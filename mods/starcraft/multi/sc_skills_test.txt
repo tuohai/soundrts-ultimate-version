@@ -1,0 +1,54 @@
+; StarCraft mod — all skills sandbox test
+;
+; Layout (west → east):
+;   a1–d1  Terran: stim, heal, nuke, yamato
+;   f1–h1  Protoss: psi storm
+;   j1–l1  Zerg: spawn larva, inject, creep tumor, extend tumor
+;   o1     Neutral zealot cluster for AoE skills
+;
+; Tab a unit, then use RPG skill hotkeys. High Templar starts at 0 mana — wait ~75s for Psi Storm.
+; Damage a Marine before testing Medivac heal.
+
+title 7680
+intro 7681
+
+square_width 12
+nb_columns 15
+nb_lines 1
+
+west_east_paths a1 b1 c1 d1 e1 f1 g1 h1 i1 j1 k1 l1 m1 n1
+
+mineral_field 9999 a1
+geyser 1 b1
+nb_meadows_by_square 4
+
+nb_players_min 1
+nb_players_max 1
+starting_squares a1
+
+player_start 1 9999 9999 a1 command_center supply_depot 2 barracks tech_lab starport tech_lab armory engineering_bay 3 marine marauder medivac ghost battlecruiser u_stim u_nuke u_cloak f1 nexus pylon high_templar u_psi_storm k1 hatchery queen_nest queen drone 2 overlord
+
+timer_coefficient 1
+
+computer_only 0 0 o1 20 zealot
+
+trigger player1 (timer 0) (add_objective 1 7682)
+trigger player1 (timer 0) (add_secondary_objective 1 7683)
+trigger player1 (timer 0) (add_secondary_objective 2 7684)
+trigger player1 (timer 0) (add_secondary_objective 3 7685)
+trigger player1 (timer 0) (add_secondary_objective 4 7686)
+trigger player1 (timer 0) (add_secondary_objective 5 7687)
+trigger player1 (timer 0) (add_secondary_objective 6 7688)
+trigger player1 (timer 0) (add_secondary_objective 7 7689)
+trigger player1 (timer 0) (add_secondary_objective 8 7690)
+trigger player1 (timer 0) (add_secondary_objective 9 7691)
+
+trigger player1 (used_skill sc_stim_pack) (secondary_objective_complete 1)
+trigger player1 (used_skill sc_heal medivac) (secondary_objective_complete 2)
+trigger player1 (used_skill sc_nuke ghost) (secondary_objective_complete 3)
+trigger player1 (used_skill sc_yamato battlecruiser) (secondary_objective_complete 4)
+trigger player1 (used_skill sc_psi_storm high_templar) (secondary_objective_complete 5)
+trigger player1 (used_skill sc_spawn_larva queen hatchery) (secondary_objective_complete 6)
+trigger player1 (used_skill sc_inject_larva queen hatchery) (secondary_objective_complete 7)
+trigger player1 (used_skill sc_spawn_creep_tumor queen) (secondary_objective_complete 8)
+trigger player1 (used_skill sc_extend_creep_tumor creep_tumor) (secondary_objective_complete 9)

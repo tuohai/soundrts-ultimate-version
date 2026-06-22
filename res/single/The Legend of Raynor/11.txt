@@ -1,0 +1,78 @@
+; how units slow down to the lowest speed in a group (except in combat)
+
+title 4271 3011
+intro 7619
+trigger player1 (timer 0) (add_objective 1 7648)
+trigger player2 (timer 0) (add_objective 1 7648)
+trigger player1 (timer 0) (add_secondary_objective 1 7649)
+trigger player2 (timer 0) (add_secondary_objective 1 7649)
+
+
+; map size
+
+square_width 12
+
+nb_columns 11
+nb_lines 4
+
+; co-op: 1-2 human allies (AoE-style cooperative campaign)
+nb_players_min 1
+nb_players_max 2
+random_starts 0
+
+; place names (province / city / district)
+square_name loc_ch11_siege_road 1,1 2,1 3,1 1,2 2,2 3,2 4,1 5,1 6,1 4,2 5,2 6,2 7,1 8,1 9,1 10,1 7,2 8,2 9,2 10,2 11,1 11,2
+square_name loc_ch11_west 1,1 2,1 3,1 1,2 2,2 3,2 4,1 5,1 6,1 7,1 8,1 9,1 10,1 11,1 4,2 5,2 6,2 7,2 8,2 9,2 10,2 11,2
+square_name loc_ch11_center 4,1 5,1 6,1 4,2 5,2 6,2 7,1 8,1 9,1 10,1 11,1 7,2 8,2 9,2 10,2 11,2
+square_name loc_ch11_east 7,1 8,1 9,1 10,1 7,2 8,2 9,2 10,2 11,1 11,2
+square_name loc_ch11_march_start 1,1 loc_ch11_iron_cavalry 3,3 loc_ch11_catapult_line 9,1 loc_ch11_grand_battery 10,1 11,1
+
+
+; paths (give only the starting square)
+
+west_east_paths a1 b1 c1 d1 e1 f1 g1 h1 i1 j1
+west_east_bridges
+
+south_north_paths c1 c2
+south_north_bridges 
+
+
+; resources
+
+nb_meadows_by_square 2
+
+
+
+; co-op symmetric partner economy
+woods 100 j1 k1
+additional_meadows k1 j1
+; players (human or computer)
+
+player 5 5 a1 raynor 10 knight 10 catapult
+player 5 5 k1 townhall 2 peasant footman j1 house footman
+
+; computer only
+
+computer_only 0 0 c3 15 knight j1 15 cannontower
+
+; triggers
+
+timer_coefficient 56
+
+; co-op alliances at start
+trigger player1 (timer 0) (alliance 1)
+trigger player2 (timer 0) (alliance 1)
+trigger computers (timer 0) (alliance 2)
+
+;trigger computer1 (has_entered d1) (order (c3 10 knight) ((auto_attack)))
+trigger computer1 (has_entered d1) (order (c3 10 knight) ((go a1) (go j1)))
+
+
+trigger player1 (not (find j1 cannontower)) (objective_complete 1)
+trigger player2 (not (find j1 cannontower)) (objective_complete 1)
+trigger player1 (has_killed 10 knight enemy) (secondary_objective_complete 1)
+trigger player2 (has_killed 10 knight enemy) (secondary_objective_complete 1)
+trigger all (no_unit_left) (defeat)
+
+trigger player1 (key_unit_killed raynor) (defeat)
+trigger player2 (key_unit_killed raynor) (defeat)

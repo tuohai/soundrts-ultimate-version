@@ -1,0 +1,239 @@
+; CrazyMod 9 — per-faction cards
+; Global resources: 79500-79501
+; Infantry cards: 79700 + faction_index
+; Elite cards:     79710 + faction_index
+; Special cards:  79720 + faction_index
+
+clear
+
+; --- all factions ---
+
+def card_cm_gold
+title 79500
+resource resource1 150
+grant_charges 1
+
+def card_cm_wood
+title 79501
+resource resource2 100
+grant_charges 1
+
+; --- traditionnel ---
+
+def card_trad_infantry
+faction traditionnel
+title 79700
+spawn arbaletrier 3
+grant_charges 1
+
+def card_trad_knights
+faction traditionnel
+title 79710
+spawn knight 2
+grant_charges 1
+min_rank rank_trad_lieutenant
+
+def card_trad_priest
+faction traditionnel
+title 79720
+spawn priest 1
+grant_charges 1
+min_rank rank_trad_captain
+
+; --- technique ---
+
+def card_tech_musketeers
+faction technique
+title 79701
+spawn mousquetaire 3
+grant_charges 1
+
+def card_tech_grenadiers
+faction technique
+title 79711
+spawn lance_grenade 2
+grant_charges 1
+min_rank rank_tech_lieutenant
+
+def card_tech_airship
+faction technique
+title 79721
+spawn dirigeable_d_observation 1
+grant_charges 1
+min_rank rank_tech_captain
+
+; --- robotique ---
+
+def card_rob_laser
+faction robotique
+title 79702
+spawn tireur_laser 3
+grant_charges 1
+
+def card_rob_drones
+faction robotique
+title 79712
+spawn drone 2
+grant_charges 1
+min_rank rank_rob_captain
+
+def card_rob_cruiser
+faction robotique
+title 79722
+spawn vaisseau_laser 1
+grant_charges 1
+min_rank rank_rob_overseer
+
+; --- tenebre ---
+
+def card_ten_ghouls
+faction tenebre
+title 79703
+spawn goule 3
+grant_charges 1
+
+def card_ten_skeletons
+faction tenebre
+title 79713
+spawn skeleton 2
+grant_charges 1
+min_rank rank_ten_knight
+
+def card_ten_necro
+faction tenebre
+title 79723
+spawn necromancer 1
+grant_charges 1
+min_rank rank_ten_lich
+
+; --- elfique ---
+
+def card_elf_archers
+faction elfique
+title 79704
+spawn archerot 3
+grant_charges 1
+
+def card_elf_centaurs
+faction elfique
+title 79714
+spawn centaure 2
+grant_charges 1
+min_rank rank_elf_blademaster
+
+def card_elf_druid
+faction elfique
+title 79724
+spawn druide 1
+grant_charges 1
+min_rank rank_elf_lord
+
+; --- orc ---
+
+def card_orc_trolls
+faction orc
+title 79705
+spawn troll_cogneur 3
+grant_charges 1
+
+def card_orc_rockets
+faction orc
+title 79715
+spawn tireur_de_fusee 2
+grant_charges 1
+min_rank rank_orc_warlord
+
+def card_orc_ogre
+faction orc
+title 79725
+spawn ogre_lanceur_de_roche 1
+grant_charges 1
+min_rank rank_orc_chieftain
+
+; --- elementale ---
+
+def card_ele_earth
+faction elementale
+title 79706
+spawn elemental_de_terre 2
+grant_charges 1
+
+def card_ele_fire
+faction elementale
+title 79716
+spawn elemental_de_feu 2
+grant_charges 1
+min_rank rank_ele_archon
+
+def card_ele_mage
+faction elementale
+title 79726
+spawn mage 1
+grant_charges 1
+min_rank rank_ele_prince
+
+; --- sauvage ---
+
+def card_sau_huntresses
+faction sauvage
+title 79707
+spawn chasseresse 3
+grant_charges 1
+
+def card_sau_archers
+faction sauvage
+title 79717
+spawn archer 2
+grant_charges 1
+min_rank rank_sau_hunter
+
+def card_sau_sorceress
+faction sauvage
+title 79727
+spawn ensorceleuse 1
+grant_charges 1
+min_rank rank_sau_king
+
+; --- vermine ---
+
+def card_ver_larvae
+faction vermine
+title 79708
+spawn larve 6
+grant_charges 1
+
+def card_ver_termite
+faction vermine
+title 79718
+spawn termite_gardien 2
+grant_charges 1
+min_rank rank_ver_brood
+
+def card_ver_flyers
+faction vermine
+title 79728
+spawn ouvriere_ailee 2
+grant_charges 1
+min_rank rank_ver_matriarch
+
+; --- elfe_noir ---
+
+def card_delf_stalkers
+faction elfe_noir
+title 79709
+spawn rodeur 3
+grant_charges 1
+
+def card_delf_dark_archers
+faction elfe_noir
+title 79719
+spawn darkarcher 2
+grant_charges 1
+min_rank rank_delf_illusionist
+
+def card_delf_illusionist
+faction elfe_noir
+title 79729
+spawn illusionniste 1
+grant_charges 1
+min_rank rank_delf_lord

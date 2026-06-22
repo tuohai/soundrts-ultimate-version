@@ -1,0 +1,191 @@
+; 建筑选择界面热键
+; 在 style.txt 为单位设置 keyboard building1 … keyboard building16（与 keyboard building 并存）
+;
+; 键位（与士兵界面同区，两行各 8 个）：
+;   d f g h j k l ;  → building1 – building8
+;   e r t y u i o p  → building9 – building16
+; 每键：本键选同类建筑中的一个，SHIFT+本键逐个切换，CTRL+本键选全图同类
+
+#define BUILDING building1 building2 building3 building4 building5 building6 building7 building8 building9 building10 building11 building12 building13 building14 building15 building16
+
+; 通用 building 类型（未指定 buildingN 的建筑）
+q: select_unit 1 building even_if_no_menu
+SHIFT q: select_unit -1 building even_if_no_menu
+
+BACKSLASH: command_unit
+
+; 过滤器（m-n，选目标时）
+m: toggle_side_filter 1
+SHIFT m: toggle_side_filter -1
+n: toggle_type_filter 1
+SHIFT n: toggle_type_filter -1
+
+; building1（d）
+d: select_unit 1 building1
+ALT d: select_unit 1 building1 local idle
+CTRL ALT d: select_unit 1 building1 idle
+CTRL d: select_unit 1 building1
+SHIFT d: select_unit 1 building1 even_if_no_menu
+ALT SHIFT d: select_unit 1 building1 idle even_if_no_menu
+CTRL SHIFT d: select_unit -1 building1 even_if_no_menu
+
+; building2（f）
+f: select_unit 1 building2
+ALT f: select_unit 1 building2 local idle
+CTRL ALT f: select_unit 1 building2 idle
+CTRL f: select_unit 1 building2
+SHIFT f: select_unit 1 building2 even_if_no_menu
+ALT SHIFT f: select_unit 1 building2 idle even_if_no_menu
+CTRL SHIFT f: select_unit -1 building2 even_if_no_menu
+
+; building3（g）
+g: select_unit 1 building3
+ALT g: select_unit 1 building3 local idle
+CTRL ALT g: select_unit 1 building3 idle
+CTRL g: select_unit 1 building3
+SHIFT g: select_unit 1 building3 even_if_no_menu
+ALT SHIFT g: select_unit 1 building3 idle even_if_no_menu
+CTRL SHIFT g: select_unit -1 building3 even_if_no_menu
+
+; building4（h）
+h: select_unit 1 building4
+ALT h: select_unit 1 building4 local idle
+CTRL ALT h: select_unit 1 building4 idle
+CTRL h: select_unit 1 building4
+SHIFT h: select_unit 1 building4 even_if_no_menu
+ALT SHIFT h: select_unit 1 building4 idle even_if_no_menu
+CTRL SHIFT h: select_unit -1 building4 even_if_no_menu
+
+; building5（j）
+j: select_unit 1 building5
+ALT j: select_unit 1 building5 local idle
+CTRL ALT j: select_unit 1 building5 idle
+CTRL j: select_unit 1 building5
+SHIFT j: select_unit 1 building5 even_if_no_menu
+ALT SHIFT j: select_unit 1 building5 idle even_if_no_menu
+CTRL SHIFT j: select_unit -1 building5 even_if_no_menu
+
+; building6（k）
+k: select_unit 1 building6
+ALT k: select_unit 1 building6 local idle
+CTRL ALT k: select_unit 1 building6 idle
+CTRL k: select_unit 1 building6
+SHIFT k: select_unit 1 building6 even_if_no_menu
+ALT SHIFT k: select_unit 1 building6 idle even_if_no_menu
+CTRL SHIFT k: select_unit -1 building6 even_if_no_menu
+
+; building7（l）
+l: select_unit 1 building7
+ALT l: select_unit 1 building7 local idle
+CTRL ALT l: select_unit 1 building7 idle
+CTRL l: select_unit 1 building7
+SHIFT l: select_unit 1 building7 even_if_no_menu
+ALT SHIFT l: select_unit 1 building7 idle even_if_no_menu
+CTRL SHIFT l: select_unit -1 building7 even_if_no_menu
+
+; building8（;）
+SEMICOLON: select_unit 1 building8
+ALT SEMICOLON: select_unit 1 building8 local idle
+CTRL ALT SEMICOLON: select_unit 1 building8 idle
+CTRL SEMICOLON: select_unit 1 building8
+SHIFT SEMICOLON: select_unit 1 building8 even_if_no_menu
+ALT SHIFT SEMICOLON: select_unit 1 building8 idle even_if_no_menu
+CTRL SHIFT SEMICOLON: select_unit -1 building8 even_if_no_menu
+
+; building9（e）
+e: select_unit 1 building9
+ALT e: select_unit 1 building9 local idle
+CTRL ALT e: select_unit 1 building9 idle
+CTRL e: select_unit 1 building9
+SHIFT e: select_unit 1 building9 even_if_no_menu
+ALT SHIFT e: select_unit 1 building9 idle even_if_no_menu
+CTRL SHIFT e: select_unit -1 building9 even_if_no_menu
+
+; building10（r）
+r: select_unit 1 building10
+ALT r: select_unit 1 building10 local idle
+CTRL ALT r: select_unit 1 building10 idle
+CTRL r: select_unit 1 building10
+SHIFT r: select_unit 1 building10 even_if_no_menu
+ALT SHIFT r: select_unit 1 building10 idle even_if_no_menu
+CTRL SHIFT r: select_unit -1 building10 even_if_no_menu
+
+; building11（t）
+t: select_unit 1 building11
+ALT t: select_unit 1 building11 local idle
+CTRL ALT t: select_unit 1 building11 idle
+CTRL t: select_unit 1 building11
+SHIFT t: select_unit 1 building11 even_if_no_menu
+ALT SHIFT t: select_unit 1 building11 idle even_if_no_menu
+CTRL SHIFT t: select_unit -1 building11 even_if_no_menu
+
+; building12（y）
+y: select_unit 1 building12
+ALT y: select_unit 1 building12 local idle
+CTRL ALT y: select_unit 1 building12 idle
+CTRL y: select_unit 1 building12
+SHIFT y: select_unit 1 building12 even_if_no_menu
+ALT SHIFT y: select_unit 1 building12 idle even_if_no_menu
+CTRL SHIFT y: select_unit -1 building12 even_if_no_menu
+
+; building13（u）
+u: select_unit 1 building13
+ALT u: select_unit 1 building13 local idle
+CTRL ALT u: select_unit 1 building13 idle
+CTRL u: select_unit 1 building13
+SHIFT u: select_unit 1 building13 even_if_no_menu
+ALT SHIFT u: select_unit 1 building13 idle even_if_no_menu
+CTRL SHIFT u: select_unit -1 building13 even_if_no_menu
+
+; building14（i）
+i: select_unit 1 building14
+ALT i: select_unit 1 building14 local idle
+CTRL ALT i: select_unit 1 building14 idle
+CTRL i: select_unit 1 building14
+SHIFT i: select_unit 1 building14 even_if_no_menu
+ALT SHIFT i: select_unit 1 building14 idle even_if_no_menu
+CTRL SHIFT i: select_unit -1 building14 even_if_no_menu
+
+; building15（o）
+o: select_unit 1 building15
+ALT o: select_unit 1 building15 local idle
+CTRL ALT o: select_unit 1 building15 idle
+CTRL o: select_unit 1 building15
+SHIFT o: select_unit 1 building15 even_if_no_menu
+ALT SHIFT o: select_unit 1 building15 idle even_if_no_menu
+CTRL SHIFT o: select_unit -1 building15 even_if_no_menu
+
+; building16（p）
+p: select_unit 1 building16
+ALT p: select_unit 1 building16 local idle
+CTRL ALT p: select_unit 1 building16 idle
+CTRL p: select_unit 1 building16
+SHIFT p: select_unit 1 building16 even_if_no_menu
+ALT SHIFT p: select_unit 1 building16 idle even_if_no_menu
+CTRL SHIFT p: select_unit -1 building16 even_if_no_menu
+
+; 编组
+1: group 1 local
+2: group 2 local
+3: group 3 local
+4: group 4 local
+5: group 5 local
+CTRL 1: group 1
+CTRL 2: group 2
+CTRL 3: group 3
+CTRL 4: group 4
+CTRL 5: group 5
+0: ungroup
+
+6: recall_group 6
+7: recall_group 7
+8: recall_group 8
+9: recall_group 9
+CTRL 6: set_group 6
+CTRL 7: set_group 7
+CTRL 8: set_group 8
+CTRL 9: set_group 9
+SHIFT 6: append_group 6
+SHIFT 7: append_group 7
+SHIFT 8: append_group 8
+SHIFT 9: append_group 9

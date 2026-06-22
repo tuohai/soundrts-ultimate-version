@@ -1,0 +1,26 @@
+title 武侠技能测试
+def parameters
+players 2
+treaty 0
+slow_game 0
+
+def player1
+human 1
+faction wuxia_hero
+alliance player1
+
+def player2
+computer 1
+faction wuxia_dummy
+alliance player2
+
+def map
+square 10 10 meadow
+square 11 10 meadow
+square 12 10 meadow
+square 10 11 meadow
+square 11 11 meadow
+square 12 11 meadow
+
+player1 1 wuxia_hero 11 10 90
+player2 1 wuxia_dummy 12 10 270

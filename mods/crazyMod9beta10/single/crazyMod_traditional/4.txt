@@ -1,0 +1,184 @@
+; CrazyMod traditional 4
+
+title 76040
+intro 76041
+
+; map size
+
+square_width 12
+
+nb_columns 5
+nb_lines 10
+
+
+; paths (give only the starting square)
+
+west_east_paths b1 c1
+west_east_paths b2 c2
+
+west_east_paths a3 b3 c3 d3
+west_east_paths a4 b4 c4 d4
+
+west_east_paths a5 b5 c5
+west_east_paths a6 b6 c6
+
+west_east_paths b7 c7 d7
+west_east_paths b8 c8 d8
+
+west_east_paths a9 b9 c9 d9
+
+west_east_bridges
+
+
+south_north_paths a1 a2 a4 a5 a7 a8 a9
+
+south_north_paths b1 b4 b5 b6 b7 b8 b9
+south_north_paths c1 c4 c5 c6 c7 c8 c9
+south_north_paths d1 d4 d5 d6 d7 d8 d9
+
+south_north_paths e1 e2 e3 e5 e6 e7 e8 e9
+
+south_north_bridges c2
+
+
+; resources
+
+goldmines 100 c1
+goldmines 1000 b2 d2
+goldmines 500 a7 e5
+
+woods 100 c2
+woods 1000 b1 d1
+woods 500 a8 e6
+
+
+nb_meadows_by_square 0
+
+additional_meadows b1 c1 d1 b2 c2 d2 b1 c1 d1 b2 c2 d2 b1 c1 d1 b2 c2 d2 b1 c1 d1 b2 c2 d2
+additional_meadows b1 c1 d1 b2 c2 d2 b1 c1 d1 b2 c2 d2 b1 c1 d1 b2 c2 d2 b1 c1 d1 b2 c2 d2
+
+additional_meadows a7 a8 e5 e6 a7 a8 e5 e6 a7 a8 e5 e6 a7 a8 e5 e6 a7 a8 e5 e6 a7 a8 e5 e6
+
+
+
+; players
+
+global_population_limit 5000
+
+player 1000 1000 c1 keep barracks lumbermill blacksmith 5 farm 10 serf 10 arbaletrier
+
+
+; computers
+
+computer_only 0 0 a10 20 goule b10 20 skeleton c10 20 zombie d10 20 spectre_en_armure e10 20 fantome
+
+
+; triggers
+
+timer_coefficient 1
+
+trigger player1 (timer 0) (add_objective 1 76042)
+trigger player1 (timer 1000) (objective_complete 1)
+
+trigger player1 (no_building_left) (defeat)
+
+trigger player1 (timer 500) (cut_scene 76043)
+trigger player1 (timer 900) (cut_scene 76044)
+
+
+trigger computer1 (timer 30) (order (a10 10 goule) ((auto_attack)))
+trigger computer1 (timer 45) (order (b10 10 skeleton) ((auto_attack)))
+trigger computer1 (timer 60) (order (c10 10 zombie) ((auto_attack)))
+trigger computer1 (timer 100) (order (d10 10 spectre_en_armure) ((auto_attack)))
+trigger computer1 (timer 120) (order (e10 10 fantome) ((auto_attack)))
+
+trigger computer1 (timer 130) (order (a10 10 goule) ((auto_attack)))
+trigger computer1 (timer 130) (order (b10 10 skeleton) ((auto_attack)))
+trigger computer1 (timer 150) (order (c10 10 zombie) ((auto_attack)))
+trigger computer1 (timer 160) (order (d10 10 spectre_en_armure) ((auto_attack)))
+trigger computer1 (timer 175) (order (e10 10 fantome) ((auto_attack)))
+
+
+trigger computer1 (timer 180) (add_units a10 20 goule)
+trigger computer1 (timer 180) (add_units b10 20 skeleton)
+trigger computer1 (timer 180) (add_units c10 20 necromancer)
+trigger computer1 (timer 180) (add_units d10 20 liche)
+trigger computer1 (timer 180) (add_units e10 20 garde_fantome)
+
+trigger computer1 (timer 200) (order (a10 20 goule) ((auto_attack)))
+trigger computer1 (timer 200) (order (b10 20 skeleton) ((auto_attack)))
+trigger computer1 (timer 190) (order (c10 5 necromancer) ((auto_attack)))
+trigger computer1 (timer 210) (order (d10 10 liche) ((auto_attack)))
+trigger computer1 (has 0 fantome) (order (e10 10 garde_fantome) ((go b2) (go d2) (auto_attack)))
+
+trigger computer1 (timer 240) (order (c10 15 necromancer) ((use a_explosion_de_cadavre c1) (auto_attack)))
+trigger computer1 (timer 240) (order (d10 5 liche) ((use a_deadly_fog b2) (auto_attack)))
+trigger computer1 (timer 260) (order (d10 5 liche) ((use a_deadly_fog d2) (auto_attack)))
+trigger computer1 (timer 300) (order (e10 10 garde_fantome) ((go a7) (go e5) (auto_attack)))
+
+
+trigger computer1 (timer 400) (add_units a10 20 goule)
+trigger computer1 (timer 400) (add_units b10 20 skeleton)
+trigger computer1 (timer 400) (add_units c10 20 sombral)
+trigger computer1 (timer 400) (add_units d10 20 dragon_squelette)
+trigger computer1 (timer 400) (add_units e10 20 spectre_en_armure)
+
+trigger computer1 (timer 410) (order (a10 20 goule) ((go b1) (auto_attack)))
+trigger computer1 (timer 410) (order (b10 20 skeleton) ((go d1) (auto_attack)))
+trigger computer1 (timer 420) (order (c10 10 sombral) ((go a2) (go e2) (auto_attack)))
+trigger computer1 (timer 450) (order (c10 10 sombral) ((go a2) (go e2) (auto_attack)))
+trigger computer1 (timer 460) (order (d10 10 dragon_squelette) ((use a_souffle_de_mort b1) (auto_attack)))
+trigger computer1 (timer 480) (order (d10 10 dragon_squelette) ((use a_souffle_de_mort d1) (auto_attack)))
+trigger computer1 (timer 490) (order (e10 20 spectre_en_armure) ((auto_attack)))
+
+trigger computer1 (timer 620) (add_units a10 25 goule)
+trigger computer1 (timer 620) (add_units b10 25 skeleton)
+trigger computer1 (timer 620) (add_units c10 20 golem_de_chair)
+trigger computer1 (timer 620) (add_units d10 25 liche)
+trigger computer1 (timer 620) (add_units e10 25 garde_fantome)
+
+trigger computer1 (timer 630) (order (a10 25 goule) ((go b2) (auto_attack)))
+trigger computer1 (timer 630) (order (b10 25 skeleton) ((go d2) (auto_attack)))
+trigger computer1 (timer 640) (order (c10 20 golem_de_chair) ((auto_attack)))
+trigger computer1 (timer 650) (order (d10 5 liche) ((use a_appeler_feu_follet c2) (auto_attack)))
+trigger computer1 (timer 660) (order (d10 5 liche) ((use a_appeler_feu_follet b2) (auto_attack)))
+trigger computer1 (timer 670) (order (d10 5 liche) ((use a_appeler_feu_follet d2) (auto_attack)))
+trigger computer1 (timer 680) (order (d10 5 liche) ((use a_deadly_fog c1) (auto_attack)))
+trigger computer1 (timer 690) (order (d10 5 liche) ((use a_deadly_fog c1) (auto_attack)))
+trigger computer1 (timer 680) (order (e10 25 garde_fantome) ((auto_attack)))
+
+
+trigger computer1 (timer 700) (add_units a10 25 zombie)
+trigger computer1 (timer 700) (add_units b10 25 golem_de_chair)
+trigger computer1 (timer 700) (add_units c10 20 necromancer)
+trigger computer1 (timer 700) (add_units d10 25 sombral)
+trigger computer1 (timer 700) (add_units e10 25 dragon_squelette)
+
+trigger computer1 (timer 710) (order (a10 25 zombie) ((go a7) (auto_attack)))
+trigger computer1 (timer 710) (order (b10 25 golem_de_chair) ((go e5) (auto_attack)))
+trigger computer1 (timer 710) (order (c10 5 necromancer) ((use a_explosion_de_cadavre c2) (use a_explosion_de_cadavre c1) (auto_attack)))
+trigger computer1 (timer 730) (order (c10 5 necromancer) ((use a_explosion_de_cadavre c2) (use a_explosion_de_cadavre c1) (auto_attack)))
+trigger computer1 (timer 750) (order (c10 5 necromancer) ((use a_explosion_de_cadavre b2) (use a_explosion_de_cadavre c1) (auto_attack)))
+trigger computer1 (timer 770) (order (c10 5 necromancer) ((use a_explosion_de_cadavre d2) (use a_explosion_de_cadavre c1) (auto_attack)))
+trigger computer1 (timer 750) (order (d10 25 sombral) ((go a2) (patrol e2)))
+trigger computer1 (timer 780) (order (e10 5 dragon_squelette) ((use a_souffle_de_mort c1) (auto_attack)))
+trigger computer1 (timer 810) (order (e10 10 dragon_squelette) ((use a_souffle_de_mort c1) (auto_attack)))
+trigger computer1 (timer 820) (order (e10 10 dragon_squelette) ((use a_souffle_de_mort c1) (auto_attack)))
+
+
+trigger computer1 (timer 825) (add_units a10 25 skeleton)
+trigger computer1 (timer 825) (add_units b10 25 golem_de_chair)
+trigger computer1 (timer 825) (add_units c10 20 necromancer)
+trigger computer1 (timer 825) (add_units d10 25 sombral)
+trigger computer1 (timer 825) (add_units e10 20 gargouille_maudite)
+
+trigger computer1 (timer 830) (order (a10 25 skeleton) ((auto_attack)))
+trigger computer1 (timer 830) (order (b10 25 golem_de_chair) ((auto_attack)))
+trigger computer1 (timer 830) (order (c10 10 necromancer) ((use a_champ_de_necromancie c2) (auto_attack)))
+trigger computer1 (timer 850) (order (c10 10 necromancer) ((use a_champ_de_necromancie c1) (auto_attack)))
+trigger computer1 (timer 880) (order (d10 25 sombral) ((auto_attack)))
+trigger computer1 (timer 880) (order (e10 10 gargouille_maudite) ((go d2)))
+trigger computer1 (timer 890) (order (e10 10 gargouille_maudite) ((go d1)))
+
+trigger computer1 (timer 970) (order (c2 10 champ_de_necromancie) ((use a_raise_dead)))
+trigger computer1 (timer 980) (order (c1 10 champ_de_necromancie) ((use a_raise_dead)))

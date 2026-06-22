@@ -1,0 +1,531 @@
+; 战役主角：雷诺 — 被流放后重获王命的边境骑士
+def raynor
+no_number 1
+ai_mode guard
+global_count_limit 1
+;is_revivable 1
+campaign_carryover 1
+;revival_time 15
+;revival_time_per_level 2
+；xp_thresholds 40 90 160 250 360 490 640 810 1000
+;level 1
+;xp 0
+;level_up_heal_full 0
+;level_up_reset_xp 1    ; 升级后经验清零
+;hp_max_per_level 30
+;mdg_per_level 2
+;mdf_per_level 1
+;charge_mdg_per_level 2
+;xp_reward 80
+inventory_capacity 3
+cost 
+time_cost 0
+hp_max 90
+mdg 1
+charge_mdg 9
+charge_mdg_cd 10
+charge_mdg_dist 15
+mana_max 200
+mana_regen 5
+
+def raynor2
+is_a raynor
+hp_max 120
+mdg 4
+mdf 2
+charge_mdg 4
+charge_mdg_cd 10
+charge_mdg_dist 15
+inventory_capacity 3
+
+def raynor3
+is_a raynor2
+hp_max 150
+mdg 6
+mdf 3
+charge_mdg 4
+
+def raynor4
+is_a raynor3
+hp_max 180
+mdg 8
+mdf 4
+charge_mdg 4
+can_use_skill skill_zhuiri_jianfa
+active_trigger_skills skill_zhuiri_jianfa
+
+def raynor5
+is_a raynor4
+hp_max 210
+mdg 10
+mdf 6
+charge_mdg 6
+
+def raynor6
+is_a raynor5
+hp_max 250
+mdg 13
+mdf 8
+charge_mdg 8
+
+def raynor7
+is_a raynor6
+hp_max 280
+hp_regen 2
+hp_regen_cd 1
+mdg 16
+mdf 10
+charge_mdg 10
+
+def escort
+class soldier
+ai_mode guard
+
+def npc_footman_escort
+is_a escort footman
+
+def npc_archer_escort
+is_a escort archer
+
+def footman
+weapons sword
+xp_reward 25
+armor footman_armor
+mdg 0
+mdg_cd 0
+mdg_range 0
+mdf 0
+sight_range 3
+can_use_tech 
+inventory_capacity 2
+
+def zombie
+xp_reward 28
+
+
+def demo_marker_footman
+is_a footman
+weapons none
+
+def archer
+weapons bow sword
+spawn_weapons_equipped 1 ; 0=允许手动装备item武器，1=混合配置时item武器留背包且不装备（默认）
+spawn_armor_equipped 0
+xp_reward 20
+rdg 0
+rdg_cd 0
+rdg_range 0
+auto_weapon_switch 1
+can_use_tech 
+inventory_capacity 3
+
+def skeleton
+xp_reward 23
+
+def knight
+xp_reward 50
+mdg 3
+mdg_bonus 3
+charge_mdg 2
+charge_mdg_cd 10
+charge_mdg_dist 15
+
+def melee
+class weapon
+
+def ranged
+class weapon
+
+def sword
+is_a melee
+class item
+equippable_as_weapon 1
+mdg 3.5
+mdg_bonus 2.5
+mdg_cd 1.5
+mdg_range 1
+transport_volume 1
+can_use_tech melee_weapon
+
+def short_sword
+is_a melee
+class item
+equippable_as_weapon 1
+mdg 2.5
+mdg_bonus 1.5
+mdg_cd 1.5
+mdg_range 1
+transport_volume 1
+can_use_tech melee_weapon
+
+def bow
+is_a ranged
+rdg 2.5
+rdg_projectile 1
+rdg_delay 0.02
+rdg_cd 1.5
+rdg_range 4
+rdg_targets ground air
+can_use_tech archer_weapon archer_range
+
+def light_armor
+class armor
+
+def footman_armor
+is_a light_armor
+class item
+equippable_as_armor 1
+mdf 0.5
+mdf_bonus 1
+rdf_bonus 1
+can_use_tech melee_armor
+
+; 物品定义 - 示例物品
+
+def potion
+class item
+
+
+def health_potion
+is_a potion
+buffs heal
+
+def mana_potion
+class item
+skills mana_regeneration
+
+def skill_zhuiri_jianfa
+class skill
+auto_trigger 1
+manual_use 1
+trigger_timing on_hit
+active_trigger_rate 100
+effect burst mdg 5 (delays 0 0.55 1.10 1.40 1.65) (window 2)
+mdg 6
+effect_target ask
+effect_range 2
+time_cost 0
+cooldown 5
+mana_cost 20
+
+; 逐日剑法秘籍（背包中使用，需 10 级）
+def zhuiri_jianfa_book
+class item
+skills skill_zhuiri_jianfa
+learn_level 10
+transport_volume 1
+
+; 任务物品（用于"把物品交给NPC"的示例地图）
+def knight_lance
+class item
+
+def pickaxe
+class item
+
+def wand
+class item
+
+; 示例任务NPC：可接收玩家交给的物品（receive_items 1），
+; 用于"把物品交给NPC才能通关"类的关卡目标。
+
+
+def npc_peasant
+is_a peasant
+
+def quest_npc
+class soldier
+cost 0 0
+population_cost 0
+time_cost 1
+hp_max 100
+speed 1.5
+sight_range 6
+inventory_capacity 5
+receive_items 1
+
+; 城邦商人：交付金币换资源（Civ5 城邦式支线）
+def city_state_trader
+is_a quest_npc
+accepted_items gold_coin
+accept_from ally neutral
+receive_items 1
+
+; 精细接收示例用的NPC（无武器，不会主动攻击）：
+; 1) 中立NPC骑士：只接收中立关系给予者交来的骑士枪
+def npc_knight
+class soldier
+cost 0 0
+population_cost 0
+time_cost 1
+hp_max 200
+speed 1.5
+sight_range 6
+inventory_capacity 3
+receive_items 1
+accepted_items knight_lance
+accept_from neutral
+
+; 2) 盟友农民：只接收盟友交来的镐头
+def npc_peasant
+class worker
+cost 0 0
+population_cost 0
+time_cost 1
+hp_max 100
+speed 1.5
+sight_range 6
+inventory_capacity 3
+receive_items 1
+accepted_items pickaxe
+accept_from ally
+
+; 3) 敌方法师：只接收敌方（非中立）交来的魔杖
+def npc_mage
+class soldier
+cost 0 0
+population_cost 0
+time_cost 1
+hp_max 100
+speed 1.5
+sight_range 6
+inventory_capacity 3
+receive_items 1
+accepted_items wand
+accept_from enemy
+
+; 任务物品：失落的护符（用于"找到某物品即通关"的示例地图）
+; class item -> 可被拥有 inventory_capacity 的单位拾取；
+; 不设置 consume_on_pickup，拾取后会进入单位库存，
+; 供触发器条件 (has_item lost_amulet) 检测。
+def lost_amulet
+class item
+
+; 战役任务物品
+
+def speed_boots
+class item
+transport_volume 1
+
+def power_sword
+class item
+equippable_as_weapon 1
+mdg 5
+mdg_bonus 3
+mdg_cd 1.5
+mdg_range 1
+transport_volume 1
+can_use_tech melee_weapon
+
+def magic_ring
+class item
+skills mana_regeneration
+transport_volume 1
+
+def gold_coin
+class item
+consume_on_pickup 1
+resource_rewards 15
+
+def mystery_treasure
+class item
+transport_volume 2
+use_square b2
+resource_rewards 150 0
+
+; 封印宝藏（第22章：须丢弃到祭坛开启，再拾取金币；title 7568）
+def sealed_treasure
+class item
+transport_volume 2
+
+; 军需品（第23章：拾取后带到指定方格丢弃即完成目标；title 7574）
+def war_supplies
+class item
+transport_volume 2
+
+; 密信（第24章：交给加雷克爵士；title 7588）
+def secret_letter
+class item
+transport_volume 1
+
+; 加雷克信物（第24章末获得，第25章交给罗兰；title 7716）
+def garrek_token
+class item
+transport_volume 1
+
+; 王旗（第26章：献给薇拉女将；title 7715）
+def war_banner
+class item
+transport_volume 1
+
+; 加雷克爵士 — 北方骑士首领（第24章密信收服）
+def npc_knight_leader
+is_a knight
+cost 0 0
+no_number 1
+population_cost 0
+time_cost 1
+hp_max 250
+sight_range 8
+inventory_capacity 3
+receive_items 1
+accepted_items secret_letter
+accept_from enemy
+accept_givers raynor5
+ai_mode guard
+mdg 20
+mdg_cd 1.5
+mdg_range 1
+
+; 首领护卫骑士（默认站岗不主动接战；title 7591）
+def npc_knight_escort
+is_a escort knight
+
+; 罗兰伯爵 — 第25章比武收服（战败投降，不真死；title 7711）
+def npc_count_roland
+is_a knight
+cost 0 0
+no_number 1
+population_cost 0
+time_cost 1
+hp_max 280
+sight_range 8
+inventory_capacity 3
+receive_items 1
+accepted_items garrek_token
+accept_from enemy
+accept_givers raynor
+ai_mode guard
+mdg 22
+mdg_cd 1.4
+mdg_range 1
+
+; 罗兰亲卫骑士 — 第25章比武（title 7712）
+def npc_roland_guard
+is_a escort knight
+cost 0 0
+population_cost 0
+time_cost 1
+hp_max 180
+ai_mode guard
+mdg 16
+mdg_cd 1.5
+mdg_range 1
+
+; 薇拉女将 — 第26章献旗收服（title 7713）
+def npc_general_vera
+is_a knight
+cost 0 0
+no_number 1
+population_cost 0
+time_cost 1
+hp_max 240
+heal_level 5
+heal_cd 2
+sight_range 8
+receive_items 1
+accepted_items war_banner
+accept_from enemy
+accept_givers raynor6
+ai_mode guard
+mdg 18
+mdg_cd 1.5
+mdg_range 1
+
+; 铁腕马尔科 — 第27章比武后分兵（title 7714）
+def npc_marco_ironhand
+is_a knight
+cost 0 0
+no_number 1
+population_cost 0
+time_cost 1
+hp_max 300
+sight_range 8
+yield_on_defeat 1
+ai_mode guard
+mdg 24
+mdg_cd 1.3
+mdg_range 1
+
+; 宰相派来的杀手（第24–27章共同敌人；title 7590）
+def traitor_guard
+class soldier
+cost 0 0
+population_cost 0
+time_cost 1
+hp_max 150
+speed 1.5
+sight_range 6
+weapons sword
+armor footman_armor
+mdg 3
+mdg_cd 1.5
+mdg_range 1
+mdf 1
+
+; 第28章演示：C3 上按序号指定的敌方步兵（guard 站岗，便于逐个击杀对比）
+def demo_marker_footman
+is_a escort footman
+hp_max 40
+ai_mode guard
+
+; 开启的宝箱（触发器在祭坛生成，不可拾取，供目标3判定；title 7561）
+def treasure_opened_mark
+class building
+cost 0 0
+hp_max 1
+provides_survival 0
+population_cost 0
+time_cost 1
+is_buildable_anywhere 1
+
+; 战役任务NPC
+
+def npc_village_healer
+class soldier
+cost 0 0
+population_cost 0
+time_cost 1
+hp_max 100
+speed 1.5
+sight_range 6
+inventory_capacity 5
+receive_items 1
+accepted_items health_potion
+accept_from neutral
+
+def npc_wandering_knight
+class soldier
+cost 0 0
+population_cost 0
+time_cost 1
+hp_max 200
+speed 1.5
+sight_range 6
+inventory_capacity 3
+receive_items 1
+accepted_items knight_lance
+accept_from neutral
+
+def npc_blacksmith
+class worker
+cost 0 0
+population_cost 0
+time_cost 1
+hp_max 120
+speed 1.5
+sight_range 6
+inventory_capacity 5
+receive_items 1
+accepted_items short_sword footman_armor
+accept_from ally
+
+; 战役任务地标：祭坛（中立装饰建筑，用于运送药剂等任务目标点）
+def shrine
+class building
+cost 0 0
+population_cost 0
+population_provided 0
+hp_max 300
+time_cost 1
+provides_survival 0
+sight_range 6

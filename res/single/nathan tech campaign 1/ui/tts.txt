@@ -1,0 +1,20 @@
+﻿; coding: utf-8
+56001 gather 3000 gold,
+56002 gather 600 wood, and
+56003 horse and cart
+56004 finally, put the resources in the cart
+56007 recruit 30 footman 
+56008 go to j10 by following the path
+56009 clear the way for Galahan 
+56010 show one of his peasants how to get to your castle
+56011 The commander wants you to set an example. Build 30 cannon tower, 30 guard tower and recruit 60 footman.  
+56012 Send in a spy.
+56013 Strenthen the defenses on the eastern sides. 50 knight, 50 footman, 50 archer, 50 catapult and 10 mages should be placed in f1 on the high ground.
+56014 Take down the enemy!
+56015 Time to prepare our counter attack. Get 50 knights to d1.
+56016 Alright. Lets show them who's boss!
+56017 Pay off Galahan. Gather the gold and wood, then stick it in a big cart.
+56018 Give him his honour guard. 50 knights and 50 footman should do it.
+56019 huge transportation cart
+56020 Leaders  Chariot
+56021 final words

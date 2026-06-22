@@ -1,0 +1,15 @@
+# SoundRTS 核心依赖
+upnpclient
+pygame
+accessible_output2
+chardet
+cloudpickle
+requests
+tomli
+docutils
+cx_Freeze
+pytest
+
+# 现代网络系统依赖 (新增)
+websockets>=15.0.0
+cryptography>=45.0.0

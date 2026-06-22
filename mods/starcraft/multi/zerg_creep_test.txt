@@ -1,0 +1,32 @@
+; StarCraft mod — Zerg creep test (spread, on-square, persist)
+;
+;  a b c d e f g h i j
+; 1 * + + + + + + + + @
+;   ^hatchery (r7)      ^build here (needs ~2s creep spread)
+;
+; Phase 1: wait for creep to reach j1, sacrifice Drone → Spawning Pool
+; Phase 2: destroy Hatchery (cancel building), sacrifice Drone → Extractor on lingering creep
+
+title 7320
+intro 7324
+
+square_width 12
+nb_columns 10
+nb_lines 1
+
+west_east_paths a1 b1 c1 d1 e1 f1 g1 h1 i1
+
+mineral_field 200 a1
+nb_meadows_by_square 0
+
+nb_players_min 1
+nb_players_max 1
+starting_squares a1
+starting_units hatchery 4 drone
+starting_resources 80 0
+
+timer_coefficient 1
+
+trigger player1 (timer 0) (add_objective 1 7321)
+trigger player1 (has spawning_pool) (do (add_objective 2 7323) (objective_complete 1))
+trigger player1 (and (building_lost hatchery) (has extractor)) (objective_complete 2)

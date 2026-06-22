@@ -1,0 +1,1099 @@
+def messages
+the_queue_is_full 143
+not_enough_resource1 135 131
+not_enough_resource2 135 132
+not_enough_population 135 133
+not_enough_resource3 135 137
+population_limit_reached 4246
+production_deferred 142
+cannot_build_here 4204
+missing_build_field 4204
+not_enough_mana 4252
+cooldown 4509
+not_enough_space 1027
+count_limit_reached 4335
+water_impassable 4976
+land_impassable 4977
+load_invalid 5453
+load_failed 5454
+unload_invalid 5455
+unload_failed 5456
+skill_level_too_low 5686
+skill_already_known 5687
+skill_learned 5688
+capture_success 4370
+target_captured 4371
+building_refund 5689
+
+def start_produce
+title 4373
+index 7.5
+shortcut p
+
+def auto_produce
+title 4650
+index 7.5
+shortcut a
+
+def manual_produce
+title 4651
+index 7.51
+shortcut m
+
+def start_automatic_cultivate
+title 4655
+index 7.52
+shortcut c
+
+def start_manual_cultivate
+title 4656
+index 7.53
+shortcut v
+
+def stop_produce
+title 4375
+index 7.6
+shortcut s
+
+def stop_cultivate
+title 4659
+index 7.65
+shortcut c
+
+def auto_explore
+title 4446
+shortcut e
+
+def gold_house
+is_a building
+title 4372
+shortcut g
+
+def gold_mint
+is_a building
+title 5122
+
+def gold_coin
+is_a item
+title 5123
+
+; miscellaneous parameters
+counterattack_enabled 4366
+counterattack_disabled 4367
+
+def parameters
+no_path_in_this_direction 1027
+requires 129
+and 23
+resource1_title 131
+resource2_title 132
+population_title 133
+resource3_title 137
+recommended_maps jl8 jl7 jl6 jl5
+main_menu_select_sound 6115 ; 菜单选择音效
+main_menu_confirm_sound 6116 ; 菜单确认音效
+victory_sound victory
+defeat_sound defeat
+
+; 示例：如何为游戏添加背景音乐
+; 您可以在每个mod的style.txt中添加以下内容来自定义音乐
+
+; 主菜单音乐，可以使用简单的音乐ID
+menu_music base_main_menu_music
+
+; 游戏内背景音乐，可以使用简单的音乐ID
+game_music base_game_music
+battle_music base_battle_music
+
+; 注意：
+; 1. 您可以使用简单的音乐ID，如"menu_music title"
+;    系统会自动查找以下文件:
+;    - mods/[您的mod名称]/ui/music/title.mp3
+;    - ui/music/title.mp3
+; 
+; 2. 您也可以使用相对路径或绝对路径:
+;    - menu_music ui/music/my_menu_music.mp3
+;    - menu_music C:/Music/my_music.mp3
+; 
+; 3. 音乐文件只支持MP3格式
+
+; units menus
+
+def enter
+title 4282
+; no index (won't appear in the menu)
+
+def go
+title 100 115
+index 1
+
+def attack ; imperative go
+title 114
+; no index (won't appear in the menu)
+
+def capture ; imperative go
+title 4370
+; no index (won't appear in the menu)
+
+def herd
+title 4934
+; no index (won't appear in the menu)
+
+def herd_ok
+title 4935
+
+def pickup
+title 4366
+index 3.5
+shortcut k
+
+def drop
+title 5690
+index 3.6
+shortcut d
+
+def give
+title 5691
+index 3.7
+shortcut g
+
+def patrol
+title 103 115
+index 2
+shortcut p
+
+def load
+title 4278
+index 3
+
+def load_all
+title 4279
+index 3
+
+def unload
+title 4280 $1 115
+index 3
+
+def unload_all
+title 4281
+index 3
+
+def gather
+title 102
+index 3
+
+def use
+title $1
+index 4
+
+def build
+title 101 $1 119 ; if the order is "build farm", $1 is replaced with the title of "farm"
+index 5
+
+def build_phase_two ; working on a construction site
+title 101
+; no index (won't appear in the menu)
+
+def block
+title 4333 
+; no index (won't appear in the menu)
+
+def repair
+title 118
+index 6
+
+def train
+title 123 $1 ; if the order is "train peasant", $1 is replaced with the title of "peasant"
+index 7
+
+def research
+title 4248 $1
+index 8
+
+def advance
+title 4214 4219 $1 ; if the order is "advance feudal_age", $1 is replaced with the title of "feudal_age"
+index 8.5
+
+;def upgrade
+;title 4214 $1
+
+def upgrade_to
+title 4214 4219 $1 ; if the order is "upgrade_to keep", $1 is replaced with the title of "keep"
+index 9
+
+def change_to
+title 4508 $1
+index 13
+
+def enable_auto_gather
+title 4355
+index 9.4
+
+def disable_auto_gather
+title 4356
+index 9.4
+
+def enable_auto_repair
+title 4353
+index 9.5
+
+def disable_auto_repair
+title 4354
+index 9.5
+
+def enable_auto_explore
+title 5692
+index 9.6
+
+def disable_auto_explore
+title 5693
+index 9.6
+
+def mode_offensive
+title 104 110
+index 10
+
+def mode_defensive
+title 104 111
+index 10
+
+def mode_guard
+title 104 4368 ; 4368 对应站岗模式
+index 10
+
+def mode_chase
+title 104 4369  ; 4369 对应追击模式
+index 10
+
+def toggle_counterattack
+title 4365
+index 10
+
+def enable_counterattack
+title 4366
+index 10
+
+def disable_counterattack
+title 4367
+index 10
+
+def cancel_building
+title 127 128
+index 10
+
+def cancel_upgrading
+title 127 4214
+index 10
+
+def cancel_training
+title 127 147
+index 10
+
+def rallying_point
+title 125 115
+comment 4255
+index 11
+
+def stop
+title 106
+index 12
+
+; weapon commands
+
+def switch_weapon
+title 4862
+index 14
+shortcut x
+
+
+; skills?
+
+def a_teleportation
+is_a skills
+title 4250 4251
+alert 1328
+shortcut t
+
+def a_recall
+is_a skills
+title 4307
+alert 1328
+shortcut r
+
+def a_holy_vision
+is_a skills
+title 4299
+alert 1339
+shortcut v
+
+def a_conversion
+is_a skills
+title 4274
+alert 6114
+shortcut c
+
+def a_summon_dragon
+is_a skills
+title 4292 4231
+alert 1338
+shortcut d
+
+def a_deadly_fog
+is_a skills
+title 4305
+alert
+shortcut f
+
+def a_raise_dead
+is_a skills
+title 4293
+alert 1340
+shortcut r
+
+def a_resurrection
+is_a skills
+title 4294
+alert 1339
+shortcut r
+
+def a_meteors
+is_a skills
+title 4306
+alert
+shortcut m
+
+def a_exorcism
+is_a skills
+title 4300
+alert
+shortcut e
+
+; upgrades
+
+def melee_weapon
+title 4215
+
+def melee_armor
+title 4217
+
+def archer_weapon
+title 4216
+
+def archer_armor
+title 4218
+
+def archer_range
+title 4233
+
+
+
+def horse_speed
+title 4254
+
+; research
+
+def hunting_techniques
+title 4936
+
+def superhealer
+title 4249
+
+def u_teleportation
+title 4250
+
+def u_recall
+title 4307
+
+def u_conversion
+title 4274
+
+def u_summon_dragon
+title 4292 4231
+
+def u_deadly_fog
+title 4305
+
+def u_raise_dead
+title 4293
+
+def u_resurrection
+title 4294
+
+def u_meteors
+title 4306
+
+def u_exorcism
+title 4300
+
+
+; "abstract" classes (not used directly)
+
+def thing
+title
+noise
+mdg_missed 1012
+rdg_missed 1012
+mdg_hit
+rdg_hit
+death
+proportion_0 if_me 6100 else 6000
+proportion_1 if_me 6101 else 6001
+proportion_2 if_me 6102 else 6002
+proportion_3 if_me 6103 else 6003
+proportion_4 if_me 6104 else 6004
+proportion_5 if_me 6105 else 6005
+proportion_6 if_me 6106 else 6006
+proportion_7 if_me 6107 else 6007
+proportion_8 if_me 6108 else 6008
+proportion_9 if_me 6109 else 6009
+proportion_10 if_me 6110 else 6010
+production 1327 ; research, train or upgrade_to
+ground
+lose_fight 1324
+order_ok if_me 1194 1195 1196 else 1094 1095 1096
+order_impossible 1029
+research_complete_msg 4248 126
+upgrade_complete_msg 4214 126
+added 1329
+added_msg $1 
+enter 1330
+exit 1331
+level_up level_up
+item_used 1194 1195 1196
+
+def skills
+is_a thing
+
+
+def unit
+is_a thing
+shape circle
+complete
+resource1_reward resource1
+resurrected resurrected
+explode_effect explode
+critical_hit critical_hit
+pickup health	  ; 生命药水拾取音效
+drop health
+complete_msg $1 124
+launch_attack
+casting 1010
+death if_me 1310 else 1309 1051
+falling_delay 1
+falling 80051
+alert 1078 ; horn
+production 1327 ; research, train or upgrade_to
+win_fight if_me 1326 else 1325
+attack if_me 1130 else 1030
+flee if_me 1174 else 1074
+healed 1097
+blocked 1027
+noise_if_damaged if_me repeat 12 1172 else repeat 12 1072
+noise_if_very_damaged if_me repeat 12 1173 else repeat 12 1073
+captured_success 1855
+captured_lost 1856
+
+def building
+is_a unit
+title 4812
+shape square
+complete if_me 1200 else 1100
+complete_msg $1 126
+death 1047
+alert 1079 ; bell
+noise_if_damaged loop 1016 .5 ; half volume
+noise_if_very_damaged loop 1016
+ground grass
+keyboard building
+; 另可指定 keyboard building1 … keyboard building16，与通用 keyboard building 并存。
+; 在 res/ui/building_bindings.txt 中：d f g h j k l ; → building1–8，e r t y u i o p → building9–16。
+
+def walking_unit
+is_a unit
+move 1053 1054
+move_on_grass 1053 1054
+move_on_leaves 1069 1070
+move_on_gravel 1344 1345
+move_on_wood 1067 1350
+move_on_mud 1087 1349
+move_on_water 1088 1348
+move_on_snow 1346 1347
+
+def resource_deposit
+is_a thing
+exhausted
+
+
+; terrain
+
+def _meadows ; this terrain is applied automatically to any square with meadows and without woods
+title 4362
+noise
+ground ; footstep noise determined by the nearest object
+color
+
+def _forest ; this terrain is applied automatically to any square with some woods
+title 4363
+noise
+ground ; footstep noise determined by the nearest object
+color
+
+def _dense_forest ; this terrain is applied automatically to any square with many woods
+title 4364
+noise
+ground ; footstep noise determined by the nearest object
+color
+
+def river
+title 4346
+noise loop 1065
+color blue4
+
+def lake
+title 4345
+noise loop 1342
+color blue4
+
+def sea
+title 4344
+noise loop 1342
+color blue
+
+def ocean
+title 4351
+noise loop 1089
+color blue
+
+def mountain
+title 4347
+noise loop 1000
+color dimgray
+
+def mountain_pass
+title 4352
+noise loop 1000
+ground snow
+
+def big_bridge
+title 4348
+noise loop 1065
+ground wood
+color brown
+
+def ford
+title 4349
+noise loop 1090
+ground water
+color blue2
+
+def marsh
+title 4350
+noise loop 1343
+ground mud
+color brown
+
+
+; buildings
+
+def buildingsite
+is_a building
+title 107 128
+noise_if_damaged
+noise_if_very_damaged
+ground gravel
+
+
+def farm
+is_a building
+title 83
+ground gravel
+color hotpink
+noise repeat 15 1050
+keyboard building4
+shortcut f
+
+def house
+is_a building
+title 4660
+keyboard building2
+shortcut h
+
+def lumbermill
+is_a building
+title 148
+noise repeat 15 1052
+store_resource2 1098
+keyboard building building5
+shortcut l
+
+def barracks
+is_a building
+title 99
+color violetred
+keyboard building building3
+shortcut b
+
+
+def townhall
+is_a building
+title 82
+color white
+noise repeat 6 1064
+store_resource1 1099
+store_resource2 1098
+store_resource3 store_food
+keyboard building building1
+shortcut h
+
+
+def keep
+is_a townhall
+title 4220
+noise repeat 6 1307
+
+def castle
+is_a keep
+title 4221
+noise repeat 6 1308
+
+def blacksmith
+is_a building
+title 4213
+noise repeat 15 1300
+shortcut k
+
+def stables
+is_a building
+title 4222
+noise repeat 15 1305 1306
+shortcut s
+
+def workshop
+is_a building
+title 4226
+noise repeat 15 1321
+shortcut w
+
+def dragonslair
+is_a building
+title 4227
+noise repeat 15 1320
+shortcut d
+
+def magestower
+is_a building
+title 4228
+noise repeat 15 1319
+shortcut m
+
+def temple
+is_a building
+title 4298
+shortcut p
+
+def necropolis
+is_a building
+title 4304
+shortcut n
+
+def scouttower
+is_a building
+title 4275
+noise repeat 6 6111
+shortcut t
+
+def guardtower
+is_a building
+title 4276
+noise repeat 6 6112
+launch_rdg 1042
+rdg_hit 1301
+
+def cannontower
+is_a building
+title 4277
+noise repeat 6 6113
+launch_mdg 1084
+mdg_hit 1085
+
+def wall
+is_a building
+title 4331
+shortcut a
+
+def massive_wall
+is_a building
+title 4338
+
+def gate
+is_a building
+title 4332
+shortcut g
+
+def massive_gate
+is_a building
+title 4339
+
+def shipyard
+is_a building
+title 4357
+
+; units
+
+def peasant
+is_a walking_unit
+resource1_reward resource1
+title 85
+intro 4889
+color brown
+noise_when_exploiting_goldmine repeat 1.6 1038 ; 1081
+noise_when_exploiting_wood repeat 1.5 1034 1035 1036 1037
+noise_when_exploiting_orchard repeat 1.6 gather_food1 gather_food2
+noise_when_exploiting_farm repeat 1.6 gather_food1 gather_food2
+noise_when_exploiting_food_carcass repeat 1.6 gather_food1 gather_food2
+noise_when_exploiting_resource1 repeat 0 gather_gold
+noise_when_exploiting_wood repeat 1.5 1034 1035 1036 1037
+noise_when_exploiting_resource2 repeat 1.5 1034 1035 1036 1037
+noise_when_building repeat 4 1046 1048 1049
+mdg_hit 1008
+keyboard worker
+shortcut p
+
+def footman
+is_a walking_unit
+title 86
+intro 4890
+color red
+mdg_hit 1039 1040 1041
+mdg_hit_lv_1 1302
+keyboard soldier1
+shortcut f
+
+def zombie
+is_a footman
+title 4295
+noise if_me repeat 6 1336 else repeat 6 1335
+attack 1031
+
+def archer
+is_a walking_unit
+title 87
+color darkorange
+launch_rdg 1042
+rdg_hit 1043
+rdg_hit_lv_1 1301
+keyboard soldier2
+shortcut a
+
+def darkarcher
+is_a archer
+title 4283
+shortcut d
+
+def repeating_crossbowman
+is_a archer
+title 5082
+launch_rdg 1042 1042 1042
+shortcut r
+
+def skeleton
+is_a archer
+title 4296
+noise repeat 6 1337
+attack 1031
+
+def raynor7
+is_a knight
+title 7736
+
+def knight
+is_a unit
+title 4225
+noise repeat 30 1305 1306
+mdg_hit 1039 1040 1041
+mdg_hit_lv_1 1302
+rdg_dodge 1040
+move 1303 1304
+shouts 1854
+keyboard soldier3
+shortcut k
+
+def catapult
+is_a unit
+title 4201
+noise repeat 9 1311 1312 1313 ; 1082 1083 ?
+launch_mdg 1084
+mdg_hit 1085
+move 1082 1083
+keyboard soldier4
+shortcut c
+
+def dragon
+is_a unit
+title 4231
+noise repeat 6 1314
+launch_rdg 1084
+rdg_hit 1085
+death 1316
+disappear 1858
+move 1317 1318
+keyboard soldier5
+shortcut d
+
+def mage
+is_a walking_unit
+title 4229
+launch_rdg 1322
+rdg_hit 1323
+keyboard soldier6
+shortcut m
+
+def priest
+is_a walking_unit
+title 4297
+keyboard soldier6
+shortcut p
+
+def necromancer
+is_a walking_unit
+title 4303
+keyboard soldier6
+shortcut n
+
+def new_flyingmachine
+is_a unit
+title 4230
+move 1317 1318
+keyboard soldier7
+shortcut f
+
+def flyingmachine ; old flying machine
+is_a new_flyingmachine
+title 110 4230 ; offensive flying machine
+launch_rdg 1322
+rdg_hit 1323
+shortcut f
+
+def boat
+is_a peasant
+title 4358
+move 1088 1088
+keyboard soldier7
+
+def destroyer
+is_a unit
+title 4359
+launch_rdg 1042
+rdg_hit 1043
+rdg_hit_lv_1 1301
+move 1088 1088
+keyboard soldier7
+
+def battleship
+is_a unit
+title 4360
+noise repeat 9 1311 1312 1313 ; 1082 1083 ?
+launch_mdg 1084
+mdg_hit 1085
+move 1088 1088
+keyboard soldier7
+
+def submarine
+is_a unit
+title 4361
+move 1088 1088
+keyboard soldier7
+
+def holy_vision
+is_a thing
+title
+alert
+
+def meteors
+is_a thing
+noise ambient repeat .5 1341
+
+def exorcism
+is_a thing
+noise ambient repeat .5 1339
+
+; resources
+
+def goldmine
+is_a resource_deposit
+title 81
+color gold
+exhausted 1047
+ground gravel
+
+def wood
+is_a resource_deposit
+title 80
+color forestgreen
+noise repeat 6 1055 1056 1057 1058 9999 9999
+ground leaves
+
+def orchard
+is_a resource_deposit
+title 4661
+qty_unit_title 5116
+color gold
+ground gravel
+
+def food_carcass
+is_a resource_deposit
+title 4932
+qty_unit_title 5115
+color saddlebrown
+noise repeat 4 gather_food1 gather_food2
+ground grass
+
+def deer
+is_a walking_unit
+title 4930
+color tan
+noise repeat 8 1059 1060
+
+def sheep
+is_a walking_unit
+title 4931
+color white
+noise repeat 10 1059 1060
+
+def boar
+is_a walking_unit
+title 4933
+color saddlebrown
+noise repeat 6 1059 1060
+mdg_hit 1008
+
+def meadow
+is_a thing
+title 122
+color yellowgreen
+noise repeat 1.5 1059 1060 1061 1062 1063 9999 9999 9999 9999 9999 9999 9999 9999 9999 9999
+ground grass
+
+def corpse
+is_a thing
+title
+noise repeat 6 1332 1333 1334 9999 9999 9999 9999 9999 9999 9999 9999 9999 9999
+
+; passages
+
+def path
+title 84
+color dimgray
+noise repeat 15 1000
+ground grass
+when_moving_through 1091
+
+def bridge
+title 153
+color blue
+noise loop 1065
+ground wood .5 ; smaller area of effect
+when_moving_through 1092
+
+
+; factions
+
+def random_faction
+title 4334
+
+def human_faction
+title 4301
+
+def resource1
+title 131
+ground gravel
+
+def resource2
+title 132
+noise repeat 6 1055 1056 1057 1058 9999 9999
+ground leaves
+
+def resource3
+title 137
+
+def producing
+title 4374
+index 7.7
+
+def plowing
+title 4658
+index 7.8
+
+def dsc
+title 4445
+def dsb
+title 4507
+
+
+def meteors
+title 4762
+
+def worker
+title 4813
+
+def soldier
+title 4814
+
+def effect
+title 4815
+
+def all
+title 4835
+
+def ground
+title 4852
+
+def air
+title 4853
+
+def water
+title 4854
+
+def pickup
+title 4510
+
+
+def hero
+title 4885
+
+def b_slow
+title 4710
+add 6122 ;6119
+noise 6121
+del 6122; 6120
+
+def dark_age
+title 4981
+
+def feudal_age
+title 4982
+
+def castle_age
+title 4983
+
+def imperial_age
+title 4984
+
+def ai_timers
+title "NPC"
+def item
+title 4883
+
+def treasure_chest
+is_a item
+title 5081
+
+def ancient_ruin
+title 5431
+
+def captured_barracks
+is_a barracks
+title 5432
+
+def weapon
+title 4873

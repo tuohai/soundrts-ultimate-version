@@ -1,0 +1,1596 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.21.2: https://docutils.sourceforge.io/" />
+<title>Modding guide</title>
+<style type="text/css">
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 9511 2024-01-13 09:50:07Z milde $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+Despite the name, some widely supported CSS2 features are used.
+
+See https://docutils.sourceforge.io/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+.subscript {
+  vertical-align: sub;
+  font-size: smaller }
+
+.superscript {
+  vertical-align: super;
+  font-size: smaller }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+object[type="image/svg+xml"], object[type="application/x-shockwave-flash"] {
+  overflow: hidden;
+}
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title, .code .error {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left, .figure.align-left, object.align-left, table.align-left {
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+img.align-right, .figure.align-right, object.align-right, table.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+img.align-center, .figure.align-center, object.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+table.align-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: inherit }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+.align-top    {
+  vertical-align: top }
+
+.align-middle {
+  vertical-align: middle }
+
+.align-bottom {
+  vertical-align: bottom }
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+pre.literal-block, pre.doctest-block, pre.math, pre.code {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+pre.code .ln { color: gray; } /* line numbers */
+pre.code, code { background-color: #eeeeee }
+pre.code .comment, code .comment { color: #5C6576 }
+pre.code .keyword, code .keyword { color: #3B0D06; font-weight: bold }
+pre.code .literal.string, code .literal.string { color: #0C5404 }
+pre.code .name.builtin, code .name.builtin { color: #352B84 }
+pre.code .deleted, code .deleted { background-color: #DEB0A1}
+pre.code .inserted, code .inserted { background-color: #A3D289}
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic, pre.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+/* "booktabs" style (no vertical lines) */
+table.docutils.booktabs {
+  border: 0px;
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+  border-collapse: collapse;
+}
+table.docutils.booktabs * {
+  border: 0px;
+}
+table.docutils.booktabs th {
+  border-bottom: thin solid;
+  text-align: left;
+}
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+</head>
+<body>
+<div class="document" id="modding-guide">
+<h1 class="title">Modding guide</h1>
+
+<div class="contents topic" id="contents">
+<p class="topic-title"><a class="reference internal" href="#top">Contents</a></p>
+<ul class="simple">
+<li><a class="reference internal" href="#mods" id="toc-entry-1">mods</a><ul>
+<li><a class="reference internal" href="#mod-localization-ui-xx" id="toc-entry-2">Mod localization (ui-xx)</a></li>
+<li><a class="reference internal" href="#clear" id="toc-entry-3">clear</a></li>
+<li><a class="reference internal" href="#is-a" id="toc-entry-4">is_a</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-rules" id="toc-entry-5">the rules</a><ul>
+<li><a class="reference internal" href="#faction" id="toc-entry-6">faction</a></li>
+<li><a class="reference internal" href="#unit" id="toc-entry-7">unit</a><ul>
+<li><a class="reference internal" href="#count-limit" id="toc-entry-8">count_limit</a></li>
+<li><a class="reference internal" href="#is-ballistic" id="toc-entry-9">is_ballistic</a></li>
+<li><a class="reference internal" href="#is-teleportable" id="toc-entry-10">is_teleportable</a></li>
+<li><a class="reference internal" href="#hp-regen" id="toc-entry-11">hp_regen</a></li>
+<li><a class="reference internal" href="#mana-start" id="toc-entry-12">mana_start</a></li>
+<li><a class="reference internal" href="#provides-survival" id="toc-entry-13">provides_survival</a></li>
+<li><a class="reference internal" href="#storage-bonus" id="toc-entry-14">storage_bonus</a></li>
+<li><a class="reference internal" href="#damage-vs" id="toc-entry-15">damage_vs</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ability" id="toc-entry-16">ability</a><ul>
+<li><a class="reference internal" href="#effect" id="toc-entry-17">effect</a><ul>
+<li><a class="reference internal" href="#apply-bonus" id="toc-entry-18">apply_bonus</a></li>
+<li><a class="reference internal" href="#bonus" id="toc-entry-19">bonus</a></li>
+<li><a class="reference internal" href="#conversion" id="toc-entry-20">conversion</a></li>
+<li><a class="reference internal" href="#raise-dead" id="toc-entry-21">raise_dead</a></li>
+<li><a class="reference internal" href="#recall" id="toc-entry-22">recall</a></li>
+<li><a class="reference internal" href="#resurrection" id="toc-entry-23">resurrection</a></li>
+<li><a class="reference internal" href="#summon" id="toc-entry-24">summon</a></li>
+<li><a class="reference internal" href="#deploy" id="toc-entry-25">deploy</a></li>
+<li><a class="reference internal" href="#teleportation" id="toc-entry-26">teleportation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#effect-target" id="toc-entry-27">effect_target</a></li>
+<li><a class="reference internal" href="#effect-range" id="toc-entry-28">effect_range</a></li>
+<li><a class="reference internal" href="#effect-radius" id="toc-entry-29">effect_radius</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#combat-system-since-1-4" id="toc-entry-30">Combat system (since 1.4)</a></li>
+<li><a class="reference internal" href="#burst-sequence-attacks-damage-seq-since-1-3-8-2-enhanced-in-1-4-3-6" id="toc-entry-31">Burst / sequence attacks (<tt class="docutils literal">damage_seq</tt>, since 1.3.8.2, enhanced in 1.4.3.6)</a></li>
+<li><a class="reference internal" href="#weapons-and-armor-since-1-4-1-3" id="toc-entry-32">Weapons and armor (since 1.4.1.3)</a></li>
+<li><a class="reference internal" href="#buffs-and-debuffs-since-1-3-9-8-extended-in-1-4-1-7" id="toc-entry-33">Buffs and debuffs (since 1.3.9.8, extended in 1.4.1.7)</a></li>
+<li><a class="reference internal" href="#skills-class-skill" id="toc-entry-34">Skills (class skill)</a></li>
+<li><a class="reference internal" href="#effects-class-effect-since-1-4-1-7" id="toc-entry-35">Effects (class effect, since 1.4.1.7)</a></li>
+<li><a class="reference internal" href="#phase-system-since-1-4-2-4" id="toc-entry-36">Phase system (since 1.4.2.4)</a></li>
+<li><a class="reference internal" href="#economy-since-1-4-0-x" id="toc-entry-37">Economy (since 1.4.0.x)</a></li>
+<li><a class="reference internal" href="#heroes-since-1-4" id="toc-entry-38">Heroes (since 1.4)</a></li>
+<li><a class="reference internal" href="#campaign-hero-carryover-rules-driven" id="toc-entry-39">Campaign hero carryover (rules-driven)</a></li>
+<li><a class="reference internal" href="#items-since-1-4-1-3" id="toc-entry-40">Items (since 1.4.1.3)</a></li>
+<li><a class="reference internal" href="#inventory-and-equippable-items-since-1-4-3-1" id="toc-entry-41">Inventory and equippable items (since 1.4.3.1)</a></li>
+<li><a class="reference internal" href="#unit-default-behavior-since-1-4-3-1" id="toc-entry-42">Unit default behavior (since 1.4.3.1)</a></li>
+<li><a class="reference internal" href="#capture-default-occupy-order" id="toc-entry-43">Capture / default occupy order</a></li>
+<li><a class="reference internal" href="#ship-repair-since-1-4-1-1" id="toc-entry-44">Ship repair (since 1.4.1.1)</a></li>
+<li><a class="reference internal" href="#build-fields-addons-lift-off-starcraft-style-mods-starcraft" id="toc-entry-45">Build fields, addons &amp; lift-off (StarCraft-style, <tt class="docutils literal">mods/starcraft</tt>)</a><ul>
+<li><a class="reference internal" href="#build-fields-protoss-psi-zerg-creep" id="toc-entry-46">Build fields (Protoss psi / Zerg creep)</a></li>
+<li><a class="reference internal" href="#deposits-gas-requires-deposit" id="toc-entry-47">Deposits &amp; gas (<tt class="docutils literal">requires_deposit</tt>)</a></li>
+<li><a class="reference internal" href="#worker-build-modes" id="toc-entry-48">Worker build modes</a></li>
+<li><a class="reference internal" href="#terran-addons" id="toc-entry-49">Terran addons</a></li>
+<li><a class="reference internal" href="#lift-off-recombine" id="toc-entry-50">Lift-off &amp; recombine</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ship-repair-since-1-4-1-1-1" id="toc-entry-51">Ship repair (since 1.4.1.1)</a></li>
+<li><a class="reference internal" href="#herding-workers" id="toc-entry-52">Herding (workers)</a></li>
+<li><a class="reference internal" href="#inheritance-since-1-3-8-3" id="toc-entry-53">Inheritance (since 1.3.8.3)</a></li>
+<li><a class="reference internal" href="#style" id="toc-entry-54">style</a><ul>
+<li><a class="reference internal" href="#shortcut" id="toc-entry-55">shortcut</a></li>
+<li><a class="reference internal" href="#intro-since-1-4-1-5" id="toc-entry-56">intro (since 1.4.1.5)</a></li>
+<li><a class="reference internal" href="#combat-sound-system-since-1-3-8-2-1-4-4-6-renamed-matk-ratk-to-mdg-rdg" id="toc-entry-57">Combat sound system (since 1.3.8.2; 1.4.4.6 renamed matk/ratk to mdg/rdg)</a></li>
+<li><a class="reference internal" href="#menu-and-game-music-since-1-4-0-2" id="toc-entry-58">Menu and game music (since 1.4.0.2)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="mods">
+<h1><a class="toc-backref" href="#toc-entry-1">mods</a></h1>
+<p>The rules of the game and the aspect of the game can be changed by mods.</p>
+<p>A mod is a folder potentially containing rules.txt, ai.txt, ui (and their localized versions). The structure of the tree is the same as the &quot;res&quot; folder structure.</p>
+<p>The mods are stored in the &quot;mods&quot; folder of the main folder or the &quot;mods&quot; folder of the user's folder. To be activated, a mod must be referenced in the &quot;mods =&quot; parameter in SoundRTS.ini.
+For example: mods = soundpack,mymod,my_other_mod</p>
+<p>The rules.txt file will patch the default file. For example, a rules.txt file containing these 2 lines: &quot;def peasant&quot; and &quot;decay 20&quot; will cause any peasant to disappear after 20 seconds.</p>
+<div class="section" id="mod-localization-ui-xx">
+<h2><a class="toc-backref" href="#toc-entry-2">Mod localization (ui-xx)</a></h2>
+<p>Mod folders mirror the <tt class="docutils literal">res</tt> tree. Add localized folders next to <tt class="docutils literal">ui/</tt> (<tt class="docutils literal"><span class="pre">ui-zh</span></tt>, <tt class="docutils literal"><span class="pre">ui-fr</span></tt>, <tt class="docutils literal"><span class="pre">ui-de</span></tt>, etc.). The game loads the language from <tt class="docutils literal">cfg/language.txt</tt> (or the system locale); missing entries fall back to <tt class="docutils literal">ui/tts.txt</tt>.</p>
+<p><strong>Recommended layout</strong> (<tt class="docutils literal">mods/mymod/</tt>):</p>
+<pre class="literal-block">
+ui/style.txt          ; title 7000
+ui/tts.txt            ; 7000 Pig Farm
+ui-zh/tts.txt         ; 7000 猪圈
+ui-fr/tts.txt         ; 7000 Ferme à porcs
+mod.txt               ; optional: dependencies and menu title (below)
+</pre>
+<p><strong>What you can translate</strong> (once the mod is active):</p>
+<ul class="simple">
+<li>Unit/building/faction names: <tt class="docutils literal">title &lt;ID&gt;</tt> in <tt class="docutils literal">style.txt</tt> + the same ID in each <tt class="docutils literal">tts.txt</tt></li>
+<li>Unit intros: <tt class="docutils literal">intro &lt;ID&gt;</tt> + <tt class="docutils literal">tts.txt</tt></li>
+<li>Maps/campaigns inside the mod: map <tt class="docutils literal">title</tt>/<tt class="docutils literal">intro</tt> TTS IDs; campaign folders may use <tt class="docutils literal">campaign.txt</tt> <tt class="docutils literal">title</tt> (same as <tt class="docutils literal">res/single</tt> campaigns)</li>
+<li>Full phrases: in <tt class="docutils literal">tts.txt</tt>, <tt class="docutils literal">english phrase = translated phrase</tt></li>
+</ul>
+<p><strong>Mod menu display name</strong> (Options → Mods, since 1.4.2.4):</p>
+<p>Add a <tt class="docutils literal">title</tt> line to <tt class="docutils literal">mod.txt</tt>, same syntax as <tt class="docutils literal">campaign.txt</tt> — TTS ID or space-separated words:</p>
+<pre class="literal-block">
+title 7100
+</pre>
+<p>Define that ID in <tt class="docutils literal">ui/tts.txt</tt> and each <tt class="docutils literal"><span class="pre">ui-xx/tts.txt</span></tt> (e.g. <tt class="docutils literal">7100 Orc Faction Mod</tt> / <tt class="docutils literal">7100 兽人模组</tt>). Without <tt class="docutils literal">title</tt>, the folder name is spoken.</p>
+<p>Alternatively, map folder names via phrase entries in global <tt class="docutils literal"><span class="pre">res/ui-zh/tts.txt</span></tt> or a small translation mod, e.g. <tt class="docutils literal">crazyMod9beta10 = 疯狂模组</tt>.</p>
+<p><strong>Notes</strong>: <tt class="docutils literal">rules.txt</tt> / <tt class="docutils literal">ai.txt</tt> are not localized. Localized <tt class="docutils literal"><span class="pre">ui-xx/style.txt</span></tt> inside map/campaign subfolders may not load, but <tt class="docutils literal"><span class="pre">ui-xx/tts.txt</span></tt> in those folders does. Soundpacks (mods without <tt class="docutils literal">rules.txt</tt>) also support <tt class="docutils literal">mod.txt</tt> <tt class="docutils literal">title</tt> and localized <tt class="docutils literal">tts.txt</tt> in <strong>Options → Soundpacks</strong>.</p>
+<p>Examples in this repo: <tt class="docutils literal">mods/orc/</tt>, <tt class="docutils literal"><span class="pre">mods/prismalab/ui-fr/</span></tt>.</p>
+</div>
+<div class="section" id="clear">
+<h2><a class="toc-backref" href="#toc-entry-3">clear</a></h2>
+<p>To replace rules.txt or style.txt instead of patching it, use the &quot;clear&quot; command at the top of your file. This doesn't work with ai.txt,
+and isn't needed anyway, because in ai.txt the def command rewrites the AI definition.</p>
+</div>
+<div class="section" id="is-a">
+<h2><a class="toc-backref" href="#toc-entry-4">is_a</a></h2>
+<p>While in style.txt &quot;is_a&quot; is a way to inherit all the properties of another definition,
+in rules.txt, &quot;is_a&quot; is also used to make sure that a keep or a castle will allow what a town hall would allow.</p>
+<p>Note: the inheritance trees in style.txt and in rules.txt don't need to match.</p>
+</div>
+</div>
+<div class="section" id="the-rules">
+<h1><a class="toc-backref" href="#toc-entry-5">the rules</a></h1>
+<p>Since SoundRTS 1.1, the rules of the game are stored in a file called rules.txt.</p>
+<div class="section" id="faction">
+<h2><a class="toc-backref" href="#toc-entry-6">faction</a></h2>
+<p>Each faction is defined in rules.txt . For example:</p>
+<pre class="literal-block">
+def orc_faction
+class faction
+</pre>
+<p>Note: the &quot;orc_faction&quot; name ends with &quot;_faction&quot; just to avoid name clashes. This &quot;_faction&quot; suffix is not mandatory as long as the name is unique.</p>
+</div>
+<div class="section" id="unit">
+<h2><a class="toc-backref" href="#toc-entry-7">unit</a></h2>
+<p>Note: a unit can also be a building.</p>
+<div class="section" id="count-limit">
+<h3><a class="toc-backref" href="#toc-entry-8">count_limit</a></h3>
+<p>New in SoundRTS 1.2 alpha 10.</p>
+<p><cite>count_limit &lt;value&gt;</cite></p>
+<p>The default value is 0 (no limit).
+When the limit is active, a unit type which reaches the limit cannot be trained,
+built, summoned, raised, resurrected, or added by a trigger (add_unit).
+Conversion is unaffected though.</p>
+</div>
+<div class="section" id="is-ballistic">
+<h3><a class="toc-backref" href="#toc-entry-9">is_ballistic</a></h3>
+<p>New in SoundRTS 1.2 alpha 9.
+Modified in SoundRTS 1.2 alpha 10.</p>
+<p><cite>is_ballistic 1</cite></p>
+<p>The unit have a range bonus if the altitude of the target is lower.</p>
+</div>
+<div class="section" id="is-teleportable">
+<h3><a class="toc-backref" href="#toc-entry-10">is_teleportable</a></h3>
+<p>New in SoundRTS 1.2 alpha 9.</p>
+<p><cite>is_teleportable 1</cite></p>
+<p>The unit (or building) is affected by the teleportation effect or the recall effect.</p>
+</div>
+<div class="section" id="hp-regen">
+<h3><a class="toc-backref" href="#toc-entry-11">hp_regen</a></h3>
+<p>New in SoundRTS 1.2 alpha 11</p>
+<p><cite>hp_regen &lt;hit points regeneration rate&gt;</cite></p>
+<p>For example, with &quot;hp_regen 0.15&quot;, the unit regains 0.15 hit points per second.</p>
+</div>
+<div class="section" id="mana-start">
+<h3><a class="toc-backref" href="#toc-entry-12">mana_start</a></h3>
+<p>New in SoundRTS 1.2 alpha 10.</p>
+<p><cite>mana_start 50</cite></p>
+<p>In the example, the unit will start with 50 mana instead of mana_max. The default value for mana_start is 0. If mana_start is 0 or negative, mana_max is used instead.</p>
+</div>
+<div class="section" id="provides-survival">
+<h3><a class="toc-backref" href="#toc-entry-13">provides_survival</a></h3>
+<p>New in SoundRTS 1.2 alpha 9.</p>
+<p><cite>provides_survival 1</cite></p>
+<p>Having at least one unit (or building) with &quot;provides_survival&quot; equal to 1 prevents a player from losing in a multiplayer game (not in a single player campaign). The affected trigger is &quot;no_building_left&quot;. By default only the buildings have this property set to 1. Construction sites have this property set to 0 and it cannot be changed.</p>
+</div>
+<div class="section" id="storage-bonus">
+<h3><a class="toc-backref" href="#toc-entry-14">storage_bonus</a></h3>
+<p><cite>storage_bonus &lt;bonus for resource 0&gt; &lt;bonus for resource 1&gt; ...</cite></p>
+<p>For example, &quot;storage_bonus 0 1&quot; will cause a +1 bonus for wood (the second resource type).</p>
+<p>The bonus goes to the owner of the unit.
+The bonus doesn't stack: only the highest bonus will apply for each resource type.</p>
+</div>
+<div class="section" id="damage-vs">
+<h3><a class="toc-backref" href="#toc-entry-15">damage_vs</a></h3>
+<p>Note: since SoundRTS 1.4 the single <tt class="docutils literal">damage</tt> / <tt class="docutils literal">armor</tt> system was replaced by the
+split melee/ranged system (<tt class="docutils literal">mdg</tt> / <tt class="docutils literal">rdg</tt> / <tt class="docutils literal">mdf</tt> / <tt class="docutils literal">rdf</tt> ...). See <a class="reference internal" href="#combat-system-since-1-4">Combat system
+(since 1.4)</a> below. The legacy <tt class="docutils literal">damage_vs</tt> documentation is kept for older mods.</p>
+<p>(damage versus specific units)</p>
+<p><cite>damage_vs [&lt;list of type names&gt; &lt;damage&gt;] ...</cite></p>
+<p>Defines a specific damage against some unit types.
+The default value is defined in unit.damage.</p>
+<dl class="docutils">
+<dt>Example of a type of pike man that would be more efficient against a knight</dt>
+<dd>and less efficient against a footman or a peasant:</dd>
+</dl>
+<p><cite>damage 2 ; default damage</cite></p>
+<p><cite>damage_vs knight 7 footman peasant 1</cite></p>
+</div>
+</div>
+<div class="section" id="ability">
+<h2><a class="toc-backref" href="#toc-entry-16">ability</a></h2>
+<p>Note: since SoundRTS 1.4, abilities are unified under <tt class="docutils literal">class skill</tt> (see <a class="reference internal" href="#skills-class-skill">Skills (class
+skill)</a> below). The <tt class="docutils literal">effect</tt> properties documented here still apply to skills and to
+<tt class="docutils literal">class effect</tt> definitions.</p>
+<div class="section" id="effect">
+<h3><a class="toc-backref" href="#toc-entry-17">effect</a></h3>
+<p><cite>effect &lt;effect type&gt; [parameters]</cite></p>
+<p>Default value: (none)</p>
+<p>An effect is a property of an ability. When an ability is used by a unit, the effect will take place unless no effect type has been mentioned.</p>
+<p>Additional properties can modify an effect: <a class="reference internal" href="#effect-target">effect_target</a> and <a class="reference internal" href="#effect-range">effect_range</a>.</p>
+<div class="section" id="apply-bonus">
+<h4><a class="toc-backref" href="#toc-entry-18">apply_bonus</a></h4>
+<p><cite>effect apply_bonus &lt;property name&gt;</cite></p>
+<p>Increases the property of the affected units. The value is defined in the property of the unit called &quot;&lt;property name&gt;_bonus&quot;.
+For example, &quot;effect apply_bonus damage&quot; will look for a property called &quot;damage_bonus&quot; in the definition of each affected unit.
+This way, units benefiting from the same upgrade can have different bonus values.</p>
+</div>
+<div class="section" id="bonus">
+<h4><a class="toc-backref" href="#toc-entry-19">bonus</a></h4>
+<p><cite>effect bonus &lt;property name&gt; &lt;value&gt;</cite></p>
+<p>Increases by the indicated value the property of the affected units.</p>
+<p>At least the following properties should work: damage, armor, range, heal_level, speed, hp_max (old units won't have their hp updated to hp_max though).
+food_cost and food_provided probably don't work correctly.</p>
+</div>
+<div class="section" id="conversion">
+<h4><a class="toc-backref" href="#toc-entry-20">conversion</a></h4>
+<p><cite>effect conversion</cite> (no parameter)</p>
+<p>Moves the target to the caster's army.</p>
+<p>If the target isn't an enemy of the caster, nothing will happen.</p>
+<p>Allowed values for the related properties:</p>
+<ul class="simple">
+<li>effect_target: ask</li>
+<li>effect_range: square, nearby, anywhere</li>
+</ul>
+<p><strong>TODO: add a &lt;limit&gt; so units in a targeted square are chosen (instead of having to target a unit)</strong></p>
+</div>
+<div class="section" id="raise-dead">
+<h4><a class="toc-backref" href="#toc-entry-21">raise_dead</a></h4>
+<p><cite>effect raise_dead &lt;life span (in seconds)&gt; &lt;unit types and numbers&gt;</cite></p>
+<p>Creates the required units in the targeted square from the corpses in the square, in the order of the units list. If there are not enough corpses, the end of the list will not be created. The units will disappear after &lt;life span&gt; seconds, unless &lt;life span&gt; is set to 0.</p>
+<p>If no corpse is in the targeted square, the order won't be executed.</p>
+<p>Allowed values for the related properties:</p>
+<ul class="simple">
+<li>effect_target: self, ask, random</li>
+<li>effect_range: square, nearby, anywhere</li>
+</ul>
+</div>
+<div class="section" id="recall">
+<h4><a class="toc-backref" href="#toc-entry-22">recall</a></h4>
+<p><cite>effect recall</cite> (no parameter)</p>
+<p>Similar to teleportation. Teleports the player's units from the targeted square back to the caster's square. Buildings are unaffected. Allied units are unaffected too.</p>
+<p>If no unit is in the targeted square, the order won't be executed.</p>
+<p>Allowed values for the related properties:</p>
+<ul class="simple">
+<li>effect_target: ask, random</li>
+<li>effect_range: nearby, anywhere</li>
+</ul>
+</div>
+<div class="section" id="resurrection">
+<h4><a class="toc-backref" href="#toc-entry-23">resurrection</a></h4>
+<p><cite>effect resurrection &lt;limit&gt;</cite></p>
+<p>Resurrects the corpses of the caster's army lying in the targeted square, with a maximum of &lt;limit&gt; resurrected units. The oldest corpses are resurrected first. The hit points are restored to one third of their maximum.</p>
+<p>If no corpse of a unit in the same army is in the targeted square, the order won't be executed.</p>
+<p>Allowed values for the related properties:</p>
+<ul class="simple">
+<li>effect_target: self, ask, random</li>
+<li>effect_range: square, nearby, anywhere</li>
+</ul>
+</div>
+<div class="section" id="summon">
+<h4><a class="toc-backref" href="#toc-entry-24">summon</a></h4>
+<p><cite>effect summon &lt;life span (in seconds)&gt; &lt;unit types and numbers&gt;</cite></p>
+<p>Creates the required units in the targeted square and adds them to the caster's army. The summoned units will disappear after &lt;life span&gt; seconds, unless &lt;life span&gt; is set to 0.</p>
+<p>Optional skill attributes for placement checks (StarCraft creep tumor example):</p>
+<pre class="literal-block">
+summon_requires_build_field creep
+summon_requires_marked_field 1
+</pre>
+<p><tt class="docutils literal">summon_requires_marked_field 1</tt> requires a <strong>marked</strong> build-field square (not live-only). Omit it when live field is enough (Queen spawn tumor).</p>
+</div>
+<div class="section" id="deploy">
+<h4><a class="toc-backref" href="#toc-entry-25">deploy</a></h4>
+<p><tt class="docutils literal">effect deploy &lt;life span (seconds)&gt; [&lt;count&gt;] &lt;effect type&gt;</tt></p>
+<p>Places a <tt class="docutils literal">class effect</tt> entity at the target square (area harm, heal zone, detector, etc.). It vanishes after the given duration. Unlike <tt class="docutils literal">effect summon</tt>, this is only for <tt class="docutils literal">class effect</tt> definitions; the attributes UI shows harm/heal stats instead of &quot;summon&quot;.</p>
+<p>Examples:</p>
+<pre class="literal-block">
+effect deploy 5 sc_nuclear_blast
+effect deploy 3 sc_psi_storm_fx
+</pre>
+<p>Optional count (multiple effect entities on the same square):</p>
+<pre class="literal-block">
+effect deploy 5 2 greek_fire
+</pre>
+<p>Also supports <tt class="docutils literal">summon_requires_build_field</tt> / <tt class="docutils literal">summon_requires_marked_field</tt>.</p>
+<p>Allowed values for the related properties:</p>
+<ul class="simple">
+<li>effect_target: self, ask, random</li>
+<li>effect_range: square, nearby, anywhere</li>
+</ul>
+</div>
+<div class="section" id="teleportation">
+<h4><a class="toc-backref" href="#toc-entry-26">teleportation</a></h4>
+<p><cite>effect teleportation</cite> (no parameter)</p>
+<p>Moves the player's units in the caster's square to the target square. Buildings are unaffected. Allied units are unaffected too.</p>
+<p>If the destination is the same as the caster's square, nothing will be done.</p>
+<p>Allowed values for the related properties:</p>
+<ul class="simple">
+<li>effect_target: ask, random</li>
+<li>effect_range: nearby, anywhere</li>
+</ul>
+</div>
+</div>
+<div class="section" id="effect-target">
+<h3><a class="toc-backref" href="#toc-entry-27">effect_target</a></h3>
+<p><cite>effect_target &lt;selection method&gt;</cite></p>
+<p>Determines how the target will be selected.</p>
+<p>Default value: self</p>
+<p>Possible values:</p>
+<ul class="simple">
+<li>self: the target will be the caster (or the location of the caster if the target must be a place)</li>
+<li>ask: the user interface will ask for a target</li>
+<li>random: the game will choose a random square as a target</li>
+</ul>
+</div>
+<div class="section" id="effect-range">
+<h3><a class="toc-backref" href="#toc-entry-28">effect_range</a></h3>
+<p><cite>effect_range &lt;distance&gt;</cite></p>
+<p>Determines the distance between the caster and the target.</p>
+<p>Default value: 6</p>
+<p>Special value: inf (infinite)</p>
+<p>If the current distance is greater than the required distance, the caster will try to move to a closer place and use the ability from there.</p>
+</div>
+<div class="section" id="effect-radius">
+<h3><a class="toc-backref" href="#toc-entry-29">effect_radius</a></h3>
+<p><cite>effect_radius &lt;distance&gt;</cite></p>
+<p>Determines the radius of the area of effect. The center of the area is the target.</p>
+<p>Default value: 6</p>
+<p>Special value: inf (infinite)</p>
+</div>
+</div>
+</div>
+<div class="section" id="combat-system-since-1-4">
+<h1><a class="toc-backref" href="#toc-entry-30">Combat system (since 1.4)</a></h1>
+<p>Since 1.4, final damage is <strong>additive</strong>: <tt class="docutils literal">final_mdg = mdg + mdg_vs</tt> (and the same for
+<tt class="docutils literal">rdg</tt>, <tt class="docutils literal">mdf</tt>, <tt class="docutils literal">rdf</tt>). When base damage is 0 and <tt class="docutils literal">minimal_damage</tt> is 0 in
+<tt class="docutils literal">def parameters</tt>, the unit will not attack.</p>
+<p>Main melee/ranged properties:</p>
+<ul class="simple">
+<li><tt class="docutils literal">mdg</tt> / <tt class="docutils literal">rdg</tt>: base damage</li>
+<li><tt class="docutils literal">mdg_vs</tt> / <tt class="docutils literal">rdg_vs</tt>: bonus vs specific unit types</li>
+<li><tt class="docutils literal">mdf</tt> / <tt class="docutils literal">rdf</tt>: defense</li>
+<li><tt class="docutils literal">mdg_range</tt> / <tt class="docutils literal">rdg_range</tt>, <tt class="docutils literal">mdg_cd</tt> / <tt class="docutils literal">rdg_cd</tt>, <tt class="docutils literal">mdg_ready</tt> / <tt class="docutils literal">rdg_ready</tt></li>
+<li><tt class="docutils literal">mdg_splash</tt> / <tt class="docutils literal">rdg_splash</tt>, <tt class="docutils literal">mdg_radius</tt> / <tt class="docutils literal">rdg_radius</tt>, <tt class="docutils literal">mdg_splash_decay</tt></li>
+<li><tt class="docutils literal">mdg_targets</tt> / <tt class="docutils literal">rdg_targets</tt>: <tt class="docutils literal">ground</tt>, <tt class="docutils literal">air</tt>, <tt class="docutils literal">unit</tt>, <tt class="docutils literal">building</tt>, or a type name</li>
+<li><tt class="docutils literal">mdg_crit</tt> / <tt class="docutils literal">rdg_crit</tt>, <tt class="docutils literal">mdg_crit_rate</tt> / <tt class="docutils literal">rdg_crit_rate</tt>, <tt class="docutils literal">crit_vs</tt></li>
+<li><tt class="docutils literal">mdg_piercing</tt> / <tt class="docutils literal">rdg_piercing</tt> (percent armor ignored), <tt class="docutils literal">piercing_vs</tt></li>
+<li><tt class="docutils literal">mdg_explode</tt> / <tt class="docutils literal">rdg_explode</tt>, <tt class="docutils literal">exp_dgf</tt>, <tt class="docutils literal">exp_hp_cost</tt>, <tt class="docutils literal">mdg_explode_vs</tt></li>
+</ul>
+<p><strong>Charge and counter-charge (since 1.4.0.1)</strong></p>
+<p><strong>Charge</strong>: units with charge stats can perform a high-damage charge attack when engaging an
+enemy within range. After charging they enter cooldown and deal normal <tt class="docutils literal">mdg</tt> / <tt class="docutils literal">rdg</tt> only
+until cooldown ends. To charge the <strong>same target</strong> again, pull the unit <strong>beyond</strong>
+<tt class="docutils literal">charge_mdg_dist</tt> / <tt class="docutils literal">charge_rdg_dist</tt> after cooldown expires.</p>
+<p><strong>Charge damage (additive, not a multiplier)</strong>:</p>
+<pre class="literal-block">
+charge_damage = (mdg + mdg_vs) + (charge_mdg + charge_mdg_vs)
+</pre>
+<p>Example: <tt class="docutils literal">mdg 6, charge_mdg 2</tt> → base <tt class="docutils literal">6 + 2 = 8</tt>, then scaled by distance within
+<tt class="docutils literal">charge_mdg_dist</tt> (about 50% at point-blank, up to ~100% at max range). Ranged uses <tt class="docutils literal">rdg</tt> /
+<tt class="docutils literal">charge_rdg</tt> the same way.</p>
+<p>Charge properties (melee / ranged pairs; swap <tt class="docutils literal">mdg</tt> ↔ <tt class="docutils literal">rdg</tt> for ranged):</p>
+<ul class="simple">
+<li><tt class="docutils literal">charge_mdg</tt> / <tt class="docutils literal">charge_rdg</tt> — extra charge damage (added)</li>
+<li><tt class="docutils literal">charge_mdg_vs</tt> / <tt class="docutils literal">charge_rdg_vs</tt> — bonus vs specific unit types</li>
+<li><tt class="docutils literal">charge_mdg_cd</tt> / <tt class="docutils literal">charge_rdg_cd</tt> — cooldown (ms)</li>
+<li><tt class="docutils literal">charge_mdg_dist</tt> / <tt class="docutils literal">charge_rdg_dist</tt> — max charge range</li>
+<li><tt class="docutils literal">charge_mdg_min_dist</tt> / <tt class="docutils literal">charge_rdg_min_dist</tt> — min range to trigger (0 = no limit)</li>
+<li><tt class="docutils literal">charge_mdg_splash</tt> / <tt class="docutils literal">charge_rdg_splash</tt> — splash damage</li>
+<li><tt class="docutils literal">charge_mdg_radius</tt> / <tt class="docutils literal">charge_rdg_radius</tt> — splash radius</li>
+<li><tt class="docutils literal">charge_mdg_splash_decay_min</tt> / <tt class="docutils literal">charge_rdg_splash_decay_min</tt> — min splash falloff (0.0–1.0)</li>
+</ul>
+<p>Example (campaign knight):</p>
+<pre class="literal-block">
+def knight
+mdg 3
+charge_mdg 2
+charge_mdg_cd 10
+charge_mdg_dist 15
+charge_mdg_splash 1
+charge_mdg_radius 1
+charge_mdg_splash_decay_min 0.5
+</pre>
+<p><strong>Counter-charge</strong>: counters an incoming charge. When a counter-charge unit blocks a charging
+attacker within range, the attacker's charge is <strong>interrupted</strong> (that hit resolves as a normal
+attack) and the attacker takes counter-charge damage.</p>
+<p><strong>Counter-charge damage (additive)</strong>:</p>
+<pre class="literal-block">
+counter = attacker (mdg/rdg + mdg_vs/rdg_vs) + attacker (charge_mdg/charge_rdg + charge_mdg_vs/charge_rdg_vs)
+        + self (op_charge_mdg/op_charge_rdg + op_charge_mdg_vs/op_charge_rdg_vs)
+</pre>
+<p>Counter-charge properties:</p>
+<ul class="simple">
+<li><tt class="docutils literal">op_charge_mdg</tt> / <tt class="docutils literal">op_charge_rdg</tt> — extra counter damage (added)</li>
+<li><tt class="docutils literal">op_charge_mdg_vs</tt> / <tt class="docutils literal">op_charge_rdg_vs</tt> — bonus vs attacker types</li>
+<li><tt class="docutils literal">op_charge_mdg_cd</tt> / <tt class="docutils literal">op_charge_rdg_cd</tt> — cooldown</li>
+<li><tt class="docutils literal">op_charge_mdg_dist</tt> / <tt class="docutils literal">op_charge_rdg_dist</tt> — effective range (0 = unlimited)</li>
+</ul>
+<p><strong>Sounds (``style.txt``)</strong>: <tt class="docutils literal">charge_success</tt>, <tt class="docutils literal">charge_failed</tt>, <tt class="docutils literal">op_charge</tt>. Also
+<tt class="docutils literal">critical_hit</tt>, <tt class="docutils literal">piercing_triggered</tt> for combat feedback.</p>
+<p><strong>Notes</strong>: self-attacks do not trigger charge; ground charge splash does not hit air units.</p>
+</div>
+<div class="section" id="burst-sequence-attacks-damage-seq-since-1-3-8-2-enhanced-in-1-4-3-6">
+<h1><a class="toc-backref" href="#toc-entry-31">Burst / sequence attacks (<tt class="docutils literal">damage_seq</tt>, since 1.3.8.2, enhanced in 1.4.3.6)</a></h1>
+<p>One attack cycle can fire <strong>multiple hits</strong> in quick succession (Age of Empires Chu Ko Nu
+style). Define base <tt class="docutils literal">mdg</tt> / <tt class="docutils literal">rdg</tt> first, then <tt class="docutils literal">damage_seq</tt>:</p>
+<p><tt class="docutils literal">damage_seq mdg|rdg &lt;times&gt; [(damage d1 d2 <span class="pre">...)]</span> [(interval seconds)]</tt></p>
+<ul class="simple">
+<li><strong>Explicit split</strong>: <tt class="docutils literal">(damage 6 3 3)</tt> — integer segment values must sum to the base
+damage (same units as <tt class="docutils literal">mdg</tt> / <tt class="docutils literal">rdg</tt> in rules.txt)</li>
+<li><strong>Auto split</strong> (since 1.4.3.6): omit <tt class="docutils literal">(damage <span class="pre">...)</span></tt> to divide base damage evenly across
+<tt class="docutils literal">times</tt> (works with fractional damage, e.g. <tt class="docutils literal">rdg 7.5</tt> with <tt class="docutils literal">times 3</tt> → 2.5 per shot)</li>
+<li><strong>Interval</strong>: <tt class="docutils literal">(interval 0.25)</tt> seconds between shots; if omitted or 0 with <tt class="docutils literal">times &gt; 1</tt>,
+default <strong>0.25</strong> s</li>
+<li><strong>Limit</strong>: at most <strong>6</strong> shots per attack</li>
+<li><strong>Hit rolls</strong>: each segment rolls hit, crit, and debuff separately</li>
+<li><strong>Cooldown</strong>: <tt class="docutils literal">mdg_cd</tt> / <tt class="docutils literal">rdg_cd</tt> starts after the <strong>full burst</strong> finishes</li>
+<li><strong>Sounds</strong>: each shot triggers <tt class="docutils literal">launch_mdg</tt> / <tt class="docutils literal">launch_rdg</tt>; list multiple sound IDs
+in <tt class="docutils literal">style.txt</tt> (e.g. <tt class="docutils literal">launch_rdg 1042 1042 1042</tt>)</li>
+</ul>
+<p>Ranged burst example (built-in <tt class="docutils literal">repeating_crossbowman</tt>):</p>
+<pre class="literal-block">
+def repeating_crossbowman
+rdg 6
+rdg_cd 2.5
+rdg_range 4
+rdg_projectile 1
+damage_seq rdg 3 (interval 0.25)
+</pre>
+<p>Melee example with explicit damage split:</p>
+<pre class="literal-block">
+def footman
+mdg 12
+mdg_cd 1.5
+mdg_range 6
+damage_seq mdg 3 (damage 6 3 3) (interval 0.2)
+</pre>
+<p>See also <tt class="docutils literal"><span class="pre">docs/en/burst-attack-damage-seq.md</span></tt>.</p>
+</div>
+<div class="section" id="weapons-and-armor-since-1-4-1-3">
+<h1><a class="toc-backref" href="#toc-entry-32">Weapons and armor (since 1.4.1.3)</a></h1>
+<p>Weapons (<tt class="docutils literal">class weapon</tt>) and armor (<tt class="docutils literal">class armor</tt>) hold combat stats. Units reference
+them:</p>
+<pre class="literal-block">
+def footman
+class soldier
+weapons sword bow     ; first weapon is default / main weapon
+auto_weapon_switch 1  ; 1 = auto-switch by range in combat
+armor light_armor
+</pre>
+<p>Players switch weapons with A / Shift+A or B then X. Manual switch overrides auto switch.
+Stats on the unit and on equipped gear <strong>add together</strong>. Weapons support inheritance like
+units.</p>
+</div>
+<div class="section" id="buffs-and-debuffs-since-1-3-9-8-extended-in-1-4-1-7">
+<h1><a class="toc-backref" href="#toc-entry-33">Buffs and debuffs (since 1.3.9.8, extended in 1.4.1.7)</a></h1>
+<p>Attach to attacks with <tt class="docutils literal">buffs</tt> / <tt class="docutils literal">debuffs</tt>, or via skills with <tt class="docutils literal">effect buffs</tt> /
+<tt class="docutils literal">effect debuffs</tt>.</p>
+<p>Multi-stat buff example:</p>
+<pre class="literal-block">
+def HealEnhancementBuff
+class buff
+stat heal_level heal_cd heal_radius
+v 1 1500 6
+duration 300
+temporary 1
+</pre>
+<p>Trigger modes:</p>
+<ol class="arabic simple">
+<li><strong>Default</strong> — on hit</li>
+<li><strong>``is_active 1``</strong> — when starting an attack (active)</li>
+<li><strong>``is_passive 1``</strong> — when taking damage (passive), with <tt class="docutils literal">trigger_condition</tt> (e.g.
+<tt class="docutils literal">hp &lt; 20</tt>) and <tt class="docutils literal">passive_trigger_rate</tt></li>
+</ol>
+<p>Trigger rates (percent; default falls back to normal attack rates):</p>
+<ul class="simple">
+<li><tt class="docutils literal">mdg_trigger_rate</tt> / <tt class="docutils literal">rdg_trigger_rate</tt> — normal damage</li>
+<li><tt class="docutils literal">charge_mdg_trigger_rate</tt> / <tt class="docutils literal">charge_rdg_trigger_rate</tt> — charge damage</li>
+<li><tt class="docutils literal">op_charge_mdg_trigger_rate</tt> / <tt class="docutils literal">op_charge_rdg_trigger_rate</tt> — counter-charge</li>
+</ul>
+</div>
+<div class="section" id="skills-class-skill">
+<h1><a class="toc-backref" href="#toc-entry-34">Skills (class skill)</a></h1>
+<p>Define skills with <tt class="docutils literal">class skill</tt> instead of <tt class="docutils literal">class ability</tt>:</p>
+<pre class="literal-block">
+def fireball
+class skill
+mana_cost 50
+cost 10 0
+time_cost 30
+effect harm 5
+effect_target ask
+effect_range 12
+</pre>
+<p><tt class="docutils literal">can_use_tech</tt> applies to upgrades; <tt class="docutils literal">can_use_skill</tt> applies to skills.</p>
+</div>
+<div class="section" id="effects-class-effect-since-1-4-1-7">
+<h1><a class="toc-backref" href="#toc-entry-35">Effects (class effect, since 1.4.1.7)</a></h1>
+<p>Harm and heal are split into detailed parameters:</p>
+<pre class="literal-block">
+def exorcism
+class effect
+harm_level 2
+harm_cd 7.5
+harm_radius 6
+harm_target_type undead
+debuffs b_slow
+</pre>
+<p>Similarly: <tt class="docutils literal">heal_level</tt>, <tt class="docutils literal">heal_cd</tt>, <tt class="docutils literal">heal_radius</tt>, <tt class="docutils literal">heal_target_type</tt>;
+<tt class="docutils literal">hp_regen_cd</tt>, <tt class="docutils literal">mana_regen_ready</tt>, etc.</p>
+</div>
+<div class="section" id="phase-system-since-1-4-2-4">
+<h1><a class="toc-backref" href="#toc-entry-36">Phase system (since 1.4.2.4)</a></h1>
+<p><tt class="docutils literal">class phase</tt> advances game eras without upgrading the base:</p>
+<pre class="literal-block">
+def dark_age
+class phase
+cost 0 0
+time_cost 0
+
+def feudal_age
+class phase
+cost 10 15
+time_cost 130
+phase bonus mdg 1 hp_max 5 cost -2 0 time_cost -5
+units_auto_upgrade 0
+phase_targets soldier
+</pre>
+<p>Optional <tt class="docutils literal">phase_targets</tt> limits which units receive non-cost entries from <tt class="docutils literal">phase bonus</tt> (cost-type bonuses always apply at player level). Leave empty for all units. Use category names (<tt class="docutils literal">soldier</tt>, <tt class="docutils literal">worker</tt>, <tt class="docutils literal">building</tt>, <tt class="docutils literal">unit</tt>, etc.), specific unit names (<tt class="docutils literal">footman knight</tt>), or any name in the <tt class="docutils literal">is_a</tt> chain; any positive match counts. A leading <tt class="docutils literal">-</tt> excludes a match — e.g. <tt class="docutils literal">phase_targets <span class="pre">-building</span></tt> means every unit except buildings; you can mix includes and excludes, e.g. <tt class="docutils literal">phase_targets soldier <span class="pre">-footman</span></tt>.</p>
+<p>On a building:</p>
+<pre class="literal-block">
+can_advance feudal_age
+</pre>
+<p>Use <tt class="docutils literal">can_advance</tt> (not <tt class="docutils literal">can_research</tt>) for phases. Press V on the building to view the
+current phase.</p>
+<p><tt class="docutils literal">hide_locked_commands 1</tt> in <tt class="docutils literal">def parameters</tt> hides commands whose requirements are not
+yet met.</p>
+</div>
+<div class="section" id="economy-since-1-4-0-x">
+<h1><a class="toc-backref" href="#toc-entry-37">Economy (since 1.4.0.x)</a></h1>
+<p><tt class="docutils literal">population_cost</tt> replaced <tt class="docutils literal">food_cost</tt>. Buildings can produce or hold resources:</p>
+<pre class="literal-block">
+auto_production 1       ; auto produce (gas, etc.); restarts while not full
+manual_production 1     ; player-started production
+auto_cultivate 1        ; farms; restarts only when storage is empty
+is_gather 1             ; output goes to building storage; workers haul to base
+resource_volume_max 8
+resource_volume_start 0
+production_type resource2
+production_time 18      ; seconds to fill one batch
+production_qty 8        ; amount per production cycle (into building storage)
+extraction_time 2       ; worker harvest time from building (seconds)
+extraction_qty 8        ; worker carry size per trip
+</pre>
+<p>Without <tt class="docutils literal">is_gather</tt>, both auto and manual production credit <tt class="docutils literal">production_type</tt> output <strong>straight into the player's stockpile</strong> (e.g. <tt class="docutils literal">gold_house</tt>):</p>
+<pre class="literal-block">
+auto_production 1
+manual_production 1
+production_type resource1
+production_time 100
+production_qty 200
+</pre>
+<p>For pickable loot instead, use <tt class="docutils literal">production_item</tt> (instead of <tt class="docutils literal">production_type</tt>):</p>
+<pre class="literal-block">
+production_item gold_pile
+production_qty 1
+</pre>
+<div class="line-block">
+<div class="line">Attribute | Role |</div>
+<div class="line">--- | --- |</div>
+<div class="line"><tt class="docutils literal">production_type</tt> | Resource produced (with <tt class="docutils literal">production_time</tt> and <tt class="docutils literal">production_qty</tt> defines production capability) |</div>
+<div class="line"><tt class="docutils literal">production_time</tt> | Seconds per production cycle |</div>
+<div class="line"><tt class="docutils literal">production_qty</tt> | Output per cycle; without <tt class="docutils literal">is_gather</tt>, added to player resources; with <tt class="docutils literal">is_gather</tt>, to building <tt class="docutils literal">resource_qty</tt> |</div>
+<div class="line"><tt class="docutils literal">auto_production</tt> | When <tt class="docutils literal">1</tt>, shows <strong>auto produce</strong>; loops after each cycle; use for <strong>gas</strong> (not <tt class="docutils literal">auto_cultivate</tt>) |</div>
+<div class="line"><tt class="docutils literal">manual_production</tt> | When <tt class="docutils literal">1</tt>, shows <strong>manual produce</strong>; one cycle per click; <strong>independent</strong> from <tt class="docutils literal">auto_production</tt> |</div>
+<div class="line"><tt class="docutils literal">auto_cultivate</tt> | Auto cultivation on <tt class="docutils literal">is_gather</tt> buildings (e.g. farms); parallels <tt class="docutils literal">auto_production</tt> |</div>
+<div class="line"><tt class="docutils literal">manual_cultivate</tt> | Manual cultivation; parallels <tt class="docutils literal">manual_production</tt>; set <tt class="docutils literal">1</tt> explicitly when needed |</div>
+<div class="line"><tt class="docutils literal">production_item</tt> | Item type name; spawns pickable items beside the building on completion |</div>
+<div class="line"><tt class="docutils literal">is_gather</tt> | Output stays in the building until a worker with <tt class="docutils literal">can_gather_building</tt> hauls it to a warehouse |</div>
+<div class="line"><tt class="docutils literal">resource_volume_max</tt> | Max stored in building (e.g. 8 vespene) |</div>
+<div class="line"><tt class="docutils literal">resource_volume_start</tt> | Initial stored amount when built (<tt class="docutils literal">0</tt> = empty) |</div>
+<div class="line"><tt class="docutils literal">extraction_time</tt> / <tt class="docutils literal">extraction_qty</tt> | Worker harvest time and per-trip amount from building or deposit |</div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><tt class="docutils literal">auto_production</tt> and <tt class="docutils literal">manual_production</tt> are <strong>separate flags</strong> and may both be <tt class="docutils literal">1</tt> (e.g. <tt class="docutils literal">gold_house</tt>). <tt class="docutils literal">auto_production</tt> absent or <tt class="docutils literal">0</tt> does <strong>not</strong> imply manual mode; set <tt class="docutils literal">manual_production 1</tt> for the manual command. Same for <tt class="docutils literal">auto_cultivate</tt> / <tt class="docutils literal">manual_cultivate</tt> on farms.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><tt class="docutils literal">is_create</tt> is deprecated: ground <tt class="docutils literal">class resource</tt> piles are no longer spawned. Use <tt class="docutils literal">production_type</tt> (direct stockpile), <tt class="docutils literal">is_gather</tt> (building storage), or <tt class="docutils literal">production_item</tt> (spawn items).</p>
+</div>
+<p><tt class="docutils literal">class resource</tt> is separate from <tt class="docutils literal">class deposit</tt>. Map deposits:</p>
+<pre class="literal-block">
+mineral_field 1500 a1
+geyser 1 e1
+</pre>
+<p>Gas structures must sit on the matching deposit:</p>
+<pre class="literal-block">
+requires_deposit geyser
+is_buildable_anywhere 0
+</pre>
+<p>See <tt class="docutils literal">sc_gas_building</tt> / <tt class="docutils literal">assimilator</tt> in <tt class="docutils literal">mods/starcraft/rules.txt</tt>. Player guide:
+<tt class="docutils literal"><span class="pre">docs/en/starcraft-resources-vespene.md</span></tt>. The attributes screen (V) adds <strong>requires deposit</strong>;
+production time/qty use the existing production attribute entries.</p>
+</div>
+<div class="section" id="heroes-since-1-4">
+<h1><a class="toc-backref" href="#toc-entry-38">Heroes (since 1.4)</a></h1>
+<p>Define hero units in <strong>any</strong> <tt class="docutils literal">rules.txt</tt> (base rules, mods, campaign packs, multiplayer map packs). They work in skirmish, random maps, multiplayer, and campaigns: kill XP, <tt class="docutils literal">xp_thresholds</tt> leveling, <tt class="docutils literal">is_revivable</tt> revival, inventory, etc. <strong>Cross-chapter save</strong> (<tt class="docutils literal">campaign_carryover</tt> in the next section) is an <strong>extra</strong> feature for <strong>single-player campaigns only</strong>.</p>
+<p>Multiplayer example: <tt class="docutils literal">hero</tt> / <tt class="docutils literal">hero_knight</tt> in <tt class="docutils literal">res/multi/td2/rules.txt</tt>.</p>
+<pre class="literal-block">
+def hero
+class soldier
+global_count_limit 1
+is_revivable 1
+revival_time 10
+xp_thresholds 200 500 900
+hp_max_per_level 1000
+mdg_per_level 100
+resource_rewards 300
+xp_reward 100
+</pre>
+<p><strong>Level and XP (``level`` / ``xp`` / ``xp_thresholds`` / ``xp_threshold_growth``)</strong></p>
+<div class="line-block">
+<div class="line">Field | Default | Meaning |</div>
+<div class="line">--- | --- | --- |</div>
+<div class="line"><tt class="docutils literal">xp_thresholds</tt> | (empty) | <strong>Cumulative</strong> XP gates. The first value is the total XP for <strong>level 2</strong> (or <strong>level 1</strong> when starting at <strong>level 0</strong>); each following value is the next level. |</div>
+<div class="line"><tt class="docutils literal">max_level</tt> | (none) | Hero level cap. With <tt class="docutils literal">xp_threshold_growth</tt>, rules load generates <tt class="docutils literal">max_level - 1</tt> thresholds automatically |</div>
+<div class="line"><tt class="docutils literal">xp_threshold_growth</tt> | (none) | Auto-generate <tt class="docutils literal">xp_thresholds</tt> from a formula (table below). Requires <tt class="docutils literal">max_level</tt>; use either this or an explicit <tt class="docutils literal">xp_thresholds</tt> list (explicit list wins) |</div>
+<div class="line"><tt class="docutils literal">level</tt> | <tt class="docutils literal">1</tt> | Starting level. When <tt class="docutils literal">&gt; 1</tt> with <tt class="docutils literal">xp_thresholds</tt>, cumulative <tt class="docutils literal">*_per_level</tt> bonuses and <tt class="docutils literal">level_skills</tt> are applied on spawn. |</div>
+<div class="line"><tt class="docutils literal">xp</tt> | <tt class="docutils literal">0</tt> | Optional starting cumulative XP. |</div>
+<div class="line"><tt class="docutils literal">level_up_heal_full</tt> | <tt class="docutils literal">0</tt> | <tt class="docutils literal">1</tt> = restore <strong>full</strong> HP and mana on each level up; <tt class="docutils literal">0</tt> = add only the <tt class="docutils literal">hp_max_per_level</tt> / <tt class="docutils literal">mana_max_per_level</tt> increment to current values (default). |</div>
+<div class="line"><tt class="docutils literal">level_up_reset_xp</tt> | <tt class="docutils literal">0</tt> | <tt class="docutils literal">1</tt> = <strong>reset current XP to 0</strong> after each level up; <tt class="docutils literal">0</tt> = keep cumulative XP (default). When <tt class="docutils literal">1</tt>, prefer <strong>per-level</strong> <tt class="docutils literal">xp_thresholds</tt> (XP since last level-up), not cumulative totals. |</div>
+</div>
+<ul class="simple">
+<li>Max level = <tt class="docutils literal">len(xp_thresholds) + 1</tt> (e.g. nine thresholds → level 10 cap).</li>
+<li>Unit status (Tab): heroes with <tt class="docutils literal">xp_thresholds</tt> <strong>always announce level</strong> (including 0 and 1). XP is shown as <tt class="docutils literal">current / next gate</tt> (at level 0 the next gate is <tt class="docutils literal">xp_thresholds[0]</tt>).</li>
+<li><tt class="docutils literal">xp_thresholds</tt> (or <tt class="docutils literal">xp_threshold_growth</tt> after expansion) alone → default <strong>level 1</strong> at game start; <tt class="docutils literal">level 0</tt> starts below level 1.</li>
+</ul>
+<p><strong>``xp_threshold_growth`` curve types</strong> (threshold index <tt class="docutils literal">i</tt> starts at 0 for level 2, 3, …)</p>
+<div class="line-block">
+<div class="line">Type | Syntax | Formula |</div>
+<div class="line">--- | --- | --- |</div>
+<div class="line">linear | <tt class="docutils literal">linear BASE STEP</tt> | <tt class="docutils literal">BASE + STEP × i</tt> |</div>
+<div class="line">quadratic | <tt class="docutils literal">quadratic BASE A B</tt> | <tt class="docutils literal">BASE + A×i + B×i²</tt> |</div>
+<div class="line">polynomial | <tt class="docutils literal">polynomial c0 c1 c2 …</tt> | <tt class="docutils literal">c0 + c1×i + c2×i² + …</tt> |</div>
+<div class="line">geometric | <tt class="docutils literal">geometric FIRST RATIO</tt> | <tt class="docutils literal">FIRST × RATIO^i</tt> (<tt class="docutils literal">RATIO</tt> may be fractional, e.g. <tt class="docutils literal">1.08</tt>) |</div>
+</div>
+<p>Example (100-level hero, linear cumulative XP):</p>
+<pre class="literal-block">
+def long_hero
+class soldier
+max_level 100
+xp_threshold_growth linear 100 50
+hp_max_per_level 30
+mdg_per_level 2
+</pre>
+<p>Example (Raynor-style quadratic curve, same as <tt class="docutils literal">40 90 160 250 …</tt>):</p>
+<pre class="literal-block">
+def raynor_curve
+class soldier
+max_level 10
+xp_threshold_growth quadratic 40 40 10
+hp_max_per_level 30
+</pre>
+<p>Example (child def overrides only the level cap; inherits parent <tt class="docutils literal">xp_threshold_growth</tt>):</p>
+<pre class="literal-block">
+def base_hero
+class soldier
+max_level 100
+xp_threshold_growth linear 100 50
+
+def short_campaign_hero
+is_a base_hero
+max_level 20
+</pre>
+<p>Example (level 0 start, explicit threshold list):</p>
+<pre class="literal-block">
+def raynor
+is_a footman
+xp_thresholds 40 90 160 250 360 490 640 810 1000
+hp_max_per_level 30
+mdg_per_level 2
+level 0
+</pre>
+<p>Example (full heal on level up):</p>
+<pre class="literal-block">
+def raynor
+is_a footman
+xp_thresholds 40 90 160
+hp_max_per_level 30
+level_up_heal_full 1
+</pre>
+<p>Example (level 3 start with initial XP):</p>
+<pre class="literal-block">
+def veteran_hero
+is_a knight
+xp_thresholds 200 500 900
+hp_max_per_level 20
+level 3
+xp 500
+</pre>
+</div>
+<div class="section" id="campaign-hero-carryover-rules-driven">
+<h1><a class="toc-backref" href="#toc-entry-39">Campaign hero carryover (rules-driven)</a></h1>
+<p>Add <tt class="docutils literal">campaign_carryover 1</tt> on a hero def from the previous section. <strong>Only</strong> single-player campaigns: on <strong>victory</strong>, progress is saved to <tt class="docutils literal">user/campaigns.ini</tt> and restored on the <strong>next chapter</strong> (defeat retry does not overwrite). <strong>Co-op</strong> does not persist heroes.</p>
+<pre class="literal-block">
+def my_hero
+is_a knight
+campaign_carryover 1
+campaign_carryover_stats 1
+campaign_carryover_inventory 1
+inventory_capacity 8
+</pre>
+<div class="line-block">
+<div class="line">Field | Default | Meaning |</div>
+<div class="line">--- | --- | --- |</div>
+<div class="line"><tt class="docutils literal">campaign_carryover</tt> | <tt class="docutils literal">0</tt> | <tt class="docutils literal">1</tt> = enable cross-chapter save |</div>
+<div class="line"><tt class="docutils literal">campaign_carryover_id</tt> | def name | Keys <tt class="docutils literal">hero_&lt;id&gt;_xp</tt>, <tt class="docutils literal">_level</tt>, <tt class="docutils literal">_inventory</tt> |</div>
+<div class="line"><tt class="docutils literal">campaign_carryover_stats</tt> | <tt class="docutils literal">1</tt> | Level + XP |</div>
+<div class="line"><tt class="docutils literal">campaign_carryover_inventory</tt> | <tt class="docutils literal">1</tt> | Backpack items |</div>
+</div>
+<p>Stats only: <tt class="docutils literal">campaign_carryover_inventory 0</tt>. Inventory only: <tt class="docutils literal">campaign_carryover_stats 0</tt>. No carryover: omit <tt class="docutils literal">campaign_carryover 1</tt>.</p>
+<p>Optional in <tt class="docutils literal">campaign.txt</tt>: <tt class="docutils literal">hero_min_level 13:2 16:3 …</tt> for chapter floor levels.</p>
+<p>Separate from <tt class="docutils literal">campaign_flag</tt> / <tt class="docutils literal">add_inventory_item</tt> (story tokens, alliances). See <tt class="docutils literal"><span class="pre">docs/en/developer/campaign-hero-carryover.md</span></tt>.</p>
+</div>
+<div class="section" id="items-since-1-4-1-3">
+<h1><a class="toc-backref" href="#toc-entry-40">Items (since 1.4.1.3)</a></h1>
+<pre class="literal-block">
+def magic_sword
+class item
+consume_on_pickup 0
+buffs power_buff
+resource_rewards resource1 50
+</pre>
+<p><tt class="docutils literal">is_loot 1</tt> drops the item when the carrier dies.</p>
+<p><strong>Item sounds (``style.txt``; use sounds since 1.4.4.6)</strong></p>
+<div class="line-block">
+<div class="line">When | Item <tt class="docutils literal">style.txt</tt> | Unit <tt class="docutils literal">style.txt</tt> | Global default (<tt class="docutils literal">def thing</tt>) |</div>
+<div class="line">Pickup | <tt class="docutils literal">on_pickup</tt> | <tt class="docutils literal">pickup_&lt;item type&gt;</tt> | <tt class="docutils literal">pickup</tt> |</div>
+<div class="line">Drop | <tt class="docutils literal">on_drop</tt> | <tt class="docutils literal">drop_&lt;item type&gt;</tt> | <tt class="docutils literal">drop</tt> |</div>
+<div class="line">Use | <tt class="docutils literal">use</tt> / <tt class="docutils literal">on_use</tt> | <tt class="docutils literal">use_&lt;item type&gt;</tt> | <tt class="docutils literal">item_used</tt> |</div>
+</div>
+<p>On the item (<tt class="docutils literal">use</tt> and <tt class="docutils literal">on_use</tt> are equivalent; multiple IDs are chosen at random):</p>
+<pre class="literal-block">
+def zhuiri_jianfa_book
+title 7754
+pickup 1506
+use 1506
+</pre>
+<p>On the unit:</p>
+<pre class="literal-block">
+def raynor
+use_zhuiri_jianfa_book 1506
+</pre>
+<p>Global fallback:</p>
+<pre class="literal-block">
+def thing
+item_used 1194 1195 1196
+</pre>
+<p>Inheritance (<tt class="docutils literal">is_a</tt>) works like <tt class="docutils literal">on_pickup</tt> / <tt class="docutils literal">on_drop</tt>: derived types override parents.</p>
+</div>
+<div class="section" id="inventory-and-equippable-items-since-1-4-3-1">
+<h1><a class="toc-backref" href="#toc-entry-41">Inventory and equippable items (since 1.4.3.1)</a></h1>
+<p>Units need <tt class="docutils literal">inventory_capacity</tt> &gt; 0 to hold items. Each item uses one slot (<tt class="docutils literal">transport_volume</tt>
+is defined but capacity currently counts items, not volume).</p>
+<p><strong>Built-in gear</strong> (traditional):</p>
+<pre class="literal-block">
+def footman
+weapons sword          ; class weapon — built-in, not in backpack
+armor footman_armor    ; class armor — built-in
+</pre>
+<p><strong>Equippable items</strong> (unified model): the same type name can be <tt class="docutils literal">class item</tt>:</p>
+<pre class="literal-block">
+def sword
+class item
+equippable_as_weapon 1
+mdg 3.5
+mdg_range 1
+transport_volume 1
+
+def footman_armor
+class item
+equippable_as_armor 1
+mdf 0.5
+</pre>
+<p>When <tt class="docutils literal">weapons</tt> / <tt class="docutils literal">armor</tt> on a unit point to equippable items, the engine creates item
+instances at spawn and puts them in inventory. If the unit has <strong>no built-in gear</strong> of that
+kind and <tt class="docutils literal">spawn_weapons_equipped</tt> / <tt class="docutils literal">spawn_armor_equipped</tt> is <tt class="docutils literal">1</tt> (default), they are
+silently equipped:</p>
+<pre class="literal-block">
+def footman
+inventory_capacity 2
+weapons sword
+armor footman_armor
+</pre>
+<p><strong>Gear switching rules</strong> when a unit has <strong>both built-in and item gear</strong> (e.g.
+<tt class="docutils literal">weapons bow sword</tt> with <tt class="docutils literal">bow</tt> as <tt class="docutils literal">class weapon</tt> and <tt class="docutils literal">sword</tt> as equippable item):</p>
+<ul class="simple">
+<li>Built-in gear is always equipped at spawn; item gear goes to the backpack.</li>
+<li>With <tt class="docutils literal">spawn_weapons_equipped 1</tt> (default), item weapons stay in the backpack and <strong>cannot
+be equipped</strong>; with <tt class="docutils literal">spawn_weapons_equipped 0</tt>, the player may equip them manually.</li>
+<li><strong>Built-in gear can only switch with built-in gear</strong>; <strong>item gear only with item gear</strong>;
+<strong>no cross-switching</strong> between the two kinds. Same rules apply to armor
+(<tt class="docutils literal">spawn_armor_equipped</tt>).</li>
+</ul>
+<p>Mixed archer example:</p>
+<pre class="literal-block">
+def archer
+weapons bow sword
+spawn_weapons_equipped 1   ; bow equipped, sword in backpack, sword not equippable
+inventory_capacity 3
+
+def archer
+weapons bow sword
+spawn_weapons_equipped 0   ; bow equipped, sword in backpack, player may equip sword
+inventory_capacity 3
+</pre>
+<p>Consumables (<tt class="docutils literal">buffs</tt> only, no <tt class="docutils literal">equippable_as_*</tt>) are used from the backpack with Enter,
+not from the equipment screen. On success, <tt class="docutils literal">use</tt> / <tt class="docutils literal">on_use</tt> sounds play; normal consumables
+announce the item title plus &quot;used&quot;.</p>
+<p><strong>Skill books</strong> (permanently learn a skill; consumed on successful use):</p>
+<pre class="literal-block">
+def zhuiri_jianfa_book
+class item
+skills skill_zhuiri_jianfa
+learn_level 10
+transport_volume 1
+</pre>
+<ul class="simple">
+<li><tt class="docutils literal">learn_level</tt> / <tt class="docutils literal">learn_level_skills</tt>: minimum level to learn from the book (strictest of
+unit <tt class="docutils literal">learn_level_skills</tt> and item rules).</li>
+<li>Unit <tt class="docutils literal">level_skills</tt>: auto-unlock on level up (separate from books; do not duplicate the same
+skill or use returns <tt class="docutils literal">skill_already_known</tt> and keeps the book).</li>
+<li>With <tt class="docutils literal">learn_level</tt> / <tt class="docutils literal">learn_level_skills</tt> on the item, pickup does not grant the skill;
+the player must use the book from the backpack.</li>
+<li>Success: use sound + TTS skill title + <tt class="docutils literal">skill_learned</tt> message; failure: <tt class="docutils literal">order_impossible</tt>
+with <tt class="docutils literal">skill_level_too_low</tt> / <tt class="docutils literal">skill_already_known</tt> etc.</li>
+</ul>
+<p><strong>Treasure with ``use_square``</strong> (rewards only when used in backpack at a named square):</p>
+<pre class="literal-block">
+def mystery_treasure
+class item
+use_square b2
+resource_rewards resource1 150
+</pre>
+<p>Server orders (also usable in trigger <tt class="docutils literal">order</tt> actions): <tt class="docutils literal">equip_weapon</tt>, <tt class="docutils literal">unequip_weapon</tt>,
+<tt class="docutils literal">equip_armor</tt>, <tt class="docutils literal">unequip_armor</tt>, <tt class="docutils literal">use_item</tt>, <tt class="docutils literal">drop</tt>.</p>
+</div>
+<div class="section" id="unit-default-behavior-since-1-4-3-1">
+<h1><a class="toc-backref" href="#toc-entry-42">Unit default behavior (since 1.4.3.1)</a></h1>
+<p>Per-unit starting behavior in <tt class="docutils literal">rules.txt</tt>:</p>
+<ul class="simple">
+<li><tt class="docutils literal">ai_mode</tt>: <tt class="docutils literal">offensive</tt>, <tt class="docutils literal">defensive</tt>, <tt class="docutils literal">guard</tt>, or <tt class="docutils literal">chase</tt>. Default: <tt class="docutils literal">offensive</tt>
+for soldiers, <tt class="docutils literal">defensive</tt> for workers. Applies to combat units.</li>
+<li><tt class="docutils literal">auto_gather</tt>: <tt class="docutils literal">1</tt> or <tt class="docutils literal">0</tt>. Default <tt class="docutils literal">1</tt>. Workers only.</li>
+<li><tt class="docutils literal">auto_repair</tt>: <tt class="docutils literal">1</tt> or <tt class="docutils literal">0</tt>. Default <tt class="docutils literal">1</tt>. Workers only.</li>
+<li><tt class="docutils literal">auto_explore</tt>: <tt class="docutils literal">1</tt> or <tt class="docutils literal">0</tt>. Default <tt class="docutils literal">0</tt>. Mobile units (speed &gt; 0).</li>
+<li><tt class="docutils literal">can_auto_explore</tt>: <tt class="docutils literal">1</tt> or <tt class="docutils literal">0</tt>. Default <tt class="docutils literal">0</tt>. Adds enable/disable auto-explore to
+the unit's command menu.</li>
+<li><tt class="docutils literal">no_number</tt> (since 1.4.3.2): <tt class="docutils literal">1</tt> or <tt class="docutils literal">0</tt>. Default <tt class="docutils literal">0</tt> (always speak serial numbers,
+e.g. &quot;peasant 1 at a1&quot;). When <tt class="docutils literal">1</tt>: omit the number while only one living unit of that
+type exists (&quot;Guan Yu at a1&quot;); with two or more, use numbers (&quot;Guan Yu 1&quot;, &quot;Guan Yu 2&quot;).
+Group summaries follow the same rule. For unique heroes or leaders.</li>
+</ul>
+<p><tt class="docutils literal">ai_mode patrol</tt> is invalid — patrol requires a route command. Neutral computer units are
+still forced to guard + counterattack regardless of <tt class="docutils literal">ai_mode</tt>.</p>
+<p>Player units in <tt class="docutils literal">offensive</tt>, <tt class="docutils literal">defensive</tt>, or <tt class="docutils literal">chase</tt> mode do <strong>not</strong> auto-attack neutral
+units (<tt class="docutils literal">computer_only ... neutral</tt>) and defensive mode does <strong>not</strong> flee from neutrals alone.
+Use an <strong>imperative</strong> attack (e.g. Ctrl+click on the unit) to fight a neutral.</p>
+<p>Example:</p>
+<pre class="literal-block">
+def knight
+class soldier
+ai_mode guard
+auto_explore 1
+can_auto_explore 1
+
+def peasant
+class worker
+auto_gather 1
+auto_repair 0
+ai_mode defensive
+</pre>
+</div>
+<div class="section" id="capture-default-occupy-order">
+<h1><a class="toc-backref" href="#toc-entry-43">Capture / default occupy order</a></h1>
+<p><strong>Target</strong> — <tt class="docutils literal">capture_hp_threshold</tt> (on capturable buildings/units):</p>
+<div class="line-block">
+<div class="line">Value | Meaning |</div>
+<div class="line">--- | --- |</div>
+<div class="line"><tt class="docutils literal">0</tt> (default) | Not capturable via HP threshold |</div>
+<div class="line"><tt class="docutils literal">100</tt> | <strong>Contact capture</strong>: convert owner on arrival, no damage; default right-click order is capture (see <tt class="docutils literal">can_capture</tt>) |</div>
+<div class="line"><tt class="docutils literal">30</tt> etc. | Capturable when HP ≤ that percentage during normal combat |</div>
+</div>
+<p><strong>Attacker</strong> — <tt class="docutils literal">can_capture</tt> (on soldiers/workers with attack):</p>
+<div class="line-block">
+<div class="line">Value | Meaning |</div>
+<div class="line">--- | --- |</div>
+<div class="line"><tt class="docutils literal">1</tt> (default) | Right-click enemy with <tt class="docutils literal">capture_hp_threshold 100</tt> → default <strong>capture</strong>; AI uses contact capture |</div>
+<div class="line"><tt class="docutils literal">0</tt> | Same target → default <strong>attack/move</strong>; AI attacks normally |</div>
+</div>
+<p>Requires <tt class="docutils literal">attack</tt> in the unit's skills; target must be a living, vulnerable enemy.</p>
+<p>Example — only footmen capture barracks; archers attack:</p>
+<pre class="literal-block">
+def captured_barracks
+class building
+capture_hp_threshold 100
+...
+
+def footman
+class soldier
+can_capture 1
+...
+
+def archer
+class soldier
+can_capture 0
+...
+</pre>
+<p>Random-map POI <tt class="docutils literal">captured_barracks</tt> and HoMM-style play: <tt class="docutils literal">docs/zh/player/英雄无敌与文明5玩法说明.md</tt>.</p>
+</div>
+<div class="section" id="ship-repair-since-1-4-1-1">
+<h1><a class="toc-backref" href="#toc-entry-44">Ship repair (since 1.4.1.1)</a></h1>
+<p><strong>give</strong> order — transfer an inventory item to another unit:</p>
+<pre class="literal-block">
+give &lt;target unit id&gt;
+give &lt;target unit id&gt; &lt;item type or id&gt;
+</pre>
+<p>Target fields (all must pass):</p>
+<ul class="simple">
+<li><tt class="docutils literal">receive_items 1</tt> (default 0 — NPCs must opt in)</li>
+<li><tt class="docutils literal">accepted_items</tt> — optional whitelist of item types (<tt class="docutils literal">is_a</tt> inheritance supported); empty = any</li>
+<li><tt class="docutils literal">accept_from</tt> — optional list: <tt class="docutils literal">self</tt>, <tt class="docutils literal">ally</tt>, <tt class="docutils literal">neutral</tt>, <tt class="docutils literal">enemy</tt>; empty = any</li>
+</ul>
+<p>Example NPC that accepts any item from anyone:</p>
+<pre class="literal-block">
+def quest_npc
+receive_items 1
+inventory_capacity 5
+</pre>
+<p>Example: allied knights accept only <tt class="docutils literal">knight_lance</tt> from allies:</p>
+<pre class="literal-block">
+def knight
+receive_items 1
+accepted_items knight_lance
+accept_from ally
+</pre>
+<p>Delivery records <tt class="docutils literal">received_items</tt> on the target for trigger checks. Items apply <tt class="docutils literal">skills</tt> /
+<tt class="docutils literal">buffs</tt> on receipt like <tt class="docutils literal">pickup</tt>. Script delivery ignores target <tt class="docutils literal">inventory_capacity</tt>.
+Multiplayer demo: <tt class="docutils literal">res/multi/give_demo.txt</tt>. Campaign relation demos: <tt class="docutils literal">The Legend of Raynor</tt> ch. 14–16
+(<tt class="docutils literal">res/single/The Legend of Raynor/14.txt</tt>, <tt class="docutils literal">15.txt</tt>, <tt class="docutils literal">16.txt</tt>).</p>
+</div>
+<div class="section" id="build-fields-addons-lift-off-starcraft-style-mods-starcraft">
+<h1><a class="toc-backref" href="#toc-entry-45">Build fields, addons &amp; lift-off (StarCraft-style, <tt class="docutils literal">mods/starcraft</tt>)</a></h1>
+<p>The engine supports <strong>build fields</strong>, <strong>worker build modes</strong>, <strong>Terran addons</strong>, and
+<strong>lift-off recombine</strong>. Reference implementation: <tt class="docutils literal">mods/starcraft/rules.txt</tt>. Player guides:</p>
+<ul class="simple">
+<li>Terran addons: <tt class="docutils literal"><span class="pre">docs/en/starcraft-terran-addons.md</span></tt></li>
+<li>Zerg creep &amp; Queen tumors: <tt class="docutils literal"><span class="pre">docs/en/starcraft-zerg-creep.md</span></tt></li>
+</ul>
+<div class="section" id="build-fields-protoss-psi-zerg-creep">
+<h2><a class="toc-backref" href="#toc-entry-46">Build fields (Protoss psi / Zerg creep)</a></h2>
+<div class="line-block">
+<div class="line">Attribute | Role |</div>
+<div class="line">--- | --- |</div>
+<div class="line"><tt class="docutils literal">provides_build_field &lt;name&gt;</tt> | Marks nearby squares (e.g. <tt class="docutils literal">psi</tt>, <tt class="docutils literal">creep</tt>) |</div>
+<div class="line"><tt class="docutils literal">requires_build_field &lt;name&gt;</tt> | Requires that field to place/build; <strong>``0``</strong> exempts the type (Nexus, Photon Cannon) |</div>
+<div class="line"><tt class="docutils literal">build_field_radius &lt;tiles&gt;</tt> | Provider radius (main-square BFS steps; use this or <tt class="docutils literal">build_field_radius_m</tt>) |</div>
+<div class="line"><tt class="docutils literal">build_field_radius_m &lt;meters&gt;</tt> | Provider radius in meters (same scale as <tt class="docutils literal">rdg_range</tt>); Euclidean distance from provider <tt class="docutils literal">(x,y)</tt> |</div>
+<div class="line"><tt class="docutils literal">build_field_persists 1</tt> | Marks remain after provider is destroyed (Zerg creep) |</div>
+<div class="line"><tt class="docutils literal">build_field_spreads 1</tt> | Spread marks to adjacent squares each second |</div>
+<div class="line"><tt class="docutils literal">build_field_spread_squares N</tt> | Layers per tick (default 1 when <tt class="docutils literal">build_field_spreads</tt>) |</div>
+<div class="line"><tt class="docutils literal">requires_build_field_on_square 1</tt> | Entire square must be marked (Zerg); else live field anywhere on square suffices (Protoss) |</div>
+<div class="line"><tt class="docutils literal">loses_power_without_field 1</tt> | <strong>Power down</strong> without live field: halt build/train/power (Protoss) |</div>
+</div>
+<p><strong>``build_field_radius`` vs ``build_field_radius_m``</strong></p>
+<p>Use <strong>one</strong> radius property per provider; leave the other at <strong>0</strong> (default).</p>
+<div class="line-block">
+<div class="line">Property | How range is measured | Typical use |</div>
+<div class="line">--- | --- | --- |</div>
+<div class="line"><tt class="docutils literal">build_field_radius</tt> | BFS steps from the provider's <strong>main square</strong> (discrete tiles) | Legacy tile-based creep |</div>
+<div class="line"><tt class="docutils literal">build_field_radius_m</tt> | Euclidean distance from the provider's <strong>(x, y)</strong> in meters | Protoss psi chains (SC2-like); Zerg Hatchery / creep tumor in <tt class="docutils literal">mods/starcraft</tt> |</div>
+</div>
+<p>One map square is about <strong>12 m</strong> wide (<tt class="docutils literal">square_width 12</tt>). Examples in the StarCraft mod:
+Nexus <strong>18 m</strong>, Pylon <strong>12 m</strong>, Hatchery <strong>12 m</strong>, creep tumor <strong>4 m</strong>.</p>
+<p><strong>Live vs marked field</strong></p>
+<ul class="simple">
+<li><strong>Live field</strong> — currently provided by standing buildings/units (meter: point-in-circle; tiles: BFS from <tt class="docutils literal">place</tt>).</li>
+<li><strong>Marked field</strong> — persistent square marks painted on registration and/or spread each second.</li>
+</ul>
+<p><tt class="docutils literal">has_build_field_on_square</tt> accepts <strong>live OR marked</strong>. Zerg <tt class="docutils literal">requires_build_field_on_square 1</tt> checks <strong>marked</strong> squares only (you cannot build on live creep that has not spread/marked yet).</p>
+<p>When <tt class="docutils literal">build_field_persists 1</tt> or <tt class="docutils literal">build_field_spreads 1</tt> is set, meter-radius providers <strong>also paint marks</strong> in range (needed so Hatchery-only <tt class="docutils literal">build_field_radius_m</tt> still allows Zerg building).</p>
+<p><strong>Queen creep tumor</strong> (<tt class="docutils literal">mods/starcraft</tt>): summon skills place <tt class="docutils literal">creep_tumor</tt> buildings on targeted squares. Skill attributes:</p>
+<div class="line-block">
+<div class="line">Attribute | Role |</div>
+<div class="line">--- | --- |</div>
+<div class="line"><tt class="docutils literal">summon_requires_build_field &lt;name&gt;</tt> | Target square must have that field (live or marked) |</div>
+<div class="line"><tt class="docutils literal">summon_requires_marked_field 1</tt> | Target must be <strong>marked</strong> (tumor <strong>Extend</strong>; Queen <strong>Spawn</strong> omits this) |</div>
+</div>
+<p>Player guide: <tt class="docutils literal"><span class="pre">docs/en/starcraft-zerg-creep.md</span></tt>. Mod readme: <tt class="docutils literal">mods/starcraft/readme.txt</tt>.</p>
+<p><strong>Protoss</strong> (<tt class="docutils literal">protoss_building</tt>):</p>
+<pre class="literal-block">
+requires_build_field psi
+is_buildable_anywhere 1
+self_constructs 1
+loses_power_without_field 1
+</pre>
+<p><strong>Zerg</strong> (<tt class="docutils literal">zerg_building</tt>):</p>
+<pre class="literal-block">
+requires_build_field creep
+requires_build_field_on_square 1
+is_buildable_anywhere 1
+self_constructs 1
+</pre>
+<p>Hatchery: <tt class="docutils literal">provides_build_field creep</tt> + <tt class="docutils literal">build_field_radius_m 12</tt> + <tt class="docutils literal">build_field_persists 1</tt> +
+<tt class="docutils literal">build_field_spreads 1</tt>. Queen <strong>Spawn creep tumor</strong> / tumor <strong>Extend</strong> — see <tt class="docutils literal"><span class="pre">docs/en/starcraft-zerg-creep.md</span></tt>.</p>
+<p><strong>UI</strong>: <tt class="docutils literal">def build_field_&lt;name&gt;</tt> + <tt class="docutils literal">title &lt;tts_id&gt;</tt> in <tt class="docutils literal">ui/style.txt</tt>; optional ambient <tt class="docutils literal">noise</tt>.</p>
+</div>
+<div class="section" id="deposits-gas-requires-deposit">
+<h2><a class="toc-backref" href="#toc-entry-47">Deposits &amp; gas (<tt class="docutils literal">requires_deposit</tt>)</a></h2>
+<div class="line-block">
+<div class="line">Attribute | Role |</div>
+<div class="line">--- | --- |</div>
+<div class="line"><tt class="docutils literal">requires_deposit &lt;type&gt;</tt> | Must build on a map deposit (e.g. <tt class="docutils literal">geyser</tt>); deposit is removed on completion |</div>
+<div class="line"><tt class="docutils literal">is_buildable_anywhere 0</tt> | With <tt class="docutils literal">requires_deposit</tt>, blocks building on meadows |</div>
+</div>
+<p>Gas template <tt class="docutils literal">sc_gas_building</tt> uses <tt class="docutils literal">auto_production</tt> + <tt class="docutils literal">is_gather</tt> + <tt class="docutils literal">production_time</tt> / <tt class="docutils literal">production_qty</tt>.
+Workers need <tt class="docutils literal">can_gather assimilator</tt> (building type), not <tt class="docutils literal">geyser</tt> (deposit).</p>
+</div>
+<div class="section" id="worker-build-modes">
+<h2><a class="toc-backref" href="#toc-entry-48">Worker build modes</a></h2>
+<div class="line-block">
+<div class="line"><tt class="docutils literal">build_mode</tt> | Behavior |</div>
+<div class="line">--- | --- |</div>
+<div class="line"><tt class="docutils literal">assisted</tt> | Worker stays until done (Terran SCV, default) |</div>
+<div class="line"><tt class="docutils literal">place_and_leave</tt> | Worker places site and leaves; <tt class="docutils literal">self_constructs 1</tt> finishes building (Probe) |</div>
+<div class="line"><tt class="docutils literal">sacrifice</tt> | Worker is consumed (Drone) |</div>
+</div>
+<p>Also: <tt class="docutils literal">self_constructs 1</tt>, <tt class="docutils literal">build_sacrifices_worker 1</tt>, <tt class="docutils literal">is_buildable_anywhere 1</tt> (no separate <tt class="docutils literal">meadow</tt> on Protoss/Zerg/flying Terran).</p>
+</div>
+<div class="section" id="terran-addons">
+<h2><a class="toc-backref" href="#toc-entry-49">Terran addons</a></h2>
+<div class="line-block">
+<div class="line">Attribute | Role |</div>
+<div class="line">--- | --- |</div>
+<div class="line"><tt class="docutils literal">can_have_addon &lt;types&gt;</tt> | Host types (Barracks / Factory / Starport) |</div>
+<div class="line"><tt class="docutils literal">addon_max N</tt> | Max attached addons (default 1) |</div>
+<div class="line"><tt class="docutils literal">is_addon 1</tt> | Addon building (Tech Lab, Reactor) |</div>
+<div class="line"><tt class="docutils literal">addon_host_types &lt;hosts&gt;</tt> | Which hosts accept this addon |</div>
+<div class="line"><tt class="docutils literal">addon_grants_train_&lt;host&gt; &lt;unit&gt;</tt> | Extra train option when attached |</div>
+<div class="line"><tt class="docutils literal">addon_grants_research &lt;tech&gt;</tt> | Extra research when attached |</div>
+<div class="line"><tt class="docutils literal">addon_train_multiplier N</tt> | Reactor double production |</div>
+<div class="line"><tt class="docutils literal">addon_offset_x &lt;value&gt;</tt> | Side slot offset east of host (default 3.5 tiles) |</div>
+</div>
+<p>Build addon on an <strong>existing host</strong>, not bare ground.</p>
+</div>
+<div class="section" id="lift-off-recombine">
+<h2><a class="toc-backref" href="#toc-entry-50">Lift-off &amp; recombine</a></h2>
+<div class="line-block">
+<div class="line">Attribute | Role |</div>
+<div class="line">--- | --- |</div>
+<div class="line"><tt class="docutils literal">can_change_to &lt;flying&gt;</tt> | Ground host can lift |</div>
+<div class="line"><tt class="docutils literal">ground_form &lt;ground&gt;</tt> | Flying form lands as this type |</div>
+<div class="line"><tt class="docutils literal">change_time &lt;sec&gt;</tt> | Morph time for <tt class="docutils literal">change_to</tt> (no resource/pop cost) |</div>
+</div>
+<p><strong>Lift</strong>: addons <strong>detach</strong> on ground; <tt class="docutils literal">meadow</tt> appears under host.</p>
+<p><strong>Land</strong>: consumes nearest <tt class="docutils literal">meadow</tt> on the square.</p>
+<p><strong>Recombine</strong>: Tab <strong>Tech Lab</strong> → Backspace go (flies to <strong>landing slot</strong> west of lab) → <tt class="docutils literal">change_to</tt> ground.</p>
+<p><strong>Meadow vs slot</strong>: meadow = land permission; reattach needs slot alignment
+(<tt class="docutils literal">tech_lab.x ≈ factory.x + addon_offset_x</tt>, within ~2.5 tiles Manhattan).</p>
+<p>Landing on <strong>own lift-off meadow</strong> does not reattach. Wrong land with orphan addon → TTS <tt class="docutils literal">addon_reattach_failed</tt> (7350).</p>
+<p>Test maps: <tt class="docutils literal">terran_addon_test</tt>, <tt class="docutils literal">terran_recombine_test</tt>; campaign <tt class="docutils literal">sc_build_tests</tt> ch. 3–4.</p>
+</div>
+</div>
+<div class="section" id="ship-repair-since-1-4-1-1-1">
+<h1><a class="toc-backref" href="#toc-entry-51">Ship repair (since 1.4.1.1)</a></h1>
+<p><tt class="docutils literal">can_repair_ships 1</tt> on workers or buildings. Workers repair adjacent shore ships (6
+squares); buildings auto-repair ships in neighboring water (8 squares).</p>
+</div>
+<div class="section" id="herding-workers">
+<h1><a class="toc-backref" href="#toc-entry-52">Herding (workers)</a></h1>
+<p><tt class="docutils literal">can_herd 1</tt> lets a worker herd animals with <tt class="docutils literal">herdable 1</tt> (for example sheep). The
+default is <tt class="docutils literal">0</tt>; enable herding explicitly per worker type in <tt class="docutils literal">rules.txt</tt>.</p>
+<p><strong>``can_capture``</strong> — <tt class="docutils literal">1</tt> or <tt class="docutils literal">0</tt>. Default <tt class="docutils literal">1</tt>. On units with <tt class="docutils literal">attack</tt> skills: when
+<tt class="docutils literal">0</tt>, right-click on enemies with <tt class="docutils literal">capture_hp_threshold 100</tt> uses normal attack/move instead
+of the default capture order; AI contact-capture is disabled too. See <strong>Capture / default occupy
+order</strong> above.</p>
+<p>Hunting system (Age of Empires style)</p>
+<p>See <tt class="docutils literal"><span class="pre">docs/en/hunting-system.md</span></tt>. Summary:</p>
+<ul class="simple">
+<li>Workers right-click <tt class="docutils literal">is_huntable</tt> animals to attack; kills spawn a <tt class="docutils literal">food_deposit</tt> carcass (e.g. <tt class="docutils literal">food_carcass</tt>).</li>
+<li>Animal attrs: <tt class="docutils literal">is_huntable</tt>, <tt class="docutils literal">flee_on_hit</tt>, <tt class="docutils literal">herdable</tt>, <tt class="docutils literal">food_deposit</tt>, <tt class="docutils literal">food_deposit_qty</tt>, <tt class="docutils literal">no_number</tt>.</li>
+<li>Map spawn: <tt class="docutils literal">computer_only 0 0 neutral &lt;square&gt; &lt;count&gt; deer</tt>; random maps add wildlife near starts.</li>
+<li><strong>Voice</strong>: units with <tt class="docutils literal">is_huntable</tt> / <tt class="docutils literal">herdable</tt> are announced as &quot;deer , animal&quot;, <strong>not</strong> &quot;neutral , NPC&quot;. Ctrl+Shift+F4 to a wildlife-only player says &quot;you are animal&quot;. Story NPCs (<tt class="docutils literal">quest_npc</tt>, etc.) still say &quot;neutral , NPC&quot;.</li>
+<li><strong>Diplomacy</strong>: a <tt class="docutils literal">computer_only</tt> slot with <strong>only</strong> wildlife (<tt class="docutils literal">deer</tt> / <tt class="docutils literal">sheep</tt> / custom <tt class="docutils literal">tiger</tt>, etc.) does not join the <tt class="docutils literal">&quot;ai&quot;</tt> alliance and does not ally with players, hostile creep, or other wildlife herds; mixed slots are unchanged. See <tt class="docutils literal"><span class="pre">docs/en/hunting-system.md</span></tt> §3.1.</li>
+<li>Tech <tt class="docutils literal">hunting_techniques</tt>: faster orchard/carcass gathering.</li>
+</ul>
+<p>Example animal:</p>
+<pre class="literal-block">
+def deer
+class soldier
+is_huntable 1
+flee_on_hit 1
+food_deposit food_carcass
+food_deposit_qty 35
+no_number 1
+ai_mode guard
+</pre>
+</div>
+<div class="section" id="inheritance-since-1-3-8-3">
+<h1><a class="toc-backref" href="#toc-entry-53">Inheritance (since 1.3.8.3)</a></h1>
+<pre class="literal-block">
+is_a footman                    ; all attributes
+is_a footman(hp_max mdg)        ; selective
+is_a footman(apart hp_max)      ; exclusion inheritance (apart form)
+is_a footman(-hp_max)           ; exclusion inheritance (- prefix, same as apart)
+is_a footman(-hp_max -mdg)      ; exclude multiple attributes
+is_a footman(mdg) knight(hp_max) ; multiple parents
+</pre>
+</div>
+<div class="section" id="style">
+<h1><a class="toc-backref" href="#toc-entry-54">style</a></h1>
+<p>The style is defined in &quot;ui/style.txt&quot; and in the localized version of &quot;style.txt&quot;.</p>
+<div class="section" id="shortcut">
+<h2><a class="toc-backref" href="#toc-entry-55">shortcut</a></h2>
+<p>Simple orders, building orders, training orders, orders using an ability can be given with a shortcut, if a shortcut is defined.</p>
+<p>To define a shortcut, define a &quot;shortcut&quot; property followed by the corresponding letter. The letter must be in lowercase.</p>
+<p>If the order is a simple order, the shortcut must be defined by the order (ex: patrol).
+If the order is a complex order (train, build, use an ability), the shortcut must be defined by the second part of the order.
+For example, define an &quot;m&quot; shortcut for the meteor ability so the mage will have the &quot;m&quot; shortcut to cast meteors.</p>
+</div>
+<div class="section" id="intro-since-1-4-1-5">
+<h2><a class="toc-backref" href="#toc-entry-56">intro (since 1.4.1.5)</a></h2>
+<p>Add a unit description below <tt class="docutils literal">title</tt>:</p>
+<pre class="literal-block">
+def footman
+title 87
+intro 1001
+</pre>
+<p>The text must exist in <tt class="docutils literal">tts.txt</tt>.</p>
+</div>
+<div class="section" id="combat-sound-system-since-1-3-8-2-1-4-4-6-renamed-matk-ratk-to-mdg-rdg">
+<h2><a class="toc-backref" href="#toc-entry-57">Combat sound system (since 1.3.8.2; 1.4.4.6 renamed matk/ratk to mdg/rdg)</a></h2>
+<p>Replaces the old attack sounds:</p>
+<pre class="literal-block">
+launch_mdg / launch_rdg
+mdg_hit / rdg_hit / mdg_hit_vs / rdg_hit_vs
+mdg_missed / rdg_missed
+mdg_dodge / rdg_dodge
+launch_charge_mdg / launch_charge_rdg
+charge_mdg_hit / charge_rdg_hit
+casting
+disappear
+weapon_switched
+death / falling / falling_delay / falling_on_&lt;terrain&gt;
+</pre>
+<p>Burst units fire <tt class="docutils literal">launch_mdg</tt> / <tt class="docutils literal">launch_rdg</tt> <strong>once per shot</strong> in a <tt class="docutils literal">damage_seq</tt>
+burst. You can list several sound IDs on the same line so each shot picks from them.</p>
+<p><tt class="docutils literal">mdg_hit_vs</tt> / <tt class="docutils literal">rdg_hit_vs</tt> can play different hit sounds by target type. The target
+match set includes the unit type, inherited unit types, and the buff/debuff types currently
+active on the target. Example:</p>
+<pre class="literal-block">
+def swordsman
+mdg_hit_vs b_absolute_defense iron_clang
+</pre>
+<p>When <tt class="docutils literal">swordsman</tt> hits a target that currently has <tt class="docutils literal">b_absolute_defense</tt>, <tt class="docutils literal">iron_clang</tt>
+is played.</p>
+<p>Since 1.4.4.6, docs and bundled resources use the <tt class="docutils literal">mdg</tt> / <tt class="docutils literal">rdg</tt> names. Old
+<tt class="docutils literal">matk</tt> / <tt class="docutils literal">ratk</tt> keys remain available as a compatibility fallback for existing mods.</p>
+<p>Skills, buffs, and debuffs can also define trigger sounds:</p>
+<pre class="literal-block">
+def skill_counter
+alert counter_alert
+ready counter_ready
+triggered counter_proc
+
+def b_absolute_defense
+triggered shield_on
+noise loop shield_hum
+</pre>
+<p>Manually used skills play <tt class="docutils literal">alert</tt>. If a skill rule has <tt class="docutils literal">ready &lt;seconds&gt;</tt>, the skill
+style can define <tt class="docutils literal">ready &lt;sound&gt;</tt>; manual and automatic triggers play it when prep starts.
+Skills triggered by <tt class="docutils literal">active_trigger_skills</tt>,
+<tt class="docutils literal">passive_trigger_skills</tt>, <tt class="docutils literal">attack_trigger_skills</tt>, or <tt class="docutils literal">attack_replace_skills</tt> prefer
+<tt class="docutils literal">triggered</tt> and fall back to <tt class="docutils literal">alert</tt> when <tt class="docutils literal">triggered</tt> is not configured. Buffs and
+debuffs applied through trigger fields play their own <tt class="docutils literal">triggered</tt> sound when configured.
+Persistent buff/debuff status sounds must be written explicitly as <tt class="docutils literal">noise loop &lt;sound&gt;</tt> or
+<tt class="docutils literal">noise repeat &lt;interval&gt; <span class="pre">&lt;sound...&gt;</span></tt>; <tt class="docutils literal">noise &lt;sound&gt;</tt> keeps its existing parsing behavior
+and is not treated as a loop automatically.</p>
+</div>
+<div class="section" id="menu-and-game-music-since-1-4-0-2">
+<h2><a class="toc-backref" href="#toc-entry-58">Menu and game music (since 1.4.0.2)</a></h2>
+<p>In <tt class="docutils literal">def parameters</tt>:</p>
+<pre class="literal-block">
+menu_music &lt;id&gt;
+campaign_music &lt;id&gt;
+game_creation_music &lt;id&gt;
+server_lobby_music &lt;id&gt;
+game_music &lt;id&gt;
+battle_music &lt;id&gt;
+victory_sound &lt;id&gt;
+defeat_sound &lt;id&gt;
+main_menu_select_sound &lt;id&gt;
+main_menu_confirm_sound &lt;id&gt;
+</pre>
+<p>Faction music (since 1.4.0.3):</p>
+<pre class="literal-block">
+china_music china
+china_battle_music china_battle
+</pre>
+<p>Map overrides: <tt class="docutils literal">map_music</tt>, <tt class="docutils literal">map_battle_music</tt>, <tt class="docutils literal">map_victory_sound</tt>, <tt class="docutils literal">map_defeat_sound</tt>.
+Music files: <tt class="docutils literal"><span class="pre">ui/music/&lt;id&gt;.mp3</span></tt> or <tt class="docutils literal"><span class="pre">mods/&lt;mod&gt;/ui/music/&lt;id&gt;.mp3</span></tt>.</p>
+</div>
+</div>
+</div>
+</body>
+</html>

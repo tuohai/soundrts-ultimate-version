@@ -1,0 +1,1514 @@
+﻿; coding: utf-8
+
+0	nothing!
+1	You are
+
+3	In front of you
+4	Behind you
+5	What are your orders?
+
+23	and
+
+38	You have
+39	/
+40	level
+
+54	at
+55	meters
+
+59	the player
+60	you are
+61	killed
+
+65	minutes
+66	seconds
+67	north
+68	south
+69	east
+70	west
+71	northeast
+72	northwest
+73	southeast
+74	southwest
+79	in a meadow rounded with trees
+80	wood
+81	gold mine
+82	town hall
+83	farm
+84	a path
+85	peasant
+86	footman
+87	archer
+88	enemy
+89	friend
+99	barracks
+100	go
+101	build
+102	exploit
+103	patrol
+104	mode
+105	ok!
+106	stop
+107	at
+108	to the
+110	offensive
+111	defensive
+112	hold position
+113	stealth
+114	attack
+115	to
+116	to the east
+117	to the west
+118	repair
+119	on
+120	combat
+121	against
+122	a meadow
+123	recruit
+124	ready!
+125	rally
+126	complete
+127	cancel
+128	building
+129	requires
+130	units
+131	gold
+132	wood
+133	population
+134	contains
+135	not enough
+136	idem!
+137	food
+138	You control
+139	a group
+
+142	production paused
+143	the queue is full
+144	exhausted
+145	neutralized
+146	lost
+147	production
+148	sawmill
+149	Victory!
+150	Defeat
+151	1
+152	alert
+153	a bridge
+154	open
+155	you reached level
+156	at the center
+
+
+
+2008	press F5 to listen again
+2010	press
+2011	to
+2012	Tab
+2013	select
+2014	Enter
+2015	confirm
+2016	A and Q
+2017	give an order
+2018	Z and S
+2019	control another unit
+2020	X or W
+2021	check resources
+2022	1, 2 or 3
+2023	control a group
+2024	0
+2025	control a single unit
+2026	backspace
+2027	give the typical order for the selected target
+2028	F5 and F6
+2029	history
+2030	Alt
+2031	interrupt speech
+2032	escape
+2033	cancel
+2034	shift
+2035	backward
+2036	open the menu
+2037	direction arrows
+2038	move on the map
+2039	control
+2040	ignoring obstacles
+2041	page down
+2042	move to the next interesting square
+2043	space
+2044	move to the square of the unit that is currently being controlled, and follow this unit
+2045	control the next local unit
+2046	select the next target
+2047	select the next order
+2048	control all units that are of the same type and located in the same square as the current unit
+2049	confirm the current order
+2050	give the most common order for the current target
+2051	hear how much gold, wood and food you have
+2052	hear the health of the current unit
+2053	control half of the units of the same type and in the same square than the current unit
+2054	control only 1 unit
+2055	q
+2056	control all of the soldiers that are located in the current square
+2057	control all of the peasants that are located in the current square
+2058	control the next building
+2059	control the next peasant
+3000	0
+3001	1
+3002	2
+3003	3
+3004	4
+3005	5
+3006	6
+3007	7
+3008	8
+3009	9
+3010	10
+3011	11
+3012	12
+3013	13
+3014	14
+3015	15
+3016	16
+3017	17
+3018	18
+3019	19
+3020	20
+3021	21
+3022	22
+3023	23
+3024	24
+3025	25
+3026	26
+3027	27
+3028	28
+3029	29
+3030	30
+3031	31
+3040	40
+3041	41
+3050	50
+3051	51
+3060	60
+3061	61
+3070	70
+3071	71
+3080	80
+3090	90	
+3100	hundred
+3101	thousand
+3102	million
+
+4000	game
+4001	Internet
+4002	local
+4004	processing
+4005	failure
+4006	success!
+4007	please make a selection
+4008	please send comments to jlpo@free.fr
+4009	Quit
+4010	Menu
+4011	continue
+4012	version error
+4014	strategy game
+4015	chapter
+4016	single player
+4017	map
+4018	multiplayer
+4019	join
+4020	objective: 
+4021	resist ennemy attacks
+4022	produced
+4023	produced
+4024	consumed
+4025	building
+4026	score
+
+4028	press F1 for help
+4029	main menu
+4030	please make a selection
+4031	single player,
+4032	play on your computer
+4033	multiplayer,
+4034	play on the Internet
+4035	server,
+4036	launch a server on your computer to host multiplayer games
+4037	options,
+4038	modify your parameters
+
+4041	quit,
+4042	quit this program
+4043	what kind of server?
+4044	simple server
+4045	only you can create games
+4046	public server
+4047	a guest can create games
+4048	cancel
+4049	Your server couldn't probably register itself to the metaserver. Please check your connection to the Internet.
+4051	good bye
+4052	press Tab to select. press Enter to confirm.
+4053	accept the invitation from
+4054	rejoin game
+4055	start a game on
+4056	welcome
+4057	error : there are too many games
+4058	invite
+4059	start
+4060	cancel this game
+4061	leave this game
+4062	the game will start in 5 seconds
+4063	the game will start when the organizer is ready
+4064	press enter to confirm
+
+4066	press tab repeatedly to cycle through each of the visible objects
+4067	press tab to select the target and then press enter to confirm
+
+4070	cancel game
+4071	continue game
+4072	Cannot contact the metaserver. Please check your connection to the Internet.
+4073	server hosted by
+4074	for
+4075	cancel
+4076	go back to previous menu
+4077	At the moment, there aren't any servers registered on the metaserver. Please try again later.
+4078	servers on
+4079	use a compatible version. Please select a server.
+4080	error: the server couldn't start
+4081	error: the server is unreachable. The server is closed, or behind a firewall, or behind a router.
+4082	error: unexpected data was received from the server. This is not a SoundRTS server
+4083	error: connection rejected by the server. This is not a SoundRTS server
+4084	or your login has been rejected
+4085	error while connecting to the server
+4086	options menu
+4087	Modify your login
+
+4096	save,
+4097	save the modifications and then return to the main menu
+4098	cancel,
+4099	return to the main menu without saving the modifications
+
+4101	a new window will open
+4102	the connection was interrupted
+4103	set the game speed to slow
+4104	set the game speed to normal
+4105	set the game speed to fast
+
+4112	save the game
+4113	restore a saved game
+4114	play against the computer on map
+4115	computer versus computer
+
+4118	go back to the previous menu
+4119	choose a server in a list
+4120	enter the I P address of the server
+4121	private server
+4122	The server won't be added to the list.
+
+4200	the wood production is improved
+4201	catapult
+4202	awaiting your orders
+4203	of
+4204	cannot build there
+4205	you are not controlling any unit
+4206	the display is now on
+4207	the display is now off
+4208	unknown
+4209	in the fog of war
+4210	F10 to access to the menu
+4211	first person mode
+4212	map mode
+4213	blacksmith
+4214	upgrade
+4215	swords
+4216	arrows
+4217	footmen armors
+4218	archers armors
+4219	to
+4220	keep
+4221	castle
+4222	stables
+4223	the menu of
+4224	 has just changed.
+4225	knight
+4226	workshop
+4227	dragons lair
+4228	mages tower
+4229	mage
+4230	flying machine
+4231	dragon
+4232	server error
+4233	bows range
+4234	a newer version of this program is available on the Internet
+4235	enter your new login name
+4236	use letters and numbers only
+4237	bad login
+4238	the current login was kept
+4239	new login
+4240	has just logged in
+4241	has just joined
+4242	players on
+4243	invites you
+4244	Not enough players to start. The minimum is
+4245	current login
+4246	the population limit has been reached
+4247	mana points on
+4248	research
+4249 super healer
+4250	teleportation
+4251	to
+4252	not enough mana
+4253	percent of the volume
+4254	horses speed
+4255	define the rally point for the new units
+4256	gathered
+4257	aggressive computer
+4258	quiet computer
+4259	has just logged out
+4260	on the server of
+4261	has just quit the game
+4262	optional sound pack
+4263	is now on
+4264	is now off
+4265	cheat mode
+4266	restart
+4267	campaign
+4268	new objective
+4269	objective complete
+4270	mission complete
+4271	chapter
+4272	prologue
+4273	epilogue
+4274	conversion
+4275	scout tower
+4276	guard tower
+4277	cannon tower
+4278	load
+4279	load all from
+4280	unload
+4281	unload all to
+4282	enter in
+4283	dark archer
+
+5000 a
+5001 b
+5002 c
+5003 d
+5004 e
+5005 f
+5006 g
+5007 h
+5008 i
+5009 j
+5010 k
+5011 l
+5012 m
+5013 n
+5014 o
+5015 p
+5016 q
+5017 r
+5018 s
+5019 t
+5020 u
+5021 v
+5022 w
+5023 x
+5024 y
+5025 z
+
+5026	dot
+
+4284 move
+4285 to alliance
+4286 allied
+4287 says
+4288 enter your message
+
+4289 invisible
+4290 detector
+4291 cloaker
+
+4292 summon
+4293 raise dead
+4294 resurrection
+
+4295 zombie
+4296 skeleton
+
+4297 priest
+4298 temple
+
+4299 holy vision
+4300 exorcism
+
+4301 human
+4302 orc
+
+4303 necromancer
+4304 necropolis
+
+4305 deadly fog
+4306 meteors
+
+4307 recall
+
+4308 stone
+4309 quarry
+
+4311 has been defeated
+4312 You have been defeated.
+4313 You are now in observer mode.
+
+4314 plateau
+
+4315 observe a recorded game
+4316 Press Control Shift F4 to observe another player.
+
+4317 Enter a command.
+
+4318 zoom
+
+4319 modify the mods load order
+4320 add a mod to the list
+4321 the list is empty
+4322 Loading
+
+4323 packages
+4324 packages menu
+4325 install a package
+4326 uninstall a package
+4327 update a package
+4328 Downloading...
+4329 Extracting...
+4330 Couldn't find mod:
+
+4331 wall
+4332 gate
+4333 block
+
+4334 random faction
+
+4335 Count limit reached
+
+4336 open user folder
+4337 documentation
+
+4338 massive wall
+4339 massive gate
+4340	Start a public game on
+4341	Mods
+4342	Soundpacks
+4343 speed
+
+4344 sea
+4345 lake
+4346 river
+4347 mountain
+4348 bridge
+4349 ford
+4350 marsh
+4351 ocean
+4352 mountain pass
+
+4353 enable auto-repair
+4354 disable auto-repair
+4355 enable auto-gather
+4356 disable auto-gather
+
+4357 shipyard
+4358 boat
+4359 destroyer
+4360 battleship
+4361 submarine
+
+4362 meadows
+4363 forest
+4364 dense forest
+4365 toggle_counterattack
+4366 counterattack_enabled
+4367 counterattack_disabled
+4368 guard
+4369 chase
+4370 capture
+4372 gold_house
+4373 producing
+4375 stop_produce
+
+; Sound balance settings
+4376 sound settings
+4377 sound balance settings
+4378 enable sound balance
+4379 disable sound balance
+4380 toggle sound balance on or off
+4381 sound balance method
+4382 change sound balance method
+4383 sound balance enabled
+4384 sound balance disabled
+4385 sqrt
+4386 linear
+4387 log
+4388 none
+
+4389 attributes
+4390 press the corresponding letter for information
+4391 press escape to exit
+4392 exit attributes screen
+4393 several units selected: 
+4394 no attributes available
+4395        : 
+4396 melee_damage
+4397 range_damage
+4398        melee defense
+4399 rdg_defense
+4400 mdg_cd
+4401 rdg_cd
+4402      mdg_range
+4403        rdg_range
+4404        versus 
+
+4405 mdg_vs
+4406 rdg_vs
+4407 hp
+4408 stats
+4409 techinc_stats
+4410 melee wind-up
+4411 ranged wind-up
+4412 melee minimum range
+4413 ranged minimum range
+4414 melee hit rate
+4415 ranged hit rate
+4416 melee dodge rate
+4417 ranged dodge rate
+4418 melee splash damage
+4419 ranged splash damage
+4420 melee splash radius
+4421 ranged splash radius
+4422 melee minimum splash decay
+4423 ranged minimum splash decay
+4424 mdf_vs
+4425 rdf_vs
+4426 mdg_range_vs
+4427 rdg_range_vs
+4428 mdg_minimal_range_vs
+4429 rdg_minimal_range_vs
+4430 mdg_ready_vs
+4431 rdg_ready_vs
+4432 mdg_cd_vs
+4433 rdg_cd_vs
+4434 mdg_cover_vs
+4435 rdg_cover_vs
+4436 mdg_dodge_vs
+4437 rdg_dodge_vs
+4438 mdg_cover_on_terrain
+4439 rdg_cover_on_terrain
+4440 mdg_dodge_on_terrain
+4441 rdg_dodge_on_terrain
+4442 speed_vs
+4443 speed_on_terrain
+4444 mana
+4445 discount
+4446 auto_explore
+
+
+4500	友军
+4501	敌人
+4502	全部
+4503	建筑
+4504	单位
+4505	元素
+4506	所有类型
+4507 reinforcements
+4508 change_to
+4509 too early
+4510 pickup
+
+
+4600 level
+4601 SP
+4602 on
+4603 max_level
+4604 revival time
+4605 level_up
+4606 resurrected
+4610 melee critical multiplier
+4611 ranged critical multiplier
+4612 melee critical chance
+4613 ranged critical chance
+4614 mdg_crit_vs
+4615 rdg_crit_vs
+4616 mdg_crit_rate_vs
+4617 rdg_crit_rate_vs = [4617]   # 远程暴击几率对特定单位
+
+4618 melee critical resistance
+4619 ranged critical resistance
+4620 mdf_crit_rate_vs
+4621 rdf_crit_rate_vs
+
+4622 melee armor piercing
+4623 ranged armor piercing
+4624 melee armor piercing chance
+4625 ranged armor piercing chance
+4626 mdg_piercing_vs
+4627 rdg_piercing_vs
+4628 mdg_piercing_rate_vs
+4629 rdg_piercing_rate_vs = [4629] # 远程穿甲几率对特定单位
+
+4630 melee piercing resistance
+4631 ranged piercing resistance
+4632 mdf_piercing_vs
+4633 rdf_piercing_vs
+4634 music
+4635 music on
+4636 music off
+4637 volume percent
+
+; 添加自动生产和手动生产命令的文本
+4650 start automatic production
+4651 start manual production
+
+; 添加自动耕种和手动耕种命令的文本
+4655 start automatic cultivation
+4656 start manual cultivation
+4657 cultivation
+4658 plowing
+4659 stop cultivation
+4660 house
+4661 orchard
+
+4700 Spectate Game
+4701 Game in Progress
+4702 No Games Available to Spectate
+4703 Select Game to Spectate
+4704 Spectating Game
+4705 Stop Spectating
+4706 You are Spectating
+4707 Spectator Joined
+4708 Spectator Left
+4709 Game Ongoing
+4710 slow
+4711 no_enemy_in_sight
+4712 attacking
+4713	center
+4714 zoom_range_error
+4715 enter_zoom_scale, exp 3x3 or 4x4
+4716 can train
+
+# 冲锋相关属性
+4717 melee charge damage
+4718 charge_mdg_vs
+4719 ranged charge damage
+4720 charge_rdg_vs
+4721 melee charge cooldown
+4722 ranged charge cooldown
+4723 melee charge distance
+4724 ranged charge distance
+4725 melee charge splash
+4726 charge_mdg_splash_vs
+4727 ranged charge splash
+4728 charge_rdg_splash_vs
+4729 melee charge splash decay minimum
+4730 charge_mdg_splash_decay_min_vs
+4731 ranged charge splash decay minimum
+4732 charge_rdg_splash_decay_min_vs
+4733 melee charge splash radius
+4734 charge_mdg_radius_vs
+4735 ranged charge splash radius
+4736 charge_rdg_radius_vs
+
+# OP冲锋相关属性
+4737 melee counter-charge damage
+4738 ranged counter-charge damage
+4739 op_charge_mdg_vs
+4740 op_charge_rdg_vs
+4741 melee counter-charge cooldown
+4742 ranged counter-charge cooldown
+4743 melee counter-charge distance
+4744 ranged counter-charge distance
+
+# 新增属性相关消息
+4750 can_use_tech
+4751 can_use_skill
+4752 can_research
+4753 can_upgrade_to
+4754 mana_cost
+4755 effect
+4756 effect_range
+4757 effect_radius
+4758 apply_bonus
+4759 bonus
+4760 harm level
+4761 harm_target_type
+4762 meteors
+4763 infinite
+4764 apply
+4765 lasting
+4768 cost
+4769 time
+4770 population
+4771 requirements
+4772 summon
+4773 heal
+4774 damage
+4775 resurrect max
+4776 units
+4777 raise dead
+4778 , type:
+4779 convert enemy units
+4780 cooldown
+4781 hit points
+4782 max hit points
+4783 melee damage
+4784 ranged damage
+4785 melee defense
+4786 ranged defense
+4787 move speed
+4788 sight range
+4789 melee range
+4790 ranged range
+4791 melee cooldown
+4792 ranged cooldown
+4793 mana
+4794 max mana
+4795 gather time
+4796 gather quantity
+4797 production time
+4798 production quantity
+4799 cost
+4800 time cost
+4801 population cost
+4802 's attributes:
+4803 no such attribute
+4804 no bonus
+4805 minutes
+4806 population provided
+4807 heal level
+4808 seconds
+4809 can build
+4810 unit type
+4811 class
+4812 building
+4813 worker
+4814 soldier
+4815 effect
+4816 tech
+4817 Ships that are repairable and docked
+4818 yes
+4819 no
+4820 mdg_explode
+4821 rdg_explode
+4822 self-destruct HP cost percent
+4823 explosion damage factor
+4824 sight_range
+4825 mdg_targets
+4826 rdg_targets
+
+; 采集和修理相关属性
+4827 can gather
+4828 gather time
+4829 gather quantity
+4830 can repair
+4831 target_ground
+4832 target_air
+4833 target_building
+4834 target_unit
+4835 all
+# 资源显示相关消息常量
+4836 resource_type
+4837 extraction_time
+4838 extraction_qty
+4839 resource_regen
+4840 resource_volume_max
+4841 resource_volume_start
+4842 deposit_type
+4843 resource_name
+
+# 新增属性相关消息常量
+4844 units_type
+4845 is_repairable
+4846 is_healable
+4847 transport_capacity
+4848 transport_volume
+4849 allow_units_attack
+4850 allow_units_add
+4851 corpse
+4852 ground
+4853 air
+4854 water
+4855 produce
+4856 not_produce
+4857 is_undead
+4858 resource
+4859 current_weapon
+4860 available_weapons
+4861 switchable
+4862 switch_weapon
+4863 sword
+4864 bow
+4865 weapon name
+4866 armor
+4867 current armor
+4868 armor name
+4871 armor
+4872 melee
+4873 weapon
+4875 inventory
+4876 item name
+4877 collision
+4878 consume_on_pickup
+4879 is_loot
+4880 resource rewards
+4881 skills
+4882 buffs
+4883 item
+4885 hero
+4886 short sword
+4887 production_type
+4888 intro
+4889 Basic worker unit, capable of gathering resources, constructing buildings, and repairing ships. It is the foundation of any civilization.
+4890 Basic melee infantry, equipped with a sword and armor. They are inexpensive to train and form the main component of the army.
+4891 heal radius
+4892 harm radius
+4893 heal range
+4894 harm range
+4895 heal cooldown
+4896 harm cooldown
+4897 heal wind-up
+4898 harm wind-up
+4899 HP regen cooldown
+4900 HP regen wind-up
+4901 mana regen cooldown
+4902 mana regen wind-up
+4903 heal_target_type
+4904 per level
+4905 growth
+4906 HP regen
+4907 current quantity
+4908 max quantity
+4909 category
+4910 inventory capacity
+4911 mana regen
+4912 melee minimum damage
+4913 ranged minimum damage
+4914 buff_radius
+4915 minimum damage
+4916 melee projectile delay
+4917 ranged projectile delay
+4918 melee status duration
+4919 ranged status duration
+4924 forced damage
+4925 melee charge minimum distance
+4926 ranged charge minimum distance
+4920	Treaty
+4921	Treaty active, no attacks allowed
+4922	Treaty over, you may fight
+4923	no treaty
+4930 deer
+4931 sheep
+4932 carcass
+4933 boar
+4934 herd
+4935 herded
+4936 hunting techniques
+4950 Co-op campaign
+4951 Local co-op campaign
+4952 Select co-op campaign
+4953 Select co-op chapter
+4954 Allies set for co-op
+4955 Cooperate with your teammate to play the campaign
+4960 diplomacy
+4961 no candidate
+4962 allied with
+4963 unallied with
+4964 mutual
+4965 one way
+4966 ally with
+4967 unally with
+4968 alliance request from
+4969 alliance accepted with
+4970 alliance declined with
+4971 alliances are locked for this game
+
+4972 Alliance request sent
+4973 Alliance request declined
+4974 Alliance request withdrawn
+4975 Alliance formed
+4976 water is impassable
+4977 land is impassable
+4980 Current Phase
+4981 Dark Age
+4982 Feudal Age
+4983 Castle Age
+4984 Imperial Age
+4985 can advance to
+4986 continue unfinished game
+4987 continue unfinished game explanation
+4988 select save slot
+4989 no save found
+4990 save slot prefix
+4991 empty slot
+4992 save ok
+4993 resume saved
+4994 enter a new name. press enter to confirm, escape to cancel
+4995 delete this item? press enter to confirm, escape to cancel
+4996 deleted
+4997 renamed
+4998 invalid name
+4999 canceled
+5027 neutral
+5028	replay
+5029 non-neutral
+5030 optional objective
+5031 optional objective abandoned
+5032 primary objective
+5033 random map
+5034 template
+5035 standard
+5036 fast
+5037 contest the center
+5038 macro
+5039 economic
+5040 map size
+5041 small
+5042 medium
+5043 large
+5044 number of players
+5045 players
+5046 monster strength
+5047 weak
+5048 medium
+5049 strong
+5050 resource distribution
+5051 balanced
+5052 clustered
+5053 terrain
+5054 random
+5055 grasslands
+5056 marsh
+5057 mountains
+5058 seed
+5059 lanes
+5060 contest the lanes
+5061 random seed
+5062 custom seed
+5063 enter a seed number
+5064 map generated
+5065 team mode
+5066 free for all
+5067 two teams
+5068 water
+5069 no water
+5070 lake
+5071 river
+5072 treasure
+5073 no treasure
+5074 low treasure
+5075 high treasure
+5076 share code
+5077 import share code
+5078 enter share code
+5079 invalid share code
+5080 map preview
+5081 treasure chest
+5082 repeating crossbowman
+5083 animal
+5084 provides build field
+5085 requires build field
+5086 build field radius
+5087 build mode
+5088 assisted build
+5089 place and leave
+5090 sacrifice build
+5091 self constructs
+5092 sacrifices worker
+5093 buildable anywhere
+5094 addon building
+5095 addon host types
+5096 can have addon
+5097 addon max
+5100 build field persists
+5101 build field spreads
+5102 requires field on square
+5103 loses power without field
+5104 spread squares per second
+5105 requires deposit
+5106 place battlefield effect
+5110 deposit quantity
+5111 phase bonus targets
+5112 units auto upgrade
+5115 meat
+5116 fruit
+5117 production item
+5118 automatic production
+5119 manual production
+5120 automatic cultivation
+5121 manual cultivation
+5122 gold mint
+5123 gold coin
+5113 except
+5114 any target other than
+5190 mission briefing
+5191 primary objectives
+5192 secondary objectives
+5193 difficulty
+5194 standard
+5195 moderate
+5196 hard
+5197 locked
+5198 completed
+5199 campaign synopsis
+5200 start mission
+5201 players needed
+5202 online co-op campaign
+5203 next mission unlocked
+5204 retry this mission
+5205 easy
+5206 extreme
+5207 standard difficulty
+5208 enemy strength
+5209 unit selection interface
+5210 building selection interface
+5211 command interface
+5212 skill interface
+5213 help and query interface
+5214 diplomacy interface
+5215 empty backpack
+5216 hotkey scheme
+5217 layered hotkeys
+5218 classic hotkeys
+5219 hotkey scheme changed takes effect at next game
+
+; Computer difficulty levels
+5220 beginner computer
+5221 intermediate computer
+5222 advanced computer
+5223 expert computer
+5224 nightmare computer
+
+; Post-game score breakdown
+5225 outcome
+5226 mining
+5227 resource utilization
+5228 unit survival
+5229 building defense
+5230 combat
+5231 demolition
+5232 total score
+5233 grade
+5234 grade S, perfect
+5235 grade A, excellent
+5236 grade B, good
+5237 grade C, pass
+5238 grade D, fair
+5239 grade E, needs improvement
+5240 out of
+5241 plus
+5242 points
+5243 defeated
+5244 achievement unlocked
+5245 gained
+5246 medals
+5247 gained card
+5248 charges remaining
+5249 rank promoted to
+5250 honor title gained
+5251 frugal efficiency
+
+5260 co-op player
+5261 open slot
+5262 AI co-op partner
+5263 set AI co-op partner
+5264 set slot to open
+5265 co-op room type
+5266 private co-op room
+5267 public co-op room
+
+5280 key mapping
+5281 global hotkeys
+5282 current hotkey
+5283 press a new key
+5284 Esc to cancel, Backspace to clear binding
+5285 hotkey saved, takes effect at next game
+5286 key mapping for classic hotkeys will come in a later version
+5287 reset global hotkeys to default
+5288 global hotkeys reset to default
+5289 key already used by
+5290 Enter to confirm replace, Esc to cancel
+5291 unbound
+5292 set to
+5293 press Enter to remap
+5294 active
+5295 inactive
+5296 layer hotkeys reset to default
+5297 reset layer hotkeys to default
+5298 map browse interface
+5299 reset classic hotkeys to default
+
+5300 perfect battle
+5301 excellent command
+5302 good battle
+5303 passing grade
+5304 frugal victory
+5305 perfect preservation
+5306 nightmare hunter
+5307 expert slayer
+5308 first victory
+5309 reinforcement contract
+
+5310 achievements
+5311 view unlocked achievements and armory inventory for this mod
+5312 locked
+5313 unlocked
+5314 no achievements defined for this mod
+5315 achievement list
+5316 armory
+5317 view rank honors medals and card inventory for this mod
+5318 total medals
+5319 charges
+5350 current rank
+5351 next rank
+5355 still need
+5356 medals
+5357 select loadout card for slot
+5358 skip this slot
+5359 start game now
+5360 no cards available to carry
+5361 loadout card applied
+5362 slot
+5363 loadout slots increased, now
+5364 carry before skirmish or random map vs computer
+5450 takes effect immediately when the game starts
+5365 extra at start
+5366 spawns near your start at game start
+5367 repeat completion
+5368 view achievement list
+5369 view armory
+5370 requires
+5371 below
+5372 at least
+5373 victory this game
+5374 or
+5375 view this mod achievements and unlock requirements
+5376 on map
+5377 times
+5378 cumulative
+5379 branches
+5380 cross-faction progress
+5381 each unlock at least
+5382 medals at least
+5383 each has honor title
+5384 map milestone complete
+5385 achievements
+5386 select your faction for this game
+5387 takes effect after
+5388 loadout card effect triggered
+5389 spawns near your start
+5390 grants extra
+5393 grants technology
+5394 extra after first completed training of
+5395 this game, extra after first completed training of
+5392 .
+5352 honor titles
+5353 pre mission card slots
+5354 requires rank
+
+5320 gold supply card
+5321 wood supply card
+5322 infantry reinforcement card
+5323 cavalry reinforcement card
+5324 archer reinforcement card
+5325 mage reinforcement card
+5326 dragon reinforcement card
+5327 siege reinforcement card
+5328 air reinforcement card
+5329 infantry cavalry combo card
+5330 infantry archer combo card
+5331 archer cavalry combo card
+5332 mixed army card
+5333 delayed infantry reinforcement card
+5334 delayed melee weapon card
+5396 infantry train bonus card
+
+5340 no cards or medals earned yet
+
+5399 classic hotkeys reset to default
+
+5397 hotkey mapping for mod
+
+5400 recruit
+5401 private first class
+5402 corporal
+5403 sergeant
+5404 lieutenant
+5405 captain
+5406 major
+5407 colonel
+5408 major general
+5409 lieutenant general
+5410 general
+5411 marshal
+
+5420 master of frugality
+5421 perfect guardian
+5422 nightmare slayer
+5423 expert slayer
+5424 first blood
+
+5425 victory mode
+5426 conquest, eliminate all enemy players
+5427 economic, reach resource goal
+5428 exploration, visit every ancient ruin
+5429 survival, hold until time runs out
+5430 visit every ancient ruin with your units
+5431 ancient ruin
+5432 capturable barracks
+5433 ruin discovered
+5434 barracks captured
+5435 accumulated resources reach
+5436 hold for
+5437 minutes
+5451 eliminate all enemy players
+5452 while keeping your town hall
+5438 deliver a gold coin to the city-state trader
+5439 the trader rewards you with supplies
+5440 deliver a healing potion to the village healer
+5441 the healer joins your cause
+5442 requires unlocking achievement
+5443 on a random map
+5445 random conqueror
+5446 random tycoon
+5447 ruin hunter
+5448 survivor
+5449 master of four modes
+5453 load invalid
+5454 load failed
+5455 unload invalid
+5456 unload failed
+
+5457 small infantry reinforcement card
+5458 medium infantry reinforcement card
+5459 large infantry reinforcement card
+5460 small cavalry reinforcement card
+5461 medium cavalry reinforcement card
+5462 large cavalry reinforcement card
+5463 small archer reinforcement card
+5464 medium archer reinforcement card
+5465 large archer reinforcement card
+5466 small mage reinforcement card
+5467 medium mage reinforcement card
+5468 large mage reinforcement card
+5469 small dragon reinforcement card
+5470 medium dragon reinforcement card
+5471 large dragon reinforcement card
+5472 small siege reinforcement card
+5473 medium siege reinforcement card
+5474 large siege reinforcement card
+5475 small air reinforcement card
+5476 medium air reinforcement card
+5477 large air reinforcement card
+5478 small gold supply card
+5479 medium gold supply card
+5480 large gold supply card
+5481 small wood supply card
+5482 medium wood supply card
+5483 large wood supply card
+
+5484 grade F, poor
+5485 hero Raynor card
+5486 mission briefing
+5487 ancient ruins lie scattered across the map
+5488 some ruins may hide more secrets in neighboring squares
+5489 rivals will not wait, but find every ruin first
+5490 metal echoes behind the stone, search the neighboring square
+5491 the hidden chamber yields extra spoils
+5492 ruins still undiscovered
+5493 only one ruin left to discover
+7736 Raynor the Coalition Lord
+5398 no mod
+5500 local select all
+5501 cycle unit
+5502 worker
+5503 soldier
+5504 building
+5505 all soldiers, local select all
+5506 local unit
+5507 generic building
+5510 resource 1 status
+5511 resource 2 status
+5512 resource 3 status
+5513 population status
+5514 cancel or enter map browse
+5515 toggle unit and building interface
+5516 toggle command and skill interface
+5517 toggle backpack and equipment
+5518 enter help and query
+5519 enter diplomacy interface
+5520 attributes screen
+5521 backpack
+5522 equipment screen
+5523 select next target
+5524 select previous target
+5525 select next useful target
+5526 select previous useful target
+5527 move north one square
+5528 move south one square
+5529 move west one square
+5530 move east one square
+5531 next scouted square
+5532 previous scouted square
+5533 next conflict square
+5534 previous conflict square
+5535 next unknown square
+5536 previous unknown square
+5537 next resource square
+5538 previous resource square
+5539 default command
+5540 confirm command
+5541 examine
+5542 follow unit view
+5543 unit hit points
+5544 next objective description
+5545 previous objective description
+5546 announce player list
+5547 history previous
+5548 history next
+5549 game menu
+5550 volume up
+5551 volume down
+5552 first-person mode
+5553 console
+5554 toggle music
+5555 fullscreen
+5556 toggle talking clock
+5557 change player
+5558 command unit
+5559 order letter shortcut
+5560 toggle side filter
+5561 toggle type filter
+5562 command building
+5563 browse next command
+5564 repeat last command
+5565 repeat last command immediately
+5566 order
+5567 browse next skill
+5568 skill
+5569 skill list
+5570 auto attack
+5571 help next item
+5572 help previous item
+5573 announce time
+5574 open chat input
+5575 toggle metronome
+5576 exit help interface
+5577 next resource 1 deposit
+5578 previous resource 1 deposit
+5579 next resource 2 deposit
+5580 previous resource 2 deposit
+5581 next resource 3 deposit
+5582 previous resource 3 deposit
+5583 next meadow
+5584 previous meadow
+5585 next passage
+5586 previous passage
+5587 toggle zoom
+5588 exit map browse
+5589 select alliance candidate
+5590 send alliance request
+5591 accept alliance
+5592 decline or cancel alliance
+5593 exit diplomacy interface
+5594 cancel command
+5595 zoom precision
+5596 select units
+5597 all
+5598 one half
+5599 one third
+5600 one quarter
+5601 one fifth
+5602 ungroup
+5603 control group 1
+5604 control group 2
+5605 control group 3
+5606 control group 4
+5610 Control
+5611 Shift
+5612 Alt
+5613 up
+5614 down
+5615 left
+5616 right
+5617 PageUp
+5618 PageDown
+5619 Home
+5620 End
+5621 Tab
+5622 space
+5623 Enter
+5624 keypad Enter
+5625 Escape
+5626 Backspace
+5627 keypad plus
+5628 keypad minus
+5629 equals
+5630 minus
+5631 backslash
+5632 semicolon
+5633 backquote
+5634 quote
+5635 left Control
+5636 right Control
+5637 left Alt
+5638 right Alt
+5639 left Shift
+5640 right Shift
+5641 display toggle
+5642 save group
+5643 append units to group
+5644 toggle cheat mode
+5645 decrease zoom precision
+5646 increase zoom precision
+5647 query zoom precision
+5648 reload parameters
+5649 stop history playback
+5650 music volume up
+5651 music volume down
+5652 confirm with queue
+5653 confirm imperative
+5654 queue order
+5655 map-wide range
+5656 global select all
+5657 browse previous command
+5658 inactive commands only
+5659 toggle side filter backward
+5660 toggle type filter backward
+5661 repeat now with queue
+5662 all soldiers
+5663 previous alliance candidate
+5664 five squares
+5665 ignore collision
+5666 cycle unit backward
+5667 idle units only
+5668 include buildings without menu
+5669 map-wide
+5670 worker and all soldiers
+5671 search hotkeys
+5672 enter search text, Esc to cancel
+5673 no matching hotkeys
+5674 advanced variants
+5675 export hotkey config
+5676 import hotkey config
+5677 copied to clipboard
+5678 import successful, takes effect next game
+5679 import failed, invalid format
+5680 merge import
+5681 replace import
+5682 type first letter to jump quickly
+5683 alias keys
+5684 default key
+5685 first person interface
+5686 level too low to learn this skill
+5687 already know this skill
+5688 learned
+5689 received building demolition refund
+5690 drop
+5691 give
+5692 enable auto explore
+5693 disable auto explore

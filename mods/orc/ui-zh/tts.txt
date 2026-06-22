@@ -1,0 +1,6 @@
+﻿; coding: utf-8
+; mod menu title
+
+7754 兽人
+
+7000 猪圈

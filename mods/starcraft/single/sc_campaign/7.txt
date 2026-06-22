@@ -1,0 +1,33 @@
+; Campaign ch.7 — Zerg late game (Mutalisk, Ultralisk, Queen, Burrow)
+
+title 7482
+intro 7487
+
+square_width 12
+nb_columns 10
+nb_lines 1
+
+west_east_paths a1 b1 c1 d1 e1 f1 g1 h1 i1
+
+mineral_field 3000 a1
+geyser 1 b1
+nb_meadows_by_square 2
+
+nb_players_min 1
+nb_players_max 1
+starting_squares a1
+starting_units hatchery 8 drone spawning_pool overlord
+starting_resources 500 300
+
+timer_coefficient 1
+
+trigger player1 (timer 0) (do (register_objective 1 2 3 4 5 6 7 8 9) (add_objective 1 7496))
+trigger player1 (has spire) (do (objective_complete 1) (add_objective 2 7497))
+trigger player1 (has mutalisk) (do (objective_complete 2) (add_objective 3 7498))
+trigger player1 (has queen_nest) (do (objective_complete 3) (add_objective 4 7499))
+trigger player1 (has queen) (do (objective_complete 4) (add_objective 5 7500))
+trigger player1 (has ultralisk_cavern) (do (objective_complete 5) (add_objective 6 7501))
+trigger player1 (has ultralisk) (do (objective_complete 6) (add_objective 7 7539))
+trigger player1 (has zergling) (do (objective_complete 7) (add_objective 8 7502))
+trigger player1 (has u_burrow) (do (objective_complete 8) (add_objective 9 7503))
+trigger player1 (has burrowed_zergling) (objective_complete 9)

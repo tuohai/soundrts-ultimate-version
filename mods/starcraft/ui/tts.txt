@@ -1,0 +1,340 @@
+; coding: utf-8
+; mod menu
+7200 StarCraft build mechanics demo
+
+; resources
+7270 minerals
+7271 vespene gas
+7272 build on a vespene geyser
+7273 mineral field
+7274 vespene geyser
+7275 Refinery
+7276 Prologue
+7277 Welcome to the StarCraft build mechanics tutorial. Five chapters will walk you through core construction rules for Protoss, Zerg, and Terran.
+7278 Chapter one starts with the Protoss psi field: extend power from your Nexus to build far from home.
+7279 Press any key to skip. Ready? Let us begin.
+
+; Protoss units
+7210 Nexus
+7211 Pylon
+7212 Gateway
+7213 Assimilator
+7214 Photon Cannon
+7215 Probe
+7216 Zealot
+7280 Forge
+7281 Cybernetics Core
+7282 Stargate
+7283 Dragoon
+7284 Observer
+7285 Ground Weapons level 1
+7286 Ground Weapons level 2
+7287 Plasma Shields level 1
+7288 Plasma Shields level 2
+7400 Singularity Charge level 1
+7401 Singularity Charge level 2
+
+; Zerg units
+7220 Hatchery
+7221 Spawning Pool
+7222 Extractor
+7223 Drone
+7224 Zergling
+7289 Roach Warren
+7290 Hydralisk Den
+7291 Roach
+7292 Hydralisk
+7293 Melee Attacks level 1
+7294 Melee Attacks level 2
+7295 Carapace level 1
+7296 Carapace level 2
+7402 Metabolic Boost
+7403 Missile Attacks level 1
+7404 Missile Attacks level 2
+
+; Terran units
+7230 Command Center
+7231 Barracks
+7232 Factory
+7233 Starport
+7234 Tech Lab
+7235 Reactor
+7236 SCV
+7237 Marine
+7250 Flying Barracks
+7251 Flying Factory
+7252 Flying Starport
+7253 Marauder
+7254 Hellion
+7255 Siege Tank
+7256 Medivac
+7405 Stim Pack
+7406 Use Stim Pack
+7407 Heal
+7410 Siege Mode
+7297 Engineering Bay
+7298 Armory
+7299 Bunker
+7242 Infantry Weapons level 1
+7305 Infantry Weapons level 2
+7306 Infantry Armor level 1
+7307 Infantry Armor level 2
+7308 Vehicle Weapons level 1
+7309 Vehicle Weapons level 2
+7310 Vehicle Armor level 1
+7311 Vehicle Armor level 2
+
+; factions (lobby)
+7260 Terran
+7261 Protoss
+7262 Zerg
+7263 Supply Depot
+7264 Overlord
+
+; multiplayer test maps
+7546 Protoss: Psi Field
+7547 Build at least 4 Pylons along the path, then build a Gateway in square f1.
+7548 Protoss psi field test complete.
+7313 Terran: Supply
+7393 Nexus psi reaches about 18 meters. Each Pylon adds 12 meters. Four Pylons chained from the Nexus can power square f1; warp a Gateway there.
+7394 Not within psi field range
+7395 Not on creep
+
+7320 Zerg: Creep
+7321 Wait for creep to spread to the far square, then sacrifice a Drone for a Spawning Pool.
+7322 Zerg creep test complete.
+7323 Destroy the Hatchery, then sacrifice a Drone for an Extractor on the lingering creep.
+7324 Hatchery paints creep within seven squares and it spreads outward each second. The far square needs a few seconds before you can build. After the pool is done, destroy the Hatchery and build an Extractor on the creep that remains.
+
+7330 Terran: Addon
+7331 Build a Tech Lab on your Barracks.
+7332 Terran addon test complete.
+
+7340 Terran: Addon Recombine
+7341 Build Tech Lab on Barracks, lift Barracks, lift Factory. Tab the Tech Lab, go, land to reattach, then train a Tank.
+7342 Terran recombine test complete.
+
+7360 StarCraft AI multiplayer test
+7361 Enable the starcraft mod and pick terran, protoss, or zerg. Invite easy or aggressive computers to fill empty slots and watch psi, creep, addons, and recombine.
+
+7370 StarCraft: Minerals and Vespene
+7371 Build an Assimilator on the vespene geyser, then gather 8 vespene back to your Nexus.
+7372 Minerals and vespene test complete.
+
+7380 StarCraft: Tech Tree
+7381 Build a Cybernetics Core, then train a Dragoon from your Gateway.
+7382 Tech tree test complete.
+
+7396 Command Center, Nexus, and Hatchery provide 10 supply. Build Supply Depots, Pylons, or upgrade a larva to an Overlord for 8 more each.
+7397 Build a Supply Depot, then train twelve Marines from your Barracks.
+7398 Supply test complete.
+7399 Not enough supply
+
+7350 Go to the Tech Lab first, then land to reattach the addon.
+
+; late game units and skills
+7420 Templar Archives
+7421 High Templar
+7422 Dark Templar
+7423 Psi Storm
+7424 Psi Storm research
+7425 Fleet Beacon
+7426 Phoenix
+7427 Carrier
+7428 Air Weapons level 1
+7429 Air Weapons level 2
+7430 Air Armor level 1
+7431 Air Armor level 2
+7432 Spire
+7433 Mutalisk
+7434 Ultralisk Cavern
+7435 Ultralisk
+7436 Queen
+7460 Queen's Nest
+7437 Burrow
+7438 Burrowed form
+7439 Flyer Attacks level 1
+7440 Flyer Attacks level 2
+7441 Flyer Carapace level 1
+7442 Flyer Carapace level 2
+7443 Spawn Larva
+7444 Inject Larva
+7445 Ghost Academy
+7446 Ghost
+7447 Nuclear Strike research
+7448 Nuclear Strike
+7449 Thor
+7450 Battlecruiser
+7451 Ship Weapons level 1
+7452 Ship Weapons level 2
+7453 Ship Armor level 1
+7454 Ship Armor level 2
+7455 Burrowed Zergling
+7456 Personal Cloaking
+7457 Yamato Cannon
+7458 Cloaked Ghost
+7459 Burrowed form
+
+; merged campaign (build + late game)
+7550 StarCraft Mod Mechanics Tutorial
+7552 Welcome to the StarCraft mod mechanics tutorial. Eight missions total: the first five cover Protoss psi fields, Zerg creep, Terran addons, recombine, and supply; the last three cover late-game units, skills, and tech for each race.
+7553 Follow each mission's objective list at your own pace. There are no enemies.
+
+; late game campaign chapter titles (missions 6–8)
+7480 StarCraft Late Game Tests
+7481 Chapter 6: Protoss late game — Templar, Carrier, air upgrades
+7482 Chapter 7: Zerg late game — Mutalisk, Ultralisk, Queen, Burrow
+7483 Chapter 8: Terran late game — Ghost, Nuke, Thor, Battlecruiser
+7485 Welcome to the StarCraft late game test campaign. Three chapters cover advanced units, skills, and tech for each race.
+7486 This mission tests Protoss late game: Templar, Psi Storm, and Carrier. Follow the objective list; no enemies.
+7487 This mission tests Zerg late game: Spire, Ultralisk, Queen, and Burrow. Combat units come from upgrading larva at your Hatchery; research Burrow at your Spawning Pool, then morph a Zergling. Follow the objective list.
+7488 This mission tests Terran late game: Ghost, Nuke, Thor, and Battlecruiser. Train Thor and Battlecruiser from a Factory or Starport with an attached Tech Lab; if the starting Tech Lab is separate, Tab-select it and land the Factory to attach. Follow the objective list.
+7489 Late game tests complete.
+
+7490 Build Templar Archives
+7491 Research Psi Storm
+7492 Train a High Templar
+7493 Train a Dark Templar
+7494 Build Fleet Beacon
+7495 Train a Carrier
+7496 Build Spire
+7497 Upgrade a larva to a Mutalisk
+7498 Build Queen's Nest
+7499 Upgrade a larva to a Queen
+7500 Build Ultralisk Cavern
+7501 Upgrade a larva to an Ultralisk
+7502 Research Burrow at the Spawning Pool
+7503 Morph a Zergling into burrowed form
+7504 Build Ghost Academy
+7505 Train a Ghost
+7506 Research Personal Cloaking
+7507 Research Nuclear Strike
+7508 Train a Thor at a Factory with a Tech Lab attached
+7509 Train a Battlecruiser at a Starport with a Tech Lab attached
+7510 Build at least 4 Pylons
+7511 Build a Gateway in square f1
+7512 Wait for creep and build a Spawning Pool
+7513 Destroy the Hatchery, then build an Extractor on lingering creep
+7514 Build a Supply Depot
+7515 Train twelve Marines
+
+7520 Creep tumor
+7521 Spawn creep tumor
+7522 Extend creep tumor
+7523 Zerg: Creep tumor
+7524 Use the Queen to spawn a creep tumor, extend tumors toward the far square, then sacrifice a Drone for a Spawning Pool on marked creep.
+7525 Spawn a creep tumor on creep near the Hatchery.
+7526 Extend creep tumors until the far square has creep, then build a Spawning Pool there.
+
+7530 Larva
+7531 Inject Larva boost
+7532 Target a Hatchery to spawn 3 larva there.
+7533 Target a Hatchery; for 30 seconds its train time is reduced by 30 percent.
+7534 Places an invisible creep tumor on creep; it spreads creep nearby. The tumor itself is not visible—use Tab or move to that square to confirm.
+7535 Effect: train time -30%, lasting 30 seconds
+7536 Effect: summon 3 larva
+7537 Effect: summon 1 creep tumor
+7539 Upgrade a larva to a Zergling
+
+; build tutorial chapter titles (missions 1–5; IDs 7540+ avoid upgrade titles 7305–7311)
+7540 StarCraft Build Tests
+7541 Chapter 1: Protoss psi field — build a Gateway beyond Nexus range.
+7542 Chapter 2: Zerg creep — spread, Spawning Pool, destroy Hatchery, Extractor on persist.
+7543 Chapter 3: Terran addon — attach a Tech Lab to the Barracks.
+7544 Chapter 4: Lift Barracks, leave Tech Lab, land Factory to recombine, train Tank.
+7545 Chapter 5: Terran supply — build a Supply Depot, then train twelve Marines.
+
+; build field type names (style: build_field_* → title)
+7240 psi field
+7241 creep
+
+; unit intros (style.txt intro → title below)
+7600 A mineral deposit. Workers gather minerals here and carry them back to a town hall.
+7601 A vespene geyser. Build a gas extractor on it before workers can harvest vespene.
+7602 Protoss town hall. Stores resources, trains Probes, provides 10 supply, and projects a psi field for nearby construction.
+7603 Extends the psi field and provides 8 supply. Most Protoss structures must be built within powered range.
+7604 Trains Zealots and Dragoons. The core production building for Protoss ground forces.
+7605 Built on a vespene geyser. Probes gather vespene here and return it to the Nexus.
+7606 A defensive structure that attacks nearby enemies. Can be warped anywhere without requiring a psi field.
+7607 Protoss worker. Gathers minerals and vespene, and warps in Protoss buildings within the psi field.
+7608 Melee infantry with strong shields. Cheap front-line unit trained from the Gateway.
+7609 Researches ground weapon upgrades for Zealots, Dragoons, and Dark Templars.
+7610 Unlocks Dragoon production and researches shield and Singularity Charge upgrades.
+7611 Unlocks Observer and Phoenix production. Requires a Cybernetics Core.
+7612 Ranged infantry requiring a Cybernetics Core. Fires anti-armor attacks from distance.
+7613 Invisible detector with extended sight. Reveals cloaked and burrowed enemies without attacking.
+7614 Zerg town hall. Stores resources, provides 10 supply, spawns larva, and spreads creep for Zerg construction.
+7615 Required for Zergling production. Also researches melee, carapace, metabolic boost, and Burrow upgrades.
+7616 Built on a vespene geyser. Drones gather vespene here after a Drone is sacrificed to build it.
+7617 Zerg worker. Gathers resources and is sacrificed to morph into Zerg structures on creep.
+7618 Fast melee swarmer requiring a Spawning Pool. Cheap and quick to produce in large numbers.
+7619 Unlocks Roach production. Requires a Spawning Pool.
+7620 Unlocks Hydralisk production and missile attack upgrades. Requires a Spawning Pool.
+7621 Armored ground unit with moderate armor. Good all-around front-line fighter from the Roach Warren.
+7622 Ranged unit attacking from distance. Effective against air and ground targets from the Hydralisk Den.
+7623 Flying supply unit providing 8 population. Essential for expanding the Zerg army early on.
+7624 Terran town hall. Stores resources, trains SCVs, and provides 10 supply.
+7625 Trains Marines. Can attach a Tech Lab or Reactor, and can lift off to relocate.
+7626 A Barracks that has lifted off. Move it to a new location, then land to resume training.
+7627 Trains Hellions. Can attach a Tech Lab or Reactor, and can lift off to relocate.
+7628 A Factory that has lifted off. Move it to a new location, then land to resume training.
+7629 Trains air units when combined with addons. Can attach a Tech Lab or Reactor, and can lift off.
+7630 Built on a vespene geyser. SCVs gather vespene here and return it to the Command Center.
+7631 Researches infantry weapon, armor, and Stim Pack upgrades for Terran infantry.
+7632 Researches vehicle and ship weapon and armor upgrades. Required for Thor and Battlecruiser tech.
+7633 Defensive structure that can garrison four infantry units for protection and fire support.
+7634 Provides 8 supply. Build more when approaching the population cap.
+7635 A Starport that has lifted off. Move it to a new location, then land to resume training.
+7636 Addon that unlocks advanced units: Marauder from Barracks, Tank and Thor from Factory, Medivac and Battlecruiser from Starport.
+7637 Addon that doubles production speed from its host Barracks, Factory, or Starport.
+7638 Terran worker. Gathers minerals and vespene, and constructs Terran buildings on the battlefield.
+7639 Basic ranged infantry from the Barracks. Cheap backbone of the Terran army; can use Stim Pack.
+7640 Heavy infantry trained from a Barracks with Tech Lab. Slower but tougher than Marines.
+7641 Fast vehicle from the Factory. Excels at raiding lightly armored targets.
+7642 Armored tank from a Factory with Tech Lab. Can morph into Siege Mode for long-range bombardment.
+7643 Stationary artillery form of the Siege Tank. Long range and splash damage, but cannot move while sieged.
+7644 Air transport from a Starport with Tech Lab. Carries ground units and heals nearby infantry.
+7645 Unlocks High Templar and Dark Templar training and Psi Storm research. Requires a Cybernetics Core.
+7646 Unlocks Carrier production and air weapon and armor upgrades. Requires a Stargate.
+7647 Psionic caster trained from the Templar Archives. Casts Psi Storm to devastate grouped enemies.
+7648 Stealth melee assassin from the Templar Archives. Invisible until attacking; high burst damage up close.
+7649 Anti-air fighter from the Stargate. Fast and effective against enemy air units.
+7650 Capital ship from the Fleet Beacon. Heavy air unit with long-range anti-air attacks and splash damage.
+7651 Unlocks Mutalisk production and flyer attack and carapace upgrades. Requires a Spawning Pool.
+7652 Unlocks Ultralisk production. Requires a Spire.
+7653 Unlocks Queen production. Requires a Spawning Pool.
+7654 Fast air harasser from the Spire. Attacks both ground and air targets.
+7655 Heavy melee beast from the Ultralisk Cavern. High health and damage; crushes enemy ground armies.
+7656 Support caster from the Queen's Nest. Spawns larva, injects Hatcheries, and spreads creep tumors.
+7657 Invisible structure placed by the Queen. Spreads creep nearby so Zerg can build farther from the Hatchery.
+7658 Burrowed Zergling. Invisible and stationary until unburrowed; requires Burrow research at the Spawning Pool.
+7659 Larva spawned by the Hatchery. Upgrade larva into any unlocked Zerg unit type.
+7660 Trains Ghosts and researches Cloaking and Nuclear Strike. Requires a Barracks.
+7661 Covert operative from the Ghost Academy. Long-range attacks; can cloak and launch Nuclear Strike.
+7662 Cloaked Ghost. Invisible until attacking or detected; retains nuke capability.
+7663 Massive walker from a Factory with Tech Lab and Armory. Heavy splash damage at long range.
+7664 Terran capital ship from a Starport with Tech Lab and Armory. Can use Yamato Cannon against high-value targets.
+
+; Skills sandbox test map sc_skills_test
+7680 StarCraft: Skills Test
+7681 Welcome to the skills sandbox. Terran zone on the left, Protoss in the center, Zerg on the right; neutral Zealots at the far east (o) for AoE skills. Required upgrades are already researched and units are ready. High Templar starts at zero energy — wait until 75 mana for Psi Storm. Wound a Marine before testing Medivac heal. No auto-win; press F9 and verify each skill manually.
+7682 Press F9 for the skill checklist. Manually verify that each skill can be cast.
+7683 Terran: select a Marine or Marauder and use Stim Pack.
+7684 Terran: select a Medivac and heal wounded infantry.
+7685 Terran: select a Ghost and launch Nuclear Strike on the zealots at o.
+7686 Terran: select a Battlecruiser and use Yamato Cannon on the zealots at o.
+7687 Protoss: select a High Templar and cast Psi Storm on the zealots at o (75 mana).
+7688 Zerg: select the Queen and Spawn Larva on the Hatchery.
+7689 Zerg: select the Queen and Inject Larva on the Hatchery.
+7690 Zerg: select the Queen and Spawn Creep Tumor on creep.
+7691 Zerg: select a Creep Tumor and Extend Creep Tumor on a marked creep square.
+
+; SC2 armor types (mdg_vs / rdg_vs target labels)
+7692 light armor
+7693 armored
+7694 massive
+7695 structure
+
+7696 Nuclear blast
+7697 Yamato blast
+7698 Psi Storm

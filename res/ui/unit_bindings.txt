@@ -1,0 +1,135 @@
+; 单位选择界面热键
+; 以下默认命令键与全局层相同，可在此单独覆盖（仅单位界面生效）
+
+BACKSPACE: default
+SHIFT BACKSPACE: default queue_order
+CTRL BACKSPACE: default imperative
+CTRL SHIFT BACKSPACE: default imperative queue_order
+
+; 批量选择士兵
+a: select_units local SOLDIER
+CTRL a: select_units SOLDIER
+SHIFT a: select_units local worker SOLDIER
+CTRL SHIFT a: select_units worker SOLDIER
+ALT a: select_units local worker SOLDIER
+CTRL ALT a: select_units worker SOLDIER
+
+; 逐个切换单位
+q: select_unit 1 local
+SHIFT q: select_unit -1 local
+CTRL q: select_unit 1
+CTRL SHIFT q: select_unit -1
+
+BACKSLASH: command_unit
+
+; 命令快捷字母（style.txt 中 order 的 shortcut）
+b: order_shortcut
+
+; 过滤器（m-n，选目标时）
+m: toggle_side_filter 1
+SHIFT m: toggle_side_filter -1
+n: toggle_type_filter 1
+SHIFT n: toggle_type_filter -1
+
+; worker（s/w，原 d/e）
+s: select_units local worker
+ALT s: select_units worker local idle
+CTRL ALT s: select_units worker idle
+w: select_unit 1 worker
+ALT w: select_unit 1 worker idle
+SHIFT w: select_unit -1 worker
+ALT SHIFT w: select_unit -1 worker idle
+CTRL w: select_units worker
+QUOTE: select_unit 1 worker idle
+CTRL QUOTE: select_units worker idle
+
+; soldier1（d/e）
+d: select_units local soldier1
+ALT d: select_units soldier1 local idle
+CTRL ALT d: select_units soldier1 idle
+CTRL d: select_units soldier1
+e: select_unit 1 soldier1
+SHIFT e: select_unit -1 soldier1
+
+; soldier2（f/r）
+f: select_units local soldier2
+ALT f: select_units soldier2 local idle
+CTRL ALT f: select_units soldier2 idle
+CTRL f: select_units soldier2
+r: select_unit 1 soldier2
+SHIFT r: select_unit -1 soldier2
+
+; soldier3（g/h）
+g: select_units local soldier3
+ALT g: select_units soldier3 local idle
+CTRL ALT g: select_units soldier3 idle
+CTRL g: select_units soldier3
+t: select_unit 1 soldier3
+SHIFT t: select_unit -1 soldier3
+
+; soldier4（h/y）
+h: select_units local soldier4
+ALT h: select_units soldier4 local idle
+CTRL ALT h: select_units soldier4 idle
+CTRL h: select_units soldier4
+y: select_unit 1 soldier4
+SHIFT y: select_unit -1 soldier4
+
+; soldier5（j/u）
+j: select_units local soldier5
+ALT j: select_units soldier5 local idle
+CTRL ALT j: select_units soldier5 idle
+CTRL j: select_units soldier5
+u: select_unit 1 soldier5
+SHIFT u: select_unit -1 soldier5
+
+; soldier6（k/i）
+k: select_units local soldier6
+ALT k: select_units soldier6 local idle
+CTRL ALT k: select_units soldier6 idle
+CTRL k: select_units soldier6
+i: select_unit 1 soldier6
+SHIFT i: select_unit -1 soldier6
+
+; soldier7（l/o）
+l: select_units local soldier7
+ALT l: select_units soldier7 local idle
+CTRL ALT l: select_units soldier7 idle
+CTRL l: select_units soldier7
+o: select_unit 1 soldier7
+SHIFT o: select_unit -1 soldier7
+
+; soldier8（;/p）
+SEMICOLON: select_units local soldier8
+ALT SEMICOLON: select_units soldier8 local idle
+CTRL ALT SEMICOLON: select_units soldier8 idle
+CTRL SEMICOLON: select_units soldier8
+p: select_unit 1 soldier8
+SHIFT p: select_unit -1 soldier8
+
+; 编组
+1: group 1 local
+2: group 2 local
+3: group 3 local
+4: group 4 local
+5: group 5 local
+CTRL 1: group 1
+CTRL 2: group 2
+CTRL 3: group 3
+CTRL 4: group 4
+CTRL 5: group 5
+0: ungroup
+
+; 可召回编组
+6: recall_group 6
+7: recall_group 7
+8: recall_group 8
+9: recall_group 9
+CTRL 6: set_group 6
+CTRL 7: set_group 7
+CTRL 8: set_group 8
+CTRL 9: set_group 9
+SHIFT 6: append_group 6
+SHIFT 7: append_group 7
+SHIFT 8: append_group 8
+SHIFT 9: append_group 9

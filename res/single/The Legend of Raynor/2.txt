@@ -1,0 +1,98 @@
+title 4271 3002
+intro 7610
+trigger player1 (timer 0) (add_objective 1 4021)
+trigger player2 (timer 0) (add_objective 1 4021)
+
+
+; map size
+
+square_width 12
+
+nb_columns 5
+nb_lines 5
+
+; co-op: 1-2 human allies (AoE-style cooperative campaign)
+nb_players_min 1
+nb_players_max 2
+random_starts 0
+
+; place names (province / city / district)
+square_name loc_ch02_outpost 1,1 2,1 3,1 1,2 2,2 3,2 1,3 2,3 3,3 1,4 2,4 3,4 1,5 2,5 3,5 4,1 5,1 4,2 5,2 4,3 5,3 4,4 5,4 4,5 5,5
+square_name loc_ch02_north 1,1 2,1 3,1 1,2 2,2 3,2 4,1 5,1 4,2 5,2
+square_name loc_ch02_mid 1,3 2,3 3,3 4,3 5,3
+square_name loc_ch02_south 1,4 2,4 3,4 1,5 2,5 3,5 4,4 5,4 4,5 5,5
+square_name loc_ch02_raynor_outpost 2,1 loc_ch02_muster_yard 3,1 loc_ch02_west_ambush 1,3 loc_ch02_east_raiders 3,5 loc_ch02_center_clash 2,5 4,1 5,1 4,5 5,5
+
+
+; terrain
+
+terrain mountain a4 c4
+terrain mountain_pass b4
+high_grounds b4
+terrain ford a2 c2
+terrain river b2
+water b2
+terrain marsh b3
+speed .5 1 a2 c2 b3 b4; half speed in the ford, the marsh and the mountain pass
+
+; paths (give only the starting square)
+
+west_east_paths a1 b1 a3 b3 a5 b5 c1 d1 c3 d3 c5 d5
+west_east_bridges
+
+south_north_paths b3 b4
+south_north_paths a1 c1 a2 c2 ; ford
+
+
+; resources
+
+goldmines 132 a1
+goldmines 132 e1
+goldmines 263 c3
+
+woods 132 c1 c3 c3
+
+nb_meadows_by_square 2
+additional_meadows b1 a3 d1 e3
+remove_meadows b3
+remove_meadows a2 b2 c2 a4 c4
+
+
+
+; co-op symmetric partner economy
+woods 100 c1 d1
+additional_meadows d1 c1
+; players (human or computer)
+
+player 16 16 -archer -knight -keep -lumbermill -blacksmith -scouttower -townhall -stables -workshop -dragonslair -magestower -temple -necropolis b1 townhall house 2 peasant 2 footman 1 archer raynor c1 house
+player 16 16 -archer -knight -keep -lumbermill -blacksmith -scouttower -townhall -stables -workshop -dragonslair -magestower -temple -necropolis d1 townhall 2 peasant footman c1 house footman
+
+; computer only
+
+computer_only 0 0 a3 2 footman c3 2 footman a5 3 footman c5 6 archer b5 6 footman
+
+; triggers
+
+timer_coefficient 56
+
+; co-op alliances at start
+trigger player1 (timer 0) (alliance 1)
+trigger player2 (timer 0) (alliance 1)
+trigger computers (timer 0) (alliance 2)
+
+trigger computer1 (timer 1) (order (a3 1 footman) ((go a1)))
+trigger computer1 (timer 2) (order (a1 1 footman) ((go b1) (auto_attack)))
+trigger computer1 (timer 3) (order (c3 1 footman) ((go c1) (go b1) (auto_attack)))
+trigger computer1 (timer 6) (order (a5 2 footman) ((go a1) (go b1) (auto_attack)))
+trigger computer1 (timer 9) (order (c5 4 archer) ((go c1) (go b1) (auto_attack)))
+trigger computer1 (timer 12) (order (b5 4 footman) ((go a1) (go b1) (auto_attack)))
+
+
+trigger player1 (no_enemy_left) (objective_complete 1)
+trigger player2 (no_enemy_left) (objective_complete 1)
+trigger all (no_unit_left) (defeat)
+
+trigger player1 (key_unit_killed raynor) (defeat)
+trigger player2 (key_unit_killed raynor) (defeat)
+trigger player1 (building_lost 1 townhall) (defeat)
+trigger player2 (building_lost 1 townhall) (defeat)

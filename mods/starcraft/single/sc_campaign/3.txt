@@ -1,0 +1,26 @@
+; Campaign ch.3 — Terran addon (build Tech Lab on Barracks)
+; See docs/zh/星际人族附属建筑与重组说明.md §2
+
+title 7543
+intro 7331
+
+square_width 12
+nb_columns 3
+nb_lines 1
+
+west_east_paths a1 b1
+
+mineral_field 100 a1
+nb_meadows_by_square 1
+
+nb_players_min 1
+nb_players_max 1
+starting_squares a1
+starting_units barracks scv
+starting_resources 40 20
+
+timer_coefficient 1
+
+trigger player1 (timer 0) (add_objective 1 7331)
+trigger player1 (has tech_lab) (objective_complete 1)
+trigger player1 (has tech_lab) (victory)

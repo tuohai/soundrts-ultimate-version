@@ -1,0 +1,20 @@
+def townhall
+can_change_to flying_townhall
+can_upgrade_to keep
+
+def flying_townhall
+class soldier
+cost 12 16
+population_provided 1
+hp_max 400;  1200/3
+time_cost 135
+can_change_to townhall
+population_cost 0
+airground_type air
+speed 1.5
+mdg 0
+rdg 0
+is_repairable 1
+is_healable 0
+transport_volume 99
+corpse 0

@@ -1,0 +1,12 @@
+; 帮助与查询界面热键
+
+1: help 1
+SHIFT 1: help -1
+2: help -1
+3: say_time
+
+F7: say
+
+CTRL SHIFT F3: toggle_tick
+
+ESCAPE: exit_overlay_mode

@@ -1,0 +1,71 @@
+; Chapter 19: Rally Again
+
+title 4271 3019
+intro 7724 7725 7535 7536
+
+square_width 12
+nb_columns 8
+nb_lines 7
+
+; co-op: 1-2 human allies (AoE-style cooperative campaign)
+nb_players_min 1
+nb_players_max 2
+random_starts 0
+
+square_name loc_ch19_rally_fields 1,1 2,1 3,1 4,1 5,1 6,1 7,1 1,2 2,2 3,2 4,2 5,2 6,2 7,2 1,3 2,3 3,3 4,3 5,3 6,3 7,3 1,4 2,4 3,4 4,4 5,4 6,4 7,4 1,5 2,5 3,5 4,5 5,5 6,5 7,5 1,6 2,6 3,6 4,6 5,6 6,6 7,6 1,7 2,7 3,7 4,7 5,7 6,7 7,7 8,1 8,2 8,3 8,4 8,5 8,6 8,7
+square_name loc_ch19_north 1,1 2,1 3,1 4,1 5,1 6,1 7,1 1,2 2,2 3,2 4,2 5,2 6,2 7,2 8,1 8,2
+square_name loc_ch19_mid 1,3 2,3 3,3 4,3 5,3 6,3 7,3 1,4 2,4 3,4 4,4 5,4 6,4 7,4 1,5 2,5 3,5 4,5 5,5 6,5 7,5 8,3 8,4 8,5
+square_name loc_ch19_south 1,6 2,6 3,6 4,6 5,6 6,6 7,6 1,7 2,7 3,7 4,7 5,7 6,7 7,7 8,6 8,7
+square_name loc_ch19_lance_drop 1,4 loc_ch19_garrek_camp 4,4 loc_ch19_sword_ruins 7,1 loc_ch19_ring_grove 7,7 8,1 8,7
+
+west_east_paths a1 b1 c1 d1 e1 f1 g1
+west_east_paths a2 b2 c2 d2 e2 f2 g2
+west_east_paths a3 b3 c3 d3 e3 f3 g3
+west_east_paths a4 b4 c4 d4 e4 f4 g4
+west_east_paths a5 b5 c5 d5 e5 f5 g5
+west_east_paths a6 b6 c6 d6 e6 f6 g6
+west_east_paths a7 b7 c7 d7 e7 f7 g7
+south_north_paths a1 a2 a3 a4 a5 a6
+south_north_paths b1 b2 b3 b4 b5 b6
+south_north_paths c1 c2 c3 c4 c5 c6
+south_north_paths d1 d2 d3 d4 d5 d6
+south_north_paths e1 e2 e3 e4 e5 e6
+south_north_paths f1 f2 f3 f4 f5 f6
+south_north_paths g1 g2 g3 g4 g5 g6
+
+nb_meadows_by_square 12
+
+power_sword g1
+magic_ring g7
+knight_lance a4
+
+computer_only 0 0 neutral d4 2 npc_wandering_knight 6 footman 5 archer
+
+starting_squares a1 e1
+starting_units raynor4 2 footman 1 archer
+starting_resources 100 100
+
+timer_coefficient 40
+
+; co-op alliances at start
+trigger player1 (timer 0) (alliance 1)
+trigger player2 (timer 0) (alliance 1)
+trigger computers (timer 0) (alliance 2)
+
+trigger player1 (timer 0) (add_objective 1 7537)
+trigger player2 (timer 0) (add_objective 1 7537)
+trigger player1 (timer 0) (add_objective 2 7538)
+trigger player2 (timer 0) (add_objective 2 7538)
+trigger player1 (timer 0) (add_objective 3 7539)
+trigger player2 (timer 0) (add_objective 3 7539)
+
+trigger player1 (has_item power_sword) (objective_complete 1)
+trigger player2 (has_item power_sword) (objective_complete 1)
+trigger player1 (npc_has_item npc_wandering_knight knight_lance d4) (do (cut_scene 7540) (objective_complete 2))
+trigger player1 (has_item magic_ring) (objective_complete 3)
+trigger player2 (has_item magic_ring) (objective_complete 3)
+
+trigger all (no_unit_left) (defeat)
+
+trigger player1 (key_unit_killed raynor4) (defeat)
+trigger player2 (key_unit_killed raynor4) (defeat)

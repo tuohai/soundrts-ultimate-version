@@ -1,0 +1,89 @@
+; ===========================================================================
+; Titles: rank ladder (medals) + honor titles (achievement rewards)
+; ===========================================================================
+;
+;   title <tts_id>
+;   kind rank | honor
+;   medals <n>                 cumulative medals for this rank
+;   loadout_slots <n>          pre-mission card slots at this rank (phase 3)
+;
+; Thresholds tuned so a strong first win usually earns ~1 promotion, not 2+.
+
+
+def rank_recruit
+kind rank
+title 5400
+medals 0
+loadout_slots 0
+
+def rank_private
+kind rank
+title 5401
+medals 35
+loadout_slots 0
+
+def rank_corporal
+kind rank
+title 5402
+medals 85
+loadout_slots 0
+
+def rank_sergeant
+kind rank
+title 5403
+medals 150
+loadout_slots 0
+
+def rank_lieutenant
+kind rank
+title 5404
+medals 200
+loadout_slots 1
+
+def rank_captain
+kind rank
+title 5405
+medals 380
+loadout_slots 2
+
+def rank_major
+kind rank
+title 5406
+medals 540
+loadout_slots 2
+
+def rank_colonel
+kind rank
+title 5407
+medals 730
+loadout_slots 3
+
+def rank_major_general
+kind rank
+title 5408
+medals 960
+loadout_slots 3
+
+def rank_lieutenant_general
+kind rank
+title 5409
+medals 1250
+loadout_slots 3
+
+def rank_general
+kind rank
+title 5410
+medals 1600
+loadout_slots 4
+
+def rank_marshal
+kind rank
+title 5411
+medals 2200
+loadout_slots 4
+
+; --- Honor titles (extra epithets; use only when wording differs from achievement) ---
+
+def honor_nightmare_slayer
+kind honor
+title 5422

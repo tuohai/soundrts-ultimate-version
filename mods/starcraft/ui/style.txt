@@ -1,0 +1,889 @@
+def parameters
+resource1_title 7270
+resource2_title 7271
+
+
+
+def resource1
+title 7270
+
+
+
+def resource2
+title 7271
+
+
+
+def sc_light
+title 7692
+
+
+
+def sc_armored
+title 7693
+
+
+
+def sc_massive
+title 7694
+
+
+
+def sc_structure
+title 7695
+
+
+
+def messages
+missing_deposit 7272
+missing_build_field_psi 7394
+missing_build_field_creep 7395
+population_limit_reached 7399
+not_enough_resource1 135 7270
+not_enough_resource2 135 7271
+
+
+
+def mineral_field
+title 7273
+intro 7600
+
+
+
+def geyser
+is_a resource_deposit
+title 7274
+intro 7601
+exhausted 1047
+ground gravel
+
+; ---------- Protoss ----------
+
+
+
+def nexus
+is_a townhall
+title 7210
+intro 7602
+keyboard building1
+shortcut h
+
+
+
+def pylon
+is_a building
+title 7211
+intro 7603
+keyboard building2
+shortcut p
+
+
+
+def gateway
+is_a building
+title 7212
+intro 7604
+keyboard building3
+shortcut g
+
+
+
+def assimilator
+is_a building
+title 7213
+intro 7605
+keyboard building5
+shortcut a
+
+
+
+def photon_cannon
+is_a scouttower
+title 7214
+intro 7606
+shortcut c
+
+
+
+def probe
+is_a peasant
+title 7215
+intro 7607
+keyboard worker
+shortcut e
+
+
+
+def zealot
+is_a footman
+title 7216
+intro 7608
+keyboard soldier1
+shortcut z
+
+
+
+def forge
+is_a building
+title 7280
+intro 7609
+keyboard building6
+shortcut f
+
+
+
+def cybernetics_core
+is_a building
+title 7281
+intro 7610
+keyboard building9
+shortcut k
+
+
+
+def stargate
+is_a building
+title 7282
+intro 7611
+shortcut s
+
+
+
+def dragoon
+is_a footman
+title 7283
+intro 7612
+keyboard soldier2
+shortcut d
+
+
+
+def observer
+is_a footman
+title 7284
+intro 7613
+keyboard soldier3
+shortcut o
+
+
+
+def protoss_ground_weapons
+title 7285
+
+
+
+def protoss_ground_weapons_2
+title 7286
+
+
+
+def protoss_plasma_shields
+title 7287
+
+
+
+def protoss_plasma_shields_2
+title 7288
+
+
+
+def protoss_singularity_charge
+title 7400
+
+
+
+def protoss_singularity_charge_2
+title 7401
+
+; ---------- Zerg ----------
+
+
+
+def hatchery
+is_a townhall
+title 7220
+intro 7614
+shortcut h
+
+
+
+def spawning_pool
+is_a building
+title 7221
+intro 7615
+keyboard building3
+shortcut p
+
+
+
+def extractor
+is_a building
+title 7222
+intro 7616
+keyboard building5
+shortcut e
+
+
+
+def drone
+is_a peasant
+title 7223
+intro 7617
+keyboard worker
+shortcut d
+
+
+
+def zergling
+is_a footman
+title 7224
+intro 7618
+keyboard soldier1
+shortcut z
+
+
+
+def roach_warren
+is_a building
+title 7289
+intro 7619
+shortcut r
+
+
+
+def hydralisk_den
+is_a building
+title 7290
+intro 7620
+shortcut y
+
+
+
+def roach
+is_a footman
+title 7291
+intro 7621
+keyboard soldier2
+shortcut r
+
+
+
+def hydralisk
+is_a footman
+title 7292
+intro 7622
+keyboard soldier3
+shortcut h
+
+
+
+def overlord
+is_a footman
+title 7264
+intro 7623
+keyboard soldier4
+shortcut l
+
+
+
+def zerg_melee
+title 7293
+
+
+
+def zerg_melee_2
+title 7294
+
+
+
+def zerg_carapace
+title 7295
+
+
+
+def zerg_carapace_2
+title 7296
+
+
+
+def zerg_metabolic_boost
+title 7402
+
+
+
+def zerg_missile
+title 7403
+
+
+
+def zerg_missile_2
+title 7404
+
+; ---------- Terran ----------
+
+
+
+def command_center
+is_a townhall
+title 7230
+intro 7624
+shortcut h
+
+
+
+def barracks
+is_a building
+title 7231
+intro 7625
+keyboard building3
+shortcut b
+
+
+
+def flying_barracks
+is_a unit
+title 7250
+intro 7626
+move 1317 1318
+keyboard building3
+
+
+
+def factory
+is_a building
+title 7232
+intro 7627
+shortcut f
+
+
+
+def flying_factory
+is_a unit
+title 7251
+intro 7628
+move 1317 1318
+keyboard building
+
+
+def starport
+is_a building
+title 7233
+intro 7629
+shortcut s
+
+
+
+def refinery
+is_a building
+title 7275
+intro 7630
+keyboard building5
+shortcut y
+
+
+
+def engineering_bay
+is_a building
+title 7297
+intro 7631
+shortcut e
+
+
+
+def armory
+is_a building
+title 7298
+intro 7632
+shortcut a
+
+
+
+def bunker
+is_a scouttower
+title 7299
+intro 7633
+shortcut u
+
+
+
+def supply_depot
+is_a building
+title 7263
+intro 7634
+keyboard building2
+shortcut d
+
+
+
+def flying_starport
+is_a unit
+title 7252
+intro 7635
+move 1317 1318
+
+
+
+def tech_lab
+is_a building
+title 7234
+intro 7636
+shortcut l
+
+
+
+def reactor
+is_a building
+title 7235
+intro 7637
+shortcut r
+
+
+
+def scv
+is_a peasant
+title 7236
+intro 7638
+keyboard worker
+shortcut e
+
+
+
+def marine
+is_a footman
+title 7237
+intro 7639
+keyboard soldier1
+shortcut m
+
+
+
+def marauder
+is_a footman
+title 7253
+intro 7640
+keyboard soldier2
+
+
+
+def hellion
+is_a footman
+title 7254
+intro 7641
+keyboard soldier3
+
+
+
+def tank
+is_a catapult
+title 7255
+intro 7642
+keyboard soldier4
+
+
+
+def siege_tank
+is_a catapult
+title 7410
+intro 7643
+keyboard soldier4
+
+
+
+def medivac
+is_a new_flyingmachine
+title 7256
+intro 7644
+keyboard soldier6
+
+; build field type labels (rules: provides_build_field / requires_build_field)
+; noise: repeat <seconds> <sound_name> or loop <sound_name> [volume]
+; sound_name = ui/**/*.ogg stem (e.g. ui/sounds/psi.ogg → psi)
+
+
+def build_field_psi
+title 7240
+noise repeat 6 psi
+
+
+
+def build_field_creep
+title 7241
+noise repeat 6 build_field_creep
+
+
+
+
+def infantry_weapons
+title 7242
+
+
+
+def infantry_weapons_2
+title 7305
+
+
+
+def infantry_armor
+title 7306
+
+
+
+def infantry_armor_2
+title 7307
+
+
+
+def vehicle_weapons
+title 7308
+
+
+
+def vehicle_weapons_2
+title 7309
+
+
+
+def vehicle_armor
+title 7310
+
+
+
+def vehicle_armor_2
+title 7311
+
+
+
+def u_stim
+title 7405
+
+
+
+def sc_stim_pack
+title 7406
+
+
+
+def sc_heal
+title 7407
+
+
+
+def templar_archives
+is_a building
+title 7420
+intro 7645
+shortcut t
+
+
+
+def fleet_beacon
+is_a building
+title 7425
+intro 7646
+shortcut b
+
+
+
+def high_templar
+is_a footman
+title 7421
+intro 7647
+keyboard soldier5
+
+
+
+def dark_templar
+is_a footman
+title 7422
+intro 7648
+keyboard soldier4
+
+
+
+def phoenix
+is_a footman
+title 7426
+intro 7649
+keyboard soldier6
+
+
+
+def carrier
+is_a footman
+title 7427
+intro 7650
+keyboard soldier7
+
+
+
+def u_psi_storm
+title 7424
+
+
+
+def sc_psi_storm
+title 7423
+
+
+
+def sc_psi_storm_fx
+title 7698
+
+
+
+def protoss_air_weapons
+title 7428
+
+
+
+def protoss_air_weapons_2
+title 7429
+
+
+
+def protoss_air_armor
+title 7430
+
+
+
+def protoss_air_armor_2
+title 7431
+
+
+
+def spire
+is_a building
+title 7432
+intro 7651
+shortcut s
+
+
+
+def ultralisk_cavern
+is_a building
+title 7434
+intro 7652
+shortcut u
+
+
+
+def queen_nest
+is_a building
+title 7460
+intro 7653
+shortcut q
+
+
+
+def mutalisk
+is_a footman
+title 7433
+intro 7654
+keyboard soldier6
+
+
+
+def ultralisk
+is_a footman
+title 7435
+intro 7655
+keyboard soldier7
+
+
+
+def queen
+is_a footman
+title 7436
+intro 7656
+keyboard soldier5
+
+
+
+def creep_tumor
+is_a building
+title 7520
+intro 7657
+keyboard building4
+
+
+
+def sc_spawn_creep_tumor
+title 7521
+intro 7534
+effect_desc 7537
+
+
+
+def sc_extend_creep_tumor
+title 7522
+
+
+
+def u_burrow
+title 7437
+
+
+
+def burrowed_zergling
+is_a footman
+title 7459
+intro 7658
+keyboard soldier1
+
+
+
+def zerg_flyer_attacks
+title 7439
+
+
+
+def zerg_flyer_attacks_2
+title 7440
+
+
+
+def zerg_flyer_carapace
+title 7441
+
+
+
+def zerg_flyer_carapace_2
+title 7442
+
+
+
+def sc_spawn_larva
+title 7443
+intro 7532
+effect_desc 7536
+
+
+
+def sc_inject_larva
+title 7444
+intro 7533
+effect_desc 7535
+
+
+
+def sc_inject_buff
+title 7531
+effect_desc 7535
+
+
+
+def larva
+title 7530
+intro 7659
+
+
+
+def ghost_academy
+is_a building
+title 7445
+intro 7660
+shortcut g
+
+
+
+def ghost
+is_a footman
+title 7446
+intro 7661
+keyboard soldier5
+
+
+
+def cloaked_ghost
+is_a footman
+title 7458
+intro 7662
+keyboard soldier1
+
+
+
+def thor
+is_a footman
+title 7449
+intro 7663
+keyboard soldier7
+
+
+
+def battlecruiser
+is_a footman
+title 7450
+intro 7664
+keyboard soldier7
+
+
+
+def u_cloak
+title 7456
+
+
+
+def u_nuke
+title 7447
+
+
+
+def sc_nuke
+title 7448
+
+
+
+def sc_nuclear_blast
+title 7696
+
+
+
+def sc_yamato
+title 7457
+
+
+
+def sc_yamato_fx
+title 7697
+
+
+
+def ship_weapons
+title 7451
+
+
+
+def ship_weapons_2
+title 7452
+
+
+
+def ship_armor
+title 7453
+
+
+
+def ship_armor_2
+title 7454
+
+
+
+def addon_reattach_failed
+title 7350
+
+; ---------- factions (lobby titles) ----------
+
+
+
+def terran
+title 7260
+
+
+
+def protoss
+title 7261
+
+
+
+def zerg
+title 7262

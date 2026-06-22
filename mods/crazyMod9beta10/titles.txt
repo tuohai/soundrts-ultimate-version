@@ -1,0 +1,515 @@
+; CrazyMod 9 — per-faction rank ladders (achievements_per_faction 1)
+; TTS ranks: 79600 + faction_index*10 + rank_index (0..5)
+; faction_index: trad=0 tech=1 rob=2 ten=3 elf=4 orc=5 ele=6 sau=7 ver=8 delf=9
+
+clear
+
+; --- traditionnel (79600-79605) ---
+
+def rank_trad_recruit
+faction traditionnel
+kind rank
+title 79600
+medals 0
+loadout_slots 0
+
+def rank_trad_soldier
+faction traditionnel
+kind rank
+title 79601
+medals 35
+loadout_slots 0
+
+def rank_trad_sergeant
+faction traditionnel
+kind rank
+title 79602
+medals 150
+loadout_slots 0
+
+def rank_trad_lieutenant
+faction traditionnel
+kind rank
+title 79603
+medals 240
+loadout_slots 1
+
+def rank_trad_captain
+faction traditionnel
+kind rank
+title 79604
+medals 380
+loadout_slots 2
+
+def rank_trad_marshal
+faction traditionnel
+kind rank
+title 79605
+medals 730
+loadout_slots 3
+
+; --- technique (79610-79615) ---
+
+def rank_tech_recruit
+faction technique
+kind rank
+title 79610
+medals 0
+loadout_slots 0
+
+def rank_tech_soldier
+faction technique
+kind rank
+title 79611
+medals 35
+loadout_slots 0
+
+def rank_tech_sergeant
+faction technique
+kind rank
+title 79612
+medals 150
+loadout_slots 0
+
+def rank_tech_lieutenant
+faction technique
+kind rank
+title 79613
+medals 240
+loadout_slots 1
+
+def rank_tech_captain
+faction technique
+kind rank
+title 79614
+medals 380
+loadout_slots 2
+
+def rank_tech_general
+faction technique
+kind rank
+title 79615
+medals 730
+loadout_slots 3
+
+; --- robotique (79620-79625) ---
+
+def rank_rob_recruit
+faction robotique
+kind rank
+title 79620
+medals 0
+loadout_slots 0
+
+def rank_rob_tech
+faction robotique
+kind rank
+title 79621
+medals 35
+loadout_slots 0
+
+def rank_rob_admin
+faction robotique
+kind rank
+title 79622
+medals 150
+loadout_slots 0
+
+def rank_rob_captain
+faction robotique
+kind rank
+title 79623
+medals 240
+loadout_slots 1
+
+def rank_rob_overseer
+faction robotique
+kind rank
+title 79624
+medals 380
+loadout_slots 2
+
+def rank_rob_mainframe
+faction robotique
+kind rank
+title 79625
+medals 730
+loadout_slots 3
+
+; --- tenebre (79630-79635) ---
+
+def rank_ten_shade
+faction tenebre
+kind rank
+title 79630
+medals 0
+loadout_slots 0
+
+def rank_ten_ghoul
+faction tenebre
+kind rank
+title 79631
+medals 35
+loadout_slots 0
+
+def rank_ten_necro
+faction tenebre
+kind rank
+title 79632
+medals 150
+loadout_slots 0
+
+def rank_ten_knight
+faction tenebre
+kind rank
+title 79633
+medals 240
+loadout_slots 1
+
+def rank_ten_lich
+faction tenebre
+kind rank
+title 79634
+medals 380
+loadout_slots 2
+
+def rank_ten_overlord
+faction tenebre
+kind rank
+title 79635
+medals 730
+loadout_slots 3
+
+; --- elfique (79640-79645) ---
+
+def rank_elf_seedling
+faction elfique
+kind rank
+title 79640
+medals 0
+loadout_slots 0
+
+def rank_elf_warden
+faction elfique
+kind rank
+title 79641
+medals 35
+loadout_slots 0
+
+def rank_elf_captain
+faction elfique
+kind rank
+title 79642
+medals 150
+loadout_slots 0
+
+def rank_elf_blademaster
+faction elfique
+kind rank
+title 79643
+medals 240
+loadout_slots 1
+
+def rank_elf_lord
+faction elfique
+kind rank
+title 79644
+medals 380
+loadout_slots 2
+
+def rank_elf_archdruid
+faction elfique
+kind rank
+title 79645
+medals 730
+loadout_slots 3
+
+; --- orc (79650-79655) ---
+
+def rank_orc_peon
+faction orc
+kind rank
+title 79650
+medals 0
+loadout_slots 0
+
+def rank_orc_brawler
+faction orc
+kind rank
+title 79651
+medals 35
+loadout_slots 0
+
+def rank_orc_shaman
+faction orc
+kind rank
+title 79652
+medals 150
+loadout_slots 0
+
+def rank_orc_warlord
+faction orc
+kind rank
+title 79653
+medals 240
+loadout_slots 1
+
+def rank_orc_chieftain
+faction orc
+kind rank
+title 79654
+medals 380
+loadout_slots 2
+
+def rank_orc_warchief
+faction orc
+kind rank
+title 79655
+medals 730
+loadout_slots 3
+
+; --- elementale (79660-79665) ---
+
+def rank_ele_spark
+faction elementale
+kind rank
+title 79660
+medals 0
+loadout_slots 0
+
+def rank_ele_manifest
+faction elementale
+kind rank
+title 79661
+medals 35
+loadout_slots 0
+
+def rank_ele_binder
+faction elementale
+kind rank
+title 79662
+medals 150
+loadout_slots 0
+
+def rank_ele_archon
+faction elementale
+kind rank
+title 79663
+medals 240
+loadout_slots 1
+
+def rank_ele_prince
+faction elementale
+kind rank
+title 79664
+medals 380
+loadout_slots 2
+
+def rank_ele_avatar
+faction elementale
+kind rank
+title 79665
+medals 730
+loadout_slots 3
+
+; --- sauvage (79670-79675) ---
+
+def rank_sau_rogue
+faction sauvage
+kind rank
+title 79670
+medals 0
+loadout_slots 0
+
+def rank_sau_brigand
+faction sauvage
+kind rank
+title 79671
+medals 35
+loadout_slots 0
+
+def rank_sau_chief
+faction sauvage
+kind rank
+title 79672
+medals 150
+loadout_slots 0
+
+def rank_sau_hunter
+faction sauvage
+kind rank
+title 79673
+medals 240
+loadout_slots 1
+
+def rank_sau_king
+faction sauvage
+kind rank
+title 79674
+medals 380
+loadout_slots 2
+
+def rank_sau_terror
+faction sauvage
+kind rank
+title 79675
+medals 730
+loadout_slots 3
+
+; --- vermine (79680-79685) ---
+
+def rank_ver_larva
+faction vermine
+kind rank
+title 79680
+medals 0
+loadout_slots 0
+
+def rank_ver_worker
+faction vermine
+kind rank
+title 79681
+medals 35
+loadout_slots 0
+
+def rank_ver_guard
+faction vermine
+kind rank
+title 79682
+medals 150
+loadout_slots 0
+
+def rank_ver_brood
+faction vermine
+kind rank
+title 79683
+medals 240
+loadout_slots 1
+
+def rank_ver_matriarch
+faction vermine
+kind rank
+title 79684
+medals 380
+loadout_slots 2
+
+def rank_ver_swarm
+faction vermine
+kind rank
+title 79685
+medals 730
+loadout_slots 3
+
+; --- elfe_noir (79690-79695) ---
+
+def rank_delf_thief
+faction elfe_noir
+kind rank
+title 79690
+medals 0
+loadout_slots 0
+
+def rank_delf_stalker
+faction elfe_noir
+kind rank
+title 79691
+medals 35
+loadout_slots 0
+
+def rank_delf_captain
+faction elfe_noir
+kind rank
+title 79692
+medals 150
+loadout_slots 0
+
+def rank_delf_illusionist
+faction elfe_noir
+kind rank
+title 79693
+medals 240
+loadout_slots 1
+
+def rank_delf_lord
+faction elfe_noir
+kind rank
+title 79694
+medals 380
+loadout_slots 2
+
+def rank_delf_prince
+faction elfe_noir
+kind rank
+title 79695
+medals 730
+loadout_slots 3
+
+; --- honor titles (79850-79859) ---
+
+def honor_trad_valiant
+faction traditionnel
+kind honor
+title 79850
+
+def honor_tech_efficient
+faction technique
+kind honor
+title 79851
+
+def honor_rob_overclocked
+faction robotique
+kind honor
+title 79852
+
+def honor_ten_gravekeeper
+faction tenebre
+kind honor
+title 79853
+
+def honor_elf_forest_heart
+faction elfique
+kind honor
+title 79854
+
+def honor_orc_bloodrage
+faction orc
+kind honor
+title 79855
+
+def honor_ele_stormcaller
+faction elementale
+kind honor
+title 79856
+
+def honor_sau_outlaw
+faction sauvage
+kind honor
+title 79857
+
+def honor_ver_hivemind
+faction vermine
+kind honor
+title 79858
+
+def honor_delf_nightblade
+faction elfe_noir
+kind honor
+title 79859
+
+; --- meta honor titles (79860-79863) ---
+
+def honor_meta_novice
+kind honor
+title 79860
+
+def honor_meta_commander
+kind honor
+title 79861
+
+def honor_meta_wayfarer
+kind honor
+title 79862
+
+def honor_meta_conqueror
+kind honor
+title 79863

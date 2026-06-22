@@ -1,0 +1,5 @@
+# Build-only dependencies (runtime does not need Cython once .pyd files exist)
+# pip install -r requirements-build.txt
+Cython>=3.0
+setuptools>=64
+wheel

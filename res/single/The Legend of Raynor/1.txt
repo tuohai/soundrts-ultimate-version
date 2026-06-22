@@ -1,0 +1,91 @@
+title 4271 3001
+intro 7501
+
+; map size
+
+square_width 12
+
+nb_columns 5
+nb_lines 5
+
+; co-op: 1-2 human allies (AoE-style cooperative campaign)
+nb_players_min 1
+nb_players_max 2
+random_starts 0
+
+; place names (province / city / district)
+square_name loc_ch01_wilds 1,1 2,1 3,1 1,2 2,2 3,2 1,3 2,3 3,3 1,4 2,4 3,4 1,5 2,5 3,5 4,1 5,1 4,2 5,2 4,3 5,3 4,4 5,4 4,5 5,5
+square_name loc_ch01_north 1,1 2,1 3,1 1,2 2,2 3,2 4,1 5,1 4,2 5,2
+square_name loc_ch01_mid 1,3 2,3 3,3 4,3 5,3
+square_name loc_ch01_south 1,4 2,4 3,4 1,5 2,5 3,5 4,4 5,4 4,5 5,5
+square_name loc_ch01_raynor_base 1,1 loc_ch01_east_woods 3,1 loc_ch01_west_gold 1,5 loc_ch01_enemy_camp 3,5 loc_ch01_mountain_pass 2,4 loc_ch01_river_bridge 2,2 loc_ch01_marsh_ford 2,3 4,1 5,1 4,5 5,5
+
+; terrain
+
+terrain mountain b4 c4
+terrain big_bridge b2
+terrain marsh b3
+speed .5 1 b3
+terrain river a2 c2
+water a2 c2
+remove_meadows b2 a2 c2 b4 c4
+
+; paths (give only the starting square)
+
+west_east_paths a1 b1 a3 b3 a5 b5 c1 d1 c3 d3 c5 d5
+west_east_bridges
+
+south_north_paths a3 a4
+south_north_paths b1 b2 ; bridge
+
+; resources
+
+goldmines 44 a1
+goldmines 44 e1
+goldmines 88 c5
+
+woods 132 a1 c1
+woods 132 e1
+
+nb_meadows_by_square 2
+additional_meadows c3
+remove_meadows a5 b3
+
+
+; co-op symmetric partner economy
+woods 100 d1 e1
+additional_meadows e1 d1
+; players
+
+player 8 16 -townhall -lumbermill -blacksmith a1 townhall raynor peasant c1 house footman
+player 8 16 -townhall -lumbermill -blacksmith e1 townhall 2 peasant footman d1 house footman
+computer_only 0 0 a5 2 footman c5 3 footman c3 2 footman
+
+; triggers
+
+timer_coefficient 40
+
+; co-op alliances at start
+trigger player1 (timer 0) (alliance 1)
+trigger player2 (timer 0) (alliance 1)
+trigger computers (timer 0) (alliance 2)
+
+
+trigger player1 (timer 0) (add_objective 1 101 151 4660)
+trigger player2 (timer 0) (add_objective 1 101 151 4660)
+trigger player1 (timer 0) (add_objective 2 101 151 99)
+trigger player2 (timer 0) (add_objective 2 101 151 99)
+
+; This trigger must be defined before the "objective_complete" triggers
+; or the cut scene will never be played (the game will quit before).
+trigger player1 (has 2 house barracks) (cut_scene 7502)
+
+trigger player1 (has 2 house) (objective_complete 1)
+trigger player2 (has 2 house) (objective_complete 1)
+trigger player1 (has barracks) (objective_complete 2)
+trigger player2 (has barracks) (objective_complete 2)
+
+trigger player1 (key_unit_killed raynor) (defeat)
+trigger player2 (key_unit_killed raynor) (defeat)
+trigger player1 (building_lost 1 townhall) (defeat)
+trigger player2 (building_lost 1 townhall) (defeat)

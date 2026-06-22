@@ -1,0 +1,318 @@
+; CrazyMod v8.3
+; coding: utf-8
+
+4307 reagrupar
+77000 avi�n bombardero
+77001 polvor�n
+77002 explosivos de alta calidad
+77003 estallar!
+77004 vida de los dragones
+77005 madriguera
+77006 salvaje
+77007 Granja de Frutas
+77008 escondite
+77009 arboleda de los ladrones
+77010 bosque de los filibusteros
+77011 hospital
+77012 salud p�blica
+77013 v�vack de entrenamiento
+77014 mosquetero
+77015 extractor de magnesita
+77016 trampa el�ctrica
+77017 jaula de leones
+77018 tormenta magn�tica
+77019 onda hipn�tica
+77020 torre magn�tica
+77021 choza de los sortilegios
+77022 cazadora
+77023 lobo
+77024 �rbol de vigilancia
+77025 sembrar �rbol de vigilancia
+77026 hechizar
+77027 ectoplasma
+77028 llamar ectoplasma
+77029 bruma mal�fica
+77030 torre espectral
+77031 demonio necr�fago
+77032 cementerio
+77033 domar lobos
+77034 palad�n
+77035 sembrar �rboles de las tinieblas
+77036 sembrar �rboles de la serenidad
+77037 �rbol de las tinieblas
+77038 �rbol de la serenidad
+77039 reciclar cad�veres en plantas carn�voras
+77040 reciclar cad�veres en plantas medicinales
+77041 planta carn�vora
+77042 planta medicinal
+77043 magnesita de alta calidad
+77044 magnesita de muy alta calidad
+77045 explosi�n
+77046 rayo
+77047 avi�n de transporte
+77048 le�n
+77049 domar leones
+77050 ballestero
+77051 gases lacrim�genos
+77052 lanza-granadas
+77053 punto de inicio
+77054 visi�n
+77055 fort�n
+77056 siervo
+77057 g�rgola maldita
+77058 planta espinosa
+77059 ayuntamiento
+77060 sede del governador
+77061 palacio del canciller
+77062 bater�a antia�rea
+77063 campo militar
+77064 bola de energ�a
+77065 generar bola de energ�a
+77066 trabajador
+77067 erudito
+77068 tormenta de nuves
+77069 ataque de los dragones
+77070 f�brica de aviones
+77071 clonaci�n
+77072 brib�n
+77073 arquerito clonado
+77074 avi�n de vigilancia
+77075 s�per armadura
+77076 s�per ataque
+77077 s�per vida
+77078 s�per velocidad
+77079 s�per exorcismo
+77080 ca��n de plasma sobrecalentado
+77081 granja de animales
+77082 avi�n de caza
+77083 pocilga
+77084 garage
+77085 computador personal
+77086 computador
+77087 s�per computador
+77088 granja hidrop�nica
+77089 f�brica rob�tica
+77090 laboratorio �ptico
+77091 cr�a de carro�eros
+77092 modulador de se�al
+77093 ascelerador de part�culas
+77094 torre l�ser
+77095 torre radar
+77096 operario
+77097 granja de energ�a
+77098 tirador l�ser
+77099 campo de caza
+77100 ca��n magn�tico
+77101 ca��n de plasma
+77102 alcance de los dragones
+77103 captador m�vil
+77104 armadura de los dragones
+77105 nave esp�a
+77106 nave l�ser
+77107 velocidad de los dragones
+77108 potencia de l�seres
+77109 potencia de plasma
+77110 escaneo
+77111 biblioteca solar
+77112 golem de carne
+77113 mausoleo
+77114 pante�n
+77115 drag�n esqueleto
+77116 aliento de la muerte
+77117 cripta
+77118 laberinto
+77119 trampa de ueso
+77120 esclavo de no-muertos
+77121 poder m�gico
+77122 fantasma
+77123 espectro con armadura
+77124 pegaso
+77125 domar pegaso
+77126 thestral
+77128 lich
+77129 trampa de flechas '
+77130 pasamurallas
+77131 fuego fatuo
+77132 llamar fuegos fatuos
+
+77136 portal inestable
+77137 portal estable
+
+77141 claro
+77142 ciudad arb�rea
+77143 domanio
+77144 arena arbolada
+77145 jard�n frondoso
+77148 bosque encantado
+77149 trampa de ra�ces
+
+77150 recolector
+77152 arquerito
+77153 arquero del bosque
+77154 centauro
+77159 druida
+77160 bruja
+77161 hada
+
+77165 enjambre
+
+77167 tormenta verde
+
+77169 ra�ces penetrantes
+
+77175 campamento
+77176 campamento fortificado
+77177 fortaleza
+77178 fosa
+77179 cercado
+
+77181 nido
+77182 tipi
+77183 trampa puntiaguda
+
+77184 pe�n
+77185 bruto
+77186 trol
+
+77189 ogro lanzarroca
+
+77190 serpiente
+
+77192 serpiente alada
+77193 hipogrifo
+77194 sacerdote vud?
+
+77196 kamikaze
+77197 bola transportadora
+77198 explosivos de muy alta calidad
+
+77199 posesi�n
+
+77200 tradicionales
+77201 t�cnicos
+77202 robots
+77203 oscuros
+77204 �lficos
+77205 orcos
+
+77208 ilusi�n arbolada
+
+77213 domar serpientes
+77212 alta agresividad
+
+77216 bomba camuflada
+77217 estructura reforzada
+
+77218 c�rculo de los elementos
+77219 torre del fuego
+77220 torre del agua
+77221 torre del aire
+77222 torre de la tierra
+77223 elemental de fuego
+77224 elemental de agua
+77225 elemental de aire
+77226 elemental de tierra
+77227 elementales
+77228 tirador magn�tico
+77229 bichos
+77230 cepa
+77231 chocadeira
+77232 vivero
+77233 laboratorio de larvas
+77234 fecundador transg�nico
+77235 incubadora multiplicador
+77236 �rbol frutal
+77237 termitero
+77238 �rbol de miel
+77239 sala de barro
+77240 galer�a de setas
+77241 �rbol chispeante
+77242 �rbol devorador
+77243 termita guardi�na
+77244 termita conquistadora
+77245 trabajo real
+77246 termita blindada
+77247 avispa col�rica
+77248 gu�pe lanceuse de dard
+77249 gu�pe aux mille dards
+77250 moustique insatiable
+77251 moustique terrible
+77252 moustique sanguinaire
+77253 crabe pinceur
+77254 crabe lanceur de coquille
+77255 crabe de si�ge
+77256 champignon bagarreur
+77257 champignon toxique
+77258 champignon d�vastateur
+77259 luciole �claireuse
+77260 luciole �blouissante
+77261 luciole enflamm�e
+77262 g�n�rer souche
+77263 g�n�rer larves
+77264 larve
+77265 ph�romone de survie
+77266 spores toxiques
+77267 spores hallucinog�nes
+77268 spores de soin
+77269 ouvri�re marcheuse
+77270 ouvri�re ail�e
+77271 elfe noir
+77272 cabane
+77273 villa
+77274 manoir
+77275 coutellerie
+77276 sc�ne
+77277 c�nacle
+77278 tour venteuse
+77279 voleur
+77280 rodeur
+77281 assassin
+77282 ma�tre assassin
+77283 illusionniste
+77284 pantin
+77285 doctoresse
+77286 shuriken volant
+77287 vortex
+77288 tourbillon
+77289 technique de lancer
+77290 vitesse d'animation
+77291 lame fatale
+77292 fumig�ne
+77293 faux vortex
+77294 plantation carnivore
+77295 voli�re
+77296 pigeon
+77297 pluie de fl�ches
+77298 tourelle des embusqu�s
+77299 haute tour des embusqu�s
+77300 tour ?perchoir
+77301 arbre carnivore
+77302 arbre vorace
+77303 r�seau racinaire
+77304 berserk
+77305 troll berserker
+77306 feuille d'acier
+77307 apprivoiser pigeons
+77308 animer pantin
+77309 �l�phant
+77310 apprivoiser �l�phant
+77311 vigne paisible
+77312 vigne envahissante
+77313 semer vigne paisible
+77314 poser pi�ge ?fl�ches
+77315 s�isme
+77316 d�flagration
+77317 soin
+77318 coup de vent
+77319 mer de lave
+77320 golem de boue
+77321 temp�te de sable
+77322 nuage de vapeur
+77323 ciel de glace
+77324 cornac
+77325 �l�phant ?tourelle
+77326 absorption des �mes
+77327 champ de n�cromancie
+77328 explosion de cadavre
+77329 cadavre pestif�r?
+77330 pestif�ration de cadavre

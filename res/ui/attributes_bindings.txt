@@ -1,0 +1,74 @@
+; Hotkey Bindings for Attribute Interface
+; This file defines hotkey bindings used in the attribute interface.
+; The format is the same as bindings.txt used in the main interface.
+;
+; Important Notes:
+; 1. Hotkeys in the attribute interface are independent from those in the main game interface, allowing for overlapping keys.
+; For example: F10 might open the game menu in the main interface but can be set to view dodge rate in the attribute interface.
+; 2. Attribute hotkey format: hotkey: attributes_attr AttributeName
+; AttributeName must use constant names defined in msgparts.py, such as HP, MELEE_DAMAGE, etc.
+; 3. Hotkey binding syntax is the same as in the main interface, supporting modifiers like CTRL, ALT, SHIFT, etc.
+;
+; Common Attribute Names:
+; HP - Health Points
+; MANA - Mana/Energy
+; MELEE_DAMAGE - Melee Damage
+; RANGE_DAMAGE - Ranged Damage
+; MELEE_DEFENSE - Melee Defense
+; RANGE_DEFENSE - Ranged Defense
+; MDG_RANGE - Melee Range
+; RANGED_RANGE - Ranged Range
+; MDG_CD - Melee Cooldown
+; RDG_CD - Ranged Cooldown
+; MDG_READY - Melee Preparation
+; RDG_READY - Ranged Preparation
+; MDG_DODGE - Melee Dodge
+; RDG_DODGE - Ranged Dodge
+; MDG_COVER - Melee Cover
+; RDG_COVER - Ranged Cover
+; STATS - Status
+; TECHNIC_STATS - Technology Status
+; MDG_VS - Melee Damage Bonus
+; RDG_VS - Ranged Damage Bonus
+; SPEED - Speed
+;
+; Examples:
+; F10: attributes_attr MDG_DODGE - Press F10 to view melee dodge rate
+; x: attributes_attr RANGE_DEFENSE - Press x to view ranged defense value
+; g: attributes_attr MDG_RANGE - Press g to view melee range
+
+; Navigation Keys
+UP: _attribute_prev
+DOWN: _attribute_next
+LEFT: _attribute_prev
+RIGHT: _attribute_next
+
+; Exit Key
+ESCAPE: _exit_attributes_screen
+
+; Attribute Quick Access Hotkey Examples:
+; These are default hotkeys, and users can modify them as needed
+h: attributes_attr HP
+m: attributes_attr MELEE_DAMAGE
+r: attributes_attr RANGE_DAMAGE
+d: attributes_attr MELEE_DEFENSE
+f: attributes_attr RANGE_DEFENSE
+s: attributes_attr SPEED
+a: attributes_attr MDG_CD
+c: attributes_attr RDG_CD
+
+; Hotkeys can also be used for special attributes
+F10: attributes_attr MDG_DODGE
+F11: attributes_attr RDG_DODGE
+F9: attributes_attr RANGED_RANGE
+
+; Additional commonly used attributes can be added here
+
+F5: history_previous
+F6: history_next
+
+LALT: history_stop
+RALT: history_stop
+
+LCTRL: examine
+RCTRL: examine

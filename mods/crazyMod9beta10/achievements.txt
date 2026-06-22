@@ -1,0 +1,654 @@
+; CrazyMod 9 — per-faction achievements
+; Names: 79800 + faction_index*5 + slot (0 grade_s, 1 grade_a, 2 frugal, 3 survival, 4 building)
+; faction_index: trad=0 tech=1 rob=2 ten=3 elf=4 orc=5 ele=6 sau=7 ver=8 delf=9
+
+clear
+
+; --- traditionnel ---
+
+def trad_grade_s
+faction traditionnel
+title 79800
+condition grade S
+once_per map_ai
+reward medal 40
+repeat_medal 8
+reward card card_trad_knights
+
+def trad_grade_a
+faction traditionnel
+title 79801
+condition grade A
+once_per map_ai
+reward medal 25
+repeat_medal 5
+
+def trad_frugal
+faction traditionnel
+title 79802
+condition victory
+condition utilization_below 30
+once_per map
+reward medal 30
+reward title honor_trad_valiant
+
+def trad_survival
+faction traditionnel
+title 79803
+condition victory
+condition survival_at_least 100
+once_per map
+reward medal 20
+reward card card_trad_infantry
+
+def trad_fortress
+faction traditionnel
+title 79804
+condition victory
+condition building_defense_at_least 100
+once_per map
+reward medal 20
+reward card card_cm_gold
+
+; --- technique ---
+
+def tech_grade_s
+faction technique
+title 79805
+condition grade S
+once_per map_ai
+reward medal 40
+repeat_medal 8
+reward card card_tech_grenadiers
+
+def tech_grade_a
+faction technique
+title 79806
+condition grade A
+once_per map_ai
+reward medal 25
+repeat_medal 5
+
+def tech_frugal
+faction technique
+title 79807
+condition victory
+condition utilization_below 30
+once_per map
+reward medal 30
+reward title honor_tech_efficient
+
+def tech_survival
+faction technique
+title 79808
+condition victory
+condition survival_at_least 100
+once_per map
+reward medal 20
+reward card card_tech_musketeers
+
+def tech_fortress
+faction technique
+title 79809
+condition victory
+condition building_defense_at_least 100
+once_per map
+reward medal 20
+reward card card_cm_wood
+
+; --- robotique ---
+
+def rob_grade_s
+faction robotique
+title 79810
+condition grade S
+once_per map_ai
+reward medal 40
+repeat_medal 8
+reward card card_rob_drones
+
+def rob_grade_a
+faction robotique
+title 79811
+condition grade A
+once_per map_ai
+reward medal 25
+repeat_medal 5
+
+def rob_frugal
+faction robotique
+title 79812
+condition victory
+condition utilization_below 30
+once_per map
+reward medal 30
+reward title honor_rob_overclocked
+
+def rob_survival
+faction robotique
+title 79813
+condition victory
+condition survival_at_least 100
+once_per map
+reward medal 20
+reward card card_rob_laser
+
+def rob_fortress
+faction robotique
+title 79814
+condition victory
+condition building_defense_at_least 100
+once_per map
+reward medal 20
+reward card card_cm_gold
+
+; --- tenebre ---
+
+def ten_grade_s
+faction tenebre
+title 79815
+condition grade S
+once_per map_ai
+reward medal 40
+repeat_medal 8
+reward card card_ten_skeletons
+
+def ten_grade_a
+faction tenebre
+title 79816
+condition grade A
+once_per map_ai
+reward medal 25
+repeat_medal 5
+
+def ten_frugal
+faction tenebre
+title 79817
+condition victory
+condition utilization_below 30
+once_per map
+reward medal 30
+reward title honor_ten_gravekeeper
+
+def ten_survival
+faction tenebre
+title 79818
+condition victory
+condition survival_at_least 100
+once_per map
+reward medal 20
+reward card card_ten_ghouls
+
+def ten_fortress
+faction tenebre
+title 79819
+condition victory
+condition building_defense_at_least 100
+once_per map
+reward medal 20
+reward card card_cm_wood
+
+; --- elfique ---
+
+def elf_grade_s
+faction elfique
+title 79820
+condition grade S
+once_per map_ai
+reward medal 40
+repeat_medal 8
+reward card card_elf_centaurs
+
+def elf_grade_a
+faction elfique
+title 79821
+condition grade A
+once_per map_ai
+reward medal 25
+repeat_medal 5
+
+def elf_frugal
+faction elfique
+title 79822
+condition victory
+condition utilization_below 30
+once_per map
+reward medal 30
+reward title honor_elf_forest_heart
+
+def elf_survival
+faction elfique
+title 79823
+condition victory
+condition survival_at_least 100
+once_per map
+reward medal 20
+reward card card_elf_archers
+
+def elf_fortress
+faction elfique
+title 79824
+condition victory
+condition building_defense_at_least 100
+once_per map
+reward medal 20
+reward card card_cm_gold
+
+; --- orc ---
+
+def orc_grade_s
+faction orc
+title 79825
+condition grade S
+once_per map_ai
+reward medal 40
+repeat_medal 8
+reward card card_orc_rockets
+
+def orc_grade_a
+faction orc
+title 79826
+condition grade A
+once_per map_ai
+reward medal 25
+repeat_medal 5
+
+def orc_frugal
+faction orc
+title 79827
+condition victory
+condition utilization_below 30
+once_per map
+reward medal 30
+reward title honor_orc_bloodrage
+
+def orc_survival
+faction orc
+title 79828
+condition victory
+condition survival_at_least 100
+once_per map
+reward medal 20
+reward card card_orc_trolls
+
+def orc_fortress
+faction orc
+title 79829
+condition victory
+condition building_defense_at_least 100
+once_per map
+reward medal 20
+reward card card_cm_wood
+
+; --- elementale ---
+
+def ele_grade_s
+faction elementale
+title 79830
+condition grade S
+once_per map_ai
+reward medal 40
+repeat_medal 8
+reward card card_ele_fire
+
+def ele_grade_a
+faction elementale
+title 79831
+condition grade A
+once_per map_ai
+reward medal 25
+repeat_medal 5
+
+def ele_frugal
+faction elementale
+title 79832
+condition victory
+condition utilization_below 30
+once_per map
+reward medal 30
+reward title honor_ele_stormcaller
+
+def ele_survival
+faction elementale
+title 79833
+condition victory
+condition survival_at_least 100
+once_per map
+reward medal 20
+reward card card_ele_earth
+
+def ele_fortress
+faction elementale
+title 79834
+condition victory
+condition building_defense_at_least 100
+once_per map
+reward medal 20
+reward card card_cm_gold
+
+; --- sauvage ---
+
+def sau_grade_s
+faction sauvage
+title 79835
+condition grade S
+once_per map_ai
+reward medal 40
+repeat_medal 8
+reward card card_sau_archers
+
+def sau_grade_a
+faction sauvage
+title 79836
+condition grade A
+once_per map_ai
+reward medal 25
+repeat_medal 5
+
+def sau_frugal
+faction sauvage
+title 79837
+condition victory
+condition utilization_below 30
+once_per map
+reward medal 30
+reward title honor_sau_outlaw
+
+def sau_survival
+faction sauvage
+title 79838
+condition victory
+condition survival_at_least 100
+once_per map
+reward medal 20
+reward card card_sau_huntresses
+
+def sau_fortress
+faction sauvage
+title 79839
+condition victory
+condition building_defense_at_least 100
+once_per map
+reward medal 20
+reward card card_cm_wood
+
+; --- vermine ---
+
+def ver_grade_s
+faction vermine
+title 79840
+condition grade S
+once_per map_ai
+reward medal 40
+repeat_medal 8
+reward card card_ver_termite
+
+def ver_grade_a
+faction vermine
+title 79841
+condition grade A
+once_per map_ai
+reward medal 25
+repeat_medal 5
+
+def ver_frugal
+faction vermine
+title 79842
+condition victory
+condition utilization_below 30
+once_per map
+reward medal 30
+reward title honor_ver_hivemind
+
+def ver_survival
+faction vermine
+title 79843
+condition victory
+condition survival_at_least 100
+once_per map
+reward medal 20
+reward card card_ver_larvae
+
+def ver_fortress
+faction vermine
+title 79844
+condition victory
+condition building_defense_at_least 100
+once_per map
+reward medal 20
+reward card card_cm_gold
+
+; --- elfe_noir ---
+
+def delf_grade_s
+faction elfe_noir
+title 79845
+condition grade S
+once_per map_ai
+reward medal 40
+repeat_medal 8
+reward card card_delf_dark_archers
+
+def delf_grade_a
+faction elfe_noir
+title 79846
+condition grade A
+once_per map_ai
+reward medal 25
+repeat_medal 5
+
+def delf_frugal
+faction elfe_noir
+title 79847
+condition victory
+condition utilization_below 30
+once_per map
+reward medal 30
+reward title honor_delf_nightblade
+
+def delf_survival
+faction elfe_noir
+title 79848
+condition victory
+condition survival_at_least 100
+once_per map
+reward medal 20
+reward card card_delf_stalkers
+
+def delf_fortress
+faction elfe_noir
+title 79849
+condition victory
+condition building_defense_at_least 100
+once_per map
+reward medal 20
+reward card card_cm_wood
+
+; --- cumulative defeats (current branch save; TTS 79900-79919) ---
+
+def cm_total_beginner_5
+title 79900
+condition victory
+condition defeated_ai beginner easy
+condition defeated_ai_total_at_least 5 beginner
+once
+reward medal 15
+reward card card_cm_gold
+
+def cm_total_beginner_15
+title 79901
+condition victory
+condition defeated_ai beginner easy
+condition defeated_ai_total_at_least 15 beginner
+once
+reward medal 25
+reward card card_cm_wood
+
+def cm_total_intermediate_5
+title 79902
+condition victory
+condition defeated_ai intermediate aggressive
+condition defeated_ai_total_at_least 5 intermediate
+once
+reward medal 20
+reward card card_cm_gold
+
+def cm_total_advanced_3
+title 79903
+condition victory
+condition defeated_ai advanced
+condition defeated_ai_total_at_least 3 advanced
+once
+reward medal 30
+
+def cm_total_expert_2
+title 79904
+condition victory
+condition defeated_ai expert
+condition defeated_ai_total_at_least 2 expert
+once
+reward medal 40
+
+def cm_total_nightmare_1
+title 79905
+condition victory
+condition defeated_ai nightmare
+condition defeated_ai_total_at_least 1 nightmare
+once
+reward medal 50
+
+; --- per-faction map milestones (TTS 79920-79929) ---
+
+def trad_map_pra1
+faction traditionnel
+title 79920
+condition victory
+condition map pra1
+condition defeated_ai beginner easy
+condition defeated_ai_map_at_least pra1 3 beginner
+once
+reward medal 20
+reward card card_cm_wood
+
+def tech_map_pra9
+faction technique
+title 79921
+condition victory
+condition map pra9
+condition defeated_ai expert
+condition defeated_ai_map_at_least pra9 1 expert
+once
+reward medal 45
+
+def rob_map_pra3
+faction robotique
+title 79922
+condition victory
+condition map pra3
+condition defeated_ai intermediate aggressive
+condition defeated_ai_map_at_least pra3 2 intermediate
+once
+reward medal 25
+
+def ten_map_pra11
+faction tenebre
+title 79923
+condition victory
+condition map pra11
+condition defeated_ai nightmare
+condition defeated_ai_map_at_least pra11 1 nightmare
+once
+reward medal 60
+
+def elf_map_pra6
+faction elfique
+title 79924
+condition victory
+condition map pra6
+condition defeated_ai advanced
+condition defeated_ai_map_at_least pra6 1 advanced
+once
+reward medal 35
+
+def orc_map_pra8
+faction orc
+title 79925
+condition victory
+condition map pra8
+condition defeated_ai advanced
+condition defeated_ai_map_at_least pra8 2 advanced
+once
+reward medal 40
+
+def ele_map_pra5
+faction elementale
+title 79926
+condition victory
+condition map pra5
+condition defeated_ai beginner easy
+condition defeated_ai_map_at_least pra5 5 beginner
+once
+reward medal 30
+reward card card_cm_gold
+
+def sau_map_pra7
+faction sauvage
+title 79927
+condition victory
+condition map pra7
+condition defeated_ai intermediate aggressive
+condition defeated_ai_map_at_least pra7 2 intermediate
+once
+reward medal 25
+
+def ver_map_z5
+faction vermine
+title 79928
+condition victory
+condition map z5
+condition defeated_ai expert
+condition defeated_ai_map_at_least z5 1 expert
+once
+reward medal 50
+
+def delf_map_pra10
+faction elfe_noir
+title 79929
+condition victory
+condition map pra10
+condition defeated_ai advanced
+condition defeated_ai_map_at_least pra10 1 advanced
+once
+reward medal 35
+
+; --- cross-faction meta progress (scope meta, TTS 79950-79953) ---
+
+def meta_three_branches
+scope meta
+title 79950
+condition factions_unlocked_at_least 3 1
+once
+reward title honor_meta_novice
+
+def meta_five_sergeant
+scope meta
+title 79951
+condition factions_medals_at_least 5 150
+once
+reward title honor_meta_commander
+
+def meta_eight_maps
+scope meta
+title 79952
+condition factions_achievement_id_contains_at_least 8 _map_
+once
+reward title honor_meta_wayfarer
+
+def meta_ten_masters
+scope meta
+title 79953
+condition factions_medals_at_least 10 240
+condition factions_honors_at_least 10 1
+once
+reward title honor_meta_conqueror
+reward medal 25

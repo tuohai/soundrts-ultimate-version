@@ -1,0 +1,5 @@
+b: order_shortcut ; order shortcuts are defined in style.txt
+
+ALT Z : do_again ; reselect the previously validated order
+ALT X: do_again now ; if no target is required, validate the order
+SHIFT ALT X: do_again now queue_order ; if no target is required, validate the order

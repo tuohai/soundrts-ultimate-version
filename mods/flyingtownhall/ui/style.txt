@@ -1,0 +1,6 @@
+def flying_townhall
+is_a townhall
+title 7000
+keyboard building1
+move 1317 1318
+

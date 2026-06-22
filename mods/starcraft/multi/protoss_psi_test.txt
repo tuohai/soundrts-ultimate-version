@@ -1,0 +1,29 @@
+; StarCraft mod — Protoss psi field test
+; Nexus at a1 only covers nearby squares. Chain 4 Pylons to reach f1, then Gateway.
+;
+;  a b c d e f g h i j
+; 1 * + + + + @ + + + +
+;   ^nexus      ^build Gateway here (4×12 m chain from Nexus)
+
+title 7546
+
+square_width 12
+nb_columns 10
+nb_lines 1
+
+west_east_paths a1 b1 c1 d1 e1 f1 g1 h1 i1
+
+mineral_field 1500 a1
+nb_meadows_by_square 0
+
+nb_players_min 1
+nb_players_max 1
+starting_squares a1
+starting_units nexus 3 probe
+starting_resources 50 0
+
+timer_coefficient 1
+
+trigger player1 (timer 0) (add_objective 1 7547)
+trigger player1 (and (has 4 pylon) (has_entered f1 gateway)) (objective_complete 1)
+trigger player1 (and (has 4 pylon) (has_entered f1 gateway)) (victory)

@@ -1,0 +1,7 @@
+def megadragon
+is_a dragon
+title 77027
+noise repeat 5580
+move 77641
+death 77581
+keyboard soldier6

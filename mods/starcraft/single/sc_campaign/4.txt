@@ -1,0 +1,26 @@
+; Campaign ch.4 — Terran recombine (lift Barracks, lift Factory, Tab Tech Lab + land)
+; See docs/zh/星际人族附属建筑与重组说明.md §4.3
+
+title 7544
+intro 7341
+
+square_width 12
+nb_columns 4
+nb_lines 1
+
+west_east_paths a1 b1 c1
+
+mineral_field 100 a1
+nb_meadows_by_square 1
+
+nb_players_min 1
+nb_players_max 1
+starting_squares a1
+starting_units command_center barracks factory scv
+starting_resources 60 30
+
+timer_coefficient 1
+
+trigger player1 (timer 0) (add_objective 1 7341)
+trigger player1 (has tank) (objective_complete 1)
+trigger player1 (has tank) (victory)

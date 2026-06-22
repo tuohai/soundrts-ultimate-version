@@ -1,0 +1,5 @@
+; 适配azerty键盘的配置
+a: select_unit 1 local          ; 原本是q键的功能
+q: select_order 1 inactive_included  ; 原本是a键的功能
+z: select_unit 1 building       ; 原本是w键的功能
+w: resource_status resource1    ; 原本是z键的功能

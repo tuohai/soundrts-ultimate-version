@@ -1,0 +1,1574 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.21.2: https://docutils.sourceforge.io/" />
+<title>Units guide</title>
+<style type="text/css">
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 9511 2024-01-13 09:50:07Z milde $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+Despite the name, some widely supported CSS2 features are used.
+
+See https://docutils.sourceforge.io/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+.subscript {
+  vertical-align: sub;
+  font-size: smaller }
+
+.superscript {
+  vertical-align: super;
+  font-size: smaller }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+object[type="image/svg+xml"], object[type="application/x-shockwave-flash"] {
+  overflow: hidden;
+}
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title, .code .error {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left, .figure.align-left, object.align-left, table.align-left {
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+img.align-right, .figure.align-right, object.align-right, table.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+img.align-center, .figure.align-center, object.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+table.align-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: inherit }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+.align-top    {
+  vertical-align: top }
+
+.align-middle {
+  vertical-align: middle }
+
+.align-bottom {
+  vertical-align: bottom }
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+pre.literal-block, pre.doctest-block, pre.math, pre.code {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+pre.code .ln { color: gray; } /* line numbers */
+pre.code, code { background-color: #eeeeee }
+pre.code .comment, code .comment { color: #5C6576 }
+pre.code .keyword, code .keyword { color: #3B0D06; font-weight: bold }
+pre.code .literal.string, code .literal.string { color: #0C5404 }
+pre.code .name.builtin, code .name.builtin { color: #352B84 }
+pre.code .deleted, code .deleted { background-color: #DEB0A1}
+pre.code .inserted, code .inserted { background-color: #A3D289}
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic, pre.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+/* "booktabs" style (no vertical lines) */
+table.docutils.booktabs {
+  border: 0px;
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+  border-collapse: collapse;
+}
+table.docutils.booktabs * {
+  border: 0px;
+}
+table.docutils.booktabs th {
+  border-bottom: thin solid;
+  text-align: left;
+}
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+</head>
+<body>
+<div class="document" id="units-guide">
+<h1 class="title">Units guide</h1>
+
+<div class="contents topic" id="contents">
+<p class="topic-title"><a class="reference internal" href="#top">Contents</a></p>
+<ul class="simple">
+<li><a class="reference internal" href="#units" id="toc-entry-1">1. Units</a><ul>
+<li><a class="reference internal" href="#boar" id="toc-entry-2">boar</a></li>
+<li><a class="reference internal" href="#deer" id="toc-entry-3">deer</a></li>
+<li><a class="reference internal" href="#raynor2" id="toc-entry-4">raynor2</a></li>
+<li><a class="reference internal" href="#raynor3" id="toc-entry-5">raynor3</a></li>
+<li><a class="reference internal" href="#raynor4" id="toc-entry-6">raynor4</a></li>
+<li><a class="reference internal" href="#raynor5" id="toc-entry-7">raynor5</a></li>
+<li><a class="reference internal" href="#raynor6" id="toc-entry-8">raynor6</a></li>
+<li><a class="reference internal" href="#raynor7" id="toc-entry-9">raynor7</a></li>
+<li><a class="reference internal" href="#raynor" id="toc-entry-10">raynor</a></li>
+<li><a class="reference internal" href="#sheep" id="toc-entry-11">sheep</a></li>
+<li><a class="reference internal" href="#skeleton" id="toc-entry-12">skeleton</a></li>
+<li><a class="reference internal" href="#zombie" id="toc-entry-13">zombie</a></li>
+<li><a class="reference internal" href="#peasant" id="toc-entry-14">peasant</a></li>
+<li><a class="reference internal" href="#footman" id="toc-entry-15">footman</a></li>
+<li><a class="reference internal" href="#archer" id="toc-entry-16">archer</a></li>
+<li><a class="reference internal" href="#repeating-crossbowman" id="toc-entry-17">repeating_crossbowman</a></li>
+<li><a class="reference internal" href="#boat" id="toc-entry-18">boat</a></li>
+<li><a class="reference internal" href="#flying-machine" id="toc-entry-19">flying machine</a></li>
+<li><a class="reference internal" href="#knight" id="toc-entry-20">knight</a></li>
+<li><a class="reference internal" href="#destroyer" id="toc-entry-21">destroyer</a></li>
+<li><a class="reference internal" href="#submarine" id="toc-entry-22">submarine</a></li>
+<li><a class="reference internal" href="#dark-archer" id="toc-entry-23">dark archer</a></li>
+<li><a class="reference internal" href="#priest" id="toc-entry-24">priest</a></li>
+<li><a class="reference internal" href="#battleship" id="toc-entry-25">battleship</a></li>
+<li><a class="reference internal" href="#catapult" id="toc-entry-26">catapult</a></li>
+<li><a class="reference internal" href="#dragon" id="toc-entry-27">dragon</a></li>
+<li><a class="reference internal" href="#mage" id="toc-entry-28">mage</a></li>
+<li><a class="reference internal" href="#necromancer" id="toc-entry-29">necromancer</a></li>
+<li><a class="reference internal" href="#offensive-flying-machine" id="toc-entry-30">offensive flying machine</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#buildings" id="toc-entry-31">2. Buildings</a><ul>
+<li><a class="reference internal" href="#ancient-ruin" id="toc-entry-32">ancient_ruin</a></li>
+<li><a class="reference internal" href="#captured-barracks" id="toc-entry-33">captured_barracks</a></li>
+<li><a class="reference internal" href="#scout-tower" id="toc-entry-34">scout tower</a></li>
+<li><a class="reference internal" href="#farm" id="toc-entry-35">farm</a></li>
+<li><a class="reference internal" href="#house" id="toc-entry-36">house</a></li>
+<li><a class="reference internal" href="#guard-tower" id="toc-entry-37">guard tower</a></li>
+<li><a class="reference internal" href="#lumber-mill" id="toc-entry-38">lumber mill</a></li>
+<li><a class="reference internal" href="#barracks" id="toc-entry-39">barracks</a></li>
+<li><a class="reference internal" href="#wall" id="toc-entry-40">wall</a></li>
+<li><a class="reference internal" href="#blacksmith" id="toc-entry-41">blacksmith</a></li>
+<li><a class="reference internal" href="#gold-house" id="toc-entry-42">gold_house</a></li>
+<li><a class="reference internal" href="#gold-mint" id="toc-entry-43">gold_mint</a></li>
+<li><a class="reference internal" href="#gate" id="toc-entry-44">gate</a></li>
+<li><a class="reference internal" href="#cannon-tower" id="toc-entry-45">cannon tower</a></li>
+<li><a class="reference internal" href="#shipyard" id="toc-entry-46">shipyard</a></li>
+<li><a class="reference internal" href="#stables" id="toc-entry-47">stables</a></li>
+<li><a class="reference internal" href="#workshop" id="toc-entry-48">workshop</a></li>
+<li><a class="reference internal" href="#town-hall" id="toc-entry-49">town hall</a></li>
+<li><a class="reference internal" href="#dragons-lair" id="toc-entry-50">dragons lair</a></li>
+<li><a class="reference internal" href="#mages-tower" id="toc-entry-51">mages tower</a></li>
+<li><a class="reference internal" href="#necropolis" id="toc-entry-52">necropolis</a></li>
+<li><a class="reference internal" href="#temple" id="toc-entry-53">temple</a></li>
+<li><a class="reference internal" href="#massive-wall" id="toc-entry-54">massive_wall</a></li>
+<li><a class="reference internal" href="#keep" id="toc-entry-55">keep</a></li>
+<li><a class="reference internal" href="#massive-gate" id="toc-entry-56">massive_gate</a></li>
+<li><a class="reference internal" href="#castle" id="toc-entry-57">castle</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#skills" id="toc-entry-58">3. Skills</a><ul>
+<li><a class="reference internal" href="#conversion" id="toc-entry-59">conversion</a></li>
+<li><a class="reference internal" href="#deadly-fog" id="toc-entry-60">deadly fog</a></li>
+<li><a class="reference internal" href="#exorcism" id="toc-entry-61">exorcism</a></li>
+<li><a class="reference internal" href="#holy-vision" id="toc-entry-62">holy vision</a></li>
+<li><a class="reference internal" href="#meteors" id="toc-entry-63">meteors</a></li>
+<li><a class="reference internal" href="#raise-dead" id="toc-entry-64">raise dead</a></li>
+<li><a class="reference internal" href="#recall" id="toc-entry-65">recall</a></li>
+<li><a class="reference internal" href="#resurrection" id="toc-entry-66">resurrection</a></li>
+<li><a class="reference internal" href="#summon-dragon" id="toc-entry-67">summon dragon</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#upgrades-and-research" id="toc-entry-68">4. Upgrades and research</a><ul>
+<li><a class="reference internal" href="#hunting-techniques" id="toc-entry-69">hunting_techniques</a></li>
+<li><a class="reference internal" href="#dsb" id="toc-entry-70">dsb</a></li>
+<li><a class="reference internal" href="#dsc" id="toc-entry-71">dsc</a></li>
+<li><a class="reference internal" href="#archer-armor-upgrade" id="toc-entry-72">archer armor upgrade</a></li>
+<li><a class="reference internal" href="#archer-range-upgrade" id="toc-entry-73">archer range upgrade</a></li>
+<li><a class="reference internal" href="#archer-weapon-upgrade" id="toc-entry-74">archer weapon upgrade</a></li>
+<li><a class="reference internal" href="#melee-armor-upgrade" id="toc-entry-75">melee armor upgrade</a></li>
+<li><a class="reference internal" href="#melee-weapon-upgrade" id="toc-entry-76">melee weapon upgrade</a></li>
+<li><a class="reference internal" href="#horse-speed-upgrade" id="toc-entry-77">horse speed upgrade</a></li>
+<li><a class="reference internal" href="#conversion-research" id="toc-entry-78">conversion research</a></li>
+<li><a class="reference internal" href="#deadly-fog-research" id="toc-entry-79">deadly fog research</a></li>
+<li><a class="reference internal" href="#exorcism-research" id="toc-entry-80">exorcism research</a></li>
+<li><a class="reference internal" href="#meteors-research" id="toc-entry-81">meteors research</a></li>
+<li><a class="reference internal" href="#recall-research" id="toc-entry-82">recall research</a></li>
+<li><a class="reference internal" href="#resurrection-research" id="toc-entry-83">resurrection research</a></li>
+<li><a class="reference internal" href="#summon-dragon-research" id="toc-entry-84">summon dragon research</a></li>
+<li><a class="reference internal" href="#bronzeworking" id="toc-entry-85">bronzeworking</a></li>
+<li><a class="reference internal" href="#iron-working" id="toc-entry-86">iron_working</a></li>
+<li><a class="reference internal" href="#super-healer-upgrade" id="toc-entry-87">super healer upgrade</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#items" id="toc-entry-88">5. Items</a><ul>
+<li><a class="reference internal" href="#gold-coin" id="toc-entry-89">gold_coin</a></li>
+<li><a class="reference internal" href="#gold-pile" id="toc-entry-90">gold_pile</a></li>
+<li><a class="reference internal" href="#treasure-chest" id="toc-entry-91">treasure_chest</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#weapons" id="toc-entry-92">6. Weapons</a></li>
+<li><a class="reference internal" href="#armor" id="toc-entry-93">7. Armor</a></li>
+<li><a class="reference internal" href="#buffs" id="toc-entry-94">8. Buffs</a><ul>
+<li><a class="reference internal" href="#b-slow" id="toc-entry-95">b_slow</a></li>
+<li><a class="reference internal" href="#berserk-buff" id="toc-entry-96">berserk_buff</a></li>
+<li><a class="reference internal" href="#desperate-resist-buff" id="toc-entry-97">desperate_resist_buff</a></li>
+<li><a class="reference internal" href="#dual-trigger-buff" id="toc-entry-98">dual_trigger_buff</a></li>
+<li><a class="reference internal" href="#heal" id="toc-entry-99">heal</a></li>
+<li><a class="reference internal" href="#spell-power-buff" id="toc-entry-100">spell_power_buff</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ages-phases" id="toc-entry-101">9. Ages (phases)</a><ul>
+<li><a class="reference internal" href="#dark-age" id="toc-entry-102">dark_age</a></li>
+<li><a class="reference internal" href="#feudal-age" id="toc-entry-103">feudal_age</a></li>
+<li><a class="reference internal" href="#castle-age" id="toc-entry-104">castle_age</a></li>
+<li><a class="reference internal" href="#imperial-age" id="toc-entry-105">imperial_age</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="units">
+<h1><a class="toc-backref" href="#toc-entry-1">1. Units</a></h1>
+<div class="section" id="boar">
+<h2><a class="toc-backref" href="#toc-entry-2">boar</a></h2>
+<ul class="simple">
+<li>total cost:</li>
+<li>health:  15000 hit points</li>
+<li>mdg attack: 2000 damage every 1500 seconds, range 1000 meters</li>
+<li>speed:  1500 meters per second</li>
+<li>sight range:  3000 meters</li>
+</ul>
+</div>
+<div class="section" id="deer">
+<h2><a class="toc-backref" href="#toc-entry-3">deer</a></h2>
+<ul class="simple">
+<li>total cost:</li>
+<li>health:  5000 hit points</li>
+<li>speed:  2000 meters per second</li>
+<li>sight range:  4000 meters</li>
+</ul>
+</div>
+<div class="section" id="raynor2">
+<h2><a class="toc-backref" href="#toc-entry-4">raynor2</a></h2>
+<p>The knight fights with his sword and moves fast.</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#stables">stables</a></li>
+<li>total cost:</li>
+<li>health:  120000 hit points</li>
+<li>melee defense: 2000</li>
+<li>mdg attack: 4000 damage every 1500 seconds, range 1000 meters</li>
+<li>speed:  2500 meters per second</li>
+<li>sight range:  3000 meters</li>
+<li>population cost: 2 units</li>
+<li>inventory capacity: 3 items</li>
+</ul>
+</div>
+<div class="section" id="raynor3">
+<h2><a class="toc-backref" href="#toc-entry-5">raynor3</a></h2>
+<p>The knight fights with his sword and moves fast.</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#stables">stables</a></li>
+<li>total cost:</li>
+<li>health:  150000 hit points</li>
+<li>melee defense: 3000</li>
+<li>mdg attack: 6000 damage every 1500 seconds, range 1000 meters</li>
+<li>speed:  2500 meters per second</li>
+<li>sight range:  3000 meters</li>
+<li>population cost: 2 units</li>
+<li>inventory capacity: 3 items</li>
+</ul>
+</div>
+<div class="section" id="raynor4">
+<h2><a class="toc-backref" href="#toc-entry-6">raynor4</a></h2>
+<p>The knight fights with his sword and moves fast.</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#stables">stables</a></li>
+<li>total cost:</li>
+<li>health:  180000 hit points</li>
+<li>melee defense: 4000</li>
+<li>mdg attack: 8000 damage every 1500 seconds, range 1000 meters</li>
+<li>speed:  2500 meters per second</li>
+<li>sight range:  3000 meters</li>
+<li>population cost: 2 units</li>
+<li>inventory capacity: 3 items</li>
+</ul>
+</div>
+<div class="section" id="raynor5">
+<h2><a class="toc-backref" href="#toc-entry-7">raynor5</a></h2>
+<p>The knight fights with his sword and moves fast.</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#stables">stables</a></li>
+<li>total cost:</li>
+<li>health:  210000 hit points</li>
+<li>melee defense: 6000</li>
+<li>mdg attack: 10000 damage every 1500 seconds, range 1000 meters</li>
+<li>speed:  2500 meters per second</li>
+<li>sight range:  3000 meters</li>
+<li>population cost: 2 units</li>
+<li>inventory capacity: 3 items</li>
+</ul>
+</div>
+<div class="section" id="raynor6">
+<h2><a class="toc-backref" href="#toc-entry-8">raynor6</a></h2>
+<p>The knight fights with his sword and moves fast.</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#stables">stables</a></li>
+<li>total cost:</li>
+<li>health:  250000 hit points</li>
+<li>melee defense: 8000</li>
+<li>mdg attack: 13000 damage every 1500 seconds, range 1000 meters</li>
+<li>speed:  2500 meters per second</li>
+<li>sight range:  3000 meters</li>
+<li>population cost: 2 units</li>
+<li>inventory capacity: 3 items</li>
+</ul>
+</div>
+<div class="section" id="raynor7">
+<h2><a class="toc-backref" href="#toc-entry-9">raynor7</a></h2>
+<p>The knight fights with his sword and moves fast.</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#stables">stables</a></li>
+<li>total cost:</li>
+<li>health:  280000 hit points</li>
+<li>health regeneration:  2000 hit points per second</li>
+<li>melee defense: 10000</li>
+<li>mdg attack: 16000 damage every 1500 seconds, range 1000 meters</li>
+<li>speed:  2500 meters per second</li>
+<li>sight range:  3000 meters</li>
+<li>population cost: 2 units</li>
+<li>inventory capacity: 3 items</li>
+</ul>
+</div>
+<div class="section" id="raynor">
+<h2><a class="toc-backref" href="#toc-entry-10">raynor</a></h2>
+<p>The knight fights with his sword and moves fast.</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#stables">stables</a></li>
+<li>total cost:</li>
+<li>health:  90000 hit points</li>
+<li>melee defense: 1000</li>
+<li>mdg attack: 1000 damage every 1500 seconds, range 1000 meters</li>
+<li>speed:  2500 meters per second</li>
+<li>sight range:  3000 meters</li>
+<li>population cost: 2 units</li>
+<li>inventory capacity: 3 items</li>
+</ul>
+</div>
+<div class="section" id="sheep">
+<h2><a class="toc-backref" href="#toc-entry-11">sheep</a></h2>
+<ul class="simple">
+<li>total cost:</li>
+<li>health:  4000 hit points</li>
+<li>speed:  1500 meters per second</li>
+<li>sight range:  3000 meters</li>
+</ul>
+</div>
+<div class="section" id="skeleton">
+<h2><a class="toc-backref" href="#toc-entry-12">skeleton</a></h2>
+<ul class="simple">
+<li>total cost:</li>
+<li>health:  15000 hit points</li>
+<li>rdg attack: 2500 damage every 1500 seconds, range 4000 meters</li>
+<li>speed:  1500 meters per second</li>
+<li>sight range:  6000 meters</li>
+</ul>
+</div>
+<div class="section" id="zombie">
+<h2><a class="toc-backref" href="#toc-entry-13">zombie</a></h2>
+<ul class="simple">
+<li>total cost:</li>
+<li>health:  23000 hit points</li>
+<li>melee defense: 500</li>
+<li>mdg attack: 5000 damage every 3000 seconds, range 1000 meters</li>
+<li>speed:  1000 meters per second</li>
+<li>sight range:  3000 meters</li>
+</ul>
+</div>
+<div class="section" id="peasant">
+<h2><a class="toc-backref" href="#toc-entry-14">peasant</a></h2>
+<p>The peasant is important but fragile. The peasant collects gold or wood, builds and repairs buildings. Many peasants can help building or repairing a building to go faster. When a peasant can build a new type of building, this new option is added at the end of the list.</p>
+<p>The peasant can fight, and can join a total attack with the command Control + Alt + S.</p>
+<ul class="simple">
+<li>total cost: 4000 gold</li>
+<li>total time cost: 10000 seconds</li>
+<li>time cost modifier: 10000</li>
+<li>health:  4000 hit points</li>
+<li>mdg attack: 1000 damage every 1000 seconds, range 800 meters</li>
+<li>speed:  1500 meters per second</li>
+<li>sight range:  6000 meters</li>
+<li>population cost: 1 unit</li>
+<li>inventory capacity: 1 item</li>
+<li>can build: <a class="reference internal" href="#gold-house">gold_house</a>, <a class="reference internal" href="#gold-mint">gold_mint</a>, <a class="reference internal" href="#house">house</a>, <a class="reference internal" href="#farm">farm</a>, <a class="reference internal" href="#barracks">barracks</a>, <a class="reference internal" href="#lumber-mill">lumber mill</a>, <a class="reference internal" href="#blacksmith">blacksmith</a>, <a class="reference internal" href="#wall">wall</a>, <a class="reference internal" href="#gate">gate</a>, <a class="reference internal" href="#scout-tower">scout tower</a>, <a class="reference internal" href="#town-hall">town hall</a>, <a class="reference internal" href="#stables">stables</a>, <a class="reference internal" href="#workshop">workshop</a>, <a class="reference internal" href="#dragons-lair">dragons lair</a>, <a class="reference internal" href="#mages-tower">mages tower</a>, <a class="reference internal" href="#temple">temple</a>, <a class="reference internal" href="#necropolis">necropolis</a>, <a class="reference internal" href="#shipyard">shipyard</a></li>
+<li>special abilities: can repair ships</li>
+</ul>
+</div>
+<div class="section" id="footman">
+<h2><a class="toc-backref" href="#toc-entry-15">footman</a></h2>
+<p>The footman fights with his sword. He must be close to the target to hit it.</p>
+<ul class="simple">
+<li>total cost: 6000 gold</li>
+<li>total time cost: 12000 seconds</li>
+<li>time cost modifier: 12000</li>
+<li>health:  15000 hit points</li>
+<li>mdg attack: 3500 damage every 1500 seconds, range 1000 meters</li>
+<li>speed:  1500 meters per second</li>
+<li>sight range:  3000 meters</li>
+<li>population cost: 1 unit</li>
+</ul>
+</div>
+<div class="section" id="archer">
+<h2><a class="toc-backref" href="#toc-entry-16">archer</a></h2>
+<p>The archer fights with a bow (ranged attack). If the archers are numerous enough, the enemy footmen die before even reaching them.</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#feudal-age">feudal_age</a></li>
+<li>total cost: 5000 gold, 1000 wood</li>
+<li>total time cost: 15000 seconds</li>
+<li>time cost modifier: 15000</li>
+<li>health:  10000 hit points</li>
+<li>rdg attack: 2500 damage every 1500 seconds, range 4000 meters</li>
+<li>speed:  1500 meters per second</li>
+<li>sight range:  6000 meters</li>
+<li>population cost: 1 unit</li>
+<li>can upgrade to: <a class="reference internal" href="#dark-archer">dark archer</a></li>
+</ul>
+</div>
+<div class="section" id="repeating-crossbowman">
+<h2><a class="toc-backref" href="#toc-entry-17">repeating_crossbowman</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#feudal-age">feudal_age</a></li>
+<li>total cost: 6000 gold, 2000 wood</li>
+<li>total time cost: 20000 seconds</li>
+<li>time cost modifier: 20000</li>
+<li>health:  10000 hit points</li>
+<li>rdg attack: 6000 damage every 2500 seconds, range 4000 meters</li>
+<li>speed:  1500 meters per second</li>
+<li>sight range:  6000 meters</li>
+<li>population cost: 1 unit</li>
+</ul>
+</div>
+<div class="section" id="boat">
+<h2><a class="toc-backref" href="#toc-entry-18">boat</a></h2>
+<ul class="simple">
+<li>total cost: 5000 gold, 5000 wood</li>
+<li>total time cost: 10000 seconds</li>
+<li>time cost modifier: 10000</li>
+<li>health:  30000 hit points</li>
+<li>speed:  1500 meters per second</li>
+<li>population cost: 1 unit</li>
+<li>transport capacity: 8 units</li>
+</ul>
+</div>
+<div class="section" id="flying-machine">
+<h2><a class="toc-backref" href="#toc-entry-19">flying machine</a></h2>
+<p>This new version of the flying machine have the ability to transport units and to detect invisible units but cannot defend itself. Transported units can't attack from a flying machine. If the transport is destroyed, the units inside are destroyed too.</p>
+<p>To load units:</p>
+<ul class="simple">
+<li>Method 1: control the unit(s) to carry, target the flying machine and press backspace.</li>
+<li>Method 2: control the flying machine(s), target the unit to carry and press backspace.</li>
+<li>Method 3: control the flying machine(s), target the square where the units are, select in the menu load all the units from...&quot;, and press Enter.</li>
+</ul>
+<p>To unload units: control the flying machine(s), select the &quot;unload action in the menu, target the destination and press Enter.</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#castle-age">castle_age</a></li>
+<li>total cost: 5000 gold, 5000 wood</li>
+<li>total time cost: 10000 seconds</li>
+<li>time cost modifier: 10000</li>
+<li>health:  30000 hit points</li>
+<li>speed:  1500 meters per second</li>
+<li>sight range:  8000 meters</li>
+<li>population cost: 1 unit</li>
+<li>transport capacity: 8 units</li>
+<li>special abilities: detects invisible units</li>
+</ul>
+</div>
+<div class="section" id="knight">
+<h2><a class="toc-backref" href="#toc-entry-20">knight</a></h2>
+<p>The knight fights with his sword and moves fast.</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#stables">stables</a></li>
+<li>total cost: 15000 gold, 15000 stone</li>
+<li>total time cost: 20000 seconds</li>
+<li>time cost modifier: 20000</li>
+<li>health:  45000 hit points</li>
+<li>melee defense: 1000</li>
+<li>mdg attack: 6000 damage every 1500 seconds, range 1000 meters</li>
+<li>speed:  2500 meters per second</li>
+<li>sight range:  3000 meters</li>
+<li>population cost: 2 units</li>
+</ul>
+</div>
+<div class="section" id="destroyer">
+<h2><a class="toc-backref" href="#toc-entry-21">destroyer</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#lumber-mill">lumber mill</a></li>
+<li>total cost: 11000 gold, 4000 wood</li>
+<li>total time cost: 14000 seconds</li>
+<li>time cost modifier: 14000</li>
+<li>health:  43000 hit points</li>
+<li>ranged defense: 1000</li>
+<li>rdg attack: 6000 damage every 1500 seconds, range 6000 meters</li>
+<li>speed:  1500 meters per second</li>
+<li>sight range:  8000 meters</li>
+<li>population cost: 2 units</li>
+</ul>
+</div>
+<div class="section" id="submarine">
+<h2><a class="toc-backref" href="#toc-entry-22">submarine</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#lumber-mill">lumber mill</a>, <a class="reference internal" href="#mages-tower">mages tower</a></li>
+<li>total cost: 11000 gold, 4000 wood</li>
+<li>total time cost: 14000 seconds</li>
+<li>time cost modifier: 14000</li>
+<li>health:  43000 hit points</li>
+<li>melee defense: 1000</li>
+<li>rdg attack: 6000 damage every 1500 seconds, range 6000 meters</li>
+<li>speed:  1500 meters per second</li>
+<li>sight range:  8000 meters</li>
+<li>population cost: 1 unit</li>
+<li>special abilities: invisible, detects invisible units</li>
+</ul>
+</div>
+<div class="section" id="dark-archer">
+<h2><a class="toc-backref" href="#toc-entry-23">dark archer</a></h2>
+<p>Any archer can become a dark archer.</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#mages-tower">mages tower</a></li>
+<li>total cost: 10000 gold, 5000 wood</li>
+<li>total time cost: 75000 seconds</li>
+<li>time cost modifier: 75000</li>
+<li>health:  12000 hit points</li>
+<li>rdg attack: 10000 damage every 3000 seconds, range 5000 meters</li>
+<li>speed:  1500 meters per second</li>
+<li>sight range:  7000 meters</li>
+<li>population cost: 1 unit</li>
+<li>special abilities: invisible</li>
+</ul>
+</div>
+<div class="section" id="priest">
+<h2><a class="toc-backref" href="#toc-entry-24">priest</a></h2>
+<p>The priest heals automatically all the friendly units located in the same square (0.13 hit point per second initially, and 1.33 hit points per second after the super healer upgrade). The priest cannot directly attack though.</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#castle-age">castle_age</a></li>
+<li>total cost: 15000 gold, 7000 wood</li>
+<li>total time cost: 20000 seconds</li>
+<li>time cost modifier: 20000</li>
+<li>health:  30000 hit points</li>
+<li>mana:  200000 mana points</li>
+<li>mana regeneration:  1000 mana points per second</li>
+<li>speed:  1000 meters per second</li>
+<li>sight range:  8000 meters</li>
+<li>population cost: 2 units</li>
+</ul>
+</div>
+<div class="section" id="battleship">
+<h2><a class="toc-backref" href="#toc-entry-25">battleship</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#lumber-mill">lumber mill</a>, <a class="reference internal" href="#workshop">workshop</a></li>
+<li>total cost: 15000 gold, 10000 wood</li>
+<li>total time cost: 30000 seconds</li>
+<li>time cost modifier: 30000</li>
+<li>health:  30000 hit points</li>
+<li>mdg attack: 8000 damage every 4000 seconds, range 12000 meters, radius 250 meters</li>
+<li>speed:  750 meters per second</li>
+<li>sight range:  14000 meters</li>
+<li>population cost: 3 units</li>
+</ul>
+</div>
+<div class="section" id="catapult">
+<h2><a class="toc-backref" href="#toc-entry-26">catapult</a></h2>
+<p>The catapult can strike units and buildings located in an adjacent square. The catapult can also damage several enemies at a time.</p>
+<p>On the other hand, the catapult is very fragile and cannot even defend itself against a unit in the same square. It moves very slowly too.</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#castle-age">castle_age</a></li>
+<li>total cost: 15000 gold, 10000 wood</li>
+<li>total time cost: 30000 seconds</li>
+<li>time cost modifier: 30000</li>
+<li>health:  30000 hit points</li>
+<li>mdg attack: 8000 damage every 4000 seconds, range 12000 meters, radius 1500 meters</li>
+<li>speed:  750 meters per second</li>
+<li>sight range:  14000 meters</li>
+<li>population cost: 2 units</li>
+</ul>
+</div>
+<div class="section" id="dragon">
+<h2><a class="toc-backref" href="#toc-entry-27">dragon</a></h2>
+<p>The dragon, flying creature, cannot be reached by peasants or footmen or knights or catapults. It flies directly to its destination, without having to follow the ground paths.</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#imperial-age">imperial_age</a></li>
+<li>total cost: 15000 gold, 10000 wood</li>
+<li>total time cost: 15000 seconds</li>
+<li>time cost modifier: 15000</li>
+<li>health:  30000 hit points</li>
+<li>health regeneration:  150 hit points per second</li>
+<li>rdg attack: 4000 damage every 4000 seconds, range 4000 meters, radius 1000 meters</li>
+<li>speed:  1750 meters per second</li>
+<li>sight range:  6000 meters</li>
+<li>population cost: 3 units</li>
+</ul>
+</div>
+<div class="section" id="mage">
+<h2><a class="toc-backref" href="#toc-entry-28">mage</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#imperial-age">imperial_age</a></li>
+<li>total cost: 20000 gold, 10000 wood</li>
+<li>total time cost: 30000 seconds</li>
+<li>time cost modifier: 30000</li>
+<li>health:  30000 hit points</li>
+<li>mana:  200000 mana points</li>
+<li>mana regeneration:  1000 mana points per second</li>
+<li>rdg attack: 8000 damage every 1500 seconds, range 6000 meters</li>
+<li>speed:  1000 meters per second</li>
+<li>sight range:  8000 meters</li>
+<li>population cost: 3 units</li>
+</ul>
+</div>
+<div class="section" id="necromancer">
+<h2><a class="toc-backref" href="#toc-entry-29">necromancer</a></h2>
+<p>Necromancers raise armies of animated corpses.</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#imperial-age">imperial_age</a></li>
+<li>total cost: 20000 gold, 10000 wood</li>
+<li>total time cost: 30000 seconds</li>
+<li>time cost modifier: 30000</li>
+<li>health:  30000 hit points</li>
+<li>mana:  200000 mana points</li>
+<li>mana regeneration:  1000 mana points per second</li>
+<li>rdg attack: 8000 damage every 1500 seconds, range 6000 meters</li>
+<li>speed:  1000 meters per second</li>
+<li>sight range:  8000 meters</li>
+<li>population cost: 3 units</li>
+</ul>
+</div>
+<div class="section" id="offensive-flying-machine">
+<h2><a class="toc-backref" href="#toc-entry-30">offensive flying machine</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#mages-tower">mages tower</a></li>
+<li>total cost: 20000 gold, 10000 wood</li>
+<li>total time cost: 30000 seconds</li>
+<li>time cost modifier: 30000</li>
+<li>health:  30000 hit points</li>
+<li>rdg attack: 8000 damage every 1500 seconds, range 5000 meters</li>
+<li>speed:  1500 meters per second</li>
+<li>sight range:  7000 meters</li>
+<li>population cost: 3 units</li>
+</ul>
+</div>
+</div>
+<div class="section" id="buildings">
+<h1><a class="toc-backref" href="#toc-entry-31">2. Buildings</a></h1>
+<div class="section" id="ancient-ruin">
+<h2><a class="toc-backref" href="#toc-entry-32">ancient_ruin</a></h2>
+<ul class="simple">
+<li>total cost:</li>
+<li>health:  200000 hit points</li>
+<li>sight range:  12000 meters</li>
+<li>have a height bonus (useful for sight and eventually attack range)</li>
+</ul>
+</div>
+<div class="section" id="captured-barracks">
+<h2><a class="toc-backref" href="#toc-entry-33">captured_barracks</a></h2>
+<ul class="simple">
+<li>total cost:</li>
+<li>health:  500000 hit points</li>
+<li>health regeneration:  100 hit points per second</li>
+</ul>
+</div>
+<div class="section" id="scout-tower">
+<h2><a class="toc-backref" href="#toc-entry-34">scout tower</a></h2>
+<p>The scout tower can't defend itself, but it can quickly evolve to a guard tower (requires a sawmill) or a cannon tower (requires a blacksmith). In the early game, the scout tower is sometimes built just in case of a rushed attack, with a smaller investment than the cost of a fully equipped tower. A tower doesn't require food and can be built anywhere (not only on a meadow).</p>
+<ul class="simple">
+<li>total cost: 6000 gold, 2000 wood</li>
+<li>total time cost: 60000 seconds</li>
+<li>time cost modifier: 60000</li>
+<li>health:  33000 hit points</li>
+<li>transport capacity: 4 units</li>
+<li>can upgrade to: <a class="reference internal" href="#guard-tower">guard tower</a>, <a class="reference internal" href="#cannon-tower">cannon tower</a></li>
+<li>have a height bonus (useful for sight and eventually attack range)</li>
+</ul>
+</div>
+<div class="section" id="farm">
+<h2><a class="toc-backref" href="#toc-entry-35">farm</a></h2>
+<p>Farms provide food rations.</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#feudal-age">feudal_age</a></li>
+<li>total cost: 5000 gold, 5000 wood</li>
+<li>total time cost: 45000 seconds</li>
+<li>time cost modifier: 45000</li>
+<li>health:  133300 hit points</li>
+</ul>
+</div>
+<div class="section" id="house">
+<h2><a class="toc-backref" href="#toc-entry-36">house</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#town-hall">town hall</a></li>
+<li>total cost: 5000 gold, 5000 wood</li>
+<li>total time cost: 45000 seconds</li>
+<li>time cost modifier: 45000</li>
+<li>health:  133300 hit points</li>
+<li>population provided: 8 units</li>
+</ul>
+</div>
+<div class="section" id="guard-tower">
+<h2><a class="toc-backref" href="#toc-entry-37">guard tower</a></h2>
+<p>The guard tower shoots arrows, like an archer.</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#lumber-mill">lumber mill</a></li>
+<li>total cost: 11000 gold, 4000 wood</li>
+<li>total time cost: 140000 seconds</li>
+<li>time cost modifier: 140000</li>
+<li>health:  43000 hit points</li>
+<li>ranged defense: 1000</li>
+<li>rdg attack: 6000 damage every 1500 seconds, range 6000 meters</li>
+<li>transport capacity: 8 units</li>
+<li>have a height bonus (useful for sight and eventually attack range)</li>
+</ul>
+</div>
+<div class="section" id="lumber-mill">
+<h2><a class="toc-backref" href="#toc-entry-38">lumber mill</a></h2>
+<p>The lumber mill can store wood. If a lumber mill is nearer than the townhall, the peasant can bring back the wood there to save time. Moreover, having at least one lumber mill gives a 25 % bonus for the wood production.</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#town-hall">town hall</a></li>
+<li>total cost: 6000 gold, 9000 wood</li>
+<li>total time cost: 68000 seconds</li>
+<li>time cost modifier: 68000</li>
+<li>health:  200000 hit points</li>
+<li>can store:  resource2</li>
+<li>can research: <a class="reference internal" href="#archer-weapon-upgrade">archer weapon upgrade</a>, <a class="reference internal" href="#archer-armor-upgrade">archer armor upgrade</a>, <a class="reference internal" href="#archer-range-upgrade">archer range upgrade</a></li>
+</ul>
+</div>
+<div class="section" id="barracks">
+<h2><a class="toc-backref" href="#toc-entry-39">barracks</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#feudal-age">feudal_age</a></li>
+<li>total cost: 7000 gold, 9000 wood</li>
+<li>total time cost: 90000 seconds</li>
+<li>time cost modifier: 90000</li>
+<li>health:  266700 hit points</li>
+<li>can research: <a class="reference internal" href="#dsb">dsb</a>, <a class="reference internal" href="#dsc">dsc</a></li>
+</ul>
+</div>
+<div class="section" id="wall">
+<h2><a class="toc-backref" href="#toc-entry-40">wall</a></h2>
+<p>A wall must be built on an exit (path, bridge).</p>
+<ul class="simple">
+<li>total cost: 7000 gold, 9000 wood</li>
+<li>total time cost: 90000 seconds</li>
+<li>time cost modifier: 90000</li>
+<li>health:  500000 hit points</li>
+<li>transport capacity: 4 units</li>
+<li>can upgrade to: <a class="reference internal" href="#massive-wall">massive_wall</a></li>
+</ul>
+</div>
+<div class="section" id="blacksmith">
+<h2><a class="toc-backref" href="#toc-entry-41">blacksmith</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#feudal-age">feudal_age</a></li>
+<li>total cost: 8000 gold, 10000 wood</li>
+<li>total time cost: 90000 seconds</li>
+<li>time cost modifier: 90000</li>
+<li>health:  266700 hit points</li>
+<li>can research: <a class="reference internal" href="#melee-weapon-upgrade">melee weapon upgrade</a>, <a class="reference internal" href="#melee-armor-upgrade">melee armor upgrade</a></li>
+</ul>
+</div>
+<div class="section" id="gold-house">
+<h2><a class="toc-backref" href="#toc-entry-42">gold_house</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#castle-age">castle_age</a></li>
+<li>total cost: 10000 gold, 9000 wood</li>
+<li>total time cost: 70000 seconds</li>
+<li>time cost modifier: 70000</li>
+<li>health:  330000 hit points</li>
+</ul>
+</div>
+<div class="section" id="gold-mint">
+<h2><a class="toc-backref" href="#toc-entry-43">gold_mint</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#castle-age">castle_age</a></li>
+<li>total cost: 10000 gold, 9000 wood</li>
+<li>total time cost: 70000 seconds</li>
+<li>time cost modifier: 70000</li>
+<li>health:  330000 hit points</li>
+</ul>
+</div>
+<div class="section" id="gate">
+<h2><a class="toc-backref" href="#toc-entry-44">gate</a></h2>
+<p>A gate must be built on an exit (path, bridge). It lets friendly units move through it.</p>
+<ul class="simple">
+<li>total cost: 10000 gold, 10000 wood</li>
+<li>total time cost: 90000 seconds</li>
+<li>time cost modifier: 90000</li>
+<li>health:  450000 hit points</li>
+<li>transport capacity: 4 units</li>
+<li>can upgrade to: <a class="reference internal" href="#massive-gate">massive_gate</a></li>
+<li>special abilities: teleportation gate</li>
+</ul>
+</div>
+<div class="section" id="cannon-tower">
+<h2><a class="toc-backref" href="#toc-entry-45">cannon tower</a></h2>
+<p>The cannon tower only attacks ground units.</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#blacksmith">blacksmith</a></li>
+<li>total cost: 16000 gold, 5000 wood</li>
+<li>total time cost: 190000 seconds</li>
+<li>time cost modifier: 190000</li>
+<li>health:  53000 hit points</li>
+<li>melee defense: 1000</li>
+<li>mdg attack: 8000 damage every 4000 seconds, range 7000 meters, radius 1000 meters</li>
+<li>transport capacity: 8 units</li>
+<li>have a height bonus (useful for sight and eventually attack range)</li>
+</ul>
+</div>
+<div class="section" id="shipyard">
+<h2><a class="toc-backref" href="#toc-entry-46">shipyard</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#town-hall">town hall</a>, <a class="reference internal" href="#lumber-mill">lumber mill</a></li>
+<li>total cost: 10000 gold, 15000 wood</li>
+<li>total time cost: 90000 seconds</li>
+<li>time cost modifier: 90000</li>
+<li>health:  266700 hit points</li>
+<li>special abilities: can repair ships</li>
+</ul>
+</div>
+<div class="section" id="stables">
+<h2><a class="toc-backref" href="#toc-entry-47">stables</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#castle-age">castle_age</a></li>
+<li>total cost: 10000 gold, 15000 wood</li>
+<li>total time cost: 90000 seconds</li>
+<li>time cost modifier: 90000</li>
+<li>health:  266700 hit points</li>
+<li>can research: <a class="reference internal" href="#horse-speed-upgrade">horse speed upgrade</a></li>
+</ul>
+</div>
+<div class="section" id="workshop">
+<h2><a class="toc-backref" href="#toc-entry-48">workshop</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#castle-age">castle_age</a></li>
+<li>total cost: 10000 gold, 15000 wood</li>
+<li>total time cost: 90000 seconds</li>
+<li>time cost modifier: 90000</li>
+<li>health:  266700 hit points</li>
+</ul>
+</div>
+<div class="section" id="town-hall">
+<h2><a class="toc-backref" href="#toc-entry-49">town hall</a></h2>
+<ul class="simple">
+<li>total cost: 12000 gold, 16000 wood</li>
+<li>total time cost: 135000 seconds</li>
+<li>time cost modifier: 135000</li>
+<li>health:  400000 hit points</li>
+<li>population provided: 1 unit</li>
+<li>can store:  resource1, resource2, resource3</li>
+<li>can research: <a class="reference internal" href="#hunting-techniques">hunting_techniques</a></li>
+</ul>
+</div>
+<div class="section" id="dragons-lair">
+<h2><a class="toc-backref" href="#toc-entry-50">dragons lair</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#imperial-age">imperial_age</a></li>
+<li>total cost: 15000 gold, 20000 wood</li>
+<li>total time cost: 90000 seconds</li>
+<li>time cost modifier: 90000</li>
+<li>health:  266700 hit points</li>
+</ul>
+</div>
+<div class="section" id="mages-tower">
+<h2><a class="toc-backref" href="#toc-entry-51">mages tower</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#imperial-age">imperial_age</a></li>
+<li>total cost: 15000 gold, 20000 wood</li>
+<li>total time cost: 90000 seconds</li>
+<li>time cost modifier: 90000</li>
+<li>health:  266700 hit points</li>
+<li>can research: <a class="reference internal" href="#recall-research">recall research</a>, <a class="reference internal" href="#summon-dragon-research">summon dragon research</a>, <a class="reference internal" href="#meteors-research">meteors research</a></li>
+</ul>
+</div>
+<div class="section" id="necropolis">
+<h2><a class="toc-backref" href="#toc-entry-52">necropolis</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#imperial-age">imperial_age</a></li>
+<li>total cost: 10000 gold, 30000 wood</li>
+<li>total time cost: 90000 seconds</li>
+<li>time cost modifier: 90000</li>
+<li>health:  300000 hit points</li>
+<li>can research: <a class="reference internal" href="#deadly-fog-research">deadly fog research</a></li>
+</ul>
+</div>
+<div class="section" id="temple">
+<h2><a class="toc-backref" href="#toc-entry-53">temple</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#castle-age">castle_age</a></li>
+<li>total cost: 10000 gold, 30000 wood</li>
+<li>total time cost: 90000 seconds</li>
+<li>time cost modifier: 90000</li>
+<li>health:  300000 hit points</li>
+<li>can research: <a class="reference internal" href="#super-healer-upgrade">super healer upgrade</a>, <a class="reference internal" href="#exorcism-research">exorcism research</a>, <a class="reference internal" href="#conversion-research">conversion research</a>, <a class="reference internal" href="#resurrection-research">resurrection research</a></li>
+</ul>
+</div>
+<div class="section" id="massive-wall">
+<h2><a class="toc-backref" href="#toc-entry-54">massive_wall</a></h2>
+<p>A wall must be built on an exit (path, bridge).</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#keep">keep</a></li>
+<li>total cost: 21000 gold, 27000 wood</li>
+<li>total time cost: 270000 seconds</li>
+<li>time cost modifier: 270000</li>
+<li>health:  2000000 hit points</li>
+<li>transport capacity: 8 units</li>
+<li>can upgrade to: <a class="reference internal" href="#massive-wall">massive_wall</a></li>
+</ul>
+</div>
+<div class="section" id="keep">
+<h2><a class="toc-backref" href="#toc-entry-55">keep</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#barracks">barracks</a></li>
+<li>total cost: 22000 gold, 31000 wood</li>
+<li>total time cost: 315000 seconds</li>
+<li>time cost modifier: 315000</li>
+<li>health:  800000 hit points</li>
+<li>population provided: 1 unit</li>
+<li>can store:  resource1, resource2, resource3</li>
+<li>can research: <a class="reference internal" href="#hunting-techniques">hunting_techniques</a></li>
+</ul>
+</div>
+<div class="section" id="massive-gate">
+<h2><a class="toc-backref" href="#toc-entry-56">massive_gate</a></h2>
+<p>A gate must be built on an exit (path, bridge). It lets friendly units move through it.</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#keep">keep</a></li>
+<li>total cost: 30000 gold, 30000 wood</li>
+<li>total time cost: 270000 seconds</li>
+<li>time cost modifier: 270000</li>
+<li>health:  1800000 hit points</li>
+<li>transport capacity: 8 units</li>
+<li>can upgrade to: <a class="reference internal" href="#massive-gate">massive_gate</a></li>
+<li>special abilities: teleportation gate</li>
+</ul>
+</div>
+<div class="section" id="castle">
+<h2><a class="toc-backref" href="#toc-entry-57">castle</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#barracks">barracks</a>, <a class="reference internal" href="#lumber-mill">lumber mill</a>, <a class="reference internal" href="#blacksmith">blacksmith</a>, <a class="reference internal" href="#stables">stables</a></li>
+<li>total cost: 42000 gold, 61000 wood</li>
+<li>total time cost: 675000 seconds</li>
+<li>time cost modifier: 675000</li>
+<li>health:  1600000 hit points</li>
+<li>population provided: 1 unit</li>
+<li>can store:  resource1, resource2, resource3</li>
+<li>can research: <a class="reference internal" href="#hunting-techniques">hunting_techniques</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="skills">
+<h1><a class="toc-backref" href="#toc-entry-58">3. Skills</a></h1>
+<div class="section" id="conversion">
+<h2><a class="toc-backref" href="#toc-entry-59">conversion</a></h2>
+<p>Conversion is a way to take control of an enemy unit. The unit will be one of your units. Buildings can be converted too.</p>
+<p>To convert an enemy unit:</p>
+<ol class="arabic simple">
+<li>select the caster for orders</li>
+<li>select the conversion order</li>
+<li>select an enemy unit or building as a target (warning: if you are selecting a mobile unit in a currently unobserved square, the unit might be actually elsewhere and the order will be canceled when the caster arrives in the square)</li>
+<li>validate the order</li>
+</ol>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#conversion-research">conversion research</a></li>
+<li>mana cost: 150000 mana points</li>
+<li>total cost:</li>
+</ul>
+</div>
+<div class="section" id="deadly-fog">
+<h2><a class="toc-backref" href="#toc-entry-60">deadly fog</a></h2>
+<p>The deadly fog damages any healable unit in the targeted square.</p>
+<ul class="simple">
+<li>duration: 15 seconds</li>
+<li>damage: 0.13 hit point per second</li>
+<li>requires: <a class="reference internal" href="#deadly-fog-research">deadly fog research</a></li>
+<li>mana cost: 150000 mana points</li>
+<li>total cost:</li>
+</ul>
+</div>
+<div class="section" id="exorcism">
+<h2><a class="toc-backref" href="#toc-entry-61">exorcism</a></h2>
+<p>Exorcism damages any undead unit in the same square.</p>
+<ul class="simple">
+<li>duration: 15 seconds</li>
+<li>damage: 0.27 hit point per second</li>
+<li>requires: <a class="reference internal" href="#exorcism-research">exorcism research</a></li>
+<li>mana cost: 150000 mana points</li>
+<li>total cost:</li>
+</ul>
+</div>
+<div class="section" id="holy-vision">
+<h2><a class="toc-backref" href="#toc-entry-62">holy vision</a></h2>
+<p>Reveals any square for 10 seconds. Detects invisible units.</p>
+<ul class="simple">
+<li>mana cost: 30000 mana points</li>
+<li>total cost:</li>
+</ul>
+</div>
+<div class="section" id="meteors">
+<h2><a class="toc-backref" href="#toc-entry-63">meteors</a></h2>
+<p>Meteors damage all the units and buildings in the targeted square.</p>
+<ul class="simple">
+<li>duration: 15 seconds</li>
+<li>damage: 0.13 hit point per second</li>
+<li>requires: <a class="reference internal" href="#meteors-research">meteors research</a></li>
+<li>mana cost: 150000 mana points</li>
+<li>total cost:</li>
+</ul>
+</div>
+<div class="section" id="raise-dead">
+<h2><a class="toc-backref" href="#toc-entry-64">raise dead</a></h2>
+<p>Animates up to 10 corpses in the same square. An animated corpse is either a <a class="reference internal" href="#zombie">zombie</a> or a <a class="reference internal" href="#skeleton">skeleton</a>. After 10 minutes, the animated corpses will crumble to dust.</p>
+<ul class="simple">
+<li>mana cost: 50000 mana points</li>
+<li>total cost:</li>
+</ul>
+</div>
+<div class="section" id="recall">
+<h2><a class="toc-backref" href="#toc-entry-65">recall</a></h2>
+<p>Recall is the ability to instantly move units to the caster's place. The affected units are the friendly units in the targeted square.</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#recall-research">recall research</a></li>
+<li>mana cost: 150000 mana points</li>
+<li>total cost:</li>
+</ul>
+</div>
+<div class="section" id="resurrection">
+<h2><a class="toc-backref" href="#toc-entry-66">resurrection</a></h2>
+<p>Resurrects up to 6 nearby units, with 33 percent of their hit points. Affects only your units.</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#resurrection-research">resurrection research</a></li>
+<li>mana cost: 150000 mana points</li>
+<li>total cost:</li>
+</ul>
+</div>
+<div class="section" id="summon-dragon">
+<h2><a class="toc-backref" href="#toc-entry-67">summon dragon</a></h2>
+<p>Summons 2 dragons for 2 minutes. See <a class="reference internal" href="#dragon">dragon</a> .</p>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#summon-dragon-research">summon dragon research</a></li>
+<li>mana cost: 150000 mana points</li>
+<li>total cost: 10000 gold, 15000 wood</li>
+</ul>
+</div>
+</div>
+<div class="section" id="upgrades-and-research">
+<h1><a class="toc-backref" href="#toc-entry-68">4. Upgrades and research</a></h1>
+<div class="section" id="hunting-techniques">
+<h2><a class="toc-backref" href="#toc-entry-69">hunting_techniques</a></h2>
+<ul class="simple">
+<li>total cost: 8000 gold, 5000 wood</li>
+<li>total time cost: 45000 seconds</li>
+<li>time cost modifier: 45000</li>
+<li>effect: gather_time_food_carcass + -1</li>
+<li>effect: gather_time_orchard + -1</li>
+<li>effect: gather_qty_food_carcass + 1</li>
+<li>effect: food_deposit_qty + 10</li>
+</ul>
+</div>
+<div class="section" id="dsb">
+<h2><a class="toc-backref" href="#toc-entry-70">dsb</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#castle-age">castle_age</a></li>
+<li>total cost: 10000 gold, 5000 wood</li>
+<li>total time cost: 20000 seconds</li>
+<li>time cost modifier: 20000</li>
+<li>effect: can_train + 1</li>
+</ul>
+</div>
+<div class="section" id="dsc">
+<h2><a class="toc-backref" href="#toc-entry-71">dsc</a></h2>
+<ul class="simple">
+<li>total cost: 10000 gold, 5000 wood</li>
+<li>total time cost: 20000 seconds</li>
+<li>time cost modifier: 20000</li>
+<li>effect: cost + -50%</li>
+<li>effect: time_cost + -5000</li>
+<li>effect: population_cost + -1</li>
+</ul>
+</div>
+<div class="section" id="archer-armor-upgrade">
+<h2><a class="toc-backref" href="#toc-entry-72">archer armor upgrade</a></h2>
+<ul class="simple">
+<li>total cost: 8000 gold, 10000 wood</li>
+<li>total time cost: 60000 seconds</li>
+<li>time cost modifier: 60000</li>
+<li>effect: rdf + 500</li>
+</ul>
+</div>
+<div class="section" id="archer-range-upgrade">
+<h2><a class="toc-backref" href="#toc-entry-73">archer range upgrade</a></h2>
+<ul class="simple">
+<li>total cost: 8000 gold, 10000 wood</li>
+<li>total time cost: 60000 seconds</li>
+<li>time cost modifier: 60000</li>
+<li>effect: rdg_range + 1000</li>
+</ul>
+</div>
+<div class="section" id="archer-weapon-upgrade">
+<h2><a class="toc-backref" href="#toc-entry-74">archer weapon upgrade</a></h2>
+<ul class="simple">
+<li>total cost: 8000 gold, 10000 wood</li>
+<li>total time cost: 60000 seconds</li>
+<li>time cost modifier: 60000</li>
+<li>effect: rdg + 1500</li>
+</ul>
+</div>
+<div class="section" id="melee-armor-upgrade">
+<h2><a class="toc-backref" href="#toc-entry-75">melee armor upgrade</a></h2>
+<ul class="simple">
+<li>total cost: 8000 gold, 10000 wood</li>
+<li>total time cost: 60000 seconds</li>
+<li>time cost modifier: 60000</li>
+<li>effect: applies the mdf upgrade bonus of the unit</li>
+</ul>
+</div>
+<div class="section" id="melee-weapon-upgrade">
+<h2><a class="toc-backref" href="#toc-entry-76">melee weapon upgrade</a></h2>
+<ul class="simple">
+<li>total cost: 8000 gold, 10000 wood</li>
+<li>total time cost: 60000 seconds</li>
+<li>time cost modifier: 60000</li>
+<li>effect: applies the mdg upgrade bonus of the unit</li>
+</ul>
+</div>
+<div class="section" id="horse-speed-upgrade">
+<h2><a class="toc-backref" href="#toc-entry-77">horse speed upgrade</a></h2>
+<ul class="simple">
+<li>total cost: 15000 gold, 5000 wood</li>
+<li>total time cost: 60000 seconds</li>
+<li>time cost modifier: 60000</li>
+<li>effect: speed + 2500</li>
+</ul>
+</div>
+<div class="section" id="conversion-research">
+<h2><a class="toc-backref" href="#toc-entry-78">conversion research</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#castle-age">castle_age</a></li>
+<li>total cost: 50000 gold</li>
+<li>total time cost: 120000 seconds</li>
+<li>time cost modifier: 120000</li>
+</ul>
+</div>
+<div class="section" id="deadly-fog-research">
+<h2><a class="toc-backref" href="#toc-entry-79">deadly fog research</a></h2>
+<ul class="simple">
+<li>total cost: 50000 gold</li>
+<li>total time cost: 120000 seconds</li>
+<li>time cost modifier: 120000</li>
+</ul>
+</div>
+<div class="section" id="exorcism-research">
+<h2><a class="toc-backref" href="#toc-entry-80">exorcism research</a></h2>
+<ul class="simple">
+<li>total cost: 50000 gold</li>
+<li>total time cost: 120000 seconds</li>
+<li>time cost modifier: 120000</li>
+</ul>
+</div>
+<div class="section" id="meteors-research">
+<h2><a class="toc-backref" href="#toc-entry-81">meteors research</a></h2>
+<ul class="simple">
+<li>total cost: 50000 gold</li>
+<li>total time cost: 120000 seconds</li>
+<li>time cost modifier: 120000</li>
+</ul>
+</div>
+<div class="section" id="recall-research">
+<h2><a class="toc-backref" href="#toc-entry-82">recall research</a></h2>
+<ul class="simple">
+<li>total cost: 50000 gold</li>
+<li>total time cost: 120000 seconds</li>
+<li>time cost modifier: 120000</li>
+</ul>
+</div>
+<div class="section" id="resurrection-research">
+<h2><a class="toc-backref" href="#toc-entry-83">resurrection research</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#imperial-age">imperial_age</a></li>
+<li>total cost: 50000 gold</li>
+<li>total time cost: 120000 seconds</li>
+<li>time cost modifier: 120000</li>
+</ul>
+</div>
+<div class="section" id="summon-dragon-research">
+<h2><a class="toc-backref" href="#toc-entry-84">summon dragon research</a></h2>
+<ul class="simple">
+<li>total cost: 50000 gold</li>
+<li>total time cost: 120000 seconds</li>
+<li>time cost modifier: 120000</li>
+</ul>
+</div>
+<div class="section" id="bronzeworking">
+<h2><a class="toc-backref" href="#toc-entry-85">bronzeworking</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#blacksmith">blacksmith</a>, <a class="reference internal" href="#imperial-age">imperial_age</a></li>
+<li>total cost: 80000 gold</li>
+<li>total time cost: 90000 seconds</li>
+<li>time cost modifier: 90000</li>
+<li>effect: applies the mdf upgrade bonus of the unit</li>
+</ul>
+</div>
+<div class="section" id="iron-working">
+<h2><a class="toc-backref" href="#toc-entry-86">iron_working</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#blacksmith">blacksmith</a></li>
+<li>total cost: 80000 gold</li>
+<li>total time cost: 90000 seconds</li>
+<li>time cost modifier: 90000</li>
+<li>effect: applies the mdg upgrade bonus of the unit</li>
+</ul>
+</div>
+<div class="section" id="super-healer-upgrade">
+<h2><a class="toc-backref" href="#toc-entry-87">super healer upgrade</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#imperial-age">imperial_age</a></li>
+<li>total cost: 80000 gold</li>
+<li>total time cost: 120000 seconds</li>
+<li>time cost modifier: 120000</li>
+<li>effect: heal_level + 9</li>
+</ul>
+</div>
+</div>
+<div class="section" id="items">
+<h1><a class="toc-backref" href="#toc-entry-88">5. Items</a></h1>
+<div class="section" id="gold-coin">
+<h2><a class="toc-backref" href="#toc-entry-89">gold_coin</a></h2>
+</div>
+<div class="section" id="gold-pile">
+<h2><a class="toc-backref" href="#toc-entry-90">gold_pile</a></h2>
+</div>
+<div class="section" id="treasure-chest">
+<h2><a class="toc-backref" href="#toc-entry-91">treasure_chest</a></h2>
+</div>
+</div>
+<div class="section" id="weapons">
+<h1><a class="toc-backref" href="#toc-entry-92">6. Weapons</a></h1>
+</div>
+<div class="section" id="armor">
+<h1><a class="toc-backref" href="#toc-entry-93">7. Armor</a></h1>
+</div>
+<div class="section" id="buffs">
+<h1><a class="toc-backref" href="#toc-entry-94">8. Buffs</a></h1>
+<div class="section" id="b-slow">
+<h2><a class="toc-backref" href="#toc-entry-95">b_slow</a></h2>
+</div>
+<div class="section" id="berserk-buff">
+<h2><a class="toc-backref" href="#toc-entry-96">berserk_buff</a></h2>
+</div>
+<div class="section" id="desperate-resist-buff">
+<h2><a class="toc-backref" href="#toc-entry-97">desperate_resist_buff</a></h2>
+</div>
+<div class="section" id="dual-trigger-buff">
+<h2><a class="toc-backref" href="#toc-entry-98">dual_trigger_buff</a></h2>
+</div>
+<div class="section" id="heal">
+<h2><a class="toc-backref" href="#toc-entry-99">heal</a></h2>
+</div>
+<div class="section" id="spell-power-buff">
+<h2><a class="toc-backref" href="#toc-entry-100">spell_power_buff</a></h2>
+</div>
+</div>
+<div class="section" id="ages-phases">
+<h1><a class="toc-backref" href="#toc-entry-101">9. Ages (phases)</a></h1>
+<div class="section" id="dark-age">
+<h2><a class="toc-backref" href="#toc-entry-102">dark_age</a></h2>
+<ul class="simple">
+<li>total cost:</li>
+</ul>
+</div>
+<div class="section" id="feudal-age">
+<h2><a class="toc-backref" href="#toc-entry-103">feudal_age</a></h2>
+<ul class="simple">
+<li>total cost: 10000 gold, 15000 wood</li>
+<li>total time cost: 130000 seconds</li>
+<li>time cost modifier: 130000</li>
+<li>can upgrade to: <a class="reference internal" href="#castle-age">castle_age</a></li>
+</ul>
+</div>
+<div class="section" id="castle-age">
+<h2><a class="toc-backref" href="#toc-entry-104">castle_age</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#feudal-age">feudal_age</a>, <a class="reference internal" href="#barracks">barracks</a>, <a class="reference internal" href="#blacksmith">blacksmith</a></li>
+<li>total cost: 20000 gold, 30000 wood</li>
+<li>total time cost: 160000 seconds</li>
+<li>time cost modifier: 160000</li>
+<li>can upgrade to: <a class="reference internal" href="#imperial-age">imperial_age</a></li>
+</ul>
+</div>
+<div class="section" id="imperial-age">
+<h2><a class="toc-backref" href="#toc-entry-105">imperial_age</a></h2>
+<ul class="simple">
+<li>requires: <a class="reference internal" href="#castle-age">castle_age</a>, <a class="reference internal" href="#stables">stables</a>, <a class="reference internal" href="#workshop">workshop</a></li>
+<li>total cost: 35000 gold, 45000 wood</li>
+<li>total time cost: 260000 seconds</li>
+<li>time cost modifier: 260000</li>
+</ul>
+</div>
+</div>
+</div>
+</body>
+</html>

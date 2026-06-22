@@ -1,0 +1,27 @@
+; coding: utf-8
+76000 Prologue.
+76001 Vous êtes un Seigneur au service du roi Conrad.
+
+76010 Chapitre 1 : une nouvelle base.
+76011 Vous disposez de quelques serfs pour explorer la carte et trouver un lieu idéal afin de prélever des ressources. Construisez un châtelet, faites le nécessaire pour le faire évoluer en donjon et recruter 5 arbalétriers afin de sécuriser les lieux.
+76012 Avoir un donjon et 5 arbalétriers.
+76013 Oh, voyez un peu là en A3, il y a des prairies et des ressources, et c'est exactement ce qu'il vous faut !
+
+76020 Chapitre 2 : un ennemi invisible.
+76021 Le roi Conrad vous a envoyé en urgence afin de résoudre une étrange affaire qui terrorise les habitants. On soupçonne que des diables et des fantomes hantent la région à la recherche de victimes. Trouver le moyen de détecter la présence de ces entités et détruisez-les.
+76022 Trouver et neutraliser tous les fantomes.
+
+76030 Chapitre 3 : le repaire des fantomes.
+76031 Vous avez réussi à écarter la menace des fantomes mais vous avez appris que ceux-ci possèdaient un repaire dans une forêt. Muni d'une petite armée, vous vous êtes rendus sur place et vous allez maintenant devoir parcourir la forêt à la recherche de la base ennemie.
+76032 Détruire le repaire des fantomes.
+76033 Oh ! Regardez là ! Un manoir hanté est en i6 ! C'est sans nul doute le repaire des fantomes !
+
+76040 Chapitre 4 : la revanche des ténèbres.
+76041 Furieux et assoifés de vengeance, des fantomes rescapés de votre offensive ont décidé de faire appel aux forces du mal. Goules, squelettes, liches et autres nécromanciens ont répondu à l'appel et s'apprêtent à vous attaquer. Ils sont beaucoup trop nombreux pour que vous puissiez les neutraliser, aussi vous allez devoir simplement organiser votre défense jusqu'à l'arrivée des renforts envoyés par le roi Conrad.
+76042 Résister à l'ennemi jusqu'à l'arrivée des renforts.
+76043 Tenez bon ! Les renforts sont à mi-chemin ! Courage !
+76044 Les renforts sont maintenant très proches ! Encore un dernier effort avant la libération !
+
+
+76400 manoir hanté
+76401 garde fantome

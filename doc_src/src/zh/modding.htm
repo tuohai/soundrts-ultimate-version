@@ -1,0 +1,1678 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.21.2: https://docutils.sourceforge.io/" />
+<title>模组制作指南</title>
+<style type="text/css">
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 9511 2024-01-13 09:50:07Z milde $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+Despite the name, some widely supported CSS2 features are used.
+
+See https://docutils.sourceforge.io/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+.subscript {
+  vertical-align: sub;
+  font-size: smaller }
+
+.superscript {
+  vertical-align: super;
+  font-size: smaller }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+object[type="image/svg+xml"], object[type="application/x-shockwave-flash"] {
+  overflow: hidden;
+}
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title, .code .error {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left, .figure.align-left, object.align-left, table.align-left {
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+img.align-right, .figure.align-right, object.align-right, table.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+img.align-center, .figure.align-center, object.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+table.align-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: inherit }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+.align-top    {
+  vertical-align: top }
+
+.align-middle {
+  vertical-align: middle }
+
+.align-bottom {
+  vertical-align: bottom }
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+pre.literal-block, pre.doctest-block, pre.math, pre.code {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+pre.code .ln { color: gray; } /* line numbers */
+pre.code, code { background-color: #eeeeee }
+pre.code .comment, code .comment { color: #5C6576 }
+pre.code .keyword, code .keyword { color: #3B0D06; font-weight: bold }
+pre.code .literal.string, code .literal.string { color: #0C5404 }
+pre.code .name.builtin, code .name.builtin { color: #352B84 }
+pre.code .deleted, code .deleted { background-color: #DEB0A1}
+pre.code .inserted, code .inserted { background-color: #A3D289}
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic, pre.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+/* "booktabs" style (no vertical lines) */
+table.docutils.booktabs {
+  border: 0px;
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+  border-collapse: collapse;
+}
+table.docutils.booktabs * {
+  border: 0px;
+}
+table.docutils.booktabs th {
+  border-bottom: thin solid;
+  text-align: left;
+}
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+</head>
+<body>
+<div class="document" id="section-1">
+<h1 class="title">模组制作指南</h1>
+
+<div class="contents topic" id="contents">
+<p class="topic-title"><a class="reference internal" href="#top">Contents</a></p>
+<ul class="simple">
+<li><a class="reference internal" href="#mods" id="toc-entry-1">mods</a><ul>
+<li><a class="reference internal" href="#ui-xx" id="toc-entry-2">模组多语言（ui-xx）</a></li>
+<li><a class="reference internal" href="#clear" id="toc-entry-3">clear</a></li>
+<li><a class="reference internal" href="#is-a" id="toc-entry-4">is_a</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-rules" id="toc-entry-5">the rules</a><ul>
+<li><a class="reference internal" href="#faction" id="toc-entry-6">faction</a></li>
+<li><a class="reference internal" href="#unit" id="toc-entry-7">unit</a><ul>
+<li><a class="reference internal" href="#count-limit" id="toc-entry-8">count_limit</a></li>
+<li><a class="reference internal" href="#is-ballistic" id="toc-entry-9">is_ballistic</a></li>
+<li><a class="reference internal" href="#is-teleportable" id="toc-entry-10">is_teleportable</a></li>
+<li><a class="reference internal" href="#hp-regen" id="toc-entry-11">hp_regen</a></li>
+<li><a class="reference internal" href="#mana-start" id="toc-entry-12">mana_start</a></li>
+<li><a class="reference internal" href="#provides-survival" id="toc-entry-13">provides_survival</a></li>
+<li><a class="reference internal" href="#storage-bonus" id="toc-entry-14">storage_bonus</a></li>
+<li><a class="reference internal" href="#damage-vs" id="toc-entry-15">damage_vs</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ability" id="toc-entry-16">ability</a><ul>
+<li><a class="reference internal" href="#effect" id="toc-entry-17">effect</a><ul>
+<li><a class="reference internal" href="#apply-bonus" id="toc-entry-18">apply_bonus</a></li>
+<li><a class="reference internal" href="#bonus" id="toc-entry-19">bonus</a></li>
+<li><a class="reference internal" href="#conversion" id="toc-entry-20">conversion</a></li>
+<li><a class="reference internal" href="#raise-dead" id="toc-entry-21">raise_dead</a></li>
+<li><a class="reference internal" href="#recall" id="toc-entry-22">recall</a></li>
+<li><a class="reference internal" href="#resurrection" id="toc-entry-23">resurrection</a></li>
+<li><a class="reference internal" href="#summon" id="toc-entry-24">summon</a></li>
+<li><a class="reference internal" href="#deploy" id="toc-entry-25">deploy</a></li>
+<li><a class="reference internal" href="#teleportation" id="toc-entry-26">teleportation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#effect-target" id="toc-entry-27">effect_target</a></li>
+<li><a class="reference internal" href="#effect-range" id="toc-entry-28">effect_range</a></li>
+<li><a class="reference internal" href="#effect-radius" id="toc-entry-29">effect_radius</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#combat-system-since-1-4-1" id="toc-entry-30">Combat system (since 1.4)</a></li>
+<li><a class="reference internal" href="#damage-seq-1-3-8-2-1-4-3-6" id="toc-entry-31">连发 / 序列攻击（<tt class="docutils literal">damage_seq</tt>，自 1.3.8.2 起，1.4.3.6 增强）</a></li>
+<li><a class="reference internal" href="#weapons-and-armor-since-1-4-1-3" id="toc-entry-32">Weapons and armor (since 1.4.1.3)</a></li>
+<li><a class="reference internal" href="#buffs-and-debuffs-since-1-3-9-8-extended-in-1-4-1-7" id="toc-entry-33">Buffs and debuffs (since 1.3.9.8, extended in 1.4.1.7)</a></li>
+<li><a class="reference internal" href="#skills-class-skill-1" id="toc-entry-34">Skills (class skill)</a></li>
+<li><a class="reference internal" href="#effects-class-effect-since-1-4-1-7" id="toc-entry-35">Effects (class effect, since 1.4.1.7)</a></li>
+<li><a class="reference internal" href="#phase-system-since-1-4-2-4" id="toc-entry-36">Phase system (since 1.4.2.4)</a></li>
+<li><a class="reference internal" href="#economy-since-1-4-0-x" id="toc-entry-37">Economy (since 1.4.0.x)</a></li>
+<li><a class="reference internal" href="#heroes-since-1-4" id="toc-entry-38">Heroes (since 1.4)</a></li>
+<li><a class="reference internal" href="#section-2" id="toc-entry-39">战役跨章英雄携带（规则驱动）</a></li>
+<li><a class="reference internal" href="#items-since-1-4-1-3" id="toc-entry-40">Items (since 1.4.1.3)</a></li>
+<li><a class="reference internal" href="#section-3" id="toc-entry-41">背包与可装备物品（自 1.4.3.1 起）</a></li>
+<li><a class="reference internal" href="#section-4" id="toc-entry-42">单位默认行为（自 1.4.3.1 起）</a></li>
+<li><a class="reference internal" href="#npc-1-4-3-1" id="toc-entry-43">给 NPC 物品（自 1.4.3.1 起）</a></li>
+<li><a class="reference internal" href="#mods-starcraft" id="toc-entry-44">建造场、附属建筑与起飞重组（星际争霸式，<tt class="docutils literal">mods/starcraft</tt>）</a><ul>
+<li><a class="reference internal" href="#section-5" id="toc-entry-45">建造场（神族灵能场 / 异虫菌毯等）</a></li>
+<li><a class="reference internal" href="#requires-deposit" id="toc-entry-46">矿床与气矿（<tt class="docutils literal">requires_deposit</tt>）</a></li>
+<li><a class="reference internal" href="#section-6" id="toc-entry-47">工人施工模式</a></li>
+<li><a class="reference internal" href="#addon" id="toc-entry-48">人族附属建筑（addon）</a></li>
+<li><a class="reference internal" href="#lift-off-recombine" id="toc-entry-49">起飞与重组（lift-off / recombine）</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#section-7" id="toc-entry-50">占领与默认占领命令</a></li>
+<li><a class="reference internal" href="#ship-repair-since-1-4-1-1" id="toc-entry-51">Ship repair (since 1.4.1.1)</a></li>
+<li><a class="reference internal" href="#inheritance-since-1-3-8-3" id="toc-entry-52">Inheritance (since 1.3.8.3)</a></li>
+<li><a class="reference internal" href="#style" id="toc-entry-53">style</a><ul>
+<li><a class="reference internal" href="#shortcut" id="toc-entry-54">shortcut</a></li>
+<li><a class="reference internal" href="#intro-since-1-4-1-5" id="toc-entry-55">intro (since 1.4.1.5)</a></li>
+<li><a class="reference internal" href="#combat-sound-system-since-1-3-8-2-1-4-4-6-renamed-matk-ratk-to-mdg-rdg" id="toc-entry-56">Combat sound system (since 1.3.8.2; 1.4.4.6 renamed matk/ratk to mdg/rdg)</a></li>
+<li><a class="reference internal" href="#menu-and-game-music-since-1-4-0-2" id="toc-entry-57">Menu and game music (since 1.4.0.2)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="mods">
+<h1><a class="toc-backref" href="#toc-entry-1">mods</a></h1>
+<p>游戏的规则和表现可以通过模组来更改。</p>
+<p>模组是一个文件夹，其中可能包含 rules.txt、ai.txt、ui（及其本地化版本）。其目录树结构与 &quot;res&quot; 文件夹的结构相同。</p>
+<p>模组存放在主文件夹的 &quot;mods&quot; 文件夹中，或用户文件夹的 &quot;mods&quot; 文件夹中。要激活某个模组，必须在 SoundRTS.ini 的 &quot;mods =&quot; 参数中引用它。
+例如：mods = soundpack,mymod,my_other_mod</p>
+<p>rules.txt 文件会对默认文件打补丁。例如，一个含有这两行的 rules.txt 文件：&quot;def peasant&quot; 和 &quot;decay 20&quot;，会使任何农民在 20 秒后消失。</p>
+<div class="section" id="ui-xx">
+<h2><a class="toc-backref" href="#toc-entry-2">模组多语言（ui-xx）</a></h2>
+<p>模组目录结构与 <tt class="docutils literal">res</tt> 相同，可在 <tt class="docutils literal">ui/</tt> 旁增加本地化文件夹（<tt class="docutils literal"><span class="pre">ui-zh</span></tt>、<tt class="docutils literal"><span class="pre">ui-fr</span></tt>、<tt class="docutils literal"><span class="pre">ui-de</span></tt> 等）。游戏根据 <tt class="docutils literal">cfg/language.txt</tt> （或系统语言）自动加载对应语言；未翻译的条目回退到 <tt class="docutils literal">ui/tts.txt</tt>。</p>
+<p><strong>推荐目录</strong> （以 <tt class="docutils literal">mods/mymod/</tt> 为例）:</p>
+<pre class="literal-block">
+ui/style.txt          ; title 7000
+ui/tts.txt            ; 7000 Pig Farm
+ui-zh/tts.txt         ; 7000 猪圈
+ui-fr/tts.txt         ; 7000 Ferme à porcs
+mod.txt               ; 可选：依赖与菜单显示名（见下）
+</pre>
+<p><strong>可翻译内容</strong> （模组激活后生效）：</p>
+<ul class="simple">
+<li>单位/建筑/派系名称：<tt class="docutils literal">style.txt</tt> 中的 <tt class="docutils literal">title &lt;ID&gt;</tt> + 各语言 <tt class="docutils literal">tts.txt</tt> 中同 ID 的文本</li>
+<li>单位简介：<tt class="docutils literal">intro &lt;ID&gt;</tt> + <tt class="docutils literal">tts.txt</tt></li>
+<li>模组内地图/战役：地图 <tt class="docutils literal">title</tt>/<tt class="docutils literal">intro</tt> 用 TTS 编号；战役文件夹可用 <tt class="docutils literal">campaign.txt</tt> 的 <tt class="docutils literal">title</tt> （与 <tt class="docutils literal">res/single</tt> 战役相同）</li>
+<li>整句翻译：在 <tt class="docutils literal">tts.txt</tt> 中用等号，例如 <tt class="docutils literal">objective be to eliminate the enemy = 目标为消灭敌人</tt></li>
+</ul>
+<p><strong>模组菜单显示名</strong> （选项 → 模组，自 1.4.2.4 起）：</p>
+<p>在 <tt class="docutils literal">mod.txt</tt> 中增加 <tt class="docutils literal">title</tt> 行，写法与 <tt class="docutils literal">campaign.txt</tt> 相同——可用 TTS 编号或空格分隔的文字:</p>
+<pre class="literal-block">
+title 7100
+</pre>
+<p>在 <tt class="docutils literal">ui/tts.txt</tt> 与各 <tt class="docutils literal"><span class="pre">ui-xx/tts.txt</span></tt> 中定义该编号，例如 <tt class="docutils literal">7100 Orc Faction Mod</tt> / <tt class="docutils literal">7100 兽人模组</tt>。未设置 <tt class="docutils literal">title</tt> 时仍朗读文件夹名。</p>
+<p>若暂不改 <tt class="docutils literal">mod.txt</tt>，也可在全局 <tt class="docutils literal"><span class="pre">res/ui-zh/tts.txt</span></tt> （或专用翻译 mod 的 <tt class="docutils literal"><span class="pre">ui-zh/tts.txt</span></tt>）用词组映射文件夹名，例如 <tt class="docutils literal">crazyMod9beta10 = 疯狂模组</tt>。</p>
+<p><strong>说明</strong>：<tt class="docutils literal">rules.txt</tt> / <tt class="docutils literal">ai.txt</tt> 无多语言版本；地图/战役子目录内的 <tt class="docutils literal"><span class="pre">ui-xx/style.txt</span></tt> 可能不被加载，但同目录 <tt class="docutils literal"><span class="pre">ui-xx/tts.txt</span></tt> 会加载。音效包（无 <tt class="docutils literal">rules.txt</tt> 的 mod）在 ** 选项 → 音效包** 菜单中同样支持 <tt class="docutils literal">mod.txt</tt> 的 <tt class="docutils literal">title</tt> 与各语言 <tt class="docutils literal">tts.txt</tt>。</p>
+<p>仓库示例：<tt class="docutils literal">mods/orc/</tt> （多语言 <tt class="docutils literal"><span class="pre">ui-xx/tts.txt</span></tt>）、<tt class="docutils literal"><span class="pre">mods/prismalab/ui-fr/</span></tt> （法语 <tt class="docutils literal">style.txt</tt> + <tt class="docutils literal">tts.txt</tt>）。</p>
+</div>
+<div class="section" id="clear">
+<h2><a class="toc-backref" href="#toc-entry-3">clear</a></h2>
+<p>要替换 rules.txt 或 style.txt 而非对其打补丁，请在文件顶部使用 &quot;clear&quot; 命令。这对 ai.txt 无效，
+而且本来也不需要，因为在 ai.txt 中 def 命令会重写该 AI 的定义。</p>
+</div>
+<div class="section" id="is-a">
+<h2><a class="toc-backref" href="#toc-entry-4">is_a</a></h2>
+<p>在 style.txt 中 &quot;is_a&quot; 是继承另一个定义全部属性的方式，
+而在 rules.txt 中，&quot;is_a&quot; 还用于确保城堡或要塞能允许市政厅所允许的内容。</p>
+<p>注意：style.txt 和 rules.txt 中的继承树无需一致。</p>
+</div>
+</div>
+<div class="section" id="the-rules">
+<h1><a class="toc-backref" href="#toc-entry-5">the rules</a></h1>
+<p>从 SoundRTS 1.1 起，游戏规则存储在一个名为 rules.txt 的文件中。</p>
+<div class="section" id="faction">
+<h2><a class="toc-backref" href="#toc-entry-6">faction</a></h2>
+<p>每个阵营都在 rules.txt 中定义。例如:</p>
+<pre class="literal-block">
+def orc_faction
+class faction
+</pre>
+<p>注意：&quot;orc_faction&quot; 名称以 &quot;_faction&quot; 结尾只是为了避免名称冲突。只要名称唯一，这个 &quot;_faction&quot; 后缀并非强制。</p>
+</div>
+<div class="section" id="unit">
+<h2><a class="toc-backref" href="#toc-entry-7">unit</a></h2>
+<p>注意：单位也可以是建筑。</p>
+<div class="section" id="count-limit">
+<h3><a class="toc-backref" href="#toc-entry-8">count_limit</a></h3>
+<p>SoundRTS 1.2 alpha 10 新增。</p>
+<p><cite>count_limit &lt;值&gt;</cite></p>
+<p>默认值为 0（无限制）。
+当限制生效时，达到上限的单位类型将无法被训练、建造、召唤、扶起、复活或由触发器（add_unit）添加。
+不过转化（conversion）不受影响。</p>
+</div>
+<div class="section" id="is-ballistic">
+<h3><a class="toc-backref" href="#toc-entry-9">is_ballistic</a></h3>
+<p>SoundRTS 1.2 alpha 9 新增。
+SoundRTS 1.2 alpha 10 修改。</p>
+<p><cite>is_ballistic 1</cite></p>
+<p>如果目标的海拔较低，该单位将获得射程加成。</p>
+</div>
+<div class="section" id="is-teleportable">
+<h3><a class="toc-backref" href="#toc-entry-10">is_teleportable</a></h3>
+<p>SoundRTS 1.2 alpha 9 新增。</p>
+<p><cite>is_teleportable 1</cite></p>
+<p>该单位（或建筑）会受到传送效果或召回效果的影响。</p>
+</div>
+<div class="section" id="hp-regen">
+<h3><a class="toc-backref" href="#toc-entry-11">hp_regen</a></h3>
+<p>SoundRTS 1.2 alpha 11 新增。</p>
+<p><cite>hp_regen &lt;生命值回复速率&gt;</cite></p>
+<p>例如，使用 &quot;hp_regen 0.15&quot; 时，该单位每秒回复 0.15 点生命值。</p>
+</div>
+<div class="section" id="mana-start">
+<h3><a class="toc-backref" href="#toc-entry-12">mana_start</a></h3>
+<p>SoundRTS 1.2 alpha 10 新增。</p>
+<p><cite>mana_start 50</cite></p>
+<p>在此示例中，该单位将以 50 法力（而非 mana_max）开局。mana_start 的默认值为 0。如果 mana_start 为 0 或负数，则改用 mana_max。</p>
+</div>
+<div class="section" id="provides-survival">
+<h3><a class="toc-backref" href="#toc-entry-13">provides_survival</a></h3>
+<p>SoundRTS 1.2 alpha 9 新增。</p>
+<p><cite>provides_survival 1</cite></p>
+<p>只要拥有至少一个 &quot;provides_survival&quot; 等于 1 的单位（或建筑），就能防止玩家在多人游戏中落败（单人战役除外）。受影响的触发器是 &quot;no_building_left&quot;。默认情况下只有建筑将此属性设为 1。建筑工地的该属性被设为 0 且无法更改。</p>
+</div>
+<div class="section" id="storage-bonus">
+<h3><a class="toc-backref" href="#toc-entry-14">storage_bonus</a></h3>
+<p><cite>storage_bonus &lt;资源 0 的加成&gt; &lt;资源 1 的加成&gt; ...</cite></p>
+<p>例如，&quot;storage_bonus 0 1&quot; 会为木材（第二种资源类型）带来 +1 加成。</p>
+<p>加成归该单位的拥有者所有。
+加成不叠加：每种资源类型只会应用最高的那个加成。</p>
+</div>
+<div class="section" id="damage-vs">
+<h3><a class="toc-backref" href="#toc-entry-15">damage_vs</a></h3>
+<p>注意：自 SoundRTS 1.4 起，单一的 <tt class="docutils literal">damage</tt> / <tt class="docutils literal">armor</tt> 体系
+已被拆分的近战/远程体系（<tt class="docutils literal">mdg</tt> / <tt class="docutils literal">rdg</tt> / <tt class="docutils literal">mdf</tt> / <tt class="docutils literal">rdf</tt> ...）取代。
+参见下文的 <a class="reference internal" href="#combat-system-since-1-4-1">Combat system (since 1.4)</a>。保留旧的 <tt class="docutils literal">damage_vs</tt> 文档仅供参考及旧模组使用。</p>
+<p>（针对特定单位的伤害）</p>
+<p><cite>damage_vs [&lt;类型名列表&gt; &lt;伤害&gt;] ...</cite></p>
+<p>定义针对某些单位类型的特定伤害。
+默认值在 unit.damage 中定义。</p>
+<p>一种对骑士更高效、对步兵或农民效率更低的长枪兵示例：</p>
+<p><cite>damage 2 ; 默认伤害</cite></p>
+<p><cite>damage_vs knight 7 footman peasant 1</cite></p>
+</div>
+</div>
+<div class="section" id="ability">
+<h2><a class="toc-backref" href="#toc-entry-16">ability</a></h2>
+<p>注意：自 SoundRTS 1.4 起，各种能力统一归于 <tt class="docutils literal">class skill</tt><cite>（参见下文</cite> <cite>Skills (class skill)`_</cite>）`。这里记录的 <tt class="docutils literal">effect</tt> 属性仍适用于技能以及 <tt class="docutils literal">class effect</tt> 定义。</p>
+<div class="section" id="effect">
+<h3><a class="toc-backref" href="#toc-entry-17">effect</a></h3>
+<p><cite>effect &lt;效果类型&gt; [参数]</cite></p>
+<p>默认值：（无）</p>
+<p>效果是某项能力的属性。当某单位使用某项能力时，该效果会生效，除非未指定任何效果类型。</p>
+<p>其他属性可以修改效果：<a class="reference internal" href="#effect-target">effect_target</a> 和 <a class="reference internal" href="#effect-range">effect_range</a>。</p>
+<div class="section" id="apply-bonus">
+<h4><a class="toc-backref" href="#toc-entry-18">apply_bonus</a></h4>
+<p><cite>effect apply_bonus &lt;属性名&gt;</cite></p>
+<p>提升受影响单位的某项属性。其数值定义在该单位名为 &quot;&lt;属性名&gt;_bonus&quot; 的属性中。
+例如，&quot;effect apply_bonus damage&quot; 会在每个受影响单位的定义中查找名为 &quot;damage_bonus&quot; 的属性。
+这样，享受相同升级的不同单位可以拥有不同的加成数值。</p>
+</div>
+<div class="section" id="bonus">
+<h4><a class="toc-backref" href="#toc-entry-19">bonus</a></h4>
+<p><cite>effect bonus &lt;属性名&gt; &lt;值&gt;</cite></p>
+<p>将受影响单位的某项属性提升指定数值。</p>
+<p>至少以下属性应当有效：damage、armor、range、heal_level、speed、hp_max（不过老单位的 hp 不会被更新到 hp_max）。
+food_cost 和 food_provided 大概无法正常工作。</p>
+</div>
+<div class="section" id="conversion">
+<h4><a class="toc-backref" href="#toc-entry-20">conversion</a></h4>
+<p><tt class="docutils literal">effect conversion</tt>（无参数）</p>
+<p>将目标移入施法者的部队。</p>
+<p>如果目标不是施法者的敌人，则什么都不会发生。</p>
+<p>相关属性的允许取值：</p>
+<ul class="simple">
+<li>effect_target：ask</li>
+<li>effect_range：square、nearby、anywhere</li>
+</ul>
+<p><strong>TODO：添加一个 &lt;limit&gt;，以便选取目标格子中的单位（而不必瞄准某个单位）</strong></p>
+</div>
+<div class="section" id="raise-dead">
+<h4><a class="toc-backref" href="#toc-entry-21">raise_dead</a></h4>
+<p><cite>effect raise_dead &lt;存活时长（秒）&gt; &lt;单位类型与数量&gt;</cite></p>
+<p>按单位列表的顺序，从目标格子里的尸体中在该格子创建所需单位。如果尸体不足，列表末尾的单位将不会被创建。除非 &lt;存活时长&gt; 设为 0，否则这些单位会在 &lt;存活时长&gt; 秒后消失。</p>
+<p>如果目标格子里没有尸体，该命令将不会执行。</p>
+<p>相关属性的允许取值：</p>
+<ul class="simple">
+<li>effect_target：self、ask、random</li>
+<li>effect_range：square、nearby、anywhere</li>
+</ul>
+</div>
+<div class="section" id="recall">
+<h4><a class="toc-backref" href="#toc-entry-22">recall</a></h4>
+<p><tt class="docutils literal">effect recall</tt>（无参数）</p>
+<p>类似传送。把玩家位于目标格子的单位传送回施法者所在的格子。建筑不受影响。盟友单位也不受影响。</p>
+<p>如果目标格子里没有单位，该命令将不会执行。</p>
+<p>相关属性的允许取值：</p>
+<ul class="simple">
+<li>effect_target：ask、random</li>
+<li>effect_range：nearby、anywhere</li>
+</ul>
+</div>
+<div class="section" id="resurrection">
+<h4><a class="toc-backref" href="#toc-entry-23">resurrection</a></h4>
+<p><cite>effect resurrection &lt;上限&gt;</cite></p>
+<p>复活躺在目标格子里、属于施法者部队的尸体，最多复活 &lt;上限&gt; 个单位。最旧的尸体最先被复活。生命值恢复到其最大值的三分之一。</p>
+<p>如果目标格子里没有同一部队单位的尸体，该命令将不会执行。</p>
+<p>相关属性的允许取值：</p>
+<ul class="simple">
+<li>effect_target：self、ask、random</li>
+<li>effect_range：square、nearby、anywhere</li>
+</ul>
+</div>
+<div class="section" id="summon">
+<h4><a class="toc-backref" href="#toc-entry-24">summon</a></h4>
+<p><cite>effect summon &lt;存活时长（秒）&gt; &lt;单位类型与数量&gt;</cite></p>
+<p>在目标格子创建所需单位并将其加入施法者的部队。除非 &lt;存活时长&gt; 设为 0，否则被召唤的单位会在 &lt;存活时长&gt; 秒后消失。</p>
+<p>可选技能属性（菌毯肿瘤示例）:</p>
+<pre class="literal-block">
+summon_requires_build_field creep
+summon_requires_marked_field 1
+</pre>
+<p><tt class="docutils literal">summon_requires_marked_field 1</tt> 要求目标格为**已标记** 建造场（仅实时供能不够）。女王生成肿瘤时不写此项。</p>
+</div>
+<div class="section" id="deploy">
+<h4><a class="toc-backref" href="#toc-entry-25">deploy</a></h4>
+<p><tt class="docutils literal">effect deploy &lt;存活时长（秒）&gt; [&lt;数量&gt;] &lt;效果类型&gt;</tt></p>
+<p>在目标格子部署 <tt class="docutils literal">class effect</tt> 实体（范围伤害、治疗区域、侦测等），持续指定秒数后消失。
+与 <tt class="docutils literal">effect summon</tt> 不同：仅用于 <tt class="docutils literal">class effect</tt>，属性界面显示伤害/治疗参数，而非「召唤」。</p>
+<p>示例（核打击、灵能风暴）:</p>
+<pre class="literal-block">
+effect deploy 5 sc_nuclear_blast
+effect deploy 3 sc_psi_storm_fx
+</pre>
+<p>可选数量（同一格多个效果实体）:</p>
+<pre class="literal-block">
+effect deploy 5 2 greek_fire
+</pre>
+<p>同样支持 <tt class="docutils literal">summon_requires_build_field</tt> / <tt class="docutils literal">summon_requires_marked_field</tt>。</p>
+<p>相关属性的允许取值：</p>
+<ul class="simple">
+<li>effect_target：self、ask、random</li>
+<li>effect_range：square、nearby、anywhere</li>
+</ul>
+</div>
+<div class="section" id="teleportation">
+<h4><a class="toc-backref" href="#toc-entry-26">teleportation</a></h4>
+<p><tt class="docutils literal">effect teleportation</tt>（无参数）</p>
+<p>把玩家位于施法者格子里的单位移动到目标格子。建筑不受影响。盟友单位也不受影响。</p>
+<p>如果目的地与施法者所在格子相同，则什么都不会做。</p>
+<p>相关属性的允许取值：</p>
+<ul class="simple">
+<li>effect_target：ask、random</li>
+<li>effect_range：nearby、anywhere</li>
+</ul>
+</div>
+</div>
+<div class="section" id="effect-target">
+<h3><a class="toc-backref" href="#toc-entry-27">effect_target</a></h3>
+<p><cite>effect_target &lt;选择方式&gt;</cite></p>
+<p>决定如何选择目标。</p>
+<p>默认值：self</p>
+<p>可能取值：</p>
+<ul class="simple">
+<li>self：目标将是施法者（如果目标必须是一个地点，则为施法者所在位置）</li>
+<li>ask：用户界面会要求选择一个目标</li>
+<li>random：游戏会随机选择一个格子作为目标</li>
+</ul>
+</div>
+<div class="section" id="effect-range">
+<h3><a class="toc-backref" href="#toc-entry-28">effect_range</a></h3>
+<p><cite>effect_range &lt;距离&gt;</cite></p>
+<p>决定施法者与目标之间的距离。</p>
+<p>默认值：6</p>
+<p>特殊值：inf（无限）</p>
+<p>如果当前距离大于所需距离，施法者会尝试移动到更近的位置，并从那里使用该能力。</p>
+</div>
+<div class="section" id="effect-radius">
+<h3><a class="toc-backref" href="#toc-entry-29">effect_radius</a></h3>
+<p><cite>effect_radius &lt;距离&gt;</cite></p>
+<p>决定效果作用范围的半径。范围的中心是目标。</p>
+<p>默认值：6</p>
+<p>特殊值：inf（无限）</p>
+</div>
+</div>
+</div>
+<div class="section" id="combat-system-since-1-4-1">
+<span id="combat-system-since-1-4"></span><h1><a class="toc-backref" href="#toc-entry-30">Combat system (since 1.4)</a></h1>
+<p>自 1.4 起，最终伤害为**叠加式**：<tt class="docutils literal">final_mdg = mdg + mdg_vs</tt> （<tt class="docutils literal">rdg</tt>、<tt class="docutils literal">mdf</tt>、<tt class="docutils literal">rdf</tt> 同理）。当基础伤害为 0 且在 <tt class="docutils literal">def parameters</tt> 中 <tt class="docutils literal">minimal_damage</tt> 为 0 时，该单位将不会攻击。</p>
+<p>主要近战/远程属性：</p>
+<ul class="simple">
+<li><tt class="docutils literal">mdg</tt> / <tt class="docutils literal">rdg</tt>：基础伤害</li>
+<li><tt class="docutils literal">mdg_vs</tt> / <tt class="docutils literal">rdg_vs</tt>：针对特定单位类型的加成</li>
+<li><tt class="docutils literal">mdf</tt> / <tt class="docutils literal">rdf</tt>：防御</li>
+<li><tt class="docutils literal">mdg_range</tt> / <tt class="docutils literal">rdg_range</tt>、<tt class="docutils literal">mdg_cd</tt> / <tt class="docutils literal">rdg_cd</tt>、<tt class="docutils literal">mdg_ready</tt> / <tt class="docutils literal">rdg_ready</tt></li>
+<li><tt class="docutils literal">mdg_splash</tt> / <tt class="docutils literal">rdg_splash</tt>、<tt class="docutils literal">mdg_radius</tt> / <tt class="docutils literal">rdg_radius</tt>、<tt class="docutils literal">mdg_splash_decay</tt></li>
+<li><tt class="docutils literal">mdg_targets</tt> / <tt class="docutils literal">rdg_targets</tt>：<tt class="docutils literal">ground</tt>、<tt class="docutils literal">air</tt>、<tt class="docutils literal">unit</tt>、<tt class="docutils literal">building</tt> 或类型名</li>
+<li><tt class="docutils literal">mdg_crit</tt> / <tt class="docutils literal">rdg_crit</tt>、<tt class="docutils literal">mdg_crit_rate</tt> / <tt class="docutils literal">rdg_crit_rate</tt>、<tt class="docutils literal">crit_vs</tt></li>
+<li><tt class="docutils literal">mdg_piercing</tt> / <tt class="docutils literal">rdg_piercing</tt><cite>（无视护甲百分比）</cite>、<tt class="docutils literal">piercing_vs</tt></li>
+<li><tt class="docutils literal">mdg_explode</tt> / <tt class="docutils literal">rdg_explode</tt>、<tt class="docutils literal">exp_dgf</tt>、<tt class="docutils literal">exp_hp_cost</tt>、<tt class="docutils literal">mdg_explode_vs</tt></li>
+</ul>
+<p><strong>冲锋与反冲锋（自 1.4.0.1 起）</strong></p>
+<p><strong>冲锋</strong>：配置了冲锋属性的单位在有效距离内接敌时，可发动一次高伤害冲锋攻击。冲锋完成后进入
+冷却，期间只造成普通 <tt class="docutils literal">mdg</tt> / <tt class="docutils literal">rdg</tt> 伤害；冷却结束后须将单位**拉开至超过冲锋有效距离**，
+才能对同一目标再次冲锋。</p>
+<p><strong>冲锋伤害（加法，非倍率）</strong>:</p>
+<pre class="literal-block">
+冲锋伤害 = (mdg + mdg_vs) + (charge_mdg + charge_mdg_vs)
+</pre>
+<p>例如 <tt class="docutils literal">mdg 6, charge_mdg 2</tt> 时基础部分为 <tt class="docutils literal">6 + 2 = 8</tt>，再按与目标距离在
+<tt class="docutils literal">charge_mdg_dist</tt> 内做衰减（近处约 50%，远处接近 100%）。远程同理，将 <tt class="docutils literal">mdg</tt> 换为
+<tt class="docutils literal">rdg</tt>、<tt class="docutils literal">charge_mdg</tt> 换为 <tt class="docutils literal">charge_rdg</tt>。</p>
+<p>冲锋属性（近战 / 远程各有一套，远程将 <tt class="docutils literal">mdg</tt> 换为 <tt class="docutils literal">rdg</tt>）：</p>
+<ul class="simple">
+<li><tt class="docutils literal">charge_mdg</tt> / <tt class="docutils literal">charge_rdg</tt> — 冲锋额外伤害加值</li>
+<li><tt class="docutils literal">charge_mdg_vs</tt> / <tt class="docutils literal">charge_rdg_vs</tt> — 对特定单位类型的冲锋加值</li>
+<li><tt class="docutils literal">charge_mdg_cd</tt> / <tt class="docutils literal">charge_rdg_cd</tt> — 冲锋冷却（毫秒）</li>
+<li><tt class="docutils literal">charge_mdg_dist</tt> / <tt class="docutils literal">charge_rdg_dist</tt> — 冲锋有效距离上限</li>
+<li><tt class="docutils literal">charge_mdg_min_dist</tt> / <tt class="docutils literal">charge_rdg_min_dist</tt> — 冲锋最小触发距离（0 表示不限）</li>
+<li><tt class="docutils literal">charge_mdg_splash</tt> / <tt class="docutils literal">charge_rdg_splash</tt> — 冲锋溅射伤害</li>
+<li><tt class="docutils literal">charge_mdg_radius</tt> / <tt class="docutils literal">charge_rdg_radius</tt> — 冲锋溅射半径</li>
+<li><tt class="docutils literal">charge_mdg_splash_decay_min</tt> / <tt class="docutils literal">charge_rdg_splash_decay_min</tt> — 溅射最小衰减（0.0–1.0）</li>
+</ul>
+<p>示例（战役骑士）:</p>
+<pre class="literal-block">
+def knight
+mdg 3
+charge_mdg 2
+charge_mdg_cd 10
+charge_mdg_dist 15
+charge_mdg_splash 1
+charge_mdg_radius 1
+charge_mdg_splash_decay_min 0.5
+</pre>
+<p><strong>反冲锋</strong>：专门克制冲锋。当具有反冲锋的单位在有效距离内拦截** 正在冲锋**的敌人时，会打断对方
+冲锋（对方本次按普通攻击结算），并对攻击者造成反冲锋伤害。</p>
+<p><strong>反冲锋伤害（加法）</strong>:</p>
+<pre class="literal-block">
+反冲锋伤害 = 对方 (mdg/rdg + mdg_vs/rdg_vs) + 对方 (charge_mdg/charge_rdg + charge_mdg_vs/charge_rdg_vs)
+           + 自身 (op_charge_mdg/op_charge_rdg + op_charge_mdg_vs/op_charge_rdg_vs)
+</pre>
+<p>反冲锋属性：</p>
+<ul class="simple">
+<li><tt class="docutils literal">op_charge_mdg</tt> / <tt class="docutils literal">op_charge_rdg</tt> — 反冲锋额外伤害加值</li>
+<li><tt class="docutils literal">op_charge_mdg_vs</tt> / <tt class="docutils literal">op_charge_rdg_vs</tt> — 对特定攻击者类型的加值</li>
+<li><tt class="docutils literal">op_charge_mdg_cd</tt> / <tt class="docutils literal">op_charge_rdg_cd</tt> — 反冲锋冷却</li>
+<li><tt class="docutils literal">op_charge_mdg_dist</tt> / <tt class="docutils literal">op_charge_rdg_dist</tt> — 反冲锋有效距离（0 表示不限）</li>
+</ul>
+<p><strong>音效（``style.txt``）</strong>：<tt class="docutils literal">charge_success</tt>、<tt class="docutils literal">charge_failed</tt>、<tt class="docutils literal">op_charge</tt>。战斗相关还有
+<tt class="docutils literal">critical_hit</tt>、<tt class="docutils literal">piercing_triggered</tt>。</p>
+<p><strong>注意</strong>：自伤不会触发冲锋；地面冲锋溅射不影响空中单位。</p>
+</div>
+<div class="section" id="damage-seq-1-3-8-2-1-4-3-6">
+<h1><a class="toc-backref" href="#toc-entry-31">连发 / 序列攻击（<tt class="docutils literal">damage_seq</tt>，自 1.3.8.2 起，1.4.3.6 增强）</a></h1>
+<p>一次攻击可在冷却周期内**快速连击多次** （类似帝国时代诸葛弩）。须先定义 <tt class="docutils literal">mdg</tt> / <tt class="docutils literal">rdg</tt>，再写
+<tt class="docutils literal">damage_seq</tt>：</p>
+<p><tt class="docutils literal">damage_seq mdg|rdg &lt;次数&gt; [(damage d1 d2 <span class="pre">...)]</span> [(interval 秒)]</tt></p>
+<ul class="simple">
+<li><strong>手动分段</strong>：<tt class="docutils literal">(damage 6 3 3)</tt> — 各段为整数，总和须等于 <tt class="docutils literal">mdg</tt> / <tt class="docutils literal">rdg</tt> 基础值</li>
+<li><strong>自动均分</strong> （1.4.3.6 起）：省略 <tt class="docutils literal">(damage <span class="pre">...)</span></tt> 时按次数均分基础伤害（支持小数，如
+<tt class="docutils literal">rdg 7.5</tt> 配 3 次 → 每发 2.5）</li>
+<li><strong>间隔</strong>：<tt class="docutils literal">(interval 0.25)</tt> 为每发之间的秒数；多段且未写 interval 或为 0 时默认 <strong>0.25</strong> 秒</li>
+<li><strong>上限</strong>：单次攻击最多 <strong>6</strong> 段</li>
+<li><strong>判定</strong>：每段独立计算命中、暴击、debuff</li>
+<li><strong>冷却</strong>：<tt class="docutils literal">mdg_cd</tt> / <tt class="docutils literal">rdg_cd</tt> 在** 整轮连发结束后**才开始</li>
+<li><strong>音效</strong>：每发触发 <tt class="docutils literal">launch_mdg</tt> / <tt class="docutils literal">launch_rdg</tt>；可在 <tt class="docutils literal">style.txt</tt> 写多个音效 ID
+（如 <tt class="docutils literal">launch_rdg 1042 1042 1042</tt>）</li>
+</ul>
+<p>远程连发示例（内置 <tt class="docutils literal">repeating_crossbowman</tt> 诸葛弩手）:</p>
+<pre class="literal-block">
+def repeating_crossbowman
+rdg 6
+rdg_cd 2.5
+rdg_range 4
+rdg_projectile 1
+damage_seq rdg 3 (interval 0.25)
+</pre>
+<p>近战手动分段示例:</p>
+<pre class="literal-block">
+def footman
+mdg 12
+mdg_cd 1.5
+mdg_range 6
+damage_seq mdg 3 (damage 6 3 3) (interval 0.2)
+</pre>
+<p>详见 <tt class="docutils literal">docs/zh/连发攻击与诸葛弩说明.md</tt>。</p>
+</div>
+<div class="section" id="weapons-and-armor-since-1-4-1-3">
+<h1><a class="toc-backref" href="#toc-entry-32">Weapons and armor (since 1.4.1.3)</a></h1>
+<p>武器（<tt class="docutils literal">class weapon</tt>）和护甲（<tt class="docutils literal">class armor</tt>）承载战斗数值。单位引用它们:</p>
+<pre class="literal-block">
+def footman
+class soldier
+weapons sword bow     ; 第一件武器为默认/主武器
+auto_weapon_switch 1  ; 1 = 战斗中按射程自动换武器
+armor light_armor
+</pre>
+<p>玩家用 A / Shift+A 或 B 然后 X 切换武器。手动切换优先于自动切换。
+单位与已装备物品上的数值**相加**。武器像单位一样支持继承。</p>
+</div>
+<div class="section" id="buffs-and-debuffs-since-1-3-9-8-extended-in-1-4-1-7">
+<h1><a class="toc-backref" href="#toc-entry-33">Buffs and debuffs (since 1.3.9.8, extended in 1.4.1.7)</a></h1>
+<p>通过 <tt class="docutils literal">buffs</tt> / <tt class="docutils literal">debuffs</tt> 附加到攻击上，或通过技能的 <tt class="docutils literal">effect buffs</tt> / <tt class="docutils literal">effect debuffs</tt> 附加。</p>
+<p>多属性增益示例:</p>
+<pre class="literal-block">
+def HealEnhancementBuff
+class buff
+stat heal_level heal_cd heal_radius
+v 1 1500 6
+duration 300
+temporary 1
+</pre>
+<p>触发模式：</p>
+<ol class="arabic simple">
+<li><strong>默认</strong> — 攻击命中后触发</li>
+<li><tt class="docutils literal">is_active 1</tt> — 发起攻击时触发（主动型）</li>
+<li><tt class="docutils literal">is_passive 1</tt> — 遭受攻击时触发（被动型），配合 <tt class="docutils literal">trigger_condition</tt><cite>（例如</cite> <tt class="docutils literal">hp &lt; 20</tt><cite>）</cite> 和 <tt class="docutils literal">passive_trigger_rate</tt></li>
+</ol>
+<p>触发几率（百分比，默认沿用普通攻击率）：</p>
+<ul class="simple">
+<li><tt class="docutils literal">mdg_trigger_rate</tt> / <tt class="docutils literal">rdg_trigger_rate</tt> — 普通伤害触发</li>
+<li><tt class="docutils literal">charge_mdg_trigger_rate</tt> / <tt class="docutils literal">charge_rdg_trigger_rate</tt> — 冲锋伤害触发</li>
+<li><tt class="docutils literal">op_charge_mdg_trigger_rate</tt> / <tt class="docutils literal">op_charge_rdg_trigger_rate</tt> — 反冲锋触发</li>
+</ul>
+</div>
+<div class="section" id="skills-class-skill-1">
+<span id="skills-class-skill"></span><h1><a class="toc-backref" href="#toc-entry-34">Skills (class skill)</a></h1>
+<p>用 <tt class="docutils literal">class skill</tt> 定义技能，取代 <tt class="docutils literal">class ability</tt>:</p>
+<pre class="literal-block">
+def fireball
+class skill
+mana_cost 50
+cost 10 0
+time_cost 30
+effect harm 5
+effect_target ask
+effect_range 12
+</pre>
+<p><tt class="docutils literal">can_use_tech</tt> 用于升级；<tt class="docutils literal">can_use_skill</tt> 用于技能。</p>
+</div>
+<div class="section" id="effects-class-effect-since-1-4-1-7">
+<h1><a class="toc-backref" href="#toc-entry-35">Effects (class effect, since 1.4.1.7)</a></h1>
+<p>伤害与治疗拆分为详细参数:</p>
+<pre class="literal-block">
+def exorcism
+class effect
+harm_level 2
+harm_cd 7.5
+harm_radius 6
+harm_target_type undead
+debuffs b_slow
+</pre>
+<p>同理：<tt class="docutils literal">heal_level</tt>、<tt class="docutils literal">heal_cd</tt>、<tt class="docutils literal">heal_radius</tt>、<tt class="docutils literal">heal_target_type</tt>；
+<tt class="docutils literal">hp_regen_cd</tt>、<tt class="docutils literal">mana_regen_ready</tt> 等。</p>
+</div>
+<div class="section" id="phase-system-since-1-4-2-4">
+<h1><a class="toc-backref" href="#toc-entry-36">Phase system (since 1.4.2.4)</a></h1>
+<p><tt class="docutils literal">class phase</tt> 在不升级基地的情况下推进游戏时代:</p>
+<pre class="literal-block">
+def dark_age
+class phase
+cost 0 0
+time_cost 0
+
+def feudal_age
+class phase
+cost 10 15
+time_cost 130
+phase bonus mdg 1 hp_max 5 cost -2 0 time_cost -5
+units_auto_upgrade 0
+phase_targets soldier
+</pre>
+<p><tt class="docutils literal">phase_targets</tt> 可选，控制哪些单位获得 <tt class="docutils literal">phase bonus</tt> 中的非成本项加成（成本类加成始终作用于玩家全局）。留空表示所有单位受益。可写类别名（<tt class="docutils literal">soldier</tt>、<tt class="docutils literal">worker</tt>、<tt class="docutils literal">building</tt>、<tt class="docutils literal">unit</tt> 等）、具体单位名（<tt class="docutils literal">footman knight</tt>），或 <tt class="docutils literal">is_a</tt> 继承链中的类型名；任一正向项命中即匹配。前缀 <tt class="docutils literal">-</tt> 表示排除，例如 <tt class="docutils literal">phase_targets <span class="pre">-building</span></tt> 表示除建筑外的所有单位；可与正向项混用，例如 <tt class="docutils literal">phase_targets soldier <span class="pre">-footman</span></tt>。</p>
+<p>在建筑上:</p>
+<pre class="literal-block">
+can_advance feudal_age
+</pre>
+<p>阶段使用 <tt class="docutils literal">can_advance</tt><cite>（而非</cite> <tt class="docutils literal">can_research</tt><cite>）</cite>。在建筑上按 V 查看当前阶段。</p>
+<p>在 <tt class="docutils literal">def parameters</tt> 中设置 <tt class="docutils literal">hide_locked_commands 1</tt> 可隐藏尚未满足要求的命令。</p>
+</div>
+<div class="section" id="economy-since-1-4-0-x">
+<h1><a class="toc-backref" href="#toc-entry-37">Economy (since 1.4.0.x)</a></h1>
+<p><tt class="docutils literal">population_cost</tt> 取代了 <tt class="docutils literal">food_cost</tt>。建筑可以生产或存放资源:</p>
+<pre class="literal-block">
+auto_production 1       ; 自动生产（气矿等）；资源未满即可重启
+manual_production 1     ; 手动开始生产
+auto_cultivate 1        ; 自动耕种（农田）；储量抽空后才重启
+is_gather 1             ; 产出进入建筑储量，由工人运回基地
+resource_volume_max 8
+resource_volume_start 0
+production_type resource2
+production_time 18      ; 攒满一批资源所需秒数
+production_qty 8        ; 每轮产出数量（存入建筑储量）
+extraction_time 2       ; 工人从建筑开采耗时（秒）
+extraction_qty 8        ; 工人单次运载量
+</pre>
+<p>无 <tt class="docutils literal">is_gather</tt> 时，无论自动还是手动生产，<tt class="docutils literal">production_type</tt> 每轮产出都会**直接进入玩家资源库存** （如 <tt class="docutils literal">gold_house</tt>）:</p>
+<pre class="literal-block">
+auto_production 1
+manual_production 1
+production_type resource1
+production_time 100
+production_qty 200
+</pre>
+<p>需要产出可拾取物品时，使用 <tt class="docutils literal">production_item</tt> （与 <tt class="docutils literal">production_type</tt> 二选一）:</p>
+<pre class="literal-block">
+production_item gold_pile
+production_qty 1
+</pre>
+<div class="line-block">
+<div class="line">属性 | 说明 |</div>
+<div class="line">--- | --- |</div>
+<div class="line"><tt class="docutils literal">production_type</tt> | 生产的资源类型（与 <tt class="docutils literal">production_time</tt>、<tt class="docutils literal">production_qty</tt> 共同定义生产能力） |</div>
+<div class="line"><tt class="docutils literal">production_time</tt> | 完成一轮生产所需时间（秒） |</div>
+<div class="line"><tt class="docutils literal">production_qty</tt> | 每轮产出量；无 <tt class="docutils literal">is_gather</tt> 时入库玩家资源；有 <tt class="docutils literal">is_gather</tt> 时写入建筑 <tt class="docutils literal">resource_qty</tt> |</div>
+<div class="line"><tt class="docutils literal">auto_production</tt> | 为 <tt class="docutils literal">1</tt> 时显示**自动生产** 命令；完成后自动开始下一轮；<strong>气矿</strong> 用此项（非 <tt class="docutils literal">auto_cultivate</tt>） |</div>
+<div class="line"><tt class="docutils literal">manual_production</tt> | 为 <tt class="docutils literal">1</tt> 时显示**手动生产** 命令；每轮完成后需再次点击；与 <tt class="docutils literal">auto_production</tt> <strong>独立</strong>，须分别开启 |</div>
+<div class="line"><tt class="docutils literal">auto_cultivate</tt> | 农田等 <tt class="docutils literal">is_gather</tt> 建筑的自动耕种；与 <tt class="docutils literal">auto_production</tt> 对应 |</div>
+<div class="line"><tt class="docutils literal">manual_cultivate</tt> | 农田等的手动耕种；与 <tt class="docutils literal">manual_production</tt> 对应，须单独设为 <tt class="docutils literal">1</tt> |</div>
+<div class="line"><tt class="docutils literal">production_item</tt> | 生产的物品类型名；完成后在建筑旁生成可 <tt class="docutils literal">pickup</tt> 的物品 |</div>
+<div class="line"><tt class="docutils literal">is_gather</tt> | 产出不进玩家库存，先存入建筑；工人 <tt class="docutils literal">can_gather_building</tt> 该建筑类型后运回仓库 |</div>
+<div class="line"><tt class="docutils literal">resource_volume_max</tt> | 建筑内最大储量（如气矿 8） |</div>
+<div class="line"><tt class="docutils literal">resource_volume_start</tt> | 建成时初始储量（<tt class="docutils literal">0</tt> 表示空） |</div>
+<div class="line"><tt class="docutils literal">extraction_time</tt> / <tt class="docutils literal">extraction_qty</tt> | 工人从建筑（或矿床）开采的耗时与单次数量 |</div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><tt class="docutils literal">auto_production</tt> 与 <tt class="docutils literal">manual_production</tt> 为**两个独立开关**，可同时为 <tt class="docutils literal">1</tt> （如 <tt class="docutils literal">gold_house</tt>）。<tt class="docutils literal">auto_production</tt> 未写或为 <tt class="docutils literal">0</tt> ** 不会**自动视为手动生产；需要手动命令时必须写 <tt class="docutils literal">manual_production 1</tt>。农田侧同理：<tt class="docutils literal">auto_cultivate</tt> / <tt class="docutils literal">manual_cultivate</tt> 独立配置。</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><tt class="docutils literal">is_create</tt> 已废弃：不再生成地面 <tt class="docutils literal">class resource</tt> 堆。请用 <tt class="docutils literal">production_type</tt> （直接入库）、<tt class="docutils literal">is_gather</tt> （存入建筑）或 <tt class="docutils literal">production_item</tt> （生成物品）。</p>
+</div>
+<p><tt class="docutils literal">class resource</tt> 与 <tt class="docutils literal">class deposit</tt> 相互独立。地图矿床:</p>
+<pre class="literal-block">
+mineral_field 1500 a1    ; 矿物矿床，1500 储量
+geyser 1 e1              ; 瓦斯气泉（建造气矿后移除）
+</pre>
+<p>气矿建筑须建在指定矿床上:</p>
+<pre class="literal-block">
+requires_deposit geyser
+is_buildable_anywhere 0
+</pre>
+<p>完整示例见 <tt class="docutils literal">mods/starcraft/rules.txt</tt> 中的 <tt class="docutils literal">sc_gas_building</tt> / <tt class="docutils literal">assimilator</tt>；玩家说明见 <tt class="docutils literal">docs/zh/星际资源与气矿说明.md</tt>。属性界面（V）新增 <strong>需要矿床</strong> （<tt class="docutils literal">requires_deposit</tt>）；生产时间/数量等沿用既有生产属性显示。</p>
+</div>
+<div class="section" id="heroes-since-1-4">
+<h1><a class="toc-backref" href="#toc-entry-38">Heroes (since 1.4)</a></h1>
+<p>任意 <strong>`rules.txt`</strong> 均可定义英雄单位（基础规则、模组、战役包、联机地图包等）。在对战电脑、随机图、联机、战役等模式中均生效：杀敌获经验、按 <tt class="docutils literal">xp_thresholds</tt> 升级、<tt class="docutils literal">is_revivable</tt> 复活、背包装备等。<a href="#system-message-1"><span class="problematic" id="problematic-1">**</span></a>跨章存档**（下一节 <tt class="docutils literal">campaign_carryover</tt>）才是**仅单人战役**的附加功能。</p>
+<div class="system-message" id="system-message-1">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">doc_src/src\zh\modding.rst</tt>, line 640); <em><a href="#problematic-1">backlink</a></em></p>
+Inline strong start-string without end-string.</div>
+<p>联机示例：<tt class="docutils literal">res/multi/td2/rules.txt</tt> 中的 <tt class="docutils literal">hero</tt> / <tt class="docutils literal">hero_knight</tt> 等。</p>
+<pre class="literal-block">
+def hero
+class soldier
+global_count_limit 1
+is_revivable 1
+revival_time 10
+xp_thresholds 200 500 900
+hp_max_per_level 1000
+mdg_per_level 100
+resource_rewards 300
+xp_reward 100
+</pre>
+<p><strong>等级与经验（``level`` / ``xp`` / ``xp_thresholds`` / ``xp_threshold_growth``）</strong></p>
+<div class="line-block">
+<div class="line">字段 | 默认 | 说明 |</div>
+<div class="line">--- | --- | --- |</div>
+<div class="line"><tt class="docutils literal">xp_thresholds</tt> | （空） | 升级所需**累计**经验列表。第 1 个值为升到 <strong>2 级**（或从 **0 级**升到 **1 级</strong>）的门槛；其后依次为 3 级、4 级…… |</div>
+<div class="line"><tt class="docutils literal">max_level</tt> | （无） | 英雄等级上限。与 <tt class="docutils literal">xp_threshold_growth</tt> 配合时，加载规则时自动生成 <tt class="docutils literal">max_level - 1</tt> 个门槛 |</div>
+<div class="line"><tt class="docutils literal">xp_threshold_growth</tt> | （无） | 按公式自动生成 <tt class="docutils literal"><span class="pre">xp_thresholds``（见下表）。须同时写</span> ``max_level</tt>；与手写 <tt class="docutils literal">xp_thresholds</tt> 二选一（手写优先） |</div>
+<div class="line"><tt class="docutils literal">level</tt> | <tt class="docutils literal">1</tt> | 开局等级。<tt class="docutils literal">&gt; 1</tt> 时按 <tt class="docutils literal">*_per_level</tt> 逐级补全属性并解锁 <tt class="docutils literal">level_skills</tt> |</div>
+<div class="line"><tt class="docutils literal">xp</tt> | <tt class="docutils literal">0</tt> | 开局累计经验（可选） |</div>
+<div class="line"><tt class="docutils literal">level_up_heal_full</tt> | <tt class="docutils literal">0</tt> | <tt class="docutils literal">1</tt> = 每次升级后生命与法力**回满**；<tt class="docutils literal">0</tt> = 仅把 <tt class="docutils literal">hp_max_per_level</tt> / <tt class="docutils literal">mana_max_per_level</tt> 增量加到当前值（默认） |</div>
+<div class="line"><tt class="docutils literal">level_up_reset_xp</tt> | <tt class="docutils literal">0</tt> | <tt class="docutils literal">1</tt> = 每次升级后**当前经验清零**；<tt class="docutils literal">0</tt> = 保留累计经验（默认）。开启时 <tt class="docutils literal">xp_thresholds</tt> 宜写**每级所需**经验，而非累计值 |</div>
+</div>
+<ul>
+<li><p class="first">最高等级 = <a href="#system-message-2"><span class="problematic" id="problematic-2">``</span></a>len(xp_thresholds) + 1``（例如 9 个阈值 → 最高 10 级）。</p>
+<div class="system-message" id="system-message-2">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">doc_src/src\zh\modding.rst</tt>, line 669); <em><a href="#problematic-2">backlink</a></em></p>
+<p>Inline literal start-string without end-string.</p>
+</div>
+</li>
+<li><p class="first">选中单位时（Tab 状态）：定义了 <tt class="docutils literal">xp_thresholds</tt> 的英雄**始终播报等级**（含 1 级、0 级）；经验显示为 <tt class="docutils literal"><span class="pre">当前经验/下一级门槛``（0</span> 级时下一级门槛为 ``xp_thresholds</tt> 第 1 项）。</p>
+</li>
+<li><p class="first">仅写 <tt class="docutils literal"><span class="pre">xp_thresholds``（或</span> ``xp_threshold_growth</tt> 展开后）且不写 <tt class="docutils literal">level</tt> → 默认 <strong>1 级</strong> 开局；写 <tt class="docutils literal">level 0</tt> 可从 0 级成长。</p>
+</li>
+</ul>
+<p><a href="#system-message-3"><span class="problematic" id="problematic-3">**</span></a><tt class="docutils literal">xp_threshold_growth</tt> 曲线类型**（第 <tt class="docutils literal">i</tt> 个门槛，<tt class="docutils literal">i</tt> 从 0 起，对应升到 2 级、3 级……）</p>
+<div class="system-message" id="system-message-3">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">doc_src/src\zh\modding.rst</tt>, line 673); <em><a href="#problematic-3">backlink</a></em></p>
+Inline strong start-string without end-string.</div>
+<div class="line-block">
+<div class="line">类型 | 写法 | 公式 |</div>
+<div class="line">--- | --- | --- |</div>
+<div class="line">线性 | <tt class="docutils literal">linear BASE STEP</tt> | <tt class="docutils literal">BASE + STEP × i</tt> |</div>
+<div class="line">二次 | <tt class="docutils literal">quadratic BASE A B</tt> | <tt class="docutils literal">BASE + A×i + B×i²</tt> |</div>
+<div class="line">多项式 | <tt class="docutils literal">polynomial c0 c1 c2 …</tt> | <tt class="docutils literal">c0 + c1×i + c2×i² + …</tt> |</div>
+<div class="line">几何 | <tt class="docutils literal">geometric FIRST RATIO</tt> | <tt class="docutils literal">FIRST × <span class="pre">RATIO^i``（``RATIO</span></tt> 可写小数，如 <tt class="docutils literal">1.08</tt>） |</div>
+</div>
+<p>示例（100 级英雄，线性累计经验）:</p>
+<pre class="literal-block">
+def long_hero
+class soldier
+max_level 100
+xp_threshold_growth linear 100 50
+hp_max_per_level 30
+mdg_per_level 2
+</pre>
+<p>示例（雷纳式二次曲线，等价于 <tt class="docutils literal">40 90 160 250 …</tt>）:</p>
+<pre class="literal-block">
+def raynor_curve
+class soldier
+max_level 10
+xp_threshold_growth quadratic 40 40 10
+hp_max_per_level 30
+</pre>
+<p>示例子类型只改等级上限（继承父 def 的 <tt class="docutils literal">xp_threshold_growth</tt>）:</p>
+<pre class="literal-block">
+def base_hero
+class soldier
+max_level 100
+xp_threshold_growth linear 100 50
+
+def short_campaign_hero
+is_a base_hero
+max_level 20
+</pre>
+<p>示例（0 级开局、手写多级阈值）:</p>
+<pre class="literal-block">
+def raynor
+is_a footman
+xp_thresholds 40 90 160 250 360 490 640 810 1000
+hp_max_per_level 30
+mdg_per_level 2
+level 0
+</pre>
+<p>示例（升级回满生命/法力）:</p>
+<pre class="literal-block">
+def raynor
+is_a footman
+xp_thresholds 40 90 160
+hp_max_per_level 30
+level_up_heal_full 1
+</pre>
+<p>示例（3 级开局，带初始经验）:</p>
+<pre class="literal-block">
+def veteran_hero
+is_a knight
+xp_thresholds 200 500 900
+hp_max_per_level 20
+level 3
+xp 500
+</pre>
+</div>
+<div class="section" id="section-2">
+<h1><a class="toc-backref" href="#toc-entry-39">战役跨章英雄携带（规则驱动）</a></h1>
+<p>在上一节已定义的英雄 def 上再加 <tt class="docutils literal">campaign_carryover 1</tt>。<strong>仅</strong> 单人战役在**通关**时把进度写入 <tt class="docutils literal">user/campaigns.ini</tt>，<a href="#system-message-4"><span class="problematic" id="problematic-4">**</span></a>下一关**开局自动恢复（<a href="#system-message-5"><span class="problematic" id="problematic-5">**</span></a>失败重打**不覆盖）。<a href="#system-message-6"><span class="problematic" id="problematic-6">**</span></a>合作战役**不支持。</p>
+<div class="system-message" id="system-message-4">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">doc_src/src\zh\modding.rst</tt>, line 739); <em><a href="#problematic-4">backlink</a></em></p>
+Inline strong start-string without end-string.</div>
+<div class="system-message" id="system-message-5">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">doc_src/src\zh\modding.rst</tt>, line 739); <em><a href="#problematic-5">backlink</a></em></p>
+Inline strong start-string without end-string.</div>
+<div class="system-message" id="system-message-6">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">doc_src/src\zh\modding.rst</tt>, line 739); <em><a href="#problematic-6">backlink</a></em></p>
+Inline strong start-string without end-string.</div>
+<pre class="literal-block">
+def my_hero
+is_a knight
+campaign_carryover 1
+campaign_carryover_id my_hero
+campaign_carryover_stats 1
+campaign_carryover_inventory 1
+inventory_capacity 8
+</pre>
+<div class="line-block">
+<div class="line">字段 | 默认 | 说明 |</div>
+<div class="line">--- | --- | --- |</div>
+<div class="line"><tt class="docutils literal">campaign_carryover</tt> | <tt class="docutils literal">0</tt> | <tt class="docutils literal">1</tt> = 启用跨章存档 |</div>
+<div class="line"><tt class="docutils literal">campaign_carryover_id</tt> | def 名 | 存档键 <tt class="docutils literal">hero_&lt;id&gt;_xp</tt> / <tt class="docutils literal">_level</tt> / <tt class="docutils literal">_inventory</tt> |</div>
+<div class="line"><tt class="docutils literal">campaign_carryover_stats</tt> | <tt class="docutils literal">1</tt> | 等级与经验 |</div>
+<div class="line"><tt class="docutils literal">campaign_carryover_inventory</tt> | <tt class="docutils literal">1</tt> | 背包物品 |</div>
+</div>
+<p>子版本（<tt class="docutils literal">raynor7 is_a … raynor</tt>）共用父类型存档键。只带经验：<tt class="docutils literal">campaign_carryover_inventory 0</tt>；只带背包：<tt class="docutils literal">campaign_carryover_stats 0</tt>；完全不跨章：不写 <tt class="docutils literal">campaign_carryover 1</tt>。</p>
+<p><tt class="docutils literal">campaign.txt</tt> 可选 <tt class="docutils literal">hero_min_level 13:2 16:3 …</tt> 指定进入某章后的最低等级。</p>
+<p>与 <tt class="docutils literal">campaign_flag</tt> / <tt class="docutils literal">add_inventory_item</tt> 独立：剧情信物、结盟等仍用地图触发器。详见 <tt class="docutils literal">docs/zh/developer/战役跨章英雄携带说明.md</tt>。</p>
+</div>
+<div class="section" id="items-since-1-4-1-3">
+<h1><a class="toc-backref" href="#toc-entry-40">Items (since 1.4.1.3)</a></h1>
+<pre class="literal-block">
+def magic_sword
+class item
+consume_on_pickup 0
+buffs power_buff
+resource_rewards resource1 50
+</pre>
+<p><tt class="docutils literal">is_loot 1</tt> 在携带者死亡时掉落该物品。</p>
+<p><strong>物品音效（``style.txt``，自 1.4.4.6 起支持使用音效）</strong></p>
+<div class="line-block">
+<div class="line">时机 | 物品 <tt class="docutils literal">style.txt</tt> | 单位 <tt class="docutils literal">style.txt</tt> | 全局默认（<tt class="docutils literal">def thing</tt>） |</div>
+<div class="line">拾取 | <tt class="docutils literal">on_pickup</tt> | <tt class="docutils literal">pickup_&lt;物品type&gt;</tt> | <tt class="docutils literal">pickup</tt> |</div>
+<div class="line">丢弃 | <tt class="docutils literal">on_drop</tt> | <tt class="docutils literal">drop_&lt;物品type&gt;</tt> | <tt class="docutils literal">drop</tt> |</div>
+<div class="line">使用 | <tt class="docutils literal">use</tt> / <tt class="docutils literal">on_use</tt> | <tt class="docutils literal">use_&lt;物品type&gt;</tt> | <tt class="docutils literal">item_used</tt> |</div>
+</div>
+<p>物品上（<tt class="docutils literal">use</tt> 与 <tt class="docutils literal">on_use</tt> 等价；多个 ID 随机播放）:</p>
+<pre class="literal-block">
+def zhuiri_jianfa_book
+title 7754
+pickup 1506
+use 1506
+</pre>
+<p>单位上:</p>
+<pre class="literal-block">
+def raynor
+use_zhuiri_jianfa_book 1506
+</pre>
+<p>全局默认:</p>
+<pre class="literal-block">
+def thing
+item_used 1194 1195 1196
+</pre>
+<p>继承链（<tt class="docutils literal">is_a</tt>）与 <tt class="docutils literal">on_pickup</tt> / <tt class="docutils literal">on_drop</tt> 相同：子类型可覆盖父类型音效。</p>
+</div>
+<div class="section" id="section-3">
+<h1><a class="toc-backref" href="#toc-entry-41">背包与可装备物品（自 1.4.3.1 起）</a></h1>
+<p>单位需要 <tt class="docutils literal">inventory_capacity</tt>&gt; 0 才能持有物品。每件物品占一格（<tt class="docutils literal">transport_volume</tt>已定义，但当前容量按**物品件数** 计算，与 <tt class="docutils literal">transport_volume</tt>无关）。</p>
+<p>两套装备系统</p>
+<p>内置武器 / 内置护甲（传统）：</p>
+<pre class="literal-block">
+def footman
+weapons sword          ; class weapon 类型
+armor footman_armor    ; class armor 类型
+</pre>
+<ul class="simple">
+<li>武器走 <tt class="docutils literal">class weapon</tt>系统，护甲走 <tt class="docutils literal">class armor</tt>系统。</li>
+<li>不会自动出现在背包里。</li>
+<li>在装备栏中显示为「内置武器 / 内置护甲」，不能通过界面装备、卸下或丢弃。</li>
+</ul>
+<p>背包物品装备（同型模型）：同一 <tt class="docutils literal">type_name</tt>可定义为 <tt class="docutils literal">class item</tt>，并加上：</p>
+<pre class="literal-block">
+def sword
+class item
+equippable_as_weapon 1
+mdg 3.5
+mdg_bonus 2.5
+mdg_cd 1.5
+mdg_range 1
+transport_volume 1
+can_use_tech melee_weapon
+
+def footman_armor
+class item
+equippable_as_armor 1
+mdf 0.5
+mdf_bonus 1
+rdf_bonus 1
+can_use_tech melee_armor
+</pre>
+<p>物品进入单位 <tt class="docutils literal">inventory</tt>后，可通过背包或装备栏装备；数值（<tt class="docutils literal">mdg</tt>、<tt class="docutils literal">mdf</tt>等）在装备时套用到单位身上，卸下后还原。</p>
+<p>装备切换规则</p>
+<p>当单位**同时配置了内置装备与 item 装备** 时：</p>
+<ul class="simple">
+<li><strong>内置装备始终优先出厂装备</strong>；item 装备进入背包。</li>
+<li><tt class="docutils literal">spawn_weapons_equipped 1</tt>（默认）时：item 出厂武器留在背包且**无法手动装备**；<tt class="docutils literal">spawn_weapons_equipped 0</tt>时允许手动装备。</li>
+<li><strong>内置装备只能与内置装备切换</strong>；<strong>item 装备只能与 item 装备切换</strong>；二者** 不能互相切换**。</li>
+<li>护甲逻辑相同，由 <tt class="docutils literal">spawn_armor_equipped</tt>控制 item 护甲是否出厂穿戴；内置护甲已启用时无法穿戴 item 护甲。</li>
+</ul>
+<p>若单位**仅有 item 装备** （无内置武器/护甲），则 <tt class="docutils literal">spawn_weapons_equipped</tt>/ <tt class="docutils literal">spawn_armor_equipped</tt>仍控制是否出厂静默装备（默认装备）。</p>
+<p>出厂装备自动入背包</p>
+<p>单位生成时，引擎会检查 rules 中的出厂配置：</p>
+<ul class="simple">
+<li><tt class="docutils literal">weapons &lt;名称&gt;</tt>：若同名类型为 <tt class="docutils literal">class item</tt>且 <tt class="docutils literal">equippable_as_weapon 1</tt>，则创建物品实例 → 放入背包；若无内置武器且 <tt class="docutils literal">spawn_weapons_equipped 1</tt>，则**静默装备**。</li>
+<li><tt class="docutils literal">armor &lt;名称&gt;</tt>：若同名类型为 <tt class="docutils literal">class item</tt>且 <tt class="docutils literal">equippable_as_armor 1</tt>，同理；若无内置护甲且 <tt class="docutils literal">spawn_armor_equipped 1</tt>，则静默穿戴。</li>
+</ul>
+<pre class="literal-block">
+def footman
+weapons sword
+armor footman_armor
+inventory_capacity 2
+</pre>
+<p>在 <tt class="docutils literal">sword</tt>与 <tt class="docutils literal">footman_armor</tt>均定义为可装备 item 时，训练出的步兵会背包中有剑和鳞甲各一件，且出厂即已装备（默认 <tt class="docutils literal">spawn_weapons_equipped 1</tt>、<tt class="docutils literal">spawn_armor_equipped 1</tt>）。</p>
+<p>出厂是否静默装备（仅背包 item）：</p>
+<pre class="literal-block">
+spawn_weapons_equipped 0/1   ; 无内置武器时：控制 class item 出厂武器是否静默装备（默认 1）
+                             ; 有内置武器时：1=item 武器留背包且不装备，0=允许手动装备 item 武器
+spawn_armor_equipped 0/1     ; 无内置护甲时：控制 class item 出厂护甲是否静默穿戴（默认 1）
+                             ; 有内置护甲时：1=item 护甲留背包且不穿戴，0=允许手动穿戴 item 护甲
+; 内置 class weapon / class armor 不受上述 flag 影响，始终出厂生效
+</pre>
+<p>混合配置（弓箭手）：</p>
+<pre class="literal-block">
+def archer
+weapons bow sword
+</pre>
+<ul class="simple">
+<li><tt class="docutils literal">bow</tt>为 <tt class="docutils literal">class weapon</tt>→ 内置武器，不入背包，始终出厂装备。</li>
+<li><tt class="docutils literal">sword</tt>为 <tt class="docutils literal">class item</tt>+ <tt class="docutils literal">equippable_as_weapon 1</tt>→ 入背包。</li>
+<li>默认 <tt class="docutils literal">spawn_weapons_equipped 1</tt>时：弓已装备，剑留在背包且无法装备；只能在内置武器之间切换。</li>
+<li>仅当 <tt class="docutils literal">spawn_weapons_equipped 0</tt>时，剑可手动装备；装备后只能在 item 武器之间切换，不能与弓直接切换。</li>
+</ul>
+<p>若希望弓为主武器、剑作备用且允许玩家手动装备：</p>
+<pre class="literal-block">
+def archer
+weapons bow sword
+spawn_weapons_equipped 0
+inventory_capacity 3
+</pre>
+<p>此时 bow 仍会自动装备，sword 在背包中待玩家手动装备。</p>
+<p>前提：<tt class="docutils literal">inventory_capacity</tt>必须 &gt; 0；出厂武器、护甲各占一件，容量需足够。</p>
+<p>地图作者配置清单</p>
+<p>仅内置装备（不可卸下）：</p>
+<pre class="literal-block">
+def my_unit
+weapons short_sword
+armor light_armor
+; 不设置 inventory_capacity，或设为 0
+</pre>
+<p>可拾取、可装备、可卸下的装备：</p>
+<ol class="arabic simple">
+<li>定义 item 并写上战斗数值与标志位。</li>
+<li>单位开启库存并声明出厂武器：<tt class="docutils literal">inventory_capacity 2</tt>、<tt class="docutils literal">weapons my_sword</tt>。</li>
+<li>在 <tt class="docutils literal">res/ui/style.txt</tt>中配置 <tt class="docutils literal">title</tt>、<tt class="docutils literal">intro</tt>，供读屏使用。</li>
+</ol>
+<p>地面放置物品：地图中放置 <tt class="docutils literal">class item</tt>类型；单位靠近后 <tt class="docutils literal">pickup</tt>拾取。</p>
+<p>消耗品：</p>
+<pre class="literal-block">
+def health_potion
+class item
+buffs heal
+</pre>
+<p>在背包中按 Enter 使用（<tt class="docutils literal">use_item</tt>），不能在装备栏中当作武器/护甲装备。使用成功后才播放 <tt class="docutils literal">use</tt> / <tt class="docutils literal">on_use</tt> 音效；普通消耗品朗读「物品名，已使用」。</p>
+<p><a href="#system-message-7"><span class="problematic" id="problematic-7">**</span></a>技能书**（永久学会技能，使用后消耗）:</p>
+<div class="system-message" id="system-message-7">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">doc_src/src\zh\modding.rst</tt>, line 937); <em><a href="#problematic-7">backlink</a></em></p>
+Inline strong start-string without end-string.</div>
+<pre class="literal-block">
+def zhuiri_jianfa_book
+class item
+skills skill_zhuiri_jianfa
+learn_level 10
+transport_volume 1
+</pre>
+<ul class="simple">
+<li><tt class="docutils literal">learn_level</tt> / <tt class="docutils literal">learn_level_skills</tt>：从背包**使用**时的最低等级（与单位 <tt class="docutils literal">learn_level_skills</tt> 取较高门槛）。</li>
+<li>单位 <tt class="docutils literal">level_skills</tt>：升级时**自动**学会（与技能书独立；勿与同一技能重复配置，否则使用时会提示 <tt class="docutils literal">skill_already_known</tt> 且不消耗书籍）。</li>
+<li>拾取时若设置了 <tt class="docutils literal">learn_level</tt>/ <tt class="docutils literal">learn_level_skills</tt>，不会自动学会，须进背包后按 Enter 使用。</li>
+<li>成功：播放使用音效 + 朗读「技能名，已学会」（<tt class="docutils literal">messages</tt> → <tt class="docutils literal">skill_learned</tt>）；失败：<tt class="docutils literal">order_impossible</tt> + <tt class="docutils literal">skill_level_too_low</tt> / <tt class="docutils literal">skill_already_known</tt> 等消息。</li>
+</ul>
+<p><a href="#system-message-8"><span class="problematic" id="problematic-8">**</span></a>带使用地点的宝箱**（<tt class="docutils literal">use_square</tt> + <tt class="docutils literal">resource_rewards</tt>）:</p>
+<div class="system-message" id="system-message-8">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">doc_src/src\zh\modding.rst</tt>, line 950); <em><a href="#problematic-8">backlink</a></em></p>
+Inline strong start-string without end-string.</div>
+<pre class="literal-block">
+def mystery_treasure
+class item
+use_square b2
+resource_rewards resource1 150
+</pre>
+<p>须站在指定方格（地图 <tt class="docutils literal">square_name</tt> 别名）上，在背包中使用后才发放资源。</p>
+<p>服务端指令（也可在触发器 <tt class="docutils literal">order</tt> 动作中使用）：<tt class="docutils literal">equip_weapon</tt>、<tt class="docutils literal">unequip_weapon</tt>、<tt class="docutils literal">equip_armor</tt>、<tt class="docutils literal">unequip_armor</tt>、<tt class="docutils literal">use_item</tt>、<tt class="docutils literal">drop</tt>。</p>
+</div>
+<div class="section" id="section-4">
+<h1><a class="toc-backref" href="#toc-entry-42">单位默认行为（自 1.4.3.1 起）</a></h1>
+<p>地图/模组作者可在 <tt class="docutils literal">rules.txt</tt>中按单位类型配置开局时的默认行为状态：</p>
+<ul class="simple">
+<li><tt class="docutils literal">ai_mode</tt>：<tt class="docutils literal">offensive</tt> / <tt class="docutils literal">defensive</tt> / <tt class="docutils literal">guard</tt> / <tt class="docutils literal">chase</tt>。默认：兵种 <tt class="docutils literal">offensive</tt>，工人 <tt class="docutils literal">defensive</tt>。作用于作战单位。</li>
+<li><tt class="docutils literal">auto_gather</tt>：<tt class="docutils literal">1</tt> / <tt class="docutils literal">0</tt>。默认 <tt class="docutils literal">1</tt>。仅工人。</li>
+<li><tt class="docutils literal">auto_repair</tt>：<tt class="docutils literal">1</tt> / <tt class="docutils literal">0</tt>。默认 <tt class="docutils literal">1</tt>。仅工人。</li>
+<li><tt class="docutils literal">auto_explore</tt>：<tt class="docutils literal">1</tt> / <tt class="docutils literal">0</tt>。默认 <tt class="docutils literal">0</tt>。可移动单位。</li>
+<li><tt class="docutils literal">can_auto_explore</tt>：<tt class="docutils literal">1</tt> / <tt class="docutils literal">0</tt>。默认 <tt class="docutils literal">0</tt>。命令菜单是否提供自动探索开关。</li>
+<li><tt class="docutils literal">no_number</tt>（自 1.4.3.2 起）：<tt class="docutils literal">1</tt> / <tt class="docutils literal">0</tt>。默认 <tt class="docutils literal">0</tt>（始终报序号，如「农民1在 a1」）。设为 <tt class="docutils literal">1</tt> 时：同类型仅 1 个存活不报序号（「关羽在 a1」），2 个及以上才报「关羽1」「关羽2」；编组摘要亦同（「你控制了关羽和2护卫骑士」）。适合英雄、将领等特殊单位。</li>
+</ul>
+<p><tt class="docutils literal">auto_explore</tt>与 <tt class="docutils literal">can_auto_explore</tt>的区别：</p>
+<ul class="simple">
+<li><tt class="docutils literal">auto_explore</tt>决定单位开局是否处于自动探索状态。</li>
+<li><tt class="docutils literal">can_auto_explore</tt>决定玩家能否在该单位的命令菜单里看到「启用/禁用自动探索」选项。</li>
+</ul>
+<p>AI 模式（<tt class="docutils literal">ai_mode</tt>）</p>
+<div class="line-block">
+<div class="line">取值 | 名称 | 行为 |</div>
+<div class="line">offensive | 进攻 | 主动攻击当前格子里的敌人 |</div>
+<div class="line">defensive | 防御 | 战力不利时撤退；占优时才交战 |</div>
+<div class="line">guard | 站岗 | 不主动出击，原地驻守 |</div>
+<div class="line">chase | 追击 | 主动追击视野范围内的敌人 |</div>
+</div>
+<p><tt class="docutils literal">ai_mode patrol</tt>无效——巡逻（patrol）是需要路线目标的命令，不是一种 AI 模式。中立电脑（<tt class="docutils literal">computer_only ... neutral</tt>）的单位仍会被引擎强制设为 guard + 反击。</p>
+<p>玩家单位在 <tt class="docutils literal">offensive</tt>/ <tt class="docutils literal">defensive</tt>/ <tt class="docutils literal">chase</tt>模式下**不会主动攻击** 中立单位，防御模式也**不会因中立者而撤退**；若要攻击中立者，须对该单位下达** 强制攻击命令** （<tt class="docutils literal">imperative</tt>，例如 Ctrl+点击）。</p>
+<p>自动采集 / 自动修理</p>
+<ul class="simple">
+<li><tt class="docutils literal">auto_gather 1</tt>：工人空闲且附近有可采集资源点 + 对应仓库时，自动前往采集。</li>
+<li><tt class="docutils literal">auto_repair 1</tt>：工人空闲且同格有受损友方可修理单位时，自动修理（需 <tt class="docutils literal">can_repair 1</tt>）。</li>
+<li><tt class="docutils literal">can_herd 1</tt>：工人可驱赶 <tt class="docutils literal">herdable</tt> 动物（如羊）；默认 <tt class="docutils literal">0</tt>，须在单位定义中显式开启。</li>
+<li><tt class="docutils literal">can_capture</tt>：<tt class="docutils literal">1</tt> / <tt class="docutils literal">0</tt>。默认 <tt class="docutils literal">1</tt>。有 <tt class="docutils literal">attack</tt> 技能的单位；控制右键 <tt class="docutils literal">capture_hp_threshold 100</tt> 敌方目标时是否默认 <strong>占领</strong> （<tt class="docutils literal">capture</tt> 命令）。<tt class="docutils literal">0</tt> 时改为普通攻击/移动，AI 也不会对该目标走接触即占领逻辑。详见下文「占领与默认占领命令」。</li>
+</ul>
+<p>狩猎系统（帝国时代式）</p>
+<p>详见 <tt class="docutils literal">docs/zh/狩猎系统说明.md</tt>。概要：</p>
+<ul class="simple">
+<li>村民右键 <tt class="docutils literal">is_huntable</tt> 动物默认攻击；击杀后在原地生成 <tt class="docutils literal">food_deposit</tt> 矿床（如 <tt class="docutils literal">food_carcass</tt>）。</li>
+<li>动物属性：<tt class="docutils literal">is_huntable</tt>、<tt class="docutils literal">flee_on_hit</tt>、<tt class="docutils literal">herdable</tt>、<tt class="docutils literal">food_deposit</tt>、<tt class="docutils literal">food_deposit_qty</tt>、<tt class="docutils literal">no_number</tt>。</li>
+<li>地图放置：<tt class="docutils literal">computer_only 0 0 neutral &lt;方格&gt; &lt;数量&gt; deer</tt>；随机地图会自动生成野生动物。</li>
+<li><strong>语音标识</strong>：配置了 <tt class="docutils literal">is_huntable</tt> / <tt class="docutils literal">herdable</tt> 的单位播报为「鹿 , 动物」，** 不是**「中立 , NPC」。Ctrl+Shift+F4 切到仅含野生动物的玩家时播报「你是动物」。剧情 NPC（<tt class="docutils literal">quest_npc</tt> 等）仍播报「中立 , NPC」。</li>
+<li><strong>外交隔离</strong>：仅含野生动物的 <tt class="docutils literal">computer_only</tt> 槽位（如 <tt class="docutils literal">deer</tt> / <tt class="docutils literal">sheep</tt> / 自定义 <tt class="docutils literal">tiger</tt>）不进 <tt class="docutils literal">ai</tt> 联盟，不与玩家、敌对 creep、其它动物群结盟；混编槽位除外。详见 <tt class="docutils literal">docs/zh/狩猎系统说明.md</tt> §3.1。</li>
+<li>科技 <tt class="docutils literal">hunting_techniques</tt>：提升尸体与浆果采集效率。</li>
+</ul>
+<p>自动探索</p>
+<ul class="simple">
+<li><tt class="docutils literal">can_auto_explore 1</tt>：该单位命令菜单里提供「启用/禁用自动探索」选项；只配置了的单位才会出现。</li>
+<li><tt class="docutils literal">auto_explore 1</tt>：该单位开局即自动探索——空闲时自动走向未探明区域；发现敌人后按 <tt class="docutils literal">ai_mode</tt>交战。</li>
+<li>玩家下达其他命令会暂停探索；命令完成、单位再次空闲时自动恢复探索。</li>
+<li>「禁用自动探索」在单位当前正处于自动探索状态时就会出现（即便没配 <tt class="docutils literal">can_auto_explore</tt>）。</li>
+</ul>
+<p>综合示例:</p>
+<pre class="literal-block">
+def peasant
+class worker
+auto_gather 1
+auto_repair 0
+ai_mode defensive
+
+def knight
+class soldier
+auto_explore 1
+can_auto_explore 1
+ai_mode guard
+</pre>
+<p>狩猎动物示例:</p>
+<pre class="literal-block">
+def deer
+class soldier
+is_huntable 1
+flee_on_hit 1
+food_deposit food_carcass
+food_deposit_qty 35
+no_number 1
+ai_mode guard
+</pre>
+</div>
+<div class="section" id="npc-1-4-3-1">
+<h1><a class="toc-backref" href="#toc-entry-43">给 NPC 物品（自 1.4.3.1 起）</a></h1>
+<p>give 指令——将背包中的物品交给另一单位：</p>
+<pre class="literal-block">
+give &lt;目标单位id&gt;            ; 交出库存第一件
+give &lt;目标单位id&gt; &lt;物品&gt;     ; 指定 type_name 或物品 id
+</pre>
+<p>npc_has_item 触发器条件：</p>
+<pre class="literal-block">
+(npc_has_item &lt;NPC选择符&gt; &lt;物品type_name&gt; [所在方格])
+</pre>
+<p>判定：目标单位的 <tt class="docutils literal">received_items</tt>含有该物品类型，或其当前库存里仍持有该类型物品。可选方格参数用于区分多个同名 NPC。</p>
+<p>目标字段（须全部通过）：</p>
+<ul class="simple">
+<li><tt class="docutils literal">receive_items</tt>：<tt class="docutils literal">1</tt> / <tt class="docutils literal">0</tt>。总开关；默认 <tt class="docutils literal">0</tt>（不接收）。</li>
+<li><tt class="docutils literal">accepted_items</tt>：物品 type_name 列表。白名单；留空 = 接收任意物品。</li>
+<li><tt class="docutils literal">accept_from</tt>：<tt class="docutils literal">self</tt>/<tt class="docutils literal">ally</tt>/<tt class="docutils literal">neutral</tt>/<tt class="docutils literal">enemy</tt>列表。留空 = 不限关系。</li>
+</ul>
+<p>关系（<tt class="docutils literal">accept_from</tt>）按 self &gt; ally &gt; neutral &gt; enemy 优先级实时计算。</p>
+<p>示例——只有盟友骑士接收 <tt class="docutils literal">knight_lance</tt>:</p>
+<pre class="literal-block">
+def knight
+receive_items 1
+accepted_items knight_lance
+accept_from ally
+</pre>
+<p>示例——只有中立农民接收 <tt class="docutils literal">pickaxe</tt>:</p>
+<pre class="literal-block">
+def quest_peasant
+receive_items 1
+accepted_items pickaxe
+accept_from neutral
+</pre>
+<p>内置示例 NPC：<tt class="docutils literal">quest_npc</tt>（<tt class="docutils literal">res/rules.txt</tt>，<tt class="docutils literal">receive_items 1</tt>+ <tt class="docutils literal">inventory_capacity 5</tt>）。</p>
+<p>交付会在目标上记录 <tt class="docutils literal">received_items</tt>，供触发器检查。物品在接收时像 <tt class="docutils literal">pickup</tt>一样应用 <tt class="docutils literal">skills</tt> / <tt class="docutils literal">buffs</tt>。脚本交付不受目标 <tt class="docutils literal">inventory_capacity</tt>限制。联机示例：<tt class="docutils literal">res/multi/give_demo.txt</tt>；战役关系示例见 <tt class="docutils literal">The Legend of Raynor</tt> 第 14–16 章（<tt class="docutils literal">res/single/The Legend of Raynor/14.txt</tt>、<tt class="docutils literal">15.txt</tt>、<tt class="docutils literal">16.txt</tt>）。</p>
+</div>
+<div class="section" id="mods-starcraft">
+<h1><a class="toc-backref" href="#toc-entry-44">建造场、附属建筑与起飞重组（星际争霸式，<tt class="docutils literal">mods/starcraft</tt>）</a></h1>
+<p>引擎自 1.4.x 起支持 <strong>建造场（build field）</strong>、** 工人施工模式**、** 人族附属**与** 起飞重组**。
+完整示例见 <tt class="docutils literal">mods/starcraft/rules.txt</tt>；玩家向说明：</p>
+<ul class="simple">
+<li>人族附属：<tt class="docutils literal">docs/zh/星际人族附属建筑与重组说明.md</tt></li>
+<li>异虫菌毯与女王肿瘤：<tt class="docutils literal">docs/zh/星际异虫菌毯说明.md</tt></li>
+</ul>
+<div class="section" id="section-5">
+<h2><a class="toc-backref" href="#toc-entry-45">建造场（神族灵能场 / 异虫菌毯等）</a></h2>
+<div class="line-block">
+<div class="line">属性 | 说明 |</div>
+<div class="line">--- | --- |</div>
+<div class="line"><tt class="docutils literal">provides_build_field &lt;名称&gt;</tt> | 该单位/建筑为周围格提供建造场标记（如 <tt class="docutils literal">psi</tt>、<tt class="docutils literal">creep</tt>） |</div>
+<div class="line"><tt class="docutils literal">requires_build_field &lt;名称&gt;</tt> | 需要指定建造场才能放置/施工；<tt class="docutils literal">0</tt> <strong>表示</strong> 该建筑豁免（如主基地、光子炮） |</div>
+<div class="line"><tt class="docutils literal">build_field_radius &lt;格数&gt;</tt> | 提供建造场的半径（沿主方格 BFS 计格；与 <tt class="docutils literal">build_field_radius_m</tt> 二选一） |</div>
+<div class="line"><tt class="docutils literal">build_field_radius_m &lt;米&gt;</tt> | 供能半径（米，与 <tt class="docutils literal">rdg_range</tt> 同尺度）；按提供者 <tt class="docutils literal">(x,y)</tt> 到目标点的距离判定 |</div>
+<div class="line"><tt class="docutils literal">build_field_persists 1</tt> | 提供者被毁后，已标记的格子仍保留建造场（异虫菌毯） |</div>
+<div class="line"><tt class="docutils literal">build_field_spreads 1</tt> | 每秒向相邻格蔓延一层建造场标记 |</div>
+<div class="line"><tt class="docutils literal">build_field_spread_squares N</tt> | 每次 tick 蔓延的层数（默认随 <tt class="docutils literal">build_field_spreads</tt> 为 1） |</div>
+<div class="line"><tt class="docutils literal">requires_build_field_on_square 1</tt> | 目标**整格** 须带建造场标记（异虫）；否则只需格内有实时供能即可（神族） |</div>
+<div class="line"><tt class="docutils literal">loses_power_without_field 1</tt> | 失去实时建造场时**断电**：停工、停训练、停供能（神族建筑） |</div>
+</div>
+<p><strong>``build_field_radius`` 与 ``build_field_radius_m``</strong></p>
+<p>每个提供者只应设置**一种** 半径，另一种保持 <strong>0</strong> （默认）。</p>
+<div class="line-block">
+<div class="line">属性 | 范围计算方式 | 典型用途 |</div>
+<div class="line">--- | --- | --- |</div>
+<div class="line"><tt class="docutils literal">build_field_radius</tt> | 从提供者**主方格** 出发的 BFS 格数（离散铺格） | 旧式按格菌毯 |</div>
+<div class="line"><tt class="docutils literal">build_field_radius_m</tt> | 从提供者 <strong>(x, y)</strong> 的欧氏距离（米） | 神族灵能链（类似 SC2）；星际 mod 主巢/菌毯肿瘤 |</div>
+</div>
+<p>一格地图宽度约 <strong>12 米</strong> （<tt class="docutils literal">square_width 12</tt>）。星际 mod 示例：主基地 <strong>18 m</strong>、水晶塔 <strong>12 m</strong>、主巢 <strong>12 m</strong>、菌毯肿瘤 <strong>4 m</strong>。</p>
+<p><strong>实时供能 vs 格标记</strong></p>
+<ul class="simple">
+<li><strong>实时供能（live）</strong> — 当前仍存在的提供者正在覆盖的范围（米制：点落在圆内；格制：从 <tt class="docutils literal">place</tt> BFS）。</li>
+<li><strong>格标记（marked）</strong> — 注册时绘制、或每秒蔓延写入的持久方格集合。</li>
+</ul>
+<p><tt class="docutils literal">has_build_field_on_square</tt> 接受 <strong>实时或标记</strong> 任一满足即可。异虫 <tt class="docutils literal">requires_build_field_on_square 1</tt> 只认** 标记格** （主巢旁实时菌毯尚未蔓延标记时不能建造）。</p>
+<p>当 <tt class="docutils literal">build_field_persists 1</tt> 或 <tt class="docutils literal">build_field_spreads 1</tt> 时，<strong>米制半径</strong> 提供者也会**绘制格标记** （主巢仅写 <tt class="docutils literal">build_field_radius_m</tt> 时仍能供异虫判定建造）。</p>
+<p><strong>女王菌毯肿瘤</strong> （<tt class="docutils literal">mods/starcraft</tt>）：召唤类技能在目标格放置 <tt class="docutils literal">creep_tumor</tt> 建筑。技能属性：</p>
+<div class="line-block">
+<div class="line">属性 | 说明 |</div>
+<div class="line">--- | --- |</div>
+<div class="line"><tt class="docutils literal">summon_requires_build_field &lt;名称&gt;</tt> | 目标格须有此建造场（实时或标记均可） |</div>
+<div class="line"><tt class="docutils literal">summon_requires_marked_field 1</tt> | 目标格须为**已标记** 菌毯（肿瘤 <strong>延伸</strong>；女王 ** 生成** 不写此项） |</div>
+</div>
+<p>测试图：<tt class="docutils literal">mods/starcraft/multi/zerg_creep_tumor_test.txt</tt>。玩家说明：<tt class="docutils literal">docs/zh/星际异虫菌毯说明.md</tt>。</p>
+<p><strong>神族示例</strong> （<tt class="docutils literal">protoss_building</tt>）:</p>
+<pre class="literal-block">
+requires_build_field psi
+is_buildable_anywhere 1
+self_constructs 1
+loses_power_without_field 1
+</pre>
+<p>主基地 <tt class="docutils literal">requires_build_field 0</tt> + <tt class="docutils literal">provides_build_field psi</tt>；水晶塔/传送门依赖灵能场。
+星际模组示例：<tt class="docutils literal">build_field_radius_m 18</tt> （主基地）、<tt class="docutils literal">12</tt> （水晶塔）；一格地图宽度约 12 米。</p>
+<p><strong>异虫示例</strong> （<tt class="docutils literal">zerg_building</tt>）:</p>
+<pre class="literal-block">
+requires_build_field creep
+requires_build_field_on_square 1
+is_buildable_anywhere 1
+self_constructs 1
+</pre>
+<p>主巢 <tt class="docutils literal">provides_build_field creep</tt> + <tt class="docutils literal">build_field_radius_m 12</tt> + <tt class="docutils literal">build_field_persists 1</tt> + <tt class="docutils literal">build_field_spreads 1</tt>；女王 <strong>生成菌毯肿瘤</strong>/ 肿瘤 ** 延伸** 见 <tt class="docutils literal">docs/zh/星际异虫菌毯说明.md</tt>。</p>
+<p><strong>UI 语音</strong>：在 <tt class="docutils literal">ui/style.txt</tt> 定义 <tt class="docutils literal">def build_field_&lt;名称&gt;</tt> + <tt class="docutils literal">title &lt;TTS编号&gt;</tt>；可选 <tt class="docutils literal">noise repeat N &lt;音效&gt;</tt>。进入可见格时会播报场类型；无法建造时播报「不能建在那里」+ 场名。</p>
+</div>
+<div class="section" id="requires-deposit">
+<h2><a class="toc-backref" href="#toc-entry-46">矿床与气矿（<tt class="docutils literal">requires_deposit</tt>）</a></h2>
+<div class="line-block">
+<div class="line">属性 | 说明 |</div>
+<div class="line">--- | --- |</div>
+<div class="line"><tt class="docutils literal">requires_deposit &lt;类型&gt;</tt> | 只能建在地图矿床对象上（如 <tt class="docutils literal">geyser</tt>）；完工后移除该矿床 |</div>
+<div class="line"><tt class="docutils literal">is_buildable_anywhere 0</tt> | 与 <tt class="docutils literal">requires_deposit</tt> 配合，禁止建在草地上 |</div>
+</div>
+<p>气矿模板 <tt class="docutils literal">sc_gas_building</tt> 使用 <tt class="docutils literal">auto_production</tt> + <tt class="docutils literal">is_gather</tt> + <tt class="docutils literal">production_time</tt> / <tt class="docutils literal">production_qty</tt>。工人 <tt class="docutils literal">can_gather</tt> 须包含气矿建筑类型名（如 <tt class="docutils literal">assimilator</tt>），而非 <tt class="docutils literal">geyser</tt> 矿床本身。</p>
+</div>
+<div class="section" id="section-6">
+<h2><a class="toc-backref" href="#toc-entry-47">工人施工模式</a></h2>
+<div class="line-block">
+<div class="line"><tt class="docutils literal">build_mode</tt> | 行为 |</div>
+<div class="line">--- | --- |</div>
+<div class="line"><tt class="docutils literal">assisted</tt> | 默认：工人协助施工直至完工（人族 SCV） |</div>
+<div class="line"><tt class="docutils literal">place_and_leave</tt> | 放置工地后离开，建筑 <tt class="docutils literal">self_constructs 1</tt> 自行完工（神族探机） |</div>
+<div class="line"><tt class="docutils literal">sacrifice</tt> | 工人被消耗，建筑立即开始施工（异虫工蜂） |</div>
+</div>
+<p>相关属性：</p>
+<ul class="simple">
+<li><tt class="docutils literal">self_constructs 1</tt> — 无需工人持续建造（可与 <tt class="docutils literal">place_and_leave</tt> 配合）</li>
+<li><tt class="docutils literal">build_sacrifices_worker 1</tt> — 强制消耗工人（等价于 sacrifice 模式）</li>
+<li><tt class="docutils literal">is_buildable_anywhere 1</tt> — 可在任意已满足建造场条件的格内选点，<strong>不</strong> 占用单独 <tt class="docutils literal">meadow</tt> 对象（神族/异虫/飞行人族）</li>
+</ul>
+</div>
+<div class="section" id="addon">
+<h2><a class="toc-backref" href="#toc-entry-48">人族附属建筑（addon）</a></h2>
+<div class="line-block">
+<div class="line">属性 | 说明 |</div>
+<div class="line">--- | --- |</div>
+<div class="line"><tt class="docutils literal">can_have_addon &lt;类型列表&gt;</tt> | 宿主（兵营/工厂/星港）可挂的附件 |</div>
+<div class="line"><tt class="docutils literal">addon_max N</tt> | 宿主最多挂载数量（默认 1） |</div>
+<div class="line"><tt class="docutils literal">is_addon 1</tt> | 标记附属建筑（Tech Lab、Reactor） |</div>
+<div class="line"><tt class="docutils literal">addon_host_types &lt;宿主列表&gt;</tt> | 附件可挂在哪些宿主上 |</div>
+<div class="line"><tt class="docutils literal">addon_grants_train_&lt;宿主&gt; &lt;单位&gt;</tt> | 挂接后为该宿主增加训练项（如 <tt class="docutils literal">addon_grants_train_factory tank</tt>） |</div>
+<div class="line"><tt class="docutils literal">addon_grants_research &lt;科技&gt;</tt> | 挂接后增加研究项 |</div>
+<div class="line"><tt class="docutils literal">addon_grants_train &lt;单位&gt;</tt> | 为任意兼容宿主增加训练（通用写法） |</div>
+<div class="line"><tt class="docutils literal">addon_train_multiplier N</tt> | Reactor：训练数量倍率（2 = 双产） |</div>
+<div class="line"><tt class="docutils literal">addon_offset_x &lt;值&gt;</tt> | 附件相对宿主东侧偏移（默认 3.5 格 = 3500 内部单位） |</div>
+</div>
+<p>附件在宿主**侧面插槽** 自行建造（<tt class="docutils literal">self_constructs 1</tt>），不单独占用草地。建造时选中**已有宿主**，不要点空地。</p>
+</div>
+<div class="section" id="lift-off-recombine">
+<h2><a class="toc-backref" href="#toc-entry-49">起飞与重组（lift-off / recombine）</a></h2>
+<div class="line-block">
+<div class="line">属性 | 说明 |</div>
+<div class="line">--- | --- |</div>
+<div class="line"><tt class="docutils literal">can_change_to &lt;飞行形态&gt;</tt> | 地面宿主可变形起飞 |</div>
+<div class="line"><tt class="docutils literal">ground_form &lt;地面形态&gt;</tt> | 飞行形态的落地目标（如 <tt class="docutils literal">flying_factory</tt> → <tt class="docutils literal">factory</tt>） |</div>
+<div class="line"><tt class="docutils literal">change_time &lt;秒&gt;</tt> | 变形耗时（<tt class="docutils literal">change_to</tt> 专用，不耗资源/人口） |</div>
+</div>
+<p><strong>起飞</strong>：地面人族建筑 → 飞行形态；附件 <strong>detach</strong> 留在原格；原位置生成 <tt class="docutils literal">meadow</tt>。</p>
+<p><strong>降落</strong>：飞行形态 <tt class="docutils literal">change_to</tt> 回地面；须消耗同格一块 <strong>meadow</strong>。</p>
+<p><strong>重组</strong> （接管孤立 Tech Lab）：</p>
+<ol class="arabic simple">
+<li>Tab <strong>科技实验室**→ 退格 go（目标改飞向</strong> 宿主降落插槽**，实验室西侧约 3.5 格）</li>
+<li>变形落地 → 插槽对齐时 <tt class="docutils literal">try_reattach_orphan_addons</tt> 自动挂接</li>
+</ol>
+<p><strong>草地 vs 插槽</strong> （两套独立判定）：</p>
+<ul class="simple">
+<li><strong>草地</strong>：降落许可；<tt class="docutils literal">find_meadow_near_xy</tt> 选最近 meadow 消耗</li>
+<li><strong>插槽</strong>：<tt class="docutils literal">tech_lab.x ≈ factory.x + addon_offset_x</tt> （曼哈顿距离 ≤ 约 2.5 格）才对接</li>
+</ul>
+<p>落在**自己起飞草地** 仅普通降落，<strong>不对接</strong>；落错格且同格仍有可对接附件时会播报 TTS <tt class="docutils literal">addon_reattach_failed</tt> （7350）。</p>
+<p><strong>操作速查</strong></p>
+<div class="line-block">
+<div class="line">目的 | Tab 目标 |</div>
+<div class="line">--- | --- |</div>
+<div class="line">落回起飞点 | 该建筑起飞留下的草地 |</div>
+<div class="line">接管孤立 Tech Lab | <strong>科技实验室</strong> （非草地） |</div>
+</div>
+<p>测试地图：<tt class="docutils literal">terran_addon_test</tt>、<tt class="docutils literal">terran_recombine_test</tt>；战役 <tt class="docutils literal">sc_build_tests</tt> 第 3–4 章。</p>
+</div>
+</div>
+<div class="section" id="section-7">
+<h1><a class="toc-backref" href="#toc-entry-50">占领与默认占领命令</a></h1>
+<p><strong>目标侧</strong> — <tt class="docutils literal">capture_hp_threshold</tt> （写在可被夺取的建筑/单位上）：</p>
+<div class="line-block">
+<div class="line">值 | 含义 |</div>
+<div class="line">--- | --- |</div>
+<div class="line"><tt class="docutils literal">0</tt> （默认） | 不可通过血量阈值夺取 |</div>
+<div class="line"><tt class="docutils literal">100</tt> | <strong>接触即占领</strong>：单位到位后直接转变阵营，不造成伤害；右键默认命令为占领（见 <tt class="docutils literal">can_capture</tt>） |</div>
+<div class="line"><tt class="docutils literal">30</tt> 等 | 战斗中血量 ≤ 该百分比时可夺取（走正常伤害与 <tt class="docutils literal">damage_effects</tt> 逻辑） |</div>
+</div>
+<p><strong>攻击方</strong> — <tt class="docutils literal">can_capture</tt> （写在士兵/工人等有攻击能力的单位上）：</p>
+<div class="line-block">
+<div class="line">值 | 含义 |</div>
+<div class="line">--- | --- |</div>
+<div class="line"><tt class="docutils literal">1</tt> （默认） | 右键 <tt class="docutils literal">capture_hp_threshold 100</tt> 的敌方目标 → 默认 <strong>占领</strong> ；AI 对该目标也走接触即占领 |</div>
+<div class="line"><tt class="docutils literal">0</tt> | 同上目标 → 默认 <strong>攻击/移动</strong> ；AI 正常攻击，不自动占领 |</div>
+</div>
+<p>前提：本单位有 <tt class="docutils literal">attack</tt> 技能，目标为存活、可受伤的敌方单位/建筑。</p>
+<p>示例 — 只有步兵能占领兵营，弓箭手只能打:</p>
+<pre class="literal-block">
+def captured_barracks
+class building
+capture_hp_threshold 100
+...
+
+def footman
+class soldier
+can_capture 1
+...
+
+def archer
+class soldier
+can_capture 0
+...
+</pre>
+<p>随机地图 POI <tt class="docutils literal">captured_barracks</tt> 与 HoMM 式玩法见 <tt class="docutils literal">docs/zh/player/英雄无敌与文明5玩法说明.md</tt>。</p>
+</div>
+<div class="section" id="ship-repair-since-1-4-1-1">
+<h1><a class="toc-backref" href="#toc-entry-51">Ship repair (since 1.4.1.1)</a></h1>
+<p>工人或建筑上设置 <tt class="docutils literal">can_repair_ships 1</tt>。工人修理相邻岸边的舰船（6 格）；建筑自动修理邻近水域中的舰船（8 格）。</p>
+</div>
+<div class="section" id="inheritance-since-1-3-8-3">
+<h1><a class="toc-backref" href="#toc-entry-52">Inheritance (since 1.3.8.3)</a></h1>
+<pre class="literal-block">
+is_a footman                    ; 全部属性
+is_a footman(hp_max mdg)        ; 选择性继承
+is_a footman(apart hp_max)      ; 排除继承（apart 写法）
+is_a footman(-hp_max)           ; 排除继承（- 前缀，与 apart 等价）
+is_a footman(-hp_max -mdg)      ; 排除多个属性
+is_a footman(mdg) knight(hp_max) ; 多父级
+</pre>
+</div>
+<div class="section" id="style">
+<h1><a class="toc-backref" href="#toc-entry-53">style</a></h1>
+<p>样式定义在 &quot;ui/style.txt&quot; 以及 &quot;style.txt&quot; 的本地化版本中。</p>
+<div class="section" id="shortcut">
+<h2><a class="toc-backref" href="#toc-entry-54">shortcut</a></h2>
+<p>如果定义了快捷键，简单命令、建造命令、训练命令以及使用能力的命令都可以用快捷键下达。</p>
+<p>要定义快捷键，定义一个 &quot;shortcut&quot; 属性，后接对应的字母。该字母必须是小写。</p>
+<p>如果命令是简单命令，则快捷键必须由该命令定义（例如：patrol）。
+如果命令是复合命令（训练、建造、使用能力），则快捷键必须由命令的第二部分定义。
+例如，为流星术能力定义一个 &quot;m&quot; 快捷键，这样法师就会有施放流星的 &quot;m&quot; 快捷键。</p>
+</div>
+<div class="section" id="intro-since-1-4-1-5">
+<h2><a class="toc-backref" href="#toc-entry-55">intro (since 1.4.1.5)</a></h2>
+<p>在 <tt class="docutils literal">title</tt> 下添加单位描述:</p>
+<pre class="literal-block">
+def footman
+title 87
+intro 1001
+</pre>
+<p>文本须存在于 <tt class="docutils literal">tts.txt</tt> 中。</p>
+</div>
+<div class="section" id="combat-sound-system-since-1-3-8-2-1-4-4-6-renamed-matk-ratk-to-mdg-rdg">
+<h2><a class="toc-backref" href="#toc-entry-56">Combat sound system (since 1.3.8.2; 1.4.4.6 renamed matk/ratk to mdg/rdg)</a></h2>
+<p>取代旧的攻击音效:</p>
+<pre class="literal-block">
+launch_mdg / launch_rdg
+mdg_hit / rdg_hit / mdg_hit_vs / rdg_hit_vs
+mdg_missed / rdg_missed
+mdg_dodge / rdg_dodge
+launch_charge_mdg / launch_charge_rdg
+charge_mdg_hit / charge_rdg_hit
+casting
+disappear
+weapon_switched
+death / falling / falling_delay / falling_on_&lt;terrain&gt;
+</pre>
+<p>配置了 <tt class="docutils literal">damage_seq</tt> 连发的单位，每一发都会触发 <tt class="docutils literal">launch_mdg</tt> / <tt class="docutils literal">launch_rdg</tt>。可在同一行
+写多个音效 ID，使各发从中选取。</p>
+<p><tt class="docutils literal">mdg_hit_vs</tt> / <tt class="docutils literal">rdg_hit_vs</tt> 可以按目标类型播放不同命中音效。目标匹配范围包括：
+单位类型、单位继承类型，以及目标当前身上的 buff/debuff 类型。例如:</p>
+<pre class="literal-block">
+def swordsman
+mdg_hit_vs b_absolute_defense iron_clang
+</pre>
+<p>当 <tt class="docutils literal">swordsman</tt> 打中带有 <tt class="docutils literal">b_absolute_defense</tt> 的目标时，会播放 <tt class="docutils literal">iron_clang</tt>。</p>
+<p>1.4.4.6 起，文档与内置资源统一使用 <tt class="docutils literal">mdg</tt> / <tt class="docutils literal">rdg</tt> 命名。旧 <tt class="docutils literal">matk</tt> / <tt class="docutils literal">ratk</tt>
+字段仍作为兼容 fallback，可供旧 mod 继续工作。</p>
+<p>技能、buff 和 debuff 还可以定义触发音效:</p>
+<pre class="literal-block">
+def skill_counter
+alert counter_alert
+ready counter_ready
+triggered counter_proc
+
+def b_absolute_defense
+triggered shield_on
+noise loop shield_hum
+</pre>
+<p>技能手动释放时播放 <tt class="docutils literal">alert</tt>；如果技能规则含 <tt class="docutils literal">ready &lt;秒&gt;</tt>，可在技能 style 中写
+<tt class="docutils literal">ready &lt;sound&gt;</tt>，手动释放与自动触发技能都会在前摇开始时播放。通过 <tt class="docutils literal">active_trigger_skills</tt>、<tt class="docutils literal">passive_trigger_skills</tt>、
+<tt class="docutils literal">attack_trigger_skills</tt> 或 <tt class="docutils literal">attack_replace_skills</tt> 自动触发时，优先播放 <tt class="docutils literal">triggered</tt>，
+未配置则回退到 <tt class="docutils literal">alert</tt>。buff/debuff 通过触发字段应用时，如果配置了 <tt class="docutils literal">triggered</tt>，
+会额外播放一次。buff/debuff 的持续状态音效必须显式写成 <tt class="docutils literal">noise loop &lt;sound&gt;</tt> 或
+<tt class="docutils literal">noise repeat &lt;interval&gt; <span class="pre">&lt;sound...&gt;</span></tt>；只写 <tt class="docutils literal">noise &lt;sound&gt;</tt> 不会自动当作循环音效。</p>
+</div>
+<div class="section" id="menu-and-game-music-since-1-4-0-2">
+<h2><a class="toc-backref" href="#toc-entry-57">Menu and game music (since 1.4.0.2)</a></h2>
+<p>在 <tt class="docutils literal">def parameters</tt> 中:</p>
+<pre class="literal-block">
+menu_music &lt;id&gt;
+campaign_music &lt;id&gt;
+game_creation_music &lt;id&gt;
+server_lobby_music &lt;id&gt;
+game_music &lt;id&gt;
+battle_music &lt;id&gt;
+victory_sound &lt;id&gt;
+defeat_sound &lt;id&gt;
+main_menu_select_sound &lt;id&gt;
+main_menu_confirm_sound &lt;id&gt;
+</pre>
+<p>阵营音乐（自 1.4.0.3 起）:</p>
+<pre class="literal-block">
+china_music china
+china_battle_music china_battle
+</pre>
+<p>地图覆盖：<tt class="docutils literal">map_music</tt>、<tt class="docutils literal">map_battle_music</tt>、<tt class="docutils literal">map_victory_sound</tt>、<tt class="docutils literal">map_defeat_sound</tt>。
+音乐文件：<tt class="docutils literal"><span class="pre">ui/music/&lt;id&gt;.mp3</span></tt> 或 <tt class="docutils literal"><span class="pre">mods/&lt;mod&gt;/ui/music/&lt;id&gt;.mp3</span></tt>。</p>
+</div>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,1304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.21.2: https://docutils.sourceforge.io/" />
+<title>Map making guide</title>
+<style type="text/css">
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 9511 2024-01-13 09:50:07Z milde $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+Despite the name, some widely supported CSS2 features are used.
+
+See https://docutils.sourceforge.io/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+.subscript {
+  vertical-align: sub;
+  font-size: smaller }
+
+.superscript {
+  vertical-align: super;
+  font-size: smaller }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+object[type="image/svg+xml"], object[type="application/x-shockwave-flash"] {
+  overflow: hidden;
+}
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title, .code .error {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left, .figure.align-left, object.align-left, table.align-left {
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+img.align-right, .figure.align-right, object.align-right, table.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+img.align-center, .figure.align-center, object.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+table.align-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: inherit }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+.align-top    {
+  vertical-align: top }
+
+.align-middle {
+  vertical-align: middle }
+
+.align-bottom {
+  vertical-align: bottom }
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+pre.literal-block, pre.doctest-block, pre.math, pre.code {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+pre.code .ln { color: gray; } /* line numbers */
+pre.code, code { background-color: #eeeeee }
+pre.code .comment, code .comment { color: #5C6576 }
+pre.code .keyword, code .keyword { color: #3B0D06; font-weight: bold }
+pre.code .literal.string, code .literal.string { color: #0C5404 }
+pre.code .name.builtin, code .name.builtin { color: #352B84 }
+pre.code .deleted, code .deleted { background-color: #DEB0A1}
+pre.code .inserted, code .inserted { background-color: #A3D289}
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic, pre.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+/* "booktabs" style (no vertical lines) */
+table.docutils.booktabs {
+  border: 0px;
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+  border-collapse: collapse;
+}
+table.docutils.booktabs * {
+  border: 0px;
+}
+table.docutils.booktabs th {
+  border-bottom: thin solid;
+  text-align: left;
+}
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+</head>
+<body>
+<div class="document" id="map-making-guide">
+<h1 class="title">Map making guide</h1>
+
+<div class="contents topic" id="contents">
+<p class="topic-title"><a class="reference internal" href="#top">Contents</a></p>
+<ul class="simple">
+<li><a class="reference internal" href="#introduction" id="toc-entry-1">Introduction</a></li>
+<li><a class="reference internal" href="#multiplayer-maps" id="toc-entry-2">Multiplayer maps</a><ul>
+<li><a class="reference internal" href="#where-to-store-a-new-multiplayer-map" id="toc-entry-3">Where to store a new multiplayer map</a></li>
+<li><a class="reference internal" href="#how-to-edit-a-map" id="toc-entry-4">How to edit a map</a></li>
+<li><a class="reference internal" href="#how-to-test-a-map" id="toc-entry-5">How to test a map</a></li>
+<li><a class="reference internal" href="#how-to-find-and-remove-an-error" id="toc-entry-6">How to find and remove an error</a></li>
+<li><a class="reference internal" href="#comments" id="toc-entry-7">Comments</a></li>
+<li><a class="reference internal" href="#basic-properties" id="toc-entry-8">Basic properties</a><ul>
+<li><a class="reference internal" href="#title" id="toc-entry-9">Title</a></li>
+<li><a class="reference internal" href="#objective" id="toc-entry-10">Objective</a></li>
+<li><a class="reference internal" href="#nb-players-min-and-nb-players-max" id="toc-entry-11">Nb_players_min and nb_players_max</a></li>
+<li><a class="reference internal" href="#global-food-limit" id="toc-entry-12">Global_food_limit</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#defining-the-terrain" id="toc-entry-13">Defining the terrain</a><ul>
+<li><a class="reference internal" href="#coordinates-since-1-4-1-8" id="toc-entry-14">Coordinates (since 1.4.1.8)</a></li>
+<li><a class="reference internal" href="#square-width" id="toc-entry-15">Square_width</a></li>
+<li><a class="reference internal" href="#nb-lines-and-nb-columns" id="toc-entry-16">Nb_lines and nb_columns</a></li>
+<li><a class="reference internal" href="#west-east-paths-and-south-north-paths" id="toc-entry-17">West_east_paths and south_north_paths</a></li>
+<li><a class="reference internal" href="#west-east-bridges-and-south-north-bridges" id="toc-entry-18">West_east_bridges and south_north_bridges</a></li>
+<li><a class="reference internal" href="#general-case-west-east-and-south-north" id="toc-entry-19">General case: west_east and south_north</a></li>
+<li><a class="reference internal" href="#goldmines-woods-and-other-resource-deposits" id="toc-entry-20">Goldmines, woods, and other resource deposits</a></li>
+<li><a class="reference internal" href="#nb-meadows-by-square" id="toc-entry-21">Nb_meadows_by_square</a></li>
+<li><a class="reference internal" href="#additional-meadows" id="toc-entry-22">Additional_meadows</a></li>
+<li><a class="reference internal" href="#remove-meadows" id="toc-entry-23">Remove_meadows</a></li>
+<li><a class="reference internal" href="#high-grounds" id="toc-entry-24">High_grounds</a></li>
+<li><a class="reference internal" href="#square-name-since-1-4-1-8" id="toc-entry-25">Square_name (since 1.4.1.8)</a></li>
+<li><a class="reference internal" href="#map-music-and-sounds-since-1-4-0-2" id="toc-entry-26">Map music and sounds (since 1.4.0.2)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#defining-the-starting-resources-of-the-players" id="toc-entry-27">Defining the starting resources of the players</a><ul>
+<li><a class="reference internal" href="#case-1-same-resources-for-everybody" id="toc-entry-28">Case 1: same resources for everybody</a><ul>
+<li><a class="reference internal" href="#starting-resources" id="toc-entry-29">starting_resources</a></li>
+<li><a class="reference internal" href="#starting-units" id="toc-entry-30">starting_units</a></li>
+<li><a class="reference internal" href="#starting-population" id="toc-entry-31">starting_population</a></li>
+<li><a class="reference internal" href="#starting-squares" id="toc-entry-32">starting_squares</a></li>
+<li><a class="reference internal" href="#player-start-since-1-4-2-8" id="toc-entry-33">player_start (since 1.4.2.8)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#case-2-different-resources-depending-on-the-player" id="toc-entry-34">Case 2: different resources depending on the player</a><ul>
+<li><a class="reference internal" href="#player" id="toc-entry-35">player</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#types-list" id="toc-entry-36">Types list</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#adding-monsters" id="toc-entry-37">Adding monsters</a><ul>
+<li><a class="reference internal" href="#add-a-computer-only-starting-point" id="toc-entry-38">Add a computer_only starting point</a><ul>
+<li><a class="reference internal" href="#neutral-computers-since-1-4-2-8" id="toc-entry-39">Neutral computers (since 1.4.2.8)</a></li>
+<li><a class="reference internal" href="#wildlife-only-slots-since-1-4-3-7" id="toc-entry-40">Wildlife-only slots (since 1.4.3.7)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#add-triggers-to-make-the-monsters-move" id="toc-entry-41">Add triggers to make the monsters move</a><ul>
+<li><a class="reference internal" href="#important-add-the-default-multiplayer-triggers" id="toc-entry-42">Important: add the default multiplayer triggers</a></li>
+<li><a class="reference internal" href="#victory-and-defeat-conditions-since-1-4-0-1" id="toc-entry-43">Victory and defeat conditions (since 1.4.0.1)</a></li>
+<li><a class="reference internal" href="#item-quest-triggers-since-1-4-3-1" id="toc-entry-44">Item quest triggers (since 1.4.3.1)</a></li>
+<li><a class="reference internal" href="#campaign-alliance-and-unit-transfer-since-1-4-3-1" id="toc-entry-45">Campaign alliance and unit transfer (since 1.4.3.1)</a></li>
+<li><a class="reference internal" href="#cross-chapter-progress-three-mechanisms" id="toc-entry-46">Cross-chapter progress (three mechanisms)</a></li>
+<li><a class="reference internal" href="#patrol" id="toc-entry-47">Patrol</a></li>
+<li><a class="reference internal" href="#attack-at-a-specific-moment" id="toc-entry-48">Attack at a specific moment</a></li>
+<li><a class="reference internal" href="#switch-to-another-ai" id="toc-entry-49">Switch to another AI</a></li>
+<li><a class="reference internal" href="#add-units" id="toc-entry-50">Add units</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#random-choice-end-choice-and-end-random-choice" id="toc-entry-51">#random_choice,  #end_choice and #end_random_choice</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#advanced-multiplayer-maps-how-to-change-the-rules-and-the-aspect-of-the-game" id="toc-entry-52">Advanced multiplayer maps: how to change the rules and the aspect of the game</a><ul>
+<li><a class="reference internal" href="#map-structure" id="toc-entry-53">Map structure</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#single-player-campaigns" id="toc-entry-54">Single player campaigns</a><ul>
+<li><a class="reference internal" href="#where-to-store-a-new-single-player-campaign" id="toc-entry-55">Where to store a new single player campaign</a></li>
+<li><a class="reference internal" href="#structure-of-the-campaign-folder" id="toc-entry-56">Structure of the campaign folder</a><ul>
+<li><a class="reference internal" href="#required-mods-file" id="toc-entry-57">Required mods file</a></li>
+<li><a class="reference internal" href="#chapter-files" id="toc-entry-58">Chapter files</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#syntax-of-a-chapter-file" id="toc-entry-59">Syntax of a chapter file</a><ul>
+<li><a class="reference internal" href="#syntax-of-a-mission-chapter-file" id="toc-entry-60">Syntax of a mission chapter file</a><ul>
+<li><a class="reference internal" href="#intro" id="toc-entry-61">Intro</a></li>
+<li><a class="reference internal" href="#add-objective" id="toc-entry-62">Add_objective</a></li>
+<li><a class="reference internal" href="#register-objective-action-in-a-trigger" id="toc-entry-63">Register_objective (action in a trigger)</a></li>
+<li><a class="reference internal" href="#objective-complete-action-in-a-trigger" id="toc-entry-64">Objective_complete (action in a trigger)</a></li>
+<li><a class="reference internal" href="#secondary-objective-complete-action-in-a-trigger" id="toc-entry-65">Secondary_objective_complete (action in a trigger)</a></li>
+<li><a class="reference internal" href="#timer-coefficiency" id="toc-entry-66">Timer coefficiency</a></li>
+<li><a class="reference internal" href="#cut-scene-action-in-a-trigger" id="toc-entry-67">Cut_scene (action in a trigger)</a></li>
+<li><a class="reference internal" href="#ai-orders" id="toc-entry-68">AI orders</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#syntax-of-a-cut-scene-chapter-file" id="toc-entry-69">Syntax of a cut scene chapter file</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#map-editor-experimental" id="toc-entry-70">Map editor (experimental)</a><ul>
+<li><a class="reference internal" href="#launch-the-editor" id="toc-entry-71">Launch the editor</a></li>
+<li><a class="reference internal" href="#select-a-terrain-from-the-palette" id="toc-entry-72">Select a terrain from the palette</a></li>
+<li><a class="reference internal" href="#apply-a-terrain-to-a-square" id="toc-entry-73">Apply a terrain to a square</a></li>
+<li><a class="reference internal" href="#toggle-path-to-a-neighbor" id="toc-entry-74">Toggle path to a neighbor</a></li>
+<li><a class="reference internal" href="#save-map" id="toc-entry-75">Save map</a></li>
+<li><a class="reference internal" href="#quit-editor" id="toc-entry-76">Quit editor</a></li>
+<li><a class="reference internal" href="#add-units-1" id="toc-entry-77">Add units</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="introduction">
+<h1><a class="toc-backref" href="#toc-entry-1">Introduction</a></h1>
+<p>The best way to start is probably to make a multiplayer map and test it against the computer.</p>
+</div>
+<div class="section" id="multiplayer-maps">
+<h1><a class="toc-backref" href="#toc-entry-2">Multiplayer maps</a></h1>
+<div class="section" id="where-to-store-a-new-multiplayer-map">
+<h2><a class="toc-backref" href="#toc-entry-3">Where to store a new multiplayer map</a></h2>
+<p>If you are allowed to write in the folder where SoundRTS (or SoundRTS test) is installed,
+then you can store your first multiplayer map in the &quot;multi&quot; folder.</p>
+<p>If you are not allowed to write in the program files folder because you work in non-admin mode, you can store your working map file in the &quot;multi&quot;
+folder in &quot;C:\Documents and Settings\Your Login\Application Data\SoundRTS&quot;. This folder is created the first time you start SoundRTS, unless a &quot;user&quot; folder exists near soundrts.exe.
+Another solution is to install SoundRTS in a folder where you are allowed to write, and to work in the folder mentioned in the previous paragraph.</p>
+</div>
+<div class="section" id="how-to-edit-a-map">
+<h2><a class="toc-backref" href="#toc-entry-4">How to edit a map</a></h2>
+<p>Open the file with a text editor.
+Write in lower case, even if case will be probably ignored anyway.</p>
+</div>
+<div class="section" id="how-to-test-a-map">
+<h2><a class="toc-backref" href="#toc-entry-5">How to test a map</a></h2>
+<p>To test a map, start SoundRTS and go to the single player menu. You can play against the computer on multiplayer maps.
+The map is reloaded each time you start a game, so you don't need to restart SoundRTS to test the modifications.
+A useful key combination is Control Shift F2: if you are the only human on the map, you will be able to examine the whole map (no fog of war).</p>
+</div>
+<div class="section" id="how-to-find-and-remove-an-error">
+<h2><a class="toc-backref" href="#toc-entry-6">How to find and remove an error</a></h2>
+<p>If, when you start the map, you get a &quot;map error&quot; message and go back to the menu, then you may sometimes find additional (but cryptic) information in &quot;client.log&quot; or in &quot;server.log&quot;, usually in the &quot;user/tmp&quot; folder.</p>
+<p>If you still don't understand where the error is, feel free to contact me, directly or at the soundRTSChat list.</p>
+</div>
+<div class="section" id="comments">
+<h2><a class="toc-backref" href="#toc-entry-7">Comments</a></h2>
+<p>The lines that start with a semicolon are comments. Comments are ignored at runtime.
+Everything after a semicolon until the end of the line is a comment too.</p>
+</div>
+<div class="section" id="basic-properties">
+<h2><a class="toc-backref" href="#toc-entry-8">Basic properties</a></h2>
+<div class="section" id="title">
+<h3><a class="toc-backref" href="#toc-entry-9">Title</a></h3>
+<p>&quot;title 4018 5000&quot; means: &quot;the title of the map is the sound 4018 followed by the sound 5000&quot;.</p>
+</div>
+<div class="section" id="objective">
+<h3><a class="toc-backref" href="#toc-entry-10">Objective</a></h3>
+<p>&quot;objective 145 88&quot; means: &quot;the objective of the map is the sound 145 followed by the sound 88&quot;.</p>
+</div>
+<div class="section" id="nb-players-min-and-nb-players-max">
+<h3><a class="toc-backref" href="#toc-entry-11">Nb_players_min and nb_players_max</a></h3>
+<p>&quot;nb_players_min 2&quot; means: &quot;2 players are needed to start the game.&quot;
+&quot;nb_players_max 4&quot; means: &quot;4 players in this map is a maximum.&quot;</p>
+</div>
+<div class="section" id="global-food-limit">
+<h3><a class="toc-backref" href="#toc-entry-12">Global_food_limit</a></h3>
+<p>New in version beta 9e.</p>
+<p>Update in version beta 10 o: this food limit is not divided among the players anymore.</p>
+<p>&quot;global_food_limit 200&quot; means: &quot;Every player cannot have more than 200 food, even if he builds more farms.&quot;</p>
+</div>
+</div>
+<div class="section" id="defining-the-terrain">
+<h2><a class="toc-backref" href="#toc-entry-13">Defining the terrain</a></h2>
+<div class="section" id="coordinates-since-1-4-1-8">
+<h3><a class="toc-backref" href="#toc-entry-14">Coordinates (since 1.4.1.8)</a></h3>
+<p>The coordinate system uses <tt class="docutils literal">x,y</tt> (e.g. <tt class="docutils literal">1,1</tt> for the old <tt class="docutils literal">a1</tt>). In zoom mode, coordinates
+are still announced with letters. Legacy notation is accepted and converted:</p>
+<pre class="literal-block">
+west_east_paths 1,3 2,3
+south_north_paths 1,1 2,1 3,1
+</pre>
+<p>Use x,y notation to define more than 26 columns.</p>
+</div>
+<div class="section" id="square-width">
+<h3><a class="toc-backref" href="#toc-entry-15">Square_width</a></h3>
+<p>&quot;square_width 12&quot; means: &quot;the square width is 12 meters&quot;.
+You shouldn't modify this parameter, since objects may be inaudible if they are too far.</p>
+</div>
+<div class="section" id="nb-lines-and-nb-columns">
+<h3><a class="toc-backref" href="#toc-entry-16">Nb_lines and nb_columns</a></h3>
+<p>&quot;nb_lines 7&quot; mean: &quot;the grid has 7 lines&quot;.
+&quot;nb_columns 7&quot; mean: &quot;the grid has 7 columns&quot;.
+Letter notation limits columns to 26 (<tt class="docutils literal">z</tt>); use x,y coordinates for more columns. There is
+no hard limit for lines, but performance sets a practical limit.
+Warning: nb_rows is deprecated and has the same meaning as nb_columns.</p>
+</div>
+<div class="section" id="west-east-paths-and-south-north-paths">
+<h3><a class="toc-backref" href="#toc-entry-17">West_east_paths and south_north_paths</a></h3>
+<p>&quot;west_east_paths a1 c1 d1 f1&quot; means: &quot;add a path from a1 to b1, from c1 to d1, from d1 to e1, and from f1 to g1&quot;.
+You only need to give the west-most square of the path.
+&quot;south_north_paths a1 a3 a4 a6&quot; means:  &quot;add a path from a1 to a2, from a3 to a4, from a4 to a5, and from a6 to a7&quot;.
+You only need to give the south-most square of the path.</p>
+</div>
+<div class="section" id="west-east-bridges-and-south-north-bridges">
+<h3><a class="toc-backref" href="#toc-entry-18">West_east_bridges and south_north_bridges</a></h3>
+<p>Bridges work exactly like paths.</p>
+</div>
+<div class="section" id="general-case-west-east-and-south-north">
+<h3><a class="toc-backref" href="#toc-entry-19">General case: west_east and south_north</a></h3>
+<p>&quot;west_east road a1 c1 d1&quot; means: &quot;add an exit with the 'road' style from a1 to b1, from c1 to d1, from d1 to e1&quot;</p>
+<p>'road' must be defined in style.txt</p>
+<p>Note: &quot;west_east_paths&quot; is the same as &quot;west_east path&quot;</p>
+<p>Note: &quot;south_north_bridges&quot; is the same as &quot;south_north bridge&quot;</p>
+</div>
+<div class="section" id="goldmines-woods-and-other-resource-deposits">
+<h3><a class="toc-backref" href="#toc-entry-20">Goldmines, woods, and other resource deposits</a></h3>
+<p>&quot;goldmine 150 a2 b7 g6 f1&quot; means: &quot;add goldmines with 150 gold at a2, b7, g6 and f1&quot;.</p>
+<p>&quot;wood 150 a2 b7 g6 f1&quot; means: &quot;add woods with 150 wood at a2, b7, g6 and f1&quot;.</p>
+<p>&quot;goldmine&quot; and &quot;wood&quot; are defined in rules.txt as resource deposits (&quot;class deposit&quot;).</p>
+<p>The old plural keywords (&quot;goldmines&quot; and &quot;woods&quot;) are still working.</p>
+</div>
+<div class="section" id="nb-meadows-by-square">
+<h3><a class="toc-backref" href="#toc-entry-21">Nb_meadows_by_square</a></h3>
+<p>&quot;nb_meadows_by_square 2&quot; means: &quot;auto fill the map with 2 meadows in each square&quot;.</p>
+</div>
+<div class="section" id="additional-meadows">
+<h3><a class="toc-backref" href="#toc-entry-22">Additional_meadows</a></h3>
+<p>&quot;additional_meadows a2 b7 g6 f1&quot; means: &quot;add 1 meadow in the squares a2, b7, g6 and f1&quot;.
+&quot;additional_meadows a2 a2 g6&quot; means: &quot;add 2 meadows in a2 and 1 meadow in g6&quot;.</p>
+</div>
+<div class="section" id="remove-meadows">
+<h3><a class="toc-backref" href="#toc-entry-23">Remove_meadows</a></h3>
+<p>remove_meadows do the opposite of additional_meadows.</p>
+</div>
+<div class="section" id="high-grounds">
+<h3><a class="toc-backref" href="#toc-entry-24">High_grounds</a></h3>
+<p>New in SoundRTS 1.2 alpha 9.</p>
+<p>&quot;high_grounds a2 b7&quot; means: &quot;a2 and b7 will have a higher altitude&quot;</p>
+</div>
+<div class="section" id="square-name-since-1-4-1-8">
+<h3><a class="toc-backref" href="#toc-entry-25">Square_name (since 1.4.1.8)</a></h3>
+<p>Name squares or regions:</p>
+<pre class="literal-block">
+square_name normandy 2,2 verdun 20,23
+square_name normandy 2,2 2,3 3,3
+</pre>
+<p>Since 1.4.1.9, up to three hierarchy levels are supported (province, city, district). TTS
+announces names when entering from another region; inner levels are omitted while browsing
+inside the same region. Translate names in <tt class="docutils literal">tts.txt</tt>:</p>
+<pre class="literal-block">
+normandy = Normandy
+</pre>
+</div>
+<div class="section" id="map-music-and-sounds-since-1-4-0-2">
+<h3><a class="toc-backref" href="#toc-entry-26">Map music and sounds (since 1.4.0.2)</a></h3>
+<p>In the map file:</p>
+<pre class="literal-block">
+map_music &lt;id&gt;
+map_battle_music &lt;id&gt;
+map_victory_sound &lt;id&gt;
+map_defeat_sound &lt;id&gt;
+</pre>
+</div>
+</div>
+<div class="section" id="defining-the-starting-resources-of-the-players">
+<h2><a class="toc-backref" href="#toc-entry-27">Defining the starting resources of the players</a></h2>
+<p>Note (since 1.4.1.8): faction starting units and resources can also be defined in
+<tt class="docutils literal">rules.txt</tt>. Map definitions take priority when both are set.</p>
+<div class="section" id="case-1-same-resources-for-everybody">
+<h3><a class="toc-backref" href="#toc-entry-28">Case 1: same resources for everybody</a></h3>
+<p>Use the following commands in combination:</p>
+<div class="section" id="starting-resources">
+<h4><a class="toc-backref" href="#toc-entry-29">starting_resources</a></h4>
+<p>&quot;starting_resources 10 10&quot; means: &quot;each player starts with 10 gold and 10 wood.&quot;</p>
+</div>
+<div class="section" id="starting-units">
+<h4><a class="toc-backref" href="#toc-entry-30">starting_units</a></h4>
+<p>&quot;starting_units townhall farm peasant&quot; means: &quot;each player starts with 1 townhall, 1 farm and 1 peasant.&quot;</p>
+<p>&quot;starting_units townhall 2 farm peasant&quot; means: &quot;each player starts with 1 townhall, 2 farms and 1 peasant.&quot;</p>
+</div>
+<div class="section" id="starting-population">
+<h4><a class="toc-backref" href="#toc-entry-31">starting_population</a></h4>
+<p>&quot;starting_population 60&quot; means: &quot;each player gets 60 extra population cap on top of
+what their starting buildings provide.&quot; This is a plain integer (not multiplied like
+resources). Per-player <tt class="docutils literal">player</tt> / <tt class="docutils literal">computer_only</tt> lines can also include
+<tt class="docutils literal">population 60</tt> among the unit tokens for that slot only. <tt class="docutils literal">available_population</tt>
+is still limited by <tt class="docutils literal">global_population_limit</tt>.</p>
+<p>Since SoundRTS 1.1, starting_units can also contain:</p>
+<ul class="simple">
+<li>upgrades and research: &quot;starting_units u_teleportation&quot; means: &quot;each player has teleportation already researched.&quot;</li>
+<li>forbidden units, buildings, abilities, upgrades/research (they won't appear on the menu):<ul>
+<li>&quot;starting_units -u_teleportation&quot; means: &quot;each player cannot research teleportation.&quot;</li>
+<li>&quot;starting_units -a_teleportation&quot; means: &quot;each player cannot use teleportation.&quot;</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="starting-squares">
+<h4><a class="toc-backref" href="#toc-entry-32">starting_squares</a></h4>
+<p>&quot;starting_squares a2 b7 g6 f1&quot; means: &quot;the starting squares of the players are a2, b7, g6 and f1.&quot;</p>
+<p>The starting units and buildings will be created in these squares.</p>
+</div>
+<div class="section" id="player-start-since-1-4-2-8">
+<h4><a class="toc-backref" href="#toc-entry-33">player_start (since 1.4.2.8)</a></h4>
+<p>Fix player N to a specific square (overrides random assignment):</p>
+<pre class="literal-block">
+player_start 1 2,3
+player_start 2 5,1
+</pre>
+</div>
+</div>
+<div class="section" id="case-2-different-resources-depending-on-the-player">
+<h3><a class="toc-backref" href="#toc-entry-34">Case 2: different resources depending on the player</a></h3>
+<div class="section" id="player">
+<h4><a class="toc-backref" href="#toc-entry-35">player</a></h4>
+<p>The &quot;player&quot; command defines a starting point that might be used by a human player or by a computer AI (in multiplayer games).</p>
+<p>This command can be repeated several times in a multiplayer map.</p>
+<p>&quot;player 5 10 -townhall a1 townhall peasant c1 footman&quot;
+means: &quot;a player will start with 5 gold, 10 wood, won't be allowed to build a town hall, will have a townhall and a peasant at A1, a footman at C1.</p>
+</div>
+</div>
+<div class="section" id="types-list">
+<h3><a class="toc-backref" href="#toc-entry-36">Types list</a></h3>
+<p>Here are some correct names for types used in <a class="reference internal" href="#starting-units">starting_units</a>, <a class="reference internal" href="#player">player</a> and <a class="reference internal" href="#computer-only">computer_only</a> .
+For a full list, examine the rules.txt file: the name is just after the &quot;def&quot; statement.</p>
+<ul class="simple">
+<li>units: peasant footman archer knight catapult dragon mage priest necromancer</li>
+<li>buildings: farm barracks lumbermill blacksmith townhall stables workshop dragonslair magestower</li>
+<li>abilities: a_teleportation</li>
+<li>upgrade/research: u_teleportation melee_weapon</li>
+</ul>
+</div>
+</div>
+<div class="section" id="adding-monsters">
+<h2><a class="toc-backref" href="#toc-entry-37">Adding monsters</a></h2>
+<div class="section" id="add-a-computer-only-starting-point">
+<h3><a class="toc-backref" href="#toc-entry-38">Add a computer_only starting point</a></h3>
+<p id="computer-only">The &quot;computer_only&quot; command defines a starting point that will always be played by a computer AI. This AI will be hostile to any other player or AI.</p>
+<p>This command can be repeated several times but be careful: too many AI can slow the game.
+So use one AI if these units are not supposed to fight each other (several dragons all over the map for example).</p>
+<p>computer_only 0 0 a3 dragon b1 dragon
+means: &quot;add a computer AI with 0 gold, 0 wood, a dragon at A3 and a dragon at B1.&quot;</p>
+<div class="section" id="neutral-computers-since-1-4-2-8">
+<h4><a class="toc-backref" href="#toc-entry-39">Neutral computers (since 1.4.2.8)</a></h4>
+<p>Add the <tt class="docutils literal">neutral</tt> keyword so the AI does not attack unless attacked first:</p>
+<pre class="literal-block">
+computer_only 0 0 neutral a3 peasant b1 footman
+</pre>
+<p>Without <tt class="docutils literal">neutral</tt>, the computer is hostile to everyone.</p>
+<p>Player units in offensive, defensive, or chase mode will not auto-attack these neutrals and
+will not flee from them in defensive mode; only a forced attack (imperative) starts combat.</p>
+</div>
+<div class="section" id="wildlife-only-slots-since-1-4-3-7">
+<h4><a class="toc-backref" href="#toc-entry-40">Wildlife-only slots (since 1.4.3.7)</a></h4>
+<p>If a <tt class="docutils literal">computer_only</tt> line contains <strong>only</strong> animals with <tt class="docutils literal">is_huntable</tt> / <tt class="docutils literal">herdable</tt> (e.g. <tt class="docutils literal">deer</tt>, <tt class="docutils literal">sheep</tt>, custom <tt class="docutils literal">tiger</tt>), that slot does <strong>not</strong> join the default <tt class="docutils literal">&quot;ai&quot;</tt> alliance and does not ally with other herds, players, or hostile creep. Each <tt class="docutils literal">computer_only</tt> line is one independent hunting spot.</p>
+<p>If the same line mixes animals and footmen, the whole slot stays a normal AI. See <tt class="docutils literal"><span class="pre">docs/en/hunting-system.md</span></tt> §3.1.</p>
+</div>
+</div>
+<div class="section" id="add-triggers-to-make-the-monsters-move">
+<h3><a class="toc-backref" href="#toc-entry-41">Add triggers to make the monsters move</a></h3>
+<div class="section" id="important-add-the-default-multiplayer-triggers">
+<h4><a class="toc-backref" href="#toc-entry-42">Important: add the default multiplayer triggers</a></h4>
+<p>If a multiplayer map defines at least one trigger, the default multiplayer triggers are ignored. The goal is to allow custom victory conditions.</p>
+<p>To keep the default victory conditions, the following triggers must be explicitly added to the map (or the game won't stop automatically):</p>
+<pre class="literal-block">
+trigger players (no_enemy_player_left) (victory)
+trigger players (no_building_left) (defeat)
+trigger computers (no_unit_left) (defeat)
+</pre>
+<p>Note: the third trigger is not really needed.</p>
+</div>
+<div class="section" id="victory-and-defeat-conditions-since-1-4-0-1">
+<h4><a class="toc-backref" href="#toc-entry-43">Victory and defeat conditions (since 1.4.0.1)</a></h4>
+<p>Additional trigger conditions:</p>
+<pre class="literal-block">
+trigger all (unit_lost knight) (defeat)
+trigger player1 (unit_lost a1 3 footman) (defeat)
+trigger player1 (building_lost 1 townhall) (defeat)
+trigger player1 (key_unit_killed a1 3 footman) (defeat)
+trigger all (key_unit_killed hero) (defeat)
+trigger all (key_units_killed 5 knight) (defeat)
+trigger all (units_lost 3 knight) (defeat)
+trigger all (building_lost townhall) (defeat)
+trigger all (buildings_lost 1 townhall 2 barracks) (defeat)
+trigger players (killed_target dragon) (victory)
+trigger players (killed_target dragon enemy) (victory)
+trigger player1 (has_killed 5 footman enemy) (objective_complete 1)
+trigger player1 (has_killed 1 footman 3 knight enemy) (objective_complete 2)
+</pre>
+<p><tt class="docutils literal">killed_target</tt> and <tt class="docutils literal">has_killed</tt> accept optional <tt class="docutils literal">enemy</tt> or <tt class="docutils literal">ally</tt> to count only
+those units.</p>
+<p><strong>Unit index selectors</strong> (since 1.4.3.1, demo: The Legend of Raynor chapter 28) — same
+<tt class="docutils literal">&lt;square&gt; &lt;index&gt; &lt;type&gt;</tt> syntax as <tt class="docutils literal">transfer_units</tt>; identifies the <strong>Nth</strong> unit of
+that type spawned at the square (stable after movement):</p>
+<pre class="literal-block">
+trigger player1 (killed_target c3 3 demo_marker_footman enemy) (objective_complete 1)
+trigger player1 (killed_target c3 1 demo_marker_footman enemy) (do (cut_scene 7606) (defeat))
+trigger player1 (npc_has_item b2 3 quest_npc short_sword) (objective_complete 2)
+</pre>
+<p><tt class="docutils literal">killed_target</tt> index: <tt class="docutils literal">(killed_target &lt;square&gt; &lt;index&gt; &lt;type&gt; [enemy|ally])</tt>.
+<tt class="docutils literal">npc_has_item</tt> index: <tt class="docutils literal">(npc_has_item &lt;square&gt; &lt;index&gt; &lt;type&gt; &lt;item&gt;)</tt>.
+<tt class="docutils literal">unit_lost</tt> / <tt class="docutils literal">building_lost</tt> / <tt class="docutils literal">key_unit_killed</tt> index: <tt class="docutils literal">(&lt;square&gt; &lt;index&gt; &lt;type&gt;)</tt> — only that spawned unit/building (e.g. protect starting town hall).
+Not the same as <tt class="docutils literal">has_killed 3 footman</tt> (total count). Each objective's <tt class="docutils literal">cut_scene</tt> should
+describe that objective only. See <tt class="docutils literal"><span class="pre">docs/en/map-unit-index-selectors.md</span></tt>; examples
+<tt class="docutils literal">res/single/The Legend of Raynor/28.txt</tt>, <tt class="docutils literal">1.txt</tt>.</p>
+</div>
+<div class="section" id="item-quest-triggers-since-1-4-3-1">
+<h4><a class="toc-backref" href="#toc-entry-44">Item quest triggers (since 1.4.3.1)</a></h4>
+<p><strong>has_item</strong> — player picked up a quest item (checks all living units' inventories):</p>
+<pre class="literal-block">
+trigger player1 (has_item lost_amulet) (objective_complete 1)
+trigger player1 (has_item health_potion 2) (objective_complete 2)
+</pre>
+<p>The item must be <tt class="docutils literal">class item</tt> with <tt class="docutils literal">consume_on_pickup</tt> not set to 1 (default 0), so it
+stays in inventory after pickup. Place items on the map like units:</p>
+<pre class="literal-block">
+lost_amulet c3
+health_potion 2 a2
+</pre>
+<p>Differences between related conditions:</p>
+<ul class="simple">
+<li><tt class="docutils literal">has</tt>: player <strong>unit</strong> counts (<tt class="docutils literal">self.units</tt>)</li>
+<li><tt class="docutils literal">has_item</tt>: items in player units' <strong>inventories</strong> (found/picked up anywhere)</li>
+<li><tt class="docutils literal">npc_has_item</tt>: an NPC received an item (inventory or <tt class="docutils literal">received_items</tt>); index form <tt class="docutils literal">&lt;square&gt; &lt;index&gt; &lt;type&gt; &lt;item&gt;</tt> (chapter 28)</li>
+<li><tt class="docutils literal">find</tt>: object exists <strong>on the ground</strong> at a square (square before type, e.g. <tt class="docutils literal">c3 mana_potion</tt>); item must usually be dropped</li>
+<li><tt class="docutils literal">has_brought_item</tt>: player unit <strong>carrying</strong> an item <strong>arrived</strong> at a square (item stays in inventory)</li>
+<li><tt class="docutils literal">remove_item</tt>: trigger <strong>action</strong> that deletes an item from player inventories (story hand-over)</li>
+<li><tt class="docutils literal">remove_ground_item</tt>: trigger <strong>action</strong> that deletes items <strong>on the ground</strong> at a square</li>
+<li><tt class="docutils literal">do</tt>: trigger <strong>action</strong> that runs multiple sub-actions in order</li>
+<li><tt class="docutils literal">and</tt>: trigger <strong>condition</strong> that is true only when every sub-condition is true</li>
+</ul>
+<p><strong>has_brought_item</strong> — carry a quest item to a square (inventory counts; no drop required):</p>
+<pre class="literal-block">
+trigger player1 (has_brought_item c3 mana_potion) (objective_complete 1)
+</pre>
+<p>Syntax: <tt class="docutils literal">(has_brought_item &lt;square&gt; &lt;item_type_name&gt; [count])</tt></p>
+<p><strong>remove_item</strong> — remove and destroy items from player inventories (story delivery):</p>
+<pre class="literal-block">
+trigger player1 (has_brought_item c3 mana_potion)
+    (do (cut_scene 7560) (remove_item mana_potion c3) (objective_complete 1))
+</pre>
+<p>Syntax: <tt class="docutils literal">(remove_item &lt;item_type_name&gt; [square] [count])</tt></p>
+<p>Typical flow: <tt class="docutils literal">has_brought_item</tt> → <tt class="docutils literal">cut_scene</tt> → <tt class="docutils literal">remove_item</tt> → <tt class="docutils literal">objective_complete</tt>.
+Example: The Legend of Raynor chapter 18.</p>
+<p><strong>do</strong> — run multiple trigger actions in order:</p>
+<pre class="literal-block">
+trigger player1 (has_brought_item c3 mana_potion)
+    (do (cut_scene 7560) (remove_item mana_potion c3) (objective_complete 1))
+</pre>
+<p>Syntax: <tt class="docutils literal">(do &lt;action1&gt; &lt;action2&gt; <span class="pre">...)</span></tt></p>
+<p><tt class="docutils literal">if</tt> has only two branches (if/else). Use <tt class="docutils literal">do</tt> when you need three or more actions
+(cut scene, remove item, complete objective, etc.).</p>
+<p><strong>remove_ground_item</strong> — delete items on the ground at a square:</p>
+<pre class="literal-block">
+trigger player1 (find b2 mystery_treasure)
+    (do (cut_scene 7546) (remove_ground_item b2 mystery_treasure)
+        (add_units b2 10 gold_coin) (objective_complete 2))
+</pre>
+<p>Syntax: <tt class="docutils literal">(remove_ground_item &lt;square&gt; &lt;item_type_name&gt; [count])</tt></p>
+<p><tt class="docutils literal">remove_item</tt> removes from <strong>player inventories</strong>; <tt class="docutils literal">remove_ground_item</tt> removes from
+the <strong>ground</strong> at a square (e.g. after the player drops a quest item to open a chest).</p>
+<p><strong>and</strong> — all sub-conditions must be true:</p>
+<pre class="literal-block">
+trigger player1 (and (find b2 treasure_opened_mark) (not (find b2 gold_coin)))
+    (objective_complete 3)
+</pre>
+<p>Syntax: <tt class="docutils literal">(and &lt;condition1&gt; &lt;condition2&gt; <span class="pre">...)</span></tt></p>
+<p>A trigger line has one condition expression. Wrap multiple conditions in <tt class="docutils literal">and</tt>; do not
+write <tt class="docutils literal">(cond1) (cond2) (action)</tt> (the second S-expression becomes the action).</p>
+<p>For <tt class="docutils literal">find</tt>, always put the <strong>square before the type</strong>, including inside <tt class="docutils literal">not</tt>.
+Wrong: <tt class="docutils literal">(not (find gold_coin b2))</tt> (checks the default square first, almost always true).
+Right: <tt class="docutils literal">(not (find b2 gold_coin))</tt>. Drop-to-open example: The Legend of Raynor chapter 22; inventory use: chapter 20.</p>
+<p><strong>npc_has_item</strong> — an NPC received a specific item (inventory or <tt class="docutils literal">received_items</tt> record):</p>
+<pre class="literal-block">
+trigger player1 (npc_has_item quest_npc health_potion) (objective_complete 1)
+trigger player1 (npc_has_item quest_npc health_potion c3) (objective_complete 1)
+trigger player1 (npc_has_item b2 3 quest_npc short_sword) (objective_complete 2)
+</pre>
+<p>Syntax (either form):</p>
+<ul class="simple">
+<li>Classic: <tt class="docutils literal">(npc_has_item &lt;NPC_selector&gt; &lt;item_type_name&gt; [square])</tt></li>
+<li>Index: <tt class="docutils literal">(npc_has_item &lt;square&gt; &lt;index&gt; &lt;unit_type&gt; &lt;item_type_name&gt;)</tt> — same as
+<tt class="docutils literal">transfer_units</tt>; the Nth unit at that square by spawn order. Example: chapter 28.</li>
+</ul>
+<p>Classic form:</p>
+<ul class="simple">
+<li><tt class="docutils literal">&lt;NPC_selector&gt;</tt>: unit <tt class="docutils literal">type_name</tt> or unit id.</li>
+<li><tt class="docutils literal">&lt;item_type_name&gt;</tt>: e.g. <tt class="docutils literal">health_potion</tt>.</li>
+<li>Optional <tt class="docutils literal">[square]</tt>: limits to NPCs <strong>currently</strong> at that square.</li>
+</ul>
+<p>Index form matches by spawn index; the unit may have moved away from that square.</p>
+<p><strong>give</strong> in trigger orders (scripted delivery):</p>
+<pre class="literal-block">
+trigger player1 (timer 5) (order (a1 1 peasant) ((give c3 health_potion)))
+</pre>
+<p>Example find-item map (The Legend of Raynor chapter 17):</p>
+<pre class="literal-block">
+title Find the lost amulet
+lost_amulet c3
+starting_squares a1
+starting_units peasant
+trigger player1 (timer 0) (add_objective 1 &quot;find the lost amulet&quot;)
+trigger player1 (has_item lost_amulet) (objective_complete 1)
+</pre>
+<p>Example give-to-NPC map (<tt class="docutils literal">res/multi/give_demo.txt</tt>):</p>
+<pre class="literal-block">
+health_potion a1
+computer_only 0 0 neutral c3 quest_npc
+trigger player1 (timer 0) (add_objective 1 &quot;deliver the potion to the quest npc&quot;)
+trigger player1 (npc_has_item quest_npc health_potion) (objective_complete 1)
+</pre>
+<p>Campaign examples (<tt class="docutils literal">The Legend of Raynor</tt>): ch. 14 deliver <tt class="docutils literal">pickaxe</tt> to allied <tt class="docutils literal">npc_peasant</tt>;
+ch. 15 deliver <tt class="docutils literal">knight_lance</tt> to neutral <tt class="docutils literal">npc_knight</tt>; ch. 16 deliver <tt class="docutils literal">wand</tt> to enemy
+<tt class="docutils literal">npc_mage</tt> (<tt class="docutils literal">ally</tt>/<tt class="docutils literal">neutral</tt>/<tt class="docutils literal">enemy</tt> relations). See <tt class="docutils literal">res/single/The Legend of Raynor/14.txt</tt>,
+<tt class="docutils literal">15.txt</tt>, <tt class="docutils literal">16.txt</tt>. Multiplayer demo: <tt class="docutils literal">res/multi/give_demo.txt</tt>.</p>
+</div>
+<div class="section" id="campaign-alliance-and-unit-transfer-since-1-4-3-1">
+<h4><a class="toc-backref" href="#toc-entry-45">Campaign alliance and unit transfer (since 1.4.3.1)</a></h4>
+<p><strong>F12 dynamic diplomacy does not work in campaigns.</strong> After <tt class="docutils literal">alliance_request</tt>, the human
+accepts with <strong>Ctrl+F4</strong> and declines with <strong>Shift+F4</strong> (no F12 target selection). See
+<tt class="docutils literal"><span class="pre">docs/en/campaign-secret-letter-alliance.md</span></tt> for the full northern arc (ch. 24–27).</p>
+<p><strong>alliance_request</strong> — trigger action: one player requests alliance with another:</p>
+<pre class="literal-block">
+trigger player1 (npc_has_item npc_knight_leader secret_letter c2)
+    (do (cut_scene 7585) (alliance_request computer1) (objective_complete 1))
+</pre>
+<p>Syntax: <tt class="docutils literal">(alliance_request &lt;from&gt; [to])</tt>; if <tt class="docutils literal">to</tt> is omitted, the request goes to the
+trigger owner.</p>
+<p><strong>alliance_with</strong> — condition: trigger owner is allied with the given player:</p>
+<pre class="literal-block">
+trigger player1 (alliance_with computer1) (objective_complete 2)
+</pre>
+<p><strong>alliance_declined_with</strong> — condition: declined alliance request from the given player (campaign <strong>Shift+F4</strong>):</p>
+<pre class="literal-block">
+trigger player1 (alliance_declined_with computer1)
+    (do (cut_scene 7598) (add_units c3 3 knight) (objective_abandon 1))
+</pre>
+<p><strong>add_secondary_objective</strong> — trigger action: add an optional objective (announced with the
+&quot;optional objective&quot; prefix). Numbering is <strong>independent</strong> from primary objectives (both start at 1):</p>
+<pre class="literal-block">
+trigger player1 (timer 0) (add_objective 1 7583)
+trigger player1 (timer 0) (add_objective 2 7584)
+trigger player1 (timer 0) (add_secondary_objective 1 7599)
+</pre>
+<p><strong>secondary_objective_complete</strong> — trigger action: complete optional objective N (does not
+affect primary objective N):</p>
+<pre class="literal-block">
+trigger player1 (alliance_with computer1)
+    (do (cut_scene 7586) (allied_assist computer1) (secondary_objective_complete 1))
+</pre>
+<p><strong>objective_abandon</strong> — trigger action: abandon optional objective N (e.g. decline alliance);
+only applies to <tt class="docutils literal">add_secondary_objective</tt>.</p>
+<p><strong>alliance_request_pending</strong> — condition: a pending alliance request from the given player.</p>
+<p><strong>transfer_units</strong> / <strong>convert_units</strong> / <strong>change_owner</strong> — trigger action: change unit
+ownership from one player to another (not <tt class="docutils literal">add_units</tt> spawning):</p>
+<pre class="literal-block">
+trigger player1 (alliance_with computer1)
+    (do (transfer_units computer1 player1) (add_objective 2 7584))
+</pre>
+<p>With no unit selector, all living units of the source player are transferred.
+Selector syntax matches <tt class="docutils literal">order</tt> / <tt class="docutils literal">add_units</tt>: <tt class="docutils literal">&lt;square&gt; &lt;count&gt; &lt;type&gt;</tt>.</p>
+<p><strong>allied_assist</strong> — trigger action: let ally units fight on their own (guard→chase); does not
+grant player command:</p>
+<pre class="literal-block">
+trigger player1 (alliance_with computer1)
+    (do (allied_assist computer1))
+
+trigger player1 (npc_has_item npc_knight_leader secret_letter c2)
+    (do (allied_assist computer1 c2 4 npc_archer_escort))
+</pre>
+<p>Syntax:</p>
+<ul class="simple">
+<li>Whole ally: <tt class="docutils literal">(allied_assist &lt;ally&gt;)</tt></li>
+<li>Selected units only: <tt class="docutils literal">(allied_assist &lt;ally&gt; &lt;square&gt; &lt;count&gt; &lt;type&gt; <span class="pre">...)</span></tt></li>
+</ul>
+<p>Unit selector syntax matches <tt class="docutils literal">transfer_units</tt> / <tt class="docutils literal">add_units</tt>. With no selector, all combat
+units on guard switch to chase; with a selector, only matching units switch; the rest are
+unchanged.</p>
+<p><strong>allied_control</strong> — trigger action: let a player directly command an ally's units
+(select, move, attack):</p>
+<pre class="literal-block">
+trigger player1 (npc_has_item npc_knight_leader secret_letter c2)
+    (do (alliance 1) (allied_control computer1 c2 4 npc_knight_escort))
+</pre>
+<p>Syntax:</p>
+<ul class="simple">
+<li>Whole ally: <tt class="docutils literal">(allied_control &lt;ally&gt; [controller])</tt></li>
+<li>Selected units only: <tt class="docutils literal">(allied_control &lt;ally&gt; [&lt;controller&gt;] &lt;square&gt; &lt;count&gt; &lt;type&gt; <span class="pre">...)</span></tt></li>
+</ul>
+<p>With no selector, all living units of the ally are granted and switch to chase. With a selector,
+only matching units are granted (they stay on guard until the player orders); unmatched combat
+units on guard switch to chase automatically.</p>
+<p><strong>add_inventory_item</strong> — put an item into a unit's inventory (quest reward, cross-chapter re-grant):</p>
+<pre class="literal-block">
+trigger player1 (has_killed 3 traitor_guard)
+    (do (cut_scene 7580) (add_inventory_item garrek_token 1 raynor) (set_campaign_flag ch24_garrek_token))
+</pre>
+<p>Syntax: <tt class="docutils literal">(add_inventory_item &lt;item_type&gt; [&lt;count&gt;] <span class="pre">[&lt;unit_type&gt;])</span></tt>; if unit omitted, first friendly unit with <tt class="docutils literal">inventory_capacity</tt> (Raynor campaign defaults to <tt class="docutils literal">raynor</tt> types).</p>
+</div>
+<div class="section" id="cross-chapter-progress-three-mechanisms">
+<h4><a class="toc-backref" href="#toc-entry-46">Cross-chapter progress (three mechanisms)</a></h4>
+<table border="1" class="docutils">
+<colgroup>
+<col width="34%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Mechanism</th>
+<th class="head">Config</th>
+<th class="head">Carries</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><tt class="docutils literal">campaign_carryover</tt></td>
+<td><tt class="docutils literal">rules.txt</tt> unit fields</td>
+<td>Level+XP, inventory
+(split; see modding.rst)</td>
+</tr>
+<tr><td><tt class="docutils literal">campaign_flag</tt> /
+<tt class="docutils literal">set_campaign_flag</tt></td>
+<td>map triggers</td>
+<td>story booleans</td>
+</tr>
+<tr><td><tt class="docutils literal">add_inventory_item</tt></td>
+<td>map triggers</td>
+<td>specific items</td>
+</tr>
+</tbody>
+</table>
+<p><tt class="docutils literal">campaign_flag</tt> persists in <tt class="docutils literal">campaigns.ini</tt> <tt class="docutils literal">flags</tt>; <tt class="docutils literal">map_flag</tt> is <strong>per map only</strong>.</p>
+<p>Re-grant at chapter start:</p>
+<pre class="literal-block">
+trigger player1 (timer 0) (if (campaign_flag ch24_garrek_token) (do (add_inventory_item garrek_token 1 raynor)))
+</pre>
+<p><strong>unset_campaign_flag</strong> clears mistakenly persisted flags.</p>
+<p><strong>set_ai_mode</strong> — change AI mode on the trigger owner's units:</p>
+<pre class="literal-block">
+trigger computer1 (npc_has_item npc_count_roland garrek_token c2)
+    (do (set_ai_mode offensive c2 1 npc_count_roland c2 2 npc_roland_guard) (set_yield_on_defeat 1 ...))
+</pre>
+<p>Syntax: <tt class="docutils literal">(set_ai_mode &lt;offensive|defensive|guard|chase&gt; [&lt;square&gt; &lt;count&gt; &lt;type&gt; <span class="pre">...])</span></tt>.</p>
+<p><strong>set_yield_on_defeat</strong> — toggle per-unit yield (zero HP → yield instead of die):</p>
+<pre class="literal-block">
+trigger computer1 (npc_has_item npc_count_roland garrek_token c2)
+    (set_yield_on_defeat 1 c2 1 npc_count_roland c2 2 npc_roland_guard)
+</pre>
+<p>Syntax: <tt class="docutils literal">(set_yield_on_defeat &lt;0|1&gt; [&lt;square&gt; &lt;count&gt; &lt;type&gt; <span class="pre">...])</span></tt>. Can also set <tt class="docutils literal">yield_on_defeat 1</tt> in <tt class="docutils literal">rules.txt</tt>.</p>
+<p><strong>units_yielded</strong> — count of yielded enemy units:</p>
+<pre class="literal-block">
+trigger player1 (units_yielded 1 npc_marco_ironhand) (objective_complete 1)
+</pre>
+<p><strong>units_yielded_by</strong> — yield forced by a specific attacker (supports <tt class="docutils literal">is_a</tt>):</p>
+<pre class="literal-block">
+trigger player1 (units_yielded_by raynor7 1 npc_marco_ironhand enemy) (objective_complete 1)
+</pre>
+<p><strong>has_entered</strong> — trigger owner's units entered a square (grid or place-name alias; optional unit type):</p>
+<pre class="literal-block">
+trigger player1 (has_entered c2 raynor7) (do (cut_scene 7718) (set_map_flag ch27_duel_started))
+</pre>
+<p><strong>map_flag</strong> / <strong>set_map_flag</strong> — per-map session flags (not saved in campaign config):</p>
+<pre class="literal-block">
+trigger player1 (has_entered c2 raynor7) (do (cut_scene 7718) (set_map_flag ch27_duel_started))
+</pre>
+<p><strong>stop_all_units</strong> / <strong>release_yielded_units</strong> — cease fire and end yield invulnerability:</p>
+<pre class="literal-block">
+trigger player1 (units_yielded_by raynor7 1 npc_marco_ironhand enemy)
+    (do (cut_scene 7710) (alliance 1 player1 computer1) (stop_all_units) (release_yielded_units computer1))
+</pre>
+<p>Run <tt class="docutils literal">cut_scene</tt> on <strong>player1</strong> triggers so the human client hears voice. AI mode / yield toggles may run on <strong>computer1</strong> (unit owner).</p>
+<p>The Legend of Raynor <strong>northern arc</strong> (ch. <strong>24</strong>–<strong>27</strong>): continuous storyline with shared <tt class="docutils literal">traitor_guard</tt> objective and <tt class="docutils literal">campaign_flag</tt> carryover. See <tt class="docutils literal"><span class="pre">docs/en/campaign-secret-letter-alliance.md</span></tt>:</p>
+<ul class="simple">
+<li>ch. <strong>24</strong> (letter to Garrek): <tt class="docutils literal">allied_control</tt>; <tt class="docutils literal">add_inventory_item garrek_token</tt> after traitors die</li>
+<li>ch. <strong>25</strong> (token to Roland): killable before delivery; then <tt class="docutils literal">set_ai_mode</tt> + <tt class="docutils literal">set_yield_on_defeat</tt>; <tt class="docutils literal">alliance_request</tt></li>
+<li>ch. <strong>26</strong> (banner to Vera): <tt class="docutils literal">transfer_units</tt></li>
+<li>ch. <strong>27</strong> (duel with Marco): <tt class="docutils literal">has_entered c2 raynor7</tt> + cutscene 7718; Marco-only <tt class="docutils literal">set_ai_mode offensive</tt>; escorts <tt class="docutils literal">order</tt> to <tt class="docutils literal">c1</tt> to clear the arena; <tt class="docutils literal">units_yielded_by raynor7</tt>; <tt class="docutils literal">stop_all_units</tt> + selective <tt class="docutils literal">allied_control</tt> (4 escort knights)</li>
+</ul>
+<p>Chapter <strong>25</strong> must register <strong>three primary</strong> objectives (deliver token, defeat Roland, kill traitors) plus <strong>optional objective 1</strong> (alliance) at start. Press <strong>F9</strong> for primary and optional objectives. Script computers display as <strong>NPC</strong> (<tt class="docutils literal">Player.name</tt> + <tt class="docutils literal">is_script_npc</tt>).</p>
+<p>Key NPCs (<tt class="docutils literal">npc_count_roland</tt>, <tt class="docutils literal">npc_roland_guard</tt>, etc.) should start on <tt class="docutils literal">ai_mode guard</tt>. Enable <tt class="docutils literal">yield_on_defeat</tt> at runtime via <tt class="docutils literal">set_yield_on_defeat</tt>, not in rules at spawn, so Roland is killable before the token is delivered.</p>
+</div>
+<div class="section" id="patrol">
+<h4><a class="toc-backref" href="#toc-entry-47">Patrol</a></h4>
+<p>To order up to 10 dragons from d1 to patrol between d1 and d9:</p>
+<pre class="literal-block">
+trigger computer1 (timer 0) (order (d1 10 dragon) ((patrol d9)))
+</pre>
+</div>
+<div class="section" id="attack-at-a-specific-moment">
+<h4><a class="toc-backref" href="#toc-entry-48">Attack at a specific moment</a></h4>
+<p>To order up to 10 dragons from e3 to attack b2 after 20 minutes (normal speed):</p>
+<pre class="literal-block">
+timer_coefficient 60
+trigger computer1 (timer 20) (order (e3 10 dragon) ((go b2)))
+</pre>
+</div>
+<div class="section" id="switch-to-another-ai">
+<h4><a class="toc-backref" href="#toc-entry-49">Switch to another AI</a></h4>
+<p>The default AI for computer_only is a trigger-only, do-nothing AI. To switch to &quot;easy&quot; (also known as &quot;quiet computer&quot;):</p>
+<pre class="literal-block">
+trigger computer1 (timer 0) (ai easy)
+</pre>
+</div>
+<div class="section" id="add-units">
+<h4><a class="toc-backref" href="#toc-entry-50">Add units</a></h4>
+<p>To add 10 dragons at A1:</p>
+<pre class="literal-block">
+trigger computer1 (timer 0) (add_units a1 10 dragon)
+</pre>
+</div>
+</div>
+</div>
+<div class="section" id="random-choice-end-choice-and-end-random-choice">
+<h2><a class="toc-backref" href="#toc-entry-51">#random_choice,  #end_choice and #end_random_choice</a></h2>
+<p>(new in beta 9g)
+This preprocessor directive chooses randomly between 2 or more choices delimited by #random_choice,  #end_choice and by #end_random_choice for the last choice.
+Each choice consists in zero or more lines.
+More than one #random_choice directives can be used in a map file, but they cannot be nested.</p>
+<p>This can be used for example to place random resources. For example:</p>
+<pre class="literal-block">
+#random_choice
+goldmines 500 e2 c6 b3 f5
+#end_choice
+goldmines 500 d2 d6 b4 f4
+#end_choice
+goldmines 500 c2 e6 b5 f3
+#end_random_choice
+</pre>
+<p>The preceding lines mean: &quot;add a goldmine at e2, c6, b3 and f5, or at d2, d6, b4 and f4, or at c2, e6, b5 and f3&quot;. This way, the resources are balanced (if I didn't make a mistake of course). This is only an example.</p>
+<p>The title of the map and the number of players cannot be changed this way because the preprocessor is run when the map is loaded (that is to say: long after the single player menu is loaded).</p>
+</div>
+</div>
+<div class="section" id="advanced-multiplayer-maps-how-to-change-the-rules-and-the-aspect-of-the-game">
+<h1><a class="toc-backref" href="#toc-entry-52">Advanced multiplayer maps: how to change the rules and the aspect of the game</a></h1>
+<div class="section" id="map-structure">
+<h2><a class="toc-backref" href="#toc-entry-53">Map structure</a></h2>
+<p>The advanced map is a folder containing a file called &quot;map.txt&quot; with the content of a usual map, and most files and folders that you find in the &quot;res&quot; folder:
+rules.txt, ai.txt, the ui folders and their content.</p>
+<p>Note: at the moment, in a map or a campaign folder, the localized version of style.txt (for example: ui-fr/style.txt) isn't loaded.
+Localized sounds are loaded though.</p>
+</div>
+</div>
+<div class="section" id="single-player-campaigns">
+<h1><a class="toc-backref" href="#toc-entry-54">Single player campaigns</a></h1>
+<div class="section" id="where-to-store-a-new-single-player-campaign">
+<h2><a class="toc-backref" href="#toc-entry-55">Where to store a new single player campaign</a></h2>
+<p>If you are allowed to write in the folder where SoundRTS (or SoundRTS test) is installed, then you can store your first campaign in the &quot;single&quot; folder.</p>
+<p>If you are not allowed to write in the program files folder because you work in non-admin mode, you can store your working map file in the &quot;single&quot;
+folder in &quot;C:\Documents and Settings\Your Login\Application Data\SoundRTS&quot;. This folder is created the first time you start SoundRTS.
+Another solution is to install SoundRTS in a folder where you are allowed to write, and to work in the folder mentioned in the previous paragraph.</p>
+</div>
+<div class="section" id="structure-of-the-campaign-folder">
+<h2><a class="toc-backref" href="#toc-entry-56">Structure of the campaign folder</a></h2>
+<p>The name of the campaign folder will be used by the single player menu. Official campaigns will have their own title in the &quot;ui&quot; folder.
+The folder contains chapter files. It also contains files and folders imitating the structure of the &quot;res&quot; folder: rules.txt, ai.txt, ui...</p>
+<div class="section" id="required-mods-file">
+<h3><a class="toc-backref" href="#toc-entry-57">Required mods file</a></h3>
+<p>New in SoundRTS 1.2 alpha 10.</p>
+<p>A campaign can define which mods it requires. The required mods will be automatically loaded.</p>
+<p>The required mods are defined in a file called &quot;mods.txt&quot;, in the campaign folder:</p>
+<ul class="simple">
+<li>the file is a comma-separated list of mod names;</li>
+<li>if the file doesn't exist, the current mods will be kept;</li>
+<li>if the file is empty, the &quot;vanilla&quot; game will be loaded.</li>
+</ul>
+</div>
+<div class="section" id="chapter-files">
+<h3><a class="toc-backref" href="#toc-entry-58">Chapter files</a></h3>
+<p>Chapter files are text files called &quot;0.txt&quot;, &quot;1.txt&quot;, &quot;2.txt&quot;, etc. When a campaign is started for the first time, only the chapter 0 is available. When a chapter is finished, the next chapter can be run. The number of the higher chapter available is automatically stored in the player's configuration file called campaigns.ini.</p>
+<p>A chapter file describes a mission chapter or a cut scene chapter.</p>
+<p>There must be at least one chapter file, called &quot;0.txt&quot;.</p>
+</div>
+</div>
+<div class="section" id="syntax-of-a-chapter-file">
+<h2><a class="toc-backref" href="#toc-entry-59">Syntax of a chapter file</a></h2>
+<p>A chapter is a mission or a cut scene.</p>
+<div class="section" id="syntax-of-a-mission-chapter-file">
+<h3><a class="toc-backref" href="#toc-entry-60">Syntax of a mission chapter file</a></h3>
+<p>A mission file is not very different from a multiplayer map.
+The advanced map structure is also allowed: in that case, the folder name is the number of the chapter.</p>
+<p>Cooperative campaign (since 1.4.2.2; AoE DE-style since 1.4.4.4+): declare
+<tt class="docutils literal">coop_campaign</tt> / <tt class="docutils literal">coop_intro</tt> / <tt class="docutils literal">coop_missions</tt> in <strong>`campaign.txt`</strong>;
+optional <tt class="docutils literal">hero_min_level 13:2 16:3 …</tt> (cross-chapter hero floor levels; see <tt class="docutils literal">modding.rst</tt>);
+single-player and co-op load the same <tt class="docutils literal">N.txt</tt> mission map (do <strong>not</strong> ship
+<tt class="docutils literal">N.coop.txt</tt>). See <tt class="docutils literal"><span class="pre">docs/en/developer/coop-campaign.md</span></tt> and
+<tt class="docutils literal"><span class="pre">docs/en/player/campaign-and-co-op-improvements.md</span></tt>.</p>
+<p>Co-op missions set <tt class="docutils literal">nb_players_min</tt> / <tt class="docutils literal">nb_players_max</tt> and multiple <tt class="docutils literal">player</tt>
+blocks in <tt class="docutils literal">N.txt</tt>; on a server, any player completing objectives contributes
+to the team. Single-player still registers one human and uses only the first spawn.</p>
+<p>In campaigns, F12 (dynamic alliance) does not select any target. Trigger-script computers are
+announced as &quot;NPC&quot; instead of internal names like <tt class="docutils literal">ai_timers</tt>.</p>
+<div class="section" id="intro">
+<h4><a class="toc-backref" href="#toc-entry-61">Intro</a></h4>
+<p>Note: a number can represent a text message defined in tts.txt (new in SoundRTS 1.2 alpha 9).</p>
+<p>Example: &quot;intro 7500 7501 7502&quot; means: &quot;before the game starts, play 7500.ogg, 7501.ogg and 7502.ogg (or text if defined in tts.txt)&quot;.
+The intro command defines a sequence of sounds and texts that will be played before the game starts. When the player presses a key, the next element in the sequence is played. An intro can be for example a title with music, then a scene with a discussion between characters, then a briefing. After the intro, the game will tell the objectives of the mission.</p>
+</div>
+<div class="section" id="add-objective">
+<h4><a class="toc-backref" href="#toc-entry-62">Add_objective</a></h4>
+<p>&quot;add_objective player1 1 7000&quot; means: &quot;add <strong>primary</strong> objective number 1 with the sound 7000.ogg&quot;</p>
+<p>&quot;add_secondary_objective player1 1 7599&quot; means: &quot;add <strong>optional</strong> objective number 1&quot; (mission
+can be won without completing it). Primary and optional objectives use <strong>independent numbering</strong>
+(both can start at 1; primary 1 and optional 1 can coexist).</p>
+<p>All <strong>primary</strong> objectives must be completed to win. Use <tt class="docutils literal">secondary_objective_complete</tt> to
+mark an optional objective done, or <tt class="docutils literal">objective_abandon</tt> to drop it. If a primary objective
+fails (e.g. an important character dies), the mission is lost.</p>
+</div>
+<div class="section" id="register-objective-action-in-a-trigger">
+<h4><a class="toc-backref" href="#toc-entry-63">Register_objective (action in a trigger)</a></h4>
+<p><tt class="docutils literal">register_objective</tt> registers <strong>primary objective numbers</strong> required for victory <strong>without</strong>
+showing them in the F9 list or playing the &quot;new objective&quot; voice.</p>
+<p>Syntax (inside a trigger action):</p>
+<pre class="literal-block">
+register_objective 1 2 3
+</pre>
+<p><strong>Why use it:</strong> if you chain <tt class="docutils literal">add_objective</tt> across several triggers (reveal goal 2 only
+after goal 1 completes), each <tt class="docutils literal">add_objective</tt> also adds that number to the victory set.
+Completing objective 1 could otherwise trigger <strong>premature victory</strong> when goals 2–N are not
+added yet.</p>
+<p><strong>Progressive reveal pattern</strong> — at <tt class="docutils literal">timer 0</tt>, register all numbers, then show only the first
+objective; on each completion, <tt class="docutils literal">objective_complete</tt> + <tt class="docutils literal">add_objective</tt> for the next:</p>
+<pre class="literal-block">
+trigger player1 (timer 0) (do (register_objective 1 2) (add_objective 1 7510))
+trigger player1 (has 4 pylon) (do (objective_complete 1) (add_objective 2 7511))
+trigger player1 (has_entered f1 gateway) (objective_complete 2)
+</pre>
+<p><strong>Victory logic:</strong> the engine keeps <tt class="docutils literal">_required_objective_numbers</tt> (from <tt class="docutils literal">register_objective</tt>
+and <tt class="docutils literal">add_objective</tt>) and <tt class="docutils literal">_completed_objective_numbers</tt> (from <tt class="docutils literal">objective_complete</tt>).
+Mission victory runs when every required number is completed — independent of whether a goal
+is still visible in F9.</p>
+<p><strong>F9 / voice numbering:</strong> when several primary objectives exist (registered or already shown),
+F9 and <tt class="docutils literal">add_objective</tt> announce <strong>&quot;Primary objective N:&quot;</strong> before the description; with a
+single primary objective the number is omitted. See <tt class="docutils literal">soundrts/objective_announce.py</tt>.</p>
+<p>Examples: <tt class="docutils literal">mods/starcraft/single/sc_build_tests/1.txt</tt> (2 goals); <tt class="docutils literal">sc_late_game/1.txt</tt> (6
+chained goals). Guide: <tt class="docutils literal"><span class="pre">docs/en/progressive-campaign-objectives.md</span></tt>.</p>
+</div>
+<div class="section" id="objective-complete-action-in-a-trigger">
+<h4><a class="toc-backref" href="#toc-entry-64">Objective_complete (action in a trigger)</a></h4>
+<p>This action can only be included in the action part of a trigger.</p>
+<p>&quot;objective_complete 1&quot; means: &quot;<strong>primary</strong> objective 1 is now complete&quot;.</p>
+</div>
+<div class="section" id="secondary-objective-complete-action-in-a-trigger">
+<h4><a class="toc-backref" href="#toc-entry-65">Secondary_objective_complete (action in a trigger)</a></h4>
+<p><tt class="docutils literal">objective_complete 1</tt> only affects primary objectives. To complete an optional objective, use:</p>
+<pre class="literal-block">
+secondary_objective_complete 1
+</pre>
+<p>which means: &quot;<strong>optional</strong> objective 1 is now complete&quot;.</p>
+<p>Trigger example:</p>
+<p>&quot;trigger player1 (has barracks) (objective_complete 2)&quot; means: &quot;add the following trigger for player1: if he has at least 1 barracks then the objective 2 is completed&quot;</p>
+</div>
+<div class="section" id="timer-coefficiency">
+<h4><a class="toc-backref" href="#toc-entry-66">Timer coefficiency</a></h4>
+<p>A timer coefficient can be used to measure time for triggers in a given block.</p>
+<p>For example, if you know that you want all of your triggers to happen in given half a minute blocks, you could set your timer coefficient to 30 like so.</p>
+<p>&quot;timer_coefficient 30&quot;</p>
+<p>Whenever this amount of time elapses, the timer counter will increment (increase by 1). You can then bind triggers to the timer reaching a given number. For example, if you wanted to make reinforcements appear on the map after 90 seconds (3 increments of 30 seconds), you would do the following.</p>
+<p>&quot;trigger player1 (timer 3) (add_units a1 10 footman)&quot; ; after three timer ticks, give the player 10 footman at a1</p>
+</div>
+<div class="section" id="cut-scene-action-in-a-trigger">
+<h4><a class="toc-backref" href="#toc-entry-67">Cut_scene (action in a trigger)</a></h4>
+<p>Note: the distinction between streaming sounds and preloaded sounds have been removed in SoundRTS 1.2. All the sounds are loaded in advance.</p>
+<p>Note: a number can represent a text message defined in tts.txt (new in SoundRTS 1.2 alpha 9).</p>
+<p>A cut scene can be triggered in the middle of a game: when something is discovered, when reinforcements arrive, etc.</p>
+<p>&quot;cut_scene 7500 7501&quot; means: play the cut scene made up of the sounds 7500 and 7501.</p>
+<p>Trigger example:</p>
+<p>&quot;trigger player1 (has_entered d5) (cut_scene 7500)&quot; means: &quot;add the following trigger for player1: if he has entered the square d5, then play the cut scene made up of the sound 7500.ogg&quot;</p>
+<p>Timer and timer_coefficient (condition in a trigger)</p>
+<p>&quot;timer_coefficient 60&quot;</p>
+<p>'trigger player1 (timer 2) (cut_scene 7500)&quot; means: &quot;after 2 minutes (2 x 60 seconds) play the 7500.ogg sound file.&quot;</p>
+</div>
+<div class="section" id="ai-orders">
+<h4><a class="toc-backref" href="#toc-entry-68">AI orders</a></h4>
+<p>It is possible to control the computer's actions in a mission, to add some challenge. You will have to do this by directly making their units take orders at given triggers.</p>
+<p>For example, we can make the AI forces at A1 move to the known player location at A3, who will engage player forces as they encounter them. Here, we will launch an attack with 10 footman on the player.</p>
+<p>&quot;timer_coefficient 60&quot;</p>
+<p>&quot;trigger computer1 (timer 1) (order (a3 10 footman) ((go a1)))&quot;</p>
+<p>The placement of brackets is important here, to encapsulate the right commands in the right parts of this trigger. If for some reason your trigger isn't seeming to work, try double checking your brackets.</p>
+<p>It is also possible to queue up orders for the given units to follow. In this next scenario, lets imagine the player has their base spread over a1 and b1. We would then need to tell the footmen to go to b1 once they've finished with a1. We would do that like so.</p>
+<p>&quot;trigger computer1 (timer 1) (order (a3 10 footman) ((go a1) (go b1)))&quot;</p>
+<p>Finally, if you want the AI units to go into &quot;auto_attack&quot; mode, where they will hunt down any surviving player units after mopping up their base, you can do this as well.</p>
+<p>&quot;trigger computer1 (timer 1) (order (a3 10 footman) ((go a1) (go b1) (auto_attack)))&quot;</p>
+<p>You can use orders to make the computer train up its own units, too, which you can then make the subject of later orders. Here, we will tell the computer barracks to immediately train up another 10 footmen to replace the ones we're about to send to attack the player.</p>
+<p>trigger computer1 (timer 0) (order (a1 barracks) ((train footman) (train footman) (train footman))) ; and so on and so on until you have 10 train footman orders</p>
+<p>Note that each training order has to be separate, you cannot do the following: (train 10 footman)</p>
+<p>This is not the only way to increase the amount of units the computer player has at its disposal, you could also use the add_units order as shown here.</p>
+<p>trigger computer1 (timer 0) (add_units a1 10 footman)</p>
+<p>However, this is immediate and doesn't offer the player any way to influence this event. In the other scenario, the player can stop the computer having its next batch of footmen by destroying the barracks used to train them. This way, these footmen will appear regardless.</p>
+</div>
+</div>
+<div class="section" id="syntax-of-a-cut-scene-chapter-file">
+<h3><a class="toc-backref" href="#toc-entry-69">Syntax of a cut scene chapter file</a></h3>
+<p>Note: the distinction between streaming sounds and preloaded sounds have been removed in SoundRTS 1.2. All the sounds are loaded in advance.</p>
+<p>Note: a number can represent a text message defined in tts.txt (new in SoundRTS 1.2 alpha 9).</p>
+<p>A cut scene chapter is an interruptible sequence of sounds. When the cut scene chapter has been played, the next chapter is unlocked.
+Do not confuse with shorter cut scenes run by a trigger during a mission when a condition is met (discovery of a square for example), or with the mission's introduction (or briefing).</p>
+<p>The cut scene chapters have only 3 lines. For example:
+cut_scene_chapter
+title 7000
+sequence 7500 7501 7502</p>
+<p>The first line is a keyword used to tell the game that this chapter is a cut scene and not a mission.
+The title line is used in the campaign menu.
+The sequence line means: &quot;play the sound 7500.ogg followed by 7501 and 7502; if the player presses a key, skip the current sound and play the next one.&quot;</p>
+</div>
+</div>
+</div>
+<div class="section" id="map-editor-experimental">
+<h1><a class="toc-backref" href="#toc-entry-70">Map editor (experimental)</a></h1>
+<p>The client includes an experimental map editor for multiplayer maps. It only works for the terrain, so you still have to edit manually the map for the units.</p>
+<div class="section" id="launch-the-editor">
+<h2><a class="toc-backref" href="#toc-entry-71">Launch the editor</a></h2>
+<p>Start a game on a map. This map will be the starting point. Enter the console (press the key under escape) and enter the command: &quot;edit&quot;. Press Enter. The editor keyboard bindings will be loaded from res/ui/editor_bindings.txt.</p>
+</div>
+<div class="section" id="select-a-terrain-from-the-palette">
+<h2><a class="toc-backref" href="#toc-entry-72">Select a terrain from the palette</a></h2>
+<p>Press PageUp or PageDown to select a terrain. The meaning of each terrain is stored in res/ui/editor_palette.txt</p>
+</div>
+<div class="section" id="apply-a-terrain-to-a-square">
+<h2><a class="toc-backref" href="#toc-entry-73">Apply a terrain to a square</a></h2>
+<p>Press Enter to apply the terrain to the current square. Neighboring squares with the same characteristics (ground and same height) will be linked automatically by a path. Different squares will have their path removed.</p>
+</div>
+<div class="section" id="toggle-path-to-a-neighbor">
+<h2><a class="toc-backref" href="#toc-entry-74">Toggle path to a neighbor</a></h2>
+<p>Press Control + Shift + arrow to add or remove the path in the corresponding direction.</p>
+</div>
+<div class="section" id="save-map">
+<h2><a class="toc-backref" href="#toc-entry-75">Save map</a></h2>
+<p>Press Control + s to save the map. The file will never overwrite another file. The name of the file will be user/multi/editor0.txt, editor1.txt, editor2.txt, etc.</p>
+</div>
+<div class="section" id="quit-editor">
+<h2><a class="toc-backref" href="#toc-entry-76">Quit editor</a></h2>
+<p>Press F10 and quit the game to leave the editor. An autosave of the map will be done just in case (but don't count on it too much). Its name is user/multi/editor_autosave.txt</p>
+</div>
+<div class="section" id="add-units-1">
+<h2><a class="toc-backref" href="#toc-entry-77">Add units</a></h2>
+<p>Open the file in a text editor. Use commands mentioned in <a class="reference internal" href="#defining-the-starting-resources-of-the-players">Defining the starting resources of the players</a>.</p>
+</div>
+</div>
+</div>
+</body>
+</html>

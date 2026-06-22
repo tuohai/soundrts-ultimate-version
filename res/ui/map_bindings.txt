@@ -1,0 +1,31 @@
+; 地图浏览界面热键
+; 方向移动与方格跳转见 global_bindings.txt（全局可用）
+
+; 以下键在当前方格内循环选择目标（等同 TAB 过滤版，不切换方格）
+; 选矿后可用全局退格/回车让农民开采；选草地后可建造；选通道后可移动或阻塞
+
+; resource1 矿点（如金矿，向东南，含有50黄金）
+f: select_deposit 1 resource1
+r: select_deposit -1 resource1
+; resource2 矿点（如树林，向北，含有50木材）
+g: select_deposit 1 resource2
+t: select_deposit -1 resource2
+; resource3 矿点（如果园，向北，含有90浆果）
+y: select_deposit 1 resource3
+h: select_deposit -1 resource3
+
+; 草地（建造用地）
+m: select_meadow 1
+SHIFT m: select_meadow -1
+
+; 通道与桥梁（通行或阻塞）
+p: select_passage 1
+SHIFT p: select_passage -1
+
+F8: toggle_zoom
+CTRL F8: change_zoom_precision
+SHIFT F8: change_zoom_precision -1
+CTRL SHIFT F8: change_zoom_precision 1
+ALT F8: get_zoom_precision
+
+ESCAPE: exit_overlay_mode

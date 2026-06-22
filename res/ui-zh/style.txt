@@ -1,0 +1,39 @@
+def auto_produce
+title 4650
+index 7.5
+shortcut a
+
+def manual_produce
+title 4651
+index 7.51
+shortcut m
+
+def start_automatic_cultivate
+title 4655
+index 7.52
+shortcut c
+
+def start_manual_cultivate
+title 4656
+index 7.53
+shortcut v
+
+def stop_produce
+title 4375
+index 7.6
+shortcut s
+
+def stop_cultivate
+title 4659
+index 7.65
+shortcut c
+
+def producing
+title 4373
+index 7.7
+
+def plowing
+title 4658
+index 7.8
+
+def auto_explore 

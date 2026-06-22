@@ -1,0 +1,1493 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.21.2: https://docutils.sourceforge.io/" />
+<title>Release notes</title>
+<style type="text/css">
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 9511 2024-01-13 09:50:07Z milde $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+Despite the name, some widely supported CSS2 features are used.
+
+See https://docutils.sourceforge.io/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+.subscript {
+  vertical-align: sub;
+  font-size: smaller }
+
+.superscript {
+  vertical-align: super;
+  font-size: smaller }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+object[type="image/svg+xml"], object[type="application/x-shockwave-flash"] {
+  overflow: hidden;
+}
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title, .code .error {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left, .figure.align-left, object.align-left, table.align-left {
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+img.align-right, .figure.align-right, object.align-right, table.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+img.align-center, .figure.align-center, object.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+table.align-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: inherit }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+.align-top    {
+  vertical-align: top }
+
+.align-middle {
+  vertical-align: middle }
+
+.align-bottom {
+  vertical-align: bottom }
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+pre.literal-block, pre.doctest-block, pre.math, pre.code {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+pre.code .ln { color: gray; } /* line numbers */
+pre.code, code { background-color: #eeeeee }
+pre.code .comment, code .comment { color: #5C6576 }
+pre.code .keyword, code .keyword { color: #3B0D06; font-weight: bold }
+pre.code .literal.string, code .literal.string { color: #0C5404 }
+pre.code .name.builtin, code .name.builtin { color: #352B84 }
+pre.code .deleted, code .deleted { background-color: #DEB0A1}
+pre.code .inserted, code .inserted { background-color: #A3D289}
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic, pre.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+/* "booktabs" style (no vertical lines) */
+table.docutils.booktabs {
+  border: 0px;
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+  border-collapse: collapse;
+}
+table.docutils.booktabs * {
+  border: 0px;
+}
+table.docutils.booktabs th {
+  border-bottom: thin solid;
+  text-align: left;
+}
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+</head>
+<body>
+<div class="document" id="release-notes">
+<h1 class="title">Release notes</h1>
+
+<div class="contents topic" id="contents">
+<p class="topic-title"><a class="reference internal" href="#top">Contents</a></p>
+<ul class="simple">
+<li><a class="reference internal" href="#section-1" id="toc-entry-1">1.4.4.7</a></li>
+<li><a class="reference internal" href="#section-2" id="toc-entry-2">1.4.4.6</a></li>
+<li><a class="reference internal" href="#section-3" id="toc-entry-3">1.4.4.5</a></li>
+<li><a class="reference internal" href="#section-4" id="toc-entry-4">1.4.4.4</a></li>
+<li><a class="reference internal" href="#section-5" id="toc-entry-5">1.4.4.3</a></li>
+<li><a class="reference internal" href="#section-6" id="toc-entry-6">1.4.4.2</a></li>
+<li><a class="reference internal" href="#section-7" id="toc-entry-7">1.4.3.9</a></li>
+<li><a class="reference internal" href="#section-8" id="toc-entry-8">1.4.3.8</a></li>
+<li><a class="reference internal" href="#section-9" id="toc-entry-9">1.4.3.7</a></li>
+<li><a class="reference internal" href="#section-10" id="toc-entry-10">1.4.3.6</a></li>
+<li><a class="reference internal" href="#section-11" id="toc-entry-11">1.4.3.5</a></li>
+<li><a class="reference internal" href="#section-12" id="toc-entry-12">1.4.3.4</a></li>
+<li><a class="reference internal" href="#section-13" id="toc-entry-13">1.4.3.3</a></li>
+<li><a class="reference internal" href="#section-14" id="toc-entry-14">1.4.3.2</a></li>
+<li><a class="reference internal" href="#section-15" id="toc-entry-15">1.4.3.1</a></li>
+<li><a class="reference internal" href="#section-16" id="toc-entry-16">1.4.3.0</a></li>
+<li><a class="reference internal" href="#section-17" id="toc-entry-17">1.4.2.9</a></li>
+<li><a class="reference internal" href="#section-18" id="toc-entry-18">1.4.2.8</a></li>
+<li><a class="reference internal" href="#section-19" id="toc-entry-19">1.4.2.7</a></li>
+<li><a class="reference internal" href="#section-20" id="toc-entry-20">1.4.2.6</a></li>
+<li><a class="reference internal" href="#section-21" id="toc-entry-21">1.4.2.5</a></li>
+<li><a class="reference internal" href="#section-22" id="toc-entry-22">1.4.2.4</a></li>
+<li><a class="reference internal" href="#section-23" id="toc-entry-23">1.4.2.3</a></li>
+<li><a class="reference internal" href="#section-24" id="toc-entry-24">1.4.2.2</a></li>
+<li><a class="reference internal" href="#section-25" id="toc-entry-25">1.4.2.1</a></li>
+<li><a class="reference internal" href="#section-26" id="toc-entry-26">1.4.2.0</a></li>
+<li><a class="reference internal" href="#section-27" id="toc-entry-27">1.4.1.9</a></li>
+<li><a class="reference internal" href="#section-28" id="toc-entry-28">1.4.1.8</a></li>
+<li><a class="reference internal" href="#section-29" id="toc-entry-29">1.4.1.7</a></li>
+<li><a class="reference internal" href="#section-30" id="toc-entry-30">1.4.1.6</a></li>
+<li><a class="reference internal" href="#section-31" id="toc-entry-31">1.4.1.5</a></li>
+<li><a class="reference internal" href="#section-32" id="toc-entry-32">1.4.1.4</a></li>
+<li><a class="reference internal" href="#section-33" id="toc-entry-33">1.4.1.3</a></li>
+<li><a class="reference internal" href="#section-34" id="toc-entry-34">1.4.1.2</a></li>
+<li><a class="reference internal" href="#section-35" id="toc-entry-35">1.4.1.1</a></li>
+<li><a class="reference internal" href="#section-36" id="toc-entry-36">1.4.1</a></li>
+<li><a class="reference internal" href="#section-37" id="toc-entry-37">1.4.0.9</a></li>
+<li><a class="reference internal" href="#section-38" id="toc-entry-38">1.4.0.8</a></li>
+<li><a class="reference internal" href="#section-39" id="toc-entry-39">1.4.0.7</a></li>
+<li><a class="reference internal" href="#section-40" id="toc-entry-40">1.4.0.6</a></li>
+<li><a class="reference internal" href="#section-41" id="toc-entry-41">1.4.0.5</a></li>
+<li><a class="reference internal" href="#section-42" id="toc-entry-42">1.4.0.4</a></li>
+<li><a class="reference internal" href="#section-43" id="toc-entry-43">1.4.0.3</a></li>
+<li><a class="reference internal" href="#section-44" id="toc-entry-44">1.4.0.2</a></li>
+<li><a class="reference internal" href="#section-45" id="toc-entry-45">1.4.0.1</a></li>
+<li><a class="reference internal" href="#section-46" id="toc-entry-46">1.4</a></li>
+<li><a class="reference internal" href="#section-47" id="toc-entry-47">1.3.9.8</a></li>
+<li><a class="reference internal" href="#section-48" id="toc-entry-48">1.3.9.7</a></li>
+<li><a class="reference internal" href="#section-49" id="toc-entry-49">1.3.9.6</a></li>
+<li><a class="reference internal" href="#section-50" id="toc-entry-50">1.3.9.5</a></li>
+<li><a class="reference internal" href="#section-51" id="toc-entry-51">1.3.9.3</a></li>
+<li><a class="reference internal" href="#section-52" id="toc-entry-52">1.3.9.2</a></li>
+<li><a class="reference internal" href="#section-53" id="toc-entry-53">1.3.9.1</a></li>
+<li><a class="reference internal" href="#section-54" id="toc-entry-54">1.3.9.0</a></li>
+<li><a class="reference internal" href="#section-55" id="toc-entry-55">1.3.8.8</a></li>
+<li><a class="reference internal" href="#section-56" id="toc-entry-56">1.3.8.7</a></li>
+<li><a class="reference internal" href="#section-57" id="toc-entry-57">1.3.8.5</a></li>
+<li><a class="reference internal" href="#section-58" id="toc-entry-58">1.3.8.4</a></li>
+<li><a class="reference internal" href="#section-59" id="toc-entry-59">1.3.8.3</a></li>
+<li><a class="reference internal" href="#section-60" id="toc-entry-60">1.3.8.2</a></li>
+<li><a class="reference internal" href="#section-61" id="toc-entry-61">1.3.8.1</a></li>
+<li><a class="reference internal" href="#section-62" id="toc-entry-62">1.3.8</a></li>
+<li><a class="reference internal" href="#section-63" id="toc-entry-63">1.3.7</a></li>
+<li><a class="reference internal" href="#section-64" id="toc-entry-64">1.3.6</a></li>
+<li><a class="reference internal" href="#section-65" id="toc-entry-65">1.3.5</a></li>
+<li><a class="reference internal" href="#section-66" id="toc-entry-66">1.3.4</a></li>
+<li><a class="reference internal" href="#section-67" id="toc-entry-67">1.3.3</a></li>
+<li><a class="reference internal" href="#section-68" id="toc-entry-68">1.3.2</a></li>
+<li><a class="reference internal" href="#section-69" id="toc-entry-69">1.3.1</a></li>
+<li><a class="reference internal" href="#section-70" id="toc-entry-70">1.3.0</a></li>
+</ul>
+</div>
+<div class="section" id="section-1">
+<h1><a class="toc-backref" href="#toc-entry-1">1.4.4.7</a></h1>
+<p>Hero XP threshold formulas (<tt class="docutils literal">xp_threshold_growth</tt>) and post-level-up XP reset (<tt class="docutils literal">level_up_reset_xp</tt>):</p>
+<p><strong>Hero XP threshold formulas (``xp_threshold_growth``)</strong></p>
+<ul class="simple">
+<li>Hero defs can set <tt class="docutils literal">max_level</tt> + <tt class="docutils literal">xp_threshold_growth</tt>; <tt class="docutils literal">rules.txt</tt> load auto-fills <tt class="docutils literal">xp_thresholds</tt> so modders need not list dozens or hundreds of cumulative XP values by hand.</li>
+<li>Curve types: <tt class="docutils literal">linear</tt>, <tt class="docutils literal">quadratic</tt>, <tt class="docutils literal">polynomial</tt>, <tt class="docutils literal">geometric</tt> (see <strong>Heroes</strong> in <tt class="docutils literal">modding.rst</tt>).</li>
+<li>Backward compatible with explicit <tt class="docutils literal">xp_thresholds</tt> (explicit list wins). Child defs can <tt class="docutils literal">is_a</tt> inherit <tt class="docutils literal">xp_threshold_growth</tt> and override only <tt class="docutils literal">max_level</tt>.</li>
+<li>Implementation: <tt class="docutils literal">soundrts/xp_threshold_growth.py</tt>, <tt class="docutils literal">soundrts/definitions.py</tt>; tests: <tt class="docutils literal">test_xp_threshold_growth.py</tt>.</li>
+</ul>
+<p><strong>Post-level-up XP reset (``level_up_reset_xp``)</strong></p>
+<ul class="simple">
+<li>Optional <tt class="docutils literal">level_up_reset_xp 1</tt> on hero defs: current XP becomes 0 after each combat level-up; default <tt class="docutils literal">0</tt> keeps cumulative XP.</li>
+<li>When <tt class="docutils literal">1</tt>, prefer <strong>per-level</strong> <tt class="docutils literal">xp_thresholds</tt>, not cumulative totals.</li>
+<li>Implementation: <tt class="docutils literal">soundrts/worldunit/world_status_update.py</tt>; tests: <tt class="docutils literal">test_level_up_combat_stats.py</tt>.</li>
+</ul>
+<p>Release notes: <tt class="docutils literal"><span class="pre">docs/en/player/release-1.4.4.7.md</span></tt></p>
+</div>
+<div class="section" id="section-2">
+<h1><a class="toc-backref" href="#toc-entry-2">1.4.4.6</a></h1>
+<p>Mod sound naming cleanup, unified skill system, generic skill effects, skill target filters and -tag exclusions, level-up stat scaling, level skill unlocks, campaign hero carryover, backpack item use sounds, custom ready/prep sounds, backpack/equipment hotkey toggle, hero starting level and level-0 XP display:</p>
+<p><strong>Attack sound key rename</strong></p>
+<ul class="simple">
+<li><tt class="docutils literal">ui/style.txt</tt> attack sounds now prefer <tt class="docutils literal">mdg</tt> / <tt class="docutils literal">rdg</tt> keys:
+<tt class="docutils literal">launch_mdg</tt> / <tt class="docutils literal">launch_rdg</tt>, <tt class="docutils literal">mdg_hit</tt> / <tt class="docutils literal">rdg_hit</tt>,
+<tt class="docutils literal">mdg_hit_vs</tt> / <tt class="docutils literal">rdg_hit_vs</tt>, <tt class="docutils literal">mdg_missed</tt> / <tt class="docutils literal">rdg_missed</tt>,
+and <tt class="docutils literal">mdg_dodge</tt> / <tt class="docutils literal">rdg_dodge</tt>.</li>
+<li>Charge sounds use <tt class="docutils literal">launch_charge_mdg</tt> / <tt class="docutils literal">launch_charge_rdg</tt> and
+<tt class="docutils literal">charge_mdg_hit</tt> / <tt class="docutils literal">charge_rdg_hit</tt>.</li>
+<li>Bundled <tt class="docutils literal">style.txt</tt> files have been migrated; old <tt class="docutils literal">matk</tt> / <tt class="docutils literal">ratk</tt> keys remain compatible as fallback.</li>
+</ul>
+<p><strong>Custom ready sounds</strong></p>
+<ul class="simple">
+<li>Skills with <tt class="docutils literal">ready &lt;seconds&gt;</tt> can define <tt class="docutils literal">ready &lt;sound&gt;</tt> on the skill style; manual and automatic triggers play it when prep starts.</li>
+<li>Normal attack prep can play unit style <tt class="docutils literal">mdg_ready</tt> / <tt class="docutils literal">rdg_ready</tt> sounds.</li>
+</ul>
+<p><strong>Unified skill system</strong></p>
+<ul class="simple">
+<li>One <tt class="docutils literal">class skill</tt> can be both <strong>manually used</strong> and <strong>auto-triggered</strong>; no separate twin lists required.</li>
+<li>Skill fields: <tt class="docutils literal">auto_trigger 1</tt>, <tt class="docutils literal">manual_use 1</tt> (default 1), <tt class="docutils literal">trigger_timing</tt>.</li>
+<li><tt class="docutils literal">trigger_timing</tt>: <tt class="docutils literal">on_hit</tt> | <tt class="docutils literal">on_attack</tt> | <tt class="docutils literal">on_attack_replace</tt> | <tt class="docutils literal">on_damaged</tt>.</li>
+<li>Learned skills live in <tt class="docutils literal">can_use_skill</tt>; the command menu shows only <tt class="docutils literal">manual_use 1</tt> skills.</li>
+<li><strong>Legacy lists still work</strong>: <tt class="docutils literal">active_trigger_skills</tt>, <tt class="docutils literal">attack_trigger_skills</tt>,
+<tt class="docutils literal">attack_replace_skills</tt>,   <tt class="docutils literal">passive_trigger_skills</tt> remain compatible alongside the new fields.</li>
+</ul>
+<p><strong>Generic skill effects</strong></p>
+<ul class="simple">
+<li>Fixed damage <tt class="docutils literal">harm_target N</tt> / <tt class="docutils literal">harm_area N R</tt>; combat damage <tt class="docutils literal">harm_target mdg</tt> / <tt class="docutils literal">harm_area mdg R</tt> (full pipeline).</li>
+<li>Combos <tt class="docutils literal">burst mdg N (interval X)</tt> or <tt class="docutils literal">(delays …)</tt>; knockback <tt class="docutils literal">push</tt>; <tt class="docutils literal">buffs</tt> / <tt class="docutils literal">debuffs</tt>; <tt class="docutils literal">deploy</tt>; <tt class="docutils literal">summon</tt>.</li>
+<li>Legacy <tt class="docutils literal">teleportation</tt> / <tt class="docutils literal">recall</tt> / <tt class="docutils literal">conversion</tt> / <tt class="docutils literal">raise_dead</tt> / <tt class="docutils literal">resurrection</tt> still work.</li>
+<li>Trigger rates, HP conditions, attack-start buff/debuff lists remain compatible; see <tt class="docutils literal">GENERIC_SKILL_SYSTEM.md</tt>.</li>
+</ul>
+<p><strong>Target type filters and exclusions (``-tag``)</strong></p>
+<ul class="simple">
+<li><tt class="docutils literal">class skill</tt> supports <tt class="docutils literal">harm_target_type</tt> on <tt class="docutils literal">burst</tt> / <tt class="docutils literal">harm_target</tt> / <tt class="docutils literal">harm_area</tt> / <tt class="docutils literal">push</tt>; default <strong>enemies only</strong> when unset.</li>
+<li>Prefix <tt class="docutils literal">-</tt> excludes a tag (e.g. <tt class="docutils literal"><span class="pre">-building</span></tt>). Applies to <tt class="docutils literal">harm_target_type</tt>, <tt class="docutils literal">heal_target_type</tt>, <tt class="docutils literal">mdg_targets</tt> / <tt class="docutils literal">rdg_targets</tt>, buff/debuff <tt class="docutils literal">target_type</tt>.</li>
+<li>Diplomacy exclusions: <tt class="docutils literal"><span class="pre">-enemy</span></tt>, <tt class="docutils literal"><span class="pre">-allied</span></tt>, <tt class="docutils literal"><span class="pre">-neutral</span></tt>.</li>
+<li>Examples: <tt class="docutils literal">harm_target_type enemy unit <span class="pre">-building</span></tt>; <tt class="docutils literal">heal_target_type unit <span class="pre">-undead</span></tt>; <tt class="docutils literal">mdg_targets <span class="pre">-building</span></tt>.</li>
+</ul>
+<p><strong>Level-up stat bonuses (``*_per_level``)</strong></p>
+<ul class="simple">
+<li>Units can set <tt class="docutils literal">&lt;stat&gt;_per_level</tt> in <tt class="docutils literal">rules.txt</tt> for most combat, life, mana, heal/harm, and regen stats; each level up adds one step.</li>
+<li>Examples: <tt class="docutils literal">hp_max_per_level</tt>, <tt class="docutils literal">mdg_per_level</tt>, <tt class="docutils literal">charge_mdg_per_level</tt>, <tt class="docutils literal">mdg_crit_rate_per_level</tt>, <tt class="docutils literal">mana_max_per_level</tt>, <tt class="docutils literal">heal_cd_per_level</tt>, etc.</li>
+<li>Campaign hero restore reapplies cumulative bonuses up to the saved level.</li>
+</ul>
+<p><strong>Hero starting level and status display</strong></p>
+<ul class="simple">
+<li><tt class="docutils literal">level</tt> / <tt class="docutils literal">xp</tt> on hero defs in <tt class="docutils literal">rules.txt</tt> (requires <tt class="docutils literal">xp_thresholds</tt>); <tt class="docutils literal">level &gt; 1</tt> applies cumulative <tt class="docutils literal">*_per_level</tt> on spawn.</li>
+<li><tt class="docutils literal">level 0</tt>: start below level 1; Tab status shows level 0 and XP toward <tt class="docutils literal">xp_thresholds[0]</tt>.</li>
+<li>Heroes with <tt class="docutils literal">xp_thresholds</tt> always announce level in Tab status (including 0 and 1).</li>
+</ul>
+<p><strong>Full heal on level up (``level_up_heal_full``)</strong></p>
+<ul class="simple">
+<li>Optional <tt class="docutils literal">level_up_heal_full 1</tt> on hero defs: restore full HP and mana on each level up; default <tt class="docutils literal">0</tt> keeps incremental HP/mana gain only.</li>
+</ul>
+<p><strong>Level skill unlocks and skill books</strong></p>
+<ul class="simple">
+<li>Unit <tt class="docutils literal">level_skills &lt;level&gt; &lt;skill&gt; …</tt>: auto-add to <tt class="docutils literal">can_use_skill</tt> when that level is reached (with voice notify).</li>
+<li>Unit <tt class="docutils literal">learn_level_skills</tt>: extra book-learning level gate (strictest with item <tt class="docutils literal">learn_level</tt>).</li>
+<li>Skill books: permanent learn via backpack <tt class="docutils literal">use_item</tt>; pickup does not grant when gated.</li>
+<li>Do not duplicate the same skill on <tt class="docutils literal">level_skills</tt> and a book.</li>
+</ul>
+<p><strong>Campaign hero carryover</strong></p>
+<ul class="simple">
+<li>Hero defs: <tt class="docutils literal">campaign_carryover 1</tt> (optional <tt class="docutils literal">campaign_carryover_stats</tt>, <tt class="docutils literal">campaign_carryover_inventory</tt>, <tt class="docutils literal">campaign_carryover_id</tt>).</li>
+<li>On <strong>victory</strong>, level/XP and backpack saved to <tt class="docutils literal">user/campaigns.ini</tt>; next chapter restores; <strong>co-op</strong> does not persist.</li>
+<li>Optional <tt class="docutils literal">hero_min_level 13:2 …</tt> in <tt class="docutils literal">campaign.txt</tt> for per-chapter level floors.</li>
+</ul>
+<p><strong>Backpack item use sounds (style.txt)</strong></p>
+<ul class="simple">
+<li>Same three-level lookup as pickup/drop: item <tt class="docutils literal">use</tt> / <tt class="docutils literal">on_use</tt> → unit <tt class="docutils literal">use_&lt;item type&gt;</tt> → global <tt class="docutils literal">item_used</tt> (<tt class="docutils literal">def thing</tt>).</li>
+<li>Sounds play only after server-confirmed success; no optimistic &quot;used&quot; voice on Enter.</li>
+<li>Skill books: use sound + skill title + <tt class="docutils literal">skill_learned</tt>; other consumables: item title + &quot;used&quot;.</li>
+<li>Consumables are removed from inventory on success; skill-book <tt class="docutils literal">unequip</tt> no longer strips permanently learned skills.</li>
+</ul>
+<p><strong>Backpack / equipment hotkeys</strong></p>
+<ul class="simple">
+<li><strong>Shift+V</strong> cycles between backpack and equipment (classic and layered); <strong>Ctrl+V</strong> removed; layered <strong>F3</strong> still works.</li>
+</ul>
+<p>Docs: <tt class="docutils literal">doc_src/src/zh/modding.rst</tt>, <tt class="docutils literal">doc_src/src/en/modding.rst</tt>, <tt class="docutils literal">GENERIC_SKILL_SYSTEM.md</tt>, <tt class="docutils literal"><span class="pre">docs/en/developer/campaign-hero-carryover.md</span></tt>
+Tests: <tt class="docutils literal">test_level_skills.py</tt>, <tt class="docutils literal">test_level_up_combat_stats.py</tt>, <tt class="docutils literal">test_campaign_hero.py</tt>, <tt class="docutils literal">test_wuxia_skills.py</tt>, <tt class="docutils literal">test_worldskill_deploy.py</tt>, <tt class="docutils literal">test_target_type_exclusions.py</tt>, <tt class="docutils literal">test_hit_vs_buff_sounds.py</tt>, <tt class="docutils literal">test_damage_seq_burst.py</tt>,
+<tt class="docutils literal">test_changelog_138x.py</tt>, <tt class="docutils literal">test_skill_trigger_sounds.py</tt>, <tt class="docutils literal">test_inventory_backpack.py</tt></p>
+<p>Release notes: <tt class="docutils literal"><span class="pre">docs/en/player/release-1.4.4.6.md</span></tt></p>
+</div>
+<div class="section" id="section-3">
+<h1><a class="toc-backref" href="#toc-entry-3">1.4.4.5</a></h1>
+<p>Random map HoMM/Civ5-style gameplay, default capture order, AI amphibious ops, Ctrl+Shift+F4 scoring fix, hotkey mapping editor:</p>
+<p><strong>Random map: HoMM / Civ5-inspired</strong></p>
+<ul class="simple">
+<li>victory mode menu: conquest / economic / exploration / survival (TTS 5425–5430)</li>
+<li>map POI: <strong>ancient ruins</strong>, <strong>capturable barracks</strong>, central creeps, optional treasure</li>
+<li>share codes: 11th victory field; <tt class="docutils literal">res/rules.txt</tt>: <tt class="docutils literal">ancient_ruin</tt>, <tt class="docutils literal">captured_barracks</tt></li>
+<li>docs: <tt class="docutils literal">docs/zh/player/英雄无敌与文明5玩法说明.md</tt>; <tt class="docutils literal">randommap.rst</tt></li>
+<li>tests: <tt class="docutils literal">test_randommap.py</tt></li>
+</ul>
+<p><strong>Default capture order (can_capture)</strong></p>
+<ul class="simple">
+<li><tt class="docutils literal">capture_hp_threshold 100</tt>: <tt class="docutils literal">can_capture 1</tt> → default <strong>occupy</strong>; <tt class="docutils literal">can_capture 0</tt> → attack/move only</li>
+<li>thresholds <strong>below 100</strong> still require combat to capture threshold</li>
+<li>docs: <tt class="docutils literal">doc_src/src/en/modding.rst</tt>; players <tt class="docutils literal"><span class="pre">docs/en/player/unit-default-behavior.md</span></tt> §4</li>
+<li>tests: <tt class="docutils literal">test_capture_default_order.py</tt></li>
+</ul>
+<p><strong>AI cross-water operations</strong></p>
+<ul class="simple">
+<li>amphibious gathering, transport assaults, naval upkeep on water maps</li>
+<li>tests: <tt class="docutils literal">test_worldplayercomputer_water.py</tt>, <tt class="docutils literal">test_ai_naval_m3.py</tt></li>
+</ul>
+<p><strong>Train: scale batch to remaining population</strong></p>
+<ul class="simple">
+<li>insufficient pop headroom when batch training → train <strong>as many as fit</strong> (e.g. 5 requested, 3 pop → 3 trained); zero headroom still fails</li>
+<li><tt class="docutils literal">worldorders/production.py</tt> (<tt class="docutils literal">TrainOrder._max_train_count_for_population</tt>)</li>
+<li>tests: <tt class="docutils literal">test_train_population.py</tt></li>
+</ul>
+<p><strong>Fix: Ctrl+Shift+F4 view switch vs scoring</strong></p>
+<ul class="simple">
+<li>pin scoring human; no AI/passive victory rewards after switch; baseline of defeated scoring enemies at first switch</li>
+<li>tests: <tt class="docutils literal">test_change_player_scoring.py</tt></li>
+</ul>
+<p><strong>Hotkey mapping editor</strong></p>
+<ul class="simple">
+<li><strong>Options → Key mapping</strong> (sibling of Hotkey scheme); <tt class="docutils literal">hotkey_remapping_menu.py</tt>, <tt class="docutils literal">hotkey_editor.py</tt>, <tt class="docutils literal">hotkey_catalogs.py</tt></li>
+<li>layered 8 layers + classic ~179 bindings; per-mod <tt class="docutils literal"><span class="pre">user/hotkey_overrides/{mod_key}.json</span></tt>; effective next game start</li>
+<li>search, advanced variants, alias keys (<tt class="docutils literal">binding_id&#64;default_key</tt>), clipboard import/export</li>
+<li>catalog TTS 5500–5684; classic advanced variants complete; control-group label fixes</li>
+<li>labels: Alt+Space → <strong>first-person mode</strong>; Ctrl+F2 → <strong>display toggle</strong></li>
+<li>docs: <tt class="docutils literal"><span class="pre">docs/en/developer/hotkey-mapping-editor.md</span></tt>, <tt class="docutils literal"><span class="pre">docs/en/player/layered-hotkeys.md</span></tt></li>
+<li>tests: <tt class="docutils literal"><span class="pre">test_hotkey_editor*.py</span></tt>, <tt class="docutils literal">test_hotkey_catalog_tts.py</tt>, <tt class="docutils literal">test_hotkey_editor_mod_isolation.py</tt></li>
+</ul>
+<p>Release notes: <tt class="docutils literal"><span class="pre">docs/en/player/release-1.4.4.5.md</span></tt></p>
+</div>
+<div class="section" id="section-4">
+<h1><a class="toc-backref" href="#toc-entry-4">1.4.4.4</a></h1>
+<p>Delayed loadout cards, scoring &amp; grades, per-faction achievements, meta progress, CrazyMod, UX fixes:</p>
+<p><strong>Delayed pre-mission cards</strong></p>
+<ul class="simple">
+<li><tt class="docutils literal">cards.txt</tt>: <tt class="docutils literal">delay &lt;seconds&gt;</tt>, <tt class="docutils literal">delay_minutes &lt;n&gt;</tt> — schedule effects after in-game time (<tt class="docutils literal">world.schedule_after</tt>, respects <tt class="docutils literal">timer_coefficient</tt>)</li>
+<li><tt class="docutils literal">tech &lt;upgrade_id&gt;</tt> on cards; combinable with <tt class="docutils literal">spawn</tt> / <tt class="docutils literal">resource</tt> under one shared delay</li>
+<li>voice at apply: effects after N minutes/seconds; at fire: loadout card effect triggered (TTS 5387–5393)</li>
+<li>vanilla: <tt class="docutils literal">card_reinforcements_delayed</tt> (3 footman after 10 min), <tt class="docutils literal">card_delayed_melee_weapon</tt> (<tt class="docutils literal">melee_weapon</tt> after 8 min)</li>
+<li>achievements: <tt class="docutils literal">reinforcement_contract</tt> → delayed reinforcements; <tt class="docutils literal">defeat_expert</tt> → delayed melee weapon card</li>
+<li>docs: <tt class="docutils literal"><span class="pre">docs/en/developer/delayed-card-loadout.md</span></tt> (players: <tt class="docutils literal"><span class="pre">docs/en/player/loadout-cards.md</span></tt>)</li>
+<li>tests: <tt class="docutils literal">test_cards.py</tt>, <tt class="docutils literal">test_card_loadout.py</tt> (<tt class="docutils literal"><span class="pre">-k</span> delay</tt> / <tt class="docutils literal"><span class="pre">-k</span> delayed</tt>)</li>
+</ul>
+<p><strong>Post-game score &amp; letter grades</strong></p>
+<ul class="simple">
+<li>docs: <tt class="docutils literal"><span class="pre">docs/en/developer/score-grading-system.md</span></tt> (players: <tt class="docutils literal"><span class="pre">docs/en/player/score-and-grades.md</span></tt>)</li>
+<li>base seven dimensions cap at 800; AI defeat bonus is extra and <strong>excluded</strong> from the percent denominator</li>
+<li><strong>defeat grade capped at D</strong> (<tt class="docutils literal">grade_total</tt> max 479)</li>
+<li>win + utilization &lt; 50%: <strong>frugal efficiency</strong> dimension (TTS 5251)</li>
+<li>mining on maps without deposit capacity: proportional to reference gather (1000 = 100 pts); campaign no-deposit maps unchanged</li>
+<li>survival 0 if no units produced; building loss/demolition <strong>5 pts per building</strong> (was 10)</li>
+<li>removed unused legacy score helpers from <tt class="docutils literal">worldplayerbase/resources.py</tt></li>
+<li>tests: <tt class="docutils literal">test_score_breakdown.py</tt></li>
+</ul>
+<p><strong>Achievements &amp; rank data</strong></p>
+<ul class="simple">
+<li>Lieutenant (<tt class="docutils literal">rank_lieutenant</tt>): <strong>200</strong> medals, 1 loadout slot</li>
+<li><tt class="docutils literal">defeat_beginner</tt> repeat medal <strong>8</strong>; <tt class="docutils literal">perfect_survival</tt> requires survival ≥90 and building defense ≥90</li>
+</ul>
+<p><strong>Fixes</strong></p>
+<ul class="simple">
+<li>worker <tt class="docutils literal">can_gather all</tt>: attribute UI no longer duplicates “all” when deposit and building lists are both <tt class="docutils literal">all</tt></li>
+<li>tests: <tt class="docutils literal">conftest</tt> restores <tt class="docutils literal">res.mods</tt> after mod-switching tests</li>
+<li>loadout / random-faction UX; NPC defeat broadcast gated by <tt class="docutils literal">broadcasts_defeat_and_quit</tt></li>
+</ul>
+<p><strong>Per-faction &amp; meta progress</strong></p>
+<ul class="simple">
+<li><tt class="docutils literal">achievements_per_faction 1</tt>, <tt class="docutils literal">_meta.json</tt>, <tt class="docutils literal">scope meta</tt>; campaign excluded</li>
+</ul>
+<p><strong>CrazyMod 9</strong></p>
+<ul class="simple">
+<li>per-faction milestones, meta tiers, balance tweaks</li>
+</ul>
+<p><strong>Documentation (player / developer)</strong></p>
+<ul class="simple">
+<li>Index: <tt class="docutils literal">docs/README.md</tt>, <tt class="docutils literal">docs/en/player/README.md</tt>, <tt class="docutils literal">docs/en/developer/README.md</tt></li>
+</ul>
+<p><strong>Campaign hero carryover (rules-driven)</strong></p>
+<ul class="simple">
+<li><tt class="docutils literal">rules.txt</tt>: <tt class="docutils literal">campaign_carryover 1</tt> (optional <tt class="docutils literal">campaign_carryover_id</tt>, <tt class="docutils literal">campaign_carryover_stats</tt>, <tt class="docutils literal">campaign_carryover_inventory</tt>)</li>
+<li><tt class="docutils literal">campaign.txt</tt>: <tt class="docutils literal">hero_min_level 13:2 …</tt> for chapter floor levels</li>
+<li>saved on <strong>victory</strong> to <tt class="docutils literal">user/campaigns.ini</tt> (<tt class="docutils literal">hero_&lt;id&gt;_xp</tt> / <tt class="docutils literal">_level</tt> / <tt class="docutils literal">_inventory</tt>); restored next chapter; <strong>co-op</strong> does not persist</li>
+<li>independent of <tt class="docutils literal">campaign_flag</tt> / <tt class="docutils literal">add_inventory_item</tt>; see <tt class="docutils literal">modding.rst</tt>, <tt class="docutils literal">mapmaking.rst</tt>, <tt class="docutils literal"><span class="pre">docs/en/developer/campaign-hero-carryover.md</span></tt></li>
+<li>implementation: <tt class="docutils literal">soundrts/campaign_hero.py</tt>; tests: <tt class="docutils literal">test_campaign_hero.py</tt></li>
+</ul>
+<p><strong>Fixes &amp; voice</strong></p>
+<ul class="simple">
+<li>lanes maps: <tt class="docutils literal">has_entered</tt> with 1-based coords (e.g. <tt class="docutils literal">8,2</tt>) no longer collides with 0-based grid keys; ruin triggers work</li>
+<li>text inputs (share code, seed, etc.): <strong>Ctrl+V</strong> paste via pygame-ce clipboard API</li>
+<li>HoMM/Civ5 and campaign side-quest TTS moved from 5107–5123 to <strong>5425–5441</strong> to avoid ID conflicts</li>
+</ul>
+<p>Release notes: <tt class="docutils literal"><span class="pre">docs/en/player/release-1.4.4.4.md</span></tt></p>
+</div>
+<div class="section" id="section-5">
+<h1><a class="toc-backref" href="#toc-entry-5">1.4.4.3</a></h1>
+<p>Achievements and armory (phases 2–3: medals, ranks, cards, pre-mission loadout):</p>
+<ul class="simple">
+<li>new main-menu <strong>Achievements</strong> entry: achievement list + <strong>armory</strong> (rank, honors, medal total, card charges)</li>
+<li>after skirmish / random-map vs computer, <tt class="docutils literal">achievements.txt</tt> unlocks are evaluated; voice for unlocks, medals, cards, rank promotion, and extra loadout slots</li>
+<li>progress is saved <strong>per mod</strong>: <tt class="docutils literal"><span class="pre">user/achievements/&lt;mod&gt;.json</span></tt></li>
+<li><strong>pre-mission card loadout</strong>: Single player → Start on map → <strong>Start</strong>, then pick up to N cards by rank (Lieutenant = 1 slot, Captain = 2, … in <tt class="docutils literal">titles.txt</tt>); <strong>TrainingGame only</strong> (custom or random map vs AI — <strong>not</strong> campaign or multiplayer)</li>
+<li>effects apply at game start: bonus resources and/or units near your start; one charge spent per card used</li>
+<li><strong>card spawns do not use population</strong>; random faction spawns use faction equivalents</li>
+<li><strong>fix:</strong> loadout cards were not applied because the local player was only detected after <tt class="docutils literal">GameInterface</tt> existed; now applied after map load, before the interface opens</li>
+<li>armory: browsing a card speaks its effect (start bonus, spawns, required rank if locked)</li>
+<li><strong>repeat completion:</strong> meeting an already-unlocked achievement again grants <tt class="docutils literal">repeat_medal &lt;n&gt;</tt> medals only (no card, honor, or unlock voice); medals still advance rank</li>
+<li><strong>mod opt-out:</strong> <tt class="docutils literal">achievements_enabled 0</tt> in <tt class="docutils literal">rules.txt</tt> hides the menu entry and skips loadout / post-game processing</li>
+<li><strong>AI ``starting_units`` bonuses in ``ai.txt`` do not consume population</strong> (map starts still do); <tt class="docutils literal">starting_population</tt> is unchanged</li>
+<li>data: <tt class="docutils literal">res/achievements.txt</tt>, <tt class="docutils literal">res/cards.txt</tt>, <tt class="docutils literal">res/titles.txt</tt>; TTS ids 5244–5367, etc.</li>
+<li>docs: <tt class="docutils literal"><span class="pre">docs/en/achievement-system.md</span></tt> (<tt class="docutils literal"><span class="pre">docs/zh/achievement-system.md</span></tt>)</li>
+<li>tests: <tt class="docutils literal">test_achievements.py</tt>, <tt class="docutils literal">test_cards.py</tt>, <tt class="docutils literal">test_titles.py</tt>, <tt class="docutils literal">test_card_loadout.py</tt></li>
+</ul>
+</div>
+<div class="section" id="section-6">
+<h1><a class="toc-backref" href="#toc-entry-6">1.4.4.2</a></h1>
+<p>AI counter targeting (<tt class="docutils literal">counter_skill</tt> in <tt class="docutils literal">ai.txt</tt>):</p>
+<ul class="simple">
+<li>computer units use <tt class="docutils literal">mdg_vs</tt> / <tt class="docutils literal">rdg_vs</tt> (and <tt class="docutils literal">is_a</tt> inheritance) when picking targets and sending attacks</li>
+<li>new <tt class="docutils literal">counter_skill <span class="pre">&lt;0-100&gt;</span></tt> script command: <tt class="docutils literal">0</tt> = ignore counters (<tt class="docutils literal">menace</tt> only), <tt class="docutils literal">100</tt> = always pick the best counter; values in between blend both</li>
+<li>vanilla tiers in <tt class="docutils literal">res/ai.txt</tt>: beginner <tt class="docutils literal">25</tt>, intermediate <tt class="docutils literal">50</tt>, advanced <tt class="docutils literal">75</tt>, expert <tt class="docutils literal">90</tt>, nightmare <tt class="docutils literal">100</tt>; omitted in a mod script defaults to <tt class="docutils literal">100</tt></li>
+<li>new <tt class="docutils literal">starting_resources</tt> / <tt class="docutils literal">starting_units</tt> in <tt class="docutils literal">ai.txt</tt>: bonus resources and units <strong>added on top of</strong> the map start for invited computers (same syntax as map commands; applied once at game start, not in the script loop)</li>
+<li>new <tt class="docutils literal">starting_population</tt> in <tt class="docutils literal">ai.txt</tt> and maps: bonus population cap (plain integer, not ×1000) added on top of houses/units; still capped by <tt class="docutils literal">global_population_limit</tt></li>
+<li>vanilla bonus starts: intermediate +50/+50 resources; advanced +100/+100 and 2 footman 2 archer; expert +200/+200 and 5/4/2 army; nightmare +400/+400 and 8/6/4 army</li>
+<li>docs: <tt class="docutils literal">doc_src/src/en/aimaking.rst</tt>, <tt class="docutils literal">doc_src/src/zh/aimaking.rst</tt></li>
+<li>tests: <tt class="docutils literal">test_ai_counter_targeting.py</tt>, <tt class="docutils literal">test_ai_loader_and_menu.py</tt>, <tt class="docutils literal">test_ai_start_settings.py</tt></li>
+</ul>
+</div>
+<div class="section" id="section-7">
+<h1><a class="toc-backref" href="#toc-entry-7">1.4.3.9</a></h1>
+<p>Layered interface hotkeys (global base + per-mode layer):</p>
+<ul class="simple">
+<li>single <tt class="docutils literal">bindings.txt</tt> split into <tt class="docutils literal">global_bindings.txt</tt> and seven mode files (unit/building/command/skill/help/map/diplomacy); load order: global → current mode → <tt class="docutils literal">cfg/bindings.txt</tt> → mod append</li>
+<li>F-key switching: F1 unit↔building, F2 command↔skill, F3 inventory↔equipment, F4 help &amp; query, F12 diplomacy, ESC enter/exit map browse; mode name announced on switch</li>
+<li>global layer keeps resources (z/x/SHIFT z/c), movement, square jumps, command confirm, F9/F11, etc.; former F1/F4 help and direct F12 diplomacy now enter dedicated overlay modes</li>
+<li>unit mode: workers <tt class="docutils literal">s</tt>/<tt class="docutils literal">w</tt> (was <tt class="docutils literal">d</tt>/<tt class="docutils literal">e</tt>); soldiers 1–7 on <tt class="docutils literal">d/e</tt>…<tt class="docutils literal">;</tt>/<tt class="docutils literal">p</tt>; building mode slots <tt class="docutils literal">building1</tt>–<tt class="docutils literal">building16</tt> (<tt class="docutils literal">d/f/g/h/j/k/l/;</tt> + <tt class="docutils literal">e/r/t/y/u/i/o/p</tt>)</li>
+<li>command mode 30-slot index hotkeys; map mode <tt class="docutils literal">f/g/m/p</tt> cycles deposits/meadows/passages on current square (no square jumps); ESC to map announces square summary and silently restores last map target</li>
+<li>mod <tt class="docutils literal">style.txt</tt>: <tt class="docutils literal">keyboard worker</tt>, <tt class="docutils literal">keyboard soldier1</tt>–<tt class="docutils literal">7</tt>, <tt class="docutils literal">keyboard building1</tt>–<tt class="docutils literal">16</tt>; <tt class="docutils literal">bindings.txt</tt> body is now a compatibility stub</li>
+<li>inventory/equipment/attributes sub-screens call <tt class="docutils literal">restore_active_bindings</tt> on exit; editor bindings unchanged</li>
+<li><strong>classic single-file hotkeys</strong>: <tt class="docutils literal">[general] layered_hotkeys = 0</tt> in <tt class="docutils literal">user/SoundRTS.ini</tt> (default <tt class="docutils literal">1</tt> = layered); or main menu <strong>Options → Hotkey scheme</strong> — <strong>Layered hotkeys</strong> / <strong>Classic hotkeys</strong> (effective next game); classic loads <tt class="docutils literal">legacy_bindings.txt</tt>, no F-key mode layers, ESC does not enter map browse</li>
+<li>mods may customize each scheme: layered via <tt class="docutils literal"><span class="pre">ui/*_bindings.txt</span></tt> or append <tt class="docutils literal">ui/bindings.txt</tt>; classic via <tt class="docutils literal">ui/legacy_bindings.txt</tt> or append <tt class="docutils literal">ui/bindings.txt</tt></li>
+<li>docs: <tt class="docutils literal"><span class="pre">docs/en/layered-hotkeys.md</span></tt>, <tt class="docutils literal">docs/zh/分层热键方案说明.md</tt></li>
+<li>tests: <tt class="docutils literal">test_layered_bindings.py</tt>, <tt class="docutils literal">test_map_browse_target_persist.py</tt></li>
+</ul>
+<p>Age of Empires DE-style campaigns (single-player + co-op):</p>
+<ul class="simple">
+<li>single-player: mission browser (<tt class="docutils literal">synopsis</tt>, five difficulty tiers persisted, completed/locked chapters, retry); enemy HP/damage scale by tier (Standard + solo = 100%)</li>
+<li>co-op: story-mission multiplayer (player slots + allied AI partners, shared intro/cutscenes/objectives, no treaty); difficulty and human count scale enemies; campaign TTS auto-loaded for localized place names</li>
+<li>see <tt class="docutils literal"><span class="pre">docs/en/campaign-and-co-op-improvements.md</span></tt> (<tt class="docutils literal">docs/zh/战役与合作战役改进说明.md</tt>)</li>
+<li>tests: <tt class="docutils literal">test_changelog_1429_coop_campaign_difficulty.py</tt>, <tt class="docutils literal">test_changelog_1429b_campaign_browser_difficulty.py</tt>, <tt class="docutils literal">test_changelog_1429c_coop_story_mission.py</tt>, <tt class="docutils literal">test_changelog_1429d_coop_player_slots.py</tt>, <tt class="docutils literal">test_coop_campaign_place_names.py</tt></li>
+</ul>
+</div>
+<div class="section" id="section-8">
+<h1><a class="toc-backref" href="#toc-entry-8">1.4.3.8</a></h1>
+<p>Build fields, progressive objectives, and Zerg creep tumors:</p>
+<ul class="simple">
+<li><tt class="docutils literal">build_field_radius</tt> (tile BFS) vs <tt class="docutils literal">build_field_radius_m</tt> (meters from <tt class="docutils literal">(x,y)</tt>); meter providers paint marks when <tt class="docutils literal">build_field_persists</tt> / <tt class="docutils literal">build_field_spreads</tt> — fixes Hatchery-only meter creep build checks</li>
+<li>Trigger <tt class="docutils literal">register_objective</tt> registers primary numbers for victory without F9/voice; victory uses <tt class="docutils literal">_required_objective_numbers</tt> vs <tt class="docutils literal">_completed_objective_numbers</tt> (no premature win when goals are revealed one-by-one)</li>
+<li>F9 / <tt class="docutils literal">add_objective</tt>: &quot;Primary objective N:&quot; when multiple goals; colon after number; single goal omits number</li>
+<li>StarCraft mod: Queen <strong>Spawn creep tumor</strong> / tumor <strong>Extend creep tumor</strong>; skill attrs <tt class="docutils literal">summon_requires_build_field</tt>, <tt class="docutils literal">summon_requires_marked_field</tt></li>
+<li>docs: <tt class="docutils literal"><span class="pre">docs/en/progressive-campaign-objectives.md</span></tt>, <tt class="docutils literal"><span class="pre">docs/en/starcraft-zerg-creep.md</span></tt>; <tt class="docutils literal">modding.rst</tt>, <tt class="docutils literal">mapmaking.rst</tt></li>
+<li>tests: <tt class="docutils literal">test_build_rules.py</tt> (creep tumor), <tt class="docutils literal">test_campaign_alliance_transfer_triggers.py</tt> (register_objective), <tt class="docutils literal">test_objective_announce.py</tt></li>
+</ul>
+</div>
+<div class="section" id="section-9">
+<h1><a class="toc-backref" href="#toc-entry-9">1.4.3.7</a></h1>
+<p>Hunting system and wildlife voice labels:</p>
+<ul class="simple">
+<li>Age of Empires–style hunting: <tt class="docutils literal">is_huntable</tt> animals leave <tt class="docutils literal">food_carcass</tt> deposits; workers gather them; deer/sheep flee; sheep can be herded (<tt class="docutils literal">can_herd</tt> / <tt class="docutils literal">herdable</tt>)</li>
+<li>Wildlife announced as &quot;animal&quot; (e.g. &quot;deer , animal&quot;), not &quot;neutral , NPC&quot;; square summaries use a separate animal bucket</li>
+<li>Wildlife-only <tt class="docutils literal">computer_only</tt> slots do not join the <tt class="docutils literal">&quot;ai&quot;</tt> alliance (not with players, hostile creep, or other herds; mixed slots unchanged)</li>
+<li>Ctrl+Shift+F4 to a wildlife-only player says &quot;you are animal&quot;; mixed NPC + wildlife players still say &quot;you are neutral NPC&quot;</li>
+<li>Random maps spawn wildlife and orchards near starts; <tt class="docutils literal">hunting_techniques</tt> improves carcass gathering</li>
+<li>docs: <tt class="docutils literal"><span class="pre">docs/en/hunting-system.md</span></tt>; <tt class="docutils literal">modding.rst</tt> hunting section</li>
+<li>tests: <tt class="docutils literal">soundrts/tests/test_hunting.py</tt>, <tt class="docutils literal">test_hunting_herd.py</tt>, <tt class="docutils literal">test_wildlife_identification.py</tt>, <tt class="docutils literal">test_wildlife_alliance.py</tt></li>
+</ul>
+</div>
+<div class="section" id="section-10">
+<h1><a class="toc-backref" href="#toc-entry-10">1.4.3.6</a></h1>
+<p>Burst / sequence attacks (<tt class="docutils literal">damage_seq</tt>):</p>
+<ul class="simple">
+<li>fixed burst interval: rules <tt class="docutils literal">(interval …)</tt> is now respected (was hard-coded to 0.4 s)</li>
+<li>omit <tt class="docutils literal">(damage …)</tt> to auto-split base <tt class="docutils literal">mdg</tt> / <tt class="docutils literal">rdg</tt> evenly (supports fractional damage)</li>
+<li>each shot in a burst triggers <tt class="docutils literal">launch_mdg</tt> / <tt class="docutils literal">launch_rdg</tt>; list multiple sound IDs in <tt class="docutils literal">style.txt</tt></li>
+<li>base rules: new <tt class="docutils literal">repeating_crossbowman</tt> (upgrade from archer; Age of Empires Chu Ko Nu style)</li>
+<li>tests: <tt class="docutils literal">soundrts/tests/test_damage_seq_burst.py</tt></li>
+<li>docs: <tt class="docutils literal"><span class="pre">docs/en/burst-attack-damage-seq.md</span></tt>; <tt class="docutils literal">modding.rst</tt> Combat system section</li>
+</ul>
+</div>
+<div class="section" id="section-11">
+<h1><a class="toc-backref" href="#toc-entry-11">1.4.3.5</a></h1>
+<p>Combat AI vs neutral units:</p>
+<ul class="simple">
+<li>player units in <tt class="docutils literal">offensive</tt>, <tt class="docutils literal">defensive</tt>, or <tt class="docutils literal">chase</tt> mode do not auto-attack neutral
+units (<tt class="docutils literal">computer_only ... neutral</tt>)</li>
+<li>defensive mode does not flee when only neutrals are present</li>
+<li>forced attack (<tt class="docutils literal">imperative</tt> go/attack, e.g. Ctrl+click on the unit) still works</li>
+<li>neutral creeps remain guard + counter-attack on their side; see <tt class="docutils literal"><span class="pre">docs/en/unit-default-behavior.md</span></tt></li>
+</ul>
+</div>
+<div class="section" id="section-12">
+<h1><a class="toc-backref" href="#toc-entry-12">1.4.3.4</a></h1>
+<p>Procedural random map generator (RMG):</p>
+<ul class="simple">
+<li>Entry: main menu <strong>Start a game</strong> → <strong>Random map</strong>; or <strong>Random map</strong> in the online create-game map list</li>
+<li>Options: template (standard/fast/macro/lanes), size, player count, 2v2 teams, monsters, resources, terrain, water, treasure, seed, treaty</li>
+<li>After generation, seed and share code are announced; <strong>F5/F6</strong> replay them from voice history (still available in the invite-AI menu)</li>
+<li><strong>Import share code</strong> skips step-by-step menus; format <tt class="docutils literal">RMG1:…</tt> — see <a class="reference external" href="randommap.htm">Random map guide</a></li>
+<li>Menu text inputs (share code, seed, login, etc.) support <strong>Ctrl+A/C/V/X</strong> select all, copy, paste, cut</li>
+<li>Code: <tt class="docutils literal">soundrts/randommap.py</tt>, <tt class="docutils literal">soundrts/randommap_menu.py</tt>; tests <tt class="docutils literal">soundrts/tests/test_randommap.py</tt></li>
+</ul>
+</div>
+<div class="section" id="section-13">
+<h1><a class="toc-backref" href="#toc-entry-13">1.4.3.3</a></h1>
+<p>Indexed conditions (<tt class="docutils literal">killed_target</tt> / <tt class="docutils literal">npc_has_item</tt> / <tt class="docutils literal">unit_lost</tt> / <tt class="docutils literal">building_lost</tt> / <tt class="docutils literal">key_unit_killed</tt>):</p>
+<ul class="simple">
+<li>Global spawn index (any square): <tt class="docutils literal">(killed_target &lt;index&gt; &lt;type&gt; [enemy|ally])</tt>, <tt class="docutils literal">(npc_has_item &lt;index&gt; &lt;type&gt; &lt;item&gt;)</tt>, <tt class="docutils literal">(unit_lost &lt;index&gt; &lt;type&gt;)</tt>, <tt class="docutils literal">(building_lost &lt;index&gt; &lt;type&gt;)</tt>, <tt class="docutils literal">(key_unit_killed &lt;index&gt; &lt;type&gt;)</tt></li>
+<li>Square index: <tt class="docutils literal">(killed_target &lt;square&gt; &lt;index&gt; &lt;type&gt;)</tt>, <tt class="docutils literal">(npc_has_item &lt;square&gt; &lt;index&gt; &lt;type&gt; &lt;item&gt;)</tt>, etc.</li>
+<li>Same index rules as <tt class="docutils literal">killed_target</tt> / <tt class="docutils literal">npc_has_item</tt>; only the Nth spawned unit/building at that square</li>
+<li>Example: <tt class="docutils literal">(building_lost 1 townhall) (defeat)</tt> fails only if the 1st spawned town hall is destroyed (any square); <tt class="docutils literal">(building_lost a1 1 townhall)</tt> is square-specific; <tt class="docutils literal">(unit_lost 3 footman) (defeat)</tt> fails only if footman #3 dies</li>
+<li>Demo: The Legend of Raynor chapter 1; see <tt class="docutils literal"><span class="pre">docs/en/map-unit-index-selectors.md</span></tt></li>
+<li>Tests: <tt class="docutils literal">soundrts/tests/test_map_select_loss_triggers.py</tt></li>
+</ul>
+</div>
+<div class="section" id="section-14">
+<h1><a class="toc-backref" href="#toc-entry-14">1.4.3.2</a></h1>
+<p>Unnumbered units (rules.txt, <tt class="docutils literal">no_number 1</tt>):</p>
+<ul class="simple">
+<li>Applies only to unit types with <tt class="docutils literal">no_number 1</tt>; default units (e.g. peasants) always keep serial numbers (&quot;peasant 1 at a1&quot;)</li>
+<li>With <tt class="docutils literal">no_number 1</tt> and only one living unit of that type: no serial number (&quot;Guan Yu at a1&quot;, &quot;knight leader at a1&quot;)</li>
+<li>With <tt class="docutils literal">no_number 1</tt> and two or more of that type: serial numbers (&quot;Guan Yu 1&quot;, &quot;Guan Yu 2&quot;)</li>
+<li>Group, square, and battle summaries follow the same rule (e.g. &quot;you control Guan Yu and 2 escort knights&quot;)</li>
+<li>See <tt class="docutils literal">modding.rst</tt>; campaign examples <tt class="docutils literal">raynor</tt>, <tt class="docutils literal">npc_knight_leader</tt> in <tt class="docutils literal">The Legend of Raynor/rules.txt</tt></li>
+</ul>
+</div>
+<div class="section" id="section-15">
+<h1><a class="toc-backref" href="#toc-entry-15">1.4.3.1</a></h1>
+<p>Inventory and equipment:</p>
+<ul class="simple">
+<li>Shift+V: backpack (all items in inventory); Ctrl+V: equipment (weapons and armor)</li>
+<li>mutually exclusive with Alt+V properties screen; requires exactly one friendly unit selected</li>
+<li>in-screen keys: arrows browse, Enter equip/use, Shift+Enter unequip, Delete/Shift+Delete drop, g reads intro</li>
+<li>unified item model: <tt class="docutils literal">class item</tt> with <tt class="docutils literal">equippable_as_weapon 1</tt> / <tt class="docutils literal">equippable_as_armor 1</tt>; stats apply on equip</li>
+<li>starting <tt class="docutils literal">weapons</tt> / <tt class="docutils literal">armor</tt> that are equippable items auto-enter inventory; silently equipped when no built-in gear of that kind and <tt class="docutils literal">spawn_weapons_equipped</tt> / <tt class="docutils literal">spawn_armor_equipped</tt> is 1 (default; needs <tt class="docutils literal">inventory_capacity</tt> &gt; 0)</li>
+<li>legacy <tt class="docutils literal">class weapon</tt> / <tt class="docutils literal">class armor</tt> remain built-in (read-only in equipment screen)</li>
+<li>mixed built-in + item gear: built-in equipped at spawn; with <tt class="docutils literal">spawn_weapons_equipped 1</tt>, item weapons stay in backpack and cannot be equipped; built-in switches only with built-in, item only with item, no cross-switching (same for armor)</li>
+</ul>
+<p>Unit default behavior (rules.txt):</p>
+<ul class="simple">
+<li><tt class="docutils literal">ai_mode</tt>: starting AI mode — <tt class="docutils literal">offensive</tt>, <tt class="docutils literal">defensive</tt>, <tt class="docutils literal">guard</tt>, or <tt class="docutils literal">chase</tt> (not <tt class="docutils literal">patrol</tt>)</li>
+<li><tt class="docutils literal">auto_gather</tt> / <tt class="docutils literal">auto_repair</tt>: worker auto-gather and auto-repair at game start (default 1)</li>
+<li><tt class="docutils literal">auto_explore</tt>: mobile units start with auto-explore on (default 0)</li>
+<li><tt class="docutils literal">can_auto_explore 1</tt>: unit menu offers enable/disable auto-explore commands</li>
+</ul>
+<p>Giving items to NPCs:</p>
+<ul class="simple">
+<li><tt class="docutils literal">give</tt> order: right-click a non-hostile unit, command menu, or shortcut <tt class="docutils literal">g</tt></li>
+<li>target needs <tt class="docutils literal">receive_items 1</tt>; optional <tt class="docutils literal">accepted_items</tt> whitelist and <tt class="docutils literal">accept_from</tt> relation filter</li>
+<li>trigger condition <tt class="docutils literal">npc_has_item</tt>; multiplayer demo <tt class="docutils literal">res/multi/give_demo.txt</tt>; campaign ch. 14–16 (<tt class="docutils literal">The Legend of Raynor/14.txt</tt>–<tt class="docutils literal">16.txt</tt>) for ally/neutral/enemy delivery</li>
+<li><tt class="docutils literal">npc_has_item</tt> / <tt class="docutils literal">killed_target</tt> unit index syntax (<tt class="docutils literal">&lt;square&gt; &lt;index&gt; &lt;type&gt;</tt>); demo The Legend of Raynor chapter 28; see <tt class="docutils literal"><span class="pre">docs/en/map-unit-index-selectors.md</span></tt></li>
+</ul>
+<p>Find-item victory:</p>
+<ul class="simple">
+<li>trigger condition <tt class="docutils literal">has_item</tt> checks player inventory for a given item type (optional count)</li>
+<li>item must stay in inventory (<tt class="docutils literal">consume_on_pickup</tt> must not be 1)</li>
+<li>example: The Legend of Raynor chapter 17 (<tt class="docutils literal">lost_amulet</tt>)</li>
+</ul>
+<p>Carry-to-square and story hand-over:</p>
+<ul class="simple">
+<li>trigger condition <tt class="docutils literal">has_brought_item</tt>: player unit arrives at a square while carrying an item (no drop)</li>
+<li>trigger action <tt class="docutils literal">remove_item</tt>: remove and destroy items from player inventories; use with <tt class="docutils literal">cut_scene</tt> for narrative delivery</li>
+<li>trigger action <tt class="docutils literal">do</tt>: run multiple sub-actions in order (<tt class="docutils literal">if</tt> cannot replace this)</li>
+<li>example: The Legend of Raynor chapter 18 (<tt class="docutils literal">mana_potion</tt> at shrine c3)</li>
+</ul>
+<p>Ground items and compound conditions:</p>
+<ul class="simple">
+<li>trigger action <tt class="docutils literal">remove_ground_item</tt>: delete items on the ground at a square (e.g. remove treasure after opening)</li>
+<li>trigger condition <tt class="docutils literal">and</tt>: true only when every sub-condition is true</li>
+<li><tt class="docutils literal">find</tt> syntax: square before type, including inside <tt class="docutils literal">not</tt>; wrong order makes conditions almost always true</li>
+<li>example: The Legend of Raynor chapter 20 (drop treasure, then pick up all gold coins)</li>
+</ul>
+<p>Campaign diplomacy and unit transfer triggers:</p>
+<ul class="simple">
+<li>trigger action <tt class="docutils literal">alliance_request</tt>: one player requests alliance; in campaigns the human accepts with <strong>Ctrl+F4</strong> (no F12 target selection)</li>
+<li>trigger conditions <tt class="docutils literal">alliance_with</tt> / <tt class="docutils literal">alliance_request_pending</tt></li>
+<li>trigger action <tt class="docutils literal">transfer_units</tt> (aliases <tt class="docutils literal">convert_units</tt>, <tt class="docutils literal">change_owner</tt>): change unit ownership between players</li>
+<li>trigger action <tt class="docutils literal">allied_assist</tt>: ally units fight on their own (guard→chase); optional unit selector for partial switch</li>
+<li>trigger action <tt class="docutils literal">allied_control</tt>: grant direct command over an ally's army (whole ally or selected units); unmatched units switch to chase</li>
+<li>trigger action <tt class="docutils literal">add_inventory_item</tt>: put items into unit inventory (cross-chapter carry, quest rewards)</li>
+<li>trigger actions <tt class="docutils literal">set_ai_mode</tt> / <tt class="docutils literal">set_yield_on_defeat</tt>: runtime AI mode and yield-duel toggles</li>
+<li>conditions <tt class="docutils literal">units_yielded</tt> / <tt class="docutils literal">units_yielded_by</tt>, <tt class="docutils literal">has_entered</tt>; actions <tt class="docutils literal">stop_all_units</tt> / <tt class="docutils literal">release_yielded_units</tt>: yield counts (filter by attacker), square entry, ceasefire, restore combat</li>
+<li>The Legend of Raynor chapters 24–27 (northern alliance arc); see <tt class="docutils literal"><span class="pre">docs/en/campaign-secret-letter-alliance.md</span></tt></li>
+</ul>
+<p><tt class="docutils literal">phase_targets</tt> exclusion syntax:</p>
+<ul class="simple">
+<li>a leading <tt class="docutils literal">-</tt> excludes a match (e.g. <tt class="docutils literal">phase_targets <span class="pre">-building</span></tt> = all units except buildings)</li>
+<li>includes and excludes can be mixed (e.g. <tt class="docutils literal">phase_targets soldier <span class="pre">-footman</span></tt>)</li>
+</ul>
+<p><tt class="docutils literal">is_a</tt> exclusion inheritance <tt class="docutils literal">-</tt> prefix:</p>
+<ul class="simple">
+<li>e.g. <tt class="docutils literal">is_a <span class="pre">footman(-hp_max)</span></tt> is equivalent to <tt class="docutils literal">is_a footman(apart hp_max)</tt></li>
+<li>multiple exclusions: <tt class="docutils literal">is_a <span class="pre">footman(-hp_max</span> <span class="pre">-mdg)</span></tt></li>
+</ul>
+<p>Bugs fixed:</p>
+<ul class="simple">
+<li>fixed unit selection being lost after a <tt class="docutils literal">can_upgrade_to</tt> upgrade or <tt class="docutils literal">can_change_to</tt> morph: for example, an archer selected with g stays selected after upgrading to a dark archer, without reselecting</li>
+</ul>
+</div>
+<div class="section" id="section-16">
+<h1><a class="toc-backref" href="#toc-entry-16">1.4.3.0</a></h1>
+<p>Bugs fixed:</p>
+<ul class="simple">
+<li>fixed a serious campaign victory bug: when a campaign map had two or more enemy computers, completing the objectives would not end the game; the root cause was mutating the player list while iterating during victory settlement</li>
+<li>fixed units and objects disappearing from a square for 4–5 seconds after a unit left</li>
+<li>in campaigns, F12 (dynamic alliance) no longer selects any target; trigger-script computers are not real opponent players</li>
+<li>trigger computers promoted by <tt class="docutils literal">(ai easy)</tt> and similar triggers are announced as &quot;NPC&quot; instead of the internal name <tt class="docutils literal">ai_timers</tt>; their defeat is no longer announced in campaigns</li>
+<li>Ctrl+Shift+F4 now announces trigger computers as &quot;NPC&quot;</li>
+</ul>
+</div>
+<div class="section" id="section-17">
+<h1><a class="toc-backref" href="#toc-entry-17">1.4.2.9</a></h1>
+<ul class="simple">
+<li>maps downloaded from a server keep their original name</li>
+<li>maps with the same content as a local map are not downloaded again</li>
+<li>multiplayer replays are stored as <tt class="docutils literal">replay1</tt>, <tt class="docutils literal">replay2</tt>, <tt class="docutils literal">replay3</tt>, etc.</li>
+</ul>
+</div>
+<div class="section" id="section-18">
+<h1><a class="toc-backref" href="#toc-entry-18">1.4.2.8</a></h1>
+<ul class="simple">
+<li>small performance boost from Cython optimizations</li>
+<li>neutral computers: add the <tt class="docutils literal">neutral</tt> keyword to a <tt class="docutils literal">computer_only</tt> line; neutral AIs do not attack unless attacked first</li>
+<li><tt class="docutils literal">player_start &lt;N&gt; &lt;square&gt;</tt> fixes the spawn square for player N (see the map making guide)</li>
+</ul>
+</div>
+<div class="section" id="section-19">
+<h1><a class="toc-backref" href="#toc-entry-19">1.4.2.7</a></h1>
+<ul class="simple">
+<li>saves and replays can be renamed (any language/characters): edit files in <tt class="docutils literal">user/saves</tt> or <tt class="docutils literal">user/replays</tt>, or press Shift+Enter on a file in the restore/replay menu</li>
+<li>Delete asks for confirmation; Shift+Delete deletes immediately</li>
+</ul>
+</div>
+<div class="section" id="section-20">
+<h1><a class="toc-backref" href="#toc-entry-20">1.4.2.6</a></h1>
+<ul class="simple">
+<li>up to 10 save slots per mod; each mod has its own saves, memory points, and replays</li>
+<li>cancelling a game creates a memory point; &quot;continue unfinished game&quot; appears on the main menu</li>
+<li>replay files are also mod-specific</li>
+</ul>
+</div>
+<div class="section" id="section-21">
+<h1><a class="toc-backref" href="#toc-entry-21">1.4.2.5</a></h1>
+<ul class="simple">
+<li><tt class="docutils literal">can_advance</tt> for phase upgrades (distinct from <tt class="docutils literal">can_research</tt>); shown in the properties interface</li>
+<li>default starting phase is displayed at game start when a building has <tt class="docutils literal">can_advance</tt></li>
+<li><tt class="docutils literal">hide_locked_commands</tt> in <tt class="docutils literal">def parameters</tt> hides commands whose requirements are not met</li>
+</ul>
+</div>
+<div class="section" id="section-22">
+<h1><a class="toc-backref" href="#toc-entry-22">1.4.2.4</a></h1>
+<ul class="simple">
+<li>new <tt class="docutils literal">class phase</tt> (age-style progression): <tt class="docutils literal">phase_targets</tt>, <tt class="docutils literal">phase bonus</tt>, <tt class="docutils literal">units_auto_upgrade</tt></li>
+<li>dynamic alliance: each alliance request now has its own cooldown</li>
+</ul>
+</div>
+<div class="section" id="section-23">
+<h1><a class="toc-backref" href="#toc-entry-23">1.4.2.3</a></h1>
+<ul class="simple">
+<li>dynamic alliance during a game (F12 / Shift+F12 select target; F4 request; Ctrl+F4 accept; Shift+F4 cancel/reject/leave); pre-game alliances cannot be changed in-game</li>
+<li>cooperative campaign bug fixes</li>
+</ul>
+</div>
+<div class="section" id="section-24">
+<h1><a class="toc-backref" href="#toc-entry-24">1.4.2.2</a></h1>
+<ul class="simple">
+<li>treaty mode: peace for a chosen duration (up to 20 minutes), then war</li>
+<li>cooperative campaign on servers: any player completing objectives contributes to the team</li>
+</ul>
+</div>
+<div class="section" id="section-25">
+<h1><a class="toc-backref" href="#toc-entry-25">1.4.2.1</a></h1>
+<p>Bugs fixed:</p>
+<ul class="simple">
+<li>passage sounds no longer delay place-name and coordinate announcements</li>
+<li>units no longer gain speed bonus on every revival</li>
+<li>upgrade changes to cost, time_cost, and population_cost now persist after research</li>
+<li>heal and harm upgrades no longer apply to every unit type</li>
+<li>air unit altitude restored to 1.3.8.1 behavior</li>
+</ul>
+</div>
+<div class="section" id="section-26">
+<h1><a class="toc-backref" href="#toc-entry-26">1.4.2.0</a></h1>
+<p>Bugs fixed:</p>
+<ul class="simple">
+<li>revived units can receive orders again</li>
+<li>self-attacks no longer trigger charge damage</li>
+<li>discount upgrades no longer affect units without the discount tech</li>
+<li>ground charge splash no longer hits air units</li>
+<li>transports with capacity ≥ 99 no longer load themselves</li>
+</ul>
+</div>
+<div class="section" id="section-27">
+<h1><a class="toc-backref" href="#toc-entry-27">1.4.1.9</a></h1>
+<ul class="simple">
+<li><tt class="docutils literal">square_name</tt> hierarchy up to 3 levels (province / city / district); TTS announces names when entering from another region</li>
+<li>further performance optimizations</li>
+</ul>
+</div>
+<div class="section" id="section-28">
+<h1><a class="toc-backref" href="#toc-entry-28">1.4.1.8</a></h1>
+<ul class="simple">
+<li>map coordinates use <tt class="docutils literal">x,y</tt> (e.g. <tt class="docutils literal">1,1</tt>) instead of letter+number; legacy notation still accepted</li>
+<li><tt class="docutils literal">square_name</tt> for naming squares; translations in <tt class="docutils literal">tts.txt</tt></li>
+<li>faction starting units and resources can be defined in <tt class="docutils literal">rules.txt</tt> (map definitions take priority)</li>
+</ul>
+</div>
+<div class="section" id="section-29">
+<h1><a class="toc-backref" href="#toc-entry-29">1.4.1.7</a></h1>
+<ul class="simple">
+<li>unified skill system (<tt class="docutils literal">class skill</tt>) with <tt class="docutils literal">effect_target</tt> and <tt class="docutils literal">effect_range</tt></li>
+<li>multi-stat buffs, aura buffs (<tt class="docutils literal">buff_radius</tt>), expanded harm/heal/regen parameters</li>
+</ul>
+</div>
+<div class="section" id="section-30">
+<h1><a class="toc-backref" href="#toc-entry-30">1.4.1.6</a></h1>
+<ul class="simple">
+<li>debuffs can be defined on weapons</li>
+<li>fixed save-game load failure</li>
+</ul>
+</div>
+<div class="section" id="section-31">
+<h1><a class="toc-backref" href="#toc-entry-31">1.4.1.5</a></h1>
+<ul class="simple">
+<li><tt class="docutils literal">intro</tt> keyword in <tt class="docutils literal">style.txt</tt> for unit descriptions</li>
+<li>diagonal perception restored</li>
+<li>fixed production UI on non-producing buildings</li>
+</ul>
+</div>
+<div class="section" id="section-32">
+<h1><a class="toc-backref" href="#toc-entry-32">1.4.1.4</a></h1>
+<ul class="simple">
+<li>1.3.5.2 triggers migrated; td1–td3 maps playable</li>
+</ul>
+</div>
+<div class="section" id="section-33">
+<h1><a class="toc-backref" href="#toc-entry-33">1.4.1.3</a></h1>
+<ul class="simple">
+<li>weapons and armor system; manual weapon switch (A / Shift+A / B+X); <tt class="docutils literal">auto_weapon_switch</tt></li>
+<li>item system migrated from 1.3.5.2</li>
+<li>walls and gates buildable again</li>
+</ul>
+</div>
+<div class="section" id="section-34">
+<h1><a class="toc-backref" href="#toc-entry-34">1.4.1.2</a></h1>
+<ul class="simple">
+<li><tt class="docutils literal">can_repair</tt> on workers; improved water-unit pathfinding and shore mining</li>
+<li>more attributes in the properties interface</li>
+</ul>
+</div>
+<div class="section" id="section-35">
+<h1><a class="toc-backref" href="#toc-entry-35">1.4.1.1</a></h1>
+<ul class="simple">
+<li>enhanced properties interface with interactive browsing (can_train, skills, research, can_build)</li>
+<li><tt class="docutils literal">can_repair_ships</tt> for workers and buildings; shore ship repair (distance 6) and building auto-repair (distance 8)</li>
+</ul>
+</div>
+<div class="section" id="section-36">
+<h1><a class="toc-backref" href="#toc-entry-36">1.4.1</a></h1>
+<ul class="simple">
+<li>first-person RPG view is 360°; improved movement precision</li>
+</ul>
+</div>
+<div class="section" id="section-37">
+<h1><a class="toc-backref" href="#toc-entry-37">1.4.0.9</a></h1>
+<ul class="simple">
+<li>first-person RPG mode guide; F8 dynamic zoom 3×3 to 15×15; path-aware browsing</li>
+</ul>
+</div>
+<div class="section" id="section-38">
+<h1><a class="toc-backref" href="#toc-entry-38">1.4.0.8</a></h1>
+<ul class="simple">
+<li><tt class="docutils literal">minimal_mdg</tt> / <tt class="docutils literal">minimal_rdg</tt> renamed back to <tt class="docutils literal">minimal_damage</tt></li>
+<li>RPG skill hotkeys (1–0) in first-person mode</li>
+</ul>
+</div>
+<div class="section" id="section-39">
+<h1><a class="toc-backref" href="#toc-entry-39">1.4.0.7</a></h1>
+<ul class="simple">
+<li>critical hit rates fixed; crazy-Mod playable</li>
+</ul>
+</div>
+<div class="section" id="section-40">
+<h1><a class="toc-backref" href="#toc-entry-40">1.4.0.6</a></h1>
+<ul class="simple">
+<li>spectator mode on servers; victory/defeat sounds in multiplayer fixed</li>
+</ul>
+</div>
+<div class="section" id="section-41">
+<h1><a class="toc-backref" href="#toc-entry-41">1.4.0.5</a></h1>
+<ul class="simple">
+<li><tt class="docutils literal">food</tt> keywords replaced with <tt class="docutils literal">population</tt> (e.g. <tt class="docutils literal">population_cost</tt>)</li>
+<li>richer economy: resource buildings, auto/manual cultivation and production</li>
+<li><tt class="docutils literal">rpg_bindings.txt</tt> reserved for future RPG hotkey customization</li>
+</ul>
+</div>
+<div class="section" id="section-42">
+<h1><a class="toc-backref" href="#toc-entry-42">1.4.0.4</a></h1>
+<ul class="simple">
+<li><tt class="docutils literal">auto_production</tt> / <tt class="docutils literal">manual_production</tt>; <tt class="docutils literal">is_gather</tt> / <tt class="docutils literal">is_create</tt>; <tt class="docutils literal">class resource</tt> separate from <tt class="docutils literal">class deposit</tt></li>
+</ul>
+</div>
+<div class="section" id="section-43">
+<h1><a class="toc-backref" href="#toc-entry-43">1.4.0.3</a></h1>
+<ul class="simple">
+<li>faction background and battle music (<tt class="docutils literal">&lt;faction&gt;_music</tt>, <tt class="docutils literal">&lt;faction&gt;_battle_music</tt>)</li>
+</ul>
+</div>
+<div class="section" id="section-44">
+<h1><a class="toc-backref" href="#toc-entry-44">1.4.0.2</a></h1>
+<ul class="simple">
+<li>menu select/confirm/return sounds; per-menu background music and battle music</li>
+</ul>
+</div>
+<div class="section" id="section-45">
+<h1><a class="toc-backref" href="#toc-entry-45">1.4.0.1</a></h1>
+<ul class="simple">
+<li>charge and counter-charge mechanics; expanded buff trigger rates</li>
+<li>new defeat conditions: <tt class="docutils literal">unit_lost</tt>, <tt class="docutils literal">key_unit_killed</tt>, <tt class="docutils literal">key_units_killed</tt>, <tt class="docutils literal">units_lost</tt>, <tt class="docutils literal">buildings_lost</tt>, <tt class="docutils literal">has_killed</tt>; <tt class="docutils literal">killed_target</tt> and <tt class="docutils literal">has_killed</tt> support <tt class="docutils literal">enemy</tt> / <tt class="docutils literal">ally</tt></li>
+</ul>
+</div>
+<div class="section" id="section-46">
+<h1><a class="toc-backref" href="#toc-entry-46">1.4</a></h1>
+<ul class="simple">
+<li>combat rework: <tt class="docutils literal">mdg</tt> + <tt class="docutils literal">mdg_vs</tt> (additive), crit, piercing, explode</li>
+<li>hero and XP system from 1.3.5.2 integrated</li>
+<li><tt class="docutils literal">title</tt> / campaign / map parameters accept quoted strings; <tt class="docutils literal">tts.txt</tt> translation format</li>
+<li>unpacked advanced maps in <tt class="docutils literal">multi/</tt> supported</li>
+<li>fixed sounds playing when typing matching names in input boxes</li>
+</ul>
+</div>
+<div class="section" id="section-47">
+<h1><a class="toc-backref" href="#toc-entry-47">1.3.9.8</a></h1>
+<ul class="simple">
+<li>buff/debuff system from 1.3.5.2 integrated</li>
+<li>enemies appear immediately when entering their square</li>
+</ul>
+</div>
+<div class="section" id="section-48">
+<h1><a class="toc-backref" href="#toc-entry-48">1.3.9.7</a></h1>
+<ul class="simple">
+<li><tt class="docutils literal">can_train</tt> with quantities; <tt class="docutils literal">can_change_to</tt>; <tt class="docutils literal">can_use_tech</tt> / <tt class="docutils literal">can_use_skill</tt> menu fix</li>
+</ul>
+</div>
+<div class="section" id="section-49">
+<h1><a class="toc-backref" href="#toc-entry-49">1.3.9.6</a></h1>
+<ul class="simple">
+<li>percentage cost/time_cost/population_cost on upgrades; decimal resource display</li>
+</ul>
+</div>
+<div class="section" id="section-50">
+<h1><a class="toc-backref" href="#toc-entry-50">1.3.9.5</a></h1>
+<ul class="simple">
+<li>object filters (M / N keys); <tt class="docutils literal">cfg/language.txt</tt> language selection</li>
+</ul>
+</div>
+<div class="section" id="section-51">
+<h1><a class="toc-backref" href="#toc-entry-51">1.3.9.3</a></h1>
+<ul class="simple">
+<li>terrain cover/dodge fixes; research applies to future units; splash hit sounds temporarily removed</li>
+</ul>
+</div>
+<div class="section" id="section-52">
+<h1><a class="toc-backref" href="#toc-entry-52">1.3.9.2</a></h1>
+<ul class="simple">
+<li>upgrade effects on cost/time/population; splash hit sounds; float attributes in properties UI</li>
+</ul>
+</div>
+<div class="section" id="section-53">
+<h1><a class="toc-backref" href="#toc-entry-53">1.3.9.1</a></h1>
+<ul class="simple">
+<li>splash <tt class="docutils literal">_vs</tt> properties; delayed <tt class="docutils literal">falling</tt> sound; projectile height attack rule</li>
+</ul>
+</div>
+<div class="section" id="section-54">
+<h1><a class="toc-backref" href="#toc-entry-54">1.3.9.0</a></h1>
+<ul class="simple">
+<li><tt class="docutils literal">extraction_time</tt> / <tt class="docutils literal">extraction_qty</tt> restored; Alt+V properties interface with <tt class="docutils literal">attributes_bindings.txt</tt></li>
+</ul>
+</div>
+<div class="section" id="section-55">
+<h1><a class="toc-backref" href="#toc-entry-55">1.3.8.8</a></h1>
+<ul class="simple">
+<li><tt class="docutils literal">can_gather</tt> / <tt class="docutils literal">gather_time</tt> / <tt class="docutils literal">gather_qty</tt> on workers; <tt class="docutils literal">is_rewards</tt> / <tt class="docutils literal">rewards_resource</tt></li>
+</ul>
+</div>
+<div class="section" id="section-56">
+<h1><a class="toc-backref" href="#toc-entry-56">1.3.8.7</a></h1>
+<ul class="simple">
+<li>kill/destroy resource rewards; refund on self-demolish</li>
+</ul>
+</div>
+<div class="section" id="section-57">
+<h1><a class="toc-backref" href="#toc-entry-57">1.3.8.5</a></h1>
+<ul class="simple">
+<li>mod-specific maps via <tt class="docutils literal"><span class="pre">mods/&lt;mod&gt;/multi/</span></tt></li>
+</ul>
+</div>
+<div class="section" id="section-58">
+<h1><a class="toc-backref" href="#toc-entry-58">1.3.8.4</a></h1>
+<ul class="simple">
+<li>building resource production (<tt class="docutils literal">is_production</tt>, <tt class="docutils literal">production_type</tt>, etc.)</li>
+</ul>
+</div>
+<div class="section" id="section-59">
+<h1><a class="toc-backref" href="#toc-entry-59">1.3.8.3</a></h1>
+<ul class="simple">
+<li>flexible <tt class="docutils literal">is_a</tt> inheritance (selective, exclusion, multi-parent)</li>
+</ul>
+</div>
+<div class="section" id="section-60">
+<h1><a class="toc-backref" href="#toc-entry-60">1.3.8.2</a></h1>
+<ul class="simple">
+<li>capture ownership; <tt class="docutils literal">mdg_projectile</tt> / terrain cover/dodge; improved exit containers</li>
+<li>major combat rework: <tt class="docutils literal">mdg</tt>/<tt class="docutils literal">rdg</tt>/<tt class="docutils literal">mdf</tt>/<tt class="docutils literal">rdf</tt> system; damage sequences; <tt class="docutils literal">class skill</tt>; guard/chase modes; sound system refactor</li>
+</ul>
+</div>
+<div class="section" id="section-61">
+<h1><a class="toc-backref" href="#toc-entry-61">1.3.8.1</a></h1>
+<p>For multiplayer games, this version requires:</p>
+<ul class="simple">
+<li>client: 1.3.8 or later</li>
+<li>server: 1.2-c12 or later</li>
+</ul>
+<p>Main changes from 1.3.8:</p>
+<p>Bugs fixed:</p>
+<ul class="simple">
+<li>in a restored game, the R key would select any soldier (thanks to Marco Oros for reporting the bug)</li>
+<li>when building a menu takes too much time, repeated keys would accumulate</li>
+<li>hopefully avoid any volume glitch when a sound source is created</li>
+<li>custom maps will appear after official maps</li>
+<li>running server.py doesn't require any package</li>
+</ul>
+</div>
+<div class="section" id="section-62">
+<h1><a class="toc-backref" href="#toc-entry-62">1.3.8</a></h1>
+<p>For multiplayer games, this version requires:</p>
+<ul class="simple">
+<li>client: 1.3.8 or later</li>
+<li>server: 1.2-c12 or later</li>
+</ul>
+<p>Main changes from 1.3.7:</p>
+<ul class="simple">
+<li>added tts_digit_coefficient in cfg/parameters.toml</li>
+</ul>
+<p>Bugs fixed:</p>
+<ul class="simple">
+<li>paths between ground and water will be kept if both squares are ground</li>
+<li>units will flee to the previous square more often</li>
+<li>properly handle replay files that are not timestamps (thanks to dnl-nash)</li>
+<li>send bug reports only if the client is an executable</li>
+</ul>
+<p>Translations:</p>
+<ul class="simple">
+<li>added Belarusian translation (thanks to Uladzimir)</li>
+<li>updated Slovak translation (thanks to Marco Oros)</li>
+</ul>
+</div>
+<div class="section" id="section-63">
+<h1><a class="toc-backref" href="#toc-entry-63">1.3.7</a></h1>
+<p>For multiplayer games, this version requires:</p>
+<ul class="simple">
+<li>client: 1.3.7 or later</li>
+<li>server: 1.2-c12 or later</li>
+</ul>
+<p>Changes from 1.3.6:</p>
+<p>Now units can attack from inside vehicles or buildings:</p>
+<ul class="simple">
+<li>ranged units can attack as usual</li>
+<li>melee units can attack only from ground and without any additional range</li>
+<li>melee units cannot attack from air vehicles</li>
+<li>in the default game: units can enter in walls, gates and towers</li>
+</ul>
+<p>Fixed issues with counterattacks to a nearby square:</p>
+<ul class="simple">
+<li>units who cannot counterattack will stay silent</li>
+<li>defensive units won't counterattack</li>
+</ul>
+<p>Other:</p>
+<ul class="simple">
+<li>restored the &quot;attack!&quot; notification</li>
+<li>bugfix: a unit would not enter a building if the order was given from another square</li>
+<li>fixed: restore game</li>
+<li>inter-square attacks might work better</li>
+</ul>
+<p>Modding:</p>
+<ul class="simple">
+<li>added armor_vs</li>
+<li>now &quot;damage_vs&quot; works with &quot;is_a&quot; (including several levels of &quot;inheritance&quot; and multiple &quot;inheritance&quot;)</li>
+</ul>
+<p>Map making:</p>
+<ul class="simple">
+<li>official &quot;multi&quot; maps moved to res/multi</li>
+<li>multiplayer &quot;folder maps&quot; must be zipped to be played online</li>
+<li>removed the &quot;maperror.txt&quot; file (the information is already in the in-game error message).</li>
+</ul>
+<p>Changes to campaign format:</p>
+<ul class="simple">
+<li>mods.txt replaced with &quot;mods&quot; keyword in campaign.txt</li>
+<li>&quot;title&quot; keyword in campaign.txt</li>
+<li>new constraint: a complex mission map must be stored as a zip file</li>
+</ul>
+</div>
+<div class="section" id="section-64">
+<h1><a class="toc-backref" href="#toc-entry-64">1.3.6</a></h1>
+<p>For multiplayer games, this version requires:</p>
+<ul class="simple">
+<li>client: 1.3.6 or later</li>
+<li>server: 1.2-c12 or later</li>
+</ul>
+<p>Changes from 1.3.5:</p>
+<p>Unit behavior:</p>
+<ul class="simple">
+<li>bug fixed: nearby offensive units will automatically counterattack again (they will move to the attacker's square and then return to their starting positions)</li>
+<li>bug fixed: defensive units will flee again</li>
+</ul>
+<p>Interface:</p>
+<ul class="simple">
+<li>the description of controlled units will be less confusing</li>
+<li>improved group following (space key): the interface will usually follow the front of the group</li>
+<li>bug fixed: in style.txt, noise_if_very_damaged would never play</li>
+<li>bug fixed: SAPI wouldn't work</li>
+</ul>
+<p>Water:</p>
+<ul class="simple">
+<li>from now on, the game won't create amphibious paths (solves the following problem: if the shortest path to destination included a water square, land units would walk into water and die)</li>
+<li>issue fixed: a mage could recall water units to non-water squares (Now a mage will recall water units to the nearest adjacent water square.)</li>
+</ul>
+<p>Multiplayer:</p>
+<ul class="simple">
+<li>starting a non-private server will auto-configure the router (works only if UPnP is activated on the router; the configuration is automatically removed by the router after 20 minutes of inactivity)</li>
+<li>easier configuration of the standalone server</li>
+<li>local server auto-discovery by UDP broadcast (The local server will appear in the &quot;choose a server in a list&quot; menu.)</li>
+<li>bug fixed: in multiplayer games, a non-admin player could set a slower speed</li>
+</ul>
+<p>Translations:</p>
+<ul class="simple">
+<li>updated Brazilian Portuguese, Chinese, Czech, Italian and Slovak translations</li>
+</ul>
+<p>Map making:</p>
+<ul class="simple">
+<li>when possible, issue a warning instead of a map error</li>
+<li>bug fixed: in some cases, a trigger selected more units than specified. For example, if there are 3 dragons and many footmen in a1, (a1 10 dragon footman) would select 3 dragons and 7 footmen.</li>
+</ul>
+</div>
+<div class="section" id="section-65">
+<h1><a class="toc-backref" href="#toc-entry-65">1.3.5</a></h1>
+<p>For multiplayer games, this version requires:</p>
+<ul class="simple">
+<li>client: 1.3.5 or later</li>
+<li>server: 1.2-c12 or later</li>
+</ul>
+<p>Changes from 1.3.4:</p>
+<ul class="simple">
+<li>bug fixed: couldn't save a game with terrain</li>
+<li>fixed: the hit sound wasn't emitted if it killed the target</li>
+<li>fixed: the game would freeze if there wasn't enough space in a square to create a unit</li>
+</ul>
+<p>Internationalization:</p>
+<ul class="simple">
+<li>converted all the tts.txt files to UTF-8 with BOM signature. The encoding is still explicitly defined in the first line as UTF-8. The BOM signature might help some text editors to select UTF-8 automatically.</li>
+<li>will always use UTF-8 (or ASCII) for text files other than tts.txt (rules.txt, style.txt, etc)</li>
+<li>updated Spanish translation (thanks to Oscar Corona)</li>
+</ul>
+</div>
+<div class="section" id="section-66">
+<h1><a class="toc-backref" href="#toc-entry-66">1.3.4</a></h1>
+<p>For multiplayer games, this version requires:</p>
+<ul class="simple">
+<li>client: 1.3.4 or later</li>
+<li>server: 1.2-c12 or later</li>
+</ul>
+<p>Changes from 1.3.3:</p>
+<ul class="simple">
+<li>probably fixed speech in a few more cases (please report if you still cannot start the client)</li>
+<li>restored save and restore (it seems to be working, but please be careful)</li>
+<li>restored infinite resources and tech for &quot;aggressive computer 2&quot; (more interesting)</li>
+</ul>
+<p>Multiplayer:</p>
+<ul class="simple">
+<li>the client will remember the previously downloaded list of servers and use it if the metaserver is temporarily down</li>
+<li>in &quot;enter the IP address of the server&quot;, entering an empty IP address will select your computer (no need to type: &quot;localhost&quot;)</li>
+<li>standalone server: removed pygame dependency</li>
+</ul>
+<p>Interface:</p>
+<ul class="simple">
+<li>console command: &quot;a u_recall&quot; will add the recall upgrade to the current player</li>
+<li>minor bug fixed: the interface wouldn't follow a unit inside a transport (if the unit was in follow mode before being transported)</li>
+</ul>
+<p>Internationalization:</p>
+<ul class="simple">
+<li>updated Italian translation (thanks to Luigi Russo)</li>
+</ul>
+<p>Main campaign:</p>
+<ul class="simple">
+<li>added chapter 12, a tiny map to show how dense forests work (the rule is: &quot;any path between two dense forests is blocked&quot;)</li>
+</ul>
+<p>Tip: to quickly check for improvements in a specific chapter of a campaign you have already played:</p>
+<ul class="simple">
+<li>press the &quot;console&quot; key under Escape and press &quot;v&quot; and Enter for an instant victory</li>
+<li>or edit user/campaigns.ini: in [single_campaign] &quot;chapter = 12&quot; for example</li>
+</ul>
+</div>
+<div class="section" id="section-67">
+<h1><a class="toc-backref" href="#toc-entry-67">1.3.3</a></h1>
+<p>For multiplayer games, this version requires:</p>
+<ul class="simple">
+<li>client: 1.3.3 or later (if compatible)</li>
+<li>server: 1.2-c12, 1.3.0, 1.3.1, 1.3.2, 1.3.3 or later (if compatible)</li>
+</ul>
+<p>Changes from 1.3.2:</p>
+<ul class="simple">
+<li>bug fixed: a unit wouldn't stop after using an ability requiring to get closer (deadly fog, exorcism...) and would move to the enemy...</li>
+<li>bug fixed: the game would require a target for an ability centered on the caster (for example: raise dead)</li>
+<li>bug fixed: water couldn't be seen from low ground (for example in map jl7)</li>
+</ul>
+<p>The map interface should feel more natural:</p>
+<ul class="simple">
+<li>moving in the map won't cause collisions if you control a flying unit</li>
+<li>moving in the map won't cause collisions if you are defining the target of a recall order (for example)</li>
+<li>removed collisions between water and low ground</li>
+</ul>
+<p>Dense forests:</p>
+<ul class="simple">
+<li>bug fixed: dense forests would create paths when cleared (even if there wasn't any paths before)</li>
+<li>now forests are dense if they have at least 7 woods (instead of 3)</li>
+<li>multiplayer map 8: updated (7 woods) and improved (faster economy)</li>
+<li>editor: updated terrain palette (dense forest if at least 7 woods)</li>
+</ul>
+<p>Internationalization:</p>
+<ul class="simple">
+<li>bug fixed: maps with non US-ASCII characters could not be read on platforms using GBK or UTF-8 by default (now maps are always read as UTF-8 and errors are replaced with &quot;?&quot;)</li>
+<li>converted the following maps to UTF-8: bs2, can1, qc1, qc2 and qc3</li>
+<li>updated Polish translation (thanks to Patryk Mojsiewicz)</li>
+</ul>
+<p>Tiny changes in the main campaign:</p>
+<ul class="simple">
+<li>chapter 9: with the &quot;deadly fog&quot; bug fixed, necromancers should be easier to manage</li>
+<li>slightly improved chapters 5 and 10</li>
+</ul>
+<p>Tip: to quickly check for improvements in a specific chapter of a campaign you have already played:</p>
+<ul class="simple">
+<li>press the &quot;console&quot; key under Escape and press &quot;v&quot; and Enter for an instant victory</li>
+<li>or edit user/campaigns.ini: in [single_campaign] &quot;chapter = 11&quot; for example</li>
+</ul>
+</div>
+<div class="section" id="section-68">
+<h1><a class="toc-backref" href="#toc-entry-68">1.3.2</a></h1>
+<p>Changes from 1.3.1:</p>
+<p>Main changes:</p>
+<ul class="simple">
+<li>the &quot;choose a server&quot; menu will include any server with a compatible server version (not only the same version) so the servers won't have to be updated as often</li>
+<li>compatible clients with different versions will be allowed to play together</li>
+<li>the &quot;nearest&quot; servers will appear first in the &quot;choose a server&quot; menu (servers with the smallest delay of response)</li>
+<li>the time taken to check if a server is available will be mentioned (expressed in milliseconds) in the &quot;choose a server&quot; menu for comparison</li>
+<li>the unavailable servers won't appear in the &quot;choose a server&quot; menu</li>
+</ul>
+<p>Minor changes:</p>
+<ul class="simple">
+<li>slightly decreased the verbosity of server.log</li>
+<li>improved the standalone server guide (still not perfect though)</li>
+<li>added &quot;release notes&quot; to the documentation</li>
+</ul>
+</div>
+<div class="section" id="section-69">
+<h1><a class="toc-backref" href="#toc-entry-69">1.3.1</a></h1>
+<p>Changes from 1.3.0:</p>
+<ul class="simple">
+<li>probably fixed: the game wouldn't start on Windows 7 (ImportError: DLL load failed while importing _socket)</li>
+<li>fixed: sometimes the game wouldn't start until the folder &quot;gen_py&quot; in &quot;appdatalocalTemp&quot; is deleted (AttributeError: module 'win32com.gen_py...' has no attribute 'CLSIDToClassMap')</li>
+<li>fixed: vcruntime140.dll could be missing</li>
+<li>fixed: couldn't get the list of servers</li>
+<li>fixed: pressing A will behave like before and pressing Control+A will only select inactive orders</li>
+</ul>
+</div>
+<div class="section" id="section-70">
+<h1><a class="toc-backref" href="#toc-entry-70">1.3.0</a></h1>
+<p>Changes from 1.2-c12:</p>
+<p>Main changes:</p>
+<ul class="simple">
+<li>only walls and gates can be built on exits (or any building &quot;buildable on exits only&quot;)</li>
+<li>now a tower can be built only at the center of a sub-square, and only one tower per sub-square. The location of a tower can be selected in several ways:<ul>
+<li>in zoom mode: selects the current sub-square (must be free)</li>
+<li>in square mode: selects any free sub-square, starting with the central one</li>
+<li>if any object is selected: selects the enclosing sub-square (must be free)</li>
+</ul>
+</li>
+<li>now the screen reader is the default TTS</li>
+</ul>
+<p>Technical changes:</p>
+<ul class="simple">
+<li>migrated to Python 3</li>
+<li>replaced all TTS with accessible_output2 (patched to support Linux)</li>
+</ul>
+<p>Bugs fixed:</p>
+<ul class="simple">
+<li>couldn't control a resurrected unit which was in a group</li>
+<li>a worker who postponed building or gathering to eliminate an intruder wouldn't move back to its task and would complete it in place</li>
+<li>a unit could see a plateau from below</li>
+<li>a unit couldn't see diagonally</li>
+<li>couldn't select a square as a target for building a gate (a free exit will be selected)</li>
+</ul>
+<p>Interface improvements:</p>
+<ul class="simple">
+<li>zoom mode: validating a build order of a wall (or a gate) without selecting a specific target will automatically select the local exit (if it isn't blocked)</li>
+<li>tab will select any enemy first</li>
+<li>pressing escape when a target is selected will select the current square</li>
+<li>bug fixed: now entering or exiting zoom mode will select the mini-square or square as a target (instead of keeping the selected target)</li>
+<li>added commas in some messages (for clarity)</li>
+<li>shorter enemy summary</li>
+<li>bug fixed: would say &quot;building site&quot; and not the type of building</li>
+<li>bug fixed: in zoom mode, a default order for a building didn't set the rallying point to the sub-square but to the square</li>
+<li>bug fixed: a paused game wouldn't quit</li>
+<li>bug fixed: pressing Space will tell the exact orders even when some units have different orders (This is very useful to check how many workers are gathering gold, wood, etc (by pressing D). This could be useful to know how many units in a group are moving and how many have arrived. Pressing Control + Shift + S will give a complete summary of the orders of soldiers and workers.)</li>
+<li>in building mode, tab will select meadows before exits</li>
+<li>the description of a patrol order will recapitulate all the waypoints</li>
+<li>bug fixed: pressing Tab would select blocked exits</li>
+<li>bug fixed: it is no longer possible to build another wall on the same exit</li>
+<li>zoom mode: if no building land is found while a build order has been validated on a sub-square, an error will be raised (instead of searching for a building land in the enclosing square</li>
+</ul>
+</div>
+</div>
+</body>
+</html>

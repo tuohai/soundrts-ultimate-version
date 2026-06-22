@@ -1,0 +1,15 @@
+; CrazyMod Traditional
+
+; 分层热键：keyboard worker / soldier1–7 / building1–16（见 res/ui/*_bindings.txt 与 docs/zh/分层热键方案说明.md）
+
+def manoir_hante
+is_a building
+title 76400
+keyboard building1
+noise repeat 0 76500 76501 76502 76503
+
+def garde_fantome
+is_a fantome
+title 76401
+move 76507
+noise repeat 10 76504 76505 76506

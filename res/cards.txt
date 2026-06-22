@@ -1,0 +1,316 @@
+; ===========================================================================
+; Reward cards (phase 2 definitions; phase 3 = pre-mission loadout)
+; ===========================================================================
+;
+;   title <tts_id>
+;   tags infantry cavalry ...     optional, for mod / future tag-spawn
+;   spawn <unit_type> <n>         repeated; effect when card is used (phase 3)
+;   resource resource1 <n>          starting resource bonus (display units)
+;   grant_charges <n>
+;   min_rank <rank_id>            minimum rank to use in loadout (phase 3)
+;   delay <seconds>               game-time delay before card effects apply (0 = start)
+;   delay_minutes <n>             same as delay, in minutes
+;   tech <upgrade_id> [...]       grant researched upgrade(s), same as building research
+;   train_bonus <unit_type> <n>   first completed train of this type spawns n extras (once/game)
+;
+; Multiple spawn lines = combo card.
+
+
+def card_resource_gold
+title 5320
+resource resource1 100
+grant_charges 1
+
+def card_resource_wood
+title 5321
+resource resource2 80
+grant_charges 1
+
+def card_infantry
+title 5322
+tags infantry
+spawn footman 3
+grant_charges 1
+
+def card_cavalry
+title 5323
+tags cavalry
+spawn knight 2
+grant_charges 1
+
+def card_archer
+title 5324
+tags archer
+spawn archer 3
+grant_charges 1
+
+def card_mage
+title 5325
+tags mage
+spawn mage 1
+grant_charges 1
+min_rank rank_sergeant
+
+def card_dragon
+title 5326
+tags dragon
+spawn dragon 1
+grant_charges 1
+min_rank rank_colonel
+
+def card_siege
+title 5327
+tags siege
+spawn catapult 1
+grant_charges 1
+min_rank rank_lieutenant
+
+def card_air
+title 5328
+tags air
+spawn flyingmachine 2
+grant_charges 1
+min_rank rank_captain
+
+def card_inf_cav
+title 5329
+tags infantry cavalry
+spawn footman 5
+spawn knight 2
+grant_charges 1
+min_rank rank_lieutenant
+
+def card_inf_arch
+title 5330
+tags infantry archer
+spawn footman 4
+spawn archer 3
+grant_charges 1
+
+def card_arch_cav
+title 5331
+tags archer cavalry
+spawn archer 3
+spawn knight 2
+grant_charges 1
+
+def card_mixed_army
+title 5332
+tags mixed
+spawn footman 2
+spawn archer 2
+spawn knight 1
+grant_charges 1
+min_rank rank_captain
+
+def card_reinforcements_delayed
+title 5333
+tags infantry
+spawn footman 3
+delay_minutes 10
+grant_charges 1
+min_rank rank_sergeant
+
+def card_delayed_melee_weapon
+title 5334
+tech melee_weapon
+delay_minutes 8
+grant_charges 1
+min_rank rank_lieutenant
+
+def card_footman_train_bonus
+title 5396
+tags infantry
+train_bonus footman 3
+grant_charges 1
+min_rank rank_sergeant
+
+; ---------------------------------------------------------------------------
+; Tiered cards (small / medium / large) — same family, different scale
+; TTS 5457–5483
+; ---------------------------------------------------------------------------
+
+def card_infantry_small
+title 5457
+tags infantry
+spawn footman 2
+grant_charges 1
+
+def card_infantry_medium
+title 5458
+tags infantry
+spawn footman 4
+grant_charges 1
+min_rank rank_sergeant
+
+def card_infantry_large
+title 5459
+tags infantry
+spawn footman 6
+grant_charges 1
+min_rank rank_lieutenant
+
+def card_cavalry_small
+title 5460
+tags cavalry
+spawn knight 1
+grant_charges 1
+
+def card_cavalry_medium
+title 5461
+tags cavalry
+spawn knight 2
+grant_charges 1
+min_rank rank_sergeant
+
+def card_cavalry_large
+title 5462
+tags cavalry
+spawn knight 3
+grant_charges 1
+min_rank rank_lieutenant
+
+def card_archer_small
+title 5463
+tags archer
+spawn archer 2
+grant_charges 1
+
+def card_archer_medium
+title 5464
+tags archer
+spawn archer 3
+grant_charges 1
+min_rank rank_sergeant
+
+def card_archer_large
+title 5465
+tags archer
+spawn archer 5
+grant_charges 1
+min_rank rank_lieutenant
+
+def card_mage_small
+title 5466
+tags mage
+spawn mage 1
+grant_charges 1
+min_rank rank_sergeant
+
+def card_mage_medium
+title 5467
+tags mage
+spawn mage 1
+grant_charges 1
+min_rank rank_lieutenant
+
+def card_mage_large
+title 5468
+tags mage
+spawn mage 2
+grant_charges 1
+min_rank rank_captain
+
+def card_dragon_small
+title 5469
+tags dragon
+spawn dragon 1
+grant_charges 1
+min_rank rank_major
+
+def card_dragon_medium
+title 5470
+tags dragon
+spawn dragon 1
+grant_charges 1
+min_rank rank_colonel
+
+def card_dragon_large
+title 5471
+tags dragon
+spawn dragon 1
+grant_charges 1
+min_rank rank_major_general
+
+def card_siege_small
+title 5472
+tags siege
+spawn catapult 1
+grant_charges 1
+min_rank rank_sergeant
+
+def card_siege_medium
+title 5473
+tags siege
+spawn catapult 1
+grant_charges 1
+min_rank rank_lieutenant
+
+def card_siege_large
+title 5474
+tags siege
+spawn catapult 2
+grant_charges 1
+min_rank rank_captain
+
+def card_air_small
+title 5475
+tags air
+spawn flyingmachine 1
+grant_charges 1
+min_rank rank_sergeant
+
+def card_air_medium
+title 5476
+tags air
+spawn flyingmachine 2
+grant_charges 1
+min_rank rank_lieutenant
+
+def card_air_large
+title 5477
+tags air
+spawn flyingmachine 3
+grant_charges 1
+min_rank rank_captain
+
+def card_resource_gold_small
+title 5478
+resource resource1 60
+grant_charges 1
+
+def card_resource_gold_medium
+title 5479
+resource resource1 100
+grant_charges 1
+min_rank rank_sergeant
+
+def card_resource_gold_large
+title 5480
+resource resource1 160
+grant_charges 1
+min_rank rank_lieutenant
+
+def card_resource_wood_small
+title 5481
+resource resource2 50
+grant_charges 1
+
+def card_resource_wood_medium
+title 5482
+resource resource2 80
+grant_charges 1
+min_rank rank_sergeant
+
+def card_resource_wood_large
+title 5483
+resource resource2 130
+grant_charges 1
+min_rank rank_lieutenant
+
+def card_hero_raynor
+title 5485
+tags hero
+spawn raynor7 1
+grant_charges 1
+min_rank rank_general

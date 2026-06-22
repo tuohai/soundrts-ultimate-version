@@ -1,0 +1,10 @@
+; 外交界面热键
+
+1: select_alliance_candidate 1
+SHIFT 1: select_alliance_candidate -1
+
+q: alliance_request
+w: alliance_accept
+e: alliance_decline_or_cancel
+
+ESCAPE: exit_overlay_mode

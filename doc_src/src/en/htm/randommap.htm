@@ -1,0 +1,611 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.21.2: https://docutils.sourceforge.io/" />
+<title>Random map guide</title>
+<style type="text/css">
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 9511 2024-01-13 09:50:07Z milde $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+Despite the name, some widely supported CSS2 features are used.
+
+See https://docutils.sourceforge.io/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+.subscript {
+  vertical-align: sub;
+  font-size: smaller }
+
+.superscript {
+  vertical-align: super;
+  font-size: smaller }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+object[type="image/svg+xml"], object[type="application/x-shockwave-flash"] {
+  overflow: hidden;
+}
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title, .code .error {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left, .figure.align-left, object.align-left, table.align-left {
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+img.align-right, .figure.align-right, object.align-right, table.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+img.align-center, .figure.align-center, object.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+table.align-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: inherit }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+.align-top    {
+  vertical-align: top }
+
+.align-middle {
+  vertical-align: middle }
+
+.align-bottom {
+  vertical-align: bottom }
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+pre.literal-block, pre.doctest-block, pre.math, pre.code {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+pre.code .ln { color: gray; } /* line numbers */
+pre.code, code { background-color: #eeeeee }
+pre.code .comment, code .comment { color: #5C6576 }
+pre.code .keyword, code .keyword { color: #3B0D06; font-weight: bold }
+pre.code .literal.string, code .literal.string { color: #0C5404 }
+pre.code .name.builtin, code .name.builtin { color: #352B84 }
+pre.code .deleted, code .deleted { background-color: #DEB0A1}
+pre.code .inserted, code .inserted { background-color: #A3D289}
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic, pre.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+/* "booktabs" style (no vertical lines) */
+table.docutils.booktabs {
+  border: 0px;
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+  border-collapse: collapse;
+}
+table.docutils.booktabs * {
+  border: 0px;
+}
+table.docutils.booktabs th {
+  border-bottom: thin solid;
+  text-align: left;
+}
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+</head>
+<body>
+<div class="document" id="random-map-guide">
+<h1 class="title">Random map guide</h1>
+
+<script type="text/javascript" src="langdir.js"></script><div class="contents topic" id="contents">
+<p class="topic-title"><a class="reference internal" href="#top">Contents</a></p>
+<ul class="simple">
+<li><a class="reference internal" href="#introduction" id="toc-entry-1">Introduction</a></li>
+<li><a class="reference internal" href="#where-to-find-it" id="toc-entry-2">1. Where to find it</a></li>
+<li><a class="reference internal" href="#configuration-flow" id="toc-entry-3">2. Configuration flow</a><ul>
+<li><a class="reference internal" href="#templates" id="toc-entry-4">2.1 Templates</a></li>
+<li><a class="reference internal" href="#teams-2v2" id="toc-entry-5">2.2 Teams 2v2</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#generation-announcement-and-f5-f6" id="toc-entry-6">3. Generation announcement and F5/F6</a></li>
+<li><a class="reference internal" href="#share-codes" id="toc-entry-7">4. Share codes</a><ul>
+<li><a class="reference internal" href="#format" id="toc-entry-8">4.1 Format</a></li>
+<li><a class="reference internal" href="#import-share-code" id="toc-entry-9">4.2 Import share code</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#multiplayer-notes" id="toc-entry-10">5. Multiplayer notes</a></li>
+<li><a class="reference internal" href="#vs-random-choice-in-map-files" id="toc-entry-11">6. vs. <tt class="docutils literal">#random_choice</tt> in map files</a></li>
+<li><a class="reference internal" href="#homm-civ5-inspired-gameplay" id="toc-entry-12">7. HoMM / Civ5-inspired gameplay</a><ul>
+<li><a class="reference internal" href="#victory-modes" id="toc-entry-13">7.1 Victory modes</a></li>
+<li><a class="reference internal" href="#map-poi" id="toc-entry-14">7.2 Map POI</a></li>
+<li><a class="reference internal" href="#further-reading" id="toc-entry-15">7.3 Further reading</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="introduction">
+<h1><a class="toc-backref" href="#toc-entry-1">Introduction</a></h1>
+<p>Since SoundRTS 1.4.3.4, the <strong>procedural random map generator</strong> (RMG) builds standard <tt class="docutils literal">.txt</tt> maps from menu options. Generated maps use the same load pipeline as hand-made maps and work in local skirmish or online room creation.</p>
+</div>
+<div class="section" id="where-to-find-it">
+<h1><a class="toc-backref" href="#toc-entry-2">1. Where to find it</a></h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="81%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Mode</th>
+<th class="head">Path</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>Local
+skirmish</td>
+<td>Main menu → <strong>Start a game</strong> → <strong>Random map</strong> (first item)</td>
+</tr>
+<tr><td>Online host</td>
+<td>Connect to server → Create game → pick <strong>Random map</strong> → speed →
+configure</td>
+</tr>
+</tbody>
+</table>
+<p>After configuration, local play continues to invite-AI / faction / start; online play sends a <tt class="docutils literal">create_random</tt> command and the host generates the map at game start.</p>
+</div>
+<div class="section" id="configuration-flow">
+<h1><a class="toc-backref" href="#toc-entry-3">2. Configuration flow</a></h1>
+<p>The submenu walks through ( <strong>Esc</strong> goes back one level ):</p>
+<ol class="arabic simple">
+<li><strong>Map template</strong> (or <strong>Import share code</strong> — section 4)</li>
+<li><strong>Size</strong>: small / medium / large</li>
+<li><strong>Players</strong>: 2 / 3 / 4</li>
+<li><strong>Team mode</strong> (4 players only): free-for-all or fixed 2v2</li>
+<li><strong>Monster strength</strong>: weak / medium / strong (hostile center garrison; attacks players — weak: 2 footmen / medium: 4 footmen + 2 archers / strong: 6 footmen + 4 archers + 1 knight)</li>
+<li><strong>Resource layout</strong>: balanced / clustered</li>
+<li><strong>Terrain</strong> (not for lanes template): random / grass / marsh / mountain</li>
+<li><strong>Water</strong> (not for lanes): none / lake / river</li>
+<li><strong>Treasure</strong>: none / low / high (requires pickable <tt class="docutils literal">class item</tt> types in rules)</li>
+<li><strong>Victory mode</strong>: conquest / economic / exploration / survival (default conquest; see section 7)</li>
+<li><strong>Seed</strong>: random or custom number (0–99999)</li>
+<li><strong>Treaty</strong>: 0 / 5 / 10 / 15 / 20 minutes</li>
+</ol>
+<p>After seed selection you hear a <strong>voice preview</strong> of the settings; after treaty confirmation the map is generated.</p>
+<div class="section" id="templates">
+<h2><a class="toc-backref" href="#toc-entry-4">2.1 Templates</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="83%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Template</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td colspan="2"><strong>Standard</strong> | Classic grid, random starts and bridges</td>
+</tr>
+<tr><td><strong>Fast</strong></td>
+<td>Higher starting resources, quicker games</td>
+</tr>
+<tr><td><strong>Macro</strong></td>
+<td>Higher pop cap and more meadows, economy-focused</td>
+</tr>
+<tr><td><strong>Lanes</strong></td>
+<td>Three-lane layout (TD2-style); no terrain/water steps</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="teams-2v2">
+<h2><a class="toc-backref" href="#toc-entry-5">2.2 Teams 2v2</a></h2>
+<p>With 4 players and <strong>2v2</strong>, the map adds alliance triggers: players 1+2 and 3+4 start allied.</p>
+</div>
+</div>
+<div class="section" id="generation-announcement-and-f5-f6">
+<h1><a class="toc-backref" href="#toc-entry-6">3. Generation announcement and F5/F6</a></h1>
+<p>In local mode, when the map is ready the game announces:</p>
+<ul class="simple">
+<li><strong>Map generated</strong></li>
+<li><strong>Seed</strong> (number for reproducing the same layout)</li>
+<li><strong>Share code</strong> (full settings string)</li>
+<li><strong>Press F5 to repeat</strong> (history hint)</li>
+</ul>
+<p>The invite-AI menu that follows does <strong>not</strong> erase this: <strong>F5</strong> repeats the previous message, <strong>F6</strong> steps through voice history so you can review seed and share code anytime.</p>
+<p>Menus support the same <strong>F5 / F6</strong> history keys as in-game.</p>
+</div>
+<div class="section" id="share-codes">
+<h1><a class="toc-backref" href="#toc-entry-7">4. Share codes</a></h1>
+<div class="section" id="format">
+<h2><a class="toc-backref" href="#toc-entry-8">4.1 Format</a></h2>
+<p>Example:</p>
+<pre class="literal-block">
+RMG1:f:m:2:med:b:r:f:v:hi:c:4242
+</pre>
+<p><strong>Twelve</strong> colon-separated parts: <tt class="docutils literal">RMG1</tt> prefix + 11 fields (legacy <strong>10-field</strong> codes omit victory and default to conquest):</p>
+<div class="system-message">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">doc_src/src\en\randommap.rst</tt>, line 96)</p>
+<p>Malformed table.</p>
+<pre class="literal-block">
++----------+-----------------------------------+---------------+
+| Field    | Meaning                           | Examples      |
++==========+===================================+===============+
+| Template | standard / fast / macro / lanes   | s / f / m / l |
++----------+-----------------------------------+---------------+
+| Size     | small / medium / large            | s / m / l     |
++----------+-----------------------------------+---------------+
+| Players  | 2–4                               | 2             |
++----------+-----------------------------------+---------------+
+| Monsters | weak / medium / strong            | w / med / s   |
++----------+-----------------------------------+---------------+
+| Resources| balanced / clustered              | b / c         |
++----------+-----------------------------------+---------------+
+| Terrain  | random / grass / marsh / mountain | r / g / a / t |
++----------+-----------------------------------+---------------+
+| Teams    | ffa / teams_2v2                   | f / t         |
++----------+-----------------------------------+---------------+
+| Water    | none / lake / river               | n / l / v     |
++----------+-----------------------------------+---------------+
+| Treasure | none / low / high                 | n / lo / hi   |
++----------+-----------------------------------+---------------+
+| Victory  | conquest / economic /             | c / e / x / s |
+|          | exploration / survival          |               |
++----------+-----------------------------------+---------------+
+| Seed     | 0 = random; &gt;0 fixed              | 4242          |
++----------+-----------------------------------+---------------+
+</pre>
+</div>
+<p>Victory abbreviations: <tt class="docutils literal">c</tt> conquest, <tt class="docutils literal">e</tt> economic, <tt class="docutils literal">x</tt> exploration, <tt class="docutils literal">s</tt> survival.</p>
+<p>Import accepts codes with or without the <tt class="docutils literal">RMG1:</tt> prefix; <tt class="docutils literal">/</tt> works as a separator instead of <tt class="docutils literal">:</tt>.</p>
+</div>
+<div class="section" id="import-share-code">
+<h2><a class="toc-backref" href="#toc-entry-9">4.2 Import share code</a></h2>
+<p>On the <strong>map template</strong> submenu, choose <strong>Import share code</strong>, type or paste the code, <strong>Enter</strong> to confirm, <strong>Esc</strong> to cancel.</p>
+<p>The input box supports standard editing shortcuts (same as other text input fields such as seed or login):</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="32%" />
+<col width="68%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Shortcut</th>
+<th class="head">Action</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><strong>Ctrl+A</strong></td>
+<td>Select all</td>
+</tr>
+<tr><td><strong>Ctrl+C</strong></td>
+<td>Copy (all text if nothing selected)</td>
+</tr>
+<tr><td><strong>Ctrl+X</strong></td>
+<td>Cut</td>
+</tr>
+<tr><td><strong>Ctrl+V</strong></td>
+<td>Paste (invalid characters filtered out)</td>
+</tr>
+<tr><td><strong>Backspace / Delete</strong></td>
+<td>Delete selection or character before/after cursor</td>
+</tr>
+</tbody>
+</table>
+<p>Max length 80; allowed characters: letters, digits, <tt class="docutils literal">:</tt>, <tt class="docutils literal">/</tt>, <tt class="docutils literal">.</tt>, <tt class="docutils literal">-</tt>.</p>
+<p>On success you hear a preview and go straight to <strong>Treaty</strong> (skipping intermediate steps). Invalid codes show <strong>Invalid share code</strong> and return to the template menu.</p>
+</div>
+</div>
+<div class="section" id="multiplayer-notes">
+<h1><a class="toc-backref" href="#toc-entry-10">5. Multiplayer notes</a></h1>
+<ul class="simple">
+<li>The host's <tt class="docutils literal">create_random …</tt> command is applied when the game starts; all clients get the same deterministic map from seed + settings.</li>
+<li>Clients do <strong>not</strong> hear the local &quot;map generated + share code&quot; announcement; share the code before hosting or have guests import the same code when creating a room.</li>
+<li>Public games and treaty minutes follow the usual speed / visibility submenus.</li>
+</ul>
+</div>
+<div class="section" id="vs-random-choice-in-map-files">
+<h1><a class="toc-backref" href="#toc-entry-11">6. vs. <tt class="docutils literal">#random_choice</tt> in map files</a></h1>
+<p><tt class="docutils literal">#random_choice</tt> / <tt class="docutils literal">#end_random_choice</tt> in a map file are <strong>preprocessor</strong> picks among fixed alternatives (e.g. random gold placement). That is not RMG.</p>
+<p>RMG <strong>generates the whole map</strong> from parameters, with seeds and share codes for reproduction.</p>
+</div>
+<div class="section" id="homm-civ5-inspired-gameplay">
+<h1><a class="toc-backref" href="#toc-entry-12">7. HoMM / Civ5-inspired gameplay</a></h1>
+<p>RMG features inspired by <strong>Heroes of Might and Magic</strong> and <strong>Civilization V</strong> (map objectives and POI, not full turn-based or tech trees):</p>
+<div class="section" id="victory-modes">
+<h2><a class="toc-backref" href="#toc-entry-13">7.1 Victory modes</a></h2>
+<dl class="docutils">
+<dt><strong>Conquest</strong></dt>
+<dd>Eliminate all enemy players (default; clearing center creeps is optional).</dd>
+<dt><strong>Economic</strong></dt>
+<dd>Total gold gathered reaches the goal (excludes starting stock; spending still counts; checked about every 60s).
+Fast 2000 / standard 3000 / macro 5000 / lanes 2500.</dd>
+<dt><strong>Exploration</strong></dt>
+<dd>Your camp discovers every ancient ruin (FFA: only your finds count; 2v2: ally finds count).</dd>
+<dt><strong>Survival</strong></dt>
+<dd>Hold until the timer ends with your town hall intact (10 min fast / 15 min otherwise).</dd>
+</dl>
+<p>Losing all <tt class="docutils literal">provides_survival</tt> buildings still means defeat. In exploration/economic/survival modes, wiping all enemies does <strong>not</strong> auto-win; you may still attack. Victory checks run about every 30s (exploration) or 60s (economic) after conditions are met.</p>
+</div>
+<div class="section" id="map-poi">
+<h2><a class="toc-backref" href="#toc-entry-14">7.2 Map POI</a></h2>
+<p>Every RMG map (when types exist in <tt class="docutils literal">rules.txt</tt>) may include:</p>
+<ul class="simple">
+<li>Ancient ruins (<tt class="docutils literal">ancient_ruin</tt>): your unit enters the square for resources (fast: 300 gold + 150 wood; others: 500 + 250); exploration requires your camp to find every ruin; reward to first visitor only; building stays after discovery</li>
+<li>Capturable barracks (<tt class="docutils literal">captured_barracks</tt>): 2 footmen + 1 archer guards; clear guards, attack to capture, then train footmen/archers; unreinforced barracks spawn extra footmen every ~5–10 minutes</li>
+<li>Center garrison: Monster strength menu (weak 2 footmen / medium 4+2 / strong 6+4+1 knight)</li>
+</ul>
+</div>
+<div class="section" id="further-reading">
+<h2><a class="toc-backref" href="#toc-entry-15">7.3 Further reading</a></h2>
+<p>Full comparison, voice IDs, and mod extension: <tt class="docutils literal">docs/zh/player/英雄无敌与文明5玩法说明.md</tt> (Chinese; English RMG details in <tt class="docutils literal"><span class="pre">docs/en/player/random-map.md</span></tt>).</p>
+</div>
+</div>
+</div>
+</body>
+</html>

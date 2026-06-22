@@ -1,0 +1,14 @@
+title 4271 3010
+intro 7510
+nb_columns 15
+nb_lines 11
+nb_meadows_by_square 1
+west_east_paths a1 a3 a2 a4 a5 a6 a7 a8 a9 a10 b1 b2 b3 b4 b5 b6 b7 b8 b9 b10 c1 c2 c3 c4 c5 c6 c7 c8 c9 c10 d1 d2 d3 d4 d5 d6 d7 d8 d9 d10 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 g1 g2 g3 g4 g5 g6 g7 g8 g9 g10 h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 i1 i2 i3 i4 i5 i6 i7 i8 i9 i10 j1 j2 j3 j4 j5 j6 j7 j8 j9 j10 k1 k2 k3 k4 k5 k6 k7 k8 k9 k10 l1 l2 l3 l4 l5 l6 l7 l8 l9 l10 m1 m2 m3 m4 m5 m6 m7 m8 m9 m10 n1 n2 n3 n4 n5 n6 n7 n8 n9 n10 
+south_north_paths a1 a3 a2 a4 a5 a6 a7 a8 a9 a10 b1 b2 b3 b4 b5 b6 b7 b8 b9 b10 c1 c2 c3 c4 c5 c6 c7 c8 c9 c10 d1 d2 d3 d4 d5 d6 d7 d8 d9 d10 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 g1 g2 g3 g4 g5 g6 g7 g8 g9 g10 h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 i1 i2 i3 i4 i5 i6 i7 i8 i9 i10 j1 j2 j3 j4 j5 j6 j7 j8 j9 j10 k1 k2 k3 k4 k5 k6 k7 k8 k9 k10 l1 l2 l3 l4 l5 l6 l7 l8 l9 l10 m1 m2 m3 m4 m5 m6 m7 m8 m9 m10 n1 n2 n3 n4 n5 n6 n7 n8 n9 n10 
+goldmines 3000 h1 h1 h1 h1 h1 h1 h1 h1 h1 h1 h1 h1 h1 h1 h1 h1 
+woods 3000 h1 h1 h1 h1 h1 h1 h1 h1 h1 h1 h1 h1 h1 h1 h1 h1 
+player 0 0 a1 50 knight a2 50 knight a3 50 knight a4 50 knight b1 10 catapult b2 10 catapult b3 10 catapult b4 10 catapult a5 50 knight a6 50 knight a7 50 knight a8 10 archer
+computer_only 0 0 f1 20 footman f2 20 footman f3 20 footman f4 20 footman g4 20 footman h4 20 footman h4 20 footman i4 20 footman i3 20 footman i2 20 footman i1 g2 30 house h2 30 house i2 30 house g1 5 lumbermill 5 blacksmith h1 5 castle 5 magestower 5 dragonslair 5 dragon 5 footman 5 knight 5 archer 5 mage blacksmith lumbermill 5 house 30 peasant 20 priest i1 20 footman 20 archer 5 lumbermill 5 blacksmith 5 workshop 5 stables g3 10 temple 10 priest h3 10 temple 10 priest i3 10 temple 10 priest 
+trigger player1 (timer 0) (add_objective 1 56016)
+trigger player1 (no_enemy_left) (objective_complete 1)
+trigger all (no_unit_left) (defeat)

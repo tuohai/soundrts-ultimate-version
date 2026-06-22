@@ -1,0 +1,142 @@
+; StarCraft mod — script AIs for terran / protoss / zerg factions.
+
+; Generic names (peasant, footman, barracks) resolve via faction equivalents in rules.txt.
+
+; Invite "easy" or "aggressive" computers in multiplayer; faction picks the script below.
+
+
+
+def sc_terran_easy
+
+watchdog 900
+
+get 6 peasant
+
+get 1 supply_depot
+
+get 1 refinery
+
+get 1 barracks 4 footman
+
+get 1 engineering_bay
+
+get 1 factory 1 tech_lab 1 tank
+
+get 12 footman 2 hellion
+
+goto -1
+
+
+
+def sc_terran_aggressive
+
+watchdog 600
+
+constant_attacks 1
+
+research 1
+
+get 4 peasant
+
+get 1 supply_depot
+
+get 1 refinery
+
+get 1 barracks 6 footman
+
+get 1 engineering_bay
+
+get 1 factory 1 tech_lab 2 tank
+
+get 1 armory
+
+get 1 starport 1 tech_lab 1 medivac
+
+get 20 footman 4 hellion 4 tank
+
+attack
+
+goto -1
+
+
+
+def sc_protoss_easy
+
+watchdog 900
+
+get 4 peasant
+
+get 1 pylon
+
+get 1 barracks 4 footman
+
+get 1 cybernetics_core 4 archer
+
+get 8 footman
+
+goto -1
+
+
+
+def sc_protoss_aggressive
+
+watchdog 600
+
+constant_attacks 1
+
+get 4 peasant
+
+get 1 pylon
+
+get 1 barracks 6 footman
+
+get 1 assimilator
+
+get 1 cybernetics_core 8 archer
+
+get 1 forge
+
+attack
+
+goto -1
+
+
+
+def sc_zerg_easy
+
+watchdog 900
+
+get 4 peasant
+
+get 1 overlord
+
+get 1 barracks 6 footman
+
+get 1 roach_warren 4 knight
+
+get 1 extractor 10 footman
+
+goto -1
+
+
+
+def sc_zerg_aggressive
+
+watchdog 600
+
+constant_attacks 1
+
+get 4 peasant
+
+get 1 overlord
+
+get 1 barracks 8 footman
+
+get 1 hydralisk_den 6 archer
+
+get 1 extractor 16 footman
+
+attack
+
+goto -1
+

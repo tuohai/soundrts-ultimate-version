@@ -1,0 +1,26 @@
+; Campaign ch.2 — Zerg creep (same layout as multiplayer test)
+
+title 7542
+intro 7324
+
+square_width 12
+nb_columns 10
+nb_lines 1
+
+west_east_paths a1 b1 c1 d1 e1 f1 g1 h1 i1
+
+mineral_field 200 a1
+geyser 1 h1
+nb_meadows_by_square 0
+
+nb_players_min 1
+nb_players_max 1
+starting_squares a1
+starting_units hatchery 4 drone
+starting_resources 80 20
+
+timer_coefficient 1
+
+trigger player1 (timer 0) (do (register_objective 1 2) (add_objective 1 7512))
+trigger player1 (has spawning_pool) (do (objective_complete 1) (add_objective 2 7513))
+trigger player1 (and (building_lost hatchery) (has extractor)) (objective_complete 2)

@@ -1,0 +1,26 @@
+; StarCraft mod — Terran supply cap test
+; Command Center gives 10 supply. Ten Marines fill it; build a Supply Depot (+8) to train more.
+
+title 7313
+intro 7396
+
+square_width 12
+nb_columns 4
+nb_lines 1
+
+west_east_paths a1 b1 c1
+
+mineral_field 500 a1
+nb_meadows_by_square 1
+
+nb_players_min 1
+nb_players_max 1
+starting_squares a1
+starting_units command_center barracks scv
+starting_resources 300 0
+
+timer_coefficient 1
+
+trigger player1 (timer 0) (add_objective 1 7397)
+trigger player1 (and (has supply_depot) (has 12 marine)) (objective_complete 1)
+trigger player1 (and (has supply_depot) (has 12 marine)) (victory)

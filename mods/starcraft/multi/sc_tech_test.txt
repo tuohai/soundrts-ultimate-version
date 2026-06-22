@@ -1,0 +1,29 @@
+; StarCraft mod — tech tree test (Protoss)
+; Build Cybernetics Core, then train a Dragoon from Gateway.
+;
+;  a b c d e
+; 1 * + + + +
+
+title 7380
+
+square_width 12
+nb_columns 5
+nb_lines 1
+
+west_east_paths a1 b1 c1 d1
+
+mineral_field 1500 a1
+geyser 1 e1
+nb_meadows_by_square 2
+
+nb_players_min 1
+nb_players_max 1
+starting_squares a1
+starting_units nexus 2 probe
+starting_resources 80 10
+
+timer_coefficient 1
+
+trigger player1 (timer 0) (add_objective 1 7381)
+trigger player1 (and (has cybernetics_core) (has dragoon)) (objective_complete 1)
+trigger player1 (and (has cybernetics_core) (has dragoon)) (victory)

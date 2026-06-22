@@ -1,0 +1,46 @@
+title 4271 3001
+intro 7500
+
+; map size
+
+square_width 12
+
+nb_columns 3
+nb_lines 3
+
+
+; paths (give only the starting square)
+
+west_east_paths a1 b1 a2 b2 a3 b3
+west_east_bridges
+
+south_north_paths a2
+south_north_bridges b1
+
+
+; resources
+
+goldmines 1000 a1
+goldmines 3000 c3
+
+woods 150 a1 c1 a3
+woods 700 c3 
+nb_meadows_by_square 1
+additional_meadows a1
+remove_meadows a3 b2
+
+; players
+
+player 100 100 -lumbermill a1 townhall 30 peasant c1 house 2 footman
+computer_only 0 0 a3 footman c3 2 footman c2 footman
+
+; triggers
+
+timer_coefficient 1
+
+trigger player1 (timer 0) (add_objective 1 56001 56002 56004)
+
+
+
+
+trigger player1 (has 1 horse_and_cart) (objective_complete 1)

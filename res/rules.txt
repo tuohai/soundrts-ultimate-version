@@ -1,0 +1,1339 @@
+; can_build: buildings that the unit can build
+; can_research: abilities (techs) that the unit can research
+; can_advance: phases (ages) that the unit can advance to
+; can_train: units that the building can train
+; can_use_tech : abilities that the unit can use and upgrades by which the unit is affected
+; can_capture: 1 = default order on capture_hp_threshold 100 targets is occupy (capture), 0 = attack/move instead
+; requirements: objects (units, upgrades) required by the object to be acquired (unit or building) or used (ability)
+
+
+; factions (this part is not ready yet)
+
+def human_faction
+class faction
+
+;def orc_faction
+;class faction
+;townhall great_hall
+;farm pig_farm
+;peasant peon
+;easy orc_easy
+;aggressive orc_aggressive
+
+
+; misc parameters
+
+def parameters
+nb_of_resource_types 3 ; gold, wood, food
+minimal_damage 0.17
+hide_locked_commands 0
+achievements_enabled 1 ; 0 = mod disables achievements, cards, ranks, loadout
+
+; resource deposits
+
+def goldmine
+class deposit
+resource_type resource1 ; gold
+extraction_time 3
+extraction_qty 1
+
+
+def wood
+class deposit
+resource_type resource2 ; wood
+extraction_time 10
+extraction_qty 2
+resource_regen 1
+
+def orchard
+class deposit
+resource_type resource3 ; food
+extraction_time 3
+extraction_qty 1
+
+def food_carcass
+class deposit
+resource_type resource3 ; food from hunted animals
+extraction_time 3
+extraction_qty 1
+collision 0
+
+
+; huntable animals (Age of Empires style)
+
+def deer
+class soldier
+is_huntable 1
+flee_on_hit 1
+wander_range 12000
+food_deposit food_carcass
+food_deposit_qty 35
+cost 0 0
+population_cost 0
+time_cost 0
+hp_max 5
+speed 2
+sight_range 4
+ai_mode guard
+mdg 0
+mdg_range 0
+corpse 0
+no_number 1
+is_vulnerable 1
+
+def sheep
+class soldier
+is_huntable 1
+herdable 1
+flee_on_hit 1
+wander_range 12000
+food_deposit food_carcass
+food_deposit_qty 25
+herd_leash_range 12000
+cost 0 0
+population_cost 0
+time_cost 0
+hp_max 4
+speed 1.5
+sight_range 3
+ai_mode guard
+mdg 0
+mdg_range 0
+corpse 0
+no_number 1
+is_vulnerable 1
+
+def boar
+class soldier
+is_huntable 1
+flee_on_hit 0
+counterattack_enabled 1
+wander_range 12000
+food_deposit food_carcass
+food_deposit_qty 50
+cost 0 0
+population_cost 0
+time_cost 0
+hp_max 15
+speed 1.5
+sight_range 3
+ai_mode guard
+mdg 2
+mdg_cd 1.5
+mdg_range 1
+corpse 0
+no_number 1
+is_vulnerable 1
+
+
+; items (random map treasure chests, etc.)
+
+; 随机地图「丰富宝物」可刷出；单位拾取即开启并获得资源（同战役 gold_coin 机制）
+def treasure_chest
+class item
+consume_on_pickup 1
+resource_rewards 80 40
+transport_volume 1
+
+def gold_pile
+class item
+consume_on_pickup 1
+resource_rewards 200 0 0
+transport_volume 1
+
+; 金币：拾取即消耗并直接增加玩家金子（resource1）
+def gold_coin
+class item
+consume_on_pickup 1
+resource_rewards 50
+transport_volume 1
+
+; Random map / Civ-style POI markers (HoMM / Civ5 inspired)
+def ancient_ruin
+class building
+cost 0 0
+time_cost 0
+hp_max 200
+hp_regen 0
+capture_hp_threshold 0
+provides_survival 0
+is_buildable_anywhere 0
+sight_range 1
+
+def captured_barracks
+class building
+cost 0 0
+time_cost 0
+hp_max 500
+hp_regen 0.1
+capture_hp_threshold 100
+provides_survival 0
+is_buildable_anywhere 0
+can_train footman 5 archer 3
+population_provided 0
+
+
+; abilities (passive or active)
+
+def a_teleportation
+class skill
+requirements u_teleportation
+mana_cost 150
+effect teleportation
+effect_target ask
+effect_range inf
+universal_notification 1
+can_use_tech dsc
+
+def a_recall
+class skill
+requirements u_recall
+mana_cost 150
+effect recall
+effect_target ask
+effect_range inf
+universal_notification 1
+can_use_tech dsc
+
+def a_conversion
+class skill
+requirements u_conversion
+mana_cost 150
+effect conversion
+effect_target ask
+can_use_tech dsc
+
+def a_summon_dragon
+class skill
+requirements u_summon_dragon
+mana_cost 150
+cost 10 15
+effect summon 120 2 dragon
+can_use_tech dsc
+
+def a_holy_vision
+class skill
+mana_cost 30
+effect deploy 10 holy_vision
+effect_target ask
+effect_range inf
+can_use_tech dsc
+
+def a_exorcism
+class skill
+requirements u_exorcism
+mana_cost 150
+effect deploy 15 exorcism
+effect_target ask
+effect_range 12
+can_use_tech dsc
+
+def a_deadly_fog
+class skill
+requirements u_deadly_fog
+mana_cost 150
+effect deploy 15 deadly_fog
+effect_target ask
+effect_range 12
+can_use_tech dsc
+
+def a_meteors
+class skill
+requirements u_meteors
+mana_cost 150
+effect summon 15 meteors
+effect_target ask
+effect_range 12
+can_use_tech dsc
+
+def a_resurrection
+class skill
+requirements u_resurrection
+mana_cost 150
+effect resurrection 6
+can_use_tech dsc
+
+def a_raise_dead
+class skill
+mana_cost 50
+effect raise_dead 600 zombie skeleton zombie skeleton zombie skeleton zombie skeleton zombie skeleton
+can_use_tech dsc
+
+;def a_improved_wood_gathering
+;effect bonus stored_wood --
+;requirements lumbermill
+
+def hunting_techniques
+class upgrade
+cost 8 5
+time_cost 45
+effect bonus gather_time_food_carcass -1
+effect bonus gather_time_orchard -1
+effect bonus gather_qty_food_carcass 1
+effect bonus food_deposit_qty 10
+
+
+; upgrades (research)
+; Example mutual-exclusion branch (pick one path at blacksmith):
+; researching iron_working blocks bronze_working until feudal_age reset in a mod scenario.
+def iron_working
+class upgrade
+cost 80 0
+time_cost 90
+requirements blacksmith
+effect apply_bonus mdg 1 footman knight
+
+def bronzeworking
+class upgrade
+cost 80 0
+time_cost 90
+requirements blacksmith imperial_age
+effect apply_bonus mdf 1 footman archer
+
+def superhealer
+class upgrade
+cost 80 0
+time_cost 120
+effect bonus heal_level 9
+requirements imperial_age
+
+def u_teleportation
+class upgrade
+cost 50 0
+time_cost 120
+can_use_tech dsc
+
+def u_recall
+class upgrade
+cost 50 0
+time_cost 120
+can_use_tech dsc
+
+def u_meteors
+class upgrade
+cost 50 0
+time_cost 120
+can_use_tech dsc
+
+def u_deadly_fog
+class upgrade
+cost 50 0
+time_cost 120
+can_use_tech dsc
+
+def u_conversion
+class upgrade
+cost 50 0
+time_cost 120
+requirements castle_age
+can_use_tech dsc
+
+def u_summon_dragon
+class upgrade
+cost 50 0
+time_cost 120
+can_use_tech dsc
+
+def u_exorcism
+class upgrade
+cost 50 0
+time_cost 120
+can_use_tech dsc
+
+def u_resurrection
+class upgrade
+cost 50 0
+time_cost 120
+requirements imperial_age
+can_use_tech dsc
+
+def melee_weapon
+class upgrade
+cost 8 10
+time_cost 60
+effect apply_bonus mdg
+can_use_tech dsc
+
+def melee_armor
+class upgrade
+cost 8 10
+time_cost 60
+effect apply_bonus mdf rdf
+can_use_tech dsc
+
+def archer_weapon
+class upgrade
+cost 8 10
+time_cost 60
+effect bonus rdg 1.5
+can_use_tech dsc
+
+def archer_armor
+class upgrade
+cost 8 10
+time_cost 60
+effect bonus rdf 0.5
+can_use_tech dsc
+
+; 天气定义
+
+def rain
+class weather
+duration 30000
+tick_interval 1000
+start_buffs rain_slow
+squares (5,5)
+
+def snow
+class weather
+duration 60000
+tick_interval 2000
+start_buffs snow_slow
+squares (6,6)
+
+def archer_range
+class upgrade
+cost 8 10
+time_cost 60
+effect bonus rdg_range 1
+can_use_tech dsc
+
+def horse_speed
+class upgrade
+cost 15 5
+time_cost 60
+effect bonus speed 2.5
+can_use_tech dsc
+
+
+; units
+
+def peasant
+class worker
+can_herd 1
+can_repair_ships 1
+can_gather_deposit goldmine wood orchard food_carcass
+can_gather_building farm
+inventory_capacity 1
+auto_repair 0
+cost 4 0
+population_cost 1
+time_cost 10
+hp_max 4
+speed 1.5
+can_build gold_house gold_mint house farm barracks lumbermill blacksmith wall gate scouttower townhall stables workshop dragonslair magestower temple necropolis shipyard 
+can_use_tech hunting_techniques
+sight_range 6
+mdg_range 0.8
+mdg_cd 1
+mdg 1
+
+def footman
+class soldier
+cost 6 0
+population_cost 1
+time_cost 12
+hp_max 15
+speed 1.5
+sight_range 3
+mdg 3.5
+mdg_cd 1.5
+mdg_bonus 2.5
+mdg_range 1
+can_use_tech melee_weapon melee_armor
+
+
+def knight
+class soldier
+cost 15 0 15
+population_cost 2
+time_cost 20
+requirements stables
+can_use_tech melee_weapon melee_armor horse_speed dsc
+speed 2.5
+sight_range 3
+hp_max 45
+mdf 1
+rdf 0
+rdf_bonus 1.5
+mdg_range 1
+mdg_cd 1.5
+mdg 6
+mdg_bonus 6
+can_auto_explore 1
+
+; Hero Raynor (final stage; card loadout / skirmish)
+def raynor
+is_a knight
+no_number 1
+ai_mode guard
+global_count_limit 1
+;is_revivable 1
+campaign_carryover 1
+;revival_time 15
+;revival_time_per_level 2
+;xp_thresholds 150 400 800 1300 1900
+;hp_max_per_level 30
+;mdg_per_level 2
+;xp_reward 80
+inventory_capacity 3
+cost 
+time_cost 0
+hp_max 90
+mdg 1
+charge_mdg 1
+charge_mdg_cd 10
+charge_mdg_dist 15
+
+def raynor2
+is_a raynor
+hp_max 120
+mdg 4
+mdf 2
+charge_mdg 4
+charge_mdg_cd 10
+charge_mdg_dist 15
+inventory_capacity 3
+
+def raynor3
+is_a raynor2
+hp_max 150
+mdg 6
+mdf 3
+charge_mdg 4
+
+def raynor4
+is_a raynor3
+hp_max 180
+mdg 8
+mdf 4
+charge_mdg 4
+
+def raynor5
+is_a raynor4
+hp_max 210
+mdg 10
+mdf 6
+charge_mdg 6
+
+def raynor6
+is_a raynor5
+hp_max 250
+mdg 13
+mdf 8
+charge_mdg 8
+
+def raynor7
+is_a raynor6
+hp_max 280
+hp_regen 2
+hp_regen_cd 1
+mdg 16
+mdf 10
+charge_mdg 10
+
+
+def zombie
+class soldier
+population_cost 0
+hp_max 23
+speed 1
+speed_on_terrain marsh 1 ford 1
+can_use_tech melee_weapon melee_armor
+sight_range 3
+mdf 0.5
+mdf_bonus 1
+mdg_range 1
+mdg_cd 3
+mdg 5
+mdg_bonus 2.5
+corpse 0
+is_healable 0
+is_undead 1
+
+def archer
+class soldier
+cost 5 1
+population_cost 1
+time_cost 15
+change_time 10
+hp_max 10
+speed 1.5
+sight_range 6
+rdg 2.5
+rdg_cd 1.5
+rdg_range 4
+rdg_delay 0.02
+rdg_projectile 1
+requirements feudal_age
+can_use_tech archer_weapon archer_armor archer_range dsc
+rdf 0
+can_upgrade_to darkarcher
+
+def repeating_crossbowman
+class soldier
+cost 6 2
+population_cost 1
+time_cost 20
+change_time 15
+hp_max 10
+speed 1.5
+sight_range 6
+rdg 6
+rdg_cd 2.5
+rdg_range 4
+rdg_projectile 1
+damage_seq rdg 3 (interval 0.25)
+requirements feudal_age
+can_use_tech archer_weapon archer_armor archer_range dsc
+rdf 0
+
+
+def darkarcher
+class soldier
+cost 10 5 ; this is the total cost
+population_cost 1
+time_cost 75 ; this is the total cost
+change_time 60
+hp_max 12
+speed 1.5
+requirements magestower
+can_use_tech archer_weapon archer_armor archer_range
+rdf 0
+rdg_cd 3
+rdg_targets ground air
+sight_range 7
+rdg_range 5
+rdg_delay 0.02
+rdg 10
+rdg_projectile 1
+is_invisible 1
+
+def skeleton
+class soldier
+population_cost 0
+hp_max 15
+speed 1.5
+speed_on_terrain marsh 1.5 ford 1.5
+can_use_tech archer_weapon archer_armor archer_range
+rdf 0
+rdg_cd 1.5
+rdg_targets ground air
+rdg_range 4
+sight_range 6
+rdg_delay 0.02
+rdg 2.5
+rdg_projectile 1
+corpse 0
+is_healable 0
+is_undead 1
+
+
+def catapult
+class soldier
+requirements castle_age
+cost 15 10
+population_cost 2
+time_cost 30
+hp_max 30
+speed 0.75
+mdg_range 12
+sight_range 14
+mdg_delay 0.05
+mdg_cd 4
+mdg 8
+mdg_radius 1.5
+mdg_splash 8
+mdg_projectile 1
+is_repairable 1
+is_healable 0
+transport_volume 4
+corpse 0
+
+def dragon
+class soldier
+requirements imperial_age
+cost 15 10
+population_cost 3
+time_cost 15
+airground_type air
+hp_max 30
+hp_regen 0.15
+speed 1.75
+rdg_range 4
+sight_range 6
+rdg_cd 4
+rdg 4
+rdg_targets ground air
+rdg_radius 1
+rdg_splash 4
+rdg_projectile 1
+transport_volume 99
+corpse 0
+
+def mage
+class soldier
+cost 20 10
+requirements imperial_age
+population_cost 3
+time_cost 30
+hp_max 30
+mana_max 200
+mana_regen 1 ; mana / second
+speed 1
+can_use_skill a_recall a_summon_dragon a_meteors
+rdg_range 6
+sight_range 8
+rdg_cd 1.5
+rdg 8
+rdg_targets ground air
+rdg_projectile 1
+transport_volume 2
+
+def necromancer
+class soldier
+requirements imperial_age
+cost 20 10
+population_cost 3
+time_cost 30
+hp_max 30
+mana_max 200
+mana_regen 1 ; mana / second
+mana_regen_cd 1
+speed 1
+speed_on_terrain marsh 1 ford 1
+can_use_skill a_raise_dead a_deadly_fog
+rdg_range 6
+sight_range 8
+rdg_cd 1.5
+rdg 8
+rdg_targets ground air
+rdg_projectile 1
+transport_volume 2
+
+def priest
+class soldier
+requirements castle_age
+cost 15 7
+population_cost 2
+time_cost 20
+hp_max 30
+mana_max 200
+mana_regen 1
+mana_regen_cd 1
+speed 1
+sight_range 8
+mdg 0
+mdg_explode 1
+mdg_range 1
+exp_hp_cost 100
+exp_dgf 10000
+mdg_targets building
+mdg_splash 5000
+mdg_radius 6
+can_use_skill superhealer a_holy_vision a_exorcism a_conversion a_resurrection
+heal_level 1
+transport_volume 2
+
+def new_flyingmachine
+class soldier
+requirements castle_age
+cost 5 5
+population_cost 1
+time_cost 10
+airground_type air
+hp_max 30
+speed 1.5
+is_repairable 1
+is_healable 0
+sight_range 8
+transport_capacity 8
+transport_volume 99
+is_a_detector 1
+corpse 0
+allow_units_attack knight archer
+
+def flyingmachine
+class soldier
+requirements imperial_age
+cost 20 10
+population_cost 3
+time_cost 30
+airground_type air
+hp_max 30
+speed 1.5
+requirements magestower
+rdg_range 5
+sight_range 7
+rdg_cd 1.5
+rdg 8
+rdg_targets ground air
+rdg_projectile 1
+is_repairable 1
+is_healable 0
+transport_volume 99
+corpse 0
+
+def boat
+class worker
+cost 5 5
+population_cost 1
+time_cost 10
+can_gather_deposit all
+can_gather_building all
+can_repair 0
+can_herd 0
+airground_type water
+hp_max 30
+speed 1.5
+is_repairable 1
+is_healable 0
+transport_capacity 8
+transport_volume 99
+corpse 0
+
+def destroyer
+class soldier
+requirements feudal_age
+cost 11 4
+population_cost 2
+time_cost 14
+requirements lumbermill
+hp_max 43;  130/3
+speed 1.5
+is_repairable 1
+is_healable 0
+airground_type water
+rdg_range 6
+sight_range 8
+rdg_delay 0.02
+rdg_cd 1.5
+rdg 6 ; 6-16
+rdg_targets ground air
+rdg_projectile 1
+rdf 1
+can_use_tech archer_weapon archer_range
+transport_volume 99
+corpse 0
+
+def battleship
+class soldier
+requirements castle_age
+cost 15 10
+population_cost 3
+time_cost 30
+requirements lumbermill workshop
+hp_max 30
+speed 0.75
+mdg_range 12
+sight_range 14
+mdg_minimal_range 4
+mdg_delay 0.05
+mdg_cd 4
+mdg 8
+mdg_radius 0.25
+mdg_splash 8
+mdg_projectile 1
+is_repairable 1
+is_healable 0
+airground_type water
+transport_volume 99
+corpse 0
+
+def submarine
+class soldier
+requirements imperial_age
+cost 11 4
+population_cost 1
+time_cost 14
+hp_max 43;  130/3
+speed 1.5
+is_repairable 1
+is_healable 0
+airground_type water
+rdg_range 6
+sight_range 8
+rdg_delay 0.02
+rdg_cd 1.5
+rdg 6 ; 6-16
+rdg_projectile 1
+mdf 1 ; armor 20
+requirements lumbermill magestower
+can_use_tech archer_weapon archer_range
+transport_volume 99
+corpse 0
+is_invisible 1
+is_a_detector 1
+
+; buildings
+
+
+def farm
+class building
+requirements feudal_age
+cost 5 5
+hp_max 133.3;  400/3
+time_cost 45
+resource_type resource3  ; 食物类型
+extraction_time 10        ; 开采时间
+extraction_qty 1         ; 开采量
+auto_cultivate 1
+is_gather 1
+production_type resource3
+production_cost 0 50
+production_qty 50
+resource_volume_max 50
+resource_volume_start 25
+
+
+def house
+class building
+cost 5 5
+population_provided 8; 4 * 2
+hp_max 133.3;  400/3
+time_cost 45
+requirements townhall
+
+def lumbermill
+class building
+cost 6 9
+population_provided 0
+hp_max 200;  600/3
+time_cost 68
+requirements townhall
+storable_resource_types resource2
+can_research archer_weapon archer_armor archer_range
+storage_bonus 0 1 ; gold bonus is +0, wood bonus is +1
+
+def barracks
+class building
+cost 7 9
+population_provided 0
+hp_max 266.7;  800/3
+time_cost 90
+requirements feudal_age
+can_train footman archer knight
+can_research dsb dsc
+can_use_tech dsb
+
+
+def townhall
+class building
+cost 12 16
+population_provided 1
+hp_max 400;  1200/3
+time_cost 135
+heal_level 1
+storable_resource_types resource1 resource2 resource3
+can_train peasant
+can_research hunting_techniques
+;can_upgrade_to keep
+can_advance feudal_age castle_age imperial_age
+
+
+def keep
+class building
+cost 22 31 ; this is the total cost
+time_cost 315 ; this is the total cost
+hp_max 800
+heal_level 2
+requirements barracks
+;can_upgrade_to castle
+is_a townhall
+
+def castle
+class building
+cost 42 61 ; this is the total cost
+time_cost 675 ; this is the total cost
+hp_max 1600
+heal_level 4
+requirements barracks lumbermill blacksmith stables
+;can_upgrade_to
+is_a keep
+
+def blacksmith
+class building
+cost 8 10
+population_provided 0
+hp_max 266.7;  800/3
+time_cost 90
+requirements feudal_age
+can_research melee_weapon melee_armor
+
+def stables
+class building
+cost 10 15
+population_provided 0
+hp_max 266.7;  800/3
+time_cost 90
+requirements castle_age
+can_research horse_speed
+
+def workshop
+class building
+cost 10 15
+population_provided 0
+hp_max 266.7;  800/3
+time_cost 90
+requirements castle_age
+can_train catapult new_flyingmachine flyingmachine
+
+def dragonslair
+class building
+cost 15 20
+population_provided 0
+hp_max 266.7;  800/3
+time_cost 90
+requirements imperial_age
+can_train dragon
+
+def magestower
+class building
+cost 15 20
+population_provided 0
+hp_max 266.7;  800/3
+time_cost 90
+requirements imperial_age
+can_train mage
+can_research u_recall u_summon_dragon u_meteors
+
+def temple
+class building
+cost 10 30
+population_provided 0
+hp_max 300
+time_cost 90
+requirements castle_age
+can_train priest
+can_research superhealer u_exorcism u_conversion u_resurrection
+
+def necropolis
+class building
+cost 10 30
+population_provided 0
+hp_max 300
+time_cost 90
+requirements imperial_age
+can_train necromancer
+can_research u_deadly_fog
+
+def scouttower
+class building
+cost 6 2
+hp_max 33;  100/3
+time_cost 60
+bonus_height 1
+can_upgrade_to guardtower cannontower
+is_buildable_anywhere 1
+transport_capacity 4
+provides_survival 0
+
+def guardtower
+class building
+cost 11 4
+requirements lumbermill
+hp_max 43;  130/3
+time_cost 140
+bonus_height 1
+rdg_range 6
+rdg_delay 0.02
+rdg_cd 1.5
+rdg 6 ; 6-16
+rdg_targets ground air
+rdg_projectile 1
+rdf 1 ; armor 20
+can_use_tech archer_weapon archer_range
+is_buildable_anywhere 1
+transport_capacity 8
+provides_survival 0
+
+def cannontower
+class building
+cost 16 5
+requirements blacksmith
+hp_max 53;  160/3
+time_cost 190
+bonus_height 1
+mdg_range 7
+mdg_delay 0.05
+mdg_cd 4
+mdg 8 ; 10-50
+mdg_targets ground
+mdg_radius 1
+mdg_projectile 1
+mdg_splash 8
+mdf 1 ; armor 20
+is_buildable_anywhere 1
+transport_capacity 8
+provides_survival 0
+
+def wall
+class building
+cost 7 9
+population_provided 0
+hp_max 500
+time_cost 90
+is_buildable_on_exits_only 1
+transport_capacity 4
+provides_survival 0
+allow_units_attack archer catapult
+capture_hp_threshold 30   # 30%血量时可被夺取
+can_upgrade_to massive_wall
+
+def massive_wall
+is_a wall
+cost 21 27
+population_provided 0
+hp_max 2000
+time_cost 270
+is_buildable_on_exits_only 1
+transport_capacity 8
+provides_survival 0
+requirements keep
+
+def gate
+class building
+cost 10 10
+population_provided 0
+hp_max 450
+time_cost 90
+is_buildable_on_exits_only 1
+is_a_gate 1
+provides_survival 0
+transport_capacity 4
+capture_hp_threshold 30   # 30%血量时可被夺取
+can_upgrade_to massive_gate
+
+def massive_gate
+is_a gate
+cost 30 30
+population_provided 0
+hp_max 1800
+time_cost 270
+is_buildable_on_exits_only 1
+is_a_gate 1
+provides_survival 0
+transport_capacity 8
+requirements keep
+
+def shipyard
+class building
+can_repair_ships 1
+cost 10 15
+population_provided 0
+hp_max 266.7;  800/3
+time_cost 90
+is_buildable_near_water_only 1
+requirements townhall lumbermill
+can_train boat destroyer battleship submarine
+
+def gold_house
+class building
+requirements castle_age
+cost 10 9
+time_cost 70
+hp_max 330
+auto_production 1
+manual_production 1
+production_type resource1
+production_time 100
+production_qty 200
+
+; 铸币厂：生产金币落在地上，工人拾取后金子直接入库
+def gold_mint
+class building
+requirements castle_age
+cost 10 9
+time_cost 70
+hp_max 330
+auto_production 1
+manual_production 1
+production_item gold_coin
+production_time 60
+production_qty 1
+
+; other units
+
+def instant_death ; used by some maps to create dead units
+class effect
+harm_level 10000
+harm_target_type
+decay 1
+
+def meteors ; or blizzard
+class effect
+harm_level 1
+harm_target_type 
+
+def deadly_fog
+class effect
+harm_level 1
+harm_target_type healable
+
+def earthquake
+class effect
+harm_level 1
+harm_target_type building
+
+def quicksand ; or surface
+class effect
+harm_level 1
+harm_target_type ground unit
+
+def holy_vision
+class effect
+is_invisible 1
+is_a_detector 1
+airground_type air
+
+def exorcism
+class effect
+harm_level 2
+harm_target_type undead
+
+def dsc
+class upgrade
+
+cost 10 5
+time_cost 20
+effect bonus cost -50% 0
+effect bonus time_cost -5
+effect bonus population_cost -1
+
+
+def dsb
+class upgrade
+requirements castle_age
+cost 10 5
+time_cost 20
+effect bonus can_train 1
+
+def b_slow
+class buff
+duration 9999
+temporary 1
+stack 1  ; duration reset
+negative 1
+stat speed
+rdg_trigger_rate 20
+op_charge_mdg_trigger_rate 100
+mdg_trigger_rate 0
+percentage 25
+target_type unit
+
+def heal
+class buff
+stack 1  ; duration reset
+stat heal_level heal_cd heal_radius
+temporary 1
+duration 9999
+v 1 7.5 6
+target_type self
+
+def berserk_buff
+class buff
+stack 1  ; duration reset
+stat rdg
+percentage 20
+temporary 1
+duration 10
+v 4	
+is_active 1
+mdg_trigger_rate 20  ; 近战攻击有20%几率触发
+rdg_trigger_rate 20  ; 远程攻击有20%几率触发
+trigger_condition hp < 20
+
+def desperate_resist_buff
+class buff
+stat mdf
+percentage 50
+duration 5
+is_passive 1
+trigger_condition hp < 30
+
+def spell_power_buff
+class buff
+stat mdg
+percentage 30
+duration 8
+is_passive 1
+trigger_condition mana < 50
+
+def dual_trigger_buff
+class buff
+stat mdg
+percentage 30
+temporary 1
+duration 8
+is_active 1
+mdg_trigger_rate 50  ; 近战攻击有50%几率触发
+rdg_trigger_rate 10  ; 远程攻击只有10%几率触发
+; 这是一个演示不同攻击类型触发率的buff
+
+
+; ===== 时代（phase）系统示例 =====
+; phase 是一种特殊的 upgrade。
+; 默认情况下研究后会对玩家所有现有及未来的单位生效；
+; 若设置了 phase_targets，则仅作用于匹配的单位。
+;
+; 关键字段：
+;   phase bonus stat1 val1 stat2 val2 ...
+;       两个词的关键字（与 effect bonus 对齐）；cost 等列表型属性可写多个值，
+;       例如  phase bonus cost -5 -3 -2 mdg 1
+;   phase_targets <type1> <type2> ...
+;       可选；当设置时，phase bonus 中的非成本项仅作用于匹配的单位。
+;       匹配规则：精确 type_name / is_a 继承链 / 类别（worker/soldier/building 等）
+;       任一命中。前缀 ``-`` 表示排除（如 ``phase_targets -building`` 表示除建筑外
+;       的所有单位）；可与正向项混用（如 ``phase_targets soldier -footman``）。
+;       注意：cost/time_cost/population_cost 等成本类加成始终走玩家
+;       全局，不受 phase_targets 限制。仅当 phase_targets 含正向匹配项
+;       （非 ``-`` 排除）且同时写了成本类 bonus 时，引擎会发出一次性警告。
+;   units_auto_upgrade 0/1
+;       1 时研究完成后，仅"与本时代绑定"的形态升级会被瞬时执行：
+;         单位的 can_upgrade_to 中，若存在某个目标的 requirements 列表里
+;         显式包含本时代名（例如 castle_age），那个目标会被免费瞬时升级。
+;       未把本时代写入 requirements 的常规手动升级链（如
+;       townhall→keep→castle、scouttower→guardtower 等）不会被影响。
+;       想让某形态随某时代自动取代旧形态，把该时代名加到目标形态的
+;       requirements 里即可（示例：让 swordsman 在城堡时代取代 footman，
+;       在 swordsman 的 requirements 里追加 castle_age）。
+;       若同时设置了 phase_targets，仍先按 phase_targets 过滤源单位。
+;   can_upgrade_to <next_phase>
+;       仅作 UI 展示用途；链式升级请通过 requirements 实现。
+;
+; 在哪个建筑/单位里推进时代：把时代名加到该建筑/单位的 can_advance 列表即可。
+; 默认示例把它放在 townhall（及其派生的 keep/castle）上，符合 AoE 玩家直觉，
+; 但引擎不强制——任何 can_advance 列表里包含该时代名的单位都能推进时代。
+; 注意：时代升级走 can_advance / advance 命令，与 can_research / research
+; 命令（科技研究）相互独立；把 phase 放到 can_research 里不会再生效。
+
+def dark_age
+class phase
+cost 0 0
+time_cost 0
+
+def feudal_age
+class phase
+cost 10 15
+time_cost 130
+phase_targets -building
+phase bonus mdg 1 hp_max 5 cost -2 0 time_cost -5
+units_auto_upgrade 0
+can_upgrade_to castle_age
+
+def castle_age
+class phase
+cost 20 30
+time_cost 160
+requirements feudal_age barracks blacksmith
+phase bonus mdg 2 rdg 2 sight_range 1
+units_auto_upgrade 1
+can_upgrade_to imperial_age
+
+def imperial_age
+class phase
+cost 35 45
+time_cost 260
+requirements castle_age stables workshop
+phase bonus mdg 2 rdg 2 sight_range 1
+units_auto_upgrade 1

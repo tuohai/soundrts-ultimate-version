@@ -1,0 +1,293 @@
+TAB: select_target 1 no_exit
+SHIFT TAB: select_target -1 no_exit
+; The key names are case sensitive.
+; The reference for the key names is at http://www.pygame.org/docs/ref/key.html
+; The game adds "K_" to the beginning of the key names.
+; The game adds "KMOD_" to the beginning of the key modifier names. The modifiers are optional.
+; For example, "CTRL LEFT" are translated to the pygame constants "KMOD_CONTROL K_LEFT".
+; The allowed modifiers are: CONTROL, ALT and SHIFT.
+
+
+; definitions used in this file
+
+#define SOLDIER soldier1 soldier2 soldier3 soldier4 soldier5 soldier6 soldier7
+
+
+; examine the situation
+
+z: resource_status resource1
+x: resource_status resource2
+SHIFT Z: resource_status resource3
+c: population_status
+ALT V: unit_attributes_screen
+
+v: unit_hp_status
+
+LCTRL: examine
+RCTRL: examine
+
+SPACE: unit_status
+
+
+; explore the map
+
+UP: select_square 0 1
+DOWN: select_square 0 -1
+LEFT: select_square -1 0
+RIGHT: select_square 1 0
+
+SHIFT UP: select_square 0 5
+SHIFT DOWN: select_square 0 -5
+SHIFT LEFT: select_square -5 0
+SHIFT RIGHT: select_square 5 0
+
+CTRL UP: select_square 0 1 no_collision
+CTRL DOWN: select_square 0 -1 no_collision
+CTRL LEFT: select_square -1 0 no_collision
+CTRL RIGHT: select_square 1 0 no_collision
+
+CTRL SHIFT UP: select_square 0 5 no_collision
+CTRL SHIFT DOWN: select_square 0 -5 no_collision
+CTRL SHIFT LEFT: select_square -5 0 no_collision
+CTRL SHIFT RIGHT: select_square 5 0 no_collision
+
+PAGEDOWN: select_scouted_square 1
+PAGEUP: select_scouted_square -1
+
+CTRL PAGEDOWN: select_conflict_square 1
+CTRL PAGEUP: select_conflict_square -1
+
+ALT PAGEDOWN: select_unknown_square 1
+ALT PAGEUP: select_unknown_square -1
+
+SHIFT PAGEDOWN: select_resource_square 1
+SHIFT PAGEUP: select_resource_square -1
+
+F8: toggle_zoom
+
+; select a target
+
+CTRL TAB: select_target 1 useful
+CTRL SHIFT TAB: select_target -1 useful
+
+; 过滤器开关（m-n过滤系统）
+
+m: toggle_side_filter 1     ; 在己方、敌方、全部之间向前切换
+SHIFT m: toggle_side_filter -1  ; 在己方、敌方、全部之间向后切换
+
+n: toggle_type_filter 1     ; 在建筑、单位、元素、全部之间向前切换
+SHIFT n: toggle_type_filter -1  ; 在建筑、单位、元素、全部之间向后切换
+
+; give an order
+
+a: select_order 1 inactive_included
+SHIFT a: select_order -1 inactive_included
+
+CTRL a: select_order 1 inactive_only
+CTRL SHIFT a: select_order -1 inactive_only
+
+b: order_shortcut ; order shortcuts are defined in style.txt
+
+RETURN: validate
+SHIFT RETURN: validate queue_order
+CTRL RETURN: validate imperative
+CTRL SHIFT RETURN: validate imperative queue_order
+
+KP_ENTER: validate
+SHIFT KP_ENTER: validate queue_order
+CTRL KP_ENTER: validate imperative
+CTRL SHIFT KP_ENTER: validate imperative queue_order
+
+BACKSPACE: default
+SHIFT BACKSPACE: default queue_order
+CTRL BACKSPACE: default imperative
+CTRL SHIFT BACKSPACE: default imperative queue_order
+
+ALT x: do_again ; reselect the previously validated order
+ALT z: do_again now ; if no target is required, validate the order
+SHIFT ALT g: do_again now queue_order ; if no target is required, validate the order
+
+; select one or several units for orders
+
+q: select_unit 1 local
+SHIFT q: select_unit -1 local
+
+CTRL q: select_unit 1
+CTRL SHIFT q: select_unit -1
+
+BACKSLASH: command_unit
+
+w: select_unit 1 building
+ALT w: select_unit 1 building idle
+CTRL w: select_unit 1 building even_if_no_menu ; include buildings without a menu (farms for example)
+e: select_unit 1 worker
+
+ALT e: select_unit 1 worker idle
+CTRL ALT e: select_units worker idle
+QUOTE: select_unit 1 worker idle
+CTRL QUOTE: select_units worker idle
+
+r: select_unit 1 soldier1
+t: select_unit 1 soldier2
+y: select_unit 1 soldier3
+u: select_unit 1 soldier4
+i: select_unit 1 soldier5
+o: select_unit 1 soldier6
+p: select_unit 1 soldier7
+
+SHIFT w: select_unit -1 building
+SHIFT e: select_unit -1 worker
+ALT SHIFT e: select_unit -1 worker idle
+SHIFT r: select_unit -1 soldier1
+SHIFT t: select_unit -1 soldier2
+SHIFT y: select_unit -1 soldier3
+SHIFT u: select_unit -1 soldier4
+SHIFT i: select_unit -1 soldier5
+SHIFT o: select_unit -1 soldier6
+SHIFT p: select_unit -1 soldier7
+
+CTRL e: select_units worker
+CTRL r: select_units soldier1
+CTRL t: select_units soldier2
+CTRL y: select_units soldier3
+CTRL u: select_units soldier4
+CTRL i: select_units soldier5
+CTRL o: select_units soldier6
+CTRL p: select_units soldier7
+
+CTRL d: select_units worker
+CTRL f: select_units soldier1
+CTRL g: select_units soldier2
+CTRL h: select_units soldier3
+CTRL j: select_units soldier4
+CTRL k: select_units soldier5
+CTRL l: select_units soldier6
+CTRL SEMICOLON: select_units soldier7
+
+d: select_units local worker
+ALT d: select_units worker local idle
+CTRL ALT d: select_units worker idle
+f: select_units local soldier1
+ALT f: select_units soldier1 local idle
+CTRL ALT f: select_units soldier1 idle
+g: select_units local soldier2
+ALT g: select_units soldier2 local idle
+CTRL ALT g: select_units soldier2 idle
+h: select_units local soldier3
+ALT h: select_units soldier3 local idle
+CTRL ALT h: select_units soldier3 idle
+j: select_units local soldier4
+ALT j: select_units soldier4 local idle
+CTRL ALT j: select_units soldier4 idle
+k: select_units local soldier5
+ALT k: select_units soldier5 local idle
+CTRL ALT k: select_units soldier5 idle
+l: select_units local soldier6
+ALT l: select_units soldier6 local idle
+CTRL ALT l: select_units soldier6 idle
+SEMICOLON: select_units local soldier7
+ALT SEMICOLON: select_units soldier7 local idle
+CTRL ALT SEMICOLON: select_units soldier7 idle
+s: select_units local SOLDIER
+CTRL s: select_units SOLDIER
+SHIFT s: select_units local worker SOLDIER
+CTRL SHIFT s: select_units worker SOLDIER
+ALT s: select_units local worker SOLDIER
+CTRL ALT s: select_units worker SOLDIER
+
+
+; group units around already selected ones
+
+1: group 1 local
+2: group 2 local
+3: group 3 local
+4: group 4 local
+5: group 5 local
+CTRL 1: group 1
+CTRL 2: group 2
+CTRL 3: group 3
+CTRL 4: group 4
+CTRL 5: group 5
+0: ungroup
+
+
+; recallable groups
+
+6: recall_group 6
+7: recall_group 7
+8: recall_group 8
+9: recall_group 9
+CTRL 6: set_group 6
+CTRL 7: set_group 7
+CTRL 8: set_group 8
+CTRL 9: set_group 9
+SHIFT 6: append_group 6
+SHIFT 7: append_group 7
+SHIFT 8: append_group 8
+SHIFT 9: append_group 9
+
+
+; miscellaneous
+
+ESCAPE: escape
+
+F1: help 1
+SHIFT F1: help -1
+
+F2: help -1
+CTRL F2: fullscreen
+CTRL SHIFT F2: toggle_cheatmode
+
+F3: say_time
+CTRL SHIFT F3: toggle_tick
+CTRL F3: toggle_talking_clock
+
+CTRL SHIFT F4: change_player
+
+F5: history_previous
+F6: history_next
+
+LALT: history_stop
+RALT: history_stop
+LSHIFT: history_stop
+RSHIFT: history_stop
+
+F9: objectives 1
+SHIFT F9: objectives -1
+
+F10: gamemenu
+CTRL c: gamemenu
+ALT F4: gamemenu
+
+F11: say_players
+
+F7: say
+
+HOME: volume
+KP_PLUS: volume
+END: volume -1 
+KP_MINUS: volume -1 
+
+; 第一人称模式控制
+ALT SPACE: immersion    ; 切换到第一人称模式
+CTRL SPACE: immersion   ; 保持传统快捷键
+
+
+
+BACKQUOTE: console
+CTRL BACKQUOTE: reload_parameters
+
+; 音乐控制快捷键
+ALT m: toggle_music
+ALT HOME: music_volume_up
+ALT KP_PLUS: music_volume_up
+ALT EQUALS: music_volume_up
+ALT END: music_volume_down
+ALT KP_MINUS: music_volume_down
+ALT MINUS: music_volume_down
+
+; RPG缩放模式精细度控制
+CTRL F8: change_zoom_precision        ; 自定义缩放精细度（打开输入框）
+SHIFT F8: change_zoom_precision -1    ; 减少缩放精细度  
+CTRL SHIFT F8: change_zoom_precision 1 ; 增加缩放精细度（3x3 -> 5x5 -> 7x7 -> 9x9 -> 11x11 -> 15x15）
+ALT F8: get_zoom_precision            ; 查询当前缩放精细度

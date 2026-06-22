@@ -1,0 +1,6 @@
+title 7747
+synopsis 7751
+coop_campaign 1
+coop_intro 0
+coop_missions 1-29
+hero_min_level 13:2 16:3 19:4 22:5 25:6 27:7

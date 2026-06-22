@@ -1,0 +1,15 @@
+title 4271 3008
+intro 7508
+nb_columns 15
+nb_lines 5
+
+west_east_paths a1 a2 a3 a4 a5 b1 b2 b3 b4 b5 c1 c2 c3 c4 c5 d1 d2 d3 d4 d5 e1 e2 e3 e4 e5 f1 f2 f3 f4 f5 g1 g2 g3 g4 g5 h1 h2 h3 h4 h5 i1 i2 i3 i4 i5 j1 j2 j3 j4 j5 k1 k2 k3 k4 k5 l1 l2 l3 l4 l5 m1 m2 m3 m4 m5 n1 n2 n3 n4 n5
+south_north_paths a1 a2 a3 a4 b1 b2 b3 b4 c1 c2 c3 c4 d1 d2 d3 d4 e1 e2 e3 e4 f1 f2 f3 f4 g1 g2 g3 g4 h1 h2 h3 h4 i1 i2 i3 i4 j1 j2 j3 j4 k1 k2 k3 l4 k4 l1 l2 l3 m1 m2 m3 m4 n1 n2 n3 n4 o1 o2 o3 o4
+goldmines 100 a1 b1 c1 d1 e1 f1 g1 h1 i1 j1 k1 l1 m1 n1 o1 o2 o3 o4 o5 n5 m5 l5 k5 j5 i5 h5 g5 f5 e5 d5 c5 b5 a5 a4 a3 a2 
+woods 100 a1 b1 c1 d1 e1 f1 g1 h1 i1 j1 k1 l1 m1 n1 o1 o2 o3 o4 o5 n5 m5 l5 k5 j5 i5 h5 g5 f5 e5 d5 c5 b5 a5 a4 a3 a2 
+high_grounds e1 e2 e3 e4 e5 f1 f2 f3 f4 f5 g1 g2 g3 g4 g5
+player 50000 50000 a1 50 footman a2 50 footman a3 50 footman a4 50 footman a5 50 footman c1 50 archer c2 50 archer c3 50 archer c4 50 archer b1 10 catapult b2 10 catapult b3 10 catapult b4 10 catapult b5 10 catapult d1 50 knight d2 50 knight d3 50 knight d4 50 knight d5 50 mage 20 dragon u_meteors
+computer_only 0 0 h1 100 footman h2 100 footman h3 100 footman h4 100 footman h5 100 footman i1 50 archer i2 50 archer i3 50 archer i4 50 archer i5 50 archer j1 30 knight j2 30 knight j3 30 knight kings_chariet 10 archer 10 footman j4 50 knight j5 30 knight k1 50 footman k2 50 footman k3 50 footman k5 50 footman k4 50 footman
+trigger player1 (timer 0) (add_objective 1 56014)
+trigger player1 (no_enemy_left) (objective_complete 1)
+trigger all (no_unit_left) (defeat)

@@ -1,0 +1,14 @@
+title 4271 3011
+intro 7511
+nb_columns 3
+nb_lines 3
+nb_meadows_by_square 1
+west_east_paths a1 b1 a2 b2 a3 b3
+south_north_paths a1 b1 c1 a2 b2 c2 
+goldmines 500 a1 b1 c1 a2 b2 c2 a3 b3 c3
+woods 500 a1 b1 c1 a2 b2 c2 a3 b3 c3
+player 7000 7000 a1 50 peasant 10 house townhall 2 footman
+computer_only 0 0 a3 footman b3 footman c3 footman
+trigger player1 (timer 0) (add_objective 1 56017)
+trigger player1 (has 1 big_cart) (objective_complete 1)
+trigger all (no_unit_left) (defeat)

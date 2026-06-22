@@ -1,0 +1,220 @@
+title 5023
+objective 1039
+
+square_width 12
+nb_columns 26
+nb_lines 40
+
+nb_players_min 2
+nb_players_max 6
+starting_squares b2 b39 k11 y2 y39 r30
+starting_units new_flyingmachine townhall 10 house 10 peasant 
+starting_resources 500 500
+global_population_limit 10000
+
+computer_only 1000000 1000000 b22 3 dragon b24 5 dragon b25 3 dragon f39 5 dragon  f2 5 dragon k39 3 dragon l39 5 dragon m39 3 dragon k2 3 dragon l2 5 dragon m2 3 dragon y22 3 dragon y24 5 dragon y25 3 dragon a19 10 archer a20 10 archer h40 10 archer  t40 10 archer z19 10 archer z20 10 archer n20   50 catapult k19 40 skeleton 20 darkarcher 40 zombie k20 2 dragon k22 2 dragon k23 40 skeleton 20 darkarcher 40 zombie l24 40 skeleton  50 zombie k24 40 skeleton  50 zombie q19 40 skeleton 20 darkarcher 40 zombie q20 2 dragon q22 2 dragon q23 40 skeleton 20 darkarcher 40 zombie m22 40 skeleton 30 darkarcher 40 zombie o22 40 skeleton 30 darkarcher 40 zombie l18 40 skeleton 50 zombie p18 40 skeleton 50 zombie l19 30 skeleton 5 darkarcher 40 zombie p19 30 skeleton 5 darkarcher 40 zombie p24 40 skeleton 50 zombie m20 5 dragon o20 5 dragon m21 10 catapult 30 darkarcher 30 zombie o21 10 catapult 30 darkarcher 30 zombie n22 50 darkarcher n23 10 dragon k24 20 destroyer 20 battleship k17 20 battleship 20 destroyer j23 20 destroyer j17 20 destroyer 20 battleship j20 20 destroyer  20 battleship p17 10 battleship 10 destroyer p25 10 battleship 10 destroyer r24 20 destroyer 20 battleship r17 20 battleship 20 destroyer f5 5 battleship 15 destroyer v34 5 battleship 15 destroyer b23 5 battleship 5 destroyer y23 5 battleship 5 destroyer
+
+goldmine 100000 n20
+goldmine 3000 l11 r29
+goldmine 500  c39 d39 e39 f39 g39 h39 x39 x38 y38 y37  y36 x35 c2 d2 e2 f2 g2 h2  x2 w2 y3 y4 y5 y6 
+aquatic_goldmine 500 f33 d24 g36
+
+wood 100000 n20
+wood 3000 j11 r31
+wood 500 b38 b37 b36 b35  b34 b33 y38 y37 y36 y35 y34 y33 y3 y4 y5 y6 y7 y8 b3 b4 b5 b6 b7 b8
+
+nb_meadows_by_square 0
+; 1 meadow
+additional_meadows b39 i9 i9 i9 i9 i9  b5 k11 t2 y2 b5 k11 t2 y2 b3 b4 b6 b7 b8 b9 b11 b12 b14 b18 b19 b28 b29 b30 b31 b32 b37 b38 c39 d39 e39 f2 f39 g39 h39 i2 i39 j11 l11 r2 r39 s2 s39 t39 u2 u39 v2 v39 w2 w39 x2 y3 y4 y6 y7 y9 y10 y11 y12 y13 y14 y16 y17 y27 y28 y29 y30 y31 y33 y34 y36 y37 y39 b3 b4 b6 b7 b8 b9 b11 b12 b14 b18 b19 b28 b29 b30 b31 b32 b37 b38 c39 d39 e39 f2 f39 g39 h39 i2 i39 j11 l11 r2 r39 s2 s39 t39 u2 u39 v2 v39 w2 w39 x2 y3 y4 y6 y7 y9 y10 y11 y12 y13 y14 y16 y17 y27 y28 y29 y30 y31 y33 y34 y36 y37 y39 b3 b4 b6 b7 b8 b9 b11 b12 b14 b18 b19 b28 b29 b30 b31 b32 b37 b38 c39 d39 e39 f2 f39 g39 h39 i2 i39 j11 l11 r2 r39 s2 s39 t39 u2 u39 v2 v39 w2 w39 x2 y3 y4 y6 y7 y9 y10 y11 y12 y13 y14 y16 y17 y27 y28 y29 y30 y31 y33 y34 y36 y37 y39 l10 l10 l10 l10 l10 j10 j12 k10 k12 l12 j10 j12 k10 k12 l12 j10 j12 k10 k12 l12 j10 j12 k10 k12 l12 j10 j12 k10 k12 l12 p29 p29 p29 p29 q29 q29 q29 q29 q30 q30 q30 q30 q30 q30 q31 q31 q31 q31 q31 q31 x39 x39 x39 x39 y38 y38 y38 y38
+
+terrain _forest b3 b4 b5 b6 b7 b8 b33 b34 b35 b36 b37 b38 r31 y3 y4 y5 y6 y7 y8 y33 y34 y35 y36 y37 y38
+terrain _meadows b2 b3 b4 b5 b6 b9 b11 b12 b14 b30 b31 b32 c39 d39 e39 f2 f39 g39 h39 i2 i9 i39 j10 j12 k10 k12 l10 l12 q30 r2 r30 r39 s2 s39 t2 t39 u2 u39 v2 v39 w2 w39 x2 x39 y9 y10 y11 y12 y13 y14 y16 y17 y27 y28 y29 y30 y31
+terrain big_bridge a26 z26
+terrain ford b26 y26
+terrain lake m20 o20
+terrain marsh n29 n31 o29 o31 x38
+terrain mountain a2 a3 a4 a6 a7 a8 a9 a11 a12 a13 a14 a16 a19 a27 a28 a29 a30 a31 a32 a34 a35 a37 a38 a39 b1 b40 c1 c40 d1 d40 f40 g1 g40 h1 h40 i1 i10 i40 j11 l9 l11 m21 m22 m29 m31 n28 n32 o21 o22 o28 o32 p28 p32 q28 q32 r1 r28 r32 r40 s1 s28 s29 s30 s31 s32 s40 t1 t40 u40 v1 v40 w1 w40 x1 x40 y1 y40 z2 z3 z4 z6 z7 z8 z9 z11 z12 z13 z17 z18 z19 z21 z22 z24 z25 z27 z29 z30 z31 z32 z33 z35 z36 z37 z39
+terrain mountain_pass a1 a5 a10 a15 a17 a18 a20 a21 a22 a23 a24 a25 a33 a40 e1 e40 k11 n20 n21 n22 u1 z1 z5 z10 z14 z15 z16 z23 z28 z34 z38 z40
+terrain ocean b19 b20 b21 b22 b23 c18 c19 c20 c21 c22 c23 d4 d5 d6 d7 d8 d9 d10 d11 d12 d13 d14 d15 d16 d17 d18 d19 d20 d21 d22 d23 d24 d25 d26 d27 d28 d29 d30 d31 d32 d33 d34 d35 d36 d37 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21 e22 e23 e24 e25 e26 e27 e28 e29 e30 e31 e32 e33 e34 e35 e36 e37 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 f22 f23 f24 f25 f26 f27 f28 f29 f30 f31 f32 f33 f34 f35 f36 f37 g4 g5 g6 g7 g8 g9 g10 g11 g12 g13 g14 g15 g16 g17 g18 g19 g20 g21 g22 g23 g24 g25 g26 g27 g28 g29 g30 g31 g32 g33 g34 g35 g36 g37 h4 h5 h6 h7 h12 h13 h14 h15 h16 h17 h18 h19 h20 h21 h22 h23 h24 h25 h26 h27 h28 h29 h30 h31 h32 h33 h34 h35 h36 h37 i4 i5 i6 i7 i14 i15 i16 i17 i18 i19 i20 i21 i22 i23 i24 i25 i26 i27 i28 i29 i30 i31 i32 i33 i34 i35 i36 i37 j1 j2 j3 j4 j5 j6 j7 j14 j15 j16 j17 j24 j25 j26 j27 j28 j29 j30 j31 j32 j33 j34 j35 j36 j37 j39 j40 k1 k2 k3 k4 k5 k6 k7 k14 k15 k16 k26 k27 k28 k29 k30 k31 k32 k33 k34 k35 k36 k37 k38 k39 k40 l1 l2 l3 l4 l5 l6 l7 l14 l15 l16 l26 l27 l28 l32 l33 l34 l35 l36 l37 l38 l39 l40 m1 m2 m3 m4 m5 m6 m7 m14 m15 m16 m26 m34 m35 m36 m37 m38 m39 m40 n1 n2 n3 n4 n5 n6 n7 n8 n9 n10 n11 n12 n13 n14 n15 n16 n26 n34 n35 n36 n37 n38 n39 n40 o1 o2 o3 o4 o5 o6 o7 o8 o9 o10 o11 o12 o13 o14 o15 o16 o26 o34 o35 o36 o37 o38 o39 o40 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p26 p34 p35 p36 p37 p38 p39 p40 q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q26 q34 q35 q36 q37 q38 q39 q40 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 r15 r16 r17 r25 r26 r34 r35 r36 r37 s4 s5 s6 s7 s8 s9 s10 s11 s12 s13 s14 s15 s16 s17 s18 s19 s20 s21 s22 s23 s24 s25 s26 s34 s35 s36 s37 t4 t5 t6 t7 t8 t9 t10 t11 t12 t13 t14 t15 t16 t17 t18 t19 t20 t21 t22 t23 t24 t25 t26 t27 t34 t35 t36 t37 u4 u5 u6 u7 u8 u9 u10 u11 u12 u13 u14 u15 u16 u17 u18 u19 u20 u21 u22 u23 u24 u25 u26 u27 u28 u29 u30 u31 u32 u33 u34 u35 u36 u37 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27 v28 v29 v30 v31 v32 v33 v34 v35 v36 v37 w4 w5 w6 w7 w8 w9 w10 w11 w12 w13 w14 w15 w16 w17 w18 w19 w20 w21 w22 w23 w24 w25 w26 w27 w28 w29 w30 w31 w32 w33 w34 w35 w36 w37 x18 x19 x20 x21 x22 x23 x24 y18 y19 y20 y21 y22 y23 y24
+terrain river l22 m23 n23 o23 p22
+terrain sea b18 b24 c3 c4 c5 c6 c7 c8 c9 c10 c11 c12 c13 c14 c15 c16 c17 c24 c25 c26 c27 c28 c29 c30 c31 c32 c33 c34 c35 c36 c37 c38 d3 d38 e3 e38 f3 f38 g3 g38 h3 h8 h9 h10 h11 h38 i3 i8 i11 i12 i13 i38 j8 j13 j18 j19 j20 j21 j22 j23 j38 k8 k13 k17 k18 k24 k25 l8 l13 l17 l25 l29 l30 l31 m8 m9 m10 m11 m12 m13 m17 m25 m27 m28 m30 m32 m33 n17 n25 n27 n30 n33 o17 o25 o27 o30 o33 p17 p25 p27 p30 p31 p33 q17 q18 q24 q25 q27 q33 r3 r18 r19 r20 r21 r22 r23 r24 r27 r33 r38 s3 s27 s33 s38 t3 t28 t29 t30 t31 t32 t33 t38 u3 u38 v3 v38 w3 w38 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x25 x26 x27 x28 x29 x30 x31 x32 x33 x34 x35 x36 x37
+
+water b19 b20 b21 b22 b23 c3 c4 c5 c6 c7 c8 c9 c10 c11 c12 c13 c14 c15 c16 c17 c18 c19 c20  c21 c22 c23 c24 c25 c26 c27 c28 c30 c31 c32 c33 c34 c35 c36 c37 c38 d3 d4 d5 d6 d7 d8 d9 d10 d11 d12 d13 d14 d15 d16 d17 d18 d19 d20 d21 d22 d23 d24 d25 d26 d27 d28 d29 d30 d31 d32 d33 d34 d35 d36 d37 d38 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21 e22 e23 e24 e25 e26 e27 e28 e29 e30 e31 e32 e33 e34 e35 e36 e37 e38 e3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 f22 f23 f24 f25 f26 f27 f28 f29 f30 f31 f32 f33 f34 f35 f36 f37 g4 g5 g6 g7 g8 g9 g10 g11 g12 g13 g14 g15 g16 g17 g18 g19 g20 g21 g22 g23 g24 g25 g26 g27 g28 g29 g30 g31 g32 g33 g34 g35 g36 g37 h4 h5 h6 h7 h12 h13 h14 h15 h16 h17 h18 h19 h20 h21 h22 h23 h24 h25 h26 h27 h28 h29 h30 h31 h32 h33 h34 h35 h36 h37 i4 i5 i6 i7 i14 i15 i16 i17 i18 i19 i20 i21 i22 i23 i24 i25 i26 i27 i28 i29 i30 i31 i32 i33 i34 i35 i36 i37 j1 j2 j3 j4 j5 j6 j7 j14 j15 j16 j17 j24 j25 j26 j27 j28 j29 j30 j31 j32 j33 j34 j35 j36 j37 j39 j40 k1 k2 k3 k4 k5 k6 k7 k14 k15 k16 k26 k27 k28 k29 k30 k31 k32 k33 k34 k35 k36 k37 k38 k39 k40 l1 l2 l3 l4 l5 l6 l7 l14 l15 l16 l26 l27 l28 l32 l33 l34 l35 l36 l37 l38 l39 l40 m1 m2 m3 m4 m5 m6 m7 m14 m15 m16 m26 m34 m35 m36 m37 m38 m39 m40 n1 n2 n3 n4 n5 n6 n7 n8 n9 n10 n11 n12 n13 n14 n15 n16 n26 n34 n35 n36 n37 n38 n39 n40 o1 o2 o3 o4 o5 o6 o7 o8 o9 o10 o11 o12 o13 o14 o15 o16 o26 o34 o35 o36 o37 o38 o39 o40 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p26 p34 p35 p36 p37 p38 p39 p40 q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q26 q34 q35 q36 q37 q38 q39 q40 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 r15 r16 r17 r25 r26 r34 r35 r36 r37 s4 s5 s6 s7 s8 s9 s10 s11 s12 s13 s14 s15 s16 s17 s18 s19 s20 s21 s22 s23 s24 s25 s26 s34 s35 s36 s37 t4 t5 t6 t7 t8 t9 t10 t11 t12 t13 t14 t15 t16 t17 t18 t19 t20 t21 t22 t23 t24 t25 t26 t27 t34 t35 t36 t37 u4 u5 u6 u7 u8 u9 u10 u11 u12 u13 u14 u15 u16 u17 u18 u19 u20 u21 u22 u23 u24 u25 u26 u27 u28 u29 u30 u31 u32 u33 u34 u35 u36 u37 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27 v28 v29 v30 v31 v32 v33 v34 v35 v36 v37 w4 w5 w6 w7 w8 w9 w10 w11 w12 w13 w14 w15 w16 w17 w18 w19 w20 w21 w22 w23 w24 w25 w26 w27 w28 w29 w30 w31 w32 w33 w34 w35 w36 w37 x18 x19 x20 x21 x22 x23 x24 y18 y19 y20 y21 y22 y23 y24 b18 b24 c3 c4 c5 c6 c7 c8 c9 c10 c11 c12 c13 c14 c15 c16 c17 c24 c25 c26 c27 c28 c29 c30 c31 c32 c33 c34 c35 c36 c37 c38 d3 d38 e3 e38 f3 f38 g3 g38 h3 h8 h9 h10 h11 h38 i3 i8 i11 i12 i13 i38 j8 j13 j18 j19 j20 j21 j22 j23 j38 k8 k13 k17 k18 k24 k25 l8 l13 l17 l25 l29 l30 l31 m8 m9 m10 m11 m12 m13 m17 m25 m27 m28 m30 m32 m33 n17 n25 n27 n30 n33 o17 o25 o27 o30 o33 p17 p25 p27 p30 p31 p33 q17 q18 q24 q25 q27 q33 r3 r18 r19 r20 r21 r22 r23 r24 r27 r33 r38 s3 s27 s33 s38 t3 t28 t29 t30 t31 t32 t33 t38 u3 u38 v3 v38 w3 w38 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x25 x26 x27 x28 x29 x30 x31 x32 x33 x34 x35 x36 x37 l22 m23 n23 o23 p22 m20 o20 j9 k9
+ground b3 b4 b5 b6 b7 b8 b33 b34 b35 b36 b37 b38 r31 y3 y4 y5 y6 y7 y8 y33 y34 y35 y36 y37 y38 b2 b3 b4 b5 b6 b9 b11 b12 b14 b30 b31 b32 c39 d39 e39 f2 f39 g39 h39 i2 i9 i39 j10 j12 k10 k12 l10 l12 q30 r2 r30 r39 s2 s39 t2 t39 u2 u39 v2 v39 w2 w39 x2 x39 y9 y10 y11 y12 y13 y14 y16 y17 y27 y28 y29 y30 y31 a2 a3 a4 a6 a7 a8 a9 a11 a12 a13 a14 a16 a19 a27 a28 a29 a30 a31 a32 a34 a35 a37 a38 a39 b1 b40 c1 c40 d1 d40 f40 g1 g40 h1 h40 i1 i10 i40 j11 l9 l11 m21 m22 m29 m31 n28 n32 o21 o22 o28 o32 p28 p32 q28 q32 r1 r28 r32 r40 s1 s28 s29 s30 s31 s32 s40 t1 t40 u40 v1 v40 w1 w40 x1 x40 y1 y40 z2 z3 z4 z6 z7 z8 z9 z11 z12 z13 z17 z18 z19 z21 z22 z24 z25 z27 z29 z30 z31 z32 z33 z35 z36 z37 z39 a1 a5 a10 a15 a17 a18 a20 a21 a22 a23 a24 a25 a33 a40 e1 e40 k11 n20 n21 n22 u1 z1 z5 z10 z14 z15 z16 z23 z28 z34 z38 z40
+
+;where flying units can't go
+no_air a2 a3 a4 a6 a7 a8 a9 a11 a12 a13 a14 a16 a19 a26 a27 a28 a29 a30 a31 a32 a34 a35 a37 a38 a39 b1 b40 c1 c40 d1 d40 f40 g1 g40 h1 h40 i1 i10 i40 j11 l9 l11 m21 m22 m29 m31 n28 n32 o21 o22 o28 o32 p28 p32 q28 q32 r1 r28 r32 r40 s1 s28 s29 s30 s31 s32 s40 t1 t40 u40 v1 v40 w1 w40 x1 x40 y1 y40 z2 z3 z4 z6 z7 z8 z9 z11 z12 z13 z17 z18 z19 z21 z22 z24 z25 z26 z27 z29 z30 z31 z32 z33 z35 z36 z37 z39 a1 a5 a10 a15 a17 a18 a20 a21 a22 a23 a24 a25 a33 a40 e1 e40 k11 n20 n21 n22 u1 z1 z5 z10 z14 z15 z16 z23 z28 z34 z38 z40
+
+cover 0.1 1.0 a1 a5 a10 a15 a17 a18 a20 a21 a22 a23 a24 a25 a33 a40 e1 e40 k11 n20 n21 n22 u1 z1 z5 z10 z14 z15 z16 z23 z28 z34 z38 z40
+cover 0.1 0.50 a2 a3 a4 a6 a7 a8 a9 a11 a12 a13 a14 a16 a19 a27 a28 a29 a30 a31 a32 a34 a35 a37 a38 a39 b1 b40 c1 c40 d1 d40 f40 g1 g40 h1 h40 i1 i10 i40 j11 l9 l11 m21 m22 m29 m31 n28 n32 o21 o22 o28 o32 p28 p32 q28 q32 r1 r28 r32 r40 s1 s28 s29 s30 s31 s32 s40 t1 t40 u40 v1 v40 w1 w40 x1 x40 y1 y40 z2 z3 z4 z6 z7 z8 z9 z11 z12 z13 z17 z18 z19 z21 z22 z24 z25 z27 z29 z30 z31 z32 z33 z35 z36 z37 z39
+
+;speed on sea
+speed 0.25 1.0 b18 b24 c3 c4 c5 c6 c7 c8 c9 c10 c11 c12 c13 c14 c15 c16 c17 c24 c25 c26 c27 c28 c29 c30 c31 c32 c33 c34 c35 c36 c37 c38 d3 d38 e3 e38 f3 f38 g3 g38 h3 h8 h9 h10 h11 h38 i3 i8 i11 i12 i13 i38 j8 j13 j18 j19 j20 j21 j22 j23 j38 k8 k13 k17 k18 k24 k25 l8 l13 l17 l25 l29 l30 l31 m8 m9 m10 m11 m12 m13 m17 m25 m27 m28 m30 m32 m33 n17 n25 n27 n30 n33 o17 o25 o27 o30 o33 p17 p25 p27 p30 p31 p33 q17 q18 q24 q25 q27 q33 r3 r18 r19 r20 r21 r22 r23 r24 r27 r33 r38 s3 s27 s33 s38 t3 t28 t29 t30 t31 t32 t33 t38 u3 u38 v3 v38 w3 w38 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x25 x26 x27 x28 x29 x30 x31 x32 x33 x34 x35 x36 x37
+
+;speed on ocean
+speed 0.0 0.25 b19 b20 b21 b22 b23 c18 c19 c20 c21 c22 c23 d4 d5 d6 d7 d8 d9 d10 d11 d12 d13 d14 d15 d16 d17 d18 d19 d20 d21 d22 d23 d24 d25 d26 d27 d28 d29 d30 d31 d32 d33 d34 d35 d36 d37 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21 e22 e23 e24 e25 e26 e27 e28 e29 e30 e31 e32 e33 e34 e35 e36 e37 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 f22 f23 f24 f25 f26 f27 f28 f29 f30 f31 f32 f33 f34 f35 f36 f37 g4 g5 g6 g7 g8 g9 g10 g11 g12 g13 g14 g15 g16 g17 g18 g19 g20 g21 g22 g23 g24 g25 g26 g27 g28 g29 g30 g31 g32 g33 g34 g35 g36 g37 h4 h5 h6 h7 h12 h13 h14 h15 h16 h17 h18 h19 h20 h21 h22 h23 h24 h25 h26 h27 h28 h29 h30 h31 h32 h33 h34 h35 h36 h37 i4 i5 i6 i7 i14 i15 i16 i17 i18 i19 i20 i21 i22 i23 i24 i25 i26 i27 i28 i29 i30 i31 i32 i33 i34 i35 i36 i37 j1 j2 j3 j4 j5 j6 j7 j14 j15 j16 j17 j24 j25 j26 j27 j28 j29 j30 j31 j32 j33 j34 j35 j36 j37 j39 j40 k1 k2 k3 k4 k5 k6 k7 k14 k15 k16 k26 k27 k28 k29 k30 k31 k32 k33 k34 k35 k36 k37 k38 k39 k40 l1 l2 l3 l4 l5 l6 l7 l14 l15 l16 l26 l27 l28 l32 l33 l34 l35 l36 l37 l38 l39 l40 m1 m2 m3 m4 m5 m6 m7 m14 m15 m16 m26 m34 m35 m36 m37 m38 m39 m40 n1 n2 n3 n4 n5 n6 n7 n8 n9 n10 n11 n12 n13 n14 n15 n16 n26 n34 n35 n36 n37 n38 n39 n40 o1 o2 o3 o4 o5 o6 o7 o8 o9 o10 o11 o12 o13 o14 o15 o16 o26 o34 o35 o36 o37 o38 o39 o40 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p26 p34 p35 p36 p37 p38 p39 p40 q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q26 q34 q35 q36 q37 q38 q39 q40 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 r15 r16 r17 r25 r26 r34 r35 r36 r37 s4 s5 s6 s7 s8 s9 s10 s11 s12 s13 s14 s15 s16 s17 s18 s19 s20 s21 s22 s23 s24 s25 s26 s34 s35 s36 s37 t4 t5 t6 t7 t8 t9 t10 t11 t12 t13 t14 t15 t16 t17 t18 t19 t20 t21 t22 t23 t24 t25 t26 t27 t34 t35 t36 t37 u4 u5 u6 u7 u8 u9 u10 u11 u12 u13 u14 u15 u16 u17 u18 u19 u20 u21 u22 u23 u24 u25 u26 u27 u28 u29 u30 u31 u32 u33 u34 u35 u36 u37 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27 v28 v29 v30 v31 v32 v33 v34 v35 v36 v37 w4 w5 w6 w7 w8 w9 w10 w11 w12 w13 w14 w15 w16 w17 w18 w19 w20 w21 w22 w23 w24 w25 w26 w27 w28 w29 w30 w31 w32 w33 w34 w35 w36 w37 x18 x19 x20 x21 x22 x23 x24 y18 y19 y20 y21 y22 y23 y24
+
+west_east path a1 b1 c1 d1 e1 f1 g1 h1 i1 j1 k1 l1 m1 n1 o1 p1 q1 r1 s1 t1 u1 v1 w1 x1 y1
+west_east path b2 c2 d2 e2 f2 g2 h2 i2 j2 k2 l2 m2 n2 o2 p2 q2 r2 s2 t2 u2 v2 w2 x2 y2
+west_east path c3 d3 e3 f3 g3 h3 i3 j3 k3 l3 m3 n3 o3 p3 q3 r3 s3 t3 u3 v3 w3 x3
+west_east path c4 d4 e4 f4 g4 h4 i4 j4 k4 l4 m4 n4 o4 p4 q4 r4 s4 t4 u4 v4 w4 x4
+west_east path c5 d5 e5 f5 g5 h5 i5 j5 k5 l5 m5 n5 o5 p5 q5 r5 s5 t5 u5 v5 w5 x5
+west_east path c6 d6 e6 f6 g6 h6 i6 j6 k6 l6 m6 n6 o6 p6 q6 r6 s6 t6 u6 v6 w6 x6
+west_east path c7 d7 e7 f7 g7 h7 i7 j7 k7 l7 m7 n7 o7 p7 q7 r7 s7 t7 u7 v7 w7 x7
+west_east path c8 d8 e8 f8 g8 h8 i8 j8 k8 l8 m8 n8 o8 p8 q8 r8 s8 t8 u8 v8 w8 x8
+west_east path c9 d9 e9 f9 g9 h9 i9 j9 k9 l9
+west_east path m9 n9 o9 p9 q9 r9 s9 t9 u9 v9 w9 x9
+west_east path c10 d10 e10 f10 g10 h10
+
+west_east path i10 j10 k10 l10 m10 n10 o10 p10 q10 r10 s10 t10 u10 v10 w10 x10
+west_east path b11 c11 d11 e11 f11 g11 h11
+west_east path i11 j11 k11 l11
+west_east path m11 n11 o11 p11 q11 r11 s11 t11 u11 v11 w11 x11
+west_east path c12 d12 e12 f12 g12 h12 i12 j12 k12 l12 m12 n12 o12 p12 q12 r12 s12 t12 u12 v12 w12 x12
+west_east path c13 d13 e13 f13 g13 h13 i13 j13 k13 l13 m13 n13 o13 p13 q13 r13 s13 t13 u13 v13 w13 x13
+west_east path c14 d14 e14 f14 g14 h14 i14 j14 k14 l14 m14 n14 o14 p14 q14 r14 s14 t14 u14 v14 w14 x14
+west_east path c15 d15 e15 f15 g15 h15 i15 j15 k15 l15 m15 n15 o15 p15 q15 r15 s15 t15 u15 v15 w15 x15
+west_east path b16 c16 d16 e16 f16 g16 h16 i16 j16 k16 l16 m16 n16 o16 p16 q16 r16 s16 t16 u16 v16 w16 x16 y16
+west_east path c17 d17 e17 f17 g17 h17 i17 j17 k17 l17 m17 n17 o17 p17 q17 r17 s17 t17 u17 v17 w17 x17
+west_east path c18 d18 e18 f18 g18 h18 i18 j18 k18 l18 m18 n18 o18 p18 q18 r18 s18 t18 u18 v18 w18 x18 y18
+west_east path k19 l19 m19 n19 o19 p19 q19
+west_east path  b20 c20 d20 e20 f20 g20 h20 i20 j20 k20 l20 m20 n20 o20 p20 q20 r20 s20 t20 u20 v20 w20 x20 y20
+west_east path b21 c21 d21 e21 f21 g21 h21 i21 j21 k21 l21 m21 n21 o21 p21 q21 r21 s21 t21 u21 v21 w21 x21 y21
+west_east path b22 c22 d22 e22 f22 g22 h22 i22 j22 k22 l22 m22 n22 o22 p22 q22 r22 s22 t22 u22 w22 x22 y22
+west_east path b23 c23 d23 e23 f23 g23 h23 i23 j23 k23 l23 m23 n23 o23 p23 q23 r23 s23 t23 u23 v23 w23 x23 y23
+west_east path b24 c24 d24 e24 f24 g24 h24 i24 j24 k24 l24 m24 n24 o24 p24 q24 r24 s24 t24 u24 v24 w24 x24 y24
+west_east path b25 c25 d25 e25 f25 g25 h25 i25 j25 k25 l25 m25 n25 o25 p25 q25 r25 s25 t25 u25 v25 w25 x25 y25
+west_east path a26 b26 c26 d26 e26 f26 g26 h26 i26 j26 k26 l26 m26 n26 o26 p26 q26 r26 s26 t26 u26 v26 w26 x26 y26
+west_east path b27 c27 d27 e27 f27 g27 h27 i27 j27 k27 l27 m27
+west_east path m28 n28 o28 p28 q28 r28 s28
+west_east path t28 u28 v28 w28 x28 y28
+west_east path b29 c29 d29 e29 f29 g29 h29 i29 j29 k29
+west_east path m29 n29 o29 p29 q29 r29 s29
+west_east path t29 u29 v29 w29 x29
+west_east path c30 d30 e30 f30 g30 h30 i30 j30 k30 l30 m30 n30 o30 p30
+west_east path q30 r30 s30
+west_east path t30 u30 v30 w30 x30
+west_east path c31 d31 e31 f31 g31 h31 i31 j31 k31 l31
+west_east path m31 n31 o31 p31 q31 r31 s31
+west_east path t31 u31 v31 w31 x31
+west_east path c32 d32 e32 f32 g32 h32 i32 j32 k32 l32 m32
+west_east path n32 o32 p32 q32 r32 s32
+west_east path t32 u32 v32 w32 x32
+west_east path c33 d33 e33 f33 g33 h33 i33 j33 k33 l33 m33 n33 o33 p33 q33 r33 s33 t33 u33 v33 w33 x33
+west_east path c34 d34 e34 f34 g34 h34 i34 j34 k34 l34 m34 n34 o34 p34 q34 r34 s34 t34 u34 v34 w34 x34
+west_east path c35 d35 e35 f35 g35 h35 i35 j35 k35 l35 m35 n35 o35 p35 q35 r35 s35 t35 u35 v35 w35 x35
+west_east path c36 d36 e36 f36 g36 h36 i36 j36 k36 l36 m36 n36 o36 p36 q36 r36 s36 t36 u36 v36 w36 x36
+west_east path c37 d37 e37 f37 g37 h37 i37 j37 k37 l37 m37 n37 o37 p37 q37 r37 s37 t37 u37 v37 w37 x37
+west_east path b38 c38 d38 e38 f38 g38 h38 i38 j38 k38 l38 m38 n38 o38 p38 q38 r38 s38 t38 u38 v38 w38 x38
+west_east path a39 b39 c39 d39 e39 f39 g39 h39 i39 j39 k39 l39 m39 n39 o39 p39 q39 r39 s39 t39 u39 v39 w39 x39 y39
+west_east path a40 b40 c40 d40 e40 f40 g40 h40 i40 j40 k40 l40 m40 n40 o40 p40 q40 r40 s40 t40 u40 v40 w40 x40 y40
+
+south_north path a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13 a14 a15 a16 a17 a18 a19 a20 a21 a22 a23 a24 a25 a26 a27 a28 a29 a30 a31 a32 a33 a34 a35 a36 a37 a38 a39
+south_north path z1 z2 z3 z4 z5 z6 z7 z8 z9 z10 z11 z12 z13 z14 z15 z16 z17 z18 z19 z20 z21 z22 z23 z24 z25 z26 z27 z28 z29 z30 z31 z32 z33 z34 z35 z36 z37 z38 z39
+south_north path b1 b2 b3 b4 b5 b6 b7 b8 b9 b10 b11 b12 b13 b14 b15 b16 b17 b18 b19 b20 b21 b22 b23 b24 b25 b26 b27 b28 b29 b30 b31 b32 b33 b34 b35 b36 b37 b38 b39
+south_north path c2 c3 c4 c5 c6 c7 c8 c9 c10 c11 c12 c13 c14 c15 c16 c17 c18 c19 c20 c21 c22 c23 c24 c25 c26 c27 c28 c29 c30 c31 c32 c33 c34 c35 c36 c37 c38
+south_north path d2 d3 d4 d5 d6 d7 d8 d9 d10 d11 d12 d13 d14 d15 d16 d17 d18 d19 d20 d21 d22 d23 d24 d25 d26 d27 d28 d29 d30 d31 d32 d33 d34 d35 d36 d37 d38
+south_north path e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21 e22 e23 e24 e25 e26 e27 e28 e29 e30 e31 e32 e33 e34 e35 e36 e37 e38
+south_north path f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 f22 f23 f24 f25 f26 f27 f28 f29 f30 f31 f32 f33 f34 f35 f36 f37 f38
+south_north path g2 g3 g4 g5 g6 g7 g8 g9 g10 g11 g12 g13 g14 g15 g16 g17 g18 g19 g20 g21 g22 g23 g24 g25 g26 g27 g28 g29 g30 g31 g32 g33 g34 g35 g36 g37 g38
+south_north path h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13 h14 h15 h16 h17 h18 h19 h20 h21 h22 h23 h24 h25 h26 h27 h28 h29 h30 h31 h32 h33 h34 h35 h36 h37 h38
+south_north path i2 i3 i4 i5 i6 i7 i8 i9 i10 i11 i12 i13 i14 i15 i16 i17 i18 i19 i20 i21 i22 i23 i24 i25 i26 i27 i28 i29 i30 i31 i32 i33 i34 i35 i36 i37 i38
+south_north path j2 j3 j4 j5 j6 j7 j8 j9 j10 j11 j12 j13 j14 j15 j16 j17 j18 j19 j20 j21 j22 j23 j24 j25 j26 j27 j28 j29 j30 j31 j32 j33 j34 j35 j36 j37 j38
+south_north path k2 k3 k4 k5 k6 k7 k8 k9 k10 k11 k12 k13 k14 k15 k16 k17 k18 k19 k20 k21 k22 k23 k24 k25 k26 k27 k28 k29 k30 k31 k32 k33 k34 k35 k36 k37 k38
+south_north path l2 l3 l4 l5 l6 l7 l8 l9 l10 l11 l12 l13 l14 l15 l16 l17 l18 l19 l20 l21 l22 l23 l24 l25 l26 l27 l28 l29 l30 l31 l32 l33 l34 l35 l36 l37 l38
+south_north path m2 m3 m4 m5 m6 m7 m8 m9 m10 m11 m12 m13 m14 m15 m16 m17 m18 m19 m20 m21 m22 m23 m24 m25 m26 m27 m28 m29 m30 m31 m32 m33 m34 m35 m36 m37 m38
+south_north path n2 n3 n4 n5 n6 n7 n8 n9 n10 n11 n12 n13 n14 n15 n16 n17 n18 n19 n20 n21 n22 n23 n24 n25 n26 n27 n28 n29 n30 n31 n32 n33 n34 n35 n36 n37 n38
+south_north path o2 o3 o4 o5 o6 o7 o8 o9 o10 o11 o12 o13 o14 o15 o16 o17 o18 o19 o20 o21 o22 o23 o24 o25 o26 o27 o28 o29 o30 o31 o32 o33 o34 o35 o36 o37 o38
+south_north path p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 p22 p23 p24 p25 p26 p27 p28 p29 p30 p31 p32 p33 p34 p35 p36 p37 p38
+south_north path q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q19 q20 q21 q22 q23 q24 q25 q26 q27 q28 q29 q30 q31 q32 q33 q34 q35 q36 q37 q38
+south_north path r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 r15 r16 r17 r18 r19 r20 r21 r22 r23 r24 r25 r26 r27 r28 r29 r30 r31 r32 r33 r34 r35 r36 r37 r38
+south_north path s2 s3 s4 s5 s6 s7 s8 s9 s10 s11 s12 s13 s14 s15 s16 s17 s18 s19 s20 s21 s22 s23 s24 s25 s26 s27 s28 s29 s30 s31 s32 s33 s34 s35 s36 s37 s38
+south_north path t2 t3 t4 t5 t6 t7 t8 t9 t10 t11 t12 t13 t14 t15 t16 t17 t18 t19 t20 t21 t22 t23 t24 t25 t26 t27 t28 t29 t30 t31 t32 t33 t34 t35 t36 t37 t38
+south_north path u2 u3 u4 u5 u6 u7 u8 u9 u10 u11 u12 u13 u14 u15 u16 u17 u18 u19 u20 u21 u22 u23 u24 u25 u26 u27 u28 u29 u30 u31 u32 u33 u34 u35 u36 u37 u38
+south_north path v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27 v28 v29 v30 v31 v32 v33 v34 v35 v36 v37 v38
+south_north path w2 w3 w4 w5 w6 w7 w8 w9 w10 w11 w12 w13 w14 w15 w16 w17 w18 w19 w20 w21 w22 w23 w24 w25 w26 w27 w28 w29 w30 w31 w32 w33 w34 w35 w36 w37 w38
+south_north path x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26 x27 x28 x29 x30 x31 x32 x33 x34 x35 x36 x37 x38
+south_north path y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12 y13 y14 y15 y16 y17 y18 y19 y20 y21 y22 y23 y24 y25 y26 y27 y28 y29 y30 y31 y32 y33 y34 y35 y36 y37 y38
+
+
+;random data
+#random_choice
+additional_meadows n19
+#end_choice
+additional_meadows n23
+#end_random_choice
+;ai (monsters)
+
+
+;triggers
+;basics triggers
+trigger players (no_enemy_player_left) (victory)
+    trigger players (no_building_left) (defeat)
+    trigger computers (no_unit_left) (defeat)
+
+;advanced triggers
+timer_coefficient 60
+
+;all dragon's moovements on the border
+trigger computer1 (timer 0) (order (b22 3 dragon) ((patrol b3)))
+trigger computer1 (timer 0) (order (b24 5 dragon) ((patrol y24)))
+trigger computer1 (timer 0) (order (b25 3 dragon) ((patrol b38)))
+trigger computer1 (timer 0) (order (f39 5 dragon) ((patrol f2)))
+trigger computer1 (timer 0) (order (f2 5 dragon) ((patrol f39)))
+trigger computer1 (timer 0) (order (k39 3 dragon ) ((patrol c39)))
+trigger computer1 (timer 0) (order (m39 3 dragon ) ((patrol x39)))
+trigger computer1 (timer 0) (order (k2 3 dragon ) ((patrol c2)))
+trigger computer1 (timer 0) (order (l2 5 dragon ) ((patrol l39)))
+trigger computer1 (timer 0) (order (m2 3 dragon ) ((patrol x2)))
+trigger computer1 (timer 0) (order (y22 3 dragon ) ((patrol y3)))
+trigger computer1 (timer 0) (order (y24 5 dragon ) ((patrol b24)))
+trigger computer1 (timer 0) (order (y25 3 dragon ) ((patrol y38)))
+
+;all archer's moovements in the mountains
+trigger computer1 (timer 0) (order (a19 10 archer) ((patrol a1)))
+trigger computer1 (timer 0) (order (a20 10 archer) ((patrol a40)))
+trigger computer1 (timer 0) (order (z19 10 archer) ((patrol z1)))
+trigger computer1 (timer 0) (order (z20 10 archer) ((patrol z40)))
+trigger computer1 (timer 0) (order (h40 10 archer) ((patrol a40)))
+trigger computer1 (timer 0) (order (t40 10 archer) ((patrol z40)))
+
+;ship's movements on sea
+trigger computer1 (timer 0) (order (k24 20 destroyer 20 battleship) ((patrol k17)))
+trigger computer1 (timer 0) (order (k17 20 destroyer 20 battleship) ((patrol k24)))
+trigger computer1 (timer 0) (order (j23 20 destroyer) ((patrol j17)))
+trigger computer1 (timer 0) (order (j17 20 destroyer 20 battleship) ((patrol j23)))
+trigger computer1 (timer 0) (order (j20 20 destroyer 20 battleship) ((patrol j18)))
+trigger computer1 (timer 0) (order (p17 10 battleship 10 destroyer) ((patrol p24)))
+trigger computer1 (timer 0) (order (p24 10 battleship 10 destroyer) ((patrol p17)))
+trigger computer1 (timer 0) (order (r17 20 battleship 20 destroyer) ((patrol r24)))
+trigger computer1 (timer 0) (order (r24 20 battleship 20 destroyer) ((patrol r17)))
+trigger computer1 (timer 0) (order (f5 5 battleship 15 destroyer) ((patrol f37)))
+trigger computer1 (timer 0) (order (v34 5 battleship 15 destroyer) ((patrol v4)))
+trigger computer1 (timer 0) (order (b23 5 battleship 5 destroyer) ((patrol y23)))
+trigger computer1 (timer 0) (order (y23 5 battleship 5 destroyer) ((patrol b23)))
+
+;all monster patrolling around the pirate's ilande
+
+;monster turning from oposed corners
+trigger computer1 (timer 0) (order (k19 20 darkarcher 40 skeleton 40 zombie) ((patrol q23)))
+trigger computer1 (timer 0) (order (q19 20 darkarcher 40 skeleton 40 zombie) ((patrol k23)))
+trigger computer1 (timer 0) (order (k19 20 darkarcher 40 skeleton 40 zombie) ((patrol q23)))
+trigger computer1 (timer 0) (order (k23 20 darkarcher 40 skeleton 40 zombie) ((patrol q19)))
+trigger computer1 (timer 0) (order (q23 20 darkarcher 40 skeleton 40 zombie) ((patrol k19)))
+
+;additionalls monsters turning on shorter range
+trigger computer1 (timer 0) (order (l19 30 skeleton 5 darkarcher 40 zombie) ((patrol p19)))
+trigger computer1 (timer 0) (order (p18 40 skeleton 50 zombie) ((patrol l18)))
+trigger computer1 (timer 0) (order (l18 40 skeleton 50 zombie) ((patrol p18)))
+trigger computer1 (timer 0) (order (p19 30 skeleton 5 darkarcher 40 zombie) ((patrol l19)))
+trigger computer1 (timer 0) (order (k20 2 dragon) ((patrol k22)))
+trigger computer1 (timer 0) (order (k22 2 dragon) ((patrol k20)))
+trigger computer1 (timer 0) (order (l24 40 skeleton  50 zombie) ((patrol p24)))
+trigger computer1 (timer 0) (order (p24 40 skeleton  50 zombie) ((patrol l24)))
+trigger computer1 (timer 0) (order (m20 5 dragon) ((patrol m23)))
+trigger computer1 (timer 0) (order (o20 5 dragon) ((patrol o23)))
+trigger computer1 (timer 0) (order (o22 40 skeleton 30 darkarcher 40 zombie) ((patrol n20)))
+trigger computer1 (timer 0) (order (m22 40 skeleton 30 darkarcher 40 zombie) ((patrol n20)))
+trigger computer1 (timer 0) (order (m21  30 darkarcher 30 zombie) ((patrol o21)))
+trigger computer1 (timer 0) (order (o21  30 darkarcher 30 zombie) ((patrol m21)))
+trigger computer1 (timer 0) (order (n22  50 darkarcher) ((patrol n20)))

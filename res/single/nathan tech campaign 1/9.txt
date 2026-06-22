@@ -1,0 +1,14 @@
+title 4271 3009
+intro 7509
+nb_columns 6
+nb_lines 2
+
+goldmines 200 a1 a1 a1 a1
+woods 300 a1 a1 a1 a1
+west_east_paths b1 b2 c1 c2 d1 d2 e1 e2 
+south_north_paths a1 b1 c1 d1 e1 f1
+player 300 300 a1 townhall 50 knight 50 archer 50 footman 50 catapult b1 50 mage u_recall 
+computer_only 0 0 c1 10 footman
+trigger player1 (timer 0) (add_objective 1 56015)
+trigger player1 (has_entered  d1) (objective_complete 1)
+trigger all (no_unit_left) (defeat)

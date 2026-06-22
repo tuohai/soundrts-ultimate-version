@@ -1,0 +1,4 @@
+﻿; coding: utf-8
+
+9000 golem in pietra
+5028	replay

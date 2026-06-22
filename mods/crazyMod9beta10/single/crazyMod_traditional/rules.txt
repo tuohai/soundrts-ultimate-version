@@ -1,0 +1,17 @@
+; CrazyMod Traditional
+
+def manoir_hante
+class building
+cost 15 18
+time_cost 120
+hp_max 200
+
+
+
+def garde_fantome
+is_a fantome
+hp_max 15
+speed 3
+damage 4
+cooldown 0.75
+range 5

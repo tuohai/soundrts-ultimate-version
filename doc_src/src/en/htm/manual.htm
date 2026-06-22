@@ -1,0 +1,916 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.21.2: https://docutils.sourceforge.io/" />
+<title>Game manual</title>
+<style type="text/css">
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 9511 2024-01-13 09:50:07Z milde $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+Despite the name, some widely supported CSS2 features are used.
+
+See https://docutils.sourceforge.io/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+.subscript {
+  vertical-align: sub;
+  font-size: smaller }
+
+.superscript {
+  vertical-align: super;
+  font-size: smaller }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+object[type="image/svg+xml"], object[type="application/x-shockwave-flash"] {
+  overflow: hidden;
+}
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title, .code .error {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left, .figure.align-left, object.align-left, table.align-left {
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+img.align-right, .figure.align-right, object.align-right, table.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+img.align-center, .figure.align-center, object.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+table.align-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: inherit }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+.align-top    {
+  vertical-align: top }
+
+.align-middle {
+  vertical-align: middle }
+
+.align-bottom {
+  vertical-align: bottom }
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+pre.literal-block, pre.doctest-block, pre.math, pre.code {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+pre.code .ln { color: gray; } /* line numbers */
+pre.code, code { background-color: #eeeeee }
+pre.code .comment, code .comment { color: #5C6576 }
+pre.code .keyword, code .keyword { color: #3B0D06; font-weight: bold }
+pre.code .literal.string, code .literal.string { color: #0C5404 }
+pre.code .name.builtin, code .name.builtin { color: #352B84 }
+pre.code .deleted, code .deleted { background-color: #DEB0A1}
+pre.code .inserted, code .inserted { background-color: #A3D289}
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic, pre.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+/* "booktabs" style (no vertical lines) */
+table.docutils.booktabs {
+  border: 0px;
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+  border-collapse: collapse;
+}
+table.docutils.booktabs * {
+  border: 0px;
+}
+table.docutils.booktabs th {
+  border-bottom: thin solid;
+  text-align: left;
+}
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+</head>
+<body>
+<div class="document" id="game-manual">
+<h1 class="title">Game manual</h1>
+
+<div class="contents topic" id="contents">
+<p class="topic-title"><a class="reference internal" href="#top">Contents</a></p>
+<ul class="simple">
+<li><a class="reference internal" href="#introduction" id="toc-entry-1">1. Introduction</a></li>
+<li><a class="reference internal" href="#tutorial" id="toc-entry-2">2. Tutorial</a><ul>
+<li><a class="reference internal" href="#chapter-1-tutorial" id="toc-entry-3">2.1 Chapter 1 tutorial</a></li>
+<li><a class="reference internal" href="#chapter-2-tutorial" id="toc-entry-4">2.2 Chapter 2 tutorial</a></li>
+<li><a class="reference internal" href="#hints-and-tips" id="toc-entry-5">2.3 Hints and tips</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#commands-list" id="toc-entry-6">3. Commands list</a><ul>
+<li><a class="reference internal" href="#moving-on-the-map" id="toc-entry-7">Moving on the map</a></li>
+<li><a class="reference internal" href="#choosing-a-unit-to-control" id="toc-entry-8">Choosing a unit to control</a></li>
+<li><a class="reference internal" href="#giving-an-order-main-method" id="toc-entry-9">Giving an order: main method</a></li>
+<li><a class="reference internal" href="#giving-an-order-alternate-faster-method" id="toc-entry-10">Giving an order: alternate, faster method</a></li>
+<li><a class="reference internal" href="#giving-an-order-using-shortcuts" id="toc-entry-11">Giving an order: using shortcuts</a></li>
+<li><a class="reference internal" href="#examining-the-situation" id="toc-entry-12">Examining the situation</a></li>
+<li><a class="reference internal" href="#giving-an-order-without-cancelling-the-previous-ones-queuing-commands" id="toc-entry-13">Giving an order without cancelling the previous ones (queuing commands)</a></li>
+<li><a class="reference internal" href="#giving-an-imperative-order" id="toc-entry-14">Giving an imperative order</a></li>
+<li><a class="reference internal" href="#attacking-a-friendly-unit" id="toc-entry-15">Attacking a friendly unit</a></li>
+<li><a class="reference internal" href="#blocking-an-exit" id="toc-entry-16">Blocking an exit</a></li>
+<li><a class="reference internal" href="#zoom-mode" id="toc-entry-17">Zoom mode</a></li>
+<li><a class="reference internal" href="#recallable-control-groups" id="toc-entry-18">Recallable control groups</a></li>
+<li><a class="reference internal" href="#in-the-menus" id="toc-entry-19">In the menus</a></li>
+<li><a class="reference internal" href="#other-commands" id="toc-entry-20">Other commands</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#multiplayer-games" id="toc-entry-21">4. Multiplayer games</a><ul>
+<li><a class="reference internal" href="#random-maps" id="toc-entry-22">4.0 Random maps</a></li>
+<li><a class="reference internal" href="#starting-a-multiplayer-game" id="toc-entry-23">4.1 Starting a multiplayer game</a></li>
+<li><a class="reference internal" href="#chatting" id="toc-entry-24">4.2 Chatting</a></li>
+<li><a class="reference internal" href="#team-play" id="toc-entry-25">4.3 Team play</a></li>
+<li><a class="reference internal" href="#how-to-make-your-server-accessible-to-other-players" id="toc-entry-26">4.4 How to make your server accessible to other players</a></li>
+<li><a class="reference internal" href="#how-to-download-a-map-from-a-server" id="toc-entry-27">4.5 How to download a map from a server</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#game-elements" id="toc-entry-28">5. Game elements</a><ul>
+<li><a class="reference internal" href="#food" id="toc-entry-29">Food</a></li>
+<li><a class="reference internal" href="#tech-upgrades" id="toc-entry-30">Tech upgrades</a></li>
+<li><a class="reference internal" href="#flying-units" id="toc-entry-31">Flying units</a></li>
+<li><a class="reference internal" href="#invisible-units-and-detectors" id="toc-entry-32">Invisible units and detectors</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#more-details-for-customization" id="toc-entry-33">6. More details for customization</a><ul>
+<li><a class="reference internal" href="#soundrts-ini" id="toc-entry-34">SoundRTS.ini</a></li>
+<li><a class="reference internal" href="#command-line-options" id="toc-entry-35">Command-line options</a></li>
+<li><a class="reference internal" href="#sound-pack" id="toc-entry-36">Sound pack</a></li>
+<li><a class="reference internal" href="#wait-delay-per-character" id="toc-entry-37">wait_delay_per_character</a></li>
+<li><a class="reference internal" href="#temporary-folder" id="toc-entry-38">Temporary folder</a></li>
+<li><a class="reference internal" href="#user-folder" id="toc-entry-39">User folder</a></li>
+<li><a class="reference internal" href="#how-to-create-a-portable-version-of-soundrts" id="toc-entry-40">How to create a portable version of SoundRTS</a></li>
+<li><a class="reference internal" href="#how-to-change-the-default-speed-in-single-player-games" id="toc-entry-41">How to change the default speed in single player games</a></li>
+<li><a class="reference internal" href="#changing-some-key-bindings" id="toc-entry-42">Changing some key bindings</a></li>
+<li><a class="reference internal" href="#creating-an-app-for-mac" id="toc-entry-43">Creating an app for Mac</a></li>
+<li><a class="reference internal" href="#using-the-windows-installer-with-a-limited-account-windows-xp" id="toc-entry-44">Using the Windows installer with a limited account (Windows XP)</a></li>
+<li><a class="reference internal" href="#what-makes-a-map-an-official-multiplayer-map" id="toc-entry-45">What makes a map an official multiplayer map?</a></li>
+<li><a class="reference internal" href="#how-to-select-a-different-language" id="toc-entry-46">How to select a different language?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#modern-features-since-1-4" id="toc-entry-47">6. Modern features (since 1.4)</a><ul>
+<li><a class="reference internal" href="#properties-interface" id="toc-entry-48">Properties interface</a></li>
+<li><a class="reference internal" href="#inventory-and-equipment-since-1-4-3-1" id="toc-entry-49">Inventory and equipment (since 1.4.3.1)</a></li>
+<li><a class="reference internal" href="#giving-items-to-npcs-since-1-4-3-1" id="toc-entry-50">Giving items to NPCs (since 1.4.3.1)</a></li>
+<li><a class="reference internal" href="#object-filters" id="toc-entry-51">Object filters</a></li>
+<li><a class="reference internal" href="#saves-and-replays-since-1-4-2-6" id="toc-entry-52">Saves and replays (since 1.4.2.6)</a></li>
+<li><a class="reference internal" href="#dynamic-alliance-and-treaty-since-1-4-2-3-1-4-2-2" id="toc-entry-53">Dynamic alliance and treaty (since 1.4.2.3 / 1.4.2.2)</a></li>
+<li><a class="reference internal" href="#spectator-mode-since-1-4-0-6" id="toc-entry-54">Spectator mode (since 1.4.0.6)</a></li>
+<li><a class="reference internal" href="#auto-explore-since-1-4-3-1" id="toc-entry-55">Auto-explore (since 1.4.3.1)</a></li>
+<li><a class="reference internal" href="#campaign-notes-since-1-4-3-0" id="toc-entry-56">Campaign notes (since 1.4.3.0)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#credits" id="toc-entry-57">7. Credits</a></li>
+</ul>
+</div>
+<div class="section" id="introduction">
+<h1><a class="toc-backref" href="#toc-entry-1">1. Introduction</a></h1>
+<p>Welcome to SoundRTS!</p>
+<p>SoundRTS is a realtime strategy game inspired by Warcraft and Starcraft, but an audiogame, so adapted for the blind.
+In this game, you will explore the surroundings, exploit goldmines and woods, build, recruit peasants and soldiers, and fight the enemy!</p>
+<p>The game is by default in map mode : you are heading north, and you can select all the object without rotating.
+But you can also play in first person mode, nice for exploration and attack.</p>
+</div>
+<div class="section" id="tutorial">
+<h1><a class="toc-backref" href="#toc-entry-2">2. Tutorial</a></h1>
+<p>This tutorial will help you learn the main controls of the game.</p>
+<div class="section" id="chapter-1-tutorial">
+<h2><a class="toc-backref" href="#toc-entry-3">2.1 Chapter 1 tutorial</a></h2>
+<p>If you use Jaws or another screen review, you may have to unactivate it to access to the keyboard.</p>
+<p>When the game starts, you'll hear the name of the square where you are: &quot;A1&quot;. The presence of a goldmine in A1 is also told. To examine this square, press Tab many times. You will notice that this square has only one exit (a path), a gold mine, a wood, town hall 1 (it's your base), and the peasant 1.</p>
+<p>Then press &quot;Page Down&quot; to know if another square can be examined. You'll hear &quot;C1&quot;, which contains (press Tab to know that) a farm, a path, a wood and footman 1.</p>
+<p>If you press &quot;Page down&quot; again, you will be again in &quot;A1&quot;. It means that only 2 squares can be examined now.</p>
+<p>Another way of moving in the map is to use the Arrow Keys. This way you can fly over the unknown squares to give the order to go to an unknown square.</p>
+<p>The objective of this map is to build 1 farm and 1 barracks. Only the peasant can build. But he needs gold and wood, and a free space (a meadow). To know how much gold, wood, food you have, press Z, X and C.</p>
+<p>Let's order the peasant to gather gold. First, to control him, press Q until you hear &quot;peasant 1, awaiting your orders!&quot;. Then, press A until you select &quot;exploit&quot; ; then press Tab until you select the gold mine ; then press Enter to confirm. The peasant will start gathering gold.</p>
+<p>To go faster you will need more peasants. Press Q until you control the townhall. Then, press A until you select &quot;recruit peasant&quot; then press Enter. After some seconds, a new peasant, peasant 2, will appear.</p>
+<p>To ask peasant 2 to gather wood, do like the first one, or, to go faster, press A until you control peasant 2, then press Tab to select the gold mine, then press &quot;Backspace&quot;. This key launches the default action on the selected target : here, the default action is &quot;exploit a gold mine&quot;.</p>
+<p>Before recruiting a third peasant, let's tell the townhall 1 that the newly recruited peasants will have to exploit this gold mine. To do that, press Q until you control townhall 1. Then press Tab until you select the gold mine. Finally, press &quot;Backspace&quot; to give the default order to the townhall : &quot;rally to a gold mine&quot;. Then press A to choose &quot;recruit peasant&quot;, then press Enter to confirm.</p>
+<p>When you have enough gold or when the gold mine is exhausted, press D to control all the peasants then press Tab until you select the wood. Then press &quot;Backspace&quot; to launch the exploitation of the gold mine.</p>
+<p>The rest is not difficult.</p>
+</div>
+<div class="section" id="chapter-2-tutorial">
+<h2><a class="toc-backref" href="#toc-entry-4">2.2 Chapter 2 tutorial</a></h2>
+<p>Hint : group your combat units. To do this, control them (with the S key) and make them patrol between the squares you want to protect.</p>
+</div>
+<div class="section" id="hints-and-tips">
+<h2><a class="toc-backref" href="#toc-entry-5">2.3 Hints and tips</a></h2>
+<ul class="simple">
+<li>Keep your forces focused.</li>
+<li>Make you soldiers patrol. Patrolling soldiers can protect a larger zone while keeping the forces focused.</li>
+<li>Use rally points for buildings. The buildings that can recruit units can define a rally point. The new units will target this rally point. For example a new peasant will exploit a gold mine.</li>
+<li>Use the defensive mode to scout. A unit in defensive mode will flee if it encouters stronger <strong>hostile</strong> enemies (neutral units do not count). This way you can know how many enemies are in a square without sacrificing the scouting unit. The peasants are in defensive mode by default but the soldiers can be put in this mode too. Offensive and chase modes also ignore neutrals for auto-attack; use a forced attack (Ctrl+click on the unit) to fight a neutral.</li>
+<li>A fleeing unit forgets its orders. For example, a peasant who is gathering gold won't go back to work after fleeing, while if he fought and survived he would have went on gathering gold.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="commands-list">
+<h1><a class="toc-backref" href="#toc-entry-6">3. Commands list</a></h1>
+<p>The game consists in giving orders to your units and buildings. To give an order to a unit, you must control it first.
+If you press F10 during the game, you will go to the game menu.
+If you use Jaws or another screen review, you may have to unactivate it to access to the keyboard.</p>
+<div class="section" id="moving-on-the-map">
+<h2><a class="toc-backref" href="#toc-entry-7">Moving on the map</a></h2>
+<p>The arrow keys make you move from a square to another square in the map. If a direct path exists between the current square and the new square, you will hear a noise depending on the type of the path (path or bridge). If no direct path exists, you will hear a collision noise and you will stay at the same square (press control + arrow keys to fly above an obstacle). If you don't know yet if a path exists (unknown square) then no noise will be heard.</p>
+<p>Press shift + arrow keys to move several squares at a time.</p>
+<p>Another way to move on the map is to press Page Up, which will lead you to the next interesting square without passing by empty squares. Since SoundRTS 1.1 alpha 3, some variants are available:</p>
+<ul class="simple">
+<li>press Alt + PageUp/PageDown to select the previous/next unknown square</li>
+<li>press Shift + PageUp/PageDown to select the Previous/Next Square containing resources</li>
+</ul>
+<p>When you control a unit and you press Space, you will automatically follow it when it moves from one square to another one.</p>
+</div>
+<div class="section" id="choosing-a-unit-to-control">
+<h2><a class="toc-backref" href="#toc-entry-8">Choosing a unit to control</a></h2>
+<p>To control the next local unit, press Q.</p>
+<p>To control the next building, press W.
+To control the next peasant, press E. To control all the local peasants, press D.
+To control the next idle peasant, press Alt E. To control all the local idle peasants, press Alt D.
+To control the next footman, press R. To control all the local footmen, press F.
+To control the next archer, press T. To control all the local archers, press G.
+To control the next knight, press Y. To control all the local knights, press H.
+To control the next catapult, press U. To control all the local catapults, press J.
+To control the next dragon, press I. To control all the local dragons, press K.
+To control the next mage, press O. To control all the local mages, press L.</p>
+<p>When a key makes you control the next unit, the same key combined with Shift makes you control the previous unit. For example, to control the previous peasant, press Shift + E.</p>
+<p>To control all the units of the same type and in the same square than the current unit, press 1.
+To control only half or third, press 2 or 3.
+To stop controlling a group, press 0.</p>
+<p>To control all the local soldiers, press S.
+To control all the soldiers and the pesants, press Alt + S.</p>
+<p>When a key makes you control a group of local units, the same key combined with control makes you control a group from all the map. For example, to control all the footment, press Control + R or Control + F.</p>
+</div>
+<div class="section" id="giving-an-order-main-method">
+<h2><a class="toc-backref" href="#toc-entry-9">Giving an order: main method</a></h2>
+<p>To give an order to a controlled unit, the main method consists in choosing the order in a list and selecting the target if the action requires it.</p>
+<p>To choose the order in a list, press A (and Shift A) to select the order.</p>
+<p>If you must select a target, press Tab (and Shift Tab) to select the target. To select a remote square as a target, use the arrow keys.</p>
+<p>Press Enter to confirm your choice.</p>
+</div>
+<div class="section" id="giving-an-order-alternate-faster-method">
+<h2><a class="toc-backref" href="#toc-entry-10">Giving an order: alternate, faster method</a></h2>
+<p>A second method to give an order consists in selecting the target with Tab (or the arrow keys) and then pressing Backspace. The default order will be given. For example, a peasant targetting a gold mine will exploit it if you press Backspace.</p>
+</div>
+<div class="section" id="giving-an-order-using-shortcuts">
+<h2><a class="toc-backref" href="#toc-entry-11">Giving an order: using shortcuts</a></h2>
+<p>To give an order with a shortcut, press Alt + A. A message will tell the list of available shortcuts for the currently controlled unit.
+Press the shortcut and the order will be executed immediately, unless a target needs to be selected.</p>
+</div>
+<div class="section" id="examining-the-situation">
+<h2><a class="toc-backref" href="#toc-entry-12">Examining the situation</a></h2>
+<p>To check the controlled unit (or the controlled group), press Space. Moreover, you will move to the square occupied by the unit (or the group leader).</p>
+<p>To know how much gold you have, press Z. Press X for wood, press C for food.</p>
+<p>To know the health of the current unit press V.</p>
+<p>To examine again an object selected with Tab, press Control.</p>
+</div>
+<div class="section" id="giving-an-order-without-cancelling-the-previous-ones-queuing-commands">
+<h2><a class="toc-backref" href="#toc-entry-13">Giving an order without cancelling the previous ones (queuing commands)</a></h2>
+<p>Hold down Shift before pressing Enter to confirm the order.</p>
+<p>It also works for default orders: hold down Shift before pressing Backspace.</p>
+<p>Press Space to check if the unit have several orders to execute.</p>
+<p>Here are some situations where queuing commands would be useful:</p>
+<ul class="simple">
+<li>Example 1: you want a peasant to scout every starting square in the map (to know where the enemy is). Control the peasant, move the cursor to a starting square, then press Shift + Backspace. Repeat for each starting square.</li>
+<li>Example 2: you want a peasant to exploit several resources. Target a resource, press Shift + Backspace. Repeat. When a resource is exhausted, the peasant will exploit the next one.</li>
+</ul>
+</div>
+<div class="section" id="giving-an-imperative-order">
+<h2><a class="toc-backref" href="#toc-entry-14">Giving an imperative order</a></h2>
+<p>If you hold down Control before pressing Enter or Backspace, the order will be imperative.</p>
+<p>Units with an imperative order will tend to ignore anything not directly related to the order. If they have to go somewhere and they come across enemy units, they will simply ignore them. This is dangerous most of the time but can be useful in some cases, for example to focus on a very important target.</p>
+<p>Here are some situations where an imperative command would be useful:</p>
+<ul class="simple">
+<li>Example 1: you want your units to attack a specific enemy building or unit and ignore the rest. Select the target and press Control + Backspace.</li>
+<li>Example 2: you want your units to retreat from a place and ignore the enemy units. Select another square and press Control + Backspace.</li>
+</ul>
+<p>You can queue imperative commands too. Hold down Control + Shift instead of Shift.</p>
+</div>
+<div class="section" id="attacking-a-friendly-unit">
+<h2><a class="toc-backref" href="#toc-entry-15">Attacking a friendly unit</a></h2>
+<p>Target the unit and press Shift Backspace: the units will attack the target.</p>
+<p>Exception: if the target is a damaged building (or a repairable unit like a catapult) and you are controlling workers, they will repair the target.</p>
+</div>
+<div class="section" id="blocking-an-exit">
+<h2><a class="toc-backref" href="#toc-entry-16">Blocking an exit</a></h2>
+<p>New in 1.2 alpha 10.</p>
+<p>To block an exit (path, bridge), you can either:</p>
+<ul class="simple">
+<li>order a unit (or several units) to block the path (give the &quot;block&quot; order or use back space with the exit as a target);</li>
+<li>build a wall on it;</li>
+<li>build any building on it.</li>
+</ul>
+<p>A unit or a gate will let friendly units pass.</p>
+</div>
+<div class="section" id="zoom-mode">
+<h2><a class="toc-backref" href="#toc-entry-17">Zoom mode</a></h2>
+<p>F8: enter or exit zoom mode. Escape exits zoom mode too.</p>
+<p>The square is divided into smaller sub-squares (3×3 by default). Since 1.4.0.9, precision can
+be adjusted from 3×3 up to 15×15:</p>
+<ul class="simple">
+<li>Ctrl+Shift+F8: increase precision</li>
+<li>Shift+F8: decrease precision</li>
+<li>Ctrl+F8: enter precision manually (e.g. <tt class="docutils literal">7x7</tt>)</li>
+<li>Alt+F8: announce current precision</li>
+</ul>
+<p>In zoom mode, Ctrl+arrow keys force-browse through obstacles (map editing / observation).</p>
+</div>
+<div class="section" id="recallable-control-groups">
+<h2><a class="toc-backref" href="#toc-entry-18">Recallable control groups</a></h2>
+<p>New in 1.2 alpha 10.</p>
+<p>Control + 6, 7, 8 or 9: sets group 6, 7, 8 or 9 with the currently controlled units</p>
+<p>Shift + 6, 7, 8 or 9: extends group 6, 7, 8 or 9 with the currently controlled units</p>
+<p>6, 7, 8 or 9: recalls group 6, 7, 8 or 9</p>
+</div>
+<div class="section" id="in-the-menus">
+<h2><a class="toc-backref" href="#toc-entry-19">In the menus</a></h2>
+<p>The arrow keys work too : Up and Down to select, Right to confirm, Left to cancel.</p>
+<p>Press any letter to select the next item starting with this letter.
+Press shift + any letter to select the previous item starting with this letter.</p>
+<p>Text input fields (share codes, seeds, login, chat, etc.) support <strong>Ctrl+A</strong> select all, <strong>Ctrl+C</strong> copy, <strong>Ctrl+X</strong> cut, <strong>Ctrl+V</strong> paste; pasted text is filtered to allowed characters.</p>
+</div>
+<div class="section" id="other-commands">
+<h2><a class="toc-backref" href="#toc-entry-20">Other commands</a></h2>
+<p>F5 and F6: previous/next message in the history.
+Alt: interrupt the current sentence.</p>
+<p>To quit a game or access to the game menu, press F10. Alt F4 and Control C do the same.</p>
+<p>Alt+Space or Control+Space: enter first-person RPG mode. Escape: return to map mode.</p>
+<p>In first-person mode:</p>
+<ul class="simple">
+<li>arrow keys: move (up=forward, down=back, left/right=strafe)</li>
+<li>Shift+left/right: turn</li>
+<li>number keys 1–9 and 0: use skills 1–10</li>
+<li>Alt+/: list skills and hotkeys</li>
+<li>Ctrl+A: auto-attack nearest enemy in sight</li>
+<li>combine with F8 zoom for precise movement</li>
+</ul>
+<p>Home/End, +/- of the numeric keyboard: increase/decrease the general sound volume.
+Control Home/End, control +/- of the numeric keyboard: increase/decrease the voice relative volume.</p>
+<p>F3: say time
+Control F3: minute bell on/off (off by default)</p>
+<p>Control + Tab selects only woods, gold mines, meadows, and repairable or buildable targets (damaged buildings, building sites, damaged catapults...).</p>
+<p>Alt + R reselects the previously given order. Useful to train the same unit or build the same type of building several times.
+Alt + G reselects the previously given order and validate it if no additional parameter is required. For example, to train 5 additional archers, press Alt + G 5 times.
+Since SoundRTS 1.1 alpha 3, Alt + A is the same than Alt + G.</p>
+<p>Backquote (the key below Escape): console command (only in single player mode). The only useful commands at the moment are add_units (to get units or buildings instantly) and victory (to win, for example to skip a chapter). Example of a &quot;add_units&quot; command: &quot;add_units a1 100 archer&quot;. New in SoundRTS 1.2 alpha 9.</p>
+</div>
+</div>
+<div class="section" id="multiplayer-games">
+<h1><a class="toc-backref" href="#toc-entry-21">4. Multiplayer games</a></h1>
+<div class="section" id="random-maps">
+<h2><a class="toc-backref" href="#toc-entry-22">4.0 Random maps</a></h2>
+<p>Since SoundRTS 1.4.3.4, whole maps can be generated from menu parameters (size, starts, resources, monsters, water, treasure, etc.), with <strong>seeds</strong> and <strong>share codes</strong> to reproduce the same layout.</p>
+<ul class="simple">
+<li><strong>Local</strong>: main menu → Start a game → <strong>Random map</strong></li>
+<li><strong>Online</strong>: create game → map list → <strong>Random map</strong></li>
+</ul>
+<p>After generation, seed and share code are announced; <strong>F5/F6</strong> still replay them from history in later menus. Full guide: <a class="reference external" href="randommap.htm">Random map guide</a>.</p>
+</div>
+<div class="section" id="starting-a-multiplayer-game">
+<h2><a class="toc-backref" href="#toc-entry-23">4.1 Starting a multiplayer game</a></h2>
+<p>Select &quot;multiplayer game&quot;, then &quot;choose a server in a list&quot;.</p>
+<p>In a public server, you will be able to organize a game.</p>
+<p>Tip: when you are waiting for players online, you can launch SoundRTS a second time and play locally in single player mode. When a player shows up, press F10 to pause your local game and start playing online.</p>
+</div>
+<div class="section" id="chatting">
+<h2><a class="toc-backref" href="#toc-entry-24">4.2 Chatting</a></h2>
+<p>You can chat in the server lobby, in the pre-game room, and during the game. The organizer of the game is temporarily unavailable during the selection of the map and of the game speed though.</p>
+<p>To say something to everybody in the same room or game, press F7, type your message, and press enter.</p>
+<p>Another option is to use Skype (or any similar software) if you know the other players.</p>
+</div>
+<div class="section" id="team-play">
+<h2><a class="toc-backref" href="#toc-entry-25">4.3 Team play</a></h2>
+<p>The teams must be created before the game starts. They can't be changed during the game.</p>
+<p>Allied players share the knowledge of the map, the victory, the upgrades (new in SoundRTS 1.2 alpha 9), and their units can help each other. A worker can use an allied warehouse to store a resource (the resource will still be added to the worker's army).</p>
+<p>In a server game, the computers are not allied by default.</p>
+<p>Note: In a single player game from the &quot;single player&quot; menu, the computers are allied.</p>
+<p>Tip: to play a single player game with a computer as an ally, launch a private server.</p>
+</div>
+<div class="section" id="how-to-make-your-server-accessible-to-other-players">
+<h2><a class="toc-backref" href="#toc-entry-26">4.4 How to make your server accessible to other players</a></h2>
+<p>If your router has UPnP activated, the server will configure it automatically.</p>
+<p>To check if your server is accessible from outside your local network, wait for a player to connect, or ideally ask a friend to connect from outside. As a last resort, you can also use a port forwarding tester website (google &quot;port forwarding tester&quot; for example). Be cautious: I can't guarantee that this kind of website isn't malicious! The web site shouldn't require you to install a tool, for example.</p>
+<p>In most cases you will have to configure your router to forward incoming TCP connections through port 2500 to the local IP address of your server.</p>
+<p>You might also have to configure DHCP in the router to make sure that your server have always the same local IP address.</p>
+<p>If you are behind a firewall, you might have to make sure that incoming TCP connections through port 2500 are allowed.</p>
+<p>About standalone servers: even if your standalone server is accessible from outside, you might not be able to connect to it from your local network using &quot;choose a server in a list&quot;. &quot;Enter the IP address of the server&quot; works in most cases, but it doesn't mean that the server is accessible from outside.</p>
+</div>
+<div class="section" id="how-to-download-a-map-from-a-server">
+<h2><a class="toc-backref" href="#toc-entry-27">4.5 How to download a map from a server</a></h2>
+<p>Play a game with the map that you wish to download. Just before the game starts, the map will appear in the <a class="reference internal" href="#temporary-folder">temporary folder</a> and will stay there until another map overwrites it. Depending on the map format, it will be a text file called recent_map.txt or a folder called recent_map.</p>
+</div>
+</div>
+<div class="section" id="game-elements">
+<h1><a class="toc-backref" href="#toc-entry-28">5. Game elements</a></h1>
+<div class="section" id="food">
+<h2><a class="toc-backref" href="#toc-entry-29">Food</a></h2>
+<p>The training of a new unit can only happen if the player have enough food rations. If some farms are destroyed or new units are obtained without training, and the food rations become insufficient, the current units will be kept without any problem. No further training will be allowed though.</p>
+</div>
+<div class="section" id="tech-upgrades">
+<h2><a class="toc-backref" href="#toc-entry-30">Tech upgrades</a></h2>
+<p>The upgrades apply to all the player's units, current and future.</p>
+</div>
+<div class="section" id="flying-units">
+<h2><a class="toc-backref" href="#toc-entry-31">Flying units</a></h2>
+<p>Since SoundRTS 1.1, flying units fly straight to the objective, ignoring the land path.</p>
+</div>
+<div class="section" id="invisible-units-and-detectors">
+<h2><a class="toc-backref" href="#toc-entry-32">Invisible units and detectors</a></h2>
+<p>To defend against an invisible unit, there are at least 3 ways:</p>
+<ul class="simple">
+<li>bring a detector unit (or use a detector spell) and attack the unit</li>
+<li>use an area of effect destruction spell on the square containing the unit</li>
+<li>ignore the invisible unit and destroy all the enemy buildings quickly enough</li>
+</ul>
+</div>
+</div>
+<div class="section" id="more-details-for-customization">
+<h1><a class="toc-backref" href="#toc-entry-33">6. More details for customization</a></h1>
+<div class="section" id="soundrts-ini">
+<h2><a class="toc-backref" href="#toc-entry-34">SoundRTS.ini</a></h2>
+<p>This file is located in the <a class="reference internal" href="#user-folder">User folder</a> . It contains various parameters about how the game works. When SoundRTS starts, if SoundRTS.ini contains an error, a new file will be generated with as many parameters as possible recovered from the corrupted file.</p>
+</div>
+<div class="section" id="command-line-options">
+<h2><a class="toc-backref" href="#toc-entry-35">Command-line options</a></h2>
+<p>From the command-line, the -h option gives the list of available options.</p>
+<p>The --mods option overrides the &quot;mods =&quot; line from <a class="reference internal" href="#soundrts-ini">SoundRTS.ini</a> . For example, to start SoundRTS with the soundpack mod and the orc mod: soundrts.exe --mods=soundpack,orc</p>
+</div>
+<div class="section" id="sound-pack">
+<h2><a class="toc-backref" href="#toc-entry-36">Sound pack</a></h2>
+<p>SoundRTS comes with a mod called &quot;soundpack&quot; containing alternative sounds. To activate this mod, in <a class="reference internal" href="#soundrts-ini">SoundRTS.ini</a> replace the &quot;mods =&quot; line with &quot;mods = soundpack&quot;. Then restart the game.</p>
+</div>
+<div class="section" id="wait-delay-per-character">
+<h2><a class="toc-backref" href="#toc-entry-37">wait_delay_per_character</a></h2>
+<p>Since sometimes it is difficult to know when a screen reader has finished talking, a better-than-nothing solution is to evaluate the duration of a message.
+So, a parameter called &quot;wait_delay_per_character&quot; determines how long SoundRTS will wait before sending the next message.
+With &quot;wait_delay_per_character = .1&quot; and a message of 10 characters, SoundRTS will wait for .1 * 10 = 1 second.</p>
+<p>Increase the value of wait_delay_per_character if some messages are interrupted by the next one.</p>
+<p>Decrease the value of wait_delay_per_character if the silence between two messages is too long.</p>
+</div>
+<div class="section" id="temporary-folder">
+<h2><a class="toc-backref" href="#toc-entry-38">Temporary folder</a></h2>
+<p>The temporary folder contains the logs and the previously played map.</p>
+<p>The temporary folder is located in the <a class="reference internal" href="#user-folder">user folder</a> as a folder called &quot;tmp&quot;.</p>
+</div>
+<div class="section" id="user-folder">
+<h2><a class="toc-backref" href="#toc-entry-39">User folder</a></h2>
+<p>The user folder contains the game settings, the custom maps and mods, and the temporary folder.
+An easy way to find the user folder is to open it from the options menu.</p>
+<p>If the main folder contains a folder called &quot;user&quot;, this folder will be the user folder.
+If the &quot;user&quot; folder doesn't exist, the user folder will be located depending on the operating system:</p>
+<ul class="simple">
+<li>Windows XP: &quot;C:\Documents and settings\your_user_name\Application data\SoundRTS unstable&quot;</li>
+<li>Linux: &quot;home/your_user_name/.SoundRTS unstable&quot;</li>
+</ul>
+</div>
+<div class="section" id="how-to-create-a-portable-version-of-soundrts">
+<h2><a class="toc-backref" href="#toc-entry-40">How to create a portable version of SoundRTS</a></h2>
+<p>Since SoundRTS 1.0 beta 10 p, it's possible to have all the game files (log, configuration, custom maps...) stored in the game folder. Here is how to proceed:</p>
+<ul class="simple">
+<li>install SoundRTS</li>
+<li>Windows: copy the <cite>game folder</cite> from &quot;Program files&quot; to a writable folder (the desktop, a USB drive, etc)</li>
+<li>In the new SoundRTS folder, create a folder called &quot;user&quot;. &quot;user&quot; can be a copy of an existing <a class="reference internal" href="#user-folder">user folder</a> (the version must be the same, though).</li>
+<li>Windows: to launch the program, execute &quot;soundrts.exe&quot;.</li>
+</ul>
+</div>
+<div class="section" id="how-to-change-the-default-speed-in-single-player-games">
+<h2><a class="toc-backref" href="#toc-entry-41">How to change the default speed in single player games</a></h2>
+<p>Find <a class="reference internal" href="#soundrts-ini">SoundRTS.ini</a> in the <a class="reference internal" href="#user-folder">user folder</a> and modify the &quot;speed = ...&quot; line. Use an integer number.</p>
+</div>
+<div class="section" id="changing-some-key-bindings">
+<h2><a class="toc-backref" href="#toc-entry-42">Changing some key bindings</a></h2>
+<p>Since SoundRTS 1.1, the keyboard layout is defined in a file called bindings.txt located in the <cite>game folder</cite>.</p>
+</div>
+<div class="section" id="creating-an-app-for-mac">
+<h2><a class="toc-backref" href="#toc-entry-43">Creating an app for Mac</a></h2>
+<p>If you have managed to install the multiplatform version for the Mac, maybe you can create an app to ease the installation for other players.
+Here are some hints. Use py2app.
+You don't need the source. For example, create a file called soundrts_launcher.py containing this only line: &quot;import soundrts&quot;.
+You can also create a file called server_launcher.py with the line: &quot;import server&quot;.
+Make sure that running &quot;python soundrts_launcher.py&quot; actually works.</p>
+</div>
+<div class="section" id="using-the-windows-installer-with-a-limited-account-windows-xp">
+<h2><a class="toc-backref" href="#toc-entry-44">Using the Windows installer with a limited account (Windows XP)</a></h2>
+<p>You can use a limited Windows XP account to install SoundRTS. Just choose another folder than the &quot;program files&quot; folder.</p>
+<p>Even if you install SoundRTS with an administrator account, you can play using a limited account.</p>
+</div>
+<div class="section" id="what-makes-a-map-an-official-multiplayer-map">
+<h2><a class="toc-backref" href="#toc-entry-45">What makes a map an official multiplayer map?</a></h2>
+<p>Official multiplayer maps don't have any sound played before their title. The official multiplayer maps are listed in cfg/official_maps.txt
+with checksums to make sure that they haven't been modified.</p>
+</div>
+<div class="section" id="how-to-select-a-different-language">
+<h2><a class="toc-backref" href="#toc-entry-46">How to select a different language?</a></h2>
+<p>If cfg/language.txt is empty, the program will select automatically the system's language.
+To select a specific language, enter the language code in cfg/language.txt, for example &quot;en&quot;, &quot;fr-ca&quot;, &quot;pt&quot; or &quot;pt-BR&quot;.
+Check the res folder to find which language codes are provided.</p>
+</div>
+</div>
+<div class="section" id="modern-features-since-1-4">
+<h1><a class="toc-backref" href="#toc-entry-47">6. Modern features (since 1.4)</a></h1>
+<div class="section" id="properties-interface">
+<h2><a class="toc-backref" href="#toc-entry-48">Properties interface</a></h2>
+<p>Alt+V opens the unit or building properties screen. Use arrow keys to browse attributes, or
+assign quick keys in <tt class="docutils literal">attributes_bindings.txt</tt>. Some entries are interactive: browse
+<tt class="docutils literal">can_train</tt>, skills, research, or <tt class="docutils literal">can_build</tt> with left/right and press Enter to inspect
+details.</p>
+</div>
+<div class="section" id="inventory-and-equipment-since-1-4-3-1">
+<h2><a class="toc-backref" href="#toc-entry-49">Inventory and equipment (since 1.4.3.1)</a></h2>
+<p>Three screens are mutually exclusive; select exactly one friendly unit:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="23%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Screen</th>
+<th class="head">Key</th>
+<th class="head">Shows</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>Properties
+Backpack
+Equipment</td>
+<td>Alt+V
+Shift+V
+Ctrl+V</td>
+<td>All unit stats
+Every item in inventory
+Weapons and armor (built-in + inventory)</td>
+</tr>
+</tbody>
+</table>
+<p>Open requirements:</p>
+<ul class="simple">
+<li>Backpack: inventory must not be empty (otherwise &quot;backpack empty&quot; is announced).</li>
+<li>Equipment: at least one weapon or armor must exist (built-in or in inventory).</li>
+</ul>
+<p>In backpack or equipment, the same keys apply:</p>
+<ul class="simple">
+<li>arrow keys: previous / next item</li>
+<li>g: read item intro (from <tt class="docutils literal">style.txt</tt> <tt class="docutils literal">intro</tt>)</li>
+<li>Enter: equip weapon, wear armor, or use consumable (backpack only)</li>
+<li>Shift+Enter: unequip equipped weapon or armor</li>
+<li>Delete: drop (confirm with Enter); Shift+Delete: drop immediately</li>
+<li>Esc: exit (or cancel a pending drop)</li>
+</ul>
+<p>Pickup and drop outside these screens:</p>
+<ul class="simple">
+<li>pickup: default right-click or command menu when a unit has enough <tt class="docutils literal">inventory_capacity</tt></li>
+<li>drop: command menu, or Delete in backpack/equipment</li>
+</ul>
+</div>
+<div class="section" id="giving-items-to-npcs-since-1-4-3-1">
+<h2><a class="toc-backref" href="#toc-entry-50">Giving items to NPCs (since 1.4.3.1)</a></h2>
+<p>When carrying items, you can hand one to another unit:</p>
+<ul class="simple">
+<li>right-click a non-hostile unit (not a building): auto-selects &quot;give&quot; and walks over</li>
+<li>command menu: &quot;give&quot;</li>
+<li>shortcut: <tt class="docutils literal">g</tt> (configured in <tt class="docutils literal">style.txt</tt>)</li>
+</ul>
+<p>The target must have <tt class="docutils literal">receive_items 1</tt> in rules.txt. The author can restrict which items
+and which relations (ally, neutral, enemy) are accepted — see the modding guide.</p>
+</div>
+<div class="section" id="object-filters">
+<h2><a class="toc-backref" href="#toc-entry-51">Object filters</a></h2>
+<p>M / Shift+M: cycle target filter (friendly, enemy, all).
+N / Shift+N: cycle type filter (buildings, units, elements, all).
+Combine both to narrow Tab selection (e.g. friendly buildings only).</p>
+</div>
+<div class="section" id="saves-and-replays-since-1-4-2-6">
+<h2><a class="toc-backref" href="#toc-entry-52">Saves and replays (since 1.4.2.6)</a></h2>
+<p>Each mod has up to 10 save slots and its own replays. Cancelling a game creates a memory
+point; use &quot;continue unfinished game&quot; on the main menu.</p>
+<p>Since 1.4.2.7:</p>
+<ul class="simple">
+<li>Shift+Enter on a save or replay in the menu: rename</li>
+<li>Delete: delete with confirmation</li>
+<li>Shift+Delete: delete immediately</li>
+</ul>
+<p>Files are also in <tt class="docutils literal">user/saves</tt> and <tt class="docutils literal">user/replays</tt>.</p>
+</div>
+<div class="section" id="dynamic-alliance-and-treaty-since-1-4-2-3-1-4-2-2">
+<h2><a class="toc-backref" href="#toc-entry-53">Dynamic alliance and treaty (since 1.4.2.3 / 1.4.2.2)</a></h2>
+<p>During a game (not if alliances were fixed before start):</p>
+<ul class="simple">
+<li>F12 or Shift+F12: select alliance candidate</li>
+<li>F4: send alliance request</li>
+<li>Ctrl+F4: accept request</li>
+<li>Shift+F4: cancel request, break alliance, or reject</li>
+</ul>
+<p>Treaty mode: choose peace duration (up to 20 minutes) before combat begins.</p>
+</div>
+<div class="section" id="spectator-mode-since-1-4-0-6">
+<h2><a class="toc-backref" href="#toc-entry-54">Spectator mode (since 1.4.0.6)</a></h2>
+<p>From the server menu, choose &quot;spectate&quot; and pick an ongoing game. Use Page Up / Page Down to
+reach a visible area before using arrow keys to move the map focus.</p>
+</div>
+<div class="section" id="auto-explore-since-1-4-3-1">
+<h2><a class="toc-backref" href="#toc-entry-55">Auto-explore (since 1.4.3.1)</a></h2>
+<p>Units with <tt class="docutils literal">can_auto_explore 1</tt> in rules.txt show &quot;enable auto-explore&quot; / &quot;disable
+auto-explore&quot; in their command menu. When enabled, idle mobile units automatically scout
+unexplored areas; player orders pause exploration and it resumes when idle again.</p>
+</div>
+<div class="section" id="campaign-notes-since-1-4-3-0">
+<h2><a class="toc-backref" href="#toc-entry-56">Campaign notes (since 1.4.3.0)</a></h2>
+<p>F12 does not work in campaigns. Trigger computers are announced as &quot;NPC&quot;. Ctrl+Shift+F4
+reports trigger computers as &quot;NPC&quot;; if that player has only wildlife (<tt class="docutils literal">is_huntable</tt> /
+<tt class="docutils literal">herdable</tt>), it says &quot;you are animal&quot;. Selected wildlife is announced as &quot;deer , animal&quot;,
+not &quot;neutral , NPC&quot; (see <tt class="docutils literal"><span class="pre">docs/en/hunting-system.md</span></tt>).</p>
+</div>
+</div>
+<div class="section" id="credits">
+<h1><a class="toc-backref" href="#toc-entry-57">7. Credits</a></h1>
+<p>Note: the following list is not exhaustive. Thanks to all who helped!</p>
+<p>This game was written by SoundMUD (<a class="reference external" href="mailto:soundmud&#64;gmail.com">soundmud&#64;gmail.com</a>).</p>
+<p>Discovery of the French-speaking community of the audio accessible games, and starting ideas: Sabine Gorecki.
+Numerous tests and encouragings during the first period of SoundMUD: Alex.
+First test of SoundMUD with Linux: Miguel.
+Relaunch of SoundMUD project, encouragings during the second period of SoundMUD to bring the strategy game to completion, and very numerous tests: Louis-Rock Lampron et Martin Morin.</p>
+<p>English translation: SoundMUD.
+German translation: Alexander Westphal from Gameport.
+Italian translation: Gabriel Battaglia.
+Spanish translation: Alan.</p>
+<p>Improvement of the English voice and sounds: Bryan Smart.</p>
+<p>Multiplayer map 101 - frontier: Bryan Smart.</p>
+</div>
+</div>
+</body>
+</html>

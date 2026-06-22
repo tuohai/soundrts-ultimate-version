@@ -1,0 +1,325 @@
+; ===========================================================================
+
+; Achievements (post-game unlocks, phase 1)
+
+; ===========================================================================
+
+;
+
+; Each achievement is a ``def <id>`` block. Mods can append or replace via
+
+; ``clear`` (same layering as ai.txt — see docs/zh/achievement-system.md).
+
+;
+
+; Directives:
+
+;   title <tts_id>           voice title (define id in ui/tts.txt)
+
+;   condition grade S        match settlement grade letter (S/A/B/C/D/E)
+
+;   condition victory        player won the game
+
+;   condition utilization_below <n>   resource use percent strictly below n (victory only)
+
+;   condition defeated_ai <tier> [<tier>...]   defeated any listed AI (OR)
+;   condition map <map_id> [<map_id>...]       played on listed map (OR); use with victory + defeated_ai
+;   condition defeated_ai_total_at_least <n> <tier>...  cumulative wins vs tier (easy→beginner, aggressive→intermediate)
+;   condition defeated_ai_map_at_least <map> <n> <tier>...  cumulative wins on map vs tier
+
+;   condition survival_at_least <n>   unit survival score >= n
+
+;   condition building_defense_at_least <n>
+
+;   once                     unlock at most once ever (default)
+
+;   once_per map             once per map name
+
+;   once_per map_ai          once per map + hardest defeated enemy AI tier
+
+;   reward medal <n>         grant n medals to armory inventory
+
+;   reward card <card_id> [<times>]   grant card charges (see cards.txt)
+
+;   reward title <title_id>  optional honor epithet (only when name differs from achievement)
+
+;   repeat_medal <n>         on repeat completion (same once-key), grant n medals only
+
+;
+
+; All ``condition`` lines in one block must be satisfied (AND).
+
+
+
+
+
+; --- Grade achievements (once per map + enemy difficulty) ----------------
+
+
+
+def grade_s
+
+title 5300
+
+condition grade S
+
+once_per map_ai
+
+reward medal 40
+
+repeat_medal 8
+
+reward card card_mixed_army
+
+
+
+def grade_a
+
+title 5301
+
+condition grade A
+
+once_per map_ai
+
+reward medal 25
+
+repeat_medal 5
+
+reward card card_inf_cav
+
+
+
+def grade_b
+
+title 5302
+
+condition grade B
+
+once_per map
+
+reward medal 15
+
+repeat_medal 3
+
+reward card card_infantry
+
+
+
+; --- Random map victory mode achievements (phase 1) -----------------------
+
+
+
+def rmg_conquest
+
+title 5445
+
+condition victory_mode conquest
+
+condition victory
+
+once
+
+reward medal 20
+
+repeat_medal 5
+
+reward card card_mixed_army
+
+
+
+def rmg_economic
+
+title 5446
+
+condition victory_mode economic
+
+condition victory
+
+once
+
+reward medal 20
+
+repeat_medal 5
+
+reward card card_resource_gold
+
+
+
+def rmg_exploration
+
+title 5447
+
+condition victory_mode exploration
+
+condition victory
+
+once
+
+reward medal 20
+
+repeat_medal 5
+
+reward card card_cavalry
+
+
+
+def rmg_survival
+
+title 5448
+
+condition victory_mode survival
+
+condition victory
+
+once
+
+reward medal 20
+
+repeat_medal 5
+
+reward card card_archer
+
+
+
+def rmg_mode_master
+
+title 5449
+
+condition achievement rmg_conquest
+
+condition achievement rmg_economic
+
+condition achievement rmg_exploration
+
+condition achievement rmg_survival
+
+once
+
+reward medal 40
+
+repeat_medal 8
+
+reward card card_mage
+
+def reinforcement_contract
+
+title 5309
+
+condition victory
+
+condition defeated_ai intermediate advanced
+
+once
+
+reward medal 15
+
+repeat_medal 3
+
+reward card card_reinforcements_delayed
+
+def grade_c
+
+title 5303
+
+condition grade C
+
+once_per map
+
+reward medal 8
+
+repeat_medal 2
+
+
+
+; --- Dimension achievements -----------------------------------------------
+
+
+
+def frugal_victory
+
+title 5304
+
+condition victory
+
+condition utilization_below 30
+
+once_per map
+
+reward medal 10
+
+repeat_medal 2
+
+reward card card_resource_gold
+
+
+
+def perfect_survival
+
+title 5305
+
+condition victory
+
+condition survival_at_least 90
+
+condition building_defense_at_least 90
+
+once_per map
+
+reward medal 15
+
+repeat_medal 3
+
+reward card card_archer
+
+
+
+def defeat_nightmare
+
+title 5306
+
+condition defeated_ai nightmare
+
+once
+
+reward medal 80
+
+repeat_medal 10
+
+reward card card_dragon
+
+reward title honor_nightmare_slayer
+
+
+
+def defeat_expert
+
+title 5307
+
+condition defeated_ai expert
+
+once
+
+reward medal 30
+
+repeat_medal 5
+
+reward card card_siege
+
+reward card card_delayed_melee_weapon
+
+
+
+def defeat_beginner
+
+title 5308
+
+condition defeated_ai beginner easy
+
+once
+
+reward medal 8
+
+repeat_medal 1
+
+reward card card_infantry
+

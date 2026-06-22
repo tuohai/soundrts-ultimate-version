@@ -1,0 +1,93 @@
+; repaire en i6
+; CrazyMod traditional 3
+
+title 76030
+intro 76031
+
+; map size
+
+square_width 12
+
+nb_columns 11
+nb_lines 10
+
+
+; paths (give only the starting square)
+
+west_east_paths a4 a7
+west_east_paths b1 b5 b8 b10
+west_east_paths c2 c4 c6 c9
+west_east_paths d1 d3 d5 d7 d8 d10
+west_east_paths e3 e4 e8 e10
+west_east_paths f1 f4 f7 f8
+west_east_paths g1 g2 g5 g9 g10
+west_east_paths h1 h2 h4 h6 h8 h10
+west_east_paths i1 i4 i6 i8 i9
+west_east_paths j3 j8
+
+south_north_paths a1 a2 a3 a4 a5 a6 a7 a8 a9
+south_north_paths b1 b2 b3 b4 b6 b7 b8 b9
+south_north_paths c1 c3 c5 c7 c8
+south_north_paths d2 d4 d6 d8 d9 
+south_north_paths e1 e2 e4 e5 e7 e8
+south_north_paths f2 f3 f5 f6 f8 f9
+south_north_paths g2 g3 g4 g6 g7 g8
+south_north_paths h1 h3 h5 h6 h8
+south_north_paths i1 i3 i5 i6 i7 i8 i9
+south_north_paths j1 j2 j4 j5 j6 j7 j8 j9
+south_north_paths k1 k2 k3 k4 k5 k6 k7 k8 k9
+
+
+; resources
+
+goldmines 1000 a1 a2 a9 a10 k1 k2 k9 k10
+
+woods 100 b2 b3 b4 b5 b6 b7 b8 b9 c1 c2 c4 c5 c6 c8 c9 d2 d3 d5 d7 d8 d9 d10 e2 e3 e4 e5 e8 e9 e10 f1 f2 f5 f7 f8 f9 g3 d4 d5 g6 g8 h1 h2 h3 h5 h8 h10 i2 i3 i6 i7 i8 j1 j2 j4 j5 j7 j8 j10
+
+
+nb_meadows_by_square 0
+
+additional_meadows a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 k1 k2 k3 k4 k5 k6 k7 k8 k9 k10 a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 k1 k2 k3 k4 k5 k6 k7 k8 k9 k10 a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 k1 k2 k3 k4 k5 k6 k7 k8 k9 k10 a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 k1 k2 k3 k4 k5 k6 k7 k8 k9 k10
+additional_meadows a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 k1 k2 k3 k4 k5 k6 k7 k8 k9 k10 a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 k1 k2 k3 k4 k5 k6 k7 k8 k9 k10 a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 k1 k2 k3 k4 k5 k6 k7 k8 k9 k10 a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 k1 k2 k3 k4 k5 k6 k7 k8 k9 k10
+additional_meadows a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 k1 k2 k3 k4 k5 k6 k7 k8 k9 k10 a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 k1 k2 k3 k4 k5 k6 k7 k8 k9 k10 a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 k1 k2 k3 k4 k5 k6 k7 k8 k9 k10 a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 k1 k2 k3 k4 k5 k6 k7 k8 k9 k10
+additional_meadows a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 k1 k2 k3 k4 k5 k6 k7 k8 k9 k10 a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 k1 k2 k3 k4 k5 k6 k7 k8 k9 k10 a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 k1 k2 k3 k4 k5 k6 k7 k8 k9 k10 a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 k1 k2 k3 k4 k5 k6 k7 k8 k9 k10
+
+
+; players
+
+global_population_limit 5000
+
+player 1000 1000 a1 keep lumbermill blacksmith barracks 5 farm 10 serf 10 arbaletrier
+
+
+; computers
+
+computer_only 0 0 b3 5 fantome b8 5 fantome c4 10 fantome c6 10 fantome d1 10 fantome d3 10 fantome d7 10 fantome d10 10 fantome e2 15 fantome e4 15 fantome e7 15 fantome f3 15 garde_fantome f4 15 garde_fantome f5 15 garde_fantome f8 15 garde_fantome f9 15 garde_fantome g1 20 garde_fantome g5 20 garde_fantome g10 20 garde_fantome h3 20 garde_fantome h8 20 garde_fantome i2 25 garde_fantome i7 25 garde_fantome i9 25 garde_fantome j1 25 garde_fantome j3 25 garde_fantome j5 25 garde_fantome j7 25 garde_fantome j8 25 garde_fantome j10 25 garde_fantome i6 manoir_hante
+
+
+; triggers
+
+timer_coefficient 1
+
+trigger player1 (timer 0) (add_objective 1 76032)
+trigger player1 (no_enemy_left) (objective_complete 1)
+
+trigger computer1 (has 0 manoir_hante) (defeat)
+trigger player1 (no_building_left) (defeat)
+
+trigger player1 (has_entered i6) (cut_scene 76033)
+
+
+trigger computer1 (timer 100) (order (b3 5 fantome) ((auto_attack)))
+trigger computer1 (timer 0) (order (c4 10 fantome) ((patrol f4)))
+trigger computer1 (timer 0) (order (d1 10 fantome) ((patrol g4)))
+trigger computer1 (timer 0) (order (d7 10 fantome) ((patrol f7)))
+trigger computer1 (timer 0) (order (f4 15 garde_fantome) ((patrol g6)))
+trigger computer1 (timer 0) (order (f9 15 garde_fantome) ((patrol h8)))
+trigger computer1 (timer 0) (order (g1 20 garde_fantome) ((patrol i5)))
+trigger computer1 (timer 0) (order (g10 20 garde_fantome) ((patrol i7)))
+trigger computer1 (timer 0) (order (i2 25 garde_fantome) ((patrol j7)))
+trigger computer1 (timer 0) (order (j1 25 garde_fantome) ((patrol f3)))
+trigger computer1 (timer 0) (order (j3 25 garde_fantome) ((patrol f5)))
+trigger computer1 (timer 0) (order (j8 25 garde_fantome) ((patrol f1)))
+trigger computer1 (timer 0) (order (j10 25 garde_fantome) ((patrol h6)))

@@ -1,0 +1,645 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.21.2: https://docutils.sourceforge.io/" />
+<title>Making AIs Tutorial</title>
+<style type="text/css">
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 9511 2024-01-13 09:50:07Z milde $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+Despite the name, some widely supported CSS2 features are used.
+
+See https://docutils.sourceforge.io/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+.subscript {
+  vertical-align: sub;
+  font-size: smaller }
+
+.superscript {
+  vertical-align: super;
+  font-size: smaller }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+object[type="image/svg+xml"], object[type="application/x-shockwave-flash"] {
+  overflow: hidden;
+}
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title, .code .error {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left, .figure.align-left, object.align-left, table.align-left {
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+img.align-right, .figure.align-right, object.align-right, table.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+img.align-center, .figure.align-center, object.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+table.align-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: inherit }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+.align-top    {
+  vertical-align: top }
+
+.align-middle {
+  vertical-align: middle }
+
+.align-bottom {
+  vertical-align: bottom }
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+pre.literal-block, pre.doctest-block, pre.math, pre.code {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+pre.code .ln { color: gray; } /* line numbers */
+pre.code, code { background-color: #eeeeee }
+pre.code .comment, code .comment { color: #5C6576 }
+pre.code .keyword, code .keyword { color: #3B0D06; font-weight: bold }
+pre.code .literal.string, code .literal.string { color: #0C5404 }
+pre.code .name.builtin, code .name.builtin { color: #352B84 }
+pre.code .deleted, code .deleted { background-color: #DEB0A1}
+pre.code .inserted, code .inserted { background-color: #A3D289}
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic, pre.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+/* "booktabs" style (no vertical lines) */
+table.docutils.booktabs {
+  border: 0px;
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+  border-collapse: collapse;
+}
+table.docutils.booktabs * {
+  border: 0px;
+}
+table.docutils.booktabs th {
+  border-bottom: thin solid;
+  text-align: left;
+}
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+</head>
+<body>
+<div class="document" id="making-ais-tutorial">
+<h1 class="title">Making AIs Tutorial</h1>
+
+<div class="contents topic" id="contents">
+<p class="topic-title"><a class="reference internal" href="#top">Contents</a></p>
+<ul class="simple">
+<li><a class="reference internal" href="#introduction" id="toc-entry-1">1. Introduction</a></li>
+<li><a class="reference internal" href="#ai-txt-ai-scripts" id="toc-entry-2">2. <tt class="docutils literal">ai.txt</tt>: AI scripts</a></li>
+<li><a class="reference internal" href="#invite-menu-and-rules-txt-mappings" id="toc-entry-3">3. Invite menu and <tt class="docutils literal">rules.txt</tt> mappings</a><ul>
+<li><a class="reference internal" href="#without-a-mod" id="toc-entry-4">Without a mod</a></li>
+<li><a class="reference internal" href="#with-a-mod-loaded" id="toc-entry-5">With a mod loaded</a></li>
+<li><a class="reference internal" href="#summary" id="toc-entry-6">Summary</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#settings-written-once-near-the-top-of-a-def" id="toc-entry-7">4. Settings (written once, near the top of a &quot;def&quot;)</a><ul>
+<li><a class="reference internal" href="#counter-targeting-counter-skill" id="toc-entry-8">Counter targeting (<tt class="docutils literal">counter_skill</tt>)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#action-commands" id="toc-entry-9">5. Action commands</a></li>
+<li><a class="reference internal" href="#flow-control" id="toc-entry-10">6. Flow control</a></li>
+<li><a class="reference internal" href="#mod-example-three-tiers-per-faction-scripts" id="toc-entry-11">7. Mod example (three tiers, per-faction scripts)</a></li>
+<li><a class="reference internal" href="#complete-example-one-vanilla-tier" id="toc-entry-12">8. Complete example (one vanilla tier)</a></li>
+</ul>
+</div>
+<div class="section" id="introduction">
+<h1><a class="toc-backref" href="#toc-entry-1">1. Introduction</a></h1>
+<p>This tutorial explains how to write computer AIs.
+You edit <tt class="docutils literal">ai.txt</tt> (scripts) and, for mods, <tt class="docutils literal">rules.txt</tt> (per-faction difficulty
+mappings). These files live in the <tt class="docutils literal">res</tt> folder of the SoundRTS package; a mod,
+campaign or map can ship its own copies too.</p>
+<p>An AI is a small script: a list of commands the computer runs from top to
+bottom, looping forever. No programming knowledge is required.</p>
+</div>
+<div class="section" id="ai-txt-ai-scripts">
+<h1><a class="toc-backref" href="#toc-entry-2">2. <tt class="docutils literal">ai.txt</tt>: AI scripts</a></h1>
+<p>In <tt class="docutils literal">ai.txt</tt>, each AI starts with <tt class="docutils literal">def &lt;name&gt;</tt> followed by its commands:</p>
+<pre class="literal-block">
+def tang_empire_easy
+research 1
+workers 12
+get 9 villager 5 footman
+attack
+goto -1
+</pre>
+<p>Notes:</p>
+<ul class="simple">
+<li>Names can be any identifier, e.g. <tt class="docutils literal">tang_empire_easy</tt> or <tt class="docutils literal">my_mod_hard</tt>.
+<strong>Custom names are not shown in the invite menu</strong>; players see the difficulty
+tier mapped in <tt class="docutils literal">rules.txt</tt> (next section).</li>
+<li>If a mod's <tt class="docutils literal">ai.txt</tt> contains <tt class="docutils literal">clear</tt>, every AI script loaded so far
+(including the base five tiers from <tt class="docutils literal">res/ai.txt</tt>) is discarded. This
+<strong>does not</strong> change how many invite buttons appear; it only affects which
+<tt class="docutils literal">def</tt> entries remain loaded. Most mods <strong>do not need</strong> <tt class="docutils literal">clear</tt>.</li>
+<li>Same-named <tt class="docutils literal">def</tt> lines in a later layer override earlier ones.</li>
+<li>If no script exists for a requested tier at runtime, <tt class="docutils literal">get_ai</tt> falls back to
+the closest defined script (including the legacy <tt class="docutils literal">easy</tt> / <tt class="docutils literal">aggressive</tt>
+alias chain).</li>
+</ul>
+</div>
+<div class="section" id="invite-menu-and-rules-txt-mappings">
+<h1><a class="toc-backref" href="#toc-entry-3">3. Invite menu and <tt class="docutils literal">rules.txt</tt> mappings</a></h1>
+<p>The single-player and multiplayer <strong>invite computer</strong> menus are driven by the
+<strong>current mod's ``rules.txt``</strong>, not by a fixed list of five buttons. You do
+<strong>not</strong> need empty placeholder lines like <tt class="docutils literal">def beginner</tt> in <tt class="docutils literal">ai.txt</tt>.</p>
+<div class="section" id="without-a-mod">
+<h2><a class="toc-backref" href="#toc-entry-4">Without a mod</a></h2>
+<p>The menu always offers the five standard tiers:</p>
+<ul class="simple">
+<li><tt class="docutils literal">beginner</tt> -- Beginner (初级)</li>
+<li><tt class="docutils literal">intermediate</tt> -- Intermediate (中级)</li>
+<li><tt class="docutils literal">advanced</tt> -- Advanced (高级)</li>
+<li><tt class="docutils literal">expert</tt> -- Expert (专家)</li>
+<li><tt class="docutils literal">nightmare</tt> -- Nightmare (噩梦)</li>
+</ul>
+</div>
+<div class="section" id="with-a-mod-loaded">
+<h2><a class="toc-backref" href="#toc-entry-5">With a mod loaded</a></h2>
+<p>The engine scans <strong>faction</strong> blocks in <tt class="docutils literal">rules.txt</tt> for difficulty mapping lines.
+Each tier appears in the menu when at least one faction maps that tier to a
+script name that exists as a <tt class="docutils literal">def</tt> in <tt class="docutils literal">ai.txt</tt>.</p>
+<p><strong>Recommended (new mods)</strong> -- standard tier names inside each faction block:</p>
+<pre class="literal-block">
+def tang_empire
+class race
+townhall county_government
+...
+beginner tang_empire_easy
+intermediate tang_empire_hard
+advanced tang_empire_hard
+</pre>
+<p>This yields <strong>Invite beginner / intermediate / advanced computer</strong> (as many
+buttons as you map). If the player picks &quot;beginner&quot; with the Tang faction, the
+<tt class="docutils literal">tang_empire_easy</tt> script runs.</p>
+<p><strong>Legacy mods</strong> -- still using <tt class="docutils literal">easy</tt> / <tt class="docutils literal">aggressive</tt>:</p>
+<pre class="literal-block">
+def orc
+class race
+...
+easy orc_defensive
+aggressive orc_aggressive
+</pre>
+<p>The menu shows <strong>Invite quiet / aggressive computer</strong> (defensive / aggressive
+labels in Chinese UI). The host still invites tier <tt class="docutils literal">easy</tt> or <tt class="docutils literal">aggressive</tt>;
+<tt class="docutils literal">rules.txt</tt> resolves the actual script per faction.</p>
+</div>
+<div class="section" id="summary">
+<h2><a class="toc-backref" href="#toc-entry-6">Summary</a></h2>
+<ul class="simple">
+<li><tt class="docutils literal">ai.txt</tt> holds scripts; <tt class="docutils literal">rules.txt</tt> maps tiers to scripts per faction.</li>
+<li>Different factions can map the same tier to different scripts; the menu lists
+tier names only, not faction-specific script names.</li>
+<li>If both <tt class="docutils literal">beginner</tt> and <tt class="docutils literal">easy</tt> are mapped, only <tt class="docutils literal">beginner</tt> is listed.</li>
+<li>Internal scripts such as <tt class="docutils literal">timers</tt> never appear in the invite menu.</li>
+<li>Multiplayer hosts send <tt class="docutils literal">invite_ai &lt;tier&gt;</tt> (e.g. <tt class="docutils literal">invite_ai beginner</tt>).
+Legacy commands <tt class="docutils literal">invite_beginner</tt>, etc. still work.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="settings-written-once-near-the-top-of-a-def">
+<h1><a class="toc-backref" href="#toc-entry-7">4. Settings (written once, near the top of a &quot;def&quot;)</a></h1>
+<p>These tune the AI's overall behaviour. Put them near the top of a <tt class="docutils literal">def</tt> so
+they run before the loop. A higher difficulty usually means a bigger economy,
+research turned on, more bases and more willingness to attack.</p>
+<ul>
+<li><p class="first"><tt class="docutils literal">constant_attacks 0/1</tt> -- when <tt class="docutils literal">1</tt> the AI keeps attacking and exploring
+the map instead of turtling at home.</p>
+</li>
+<li><p class="first"><tt class="docutils literal">research 0/1</tt> -- when <tt class="docutils literal">1</tt> the AI researches weapon/armor/ability
+upgrades whenever it can afford them.</p>
+</li>
+<li><p class="first"><tt class="docutils literal">workers &lt;n&gt;</tt> -- the number of workers (peasants) the AI tries to keep.
+More workers means a stronger economy. Default: <tt class="docutils literal">10</tt>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal">expand &lt;n&gt;</tt> -- the total number of town halls (bases) to maintain. The
+starting base counts, so <tt class="docutils literal">expand 2</tt> makes the AI build one extra base.
+Default: <tt class="docutils literal">0</tt> (no extra expansion).</p>
+</li>
+<li><p class="first"><tt class="docutils literal">attack_ratio &lt;percent&gt;</tt> -- how strong the AI's army must be, compared to
+the enemy in the target area, before it attacks. <tt class="docutils literal">180</tt> (the default) means
+&quot;attack only with an 80% advantage&quot; (cautious). Lower values make the AI
+commit sooner; below <tt class="docutils literal">100</tt> it attacks even when slightly weaker
+(relentless pressure).</p>
+</li>
+<li><p class="first"><tt class="docutils literal">counter_skill <span class="pre">&lt;0-100&gt;</span></tt> -- how well the AI's units use <tt class="docutils literal">mdg_vs</tt> /
+<tt class="docutils literal">rdg_vs</tt> counter bonuses when choosing targets and sending attacks.
+<tt class="docutils literal">0</tt> ignores counters (pure <tt class="docutils literal">menace</tt> priority). <tt class="docutils literal">100</tt> always picks the
+best counter match, including inherited types via <tt class="docutils literal">is_a</tt> (for example,
+<tt class="docutils literal">mdg_vs cavalry</tt> also counters a camel with <tt class="docutils literal">is_a cavalry</tt>). Values in
+between blend counter bonus and <tt class="docutils literal">menace</tt>. Default if omitted: <tt class="docutils literal">100</tt>.</p>
+<p>Vanilla <tt class="docutils literal">res/ai.txt</tt> sets: beginner <tt class="docutils literal">25</tt>, intermediate <tt class="docutils literal">50</tt>,
+advanced <tt class="docutils literal">75</tt>, expert <tt class="docutils literal">90</tt>, nightmare <tt class="docutils literal">100</tt>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal">starting_resources <span class="pre">&lt;amounts...&gt;</span></tt> -- <strong>bonus</strong> resources added on top of
+the map (or faction) start. Same order and <strong>same units</strong> as map
+<tt class="docutils literal">starting_resources</tt> (e.g. <tt class="docutils literal">10 10</tt> = 10 gold and 10 wood; internally
+stored as <tt class="docutils literal">× 1000</tt> like map starts). Omitted = no bonus.</p>
+</li>
+<li><p class="first"><tt class="docutils literal">starting_units <span class="pre">&lt;unit&gt;...</span></tt> -- <strong>bonus</strong> units or buildings spawned at the
+AI's start square after the normal start. Uses the same flat syntax as map
+<tt class="docutils literal">starting_units</tt> (put a count before a type name to spawn several:
+<tt class="docutils literal">5 footman 2 archer</tt>). Respects faction <tt class="docutils literal">equivalent</tt> names. <strong>Do not
+consume population</strong> (unlike map starting units). Omitted = no bonus units.</p>
+</li>
+<li><p class="first"><tt class="docutils literal">starting_population &lt;n&gt;</tt> -- <strong>bonus</strong> population cap added on top of
+houses and other <tt class="docutils literal">population_provided</tt> units. Plain integer (not <tt class="docutils literal">× 1000</tt>).
+<tt class="docutils literal">available_population</tt> is still capped by the map's <tt class="docutils literal">global_population_limit</tt>.</p>
+<p>These lines are applied once at game start; they are <strong>not</strong> part of the
+script loop (unlike <tt class="docutils literal">get</tt> / <tt class="docutils literal">attack</tt>).</p>
+<p>Vanilla <tt class="docutils literal">res/ai.txt</tt> bonuses (on top of every map start):</p>
+<ul class="simple">
+<li>intermediate: <tt class="docutils literal">starting_resources 50 50</tt>, <tt class="docutils literal">starting_population 10</tt></li>
+<li>advanced: <tt class="docutils literal">100 100</tt> + <tt class="docutils literal">2 footman 2 archer</tt>, <tt class="docutils literal">starting_population 20</tt></li>
+<li>expert: <tt class="docutils literal">200 200</tt> + <tt class="docutils literal">5 footman 4 archer 2 knight</tt>, <tt class="docutils literal">starting_population 40</tt></li>
+<li>nightmare: <tt class="docutils literal">400 400</tt> + <tt class="docutils literal">8 footman 6 archer 4 knight</tt>, <tt class="docutils literal">starting_population 60</tt></li>
+</ul>
+</li>
+<li><p class="first"><tt class="docutils literal">watchdog &lt;seconds&gt;</tt> -- a safety net: if the AI is stuck on the same line
+for this long, it moves on to the next line. <tt class="docutils literal">0</tt> disables it.</p>
+</li>
+</ul>
+<div class="section" id="counter-targeting-counter-skill">
+<h2><a class="toc-backref" href="#toc-entry-8">Counter targeting (<tt class="docutils literal">counter_skill</tt>)</a></h2>
+<p>When <tt class="docutils literal">counter_skill</tt> is above <tt class="docutils literal">0</tt>, computer units prefer enemies they
+counter according to <tt class="docutils literal">rules.txt</tt> damage bonuses:</p>
+<ul class="simple">
+<li>A knight with <tt class="docutils literal">mdg_vs archer 12</tt> focuses archers over higher-<tt class="docutils literal">menace</tt> units.</li>
+<li>An archer with <tt class="docutils literal">rdg_vs footman 7</tt> focuses footmen.</li>
+<li>Type names in <tt class="docutils literal">mdg_vs</tt> / <tt class="docutils literal">rdg_vs</tt> match the target's <tt class="docutils literal">type_name</tt> or any
+name in its <tt class="docutils literal">is_a</tt> inheritance chain.</li>
+</ul>
+<p>At low <tt class="docutils literal">counter_skill</tt>, high-<tt class="docutils literal">menace</tt> targets can still win; at <tt class="docutils literal">100</tt>,
+the best counter match wins unless only one enemy is in range.</p>
+<p>This affects both <strong>micro</strong> (which enemy each unit attacks) and <strong>macro</strong>
+(which area to push and which units to send first), as long as the army still
+meets <tt class="docutils literal">attack_ratio</tt>.</p>
+</div>
+</div>
+<div class="section" id="action-commands">
+<h1><a class="toc-backref" href="#toc-entry-9">5. Action commands</a></h1>
+<ul class="simple">
+<li><tt class="docutils literal">get &lt;n&gt; <span class="pre">&lt;unit&gt;...</span></tt> -- recruit or build until the AI owns <tt class="docutils literal">&lt;n&gt;</tt> of each
+listed unit/building. You can list several pairs at once. See <tt class="docutils literal">rules.txt</tt>
+for the exact unit type names.
+Example: <tt class="docutils literal">get 10 footman 20 archer 10 knight</tt></li>
+<li><tt class="docutils literal">attack</tt> -- from this point on, attack whenever strong enough (it also
+turns on <tt class="docutils literal">constant_attacks</tt>).</li>
+<li><tt class="docutils literal">wait &lt;seconds&gt;</tt> -- stay on this line for <tt class="docutils literal">&lt;seconds&gt;</tt> before continuing.
+Useful for pacing (an easy AI can <tt class="docutils literal">wait</tt> between waves). Note: a non-zero
+<tt class="docutils literal">watchdog</tt> can still pull the AI off the line early.</li>
+</ul>
+</div>
+<div class="section" id="flow-control">
+<h1><a class="toc-backref" href="#toc-entry-10">6. Flow control</a></h1>
+<ul class="simple">
+<li><tt class="docutils literal">label &lt;name&gt;</tt> -- marks a position you can jump to.</li>
+<li><tt class="docutils literal">goto &lt;name&gt;</tt> -- jump to a label. <tt class="docutils literal">goto</tt> also accepts a relative line
+offset such as <tt class="docutils literal">goto <span class="pre">-1</span></tt> (go back one line).</li>
+<li><tt class="docutils literal">goto_random &lt;name1&gt; &lt;name2&gt; ...</tt> -- jump to one of the listed labels,
+chosen at random. Great for making the AI unpredictable.</li>
+</ul>
+</div>
+<div class="section" id="mod-example-three-tiers-per-faction-scripts">
+<h1><a class="toc-backref" href="#toc-entry-11">7. Mod example (three tiers, per-faction scripts)</a></h1>
+<p><tt class="docutils literal">ai.txt</tt> excerpt:</p>
+<pre class="literal-block">
+def tang_empire_easy
+constant_attacks 0
+get 9 villager 5 footman
+attack
+goto -1
+
+def tang_empire_hard
+constant_attacks 1
+get 9 villager 10 footman
+attack
+goto -1
+</pre>
+<p><tt class="docutils literal">rules.txt</tt> excerpt for the Tang faction:</p>
+<pre class="literal-block">
+def tang_empire
+class race
+peasant villagers
+...
+beginner tang_empire_easy
+intermediate tang_empire_hard
+advanced tang_empire_hard
+</pre>
+<p>The menu shows three tiers; Tang + &quot;intermediate&quot; runs <tt class="docutils literal">tang_empire_hard</tt>.</p>
+</div>
+<div class="section" id="complete-example-one-vanilla-tier">
+<h1><a class="toc-backref" href="#toc-entry-12">8. Complete example (one vanilla tier)</a></h1>
+<pre class="literal-block">
+def advanced
+
+counter_skill 75
+watchdog 480
+constant_attacks 1
+research 1
+workers 18
+expand 2          ; second base for a stronger economy
+attack_ratio 150  ; pushes with a smaller advantage
+
+label open
+get 9 peasant 6 footman 4 archer
+attack
+goto_random knights mixed
+
+label knights
+get 9 peasant 16 knight 10 archer 3 catapult
+attack
+goto open
+
+label mixed
+get 9 peasant 20 archer 12 knight 5 priest 4 catapult
+attack
+goto open
+</pre>
+<p>Everything after a <tt class="docutils literal">;</tt> on a line is a comment and is ignored.</p>
+</div>
+</div>
+</body>
+</html>

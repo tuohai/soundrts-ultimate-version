@@ -1,0 +1,91 @@
+; CrazyMod traditional 2
+
+title 76020
+intro 76021
+
+; map size
+
+square_width 12
+
+nb_columns 5
+nb_lines 10
+
+
+; paths (give only the starting square)
+
+west_east_paths b1 c1
+west_east_paths b2 c2
+
+west_east_paths a3 b3 c3 d3
+west_east_paths a4 b4 c4 d4
+
+west_east_paths a5 b5 c5
+west_east_paths a6 b6 c6
+
+west_east_paths b7 c7 d7
+west_east_paths b8 c8 d8
+
+west_east_paths a9 b9 c9 d9
+
+west_east_bridges
+
+
+south_north_paths a1 a2 a4 a5 a7 a8 a9
+
+south_north_paths b1 b4 b5 b6 b7 b8 b9
+south_north_paths c1 c4 c5 c6 c7 c8 c9
+south_north_paths d1 d4 d5 d6 d7 d8 d9
+
+south_north_paths e1 e2 e3 e5 e6 e7 e8 e9
+
+south_north_bridges c2
+
+
+; resources
+
+goldmines 100 c1
+goldmines 1000 b2 d2
+goldmines 500 a7 e5
+
+woods 100 c2
+woods 1000 b1 d1
+woods 500 a8 e6
+
+
+nb_meadows_by_square 0
+
+additional_meadows b1 c1 d1 b2 c2 d2 b1 c1 d1 b2 c2 d2 b1 c1 d1 b2 c2 d2 b1 c1 d1 b2 c2 d2
+additional_meadows b1 c1 d1 b2 c2 d2 b1 c1 d1 b2 c2 d2 b1 c1 d1 b2 c2 d2 b1 c1 d1 b2 c2 d2
+
+additional_meadows a7 a8 e5 e6 a7 a8 e5 e6 a7 a8 e5 e6 a7 a8 e5 e6 a7 a8 e5 e6 a7 a8 e5 e6
+
+
+
+; players
+
+global_population_limit 5000
+
+player 50 50 c1 chatelet 3 farm 10 serf
+
+
+; computers
+
+computer_only 0 0 a1 fantome e1 fantome a5 5 fantome e5 5 fantome a7 5 fantome c8 5 fantome a10 5 fantome e10 5 fantome
+
+
+; triggers
+
+timer_coefficient 1
+
+trigger player1 (timer 0) (add_objective 1 76022)
+trigger player1 (no_enemy_left) (objective_complete 1)
+
+trigger computer1 (no_unit_left) (defeat)
+
+trigger computer1 (timer 0) (order (a1 fantome) ((patrol e2)))
+trigger computer1 (timer 0) (order (e1 fantome) ((patrol a2)))
+trigger computer1 (timer 0) (order (a5 5 fantome) ((patrol e3)))
+trigger computer1 (timer 0) (order (a7 5 fantome) ((patrol c3)))
+trigger computer1 (timer 0) (order (c8 5 fantome) ((patrol e4)))
+trigger computer1 (timer 0) (order (a10 5 fantome) ((patrol e10)))
+trigger computer1 (timer 0) (order (e10 5 fantome) ((patrol a10)))

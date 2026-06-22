@@ -1,0 +1,44 @@
+; buildings
+
+; 分层热键：keyboard worker / soldier1–7 / building1–16（见 res/ui/*_bindings.txt 与 docs/zh/分层热键方案说明.md）
+
+def pig_farm
+is_a farm
+title 7000
+keyboard building4
+noise repeat 15 1050
+
+def orc_barracks
+is_a barracks
+title 7001
+keyboard building3
+
+def great_hall
+is_a townhall
+title 7002
+keyboard building1
+noise repeat 6 1064
+
+
+; units
+
+def peon
+is_a peasant
+title 7003
+keyboard worker
+
+def grunt
+is_a footman
+title 7004
+keyboard soldier1
+
+
+; factions
+
+def orc_faction
+title 4302
+
+; 自定义菜单音效
+def parameters
+select_sound 7010 ; 兽人菜单选择音效
+confirm_sound 7011 ; 兽人菜单确认音效

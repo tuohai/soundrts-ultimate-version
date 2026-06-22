@@ -1,0 +1,122 @@
+; 全局热键层 — 在任何界面模式下均生效
+; 界面专属热键见 unit_bindings.txt、command_bindings.txt 等
+
+#define SOLDIER soldier1 soldier2 soldier3 soldier4 soldier5 soldier6 soldier7
+
+; 资源与人口（始终可用）
+z: resource_status resource1
+x: resource_status resource2
+SHIFT Z: resource_status resource3
+c: population_status
+
+; ESC：取消命令/退出子界面/进入地图浏览
+ESCAPE: ui_escape
+
+; 界面切换
+F1: toggle_selection_mode
+F2: toggle_action_mode
+F3: toggle_gear_screen
+F4: enter_help_mode
+F12: enter_diplomacy_mode
+
+; 快捷入口（兼容旧键位）
+ALT V: unit_attributes_screen
+SHIFT V: toggle_gear_screen
+
+; 目标选择
+TAB: select_target 1
+SHIFT TAB: select_target -1
+CTRL TAB: select_target 1 useful
+CTRL SHIFT TAB: select_target -1 useful
+
+; 方向移动（任何界面均可使用）
+UP: select_square 0 1
+DOWN: select_square 0 -1
+LEFT: select_square -1 0
+RIGHT: select_square 1 0
+
+SHIFT UP: select_square 0 5
+SHIFT DOWN: select_square 0 -5
+SHIFT LEFT: select_square -5 0
+SHIFT RIGHT: select_square 5 0
+
+CTRL UP: select_square 0 1 no_collision
+CTRL DOWN: select_square 0 -1 no_collision
+CTRL LEFT: select_square -1 0 no_collision
+CTRL RIGHT: select_square 1 0 no_collision
+
+CTRL SHIFT UP: select_square 0 5 no_collision
+CTRL SHIFT DOWN: select_square 0 -5 no_collision
+CTRL SHIFT LEFT: select_square -5 0 no_collision
+CTRL SHIFT RIGHT: select_square 5 0 no_collision
+
+; 方格跳转（任何界面均可使用）
+PAGEDOWN: select_scouted_square 1
+PAGEUP: select_scouted_square -1
+CTRL PAGEDOWN: select_conflict_square 1
+CTRL PAGEUP: select_conflict_square -1
+ALT PAGEDOWN: select_unknown_square 1
+ALT PAGEUP: select_unknown_square -1
+SHIFT PAGEDOWN: select_resource_square 1
+SHIFT PAGEUP: select_resource_square -1
+
+; 默认命令（全局，任何界面均可执行）
+BACKSPACE: default
+SHIFT BACKSPACE: default queue_order
+CTRL BACKSPACE: default imperative
+CTRL SHIFT BACKSPACE: default imperative queue_order
+
+; 命令确认（有已选命令时全局可用）
+RETURN: validate
+SHIFT RETURN: validate queue_order
+CTRL RETURN: validate imperative
+CTRL SHIFT RETURN: validate imperative queue_order
+KP_ENTER: validate
+SHIFT KP_ENTER: validate queue_order
+CTRL KP_ENTER: validate imperative
+CTRL SHIFT KP_ENTER: validate imperative queue_order
+
+; 观察与查询
+LCTRL: examine
+RCTRL: examine
+SPACE: unit_status
+v: unit_hp_status
+F9: objectives 1
+SHIFT F9: objectives -1
+F11: say_players
+
+; 系统功能
+F5: history_previous
+F6: history_next
+LALT: history_stop
+RALT: history_stop
+LSHIFT: history_stop
+RSHIFT: history_stop
+
+F10: gamemenu
+CTRL c: gamemenu
+ALT F4: gamemenu
+
+HOME: volume
+KP_PLUS: volume
+END: volume -1
+KP_MINUS: volume -1
+
+ALT SPACE: immersion
+CTRL SPACE: immersion
+
+BACKQUOTE: console
+CTRL BACKQUOTE: reload_parameters
+
+ALT m: toggle_music
+ALT HOME: music_volume_up
+ALT KP_PLUS: music_volume_up
+ALT EQUALS: music_volume_up
+ALT END: music_volume_down
+ALT KP_MINUS: music_volume_down
+ALT MINUS: music_volume_down
+
+CTRL F2: fullscreen
+CTRL SHIFT F2: toggle_cheatmode
+CTRL F3: toggle_talking_clock
+CTRL SHIFT F4: change_player

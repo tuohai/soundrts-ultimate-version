@@ -1,0 +1,70 @@
+def house
+hp_max 10
+
+def peasant
+speed 100
+mdg 0
+hp_regen 10
+can_build guardtower cannontower mudtower
+
+def scouttower
+cost 5
+time_cost .5
+can_upgrade_to guardtower cannontower mudtower
+is_buildable_anywhere 0
+
+def guardtower
+requirements
+cost 10
+time_cost 1
+rdg_range 6
+rdg_cd 1.5
+rdg 6 ; 6-16
+rdg_targets ground air
+is_buildable_anywhere 0
+
+def cannontower
+requirements
+cost 20
+time_cost 1
+mdg_range 7
+mdg_cd 4
+mdg 8 ; 10-50
+mdg_targets ground
+mdg_radius 1
+mdg_splash 8
+is_buildable_anywhere 0
+
+def mudtower
+class building
+hp_max 10
+cost 20
+time_cost 1
+harm_level 1
+harm_target_type healable
+debuffs b_slow
+mdg_targets ground
+rdg_targets ground
+is_buildable_anywhere 0
+provides_survival 0
+
+def footman
+mdg_cd 10000000
+speed 1.6
+mdg 1
+resource_rewards 5
+
+def knight
+mdg_cd 10000000
+mdg 1
+resource_rewards 20
+
+def b_slow
+class buff
+duration 20
+temporary 1
+stack 1  ; duration reset
+negative 1
+stat speed
+percentage 75
+target_type healable

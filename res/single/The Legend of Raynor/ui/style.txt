@@ -1,0 +1,213 @@
+def npc_mage
+is_a mage
+
+def raynor
+is_a knight
+title 7607
+intro 7740
+
+def raynor2
+is_a raynor
+title 7731
+intro 7741
+
+def raynor3
+is_a raynor
+title 7732
+intro 7742
+
+def raynor4
+is_a raynor
+title 7733
+intro 7743
+
+def raynor5
+is_a raynor
+title 7734
+intro 7744
+
+def raynor6
+is_a raynor
+title 7735
+intro 7745
+
+def raynor7
+is_a raynor
+title 7736
+intro 7746
+
+def skill_moli_dan
+title 7753
+
+def skill_zhuiri_jianfa
+title 7752
+alert roar
+triggered roar
+
+def zhuiri_jianfa_book
+title 7754
+pickup 1506
+use 1506
+
+def npc_peasant
+is_a peasant
+
+def npc_footman_escort
+is_a footman
+title 7592
+
+def npc_archer_escort
+is_a archer
+title 7593
+
+def bow
+title 4864
+weapon_switched bow  ; 弓的切换音效
+launch_rdg 1042
+rdg_hit 1043
+rdg_hit_lv_1 1301
+
+def sword
+title 7514
+weapon_switched dao  ; 剑的切换或装备音效
+weapon_unequipped pull2  ; 剑的卸下音效
+mdg_hit 1039 1040 1041
+mdg_hit_lv_1 1302
+
+def short_sword
+is_a sword
+title 7515
+
+def light_armor
+title 7516
+
+def footman_armor
+title 7517
+armor_equipped pull0  ; 盔甲装备音效
+armor_unequipped pull0  ; 盔甲卸下音效
+
+
+def armor
+title 7518
+
+def melee
+title 7519
+
+def weapon
+title 7520
+
+def health_potion
+is_a potion
+title 7521
+
+def mana_potion
+title 7522
+pickup 1501  ; 法力药水拾取音效
+
+def speed_boots
+title 7523
+pickup 1502  ; 速度靴子拾取音效
+
+def power_sword
+title 7524
+pickup 1503  ; 力量之剑拾取音效
+
+def magic_ring
+title 7525
+pickup 1504  ; 魔法戒指拾取音效
+
+def gold_coin
+title 7526
+pickup 1505  ; 金币拾取音效
+
+def item
+title 7527
+
+def potion
+title 7528
+
+def quest_npc
+title 7504
+
+def pickaxe
+title 7506
+def knight_lance
+title 7508
+def wand
+title 7510
+def lost_amulet
+title 7512
+
+def mystery_treasure
+title 7555
+pickup 1506
+
+def npc_village_healer
+title 7556
+
+def npc_wandering_knight
+is_a knight
+title 7557
+
+def npc_blacksmith
+title 7558
+
+def shrine
+title 7559
+
+def treasure_opened_mark
+title 7561
+
+def sealed_treasure
+title 7568
+pickup 1506
+
+def war_supplies
+title 7574
+pickup 1506
+
+def secret_letter
+title 7588
+pickup 1506
+
+def garrek_token
+title 7716
+pickup 1506
+
+def war_banner
+title 7715
+pickup 1506
+
+def npc_knight
+is_a knight
+
+def npc_knight_leader
+title 7589
+is_a knight
+
+def npc_count_roland
+title 7711
+is_a knight
+
+def npc_roland_guard
+title 7712
+is_a knight
+
+def npc_general_vera
+title 7713
+is_a knight
+
+def npc_marco_ironhand
+title 7714
+is_a knight
+
+def npc_knight_escort
+title 7591
+is_a knight
+
+def traitor_guard
+is_a footman
+title 7590
+
+def demo_marker_footman
+is_a footman

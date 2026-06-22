@@ -1,0 +1,8 @@
+; 技能界面热键
+
+
+
+a: select_order 1 inactive_included
+
+SHIFT a: select_order -1 inactive_included
+

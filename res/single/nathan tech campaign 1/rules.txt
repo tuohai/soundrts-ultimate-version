@@ -1,0 +1,54 @@
+def parameters
+
+def workshop
+cost 10 15
+population_provided 0
+hp_max 266.7;  800/3
+time_cost 90
+requirements castle_age
+can_train catapult horse_and_cart big_cart new_flyingmachine flyingmachine
+
+def horse_and_cart
+class soldier
+cost 3000 600
+population_cost 0
+time_cost 50
+hp_max 80
+speed 3
+mdg_range 6
+mdg_cd 1.5
+mdg 0
+mdf_bonus 5
+mdg_projectile 1
+
+def peasant
+can_build house farm barracks lumbermill blacksmith scouttower townhall stables workshop dragonslair magestower temple necropolis horse_and_cart
+
+def kings_chariet
+class building
+cost 3000 600
+time_cost 50
+hp_max 3000
+rdg_range 6
+rdg_cd 1.5
+rdg 1
+mdf_bonus 5
+rdg_projectile 1
+
+
+
+def big_cart
+class soldier
+cost 10000 10000
+population_cost 0
+time_cost 50
+hp_max 80
+speed 3
+rdg_range 6
+rdg_cd 1.5
+rdg 0
+rdf_bonus 5
+rdg_projectile 1
+
+def peasant
+can_build house farm barracks lumbermill blacksmith scouttower townhall stables workshop dragonslair magestower temple necropolis horse_and_cart big_cart

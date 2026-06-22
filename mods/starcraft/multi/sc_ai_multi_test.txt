@@ -1,0 +1,37 @@
+; StarCraft mod — multiplayer AI test (2–4 players)
+;
+; Setup:
+;   1. SoundRTS.ini → mods = starcraft
+;   2. Multiplayer → pick this map
+;   3. Each human picks faction: terran / protoss / zerg
+;   4. Host invites easy or aggressive computers to fill empty slots
+;
+; AI exercises: psi + pylon (protoss), creep spread (zerg), addons + tanks (terran).
+;
+;   a b
+; 1 P E    P/E = player corners (2-player default)
+; 2 + +    +   = expansion slots (3–4 players)
+
+title 7360
+
+square_width 12
+nb_columns 2
+nb_lines 2
+
+west_east_paths a1
+south_north_paths a1 b1
+
+mineral_field 1500 a1 b1
+mineral_field 1200 a2 b2
+mineral_field 800 a1 b2
+geyser 1 a1 b1 a2 b2
+nb_meadows_by_square 2
+
+nb_players_min 2
+nb_players_max 4
+starting_squares a1 b1 a2 b2
+starting_resources 50 0
+
+timer_coefficient 1
+
+trigger all (timer 0) (add_objective 1 7361)

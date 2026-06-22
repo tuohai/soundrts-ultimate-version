@@ -1,0 +1,6 @@
+*.pyc
+/doc_src/src/*/stats.inc
+/user
+/doc
+/.mypy_cache
+/.venv

@@ -1,0 +1,15 @@
+title 4271 3012
+intro 7512
+nb_columns 3
+nb_lines 3
+west_east_paths a1 a2 a3 b1 b2 b3 
+south_north_paths a1 b1 c1 a2 b2 c2
+nb_meadows_by_square 3
+goldmine 300 a1 a1 a1 a1
+woods 300 a1 a1 a1 a1
+player 50000 50000 a1 townhall 5 barracks kings_chariet big_cart 5 peasant 5 house
+computer_only 0 0 a3 3 footman
+global_population_limit 300
+trigger player1 (timer 0) (add_objective 1 56018)
+trigger player1 (has 50 footman 50 knight) (objective_complete 1)
+trigger all (no_unit_left) (defeat)

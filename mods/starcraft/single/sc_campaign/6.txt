@@ -1,0 +1,30 @@
+; Campaign ch.6 — Protoss late game (Templar, Psi Storm, Carrier)
+
+title 7481
+intro 7486
+
+square_width 12
+nb_columns 10
+nb_lines 1
+
+west_east_paths a1 b1 c1 d1 e1 f1 g1 h1 i1
+
+mineral_field 3000 a1
+geyser 1 b1
+nb_meadows_by_square 2
+
+nb_players_min 1
+nb_players_max 1
+starting_squares a1
+starting_units nexus 8 probe cybernetics_core stargate forge pylon pylon gateway 2 zealot
+starting_resources 500 300
+
+timer_coefficient 1
+
+trigger player1 (timer 0) (do (register_objective 1 2 3 4 5 6) (add_objective 1 7490))
+trigger player1 (has templar_archives) (do (objective_complete 1) (add_objective 2 7491))
+trigger player1 (has u_psi_storm) (do (objective_complete 2) (add_objective 3 7492))
+trigger player1 (has high_templar) (do (objective_complete 3) (add_objective 4 7493))
+trigger player1 (has dark_templar) (do (objective_complete 4) (add_objective 5 7494))
+trigger player1 (has fleet_beacon) (do (objective_complete 5) (add_objective 6 7495))
+trigger player1 (has carrier) (objective_complete 6)

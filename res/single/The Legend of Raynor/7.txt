@@ -1,0 +1,74 @@
+title 4271 3007
+intro 7615
+trigger player1 (timer 0) (add_objective 1 7644)
+trigger player2 (timer 0) (add_objective 1 7644)
+
+
+; map size
+
+square_width 12
+
+nb_columns 6
+nb_lines 4
+
+; co-op: 1-2 human allies (AoE-style cooperative campaign)
+nb_players_min 1
+nb_players_max 2
+random_starts 0
+
+; place names (province / city / district)
+square_name loc_ch07_ambush_lane 1,1 2,1 3,1 4,1 5,1 6,1
+square_name loc_ch07_corridor 1,1 2,1 3,1 4,1 5,1 6,1
+square_name loc_ch07_mage_tower 1,1 loc_ch07_knight_patrol 2,1 3,1 4,1 5,1 6,1
+
+
+; paths (give only the starting square)
+
+west_east_paths a1 b1 c1 d1 e1
+west_east_bridges
+
+south_north_paths 
+south_north_bridges 
+
+
+; resources
+
+goldmines 132 a1
+goldmines 132 f1
+
+woods 132 c1
+woods 132 d1
+
+nb_meadows_by_square 2
+additional_meadows b1 e1
+remove_meadows 
+
+
+
+; co-op symmetric partner economy
+woods 100 e1 f1
+additional_meadows f1 e1
+; players (human or computer)
+
+player 1600 1600 a1 raynor archer lumbermill magestower -u_summon_dragon
+player 1600 1600 -u_summon_dragon f1 townhall 2 peasant footman e1 house footman
+
+; computer only
+
+computer_only 0 0 b1 3 knight
+
+; triggers
+
+timer_coefficient 56
+
+; co-op alliances at start
+trigger player1 (timer 0) (alliance 1)
+trigger player2 (timer 0) (alliance 1)
+trigger computers (timer 0) (alliance 2)
+
+trigger player1 (no_enemy_left) (objective_complete 1)
+trigger player2 (no_enemy_left) (objective_complete 1)
+trigger all (no_unit_left) (defeat)
+
+trigger player1 (key_unit_killed raynor) (defeat)
+trigger player2 (key_unit_killed raynor) (defeat)

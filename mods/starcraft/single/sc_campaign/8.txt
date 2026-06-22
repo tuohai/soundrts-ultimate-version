@@ -1,0 +1,30 @@
+; Campaign ch.8 — Terran late game (Ghost, Nuke, Thor, Battlecruiser)
+
+title 7483
+intro 7488
+
+square_width 12
+nb_columns 10
+nb_lines 1
+
+west_east_paths a1 b1 c1 d1 e1 f1 g1 h1 i1
+
+mineral_field 3000 a1
+geyser 1 b1
+nb_meadows_by_square 2
+
+nb_players_min 1
+nb_players_max 1
+starting_squares a1
+starting_units command_center 8 scv barracks factory starport engineering_bay armory supply_depot tech_lab
+starting_resources 500 300
+
+timer_coefficient 1
+
+trigger player1 (timer 0) (do (register_objective 1 2 3 4 5 6) (add_objective 1 7504))
+trigger player1 (has ghost_academy) (do (objective_complete 1) (add_objective 2 7505))
+trigger player1 (has ghost) (do (objective_complete 2) (add_objective 3 7506))
+trigger player1 (has u_cloak) (do (objective_complete 3) (add_objective 4 7507))
+trigger player1 (has u_nuke) (do (objective_complete 4) (add_objective 5 7508))
+trigger player1 (has thor) (do (objective_complete 5) (add_objective 6 7509))
+trigger player1 (has battlecruiser) (objective_complete 6)

@@ -1,0 +1,31 @@
+; StarCraft mod — Queen creep tumor spawn + extend
+;
+;  a b c d e f g h i j
+; 1 * + + + + + + + + @
+;   ^hatchery+queen      ^build Spawning Pool (needs tumor chain)
+;
+; Queen: Spawn creep tumor (25 mana) on creep; tumors: Extend creep tumor (marked squares only).
+
+title 7523
+intro 7524
+
+square_width 12
+nb_columns 10
+nb_lines 1
+
+west_east_paths a1 b1 c1 d1 e1 f1 g1 h1 i1
+
+mineral_field 200 a1
+nb_meadows_by_square 0
+
+nb_players_min 1
+nb_players_max 1
+starting_squares a1
+starting_units hatchery 1 queen_nest 1 queen 1 drone 3 overlord 2
+starting_resources 80 0
+
+timer_coefficient 1
+
+trigger player1 (timer 0) (add_objective 1 7525)
+trigger player1 (has creep_tumor) (do (add_objective 2 7526) (objective_complete 1))
+trigger player1 (has spawning_pool) (objective_complete 2)

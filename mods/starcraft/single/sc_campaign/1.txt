@@ -1,0 +1,25 @@
+; Campaign ch.1 — Protoss psi field (same layout as multiplayer test)
+
+title 7541
+intro 7393
+
+square_width 12
+nb_columns 10
+nb_lines 1
+
+west_east_paths a1 b1 c1 d1 e1 f1 g1 h1 i1
+
+mineral_field 200 a1
+nb_meadows_by_square 0
+
+nb_players_min 1
+nb_players_max 1
+starting_squares a1
+starting_units nexus 3 probe
+starting_resources 80 0
+
+timer_coefficient 1
+
+trigger player1 (timer 0) (do (register_objective 1 2) (add_objective 1 7510))
+trigger player1 (has 4 pylon) (do (objective_complete 1) (add_objective 2 7511))
+trigger player1 (has_entered f1 gateway) (objective_complete 2)

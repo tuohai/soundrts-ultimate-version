@@ -1,0 +1,74 @@
+title 4271 3006
+intro 7614
+trigger player1 (timer 0) (add_objective 1 145 88)
+trigger player2 (timer 0) (add_objective 1 145 88)
+
+
+; map size
+
+square_width 12
+
+nb_columns 6
+nb_lines 4
+
+; co-op: 1-2 human allies (AoE-style cooperative campaign)
+nb_players_min 1
+nb_players_max 2
+random_starts 0
+
+; place names (province / city / district)
+square_name loc_ch06_shadow_wood 1,1 2,1 3,1 4,1 5,1 6,1
+square_name loc_ch06_corridor 1,1 2,1 3,1 4,1 5,1 6,1
+square_name loc_ch06_priest_line 1,1 loc_ch06_knight_vanguard 2,1 loc_ch06_archer_nest 3,1 4,1 5,1 6,1
+
+
+; paths (give only the starting square)
+
+west_east_paths a1 b1 c1 d1 e1
+west_east_bridges
+
+south_north_paths 
+south_north_bridges 
+
+
+; resources
+
+goldmines 132 a1
+goldmines 132 f1
+
+woods 132 c1
+woods 132 d1
+
+nb_meadows_by_square 2
+additional_meadows b1 e1
+remove_meadows 
+
+
+
+; co-op symmetric partner economy
+woods 100 e1 f1
+additional_meadows f1 e1
+; players (human or computer)
+
+player 1600 1600 a1 5 priest raynor u_exorcism u_conversion u_resurrection b1 20 knight
+player 1600 1600 f1 townhall 2 peasant footman e1 house footman
+
+; computer only
+
+computer_only 0 0 b1 2 darkarcher c1 30 darkarcher
+
+; triggers
+
+timer_coefficient 56
+
+; co-op alliances at start
+trigger player1 (timer 0) (alliance 1)
+trigger player2 (timer 0) (alliance 1)
+trigger computers (timer 0) (alliance 2)
+
+trigger player1 (no_enemy_left) (objective_complete 1)
+trigger player2 (no_enemy_left) (objective_complete 1)
+trigger all (no_unit_left) (defeat)
+
+trigger player1 (key_unit_killed raynor) (defeat)
+trigger player2 (key_unit_killed raynor) (defeat)

@@ -1,0 +1,109 @@
+; RPG模式专用键位绑定
+; 在第一人称模式下使用的特殊键位绑定
+
+; 继承所有基础绑定
+; 这个文件会在进入RPG模式时额外加载
+
+; RPG缩放模式精细度控制（与F8缩放模式结合使用时更精细移动）
+CTRL F8: change_zoom_precision 1      ; 增加缩放精细度（3x3 -> 5x5 -> 7x7 -> 9x9 -> 11x11 -> 15x15）
+SHIFT F8: change_zoom_precision -1    ; 减少缩放精细度
+ALT F8: get_zoom_precision            ; 查询当前缩放精细度
+
+; RPG模式专用技能快捷键（数字键1-0释放技能）
+1: rpg_skill_1
+2: rpg_skill_2
+3: rpg_skill_3
+4: rpg_skill_4
+5: rpg_skill_5
+6: rpg_skill_6
+7: rpg_skill_7
+8: rpg_skill_8
+9: rpg_skill_9
+0: rpg_skill_0
+MINUS: rpg_skill_10
+EQUALS: rpg_skill_11
+
+; RPG模式专用功能
+ALT SLASH: rpg_skill_list        ; 列出所有可用技能
+CTRL A: rpg_auto_attack          ; 自动攻击最近的敌人
+
+; 第一人称移动（覆盖默认的方向键行为）
+UP: select_square 0 1            ; 前进
+DOWN: select_square 0 -1         ; 后退  
+LEFT: select_square -1 0         ; 左移
+RIGHT: select_square 1 0         ; 右移
+
+; 第一人称转向
+SHIFT UP: select_square 0 1 turn     ; 向上看（无效果但保持一致性）
+SHIFT DOWN: turn_around              ; 180度转身（掉头）
+SHIFT LEFT: select_square -1 0 turn  ; 向左转
+SHIFT RIGHT: select_square 1 0 turn  ; 向右转
+
+; 保持其他重要的快捷键
+z: resource_status resource1
+x: resource_status resource2
+SHIFT Z: resource_status resource3
+c: population_status
+v: unit_hp_status
+SPACE: unit_status
+LCTRL: examine
+RCTRL: examine
+
+; 目标选择在RPG模式下仍然有用
+TAB: select_target 1 
+SHIFT TAB: select_target -1 
+CTRL TAB: select_target 1 useful
+CTRL SHIFT TAB: select_target -1 useful
+
+; 命令执行
+RETURN: validate
+SHIFT RETURN: validate queue_order
+CTRL RETURN: validate imperative
+CTRL SHIFT RETURN: validate imperative queue_order
+KP_ENTER: validate
+SHIFT KP_ENTER: validate queue_order
+CTRL KP_ENTER: validate imperative
+CTRL SHIFT KP_ENTER: validate imperative queue_order
+
+; 默认动作（攻击/移动）
+BACKSPACE: default
+SHIFT BACKSPACE: default queue_order
+CTRL BACKSPACE: default imperative
+CTRL SHIFT BACKSPACE: default imperative queue_order
+
+; 退出RPG模式
+ESCAPE: escape
+
+; 其他有用的快捷键
+F1: help 1
+SHIFT F1: help -1
+F2: help -1
+F3: say_time
+F5: history_previous
+F6: history_next
+F9: objectives 1
+SHIFT F9: objectives -1
+F10: gamemenu
+F11: say_players
+F7: say
+
+; 音量控制
+HOME: volume
+KP_PLUS: volume
+END: volume -1 
+KP_MINUS: volume -1 
+
+; 音乐控制
+ALT m: toggle_music
+ALT HOME: music_volume_up
+ALT KP_PLUS: music_volume_up
+ALT EQUALS: music_volume_up
+ALT END: music_volume_down
+ALT KP_MINUS: music_volume_down
+ALT MINUS: music_volume_down
+
+; 过滤器控制（在RPG模式下仍然有用）
+m: toggle_side_filter 1
+SHIFT m: toggle_side_filter -1
+n: toggle_type_filter 1
+SHIFT n: toggle_type_filter -1

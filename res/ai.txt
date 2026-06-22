@@ -1,0 +1,249 @@
+; ===========================================================================
+; Computer difficulty AI scripts
+; ===========================================================================
+;
+; SoundRTS ships five difficulty levels. Each one is an AI script you can
+; freely rewrite below (or override from a mod / map ai.txt):
+;
+;   beginner     初级 Beginner     - defensive, only retaliates when attacked
+;   intermediate 中级 Intermediate - attacks with each wave
+;   advanced     高级 Advanced     - bigger waves + research, keeps pressure
+;   expert       专家 Expert       - early rushes, constant attacks, research
+;   nightmare    噩梦 Nightmare     - relentless: huge armies, every unit type
+;
+; The old names "easy" and "aggressive" still work as aliases for "beginner"
+; and "intermediate", so older mods keep running. If a difficulty has no
+; "def" here, the engine falls back to the closest lower one.
+;
+; Commands (all optional, write what you need):
+;   get <n> <unit>...   recruit/build until you own <n> of each unit/building
+;   attack              from now on, attack whenever strong enough
+;   goto <label/±n>     jump to a label (or relative line)
+;   goto_random <a> <b> jump to a randomly chosen label
+;   label <name>        define a jump target
+;   wait <seconds>      pause on this line for <seconds> before continuing
+;   watchdog <seconds>  safety net: leave a stuck line after <seconds> (0=off)
+;   constant_attacks 0/1  keep attacking/exploring instead of turtling
+;   research 0/1        research weapon/armor/ability upgrades
+;   workers <n>         target number of workers to keep (economy strength)
+;   expand <n>          total town halls (bases) to maintain; 2 = one expansion
+;   attack_ratio <pct>  % of the enemy's strength needed before attacking
+;                       (180 = cautious default, <100 = reckless/relentless)
+;   counter_skill <0-100>  how well units pick mdg_vs/rdg_vs counter targets
+;                       (0 = ignore counters, 100 = always pick best counter)
+;   starting_resources <amounts...>  bonus resources added on top of the map
+;                       start (same order as map starting_resources)
+;   starting_units <unit>...  bonus units/buildings at the AI start square
+;                       (same syntax as map starting_units: counts before names;
+;                        do not consume population)
+;   starting_population <n>  bonus population cap added on top of houses/units
+;                       (plain integer, not x1000; still capped by map limit)
+;   defeat_score <n>    post-game bonus for beating this AI (settlement score)
+;                       omit to use the engine default for built-in tiers
+;
+; Naval units (boat, destroyer, shipyard, …):
+;   Included from intermediate upward. Intermediate phase2 always builds a
+;   small navy on water maps; higher tiers scale up via ai.txt and
+;   _try_maintain_naval. On land-only maps the engine skips shipyard and
+;   water units automatically (no shipyard can be built).
+
+
+; --- beginner (初级) -------------------------------------------------------
+; a defensive AI, never attacking first, but retaliating if attacked
+def beginner
+defeat_score 10
+counter_skill 25
+workers 8
+get 8 peasant 5 footman 15 archer
+get 9 peasant 10 knight 30 archer 5 catapult 1 new_flyingmachine 5 priest 10 mage 1 darkarcher 10 dragon 10 flyingmachine
+get 9 peasant 20 knight 60 archer
+goto -1
+
+
+; --- intermediate (中级) ---------------------------------------------------
+; an aggressive AI, attacking when each wave is ready
+def intermediate
+defeat_score 20
+
+counter_skill 50
+starting_resources 50 50
+starting_population 10
+watchdog 600 ; never stay on the same line for more than 10 minutes
+constant_attacks 1 ; constantly attack if powerful enough
+research 1 ; do the research if enough resources
+workers 12
+
+label phase1
+goto_random very_early_rush early_rush rush phase2
+
+label very_early_rush
+get 3 peasant 1 footman
+attack
+goto_random early_rush phase2
+
+label early_rush
+get 4 peasant 5 footman
+attack
+goto_random rush phase2
+
+label rush
+get 9 peasant 5 footman 8 knight
+attack
+
+label phase2
+get 9 peasant 15 archer 1 new_flyingmachine 5 knight 5 priest
+get 9 peasant 1 lumbermill 1 shipyard 2 boat 2 destroyer
+goto_random basic_defense darkarchers dragons knights footmen archers
+
+label basic_defense
+get 9 peasant 30 archer 1 new_flyingmachine 10 catapult
+get 9 peasant 60 archer 1 new_flyingmachine 20 catapult
+get 10 guardtower 5 cannontower
+goto phase3
+
+label darkarchers
+get 9 peasant 1 darkarcher
+attack
+get 9 peasant 3 darkarcher
+attack
+goto phase3
+
+label dragons
+get 9 peasant 3 dragonslair 60 dragon
+attack
+goto phase3
+
+label knights
+get 9 peasant 50 knight
+attack
+goto phase3
+
+label footmen
+get 9 peasant 20 footman
+attack
+goto phase3
+
+label archers
+get 9 peasant 60 archer
+attack
+goto phase3
+
+label phase3
+goto_random phase1 phase2
+
+
+; --- advanced (高级) -------------------------------------------------------
+; keeps constant pressure with larger, mixed armies and full research
+def advanced
+defeat_score 40
+
+counter_skill 75
+starting_resources 100 100
+starting_units 2 footman 2 archer
+starting_population 20
+watchdog 480
+constant_attacks 1
+research 1
+workers 18
+expand 2          ; takes a second base for a stronger economy
+attack_ratio 150  ; pushes with a smaller advantage than the lower tiers
+
+label adv_open
+get 9 peasant 6 footman 4 archer
+attack
+goto_random adv_knights adv_mixed adv_naval
+
+label adv_naval
+get 9 peasant 1 shipyard 2 boat 6 destroyer 2 battleship
+attack
+goto adv_open
+
+label adv_knights
+get 9 peasant 6 footman 16 knight 10 archer 3 catapult
+attack
+goto adv_air
+
+label adv_mixed
+get 9 peasant 20 archer 12 knight 5 priest 4 catapult
+attack
+goto adv_air
+
+label adv_air
+get 9 peasant 25 knight 30 archer 2 new_flyingmachine 10 dragon 5 priest 5 mage
+attack
+get 8 guardtower 3 cannontower
+goto adv_open
+
+
+; --- expert (专家) ---------------------------------------------------------
+; early aggression that snowballs into a full-tech doomstack
+def expert
+defeat_score 80
+
+counter_skill 90
+starting_resources 200 200
+starting_units 5 footman 4 archer 2 knight
+starting_population 40
+watchdog 360
+constant_attacks 1
+research 1
+workers 24
+expand 3
+attack_ratio 120
+
+label exp_rush
+get 3 peasant 2 footman
+attack
+get 5 peasant 6 footman 4 archer
+attack
+goto exp_push
+
+label exp_push
+get 9 peasant 12 knight 20 archer 4 catapult 5 priest
+attack
+goto exp_storm
+
+label exp_storm
+get 9 peasant 30 knight 40 archer 8 catapult 1 new_flyingmachine 15 dragon 8 priest 8 mage 3 darkarcher 1 shipyard 2 boat 6 destroyer 2 battleship
+attack
+get 9 peasant 60 archer 30 knight 12 catapult 20 dragon 2 destroyer 1 battleship
+attack
+goto exp_rush
+
+
+; --- nightmare (噩梦) ------------------------------------------------------
+; relentless: rushes fast, never stops, fields the entire roster at scale
+def nightmare
+defeat_score 200
+
+counter_skill 100
+starting_resources 400 400
+starting_units 8 footman 6 archer 4 knight
+starting_population 60
+watchdog 240
+constant_attacks 1
+research 1
+workers 36
+expand 4          ; sprawls across the map with multiple bases
+attack_ratio 90   ; attacks even when only roughly even: relentless pressure
+
+label nm_rush
+get 3 peasant 3 footman
+attack
+get 6 peasant 8 footman 6 archer 4 knight
+attack
+goto nm_assault
+
+label nm_assault
+get 9 peasant 1 lumbermill 1 workshop 1 shipyard 2 boat 1 new_flyingmachine
+get 9 peasant 20 knight 25 archer 6 catapult 6 priest 6 mage 6 destroyer
+attack
+goto nm_doom
+
+label nm_doom
+get 9 peasant 40 knight 60 archer 15 catapult 2 new_flyingmachine 30 dragon 12 priest 12 mage 6 darkarcher 15 flyingmachine 2 boat 8 destroyer 3 battleship 2 submarine
+attack
+get 12 guardtower 6 cannontower
+get 9 peasant 99 archer 50 knight 20 catapult 40 dragon 4 destroyer 2 battleship
+attack
+goto nm_rush

@@ -1,0 +1,19 @@
+title 4271 3003
+intro 7503
+square_width 12
+nb_columns 10
+nb_lines 10
+west_east_paths a1 b1 a2  a3 b3 c2 d2 e2 f2 h2 g2 i2 i9 i8 i7 i6 i5 i4 i3 h9 g9 h10 i10
+west_east_bridges g9 
+south_north_paths  b1 a2 c2 j2 j3 j4 j5 j6 j7 j8 h9 
+nb_meadows_by_square 2
+goldmines 50 a1 b1 c1 d1 e1 f1 g1 h1 i1 j1 a10 b10 c10 d10 e10 f10 g10 h10 i10 j10
+woods 50 a1 b1 c1 d1 e1 f1 g1 h1 i1 j1 a10 b10 c10 d10 e10 f10 g10 h10 i10 j10
+player 4000 4000 a1 5 peasant townhall 50 archer 50 knight b1 50 knight b2 50 footman j10 30 footman 
+computer_only 0 0 c1 50 footman i3 50 footman i4 50 footman i5 30 footman 20 archer i6 30 footman 20 knight i7 30 footman 10 knight 10 archer i8 30 footman 30 knight 3 archer
+timer_coefficient 1
+
+trigger player1 (timer 0) (add_objective 1 56009)
+
+trigger player1 (no_enemy_left) (objective_complete 1)
+trigger all (no_unit_left) (defeat)

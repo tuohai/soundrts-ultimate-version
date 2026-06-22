@@ -1,0 +1,25 @@
+; Campaign ch.5 — Terran supply (same as multiplayer sc_supply_test)
+
+title 7545
+intro 7396
+
+square_width 12
+nb_columns 4
+nb_lines 1
+
+west_east_paths a1 b1 c1
+
+mineral_field 500 a1
+nb_meadows_by_square 1
+
+nb_players_min 1
+nb_players_max 1
+starting_squares a1
+starting_units command_center barracks scv
+starting_resources 300 0
+
+timer_coefficient 1
+
+trigger player1 (timer 0) (do (register_objective 1 2) (add_objective 1 7514))
+trigger player1 (has supply_depot) (do (objective_complete 1) (add_objective 2 7515))
+trigger player1 (has 12 marine) (objective_complete 2)

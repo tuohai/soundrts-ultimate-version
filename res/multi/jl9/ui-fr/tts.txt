@@ -1,0 +1,4 @@
+﻿; coding: utf-8
+
+9000 golem de pierre
+5028	replay

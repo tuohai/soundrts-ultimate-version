@@ -1,0 +1,20 @@
+def aquatic_goldmine
+class deposit
+resource_type resource1 ; gold
+extraction_time 3
+extraction_qty 1
+
+def boat
+class worker
+cost 5 5
+population_cost 1
+time_cost 10
+can_gather all
+airground_type water
+hp_max 30
+speed 1.5
+is_repairable 1
+is_healable 0
+transport_capacity 8
+transport_volume 99
+corpse 0

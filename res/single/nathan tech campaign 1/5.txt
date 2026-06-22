@@ -1,0 +1,14 @@
+title 4271 3005
+intro 7505
+nb_columns 10
+nb_lines 10
+west_east_paths a1 a2 a3 a6 a7 a8 a9 a10 b1 b2 b3 b4 b5 b6 b7 b8 b9 b10 c1 c2 c3 c4 c5 c6 c7 c8 c9 c10 d1 d2 d3 d4 d5 d6 d7 d8 d9 d10 e1 e2 e3 e4 e5 e6 e7 e8 e9  f1 f2 f3 f4 f5 f6 f7 f8 f9  g1 g2 g3 g4 g5 g6 g7 g8 g9 g10 h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 i1 i2 i3 i4 i5 i6 i7 i8 i9 i10
+south_north_paths a1 a2 a3 a4 a5 a6 a7 a8 a9 b1 b2 b3 b4 b5 b6 b7 b8 b9 c1 c2 c3 c4 c5 c6 c7 c8 c9 d1 d2 d3 d4 d5 d6 d7 d8 d9 e1 e2 e3 e4 e5 e6 e7 e8 e9 f1 f2 f3 f4 f5 f6 f8 f7 f9 g1 g2 g3 g4 g5 g6 g7 g8 g9 h1 h2 h3 h4 h5 h6 h7 h8 h9 i1 i2 i3 i4 i5 i6 i7 i8 i9 j1 j2 j3  j6 j7 j8 j9 
+nb_meadows_by_square 0
+goldmines 3000 a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 b1 c1 d1 e1 f1 g1 h1 i1 j1 j2 j3 j4 j5 j6 j7 j8 j9 j10 i10 h10 g10 f10 e10 d10 c10 b10 a10
+woods 3000 a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 b1 c1 d1 e1 f1 g1 h1 i1 j1 j2 j3 j4 j5 j6 j7 j8 j9 j10 i10 h10 g10 f10 e10 d10 c10 b10 a10
+player 50000 50000 a1 10 house 10 peasant b1 10 house 10 peasant c1 10 house 10 peasant c2 10 house 10 peasant c3 10 house 10 peasant b3 10 house 10 peasant a3 10 house 10 peasant e5 2 castle magestower 5 barracks f8 3 blacksmith e4 3 stables i4 3 stables i8 8 lumbermill f10 house j5 house a5 house f3 5 workshop 3 dragonslair a10 5 temple j10 5 temple j1 5 temple j5 temple 10 priest peasant h5 5 priest 5 peasant 30 guardtower 29 cannontower
+computer_only 0 0 a5 10 footman f10 10 footman j5 10 footman 
+global_population_limit 30000
+trigger player1 (timer 0) (add_objective 1  56011)
+trigger player1 (has 60 footman 30 cannontower 30 guardtower) (objective_complete 1)

@@ -1,0 +1,18 @@
+; layered bindings — 热键已拆分到独立界面文件，本文件仅作兼容说明。
+; 全局层:     global_bindings.txt
+; 单位选择:   unit_bindings.txt
+; 建筑选择:   building_bindings.txt
+; 命令:       command_bindings.txt
+; 技能:       skill_bindings.txt
+; 帮助查询:   help_bindings.txt
+; 地图浏览:   map_bindings.txt
+; 外交:       diplomacy_bindings.txt
+;
+; 界面切换: F1 单位/建筑  F2 命令/技能  F3 背包/装备
+;           F4 帮助  F12 外交  ESC 地图浏览
+;
+; 用户自定义热键仍追加自 cfg/bindings.txt（见 paths.CUSTOM_BINDINGS_PATH）
+; 完整说明: docs/zh/分层热键方案说明.md  docs/en/layered-hotkeys.md
+;
+; 切回旧版单文件热键: 主菜单 → 选项 → 热键方案；或在 user/SoundRTS.ini 设 layered_hotkeys = 0
+; 将加载 res/ui/legacy_bindings.txt（仍追加 user/bindings.txt）

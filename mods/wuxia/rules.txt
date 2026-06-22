@@ -1,0 +1,97 @@
+; 武侠技能 mod — 演示 burst / harm_area / harm_target / push / reflect
+
+def b_douzhuan
+class buff
+duration 8
+temporary 1
+reflect_percent 100
+
+def skill_jifengci
+class skill
+effect burst mdg 5 (interval 0.2) (window 1)
+effect_target ask
+effect_range 2
+time_cost 0
+cooldown 8
+mana_cost 20
+
+def skill_jifengci_rdg
+class skill
+effect burst rdg 5 (interval 0.2) (window 1)
+effect_target ask
+effect_range 6
+time_cost 0
+cooldown 8
+mana_cost 20
+
+def skill_heng_sao
+class skill
+effect harm_area 50 3
+effect_target ask
+effect_range 8
+time_cost 15
+cooldown 12
+mana_cost 30
+
+def skill_lipi
+class skill
+effect harm_target 60
+effect_target ask
+effect_range 2
+time_cost 10
+cooldown 10
+mana_cost 25
+
+def skill_lipi_mdg
+class skill
+effect harm_target mdg
+effect_target ask
+effect_range 2
+time_cost 10
+cooldown 10
+mana_cost 25
+
+def skill_heng_sao_mdg
+class skill
+effect harm_area mdg 3
+mdg 12
+mdg_splash 6
+mdg_radius 1.5
+mdg_splash_decay_min 0.5
+effect_target ask
+effect_range 8
+time_cost 15
+cooldown 12
+mana_cost 30
+
+def skill_douzhuan
+class skill
+effect buffs b_douzhuan
+effect_target self
+time_cost 5
+cooldown 20
+mana_cost 40
+
+def skill_moli_dan
+class skill
+effect push 5
+effect_target ask
+effect_range 6
+time_cost 8
+cooldown 6
+mana_cost 15
+
+def wuxia_hero
+class soldier
+hp_max 50
+mdg 8
+rdg 6
+rdg_range 5
+speed 1.5
+can_use_skill skill_jifengci skill_jifengci_rdg skill_heng_sao skill_heng_sao_mdg skill_lipi skill_lipi_mdg skill_douzhuan skill_moli_dan
+
+def wuxia_dummy
+class soldier
+hp_max 40
+mdg 3
+speed 1
