@@ -565,6 +565,7 @@ rdg_cd 1.5
 rdg_range 4
 rdg_delay 0.02
 rdg_projectile 1
+rdg_targets ground air
 requirements feudal_age
 can_use_tech archer_weapon archer_armor archer_range dsc
 rdf 0
