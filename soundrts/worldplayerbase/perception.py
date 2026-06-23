@@ -1185,6 +1185,7 @@ class PerceptionMixin:
         # 分帧配额：限制每次完整清理中昂贵判断的数量，避免爆发
         total_units = len(self.world.units) if hasattr(self.world, 'units') else 0
         cleanup_quota = 300 + (total_units // 50)
+        display_expired_initial_models = set()
 
         # 选择扫描集合：完整清理时扫描全部，否则仅扫描批次
         if should_do_full_cleanup:
@@ -1200,10 +1201,16 @@ class PerceptionMixin:
 
         for m in iterable_memories:
             # 基本忘记条件（总是检查，成本低）
+            expired_memory = self._expire_memory_if_stale(
+                m, current_time, display_expired_initial_models
+            )
+            visible_model_in_perception = (
+                m.initial_model in self.perception and self._is_seeing(m.initial_model)
+            )
             basic_forget_conditions = (
-                m.initial_model in self.perception
+                expired_memory
+                or visible_model_in_perception
                 or m.initial_model.place is None
-                or (m.initial_model.speed and m.time_stamp + self.memory_duration < self.world.time)
             )
             
             if basic_forget_conditions:
@@ -1220,6 +1227,9 @@ class PerceptionMixin:
         # 批量遗忘单位
         for m in units_to_forget:
             self._forget(m)
+        forgotten_initial_models = {
+            m.initial_model for m in units_to_forget
+        }.union(display_expired_initial_models)
             
         # 记忆"刚刚离开感知"的单位。
         # 注意：绝不能用 ``len(perception) 是否变化`` 来判断是否有单位消失。
@@ -1235,6 +1245,7 @@ class PerceptionMixin:
             units_to_memorize = {
                 o for o in disappeared_units
                 if not (o.is_invisible or o.is_cloaked) and o.place is not None
+                and o not in forgotten_initial_models
             }
 
             # 批量记忆
@@ -1361,8 +1372,8 @@ class PerceptionMixin:
         units_to_forget = []
         for m in self.memory:
             # 只检查明确过期的条件，跳过昂贵的should_be_seeing检查
-            if (m.initial_model.place is None or 
-                (m.initial_model.speed and m.time_stamp + self.memory_duration < current_time)):
+            if (m.initial_model.place is None or
+                self._expire_memory_if_stale(m, current_time)):
                 units_to_forget.append(m)
         
         # 批量遗忘
@@ -1370,6 +1381,42 @@ class PerceptionMixin:
             self._forget(m)
             
         self._last_memory_cleanup = current_time
+
+    def _expire_memory_if_stale(
+        self, memory, current_time, display_expired_initial_models=None
+    ):
+        """Return True when an old moving-unit memory must be forgotten.
+
+        In shared-vision games a remembered enemy can remain in ``perception``
+        through an alliance cache even after it is no longer actually visible.
+        When the sighting reaches the display limit, drop that stale perception
+        entry too; genuinely visible units are kept. AI can still keep a longer
+        internal memory for decisions.
+        """
+        unit = memory.initial_model
+        if not unit.speed:
+            return False
+        display_duration = getattr(self, "display_memory_duration", self.memory_duration)
+        display_expired = memory.time_stamp + display_duration < current_time
+        if display_expired and unit in self.perception and not self._is_seeing(unit):
+            self.perception.discard(unit)
+            if display_expired_initial_models is not None:
+                display_expired_initial_models.add(unit)
+        return memory.time_stamp + self.memory_duration < current_time
+
+    def _memory_visible_for_display(self, memory, current_time):
+        unit = memory.initial_model
+        if not unit.speed:
+            return True
+        display_duration = getattr(self, "display_memory_duration", self.memory_duration)
+        return memory.time_stamp + display_duration >= current_time
+
+    def memory_for_display(self):
+        current_time = self.world.time
+        return {
+            memory for memory in self.memory
+            if self._memory_visible_for_display(memory, current_time)
+        }
 
     def _refresh_combat_snapshot(self):
         """构建战斗快照，供战斗模块直接读取，减少重复聚合成本。

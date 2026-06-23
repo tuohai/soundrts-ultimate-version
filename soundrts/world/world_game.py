@@ -256,7 +256,7 @@ class WorldGameMixin:
                     p.push(
                         "voila",
                         self.time,
-                        _copy(p.memory),
+                        _copy(p.memory_for_display()),
                         _copy(p.perception),
                         p.observed_squares,
                         observed_before_squares,
