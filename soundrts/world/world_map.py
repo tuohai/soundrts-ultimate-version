@@ -59,8 +59,8 @@ class WorldMapMixin:
                     return f"{col_0based},{row_0based}"
                 except ValueError:
                     return token
-        # 旧式 a1/a12/a... -> 转换为 x,y
-        if re.match(r"^[a-z]+[0-9]+$", t):
+        # 旧式 a1/a12/a... -> 转换为 x,y（排除 rules 里已定义的单位名，如 dragon2、raynor7）
+        if re.match(r"^[a-z]+[0-9]+$", t) and rules.unit_class(t) is None:
             letters = ''.join([c for c in t if c.isalpha()])
             digits = ''.join([c for c in t if c.isdigit()])
             # 将字母部分按 26 进制转换（a->1, b->2 ... aa->27），再统一转为 0 基
@@ -76,7 +76,13 @@ class WorldMapMixin:
         return token
 
     def _normalize_square_list(self, tokens):
-        return [self._normalize_square_token(t) for t in tokens]
+        out = []
+        for t in tokens:
+            if isinstance(t, str) and rules.unit_class(t) is not None:
+                out.append(t)
+            else:
+                out.append(self._normalize_square_token(t))
+        return out
 
     def _parse_terrain_location_tokens(self, tokens, line, command):
         """Parse square or square/sub_x,sub_y tokens for terrain commands."""

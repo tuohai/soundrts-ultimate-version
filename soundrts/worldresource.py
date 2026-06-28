@@ -105,7 +105,7 @@ class Corpse(Entity):
         if self.unit.is_revivable:
             self.time_limit = float("inf")
             self._time_of_revival = (
-                self.place.world.time + unit.revival_time + unit.revival_time
+                self.place.world.time + unit.revival_time
             )
         else:
             self.time_limit = self.place.world.time + unit.corpse_decay
