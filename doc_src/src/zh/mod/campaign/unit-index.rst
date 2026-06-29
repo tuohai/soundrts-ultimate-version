@@ -1,0 +1,279 @@
+指定序号目标（killed_target / npc_has_item / unit_lost / building_lost / key_unit_killed）
+==========================================================================================
+
+
+当同一方格上有多个同类型单位时，可用 :strong:```\<方格\> \<序号\> \<类型\>`` 指定「第几个」单位，
+而不是「任意一个同名单位」或「杀够 N 个」。
+
+语法与 :strong:```transfer_units``、``order``、``add_units`` 的单位选择符一致。单位在地图加载
+或触发器刷出时按 ``(方格, 类型)`` 递增编号；移动后仍按刷出序号识别。
+
+
+----
+
+
+1. 适用触发器
+-------------
+
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 触发器
+     - 序号格式
+     - 典型用途
+   * - ``killed_target``
+     - ``(killed_target \<序号\> \<类型\> [enemy|ally])`` 或方格序号
+   * - ``npc_has_item``
+     - ``(npc_has_item \<序号\> \<类型\> \<物品\>)`` 或方格序号
+     - 必须把物品交给指定那一个 NPC
+   * - ``unit_lost``
+     - ``(unit_lost \<序号\> \<类型\>)`` 或 `` (unit_lost \<方格\> \<序号\> \<类型\>)``
+     - 己方指定刷出序号单位已阵亡/消失
+   * - ``building_lost``
+     - ``(building_lost \<序号\> \<类型\>)`` 或 `` (building_lost \<方格\> \<序号\> \<类型\>)``
+     - 己方指定刷出序号建筑已被摧毁
+   * - ``key_unit_killed``
+     - ``(key_unit_killed \<序号\> \<类型\>)`` 或 `` (key_unit_killed \<方格\> \<序号\> \<类型\>)``
+     - 己方指定刷出序号单位被击杀
+
+
+
+仍可使用旧写法：
+
+- `(killed_target <单位id>)` — 按全局单位 id
+- `(killed_target <类型> [enemy\|ally])` — 击杀过该类型任意一个即可
+- `(npc_has_item <NPC选择符> <物品> [所在方格])` — 按 type_name/id，可选当前所在格区分
+
+
+----
+
+
+2. 击杀指定单位（killed_target）
+--------------------------------
+
+
+2.1 仅第 N 个算完成
+~~~~~~~~~~~~~~~~~~~
+
+
+.. code-block:: text
+
+   computer_only 0 0 c3 3 demo_marker_footman
+   
+   trigger player1 (killed_target 3 demo_marker_footman enemy) (objective_complete 1)
+
+
+该玩家名下刷出的 3 个 ``demo_marker_footman`` 全局序号分别为 1、2、3（与是否在 C3 无关）。
+只有击杀第 3 个时条件成立；击杀第 1、2 个不会完成目标 1。
+
+方格限定写法：``(killed_target c3 3 demo_marker_footman enemy)`` 仍可用。
+
+2.2 杀错则失败
+~~~~~~~~~~~~~~
+
+
+.. code-block:: text
+
+   trigger player1 (killed_target 1 demo_marker_footman enemy) (do (cut_scene 7606) (defeat))
+   trigger player1 (killed_target 2 demo_marker_footman enemy) (do (cut_scene 7606) (defeat))
+   trigger player1 (killed_target 3 demo_marker_footman enemy) (do (cut_scene 7603) (objective_complete 1))
+
+
+误杀第 1 或第 2 个 → 播放失败过场并 ``defeat``；击杀第 3 个 → 完成目标 1。
+
+2.3 与 has_killed 的区别
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 条件
+     - 含义
+   * - ``(has_killed 3 footman enemy)``
+     - 击杀敌方 footman 合计 3 个（任意序号）
+   * - ``(killed_target c3 3 footman enemy)``
+     - 击杀 C3 上第 3 个 footman（仅这一个）
+
+
+
+
+----
+
+
+3. 交给指定 NPC（npc_has_item）
+-------------------------------
+
+
+.. code-block:: text
+
+   computer_only 0 0 neutral b2 3 quest_npc
+   short_sword a1
+   
+   trigger player1 (npc_has_item 3 quest_npc short_sword) (objective_complete 2)
+
+
+只有把 ``short_sword`` 交给第 3 个刷出的 ``quest_npc`` 时条件成立（不限 B2）；交给第 1、2 个无效。
+
+方格限定：``(npc_has_item b2 3 quest_npc short_sword)``。
+
+目标 NPC 须 ``receive_items 1``，交付方式见 `给NPC物品功能说明 <给NPC物品功能说明.htm>`_。
+
+
+----
+
+
+4. 保护指定己方单位/建筑（失败条件）
+------------------------------------
+
+
+4.1 仅第 N 个步兵阵亡则失败
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. code-block:: text
+
+   player ... a1 3 footman raynor
+   
+   trigger player1 (unit_lost a1 3 footman) (defeat)
+   trigger player1 (key_unit_killed a1 3 footman) (defeat)
+
+
+- ``unit_lost``：每帧检查该序号单位是否仍存活；第 1、2 个步兵死亡不触发
+- ``key_unit_killed``：该序号单位被击杀的瞬间触发（死亡记录含刷出序号）
+
+4.2 仅第 1 个城镇大厅被毁则失败（推荐：全局序号）
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. code-block:: text
+
+   player ... b1 townhall raynor ...   ; 第 2 章基地在 b1 也行
+   
+   trigger player1 (building_lost 1 townhall) (defeat)
+
+
+全局序号按玩家名下同类型单位的刷出顺序从 1 递增，与所在方格无关：
+- 第 1 个刷出的 townhall = 市政厅 1（无论在 a1 还是 b1）
+- 第 2 个刷出的 townhall = 市政厅 2；摧毁市政厅 2 不会触发上述失败
+
+若需限定某一格上的第 N 个，仍可用方格序号：``(building_lost a1 1 townhall)``。
+
+4.3 与旧写法的区别
+~~~~~~~~~~~~~~~~~~
+
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 条件
+     - 含义
+   * - ``(unit_lost footman)``
+     - 玩家所有 footman 都消失
+   * - ``(unit_lost a1 3 footman)``
+     - 仅 a1 上第 3 个 footman 消失
+   * - ``(building_lost townhall)``
+     - 玩家所有 townhall 都被摧毁
+   * - ``(building_lost 1 townhall)``
+     - 仅玩家名下第 1 个刷出的 townhall 被摧毁（不限方格）
+   * - ``(building_lost a1 1 townhall)``
+     - 仅 a1 格上第 1 个 townhall 被摧毁
+
+
+
+
+----
+
+
+5. 多目标与过场文案
+-------------------
+
+
+两个主要目标可任意顺序完成。每个目标完成时的 ``cut_scene`` 应只描述该目标，
+不要在单个目标的过场里写「所有目标均已完成」——全部主要目标 ``objective_complete`` 后，
+引擎才自动判定胜利。
+
+推荐：
+
+.. code-block:: text
+
+   trigger player1 (killed_target c3 3 demo_marker_footman enemy)
+       (do (cut_scene 7603) (objective_complete 1))   ; 7603：真凶倒下。目标完成。
+   
+   trigger player1 (npc_has_item b2 3 quest_npc short_sword)
+       (do (cut_scene 7604) (objective_complete 2))   ; 7604：第三名使者收下了短剑。
+
+
+避免：
+
+.. code-block:: text
+
+   ; 7604 若写「使者收剑，两项任务均完成」——玩家先交剑后杀敌时会剧透/说错
+
+
+
+----
+
+
+6. 完整示例：The Legend of Raynor 第 28 章
+------------------------------------------
+
+
+文件：``res/single/The Legend of Raynor/28.txt``
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 区域
+     - 内容
+   * - A1
+     - 步兵 + 农民，地上 ``short_sword``
+   * - C3
+     - 3 个敌方 ``demo_marker_footman``
+   * - B2
+     - 3 个中立 ``quest_npc``
+
+
+
+目标 1：击杀 C3 第 3 个步兵（误杀 1/2 失败）。  
+目标 2：短剑交给 B2 第 3 个 NPC。
+
+
+----
+
+
+7. 实现与测试
+-------------
+
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 用途
+     - 路径
+   * - 刷出时分配序号
+     - ``soundrts/worldplayerbase/triggers.py`` — ``\_assign_map_select_slot``
+   * - 击杀记录
+     - ``record_unit_killed`` → ``\_killed_map_slots`` / ``\_units_killed_by``
+   * - 条件判定
+     - ``lang_killed_target``、``lang_npc_has_item``、``lang_unit_lost``、``lang_building_lost``、``lang_key_unit_killed``
+   * - 地图测试
+     - `soundrts/tests/test_give_item_to_npc.py::test_chapter_28_map_select_index_triggers`
+   * - 失败条件测试
+     - ``soundrts/tests/test_map_select_loss_triggers.py``
+   * - 引擎测试
+     - ``soundrts/tests/test_campaign_alliance_transfer_triggers.py``
+
+
+
+.. code-block:: text
+
+   python -m pytest soundrts/tests/test_give_item_to_npc.py::test_chapter_28_map_select_index_triggers -q
+   python -m pytest soundrts/tests/test_campaign_alliance_transfer_triggers.py -k map_select -q
+   python -m pytest soundrts/tests/test_map_select_loss_triggers.py -q

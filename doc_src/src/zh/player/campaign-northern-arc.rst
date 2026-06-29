@@ -1,0 +1,423 @@
+﻿# 北方战役剧情说明（第 24–27 章）
+
+``The Legend of Raynor`` 第 24–27 章为连贯的北方联军线：密信收服加雷克 → 信物面见罗兰并比武 → 献旗收服薇拉 → 比武收服马尔科。各章共享「歼灭宰相杀手（``traitor_guard``）」副目标，并通过 ``campaign_flag`` 在章节间保留奖励。
+
+示例地图：
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 章节
+     - 文件
+     - 主题
+   * - 24
+     - [24.txt](../../../res/single/The Legend of Raynor/24.txt)
+     - 密信收服加雷克爵士；杀手全灭后获得信物
+   * - 25
+     - [25.txt](../../../res/single/The Legend of Raynor/25.txt)
+     - 信物交给罗兰；比武认输与可选结盟
+   * - 26
+     - [26.txt](../../../res/single/The Legend of Raynor/26.txt)
+     - 王旗献给薇拉女将；部队改归属
+   * - 27
+     - [27.txt](../../../res/single/The Legend of Raynor/27.txt)
+     - 击败马尔科；选择性移交 4 名护卫骑士
+
+
+
+单位与物品定义：`rules.txt <../../../res/single/The Legend of Raynor/rules.txt>`_。TTS：``res/single/The Legend of Raynor/ui/tts.txt``、``ui-zh/tts.txt`` （7575–7717）。
+
+
+----
+
+
+1. 战役进度标记（``campaign_flag``）
+------------------------------------
+
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 标记
+     - 设置章节
+     - 作用
+   * - ``ch24_garrek``
+     - 24
+     - 加雷克收服；后续章 ``allied_control computer3`` （加雷克部队）
+   * - ``ch24_garrek_token``
+     - 24
+     - 杀手全灭后获得加雷克信物；25 章开局放入雷诺背包
+   * - ``ch25_duel_started``
+     - 25
+     - 信物已交罗兰、比武开始；此前误杀罗兰/亲卫判失败
+   * - ``ch25_roland_allied``
+     - 25
+     - 同意罗兰结盟；后续章 ``allied_assist computer4``
+   * - ``ch25_roland_knights``
+     - 25
+     - 拒绝结盟；后续章刷补偿骑兵
+   * - ``ch26_vera``
+     - 26
+     - 薇拉归顺；27 章刷薇拉援军
+   * - ``ch27_duel_started``
+     - 27
+     - 局内 ``map_flag`` （不跨章存档）：雷诺抵达马尔科阵前、过场 7718 已播；此前误杀马尔科判失败
+   * - ``ch27_marco``
+     - 27
+     - 马尔科收服；28 章及以后可挂接
+
+
+
+
+----
+
+
+2. 新增 / 常用触发器
+--------------------
+
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 名称
+     - 类型
+     - 用法摘要
+   * - ``add_inventory_item``
+     - 动作
+     - 把物品放入单位背包：``(add_inventory_item \<物品\> [\<数量\>] [\<单位type\>])``
+   * - ``set_ai_mode``
+     - 动作
+     - 切换所属方单位 AI：``(set_ai_mode \<offensive|defensive|chase|guard\> …)``
+   * - ``set_yield_on_defeat``
+     - 动作
+     - 开关实例级认输：``(set_yield_on_defeat \<0|1\> [单位选择器…])``
+   * - ``units_yielded``
+     - 条件
+     - 敌方单位认输计数（``yield_on_defeat``）
+   * - ``units_yielded_by``
+     - 条件
+     - 指定攻击者令敌方认输：``(units_yielded_by \<攻击者\> \<数量\> \<受害者\> [enemy|ally])``
+   * - ``has_entered``
+     - 条件
+     - 触发方单位进入指定方格（可用地名别名）
+   * - ``stop_all_units``
+     - 动作
+     - 停止战斗；可写 ``computer1`` 等
+   * - ``release_yielded_units``
+     - 动作
+     - 结束认输无敌，恢复可战
+   * - ``npc_has_item``
+     - 条件
+     - NPC 已收到物品
+   * - ``alliance``
+     - 动作
+     - 设同盟；多目标：``(alliance 1 player1 computer1)``
+   * - ``alliance_request`` / ``alliance_with``
+     - 动作/条件
+     - 动态结盟（战役 Ctrl+F4 / Shift+F4）
+   * - ``allied_assist`` / ``allied_control``
+     - 动作
+     - 盟友自主参战 / 玩家直接指挥
+   * - ``transfer_units``
+     - 动作
+     - 改归属（26 章薇拉）
+   * - ``has_killed``
+     - 条件
+     - 团队击杀计数（含盟友、``allied_control``）
+   * - ``key_unit_killed``
+     - 条件
+     - 关键单位被真死亡（非认输）
+   * - ``campaign_flag`` / ``set_campaign_flag``
+     - 条件/动作
+     - 跨章进度
+
+
+
+
+过场 ``cut_scene`` 须挂在 ``player1`` 触发器上，否则语音只发给电脑客户端，玩家听不到。AI 模式、认输开关可挂在 ``computer1`` （单位归属方）。
+
+
+触发器格式为 `trigger <所属方> <条件> <动作>` 三段；条件与动作不能包成单独的 `(if … (defeat))` 两元组。复合条件直接写：`(and (not (campaign_flag X)) (key_unit_killed …)) (defeat)`。
+
+
+战役内 F12 外交无效；结盟用 Ctrl+F4 同意、Shift+F4 拒绝。
+
+
+----
+
+
+3. 第 24 章：密信·加雷克
+------------------------
+
+
+地图：``a1`` 雷诺；``b1`` 密信；``c2`` 加雷克 + 护卫；``b3``/``c3`` 杀手。
+
+流程：
+
+1. 拾取密信，到 C2 交给加雷克（``npc_has_item`` + ``cut_scene 7579``）。
+2. 自动结盟、``allied_control computer1``、刷援军；``set_campaign_flag ch24_garrek``。
+3. 歼灭 3 名杀手 → ``cut_scene 7580``，`(add_inventory_item garrek_token 1 raynor)`，``ch24_garrek_token``。
+
+失败：加雷克或雷诺阵亡；任一方全灭。
+
+
+----
+
+
+4. 第 25 章：信物·罗兰
+----------------------
+
+
+地图：``c2`` 罗兰伯爵 + 2 名亲卫骑士（``npc_roland_guard``）；杀手同 24 章布局。
+
+carryover：若 ``ch24_garrek``，加雷克部队在 ``a2`` 且 ``allied_control computer3``；若 ``ch24_garrek_token``，开局雷诺背包有信物。
+
+目标：
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 编号
+     - 内容
+   * - 主要 1
+     - 把加雷克信物交给罗兰（7717）
+   * - 主要 2
+     - 击败罗兰与两名亲卫骑士（认输，7703）
+   * - 主要 3
+     - 歼灭杀手（7704）
+   * - 可选 1
+     - 同意罗兰结盟（7599）
+
+
+
+流程：
+
+1. 罗兰与亲卫默认 ``ai_mode guard``，无 ``yield_on_defeat`` （交信物前可被击杀；误杀 → ``defeat``）。
+2. 雷诺把 ``garrek_token`` 交给罗兰 → ``player1`` 触发：``cut_scene 7701``、完成目标 1、``ch25_duel_started``。
+3. ``computer1`` 触发：``set_ai_mode offensive`` + ``set_yield_on_defeat 1`` （比武开始，认输不真死）。
+4. 三人认输 → 停火、``alliance_request``；Ctrl+F4 结盟或 Shift+F4 拒绝（刷骑兵补偿）。
+
+开局须注册 三个主要目标 + 一个可选目标（编号各自独立），否则过早完成单一主要目标会立刻通关。
+
+
+----
+
+
+5. 第 26 章：献旗·薇拉
+----------------------
+
+
+地图：``b1`` 王旗；``c2`` 薇拉 + 护卫；杀手布局同前。
+
+carryover：加雷克（``ch24_garrek``）；罗兰结盟或拒绝奖励（``ch25_roland_allied`` / ``ch25_roland_knights``）。
+
+流程：拾取王旗，交给 C2 薇拉 → ``transfer_units computer1 player1`` 改归属 → ``ch26_vera``。误杀薇拉判失败（无认输）。
+
+
+----
+
+
+6. 第 27 章：比武·马尔科
+------------------------
+
+
+地图：``c2`` （三级地名 马尔科阵前）马尔科 + 护卫（骑士/勇士/射手）；``b3``/``c3`` 杀手。开局马尔科与全部护卫均为 ``ai_mode guard`` （``rules.txt``），不主动追击。
+
+carryover：24–26 全部奖励单位按标记刷入。玩家开局为 ``raynor7`` 与亲卫（2 步兵、2 弓箭手、2 骑士）。
+
+流程：
+
+1. 雷诺``进入 ``c2`` （马尔科阵前 / 3,2）`` → ``player1``：``cut_scene 7718``、``set_map_flag ch27_duel_started`` （须 ``raynor7`` 本人进入，亲卫先到不触发）。
+2. ``computer1`` （同标记已设）：仅马尔科 `(set_ai_mode offensive c2 1 npc_marco_ironhand)`；其余护卫 `(order … ((go c1)))` 前往 ``c1`` 让出阵前。
+3. 须由雷诺亲自击败马尔科：`(units_yielded_by raynor7 1 npc_marco_ironhand enemy)` 完成主要目标。亲卫或其他单位令马尔科认输 → ``defeat``。
+4. 认输后 ``cut_scene 7710`` → `(alliance 1 player1 computer1)`、``stop_all_units`` （含 carryover 友军）、``release_yielded_units``。
+5. `(allied_control computer1 c2 4 npc_knight_escort)` — 仅 4 名护卫骑士交玩家指挥；此前撤至 ``c1`` 的护卫 `(order … ((go c2)))` 列队回阵前。
+6. 歼灭 3 名 ``traitor_guard`` （副目标）→ ``cut_scene 7719`` （马尔科阵前结语，非第 24 章加雷克信物台词 `7580`）。
+
+失败：比武开始前击杀马尔科（``key_unit_killed``）；马尔科由非雷诺单位打出认输；雷诺阵亡；全灭。
+
+注意：宰相杀手为 ``guard`` 站岗，不会跨格追击；结盟后友军误伤问题已通过停火与 ``can_attack`` 敌友校验修复。
+
+
+----
+
+
+7. 关键单位与物品
+-----------------
+
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 类型名
+     - 说明
+   * - ``secret_letter``
+     - 国王密信（24）
+   * - ``garrek_token``
+     - 加雷克信物（24 末获得，25 交付）
+   * - ``war_banner``
+     - 王室战旗（26）
+   * - ``npc_knight_leader``
+     - 加雷克爵士；``accept_givers raynor``
+   * - ``npc_count_roland``
+     - 罗兰伯爵；收 ``garrek_token``
+   * - ``npc_roland_guard``
+     - 罗兰亲卫骑士（非血亲，罗兰口语中称「兄弟」）
+   * - ``npc_general_vera``
+     - 薇拉女将
+   * - ``npc_marco_ironhand``
+     - 铁腕马尔科
+   * - ``traitor_guard``
+     - 宰相杀手；``guard``，不主动远距追击
+
+
+
+
+----
+
+
+8. ``yield_on_defeat`` （比武认输）
+-----------------------------------
+
+
+- 写在 ``rules.txt`` 或运行时 `(set_yield_on_defeat 1 …)` 启用。
+- HP 归零时认输而非死亡：`is_vulnerable = false`，停止被攻击。
+- `(release_yielded_units computer1)` 在结盟决定后恢复可战。
+- 25 章：交信物前不启用，避免「打不死」；交信物后由触发器开启。
+
+
+----
+
+
+9. 四章对比
+-----------
+
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 对比项
+     - 24 加雷克
+     - 25 罗兰
+     - 26 薇拉
+     - 27 马尔科
+   * - 交付物
+     - 密信
+     - 信物
+     - 王旗
+     - —（直接比武）
+   * - 收编
+     - ``allied_control``
+     - 认输 + 可选结盟
+     - ``transfer_units``
+     - 结盟 + 选择性 ``allied_control``
+   * - 比武认输
+     - 无
+     - 交信物后启用
+     - 无
+     - 开局即有；须雷诺亲自击败
+   * - 开战条件
+     - 交物即战
+     - 交信物后比武
+     - 交旗改属
+     - 进入马尔科阵前
+   * - 误杀关键 NPC
+     - 加雷克阵亡失败
+     - 交信物前杀罗兰/亲卫失败
+     - 薇拉阵亡失败
+     - 阵前决斗前杀马尔科失败
+
+
+
+
+----
+
+
+10. 相关文档
+------------
+
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 主题
+     - 文档
+   * - 交给 NPC、``npc_has_item``
+     - [给NPC物品功能说明.md](给NPC物品功能说明.htm)
+   * - ``ai_mode`` / 触发器切模式
+     - [单位默认模式与自动状态配置说明.md](单位默认模式与自动状态配置说明.htm)
+   * - 序号选择符
+     - [指定序号目标说明.md](指定序号目标说明.htm)
+   * - 官方地图语法
+     - ``mod/mapmaking.rst``
+
+
+
+
+----
+
+
+11. 测试
+--------
+
+
+.. code-block:: text
+
+   python -m pytest soundrts/tests/test_campaign_alliance_transfer_triggers.py -q
+   python -m pytest soundrts/tests/test_yield_on_defeat_and_campaign_flags.py -q
+   python -m pytest soundrts/tests/test_give_item_to_npc.py -q
+
+
+``test_campaign_alliance_transfer_triggers.py`` 覆盖结盟、移交指挥、停火、24–27 章地图契约；``test_yield_on_defeat_and_campaign_flags.py`` 覆盖认输、``units_yielded_by`` 与战役标记。
+
+
+----
+
+
+12. 战役全局（雷诺成长、亲卫与地名）
+------------------------------------
+
+
+雷诺成长阶段（``rules.txt`` / 各地图 ``starting_units``）：
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 章节
+     - 单位类型
+     - 开局亲卫（``starting_units`` 除雷诺外）
+   * - 1–12
+     - ``raynor``
+     - 各章原有配置
+   * - 13–15
+     - ``raynor2``
+     - 1 步兵
+   * - 16–18
+     - ``raynor3``
+     - 2 步兵
+   * - 19–21
+     - ``raynor4``
+     - 2 步兵、1 弓箭手
+   * - 22–24
+     - ``raynor5``
+     - 2 步兵、1 弓箭手、1 骑士
+   * - 25–26
+     - ``raynor6``
+     - 2 步兵、2 弓箭手、2 骑士
+   * - 27–28
+     - ``raynor7``
+     - 2 步兵、2 弓箭手、2 骑士
+
+
+
+阶段切换过场：第 12 章末 ``7730``；第 13/16/19/22/25/27 章开局 ``7720``–``7729`` 与 ``7737``–``7738``。属性读屏简介见 ``ui/style.txt`` 的 ``intro 7740``–``7746``。
+
+三级地名：第 1–28 章地图已配置 ``square_name`` （省/郡/据点）；TTS 在 ``ui-zh/tts.txt`` 的 Place names 段。脚本仍可用 ``c2`` 等格子坐标或地名别名。

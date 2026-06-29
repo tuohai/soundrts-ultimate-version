@@ -1,56 +1,52 @@
 
 Release notes
-=============
+==============
 
 .. contents::
 
 
 1.4.4.8
--------
+--------
 
 Sub-cell terrain for map authors and the map editor:
 
-**Sub-cell terrain inside a square**
+Sub-cell terrain inside a square
 
 - Terrain commands can target an area inside a square with ``square/x,y`` syntax, for example ``high_grounds a1/1,1 a1/1,2``.
 - ``subcell_precision N`` controls the subdivision. It defaults to ``3`` and accepts values from ``2`` to ``20``.
 - Supported commands: ``terrain``, ``high_grounds``, ``speed``, ``cover``, ``water``, ``ground`` and ``no_air``.
 - Combat, movement, terrain speed, cover and high-ground checks can use the unit's actual sub-cell.
 
-**Zoom browsing and editor behavior**
+Zoom browsing and editor behavior
 
 - Zoom-mode map browsing announces the current sub-cell terrain, including partial high ground.
 - In the experimental map editor, Enter applies the selected terrain to the current sub-cell while zoom mode is enabled.
 - Saved maps write sub-cell overrides with ``square/x,y`` syntax.
 
-Release notes: ``docs/en/player/release-1.4.4.8.md``
-
 1.4.4.7
--------
+--------
 
 Hero XP threshold formulas (``xp_threshold_growth``) and post-level-up XP reset (``level_up_reset_xp``):
 
-**Hero XP threshold formulas (``xp_threshold_growth``)**
+``Hero XP threshold formulas (``xp_threshold_growth``)``
 
 - Hero defs can set ``max_level`` + ``xp_threshold_growth``; ``rules.txt`` load auto-fills ``xp_thresholds`` so modders need not list dozens or hundreds of cumulative XP values by hand.
-- Curve types: ``linear``, ``quadratic``, ``polynomial``, ``geometric`` (see **Heroes** in ``modding.rst``).
+- Curve types: ``linear``, ``quadratic``, ``polynomial``, ``geometric`` (see Heroes in ``modding.rst``).
 - Backward compatible with explicit ``xp_thresholds`` (explicit list wins). Child defs can ``is_a`` inherit ``xp_threshold_growth`` and override only ``max_level``.
 - Implementation: ``soundrts/xp_threshold_growth.py``, ``soundrts/definitions.py``; tests: ``test_xp_threshold_growth.py``.
 
-**Post-level-up XP reset (``level_up_reset_xp``)**
+``Post-level-up XP reset (``level_up_reset_xp``)``
 
 - Optional ``level_up_reset_xp 1`` on hero defs: current XP becomes 0 after each combat level-up; default ``0`` keeps cumulative XP.
-- When ``1``, prefer **per-level** ``xp_thresholds``, not cumulative totals.
+- When ``1``, prefer per-level ``xp_thresholds``, not cumulative totals.
 - Implementation: ``soundrts/worldunit/world_status_update.py``; tests: ``test_level_up_combat_stats.py``.
 
-Release notes: ``docs/en/player/release-1.4.4.7.md``
-
 1.4.4.6
--------
+--------
 
 Mod sound naming cleanup, unified skill system, generic skill effects, skill target filters and -tag exclusions, level-up stat scaling, level skill unlocks, campaign hero carryover, backpack item use sounds, custom ready/prep sounds, backpack/equipment hotkey toggle, hero starting level and level-0 XP display:
 
-**Attack sound key rename**
+Attack sound key rename
 
 - ``ui/style.txt`` attack sounds now prefer ``mdg`` / ``rdg`` keys:
   ``launch_mdg`` / ``launch_rdg``, ``mdg_hit`` / ``rdg_hit``,
@@ -60,230 +56,224 @@ Mod sound naming cleanup, unified skill system, generic skill effects, skill tar
   ``charge_mdg_hit`` / ``charge_rdg_hit``.
 - Bundled ``style.txt`` files have been migrated; old ``matk`` / ``ratk`` keys remain compatible as fallback.
 
-**Custom ready sounds**
+Custom ready sounds
 
-- Skills with ``ready <seconds>`` can define ``ready <sound>`` on the skill style; manual and automatic triggers play it when prep starts.
+- Skills with ``ready \<seconds\>`` can define ``ready \<sound\>`` on the skill style; manual and automatic triggers play it when prep starts.
 - Normal attack prep can play unit style ``mdg_ready`` / ``rdg_ready`` sounds.
 
-**Unified skill system**
+Unified skill system
 
-- One ``class skill`` can be both **manually used** and **auto-triggered**; no separate twin lists required.
+- One ``class skill`` can be both manually used and auto-triggered; no separate twin lists required.
 - Skill fields: ``auto_trigger 1``, ``manual_use 1`` (default 1), ``trigger_timing``.
 - ``trigger_timing``: ``on_hit`` | ``on_attack`` | ``on_attack_replace`` | ``on_damaged``.
 - Learned skills live in ``can_use_skill``; the command menu shows only ``manual_use 1`` skills.
-- **Legacy lists still work**: ``active_trigger_skills``, ``attack_trigger_skills``,
+- Legacy lists still work: ``active_trigger_skills``, ``attack_trigger_skills``,
   ``attack_replace_skills``,   ``passive_trigger_skills`` remain compatible alongside the new fields.
 
-**Generic skill effects**
+Generic skill effects
 
 - Fixed damage ``harm_target N`` / ``harm_area N R``; combat damage ``harm_target mdg`` / ``harm_area mdg R`` (full pipeline).
-- Combos ``burst mdg N (interval X)`` or ``(delays …)``; knockback ``push``; ``buffs`` / ``debuffs``; ``deploy``; ``summon``.
+- Combos ``burst mdg N (interval X)`` or `` (delays …)``; knockback ``push``; ``buffs`` / ``debuffs``; ``deploy``; ``summon``.
 - Legacy ``teleportation`` / ``recall`` / ``conversion`` / ``raise_dead`` / ``resurrection`` still work.
-- Trigger rates, HP conditions, attack-start buff/debuff lists remain compatible; see ``GENERIC_SKILL_SYSTEM.md``.
+- Trigger rates, HP conditions, attack-start buff/debuff lists remain compatible; see ``mod/skills-and-effects.htm``.
 
-**Target type filters and exclusions (``-tag``)**
+``Target type filters and exclusions (``-tag``)``
 
-- ``class skill`` supports ``harm_target_type`` on ``burst`` / ``harm_target`` / ``harm_area`` / ``push``; default **enemies only** when unset.
+- ``class skill`` supports ``harm_target_type`` on ``burst`` / ``harm_target`` / ``harm_area`` / ``push``; default enemies only when unset.
 - Prefix ``-`` excludes a tag (e.g. ``-building``). Applies to ``harm_target_type``, ``heal_target_type``, ``mdg_targets`` / ``rdg_targets``, buff/debuff ``target_type``.
 - Diplomacy exclusions: ``-enemy``, ``-allied``, ``-neutral``.
 - Examples: ``harm_target_type enemy unit -building``; ``heal_target_type unit -undead``; ``mdg_targets -building``.
 
 **Level-up stat bonuses (``*_per_level``)**
 
-- Units can set ``<stat>_per_level`` in ``rules.txt`` for most combat, life, mana, heal/harm, and regen stats; each level up adds one step.
+- Units can set ``\<stat\>\_per_level`` in ``rules.txt`` for most combat, life, mana, heal/harm, and regen stats; each level up adds one step.
 - Examples: ``hp_max_per_level``, ``mdg_per_level``, ``charge_mdg_per_level``, ``mdg_crit_rate_per_level``, ``mana_max_per_level``, ``heal_cd_per_level``, etc.
 - Campaign hero restore reapplies cumulative bonuses up to the saved level.
 
-**Hero starting level and status display**
+Hero starting level and status display
 
-- ``level`` / ``xp`` on hero defs in ``rules.txt`` (requires ``xp_thresholds``); ``level > 1`` applies cumulative ``*_per_level`` on spawn.
+- ``level`` / ``xp`` on hero defs in ``rules.txt`` (requires ``xp_thresholds``); ``level \> 1`` applies cumulative ``*_per_level`` on spawn.
 - ``level 0``: start below level 1; Tab status shows level 0 and XP toward ``xp_thresholds[0]``.
 - Heroes with ``xp_thresholds`` always announce level in Tab status (including 0 and 1).
 
-**Full heal on level up (``level_up_heal_full``)**
+``Full heal on level up (``level_up_heal_full``)``
 
 - Optional ``level_up_heal_full 1`` on hero defs: restore full HP and mana on each level up; default ``0`` keeps incremental HP/mana gain only.
 
-**Level skill unlocks and skill books**
+Level skill unlocks and skill books
 
-- Unit ``level_skills <level> <skill> …``: auto-add to ``can_use_skill`` when that level is reached (with voice notify).
+- Unit ``level_skills \<level\> \<skill\> …``: auto-add to ``can_use_skill`` when that level is reached (with voice notify).
 - Unit ``learn_level_skills``: extra book-learning level gate (strictest with item ``learn_level``).
 - Skill books: permanent learn via backpack ``use_item``; pickup does not grant when gated.
 - Do not duplicate the same skill on ``level_skills`` and a book.
 
-**Campaign hero carryover**
+Campaign hero carryover
 
 - Hero defs: ``campaign_carryover 1`` (optional ``campaign_carryover_stats``, ``campaign_carryover_inventory``, ``campaign_carryover_id``).
-- On **victory**, level/XP and backpack saved to ``user/campaigns.ini``; next chapter restores; **co-op** does not persist.
+- On victory, level/XP and backpack saved to ``user/campaigns.ini``; next chapter restores; co-op does not persist.
 - Optional ``hero_min_level 13:2 …`` in ``campaign.txt`` for per-chapter level floors.
 
-**Backpack item use sounds (style.txt)**
+Backpack item use sounds (style.txt)
 
-- Same three-level lookup as pickup/drop: item ``use`` / ``on_use`` → unit ``use_<item type>`` → global ``item_used`` (``def thing``).
+- Same three-level lookup as pickup/drop: item ``use`` / ``on_use`` → unit ``use_\<item type\>`` → global ``item_used`` (``def thing``).
 - Sounds play only after server-confirmed success; no optimistic "used" voice on Enter.
 - Skill books: use sound + skill title + ``skill_learned``; other consumables: item title + "used".
 - Consumables are removed from inventory on success; skill-book ``unequip`` no longer strips permanently learned skills.
 
-**Backpack / equipment hotkeys**
+Backpack / equipment hotkeys
 
-- **Shift+V** cycles between backpack and equipment (classic and layered); **Ctrl+V** removed; layered **F3** still works.
+- Shift+V cycles between backpack and equipment (classic and layered); Ctrl+V removed; layered F3 still works.
 
-Docs: ``doc_src/src/zh/modding.rst``, ``doc_src/src/en/modding.rst``, ``GENERIC_SKILL_SYSTEM.md``, ``docs/en/developer/campaign-hero-carryover.md``
+Docs: ``mod/modding.rst``, ``mod/modding.rst``, ``mod/skills-and-effects.htm``, ``mod/campaign-hero-carryover.htm``
 Tests: ``test_level_skills.py``, ``test_level_up_combat_stats.py``, ``test_campaign_hero.py``, ``test_wuxia_skills.py``, ``test_worldskill_deploy.py``, ``test_target_type_exclusions.py``, ``test_hit_vs_buff_sounds.py``, ``test_damage_seq_burst.py``,
 ``test_changelog_138x.py``, ``test_skill_trigger_sounds.py``, ``test_inventory_backpack.py``
 
-Release notes: ``docs/en/player/release-1.4.4.6.md``
-
 
 1.4.4.5
--------
+--------
 
 Random map HoMM/Civ5-style gameplay, default capture order, AI amphibious ops, Ctrl+Shift+F4 scoring fix, hotkey mapping editor:
 
-**Random map: HoMM / Civ5-inspired**
+Random map: HoMM / Civ5-inspired
 
 - victory mode menu: conquest / economic / exploration / survival (TTS 5425–5430)
-- map POI: **ancient ruins**, **capturable barracks**, central creeps, optional treasure
+- map POI: ancient ruins, capturable barracks, central creeps, optional treasure
 - share codes: 11th victory field; ``res/rules.txt``: ``ancient_ruin``, ``captured_barracks``
-- docs: ``docs/zh/player/英雄无敌与文明5玩法说明.md``; ``randommap.rst``
+- docs: ``player/英雄无敌与文明5玩法说明.htm``; ``randommap.rst``
 - tests: ``test_randommap.py``
 
-**Default capture order (can_capture)**
+Default capture order (can_capture)
 
-- ``capture_hp_threshold 100``: ``can_capture 1`` → default **occupy**; ``can_capture 0`` → attack/move only
-- thresholds **below 100** still require combat to capture threshold
-- docs: ``doc_src/src/en/modding.rst``; players ``docs/en/player/unit-default-behavior.md`` §4
+- ``capture_hp_threshold 100``: ``can_capture 1`` → default occupy; ``can_capture 0`` → attack/move only
+- thresholds below 100 still require combat to capture threshold
+- docs: ``mod/modding.rst``; players ``player/unit-default-behavior.htm`` §4
 - tests: ``test_capture_default_order.py``
 
-**AI cross-water operations**
+AI cross-water operations
 
 - amphibious gathering, transport assaults, naval upkeep on water maps
 - tests: ``test_worldplayercomputer_water.py``, ``test_ai_naval_m3.py``
 
-**Train: scale batch to remaining population**
+Train: scale batch to remaining population
 
-- insufficient pop headroom when batch training → train **as many as fit** (e.g. 5 requested, 3 pop → 3 trained); zero headroom still fails
+- insufficient pop headroom when batch training → train as many as fit (e.g. 5 requested, 3 pop → 3 trained); zero headroom still fails
 - ``worldorders/production.py`` (``TrainOrder._max_train_count_for_population``)
 - tests: ``test_train_population.py``
 
-**Fix: Ctrl+Shift+F4 view switch vs scoring**
+Fix: Ctrl+Shift+F4 view switch vs scoring
 
 - pin scoring human; no AI/passive victory rewards after switch; baseline of defeated scoring enemies at first switch
 - tests: ``test_change_player_scoring.py``
 
-**Hotkey mapping editor**
+Hotkey mapping editor
 
-- **Options → Key mapping** (sibling of Hotkey scheme); ``hotkey_remapping_menu.py``, ``hotkey_editor.py``, ``hotkey_catalogs.py``
+- Options → Key mapping (sibling of Hotkey scheme); ``hotkey_remapping_menu.py``, ``hotkey_editor.py``, ``hotkey_catalogs.py``
 - layered 8 layers + classic ~179 bindings; per-mod ``user/hotkey_overrides/{mod_key}.json``; effective next game start
 - search, advanced variants, alias keys (``binding_id@default_key``), clipboard import/export
 - catalog TTS 5500–5684; classic advanced variants complete; control-group label fixes
-- labels: Alt+Space → **first-person mode**; Ctrl+F2 → **display toggle**
-- docs: ``docs/en/developer/hotkey-mapping-editor.md``, ``docs/en/player/layered-hotkeys.md``
+- labels: Alt+Space → first-person mode; Ctrl+F2 → display toggle
+- docs: ``mod/hotkey-mapping-editor.htm``, ``player/layered-hotkeys.htm``
 - tests: ``test_hotkey_editor*.py``, ``test_hotkey_catalog_tts.py``, ``test_hotkey_editor_mod_isolation.py``
 
-Release notes: ``docs/en/player/release-1.4.4.5.md``
-
 1.4.4.4
--------
+--------
 
 Delayed loadout cards, scoring & grades, per-faction achievements, meta progress, CrazyMod, UX fixes:
 
-**Delayed pre-mission cards**
+Delayed pre-mission cards
 
-- ``cards.txt``: ``delay <seconds>``, ``delay_minutes <n>`` — schedule effects after in-game time (``world.schedule_after``, respects ``timer_coefficient``)
-- ``tech <upgrade_id>`` on cards; combinable with ``spawn`` / ``resource`` under one shared delay
+- ``cards.txt``: ``delay \<seconds\>``, ``delay_minutes \<n\>`` — schedule effects after in-game time (``world.schedule_after``, respects ``timer_coefficient``)
+- ``tech \<upgrade_id\>`` on cards; combinable with ``spawn`` / ``resource`` under one shared delay
 - voice at apply: effects after N minutes/seconds; at fire: loadout card effect triggered (TTS 5387–5393)
 - vanilla: ``card_reinforcements_delayed`` (3 footman after 10 min), ``card_delayed_melee_weapon`` (``melee_weapon`` after 8 min)
 - achievements: ``reinforcement_contract`` → delayed reinforcements; ``defeat_expert`` → delayed melee weapon card
-- docs: ``docs/en/developer/delayed-card-loadout.md`` (players: ``docs/en/player/loadout-cards.md``)
+- docs: ``mod/delayed-card-loadout.htm`` (players: ``player/loadout-cards.htm``)
 - tests: ``test_cards.py``, ``test_card_loadout.py`` (``-k delay`` / ``-k delayed``)
 
-**Post-game score & letter grades**
+Post-game score & letter grades
 
-- docs: ``docs/en/developer/score-grading-system.md`` (players: ``docs/en/player/score-and-grades.md``)
-- base seven dimensions cap at 800; AI defeat bonus is extra and **excluded** from the percent denominator
-- **defeat grade capped at D** (``grade_total`` max 479)
-- win + utilization < 50%: **frugal efficiency** dimension (TTS 5251)
+- docs: ``mod/score-grading-system.htm`` (players: ``player/score-and-grades.htm``)
+- base seven dimensions cap at 800; AI defeat bonus is extra and excluded from the percent denominator
+- defeat grade capped at D (``grade_total`` max 479)
+- win + utilization < 50%: frugal efficiency dimension (TTS 5251)
 - mining on maps without deposit capacity: proportional to reference gather (1000 = 100 pts); campaign no-deposit maps unchanged
-- survival 0 if no units produced; building loss/demolition **5 pts per building** (was 10)
+- survival 0 if no units produced; building loss/demolition 5 pts per building (was 10)
 - removed unused legacy score helpers from ``worldplayerbase/resources.py``
 - tests: ``test_score_breakdown.py``
 
-**Achievements & rank data**
+Achievements & rank data
 
-- Lieutenant (``rank_lieutenant``): **200** medals, 1 loadout slot
-- ``defeat_beginner`` repeat medal **8**; ``perfect_survival`` requires survival ≥90 and building defense ≥90
+- Lieutenant (``rank_lieutenant``): 200 medals, 1 loadout slot
+- ``defeat_beginner`` repeat medal 8; ``perfect_survival`` requires survival ≥90 and building defense ≥90
 
-**Fixes**
+Fixes
 
 - worker ``can_gather all``: attribute UI no longer duplicates “all” when deposit and building lists are both ``all``
 - tests: ``conftest`` restores ``res.mods`` after mod-switching tests
 - loadout / random-faction UX; NPC defeat broadcast gated by ``broadcasts_defeat_and_quit``
 
-**Per-faction & meta progress**
+Per-faction & meta progress
 
-- ``achievements_per_faction 1``, ``_meta.json``, ``scope meta``; campaign excluded
+- ``achievements_per_faction 1``, ``\_meta.json``, ``scope meta``; campaign excluded
 
-**CrazyMod 9**
+CrazyMod 9
 
 - per-faction milestones, meta tiers, balance tweaks
 
-**Documentation (player / developer)**
+Documentation (player / developer)
 
-- Index: ``docs/README.md``, ``docs/en/player/README.md``, ``docs/en/developer/README.md``
+- Index: ``help-index.htm``, ``player/README.htm``, ``mod/README.htm``
 
-**Campaign hero carryover (rules-driven)**
+Campaign hero carryover (rules-driven)
 
 - ``rules.txt``: ``campaign_carryover 1`` (optional ``campaign_carryover_id``, ``campaign_carryover_stats``, ``campaign_carryover_inventory``)
 - ``campaign.txt``: ``hero_min_level 13:2 …`` for chapter floor levels
-- saved on **victory** to ``user/campaigns.ini`` (``hero_<id>_xp`` / ``_level`` / ``_inventory``); restored next chapter; **co-op** does not persist
-- independent of ``campaign_flag`` / ``add_inventory_item``; see ``modding.rst``, ``mapmaking.rst``, ``docs/en/developer/campaign-hero-carryover.md``
+- saved on victory to ``user/campaigns.ini`` (``hero_\<id\>\_xp`` / ``\_level`` / ``\_inventory``); restored next chapter; co-op does not persist
+- independent of ``campaign_flag`` / ``add_inventory_item``; see ``modding.rst``, ``mapmaking.rst``, ``mod/campaign-hero-carryover.htm``
 - implementation: ``soundrts/campaign_hero.py``; tests: ``test_campaign_hero.py``
 
-**Fixes & voice**
+Fixes & voice
 
 - lanes maps: ``has_entered`` with 1-based coords (e.g. ``8,2``) no longer collides with 0-based grid keys; ruin triggers work
-- text inputs (share code, seed, etc.): **Ctrl+V** paste via pygame-ce clipboard API
-- HoMM/Civ5 and campaign side-quest TTS moved from 5107–5123 to **5425–5441** to avoid ID conflicts
-
-Release notes: ``docs/en/player/release-1.4.4.4.md``
+- text inputs (share code, seed, etc.): Ctrl+V paste via pygame-ce clipboard API
+- HoMM/Civ5 and campaign side-quest TTS moved from 5107–5123 to 5425–5441 to avoid ID conflicts
 
 1.4.4.3
--------
+--------
 
 Achievements and armory (phases 2–3: medals, ranks, cards, pre-mission loadout):
 
-- new main-menu **Achievements** entry: achievement list + **armory** (rank, honors, medal total, card charges)
+- new main-menu Achievements entry: achievement list + armory (rank, honors, medal total, card charges)
 - after skirmish / random-map vs computer, ``achievements.txt`` unlocks are evaluated; voice for unlocks, medals, cards, rank promotion, and extra loadout slots
-- progress is saved **per mod**: ``user/achievements/<mod>.json``
-- **pre-mission card loadout**: Single player → Start on map → **Start**, then pick up to N cards by rank (Lieutenant = 1 slot, Captain = 2, … in ``titles.txt``); **TrainingGame only** (custom or random map vs AI — **not** campaign or multiplayer)
+- progress is saved per mod: ``user/achievements/\<mod\>.json``
+- pre-mission card loadout: Single player → Start on map → Start, then pick up to N cards by rank (Lieutenant = 1 slot, Captain = 2, … in ``titles.txt``); TrainingGame only (custom or random map vs AI — not campaign or multiplayer)
 - effects apply at game start: bonus resources and/or units near your start; one charge spent per card used
-- **card spawns do not use population**; random faction spawns use faction equivalents
-- **fix:** loadout cards were not applied because the local player was only detected after ``GameInterface`` existed; now applied after map load, before the interface opens
+- card spawns do not use population; random faction spawns use faction equivalents
+- fix: loadout cards were not applied because the local player was only detected after ``GameInterface`` existed; now applied after map load, before the interface opens
 - armory: browsing a card speaks its effect (start bonus, spawns, required rank if locked)
-- **repeat completion:** meeting an already-unlocked achievement again grants ``repeat_medal <n>`` medals only (no card, honor, or unlock voice); medals still advance rank
-- **mod opt-out:** ``achievements_enabled 0`` in ``rules.txt`` hides the menu entry and skips loadout / post-game processing
-- **AI ``starting_units`` bonuses in ``ai.txt`` do not consume population** (map starts still do); ``starting_population`` is unchanged
+- repeat completion: meeting an already-unlocked achievement again grants ``repeat_medal \<n\>`` medals only (no card, honor, or unlock voice); medals still advance rank
+- mod opt-out: ``achievements_enabled 0`` in ``rules.txt`` hides the menu entry and skips loadout / post-game processing
+- ``AI ``starting_units`` bonuses in ``ai.txt`` do not consume population`` (map starts still do); ``starting_population`` is unchanged
 - data: ``res/achievements.txt``, ``res/cards.txt``, ``res/titles.txt``; TTS ids 5244–5367, etc.
-- docs: ``docs/en/achievement-system.md`` (``docs/zh/achievement-system.md``)
+- docs: ``achievement-system.htm`` (``achievement-system.htm``)
 - tests: ``test_achievements.py``, ``test_cards.py``, ``test_titles.py``, ``test_card_loadout.py``
 
 1.4.4.2
--------
+--------
 
 AI counter targeting (``counter_skill`` in ``ai.txt``):
 
 - computer units use ``mdg_vs`` / ``rdg_vs`` (and ``is_a`` inheritance) when picking targets and sending attacks
-- new ``counter_skill <0-100>`` script command: ``0`` = ignore counters (``menace`` only), ``100`` = always pick the best counter; values in between blend both
+- new ``counter_skill \<0-100\>`` script command: ``0`` = ignore counters (``menace`` only), ``100`` = always pick the best counter; values in between blend both
 - vanilla tiers in ``res/ai.txt``: beginner ``25``, intermediate ``50``, advanced ``75``, expert ``90``, nightmare ``100``; omitted in a mod script defaults to ``100``
-- new ``starting_resources`` / ``starting_units`` in ``ai.txt``: bonus resources and units **added on top of** the map start for invited computers (same syntax as map commands; applied once at game start, not in the script loop)
+- new ``starting_resources`` / ``starting_units`` in ``ai.txt``: bonus resources and units added on top of the map start for invited computers (same syntax as map commands; applied once at game start, not in the script loop)
 - new ``starting_population`` in ``ai.txt`` and maps: bonus population cap (plain integer, not ×1000) added on top of houses/units; still capped by ``global_population_limit``
 - vanilla bonus starts: intermediate +50/+50 resources; advanced +100/+100 and 2 footman 2 archer; expert +200/+200 and 5/4/2 army; nightmare +400/+400 and 8/6/4 army
 - docs: ``doc_src/src/en/aimaking.rst``, ``doc_src/src/zh/aimaking.rst``
 - tests: ``test_ai_counter_targeting.py``, ``test_ai_loader_and_menu.py``, ``test_ai_start_settings.py``
 
 1.4.3.9
--------
+--------
 
 Layered interface hotkeys (global base + per-mode layer):
 
@@ -294,32 +284,32 @@ Layered interface hotkeys (global base + per-mode layer):
 - command mode 30-slot index hotkeys; map mode ``f/g/m/p`` cycles deposits/meadows/passages on current square (no square jumps); ESC to map announces square summary and silently restores last map target
 - mod ``style.txt``: ``keyboard worker``, ``keyboard soldier1``–``7``, ``keyboard building1``–``16``; ``bindings.txt`` body is now a compatibility stub
 - inventory/equipment/attributes sub-screens call ``restore_active_bindings`` on exit; editor bindings unchanged
-- **classic single-file hotkeys**: ``[general] layered_hotkeys = 0`` in ``user/SoundRTS.ini`` (default ``1`` = layered); or main menu **Options → Hotkey scheme** — **Layered hotkeys** / **Classic hotkeys** (effective next game); classic loads ``legacy_bindings.txt``, no F-key mode layers, ESC does not enter map browse
+- classic single-file hotkeys: `````[general] layered_hotkeys = 0``` in ``user/SoundRTS.ini`` (default ``1`` = layered); or main menu Options → Hotkey scheme — Layered hotkeys / Classic hotkeys (effective next game); classic loads ``legacy_bindings.txt``, no F-key mode layers, ESC does not enter map browse
 - mods may customize each scheme: layered via ``ui/*_bindings.txt`` or append ``ui/bindings.txt``; classic via ``ui/legacy_bindings.txt`` or append ``ui/bindings.txt``
-- docs: ``docs/en/layered-hotkeys.md``, ``docs/zh/分层热键方案说明.md``
+- docs: ``../player/layered-hotkeys.htm``, ``../player/layered-hotkeys.htm``
 - tests: ``test_layered_bindings.py``, ``test_map_browse_target_persist.py``
 
 Age of Empires DE-style campaigns (single-player + co-op):
 
 - single-player: mission browser (``synopsis``, five difficulty tiers persisted, completed/locked chapters, retry); enemy HP/damage scale by tier (Standard + solo = 100%)
 - co-op: story-mission multiplayer (player slots + allied AI partners, shared intro/cutscenes/objectives, no treaty); difficulty and human count scale enemies; campaign TTS auto-loaded for localized place names
-- see ``docs/en/campaign-and-co-op-improvements.md`` (``docs/zh/战役与合作战役改进说明.md``)
+- see ``../player/campaign-menu.htm`` (``../player/campaign-menu.htm``)
 - tests: ``test_changelog_1429_coop_campaign_difficulty.py``, ``test_changelog_1429b_campaign_browser_difficulty.py``, ``test_changelog_1429c_coop_story_mission.py``, ``test_changelog_1429d_coop_player_slots.py``, ``test_coop_campaign_place_names.py``
 
 1.4.3.8
--------
+--------
 
 Build fields, progressive objectives, and Zerg creep tumors:
 
-- ``build_field_radius`` (tile BFS) vs ``build_field_radius_m`` (meters from ``(x,y)``); meter providers paint marks when ``build_field_persists`` / ``build_field_spreads`` — fixes Hatchery-only meter creep build checks
-- Trigger ``register_objective`` registers primary numbers for victory without F9/voice; victory uses ``_required_objective_numbers`` vs ``_completed_objective_numbers`` (no premature win when goals are revealed one-by-one)
+- ``build_field_radius`` (tile BFS) vs ``build_field_radius_m`` (meters from `` (x,y)``); meter providers paint marks when ``build_field_persists`` / ``build_field_spreads`` — fixes Hatchery-only meter creep build checks
+- Trigger ``register_objective`` registers primary numbers for victory without F9/voice; victory uses ``\_required_objective_numbers`` vs ``\_completed_objective_numbers`` (no premature win when goals are revealed one-by-one)
 - F9 / ``add_objective``: "Primary objective N:" when multiple goals; colon after number; single goal omits number
-- StarCraft mod: Queen **Spawn creep tumor** / tumor **Extend creep tumor**; skill attrs ``summon_requires_build_field``, ``summon_requires_marked_field``
-- docs: ``docs/en/progressive-campaign-objectives.md``, ``docs/en/starcraft-zerg-creep.md``; ``modding.rst``, ``mapmaking.rst``
+- StarCraft mod: Queen Spawn creep tumor / tumor Extend creep tumor; skill attrs ``summon_requires_build_field``, ``summon_requires_marked_field``
+- docs: ``campaign/progressive-objectives.htm``, ``../player/starcraft-zerg-creep.htm``; ``modding.rst``, ``mapmaking.rst``
 - tests: ``test_build_rules.py`` (creep tumor), ``test_campaign_alliance_transfer_triggers.py`` (register_objective), ``test_objective_announce.py``
 
 1.4.3.7
--------
+--------
 
 Hunting system and wildlife voice labels:
 
@@ -328,11 +318,11 @@ Hunting system and wildlife voice labels:
 - Wildlife-only ``computer_only`` slots do not join the ``"ai"`` alliance (not with players, hostile creep, or other herds; mixed slots unchanged)
 - Ctrl+Shift+F4 to a wildlife-only player says "you are animal"; mixed NPC + wildlife players still say "you are neutral NPC"
 - Random maps spawn wildlife and orchards near starts; ``hunting_techniques`` improves carcass gathering
-- docs: ``docs/en/hunting-system.md``; ``modding.rst`` hunting section
+- docs: ``../player/hunting.htm``; ``modding.rst`` hunting section
 - tests: ``soundrts/tests/test_hunting.py``, ``test_hunting_herd.py``, ``test_wildlife_identification.py``, ``test_wildlife_alliance.py``
 
 1.4.3.6
--------
+--------
 
 Burst / sequence attacks (``damage_seq``):
 
@@ -341,10 +331,10 @@ Burst / sequence attacks (``damage_seq``):
 - each shot in a burst triggers ``launch_mdg`` / ``launch_rdg``; list multiple sound IDs in ``style.txt``
 - base rules: new ``repeating_crossbowman`` (upgrade from archer; Age of Empires Chu Ko Nu style)
 - tests: ``soundrts/tests/test_damage_seq_burst.py``
-- docs: ``docs/en/burst-attack-damage-seq.md``; ``modding.rst`` Combat system section
+- docs: ``../player/burst-attacks.htm``; ``modding.rst`` Combat system section
 
 1.4.3.5
--------
+--------
 
 Combat AI vs neutral units:
 
@@ -352,34 +342,34 @@ Combat AI vs neutral units:
   units (``computer_only ... neutral``)
 - defensive mode does not flee when only neutrals are present
 - forced attack (``imperative`` go/attack, e.g. Ctrl+click on the unit) still works
-- neutral creeps remain guard + counter-attack on their side; see ``docs/en/unit-default-behavior.md``
+- neutral creeps remain guard + counter-attack on their side; see ``../player/unit-default-behavior.htm``
 
 1.4.3.4
--------
+--------
 
 Procedural random map generator (RMG):
 
-- Entry: main menu **Start a game** → **Random map**; or **Random map** in the online create-game map list
+- Entry: main menu Start a game → Random map; or Random map in the online create-game map list
 - Options: template (standard/fast/macro/lanes), size, player count, 2v2 teams, monsters, resources, terrain, water, treasure, seed, treaty
-- After generation, seed and share code are announced; **F5/F6** replay them from voice history (still available in the invite-AI menu)
-- **Import share code** skips step-by-step menus; format ``RMG1:…`` — see `Random map guide <randommap.htm>`_
-- Menu text inputs (share code, seed, login, etc.) support **Ctrl+A/C/V/X** select all, copy, paste, cut
+- After generation, seed and share code are announced; F5/F6 replay them from voice history (still available in the invite-AI menu)
+- Import share code skips step-by-step menus; format ``RMG1:…`` — see `Random map guide <randommap.htm>`_
+- Menu text inputs (share code, seed, login, etc.) support Ctrl+A/C/V/X select all, copy, paste, cut
 - Code: ``soundrts/randommap.py``, ``soundrts/randommap_menu.py``; tests ``soundrts/tests/test_randommap.py``
 
 1.4.3.3
--------
+--------
 
 Indexed conditions (``killed_target`` / ``npc_has_item`` / ``unit_lost`` / ``building_lost`` / ``key_unit_killed``):
 
-- Global spawn index (any square): ``(killed_target <index> <type> [enemy|ally])``, ``(npc_has_item <index> <type> <item>)``, ``(unit_lost <index> <type>)``, ``(building_lost <index> <type>)``, ``(key_unit_killed <index> <type>)``
-- Square index: ``(killed_target <square> <index> <type>)``, ``(npc_has_item <square> <index> <type> <item>)``, etc.
+- Global spawn index (any square): ``(killed_target \<index\> \<type\> [enemy|ally])``, `` (npc_has_item \<index\> \<type\> \<item\>)``, `` (unit_lost \<index\> \<type\>)``, `` (building_lost \<index\> \<type\>)``, `` (key_unit_killed \<index\> \<type\>)``
+- Square index: ``(killed_target \<square\> \<index\> \<type\>)``, `` (npc_has_item \<square\> \<index\> \<type\> \<item\>)``, etc.
 - Same index rules as ``killed_target`` / ``npc_has_item``; only the Nth spawned unit/building at that square
-- Example: ``(building_lost 1 townhall) (defeat)`` fails only if the 1st spawned town hall is destroyed (any square); ``(building_lost a1 1 townhall)`` is square-specific; ``(unit_lost 3 footman) (defeat)`` fails only if footman #3 dies
-- Demo: The Legend of Raynor chapter 1; see ``docs/en/map-unit-index-selectors.md``
+- Example: ``(building_lost 1 townhall) (defeat)`` fails only if the 1st spawned town hall is destroyed (any square); `` (building_lost a1 1 townhall)`` is square-specific; `` (unit_lost 3 footman) (defeat)`` fails only if footman #3 dies
+- Demo: The Legend of Raynor chapter 1; see ``campaign/unit-index.htm``
 - Tests: ``soundrts/tests/test_map_select_loss_triggers.py``
 
 1.4.3.2
--------
+--------
 
 Unnumbered units (rules.txt, ``no_number 1``):
 
@@ -390,7 +380,7 @@ Unnumbered units (rules.txt, ``no_number 1``):
 - See ``modding.rst``; campaign examples ``raynor``, ``npc_knight_leader`` in ``The Legend of Raynor/rules.txt``
 
 1.4.3.1
--------
+--------
 
 Inventory and equipment:
 
@@ -414,7 +404,7 @@ Giving items to NPCs:
 - ``give`` order: right-click a non-hostile unit, command menu, or shortcut ``g``
 - target needs ``receive_items 1``; optional ``accepted_items`` whitelist and ``accept_from`` relation filter
 - trigger condition ``npc_has_item``; multiplayer demo ``res/multi/give_demo.txt``; campaign ch. 14–16 (``The Legend of Raynor/14.txt``\ –``16.txt``) for ally/neutral/enemy delivery
-- ``npc_has_item`` / ``killed_target`` unit index syntax (``<square> <index> <type>``); demo The Legend of Raynor chapter 28; see ``docs/en/map-unit-index-selectors.md``
+- ``npc_has_item`` / ``killed_target`` unit index syntax (``\<square\> \<index\> \<type\>``); demo The Legend of Raynor chapter 28; see ``campaign/unit-index.htm``
 
 Find-item victory:
 
@@ -438,7 +428,7 @@ Ground items and compound conditions:
 
 Campaign diplomacy and unit transfer triggers:
 
-- trigger action ``alliance_request``: one player requests alliance; in campaigns the human accepts with **Ctrl+F4** (no F12 target selection)
+- trigger action ``alliance_request``: one player requests alliance; in campaigns the human accepts with Ctrl+F4 (no F12 target selection)
 - trigger conditions ``alliance_with`` / ``alliance_request_pending``
 - trigger action ``transfer_units`` (aliases ``convert_units``, ``change_owner``): change unit ownership between players
 - trigger action ``allied_assist``: ally units fight on their own (guard→chase); optional unit selector for partial switch
@@ -446,7 +436,7 @@ Campaign diplomacy and unit transfer triggers:
 - trigger action ``add_inventory_item``: put items into unit inventory (cross-chapter carry, quest rewards)
 - trigger actions ``set_ai_mode`` / ``set_yield_on_defeat``: runtime AI mode and yield-duel toggles
 - conditions ``units_yielded`` / ``units_yielded_by``, ``has_entered``; actions ``stop_all_units`` / ``release_yielded_units``: yield counts (filter by attacker), square entry, ceasefire, restore combat
-- The Legend of Raynor chapters 24–27 (northern alliance arc); see ``docs/en/campaign-secret-letter-alliance.md``
+- The Legend of Raynor chapters 24–27 (northern alliance arc); see ``../player/campaign-northern-arc.htm``
 
 ``phase_targets`` exclusion syntax:
 
@@ -464,7 +454,7 @@ Bugs fixed:
 
 
 1.4.3.0
--------
+--------
 
 Bugs fixed:
 
@@ -476,7 +466,7 @@ Bugs fixed:
 
 
 1.4.2.9
--------
+--------
 
 - maps downloaded from a server keep their original name
 - maps with the same content as a local map are not downloaded again
@@ -484,22 +474,22 @@ Bugs fixed:
 
 
 1.4.2.8
--------
+--------
 
 - small performance boost from Cython optimizations
 - neutral computers: add the ``neutral`` keyword to a ``computer_only`` line; neutral AIs do not attack unless attacked first
-- ``player_start <N> <square>`` fixes the spawn square for player N (see the map making guide)
+- ``player_start \<N\> \<square\>`` fixes the spawn square for player N (see the map making guide)
 
 
 1.4.2.7
--------
+--------
 
 - saves and replays can be renamed (any language/characters): edit files in ``user/saves`` or ``user/replays``, or press Shift+Enter on a file in the restore/replay menu
 - Delete asks for confirmation; Shift+Delete deletes immediately
 
 
 1.4.2.6
--------
+--------
 
 - up to 10 save slots per mod; each mod has its own saves, memory points, and replays
 - cancelling a game creates a memory point; "continue unfinished game" appears on the main menu
@@ -507,7 +497,7 @@ Bugs fixed:
 
 
 1.4.2.5
--------
+--------
 
 - ``can_advance`` for phase upgrades (distinct from ``can_research``); shown in the properties interface
 - default starting phase is displayed at game start when a building has ``can_advance``
@@ -515,28 +505,28 @@ Bugs fixed:
 
 
 1.4.2.4
--------
+--------
 
 - new ``class phase`` (age-style progression): ``phase_targets``, ``phase bonus``, ``units_auto_upgrade``
 - dynamic alliance: each alliance request now has its own cooldown
 
 
 1.4.2.3
--------
+--------
 
 - dynamic alliance during a game (F12 / Shift+F12 select target; F4 request; Ctrl+F4 accept; Shift+F4 cancel/reject/leave); pre-game alliances cannot be changed in-game
 - cooperative campaign bug fixes
 
 
 1.4.2.2
--------
+--------
 
 - treaty mode: peace for a chosen duration (up to 20 minutes), then war
 - cooperative campaign on servers: any player completing objectives contributes to the team
 
 
 1.4.2.1
--------
+--------
 
 Bugs fixed:
 
@@ -548,7 +538,7 @@ Bugs fixed:
 
 
 1.4.2.0
--------
+--------
 
 Bugs fixed:
 
@@ -560,14 +550,14 @@ Bugs fixed:
 
 
 1.4.1.9
--------
+--------
 
 - ``square_name`` hierarchy up to 3 levels (province / city / district); TTS announces names when entering from another region
 - further performance optimizations
 
 
 1.4.1.8
--------
+--------
 
 - map coordinates use ``x,y`` (e.g. ``1,1``) instead of letter+number; legacy notation still accepted
 - ``square_name`` for naming squares; translations in ``tts.txt``
@@ -575,21 +565,21 @@ Bugs fixed:
 
 
 1.4.1.7
--------
+--------
 
 - unified skill system (``class skill``) with ``effect_target`` and ``effect_range``
 - multi-stat buffs, aura buffs (``buff_radius``), expanded harm/heal/regen parameters
 
 
 1.4.1.6
--------
+--------
 
 - debuffs can be defined on weapons
 - fixed save-game load failure
 
 
 1.4.1.5
--------
+--------
 
 - ``intro`` keyword in ``style.txt`` for unit descriptions
 - diagonal perception restored
@@ -597,13 +587,13 @@ Bugs fixed:
 
 
 1.4.1.4
--------
+--------
 
 - 1.3.5.2 triggers migrated; td1–td3 maps playable
 
 
 1.4.1.3
--------
+--------
 
 - weapons and armor system; manual weapon switch (A / Shift+A / B+X); ``auto_weapon_switch``
 - item system migrated from 1.3.5.2
@@ -611,52 +601,52 @@ Bugs fixed:
 
 
 1.4.1.2
--------
+--------
 
 - ``can_repair`` on workers; improved water-unit pathfinding and shore mining
 - more attributes in the properties interface
 
 
 1.4.1.1
--------
+--------
 
 - enhanced properties interface with interactive browsing (can_train, skills, research, can_build)
 - ``can_repair_ships`` for workers and buildings; shore ship repair (distance 6) and building auto-repair (distance 8)
 
 
 1.4.1
------
+------
 
 - first-person RPG view is 360°; improved movement precision
 
 
 1.4.0.9
--------
+--------
 
 - first-person RPG mode guide; F8 dynamic zoom 3×3 to 15×15; path-aware browsing
 
 
 1.4.0.8
--------
+--------
 
 - ``minimal_mdg`` / ``minimal_rdg`` renamed back to ``minimal_damage``
 - RPG skill hotkeys (1–0) in first-person mode
 
 
 1.4.0.7
--------
+--------
 
 - critical hit rates fixed; crazy-Mod playable
 
 
 1.4.0.6
--------
+--------
 
 - spectator mode on servers; victory/defeat sounds in multiplayer fixed
 
 
 1.4.0.5
--------
+--------
 
 - ``food`` keywords replaced with ``population`` (e.g. ``population_cost``)
 - richer economy: resource buildings, auto/manual cultivation and production
@@ -664,32 +654,32 @@ Bugs fixed:
 
 
 1.4.0.4
--------
+--------
 
 - ``auto_production`` / ``manual_production``; ``is_gather`` / ``is_create``; ``class resource`` separate from ``class deposit``
 
 
 1.4.0.3
--------
+--------
 
-- faction background and battle music (``<faction>_music``, ``<faction>_battle_music``)
+- faction background and battle music (``\<faction\>\_music``, ``\<faction\>\_battle_music``)
 
 
 1.4.0.2
--------
+--------
 
 - menu select/confirm/return sounds; per-menu background music and battle music
 
 
 1.4.0.1
--------
+--------
 
 - charge and counter-charge mechanics; expanded buff trigger rates
 - new defeat conditions: ``unit_lost``, ``key_unit_killed``, ``key_units_killed``, ``units_lost``, ``buildings_lost``, ``has_killed``; ``killed_target`` and ``has_killed`` support ``enemy`` / ``ally``
 
 
 1.4
----
+----
 
 - combat rework: ``mdg`` + ``mdg_vs`` (additive), crit, piercing, explode
 - hero and XP system from 1.3.5.2 integrated
@@ -699,93 +689,93 @@ Bugs fixed:
 
 
 1.3.9.8
--------
+--------
 
 - buff/debuff system from 1.3.5.2 integrated
 - enemies appear immediately when entering their square
 
 
 1.3.9.7
--------
+--------
 
 - ``can_train`` with quantities; ``can_change_to``; ``can_use_tech`` / ``can_use_skill`` menu fix
 
 
 1.3.9.6
--------
+--------
 
 - percentage cost/time_cost/population_cost on upgrades; decimal resource display
 
 
 1.3.9.5
--------
+--------
 
 - object filters (M / N keys); ``cfg/language.txt`` language selection
 
 
 1.3.9.3
--------
+--------
 
 - terrain cover/dodge fixes; research applies to future units; splash hit sounds temporarily removed
 
 
 1.3.9.2
--------
+--------
 
 - upgrade effects on cost/time/population; splash hit sounds; float attributes in properties UI
 
 
 1.3.9.1
--------
+--------
 
-- splash ``_vs`` properties; delayed ``falling`` sound; projectile height attack rule
+- splash ``\_vs`` properties; delayed ``falling`` sound; projectile height attack rule
 
 
 1.3.9.0
--------
+--------
 
 - ``extraction_time`` / ``extraction_qty`` restored; Alt+V properties interface with ``attributes_bindings.txt``
 
 
 1.3.8.8
--------
+--------
 
 - ``can_gather`` / ``gather_time`` / ``gather_qty`` on workers; ``is_rewards`` / ``rewards_resource``
 
 
 1.3.8.7
--------
+--------
 
 - kill/destroy resource rewards; refund on self-demolish
 
 
 1.3.8.5
--------
+--------
 
-- mod-specific maps via ``mods/<mod>/multi/``
+- mod-specific maps via ``mods/\<mod\>/multi/``
 
 
 1.3.8.4
--------
+--------
 
 - building resource production (``is_production``, ``production_type``, etc.)
 
 
 1.3.8.3
--------
+--------
 
 - flexible ``is_a`` inheritance (selective, exclusion, multi-parent)
 
 
 1.3.8.2
--------
+--------
 
 - capture ownership; ``mdg_projectile`` / terrain cover/dodge; improved exit containers
 - major combat rework: ``mdg``/``rdg``/``mdf``/``rdf`` system; damage sequences; ``class skill``; guard/chase modes; sound system refactor
 
 
 1.3.8.1
--------
+--------
 
 For multiplayer games, this version requires:
 
@@ -804,7 +794,7 @@ Bugs fixed:
 
 
 1.3.8
------
+------
 
 For multiplayer games, this version requires:
 
@@ -829,7 +819,7 @@ Translations:
 
 
 1.3.7
------
+------
 
 For multiplayer games, this version requires:
 
@@ -876,7 +866,7 @@ Changes to campaign format:
 
 
 1.3.6
------
+------
 
 For multiplayer games, this version requires:
 
@@ -920,7 +910,7 @@ Map making:
 
 
 1.3.5
------
+------
 
 For multiplayer games, this version requires:
 
@@ -941,7 +931,7 @@ Internationalization:
 
 
 1.3.4
------
+------
 
 For multiplayer games, this version requires:
 
@@ -980,7 +970,7 @@ Tip: to quickly check for improvements in a specific chapter of a campaign you h
 
 
 1.3.3
------
+------
 
 For multiplayer games, this version requires:
 
@@ -1024,7 +1014,7 @@ Tip: to quickly check for improvements in a specific chapter of a campaign you h
 
 
 1.3.2
------
+------
 
 Changes from 1.3.1:
 
@@ -1043,7 +1033,7 @@ Minor changes:
 - added "release notes" to the documentation
 
 1.3.1
------
+------
 
 Changes from 1.3.0:
 
@@ -1054,7 +1044,7 @@ Changes from 1.3.0:
 - fixed: pressing A will behave like before and pressing Control+A will only select inactive orders
 
 1.3.0
------
+------
 
 Changes from 1.2-c12:
 

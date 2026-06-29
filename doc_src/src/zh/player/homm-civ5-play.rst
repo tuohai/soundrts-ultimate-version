@@ -1,0 +1,656 @@
+英雄无敌与文明 5 玩法说明
+=========================
+
+
+SoundRTS 1.4.3.4 起，随机地图（RMG） 在经典 RTS 骨架上引入了受 《英雄无敌》（HoMM） 与 《文明 5》（Civ5） 启发的地图目标、兴趣点（POI）与多种胜利条件。本文档说明这些玩法的设计对照、玩家操作与模组/开发者扩展方法。
+
+
+随机地图菜单、种子与分享码的通用说明见 `随机地图功能说明.md <随机地图功能说明.htm>`_。
+
+
+----
+
+
+1. 设计理念：RTS 里能玩到什么
+-----------------------------
+
+
+SoundRTS 仍是即时战略：选单位、下命令、采集、造兵、交战。HoMM / Civ5 元素主要体现在 地图生成 与 触发器胜利条件，而不是完整的回合制或科技树。
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 灵感来源
+     - 在 SoundRTS 中的对应
+     - 实现位置
+   * - HoMM 地图探索、遗迹奖励
+     - 派单位进入方格 → 播报「遗迹已发现」→ 获得金币/木材
+     - ``ancient_ruin`` + ``has_entered`` 触发器
+   * - HoMM 中立生物巢穴 / 可占领据点
+     - 清守卫 → 用 ``can_capture 1`` 的单位占领兵营（或攻击至阈值）
+     - ``captured_barracks`` + ``capture_hp_threshold`` + 单位 ``can_capture``
+   * - HoMM 中央守军、对称地图
+     - 地图中央（及镜像点）放置按强度缩放的敌对守军
+     - ``MONSTER_PRESETS`` + ``\_append_creep``
+   * - Civ5 多种胜利方式
+     - 征服 / 经济 / 探索 / 生存 四种 RMG 胜利模式
+     - `RandomMapConfig.victory_mode`
+   * - Civ5 探索全图、资源胜利
+     - 探索模式：己方发现全部遗迹；经济模式：累计采集达目标
+     - ``\_victory_mode_trigger_lines``
+   * - Civ5 生存与时间压力
+     - 生存模式：坚守至倒计时且保留主基地（``personal_victory``）
+     - ``timer`` + `(personal_victory)`
+   * - Civ5 地图宝箱 / 奢侈品
+     - 「宝箱」选项：对称放置可拾取物品或额外矿点
+     - ``\_append_treasure``
+   * - Civ5 城邦式支线（战役）
+     - 向 NPC 交付物品换资源（非 RMG，属战役脚本）
+     - 例：`res/single/The Legend of Raynor/`
+
+
+
+未实现、仅作未来扩展方向的内容（当前 RMG 不包含）：
+
+- 英雄单位升级、技能树、魔法值系统（HoMM 核心）
+- 科技树、文化、外交点数（Civ5 核心）
+- 城市扩张、地块产出、政策卡
+
+
+----
+
+
+2. 玩家指南
+-----------
+
+
+2.1 如何开启
+~~~~~~~~~~~~
+
+
+1. 主菜单 → 开始游戏 → 随机地图
+2. 按菜单逐步配置，或在 地图模板 → 导入分享码 粘贴完整配置（支持 Ctrl+V 粘贴）
+3. 在 胜利模式 步骤选择玩法（默认 征服）
+4. 确认 停火条约 后生成地图
+
+探索模式 在点击「开始」进入对局后，会先播放 seed 任务简报（任务简报 + 随机变体一句 + 探索目标），再开始运营。简报内容由地图种子决定，同一分享码可复现。
+
+联机：建房时地图列表选 随机地图，由主机在开局时按相同种子生成；客户端不会自动播报分享码，需事先交换分享码。
+
+2.2 四种胜利模式
+~~~~~~~~~~~~~~~~
+
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 模式
+     - 语音 ID
+     - 胜利条件
+     - 失败条件（与其他模式相同）
+   * - 征服
+     - 5426
+     - 歼灭所有敌方玩家（不必清中央野怪）
+     - 失去所有 ``provides_survival`` 建筑
+   * - 经济
+     - 5427
+     - 累计采集达到目标金币（不含开局自带；花掉仍算）
+     - 同上
+   * - 探索
+     - 5428
+     - 亲访每一处古代遗迹
+     - 同上
+   * - 生存
+     - 5429
+     - 坚守至时间结束且保留主基地
+     - 同上
+
+
+
+配置预览：经济模式会额外播报具体金币目标（如「经济…3000 黄金」）。
+
+经济模式目标金币（仅 ``resource1``，即金币）：
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 地图模板
+     - 目标
+   * - 快速
+     - 2000
+   * - 标准
+     - 3000
+   * - 宏观
+     - 5000
+   * - 通道
+     - 2500
+
+
+
+生存模式时长：
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 地图模板
+     - 时长
+   * - 快速
+     - 10 分钟
+   * - 标准 / 宏观 / 通道
+     - 15 分钟
+
+
+
+
+注意：探索、经济、生存模式下不会因「全灭敌人」自动胜利（已移除 `(no_enemy_player_left) (victory)`）；但仍可主动进攻削弱对手。失去主基地（城镇中心等 ``provides_survival 1`` 建筑）仍会失败。
+
+2.3 地图兴趣点（POI）
+~~~~~~~~~~~~~~~~~~~~~
+
+
+所有 RMG 地图（只要 ``rules.txt`` 中定义了对应单位类型）都会生成以下 POI，与胜利模式无关：
+
+古代遗迹（``ancient_ruin``）
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+- 作用：首次有你的单位进入该方格时触发（不要求攻击建筑）
+- 第一幕奖励：播报 遗迹已发现（5433），并获得资源
+- 快速模板：300 金 + 150 木
+- 其它模板：500 金 + 250 木
+- 第二幕（相邻方格）：发现遗迹后会提示 石壁后传来金属声，检查相邻方格（5490）。若该遗迹旁存在可用邻格，再派单位进入该邻格可获得 深处另有额外收获（5491）及额外资源（约为第一幕的 50%：快速 +150 金 / +75 木，其它 +250 金 / +125 木）。邻格不可用时（贴边、出生点等）跳过第二幕。
+- 探索进度播报（仅探索胜利模式）：发现遗迹后播报 尚未发现的遗迹：N 或 只剩最后一处遗迹（5492 / 5493）。
+- 探索胜利：你必须亲自派单位进入每一处遗迹（2v2 含队友各自进入过的合并计数）。敌方或对手先探过的遗迹不会替你计入进度，但你仍可以之后进入并完成发现；全图首次进入某遗迹时的资源奖励仍只发一次（不论谁先到）
+- 数量（对称成对放置，实际触发点数为 2× 对数）：
+- 小图：1 对（探索模式 +1 对）
+- 中 / 大图：2 对（探索模式 +1 对）
+
+可占领兵营（``captured_barracks``）
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+- 守卫：方格上有 2 步兵 + 1 弓箭手（敌对电脑，非 neutral）
+- 占领：清掉守卫后，让 ``can_capture 1`` 的单位右键兵营（或攻击至可夺取阈值）；当目标 ``capture_hp_threshold`` 为 100 时，到位即占领，不造成伤害。设为 ``can_capture 0`` 的单位只会普通攻击，不会默认走占领命令
+- 占领后：播报 兵营已占领（5434）；可训练 步兵（上限 5）与 弓箭手（上限 3）
+- 未占领时：约 5～10 分钟会增援 2 名步兵（直到被占领）
+- 数量：小图 1 对；中 / 大图 2 对；探索模式额外 +1 对
+
+中央守军（野怪强度）
+^^^^^^^^^^^^^^^^^^^^
+
+
+菜单 野怪强度 控制地图中央守军规模（HoMM 式「地图中心危险区」）：
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 强度
+     - 守军
+   * - 弱
+     - 2 步兵
+   * - 中
+     - 4 步兵 + 2 弓箭手
+   * - 强
+     - 6 步兵 + 4 弓箭手 + 1 骑士
+
+
+
+守军会主动攻击进入范围的玩家；快速 / 通道等模板会通过 ``creep_multiplier`` 微调数量。
+
+宝箱（可选）
+^^^^^^^^^^^^
+
+
+宝箱 菜单项为 无 / 少 / 多：
+
+- 少：对称 1 处额外金矿（约 500）
+- 多：2 处；约 45% 概率为可拾取 物品（``class item``），约 35% 为 果园，其余为金矿（约 900）
+
+需当前 ``rules.txt`` 中存在 ``class item`` 的可拾取物品定义。
+
+2.4 坐标与探索技巧
+~~~~~~~~~~~~~~~~~~
+
+
+- 地图与菜单中的方格坐标为 1 基（左下角为 `1,1`）
+- 探索遗迹时，将单位移动进入遗迹所在格即可；无需选中遗迹或攻击
+- 遗迹被「发现」后不会消失，只是奖励只发一次
+- 按 F5 / F6 可回听「地图已生成、种子、分享码」等历史语音
+
+2.5 分享码中的胜利模式字段
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+完整分享码为 12 段（含 ``RMG1`` 前缀），第 11 段为胜利模式：
+
+.. code-block:: text
+
+   RMG1:模板:尺寸:人数:野怪:资源:地形:团队:水域:宝箱:胜利:种子
+
+
+胜利模式缩写：
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 缩写
+     - 模式
+   * - ``c``
+     - 征服 conquest
+   * - ``e``
+     - 经济 economic
+   * - ``x``
+     - 探索 exploration
+   * - ``s``
+     - 生存 survival
+
+
+
+示例（通道、小图、2 人、探索、高宝箱、种子 6685）：
+
+.. code-block:: text
+
+   RMG1:l:s:2:w:b:r:f:n:hi:x:6685
+
+
+旧版 10 段分享码（无胜利字段）导入后默认为 征服。
+
+
+----
+
+
+3. 规则与数据定义（``res/rules.txt``）
+--------------------------------------
+
+
+POI 单位定义在基础规则末尾附近（注释标明 HoMM / Civ5 灵感）：
+
+.. code-block:: text
+
+   def ancient_ruin
+   class building
+   cost 0 0
+   time_cost 0
+   hp_max 200
+   hp_regen 0
+   capture_hp_threshold 0    ; 不可被占领，仅作地图标记
+   provides_survival 0
+   is_buildable_anywhere 0
+   sight_range 1
+   
+   def captured_barracks
+   class building
+   cost 0 0
+   time_cost 0
+   hp_max 500
+   hp_regen 0.1
+   capture_hp_threshold 100  ; 血量 ≤100% 时可被夺取（一次攻击即可）
+   provides_survival 0
+   is_buildable_anywhere 0
+   can_train footman 5 archer 3
+   population_provided 0
+
+
+关键字段说明
+~~~~~~~~~~~~
+
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 字段
+     - 遗迹
+     - 兵营
+   * - ``capture_hp_threshold``
+     - ``0`` = 不可占领
+     - `100` = 可被夺取（接触即占领）
+   * - ``can_capture``
+     - —（写在攻击方单位上）
+     - 默认 `1`；`0` = 该单位右键/AI 不默认占领
+   * - ``provides_survival``
+     - ``0`` = 丢失不影响「还有建筑」判定
+     - 同左
+   * - ``can_train``
+     - 无
+     - 占领后可生产的单位及上限
+   * - ``sight_range 1``
+     - 低视野；引擎可能对 ``sight_range 1`` 打 INFO 日志，可忽略
+     - —
+
+
+
+模组若删除或改名这些 ``type_name``，RMG 会通过 ``\_rules_has_type()`` 跳过对应 POI 生成，不会报错。
+
+
+----
+
+
+4. 随机地图生成器（开发者）
+---------------------------
+
+
+核心源码：``soundrts/randommap.py``  
+菜单：``soundrts/randommap_menu.py``  
+测试：``soundrts/tests/test_randommap.py``
+
+4.1 生成流程概览
+~~~~~~~~~~~~~~~~
+
+
+.. code-block:: text
+
+   RandomMapConfig
+       → generate_definition() / _generate_grid_definition() / _generate_lanes_definition()
+           → 地形、资源、水域、宝箱
+           → _append_hunting（野生动物）
+           → 玩家出生块
+           → _append_creep（中央守军）
+           → _append_exploration_poi（遗迹 + has_entered 触发器）
+           → _append_capturable_dwelling（兵营 + 增援/占领触发器）
+           → _append_skirmish_triggers（胜利/失败）
+       → 输出 .txt 地图字符串 → Map / World 正常加载
+
+
+POI 位置由 ``\_symmetric_pairs()`` 在避开出生点及镜像出生点的候选格中随机对称选取，保证公平性。
+
+4.2 探索 POI 生成的触发器模板
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+``\_append_exploration_poi()`` 为每个遗迹写入：
+
+.. code-block:: text
+
+   computer_only 0 0 neutral 8,2 1 ancient_ruin
+   trigger players (has_entered 8,2) (if (not (rmg_ruin_discovered_by_self rmg_ruin_0)) (do (rmg_mark_ruin_discovered rmg_ruin_0) (if (not (map_flag rmg_ruin_0_reward)) (do (set_map_flag rmg_ruin_0_reward) (cut_scene 5433) (grant_resources 500 resource1 250 resource2))) (cut_scene 5490)))
+
+
+- 坐标 `8,2` 为 1 基；``has_entered`` 在 ``triggers.py`` 中会转换为 0 基 网格键
+- 重要：在通道等窄地图上，1 基坐标可能与 0 基网格键「撞号」；触发器解析必须先按 1 基转换，不能直接查 grid（否则遗迹无法触发）
+
+4.3 可占领兵营触发器模板
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. code-block:: text
+
+   computer_only 0 0 8,3 1 captured_barracks 2 footman 1 archer
+   trigger computerN (timer 5 5) (if (and (not (map_flag rmg_dwelling_8_3)) (unit_lost 8,3 1 captured_barracks)) (do (set_map_flag rmg_dwelling_8_3) (cut_scene 5434)))
+   trigger computerN (timer 300 600) (if (and (not (map_flag rmg_dwelling_8_3)) (not (unit_lost 8,3 1 captured_barracks))) (add_units 8,3 2 footman))
+
+
+- 兵营放在 ``敌对 ``computer_only`` 格`` （带守卫），不能写 ``neutral``，否则守卫不会主动交战
+- 占领判定用 `(unit_lost 方格 1 captured_barracks)`（建筑被夺取/替换），不要使用已废弃的 ``transfer_units player1`` 写法
+
+4.4 胜利模式触发器
+~~~~~~~~~~~~~~~~~~
+
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 模式
+     - 生成逻辑
+   * - 经济
+     - 每 60 秒检查 ``(has_gathered 目标 resource1)`` → `` (victory)`` （累计采集，不含开局自带）
+   * - 生存
+     - ``(timer 秒数) (if (not (no_building_left)) (personal_victory))`` （多人可同时胜）
+   * - 探索
+     - 每 30 秒检查 ``(rmg_all_ruins_discovered_by_allies rmg_ruin_0 …)`` → `` (victory)``
+   * - 征服
+     - ``(no_enemy_player_left) (victory)`` （仅征服模式；只计敌方玩家）
+
+
+
+公共失败条件（所有模式）：
+
+.. code-block:: text
+
+   trigger players (no_building_left) (defeat)
+   trigger computers (no_unit_left) (defeat)
+
+
+4.5 扩展 POI 类型的推荐步骤
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+以添加「神龛（shrine）」为例：
+
+1. :strong:```rules.txt``：定义 ``def shrine`` （继承 ``building``，设 ``capture_hp_threshold`` 或纯标记）
+2. :strong:```res/ui-zh/tts.txt`` / ``res/ui/tts.txt``：分配新语音 ID（避免与 5425–5441 RMG 段冲突）
+3. :strong:```msgparts.py``：添加 `RMG_*` 常量
+4. :strong:```randommap.py``：
+
+   - 新增 `_append_shrine_poi()`，仿照 ``\_append_exploration_poi``
+   - 在 `_generate_*_definition` 中调用
+   - 若与探索胜利挂钩，返回 flag 列表并传入 ``\_victory_mode_trigger_lines``
+5. :strong:```randommap_menu.py``：若需新菜单项，扩展 ``\_open_victory_menu`` 或模板选项
+6. ``\_SHARE_ABBR["victory_mode"]`` 或新字段`：更新 ``encode_share_code`` / ``decode_share_code``
+7. 测试：在 ``test_randommap.py`` 中断言生成文本含预期触发器
+
+4.6 相关触发器 API
+~~~~~~~~~~~~~~~~~~
+
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 触发器
+     - 用途
+   * - ``(has_entered 方格 [单位类型…])``
+     - 玩家单位进入方格
+   * - ``(has_gathered 数量 resource1)``
+     - 经济胜利：累计采集（不含开局自带）
+   * - ``(has_resources 数量 resource1)``
+     - 检查当前资源存量（非 RMG 经济胜利）
+   * - ``(rmg_mark_ruin_discovered 名称)``
+     - 标记当前玩家已发现该遗迹（胜利进度）
+   * - ``(rmg_ruin_discovered_by_self 名称)``
+     - 条件：当前玩家是否已发现该遗迹
+   * - ``(rmg_all_ruins_discovered_by_allies 名称…)``
+     - 探索胜利：己方阵营是否找齐全部遗迹
+   * - ``(grant_resources 500 resource1 200 resource2)``
+     - 遗迹奖励
+   * - `(set_map_flag 名称)` / `(map_flag 名称)`
+     - 地图局内标记
+   * - ``(cut_scene 语音ID)``
+     - 播报发现/占领
+   * - ``(unit_lost 方格 序号 类型)``
+     - 兵营被占领
+   * - ``(add_units 方格 数量 类型)``
+     - 守军增援
+   * - ``(timer 间隔 [次数])``
+     - 周期性检查 / 生存倒计时
+   * - ``(personal_victory)``
+     - 生存模式：本人获胜且不淘汰其他幸存者
+
+
+
+实现见 ``soundrts/worldplayerbase/triggers.py``。
+
+
+----
+
+
+5. 语音与 UI 文案
+-----------------
+
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - ID
+     - 中文
+     - 用途
+   * - 5425
+     - 胜利模式
+     - 菜单标题
+   * - 5426
+     - 征服，歼灭所有敌方玩家
+     - 模式名
+   * - 5427
+     - 经济，累计采集达到目标
+     - 模式名（预览可接具体金币数）
+   * - 5428
+     - 探索，亲访每一处遗迹
+     - 模式名
+   * - 5429
+     - 生存，坚守到时间结束
+     - 模式名
+   * - 5430
+     - 亲访每一处古代遗迹
+     - 探索模式目标行
+   * - 5431
+     - 古代遗迹
+     - 单位/概念名（预留）
+   * - 5432
+     - 可占领兵营
+     - 单位/概念名（预留）
+   * - 5433
+     - 遗迹已发现
+     - 进入遗迹 cut_scene
+   * - 5434
+     - 兵营已占领
+     - 占领 cut_scene
+   * - 5435
+     - 累计采集达到
+     - 经济模式目标行（后接数量与「黄金」）
+   * - 5436
+     - 坚守
+     - 生存模式目标行
+   * - 5437
+     - 分钟
+     - 生存模式目标行
+   * - 5451
+     - 歼灭所有敌方玩家
+     - 征服模式目标行
+   * - 5452
+     - 并保留主基地
+     - 生存模式目标行后缀
+
+
+
+``objective`` 地图行示例：
+
+.. code-block:: text
+
+   objective 5430                    ; 探索
+   objective 5435 3000 131           ; 经济：累计采集 3000 黄金
+   objective 5436 15 5437 5452       ; 生存 15 分钟并保留主基地
+   objective 5451                    ; 征服
+
+
+
+----
+
+
+6. 测试与回归
+-------------
+
+
+``soundrts/tests/test_randommap.py`` 覆盖：
+
+- 探索模式生成 ``ancient_ruin``、``rmg_mark_ruin_discovered``、``rmg_all_ruins_discovered_by_allies``，且无征服 `(no_enemy_player_left) (victory)`
+- 经济模式使用 ``has_gathered``；生存目标含 `5452`；征服目标为 `5451`
+- 经济 / 生存模式同样无征服自动胜利
+- 兵营使用 ``computer_only`` 守卫、非 ``neutral``
+- `captured_barracks.capture_hp_threshold == 100`
+- 分享码含胜利字段 `:e:` / `:x:` 等往返解析
+
+坐标相关：``soundrts/tests/test_yield_on_defeat_and_campaign_flags.py`` 中  
+``test_has_entered_one_based_coords_not_confused_with_zero_based_grid_key`` 防止通道图遗迹坐标 bug 回归。
+
+
+----
+
+
+7. 已知限制与注意事项
+---------------------
+
+
+1. 生存模式 AI： invited 电脑仍使用标准 ``res/ai.txt``，无专用「围攻生存玩家」脚本
+2. ``computerN`` 槽位`：POI 较多时可能分配 ``computer11`` 等 ID，若实际电脑玩家数不足会有「unknown player」警告（不影响人类玩家 POI）
+3. 探索 ≠ 战争胜利：全灭敌人不会赢；须由己方阵营找齐遗迹（FFA 仅计本人发现）
+4. 经济胜利：累计 ``resource1`` （金币）采集量`` （``has_gathered``，不含开局自带与遗迹 ``grant_resources``），不含木材；达标后最多约 60 秒触发胜利
+5. 探索胜利：找齐遗迹后最多约 30 秒触发胜利
+6. 模组兼容：换用非标准资源名时，需同步修改 ``\_economic_goal`` 与 ``grant_resources`` 中的 ``resource1`` / ``resource2``
+7. ``探索 + 无 ``ancient_ruin``：模组未定义遗迹类型时不会生成 POI，探索模式无法获胜
+8. 战役 Civ5 元素：城邦商人、交付任务等见战役地图与 `携带物品与剧情交付说明.md <携带物品与剧情交付说明.htm>`_，与 RMG 独立
+
+
+----
+
+
+8. 相关文件索引
+---------------
+
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 内容
+     - 路径
+   * - 玩家：随机地图菜单
+     - [随机地图功能说明.md](随机地图功能说明.htm)
+   * - 规则：POI 单位
+     - ``res/rules.txt`` （``ancient_ruin``、``captured_barracks``）
+   * - 生成器
+     - ``soundrts/randommap.py``
+   * - 菜单
+     - ``soundrts/randommap_menu.py``
+   * - 触发器
+     - ``soundrts/worldplayerbase/triggers.py``
+   * - 夺取逻辑
+     - ``soundrts/combat/damage_effects.py`` （``capture_hp_threshold``）；默认占领命令 ``can_capture`` → ``worldunit/world_order.py``
+   * - 语音常量
+     - ``soundrts/msgparts.py``
+   * - 游戏内 HTML 文档
+     - ``doc/zh/mod/randommap.htm``
+   * - 英文随机地图
+     - [../../en/player/random-map.md](../../en/player/random-map.htm)
+
+
+
+
+----
+
+
+9. 快速对照：我想玩哪种？
+-------------------------
+
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 我想体验…
+     - 推荐设置
+   * - HoMM 式探图拿奖
+     - 胜利模式 探索，宝箱 多，野怪 中
+   * - HoMM 式抢兵营扩军
+     - 任意胜利模式均可；优先找 可占领兵营
+   * - Civ5 式攒经济赢
+     - 胜利模式 经济，模板 宏观，资源 集中
+   * - Civ5 式守到终局
+     - 胜利模式 生存，模板 快速（10 分钟）
+   * - 经典 RTS 歼灭
+     - 胜利模式 征服（默认）
+
+
+
+
+----
+
+
+*文档版本：对应 SoundRTS 1.4.2.x 随机地图实现；若分享码字段或 POI 数量有变更，以 ``soundrts/randommap.py`` 与 ``test_randommap.py`` 为准。*

@@ -1,0 +1,210 @@
+连发攻击（damage_seq）与诸葛弩手
+================================
+
+
+自 SoundRTS 1.3.8.2 起（1.4.3.6 增强），单位可配置连发 / 序列攻击：一次攻击周期内快速射出多段伤害，类似《帝国时代》中的诸葛弩（连弩）。每一发独立判定命中、暴击与 debuff。
+
+官方参考：``mod/modding.rst`` （Combat system → ``damage_seq``）。
+
+
+----
+
+
+1. 概述
+-------
+
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 项目
+     - 行为
+   * - 单次攻击总伤害
+     - 仍等于 ``mdg`` / ``rdg`` 基础值（拆成多段）
+   * - 每轮段数
+     - 最多 6 段（`damage_seq … <次数>`）
+   * - 命中判定
+     - 每段独立 roll
+   * - 冷却
+     - ``mdg_cd`` / ``rdg_cd`` 在整轮连发结束后开始
+   * - 发射音效
+     - 每发一次 ``launch_mdg`` / ``launch_rdg``
+
+
+
+
+----
+
+
+2. rules.txt 配置
+-----------------
+
+
+2.1 语法
+~~~~~~~~
+
+
+.. code-block:: text
+
+   damage_seq mdg|rdg <次数> [(damage d1 d2 ...)] [(interval 秒)]
+
+
+须先定义 ``mdg`` 或 ``rdg``，再写 ``damage_seq``。
+
+2.2 自动均分（1.4.3.6 起）
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+省略 ``(damage …)`` 时按次数均分基础伤害：
+
+.. code-block:: text
+
+   rdg 6
+   damage_seq rdg 3 (interval 0.25)
+
+
+→ 三发，每发 2 点伤害。支持小数基础伤害（如 ``rdg 7.5`` 配 3 次 → 每发 2.5）。
+
+2.3 手动分段
+~~~~~~~~~~~~
+
+
+``(damage …)`` 内为整数，各段之和须等于 ``mdg`` / ``rdg``：
+
+.. code-block:: text
+
+   mdg 12
+   damage_seq mdg 3 (damage 6 3 3) (interval 0.2)
+
+
+若基础伤害为小数（如 ``rdg 2.5``），无法用整数 `` (damage …)`` 表达，请改用自动均分。
+
+2.4 间隔
+~~~~~~~~
+
+
+- `(interval 0.25)` — 每发之间的秒数
+- 多段且未写 interval 或为 0 时，默认 0.25 秒
+
+2.5 远程连发建议
+~~~~~~~~~~~~~~~~
+
+
+- 配合 ``rdg_projectile 1`` 使用投射物逻辑（高地等）
+- ``rdg_cd`` 宜比单发弓箭手更长：连发 DPS 更高，但每轮仍受总 ``rdg`` 与冷却约束
+
+内置示例：
+
+.. code-block:: text
+
+   def repeating_crossbowman
+   class soldier
+   rdg 6
+   rdg_cd 2.5
+   rdg_range 4
+   rdg_projectile 1
+   damage_seq rdg 3 (interval 0.25)
+
+
+
+----
+
+
+3. 音效（style.txt）
+--------------------
+
+
+每一发都会触发 ``launch_rdg`` 或 ``launch_mdg``。可在同一行写多个音效 ID：
+
+.. code-block:: text
+
+   def repeating_crossbowman
+   is_a archer
+   launch_rdg 1042 1042 1042
+
+
+命中 / 未命中音效（``rdg_hit``、``rdg_missed`` 等）仍按各段命中结果照常播放。
+
+
+----
+
+
+4. 内置示例：诸葛弩手（repeating_crossbowman）
+----------------------------------------------
+
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 项目
+     - 说明
+   * - 定义位置
+     - ``res/rules.txt``
+   * - 获得方式
+     - ``archer`` 升级（``can_upgrade_to repeating_crossbowman``）
+   * - 中文名
+     - 诸葛弩手（``tts.txt`` id 5082）
+   * - 数值
+     - 每轮 3×2 远程伤害，装填 2.5 秒，射程 4
+
+
+
+
+----
+
+
+5. 常见错误
+-----------
+
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 现象
+     - 原因 / 处理
+   * - ``damage_seq`` 不生效
+     - 未定义 ``mdg``/``rdg``，或手动分段总和与基础值不符
+   * - 间隔不对
+     - 1.4.3.6 之前 interval 被忽略；请确认版本
+   * - 小数伤害 + 手动 `(damage …)`
+     - 改用手动均分（省略 damage 子句）
+   * - 超过 6 段
+     - 引擎单次攻击上限为 6
+   * - 连发只有一声发射音
+     - 非连发单位正常；连发需 1.4.3.6+ 的按发音效
+
+
+
+
+----
+
+
+6. 相关文件与测试
+-----------------
+
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - 文件
+     - 作用
+   * - ``soundrts/definitions.py``
+     - 解析 rules 中的 ``damage_seq``
+   * - ``soundrts/combat/damage_effects.py``
+     - 调度连发命中与发射音效
+   * - ``soundrts/combat/attack_action.py``
+     - 攻击前摇与冷却
+   * - ``soundrts/tests/test_damage_seq_burst.py``
+     - 解析与回归测试
+
+
+
+运行测试：
+
+.. code-block:: bash
+
+   python -m pytest soundrts/tests/test_damage_seq_burst.py -q

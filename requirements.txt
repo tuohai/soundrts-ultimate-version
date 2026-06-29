@@ -7,6 +7,7 @@ cloudpickle
 requests
 tomli
 docutils
+Pygments
 cx_Freeze
 pytest
 
