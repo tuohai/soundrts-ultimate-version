@@ -590,6 +590,63 @@ Skills (class skill)
 
 1.4.4.6 起支持 ``harm_target``、``harm_area``、``burst``、``push``、``effect buffs`` / ``debuffs`` 等通用效果；官方演示见 ``mods/wuxia/rules.txt``。详见 `技能 / 治疗 / 效果 <skills-and-effects.htm>`_。
 
+**技能触发方式（since 1.4.4.6）**
+
+学会的技能写在 ``can_use_skill``。手动与自动可并存：
+
++------------------+--------------------------------------------------+
+| ``manual_use 1`` | 出现在命令菜单（默认 1）                         |
++------------------+--------------------------------------------------+
+| ``auto_trigger 1`` | 战斗中自动触发                               |
++------------------+--------------------------------------------------+
+| ``trigger_timing`` | 见下表                                       |
++------------------+--------------------------------------------------+
+
++-----------------------+----------------------------------------------+---------------------------+
+| ``trigger_timing``    | 时机                                         | 旧列表（兼容）            |
++=======================+==============================================+===========================+
+| ``on_hit`` （默认）   | 命中敌人后                                   | ``active_trigger_skills`` |
++-----------------------+----------------------------------------------+---------------------------+
+| ``on_attack``         | 发起攻击时附加，普攻继续                     | ``attack_trigger_skills`` |
++-----------------------+----------------------------------------------+---------------------------+
+| ``on_attack_replace`` | 发起攻击时释放，替代本次普攻                 | ``attack_replace_skills`` |
++-----------------------+----------------------------------------------+---------------------------+
+| ``on_damaged``        | 被敌人命中时（被动）                         | ``passive_trigger_skills``|
++-----------------------+----------------------------------------------+---------------------------+
+
+触发概率：``active_trigger_rate`` / ``passive_trigger_rate`` （1–100）；近战/远程可分别写 ``mdg_trigger_rate`` / ``rdg_trigger_rate`` （>0 时覆盖 active 率）。
+
+触发条件：``trigger_condition hp < 30`` （``hp``/``mana`` 按百分比比较）；或简写 ``hp_threshold 30``。**仅** ``on_hit`` / ``on_damaged`` 检查条件；``on_attack`` / ``on_attack_replace`` 不检查。
+
+自动触发同样消耗法力、进入冷却；``ready`` 前摇与手动释放一致。
+
+示例（受击被动）::
+
+    def skill_thorns
+    class skill
+    auto_trigger 1
+    manual_use 0
+    trigger_timing on_damaged
+    passive_trigger_rate 30
+    effect harm_target 10
+    effect_target ask
+
+示例（替代普攻）::
+
+    def skill_flame_strike
+    class skill
+    auto_trigger 1
+    trigger_timing on_attack_replace
+    active_trigger_rate 100
+    effect harm_target mdg
+    effect_target ask
+    effect_range 1
+    mdg 15
+    mana_cost 10
+    cooldown 3
+
+完整说明与四种 timing 的更多示例见 `技能专篇 <skills-and-effects.htm>`_ 的「技能触发方式」一节。
+
 Effects (class effect, since 1.4.1.7)
 --------------------------------------
 

@@ -48,23 +48,231 @@
 ~~~~~~~~~~~~~~~~~
 
 
-同一 ``class skill`` 可同时配置 **手动释放** 与 **自动触发**：
+同一 ``class skill`` 可同时配置 **手动释放** 与 **自动触发**。学会的技能统一写在单位的 ``can_use_skill`` 中。
 
 
 +----+----+
 | 属性 | 说明 |
 +====+====+
-| `manual_use 1` | 出现在命令菜单，玩家可按键释放（默认） |
+| `manual_use 1` | 出现在命令菜单，玩家可按键释放（默认 `1`） |
 +----+----+
-| `auto_trigger 1` | 满足条件时自动触发 |
+| `auto_trigger 1` | 战斗中满足条件时自动触发（默认 `0`） |
 +----+----+
-| `trigger_timing` | `on_hit`、`on_attack`、`on_attack_replace`、`on_damaged` |
+| `trigger_timing` | 自动触发的时机（见下文） |
 +----+----+
 
 
-旧字段 ``active_trigger_skills``、``attack_trigger_skills``、``attack_replace_skills``、``passive_trigger_skills`` 仍兼容，但新 mod 建议统一写入 ``can_use_skill``。
+二者可并存：例如 ``manual_use 1`` + ``auto_trigger 1`` 表示既能手动放，也能在战斗中概率自动触发。
 
-触发率与条件：``active_trigger_rate``、``passive_trigger_rate``、``mdg_trigger_rate`` / ``rdg_trigger_rate``、``trigger_condition``、``hp_threshold``。
+旧字段 ``active_trigger_skills``、``attack_trigger_skills``、``attack_replace_skills``、``passive_trigger_skills`` 仍兼容；新 mod 建议只用 ``can_use_skill`` + 技能上的 ``auto_trigger`` / ``trigger_timing``。
+
+技能触发方式
+------
+
+
+四种自动触发时机（trigger_timing）
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+须同时设置 ``auto_trigger 1`` 与 ``trigger_timing``。默认值为 ``on_hit``。
+
+
++------------------+------+------------+
+| `trigger_timing` | 触发时机 | 旧单位列表（仍兼容） |
++==================+======+============+
+| `on_hit` | 攻击者 **命中敌人之后**（默认） | `active_trigger_skills` |
++------------------+------+------------+
+| `on_attack` | **发起攻击时**附加释放，**普攻照常进行** | `attack_trigger_skills` |
++------------------+------+------------+
+| `on_attack_replace` | **发起攻击时**释放，**替代本次普攻**（技能触发成功则跳过普攻） | `attack_replace_skills` |
++------------------+------+------------+
+| `on_damaged` | **被敌人命中时**（被动） | `passive_trigger_skills` |
++------------------+------+------------+
+
+
+自动触发时会检查法力（``mana_cost``）、冷却（``cooldown``），并消耗法力、进入冷却（与手动释放相同）。若技能写了 ``ready``，自动触发也会先进入前摇再生效。
+
+**注意**：``on_hit`` 仅在攻击者对 **敌人** 造成伤害后触发；``on_damaged`` 在 **被敌人攻击命中** 时由受击方触发。
+
+示例 1：命中后附加伤害（on_hit）
+^^^^^^^^^^^^^^^^^^^^
+
+
+对 **被命中的敌人** 触发时，```effect_target```` 不要写 ````self```（默认为自身）。实战写法：
+
+.. code-block:: text
+
+   def skill_poison_strike
+   class skill
+   auto_trigger 1
+   manual_use 0
+   trigger_timing on_hit
+   active_trigger_rate 30
+   effect debuffs b_poison
+   effect_target ask
+
+
+自动触发时 ```ask```` 会解析为当前受击的敌人。测试见 ````test_wuxia_skills.py```` 的 ````skill_proc```。
+
+示例 2：出手附加 buff（on_attack）
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+.. code-block:: text
+
+   def skill_battle_cry
+   class skill
+   auto_trigger 1
+   manual_use 0
+   trigger_timing on_attack
+   active_trigger_rate 50
+   effect buffs b_battle_cry
+   effect_target self
+
+
+发起攻击时 50% 概率对自身加 buff，**本次普攻仍会继续**。
+
+示例 3：替代普攻（on_attack_replace）
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+.. code-block:: text
+
+   def skill_flame_strike
+   class skill
+   auto_trigger 1
+   manual_use 1
+   trigger_timing on_attack_replace
+   active_trigger_rate 100
+   effect harm_target mdg
+   effect_target ask
+   effect_range 1
+   mdg 15
+   cooldown 3
+   mana_cost 10
+
+
+攻击开始时尝试释放；成功则 **本次不进行普通攻击**。可保留 ``manual_use 1`` 以便玩家也能从菜单手动施放。
+
+示例 4：受击反击（on_damaged）
+^^^^^^^^^^^^^^^^^^^^^
+
+
+.. code-block:: text
+
+   def skill_thorns
+   class skill
+   auto_trigger 1
+   manual_use 0
+   trigger_timing on_damaged
+   passive_trigger_rate 30
+   effect harm_target 10
+   effect_target ask
+
+
+被敌人命中时 30% 概率对 **攻击者** 造成 10 点固定伤害（```effect_target ask``` 在被动触发时解析为攻击者）。
+
+示例 5：手动 + 自动并存
+^^^^^^^^^^^^^^
+
+
+.. code-block:: text
+
+   def skill_heal_proc
+   class skill
+   auto_trigger 1
+   manual_use 1
+   trigger_timing on_hit
+   active_trigger_rate 15
+   effect buffs b_small_heal
+   effect_target self
+   mana_cost 20
+   cooldown 8
+
+
+玩家可按技能键手动治疗；战斗中命中敌人时另有 15% 概率自动触发（仍消耗法力并 respect 冷却）。
+
+触发概率
+~~~~
+
+
+
++----+------+----+
+| 属性 | 适用时机 | 说明 |
++====+======+====+
+| `active_trigger_rate` | `on_hit`、`on_attack`、`on_attack_replace` | 触发概率 1–100（默认 100） |
++----+------+----+
+| `passive_trigger_rate` | `on_damaged` | 触发概率 1–100（默认 100） |
++----+------+----+
+| `mdg_trigger_rate` | 上述主动类时机 | 若 > 0，**近战攻击时优先使用**，覆盖 `active_trigger_rate` |
++----+------+----+
+| `rdg_trigger_rate` | 上述主动类时机 | 若 > 0，**远程攻击时优先使用**，覆盖 `active_trigger_rate` |
++----+------+----+
+
+
+示例：近战 80%、远程 40% 的命中触发：
+
+.. code-block:: text
+
+   active_trigger_rate 100
+   mdg_trigger_rate 80
+   rdg_trigger_rate 40
+   trigger_timing on_hit
+
+
+触发条件
+~~~~
+
+
+
++----+----+
+| 属性 | 说明 |
++====+====+
+| `trigger_condition` | 条件表达式，格式 `属性 运算符 值`（三词，空格分隔） |
++----+----+
+| `hp_threshold` | 简写：生命百分比 ≤ 阈值时才触发（整数，如 `30` 表示 30% 以下） |
++----+----+
+
+
+``trigger_condition`` 语法与 buff 相同。``hp``、``mana`` 在条件中按 **百分比** 比较：
+
+.. code-block:: text
+
+   trigger_condition hp < 30
+
+
+等价于简写 ``hp_threshold 30``（生命 ≤ 30% 时方可触发）。
+
+**限制**：``trigger_condition`` / ``hp_threshold`` 目前由 ``on_hit`` 与 ``on_damaged`` 路径检查；``on_attack`` / ``on_attack_replace`` **不**检查这两项条件。
+
+前摇（ready）
+~~~~~~~~~
+
+
+.. code-block:: text
+
+   ready 2
+
+
+自动触发与手动释放均会先等待 ``ready`` 秒再执行 ``effect``；可在技能 ``style.txt`` 写 ``ready <音效ID>`` 在前摇开始时播放。
+
+与 buff 攻击触发的区别
+~~~~~~~~~~~~~~
+
+
+
++----+------+------+
+| 机制 | 配置位置 | 典型用途 |
++====+======+======+
+| 技能 `auto_trigger` | `class skill` + `can_use_skill` | 释放完整技能 effect（harm、buff、deploy 等） |
++----+------+------+
+| 攻击附带 buff | 单位 `attack_trigger_buffs` / `attack_replace_buffs` 等 | 仅施加 buff/debuff，无独立技能 def |
++----+------+------+
+| buff `is_active` / `is_passive` | `class buff` | buff 自身在攻击/受击时叠加 |
++----+------+------+
+
+
+同一单位可同时使用技能自动触发与攻击附带 buff；二者独立判定概率与冷却。
 
 目标与范围
 ~~~~~
@@ -336,22 +544,6 @@ summon — 召唤单位
 
 
 两者均走战斗管线，但配置入口与触发时机完全不同，请勿混用语法。
-
-自动触发示例
-~~~~~~
-
-
-.. code-block:: text
-
-   def passive_thorns
-   class skill
-   auto_trigger 1
-   manual_use 0
-   trigger_timing on_damaged
-   passive_trigger_rate 30
-   effect harm_target 10
-   effect_target self
-
 
 技能书与升级解锁
 ~~~~~~~~

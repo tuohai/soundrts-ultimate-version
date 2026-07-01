@@ -606,6 +606,49 @@ Define skills with ``class skill`` instead of ``class ability``::
 
 Since 1.4.4.6: ``harm_target``, ``harm_area``, ``burst``, ``push``, ``effect buffs`` / ``debuffs``, etc. Demo mod: ``mods/wuxia/rules.txt``. See `Skills guide <../../zh/mod/skills-and-effects.htm>`_.
 
+**Skill triggers (since 1.4.4.6)**
+
+Learned skills go in ``can_use_skill``. Manual and auto can coexist (``manual_use 1`` + ``auto_trigger 1``).
+
++--------------------+------------------------------------------------+
+| ``manual_use 1``   | Show in command menu (default 1)               |
++--------------------+------------------------------------------------+
+| ``auto_trigger 1`` | Fire automatically in combat                   |
++--------------------+------------------------------------------------+
+| ``trigger_timing`` | When to auto-fire (see table)                  |
++--------------------+------------------------------------------------+
+
++-------------------------+----------------------------------------------+---------------------------+
+| ``trigger_timing``      | When                                         | Legacy list               |
++=========================+==============================================+===========================+
+| ``on_hit`` (default)    | After hitting an enemy                       | ``active_trigger_skills`` |
++-------------------------+----------------------------------------------+---------------------------+
+| ``on_attack``           | At attack start; normal attack continues     | ``attack_trigger_skills`` |
++-------------------------+----------------------------------------------+---------------------------+
+| ``on_attack_replace``   | At attack start; replaces this attack        | ``attack_replace_skills`` |
++-------------------------+----------------------------------------------+---------------------------+
+| ``on_damaged``          | When hit by an enemy (passive)               | ``passive_trigger_skills``|
++-------------------------+----------------------------------------------+---------------------------+
+
+Rates: ``active_trigger_rate`` / ``passive_trigger_rate`` (1–100); optional ``mdg_trigger_rate`` / ``rdg_trigger_rate`` override the active rate for melee/ranged.
+
+Conditions: ``trigger_condition hp < 30`` (``hp``/``mana`` compared as percent) or ``hp_threshold 30``. Checked only for ``on_hit`` and ``on_damaged``, not for ``on_attack`` / ``on_attack_replace``.
+
+Auto triggers consume mana and respect cooldown; ``ready`` wind-up applies like manual casts.
+
+Example (passive on hit taken)::
+
+    def skill_thorns
+    class skill
+    auto_trigger 1
+    manual_use 0
+    trigger_timing on_damaged
+    passive_trigger_rate 30
+    effect harm_target 10
+    effect_target ask
+
+Full reference: `Skills guide <../../zh/mod/skills-and-effects.htm>`_ (section on trigger modes).
+
 Effects (class effect, since 1.4.1.7)
 --------------------------------------
 
