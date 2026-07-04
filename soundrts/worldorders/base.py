@@ -9,7 +9,7 @@ from soundrts.lib.nofloat import square_of_distance
 from ..definitions import MAX_NB_OF_RESOURCE_TYPES, VIRTUAL_TIME_INTERVAL, rules
 from ..lib.nofloat import to_int
 from ..worldaction import AttackAction
-from ..worldresource import Corpse, Deposit, Meadow
+from ..worldresource import Corpse, Deposit
 from ..worldroom import Square
 from ..lib.log import info, warning
 from ..lib.nofloat import PRECISION, int_distance
@@ -181,22 +181,23 @@ class Order:
         try:
             # Square 或 ZoomTarget 指向方格内坐标都视为需要强制进入方格
             from ..worldroom import Square, ZoomTarget
-            from ..worldresource import Meadow, Deposit
+            from ..worldresource import Deposit, is_building_land
             force_enter_square = (
                 isinstance(target, Square) or
                 isinstance(target, ZoomTarget) or
-                (self.keyword == "build" and isinstance(target, Meadow)) or
+                (self.keyword == "build" and is_building_land(target)) or
                 (self.keyword == "gather" and (
                     isinstance(target, Deposit) or
                     (getattr(target, "is_a_building", False) and getattr(target, "resource_type", None))
                 )) or
-                (self.keyword == "repair" and getattr(target, "is_repairable", False)) or
+                (self.keyword in ("repair", "build_phase_two") and getattr(target, "is_repairable", False)) or
                 (self.keyword == "attack") or
                 (self.keyword == "capture") or
                 (self.keyword == "herd" and getattr(target, "herdable", 0)) or
                 # 关键补充：当是普通 go 到当前方格中的对象（建筑/草地/资源/单位）时，也必须允许进入该方格
                 (self.keyword == "go" and (
-                    isinstance(target, (Square, ZoomTarget, Meadow, Deposit)) or
+                    isinstance(target, (Square, ZoomTarget, Deposit)) or
+                    is_building_land(target) or
                     getattr(target, "is_a_building", False) or
                     getattr(target, "is_vulnerable", False)
                 ))
@@ -248,21 +249,22 @@ class Order:
         force_enter_square = False
         try:
             from ..worldroom import Square, ZoomTarget
-            from ..worldresource import Meadow, Deposit
+            from ..worldresource import Deposit, is_building_land
             force_enter_square = (
                 isinstance(target, Square) or
                 isinstance(target, ZoomTarget) or
-                (self.keyword == "build" and isinstance(target, Meadow)) or
+                (self.keyword == "build" and is_building_land(target)) or
                 (self.keyword == "gather" and (
                     isinstance(target, Deposit) or
                     (getattr(target, "is_a_building", False) and getattr(target, "resource_type", None))
                 )) or
-                (self.keyword == "repair" and getattr(target, "is_repairable", False)) or
+                (self.keyword in ("repair", "build_phase_two") and getattr(target, "is_repairable", False)) or
                 (self.keyword == "attack") or
                 (self.keyword == "capture") or
                 (self.keyword == "herd" and getattr(target, "herdable", 0)) or
                 (self.keyword == "go" and (
-                    isinstance(target, (Square, ZoomTarget, Meadow, Deposit)) or
+                    isinstance(target, (Square, ZoomTarget, Deposit)) or
+                    is_building_land(target) or
                     getattr(target, "is_a_building", False) or
                     getattr(target, "is_vulnerable", False)
                 ))
@@ -274,7 +276,7 @@ class Order:
             # 尝试直接进入目标所在方格，不使用避敌逻辑
             self.unit.start_moving_to(target, avoid=False)
             if self.unit.is_idle and self.keyword in (
-                "go", "patrol", "herd", "gather", "repair", "attack", "capture"
+                "go", "patrol", "herd", "gather", "repair", "build_phase_two", "attack", "capture"
             ):
                 next_square = self.unit.next_square(target)
                 if next_square is not None:

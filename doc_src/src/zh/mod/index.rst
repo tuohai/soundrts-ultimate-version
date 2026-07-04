@@ -19,16 +19,18 @@ Mod 规则
 
 4. `地图入门与进阶 <map-guide.htm>`_ — 第一张多人图、触发器、子格地形
 5. `地图制作手册 <mapmaking.htm>`_ — 语法大全（权威）
-6. `随机地图 <randommap.htm>`_ — RMG 参数与分享码
+6. `方格地形与建造用地 <building-land-terrain.htm>`_ — ``class terrain`` / ``building_land`` / ``square_terrain``
+7. `水上铺桥 <water-bridge-building.htm>`_ — 逐格桥段、``is_buildable_on_water_only`` / ``bridge_terrain``
+8. `随机地图 <randommap.htm>`_ — RMG 参数与分享码
 
 战役
 
-7. `战役入门与进阶 <campaign-guide.htm>`_ — 多章结构、目标、物品、NPC、合作、跨章携带
+9. `战役入门与进阶 <campaign-guide.htm>`_ — 多章结构、目标、物品、NPC、合作、跨章携带
 
 其它
 
-8. `AI 制作 <aimaking.htm>`_ · `独立服务器 <server.htm>`_
-9. `版本说明 <../relnotes.htm>`_
+10. `AI 制作 <aimaking.htm>`_ · `独立服务器 <server.htm>`_
+11. `版本说明 <../relnotes.htm>`_
 
 元进度与界面（按需）
 --------------------

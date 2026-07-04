@@ -106,11 +106,34 @@ class Exit(Entity):
         self._blockers.remove(o)
 
     def delete(self):
-        self.place.exits.remove(self)
-        if self.other_side:
-            self.other_side.other_side = None
-            self.other_side.delete()
-        Entity.delete(self)
+        other_id = self._other_side_id
+        self._other_side_id = None
+        place = self.place
+        if place is not None:
+            if self in place.exits:
+                place.exits.remove(self)
+            if self in place.objects:
+                place.objects.remove(self)
+        if self.id is not None:
+            self.world.objects.pop(self.id, None)
+        self.world.unregister_entity(self)
+        self.place = None
+        if other_id is None:
+            return
+        other = self.world.objects.get(other_id)
+        if other is None or other is self:
+            return
+        other._other_side_id = None
+        other_place = other.place
+        if other_place is not None:
+            if other in other_place.exits:
+                other_place.exits.remove(other)
+            if other in other_place.objects:
+                other_place.objects.remove(other)
+        if other.id is not None:
+            self.world.objects.pop(other.id, None)
+        self.world.unregister_entity(other)
+        other.place = None
 
 
 def passage(places, exit_type):

@@ -10,6 +10,7 @@ from .. import msgparts as mp
 from ..definitions import MAX_NB_OF_RESOURCE_TYPES, rules, style
 from ..lib import group
 from ..lib.log import exception, info, warning
+from ..lib.square_terrain_rules import squares_same_ground_region
 from ..lib.msgs import encode_msg, nb2msg
 from ..lib.nofloat import PRECISION, square_of_distance, to_int
 from ..worldplayerstats import Stats
@@ -1328,12 +1329,12 @@ class Player:
                     square = queue.pop(0)
                     region.squares.append(square)
                     
-                    # 检查相邻方格
+                    # 检查相邻方格（浅滩/大桥 is_water+is_ground 与陆地同属地面区域）
                     for neighbor in square.neighbors:
-                        if (neighbor not in self.visited and 
-                            # 确保只添加相同类型的地形到同一区域
-                            neighbor.is_water == region.is_water and
-                            neighbor.is_ground == region.is_ground):
+                        if (
+                            neighbor not in self.visited
+                            and squares_same_ground_region(square, neighbor)
+                        ):
                             self.visited.add(neighbor)
                             queue.append(neighbor)
                 
@@ -1348,20 +1349,14 @@ class Player:
         if region1.squares and region2.squares:
             square1 = region1.squares[0]
             square2 = region2.squares[0]
-            
-            # 如果一个是水域一个是陆地，则不连通
-            if square1.is_water != square2.is_water:
+            if not squares_same_ground_region(square1, square2):
                 return False
-            # 如果一个是地面一个不是地面，则不连通
-            if square1.is_ground != square2.is_ground:
-                return False
-        
+
         # 检查区域1的每个方格是否与区域2的方格相邻
         for square1 in region1.squares:
             for square2 in region2.squares:
                 if square2 in square1.neighbors:
-                    # 再次确认这两个方格的地形类型相同
-                    if square1.is_water == square2.is_water and square1.is_ground == square2.is_ground:
+                    if squares_same_ground_region(square1, square2):
                         return True
         return False
     

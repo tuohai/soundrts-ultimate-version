@@ -504,12 +504,12 @@ def test_vs_attributes_interpret_includes_ready_cd_range():
 
 def test_container_unit_attack_sound_supported():
     """1.3.8.2 修复了容器内单位攻击外部目标无命中音效的 bug。
-    通过 allow_units_attack 字段开放容器内单位攻击。"""
+    通过 passenger_attack_types 字段开放容器内单位攻击。"""
     src = _source("soundrts", "definitions.py")
-    assert '"allow_units_attack"' in src
+    assert '"passenger_attack_types"' in src
     # 字段实际在 worldunit 类默认
     src2 = _source("soundrts", "worldunit", "worldcreature.py")
-    assert "allow_units_attack" in src2
+    assert "passenger_attack_types" in src2
 
 
 # =============================================================================
@@ -594,25 +594,31 @@ def test_damage_seq_validates_total_matches_base_damage():
     assert "sum(raw_damages) == base_damage" in block
 
 
-def test_allow_units_attack_and_add_supported():
-    """1.3.8.2：allow_units_attack（容器内允许攻击的单位）/ allow_units_add（每装载一名单位给的属性加成）。"""
+def test_passenger_attack_types_and_load_bonus_supported():
+    """1.3.8.2：passenger_attack_types（容器内允许攻击的单位）/ load_bonus（每装载一名单位给容器的属性加成）。"""
     src = _source("soundrts", "definitions.py")
-    # 允许攻击：string_list_properties
-    assert '"allow_units_attack"' in src
-    # allow_units_add 在 key_value_properties
-    assert '"allow_units_add"' in src
-    # 配套使用
+    assert '"passenger_attack_types"' in src
+    assert '"load_bonus"' in src
+    assert '"passenger_bonus"' in src
     src2 = _source("soundrts", "worldunit", "world_transport.py")
-    assert "allow_units_add" in src2
+    assert "load_bonus" in src2
+    assert "passenger_bonus" in src2
 
 
-def test_allow_units_add_applies_to_transport_loaded_units():
+def test_load_bonus_applies_to_transport_loaded_units():
     """1.3.8.2：每装载一名单位都给载具属性加成；卸载时逆转。"""
     src = _source("soundrts", "worldunit", "world_transport.py")
     block = _section(src, "def unload_all", "def _can_load_from_terrain", "def load_all")
-    # 卸载时取消加成
-    assert "allow_units_add" in block
+    assert "load_bonus" in block
     assert "_bonus_stats" in block
+
+
+def test_passenger_bonus_applies_to_loaded_unit():
+    """进入容器后给乘客属性加成；卸载时回滚。"""
+    src = _source("soundrts", "worldunit", "world_transport.py")
+    assert "passenger_bonus" in src
+    assert "_passenger_bonus_stats" in src
+    assert "_remove_transport_bonus" in src
 
 
 def test_upgrade_effect_bonus_multi_attr_pairs():

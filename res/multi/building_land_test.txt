@@ -1,0 +1,58 @@
+; Building land test map
+;
+; Passage rules (engine wrap):
+;   west_east list on column f wraps to column a on the SAME row.
+;   south_north list on row 3 wraps to row 1 on the SAME column (e3↔e1 skip e2!).
+;   Each name in a west_east list also opens one step EAST from that square.
+;   Each name in a south_north list also opens one step NORTH from that square.
+;   => Never put x3 or fY in path lists; end chains at e2 / c2 / d2 / b2 / a2.
+;
+;  a     b     c     d     e
+; 1 P1        site  mdw   P2
+; 2       hg+  bridge mix  forest
+; 3 P3         hub           P4
+
+title Building Land Terrain Test
+objective 145 88
+
+square_width 12
+nb_columns 6
+nb_lines 3
+
+; row 1 spurs (single step east from a1 / d1 only)
+west_east_paths a1
+west_east_paths d1
+
+; row 2 lane (stop lists at e2 / c2 — no f column, no row-3 names)
+west_east_paths b2 c2
+west_east bridge c2 d2
+west_east_paths d2
+south_north_paths b1 b2
+south_north_paths c1 c2
+south_north_paths d1 d2
+south_north_paths e1 e2
+
+; row 3 hub (stop at e3 — do not extend to f3)
+west_east_paths a3 b3 c3
+west_east_paths d3
+
+; base columns (stop at row-2 names — row 3 reached via a2→a3, not a3 in list)
+south_north_paths a1 a2
+south_north_paths e1 e2
+
+goldmine 500 a1 e1 a3 e3
+
+building_land build_site
+nb_meadows_by_square 0
+
+nb_players_min 2
+nb_players_max 4
+starting_squares a1 e1 a3 e3
+starting_units townhall house 2 peasant
+starting_resources 500 200
+global_population_limit 50
+
+additional_build_sites a1 e1 a3 e3 c1 c2 d2 e2
+additional_meadows d1 d2
+high_grounds c2
+woods 50 e2

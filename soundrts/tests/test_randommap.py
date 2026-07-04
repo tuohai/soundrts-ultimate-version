@@ -842,3 +842,87 @@ def test_map_generated_voice_msg_includes_history_hint():
     assert mp.RMG_MAP_GENERATED[0] in msg
     assert mp.HISTORY_EXPLANATION[0] in msg
     assert mp.RMG_SHARE_CODE[0] in msg
+
+
+def test_custom_template_loads_and_generates(tmp_path):
+    from soundrts.rmg_templates import parse_template_text, reload_custom_templates
+    from soundrts.randommap import _builtin_rmg_specs, refresh_rmg_templates
+
+    template_dir = tmp_path / "cfg" / "randommap"
+    template_dir.mkdir(parents=True)
+    (template_dir / "desert.txt").write_text(
+        "random_map_template\n"
+        "name desert_skirmish\n"
+        "extends fast\n"
+        "title desert skirmish\n"
+        "terrain_modes random grass marsh\n",
+        encoding="utf-8",
+    )
+    old_cwd = os.getcwd()
+    try:
+        os.chdir(tmp_path)
+        reload_custom_templates(_builtin_rmg_specs())
+        entry = parse_template_text(
+            (template_dir / "desert.txt").read_text(encoding="utf-8"),
+            builtin_specs=_builtin_rmg_specs(),
+        )
+        assert entry.name == "desert_skirmish"
+        assert entry.spec.starting_units.startswith("townhall 3")
+        text, _ = generate_definition(
+            RandomMapConfig(template="desert_skirmish", terrain="marsh", seed=101)
+        )
+        assert "terrain marsh" in text
+        assert "starting_units townhall 3" in text
+    finally:
+        os.chdir(old_cwd)
+        refresh_rmg_templates()
+
+
+def test_custom_template_share_code_rmg2(tmp_path):
+    template_dir = tmp_path / "cfg" / "randommap"
+    template_dir.mkdir(parents=True)
+    (template_dir / "desert.txt").write_text(
+        "random_map_template\nname desert_skirmish\nextends fast\n",
+        encoding="utf-8",
+    )
+    old_cwd = os.getcwd()
+    try:
+        os.chdir(tmp_path)
+        from soundrts.randommap import refresh_rmg_templates
+
+        refresh_rmg_templates()
+        cfg = RandomMapConfig(template="desert_skirmish", terrain="marsh", seed=4242)
+        code = encode_share_code(cfg, 4242)
+        assert code.startswith("RMG2:")
+        restored = decode_share_code(code)
+        assert restored.template == "desert_skirmish"
+        assert restored.terrain == "marsh"
+        assert restored.seed == 4242
+    finally:
+        os.chdir(old_cwd)
+        from soundrts.randommap import refresh_rmg_templates
+
+        refresh_rmg_templates()
+
+
+def test_terrain_choices_include_rules_rmg_terrains():
+    from pathlib import Path
+
+    from soundrts.definitions import _get_base_classes, rules
+    from soundrts.randommap import terrain_choices_for_template
+
+    _reset_base_game_rules()
+    choices = terrain_choices_for_template("standard")
+    assert "random" in choices
+    assert "grass" in choices
+    assert "marsh" in choices
+    assert "mountain" in choices
+
+    base = Path("res/rules.txt").read_text(encoding="utf-8")
+    rules.load(
+        base,
+        "def rocky_plain\nclass terrain\nis_dynamic 1\nrmg_terrain 1\n",
+        base_classes=_get_base_classes(),
+    )
+    choices = terrain_choices_for_template("standard")
+    assert "rocky_plain" in choices

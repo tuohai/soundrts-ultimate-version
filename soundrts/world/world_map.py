@@ -12,7 +12,7 @@ from ..worldentity import COLLISION_RADIUS
 from ..worldexit import passage
 from ..worldorders import ORDERS_DICT
 from ..worldplayerbase import Player
-from ..worldresource import Meadow
+from ..worldresource import create_building_land
 from ..worldroom import Square
 from ..lib import collision
 from ..lib.map_tokens import expand_deposit_plurals
@@ -23,7 +23,6 @@ from ..lib.subcell_terrain import (
     parse_location_token,
     format_subcell_suffix,
 )
-
 
 class WorldMapMixin:
     """World地图管理混入类"""
@@ -124,8 +123,21 @@ class WorldMapMixin:
         for (square_key, cell), t in self.sub_terrain.items():
             square = self.grid.get(square_key)
             if square is not None and _valid_cell(cell):
+                from ..lib.square_terrain_rules import (
+                    apply_terrain_map_flags,
+                    resolve_terrain_speed,
+                )
+
                 square.subcells.set_type_name(cell[0], cell[1], t)
+                apply_terrain_map_flags(square, t, cell[0], cell[1])
+                square.subcells.set_terrain_speed(
+                    cell[0],
+                    cell[1],
+                    resolve_terrain_speed(t, self.sub_terrain_speed.get((square_key, cell))),
+                )
         for (square_key, cell), t in self.sub_terrain_speed.items():
+            if (square_key, cell) in self.sub_terrain:
+                continue
             square = self.grid.get(square_key)
             if square is not None and _valid_cell(cell):
                 square.subcells.set_terrain_speed(cell[0], cell[1], t)
@@ -155,7 +167,65 @@ class WorldMapMixin:
                 if _valid_cell(cell):
                     square.subcells.set_is_air(cell[0], cell[1], False)
 
+    def _queue_dynamic_terrain_spawns(self):
+        """Queue objects implied by dynamic ``terrain`` via ``square_terrain``."""
+        from ..lib.square_terrain_rules import (
+            terrain_deposit_spawn_qty,
+            terrain_is_dynamic,
+            terrain_map_object_spawns,
+            terrain_object_spawn_kind,
+        )
+
+        self.terrain_building_land = []
+        self.terrain_map_units = []
+        for square_key, terrain_name in self.terrain.items():
+            if not terrain_is_dynamic(terrain_name):
+                continue
+            for obj_type, count in terrain_map_object_spawns(terrain_name).items():
+                kind = terrain_object_spawn_kind(obj_type)
+                if kind == "building_land":
+                    for _ in range(count):
+                        self.terrain_building_land.append((square_key, obj_type))
+                elif kind == "deposit":
+                    qty = terrain_deposit_spawn_qty(obj_type)
+                    for _ in range(count):
+                        self.map_objects.append([square_key, obj_type, qty])
+                elif kind == "unit":
+                    self.terrain_map_units.append((square_key, obj_type, count))
+
+    def _ensure_map_terrain_player(self):
+        player = getattr(self, "_map_terrain_player", None)
+        if player is not None and player in getattr(self, "players", []):
+            return player
+        from ..worldclient import DummyClient
+
+        client = DummyClient(neutral=True, alliance=None)
+        client.create_player(self)
+        self._map_terrain_player = client.player
+        return self._map_terrain_player
+
+    def _spawn_terrain_map_units(self):
+        units = getattr(self, "terrain_map_units", None) or []
+        if not units:
+            return
+        player = self._ensure_map_terrain_player()
+        for square_key, obj_type, count in units:
+            if square_key not in self.grid:
+                continue
+            entity_class = rules.unit_class(obj_type)
+            if entity_class is None:
+                continue
+            square = self.grid[square_key]
+            for _ in range(count):
+                player.add_unit(entity_class, square)
+
     def _create_squares_and_grid(self):
+        from ..lib.square_terrain_rules import (
+            apply_terrain_map_flags,
+            resolve_terrain_speed,
+            terrain_is_dynamic,
+        )
+
         self.grid = {}
         for col in range(self.nb_columns):
             for row in range(self.nb_lines):
@@ -165,10 +235,16 @@ class WorldMapMixin:
                 # 同时保留 (col,row) 作为索引
                 self.grid[(col, row)] = square
                 square.high_ground = square.name in self.high_grounds
-                if square.name in self.terrain:
-                    square.type_name = self.terrain[square.name]
-                if square.name in self.terrain_speed:
-                    square.terrain_speed = self.terrain_speed[square.name]
+                terrain_name = self.terrain.get(square.name)
+                if terrain_name:
+                    apply_terrain_map_flags(square, terrain_name)
+                    if not terrain_is_dynamic(terrain_name):
+                        square.type_name = terrain_name
+                        square.fixed_terrain = True
+                square.terrain_speed = resolve_terrain_speed(
+                    terrain_name,
+                    self.terrain_speed.get(square.name),
+                )
                 if square.name in self.terrain_cover:
                     square.terrain_cover = self.terrain_cover[square.name]
                 if square.name in self.water_squares:
@@ -185,17 +261,64 @@ class WorldMapMixin:
         }
         self.collision["water"] = self.collision["ground"]
 
-    def _meadows(self):
-        m = []
+    @staticmethod
+    def _nb_by_square_land_type(keyword):
+        from ..worldresource import nb_by_square_land_type
+
+        return nb_by_square_land_type(keyword)
+
+    def _sync_map_building_land_default(self):
+        """Infer ``world.building_land`` from map keywords when the map omits ``building_land``."""
+        if getattr(self, "_map_building_land_explicit", False):
+            return
+        nb = getattr(self, "nb_building_land_by_square", None) or {}
+        if len(nb) == 1:
+            self.building_land = next(iter(nb.keys()))
+
+    def _building_land_placements(self):
+        placements = []
+        default_type = getattr(self, "building_land", "meadow")
+        nb_by_square = getattr(self, "nb_building_land_by_square", {})
         for square in sorted([x for x in list(self.grid.keys()) if isinstance(x, str)]):
-            m.extend([square] * self.nb_meadows_by_square)
-        m.extend(self.additional_meadows)
+            placements.extend([(square, default_type)] * self.nb_meadows_by_square)
+            for land_type, count in nb_by_square.items():
+                placements.extend([(square, land_type)] * count)
+        placements.extend((square, "meadow") for square in self.additional_meadows)
+        placements.extend(
+            (square, "build_site") for square in self.additional_build_sites
+        )
+        placements.extend(getattr(self, "terrain_building_land", []))
+        placements.extend(getattr(self, "additional_building_land", []))
+        counts = {}
+        for square, land_type in placements:
+            counts[(square, land_type)] = counts.get((square, land_type), 0) + 1
         for square in self.remove_meadows:
-            if square in m:
-                m.remove(square)
-        return m
+            key = (square, "meadow")
+            if key in counts:
+                counts[key] -= 1
+                if counts[key] <= 0:
+                    del counts[key]
+        result = []
+        for (square, land_type), count in counts.items():
+            result.extend([(square, land_type)] * count)
+        return result
+
+    def _meadows(self):
+        return [square for square, land_type in self._building_land_placements() if land_type == "meadow"]
+
+    def _deposit_spawn_totals(self):
+        totals = {}
+        for z, cls, _n in self.map_objects:
+            if z not in self.grid:
+                continue
+            if rules.get(cls, "class") == ["item"]:
+                continue
+            totals[(z, cls)] = totals.get((z, cls), 0) + 1
+        return totals
 
     def _create_resources(self):
+        deposit_totals = self._deposit_spawn_totals()
+        deposit_index = {}
         for z, cls, n in self.map_objects:
             # 检查坐标有效性
             if z not in self.grid:
@@ -226,19 +349,38 @@ class WorldMapMixin:
                                                self.grid[z].y + offset_y)
                             # 物品不需要建筑用地
                     else:
-                        # 创建资源实例时传入数量参数
-                        resource = entity_class(self.grid[z], n if n is not None else 0)
-                        
+                        square = self.grid[z]
+                        key = (z, cls)
+                        total = deposit_totals.get(key, 1)
+                        idx = deposit_index.get(key, 0)
+                        deposit_index[key] = idx + 1
+                        if total > 1 and self.time == 0:
+                            x, y = square.deposit_arrange_xy(idx, total)
+                            resource = entity_class.__new__(entity_class)
+                            resource.collision = 0
+                            resource.__init__(
+                                square, n if n is not None else 0, x, y
+                            )
+                        else:
+                            x, y = square.find_free_space(
+                                "ground", square.x, square.y
+                            )
+                            if x is None:
+                                warning(f"no space for {cls} on {z}")
+                                continue
+                            resource = entity_class(
+                                square, n if n is not None else 0, x, y
+                            )
+
                         # 设置建筑用地
-                        resource.building_land = Meadow(self.grid[z])
+                        resource.building_land = create_building_land(self.grid[z])
                         resource.building_land.delete()
             except Exception as e:
                 warning(f"couldn't create entity {cls}: {e}")
                 continue
-                
-        # 创建草地
-        for z in self._meadows():
-            Meadow(self.grid[z])
+
+        for z, land_type in self._building_land_placements():
+            create_building_land(self.grid[z], type_name=land_type)
 
     def _arrange_resources_symmetrically(self):
         xc = self.nb_columns * 10 // 2
@@ -290,11 +432,19 @@ class WorldMapMixin:
                 self._create_sn_passage(i, t)
 
     def _build_map(self):
+        self._queue_dynamic_terrain_spawns()
         self._create_squares_and_grid()
         self._create_resources()
+        self._spawn_terrain_map_units()
         self._arrange_resources_symmetrically()
         self._create_passages()
         self._create_graphs()
+        self._update_all_auto_terrain()
+
+    def _update_all_auto_terrain(self):
+        for s in self.squares:
+            if not getattr(s, "fixed_terrain", False):
+                s.update_terrain()
 
     def _strip_population_from_items(self, items):
         population = 0
@@ -573,6 +723,7 @@ class WorldMapMixin:
         squares_words = [
             "starting_squares",
             "additional_meadows",
+            "additional_build_sites",
             "remove_meadows",
         ]
 
@@ -719,9 +870,68 @@ class WorldMapMixin:
                         warning("nb_rows is deprecated, use nb_columns instead")
                 except:
                     map_error(line, "%s must be an integer" % w)
+            elif (land_type := self._nb_by_square_land_type(w)) is not None:
+                from ..worldresource import (
+                    building_land_types,
+                    normalize_building_land_type_name,
+                )
+
+                try:
+                    count = int(words[1])
+                except (IndexError, ValueError):
+                    map_error(line, "%s requires an integer count" % w)
+                land_type = normalize_building_land_type_name(land_type)
+                if land_type not in building_land_types():
+                    map_error(
+                        line,
+                        "unknown building_land type %r for %s (known: %s)"
+                        % (
+                            land_type,
+                            w,
+                            ", ".join(sorted(building_land_types())),
+                        ),
+                    )
+                else:
+                    self.nb_building_land_by_square[land_type] = count
             elif w == "victory_mode":
                 mode = words[1].lower() if len(words) >= 2 else "conquest"
                 setattr(self, w, mode)
+            elif w == "building_land":
+                from ..worldresource import building_land_types
+
+                land_type = words[1].lower() if len(words) >= 2 else None
+                if land_type is None:
+                    from ..worldresource import default_building_land_type
+
+                    land_type = default_building_land_type()
+                if land_type not in building_land_types():
+                    map_error(
+                        line,
+                        "building_land must be one of: %s"
+                        % ", ".join(sorted(building_land_types())),
+                    )
+                else:
+                    self.building_land = land_type
+                    self._map_building_land_explicit = True
+            elif w == "additional_building_land":
+                from ..worldresource import building_land_types
+
+                if len(words) < 3:
+                    map_error(line, "additional_building_land requires a type and squares")
+                land_type = words[1].lower()
+                if land_type not in building_land_types():
+                    map_error(
+                        line,
+                        "unknown building_land type: %s" % land_type,
+                    )
+                replaced = [
+                    self.name_to_square.get(tok, tok) for tok in words[2:]
+                ]
+                squares = self._normalize_square_list(replaced)
+                check_squares(line, squares)
+                self.additional_building_land.extend(
+                    (square, land_type) for square in squares
+                )
             elif w in ["south_north", "west_east"]:
                 # 支持别名
                 replaced = []
@@ -1099,6 +1309,8 @@ class WorldMapMixin:
             
             # 用处理后的触发器数据调用_add_trigger
             self._add_trigger(t)
+
+        self._sync_map_building_land_default()
 
     def load_and_build_map(self, map):
         res.set_map(map)

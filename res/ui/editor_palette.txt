@@ -1,4 +1,5 @@
 ; terrain palette used by the map editor
+; ``style`` should match a ``class terrain`` name in rules.txt when possible.
 
 ; The defaults are:
 ; style: (same as def)
@@ -9,96 +10,101 @@
 ; meadows: 0
 ; woods: 0 75
 ; goldmines: 0 150
-; speed: 1 1 
+; speed: ground air multipliers — default (100, 100). Omit ``speed`` in a palette
+; def to inherit from rules.txt ``class terrain`` (see building-land-terrain doc).
 ; cover: 0 0
 
 def rocky_plain
-style
+style rocky_plain
 
 def high_rocky_plain
-style
+style high_rocky_plain
 high_ground 1
 
-def meadow
-style
+def meadows
+style meadows
 meadows 3
 
-def woods
-style
+def forest
+style forest
 meadows 1
 woods 3 100
 cover .1 0
 
-def dense_woods
-style
+def dense_forest
+style dense_forest
 meadows 0
 woods 7 100
 cover .1 0
 
 def goldmine
-style
+style meadows
 meadows 1
 woods 1 75
 goldmines 1 150
 
-def high_meadow
-style
+def high_meadows
+style meadows
 high_ground 1
 meadows 3
 
-def high_woods
-style
+def high_forest
+style forest
 high_ground 1
 meadows 1
 woods 3 75
 cover .1 0
 
-def high_dense_woods
-style
+def high_dense_forest
+style dense_forest
 high_ground 1
 meadows 0
 woods 7 75
 cover .1 0
 
 def high_goldmine
-style
+style meadows
 high_ground 1
 meadows 1
 woods 1 75
 goldmines 1 150
 
 def river
+style river
 water 1
 ground 0
 
 def lake
+style lake
 water 1
 ground 0
 
 def sea
+style sea
 water 1
 ground 0
-speed 0 .25
 
 def ocean
+style ocean
 water 1
 ground 0
-speed 0 .25
 
 def mountain
+style mountain
 ground 0
 air 0
 
 def mountain_pass
+style mountain_pass
 high_ground 1
 meadows 1
-speed .5 1
 
 def big_bridge
+style big_bridge
 water 1
 
 def ford
-speed .5 1
+style ford
 
 def marsh
-speed .5 1
+style marsh

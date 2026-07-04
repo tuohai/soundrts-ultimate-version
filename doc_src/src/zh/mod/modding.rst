@@ -433,6 +433,7 @@ Combat system (since 1.4)
 - ``mdg_crit`` / ``rdg_crit``、``mdg_crit_rate`` / ``rdg_crit_rate``、``crit_vs``
 - ``mdg_piercing`` / ``rdg_piercing``\ `` （无视护甲百分比）``、``piercing_vs``
 - ``mdg_explode`` / ``rdg_explode``、``exp_dgf``、``exp_hp_cost``、``mdg_explode_vs``
+- 单位**所在地形**上的修正（自 1.4.5.0）：``mdg_on_terrain`` / ``rdg_on_terrain``、``mdg_cd_on_terrain`` / ``rdg_cd_on_terrain``、``charge_mdg_terrain`` / ``charge_rdg_terrain``、``charge_mdg_cd_on_terrain`` / ``charge_rdg_cd_on_terrain``；与 ``speed_on_terrain`` 写法相同，详见 ``building-land-terrain.rst`` *单位在地形上的战斗修正*
 
 冲锋与反冲锋（自 1.4.0.1 起）
 
@@ -884,6 +885,35 @@ Heroes (since 1.4)
 
 与 ``campaign_flag`` / ``add_inventory_item`` 独立：剧情信物、结盟等仍用地图触发器。详见 ``mod/战役跨章英雄携带说明.htm``\ 。
 
+运输容器（自 1.4.4.9 起字段重命名；旧名仍兼容）
+------------------------------------------------
+
+带 ``transport_capacity`` 的单位/建筑可作为运输容器。相关属性：
+
+| 字段 | 作用 | 示例 |
+| --- | --- | --- |
+| ``passenger_attack_types`` | 容器内可攻击外部目标的单位类型 | ``passenger_attack_types archer knight`` 或 ``all`` |
+| ``load_bonus`` | 每装载 1 名单位 → **容器**获得属性 | ``load_bonus speed 0.5 mdg 2`` |
+| ``passenger_bonus`` | 进入容器后 → **乘客**获得属性（卸载回滚） | ``passenger_bonus rdg_range 1 mdg 2`` |
+
+完整示例::
+
+    def flyingmachine
+    class soldier
+    transport_capacity 8
+    passenger_attack_types knight archer
+    load_bonus speed 0.5
+    passenger_bonus rdg_range 1
+
+    def wall
+    class building
+    transport_capacity 4
+    passenger_attack_types archer catapult
+    passenger_bonus mdg 2
+
+- 未写 ``passenger_attack_types`` 时，容器内单位默认不能攻击外部目标。
+- ``load_bonus`` 与 ``passenger_bonus`` 可叠加使用。
+
 Items (since 1.4.1.3)
 ----------------------
 
@@ -1284,7 +1314,7 @@ UI 语音：在 ``ui/style.txt`` 定义 ``def build_field_\<名称\>`` + ``title
 | 属性 | 说明 |
 | --- | --- |
 | ``requires_deposit \<类型\>`` | 只能建在地图矿床对象上（如 ``geyser``）；完工后移除该矿床 |
-| ``is_buildable_anywhere 0`` | 与 ``requires_deposit`` 配合，禁止建在草地上 |
+| ``is_buildable_anywhere 0`` | 与 ``requires_deposit`` 配合，禁止建在建造用地上 |
 
 气矿模板 ``sc_gas_building`` 使用 ``auto_production`` + ``is_gather`` + ``production_time`` / ``production_qty``\ 。工人 ``can_gather`` 须包含气矿建筑类型名（如 ``assimilator``），而非 ``geyser`` 矿床本身。
 
@@ -1301,7 +1331,7 @@ UI 语音：在 ``ui/style.txt`` 定义 ``def build_field_\<名称\>`` + ``title
 
 - ``self_constructs 1`` — 无需工人持续建造（可与 ``place_and_leave`` 配合）
 - ``build_sacrifices_worker 1`` — 强制消耗工人（等价于 sacrifice 模式）
-- ``is_buildable_anywhere 1`` — 可在任意已满足建造场条件的格内选点，不 占用单独 ``meadow`` 对象（神族/异虫/飞行人族）
+- ``is_buildable_anywhere 1`` — 可在任意已满足建造场条件的格内选点，不单独占用 ``class building_land`` 对象（神族/异虫/飞行人族）
 
 人族附属建筑（addon）
 >>>>>>>>>>>>>>>>>>>>>
@@ -1318,7 +1348,7 @@ UI 语音：在 ``ui/style.txt`` 定义 ``def build_field_\<名称\>`` + ``title
 | ``addon_train_multiplier N`` | Reactor：训练数量倍率（2 = 双产） |
 | ``addon_offset_x \<值\>`` | 附件相对宿主东侧偏移（默认 3.5 格 = 3500 内部单位） |
 
-附件在宿主侧面插槽 自行建造（``self_constructs 1``\ ），不单独占用草地。建造时选中已有宿主，不要点空地。
+附件在宿主侧面插槽自行建造（``self_constructs 1``\ ），不单独占用建造用地。建造时选中已有宿主，不要点空地。
 
 起飞与重组（lift-off / recombine）
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1329,28 +1359,30 @@ UI 语音：在 ``ui/style.txt`` 定义 ``def build_field_\<名称\>`` + ``title
 | ``ground_form \<地面形态\>`` | 飞行形态的落地目标（如 ``flying_factory`` → ``factory``\ ） |
 | ``change_time \<秒\>`` | 变形耗时（``change_to`` 专用，不耗资源/人口） |
 
-起飞：地面人族建筑 → 飞行形态；附件 detach 留在原格；原位置生成 ``meadow``\ 。
+星际 mod 地图默认刷 **空地**（``build_site``），见 ``nb_build_site_by_square`` / ``building_land build_site`` （``mod/mapmaking.rst``\ ）。
 
-降落：飞行形态 ``change_to`` 回地面；须消耗同格一块 meadow\ 。
+起飞：地面人族建筑 → 飞行形态；附件 detach 留在原格；原位置恢复**该建筑建造时占用的建造用地类型**（星际为 ``build_site``）。仅当建筑未保存用地引用时，才用地图 ``building_land`` 或 ``nb_<type>_by_square`` 推断的类型。
+
+降落：飞行形态 ``change_to`` 回地面；须消耗同格一块 ``class building_land`` 对象（引擎内部仍称 meadow，见 ``find_meadow_near_xy``\ ）。
 
 重组 （接管孤立 Tech Lab）：
 
-1. Tab 科技实验室→ 退格 go（目标改飞向 宿主降落插槽，实验室西侧约 3.5 格）
+1. Tab 科技实验室→ 退格 go（目标改飞向宿主降落插槽，实验室西侧约 3.5 格）
 2. 变形落地 → 插槽对齐时 ``try_reattach_orphan_addons`` 自动挂接
 
-草地 vs 插槽 （两套独立判定）：
+建造用地 vs 插槽 （两套独立判定）：
 
-- 草地：降落许可；``find_meadow_near_xy`` 选最近 meadow 消耗
+- 建造用地：降落许可；``find_meadow_near_xy`` 选最近 ``class building_land`` 消耗
 - 插槽：``tech_lab.x ≈ factory.x + addon_offset_x`` （曼哈顿距离 ≤ 约 2.5 格）才对接
 
-落在自己起飞草地 仅普通降落，不对接；落错格且同格仍有可对接附件时会播报 TTS ``addon_reattach_failed`` （7350）。
+落在自己起飞用地 仅普通降落，不对接；落错格且同格仍有可对接附件时会播报 TTS ``addon_reattach_failed`` （7350）。
 
 操作速查
 
 | 目的 | Tab 目标 |
 | --- | --- |
-| 落回起飞点 | 该建筑起飞留下的草地 |
-| 接管孤立 Tech Lab | 科技实验室 （非草地） |
+| 落回起飞点 | 该建筑起飞留下的建造用地（星际为空地） |
+| 接管孤立 Tech Lab | 科技实验室 （非建造用地） |
 
 测试地图：``terran_addon_test``\ 、``terran_recombine_test``\ ；战役 ``sc_build_tests`` 第 3–4 章。
 
@@ -1397,6 +1429,11 @@ Ship repair (since 1.4.1.1)
 ----------------------------
 
 工人或建筑上设置 ``can_repair_ships 1``。工人修理相邻岸边的舰船（6 格）；建筑自动修理邻近水域中的舰船（8 格）。
+
+水上铺桥（逐格桥段）
+--------------------
+
+工人可在纯水路方格上建造 ``is_buildable_on_water_only 1`` 的桥段；完工后应用 ``bridge_terrain``（如 ``bridge_deck``）。脚手架阶段播报与其它 ``buildingsite`` 相同（「木桥桥段 在建筑」），脚步声读 ``bridge_terrain`` 的 ``ground``。详见 `水上铺桥 <water-bridge-building.htm>`_。
 
 Inheritance (since 1.3.8.3)
 -----------------------------

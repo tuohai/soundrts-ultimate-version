@@ -1,5 +1,7 @@
 """Tests for sub-cell terrain within a map square."""
 
+import types
+
 import pytest
 
 from soundrts.lib.subcell_terrain import (
@@ -66,15 +68,20 @@ def test_subcell_high_ground_override():
 
 
 def test_square_terrain_uses_subcell_high_ground_for_voice():
-    from soundrts import msgparts as mp
     from soundrts.clientgame.game_navigation import _square_terrain
 
     sq = _make_square()
     sq.high_ground = False
+    sq.fixed_terrain = False
+    sq.world = types.SimpleNamespace()
     sq.subcells.set_high_ground(0, 0, True)
 
-    assert _square_terrain(sq, sq.xmin + 1, sq.ymin + 1)[-len(mp.PLATEAU):] == mp.PLATEAU
-    assert _square_terrain(sq, sq.xmax - 2, sq.ymax - 2)[-len(mp.PLATEAU):] != mp.PLATEAU
+    high_msgs = _square_terrain(sq, sq.xmin + 1, sq.ymin + 1)
+    low_msgs = _square_terrain(sq, sq.xmax - 2, sq.ymax - 2)
+    assert 5698 in high_msgs or "5698" in high_msgs
+    assert 5698 not in low_msgs and "5698" not in low_msgs
+    assert 4314 not in high_msgs and "4314" not in high_msgs
+    assert 5696 not in low_msgs and "5696" not in low_msgs
 
 
 def test_subcell_mountain_blocks_ground():

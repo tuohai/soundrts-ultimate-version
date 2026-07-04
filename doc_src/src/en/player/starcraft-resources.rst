@@ -23,7 +23,7 @@ Gas structures
 ---------------
 
 
-Assimilator / Extractor / Refinery must be built on a geyser (Tab the geyser, then build). Building on a meadow plays “cannot build there”.
+Assimilator / Extractor / Refinery must be built on a geyser (Tab the geyser, then build). Building on building land plays “cannot build there”.
 
 After completion:
 

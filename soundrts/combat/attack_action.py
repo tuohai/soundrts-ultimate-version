@@ -524,12 +524,16 @@ class AttackActionMixin:
         # 基础伤害（含 mdg_vs / rdg_vs 修正）
         if is_melee:
             base = self._get_melee_damage_vs(target)
-            mult = self.charge_mdg
+            mult = self.charge_mdg + self._get_on_terrain_modifier(
+                getattr(self, "charge_mdg_terrain", ())
+            )
             vs_dict = self.charge_mdg_vs
             max_dist = self.charge_mdg_dist
         else:
             base = self._get_ranged_damage_vs(target)
-            mult = self.charge_rdg
+            mult = self.charge_rdg + self._get_on_terrain_modifier(
+                getattr(self, "charge_rdg_terrain", ())
+            )
             vs_dict = self.charge_rdg_vs
             max_dist = self.charge_rdg_dist
 
@@ -746,13 +750,37 @@ class AttackActionMixin:
         """
         now = self.world.time
         if is_melee:
-            self.charge_mdg_next_time = now + self.charge_mdg_cd
+            cd = self.charge_mdg_cd + self._get_on_terrain_modifier(
+                getattr(self, "charge_mdg_cd_on_terrain", ())
+            )
+            self.charge_mdg_next_time = now + max(0, cd)
             # 标记冲锋不可用，直到拉开足够距离
             self.charge_mdg_ready = False
         else:
-            self.charge_rdg_next_time = now + self.charge_rdg_cd
+            cd = self.charge_rdg_cd + self._get_on_terrain_modifier(
+                getattr(self, "charge_rdg_cd_on_terrain", ())
+            )
+            self.charge_rdg_next_time = now + max(0, cd)
             # 标记冲锋不可用，直到拉开足够距离
             self.charge_rdg_ready = False
+    
+    def _get_melee_cd_on_terrain(self) -> int:
+        return self._get_on_terrain_modifier(getattr(self, "mdg_cd_on_terrain", ()))
+
+    def _get_ranged_cd_on_terrain(self) -> int:
+        return self._get_on_terrain_modifier(getattr(self, "rdg_cd_on_terrain", ()))
+
+    def _get_melee_cd_base(self) -> int:
+        return max(0, self.mdg_cd + self._get_melee_cd_on_terrain())
+
+    def _get_ranged_cd_base(self) -> int:
+        return max(0, self.rdg_cd + self._get_ranged_cd_on_terrain())
+
+    def _apply_melee_cd_on_terrain(self, cd: int) -> int:
+        return max(0, cd + self._get_melee_cd_on_terrain())
+
+    def _apply_ranged_cd_on_terrain(self, cd: int) -> int:
+        return max(0, cd + self._get_ranged_cd_on_terrain())
     
     def _set_attack_cooldown(self, is_melee, target=None):
         """设置攻击冷却时间
@@ -763,10 +791,10 @@ class AttackActionMixin:
         """
         now = self.world.time
         if is_melee:
-            cd = self._get_melee_cd_vs(target) if target else self.mdg_cd
+            cd = self._get_melee_cd_vs(target) if target else self._get_melee_cd_base()
             self.mdg_next_attack_time = now + cd
         else:
-            cd = self._get_ranged_cd_vs(target) if target else self.rdg_cd
+            cd = self._get_ranged_cd_vs(target) if target else self._get_ranged_cd_base()
             self.rdg_next_attack_time = now + cd
 
     def aim(self, target):
@@ -780,9 +808,10 @@ class AttackActionMixin:
             # 不发送攻击通知，直接返回
             return
 
-        # 检查是否允许攻击载具内部目标
-        if hasattr(target, 'is_inside') and target.is_inside and not self.allow_attack_inside:
-            return
+        # 检查是否允许攻击载具内部目标（直接瞄准乘客时）
+        if getattr(target, 'is_inside', False):
+            if not self._can_attack_inside_passenger(target):
+                return
 
         # 在每次瞄准时检查并切换到最合适的武器
         if (self._should_auto_switch_weapon() and 
@@ -857,7 +886,9 @@ class AttackActionMixin:
             self.notify = charge_notify
             
             # 立即应用伤害（显式标记为近战冲锋，避免 receive_hit 内部基于距离误判）
-            target.receive_hit(charge_damage, self, notify=True, is_charge=True, is_melee=True)
+            damage_target = self._resolve_damage_target(target)
+            if damage_target is not None:
+                damage_target.receive_hit(charge_damage, self, notify=True, is_charge=True, is_melee=True)
             
             # 恢复原始通知方法
             self.notify = old_notify
@@ -1038,18 +1069,18 @@ class AttackActionMixin:
         # 先检查直接对单位类型的vs
         cd_vs = self.mdg_cd_vs.get(target.type_name, None)
         if cd_vs is not None:
-            return self.mdg_cd + cd_vs
+            return self._apply_melee_cd_on_terrain(self.mdg_cd + cd_vs)
 
         # 检查对单位继承类型的vs
         for t in target.expanded_is_a:
             if t in self.mdg_cd_vs:
-                return self.mdg_cd + self.mdg_cd_vs[t]
+                return self._apply_melee_cd_on_terrain(self.mdg_cd + self.mdg_cd_vs[t])
         
         # 检查对目标护甲类型的vs
         if hasattr(target, 'get_current_armor_name'):
             armor_name = target.get_current_armor_name()
             if armor_name and armor_name in self.mdg_cd_vs:
-                return self.mdg_cd + self.mdg_cd_vs[armor_name]
+                return self._apply_melee_cd_on_terrain(self.mdg_cd + self.mdg_cd_vs[armor_name])
         
         # 检查对目标护甲继承类型的vs
         if hasattr(target, '_armor_instance') and target._armor_instance:
@@ -1057,15 +1088,15 @@ class AttackActionMixin:
             if hasattr(armor, 'expanded_is_a'):
                 for armor_type in armor.expanded_is_a:
                     if armor_type in self.mdg_cd_vs:
-                        return self.mdg_cd + self.mdg_cd_vs[armor_type]
+                        return self._apply_melee_cd_on_terrain(self.mdg_cd + self.mdg_cd_vs[armor_type])
             # 也检查护甲的直接is_a
             if hasattr(armor, 'is_a'):
                 for armor_type in armor.is_a:
                     if armor_type in self.mdg_cd_vs:
-                        return self.mdg_cd + self.mdg_cd_vs[armor_type]
+                        return self._apply_melee_cd_on_terrain(self.mdg_cd + self.mdg_cd_vs[armor_type])
 
         # 否则用基础冷却时间
-        return self.mdg_cd
+        return self._get_melee_cd_base()
 
     def _get_ranged_cd_vs(self, target) -> int:
         """返回对目标的远程冷却时间
@@ -1079,18 +1110,18 @@ class AttackActionMixin:
         # 先检查直接对单位类型的vs
         cd_vs = self.rdg_cd_vs.get(target.type_name, None)
         if cd_vs is not None:
-            return self.rdg_cd + cd_vs
+            return self._apply_ranged_cd_on_terrain(self.rdg_cd + cd_vs)
 
         # 检查对单位继承类型的vs
         for t in target.expanded_is_a:
             if t in self.rdg_cd_vs:
-                return self.rdg_cd + self.rdg_cd_vs[t]
+                return self._apply_ranged_cd_on_terrain(self.rdg_cd + self.rdg_cd_vs[t])
         
         # 检查对目标护甲类型的vs
         if hasattr(target, 'get_current_armor_name'):
             armor_name = target.get_current_armor_name()
             if armor_name and armor_name in self.rdg_cd_vs:
-                return self.rdg_cd + self.rdg_cd_vs[armor_name]
+                return self._apply_ranged_cd_on_terrain(self.rdg_cd + self.rdg_cd_vs[armor_name])
         
         # 检查对目标护甲继承类型的vs
         if hasattr(target, '_armor_instance') and target._armor_instance:
@@ -1098,15 +1129,15 @@ class AttackActionMixin:
             if hasattr(armor, 'expanded_is_a'):
                 for armor_type in armor.expanded_is_a:
                     if armor_type in self.rdg_cd_vs:
-                        return self.rdg_cd + self.rdg_cd_vs[armor_type]
+                        return self._apply_ranged_cd_on_terrain(self.rdg_cd + self.rdg_cd_vs[armor_type])
             # 也检查护甲的直接is_a
             if hasattr(armor, 'is_a'):
                 for armor_type in armor.is_a:
                     if armor_type in self.rdg_cd_vs:
-                        return self.rdg_cd + self.rdg_cd_vs[armor_type]
+                        return self._apply_ranged_cd_on_terrain(self.rdg_cd + self.rdg_cd_vs[armor_type])
 
         # 否则用基础冷却时间
-        return self.rdg_cd
+        return self._get_ranged_cd_base()
 
     def _get_melee_ready_vs(self, target) -> int:
         """返回对目标的近战前摇（攻击预备时间）"""
@@ -1248,7 +1279,120 @@ class AttackActionMixin:
                 
             self.action = AttackAction(self, target)
             self.notify("attack")
-            
+
+    def _container_attack_inside_chance(self, container):
+        if container is None:
+            return 0
+        return max(0, min(100, int(getattr(container, "attack_inside_chance", 0))))
+
+    def _get_attack_inside_chance(self, target):
+        if target is None:
+            return 0
+        if getattr(target, "is_inside", False):
+            container = getattr(getattr(target, "place", None), "container", None)
+            return self._container_attack_inside_chance(container)
+        return self._container_attack_inside_chance(target)
+
+    def _combat_target_place(self, target):
+        if getattr(target, "is_inside", False):
+            container = getattr(getattr(target, "place", None), "container", None)
+            if container is not None:
+                return container.place
+        return getattr(target, "place", None)
+
+    def _sync_inside_combat_coords(self, target):
+        if target is None or getattr(target, "_inside_combat_synced", False):
+            return
+        if not getattr(target, "is_inside", False):
+            return
+        container = getattr(getattr(target, "place", None), "container", None)
+        if container is None:
+            return
+        target._saved_combat_x = target.x
+        target._saved_combat_y = target.y
+        target.x = container.x
+        target.y = container.y
+        target._inside_combat_synced = True
+
+    def _restore_inside_combat_coords(self, target):
+        if target is None or not getattr(target, "_inside_combat_synced", False):
+            return
+        target.x = target._saved_combat_x
+        target.y = target._saved_combat_y
+        target._inside_combat_synced = False
+        del target._saved_combat_x
+        del target._saved_combat_y
+
+    def _attackable_passengers(self, container):
+        if container is None:
+            return []
+        inside = getattr(container, "inside", None)
+        if inside is None:
+            return []
+        result = []
+        for obj in list(getattr(inside, "objects", [])):
+            if obj is None or obj.hp <= 0:
+                continue
+            if not self.is_an_enemy(obj):
+                continue
+            result.append(obj)
+        return result
+
+    def _attacker_near_container(self, container):
+        if container is None:
+            return False
+        outside = container.place
+        if outside is not None and self.place is outside:
+            return True
+        blocked_exit = getattr(container, "blocked_exit", None)
+        if blocked_exit is not None:
+            other_place = getattr(getattr(blocked_exit, "other_side", None), "place", None)
+            if other_place is not None and self.place is other_place:
+                return True
+        return False
+
+    def _attacker_can_reach_container_passengers(self, container):
+        if self._attacker_near_container(container):
+            return True
+        return self._near_enough_to_aim(container)
+
+    def _can_attack_inside_passenger(self, target):
+        if not getattr(target, "is_inside", False):
+            return False
+        container = getattr(getattr(target, "place", None), "container", None)
+        if container is None:
+            return False
+        chance = self._container_attack_inside_chance(container)
+        if chance <= 0:
+            return bool(self.allow_attack_inside)
+        if not self._attacker_can_reach_container_passengers(container):
+            return False
+        return self.is_an_enemy(target)
+
+    def _resolve_inside_attack_target(self, passenger):
+        chance = self._get_attack_inside_chance(passenger)
+        if chance <= 0:
+            return None
+        container = passenger.place.container
+        if chance >= 100 or self.world.random.randint(1, 100) <= chance:
+            return passenger
+        return container
+
+    def _resolve_damage_target(self, target):
+        if target is None:
+            return None
+        if getattr(target, "is_inside", False):
+            return self._resolve_inside_attack_target(target)
+        chance = self._get_attack_inside_chance(target)
+        if chance <= 0:
+            return target
+        passengers = self._attackable_passengers(target)
+        if not passengers:
+            return target
+        if chance >= 100 or self.world.random.randint(1, 100) <= chance:
+            return self.world.random.choice(passengers)
+        return target
+
     def _can_attack_from_inside(self):
         """检查单位是否可以从载具内部进行攻击"""
         # 如果不在载具内,允许攻击
@@ -1261,13 +1405,14 @@ class AttackActionMixin:
             return False
             
         # 检查是否允许所有单位攻击
-        if hasattr(container, 'allow_units_attack'):
-            if 'all' in container.allow_units_attack:
+        attack_types = getattr(container, 'passenger_attack_types', None)
+        if attack_types:
+            if 'all' in attack_types:
                 return True
-                
+
             # 检查特定单位类型
-            return (self.type_name in container.allow_units_attack or 
-                    any(t in container.allow_units_attack for t in getattr(self, 'expanded_is_a', [])))
+            return (self.type_name in attack_types or
+                    any(t in attack_types for t in getattr(self, 'expanded_is_a', [])))
                     
         return False  # 默认不允许在载具内攻击
         
@@ -1282,9 +1427,9 @@ class AttackActionMixin:
             return False
 
         # 检查目标是否在视野中（感知或记忆中）或相邻区域
-        # 对于相邻区域的敌人，即使不在感知中也可以攻击
-        # 强制攻击己方/友军时跳过（目标已在指挥范围内选中）
-        if not forced and (
+        # 开放式容器内敌人：邻格/射程内可达时跳过视野检查
+        inside_passenger = getattr(target, "is_inside", False) and self._can_attack_inside_passenger(target)
+        if not forced and not inside_passenger and (
             target not in self.player.perception
             and target not in self.player.memory
             and target.place not in self.place.neighbors
@@ -1304,9 +1449,12 @@ class AttackActionMixin:
                         return True
             return False
         else:
-            # 检查当前武器的攻击范围（近战或远程）
-            if self.in_melee_range(target) or self.in_ranged_range(target):
-                return True
+            self._sync_inside_combat_coords(target)
+            try:
+                if self.in_melee_range(target) or self.in_ranged_range(target):
+                    return True
+            finally:
+                self._restore_inside_combat_coords(target)
             return False
     
     def _can_weapon_attack_target(self, weapon, target):
@@ -1356,6 +1504,8 @@ class AttackActionMixin:
 
         # 如果目标在容器内
         if target.is_inside:
+            if self._can_attack_inside_passenger(target):
+                return True
             container = target.place.container
             # 如果容器阻挡了出口
             if hasattr(container, 'blocked_exit'):

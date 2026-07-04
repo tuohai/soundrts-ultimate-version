@@ -89,6 +89,8 @@ class ResourcesMixin:
 
     def _update_drowning(self):
         for u in self.units[:]:
+            if getattr(u, "is_a_building", False):
+                continue
             if (
                 u.is_vulnerable
                 and u.airground_type == "ground"

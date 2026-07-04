@@ -5,7 +5,7 @@
 
 from .. import msgparts as mp
 from ..lib.nofloat import PRECISION
-from ..lib.msgs import nb2msg, nb2msg_float
+from ..lib.msgs import format_signed_number, nb2msg, nb2msg_float
 from ..clientmedia import voice
 from ..definitions import style
 from ..level_up_stats import LEVEL_UP_INT_STAT_ATTRS, LEVEL_UP_STAT_ATTRS
@@ -141,6 +141,8 @@ class DisplayInterface:
         if hasattr(u.model, "transport_capacity") and u.model.transport_capacity > 0:
             transport_capacity_text = nb2msg(u.model.transport_capacity)
             attrs.append(("", mp.TRANSPORT_CAPACITY, transport_capacity_text))
+
+        self._add_transport_container_attributes(u, attrs)
         
         # 人口成本（只在大于1时显示）
         if hasattr(u.model, "population_cost") and u.model.population_cost > 1:
@@ -167,7 +169,113 @@ class DisplayInterface:
         
         if hasattr(u.model, "can_repair") and u.model.can_repair:
             attrs.append(("", mp.CAN_REPAIR, mp.YES))
-    
+
+    def _normalize_transport_bonus(self, bonus):
+        """将 load_bonus / passenger_bonus 规范为 {stat: value}（rules 中常为列表）。"""
+        if isinstance(bonus, dict):
+            return {str(k): v for k, v in bonus.items()}
+        if isinstance(bonus, list):
+            result = {}
+            i = 0
+            while i < len(bonus):
+                if i + 1 < len(bonus):
+                    try:
+                        result[str(bonus[i])] = float(bonus[i + 1])
+                    except (TypeError, ValueError):
+                        pass
+                i += 2
+            return result
+        return {}
+
+    def _format_transport_bonus_value_parts(self, value):
+        """格式化单个加成数值，避免小整数被 tts.txt 误解析为语音 ID。"""
+        try:
+            coerced = float(value)
+        except (TypeError, ValueError):
+            return [str(value)]
+        if coerced == 0:
+            return []
+        if coerced == int(coerced):
+            value_text = format_signed_number(int(coerced))
+        else:
+            value_text = format_signed_number(coerced, as_float=True)
+        if coerced > 0:
+            return ["+"] + value_text
+        return value_text
+
+    def _format_transport_bonus_dict(self, bonus):
+        """格式化 load_bonus / passenger_bonus 为属性界面文本。"""
+        bonus_text = []
+        normalized = self._normalize_transport_bonus(bonus)
+        for attr_name, value in normalized.items():
+            attr_display_name = get_stat_tts_name(attr_name)
+            if isinstance(attr_display_name, list):
+                bonus_text.extend(attr_display_name)
+            else:
+                bonus_text.append(str(attr_display_name))
+            bonus_text.extend(self._format_transport_bonus_value_parts(value))
+            bonus_text.extend(mp.COMMA)
+        if bonus_text and bonus_text[-1] in mp.COMMA:
+            bonus_text = bonus_text[:-1]
+        elif not normalized and bonus:
+            bonus_text.append(str(bonus))
+        return bonus_text
+
+    def _format_passenger_attack_types(self, attack_types):
+        """格式化 passenger_attack_types 为属性界面文本。"""
+        attack_text = []
+        if isinstance(attack_types, list):
+            for unit_type in attack_types:
+                unit_title = style.get(unit_type, "title")
+                if unit_title:
+                    if isinstance(unit_title, list):
+                        attack_text.extend(unit_title)
+                    else:
+                        attack_text.append(str(unit_title))
+                else:
+                    attack_text.append(str(unit_type))
+                attack_text.extend(mp.COMMA)
+            if attack_text and attack_text[-1] in mp.COMMA:
+                attack_text = attack_text[:-1]
+        elif attack_types:
+            unit_title = style.get(attack_types, "title")
+            if unit_title:
+                if isinstance(unit_title, list):
+                    attack_text.extend(unit_title)
+                else:
+                    attack_text.append(str(unit_title))
+            else:
+                attack_text.append(str(attack_types))
+        return attack_text
+
+    def _add_transport_container_attributes(self, u, attrs):
+        """运输容器：容器内可攻击单位、装载加成、乘客加成。"""
+        model = u.model
+
+        passenger_attack_types = getattr(model, "passenger_attack_types", None)
+        if passenger_attack_types:
+            attack_text = self._format_passenger_attack_types(passenger_attack_types)
+            if attack_text:
+                attrs.append(("", mp.PASSENGER_ATTACK_TYPES, attack_text))
+
+        load_bonus = getattr(model, "load_bonus", None)
+        if load_bonus:
+            load_bonus_text = self._format_transport_bonus_dict(load_bonus)
+            if load_bonus_text:
+                attrs.append(("", mp.LOAD_BONUS, load_bonus_text))
+
+        passenger_bonus = getattr(model, "passenger_bonus", None)
+        if passenger_bonus:
+            passenger_bonus_text = self._format_transport_bonus_dict(passenger_bonus)
+            if passenger_bonus_text:
+                attrs.append(("", mp.PASSENGER_BONUS, passenger_bonus_text))
+
+        attack_inside_chance = getattr(model, "attack_inside_chance", 0)
+        if attack_inside_chance:
+            attrs.append(
+                ("", mp.ATTACK_INSIDE_CHANCE, nb2msg(attack_inside_chance) + mp.PERCENT)
+            )
+
     def populate_tech_attributes(self, u, attrs, effect_formatter):
         """构建科技/技能/时代的完整属性列表。"""
         model = u.model

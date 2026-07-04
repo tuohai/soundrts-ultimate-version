@@ -486,20 +486,49 @@ def _silence_square(interface):
     sound.stop(stop_voice_too=False)  # cut the long non-looping environment sounds
 
 
+def _square_has_building_land(place):
+    for o in getattr(place, "objects", ()):
+        if getattr(o, "is_a_building_land", False) and not getattr(o, "is_an_exit", False):
+            return True
+    return False
+
+
+def _building_land_terrain_type_name(place):
+    from ..lib.square_terrain_rules import winning_building_land_terrain_entry
+
+    entry = winning_building_land_terrain_entry(getattr(place, "objects", ()))
+    return entry["name"] if entry else None
+
+
+def _square_is_water(place, x=None, y=None):
+    if x is not None and y is not None and hasattr(place, "is_water_at"):
+        return place.is_water_at(x, y)
+    return getattr(place, "is_water", False)
+
+
+def _append_terrain_title(result, terrain_name):
+    if not terrain_name:
+        return
+    title = style.get(terrain_name, "title")
+    if title:
+        result += mp.COMMA + title
+
+
 def _square_terrain(place, x=None, y=None):
+    from ..lib.square_terrain_rules import resolve_square_layers
+
     result = []
-    if x is not None and y is not None and hasattr(place, "type_name_at"):
-        t = place.type_name_at(x, y)
-        high_ground = place.high_ground_at(x, y)
-    else:
-        t = place.type_name
-        high_ground = place.high_ground
-    if t:
-        title = style.get(t, "title")
-        if title:
-            result += mp.COMMA + title
-    if high_ground:
-        result += mp.COMMA + mp.PLATEAU
+    layers = resolve_square_layers(place, x, y)
+    for name in layers["static_voices"]:
+        _append_terrain_title(result, name)
+    if layers["dynamic_voice"]:
+        _append_terrain_title(result, layers["dynamic_voice"])
+    if layers["feature_voice"]:
+        _append_terrain_title(result, layers["feature_voice"])
+    if layers["high_ground_voice"]:
+        _append_terrain_title(result, layers["high_ground_voice"])
+    if layers["building_land_voice"]:
+        _append_terrain_title(result, layers["building_land_voice"])
     return result
 
 

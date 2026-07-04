@@ -13,6 +13,7 @@ from ..clientgamenews import must_be_said
 from ..clientgameorder import get_orders_list, substitute_args
 from ..clientmedia import sounds, voice
 from ..definitions import style
+from ..open_container import inside_unit_visible_from_place
 from ..lib.log import exception, warning
 from ..lib.msgs import nb2msg
 from ..lib.nofloat import PRECISION
@@ -260,12 +261,20 @@ class EntityViewBase:
 
     @property
     def is_an_exit(self):
-        return style.has(self.model.type_name, "when_moving_through")
+        if getattr(self.model, "is_an_exit", False):
+            return True
+        type_name = getattr(self.model, "type_name", None)
+        if type_name in ("wooden_bridge", "buildingsite"):
+            return False
+        if getattr(self.model, "is_a_building", False) or getattr(
+            self.model, "is_a_building_land", False
+        ):
+            return False
+        return style.has(type_name, "when_moving_through")
 
     def is_in(self, place):
-        # a unit inside a transporter is also inside the place of the transporter
         if getattr(self, "is_inside", False):
-            return self.place.outside is place
+            return inside_unit_visible_from_place(self, place)
         # For the interface, a blocker is also on the other side of the exit.
         return (
             self.place is place

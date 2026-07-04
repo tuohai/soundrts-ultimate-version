@@ -442,6 +442,7 @@ Main melee/ranged properties:
 - ``mdg_crit`` / ``rdg_crit``, ``mdg_crit_rate`` / ``rdg_crit_rate``, ``crit_vs``
 - ``mdg_piercing`` / ``rdg_piercing`` (percent armor ignored), ``piercing_vs``
 - ``mdg_explode`` / ``rdg_explode``, ``exp_dgf``, ``exp_hp_cost``, ``mdg_explode_vs``
+- Per-**attacker terrain** modifiers (since 1.4.5.0): ``mdg_on_terrain`` / ``rdg_on_terrain``, ``mdg_cd_on_terrain`` / ``rdg_cd_on_terrain``, ``charge_mdg_terrain`` / ``charge_rdg_terrain``, ``charge_mdg_cd_on_terrain`` / ``charge_rdg_cd_on_terrain``; same syntax as ``speed_on_terrain`` — see ``building-land-terrain.rst`` *Unit combat modifiers on terrain*
 
 Charge and counter-charge (since 1.4.0.1)
 
@@ -889,6 +890,35 @@ Optional in ``campaign.txt``: ``hero_min_level 13:2 16:3 …`` for chapter floor
 
 Separate from ``campaign_flag`` / ``add_inventory_item`` (story tokens, alliances). See ``mod/campaign-hero-carryover.htm``.
 
+Transport containers (field rename since 1.4.4.9; legacy names still accepted)
+-------------------------------------------------------------------------------
+
+Units or buildings with ``transport_capacity`` act as transport containers. Related properties:
+
+| Property | Effect | Example |
+| --- | --- | --- |
+| ``passenger_attack_types`` | Unit types that may attack outside while inside | ``passenger_attack_types archer knight`` or ``all`` |
+| ``load_bonus`` | Per loaded unit → stats added to the **container** | ``load_bonus speed 0.5 mdg 2`` |
+| ``passenger_bonus`` | Stats added to the **passenger** while inside (rolled back on unload) | ``passenger_bonus rdg_range 1 mdg 2`` |
+
+Example::
+
+    def flyingmachine
+    class soldier
+    transport_capacity 8
+    passenger_attack_types knight archer
+    load_bonus speed 0.5
+    passenger_bonus rdg_range 1
+
+    def wall
+    class building
+    transport_capacity 4
+    passenger_attack_types archer catapult
+    passenger_bonus mdg 2
+
+- Without ``passenger_attack_types``, passengers cannot attack outside targets by default.
+- ``load_bonus`` and ``passenger_bonus`` can be combined on the same container.
+
 Items (since 1.4.1.3)
 ----------------------
 
@@ -1205,7 +1235,7 @@ Deposits & gas (``requires_deposit``)
 | Attribute | Role |
 | --- | --- |
 | ``requires_deposit \<type\>`` | Must build on a map deposit (e.g. ``geyser``); deposit is removed on completion |
-| ``is_buildable_anywhere 0`` | With ``requires_deposit``, blocks building on meadows |
+| ``is_buildable_anywhere 0`` | With ``requires_deposit``, blocks building on building land |
 
 Gas template ``sc_gas_building`` uses ``auto_production`` + ``is_gather`` + ``production_time`` / ``production_qty``.
 Workers need ``can_gather assimilator`` (building type), not ``geyser`` (deposit).
@@ -1219,7 +1249,7 @@ Worker build modes
 | ``place_and_leave`` | Worker places site and leaves; ``self_constructs 1`` finishes building (Probe) |
 | ``sacrifice`` | Worker is consumed (Drone) |
 
-Also: ``self_constructs 1``, ``build_sacrifices_worker 1``, ``is_buildable_anywhere 1`` (no separate ``meadow`` on Protoss/Zerg/flying Terran).
+Also: ``self_constructs 1``, ``build_sacrifices_worker 1``, ``is_buildable_anywhere 1`` (no separate ``class building_land`` slot on Protoss/Zerg/flying Terran).
 
 Terran addons
 >>>>>>>>>>>>>
@@ -1246,16 +1276,16 @@ Lift-off & recombine
 | ``ground_form \<ground\>`` | Flying form lands as this type |
 | ``change_time \<sec\>`` | Morph time for ``change_to`` (no resource/pop cost) |
 
-Lift: addons detach on ground; ``meadow`` appears under host.
+Lift: addons detach on ground; building land is restored under the host (**same type the building consumed when built**; StarCraft maps use ``build_site``). If the unit has no saved reference, the map’s ``building_land`` or a sole ``nb_<type>_by_square`` keyword is used.
 
-Land: consumes nearest ``meadow`` on the square.
+Land: consumes nearest ``class building_land`` object on the square (API names like ``find_meadow_near_xy`` are historical).
 
 Recombine: Tab Tech Lab → Backspace go (flies to landing slot west of lab) → ``change_to`` ground.
 
-Meadow vs slot: meadow = land permission; reattach needs slot alignment
+Building land vs slot: building land = land permission; reattach needs slot alignment
 (``tech_lab.x ≈ factory.x + addon_offset_x``, within ~2.5 tiles Manhattan).
 
-Landing on own lift-off meadow does not reattach. Wrong land with orphan addon → TTS ``addon_reattach_failed`` (7350).
+Landing on own lift-off patch does not reattach. Wrong land with orphan addon → TTS ``addon_reattach_failed`` (7350).
 
 Test maps: ``terran_addon_test``, ``terran_recombine_test``; campaign ``sc_build_tests`` ch. 3–4.
 
@@ -1264,6 +1294,14 @@ Ship repair (since 1.4.1.1)
 
 ``can_repair_ships 1`` on workers or buildings. Workers repair adjacent shore ships (6
 squares); buildings auto-repair ships in neighboring water (8 squares).
+
+Building bridges on water (tile spans)
+---------------------------------------
+
+Workers can build ``is_buildable_on_water_only 1`` spans on pure water; on completion
+``bridge_terrain`` (e.g. ``bridge_deck``) is applied. Scaffold sites use normal
+``buildingsite`` TTS; footsteps use the finished terrain ``ground``. See
+`water-bridge-building.htm <water-bridge-building.htm>`_ (`zh <../../zh/mod/water-bridge-building.htm>`_).
 
 Herding (workers)
 ------------------

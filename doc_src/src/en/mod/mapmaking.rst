@@ -155,6 +155,54 @@ Remove_meadows
 
 remove_meadows do the opposite of additional_meadows.
 
+Building_land (default build slot type)
+'''''''''''''''''''''''''''''''''''''
+
+Maps can choose which object type ``nb_meadows_by_square`` auto-fills::
+
+    building_land build_site
+    nb_meadows_by_square 2
+
+- ``building_land meadow`` (default): auto-fill **meadow** slots.
+- ``building_land build_site``: auto-fill **build_site** slots (theme-neutral, e.g. space mods).
+
+``additional_meadows`` and ``additional_build_sites`` still place those types explicitly;
+``remove_meadows`` only removes ``meadow`` objects.
+
+Nb_<type>_by_square (building_land types from rules)
+'''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Map keyword pattern: ``nb_<type>_by_square <count>``, where ``<type>`` is the ``def`` name
+of any object with ``class building_land`` in ``rules.txt``::
+
+    nb_build_site_by_square 1
+    nb_meadow_by_square 2
+    nb_volcanic_rock_by_square 1
+
+- Fills **every square** with that many objects of the given type.
+- Types come from rules (mods can add ``def volcanic_rock`` + ``class building_land`` and use
+  ``nb_volcanic_rock_by_square``; Unicode names such as ``nb_火山岩石_by_square`` work if defined in rules).
+- Independent of the map ``building_land`` line.
+- Can coexist with ``nb_meadows_by_square``; usually use one or the other.
+
+Legacy ``nb_meadows_by_square`` remains: the name is historical; the actual type is controlled
+by ``building_land`` (default ``meadow``), not by parsing ``meadow`` from the keyword.
+
+If the map omits ``building_land`` and uses only one ``nb_<type>_by_square`` keyword, that type becomes ``world.building_land`` for the match.
+
+When lift-off or some upgrades restore building land in place, the engine uses **the type saved when the building was placed** first; only if missing, it falls back to the map default above.
+
+Additional_build_sites
+''''''''''''''''''''''
+
+::
+
+    additional_build_sites a2 b7
+
+adds one **build_site** per listed square (independent of ``building_land``).
+
+See ``building-land-terrain.htm`` for terrain, building land, and related examples.
+
 High_grounds
 ''''''''''''
 
@@ -1049,7 +1097,12 @@ Start a game on a map. This map will be the starting point. Enter the console (p
 Select a terrain from the palette
 """"""""""""""""""""""""""""""""""
 
-Press PageUp or PageDown to select a terrain. The meaning of each terrain is stored in res/ui/editor_palette.txt
+Press PageUp or PageDown to select a terrain. The meaning of each terrain is stored in ``res/ui/editor_palette.txt``.
+
+Each palette entry's ``style`` must match a ``class terrain`` name in ``rules.txt`` (e.g. ``forest``, ``dense_forest``, ``meadows``, ``lake``). When applied:
+
+- **Static terrain** (``is_dynamic 0``, e.g. lake, mountain): locks ``type_name`` on the square; saved as ``terrain <name>``.
+- **Dynamic terrain** (``is_dynamic 1``, e.g. forest, dense forest, meadows): places ``wood`` / ``meadow`` deposits on the square; terrain voice comes from ``square_terrain`` and can change when objects are removed.
 
 Apply a terrain to a square
 """"""""""""""""""""""""""""

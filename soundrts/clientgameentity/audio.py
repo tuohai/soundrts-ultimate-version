@@ -9,6 +9,7 @@ from .. import parameters
 from ..animation import noise
 from ..clientmedia import sounds
 from ..definitions import style
+from ..open_container import inside_unit_visible_from_place
 from ..lib.sound import psounds, distance
 from .base import FOOTSTEP_LIMIT
 
@@ -21,8 +22,20 @@ class EntityViewAudio:
     _buff_noises = None
     previous_hp = None
 
+    def _place_terrain_voice(self):
+        place = self.place
+        if place is None:
+            return None
+        scaffold_voice = getattr(place, "_scaffold_terrain_voice", None)
+        if scaffold_voice:
+            return scaffold_voice
+        bridge_voice = getattr(place, "_bridge_terrain_voice", None)
+        if bridge_voice:
+            return bridge_voice
+        return getattr(place, "type_name", None)
+
     def _terrain_footstep(self):
-        t = self.place.type_name
+        t = self._place_terrain_voice()
         if t:
             g = style.get(t, "ground")
             if g and style.has(self.type_name, "move_on_%s" % g[0]):
@@ -104,6 +117,13 @@ class EntityViewAudio:
         # 缓存常用阈值，减少属性访问与除法开销
         activity = getattr(self, 'activity', None)
         if activity:
+            if activity == "building" and self.type_name == "buildingsite":
+                building_type = getattr(getattr(self, "model", None), "type", None)
+                bt_name = getattr(building_type, "type_name", None)
+                if bt_name:
+                    st = style.get(bt_name, "noise_when_building", warn_if_not_found=False)
+                    if st:
+                        return st
             st = self.get_style(f"noise_when_{activity}")
             if st:
                 return st
@@ -232,12 +252,20 @@ class EntityViewAudio:
                 self.render_hp_evolution()
                 self.previous_hp = self.hp
 
+    def _client_audio_place(self):
+        if getattr(self, "is_inside", False):
+            container = getattr(self.place, "container", None)
+            if container is not None:
+                return container.place
+        return self.place
+
     def launch_event(self, sound, volume=1, priority=0, limit=0, ambient=False):
-        if self.place is self.interface.place:
+        audio_place = self._client_audio_place()
+        if audio_place is self.interface.place:
             pass
-        elif self.place in getattr(self.interface.place, "neighbors", []):
+        elif audio_place in getattr(self.interface.place, "neighbors", []):
             priority -= 1
-        else:
+        elif not inside_unit_visible_from_place(self, self.interface.place):
             return
         if self.is_memory:
             volume *= parameters.d.get("fog_of_war_factor", 0.5)
@@ -254,7 +282,13 @@ class EntityViewAudio:
 
     @property
     def is_local(self):
-        return self.place is self.interface.place or parameters.d.get("render_nearby_objects", False) and self.interface.place and self.place in self.interface.place.neighbors
+        audio_place = self._client_audio_place()
+        interface_place = self.interface.place
+        return audio_place is interface_place or (
+            parameters.d.get("render_nearby_objects", False)
+            and interface_place
+            and audio_place in interface_place.neighbors
+        )
 
     def on_use_complete(self, skill):
         st = style.get(skill, "alert")

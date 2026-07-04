@@ -149,6 +149,15 @@ class CreatureMovement(Entity):
         if cache_key in self._can_go_cache:
             return self._can_go_cache[cache_key]
 
+        from ..world_build_rules import square_has_construction_scaffold
+
+        if (
+            square_has_construction_scaffold(self.place)
+            and square_has_construction_scaffold(new_place)
+        ):
+            self._can_go_cache[cache_key] = False
+            return False
+
         # 实际检查逻辑
         result = False
 
@@ -293,9 +302,13 @@ class CreatureMovement(Entity):
         D-Phase 2 §3.1: 整体 cpdef 化 (3.0M calls/5min, 10.8 s tottime).
         cython 版省 frame setup + LOAD_FAST + 字节码 dispatch.
         """
-        if _mf is not None:
-            return _mf.near_enough_to_aim(self, target)
-        return self._py_near_enough_to_aim(target)
+        self._sync_inside_combat_coords(target)
+        try:
+            if _mf is not None:
+                return _mf.near_enough_to_aim(self, target)
+            return self._py_near_enough_to_aim(target)
+        finally:
+            self._restore_inside_combat_coords(target)
 
     def _py_near_enough_to_aim(self, target):
         """Python fallback for _near_enough_to_aim (与 cython 版语义等价)."""

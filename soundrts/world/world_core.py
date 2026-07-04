@@ -105,6 +105,7 @@ class World:
             0  # deprecated (was incorrectly used for columns instead of lines)
         )
         self.nb_meadows_by_square = 0
+        self.nb_building_land_by_square = {}
         self.random_starts = 1  # 添加random_starts属性，默认值为1（启用随机起始位置）
 
         self.west_east = []
@@ -140,7 +141,13 @@ class World:
         # "squares words"
         self.starting_squares = []
         self.additional_meadows = []
+        self.additional_build_sites = []
+        self.additional_building_land = []
         self.remove_meadows = []
+        from ..worldresource import default_building_land_type
+
+        self.building_land = default_building_land_type()
+        self._map_building_land_explicit = False
         self.high_grounds = []
 
         self.nb_players_min = 1

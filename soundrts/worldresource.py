@@ -13,7 +13,7 @@ class Deposit(Entity):
     extraction_qty = None  # 提取量
     type_name = "deposit"  # 添加type_name属性
 
-    def __init__(self, square, qty):
+    def __init__(self, square, qty, x=None, y=None):
         if isinstance(qty, str):
             self.qty = to_int(qty)
         elif isinstance(qty, int):
@@ -21,7 +21,7 @@ class Deposit(Entity):
         else:
             self.qty = 0
         self.qty_max = self.qty
-        Entity.__init__(self, square)
+        Entity.__init__(self, square, x, y)
         self._register_map_capacity()
 
     def _register_map_capacity(self, qty=None):
@@ -83,9 +83,17 @@ class BuildingLand(Entity):
     collision = 0
 
 
-class Meadow(BuildingLand):
-
-    type_name = "meadow"
+from .lib.building_land import (  # noqa: E402
+    building_land_class,
+    building_land_type_names,
+    building_land_types,
+    create_building_land,
+    default_building_land_type,
+    is_building_land,
+    nb_by_square_land_type,
+    normalize_building_land_type_name,
+    recreate_building_land,
+)
 
 
 class Corpse(Entity):

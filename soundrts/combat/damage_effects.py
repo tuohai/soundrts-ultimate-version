@@ -722,11 +722,15 @@ class DamageEffectsMixin(DamageCalculationMixin):
                     return
 
                 # 检查攻击范围,但在强制攻击时忽略
-                if not getattr(self.action, 'is_imperative', False):
-                    if is_melee and not self.in_melee_range(target):
-                        return
-                    elif not is_melee and not self.in_ranged_range(target):
-                        return
+                self._sync_inside_combat_coords(target)
+                try:
+                    if not getattr(self.action, 'is_imperative', False):
+                        if is_melee and not self.in_melee_range(target):
+                            return
+                        elif not is_melee and not self.in_ranged_range(target):
+                            return
+                finally:
+                    self._restore_inside_combat_coords(target)
 
                 # 检查是否是自爆单位（无论是否命中都会触发溅射）
                 is_exploding_unit = False
@@ -1111,9 +1115,13 @@ class DamageEffectsMixin(DamageCalculationMixin):
                                             final_damage += self.exp_dgf_vs[armor_type]
                                             break
 
+                        damage_target = self._resolve_damage_target(target)
+                        if damage_target is None:
+                            return
+
                         # 将最终伤害应用到目标（透传 is_melee，避免目标端误判双攻击单位的攻击类型）
-                        target.receive_hit(final_damage, self, is_crit=is_crit, is_charge=False, is_melee=is_melee)
-                        target.apply_damage_over_time(is_melee=is_melee, base_damage=damage)
+                        damage_target.receive_hit(final_damage, self, is_crit=is_crit, is_charge=False, is_melee=is_melee)
+                        damage_target.apply_damage_over_time(is_melee=is_melee, base_damage=damage)
 
                         # 检查是否有对目标生效的buff
                         # 首先从当前武器的debuffs中触发

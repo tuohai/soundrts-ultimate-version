@@ -400,35 +400,23 @@ def _execute_command(interface, cmd):
             voice.item(mp.BEEP)
             return
         p = interface.place
+        voice_name = None
         if getattr(interface, "zoom_mode", False) and hasattr(interface, "zoom"):
             from ..lib.subcell_terrain import zoom_subcell_index
             cx, cy = zoom_subcell_index(interface.zoom)
             p.subcells.apply_palette(d, cx, cy)
+            voice_name = d.get("style")
         else:
-            p.type_name = d["style"]
-
-            # trigger the update of terrain noises
             terrain_noises = getattr(interface, '_terrain_noises', [])
             for n in terrain_noises[:]:
                 n.stop()
             interface._terrain_noises = []
 
-            p.is_water = d["water"]
-            p.is_ground = d["ground"]
-            p.is_air = d["air"]
-            p.high_ground = d["high_ground"]
-            for p2 in p.strict_neighbors:
-                if p.is_ground and p2.is_ground and p.high_ground == p2.high_ground:
-                    p.ensure_path(p2)
-                else:
-                    p.ensure_nopath(p2)
-            p.ensure_resources("goldmine", *d["goldmines"])
-            p.ensure_resources("wood", *d["woods"])
-            p.ensure_meadows(d["meadows"])
-            p.terrain_speed = d["speed"]
-            p.terrain_cover = d["cover"]
-        if d["style"]:
-            voice.item([d["style"]])
+            from ..lib.editor_palette import apply_palette_to_square
+
+            voice_name = apply_palette_to_square(p, d) or d.get("style")
+        if voice_name:
+            voice.item([voice_name])
     elif cmd == "dti":
         interface._must_display_target_info = not getattr(interface, '_must_display_target_info', False)
     elif cmd:

@@ -29,6 +29,8 @@ class _Square:
 
 class _Meadow:
     __slots__ = ("id", "place", "x", "y", "type_name")
+    is_a_building_land = True
+    is_an_exit = False
 
     def __init__(self, mid, place, x, y):
         self.id = mid

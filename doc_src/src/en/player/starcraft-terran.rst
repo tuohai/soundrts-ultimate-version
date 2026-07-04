@@ -2,7 +2,9 @@
 
 Mod: enable ``mods = starcraft`` in ``SoundRTS.ini``.
 
-This guide covers Tech Lab / Reactor addons: build, lift-off detach, flying recombine, and the difference between meadows (build permission) and slot alignment (reattach).
+This guide covers Tech Lab / Reactor addons: build, lift-off detach, flying recombine, and the difference between **building land** (build permission) and slot alignment (reattach).
+
+StarCraft maps use **build sites** (``build_site``, square terrain ``build_sites``) rather than classic **meadows**. Below, “building land” means any ``class building_land`` object; in this mod that is usually ``build_site``.
 
 
 ----
@@ -24,8 +26,8 @@ This guide covers Tech Lab / Reactor addons: build, lift-off detach, flying reco
      - Tech Lab or Reactor (``is_addon 1``), built on the host’s side slot
    * - Slot
      - About 3.5 tiles east of the host (``addon_offset_x``, default 3500 internal units)
-   * - Meadow
-     - A ``meadow`` object on the square; ground Terran buildings must consume one to land
+   * - Building land
+     - A ``class building_land`` object on the square (``build_site`` in this mod); ground Terran buildings must consume one to land
    * - Recombine
      - After lift-off the addon stays on the ground; another host lands with the slot aligned and auto-reattaches the orphan addon
 
@@ -49,7 +51,7 @@ Reactor uses ``addon_train_multiplier 2``.
 
 1. Select an existing host (e.g. Barracks), not bare ground.
 2. Build Tech Lab or Reactor from the menu.
-3. The addon self-constructs on the host’s side (``self_constructs 1``); it does not use its own meadow.
+3. The addon self-constructs on the host’s side (``self_constructs 1``); it does not use its own building-land slot.
 
 Test map: ``terran_addon_test``.
 
@@ -65,9 +67,9 @@ Barracks / Factory / Starport can change to flying form (``can_change_to flying_
 
 1. Select the ground building → change_to → flying variant.
 2. The host leaves the ground; the addon stays and is detached.
-3. A new meadow appears where the host stood.
+3. Building land is restored where the host stood: **the same type the building consumed when built** (``build_site`` in this mod). If the map only spawns build sites (``nb_build_site_by_square``, ``building_land build_site``, etc.), lift-off leaves a build site — you do **not** need ``default_building_land build_site`` in mod rules for that.
 
-One square may have several meadows (e.g. Barracks and Factory each lift once → two meadows). On starts with only one map meadow, the Factory may start without a meadow; meadows appear at each building’s lift position.
+One square may have several patches (e.g. Barracks and Factory each lift once → two build sites). On starts with only one map patch, the Factory may start without building land; patches appear at each building’s lift position.
 
 
 ----
@@ -89,24 +91,24 @@ One square may have several meadows (e.g. Barracks and Factory each lift once �
      - Decides
      - Does not decide
    * - Landing
-     - Which meadow is consumed; host (x, y)
+     - Which building-land object is consumed; host (x, y)
      - Reattach
    * - Reattach
      - Orphan Tech Lab attaches to host
-     - Which meadow was used
+     - Which patch was used
 
 
 
-Meadow = permission to land on the square.  
+Building land = permission to land (any ``class building_land`` on the square; API names like ``find_meadow_near_xy`` are historical).  
 Slot = geometry: addon at ``(host.x + 3500, host.y)``; reattach requires slot alignment within ~2.5 tiles Manhattan distance.
 
-You may see the Factory on a “center meadow” while Tank training works: slot is aligned, not because the building sits on grass under the lab.
+You may see the Factory on a “center patch” while Tank training works: slot is aligned, not because the building sits on grass under the lab.
 
-4.2 Normal land (own lift-off meadow)
+4.2 Normal land (own lift-off patch)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-1. Tab the meadow left when that building lifted.
+1. Tab the building land left when that building lifted (build site in this mod).
 2. Backspace (default ``go``), wait until arrival.
 3. change_to ground form.
 
@@ -118,14 +120,14 @@ The building lands there and does not take over an orphan Tech Lab. If a compati
 
 1. Build Tech Lab on Barracks, lift Barracks (lab stays).
 2. Lift Factory, fly to that square.
-3. Tab the Tech Lab (not a meadow).
+3. Tab the Tech Lab (not a building-land patch).
 4. Backspace go — target becomes the landing slot (~3.5 tiles west of the lab), not the lab’s center.
 5. change_to Factory.
 
 Result:
 
 - Factory spawns at slot coordinates;
-- The nearest meadow on the square is consumed (often a center patch);
+- The nearest building-land object on the square is consumed (often a center patch);
 - Slot aligns with the lab → auto-reattach → Tank (etc.) available.
 
 Test map: ``terran_recombine_test``; campaign ``sc_build_tests`` chapter 4.
@@ -147,7 +149,7 @@ Test map: ``terran_recombine_test``; campaign ``sc_build_tests`` chapter 4.
      - After go
      - change_to result
    * - Land on lift spot
-     - Lift-off meadow
+     - Lift-off build site
      - Backspace
      - No reattach, no Tank
    * - Take orphan Tech Lab
@@ -157,7 +159,7 @@ Test map: ``terran_recombine_test``; campaign ``sc_build_tests`` chapter 4.
 
 
 
-With multiple meadows, Tab voice says “meadow” for all — use direction; for recombine, Tab the lab.
+With multiple patches, Tab voice may say “build site” for all — use direction; for recombine, Tab the lab.
 
 
 ----
@@ -167,13 +169,13 @@ With multiple meadows, Tab voice says “meadow” for all — use direction; fo
 --------
 
 
-Why can I train Tank when the lab has no meadow nearby, only center meadows?
+Why can I train Tank when the lab has no patch nearby, only center patches?
 
-Going to the Tech Lab flies you to the slot. Landing places the Factory at slot (x,y) but deletes the nearest meadow (often a center one). Reattach checks distance from the lab to ``factory.x + 3500``, not which meadow was used.
+Going to the Tech Lab flies you to the slot. Landing places the Factory at slot (x,y) but deletes the nearest building-land object (often a center one). Reattach checks distance from the lab to ``factory.x + 3500``, not which patch was used.
 
 Why did center landing used to reattach?
 
-Older logic snapped landing anywhere on the square within ~5.5 m of the lab. Now: go to your own meadow → land in place; recombine requires go to the Tech Lab.
+Older logic snapped landing anywhere on the square within ~5.5 m of the lab. Now: go to your own lift-off patch → land in place; recombine requires go to the Tech Lab.
 
 Slot aligned but looks far from the lab?
 
@@ -209,6 +211,8 @@ The lab is on the host’s side (~3.5 tiles offset), not under the host center �
      - Lift / land forms
    * - ``change_time``
      - Morph time
+   * - ``nb_build_site_by_square``
+     - Auto-fill each square with ``build_site``; see ``mod/mapmaking.rst`` and ``mod/building-land-terrain.htm``
 
 
 

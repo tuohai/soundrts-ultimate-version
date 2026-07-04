@@ -32,8 +32,8 @@ additional_meadows b1 b6
 additional_meadows b1 b6
 additional_meadows b1 b6
 
-terrain _forest a5 a6 c1 c2
-terrain _meadows a1 a2 b1 b2 b5 b6 c5 c6
+terrain forest a5 a6 c1 c2
+terrain meadows a1 a2 b1 b2 b5 b6 c5 c6
 high_grounds a5 c2
 water 
 ground 

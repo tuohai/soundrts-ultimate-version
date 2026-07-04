@@ -16,6 +16,20 @@ from .mapfile import Map
 
 from . import msgparts as mp
 from .lib.msgs import nb2msg
+from .rmg_templates import (
+    RmgTemplateSpec,
+    all_template_names,
+    get_template_spec,
+    normalize_terrain_mode,
+    reload_custom_templates,
+    resolve_random_terrain,
+    rmg_ford_terrain,
+    rmg_water_terrain,
+    template_monster_presets,
+    template_title_voice,
+    terrain_speed_line,
+    terrain_uses_border_style,
+)
 
 _TEMPLATE_TITLE = {
     "standard": mp.RMG_TEMPLATE_STANDARD,
@@ -83,7 +97,18 @@ MONSTER_PRESETS = {
 
 TEMPLATES = ("standard", "fast", "macro", "lanes")
 
-TERRAIN_MODES = ("random", "grass", "marsh", "mountain")
+TERRAIN_BASE_MODES = ("random", "grass")
+
+
+def terrain_choices_for_template(template: str) -> Tuple[str, ...]:
+    _refresh_custom_templates()
+    from .rmg_templates import terrain_modes_for_template
+
+    return terrain_modes_for_template(template, _builtin_rmg_specs())
+
+
+# Backward-compatible alias used by tests and share-code abbreviations.
+TERRAIN_MODES = TERRAIN_BASE_MODES + ("marsh", "mountain")
 
 TEAM_MODES = ("ffa", "teams_2v2")
 
@@ -149,6 +174,7 @@ _VICTORY_TITLE = {
 }
 
 _SHARE_CODE_PREFIX = "RMG1"
+_SHARE_CODE_PREFIX_V2 = "RMG2"
 
 _RESOURCE_TIERS_BALANCED = [(400, 400), (200, 200), (150, 150)]
 _RESOURCE_TIERS_CLUSTERED = [(800, 800), (600, 600), (300, 300)]
@@ -166,6 +192,43 @@ class _TemplateSpec:
     meadows_per_square: int
     creep_multiplier: float
     center_bridges: bool
+    terrain_modes: Tuple[str, ...] = ()  # empty = auto from rules (see rmg_templates)
+    water_terrain: str = "lake"
+    ford_terrain: str = "ford"
+    skip_terrain_menu: bool = False
+    skip_water_menu: bool = False
+
+
+def _template_spec_to_rmg(spec: _TemplateSpec) -> RmgTemplateSpec:
+    return RmgTemplateSpec(
+        layout=spec.layout,
+        starting_units=spec.starting_units,
+        starting_resources=spec.starting_resources,
+        start_mine_qty=spec.start_mine_qty,
+        tiers_balanced=spec.tiers_balanced,
+        tiers_clustered=spec.tiers_clustered,
+        population_limit=spec.population_limit,
+        meadows_per_square=spec.meadows_per_square,
+        creep_multiplier=spec.creep_multiplier,
+        center_bridges=spec.center_bridges,
+        terrain_modes=spec.terrain_modes,
+        water_terrain=spec.water_terrain,
+        ford_terrain=spec.ford_terrain,
+        skip_terrain_menu=spec.skip_terrain_menu,
+        skip_water_menu=spec.skip_water_menu,
+    )
+
+
+def _builtin_rmg_specs() -> Dict[str, RmgTemplateSpec]:
+    return {name: _template_spec_to_rmg(spec) for name, spec in _TEMPLATE_SPECS.items()}
+
+
+def _all_templates() -> Tuple[str, ...]:
+    return all_template_names(TEMPLATES)
+
+
+def _refresh_custom_templates() -> None:
+    reload_custom_templates(_builtin_rmg_specs())
 
 
 _TEMPLATE_SPECS: Dict[str, _TemplateSpec] = {
@@ -216,8 +279,23 @@ _TEMPLATE_SPECS: Dict[str, _TemplateSpec] = {
         meadows_per_square=0,
         creep_multiplier=1.1,
         center_bridges=False,
+        skip_terrain_menu=True,
+        skip_water_menu=True,
     ),
 }
+
+
+_refresh_custom_templates()
+
+
+def refresh_rmg_templates() -> None:
+    """Reload custom templates from cfg/randommap, res/randommap, and active mods."""
+    _refresh_custom_templates()
+
+
+def get_rmg_template_spec(template_name: str) -> RmgTemplateSpec:
+    refresh_rmg_templates()
+    return get_template_spec(template_name, _builtin_rmg_specs())
 
 
 @dataclass
@@ -240,17 +318,19 @@ class RandomMapConfig:
         return random.randint(0, 10000)
 
     def normalized(self) -> RandomMapConfig:
+        _refresh_custom_templates()
         size = self.size if self.size in SIZE_PRESETS else "medium"
         nb_players = max(2, min(4, int(self.nb_players)))
         monster = self.monster_strength if self.monster_strength in MONSTER_PRESETS else "medium"
         layout = self.resource_layout if self.resource_layout in ("balanced", "clustered") else "balanced"
-        template = self.template if self.template in TEMPLATES else "standard"
-        terrain = self.terrain if self.terrain in TERRAIN_MODES else "random"
+        template = self.template if self.template in _all_templates() else "standard"
+        terrain = normalize_terrain_mode(self.terrain, template, _builtin_rmg_specs())
         team_mode = self.team_mode if self.team_mode in TEAM_MODES else "ffa"
         if nb_players != 4:
             team_mode = "ffa"
         water = self.water if self.water in WATER_MODES else "none"
-        if _TEMPLATE_SPECS[template].layout == "lanes":
+        spec = get_template_spec(template, _builtin_rmg_specs())
+        if spec.layout == "lanes" or spec.skip_water_menu:
             water = "none"
         treasure = self.treasure if self.treasure in TREASURE_MODES else "none"
         victory_mode = (
@@ -726,21 +806,44 @@ def _invert_abbr(table: Dict[str, Dict[str, str]]) -> Dict[str, Dict[str, str]]:
 _SHARE_REV = _invert_abbr(_SHARE_ABBR)
 
 
+def _uses_compact_share_code(cfg: RandomMapConfig) -> bool:
+    return (
+        cfg.template in _SHARE_ABBR["template"]
+        and cfg.terrain in _SHARE_ABBR["terrain"]
+    )
+
+
 def encode_share_code(config: RandomMapConfig, seed: int | None = None) -> str:
     cfg = config.normalized()
     seed_val = int(seed if seed is not None else (cfg.seed or 0))
+    if _uses_compact_share_code(cfg):
+        parts = [
+            _SHARE_CODE_PREFIX,
+            _SHARE_ABBR["template"][cfg.template],
+            _SHARE_ABBR["size"][cfg.size],
+            str(cfg.nb_players),
+            _SHARE_ABBR["monster_strength"][cfg.monster_strength],
+            _SHARE_ABBR["resource_layout"][cfg.resource_layout],
+            _SHARE_ABBR["terrain"][cfg.terrain],
+            _SHARE_ABBR["team_mode"][cfg.team_mode],
+            _SHARE_ABBR["water"][cfg.water],
+            _SHARE_ABBR["treasure"][cfg.treasure],
+            _SHARE_ABBR["victory_mode"][cfg.victory_mode],
+            str(seed_val),
+        ]
+        return ":".join(parts)
     parts = [
-        _SHARE_CODE_PREFIX,
-        _SHARE_ABBR["template"][cfg.template],
-        _SHARE_ABBR["size"][cfg.size],
+        _SHARE_CODE_PREFIX_V2,
+        cfg.template,
+        cfg.size,
         str(cfg.nb_players),
-        _SHARE_ABBR["monster_strength"][cfg.monster_strength],
-        _SHARE_ABBR["resource_layout"][cfg.resource_layout],
-        _SHARE_ABBR["terrain"][cfg.terrain],
-        _SHARE_ABBR["team_mode"][cfg.team_mode],
-        _SHARE_ABBR["water"][cfg.water],
-        _SHARE_ABBR["treasure"][cfg.treasure],
-        _SHARE_ABBR["victory_mode"][cfg.victory_mode],
+        cfg.monster_strength,
+        cfg.resource_layout,
+        cfg.terrain,
+        cfg.team_mode,
+        cfg.water,
+        cfg.treasure,
+        cfg.victory_mode,
         str(seed_val),
     ]
     return ":".join(parts)
@@ -748,9 +851,30 @@ def encode_share_code(config: RandomMapConfig, seed: int | None = None) -> str:
 
 def decode_share_code(code: str) -> RandomMapConfig:
     text = code.strip()
-    if text.lower().startswith(_SHARE_CODE_PREFIX.lower() + ":"):
+    prefix = _SHARE_CODE_PREFIX
+    if text.lower().startswith(_SHARE_CODE_PREFIX_V2.lower() + ":"):
+        prefix = _SHARE_CODE_PREFIX_V2
+        text = text.split(":", 1)[1]
+    elif text.lower().startswith(_SHARE_CODE_PREFIX.lower() + ":"):
         text = text.split(":", 1)[1]
     tokens = [t for t in text.replace("/", ":").split(":") if t]
+    if prefix == _SHARE_CODE_PREFIX_V2:
+        if len(tokens) != 11:
+            raise ValueError("invalid RMG share code")
+        seed_raw = int(tokens[10])
+        return RandomMapConfig(
+            template=tokens[0],
+            size=tokens[1],
+            nb_players=int(tokens[2]),
+            monster_strength=tokens[3],
+            resource_layout=tokens[4],
+            terrain=tokens[5],
+            team_mode=tokens[6],
+            water=tokens[7],
+            treasure=tokens[8],
+            victory_mode=tokens[9],
+            seed=seed_raw if seed_raw > 0 else None,
+        ).normalized()
     if len(tokens) not in (10, 11):
         raise ValueError("invalid RMG share code")
     rev = _SHARE_REV
@@ -820,9 +944,10 @@ def _chunks(items: Sequence[str], width: int = 16) -> Iterable[str]:
         yield " ".join(items[i : i + width])
 
 
-def _scaled_creep(strength: str, multiplier: float) -> List[Tuple[int, str]]:
+def _scaled_creep(strength: str, multiplier: float, template: str) -> List[Tuple[int, str]]:
+    presets = template_monster_presets(template, MONSTER_PRESETS)
     result = []
-    for qty, unit_type in MONSTER_PRESETS[strength]:
+    for qty, unit_type in presets[strength]:
         scaled = max(1, int(round(qty * multiplier)))
         result.append((scaled, unit_type))
     return result
@@ -847,10 +972,14 @@ def _blob(
     return cells
 
 
-def _resolve_terrain_mode(rng: random.Random, terrain: str) -> str:
+def _resolve_terrain_mode(
+    rng: random.Random,
+    terrain: str,
+    template: str,
+) -> str:
     if terrain != "random":
         return terrain
-    return rng.choice(["grass", "marsh", "marsh", "mountain"])
+    return resolve_random_terrain(rng, template, _builtin_rmg_specs())
 
 
 def _terrain_lines(
@@ -860,8 +989,9 @@ def _terrain_lines(
     starts: Sequence[Tuple[int, int]],
     terrain_mode: str,
     water: Set[Tuple[int, int]],
+    template: str,
 ) -> List[str]:
-    mode = _resolve_terrain_mode(rng, terrain_mode)
+    mode = _resolve_terrain_mode(rng, terrain_mode, template)
     if mode == "grass":
         return []
 
@@ -873,40 +1003,37 @@ def _terrain_lines(
     blocked.add(_mirror(cx, cy, cols, lines))
 
     terrain_cells: Set[Tuple[int, int]] = set()
-    if mode == "marsh":
-        patch_count = 2 if cols <= 9 else 3
-        seeds = _symmetric_pairs(rng, cols, lines, list(blocked), patch_count)
-        for px, py in seeds:
-            terrain_cells |= _blob(px, py, cols, lines, 1, blocked)
-            mx, my = _mirror(px, py, cols, lines)
-            terrain_cells |= _blob(mx, my, cols, lines, 1, blocked)
-        if not terrain_cells:
-            return []
-        tokens = sorted(_sq(x, y) for x, y in terrain_cells)
-        return [f"terrain marsh {' '.join(tokens)}", f"speed .5 1 {' '.join(tokens)}"]
-
-    if mode == "mountain":
+    if terrain_uses_border_style(mode):
         margin = 1
         for x in range(1, cols + 1):
             for y in range(1, lines + 1):
                 if x <= margin or y <= margin or x > cols - margin or y > lines - margin:
                     if (x, y) not in blocked:
                         terrain_cells.add((x, y))
-        if not terrain_cells:
-            return []
-        tokens = sorted(_sq(x, y) for x, y in terrain_cells)
-        return [f"terrain mountain {' '.join(tokens)}", f"speed .25 .5 {' '.join(tokens)}"]
+    else:
+        patch_count = 2 if cols <= 9 else 3
+        seeds = _symmetric_pairs(rng, cols, lines, list(blocked), patch_count)
+        for px, py in seeds:
+            terrain_cells |= _blob(px, py, cols, lines, 1, blocked)
+            mx, my = _mirror(px, py, cols, lines)
+            terrain_cells |= _blob(mx, my, cols, lines, 1, blocked)
+    if not terrain_cells:
+        return []
+    tokens = sorted(_sq(x, y) for x, y in terrain_cells)
+    out = [f"terrain {mode} {' '.join(tokens)}"]
+    speed_line = terrain_speed_line(mode)
+    if speed_line:
+        out.append(f"{speed_line} {' '.join(tokens)}")
+    return out
 
-    return []
 
-
-def _water_lines(water: Set[Tuple[int, int]]) -> List[str]:
+def _water_lines(water: Set[Tuple[int, int]], water_terrain: str) -> List[str]:
     if not water:
         return []
     tokens = sorted(_sq(x, y) for x, y in water)
     return [
         f"water {' '.join(tokens)}",
-        f"terrain lake {' '.join(tokens)}",
+        f"terrain {water_terrain} {' '.join(tokens)}",
     ]
 
 
@@ -920,10 +1047,14 @@ def _center_bridge_lines(cols: int, lines: int, water: Set[Tuple[int, int]]) -> 
     return out
 
 
-def _lane_ford_lines(cols: int) -> List[str]:
+def _lane_ford_lines(cols: int, ford_terrain: str) -> List[str]:
     fords = {_sq(c, 2) for c in (max(1, cols // 4), max(1, cols // 2), min(cols, (3 * cols) // 4))}
     tokens = sorted(fords)
-    return [f"terrain ford {' '.join(tokens)}", f"speed .5 1 {' '.join(tokens)}"]
+    out = [f"terrain {ford_terrain} {' '.join(tokens)}"]
+    speed_line = terrain_speed_line(ford_terrain)
+    if speed_line:
+        out.append(f"{speed_line} {' '.join(tokens)}")
+    return out
 
 
 def _team_trigger_lines(nb_players: int, team_mode: str) -> List[str]:
@@ -1276,11 +1407,11 @@ def _append_player_block(
 def _append_creep(
     lines_out: List[str],
     cfg: RandomMapConfig,
-    spec: _TemplateSpec,
+    spec: RmgTemplateSpec,
     creep_squares: Sequence[str],
 ) -> None:
     creep_parts: List[str] = []
-    for qty, unit_type in _scaled_creep(cfg.monster_strength, spec.creep_multiplier):
+    for qty, unit_type in _scaled_creep(cfg.monster_strength, spec.creep_multiplier, cfg.template):
         creep_parts.extend([str(qty), unit_type])
     lines_out.append(
         f"computer_only 0 0 {' '.join(creep_squares)} {' '.join(creep_parts)}"
@@ -1289,7 +1420,7 @@ def _append_creep(
 
 def _generate_grid_definition(
     cfg: RandomMapConfig,
-    spec: _TemplateSpec,
+    spec: RmgTemplateSpec,
     seed: int,
     rng: random.Random,
 ) -> str:
@@ -1326,10 +1457,11 @@ def _generate_grid_definition(
     lines_out.append("")
 
     if water_set:
-        lines_out.extend(_water_lines(water_set))
+        water_terrain = rmg_water_terrain(spec.water_terrain)
+        lines_out.extend(_water_lines(water_set, water_terrain))
         lines_out.append("")
 
-    terrain_out = _terrain_lines(rng, cols, lines, starts, cfg.terrain, water_set)
+    terrain_out = _terrain_lines(rng, cols, lines, starts, cfg.terrain, water_set, cfg.template)
     if terrain_out:
         lines_out.extend(terrain_out)
         lines_out.append("")
@@ -1365,7 +1497,7 @@ def _generate_grid_definition(
 
 def _generate_lanes_definition(
     cfg: RandomMapConfig,
-    spec: _TemplateSpec,
+    spec: RmgTemplateSpec,
     seed: int,
     rng: random.Random,
 ) -> str:
@@ -1392,7 +1524,7 @@ def _generate_lanes_definition(
     for chunk in _chunks(sn):
         lines_out.append(f"south_north_paths {chunk}")
     lines_out.append("")
-    lines_out.extend(_lane_ford_lines(cols))
+    lines_out.extend(_lane_ford_lines(cols, rmg_ford_terrain(spec.ford_terrain)))
     lines_out.append("")
 
     _append_resources(lines_out, spec, cfg, rng, cols, lines, starts)
@@ -1424,8 +1556,9 @@ def _generate_lanes_definition(
 
 def generate_definition(config: RandomMapConfig) -> Tuple[str, int]:
     """Return (map definition text, seed used)."""
+    _refresh_custom_templates()
     cfg = config.normalized()
-    spec = _TEMPLATE_SPECS[cfg.template]
+    spec = get_template_spec(cfg.template, _builtin_rmg_specs())
     seed = cfg.resolved_seed()
     rng = random.Random(seed)
     if spec.layout == "lanes":
@@ -1518,10 +1651,11 @@ def make_map(config: RandomMapConfig) -> Tuple[Map, int]:
 
 def menu_title_for_config(config: RandomMapConfig) -> list:
     """Voice-menu title tokens for a config (before generation)."""
+    _refresh_custom_templates()
     cfg = config.normalized()
     parts = (
         mp.RMG_RANDOM_MAP
-        + _TEMPLATE_TITLE[cfg.template]
+        + template_title_voice(cfg.template, _TEMPLATE_TITLE)
         + _SIZE_TITLE[cfg.size]
         + nb2msg(cfg.nb_players)
         + mp.RMG_PLAYERS

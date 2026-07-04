@@ -126,6 +126,10 @@ class CreatureAttributes(Entity):
             o._cached_has_mode = hasattr(o, "mode")
         
         if o._cached_has_mode and o.mode == "build":
+            target = getattr(o, "target", None)
+            # 施工声由 BuildingSite 在工地播放（岸建/水上脚手架等）
+            if getattr(target, "type_name", None) == "buildingsite":
+                return
             return "building"
         if o._cached_has_mode and o.mode == "gather":
             # 缓存target的type_name属性检查 - 添加空值检查
@@ -266,6 +270,10 @@ class CreatureAttributes(Entity):
         if "allow_attack_inside" in d:
             cls.allow_attack_inside = int(d["allow_attack_inside"]) == 1
 
+        # 解析容器被外部攻击时乘客被命中的几率（0-100）
+        if "attack_inside_chance" in d:
+            cls.attack_inside_chance = max(0, min(100, int(d["attack_inside_chance"])))
+
         # 注意：can_gather属性已移至Worker.interpret方法中处理，避免影响其他单位类型
 
         # 解析奖励资源数量
@@ -298,23 +306,26 @@ class CreatureAttributes(Entity):
         else:
             cls.yield_on_defeat = 0
 
-        # 解析允   许攻击的单位类型
-        if "allow_units_attack" in d:
-            if "all" in d["allow_units_attack"]:
-                cls.allow_units_attack = ["all"]
+        if "passenger_attack_types" in d:
+            if "all" in d["passenger_attack_types"]:
+                cls.passenger_attack_types = ["all"]
             else:
-                cls.allow_units_attack = d["allow_units_attack"]
+                cls.passenger_attack_types = d["passenger_attack_types"]
         else:
-            cls.allow_units_attack = []
+            cls.passenger_attack_types = []
 
-        # 解析属性加成
-        if "allow_units_add" in d:
-            cls.allow_units_add = {}
-            items = d.get("allow_units_add", [])
-            if not items:
-                return
-
-            # 如果是列表，每两个元素组成一对
+        for bonus_key, attr_name in (
+            ("load_bonus", "load_bonus"),
+            ("passenger_bonus", "passenger_bonus"),
+        ):
+            if bonus_key not in d:
+                continue
+            raw = d.get(bonus_key, {})
+            if isinstance(raw, dict):
+                setattr(cls, attr_name, {str(k): float(v) for k, v in raw.items()})
+                continue
+            bonus = {}
+            items = raw
             i = 0
             while i < len(items):
                 if i + 1 >= len(items):
@@ -322,10 +333,11 @@ class CreatureAttributes(Entity):
                 try:
                     stat = str(items[i])
                     value = float(items[i + 1])
-                    cls.allow_units_add[stat] = value
+                    bonus[stat] = value
                     i += 2
                 except (ValueError, IndexError):
                     i += 1
+            setattr(cls, attr_name, bonus)
 
         # 解析近战溅射衰减
         if "mdg_splash_decay" in d:

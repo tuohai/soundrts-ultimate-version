@@ -4,7 +4,7 @@
 """
 
 from .. import msgparts as mp
-from ..lib.nofloat import PRECISION
+from ..lib.nofloat import PRECISION, to_int
 from ..lib.msgs import nb2msg, nb2msg_float
 from ..definitions import style
 
@@ -12,6 +12,31 @@ from ..definitions import style
 class CombatAttributes:
     def __init__(self, main_interface):
         self.main_interface = main_interface
+
+    def _format_terrain_pair_list(self, terrain_list):
+        """将 [地形, 值, 地形, 值, ...] 格式化为属性面板文本。"""
+        if not terrain_list:
+            return None
+        terrain_text = []
+        for i in range(0, len(terrain_list), 2):
+            if i + 1 >= len(terrain_list):
+                break
+            terrain_type = terrain_list[i]
+            modifier = terrain_list[i + 1]
+            terrain_title = style.get(terrain_type, "title") or [terrain_type]
+            if isinstance(terrain_title, list):
+                terrain_text.extend(terrain_title)
+            else:
+                terrain_text.append(str(terrain_title))
+            terrain_text.extend(mp.COLON)
+            try:
+                terrain_text.extend(nb2msg_float(to_int(modifier) / PRECISION))
+            except (ValueError, TypeError):
+                terrain_text.append(str(modifier))
+            terrain_text.extend(mp.COMMA)
+        if terrain_text:
+            return terrain_text[:-1]
+        return None
     
     def add_attack_defense_attributes(self, u, attrs):
         """添加攻击防御相关属性"""
@@ -330,3 +355,19 @@ class CombatAttributes:
                 if terrain_text:
                     terrain_text = terrain_text[:-1]  # 移除最后一个逗号
                     attrs.append(("", mp.RDG_COVER_ON_TERRAIN, terrain_text))
+
+        terrain_attr_map = (
+            ("mdg_on_terrain", mp.MDG_ON_TERRAIN),
+            ("rdg_on_terrain", mp.RDG_ON_TERRAIN),
+            ("mdg_cd_on_terrain", mp.MDG_CD_ON_TERRAIN),
+            ("rdg_cd_on_terrain", mp.RDG_CD_ON_TERRAIN),
+            ("charge_mdg_terrain", mp.CHARGE_MDG_TERRAIN),
+            ("charge_rdg_terrain", mp.CHARGE_RDG_TERRAIN),
+            ("charge_mdg_cd_on_terrain", mp.CHARGE_MDG_CD_ON_TERRAIN),
+            ("charge_rdg_cd_on_terrain", mp.CHARGE_RDG_CD_ON_TERRAIN),
+        )
+        for attr_name, msg_key in terrain_attr_map:
+            terrain_list = getattr(u.model, attr_name, ())
+            terrain_text = self._format_terrain_pair_list(terrain_list)
+            if terrain_text:
+                attrs.append(("", msg_key, terrain_text))

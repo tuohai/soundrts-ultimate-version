@@ -526,20 +526,70 @@ exhausted
 
 ; terrain
 
-def _meadows ; this terrain is applied automatically to any square with meadows and without woods
+def plain ; plain terrain (map: terrain plain a1)
+title 5696
+noise
+ground
+color
+
+def rocky_plain ; rocky plain terrain (map: terrain rocky_plain a1)
+title 5696
+noise
+ground
+color
+
+def high_rocky_plain ; high rocky plain (map: terrain high_rocky_plain a1)
+title 4314
+noise
+ground
+color
+
+def _high_ground ; voiced when square/sub-cell is high ground (not a map terrain type)
+title 5698
+noise
+ground
+color
+
+def plateau ; highland terrain (e.g. terrain plateau a1 → plateau + high ground)
+title 4314
+noise
+ground
+color
+
+def hill ; hill terrain (e.g. terrain hill a1 → hill + high ground)
+title 5699
+noise
+ground
+color
+
+def meadows ; square terrain contributed by meadow building land
 title 4362
 noise
 ground ; footstep noise determined by the nearest object
 color
 
-def _forest ; this terrain is applied automatically to any square with some woods
+def build_sites ; auto terrain when square has any build_site building land
+is_a meadows
+title 5694
+noise
+ground ; footstep noise determined by the nearest object
+color
+
+def town ; square terrain when townhall (or is_a townhall) is on the square
+title 5695
+noise
+ground
+color
+
+def forest ; square terrain when wood deposits are present
 title 4363
 noise
 ground ; footstep noise determined by the nearest object
 color
 
-def _dense_forest ; this terrain is applied automatically to any square with many woods
+def dense_forest ; square terrain when many wood deposits are present
 title 4364
+blocks_path 1
 noise
 ground ; footstep noise determined by the nearest object
 color
@@ -547,6 +597,12 @@ color
 def river
 title 4346
 noise loop 1065
+color blue4
+
+def creek
+title 5697
+noise loop 1065
+ground water
 color blue4
 
 def lake
@@ -579,6 +635,11 @@ title 4348
 noise loop 1065
 ground wood
 color brown
+when_moving_through 1092
+
+def bridge_deck
+is_a big_bridge
+title 5109
 
 def ford
 title 4349
@@ -598,6 +659,7 @@ color brown
 def buildingsite
 is_a building
 title 107 128
+noise_when_building repeat 4 1046 1048 1049
 noise_if_damaged
 noise_if_very_damaged
 ground gravel
@@ -974,6 +1036,13 @@ color yellowgreen
 noise repeat 1.5 1059 1060 1061 1062 1063 9999 9999 9999 9999 9999 9999 9999 9999 9999 9999
 ground grass
 
+def build_site
+is_a thing
+title 5694
+color gray
+noise repeat 1.5 1059 1060 1061 1062 1063 9999 9999 9999 9999 9999 9999 9999 9999 9999 9999
+ground gravel
+
 def corpse
 is_a thing
 title
@@ -987,6 +1056,10 @@ color dimgray
 noise repeat 15 1000
 ground grass
 when_moving_through 1091
+
+def wooden_bridge
+is_a big_bridge building
+title 5108
 
 def bridge
 title 153

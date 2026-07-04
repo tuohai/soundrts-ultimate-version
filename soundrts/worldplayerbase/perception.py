@@ -8,6 +8,7 @@ from ..lib.log import warning
 from ..worldroom import Square
 from ..worldexit import Exit
 from ..worldresource import Corpse, Deposit
+from ..open_container import container_visible_from_place, is_open_container
 from .base import A
 
 # D-Phase 1 T2: known_enemies 内层 Cython 化 (失败 fallback 到 Python).
@@ -23,6 +24,18 @@ if os.environ.get("SOUNDRTS_NO_CYTHON", "").strip() not in ("1", "true", "True")
 
 class PerceptionMixin:
     """视野、感知和记忆相关的方法混入类"""
+
+    def _open_container_passenger_visible(self, unit):
+        if not getattr(unit, "is_inside", False):
+            return False
+        container = getattr(getattr(unit, "place", None), "container", None)
+        if not is_open_container(container):
+            return False
+        observed = self.observed_squares
+        for sq in observed:
+            if container_visible_from_place(container, sq):
+                return True
+        return False
 
     def raise_threat(self, subsquare, delta):
         try:
@@ -64,8 +77,6 @@ class PerceptionMixin:
             return []
 
         current_time = self.world.time
-
-        # 敌方玩家与单位列表: 250ms 重建
         if current_time - self._enemy_units_cache_time > 250:
             if current_time - self._enemy_players_cache_time > 1000:
                 self._cached_enemy_players = [
@@ -111,6 +122,15 @@ class PerceptionMixin:
                     ):
                         op = obj.place
                         if op is None or not op.is_inside_place:
+                            result.append(obj)
+                for obj in enemy_units_set:
+                    if (
+                        obj.is_vulnerable
+                        and getattr(obj, "is_inside", False)
+                        and obj not in result
+                    ):
+                        container = getattr(getattr(obj, "place", None), "container", None)
+                        if container_visible_from_place(container, place):
                             result.append(obj)
             self._known_enemies[place] = result
             self._known_enemies_time[place] = current_time
@@ -832,7 +852,11 @@ class PerceptionMixin:
             if self._is_seeing(u):
                 enemy_units.add(u)
             checks_left -= 1
-        
+
+        for u in sorted_enemy_units:
+            if getattr(u, "is_inside", False) and self._open_container_passenger_visible(u):
+                enemy_units.add(u)
+
         self.perception.update(enemy_units)
         
         # 移除位于建筑内部的单位 - 使用集合推导，按ID排序确保顺序
@@ -843,6 +867,8 @@ class PerceptionMixin:
         for o in self.perception:
             p = o.place
             if p is not None and p.is_inside_place and o not in self_units:
+                if self._open_container_passenger_visible(o):
+                    continue
                 inside_units.add(o)
         self.perception -= inside_units
 

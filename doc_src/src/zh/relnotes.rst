@@ -3,6 +3,49 @@
 
 .. contents::
 
+
+1.4.5.0
+--------
+
+可配置方格地形、运输容器、``attack_inside_chance`` 与随机地图：
+
+**可配置方格地形**
+
+- 地形统一为 ``rules.txt`` 的 ``class terrain`` + ``style.txt`` 同名样式；引擎不再给每格自动赋默认地形。
+- 地图 ``terrain <名>`` 写入通行、水域、速度与高地等；``class building_land`` 可扩展草地 / 建造用地。
+- 地图编辑器与子格 ``square/x,y`` 地形见 ``mod/building-land-terrain.rst``。
+
+**运输容器**
+
+- ``passenger_attack_types``：容器内可攻击外部目标的单位类型。
+- ``load_bonus``：每装载一名单位，给容器累加属性。
+- ``passenger_bonus``：进入容器后给乘客（被装载单位）加属性；卸载时自动回滚。写法与 ``load_bonus`` 相同，例如 ``passenger_bonus rdg_range 1 mdg 2``；可与 ``load_bonus`` 同时使用。
+
+**``attack_inside_chance``**
+
+- 开放式容器新属性：外部攻击时按 0–100% 几率命中内部乘客（如城墙 ``attack_inside_chance 40``）。
+
+**随机地图**
+
+- 内置模板地形菜单自动列出 rules 中全部 ``rmg_terrain 1`` 地形；放置规则读 ``rules.txt``。
+- 玩家 / 模组可在 ``cfg/randommap/`` 或 ``mods/.../randommap/`` 写 ``random_map_template`` 自定义模板。
+- 分享码 ``RMG1``（内置）/ ``RMG2``（自定义全名）。
+
+详见 ``mod/building-land-terrain.rst``、``mod/randommap.rst``、``mod/modding.rst`` 运输容器章节；测试 ``test_transport_bonus.py``、``test_attack_inside_chance.py``、``test_randommap.py``。
+
+**水上铺桥**
+
+- 工人可在河流 / 湖泊 / 海洋上逐格建造 ``wooden_bridge``（``is_buildable_on_water_only`` + ``bridge_terrain bridge_deck``）。
+- 脚手架阶段可走上施工、未完工不可偷渡；完工后与相邻陆地 / 桥段连通，全阵营可走。
+- 工地播报与其它 ``buildingsite`` 一致（「木桥桥段 在建筑」）；脚步与完工桥面共用 ``bridge_deck`` / ``big_bridge`` 的 ``ground wood``。
+- 文档：``mod/water-bridge-building.rst``；测试：``test_bridge_terrain.py``。
+
+**单位在地形上的战斗修正**
+
+- ``mdg_on_terrain`` / ``rdg_on_terrain``、``mdg_cd_on_terrain`` / ``rdg_cd_on_terrain``、``charge_mdg_terrain`` / ``charge_rdg_terrain``、``charge_mdg_cd_on_terrain`` / ``charge_rdg_cd_on_terrain``：按**攻击者当前格**地形修正攻击、冷却与冲锋（写法同 ``speed_on_terrain``）。
+- 负值削弱伤害；``*_cd_on_terrain`` 正值表示冷却更长。
+- 文档：``mod/building-land-terrain.rst``；测试：``test_combat_terrain_modifiers.py``。
+
 1.4.4.9
 --------
 

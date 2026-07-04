@@ -10,14 +10,19 @@ from ..world_build_rules import (
     is_ground_host_building,
     is_ground_host_building_type,
     landing_coords_for_ground_building,
+    nearest_reachable_land_for_water_build,
     requires_build_field_type,
     requires_deposit_type,
+    square_has_bridge_building,
     try_reattach_orphan_addons,
+    worker_can_place_water_build,
+    worker_can_reach_water_build,
     building_can_operate,
     can_host_addon,
     is_addon_type,
+    is_pure_water_square,
 )
-from ..worldresource import Meadow
+from ..worldresource import recreate_building_land
 from .base import ComplexOrder, Order, ORDERS_QUEUE_LIMIT
 from .immediate import ImmediateOrder
 
@@ -1203,7 +1208,12 @@ class UpgradeToOrder(ProductionOrder):
             old_unit.transfer_inventory_to(unit)
         unit.notify("complete")
         if leave_meadow:
-            Meadow(place, x, y)
+            recreate_building_land(
+                place,
+                x,
+                y,
+                consumed=getattr(old_unit, "building_land", None),
+            )
 
     @staticmethod
     def additional_condition(unit, unused_type_name):
@@ -1292,7 +1302,12 @@ class ChangeToOrder(ProductionOrder):
                 unit.notify("addon_reattach_failed")
         unit.notify("complete")
         if leave_meadow:
-            Meadow(place, x, y)
+            recreate_building_land(
+                place,
+                x,
+                y,
+                consumed=getattr(old_unit, "building_land", None),
+            )
 
     @staticmethod
     def additional_condition(unit, unused_type_name):
@@ -1364,6 +1379,17 @@ class BuildOrder(ComplexOrder):
         ):
             self.mark_as_impossible("cannot_build_here")
             return
+        elif getattr(self.type, "is_buildable_on_water_only", False):
+            water_square = self.target
+            if not hasattr(water_square, "strict_neighbors"):
+                water_square = getattr(self.target, "place", None)
+            if water_square is None or not is_pure_water_square(water_square):
+                self.mark_as_impossible("cannot_build_here")
+                return
+            if square_has_bridge_building(water_square):
+                self.mark_as_impossible("cannot_build_here")
+                return
+            self.target = water_square
         elif requires_deposit_type(self.type):
             from ..worldresource import Deposit
 
@@ -1401,7 +1427,11 @@ class BuildOrder(ComplexOrder):
             if result is not None:
                 self.mark_as_impossible(result)
                 return
-        if (
+        if getattr(self.type, "is_buildable_on_water_only", False):
+            if not worker_can_reach_water_build(self.unit, self.target):
+                self.mark_as_impossible()
+                return
+        elif (
             self.unit.next_stage(self.target) is None
             and self.target is not self.unit.place
         ):  # target must be reachable
@@ -1443,13 +1473,38 @@ class BuildOrder(ComplexOrder):
         if self.target is None:  # meadow already used
             self.mark_as_impossible()
             return
-        if self.target is self.unit.place or self.target.place is self.unit.place:
+        at_build_site = False
+        if getattr(self.type, "is_buildable_on_water_only", False):
+            if worker_can_place_water_build(self.unit, self.target):
+                at_build_site = True
+            elif self.unit.is_idle:
+                staging = nearest_reachable_land_for_water_build(
+                    self.unit, self.target
+                )
+                if staging is not None:
+                    self.move_to_or_fail(staging)
+                else:
+                    self.mark_as_impossible()
+                return
+        elif self.target is self.unit.place or self.target.place is self.unit.place:
+            at_build_site = True
+        elif self.unit.is_idle:
+            self.move_to_or_fail(self.target)
+            return
+        if not at_build_site:
+            return
+        if at_build_site:
             # 释放预留的资源，但只有在资源被预留的情况下
             if self.resources_reserved:
                 self.player.free_resources(self)
                 self.resources_reserved = False  # 重置标记
-            
-            x, _ = self.unit.place.find_free_space(self.type.airground_type, self.target.x, self.target.y)
+
+            if getattr(self.type, "is_buildable_on_water_only", False):
+                x, y = self.target.x, self.target.y
+            else:
+                x, y = self.unit.place.find_free_space(
+                    self.type.airground_type, self.target.x, self.target.y
+                )
             if x is None:
                 self.cancel(unpay=False)  # 不需要返还资源，因为没有创建BuildingSite
                 self.mark_as_impossible("not_enough_space")

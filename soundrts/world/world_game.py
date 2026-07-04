@@ -121,7 +121,7 @@ class WorldGameMixin:
         dirty = getattr(self, '_dirty_terrain_squares', None)
         if dirty:
             for s in list(dirty):
-                if s.type_name in ["", "_meadows", "_forest", "_dense_forest"]:
+                if not getattr(s, "fixed_terrain", False):
                     s.update_terrain()
             dirty.clear()
         # 每2秒全量校验一次，防止遗漏
@@ -129,7 +129,7 @@ class WorldGameMixin:
             self._last_full_terrain_update = 0
         if self.time - self._last_full_terrain_update >= 2000:
             for s in self.squares:
-                if s.type_name in ["", "_meadows", "_forest", "_dense_forest"]:
+                if not getattr(s, "fixed_terrain", False):
                     s.update_terrain()
             self._last_full_terrain_update = self.time
 

@@ -18,15 +18,17 @@ Mod rules
 Maps
 
 4. `Map guide <map-guide.htm>`_ → `Mapmaking manual <mapmaking.htm>`_
-5. `Random maps <randommap.htm>`_
+5. `Square terrain & building land <building-land-terrain.htm>`_ (full tables: `zh <../../zh/mod/building-land-terrain.htm>`_)
+6. `Building bridges on water <water-bridge-building.htm>`_ (`zh <../../zh/mod/water-bridge-building.htm>`_) — tile spans, ``bridge_terrain``
+7. `Random maps <randommap.htm>`_
 
 Campaigns
 
-6. `Campaign guide <campaign-guide.htm>`_
+7. `Campaign guide <campaign-guide.htm>`_
 
 Other
 
-7. `AI tutorial <aimaking.htm>`_ · `Server <server.htm>`_ · `Release notes <../relnotes.htm>`_
+8. `AI tutorial <aimaking.htm>`_ · `Server <server.htm>`_ · `Release notes <../relnotes.htm>`_
 
 Meta progress
 --------------

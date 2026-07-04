@@ -13,6 +13,7 @@ from ..clientmedia import voice
 from ..definitions import style
 from ..lib import group
 from ..lib.log import exception
+from ..open_container import container_visible_from_place, inside_unit_visible_from_place
 from ..lib.msgs import nb2msg, nb2msg_float
 from ..lib.sound import angle, distance, stereo
 
@@ -122,10 +123,9 @@ def is_visible(interface, o):
         
     # 处理容器内单位的可见性
     if hasattr(o, 'is_inside') and o.is_inside:
-        container = o.place.container
-        # 如果容器在当前区域或相邻区域可见
-        if container.place is interface.place or container.place in interface.place.neighbors:
+        if inside_unit_visible_from_place(o, interface.place):
             return True
+        return False
             
     # 检查单位是否在当前区域
     if not o.is_in(interface.place) or not o.title:
@@ -150,15 +150,27 @@ def is_selectable(interface, o):
     return is_visible(interface, o)
 
 
+def _square_allows_passage_tab(place):
+    """Bridge/scaffold squares: Tab may cycle passage exits even with ``no_exit``."""
+    if place is None:
+        return False
+    return bool(
+        getattr(place, "_bridge_terrain_voice", None)
+        or getattr(place, "_scaffold_terrain_voice", None)
+    )
+
+
 def _object_choices(interface, inc, types):
     choices = []
     no_exit = "no_exit" in types
     if no_exit:
         types = list(types)
         types.remove("no_exit")
+    allow_passage_tab = no_exit and _square_allows_passage_tab(interface.place)
     for o in list(interface.dobjets.values()):
-        if no_exit and getattr(o, "is_an_exit", False):
-            continue
+        if no_exit and getattr(getattr(o, "model", None), "is_an_exit", False):
+            if not allow_passage_tab:
+                continue
         # 根据方向过滤
         if interface._side_filter != "all":
             if interface._side_filter == "ally":
@@ -331,6 +343,12 @@ def cmd_select_passage(interface, inc):
         if getattr(o, "is_an_exit", False):
             return True
         name = getattr(o, "type_name", None)
+        if name == "wooden_bridge":
+            return True
+        if name == "buildingsite":
+            model = getattr(o, "model", None)
+            if model is not None and getattr(model, "shore_land", None) is not None:
+                return True
         return name in ("bridge", "passage", "gate")
 
     _cycle_square_target(interface, inc, ok)
@@ -513,14 +531,10 @@ def place_summary(interface, place, me=True, zoom=None, brief=False):
             distance_to_obj = int(interface.distance(obj))
             obj_title = obj_title + nb2msg(distance_to_obj) + mp.METERS
         
-    # 处理容器内的单位
+        # 处理容器内的单位
         if hasattr(obj, 'is_inside') and obj.is_inside:
             container = obj.place.container
-        # 如果容器阻挡了出口，且观察者在出口任意一侧
-            if (hasattr(container, 'blocked_exit') and 
-                (container.place is place or 
-                 (container.blocked_exit and container.blocked_exit.other_side.place is place))):
-            # 根据单位所属确定分类
+            if container_visible_from_place(container, place):
                 if obj.model.player is interface.player:
                     _append_unit_title(units_list, obj, obj_title)
                 elif is_wildlife_unit(obj.model):
@@ -532,8 +546,8 @@ def place_summary(interface, place, me=True, zoom=None, brief=False):
                 elif obj.model.player in interface.player.allied and obj.model.player is not interface.player:
                     _append_unit_title(allies, obj, obj_title)
                 continue
-            
-    # 处理普通单位
+
+        # 处理普通单位
         if obj.is_in(place):
             if obj.model.player is interface.player:
                 _append_unit_title(units_list, obj, obj_title)

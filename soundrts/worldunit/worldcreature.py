@@ -539,7 +539,11 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
         )
         if build_on_deposit:
             remember_land = False
-        elif not (getattr(target, "is_an_exit", False) or type.is_buildable_anywhere):
+        elif not (
+            getattr(target, "is_an_exit", False)
+            or type.is_buildable_anywhere
+            or getattr(type, "is_buildable_on_water_only", False)
+        ):
             if not is_addon_type(type):
                 target.delete()  # remove the meadow replaced by the building
             remember_land = not is_addon_type(type)
@@ -554,6 +558,22 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
             site.block(target)
         if addon_host is not None:
             site.addon_host = addon_host
+
+        if getattr(type, "is_buildable_on_water_only", False):
+            from ..world_build_rules import (
+                is_pure_water_square,
+                refresh_scaffold_passage,
+                worker_can_place_water_build,
+            )
+
+            if (
+                worker_can_place_water_build(self, place)
+                and self.place is not place
+                and is_pure_water_square(place)
+                and not is_pure_water_square(self.place)
+            ):
+                site.shore_land = self.place
+                refresh_scaffold_passage(site)
 
         sacrifice = building_sacrifices_worker(type, self)
         self_constructs = building_self_constructs(type) or sacrifice
@@ -720,6 +740,7 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     provides_build_field = ""
     requires_build_field = ""
     requires_deposit = ""
+    bridge_terrain = ""
     build_field_radius = 0
     build_field_radius_m = 0
     build_field_persists = 0
@@ -825,10 +846,12 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     rdg_targets = ["ground"]
     mdg_bang_targets = ["ground"]
     rdg_bang_targets = ["ground"]
-    allow_units_attack = []  # 允许在载具内攻击的单位类型列表
-    allow_units_add = {}  # 修改为字典类型的默认值
-    _bonus_stats = {}  # 用于追踪各属性的总加成值
+    passenger_attack_types = []  # 容器内可攻击外部目标的单位类型列表
+    load_bonus = {}  # 每装载一名单位 → 容器获得的属性加成
+    passenger_bonus = {}  # 进入容器后 → 乘客获得的属性加成
+    _bonus_stats = {}  # 容器装载加成的累计值（卸载时回滚）
     allow_attack_inside = False  # 是否允许攻击载具内部单位
+    attack_inside_chance = 0  # 外部攻击命中容器内乘客的几率（0-100，仅对容器生效）
     capture_hp_threshold = 0  # 默认为0表示不可夺取
     yield_on_defeat = 0  # 战败后投降（不死亡），用于比武收服等剧情
     _last_capture_time = 0  # 上次夺取尝试的时间
@@ -1509,6 +1532,7 @@ class BuildingSite(_Building):
         self.damage_during_construction = 0
         self.addon_host = None
         self.build_deposit = None
+        self.shore_land = None
         from ..world_build_rules import building_self_constructs
 
         self._self_construct = (
@@ -1546,6 +1570,10 @@ class BuildingSite(_Building):
         return self.type.is_buildable_near_water_only
 
     @property
+    def is_buildable_on_water_only(self):
+        return self.type.is_buildable_on_water_only
+
+    @property
     def is_a_gate(self):
         return self.type.is_a_gate
 
@@ -1559,6 +1587,50 @@ class BuildingSite(_Building):
 
     def be_built(self, actor):
         self._construction_tick()
+
+    def _has_active_builder(self):
+        world = getattr(self, "world", None)
+        if world is None:
+            return False
+        my_id = self.id
+        for player in getattr(world, "players", ()):
+            for unit in getattr(player, "units", ()):
+                if unit.place is None:
+                    continue
+                try:
+                    order = unit.orders[0]
+                except IndexError:
+                    continue
+                if getattr(order, "mode", None) != "build":
+                    continue
+                target = getattr(order, "target", None)
+                if target is self or getattr(target, "id", None) == my_id:
+                    return True
+        return False
+
+    @property
+    def activity(self):
+        if self.timer <= 0:
+            return
+        if self._has_active_builder():
+            return "building"
+        if self._self_construct:
+            from ..world_build_rules import construction_can_progress
+
+            if construction_can_progress(self):
+                return "building"
+
+    def can_be_repaired_by_worker_from_shore(self, worker):
+        if getattr(self.type, "is_buildable_on_water_only", False):
+            return False
+        return super().can_be_repaired_by_worker_from_shore(worker)
+
+    def delete(self):
+        from ..world_build_rules import clear_scaffold_passage
+
+        if getattr(self, "shore_land", None) is not None:
+            clear_scaffold_passage(self)
+        super().delete()
 
     def slow_update(self):
         if self._self_construct and self.timer > 0:
@@ -1576,13 +1648,15 @@ class BuildingSite(_Building):
             self._complete_construction()
 
     def _complete_construction(self):
-        from ..world_build_rules import finalize_new_building
+        from ..world_build_rules import clear_scaffold_passage, finalize_new_building
 
         player, place, x, y = self.player, self.place, self.x, self.y
         blocked_exit = self.blocked_exit
         building_land = self.building_land
         build_deposit = getattr(self, "build_deposit", None)
         addon_host = getattr(self, "addon_host", None)
+        if getattr(self, "shore_land", None) is not None:
+            clear_scaffold_passage(self)
         self.delete()
         building = self.type(player, place, x, y)
         building.building_land = building_land
@@ -1604,6 +1678,7 @@ class Building(_Building):
     is_buildable_anywhere = False
     is_buildable_on_exits_only = False
     is_buildable_near_water_only = False
+    is_buildable_on_water_only = False
     provides_survival = True
     stat_type = "building"
     auto_production = 0  # 默认不可生产

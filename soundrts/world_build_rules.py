@@ -1019,9 +1019,12 @@ def detach_addon(host, addon):
 
 
 def cleanup_build_rules_on_death(unit):
+    place = getattr(unit, "place", None)
     if provides_build_field_type(unit) and build_field_persists(unit):
         paint_build_field_from_unit(unit)
     unregister_build_field_provider(unit)
+    if bridge_terrain_type(_bridge_subject_type(unit)) and place is not None:
+        refresh_bridge_terrain(place)
     if getattr(unit, "is_a_building", False):
         for addon in list(getattr(unit, "attached_addons", []) or []):
             if addon is not unit and addon.place is not None:
@@ -1033,8 +1036,334 @@ def cleanup_build_rules_on_death(unit):
         detach_addon(host, unit)
 
 
+def bridge_terrain_type(unit_or_class):
+    """Return terrain name applied when this building stands on water, or None."""
+    value = getattr(unit_or_class, "bridge_terrain", "") or ""
+    if isinstance(value, (list, tuple)):
+        value = value[0] if value else ""
+    if not value or value == "0":
+        return None
+    return value
+
+
+def is_buildable_on_water_only_type(unit_or_class):
+    return bool(getattr(unit_or_class, "is_buildable_on_water_only", 0))
+
+
+def is_pure_water_square(square):
+    """Water that blocks ground units (river/lake/ocean; not ford/bridge)."""
+    if square is None:
+        return False
+    return getattr(square, "is_water", False) and not getattr(
+        square, "is_ground", True
+    )
+
+
+def _bridge_subject_type(obj):
+    if getattr(obj, "type_name", None) == "buildingsite":
+        return getattr(obj, "type", obj)
+    return getattr(obj, "type", type(obj))
+
+
+def _bridge_terrain_providers(objects):
+    """Completed bridge buildings that grant passage (not construction sites)."""
+    for obj in objects or ():
+        if getattr(obj, "hp", 1) <= 0:
+            continue
+        if getattr(obj, "type_name", None) == "buildingsite":
+            continue
+        name = bridge_terrain_type(_bridge_subject_type(obj))
+        if name:
+            yield name
+
+
+def water_only_build_square_for(target):
+    """Return the water square for a water-only build target, or None."""
+    if target is None:
+        return None
+    if not is_buildable_on_water_only_type(_bridge_subject_type(target)):
+        return None
+    square = getattr(target, "place", None)
+    if square is None or not is_pure_water_square(square):
+        return None
+    return square
+
+
+def can_build_water_target_from_shore(target, worker):
+    """True if *worker* on adjacent land may build a water-only target."""
+    if worker is None or target is None:
+        return False
+    if getattr(target, "type_name", None) == "buildingsite":
+        return False
+    if getattr(worker, "airground_type", None) != "ground":
+        return False
+    if not is_buildable_on_water_only_type(_bridge_subject_type(target)):
+        return False
+    water_square = getattr(target, "place", None)
+    if water_square is None or not getattr(water_square, "is_water", False):
+        return False
+    if worker.place is water_square and getattr(water_square, "is_ground", False):
+        return True
+    return worker_can_place_water_build(worker, water_square)
+
+
+def square_has_bridge_building(square):
+    """True if square already has a bridge/scaffold building or site."""
+    if square is None:
+        return False
+    for obj in getattr(square, "objects", ()):
+        if getattr(obj, "hp", 1) <= 0:
+            continue
+        if bridge_terrain_type(_bridge_subject_type(obj)):
+            return True
+    return False
+
+
+def invalidate_world_regions(world):
+    """Drop cached region graph so ground flood-fill picks up bridge changes."""
+    if world is None:
+        return
+    if hasattr(world, "region_graph"):
+        del world.region_graph
+    if hasattr(world, "region_portals"):
+        del world.region_portals
+    for sq in getattr(world, "squares", ()):
+        if hasattr(sq, "region"):
+            sq.region = None
+
+
+def square_has_construction_scaffold(square):
+    """True if *square* is water with an active walk-on scaffold (BuildingSite)."""
+    if square is None or not getattr(square, "_scaffold_terrain_saved", None):
+        return False
+    for obj in getattr(square, "objects", ()) or ():
+        if getattr(obj, "type_name", None) != "buildingsite":
+            continue
+        if getattr(obj, "shore_land", None) is None:
+            continue
+        if getattr(obj, "hp", 1) <= 0:
+            continue
+        return True
+    return False
+
+
+def _bridge_passage_allowed(a, b):
+    """Whether an exit may exist between two squares (mirrors ``passage()``)."""
+    if getattr(a, "is_water", False) != getattr(b, "is_water", False):
+        return getattr(a, "is_ground", True) and getattr(b, "is_ground", True)
+    if getattr(a, "is_water", False) and getattr(b, "is_water", False):
+        if square_has_construction_scaffold(a) or square_has_construction_scaffold(b):
+            return False
+    return True
+
+
+def _bridge_square_active(square):
+    """True if *square* currently grants bridge passability."""
+    return bool(getattr(square, "_bridge_terrain_voice", None))
+
+
+def _passage_exit_type(a, b):
+    """Exit style between two squares (bridge-to-bridge uses ``bridge``)."""
+    if _bridge_square_active(a) and _bridge_square_active(b):
+        return "bridge"
+    return "path"
+
+
+def is_scaffold_water_build_target(target):
+    """Water-only BuildingSite with a recorded placer shore (walk-on build)."""
+    if getattr(target, "type_name", None) != "buildingsite":
+        return False
+    if not is_buildable_on_water_only_type(_bridge_subject_type(target)):
+        return False
+    return getattr(target, "shore_land", None) is not None
+
+
+def _apply_scaffold_passage(site):
+    """Apply scaffold footing and shore-only exit for one site (no world sync)."""
+    if site is None:
+        return
+    water = getattr(site, "place", None)
+    shore = getattr(site, "shore_land", None)
+    if water is None or shore is None:
+        return
+    if not is_buildable_on_water_only_type(_bridge_subject_type(site)):
+        return
+    from .lib.square_terrain_rules import DEFAULT_TERRAIN_SPEED
+
+    saved = getattr(water, "_scaffold_terrain_saved", None)
+    if saved is None:
+        water._scaffold_terrain_saved = {
+            "is_ground": getattr(water, "is_ground", False),
+            "terrain_speed": getattr(water, "terrain_speed", DEFAULT_TERRAIN_SPEED),
+        }
+    water.is_ground = True
+    water.terrain_speed = DEFAULT_TERRAIN_SPEED
+    deck_voice = bridge_terrain_type(_bridge_subject_type(site))
+    water._scaffold_terrain_voice = deck_voice
+    exit_type = _passage_exit_type(water, shore)
+    water.ensure_path(shore, exit_type=exit_type)
+    for neighbor in water.strict_neighbors:
+        if neighbor is not shore:
+            water.ensure_nopath(neighbor)
+
+
+def resync_all_scaffold_passages(world):
+    """Re-apply passage rules for every active water scaffold."""
+    if world is None:
+        return
+    for player in getattr(world, "players", ()):
+        for unit in getattr(player, "units", ()):
+            if is_scaffold_water_build_target(unit):
+                _apply_scaffold_passage(unit)
+
+
+def refresh_scaffold_passage(site):
+    """Scaffold: temporary ground on water, single exit to placer's shore only."""
+    water = getattr(site, "place", None) if site is not None else None
+    world = getattr(water, "world", None) if water is not None else None
+    _apply_scaffold_passage(site)
+    if world is not None:
+        resync_all_scaffold_passages(world)
+        invalidate_world_regions(world)
+        if hasattr(world, "_create_graphs"):
+            world._create_graphs()
+        for player in getattr(world, "players", ()):
+            for unit in getattr(player, "units", ()):
+                if hasattr(unit, "_can_go_cache"):
+                    unit._can_go_cache = {}
+
+
+def clear_scaffold_passage(site):
+    """Remove scaffold-only footing and the placer-shore link."""
+    if site is None:
+        return
+    water = getattr(site, "place", None)
+    shore = getattr(site, "shore_land", None)
+    if water is None:
+        return
+    if shore is not None:
+        water.ensure_nopath(shore)
+    saved = getattr(water, "_scaffold_terrain_saved", None)
+    if saved is not None:
+        water.is_ground = saved["is_ground"]
+        if "terrain_speed" in saved:
+            water.terrain_speed = saved["terrain_speed"]
+        del water._scaffold_terrain_saved
+    if getattr(water, "_scaffold_terrain_voice", None):
+        del water._scaffold_terrain_voice
+    world = getattr(water, "world", None)
+    if world is not None:
+        invalidate_world_regions(world)
+        if hasattr(world, "_create_graphs"):
+            world._create_graphs()
+        for player in getattr(world, "players", ()):
+            for unit in getattr(player, "units", ()):
+                if hasattr(unit, "_can_go_cache"):
+                    unit._can_go_cache = {}
+
+
+def _sync_bridge_passages(square):
+    """Create/remove neighbor exits according to current terrain passability."""
+    if square is None or not hasattr(square, "strict_neighbors"):
+        return
+    for neighbor in square.strict_neighbors:
+        if _bridge_passage_allowed(square, neighbor):
+            square.ensure_path(neighbor, exit_type=_passage_exit_type(square, neighbor))
+        else:
+            square.ensure_nopath(neighbor)
+
+
+def refresh_bridge_terrain(square):
+    """Apply or remove bridge passability from buildings on *square*."""
+    if square is None:
+        return
+    world = getattr(square, "world", None)
+    terrain_name = None
+    providers = list(_bridge_terrain_providers(getattr(square, "objects", ())))
+    if providers:
+        terrain_name = providers[0]
+    saved = getattr(square, "_bridge_terrain_saved", None)
+    if terrain_name:
+        from .lib.square_terrain_rules import apply_terrain_map_flags, is_terrain_def
+
+        if not is_terrain_def(terrain_name):
+            warning("unknown bridge_terrain: %s", terrain_name)
+            return
+        if saved is None:
+            square._bridge_terrain_saved = {
+                "is_ground": square.is_ground,
+                "is_water": square.is_water,
+                "type_name": getattr(square, "type_name", "") or "",
+            }
+        apply_terrain_map_flags(square, terrain_name)
+        square._bridge_terrain_voice = terrain_name
+    elif saved is not None:
+        square.is_ground = saved["is_ground"]
+        square.is_water = saved["is_water"]
+        if getattr(square, "fixed_terrain", False):
+            square.type_name = saved["type_name"]
+        square._bridge_terrain_voice = None
+        del square._bridge_terrain_saved
+    if terrain_name or saved is not None:
+        _sync_bridge_passages(square)
+        if world is not None:
+            invalidate_world_regions(world)
+            if hasattr(world, "_create_graphs"):
+                world._create_graphs()
+            for player in getattr(world, "players", ()):
+                for unit in getattr(player, "units", ()):
+                    if hasattr(unit, "_can_go_cache"):
+                        unit._can_go_cache = {}
+
+
+def worker_can_place_water_build(worker, water_square):
+    """Worker may start a water-only build from the water cell or adjacent land."""
+    if worker is None or water_square is None:
+        return False
+    if worker.place is water_square:
+        return True
+    if worker.place in water_square.strict_neighbors:
+        if is_pure_water_square(water_square) and not is_pure_water_square(
+            worker.place
+        ):
+            return True
+    return False
+
+
+def nearest_reachable_land_for_water_build(worker, water_square, avoid=False):
+    """Best adjacent land square the worker can path to for placing a water build."""
+    if worker is None or water_square is None or worker.place is None:
+        return None
+    if worker_can_place_water_build(worker, water_square):
+        return worker.place
+    best = None
+    best_dist = None
+    plane = getattr(worker, "airground_type", "ground")
+    for neighbor in water_square.strict_neighbors:
+        if is_pure_water_square(neighbor):
+            continue
+        dist = worker.place.shortest_path_distance_to(
+            neighbor, player=worker.player, plane=plane, avoid=avoid
+        )
+        if dist == float("inf"):
+            continue
+        if best is None or dist < best_dist:
+            best = neighbor
+            best_dist = dist
+    return best
+
+
+def worker_can_reach_water_build(worker, water_square, avoid=False):
+    return (
+        nearest_reachable_land_for_water_build(worker, water_square, avoid=avoid)
+        is not None
+    )
+
+
 def finalize_new_building(building, site=None):
     register_build_field_provider(building)
+    if bridge_terrain_type(building) and building.place is not None:
+        refresh_bridge_terrain(building.place)
     host = None
     if site is not None:
         host = getattr(site, "addon_host", None)

@@ -190,9 +190,7 @@ def test_choose_build_target_returns_meadow_not_square_for_barracks(monkeypatch)
         memory = set()
 
         def check_type(self, o, c):
-            from soundrts.worldresource import Meadow
-
-            if c is Meadow:
+            if c == "meadow":
                 return isinstance(o, _Meadow)
             return False
 

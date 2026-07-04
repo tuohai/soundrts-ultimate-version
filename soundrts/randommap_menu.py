@@ -9,11 +9,15 @@ from .randommap import (
     RandomMapConfig,
     config_voice_summary,
     decode_share_code,
+    get_rmg_template_spec,
     map_generated_voice_msg,
     make_map,
     menu_title_for_config,
+    refresh_rmg_templates,
     server_create_command,
+    terrain_choices_for_template,
 )
+from .rmg_templates import custom_template_names, template_title_voice, terrain_menu_voice
 
 
 class RandomMapMenu:
@@ -30,12 +34,20 @@ class RandomMapMenu:
         self._open_template_menu()
 
     def _open_template_menu(self):
+        refresh_rmg_templates()
         menu = Menu(mp.RMG_RANDOM_MAP + mp.RMG_TEMPLATE, menu_type="submenu")
         menu.append(mp.RMG_IMPORT_CODE, self._prompt_import_share_code)
         menu.append(mp.RMG_TEMPLATE_STANDARD, (self._set_template, "standard"))
         menu.append(mp.RMG_TEMPLATE_FAST + mp.RMG_CONTEST_CENTER, (self._set_template, "fast"))
         menu.append(mp.RMG_TEMPLATE_MACRO + mp.RMG_ECONOMIC, (self._set_template, "macro"))
         menu.append(mp.RMG_TEMPLATE_LANES + mp.RMG_LANES_DESC, (self._set_template, "lanes"))
+        from .randommap import _TEMPLATE_TITLE
+
+        for name in custom_template_names():
+            menu.append(
+                template_title_voice(name, _TEMPLATE_TITLE),
+                (self._set_template, name),
+            )
         menu.append(mp.CANCEL, CLOSE_MENU)
         menu.run()
 
@@ -121,18 +133,19 @@ class RandomMapMenu:
 
     def _set_resource(self, layout):
         self._config.resource_layout = layout
-        if self._config.template == "lanes":
+        refresh_rmg_templates()
+        spec = get_rmg_template_spec(self._config.template)
+        if spec.skip_terrain_menu:
             self._config.water = "none"
             self._open_treasure_menu()
         else:
             self._open_terrain_menu()
 
     def _open_terrain_menu(self):
+        refresh_rmg_templates()
         menu = Menu(mp.RMG_RANDOM_MAP + mp.RMG_TERRAIN, menu_type="submenu")
-        menu.append(mp.RMG_RANDOM, (self._set_terrain, "random"))
-        menu.append(mp.RMG_GRASS, (self._set_terrain, "grass"))
-        menu.append(mp.RMG_MARSH, (self._set_terrain, "marsh"))
-        menu.append(mp.RMG_MOUNTAIN, (self._set_terrain, "mountain"))
+        for terrain in terrain_choices_for_template(self._config.template):
+            menu.append(terrain_menu_voice(terrain), (self._set_terrain, terrain))
         menu.append(mp.CANCEL, CLOSE_MENU)
         menu.run()
 

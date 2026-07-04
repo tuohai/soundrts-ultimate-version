@@ -585,44 +585,49 @@ class CreatureAIDecision(Entity):
         if target is None:
             return False
 
-        # 添加从低地攻击高地的限制
-        # 如果攻击者在低地，目标在高地，且攻击者没有投射物能力，则无法攻击
-        if (hasattr(self, 'place') and hasattr(target, 'place') and
-                self.place is not None and target.place is not None):
-            attacker_high = (
-                self.place.high_ground_at(self.x, self.y)
-                if hasattr(self.place, "high_ground_at")
-                else self.place.high_ground
-            )
-            target_high = (
-                target.place.high_ground_at(target.x, target.y)
-                if hasattr(target.place, "high_ground_at")
-                else target.place.high_ground
-            )
-            if (not attacker_high and target_high and
-                target.airground_type == "ground" and
-                not ((hasattr(self, 'mdg_projectile') and self.mdg_projectile == 1) or
-                     (hasattr(self, 'rdg_projectile') and self.rdg_projectile == 1))):
-                return False
+        self._sync_inside_combat_coords(target)
+        try:
+            target_place = self._combat_target_place(target)
 
-        dist2 = square_of_distance(self.x, self.y, target.x, target.y)
-        collision = self.radius + target.radius
+            # 添加从低地攻击高地的限制
+            if (hasattr(self, 'place') and target_place is not None
+                    and self.place is not None):
+                attacker_high = (
+                    self.place.high_ground_at(self.x, self.y)
+                    if hasattr(self.place, "high_ground_at")
+                    else self.place.high_ground
+                )
+                target_high = (
+                    target_place.high_ground_at(target.x, target.y)
+                    if hasattr(target_place, "high_ground_at")
+                    else target_place.high_ground
+                )
+                if (not attacker_high and target_high and
+                    target.airground_type == "ground" and
+                    not ((hasattr(self, 'mdg_projectile') and self.mdg_projectile == 1) or
+                         (hasattr(self, 'rdg_projectile') and self.rdg_projectile == 1))):
+                    return False
 
-        # 如果是近战单位（射程为0），只要在同一个区域就视为在攻击范围内
-        if (self.mdg_range == 0 and self.mdg > 0) or (self.rdg_range == 0 and self.rdg > 0):
-            return target.place is self.place
+            dist2 = square_of_distance(self.x, self.y, target.x, target.y)
+            collision = self.radius + target.radius
 
-        if self.mdg_range > 0:
-            max_range2 = (self.mdg_range + collision) ** 2
-            if dist2 <= max_range2:
-                return True
+            # 如果是近战单位（射程为0），只要在同一个区域就视为在攻击范围内
+            if (self.mdg_range == 0 and self.mdg > 0) or (self.rdg_range == 0 and self.rdg > 0):
+                return target_place is self.place
 
-        if self.rdg_range > 0:
-            max_range2 = (self.rdg_range + collision) ** 2
-            if dist2 <= max_range2:
-                return True
+            if self.mdg_range > 0:
+                max_range2 = (self.mdg_range + collision) ** 2
+                if dist2 <= max_range2:
+                    return True
 
-        return False
+            if self.rdg_range > 0:
+                max_range2 = (self.rdg_range + collision) ** 2
+                if dist2 <= max_range2:
+                    return True
+
+            return False
+        finally:
+            self._restore_inside_combat_coords(target)
     # D-Phase 1 T3: 删除上面的 def can_attack(target) 死代码 — Python 后定义
     # 的同名方法覆盖前者, line 394-432 早就不会被调用 (game 一直在跑下面这个).
     # 只保留 line 434 这个 "without moving to another square" 版本.

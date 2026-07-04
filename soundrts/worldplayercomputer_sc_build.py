@@ -23,7 +23,11 @@ from .world_build_rules import (
     requires_deposit_type,
     try_reattach_orphan_addons,
 )
-from .worldresource import Meadow
+
+def _is_building_land_obj(obj):
+    return getattr(obj, "is_a_building_land", False) and not getattr(
+        obj, "is_an_exit", False
+    )
 
 
 def _is_buildable_anywhere_type(building_type):
@@ -112,7 +116,7 @@ def _meadow_candidates(ai, starting_place=None, resource_type=None):
     candidates = [
         o
         for o in ai.perception.union(ai.memory)
-        if ai.check_type(o, Meadow) and is_ok(o)
+        if _is_building_land_obj(o) and is_ok(o)
     ]
     candidates.sort(key=lambda x: x.id)
     if len(candidates) > 10:
@@ -148,7 +152,7 @@ def resolve_build_target(ai, building_type, target):
         if not deposit_build_target_ok(ai, target, building_type):
             return None
         return target
-    if isinstance(target, Meadow) or getattr(target, "type_name", None) == "meadow":
+    if _is_building_land_obj(target):
         place = target.place
         if place is None:
             return None
@@ -167,7 +171,7 @@ def resolve_build_target(ai, building_type, target):
             ):
                 return meadow
         for obj in getattr(target, "objects", ()):
-            if ai.check_type(obj, Meadow) and build_site_valid(
+            if _is_building_land_obj(obj) and build_site_valid(
                 ai, building_type, target, obj.x, obj.y
             ):
                 return obj
@@ -195,6 +199,14 @@ def build_site_valid(ai, building_type, place, x, y):
     if getattr(building_type, "is_buildable_near_water_only", False):
         square = place if hasattr(place, "neighbors") else None
         if square is None or not getattr(square, "is_near_water", False):
+            return False
+    if getattr(building_type, "is_buildable_on_water_only", False):
+        from .world_build_rules import is_pure_water_square, square_has_bridge_building
+
+        square = place if hasattr(place, "neighbors") else None
+        if square is None or not is_pure_water_square(square):
+            return False
+        if square_has_bridge_building(square):
             return False
     return True
 
@@ -239,7 +251,7 @@ def choose_near_water_build_target(ai, building_type, starting_place=None):
         if dist is None or dist == float("inf"):
             continue
         for obj in sq.objects:
-            if not ai.check_type(obj, Meadow):
+            if not _is_building_land_obj(obj):
                 continue
             if not build_site_valid(ai, building_type, sq, obj.x, obj.y):
                 continue
@@ -253,10 +265,55 @@ def choose_near_water_build_target(ai, building_type, starting_place=None):
     return best
 
 
+def _water_build_path_distance(from_sq, water_sq, ai):
+    from .world_build_rules import is_pure_water_square
+
+    if from_sq is water_sq:
+        return 0
+    best = float("inf")
+    for neighbor in water_sq.strict_neighbors:
+        if is_pure_water_square(neighbor):
+            continue
+        dist = from_sq.shortest_path_distance_to(neighbor, ai, avoid=True)
+        if dist < best:
+            best = dist
+    return best
+
+
+def choose_water_build_target(ai, building_type, starting_place=None):
+    """Pick a pure-water square reachable from land for bridge-style buildings."""
+    from .world_build_rules import is_pure_water_square, square_has_bridge_building
+
+    if not getattr(building_type, "is_buildable_on_water_only", False):
+        return None
+    if starting_place is None:
+        starting_place = townhall_place(ai) or _builders_place(ai)
+    best = None
+    best_dist = None
+    for sq in getattr(ai.world, "squares", ()):
+        if not is_pure_water_square(sq):
+            continue
+        if square_has_bridge_building(sq):
+            continue
+        if not build_site_valid(ai, building_type, sq, sq.x, sq.y):
+            continue
+        if starting_place is None:
+            return sq
+        dist = _water_build_path_distance(starting_place, sq, ai)
+        if dist == float("inf"):
+            continue
+        if best is None or dist < best_dist:
+            best = sq
+            best_dist = dist
+    return best
+
+
 def choose_build_target(ai, building_type, starting_place=None, resource_type=None):
     """Pick a meadow or square where building_type passes build_field_ok."""
     if is_addon_type(building_type):
         return choose_addon_host(ai, building_type)
+    if getattr(building_type, "is_buildable_on_water_only", False):
+        return choose_water_build_target(ai, building_type, starting_place)
     if starting_place is None:
         starting_place = _builders_place(ai)
     anywhere = _is_buildable_anywhere_type(building_type)
@@ -324,7 +381,7 @@ def choose_build_target(ai, building_type, starting_place=None, resource_type=No
         return None
     if anywhere:
         return best
-    if isinstance(best, Meadow) or getattr(best, "type_name", None) == "meadow":
+    if _is_building_land_obj(best):
         return best
     from .worldresource import Deposit
 

@@ -1,7 +1,7 @@
 import os
 import random
 
-from ..lib.nofloat import int_distance as _int_distance
+from ..lib.nofloat import int_distance as _int_distance, to_int
 from ..worldaction import MoveAction
 
 # 战斗算术热点的 Cython 加速器；不可用时回退纯 Python
@@ -38,6 +38,30 @@ class DamageCalculationMixin:
     """
     处理基础伤害计算相关的功能
     """
+    def _get_attacker_terrain_type(self):
+        """返回攻击者当前所在格的地形类型名。"""
+        place = self.place
+        if not place:
+            return None
+        if hasattr(place, "type_name_at"):
+            return place.type_name_at(self.x, self.y)
+        return getattr(place, "type_name", None)
+
+    def _get_on_terrain_modifier(self, terrain_list) -> int:
+        """从 [地形, 修正, 地形, 修正, ...] 列表读取当前地形修正值。"""
+        if not terrain_list:
+            return 0
+        terrain_type = self._get_attacker_terrain_type()
+        if not terrain_type:
+            return 0
+        try:
+            idx = terrain_list.index(terrain_type)
+            if idx + 1 < len(terrain_list):
+                return to_int(terrain_list[idx + 1])
+        except (ValueError, IndexError, TypeError):
+            pass
+        return 0
+
     def _get_melee_damage_vs(self, target) -> int:
         """返回对 target 的近战基础伤害（含 vs 修正）.
 
@@ -49,8 +73,11 @@ class DamageCalculationMixin:
         直接属性访问替代 getattr (12.88M calls / 5min).
         """
         if _cf is not None:
-            return _cf.compute_damage_vs(self.mdg, self.mdg_vs, target)
-        return self._py_get_melee_damage_vs(target)
+            damage = _cf.compute_damage_vs(self.mdg, self.mdg_vs, target)
+        else:
+            damage = self._py_get_melee_damage_vs(target)
+        terrain_mod = self._get_on_terrain_modifier(getattr(self, "mdg_on_terrain", ()))
+        return max(0, damage + terrain_mod)
 
     def _py_get_melee_damage_vs(self, target) -> int:
         """Python fallback for _get_melee_damage_vs."""
@@ -80,8 +107,11 @@ class DamageCalculationMixin:
         D-Phase 2 §3.2: 整个函数走 ``combat_fast.compute_damage_vs`` (cpdef).
         """
         if _cf is not None:
-            return _cf.compute_damage_vs(self.rdg, self.rdg_vs, target)
-        return self._py_get_ranged_damage_vs(target)
+            damage = _cf.compute_damage_vs(self.rdg, self.rdg_vs, target)
+        else:
+            damage = self._py_get_ranged_damage_vs(target)
+        terrain_mod = self._get_on_terrain_modifier(getattr(self, "rdg_on_terrain", ()))
+        return max(0, damage + terrain_mod)
 
     def _py_get_ranged_damage_vs(self, target) -> int:
         """Python fallback for _get_ranged_damage_vs."""

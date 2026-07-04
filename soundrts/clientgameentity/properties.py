@@ -6,7 +6,6 @@ from ..definitions import style
 from ..lib.log import exception
 from ..lib.msgs import nb2msg
 from .. import msgparts as mp
-from ..worldunit import BuildingSite
 from .base import compute_title
 
 
@@ -199,12 +198,7 @@ class EntityViewProperties:
 
     @property
     def title(self):
-        if isinstance(self.model, BuildingSite):
-            title = compute_title(self.type.type_name) + compute_title(
-                BuildingSite.type_name
-            )
-        else:
-            title = self.short_title[:]
+        title = self.short_title[:]
         if self.player:
             if self.player == self.interface.player:
                 if self.number and unit_should_show_number(self.model):

@@ -607,6 +607,14 @@
 4444 mana
 4445 discount
 4446 auto_explore
+4452 mdg_on_terrain
+4453 rdg_on_terrain
+4454 mdg_cd_on_terrain
+4455 rdg_cd_on_terrain
+4456 charge_mdg_terrain
+4457 charge_rdg_terrain
+4458 charge_mdg_cd_on_terrain
+4459 charge_rdg_cd_on_terrain
 
 
 4500	友军
@@ -827,8 +835,10 @@
 4846 is_healable
 4847 transport_capacity
 4848 transport_volume
-4849 allow_units_attack
-4850 allow_units_add
+4849 passenger_attack_types
+4850 load_bonus
+4927 passenger_bonus
+4928 attack_inside_chance
 4851 corpse
 4852 ground
 4853 air
@@ -1031,6 +1041,9 @@
 5104 spread squares per second
 5105 requires deposit
 5106 place battlefield effect
+5107 scaffold
+5108 bridge span
+5109 bridge deck
 5110 deposit quantity
 5111 phase bonus targets
 5112 units auto upgrade
@@ -1512,3 +1525,9 @@
 5691 give
 5692 enable auto explore
 5693 disable auto explore
+5694 build site
+5695 town
+5696 plain
+5697 creek
+5698 high ground
+5699 hill

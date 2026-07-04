@@ -15,6 +15,7 @@ MAX_NB_OF_RESOURCE_TYPES = 10
 def _get_base_classes():
     from .worldskill import Skill
     from .worldresource import Deposit
+    from .worldresource import BuildingLand
     from .worldunit import Unit
     from .worldweapon import Weapon
     from .worldarmor import Armor
@@ -26,6 +27,7 @@ def _get_base_classes():
     from .worldbuff import Buff
     from .worldunit import Worker
     from .worlditem import Item
+    from .worldterrain import TerrainRules
 
     return {
         "worker": Worker,
@@ -33,6 +35,7 @@ def _get_base_classes():
         "building": Building,
         "effect": Effect,
         "deposit": Deposit,
+        "building_land": BuildingLand,
         "resource": Deposit,  # 已废弃：class resource 等同 deposit
         "upgrade": Upgrade,
         "phase": Phase,  # 时代（age）类——作用于玩家所有单位
@@ -41,6 +44,7 @@ def _get_base_classes():
         "weapon": Weapon,
         "armor": Armor,  # 添加护甲类
         "item": Item,  # 添加物品类
+        "terrain": TerrainRules,
     }
 
 
@@ -267,10 +271,25 @@ class _Definitions:
                             d[name][f"{damage_type}_seq_times"] = times
                             d[name][f"{damage_type}_seq_damages"] = damages
                             d[name][f"{damage_type}_seq_interval"] = interval
+                elif words[0] == "square_terrain":
+                    from .lib.square_terrain_rules import parse_square_terrain_entries
+
+                    entries = parse_square_terrain_entries(words[1:])
+                    existing = d[name].get("square_terrain", [])
+                    if not isinstance(existing, list):
+                        existing = []
+                    d[name]["square_terrain"] = existing + entries
                 elif words[0] in self.string_properties:
                     d[name][words[0]] = words[1]
                 elif words[0] in self.int_properties:
                     d[name][words[0]] = int(words[1])
+                elif (
+                    words[0] == "speed"
+                    and d[name].get("class") == ["terrain"]
+                    and len(words) >= 3
+                ):
+                    # terrain speed is ground/air pair, not unit movement speed
+                    d[name][words[0]] = words[1:]
                 elif words[0] in self.precision_properties:
                     if words[0] == "effect_range" and len(words) >= 2:
                         if words[1] == "square":
@@ -437,6 +456,11 @@ class _Definitions:
                             d[name]["phase_bonus"] = parsed
                     elif words[0] == "can_train":
                         d[name][words[0]] = parse_can_train_words(words)
+                    elif (
+                        getattr(self, "key_value_properties", None)
+                        and words[0] in self.key_value_properties
+                    ):
+                        d[name][words[0]] = self.parse_property(words[0], words[1:])
                     # 特殊处理gather相关属性，支持百分比格式
                     elif (words[0] == "gather_time" or words[0] == "gather_qty" or 
                           words[0].startswith("gather_time_") or words[0].startswith("gather_qty_")):
@@ -778,7 +802,8 @@ class Rules(_Definitions):
 
     # 键值对属性集合
     key_value_properties = {
-        "allow_units_add",     # 添加属性加成配置
+        "load_bonus",          # 每装载一名单位 → 容器属性加成
+        "passenger_bonus",     # 进入容器后 → 乘客属性加成
     }
 
     string_properties = {
@@ -796,6 +821,7 @@ class Rules(_Definitions):
         "ground_form",  # 飞行建筑落地后的地面形态（如 flying_barracks → barracks）
         "requires_deposit",  # 必须建在指定矿床类型上（如气矿 geyser）
         "summon_requires_build_field",  # 召唤技能：目标格需有指定建造场（如 creep）
+        "bridge_terrain",  # 建成后将该格变为指定桥梁地形（如 big_bridge）
     }
 
     # vs属性集合
@@ -1186,6 +1212,7 @@ class Rules(_Definitions):
         "is_a_gate",
         "is_buildable_on_exits_only",
         "is_buildable_near_water_only",
+        "is_buildable_on_water_only",
         "self_constructs",
         "build_sacrifices_worker",
         "build_field_persists",
@@ -1215,6 +1242,7 @@ class Rules(_Definitions):
         "level_up_heal_full",  # 1 = 升级后生命/法力回满（默认 0：仅加上限增量）
         "level_up_reset_xp",  # 1 = 升级后当前经验清零（默认 0：保留累计经验）
         "allow_attack_inside", # 允许攻击载具内部目标
+        "attack_inside_chance",  # 容器：外部攻击命中内部乘客的几率（0-100）
         "capture_hp_threshold",  # 可被夺取的血量阈值(百分比,0表示不可夺取)
         "yield_on_defeat",       # 战败投降(不死亡)，用于比武收服剧情
         "reflect_percent",  # buff：反弹所受伤害比例（0-100）
@@ -1227,6 +1255,13 @@ class Rules(_Definitions):
         "auto_cultivate",   # 建筑物是否可以生产资源
         "manual_cultivate",   # 建筑物是否可以生产资源
         "is_gather",
+        "is_dynamic",
+        "is_high_ground",
+        "is_water",
+        "is_ground",
+        "is_air",
+        "height",
+        "blocks_path",
         "resource_volume_max",
         "resource_volume_start",
         "resource_regen",
@@ -1286,7 +1321,15 @@ class Rules(_Definitions):
         "rdg_cover_on_terrain",
         "mdg_dodge_on_terrain",
         "rdg_dodge_on_terrain",
-        "allow_units_attack",  # 允许攻击的单位列表
+        "mdg_on_terrain",
+        "rdg_on_terrain",
+        "mdg_cd_on_terrain",
+        "rdg_cd_on_terrain",
+        "charge_mdg_terrain",
+        "charge_rdg_terrain",
+        "charge_mdg_cd_on_terrain",
+        "charge_rdg_cd_on_terrain",
+        "passenger_attack_types",  # 容器内可攻击的单位类型列表
         "can_gather",          # 已废弃，见 can_gather_deposit / can_gather_building
         "can_gather_deposit",  # 可开采的矿床（deposit）类型列表
         "can_gather_building", # 可开采的建筑类型列表（如 farm）
@@ -1301,6 +1344,7 @@ class Rules(_Definitions):
         "accepted_items",      # NPC可接受的物品类型列表（type_name，支持is_a；空=接收任意）
         "accept_from",         # 仅接收来自这些关系的给予者：self/ally/neutral/enemy（空=不限）
         "accept_givers",       # 仅接收这些单位类型交来的物品（type_name，支持is_a；空=不限）
+        "passable_units",      # 地形允许通行的单位类型（type_name，支持 is_a 继承链）
     }
 
     def parse_resource_list(self, resource_list):
@@ -1358,6 +1402,7 @@ class Rules(_Definitions):
 
     _DOC_ONLY_PROPERTIES = frozenset({"name", "desc", "description"})
     _PARSE_ONLY_PROPERTIES = frozenset({"max_level", "xp_threshold_growth"})
+    _RULES_ONLY_PROPERTIES = frozenset({"square_terrain"})
 
     def _expand_xp_thresholds_for_all_units(self):
         from .xp_threshold_growth import expand_xp_thresholds_in_definition
@@ -1385,6 +1430,8 @@ class Rules(_Definitions):
                 continue
             if k in self._PARSE_ONLY_PROPERTIES:
                 del d[k]
+                continue
+            if k in self._RULES_ONLY_PROPERTIES:
                 continue
             if k in self._DOC_ONLY_PROPERTIES:
                 continue
@@ -1419,6 +1466,11 @@ class Rules(_Definitions):
         try:
             for k, v in self._dict.items():
                 cls = v.get("class", [None])[0]
+                if cls == "terrain":
+                    from .worldterrain import TerrainRules
+
+                    self.interpret(v, TerrainRules, k)
+                    continue
                 if cls in base_classes:
                     base = base_classes[cls]
                     self.interpret(v, base, k)

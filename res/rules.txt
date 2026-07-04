@@ -23,11 +23,143 @@ class faction
 
 ; misc parameters
 
+; terrains (class terrain)
+
+; low land
+
+def plain
+class terrain
+is_dynamic 1
+
+def rocky_plain
+class terrain
+is_dynamic 1
+
+; high land
+
+def plateau
+class terrain
+is_high_ground 1
+is_dynamic 0
+
+def hill
+class terrain
+is_high_ground 1
+is_dynamic 0
+height 1
+
+def high_rocky_plain
+class terrain
+is_high_ground 1
+is_dynamic 1
+
+def mountain_pass
+class terrain
+is_high_ground 1
+is_dynamic 0
+speed .5 1
+
+def basin
+class terrain
+is_dynamic 0
+height -1
+
+; water (terrain <name> sets is_water; ground units blocked unless is_ground 1)
+
+def lake
+class terrain
+is_water 1
+is_dynamic 0
+rmg_water 1
+
+def sea
+class terrain
+is_water 1
+is_dynamic 0
+speed 0 .25
+
+def ocean
+class terrain
+is_water 1
+is_dynamic 0
+speed 0 .25
+
+def river
+class terrain
+is_water 1
+is_dynamic 0
+
+def creek
+class terrain
+is_water 1
+is_dynamic 0
+
+def ford
+class terrain
+is_water 1
+is_ground 1
+is_dynamic 0
+speed .5 1
+rmg_ford 1
+
+def big_bridge
+class terrain
+is_water 1
+is_ground 1
+is_dynamic 0
+
+def bridge_deck
+class terrain
+is_water 1
+is_ground 1
+is_dynamic 0
+
+def marsh
+class terrain
+is_dynamic 0
+speed .5 1
+rmg_terrain 1
+
+; impassable
+
+def mountain
+class terrain
+is_ground 0
+is_air 0
+is_dynamic 0
+blocks_path 1
+rmg_terrain 1
+rmg_border 1
+
+; object-driven square terrain (usable on map too)
+
+def town
+class terrain
+is_dynamic 1
+
+def meadows
+class terrain
+is_dynamic 1
+
+def build_sites
+class terrain
+is_dynamic 0
+
+def forest
+class terrain
+is_dynamic 1
+
+def dense_forest
+class terrain
+is_dynamic 1
+blocks_path 1
+
 def parameters
 nb_of_resource_types 3 ; gold, wood, food
 minimal_damage 0.17
 hide_locked_commands 0
 achievements_enabled 1 ; 0 = mod disables achievements, cards, ranks, loadout
+default_building_land meadow
 
 ; resource deposits
 
@@ -44,6 +176,8 @@ resource_type resource2 ; wood
 extraction_time 10
 extraction_qty 2
 resource_regen 1
+square_terrain forest 80
+square_terrain dense_forest 90 7
 
 def orchard
 class deposit
@@ -58,6 +192,13 @@ extraction_time 3
 extraction_qty 1
 collision 0
 
+def meadow
+class building_land
+square_terrain meadows 40
+
+def build_site
+class building_land
+square_terrain build_sites 50
 
 ; huntable animals (Age of Empires style)
 
@@ -421,7 +562,7 @@ population_cost 1
 time_cost 10
 hp_max 4
 speed 1.5
-can_build gold_house gold_mint house farm barracks lumbermill blacksmith wall gate scouttower townhall stables workshop dragonslair magestower temple necropolis shipyard 
+can_build gold_house gold_mint house farm barracks lumbermill blacksmith wall gate wooden_bridge scouttower townhall stables workshop dragonslair magestower temple necropolis shipyard 
 can_use_tech hunting_techniques
 sight_range 6
 mdg_range 0.8
@@ -752,7 +893,8 @@ transport_capacity 8
 transport_volume 99
 is_a_detector 1
 corpse 0
-allow_units_attack knight archer
+passenger_attack_types archer
+
 
 def flyingmachine
 class soldier
@@ -928,6 +1070,7 @@ heal_level 1
 storable_resource_types resource1 resource2 resource3
 can_train peasant
 can_research hunting_techniques
+square_terrain town 60
 ;can_upgrade_to keep
 can_advance feudal_age castle_age imperial_age
 
@@ -1077,7 +1220,8 @@ time_cost 90
 is_buildable_on_exits_only 1
 transport_capacity 4
 provides_survival 0
-allow_units_attack archer catapult
+passenger_attack_types archer catapult
+attack_inside_chance 40   # 外部单位攻击城墙上单位时有40%几率命中乘客
 capture_hp_threshold 30   # 30%血量时可被夺取
 can_upgrade_to massive_wall
 
@@ -1102,6 +1246,8 @@ is_buildable_on_exits_only 1
 is_a_gate 1
 provides_survival 0
 transport_capacity 4
+passenger_attack_types archer catapult
+attack_inside_chance 40   # 外部单位攻击城门上单位时有40%几率命中乘客
 capture_hp_threshold 30   # 30%血量时可被夺取
 can_upgrade_to massive_gate
 
@@ -1127,6 +1273,16 @@ time_cost 90
 is_buildable_near_water_only 1
 requirements townhall lumbermill
 can_train boat destroyer battleship submarine
+
+def wooden_bridge
+class building
+cost 5 10
+population_provided 0
+hp_max 400
+time_cost 60
+is_buildable_on_water_only 1
+bridge_terrain bridge_deck
+requirements lumbermill
 
 def gold_house
 class building

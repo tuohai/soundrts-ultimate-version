@@ -10,8 +10,13 @@ from .lib.priodict import priorityDictionary
 from heapq import heappush, heappop
 from .worldentity import COLLISION_RADIUS
 from .worldexit import passage
-from .worldresource import Deposit, Meadow
+from .worldresource import Deposit, BuildingLand, create_building_land
 from .lib.subcell_terrain import SubCellOverlay
+from .lib.square_terrain_rules import (
+    object_affects_square_terrain,
+    resolve_square_type_name,
+    terrain_blocks_path,
+)
 
 # A* 内层 Cython 加速器；不可用时回退到 Python 实现
 _rf = None
@@ -83,6 +88,7 @@ class Square(_Space):
 
     transport_capacity = 0
     type_name = ""
+    fixed_terrain = False
     terrain_speed = (100, 100)
     terrain_cover = (0, 0)
     is_ground = True
@@ -153,6 +159,21 @@ class Square(_Space):
 
     def is_passable_for(self, unit, x, y):
         """Whether *unit* may stand at world coords (*x*, *y*) in this square."""
+        terrain_name = ""
+        if hasattr(self, "type_name_at"):
+            terrain_name = self.type_name_at(x, y) or ""
+        elif getattr(self, "fixed_terrain", False):
+            terrain_name = getattr(self, "type_name", "") or ""
+
+        if terrain_name:
+            from .lib.square_terrain_rules import (
+                terrain_allows_unit,
+                terrain_has_passable_units,
+            )
+
+            if terrain_has_passable_units(terrain_name):
+                return terrain_allows_unit(terrain_name, unit)
+
         ag = getattr(unit, "airground_type", "ground")
         if ag == "air":
             return self.is_air_at(x, y)
@@ -233,8 +254,7 @@ class Square(_Space):
         
         # 如果没有建筑用地，返回任何陆地对象
         for o in self.objects:
-            if (hasattr(o, 'is_a_building_land') and o.is_a_building_land) or \
-               (hasattr(o, 'type_name') and 'meadow' in o.type_name.lower()):
+            if (hasattr(o, 'is_a_building_land') and o.is_a_building_land):
                 return o
         
         return None
@@ -497,7 +517,14 @@ class Square(_Space):
             # o.id to make sure that the result is the same on any computer
             return int_distance(o.x, o.y, x, y), o.id
 
-        meadows = sorted([o for o in self.objects if isinstance(o, Meadow)], key=_d)
+        meadows = sorted(
+            [
+                o
+                for o in self.objects
+                if isinstance(o, BuildingLand) and not getattr(o, "is_an_exit", False)
+            ],
+            key=_d,
+        )
         if meadows:
             return meadows[0]
 
@@ -505,7 +532,7 @@ class Square(_Space):
         if item_type.is_buildable_anywhere:
             return self.x, self.y, None
         for o in self.objects:
-            if isinstance(o, Meadow):
+            if isinstance(o, BuildingLand) and not getattr(o, "is_an_exit", False):
                 x, y = o.x, o.y
                 o.delete()
                 return x, y, o
@@ -535,7 +562,7 @@ class Square(_Space):
         return int_angle(xc, yc, self.col * 10 + 5, self.row * 10 + 5)
 
     def arrange_resources_symmetrically(self, xc, yc):
-        things = [o for o in self.objects if isinstance(o, (Deposit, Meadow))]
+        things = [o for o in self.objects if isinstance(o, (Deposit, BuildingLand))]
         square_width = self.xmax - self.xmin
         nb = len(things)
         shift = self._shift(xc, yc)
@@ -598,9 +625,8 @@ class Square(_Space):
 
     def add(self, o):
         self.world.collision[o.airground_type].add(o.x, o.y)
-        # 标记地形脏区：草地/树林数量变化会影响地形与通路
         try:
-            if getattr(o, 'type_name', None) in ("meadow", "wood"):
+            if object_affects_square_terrain(o):
                 if not hasattr(self.world, '_dirty_terrain_squares'):
                     self.world._dirty_terrain_squares = set()
                 self.world._dirty_terrain_squares.add(self)
@@ -611,9 +637,8 @@ class Square(_Space):
 
     def remove(self, o):
         self.world.collision[o.airground_type].remove(o.x, o.y)
-        # 标记地形脏区
         try:
-            if getattr(o, 'type_name', None) in ("meadow", "wood"):
+            if object_affects_square_terrain(o):
                 if not hasattr(self.world, '_dirty_terrain_squares'):
                     self.world._dirty_terrain_squares = set()
                 self.world._dirty_terrain_squares.add(self)
@@ -629,11 +654,18 @@ class Square(_Space):
         space.add(o.x, o.y)
         return result
 
-    def ensure_path(self, other):
+    def ensure_path(self, other, exit_type="path"):
+        for e in self.exits:
+            if e.other_side.place is other:
+                if e.type_name != exit_type:
+                    e.delete()
+                else:
+                    return
+                break
         if other not in [e.other_side.place for e in self.exits]:
             x = (self.x + other.x) // 2
             y = (self.y + other.y) // 2
-            passage(((self, x, y, 0), (other, x, y, 0), False), "path")
+            passage(((self, x, y, 0), (other, x, y, 0), False), exit_type)
             self.world._create_graphs()
 
     def ensure_nopath(self, other):
@@ -668,15 +700,43 @@ class Square(_Space):
             if o.is_a_building_land and not getattr(o, "is_an_exit", False):
                 o.delete()
         for _ in range(n - self.nb_meadows):
-            Meadow(self)
+            create_building_land(self)
         self.arrange_resources_symmetrically(self.x, self.y)
+
+    def deposit_arrange_xy(self, index, total):
+        x, y = self.x, self.y
+        if total <= 1:
+            return x, y
+        world = self.world
+        xc = world.nb_columns * 10 // 2
+        yc = world.nb_lines * 10 // 2
+        shift = self._shift(xc, yc)
+        square_width = self.xmax - self.xmin
+        angle = 360 * index // total + shift
+        x += square_width * 35 // 100 * int_cos_1000(angle) // 1000
+        y += square_width * 35 // 100 * int_sin_1000(angle) // 1000
+        return x, y
 
     def ensure_resources(self, t, n, q):
         for o in self.objects[:]:
             if o.type_name == t:
                 o.delete()
-        for _ in range(n):
-            rules.unit_class(t)(self, q)
+        if n <= 0:
+            return
+        entity_class = rules.unit_class(t)
+        if entity_class is None:
+            return
+        if n > 1:
+            for i in range(n):
+                x, y = self.deposit_arrange_xy(i, n)
+                obj = entity_class.__new__(entity_class)
+                obj.collision = 0
+                obj.__init__(self, q, x, y)
+            self.arrange_resources_symmetrically(self.x, self.y)
+        else:
+            x, y = self.find_free_space("ground", self.x, self.y)
+            if x is not None:
+                entity_class(self, q, x, y)
 
     @property
     def nb_meadows(self):
@@ -692,26 +752,12 @@ class Square(_Space):
         )
 
     def update_terrain(self):
-        meadows = 0
-        woods = 0
-        for o in self.objects:
-            t = getattr(o, 'type_name', None)
-            if t == "meadow":
-                meadows += 1
-            elif t == "wood":
-                woods += 1
-        if woods >= 7:
-            self.type_name = "_dense_forest"
-        elif woods:
-            self.type_name = "_forest"
-        elif meadows:
-            self.type_name = "_meadows"
-        else:
-            self.type_name = ""
-        # dynamic path through forest
-        if self.type_name == "_dense_forest":
+        if getattr(self, "fixed_terrain", False):
+            return
+        self.type_name = resolve_square_type_name(self)
+        if terrain_blocks_path(self.type_name):
             for s in self.strict_neighbors:
-                if s.type_name == "_dense_forest":
+                if terrain_blocks_path(s.type_name):
                     self.ensure_blocked_path(s)
                 else:
                     self.ensure_free_path(s)
@@ -870,6 +916,44 @@ class Inside(_Space):
     @property
     def outside(self):
         return self.container.place
+
+    @property
+    def type_name(self):
+        outside = self.outside
+        if outside is None:
+            return ""
+        return getattr(outside, "type_name", "")
+
+    def type_name_at(self, x, y):
+        outside = self.outside
+        if outside is None:
+            return ""
+        if hasattr(outside, "type_name_at"):
+            return outside.type_name_at(x, y)
+        return getattr(outside, "type_name", "")
+
+    @property
+    def terrain_cover(self):
+        outside = self.outside
+        if outside is None:
+            return (0, 0)
+        return getattr(outside, "terrain_cover", (0, 0))
+
+    def terrain_cover_at(self, x, y):
+        outside = self.outside
+        if outside is None:
+            return (0, 0)
+        if hasattr(outside, "terrain_cover_at"):
+            return outside.terrain_cover_at(x, y)
+        return getattr(outside, "terrain_cover", (0, 0))
+
+    def high_ground_at(self, x, y):
+        outside = self.outside
+        if outside is None:
+            return self.high_ground
+        if hasattr(outside, "high_ground_at"):
+            return outside.high_ground_at(x, y)
+        return getattr(outside, "high_ground", False)
 
     def have_enough_space(self, new_object):
         capacity = self.container.transport_capacity

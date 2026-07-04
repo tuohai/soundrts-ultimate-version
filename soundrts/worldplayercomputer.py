@@ -31,7 +31,7 @@ from .worldplayercomputer_water import (
 from .version import IS_DEV_VERSION
 from .worldupgrade.base import is_an_upgrade
 from .worldplayerbase import Player
-from .worldresource import Deposit, Meadow
+from .worldresource import Deposit
 from .worldunit import BuildingSite
 from .worldunit import Soldier
 from .worldunit import Worker
@@ -367,7 +367,10 @@ class Computer(Player):
             wh_type = self._best_warehouse(deposit.place)
             meadow = choose_build_target(
                 self, wh_type, starting_place=deposit.place
-            ) or self.choose(Meadow, starting_place=deposit.place)
+            ) or self.choose(
+                getattr(self.world, "building_land", "meadow"),
+                starting_place=deposit.place,
+            )
             if meadow:
                 self._issue_build(wh_type.type_name, meadow, nearby_workers)
 
@@ -1680,6 +1683,8 @@ class Computer(Player):
             return True
         if getattr(cls, "is_buildable_near_water_only", False):
             return True
+        if getattr(cls, "is_buildable_on_water_only", False):
+            return True
         return False
 
     def get(self, nb, type):
@@ -1898,7 +1903,7 @@ class Computer(Player):
                     and not getattr(t, "is_buildable_anywhere", 0)
                 ):
                     target = self.choose(
-                        Meadow,
+                        getattr(self.world, "building_land", "meadow"),
                         resource_type=resource_type,
                         starting_place=starting,
                     )

@@ -269,7 +269,7 @@ def direction_to_msgpart(o):
 def load_palette():
     """加载调色板（编辑器用）"""
     p = []
-    with open("res/ui/editor_palette.txt") as f:
+    with open("res/ui/editor_palette.txt", encoding="utf-8") as f:
         for s in f:
             s = s.strip()
             if s and not s.startswith(";"):
@@ -304,6 +304,11 @@ def load_palette():
                     elif k in ["speed", "cover"]:
                         v = tuple([int(float(x) * 100) for x in v[:2]])
                     t[k] = v
+    from ..lib.square_terrain_rules import palette_speed_default
+
+    for _name, entry in p:
+        style = entry.get("style") or _name
+        entry["speed"] = palette_speed_default(style, entry["speed"])
     return p
 
 # 导出主要的类

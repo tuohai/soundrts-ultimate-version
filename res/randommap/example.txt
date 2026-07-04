@@ -1,0 +1,29 @@
+; Custom random map templates for SoundRTS skirmish / multiplayer.
+;
+; Copy a template below into cfg/randommap/my_template.txt
+; (create the cfg/randommap folder if needed). It will appear in the
+; random map menu under 模板.
+;
+; File format:
+;   random_map_template
+;   name <unique_id>
+;   extends <standard|fast|macro|lanes|other_custom>
+;   title <spoken menu label>
+;   terrain_modes random grass marsh rocky_plain
+;   water_terrain lake
+;   ford_terrain ford
+;   monster_medium 4 footman 2 archer
+;
+; Terrain names must exist in rules.txt. Mark terrains with:
+;   rmg_terrain 1       — placeable land patches / borders
+;   rmg_border 1        — map edge placement (like mountain)
+;   rmg_water 1         — used for lake/river water tiles
+;   rmg_ford 1          — lane-map ford crossings
+;
+; Example (uncomment and save as cfg/randommap/my_macro.txt):
+;
+; random_map_template
+; name my_macro
+; extends macro
+; title my macro
+; terrain_modes random grass marsh mountain

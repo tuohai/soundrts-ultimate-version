@@ -43,7 +43,7 @@ The submenu walks through ( Esc goes back one level ):
 4. Team mode (4 players only): free-for-all or fixed 2v2
 5. Monster strength: weak / medium / strong (hostile center garrison; attacks players — weak: 2 footmen / medium: 4 footmen + 2 archers / strong: 6 footmen + 4 archers + 1 knight)
 6. Resource layout: balanced / clustered
-7. Terrain (not for lanes template): random / grass / marsh / mountain
+7. Terrain (not for lanes template): random / grass, plus every ``rmg_terrain 1`` terrain in ``rules.txt``
 8. Water (not for lanes): none / lake / river
 9. Treasure: none / low / high (requires pickable ``class item`` types in rules)
 10. Victory mode: conquest / economic / exploration / survival (default conquest; see section 7)
@@ -227,3 +227,45 @@ Every RMG map (when types exist in ``rules.txt``) may include:
 ^^^^^^^^^^^^^^^^^^^^
 
 Full comparison, voice IDs, and mod extension: ``player/英雄无敌与文明5玩法说明.htm`` (Chinese; English RMG details in ``player/random-map.htm``).
+
+8. Custom random map templates
+--------------------------------
+
+Players and mod authors can add ``random_map_template`` text files to extend RMG templates and align terrain choices with ``rules.txt``.
+
+8.1 Where to put files
+^^^^^^^^^^^^^^^^^^^^^^^
+
+- ``cfg/randommap/*.txt`` — local player templates (recommended)
+- ``mods/<modname>/randommap/*.txt`` — shipped with a mod
+- Syntax reference: ``res/randommap/example.txt``
+
+8.2 File format
+^^^^^^^^^^^^^^^^
+
+::
+
+ random_map_template
+ name my_macro
+ extends macro
+ title My macro map
+ terrain_modes random grass marsh rocky_plain
+ water_terrain lake
+ monster_medium 4 footman 2 archer
+
+- ``extends`` inherits from ``standard``, ``fast``, ``macro``, ``lanes``, or another custom template
+- Built-in templates omit ``terrain_modes`` to auto-list ``random``, ``grass``, and all ``rmg_terrain 1`` terrains from rules
+- ``terrain_modes`` optionally restricts the menu (each name must be ``class terrain`` in ``rules.txt``)
+- Share codes: built-in templates still use ``RMG1:`` abbreviations; custom templates or custom terrain names use ``RMG2:`` (full names, no abbreviations)
+
+8.3 Terrain flags in rules.txt
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Optional flags on ``class terrain``:
+
+- ``rmg_terrain 1`` — land terrain RMG may place
+- ``rmg_border 1`` — place along map edges (e.g. mountains)
+- ``rmg_water 1`` — terrain name used for lake/river water squares
+- ``rmg_ford 1`` — terrain name used for lane-map ford crossings
+
+When RMG places terrain, it reads ``speed``, ``is_water``, ``blocks_path``, and related properties from rules instead of hard-coded ``marsh`` / ``mountain`` values.

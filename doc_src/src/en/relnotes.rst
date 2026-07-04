@@ -4,6 +4,49 @@ Release notes
 
 .. contents::
 
+
+1.4.5.0
+--------
+
+Configurable terrain, transport containers, ``attack_inside_chance``, and random maps:
+
+**Configurable square terrain**
+
+- Terrain is ``class terrain`` in ``rules.txt`` plus matching ``style.txt`` defs; no engine-wide default terrain on every cell.
+- Map ``terrain <name>`` applies passability, water, speed, and high ground from rules; ``class building_land`` extends meadows and build sites.
+- Map editor and sub-cell ``square/x,y`` syntax: ``mod/building-land-terrain.rst``.
+
+**Transport containers**
+
+- ``passenger_attack_types``: unit types that may attack outside targets while inside the container.
+- ``load_bonus``: per loaded unit, add stats to the container.
+- ``passenger_bonus``: stats added to the passenger while inside; removed on unload. Same syntax as ``load_bonus``; can be combined with ``load_bonus``.
+
+**``attack_inside_chance``**
+
+- Open-container property: outside attacks hit passengers inside at this percent (e.g. wall ``attack_inside_chance 40``).
+
+**Random map generator**
+
+- Built-in templates list every ``rmg_terrain 1`` terrain from rules; placement uses rules properties.
+- Custom ``random_map_template`` files in ``cfg/randommap/`` or ``mods/.../randommap/``.
+- Share codes: ``RMG1`` (built-in abbreviations) / ``RMG2`` (full custom names).
+
+See ``mod/building-land-terrain.rst``, ``mod/randommap.rst``, ``mod/modding.rst`` (Transport containers); tests ``test_transport_bonus.py``, ``test_attack_inside_chance.py``, ``test_randommap.py``.
+
+**Building bridges on water**
+
+- Workers can lay ``wooden_bridge`` spans tile-by-tile on rivers, lakes, and oceans (``is_buildable_on_water_only`` + ``bridge_terrain bridge_deck``).
+- Scaffold phase: walk-on build, no passage until complete; finished spans link to shore / other decks; neutral for all players.
+- Site TTS matches other ``buildingsite`` entries; footsteps use ``bridge_deck`` / ``big_bridge`` ``ground wood``.
+- Docs: ``mod/water-bridge-building.rst``; tests: ``test_bridge_terrain.py``.
+
+**Unit combat modifiers on terrain**
+
+- ``mdg_on_terrain`` / ``rdg_on_terrain``, ``mdg_cd_on_terrain`` / ``rdg_cd_on_terrain``, ``charge_mdg_terrain`` / ``charge_rdg_terrain``, ``charge_mdg_cd_on_terrain`` / ``charge_rdg_cd_on_terrain``: per-terrain attack, cooldown, and charge bonuses for the **attacker's current square** (same ``terrain value …`` list syntax as ``speed_on_terrain``).
+- Negative damage modifiers weaken attacks; positive ``*_cd_on_terrain`` lengthens cooldown.
+- Docs: ``mod/building-land-terrain.rst``; tests: ``test_combat_terrain_modifiers.py``.
+
 1.4.4.9
 --------
 
