@@ -75,15 +75,14 @@ class CreatureMovement(Entity):
                 if hasattr(place, "type_name_at")
                 else place.type_name
             )
-            if type_name and type_name in self.speed_on_terrain:
-                try:
-                    terrain_index = self.speed_on_terrain.index(type_name) + 1
-                    if terrain_index < len(self.speed_on_terrain):
-                        self._actual_speed = int(self.speed_on_terrain[terrain_index])
-                except (ValueError, IndexError):
-                    # 如果地形类型不在列表中或索引越界，使用默认地形速度修正
+            if type_name:
+                from ..lib.square_terrain_rules import terrain_list_value
+
+                terrain_speed = terrain_list_value(type_name, self.speed_on_terrain)
+                if terrain_speed is not None:
+                    self._actual_speed = int(terrain_speed)
                     type_name = None
-            if not (type_name and type_name in self.speed_on_terrain) and hasattr(place, 'terrain_speed'):
+            if type_name and hasattr(place, 'terrain_speed'):
                 if hasattr(place, "terrain_speed_at"):
                     terrain_speed = place.terrain_speed_at(self.x, self.y)
                 else:

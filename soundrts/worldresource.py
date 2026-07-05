@@ -80,7 +80,29 @@ class Deposit(Entity):
 class BuildingLand(Entity):
 
     is_a_building_land = True
+    is_a = ()
+    expanded_is_a = ()
     collision = 0
+
+    def is_a_type(self, type_name):
+        cls = type(self)
+        if getattr(cls, "type_name", None) == type_name:
+            return True
+        is_a = getattr(cls, "is_a", ()) or ()
+        if type_name in is_a:
+            return True
+        expanded = getattr(cls, "expanded_is_a", ()) or ()
+        return type_name in expanded
+
+    @classmethod
+    def is_building_land_type(cls, type_name):
+        if getattr(cls, "type_name", None) == type_name:
+            return True
+        is_a = getattr(cls, "is_a", ()) or ()
+        if type_name in is_a:
+            return True
+        expanded = getattr(cls, "expanded_is_a", ()) or ()
+        return type_name in expanded
 
 
 from .lib.building_land import (  # noqa: E402

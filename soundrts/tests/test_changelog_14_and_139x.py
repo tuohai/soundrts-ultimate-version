@@ -319,10 +319,8 @@ def test_terrain_modifier_attributes_used_in_hit_miss():
 
 def test_terrain_dodge_lookup_pattern():
     src = _source("soundrts", "combat", "hit_miss.py")
-    block = src[:src.index("def ", 100)]  # first 100+ chars then first function
-    # 寻找 idx = list.index(terrain_type) 模式
-    assert "self.mdg_dodge_on_terrain.index(terrain_type)" in src
-    assert "self.rdg_dodge_on_terrain.index(terrain_type)" in src
+    assert "_terrain_modifier_from_list" in src
+    assert "terrain_list_value" in src
 
 
 def test_entity_defaults_for_terrain_attrs():

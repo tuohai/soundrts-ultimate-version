@@ -56,6 +56,21 @@ def is_building_land(obj):
     )
 
 
+def building_land_is_a_type(type_name, parent_name):
+    """Whether *type_name* is *parent_name* or inherits it via ``is_a``."""
+    if not type_name or not parent_name:
+        return False
+    if type_name == parent_name:
+        return True
+    if rules.get(type_name, "class") != ["building_land"]:
+        return False
+    is_a = rules.get(type_name, "is_a", []) or []
+    if parent_name in is_a:
+        return True
+    expanded = rules.get(type_name, "expanded_is_a", []) or []
+    return parent_name in expanded
+
+
 def building_land_class(type_name=None):
     from ..worldresource import BuildingLand
 

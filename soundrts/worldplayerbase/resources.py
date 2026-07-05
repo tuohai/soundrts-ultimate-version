@@ -59,12 +59,13 @@ class ResourcesMixin:
                     base_speed = u._get_speed_vs(u.action.target)
 
                 # 应用地形修正
-                if u.place.type_name in u.speed_on_terrain:
-                    u.actual_speed = to_int(
-                        u.speed_on_terrain[
-                            u.speed_on_terrain.index(u.place.type_name) + 1
-                        ]
-                    )
+                from ..lib.square_terrain_rules import terrain_list_value
+
+                terrain_speed = terrain_list_value(
+                    u.place.type_name, u.speed_on_terrain
+                )
+                if terrain_speed is not None:
+                    u.actual_speed = to_int(terrain_speed)
                 elif u.airground_type == "water":
                     u.actual_speed = base_speed
                 else:

@@ -87,3 +87,42 @@ def test_charge_mdg_cd_on_terrain_increases_charge_cooldown():
     attacker = _Attacker(on_marsh=True)
     attacker._set_charge_cooldown(is_melee=True)
     assert attacker.charge_mdg_next_time == 1000 + 12 * PRECISION
+
+
+def test_mdg_on_terrain_inherits_parent_terrain_type():
+    from soundrts.definitions import _get_base_classes, rules
+
+    rules.load(
+        """
+def forests
+class terrain
+
+def forest
+class terrain
+is_a forests
+
+def archer
+class soldier
+mdg 6
+mdg_on_terrain forests -2
+""",
+        base_classes=_get_base_classes(),
+    )
+
+    class _ForestPlace:
+        type_name = "forest"
+
+        def type_name_at(self, x, y):
+            return "forest"
+
+    attacker_cls = rules.unit_class("archer")
+    attacker = attacker_cls.__new__(attacker_cls)
+    DamageCalculationMixin.__init__(attacker)
+    attacker.mdg = 6 * PRECISION
+    attacker.mdg_vs = {}
+    attacker.mdg_on_terrain = attacker_cls.mdg_on_terrain
+    attacker.place = _ForestPlace()
+    attacker.x = 0
+    attacker.y = 0
+    target = _MockTarget()
+    assert attacker._get_melee_damage_vs(target) == 4 * PRECISION

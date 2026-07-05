@@ -54,13 +54,15 @@ class DamageCalculationMixin:
         terrain_type = self._get_attacker_terrain_type()
         if not terrain_type:
             return 0
+        from ..lib.square_terrain_rules import terrain_list_value
+
+        value = terrain_list_value(terrain_type, terrain_list)
+        if value is None:
+            return 0
         try:
-            idx = terrain_list.index(terrain_type)
-            if idx + 1 < len(terrain_list):
-                return to_int(terrain_list[idx + 1])
-        except (ValueError, IndexError, TypeError):
-            pass
-        return 0
+            return to_int(value)
+        except (TypeError, ValueError):
+            return 0
 
     def _get_melee_damage_vs(self, target) -> int:
         """返回对 target 的近战基础伤害（含 vs 修正）.
@@ -341,12 +343,11 @@ class DamageCalculationMixin:
         # 添加地形移动速度修正(如果有)
         terrain_type = self.place.type_name if self.place else None
         if terrain_type and hasattr(self, 'speed_on_terrain'):
-            try:
-                idx = self.speed_on_terrain.index(terrain_type)
-                if idx + 1 < len(self.speed_on_terrain):
-                    final_speed += int(self.speed_on_terrain[idx + 1])
-            except (ValueError, IndexError):
-                pass
+            from ..lib.square_terrain_rules import terrain_list_value
+
+            value = terrain_list_value(terrain_type, self.speed_on_terrain)
+            if value is not None:
+                final_speed += int(value)
 
         # 检查是否有针对这个目标类型的特定速度
         if hasattr(target, 'type_name') and target.type_name in self.speed_vs:

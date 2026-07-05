@@ -323,3 +323,61 @@ passable_units
     )
     unit = types.SimpleNamespace(type_name="footman", expanded_is_a=())
     assert terrain_allows_unit("sealed", unit) is False
+
+
+def test_terrain_is_a_inherits_attributes_and_chain():
+    from soundrts.definitions import _get_base_classes, rules
+    from soundrts.lib.square_terrain_rules import (
+        terrain_is_a_type,
+        terrain_is_water,
+        terrain_property,
+    )
+
+    rules.load(
+        """
+def water_base
+class terrain
+is_water 1
+is_dynamic 0
+
+def shallow_lake
+class terrain
+is_a water_base
+speed .5 1
+
+def deep_lake
+class terrain
+is_a shallow_lake
+rmg_water 1
+""",
+        base_classes=_get_base_classes(),
+    )
+    assert rules.get("shallow_lake", "is_a") == ["water_base"]
+    assert rules.get("shallow_lake", "expanded_is_a") == ["water_base"]
+    assert terrain_is_water("shallow_lake") is True
+    assert terrain_property("shallow_lake", "is_dynamic", 1) == 0
+    assert terrain_property("deep_lake", "speed") == [".5", "1"]
+    assert terrain_is_a_type("shallow_lake", "water_base")
+    assert terrain_is_a_type("deep_lake", "water_base")
+    assert terrain_is_a_type("deep_lake", "shallow_lake")
+    assert terrain_is_a_type("shallow_lake", "deep_lake") is False
+
+
+def test_terrain_list_value_inherits_parent_entry():
+    from soundrts.definitions import _get_base_classes, rules
+    from soundrts.lib.square_terrain_rules import terrain_list_value
+
+    rules.load(
+        """
+def forests
+class terrain
+
+def forest
+class terrain
+is_a forests
+""",
+        base_classes=_get_base_classes(),
+    )
+    assert terrain_list_value("forest", ("forests", "60")) == "60"
+    assert terrain_list_value("forest", ("forests", "60", "forest", "40")) == "40"
+    assert terrain_list_value("plain", ("forests", "60")) is None

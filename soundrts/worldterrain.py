@@ -2,6 +2,8 @@
 
 
 class TerrainRules:
+    is_a = ()
+    expanded_is_a = ()
     is_dynamic = 1
     is_high_ground = 0
     is_water = 0

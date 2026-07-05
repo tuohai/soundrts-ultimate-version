@@ -20,6 +20,45 @@ def is_terrain_def(name):
     return rules.get(name, "class") == ["terrain"]
 
 
+def terrain_is_a_type(terrain_name, type_name):
+    """Whether *terrain_name* is *type_name* or inherits it via ``is_a``."""
+    if not terrain_name or not type_name:
+        return False
+    if terrain_name == type_name:
+        return True
+    if not is_terrain_def(terrain_name):
+        return False
+    from ..definitions import rules
+
+    is_a = rules.get(terrain_name, "is_a", []) or []
+    if type_name in is_a:
+        return True
+    expanded = rules.get(terrain_name, "expanded_is_a", []) or []
+    return type_name in expanded
+
+
+def terrain_list_value(terrain_type, terrain_list, default=None):
+    """Read paired value from ``[name, value, name, value, ...]``.
+
+    Exact *terrain_type* wins; else first list name inherited by *terrain_type*
+    via ``terrain_is_a_type``.
+    """
+    if not terrain_type or not terrain_list:
+        return default
+    tokens = list(terrain_list)
+    inherited = None
+    i = 0
+    while i + 1 < len(tokens):
+        name = tokens[i]
+        value = tokens[i + 1]
+        if name == terrain_type:
+            return value
+        if inherited is None and terrain_is_a_type(terrain_type, name):
+            inherited = value
+        i += 2
+    return inherited if inherited is not None else default
+
+
 def terrain_property(name, prop, default=None):
     from ..definitions import rules
 

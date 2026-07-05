@@ -1,5 +1,17 @@
 
 
+def _terrain_modifier_from_list(terrain_type, terrain_list):
+    from ..lib.square_terrain_rules import terrain_list_value
+
+    value = terrain_list_value(terrain_type, terrain_list)
+    if value is None:
+        return 0
+    try:
+        return int(value)
+    except (ValueError, TypeError):
+        return 0
+
+
 class HitMissMixin:
     """
     处理命中与闪避相关的功能
@@ -11,19 +23,9 @@ class HitMissMixin:
             return 0
 
         if is_melee and hasattr(self, 'mdg_dodge_on_terrain') and self.mdg_dodge_on_terrain:
-            try:
-                idx = self.mdg_dodge_on_terrain.index(terrain_type)
-                if idx + 1 < len(self.mdg_dodge_on_terrain):
-                    return int(self.mdg_dodge_on_terrain[idx + 1])
-            except (ValueError, IndexError):
-                pass
+            return _terrain_modifier_from_list(terrain_type, self.mdg_dodge_on_terrain)
         elif not is_melee and hasattr(self, 'rdg_dodge_on_terrain') and self.rdg_dodge_on_terrain:
-            try:
-                idx = self.rdg_dodge_on_terrain.index(terrain_type)
-                if idx + 1 < len(self.rdg_dodge_on_terrain):
-                    return int(self.rdg_dodge_on_terrain[idx + 1])
-            except (ValueError, IndexError):
-                pass
+            return _terrain_modifier_from_list(terrain_type, self.rdg_dodge_on_terrain)
         return 0
 
     def _get_melee_cover_vs(self, target) -> int:
@@ -248,21 +250,13 @@ class HitMissMixin:
             terrain_modifier = 0
 
             if is_melee and hasattr(self, 'mdg_cover_on_terrain') and self.mdg_cover_on_terrain:
-                # 检查是否有针对该地形的近战命中修正
-                try:
-                    idx = self.mdg_cover_on_terrain.index(terrain_type)
-                    if idx + 1 < len(self.mdg_cover_on_terrain):
-                        terrain_modifier = int(self.mdg_cover_on_terrain[idx + 1])
-                except (ValueError, IndexError):
-                    pass
+                terrain_modifier = _terrain_modifier_from_list(
+                    terrain_type, self.mdg_cover_on_terrain
+                )
             elif not is_melee and hasattr(self, 'rdg_cover_on_terrain') and self.rdg_cover_on_terrain:
-                # 检查是否有针对该地形的远程命中修正
-                try:
-                    idx = self.rdg_cover_on_terrain.index(terrain_type)
-                    if idx + 1 < len(self.rdg_cover_on_terrain):
-                        terrain_modifier = int(self.rdg_cover_on_terrain[idx + 1])
-                except (ValueError, IndexError):
-                    pass
+                terrain_modifier = _terrain_modifier_from_list(
+                    terrain_type, self.rdg_cover_on_terrain
+                )
 
             # 将地形修正直接加到命中率上，而不是做百分比调整
             cover = cover + terrain_modifier
@@ -342,23 +336,17 @@ class HitMissMixin:
                 terrain_type = target.place.type_name
         if terrain_type:
             if is_melee and self.mdg_cover_on_terrain:
-                # 检查是否有针对该地形的近战命中修正
-                try:
-                    idx = self.mdg_cover_on_terrain.index(terrain_type)
-                    if idx + 1 < len(self.mdg_cover_on_terrain):
-                        terrain_modifier = int(self.mdg_cover_on_terrain[idx + 1])
-                        base_chance = base_chance * terrain_modifier // 100
-                except ValueError:
-                    pass
+                terrain_modifier = _terrain_modifier_from_list(
+                    terrain_type, self.mdg_cover_on_terrain
+                )
+                if terrain_modifier:
+                    base_chance = base_chance * terrain_modifier // 100
             elif not is_melee and self.rdg_cover_on_terrain:
-                # 检查是否有针对该地形的远程命中修正
-                try:
-                    idx = self.rdg_cover_on_terrain.index(terrain_type)
-                    if idx + 1 < len(self.rdg_cover_on_terrain):
-                        terrain_modifier = int(self.rdg_cover_on_terrain[idx + 1])
-                        base_chance = base_chance * terrain_modifier // 100
-                except ValueError:
-                    pass
+                terrain_modifier = _terrain_modifier_from_list(
+                    terrain_type, self.rdg_cover_on_terrain
+                )
+                if terrain_modifier:
+                    base_chance = base_chance * terrain_modifier // 100
 
         # 3. 处理高地修正
         attacker_high = (

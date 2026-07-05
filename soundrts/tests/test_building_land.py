@@ -582,3 +582,38 @@ terrain lake 1,1
     assert sq.fixed_terrain is True
     assert sq.type_name == "lake"
     assert [o for o in sq.objects if o.type_name == "wood"] == []
+
+
+def test_building_land_is_a_inherits_attributes_and_chain():
+    from soundrts.definitions import _get_base_classes, rules
+    from soundrts.lib.building_land import building_land_is_a_type
+    from soundrts.lib.square_terrain_rules import square_terrain_entries_for_type
+
+    rules.load(
+        """
+def meadow_base
+class building_land
+square_terrain meadows 40
+
+def custom_meadow
+class building_land
+is_a meadow_base
+
+def deluxe_meadow
+class building_land
+is_a custom_meadow
+""",
+        base_classes=_get_base_classes(),
+    )
+    meadow_cls = rules.unit_class("custom_meadow")
+    deluxe_cls = rules.unit_class("deluxe_meadow")
+    assert meadow_cls.is_a == ["meadow_base"]
+    assert meadow_cls.expanded_is_a == ["meadow_base"]
+    assert deluxe_cls.expanded_is_a == ["custom_meadow", "meadow_base"]
+    assert square_terrain_entries_for_type("custom_meadow") == [
+        {"name": "meadows", "priority": 40, "min_count": 1}
+    ]
+    assert building_land_is_a_type("custom_meadow", "meadow_base")
+    assert building_land_is_a_type("deluxe_meadow", "meadow_base")
+    assert meadow_cls.is_building_land_type("meadow_base")
+    assert deluxe_cls.is_building_land_type("custom_meadow")
