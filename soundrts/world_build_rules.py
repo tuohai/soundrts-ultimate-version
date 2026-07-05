@@ -1159,16 +1159,42 @@ def _scaffold_placed_from_shore(scaffold_square, shore_square):
     return False
 
 
-def scaffold_to_scaffold_forbidden(unit, dest_square):
-    """Ground unit on a scaffold may not ``go`` to another scaffold square."""
+def scaffold_shore_land(scaffold_square):
+    """Placer shore recorded on an active walk-on scaffold, or None."""
+    if not square_has_construction_scaffold(scaffold_square):
+        return None
+    for obj in getattr(scaffold_square, "objects", ()) or ():
+        if getattr(obj, "type_name", None) != "buildingsite":
+            continue
+        shore = getattr(obj, "shore_land", None)
+        if shore is not None and getattr(obj, "hp", 1) > 0:
+            return shore
+    return None
+
+
+def scaffold_go_forbidden(unit, dest_square):
+    """Block ``go`` onto/off an unfinished span except via its placer shore."""
     if getattr(unit, "airground_type", None) != "ground":
         return False
     place = getattr(unit, "place", None)
     if place is None or dest_square is None or place is dest_square:
         return False
-    if not square_has_construction_scaffold(place):
-        return False
-    return square_has_construction_scaffold(dest_square)
+
+    if square_has_construction_scaffold(dest_square):
+        shore = scaffold_shore_land(dest_square)
+        if shore is None:
+            return False
+        return place is not shore
+
+    if square_has_construction_scaffold(place):
+        shore = scaffold_shore_land(place)
+        if shore is None:
+            return False
+        if not getattr(dest_square, "is_water", False):
+            return dest_square is not shore
+        return square_has_construction_scaffold(dest_square)
+
+    return False
 
 
 def _bridge_passage_allowed(a, b):

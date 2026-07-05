@@ -664,6 +664,55 @@ def test_go_order_scaffold_to_scaffold_is_impossible():
     assert "order_ok" not in msgs
 
 
+def test_go_order_wrong_shore_to_scaffold_is_impossible():
+    """Only the placer shore may ``go`` onto an unfinished span."""
+    import types
+
+    from soundrts.worldorders import GoOrder
+
+    world, player = _world_from_map(
+        _mini_map(
+            "terrain plain a1 b1 c1",
+            "terrain ocean a2 b2 c2",
+            "terrain plain a3 b3 c3",
+        )
+    )
+    ocean = _sq(world, "b2")
+    placer_shore = _sq(world, "b1")
+    far_shore = _sq(world, "b3")
+    _make_water_scaffold(player, ocean, placer_shore)
+
+    def _unit_on(place):
+        unit = types.SimpleNamespace(
+            airground_type="ground",
+            place=place,
+            player=player,
+            world=world,
+            is_imperative=False,
+        )
+        msgs = []
+        unit.notify = lambda msg, *_a, **_k: msgs.append(msg)
+        return unit, msgs
+
+    unit, msgs = _unit_on(placer_shore)
+    ok = GoOrder(unit, [ocean.id])
+    ok.on_queued()
+    assert not ok.is_impossible
+    assert "order_ok" in msgs
+
+    unit, msgs = _unit_on(far_shore)
+    bad = GoOrder(unit, [ocean.id])
+    bad.on_queued()
+    assert bad.is_impossible
+    assert "order_impossible,scaffold_impassable" in msgs
+
+    unit, msgs = _unit_on(ocean)
+    leave = GoOrder(unit, [far_shore.id])
+    leave.on_queued()
+    assert leave.is_impossible
+    assert "order_impossible,scaffold_impassable" in msgs
+
+
 def test_completed_bridge_keeps_exit_to_next_scaffold():
     """Finishing span N must not sever the link to span N+1 scaffold placed from it."""
     world, player = _world_from_map(

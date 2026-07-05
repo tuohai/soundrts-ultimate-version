@@ -52,13 +52,13 @@ def _is_impassable_land_for_water_unit(unit, square):
 
 
 def _terrain_impassable_reason(unit, square):
-    from ..world_build_rules import scaffold_to_scaffold_forbidden
+    from ..world_build_rules import scaffold_go_forbidden
 
     if _is_impassable_water_for_ground_unit(unit, square):
         return "water_impassable"
     if _is_impassable_land_for_water_unit(unit, square):
         return "land_impassable"
-    if scaffold_to_scaffold_forbidden(unit, square):
+    if scaffold_go_forbidden(unit, square):
         return "scaffold_impassable"
     return None
 
