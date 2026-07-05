@@ -1184,15 +1184,19 @@ def scaffold_go_forbidden(unit, dest_square):
         shore = scaffold_shore_land(dest_square)
         if shore is None:
             return False
+        if square_has_construction_scaffold(place):
+            return True
         return place is not shore
 
     if square_has_construction_scaffold(place):
         shore = scaffold_shore_land(place)
         if shore is None:
             return False
+        if square_has_construction_scaffold(dest_square):
+            return True
         if not getattr(dest_square, "is_water", False):
             return dest_square is not shore
-        return square_has_construction_scaffold(dest_square)
+        return False
 
     return False
 

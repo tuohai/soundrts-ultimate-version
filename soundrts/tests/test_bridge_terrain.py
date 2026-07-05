@@ -664,6 +664,35 @@ def test_go_order_scaffold_to_scaffold_is_impossible():
     assert "order_ok" not in msgs
 
 
+def test_go_order_chain_scaffold_to_scaffold_is_impossible():
+    """Next-span scaffold placed from the previous span must still block ``go``."""
+    from soundrts.worldorders import GoOrder
+
+    world, player = _world_from_map(
+        _mini_map(
+            "terrain plain a1 b1 c1 d1",
+            "terrain ocean a2 b2 c2 d2",
+        )
+    )
+    span1 = _sq(world, "b2")
+    span2 = _sq(world, "c2")
+    land = _sq(world, "b1")
+    _make_water_scaffold(player, span1, land)
+    _make_water_scaffold(player, span2, span1)
+
+    peasant_cls = rules.unit_class("peasant")
+    peasant = peasant_cls(player, span1, span1.x, span1.y)
+    player.units.append(peasant)
+    msgs = []
+    peasant.notify = lambda msg, *_a, **_k: msgs.append(msg)
+
+    order = GoOrder(peasant, [span2.id])
+    order.on_queued()
+    assert order.is_impossible
+    assert "order_impossible,scaffold_impassable" in msgs
+    assert "order_ok" not in msgs
+
+
 def test_go_order_wrong_shore_to_scaffold_is_impossible():
     """Only the placer shore may ``go`` onto an unfinished span."""
     import types
