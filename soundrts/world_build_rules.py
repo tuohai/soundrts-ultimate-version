@@ -1147,11 +1147,41 @@ def square_has_construction_scaffold(square):
     return False
 
 
+def _scaffold_placed_from_shore(scaffold_square, shore_square):
+    """True if *scaffold_square* has a walk-on scaffold placed from *shore_square*."""
+    if not square_has_construction_scaffold(scaffold_square):
+        return False
+    for obj in getattr(scaffold_square, "objects", ()) or ():
+        if getattr(obj, "type_name", None) != "buildingsite":
+            continue
+        if getattr(obj, "shore_land", None) is shore_square:
+            return True
+    return False
+
+
+def scaffold_to_scaffold_forbidden(unit, dest_square):
+    """Ground unit on a scaffold may not ``go`` to another scaffold square."""
+    if getattr(unit, "airground_type", None) != "ground":
+        return False
+    place = getattr(unit, "place", None)
+    if place is None or dest_square is None or place is dest_square:
+        return False
+    if not square_has_construction_scaffold(place):
+        return False
+    return square_has_construction_scaffold(dest_square)
+
+
 def _bridge_passage_allowed(a, b):
     """Whether an exit may exist between two squares (mirrors ``passage()``)."""
     if getattr(a, "is_water", False) != getattr(b, "is_water", False):
         return getattr(a, "is_ground", True) and getattr(b, "is_ground", True)
     if getattr(a, "is_water", False) and getattr(b, "is_water", False):
+        if square_has_construction_scaffold(a) and square_has_construction_scaffold(b):
+            return False
+        if _bridge_square_active(a) and _scaffold_placed_from_shore(b, a):
+            return True
+        if _bridge_square_active(b) and _scaffold_placed_from_shore(a, b):
+            return True
         if square_has_construction_scaffold(a) or square_has_construction_scaffold(b):
             return False
         return _bridge_square_active(a) and _bridge_square_active(b)
@@ -1189,7 +1219,7 @@ def _apply_scaffold_passage(site):
         return
     if not is_buildable_on_water_only_type(_bridge_subject_type(site)):
         return
-    from .lib.square_terrain_rules import DEFAULT_TERRAIN_SPEED
+    from .lib.square_terrain_rules import DEFAULT_TERRAIN_SPEED, resolve_terrain_speed
 
     saved = getattr(water, "_scaffold_terrain_saved", None)
     if saved is None:
@@ -1198,8 +1228,13 @@ def _apply_scaffold_passage(site):
             "terrain_speed": getattr(water, "terrain_speed", DEFAULT_TERRAIN_SPEED),
         }
     water.is_ground = True
-    water.terrain_speed = DEFAULT_TERRAIN_SPEED
-    deck_voice = bridge_terrain_type(_bridge_subject_type(site))
+    deck_name = bridge_terrain_type(_bridge_subject_type(site))
+    water.terrain_speed = (
+        resolve_terrain_speed(deck_name)
+        if deck_name
+        else getattr(water, "terrain_speed", DEFAULT_TERRAIN_SPEED)
+    )
+    deck_voice = deck_name
     water._scaffold_terrain_voice = deck_voice
     exit_type = _passage_exit_type(water, shore)
     water.ensure_path(shore, exit_type=exit_type)
@@ -1285,7 +1320,11 @@ def refresh_bridge_terrain(square):
         terrain_name = providers[0]
     saved = getattr(square, "_bridge_terrain_saved", None)
     if terrain_name:
-        from .lib.square_terrain_rules import apply_terrain_map_flags, is_terrain_def
+        from .lib.square_terrain_rules import (
+            apply_terrain_map_flags,
+            is_terrain_def,
+            resolve_terrain_speed,
+        )
 
         if not is_terrain_def(terrain_name):
             warning("unknown bridge_terrain: %s", terrain_name)
@@ -1295,14 +1334,18 @@ def refresh_bridge_terrain(square):
                 "is_ground": square.is_ground,
                 "is_water": square.is_water,
                 "type_name": getattr(square, "type_name", "") or "",
+                "terrain_speed": getattr(square, "terrain_speed", None),
             }
         apply_terrain_map_flags(square, terrain_name)
+        square.terrain_speed = resolve_terrain_speed(terrain_name)
         square._bridge_terrain_voice = terrain_name
     elif saved is not None:
         square.is_ground = saved["is_ground"]
         square.is_water = saved["is_water"]
         if getattr(square, "fixed_terrain", False):
             square.type_name = saved["type_name"]
+        if saved.get("terrain_speed") is not None:
+            square.terrain_speed = saved["terrain_speed"]
         square._bridge_terrain_voice = None
         del square._bridge_terrain_saved
     if terrain_name or saved is not None:

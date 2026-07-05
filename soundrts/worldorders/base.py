@@ -52,10 +52,14 @@ def _is_impassable_land_for_water_unit(unit, square):
 
 
 def _terrain_impassable_reason(unit, square):
+    from ..world_build_rules import scaffold_to_scaffold_forbidden
+
     if _is_impassable_water_for_ground_unit(unit, square):
         return "water_impassable"
     if _is_impassable_land_for_water_unit(unit, square):
         return "land_impassable"
+    if scaffold_to_scaffold_forbidden(unit, square):
+        return "scaffold_impassable"
     return None
 
 
@@ -190,7 +194,7 @@ class Order:
                     isinstance(target, Deposit) or
                     (getattr(target, "is_a_building", False) and getattr(target, "resource_type", None))
                 )) or
-                (self.keyword in ("repair", "build_phase_two") and getattr(target, "is_repairable", False)) or
+                (self.keyword == "repair" and getattr(target, "is_repairable", False)) or
                 (self.keyword == "attack") or
                 (self.keyword == "capture") or
                 (self.keyword == "herd" and getattr(target, "herdable", 0)) or
@@ -258,7 +262,7 @@ class Order:
                     isinstance(target, Deposit) or
                     (getattr(target, "is_a_building", False) and getattr(target, "resource_type", None))
                 )) or
-                (self.keyword in ("repair", "build_phase_two") and getattr(target, "is_repairable", False)) or
+                (self.keyword == "repair" and getattr(target, "is_repairable", False)) or
                 (self.keyword == "attack") or
                 (self.keyword == "capture") or
                 (self.keyword == "herd" and getattr(target, "herdable", 0)) or
@@ -276,7 +280,7 @@ class Order:
             # 尝试直接进入目标所在方格，不使用避敌逻辑
             self.unit.start_moving_to(target, avoid=False)
             if self.unit.is_idle and self.keyword in (
-                "go", "patrol", "herd", "gather", "repair", "build_phase_two", "attack", "capture"
+                "go", "patrol", "herd", "gather", "repair", "attack", "capture"
             ):
                 next_square = self.unit.next_square(target)
                 if next_square is not None:

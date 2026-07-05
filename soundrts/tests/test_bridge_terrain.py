@@ -23,7 +23,7 @@ from soundrts.world_build_rules import (
     worker_can_place_water_build,
     worker_can_reach_water_build,
 )
-from soundrts.lib.square_terrain_rules import DEFAULT_TERRAIN_SPEED
+from soundrts.lib.square_terrain_rules import DEFAULT_TERRAIN_SPEED, resolve_terrain_speed
 from soundrts.worldclient import DummyClient
 from soundrts.worldorders.base import _is_impassable_water_for_ground_unit
 from soundrts.worldorders.production import BuildOrder
@@ -635,6 +635,61 @@ def test_scaffold_no_move_between_adjacent_scaffolds_via_shore():
     assert not peasant.can_move_to(river2)
 
 
+def test_go_order_scaffold_to_scaffold_is_impossible():
+    from soundrts.worldorders import GoOrder
+
+    world, player = _world_from_map(
+        _mini_map(
+            "terrain plain a1 b1 c1",
+            "terrain river a2 b2 c2",
+            "terrain plain a3 b3 c3",
+        )
+    )
+    river1 = _sq(world, "b2")
+    river2 = _sq(world, "c2")
+    shore = _sq(world, "b1")
+    _make_water_scaffold(player, river1, shore)
+    _make_water_scaffold(player, river2, shore)
+
+    peasant_cls = rules.unit_class("peasant")
+    peasant = peasant_cls(player, river1, river1.x, river1.y)
+    player.units.append(peasant)
+    msgs = []
+    peasant.notify = lambda msg, *_a, **_k: msgs.append(msg)
+
+    order = GoOrder(peasant, [river2.id])
+    order.on_queued()
+    assert order.is_impossible
+    assert "order_impossible,scaffold_impassable" in msgs
+    assert "order_ok" not in msgs
+
+
+def test_completed_bridge_keeps_exit_to_next_scaffold():
+    """Finishing span N must not sever the link to span N+1 scaffold placed from it."""
+    world, player = _world_from_map(
+        _mini_map(
+            "terrain plain a1 b1 c1",
+            "terrain river a2 b2 c2",
+            "terrain river a3 b3 c3",
+        )
+    )
+    span1 = _sq(world, "b2")
+    span2 = _sq(world, "c2")
+    land = _sq(world, "b1")
+    building_type = rules.unit_class("wooden_bridge")
+
+    site1 = _make_water_scaffold(player, span1, land)
+    _make_water_scaffold(player, span2, span1)
+    assert any(e.other_side.place is span2 for e in span1.exits)
+
+    clear_scaffold_passage(site1)
+    span1.objects = [_completed_bridge(span1, building_type)]
+    refresh_bridge_terrain(span1)
+
+    assert any(e.other_side.place is span2 for e in span1.exits)
+    assert any(e.other_side.place is span1 for e in span2.exits)
+
+
 def test_ocean_scaffold_restores_terrain_speed():
     world, player = _world_from_map(
         _mini_map(
@@ -648,16 +703,16 @@ def test_ocean_scaffold_restores_terrain_speed():
     assert ocean.terrain_speed == (0, 25)
 
     site = _make_water_scaffold(player, ocean, land)
-    assert ocean.terrain_speed == DEFAULT_TERRAIN_SPEED
+    expected_deck_speed = resolve_terrain_speed("bridge_deck")
+    assert ocean.terrain_speed == expected_deck_speed
+    assert expected_deck_speed == DEFAULT_TERRAIN_SPEED
 
     clear_scaffold_passage(site)
     assert ocean.terrain_speed == (0, 25)
 
 
-def test_ocean_scaffold_allows_build_after_walk_on():
-    from soundrts.worldorders.movement import BuildPhaseTwoOrder
-
-    world, player = _world_from_map(
+def test_ocean_bridge_deck_restores_terrain_speed():
+    world, _player = _world_from_map(
         _mini_map(
             "terrain plain a1 a2 a3",
             "terrain plain b1 b3",
@@ -665,28 +720,19 @@ def test_ocean_scaffold_allows_build_after_walk_on():
         )
     )
     ocean = _sq(world, "b2")
-    land = _sq(world, "b1")
-    player.resources = [100000] * 10
-    site = _make_water_scaffold(player, ocean, land)
-    player.units.append(site)
+    assert ocean.terrain_speed == (0, 25)
 
-    peasant_cls = rules.unit_class("peasant")
-    peasant = peasant_cls(player, land, land.x, land.y)
-    player.units.append(peasant)
+    building_type = rules.unit_class("wooden_bridge")
+    bridge = _completed_bridge(ocean, building_type)
+    ocean.objects = [bridge]
+    refresh_bridge_terrain(ocean)
 
-    assert land.shortest_path_to(ocean) is not None
-    peasant.move_to(ocean, ocean.x, ocean.y)
-    assert peasant.place is ocean
+    assert ocean.terrain_speed == DEFAULT_TERRAIN_SPEED
+    assert getattr(ocean, "_bridge_terrain_voice", None) == "bridge_deck"
 
-    order = BuildPhaseTwoOrder(peasant, [site.id])
-    order.on_queued()
-    assert not order.is_impossible
-
-    hp0 = site.hp
-    order.execute()
-    assert order.mode == "build"
-    order.execute()
-    assert site.hp > hp0
+    ocean.objects = []
+    refresh_bridge_terrain(ocean)
+    assert ocean.terrain_speed == (0, 25)
 
 
 def test_bridge_layer_voice_only_when_deck_complete():

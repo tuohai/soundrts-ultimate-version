@@ -310,22 +310,13 @@ class RepairOrder(BasicOrder):
         self.mode = "go_build"
 
     def execute(self):
-        from ..world_build_rules import is_scaffold_water_build_target
-
         self.update_target()
         if (self.target is None or self.target.is_fully_repaired):
             self.mark_as_complete()
             self.unit.stop()
         elif self.mode == "go_build":
-            # 水上脚手架：已在施工格内则直接施工
-            if (
-                is_scaffold_water_build_target(self.target)
-                and self.unit.place is self.target.place
-            ):
-                self.mode = "build"
-                self.unit.stop()
             # 检查是否在建筑物附近
-            elif self.unit._near_enough(self.target):
+            if self.unit._near_enough(self.target):
                 self.mode = "build"
                 self.unit.stop()
             # 检查是否可以从岸上修理靠岸的船只
@@ -343,6 +334,7 @@ class RepairOrder(BasicOrder):
                 self.unit.stop()
             elif self.unit.is_idle:
                 from ..world_build_rules import (
+                    is_scaffold_water_build_target,
                     nearest_reachable_land_for_water_build,
                     water_only_build_square_for,
                 )
@@ -366,13 +358,8 @@ class RepairOrder(BasicOrder):
             # 检查是否仍然可以修理
             repair_possible = False
 
-            if (
-                is_scaffold_water_build_target(self.target)
-                and self.unit.place is self.target.place
-            ):
-                repair_possible = True
             # 检查常规修理条件
-            elif self.unit._near_enough(self.target):
+            if self.unit._near_enough(self.target):
                 repair_possible = True
             
             # 检查靠岸修理条件
