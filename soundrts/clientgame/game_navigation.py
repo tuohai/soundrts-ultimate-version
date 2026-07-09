@@ -988,16 +988,41 @@ def _follow_if_needed(interface):
 
 
 # 雾战更新相关功能
+def _sync_memory_hp_from_live(m):
+    im = getattr(m, "initial_model", None)
+    if im is not None and hasattr(im, "hp"):
+        m.hp = im.hp
+
+
+def _take_hp_tracking(view):
+    if view is None:
+        return None, None
+    return getattr(view, "previous_hp", None), getattr(view, "_previous_soldiers_alive", None)
+
+
+def _apply_hp_tracking(view, previous_hp, previous_soldiers):
+    if view is None:
+        return
+    if previous_hp is not None:
+        view.previous_hp = previous_hp
+    if previous_soldiers is not None:
+        view._previous_soldiers_alive = previous_soldiers
+
+
 def update_fog_of_war(interface):
     # updates dobjets (the dictionary of view objects)
     found_new_enemy = False
     
     # add or update objects
     for m in interface.memory:
+        _sync_memory_hp_from_live(m)
+        prev_hp, prev_soldiers = None, None
         if m.id in interface.dobjets and not interface.dobjets[m.id].is_memory:
+            prev_hp, prev_soldiers = _take_hp_tracking(interface.dobjets.get(m.id))
             _delete_object(interface, m.id)  # memory will replace perception
         if m.id not in interface.dobjets:
             interface.dobjets[m.id] = EntityView(interface, m)
+            _apply_hp_tracking(interface.dobjets[m.id], prev_hp, prev_soldiers)
             if interface.target and m.id == interface.target.id:  # keep target
                 interface.target = interface.dobjets[m.id]
             if _must_report_resource(interface, m):
@@ -1005,6 +1030,7 @@ def update_fog_of_war(interface):
         else:
             interface.dobjets[m.id].model = m
     for m in interface.perception:
+        prev_hp, prev_soldiers = None, None
         if m.id not in interface.dobjets:
             # 中立电脑（`computer_only ... neutral`）的单位是被动 creep，不视为
             # 主动敌人——不进"新敌人提示"，也不触发战斗音乐。它们仍走 is_an_enemy
@@ -1023,9 +1049,11 @@ def update_fog_of_war(interface):
             if _must_report_resource(interface, m):
                 interface.scout_info.add(m.place)
         elif interface.dobjets[m.id].is_memory:
+            prev_hp, prev_soldiers = _take_hp_tracking(interface.dobjets.get(m.id))
             _delete_object(interface, m.id)  # perception will replace memory
         if m.id not in interface.dobjets:
             interface.dobjets[m.id] = EntityView(interface, m)
+            _apply_hp_tracking(interface.dobjets[m.id], prev_hp, prev_soldiers)
             if interface.target and m.id == interface.target.id:  # keep target
                 interface.target = interface.dobjets[m.id]
         else:

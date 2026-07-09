@@ -56,6 +56,15 @@ def modify_volume(incr):
     voice.item(nb2msg(round(sound.main_volume * 100)) + mp.PERCENT_VOLUME)
 
 
+def modify_sfx_volume(incr):
+    """increase or decrease SFX volume and announce the new level"""
+    volume_percent = sound.adjust_sfx_volume(incr)
+    config.save_audio_settings()
+
+    sound.stop(stop_voice_too=False)
+    voice.item(nb2msg(volume_percent) + mp.PERCENT_VOLUME)
+
+
 def toggle_fullscreen():
     """toggle full screen mode, and say it"""
     global fullscreen

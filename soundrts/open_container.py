@@ -40,3 +40,30 @@ def inside_unit_visible_from_place(unit, place):
         return unit.place is place
     container = getattr(unit.place, "container", None)
     return container_visible_from_place(container, place)
+
+
+def exit_blocker_visible_from_observed_squares(unit, observed_squares):
+    """出口阻挡物是否处于当前观察区的任一格的可见范围内。"""
+    if not getattr(unit, "blocked_exit", None):
+        return False
+    unit_place = getattr(unit, "place", None)
+    if unit_place is None:
+        return False
+    other_place = getattr(
+        getattr(getattr(unit, "blocked_exit", None), "other_side", None),
+        "place",
+        None,
+    )
+    for sq in observed_squares or ():
+        if sq is unit_place or sq is other_place:
+            return True
+        neighbors = getattr(sq, "neighbors", None)
+        if neighbors and unit_place in neighbors:
+            return True
+        if other_place is not None:
+            other_neighbors = getattr(other_place, "neighbors", None)
+            if other_neighbors and sq in other_neighbors:
+                return True
+        if container_visible_from_place(unit, sq):
+            return True
+    return False

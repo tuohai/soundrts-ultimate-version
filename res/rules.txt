@@ -1221,7 +1221,7 @@ is_buildable_on_exits_only 1
 transport_capacity 4
 provides_survival 0
 passenger_attack_types archer catapult
-attack_inside_chance 40   # 外部单位攻击城墙上单位时有40%几率命中乘客
+
 capture_hp_threshold 30   # 30%血量时可被夺取
 can_upgrade_to massive_wall
 

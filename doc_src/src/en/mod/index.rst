@@ -14,6 +14,7 @@ Mod rules
 2. `Advanced guide <advanced.htm>`_ — skills, factions, meta, AI
 3. `Modding manual <modding.htm>`_
 4. `Skills / heal / effects (zh) <../../zh/mod/skills-and-effects.htm>`_
+5. `Battle shouts <battle-shouts.htm>`_ · `Battle shouts (zh) <../../zh/mod/battle-shouts.htm>`_
 
 Maps
 

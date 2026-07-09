@@ -90,11 +90,6 @@ F11: say_players
 
 F7: say
 
-HOME: volume
-KP_PLUS: volume
-END: volume -1 
-KP_MINUS: volume -1 
-
 CTRL SPACE: immersion
 
 BACKQUOTE: console

@@ -87,12 +87,6 @@ F10: gamemenu
 F11: say_players
 F7: say
 
-; 音量控制
-HOME: volume
-KP_PLUS: volume
-END: volume -1 
-KP_MINUS: volume -1 
-
 ; 音乐控制
 ALT m: toggle_music
 ALT HOME: music_volume_up
@@ -101,6 +95,11 @@ ALT EQUALS: music_volume_up
 ALT END: music_volume_down
 ALT KP_MINUS: music_volume_down
 ALT MINUS: music_volume_down
+
+HOME: sfx_volume
+KP_PLUS: sfx_volume
+END: sfx_volume -1
+KP_MINUS: sfx_volume -1
 
 ; 过滤器控制（在RPG模式下仍然有用）
 m: toggle_side_filter 1

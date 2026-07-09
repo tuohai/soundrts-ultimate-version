@@ -136,6 +136,33 @@ def ui_target(interface):
             return interface.place
 
 
+def _say_validate_confirmation(interface, order_view, args):
+    """命令确认音：imperative go 对玩家目标时播报攻击而非移动。"""
+    target = ui_target(interface)
+    imperative = "imperative" in args
+    if imperative and order_view.cls.keyword == "go" and target.id is not None:
+        msgs = []
+        for uid in interface.group:
+            if uid not in interface.dobjets:
+                continue
+            u = interface.dobjets[uid]
+            model = u.model
+            if hasattr(model, "resolve_imperative_go_order"):
+                keyword = model.resolve_imperative_go_order(target.id)
+            else:
+                keyword = "go"
+            msg = OrderTypeView(keyword, u).title + target.title
+            if msg not in msgs:
+                msgs.append(msg)
+        confirmation = []
+        for msg in msgs:
+            confirmation += msg + mp.COMMA
+        if confirmation:
+            voice.item(confirmation)
+            return
+    voice.item(order_view.title + target.title)
+
+
 def cmd_validate(interface, *args):
     if not interface.group:
         voice.item(mp.NO_UNIT_CONTROLLED)
@@ -155,22 +182,30 @@ def cmd_validate(interface, *args):
             from .game_unit_control import send_order
             send_order(interface, interface.order.encode, ui_target(interface).id, args)
             # confirmation
-            voice.item(interface.order.title + ui_target(interface).title)
+            _say_validate_confirmation(interface, interface.order, args)
             interface._previous_order = interface.order
     interface.order = None
 
 
-def _say_default_confirmation(interface):
+def _say_default_confirmation(interface, args=()):
     # If the group contains different units with different default orders,
     # tell the various default orders.
     # For example, if the target is a goldmine and the group contains
     # workers and soldiers, then the interface will say:
     # "exploit a goldmine, move to a goldmine".
+    imperative = "imperative" in args
     msgs = []
+    target_id = ui_target(interface).id
     for u in interface.group:
         if u in interface.dobjets:
             u = interface.dobjets[u]
-            order = u.model.get_default_order(ui_target(interface).id)
+            model = u.model
+            if hasattr(model, "get_resolved_default_order"):
+                order = model.get_resolved_default_order(
+                    target_id, imperative=imperative
+                )
+            else:
+                order = model.get_default_order(target_id)
             if order is not None:
                 msg = OrderTypeView(order, u).title + ui_target(interface).title
                 if msg not in msgs:
@@ -190,7 +225,7 @@ def cmd_default(interface, *args):
     elif ui_target(interface).id is not None:
         from .game_unit_control import send_order
         send_order(interface, "default", ui_target(interface).id, args)
-        _say_default_confirmation(interface)
+        _say_default_confirmation(interface, args)
     interface.order = None
 
 

@@ -97,11 +97,6 @@ F10: gamemenu
 CTRL c: gamemenu
 ALT F4: gamemenu
 
-HOME: volume
-KP_PLUS: volume
-END: volume -1
-KP_MINUS: volume -1
-
 ALT SPACE: immersion
 CTRL SPACE: immersion
 
@@ -115,6 +110,11 @@ ALT EQUALS: music_volume_up
 ALT END: music_volume_down
 ALT KP_MINUS: music_volume_down
 ALT MINUS: music_volume_down
+
+HOME: sfx_volume
+KP_PLUS: sfx_volume
+END: sfx_volume -1
+KP_MINUS: sfx_volume -1
 
 CTRL F2: fullscreen
 CTRL SHIFT F2: toggle_cheatmode

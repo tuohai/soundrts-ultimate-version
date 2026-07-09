@@ -1,7 +1,7 @@
 import time
 
 from .. import msgparts as mp
-from ..clientmedia import modify_volume, sounds, voice
+from ..clientmedia import modify_sfx_volume, modify_volume, sounds, voice
 from ..clientmenu import _is_valid_chat_char, input_text
 from ..lib import sound
 from ..lib.log import warning, exception, debug
@@ -321,6 +321,11 @@ def cmd_music_volume_down(interface):
 def cmd_volume(interface, inc=1):
     """调整主音量"""
     modify_volume(int(inc))
+
+
+def cmd_sfx_volume(interface, inc=1):
+    """调整游戏音效音量"""
+    modify_sfx_volume(int(inc))
 
 
 # 语音历史管理
@@ -751,7 +756,7 @@ def cmd_get_zoom_precision(interface):
 # 导出的函数供其他模块使用
 __all__ = [
     'cmd_say', 'cmd_say_players', 'cmd_say_time', 'cmd_toggle_music',
-    'cmd_music_volume_up', 'cmd_music_volume_down', 'cmd_volume',
+    'cmd_music_volume_up', 'cmd_music_volume_down', 'cmd_volume', 'cmd_sfx_volume',
     'cmd_history_previous', 'cmd_history_stop', 'cmd_history_next',
     'cmd_select_sound', 'cmd_sound_volume', 'cmd_toggle_talking_clock',
     'cmd_toggle_tick', 'srv_restore_music', 'srv_resume_music',

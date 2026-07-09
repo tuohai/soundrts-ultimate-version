@@ -148,6 +148,7 @@ GameInterface.cmd_toggle_music = game_audio.cmd_toggle_music
 GameInterface.cmd_music_volume_up = game_audio.cmd_music_volume_up
 GameInterface.cmd_music_volume_down = game_audio.cmd_music_volume_down
 GameInterface.cmd_volume = game_audio.cmd_volume
+GameInterface.cmd_sfx_volume = game_audio.cmd_sfx_volume
 GameInterface.cmd_history_previous = game_audio.cmd_history_previous
 GameInterface.cmd_history_stop = game_audio.cmd_history_stop
 GameInterface.cmd_history_next = game_audio.cmd_history_next

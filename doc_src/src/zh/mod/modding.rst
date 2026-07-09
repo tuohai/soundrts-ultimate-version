@@ -1491,6 +1491,10 @@ Combat sound system (since 1.3.8.2; 1.4.4.6 renamed matk/ratk to mdg/rdg)
     death / falling / falling_delay / falling_on_<terrain>
     move / move_on_<terrain>
 
+**战斗喊杀（自 1.4.5.0 起分层播放；详见 :doc:`battle-shouts`）**
+
+- ``shouts`` — 接战喊杀音池；建议在 ``def walking_unit`` 定义，供步兵/弓手等继承
+
 **脚步声与倒地音效（自 1.3.9.1 起；1.4.5.0 起 ``move_on_`` / ``falling_on_`` 支持地形类型名）**
 
 在 ``def unit``（或具体单位）的 ``style.txt`` 中可写：

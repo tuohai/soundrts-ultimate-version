@@ -6,6 +6,7 @@ import types
 import soundrts.worldunit  # noqa: F401
 
 from soundrts.worldunit.world_ai_decision import CreatureAIDecision
+from soundrts.worldunit.world_order import CreatureOrders
 
 
 class _Sq:
@@ -196,3 +197,108 @@ def test_imperative_default_prefers_repair_then_attack():
 
     unit.take_default_order("u1", imperative=True)
     assert unit.orders_taken[-1] == (["attack", "u1"], True)
+
+
+def test_get_resolved_default_order_imperative_attack_on_wall():
+    """敌方墙：普通默认 go，强制默认 attack（与 take_default_order 一致）。"""
+    class _Orders(CreatureOrders):
+        basic_skills = ["go", "attack"]
+
+        def __init__(self):
+            self.player = _Player()
+            self.basic_skills = ["go", "attack"]
+
+        def get_default_order(self, target_id):
+            return "go"
+
+        def is_an_enemy(self, _target):
+            return True
+
+    unit = _Orders()
+    wall = types.SimpleNamespace(
+        id="wall1",
+        player=_Player(),
+        hp=100,
+        is_vulnerable=True,
+        is_huntable=0,
+        have_enough_space=lambda _u: False,
+    )
+    unit.player.get_object_by_id = lambda i: {"wall1": wall}[i]
+
+    assert unit.get_default_order("wall1") == "go"
+    assert unit.get_resolved_default_order("wall1", imperative=False) == "go"
+    assert unit.get_resolved_default_order("wall1", imperative=True) == "attack"
+
+
+def test_resolve_imperative_go_order_on_wall():
+    class _Orders(CreatureOrders):
+        def __init__(self):
+            self.player = _Player()
+            self.basic_skills = ["go", "attack"]
+
+    unit = _Orders()
+    wall = types.SimpleNamespace(
+        id="wall1",
+        player=_Player(),
+        hp=100,
+        is_vulnerable=True,
+        have_enough_space=lambda _u: False,
+    )
+    unit.player.get_object_by_id = lambda i: {"wall1": wall}[i]
+
+    assert unit.resolve_imperative_go_order("wall1") == "attack"
+
+
+def test_resolve_imperative_go_order_without_attack_skill():
+    class _Orders(CreatureOrders):
+        def __init__(self):
+            self.player = _Player()
+            self.basic_skills = ["go"]
+
+    unit = _Orders()
+    wall = types.SimpleNamespace(
+        id="wall1",
+        player=_Player(),
+        hp=100,
+        is_vulnerable=True,
+        have_enough_space=lambda _u: False,
+    )
+    unit.player.get_object_by_id = lambda i: {"wall1": wall}[i]
+
+    assert unit.resolve_imperative_go_order("wall1") == "go"
+
+
+def test_resolve_imperative_go_order_on_square():
+    class _Orders(CreatureOrders):
+        def __init__(self):
+            self.player = _Player()
+            self.basic_skills = ["go", "attack"]
+
+    unit = _Orders()
+    square = types.SimpleNamespace(id="sq1", player=None)
+    unit.player.get_object_by_id = lambda i: {"sq1": square}[i]
+
+    assert unit.resolve_imperative_go_order("sq1") == "go"
+
+
+def test_get_resolved_default_order_imperative_go_without_attack_skill():
+    """无攻击力单位：强制默认仍为 go。"""
+    class _Orders(CreatureOrders):
+        def __init__(self):
+            self.player = _Player()
+            self.basic_skills = ["go"]
+
+        def get_default_order(self, target_id):
+            return "go"
+
+    unit = _Orders()
+    wall = types.SimpleNamespace(
+        id="wall1",
+        player=_Player(),
+        hp=100,
+        is_vulnerable=True,
+        have_enough_space=lambda _u: False,
+    )
+    unit.player.get_object_by_id = lambda i: {"wall1": wall}[i]
+
+    assert unit.get_resolved_default_order("wall1", imperative=True) == "go"

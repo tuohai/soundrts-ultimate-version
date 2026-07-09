@@ -1,7 +1,7 @@
 ; coding: utf-8
 
 ; mod menu title
-7777 Immortal Tang
+777777 Immortal Tang
 
 12800 Armor weight reduction reduces defense
 12801 Bright Light Armor

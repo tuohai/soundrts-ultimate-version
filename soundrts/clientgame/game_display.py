@@ -152,6 +152,11 @@ def _animate_objects(interface):
             set_obs_pos(interface)
         except:
             exception("couldn't set user interface position")
+        try:
+            from ..clientgameentity.formation_sound_queue import flush_formation_sound_queue
+            flush_formation_sound_queue(interface)
+        except Exception:
+            exception("couldn't flush formation sound queue")
         for o in interface.dobjets.values():
             try:
                 o.animate()

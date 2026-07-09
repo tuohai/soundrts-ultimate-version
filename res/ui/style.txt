@@ -510,6 +510,7 @@ keyboard building
 def walking_unit
 is_a unit
 move 1053 1054
+shouts 1854
 move_on_grass 1053 1054
 move_on_leaves 1069 1070
 move_on_gravel 1344 1345
@@ -567,14 +568,14 @@ color
 def meadows ; square terrain contributed by meadow building land
 title 4362
 noise
-ground ; footstep noise determined by the nearest object
+ground ; mod: set ``ground grass`` (or wood/gravel/…) for overlay footstep; empty falls back to building_land object ground
 color
 
 def build_sites ; auto terrain when square has any build_site building land
 is_a meadows
 title 5694
 noise
-ground ; footstep noise determined by the nearest object
+ground ; mod: set ``ground grass`` on this def and on building_land types for construction footstep
 color
 
 def town ; square terrain when townhall (or is_a townhall) is on the square
@@ -647,6 +648,7 @@ when_moving_through 1092
 def bridge_deck
 is_a big_bridge
 title 5109
+; inherits ground wood from big_bridge; mod may override with ``ground wood`` here
 
 def ford
 title 4349

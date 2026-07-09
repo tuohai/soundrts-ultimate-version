@@ -1392,6 +1392,10 @@ Replaces the old attack sounds::
     death / falling / falling_delay / falling_on_<terrain>
     move / move_on_<terrain>
 
+**Battle shouts (layered playback since 1.4.5.0; see :doc:`battle-shouts`)**
+
+- ``shouts`` — combat shout pool; define on ``def walking_unit`` so infantry and archers inherit
+
 **Terrain footsteps and falling sounds (since 1.3.9.1; terrain type names since 1.4.5.0)**
 
 In ``def unit`` (or a specific unit) in ``style.txt``:

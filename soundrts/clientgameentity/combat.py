@@ -5,56 +5,133 @@ import time
 
 from ..definitions import style, rules
 from ..lib.sound import distance
+from .battle_shout_audio import (
+    battle_qualifies_for_shouts,
+    clash_shout_speakers,
+    clash_unit_count,
+    default_battle_shout_pool,
+    is_first_clash_at_place,
+    mark_battle_shout_played,
+    mark_shout_event_played,
+    normalize_sound_pool,
+    shout_bg_burst_cap,
+    shout_unit_burst_cap,
+    soldiers_in_place,
+    try_battle_shout_gates,
+    try_shout_event_gate,
+)
 
 
 class EntityViewCombat:
     """EntityView的战斗相关方法"""
 
-    def _get_battle_shout_volume(self, defender_units, attacker_units):
-        """计算喊杀声的音量"""
-        total_units = max(defender_units, attacker_units)
-        volume_increase = min((total_units - self._min_units_for_shout) // self._units_per_volume, 
-                            self._max_volume_increase)
-        return self._base_volume + (volume_increase * 1)  # 每次增加1音量
-
-    def _should_play_battle_shout(self, attacker_id, current_time):
-        """判断是否应该播放喊杀音效,返回音量"""
-        # 检查冷却时间
-        if current_time - self.__class__._last_shout_time < self.__class__._shout_cooldown:
-            return 0
-            
-        # 获取攻击者
+    def _battle_shout_context(self, attacker_id):
         attacker = self.interface.dobjets.get(attacker_id)
         if not attacker:
-            return 0
-        
-        # 位置与玩家健壮性校验
-        place = getattr(self, 'place', None)
+            return None
+        place = getattr(self, "place", None)
         if place is None:
+            return None
+        defender_units = soldiers_in_place(
+            self.interface, place, getattr(self, "player", None)
+        )
+        attacker_units = soldiers_in_place(
+            self.interface, place, getattr(attacker, "player", None)
+        )
+        if not battle_qualifies_for_shouts(defender_units, attacker_units):
+            return None
+        return {
+            "attacker": attacker,
+            "place": place,
+            "defender_units": defender_units,
+            "attacker_units": attacker_units,
+        }
+
+    def _should_play_battle_shout(self, attacker_id, current_time):
+        """判断是否应该播放喊杀（>0 表示应播），供测试与兼容。"""
+        if not self._battle_shout_context(attacker_id):
             return 0
-        
-        # 计算双方参战单位数量（安全访问）
-        defender_units = 0
-        player = getattr(self, 'player', None)
-        if player is not None and hasattr(player, 'units'):
-            defender_units = sum(
-                1 for u in player.units
-                if getattr(u, 'place', None) is place and getattr(u, 'menace', 0)
+        if not try_battle_shout_gates(self.interface, self.place, current_time):
+            return 0
+        return 1
+
+    def _resolve_shout_pool(self, primary_view=None):
+        for view in (primary_view, self):
+            if view is None:
+                continue
+            pool = normalize_sound_pool(view.get_style("shouts"))
+            if pool:
+                return pool
+        return normalize_sound_pool(default_battle_shout_pool())
+
+    def _play_layered_battle_shouts(self, attacker_id, current_time_ms):
+        """三层喊杀：战场背景 + 单位音色 + 接战高光。"""
+        ctx = self._battle_shout_context(attacker_id)
+        if ctx is None or not try_battle_shout_gates(
+            self.interface, ctx["place"], current_time_ms
+        ):
+            return
+
+        attacker_view = ctx["attacker"]
+        place = ctx["place"]
+        clash_count = clash_unit_count(self, attacker_view, self.interface)
+        first_clash = is_first_clash_at_place(
+            self.interface, place, current_time_ms
+        )
+
+        bg_pool = normalize_sound_pool(default_battle_shout_pool())
+        if bg_pool:
+            self.launch_staggered_shouts(
+                bg_pool,
+                clash_count,
+                kind="shout_bg",
+                base_volume=0.78,
+                burst_cap=shout_bg_burst_cap(clash_count),
             )
-        
-        attacker_units = 0
-        att_player = getattr(attacker, 'player', None)
-        if att_player is not None and hasattr(att_player, 'units'):
-            attacker_units = sum(
-                1 for u in att_player.units
-                if getattr(u, 'place', None) is place and getattr(u, 'menace', 0)
+
+        for speaker in clash_shout_speakers(
+            self, attacker_view, self.interface
+        ):
+            pool = normalize_sound_pool(speaker.get_style("shouts"))
+            if not pool:
+                continue
+            speaker.launch_staggered_shouts(
+                pool,
+                clash_count,
+                kind="shout_unit",
+                burst_cap=shout_unit_burst_cap(clash_count),
             )
-                            
-        # 当任意一方单位数量达到要求时触发
-        if (defender_units >= self.__class__._min_units_for_shout or 
-            attacker_units >= self.__class__._min_units_for_shout):
-            return self._get_battle_shout_volume(defender_units, attacker_units)
-        return 0
+
+        if first_clash:
+            event_pool = self._resolve_shout_pool(attacker_view)
+            if event_pool:
+                self.launch_staggered_shouts(
+                    event_pool,
+                    clash_count,
+                    kind="shout_event",
+                    burst_cap=2,
+                )
+
+        mark_battle_shout_played(self.interface, place, current_time_ms)
+
+    def _play_shout_event(self, attacker_id, headcount, burst_cap=1):
+        """高光喊杀：冲锋/暴击等，短冷却、高优先级。"""
+        current_time_ms = int(time.time() * 1000)
+        place = getattr(self, "place", None)
+        if place is None or not try_shout_event_gate(
+            self.interface, place, current_time_ms
+        ):
+            return
+        attacker_view = (
+            self.interface.dobjets.get(attacker_id) if attacker_id is not None else None
+        )
+        pool = self._resolve_shout_pool(attacker_view)
+        if not pool:
+            return
+        self.launch_staggered_shouts(
+            pool, headcount, kind="shout_event", burst_cap=burst_cap
+        )
+        mark_shout_event_played(self.interface, place, current_time_ms)
 
     def _set_battle_mode(self, is_battle):
         """设置战斗模式并播放相应音乐

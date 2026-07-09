@@ -1035,6 +1035,20 @@ class ZoomTarget:
         self.precision = precision
         self.title = self.place.title  # TODO: full zoom title
 
+    def title_msg(self):
+        """TTS：方格名 + 缩放子格坐标（与 F8 缩放模式一致，1 基）。"""
+        from .lib.subcell_terrain import subcell_index
+
+        precision = getattr(self, "precision", 3) or 3
+        cx, cy = subcell_index(self.place, self.x, self.y, precision)
+        return (
+            (getattr(self.place, "title", []) or [])
+            + mp.COMMA
+            + nb2msg(cx + 1)
+            + mp.DOT
+            + nb2msg(cy + 1)
+        )
+
     def __eq__(self, other):
         if isinstance(other, ZoomTarget):
             return self.x, self.y == other.x, other.y

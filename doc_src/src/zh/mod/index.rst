@@ -14,6 +14,7 @@ Mod 规则
 2. `Mod 进阶 <advanced.htm>`_ — 技能、阵营、成就、AI
 3. `Mod 制作手册 <modding.htm>`_ — 关键字大全（权威）
 4. `技能 / 治疗 / 效果 <skills-and-effects.htm>`_
+5. `战斗喊杀音效 <battle-shouts.htm>`_ — 分层喊杀、``shouts`` 配置
 
 地图
 

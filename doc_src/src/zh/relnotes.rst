@@ -4,6 +4,48 @@
 .. contents::
 
 
+1.4.5.1
+--------
+
+Bug 修复与语音/音频体验改善：
+
+**修复：单位自杀后雾中残留无名对象**
+
+- **现象**：单位自杀后，在同一方格用 Tab 循环目标时，仍会出现一个读不出名字的对象。
+- **原因**：死亡后 ``place is None``，战争迷雾记忆未及时清除；记忆对象可能有 ``title``（战云）但 ``short_title`` 为空，Tab 仍将其当作可选目标。
+- **修复**：``perception.py`` 记忆清理条件含 ``initial_model.place is None``；离开感知写入记忆时过滤 ``place is None`` 及己方已死亡单位；``game_unit_control.py`` 的 ``is_visible`` 要求 ``short_title`` 非空。
+- **测试**：``test_suicide_fog_ghost.py``（尸体雾中记忆与蝇鸣等环境音路径仍保留）。
+
+**修复：攻击城墙等建筑时血量反复增减**
+
+- **现象**：攻击 ``wall`` 等 ``is_repairable`` 建筑时，血量或生命音效一会儿升、一会儿降。
+- **原因**：城墙继承建筑 ``is_repairable=True``，攻击 / 修理 / 夺取阈值逻辑可能交织；雾战 HP 同步（``_sync_memory_hp_from_live``）在感知与记忆视图切换时若未延续 ``previous_hp``，会产生虚假生命变化反馈。
+- **修复**：``world_order.py`` / ``worldcreature.py`` / ``worldworker.py`` — 敌方可修理建筑默认 ``go``，强制默认 ``attack``；修理路径统一 ``not is_an_enemy(target)`` 守卫；``game_navigation.py`` 雾战更新时保留 HP 追踪（``_take_hp_tracking`` / ``_apply_hp_tracking``）。
+- **测试**：``test_imperative_attack.py``（城墙强制攻击用例）。
+
+**改善：单位行为语音描述**
+
+- Tab 选目标后 Ctrl+退格、选择 go 后 Ctrl+回车：对敌方目标播报「攻击某某」而非「移动」。
+- 热键选编组（如 F 选步兵）：播报「你控制了 N 步兵攻击市政厅」；途中接敌且仍有移动命令时附「去往 c6」。
+- **实现**：``clientgameentity/base.py`` ``_attack_action_title_msg``；``properties.py`` ``orders_txt``；``game_orders.py`` ``_say_validate_confirmation`` / ``_say_default_confirmation``；``game_unit_control.py`` ``say_group``。
+- **测试**：``test_attack_orders_txt.py``、``test_imperative_attack.py``。
+
+**改善：喊杀声分层（shouts）**
+
+- 接战喊杀分 ``shout_bg``（战场背景）、``shout_unit``（单位音色）、``shout_event``（接战高光 / 冲锋 / 暴击）三层；全局与同格冷却，``formation_sound_queue`` 错开 burst，避免与砍杀音效同帧齐射。
+- **实现**：``battle_shout_audio.py``、``combat.py``、``formation_sound_queue.py``。
+- **文档**：``mod/battle-shouts.rst``。
+- **测试**：``test_battle_shout_audio.py``。
+
+**改善：音频管理 P0–P2 优先级方案**
+
+- **P0 环境层**（负值 ~ 低正值，如 -20、-10）：脚步声、循环环境音、背景喊杀；可被更高层打断。
+- **P1 战斗层**（0 ~ 14，``shout_combat_priority`` 按规模计算）：命中、受击、单位喊杀。
+- **P2 提示层**（10 ~ 16）：升级、形态变化、事件喊杀；优先保留。
+- **实现**：``lib/sound.py`` ``SoundManager.find_a_channel`` 按 priority 抢占低优先级声源；``audio.py`` 脚步声 ``priority=-10``；TTS 保留 channel 0。
+
+- **尝试在GitHub CI上修复Win和Mac的构建，感谢fcnjd的贡献。
+
 1.4.5.0
 --------
 
@@ -51,6 +93,13 @@
 - ``move_on_<键>`` / ``falling_on_<键>`` 现支持**地形类型名**（如 ``ocean``）与 ``style.txt`` 的 ``ground`` 类别（如 ``water``、``grass``）；优先匹配地形名。
 - 修复：不带 ``ground`` 的地形（如 ``ocean``）上 ``falling_on_ocean`` 以前无效，只会播放通用 ``falling``。
 - 文档：``mod/modding.rst`` 战斗音效章节；测试：``test_falling_terrain_sound.py``。
+
+**战斗喊杀（分层播放）**
+
+- 接战时分**战场背景**、**单位音色**、**事件高光**三层播放，带全局/同格冷却，避免与砍杀音效同帧齐射。
+- ``ui/style.txt``：在 ``def walking_unit`` 定义 ``shouts``；同格任一方 ≥5 战斗单位触发。
+- 实现：``battle_shout_audio.py``、``combat.py``、``formation_sound_queue.py``；测试：``test_battle_shout_audio.py``。
+- 文档：``mod/battle-shouts.rst``。
 
 1.4.4.9
 --------

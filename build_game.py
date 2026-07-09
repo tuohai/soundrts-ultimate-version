@@ -1,0 +1,218 @@
+"""Build SoundRTS distributable CI artifacts with PyInstaller."""
+
+from __future__ import annotations
+
+import argparse
+import os
+import platform
+import re
+import shutil
+import subprocess
+import sys
+import sysconfig
+import tarfile
+import tempfile
+from pathlib import Path
+from zipfile import ZIP_DEFLATED, ZipFile
+
+
+ROOT = Path(__file__).resolve().parent
+DIST_DIR = ROOT / "dist"
+BUILD_DIR = ROOT / "build"
+ARTIFACTS_DIR = ROOT / "artifacts"
+BUNDLE_NAME = "SoundRTS"
+
+
+def _run(command: list[str], **kwargs) -> None:
+    print("+", " ".join(command), flush=True)
+    subprocess.run(command, check=True, cwd=ROOT, **kwargs)
+
+
+def _git_describe() -> str:
+    try:
+        return subprocess.check_output(
+            ["git", "describe", "--tags", "--always", "--dirty"],
+            cwd=ROOT,
+            text=True,
+            stderr=subprocess.DEVNULL,
+        ).strip()
+    except (OSError, subprocess.CalledProcessError):
+        return f"{_version()}-unknown"
+
+
+def _version() -> str:
+    version_py = ROOT / "soundrts" / "version.py"
+    match = re.search(
+        r'^VERSION\s*=\s*["\']([^"\']+)["\']',
+        version_py.read_text(encoding="utf-8"),
+        re.MULTILINE,
+    )
+    if not match:
+        raise RuntimeError(f"Could not read VERSION from {version_py}")
+    return match.group(1)
+
+
+def _default_artifact_suffix() -> str:
+    system = platform.system().lower()
+    machine = platform.machine().lower()
+    arch = {
+        "amd64": "x64",
+        "x86_64": "x64",
+        "aarch64": "arm64",
+        "arm64": "arm64",
+    }.get(machine, machine or "unknown")
+    system_name = {
+        "darwin": "macos",
+        "linux": "linux",
+        "windows": "windows",
+    }.get(system, system or "unknown")
+    return f"{system_name}-{arch}"
+
+
+def _bundle_dir() -> Path:
+    return DIST_DIR / BUNDLE_NAME
+
+
+def _resource_root(bundle_dir: Path) -> Path:
+    internal = bundle_dir / "_internal"
+    return internal if internal.exists() else bundle_dir
+
+
+def _client_executable(bundle_dir: Path) -> Path:
+    exe_name = "SoundRTS.exe" if platform.system() == "Windows" else "SoundRTS"
+    return bundle_dir / exe_name
+
+
+def _server_executable(bundle_dir: Path) -> Path:
+    exe_name = "SoundRTS-server.exe" if platform.system() == "Windows" else "SoundRTS-server"
+    return bundle_dir / exe_name
+
+
+def _clean() -> None:
+    for path in (DIST_DIR, BUILD_DIR, ARTIFACTS_DIR):
+        if path.exists():
+            shutil.rmtree(path)
+    ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def _build_docs() -> None:
+    import builddoc
+
+    print("[build] Building documentation...")
+    builddoc.build()
+
+
+def _build_cython() -> None:
+    print("[build] Building Cython extensions...")
+    env = os.environ.copy()
+    env["SOUNDRTS_CYTHON_BUILD_DIR"] = str(BUILD_DIR / "cythonized")
+    _run([sys.executable, "setup_cython.py", "build_ext", "--inplace"], env=env)
+    outputs = _compiled_extension_outputs()
+    if not outputs:
+        raise RuntimeError("Cython build produced no extension modules for this Python.")
+    print(f"[build] Cython outputs: {len(outputs)}")
+
+
+def _compiled_extension_outputs() -> list[Path]:
+    suffix = sysconfig.get_config_var("EXT_SUFFIX")
+    if not suffix:
+        return []
+    return sorted((ROOT / "soundrts").rglob(f"*{suffix}"))
+
+
+def _build_pyinstaller() -> None:
+    print("[build] Building PyInstaller bundle...")
+    _run([sys.executable, "-m", "PyInstaller", "--noconfirm", "--clean", "soundrts.spec"])
+
+
+def _write_full_version(resource_root: Path) -> None:
+    lib_dir = resource_root / "lib"
+    lib_dir.mkdir(parents=True, exist_ok=True)
+    (lib_dir / "full_version.txt").write_text(_git_describe(), encoding="utf-8")
+
+
+def _validate_bundle(bundle_dir: Path) -> None:
+    resource_root = _resource_root(bundle_dir)
+    missing = [name for name in ("cfg", "res", "mods", "doc") if not (resource_root / name).exists()]
+    if missing:
+        raise RuntimeError(f"Bundle is missing required resource paths: {', '.join(missing)}")
+    extension_patterns = ("*.pyd", "*.so", "*.dylib")
+    extensions = [
+        path
+        for pattern in extension_patterns
+        for path in (resource_root / "soundrts").rglob(pattern)
+    ]
+    if not extensions:
+        raise RuntimeError("Bundle is missing compiled Cython extension modules.")
+    exe = _client_executable(bundle_dir)
+    if not exe.exists():
+        raise RuntimeError(f"Bundle is missing client executable: {exe}")
+    server_exe = _server_executable(bundle_dir)
+    if not server_exe.exists():
+        raise RuntimeError(f"Bundle is missing server executable: {server_exe}")
+    print(f"[build] Bundle validation passed with {len(extensions)} compiled extensions.")
+
+
+def _smoke_test(bundle_dir: Path) -> None:
+    exe = _server_executable(bundle_dir)
+    env = os.environ.copy()
+    env.setdefault("PYGAME_HIDE_SUPPORT_PROMPT", "1")
+    env.setdefault("SDL_VIDEODRIVER", "dummy")
+    env.setdefault("SDL_AUDIODRIVER", "dummy")
+    tmp = tempfile.mkdtemp(prefix="soundrts-smoke-")
+    env["HOME"] = tmp
+    if platform.system() == "Windows":
+        env["APPDATA"] = tmp
+    try:
+        _run([str(exe), "--help"], env=env)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def _archive_zip(bundle_dir: Path, target: Path) -> None:
+    with ZipFile(target, "w", compression=ZIP_DEFLATED) as zip_file:
+        for path in bundle_dir.rglob("*"):
+            if path.is_file():
+                zip_file.write(path, path.relative_to(bundle_dir.parent))
+
+
+def _archive_tar_gz(bundle_dir: Path, target: Path) -> None:
+    with tarfile.open(target, "w:gz") as tar:
+        tar.add(bundle_dir, arcname=bundle_dir.name)
+
+
+def _archive(bundle_dir: Path, artifact_suffix: str) -> Path:
+    base_name = f"SoundRTS-{_version()}-{artifact_suffix}"
+    if artifact_suffix.startswith("linux-"):
+        target = ARTIFACTS_DIR / f"{base_name}.tar.gz"
+        _archive_tar_gz(bundle_dir, target)
+    else:
+        target = ARTIFACTS_DIR / f"{base_name}.zip"
+        _archive_zip(bundle_dir, target)
+    print(f"[build] Created artifact: {target}")
+    return target
+
+
+def main() -> None:
+    os.chdir(ROOT)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--artifact-suffix", default=_default_artifact_suffix())
+    parser.add_argument("--skip-smoke-test", action="store_true")
+    args = parser.parse_args()
+
+    _clean()
+    _build_cython()
+    _build_docs()
+    _build_pyinstaller()
+
+    bundle_dir = _bundle_dir()
+    resource_root = _resource_root(bundle_dir)
+    _write_full_version(resource_root)
+    _validate_bundle(bundle_dir)
+    if not args.skip_smoke_test:
+        _smoke_test(bundle_dir)
+    _archive(bundle_dir, args.artifact_suffix)
+
+
+if __name__ == "__main__":
+    main()

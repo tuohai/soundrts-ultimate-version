@@ -2,7 +2,7 @@
 ; coding: utf-8
 
 ; mod menu title
-777777 crazyMod
+7777778 crazyMod
 
 77000 bomber airship
 77001 explosives magazine

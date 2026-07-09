@@ -263,11 +263,6 @@ F11: say_players
 
 F7: say
 
-HOME: volume
-KP_PLUS: volume
-END: volume -1 
-KP_MINUS: volume -1 
-
 ; 第一人称模式控制
 ALT SPACE: immersion    ; 切换到第一人称模式
 CTRL SPACE: immersion   ; 保持传统快捷键
@@ -285,6 +280,11 @@ ALT EQUALS: music_volume_up
 ALT END: music_volume_down
 ALT KP_MINUS: music_volume_down
 ALT MINUS: music_volume_down
+
+HOME: sfx_volume
+KP_PLUS: sfx_volume
+END: sfx_volume -1
+KP_MINUS: sfx_volume -1
 
 ; RPG缩放模式精细度控制
 CTRL F8: change_zoom_precision        ; 自定义缩放精细度（打开输入框）

@@ -147,7 +147,7 @@ class SoundSource:
             else:
                 vol = psounds.get_stereo_volume(self)
             if force or vol != self.previous_vol:
-                self.channel.set_volume(vol[0] * main_volume, vol[1] * main_volume)
+                self.channel.set_volume(vol[0] * sfx_volume, vol[1] * sfx_volume)
                 self.previous_vol = vol
 
     def update(self):
@@ -273,9 +273,9 @@ class SoundManager:
             if c is not None:
                 c.play(s)
                 if isinstance(vol, tuple):
-                    c.set_volume(vol[0] * main_volume, vol[1] * main_volume)
+                    c.set_volume(vol[0] * sfx_volume, vol[1] * sfx_volume)
                 else:
-                    c.set_volume(vol * main_volume)
+                    c.set_volume(vol * sfx_volume)
                 self.remember_start_time(s)
 
     def update(self):
@@ -778,6 +778,16 @@ def adjust_music_volume(delta):
     # 返回百分比形式的音量值
     return int(music_volume * 100)
 
+def adjust_sfx_volume(delta):
+    """Adjust positional/stereo SFX volume."""
+    global sfx_volume
+
+    sfx_volume = min(1, max(0, sfx_volume + 0.1 * delta))
+    for source in psounds._sources:
+        if source.is_playing():
+            source._update_volume(force=True)
+    return int(sfx_volume * 100)
+
 def toggle_music():
     """切换音乐开关状态"""
     global music_enabled, current_music, in_battle
@@ -1125,6 +1135,7 @@ def get_music_status():
     return {
         "enabled": music_enabled,
         "volume": music_volume,
+        "sfx_volume": sfx_volume,
         "current_music": current_music,
         "menu_music": menu_music,
         "campaign_music": campaign_music,
@@ -1147,6 +1158,7 @@ def clear_music_cache():
 
 psounds = SoundManager()  # positional sounds (3D)
 main_volume = 0.5
+sfx_volume = 0.5
 voice_volume = 1.0  # for sounds played on the voice channel (not for the TTS)
 
 

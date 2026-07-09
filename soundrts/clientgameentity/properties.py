@@ -149,6 +149,18 @@ class EntityViewProperties:
     @property
     def orders_txt(self):
         t = []
+        model = getattr(self, "model", None)
+        if model is not None:
+            from .base import _attack_action_title_msg
+
+            orders = getattr(model, "orders", None) or []
+            attack_msg = _attack_action_title_msg(self.interface, model)
+            if attack_msg:
+                if not orders:
+                    return attack_msg + mp.COMMA
+                if getattr(orders[0], "keyword", None) != "attack":
+                    t += attack_msg
+
         prev = None
         nb = 0
         

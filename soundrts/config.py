@@ -15,6 +15,7 @@ mods: str
 soundpacks: str
 wait_delay_per_character: float
 main_volume: float
+sfx_volume: float
 music_volume: float
 music_enabled: int
 
@@ -69,6 +70,7 @@ _options = [
     ("server", "require_humans", 0),
     ("tts", "wait_delay_per_character", 0.1),
     ("audio", "main_volume", 0.5, volume_type),
+    ("audio", "sfx_volume", 0.5, volume_type),
     ("audio", "music_volume", 0.5, volume_type),
     ("audio", "music_enabled", 1, int),
 ]
@@ -149,6 +151,7 @@ def apply_audio_settings():
     from .lib import sound
 
     sound.main_volume = main_volume
+    sound.sfx_volume = sfx_volume
     sound.music_volume = music_volume
     sound.music_enabled = bool(music_enabled)
 
@@ -158,6 +161,7 @@ def sync_audio_settings():
     from .lib import sound
 
     _module.main_volume = sound.main_volume
+    _module.sfx_volume = sound.sfx_volume
     _module.music_volume = sound.music_volume
     _module.music_enabled = int(sound.music_enabled)
 

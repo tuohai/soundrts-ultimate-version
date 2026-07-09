@@ -75,6 +75,37 @@ def compute_title(type_name):
     # 等号在definitions.py的read方法中已经被移除，不需要再处理
     return t
 
+def _target_title_msg(interface, target, *, for_order_unit=None):
+    """TTS 目标名称：ZoomTarget / Square / 实体。"""
+    from ..worldroom import Square, ZoomTarget
+    from . import EntityView
+
+    if isinstance(target, ZoomTarget):
+        if getattr(interface, "zoom_mode", False):
+            return target.title_msg()
+        return getattr(target.place, "title", []) or []
+    if isinstance(target, Square):
+        return getattr(target, "title", []) or []
+    if for_order_unit is target:
+        return compute_title(getattr(target, "type_name", "") or "")
+    return EntityView(interface, target).short_title
+
+
+def _attack_action_title_msg(interface, model):
+    """单位正在 AttackAction 时，生成「攻击 + 目标」播报（用于 orders_txt）。"""
+    from ..worldaction import AttackAction
+
+    action = getattr(model, "action", None)
+    if not isinstance(action, AttackAction):
+        return None
+    target = getattr(action, "target", None)
+    if target is None:
+        return None
+    result = list(style.get("attack", "title") or [])
+    result += _target_title_msg(interface, target)
+    return mp.COMMA + result
+
+
 def _order_title_msg(order, interface, nb=1):
     if order.is_deferred:
         result = style.get("messages", "production_deferred")
@@ -138,9 +169,10 @@ def _order_title_msg(order, interface, nb=1):
         if order.keyword == "build_phase_two":
             result += style.get(order.target.type.type_name, "title")
         else:
-            # 这里需要引用完整的EntityView，因为需要title属性
-            from . import EntityView
-            result += EntityView(interface, order.target).title
+            target = order.target
+            result += _target_title_msg(
+                interface, target, for_order_unit=getattr(order, "unit", None)
+            )
     
     return mp.COMMA + result
 
@@ -178,14 +210,7 @@ class EntityViewBase:
     """EntityView的基础部分"""
     
     next_step = None
-    # 添加类变量用来处理喊杀声的音效与冷却
-    _last_shout_time = 0  # 上次喊杀时间
-    _shout_cooldown = 10000  # 喊杀冷却时间(10秒)
-    _min_units_for_shout = 5  # 触发喊杀的最小单位数
-    _units_per_volume = 5  # 每5个单位增加1音量
-    _base_volume = 1  # 基础音量
-    _max_volume_increase = 5  # 最大音量增加值
-    # 添加类变量用于攻击音效冷却
+    # 攻击音效冷却（喊杀冷却已迁至 interface 分层管理）
     _last_attack_sound_time = 0  # 上次攻击音效时间
     _attack_sound_cooldown = 8000  # 攻击音效冷却时间(1秒)
 

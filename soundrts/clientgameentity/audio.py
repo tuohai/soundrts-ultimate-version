@@ -348,7 +348,7 @@ class EntityViewAudio:
                 return container.place
         return self.place
 
-    def launch_event(self, sound, volume=1, priority=0, limit=0, ambient=False):
+    def launch_event(self, sound, volume=1, priority=0, limit=0, ambient=False, x=None, y=None):
         audio_place = self._client_audio_place()
         if audio_place is self.interface.place:
             pass
@@ -358,9 +358,66 @@ class EntityViewAudio:
             return
         if self.is_memory:
             volume *= parameters.d.get("fog_of_war_factor", 0.5)
+        sx = self.x if x is None else x
+        sy = self.y if y is None else y
         return psounds.play(
-            sounds.get_sound(sound), volume, self.x, self.y, priority, limit, ambient
+            sounds.get_sound(sound), volume, sx, sy, priority, limit, ambient
         )
+
+    def launch_staggered_shouts(
+        self,
+        sound_ids,
+        headcount,
+        kind="shout_unit",
+        base_volume=1.0,
+        priority=0,
+        burst_cap=None,
+        spread=None,
+    ):
+        """按规模错开播放多条喊杀音效。"""
+        from .battle_shout_audio import (
+            _DEFAULT_SPREAD,
+            burst_stagger_delays,
+            normalize_sound_pool,
+            scaled_shout_burst,
+            shout_combat_priority,
+            shout_combat_volume,
+        )
+        from .formation_sound_queue import queue_formation_sound
+
+        pool = normalize_sound_pool(sound_ids)
+        if not pool:
+            return
+        burst = scaled_shout_burst(headcount, kind)
+        if burst_cap is not None:
+            burst = min(burst, burst_cap)
+        if burst <= 0:
+            return
+        sfx_priority = priority or shout_combat_priority(headcount, kind)
+        spread = _DEFAULT_SPREAD if spread is None else spread
+        now = time.time()
+        entity_id = getattr(self, "id", None)
+        for delay in burst_stagger_delays(burst, kind, headcount):
+            sound = random.choice(pool)
+            jx = self.x + random.uniform(-spread, spread)
+            jy = self.y + random.uniform(-spread, spread)
+            vol = shout_combat_volume(base_volume, headcount, kind)
+            if entity_id is not None:
+                queue_formation_sound(
+                    self.interface,
+                    entity_id,
+                    now + delay,
+                    sound,
+                    vol,
+                    sfx_priority,
+                    0,
+                    jx,
+                    jy,
+                )
+            else:
+                self.launch_event(
+                    sound, vol, priority=sfx_priority, x=jx, y=jy
+                )
 
     def launch_alert(self, sound):
         if self.is_inside:

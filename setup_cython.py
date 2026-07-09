@@ -1,18 +1,20 @@
 #! .venv\Scripts\python.exe
-"""SoundRTS Cython 模块编译入口
+"""SoundRTS Cython extension build entry point.
 
-用法：
-    # 开发者本机：原地编译 .pyd / .so（与 .py 同目录），便于运行
+Usage:
+    # Developer machines: build .pyd / .so files in place next to .py files.
     python setup_cython.py build_ext --inplace
 
-    # 仅生成 C 源码（不编译），用于调试 Cython 代码
+    # Generate C sources only for Cython debugging.
     python setup_cython.py build_ext --inplace --build-cython-only
 
-设计原则：
-1. 全自动发现 ``soundrts/**/*.pyx``（排除 ``soundrts/老版本/`` 归档），新增 .pyx 无需改本脚本。
-2. 失败时退化：如果 Cython 未安装或编译失败，调用方应负责走 .py fallback。
-3. 与 cx_Freeze 解耦：setup.py 调用本脚本前置编译，本脚本不依赖 cx_Freeze。
-4. 编译选项以"游戏循环热点"为目标，关掉 boundscheck/wraparound 等运行时检查。
+Design notes:
+1. Automatically discover ``soundrts/**/*.pyx`` files, excluding archived
+   ``soundrts/old versions/`` content. New .pyx files need no script changes.
+2. If Cython is missing or compilation fails, the caller decides whether to
+   fall back to .py modules.
+3. Keep this script independent from cx_Freeze.
+4. Optimize for game-loop hot paths by disabling selected runtime checks.
 """
 
 from __future__ import annotations
@@ -24,16 +26,14 @@ from glob import glob
 
 
 def _openmp_flags() -> tuple[list[str], list[str]]:
-    """返回 (extra_compile_args, extra_link_args)，用于启用 OpenMP。
+    """Return (extra_compile_args, extra_link_args) for enabling OpenMP.
 
-    Windows + MSVC：``/openmp``，链接器不需要额外参数。
-    Linux/macOS + GCC/Clang：``-fopenmp`` 同时给 compile 和 link。
-    macOS 的 Apple Clang 默认不带 OpenMP，需要 ``brew install libomp`` 并改
-    ``-Xpreprocessor -fopenmp -lomp``；这里先按通用 GCC 写，macOS 编译失败
-    时调用方应自行调整。
+    Windows + MSVC: ``/openmp``; no extra linker argument is needed.
+    Linux/macOS + GCC/Clang: ``-fopenmp`` for both compile and link.
+    macOS Apple Clang does not provide OpenMP by default. The CI workflow
+    installs Homebrew GCC and sets CC/CXX accordingly.
 
-    可通过环境变量 ``SOUNDRTS_NO_OPENMP=1`` 关掉 OpenMP（用于不支持 OpenMP
-    的工具链，例如 macOS Apple Clang 默认状态）。
+    Set ``SOUNDRTS_NO_OPENMP=1`` to disable OpenMP for unsupported toolchains.
     """
     if os.environ.get("SOUNDRTS_NO_OPENMP", "").strip() in ("1", "true", "True"):
         return [], []
@@ -43,14 +43,14 @@ def _openmp_flags() -> tuple[list[str], list[str]]:
 
 
 def _find_pyx_files(root: str = "soundrts") -> list[str]:
-    """递归发现所有 .pyx 文件，按字典序排序以保证可重复构建。"""
+    """Discover all .pyx files recursively in deterministic order."""
     pattern = os.path.join(root, "**", "*.pyx")
     files = sorted(glob(pattern, recursive=True))
     return [p for p in files if f"{os.sep}老版本{os.sep}" not in p]
 
 
 def _cython_directives() -> dict:
-    """全局 Cython 编译指令。"""
+    """Global Cython compiler directives."""
     return {
         "language_level": 3,
         "boundscheck": False,
@@ -63,25 +63,26 @@ def _cython_directives() -> dict:
 
 
 def build(inplace: bool = True, force: bool = False) -> list[str]:
-    """编译所有 .pyx 文件。返回成功编译的 .pyx 路径列表。
+    """Compile all .pyx files and return their paths.
 
-    若 Cython 未安装，抛出 ImportError，调用方决定是否致命。
+    Raises ImportError if Cython is missing; the caller decides whether that is
+    fatal.
     """
     try:
         from Cython.Build import cythonize
         from setuptools import setup
     except ImportError as e:
         raise ImportError(
-            "Cython 编译需要 'Cython' 和 'setuptools'。"
-            "请先运行: pip install -r requirements-build.txt"
+            "Cython compilation requires 'Cython' and 'setuptools'. "
+            "Run: pip install -r requirements-build.txt"
         ) from e
 
     pyx_files = _find_pyx_files()
     if not pyx_files:
-        print("[setup_cython] 未发现任何 .pyx 文件，跳过编译。")
+        print("[setup_cython] No .pyx files found; skipping compilation.")
         return []
 
-    print(f"[setup_cython] 将编译 {len(pyx_files)} 个 .pyx 模块：")
+    print(f"[setup_cython] Compiling {len(pyx_files)} .pyx modules:")
     for p in pyx_files:
         print(f"  - {p}")
 
@@ -94,11 +95,13 @@ def build(inplace: bool = True, force: bool = False) -> list[str]:
             argv.append("--force")
         sys.argv = argv
 
+        cython_build_dir = os.environ.get("SOUNDRTS_CYTHON_BUILD_DIR") or None
         ext_modules = cythonize(
             pyx_files,
             compiler_directives=_cython_directives(),
             force=force,
             annotate=False,
+            build_dir=cython_build_dir,
         )
 
         omp_cflags, omp_ldflags = _openmp_flags()
@@ -106,9 +109,9 @@ def build(inplace: bool = True, force: bool = False) -> list[str]:
             for ext in ext_modules:
                 ext.extra_compile_args = list(ext.extra_compile_args or []) + omp_cflags
                 ext.extra_link_args = list(ext.extra_link_args or []) + omp_ldflags
-            print(f"[setup_cython] OpenMP 已启用：cflags={omp_cflags} ldflags={omp_ldflags}")
+            print(f"[setup_cython] OpenMP enabled: cflags={omp_cflags} ldflags={omp_ldflags}")
         else:
-            print("[setup_cython] OpenMP 已禁用（SOUNDRTS_NO_OPENMP=1）")
+            print("[setup_cython] OpenMP disabled (SOUNDRTS_NO_OPENMP=1)")
 
         setup(name="soundrts-cython", ext_modules=ext_modules)
     finally:
@@ -118,7 +121,7 @@ def build(inplace: bool = True, force: bool = False) -> list[str]:
 
 
 def find_compiled_outputs(root: str = "soundrts") -> list[str]:
-    """返回所有编译产物路径（.pyd / .so），供 cx_Freeze include_files 使用。"""
+    """Return compiled output paths (.pyd / .so) for packagers."""
     out: list[str] = []
     for ext in ("*.pyd", "*.so"):
         for path in sorted(glob(os.path.join(root, "**", ext), recursive=True)):
@@ -138,12 +141,12 @@ def main():
     try:
         pyx_files = build(inplace=inplace, force=force)
     except ImportError as e:
-        print(f"[setup_cython] 错误: {e}", file=sys.stderr)
+        print(f"[setup_cython] Error: {e}", file=sys.stderr)
         sys.exit(1)
 
     if pyx_files:
         outputs = find_compiled_outputs()
-        print(f"\n[setup_cython] 编译完成。产物 {len(outputs)} 个：")
+        print(f"\n[setup_cython] Compilation finished. Outputs: {len(outputs)}")
         for o in outputs:
             print(f"  - {o}")
 

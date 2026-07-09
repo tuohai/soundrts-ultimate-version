@@ -1,5 +1,10 @@
 # Build-only dependencies (runtime does not need Cython once .pyd files exist)
 # pip install -r requirements-build.txt
 Cython>=3.0
-setuptools>=64
+pyinstaller>=6.0
+# PyInstaller's pkg_resources runtime hook still expects
+# pkg_resources.NullProvider. setuptools 82 removed it, which breaks the
+# frozen macOS smoke test with:
+# AttributeError: module 'pkg_resources' has no attribute 'NullProvider'
+setuptools>=64,<82
 wheel

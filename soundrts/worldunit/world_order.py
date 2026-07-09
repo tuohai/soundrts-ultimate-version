@@ -96,22 +96,19 @@ class CreatureOrders(Entity):
         ):
             return "capture"
 
-    def _take_imperative_default_order(
-        self, target_id, forget_previous=True, order_id=None
-    ):
-        """Ctrl+退格：进入容器 → 修理 → 驱赶动物 → 否则强制攻击。"""
+        return None
+
+    def _imperative_default_order_keyword(self, target_id):
+        """Ctrl+退格解析：进入容器 → 修理 → 驱赶动物 → 否则强制攻击。"""
         target = self.player.get_object_by_id(target_id)
         if target is None:
-            return False
+            return None
         if self._target_is_enter_container(target):
-            self.take_order(["enter", target_id], forget_previous, True, order_id)
-            return True
+            return "enter"
         if self._target_needs_imperative_repair(target):
-            self.take_order(["repair", target_id], forget_previous, True, order_id)
-            return True
+            return "repair"
         if self._target_is_herdable_animal(target):
-            self.take_order(["herd", target_id], forget_previous, True, order_id)
-            return True
+            return "herd"
         if (
             target is not self
             and getattr(target, "hp", 0) > 0
@@ -119,9 +116,39 @@ class CreatureOrders(Entity):
             and getattr(target, "player", None) is not None
             and "attack" in self.basic_skills
         ):
-            self.take_order(["attack", target_id], forget_previous, True, order_id)
-            return True
-        return False
+            return "attack"
+        return None
+
+    def resolve_imperative_go_order(self, target_id):
+        """与 take_order 中 imperative go → attack 的转换一致。"""
+        target = self.player.get_object_by_id(target_id)
+        if (
+            getattr(target, "player", None) is not None
+            and "attack" in self.basic_skills
+        ):
+            return "attack"
+        return "go"
+
+    def get_resolved_default_order(self, target_id, imperative=False):
+        """与 take_default_order 一致地解析默认命令（供客户端确认音使用）。"""
+        if imperative:
+            keyword = self._imperative_default_order_keyword(target_id)
+            if keyword:
+                return keyword
+            order = self.get_default_order(target_id)
+            if order == "go":
+                return self.resolve_imperative_go_order(target_id)
+            return order
+        return self.get_default_order(target_id)
+
+    def _take_imperative_default_order(
+        self, target_id, forget_previous=True, order_id=None
+    ):
+        keyword = self._imperative_default_order_keyword(target_id)
+        if keyword is None:
+            return False
+        self.take_order([keyword, target_id], forget_previous, True, order_id)
+        return True
 
     def take_default_order(self, target_id, forget_previous=True, imperative=False, order_id=None
     ):

@@ -13,6 +13,7 @@ from ..lib.msgs import nb2msg, nb2msg_float
 from .. import msgparts as mp
 from ..attributes.utils import get_stat_tts_name
 from .properties import summary_omit_single_count_at_death
+from .battle_shout_audio import clash_unit_count
 
 
 class EntityViewEvents:
@@ -203,12 +204,8 @@ class EntityViewEvents:
         self.__class__._last_attack_sound_time = current_time
 
     def on_wounded(self, attacker_type, attacker_id, level, is_crit="0", is_charge="0"):
-        # 检查喊杀条件
         current_time = int(time.time() * 1000)
-        volume = self._should_play_battle_shout(attacker_id, current_time)
-        if volume > 0:
-            self.launch_event_style("shouts")  # 改回原来的方法
-            self.__class__._last_shout_time = current_time
+        self._play_layered_battle_shouts(attacker_id, current_time)
         
         # 触发战斗音乐（受到攻击时），但攻击者是自己人时不播放
         attacker = self.interface.dobjets.get(attacker_id)
@@ -246,6 +243,8 @@ class EntityViewEvents:
         
         # 转换冲锋标志为布尔值
         is_charge = is_charge == "1"
+        attacker_view = self.interface.dobjets.get(attacker_id)
+        clash_count = clash_unit_count(self, attacker_view, self.interface)
         
         # 如果是冲锋攻击，优先播放冲锋攻击音效
         if is_charge:
@@ -259,6 +258,7 @@ class EntityViewEvents:
             # 播放冲锋攻击音效
             if charge_sound:
                 self.launch_event(random.choice(charge_sound))
+                self._play_shout_event(attacker_id, clash_count, burst_cap=1)
             else:
                 # 如果没有特定的冲锋攻击音效，使用通用的攻击音效
                 if is_melee:
@@ -288,6 +288,7 @@ class EntityViewEvents:
         # 如果是暴击，播放暴击音效
         if is_crit:
             self.launch_event("critical_hit")
+            self._play_shout_event(attacker_id, clash_count, burst_cap=1)
 
         # 4. 显示攻击效果
         if self.interface.display_is_active and attacker_id in self.interface.dobjets:

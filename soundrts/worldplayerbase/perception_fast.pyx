@@ -158,6 +158,8 @@ cpdef bulk_memorize(self, objects):
         existing = memory_index.get(obj)
         if existing is not None:
             existing.time_stamp = current_time
+            if hasattr(obj, "hp"):
+                existing.hp = obj.hp
         else:
             remembrance = _copy(obj)
             remembrance.time_stamp = current_time

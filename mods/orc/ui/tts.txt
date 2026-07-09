@@ -1,7 +1,7 @@
 ﻿; coding: utf-8
 
 ; mod menu title
-7754 Orc
+777754 Orc
 
 7000 pig farm
 7001 barracks

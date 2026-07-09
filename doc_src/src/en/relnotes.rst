@@ -5,6 +5,48 @@ Release notes
 .. contents::
 
 
+1.4.5.1
+--------
+
+Bug fixes and voice/audio UX improvements:
+
+**Fix: nameless fog ghost after unit suicide**
+
+- **Symptom**: After a unit suicides, Tab-cycling targets in the same square could still select an object with no readable name.
+- **Cause**: After death ``place is None``, fog-of-war memory was not cleared in time; memory objects could have a ``title`` (fog suffix) but an empty ``short_title``, yet Tab still treated them as selectable.
+- **Fix**: ``perception.py`` forgets memory when ``initial_model.place is None``; units leaving perception are not memorized when ``place is None`` or when they are the player's own dead units; ``game_unit_control.py`` ``is_visible`` requires a non-empty ``short_title``.
+- **Tests**: ``test_suicide_fog_ghost.py`` (corpse fog memory and ambient audio paths preserved).
+
+**Fix: wall HP flickering up and down while attacking**
+
+- **Symptom**: Attacking ``wall`` and other ``is_repairable`` buildings could make HP or life-change sounds rise and fall intermittently.
+- **Cause**: Walls inherit ``is_repairable=True`` from buildings, so attack / repair / capture-threshold logic could interact; fog HP sync (``_sync_memory_hp_from_live``) without carrying ``previous_hp`` across perception/memory view swaps caused false life-change feedback.
+- **Fix**: ``world_order.py`` / ``worldcreature.py`` / ``worldworker.py`` — enemy repairable buildings default to ``go``, imperative default to ``attack``; repair paths guarded with ``not is_an_enemy(target)``; ``game_navigation.py`` preserves HP tracking on fog updates (``_take_hp_tracking`` / ``_apply_hp_tracking``).
+- **Tests**: ``test_imperative_attack.py`` (imperative attack on walls).
+
+**Improvement: unit behavior voice descriptions**
+
+- After Tab-selecting a target, Ctrl+Backspace or go + Ctrl+Enter confirms "attack \<target\>" instead of "go" for enemy units/buildings.
+- Hotkey group select (e.g. F for footmen): "You control N footmen attacking the town hall"; if moving while fighting, appends "go to c6".
+- **Code**: ``clientgameentity/base.py`` ``_attack_action_title_msg``; ``properties.py`` ``orders_txt``; ``game_orders.py`` ``_say_validate_confirmation`` / ``_say_default_confirmation``; ``game_unit_control.py`` ``say_group``.
+- **Tests**: ``test_attack_orders_txt.py``, ``test_imperative_attack.py``.
+
+**Improvement: layered battle shouts**
+
+- Three layers: ``shout_bg`` (battlefield background), ``shout_unit`` (unit voice), ``shout_event`` (first clash / charge / crit highlights); global and per-square cooldowns; ``formation_sound_queue`` staggers bursts so shouts do not stack with hit sounds in the same frame.
+- **Code**: ``battle_shout_audio.py``, ``combat.py``, ``formation_sound_queue.py``.
+- **Docs**: ``mod/battle-shouts.rst``.
+- **Tests**: ``test_battle_shout_audio.py``.
+
+**Improvement: P0–P2 audio priority scheme**
+
+- **P0 ambient** (negative to low positive, e.g. -20, -10): footsteps, looping ambience, background shouts; may be preempted by higher layers.
+- **P1 combat** (0–14, ``shout_combat_priority`` scales with headcount): hits, wounds, unit shouts.
+- **P2 alerts** (10–16): level-up, morph, event shouts; kept when channels are scarce.
+- **Code**: ``lib/sound.py`` ``SoundManager.find_a_channel`` preempts lower-priority sources; ``audio.py`` footsteps at ``priority=-10``; TTS stays on channel 0.
+
+**Attempted to fix the Windows and Mac builds on GitHub CI, thanks to fcnjd for the contribution.
+
 1.4.5.0
 --------
 
@@ -52,6 +94,13 @@ See ``mod/building-land-terrain.rst``, ``mod/randommap.rst``, ``mod/modding.rst`
 - ``move_on_<key>`` / ``falling_on_<key>`` now accept **terrain type names** (e.g. ``ocean``) and ``style.txt`` ``ground`` categories (e.g. ``water``, ``grass``); the type name is tried first.
 - Fix: on terrains without ``ground`` (e.g. ``ocean``), ``falling_on_ocean`` previously never matched and only the generic ``falling`` played.
 - Docs: ``mod/modding.rst`` (Combat sound system); tests: ``test_falling_terrain_sound.py``.
+
+**Battle shouts (layered playback)**
+
+- Three layers on combat: battlefield background, unit voice, event highlights; global/per-square cooldowns.
+- ``ui/style.txt``: ``shouts`` on ``def walking_unit``; triggers when either side has ≥5 fighting units in the square.
+- Code: ``battle_shout_audio.py``, ``combat.py``, ``formation_sound_queue.py``; tests: ``test_battle_shout_audio.py``.
+- Docs: ``mod/battle-shouts.rst``.
 
 1.4.4.9
 --------

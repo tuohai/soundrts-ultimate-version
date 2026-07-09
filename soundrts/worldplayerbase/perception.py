@@ -8,7 +8,11 @@ from ..lib.log import warning
 from ..worldroom import Square
 from ..worldexit import Exit
 from ..worldresource import Corpse, Deposit
-from ..open_container import container_visible_from_place, is_open_container
+from ..open_container import (
+    container_visible_from_place,
+    exit_blocker_visible_from_observed_squares,
+    is_open_container,
+)
 from .base import A
 
 # D-Phase 1 T2: known_enemies 内层 Cython 化 (失败 fallback 到 Python).
@@ -36,6 +40,9 @@ class PerceptionMixin:
             if container_visible_from_place(container, sq):
                 return True
         return False
+
+    def _exit_blocker_visible(self, unit):
+        return exit_blocker_visible_from_observed_squares(unit, self.observed_squares)
 
     def raise_threat(self, subsquare, delta):
         try:
@@ -291,6 +298,10 @@ class PerceptionMixin:
 
         # 超快路径：已在合并后的严格观察区内则可见（避免后续一切开销）
         if u.place in self.observed_squares:
+            return True
+
+        # 墙/门等出口阻挡物：站在出口任一侧或相邻格观察时，应能看到阻挡物本身
+        if self._exit_blocker_visible(u):
             return True
         
         # 如果是敌方单位，且不在观察区域中，则不可见
@@ -844,8 +855,8 @@ class PerceptionMixin:
         observed_squares_set = self.observed_squares  # 缓存集合引用
         
         for u in sorted_enemy_units:
-            # 快速预检查：只对在观察区域内的敌方单位调用_is_seeing
-            if u.place in observed_squares_set:
+            # 快速预检查：观察区内，或出口阻挡物从观察区可见
+            if u.place in observed_squares_set or self._exit_blocker_visible(u):
                 enemy_units_in_sight.append(u)
         
         # 批量检查可见性（限制每帧昂贵检查次数，避免极端场景爆发）
@@ -1181,7 +1192,10 @@ class PerceptionMixin:
             if obj.is_invisible or obj.is_cloaked:
                 continue
             if obj in self._memory_index:
-                self._memory_index[obj].time_stamp = current_time
+                remembrance = self._memory_index[obj]
+                remembrance.time_stamp = current_time
+                if hasattr(obj, "hp"):
+                    remembrance.hp = obj.hp
             else:
                 remembrance = copy.copy(obj)
                 remembrance.time_stamp = current_time
