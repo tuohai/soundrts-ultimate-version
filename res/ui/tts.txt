@@ -617,13 +617,13 @@
 4459 charge_rdg_cd_on_terrain
 
 
-4500	友军
-4501	敌人
-4502	全部
-4503	建筑
-4504	单位
-4505	元素
-4506	所有类型
+4500	Friendly units
+4501	Enemies
+4502	All
+4503	Buildings
+4504	Units
+4505	Static objects
+4506	all
 4507 reinforcements
 4508 change_to
 4509 too early
