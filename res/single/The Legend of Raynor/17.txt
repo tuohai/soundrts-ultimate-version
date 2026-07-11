@@ -10,7 +10,7 @@ nb_lines 7
 ; co-op: 1-2 human allies (AoE-style cooperative campaign)
 nb_players_min 1
 nb_players_max 2
-random_starts 0
+
 
 square_name loc_ch17_cursed_moor 1,1 2,1 3,1 4,1 5,1 6,1 7,1 1,2 2,2 3,2 4,2 5,2 6,2 7,2 1,3 2,3 3,3 4,3 5,3 6,3 7,3 1,4 2,4 3,4 4,4 5,4 6,4 7,4 1,5 2,5 3,5 4,5 5,5 6,5 7,5 1,6 2,6 3,6 4,6 5,6 6,6 7,6 1,7 2,7 3,7 4,7 5,7 6,7 7,7 8,1 8,2 8,3 8,4 8,5 8,6 8,7
 square_name loc_ch17_north 1,1 2,1 3,1 4,1 5,1 6,1 7,1 1,2 2,2 3,2 4,2 5,2 6,2 7,2 8,1 8,2
@@ -54,11 +54,8 @@ timer_coefficient 40
 trigger player1 (timer 0) (alliance 1)
 trigger player2 (timer 0) (alliance 1)
 trigger computers (timer 0) (alliance 2)
-trigger player1 (timer 0) (add_objective 1 7628)
-trigger player2 (timer 0) (add_objective 1 7628)
-trigger player1 (has_item lost_amulet) (objective_complete 1)
-trigger player2 (has_item lost_amulet) (objective_complete 1)
+trigger players (timer 0) (add_objective 1 7628)
+trigger players (has_item lost_amulet) (objective_complete 1)
 trigger all (no_unit_left) (defeat)
 
-trigger player1 (key_unit_killed raynor) (defeat)
-trigger player2 (key_unit_killed raynor) (defeat)
+trigger players (key_unit_killed raynor) (defeat)

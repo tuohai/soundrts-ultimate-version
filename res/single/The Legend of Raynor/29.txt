@@ -1,5 +1,5 @@
 random_map_chapter
-random_starts 0
+
 title 4271 3029
 size medium
 players 2

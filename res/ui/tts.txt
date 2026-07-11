@@ -944,6 +944,7 @@
 4976 water is impassable
 4977 land is impassable
 4978 unfinished, impassable
+4979 ground is impassable
 4980 Current Phase
 4981 Dark Age
 4982 Feudal Age
@@ -1532,6 +1533,8 @@
 5697 creek
 5698 high ground
 5699 hill
+5700 air is impassable
+5701 cannot pass
 4371	occupied
 4511	slow
 4638	manual production

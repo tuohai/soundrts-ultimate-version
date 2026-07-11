@@ -222,6 +222,18 @@ Each tick, ``update_terrain()`` picks the highest-priority eligible entry and se
 Dynamic ``terrain forest`` on the map spawns matching objects via reverse ``square_terrain`` links (see Chinese doc for full tables).
 
 
+Passability, ``go`` orders, and voice feedback
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Target squares use the same check as movement (``Square.is_passable_for``). Impassable ``go`` / ``patrol`` orders fail at **queue time** (``order_impossible`` sound).
+
+Without ``passable_units``: ground units blocked by pure water → ``water_impassable``; water units on land → ``land_impassable``; ``is_ground 0`` → ``ground_impassable``; ``is_air 0`` → ``air_impassable``; unfinished bridge scaffold → ``scaffold_impassable``. Message IDs in ``res/ui/style.txt`` ``messages`` (4976–4979, 4978, 5700).
+
+With ``passable_units``: whitelist wins over category flags. Denied units hear their unit ``title`` from ``style.txt`` plus "cannot pass" (``passable_units_denied``, TTS 5701). ``is_a`` inheritance applies (e.g. ``passable_units archers`` allows ``is_a archers``).
+
+``patrol`` and ``move_to_or_fail`` use the same ``_terrain_impassable_reason`` path. Full tables and Chinese prose: ``../../zh/mod/building-land-terrain.htm``.
+
+
 Voice layers
 ~~~~~~~~~~~~
 
@@ -250,6 +262,6 @@ Tests
 
 .. code-block:: bash
 
-   python -m pytest soundrts/tests/test_square_terrain_rules.py soundrts/tests/test_building_land.py soundrts/tests/test_subcell_terrain.py soundrts/tests/test_editor_palette.py soundrts/tests/test_terrain_speed_defaults.py soundrts/tests/test_ground_region_ford.py -q
+   python -m pytest soundrts/tests/test_square_terrain_rules.py soundrts/tests/test_building_land.py soundrts/tests/test_subcell_terrain.py soundrts/tests/test_editor_palette.py soundrts/tests/test_terrain_speed_defaults.py soundrts/tests/test_ground_region_ford.py soundrts/tests/test_water_impassable_order.py -q
 
 Full tables and Chinese prose: ``../../zh/mod/building-land-terrain.htm``.

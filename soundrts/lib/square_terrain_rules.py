@@ -537,6 +537,33 @@ def terrain_allows_unit(terrain_name, unit):
     return unit_matches_passable_units(unit, allowed)
 
 
+def terrain_name_at_square(square, x=None, y=None):
+    """Resolve gameplay terrain type name at *square* (optionally at *x*, *y*)."""
+    if square is None:
+        return ""
+    if x is None:
+        x = getattr(square, "x", 0)
+    if y is None:
+        y = getattr(square, "y", 0)
+    if hasattr(square, "type_name_at"):
+        name = square.type_name_at(x, y)
+        if name:
+            return name
+    if getattr(square, "fixed_terrain", False):
+        return getattr(square, "type_name", "") or ""
+    return resolve_square_type_name(square) or ""
+
+
+def passable_units_denied_reason(terrain_name, unit):
+    """Return ``passable_units_denied,<type_name>`` if whitelist blocks *unit*."""
+    if not terrain_name or not terrain_has_passable_units(terrain_name):
+        return None
+    if terrain_allows_unit(terrain_name, unit):
+        return None
+    type_name = getattr(unit, "type_name", None) or "unknown"
+    return f"passable_units_denied,{type_name}"
+
+
 def terrain_blocks_path(terrain_name):
     if not terrain_name:
         return False

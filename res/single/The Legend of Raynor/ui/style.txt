@@ -129,6 +129,9 @@ title 7528
 def quest_npc
 title 7504
 
+def npc_wounded_contact
+title 7504
+
 def pickaxe
 title 7506
 def knight_lance

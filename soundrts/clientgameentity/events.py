@@ -307,7 +307,7 @@ class EntityViewEvents:
             return
         self.launch_event_style("order_ok", alert=True)
 
-    def on_order_impossible(self, reason=None):
+    def on_order_impossible(self, reason=None, *extra):
         if self.player is not self.interface.player:
             return
         self.launch_event_style("order_impossible", alert=True)
@@ -319,6 +319,26 @@ class EntityViewEvents:
                 voice_missing_build_field,
                 voice_missing_deposit,
             )
+            if reason == "passable_units_denied" and extra:
+                unit_type = extra[0]
+                msg = []
+                title = style.get(unit_type, "title", warn_if_not_found=False)
+                if title:
+                    if isinstance(title, list):
+                        msg.extend(title)
+                    else:
+                        msg.append(title)
+                denied = style.get(
+                    "messages", "passable_units_denied", warn_if_not_found=False
+                )
+                if denied:
+                    if isinstance(denied, list):
+                        msg.extend(denied)
+                    else:
+                        msg.append(denied)
+                if msg:
+                    voice.info(msg)
+                return
             if not voice_missing_build_field(reason) and not voice_missing_deposit(reason):
                 voice.info(style.get("messages", reason))
 

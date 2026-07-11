@@ -10,6 +10,16 @@ Release notes
 
 Bug fixes and voice/audio UX improvements:
 
+**Improvement: go-order rejection and voice feedback on impassable terrain**
+
+- When a ground unit orders ``go`` / ``patrol`` to a square with ``is_ground 0``, or an air unit to ``is_air 0``, the order is rejected at queue time with "ground is impassable" or "air is impassable" (``order_impossible`` + ``ground_impassable`` / ``air_impassable``).
+- Terrain with a ``passable_units`` whitelist: units not on the list are rejected on ``go`` with "\<unit type\>, cannot pass" (e.g. "footman, cannot pass", "knight, cannot pass"); whitelisted types (including via ``is_a``) still work.
+- Existing checks unchanged: pure water for ground units, land for water units, unfinished bridge scaffold, etc.
+- **Code**: ``worldorders/base.py`` (``_ground_air_impassable_reason``, ``_terrain_impassable_reason``); ``lib/square_terrain_rules.py`` (``terrain_name_at_square``, ``passable_units_denied_reason``); ``clientgameentity/events.py`` (unit title + "cannot pass" in ``on_order_impossible``).
+- **Voice**: ``res/ui/style.txt`` ``messages`` — ``ground_impassable`` 4979, ``air_impassable`` 5700, ``passable_units_denied`` 5701; EN/ZH ``tts.txt`` entries included.
+- **Docs**: ``mod/building-land-terrain.rst`` passability section.
+- **Tests**: ``test_water_impassable_order.py``.
+
 **Fix: nameless fog ghost after unit suicide**
 
 - **Symptom**: After a unit suicides, Tab-cycling targets in the same square could still select an object with no readable name.

@@ -9,6 +9,12 @@ Notas de la versión
 
 Corrección de errores y mejoras en la experiencia de usuario de voz/audio:
 
+**Mejora: rechazo de órdenes go y aviso de voz en terreno intransitable**
+
+- Las unidades terrestres que ordenan ``go`` / ``patrol`` a casillas con ``is_ground 0``, o las aéreas a ``is_air 0``, reciben rechazo al encolar con ``ground_impassable`` / ``air_impassable``.
+- Terreno con ``passable_units``: unidades fuera de la lista escuchan el título del tipo de unidad más «no puede pasar» (p. ej. footman, knight); los tipos en la lista (incl. ``is_a``) siguen pudiendo ``go``.
+- **Código**: ``worldorders/base.py``, ``lib/square_terrain_rules.py``, ``clientgameentity/events.py``. **Voz**: ``messages`` 4979, 5700, 5701. **Pruebas**: ``test_water_impassable_order.py``.
+
 **Solución: fantasma de niebla sin nombre después del suicidio de la unidad**
 
 - **Síntoma**: Después de que una unidad se suicida, los objetivos que se mueven con tabulaciones en el mismo cuadrado aún podrían seleccionar un objeto sin un nombre legible.

@@ -9,6 +9,16 @@
 
 Bug 修复与语音/音频体验改善：
 
+**改善：不可通行地形的 go 命令拦截与语音提示**
+
+- 地面单位对 ``is_ground 0`` 方格、空中单位对 ``is_air 0`` 方格下达 ``go`` / ``patrol`` 时，命令在入队阶段即被拒绝，并播报「地面无法通行」或「空中无法通行」（``order_impossible`` + ``ground_impassable`` / ``air_impassable``）。
+- 配置了 ``passable_units`` 白名单的地形：不在名单内的单位 ``go`` 时被拒绝，并播报「\<单位类型名\>，无法通行」（如「步兵，无法通行」「骑士，无法通行」）；白名单内单位（含 ``is_a`` 继承链）仍可正常 ``go``。
+- 纯水路（``is_water`` 且非 ``is_ground``）、水上单位进陆地、脚手架未完工等原有拦截与提示不变。
+- **实现**：``worldorders/base.py``（``_ground_air_impassable_reason``、``_terrain_impassable_reason``）；``lib/square_terrain_rules.py``（``terrain_name_at_square``、``passable_units_denied_reason``）；``clientgameentity/events.py``（``on_order_impossible`` 播报单位名 + 「无法通行」）。
+- **语音**：``res/ui/style.txt`` ``messages`` — ``ground_impassable`` 4979、``air_impassable`` 5700、``passable_units_denied`` 5701；中英文 ``tts.txt`` 已配套。
+- **文档**：``mod/building-land-terrain.rst`` 通行与寻路章节。
+- **测试**：``test_water_impassable_order.py``。
+
 **修复：单位自杀后雾中残留无名对象**
 
 - **现象**：单位自杀后，在同一方格用 Tab 循环目标时，仍会出现一个读不出名字的对象。

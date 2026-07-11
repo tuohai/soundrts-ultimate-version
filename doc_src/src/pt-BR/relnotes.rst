@@ -10,6 +10,12 @@ Notas de lançamento
 
 Correções de bugs e melhorias de UX de voz/áudio:
 
+**Melhoria: rejeição de ordens go e aviso de voz em terreno intransitável**
+
+- Unidades terrestres com ``go`` / ``patrol`` para casas ``is_ground 0``, ou aéreas para ``is_air 0``: ordem rejeitada na fila com ``ground_impassable`` / ``air_impassable``.
+- Terreno com ``passable_units``: unidades fora da lista ouvem o título do tipo + ``passable_units_denied`` (5701); tipos na lista (incl. ``is_a``) ainda podem ``go``.
+- **Código**: ``worldorders/base.py``, ``lib/square_terrain_rules.py``, ``clientgameentity/events.py``. **Testes**: ``test_water_impassable_order.py``.
+
 **Correção: fantasma de neblina sem nome após suicídio de unidade**
 
 - **Sintoma**: Após uma unidade se suicidar, percorrer alvos com Tab na mesma casa ainda podia selecionar um objeto sem nome legível.

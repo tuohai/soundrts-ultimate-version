@@ -51,6 +51,46 @@ def _is_impassable_land_for_water_unit(unit, square):
     return not getattr(square, "is_water", False)
 
 
+def _ground_air_impassable_reason(unit, square):
+    """Return reason when *square* blocks *unit* via is_ground / is_air (or passable_units)."""
+    if square is None or unit is None:
+        return None
+    if hasattr(square, "is_passable_for"):
+        from ..lib.square_terrain_rules import (
+            passable_units_denied_reason,
+            terrain_name_at_square,
+        )
+
+        x = getattr(square, "x", 0)
+        y = getattr(square, "y", 0)
+        if square.is_passable_for(unit, x, y):
+            return None
+        terrain_name = terrain_name_at_square(square, x, y)
+        denied = passable_units_denied_reason(terrain_name, unit)
+        if denied:
+            return denied
+    else:
+        ag = getattr(unit, "airground_type", "ground")
+        if ag == "air":
+            if getattr(square, "is_air", True):
+                return None
+            return "air_impassable"
+        if ag == "ground":
+            if getattr(square, "is_water", False) and not getattr(square, "is_ground", True):
+                return None
+            if getattr(square, "is_ground", True):
+                return None
+            return "ground_impassable"
+        return None
+
+    ag = getattr(unit, "airground_type", "ground")
+    if ag == "air":
+        return "air_impassable"
+    if ag == "ground":
+        return "ground_impassable"
+    return None
+
+
 def _terrain_impassable_reason(unit, square):
     from ..world_build_rules import scaffold_go_forbidden
 
@@ -60,7 +100,7 @@ def _terrain_impassable_reason(unit, square):
         return "land_impassable"
     if scaffold_go_forbidden(unit, square):
         return "scaffold_impassable"
-    return None
+    return _ground_air_impassable_reason(unit, square)
 
 
 class Order:

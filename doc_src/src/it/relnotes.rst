@@ -9,6 +9,12 @@ Note di rilascio
 
 Correzioni di bug e miglioramenti UX voce/audio:
 
+**Miglioramento: rifiuto ordini go e feedback vocale su terreno non transitabile**
+
+- Unità di terra con ``go`` / ``patrol`` verso caselle ``is_ground 0``, o aeree verso ``is_air 0``: ordine rifiutato in coda con ``ground_impassable`` / ``air_impassable``.
+- Terreno con ``passable_units``: unità fuori lista → «\<tipo unità\>, cannot pass» (titolo unità + messaggio 5701); tipi in lista (anche via ``is_a``) possono ancora ``go``.
+- **Codice**: ``worldorders/base.py``, ``lib/square_terrain_rules.py``, ``clientgameentity/events.py``. **Test**: ``test_water_impassable_order.py``.
+
 **Correzione: fantasma di nebbia senza nome dopo il suicidio di un'unità**
 
 - **Sintomo**: Dopo il suicidio di un'unità, ciclare i bersagli con Tab nella stessa casella poteva ancora selezionare un oggetto senza nome leggibile.

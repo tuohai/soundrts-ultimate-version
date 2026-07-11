@@ -15,6 +15,9 @@ count_limit_reached 4335
 water_impassable 4976
 land_impassable 4977
 scaffold_impassable 4978
+ground_impassable 4979
+air_impassable 5700
+passable_units_denied 5701
 load_invalid 5453
 load_failed 5454
 unload_invalid 5455

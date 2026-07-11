@@ -244,6 +244,12 @@ sight_range 6
 inventory_capacity 5
 receive_items 1
 
+; 第13章负伤联络员：只接收健康药剂
+def npc_wounded_contact
+is_a quest_npc
+accepted_items health_potion
+accept_from ally neutral
+
 ; 城邦商人：交付金币换资源（Civ5 城邦式支线）
 def city_state_trader
 is_a quest_npc

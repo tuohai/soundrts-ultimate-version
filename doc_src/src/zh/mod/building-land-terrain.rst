@@ -462,10 +462,55 @@
 - 未写 ``passable_units`` → 用该地形 ``class terrain`` 的 ``is_ground`` / ``is_air`` / ``is_water``
 - 写了 ``passable_units`` → 白名单优先
 
-``blocks_path 1`` 的地形（``dense_forest``、``mountain``）在成为当前 ``type_name`` 后，会影响**相邻方格之间的 exit**，不只是格内站立。
+``blocks_path 1`` 的地形（``dense_forest``、``mountain``）在成为当前 ``type_name`` 后，会影响**相邻方格之间的 exit**，不只是格内站立。仅当**相邻两格均为** ``blocks_path`` 地形时才封住二者之间的通道（密林 ↔ 密林）；密林 ↔ 普通陆地之间的南北向通道不封。
 
+``go`` / ``patrol`` 命令与语音提示
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-模组作者：自定义对象地貌
+对目标方格做与移动相同的通行判定（``Square.is_passable_for``）。不可通行时命令在**入队阶段**失败（``order_impossible`` 音效），不进入移动。
+
+**按地形属性（未配置 ``passable_units``）**
+
+.. list-table::
+   :header-rows: 1
+
+   * - 条件
+     - 消息键（``style.txt`` ``messages``）
+     - 中文播报示例
+   * - 地面单位 → 纯水路（``is_water`` 且非 ``is_ground``）
+     - ``water_impassable``
+     - 水路无法通行
+   * - 水上单位 → 陆地
+     - ``land_impassable``
+     - 陆地无法通行
+   * - 地面单位 → ``is_ground 0``
+     - ``ground_impassable``
+     - 地面无法通行
+   * - 空中单位 → ``is_air 0``
+     - ``air_impassable``
+     - 空中无法通行
+   * - 未完工桥梁脚手架
+     - ``scaffold_impassable``
+     - 未完工，无法通行
+
+**``passable_units`` 白名单**
+
+地形写了 ``passable_units`` 时，白名单**优先于** ``is_ground`` / ``is_air`` / ``is_water`` 分类判定。不在名单内的单位 ``go`` 失败，播报该单位 ``style.txt`` ``title`` + 「无法通行」（消息键 ``passable_units_denied``，TTS 5701）。名单条目支持 ``is_a`` 继承（例如 ``passable_units archers`` 允许所有 ``is_a archers`` 的单位）。
+
+示例：
+
+.. code-block:: text
+
+   def mountain
+   class terrain
+   is_ground 0
+   is_air 0
+   passable_units archers
+
+- ``archer``（``is_a archers``）→ 可 ``go`` 进山
+- ``footman``、``knight`` → ``go`` 失败，播报「步兵，无法通行」「骑士，无法通行」
+
+``patrol`` 与 ``move_to_or_fail``（含智能单位编队移动）使用同一套 ``_terrain_impassable_reason`` 检查。
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -664,4 +709,4 @@
 
 .. code-block:: bash
 
-   python -m pytest soundrts/tests/test_square_terrain_rules.py soundrts/tests/test_building_land.py soundrts/tests/test_subcell_terrain.py soundrts/tests/test_editor_palette.py soundrts/tests/test_terrain_speed_defaults.py soundrts/tests/test_ground_region_ford.py -q
+   python -m pytest soundrts/tests/test_square_terrain_rules.py soundrts/tests/test_building_land.py soundrts/tests/test_subcell_terrain.py soundrts/tests/test_editor_palette.py soundrts/tests/test_terrain_speed_defaults.py soundrts/tests/test_ground_region_ford.py soundrts/tests/test_water_impassable_order.py -q
