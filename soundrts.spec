@@ -70,7 +70,7 @@ client_exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    contents_directory=".",
+    contents_directory="_internal",
 )
 
 server_pyz = PYZ(server_a.pure, server_a.zipped_data, cipher=block_cipher)
@@ -90,7 +90,7 @@ server_exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    contents_directory=".",
+    contents_directory="_internal",
 )
 
 coll = COLLECT(

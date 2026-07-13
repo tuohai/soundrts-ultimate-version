@@ -21,6 +21,7 @@ DIST_DIR = ROOT / "dist"
 BUILD_DIR = ROOT / "build"
 ARTIFACTS_DIR = ROOT / "artifacts"
 BUNDLE_NAME = "SoundRTS"
+RESOURCE_DIRS = ("cfg", "res", "mods", "doc")
 
 
 def _run(command: list[str], **kwargs) -> None:
@@ -121,6 +122,21 @@ def _build_pyinstaller() -> None:
     _run([sys.executable, "-m", "PyInstaller", "--noconfirm", "--clean", "soundrts.spec"])
 
 
+def _expose_resources(bundle_dir: Path) -> None:
+    """Move application resources next to the executables on every platform."""
+    internal = bundle_dir / "_internal"
+    if not internal.is_dir():
+        raise RuntimeError(f"Bundle is missing the contents directory: {internal}")
+    for name in RESOURCE_DIRS:
+        source = internal / name
+        target = bundle_dir / name
+        if not source.exists():
+            raise RuntimeError(f"Bundle is missing required internal resource path: {source}")
+        if target.exists():
+            raise RuntimeError(f"Cannot expose resource path because it already exists: {target}")
+        shutil.move(source, target)
+
+
 def _write_full_version(bundle_dir: Path) -> None:
     lib_dir = bundle_dir / "lib"
     lib_dir.mkdir(parents=True, exist_ok=True)
@@ -140,10 +156,13 @@ def _validate_bundle(bundle_dir: Path) -> None:
     if missing:
         raise RuntimeError(f"Bundle is missing required resource paths: {', '.join(missing)}")
     extension_patterns = ("*.pyd", "*.so", "*.dylib")
+    runtime_root = bundle_dir / "_internal"
+    if not runtime_root.is_dir():
+        raise RuntimeError(f"Bundle is missing the contents directory: {runtime_root}")
     extensions = [
         path
         for pattern in extension_patterns
-        for path in (bundle_dir / "soundrts").rglob(pattern)
+        for path in (runtime_root / "soundrts").rglob(pattern)
     ]
     if not extensions:
         raise RuntimeError("Bundle is missing compiled Cython extension modules.")
@@ -209,6 +228,7 @@ def main() -> None:
     _build_pyinstaller()
 
     bundle_dir = _bundle_dir()
+    _expose_resources(bundle_dir)
     _write_full_version(bundle_dir)
     _validate_bundle(bundle_dir)
     if not args.skip_smoke_test:
