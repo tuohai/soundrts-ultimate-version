@@ -39,7 +39,7 @@ analysis_kwargs = dict(
     hiddenimports=hiddenimports,
     hookspath=[],
     hooksconfig={},
-    runtime_hooks=[],
+    runtime_hooks=["pyinstaller_runtime_hook.py"],
     excludes=["Cython", "scipy", "numpy", "tkinter", "pytest", "cx_Freeze"],
     noarchive=False,
     optimize=1,
@@ -70,6 +70,7 @@ client_exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    contents_directory=".",
 )
 
 server_pyz = PYZ(server_a.pure, server_a.zipped_data, cipher=block_cipher)
@@ -89,6 +90,7 @@ server_exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    contents_directory=".",
 )
 
 coll = COLLECT(
