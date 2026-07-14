@@ -4,9 +4,6 @@ Random map generator
 
 Since SoundRTS 1.4.3.4, the procedural random map generator (RMG) builds standard ``.txt`` maps from menu options. Generated maps use the same load pipeline as hand-made maps and work in local skirmish or online room creation.
 
-Hero growth, city territory and tile management, culture, diplomacy points, tech tree, and policy cards are documented in
-`RMG hero and civilization strategic systems <rmg-strategic-systems.htm>`_.
-
 
 ----
 
@@ -43,7 +40,7 @@ The submenu walks through ( Esc goes back one level ):
 1. Map template (or Import share code — section 4)
 2. Size: small / medium / large
 3. Players: 2 / 3 / 4
-4. Team mode (3 players: free-for-all / one-vs-many; 4 players: free-for-all / 2v2 / one-vs-many). Free-for-all means everyone independent; one-vs-many allies all other players against player 1
+4. Team mode (4 players only): free-for-all or fixed 2v2
 5. Monster strength: weak / medium / strong (hostile center garrison; attacks players — weak: 2 footmen / medium: 4 footmen + 2 archers / strong: 6 footmen + 4 archers + 1 knight)
 6. Resource layout: balanced / clustered
 7. Terrain (not for lanes template): random / grass / marsh / mountain
@@ -76,12 +73,11 @@ After seed selection you hear a voice preview of the settings; after treaty conf
 
 
 
-2.2 Team modes
+2.2 Teams 2v2
 ~~~~~~~~~~~~~~
 
-- **Free-for-all**: each player starts in a unique alliance.
-- **One-vs-many**: player 1 alone; all other players start allied.
-- **2v2** (4 players only): players 1+3 vs 2+4.
+
+With 4 players and 2v2, the map adds alliance triggers: players 1+2 and 3+4 start allied.
 
 2.3 Victory modes
 ~~~~~~~~~~~~~~~~~~
@@ -132,11 +128,6 @@ Economic gold goals (``resource1`` only):
      - 2500
 
 
-
-These are ``rules.txt`` defaults (``rmg_economic_goal*``, ``rmg_survival_seconds*``, etc.).
-Mods override them in ``def parameters`` or ``cfg/randommap/*.txt``; use
-``victory_triggers`` for custom victory modes. See ``mod/randommap.htm`` sections
-6.5 / 8.4 and ``player/rmg-strategic-systems.htm`` section 7.
 
 Losing all ``provides_survival`` buildings still means defeat. In exploration/economic/survival modes, wiping all enemies does not auto-win; you may still attack.
 
@@ -208,8 +199,8 @@ Eleven colon-separated parts: ``RMG1`` prefix + 10 fields:
      - random / grass / marsh / mountain
      - ``r`` / ``g`` / ``a`` / ``t``
    * - Teams
-     - ffa / teams_2v2 / one_vs_many
-     - ``f`` / ``t`` / ``o``
+     - ffa / teams_2v2
+     - ``f`` / ``t``
    * - Water
      - none / lake / river
      - ``n`` / ``l`` / ``v``

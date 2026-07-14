@@ -38,7 +38,6 @@ Livello 4 · Gioco a tema mod
 ---------------------------
 
 - `Mappe in stile Heroes / Civ 5 <homm-civ5-play.htm>`_
-- `Sistemi strategici RMG: eroe e civiltà <rmg-strategic-systems.htm>`_
 - Mod StarCraft: `risorse <starcraft-resources.htm>`_ · `Terran <starcraft-terran.htm>`_ · `creep <starcraft-zerg-creep.htm>`_
 
 Suggerimenti sulla trama

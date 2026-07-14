@@ -7,9 +7,6 @@ Desde o SoundRTS 1.4.3.4, mapas aleatórios (RMG) incorporam, sobre a estrutura 
 
 Instruções gerais sobre menu de mapa aleatório, semente e código de compartilhamento: `Mapas aleatórios (jogador) <random-map-play.htm>`_.
 
-Regras detalhadas de herói, rendimentos urbanos, cultura, pontos diplomáticos, tecnologias e políticas:
-`Sistemas estratégicos RMG: herói e civilização <rmg-strategic-systems.htm>`_.
-
 
 ----
 
@@ -18,7 +15,7 @@ Regras detalhadas de herói, rendimentos urbanos, cultura, pontos diplomáticos,
 --------------------------------------------------
 
 
-O SoundRTS continua sendo estratégia em tempo real: selecionar unidades, dar ordens, coletar, treinar tropas e lutar. Os elementos HoMM / Civ5 entram no RMG em tempo real: o herói sobe de nível em combate e desbloqueia habilidades com mana (no solo local pode persistir entre partidas); cidades ocupam casas, compram casas adjacentes, atribuem cidadãos e melhorias, e liquidam rendimentos, cultura e pontos diplomáticos a cada minuto; tecnologias e políticas são pesquisadas na prefeitura e políticas desbloqueadas podem ser trocadas na mesma partida.
+O SoundRTS continua sendo estratégia em tempo real: selecionar unidades, dar ordens, coletar, treinar tropas e lutar. Os elementos HoMM / Civ5 aparecem sobretudo na **geração de mapa** e em **gatilhos de vitória**, não como turnos completos nem árvore de tecnologia.
 
 
 .. list-table::
@@ -48,28 +45,17 @@ O SoundRTS continua sendo estratégia em tempo real: selecionar unidades, dar or
    * - Baús / luxos no mapa (Civ5)
      - Opção «baús»: itens coletáveis ou minas extras em posição simétrica
      - ``\_append_treasure``
-   * - Território urbano e gestão de casas (Civ5)
-     - Comprar casas adjacentes, atribuir cidadãos, mina/serraria/fazenda
-     - ``rmg_systems.py`` + ``worldorders/strategic.py``
-   * - Troca de políticas (Civ5)
-     - Duas políticas ativas; a terceira substitui a mais antiga; troca grátis entre desbloqueadas
-     - ``rmg_systems.activate_policy`` / ``switch_policy``
-   * - Progressão de herói HoMM entre partidas (RMG solo)
-     - JSON por facção com nível e experiência
-     - ``rmg_progress.py``
    * - Missões secundárias estilo city-state (campanha)
      - Entregar itens a NPC por recursos (não é RMG; script de campanha)
      - Ex.: `res/single/The Legend of Raynor/`
 
 
 
-Sistemas estratégicos RMG (detalhes em `Sistemas estratégicos RMG: herói e civilização <rmg-strategic-systems.htm>`_):
+Não implementado — apenas direção futura (RMG atual não inclui):
 
-- Cada jogador começa com 1 ``rmg_hero``. Nível máximo 8; nos níveis 2/4/6 desbloqueia seta arcano, redemoinho e chuva de meteoros; habilidades gastam mana. Em RMG local solo salva nível e experiência máximos por mod e facção.
-- Prefeitura, fortaleza e castelo são cidades. Cada cidade possui sua casa; **Comprar casa** expande casas adjacentes (primeira 20 ouro, depois +10). A cada 60 s liquida rendimentos urbanos e de casas trabalhadas; cidadãos em ouro/madeira/comida/cultura; mina, serraria ou fazenda.
-- Cadeia tecnológica: planejamento urbano → administração cívica → serviço exterior.
-- Políticas tradição, comércio e diplomacia; máximo duas ativas; a terceira substitui a mais antiga; troca grátis entre desbloqueadas. A IA escolhe combinações fixas conforme a situação.
-- Em RMG, enviar pedido de aliança custa 20 pontos diplomáticos; aceitar, recusar e sair de aliança não custam.
+- Herói com level, árvore de habilidades, sistema de mana (núcleo HoMM)
+- Árvore de tecnologia, cultura, pontos diplomáticos (núcleo Civ5)
+- Expansão de cidades, produção por tile, cartas de política
 
 
 ----
@@ -597,7 +583,7 @@ Coordenadas: em ``soundrts/tests/test_yield_on_defeat_and_campaign_flags.py``,
 3. Exploração ≠ vitória militar: eliminar inimigos não vence; a facção aliada deve encontrar todas as ruínas (FFA conta só descobertas por você)
 4. Vitória Economia: coleta acumulada de ``resource1`` (ouro) via ``has_gathered`` (sem inicial nem ``grant_resources`` de ruínas); madeira não conta; após atingir meta, vitória em até ~60 s
 5. Vitória Exploração: após encontrar todas as ruínas, vitória em até ~30 s
-6. Compatibilidade de mod: metas de vitória e sistemas estratégicos via ``rmg_*`` em ``rules.txt`` e templates ``cfg/randommap/*.txt``. Com recursos não padrão, ajuste ``rmg_economic_goal*``, ``victory_triggers`` e ``grant_resources``. Ver ``player/rmg-strategic-systems.htm`` §7 e ``mod/randommap.htm`` §8.4
+6. Compatibilidade de mod: com nomes de recurso não padrão, ajuste ``\_economic_goal`` e ``grant_resources`` em ``resource1`` / ``resource2``
 7. Exploração sem ``ancient_ruin``: se o mod não define ruínas, POI não é gerado e Exploração não pode vencer
 8. Elementos Civ5 em campanha: comerciantes city-state, entrega de missões etc. — veja mapas de campanha e `携带物品与剧情交付说明.md <携带物品与剧情交付说明.htm>`_; independente do RMG
 
@@ -616,15 +602,11 @@ Coordenadas: em ``soundrts/tests/test_yield_on_defeat_and_campaign_flags.py``,
    * - Conteúdo
      - Caminho
    * - Jogador: menu de mapa aleatório
-     - [Mapas aleatórios (jogador)](random-map-play.htm)
-   * - Jogador: sistemas estratégicos RMG
-     - [Sistemas estratégicos RMG: herói e civilização](rmg-strategic-systems.htm)
+     - [随机地图功能说明.md](随机地图功能说明.htm)
    * - Regras: unidades POI
      - ``res/rules.txt`` (``ancient_ruin``, ``captured_barracks``)
    * - Gerador
      - ``soundrts/randommap.py``
-   * - Camada estratégica RMG
-     - ``soundrts/rmg_systems.py``、``soundrts/rmg_progress.py``、``soundrts/worldorders/strategic.py``
    * - Menu
      - ``soundrts/randommap_menu.py``
    * - Gatilhos

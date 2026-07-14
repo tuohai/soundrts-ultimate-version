@@ -556,12 +556,6 @@ def _build_diplomacy_catalog() -> Catalog:
             "diplomacy.alliance_decline_or_cancel",
             list(mp.HOTKEY_ALLIANCE_DECLINE),
         ),
-        ("diplomacy.rmg_trade_wood", list(mp.HOTKEY_RMG_TRADE_WOOD)),
-        ("diplomacy.rmg_trade_food", list(mp.HOTKEY_RMG_TRADE_FOOD)),
-        (
-            "diplomacy.rmg_trade_open_borders",
-            list(mp.HOTKEY_RMG_TRADE_OPEN_BORDERS),
-        ),
         ("diplomacy.exit_overlay_mode", list(mp.HOTKEY_EXIT_DIPLOMACY)),
     ]
 
@@ -573,8 +567,6 @@ def _build_classic_catalog() -> Catalog:
         ("classic.resource_status.resource2", list(mp.HOTKEY_RESOURCE2_STATUS)),
         ("classic.resource_status.resource3", list(mp.HOTKEY_RESOURCE3_STATUS)),
         ("classic.population_status", list(mp.HOTKEY_POPULATION_STATUS)),
-        ("classic.culture_status", list(mp.HOTKEY_CULTURE_STATUS)),
-        ("classic.diplomacy_status", list(mp.HOTKEY_DIPLOMACY_STATUS)),
         ("classic.unit_attributes_screen", list(mp.HOTKEY_ATTRIBUTES_SCREEN)),
         ("classic.toggle_gear_screen", list(mp.HOTKEY_TOGGLE_GEAR_SCREEN)),
         ("classic.unit_hp_status", list(mp.HOTKEY_UNIT_HP_STATUS)),

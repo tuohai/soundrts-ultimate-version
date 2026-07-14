@@ -271,6 +271,13 @@
 
 另有命中/闪避地形修正（作用于目标所在地形，仍为列表加值）：``mdg_cover_on_terrain``、``rdg_cover_on_terrain``、``mdg_dodge_on_terrain``、``rdg_dodge_on_terrain``。
 
+
+**属性界面（Alt+V）**
+
+- 会列出单位配置的 ``mdg_on_terrain`` / ``rdg_on_terrain`` / ``*_cd_on_terrain`` / 冲锋类地形修正。
+- 当前格地形的 ``mdg_vs`` / ``rdg_vs`` / ``speed_vs`` 等与单位 ``*_on_terrain`` 一并反映到界面上的伤害、冷却、移速等读数（地形 ``*_vs`` 为小数百分比；``speed_on_terrain`` 仍为绝对移速替换）。
+
+
 **示例 — 地形规定沼泽只慢骑士、森林只掩护弓箭手：**
 
 .. code-block:: text

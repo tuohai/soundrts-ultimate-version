@@ -16,11 +16,9 @@ from .mapfile import Map
 
 from . import msgparts as mp
 from .lib.msgs import nb2msg
-from . import rmg_rules
 from .rmg_templates import (
     RmgTemplateSpec,
     all_template_names,
-    custom_template_entry,
     get_template_spec,
     normalize_terrain_mode,
     reload_custom_templates,
@@ -139,22 +137,9 @@ _OBJECTIVE_VICTORY_MODE = {
 }
 
 
-def _template_victory_triggers(template_name: str) -> Tuple[str, ...]:
-    entry = custom_template_entry(template_name)
-    if entry is None:
-        return ()
-    return entry.victory_triggers
-
-
-def _append_random_map_meta_lines(
-    lines_out: List[str], cfg: RandomMapConfig, spec: RmgTemplateSpec
-) -> None:
+def _append_random_map_meta_lines(lines_out: List[str], cfg: RandomMapConfig) -> None:
     """Embed skirmish metadata for achievements and other post-game logic."""
     lines_out.append("random_map 1")
-    if rmg_rules.strategic_systems_enabled(spec.strategic_systems):
-        lines_out.append("rmg_strategic_systems 1")
-    else:
-        lines_out.append("rmg_strategic_systems 0")
     mode = cfg.victory_mode if cfg.victory_mode in VICTORY_MODES else "conquest"
     lines_out.append(f"victory_mode {mode}")
 
@@ -935,8 +920,7 @@ def config_voice_summary(config: RandomMapConfig, seed: int | None = None) -> li
     if cfg.victory_mode != "conquest":
         parts += _VICTORY_TITLE[cfg.victory_mode]
     if cfg.victory_mode == "economic":
-        spec = get_template_spec(cfg.template, _builtin_rmg_specs())
-        parts += nb2msg(_economic_goal(cfg, spec)) + [131]
+        parts += nb2msg(_economic_goal(cfg)) + [131]
     if seed is not None:
         parts += mp.RMG_SEED + nb2msg(seed)
     return parts
@@ -1120,44 +1104,58 @@ def _team_trigger_lines(nb_players: int, team_mode: str) -> List[str]:
     ]
 
 
-def _economic_goal(cfg: RandomMapConfig, spec: RmgTemplateSpec) -> int:
-    return rmg_rules.economic_goal(cfg.template, spec.economic_goal)
 
 
-def _survival_seconds(cfg: RandomMapConfig, spec: RmgTemplateSpec) -> int:
-    return rmg_rules.survival_seconds(cfg.template, spec.survival_seconds)
+def _default_skirmish_trigger_lines(cfg: RandomMapConfig) -> List[str]:
+    """Defeat triggers for all modes; conquest victory only in conquest mode."""
+    lines: List[str] = []
+    if cfg.victory_mode == "conquest":
+        lines.append("trigger players (no_enemy_player_left) (victory)")
+    lines.extend(
+        [
+            "trigger players (no_building_left) (defeat)",
+            "trigger computers (no_unit_left) (defeat)",
+        ]
+    )
+    return lines
 
 
-def _objective_line_for_victory_mode(
-    cfg: RandomMapConfig, spec: RmgTemplateSpec, *, custom_triggers: bool = False
-) -> str | None:
-    if custom_triggers:
-        return None
+def _economic_goal(cfg: RandomMapConfig) -> int:
+    goals = {
+        "fast": 2000,
+        "standard": 3000,
+        "macro": 5000,
+        "lanes": 2500,
+    }
+    return goals.get(cfg.template, 3000)
+
+
+def _survival_seconds(cfg: RandomMapConfig) -> int:
+    return 600 if cfg.template == "fast" else 900
+
+
+def _objective_line_for_victory_mode(cfg: RandomMapConfig) -> str:
     mode = cfg.victory_mode
     if mode == "economic":
-        goal = _economic_goal(cfg, spec)
+        goal = _economic_goal(cfg)
         return f"objective 5435 {goal} 131"
     if mode == "exploration":
         return "objective 5430"
     if mode == "survival":
-        minutes = _survival_seconds(cfg, spec) // 60
+        minutes = _survival_seconds(cfg) // 60
         return f"objective 5436 {minutes} 5437 5452"
     return "objective 5451"
 
 
-def _victory_mode_trigger_lines(
-    cfg: RandomMapConfig,
-    spec: RmgTemplateSpec,
-    ruin_flags: Sequence[str] | None = None,
-) -> List[str]:
+def _victory_mode_trigger_lines(cfg: RandomMapConfig, ruin_flags: Sequence[str] | None = None) -> List[str]:
     mode = cfg.victory_mode
     if mode == "economic":
-        goal = _economic_goal(cfg, spec)
+        goal = _economic_goal(cfg)
         return [
             f"trigger players (timer 60 60) (if (has_gathered {goal} resource1) (victory))",
         ]
     if mode == "survival":
-        seconds = _survival_seconds(cfg, spec)
+        seconds = _survival_seconds(cfg)
         return [
             "trigger players "
             f"(timer {seconds}) (if (not (no_building_left)) (personal_victory))"
@@ -1171,57 +1169,25 @@ def _victory_mode_trigger_lines(
     return []
 
 
-def _default_defeat_trigger_lines() -> List[str]:
-    return [
-        "trigger players (no_building_left) (defeat)",
-        "trigger computers (no_unit_left) (defeat)",
-    ]
-
-
-def _default_skirmish_trigger_lines(cfg: RandomMapConfig) -> List[str]:
-    """Defeat triggers for all modes; conquest victory only in conquest mode."""
-    lines: List[str] = []
-    if cfg.victory_mode == "conquest":
-        lines.append("trigger players (no_enemy_player_left) (victory)")
-    lines.extend(_default_defeat_trigger_lines())
-    return lines
+def _next_computer_id(lines_out: List[str]) -> str:
+    """Return ``computerN`` matching the next ``computer_only`` line index."""
+    n = sum(1 for ln in lines_out if ln.startswith("computer_only")) + 1
+    return f"computer{n}"
 
 
 def _append_skirmish_triggers(
     lines_out: List[str],
     cfg: RandomMapConfig,
-    spec: RmgTemplateSpec,
     ruin_flags: Sequence[str] | None = None,
-    victory_triggers: Sequence[str] | None = None,
 ) -> None:
-    custom = tuple(victory_triggers or ())
-    mode_lines = (
-        []
-        if custom
-        else _victory_mode_trigger_lines(cfg, spec, ruin_flags)
-    )
-    default_lines = (
-        _default_defeat_trigger_lines()
-        if custom
-        else _default_skirmish_trigger_lines(cfg)
-    )
-    if not custom and not mode_lines and not default_lines:
+    mode_lines = _victory_mode_trigger_lines(cfg, ruin_flags)
+    default_lines = _default_skirmish_trigger_lines(cfg)
+    if not mode_lines and not default_lines:
         return
     lines_out.append("")
     lines_out.append("; skirmish victory / defeat triggers")
-    if rmg_rules.strategic_systems_enabled(spec.strategic_systems):
-        lines_out.append("trigger players (timer 60 60) (rmg_strategic_tick)")
-    if custom:
-        lines_out.extend(custom)
-    else:
-        lines_out.extend(mode_lines)
+    lines_out.extend(mode_lines)
     lines_out.extend(default_lines)
-
-
-def _next_computer_id(lines_out: List[str]) -> str:
-    """Return ``computerN`` matching the next ``computer_only`` line index."""
-    n = sum(1 for ln in lines_out if ln.startswith("computer_only")) + 1
-    return f"computer{n}"
 
 
 _EXPLORATION_BRIEFING_VARIANTS: Tuple[Tuple[int, ...], ...] = (
@@ -1284,19 +1250,21 @@ def _pick_depth_neighbor(
     return rng.choice(candidates)
 
 
-def _poi_pair_count(cfg: RandomMapConfig, spec: RmgTemplateSpec) -> int:
-    exploration = cfg.victory_mode == "exploration"
-    return rmg_rules.exploration_ruin_pairs(
-        cfg.size,
-        exploration_mode=exploration,
-        spec_override=spec.exploration_ruin_pairs,
-    )
+def _poi_pair_count(cfg: RandomMapConfig) -> int:
+    if cfg.size == "small":
+        base = 1
+    elif cfg.size == "large":
+        base = 2
+    else:
+        base = 2
+    if cfg.victory_mode == "exploration":
+        return base + 1
+    return base
 
 
 def _append_exploration_poi(
     lines_out: List[str],
     cfg: RandomMapConfig,
-    spec: RmgTemplateSpec,
     rng: random.Random,
     cols: int,
     lines: int,
@@ -1305,7 +1273,7 @@ def _append_exploration_poi(
     """Place ancient ruins, depth chambers, and reward triggers. Returns map_flag names."""
     if not _rules_has_type("ancient_ruin"):
         return []
-    pair_count = _poi_pair_count(cfg, spec)
+    pair_count = _poi_pair_count(cfg)
     spots = _symmetric_pairs(rng, cols, lines, starts, pair_count)
     reward_gold = 300 if cfg.template == "fast" else 500
     reward_wood = 150 if cfg.template == "fast" else 250
@@ -1467,10 +1435,7 @@ def _append_player_block(
     lines_out.append(f"nb_players_min {cfg.nb_players}")
     lines_out.append(f"nb_players_max {cfg.nb_players}")
     lines_out.append(f"starting_squares {' '.join(start_tokens)}")
-    starting_units = spec.starting_units
-    if _rules_has_type("rmg_hero"):
-        starting_units = f"{starting_units} 1 rmg_hero"
-    lines_out.append(f"starting_units {starting_units}")
+    lines_out.append(f"starting_units {spec.starting_units}")
     lines_out.append(f"starting_resources {' '.join(str(n) for n in starting_resources)}")
     lines_out.append(f"global_population_limit {spec.population_limit}")
     lines_out.append("random_starts 1")
@@ -1502,16 +1467,12 @@ def _generate_grid_definition(
     cx, cy = cols // 2 + 1, lines // 2 + 1
 
     water_set: Set[Tuple[int, int]] = _water_squares_for_cfg(cfg, rng, cols, lines, starts)
-    victory_triggers = _template_victory_triggers(cfg.template)
-    custom_victory = bool(victory_triggers)
 
     lines_out: List[str] = []
     lines_out.append(f"title random_map {cfg.template} seed_{seed}")
-    _append_random_map_meta_lines(lines_out, cfg, spec)
+    _append_random_map_meta_lines(lines_out, cfg)
     _append_briefing_intro(lines_out, cfg, rng)
-    objective = _objective_line_for_victory_mode(cfg, spec, custom_triggers=custom_victory)
-    if objective:
-        lines_out.append(objective)
+    lines_out.append(_objective_line_for_victory_mode(cfg))
     lines_out.append("")
     lines_out.append("square_width 12")
     lines_out.append(f"nb_columns {cols}")
@@ -1556,7 +1517,7 @@ def _generate_grid_definition(
     _append_creep(lines_out, cfg, spec, creep_squares)
 
     ruin_flags = _append_exploration_poi(
-        lines_out, cfg, spec, rng, cols, lines, starts
+        lines_out, cfg, rng, cols, lines, starts
     )
     _append_capturable_dwelling(
         lines_out, cfg, rng, cols, lines, starts
@@ -1567,9 +1528,7 @@ def _generate_grid_definition(
         lines_out.append("")
         lines_out.extend(team_lines)
 
-    _append_skirmish_triggers(
-        lines_out, cfg, spec, ruin_flags or None, victory_triggers
-    )
+    _append_skirmish_triggers(lines_out, cfg, ruin_flags or None)
 
     return "\n".join(lines_out) + "\n"
 
@@ -1584,16 +1543,12 @@ def _generate_lanes_definition(
     lines = LANE_LINES
     starts = _lane_starts(cols, cfg.nb_players)
     cx = cols // 2 + 1
-    victory_triggers = _template_victory_triggers(cfg.template)
-    custom_victory = bool(victory_triggers)
 
     lines_out: List[str] = []
     lines_out.append(f"title random_map lanes seed_{seed}")
-    _append_random_map_meta_lines(lines_out, cfg, spec)
+    _append_random_map_meta_lines(lines_out, cfg)
     _append_briefing_intro(lines_out, cfg, rng)
-    objective = _objective_line_for_victory_mode(cfg, spec, custom_triggers=custom_victory)
-    if objective:
-        lines_out.append(objective)
+    lines_out.append(_objective_line_for_victory_mode(cfg))
     lines_out.append("")
     lines_out.append("square_width 12")
     lines_out.append(f"nb_columns {cols}")
@@ -1621,7 +1576,7 @@ def _generate_lanes_definition(
     _append_creep(lines_out, cfg, spec, creep_squares)
 
     ruin_flags = _append_exploration_poi(
-        lines_out, cfg, spec, rng, cols, lines, starts
+        lines_out, cfg, rng, cols, lines, starts
     )
     _append_capturable_dwelling(
         lines_out, cfg, rng, cols, lines, starts
@@ -1632,9 +1587,7 @@ def _generate_lanes_definition(
         lines_out.append("")
         lines_out.extend(team_lines)
 
-    _append_skirmish_triggers(
-        lines_out, cfg, spec, ruin_flags or None, victory_triggers
-    )
+    _append_skirmish_triggers(lines_out, cfg, ruin_flags or None)
 
     return "\n".join(lines_out) + "\n"
 

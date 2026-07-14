@@ -53,6 +53,8 @@ class DisplayInterface:
             
             # 保存属性列表以供界面使用
             self.main_interface._attributes_screen_attrs = attrs
+            from .terrain_effective import current_terrain_type
+            self.main_interface._attrs_terrain_type = current_terrain_type(u)
             
             # 显示标题和提示
             voice.item(u.title + mp.ATTRIBUTES + mp.PRESS_LETTER_FOR_INFO + mp.COMMA + mp.PRESS_ESC_TO_EXIT)
@@ -410,12 +412,52 @@ class DisplayInterface:
             except Exception:
                 pass
 
+    def refresh_attributes_for_terrain_if_needed(self):
+        """单位换地形后重建属性列表，使 mdg 等显示即时修正。"""
+        mi = self.main_interface
+        if not getattr(mi, "_in_attributes_screen", False):
+            return False
+        if getattr(mi, "_in_detail_attributes_screen", False):
+            return False
+        u = getattr(mi, "_attributes_screen_unit", None)
+        if u is None:
+            return False
+        from .terrain_effective import current_terrain_type
+
+        terrain = current_terrain_type(u)
+        if terrain == getattr(mi, "_attrs_terrain_type", object()):
+            return False
+
+        prev_name = None
+        idx = getattr(mi, "_current_attribute_index", 0)
+        attrs_old = getattr(mi, "_attributes_screen_attrs", None) or []
+        if 0 <= idx < len(attrs_old):
+            prev_name = attrs_old[idx][1]
+
+        attrs = []
+        self.populate_unit_attributes(u, attrs)
+        mi._attributes_screen_attrs = attrs
+        mi._attrs_terrain_type = terrain
+
+        if prev_name is not None:
+            for i, (_, name, _) in enumerate(attrs):
+                if name == prev_name:
+                    mi._current_attribute_index = i
+                    break
+            else:
+                mi._current_attribute_index = min(idx, max(0, len(attrs) - 1))
+        else:
+            mi._current_attribute_index = min(idx, max(0, len(attrs) - 1))
+        mi._current_sub_item_index = 0
+        return True
+
     def _display_current_attribute(self, show_attribute_name=True):
         """显示当前选中的属性
         
         Args:
             show_attribute_name: 是否显示属性名称，False时只显示值（用于子项导航）
         """
+        self.refresh_attributes_for_terrain_if_needed()
         if self.main_interface._current_attribute_index < 0 or self.main_interface._current_attribute_index >= len(self.main_interface._attributes_screen_attrs):
             return
             
@@ -493,6 +535,13 @@ class DisplayInterface:
         self.main_interface._add_bonus_attribute(attrs, u, "rdg", "r", mp.RANGE_DAMAGE, True)
         self.main_interface._add_bonus_attribute(attrs, u, "mdf", "d", mp.MELEE_DEFENSE, True)
         self.main_interface._add_bonus_attribute(attrs, u, "rdf", "", mp.RANGE_DEFENSE, True)
+
+        from .basic_attributes import BasicAttributes
+
+        src = BasicAttributes._attribute_source(u)
+        menace_val = BasicAttributes._effective_menace(src)
+        if menace_val > 0:
+            attrs.append(("", mp.MENACE, nb2msg_float(menace_val / PRECISION)))
         
         # vs属性
         if hasattr(u.model, "mdg_vs") and u.model.mdg_vs:

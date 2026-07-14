@@ -108,10 +108,32 @@ Independent: e.g. only knights get ``can_auto_explore 1``, or ``auto_explore 1``
      - hold position; counter-attack only if enabled
    * - ``chase``
      - Chase
-     - pursue visible hostile units into range
+     - keep one ``AttackAction`` on a locked enemy and follow through exits across squares (no automatic ``go``) until in range
 
 
+2.1.1 Hold point (``position_to_hold``) and leaving a square
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+Units spawn with the current square as ``position_to_hold``. While inside that hold area,
+``_must_hold`` blocks leaving square coordinates:
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - AI mode
+     - Limited by ``position_to_hold``?
+   * - ``offensive`` / ``guard``
+     - Yes (will not leave on their own without an order that ``stop()``\ s)
+   * - ``defensive``
+     - No (so they can retreat under threat)
+   * - ``chase``
+     - No (hold is cleared when chase crosses squares)
+
+
+Player ``go`` / ``attack`` orders call ``stop()`` on first update, which clears
+``position_to_hold`` so cross-square movement works.
 
 Patrol is a command with a route, not an AI mode. You cannot write ``ai_mode patrol``. Use ``guard`` or ``chase`` for similar effects.
 
@@ -140,8 +162,10 @@ Player units in ``offensive``, ``defensive``, or ``chase`` mode:
 
 - do not auto-attack neutral units (`computer_only ... neutral` creeps / NPCs / wildlife);
 - do not flee because of neutrals (defensive mode only weighs real hostile threats);
-- to fight a neutral, issue a forced attack (``imperative`` — e.g. Ctrl+click on the unit;
-  the engine converts imperative ``go`` into ``attack``).
+- default / plain ``go`` on a neutral (non-imperative) only moves — no AttackAction;
+- default order on ``is_huntable`` animals is still ``attack``, and plain attack deals damage;
+- to make the AI treat a neutral creep / NPC as an auto-engage target, issue a forced attack
+  (``imperative`` — e.g. Ctrl+click; the engine converts imperative ``go`` into ``attack``).
 
 
 Voice: hunt animals (``is_huntable`` / ``herdable``, e.g. deer, sheep) are announced as
@@ -277,6 +301,10 @@ A: Ignored (speed 0).
 
 ``Q: ``auto_gather`` on a soldier?``  
 A: Only meaningful on workers.
+
+Q: How does chase differ from the old auto-``go`` hop?  
+A: Chase now keeps the attack action and follows across squares; it is not limited by
+``position_to_hold``. Offensive / guard still are, unless the player issues a move order.
 
 Q: Will offensive/chase units auto-attack neutral NPCs?  
 A: No. Offensive, defensive, and chase modes ignore neutrals for auto-attack and flee;

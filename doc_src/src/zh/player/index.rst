@@ -38,7 +38,6 @@
 ---------------------
 
 - `英雄无敌 / 文明5 式地图 <homm-civ5-play.htm>`_
-- `RMG 英雄与文明战略系统 <rmg-strategic-systems.htm>`_
 - `星际 mod <starcraft-resources.htm>`_ · `人族 <starcraft-terran.htm>`_ · `菌毯 <starcraft-zerg-creep.htm>`_
 
 剧情提示（少剧透）

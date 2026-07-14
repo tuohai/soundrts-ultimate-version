@@ -192,11 +192,6 @@ def cmd_alliance_request(interface):
     if getattr(interface.world, 'alliances_locked', False):
         voice.item(mp.ALLIANCES_LOCKED)
         return
-    from ..rmg_systems import alliance_request_cost, diplomacy_cost_msg
-
-    cost = alliance_request_cost(me)
-    if cost:
-        voice.item(diplomacy_cost_msg(cost))
     # 发送客户端命令到世界（由本地/联机协调器转发）
     interface.server.write_line(f"diplomacy request {target.id}")
     # 本地提示
@@ -230,40 +225,6 @@ def cmd_alliance_decline_or_cancel(interface):
     else:
         # 未选择候选时，优先拒绝最近的待处理请求
         interface.server.write_line("diplomacy decline_or_cancel")
-
-
-def _rmg_trade_with_selected(interface, trade_kind: str, title_msg):
-    """Send a simplified RMG trade request to the selected diplomacy candidate."""
-    me = getattr(interface, "player", None)
-    target = _diplo_get_selected(interface)
-    if target is None:
-        t = getattr(interface, "target", None)
-        if t is not None and hasattr(t, "player") and t.player and t.player is not me:
-            target = t.player
-    if not me or not target or target is me:
-        voice.item(mp.DIPLOMACY + mp.NO_CANDIDATE)
-        return
-    if getattr(interface.world, "alliances_locked", False):
-        voice.item(mp.ALLIANCES_LOCKED)
-        return
-    # 立即成交，无需二次确认；费用不足或遭拒时由服务端语音反馈。
-    interface.server.write_line(f"diplomacy trade {trade_kind} {target.id}")
-    try:
-        voice.item(title_msg + target.name)
-    except Exception:
-        voice.item(title_msg)
-
-
-def cmd_rmg_trade_wood(interface):
-    _rmg_trade_with_selected(interface, "resource2", mp.RMG_TRADE_WOOD)
-
-
-def cmd_rmg_trade_food(interface):
-    _rmg_trade_with_selected(interface, "resource3", mp.RMG_TRADE_FOOD)
-
-
-def cmd_rmg_trade_open_borders(interface):
-    _rmg_trade_with_selected(interface, "open_borders", mp.RMG_TRADE_OPEN_BORDERS)
 
 
 # 音乐控制功能

@@ -37,7 +37,7 @@ terrain marsh a4 d4
 speed .5 1 a4 d4
 nb_meadows_by_square 12
 
-wand a1
+wand a1 e1
 
 starting_squares a1 e1
 starting_units raynor 6 footman 3 archer 1 knight
@@ -55,10 +55,8 @@ timer_coefficient 40
 trigger player1 (timer 0) (alliance 1)
 trigger player2 (timer 0) (alliance 1)
 trigger computers (timer 0) (alliance 2)
-trigger player1 (timer 0) (add_objective 1 7511)
-trigger player2 (timer 0) (add_objective 1 7511)
-trigger player1 (npc_has_item npc_mage wand) (objective_complete 1)
-trigger player2 (npc_has_item npc_mage wand) (objective_complete 1)
+trigger players (timer 0) (add_objective 1 7511)
+trigger players (npc_has_item npc_mage wand) (objective_complete 1)
 
-trigger player1 (key_unit_killed raynor) (defeat)
-trigger player2 (key_unit_killed raynor) (defeat)
+
+trigger players (key_unit_killed raynor) (defeat)

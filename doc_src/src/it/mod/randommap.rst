@@ -40,7 +40,7 @@ Il sottomenu procede così ( Esc torna indietro di un livello ):
 1. Modello di mappa (o Importa codice di condivisione — sezione 4)
 2. Dimensione: piccola / media / grande
 3. Giocatori: 2 / 3 / 4
-4. Modalità squadre (3 giocatori: tutti contro tutti / uno contro molti; 4 giocatori: tutti contro tutti / 2v2 / uno contro molti). Tutti contro tutti = tutti indipendenti; uno contro molti = il giocatore 1 da solo contro gli altri alleati
+4. Modalità squadre (solo 4 giocatori): tutti contro tutti o 2v2 fisso
 5. Forza mostri: debole / media / forte (guarnigione ostile al centro; attacca i giocatori — debole: 2 footmen / media: 4 footmen + 2 archers / forte: 6 footmen + 4 archers + 1 knight)
 6. Disposizione risorse: bilanciata / raggruppata
 7. Terreno (non per il modello lanes): casuale / erba, più ogni terreno ``rmg_terrain 1`` in ``rules.txt``
@@ -70,12 +70,10 @@ Dopo la selezione del seed senti un’anteprima vocale delle impostazioni; dopo 
      - Layout a tre corsie (stile TD2); senza passi terreno/acqua
 
 
-2.2 Modalità squadre
-^^^^^^^^^^^^^^^^^^^^
+2.2 Squadre 2v2
+^^^^^^^^^^^^^^^
 
-- **Tutti contro tutti**: ogni giocatore inizia in un'alleanza propria.
-- **Uno contro molti**: il giocatore 1 da solo; gli altri iniziano alleati.
-- **2v2** (solo 4 giocatori): giocatori 1+3 contro 2+4.
+Con 4 giocatori e 2v2, la mappa aggiunge trigger di alleanza: i giocatori 1+2 e 3+4 partono alleati.
 
 3. Annuncio di generazione e F5/F6
 ----------------------------------
@@ -128,8 +126,8 @@ Dodici parti separate da due punti: prefisso ``RMG1`` + 11 campi (i codici legac
      - random / grass / marsh / mountain
      - r / g / a / t
    * - Squadre
-     - ffa / teams_2v2 / one_vs_many
-     - f / t / o
+     - ffa / teams_2v2
+     - f / t
    * - Acqua
      - none / lake / river
      - n / l / v
@@ -193,13 +191,6 @@ In caso di successo senti un’anteprima e vai direttamente a Tregua (saltando i
 
 RMG genera l’intera mappa dai parametri, con seed e codici di condivisione per la riproduzione.
 
-6.5 Gameplay RMG ed estensioni mod
------------------------------------
-
-Le mappe casuali sono un **framework del motore**; valori predefiniti in
-``rules.txt`` ``def parameters``; override via ``cfg/randommap/*.txt``. Vedi
-``player/rmg-strategic-systems.htm`` (sezione 7) e ``res/randommap/example.txt``.
-
 7. Gameplay ispirato a HoMM / Civ5
 ----------------------------------
 
@@ -212,16 +203,14 @@ Conquista
     Elimina tutti i giocatori nemici (predefinita; ripulire i creep del centro è opzionale).
 
 Economica
-    Oro raccolto totale raggiunge l’obiettivo (~ogni 60 s).
-    **Predefiniti** (``rules.txt`` o template): fast 2000 / standard 3000 / macro 5000 / lanes 2500.
+    L’oro totale raccolto raggiunge l’obiettivo (esclude lo stock iniziale; la spesa conta comunque; controllo circa ogni 60 s).
+    Fast 2000 / standard 3000 / macro 5000 / lanes 2500.
 
 Esplorazione
-    Scopri ogni rovina sulla mappa; coppie da ``rmg_exploration_ruin_pairs_*`` o ``exploration_ruin_pairs`` nel template.
+    Il tuo campo scopre ogni rovina antica (FFA: contano solo le tue scoperte; 2v2: contano anche quelle degli alleati).
 
 Sopravvivenza
-    Resisti fino al timer con base intacta; **predefiniti** fast 600 s / altri 900 s; template ``survival_seconds``.
-
-Mod personalizzate: 5ª modalità con ``victory_triggers`` (sezione 8.4).
+    Resisti fino alla fine del timer con il municipio intatto (10 min fast / 15 min altrimenti).
 
 Perdere tutti gli edifici ``provides_survival`` significa comunque sconfitta. Nelle modalità esplorazione/economica/sopravvivenza, eliminare tutti i nemici non dà vittoria automatica; puoi comunque attaccare. I controlli di vittoria girano circa ogni 30 s (esplorazione) o 60 s (economica) dopo che le condizioni sono soddisfatte.
 
@@ -280,10 +269,3 @@ Flag opzionali su ``class terrain``:
 - ``rmg_ford 1`` — nome terreno usato per i guadi delle mappe a corsie
 
 Quando RMG posiziona il terreno, legge ``speed``, ``is_water``, ``blocks_path`` e proprietà correlate dalle regole invece di valori cablati ``marsh`` / ``mountain``.
-
-8.4 Modalità di vittoria e sfide personalizzate
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Campi template: ``default_victory_mode``, ``economic_goal``, ``survival_seconds``,
-``exploration_ruin_pairs``, ``strategic_systems 0``. Blocco ``victory_triggers`` per
-vittorie personalizzate — esempi in ``res/randommap/example.txt``.

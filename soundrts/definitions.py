@@ -676,6 +676,13 @@ _precision_properties = {
     "mdf_per_level",
     "rdf_per_level",
     "rdg",
+    "menace",
+    "menace_mult",
+    "menace_armor_weight",
+    "menace_dodge_weight",
+    "menace_range_weight",
+    "menace_speed_weight",
+    "menace_hp_ref",
     "exp_dgf",
         "exp_hp_cost",
     "mdg_crit",
@@ -822,8 +829,6 @@ class Rules(_Definitions):
         "requires_deposit",  # 必须建在指定矿床类型上（如气矿 geyser）
         "summon_requires_build_field",  # 召唤技能：目标格需有指定建造场（如 creep）
         "bridge_terrain",  # 建成后将该格变为指定桥梁地形（如 big_bridge）
-        "rmg_trade_id",  # wire token for diplomacy trade (resource2, open_borders, ...)
-        "rmg_improvement_key",  # short key for RMG tile improvement (mine, farm, ...)
     }
 
     # vs属性集合
@@ -1243,29 +1248,6 @@ class Rules(_Definitions):
         "max_level",  # 英雄等级上限；与 xp_threshold_growth 配合，加载时展开为 xp_thresholds
         "level_up_heal_full",  # 1 = 升级后生命/法力回满（默认 0：仅加上限增量）
         "level_up_reset_xp",  # 1 = 升级后当前经验清零（默认 0：保留累计经验）
-        "culture_cost",  # RMG policy/technology culture requirement and payment
-        "rmg_policy",  # 1 = counts against the RMG policy-card slot limit
-        "rmg_tile_improvement",  # 1 = RMG tile building improvement
-        "rmg_trade",  # 1 = diplomacy trade offer defined by this upgrade
-        "rmg_trade_diplomacy_cost",  # diplomacy points paid by buyer
-        "rmg_trade_alliance",  # 1 = trade establishes alliance (open borders)
-        "rmg_trade_cooldown",  # per-trade cooldown override in seconds
-        "rmg_diplomacy_request_cost",  # parameters: alliance request cost
-        "rmg_tile_purchase_base",  # parameters: first tile purchase gold cost
-        "rmg_tile_purchase_step",  # parameters: +gold per extra purchased tile
-        "rmg_policy_slot_limit",  # parameters: active policy card limit
-        "rmg_trade_cooldown",  # parameters: default trade cooldown seconds
-        "rmg_economic_goal",  # parameters: default economic victory gold gathered
-        "rmg_economic_goal_fast",
-        "rmg_economic_goal_macro",
-        "rmg_economic_goal_lanes",
-        "rmg_survival_seconds",  # parameters: survival victory hold time (seconds)
-        "rmg_survival_seconds_fast",
-        "rmg_exploration_ruin_pairs_small",  # symmetric ruin pair counts by map size
-        "rmg_exploration_ruin_pairs_medium",
-        "rmg_exploration_ruin_pairs_large",
-        "rmg_exploration_ruin_pairs_bonus",  # extra pairs in exploration victory mode
-        "rmg_strategic_systems",  # parameters: 1 = enable Civ-style RMG systems on random maps
         "allow_attack_inside", # 允许攻击载具内部目标
         "attack_inside_chance",  # 容器：外部攻击命中内部乘客的几率（0-100）
         "capture_hp_threshold",  # 可被夺取的血量阈值(百分比,0表示不可夺取)
@@ -1334,9 +1316,6 @@ class Rules(_Definitions):
     int_list_properties = {
         "resource_rewards",  # 物品/单位击杀奖励，[资源1数量, 资源2数量]
         "xp_thresholds",
-        "rmg_tile_yield",  # RMG worked-tile bonus: gold wood food culture diplomacy
-        "rmg_trade_pay",  # visible resources paid by buyer (resource1..3)
-        "rmg_trade_gain",  # visible resources received from seller (resource1..3)
     }
     precision_list_properties = {"cost", "storage_bonus", "production_cost"}
     
@@ -1380,6 +1359,8 @@ class Rules(_Definitions):
         "rdg_vs",
         "mdg_cd_vs",
         "rdg_cd_vs",
+        "menace_vs",
+        "menace_mult_vs",
     }
 
     def parse_resource_list(self, resource_list):
@@ -1489,6 +1470,14 @@ class Rules(_Definitions):
         self._dict = {}
         if hasattr(self, "_get_cache"):
             self._get_cache.clear()
+        if hasattr(self, "_makers_cache"):
+            self._makers_cache.clear()
+        try:
+            from .lib.square_terrain_rules import clear_terrain_lookup_caches
+
+            clear_terrain_lookup_caches()
+        except ImportError:
+            pass
         for s in strings:
             s = re.sub(r"^[ \t]*class +race\b", "class faction", s, flags=re.M)
             self.read(s)
@@ -1512,9 +1501,6 @@ class Rules(_Definitions):
                     # can_train 解析为 dict 时会遮蔽 Building.can_train @property
                     if isinstance(v.get("can_train"), dict):
                         v["_rules_can_train"] = v.pop("can_train")
-                    # can_research 列表同样会遮蔽 Building.can_research @property
-                    if "can_research" in v:
-                        v["_rules_can_research"] = v.pop("can_research")
                     d[k] = type(k, (base,), v)
                     d[k].type_name = k
                     d[k].cls = base
@@ -1570,19 +1556,10 @@ class Rules(_Definitions):
             return raw
         return _raw_class_attr(cls, "can_train", ())
 
-    def class_can_research(self, cls):
-        raw = _raw_class_attr(cls, "_rules_can_research", None)
-        if raw:
-            return raw
-        return _raw_class_attr(cls, "can_research", ())
-
     def get_makers(self, t):
         def can_make(uc, t):
             rules_train = _raw_class_attr(uc, "_rules_can_train", None)
             if rules_train and t in rules_train:
-                return True
-            rules_research = _raw_class_attr(uc, "_rules_can_research", None)
-            if rules_research and t in rules_research:
                 return True
             for a in ("can_build", "can_train", "can_upgrade_to", "can_research", "can_advance"):
                 if t in _raw_class_attr(uc, a, ()):
@@ -1597,10 +1574,16 @@ class Rules(_Definitions):
 
         if t.__class__ != str:
             t = t.__name__
-        # RMG map entities are spawned by rmg_systems, not built through makers.
-        if isinstance(t, str) and t.startswith("rmg_"):
-            return []
-        return self._get_classnames(lambda uc: can_make(uc, t))
+        cache = getattr(self, "_makers_cache", None)
+        if cache is None:
+            cache = {}
+            self._makers_cache = cache
+        cached = cache.get(t)
+        if cached is not None:
+            return cached
+        result = self._get_classnames(lambda uc: can_make(uc, t))
+        cache[t] = result
+        return result
 
 
 def parse_noise(st):

@@ -189,6 +189,11 @@ Com ``counter_skill`` baixo, alvos com ``menace`` alto ainda podem vencer; em
 ``100``, o melhor par de contador vence, a menos que haja apenas um inimigo ao
 alcance.
 
+Desde 1.4.5.2, o ``menace`` padrão é uma **pontuação de combate multidimensional**
+(dano, cover/acerto, cooldown, ready/wind-up, HP, armadura, esquiva, alcance, velocidade),
+opcionalmente sobrescrito com ``menace_mult`` / ``menace_vs`` — veja ``modding.rst``
+*Menace automática / prioridade de alvo*.
+
 Isso afeta micro (qual inimigo cada unidade ataca) e macro (qual área
 empurrar e quais unidades enviar primeiro), desde que o exército ainda atenda
 ``attack_ratio``.

@@ -174,6 +174,11 @@ contador según ``rules.txt`` bonificaciones de daño:
 Con un ``counter_skill`` bajo, los objetivos con un ``menace`` alto aún pueden ganar; en ``100``,
 la mejor contrapartida gana a menos que solo haya un enemigo dentro del alcance.
 
+Desde 1.4.5.2, el ``menace`` por defecto es una **puntuación de combate multidimensional**
+(daño, cover/acierto, enfriamiento, preparación/ready, HP, armadura, esquiva, alcance, velocidad),
+opcionalmente anulable con ``menace_mult`` / ``menace_vs`` — ver ``modding.rst``
+*Amenaza automática / prioridad de objetivo*.
+
 Esto afecta tanto al micro (a qué enemigo ataca cada unidad) como al macro.
 (qué área empujar y qué unidades enviar primero), siempre y cuando el ejército todavía
 cumple con ``attack_ratio``.

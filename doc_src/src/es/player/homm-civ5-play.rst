@@ -6,9 +6,6 @@ A partir de SoundRTS 1.4.3.4, Random Map (RMG) introduce objetivos de mapa, punt
 
 Consulta `Mapas aleatorios (jugador) <random-map-play.htm>`_ para obtener instrucciones generales sobre menús de mapas aleatorios, semillas y códigos para compartir.
 
-Reglas detalladas de héroe, rendimientos urbanos, cultura, puntos diplomáticos, tecnologías y políticas:
-`Sistemas estratégicos RMG: héroe y civilización <rmg-strategic-systems.htm>`_.
-
 ----
 
 
@@ -16,7 +13,7 @@ Reglas detalladas de héroe, rendimientos urbanos, cultura, puntos diplomáticos
 ------------------------------------------------
 
 
-SoundRTS sigue siendo una estrategia en tiempo real: selecciona unidades, da órdenes, reúne, construye tropas y participa en la batalla. Los elementos HoMM/Civ5 se integran en RMG en tiempo real: el héroe sube de nivel en combate y desbloquea habilidades con maná (en solitario puede persistir entre partidas); las ciudades ocupan casillas, compran casillas adyacentes, asignan ciudadanos y mejoras, y liquidan rendimientos, cultura y puntos diplomáticos cada minuto; las tecnologías y políticas se investigan en el ayuntamiento y las políticas desbloqueadas se pueden cambiar en la misma partida.
+SoundRTS sigue siendo una estrategia en tiempo real: selecciona unidades, da órdenes, reúne, construye tropas y participa en la batalla. Los elementos de HoMM/Civ5 se reflejan principalmente en la generación de mapas y activan las condiciones de victoria, en lugar de un sistema completo por turnos o un árbol de tecnología.
 
 .. list-table::
    :header-rows: 1
@@ -45,28 +42,16 @@ SoundRTS sigue siendo una estrategia en tiempo real: selecciona unidades, da ór
    * - Cofre de mapas Civ5/Lujo
      - Opción "Cofre del tesoro": artículos de recogida colocados simétricamente o puntos minerales adicionales
      - ``\_append_treasure``
-   * - Territorio urbano y gestión de casillas Civ5
-     - Comprar casillas adyacentes, asignar ciudadanos, mina/aserradero/granja
-     - ``rmg_systems.py`` + ``worldorders/strategic.py``
-   * - Cambio de políticas Civ5
-     - Dos políticas activas; la tercera reemplaza la más antigua; cambio gratis entre desbloqueadas
-     - ``rmg_systems.activate_policy`` / ``switch_policy``
-   * - Progreso del héroe HoMM entre partidas (RMG solitario)
-     - JSON por facción con nivel y experiencia
-     - ``rmg_progress.py``
    * - Rama ciudad-estado de Civ5 (campaña)
      - Entregar artículos a NPC a cambio de recursos (no RMG, pertenece al guión de campaña)
      - Ejemplo: `res/single/The Legend of Raynor/`
 
 
 
-Sistemas estratégicos RMG (detalle en `Sistemas estratégicos RMG: héroe y civilización <rmg-strategic-systems.htm>`_):
-
-- Cada jugador empieza con 1 ``rmg_hero``. Máximo nivel 8; en niveles 2/4/6 desbloquea flecha arcano, tornado y lluvia de meteoros; las habilidades consumen maná. En RMG local en solitario se guardan nivel y experiencia máximos por mod y facción.
-- Ayuntamiento, fortaleza y castillo son ciudades. Cada ciudad posee su casilla; **Comprar casilla** expande casillas adyacentes (primera 20 oro, luego +10). Cada 60 s se liquidan rendimientos urbanos y de casillas trabajadas; ciudadanos en oro/madera/comida/cultura; mina, aserradero o granja.
-- Cadena tecnológica: planificación urbana → administración cívica → servicio exterior.
-- Políticas tradición, comercio y diplomacia; máximo dos activas; la tercera reemplaza la más antigua; cambio gratis entre desbloqueadas. La IA elige combinaciones fijas según la situación.
-- En RMG, enviar solicitud de alianza cuesta 20 puntos diplomáticos; aceptar, rechazar y salir de alianza no cuestan.
+Contenido que no ha sido implementado y es sólo para futura expansión (no incluido en el RMG actual):
+- Mejoras de unidades de héroe, árboles de habilidades, sistema de maná (núcleo HoMM)
+- Árbol de tecnología, cultura, puntos de diplomacia (núcleo de Civ5)
+- Expansión urbana, producción de suelo, tarjetas de políticas.
 
 ----
 
@@ -562,15 +547,11 @@ Coordenada relacionada: ``soundrts/tests/test_yield_on_defeat_and_campaign_flags
    * - contenido
      - camino
    * - Jugador: menú de mapa aleatorio
-     - [Mapas aleatorios (jugador)](random-map-play.htm)
-   * - Jugador: sistemas estratégicos RMG
-     - [Sistemas estratégicos RMG: héroe y civilización](rmg-strategic-systems.htm)
+     - [Descripción de función de mapa aleatorio.md](Descripción de función de mapa aleatorio.htm)
    * - Regla: unidad PDI
      - ``res/rules.txt`` （``ancient_ruin``、``captured_barracks``）
    * - generador
      - ``soundrts/randommap.py``
-   * - Capa estratégica RMG
-     - ``soundrts/rmg_systems.py``、``soundrts/rmg_progress.py``、``soundrts/worldorders/strategic.py``
    * - menú
      - ``soundrts/randommap_menu.py``
    * - desencadenar

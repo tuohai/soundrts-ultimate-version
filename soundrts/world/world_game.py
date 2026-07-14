@@ -23,31 +23,163 @@ from .world_ecs import ecs_enabled as _ecs_enabled
 class WorldGameMixin:
     """World游戏逻辑混入类"""
 
+    # Periodic full bucket rebuild to heal rare incremental drift (units removed
+    # without going through normal death paths, etc.). Does not touch perception
+    # idle / contact_force / decide timing — only spatial index correctness.
+    _BUCKET_HEAL_TICKS = 120
+
+    def _rebuild_player_buckets(self, p, A):
+        """Full rebuild of one player's spatial buckets (cold start / heal)."""
+        if _wbf is not None:
+            p._buckets = _wbf.build_buckets(p.units, A)
+        else:
+            buckets = {}
+            for u in p.units:
+                k = (u.x // A, u.y // A)
+                try:
+                    buckets[k].append(u)
+                except KeyError:
+                    buckets[k] = [u]
+            p._buckets = buckets
+        # id(u) keys: Creature instances are hashable, but keep this robust for
+        # stubs / unusual unit types.
+        p._bucket_unit_cells = {
+            id(u): ((u.x // A, u.y // A), u) for u in p.units
+        }
+        p._bucket_ticks_since_heal = 0
+
+    def _incremental_player_buckets(self, p, A):
+        """Move units between bucket cells. Returns dirty cell set, or None for full invalidate."""
+        prev = getattr(p, "_bucket_unit_cells", None)
+        buckets = getattr(p, "_buckets", None)
+        ticks = getattr(p, "_bucket_ticks_since_heal", 0) + 1
+        p._bucket_ticks_since_heal = ticks
+        if (
+            prev is None
+            or not isinstance(buckets, dict)
+            or ticks >= self._BUCKET_HEAL_TICKS
+        ):
+            self._rebuild_player_buckets(p, A)
+            return None  # caller must full-clear this player's neighbor entries
+
+        dirty = set()
+        live_ids = {id(u) for u in p.units}
+
+        for uid in tuple(prev.keys()):
+            if uid in live_ids:
+                continue
+            old_k, u = prev.pop(uid)
+            bl = buckets.get(old_k)
+            if bl is not None:
+                try:
+                    bl.remove(u)
+                except ValueError:
+                    pass
+                if not bl:
+                    buckets.pop(old_k, None)
+            dirty.add(old_k)
+
+        for u in p.units:
+            k = (u.x // A, u.y // A)
+            uid = id(u)
+            entry = prev.get(uid)
+            if entry is None:
+                bl = buckets.get(k)
+                if bl is None:
+                    buckets[k] = [u]
+                else:
+                    bl.append(u)
+                prev[uid] = (k, u)
+                dirty.add(k)
+            else:
+                old_k, _stored = entry
+                if old_k != k:
+                    bl = buckets.get(old_k)
+                    if bl is not None:
+                        try:
+                            bl.remove(u)
+                        except ValueError:
+                            pass
+                        if not bl:
+                            buckets.pop(old_k, None)
+                    bl = buckets.get(k)
+                    if bl is None:
+                        buckets[k] = [u]
+                    else:
+                        bl.append(u)
+                    prev[uid] = (k, u)
+                    dirty.add(old_k)
+                    dirty.add(k)
+                else:
+                    # Same cell; refresh stored ref in case object was replaced.
+                    prev[uid] = (k, u)
+
+        return dirty
+
     def _update_buckets(self):
+        """Maintain per-player spatial buckets.
+
+        Safety constraints (SESSION_PERF_AND_FIXES_REPORT.md):
+        - Still clear vision cache every tick (do not reuse stale vision).
+        - Do not touch perception idle / contact_force / decide intervals.
+        - Neighbor merge cache: keep across ticks when nothing moved; selective
+          invalidate near dirty cells; large dirty → full clear.
+        """
         ecs = getattr(self, "_ecs", None)
+        # ECS path keeps full rebuild (SoA snapshot); neighbor invalidate still selective.
         if ecs is not None and _ecs_enabled():
             ecs.sync_all(self.players)
             for p in self.players:
+                old_cells = getattr(p, "_bucket_unit_cells", None)
                 p._buckets = ecs.build_buckets_for_player(p, A)
-        elif _wbf is not None:
-            for p in self.players:
-                p._buckets = _wbf.build_buckets(p.units, A)
-        else:
-            for p in self.players:
-                p._buckets = {}
-                for u in p.units:
-                    k = (u.x // A, u.y // A)
-                    try:
-                        p._buckets[k].append(u)
-                    except:
-                        p._buckets[k] = [u]
+                new_cells = {
+                    id(u): ((u.x // A, u.y // A), u) for u in p.units
+                }
+                p._bucket_unit_cells = new_cells
+                if old_cells is None:
+                    dirty = None
+                else:
+                    dirty = set()
+                    for uid, (k, _u) in new_cells.items():
+                        old = old_cells.get(uid)
+                        if old is None:
+                            dirty.add(k)
+                        elif old[0] != k:
+                            dirty.add(k)
+                            dirty.add(old[0])
+                    for uid, (ok, _u) in old_cells.items():
+                        if uid not in new_cells:
+                            dirty.add(ok)
+                if dirty is None:
+                    clear_nb = getattr(p, "_clear_neighbors_cache", None)
+                    if clear_nb is not None:
+                        clear_nb()
+                elif dirty:
+                    inv = getattr(p, "_invalidate_neighbors_near", None)
+                    if inv is not None:
+                        inv(dirty)
+                clear_vis = getattr(p, "_clear_vision_cache", None)
+                if clear_vis is not None:
+                    clear_vis()
+            return
 
-        # 清理各种缓存
         for p in self.players:
-            if hasattr(p, '_clear_neighbors_cache'):
-                p._clear_neighbors_cache()
-            if hasattr(p, '_clear_vision_cache'):
-                p._clear_vision_cache()
+            dirty = self._incremental_player_buckets(p, A)
+            if dirty is None:
+                clear_nb = getattr(p, "_clear_neighbors_cache", None)
+                if clear_nb is not None:
+                    clear_nb()
+            elif dirty:
+                inv = getattr(p, "_invalidate_neighbors_near", None)
+                if inv is not None:
+                    inv(dirty)
+            # else: units stationary → keep neighbor merge cache warm
+
+            # Vision cache still every tick — required for perception correctness
+            # (reusing it across ticks previously caused delayed engagement).
+            clear_vis = getattr(p, "_clear_vision_cache", None)
+            if clear_vis is not None:
+                clear_vis()
 
     def _update_cloaking(self):
         for p in self.players:

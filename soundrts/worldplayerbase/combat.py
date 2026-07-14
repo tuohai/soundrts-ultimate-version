@@ -23,187 +23,143 @@ class CombatMixin:
 
     def _update_enemy_menace_and_presence_and_corpses(self):
         """更新敌人威胁、存在和尸体信息 - 优化版"""
-        # 初始化数据结构
+        current_time = self.world.time
+        cache_key = current_time // 500  # 每500ms更新一次
+
+        # 检查缓存是否有效
+        if self._enemy_menace_cache_time == cache_key:
+            cached = self._enemy_menace_cache
+            self._enemy_menace = cached.get("enemy_menace", {})
+            self._enemy_presence = cached.get("enemy_presence", [])
+            self._places_with_corpses = cached.get("places_with_corpses", set())
+            self._places_with_friends = cached.get("places_with_friends", set())
+            self._cataclysmic_places = cached.get("cataclysmic_places", set())
+            return
+
+        # Prefer perception combat snapshot — assign refs, no dict/list copies.
+        snapshot = getattr(self, "_combat_snapshot", None)
+        if (
+            snapshot is None
+            or current_time - snapshot.get("timestamp", 0) > 2000
+        ):
+            refresh = getattr(self, "_refresh_combat_snapshot", None)
+            if refresh is not None:
+                refresh()
+                snapshot = getattr(self, "_combat_snapshot", None)
+        if snapshot and current_time - snapshot.get("timestamp", 0) <= 2000:
+            enemy_menace = snapshot.get("place_enemy_menace") or {}
+            enemy_presence = snapshot.get("enemy_presence_places") or []
+            places_with_corpses = snapshot.get("corpse_places") or set()
+            places_with_friends = snapshot.get("friend_places") or set()
+            cataclysmic_places = set()
+            self._enemy_menace = enemy_menace
+            self._enemy_presence = enemy_presence
+            self._places_with_corpses = places_with_corpses
+            self._places_with_friends = places_with_friends
+            self._cataclysmic_places = cataclysmic_places
+            self._enemy_menace_cache = {
+                "enemy_menace": enemy_menace,
+                "enemy_presence": enemy_presence,
+                "places_with_corpses": places_with_corpses,
+                "places_with_friends": places_with_friends,
+                "cataclysmic_places": cataclysmic_places,
+            }
+            self._enemy_menace_cache_time = cache_key
+            return
+
         enemy_menace = {}
         enemy_presence = []
         places_with_corpses = set()
         places_with_friends = set()
         cataclysmic_places = set()
-        
-        # 使用缓存机制减少计算
-        current_time = self.world.time
-        cache_key = current_time // 500  # 每500ms更新一次
-        
-        # 初始化缓存
-        # (_enemy_menace_cache / _enemy_menace_cache_time 已在 Player.__init__ 预初始化)
-        
-        # 检查缓存是否有效
-        if self._enemy_menace_cache_time == cache_key:
-            # 使用缓存数据
-            self._enemy_menace = self._enemy_menace_cache.get('enemy_menace', {})
-            self._enemy_presence = self._enemy_menace_cache.get('enemy_presence', [])
-            self._places_with_corpses = self._enemy_menace_cache.get('places_with_corpses', set())
-            self._places_with_friends = self._enemy_menace_cache.get('places_with_friends', set())
-            self._cataclysmic_places = self._enemy_menace_cache.get('cataclysmic_places', set())
-            return
-            
-        # 首先尝试复用 perception 生成的战斗快照（放宽至1000ms内有效）
-        snapshot = getattr(self, '_combat_snapshot', None)
-        if snapshot:
-            snap_ts = snapshot.get('timestamp', 0)
-            if self.world.time - snap_ts <= 2000:
-                enemy_menace = dict(snapshot.get('place_enemy_menace', {}))
-                enemy_presence = list(snapshot.get('enemy_presence_places', []))
-                places_with_corpses = set(snapshot.get('corpse_places', set()))
-                places_with_friends = set(snapshot.get('friend_places', set()))
-                cataclysmic_places = set()  # 暂不在快照中构建
-                # 保存结果并更新缓存后返回
-                self._enemy_menace = enemy_menace
-                self._enemy_presence = enemy_presence
-                self._places_with_corpses = places_with_corpses
-                self._places_with_friends = places_with_friends
-                self._cataclysmic_places = cataclysmic_places
-                self._enemy_menace_cache = {
-                    'enemy_menace': enemy_menace,
-                    'enemy_presence': enemy_presence,
-                    'places_with_corpses': places_with_corpses,
-                    'places_with_friends': places_with_friends,
-                    'cataclysmic_places': cataclysmic_places
-                }
-                self._enemy_menace_cache_time = cache_key
-                return
 
-        # 敌方单位集合的短期缓存（200ms窗口），减少集合构建与交集成本
-        # (_cached_enemy_units / _cached_enemy_units_time 已在 Player.__init__ 预初始化)
-
-        # 使用优化的玩家关系判断
         enemy_players = [p for p in self.world.players if self.player_is_a_hostile_enemy(p)]
-
-        # 使用已有的联盟单位缓存
         allied_units = self.get_allied_units()
         allied_vulnerable_units = {u for u in allied_units if u.is_vulnerable and not u.is_inside}
 
-        # 创建敌人单位集合 - 200ms短期缓存，避免每帧重建
-        if current_time - getattr(self, '_cached_enemy_units_time', 0) > 200:
+        if current_time - getattr(self, "_cached_enemy_units_time", 0) > 200:
             enemy_units = set()
             for p in enemy_players:
                 enemy_units.update(p.units)
             self._cached_enemy_units = enemy_units
             self._cached_enemy_units_time = current_time
         else:
-            enemy_units = getattr(self, '_cached_enemy_units', set())
-        
-        # 预处理感知中的对象 - 一次分类处理
-        perception_objects = set(self.perception)
-        memory_objects = set(self.memory)
-        
-        # 分类感知对象 - 按ID排序确保顺序一致
+            enemy_units = getattr(self, "_cached_enemy_units", set())
+
+        perception_objects = self.perception
+        memory_objects = self.memory
         enemy_units_perceived = enemy_units.intersection(perception_objects)
         enemy_units_remembered = enemy_units.intersection(memory_objects)
-        
-        # 优化：缓存类型检查，减少isinstance调用
-        corpses_perceived = set()
-        corpses_remembered = set()
-        
-        for o in perception_objects:
-            if not hasattr(o, '_cached_is_corpse'):
-                o._cached_is_corpse = isinstance(o, Corpse)
-            if o._cached_is_corpse:
-                corpses_perceived.add(o)
-                
-        for o in memory_objects:
-            if not hasattr(o, '_cached_is_corpse'):
-                o._cached_is_corpse = isinstance(o, Corpse)
-            if o._cached_is_corpse:
-                corpses_remembered.add(o)
-        
-        # 先处理感知中的敌方单位 - 按ID排序确保顺序一致
-        sorted_enemy_perceived = sorted(enemy_units_perceived, key=lambda o: o.id)
-        for o in sorted_enemy_perceived:
+
+        # Aggregate without sorting units; sort place presence once for determinism.
+        for o in enemy_units_perceived:
             if o.is_inside or not o.is_vulnerable:
                 continue
-                
             place = o.place
-            # 优化：缓存Square类型检查
-            if not hasattr(place, '_cached_is_square'):
-                place._cached_is_square = isinstance(place, Square)
-            if not place._cached_is_square:
+            if place is None or not isinstance(place, Square):
                 continue
-                
-            # 计算威胁
             menace = o.menace
             if place in enemy_menace:
                 enemy_menace[place] += menace
             else:
                 enemy_menace[place] = menace
                 enemy_presence.append(place)
-                
-            # 处理远程单位
-            # 优化：缓存is_melee属性检查
-            if not hasattr(o, '_cached_is_melee'):
-                o._cached_is_melee = getattr(o, 'is_melee', True)
-            
-            if not o._cached_is_melee:
+            if not getattr(o, "is_melee", True):
                 range_threat = menace // 10
                 for neighbor in place.neighbors:
                     if neighbor in enemy_menace:
                         enemy_menace[neighbor] += range_threat
                     else:
                         enemy_menace[neighbor] = range_threat
-        
-        # 处理记忆中的敌方单位
+
+        presence_set = set(enemy_presence)
         for o in enemy_units_remembered:
             if o.is_inside or not o.is_vulnerable:
                 continue
-                
             place = o.place
-            # 优化：复用已有的Square类型检查缓存
-            if not hasattr(place, '_cached_is_square'):
-                place._cached_is_square = isinstance(place, Square)
-            if not place._cached_is_square or place in enemy_presence:
+            if place is None or not isinstance(place, Square) or place in presence_set:
                 continue
-                
-            # 记忆中的单位威胁降低50%
             menace = o.menace // 2
             if place in enemy_menace:
                 enemy_menace[place] += menace
             else:
                 enemy_menace[place] = menace
                 enemy_presence.append(place)
-        
-        # 处理尸体
-        all_corpses = corpses_perceived.union(corpses_remembered)
-        for o in all_corpses:
-            place = o.place
-            if isinstance(place, Square):
-                places_with_corpses.add(place)
-        
-        # 处理友方单位
+                presence_set.add(place)
+
+        enemy_presence.sort(key=lambda p: p.id)
+
+        for o in perception_objects:
+            if isinstance(o, Corpse) and isinstance(o.place, Square):
+                places_with_corpses.add(o.place)
+        for o in memory_objects:
+            if isinstance(o, Corpse) and isinstance(o.place, Square):
+                places_with_corpses.add(o.place)
+
         for u in allied_vulnerable_units:
             place = u.place
             if isinstance(place, Square):
                 places_with_friends.add(place)
-        
-        # 处理灾难性区域
-        for o in perception_objects.union(memory_objects):
-            if o.time_limit and o.harm_level:
-                if isinstance(o.place, Square):
-                    cataclysmic_places.add(o.place)
-        
-        # 保存结果
+
+        for o in perception_objects:
+            if o.time_limit and o.harm_level and isinstance(o.place, Square):
+                cataclysmic_places.add(o.place)
+        for o in memory_objects:
+            if o.time_limit and o.harm_level and isinstance(o.place, Square):
+                cataclysmic_places.add(o.place)
+
         self._enemy_menace = enemy_menace
         self._enemy_presence = enemy_presence
         self._places_with_corpses = places_with_corpses
         self._places_with_friends = places_with_friends
         self._cataclysmic_places = cataclysmic_places
-        
-        # 更新缓存
+
         self._enemy_menace_cache = {
-            'enemy_menace': enemy_menace,
-            'enemy_presence': enemy_presence,
-            'places_with_corpses': places_with_corpses,
-            'places_with_friends': places_with_friends,
-            'cataclysmic_places': cataclysmic_places
+            "enemy_menace": enemy_menace,
+            "enemy_presence": enemy_presence,
+            "places_with_corpses": places_with_corpses,
+            "places_with_friends": places_with_friends,
+            "cataclysmic_places": cataclysmic_places,
         }
         self._enemy_menace_cache_time = cache_key
 
@@ -214,23 +170,47 @@ class CombatMixin:
             return 0
 
     def is_very_dangerous(self, square_or_exit: Union[Square, Exit]) -> bool:
+        if square_or_exit is None:
+            return False
+        # Units leaving a transport/building remember Inside as _previous_square.
+        if getattr(square_or_exit, "is_inside_place", False):
+            square_or_exit = getattr(square_or_exit, "outside", None)
+            if square_or_exit is None:
+                return False
         if isinstance(square_or_exit, Square):
             return (
                 self.square_is_dangerous(square_or_exit)
                 and square_or_exit in self._enemy_presence
             )
-        else:
+        other = getattr(square_or_exit, "other_side", None)
+        if other is not None:
             return (
-                square_or_exit.other_side is not None
-                and self.exit_is_dangerous(square_or_exit)
-                and square_or_exit.other_side.place in self._enemy_presence
+                self.exit_is_dangerous(square_or_exit)
+                and other.place in self._enemy_presence
             )
+        # Unknown place-like object with exits: treat like a square.
+        if hasattr(square_or_exit, "exits"):
+            return (
+                self.square_is_dangerous(square_or_exit)
+                and square_or_exit in self._enemy_presence
+            )
+        return False
 
     def square_is_dangerous(self, s: Square) -> bool:
+        if s is None:
+            return False
+        if getattr(s, "is_inside_place", False):
+            s = getattr(s, "outside", None)
+            if s is None:
+                return False
         return s in self._enemy_menace
 
     def exit_is_dangerous(self, e: Exit) -> bool:
-        return e.other_side.place in self._enemy_menace
+        other = getattr(e, "other_side", None)
+        if other is None:
+            return False
+        place = getattr(other, "place", None)
+        return place is not None and place in self._enemy_menace
 
     def balance(self, *squares, add=None, mult=1):
         # The first square is where the fight will be.

@@ -203,6 +203,47 @@ cpdef list merge_buckets_3x3(dict buckets, long long grid_x, long long grid_y):
     return result
 
 
+cpdef bint is_seeing(self, u) except -1:
+    """Cython 化 ``PerceptionMixin._is_seeing``（1.3.8.1 欧氏视野）。
+
+    self / u / 观察者仍是 Python 对象；紧循环里的距离平方用 C long long。
+    ``get_observed_squares`` / ``_potential_neighbors`` / ``_exit_blocker_visible``
+    仍回调 Python（语义必须一致）。
+    """
+    cdef long long x, y, dx, dy, sr2
+    cdef object place, avp, avu, sr
+
+    if (u.is_invisible or u.is_cloaked) and u not in self.detected_units:
+        return False
+
+    place = u.place
+    if place is None:
+        return False
+
+    if self._exit_blocker_visible(u):
+        return True
+
+    x = u.x
+    y = u.y
+    for avp in self.allied_vision:
+        for avu in avp._potential_neighbors(x, y):
+            if getattr(avu, "is_inside", False):
+                continue
+            sr = avu.sight_range
+            if not sr:
+                continue
+            dx = avu.x - x
+            dy = avu.y - y
+            # sr may be Python int; coerce once for squared compare
+            sr2 = <long long>sr
+            sr2 = sr2 * sr2
+            if dx * dx + dy * dy >= sr2:
+                continue
+            if place in avu.get_observed_squares():
+                return True
+    return False
+
+
 # === D-Phase 2 (cont.): bulk_visibility_check whole-fn cpdef =================
 # perception._bulk_visibility_check: ~3.7k calls / 90s cw1, ~4.8 s tottime.
 # 250 行含 6 层 cache + place 大循环; Cython 化省 frame setup + 字节码 dispatch.

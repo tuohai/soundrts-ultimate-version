@@ -4,9 +4,6 @@ Gerador de mapas aleatórios
 
 Desde o SoundRTS 1.4.3.4, o gerador procedural de mapas aleatórios (RMG) constrói mapas ``.txt`` padrão a partir de opções do menu. Mapas gerados usam o mesmo pipeline de carregamento dos feitos à mão e funcionam em escaramuça local ou criação de sala online.
 
-Progressão do herói, território urbano, cultura, pontos diplomáticos, tecnologias e políticas:
-`Sistemas estratégicos RMG: herói e civilização <rmg-strategic-systems.htm>`_.
-
 
 ----
 
@@ -43,7 +40,7 @@ O submenu percorre (Esc volta um nível):
 1. Modelo de mapa (ou Importar código de compartilhamento — seção 4)
 2. Tamanho: pequeno / médio / grande
 3. Jogadores: 2 / 3 / 4
-4. Modo de equipe (3 jogadores: todos contra todos / um contra muitos; 4 jogadores: todos contra todos / 2v2 / um contra muitos). Todos contra todos = todos independentes; um contra muitos = jogador 1 sozinho contra o resto aliado
+4. Modo de equipe (apenas 4 jogadores): todos contra todos ou 2v2 fixo
 5. Força dos monstros: fraco / médio / forte (guarnição hostil no centro; ataca jogadores — fraco: 2 footmen / médio: 4 footmen + 2 archers / forte: 6 footmen + 4 archers + 1 knight)
 6. Layout de recursos: equilibrado / agrupado
 7. Terreno (não para modelo lanes): aleatório / grama / pântano / montanha
@@ -76,12 +73,11 @@ Após selecionar a seed você ouve uma prévia por voz das configurações; apó
 
 
 
-2.2 Modos de equipe
-~~~~~~~~~~~~~~~~~~~
+2.2 Equipes 2v2
+~~~~~~~~~~~~~~
 
-- **Todos contra todos**: cada jogador começa em uma aliança própria.
-- **Um contra muitos**: jogador 1 sozinho; os demais começam aliados.
-- **2v2** (apenas 4 jogadores): jogadores 1+3 contra 2+4.
+
+Com 4 jogadores e 2v2, o mapa adiciona gatilhos de aliança: jogadores 1+2 e 3+4 começam aliados.
 
 2.3 Modos de vitória
 ~~~~~~~~~~~~~~~~~~
@@ -132,11 +128,6 @@ Metas de ouro no modo econômico (somente ``resource1``):
      - 2500
 
 
-
-Padrões do ``rules.txt`` (``rmg_economic_goal*``, ``rmg_survival_seconds*``, etc.).
-Mods sobrescrevem em ``def parameters`` ou ``cfg/randommap/*.txt``; vitória
-personalizada com ``victory_triggers``. Ver ``mod/randommap.htm`` 6.5 / 8.4 e
-``player/rmg-strategic-systems.htm`` seção 7.
 
 Perder todos os edifícios ``provides_survival`` ainda significa derrota. Nos modos exploração/econômico/sobrevivência, eliminar todos os inimigos não vence automaticamente; você ainda pode atacar.
 
@@ -208,8 +199,8 @@ Onze partes separadas por dois-pontos: prefixo ``RMG1`` + 10 campos:
      - random / grass / marsh / mountain
      - ``r`` / ``g`` / ``a`` / ``t``
    * - Teams
-     - ffa / teams_2v2 / one_vs_many
-     - ``f`` / ``t`` / ``o``
+     - ffa / teams_2v2
+     - ``f`` / ``t``
    * - Water
      - none / lake / river
      - ``n`` / ``l`` / ``v``

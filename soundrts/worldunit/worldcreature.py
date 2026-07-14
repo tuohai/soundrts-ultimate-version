@@ -59,6 +59,8 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     # 新增的近战/远程伤害与修正
     mdg_vs: dict = dict()  # 近战伤害 vs 某些单位
     rdg_vs: dict = dict()  # 远程伤害 vs 某些单位
+    menace_vs: dict = dict()  # 对观察者类型的绝对威胁（选敌用）
+    menace_mult_vs: dict = dict()  # 对观察者类型的威胁权重（当前伤害 × 权重）
     charge_mdg_vs: dict = dict()
     charge_rdg_vs: dict = dict()
     # 新增反冲锋相关属性
@@ -149,6 +151,7 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     type_name: Optional[str] = None
     is_a_unit = False
     is_a_building = False
+    is_creature = True
     stat_type = None
     can_gather = None  # 修改：从空列表[]改为None，表示未定义状态
 
@@ -201,6 +204,9 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
             "op_charge_mdg_vs", "op_charge_rdg_vs",
             # 速度vs
             "speed_vs",
+            # 选敌威胁 vs
+            "menace_vs",
+            "menace_mult_vs",
         ]
         
         for attr in vs_attributes:
@@ -497,7 +503,15 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
         elif isinstance(value, ZoomTarget):
             self.action = MoveXYAction(self, (value.x, value.y))
         elif self.is_an_enemy(value):
-            self.action = AttackAction(self, value)
+            # 中立在「非明确攻击命令」下 is_an_enemy 仍可能为 True（外交上的敌方）。
+            # 普通 go 跟随时必须 MoveAction，否则会挂 AttackAction：界面显示攻击却无伤害。
+            if (
+                self._is_neutral_target(value)
+                and not self._player_ordered_attack_on(value)
+            ):
+                self.action = MoveAction(self, value)
+            else:
+                self.action = AttackAction(self, value)
         elif value is not None:
             self.action = MoveAction(self, value)
         else:
@@ -604,29 +618,51 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
                 self.orders[0] = BuildPhaseTwoOrder(self, [site.id])
                 self.orders[0].on_queued()
     def is_an_enemy(self, c):
-        if isinstance(c, Creature):
-            if self._player_ordered_attack_on(c):
-                return True
-
-            ctrl = _allied_control_controller_for(self)
-            if ctrl is not None:
-                if ctrl.unit_under_allied_control(c):
-                    return False
-                cp = getattr(c, "player", None)
-                if cp is not None and (cp is ctrl or cp in getattr(ctrl, "allied", ())):
-                    return False
-                if cp is not None:
-                    return ctrl.player_is_an_enemy(cp)
-                return False
-            ctrl_other = _allied_control_controller_for(c)
-            if ctrl_other is not None and self.player is not None:
-                if self.player is ctrl_other or self.player in getattr(
-                    ctrl_other, "allied", ()
-                ):
-                    return False
-            return self.player and self.player.player_is_an_enemy(c.player)
-        else:
+        # Fast reject: most callers pass Creature; avoid full isinstance when possible.
+        if not getattr(c, "is_creature", False) and not isinstance(c, Creature):
             return False
+        # 玩家已对目标下达攻击命令时视为敌人（普通 attack，或强制 go）。
+        # 仅检查队首命令类型，避免 gather/build 路径上无谓查目标。
+        orders = self.orders
+        if orders:
+            order = orders[0]
+            kw = getattr(order, "keyword", None)
+            if kw == "attack" or (
+                getattr(order, "is_imperative", False) and kw == "go"
+            ):
+                if self._player_ordered_attack_on(c):
+                    return True
+
+        world = self.world
+        # Common multiplayer path: no allied-control transfer in effect.
+        # Skip controller lookup + unit_under_allied_control megacalls.
+        if world is not None:
+            if not getattr(world, "_allied_control_scanned", False):
+                from ..worldplayerbase.allied_control import _world_has_allied_control
+
+                world._allied_control_active = _world_has_allied_control(world)
+                world._allied_control_scanned = True
+            if not getattr(world, "_allied_control_active", False):
+                p = self.player
+                return bool(p) and p.player_is_an_enemy(c.player)
+
+        ctrl = _allied_control_controller_for(self)
+        if ctrl is not None:
+            if ctrl.unit_under_allied_control(c):
+                return False
+            cp = c.player
+            if cp is not None and (cp is ctrl or cp in getattr(ctrl, "allied", ())):
+                return False
+            if cp is not None:
+                return ctrl.player_is_an_enemy(cp)
+            return False
+        ctrl_other = _allied_control_controller_for(c)
+        if ctrl_other is not None and self.player is not None:
+            if self.player is ctrl_other or self.player in getattr(
+                ctrl_other, "allied", ()
+            ):
+                return False
+        return bool(self.player) and self.player.player_is_an_enemy(c.player)
     def get_action_target(self):
         if self.action:
             return self.action.target
@@ -1209,6 +1245,8 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
         # 复制vs属性
         self.mdg_vs = dict(type(self).mdg_vs)
         self.rdg_vs = dict(type(self).rdg_vs)
+        self.menace_vs = dict(type(self).menace_vs)
+        self.menace_mult_vs = dict(type(self).menace_mult_vs)
         self.mdf_vs = dict(type(self).mdf_vs)
         self.rdf_vs = dict(type(self).rdf_vs)
         self.mdg_cover_vs = dict(type(self).mdg_cover_vs)  # 确保复制vs属性
@@ -1449,10 +1487,11 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
             if not self.player.is_very_dangerous(self.place):
                 self.action_target = None
         elif self.player.is_very_dangerous(self.place):
-            if self._previous_square is not None and not self.player.is_very_dangerous(
-                self._previous_square
-            ):
-                self.start_moving_to(self._previous_square)
+            retreat = self._previous_square
+            if getattr(retreat, "is_inside_place", False):
+                retreat = getattr(retreat, "outside", None)
+            if retreat is not None and not self.player.is_very_dangerous(retreat):
+                self.start_moving_to(retreat)
 
     def start_moving_to(self, target, avoid=False):
         # note: it can be an attack
@@ -1511,9 +1550,6 @@ class _Building(Creature):
     transport_volume = 99
 
     corpse = 0
-    rmg_tile_improvement = 0
-    rmg_improvement_key = ""
-    rmg_tile_yield = ()
 
     def die(self, attacker=None):
         from ..world_build_rules import cleanup_build_rules_on_death
@@ -1765,12 +1801,10 @@ class Building(_Building):
             place = target
         if not isinstance(place, Square):
             return None
-        self.distance_to_goal = self.place.shortest_path_distance_to(
-            place, player=self.player, plane=self.airground_type, avoid=avoid
+        nxt, self.distance_to_goal = self.place._shortest_path_to(
+            place, self.airground_type, self.player, avoid=avoid
         )
-        return self.place.shortest_path_to(
-            place, player=self.player, plane=self.airground_type, avoid=avoid
-        )
+        return nxt
 
     def decide(self):
         """建筑物的决策逻辑，包括自动修理船只功能"""

@@ -394,15 +394,6 @@ class _Game:
             play_sequence(self.world.intro)
             
             # intro结束后不恢复音乐，让后续的游戏音乐系统来处理
-        if (
-            self.game_type_name == "training"
-            and getattr(self.world, "rmg_strategic_systems", False)
-        ):
-            player = self.scoring_player()
-            if player is not None:
-                from .rmg_progress import apply_hero_progress
-
-                apply_hero_progress(player)
 
     def post_run(self):
         # 首先检查胜利或失败状态并播放相应音乐
@@ -419,15 +410,6 @@ class _Game:
         
         # 显示统计信息
         self.say_score()
-        if (
-            self.game_type_name == "training"
-            and getattr(self.world, "rmg_strategic_systems", False)
-        ):
-            player = self.scoring_player()
-            if player is not None:
-                from .rmg_progress import save_hero_progress
-
-                save_hero_progress(player)
         self._say_achievements()
         Upgrade.reset()
 

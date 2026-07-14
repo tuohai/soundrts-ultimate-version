@@ -191,6 +191,11 @@ Con ``counter_skill`` basso, i bersagli ad alto ``menace`` possono ancora
 vincere; a ``100``, vince il miglior match di contro a meno che non ci sia
 un solo nemico a portata.
 
+Da 1.4.5.2, il ``menace`` predefinito è un **punteggio di combattimento multidimensionale**
+(danno, cover/precisione, cooldown, ready/wind-up, HP, armatura, schivata, portata, velocità),
+opzionalmente sovrascrivibile con ``menace_mult`` / ``menace_vs`` — vedi ``modding.rst``
+*Menace automatica / priorità di bersaglio*.
+
 Questo influisce sia sul micro (quale nemico attacca ogni unità) sia sul
 macro (quale area spingere e quali unità inviare per prime), purché
 l’esercito soddisfi ancora ``attack_ratio``.

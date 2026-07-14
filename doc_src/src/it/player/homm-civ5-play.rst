@@ -7,9 +7,6 @@ A partire da SoundRTS 1.4.3.4, le mappe casuali (RMG) introducono sulla struttur
 
 Per le istruzioni generali su menu mappe casuali, seed e codici di condivisione vedi `Guida alle mappe casuali <random-map-play.htm>`_.
 
-Regole dettagliate su eroe, rendimenti urbani, cultura, punti diplomatici, tecnologie e politiche:
-`Sistemi strategici RMG: eroe e civiltà <rmg-strategic-systems.htm>`_.
-
 
 ----
 
@@ -18,7 +15,7 @@ Regole dettagliate su eroe, rendimenti urbani, cultura, punti diplomatici, tecno
 -----------------------------------------------
 
 
-SoundRTS resta strategia in tempo reale: selezioni unità, dai ordini, raccogli, produci truppe, combatti. Gli elementi HoMM / Civ5 si integrano nell'RMG in tempo reale: l'eroe sale di livello in combattimento e sblocca abilità con mana (in solitaria può persistere tra le partite); le città occupano caselle, comprano caselle adiacenti, assegnano cittadini e miglioramenti, e liquidano rendimenti, cultura e punti diplomatici ogni minuto; tecnologie e politiche si ricercano nel municipio e le politiche sbloccate si possono cambiare nella stessa partita.
+SoundRTS resta strategia in tempo reale: selezioni unità, dai ordini, raccogli, produci truppe, combatti. Gli elementi HoMM / Civ5 si esprimono soprattutto nella generazione della mappa e nelle condizioni di vittoria a trigger, non in un sistema a turni completo o in un albero tecnologico.
 
 
 .. list-table::
@@ -48,28 +45,17 @@ SoundRTS resta strategia in tempo reale: selezioni unità, dai ordini, raccogli,
    * - Casse / beni di lusso Civ5
      - Opzione «tesoro»: oggetti raccoglibili o miniere extra posti in modo simmetrico
      - ``\_append_treasure``
-   * - Territorio urbano e gestione caselle Civ5
-     - Acquistare caselle adiacenti, assegnare cittadini, miniera/segheria/fattoria
-     - ``rmg_systems.py`` + ``worldorders/strategic.py``
-   * - Cambio politiche Civ5
-     - Due politiche attive; la terza sostituisce la più vecchia; cambio gratis tra sbloccate
-     - ``rmg_systems.activate_policy`` / ``switch_policy``
-   * - Progressione eroe HoMM tra partite (RMG solitaria)
-     - JSON per fazione con livello ed esperienza
-     - ``rmg_progress.py``
    * - Missioni secondarie stile città-stato Civ5 (campagne)
      - Consegna oggetti a NPC in cambio di risorse (non RMG, script di campagna)
      - Es.: `res/single/The Legend of Raynor/`
 
 
 
-Sistemi strategici RMG (dettaglio in `Sistemi strategici RMG: eroe e civiltà <rmg-strategic-systems.htm>`_):
+Non implementato, solo direzione futura (l’RMG attuale non include):
 
-- Ogni giocatore inizia con 1 ``rmg_hero``. Livello massimo 8; ai livelli 2/4/6 sblocca dardo arcano, turbine e pioggia di meteoriti; le abilità consumano mana. In RMG locale in solitaria si salvano livello ed esperienza massimi per mod e fazione.
-- Municipio, roccaforte e castello sono città. Ogni città possiede la casella; **Acquista casella** espande caselle adiacenti (prima 20 oro, poi +10). Ogni 60 s si liquidano rendimenti urbani e caselle lavorate; cittadini su oro/legna/cibo/cultura; miniera, segheria o fattoria.
-- Catena tecnologica: pianificazione urbana → amministrazione civica → servizio estero.
-- Politiche tradizione, commercio e diplomazia; massimo due attive; la terza sostituisce la più vecchia; cambio gratis tra sbloccate. L'IA sceglie combinazioni fisse in base alla situazione.
-- In RMG, inviare richiesta di alleanza costa 20 punti diplomatici; accettare, rifiutare e uscire dall'alleanza sono gratis.
+- Upgrade eroi, alberi abilità, sistema mana (nucleo HoMM)
+- Albero tecnologico, cultura, punti diplomazia (nucleo Civ5)
+- Espansione città, resa delle caselle, carte politiche
 
 
 ----
@@ -596,7 +582,7 @@ Coordinate: in ``soundrts/tests/test_yield_on_defeat_and_campaign_flags.py``
 3. Esplorazione ≠ vittoria di guerra: eliminare tutti i nemici non fa vincere; la fazione deve trovare tutte le rovine (in FFA conta solo la propria scoperta)
 4. Vittoria economia: quantità cumulativa raccolta di ``resource1`` (oro) (``has_gathered``, esclusi stock iniziale e ``grant_resources`` delle rovine), senza legno; dopo il traguardo la vittoria scatta entro circa 60 secondi
 5. Vittoria esplorazione: dopo aver trovato tutte le rovine la vittoria scatta entro circa 30 secondi
-6. Compatibilità mod: obiettivi di vittoria e sistemi strategici via parametri ``rmg_*`` in ``rules.txt`` e template ``cfg/randommap/*.txt``. Con risorse non standard, allinea ``rmg_economic_goal*``, ``victory_triggers`` e ``grant_resources``. Vedi ``player/rmg-strategic-systems.htm`` §7 e ``mod/randommap.htm`` §8.4
+6. Compatibilità mod: con nomi risorse non standard, aggiorna anche ``resource1`` / ``resource2`` in ``\_economic_goal`` e ``grant_resources``
 7. Esplorazione + niente ``ancient_ruin``: se la mod non definisce il tipo rovina non si generano POI e la modalità esplorazione non può vincere
 8. Elementi Civ5 in campagna: mercanti città-stato, missioni di consegna ecc. vedi mappe di campagna e `Portare oggetti e consegne di trama <brought-items.htm>`_, indipendenti dall’RMG
 
@@ -616,14 +602,10 @@ Coordinate: in ``soundrts/tests/test_yield_on_defeat_and_campaign_flags.py``
      - Percorso
    * - Giocatore: menu mappe casuali
      - [Guida alle mappe casuali](random-map-play.htm)
-   * - Giocatore: sistemi strategici RMG
-     - [Sistemi strategici RMG: eroe e civiltà](rmg-strategic-systems.htm)
    * - Regole: unità POI
      - ``res/rules.txt`` (``ancient_ruin``, ``captured_barracks``)
    * - Generatore
      - ``soundrts/randommap.py``
-   * - Strato strategico RMG
-     - ``soundrts/rmg_systems.py``、``soundrts/rmg_progress.py``、``soundrts/worldorders/strategic.py``
    * - Menu
      - ``soundrts/randommap_menu.py``
    * - Trigger

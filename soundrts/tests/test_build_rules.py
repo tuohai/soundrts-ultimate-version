@@ -1091,7 +1091,7 @@ def test_starcraft_mod_rules_parse():
     assert "roach_warren" in r.get("roach", "requirements", ())
     assert "spawning_pool" in r.get("roach_warren", "requirements", ())
     assert int(r.get("roach", "cost", (0, 0))[1]) > 0
-    assert "infantry_weapons" in r.class_can_research(r.unit_class("engineering_bay"))
+    assert "infantry_weapons" in r.get("engineering_bay", "can_research", ())
     assert "infantry_weapons" not in tech_lab.addon_grants_research
     assert "infantry_weapons" in r.get("infantry_weapons_2", "requirements", ())
     from soundrts.lib.nofloat import PRECISION

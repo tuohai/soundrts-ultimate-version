@@ -12,11 +12,15 @@ SoundRTS supporta la caccia in stile Age of Empires: i lavoratori attaccano la f
 ------------------------
 
 
-1. Clic destro su un animale → il lavoratore attacca (ordine forzato; funziona sugli animali neutrali)
-2. Alla morte → nasce un deposito ``food_carcass`` sulla casella della morte
-3. Raccolta automatica → i lavoratori con ``auto_gather`` raccolgono la carcassa e riportano il cibo
+1. Backspace / ordine predefinito o clic destro su un animale → ``attack`` su ``is_huntable`` (l’attacco normale infligge danno; non serve imperative)
+2. Alla morte → nasce ``food_carcass``; l’ordine di attacco si completa (**nessun** beep falso ``order_impossible``)
+3. Raccolta automatica → dopo l’uccisione il lavoratore può accodare la raccolta; con ``auto_gather`` raccoglie e riporta il cibo
 4. Fuga al colpo → cervi e pecore scappano; i cinghiali contrattaccano
 5. Pastorizia (opzionale) → i lavoratori con ``can_herd 1`` possono guidare animali ``herdable`` (es. pecore)
+
+
+Nota: l’ordine predefinito su creep / NPC neutrali comuni è ``go`` (solo movimento); sugli animali cacciabili resta ``attack``.
+Le modalità offensive / defensive / chase **non** attaccano automaticamente gli animali neutrali senza attacco imperativo.
 
 
 ----

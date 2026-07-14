@@ -48,21 +48,20 @@ class ResourcesMixin:
         from ..worldaction import AttackAction
         from .base import VERY_SLOW
         from ..lib.nofloat import to_int
-        
+        from ..lib.square_terrain_rules import terrain_list_value
+
         for u in self.units:
             try:
-                # 获取基础速度
                 base_speed = u.speed
+                action = u.action
+                if isinstance(action, AttackAction) and action.target:
+                    base_speed = u._get_speed_vs(action.target)
 
-                # 如果单位正在攻击目标，检查是否有速度修正
-                if isinstance(u.action, AttackAction) and u.action.target:
-                    base_speed = u._get_speed_vs(u.action.target)
-
-                # 应用地形修正
-                from ..lib.square_terrain_rules import terrain_list_value
-
-                terrain_speed = terrain_list_value(
-                    u.place.type_name, u.speed_on_terrain
+                place = u.place
+                terrain_speed = (
+                    terrain_list_value(place.type_name, u.speed_on_terrain)
+                    if place is not None
+                    else None
                 )
                 if terrain_speed is not None:
                     u.actual_speed = to_int(terrain_speed)
@@ -71,22 +70,23 @@ class ResourcesMixin:
                 else:
                     u.actual_speed = (
                         base_speed
-                        * u.place.terrain_speed[
+                        * place.terrain_speed[
                             0 if u.airground_type == "ground" else 1
                         ]
                         // 100
                     )
                 if base_speed:
                     u.actual_speed = max(u.actual_speed, VERY_SLOW)  # never stuck
-            except:
-                u.actual_speed = base_speed
+            except Exception:
+                u.actual_speed = getattr(u, "speed", 0)
 
-            # 更新编组速度
-            for g in list(self.groups.values()):
-                if g:
-                    actual_speed = min(u.actual_speed for u in g)
-                    for u in g:
-                        u.actual_speed = actual_speed
+        # Groups once per player update — was wrongly nested inside the unit loop
+        # (O(units × groups) and rewrote speeds many times per tick).
+        for g in self.groups.values():
+            if g:
+                actual_speed = min(member.actual_speed for member in g)
+                for member in g:
+                    member.actual_speed = actual_speed
 
     def _update_drowning(self):
         for u in self.units[:]:

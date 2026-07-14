@@ -59,33 +59,143 @@ class CreatureAttributes(Entity):
     @property
     def height(self):
         # D-Phase 2: place / bonus_height / place.height 都是 Entity / _Space
-        # 的 class-level defaults (Entity.place=None, Entity.bonus_height=0,
-        # _Space.high_ground=False, Square.height @property). 移除 getattr.
-        # 10.83M calls / 5min, 原版每 call 3 个 getattr.
+        # 的 class-level defaults. Square and Inside both define high_ground_at.
         if self.airground_type == "air":
             return 2
         place = self.place
         if place is None:
             return self.bonus_height
-        if hasattr(place, "high_ground_at"):
-            h = 1 if place.high_ground_at(self.x, self.y) else 0
-        else:
-            h = place.height
-        return h + self.bonus_height
+        return (
+            (1 if place.high_ground_at(self.x, self.y) else 0) + self.bonus_height
+        )
     # Round 4: class-level cache 默认值, 消除 hasattr 检查
     # menace 是单位 @property, 每帧调几百万次, 原版每 call 2 hasattr + 3 getattr
     _cached_menace = 0
     _menace_cache_timestamp = -1_000_000
+    # Relative threat weight (1.0). Effective threat = auto_damage * menace_mult.
+    # Prefer this over absolute ``menace`` so upgrades still change priority.
+    menace_mult = PRECISION
+
+    def _menace_rule_param(self, name, default):
+        """Read optional parameters.<name> (PRECISION int); fall back to default."""
+        try:
+            v = rules.get("parameters", name, False)
+        except Exception:
+            return default
+        if v is None or v == []:
+            return default
+        if isinstance(v, list):
+            if not v:
+                return default
+            v = v[0]
+        try:
+            return int(v)
+        except (TypeError, ValueError):
+            return default
+
+    def _auto_combat_menace_base(self):
+        """Multi-dimensional combat threat (no menace_mult applied).
+
+        Uses damage, cover (hit), cd+ready, hp, armor, dodge, range, speed.
+        Tunable via parameters: menace_armor_weight, menace_dodge_weight,
+        menace_range_weight, menace_speed_weight, menace_hp_ref.
+        """
+        mdg = getattr(self, "mdg", 0) or 0
+        rdg = getattr(self, "rdg", 0) or 0
+        if not mdg and not rdg:
+            tc = getattr(self, "transport_capacity", 0) or 0
+            if tc:
+                return tc * PRECISION * 2
+            return 0
+
+        if mdg >= rdg:
+            damage = mdg
+            cd = getattr(self, "mdg_cd", 0) or 0
+            ready = getattr(self, "mdg_ready", 0) or 0
+            cover = getattr(self, "mdg_cover", 0) or 0
+            rng = getattr(self, "mdg_range", 0) or 0
+        else:
+            damage = rdg
+            cd = getattr(self, "rdg_cd", 0) or 0
+            ready = getattr(self, "rdg_ready", 0) or 0
+            cover = getattr(self, "rdg_cover", 0) or 0
+            rng = getattr(self, "rdg_range", 0) or 0
+
+        # cover: 0 → 100% hit (same as hit_miss); else PRECISION-scaled percent
+        cover_pct = cover // PRECISION if cover else 100
+        if cover_pct < 1:
+            cover_pct = 1
+        elif cover_pct > 100:
+            cover_pct = 100
+
+        period = cd + ready
+        if period < PRECISION // 10:
+            period = PRECISION // 10  # floor 0.1s
+        # effective DPS ~ damage * hit% / period_sec
+        dps = damage * cover_pct * PRECISION // (period * 100)
+
+        hp = getattr(self, "hp", 0) or 0
+        if hp <= 0:
+            hp = getattr(self, "hp_max", 0) or 0
+        if hp <= 0:
+            hp = PRECISION
+        hp_d = hp // PRECISION if hp >= PRECISION else hp
+
+        armor = max(getattr(self, "mdf", 0) or 0, getattr(self, "rdf", 0) or 0)
+        dodge_raw = max(
+            getattr(self, "mdg_dodge", 0) or 0,
+            getattr(self, "rdg_dodge", 0) or 0,
+        )
+        dodge_pct = dodge_raw // PRECISION if dodge_raw else 0
+        if dodge_pct < 0:
+            dodge_pct = 0
+        elif dodge_pct > 100:
+            dodge_pct = 100
+
+        armor_w = CreatureAttributes._menace_rule_param(
+            self, "menace_armor_weight", PRECISION
+        )
+        dodge_w = CreatureAttributes._menace_rule_param(
+            self, "menace_dodge_weight", PRECISION
+        )
+        range_w = CreatureAttributes._menace_rule_param(
+            self, "menace_range_weight", 150
+        )  # 0.15
+        speed_w = CreatureAttributes._menace_rule_param(
+            self, "menace_speed_weight", 200
+        )  # 0.20
+        hp_ref = CreatureAttributes._menace_rule_param(
+            self, "menace_hp_ref", 50 * PRECISION
+        )
+        hp_ref_d = max(1, hp_ref // PRECISION if hp_ref >= PRECISION else hp_ref)
+
+        # survivability ~ hp * (1 + w*armor) * (1 + w*dodge%)
+        armor_f = PRECISION + armor * armor_w // PRECISION
+        dodge_f = PRECISION + (dodge_pct * PRECISION // 100) * dodge_w // PRECISION
+        tough = hp_d * armor_f // PRECISION
+        tough = tough * dodge_f // PRECISION
+
+        range_d = rng // PRECISION if rng else 0
+        speed = getattr(self, "speed", 0) or 0
+        speed_d = speed // PRECISION if speed else 0
+        reach_f = PRECISION + range_d * range_w
+        mob_f = PRECISION + speed_d * speed_w
+
+        # Normalize toughness vs reference HP so scale stays near damage-order
+        score = dps * max(1, tough) // hp_ref_d
+        score = score * reach_f // PRECISION
+        score = score * mob_f // PRECISION
+        return max(0, score)
 
     @property
     def menace(self):
-        """Calculate unit's menace value - 优化版：添加5秒缓存
+        """Unit threat for AI targeting and square threat sums.
 
-        Returns:
-            int: Menace value based on:
-            1. If unit has melee or ranged damage, menace equals the higher value
-            2. If unit has transport capacity, menace equals transport_capacity * PRECISION * 2
-            3. If none of above, menace equals 0
+        Auto: multi-dim combat score (damage, cover, cd+ready, hp, armor,
+        dodge, range, speed) × ``menace_mult``.
+
+        If rules.txt sets absolute ``menace`` on the unit type, that class
+        attribute overrides this property (fixed; does not scale with stats).
 
         Round 4: mdg/rdg/transport_capacity 在 Creature 类已有 class-level default (=0),
         _cached_menace / _menace_cache_timestamp 也由本类提供 default;
@@ -97,17 +207,10 @@ class CreatureAttributes(Entity):
         if current_time - self._menace_cache_timestamp < 5000:
             return self._cached_menace
 
-        # 重新计算威胁度
-        mdg = self.mdg
-        rdg = self.rdg
-        damage = mdg if mdg > rdg else rdg
-
-        if damage:
-            menace = damage
-        elif self.transport_capacity:
-            menace = self.transport_capacity * PRECISION * 2
-        else:
-            menace = 0
+        menace = self._auto_combat_menace_base()
+        if menace:
+            mult = self.menace_mult or PRECISION
+            menace = menace * mult // PRECISION
 
         # 缓存结果
         self._cached_menace = menace
@@ -177,8 +280,14 @@ class CreatureAttributes(Entity):
         通用 vs 属性解析函数，例如将:
         ["footman", "2", "knight", "4", "archer", "3"]
         解析为 { "footman":2, "knight":4, "archer":3 }。
+
+        仅处理规则里已经写出的键；不要给定义字典塞空 ``{}``。
+        否则 Skill 等基类没有 ``menace_vs`` 时会被 Rules.interpret 刷一堆告警
+        （威胁选敌只作用于单位，技能本不该带这些字段）。
         """
         for attr in attrs:
+            if attr not in d:
+                continue
             items = d.get(attr, [])
             d[attr] = dict()
             targets = []
@@ -246,6 +355,8 @@ class CreatureAttributes(Entity):
             "charge_rdg_radius_vs",
             "charge_mdg_splash_decay_min_vs",
             "charge_rdg_splash_decay_min_vs",
+            "menace_vs",
+            "menace_mult_vs",
         ]
         cls.interpret_vs_attributes(d, vs_attributes)
 

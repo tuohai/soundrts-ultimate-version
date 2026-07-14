@@ -84,6 +84,21 @@ class PerceptionMixin:
             return []
 
         current_time = self.world.time
+        # Same place re-queried many times per tick (decide/can_attack).
+        # Mutate list in-place — Player.__setattr__ is expensive (69M calls).
+        hit = self._known_enemies_hit
+        if place is hit[0] and current_time == hit[1]:
+            return hit[2]
+
+        # Per-place cache before rebuilding enemy unit lists (was done every miss).
+        known_time = self._known_enemies_time.get(place)
+        if known_time == current_time:
+            result = self._known_enemies[place]
+            hit[0] = place
+            hit[1] = current_time
+            hit[2] = result
+            return result
+
         if current_time - self._enemy_units_cache_time > 250:
             if current_time - self._enemy_players_cache_time > 1000:
                 self._cached_enemy_players = [
@@ -96,56 +111,53 @@ class PerceptionMixin:
             self._enemy_units_cache = cache
             self._enemy_units_cache_time = current_time
 
-        # 本帧未计算则重建
-        known_time = self._known_enemies_time.get(place)
-        if known_time != current_time:
-            # 每 tick 级集合缓存
-            if self._enemy_units_set_time == current_time:
-                enemy_units_set = self._enemy_units_set
-            else:
-                enemy_units_set = set(self._enemy_units_cache)
-                self._enemy_units_set = enemy_units_set
-                self._enemy_units_set_time = current_time
+        # 每 tick 级集合缓存（舱内单位列表一并缓存，避免 known_enemies
+        # 每次对全体敌人扫 is_inside）
+        if self._enemy_units_set_time == current_time:
+            enemy_units_set = self._enemy_units_set
+            enemy_inside = self._enemy_inside_units
+        else:
+            enemy_units_set = set(self._enemy_units_cache)
+            enemy_inside = tuple(u for u in enemy_units_set if u.is_inside)
+            self._enemy_units_set = enemy_units_set
+            self._enemy_inside_units = enemy_inside
+            self._enemy_units_set_time = current_time
 
-            if self._perception_set_time == current_time:
-                perceived_set = self._perception_set
-            else:
-                perceived_set = set(self.perception)
-                self._perception_set = perceived_set
-                self._perception_set_time = current_time
+        if self._perception_set_time == current_time:
+            perceived_set = self._perception_set
+        else:
+            perceived_set = set(self.perception)
+            self._perception_set = perceived_set
+            self._perception_set_time = current_time
 
-            # D-Phase 1 T2: 内层 Cython 化 (22M calls / 5min).
-            if _fast is not None:
-                result = _fast.filter_visible_vulnerable_enemies(
-                    place.objects, perceived_set, enemy_units_set
-                )
-            else:
-                result = []
-                for obj in place.objects:
-                    if (
-                        obj in perceived_set
-                        and obj in enemy_units_set
-                        and obj.is_vulnerable
-                    ):
-                        op = obj.place
-                        if op is None or not op.is_inside_place:
-                            result.append(obj)
-                for obj in enemy_units_set:
-                    if (
-                        obj.is_vulnerable
-                        and getattr(obj, "is_inside", False)
-                        and obj not in result
-                    ):
-                        container = getattr(getattr(obj, "place", None), "container", None)
-                        if container_visible_from_place(container, place):
-                            result.append(obj)
-            self._known_enemies[place] = result
-            self._known_enemies_time[place] = current_time
-        # D-Phase 2 §4.x: cache-hit 路径不再重新 filter (单位在同帧内不移动,
-        # cached list 在同帧内有效; 下游 can_attack_if_in_range 已检查
-        # place is None / hp < 0 兜底, 移除无用的 list 重建 = 19M calls × ~5
-        # element listcomp 节省).
-        return self._known_enemies[place]
+        # D-Phase 1 T2: 内层 Cython 化 (22M calls / 5min).
+        if _fast is not None:
+            result = _fast.filter_visible_vulnerable_enemies(
+                place.objects, perceived_set, enemy_units_set
+            )
+        else:
+            result = []
+            for obj in place.objects:
+                if (
+                    obj in perceived_set
+                    and obj in enemy_units_set
+                    and obj.is_vulnerable
+                ):
+                    op = obj.place
+                    if op is None or not op.is_inside_place:
+                        result.append(obj)
+        # Open-container passengers (Cython + Python paths).
+        for obj in enemy_inside:
+            if obj.is_vulnerable and obj not in result:
+                container = getattr(getattr(obj, "place", None), "container", None)
+                if container_visible_from_place(container, place):
+                    result.append(obj)
+        self._known_enemies[place] = result
+        self._known_enemies_time[place] = current_time
+        hit[0] = place
+        hit[1] = current_time
+        hit[2] = result
+        return result
 
     def allied_vision_has_explored(self, square):
         """检查联盟是否已经探索过某个方格(优化版)
@@ -177,341 +189,165 @@ class PerceptionMixin:
         if buckets is None:
             buckets = self._buckets = {}
 
-        # 如果需要跳过缓存（用于harm_nearby_units等功能）
-        if skip_cache:
-            # 直接计算结果，不使用缓存
+        def _merge():
+            if _fast is not None:
+                return _fast.merge_buckets_3x3(buckets, grid_x, grid_y)
             result = []
-            for dx in [0, 1, -1]:
-                for dy in [0, 1, -1]:
+            for dx in (0, 1, -1):
+                for dy in (0, 1, -1):
                     k = grid_x + dx, grid_y + dy
                     if k in buckets:
                         result.extend(buckets[k])
             return result
-        
+
+        # 如果需要跳过缓存（用于harm_nearby_units等功能）
+        if skip_cache:
+            return _merge()
+
         # 缓存键必须包含玩家 id：每条 computer_only 行是独立 Computer 玩家，
         # 同 Player 子类共享类级缓存；若只用格子坐标，先查询的空电脑会
         # 把「无单位」写入缓存，后查询的有单位电脑会误命中空列表（流星等
         # harm 范围技能因此打不到地图 computer 单位）。
         cache_key = (id(self), grid_x, grid_y)
-        
-        # 使用类变量而不是实例变量存储缓存，提高共享效率
-        if not hasattr(self.__class__, '_global_neighbors_cache'):
-            self.__class__._global_neighbors_cache = {}
-            self.__class__._global_neighbors_timestamp = {}
-            self.__class__._last_cleanup_time = self.world.time
-            
-        # 定期清理缓存（每30秒游戏时间）
+        cls = self.__class__
+        cache = getattr(cls, "_global_neighbors_cache", None)
+        if cache is None:
+            cache = {}
+            cls._global_neighbors_cache = cache
+            cls._global_neighbors_timestamp = {}
+            cls._last_cleanup_time = self.world.time
+
         current_time = self.world.time
-        if current_time - self.__class__._last_cleanup_time > 30000:
-            # 仅保留最近使用的1000个缓存项
-            if len(self.__class__._global_neighbors_cache) > 1000:
-                # 根据时间戳排序，保留最近的1000
-                recent_keys = sorted(self.__class__._global_neighbors_timestamp.keys(), 
-                                    key=lambda k: self.__class__._global_neighbors_timestamp[k],
-                                    reverse=True)[:1000]
-                
-                # 创建新缓存，只包含最近的项
+        if current_time - cls._last_cleanup_time > 30000:
+            if len(cache) > 1000:
+                recent_keys = sorted(
+                    cls._global_neighbors_timestamp.keys(),
+                    key=lambda k: cls._global_neighbors_timestamp[k],
+                    reverse=True,
+                )[:1000]
                 new_cache = {}
                 new_timestamps = {}
                 for k in recent_keys:
-                    new_cache[k] = self.__class__._global_neighbors_cache[k]
-                    new_timestamps[k] = self.__class__._global_neighbors_timestamp[k]
-                
-                # 替换旧缓存
-                self.__class__._global_neighbors_cache = new_cache
-                self.__class__._global_neighbors_timestamp = new_timestamps
-            
-            self.__class__._last_cleanup_time = current_time
-        
-        # 检查是否有缓存
-        if cache_key in self.__class__._global_neighbors_cache:
-            # 更新时间戳
-            self.__class__._global_neighbors_timestamp[cache_key] = current_time
-            return self.__class__._global_neighbors_cache[cache_key]
-        
-        # 如果没有缓存，则计算邻居
-        # 优化：预先分配空间以减少内存分配
-        result = []
-        result_capacity = 0
-        
-        # 估计需要的容量
-        for dx in [0, 1, -1]:
-            for dy in [0, 1, -1]:
-                k = grid_x + dx, grid_y + dy
-                if k in buckets:
-                    result_capacity += len(buckets[k])
-        
-        # 一次性分配空间
-        if result_capacity > 0:
-            result = [None] * result_capacity
-            idx = 0
-            
-            # 填充结果
-            for dx in [0, 1, -1]:
-                for dy in [0, 1, -1]:
-                    k = grid_x + dx, grid_y + dy
-                    if k in buckets:
-                        bucket = buckets[k]
-                        bucket_len = len(bucket)
-                        for i in range(bucket_len):
-                            result[idx] = bucket[i]
-                            idx += 1
-            
-            # 如果预估不准确，截断结果
-            if idx < result_capacity:
-                result = result[:idx]
-        
-        # 存储结果到缓存
-        self.__class__._global_neighbors_cache[cache_key] = result
-        self.__class__._global_neighbors_timestamp[cache_key] = current_time
-        
+                    new_cache[k] = cache[k]
+                    new_timestamps[k] = cls._global_neighbors_timestamp[k]
+                cache = new_cache
+                cls._global_neighbors_cache = new_cache
+                cls._global_neighbors_timestamp = new_timestamps
+            cls._last_cleanup_time = current_time
+
+        hit = cache.get(cache_key)
+        if hit is not None:
+            cls._global_neighbors_timestamp[cache_key] = current_time
+            return hit
+
+        result = _merge()
+        cache[cache_key] = result
+        cls._global_neighbors_timestamp[cache_key] = current_time
         return result
 
     def _clear_neighbors_cache(self):
-        """清除邻居缓存"""
-        if hasattr(self.__class__, '_global_neighbors_cache'):
-            # 仅清除与当前玩家相关的缓存项
-            # 这比完全清空缓存更高效
-            current_grid_keys = set()
-            for unit in self.units:
-                grid_x = unit.x // A
-                grid_y = unit.y // A
-                for dx in [-1, 0, 1]:
-                    for dy in [-1, 0, 1]:
-                        current_grid_keys.add((grid_x + dx, grid_y + dy))
-            
-            # 从缓存中移除这些键（仅当前玩家）
-            player_id = id(self)
-            for gx, gy in current_grid_keys:
-                k = (player_id, gx, gy)
-                if k in self.__class__._global_neighbors_cache:
-                    del self.__class__._global_neighbors_cache[k]
-                    if k in self.__class__._global_neighbors_timestamp:
-                        del self.__class__._global_neighbors_timestamp[k]
+        """Invalidate neighbor merge cache entries for *this* player only.
+
+        Cache keys are ``(id(player), grid_x, grid_y)``; do not wipe other
+        players that share the class-level dict.
+        """
+        cls = self.__class__
+        cache = getattr(cls, "_global_neighbors_cache", None)
+        if not cache:
+            return
+        token = id(self)
+        ts = getattr(cls, "_global_neighbors_timestamp", None)
+        for key in [k for k in cache if k[0] == token]:
+            del cache[key]
+            if ts is not None:
+                ts.pop(key, None)
+
+    def _invalidate_neighbors_near(self, dirty_cells, player_token=None):
+        """Drop neighbor-cache entries affected by dirty bucket cells.
+
+        A query at (gx, gy) reads the 3x3 around that cell. If bucket cell
+        (bx, by) changed, every query with |gx-bx|<=1 and |gy-by|<=1 is stale.
+
+        When *dirty_cells* is large, fall back to full clear (selective scan
+        used to cost more than the cache itself on chaotic battles).
+        Does not touch vision / perception caches.
+        """
+        if not dirty_cells:
+            return
+        cls = self.__class__
+        cache = getattr(cls, "_global_neighbors_cache", None)
+        if not cache:
+            return
+        # Heuristic: many dirty cells → O(cache) selective scan loses to clear.
+        if len(dirty_cells) > 48 or len(cache) <= len(dirty_cells) * 4:
+            self._clear_neighbors_cache()
+            return
+
+        token = id(self) if player_token is None else player_token
+        ts = getattr(cls, "_global_neighbors_timestamp", None)
+        dirty = dirty_cells if isinstance(dirty_cells, set) else set(dirty_cells)
+        # Queries reading a dirty bucket cell: all (gx,gy) within Chebyshev 1.
+        affected = set()
+        for bx, by in dirty:
+            for dx in (-1, 0, 1):
+                for dy in (-1, 0, 1):
+                    affected.add((bx + dx, by + dy))
+        to_del = []
+        for key in cache:
+            if key[0] != token:
+                continue
+            if (key[1], key[2]) in affected:
+                to_del.append(key)
+        for key in to_del:
+            del cache[key]
+            if ts is not None:
+                ts.pop(key, None)
 
     def _is_seeing(self, u):
+        """1.3.8.1-style: Euclidean sight vs allied observers (no quota / prefilter).
+
+        Temporarily used for playtesting vs the optimized strict/partial+150 path
+        (see backup_perception_pre_1381style_20260714/).
+        """
+        if _fast is not None:
+            return bool(_fast.is_seeing(self, u))
+        return self._py_is_seeing(u)
+
+    def _py_is_seeing(self, u):
+        """Python fallback — byte-equivalent to ``perception_fast.is_seeing``."""
         # 如果单位是隐形或隐身的，并且没有被探测，则不可见
         if (u.is_invisible or u.is_cloaked) and u not in self.detected_units:
             return False
-        
-        # 覆盖计数网格：若该格子被任意友军严格观察覆盖，则O(1)返回
-        # (_vision_cover_counts 已在 Player.__init__ 预初始化)
-        if self._vision_cover_counts.get(u.place, 0) > 0:
-            return True
 
-        # 超快路径：已在合并后的严格观察区内则可见（避免后续一切开销）
-        if u.place in self.observed_squares:
-            return True
+        place = u.place
+        if place is None:
+            return False
 
         # 墙/门等出口阻挡物：站在出口任一侧或相邻格观察时，应能看到阻挡物本身
         if self._exit_blocker_visible(u):
             return True
-        
-        # 如果是敌方单位，且不在观察区域中，则不可见
-        if self.is_an_enemy(u) and u.place not in self.observed_squares:
-            return False
-        
-        # 提取目标单位的位置
+
         x = u.x
         y = u.y
-        place = u.place
-        
-        # 使用更高效的全局缓存系统 - 双层 dict {player_id -> {key -> bool}}
-        # (Round 3: 类级 dict 已在 Player 类体声明, 总是存在)
-        current_time = self.world.time
-        
-        # 优化缓存键结构 - 更快速的缓存查找
-        # 使用固定间隔的时间戳分段，减少缓存失效频率
-        time_bucket = current_time // 250  # 250ms更新一次缓存
-        
-        # 使用双层字典结构，第一层是玩家ID，第二层是单位ID和时间的组合
-        if self.id not in self.__class__._global_vision_cache:
-            self.__class__._global_vision_cache[self.id] = {}
-        
-        player_cache = self.__class__._global_vision_cache[self.id]
-        cache_key = (u.id, time_bucket)
-        
-        # 查看缓存
-        if cache_key in player_cache:
-            self.__class__._vision_cache_hits += 1
-            return player_cache[cache_key]
-        
-        self.__class__._vision_cache_misses += 1
-        
-        # 缓存管理 - 仅当缓存命中率较低时才清理
-        cache_total = self.__class__._vision_cache_hits + self.__class__._vision_cache_misses
-        if cache_total > 10000 and self.__class__._vision_cache_hits / cache_total < 0.5:
-            # 缓存效率低，进行清理 (_last_vision_cleanup 已在类体初始化)
-            if current_time - self.__class__._last_vision_cleanup > 5000:
-                self.__class__._last_vision_cleanup = current_time
-                self.__class__._global_vision_cache.clear()
-                self.__class__._vision_cache_hits = 0
-                self.__class__._vision_cache_misses = 0
-                player_cache = self.__class__._global_vision_cache[self.id] = {}
-        
-        # 优化8：缓存联盟观察区域，避免重复any()生成器计算
-        # 预计算并缓存联盟ID列表，避免每次调用都重新排序
-        # (_cached_alliance_ids / _cached_alliance_time 已在 Player.__init__ 预初始化)
-        if self._cached_alliance_time != current_time // 1000:
-            self._cached_alliance_ids = tuple(sorted(avp.id for avp in self.allied_vision))
-            self._cached_alliance_time = current_time // 1000
-        
-        # 创建联盟观察区域的缓存键
-        alliance_cache_key = (self._cached_alliance_ids, time_bucket)
-        
-        # 初始化联盟观察区域缓存
-        if not hasattr(self.__class__, '_alliance_observed_cache'):
-            self.__class__._alliance_observed_cache = {}
-            
-        # 检查缓存中是否有合并的观察区域
-        if alliance_cache_key in self.__class__._alliance_observed_cache:
-            merged_observed_squares = self.__class__._alliance_observed_cache[alliance_cache_key]
-        else:
-            # 合并所有盟友的观察区域到一个集合中，避免重复any()调用
-            merged_observed_squares = set()
-            for avp in self.allied_vision:
-                merged_observed_squares.update(avp.observed_squares)
-                
-            # 缓存结果，但限制缓存大小避免内存问题
-            if len(self.__class__._alliance_observed_cache) > 50:
-                # 清理一半旧缓存
-                items = list(self.__class__._alliance_observed_cache.items())
-                self.__class__._alliance_observed_cache = dict(items[25:])
-                
-            self.__class__._alliance_observed_cache[alliance_cache_key] = merged_observed_squares
-        
-        # 快速预检查 - 使用预合并的集合，避免any()生成器
-        in_observed_area = place in merged_observed_squares
-        
-        if not in_observed_area:
-            player_cache[cache_key] = False
-            return False
-        
-        # 关键优化：如果位置已在联盟严格观察区内，则必然可见
-        player_cache[cache_key] = True
-        return True
-        
-        # 优化9：缓存对象属性检查，避免重复hasattr调用
-        # 为单位缓存airground_type属性的存在性
-        if not hasattr(u, '_cached_has_airground_type'):
-            u._cached_has_airground_type = hasattr(u, 'airground_type')
-            
-        # 空中单位特殊处理 - 如果在同一格子中，则空中单位一定能看到地面单位，地面单位也一定能看到空中单位
-        if u._cached_has_airground_type and u.place:
-            for avp in self.allied_vision:
-                for avu in avp.units:
-                    if not avu.is_inside and avu.place == u.place:
-                        # 同一方格内互相可见
-                        player_cache[cache_key] = True
-                        return True
-        
-        # 使用缓存存储视野距离的平方值 - 避免重复计算
-        if not hasattr(self.__class__, '_sight_range_squares'):
-            self.__class__._sight_range_squares = {}
-        
-        # 计算结果
-        result = False
-        
-        # 使用空间索引加速邻居单位查找
-        nearby_units_map = {}  # 用于去重，避免重复检查同一单位
-        
-        # 优化11：联盟级别的空间索引缓存，避免重复_potential_neighbors调用
-        # 复用之前缓存的联盟ID列表
-        alliance_spatial_key = (self._cached_alliance_ids, x // A, y // A, time_bucket)
-        
-        # 初始化联盟空间索引缓存
-        if not hasattr(self.__class__, '_alliance_spatial_cache'):
-            self.__class__._alliance_spatial_cache = {}
-            
-        # 检查是否有缓存的联盟单位
-        if alliance_spatial_key in self.__class__._alliance_spatial_cache:
-            nearby_allied_units = self.__class__._alliance_spatial_cache[alliance_spatial_key]
-        else:
-            # 合并所有盟友的附近单位，避免重复计算
-            nearby_allied_units = []
-            processed_unit_ids = set()
-            
-            for avp in self.allied_vision:
-                # 获取可能在视野范围内的友方单位
-                nearby_units = avp._potential_neighbors(x, y)
-                
-                for avu in nearby_units:
-                    # 避免重复添加同一单位
-                    if avu.id not in processed_unit_ids:
-                        nearby_allied_units.append(avu)
-                        processed_unit_ids.add(avu.id)
-            
-            # 缓存结果，但限制缓存大小
-            if len(self.__class__._alliance_spatial_cache) > 200:
-                # 清理一半旧缓存
-                items = list(self.__class__._alliance_spatial_cache.items())
-                self.__class__._alliance_spatial_cache = dict(items[100:])
-                
-            self.__class__._alliance_spatial_cache[alliance_spatial_key] = nearby_allied_units
-        
-        # 算法优化：减少视野检查频率，而非加速单次计算
-        # 策略1：空间分区预筛选 - 只检查相邻区域的单位
-        if nearby_allied_units:
-            # 将目标位置量化到网格
-            grid_x = x // (A * 2)  # 使用更大的网格减少计算
-            grid_y = y // (A * 2)
-            
-            # 快速预筛选：优先检查距离最近的单位
-            min_distance_unit = None
-            min_distance = float('inf')
-            
-            # 第一轮：快速距离预筛选，找到最近的几个单位
-            close_units = []
-            for avu in nearby_allied_units:
-                # 使用曼哈顿距离进行快速预筛选（比欧几里得距离快）
-                manhattan_dist = abs(avu.x - x) + abs(avu.y - y)
-                if manhattan_dist < avu.sight_range * 1.5:  # 粗筛选
-                    close_units.append((avu, manhattan_dist))
-            
-            # 按距离排序，优先检查最近的单位
-            close_units.sort(key=lambda item: item[1])
-            
-            # 第二轮：对预筛选的单位进行精确检查
-            for avu, _ in close_units[:5]:  # 最多检查5个最近的单位
-                # 获取或计算视野范围的平方
-                sight_range = avu.sight_range
-                if sight_range not in self.__class__._sight_range_squares:
-                    self.__class__._sight_range_squares[sight_range] = sight_range * sight_range
-                
-                radius2 = self.__class__._sight_range_squares[sight_range]
-                
-                # 精确距离计算
+        for avp in self.allied_vision:
+            for avu in avp._potential_neighbors(x, y):
+                if getattr(avu, "is_inside", False):
+                    continue
+                sr = avu.sight_range
+                if not sr:
+                    continue
                 dx = avu.x - x
                 dy = avu.y - y
-                dist2 = dx * dx + dy * dy
-                
-                # 对于距离非常近的单位直接判定为可见
-                if dist2 < radius2 / 4:
-                    result = True
-                    break
-                
-                # 检查是否在视野范围内
-                if dist2 < radius2:
-                    # 缓存单位的观察区域检查结果
-                    observed_squares = getattr(avu, '_cached_observed_squares', None)
-                    
-                    # 如果缓存不存在或者已过期，重新计算
-                    if observed_squares is None or getattr(avu, '_cached_observed_time', 0) != time_bucket:
-                        observed_squares = set(avu.get_observed_squares())
-                        avu._cached_observed_squares = observed_squares
-                        avu._cached_observed_time = time_bucket
-                    
-                    if place in observed_squares:
-                        result = True
-                        break
-                
-                if result:
-                    break
-        
-        # 保存结果到缓存
-        player_cache[cache_key] = result
-        
-        return result
+                if dx * dx + dy * dy >= sr * sr:
+                    continue
+                # get_observed_squares() defaults to strict=False（含邻格高度/通行规则）
+                if place in avu.get_observed_squares():
+                    return True
+        return False
+
+    def _is_within_allied_sight_range(self, u):
+        """Alias kept for callers/tests; same as 1.3.8.1 ``_is_seeing`` body."""
+        return self._is_seeing(u)
 
     def _clear_vision_cache(self):
         """清除视野缓存 - O(1) 版本.
@@ -585,8 +421,8 @@ class PerceptionMixin:
         cls = self.__class__
         current_time = self.world.time
 
-        # 每140ms切换一个玩家组进行视野更新，并将分组数从7提高到9
-        if current_time - cls._last_global_update_time > 140:
+        # 每180ms切换一个玩家组进行视野更新（9 组 → 单玩家约 1.6s 一轮）
+        if current_time - cls._last_global_update_time > 180:
             cls._global_update_cycle = (cls._global_update_cycle + 1) % 9
             cls._last_global_update_time = current_time
 
@@ -646,18 +482,25 @@ class PerceptionMixin:
         current_time = self.world.time
         vision_cache_key = current_time // 250  # 每250毫秒更新一次视野缓存
 
-        # 创建或使用联盟缓存 - 复用已有的联盟ID缓存
+        # 创建或使用联盟缓存 - 必须按 allied_vision（实际共享迷雾的玩家），
+        # 不能用 self.allied：computer_only 仍同属 "ai" 但不共享迷雾，
+        # 若用 allied 作键会把第一个 NPC 的视野错发给其它 NPC。
         # (_cached_allied_ids / _cached_allied_time 已在 Player.__init__ 预初始化)
         if self._cached_allied_time != current_time // 1000:
-            self._cached_allied_ids = tuple(sorted(ally.id for ally in self.allied))
+            self._cached_allied_ids = tuple(
+                sorted(ally.id for ally in self.allied_vision)
+            )
             self._cached_allied_time = current_time // 1000
 
         alliance_key = self._cached_allied_ids
         if alliance_key in self.__class__._allied_vision_cache and self.__class__._allied_vision_timestamp.get(alliance_key) == vision_cache_key:
-            # 使用缓存数据
+            # 命中缓存：直接引用，本路径不再 mutate 这两个 set
             cached_vision = self.__class__._allied_vision_cache[alliance_key]
-            self.observed_squares = cached_vision['observed_squares'].copy()
-            partially_observed_squares = cached_vision['partially_observed_squares'].copy()
+            self.observed_squares = cached_vision['observed_squares']
+            partially_observed_squares = cached_vision['partially_observed_squares']
+            # 覆盖计数未入缓存：用严格观察区补上，至少保证 O(1) 同格可见
+            for sq in self.observed_squares:
+                self._vision_cover_counts[sq] = self._vision_cover_counts.get(sq, 0) + 1
         else:
             # 优化: 预计算相同特性单位组
             unit_vision_groups = {}
@@ -762,36 +605,79 @@ class PerceptionMixin:
                     self.__class__._allied_vision_cache = new_cache
                     self.__class__._allied_vision_timestamp = new_timestamps
         
-        from ..rmg_systems import apply_territory_vision
-
-        apply_territory_vision(self)
-
         # 更新历史观察记录
+        self.partially_observed_squares = partially_observed_squares
         self.observed_before_squares.update(partially_observed_squares)
         self.strictly_observed_before_squares.update(self.observed_squares)
-        
-        # 优化：使用集合操作批量添加静态对象
-        static_objects = set()
-        for s in self.observed_squares:
-            objs = getattr(s, 'objects', None)
-            if objs:
-                static_objects.update([o for o in objs if o.player is None])
-        self.perception.update(static_objects)
-        
-        # 创建部分可见区域中的静态对象映射，仅检查一次每个对象
-        objects_to_check = set()
-        for s in partially_observed_squares:
-            objs = getattr(s, 'objects', None)
-            if objs:
-                objects_to_check.update([o for o in objs if o.player is None])
-        
-        # 批量检查可见性 - 使用批处理接口，显著降低函数调用开销
-        if objects_to_check:
-            visible_objects, memory_objects = self._bulk_visibility_check(objects_to_check)
-            self.perception.update(visible_objects)
-            if memory_objects:
-                self._bulk_memorize(memory_objects)
-            
+
+        # 视野方格未变时复用静态感知，跳过昂贵的 bulk 距离检查
+        prev_obs = getattr(self, "_prev_obs_squares", None)
+        prev_partial = getattr(self, "_prev_partial_squares", None)
+        cached_static = getattr(self, "_cached_static_perception", None)
+        vision_unchanged = (
+            prev_obs is not None
+            and prev_partial is not None
+            and prev_obs == self.observed_squares
+            and prev_partial == partially_observed_squares
+            and cached_static is not None
+        )
+        if vision_unchanged:
+            self.perception.update(cached_static)
+        else:
+            # 严格观察区：静态对象直接可见
+            static_objects = set()
+            for s in self.observed_squares:
+                objs = s.objects
+                if objs:
+                    for o in objs:
+                        if o.player is None:
+                            static_objects.add(o)
+            if static_objects:
+                self.perception.update(static_objects)
+                self._memorize_unseen_exit_pairs(static_objects)
+
+            # 部分观察区：优先检查矿点/建筑用地，并限制每帧 bulk 量
+            objects_to_check = set()
+            for s in partially_observed_squares:
+                objs = s.objects
+                if objs:
+                    for o in objs:
+                        if o.player is None:
+                            objects_to_check.add(o)
+
+            if objects_to_check:
+                _BULK_STATIC_CAP = 100
+                if len(objects_to_check) > _BULK_STATIC_CAP:
+                    # 先装重要目标，再补其余；避免对整表 sort（曾 ~2 万次/局）
+                    capped = []
+                    for o in objects_to_check:
+                        if isinstance(o, Deposit) or o.is_a_building_land:
+                            capped.append(o)
+                    if len(capped) > _BULK_STATIC_CAP:
+                        capped.sort(key=lambda o: o.id if o.id is not None else 0)
+                        capped = capped[:_BULK_STATIC_CAP]
+                    elif len(capped) < _BULK_STATIC_CAP:
+                        rest = [
+                            o
+                            for o in objects_to_check
+                            if not (isinstance(o, Deposit) or o.is_a_building_land)
+                        ]
+                        rest.sort(key=lambda o: o.id if o.id is not None else 0)
+                        capped.extend(rest[: _BULK_STATIC_CAP - len(capped)])
+                    objects_to_check = set(capped)
+                visible_objects, memory_objects = self._bulk_visibility_check(
+                    objects_to_check
+                )
+                self.perception.update(visible_objects)
+                static_objects.update(visible_objects)
+                if memory_objects:
+                    self._bulk_memorize(memory_objects)
+                self._memorize_unseen_exit_pairs(visible_objects)
+
+            self._cached_static_perception = static_objects
+            self._prev_obs_squares = set(self.observed_squares)
+            self._prev_partial_squares = set(partially_observed_squares)
+
         # 处理联盟观察到的对象 - 使用联盟视野缓存
         if alliance_key in self.__class__._allied_vision_cache and 'observed_objects' in self.__class__._allied_vision_cache[alliance_key]:
             cached_observed = {
@@ -838,46 +724,17 @@ class PerceptionMixin:
             if alliance_key in self.__class__._allied_vision_cache:
                 self.__class__._allied_vision_cache[alliance_key]['allied_units'] = allied_units
         
-        # 处理敌方单位 - 使用集合操作优化，但保持顺序确定性
+        # 处理敌方单位 —— 临时改回 1.3.8.1：每个敌人都跑欧氏 ``_is_seeing``，
+        # 不做观察区预筛 / 150 配额（备份见 backup_perception_pre_1381style_20260714/）。
         enemy_units = set()
         enemy_players = set(self.world.players) - set(self.allied_vision)
-        
-        all_enemy_units = set()
-        for p in enemy_players:
-            all_enemy_units.update(p.units)
-        
-        # 优化：缓存敌方单位排序结果，避免每次_update_perception都重新排序
-        enemy_units_hash = hash(frozenset(u.id for u in all_enemy_units))
-        
-        # (_cached_enemy_units_hash / _cached_sorted_enemy_units 已在 Player.__init__ 预初始化)
-        if self._cached_enemy_units_hash != enemy_units_hash:
-            self._cached_sorted_enemy_units = sorted(all_enemy_units, key=lambda u: u.id)
-            self._cached_enemy_units_hash = enemy_units_hash
-        
-        # 优化：批量检查敌方单位可见性，减少_is_seeing调用次数
-        sorted_enemy_units = self._cached_sorted_enemy_units
-        
-        # 预先筛选在观察区域内的敌方单位，避免对不在视野内的单位调用昂贵的_is_seeing
-        enemy_units_in_sight = []
-        observed_squares_set = self.observed_squares  # 缓存集合引用
-        
-        for u in sorted_enemy_units:
-            # 快速预检查：观察区内，或出口阻挡物从观察区可见
-            if u.place in observed_squares_set or self._exit_blocker_visible(u):
-                enemy_units_in_sight.append(u)
-        
-        # 批量检查可见性（限制每帧昂贵检查次数，避免极端场景爆发）
-        checks_left = 200
-        for u in enemy_units_in_sight:
-            if checks_left <= 0:
-                break
-            if self._is_seeing(u):
-                enemy_units.add(u)
-            checks_left -= 1
 
-        for u in sorted_enemy_units:
-            if getattr(u, "is_inside", False) and self._open_container_passenger_visible(u):
-                enemy_units.add(u)
+        for p in enemy_players:
+            for u in p.units:
+                if self._is_seeing(u):
+                    enemy_units.add(u)
+                elif getattr(u, "is_inside", False) and self._open_container_passenger_visible(u):
+                    enemy_units.add(u)
 
         self.perception.update(enemy_units)
         
@@ -1185,10 +1042,65 @@ class PerceptionMixin:
         D-Phase 2 (cont.): 22.6k calls/5min cw1, 14.8 s tottime. 整函数 Cython
         化省 frame setup + bytecode dispatch. 失败时 fallback 到 Python.
         """
+        objects = self._expand_unseen_exit_pairs(objects)
         if _fast is not None:
             _fast.bulk_memorize(self, objects)
             return
         self._py_bulk_memorize(objects)
+
+    def _expand_unseen_exit_pairs(self, objects):
+        """Seeing/remembering one exit must also fog-remember its other side.
+
+        Exits are paired across squares; incremental leave can keep only one side
+        (e.g. a2 south found, a1 north missing). Cheap: only walks the given
+        objects, not the whole map.
+        """
+        if not objects:
+            return objects
+        observed = self.observed_squares
+        perception = self.perception
+        index = self._memory_index
+        extra = []
+        for o in objects:
+            if not getattr(o, "is_an_exit", False):
+                continue
+            try:
+                other = o.other_side
+            except Exception:
+                continue
+            if other is None:
+                continue
+            if other in perception or other in index:
+                continue
+            place = getattr(other, "place", None)
+            if place is not None and place in observed:
+                continue
+            extra.append(other)
+        if not extra:
+            return objects
+        if isinstance(objects, set):
+            out = set(objects)
+            out.update(extra)
+            return out
+        return list(objects) + extra
+
+    def _memorize_unseen_exit_pairs(self, objects):
+        """Remember the far side of exits just added to perception."""
+        pairs = self._expand_unseen_exit_pairs(objects)
+        if pairs is objects:
+            return
+        # Only the newly expanded far sides (not already in ``objects``).
+        if isinstance(objects, set):
+            only_pairs = pairs - objects
+        else:
+            obj_ids = {id(o) for o in objects}
+            only_pairs = [o for o in pairs if id(o) not in obj_ids]
+        if only_pairs:
+            # Bypass expand-again by calling py/fast directly on pairs only.
+            if _fast is not None:
+                _fast.bulk_memorize(self, only_pairs)
+            else:
+                self._py_bulk_memorize(only_pairs)
 
     def _py_bulk_memorize(self, objects):
         """Python fallback (与 perception_fast.bulk_memorize 完全等价)."""
@@ -1220,10 +1132,10 @@ class PerceptionMixin:
         # 优化10：记忆清理频率控制 - 避免每次都检查昂贵的should_be_seeing
         # (_last_memory_cleanup / _memory_scan_cursor / _memory_list /
         #  _memory_list_snapshot_time 已在 Player.__init__ 预初始化)
-        should_do_full_cleanup = (current_time - self._last_memory_cleanup) >= 2000
+        should_do_full_cleanup = (current_time - self._last_memory_cleanup) >= 3000
 
         # 当执行完整清理或内存快照过期时刷新快照
-        if should_do_full_cleanup or (current_time - self._memory_list_snapshot_time > 2000):
+        if should_do_full_cleanup or (current_time - self._memory_list_snapshot_time > 3000):
             # 重新拍摄快照，避免每帧从 set 迭代
             self._memory_list = list(self.memory)
             self._memory_list_snapshot_time = current_time
@@ -1235,15 +1147,15 @@ class PerceptionMixin:
         units_to_forget = []
         # 分帧配额：限制每次完整清理中昂贵判断的数量，避免爆发
         total_units = len(self.world.units) if hasattr(self.world, 'units') else 0
-        cleanup_quota = 300 + (total_units // 50)
+        cleanup_quota = 200 + (total_units // 80)
         display_expired_initial_models = set()
 
         # 选择扫描集合：完整清理时扫描全部，否则仅扫描批次
         if should_do_full_cleanup:
             iterable_memories = self._memory_list  # 使用快照以获得稳定顺序
         else:
-            # 自适应批次：随单位量缩放
-            BATCH = 250 + (total_units // 80)
+            # 自适应批次：随单位量缩放（收紧以降低 _is_seeing 压力）
+            BATCH = 120 + (total_units // 120)
             start = self._memory_scan_cursor
             end = min(start + BATCH, len(self._memory_list))
             iterable_memories = self._memory_list[start:end]
@@ -1251,27 +1163,42 @@ class PerceptionMixin:
             self._memory_scan_cursor = 0 if end >= len(self._memory_list) else end
 
         for m in iterable_memories:
-            # 基本忘记条件（总是检查，成本低）
-            expired_memory = self._expire_memory_if_stale(
-                m, current_time, display_expired_initial_models
-            )
-            visible_model_in_perception = (
-                m.initial_model in self.perception and self._is_seeing(m.initial_model)
-            )
-            basic_forget_conditions = (
-                expired_memory
-                or visible_model_in_perception
-                or m.initial_model.place is None
-            )
-            
-            if basic_forget_conditions:
+            model = m.initial_model
+            if model.place is None:
                 units_to_forget.append(m)
-            elif should_do_full_cleanup and cleanup_quota > 0:
-                # 使用观察区集合做快速判定，替代昂贵的可见性函数
-                if m.place in self.observed_squares:
+                continue
+            # Static terrain (meadows/exits/...): keep fog forever unless the live
+            # object is currently perceived (then the live view replaces memory).
+            if not model.speed:
+                if model in self.perception:
                     units_to_forget.append(m)
-                cleanup_quota -= 1
-        
+                continue
+            # Hot path: most memories are still fresh — skip expire/_is_seeing.
+            stamp = m.time_stamp
+            display_duration = getattr(
+                self, "display_memory_duration", self.memory_duration
+            )
+            display_expired = stamp + display_duration < current_time
+            memory_expired = stamp < memory_expires_time
+
+            # Visible live unit → drop memory copy
+            if model in self.perception and self._is_seeing(model):
+                units_to_forget.append(m)
+                continue
+
+            # Display timer: drop stale UI perception; AI may keep longer memory.
+            if display_expired and model in self.perception and not self._is_seeing(model):
+                self.perception.discard(model)
+                display_expired_initial_models.add(model)
+
+            if memory_expired:
+                units_to_forget.append(m)
+                continue
+
+            if should_do_full_cleanup and cleanup_quota > 0:
+                if m.place in self.observed_squares and model in self.perception:
+                    units_to_forget.append(m)
+                cleanup_quota -= 1        
         if should_do_full_cleanup:
             self._last_memory_cleanup = current_time
                 
@@ -1308,6 +1235,9 @@ class PerceptionMixin:
             if units_to_memorize:
                 self._bulk_memorize(units_to_memorize)
 
+        # 感知更新后再清一遍：己方已站在该格时，雾中幽灵必须立刻消失。
+        self._forget_memories_on_observed_squares()
+
     def _update_perception_and_memory(self):
         # 优化12：增量感知更新系统 - 只更新真正发生变化的部分
         # (_last_unit_positions / _last_perception_hash / _force_full_update /
@@ -1339,29 +1269,41 @@ class PerceptionMixin:
         # (_last_forced_perception_update 已在 Player.__init__ 预初始化)
         current_time = self.world.time
 
-        # 每2秒强制刷新一次感知，确保建筑物视野等不会被缓存遗漏
+        # 空闲时也要定期刷感知；同格接触必须立刻刷，否则 idle AI 会拖到
+        # forced 间隔才看见入侵者（1.4.5.2=2s，本分支曾误拉到 5s）。
         time_since_last_forced = current_time - self._last_forced_perception_update
-        needs_forced_update = time_since_last_forced >= 2000  # 2秒
-        
-        # 如果单位位置没有变化，且不是强制更新，且不是作弊模式，且不需要定期强制更新，则跳过感知更新
-        if not position_changed and not self._force_full_update and not self.cheatmode and not needs_forced_update:
-            # 仍然需要轻量级记忆更新
-            self._lightweight_memory_update()
-            return
+        needs_forced_update = time_since_last_forced >= 1000
+        contact_force = False
+        if (
+            not position_changed
+            and not self._force_full_update
+            and not self.cheatmode
+            and not needs_forced_update
+        ):
+            contact_force = self._unseen_hostile_on_owned_squares()
+            if not contact_force:
+                self._lightweight_memory_update()
+                return
+
+        # 定期强制或同格接触：作废静态视野缓存并走完整/增量更新
+        if needs_forced_update or contact_force:
+            if needs_forced_update:
+                self._last_forced_perception_update = current_time
+            self._cached_static_perception = None
+            self._prev_obs_squares = None
+            self._prev_partial_squares = None
             
-        # 如果是定期强制更新，记录时间
-        if needs_forced_update:
-            self._last_forced_perception_update = current_time
-            
-        # 若本帧仅少量单位移动，执行增量更新以避免整帧重算
-        # 阈值可调整：在大地图上通常只有极少数单位同时移动
-        if position_changed and moved_units and len(moved_units) <= 5:
+        # 若本帧有单位移动：优先增量。人多时只增量处理按 id 截断的一批，
+        # 避免整帧全量（cw1 上全量 _update_perception ~32s tottime）。
+        if position_changed and moved_units and not needs_forced_update:
+            n_units = len(self.units)
+            inc_limit = max(20, min(40, n_units // 2 if n_units else 20))
+            if len(moved_units) > inc_limit:
+                moved_units = sorted(moved_units, key=lambda u: u.id)[:inc_limit]
             previous_perception = self.perception.copy()
             self._incremental_perception_update(moved_units)
             self._last_unit_positions = current_unit_positions
-            # 增量路径也需要更新记忆（基于变化前的感知）
             self._update_memory(previous_perception)
-            # 感知版本号：每次增量更新后递增，供其他系统做去抖/早退
             self._perception_version = getattr(self, '_perception_version', 0) + 1
             return
 
@@ -1382,19 +1324,10 @@ class PerceptionMixin:
 
         # 生成供战斗模块复用的“战斗快照”，避免其重复聚合
         if hasattr(self, '_refresh_combat_snapshot'):
-            # 每 ≥1500ms 且在感知/记忆变化或强制更新时才刷新快照
+            # Refresh on a timer even when perception size is stable — otherwise
+            # combat falls back to the full recompute path after 2s and stays there.
             last_call = getattr(self, '_last_snapshot_call_time', 0)
-            last_per_size = getattr(self, '_last_snapshot_perception_size', -1)
-            last_mem_size = getattr(self, '_last_snapshot_memory_size', -1)
-            should_snapshot = (
-                current_time - last_call >= 1500 and (
-                    last_per_size != len(self.perception) or
-                    last_mem_size != len(self.memory) or
-                    needs_forced_update or
-                    position_changed
-                )
-            )
-            if should_snapshot:
+            if current_time - last_call >= 1000:
                 self._refresh_combat_snapshot()
                 self._last_snapshot_call_time = current_time
                 self._last_snapshot_perception_size = len(self.perception)
@@ -1414,8 +1347,77 @@ class PerceptionMixin:
             
             # 如果程序有内存压力，可以在这里调用gc.collect()
 
+    def _unseen_hostile_on_owned_squares(self):
+        """True when a hostile already shares a square with us but is not in perception.
+
+        Idle perception skips must not delay same-square combat (e.g. z5 b3 knight).
+        """
+        perception = self.perception
+        for unit in self.units:
+            place = unit.place
+            if place is None:
+                continue
+            if getattr(place, "is_inside_place", False):
+                continue
+            objs = getattr(place, "objects", None) or ()
+            if not objs:
+                continue
+            for obj in objs:
+                if obj is unit or obj.player is None:
+                    continue
+                if obj in perception:
+                    continue
+                if not obj.is_vulnerable:
+                    continue
+                if self.is_an_enemy(obj):
+                    return True
+        return False
+
+    def _forget_memories_on_observed_squares(self):
+        """Clear fog ghosts on squares we are currently observing.
+
+        Re-entering a square must drop stale war-cloud memories there:
+        - live unit still here and perceived → memory replaced by perception
+        - live unit left / died → ghost is proven wrong
+        Cloaked/invisible units keep memory only while still on that square.
+        """
+        observed = self.observed_squares
+        if not observed or not self.memory:
+            return
+        perception = self.perception
+        detected = getattr(self, "detected_units", None)
+        to_forget = []
+        for m in self.memory:
+            place = m.place
+            if place is None or place not in observed:
+                continue
+            model = m.initial_model
+            if model.place is None:
+                to_forget.append(m)
+                continue
+            if not model.speed:
+                if model in perception:
+                    to_forget.append(m)
+                continue
+            if model.place is not place:
+                to_forget.append(m)
+                continue
+            if (
+                (model.is_invisible or model.is_cloaked)
+                and detected is not None
+                and model not in detected
+            ):
+                continue
+            # 正在观察该格：雾中幽灵一律作废（实体由 perception 提供）。
+            to_forget.append(m)
+        for m in to_forget:
+            self._forget(m)
+
     def _lightweight_memory_update(self):
         """轻量级记忆更新 - 在感知未变化时仅做必要的记忆清理"""
+        # 空闲跳过全量感知时也要清当前视野格上的战云幽灵。
+        self._forget_memories_on_observed_squares()
+
         current_time = self.world.time
         
         # 简化的记忆过期检查
@@ -1452,13 +1454,19 @@ class PerceptionMixin:
         unit = memory.initial_model
         if not unit.speed:
             return False
-        display_duration = getattr(self, "display_memory_duration", self.memory_duration)
-        display_expired = memory.time_stamp + display_duration < current_time
+        stamp = memory.time_stamp
+        mem_dur = self.memory_duration
+        memory_expired = stamp + mem_dur < current_time
+        display_duration = getattr(self, "display_memory_duration", mem_dur)
+        display_expired = stamp + display_duration < current_time
+        # Common case: still fresh for both timers — skip perception/_is_seeing.
+        if not display_expired and not memory_expired:
+            return False
         if display_expired and unit in self.perception and not self._is_seeing(unit):
             self.perception.discard(unit)
             if display_expired_initial_models is not None:
                 display_expired_initial_models.add(unit)
-        return memory.time_stamp + self.memory_duration < current_time
+        return memory_expired
 
     def _memory_visible_for_display(self, memory, current_time):
         unit = memory.initial_model
@@ -1516,39 +1524,14 @@ class PerceptionMixin:
             enemy_player_ids = rel_entry['enemy']
             allied_player_ids = rel_entry['allied']
 
-        # 敌方单位（感知 + 记忆）聚合威胁（增量：与上次快照对比差异）
-        last_perceived = getattr(self, '_last_snapshot_perceived', None)
-        last_memory = getattr(self, '_last_snapshot_memory', None)
-        # 初次或无快照：走全量
-        if last_perceived is None or last_memory is None:
-            iter_perceived = perceived
-            iter_memory = mem_set
-            added_perceived = set()
-            removed_perceived = set()
-            added_memory = set()
-            removed_memory = set()
-        else:
-            added_perceived = perceived - last_perceived
-            removed_perceived = last_perceived - perceived
-            added_memory = mem_set - last_memory
-            removed_memory = last_memory - mem_set
-            # 仅增量处理：新出现与刚消失的单位需要调整聚合
-            iter_perceived = added_perceived
-            iter_memory = added_memory
+        # 敌方单位威胁：必须每帧全量按 place 重算。
+        # 旧增量逻辑从空 dict 起步，只加 added、不继承上次快照；同格持续交战
+        # 时 perception 成员不变 → added 为空 → place_enemy_menace 被清空，
+        # 再叠加 decide/_choose_enemy 的 menace 早退，就会出现「刚打过又停手」。
+        place_enemy_menace = {}
+        enemy_presence_places = []
 
-        # D-Phase 2: 移除热路径 getattr.
-        # o.player/o.place/o.menace 都在 Entity 类有 class-level default
-        # (None/None/0); o.is_inside 是 Entity @property; 直接访问.
-        # 唯一保留 getattr 的是 is_vulnerable: Entity 默认 False, 但本函数旧
-        # 默认 True (对没有 is_vulnerable 字段的对象当成可攻击); 由于 Entity
-        # 已加 class default, 现在 o.is_vulnerable 永远存在 → 行为是
-        # "Entity default False (e.g. Resource/Item/Memory) 视为不可攻击",
-        # 这与"对没有该字段的对象视为可攻击"语义不同. 检查后实测 perception
-        # 内有效目标 (Creature) 都正确 override 为 True; Resource/Item/Corpse
-        # 等本就不应进入威胁聚合, 跳过它们更符合 menace 计算的意图.
-
-        # 全量或增量地加和来自感知的敌人
-        for o in iter_perceived:
+        for o in perceived:
             p = o.player
             if p is None:
                 continue
@@ -1568,8 +1551,9 @@ class PerceptionMixin:
                 place_enemy_menace[pl] = current_sum + men
 
         # 记忆中的敌人给予折扣威胁 (memory 对象有 initial_model)
-        for rem in iter_memory:
-            o = rem.initial_model if hasattr(rem, 'initial_model') else rem
+        presence_set = set(enemy_presence_places)
+        for rem in mem_set:
+            o = rem.initial_model if hasattr(rem, "initial_model") else rem
             p = o.player
             if p is None:
                 continue
@@ -1578,57 +1562,24 @@ class PerceptionMixin:
             if p.id not in enemy_player_ids:
                 continue
             pl = o.place
-            if pl is None or pl in enemy_presence_places:
+            if pl is None or pl in presence_set:
                 continue
             men = o.menace // 2
             current_sum = place_enemy_menace.get(pl)
             if current_sum is None:
                 place_enemy_menace[pl] = men
                 enemy_presence_places.append(pl)
+                presence_set.add(pl)
             else:
                 place_enemy_menace[pl] = current_sum + men
 
-        # 处理消失的单位：从聚合中减去它们贡献（仅在存在上次快照时）
-        if last_perceived is not None and last_memory is not None:
-            for o in removed_perceived:
-                p = o.player
-                if p is None or p.id not in enemy_player_ids:
-                    continue
-                if o.is_inside or not o.is_vulnerable:
-                    continue
-                pl = o.place
-                if pl is None:
-                    continue
-                men = o.menace
-                if pl in place_enemy_menace:
-                    place_enemy_menace[pl] -= men
-                    if place_enemy_menace[pl] <= 0:
-                        del place_enemy_menace[pl]
-                        if pl in enemy_presence_places:
-                            try:
-                                enemy_presence_places.remove(pl)
-                            except ValueError:
-                                pass
-            for rem in removed_memory:
-                o = rem.initial_model if hasattr(rem, 'initial_model') else rem
-                p = o.player
-                if p is None or p.id not in enemy_player_ids:
-                    continue
-                if o.is_inside or not o.is_vulnerable:
-                    continue
-                pl = o.place
-                if pl is None:
-                    continue
-                men = o.menace // 2
-                if pl in place_enemy_menace:
-                    place_enemy_menace[pl] -= men
-                    if place_enemy_menace[pl] <= 0:
-                        del place_enemy_menace[pl]
-                        if pl in enemy_presence_places:
-                            try:
-                                enemy_presence_places.remove(pl)
-                            except ValueError:
-                                pass
+        # 记录 perception/memory 集合供其它逻辑使用（不再做错误的 menace 增量）
+        try:
+            self._last_snapshot_perceived = set(perceived)
+            self._last_snapshot_memory = set(mem_set)
+        except Exception:
+            self._last_snapshot_perceived = None
+            self._last_snapshot_memory = None
 
         # 尸体与友军位置：≥2000ms 才刷新一次，否则复用上次结果
         last_extras_ts = getattr(self, '_snapshot_extras_time', 0)
@@ -1666,15 +1617,6 @@ class PerceptionMixin:
             'timestamp': current_time,
         }
         self._combat_snapshot_bucket = time_bucket
-        # 保存用于下次增量的快照集合引用（浅拷贝为set，避免后续被修改）
-        try:
-            self._last_snapshot_perceived = set(perceived)
-            self._last_snapshot_memory = set(mem_set)
-        except Exception:
-            self._last_snapshot_perceived = None
-            self._last_snapshot_memory = None
-
-
 
     def _incremental_perception_update(self, moved_units):
         """增量更新：仅根据少量移动单位更新覆盖网格与感知。
@@ -1704,10 +1646,7 @@ class PerceptionMixin:
             last_strict = getattr(unit, '_last_coverage_strict', None)
 
             # 读取或计算本帧覆盖
-            observed_data = unit.get_observed_squares_optimized() if hasattr(unit, 'get_observed_squares_optimized') else {
-                'strict': set(unit.get_observed_squares()),
-                'all': set(unit.get_observed_squares())
-            }
+            observed_data = unit.get_observed_squares_optimized()
             strict_now = set(observed_data['strict'])
 
             # 计算差分
@@ -1730,10 +1669,6 @@ class PerceptionMixin:
                     self.observed_squares.add(sq)
             for sq in dec:
                 if sq in self._vision_cover_counts:
-                    from ..rmg_systems import is_claimed_square
-
-                    if is_claimed_square(self, sq):
-                        continue
                     self._vision_cover_counts[sq] -= 1
                     if self._vision_cover_counts[sq] <= 0:
                         del self._vision_cover_counts[sq]
@@ -1751,11 +1686,14 @@ class PerceptionMixin:
         if newly_strict:
             static_objects = set()
             for s in newly_strict:
-                objs = getattr(s, 'objects', None)
+                objs = s.objects
                 if objs:
-                    static_objects.update([o for o in objs if o.player is None])
+                    for o in objs:
+                        if o.player is None:
+                            static_objects.add(o)
             if static_objects:
                 self.perception.update(static_objects)
+                self._memorize_unseen_exit_pairs(static_objects)
 
         # 敌方单位：仅检查新进入严格观察的方格，避免全量扫描
         if newly_strict:
@@ -1774,32 +1712,42 @@ class PerceptionMixin:
                         if self._is_seeing(o):
                             self.perception.add(o)
 
-        # 处理失去严格观察的区域：移除不再可见的对象，避免感知集“漏删”
+        # 处理失去严格观察的区域：敌方单位可直接摘除；静态对象必须进记忆，
+        # 否则雾战里草地/出口等会变成空白（增量优化曾漏掉 memorize）。
         if removed_strict:
+            static_to_memorize = []
             for s in removed_strict:
-                if s not in self.observed_squares:
-                    objs = list(getattr(s, 'objects', ()))
-                    if not objs:
+                if s in self.observed_squares:
+                    continue
+                objs = getattr(s, "objects", None) or ()
+                if not objs:
+                    continue
+                for o in objs:
+                    if o.player is None:
+                        if o in self.perception:
+                            self.perception.discard(o)
+                        # 始终写入/刷新记忆：即使 perception 里已丢了（历史空白），
+                        # 也要从方格上的静态对象补回雾战内容。
+                        static_to_memorize.append(o)
                         continue
-                    for o in objs:
-                        if o.player is None and o in self.perception:
-                            self.perception.discard(o)
-                    for o in objs:
-                        if o.player is None:
-                            continue
-                        # 仅对敌方单位做可见性校验并可能移除；友军/己方单位保持可见，
-                        # 以与完整更新路径的“添加盟友单位”逻辑保持一致
-                        if o in self.perception and self.is_an_enemy(o) and not self._is_seeing(o):
-                            self.perception.discard(o)
+                    if o.is_inside:
+                        continue
+                    # 仅对敌方单位做可见性校验并可能移除；友军/己方单位保持可见，
+                    # 以与完整更新路径的“添加盟友单位”逻辑保持一致
+                    if (
+                        o in self.perception
+                        and self.is_an_enemy(o)
+                        and not self._is_seeing(o)
+                    ):
+                        self.perception.discard(o)
+            if static_to_memorize:
+                self._bulk_memorize(static_to_memorize)
         # 确保移动的友军单位始终在感知集中（与完整更新路径保持一致行为）
         # 这是必要的，因为增量移除步骤可能会把不在严格观察区内的友军从感知中移除，
         # 而完整更新会无条件把盟友单位加入感知。
         for unit in moved_units:
             if getattr(unit, 'player', None) is not None and unit.place is not None and not getattr(unit, 'is_inside', False):
                 self.perception.add(unit)
-        from ..rmg_systems import apply_territory_vision
-
-        apply_territory_vision(self)
         # 结束时不直接在此处递增版本（由调用者控制），避免重复递增
     def force_perception_update(self):
         """强制在下次更新时刷新感知系统"""

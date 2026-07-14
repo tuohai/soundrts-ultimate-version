@@ -506,32 +506,33 @@ class CreatureStatusUpdate(Entity):
 
         # 优化：缓存排序结果，避免每次update都重新排序
         # (_cached_*_hash / _cached_sorted_* 已在类体设默认值)
-        current_time = self.world.time
+        inventory = self.inventory
+        if inventory:
+            inventory_hash = hash(tuple(i.id for i in inventory))
+            if self._cached_inventory_hash != inventory_hash:
+                self._cached_sorted_inventory = sorted(inventory, key=lambda i: i.id)
+                self._cached_inventory_hash = inventory_hash
 
-        # 缓存库存排序 (inventory item 都是 Entity, .id 永远存在)
-        inventory_hash = hash(tuple(i.id for i in self.inventory))
-        if self._cached_inventory_hash != inventory_hash:
-            self._cached_sorted_inventory = sorted(self.inventory, key=lambda i: i.id)
-            self._cached_inventory_hash = inventory_hash
+            for i in self._cached_sorted_inventory:
+                update_inv = getattr(i, "update_in_inventory", None)
+                if update_inv is not None:
+                    update_inv(self)
 
-        for i in self._cached_sorted_inventory:
-            if hasattr(i, "update_in_inventory"):
-                i.update_in_inventory(self)
+        buffs = self._buffs
+        if buffs:
+            buffs_hash = hash(tuple(b.type_name for b in buffs))
+            if self._cached_buffs_hash != buffs_hash:
+                self._cached_sorted_buffs = sorted(buffs, key=lambda b: b.type_name)
+                self._cached_buffs_hash = buffs_hash
 
-        # 缓存buff排序 (buff 有 type_name)
-        buffs_hash = hash(tuple(b.type_name for b in self._buffs))
-        if self._cached_buffs_hash != buffs_hash:
-            self._cached_sorted_buffs = sorted(list(self._buffs), key=lambda b: b.type_name)
-            self._cached_buffs_hash = buffs_hash
-        
-        for b in self._cached_sorted_buffs:
-            if b.should_stop():
-                b.stop(self)
-                self._buffs.remove(b)
-            else:
-                b.update(self)
-                if self.is_dead:
-                    return
+            for b in self._cached_sorted_buffs:
+                if b.should_stop():
+                    b.stop(self)
+                    self._buffs.remove(b)
+                else:
+                    b.update(self)
+                    if self.is_dead:
+                        return
 
         self._update_cooldowns()
 
@@ -734,15 +735,6 @@ class CreatureStatusUpdate(Entity):
                 self.xp = 0
             self._unlock_level_skills(self.level, notify=True)
             self.notify(f"level_up,{self.type_name},{self.id},{self.level}")
-        if self.type_name == "rmg_hero" and self.player is not None:
-            self.player.rmg_hero_peak_level = max(
-                int(getattr(self.player, "rmg_hero_peak_level", 1) or 1),
-                int(self.level),
-            )
-            self.player.rmg_hero_peak_xp = max(
-                int(getattr(self.player, "rmg_hero_peak_xp", 0) or 0),
-                int(self.xp),
-            )
     def claim_rewards(self, target):
         if target.xp_reward:
             # 检查攻击者和目标是否属于同一玩家或盟友，如果是则不分配经验值

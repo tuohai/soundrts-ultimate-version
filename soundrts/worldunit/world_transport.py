@@ -289,32 +289,51 @@ class CreatureTransport(Entity):
         """
         if self.is_inside or self.place is None:
             return []
-        result = [self.place]
+        place = self.place
+        result = [place]
         if strict and self.sight_range < self.world.square_width:
             return result
-        for sq in self.place.neighbors:  # 改为neighbors以包含对角方向
-            if (
-                self.height > sq.height
-                or self.height == sq.height
+        # Cache height once — property was a hotspot when called per neighbor.
+        my_height = self.height
+        place_is_water = place.is_water
+        for sq in place.neighbors:
+            sq_h = sq.height
+            if my_height > sq_h or (
+                my_height == sq_h
                 and (
                     self._can_go(sq, ignore_forests=True)
                     or sq.is_water
-                    or self.place.is_water
+                    or place_is_water
                 )
             ):
                 result.append(sq)
         return result
 
+    # Per-tick observation cache (class defaults avoid hasattr).
+    _obs_cache_time = -1
+    _obs_cache_place = None
+    _obs_cache = None
+
     def get_observed_squares_optimized(self):
-        """获取单位能观察到的方格的优化版本
-
-        同时计算严格和非严格模式的观察方格，避免重复计算
-
-        Returns:
-            dict: 包含两个键'strict'和'all'的字典，分别表示严格模式和非严格模式的观察方格集合
-        """
-        # 使用原始版本的简单逻辑
-        strict_squares = set(self.get_observed_squares(strict=True))
+        """Strict + non-strict observed squares in one pass (no double _can_go)."""
+        if self.is_inside or self.place is None:
+            empty = set()
+            return {"strict": empty, "all": empty}
+        t = self.world.time
+        place = self.place
+        if (
+            self._obs_cache_time == t
+            and self._obs_cache_place is place
+            and self._obs_cache is not None
+        ):
+            return self._obs_cache
         all_squares = set(self.get_observed_squares(strict=False))
-
-        return {'strict': strict_squares, 'all': all_squares}
+        if self.sight_range < self.world.square_width:
+            strict_squares = {place}
+        else:
+            strict_squares = all_squares
+        result = {"strict": strict_squares, "all": all_squares}
+        self._obs_cache_time = t
+        self._obs_cache_place = place
+        self._obs_cache = result
+        return result

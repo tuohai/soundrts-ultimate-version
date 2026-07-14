@@ -1,6 +1,5 @@
 from .lib.nofloat import square_of_distance
 
-
 def should_capture_on_contact(unit, target):
     """夺取阈值 100 且目标仍为真实敌方（非强制攻击下的伪敌人）。"""
     if getattr(target, "capture_hp_threshold", 0) != 100:
@@ -102,9 +101,16 @@ class MoveXYAction(Action):
 
 
 class AttackAction(Action):
-    def update(self):  # without moving to another square
+    def update(self):
         unit = self.unit
         target = self.target
+        if (
+            target is None
+            or getattr(target, "place", None) is None
+            or getattr(target, "hp", 0) <= 0
+        ):
+            self.complete()
+            return
         # 夺取阈值为 100 的敌方建筑“接触即占领”：直接占领而非攻击。
         # 单位移动到目标处后直接转变其阵营，全程不造成伤害、不播放攻击动作/音效。
         if should_capture_on_contact(unit, target):
@@ -117,13 +123,60 @@ class AttackAction(Action):
             else:
                 self.complete()
             return
-        if unit.speed and target in unit.place.objects:
+        # 同格：靠近并瞄准
+        if unit.speed and unit.place is not None and target in unit.place.objects:
             unit.action_reach_and_aim()
-        elif unit.can_attack(target):
+            return
+        # 跨格但仍在射程内（远程等）：直接开火
+        if unit.can_attack(target):
             unit.aim(target)
-        else:
-            self.complete()
-            
+            return
+        # 追击模式：保持 AttackAction，经出口路径持续跟随，不下 go 命令
+        if (
+            getattr(unit, "ai_mode", None) == "chase"
+            and unit.speed > 0
+            and hasattr(unit, "is_an_enemy")
+            and unit.is_an_enemy(target)
+        ):
+            if self._chase_toward(unit, target):
+                return
+        self.complete()
+
+    def _chase_toward(self, unit, target):
+        """跨格追击：用 next_stage 走出口，不替换当前 AttackAction。"""
+        next_stage = getattr(unit, "next_stage", None)
+        if not callable(next_stage):
+            return False
+        stage = next_stage(target)
+        if stage is None:
+            return False
+        if stage is target:
+            if unit.place is not None and target in unit.place.objects:
+                unit.action_reach_and_aim()
+                return True
+            return False
+        # 与下达 go 时 stop() 清 hold 同效：否则 position_to_hold 会禁止离开当前格
+        if getattr(unit, "position_to_hold", None) is not None:
+            unit.position_to_hold = None
+        # 出口：与 MoveAction 相同，朝对面格中心走以完成跨格
+        other_side = getattr(stage, "other_side", None)
+        if other_side is not None:
+            if unit.place is getattr(stage, "place", None):
+                destination = getattr(other_side, "place", None)
+                if destination is None:
+                    return False
+                unit.go_to_xy(destination.x, destination.y)
+                return True
+            # 出口不在当前格时，尽量朝出口坐标靠近
+            if hasattr(stage, "x") and hasattr(stage, "y"):
+                unit.go_to_xy(stage.x, stage.y)
+                return True
+            return False
+        if hasattr(stage, "x") and hasattr(stage, "y"):
+            unit.go_to_xy(stage.x, stage.y)
+            return True
+        return False
+
     def complete(self):
         # 重置冲锋状态，但保持冲锋的距离条件限制
         if hasattr(self.unit, 'reset_charge_state'):

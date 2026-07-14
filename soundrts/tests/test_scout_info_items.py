@@ -45,9 +45,12 @@ def _is_ground_item(m):
 
 
 def _must_report_resource(interface, m):
+    place = getattr(m, "place", None)
+    if place is None:
+        return False
     resource_type = getattr(m, "resource_type", None)
-    if resource_type is not None and m.place not in interface._known_resource_places:
-        interface._known_resource_places.add(m.place)
+    if resource_type is not None and place not in interface._known_resource_places:
+        interface._known_resource_places.add(place)
         return True
     if _is_ground_item(m) and m.id not in interface._known_item_ids:
         interface._known_item_ids.add(m.id)
@@ -101,3 +104,48 @@ def test_must_report_resource_skips_inventory_item_with_owner():
     )
 
     assert _must_report_resource(interface, owned) is False
+
+
+def test_must_report_resource_skips_missing_place():
+    interface = _StubInterface()
+    item = _StubModel(id=7, place=None, default_order="pickup", player=None)
+    deposit = _StubModel(id=8, place=None, resource_type="resource1")
+
+    assert _must_report_resource(interface, item) is False
+    assert _must_report_resource(interface, deposit) is False
+
+
+def test_scout_info_if_needed_skips_none_place():
+    from types import SimpleNamespace
+
+    from soundrts.clientgame.game_navigation import scout_info_if_needed
+
+    spoken = []
+
+    class Place:
+        title = ["a1"]
+
+    interface = SimpleNamespace(
+        scout_info={None, Place()},
+        previous_scout_info=None,
+    )
+
+    import soundrts.clientgame.game_navigation as nav
+    import soundrts.config as config
+    import soundrts.clientgame.game_unit_control as uc
+
+    orig_summary = uc.place_summary
+    orig_info = nav.voice.info
+    orig_verbosity = config.verbosity
+    try:
+        config.verbosity = "scout_info"
+        uc.place_summary = lambda *_a, **_k: ["goldmine"]
+        nav.voice.info = lambda msg: spoken.append(msg)
+        scout_info_if_needed(interface)
+    finally:
+        uc.place_summary = orig_summary
+        nav.voice.info = orig_info
+        config.verbosity = orig_verbosity
+
+    assert len(spoken) == 1
+    assert interface.scout_info == set()

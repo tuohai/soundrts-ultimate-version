@@ -18,7 +18,43 @@ class _HuntableTarget:
         self.player = types.SimpleNamespace(neutral=True)
 
 
-def test_worker_default_order_on_huntable_is_attack():
+def test_attack_order_completes_when_huntable_target_gone():
+    """击杀动物后目标消失：应 complete，不要 order_impossible 滴声。"""
+    from soundrts.worldorders.movement import AttackOrder
+
+    class _Player:
+        def updated_target(self, target):
+            return None  # 目标已删除
+
+    class _Unit:
+        notifications = []
+        orders = []
+        is_idle = True
+        action = None
+        distance_to_goal = 0
+
+        def __init__(self):
+            self.player = _Player()
+            self.notifications = []
+
+        def notify(self, msg, *_a, **_k):
+            self.notifications.append(msg)
+
+        def is_an_enemy(self, _t):
+            return True
+
+        def _near_enough_to_aim(self, _t):
+            return True
+
+    unit = _Unit()
+    order = AttackOrder(unit, ["deer1"])
+    order.target = types.SimpleNamespace(id="deer1", hp=0, is_vulnerable=True)
+    unit.orders = [order]
+    order.execute()
+
+    assert order.is_complete
+    assert not getattr(order, "is_impossible", False)
+    assert "order_impossible" not in unit.notifications
     worker = Worker.__new__(Worker)
     worker._basic_skills = {"go", "attack", "gather", "repair", "block", "join_group", "pickup", "drop"}
     worker.orders = []
@@ -29,7 +65,8 @@ def test_worker_default_order_on_huntable_is_attack():
 
 def test_is_an_enemy_honors_imperative_attack_order():
     src = Path("soundrts/worldunit/worldcreature.py").read_text(encoding="utf-8")
-    assert "if self._player_ordered_attack_on(c):" in src
+    assert "_player_ordered_attack_on(c)" in src
+    assert 'kw == "attack"' in src or 'keyword == "attack"' in src
 
 
 def test_flee_from_attacker_moves_away():
@@ -171,3 +208,41 @@ def test_computer_ai_herding_helpers():
     assert "herd_target = self._choose_herd_target(u)" in src
     assert 'u.take_order(["herd", herd_target.id], imperative=True)' in src
     assert "getattr(o, \"herdable\", 0) and self._worker_can_herd(worker)" in src
+
+
+def test_attack_order_completes_when_huntable_target_gone():
+    """击杀动物后目标消失：应 complete，不要 order_impossible 滴声。"""
+    from soundrts.worldorders.movement import AttackOrder
+
+    class _Player:
+        def updated_target(self, target):
+            return None  # 目标已删除
+
+    class _Unit:
+        is_idle = True
+        action = None
+        distance_to_goal = 0
+
+        def __init__(self):
+            self.player = _Player()
+            self.notifications = []
+            self.orders = []
+
+        def notify(self, msg, *_a, **_k):
+            self.notifications.append(msg)
+
+        def is_an_enemy(self, _t):
+            return True
+
+        def _near_enough_to_aim(self, _t):
+            return True
+
+    unit = _Unit()
+    order = AttackOrder(unit, ["deer1"])
+    order.target = types.SimpleNamespace(id="deer1", hp=0, is_vulnerable=True)
+    unit.orders = [order]
+    order.execute()
+
+    assert order.is_complete
+    assert not getattr(order, "is_impossible", False)
+    assert "order_impossible" not in unit.notifications

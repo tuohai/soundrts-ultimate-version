@@ -15,9 +15,9 @@ def path_plane(unit):
 def is_passable_land(place):
     return (
         place is not None
-        and getattr(place, "is_ground", False)
-        and not getattr(place, "is_water", False)
-        and not getattr(place, "high_ground", False)
+        and place.is_ground
+        and not place.is_water
+        and not place.high_ground
     )
 
 
@@ -25,20 +25,24 @@ def is_land_shore(place):
     if not is_passable_land(place):
         return False
     for neighbor in place.strict_neighbors:
-        if getattr(neighbor, "is_water", False):
+        if neighbor.is_water:
             return True
     return False
 
 
 def water_neighbors_of_land(land_place):
     for neighbor in land_place.strict_neighbors:
-        if getattr(neighbor, "is_water", False):
+        if neighbor.is_water:
             yield neighbor
 
 
 def gather_shore_lands_near(from_place, max_hops=12):
     if from_place is None:
         return []
+    # Shore topology is static for a square during a game; cache per place.
+    cache = getattr(from_place, "_shore_lands_cache", None)
+    if cache is not None and cache[0] == max_hops:
+        return list(cache[1])
     shores = []
     seen = {id(from_place)}
     queue = [(from_place, 0)]
@@ -51,11 +55,13 @@ def gather_shore_lands_near(from_place, max_hops=12):
         if hops >= max_hops:
             continue
         for neighbor in place.neighbors:
-            if id(neighbor) in seen or not is_passable_land(neighbor):
+            nid = id(neighbor)
+            if nid in seen or not is_passable_land(neighbor):
                 continue
-            seen.add(id(neighbor))
+            seen.add(nid)
             queue.append((neighbor, hops + 1))
-    return shores
+    from_place._shore_lands_cache = (max_hops, shores)
+    return list(shores)
 
 
 def find_amphibious_crossing(start_place, dest_place, player):

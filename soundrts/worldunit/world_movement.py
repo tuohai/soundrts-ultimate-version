@@ -125,6 +125,10 @@ class CreatureMovement(Entity):
         x, y = self._future_coords(rotation, target_d)
         return abs(rotation) + self._already_walked(x, y) * 200
 
+    # Round 4 / perf: avoid hasattr on _can_go hot path
+    _can_go_cache = None
+    _can_go_cache_timestamp = 0
+
     def _can_go(self, new_place, ignore_blockers=False, ignore_forests=False):
         # 对空中单位的快速检查
         if self.airground_type != "ground":
@@ -134,24 +138,21 @@ class CreatureMovement(Entity):
         if new_place is self.place:
             return True
 
-        # 使用缓存系统避免重复计算
-        if not hasattr(self, '_can_go_cache'):
-            self._can_go_cache = {}
-            self._can_go_cache_timestamp = self.world.time
-
-        # 清理过期缓存
+        cache = self._can_go_cache
         current_time = self.world.time
-        if current_time - self._can_go_cache_timestamp > 5000:  # 每5秒清理一次
-            self._can_go_cache = {}
+        if cache is None:
+            cache = {}
+            self._can_go_cache = cache
+            self._can_go_cache_timestamp = current_time
+        elif current_time - self._can_go_cache_timestamp > 5000:
+            cache = {}
+            self._can_go_cache = cache
             self._can_go_cache_timestamp = current_time
 
-        # 创建缓存键
-        cache_key = (new_place.id if hasattr(new_place, 'id') else id(new_place),
-                     ignore_blockers, ignore_forests)
-
-        # 检查缓存
-        if cache_key in self._can_go_cache:
-            return self._can_go_cache[cache_key]
+        cache_key = (new_place.id, ignore_blockers, ignore_forests)
+        hit = cache.get(cache_key)
+        if hit is not None:
+            return hit
 
         from ..world_build_rules import square_has_construction_scaffold
 
@@ -159,7 +160,7 @@ class CreatureMovement(Entity):
             square_has_construction_scaffold(self.place)
             and square_has_construction_scaffold(new_place)
         ):
-            self._can_go_cache[cache_key] = False
+            cache[cache_key] = False
             return False
 
         # 实际检查逻辑
@@ -216,8 +217,12 @@ class CreatureMovement(Entity):
         self.walked.append((self.place, self.x, self.y, 5))
 
     def _must_hold(self):
+        # defensive：可撤；chase：必须允许跨格追击（不下 go，不会走 stop 清 hold）
         return (
-                not (self.player.smart_units or self.ai_mode == "defensive")
+                not (
+                    self.player.smart_units
+                    or self.ai_mode in ("defensive", "chase")
+                )
                 and self.position_to_hold is not None
                 and self.position_to_hold.contains(self.x, self.y)
         )

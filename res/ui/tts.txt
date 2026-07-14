@@ -1536,57 +1536,13 @@
 5699 hill
 5700 air is impassable
 5701 cannot pass
+5702 threat
+5703 threat multiplier
+5704 threat versus
+5705 threat multiplier versus
 4371	occupied
 4511	slow
 4638	manual production
 4654	gold mine building
 4662	plain
 4663	open ground
-5702 urban planning
-5703 civic administration
-5704 foreign service
-5705 tradition policy
-5706 commerce policy
-5707 diplomacy policy
-5708 arcane bolt
-5709 whirlwind
-5710 meteor shower
-5711 hero
-5712 cities
-5713 culture
-5714 diplomacy points
-5715 not enough diplomacy points
-5716 culture status
-5717 diplomacy status
-5718 purchase tile
-5719 dispatch worker to gold
-5720 dispatch worker to wood
-5721 dispatch worker to food
-5722 dispatch worker to culture
-5723 build mine
-5724 build lumber mill
-5725 build farm
-5726 activate tradition policy
-5727 activate commerce policy
-5728 activate diplomacy policy
-5729 tile purchased
-5730 worker dispatched to tile
-5731 mine built
-5732 lumber mill built
-5733 farm built
-5734 city yield
-5735 yields settle every sixty seconds
-5736 territory flag
-5737 mine
-5738 lumber mill
-5739 farm
-5740 build trading post
-5741 trading post
-5742 trading post built
-5743 buy wood
-5744 buy food
-5745 buy open borders
-5746 trade successful
-5747 trade declined
-5748 open borders established
-5749 already allied with this faction

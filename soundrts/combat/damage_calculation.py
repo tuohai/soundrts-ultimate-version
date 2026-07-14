@@ -2,6 +2,11 @@ import os
 import random
 
 from ..lib.nofloat import int_distance as _int_distance, to_int
+from ..lib.square_terrain_rules import (
+    any_terrain_defines as _any_terrain_defines,
+    terrain_list_stat_percent_delta as _terrain_list_stat_percent_delta,
+    terrain_unit_stat_percent_delta as _terrain_unit_stat_percent_delta,
+)
 from ..worldaction import MoveAction
 
 # 战斗算术热点的 Cython 加速器；不可用时回退纯 Python
@@ -38,14 +43,36 @@ class DamageCalculationMixin:
     """
     处理基础伤害计算相关的功能
     """
+    # Class defaults so mixin-only mocks (no Entity) still work.
+    _attacker_terrain_place = None
+    _attacker_terrain_x = None
+    _attacker_terrain_y = None
+    _attacker_terrain_type = None
+    mdg_on_terrain = ()
+    rdg_on_terrain = ()
+
     def _get_attacker_terrain_type(self):
         """返回攻击者当前所在格的地形类型名。"""
         place = self.place
         if not place:
             return None
+        x = self.x
+        y = self.y
+        if (
+            place is self._attacker_terrain_place
+            and x == self._attacker_terrain_x
+            and y == self._attacker_terrain_y
+        ):
+            return self._attacker_terrain_type
         if hasattr(place, "type_name_at"):
-            return place.type_name_at(self.x, self.y)
-        return getattr(place, "type_name", None)
+            terrain_type = place.type_name_at(x, y)
+        else:
+            terrain_type = getattr(place, "type_name", None)
+        self._attacker_terrain_place = place
+        self._attacker_terrain_x = x
+        self._attacker_terrain_y = y
+        self._attacker_terrain_type = terrain_type
+        return terrain_type
 
     def _get_on_terrain_modifier(self, terrain_list, base_value: int = 0) -> int:
         """从 [地形, 修正, ...] 列表按 *base_value* 的百分比读取修正值。"""
@@ -54,18 +81,16 @@ class DamageCalculationMixin:
         terrain_type = self._get_attacker_terrain_type()
         if not terrain_type:
             return 0
-        from ..lib.square_terrain_rules import terrain_list_stat_percent_delta
-
-        return terrain_list_stat_percent_delta(terrain_type, terrain_list, base_value)
+        return _terrain_list_stat_percent_delta(terrain_type, terrain_list, base_value)
 
     def _get_terrain_unit_modifier(self, prop: str, base_value: int) -> int:
         """从地形 ``*_vs`` 列表按 *base_value* 的百分比读取修正值。"""
+        if not base_value or not _any_terrain_defines(prop):
+            return 0
         terrain_type = self._get_attacker_terrain_type()
         if not terrain_type:
             return 0
-        from ..lib.square_terrain_rules import terrain_unit_stat_percent_delta
-
-        return terrain_unit_stat_percent_delta(terrain_type, self, base_value, prop)
+        return _terrain_unit_stat_percent_delta(terrain_type, self, base_value, prop)
 
     def _get_melee_damage_vs(self, target) -> int:
         """返回对 target 的近战基础伤害（含 vs 修正）.
@@ -81,10 +106,12 @@ class DamageCalculationMixin:
             damage = _cf.compute_damage_vs(self.mdg, self.mdg_vs, target)
         else:
             damage = self._py_get_melee_damage_vs(target)
-        terrain_mod = self._get_on_terrain_modifier(
-            getattr(self, "mdg_on_terrain", ()), damage
-        )
-        terrain_mod += self._get_terrain_unit_modifier("mdg_vs", damage)
+        terrain_mod = 0
+        on_terrain = self.mdg_on_terrain
+        if on_terrain:
+            terrain_mod = self._get_on_terrain_modifier(on_terrain, damage)
+        if _any_terrain_defines("mdg_vs"):
+            terrain_mod += self._get_terrain_unit_modifier("mdg_vs", damage)
         return max(0, damage + terrain_mod)
 
     def _py_get_melee_damage_vs(self, target) -> int:
@@ -118,10 +145,12 @@ class DamageCalculationMixin:
             damage = _cf.compute_damage_vs(self.rdg, self.rdg_vs, target)
         else:
             damage = self._py_get_ranged_damage_vs(target)
-        terrain_mod = self._get_on_terrain_modifier(
-            getattr(self, "rdg_on_terrain", ()), damage
-        )
-        terrain_mod += self._get_terrain_unit_modifier("rdg_vs", damage)
+        terrain_mod = 0
+        on_terrain = self.rdg_on_terrain
+        if on_terrain:
+            terrain_mod = self._get_on_terrain_modifier(on_terrain, damage)
+        if _any_terrain_defines("rdg_vs"):
+            terrain_mod += self._get_terrain_unit_modifier("rdg_vs", damage)
         return max(0, damage + terrain_mod)
 
     def _py_get_ranged_damage_vs(self, target) -> int:

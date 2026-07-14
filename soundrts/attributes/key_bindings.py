@@ -222,8 +222,6 @@ class KeyBindings:
         special_attr_map = {
             'HP': 'hp',
             'MANA': 'mana',
-            'RMG_CULTURE': 'culture_points',
-            'RMG_DIPLOMACY_POINTS': 'diplomacy_points',
             'MELEE_DAMAGE': 'mdg',
             'RANGE_DAMAGE': 'rdg',
             'MELEE_DEFENSE': 'melee_armor',

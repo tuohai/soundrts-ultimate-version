@@ -159,8 +159,6 @@ GLOBAL_PRIMARY_CATALOG: List[Tuple[str, list]] = [
     ("global.resource_status.resource2", list(mp.HOTKEY_RESOURCE2_STATUS)),
     ("global.resource_status.resource3", list(mp.HOTKEY_RESOURCE3_STATUS)),
     ("global.population_status", list(mp.HOTKEY_POPULATION_STATUS)),
-    ("global.culture_status", list(mp.HOTKEY_CULTURE_STATUS)),
-    ("global.diplomacy_status", list(mp.HOTKEY_DIPLOMACY_STATUS)),
     ("global.ui_escape", list(mp.HOTKEY_UI_ESCAPE)),
     ("global.toggle_selection_mode", list(mp.HOTKEY_TOGGLE_SELECTION_MODE)),
     ("global.toggle_action_mode", list(mp.HOTKEY_TOGGLE_ACTION_MODE)),

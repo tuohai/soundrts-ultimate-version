@@ -34,9 +34,10 @@ cpdef int compute_decide_interval(int ai_mode_id, int speed,
     """
     cdef int interval
     if ai_mode_id == AI_MODE_OFFENSIVE or ai_mode_id == AI_MODE_CHASE:
-        interval = 100
-    elif ai_mode_id == AI_MODE_DEFENSIVE:
+        # Was 100; 150 cuts decide volume ~33% with acceptable AI latency.
         interval = 150
+    elif ai_mode_id == AI_MODE_DEFENSIVE:
+        interval = 200
     else:
         interval = 400
 

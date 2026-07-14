@@ -130,6 +130,15 @@ def is_visible(interface, o):
     # 检查单位是否在当前区域（用 short_title：雾中记忆对象 title 含战云但 short_title 为空时不应 Tab 选中）
     if not o.is_in(interface.place) or not o.short_title:
         return False
+
+    # 从未探索过的空白格：不可 Tab / 选中任何对象。
+    # （感知系统会把小径对侧出口预写入记忆，否则会在未知区域 Tab 出「向南小径」等）
+    place = interface.place
+    if place is not None:
+        scouted = getattr(interface, "scouted_squares", None) or ()
+        scouted_before = getattr(interface, "scouted_before_squares", None) or ()
+        if place not in scouted and place not in scouted_before:
+            return False
         
     if interface.immersion:
         if o.id in interface.group:
@@ -479,6 +488,16 @@ def summary(interface, group, brief=False):
 
 
 def place_summary(interface, place, me=True, zoom=None, brief=False):
+    # 从未探索过的方格视为空白：不汇总小径/资源等（即使对侧出口曾被预记忆）
+    scouted = getattr(interface, "scouted_squares", None) or ()
+    scouted_before = getattr(interface, "scouted_before_squares", None) or ()
+    if (
+        place is not None
+        and place not in scouted
+        and place not in scouted_before
+    ):
+        return []
+
     enemies = []
     neutrals = []  # 中立 creep（computer_only ... neutral）单独归类，标注为"中立"而不是"敌人"
     animals = []  # 狩猎动物（鹿、羊等），标注为"动物"而非"中立/NPC"

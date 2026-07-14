@@ -890,9 +890,25 @@ class EntityViewEvents:
 
     def on_attributes_changed(self):
         """处理属性变化事件"""
-        # 这个事件用来通知客户端刷新属性界面
-        # 具体的刷新逻辑由游戏界面处理
-        pass
+        interface = getattr(self, "interface", None)
+        if interface is None:
+            return
+        if not getattr(interface, "_in_attributes_screen", False):
+            return
+        unit = getattr(interface, "_attributes_screen_unit", None)
+        if unit is None:
+            return
+        # 当前属性单位（或其 model）与本实体匹配时刷新
+        if unit is not self and getattr(unit, "model", None) is not self.model:
+            if getattr(unit, "id", None) != getattr(self, "id", None):
+                return
+        display = getattr(getattr(interface, "main_display", None), "display_interface", None)
+        if display is None:
+            return
+        # 强制按新地形/属性重建
+        interface._attrs_terrain_type = object()
+        if display.refresh_attributes_for_terrain_if_needed():
+            display._display_current_attribute()
 
     def on_launch_charge_mdg(self, *args):
         """处理发起近战冲锋攻击

@@ -26,40 +26,6 @@ def resources(interface):
     return [int(x / PRECISION) for x in interface.player.resources]
 
 
-def strategic_systems_active(interface):
-    world = getattr(interface, "world", None)
-    return bool(getattr(world, "rmg_strategic_systems", False))
-
-
-def culture_points(interface):
-    player = getattr(interface, "player", None)
-    if player is None:
-        return 0
-    from ..rmg_systems import initialize_player
-
-    initialize_player(player)
-    return int(getattr(player, "culture_points", 0) or 0)
-
-
-def diplomacy_points(interface):
-    player = getattr(interface, "player", None)
-    if player is None:
-        return 0
-    from ..rmg_systems import initialize_player
-
-    initialize_player(player)
-    return int(getattr(player, "diplomacy_points", 0) or 0)
-
-
-def _is_local_playing_human(interface):
-    player = getattr(interface, "player", None)
-    if player is None:
-        return False
-    if getattr(player, "_is_pure_spectator", False):
-        return False
-    return True
-
-
 def available_population(interface):
     return interface.player.available_population
 
@@ -116,22 +82,6 @@ def cmd_population_status(interface):
         + nb2msg_float(interface.available_population)
         + style.get("parameters", "population_title")
     )
-
-
-def cmd_culture_status(interface):
-    """显示文化点（RMG 战略地图）"""
-    if not strategic_systems_active(interface) or not _is_local_playing_human(interface):
-        voice.item(mp.BEEP)
-        return
-    voice.item(nb2msg(culture_points(interface)) + mp.RMG_CULTURE)
-
-
-def cmd_diplomacy_status(interface):
-    """显示外交点（RMG 战略地图）"""
-    if not strategic_systems_active(interface) or not _is_local_playing_human(interface):
-        voice.item(mp.BEEP)
-        return
-    voice.item(nb2msg(diplomacy_points(interface)) + mp.RMG_DIPLOMACY_POINTS)
 
 
 def send_msg_if_playing(interface, msg, update_type=None):
@@ -193,32 +143,6 @@ def send_resource_alerts_if_needed(interface):
                 )
             interface._previous_available_population = interface.available_population
             interface._previous_used_population = interface.used_population
-
-    if strategic_systems_active(interface) and _is_local_playing_human(interface):
-        culture = culture_points(interface)
-        diplomacy = diplomacy_points(interface)
-        prev_culture = getattr(interface, "_previous_culture_points", None)
-        prev_diplomacy = getattr(interface, "_previous_diplomacy_points", None)
-        if prev_culture is None:
-            interface._previous_culture_points = culture
-        elif culture != prev_culture:
-            interface._previous_culture_points = culture
-            if "resources" in config.verbosity and must_be_said(culture):
-                send_msg_if_playing(
-                    interface,
-                    nb2msg(culture) + mp.RMG_CULTURE,
-                    update_type="culture_points",
-                )
-        if prev_diplomacy is None:
-            interface._previous_diplomacy_points = diplomacy
-        elif diplomacy != prev_diplomacy:
-            interface._previous_diplomacy_points = diplomacy
-            if "resources" in config.verbosity and must_be_said(diplomacy):
-                send_msg_if_playing(
-                    interface,
-                    nb2msg(diplomacy) + mp.RMG_DIPLOMACY_POINTS,
-                    update_type="diplomacy_points",
-                )
 
 
 # 过滤器管理
@@ -650,10 +574,7 @@ def srv_alert(interface, s):
 # 导出的函数供其他模块使用
 __all__ = [
     'resources', 'available_population', 'used_population',
-    'strategic_systems_active', 'culture_points', 'diplomacy_points',
-    'cmd_resource_status', 'cmd_population_status',
-    'cmd_culture_status', 'cmd_diplomacy_status',
-    'send_resource_alerts_if_needed',
+    'cmd_resource_status', 'cmd_population_status', 'send_resource_alerts_if_needed',
     'cmd_toggle_side_filter', 'cmd_toggle_type_filter', 'cmd_gamemenu',
     'cmd_toggle_cheatmode', 'cmd_cmd', 'cmd_console', 'cmd_reload_parameters',
     'cmd_change_player', 'cmd_objectives', 'cmd_help', 'direction_to_msg',

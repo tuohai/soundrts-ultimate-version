@@ -787,15 +787,8 @@ def _base_can_train(host):
     return _normalize_train_list(_rules_can_train_dict(_unit_type(host)) or _raw_class_attr(_unit_type(host), "can_train", ()))
 
 
-def _rules_can_research_list(cls):
-    raw = _raw_class_attr(cls, "_rules_can_research", None)
-    if raw:
-        return _normalize_train_list(raw)
-    return _normalize_train_list(_raw_class_attr(cls, "can_research", ()))
-
-
 def _base_can_research(host):
-    return _rules_can_research_list(_unit_type(host))
+    return _raw_class_attr(_unit_type(host), "can_research", ())
 
 
 def _addon_train_grants_for_host(addon, host):
@@ -881,16 +874,6 @@ def effective_can_research(host):
         for name in _addon_research_grants_for_host(addon, host):
             if name not in names:
                 names.append(name)
-    world = getattr(host, "world", None)
-    if getattr(world, "rmg_strategic_systems", False):
-        from .rmg_systems import STRATEGIC_RESEARCH_TYPES, is_city
-
-        if is_city(host):
-            for name in STRATEGIC_RESEARCH_TYPES:
-                if rules.unit_class(name) is not None and name not in names:
-                    names.append(name)
-    else:
-        names = [name for name in names if not str(name).startswith("rmg_")]
     return tuple(names)
 
 
@@ -1473,10 +1456,6 @@ def finalize_new_building(building, site=None):
     _auto_start_gas_production(building)
     if getattr(building, "type_name", None) == "hatchery":
         fill_hatchery_larva(building, notify=False)
-    from .rmg_systems import is_rmg_improvement_type, register_completed_rmg_improvement
-
-    if is_rmg_improvement_type(getattr(building, "type_name", None)):
-        register_completed_rmg_improvement(building)
 
 
 def _auto_start_gas_production(building):

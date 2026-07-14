@@ -94,7 +94,30 @@ Independientes: p. ej. solo los caballeros obtienen ``can_auto_explore 1``, o ``
      - mantener posición; contraatacar solo si está habilitado
    * - ``chase``
      - Perseguir
-     - perseguir unidades hostiles visibles hasta el alcance
+     - mantener un solo ``AttackAction`` sobre el enemigo fijado y seguir por salidas entre casillas (sin ``go`` automático) hasta estar a alcance
+
+2.1.1 Punto de retención (``position_to_hold``) y salir de casilla
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Las unidades nacen con la casilla actual como ``position_to_hold``. Dentro de esa zona,
+``_must_hold`` impide salir:
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - Modo IA
+     - ¿Limitado por ``position_to_hold``?
+   * - ``offensive`` / ``guard``
+     - Sí (no salen solas sin una orden que haga ``stop()``)
+   * - ``defensive``
+     - No (pueden retirarse)
+   * - ``chase``
+     - No (se limpia el hold al cruzar casillas)
+
+
+Las órdenes ``go`` / ``attack`` del jugador llaman ``stop()`` al primer update y limpian
+``position_to_hold``.
 
 La patrulla es un comando con ruta, no un modo de IA. No puedes escribir ``ai_mode patrol``. Usa ``guard`` o ``chase`` para efectos similares.
 
@@ -120,8 +143,10 @@ Unidades del jugador en modo ``offensive``, ``defensive`` o ``chase``:
 
 - no autoatacan unidades neutrales (bichos / PNJ / fauna `computer_only ... neutral`);
 - no huyen por neutrales (el modo defensivo solo sopesa amenazas hostiles reales);
-- para luchar contra un neutral, emite un ataque forzado (``imperative`` — p. ej. Ctrl+clic en la unidad;
-  el motor convierte el ``go`` imperativo en ``attack``).
+- ``go`` por defecto / normal sobre un neutral (no imperativo) solo mueve, sin AttackAction;
+- el orden por defecto sobre ``is_huntable`` sigue siendo ``attack`` y hace daño;
+- para que la IA trate un creep / PNJ neutral como objetivo automático, emite un ataque forzado
+  (``imperative`` — p. ej. Ctrl+clic; el motor convierte el ``go`` imperativo en ``attack``).
 
 Voz: los animales de caza (``is_huntable`` / ``herdable``, p. ej. ciervo, oveja) se anuncian como
 
@@ -234,6 +259,10 @@ A: Se ignora (velocidad 0).
 
 ``Q: ¿``auto_gather`` en un soldado?``  
 A: Solo tiene sentido en trabajadores.
+
+P: ¿En qué se diferencia chase del antiguo salto con ``go`` automático?  
+A: Ahora mantiene el ataque y sigue entre casillas; no está limitado por ``position_to_hold``.
+Ofensivo / guardia sí lo están, salvo que el jugador ordene moverse.
 
 P: ¿Las unidades ofensivas/persecución autoatacarán PNJ neutrales?  
 A: No. Los modos ofensivo, defensivo y persecución ignoran a los neutrales para autoataque y huida;

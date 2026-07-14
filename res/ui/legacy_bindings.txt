@@ -20,8 +20,6 @@ z: resource_status resource1
 x: resource_status resource2
 SHIFT Z: resource_status resource3
 c: population_status
-b: culture_status
-SHIFT B: diplomacy_status
 ALT V: unit_attributes_screen
 SHIFT V: toggle_gear_screen
 

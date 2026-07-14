@@ -1926,61 +1926,6 @@ class TriggersMixin:
             self.world._map_flags = set()
         self.world._map_flags.add(args[0])
 
-    def lang_rmg_strategic_tick(self, unused_args):
-        """Produce city/tile yields plus culture and diplomacy points."""
-        from ..rmg_systems import format_yield_announcement, strategic_tick
-
-        summary = strategic_tick(self)
-        if summary["cities"] and self.is_local_human():
-            self.send_voice_important(format_yield_announcement(summary))
-        return summary
-
-    def lang_rmg_has_culture(self, args):
-        """Condition: this player has at least the requested culture."""
-        if not args:
-            return False
-        from ..rmg_systems import initialize_player
-
-        initialize_player(self)
-        try:
-            return self.culture_points >= int(args[0])
-        except (TypeError, ValueError):
-            return False
-
-    def lang_rmg_has_diplomacy(self, args):
-        """Condition: this player has at least the requested diplomacy points."""
-        if not args:
-            return False
-        from ..rmg_systems import initialize_player
-
-        initialize_player(self)
-        try:
-            return self.diplomacy_points >= int(args[0])
-        except (TypeError, ValueError):
-            return False
-
-    def lang_rmg_grant_culture(self, args):
-        if not args:
-            return
-        from ..rmg_systems import initialize_player
-
-        initialize_player(self)
-        try:
-            self.culture_points += max(0, int(args[0]))
-        except (TypeError, ValueError):
-            return
-
-    def lang_rmg_grant_diplomacy(self, args):
-        if not args:
-            return
-        from ..rmg_systems import initialize_player
-
-        initialize_player(self)
-        try:
-            self.diplomacy_points += max(0, int(args[0]))
-        except (TypeError, ValueError):
-            return
-
     @staticmethod
     def _rmg_ruin_disc_flag(ruin_flag, player_id) -> str:
         return f"{ruin_flag}_disc_{player_id}"

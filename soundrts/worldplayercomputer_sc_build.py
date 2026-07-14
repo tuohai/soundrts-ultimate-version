@@ -86,7 +86,12 @@ def worker_can_build(worker, type_name):
 
 
 def _peasant_class(ai):
-    return rules.unit_class(ai.equivalent("peasant"))
+    name = None
+    if hasattr(ai, "_primary_worker_type_name"):
+        name = ai._primary_worker_type_name()
+    if not name and hasattr(ai, "equivalent"):
+        name = ai.equivalent("peasant")
+    return rules.unit_class(name) if name else None
 
 
 def _builders_place(ai):
@@ -212,12 +217,17 @@ def build_site_valid(ai, building_type, place, x, y):
 
 
 def townhall_place(ai):
-    townhall = ai.equivalent("townhall")
-    for u in ai.units:
-        if getattr(u, "type_name", None) == townhall:
-            place = getattr(u, "place", None)
-            if _is_square_place(place):
-                return place
+    base_names = ()
+    if hasattr(ai, "_main_base_type_names"):
+        base_names = ai._main_base_type_names()
+    if not base_names and hasattr(ai, "equivalent"):
+        base_names = (ai.equivalent("townhall"),)
+    for base_name in base_names:
+        for u in ai.units:
+            if getattr(u, "type_name", None) == base_name:
+                place = getattr(u, "place", None)
+                if _is_square_place(place):
+                    return place
     return None
 
 

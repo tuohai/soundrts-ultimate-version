@@ -1,6 +1,6 @@
 import os
 
-from ..lib.nofloat import int_distance, square_of_distance
+from ..lib.nofloat import PRECISION, int_distance, square_of_distance
 from ..worldunit.world_public_method import ground_or_air, matches_attack_targets
 from ..worldaction import AttackAction
 
@@ -76,13 +76,63 @@ class TargetingMixin:
         target._capture_claimer_id = self.id
         target._capture_claim_time = self.world.time
 
+    def menace_versus(self, observer):
+        """Threat of ``self`` when ``observer`` is choosing targets.
+
+        Lookup order on this unit's rules:
+        1. ``menace_vs`` vs observer type / is_a (absolute)
+        2. ``menace_mult_vs`` vs observer → auto multi-dim base × weight
+        3. else ``self.menace`` (absolute menace / menace_mult / auto score)
+        """
+        obs_type = getattr(observer, "type_name", None)
+        obs_isa = getattr(observer, "expanded_is_a", None)
+        vs = getattr(self, "menace_vs", None)
+        if vs:
+            v = _vs_lookup(vs, obs_type, obs_isa)
+            if v is not None:
+                return v
+        mult_vs = getattr(self, "menace_mult_vs", None)
+        if mult_vs:
+            m = _vs_lookup(mult_vs, obs_type, obs_isa)
+            if m is not None:
+                if hasattr(self, "_auto_combat_menace_base"):
+                    base = self._auto_combat_menace_base()
+                else:
+                    mdg = getattr(self, "mdg", 0) or 0
+                    rdg = getattr(self, "rdg", 0) or 0
+                    base = mdg if mdg > rdg else rdg
+                    if not base:
+                        tc = getattr(self, "transport_capacity", 0) or 0
+                        if tc:
+                            base = tc * PRECISION * 2
+                if not base:
+                    return 0
+                return base * m // PRECISION
+        return self.menace
+
     def _choose_enemy(self, place):
+        # 1.3.8.1-style: sort by menace (rules may override auto damage threat).
+        # Same-square object scan: idle perception throttle must not leave an
+        # empty known_enemies list while hostiles share the square.
         known = self.player.known_enemies(place)
         if not known:
             for place in place.strict_neighbors:
                 known = self.player.known_enemies(place)
                 if known:
                     break
+        if not known and place is self.place:
+            local = []
+            for obj in place.objects:
+                if (
+                    obj.player is not None
+                    and obj.is_vulnerable
+                    and not obj.is_inside
+                    and obj.hp > 0
+                    and self.is_an_enemy(obj)
+                    and not self._is_neutral_target(obj)
+                ):
+                    local.append(obj)
+            known = local
         reachable_enemies = [x for x in known if self.can_attack(x)]
         if reachable_enemies:
             player = self.player
@@ -94,13 +144,16 @@ class TargetingMixin:
 
             def _enemy_sort_key(enemy):
                 dist2 = square_of_distance(self.x, self.y, enemy.x, enemy.y)
+                threat = enemy.menace_versus(self) if hasattr(
+                    enemy, "menace_versus"
+                ) else enemy.menace
                 if skill > 0:
                     score = (
                         self._get_vs_damage_bonus(enemy) * skill
-                        + enemy.menace * (100 - skill)
+                        + threat * (100 - skill)
                     )
                     return (-score, dist2, enemy.id)
-                return (-enemy.menace, dist2, enemy.id)
+                return (-threat, dist2, enemy.id)
 
             reachable_enemies.sort(key=_enemy_sort_key)
             # 按优先级遍历：对“接触即占领”的敌方建筑，若已有其他单位在占领中

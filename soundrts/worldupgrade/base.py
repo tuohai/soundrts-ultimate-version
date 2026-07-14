@@ -19,15 +19,6 @@ class Upgrade(CostEffectsMixin, AttributeEffectsMixin, ProductionEffectsMixin, G
     requirements = ()
     population_cost = 0
     effect = None
-    culture_cost = 0
-    rmg_policy = 0
-    rmg_trade = 0
-    rmg_trade_id = ""
-    rmg_trade_pay = ()
-    rmg_trade_gain = ()
-    rmg_trade_diplomacy_cost = 0
-    rmg_trade_alliance = 0
-    rmg_trade_cooldown = 0
     is_a = ()  # 添加is_a支持
     expanded_is_a = set()  # 添加expanded_is_a支持
     can_use = ()  # 添加can_use支持，表示科技可以使用的其他科技
@@ -271,10 +262,6 @@ class Upgrade(CostEffectsMixin, AttributeEffectsMixin, ProductionEffectsMixin, G
         # 记录升级
         if cls.type_name not in player.upgrades:
             player.upgrades.append(cls.type_name)
-        if getattr(cls, "rmg_policy", 0):
-            from ..rmg_systems import activate_policy
-
-            activate_policy(player, cls.type_name)
             
         # 新增：科技加入后再次为现有单位应用效果（带去重，确保仅应用新等级且仅限有权限单位）
         for unit in player.units:

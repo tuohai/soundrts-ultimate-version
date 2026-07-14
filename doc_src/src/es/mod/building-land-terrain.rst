@@ -167,6 +167,8 @@ Además de por cuadrado ``terrain_speed``, las definiciones de unidad pueden anu
 
 Golpea/esquiva en terreno **objetivo** (existente): ``mdg_cover_on_terrain``, ``rdg_cover_on_terrain``, ``mdg_dodge_on_terrain``, ``rdg_dodge_on_terrain``.
 
+**Pantalla de atributos (Alt+V):** muestra las líneas ``*_on_terrain`` / carga de la unidad, y las lecturas en vivo de daño / enfriamiento / velocidad incluyen ``*_vs`` del terreno de la casilla actual más ``*_on_terrain`` (``*_vs`` de terreno = porcentaje decimal; ``speed_on_terrain`` sigue siendo absoluto).
+
 **Ejemplo: caballero debilitado en un pantano:**
 
 .. code-block:: text

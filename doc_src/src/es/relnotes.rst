@@ -4,46 +4,67 @@ Notas de la versión
 
 .. contents::
 
-1.4.5.1
+1.4.5.2
 -------
 
-**Mejora: modos de equipo del mapa aleatorio y «uno contra muchos»**
 
-- **Todos contra todos**: cada jugador empieza en una alianza propia (FFA real); ya no se usa el comportamiento por defecto del entrenamiento en el que todas las IA comparten equipo.
-- **Nuevo «uno contra muchos»**: el jugador 1 solo frente al resto aliado; 3 jugadores: todos contra todos / uno contra muchos; 4 jugadores: todos contra todos / 2v2 / uno contra muchos.
-- **Código de compartir**: abreviatura ``o`` para ``one_vs_many``.
-- **Código**: ``randommap.py``, ``randommap_menu.py``, ``msgparts.py``; TTS 5750.
-- **Documentación**: ``player/random-map-play.rst``, ``mod/randommap.rst`` (todos los idiomas).
-- **Pruebas**: ``test_ffa_assigns_unique_alliances``, ``test_one_vs_many_allies_all_except_player1``, ``test_team_modes_for_players``.
+**Mejora: amenaza (menace) multidimensional y overrides opcionales en rules**
 
-**Nuevo: expansión de la capa estratégica RMG (territorio, ciudadanos, cambio de políticas, IA, héroe entre partidas)**
+- El ``menace`` por defecto ya no es solo el daño: combina daño, cobertura/acierto, enfriamiento, preparación (``*_ready``), HP, armadura, esquiva, alcance y velocidad (selección de objetivo y amenaza por casilla).
+- Campos opcionales: ``menace`` / ``menace_vs`` (absoluto), ``menace_mult`` / ``menace_mult_vs`` (peso sobre la base auto). Parámetros: ``menace_armor_weight``, ``menace_dodge_weight``, ``menace_range_weight``, ``menace_speed_weight``, ``menace_hp_ref``.
+- **Docs**: ``mod/modding.rst``, ``mod/aimaking.rst`` (EN/ZH).
 
-- **Territorio urbano y compra de casillas**: cada ciudad posee su casilla; ``rmg_buy_tile`` compra casillas principales adyacentes libres (primera 20 oro, luego +10 por casilla).
-- **Ciudadanos y mejoras**: ``rmg_assign_gold/wood/food/culture`` asignan ciudadanos; ``rmg_build_mine/lumber_mill/farm`` construyen mejoras; las casillas trabajadas entran en ``rmg_strategic_tick`` cada 60 s.
-- **Cambio de políticas en la partida**: máximo dos activas; la tercera reemplaza la más antigua; políticas desbloqueadas se cambian gratis con ``rmg_switch_*``.
-- **Combinaciones de políticas de la IA**: agresiva → comercio + tradición; ≥2 enemigos → diplomacia + comercio; resto → tradición + comercio; investiga la cadena tecnológica en orden.
-- **Persistencia del héroe RMG en solitario**: al terminar guarda y al iniciar restaura nivel y XP máximos en ``rmg_heroes/<mod>/<facción>.json``; no en multijugador/repeticiones.
-- **Código**: ``soundrts/rmg_systems.py``, ``soundrts/rmg_progress.py``, ``soundrts/worldorders/strategic.py``, ``soundrts/worldplayercomputer.py``, ``soundrts/game.py``.
-- **Voz**: ``res/ui/tts.txt`` / ``res/ui-zh/tts.txt`` 5718–5728; títulos en ``res/ui/style.txt``.
-- **Documentación**: ``player/rmg-strategic-systems.rst``, ``player/homm-civ5-play.rst``.
-- **Pruebas**: ``test_rmg_systems.py``.
+**Mejora: persecución continua entre casillas (persecución real)**
 
-**Corrección: tecnología estratégica RMG visible en mapas normales (ayuntamiento)**
+- **Antes**: En modo ``chase``, al salir el enemigo de la casilla la IA emitía ``go`` automáticos a casillas vecinas y volvía a atacar — seguía siendo por órdenes, y la unidad podía quedarse «atacando» sin cruzar.
+- **Ahora**: ``chase`` mantiene un solo ``AttackAction`` sobre el enemigo bloqueado y sigue por salidas entre casillas, sin spam de ``go``.
+- **Hold**: ``position_to_hold`` al nacer sigue bloqueando salir en ofensivo / guardia. Defensivo / persecución están exentos (la persecución limpia el hold al cruzar). ``go`` / ``attack`` normales siguen llamando ``stop()`` y limpian el hold.
+- **Código**: ``worldaction.py``, ``worldunit/world_ai_decision.py``, ``worldunit/world_movement.py``.
+- **Docs**: ``player/unit-default-behavior.rst``.
+- **Pruebas**: ``test_chase_continuous_pursuit.py``.
 
-- **Síntoma**: En mapas clásicos o hechos a mano, el menú de investigación del ayuntamiento seguía mostrando planificación urbana, políticas y otras tecnologías ``rmg_*``.
-- **Causa**: ``rules.txt`` listaba ``rmg_*`` en ``can_research`` del ayuntamiento, y esa lista ocultaba la ``@property`` ``Building.can_research``; el menú leía la lista estática en lugar de ``effective_can_research()``.
-- **Corrección**: (1) ``can_research`` del ayuntamiento solo conserva tecnología genérica como ``hunting_techniques``; los mapas RMG inyectan ``STRATEGIC_RESEARCH_TYPES`` vía ``effective_can_research``. (2) Como ``can_train`` → ``_rules_can_train``, ``can_research`` pasa a ``_rules_can_research`` para que la ``@property`` vuelva a funcionar.
-- **Código**: ``definitions.py``, ``world_build_rules.py``, ``world_objects.py``, ``worldplayercomputer.py``, ``attributes/utils.py``, ``res/rules.txt``.
-- **Pruebas**: ``test_townhall_can_research_property_respects_rmg_flag``, ``test_strategic_research_is_only_exposed_on_rmg_cities``.
+**Mejora: la pantalla de atributos muestra estadísticas con terreno en vivo**
 
-**Mejora: puntos de cultura y diplomacia consultables**
+- Alt+V muestra ``mdg_on_terrain`` / ``rdg_on_terrain`` / ``mdg_cd_on_terrain`` / ``rdg_cd_on_terrain`` y modificadores de carga por terreno.
+- El terreno de la casilla actual (``mdg_vs`` / ``rdg_vs`` / etc.) y ``*_on_terrain`` alimentan daño, enfriamiento y velocidad en la UI (``*_vs`` de terreno = porcentaje decimal; ``speed_on_terrain`` sigue siendo velocidad absoluta).
+- **Código**: ``attributes/terrain_effective.py``, ``attributes/combat_attributes.py``, ``attributes/basic_attributes.py``, ``attributes/bonus_handler.py``.
+- **Pruebas**: ``test_terrain_attributes_ui.py``, ``test_terrain_effective_attributes.py``.
 
-- En mapas RMG estratégicos: **B** anuncia cultura, **Mayús+B** puntos diplomáticos (en mapas no RMG suena aviso).
-- Con tu ciudad seleccionada (ayuntamiento / fortaleza / castillo), pantalla de propiedades (Alt+V): **U** cultura, **Y** diplomacia.
-- Se mantiene la voz cada 60 s de ``rmg_strategic_tick``; si las alertas de recursos están activas, también se anuncian cambios de cultura/diplomacia.
-- **Código**: ``clientgame/game_resources.py``, ``attributes/basic_attributes.py``, ``res/ui/global_bindings.txt``, ``res/ui/legacy_bindings.txt``, ``res/ui/tts.txt`` / ``res/ui-zh/tts.txt`` (5716–5717), ``hotkey_editor.py``, ``hotkey_catalogs.py``.
-- **Documentación**: ``player/rmg-strategic-systems.rst`` (todos los idiomas).
-- **Pruebas**: ``test_culture_and_diplomacy_status_helpers``, ``test_city_attributes_include_strategic_points``.
+**Corrección: Tab ya no encuentra salidas en casillas nunca exploradas**
+
+- **Síntoma**: En casillas nunca visitadas, Tab podía anunciar salidas del otro lado.
+- **Causa**: La niebla recordaba salidas opuestas antes de entrar realmente.
+- **Corrección**: Sin ``scouted_squares`` ni ``scouted_before_squares``, resumen / visibilidad en blanco; la niebla estática tras visitar sigue permitiendo Tab.
+- **Código**: ``clientgame/game_unit_control.py``.
+- **Pruebas**: ``test_unknown_square_tab_blank.py``.
+
+**Corrección: pitido ``order_impossible`` tras matar un animal con Retroceso**
+
+- **Síntoma**: Tras el ataque por defecto a un animal cazable, sonaba ``order_impossible``.
+- **Causa**: ``AttackOrder`` trataba la desaparición del objetivo como fallo.
+- **Corrección**: Completar la orden si el objetivo desaparece o ``hp <= 0``.
+- **Código**: ``worldorders/movement.py``.
+- **Pruebas**: ``test_hunting.py``.
+
+**Corrección: orden por defecto sobre neutrales y daño de caza**
+
+- ``go`` normal / por defecto sobre neutrales (no imperativo) solo mueve, sin AttackAction sin daño.
+- ``attack`` normal sobre ``is_huntable`` (incluida caza por defecto con Retroceso) hace daño; solo el ataque imperativo hace que la IA trate neutrales como objetivos automáticos.
+- **Código**: ``worldunit/world_ai_decision.py``, ``worldunit/worldcreature.py``.
+- **Docs**: ``player/hunting.rst``, ``player/unit-default-behavior.rst``.
+- **Pruebas**: ``test_neutral_no_auto_attack.py``, ``test_neutral_go_and_hunt_attack.py``.
+
+**Solución: fallo al actualizar la percepción del jugador Computer (falta ``_buckets``)**
+
+- **Síntoma**: Durante la partida (sobre todo con IA ``computer_only`` del mapa, aliados IA o tras cargar una partida) podía fallar en la fase de percepción del bucle principal con ``AttributeError: 'Computer' object has no attribute '_buckets'``.
+- **Causa**: El índice espacial del jugador ``_buckets`` solo se inicializaba en el envoltorio ``Player.__init__``; guardar/cargar elimina ese campo de caché; las comprobaciones de visibilidad aliada en bloque (``bulk_visibility_check``) llaman a ``_potential_neighbors`` de los aliados y fallaban si un ``Computer`` aún no tenía ``_buckets``.
+- **Solución**: Preinicializar ``_buckets`` en ``BasePlayer.__init__`` junto con las demás cachés de percepción; ``_potential_neighbors`` usa un diccionario vacío si falta; ``update_alliance`` borra la caché de instancia ``allied_vision`` para que un cambio de alianza no siga usando listas de aliados obsoletas.
+- **Código**: ``worldplayerbase/base.py``, ``worldplayerbase/perception.py``, ``worldplayerbase/__init__.py``.
+- **Pruebas**: ``test_meteors_computer_only.py``, ``test_phase3_parity.py``, ``test_neutral_passive_creep.py``.
+
+
+1.4.5.1
+-------
 
 **Mejora: cobertura de terreno, modificadores por unidad y notación porcentual**
 
@@ -66,14 +87,6 @@ Corrección de errores y mejoras en la experiencia de usuario de voz/audio:
 - **Nota**: ``charge_mdg_cd`` / ``charge_rdg_cd`` usan otra ruta (``receive_hit`` inmediato, sin preparación/programación balística) y no se vieron afectados; el ritmo mixto carga + ataque normal mejora indirectamente con la corrección del CD normal.
 - **Código**: ``combat/attack_action.py``, ``combat/damage_effects.py``.
 - **Pruebas**: ``test_attack_cooldown_timing.py``.
-
-**Corrección: bloqueo del jugador Computer durante la actualización de percepción (falta ``_buckets``)**
-
-- **Síntoma**: Durante una partida (sobre todo con IA de mapa ``computer_only``, compañeros IA aliados o tras cargar una partida), el bucle principal podía bloquearse en la fase de percepción con ``AttributeError: 'Computer' object has no attribute '_buckets'``.
-- **Causa**: El índice espacial ``_buckets`` solo se inicializaba en el ``Player.__init__`` envoltorio; guardar/cargar elimina ese campo de caché; la visibilidad masiva de visión aliada (``bulk_visibility_check``) llama a ``_potential_neighbors`` de los aliados y falla si un ``Computer`` aún no tiene ``_buckets``.
-- **Corrección**: preinicializar ``_buckets`` en ``BasePlayer.__init__`` junto con otras cachés de percepción; ``_potential_neighbors`` usa un dict vacío si falta; ``update_alliance`` limpia la caché de instancia ``allied_vision`` para no reutilizar listas de aliados obsoletas tras cambios de alianza.
-- **Código**: ``worldplayerbase/base.py``, ``worldplayerbase/perception.py``, ``worldplayerbase/__init__.py``.
-- **Pruebas**: ``test_meteors_computer_only.py``, ``test_phase3_parity.py``, ``test_neutral_passive_creep.py``.
 
 **Mejora: rechazo de órdenes go y aviso de voz en terreno intransitable**
 
@@ -102,22 +115,6 @@ Corrección de errores y mejoras en la experiencia de usuario de voz/audio:
 - **Solución**: Con una orden imperativa activa, los comandos normales (excepto ``stop``) se encolan automáticamente (``forget_previous=False``) sin reemplazar la cabeza imperativa; la unidad termina el ataque forzado antes del comando en cola. Tras un imperativo solo se permite **un** comando en cola; un nuevo comando normal **reemplaza** el ya encolado (igual que en 1.3.8.1).
 - **Código**: ``worldunit/world_order.py`` ``take_order``.
 - **Pruebas**: ``test_imperative_attack.py`` (``test_normal_go_queues_behind_imperative_attack``, ``test_only_one_queued_order_behind_imperative_attack``, etc.).
-
-**Corrección: ataque forzado a edificio ya capturado seguía activando captura**
-
-- **Síntoma**: Tras capturar un edificio enemigo capturable (``capture_hp_threshold`` 100, p. ej. cuartel), un ataque forzado contra ese edificio seguía ejecutando captura en lugar de causar daño, repitiendo los sonidos de captura.
-- **Causa**: La ruta «captura al contacto» usaba ``is_an_enemy()``; en ataque forzado ese método devuelve ``True`` también para edificios capturados aliados (vía ``_player_ordered_attack_on``).
-- **Corrección**: nueva ``should_capture_on_contact()`` con ``player.player_is_an_enemy(target.player)``; la misma guarda en ``_perform_capture()``.
-- **Código**: ``worldaction.py``, ``combat/attack_action.py``, ``worldunit/world_order.py``.
-- **Pruebas**: ``test_capture_default_order.py`` (``test_imperative_attack_on_captured_barracks_deals_damage_not_capture``).
-
-**Corrección: barcos de transporte de la IA aparcan cargados en la orilla enemiga sin descargar**
-
-- **Síntoma**: En mapas acuáticos como ``jl7``, incluso un ordenador nightmare podía llevar un ``boat`` lleno de soldados hasta la orilla del jugador y nunca emitir ``unload`` / ``unload_all``, de modo que las tropas no desembarcaban.
-- **Causa**: ``_try_transport_assaults`` solo programa soldados terrestres ociosos fuera del transporte; la carga con ``is_inside`` se ignora. Tras cargar/navegar, si la descarga faltaba o fallaba, un transporte lleno e inactivo no tenía ruta de recuperación para descargar.
-- **Corrección**: ``_try_amphibious_landings`` ahora llama primero a ``_try_unload_idle_loaded_transports``: los transportes acuáticos/aéreos ociosos con unidades terrestres reciben ``unload_all`` hacia tierra adyacente practicable (priorizando tierra más cercana a objetivos enemigos); si aún no están junto a tierra, ``go`` al agua de descarga y luego descargan.
-- **Código**: ``worldplayercomputer.py`` (``_enemy_land_assault_targets``, ``_choose_unload_land_for_transport``, ``_try_unload_idle_loaded_transports``).
-- **Pruebas**: ``test_ai_jl7_amphibious_unload.py`` (regresión nightmare: barco lleno en la puerta debe emitir ``unload_all``).
 
 **Mejora: descripciones de voz del comportamiento de la unidad**
 

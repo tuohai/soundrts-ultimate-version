@@ -48,11 +48,15 @@ class CreatureAIDecision(Entity):
     # 上 getattr(self, 'counterattack_enabled', False). decide 调 1M+ /5min.
     counterattack_enabled = False
     # last_attacker class default = None, 替代 hasattr fallback.
+    _has_yielded = False
+    _herd_leader = None
+    herdable = 0
+    flee_on_hit = 0
     last_attacker = None
 
     def _is_neutral_target(self, other):
-        p = getattr(other, "player", None)
-        return p is not None and getattr(p, "neutral", False)
+        p = other.player
+        return p is not None and p.neutral
 
     def _flee_from_attacker(self):
         """受击后向远离攻击者的相邻方格逃跑（鹿、羊等狩猎动物）。"""
@@ -190,17 +194,23 @@ class CreatureAIDecision(Entity):
         return getattr(a, "id", None) == getattr(b, "id", None)
 
     def _player_ordered_attack_on(self, other):
-        """玩家是否对该单位下达了强制攻击命令（imperative go/attack）。"""
-        if not self.orders:
+        """玩家是否对该单位下达了明确攻击意图的命令。
+
+        - ``attack``（普通或强制）：允许伤害中立/可猎杀目标
+        - ``go`` 仅在 ``imperative`` 时视为强制攻击（Ctrl+退格 / 强制 go）
+        """
+        orders = self.orders
+        if not orders:
             return False
-        order = self.orders[0]
-        if not getattr(order, "is_imperative", False):
-            return False
+        order = orders[0]
         if not CreatureAIDecision._same_unit_target(
             getattr(order, "target", None), other
         ):
             return False
-        return getattr(order, "keyword", None) in ("attack", "go")
+        keyword = getattr(order, "keyword", None)
+        if keyword == "attack":
+            return True
+        return bool(getattr(order, "is_imperative", False)) and keyword == "go"
     # D-Phase 2 §4.3: decision_cache 现在用 (id, bucket) tuple key 替代
     # f"decision_{id}_{bucket}" 字符串 (decide 调 1.1M 次, f-string format
     # 每次 ~1us = ~1s 浪费). 同时 _decision_cache_bucket 用 sentinel 跟踪
@@ -210,9 +220,10 @@ class CreatureAIDecision(Entity):
 
     def decide(self):
         """优化的单位AI决策逻辑"""
+        # Unbound decide(stub) tests may not inherit CreatureAIDecision defaults.
         if getattr(self, "_has_yielded", False):
             return
-        if getattr(type(self), "herdable", 0):
+        if getattr(self, "herdable", 0):
             leader = getattr(self, "_herd_leader", None)
             if (
                 leader is not None
@@ -222,12 +233,14 @@ class CreatureAIDecision(Entity):
                 return
         # 动态降频：根据单位状态/AI模式调整决策频率，减少重负载路径调用
         current_time = self.world.time
-        last = self._last_decide_time
+        dt = current_time - self._last_decide_time
+        # Absolute floor (attacker/orders path uses 80ms). Skip work on sub-floor gaps.
+        if dt < 80:
+            return
 
         # D-Phase 1 T4: interval 计算抽到 Cython (1.1M calls/5min).
-        # 行为与原版完全一致 (参考: AI_MODE_*; offensive/chase=100, defensive=150,
-        # 其他=400; speed<=0 加 300; last_attacker → min(interval, 80);
-        # orders → max(80, interval-70)).
+        # offensive/chase=150, defensive=200, 其他=400; speed<=0 加 300;
+        # last_attacker → min(interval, 80); orders → max(80, interval-70).
         ai_mode_id = _AI_MODE_MAP.get(self.ai_mode, _AI_MODE_OTHER)
         if _fast is not None:
             interval = _fast.compute_decide_interval(
@@ -238,9 +251,9 @@ class CreatureAIDecision(Entity):
             )
         else:
             if ai_mode_id == 0 or ai_mode_id == 1:  # offensive / chase
-                interval = 100
-            elif ai_mode_id == 2:  # defensive
                 interval = 150
+            elif ai_mode_id == 2:  # defensive
+                interval = 200
             else:
                 interval = 400
             if self.speed <= 0:
@@ -252,7 +265,7 @@ class CreatureAIDecision(Entity):
                 if interval < 80:
                     interval = 80
 
-        if current_time - last < interval:
+        if dt < interval:
             return
         self._last_decide_time = current_time
 
@@ -268,7 +281,9 @@ class CreatureAIDecision(Entity):
             # 获取容器的实际位置（确保是Square对象而不是Inside对象）
             container_place = self.place.container.place
             # 如果容器也在另一个容器内，需要找到最终的Square位置
-            while hasattr(container_place, 'container') and hasattr(container_place, 'outside'):
+            while getattr(container_place, "container", None) is not None and getattr(
+                container_place, "outside", None
+            ) is not None:
                 container_place = container_place.outside
             self._choose_enemy(container_place)
             return
@@ -289,10 +304,8 @@ class CreatureAIDecision(Entity):
             self.take_order(["auto_explore"])
             return
 
-        # 决策缓存: 100ms bucketed cache, 同 bucket 内复用同一单位决策.
-        # D-Phase 2 §4.3: tuple key 替代 f-string (1.1M calls/5min)
-        # + bucket 变化时 clear, 防止 dict 跨 1000+ bucket 累积.
-        decision_bucket = current_time // 100
+        # 决策缓存: bucket 与进攻间隔对齐 (150ms).
+        decision_bucket = current_time // 150
         cls = self.__class__
         if cls._decision_cache_bucket != decision_bucket:
             cls._decision_cache = {}
@@ -323,10 +336,38 @@ class CreatureAIDecision(Entity):
                     self.take_order(["go", decision['escape_square'].id], imperative=True)
                     return
 
+        # Already engaged on a living enemy: skip expensive re-scan.
+        # Same-square engage: only is_an_enemy / neutral，不跑 can_attack→near_enough。
+        action = getattr(self, "action", None)
+        if action is not None:
+            cur = getattr(action, "target", None)
+            if (
+                cur is not None
+                and getattr(cur, "is_creature", False)
+                and cur.place is not None
+                and cur.hp > 0
+                and self.is_an_enemy(cur)
+            ):
+                if self._is_neutral_target(cur):
+                    if not self._player_ordered_attack_on(cur):
+                        cur = None
+                if cur is not None:
+                    if cur.place is self.place:
+                        decision_cache[cache_key] = {"action": "attack", "target": cur}
+                        return
+                    if self.can_attack(cur):
+                        decision_cache[cache_key] = {"action": "attack", "target": cur}
+                        return
+                    # 追击：已锁定敌人则由 AttackAction 跨格跟随，勿在此下 go
+                    if self.ai_mode == "chase" and self.speed > 0:
+                        decision_cache[cache_key] = {"action": "attack", "target": cur}
+                        return
+
         # 仅防御模式下的撤退判断：其他模式不撤退
         if (self.ai_mode == "defensive"
                 and self.speed > 0  # 可以移动的单位
                 and not self._must_hold()  # 不是被命令固定位置
+                and self.player.enemy_menace(self.place) > 0  # cheap gate before balance
                 and self.player.balance(self.place, self._previous_square, mult=10) < 5):  # 战力不平衡
 
             # 计算逃跑
@@ -375,71 +416,23 @@ class CreatureAIDecision(Entity):
                 self._attack(self.last_attacker)
             return  # 站岗模式不主动攻击，只有遭受攻击时才反击
 
-        # 追击模式处理：主动追击视野内的敌人到射程内攻击
+        # 追击模式：锁定敌人后由 AttackAction 跨格持续跟随（不下 go 命令）
         if self.ai_mode == "chase":
-            # 获取视野范围内的所有区域
-            squares_in_sight = self._get_squares_in_sight()
-            
-            # 在视野范围内寻找最近的敌人
-            closest_enemy = None
-            closest_distance = float('inf')
-            
-            for square in squares_in_sight:
-                # 获取该区域的敌人
-                enemies = self.player.known_enemies(square)
-                if not enemies:
-                    # 如果 known_enemies 没返回敌人, 直接检查区域内对象.
-                    # Round 4: square.objects (_Space.objects=()), obj.player/
-                    # is_vulnerable/is_inside/hp 都在 Entity 基类有 default,
-                    # 全部 hasattr 永远 True; 删除 _cached_ai_attrs 机制.
-                    for obj in square.objects:
-                        if (obj.player and obj.is_vulnerable and not obj.is_inside
-                                and obj.hp > 0
-                                and self.is_an_enemy(obj)
-                                and not self._is_neutral_target(obj)):
-                            enemies = [obj]
-                            break
-                
-                # 计算与每个敌人的距离
-                for enemy in enemies:
-                    if self.can_attack(enemy):
-                        # 计算距离（使用平方距离避免开方运算）
-                        dist_squared = (self.x - enemy.x) ** 2 + (self.y - enemy.y) ** 2
-                        if dist_squared < closest_distance:
-                            closest_distance = dist_squared
-                            closest_enemy = enemy
-            
-            # 如果找到了敌人
-            if closest_enemy:
-                # 如果敌人在当前区域且可以攻击，直接攻击
-                if closest_enemy.place is self.place and self.in_attack_range(closest_enemy):
-                    self._attack(closest_enemy)
-                    return
-                
-                # 如果敌人在相邻区域，移动到敌人所在区域
-                # Round 4: speed/take_order 永远存在 (Entity.speed=0; 方法)
-                if closest_enemy.place in self.place.neighbors:
-                    if self.speed > 0:
-                        # 使用take_order来执行移动命令
-                        self.take_order(["go", closest_enemy.place.id], forget_previous=True)
-                        return
+            # 先扫当前格，再扫邻格；不再做全视野 BFS（cw1 上 known_enemies
+            # 从 decide 打出约 1700 万次，_get_squares_in_sight ~10s）。
+            closest_enemy = self._pick_chase_enemy()
+            if closest_enemy is not None:
+                self._attack(closest_enemy)
+                decision_cache[cache_key] = {
+                    "action": "attack",
+                    "target": closest_enemy,
+                }
+                return
 
-                # 如果敌人在更远的区域，移动到最近的相邻区域
-                elif self.speed > 0:
-                    # 找到通往敌人区域的最短路径
-                    target_place = closest_enemy.place
-                    self.take_order(["go", target_place.id], forget_previous=True)
-                    return
-            
-            # 如果没有找到敌人，使用原来的逻辑作为后备
-            # 优先攻击当前位置的敌人
-            # Round 4: self.action 永远存在 (Creature.__init__ self.action = None);
-            # action 对象有 target 属性 (worldaction 类).
+            # 后备：本格选敌；邻格仅有威胁时锁定已知敌人并 AttackAction 追击
             if self._choose_enemy(self.place):
                 last_target = self.action.target if (self.action is not None
                                                      and hasattr(self.action, 'target')) else None
-
-                # 缓存攻击决策
                 if last_target:
                     decision_cache[cache_key] = {
                         'action': 'attack',
@@ -447,28 +440,30 @@ class CreatureAIDecision(Entity):
                     }
                 return
 
-            # 如果当前区域没有敌人，主动追击相邻区域的敌人
-            threatening_neighbors = [
-                place for place in self.place.neighbors
-                if self.player.enemy_menace(place) > 0
-            ]
-
-            if threatening_neighbors:
-                # 选择威胁最大的相邻区域
-                target_place = max(
-                    threatening_neighbors,
-                    key=lambda p: self.player.enemy_menace(p)
-                )
-
-                # 使用take_order来执行移动命令
-                if self.speed > 0:
-                    self.take_order(["go", target_place.id], forget_previous=True)
-                    return
+            if self.speed > 0:
+                threatening_neighbors = [
+                    place for place in self.place.neighbors
+                    if self.player.enemy_menace(place) > 0
+                ]
+                if threatening_neighbors:
+                    target_place = max(
+                        threatening_neighbors,
+                        key=lambda p: self.player.enemy_menace(p),
+                    )
+                    menace_enemy = self._first_chaseable_enemy_in(target_place)
+                    if menace_enemy is not None:
+                        self._attack(menace_enemy)
+                        decision_cache[cache_key] = {
+                            "action": "attack",
+                            "target": menace_enemy,
+                        }
             return
 
         # 防御模式处理：根据威胁值决定是攻击还是逃跑
         if self.ai_mode == "defensive":
             # 计算当前区域的威胁平衡
+            if self.player.enemy_menace(self.place) <= 0:
+                return
             threat_balance = self.player.balance(self.place, self._previous_square, mult=1)
             
             # 如果威胁值低于己方（threat_balance > 0），攻击敌人
@@ -580,6 +575,64 @@ class CreatureAIDecision(Entity):
                     queue.append((neighbor, distance + 1))
                     qlen += 1
         return squares
+
+    def _is_chaseable_enemy(self, obj):
+        """追击可选目标：敌对、可伤、非中立；不要求当前格/射程内。"""
+        if obj is None or getattr(obj, "place", None) is None:
+            return False
+        if not getattr(obj, "player", None) or not getattr(obj, "is_vulnerable", False):
+            return False
+        if getattr(obj, "is_inside", False) or getattr(obj, "hp", 0) <= 0:
+            return False
+        if not self.is_an_enemy(obj) or self._is_neutral_target(obj):
+            return False
+        # 武器根本上打不了的类型（如纯近战对空）不追
+        can_if = getattr(self, "can_attack_if_in_range", None)
+        if callable(can_if) and not can_if(obj):
+            return False
+        return True
+
+    def _first_chaseable_enemy_in(self, square):
+        if square is None:
+            return None
+        for enemy in self.player.known_enemies(square):
+            if self._is_chaseable_enemy(enemy):
+                return enemy
+        for obj in square.objects:
+            if self._is_chaseable_enemy(obj):
+                return obj
+        return None
+
+    def _pick_chase_enemy(self):
+        """当前格优先，其次邻格；不要求 can_attack（跨格由 AttackAction 跟随）。"""
+        closest_enemy = None
+        closest_distance = float("inf")
+
+        def _consider(enemy):
+            nonlocal closest_enemy, closest_distance
+            if not self._is_chaseable_enemy(enemy):
+                return
+            dist_squared = (self.x - enemy.x) ** 2 + (self.y - enemy.y) ** 2
+            if dist_squared < closest_distance:
+                closest_distance = dist_squared
+                closest_enemy = enemy
+
+        for enemy in self.player.known_enemies(self.place):
+            _consider(enemy)
+        if closest_enemy is None:
+            for obj in self.place.objects:
+                _consider(obj)
+        if closest_enemy is None:
+            for square in self.place.neighbors:
+                for enemy in self.player.known_enemies(square):
+                    _consider(enemy)
+                if closest_enemy is None:
+                    for obj in square.objects:
+                        _consider(obj)
+                if closest_enemy is not None:
+                    break
+        return closest_enemy
+
     def in_attack_range(self, target):
         """检查目标是否在攻击射程内"""
         if target is None:
@@ -632,15 +685,22 @@ class CreatureAIDecision(Entity):
     # 的同名方法覆盖前者, line 394-432 早就不会被调用 (game 一直在跑下面这个).
     # 只保留 line 434 这个 "without moving to another square" 版本.
     def can_attack(self, other):  # without moving to another square
+        if other is None or other.place is None or other.hp <= 0:
+            return False
         if not self.is_an_enemy(other):
             return False
         # 进攻/防御/追击等 AI 不主动攻击中立者；仅强制攻击命令例外
-        if self._is_neutral_target(other) and not self._player_ordered_attack_on(other):
-            return False
+        # 先看 neutral，避免无谓地对非中立目标调 _player_ordered_attack_on
+        if self._is_neutral_target(other):
+            # 中立：仅响应明确的攻击命令（普通 attack，或强制 go/attack）
+            if not self._player_ordered_attack_on(other):
+                return False
         # 条约期内禁止攻击敌对单位
         try:
-            if getattr(self.world, "treaty_until_time", 0) > 0 and self.world.time < self.world.treaty_until_time:
-                if hasattr(other, 'player') and other.player is not None and self.player.player_is_an_enemy(other.player):
+            treaty_until = getattr(self.world, "treaty_until_time", 0)
+            if treaty_until > 0 and self.world.time < treaty_until:
+                op = other.player
+                if op is not None and self.player.player_is_an_enemy(op):
                     return False
         except Exception:
             pass
@@ -663,6 +723,19 @@ class CreatureAIDecision(Entity):
                     return True
         if self.speed and is_same_place:
             return True
+        # 超距快速拒绝，避免进入 _near_enough_to_aim 的 damage_vs 重路径
+        # （cw1 上 near_enough 约 300 万次 / 35s cum）。高度加成最多垫 3 格。
+        max_range = mdg_range if mdg_range >= rdg_range else rdg_range
+        if max_range > 0:
+            try:
+                collision = self.radius + other.radius
+            except Exception:
+                collision = 0
+            limit = max_range + collision + 3000
+            dx = self.x - other.x
+            dy = self.y - other.y
+            if dx * dx + dy * dy > limit * limit:
+                return False
         return self._near_enough_to_aim(other)
 
     def immediate_order_toggle_ai_mode(self):

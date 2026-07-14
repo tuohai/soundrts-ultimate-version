@@ -22,6 +22,9 @@ class _CombatPlayer(CombatMixin):
         self.world = types.SimpleNamespace(time=0, players=[self])
         self._enemy_player_cache = {}
         self._enemy_player_timestamp = 0
+        self._enemy_menace = {}
+        self._balance_cache = {}
+        self._balance_cache_time = {}
 
     def player_is_an_enemy(self, p):
         return p is not None and p not in self.allied
@@ -32,6 +35,9 @@ class _Square:
 
     def __init__(self, sid):
         self.id = sid
+        self.neighbors = []
+        self.strict_neighbors = []
+        self.exits = []
 
 
 class _CanAttackStub:
@@ -134,6 +140,32 @@ def test_can_attack_allows_neutral_with_imperative_go_order():
     assert unit.can_attack(neutral) is True
 
 
+def test_can_attack_allows_neutral_with_normal_attack_order():
+    """普通 attack（如对可猎杀动物退格）必须能造成伤害。"""
+    neutral = _NeutralTarget()
+    attack_order = types.SimpleNamespace(
+        is_imperative=False,
+        target=neutral,
+        keyword="attack",
+    )
+    unit = _CanAttackStub(orders=[attack_order])
+
+    assert unit.can_attack(neutral) is True
+
+
+def test_can_attack_refuses_neutral_with_normal_go_order():
+    """普通 go 跟随时不得攻击中立。"""
+    neutral = _NeutralTarget()
+    go_order = types.SimpleNamespace(
+        is_imperative=False,
+        target=neutral,
+        keyword="go",
+    )
+    unit = _CanAttackStub(orders=[go_order])
+
+    assert unit.can_attack(neutral) is False
+
+
 def test_decide_cache_skips_neutral_attack():
     """决策缓存恢复时不应继续攻击中立目标。"""
 
@@ -192,7 +224,7 @@ def test_decide_cache_skips_neutral_attack():
     neutral = _NeutralTarget()
     unit = _DecideStub()
     unit.counterattack_enabled = False
-    bucket = unit.world.time // 100
+    bucket = unit.world.time // 150
     _DecideStub._decision_cache[(unit.id, bucket)] = {
         "action": "attack",
         "target": neutral,

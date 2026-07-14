@@ -610,7 +610,7 @@ is_a custom_meadow
     assert meadow_cls.is_a == ["meadow_base"]
     assert meadow_cls.expanded_is_a == ["meadow_base"]
     assert deluxe_cls.expanded_is_a == ["custom_meadow", "meadow_base"]
-    assert square_terrain_entries_for_type("custom_meadow") == [
+    assert list(square_terrain_entries_for_type("custom_meadow")) == [
         {"name": "meadows", "priority": 40, "min_count": 1}
     ]
     assert building_land_is_a_type("custom_meadow", "meadow_base")

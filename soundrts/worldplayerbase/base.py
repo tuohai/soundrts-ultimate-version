@@ -193,40 +193,28 @@ class Player:
         self.observed_before_squares = set()
         self.strictly_observed_before_squares = set()
         self.observed_squares = set()
+        self.partially_observed_squares = set()
         self.observed_objects = {}
         # 动态外交状态：单向结盟请求与关系
         self._ally_requests_from = set()  # 收到的结盟请求：对方玩家id集合
         self._alliance_declined_from = set()  # 已拒绝的结盟申请：对方玩家id集合
         self._ally_relations_one_way = set()  # 我单方面视为盟友的玩家id（未对方确认）
-        # RMG strategic layer (culture, diplomacy and city/tile income).
-        # Kept on every player so save/replay state remains deterministic.
-        self.culture_points = 0
-        self.diplomacy_points = 0
-        self.rmg_city_yield_ticks = 0
-        self.rmg_claimed_tiles = {}
-        self.rmg_worked_tiles = {}
-        self.rmg_tile_workers = {}
-        self.rmg_worker_auto_gather = {}
-        self.rmg_assignment_order = []
-        self.rmg_tile_improvements = {}
-        self.rmg_territory_markers = {}
-        self.rmg_improvement_units = {}
-        self.rmg_unlocked_policies = set()
-        self.rmg_policy_slots = []
-        self.rmg_hero_peak_level = 1
-        self.rmg_hero_peak_xp = 0
         self.detected_units = set()
         self.allied_control = (self,)
         self.allied_control_units_set = set()
         self._known_enemies = {}
         self._known_enemies_time = {}
+        # Mutable triple updated in-place to avoid Player.__setattr__ on hot path.
+        self._known_enemies_hit = [None, -1, ()]  # place, time, result
         self._enemy_menace = {}
         self._enemy_menace_time = {}
         self._subsquare_threat = {}
         self.new_enemy_units = []  # 初始化新发现的敌方单位列表
-        # 空间网格索引；每 tick 由 World._update_buckets 重建，但必须在 __init__
-        # / 读档后立即可用，避免 allied_vision 查询时 AttributeError。
+        # 空间网格索引；由 World._update_buckets 增量维护（冷启动全量构建）。
+        # `_bucket_unit_cells` 为 None 表示尚未建立增量状态。
         self._buckets = {}
+        self._bucket_unit_cells = None
+        self._bucket_ticks_since_heal = 0
         # known_enemies hot path 用到的缓存; 预初始化避免每次 hasattr 检查
         # (实测: known_enemies 17.9M calls, 原版每次 4-5 个 hasattr/getattr)
         self._enemy_units_cache = []
@@ -235,6 +223,7 @@ class Player:
         self._enemy_players_cache_time = -1_000_000
         self._enemy_units_set = frozenset()
         self._enemy_units_set_time = -1
+        self._enemy_inside_units = ()
         self._perception_set = frozenset()
         self._perception_set_time = -1
 
@@ -274,6 +263,10 @@ class Player:
         # Round 4: _bulk_visibility_check 实例级 cache
         self._nearby_units_cache = {}
         self._nearby_units_cache_bucket = -1
+        # 静态视野复用：observed/partial 未变时跳过 bulk
+        self._cached_static_perception = None
+        self._prev_obs_squares = None
+        self._prev_partial_squares = None
         self._memory_scan_cursor = 0
         self._memory_list = []
         self._memory_list_snapshot_time = -1_000_000
@@ -476,7 +469,13 @@ class Player:
         
         # (_allied_vision_cache_time / _cached_allied_vision 已在 __init__ 预初始化)
         if current_time - self._allied_vision_cache_time > cache_interval:
-            self._cached_allied_vision = self.allied
+            # 地图 ``computer_only`` 脚本 NPC（含非中立）在 alliance "ai" 下彼此
+            # 结盟是为了互不残杀；但不应共享战争迷雾，否则切到任一 NPC 视角时
+            # 能看见其它敌对营地。战役/难度电脑等非 script NPC 仍用完整 allied。
+            if self.is_script_npc:
+                self._cached_allied_vision = [self]
+            else:
+                self._cached_allied_vision = self.allied
             self._allied_vision_cache_time = current_time
             
         return self._cached_allied_vision
@@ -715,41 +714,12 @@ class Player:
         if not args:
             return
         action = args[0]
+        target_id = args[1] if len(args) > 1 else None
         if self._alliances_locked_now():
             # 提示锁定
             if self.is_local_human():
                 self.send_voice_important(mp.ALLIANCES_LOCKED)
             return
-        if action == 'trade':
-            if len(args) < 3:
-                if self.is_local_human():
-                    self.send_voice_important(mp.DIPLOMACY + mp.NO_CANDIDATE)
-                return
-            trade_kind = args[1]
-            target = self._resolve_player_by_id(args[2])
-            if target is None or target is self:
-                if self.is_local_human():
-                    self.send_voice_important(mp.DIPLOMACY + mp.NO_CANDIDATE)
-                return
-            from ..rmg_systems import execute_rmg_trade
-
-            result = execute_rmg_trade(self, target, trade_kind)
-            if not self.is_local_human():
-                return
-            if result == "success":
-                return
-            if result == "already_allied":
-                self.send_voice_important(mp.RMG_ALREADY_ALLIED)
-            elif result == "not_enough_diplomacy":
-                self.send_voice_important(mp.RMG_NOT_ENOUGH_DIPLOMACY)
-            elif result == "not_enough_gold":
-                self.send_voice_important(mp.BEEP)
-            elif result == "cooldown":
-                self.send_voice_important(mp.TOO_EARLY)
-            elif result in ("declined", "invalid"):
-                self.send_voice_important(mp.RMG_TRADE_DECLINED)
-            return
-        target_id = args[1] if len(args) > 1 else None
         # 针对 accept/decline_or_cancel，允许省略目标，由服务器选择最近的待处理请求
         if action in ('accept', 'decline_or_cancel') and not target_id:
             # 1) 优先选择一个收到的待处理请求
@@ -827,17 +797,6 @@ class Player:
                     except Exception:
                         self.send_voice_important(mp.TOO_EARLY)
                 return
-            if getattr(self.world, "rmg_strategic_systems", False):
-                from ..rmg_systems import (
-                    DIPLOMACY_REQUEST_COST,
-                    cities,
-                    spend_diplomacy,
-                )
-
-                if cities(self) and not spend_diplomacy(self, DIPLOMACY_REQUEST_COST):
-                    if self.is_local_human():
-                        self.send_voice_important(mp.RMG_NOT_ENOUGH_DIPLOMACY)
-                    return
             last_map[target.id] = self.world.time
             # 发送请求给目标
             target._ally_requests_from.add(self.id)
@@ -1096,10 +1055,11 @@ class Player:
                     return True
         elif inspect.isclass(t):  # Deposit, BuildingSite, Worker, Meadow...
             return isinstance(o, t)
-        elif hasattr(t, "type_name"):
-            return o.type_name == t.type_name
         elif isinstance(t, str):
             return o.type_name == t
+        type_name = getattr(t, "type_name", None)
+        if type_name is not None:
+            return o.type_name == type_name
 
     @staticmethod
     def effective_count_limit(type_name):

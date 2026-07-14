@@ -8,11 +8,15 @@ SoundRTS admite caza al estilo Age of Empires: los trabajadores atacan a la faun
 1. Flujo del jugador
 --------------------
 
-1. Clic derecho en un animal → el trabajador ataca (orden forzada; funciona con animales neutrales)
-2. Al matar → aparece un depósito ``food_carcass`` en la casilla de muerte
-3. Recolección automática → los trabajadores con ``auto_gather`` recolectan el cadáver y devuelven comida
+1. Retroceso / orden por defecto o clic derecho en un animal → ``attack`` sobre ``is_huntable`` (el ataque normal hace daño; no hace falta imperativo)
+2. Al matar → aparece ``food_carcass``; la orden de ataque se completa (**sin** pitido falso ``order_impossible``)
+3. Recolección automática → tras matar, el trabajador puede encolar recolección; con ``auto_gather`` también recoge y lleva comida
 4. Huir al ser golpeado → ciervos y ovejas huyen; los jabalíes contraatacan
 5. Pastoreo (opcional) → los trabajadores con ``can_herd 1`` pueden pastorear animales ``herdable`` (p. ej. ovejas)
+
+
+Nota: la orden por defecto sobre creeps / PNJ neutrales comunes es ``go`` (solo mover); sobre animales cazables sigue siendo ``attack``.
+Los modos ofensivo / defensivo / persecución **no** autoatacan animales neutrales sin un ataque imperativo.
 
 ----
 

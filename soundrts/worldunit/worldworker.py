@@ -86,14 +86,25 @@ class Worker(Unit):
         )
 
     def decide(self):
-        Unit.decide(self)
-        if self.player.__class__.__name__ != "Human":
+        # Computer AI workers almost never fight; Unit.decide → _choose_enemy was
+        # ~15s / 10min for workers that mostly return at _cached_has_attack=False.
+        player = self.player
+        if not player.is_human:
+            if (
+                self.last_attacker is None
+                and not self.mdg
+                and not self.rdg
+                and self.ai_mode != "defensive"
+            ):
+                return
+            Unit.decide(self)
             return
+        Unit.decide(self)
         if self.orders and self.orders[0].keyword != "gather":
             return
         if self.auto_repair and self.can_repair:  # 检查can_repair参数
             # 检查同一区域内的可修理单位
-            for p in self.player.allied:
+            for p in player.allied:
                 for u in p.units:
                     if (
                         u.place is self.place
@@ -107,7 +118,7 @@ class Worker(Unit):
             
             # 检查靠岸的船只（在相邻水域中的水上单位）
             if self.is_near_water and self.can_repair_ships:
-                for p in self.player.allied:
+                for p in player.allied:
                     for u in p.units:
                         if u.can_be_repaired_by_worker_from_shore(self):
                             if self.check_if_enough_resources(u.repair_cost) is None:
@@ -117,12 +128,12 @@ class Worker(Unit):
             return
         if self.auto_gather:
             # 确保在自动收集前感知系统是最新的（避免游戏开始时的无效命令）
-            if hasattr(self.player, 'force_perception_update'):
-                self.player.force_perception_update()
+            if hasattr(player, 'force_perception_update'):
+                player.force_perception_update()
             
             local_warehouses_resource_types = set()
             for w in self.place.objects:
-                if w.player in self.player.allied:
+                if w.player in player.allied:
                     local_warehouses_resource_types.update(w.storable_resource_types)
             if local_warehouses_resource_types:
                 # 筛选可采集的资源

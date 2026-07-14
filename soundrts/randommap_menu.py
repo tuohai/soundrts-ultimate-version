@@ -73,13 +73,6 @@ class RandomMapMenu:
 
     def _set_template(self, template):
         self._config.template = template
-        from .rmg_templates import custom_template_entry
-
-        entry = custom_template_entry(template)
-        if entry is not None and entry.spec.default_victory_mode:
-            mode = entry.spec.default_victory_mode
-            if mode in ("conquest", "economic", "exploration", "survival"):
-                self._config.victory_mode = mode
         self._open_size_menu()
 
     def _open_size_menu(self):

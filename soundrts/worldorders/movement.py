@@ -152,8 +152,10 @@ class AttackOrder(BasicOrder):
         except Exception:
             pass
         self.update_target()
-        if self.target is None:
-            self.mark_as_impossible()
+        if self.target is None or getattr(self.target, "hp", 0) <= 0:
+            # 目标消失/死亡通常表示已击杀（如狩猎动物），属攻击成功而非失败。
+            # 旧逻辑会 mark_as_impossible → 退格杀完动物后滴一声 order_impossible。
+            self.mark_as_complete()
             return
         if (
             hasattr(self.unit, "is_an_enemy")

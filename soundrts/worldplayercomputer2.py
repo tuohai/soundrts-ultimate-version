@@ -35,6 +35,8 @@ class Computer2(Player):
 
     def __init__(self, *args, **kargs):
         Player.__init__(self, *args)
+        self._ai2_targets_cache = None
+        self._ai2_targets_sig = None
 
     def __repr__(self):
         return "Computer2(%s)" % self.client
@@ -51,13 +53,23 @@ class Computer2(Player):
 
     def play(self):
         self.cheat()
-        # sort to avoid desync
-        # 优化: 原版用 getattr(x, "is_an_exit", False) 反射, cProfile 显示此
-        # listcomp 29M calls. Entity 已有 class-level is_an_exit=False, Exit 覆盖
-        # 为 True, 因此可以直接 x.is_an_exit 命中类属性, 省去 getattr 开销.
-        targets = list(self.perception) + list(self.memory)
-        targets = [x for x in targets if not x.is_an_exit]
-        targets.sort(key=_id)
+        # sort to avoid desync；按感知版本缓存，避免每 turn 全量重建+排序
+        # (cw1 上 Computer2.play 的 sort 约 3.7s)
+        sig = (
+            getattr(self, "_perception_version", 0),
+            len(self.perception),
+            len(self.memory),
+        )
+        if self._ai2_targets_sig != sig or self._ai2_targets_cache is None:
+            targets = [x for x in self.perception if not x.is_an_exit]
+            targets.extend(x for x in self.memory if not x.is_an_exit)
+            targets.sort(key=_id)
+            self._ai2_targets_cache = targets
+            self._ai2_targets_sig = sig
+        else:
+            targets = self._ai2_targets_cache
+        if not targets:
+            return
         for u in self.units:
             if not u.orders:
                 order = self._random_order(u, targets)

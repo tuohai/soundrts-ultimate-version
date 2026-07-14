@@ -443,6 +443,66 @@ Propriedades principais corpo a corpo/à distância:
 - ``mdg_explode`` / ``rdg_explode``, ``exp_dgf``, ``exp_hp_cost``, ``mdg_explode_vs``
 - Modificadores de **terreno do atacante** (desde 1.4.5.0): ``mdg_on_terrain`` / ``rdg_on_terrain``, ``mdg_cd_on_terrain`` / ``rdg_cd_on_terrain``, ``charge_mdg_terrain`` / ``charge_rdg_terrain``, ``charge_mdg_cd_on_terrain`` / ``charge_rdg_cd_on_terrain``; mesma sintaxe que ``speed_on_terrain`` — veja ``building-land-terrain.rst`` *Modificadores de combate de unidade em terreno*
 
+Menace automática / prioridade de alvo (desde 1.4.5.2)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+O ``menace`` de uma unidade não é mais só o dano. Quando rules não define um
+valor absoluto, o motor usa uma **pontuação de combate multidimensional** para:
+
+- Escolha automática de alvo (maior ameaça primeiro; jogadores computer que não
+  são ``timers`` também podem misturar ``mdg_vs``/``rdg_vs`` com
+  ``counter_skill`` — veja ``aimaking.rst``)
+- Somas de ameaça inimiga por casa e decisões de IA relacionadas
+
+**Dimensões** (arma principal = o maior de ``mdg`` / ``rdg``):
+
+- Dano, acerto (``mdg_cover``/``rdg_cover``, 0 = 100%%), cooldown (``*_cd``),
+  wind-up (``mdg_ready``/``rdg_ready`` — não o ``*_delay`` balístico)
+- HP (``hp`` atual, senão ``hp_max``), armadura (``max(mdf, rdf)``), esquiva
+  (``max(mdg_dodge, rdg_dodge)``)
+- Alcance de ataque, velocidade de movimento
+
+Em resumo: DPS efetivo (dano × acerto / (cd + ready)), depois sobrevivência e
+fatores de alcance/velocidade.
+
+**Overrides opcionais em rules** (defs de unidade):
+
+======= ================= ============================================================
+Campo     Tipo              Significado
+======= ================= ============================================================
+``menace`` absoluto         Ameaça fixa; **não** acompanha upgrades; substitui o auto
+``menace_mult`` peso (1)    Multiplica a base multi-dim (ainda escala com stats)
+``menace_vs`` absoluto vs   Ameaça fixa em relação a esse tipo de observador / ``is_a``
+``menace_mult_vs`` peso vs  Base multi-dim × peso em relação a esse observador
+======= ================= ============================================================
+
+Ordem de busca (``menace_versus``): ``menace_vs`` → ``menace_mult_vs`` →
+``menace`` / ``menace_mult`` / pontuação automática global.
+
+Exemplo::
+
+    def knight
+    mdg 6
+    menace_mult 1.5
+
+    def archer
+    rdg 5
+    menace_vs knight 3
+    menace_mult_vs mage 1.2
+
+**Pesos ajustáveis** em ``def parameters`` (importância de armadura/esquiva/alcance/velocidade
+e normalização de HP; dano+cd+ready+cover sempre alimentam o núcleo de DPS)::
+
+    def parameters
+    menace_armor_weight 1
+    menace_dodge_weight 1
+    menace_range_weight 0.15
+    menace_speed_weight 0.2
+    menace_hp_ref 50
+
+Prefira ``menace_mult`` / ``menace_mult_vs`` para unidades que pesquisam upgrades;
+use ``menace`` / ``menace_vs`` absolutos só quando quiser prioridade fixa.
+
 Investida e contra-investida (desde 1.4.0.1)
 
 Investida: unidades com estatísticas de investida podem executar um ataque de investida de alto dano ao engajar um
@@ -1052,6 +1112,9 @@ Comportamento inicial por unidade em ``rules.txt``:
 
 - ``ai_mode``: ``offensive``, ``defensive``, ``guard`` ou ``chase``. Padrão: ``offensive``
   para soldados, ``defensive`` para trabalhadores. Aplica-se a unidades de combate.
+  ``chase`` mantém um ``AttackAction`` e segue entre casas (sem ``go`` automático);
+  ``offensive`` / ``guard`` ainda respeitam ``position_to_hold`` do spawn até uma ordem dar ``stop()``;
+  ``defensive`` / ``chase`` não.
 - ``auto_gather``: ``1`` ou ``0``. Padrão ``1``. Apenas trabalhadores.
 - ``auto_repair``: ``1`` ou ``0``. Padrão ``1``. Apenas trabalhadores.
 - ``auto_explore``: ``1`` ou ``0``. Padrão ``0``. Unidades móveis (speed > 0).
@@ -1067,7 +1130,8 @@ forçadas a guard + contra-ataque independentemente de ``ai_mode``.
 
 Unidades do jogador em modo ``offensive``, ``defensive`` ou ``chase`` não atacam automaticamente unidades
 neutras (``computer_only ... neutral``) e modo defensivo não foge só de neutros.
-Use ataque imperativo (ex.: Ctrl+clique na unidade) para lutar contra um neutro.
+``go`` normal em neutro só move; ``attack`` normal em ``is_huntable`` causa dano.
+Use ataque imperativo (ex.: Ctrl+clique) para a IA tratar creep/NPC neutro como alvo automático.
 
 Exemplo::
 
@@ -1316,7 +1380,7 @@ Sistema de caça (estilo Age of Empires)
 
 Veja ``../player/hunting.htm``. Resumo:
 
-- Trabalhadores clicam com botão direito em animais ``is_huntable`` para atacar; abates geram cadáver ``food_deposit`` (ex.: ``food_carcass``).
+- Trabalhadores Backspace/clique direito em ``is_huntable`` atacam (ataque normal causa dano); abates geram ``food_deposit`` (ex.: ``food_carcass``) e completam a ordem sem bip falso ``order_impossible``.
 - Atributos de animal: ``is_huntable``, ``flee_on_hit``, ``herdable``, ``food_deposit``, ``food_deposit_qty``, ``no_number``.
 - Spawn no mapa: ``computer_only 0 0 neutral \<square\> \<count\> deer``; mapas aleatórios adicionam fauna perto dos starts.
 - Voz: unidades com ``is_huntable`` / ``herdable`` são anunciadas como "deer , animal", não "neutral , NPC". Ctrl+Shift+F4 para jogador só de fauna diz "you are animal". NPCs de história (``quest_npc``, etc.) ainda dizem "neutral , NPC".

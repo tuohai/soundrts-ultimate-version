@@ -40,7 +40,7 @@ The submenu walks through ( Esc goes back one level ):
 1. Map template (or Import share code — section 4)
 2. Size: small / medium / large
 3. Players: 2 / 3 / 4
-4. Team mode (3 players: free-for-all / one-vs-many; 4 players: free-for-all / 2v2 / one-vs-many). Free-for-all means everyone independent; one-vs-many allies all other players against player 1
+4. Team mode (4 players only): free-for-all or fixed 2v2
 5. Monster strength: weak / medium / strong (hostile center garrison; attacks players — weak: 2 footmen / medium: 4 footmen + 2 archers / strong: 6 footmen + 4 archers + 1 knight)
 6. Resource layout: balanced / clustered
 7. Terrain (not for lanes template): random / grass, plus every ``rmg_terrain 1`` terrain in ``rules.txt``
@@ -70,12 +70,10 @@ After seed selection you hear a voice preview of the settings; after treaty conf
      - Three-lane layout (TD2-style); no terrain/water steps
 
 
-2.2 Team modes
+2.2 Teams 2v2
 ^^^^^^^^^^^^^^
 
-- **Free-for-all**: each player starts in a unique alliance (true FFA).
-- **One-vs-many**: player 1 alone; all other players start allied.
-- **2v2** (4 players only): players 1+3 vs 2+4.
+With 4 players and 2v2, the map adds alliance triggers: players 1+2 and 3+4 start allied.
 
 3. Generation announcement and F5/F6
 --------------------------------------
@@ -128,8 +126,8 @@ Twelve colon-separated parts: ``RMG1`` prefix + 11 fields (legacy 10-field codes
      - random / grass / marsh / mountain
      - r / g / a / t
    * - Teams
-     - ffa / teams_2v2 / one_vs_many
-     - f / t / o
+     - ffa / teams_2v2
+     - f / t
    * - Water
      - none / lake / river
      - n / l / v
@@ -193,16 +191,6 @@ On success you hear a preview and go straight to Treaty (skipping intermediate s
 
 RMG generates the whole map from parameters, with seeds and share codes for reproduction.
 
-6.5 RMG gameplay and mod extensions
-------------------------------------
-
-Random maps are an **engine framework**: the generator, four victory modes,
-trigger API, and optional Civ-style strategic systems ship with SoundRTS.
-Default values live in ``rules.txt`` ``def parameters``; mods and
-``cfg/randommap/*.txt`` templates override them (economic goals, survival time,
-ruin counts, strategic systems on/off). See ``player/rmg-strategic-systems.htm``
-(section 7) and ``res/randommap/example.txt``.
-
 7. HoMM / Civ5-inspired gameplay
 ----------------------------------
 
@@ -216,18 +204,13 @@ Conquest
 
 Economic
     Total gold gathered reaches the goal (excludes starting stock; spending still counts; checked about every 60s).
-    **Defaults** (override in ``rules.txt`` or template): fast 2000 / standard 3000 / macro 5000 / lanes 2500
-    (``rmg_economic_goal*`` parameters).
+    Fast 2000 / standard 3000 / macro 5000 / lanes 2500.
 
 Exploration
-    Your camp discovers every ancient ruin on the map. Ruin pair counts follow map size and
-    ``rmg_exploration_ruin_pairs_*``; templates may set ``exploration_ruin_pairs N``.
+    Your camp discovers every ancient ruin (FFA: only your finds count; 2v2: ally finds count).
 
 Survival
-    Hold until the timer ends with your command centre intact.
-    **Defaults**: fast 600 s / others 900 s (``rmg_survival_seconds*``); templates may set ``survival_seconds``.
-
-Mods may define a 5th+ victory mode via ``victory_triggers`` in a custom template (section 8.4).
+    Hold until the timer ends with your town hall intact (10 min fast / 15 min otherwise).
 
 Losing all ``provides_survival`` buildings still means defeat. In exploration/economic/survival modes, wiping all enemies does not auto-win; you may still attack. Victory checks run about every 30s (exploration) or 60s (economic) after conditions are met.
 
@@ -286,24 +269,3 @@ Optional flags on ``class terrain``:
 - ``rmg_ford 1`` — terrain name used for lane-map ford crossings
 
 When RMG places terrain, it reads ``speed``, ``is_water``, ``blocks_path``, and related properties from rules instead of hard-coded ``marsh`` / ``mountain`` values.
-
-8.4 Victory modes and custom challenges
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Optional template fields (override ``rules.txt`` defaults):
-
-- ``default_victory_mode`` — ``conquest`` / ``economic`` / ``exploration`` / ``survival``
-- ``economic_goal``, ``survival_seconds``, ``exploration_ruin_pairs``
-- ``strategic_systems 0`` — disable Civ-style systems (pure RTS, e.g. sci-fi reskin)
-- ``starting_units`` — mod command centre/workers (need ``provides_survival`` + ``storable_resource_types``)
-
-**Custom victory (5th mode and beyond)**:
-
-::
-
- victory_triggers
- trigger players (timer 60 60) (if (has_gathered 5000 resource2) (victory))
- end_victory_triggers
-
-The generator writes your triggers and still adds defeat conditions (lose all
-``provides_survival`` buildings, etc.). Full examples: ``res/randommap/example.txt``.

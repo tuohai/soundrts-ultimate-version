@@ -13,10 +13,16 @@ class CombatAttributes:
     def __init__(self, main_interface):
         self.main_interface = main_interface
 
-    def _format_terrain_pair_list(self, terrain_list):
-        """将 [地形, 值, 地形, 值, ...] 格式化为属性面板文本。"""
+    def _format_terrain_pair_list(self, terrain_list, as_percent_fraction=False):
+        """将 [地形, 值, 地形, 值, ...] 格式化为属性面板文本。
+
+        as_percent_fraction=True：小数百分比（``.33`` → ``33%``），用于战斗/冲锋地形修正。
+        as_percent_fraction=False：直接显示数值（cover/dodge 等整点修正）。
+        """
         if not terrain_list:
             return None
+        from ..lib.square_terrain_rules import parse_percent_points
+
         terrain_text = []
         for i in range(0, len(terrain_list), 2):
             if i + 1 >= len(terrain_list):
@@ -29,10 +35,23 @@ class CombatAttributes:
             else:
                 terrain_text.append(str(terrain_title))
             terrain_text.extend(mp.COLON)
-            try:
-                terrain_text.extend(nb2msg_float(to_int(modifier) / PRECISION))
-            except (ValueError, TypeError):
-                terrain_text.append(str(modifier))
+            if as_percent_fraction:
+                pct = parse_percent_points(modifier)
+                if pct is not None:
+                    terrain_text.extend(nb2msg_float(pct))
+                    terrain_text.append("%")
+                else:
+                    terrain_text.append(str(modifier))
+            else:
+                try:
+                    # cover/dodge：规则里常写整点字符串如 "60"
+                    terrain_text.extend(nb2msg_float(float(modifier)))
+                    terrain_text.append("%")
+                except (ValueError, TypeError):
+                    try:
+                        terrain_text.extend(nb2msg_float(to_int(str(modifier)) / PRECISION))
+                    except (ValueError, TypeError, AssertionError):
+                        terrain_text.append(str(modifier))
             terrain_text.extend(mp.COMMA)
         if terrain_text:
             return terrain_text[:-1]
@@ -309,52 +328,19 @@ class CombatAttributes:
             )
     
     def add_terrain_modifier_attributes(self, u, attrs):
-        """添加地形修正相关属性"""
-        # 地形命中/闪避修正
-        if hasattr(u.model, "mdg_cover_on_terrain") and u.model.mdg_cover_on_terrain:
-            terrain_dict = u.model.mdg_cover_on_terrain
-            if terrain_dict:
-                terrain_text = []
-                for terrain_type, modifier in terrain_dict.items():
-                    terrain_title = style.get(terrain_type, "title")
-                    if terrain_title:
-                        if isinstance(terrain_title, list):
-                            terrain_text.extend(terrain_title)
-                        else:
-                            terrain_text.append(str(terrain_title))
-                    else:
-                        terrain_text.append(str(terrain_type))
-                    
-                    terrain_text.extend(mp.COLON)
-                    terrain_text.extend(nb2msg_float(modifier / PRECISION))
-                    terrain_text.extend(mp.COMMA)
-                
-                if terrain_text:
-                    # 移除最后一个逗号
-                    terrain_text = terrain_text[:-1]
-                    attrs.append(("", mp.MDG_COVER_ON_TERRAIN, terrain_text))
-        
-        if hasattr(u.model, "rdg_cover_on_terrain") and u.model.rdg_cover_on_terrain:
-            rdg_terrain_list = getattr(u.model, "rdg_cover_on_terrain", [])
-            if rdg_terrain_list:
-                terrain_text = []
-                for terrain_type, modifier in rdg_terrain_list.items():
-                    terrain_title = style.get(terrain_type, "title")
-                    if terrain_title:
-                        if isinstance(terrain_title, list):
-                            terrain_text.extend(terrain_title)
-                        else:
-                            terrain_text.append(str(terrain_title))
-                    else:
-                        terrain_text.append(str(terrain_type))
-                    
-                    terrain_text.extend(mp.COLON)
-                    terrain_text.extend(nb2msg_float(modifier / PRECISION))
-                    terrain_text.extend(mp.COMMA)
-                
-                if terrain_text:
-                    terrain_text = terrain_text[:-1]  # 移除最后一个逗号
-                    attrs.append(("", mp.RDG_COVER_ON_TERRAIN, terrain_text))
+        """添加地形修正相关属性（cover/dodge + 攻击/冷却/冲锋地形百分比）。"""
+        cover_dodge_map = (
+            ("mdg_cover_on_terrain", mp.MDG_COVER_ON_TERRAIN),
+            ("rdg_cover_on_terrain", mp.RDG_COVER_ON_TERRAIN),
+            ("mdg_dodge_on_terrain", mp.MDG_DODGE_ON_TERRAIN),
+            ("rdg_dodge_on_terrain", mp.RDG_DODGE_ON_TERRAIN),
+        )
+        for attr_name, msg_key in cover_dodge_map:
+            terrain_text = self._format_terrain_pair_list(
+                getattr(u.model, attr_name, ()), as_percent_fraction=False
+            )
+            if terrain_text:
+                attrs.append(("", msg_key, terrain_text))
 
         terrain_attr_map = (
             ("mdg_on_terrain", mp.MDG_ON_TERRAIN),
@@ -367,7 +353,8 @@ class CombatAttributes:
             ("charge_rdg_cd_on_terrain", mp.CHARGE_RDG_CD_ON_TERRAIN),
         )
         for attr_name, msg_key in terrain_attr_map:
-            terrain_list = getattr(u.model, attr_name, ())
-            terrain_text = self._format_terrain_pair_list(terrain_list)
+            terrain_text = self._format_terrain_pair_list(
+                getattr(u.model, attr_name, ()), as_percent_fraction=True
+            )
             if terrain_text:
                 attrs.append(("", msg_key, terrain_text))

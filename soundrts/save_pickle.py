@@ -30,12 +30,15 @@ CREATURE_STRIP_ON_SAVE = (
 
 PLAYER_CACHE_KEYS = (
     "_buckets",
+    "_bucket_unit_cells",
+    "_bucket_ticks_since_heal",
     "_enemy_units_cache",
     "_enemy_units_cache_time",
     "_cached_enemy_players",
     "_enemy_players_cache_time",
     "_enemy_units_set",
     "_enemy_units_set_time",
+    "_enemy_inside_units",
     "_perception_set",
     "_perception_set_time",
     "_allied_exploration_cache",
@@ -192,12 +195,15 @@ def restore_player_memory(player) -> None:
 def init_player_pickle_caches(player) -> None:
     """Reset recomputable Player caches to post-__init__ defaults."""
     player._buckets = {}
+    player._bucket_unit_cells = None
+    player._bucket_ticks_since_heal = 0
     player._enemy_units_cache = []
     player._enemy_units_cache_time = -1_000_000
     player._cached_enemy_players = []
     player._enemy_players_cache_time = -1_000_000
     player._enemy_units_set = frozenset()
     player._enemy_units_set_time = -1
+    player._enemy_inside_units = ()
     player._perception_set = frozenset()
     player._perception_set_time = -1
     player._allied_exploration_cache = {}

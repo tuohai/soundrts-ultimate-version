@@ -45,7 +45,7 @@ O submenu percorre (Esc volta um nível):
 1. Modelo de mapa (ou Importar código de compartilhamento — seção 4)
 2. Tamanho: pequeno / médio / grande
 3. Jogadores: 2 / 3 / 4
-4. Modo de equipe (3 jogadores: todos contra todos / um contra muitos; 4 jogadores: todos contra todos / 2v2 / um contra muitos). Todos contra todos = todos independentes; um contra muitos = jogador 1 sozinho contra o resto aliado
+4. Modo de equipe (apenas 4 jogadores): todos contra todos ou 2v2 fixo
 5. Força dos monstros: fraca / média / forte (guarnição hostil central; ataca
    jogadores — fraca: 2 footman / média: 4 footman + 2 archer / forte: 6
    footman + 4 archer + 1 knight)
@@ -81,12 +81,11 @@ confirmar a trégua o mapa é gerado.
      - Layout de três rotas (estilo TD2); sem etapas de terreno/água
 
 
-2.2 Modos de equipe
-^^^^^^^^^^^^^^^^^^^
+2.2 Equipes 2v2
+^^^^^^^^^^^^^^^
 
-- **Todos contra todos**: cada jogador começa em uma aliança própria.
-- **Um contra muitos**: jogador 1 sozinho; os demais começam aliados.
-- **2v2** (apenas 4 jogadores): jogadores 1+3 contra 2+4.
+Com 4 jogadores e 2v2, o mapa adiciona gatilhos de aliança: jogadores 1+2 e
+3+4 começam aliados.
 
 3. Anúncio de geração e F5/F6
 -----------------------------
@@ -142,8 +141,8 @@ legados de 10 campos omitem vitória e usam conquest como padrão):
      - random / grass / marsh / mountain
      - r / g / a / t
    * - Equipes
-     - ffa / teams_2v2 / one_vs_many
-     - f / t / o
+     - ffa / teams_2v2
+     - f / t
    * - Água
      - none / lake / river
      - n / l / v
@@ -222,13 +221,6 @@ aleatório de ouro). Isso não é RMG.
 O RMG gera o mapa inteiro a partir de parâmetros, com sementes e códigos de
 compartilhamento para reprodução.
 
-6.5 Gameplay RMG e extensões de mod
-------------------------------------
-
-Mapas aleatórios são **framework do motor**; padrões em ``rules.txt``;
-sobrescritas em ``cfg/randommap/*.txt``. Ver ``player/rmg-strategic-systems.htm``
-(seção 7) e ``res/randommap/example.txt``.
-
 7. Jogabilidade inspirada em HoMM / Civ5
 ----------------------------------------
 
@@ -243,16 +235,17 @@ Conquest
     opcional).
 
 Economic
-    Ouro total coletado atinge a meta (~a cada 60s).
-    **Padrões** (``rules.txt`` ou template): fast 2000 / standard 3000 / macro 5000 / lanes 2500.
+    Ouro total coletado atinge a meta (exclui estoque inicial; gastos ainda
+    contam; verificado a cada ~60s).
+    Fast 2000 / standard 3000 / macro 5000 / lanes 2500.
 
 Exploration
-    Descubra todas as ruínas do mapa; pares via ``rmg_exploration_ruin_pairs_*`` ou ``exploration_ruin_pairs``.
+    Seu acampamento descobre todas as ruínas antigas (FFA: só suas descobertas
+    contam; 2v2: descobertas de aliados contam).
 
 Survival
-    Resista até o timer com base intacta; **padrões** fast 600 s / outros 900 s; template ``survival_seconds``.
-
-Mods: 5º modo via ``victory_triggers`` (seção 8.4).
+    Resista até o temporizador terminar com sua prefeitura intacta (10 min
+    fast / 15 min nos demais).
 
 Perder todos os edifícios ``provides_survival`` ainda significa derrota. Nos
 modos exploration/economic/survival, eliminar todos os inimigos não garante
@@ -332,11 +325,3 @@ Flags opcionais em ``class terrain``:
 Quando o RMG coloca terreno, lê ``speed``, ``is_water``, ``blocks_path`` e
 propriedades relacionadas de rules em vez de valores fixos de ``marsh`` /
 ``mountain``.
-
-8.4 Modos de vitória e desafios personalizados
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Campos de template: ``default_victory_mode``, ``economic_goal``,
-``survival_seconds``, ``exploration_ruin_pairs``, ``strategic_systems 0``.
-Bloco ``victory_triggers`` para vitórias personalizadas — ver
-``res/randommap/example.txt``.

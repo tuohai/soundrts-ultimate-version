@@ -5,6 +5,7 @@ Bonus属性处理模块
 from .. import msgparts as mp
 from ..lib.nofloat import PRECISION
 from ..lib.msgs import nb2msg, nb2msg_float
+from .terrain_effective import ATTR_ON_TERRAIN, ATTR_TERRAIN_VS, effective_stat_value
 
 
 class BonusHandler:
@@ -108,6 +109,12 @@ class BonusHandler:
         # 如果单位本身没有，再检查model
         elif hasattr(u.model, base_attr):
             base_value = getattr(u.model, base_attr, 0)
+
+        # 当前格地形 *_vs / 单位 *_on_terrain：计入 mdg 等显示值
+        if base_value and (
+            base_attr in ATTR_TERRAIN_VS or base_attr in ATTR_ON_TERRAIN
+        ):
+            base_value = effective_stat_value(u, base_attr, base_value)
             
         if base_value > 0:
             if precision_divide:

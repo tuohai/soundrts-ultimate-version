@@ -108,10 +108,32 @@ Independentes: ex. apenas cavaleiros recebem ``can_auto_explore 1``, ou ``auto_e
      - mantém posição; contra-ataca apenas se habilitado
    * - ``chase``
      - Perseguição
-     - persegue unidades hostis visíveis dentro do alcance
+     - mantém um único ``AttackAction`` no inimigo travado e segue pelas saídas entre casas (sem ``go`` automático) até ficar no alcance
 
 
+2.1.1 Ponto de hold (``position_to_hold``) e sair da casa
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+Unidades nascem com a casa atual como ``position_to_hold``. Dentro dessa área,
+``_must_hold`` impede sair:
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - Modo IA
+     - Limitado por ``position_to_hold``?
+   * - ``offensive`` / ``guard``
+     - Sim (não saem sozinhas sem ordem que faça ``stop()``)
+   * - ``defensive``
+     - Não (podem recuar)
+   * - ``chase``
+     - Não (o hold é limpo ao cruzar casas)
+
+
+Ordens ``go`` / ``attack`` do jogador chamam ``stop()`` no primeiro update e limpam
+``position_to_hold``.
 
 Patrulha é um comando com rota, não um modo de IA. Você não pode escrever ``ai_mode patrol``. Use ``guard`` ou ``chase`` para efeitos similares.
 
@@ -140,8 +162,10 @@ Unidades do jogador em modo ``offensive``, ``defensive`` ou ``chase``:
 
 - não atacam automaticamente unidades neutras (`computer_only ... neutral` creeps / NPCs / vida selvagem);
 - não fogem por causa de neutros (modo defensivo só pondera ameaças hostis reais);
-- para lutar contra um neutro, emita ataque forçado (``imperative`` — ex. Ctrl+clique na unidade;
-  o motor converte ``go`` imperativo em ``attack``).
+- ``go`` padrão / normal em neutro (não imperativo) só move, sem AttackAction;
+- a ordem padrão em ``is_huntable`` continua ``attack`` e causa dano;
+- para a IA tratar creep / NPC neutro como alvo automático, emita ataque forçado
+  (``imperative`` — ex. Ctrl+clique; o motor converte ``go`` imperativo em ``attack``).
 
 
 Voz: animais de caça (``is_huntable`` / ``herdable``, ex. cervo, ovelha) são anunciados como
@@ -276,6 +300,10 @@ R: Ignorado (velocidade 0).
 
 ``Q: ``auto_gather`` em um soldado?``  
 R: Só faz sentido em trabalhadores.
+
+P: Como chase difere do antigo salto com ``go`` automático?  
+R: Agora mantém o ataque e segue entre casas; não é limitado por ``position_to_hold``.
+Ofensivo / guarda ainda são, a menos que o jogador ordene mover.
 
 P: Unidades ofensivas/chase atacam automaticamente NPCs neutros?  
 R: Não. Modos ofensivo, defensivo e chase ignoram neutros para ataque automático e fuga;

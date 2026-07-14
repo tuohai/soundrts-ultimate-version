@@ -1,6 +1,33 @@
 def peasant
 desc The peasant is important but fragile. The peasant collects gold, wood, or food, builds and repairs buildings. Peasants gather food from farms, orchards, and hunted animals, and bring it to warehouses. Many peasants can help building or repairing a building to go faster. When a peasant can build a new type of building, this new option is added at the end of the list.\nThe peasant can fight, and can join a total attack with the command Control + Alt + S.
 
+def menace
+desc Optional unit rule (absolute). Fixed AI threat for auto-targeting and square threat sums. Does not change when stats upgrade. Prefer menace_mult or auto multi-dim threat.
+
+def menace_mult
+desc Optional unit rule (relative). Multiplies the auto multi-dimensional threat (damage, hit cover, cd+ready, hp, armor, dodge, range, speed). Default 1.
+
+def menace_vs
+desc Optional. Absolute threat of this unit toward specific observer types when they auto-target. Example: archer menace_vs knight 3 means knights treat archers as threat 3. Supports is_a. Overrides menace_mult_vs and global menace for that match.
+
+def menace_mult_vs
+desc Optional. Threat weight of this unit toward specific observer types: auto multi-dim base times weight. Example: footman menace_mult_vs knight 0.5. Prefer over menace_vs when upgrades should still matter.
+
+def menace_armor_weight
+desc parameters: armor contribution in auto menace (default 1).
+
+def menace_dodge_weight
+desc parameters: dodge contribution in auto menace (default 1).
+
+def menace_range_weight
+desc parameters: attack range contribution in auto menace (default 0.15).
+
+def menace_speed_weight
+desc parameters: move speed contribution in auto menace (default 0.2).
+
+def menace_hp_ref
+desc parameters: reference HP for normalizing toughness in auto menace (default 50).
+
 def footman
 desc The footman fights with his sword. He must be close to the target to hit it.
 

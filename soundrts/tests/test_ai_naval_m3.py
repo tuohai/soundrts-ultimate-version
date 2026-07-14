@@ -67,18 +67,19 @@ def test_m3_intermediate_finds_shore_shipyard_site():
     assert place.is_near_water
 
 
-def test_maintain_naval_requests_lumbermill_on_m3(monkeypatch):
+def test_maintain_naval_requests_shipyard_on_m3(monkeypatch):
     world = _load_m3_world()
     comp = Computer.__new__(Computer)
     comp.world = world
     comp.AI_type = "intermediate"
-    comp.equivalent = lambda name: name
+    comp._workers = []
+    comp._type_discovery_cache = None
     comp.nb = lambda name: 0
     comp.future_nb = lambda name: 0
     calls = []
     comp.get = lambda n, t: calls.append((n, t)) or True
     comp._try_maintain_naval()
-    assert calls == [(1, "lumbermill")]
+    assert calls == [(1, "shipyard")]
 
 
 def test_maintain_naval_requests_boats_when_dock_ready(monkeypatch):
@@ -86,7 +87,8 @@ def test_maintain_naval_requests_boats_when_dock_ready(monkeypatch):
     comp = Computer.__new__(Computer)
     comp.world = world
     comp.AI_type = "intermediate"
-    comp.equivalent = lambda name: name
+    comp._workers = []
+    comp._type_discovery_cache = None
     comp.nb = lambda name: 1 if name == "shipyard" else 0
     comp.future_nb = lambda name: 0
     calls = []
@@ -116,7 +118,8 @@ def test_maintain_naval_requests_destroyers_for_intermediate():
     comp = Computer.__new__(Computer)
     comp.world = world
     comp.AI_type = "intermediate"
-    comp.equivalent = lambda name: name
+    comp._workers = []
+    comp._type_discovery_cache = None
     comp.nb = lambda name: 2 if name == "boat" else (1 if name == "shipyard" else 0)
     comp.future_nb = lambda name: 0
     calls = []

@@ -18,6 +18,17 @@ class HitMissMixin:
     """
     def _get_dodge_on_terrain(self, is_melee=True) -> int:
         """获取当前地形上的闪避修正（0~100）"""
+        from ..lib.square_terrain_rules import any_terrain_defines, terrain_unit_dodge_bonus
+
+        if is_melee:
+            unit_list = getattr(self, "mdg_dodge_on_terrain", ()) or ()
+        else:
+            unit_list = getattr(self, "rdg_dodge_on_terrain", ()) or ()
+        need_unit = bool(unit_list)
+        need_terrain = any_terrain_defines("dodge_vs")
+        if not need_unit and not need_terrain:
+            return 0
+
         terrain_type = None
         if self.place:
             if hasattr(self.place, "type_name_at"):
@@ -28,14 +39,10 @@ class HitMissMixin:
             return 0
 
         unit_mod = 0
-        if is_melee and hasattr(self, 'mdg_dodge_on_terrain') and self.mdg_dodge_on_terrain:
-            unit_mod = _terrain_modifier_from_list(terrain_type, self.mdg_dodge_on_terrain)
-        elif not is_melee and hasattr(self, 'rdg_dodge_on_terrain') and self.rdg_dodge_on_terrain:
-            unit_mod = _terrain_modifier_from_list(terrain_type, self.rdg_dodge_on_terrain)
+        if need_unit:
+            unit_mod = _terrain_modifier_from_list(terrain_type, unit_list)
 
-        from ..lib.square_terrain_rules import terrain_unit_dodge_bonus
-
-        terrain_mod = terrain_unit_dodge_bonus(terrain_type, self)
+        terrain_mod = terrain_unit_dodge_bonus(terrain_type, self) if need_terrain else 0
         return unit_mod + terrain_mod
 
     def _get_melee_cover_vs(self, target) -> int:

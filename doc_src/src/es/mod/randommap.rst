@@ -38,7 +38,7 @@ El submenú recorre (Esc retrocede un nivel):
 1. Plantilla de mapa (o Importar código compartido – sección 4)
 2. Tamaño: pequeño/mediano/grande
 3. Jugadores: 2 / 3 / 4
-4. Modo equipo (3 jugadores: todos contra todos / uno contra muchos; 4 jugadores: todos contra todos / 2v2 / uno contra muchos). Todos contra todos = independientes; uno contra muchos = el jugador 1 solo contra el resto aliado
+4. Modo equipo (solo 4 jugadores): todos contra todos o 2v2 fijo
 5. Fuerza del monstruo: débil / media / fuerte (guarnición central hostil; ataca a los jugadores - débil: 2 lacayos / media: 4 lacayos + 2 arqueros / fuerte: 6 lacayos + 4 arqueros + 1 caballero)
 6. Diseño de recursos: equilibrado/agrupado
 7. Terreno (no para plantilla de carriles): aleatorio/hierba, más cada terreno ``rmg_terrain 1`` en ``rules.txt``
@@ -67,12 +67,10 @@ Después de la selección de semillas, escuchará una vista previa de voz de la 
    * - Carriles
      - Diseño de tres carriles (estilo TD2); sin terreno/escalones de agua
 
-2.2 Modos de equipo
-^^^^^^^^^^^^^^^^^^^
+2.2 Equipos 2v2
+^^^^^^^^^^^^^^^
 
-- **Todos contra todos**: cada jugador empieza en una alianza propia.
-- **Uno contra muchos**: el jugador 1 solo; el resto empieza aliado.
-- **2v2** (solo 4 jugadores): jugadores 1+3 frente a 2+4.
+Con 4 jugadores y 2v2, el mapa añade activadores de alianza: los jugadores 1+2 y 3+4 comienzan aliados.
 
 3. Anuncio de generación y F5/F6
 --------------------------------
@@ -125,8 +123,8 @@ Doce partes separadas por dos puntos: prefijo ``RMG1`` + 11 campos (los códigos
      - aleatorio / hierba / pantano / montaña
      -r/g/a/t
    * - Equipos
-     - ffa / teams_2v2 / one_vs_many
-     - f / t / o
+     -ffa/equipos_2v2
+     -f/t
    * - Agua
      - ninguno / lago / río
      -n/l/v
@@ -187,15 +185,6 @@ Si tiene éxito, escuchará una vista previa y irá directamente al Tratado (omi
 
 RMG genera el mapa completo a partir de parámetros, con semillas y códigos compartidos para su reproducción.
 
-6.5 Gameplay RMG y extensiones de mods
----------------------------------------
-
-Los mapas aleatorios son un **marco del motor**: generador, cuatro modos de victoria,
-API de triggers y sistemas estratégicos opcionales al estilo Civ. Los valores
-predeterminados están en ``def parameters`` de ``rules.txt``; mods y plantillas
-``cfg/randommap/*.txt`` los sobrescriben. Ver ``player/rmg-strategic-systems.htm``
-(sección 7) y ``res/randommap/example.txt``.
-
 7. Jugabilidad inspirada en HoMM/Civ5
 -------------------------------------
 
@@ -208,19 +197,14 @@ Conquista
     Elimina a todos los jugadores enemigos (predeterminado; eliminar los creeps del centro es opcional).
 
 Económico
-    El oro total recolectado alcanza la meta (excluye stock inicial; el gasto cuenta; ~cada 60 s).
-    **Predeterminados** (sobrescribir en ``rules.txt`` o plantilla): rápido 2000 / estándar 3000 / macro 5000 / carriles 2500
-    (``rmg_economic_goal*``).
+    El oro total recolectado alcanza la meta (excluye las existencias iniciales; el gasto aún cuenta; se verifica aproximadamente cada 60).
+    Rápido 2000 / estándar 3000 / macro 5000 / carriles 2500.
 
 Exploración
-    Tu campamento descubre cada ruina del mapa. Pares de ruinas según tamaño y ``rmg_exploration_ruin_pairs_*``;
-    plantillas: ``exploration_ruin_pairs N``.
+    Tu campamento descubre cada ruina antigua (FFA: solo cuentan tus hallazgos; 2v2: los hallazgos de tus aliados cuentan).
 
 Supervivencia
-    Resiste hasta que termine el temporizador con tu base intacta.
-    **Predeterminados**: rápido 600 s / otros 900 s (``rmg_survival_seconds*``); plantillas: ``survival_seconds``.
-
-Los mods pueden definir un 5.º modo con ``victory_triggers`` en plantilla (sección 8.4).
+    Mantén presionado hasta que el cronómetro termine con tu ayuntamiento intacto (10 min rápido / 15 min en caso contrario).
 
 Perder todos los edificios ``provides_survival`` sigue significando la derrota. En los modos de exploración, economía y supervivencia, eliminar a todos los enemigos no significa ganar automáticamente; todavía puedes atacar. Los controles de victoria se realizan cada 30 segundos (exploración) o 60 segundos (económico) después de que se cumplan las condiciones.
 
@@ -279,18 +263,3 @@ Banderas opcionales en ``class terrain``:
 - ``rmg_ford 1`` — nombre del terreno utilizado para los cruces de vado en el mapa de carriles
 
 Cuando RMG coloca terreno, lee ``speed``, ``is_water``, ``blocks_path`` y las propiedades relacionadas de las reglas en lugar de los valores ``marsh`` / ``mountain`` codificados.
-
-8.4 Modos de victoria y desafíos personalizados
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Campos opcionales de plantilla: ``default_victory_mode``, ``economic_goal``,
-``survival_seconds``, ``exploration_ruin_pairs``, ``strategic_systems 0``,
-``starting_units``. **Victoria personalizada**:
-
-::
-
- victory_triggers
- trigger players (timer 60 60) (if (has_gathered 5000 resource2) (victory))
- end_victory_triggers
-
-Ver ``res/randommap/example.txt``.

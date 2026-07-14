@@ -1,8 +1,47 @@
 """Square terrain from map placement and object contributions only."""
 
+import os
+
 HIGH_GROUND_VOICE = "_high_ground"
 DEFAULT_TERRAIN_SPEED = (100, 100)
 DEFAULT_TERRAIN_COVER = (0, 0)
+
+_fast = None
+if os.environ.get("SOUNDRTS_NO_CYTHON", "").strip() not in ("1", "true", "True"):
+    try:
+        from . import square_terrain_fast as _fast  # type: ignore[no-redef]
+    except ImportError:
+        _fast = None
+
+# Hot-path caches. Cleared on rules.load via clear_terrain_lookup_caches().
+_IS_TERRAIN_CACHE = {}
+_TERRAIN_PROP_CACHE = {}
+_SQUARE_TERRAIN_ENTRIES_CACHE = {}
+_EMPTY_SQUARE_TERRAIN_ENTRIES = ()
+_MISSING_PROP = object()
+# None = not built yet; frozenset of prop names that at least one terrain defines.
+_TERRAIN_PROPS_PRESENT = None
+
+# Combat/path props that damage/CD/hit code may query millions of times per game.
+_INDEXED_TERRAIN_UNIT_PROPS = (
+    "mdg_vs",
+    "rdg_vs",
+    "mdg_cd_vs",
+    "rdg_cd_vs",
+    "speed_vs",
+    "cover_vs",
+    "dodge_vs",
+)
+
+
+def clear_terrain_lookup_caches():
+    """Drop terrain lookup caches after rules reload."""
+    global _IS_TERRAIN_CACHE, _TERRAIN_PROP_CACHE, _SQUARE_TERRAIN_ENTRIES_CACHE
+    global _TERRAIN_PROPS_PRESENT
+    _IS_TERRAIN_CACHE = {}
+    _TERRAIN_PROP_CACHE = {}
+    _SQUARE_TERRAIN_ENTRIES_CACHE = {}
+    _TERRAIN_PROPS_PRESENT = None
 
 
 def _is_int_token(token):
@@ -14,11 +53,54 @@ def _is_int_token(token):
 
 
 def is_terrain_def(name):
-    from ..definitions import rules
-
     if not name:
         return False
-    return rules.get(name, "class") == ["terrain"]
+    cached = _IS_TERRAIN_CACHE.get(name)
+    if cached is not None:
+        return cached
+    from ..definitions import rules
+
+    # Prefer raw dict to avoid rules.get list-copy on every call.
+    raw = getattr(rules, "_dict", {}).get(name)
+    if raw is not None and "class" in raw:
+        cls = raw.get("class")
+        result = cls == ["terrain"] or (
+            isinstance(cls, list) and len(cls) == 1 and cls[0] == "terrain"
+        )
+    else:
+        result = rules.get(name, "class") == ["terrain"]
+    _IS_TERRAIN_CACHE[name] = result
+    return result
+
+
+def _ensure_terrain_props_index():
+    """Build set of terrain unit-props that exist on any terrain (incl. inheritance)."""
+    global _TERRAIN_PROPS_PRESENT
+    if _TERRAIN_PROPS_PRESENT is not None:
+        return _TERRAIN_PROPS_PRESENT
+    from ..definitions import rules
+
+    present = set()
+    remaining = set(_INDEXED_TERRAIN_UNIT_PROPS)
+    for name in list(getattr(rules, "_dict", {})):
+        if not remaining:
+            break
+        if not is_terrain_def(name):
+            continue
+        for prop in tuple(remaining):
+            val = rules.get(name, prop)
+            if val:
+                present.add(prop)
+                remaining.discard(prop)
+    _TERRAIN_PROPS_PRESENT = frozenset(present)
+    return _TERRAIN_PROPS_PRESENT
+
+
+def any_terrain_defines(prop):
+    """True if at least one terrain defines a non-empty *prop* (cached)."""
+    if not prop:
+        return False
+    return prop in _ensure_terrain_props_index()
 
 
 def terrain_is_a_type(terrain_name, type_name):
@@ -61,13 +143,20 @@ def terrain_list_value(terrain_type, terrain_list, default=None):
 
 
 def terrain_property(name, prop, default=None):
+    cache_key = (name, prop)
+    if cache_key in _TERRAIN_PROP_CACHE:
+        val = _TERRAIN_PROP_CACHE[cache_key]
+        return default if val is _MISSING_PROP else val
+    if not is_terrain_def(name):
+        _TERRAIN_PROP_CACHE[cache_key] = _MISSING_PROP
+        return default
     from ..definitions import rules
 
-    if not is_terrain_def(name):
-        return default
-    val = rules.get(name, prop, default)
+    val = rules.get(name, prop, None)
     if val is None:
+        _TERRAIN_PROP_CACHE[cache_key] = _MISSING_PROP
         return default
+    _TERRAIN_PROP_CACHE[cache_key] = val
     return val
 
 
@@ -184,7 +273,12 @@ def unit_list_value(unit, unit_list, default=None):
 
 def terrain_unit_list_value(terrain_name, unit, prop, default=None):
     """Read a terrain ``*_vs`` list entry for *unit* on *terrain_name*."""
-    if not terrain_name or not is_terrain_def(terrain_name):
+    if not terrain_name:
+        return default
+    # Global short-circuit: default rules have almost no combat *_vs props.
+    if prop in _INDEXED_TERRAIN_UNIT_PROPS and not any_terrain_defines(prop):
+        return default
+    if not is_terrain_def(terrain_name):
         return default
     raw = terrain_property(terrain_name, prop, ())
     if not raw:
@@ -270,12 +364,16 @@ def terrain_list_stat_percent_delta(terrain_type, terrain_list, base_value):
 
 def terrain_unit_dodge_bonus(terrain_name, unit):
     """Dodge points (0~100 scale) from ``dodge_vs``."""
+    if not any_terrain_defines("dodge_vs"):
+        return 0
     pct = terrain_unit_percent_points(terrain_name, unit, "dodge_vs")
     return pct if pct is not None else 0
 
 
 def terrain_unit_stat_percent_delta(terrain_name, unit, base_value, prop):
     """Apply terrain ``*_vs`` percent of *base_value* (``.5`` -> +50% of base)."""
+    if prop in _INDEXED_TERRAIN_UNIT_PROPS and not any_terrain_defines(prop):
+        return 0
     value = terrain_unit_list_value(terrain_name, unit, prop)
     if value is None:
         return 0
@@ -465,11 +563,14 @@ def _building_site_land_voices(objects):
     return voices
 
 
-def overlay_voices_for_square(square, x=None, y=None):
+def overlay_voices_for_square(square, x=None, y=None, winner=None, bl_entry=None):
     """Ordered overlay terrain voices for footstep/falling (excludes base map terrain).
 
     Priority: scaffold → bridge → square_terrain feature → building_land →
     construction-site remembered building_land.
+
+    Optional *winner* / *bl_entry* avoid recomputing the same scans when the
+    caller already resolved layers (resolve_square_layers hot path).
     """
     objects = getattr(square, "objects", None)
     if objects is None:
@@ -488,10 +589,12 @@ def overlay_voices_for_square(square, x=None, y=None):
         _add(_bridge_voice_from_objects(objects))
 
     if not getattr(square, "fixed_terrain", False):
-        winner = winning_terrain_entry(objects)
+        if winner is None:
+            winner = winning_terrain_entry(objects)
         if winner:
             _add(winner.get("name"))
-        bl_entry = winning_building_land_terrain_entry(objects)
+        if bl_entry is None:
+            bl_entry = winning_building_land_terrain_entry(objects)
         if bl_entry:
             _add(bl_entry.get("name"))
 
@@ -524,16 +627,19 @@ def resolve_square_layers(square, x=None, y=None):
             "building_land_voice": None,
             "overlay_voices": overlay_voices,
         }
-    winner = winning_terrain_entry(square.objects)
+    objects = square.objects
+    winner = winning_terrain_entry(objects)
     feature = winner["name"] if winner else None
     bridge_voice = _bridge_layer_voice(square)
     if bridge_voice:
         feature = bridge_voice
-    bl_entry = winning_building_land_terrain_entry(square.objects)
+    bl_entry = winning_building_land_terrain_entry(objects)
     blt = bl_entry["name"] if bl_entry else None
     type_name = feature or ""
     building_land_voice = blt if blt and blt != feature else None
-    overlay_voices = overlay_voices_for_square(square, x, y)
+    overlay_voices = overlay_voices_for_square(
+        square, x, y, winner=winner, bl_entry=bl_entry
+    )
     return {
         "static_voices": [],
         "dynamic_voice": None,
@@ -546,9 +652,25 @@ def resolve_square_layers(square, x=None, y=None):
 
 
 def resolve_square_type_name(square):
+    """Map/gameplay type_name only — does not build overlay voice layers.
+
+    ``update_terrain`` calls this every tick for every square; previously it
+    ran full ``resolve_square_layers`` (building_land + overlay scans) just to
+    read ``type_name``. Feature voice semantics stay identical.
+    """
     if getattr(square, "fixed_terrain", False):
         return square.type_name or ""
-    return resolve_square_layers(square)["type_name"]
+    if _fast is not None:
+        return _fast.resolve_square_type_name(
+            square, square_terrain_entries_for_type, _bridge_layer_voice
+        )
+    objects = square.objects
+    winner = winning_terrain_entry(objects)
+    feature = winner["name"] if winner else None
+    bridge_voice = _bridge_layer_voice(square)
+    if bridge_voice:
+        feature = bridge_voice
+    return feature or ""
 
 
 def parse_square_terrain_entries(words):
@@ -573,16 +695,28 @@ def parse_square_terrain_entries(words):
 
 
 def square_terrain_entries_for_type(type_name):
+    """Return cached ``square_terrain`` entries for *type_name* (tuple, may be empty).
+
+    Avoids per-call ``rules.get`` list copies and function-local imports on the
+    millions of add/remove / resolve_layers lookups in a long game.
+    """
+    if not type_name:
+        return _EMPTY_SQUARE_TERRAIN_ENTRIES
+    cached = _SQUARE_TERRAIN_ENTRIES_CACHE.get(type_name)
+    if cached is not None:
+        return cached
     from ..definitions import rules
 
-    if not type_name:
-        return []
-    entries = rules.get(type_name, "square_terrain", [])
+    # _val resolves is_a inheritance without the list copy from rules.get.
+    entries = rules._val(type_name, "square_terrain")
     if not entries:
-        return []
-    if isinstance(entries, dict):
-        return [entries]
-    return list(entries)
+        result = _EMPTY_SQUARE_TERRAIN_ENTRIES
+    elif isinstance(entries, dict):
+        result = (entries,)
+    else:
+        result = tuple(entries)
+    _SQUARE_TERRAIN_ENTRIES_CACHE[type_name] = result
+    return result
 
 
 def type_affects_square_terrain(type_name):
@@ -594,6 +728,8 @@ def object_affects_square_terrain(obj):
 
 
 def _type_counts(objects):
+    if _fast is not None:
+        return _fast.type_counts(objects)
     counts = {}
     for o in objects:
         tn = getattr(o, "type_name", None)
@@ -603,6 +739,10 @@ def _type_counts(objects):
 
 
 def qualifying_terrain_entries(objects):
+    if _fast is not None:
+        return _fast.qualifying_terrain_entries(
+            objects, square_terrain_entries_for_type
+        )
     counts = _type_counts(objects)
     qualified = []
     seen_types = set()
@@ -618,6 +758,8 @@ def qualifying_terrain_entries(objects):
 
 
 def winning_terrain_entry(objects):
+    if _fast is not None:
+        return _fast.winning_terrain_entry(objects, square_terrain_entries_for_type)
     qualified = qualifying_terrain_entries(objects)
     if not qualified:
         return None
@@ -625,7 +767,12 @@ def winning_terrain_entry(objects):
 
 
 def winning_building_land_terrain_entry(objects):
-    qualified = []
+    if _fast is not None:
+        return _fast.winning_building_land_terrain_entry(
+            objects, square_terrain_entries_for_type
+        )
+    best = None
+    best_priority = None
     for o in objects:
         if not getattr(o, "is_a_building_land", False) or getattr(
             o, "is_an_exit", False
@@ -635,10 +782,11 @@ def winning_building_land_terrain_entry(objects):
         if not tn:
             continue
         for entry in square_terrain_entries_for_type(tn):
-            qualified.append(entry)
-    if not qualified:
-        return None
-    return max(qualified, key=lambda e: e.get("priority", 50))
+            pri = entry.get("priority", 50)
+            if best is None or pri > best_priority:
+                best = entry
+                best_priority = pri
+    return best
 
 
 _PASSABLE_UNITS_SENTINEL = object()

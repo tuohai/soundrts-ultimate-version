@@ -54,23 +54,16 @@ trigger computers (timer 0) (alliance 2)
 
 trigger computer1 (timer 0) (alliance 1)
 
-trigger player1 (timer 0) (add_objective 1 7548)
-trigger player2 (timer 0) (add_objective 1 7548)
-trigger player1 (timer 0) (add_objective 2 7549)
-trigger player2 (timer 0) (add_objective 2 7549)
-trigger player1 (timer 0) (add_objective 3 7550)
-trigger player2 (timer 0) (add_objective 3 7550)
+trigger players (timer 0) (add_objective 1 7548)
+trigger players (timer 0) (add_objective 2 7549)
+trigger players (timer 0) (add_objective 3 7550)
 
-trigger player1 (has_item speed_boots) (objective_complete 1)
-trigger player2 (has_item speed_boots) (objective_complete 1)
-trigger player1 (npc_has_item npc_blacksmith short_sword g1) (objective_complete 2)
-trigger player2 (npc_has_item npc_blacksmith short_sword g1) (objective_complete 2)
-trigger player1 (npc_has_item npc_blacksmith footman_armor g1) (objective_complete 3)
-trigger player2 (npc_has_item npc_blacksmith footman_armor g1) (objective_complete 3)
+trigger players (has_item speed_boots) (objective_complete 1)
+trigger players (npc_has_item npc_blacksmith short_sword g1) (objective_complete 2)
+trigger players (npc_has_item npc_blacksmith footman_armor g1) (objective_complete 3)
 
-trigger player1 (npc_has_item npc_blacksmith footman_armor) (cut_scene 7551)
+trigger players (npc_has_item npc_blacksmith footman_armor) (cut_scene 7551)
 
 trigger all (no_unit_left) (defeat)
 
-trigger player1 (key_unit_killed raynor4) (defeat)
-trigger player2 (key_unit_killed raynor4) (defeat)
+trigger players (key_unit_killed raynor4) (defeat)

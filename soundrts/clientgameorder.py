@@ -190,26 +190,6 @@ class OrderTypeView:  # future order
             if s:
                 return str(s[0])
 
-    def _research_culture_cost(self) -> int:
-        if not self.type:
-            return 0
-        try:
-            research_type = rules.unit_class(self.type)
-            if research_type is None:
-                return 0
-            return max(0, int(getattr(research_type, "culture_cost", 0) or 0))
-        except Exception:
-            return 0
-
-    def _append_culture_cost(self, msg, and_index):
-        culture_cost = self._research_culture_cost()
-        if culture_cost <= 0:
-            return and_index
-        if msg:
-            and_index = len(msg)
-        msg += nb2msg(culture_cost) + mp.RMG_CULTURE
-        return and_index
-
     def _get_requirements_msg(self):
         and_index = 0
         msg = []
@@ -217,8 +197,6 @@ class OrderTypeView:  # future order
         for t in missing:
             and_index = len(msg)
             msg += style.get(t, "title")
-        if missing:
-            and_index = self._append_culture_cost(msg, and_index)
         if not missing:
             # 检查是否是生产或耕种命令，如果是，显示其资源成本
             if self.cls.keyword in ["auto_produce", "manual_produce", "start_automatic_cultivate", "start_manual_cultivate"]:
@@ -259,7 +237,6 @@ class OrderTypeView:  # future order
                         # 获取资源类型的标题
                             resource_title = style.get("parameters", f"resource{i+1}_title")
                             msg += nb2msg(resource_amount) + resource_title
-                and_index = self._append_culture_cost(msg, and_index)
             if self.population_cost:
                 and_index = len(msg)
                 msg += nb2msg_f(self.population_cost) + style.get("parameters", "population_title")

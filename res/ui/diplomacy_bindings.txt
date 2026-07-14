@@ -7,8 +7,4 @@ q: alliance_request
 w: alliance_accept
 e: alliance_decline_or_cancel
 
-r: rmg_trade_wood
-f: rmg_trade_food
-t: rmg_trade_open_borders
-
 ESCAPE: exit_overlay_mode

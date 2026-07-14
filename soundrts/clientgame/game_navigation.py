@@ -1125,9 +1125,12 @@ def _is_ground_item(m):
 
 
 def _must_report_resource(interface, m):
+    place = getattr(m, "place", None)
+    if place is None:
+        return False
     resource_type = getattr(m, "resource_type", None)
-    if resource_type is not None and m.place not in interface._known_resource_places:
-        interface._known_resource_places.add(m.place)
+    if resource_type is not None and place not in interface._known_resource_places:
+        interface._known_resource_places.add(place)
         return True
     if _is_ground_item(m) and m.id not in interface._known_item_ids:
         interface._known_item_ids.add(m.id)
@@ -1143,6 +1146,8 @@ def scout_info_if_needed(interface):
         or time.time() > interface.previous_scout_info + 10
     ):
         for place in interface.scout_info:
+            if place is None or not getattr(place, "title", None):
+                continue
             from .game_unit_control import place_summary
             s = place_summary(interface, place, me=False, brief=True)
             if s:

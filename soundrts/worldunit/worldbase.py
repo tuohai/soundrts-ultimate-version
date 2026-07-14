@@ -625,7 +625,8 @@ class Unit(Creature):
             "mdg_vs", "rdg_vs", "mdg_crit_vs", "rdg_crit_vs",
             "mdg_crit_rate_vs", "rdg_crit_rate_vs", "mdg_piercing_vs", "rdg_piercing_vs",
             "mdg_piercing_rate_vs", "rdg_piercing_rate_vs", "mdg_cd_vs", "rdg_cd_vs",
-            "mdg_range_vs", "rdg_range_vs", "mdg_minimal_range_vs", "rdg_minimal_range_vs"
+            "mdg_range_vs", "rdg_range_vs", "mdg_minimal_range_vs", "rdg_minimal_range_vs",
+            "menace_vs", "menace_mult_vs",
         ]
         
         for attr in vs_attributes:
@@ -719,7 +720,8 @@ class Unit(Creature):
             "mdg_vs", "rdg_vs", "mdg_crit_vs", "rdg_crit_vs",
             "mdg_crit_rate_vs", "rdg_crit_rate_vs", "mdg_piercing_vs", "rdg_piercing_vs",
             "mdg_piercing_rate_vs", "rdg_piercing_rate_vs", "mdg_cd_vs", "rdg_cd_vs",
-            "mdg_range_vs", "rdg_range_vs", "mdg_minimal_range_vs", "rdg_minimal_range_vs"
+            "mdg_range_vs", "rdg_range_vs", "mdg_minimal_range_vs", "rdg_minimal_range_vs",
+            "menace_vs", "menace_mult_vs",
         ]
         
         for attr in vs_attributes:
@@ -863,12 +865,10 @@ class Unit(Creature):
             from ..worldplayercomputer_water import water_path_destination
 
             place = water_path_destination(self, place, self.player)
-        self.distance_to_goal = self.place.shortest_path_distance_to(
-            place, player=self.player, plane=self.airground_type, avoid=avoid
+        nxt, self.distance_to_goal = self.place._shortest_path_to(
+            place, self.airground_type, self.player, avoid=avoid
         )
-        return self.place.shortest_path_to(
-            place, player=self.player, plane=self.airground_type, avoid=avoid
-        )
+        return nxt
 
     _destination = None
 

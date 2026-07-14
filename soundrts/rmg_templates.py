@@ -57,11 +57,6 @@ class RmgTemplateSpec:
     ford_terrain: str = "ford"
     skip_terrain_menu: bool = False
     skip_water_menu: bool = False
-    default_victory_mode: str | None = None
-    economic_goal: int | None = None
-    survival_seconds: int | None = None
-    exploration_ruin_pairs: int | None = None
-    strategic_systems: bool | None = None
 
 
 @dataclass
@@ -70,7 +65,6 @@ class RmgTemplateEntry:
     spec: RmgTemplateSpec
     title_voice: List = field(default_factory=list)
     source: str = ""
-    victory_triggers: Tuple[str, ...] = ()
 
 
 _TEMPLATE_FIELD_ALIASES = {
@@ -96,12 +90,6 @@ _TEMPLATE_FIELD_ALIASES = {
     "monster_weak": "monster_weak",
     "monster_medium": "monster_medium",
     "monster_strong": "monster_strong",
-    "default_victory_mode": "default_victory_mode",
-    "victory_mode": "default_victory_mode",
-    "economic_goal": "economic_goal",
-    "survival_seconds": "survival_seconds",
-    "exploration_ruin_pairs": "exploration_ruin_pairs",
-    "strategic_systems": "strategic_systems",
 }
 
 
@@ -171,8 +159,6 @@ def parse_template_text(
     data: dict = {}
     title_voice: List = []
     monster_presets: Dict[str, List[Tuple[int, str]]] = {}
-    victory_triggers: List[str] = []
-    in_victory_triggers = False
 
     for line in lines[1:]:
         stripped = line.strip()
@@ -180,20 +166,6 @@ def parse_template_text(
             continue
         parts = stripped.split()
         key = parts[0].lower()
-        if key == "victory_triggers":
-            in_victory_triggers = True
-            continue
-        if in_victory_triggers:
-            if key in ("end_victory_triggers", "end"):
-                in_victory_triggers = False
-                continue
-            if key == "trigger":
-                victory_triggers.append(stripped)
-                continue
-            if _TEMPLATE_FIELD_ALIASES.get(key) is not None:
-                in_victory_triggers = False
-            else:
-                continue
         value_tokens = parts[1:]
         field_name = _TEMPLATE_FIELD_ALIASES.get(key)
         if field_name is None:
@@ -219,19 +191,9 @@ def parse_template_text(
             "start_mine_qty",
             "population_limit",
             "meadows_per_square",
-            "economic_goal",
-            "survival_seconds",
-            "exploration_ruin_pairs",
         ):
             if value_tokens:
                 data[field_name] = int(value_tokens[0])
-            continue
-        if field_name == "default_victory_mode":
-            if value_tokens:
-                data[field_name] = value_tokens[0].lower()
-            continue
-        if field_name == "strategic_systems":
-            data[field_name] = _is_truthy(value_tokens[0] if value_tokens else "1")
             continue
         if field_name == "creep_multiplier":
             if value_tokens:
@@ -269,11 +231,6 @@ def parse_template_text(
             "ford_terrain": base.ford_terrain,
             "skip_terrain_menu": base.skip_terrain_menu,
             "skip_water_menu": base.skip_water_menu,
-            "default_victory_mode": base.default_victory_mode,
-            "economic_goal": base.economic_goal,
-            "survival_seconds": base.survival_seconds,
-            "exploration_ruin_pairs": base.exploration_ruin_pairs,
-            "strategic_systems": base.strategic_systems,
         }
     for key, value in data.items():
         if key == "name":
@@ -288,13 +245,7 @@ def parse_template_text(
     spec = RmgTemplateSpec(**spec_kwargs)
     if not title_voice:
         title_voice = _parse_title_voice(name.replace("_", " "))
-    entry = RmgTemplateEntry(
-        name=name,
-        spec=spec,
-        title_voice=title_voice,
-        source=source,
-        victory_triggers=tuple(victory_triggers),
-    )
+    entry = RmgTemplateEntry(name=name, spec=spec, title_voice=title_voice, source=source)
     if monster_presets:
         entry.monster_presets = monster_presets  # type: ignore[attr-defined]
     return entry

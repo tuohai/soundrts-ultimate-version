@@ -73,7 +73,6 @@ class World:
         self.map_battle_music = None  # 添加map_battle_music属性用于存储地图指定的战斗音乐
         self.map_victory_sound = None  # 添加map_victory_sound属性用于存储地图指定的胜利音乐
         self.map_defeat_sound = None  # 添加map_defeat_sound属性用于存储地图指定的失败音乐
-        self.rmg_strategic_systems = False
 
         self.map_objects = []
         # 地图矿藏初始储量（内部单位），用于结算开采率

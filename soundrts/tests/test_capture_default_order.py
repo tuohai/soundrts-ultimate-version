@@ -171,7 +171,6 @@ def test_capture_order_still_impossible_for_non_capture_friendly_target():
     assert order.is_impossible
     assert "order_impossible" in unit.notifications
 
-
 def test_imperative_attack_on_captured_barracks_deals_damage_not_capture():
     """已占领的夺取阈值 100 建筑：强制攻击应造成伤害，而非再次占领。"""
     from soundrts.worldaction import AttackAction
@@ -220,3 +219,4 @@ def test_imperative_attack_on_captured_barracks_deals_damage_not_capture():
     assert unit.aim_calls == [building]
     assert unit.capture_calls == []
     assert "captured_success" not in unit.notifications
+

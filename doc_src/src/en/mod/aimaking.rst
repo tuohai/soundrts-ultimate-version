@@ -171,6 +171,11 @@ counter according to ``rules.txt`` damage bonuses:
 At low ``counter_skill``, high-``menace`` targets can still win; at ``100``,
 the best counter match wins unless only one enemy is in range.
 
+Since 1.4.5.2, default ``menace`` is a **multi-dimensional combat score**
+(damage, hit cover, cooldown, ready/wind-up, HP, armor, dodge, range, speed),
+optionally overridden with ``menace_mult`` / ``menace_vs`` — see ``modding.rst``
+*Auto menace / targeting priority*.
+
 This affects both micro (which enemy each unit attacks) and macro
 (which area to push and which units to send first), as long as the army still
 meets ``attack_ratio``.

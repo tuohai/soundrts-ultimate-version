@@ -14,46 +14,16 @@
 ;   ford_terrain ford
 ;   monster_medium 4 footman 2 archer
 ;
-; Victory / RMG strategic options (optional, override rules.txt defaults):
-;   default_victory_mode survival   ; auto-select in menu: conquest|economic|exploration|survival
-;   economic_goal 5000              ; gold gathered for economic victory
-;   survival_seconds 1200           ; hold time in seconds for survival victory
-;   exploration_ruin_pairs 2        ; symmetric ruin pairs (exploration mode adds rules bonus)
-;   strategic_systems 0             ; 0 = pure RTS (no Civ-style culture/diplomacy/tiles)
-;
-; Custom victory (5th mode and beyond) — full trigger lines:
-;   victory_triggers
-;   trigger players (timer 60 60) (if (has_gathered 5000 resource2) (victory))
-;   end_victory_triggers
-; Defeat triggers (no_building_left / no_unit_left) are still added automatically.
-;
-; Global defaults live in rules.txt def parameters:
-;   rmg_economic_goal, rmg_survival_seconds, rmg_exploration_ruin_pairs_*,
-;   rmg_strategic_systems, ...
-;
 ; Terrain names must exist in rules.txt. Mark terrains with:
 ;   rmg_terrain 1       — placeable land patches / borders
 ;   rmg_border 1        — map edge placement (like mountain)
 ;   rmg_water 1         — used for lake/river water tiles
 ;   rmg_ford 1          — lane-map ford crossings
 ;
-; Example — space survival (save as cfg/randommap/space_survival.txt):
+; Example (uncomment and save as cfg/randommap/my_macro.txt):
 ;
 ; random_map_template
-; name space_survival
-; extends fast
-; title space survival
-; default_victory_mode survival
-; survival_seconds 1200
-; strategic_systems 0
-; starting_units command_nexus 6 worker_drone
-;
-; Example — custom economic win on wood (resource2):
-;
-; random_map_template
-; name timber_rush
+; name my_macro
 ; extends macro
-; title timber rush
-; victory_triggers
-; trigger players (timer 60 60) (if (has_gathered 8000 resource2) (victory))
-; end_victory_triggers
+; title my macro
+; terrain_modes random grass marsh mountain

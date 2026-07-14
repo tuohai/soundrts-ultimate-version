@@ -12,11 +12,15 @@ SoundRTS supports Age of Empires–style hunting: workers attack wildlife, hunte
 ----------------
 
 
-1. Right-click an animal → worker attacks (forced order; works on neutral animals)
-2. On kill → ``food_carcass`` deposit spawns at the death square
-3. Auto-gather → workers with ``auto_gather`` collect the carcass and return food
+1. Backspace / default order or right-click an animal → ``attack`` on ``is_huntable`` (plain attack deals damage; imperative not required)
+2. On kill → ``food_carcass`` deposit spawns; the attack order completes (**no** false ``order_impossible`` beep)
+3. Auto-gather → workers may auto-queue gather on the carcass after the kill; with ``auto_gather`` they also collect and return food
 4. Flee on hit → deer and sheep run away; boars fight back
 5. Herding (optional) → workers with ``can_herd 1`` can herd ``herdable`` animals (e.g. sheep)
+
+
+Note: default order on ordinary neutral creeps / NPCs is ``go`` (move only); on huntable animals it remains ``attack``.
+Offensive / defensive / chase AI will **not** auto-attack neutral animals unless you issue an imperative attack.
 
 
 ----

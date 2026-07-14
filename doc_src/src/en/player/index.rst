@@ -25,7 +25,6 @@ Level 2 · Progress & campaigns
 - `Loadout cards <loadout-cards.htm>`_
 - `Campaign menu & co-op <campaign-menu.htm>`_
 - `Random maps (player) <random-map-play.htm>`_
-- `RMG hero & civilization strategic systems <rmg-strategic-systems.htm>`_
 
 Level 3 · Inventory & combat
 -----------------------------

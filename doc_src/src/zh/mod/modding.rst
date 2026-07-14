@@ -435,6 +435,61 @@ Combat system (since 1.4)
 - ``mdg_explode`` / ``rdg_explode``、``exp_dgf``、``exp_hp_cost``、``mdg_explode_vs``
 - 单位**所在地形**上的修正（自 1.4.5.0，1.4.5.1 起百分比）：``mdg_on_terrain`` / ``rdg_on_terrain``、``mdg_cd_on_terrain`` / ``rdg_cd_on_terrain``、``charge_*_terrain`` 等使用小数百分比（``.33`` = ±33%%）；地形 ``class terrain`` 上可用 ``speed_vs`` / ``cover_vs`` / ``dodge_vs`` / ``mdg_vs`` 等按单位类型修正。详见 ``building-land-terrain.rst`` *单位在地形上的战斗修正*
 
+自动威胁度 / 选敌优先级（自 1.4.5.2）
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+单位属性 ``menace`` 不再等于「伤害」。未在 rules 中写死绝对值时，引擎用**多维战斗评分**作为威胁度，用于：
+
+- 单位自动选敌（按威胁从高到低；非 ``timers`` 电脑还可与 ``mdg_vs``/``rdg_vs`` + ``counter_skill`` 加权，见 ``aimaking.rst``）
+- 格内敌方威胁求和等 AI 决策
+
+**自动评分纳入的维度**（取主武器：``mdg``/``rdg`` 中伤害较高的一路）：
+
+- 伤害、命中（``mdg_cover``/``rdg_cover``，0 视为 100%%）、冷却（``*_cd``）、前摇（``mdg_ready``/``rdg_ready``，不是弹道 ``*_delay``）
+- 生命（当前 ``hp``，否则 ``hp_max``）、防御（``max(mdf, rdf)``）、闪避（``max(mdg_dodge, rdg_dodge)``）
+- 射程、移速
+
+大致：先算有效 DPS（伤害 × 命中 /（冷却+前摇）），再乘生存与射程/移速修正。
+
+**rules 可选覆盖**（单位 def）：
+
+======= ================== ==========================================================
+字段      类型               含义
+======= ================== ==========================================================
+``menace`` 绝对值            固定威胁；**不**随升级/血量变化；盖掉自动多维
+``menace_mult`` 权重（默认 1）  乘在自动多维底分上（随伤害升级等仍会变）
+``menace_vs`` 绝对值 vs 类型   对该观察者类型（及 ``is_a``）的固定威胁；选敌时优先于下两项
+``menace_mult_vs`` 权重 vs 类型 对该观察者：自动多维底分 × 权重
+======= ================== ==========================================================
+
+查有效威胁（``menace_versus``）顺序：``menace_vs`` → ``menace_mult_vs`` → 全局 ``menace``/``menace_mult``/自动分。
+
+示例::
+
+    def knight
+    mdg 6
+    menace_mult 1.5
+
+    def archer
+    rdg 5
+    menace_vs knight 3
+    menace_mult_vs mage 1.2
+
+**parameters 可调权重**（只调「生存/机动」等项的比重；伤害+冷却+前摇+命中始终进入 DPS 核心，无单独旋钮）::
+
+    def parameters
+    menace_armor_weight 1
+    menace_dodge_weight 1
+    menace_range_weight 0.15
+    menace_speed_weight 0.2
+    menace_hp_ref 50
+
+- ``menace_armor_weight`` / ``menace_dodge_weight``：防御、闪避在生存项中的权重（默认 1）
+- ``menace_range_weight`` / ``menace_speed_weight``：每单位射程、移速的加成系数（默认 0.15 / 0.2）
+- ``menace_hp_ref``：血量归一参考（默认 50），用于把综合分压到与旧「伤害威胁」相近的量级
+
+建议：会随科研成长的战斗单位优先用 ``menace_mult`` / ``menace_mult_vs``；仅当刻意固定优先级时才写绝对 ``menace`` / ``menace_vs``。
+
 冲锋与反冲锋（自 1.4.0.1 起）
 
 冲锋：配置了冲锋属性的单位在有效距离内接敌时，可发动一次高伤害冲锋攻击。冲锋完成后进入
@@ -1116,7 +1171,7 @@ Items (since 1.4.1.3)
 
 地图/模组作者可在 ``rules.txt``\ 中按单位类型配置开局时的默认行为状态：
 
-- ``ai_mode``\ ：``offensive`` / ``defensive`` / ``guard`` / ``chase``\ 。默认：兵种 ``offensive``\ ，工人 ``defensive``\ 。作用于作战单位。
+- ``ai_mode``\ ：``offensive`` / ``defensive`` / ``guard`` / ``chase``\ 。默认：兵种 ``offensive``\ ，工人 ``defensive``\ 。作用于作战单位。``chase`` 锁定敌人后保持 ``AttackAction`` 跨格跟随（不下自动 ``go``）；``offensive`` / ``guard`` 仍受出生 ``position_to_hold`` 限制，直到命令 ``stop()``；``defensive`` / ``chase`` 不受限。
 - ``auto_gather``\ ：``1`` / ``0``\ 。默认 ``1``\ 。仅工人。
 - ``auto_repair``\ ：``1`` / ``0``\ 。默认 ``1``\ 。仅工人。
 - ``auto_explore``\ ：``1`` / ``0``\ 。默认 ``0``\ 。可移动单位。
@@ -1134,11 +1189,11 @@ AI 模式（``ai_mode``\ ）
 | offensive | 进攻 | 主动攻击当前格子里的敌人 |
 | defensive | 防御 | 战力不利时撤退；占优时才交战 |
 | guard | 站岗 | 不主动出击，原地驻守 |
-| chase | 追击 | 主动追击视野范围内的敌人 |
+| chase | 追击 | 保持攻击动作跨格跟随敌人（不下自动 ``go``）；不受 ``position_to_hold`` 限制 |
 
 ``ai_mode patrol``\ 无效——巡逻（patrol）是需要路线目标的命令，不是一种 AI 模式。中立电脑（``computer_only ... neutral``\ ）的单位仍会被引擎强制设为 guard + 反击。
 
-玩家单位在 ``offensive``\ / ``defensive``\ / ``chase``\ 模式下不会主动攻击 中立单位，防御模式也不会因中立者而撤退；若要攻击中立者，须对该单位下达 强制攻击命令 （``imperative``\ ，例如 Ctrl+点击）。
+玩家单位在 ``offensive``\ / ``defensive``\ / ``chase``\ 模式下不会主动攻击 中立单位，防御模式也不会因中立者而撤退；对中立普通 ``go`` 只移动；对 ``is_huntable`` 默认仍可 ``attack`` 并造成伤害；若要 AI 把中立 creep/NPC 当自动目标，须下达 强制攻击命令 （``imperative``\ ，例如 Ctrl+点击）。
 
 自动采集 / 自动修理
 
@@ -1151,7 +1206,7 @@ AI 模式（``ai_mode``\ ）
 
 详见 ``../player/hunting.htm``\ 。概要：
 
-- 村民右键 ``is_huntable`` 动物默认攻击；击杀后在原地生成 ``food_deposit`` 矿床（如 ``food_carcass``\ ）。
+- 村民退格/右键 ``is_huntable`` 动物默认攻击（普通攻击即造成伤害）；击杀后生成 ``food_deposit``（如 ``food_carcass``\ ），攻击命令完成且不误播 ``order_impossible``\ 。
 - 动物属性：``is_huntable``\ 、``flee_on_hit``\ 、``herdable``\ 、``food_deposit``\ 、``food_deposit_qty``\ 、``no_number``\ 。
 - 地图放置：``computer_only 0 0 neutral \<方格\> \<数量\> deer``\ ；随机地图会自动生成野生动物。
 - 语音标识：配置了 ``is_huntable`` / ``herdable`` 的单位播报为「鹿 , 动物」，`` 不是`` 「中立 , NPC」。Ctrl+Shift+F4 切到仅含野生动物的玩家时播报「你是动物」。剧情 NPC（``quest_npc`` 等）仍播报「中立 , NPC」。

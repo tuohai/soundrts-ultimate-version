@@ -5,46 +5,69 @@ Release notes
 .. contents::
 
 
-1.4.5.1
+1.4.5.2
 --------
 
-**Improve: random-map team modes and one-vs-many**
+**Improvement: multi-dimensional auto menace and optional rules overrides**
 
-- **Free-for-all**: each player starts in a unique alliance (true FFA); no longer keeps the training-game default where all AIs share one team.
-- **New one-vs-many**: player 1 alone vs all other players allied; 3 players get FFA / one-vs-many; 4 players get FFA / 2v2 / one-vs-many.
-- **Share code**: team field abbreviation ``o`` for ``one_vs_many``.
-- **Code**: ``randommap.py``, ``randommap_menu.py``, ``msgparts.py``; TTS 5750.
-- **Docs**: ``player/random-map-play.rst``, ``mod/randommap.rst`` (all languages).
-- **Tests**: ``test_ffa_assigns_unique_alliances``, ``test_one_vs_many_allies_all_except_player1``, ``test_team_modes_for_players``.
+- Default ``menace`` is no longer raw damage: it scores damage, hit cover, cooldown, wind-up (``*_ready``), HP, armor, dodge, range, and speed for auto-targeting and square threat sums.
+- Optional unit fields: ``menace`` / ``menace_vs`` (absolute fixed), ``menace_mult`` / ``menace_mult_vs`` (multiply the auto multi-dim base; still scales with upgrades).
+- Tunable in ``def parameters``: ``menace_armor_weight``, ``menace_dodge_weight``, ``menace_range_weight``, ``menace_speed_weight``, ``menace_hp_ref``.
+- **Code**: ``worldunit/world_attributes.py``, ``combat/targeting.py``, ``definitions.py``; ``res/rules.txt`` parameters; ``res/ui/rules_doc.txt``.
+- **Docs**: ``mod/modding.rst``, ``mod/aimaking.rst``.
+- **Tests**: ``test_rules_menace_targeting.py``, ``test_ai_counter_targeting.py``.
 
-**New: RMG strategic layer expansion (territory, citizens, policy switching, AI strategy, cross-match hero growth)**
+**Improvement: continuous cross-square chase (true pursuit)**
 
-- **City territory and tile purchase**: each city owns its home square; ``rmg_buy_tile`` buys adjacent unclaimed main squares (first tile 20 gold, then +10 per tile).
-- **Citizens and tile improvements**: ``rmg_assign_gold/wood/food/culture`` assign citizens; ``rmg_build_mine/lumber_mill/farm`` build improvements; worked tiles pay into the 60-second ``rmg_strategic_tick``.
-- **In-match policy switching**: at most two active; researching a third replaces the oldest; unlocked policies switch free via ``rmg_switch_*``.
-- **AI policy combinations**: aggressive → commerce + tradition; ≥2 enemies → diplomacy + commerce; otherwise tradition + commerce; researches prerequisite tech chain in order.
-- **Local single-player RMG hero persistence**: peak level and XP saved at match end and restored at start to ``rmg_heroes/<mod>/<faction>.json``; not used in multiplayer/replays.
-- **Code**: ``soundrts/rmg_systems.py``, ``soundrts/rmg_progress.py``, ``soundrts/worldorders/strategic.py``, ``soundrts/worldplayercomputer.py``, ``soundrts/game.py``.
-- **Voice**: ``res/ui/tts.txt`` / ``res/ui-zh/tts.txt`` 5718–5728; matching command titles in ``res/ui/style.txt``.
-- **Docs**: ``player/rmg-strategic-systems.rst``, ``player/homm-civ5-play.rst``.
-- **Tests**: ``test_rmg_systems.py`` (territory, improvements, policy replacement, AI combos, hero profile, command registration).
+- **Before**: In chase mode, when an enemy left the square the AI issued automatic ``go`` orders to hop into adjacent squares and then attack again — still order-driven, and units could stay “attacking” without leaving the square.
+- **Now**: ``chase`` keeps a single ``AttackAction`` on the locked enemy and paths through exits across squares; no automatic ``go`` spam.
+- **Hold**: Spawn ``position_to_hold`` still blocks leaving the hold area for offensive / guard. Defensive / chase are exempt (chase clears hold when crossing squares). Normal ``go`` / ``attack`` still call ``stop()`` first and clear hold.
+- **Code**: ``worldaction.py`` (``AttackAction._chase_toward``), ``worldunit/world_ai_decision.py``, ``worldunit/world_movement.py`` (``_must_hold``).
+- **Docs**: ``player/unit-default-behavior.rst``.
+- **Tests**: ``test_chase_continuous_pursuit.py``.
 
-**Fix: RMG strategic research appearing on normal maps (town hall)**
+**Improvement: attributes screen shows live terrain-adjusted stats**
 
-- **Symptom**: On hand-made or classic maps, the town hall research menu still listed urban planning, policy cards, and other ``rmg_*`` technologies.
-- **Cause**: ``rules.txt`` listed ``rmg_*`` on ``townhall`` ``can_research``, and the rules-loaded list shadowed ``Building.can_research`` ``@property``; the research menu read the static list instead of ``effective_can_research()``.
-- **Fix**: (1) ``townhall`` ``can_research`` keeps only generic tech such as ``hunting_techniques``; RMG maps inject ``STRATEGIC_RESEARCH_TYPES`` via ``effective_can_research``. (2) Like ``can_train`` → ``_rules_can_train``, store ``can_research`` as ``_rules_can_research`` so the ``@property`` works again.
-- **Code**: ``definitions.py``, ``world_build_rules.py``, ``world_objects.py``, ``worldplayercomputer.py``, ``attributes/utils.py``, ``res/rules.txt``.
-- **Tests**: ``test_townhall_can_research_property_respects_rmg_flag``, ``test_strategic_research_is_only_exposed_on_rmg_cities``.
+- Alt+V shows unit ``mdg_on_terrain`` / ``rdg_on_terrain`` / ``mdg_cd_on_terrain`` / ``rdg_cd_on_terrain`` and charge terrain modifiers.
+- Current-square terrain ``mdg_vs`` / ``rdg_vs`` / etc. plus ``*_on_terrain`` feed the damage, cooldown, and speed readings on the attributes screen (terrain ``*_vs`` = decimal percent, e.g. ``.25`` = +25%%; unit ``speed_on_terrain`` remains absolute speed).
+- **Code**: ``attributes/terrain_effective.py``, ``attributes/combat_attributes.py``, ``attributes/basic_attributes.py``, ``attributes/bonus_handler.py``.
+- **Tests**: ``test_terrain_attributes_ui.py``, ``test_terrain_effective_attributes.py``.
 
-**Improvement: culture and diplomacy points are viewable**
+**Fix: Tab no longer finds exits on never-scouted squares**
 
-- On RMG strategic maps: global **B** announces culture points, **Shift+B** diplomacy points (non-RMG maps beep).
-- With your city selected (town hall / keep / castle), open the attributes screen (Alt+V): **U** for culture, **Y** for diplomacy.
-- The 60-second ``rmg_strategic_tick`` voice for city count remains; if resource-change alerts are on, culture/diplomacy changes are announced too.
-- **Code**: ``clientgame/game_resources.py``, ``attributes/basic_attributes.py``, ``res/ui/global_bindings.txt``, ``res/ui/legacy_bindings.txt``, ``res/ui/tts.txt`` / ``res/ui-zh/tts.txt`` (5716–5717), ``hotkey_editor.py``, ``hotkey_catalogs.py``.
-- **Docs**: ``player/rmg-strategic-systems.rst`` (all locales).
-- **Tests**: ``test_culture_and_diplomacy_status_helpers``, ``test_city_attributes_include_strategic_points``.
+- **Symptom**: On squares never visited (static fog, no scout record), Tab cycling could still announce far-side exits / paths.
+- **Cause**: Fog logic remembered opposite-side exits before the square was actually entered.
+- **Fix**: If a square is in neither ``scouted_squares`` nor ``scouted_before_squares``, visibility / place summary stay blank; visited-then-left static fog still allows Tab.
+- **Code**: ``clientgame/game_unit_control.py``.
+- **Tests**: ``test_unknown_square_tab_blank.py``.
+
+**Fix: ``order_impossible`` beep after Backspace-killing a hunt animal**
+
+- **Symptom**: After a default attack killed a huntable animal, ``order_impossible`` played.
+- **Cause**: ``AttackOrder`` treated a vanished target as failure.
+- **Fix**: Mark the order complete when the target is gone or ``hp <= 0``.
+- **Code**: ``worldorders/movement.py``.
+- **Tests**: ``test_hunting.py`` (``test_attack_order_completes_when_huntable_target_gone``).
+
+**Fix: neutral default order and hunt damage**
+
+- Plain / default ``go`` on neutrals (non-imperative) only moves — no AttackAction with zero damage.
+- Plain ``attack`` on ``is_huntable`` animals (including Backspace default hunt) deals damage; only imperative attack lets AI treat neutrals as auto-engage targets.
+- **Code**: ``worldunit/world_ai_decision.py``, ``worldunit/worldcreature.py``.
+- **Docs**: ``player/hunting.rst``, ``player/unit-default-behavior.rst``.
+- **Tests**: ``test_neutral_no_auto_attack.py``, ``test_neutral_go_and_hunt_attack.py``.
+
+**Fix: Computer player perception update crash (missing ``_buckets``)**
+
+- **Symptom**: Mid-game (especially with ``computer_only`` map AI, allied AI teammates, or after loading a save) could crash in the main-loop perception stage with ``AttributeError: 'Computer' object has no attribute '_buckets'``.
+- **Cause**: The player spatial-grid index ``_buckets`` was initialized only in the wrapper ``Player.__init__``; save/load strips that cache field; allied-vision bulk visibility checks (``bulk_visibility_check``) call allies' ``_potential_neighbors``, which raised if a ``Computer`` did not yet hold ``_buckets``.
+- **Fix**: Pre-initialize ``_buckets`` in ``BasePlayer.__init__`` with the other perception caches; ``_potential_neighbors`` falls back to an empty dict when missing; ``update_alliance`` clears the ``allied_vision`` instance cache so alliance changes do not keep stale ally lists.
+- **Code**: ``worldplayerbase/base.py``, ``worldplayerbase/perception.py``, ``worldplayerbase/__init__.py``.
+- **Tests**: ``test_meteors_computer_only.py``, ``test_phase3_parity.py``, ``test_neutral_passive_creep.py``.
+
+
+1.4.5.1
+--------
 
 **Improvement: terrain cover, per-unit modifiers, and percent notation**
 
@@ -67,14 +90,6 @@ Bug fixes and voice/audio UX improvements:
 - **Note**: ``charge_mdg_cd`` / ``charge_rdg_cd`` use a separate path (immediate ``receive_hit``, no prep/ballistic scheduling) and were not affected by these three issues; mixed charge + normal-attack pacing improves indirectly via the normal-attack CD fix.
 - **Code**: ``combat/attack_action.py``, ``combat/damage_effects.py``.
 - **Tests**: ``test_attack_cooldown_timing.py``.
-
-**Fix: Computer player crash during perception update (missing ``_buckets``)**
-
-- **Symptom**: During a match (especially with ``computer_only`` map AIs, allied AI teammates, or after loading a save), the main loop could crash in the perception phase with ``AttributeError: 'Computer' object has no attribute '_buckets'``.
-- **Cause**: The spatial grid index ``_buckets`` was initialized only in the wrapper ``Player.__init__``; save/load strips that cache field; allied-vision bulk visibility (``bulk_visibility_check``) calls allies' ``_potential_neighbors``, which raises if a ``Computer`` has no ``_buckets`` yet.
-- **Fix**: Pre-initialize ``_buckets`` in ``BasePlayer.__init__`` with other perception caches; ``_potential_neighbors`` falls back to an empty dict when missing; ``update_alliance`` clears the ``allied_vision`` instance cache so stale ally lists are not reused after alliance changes.
-- **Code**: ``worldplayerbase/base.py``, ``worldplayerbase/perception.py``, ``worldplayerbase/__init__.py``.
-- **Tests**: ``test_meteors_computer_only.py``, ``test_phase3_parity.py``, ``test_neutral_passive_creep.py``.
 
 **Improvement: go-order rejection and voice feedback on impassable terrain**
 
@@ -107,22 +122,6 @@ Bug fixes and voice/audio UX improvements:
 - **Fix**: While an imperative order is active, normal commands (except ``stop``) are auto-queued (``forget_previous=False``) without replacing the imperative head; the unit finishes the forced attack before executing the follow-up. Only **one** queued command is allowed after an imperative order; a new normal command **replaces** the existing queued one (same as 1.3.8.1).
 - **Code**: ``worldunit/world_order.py`` ``take_order``.
 - **Tests**: ``test_imperative_attack.py`` (``test_normal_go_queues_behind_imperative_attack``, ``test_only_one_queued_order_behind_imperative_attack``, etc.).
-
-**Fix: force attack on already-captured building still triggers capture**
-
-- **Symptom**: After capturing an enemy capturable building (``capture_hp_threshold`` 100, e.g. barracks), force-attacking that building still issued capture instead of dealing damage, repeatedly playing capture sounds.
-- **Cause**: "Capture on contact" routing used ``is_an_enemy()``; during force attack that method returns ``True`` for friendly captured buildings too (via ``_player_ordered_attack_on`` treating allied targets as attackable).
-- **Fix**: Added ``should_capture_on_contact()`` using ``player.player_is_an_enemy(target.player)`` for genuine enemy checks; same guard in ``_perform_capture()``.
-- **Code**: ``worldaction.py``, ``combat/attack_action.py``, ``worldunit/world_order.py``.
-- **Tests**: ``test_capture_default_order.py`` (``test_imperative_attack_on_captured_barracks_deals_damage_not_capture``).
-
-**Fix: computer transport boats park loaded at the enemy shore without unloading**
-
-- **Symptom**: On water maps such as ``jl7``, even a nightmare computer could sail a ``boat`` full of soldiers to the player's shore and never issue ``unload`` / ``unload_all``, so troops never landed to fight.
-- **Cause**: ``_try_transport_assaults`` only schedules idle ground soldiers outside transports; cargo with ``is_inside`` is ignored. After load/sail, if unload was missing or failed, a packed idle transport had no recovery path to unload.
-- **Fix**: ``_try_amphibious_landings`` now calls ``_try_unload_idle_loaded_transports`` first: idle water/air transports carrying ground units get ``unload_all`` onto adjacent passable land (preferring land nearer enemy targets); if not yet adjacent, ``go`` to unload water then unload.
-- **Code**: ``worldplayercomputer.py`` (``_enemy_land_assault_targets``, ``_choose_unload_land_for_transport``, ``_try_unload_idle_loaded_transports``).
-- **Tests**: ``test_ai_jl7_amphibious_unload.py`` (nightmare AI regression: packed boat at the door must issue ``unload_all``).
 
 **Improvement: unit behavior voice descriptions**
 

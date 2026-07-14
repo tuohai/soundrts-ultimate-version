@@ -51,12 +51,16 @@ _cache_time = None
 def cache(f):
     def decorated_f(*args, **kargs):
         global _cache, _cache_time
-        # 将缓存时间粒度放宽到1000ms，减少同一时间段内重复寻路
-        current_bucket = args[0].world.time // 1000
+        # 将缓存时间粒度放宽到3000ms，减少同一时间段内重复寻路
+        current_bucket = args[0].world.time // 3000
         if _cache_time != current_bucket:
             _cache = {}
             _cache_time = current_bucket
-        k = (args, tuple(sorted(kargs.items())))
+        # 热路径几乎都是纯 positional；避免每次 sorted(kargs.items())
+        if kargs:
+            k = (args, tuple(sorted(kargs.items())))
+        else:
+            k = args
         if k not in _cache:
             _cache[k] = f(*args, **kargs)
         return _cache[k]
@@ -71,6 +75,9 @@ class _Space:
     # 避免 PyObject_HasAttr 慢路径. 实例化后会被 __init__ 覆盖为各自的实例属性.
     objects = ()
     is_inside_place = False
+    # A* 图节点含 Square 与 Exit；仅 Exit 有 is_blocked。用 is_an_exit 替代
+    # hasattr(v, 'is_blocked')，避免千万级 HasAttr 慢路径。
+    is_an_exit = False
 
     def __init__(self):
         self.objects = []
@@ -357,11 +364,38 @@ class Square(_Space):
             return region_res
         # TODO: remove the duplicate exits in the graph
         if avoid:
-            avoid = player.is_very_dangerous
+            avoid_fn = player.is_very_dangerous
         else:
-            avoid = lambda x: False
+            avoid_fn = None
         if dest is self:
             return [self] if places else (None, 0)
+
+        # 邻格快路径：直接出口连通时跳过整图 A*（常见近距移动）
+        if plane == "ground" and not places:
+            for e in self.exits:
+                other = e.other_side
+                if other is None:
+                    continue
+                if other.place is not dest:
+                    continue
+                if player is not None:
+                    try:
+                        if e.is_blocked(player, ignore_enemy_walls=True):
+                            continue
+                    except Exception:
+                        pass
+                    try:
+                        if other.is_blocked(player, ignore_enemy_walls=True):
+                            continue
+                    except Exception:
+                        pass
+                if avoid_fn is not None and (avoid_fn(e) or avoid_fn(other)):
+                    continue
+                dist = int_distance(self.x, self.y, e.x, e.y) + int_distance(
+                    other.x, other.y, dest.x, dest.y
+                )
+                return e, dist
+
         ##        if not dest.exits: # small optimization
         ##            return None, None # no path exists
 
@@ -421,7 +455,8 @@ class Square(_Space):
             # D-Phase 1 T5: pop 时的 is_blocked 也走 cached_is_blocked.
             # 同一 A* 调用内 v 可能多次入堆 (从不同方向), cache 复用首次结果.
             # 配合下面 neighbors 检查共用一份 local_block_cache, 命中率显著提升.
-            if hasattr(v, 'is_blocked') and player:
+            # 仅 Exit 有 is_blocked；用 is_an_exit 替代 hasattr (千万级调用)。
+            if player and v.is_an_exit:
                 if _rf is not None:
                     v_blocked = _rf.cached_is_blocked(v, player, local_block_cache, player_id)
                 else:
@@ -435,7 +470,7 @@ class Square(_Space):
                         local_block_cache[lk] = v_blocked
             else:
                 v_blocked = False
-            if v_blocked or avoid(v):
+            if v_blocked or (avoid_fn is not None and avoid_fn(v)):
                 closed.add(v)
                 continue
             if v is end:
@@ -446,7 +481,7 @@ class Square(_Space):
             g_v = g_score.get(v, 0)
             for w, edge_cost in neighbors.items():
                 # 使用局部阻挡缓存（Cython 加速时走 cached_is_blocked）
-                if hasattr(w, 'is_blocked') and player:
+                if player and w.is_an_exit:
                     if _rf is not None:
                         blocked = _rf.cached_is_blocked(w, player, local_block_cache, player_id)
                     else:
@@ -460,7 +495,7 @@ class Square(_Space):
                             local_block_cache[lk] = blocked
                 else:
                     blocked = False
-                if blocked or avoid(w):
+                if blocked or (avoid_fn is not None and avoid_fn(w)):
                     continue
 
                 tentative_g = g_v + edge_cost

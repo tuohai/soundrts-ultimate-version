@@ -1089,33 +1089,9 @@ class ResearchOrder(ProductionOrder):
     keyword = "research"
     cancel_order = "cancel_upgrading"
 
-    def on_queued(self):
-        super().on_queued()
-        if self.is_impossible:
-            return
-        culture_cost = max(0, int(getattr(self.type, "culture_cost", 0) or 0))
-        if culture_cost:
-            from ..rmg_systems import initialize_player
-
-            initialize_player(self.player)
-            if self.player.culture_points < culture_cost:
-                self.player.unpay(self.cost)
-                self.mark_as_impossible("not_enough_resources")
-                return
-            self.player.culture_points -= culture_cost
-            self._rmg_culture_paid = culture_cost
-
     def complete(self):
         self.type.upgrade_player(self.player)
-        self._rmg_culture_paid = 0
         self.unit.notify("research_complete")
-
-    def cancel(self, unpay=True):
-        culture_paid = int(getattr(self, "_rmg_culture_paid", 0) or 0)
-        if unpay and culture_paid:
-            self.player.culture_points += culture_paid
-            self._rmg_culture_paid = 0
-        super().cancel(unpay=unpay)
 
     @staticmethod
     def additional_condition(unit, type_name):
@@ -1128,19 +1104,6 @@ class ResearchOrder(ProductionOrder):
         from ..worldphase import is_a_phase
         if is_a_phase(rules.unit_class(type_name)):
             return False
-        research_type = rules.unit_class(type_name)
-        culture_cost = max(0, int(getattr(research_type, "culture_cost", 0) or 0))
-        if culture_cost:
-            from ..rmg_systems import can_adopt_policy, initialize_player
-
-            initialize_player(unit.player)
-            # Unlocked policies are re-enabled via rmg_switch_*; never research twice.
-            if type_name in unit.player.rmg_unlocked_policies:
-                return False
-            if unit.player.culture_points < culture_cost:
-                return False
-            if not can_adopt_policy(unit.player, type_name):
-                return False
         for u in unit.player.units:
             for w in unit.orders:
                 if w.__class__ == ResearchOrder and w.type.__name__ == type_name:
@@ -1364,23 +1327,18 @@ class BuildOrder(ComplexOrder):
         
     @staticmethod
     def additional_condition(unit, type_name):
-        """Ensure only buildings can be built; RMG improvements only on RMG maps."""
+        """确保只有建筑物能被建造，不允许建造任何单位"""
         from ..definitions import rules
-        from ..rmg_systems import (
-            is_rmg_improvement_type,
-            worker_can_start_rmg_improvement,
-        )
-
         unit_class = rules.unit_class(type_name)
         # 检查是否为建筑物类型，只有建筑物可以建造
         if unit_class and hasattr(unit_class, "class"):
             unit_classes = getattr(unit_class, "class")
             # 如果class是building，允许建造
-            if "building" not in unit_classes:
-                # 否则不允许建造（包括soldier、worker等所有非建筑单位）
+            if "building" in unit_classes:
+                return True
+            # 否则不允许建造（包括soldier、worker等所有非建筑单位）
+            else:
                 return False
-        if is_rmg_improvement_type(type_name):
-            return worker_can_start_rmg_improvement(unit, type_name)
         return True
 
     def __eq__(self, other):
@@ -1396,8 +1354,6 @@ class BuildOrder(ComplexOrder):
         )
 
     def on_queued(self):
-        from ..rmg_systems import is_rmg_improvement_type
-
         self.target = self.player.get_object_by_id(self.args[0])
         self.addon_host = None
         if is_addon_type(self.type):
@@ -1452,19 +1408,6 @@ class BuildOrder(ComplexOrder):
                 self.mark_as_impossible("cannot_build_here")
                 return
             self.target = deposit
-        elif is_rmg_improvement_type(self.type):
-            from ..rmg_systems import square_for, validate_rmg_build_target
-
-            reason = validate_rmg_build_target(
-                self.unit, self.type.type_name, self.target
-            )
-            if reason is not None:
-                self.mark_as_impossible(reason)
-                return
-            square = square_for(self.target)
-            if square is None and hasattr(self.target, "find_free_space_for"):
-                square = self.target
-            self.target = square
         elif self.type.is_buildable_anywhere:
             land = getattr(self.target, "any_land", None)
             if land is None and hasattr(self.target, "find_free_space_for"):

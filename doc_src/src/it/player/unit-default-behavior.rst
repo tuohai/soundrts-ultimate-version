@@ -108,10 +108,32 @@ Indipendenti: ad esempio solo i cavalieri hanno ``can_auto_explore 1``, oppure `
      - mantiene la posizione; contrattacca solo se abilitato
    * - ``chase``
      - Inseguimento
-     - insegue le unità ostili visibili fino a portata
+     - mantiene un solo ``AttackAction`` sul nemico bloccato e segue tramite uscite tra caselle (senza ``go`` automatico) fino a portata
 
 
+2.1.1 Punto di hold (``position_to_hold``) e uscita dalla casella
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+Le unità nascono con la casella corrente come ``position_to_hold``. Dentro di quell’area,
+``_must_hold`` blocca l’uscita:
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - Modalità IA
+     - Limitata da ``position_to_hold``?
+   * - ``offensive`` / ``guard``
+     - Sì (non escono da sole senza un ordine che fa ``stop()``)
+   * - ``defensive``
+     - No (possono ritirarsi)
+   * - ``chase``
+     - No (l’hold si azzera quando l’inseguimento attraversa caselle)
+
+
+Gli ordini ``go`` / ``attack`` del giocatore chiamano ``stop()`` al primo update e azzerano
+``position_to_hold``.
 
 La pattuglia è un comando con un percorso, non una modalità IA. Non puoi scrivere ``ai_mode patrol``. Usa ``guard`` o ``chase`` per effetti simili.
 
@@ -140,7 +162,9 @@ Le unità del giocatore in modalità ``offensive``, ``defensive`` o ``chase``:
 
 - non attaccano automaticamente le unità neutrali (creep / NPC / fauna `computer_only ... neutral`);
 - non fuggono a causa dei neutrali (la modalità difensiva valuta solo le vere minacce ostili);
-- per combattere un neutrale, dai un attacco forzato (``imperative`` — ad es. Ctrl+clic sull’unità;
+- ``go`` predefinito / normale su un neutrale (non imperativo) si limita a muovere, senza AttackAction;
+- l’ordine predefinito su ``is_huntable`` resta ``attack`` e infligge danno;
+- per far trattare dalla IA un creep / NPC neutrale come bersaglio automatico, dai un attacco forzato (``imperative`` — ad es. Ctrl+clic sull’unità;
   il motore converte l’``go`` imperativo in ``attack``).
 
 
@@ -277,6 +301,10 @@ A: Ignorato (velocità 0).
 
 ``Q: ``auto_gather`` su un soldato?``  
 A: Ha senso solo sui lavoratori.
+
+Q: In che modo chase differisce dal vecchio salto con ``go`` automatico?  
+A: Ora mantiene l’attacco e segue tra caselle; non è limitato da ``position_to_hold``.
+Offensiva / guardia sì, a meno che il giocatore non ordini di muoversi.
 
 Q: Le unità in offensiva/inseguimento attaccheranno automaticamente gli NPC neutrali?  
 A: No. Le modalità offensive, defensive e chase ignorano i neutrali per attacco automatico e fuga;

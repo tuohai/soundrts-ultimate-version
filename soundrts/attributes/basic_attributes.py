@@ -12,7 +12,58 @@ from ..definitions import style
 class BasicAttributes:
     def __init__(self, main_interface):
         self.main_interface = main_interface
-    
+
+    @staticmethod
+    def _attribute_source(u):
+        return getattr(u, "model", None) or u
+
+    @staticmethod
+    def _absolute_menace(src):
+        """Return class/instance absolute ``menace`` if rules fixed it; else None."""
+        if src is None:
+            return None
+        if isinstance(src, type):
+            raw = src.__dict__.get("menace")
+        else:
+            raw = type(src).__dict__.get("menace")
+            if raw is None and hasattr(src, "__dict__"):
+                raw = src.__dict__.get("menace")
+        if isinstance(raw, property):
+            return None
+        if isinstance(raw, (int, float)) and not isinstance(raw, bool):
+            return int(raw)
+        return None
+
+    @staticmethod
+    def _effective_menace(src):
+        """PRECISION-scaled threat for a live unit or a rules unit class."""
+        if src is None:
+            return 0
+        absolute = BasicAttributes._absolute_menace(src)
+        if absolute is not None:
+            return absolute
+        if not isinstance(src, type):
+            try:
+                val = src.menace
+            except Exception:
+                return 0
+            if isinstance(val, property):
+                return 0
+            try:
+                return int(val or 0)
+            except (TypeError, ValueError):
+                return 0
+        try:
+            from ..worldunit.world_attributes import CreatureAttributes
+
+            base = CreatureAttributes._auto_combat_menace_base(src)
+            if not base:
+                return 0
+            mult = getattr(src, "menace_mult", PRECISION) or PRECISION
+            return int(base * mult // PRECISION)
+        except Exception:
+            return 0
+
     def add_basic_info_attributes(self, u, attrs):
         """添加基础信息属性"""
         # 基本信息 - HP和MP（如果有的话）
@@ -22,8 +73,6 @@ class BasicAttributes:
             # 魔法值/能量
             if hasattr(u, "mana") and hasattr(u, "mana_max") and u.mana_max > 0:
                 attrs.append(("n", mp.MANA, u.mana_status))
-
-        self.add_strategic_player_attributes(u, attrs)
         
         # 单位简介（总是检查）
         unit_type_name = getattr(u, 'type_name', None) or getattr(u.model, 'type_name', None)
@@ -59,31 +108,6 @@ class BasicAttributes:
         if hasattr(u.model, "time_cost") and u.model.time_cost > 0:
             time_text = nb2msg_float(u.model.time_cost / 1000) + mp.SECONDS
             attrs.append(("", mp.TIME, time_text))
-
-    def add_strategic_player_attributes(self, u, attrs):
-        """RMG 战略地图：在城市建筑属性中显示玩家的文化点与外交点。"""
-        interface = getattr(self.main_interface, "interface", None)
-        world = getattr(interface, "world", None) if interface is not None else None
-        if not getattr(world, "rmg_strategic_systems", False):
-            return
-
-        player = getattr(u, "player", None)
-        local_player = getattr(interface, "player", None) if interface is not None else None
-        if player is None or local_player is None or player is not local_player:
-            return
-        if getattr(local_player, "_is_pure_spectator", False):
-            return
-
-        from ..rmg_systems import initialize_player, is_city
-
-        if not is_city(u):
-            return
-
-        initialize_player(player)
-        culture = int(getattr(player, "culture_points", 0) or 0)
-        diplomacy = int(getattr(player, "diplomacy_points", 0) or 0)
-        attrs.append(("u", mp.RMG_CULTURE, nb2msg(culture)))
-        attrs.append(("y", mp.RMG_DIPLOMACY_POINTS, nb2msg(diplomacy)))
     
     def add_healing_attributes(self, u, attrs):
         """添加治疗相关属性"""
@@ -177,12 +201,18 @@ class BasicAttributes:
     
     def add_movement_attributes(self, u, attrs):
         """添加移动相关属性"""
+        from .terrain_effective import effective_speed_value
+
         # 移动速度 - 先检查单位本身，再检查model
         speed_value = 0
         if hasattr(u, "speed"):
             speed_value = getattr(u, "speed", 0)
         elif hasattr(u.model, "speed"):
             speed_value = getattr(u.model, "speed", 0)
+
+        # 当前格：speed_on_terrain 绝对替换，或 speed_vs / 地形 speed 倍率
+        if speed_value > 0:
+            speed_value = effective_speed_value(u, speed_value)
             
         if speed_value > 0:
             speed_text = nb2msg_float(speed_value / PRECISION)
@@ -245,6 +275,45 @@ class BasicAttributes:
         # 防御暴击率
         self.main_interface._add_bonus_attribute(attrs, u, "mdf_crit_rate", "d", mp.MDF_CRIT_RATE, False)
         self.main_interface._add_bonus_attribute(attrs, u, "rdf_crit_rate", "", mp.RDF_CRIT_RATE, False)
+
+        # 威胁：绝对值（rules 写死的 menace）或自动综合威胁；
+        # 权重 menace_mult / menace_mult_vs 与绝对值并列显示。
+        src = self._attribute_source(u)
+        absolute = self._absolute_menace(src)
+        menace_val = absolute if absolute is not None else self._effective_menace(src)
+        if menace_val > 0 or absolute is not None:
+            attrs.append(("", mp.MENACE, nb2msg_float((absolute if absolute is not None else menace_val) / PRECISION)))
+
+        mult = getattr(src, "menace_mult", PRECISION) or PRECISION
+        if isinstance(mult, property):
+            mult = PRECISION
+        try:
+            mult = int(mult)
+        except (TypeError, ValueError):
+            mult = PRECISION
+        # 有威胁时始终显示权重（含默认 1），便于对照绝对威胁/自动威胁
+        if menace_val > 0 or absolute is not None or mult != PRECISION:
+            attrs.append(("", mp.MENACE_MULT, nb2msg_float(mult / PRECISION)))
+
+        menace_vs = getattr(src, "menace_vs", None) or {}
+        if isinstance(menace_vs, dict) and menace_vs:
+            self.main_interface.vs_handler.add_grouped_vs_attribute(
+                attrs,
+                menace_vs,
+                mp.MENACE_VS,
+                precision_divide=True,
+                min_positive=False,
+            )
+
+        menace_mult_vs = getattr(src, "menace_mult_vs", None) or {}
+        if isinstance(menace_mult_vs, dict) and menace_mult_vs:
+            self.main_interface.vs_handler.add_grouped_vs_attribute(
+                attrs,
+                menace_mult_vs,
+                mp.MENACE_MULT_VS,
+                precision_divide=True,
+                min_positive=False,
+            )
     
     def add_sight_attributes(self, u, attrs):
         """添加视野相关属性"""

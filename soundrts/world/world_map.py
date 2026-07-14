@@ -907,9 +907,6 @@ class WorldMapMixin:
             elif w == "victory_mode":
                 mode = words[1].lower() if len(words) >= 2 else "conquest"
                 setattr(self, w, mode)
-            elif w == "rmg_strategic_systems":
-                value = words[1].lower() if len(words) >= 2 else "1"
-                self.rmg_strategic_systems = value not in ("0", "false", "no")
             elif w == "building_land":
                 from ..worldresource import building_land_types
 

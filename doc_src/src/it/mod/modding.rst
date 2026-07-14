@@ -447,6 +447,66 @@ Proprietà principali mischia/distanza:
 - ``mdg_explode`` / ``rdg_explode``, ``exp_dgf``, ``exp_hp_cost``, ``mdg_explode_vs``
 - Modificatori per **terreno dell’attaccante** (da 1.4.5.0): ``mdg_on_terrain`` / ``rdg_on_terrain``, ``mdg_cd_on_terrain`` / ``rdg_cd_on_terrain``, ``charge_mdg_terrain`` / ``charge_rdg_terrain``, ``charge_mdg_cd_on_terrain`` / ``charge_rdg_cd_on_terrain``; stessa sintassi di ``speed_on_terrain`` — vedi ``building-land-terrain.rst`` *Modificatori di combattimento delle unità sul terreno*
 
+Menace automatica / priorità di bersaglio (da 1.4.5.2)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Il ``menace`` di un’unità non è più solo il danno. Se rules non imposta un valore
+assoluto, il motore usa un **punteggio di combattimento multidimensionale** per:
+
+- Scelta automatica del bersaglio (minaccia più alta prima; giocatori computer
+  non ``timers`` possono anche mescolare ``mdg_vs``/``rdg_vs`` con
+  ``counter_skill`` — vedi ``aimaking.rst``)
+- Somme di minaccia nemica per casella e decisioni IA correlate
+
+**Dimensioni** (arma primaria = il maggiore tra ``mdg`` / ``rdg``):
+
+- Danno, precisione (``mdg_cover``/``rdg_cover``, 0 = 100%%), cooldown
+  (``*_cd``), wind-up (``mdg_ready``/``rdg_ready`` — non il ``*_delay`` balistico)
+- HP (``hp`` corrente, altrimenti ``hp_max``), armatura (``max(mdf, rdf)``),
+  schivata (``max(mdg_dodge, rdg_dodge)``)
+- Portata d’attacco, velocità di movimento
+
+In sintesi: DPS effettivo (danno × hit / (cd + ready)), poi sopravvivenza e
+fattori di portata/velocità.
+
+**Override opzionali in rules** (def unità):
+
+======= ================= ============================================================
+Campo     Tipo              Significato
+======= ================= ============================================================
+``menace`` assoluto         Minaccia fissa; **non** segue gli upgrade; sostituisce l’auto
+``menace_mult`` peso (1)    Moltiplica la base multi-dim (scala ancora con le stat)
+``menace_vs`` assoluto vs   Minaccia fissa verso quel tipo di osservatore / ``is_a``
+``menace_mult_vs`` peso vs  Base multi-dim × peso verso quell’osservatore
+======= ================= ============================================================
+
+Ordine di lookup (``menace_versus``): ``menace_vs`` → ``menace_mult_vs`` →
+``menace`` / ``menace_mult`` / punteggio automatico globale.
+
+Esempio::
+
+    def knight
+    mdg 6
+    menace_mult 1.5
+
+    def archer
+    rdg 5
+    menace_vs knight 3
+    menace_mult_vs mage 1.2
+
+**Pesi regolabili** in ``def parameters`` (importanza armatura/schivata/portata/velocità
+e normalizzazione HP; danno+cd+ready+cover alimentano sempre il nucleo DPS)::
+
+    def parameters
+    menace_armor_weight 1
+    menace_dodge_weight 1
+    menace_range_weight 0.15
+    menace_speed_weight 0.2
+    menace_hp_ref 50
+
+Preferire ``menace_mult`` / ``menace_mult_vs`` per unità che ricercano upgrade;
+usare ``menace`` / ``menace_vs`` assoluti solo per una priorità fissa.
+
 Carica e controcarica (da 1.4.0.1)
 
 Carica: le unità con statistiche di carica possono eseguire un attacco di carica ad alto danno quando impegnano un
@@ -1055,6 +1115,9 @@ Comportamento iniziale per unità in ``rules.txt``:
 
 - ``ai_mode``: ``offensive``, ``defensive``, ``guard``, o ``chase``. Predefinito: ``offensive``
   per i soldati, ``defensive`` per i lavoratori. Si applica alle unità di combattimento.
+  ``chase`` mantiene un ``AttackAction`` e segue tra caselle (senza ``go`` automatico);
+  ``offensive`` / ``guard`` rispettano ancora ``position_to_hold`` alla creazione finché un ordine non fa ``stop()``;
+  ``defensive`` / ``chase`` no.
 - ``auto_gather``: ``1`` o ``0``. Predefinito ``1``. Solo lavoratori.
 - ``auto_repair``: ``1`` o ``0``. Predefinito ``1``. Solo lavoratori.
 - ``auto_explore``: ``1`` o ``0``. Predefinito ``0``. Unità mobili (speed > 0).
@@ -1070,7 +1133,8 @@ ancora forzate a guard + contrattacco indipendentemente da ``ai_mode``.
 
 Le unità del giocatore in modalità ``offensive``, ``defensive`` o ``chase`` non attaccano automaticamente le unità
 neutrali (``computer_only ... neutral``) e la modalità difensiva non fugge dai soli neutrali.
-Usa un attacco imperativo (es. Ctrl+clic sull’unità) per combattere un neutrale.
+Il ``go`` normale su un neutrale si limita a muovere; l’``attack`` normale su ``is_huntable`` infligge danno.
+Usa un attacco imperativo (es. Ctrl+clic) perché l’IA tratti un creep/NPC neutrale come bersaglio automatico.
 
 Esempio::
 
@@ -1319,7 +1383,7 @@ Sistema di caccia (stile Age of Empires)
 
 Vedi ``../player/hunting.htm``. Riepilogo:
 
-- I lavoratori cliccano destro su animali ``is_huntable`` per attaccare; le uccisioni generano una carcassa ``food_deposit`` (es. ``food_carcass``).
+- I lavoratori Backspace/clic destro su ``is_huntable`` attaccano (l’attacco normale infligge danno); le uccisioni generano ``food_deposit`` (es. ``food_carcass``) e completano l’ordine senza beep falso ``order_impossible``.
 - Attr animali: ``is_huntable``, ``flee_on_hit``, ``herdable``, ``food_deposit``, ``food_deposit_qty``, ``no_number``.
 - Spawn sulla mappa: ``computer_only 0 0 neutral \<casella\> \<conteggio\> deer``; le mappe casuali aggiungono fauna vicino agli inizi.
 - Voce: le unità con ``is_huntable`` / ``herdable`` sono annunciate come "deer , animal", non "neutral , NPC". Ctrl+Shift+F4 su un giocatore solo fauna dice "you are animal". Gli NPC di storia (``quest_npc``, ecc.) dicono ancora "neutral , NPC".

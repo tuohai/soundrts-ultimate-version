@@ -214,51 +214,6 @@ def test_choose_build_target_returns_meadow_not_square_for_barracks(monkeypatch)
     assert chosen is meadow
 
 
-def test_get_exception_handler_does_not_shadow_builtin_type(caplog):
-    """Regression: _get's except block must not call type(e) while looping on `type`."""
-    caplog.set_level(logging.WARNING)
-    comp = Computer.__new__(Computer)
-    comp._safe_cnt = 0
-    comp.units = []
-    lumbermill = rules.unit_class("lumbermill")
-
-    def boom(_t, _nb=1):
-        raise RuntimeError("build failed")
-
-    def nb(arg):
-        if (
-            isinstance(arg, list)
-            and len(arg) == 1
-            and getattr(arg[0], "__name__", None) == "lumbermill"
-        ):
-            return 0
-        return 1
-
-    types_arg = [lumbermill]
-    comp.nb = nb
-    comp.future_nb = lambda _types: 0
-    comp.build_or_train_or_upgradeto_or_summon = boom
-
-    assert comp._get(1, types_arg) is False
-    assert any(
-        "创建单位时出错" in r.message and "RuntimeError" in r.message
-        for r in caplog.records
-    )
-    assert not any(
-        "missing 3 required positional arguments" in r.message for r in caplog.records
-    )
-
-
-def test_rmg_spawn_types_have_no_makers():
-    for name in (
-        "rmg_territory_marker",
-        "rmg_tile_mine",
-        "rmg_tile_lumber_mill",
-        "rmg_tile_farm",
-    ):
-        assert rules.get_makers(name) == []
-
-
 def test_jl6_advanced_ai_no_goldmine_build_warnings(caplog):
     caplog.set_level(logging.WARNING)
     world = _populate_jl6("advanced")

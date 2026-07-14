@@ -156,6 +156,8 @@ Besides per-square ``terrain_speed`` / ``terrain_cover``, use **terrain** ``*_vs
 
 **Unit-side:** ``mdg_on_terrain``, ``rdg_on_terrain``, ``mdg_cd_on_terrain``, ``rdg_cd_on_terrain``, ``charge_*_terrain`` — same percent rules. ``speed_on_terrain`` remains an **absolute** speed override.
 
+**Attributes screen (Alt+V):** lists unit ``*_on_terrain`` / charge terrain lines, and the live damage / cooldown / speed readings include current-square terrain ``*_vs`` plus unit ``*_on_terrain`` (terrain ``*_vs`` = decimal percent; ``speed_on_terrain`` stays absolute).
+
 **Which tile counts:** attacker/mover’s current square ``type_name`` (or ``type_name_at`` for sub-cells). ``cover_vs`` applies to the **target** unit when attacked at range.
 
 Maps: ``speed``/``cover`` lines affect **all** units on a cell; per-unit rules belong in ``rules.txt``.

@@ -39,8 +39,10 @@ def parse_location_token(token, max_precision=MAX_SUBCELL_PRECISION):
 def subcell_index(place, x, y, precision=None):
     """Return 0-based sub-cell index ``(cx, cy)`` for world coords in *place*."""
     if precision is None:
-        world = getattr(place, "world", None)
-        precision = getattr(world, "subcell_precision", DEFAULT_SUBCELL_PRECISION)
+        try:
+            precision = place.world.subcell_precision
+        except AttributeError:
+            precision = DEFAULT_SUBCELL_PRECISION
     xmin = place.xmin
     ymin = place.ymin
     xmax = place.xmax
@@ -59,8 +61,10 @@ def subcell_index(place, x, y, precision=None):
 def subcell_center(place, cx, cy, precision=None):
     """World coords of the center of sub-cell ``(cx, cy)`` (0-based)."""
     if precision is None:
-        world = getattr(place, "world", None)
-        precision = getattr(world, "subcell_precision", DEFAULT_SUBCELL_PRECISION)
+        try:
+            precision = place.world.subcell_precision
+        except AttributeError:
+            precision = DEFAULT_SUBCELL_PRECISION
     sub_w = (place.xmax - place.xmin) / precision
     sub_h = (place.ymax - place.ymin) / precision
     x = place.xmin + (cx + 0.5) * sub_w
@@ -157,45 +161,66 @@ class SubCellOverlay:
             self.set_terrain_cover(cx, cy, palette["cover"])
 
     def high_ground_at(self, square, x, y):
+        mapping = self._high_ground
+        if not mapping:
+            return square.high_ground
         cx, cy = self._cell(square, x, y)
-        if (cx, cy) in self._high_ground:
-            return self._high_ground[(cx, cy)]
+        if (cx, cy) in mapping:
+            return mapping[(cx, cy)]
         return square.high_ground
 
     def type_name_at(self, square, x, y):
+        mapping = self._type_name
+        if not mapping:
+            return square.type_name
         cx, cy = self._cell(square, x, y)
-        if (cx, cy) in self._type_name:
-            return self._type_name[(cx, cy)]
+        if (cx, cy) in mapping:
+            return mapping[(cx, cy)]
         return square.type_name
 
     def terrain_speed_at(self, square, x, y):
+        mapping = self._terrain_speed
+        if not mapping:
+            return square.terrain_speed
         cx, cy = self._cell(square, x, y)
-        if (cx, cy) in self._terrain_speed:
-            return self._terrain_speed[(cx, cy)]
+        if (cx, cy) in mapping:
+            return mapping[(cx, cy)]
         return square.terrain_speed
 
     def terrain_cover_at(self, square, x, y):
+        mapping = self._terrain_cover
+        if not mapping:
+            return square.terrain_cover
         cx, cy = self._cell(square, x, y)
-        if (cx, cy) in self._terrain_cover:
-            return self._terrain_cover[(cx, cy)]
+        if (cx, cy) in mapping:
+            return mapping[(cx, cy)]
         return square.terrain_cover
 
     def is_water_at(self, square, x, y):
+        mapping = self._is_water
+        if not mapping:
+            return square.is_water
         cx, cy = self._cell(square, x, y)
-        if (cx, cy) in self._is_water:
-            return self._is_water[(cx, cy)]
+        if (cx, cy) in mapping:
+            return mapping[(cx, cy)]
         return square.is_water
 
     def is_ground_at(self, square, x, y):
+        mapping = self._is_ground
+        if not mapping:
+            return square.is_ground
         cx, cy = self._cell(square, x, y)
-        if (cx, cy) in self._is_ground:
-            return self._is_ground[(cx, cy)]
+        if (cx, cy) in mapping:
+            return mapping[(cx, cy)]
         return square.is_ground
 
     def is_air_at(self, square, x, y):
+        mapping = self._is_air
+        if not mapping:
+            return square.is_air
         cx, cy = self._cell(square, x, y)
-        if (cx, cy) in self._is_air:
-            return self._is_air[(cx, cy)]
+        if (cx, cy) in mapping:
+            return mapping[(cx, cy)]
         return square.is_air
 
     def iter_high_ground(self):

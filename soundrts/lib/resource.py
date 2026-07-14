@@ -268,11 +268,6 @@ class ResourceStack:
     def load_rules_and_ai(self):
         rules.load(self.text("rules", append=True))
         load_ai(*self.texts("ai"))
-        try:
-            from ..rmg_rules import invalidate_rmg_rules_cache
-            invalidate_rmg_rules_cache()
-        except Exception:
-            pass
         if achievements_enabled():
             load_achievements(*self.texts("achievements"))
             load_cards(*self.texts("cards"))

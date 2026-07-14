@@ -49,16 +49,12 @@ trigger player1 (timer 0) (alliance 1)
 trigger player2 (timer 0) (alliance 1)
 trigger computers (timer 0) (alliance 2)
 
-trigger player1 (timer 0) (add_objective 1 7571)
-trigger player2 (timer 0) (add_objective 1 7571)
-trigger player1 (timer 0) (add_objective 2 7572)
-trigger player2 (timer 0) (add_objective 2 7572)
+trigger players (timer 0) (add_objective 1 7571)
+trigger players (timer 0) (add_objective 2 7572)
 
-trigger player1 (has_item war_supplies) (objective_complete 1)
-trigger player2 (has_item war_supplies) (objective_complete 1)
-trigger player1 (find g7 war_supplies) (do (cut_scene 7573) (remove_ground_item g7 war_supplies) (objective_complete 2))
+trigger players (has_item war_supplies) (objective_complete 1)
+trigger players (find g7 war_supplies) (do (cut_scene 7573) (remove_ground_item g7 war_supplies) (objective_complete 2))
 
 trigger all (no_unit_left) (defeat)
 
-trigger player1 (key_unit_killed raynor) (defeat)
 trigger player2 (key_unit_killed raynor) (defeat)

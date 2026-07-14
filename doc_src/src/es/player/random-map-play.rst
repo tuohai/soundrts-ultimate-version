@@ -3,9 +3,6 @@ Generador de mapas aleatorios
 
 Desde SoundRTS 1.4.3.4, el generador procedural de mapas aleatorios (RMG) construye mapas ``.txt`` estándar a partir de opciones del menú. Los mapas generados usan la misma canalización de carga que los mapas hechos a mano y funcionan en escaramuza local o al crear salas en línea.
 
-Progreso del héroe, territorio urbano, cultura, puntos diplomáticos, tecnologías y políticas:
-`Sistemas estratégicos RMG: héroe y civilización <rmg-strategic-systems.htm>`_.
-
 ----
 
 1. Dónde encontrarlo
@@ -33,7 +30,7 @@ El submenú recorre ( Esc vuelve un nivel ):
 1. Plantilla de mapa (o Importar código para compartir — sección 4)
 2. Tamaño: pequeño / mediano / grande
 3. Jugadores: 2 / 3 / 4
-4. Modo de equipo (3 jugadores: todos contra todos / uno contra muchos; 4 jugadores: todos contra todos / 2v2 / uno contra muchos). Todos contra todos = independientes; uno contra muchos = el jugador 1 solo contra el resto aliado
+4. Modo de equipo (solo 4 jugadores): todos contra todos o 2v2 fijo
 5. Fuerza de monstruos: débil / media / fuerte (guarnición hostil del centro; ataca a los jugadores — débil: 2 footmen / media: 4 footmen + 2 archers / fuerte: 6 footmen + 4 archers + 1 knight)
 6. Distribución de recursos: equilibrada / agrupada
 7. Terreno (no para plantilla lanes): aleatorio / hierba / pantano / montaña
@@ -62,12 +59,10 @@ Tras elegir la semilla oyes una vista previa por voz de los ajustes; tras confir
    * - Lanes
      - Diseño de tres carriles (estilo TD2); sin pasos de terreno/agua
 
-2.2 Modos de equipo
-~~~~~~~~~~~~~~~~~~~
+2.2 Equipos 2v2
+~~~~~~~~~~~~~~~
 
-- **Todos contra todos**: cada jugador empieza en una alianza propia.
-- **Uno contra muchos**: el jugador 1 solo; el resto empieza aliado.
-- **2v2** (solo 4 jugadores): jugadores 1+3 frente a 2+4.
+Con 4 jugadores y 2v2, el mapa añade disparadores de alianza: los jugadores 1+2 y 3+4 empiezan aliados.
 
 2.3 Modos de victoria
 ~~~~~~~~~~~~~~~~~~~~~
@@ -111,11 +106,6 @@ Metas de oro económicas (solo ``resource1``):
      - 5000
    * - Lanes
      - 2500
-
-Valores predeterminados de ``rules.txt`` (``rmg_economic_goal*``, ``rmg_survival_seconds*``, etc.).
-Los mods los sobrescriben en ``def parameters`` o ``cfg/randommap/*.txt``; victoria
-personalizada con ``victory_triggers``. Ver ``mod/randommap.htm`` 6.5 / 8.4 y
-``player/rmg-strategic-systems.htm`` sección 7.
 
 Perder todos los edificios ``provides_survival`` sigue significando derrota. En modos exploración/económica/supervivencia, eliminar a todos los enemigos no gana automáticamente; aún puedes atacar.
 
@@ -178,8 +168,8 @@ Once partes separadas por dos puntos: prefijo ``RMG1`` + 10 campos:
      - random / grass / marsh / mountain
      - ``r`` / ``g`` / ``a`` / ``t``
    * - Equipos
-     - ffa / teams_2v2 / one_vs_many
-     - ``f`` / ``t`` / ``o``
+     - ffa / teams_2v2
+     - ``f`` / ``t``
    * - Agua
      - none / lake / river
      - ``n`` / ``l`` / ``v``

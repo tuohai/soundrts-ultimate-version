@@ -64,6 +64,8 @@ class Entity:
     # 大量 getattr(o, '...', default) 的慢路径. Creature 子类自带 override.
     is_a_unit = False
     is_a_building = False
+    is_creature = False
+    _allied_control_controller_cache = None
     type_name = None
     is_a_gate = False  # worldexit.is_blocked 检查所有 blockers; 默认 False
     # minimal_damage 在 Creature.__init__ 从 rules 注入实例属性; 非 Creature
@@ -125,6 +127,11 @@ class Entity:
     charge_rdg_terrain = ()  # 攻击者所在地形上的远程冲锋伤害修正
     charge_mdg_cd_on_terrain = ()  # 攻击者所在地形上的近战冲锋冷却修正
     charge_rdg_cd_on_terrain = ()  # 攻击者所在地形上的远程冲锋冷却修正
+    # Per-unit cache for attacker terrain lookups (place/x/y).
+    _attacker_terrain_place = None
+    _attacker_terrain_x = None
+    _attacker_terrain_y = None
+    _attacker_terrain_type = None
     is_moving = False
 
     def __repr__(self):

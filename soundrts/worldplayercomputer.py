@@ -280,26 +280,269 @@ class Computer(Player):
                 warning("unknown command: '%s' (in ai.txt)", cmd[0])
                 self._line_nb += 1
 
-    def _best_warehouse(self, place=None):
-        return rules.unit_class(self.equivalent("townhall"))
+    # ------------------------------------------------------------------
+    # Attribute-driven type discovery (no faction type-name literals).
+    # ai.txt still uses semantic names via equivalent(); economy/naval/
+    # housing code must work for arbitrary mods from rules attributes.
+    # ------------------------------------------------------------------
+
+    def _discovery_cache_get(self, key, factory):
+        turn = getattr(getattr(self, "world", None), "turn", -1)
+        cache = getattr(self, "_type_discovery_cache", None)
+        if cache is None or cache.get("_turn") != turn:
+            cache = {"_turn": turn}
+            self._type_discovery_cache = cache
+        if key not in cache:
+            cache[key] = factory()
+        return cache[key]
+
+    def _iter_ground_worker_classes(self):
+        for name in rules.classnames():
+            uc = rules.unit_class(name)
+            if uc is None:
+                continue
+            try:
+                if not issubclass(uc, Worker):
+                    continue
+            except TypeError:
+                continue
+            if getattr(uc, "airground_type", "ground") != "ground":
+                continue
+            yield name, uc
+
+    def _worker_buildable_type_names(self):
+        def _compute():
+            names = set()
+            for w in getattr(self, "_workers", ()) or ():
+                names.update(getattr(w, "can_build", ()) or ())
+            if names:
+                return frozenset(names)
+            for _name, uc in self._iter_ground_worker_classes():
+                built = rules.class_rules_attr(uc, "can_build", ()) or ()
+                if built:
+                    names.update(built)
+            return frozenset(names)
+
+        return self._discovery_cache_get("worker_buildables", _compute)
+
+    def _primary_worker_type_name(self):
+        def _compute():
+            counts = {}
+            for u in getattr(self, "_workers", ()) or ():
+                tn = getattr(u, "type_name", None)
+                if tn:
+                    counts[tn] = counts.get(tn, 0) + 1
+            if counts:
+                return max(counts, key=counts.get)
+            best = None
+            best_score = -1
+            for name, uc in self._iter_ground_worker_classes():
+                score = 0
+                if rules.class_rules_attr(uc, "can_build", ()):
+                    score += 2
+                if rules.class_rules_attr(uc, "can_gather_deposit", ()) or rules.class_rules_attr(
+                    uc, "can_gather_building", ()
+                ):
+                    score += 1
+                if score > best_score:
+                    best_score = score
+                    best = name
+            return best
+
+        return self._discovery_cache_get("primary_worker", _compute)
+
+    def _main_base_type_names(self):
+        """Buildings that train the primary worker (townhall / nexus / cc…)."""
+
+        def _compute():
+            worker = self._primary_worker_type_name()
+            if not worker:
+                return ()
+            makers = rules.get_makers(worker) or ()
+            return tuple(m for m in makers if rules.unit_class(m) is not None)
+
+        return self._discovery_cache_get("main_base_types", _compute)
+
+    def _housing_type_names(self):
+        """Supply buildings: provide population and are not the main base."""
+
+        def _compute():
+            main = set(self._main_base_type_names())
+            result = []
+            for name in self._worker_buildable_type_names():
+                if name in main:
+                    continue
+                uc = rules.unit_class(name)
+                if uc is None:
+                    continue
+                if int(getattr(uc, "population_provided", 0) or 0) <= 0:
+                    continue
+                result.append(name)
+            return tuple(result)
+
+        return self._discovery_cache_get("housing_types", _compute)
+
+    def _storage_building_type_names(self, resource_index):
+        resource_type = f"resource{resource_index + 1}"
+
+        def _compute():
+            result = []
+            for name in self._worker_buildable_type_names():
+                uc = rules.unit_class(name)
+                if uc is None:
+                    continue
+                stores = getattr(uc, "storable_resource_types", ()) or ()
+                if resource_type in stores:
+                    result.append(name)
+            return tuple(result)
+
+        return self._discovery_cache_get(
+            f"storage_{resource_index}", _compute
+        )
+
+    def _gate_type_names(self):
+        def _compute():
+            result = []
+            for name in self._worker_buildable_type_names():
+                uc = rules.unit_class(name)
+                if uc is not None and getattr(uc, "is_a_gate", 0):
+                    result.append(name)
+            return tuple(result)
+
+        return self._discovery_cache_get("gate_types", _compute)
+
+    def _naval_yard_type_names(self):
+        def _compute():
+            result = []
+            for name in self._worker_buildable_type_names():
+                uc = rules.unit_class(name)
+                if uc is None:
+                    continue
+                if getattr(uc, "is_buildable_near_water_only", False):
+                    result.append(name)
+                    continue
+                for t in rules.class_can_train(uc) or ():
+                    tc = rules.unit_class(t)
+                    if tc is not None and getattr(tc, "airground_type", None) == "water":
+                        result.append(name)
+                        break
+            return tuple(result)
+
+        return self._discovery_cache_get("naval_yards", _compute)
+
+    def _trainable_from_types(self, maker_names):
+        result = []
+        seen = set()
+        for maker in maker_names or ():
+            uc = rules.unit_class(maker)
+            if uc is None:
+                continue
+            for t in rules.class_can_train(uc) or ():
+                if t not in seen:
+                    seen.add(t)
+                    result.append(t)
+        return result
+
+    def _water_transport_type_names(self):
+        def _compute():
+            candidates = self._trainable_from_types(self._naval_yard_type_names())
+            if not candidates:
+                candidates = [
+                    n
+                    for n in rules.classnames()
+                    if (uc := rules.unit_class(n)) is not None
+                    and getattr(uc, "airground_type", None) == "water"
+                    and getattr(uc, "transport_capacity", 0) > 0
+                ]
+            result = []
+            for name in candidates:
+                uc = rules.unit_class(name)
+                if uc is None:
+                    continue
+                if getattr(uc, "airground_type", None) != "water":
+                    continue
+                if getattr(uc, "transport_capacity", 0) <= 0:
+                    continue
+                result.append(name)
+            return tuple(result)
+
+        return self._discovery_cache_get("water_transports", _compute)
+
+    def _water_warship_type_names(self):
+        def _compute():
+            candidates = self._trainable_from_types(self._naval_yard_type_names())
+            if not candidates:
+                candidates = list(rules.classnames())
+            result = []
+            for name in candidates:
+                uc = rules.unit_class(name)
+                if uc is None:
+                    continue
+                if getattr(uc, "airground_type", None) != "water":
+                    continue
+                if getattr(uc, "transport_capacity", 0) > 0:
+                    continue
+                if not (getattr(uc, "mdg", 0) or getattr(uc, "rdg", 0)):
+                    continue
+                result.append(name)
+            # Prefer cheaper warships first (destroyer before battleship).
+            result.sort(
+                key=lambda n: sum(getattr(rules.unit_class(n), "cost", ()) or ())
+            )
+            return tuple(result)
+
+        return self._discovery_cache_get("water_warships", _compute)
+
+    def _preferred_warehouse_class(self, resource_type=None):
+        """Pick a buildable warehouse class; prefer dedicated storage when possible."""
+        candidates = []
+        for name in self._worker_buildable_type_names():
+            uc = rules.unit_class(name)
+            if uc is None:
+                continue
+            stores = tuple(getattr(uc, "storable_resource_types", ()) or ())
+            if not stores:
+                continue
+            if resource_type is not None and resource_type not in stores:
+                continue
+            dedicated = 1 if len(stores) == 1 else 0
+            coverage = len(stores)
+            cost = sum(getattr(uc, "cost", ()) or ())
+            # Dedicated dropoff near wood > multi-purpose hall when resource given;
+            # otherwise prefer widest coverage (main hall).
+            if resource_type is not None:
+                score = (dedicated, -cost, coverage)
+            else:
+                score = (coverage, dedicated, -cost)
+            candidates.append((score, name, uc))
+        if not candidates:
+            return None
+        candidates.sort(key=lambda x: x[0], reverse=True)
+        return candidates[0][2]
+
+    def _best_warehouse(self, place=None, resource_type=None):
+        if resource_type is None and isinstance(place, Deposit):
+            resource_type = getattr(place, "resource_type", None)
+        return self._preferred_warehouse_class(resource_type=resource_type)
 
     def _warehouse_economy_enabled(self):
-        wh = self._best_warehouse()
+        wh = self._preferred_warehouse_class()
         return wh is not None and bool(getattr(wh, "storable_resource_types", None))
 
     def _auto_warehouse_expansion_enabled(self):
         """Only build extra warehouse buildings when they are not the main base."""
-        wh_type = self._best_warehouse()
+        wh_type = self._preferred_warehouse_class()
         if wh_type is None:
             return False
-        townhall = self.equivalent("townhall")
-        if wh_type.type_name == townhall and self.nb([townhall]) >= 1:
+        main = self._main_base_type_names()
+        if wh_type.type_name in main and self.nb(list(main)) >= 1:
             return False
         return True
 
     def _issue_build(self, type_name, target, workers=None):
         cls = rules.unit_class(type_name)
-        maker_cls = rules.unit_class(self.equivalent("peasant"))
+        worker_name = self._primary_worker_type_name()
+        maker_cls = rules.unit_class(worker_name) if worker_name else None
         if cls is None or maker_cls is None:
             return False
         if workers is None:
@@ -367,7 +610,9 @@ class Computer(Player):
             or deposit.place.shortest_path_distance_to(wh.place, self, avoid=True)
             > self.world.square_width
         ):
-            wh_type = self._best_warehouse(deposit.place)
+            wh_type = self._best_warehouse(resource_type=getattr(deposit, "resource_type", None))
+            if wh_type is None:
+                return
             meadow = choose_build_target(
                 self, wh_type, starting_place=deposit.place
             ) or self.choose(
@@ -378,18 +623,21 @@ class Computer(Player):
                 self._issue_build(wh_type.type_name, meadow, nearby_workers)
 
     def _maintain_expansions(self):
-        """Build extra town halls (new bases) up to the ``expand`` target.
+        """Build extra main bases up to the ``expand`` target.
 
-        The starting town hall counts toward the total, so ``expand 2`` makes
+        The starting base counts toward the total, so ``expand 2`` makes
         the AI build a single additional base. Disabled by default (``0``).
         """
         if self._target_townhalls <= 0:
             return
-        townhall = self.equivalent("townhall")
+        bases = self._main_base_type_names()
+        if not bases:
+            return
+        townhall = bases[0]
         cls = rules.unit_class(townhall)
         if cls is None:
             return
-        if self.future_nb([townhall]) >= self._target_townhalls:
+        if self.future_nb(list(bases)) >= self._target_townhalls:
             return
         if self.missing_resources(cls.cost):
             return
@@ -416,32 +664,16 @@ class Computer(Player):
             if u.orders:
                 continue
             # 普通科技：can_research / research
-            research_candidates = list(u.can_research)
-            if getattr(self.world, "rmg_strategic_systems", False):
-                from .rmg_systems import ai_research_priority, initialize_player
-
-                initialize_player(self)
-                research_candidates = ai_research_priority(self, research_candidates)
-            for t in research_candidates:
+            for t in u.can_research:
                 unit_type = self.unit_class(t)
                 if unit_type is None:  # 跳过无效的研究类型
-                    continue
-                culture_cost = max(
-                    0, int(getattr(unit_type, "culture_cost", 0) or 0)
-                )
-                if (
-                    getattr(unit_type, "rmg_policy", 0)
-                    and t in getattr(self, "rmg_unlocked_policies", ())
-                ):
                     continue
                 if (
                     not self.future_nb([t])
                     and not self.missing_resources(unit_type.cost)
-                    and getattr(self, "culture_points", 0) >= culture_cost
                     and self.potential(unit_type.cost) > 3
                 ):
                     u.take_order(["research", t])
-                    break
             # 时代推进：can_advance / advance（与科技通道完全分离）
             for t in getattr(u, "can_advance", ()) or ():
                 unit_type = self.unit_class(t)
@@ -494,7 +726,10 @@ class Computer(Player):
     def _deposit_resource_index(self, deposit):
         if not isinstance(deposit, Deposit):
             return None
-        resource_type = getattr(deposit, "resource_type", None)
+        return self._target_resource_index(deposit)
+
+    def _target_resource_index(self, target):
+        resource_type = getattr(target, "resource_type", None)
         if resource_type == "resource1":
             return 0
         if resource_type == "resource2":
@@ -508,12 +743,65 @@ class Computer(Player):
                 return None
         return None
 
+    def _resource_need_ratio(self, resource_index):
+        """Lower ratio = more urgently needed relative to the low threshold."""
+        if resource_index is None or resource_index >= len(self.resources):
+            return 999.0
+        threshold = max(1, self._resource_low_threshold(resource_index))
+        return self.resources[resource_index] / threshold
+
     def _worker_can_gather_deposit(self, worker, deposit):
         allowed = getattr(worker, "can_gather_deposit", None) or []
         if "all" in allowed:
             return True
         type_name = getattr(deposit, "type_name", None)
         return type_name in allowed
+
+    def _pick_nearest_reachable(
+        self, origin, candidates, plane="ground", avoid=True, top_k=12
+    ):
+        """欧氏距离预排序后，按序 A* 直到找到第一个可达目标。
+
+        对齐 nearest_warehouse 的预筛思路：避免 AI 对全部矿点/猎物
+        做 O(n) 次 shortest_path_distance_to。默认最多探测 top_k 个；
+        若都不可达再扫描剩余，保证仍能找到可达目标。
+        """
+        if origin is None or not candidates:
+            return None
+        scored = []
+        ox = origin.x
+        oy = origin.y
+        for o in candidates:
+            place = o.place
+            if place is None:
+                continue
+            try:
+                euclid = square_of_distance(ox, oy, place.x, place.y)
+            except Exception:
+                euclid = 0
+            # id(o) 作最终 tie-break：两矿同距且 o.id 同为 None 时，
+            # 不能让 sort 落到比较 goldmine 实例本身。
+            oid = o.id
+            if oid is None:
+                oid = 0
+            scored.append((euclid, oid, id(o), o))
+        if not scored:
+            return None
+        scored.sort()
+        limit = top_k if top_k > 0 else len(scored)
+        for _, _, _, o in scored[:limit]:
+            dist = origin.shortest_path_distance_to(
+                o.place, self, plane, avoid=avoid
+            )
+            if dist is not None and dist < float("inf"):
+                return o
+        for _, _, _, o in scored[limit:]:
+            dist = origin.shortest_path_distance_to(
+                o.place, self, plane, avoid=avoid
+            )
+            if dist is not None and dist < float("inf"):
+                return o
+        return None
 
     def _worker_origin_for_gather(self):
         origin = self._builders_place()
@@ -527,7 +815,7 @@ class Computer(Player):
     def _reachable_deposits(self, from_place, resource_index=None, worker=None):
         if from_place is None:
             return []
-        found = []
+        candidates = []
         for o in self.perception.union(self.memory):
             if not isinstance(o, Deposit) or not self._gather_target_ok(o):
                 continue
@@ -536,6 +824,22 @@ class Computer(Player):
                 continue
             if worker is not None and not self._worker_can_gather_deposit(worker, o):
                 continue
+            place = o.place
+            if place is None:
+                continue
+            try:
+                euclid = square_of_distance(
+                    from_place.x, from_place.y, place.x, place.y
+                )
+            except Exception:
+                euclid = 0
+            oid = o.id
+            if oid is None:
+                oid = 0
+            candidates.append((euclid, oid, id(o), o))
+        candidates.sort()
+        found = []
+        for _, _, _, o in candidates:
             dist = from_place.shortest_path_distance_to(o.place, self, avoid=True)
             if dist is not None and dist < float("inf"):
                 found.append((dist, o, "ground"))
@@ -551,13 +855,44 @@ class Computer(Player):
         return 20 if resource_index == 2 else 40
 
     def _storage_type_for_resource(self, resource_index):
-        if resource_index == 1:
-            return self.equivalent("lumbermill")
-        return self.equivalent("townhall")
+        names = self._storage_building_type_names(resource_index)
+        if not names:
+            return None
+        # Prefer a dedicated store (single resource) when one exists.
+        dedicated = []
+        multi = []
+        for name in names:
+            uc = rules.unit_class(name)
+            stores = getattr(uc, "storable_resource_types", ()) or ()
+            if len(stores) == 1:
+                dedicated.append(name)
+            else:
+                multi.append(name)
+        return (dedicated or multi)[0]
+
+    def _has_storage_for_resource(self, resource_index):
+        """True if any building (incl. sites) can store this resource type."""
+        resource_type = f"resource{resource_index + 1}"
+        for u in self.units:
+            if resource_type in getattr(u, "storable_resource_types", ()):
+                return True
+            site_type = getattr(u, "type", None)
+            if site_type is not None and resource_type in getattr(
+                site_type, "storable_resource_types", ()
+            ):
+                return True
+        return False
 
     def _ensure_deposit_supply(self, resource_index):
         storage = self._storage_type_for_resource(resource_index)
-        if storage and self.nb(storage) == 0 and self.future_nb(storage) == 0:
+        # Townhall already stores wood: demanding lumbermill while wood is missing
+        # recurses (lumbermill costs wood → gather → ensure lumbermill → …).
+        if (
+            storage
+            and self.nb(storage) == 0
+            and self.future_nb(storage) == 0
+            and not self._has_storage_for_resource(resource_index)
+        ):
             self.get(1, storage)
         self._try_remote_deposit_expansion(resource_index)
 
@@ -614,17 +949,26 @@ class Computer(Player):
         if not self._send_workers_to_gather_amphibious(idle[:4], deposit):
             return False
         storage = self._storage_type_for_resource(resource_index)
-        if storage and self.nb(storage) == 0 and self.future_nb(storage) == 0:
+        if (
+            storage
+            and self.nb(storage) == 0
+            and self.future_nb(storage) == 0
+            and not self._has_storage_for_resource(resource_index)
+        ):
             self.get(1, storage)
         return True
 
     def _resource_building_types(self, resource_type):
         """Return buildable building type names that produce the given resource."""
         result = []
-        peasant_class = rules.unit_class(self.equivalent("peasant"))
-        if peasant_class is None:
-            return result
-        for name in rules.class_rules_attr(peasant_class, "can_build", ()):
+        worker_name = self._primary_worker_type_name()
+        peasant_class = rules.unit_class(worker_name) if worker_name else None
+        buildables = (
+            rules.class_rules_attr(peasant_class, "can_build", ())
+            if peasant_class is not None
+            else self._worker_buildable_type_names()
+        )
+        for name in buildables:
             uc = rules.unit_class(name)
             if uc is None:
                 continue
@@ -652,12 +996,18 @@ class Computer(Player):
             threshold = self._resource_low_threshold(i)
             if amount >= threshold:
                 continue
-            if i == 2:
-                farm_cls = rules.unit_class("farm")
-                if farm_cls and not (
-                    self._can_afford_production_cost(farm_cls)
-                    or self._has_reachable_deposit(1)
-                ):
+            producers = self._resource_building_types(f"resource{i + 1}")
+            if producers:
+                can_run = any(
+                    self._can_afford_production_cost(rules.unit_class(name))
+                    or (
+                        # food/cultivate often needs wood (resource2)
+                        i == 2 and self._has_reachable_deposit(1)
+                    )
+                    for name in producers
+                    if rules.unit_class(name) is not None
+                )
+                if not can_run:
                     continue
             low.append(i)
         if low:
@@ -772,10 +1122,7 @@ class Computer(Player):
         ]
         if not buildings:
             return None
-        buildings.sort(
-            key=lambda b: place.shortest_path_distance_to(b.place, self, avoid=True)
-        )
-        return buildings[0]
+        return self._pick_nearest_reachable(place, buildings) or buildings[0]
 
     def _maintain_worker_herding(self, worker):
         """已绑定羊群的工人：引回基地，到基地后宰杀采集。"""
@@ -817,20 +1164,8 @@ class Computer(Player):
             return None
         if self._herd_dropoff_building(worker) is None:
             return None
-        animals.sort(
-            key=lambda a: origin.shortest_path_distance_to(
-                a.place, self, avoid=True
-            )
-        )
-        for animal in animals:
-            if self.square_is_dangerous(animal.place):
-                continue
-            if (
-                origin.shortest_path_distance_to(animal.place, self, avoid=True)
-                < float("inf")
-            ):
-                return animal
-        return None
+        safe = [a for a in animals if not self.square_is_dangerous(a.place)]
+        return self._pick_nearest_reachable(origin, safe)
 
     def _choose_hunt_target(self, worker):
         if not self._worker_can_hunt(worker):
@@ -851,67 +1186,263 @@ class Computer(Player):
         ]
         if not animals:
             return None
-        animals.sort(
-            key=lambda a: origin.shortest_path_distance_to(
-                a.place, self, avoid=True
-            )
-        )
-        for animal in animals:
-            if self.square_is_dangerous(animal.place):
-                continue
-            if (
-                origin.shortest_path_distance_to(animal.place, self, avoid=True)
-                < float("inf")
-            ):
-                return animal
-        return None
+        # 危险格在挑选时过滤，避免先 A* 全排序再丢弃
+        safe = [a for a in animals if not self.square_is_dangerous(a.place)]
+        return self._pick_nearest_reachable(origin, safe or animals)
 
-    def _choose_gather_target(self, worker):
+    def _gatherable_building_targets(self, worker):
+        result = []
+        for u in self.units:
+            if not getattr(u, "is_a_building", False):
+                continue
+            if getattr(u, "resource_qty", 0) <= 0:
+                continue
+            if not getattr(u, "resource_type", None):
+                continue
+            if u.place is None or self.square_is_dangerous(u.place):
+                continue
+            if not Worker._can_gather_target(worker, u):
+                continue
+            result.append(u)
+        return result
+
+    def _item_resource_indices(self, item):
+        rewards = getattr(item, "resource_rewards", None) or ()
+        indices = []
+        for i, amount in enumerate(rewards):
+            try:
+                if int(amount) > 0:
+                    indices.append(i)
+            except (TypeError, ValueError):
+                continue
+        return indices
+
+    def _is_resource_pickup_item(self, obj):
+        """Ground loot that grants resources on pickup (e.g. gold_coin from gold_mint)."""
+        if obj is None or obj.place is None:
+            return False
+        # Creature.resource_rewards defaults to [0, 0] (truthy) — only real loot
+        # uses default_order "pickup" (Item). Without this, world scans hit every unit.
+        if getattr(obj, "default_order", None) != "pickup":
+            return False
+        rewards = getattr(obj, "resource_rewards", None)
+        if not rewards:
+            return False
+        for amount in rewards:
+            try:
+                if amount:
+                    return True
+            except (TypeError, ValueError):
+                continue
+        return False
+
+    def _collect_resource_pickup_items(self):
+        """Scan producers every turn; throttle full perception loot scan."""
+        result = []
+        seen = set()
+        producers = []
+        for u in self.units:
+            if getattr(u, "production_item", None):
+                producers.append(u)
+        for u in producers:
+            place = u.place
+            if place is None:
+                continue
+            for o in place.objects:
+                oid = id(o)
+                if oid in seen:
+                    continue
+                if self._is_resource_pickup_item(o):
+                    seen.add(oid)
+                    result.append(o)
+        world = getattr(self, "world", None)
+        if world is None:
+            return result
+        # No resource producers and no prior world-loot cache → skip perception.
+        if not producers and not getattr(self, "_pickup_world_scan_cache", None):
+            bucket = world.time // 2000
+            if getattr(self, "_pickup_world_scan_bucket", -1) == bucket:
+                return result
+        # World loot in perception — at most every 2s game time
+        bucket = world.time // 2000
+        if getattr(self, "_pickup_world_scan_bucket", -1) != bucket:
+            self._pickup_world_scan_bucket = bucket
+            cached = []
+            for o in self.perception:
+                # Cheap prefilter (Creature defaults fooled bare rewards check)
+                if getattr(o, "default_order", None) != "pickup":
+                    continue
+                oid = id(o)
+                if oid in seen:
+                    continue
+                if self._is_resource_pickup_item(o):
+                    seen.add(oid)
+                    result.append(o)
+                    cached.append(o)
+            self._pickup_world_scan_cache = cached
+        else:
+            for o in getattr(self, "_pickup_world_scan_cache", ()):
+                if o.place is None:
+                    continue
+                oid = id(o)
+                if oid in seen:
+                    continue
+                if self._is_resource_pickup_item(o):
+                    seen.add(oid)
+                    result.append(o)
+        return result
+
+    def _resource_pickup_items_cached(self):
+        """Per world-time cache: pickup scans were ~9M calls / 10min bench."""
+        t = getattr(getattr(self, "world", None), "time", -1)
+        if getattr(self, "_pickup_cache_time", None) == t:
+            return self._pickup_cache_list
+        items = self._collect_resource_pickup_items()
+        self._pickup_cache_time = t
+        self._pickup_cache_list = items
+        return items
+
+    def _iter_resource_pickup_items(self):
+        return iter(self._resource_pickup_items_cached())
+
+    def _item_need_ratio(self, item):
+        idxs = self._item_resource_indices(item)
+        if not idxs:
+            return 999.0
+        return min(self._resource_need_ratio(i) for i in idxs)
+
+    def _worker_can_pickup(self, worker):
+        if getattr(worker, "is_inside", False):
+            return False
+        if not getattr(worker, "have_inventory_space", False):
+            return False
+        skills = getattr(worker, "basic_skills", None) or getattr(
+            worker, "_basic_skills", ()
+        )
+        return "pickup" in skills
+
+    def _choose_pickup_target(self, worker, resource_indices=None):
+        if not self._worker_can_pickup(worker):
+            return None
         origin = self._world_place_for_unit(worker)
         if origin is None:
             return None
-        deposits = [
-            o
-            for o in self.perception.union(self.memory)
-            if isinstance(o, Deposit)
-            and self._gather_target_ok(o)
-            and Worker._gather_terrain_ok_for_unit(worker, o)
+        items = self._resource_pickup_items_cached()
+        if not items:
+            return None
+        candidates = []
+        for item in items:
+            if self.square_is_dangerous(item.place):
+                continue
+            idxs = self._item_resource_indices(item)
+            if resource_indices is not None and not any(
+                i in resource_indices for i in idxs
+            ):
+                continue
+            candidates.append(item)
+        if not candidates:
+            return None
+        candidates.sort(
+            key=lambda t: (
+                self._item_need_ratio(t),
+                square_of_distance(origin.x, origin.y, t.place.x, t.place.y),
+            )
+        )
+        best = self._item_need_ratio(candidates[0])
+        preferred = [
+            t for t in candidates if self._item_need_ratio(t) <= best + 1e-9
         ]
-        if deposits:
-            deposits.sort(
-                key=lambda d: origin.shortest_path_distance_to(
-                    d.place, self, avoid=True
+        return self._pick_nearest_reachable(
+            origin, preferred
+        ) or self._pick_nearest_reachable(origin, candidates)
+
+    def _maintain_resource_pickups(self, max_workers=2):
+        """Send workers to pick up free resource loot (gold_mint coins, chests, …)."""
+        items = self._resource_pickup_items_cached()
+        if not items:
+            return
+        already = sum(
+            1
+            for u in self._workers
+            if u.orders and u.orders[0].keyword == "pickup"
+        )
+        need = max_workers - already
+        if need <= 0:
+            return
+        for u in self._workers:
+            if need <= 0:
+                break
+            if u.orders and u.orders[0].keyword in ("build", "repair", "pickup"):
+                continue
+            target = self._choose_pickup_target(u)
+            if target is None:
+                continue
+            if u.orders and u.orders[0].keyword in (
+                "auto_explore",
+                "auto_attack",
+                "gather",
+            ):
+                u.take_order(["stop"])
+            u.take_order(["pickup", target.id])
+            need -= 1
+
+    def _choose_gather_target(self, worker, resource_indices=None):
+        """Pick a gather target, preferring the most needed resource type.
+
+        When food (or another resource) is low, owned gatherable buildings such as
+        farms are considered alongside deposits so peasants actually harvest them.
+        """
+        origin = self._world_place_for_unit(worker)
+        if origin is None:
+            return None
+
+        candidates = []
+        for o in self.perception.union(self.memory):
+            if not isinstance(o, Deposit):
+                continue
+            if not self._gather_target_ok(o):
+                continue
+            if not self._worker_can_gather_deposit(worker, o):
+                continue
+            if not Worker._gather_terrain_ok_for_unit(worker, o):
+                continue
+            idx = self._target_resource_index(o)
+            if resource_indices is not None and idx not in resource_indices:
+                continue
+            candidates.append(o)
+
+        for u in self._gatherable_building_targets(worker):
+            idx = self._target_resource_index(u)
+            if resource_indices is not None and idx not in resource_indices:
+                continue
+            candidates.append(u)
+
+        if candidates:
+            candidates.sort(
+                key=lambda t: (
+                    self._resource_need_ratio(self._target_resource_index(t)),
+                    square_of_distance(origin.x, origin.y, t.place.x, t.place.y),
                 )
             )
-            for deposit in deposits:
-                if origin.shortest_path_distance_to(
-                    deposit.place, self, avoid=True
-                ) < float("inf"):
-                    return deposit
-        deposit = self.choose(Deposit, starting_place=origin, random=True)
-        if (
-            deposit
-            and self._gather_target_ok(deposit)
-            and Worker._gather_terrain_ok_for_unit(worker, deposit)
-        ):
-            return deposit
-        building_targets = [
-            u
-            for u in self.units
-            if getattr(u, "is_a_building", False)
-            and getattr(u, "resource_qty", 0) > 0
-            and getattr(u, "resource_type", None)
-            and u.place is not None
-            and not self.square_is_dangerous(u.place)
-            and Worker._gather_terrain_ok_for_unit(worker, u)
-        ]
-        if building_targets:
-            building_targets.sort(
-                key=lambda b: origin.shortest_path_distance_to(
-                    b.place, self, avoid=True
-                )
+            best_ratio = self._resource_need_ratio(
+                self._target_resource_index(candidates[0])
             )
-            return building_targets[0]
+            preferred = [
+                t
+                for t in candidates
+                if self._resource_need_ratio(self._target_resource_index(t))
+                <= best_ratio + 1e-9
+            ]
+            picked = self._pick_nearest_reachable(origin, preferred)
+            if picked is not None:
+                return picked
+            picked = self._pick_nearest_reachable(origin, candidates)
+            if picked is not None:
+                return picked
+
+        if resource_indices is not None:
+            return None
+
         deposit = self.choose(Deposit, starting_place=origin, random=True)
         if (
             deposit
@@ -920,6 +1451,60 @@ class Computer(Player):
         ):
             return deposit
         return None
+
+    def _send_workers_toward_resources(self, resource_indices, max_workers=2):
+        """Reassign a few workers to gather specifically needed resources (e.g. farm food)."""
+        if not resource_indices:
+            return
+        for resource_index in resource_indices:
+            sent = 0
+            for u in self._workers:
+                if sent >= max_workers:
+                    break
+                if getattr(u, "is_inside", False):
+                    continue
+                if u.orders and u.orders[0].keyword in ("build", "repair"):
+                    continue
+                if u.orders and u.orders[0].keyword == "pickup":
+                    current = u.orders[0].target
+                    if resource_index in self._item_resource_indices(current):
+                        sent += 1
+                        continue
+                if u.orders and u.orders[0].keyword == "gather":
+                    current = u.orders[0].target
+                    if self._target_resource_index(current) == resource_index:
+                        sent += 1
+                        continue
+                # gold_mint coins etc. before mines when that resource is missing
+                pickup = self._choose_pickup_target(
+                    u, resource_indices=[resource_index]
+                )
+                if pickup is not None:
+                    if u.orders and u.orders[0].keyword in (
+                        "auto_explore",
+                        "auto_attack",
+                        "gather",
+                    ):
+                        u.take_order(["stop"])
+                    u.take_order(["pickup", pickup.id])
+                    sent += 1
+                    continue
+                target = self._choose_gather_target(
+                    u, resource_indices=[resource_index]
+                )
+                if target is None:
+                    continue
+                if u.orders and u.orders[0].keyword in ("auto_explore", "auto_attack"):
+                    u.take_order(["stop"])
+                if self._try_send_worker_to_gather_amphibious(u, target):
+                    sent += 1
+                    continue
+                u.take_order(["gather", target.id])
+                try:
+                    self._gathered_deposits[target] += 1
+                except Exception:
+                    self._gathered_deposits[target] = 1
+                sent += 1
 
     def _choose_water_gather_target(self, worker):
         origin = self._world_place_for_unit(worker)
@@ -934,16 +1519,11 @@ class Computer(Player):
             and Worker._gather_terrain_ok_for_unit(worker, o)
         ]
         if deposits:
-            deposits.sort(
-                key=lambda d: origin.shortest_path_distance_to(
-                    d.place, self, plane, avoid=True
-                )
+            deposit = self._pick_nearest_reachable(
+                origin, deposits, plane=plane, avoid=True
             )
-            for deposit in deposits:
-                if origin.shortest_path_distance_to(
-                    deposit.place, self, plane, avoid=True
-                ) < float("inf"):
-                    return deposit
+            if deposit is not None:
+                return deposit
         deposit = self.choose(Deposit, starting_place=origin, random=True)
         if (
             deposit
@@ -974,6 +1554,11 @@ class Computer(Player):
             if getattr(u, "is_inside", False):
                 continue
             if self._maintain_worker_herding(u):
+                continue
+            # Prefer free loot (gold_mint coins) over mining when available
+            pickup = self._choose_pickup_target(u)
+            if pickup:
+                u.take_order(["pickup", pickup.id])
                 continue
             target = self._choose_gather_target(u)
             if target:
@@ -1006,12 +1591,20 @@ class Computer(Player):
         # Only pull wounded soldiers back to the main base. Sending every idle
         # fighter to the mining site each AI turn cancels their orders and
         # spams acknowledgments without accomplishing anything useful.
-        townhall = self.equivalent("townhall")
         heal_place = None
-        for u in self.units:
-            if getattr(u, "type_name", None) == townhall:
-                heal_place = getattr(u, "place", None)
+        for base_name in self._main_base_type_names():
+            for u in self.units:
+                if getattr(u, "type_name", None) == base_name:
+                    heal_place = getattr(u, "place", None)
+                    break
+            if heal_place is not None:
                 break
+        if heal_place is None:
+            for u in self.units:
+                if getattr(u, "heal_level", 0):
+                    heal_place = getattr(u, "place", None)
+                    if heal_place is not None:
+                        break
         if heal_place is not None:
             wounded = [
                 u
@@ -1021,9 +1614,11 @@ class Computer(Player):
             if wounded:
                 self._send_units(wounded, heal_place)
 
-        # build static defenses
-        gate = rules.unit_class("gate")
-        if self._sensible_building is not None and gate is not None:
+        # build static defenses (any is_a_gate building workers can build)
+        gate_names = self._gate_type_names()
+        if self._sensible_building is not None and gate_names:
+            gate_name = gate_names[0]
+            gate = rules.unit_class(gate_name)
 
             def nearest_exit(u):
                 result = sorted(
@@ -1036,10 +1631,11 @@ class Computer(Player):
             if (
                 e is not None
                 and not e.is_blocked()
+                and gate is not None
                 and self.gather(gate.cost, 0)
-                and any(worker_can_build(w, "gate") for w in self._workers)
+                and any(worker_can_build(w, gate_name) for w in self._workers)
             ):
-                self._issue_build("gate", e, self._workers)
+                self._issue_build(gate_name, e, self._workers)
 
     nb_workers_to_get = 10
 
@@ -1059,23 +1655,27 @@ class Computer(Player):
             return
         if self.AI_type in ("beginner", "timers"):
             return
-        shipyard = self.equivalent("shipyard")
-        lumbermill = self.equivalent("lumbermill")
+        yards = self._naval_yard_type_names()
+        if not yards:
+            return
+        shipyard = yards[0]
         if self.nb(shipyard) == 0:
-            if self.nb(lumbermill) == 0 and self.future_nb(lumbermill) == 0:
-                self.get(1, lumbermill)
-                return
+            # Requirements (e.g. lumbermill) are pulled by get()/_get_requirements.
             if self.future_nb(shipyard) == 0:
                 self.get(1, shipyard)
             return
-        boat = self.equivalent("boat")
-        destroyer = self.equivalent("destroyer")
-        if self.nb(boat) < 2 and self.future_nb(boat) < 2:
-            self.get(2, boat)
-            return
+        boats = self._water_transport_type_names()
+        if boats:
+            boat = boats[0]
+            if self.nb(boat) < 2 and self.future_nb(boat) < 2:
+                self.get(2, boat)
+                return
+        warships = self._water_warship_type_names()
         dd_target = self._naval_destroyer_target()
-        if dd_target and self.nb(destroyer) < dd_target and self.future_nb(destroyer) < dd_target:
-            self.get(dd_target, destroyer)
+        if warships and dd_target:
+            destroyer = warships[0]
+            if self.nb(destroyer) < dd_target and self.future_nb(destroyer) < dd_target:
+                self.get(dd_target, destroyer)
 
     def _is_idle_for_ai_orders(self, unit):
         """True when a unit has no active order (impossible orders are cleared)."""
@@ -1358,6 +1958,9 @@ class Computer(Player):
 
     def _try_transport_assaults(self):
         """Ferry blocked ground troops by boat or air transport toward enemy bases."""
+        # Cheap gate: pathfinding below is expensive; skip when no transport exists.
+        if not self._available_water_transports() and not self._available_air_transports():
+            return
         targets = self._enemy_land_assault_targets()
         if not targets:
             return
@@ -1401,6 +2004,7 @@ class Computer(Player):
         self._maintain_resource_buildings()
         self._idle_resource_buildings_produce()
         self._idle_workers_gather()
+        self._maintain_resource_pickups()
         self._idle_water_workers_gather()
         self._sanitize_water_unit_orders()
         self._idle_water_workers()
@@ -1421,7 +2025,9 @@ class Computer(Player):
         self._build_a_warehouse_if_useful()
         self._maintain_expansions()
         self._ensure_housing(min_headroom=0)
-        self.get(self.nb_workers_to_get, self.equivalent("peasant"))
+        worker_type = self._primary_worker_type_name()
+        if worker_type:
+            self.get(self.nb_workers_to_get, worker_type)
         try:
             self._follow_plan()
         except RuntimeError:
@@ -1718,18 +2324,22 @@ class Computer(Player):
             if isinstance(u, BuildingSite) and self.check_type(u.type, types):
                 n += 1
                 continue
-            for o in u.orders:
-                if getattr(o, "is_deferred", False):
-                    continue
-                if o.keyword in (
-                    "build",
-                    "train",
-                    "upgrade_to",
-                    "research",
-                ) and self.check_type(o.type, types):
-                    # the result might be temporarily too high because of build orders
-                    # but that's not a big problem for order()
-                    n += 1
+            # 只统计正在执行（队首）的生产命令。auto_explore / auto_attack 是
+            # imperative，普通 build 会被 take_order 排到后面且永远到不了队首；
+            # 若把这些卡住的 build 算进 future_nb，AI 会以为兵营已在造而不再下单。
+            if not u.orders:
+                continue
+            o = u.orders[0]
+            if getattr(o, "is_deferred", False):
+                continue
+            if o.keyword in (
+                "build",
+                "train",
+                "upgrade_to",
+                "research",
+                "advance",
+            ) and self.check_type(o.type, types):
+                n += 1
         return n
 
     def future_nb(self, types):
@@ -1762,10 +2372,15 @@ class Computer(Player):
             if requisition:
                 units.sort(key=self._worker_orders_priority)
             u = units.pop(0)
+            # auto_explore / auto_attack 是 imperative：普通 take_order 只能排队
+            # 到它们后面，建造永远不会开始。征用工人或升级时先停掉探索。
             if (
-                order[0] == "upgrade_to"
-                and u.orders
-                and u.orders[0].keyword == "auto_explore"
+                u.orders
+                and u.orders[0].keyword in ("auto_explore", "auto_attack")
+                and (
+                    requisition
+                    or order[0] in ("upgrade_to", "build", "repair", "gather")
+                )
             ):
                 u.take_order(["stop"])
             if requisition or not u.orders:
@@ -1803,13 +2418,20 @@ class Computer(Player):
         return result
 
     def _map_has_water(self):
+        cached = getattr(self, "_map_has_water_cached", None)
+        if cached is not None:
+            return cached
+        # Prefer water_squares even when empty (land-only maps); avoid rescanning squares.
         water_squares = getattr(self.world, "water_squares", None)
-        if water_squares:
-            return len(water_squares) > 0
-        for sq in getattr(self.world, "squares", ()):
-            if getattr(sq, "is_water", False):
-                return True
-        return False
+        if water_squares is not None:
+            result = len(water_squares) > 0
+        else:
+            result = any(
+                getattr(sq, "is_water", False)
+                for sq in getattr(self.world, "squares", ())
+            )
+        self._map_has_water_cached = result
+        return result
 
     def _type_needs_water(self, type_name_or_class):
         if isinstance(type_name_or_class, str):
@@ -1829,8 +2451,22 @@ class Computer(Player):
     def get(self, nb, type):
         if not self._map_has_water() and self._type_needs_water(type):
             return True
-        self._safe_cnt = 0
-        return self._get(nb, [type])
+        type_name = type if isinstance(type, str) else getattr(type, "__name__", None)
+        if type_name is None:
+            return False
+        getting = getattr(self, "_getting", None)
+        if getting is None:
+            getting = set()
+            self._getting = getting
+        # Re-entrancy guard: gather→ensure storage→get(same) must not recurse.
+        if type_name in getting:
+            return False
+        getting.add(type_name)
+        try:
+            self._safe_cnt = 0
+            return self._get(nb, [type])
+        finally:
+            getting.discard(type_name)
 
     def _get(self, nb, types):
         if not hasattr(self, "_safe_cnt"):
@@ -1847,21 +2483,21 @@ class Computer(Player):
         if self._safe_cnt > 10:
             info("AI has trouble getting: %s %s", nb, types)
             return False
-        for unit_type in types:
-            if isinstance(unit_type, str):
-                unit_class = rules.unit_class(unit_type)
+        for wanted in types:
+            if isinstance(wanted, str):
+                unit_class = rules.unit_class(wanted)
                 if unit_class is None:
-                    warning("无效的单位类型: %s", unit_type)
+                    warning("无效的单位类型: %s", wanted)
                     continue
-                unit_type = unit_class
-            elif unit_type is None:
+                wanted = unit_class
+            elif wanted is None:
                 continue
-            elif not hasattr(unit_type, "__name__"):
-                warning("无效的单位类型: %s", unit_type)
+            elif not hasattr(wanted, "__name__"):
+                warning("无效的单位类型: %s", wanted)
                 continue
 
             # 获取制造者类型列表
-            makers = rules.get_makers(unit_type)
+            makers = rules.get_makers(wanted)
             if not makers:
                 continue
                 
@@ -1873,15 +2509,23 @@ class Computer(Player):
                     target_count = nb - future_count
                     if target_count > 0:
                         self.build_or_train_or_upgradeto_or_summon(
-                            unit_type, target_count
+                            wanted, target_count
                         )
                     break
                 except Exception as e:
+                    # Avoid formatting e when RecursionError: str(e) can recurse again.
+                    wanted_name = (
+                        wanted.__name__ if hasattr(wanted, "__name__") else wanted
+                    )
+                    try:
+                        detail = str(e)
+                    except Exception:
+                        detail = "<unprintable>"
                     warning(
                         "创建单位时出错: %s - %s: %s",
-                        unit_type.__name__ if hasattr(unit_type, "__name__") else unit_type,
+                        wanted_name,
                         e.__class__.__name__,
-                        e,
+                        detail,
                     )
             elif makers:
                 # 递归获取制造者
@@ -1898,23 +2542,25 @@ class Computer(Player):
         return self.available_population - self.used_population
 
     def _is_house_type(self, building_type):
-        house = self.equivalent("house")
+        houses = self._housing_type_names()
         if isinstance(building_type, str):
-            return building_type == house
-        return getattr(building_type, "type_name", None) == house
+            return building_type in houses
+        return getattr(building_type, "type_name", None) in houses
 
     def _ensure_housing(self, min_headroom=2):
-        """Build faction supply (pylon / depot equivalent) when population is tight."""
+        """Build faction supply when population is tight (any pop-providing non-base)."""
         if self._population_headroom() > min_headroom:
             return False
         if self.available_population >= self.world.population_limit:
             return False
-        house = self.equivalent("house")
+        houses = self._housing_type_names()
+        if not houses:
+            return False
+        house = houses[0]
         house_cls = rules.unit_class(house)
         if house_cls is None:
             return False
-        peasant_cls = rules.unit_class(self.equivalent("peasant"))
-        if peasant_cls is None or house not in getattr(peasant_cls, "can_build", ()):
+        if house not in self._worker_buildable_type_names():
             return False
         if self.future_nb(house) > self.nb(house):
             return False
@@ -1928,6 +2574,8 @@ class Computer(Player):
         if missing:
             self._ensure_resource_buildings(missing)
             self._idle_resource_buildings_produce()
+            # e.g. knight needs food: send peasants to harvest farms, not only gold/wood
+            self._send_workers_toward_resources(missing)
             return
         if population != 0 and population > self._population_headroom():
             if self._ensure_housing(min_headroom=population - 1):
@@ -2083,7 +2731,7 @@ class Computer(Player):
                             break
                 if not trained:
                     self._try_morph_from_larva(type)
-            elif type in rules.class_can_research(maker_cls):
+            elif type in rules.class_rules_attr(maker_cls, "can_research"):
                 if self.gather(t.cost, t.population_cost):
                     self.order(1, maker, ["research", type])
             elif type in rules.class_rules_attr(maker_cls, "can_advance"):
@@ -2373,14 +3021,14 @@ class Computer(Player):
         return "airborne" if air <= amp else "amphibious"
 
     def _ground_units_needing_transport(self, units, dest_place):
+        """Units that cannot walk to dest. Does not re-run transport pathfinding per unit."""
         blocked = []
         for u in units:
             if getattr(u, "airground_type", None) != "ground" or u.speed <= 0:
                 continue
             if self._unit_can_reach(u, dest_place):
                 continue
-            if self._choose_transport_mode([u], dest_place):
-                blocked.append(u)
+            blocked.append(u)
         return blocked
 
     def _available_water_transports(self):

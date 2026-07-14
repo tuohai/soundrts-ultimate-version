@@ -444,6 +444,65 @@ Main melee/ranged properties:
 - ``mdg_explode`` / ``rdg_explode``, ``exp_dgf``, ``exp_hp_cost``, ``mdg_explode_vs``
 - Per-**attacker terrain** modifiers (since 1.4.5.0): ``mdg_on_terrain`` / ``rdg_on_terrain``, ``mdg_cd_on_terrain`` / ``rdg_cd_on_terrain``, ``charge_mdg_terrain`` / ``charge_rdg_terrain``, ``charge_mdg_cd_on_terrain`` / ``charge_rdg_cd_on_terrain``; same syntax as ``speed_on_terrain`` — see ``building-land-terrain.rst`` *Unit combat modifiers on terrain*
 
+Auto menace / targeting priority (since 1.4.5.2)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Unit ``menace`` is no longer just damage. When rules do not set a fixed absolute
+value, the engine builds a **multi-dimensional combat score** used for:
+
+- Auto target choice (highest threat first; non-``timers`` computer players can
+  also blend ``mdg_vs``/``rdg_vs`` via ``counter_skill`` — see ``aimaking.rst``)
+- Square enemy-threat sums and related AI checks
+
+**Dimensions** (primary weapon = higher of ``mdg`` / ``rdg``):
+
+- Damage, hit chance (``mdg_cover``/``rdg_cover``, 0 means 100%%), cooldown
+  (``*_cd``), wind-up (``mdg_ready``/``rdg_ready`` — not ballistic ``*_delay``)
+- HP (current ``hp``, else ``hp_max``), armor (``max(mdf, rdf)``), dodge
+  (``max(mdg_dodge, rdg_dodge)``)
+- Attack range, move speed
+
+Roughly: effective DPS (damage × hit / (cd + ready)), then survivability and
+range/speed factors.
+
+**Optional rules overrides** (unit defs):
+
+======= ================= ============================================================
+Field     Kind              Meaning
+======= ================= ============================================================
+``menace`` absolute         Fixed threat; does **not** track upgrades; replaces auto
+``menace_mult`` weight (1)  Multiplies the auto multi-dim base (still scales with stats)
+``menace_vs`` absolute vs   Fixed threat toward that observer type / ``is_a``
+``menace_mult_vs`` weight vs Auto multi-dim base × weight toward that observer
+======= ================= ============================================================
+
+Lookup order (``menace_versus``): ``menace_vs`` → ``menace_mult_vs`` → global
+``menace`` / ``menace_mult`` / auto score.
+
+Example::
+
+    def knight
+    mdg 6
+    menace_mult 1.5
+
+    def archer
+    rdg 5
+    menace_vs knight 3
+    menace_mult_vs mage 1.2
+
+**Tunable weights** in ``def parameters`` (armor/dodge/range/speed importance and
+HP normalization; damage+cd+ready+cover always feed the DPS core)::
+
+    def parameters
+    menace_armor_weight 1
+    menace_dodge_weight 1
+    menace_range_weight 0.15
+    menace_speed_weight 0.2
+    menace_hp_ref 50
+
+Prefer ``menace_mult`` / ``menace_mult_vs`` for combat units that research upgrades;
+use absolute ``menace`` / ``menace_vs`` only when you want a fixed priority.
+
 Charge and counter-charge (since 1.4.0.1)
 
 Charge: units with charge stats can perform a high-damage charge attack when engaging an
@@ -1054,6 +1113,9 @@ Per-unit starting behavior in ``rules.txt``:
 
 - ``ai_mode``: ``offensive``, ``defensive``, ``guard``, or ``chase``. Default: ``offensive``
   for soldiers, ``defensive`` for workers. Applies to combat units.
+  ``chase`` keeps one ``AttackAction`` and follows across squares (no auto ``go``);
+  ``offensive`` / ``guard`` still respect spawn ``position_to_hold`` until an order ``stop()``\ s;
+  ``defensive`` / ``chase`` do not.
 - ``auto_gather``: ``1`` or ``0``. Default ``1``. Workers only.
 - ``auto_repair``: ``1`` or ``0``. Default ``1``. Workers only.
 - ``auto_explore``: ``1`` or ``0``. Default ``0``. Mobile units (speed > 0).
@@ -1069,7 +1131,8 @@ still forced to guard + counterattack regardless of ``ai_mode``.
 
 Player units in ``offensive``, ``defensive``, or ``chase`` mode do not auto-attack neutral
 units (``computer_only ... neutral``) and defensive mode does not flee from neutrals alone.
-Use an imperative attack (e.g. Ctrl+click on the unit) to fight a neutral.
+Plain ``go`` on a neutral only moves; plain ``attack`` on ``is_huntable`` deals damage.
+Use an imperative attack (e.g. Ctrl+click on the unit) to make the AI treat a neutral creep/NPC as an auto-engage target.
 
 Example::
 
@@ -1318,7 +1381,7 @@ Hunting system (Age of Empires style)
 
 See ``../player/hunting.htm``. Summary:
 
-- Workers right-click ``is_huntable`` animals to attack; kills spawn a ``food_deposit`` carcass (e.g. ``food_carcass``).
+- Workers Backspace/right-click ``is_huntable`` animals to attack (plain attack deals damage); kills spawn a ``food_deposit`` carcass (e.g. ``food_carcass``) and complete the attack order without a false ``order_impossible`` beep.
 - Animal attrs: ``is_huntable``, ``flee_on_hit``, ``herdable``, ``food_deposit``, ``food_deposit_qty``, ``no_number``.
 - Map spawn: ``computer_only 0 0 neutral \<square\> \<count\> deer``; random maps add wildlife near starts.
 - Voice: units with ``is_huntable`` / ``herdable`` are announced as "deer , animal", not "neutral , NPC". Ctrl+Shift+F4 to a wildlife-only player says "you are animal". Story NPCs (``quest_npc``, etc.) still say "neutral , NPC".
