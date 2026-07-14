@@ -42,7 +42,7 @@ pickaxe a1
 pickaxe e1
 
 starting_squares a1 e1
-starting_units raynor 4 footman 2 archer
+starting_units raynor2 4 footman 2 archer
 starting_resources 150 150
 
 computer_only 0 0 g4 2 npc_peasant 5 footman 3 archer
@@ -60,4 +60,4 @@ trigger computer1 (timer 0) (alliance 1 player1 computer1)
 trigger players (timer 0) (add_objective 1 7507)
 trigger players (npc_has_item npc_peasant pickaxe) (objective_complete 1)
 
-trigger players (key_unit_killed raynor) (defeat)
+trigger players (key_unit_killed raynor2) (defeat)

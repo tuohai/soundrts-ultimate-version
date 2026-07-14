@@ -61,7 +61,7 @@ computer_only 0 0 e8 6 footman 6 archer
 computer_only 0 0 j8 6 footman 6 archer
 
 starting_squares a1 e1
-starting_units raynor 8 footman 6 archer 4 knight
+starting_units raynor7 8 footman 6 archer 4 knight
 starting_resources 100 100
 
 timer_coefficient 40
@@ -91,4 +91,4 @@ trigger players (has_killed 6 traitor_guard enemy) (do (cut_scene 7597) (objecti
 trigger players (key_unit_killed npc_general_vera) (defeat)
 trigger all (no_unit_left) (defeat)
 
-trigger players (key_unit_killed raynor) (defeat)
+trigger players (key_unit_killed raynor7) (defeat)

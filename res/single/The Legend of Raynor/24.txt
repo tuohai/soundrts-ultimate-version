@@ -60,7 +60,7 @@ computer_only 0 0 d8 5 footman 5 archer
 computer_only 0 0 k8 5 footman 5 archer
 
 starting_squares a1 e1
-starting_units raynor 8 footman 6 archer 4 knight
+starting_units raynor6 8 footman 6 archer 4 knight
 starting_resources 100 100
 
 timer_coefficient 40
@@ -76,9 +76,9 @@ trigger players (timer 0) (add_objective 2 7578)
 trigger players (npc_has_item npc_knight_leader secret_letter o8) (do (cut_scene 7579) (alliance 1) (allied_control computer1) (add_units o8 6 knight) (objective_complete 1) (set_campaign_flag ch24_garrek))
 trigger computer1 (npc_has_item npc_knight_leader secret_letter) (alliance 1)
 
-trigger players (has_killed 6 traitor_guard enemy) (do (cut_scene 7580) (add_inventory_item garrek_token 1 raynor) (set_campaign_flag ch24_garrek_token) (objective_complete 2))
+trigger players (has_killed 6 traitor_guard enemy) (do (cut_scene 7580) (add_inventory_item garrek_token 1 raynor6) (set_campaign_flag ch24_garrek_token) (objective_complete 2))
 
 trigger players (key_unit_killed npc_knight_leader) (defeat)
 trigger all (no_unit_left) (defeat)
 
-trigger players (key_unit_killed raynor) (defeat)
+trigger players (key_unit_killed raynor6) (defeat)

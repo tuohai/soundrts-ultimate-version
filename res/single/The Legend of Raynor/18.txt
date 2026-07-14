@@ -42,7 +42,7 @@ computer_only 0 0 neutral g7 2 shrine
 computer_only 0 0 neutral a7 2 npc_village_healer 5 footman 3 archer
 
 starting_squares a1 e1
-starting_units raynor 6 footman 3 archer 1 knight
+starting_units raynor4 6 footman 3 archer 1 knight
 starting_resources 100 100
 
 timer_coefficient 40
@@ -61,4 +61,4 @@ trigger players (npc_has_item npc_village_healer health_potion a7) (do (cut_scen
 
 trigger all (no_unit_left) (defeat)
 
-trigger players (key_unit_killed raynor) (defeat)
+trigger players (key_unit_killed raynor4) (defeat)

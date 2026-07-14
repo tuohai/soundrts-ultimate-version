@@ -40,7 +40,7 @@ nb_meadows_by_square 12
 wand a1 e1
 
 starting_squares a1 e1
-starting_units raynor 6 footman 3 archer 1 knight
+starting_units raynor3 6 footman 3 archer 1 knight
 starting_resources 150 150
 
 computer_only 0 0 g4 2 npc_mage
@@ -59,4 +59,4 @@ trigger players (timer 0) (add_objective 1 7511)
 trigger players (npc_has_item npc_mage wand) (objective_complete 1)
 
 
-trigger players (key_unit_killed raynor) (defeat)
+trigger players (key_unit_killed raynor3) (defeat)

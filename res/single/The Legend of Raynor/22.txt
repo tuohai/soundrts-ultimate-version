@@ -39,7 +39,7 @@ computer_only 0 0 neutral d4 2 shrine
 sealed_treasure g7
 
 starting_squares a1 e1
-starting_units raynor 6 footman 4 archer 2 knight
+starting_units raynor6 6 footman 4 archer 2 knight
 starting_resources 100 100
 
 timer_coefficient 40
@@ -59,4 +59,4 @@ trigger players (and (find d4 treasure_opened_mark) (not (find d4 gold_coin))) (
 
 trigger all (no_unit_left) (defeat)
 
-trigger players (key_unit_killed raynor) (defeat)
+trigger players (key_unit_killed raynor6) (defeat)

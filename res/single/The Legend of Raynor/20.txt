@@ -39,7 +39,7 @@ computer_only 0 0 neutral d4 2 shrine
 mystery_treasure g7
 
 starting_squares a1 e1
-starting_units raynor4 2 footman 1 archer
+starting_units raynor5 2 footman 1 archer
 starting_resources 100 100
 
 timer_coefficient 40
@@ -59,4 +59,4 @@ trigger players (and (find d4 treasure_opened_mark) (not (has_item mystery_treas
 
 trigger all (no_unit_left) (defeat)
 
-trigger players (key_unit_killed raynor4) (defeat)
+trigger players (key_unit_killed raynor5) (defeat)
