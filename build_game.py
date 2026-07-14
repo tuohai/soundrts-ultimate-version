@@ -21,11 +21,13 @@ DIST_DIR = ROOT / "dist"
 BUILD_DIR = ROOT / "build"
 ARTIFACTS_DIR = ROOT / "artifacts"
 BUNDLE_NAME = "SoundRTS"
+RESOURCE_DIRS = ("cfg", "res", "mods", "doc")
 
 
 def _run(command: list[str], **kwargs) -> None:
     print("+", " ".join(command), flush=True)
-    subprocess.run(command, check=True, cwd=ROOT, **kwargs)
+    kwargs.setdefault("cwd", ROOT)
+    subprocess.run(command, check=True, **kwargs)
 
 
 def _git_describe() -> str:
@@ -71,11 +73,6 @@ def _default_artifact_suffix() -> str:
 
 def _bundle_dir() -> Path:
     return DIST_DIR / BUNDLE_NAME
-
-
-def _resource_root(bundle_dir: Path) -> Path:
-    internal = bundle_dir / "_internal"
-    return internal if internal.exists() else bundle_dir
 
 
 def _client_executable(bundle_dir: Path) -> Path:
@@ -125,22 +122,47 @@ def _build_pyinstaller() -> None:
     _run([sys.executable, "-m", "PyInstaller", "--noconfirm", "--clean", "soundrts.spec"])
 
 
-def _write_full_version(resource_root: Path) -> None:
-    lib_dir = resource_root / "lib"
+def _expose_resources(bundle_dir: Path) -> None:
+    """Move application resources next to the executables on every platform."""
+    internal = bundle_dir / "_internal"
+    if not internal.is_dir():
+        raise RuntimeError(f"Bundle is missing the contents directory: {internal}")
+    for name in RESOURCE_DIRS:
+        source = internal / name
+        target = bundle_dir / name
+        if not source.exists():
+            raise RuntimeError(f"Bundle is missing required internal resource path: {source}")
+        if target.exists():
+            raise RuntimeError(f"Cannot expose resource path because it already exists: {target}")
+        shutil.move(source, target)
+
+
+def _write_full_version(bundle_dir: Path) -> None:
+    lib_dir = bundle_dir / "lib"
     lib_dir.mkdir(parents=True, exist_ok=True)
     (lib_dir / "full_version.txt").write_text(_git_describe(), encoding="utf-8")
 
 
 def _validate_bundle(bundle_dir: Path) -> None:
-    resource_root = _resource_root(bundle_dir)
-    missing = [name for name in ("cfg", "res", "mods", "doc") if not (resource_root / name).exists()]
+    required_paths = (
+        "cfg",
+        "cfg/parameters.toml",
+        "res",
+        "mods",
+        "doc",
+        "lib/full_version.txt",
+    )
+    missing = [name for name in required_paths if not (bundle_dir / name).exists()]
     if missing:
         raise RuntimeError(f"Bundle is missing required resource paths: {', '.join(missing)}")
     extension_patterns = ("*.pyd", "*.so", "*.dylib")
+    runtime_root = bundle_dir / "_internal"
+    if not runtime_root.is_dir():
+        raise RuntimeError(f"Bundle is missing the contents directory: {runtime_root}")
     extensions = [
         path
         for pattern in extension_patterns
-        for path in (resource_root / "soundrts").rglob(pattern)
+        for path in (runtime_root / "soundrts").rglob(pattern)
     ]
     if not extensions:
         raise RuntimeError("Bundle is missing compiled Cython extension modules.")
@@ -164,7 +186,7 @@ def _smoke_test(bundle_dir: Path) -> None:
     if platform.system() == "Windows":
         env["APPDATA"] = tmp
     try:
-        _run([str(exe), "--help"], env=env)
+        _run([str(exe), "--help"], env=env, cwd=tmp)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
@@ -206,8 +228,8 @@ def main() -> None:
     _build_pyinstaller()
 
     bundle_dir = _bundle_dir()
-    resource_root = _resource_root(bundle_dir)
-    _write_full_version(resource_root)
+    _expose_resources(bundle_dir)
+    _write_full_version(bundle_dir)
     _validate_bundle(bundle_dir)
     if not args.skip_smoke_test:
         _smoke_test(bundle_dir)
