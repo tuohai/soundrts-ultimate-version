@@ -84,11 +84,11 @@ trigger player2 (timer 0) (if (campaign_flag ch25_roland_knights) (do (add_units
 trigger players (timer 0) (add_objective 1 7706)
 trigger players (timer 0) (add_objective 2 7704)
 
-trigger players (npc_has_item npc_general_vera war_banner o8) (do (cut_scene 7707) (transfer_units computer1 player1) (objective_complete 1) (set_campaign_flag ch26_vera))
+trigger players (npc_has_item npc_general_vera war_banner o8) (do (cut_scene 7707) (transfer_units computer1 player1) (set_campaign_flag ch26_vera) (objective_complete 1))
 
 trigger players (has_killed 6 traitor_guard enemy) (do (cut_scene 7597) (objective_complete 2))
 
 trigger players (key_unit_killed npc_general_vera) (defeat)
 trigger all (no_unit_left) (defeat)
 
-trigger players (key_unit_killed raynor7) (defeat)
+trigger players (key_unit_killed raynor) (defeat)

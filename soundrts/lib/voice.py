@@ -207,9 +207,12 @@ class _Voice:
 
     def _key_hit(self, keep_key=True):
         l = pygame.event.get([KEYDOWN])
-        if keep_key:
-            for e in l:  # put events back in queue
-                pygame.event.post(e)  # will the order be preserved?
+        if keep_key and l:
+            # Only re-queue the first KEYDOWN. Keyboard auto-repeat (and some
+            # IME stacks) can leave several KEYDOWNs in the queue while a menu
+            # title is spoken; posting them all back would jump twice on one
+            # physical press (e.g. m1 then immediately m2).
+            pygame.event.post(l[0])
         return len(l) != 0
 
 

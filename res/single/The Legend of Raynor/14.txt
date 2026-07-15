@@ -60,4 +60,4 @@ trigger computer1 (timer 0) (alliance 1 player1 computer1)
 trigger players (timer 0) (add_objective 1 7507)
 trigger players (npc_has_item npc_peasant pickaxe) (objective_complete 1)
 
-trigger players (key_unit_killed raynor2) (defeat)
+trigger players (key_unit_killed raynor) (defeat)

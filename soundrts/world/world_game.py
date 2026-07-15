@@ -124,47 +124,18 @@ class WorldGameMixin:
         - Do not touch perception idle / contact_force / decide intervals.
         - Neighbor merge cache: keep across ticks when nothing moved; selective
           invalidate near dirty cells; large dirty → full clear.
+
+        ECS (default-on when extension built; ``SOUNDRTS_ECS=0`` to disable):
+        same incremental ``_buckets`` as the default path; SoA scalars sync each
+        tick for ``batch_see_enemies``.
         """
-        ecs = getattr(self, "_ecs", None)
-        # ECS path keeps full rebuild (SoA snapshot); neighbor invalidate still selective.
-        if ecs is not None and _ecs_enabled():
-            ecs.sync_all(self.players)
-            for p in self.players:
-                old_cells = getattr(p, "_bucket_unit_cells", None)
-                p._buckets = ecs.build_buckets_for_player(p, A)
-                new_cells = {
-                    id(u): ((u.x // A, u.y // A), u) for u in p.units
-                }
-                p._bucket_unit_cells = new_cells
-                if old_cells is None:
-                    dirty = None
-                else:
-                    dirty = set()
-                    for uid, (k, _u) in new_cells.items():
-                        old = old_cells.get(uid)
-                        if old is None:
-                            dirty.add(k)
-                        elif old[0] != k:
-                            dirty.add(k)
-                            dirty.add(old[0])
-                    for uid, (ok, _u) in old_cells.items():
-                        if uid not in new_cells:
-                            dirty.add(ok)
-                if dirty is None:
-                    clear_nb = getattr(p, "_clear_neighbors_cache", None)
-                    if clear_nb is not None:
-                        clear_nb()
-                elif dirty:
-                    inv = getattr(p, "_invalidate_neighbors_near", None)
-                    if inv is not None:
-                        inv(dirty)
-                clear_vis = getattr(p, "_clear_vision_cache", None)
-                if clear_vis is not None:
-                    clear_vis()
-            return
+        ecs = getattr(self, "_ecs", None) if _ecs_enabled() else None
 
         for p in self.players:
             dirty = self._incremental_player_buckets(p, A)
+            if ecs is not None:
+                # Batch visibility needs fresh SoA every tick; heal → full rebuild.
+                ecs.sync_player(p, force_rebuild=(dirty is None))
             if dirty is None:
                 clear_nb = getattr(p, "_clear_neighbors_cache", None)
                 if clear_nb is not None:
@@ -307,7 +278,7 @@ class WorldGameMixin:
                         exception("")
                     
         # 决定性配额：按对象 id 稳定顺序分帧更新
-        objects_snapshot = sorted(self.active_objects, key=lambda _o: _o.id)
+        objects_snapshot = self._active_objects_snapshot()
         n_objects = len(objects_snapshot)
         if n_objects:
             from ..definitions import VIRTUAL_TIME_INTERVAL as _VT
@@ -333,7 +304,7 @@ class WorldGameMixin:
                 tick_hatchery_larva(self)
             except Exception:
                 exception("")
-            for o in sorted(self.active_objects[:], key=lambda _o: _o.id):
+            for o in self._active_objects_snapshot():
                 if o.place is not None:
                     try:
                         o.slow_update()

@@ -59,4 +59,4 @@ trigger players (and (find d4 treasure_opened_mark) (not (has_item mystery_treas
 
 trigger all (no_unit_left) (defeat)
 
-trigger players (key_unit_killed raynor5) (defeat)
+trigger players (key_unit_killed raynor) (defeat)

@@ -346,7 +346,7 @@ def test_chapter_24_uses_workaround_triggers():
     assert "(allied_control computer1)" in text
     assert "(add_units o8 6 knight)" in text
     assert "(set_campaign_flag ch24_garrek)" in text
-    assert "(add_inventory_item garrek_token 1 raynor5)" in text
+    assert "(add_inventory_item garrek_token 1 raynor)" in text
     assert "(set_campaign_flag ch24_garrek_token)" in text
     assert "(alliance_request" not in text
     assert "(transfer_units" not in text
@@ -370,6 +370,41 @@ def test_lang_add_inventory_item_puts_item_in_unit_bag(monkeypatch):
 
     human, _, world = _human_and_computer()
     raynor = _StubUnit(human, type_name="raynor", unit_id="r1")
+    raynor.inventory = []
+    raynor.inventory_capacity = 3
+    t = _make_triggers(human, world)
+    monkeypatch.setattr(
+        "soundrts.worldplayerbase.triggers.rules.unit_class",
+        lambda name: _Token if name == "garrek_token" else None,
+    )
+    monkeypatch.setattr(
+        "soundrts.worldplayerbase.triggers.rules.get",
+        lambda name, key: ["item"] if name == "garrek_token" and key == "class" else None,
+    )
+    t.lang_add_inventory_item(["garrek_token", "1", "raynor"])
+    assert len(raynor.inventory) == 1
+    assert len(created) == 1
+
+
+def test_lang_add_inventory_item_matches_raynor_stage_via_is_a(monkeypatch):
+    """战役各章雷诺阶段名不同；add_inventory_item 用基类 raynor 应能命中。"""
+    created = []
+
+    class _Token:
+        def __init__(self, place, x, y):
+            self.type_name = "garrek_token"
+            self.place = place
+            created.append(self)
+
+        def move_to(self, *a, **k):
+            pass
+
+        def equip(self, unit):
+            pass
+
+    human, _, world = _human_and_computer()
+    raynor = _StubUnit(human, type_name="raynor6", unit_id="r1")
+    raynor.expanded_is_a = {"raynor", "raynor5", "raynor6"}
     raynor.inventory = []
     raynor.inventory_capacity = 3
     t = _make_triggers(human, world)
@@ -427,8 +462,8 @@ def test_chapter_25_roland_rules_no_spawn_yield():
 def test_chapter_27_uses_selective_allied_control():
     text = (_CAMPAIGN_DIR / "27.txt").read_text(encoding="utf-8")
     assert "npc_marco_ironhand" in text
-    assert "(units_yielded_by raynor7 1 npc_marco_ironhand enemy)" in text
-    assert "(not (units_yielded_by raynor7 1 npc_marco_ironhand enemy))" in text
+    assert "(units_yielded_by raynor 1 npc_marco_ironhand enemy)" in text
+    assert "(not (units_yielded_by raynor 1 npc_marco_ironhand enemy))" in text
     assert "(alliance 1 player1 computer1)" in text
     assert "(stop_all_units)" in text
     assert "(stop_all_units computer1)" in text
@@ -444,7 +479,9 @@ def test_chapter_27_uses_selective_allied_control():
     assert "(has_killed 6 traitor_guard enemy)" in text
     assert "(cut_scene 7719)" in text
     assert "7580" not in text
-    assert "(has_entered o8 raynor7)" in text
+    assert "(has_entered o8 raynor)" in text
+    assert "starting_units raynor7" in text
+    assert "raynor77" not in text
     assert "(set_map_flag ch27_duel_started)" in text
     assert "(map_flag ch27_duel_started)" in text
     assert "(unset_campaign_flag ch27_duel_started)" in text
@@ -808,13 +845,14 @@ def test_chapter_25_uses_duel_and_optional_alliance():
     assert "(set_ai_mode offensive o8 1 npc_count_roland 6 npc_roland_guard)" in text
     assert "(set_yield_on_defeat 1 o8 1 npc_count_roland 6 npc_roland_guard)" in text
     assert "(set_campaign_flag ch25_duel_started)" in text
-    assert "trigger player1 (npc_has_item npc_count_roland garrek_token o8) (do (cut_scene 7701)" in text
+    assert "trigger players (npc_has_item npc_count_roland garrek_token o8) (do (cut_scene 7701)" in text
     assert "(set_campaign_flag ch25_duel_started))" in text.split("(cut_scene 7701)")[1].split("trigger computer1")[0]
     assert "trigger computer1 (npc_has_item npc_count_roland garrek_token o8) (do (set_ai_mode offensive" in text
     assert "(campaign_flag ch25_duel_started)" in text
     assert "(key_unit_killed npc_count_roland npc_roland_guard)" in text
-    assert "trigger player1 (and (not (campaign_flag ch25_duel_started)) (key_unit_killed npc_count_roland npc_roland_guard)) (defeat)" in text
+    assert "trigger players (and (not (campaign_flag ch25_duel_started)) (key_unit_killed npc_count_roland npc_roland_guard)) (defeat)" in text
     assert "(campaign_flag ch24_garrek_token)" in text
+    assert "(add_inventory_item garrek_token 1 raynor)" in text
     assert "(add_objective 1 7717)" in text
     assert "intro 7728 7729 7700" in text
     assert "7701" not in text.split("intro")[1].split("\n")[0]
@@ -831,7 +869,7 @@ def test_chapter_25_uses_duel_and_optional_alliance():
     assert "(stop_all_units)" in text
     assert "(stop_all_units computer1)" in text
     assert "(release_yielded_units computer1)" in text
-    assert "trigger player1 (no_unit_left) (defeat)" in text
+    assert "trigger players (no_unit_left) (defeat)" in text
     assert "trigger all (no_unit_left)" not in text
     assert "(transfer_units" not in text
     assert "secret_letter" not in text

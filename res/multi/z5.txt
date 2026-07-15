@@ -26,4 +26,5 @@ starting_squares a1 c1
 starting_units knight 10 peasant gold_house townhall 15 house barracks blacksmith stables 2 magestower dragonslair
 starting_resources 5000 5000
 global_population_limit 1000
+computer_only 0 0 b3 20 footman 20 archer 20 knight 20 mage 20 dragon
 computer_only 0 0 neutral b3 3 deer 2 sheep 2 boar

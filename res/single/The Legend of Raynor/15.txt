@@ -55,4 +55,4 @@ trigger computers (timer 0) (alliance 2)
 trigger players (timer 0) (add_objective 1 7509)
 trigger players (npc_has_item npc_knight knight_lance) (objective_complete 1)
 
-trigger players (key_unit_killed raynor3) (defeat)
+trigger players (key_unit_killed raynor) (defeat)

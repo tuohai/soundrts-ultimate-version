@@ -51,7 +51,7 @@ south_north_paths o1 o2 o3 o4 o5 o6 o7 o8 o9 o10 o11 o12 o13 o14
 
 nb_meadows_by_square 35
 
-computer_only 0 0 o8 2 npc_count_roland 9 npc_roland_guard
+computer_only 0 0 neutral o8 2 npc_count_roland 9 npc_roland_guard
 computer_only 0 0 h15 9 traitor_guard o15 9 traitor_guard
 computer_only 0 0 non_neutral a2
 computer_only 0 0 non_neutral a3
@@ -73,8 +73,8 @@ trigger computers (timer 0) (alliance 2)
 trigger computer3 (timer 0) (if (campaign_flag ch24_garrek) (do (add_units a2 1 npc_knight_leader 4 npc_knight_escort 4 footman) (alliance 1)))
 trigger player1 (timer 0) (if (campaign_flag ch24_garrek) (do (alliance 1) (allied_control computer3)))
 trigger player2 (timer 0) (if (campaign_flag ch24_garrek) (do (alliance 1) (allied_control computer3)))
-trigger player1 (timer 0) (if (campaign_flag ch24_garrek_token) (do (add_inventory_item garrek_token 1 raynor7)))
-trigger player2 (timer 0) (if (campaign_flag ch24_garrek_token) (do (add_inventory_item garrek_token 1 raynor7)))
+; 24章 flag 已设时，开局把信物放回雷诺背包（raynor 匹配 raynor7）
+trigger players (timer 0) (if (campaign_flag ch24_garrek_token) (do (add_inventory_item garrek_token 1 raynor)))
 
 trigger players (timer 0) (add_objective 1 7717)
 trigger players (timer 0) (add_objective 2 7703)
@@ -95,4 +95,4 @@ trigger players (has_killed 6 traitor_guard enemy) (do (cut_scene 7587) (objecti
 
 trigger players (no_unit_left) (defeat)
 
-trigger players (key_unit_killed raynor7) (defeat)
+trigger players (key_unit_killed raynor) (defeat)

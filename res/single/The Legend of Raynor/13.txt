@@ -60,4 +60,4 @@ trigger players (timer 0) (add_objective 1 7622)
 trigger players (npc_has_item npc_wounded_contact health_potion) (do (cut_scene 7623) (objective_complete 1))
 trigger all (no_unit_left) (defeat)
 
-trigger players (key_unit_killed raynor2) (defeat)
+trigger players (key_unit_killed raynor) (defeat)

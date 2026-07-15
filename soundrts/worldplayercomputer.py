@@ -2190,25 +2190,45 @@ class Computer(Player):
 
     def _send_explorer(self):
         candidates = self.best_explorers()
-        if candidates:
-            best_explorer = candidates[0]
-            if not (
-                best_explorer.orders
-                and best_explorer.orders[0].keyword == "auto_explore"
+        if not candidates:
+            return
+        best_explorer = candidates[0]
+        explorers = [
+            u
+            for u in self.units
+            if u.orders and u.orders[0].keyword == "auto_explore"
+        ]
+
+        def _recall(u):
+            # auto_explore is imperative: plain take_order(["go", ...]) only queues
+            # behind it (1.4 take_order change). Must stop first, else explorers pile
+            # up and constant_attacks never gets idle fighters (jl1 vs 1.3.8.1).
+            if u.orders and u.orders[0].keyword == "auto_explore":
+                u.take_order(["stop"])
+            if self.units:
+                u.take_order(["go", self.units[0].place.id])
+
+        if (
+            best_explorer.orders
+            and best_explorer.orders[0].keyword == "auto_explore"
+        ):
+            for u in explorers:
+                if u is not best_explorer:
+                    _recall(u)
+            return
+
+        current = explorers[0] if explorers else None
+        if current is not None:
+            if (
+                value_as_an_explorer(current)[0]
+                == value_as_an_explorer(best_explorer)[0]
             ):
-                explorer = None
-                for u in self.units:
-                    if u.orders and u.orders[0].keyword == "auto_explore":
-                        explorer = u
-                        break
-                if explorer:
-                    if (
-                        value_as_an_explorer(explorer)[0]
-                        == value_as_an_explorer(best_explorer)[0]
-                    ):
-                        return
-                    explorer.take_order(["go", self.units[0].place.id])
-                best_explorer.take_order(["auto_explore"])
+                for u in explorers[1:]:
+                    _recall(u)
+                return
+            for u in explorers:
+                _recall(u)
+        best_explorer.take_order(["auto_explore"])
 
     def _remove_far_candidates(self, candidates, start, limit):
         ids = {o.id: o for o in candidates}

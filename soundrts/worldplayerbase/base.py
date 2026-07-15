@@ -171,6 +171,9 @@ class Player:
         self.perception = set()
         self.memory = set()
         self._memory_index = {}
+        # place -> set(memory): speeds observed-square ghost clears
+        self._memory_by_place = {}
+        self._memory_by_place_count = 0
         self.id = world.get_next_id()
         self.world = world
         self.client = client

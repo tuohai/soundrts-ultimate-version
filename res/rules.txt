@@ -585,7 +585,7 @@ population_cost 1
 time_cost 12
 hp_max 15
 speed 1.5
-sight_range 3
+sight_range 6
 mdg 3.5
 mdg_cd 1.5
 mdg_bonus 2.5
@@ -601,7 +601,7 @@ time_cost 20
 requirements stables
 can_use_tech melee_weapon melee_armor horse_speed dsc
 speed 2.5
-sight_range 3
+sight_range 6
 hp_max 45
 mdf 1
 rdf 0
@@ -675,6 +675,7 @@ charge_mdg 8
 
 def raynor7
 is_a raynor6
+sight_range 6
 hp_max 280
 hp_regen 2
 hp_regen_cd 1

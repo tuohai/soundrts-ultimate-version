@@ -1023,7 +1023,8 @@ def test_allied_peasant_map_sets_alliance():
     text = (_CAMPAIGN_DIR / "14.txt").read_text(encoding="utf-8")
     assert "(alliance 1)" in text
     assert "trigger player1 (timer 0) (alliance 1)" in text
-    assert "trigger computer1 (timer 0) (alliance 1)" in text
+    # 单人会剥掉 player1 联盟触发器，须显式绑定 player1+computer1
+    assert "trigger computer1 (timer 0) (alliance 1 player1 computer1)" in text
 
 
 def test_chapter_28_map_select_index_triggers():

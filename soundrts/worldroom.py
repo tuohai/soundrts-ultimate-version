@@ -49,21 +49,29 @@ _cache_time = None
 
 
 def cache(f):
-    def decorated_f(*args, **kargs):
+    """Memoize path queries for a few seconds.
+
+    Key by square/player **ids** (not object identity) so keyword order and
+    temporary graph mutations cannot fragment the cache.
+    """
+
+    def decorated_f(self, dest, plane, player, places=False, avoid=False):
         global _cache, _cache_time
         # 将缓存时间粒度放宽到3000ms，减少同一时间段内重复寻路
-        current_bucket = args[0].world.time // 3000
+        current_bucket = self.world.time // 3000
         if _cache_time != current_bucket:
             _cache = {}
             _cache_time = current_bucket
-        # 热路径几乎都是纯 positional；避免每次 sorted(kargs.items())
-        if kargs:
-            k = (args, tuple(sorted(kargs.items())))
-        else:
-            k = args
-        if k not in _cache:
-            _cache[k] = f(*args, **kargs)
-        return _cache[k]
+        pid = None if player is None else player.id
+        did = None if dest is None else dest.id
+        # Include world identity — entity ids restart per World and must not collide.
+        k = (id(self.world), self.id, did, plane, pid, places, avoid)
+        hit = _cache.get(k)
+        if hit is not None:
+            return hit
+        res = f(self, dest, plane, player, places=places, avoid=avoid)
+        _cache[k] = res
+        return res
 
     return decorated_f
 
@@ -396,6 +404,11 @@ class Square(_Space):
                 )
                 return e, dist
 
+            # Ground graph is exit-only. Run A* on exits without temporarily
+            # inserting Square nodes into the shared world.g (add/del was costly
+            # on every cache miss and mutated global state mid-search).
+            return self._ground_astar_exits_only(dest, player, avoid_fn)
+
         ##        if not dest.exits: # small optimization
         ##            return None, None # no path exists
 
@@ -403,6 +416,7 @@ class Square(_Space):
         G = self.world.g[plane]
         water_shore_temps = []
         if plane == "ground":
+            # places=True still uses Square endpoints in the graph.
             for v in (self, dest):
                 G[v] = {}
                 for e in v.exits:
@@ -543,6 +557,90 @@ class Square(_Space):
             return result
         else:
             return Path[1], g_score[dest]
+
+    def _ground_astar_exits_only(self, dest, player, avoid_fn):
+        """Ground A* over the exit graph without mutating ``world.g``.
+
+        Semantics match the former Square-endpoint A*:
+        - seed from ``self.exits`` with g = dist(self, exit)
+        - goal when an exit on ``dest`` is dequeued (then + dist(exit, dest))
+        - return ``(first_exit, total_dist)`` like ``Path[1], g_score[dest]``
+        """
+        from heapq import heappop, heappush
+
+        G = self.world.g["ground"]
+        end_x = dest.x
+        end_y = dest.y
+        if _rf is not None:
+            _h = lambda n: _rf.astar_heuristic(n, end_x, end_y)
+        else:
+            def _h(n):
+                try:
+                    return int_distance(n.x, n.y, end_x, end_y)
+                except Exception:
+                    return 0
+
+        g_score = {}
+        came_from = {}
+        open_heap = []
+        closed = set()
+        local_block_cache = {}
+        player_id = int(player.id) if player else 0
+
+        def _blocked(node):
+            if not player or not getattr(node, "is_an_exit", False):
+                return False
+            if _rf is not None:
+                return _rf.cached_is_blocked(
+                    node, player, local_block_cache, player_id
+                )
+            lk = (id(node), player_id)
+            blocked = local_block_cache.get(lk)
+            if blocked is None:
+                try:
+                    blocked = node.is_blocked(player, ignore_enemy_walls=True)
+                except Exception:
+                    blocked = False
+                local_block_cache[lk] = blocked
+            return blocked
+
+        for e in self.exits:
+            if _blocked(e) or (avoid_fn is not None and avoid_fn(e)):
+                continue
+            g0 = int_distance(self.x, self.y, e.x, e.y)
+            g_score[e] = g0
+            came_from[e] = None
+            heappush(open_heap, (g0 + _h(e), int(e.id), e))
+
+        while open_heap:
+            _, _, v = heappop(open_heap)
+            if v in closed:
+                continue
+            if _blocked(v) or (avoid_fn is not None and avoid_fn(v)):
+                closed.add(v)
+                continue
+            closed.add(v)
+
+            # Arrive: exit standing on the destination square.
+            if getattr(v, "place", None) is dest:
+                total = g_score[v] + int_distance(v.x, v.y, dest.x, dest.y)
+                # First hop = exit whose came_from is None.
+                cur = v
+                while came_from.get(cur) is not None:
+                    cur = came_from[cur]
+                return cur, total
+
+            g_v = g_score[v]
+            for w, edge_cost in G.get(v, {}).items():
+                if _blocked(w) or (avoid_fn is not None and avoid_fn(w)):
+                    continue
+                tentative_g = g_v + edge_cost
+                if tentative_g < g_score.get(w, 1 << 60):
+                    came_from[w] = v
+                    g_score[w] = tentative_g
+                    heappush(open_heap, (tentative_g + _h(w), int(w.id), w))
+
+        return None, float("inf")
 
     def find_nearest_meadow(self, unit):
         return self.find_meadow_near_xy(unit.x, unit.y)

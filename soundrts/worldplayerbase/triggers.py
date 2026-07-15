@@ -925,6 +925,7 @@ class TriggersMixin:
         用法：``(add_inventory_item <物品type_name> [<数量>] [<单位type_name>])``
 
         省略单位时，放入触发器所属玩家首个有背包的空位单位；数量默认 1。
+        指定单位类型时支持 ``is_a`` 继承（如 ``raynor`` 可匹配 ``raynor6``/``raynor7``）。
         """
         if not args:
             return
@@ -935,8 +936,11 @@ class TriggersMixin:
             nb = int(rest.pop(0))
         unit = None
         if rest:
+            type_name = rest[0]
             for u in self.units:
-                if getattr(u, "presence", True) and self.check_type(u, rest[0]):
+                if getattr(u, "presence", True) and self._unit_matches_map_select_type(
+                    u, type_name
+                ):
                     unit = u
                     break
         else:
@@ -1524,10 +1528,16 @@ class TriggersMixin:
         ]
 
     def lang_no_enemy_player_left(self, unused_args):
+        # 只统计对局参与者（真人、邀请的电脑对手）。地图 ``computer_only``
+        # 脚本 NPC（AI_type=="timers"）、战役触发器电脑、纯野生动物等
+        # broadcasts_defeat_and_quit=False，虽可敌对/可战斗，但不计入多人默认
+        # 胜利条件。否则 sg4 等图上邀请的初级电脑被 creep 消灭后，残留的
+        # 非中立 computer_only 会挡住 (no_enemy_player_left)(victory)。
+        # 需要清空全部敌对势力（含 NPC）时用 no_enemy_left。
         return not [
             p
-            for p in self.world.true_players()
-            if self.player_is_an_enemy(p) and p.is_playing
+            for p in self.world.match_participating_players
+            if self.player_is_an_enemy(p)
         ]
 
     def lang_no_unit_left(self, unused_args):

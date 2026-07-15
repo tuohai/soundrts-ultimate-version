@@ -58,4 +58,4 @@ trigger players (timer 0) (add_objective 1 7628)
 trigger players (has_item lost_amulet) (objective_complete 1)
 trigger all (no_unit_left) (defeat)
 
-trigger players (key_unit_killed raynor4) (defeat)
+trigger players (key_unit_killed raynor) (defeat)

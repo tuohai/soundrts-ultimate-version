@@ -41,13 +41,17 @@ class World:
         self.time = 0
         self.squares = []
         self.active_objects = []
+        # When True, active_objects must be re-sorted by id before the next
+        # deterministic update sweep (avoids sorting every tick).
+        self._active_objects_order_dirty = True
         self.players = []
         self.ex_players = []
         self.unit_classes = {}
         self.objects = {}
         self.harm_target_types = {}
         self._command_queue = queue.Queue()
-        # Hybrid C++ ECS (Phase 1): opt-in via SOUNDRTS_ECS=1
+        # Hybrid C++ ECS (Phase 1–2): on by default when extension is built;
+        # disable with SOUNDRTS_ECS=0
         self._ecs = None
         try:
             from .world_ecs import WorldEcs, ecs_enabled
@@ -215,6 +219,7 @@ class World:
         self.objects[o.id] = o
         if hasattr(o, "update"):
             self.active_objects.append(o)
+            self._active_objects_order_dirty = True
         if self._ecs is not None:
             self._ecs.register(o)
 
@@ -223,6 +228,14 @@ class World:
             self._ecs.unregister(o)
         if o in self.active_objects:
             self.active_objects.remove(o)
+            self._active_objects_order_dirty = True
+
+    def _active_objects_snapshot(self):
+        """Stable id-ordered copy of ``active_objects`` (sort only when dirty)."""
+        if getattr(self, "_active_objects_order_dirty", True):
+            self.active_objects.sort(key=lambda _o: _o.id)
+            self._active_objects_order_dirty = False
+        return self.active_objects[:]
 
     # Why use a different id for orders: get_next_id() would have worked too,
     # but with higher risks of synchronization errors. This way is probably

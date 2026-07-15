@@ -59,4 +59,4 @@ trigger players (timer 0) (add_objective 1 7511)
 trigger players (npc_has_item npc_mage wand) (objective_complete 1)
 
 
-trigger players (key_unit_killed raynor3) (defeat)
+trigger players (key_unit_killed raynor) (defeat)

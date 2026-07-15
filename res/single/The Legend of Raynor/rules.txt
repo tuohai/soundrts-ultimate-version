@@ -229,10 +229,6 @@ class item
 ; 示例任务NPC：可接收玩家交给的物品（receive_items 1），
 ; 用于"把物品交给NPC才能通关"类的关卡目标。
 
-
-def npc_peasant
-is_a peasant
-
 def quest_npc
 class soldier
 cost 0 0
@@ -336,7 +332,7 @@ resource_rewards 15
 def mystery_treasure
 class item
 transport_volume 2
-use_square b2
+use_square d4
 resource_rewards 150 0
 
 ; 封印宝藏（第22章：须丢弃到祭坛开启，再拾取金币；title 7568）
@@ -376,8 +372,8 @@ sight_range 8
 inventory_capacity 3
 receive_items 1
 accepted_items secret_letter
-accept_from enemy
-accept_givers raynor5
+accept_from neutral
+accept_givers raynor
 ai_mode guard
 mdg 20
 mdg_cd 1.5
@@ -432,7 +428,7 @@ sight_range 8
 receive_items 1
 accepted_items war_banner
 accept_from enemy
-accept_givers raynor6
+accept_givers raynor
 ai_mode guard
 mdg 18
 mdg_cd 1.5

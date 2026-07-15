@@ -408,8 +408,9 @@ def test_chapter_maps_use_distinct_heroes_and_carryover():
     assert "(stop_all_units)" in ch25
     assert "(stop_all_units computer1)" in ch25
     assert "(release_yielded_units computer1)" in ch25
-    assert "trigger player1 (no_unit_left) (defeat)" in ch25
+    assert "trigger players (no_unit_left) (defeat)" in ch25
     assert "campaign_flag ch24_garrek" in ch25
+    assert "(add_inventory_item garrek_token 1 raynor)" in ch25
     assert "npc_knight_leader" not in ch25.split("computer_only")[1].split("\n")[0]
 
     assert "npc_general_vera" in ch26
@@ -417,5 +418,7 @@ def test_chapter_maps_use_distinct_heroes_and_carryover():
     assert "campaign_flag ch25_roland_allied" in ch26
 
     assert "npc_marco_ironhand" in ch27
-    assert "units_yielded_by raynor7 1 npc_marco_ironhand" in ch27
+    assert "units_yielded_by raynor 1 npc_marco_ironhand" in ch27
+    assert "starting_units raynor7" in ch27
+    assert "raynor77" not in ch27
     assert "campaign_flag ch26_vera" in ch27

@@ -86,6 +86,72 @@ cpdef list filter_visible_vulnerable_enemies(objects, perceived_set,
     return result
 
 
+cpdef list filter_inside_units(units):
+    """Units whose ``place.is_inside_place`` (for known_enemies cabin list)."""
+    cdef list result = []
+    cdef object u, pl
+    for u in units:
+        pl = u.place
+        if pl is not None and pl.is_inside_place:
+            result.append(u)
+    return result
+
+
+cpdef tuple scan_memories_for_forget(
+    object memories,
+    object perception,
+    object observed,
+    long long current_time,
+    long long memory_expires_time,
+    long long display_duration,
+    bint should_do_full_cleanup,
+    int cleanup_quota,
+    object is_seeing_fn,
+):
+    """Parity with ``PerceptionMixin._update_memory`` forget scan loop.
+
+    Returns ``(units_to_forget: list, display_expired_initial_models: set)``.
+    Does not call ``_is_seeing`` for ghosts that are not in ``perception``.
+    """
+    cdef list units_to_forget = []
+    cdef object display_expired_initial_models = set()
+    cdef object m, model, stamp
+    cdef bint display_expired, memory_expired, in_perc
+    cdef int quota = cleanup_quota
+
+    for m in memories:
+        model = m.initial_model
+        if model.place is None:
+            units_to_forget.append(m)
+            continue
+        if not model.speed:
+            if model in perception:
+                units_to_forget.append(m)
+            continue
+        stamp = m.time_stamp
+        display_expired = stamp + display_duration < current_time
+        memory_expired = stamp < memory_expires_time
+        in_perc = model in perception
+        if not in_perc:
+            if memory_expired:
+                units_to_forget.append(m)
+            continue
+        if is_seeing_fn(model):
+            units_to_forget.append(m)
+            continue
+        if display_expired:
+            perception.discard(model)
+            display_expired_initial_models.add(model)
+        if memory_expired:
+            units_to_forget.append(m)
+            continue
+        if should_do_full_cleanup and quota > 0:
+            if m.place in observed:
+                units_to_forget.append(m)
+            quota -= 1
+    return units_to_forget, display_expired_initial_models
+
+
 # === D-Phase 2 (continued): player_is_an_enemy whole-fn cpdef ============
 # combat.player_is_an_enemy: 20.2M calls / 5min cw1, 6.8 s tottime.
 # 函数体短小 (5-line dict cache + set membership), 但 frame setup +
@@ -149,7 +215,9 @@ cpdef bulk_memorize(self, objects):
     cdef dict memory_index = self._memory_index
     cdef object memory_set = self.memory
     cdef object _copy = _copy_mod.copy
-    cdef object obj, remembrance, existing
+    cdef object obj, remembrance, existing, place, by_place, bag
+    cdef object add_place
+    add_place = getattr(self, "_memory_place_index_add", None)
     for obj in objects:
         if getattr(obj, "_is_skill_combat_proxy", False):
             continue
@@ -166,6 +234,25 @@ cpdef bulk_memorize(self, objects):
             remembrance.initial_model = obj
             memory_set.add(remembrance)
             memory_index[obj] = remembrance
+            # Keep place index in sync for observed-square forget (SESSION 4).
+            if add_place is not None:
+                add_place(remembrance)
+            else:
+                place = remembrance.place
+                if place is not None:
+                    by_place = getattr(self, "_memory_by_place", None)
+                    if by_place is None:
+                        by_place = {}
+                        self._memory_by_place = by_place
+                        self._memory_by_place_count = 0
+                    bag = by_place.get(place)
+                    if bag is None:
+                        bag = set()
+                        by_place[place] = bag
+                    bag.add(remembrance)
+                    self._memory_by_place_count = getattr(
+                        self, "_memory_by_place_count", 0
+                    ) + 1
 
 
 cpdef list merge_buckets_3x3(dict buckets, long long grid_x, long long grid_y):
@@ -209,6 +296,9 @@ cpdef bint is_seeing(self, u) except -1:
     self / u / 观察者仍是 Python 对象；紧循环里的距离平方用 C long long。
     ``get_observed_squares`` / ``_potential_neighbors`` / ``_exit_blocker_visible``
     仍回调 Python（语义必须一致）。
+
+    Single-target path stays on warm neighbor cache. ECS SoA observer helpers
+    are for future batch visibility, not this per-enemy loop.
     """
     cdef long long x, y, dx, dy, sr2
     cdef object place, avp, avu, sr
@@ -234,7 +324,6 @@ cpdef bint is_seeing(self, u) except -1:
                 continue
             dx = avu.x - x
             dy = avu.y - y
-            # sr may be Python int; coerce once for squared compare
             sr2 = <long long>sr
             sr2 = sr2 * sr2
             if dx * dx + dy * dy >= sr2:
@@ -462,3 +551,99 @@ cpdef tuple bulk_visibility_check(self, objects):
                 invisible_objects.add(obj)
 
     return visible_objects, invisible_objects
+
+
+cpdef tuple build_enemy_place_menace(object perceived, object enemy_player_ids):
+    """Aggregate live enemy menace by place (parity with Python snapshot loop).
+
+    Uses ``place.is_inside_place`` instead of the ``is_inside`` property to skip
+    one Python attribute indirection per unit (hot on cw1 10min profiles).
+    """
+    cdef dict place_enemy_menace = {}
+    cdef list enemy_presence_places = []
+    cdef object o, p, pl, men, current_sum, pid
+    for o in perceived:
+        p = o.player
+        if p is None:
+            continue
+        pl = o.place
+        if pl is None or pl.is_inside_place:
+            continue
+        if not o.is_vulnerable:
+            continue
+        pid = p.id
+        if pid not in enemy_player_ids:
+            continue
+        men = o.menace
+        current_sum = place_enemy_menace.get(pl)
+        if current_sum is None:
+            place_enemy_menace[pl] = men
+            enemy_presence_places.append(pl)
+        else:
+            place_enemy_menace[pl] = current_sum + men
+    return place_enemy_menace, enemy_presence_places
+
+
+cpdef void add_memory_enemy_menace(
+    dict place_enemy_menace,
+    list enemy_presence_places,
+    object live_presence,
+    object mem_set,
+    object enemy_player_ids,
+):
+    """Half-threat ghosts for places not already covered by live presence."""
+    cdef object rem, o, p, pl, men, current_sum, pid
+    for rem in mem_set:
+        o = rem.initial_model
+        p = o.player
+        if p is None:
+            continue
+        pl = o.place
+        if pl is None or pl in live_presence:
+            continue
+        if pl.is_inside_place or not o.is_vulnerable:
+            continue
+        pid = p.id
+        if pid not in enemy_player_ids:
+            continue
+        men = o.menace // 2
+        current_sum = place_enemy_menace.get(pl)
+        if current_sum is None:
+            place_enemy_menace[pl] = men
+            enemy_presence_places.append(pl)
+        else:
+            place_enemy_menace[pl] = current_sum + men
+
+
+cpdef void add_memory_enemy_menace_by_place(
+    dict place_enemy_menace,
+    list enemy_presence_places,
+    object live_presence,
+    dict by_place,
+    object enemy_player_ids,
+):
+    """Same as ``add_memory_enemy_menace`` but iterate place bags (skip live places)."""
+    cdef object rem, o, p, pl, men, current_sum, pid, bag
+    for pl, bag in by_place.items():
+        if pl in live_presence or not bag:
+            continue
+        for rem in bag:
+            o = rem.initial_model
+            p = o.player
+            if p is None:
+                continue
+            if pl.is_inside_place or not o.is_vulnerable:
+                continue
+            pid = p.id
+            if pid not in enemy_player_ids:
+                continue
+            # Ghost may have moved; only count while still remembering this place.
+            if o.place is not None and o.place is not pl and o.place in live_presence:
+                continue
+            men = o.menace // 2
+            current_sum = place_enemy_menace.get(pl)
+            if current_sum is None:
+                place_enemy_menace[pl] = men
+                enemy_presence_places.append(pl)
+            else:
+                place_enemy_menace[pl] = current_sum + men

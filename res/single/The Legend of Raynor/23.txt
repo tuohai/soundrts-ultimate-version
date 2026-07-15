@@ -57,4 +57,4 @@ trigger players (find g7 war_supplies) (do (cut_scene 7573) (remove_ground_item 
 
 trigger all (no_unit_left) (defeat)
 
-trigger player2 (key_unit_killed raynor6) (defeat)
+trigger players (key_unit_killed raynor) (defeat)

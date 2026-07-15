@@ -4,6 +4,26 @@ Note di rilascio
 .. contents::
 
 
+1.4.5.3
+--------
+
+**Correzione: soldati del computer intermedio bloccati su auto_explore (attacchi molto ritardati o instabili)**
+
+- **Sintomo**: Su mappe melee piccole (es. ``jl1``), invitando un computer intermedio con umano idle, il primo attacco era molto instabile (~6 min a volte, 16–22 min altre). In 1.3.8.1 il computer aggressivo attaccava in modo stabile verso i 7–9 minuti nello stesso scenario.
+- **Causa**: Dal 1.4, ``take_order`` protegge l’ordine imperativo in testa (``auto_explore`` è imperativo): un ``go`` normale viene solo messo in coda e non può sostituire l’esplorazione. ``_send_explorer`` richiamava ancora il vecchio esploratore con ``go``, falliva e assegnava nuovi esploratori finché quasi tutti i soldati erano in ``auto_explore``, quindi ``constant_attacks`` non aveva combattenti idle.
+- **Correzione**: ``_send_explorer`` emette ``stop`` prima del richiamo e rimuove gli esploratori in eccesso, così di norma esplora una sola unità.
+- **Codice**: ``worldplayercomputer.py`` (``_send_explorer``).
+- **Verifica**: Confronto headless multi-seed vs 1.3.8.1; dopo la correzione, il primo danno dell’intermedio su jl1 è circa 5–7 minuti con span ~1,5 minuti.
+
+**Correzione: il salto per iniziale nel menu mappe saltava la prima voce e ritardava al cambio lettera**
+
+- **Sintomo**: In Giocatore singolo → Avvia una partita su (elenco mappe), una pressione di lettera finiva spesso sulla seconda corrispondenza (es. ``m`` → ``m2`` invece di ``m1``, ``p`` → ``pm2`` invece di ``pm1``); premendo un’altra lettera c’era una pausa di circa 0,7–1 secondo prima del salto.
+- **Causa**: L’annuncio del titolo con ``keep_key`` rimetteva in coda tutti i ``KEYDOWN`` di auto-ripetizione, quindi una pressione fisica veniva gestita due volte; ricordare l’ultima mappa inseriva un duplicato in cima all’elenco, che vinceva se condivideva la lettera. ``_first_letter`` chiamava ``translate_sound_number`` → ``_global_lookup_text`` sui nomi file mappa, costando ~1 secondo su una lista di centinaia di voci.
+- **Correzione**: Conservare solo il primo ``KEYDOWN`` all’interruzione della voce e cancellare le ripetizioni dopo il salto per lettera; con selezione fresca, cercare la prima corrispondenza dall’inizio dell’elenco; ricordare con ``default_choice_index`` invece di un duplicato; prendere il primo carattere del nome mappa e cercare gli id TTS numerici solo nel layer locale.
+- **Codice**: ``clientmenu.py``, ``lib/voice.py``.
+- **Test**: ``test_menu_first_letter_jump.py``.
+
+
 1.4.5.2
 --------
 

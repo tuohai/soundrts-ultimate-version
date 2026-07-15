@@ -62,4 +62,4 @@ trigger players (has_item magic_ring) (objective_complete 3)
 
 trigger all (no_unit_left) (defeat)
 
-trigger players (key_unit_killed raynor5) (defeat)
+trigger players (key_unit_killed raynor) (defeat)

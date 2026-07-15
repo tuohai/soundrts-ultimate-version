@@ -1492,6 +1492,19 @@ static const char *__pyx_f[] = {
 /* #### Code section: type_declarations ### */
 
 /*--- Type declarations ---*/
+struct __pyx_opt_args_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_interval;
+
+/* "soundrts/worldunit/world_ai_decision_fast.pyx":28
+ * 
+ * 
+ * cpdef int compute_decide_interval(int ai_mode_id, int speed,             # <<<<<<<<<<<<<<
+ *                                   bint has_attacker, bint has_orders,
+ *                                   bint truly_idle=False):
+ */
+struct __pyx_opt_args_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_interval {
+  int __pyx_n;
+  int truly_idle;
+};
 /* #### Code section: utility_code_proto ### */
 
 /* --- Runtime support code (head) --- */
@@ -2036,7 +2049,7 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 /* Module declarations from "cython" */
 
 /* Module declarations from "soundrts.worldunit.world_ai_decision_fast" */
-static int __pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_interval(int, int, int, int, int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_interval(int, int, int, int, int __pyx_skip_dispatch, struct __pyx_opt_args_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_interval *__pyx_optional_args); /*proto*/
 static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squares_in_sight(PyObject *, int, int __pyx_skip_dispatch); /*proto*/
 /* #### Code section: typeinfo ### */
 /* #### Code section: before_global_var ### */
@@ -2047,7 +2060,7 @@ int __pyx_module_is_main_soundrts__worldunit__world_ai_decision_fast = 0;
 /* Implementation of "soundrts.worldunit.world_ai_decision_fast" */
 /* #### Code section: global_var ### */
 /* #### Code section: string_decls ### */
-static const char __pyx_k__5[] = "?";
+static const char __pyx_k__6[] = "?";
 static const char __pyx_k_main[] = "__main__";
 static const char __pyx_k_name[] = "__name__";
 static const char __pyx_k_test[] = "__test__";
@@ -2055,6 +2068,7 @@ static const char __pyx_k_speed[] = "speed";
 static const char __pyx_k_neighbors[] = "neighbors";
 static const char __pyx_k_ai_mode_id[] = "ai_mode_id";
 static const char __pyx_k_has_orders[] = "has_orders";
+static const char __pyx_k_truly_idle[] = "truly_idle";
 static const char __pyx_k_sight_range[] = "sight_range";
 static const char __pyx_k_start_place[] = "start_place";
 static const char __pyx_k_has_attacker[] = "has_attacker";
@@ -2072,7 +2086,7 @@ static const char __pyx_k_Cython_AI_D_Phase_1_world_ai_dec[] = "Cython \345\212\
 static const char __pyx_k_soundrts_worldunit_world_ai_deci[] = "soundrts\\worldunit\\world_ai_decision_fast.pyx";
 static const char __pyx_k_soundrts_worldunit_world_ai_deci_2[] = "soundrts.worldunit.world_ai_decision_fast";
 /* #### Code section: decls ### */
-static PyObject *__pyx_pf_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_interval(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_ai_mode_id, int __pyx_v_speed, int __pyx_v_has_attacker, int __pyx_v_has_orders); /* proto */
+static PyObject *__pyx_pf_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_interval(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_ai_mode_id, int __pyx_v_speed, int __pyx_v_has_attacker, int __pyx_v_has_orders, int __pyx_v_truly_idle); /* proto */
 static PyObject *__pyx_pf_8soundrts_9worldunit_22world_ai_decision_fast_2bfs_squares_in_sight(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_start_place, int __pyx_v_sight_range); /* proto */
 /* #### Code section: late_includes ### */
 /* #### Code section: module_state ### */
@@ -2110,7 +2124,7 @@ typedef struct {
   PyObject *__pyx_n_s_AI_MODE_GUARD;
   PyObject *__pyx_n_s_AI_MODE_OFFENSIVE;
   PyObject *__pyx_n_s_AI_MODE_OTHER;
-  PyObject *__pyx_n_s__5;
+  PyObject *__pyx_n_s__6;
   PyObject *__pyx_n_s_ai_mode_id;
   PyObject *__pyx_n_s_asyncio_coroutines;
   PyObject *__pyx_n_s_bfs_squares_in_sight;
@@ -2128,6 +2142,7 @@ typedef struct {
   PyObject *__pyx_n_s_speed;
   PyObject *__pyx_n_s_start_place;
   PyObject *__pyx_n_s_test;
+  PyObject *__pyx_n_s_truly_idle;
   PyObject *__pyx_int_0;
   PyObject *__pyx_int_1;
   PyObject *__pyx_int_2;
@@ -2135,8 +2150,9 @@ typedef struct {
   PyObject *__pyx_int_4;
   PyObject *__pyx_tuple_;
   PyObject *__pyx_tuple__3;
+  PyObject *__pyx_tuple__4;
   PyObject *__pyx_codeobj__2;
-  PyObject *__pyx_codeobj__4;
+  PyObject *__pyx_codeobj__5;
 } __pyx_mstate;
 
 #if CYTHON_USE_MODULE_STATE
@@ -2184,7 +2200,7 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_AI_MODE_GUARD);
   Py_CLEAR(clear_module_state->__pyx_n_s_AI_MODE_OFFENSIVE);
   Py_CLEAR(clear_module_state->__pyx_n_s_AI_MODE_OTHER);
-  Py_CLEAR(clear_module_state->__pyx_n_s__5);
+  Py_CLEAR(clear_module_state->__pyx_n_s__6);
   Py_CLEAR(clear_module_state->__pyx_n_s_ai_mode_id);
   Py_CLEAR(clear_module_state->__pyx_n_s_asyncio_coroutines);
   Py_CLEAR(clear_module_state->__pyx_n_s_bfs_squares_in_sight);
@@ -2202,6 +2218,7 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_speed);
   Py_CLEAR(clear_module_state->__pyx_n_s_start_place);
   Py_CLEAR(clear_module_state->__pyx_n_s_test);
+  Py_CLEAR(clear_module_state->__pyx_n_s_truly_idle);
   Py_CLEAR(clear_module_state->__pyx_int_0);
   Py_CLEAR(clear_module_state->__pyx_int_1);
   Py_CLEAR(clear_module_state->__pyx_int_2);
@@ -2209,8 +2226,9 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_int_4);
   Py_CLEAR(clear_module_state->__pyx_tuple_);
   Py_CLEAR(clear_module_state->__pyx_tuple__3);
+  Py_CLEAR(clear_module_state->__pyx_tuple__4);
   Py_CLEAR(clear_module_state->__pyx_codeobj__2);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__4);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__5);
   return 0;
 }
 #endif
@@ -2236,7 +2254,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_AI_MODE_GUARD);
   Py_VISIT(traverse_module_state->__pyx_n_s_AI_MODE_OFFENSIVE);
   Py_VISIT(traverse_module_state->__pyx_n_s_AI_MODE_OTHER);
-  Py_VISIT(traverse_module_state->__pyx_n_s__5);
+  Py_VISIT(traverse_module_state->__pyx_n_s__6);
   Py_VISIT(traverse_module_state->__pyx_n_s_ai_mode_id);
   Py_VISIT(traverse_module_state->__pyx_n_s_asyncio_coroutines);
   Py_VISIT(traverse_module_state->__pyx_n_s_bfs_squares_in_sight);
@@ -2254,6 +2272,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_speed);
   Py_VISIT(traverse_module_state->__pyx_n_s_start_place);
   Py_VISIT(traverse_module_state->__pyx_n_s_test);
+  Py_VISIT(traverse_module_state->__pyx_n_s_truly_idle);
   Py_VISIT(traverse_module_state->__pyx_int_0);
   Py_VISIT(traverse_module_state->__pyx_int_1);
   Py_VISIT(traverse_module_state->__pyx_int_2);
@@ -2261,8 +2280,9 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_int_4);
   Py_VISIT(traverse_module_state->__pyx_tuple_);
   Py_VISIT(traverse_module_state->__pyx_tuple__3);
+  Py_VISIT(traverse_module_state->__pyx_tuple__4);
   Py_VISIT(traverse_module_state->__pyx_codeobj__2);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__4);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__5);
   return 0;
 }
 #endif
@@ -2300,7 +2320,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_AI_MODE_GUARD __pyx_mstate_global->__pyx_n_s_AI_MODE_GUARD
 #define __pyx_n_s_AI_MODE_OFFENSIVE __pyx_mstate_global->__pyx_n_s_AI_MODE_OFFENSIVE
 #define __pyx_n_s_AI_MODE_OTHER __pyx_mstate_global->__pyx_n_s_AI_MODE_OTHER
-#define __pyx_n_s__5 __pyx_mstate_global->__pyx_n_s__5
+#define __pyx_n_s__6 __pyx_mstate_global->__pyx_n_s__6
 #define __pyx_n_s_ai_mode_id __pyx_mstate_global->__pyx_n_s_ai_mode_id
 #define __pyx_n_s_asyncio_coroutines __pyx_mstate_global->__pyx_n_s_asyncio_coroutines
 #define __pyx_n_s_bfs_squares_in_sight __pyx_mstate_global->__pyx_n_s_bfs_squares_in_sight
@@ -2318,6 +2338,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_speed __pyx_mstate_global->__pyx_n_s_speed
 #define __pyx_n_s_start_place __pyx_mstate_global->__pyx_n_s_start_place
 #define __pyx_n_s_test __pyx_mstate_global->__pyx_n_s_test
+#define __pyx_n_s_truly_idle __pyx_mstate_global->__pyx_n_s_truly_idle
 #define __pyx_int_0 __pyx_mstate_global->__pyx_int_0
 #define __pyx_int_1 __pyx_mstate_global->__pyx_int_1
 #define __pyx_int_2 __pyx_mstate_global->__pyx_int_2
@@ -2325,16 +2346,17 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_int_4 __pyx_mstate_global->__pyx_int_4
 #define __pyx_tuple_ __pyx_mstate_global->__pyx_tuple_
 #define __pyx_tuple__3 __pyx_mstate_global->__pyx_tuple__3
+#define __pyx_tuple__4 __pyx_mstate_global->__pyx_tuple__4
 #define __pyx_codeobj__2 __pyx_mstate_global->__pyx_codeobj__2
-#define __pyx_codeobj__4 __pyx_mstate_global->__pyx_codeobj__4
+#define __pyx_codeobj__5 __pyx_mstate_global->__pyx_codeobj__5
 /* #### Code section: module_code ### */
 
 /* "soundrts/worldunit/world_ai_decision_fast.pyx":28
  * 
  * 
  * cpdef int compute_decide_interval(int ai_mode_id, int speed,             # <<<<<<<<<<<<<<
- *                                   bint has_attacker, bint has_orders):
- *     """ ai_mode / speed /  /  decide  ().
+ *                                   bint has_attacker, bint has_orders,
+ *                                   bint truly_idle=False):
  */
 
 static PyObject *__pyx_pw_8soundrts_9worldunit_22world_ai_decision_fast_1compute_decide_interval(PyObject *__pyx_self, 
@@ -2344,7 +2366,16 @@ PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static int __pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_interval(int __pyx_v_ai_mode_id, int __pyx_v_speed, int __pyx_v_has_attacker, int __pyx_v_has_orders, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static int __pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_interval(int __pyx_v_ai_mode_id, int __pyx_v_speed, int __pyx_v_has_attacker, int __pyx_v_has_orders, CYTHON_UNUSED int __pyx_skip_dispatch, struct __pyx_opt_args_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_interval *__pyx_optional_args) {
+
+  /* "soundrts/worldunit/world_ai_decision_fast.pyx":30
+ * cpdef int compute_decide_interval(int ai_mode_id, int speed,
+ *                                   bint has_attacker, bint has_orders,
+ *                                   bint truly_idle=False):             # <<<<<<<<<<<<<<
+ *     """ ai_mode / speed /  /  decide  ().
+ * 
+ */
+  int __pyx_v_truly_idle = ((int)0);
   int __pyx_v_interval;
   int __pyx_r;
   __Pyx_RefNannyDeclarations
@@ -2357,6 +2388,11 @@ static int __pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("compute_decide_interval", 1);
+  if (__pyx_optional_args) {
+    if (__pyx_optional_args->__pyx_n > 0) {
+      __pyx_v_truly_idle = __pyx_optional_args->truly_idle;
+    }
+  }
 
   /* "soundrts/worldunit/world_ai_decision_fast.pyx":36
  *     """
@@ -2557,7 +2593,7 @@ static int __pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_
  *         interval -= 70
  *         if interval < 80:             # <<<<<<<<<<<<<<
  *             interval = 80
- * 
+ *     elif truly_idle:
  */
     __pyx_t_1 = (__pyx_v_interval < 80);
     if (__pyx_t_1) {
@@ -2566,8 +2602,8 @@ static int __pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_
  *         interval -= 70
  *         if interval < 80:
  *             interval = 80             # <<<<<<<<<<<<<<
- * 
- *     return interval
+ *     elif truly_idle:
+ *         # No orders / attacker / auto_explore: engagement still driven by
  */
       __pyx_v_interval = 80;
 
@@ -2576,7 +2612,7 @@ static int __pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_
  *         interval -= 70
  *         if interval < 80:             # <<<<<<<<<<<<<<
  *             interval = 80
- * 
+ *     elif truly_idle:
  */
     }
 
@@ -2587,10 +2623,58 @@ static int __pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_
  *         # max(80, interval - 70)
  *         interval -= 70
  */
+    goto __pyx_L9;
   }
 
-  /* "soundrts/worldunit/world_ai_decision_fast.pyx":57
+  /* "soundrts/worldunit/world_ai_decision_fast.pyx":56
+ *         if interval < 80:
  *             interval = 80
+ *     elif truly_idle:             # <<<<<<<<<<<<<<
+ *         # No orders / attacker / auto_explore: engagement still driven by
+ *         # contact_force perception + next decide; 600ms keeps same-square
+ */
+  if (__pyx_v_truly_idle) {
+
+    /* "soundrts/worldunit/world_ai_decision_fast.pyx":60
+ *         # contact_force perception + next decide; 600ms keeps same-square
+ *         # response within~1 tick of contact under normal load.
+ *         if interval < 600:             # <<<<<<<<<<<<<<
+ *             interval = 600
+ * 
+ */
+    __pyx_t_1 = (__pyx_v_interval < 0x258);
+    if (__pyx_t_1) {
+
+      /* "soundrts/worldunit/world_ai_decision_fast.pyx":61
+ *         # response within~1 tick of contact under normal load.
+ *         if interval < 600:
+ *             interval = 600             # <<<<<<<<<<<<<<
+ * 
+ *     return interval
+ */
+      __pyx_v_interval = 0x258;
+
+      /* "soundrts/worldunit/world_ai_decision_fast.pyx":60
+ *         # contact_force perception + next decide; 600ms keeps same-square
+ *         # response within~1 tick of contact under normal load.
+ *         if interval < 600:             # <<<<<<<<<<<<<<
+ *             interval = 600
+ * 
+ */
+    }
+
+    /* "soundrts/worldunit/world_ai_decision_fast.pyx":56
+ *         if interval < 80:
+ *             interval = 80
+ *     elif truly_idle:             # <<<<<<<<<<<<<<
+ *         # No orders / attacker / auto_explore: engagement still driven by
+ *         # contact_force perception + next decide; 600ms keeps same-square
+ */
+  }
+  __pyx_L9:;
+
+  /* "soundrts/worldunit/world_ai_decision_fast.pyx":63
+ *             interval = 600
  * 
  *     return interval             # <<<<<<<<<<<<<<
  * 
@@ -2603,8 +2687,8 @@ static int __pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_
  * 
  * 
  * cpdef int compute_decide_interval(int ai_mode_id, int speed,             # <<<<<<<<<<<<<<
- *                                   bint has_attacker, bint has_orders):
- *     """ ai_mode / speed /  /  decide  ().
+ *                                   bint has_attacker, bint has_orders,
+ *                                   bint truly_idle=False):
  */
 
   /* function exit code */
@@ -2627,7 +2711,7 @@ PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-PyDoc_STRVAR(__pyx_doc_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_interval, "compute_decide_interval(int ai_mode_id, int speed, bool has_attacker, bool has_orders) -> int\n\346\240\271\346\215\256 ai_mode / speed / \346\224\273\345\207\273\347\212\266\346\200\201 / \345\221\275\344\273\244\347\212\266\346\200\201\350\277\224\345\233\236 decide \351\227\264\351\232\224 (\346\257\253\347\247\222).\n\n    \344\270\216 ``world_ai_decision.decide`` line 22-48 \350\241\214\344\270\272\345\256\214\345\205\250\347\255\211\344\273\267.\n    \345\205\250\351\203\250\350\265\260 C-level int \346\257\224\350\276\203, \346\257\224\345\216\237 Python \347\211\210\347\232\204 str \346\257\224\350\276\203 + \345\210\206\346\224\257\345\277\253 ~10x.\n    ");
+PyDoc_STRVAR(__pyx_doc_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_interval, "compute_decide_interval(int ai_mode_id, int speed, bool has_attacker, bool has_orders, bool truly_idle=False) -> int\n\346\240\271\346\215\256 ai_mode / speed / \346\224\273\345\207\273\347\212\266\346\200\201 / \345\221\275\344\273\244\347\212\266\346\200\201\350\277\224\345\233\236 decide \351\227\264\351\232\224 (\346\257\253\347\247\222).\n\n    ``truly_idle``: \346\227\240\350\256\242\345\215\225\343\200\201\346\227\240\346\224\273\345\207\273\350\200\205\343\200\201\351\235\236 auto_explore \342\200\224 \345\206\215\346\213\211\345\274\200\351\227\264\351\232\224\344\273\245\345\260\221\350\277\233 decide \344\270\273\344\275\223\343\200\202\n    ");
 static PyMethodDef __pyx_mdef_8soundrts_9worldunit_22world_ai_decision_fast_1compute_decide_interval = {"compute_decide_interval", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8soundrts_9worldunit_22world_ai_decision_fast_1compute_decide_interval, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_interval};
 static PyObject *__pyx_pw_8soundrts_9worldunit_22world_ai_decision_fast_1compute_decide_interval(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
@@ -2640,11 +2724,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   int __pyx_v_speed;
   int __pyx_v_has_attacker;
   int __pyx_v_has_orders;
+  int __pyx_v_truly_idle;
   #if !CYTHON_METH_FASTCALL
   CYTHON_UNUSED Py_ssize_t __pyx_nargs;
   #endif
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
-  PyObject* values[4] = {0,0,0,0};
+  PyObject* values[5] = {0,0,0,0,0};
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -2660,10 +2745,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   #endif
   __pyx_kwvalues = __Pyx_KwValues_FASTCALL(__pyx_args, __pyx_nargs);
   {
-    PyObject **__pyx_pyargnames[] = {&__pyx_n_s_ai_mode_id,&__pyx_n_s_speed,&__pyx_n_s_has_attacker,&__pyx_n_s_has_orders,0};
+    PyObject **__pyx_pyargnames[] = {&__pyx_n_s_ai_mode_id,&__pyx_n_s_speed,&__pyx_n_s_has_attacker,&__pyx_n_s_has_orders,&__pyx_n_s_truly_idle,0};
     if (__pyx_kwds) {
       Py_ssize_t kw_args;
       switch (__pyx_nargs) {
+        case  5: values[4] = __Pyx_Arg_FASTCALL(__pyx_args, 4);
+        CYTHON_FALLTHROUGH;
         case  4: values[3] = __Pyx_Arg_FASTCALL(__pyx_args, 3);
         CYTHON_FALLTHROUGH;
         case  3: values[2] = __Pyx_Arg_FASTCALL(__pyx_args, 2);
@@ -2692,7 +2779,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
         }
         else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 28, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_decide_interval", 1, 4, 4, 1); __PYX_ERR(0, 28, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_decide_interval", 0, 4, 5, 1); __PYX_ERR(0, 28, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
@@ -2702,7 +2789,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
         }
         else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 28, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_decide_interval", 1, 4, 4, 2); __PYX_ERR(0, 28, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_decide_interval", 0, 4, 5, 2); __PYX_ERR(0, 28, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
@@ -2712,29 +2799,53 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
         }
         else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 28, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("compute_decide_interval", 1, 4, 4, 3); __PYX_ERR(0, 28, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compute_decide_interval", 0, 4, 5, 3); __PYX_ERR(0, 28, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  4:
+        if (kw_args > 0) {
+          PyObject* value = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_truly_idle);
+          if (value) { values[4] = __Pyx_Arg_NewRef_FASTCALL(value); kw_args--; }
+          else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 28, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
         if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "compute_decide_interval") < 0)) __PYX_ERR(0, 28, __pyx_L3_error)
       }
-    } else if (unlikely(__pyx_nargs != 4)) {
-      goto __pyx_L5_argtuple_error;
     } else {
-      values[0] = __Pyx_Arg_FASTCALL(__pyx_args, 0);
-      values[1] = __Pyx_Arg_FASTCALL(__pyx_args, 1);
-      values[2] = __Pyx_Arg_FASTCALL(__pyx_args, 2);
-      values[3] = __Pyx_Arg_FASTCALL(__pyx_args, 3);
+      switch (__pyx_nargs) {
+        case  5: values[4] = __Pyx_Arg_FASTCALL(__pyx_args, 4);
+        CYTHON_FALLTHROUGH;
+        case  4: values[3] = __Pyx_Arg_FASTCALL(__pyx_args, 3);
+        values[2] = __Pyx_Arg_FASTCALL(__pyx_args, 2);
+        values[1] = __Pyx_Arg_FASTCALL(__pyx_args, 1);
+        values[0] = __Pyx_Arg_FASTCALL(__pyx_args, 0);
+        break;
+        default: goto __pyx_L5_argtuple_error;
+      }
     }
     __pyx_v_ai_mode_id = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_ai_mode_id == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 28, __pyx_L3_error)
     __pyx_v_speed = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_speed == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 28, __pyx_L3_error)
     __pyx_v_has_attacker = __Pyx_PyObject_IsTrue(values[2]); if (unlikely((__pyx_v_has_attacker == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 29, __pyx_L3_error)
     __pyx_v_has_orders = __Pyx_PyObject_IsTrue(values[3]); if (unlikely((__pyx_v_has_orders == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 29, __pyx_L3_error)
+    if (values[4]) {
+      __pyx_v_truly_idle = __Pyx_PyObject_IsTrue(values[4]); if (unlikely((__pyx_v_truly_idle == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 30, __pyx_L3_error)
+    } else {
+
+      /* "soundrts/worldunit/world_ai_decision_fast.pyx":30
+ * cpdef int compute_decide_interval(int ai_mode_id, int speed,
+ *                                   bint has_attacker, bint has_orders,
+ *                                   bint truly_idle=False):             # <<<<<<<<<<<<<<
+ *     """ ai_mode / speed /  /  decide  ().
+ * 
+ */
+      __pyx_v_truly_idle = ((int)0);
+    }
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("compute_decide_interval", 1, 4, 4, __pyx_nargs); __PYX_ERR(0, 28, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("compute_decide_interval", 0, 4, 5, __pyx_nargs); __PYX_ERR(0, 28, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -2748,7 +2859,15 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_interval(__pyx_self, __pyx_v_ai_mode_id, __pyx_v_speed, __pyx_v_has_attacker, __pyx_v_has_orders);
+  __pyx_r = __pyx_pf_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_interval(__pyx_self, __pyx_v_ai_mode_id, __pyx_v_speed, __pyx_v_has_attacker, __pyx_v_has_orders, __pyx_v_truly_idle);
+
+  /* "soundrts/worldunit/world_ai_decision_fast.pyx":28
+ * 
+ * 
+ * cpdef int compute_decide_interval(int ai_mode_id, int speed,             # <<<<<<<<<<<<<<
+ *                                   bint has_attacker, bint has_orders,
+ *                                   bint truly_idle=False):
+ */
 
   /* function exit code */
   {
@@ -2761,26 +2880,29 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_interval(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_ai_mode_id, int __pyx_v_speed, int __pyx_v_has_attacker, int __pyx_v_has_orders) {
+static PyObject *__pyx_pf_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_interval(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_ai_mode_id, int __pyx_v_speed, int __pyx_v_has_attacker, int __pyx_v_has_orders, int __pyx_v_truly_idle) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
-  PyObject *__pyx_t_2 = NULL;
+  struct __pyx_opt_args_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_interval __pyx_t_2;
+  PyObject *__pyx_t_3 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("compute_decide_interval", 1);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_interval(__pyx_v_ai_mode_id, __pyx_v_speed, __pyx_v_has_attacker, __pyx_v_has_orders, 0); if (unlikely(__pyx_t_1 == ((int)-1) && PyErr_Occurred())) __PYX_ERR(0, 28, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 28, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_r = __pyx_t_2;
-  __pyx_t_2 = 0;
+  __pyx_t_2.__pyx_n = 1;
+  __pyx_t_2.truly_idle = __pyx_v_truly_idle;
+  __pyx_t_1 = __pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_compute_decide_interval(__pyx_v_ai_mode_id, __pyx_v_speed, __pyx_v_has_attacker, __pyx_v_has_orders, 0, &__pyx_t_2); if (unlikely(__pyx_t_1 == ((int)-1) && PyErr_Occurred())) __PYX_ERR(0, 28, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 28, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_r = __pyx_t_3;
+  __pyx_t_3 = 0;
   goto __pyx_L0;
 
   /* function exit code */
   __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
   __Pyx_AddTraceback("soundrts.worldunit.world_ai_decision_fast.compute_decide_interval", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
@@ -2789,7 +2911,7 @@ static PyObject *__pyx_pf_8soundrts_9worldunit_22world_ai_decision_fast_compute_
   return __pyx_r;
 }
 
-/* "soundrts/worldunit/world_ai_decision_fast.pyx":60
+/* "soundrts/worldunit/world_ai_decision_fast.pyx":66
  * 
  * 
  * cpdef set bfs_squares_in_sight(object start_place, int sight_range):             # <<<<<<<<<<<<<<
@@ -2831,20 +2953,20 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("bfs_squares_in_sight", 1);
 
-  /* "soundrts/worldunit/world_ai_decision_fast.pyx":69
+  /* "soundrts/worldunit/world_ai_decision_fast.pyx":75
  *      ``world_ai_decision.py:_get_squares_in_sight`` .
  *     """
  *     cdef set squares = {start_place}             # <<<<<<<<<<<<<<
  * 
  *     if sight_range <= 1:
  */
-  __pyx_t_1 = PySet_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 69, __pyx_L1_error)
+  __pyx_t_1 = PySet_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 75, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PySet_Add(__pyx_t_1, __pyx_v_start_place) < 0) __PYX_ERR(0, 69, __pyx_L1_error)
+  if (PySet_Add(__pyx_t_1, __pyx_v_start_place) < 0) __PYX_ERR(0, 75, __pyx_L1_error)
   __pyx_v_squares = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "soundrts/worldunit/world_ai_decision_fast.pyx":71
+  /* "soundrts/worldunit/world_ai_decision_fast.pyx":77
  *     cdef set squares = {start_place}
  * 
  *     if sight_range <= 1:             # <<<<<<<<<<<<<<
@@ -2854,7 +2976,7 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
   __pyx_t_2 = (__pyx_v_sight_range <= 1);
   if (__pyx_t_2) {
 
-    /* "soundrts/worldunit/world_ai_decision_fast.pyx":72
+    /* "soundrts/worldunit/world_ai_decision_fast.pyx":78
  * 
  *     if sight_range <= 1:
  *         return squares             # <<<<<<<<<<<<<<
@@ -2866,7 +2988,7 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
     __pyx_r = __pyx_v_squares;
     goto __pyx_L0;
 
-    /* "soundrts/worldunit/world_ai_decision_fast.pyx":71
+    /* "soundrts/worldunit/world_ai_decision_fast.pyx":77
  *     cdef set squares = {start_place}
  * 
  *     if sight_range <= 1:             # <<<<<<<<<<<<<<
@@ -2875,7 +2997,7 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
  */
   }
 
-  /* "soundrts/worldunit/world_ai_decision_fast.pyx":75
+  /* "soundrts/worldunit/world_ai_decision_fast.pyx":81
  * 
  *     # sight_range == 2:
  *     if sight_range <= 2:             # <<<<<<<<<<<<<<
@@ -2885,23 +3007,23 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
   __pyx_t_2 = (__pyx_v_sight_range <= 2);
   if (__pyx_t_2) {
 
-    /* "soundrts/worldunit/world_ai_decision_fast.pyx":76
+    /* "soundrts/worldunit/world_ai_decision_fast.pyx":82
  *     # sight_range == 2:
  *     if sight_range <= 2:
  *         for p in start_place.neighbors:             # <<<<<<<<<<<<<<
  *             squares.add(p)
  *         return squares
  */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_start_place, __pyx_n_s_neighbors); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 76, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_start_place, __pyx_n_s_neighbors); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 82, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (likely(PyList_CheckExact(__pyx_t_1)) || PyTuple_CheckExact(__pyx_t_1)) {
       __pyx_t_3 = __pyx_t_1; __Pyx_INCREF(__pyx_t_3);
       __pyx_t_4 = 0;
       __pyx_t_5 = NULL;
     } else {
-      __pyx_t_4 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 76, __pyx_L1_error)
+      __pyx_t_4 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 82, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_5 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 76, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 82, __pyx_L1_error)
     }
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     for (;;) {
@@ -2910,28 +3032,28 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
           {
             Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_3);
             #if !CYTHON_ASSUME_SAFE_MACROS
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 76, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 82, __pyx_L1_error)
             #endif
             if (__pyx_t_4 >= __pyx_temp) break;
           }
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_1 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_4); __Pyx_INCREF(__pyx_t_1); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 76, __pyx_L1_error)
+          __pyx_t_1 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_4); __Pyx_INCREF(__pyx_t_1); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 82, __pyx_L1_error)
           #else
-          __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_3, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 76, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_3, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 82, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
           #endif
         } else {
           {
             Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_3);
             #if !CYTHON_ASSUME_SAFE_MACROS
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 76, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 82, __pyx_L1_error)
             #endif
             if (__pyx_t_4 >= __pyx_temp) break;
           }
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_4); __Pyx_INCREF(__pyx_t_1); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 76, __pyx_L1_error)
+          __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_4); __Pyx_INCREF(__pyx_t_1); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 82, __pyx_L1_error)
           #else
-          __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_3, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 76, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_3, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 82, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
           #endif
         }
@@ -2941,7 +3063,7 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 76, __pyx_L1_error)
+            else __PYX_ERR(0, 82, __pyx_L1_error)
           }
           break;
         }
@@ -2950,16 +3072,16 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
       __Pyx_XDECREF_SET(__pyx_v_p, __pyx_t_1);
       __pyx_t_1 = 0;
 
-      /* "soundrts/worldunit/world_ai_decision_fast.pyx":77
+      /* "soundrts/worldunit/world_ai_decision_fast.pyx":83
  *     if sight_range <= 2:
  *         for p in start_place.neighbors:
  *             squares.add(p)             # <<<<<<<<<<<<<<
  *         return squares
  * 
  */
-      __pyx_t_6 = PySet_Add(__pyx_v_squares, __pyx_v_p); if (unlikely(__pyx_t_6 == ((int)-1))) __PYX_ERR(0, 77, __pyx_L1_error)
+      __pyx_t_6 = PySet_Add(__pyx_v_squares, __pyx_v_p); if (unlikely(__pyx_t_6 == ((int)-1))) __PYX_ERR(0, 83, __pyx_L1_error)
 
-      /* "soundrts/worldunit/world_ai_decision_fast.pyx":76
+      /* "soundrts/worldunit/world_ai_decision_fast.pyx":82
  *     # sight_range == 2:
  *     if sight_range <= 2:
  *         for p in start_place.neighbors:             # <<<<<<<<<<<<<<
@@ -2969,7 +3091,7 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
     }
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-    /* "soundrts/worldunit/world_ai_decision_fast.pyx":78
+    /* "soundrts/worldunit/world_ai_decision_fast.pyx":84
  *         for p in start_place.neighbors:
  *             squares.add(p)
  *         return squares             # <<<<<<<<<<<<<<
@@ -2981,7 +3103,7 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
     __pyx_r = __pyx_v_squares;
     goto __pyx_L0;
 
-    /* "soundrts/worldunit/world_ai_decision_fast.pyx":75
+    /* "soundrts/worldunit/world_ai_decision_fast.pyx":81
  * 
  *     # sight_range == 2:
  *     if sight_range <= 2:             # <<<<<<<<<<<<<<
@@ -2990,43 +3112,43 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
  */
   }
 
-  /* "soundrts/worldunit/world_ai_decision_fast.pyx":81
+  /* "soundrts/worldunit/world_ai_decision_fast.pyx":87
  * 
  *     # sight_range > 2:  BFS
  *     cdef set visited = {start_place}             # <<<<<<<<<<<<<<
  *     cdef list queue = [(start_place, 0)]
  *     cdef int distance
  */
-  __pyx_t_3 = PySet_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 81, __pyx_L1_error)
+  __pyx_t_3 = PySet_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 87, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PySet_Add(__pyx_t_3, __pyx_v_start_place) < 0) __PYX_ERR(0, 81, __pyx_L1_error)
+  if (PySet_Add(__pyx_t_3, __pyx_v_start_place) < 0) __PYX_ERR(0, 87, __pyx_L1_error)
   __pyx_v_visited = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "soundrts/worldunit/world_ai_decision_fast.pyx":82
+  /* "soundrts/worldunit/world_ai_decision_fast.pyx":88
  *     # sight_range > 2:  BFS
  *     cdef set visited = {start_place}
  *     cdef list queue = [(start_place, 0)]             # <<<<<<<<<<<<<<
  *     cdef int distance
  *     cdef int qi = 0
  */
-  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 82, __pyx_L1_error)
+  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 88, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_INCREF(__pyx_v_start_place);
   __Pyx_GIVEREF(__pyx_v_start_place);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_v_start_place)) __PYX_ERR(0, 82, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_v_start_place)) __PYX_ERR(0, 88, __pyx_L1_error);
   __Pyx_INCREF(__pyx_int_0);
   __Pyx_GIVEREF(__pyx_int_0);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_int_0)) __PYX_ERR(0, 82, __pyx_L1_error);
-  __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 82, __pyx_L1_error)
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_int_0)) __PYX_ERR(0, 88, __pyx_L1_error);
+  __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 88, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_3);
-  if (__Pyx_PyList_SET_ITEM(__pyx_t_1, 0, __pyx_t_3)) __PYX_ERR(0, 82, __pyx_L1_error);
+  if (__Pyx_PyList_SET_ITEM(__pyx_t_1, 0, __pyx_t_3)) __PYX_ERR(0, 88, __pyx_L1_error);
   __pyx_t_3 = 0;
   __pyx_v_queue = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "soundrts/worldunit/world_ai_decision_fast.pyx":84
+  /* "soundrts/worldunit/world_ai_decision_fast.pyx":90
  *     cdef list queue = [(start_place, 0)]
  *     cdef int distance
  *     cdef int qi = 0             # <<<<<<<<<<<<<<
@@ -3035,7 +3157,7 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
  */
   __pyx_v_qi = 0;
 
-  /* "soundrts/worldunit/world_ai_decision_fast.pyx":85
+  /* "soundrts/worldunit/world_ai_decision_fast.pyx":91
  *     cdef int distance
  *     cdef int qi = 0
  *     cdef int qlen = 1             # <<<<<<<<<<<<<<
@@ -3044,7 +3166,7 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
  */
   __pyx_v_qlen = 1;
 
-  /* "soundrts/worldunit/world_ai_decision_fast.pyx":88
+  /* "soundrts/worldunit/world_ai_decision_fast.pyx":94
  *     cdef object current_place, neighbor
  * 
  *     while qi < qlen:             # <<<<<<<<<<<<<<
@@ -3055,7 +3177,7 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
     __pyx_t_2 = (__pyx_v_qi < __pyx_v_qlen);
     if (!__pyx_t_2) break;
 
-    /* "soundrts/worldunit/world_ai_decision_fast.pyx":89
+    /* "soundrts/worldunit/world_ai_decision_fast.pyx":95
  * 
  *     while qi < qlen:
  *         current_place, distance = queue[qi]             # <<<<<<<<<<<<<<
@@ -3070,7 +3192,7 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
       if (unlikely(size != 2)) {
         if (size > 2) __Pyx_RaiseTooManyValuesError(2);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        __PYX_ERR(0, 89, __pyx_L1_error)
+        __PYX_ERR(0, 95, __pyx_L1_error)
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
       if (likely(PyTuple_CheckExact(sequence))) {
@@ -3083,15 +3205,15 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
       __Pyx_INCREF(__pyx_t_3);
       __Pyx_INCREF(__pyx_t_7);
       #else
-      __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 89, __pyx_L1_error)
+      __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 95, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_7 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 89, __pyx_L1_error)
+      __pyx_t_7 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 95, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       #endif
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     } else {
       Py_ssize_t index = -1;
-      __pyx_t_8 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 89, __pyx_L1_error)
+      __pyx_t_8 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 95, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __pyx_t_9 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_8);
@@ -3099,7 +3221,7 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
       __Pyx_GOTREF(__pyx_t_3);
       index = 1; __pyx_t_7 = __pyx_t_9(__pyx_t_8); if (unlikely(!__pyx_t_7)) goto __pyx_L10_unpacking_failed;
       __Pyx_GOTREF(__pyx_t_7);
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_9(__pyx_t_8), 2) < 0) __PYX_ERR(0, 89, __pyx_L1_error)
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_9(__pyx_t_8), 2) < 0) __PYX_ERR(0, 95, __pyx_L1_error)
       __pyx_t_9 = NULL;
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       goto __pyx_L11_unpacking_done;
@@ -3107,16 +3229,16 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __pyx_t_9 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      __PYX_ERR(0, 89, __pyx_L1_error)
+      __PYX_ERR(0, 95, __pyx_L1_error)
       __pyx_L11_unpacking_done:;
     }
-    __pyx_t_10 = __Pyx_PyInt_As_int(__pyx_t_7); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 89, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyInt_As_int(__pyx_t_7); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 95, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_XDECREF_SET(__pyx_v_current_place, __pyx_t_3);
     __pyx_t_3 = 0;
     __pyx_v_distance = __pyx_t_10;
 
-    /* "soundrts/worldunit/world_ai_decision_fast.pyx":90
+    /* "soundrts/worldunit/world_ai_decision_fast.pyx":96
  *     while qi < qlen:
  *         current_place, distance = queue[qi]
  *         qi += 1             # <<<<<<<<<<<<<<
@@ -3125,7 +3247,7 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
  */
     __pyx_v_qi = (__pyx_v_qi + 1);
 
-    /* "soundrts/worldunit/world_ai_decision_fast.pyx":92
+    /* "soundrts/worldunit/world_ai_decision_fast.pyx":98
  *         qi += 1
  * 
  *         if distance >= sight_range:             # <<<<<<<<<<<<<<
@@ -3135,7 +3257,7 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
     __pyx_t_2 = (__pyx_v_distance >= __pyx_v_sight_range);
     if (__pyx_t_2) {
 
-      /* "soundrts/worldunit/world_ai_decision_fast.pyx":93
+      /* "soundrts/worldunit/world_ai_decision_fast.pyx":99
  * 
  *         if distance >= sight_range:
  *             continue             # <<<<<<<<<<<<<<
@@ -3144,7 +3266,7 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
  */
       goto __pyx_L8_continue;
 
-      /* "soundrts/worldunit/world_ai_decision_fast.pyx":92
+      /* "soundrts/worldunit/world_ai_decision_fast.pyx":98
  *         qi += 1
  * 
  *         if distance >= sight_range:             # <<<<<<<<<<<<<<
@@ -3153,23 +3275,23 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
  */
     }
 
-    /* "soundrts/worldunit/world_ai_decision_fast.pyx":95
+    /* "soundrts/worldunit/world_ai_decision_fast.pyx":101
  *             continue
  * 
  *         for neighbor in current_place.neighbors:             # <<<<<<<<<<<<<<
  *             if neighbor not in visited:
  *                 visited.add(neighbor)
  */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_current_place, __pyx_n_s_neighbors); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 95, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_current_place, __pyx_n_s_neighbors); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 101, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (likely(PyList_CheckExact(__pyx_t_1)) || PyTuple_CheckExact(__pyx_t_1)) {
       __pyx_t_7 = __pyx_t_1; __Pyx_INCREF(__pyx_t_7);
       __pyx_t_4 = 0;
       __pyx_t_5 = NULL;
     } else {
-      __pyx_t_4 = -1; __pyx_t_7 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 95, __pyx_L1_error)
+      __pyx_t_4 = -1; __pyx_t_7 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 101, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_5 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_7); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 95, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_7); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 101, __pyx_L1_error)
     }
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     for (;;) {
@@ -3178,28 +3300,28 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
           {
             Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_7);
             #if !CYTHON_ASSUME_SAFE_MACROS
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 95, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 101, __pyx_L1_error)
             #endif
             if (__pyx_t_4 >= __pyx_temp) break;
           }
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_1 = PyList_GET_ITEM(__pyx_t_7, __pyx_t_4); __Pyx_INCREF(__pyx_t_1); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 95, __pyx_L1_error)
+          __pyx_t_1 = PyList_GET_ITEM(__pyx_t_7, __pyx_t_4); __Pyx_INCREF(__pyx_t_1); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 101, __pyx_L1_error)
           #else
-          __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_7, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 95, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_7, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 101, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
           #endif
         } else {
           {
             Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_7);
             #if !CYTHON_ASSUME_SAFE_MACROS
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 95, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 101, __pyx_L1_error)
             #endif
             if (__pyx_t_4 >= __pyx_temp) break;
           }
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_7, __pyx_t_4); __Pyx_INCREF(__pyx_t_1); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 95, __pyx_L1_error)
+          __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_7, __pyx_t_4); __Pyx_INCREF(__pyx_t_1); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 101, __pyx_L1_error)
           #else
-          __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_7, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 95, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_7, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 101, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
           #endif
         }
@@ -3209,7 +3331,7 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 95, __pyx_L1_error)
+            else __PYX_ERR(0, 101, __pyx_L1_error)
           }
           break;
         }
@@ -3218,55 +3340,55 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
       __Pyx_XDECREF_SET(__pyx_v_neighbor, __pyx_t_1);
       __pyx_t_1 = 0;
 
-      /* "soundrts/worldunit/world_ai_decision_fast.pyx":96
+      /* "soundrts/worldunit/world_ai_decision_fast.pyx":102
  * 
  *         for neighbor in current_place.neighbors:
  *             if neighbor not in visited:             # <<<<<<<<<<<<<<
  *                 visited.add(neighbor)
  *                 squares.add(neighbor)
  */
-      __pyx_t_2 = (__Pyx_PySet_ContainsTF(__pyx_v_neighbor, __pyx_v_visited, Py_NE)); if (unlikely((__pyx_t_2 < 0))) __PYX_ERR(0, 96, __pyx_L1_error)
+      __pyx_t_2 = (__Pyx_PySet_ContainsTF(__pyx_v_neighbor, __pyx_v_visited, Py_NE)); if (unlikely((__pyx_t_2 < 0))) __PYX_ERR(0, 102, __pyx_L1_error)
       if (__pyx_t_2) {
 
-        /* "soundrts/worldunit/world_ai_decision_fast.pyx":97
+        /* "soundrts/worldunit/world_ai_decision_fast.pyx":103
  *         for neighbor in current_place.neighbors:
  *             if neighbor not in visited:
  *                 visited.add(neighbor)             # <<<<<<<<<<<<<<
  *                 squares.add(neighbor)
  *                 queue.append((neighbor, distance + 1))
  */
-        __pyx_t_6 = PySet_Add(__pyx_v_visited, __pyx_v_neighbor); if (unlikely(__pyx_t_6 == ((int)-1))) __PYX_ERR(0, 97, __pyx_L1_error)
+        __pyx_t_6 = PySet_Add(__pyx_v_visited, __pyx_v_neighbor); if (unlikely(__pyx_t_6 == ((int)-1))) __PYX_ERR(0, 103, __pyx_L1_error)
 
-        /* "soundrts/worldunit/world_ai_decision_fast.pyx":98
+        /* "soundrts/worldunit/world_ai_decision_fast.pyx":104
  *             if neighbor not in visited:
  *                 visited.add(neighbor)
  *                 squares.add(neighbor)             # <<<<<<<<<<<<<<
  *                 queue.append((neighbor, distance + 1))
  *                 qlen += 1
  */
-        __pyx_t_6 = PySet_Add(__pyx_v_squares, __pyx_v_neighbor); if (unlikely(__pyx_t_6 == ((int)-1))) __PYX_ERR(0, 98, __pyx_L1_error)
+        __pyx_t_6 = PySet_Add(__pyx_v_squares, __pyx_v_neighbor); if (unlikely(__pyx_t_6 == ((int)-1))) __PYX_ERR(0, 104, __pyx_L1_error)
 
-        /* "soundrts/worldunit/world_ai_decision_fast.pyx":99
+        /* "soundrts/worldunit/world_ai_decision_fast.pyx":105
  *                 visited.add(neighbor)
  *                 squares.add(neighbor)
  *                 queue.append((neighbor, distance + 1))             # <<<<<<<<<<<<<<
  *                 qlen += 1
  * 
  */
-        __pyx_t_1 = __Pyx_PyInt_From_long((__pyx_v_distance + 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 99, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyInt_From_long((__pyx_v_distance + 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 105, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 99, __pyx_L1_error)
+        __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 105, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
         __Pyx_INCREF(__pyx_v_neighbor);
         __Pyx_GIVEREF(__pyx_v_neighbor);
-        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_v_neighbor)) __PYX_ERR(0, 99, __pyx_L1_error);
+        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_v_neighbor)) __PYX_ERR(0, 105, __pyx_L1_error);
         __Pyx_GIVEREF(__pyx_t_1);
-        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_t_1)) __PYX_ERR(0, 99, __pyx_L1_error);
+        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_t_1)) __PYX_ERR(0, 105, __pyx_L1_error);
         __pyx_t_1 = 0;
-        __pyx_t_6 = __Pyx_PyList_Append(__pyx_v_queue, __pyx_t_3); if (unlikely(__pyx_t_6 == ((int)-1))) __PYX_ERR(0, 99, __pyx_L1_error)
+        __pyx_t_6 = __Pyx_PyList_Append(__pyx_v_queue, __pyx_t_3); if (unlikely(__pyx_t_6 == ((int)-1))) __PYX_ERR(0, 105, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-        /* "soundrts/worldunit/world_ai_decision_fast.pyx":100
+        /* "soundrts/worldunit/world_ai_decision_fast.pyx":106
  *                 squares.add(neighbor)
  *                 queue.append((neighbor, distance + 1))
  *                 qlen += 1             # <<<<<<<<<<<<<<
@@ -3275,7 +3397,7 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
  */
         __pyx_v_qlen = (__pyx_v_qlen + 1);
 
-        /* "soundrts/worldunit/world_ai_decision_fast.pyx":96
+        /* "soundrts/worldunit/world_ai_decision_fast.pyx":102
  * 
  *         for neighbor in current_place.neighbors:
  *             if neighbor not in visited:             # <<<<<<<<<<<<<<
@@ -3284,7 +3406,7 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
  */
       }
 
-      /* "soundrts/worldunit/world_ai_decision_fast.pyx":95
+      /* "soundrts/worldunit/world_ai_decision_fast.pyx":101
  *             continue
  * 
  *         for neighbor in current_place.neighbors:             # <<<<<<<<<<<<<<
@@ -3296,7 +3418,7 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
     __pyx_L8_continue:;
   }
 
-  /* "soundrts/worldunit/world_ai_decision_fast.pyx":102
+  /* "soundrts/worldunit/world_ai_decision_fast.pyx":108
  *                 qlen += 1
  * 
  *     return squares             # <<<<<<<<<<<<<<
@@ -3306,7 +3428,7 @@ static PyObject *__pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squar
   __pyx_r = __pyx_v_squares;
   goto __pyx_L0;
 
-  /* "soundrts/worldunit/world_ai_decision_fast.pyx":60
+  /* "soundrts/worldunit/world_ai_decision_fast.pyx":66
  * 
  * 
  * cpdef set bfs_squares_in_sight(object start_place, int sight_range):             # <<<<<<<<<<<<<<
@@ -3391,7 +3513,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 60, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 66, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
@@ -3399,14 +3521,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[1]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 60, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 66, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("bfs_squares_in_sight", 1, 2, 2, 1); __PYX_ERR(0, 60, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("bfs_squares_in_sight", 1, 2, 2, 1); __PYX_ERR(0, 66, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "bfs_squares_in_sight") < 0)) __PYX_ERR(0, 60, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "bfs_squares_in_sight") < 0)) __PYX_ERR(0, 66, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
@@ -3415,11 +3537,11 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
       values[1] = __Pyx_Arg_FASTCALL(__pyx_args, 1);
     }
     __pyx_v_start_place = values[0];
-    __pyx_v_sight_range = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_sight_range == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 60, __pyx_L3_error)
+    __pyx_v_sight_range = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_sight_range == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 66, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("bfs_squares_in_sight", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 60, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("bfs_squares_in_sight", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 66, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -3455,7 +3577,7 @@ static PyObject *__pyx_pf_8soundrts_9worldunit_22world_ai_decision_fast_2bfs_squ
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("bfs_squares_in_sight", 1);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squares_in_sight(__pyx_v_start_place, __pyx_v_sight_range, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 60, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_8soundrts_9worldunit_22world_ai_decision_fast_bfs_squares_in_sight(__pyx_v_start_place, __pyx_v_sight_range, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 66, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3493,7 +3615,7 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_AI_MODE_GUARD, __pyx_k_AI_MODE_GUARD, sizeof(__pyx_k_AI_MODE_GUARD), 0, 0, 1, 1},
     {&__pyx_n_s_AI_MODE_OFFENSIVE, __pyx_k_AI_MODE_OFFENSIVE, sizeof(__pyx_k_AI_MODE_OFFENSIVE), 0, 0, 1, 1},
     {&__pyx_n_s_AI_MODE_OTHER, __pyx_k_AI_MODE_OTHER, sizeof(__pyx_k_AI_MODE_OTHER), 0, 0, 1, 1},
-    {&__pyx_n_s__5, __pyx_k__5, sizeof(__pyx_k__5), 0, 0, 1, 1},
+    {&__pyx_n_s__6, __pyx_k__6, sizeof(__pyx_k__6), 0, 0, 1, 1},
     {&__pyx_n_s_ai_mode_id, __pyx_k_ai_mode_id, sizeof(__pyx_k_ai_mode_id), 0, 0, 1, 1},
     {&__pyx_n_s_asyncio_coroutines, __pyx_k_asyncio_coroutines, sizeof(__pyx_k_asyncio_coroutines), 0, 0, 1, 1},
     {&__pyx_n_s_bfs_squares_in_sight, __pyx_k_bfs_squares_in_sight, sizeof(__pyx_k_bfs_squares_in_sight), 0, 0, 1, 1},
@@ -3511,6 +3633,7 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_speed, __pyx_k_speed, sizeof(__pyx_k_speed), 0, 0, 1, 1},
     {&__pyx_n_s_start_place, __pyx_k_start_place, sizeof(__pyx_k_start_place), 0, 0, 1, 1},
     {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
+    {&__pyx_n_s_truly_idle, __pyx_k_truly_idle, sizeof(__pyx_k_truly_idle), 0, 0, 1, 1},
     {0, 0, 0, 0, 0, 0, 0}
   };
   return __Pyx_InitStrings(__pyx_string_tab);
@@ -3529,25 +3652,28 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  * 
  * cpdef int compute_decide_interval(int ai_mode_id, int speed,             # <<<<<<<<<<<<<<
- *                                   bint has_attacker, bint has_orders):
- *     """ ai_mode / speed /  /  decide  ().
+ *                                   bint has_attacker, bint has_orders,
+ *                                   bint truly_idle=False):
  */
-  __pyx_tuple_ = PyTuple_Pack(4, __pyx_n_s_ai_mode_id, __pyx_n_s_speed, __pyx_n_s_has_attacker, __pyx_n_s_has_orders); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 28, __pyx_L1_error)
+  __pyx_tuple_ = PyTuple_Pack(5, __pyx_n_s_ai_mode_id, __pyx_n_s_speed, __pyx_n_s_has_attacker, __pyx_n_s_has_orders, __pyx_n_s_truly_idle); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 28, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple_);
   __Pyx_GIVEREF(__pyx_tuple_);
-  __pyx_codeobj__2 = (PyObject*)__Pyx_PyCode_New(4, 0, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple_, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_soundrts_worldunit_world_ai_deci, __pyx_n_s_compute_decide_interval, 28, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__2)) __PYX_ERR(0, 28, __pyx_L1_error)
+  __pyx_codeobj__2 = (PyObject*)__Pyx_PyCode_New(5, 0, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple_, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_soundrts_worldunit_world_ai_deci, __pyx_n_s_compute_decide_interval, 28, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__2)) __PYX_ERR(0, 28, __pyx_L1_error)
+  __pyx_tuple__3 = PyTuple_Pack(1, Py_False); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 28, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__3);
+  __Pyx_GIVEREF(__pyx_tuple__3);
 
-  /* "soundrts/worldunit/world_ai_decision_fast.pyx":60
+  /* "soundrts/worldunit/world_ai_decision_fast.pyx":66
  * 
  * 
  * cpdef set bfs_squares_in_sight(object start_place, int sight_range):             # <<<<<<<<<<<<<<
  *     """BFS :  ``start_place`` ,  ``sight_range`` .
  * 
  */
-  __pyx_tuple__3 = PyTuple_Pack(2, __pyx_n_s_start_place, __pyx_n_s_sight_range); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 60, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__3);
-  __Pyx_GIVEREF(__pyx_tuple__3);
-  __pyx_codeobj__4 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__3, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_soundrts_worldunit_world_ai_deci, __pyx_n_s_bfs_squares_in_sight, 60, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__4)) __PYX_ERR(0, 60, __pyx_L1_error)
+  __pyx_tuple__4 = PyTuple_Pack(2, __pyx_n_s_start_place, __pyx_n_s_sight_range); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 66, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__4);
+  __Pyx_GIVEREF(__pyx_tuple__4);
+  __pyx_codeobj__5 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__4, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_soundrts_worldunit_world_ai_deci, __pyx_n_s_bfs_squares_in_sight, 66, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__5)) __PYX_ERR(0, 66, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -3965,24 +4091,25 @@ if (!__Pyx_RefNanny) {
  * 
  * 
  * cpdef int compute_decide_interval(int ai_mode_id, int speed,             # <<<<<<<<<<<<<<
- *                                   bint has_attacker, bint has_orders):
- *     """ ai_mode / speed /  /  decide  ().
+ *                                   bint has_attacker, bint has_orders,
+ *                                   bint truly_idle=False):
  */
   __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8soundrts_9worldunit_22world_ai_decision_fast_1compute_decide_interval, 0, __pyx_n_s_compute_decide_interval, NULL, __pyx_n_s_soundrts_worldunit_world_ai_deci_2, __pyx_d, ((PyObject *)__pyx_codeobj__2)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 28, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_2, __pyx_tuple__3);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_compute_decide_interval, __pyx_t_2) < 0) __PYX_ERR(0, 28, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "soundrts/worldunit/world_ai_decision_fast.pyx":60
+  /* "soundrts/worldunit/world_ai_decision_fast.pyx":66
  * 
  * 
  * cpdef set bfs_squares_in_sight(object start_place, int sight_range):             # <<<<<<<<<<<<<<
  *     """BFS :  ``start_place`` ,  ``sight_range`` .
  * 
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8soundrts_9worldunit_22world_ai_decision_fast_3bfs_squares_in_sight, 0, __pyx_n_s_bfs_squares_in_sight, NULL, __pyx_n_s_soundrts_worldunit_world_ai_deci_2, __pyx_d, ((PyObject *)__pyx_codeobj__4)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 60, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8soundrts_9worldunit_22world_ai_decision_fast_3bfs_squares_in_sight, 0, __pyx_n_s_bfs_squares_in_sight, NULL, __pyx_n_s_soundrts_worldunit_world_ai_deci_2, __pyx_d, ((PyObject *)__pyx_codeobj__5)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 66, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_bfs_squares_in_sight, __pyx_t_2) < 0) __PYX_ERR(0, 60, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_bfs_squares_in_sight, __pyx_t_2) < 0) __PYX_ERR(0, 66, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "soundrts/worldunit/world_ai_decision_fast.pyx":1
@@ -6815,7 +6942,7 @@ __Pyx_PyType_GetName(PyTypeObject* tp)
     if (unlikely(name == NULL) || unlikely(!PyUnicode_Check(name))) {
         PyErr_Clear();
         Py_XDECREF(name);
-        name = __Pyx_NewRef(__pyx_n_s__5);
+        name = __Pyx_NewRef(__pyx_n_s__6);
     }
     return name;
 }

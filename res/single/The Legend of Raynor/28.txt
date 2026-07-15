@@ -136,5 +136,5 @@ trigger player1 (npc_has_item 3 quest_npc short_sword) (do (cut_scene 7604) (obj
 
 trigger all (no_unit_left) (defeat)
 
-trigger player1 (key_unit_killed raynor7) (defeat)
-trigger player2 (key_unit_killed raynor7) (defeat)
+trigger player1 (key_unit_killed raynor) (defeat)
+trigger player2 (key_unit_killed raynor) (defeat)

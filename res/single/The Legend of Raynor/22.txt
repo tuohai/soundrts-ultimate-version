@@ -59,4 +59,4 @@ trigger players (and (find d4 treasure_opened_mark) (not (find d4 gold_coin))) (
 
 trigger all (no_unit_left) (defeat)
 
-trigger players (key_unit_killed raynor6) (defeat)
+trigger players (key_unit_killed raynor) (defeat)

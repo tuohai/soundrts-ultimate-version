@@ -54,7 +54,7 @@ from . import msgparts as mp
 from .clienthelp import help_msg
 from .clientmedia import modify_volume, sounds, toggle_fullscreen, voice
 from .lib.log import warning
-from .lib.msgs import literal_text_msg, nb2msg
+from .lib.msgs import LITERAL_TEXT_PREFIX, literal_text_msg, nb2msg
 from .lib.sound import psounds, toggle_music, adjust_music_volume, get_music_status
 from .paths import TMP_PATH
 from .definitions import style
@@ -569,12 +569,33 @@ CLOSE_MENU = 1
 
 
 def _first_letter(choice):
-    if choice:
-        for sound_number in choice[0]:
-            try:
-                return sounds.translate_sound_number(sound_number)[0].lower()
-            except:
-                pass
+    """首字母用于菜单按键跳转。
+
+    地图标题形如 ``['m1', 5012, 3001]``：必须以 ``m1`` 的 ``m`` 为准。
+    不可对这类字符串走 ``translate_sound_number`` —— 其 ``_global_lookup_text``
+    会扫描全部战役 tts，在百级地图列表上单次跳转可达约 1 秒。
+    """
+    if not choice or not choice[0]:
+        return None
+
+    for sound_number in choice[0]:
+        try:
+            if isinstance(sound_number, str):
+                if sound_number.startswith(LITERAL_TEXT_PREFIX):
+                    text = sound_number[len(LITERAL_TEXT_PREFIX) :]
+                    if text:
+                        return text[0].lower()
+                # Map names / literal labels (“m1”, “pm1”, …)：直接取首字符。
+                if sound_number and not sound_number.isdigit():
+                    return sound_number[0].lower()
+            # 数字 TTS id（如随机地图 5033）：只查本地层，避免全局扫描。
+            key = "%s" % sound_number
+            t = sounds.text(key)
+            if t:
+                return str(t)[0].lower()
+        except Exception:
+            pass
+    return None
 
 
 class Menu:
@@ -599,8 +620,9 @@ class Menu:
         self._choice_extras = {}
         if self.remember is not None:
             try:
-                self._remembered_choice = open(_remember_path(remember)).read()
-            except:
+                with open(_remember_path(remember), encoding="utf-8") as f:
+                    self._remembered_choice = f.read()
+            except Exception:
                 self._remembered_choice = ""
         # 初始化按键绑定处理器
         from .lib.bindings import Bindings
@@ -645,28 +667,41 @@ ALT MINUS: music_volume_down
         )
 
     def _select_next_choice(self, first_letter=None, inc=1):
-        if self.choices:
+        if not self.choices:
+            return
+        n = len(self.choices)
+        if first_letter:
+            letter = first_letter.lower()
+            step = 1 if inc >= 0 else -1
             if self.choice_index is None:
-                self.choice_index = self.default_choice_index
-                if inc == -1:
-                    self.choice_index -= 1
-            else:
-                self.choice_index += inc
-                self.choice_index %= len(self.choices)
-            if first_letter:
-                found = False
-                for _ in range(len(self.choices)):
-                    choice = self.choices[self.choice_index]
-                    if _first_letter(choice) == first_letter.lower():
-                        found = True
-                        break
-                    self.choice_index += inc
-                    self.choice_index %= len(self.choices)
-                if not found:
-                    self.choice_index -= inc
-                    self.choice_index %= len(self.choices)
+                # Fresh menu: always land on the first matching item in list
+                # order (or last when searching backwards). Do not start from
+                # default/remembered index — that would skip e.g. m1 to m2 when
+                # the remembered map also starts with "m".
+                start = 0 if step > 0 else n - 1
+                for i in range(n):
+                    idx = (start + i * step) % n
+                    if _first_letter(self.choices[idx]) == letter:
+                        self.choice_index = idx
+                        self._say_choice()
+                        return
+                return
+            # Already on an item: cycle to the next match after the current one.
+            for i in range(1, n + 1):
+                idx = (self.choice_index + i * step) % n
+                if _first_letter(self.choices[idx]) == letter:
+                    self.choice_index = idx
+                    self._say_choice()
                     return
-            self._say_choice()
+            return
+        if self.choice_index is None:
+            self.choice_index = self.default_choice_index
+            if inc == -1:
+                self.choice_index -= 1
+                self.choice_index %= n
+        else:
+            self.choice_index = (self.choice_index + inc) % n
+        self._say_choice()
 
     def _confirm_choice(self):
         # 根据菜单类型选择不同的确认音效
@@ -780,8 +815,12 @@ ALT MINUS: music_volume_down
                     self.server.write_line("say %s" % msg)
         elif e.unicode and e.mod & KMOD_SHIFT:
             self._select_next_choice(e.unicode, -1)
+            # Drop auto-repeat / duplicate KEYDOWNs so one physical press
+            # cannot advance from the first match (m1) to the second (m2).
+            pygame.event.clear([KEYDOWN])
         elif e.unicode:
             self._select_next_choice(e.unicode)
+            pygame.event.clear([KEYDOWN])
         elif e.key not in [K_LSHIFT, K_RSHIFT]:
             voice.item(mp.SELECT_AND_CONFIRM_EXPLANATION)
 
@@ -793,14 +832,10 @@ ALT MINUS: music_volume_down
         if on_rename is not None or on_delete is not None:
             self._choice_extras[idx] = {"rename": on_rename, "delete": on_delete}
         if self.remember is not None and self._remembered_choice == repr(label):
-            # 记忆功能会在最前插入一份副本，使下次进入时优先选中该项。
-            # 这种用法目前未与 on_rename/on_delete 同时使用，因此不维护副本的回调。
-            self.choices.insert(0, (label, action))
-            # 把已记录的 extras 索引整体后移一位，保持与选项的对应关系。
-            if self._choice_extras:
-                self._choice_extras = {
-                    k + 1: v for k, v in self._choice_extras.items()
-                }
+            # Remember last choice by default index — do not insert a duplicate
+            # at the front (that made letter-jump hit the remembered map first,
+            # e.g. last played m2 → pressing "m" selected m2 instead of m1).
+            self.default_choice_index = idx
 
     def clear_choices(self):
         """清空所有菜单项和附加回调，便于在 rename/delete 后重新填充菜单。"""

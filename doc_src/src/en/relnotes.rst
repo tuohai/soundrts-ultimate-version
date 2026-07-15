@@ -5,6 +5,26 @@ Release notes
 .. contents::
 
 
+1.4.5.3
+--------
+
+**Fix: intermediate computer soldiers stuck on auto-explore delaying attacks**
+
+- **Symptom**: On small melee maps (e.g. ``jl1``), inviting an intermediate computer while the human idles produced highly unstable first-attack timing — sometimes ~6 minutes, sometimes 16–22 minutes. In 1.3.8.1 the aggressive computer reliably attacked around 7–9 minutes in the same setup.
+- **Cause**: Since 1.4, ``take_order`` protects an imperative head order (``auto_explore`` is imperative): a plain ``go`` only queues and cannot displace explore. AI ``_send_explorer`` still recalled the old explorer with ``go``, failed, then kept assigning new explorers until nearly all soldiers were on ``auto_explore``, so ``constant_attacks`` had no idle fighters.
+- **Fix**: ``_send_explorer`` issues ``stop`` before recall and clears surplus explorers so normally only one unit explores.
+- **Code**: ``worldplayercomputer.py`` (``_send_explorer``).
+- **Verification**: Headless multi-seed comparison vs 1.3.8.1; after the fix, jl1 intermediate first damage is about 5–7 minutes with ~1.5 minutes span (no more 10+ minute stalls).
+
+**Fix: menu first-letter map jump skipped the first match and lagged when changing letters**
+
+- **Symptom**: In Single player → Start a game on (map list), one press of a letter often landed on the second match (e.g. ``m`` → ``m2`` instead of ``m1``, ``p`` → ``pm2`` instead of ``pm1``); pressing another letter then paused about 0.7–1 second before jumping.
+- **Cause**: Title speech with ``keep_key`` re-queued every auto-repeat ``KEYDOWN``, so one physical press was handled twice; remembering the last map inserted a duplicate at the front of the list, which won when it shared the typed letter. ``_first_letter`` called ``translate_sound_number`` → ``_global_lookup_text`` on map filenames, costing ~1 second to scan a hundred-entry list.
+- **Fix**: Keep only the first ``KEYDOWN`` when interrupting speech and clear repeats after letter jumps; from a fresh selection, find the first match from the start of the list; remember via ``default_choice_index`` instead of a duplicate; take the first character of map names directly and look up numeric TTS ids in the local layer only.
+- **Code**: ``clientmenu.py``, ``lib/voice.py``.
+- **Tests**: ``test_menu_first_letter_jump.py``.
+
+
 1.4.5.2
 --------
 

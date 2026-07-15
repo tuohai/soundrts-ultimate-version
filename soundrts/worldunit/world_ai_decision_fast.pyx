@@ -26,11 +26,11 @@ AI_MODE_OTHER = 4
 
 
 cpdef int compute_decide_interval(int ai_mode_id, int speed,
-                                  bint has_attacker, bint has_orders):
+                                  bint has_attacker, bint has_orders,
+                                  bint truly_idle=False):
     """根据 ai_mode / speed / 攻击状态 / 命令状态返回 decide 间隔 (毫秒).
 
-    与 ``world_ai_decision.decide`` line 22-48 行为完全等价.
-    全部走 C-level int 比较, 比原 Python 版的 str 比较 + 分支快 ~10x.
+    ``truly_idle``: 无订单、无攻击者、非 auto_explore — 再拉开间隔以少进 decide 主体。
     """
     cdef int interval
     if ai_mode_id == AI_MODE_OFFENSIVE or ai_mode_id == AI_MODE_CHASE:
@@ -53,6 +53,12 @@ cpdef int compute_decide_interval(int ai_mode_id, int speed,
         interval -= 70
         if interval < 80:
             interval = 80
+    elif truly_idle:
+        # No orders / attacker / auto_explore: engagement still driven by
+        # contact_force perception + next decide; 600ms keeps same-square
+        # response within~1 tick of contact under normal load.
+        if interval < 600:
+            interval = 600
 
     return interval
 

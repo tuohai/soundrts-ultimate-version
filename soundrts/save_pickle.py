@@ -83,6 +83,8 @@ PLAYER_CACHE_KEYS = (
     "_enemy_player_cache",
     "_enemy_player_timestamp",
     "_memory_index",
+    "_memory_by_place",
+    "_memory_by_place_count",
 )
 
 
@@ -174,9 +176,12 @@ def prepare_memory_for_pickle(memory):
 
 def restore_player_memory(player) -> None:
     player._memory_index = {}
+    player._memory_by_place = {}
+    player._memory_by_place_count = 0
     memory = getattr(player, "memory", None)
     if not memory:
         return
+    by_place = player._memory_by_place
     for rem in memory:
         tid = getattr(rem, "_pickle_initial_model_id", None)
         if tid is not None:
@@ -190,6 +195,14 @@ def restore_player_memory(player) -> None:
         initial = getattr(rem, "initial_model", None)
         if initial is not None:
             player._memory_index[initial] = rem
+        pl = getattr(rem, "place", None)
+        if pl is not None:
+            bag = by_place.get(pl)
+            if bag is None:
+                bag = set()
+                by_place[pl] = bag
+            bag.add(rem)
+    player._memory_by_place_count = len(memory)
 
 
 def init_player_pickle_caches(player) -> None:

@@ -4,6 +4,27 @@ Notas de la versión
 
 .. contents::
 
+
+1.4.5.3
+-------
+
+**Corrección: soldados de la IA intermedia atrapados en autoexploración (ataques muy tardíos o inestables)**
+
+- **Síntoma**: En mapas pequeños (p. ej. ``jl1``), al invitar un ordenador intermedio con el humano inactivo, el primer ataque era muy inestable (~6 min a veces, 16–22 min otras). En 1.3.8.1 el ordenador agresivo atacaba de forma estable hacia 7–9 min en el mismo escenario.
+- **Causa**: Desde 1.4, ``take_order`` protege el orden imperativo en cabeza (``auto_explore`` es imperativo): un ``go`` normal solo se encola y no puede sustituir la exploración. ``_send_explorer`` seguía recordando al explorador antiguo con ``go``, fallaba y asignaba nuevos exploradores hasta que casi todos los soldados estaban en ``auto_explore``, de modo que ``constant_attacks`` no tenía combatientes libres.
+- **Corrección**: ``_send_explorer`` hace ``stop`` antes de recordar y limpia exploradores sobrantes para que normalmente explore solo una unidad.
+- **Código**: ``worldplayercomputer.py`` (``_send_explorer``).
+- **Verificación**: Comparación sin interfaz con varios seeds frente a 1.3.8.1; tras el arreglo, el primer daño de la IA intermedia en jl1 ronda 5–7 min con ~1,5 min de dispersión.
+
+**Corrección: el salto por letra inicial en el menú de mapas saltaba el primer mapa y se retrasaba al cambiar de letra**
+
+- **Síntoma**: En Un jugador → Iniciar una partida en (lista de mapas), una pulsación de letra a menudo caía en la segunda coincidencia (p. ej. ``m`` → ``m2`` en lugar de ``m1``, ``p`` → ``pm2`` en lugar de ``pm1``); al pulsar otra letra había una pausa de unos 0,7–1 s antes de saltar.
+- **Causa**: El anuncio del título con ``keep_key`` devolvía a la cola todos los ``KEYDOWN`` de autocorrección, así que una pulsación se procesaba dos veces; recordar el último mapa insertaba un duplicado al frente de la lista, que ganaba si compartía la letra. ``_first_letter`` llamaba a ``translate_sound_number`` → ``_global_lookup_text`` sobre los nombres de mapa, costando ~1 s al recorrer una lista de cientos de entradas.
+- **Corrección**: Conservar solo el primer ``KEYDOWN`` al interrumpir el habla y limpiar repeticiones tras el salto por letra; con selección fresca, buscar la primera coincidencia desde el inicio de la lista; recordar con ``default_choice_index`` en lugar de un duplicado; tomar el primer carácter del nombre del mapa y consultar los id TTS numéricos solo en la capa local.
+- **Código**: ``clientmenu.py``, ``lib/voice.py``.
+- **Pruebas**: ``test_menu_first_letter_jump.py``.
+
+
 1.4.5.2
 -------
 

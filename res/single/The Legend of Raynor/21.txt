@@ -52,7 +52,7 @@ trigger player1 (timer 0) (alliance 1)
 trigger player2 (timer 0) (alliance 1)
 trigger computers (timer 0) (alliance 2)
 
-trigger computer1 (timer 0) (alliance 1)
+trigger computer1 (timer 0) (alliance 1 player1 computer1)
 
 trigger players (timer 0) (add_objective 1 7548)
 trigger players (timer 0) (add_objective 2 7549)
@@ -66,4 +66,4 @@ trigger players (npc_has_item npc_blacksmith footman_armor) (cut_scene 7551)
 
 trigger all (no_unit_left) (defeat)
 
-trigger players (key_unit_killed raynor5) (defeat)
+trigger players (key_unit_killed raynor) (defeat)
