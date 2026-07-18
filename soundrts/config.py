@@ -18,6 +18,7 @@ main_volume: float
 sfx_volume: float
 music_volume: float
 music_enabled: int
+secondary_voice_enabled: int
 
 _LOGIN_FORBIDDEN_CHARS = set('\\/:*?"<>|\0')
 _LOGIN_MAX_LENGTH = 20
@@ -50,6 +51,24 @@ def volume_type(s):
     return max(0.0, min(1.0, float(s)))
 
 
+def game_voice_rate_type(s):
+    v = int(s)
+    if v < -10 or v > 10:
+        raise ValueError
+    return v
+
+
+def voice_lib_pct_type(s):
+    v = int(s)
+    if v < 0 or v > 100:
+        raise ValueError
+    return v
+
+
+def voice_lib_param_type(s):
+    return int(s) % 4
+
+
 _options = [
     ("general", "login", DEFAULT_LOGIN, login_type),
     ("general", "mods", ""),
@@ -69,6 +88,26 @@ _options = [
     ("server", "fpct_max", 3),
     ("server", "require_humans", 0),
     ("tts", "wait_delay_per_character", 0.1),
+    # Game VoiceChannel: auto | default | SAPI description | nuance:Ting-Ting
+    ("tts", "game_voice", "auto", str),
+    ("tts", "game_voice_rate", 0, game_voice_rate_type),
+    ("tts", "nuance_vl_path", "", str),
+    ("tts", "nuance_java", "", str),
+    # MW-style dual libraries (主/副)
+    ("tts", "primary_voice", "auto", str),
+    ("tts", "primary_rate", 80, voice_lib_pct_type),
+    ("tts", "primary_volume", 80, voice_lib_pct_type),
+    ("tts", "primary_pitch", 50, voice_lib_pct_type),
+    ("tts", "primary_device", "default", str),
+    ("tts", "primary_param", 0, voice_lib_param_type),
+    ("tts", "secondary_voice", "auto", str),
+    ("tts", "secondary_rate", 80, voice_lib_pct_type),
+    ("tts", "secondary_volume", 80, voice_lib_pct_type),
+    ("tts", "secondary_pitch", 50, voice_lib_pct_type),
+    ("tts", "secondary_device", "default", str),
+    ("tts", "secondary_param", 0, voice_lib_param_type),
+    # 1 = dual voice (副库播被动事件); 0 = primary handles everything (E-style)
+    ("tts", "secondary_voice_enabled", 1, int),
     ("audio", "main_volume", 0.5, volume_type),
     ("audio", "sfx_volume", 0.5, volume_type),
     ("audio", "music_volume", 0.5, volume_type),

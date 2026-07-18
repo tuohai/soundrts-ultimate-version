@@ -35,11 +35,17 @@
 ;                       start (same order as map starting_resources)
 ;   starting_units <unit>...  bonus units/buildings at the AI start square
 ;                       (same syntax as map starting_units: counts before names;
-;                        do not consume population)
+;                        consume population like normal units)
 ;   starting_population <n>  bonus population cap added on top of houses/units
 ;                       (plain integer, not x1000; still capped by map limit)
 ;   defeat_score <n>    post-game bonus for beating this AI (settlement score)
 ;                       omit to use the engine default for built-in tiers
+;   train_time <pct>    percent of normal unit-training duration (100 = normal;
+;                       50 = half time / trains twice as fast)
+;   research_time <pct> percent of normal research/advance duration (100 = normal;
+;                       80 = 20% faster research)
+;   unit_hp <pct>       percent of normal unit HP for this AI (100 = normal;
+;                       120 = +20% HP on all of its units)
 ;
 ; Naval units (boat, destroyer, shipyard, …):
 ;   Included from intermediate upward. Intermediate phase2 always builds a
@@ -141,6 +147,8 @@ counter_skill 75
 starting_resources 100 100
 starting_units 2 footman 2 archer
 starting_population 20
+train_time 50       ; trains twice as fast (half duration)
+research_time 80    ; research 20% faster
 watchdog 480
 constant_attacks 1
 research 1
@@ -184,6 +192,9 @@ counter_skill 90
 starting_resources 200 200
 starting_units 5 footman 4 archer 2 knight
 starting_population 40
+train_time 50
+research_time 70
+unit_hp 120       ; units have +20% HP
 watchdog 360
 constant_attacks 1
 research 1
@@ -220,6 +231,9 @@ counter_skill 100
 starting_resources 400 400
 starting_units 8 footman 6 archer 4 knight
 starting_population 60
+train_time 40
+research_time 60
+unit_hp 140
 watchdog 240
 constant_attacks 1
 research 1

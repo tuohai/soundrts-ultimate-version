@@ -164,6 +164,12 @@ GameInterface.cmd_move_left_zoom = game_audio.cmd_move_left_zoom
 GameInterface.cmd_move_right_zoom = game_audio.cmd_move_right_zoom
 GameInterface.cmd_change_zoom_precision = game_audio.cmd_change_zoom_precision
 GameInterface.cmd_get_zoom_precision = game_audio.cmd_get_zoom_precision
+GameInterface.cmd_voice_lib_cycle = game_audio.cmd_voice_lib_cycle
+GameInterface.cmd_voice_lib_device = game_audio.cmd_voice_lib_device
+GameInterface.cmd_voice_lib_param = game_audio.cmd_voice_lib_param
+GameInterface.cmd_voice_lib_nudge = game_audio.cmd_voice_lib_nudge
+GameInterface.cmd_voice_lib_copy = game_audio.cmd_voice_lib_copy
+GameInterface.cmd_voice_lib_append_copy = game_audio.cmd_voice_lib_append_copy
 # 动态联盟命令绑定
 GameInterface.cmd_select_alliance_candidate = game_audio.cmd_select_alliance_candidate
 GameInterface.cmd_alliance_request = game_audio.cmd_alliance_request

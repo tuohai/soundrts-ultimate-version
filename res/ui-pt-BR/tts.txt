@@ -1445,3 +1445,7 @@
 4654	prédio de mina de ouro
 4662	planície
 4663	terreno aberto
+5710	volume
+5711	tom
+5712	velocidade
+5713	voz

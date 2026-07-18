@@ -22,6 +22,11 @@ BUILD_DIR = ROOT / "build"
 ARTIFACTS_DIR = ROOT / "artifacts"
 BUNDLE_NAME = "SoundRTS"
 RESOURCE_DIRS = ("cfg", "res", "mods", "doc")
+# Redistributable Nuance helper (jars only; voice data stays in user/voices).
+NUANCE_HELPER_SRC = ROOT / "tools" / "nuance_ve"
+NUANCE_HELPER_JARS = ("nuance_ve_helper.jar", "jna.jar")
+SAPI32_HELPER_SRC = ROOT / "tools" / "sapi32"
+SAPI32_HELPER_FILES = ("helper.ps1",)
 
 
 def _run(command: list[str], **kwargs) -> None:
@@ -137,6 +142,42 @@ def _expose_resources(bundle_dir: Path) -> None:
         shutil.move(source, target)
 
 
+def _copy_nuance_helper(bundle_dir: Path) -> None:
+    """Ship Java helper jars next to the exe so packed builds can use Apple voices."""
+    missing = [n for n in NUANCE_HELPER_JARS if not (NUANCE_HELPER_SRC / n).is_file()]
+    if missing:
+        print(
+            f"[build] WARNING: skipping Nuance helper (missing {', '.join(missing)} "
+            f"under {NUANCE_HELPER_SRC})",
+            flush=True,
+        )
+        return
+    dest = bundle_dir / "tools" / "nuance_ve"
+    dest.mkdir(parents=True, exist_ok=True)
+    for name in NUANCE_HELPER_JARS:
+        shutil.copy2(NUANCE_HELPER_SRC / name, dest / name)
+    readme = NUANCE_HELPER_SRC / "README.md"
+    if readme.is_file():
+        shutil.copy2(readme, dest / "README.md")
+    print(f"[build] Copied Nuance helper jars to {dest}", flush=True)
+
+
+def _copy_sapi32_helper(bundle_dir: Path) -> None:
+    """Ship 32-bit SAPI helper (VW Julie etc. only visible to SysWOW64)."""
+    missing = [n for n in SAPI32_HELPER_FILES if not (SAPI32_HELPER_SRC / n).is_file()]
+    if missing:
+        print(
+            f"[build] WARNING: skipping sapi32 helper (missing {', '.join(missing)})",
+            flush=True,
+        )
+        return
+    dest = bundle_dir / "tools" / "sapi32"
+    dest.mkdir(parents=True, exist_ok=True)
+    for name in SAPI32_HELPER_FILES:
+        shutil.copy2(SAPI32_HELPER_SRC / name, dest / name)
+    print(f"[build] Copied sapi32 helper to {dest}", flush=True)
+
+
 def _write_full_version(bundle_dir: Path) -> None:
     lib_dir = bundle_dir / "lib"
     lib_dir.mkdir(parents=True, exist_ok=True)
@@ -229,6 +270,8 @@ def main() -> None:
 
     bundle_dir = _bundle_dir()
     _expose_resources(bundle_dir)
+    _copy_nuance_helper(bundle_dir)
+    _copy_sapi32_helper(bundle_dir)
     _write_full_version(bundle_dir)
     _validate_bundle(bundle_dir)
     if not args.skip_smoke_test:

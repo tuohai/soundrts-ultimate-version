@@ -9,4 +9,8 @@ F7: say
 
 CTRL SHIFT F3: toggle_tick
 
+; wx 盲文摸读（帮助层内也可跳到可摸读控件）
+CTRL B: focus_braille_review
+CTRL SHIFT B: focus_message_log
+
 ESCAPE: exit_overlay_mode

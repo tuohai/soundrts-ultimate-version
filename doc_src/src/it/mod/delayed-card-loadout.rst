@@ -74,7 +74,7 @@ Combinabile con ``spawn`` e ``resource`` sulla stessa carta; un solo ritardo con
 Al momento dell’applicazione del loadout, ``delay \> 0`` registra ``world.schedule_after(delay_ms, callback)``.  
 ``delay_ms = delay_seconds × 1000 × world.timer_coefficient``.
 
-Quando scatta il timer: applica risorse → spawn vicino all’inizio (senza costo di popolazione) → tech; l’umano locale riceve la voce LOADOUT_CARD_TRIGGERED.
+Quando scatta il timer: applica risorse → spawn vicino all’inizio (consumano popolazione) → tech; l’umano locale riceve la voce LOADOUT_CARD_TRIGGERED.
 
 La carica viene consumata quando la carta è programmata con successo all’inizio della partita, non quando gli effetti scattano.
 

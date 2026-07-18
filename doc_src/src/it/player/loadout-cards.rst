@@ -46,7 +46,7 @@ Effetti tipici
 
 
 - Carte risorse — bonus all'inizio
-- Carte rinforzi — unità vicino al tuo punto di partenza (senza costo di popolazione)
+- Carte rinforzi — unità vicino al tuo punto di partenza (consumano popolazione)
 - Carte ritardate — la carica si spende all'inizio; unità o tecnologia arrivano dopo un tempo di gioco
 
 L'arsenale annuncia l'effetto di ciascuna carta quando la sfogli.

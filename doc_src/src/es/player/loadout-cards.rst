@@ -36,7 +36,7 @@ Efectos típicos
 ---------------
 
 - Cartas de recursos — bonificación al inicio
-- Cartas de refuerzo — unidades cerca de tu inicio (sin coste de población)
+- Cartas de refuerzo — unidades cerca de tu inicio (consumen población)
 - Cartas diferidas — la carga se gasta al inicio; las unidades o la tecnología llegan tras un tiempo de juego
 
 El arsenal anuncia el efecto de cada carta cuando la exploras.

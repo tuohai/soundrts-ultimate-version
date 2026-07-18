@@ -158,12 +158,18 @@ class WorldObjectsMixin:
                 # 地面单位可以通过的条件：
                 # 1. 两个方格都不是水区域（传统陆地连接）
                 # 2. 或者两个方格都同时是is_water和is_ground（big_bridge等）
-                target_square = e.other_side.place
+                try:
+                    other = e.other_side
+                    target_square = other.place
+                except (AttributeError, KeyError):
+                    continue
+                if target_square is None:
+                    continue
                 current_can_ground = not z.is_water or z.is_ground
                 target_can_ground = not target_square.is_water or target_square.is_ground
-                
+
                 if current_can_ground and target_can_ground:
-                    g[e][e.other_side] = 0
+                    g[e][other] = 0
         return g
 
     def _air_graph(self):

@@ -1445,3 +1445,7 @@
 4654	budynek kopalni złota
 4662	równina
 4663	otwarty teren
+5710	głośność
+5711	wysokość tonu
+5712	tempo mowy
+5713	głos

@@ -17,7 +17,6 @@ F1: toggle_selection_mode
 F2: toggle_action_mode
 F3: toggle_gear_screen
 F4: enter_help_mode
-F12: enter_diplomacy_mode
 
 ; 快捷入口（兼容旧键位）
 ALT V: unit_attributes_screen
@@ -81,21 +80,42 @@ LCTRL: examine
 RCTRL: examine
 SPACE: unit_status
 v: unit_hp_status
-F9: objectives 1
-SHIFT F9: objectives -1
-F11: say_players
+; 目标 / 玩家列表（原 F9/F11，让位给语音库热键）
+CTRL F9: objectives 1
+CTRL SHIFT F9: objectives -1
+CTRL F11: say_players
+
+; 语音库设置（迷雾世界风格：主=玩家操作，副=被动事件）
+; F9 切换该库输出声卡；F10 音量/音调/语速/音库；F11/F12 调节当前项
+F9: voice_lib_device 0
+F10: voice_lib_param 0
+F11: voice_lib_nudge -5 0
+F12: voice_lib_nudge 5 0
+SHIFT F9: voice_lib_device 1
+SHIFT F10: voice_lib_param 1
+SHIFT F11: voice_lib_nudge -5 1
+SHIFT F12: voice_lib_nudge 5 1
+; 左 Shift+C 复制主语音库最近播报正文，右 Shift+C 复制副语音库最近播报正文；Shift+A 追加音库热键提示
+SHIFT C: voice_lib_copy
+SHIFT A: voice_lib_append_copy
 
 ; 系统功能
 F5: history_previous
 F6: history_next
+; 对局内仅 Alt 可打断副语音库（Shift 不再 history_stop）
 LALT: history_stop
 RALT: history_stop
-LSHIFT: history_stop
-RSHIFT: history_stop
 
-F10: gamemenu
+; wx 盲文/读屏摸读：最新播报 ↔ 消息日志 ↔ 游戏输入
+
+; 游戏菜单（原 F10，保留 Ctrl+C / Alt+F4）
 CTRL c: gamemenu
 ALT F4: gamemenu
+CTRL F10: gamemenu
+
+; 外交（原 F12）
+CTRL F12: enter_diplomacy_mode
+ALT F12: enter_diplomacy_mode
 
 ALT SPACE: immersion
 CTRL SPACE: immersion

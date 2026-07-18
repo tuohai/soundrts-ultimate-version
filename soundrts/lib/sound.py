@@ -92,7 +92,10 @@ def stereo(x, y, xo, yo, o, volume=1, no_distance=False):
 def find_idle_channel():
     # because pygame.mixer.find_channel() doesn't work
     # (it can return the reserved channel 0)
-    for n in range(1, pygame.mixer.get_num_channels()):  # avoid channel 0
+    # Also leave the last channel free for VoiceChannel parallel-ops SFX.
+    n_ch = pygame.mixer.get_num_channels()
+    end = n_ch - 1 if n_ch > 2 else n_ch
+    for n in range(1, end):  # avoid channel 0 (and last when reserved)
         if not pygame.mixer.Channel(n).get_busy():
             return pygame.mixer.Channel(n)
 

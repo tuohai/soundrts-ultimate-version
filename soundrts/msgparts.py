@@ -201,6 +201,31 @@ OK = [105]
 ON_THE_SERVER_OF = [4260]
 ONE_F = [151]
 OPEN_USER_FOLDER = [4336]
+VOICE_LIBS_MENU = ["语音库设置"]
+VOICE_LIB_PRIMARY = ["主语音库"]
+VOICE_LIB_SECONDARY = ["副语音库"]
+VOICE_LIB_SECONDARY_TOGGLE = ["启用或禁用副语音"]
+VOICE_LIB_SECONDARY_ON = ["副语音已启用"]
+VOICE_LIB_SECONDARY_OFF = ["副语音已禁用，主语音接管全部播报"]
+VOICE_LIB_VOLUME = [5710]  # 音量
+VOICE_LIB_PITCH = [5711]  # 音调
+VOICE_LIB_RATE = [5712]  # 语速
+VOICE_LIB_VOICE_PARAM = [5713]  # 语音（角色/音色）
+VOICE_LIB_DEVICE = ["声卡"]
+VOICE_LIB_EDITOR_HINT = [
+    "上下光标选择参数，左右光标调整。回车或 Esc 返回。"
+]
+VOICE_LIB_HELP = [
+    "主语音库用于对局外的菜单与玩家操作。若检测到屏幕阅读器（争渡/NVDA等），则读屏接管主语音职责，避免与主库抢播。"
+    "副语音库仅用于对局内的被动事件，例如伤亡与发现。对局内操作不会打断副库；仅按 Alt 可打断副库。"
+    "可在本菜单启用或禁用副语音：禁用后主语音接管全部播报（与单通道模式相同）；启用后恢复主副分工。"
+    "在任意菜单中按 F3 也可切换副语音（对局内无效）。"
+    "在语音库设置中：上下光标选择参数，左右光标调整。"
+    "局内热键：F9切换声卡，F10切换参数类型，F11和F12调节当前参数。"
+    "Shift加F9到F12调节副库。左Shift加C复制主库最近播报，右Shift加C复制副库最近播报，Shift加A追加到剪贴板。"
+]
+OPEN_VOICES_FOLDER = ["打开语音安装文件夹"]
+GAME_VOICE_IMPORT_NUANCE = ["导入苹果音库到本游戏"]
 OPTIONS = [4037]
 OPTIONS_EXPLANATION = [4038]
 OPTIONS_MENU = [4086]

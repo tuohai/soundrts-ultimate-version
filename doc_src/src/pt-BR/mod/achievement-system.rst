@@ -234,7 +234,7 @@ Fase 3 (concluída)
 - Campos de carta: ``spawn``, ``resource``, ``tech``; cartas combo suportadas;
   cartas com atraso documentadas em `delayed-card-loadout.htm
   <delayed-card-loadout.htm>`_
-- Spawns de carta não consomem população
+- Spawns de carta consomem população
 - Apenas TrainingGame (escaramuça vs IA); não campanha nem multijogador
 - Cartas podem exigir ``min_rank`` em ``cards.txt``
 

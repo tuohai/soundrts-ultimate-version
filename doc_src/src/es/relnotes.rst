@@ -5,6 +5,39 @@ Notas de la versión
 .. contents::
 
 
+1.4.5.4
+-------
+
+**Mejora: bibliotecas de voz principal / secundaria y interruptor**
+
+- En partida: las operaciones del jugador usan la biblioteca **principal**; los eventos pasivos (bajas, descubrimientos…) usan la **secundaria** (pueden solaparse; solo Alt interrumpe la secundaria).
+- Opciones → Ajustes de biblioteca de voz: volumen / tono / velocidad / voz / dispositivo por biblioteca; activar o desactivar la secundaria.
+- **F3 en menús** activa/desactiva la secundaria (no en partida); desactivada, la principal anuncia todo.
+- Instala voces SAPI o paquetes ``voice.ini`` en ``user/voices``; un lector de pantalla detectado puede asumir la principal.
+- **Código**: ``lib/voice.py``, ``lib/voicechannel.py``, ``lib/game_tts.py``, ``lib/voice_libs.py``, ``lib/voice_packs.py``, ``clientmenu.py``, ``clientmain.py``, ``config.py``.
+- **Documentos**: ``player/voice-libraries.rst``.
+- **Pruebas**: ``test_secondary_voice_toggle.py``, ``test_secondary_alt_interrupt.py``.
+
+**Mejora: los refuerzos de cartas y ``starting_units`` de la IA consumen población**
+
+- Las unidades de cartas ``spawn`` / ``train_bonus`` usan el ``population_cost`` normal (ya no son gratis en población).
+- Los bonus ``starting_units`` de ``ai.txt`` también consumen población (igual que el inicio del mapa); sube el tope con ``starting_population`` si hace falta.
+- **Código**: ``card_loadout.py``, ``worldplayercomputer.py``.
+- **Documentos**: ``player/loadout-cards.rst``, ``mod/aimaking.rst``, ``mod/delayed-card-loadout.rst``, ``mod/achievement-system.rst``.
+- **Pruebas**: ``test_card_loadout.py``, ``test_ai_start_settings.py``.
+
+**Mejora: multiplicadores ``train_time``, ``research_time`` y ``unit_hp`` en ``ai.txt``**
+
+- Nuevas directivas de una sola vez (al inicio de la partida, fuera del bucle del script):
+  - ``train_time <pct>`` — porcentaje de la duración normal de entrenamiento (``100`` = normal, ``50`` = mitad de tiempo)
+  - ``research_time <pct>`` — porcentaje de la duración normal de investigación/avance (``80`` = 20% más rápido)
+  - ``unit_hp <pct>`` — porcentaje de PV normales de las unidades de este ordenador (``120`` = +20% PV)
+- Ejemplos en ``res/ai.txt``: avanzado ``train_time 50`` / ``research_time 80``; experto también ``unit_hp 120``; pesadilla ``train_time 40`` / ``research_time 60`` / ``unit_hp 140``.
+- **Código**: ``definitions.py``, ``worldplayercomputer.py``, ``worldorders/base.py``, ``worldorders/production.py``, ``worldunit/worldcreature.py``; ``res/ai.txt``.
+- **Documentos**: ``mod/aimaking.rst``.
+- **Pruebas**: ``test_ai_start_settings.py``, ``test_ai_train_research_hp.py``.
+
+
 1.4.5.3
 -------
 

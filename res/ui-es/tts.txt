@@ -1445,3 +1445,7 @@
 4654	edificio de mina de oro
 4662	llanura
 4663	terreno abierto
+5710	volumen
+5711	tono
+5712	velocidad
+5713	voz

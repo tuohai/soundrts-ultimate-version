@@ -503,7 +503,7 @@ mod key 与存档目录规则相同，见 ``soundrts/paths.py`` → ``current_mo
 限制：
 - 仅 ``TrainingGame`` （自定义图 / 随机图 + 邀请电脑），不含战役、联机
 - 卡须 ``min_rank`` 满足当前军衔（军械库中已有提示）
-- 进局后卡牌 ``spawn`` 在起始位置附近立即生成单位；不占人口
+- 进局后卡牌 ``spawn`` 在起始位置附近立即生成单位；占用人口
 - 充能不足或栏位已满时不可重复选择
 
 模组： ``cards.txt`` 的 ``min_rank``；``titles.txt`` 的 ``loadout_slots`` 与军衔阶梯。

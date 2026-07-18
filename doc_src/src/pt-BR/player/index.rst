@@ -16,6 +16,7 @@ Nível 1 · Controles
 
 - `Atalhos em camadas <layered-hotkeys.htm>`_
 - `Comportamentos padrão das unidades <unit-default-behavior.htm>`_ (coleta automática, exploração, guarda)
+- `Bibliotecas de voz principal e secundária <voice-libraries.htm>`_
 
 Nível 2 · Progresso e campanhas
 -------------------------------

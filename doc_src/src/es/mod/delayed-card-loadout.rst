@@ -59,7 +59,7 @@ Combínalo con ``spawn`` y ``resource`` en una misma carta; un solo retraso comp
 En el momento de aplicar la carga, ``delay \> 0`` registra ``world.schedule_after(delay_ms, callback)``.  
 ``delay_ms = delay_seconds × 1000 × world.timer_coefficient``.
 
-Cuando el temporizador se dispara: aplica recursos → apariciones cerca del inicio (sin coste de población) → tecnologías; el humano local recibe la voz LOADOUT_CARD_TRIGGERED.
+Cuando el temporizador se dispara: aplica recursos → apariciones cerca del inicio (consumen población) → tecnologías; el humano local recibe la voz LOADOUT_CARD_TRIGGERED.
 
 La carga se consume cuando la carta se programa con éxito al inicio de la partida, no cuando se disparan los efectos.
 

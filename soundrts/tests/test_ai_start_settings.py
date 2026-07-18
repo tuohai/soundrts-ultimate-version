@@ -31,10 +31,15 @@ def test_parse_ai_start_settings(isolated_ai):
         workers 20
         attack
     """)
-    bonus, units, population = parse_ai_start_settings("expert")
+    bonus, units, population, train_time, research_time, unit_hp = parse_ai_start_settings(
+        "expert"
+    )
     assert bonus[:2] == [200 * 1000, 150 * 1000]
     assert units == ["3", "footman", "2", "archer"]
     assert population == 0
+    assert train_time == 100
+    assert research_time == 100
+    assert unit_hp == 100
 
 
 def test_parse_ai_start_settings_population(isolated_ai):
@@ -43,10 +48,27 @@ def test_parse_ai_start_settings_population(isolated_ai):
         starting_population 60
         attack
     """)
-    bonus, units, population = parse_ai_start_settings("expert")
+    bonus, units, population, train_time, research_time, unit_hp = parse_ai_start_settings(
+        "expert"
+    )
     assert bonus is None
     assert units == []
     assert population == 60
+    assert (train_time, research_time, unit_hp) == (100, 100, 100)
+
+
+def test_parse_ai_start_settings_speed_and_hp(isolated_ai):
+    load_ai("""
+        def advanced
+        train_time 50
+        research_time 80
+        unit_hp 120
+        attack
+    """)
+    *_, train_time, research_time, unit_hp = parse_ai_start_settings("advanced")
+    assert train_time == 50
+    assert research_time == 80
+    assert unit_hp == 120
 
 
 def test_filter_ai_executable_plan_drops_start_directives():
@@ -56,6 +78,9 @@ def test_filter_ai_executable_plan_drops_start_directives():
         "starting_units 2 knight",
         "starting_population 40",
         "defeat_score 25",
+        "train_time 50",
+        "research_time 80",
+        "unit_hp 120",
         "attack",
     ]
     assert filter_ai_executable_plan(lines) == ["workers 12", "attack"]
@@ -136,6 +161,9 @@ def test_computer_applies_ai_start_bonus(monkeypatch, isolated_ai):
         starting_resources 50 25
         starting_units 2 footman 1 archer
         starting_population 30
+        train_time 40
+        research_time 60
+        unit_hp 140
         goto -1
     """)
     monkeypatch.setattr(
@@ -177,5 +205,9 @@ def test_computer_applies_ai_start_bonus(monkeypatch, isolated_ai):
     assert c.resources[0] == 150 * 1000
     assert c.resources[1] == 125 * 1000
     assert c.population == 35
+    assert c.ai_train_time_percent == 40
+    assert c.ai_research_time_percent == 60
+    assert c.ai_unit_hp_percent == 140
     assert [entry[0] for entry in added] == ["footman", "footman", "archer"]
-    assert all(entry[2] == 0 for entry in added)
+    # starting_units now consume normal population (no population_cost=0 override)
+    assert all(entry[2] is None for entry in added)

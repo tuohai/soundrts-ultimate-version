@@ -305,14 +305,223 @@ def link_game_clients_after_load(game) -> None:
                 break
 
 
+def _infer_blank_square_col_row(world, sq):
+    """Infer (col, row) for a Square whose __dict__ was wiped before save."""
+    width = int(getattr(world, "square_width", 0) or 0)
+    if width > 0:
+        for o in (getattr(world, "objects", None) or {}).values():
+            if getattr(o, "place", None) is not sq and getattr(
+                o, "_previous_square", None
+            ) is not sq:
+                continue
+            x = getattr(o, "x", None)
+            y = getattr(o, "y", None)
+            if x is None or y is None:
+                continue
+            # Prefer real map coords (meadows wiped by clean() often sit at 0,0).
+            if x == 0 and y == 0:
+                continue
+            return int(x) // width, int(y) // width
+
+    present = {
+        (s.col, s.row)
+        for s in getattr(world, "squares", ())
+        if hasattr(s, "col") and hasattr(s, "row")
+    }
+    if not present:
+        return None, None
+    max_c = max(c for c, _r in present)
+    max_r = max(r for _c, r in present)
+    for c in range(max_c + 1):
+        for r in range(max_r + 1):
+            if (c, r) not in present:
+                return c, r
+    return None, None
+
+
+def _revive_blank_square(world, sq) -> bool:
+    """Rebuild essential Square fields after a wiped-__dict__ pickle.
+
+    ``Square.clean()`` sets ``__dict__ = {}`` but the object can remain in
+    ``world.squares`` / ``world.objects`` and as ``unit.place``. If that slips
+    into a save, load must revive geometry or ``rebuild_world_after_load``
+    crashes on ``sq.name``.
+    """
+    from .lib.log import warning
+    from .lib.msgs import nb2msg
+    from .lib.subcell_terrain import SubCellOverlay
+    from . import msgparts as mp
+    from .worldexit import Exit
+
+    width = int(getattr(world, "square_width", 0) or 0)
+    col, row = _infer_blank_square_col_row(world, sq)
+    if col is None or row is None or width <= 0:
+        warning("cannot revive blank Square during load; skipping grid entry")
+        return False
+
+    sq.col = col
+    sq.row = row
+    sq.name = f"{col},{row}"
+    sq.world = world
+    sq.place = world
+    sq.xmin = col * width
+    sq.ymin = row * width
+    sq.xmax = sq.xmin + width
+    sq.ymax = sq.ymin + width
+    sq.x = (sq.xmax + sq.xmin) // 2
+    sq.y = (sq.ymax + sq.ymin) // 2
+    sq.is_inside_place = False
+    sq.high_ground = False
+    sq.type_name = getattr(sq, "type_name", "") or ""
+    sq.terrain_speed = getattr(sq, "terrain_speed", (100, 100))
+    sq.terrain_cover = getattr(sq, "terrain_cover", (0, 0))
+    if not hasattr(sq, "subcells") or sq.subcells is None:
+        sq.subcells = SubCellOverlay()
+
+    std = sq.name
+    city = getattr(world, "square_cities", {}).get(std)
+    district = getattr(world, "square_districts", {}).get(std)
+    fallback = getattr(world, "square_names", {}).get(std)
+    coord = nb2msg(col + 1) + mp.COMMA + nb2msg(row + 1)
+    if district:
+        sq.title = [district] + mp.COMMA + coord
+    elif city:
+        sq.title = coord
+    elif fallback:
+        sq.title = [fallback] + mp.COMMA + coord
+    else:
+        sq.title = coord
+
+    if not getattr(sq, "id", None):
+        for oid, obj in (world.objects or {}).items():
+            if obj is sq:
+                sq.id = oid
+                break
+
+    objects = [
+        o
+        for o in (world.objects or {}).values()
+        if getattr(o, "place", None) is sq and o is not sq
+    ]
+    sq.objects = objects
+    sq.exits = [o for o in objects if isinstance(o, Exit)]
+    return True
+
+
+def _adjacent_square_for_exit(partner):
+    """Square on the far side of ``partner`` exit, inferred from edge position."""
+    place = getattr(partner, "place", None)
+    if place is None:
+        return None
+    world = getattr(place, "world", None) or getattr(partner, "world", None)
+    if world is None:
+        return None
+    x = getattr(partner, "x", None)
+    y = getattr(partner, "y", None)
+    if x is None or y is None:
+        return None
+    col, row = place.col, place.row
+    # Prefer edge detection (exits sit on square borders).
+    if abs(x - place.xmax) <= 1:
+        col += 1
+    elif abs(x - place.xmin) <= 1:
+        col -= 1
+    elif abs(y - place.ymax) <= 1:
+        row += 1
+    elif abs(y - place.ymin) <= 1:
+        row -= 1
+    else:
+        width = int(getattr(world, "square_width", 0) or 0)
+        if width <= 0:
+            return None
+        col = int(x) // width
+        row = int(y) // width
+        if col == place.col and row == place.row:
+            return None
+    return world.grid.get((col, row)) or world.grid.get(f"{col},{row}")
+
+
+def _revive_blank_exits(world) -> None:
+    """Restore Exit shells wiped by clean() but still linked as other_side."""
+    from .lib.log import warning
+    from .worldexit import Exit
+
+    objects = getattr(world, "objects", None) or {}
+    for oid, obj in list(objects.items()):
+        if not isinstance(obj, Exit) or obj.__dict__:
+            continue
+        partner = None
+        for other in objects.values():
+            if (
+                isinstance(other, Exit)
+                and other is not obj
+                and getattr(other, "_other_side_id", None) == oid
+            ):
+                partner = other
+                break
+        if partner is None:
+            warning("cannot revive blank Exit %s during load; removing", oid)
+            objects.pop(oid, None)
+            continue
+        place = _adjacent_square_for_exit(partner)
+        if place is None:
+            warning(
+                "cannot place revived Exit %s (partner %s); unlinking",
+                oid,
+                getattr(partner, "id", None),
+            )
+            partner._other_side_id = None
+            objects.pop(oid, None)
+            continue
+        # Mirror a normal Exit on the far side of ``partner``.
+        obj.type_name = getattr(partner, "type_name", "") or "path"
+        obj.is_a_portal = bool(getattr(partner, "is_a_portal", False))
+        obj.world = world
+        obj.id = oid
+        obj._other_side_id = partner.id
+        obj._blockers = []
+        obj._blocked_cache = None
+        obj.is_blocked_by_forests = False
+        obj.action_target = None
+        obj._previous_square = None
+        obj.o = (getattr(partner, "o", 0) + 180) % 360
+        # Sit on the shared border, just inside ``place``.
+        if abs(partner.x - partner.place.xmax) <= 1:
+            obj.x = place.xmin
+            obj.y = partner.y
+        elif abs(partner.x - partner.place.xmin) <= 1:
+            obj.x = place.xmax - 1
+            obj.y = partner.y
+        elif abs(partner.y - partner.place.ymax) <= 1:
+            obj.x = partner.x
+            obj.y = place.ymin
+        elif abs(partner.y - partner.place.ymin) <= 1:
+            obj.x = partner.x
+            obj.y = place.ymax - 1
+        else:
+            obj.x = place.x
+            obj.y = place.y
+        obj.place = place
+        if obj not in place.objects:
+            place.objects.append(obj)
+        if obj not in place.exits:
+            place.exits.append(obj)
+
+
 def rebuild_world_after_load(world) -> None:
     if not hasattr(world, "objects") or world.objects is None:
         world.objects = {}
     _normalize_world_players(world)
     world.grid = {}
     for sq in world.squares:
+        if not hasattr(sq, "name") or not hasattr(sq, "col") or not hasattr(sq, "row"):
+            if not _revive_blank_square(world, sq):
+                continue
+        elif "name" not in sq.__dict__ and hasattr(sq, "col") and hasattr(sq, "row"):
+            sq.name = f"{sq.col},{sq.row}"
         world.grid[sq.name] = sq
         world.grid[(sq.col, sq.row)] = sq
+    _revive_blank_exits(world)
     world._create_graphs()
     world._sights_cache = {}
     world._sights_cache_bucket = -1

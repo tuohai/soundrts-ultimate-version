@@ -53,7 +53,15 @@ def _morph_train_time_cost(unit, target_type):
     if mult != 100:
         base = max(0, base * mult // 100)
     unit_time = getattr(unit, "time_cost", 0) or 0
-    return max(0, base - unit_time)
+    result = max(0, base - unit_time)
+    player = getattr(unit, "player", None)
+    if player is not None:
+        pct = getattr(player, "ai_train_time_percent", 100)
+        if pct != 100:
+            if pct <= 0:
+                return 0
+            result = max(0, int(result) * int(pct) // 100)
+    return result
 
 
 def _upgrade_cost_diff(unit, target_type):

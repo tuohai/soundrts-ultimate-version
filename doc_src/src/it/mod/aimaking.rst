@@ -155,12 +155,22 @@ attaccare.
   casella di partenza dell’IA dopo l’inizio normale. Usa la stessa sintassi
   piatta di ``starting_units`` di mappa (metti un conteggio prima di un nome
   tipo per generarne diversi: ``5 footman 2 archer``). Rispetta i nomi
-  ``equivalent`` della fazione. Non consumano popolazione (a differenza
-  delle unità iniziali di mappa). Omesso = nessuna unità bonus.
+  ``equivalent`` della fazione. **Consumano popolazione** (come le unità
+  iniziali di mappa; alza il tetto con ``starting_population`` se serve).
+  Omesso = nessuna unità bonus.
 - ``starting_population \<n\>`` -- bonus al tetto di popolazione aggiunto
   sopra case e altre unità ``population_provided``. Intero semplice (non
   ``× 1000``). ``available_population`` resta comunque limitato dal
   ``global_population_limit`` della mappa.
+- ``train_time \<pct\>`` -- percentuale della durata normale di addestramento
+  (``100`` = normale, ``50`` = metà tempo). Solo ``train`` e morph-as-train.
+  Omesso = ``100``.
+- ``research_time \<pct\>`` -- percentuale della durata normale di ricerca /
+  avanzamento (``100`` = normale, ``80`` = 20% più veloce). Solo
+  ``research`` / ``advance``. Omesso = ``100``.
+- ``unit_hp \<pct\>`` -- percentuale dei PV normali di tutte le unità di
+  questo computer (``100`` = normale, ``120`` = +20% PV). Dopo
+  ``enemy_hp_factor`` coop. Omesso = ``100``.
 
   Queste righe sono applicate una volta all’inizio della partita; non fanno
   parte del loop dello script (a differenza di ``get`` / ``attack``).
@@ -168,9 +178,12 @@ attaccare.
   Bonus del ``res/ai.txt`` vanilla (sopra ogni inizio di mappa):
 
   - intermediate: ``starting_resources 50 50``, ``starting_population 10``
-  - advanced: ``100 100`` + ``2 footman 2 archer``, ``starting_population 20``
-  - expert: ``200 200`` + ``5 footman 4 archer 2 knight``, ``starting_population 40``
-  - nightmare: ``400 400`` + ``8 footman 6 archer 4 knight``, ``starting_population 60``
+  - advanced: ``100 100`` + ``2 footman 2 archer``, ``starting_population 20``,
+    ``train_time 50``, ``research_time 80``
+  - expert: ``200 200`` + ``5 footman 4 archer 2 knight``, ``starting_population 40``,
+    ``train_time 50``, ``research_time 70``, ``unit_hp 120``
+  - nightmare: ``400 400`` + ``8 footman 6 archer 4 knight``, ``starting_population 60``,
+    ``train_time 40``, ``research_time 60``, ``unit_hp 140``
 - ``watchdog \<seconds\>`` -- una rete di sicurezza: se l’IA è bloccata sulla
   stessa riga per così tanto tempo, passa alla riga successiva. ``0`` lo
   disabilita.

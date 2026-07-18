@@ -1446,3 +1446,7 @@
 4654	công trình mỏ vàng
 4662	đồng bằng
 4663	đất trống
+5710	âm lượng
+5711	cao độ
+5712	tốc độ nói
+5713	giọng nói

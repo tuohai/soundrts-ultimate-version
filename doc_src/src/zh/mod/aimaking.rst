@@ -128,21 +128,30 @@ AI 制作教程
   无加成。
 - ``starting_units \<单位\>...`` —— 在正常开局之后，于 AI 出生方格额外生成
   单位或建筑。语法与地图 ``starting_units`` 相同（数量写在类型名前，如
-  ``5 footman 2 archer``）。会走阵营 ``equivalent`` 映射。不占人口
-  （与地图开局单位不同）。不写则无额外单位。
+  ``5 footman 2 archer``）。会走阵营 ``equivalent`` 映射。**占用人口**
+  （与地图开局单位相同；可用 ``starting_population`` 提高上限）。不写则无额外单位。
 - ``starting_population \<n\>`` —— 在农舍等 ``population_provided`` 单位提供的
   人口上限之上，额外增加人口上限。普通整数（不像资源那样 ``× 1000``）。
   实际可用人口仍受地图 ``global_population_limit`` 限制。
+- ``train_time \<pct\>`` —— 训练时长百分比（``100`` = 正常，``50`` = 时间减半 /
+  训练更快）。仅影响 ``train`` 与按训练计时的变形。不写则 ``100``。
+- ``research_time \<pct\>`` —— 科技研究 / 时代推进时长百分比（``100`` = 正常，
+  ``80`` = 快 20%）。仅影响 ``research`` / ``advance``。不写则 ``100``。
+- ``unit_hp \<pct\>`` —— 该电脑所有单位血量百分比（``100`` = 正常，``120`` =
+  +20% HP）。在合作战役 ``enemy_hp_factor`` 之后再乘。不写则 ``100``。
 
-  以上三行仅在游戏开始时生效一次，不会进入脚本循环（与 ``get`` /
+  以上指令仅在游戏开始时生效一次，不会进入脚本循环（与 ``get`` /
   ``attack`` 不同）。
 
   原版 ``res/ai.txt`` 额外加成（叠在每张地图的正常开局之上）：
 
   - 中级：``starting_resources 50 50``、``starting_population 10``
-  - 高级：``100 100`` + ``2 footman 2 archer``、``starting_population 20``
-  - 专家：``200 200`` + ``5 footman 4 archer 2 knight``、``starting_population 40``
-  - 噩梦：``400 400`` + ``8 footman 6 archer 4 knight``、``starting_population 60``
+  - 高级：``100 100`` + ``2 footman 2 archer``、``starting_population 20``、
+    ``train_time 50``、``research_time 80``
+  - 专家：``200 200`` + ``5 footman 4 archer 2 knight``、``starting_population 40``、
+    ``train_time 50``、``research_time 70``、``unit_hp 120``
+  - 噩梦：``400 400`` + ``8 footman 6 archer 4 knight``、``starting_population 60``、
+    ``train_time 40``、``research_time 60``、``unit_hp 140``
 - ``watchdog \<秒\>`` —— 安全机制：若 AI 在同一行卡住超过这么久，就跳到下一行。
   ``0`` 表示关闭。
 

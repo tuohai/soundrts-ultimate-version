@@ -928,6 +928,186 @@ def hotkeys_menu():
     menu.loop()
 
 
+def open_voices_folder():
+    """Open the user voices folder (Nuance / SAPI pack install location)."""
+    from .paths import VOICES_PATH
+
+    try:
+        readme = os.path.join(VOICES_PATH, "README.txt")
+        with open(readme, "w", encoding="utf-8") as f:
+            f.write(
+                "SoundRTS2 游戏语音安装说明\n"
+                "=========================\n\n"
+                "主语音库：玩家操作与菜单。副语音库：对局内被动事件。\n"
+                "选项 → 语音库设置 可分别调整；菜单内按 F3 可启用或禁用副语音。\n\n"
+                "SAPI 音库：先安装到 Windows。部分音库（如 VW Julie）只有 32 位，\n"
+                "游戏会通过 tools/sapi32 调用。也可在本目录建子文件夹 + voice.ini\n"
+                "（title=中文名，sapi=系统语音名）。\n\n"
+                "可选：将 Nuance 数据包放到 voices/nuance/ 后可在列表中选用。\n"
+            )
+    except Exception:
+        pass
+    webbrowser.open(VOICES_PATH)
+
+
+def import_nuance_apple_voices():
+    """Copy Mist World Apple pack into user/voices/nuance (one-time)."""
+    from .lib import nuance_tts
+
+    def _progress(msg):
+        try:
+            voice.info([msg])
+        except Exception:
+            pass
+
+    try:
+        voice.info(["开始导入苹果音库，约需一两分钟…"])
+    except Exception:
+        pass
+    ok, detail = nuance_tts.import_from_mist_world(progress=_progress)
+    if ok:
+        voice.info(["导入完成，可在语音库设置中选择 Nuance"])
+        try:
+            from .lib import game_tts, voice_libs
+
+            voice_libs.load_from_config()
+            voice_libs.profile(voice_libs.PRIMARY)["voice"] = "nuance:Ting-Ting"
+            voice_libs.save_to_config()
+            voice_libs.apply_all()
+            game_tts.speak("SoundRTS 语音测试", interrupt=True, channel=game_tts.PRIMARY)
+        except Exception:
+            pass
+    else:
+        voice.info(["导入失败", str(detail)])
+    return ok
+
+
+def voice_lib_editor(which: str):
+    """Edit one voice library: Up/Down select param, Left/Right adjust, Enter/Esc back."""
+    import pygame
+    from pygame.locals import (
+        KEYDOWN,
+        K_DOWN,
+        K_ESCAPE,
+        K_KP_ENTER,
+        K_LEFT,
+        K_RETURN,
+        K_RIGHT,
+        K_UP,
+        QUIT,
+        USEREVENT,
+    )
+
+    from .lib import voice_libs
+    from .lib.msgs import literal_text_msg
+
+    voice_libs.load_from_config()
+    rows = [
+        voice_libs.PARAM_VOLUME,
+        voice_libs.PARAM_PITCH,
+        voice_libs.PARAM_RATE,
+        voice_libs.PARAM_VOICE,
+        "device",
+    ]
+    idx = 0
+    title = (
+        mp.VOICE_LIB_PRIMARY[0]
+        if which == voice_libs.PRIMARY
+        else mp.VOICE_LIB_SECONDARY[0]
+    )
+
+    def _announce_row():
+        row = rows[idx]
+        if row == "device":
+            voice_libs.announce_device(which)
+        else:
+            voice_libs.profile(which)["param"] = int(row)
+            voice_libs.announce_param_value(which)
+
+    def _nudge(delta: int):
+        row = rows[idx]
+        if row == "device":
+            voice_libs.cycle_device(which, step=1 if delta > 0 else -1)
+            voice_libs.announce_device(which)
+        else:
+            voice_libs.profile(which)["param"] = int(row)
+            voice_libs.nudge_param(which, delta)
+            voice_libs.announce_param_value(which)
+
+    hint = mp.VOICE_LIB_EDITOR_HINT[0] if mp.VOICE_LIB_EDITOR_HINT else ""
+    voice.item(literal_text_msg(f"{title}。{hint}" if hint else title))
+    _announce_row()
+    pygame.event.clear([KEYDOWN])
+
+    while True:
+        e = pygame.event.poll()
+        if e.type == QUIT:
+            sys.exit()
+        if e.type == USEREVENT:
+            voice.update()
+        elif e.type == KEYDOWN:
+            pygame.event.clear([KEYDOWN])
+            if e.key in (K_ESCAPE, K_RETURN, K_KP_ENTER):
+                break
+            if e.key == K_UP:
+                idx = (idx - 1) % len(rows)
+                _announce_row()
+            elif e.key == K_DOWN:
+                idx = (idx + 1) % len(rows)
+                _announce_row()
+            elif e.key == K_LEFT:
+                _nudge(-5)
+            elif e.key == K_RIGHT:
+                _nudge(5)
+            elif e.key in (pygame.K_F9, pygame.K_F10, pygame.K_F11, pygame.K_F12):
+                try:
+                    voice_libs.handle_hotkey(e.key, e.mod)
+                except Exception:
+                    voice.item(mp.BEEP)
+        voice.update()
+        time.sleep(0.01)
+
+
+def voice_libs_menu():
+    """选项 → 语音库设置：主/副库编辑器（经典 UI，无 wx）。"""
+    from .lib import voice_libs
+
+    voice_libs.load_from_config()
+    menu = Menu(mp.VOICE_LIBS_MENU, menu_type="submenu")
+
+    def _secondary_status():
+        if int(getattr(config, "secondary_voice_enabled", 1)):
+            return mp.VOICE_LIB_SECONDARY_ON
+        return mp.VOICE_LIB_SECONDARY_OFF
+
+    def _refresh_choices():
+        menu.choices = [
+            (mp.VOICE_LIB_HELP, None),
+            (
+                mp.VOICE_LIB_SECONDARY_TOGGLE,
+                _toggle_secondary_voice,
+                _secondary_status(),
+            ),
+            (
+                mp.VOICE_LIB_PRIMARY,
+                (lambda: voice_lib_editor(voice_libs.PRIMARY)),
+            ),
+            (
+                mp.VOICE_LIB_SECONDARY,
+                (lambda: voice_lib_editor(voice_libs.SECONDARY)),
+            ),
+            (mp.OPEN_VOICES_FOLDER, open_voices_folder),
+            (mp.BACK, CLOSE_MENU),
+        ]
+
+    def _toggle_secondary_voice():
+        voice_libs.toggle_secondary_voice_enabled(announce=True)
+        _refresh_choices()
+
+    _refresh_choices()
+    menu.loop()
+
+
 def options_menu():
     from .hotkey_remapping_menu import hotkey_mapping_menu
 
@@ -939,6 +1119,7 @@ def options_menu():
             (mp.HOTKEY_MAPPING, hotkey_mapping_menu),
             (mp.MODS, mods_menu),
             (mp.SOUNDPACKS, soundpacks_menu),
+            (mp.VOICE_LIBS_MENU, voice_libs_menu),
             (mp.OPEN_USER_FOLDER, open_user_folder),
             (mp.BACK, CLOSE_MENU),
         ],

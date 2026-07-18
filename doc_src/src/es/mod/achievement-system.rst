@@ -219,7 +219,7 @@ Fase 3 (terminada)
 - Después de Un jugador → Iniciar en el mapa → Iniciar, recoge hasta N cartas (N = rango ``loadout_slots``)
 - Los efectos se aplican después de completar el mapa (inmediatamente o después de ``delay`` / ``delay_minutes``); un cargo consumido por tarjeta al inicio del juego
 - Campos de la tarjeta: ``spawn``, ``resource``, ``tech``; tarjetas combinadas compatibles; tarjetas retrasadas documentadas en `delayed-card-loadout.htm <delayed-card-loadout.htm>`_
-- La aparición de cartas no consume población.
+- La aparición de cartas consume población.
 - Solo juego de entrenamiento (escaramuza contra IA); no campaña ni multijugador
 - Las tarjetas pueden requerir ``min_rank`` en ``cards.txt``
 

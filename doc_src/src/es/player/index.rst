@@ -15,6 +15,7 @@ Nivel 1 · Controles
 
 - `Teclas rápidas por capas <layered-hotkeys.htm>`_
 - `Comportamientos por defecto de las unidades <unit-default-behavior.htm>`_
+- `Bibliotecas de voz principal y secundaria <voice-libraries.htm>`_
 
 Nivel 2 · Progreso y campañas
 -----------------------------

@@ -123,3 +123,40 @@ def test_remember_sets_default_index_without_duplicate(tmp_path, monkeypatch):
 
     menu._select_next_choice("m")
     assert menu.choices[menu.choice_index][0][0] == "m1"
+
+
+def test_soundrts2_first_letter_decodes_nb2msg_chapter_prefix(monkeypatch):
+    """soundrts2 campaign chapters use nb2msg(n); digit keys must jump by number."""
+    import warnings
+
+    _saved = sys.argv
+    sys.argv = [sys.argv[0]]
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            import soundrts2.clientmenu as cm2
+            from soundrts2.lib.msgs import nb2msg
+    finally:
+        sys.argv = _saved
+
+    class _LocalSounds(_FakeSounds):
+        def text(self, key):
+            if key in ("4271", "3001"):
+                return "章节"
+            return None
+
+    monkeypatch.setattr(cm2, "sounds", _LocalSounds())
+    choices = [
+        (nb2msg(1) + [4271, 3001], None),
+        (nb2msg(2) + [4271, 3001], None),
+        (nb2msg(10) + [4271, 3001], None),
+    ]
+    menu = cm2.Menu(choices=choices, default_choice_index=0)
+    menu._say_choice = lambda: None  # type: ignore[method-assign]
+    menu._select_next_choice("2")
+    assert menu.choice_index == 1
+    menu.choice_index = None
+    menu._select_next_choice("1")
+    assert menu.choice_index == 0
+    menu._select_next_choice("1")
+    assert menu.choice_index == 2

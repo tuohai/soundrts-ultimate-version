@@ -1368,6 +1368,8 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
 
         # 合作战役难度：在敌方单位生成时缩放生命（含开局单位与后续触发器增援）。
         self._apply_coop_difficulty_hp()
+        # 电脑 AI（ai.txt unit_hp）：在合作难度之后再缩放。
+        self._apply_ai_unit_hp()
 
         # 最小伤害
         self.minimal_damage = rules.get("parameters", "minimal_damage")
@@ -1420,6 +1422,30 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
             self.hp = max(1, int(self.hp) * factor // 100)
             if getattr(self, "hp_soldier_max", 0):
                 self.hp_soldier_max = max(1, int(self.hp_soldier_max) * factor // 100)
+        except (TypeError, ValueError):
+            pass
+
+    def _apply_ai_unit_hp(self) -> None:
+        """按 ai.txt ``unit_hp`` 缩放电脑玩家单位生命（整数运算，确定性安全）。"""
+        p = self.player
+        if p is None or not getattr(p, "is_computer_player", False):
+            return
+        if getattr(p, "neutral", False):
+            return
+        pct = getattr(p, "ai_unit_hp_percent", 100)
+        if pct == 100:
+            return
+        try:
+            if pct <= 0:
+                self.hp_max = 1
+                self.hp = 1
+                if getattr(self, "hp_soldier_max", 0):
+                    self.hp_soldier_max = 1
+                return
+            self.hp_max = max(1, int(self.hp_max) * int(pct) // 100)
+            self.hp = max(1, int(self.hp) * int(pct) // 100)
+            if getattr(self, "hp_soldier_max", 0):
+                self.hp_soldier_max = max(1, int(self.hp_soldier_max) * int(pct) // 100)
         except (TypeError, ValueError):
             pass
 

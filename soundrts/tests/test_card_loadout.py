@@ -113,10 +113,10 @@ def test_apply_card_adds_resources_and_spawns(monkeypatch):
     assert loadout.apply_card_to_player(player, "card_resource_gold") is True
     assert player.resources[0] == 10 * PRECISION
     assert loadout.apply_card_to_player(player, "card_infantry") is True
-    assert ("spawn", 0) in added
+    assert ("spawn", None) in added
 
 
-def test_card_spawn_requests_zero_population(monkeypatch):
+def test_card_spawn_uses_default_population(monkeypatch):
     card_mod.load_cards("""
         def card_infantry
         title 5322
@@ -166,7 +166,8 @@ def test_card_spawn_requests_zero_population(monkeypatch):
 
     player.add_unit = add_unit
     loadout.apply_card_to_player(player, "card_infantry")
-    assert calls == [0, 0]
+    # No population_cost override: units use their normal population_cost.
+    assert calls == [None, None]
 
 
 def test_apply_training_loadout_only_for_training_game(card_state, tmp_path, monkeypatch):
@@ -326,7 +327,7 @@ def test_delayed_card_schedules_spawn(monkeypatch):
 
     scheduled[0][1]()
     assert len(spawn_calls) == 2
-    assert all(call[0] == 0 for call in spawn_calls)
+    assert all(call[0] is None for call in spawn_calls)
     assert player.pushed
 
 
@@ -544,7 +545,8 @@ def test_apply_train_bonus_spawns_extra_units(monkeypatch):
     spawned = loadout.apply_train_bonus_for_unit(player, Footman, place, 1000, 1000, None)
     assert spawned == 3
     assert len(created) == 3
-    assert player.used_population == 0
+    # Bonus units keep their normal population cost (no refund to used_population).
+    assert player.used_population == 3
     assert loadout.apply_train_bonus_for_unit(player, Footman, place, 1000, 1000, None) == 0
     assert len(created) == 3
 

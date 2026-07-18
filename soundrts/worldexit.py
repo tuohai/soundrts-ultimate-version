@@ -34,6 +34,12 @@ class Exit(Entity):
         d.pop("_blocked_cache", None)
         return d
 
+    def __setstate__(self, state):
+        # Empty state = Entity.clean() wiped __dict__; revive in rebuild_world_after_load.
+        if not state:
+            return
+        self.__dict__.update(state)
+
     @property
     def other_side(self):
         return self.world.objects[self._other_side_id]

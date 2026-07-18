@@ -56,6 +56,11 @@ _mkdir(HOTKEY_OVERRIDES_DIR)
 # 旧版单文件路径（迁移到 hotkey_overrides/_base.json）
 LEGACY_HOTKEY_OVERRIDES_PATH = os.path.join(CONFIG_DIR_PATH, "hotkey_overrides.json")
 
+# Dual voice libraries / Nuance install location
+VOICES_PATH = os.path.join(CONFIG_DIR_PATH, "voices")
+_mkdir(VOICES_PATH)
+NUANCE_VOICE_PATH = os.path.join(VOICES_PATH, "nuance")
+
 
 def current_hotkey_overrides_path():
     """当前 mod 专属热键映射文件（与存档/回放隔离规则相同）。"""

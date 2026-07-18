@@ -310,7 +310,8 @@ cpdef bint is_seeing(self, u) except -1:
     if place is None:
         return False
 
-    if self._exit_blocker_visible(u):
+    # Most units have blocked_exit=None; avoid Python exit-blocker walk.
+    if getattr(u, "blocked_exit", None) is not None and self._exit_blocker_visible(u):
         return True
 
     x = u.x

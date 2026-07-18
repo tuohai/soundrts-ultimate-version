@@ -71,6 +71,10 @@ class Computer(Player):
     _target_townhalls = 0  # extra bases to maintain (ai.txt: "expand <n>")
     _attack_ratio = 180  # % of enemy menace needed to attack ("attack_ratio")
     counter_skill = 100  # 0-100: how well units use mdg_vs/rdg_vs ("counter_skill")
+    # One-shot ai.txt multipliers (100 = normal). See parse_ai_start_settings.
+    ai_train_time_percent = 100
+    ai_research_time_percent = 100
+    ai_unit_hp_percent = 100
     _wait_deadline = None  # internal state for the "wait <seconds>" command
 
     def __init__(self, world, client):
@@ -85,8 +89,20 @@ class Computer(Player):
         return "Computer(%s)" % self.client
 
     def init_position(self, parsed_start):
+        # Apply ai.txt multipliers before map starting units spawn (unit_hp).
+        self._apply_ai_multipliers()
         super().init_position(parsed_start)
         self._apply_ai_start_settings()
+
+    def _apply_ai_multipliers(self):
+        """Load train_time / research_time / unit_hp from ai.txt onto this player."""
+        if self.AI_type == "timers" or self.neutral:
+            return
+        script_name = self.faction_ai_type(self.AI_type)
+        *_, train_time, research_time, unit_hp = parse_ai_start_settings(script_name)
+        self.ai_train_time_percent = train_time
+        self.ai_research_time_percent = research_time
+        self.ai_unit_hp_percent = unit_hp
 
     def _default_start_place(self):
         for u in self.units:
@@ -109,7 +125,17 @@ class Computer(Player):
         if self.AI_type == "timers" or self.neutral:
             return
         script_name = self.faction_ai_type(self.AI_type)
-        resource_bonus, unit_tokens, population_bonus = parse_ai_start_settings(script_name)
+        (
+            resource_bonus,
+            unit_tokens,
+            population_bonus,
+            train_time,
+            research_time,
+            unit_hp,
+        ) = parse_ai_start_settings(script_name)
+        self.ai_train_time_percent = train_time
+        self.ai_research_time_percent = research_time
+        self.ai_unit_hp_percent = unit_hp
         if resource_bonus:
             for index, qty in enumerate(resource_bonus):
                 if not qty or index >= len(self.resources):
@@ -145,7 +171,7 @@ class Computer(Player):
                         self.upgrades.append(unit_cls.type_name)
                 else:
                     for _ in range(multiplicator):
-                        self.add_unit(unit_cls, place, population_cost=0)
+                        self.add_unit(unit_cls, place)
                 multiplicator = 1
 
     @property
@@ -179,6 +205,9 @@ class Computer(Player):
             self._target_townhalls = type(self)._target_townhalls
             self._attack_ratio = type(self)._attack_ratio
             self.counter_skill = type(self).counter_skill
+            self.ai_train_time_percent = type(self).ai_train_time_percent
+            self.ai_research_time_percent = type(self).ai_research_time_percent
+            self.ai_unit_hp_percent = type(self).ai_unit_hp_percent
             self._wait_deadline = None
             self._update_effect_users_and_workers()  # required by some tests
 

@@ -224,6 +224,9 @@ class Player:
         self._enemy_units_cache_time = -1_000_000
         self._cached_enemy_players = []
         self._enemy_players_cache_time = -1_000_000
+        # batch_see 敌方玩家列表（按秒桶；与 known_enemies 的 hostile 列表独立）
+        self._enemy_players_batch = None
+        self._enemy_players_batch_bucket = -1
         self._enemy_units_set = frozenset()
         self._enemy_units_set_time = -1
         self._enemy_inside_units = ()

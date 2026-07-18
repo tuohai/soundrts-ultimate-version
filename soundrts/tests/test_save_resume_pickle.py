@@ -98,6 +98,106 @@ def test_action_pickle_defers_target_until_world_objects_ready():
     assert action.target is target
 
 
+def test_rebuild_revives_blank_square_and_exit():
+    """Regression: wiped Square/Exit __dict__ must not crash resume load."""
+    from soundrts.save_pickle import rebuild_world_after_load
+    from soundrts.worldexit import Exit
+    from soundrts.worldroom import Square
+
+    class _World:
+        square_width = 15000
+        square_cities = {}
+        square_districts = {}
+        square_names = {}
+        players = []
+        _ecs = None
+
+        def _create_graphs(self):
+            self.g = {"ground": {}, "air": {}, "water": {}}
+
+    world = _World()
+    world.objects = {}
+    world.squares = []
+
+    # Intact neighbor square 10,1 with exit facing east toward 11,1
+    sq10 = Square.__new__(Square)
+    sq10.__dict__.update(
+        {
+            "col": 10,
+            "row": 1,
+            "name": "10,1",
+            "id": "35",
+            "world": world,
+            "place": world,
+            "xmin": 150000,
+            "ymin": 15000,
+            "xmax": 165000,
+            "ymax": 30000,
+            "x": 157500,
+            "y": 22500,
+            "is_inside_place": False,
+            "high_ground": False,
+            "type_name": "",
+            "terrain_speed": (100, 100),
+            "terrain_cover": (0, 0),
+            "title": [],
+            "objects": [],
+            "exits": [],
+            "subcells": None,
+        }
+    )
+    world.squares.append(sq10)
+    world.objects["35"] = sq10
+
+    partner = Exit.__new__(Exit)
+    partner.__dict__.update(
+        {
+            "type_name": "path",
+            "is_a_portal": False,
+            "world": world,
+            "x": 164999,
+            "y": 22500,
+            "o": 180,
+            "place": sq10,
+            "id": "322",
+            "_other_side_id": "323",
+            "_blockers": [],
+            "is_blocked_by_forests": False,
+            "action_target": None,
+            "_previous_square": None,
+        }
+    )
+    sq10.objects.append(partner)
+    sq10.exits.append(partner)
+    world.objects["322"] = partner
+
+    # Blank square 11,1 and its wiped exit (as in a corrupted resume save)
+    blank = Square.__new__(Square)
+    world.squares.append(blank)
+    world.objects["36"] = blank
+
+    blank_exit = Exit.__new__(Exit)
+    world.objects["323"] = blank_exit
+
+    # Unit still sitting on the blank square with real map coords
+    unit = type("U", (), {})()
+    unit.place = blank
+    unit.x = 177750
+    unit.y = 22500
+    unit.id = "400"
+    world.objects["400"] = unit
+
+    rebuild_world_after_load(world)
+
+    assert blank.name == "11,1"
+    assert world.grid["11,1"] is blank
+    assert world.grid[(11, 1)] is blank
+    assert blank_exit.place is blank
+    assert blank_exit._other_side_id == "322"
+    assert partner.other_side is blank_exit
+    assert blank_exit in blank.exits
+
+
 def test_cw1_mm_save_roundtrip():
     """Regression: 100x100 cw1-mm must save/load without stack overflow."""
     import os

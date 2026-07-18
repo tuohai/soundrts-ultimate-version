@@ -341,6 +341,15 @@ class GameInterface(AttributesInterface):
         return get_legacy_bindings_text()
 
     def run_game(self, game, new=True):
+        from ..lib import game_tts as _game_tts
+
+        _game_tts.set_in_match(True)
+        try:
+            self._run_game_body(game, new=new)
+        finally:
+            _game_tts.set_in_match(False)
+
+    def _run_game_body(self, game, new=True):
         t = threading.Thread(target=game.world.loop)
         t.daemon = True
         t.start()

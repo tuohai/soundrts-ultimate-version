@@ -215,7 +215,7 @@ Fase 3 (completata)
 - Dopo Singolo giocatore → Avvia su mappa → Avvia, scegli fino a N carte (N = ``loadout_slots`` del rango)
 - Gli effetti si applicano dopo il populate della mappa (immediati o dopo ``delay`` / ``delay_minutes``); una carica consumata per carta all’inizio partita
 - Campi carta: ``spawn``, ``resource``, ``tech``; carte combo supportate; carte ritardate documentate in `Carte di loadout ritardate <delayed-card-loadout.htm>`_
-- Gli spawn delle carte non consumano popolazione
+- Gli spawn delle carte consumano popolazione
 - Solo TrainingGame (skirmish contro IA); non campagna né multigiocatore
 - Le carte possono richiedere ``min_rank`` in ``cards.txt``
 

@@ -90,7 +90,7 @@
 到点回调（``\_schedule_card_effects``）：
 
 1. 按 `player.id` 找回本地人类玩家（玩家已退出则放弃并写 warning）
-2. 依次应用：资源 → 生成单位（起始格附近，不占人口）→ 科技
+2. 依次应用：资源 → 生成单位（起始格附近，占用人口）→ 科技
 3. 对本地玩家推送 ``LOADOUT_CARD_TRIGGERED`` 语音（「携带卡牌效果生效：…」）
 
 游戏速度：``delay_ms = delay_seconds × 1000 × world.timer_coefficient`` （加速/减速局内一致）。

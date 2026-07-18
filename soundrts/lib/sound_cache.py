@@ -233,6 +233,14 @@ class SoundCache:
         # 切换战役/mod/地图时清空跨战役 tts 的全局回退缓存，
         # 避免上一个战役命中过的 ID 被下一个战役继续复用
         self._global_text_cache = {}
+        # Message.translate_and_collapse caches by ID only; clear so nathan's
+        # ui/7501.ogg is not stuck behind a prior Raynor 7501 text collapse.
+        try:
+            from soundrts.lib.message import clear_collapse_cache
+
+            clear_collapse_cache()
+        except Exception:
+            pass
 
     def translate_sound_number(self, sound_number):
         """Return the text or sound corresponding to the sound number.

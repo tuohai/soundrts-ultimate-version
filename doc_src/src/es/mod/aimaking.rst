@@ -142,11 +142,21 @@ Investigación activada, más bases y más voluntad de atacar.
 - ``starting_units \<unit\>...`` -- unidades o edificios de bonificación generados en el
   Casilla de salida de la IA después de la salida normal. Utiliza la misma sintaxis plana que map.
   ``starting_units`` (ponga un recuento antes del nombre de un tipo para generar varios:
-  ``5 footman 2 archer``). Respeta los nombres de las facciones ``equivalent``. no
-  consumir población (a diferencia de las unidades iniciales del mapa). Omitido = sin unidades de bonificación.
+  ``5 footman 2 archer``). Respeta los nombres de las facciones ``equivalent``.
+  **Consumen población** (igual que las unidades iniciales del mapa; sube el
+  tope con ``starting_population`` si hace falta). Omitido = sin unidades de bonificación.
 - ``starting_population \<n\>`` -- límite de población adicional agregado además de
   casas y otras unidades ``population_provided``. Entero simple (no ``× 1000``).
   ``available_population`` todavía está limitado por el ``global_population_limit`` del mapa.
+- ``train_time \<pct\>`` -- porcentaje de la duración normal de entrenamiento
+  (``100`` = normal, ``50`` = mitad de tiempo). Solo afecta a ``train`` y
+  morph-as-train. Omitido = ``100``.
+- ``research_time \<pct\>`` -- porcentaje de la duración normal de investigación /
+  avance (``100`` = normal, ``80`` = 20% más rápido). Solo ``research`` /
+  ``advance``. Omitido = ``100``.
+- ``unit_hp \<pct\>`` -- porcentaje de PV normales de todas las unidades de este
+  ordenador (``100`` = normal, ``120`` = +20% PV). Tras el ``enemy_hp_factor``
+  de coop. Omitido = ``100``.
 
   Estas líneas se aplican una vez al inicio del juego; no son parte del
   bucle de secuencia de comandos (a diferencia de ``get`` / ``attack``).
@@ -154,9 +164,12 @@ Investigación activada, más bases y más voluntad de atacar.
   Bonificaciones de vainilla ``res/ai.txt`` (además de cada inicio de mapa):
 
   - intermedio: ``starting_resources 50 50``, ``starting_population 10``
-  - avanzado: ``100 100`` + ``2 footman 2 archer``, ``starting_population 20``
-  - experto: ``200 200`` + ``5 footman 4 archer 2 knight``, ``starting_population 40``
-  - pesadilla: ``400 400`` + ``8 footman 6 archer 4 knight``, ``starting_population 60``
+  - avanzado: ``100 100`` + ``2 footman 2 archer``, ``starting_population 20``,
+    ``train_time 50``, ``research_time 80``
+  - experto: ``200 200`` + ``5 footman 4 archer 2 knight``, ``starting_population 40``,
+    ``train_time 50``, ``research_time 70``, ``unit_hp 120``
+  - pesadilla: ``400 400`` + ``8 footman 6 archer 4 knight``, ``starting_population 60``,
+    ``train_time 40``, ``research_time 60``, ``unit_hp 140``
 - ``watchdog \<seconds\>`` -- una red de seguridad: si la IA está atrapada en la misma línea
   durante este tiempo, pasa a la siguiente línea. ``0`` lo desactiva.
 

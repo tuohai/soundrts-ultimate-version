@@ -115,6 +115,8 @@ Level 3 — Modern features (1.4+)
      - [random-map.md](random-map.htm)
    * - Layered hotkeys
      - [layered-hotkeys.md](layered-hotkeys.htm)
+   * - Primary & secondary voice libraries
+     - [voice-libraries.md](voice-libraries.htm)
    * - Bring items to a square
      - [brought-item-delivery.md](brought-item-delivery.htm)
 

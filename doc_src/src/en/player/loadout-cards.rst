@@ -46,7 +46,7 @@ Typical effects
 
 
 - Resource cards — bonus at start
-- Reinforcement cards — units near your start (no population cost)
+- Reinforcement cards — units near your start (consume population)
 - Delayed cards — charge spent at start; units or tech arrive after in-game time
 
 The armory speaks each card’s effect when you browse it.

@@ -139,11 +139,21 @@ research turned on, more bases and more willingness to attack.
 - ``starting_units \<unit\>...`` -- bonus units or buildings spawned at the
   AI's start square after the normal start. Uses the same flat syntax as map
   ``starting_units`` (put a count before a type name to spawn several:
-  ``5 footman 2 archer``). Respects faction ``equivalent`` names. Do not
-  consume population (unlike map starting units). Omitted = no bonus units.
+  ``5 footman 2 archer``). Respects faction ``equivalent`` names. **Consume
+  population** (same as map starting units; raise the cap with
+  ``starting_population`` if needed). Omitted = no bonus units.
 - ``starting_population \<n\>`` -- bonus population cap added on top of
   houses and other ``population_provided`` units. Plain integer (not ``× 1000``).
   ``available_population`` is still capped by the map's ``global_population_limit``.
+- ``train_time \<pct\>`` -- percent of normal unit-training duration
+  (``100`` = normal, ``50`` = half time / trains faster). Affects ``train``
+  and morph-as-train only. Omitted = ``100``.
+- ``research_time \<pct\>`` -- percent of normal research / advance duration
+  (``100`` = normal, ``80`` = 20% faster). Affects ``research`` / ``advance``
+  only. Omitted = ``100``.
+- ``unit_hp \<pct\>`` -- percent of normal HP for all of this computer's units
+  (``100`` = normal, ``120`` = +20% HP). Applied after coop
+  ``enemy_hp_factor``. Omitted = ``100``.
 
   These lines are applied once at game start; they are not part of the
   script loop (unlike ``get`` / ``attack``).
@@ -151,9 +161,12 @@ research turned on, more bases and more willingness to attack.
   Vanilla ``res/ai.txt`` bonuses (on top of every map start):
 
   - intermediate: ``starting_resources 50 50``, ``starting_population 10``
-  - advanced: ``100 100`` + ``2 footman 2 archer``, ``starting_population 20``
-  - expert: ``200 200`` + ``5 footman 4 archer 2 knight``, ``starting_population 40``
-  - nightmare: ``400 400`` + ``8 footman 6 archer 4 knight``, ``starting_population 60``
+  - advanced: ``100 100`` + ``2 footman 2 archer``, ``starting_population 20``,
+    ``train_time 50``, ``research_time 80``
+  - expert: ``200 200`` + ``5 footman 4 archer 2 knight``, ``starting_population 40``,
+    ``train_time 50``, ``research_time 70``, ``unit_hp 120``
+  - nightmare: ``400 400`` + ``8 footman 6 archer 4 knight``, ``starting_population 60``,
+    ``train_time 40``, ``research_time 60``, ``unit_hp 140``
 - ``watchdog \<seconds\>`` -- a safety net: if the AI is stuck on the same line
   for this long, it moves on to the next line. ``0`` disables it.
 

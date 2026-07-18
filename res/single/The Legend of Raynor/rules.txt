@@ -373,7 +373,7 @@ inventory_capacity 3
 receive_items 1
 accepted_items secret_letter
 accept_from neutral
-accept_givers raynor
+accept_givers raynor6
 ai_mode guard
 mdg 20
 mdg_cd 1.5
@@ -395,8 +395,8 @@ sight_range 8
 inventory_capacity 3
 receive_items 1
 accepted_items garrek_token
-accept_from enemy
-accept_givers raynor
+accept_from neutral
+accept_givers raynor7
 ai_mode guard
 mdg 22
 mdg_cd 1.4
@@ -427,8 +427,8 @@ heal_cd 2
 sight_range 8
 receive_items 1
 accepted_items war_banner
-accept_from enemy
-accept_givers raynor
+accept_from neutral
+accept_givers raynor7
 ai_mode guard
 mdg 18
 mdg_cd 1.5

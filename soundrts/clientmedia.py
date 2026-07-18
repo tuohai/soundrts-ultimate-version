@@ -34,6 +34,12 @@ def minimal_init():
     sound.init(config.num_channels)
     config.apply_audio_settings()
     voice.init(config)
+    try:
+        from .lib import voice_libs
+
+        voice_libs.apply_all()
+    except Exception:
+        pass
     set_screen(fullscreen)
     res.register(update_display_caption)
     pygame.key.set_repeat(500, 100)
@@ -93,6 +99,11 @@ def play_sequence(names):
     参数:
         names: 要播放的声音或文本的ID列表，可以是数字、字母或中文字符
               对于自定义音效，可以选择是否包含.ogg后缀，例如'launch_mdg 1000'或'launch_mdg 1000.ogg'均可
+
+    Story / intro / cut-scenes always use the **primary** voice library
+    (and AO2 when a screen reader owns primary). They must not follow
+    ``passive_channel()`` — ``run_game`` sets in-match before ``pre_run``,
+    which would otherwise route chapter intros to secondary.
     """
     # 检查音乐是否已经被暂停（比如上层调用者已经暂停了）
     music_already_paused = sound.music_paused
@@ -111,14 +122,13 @@ def play_sequence(names):
     # 停止其他声音效果
     sound.stop(stop_voice_too=False)  # 不停止语音通道
     
+    from .lib import game_tts
+
     # 播放序列
     for name in names:
         # 检查是否是数字ID，但不要立即判断它是聊天文本
         # 先检查它是否是一个有效的声音ID
-        if isinstance(name, str) and name.isdigit():
-            voice.important([name])  # 让voice系统处理数字ID
-        else:
-            voice.important([name])  # each element is interruptible
+        voice.important([name], tts_channel=game_tts.PRIMARY)
             
     # 只有当我们暂停了音乐时才恢复
     if music_controlled_by_us:

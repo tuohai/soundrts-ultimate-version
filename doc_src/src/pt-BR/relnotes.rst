@@ -5,6 +5,39 @@ Notas de lançamento
 .. contents::
 
 
+1.4.5.4
+-------
+
+**Melhoria: bibliotecas de voz principal / secundária e interruptor**
+
+- Na partida: operações do jogador usam a biblioteca **principal**; eventos passivos (baixas, descobertas…) usam a **secundária** (podem sobrepor-se; só Alt interrompe a secundária).
+- Opções → Configurações da biblioteca de voz: volume / tom / velocidade / voz / dispositivo por biblioteca; ativar ou desativar a secundária.
+- **F3 nos menus** ativa/desativa a secundária (não na partida); desativada, a principal anuncia tudo.
+- Instale vozes SAPI ou pacotes ``voice.ini`` em ``user/voices``; um leitor de tela detectado pode assumir a principal.
+- **Código**: ``lib/voice.py``, ``lib/voicechannel.py``, ``lib/game_tts.py``, ``lib/voice_libs.py``, ``lib/voice_packs.py``, ``clientmenu.py``, ``clientmain.py``, ``config.py``.
+- **Documentação**: ``player/voice-libraries.rst``.
+- **Testes**: ``test_secondary_voice_toggle.py``, ``test_secondary_alt_interrupt.py``.
+
+**Melhoria: reforços de cartas e ``starting_units`` da IA consomem população**
+
+- Unidades de cartas ``spawn`` / ``train_bonus`` usam o ``population_cost`` normal (não são mais grátis em população).
+- Bônus ``starting_units`` em ``ai.txt`` também consomem população (igual ao início do mapa); aumente o teto com ``starting_population`` se precisar.
+- **Código**: ``card_loadout.py``, ``worldplayercomputer.py``.
+- **Documentação**: ``player/loadout-cards.rst``, ``mod/aimaking.rst``, ``mod/delayed-card-loadout.rst``, ``mod/achievement-system.rst``.
+- **Testes**: ``test_card_loadout.py``, ``test_ai_start_settings.py``.
+
+**Melhoria: multiplicadores ``train_time``, ``research_time`` e ``unit_hp`` em ``ai.txt``**
+
+- Novas diretivas one-shot (no início da partida, fora do loop do script):
+  - ``train_time <pct>`` — porcentagem da duração normal de treinamento (``100`` = normal, ``50`` = metade do tempo)
+  - ``research_time <pct>`` — porcentagem da duração normal de pesquisa/avanço (``80`` = 20% mais rápido)
+  - ``unit_hp <pct>`` — porcentagem do HP normal das unidades deste computador (``120`` = +20% HP)
+- Exemplos em ``res/ai.txt``: advanced ``train_time 50`` / ``research_time 80``; expert também ``unit_hp 120``; nightmare ``train_time 40`` / ``research_time 60`` / ``unit_hp 140``.
+- **Código**: ``definitions.py``, ``worldplayercomputer.py``, ``worldorders/base.py``, ``worldorders/production.py``, ``worldunit/worldcreature.py``; ``res/ai.txt``.
+- **Documentação**: ``mod/aimaking.rst``.
+- **Testes**: ``test_ai_start_settings.py``, ``test_ai_train_research_hp.py``.
+
+
 1.4.5.3
 -------
 

@@ -200,11 +200,13 @@ class WorldEcs:
             out.append(u)
         return out
 
-    def batch_see_enemies(self, viewer, enemies, bucket_size: int):
+    def batch_see_enemies(self, viewer, enemies, bucket_size: int, vision_places=None):
         """Return enemies visible to *viewer* (parity with ``_is_seeing``).
 
         Optimizations vs per-enemy ``_is_seeing``:
         - cloak / exit-blocker handled once up front
+        - optional *vision_places* (observed ∪ partial): skip Euclidean for units
+          whose place can never pass ``place in observer.get_observed_squares()``
         - enemies grouped by bucket cell; observers from warm 3×3 ``_buckets``
         - observed-square sets from ``get_observed_squares_optimized`` + shared
           cache across overlapping cells (pay topology once per observer)
@@ -223,9 +225,17 @@ class WorldEcs:
             # Direct attrs (hot path; avoid getattr).
             if (u.is_invisible or u.is_cloaked) and detected is not None and u not in detected:
                 continue
-            if u.place is None:
+            pl = u.place
+            if pl is None:
                 continue
-            if exit_vis is not None and exit_vis(u):
+            # Only exit-blockers (doors/walls) need the expensive observed-square walk.
+            # Class default blocked_exit=None on normal units — skip exit_vis entirely.
+            is_blocker = getattr(u, "blocked_exit", None) is not None
+            if vision_places is not None and pl not in vision_places:
+                if is_blocker and exit_vis is not None and exit_vis(u):
+                    visible.add(u)
+                continue
+            if is_blocker and exit_vis is not None and exit_vis(u):
                 visible.add(u)
                 continue
             pending.append(u)

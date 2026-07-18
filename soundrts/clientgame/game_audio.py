@@ -753,6 +753,65 @@ def cmd_get_zoom_precision(interface):
     voice.item([f"{interface._zoom_precision}x{interface._zoom_precision}"])
 
 
+def _voice_lib_which(secondary=False):
+    from ..lib import voice_libs
+
+    return voice_libs.SECONDARY if int(secondary) else voice_libs.PRIMARY
+
+
+def cmd_voice_lib_cycle(interface, secondary=0):
+    """Legacy alias: cycle voice for the library."""
+    from ..lib import voice_libs
+
+    which = _voice_lib_which(secondary)
+    voice_libs.cycle_voice(which, step=1)
+    voice_libs.announce_param_value(which)
+
+
+def cmd_voice_lib_device(interface, secondary=0):
+    """F9 / Shift+F9: cycle output sound card."""
+    from ..lib import voice_libs
+
+    which = _voice_lib_which(secondary)
+    voice_libs.cycle_device(which, step=1)
+    voice_libs.announce_device(which)
+
+
+def cmd_voice_lib_param(interface, secondary=0):
+    """F10 / Shift+F10: cycle parameter type."""
+    from ..lib import voice_libs
+
+    which = _voice_lib_which(secondary)
+    voice_libs.cycle_param(which, step=1)
+    voice_libs.announce_param_type(which)
+
+
+def cmd_voice_lib_nudge(interface, delta=1, secondary=0):
+    """F11/F12 or Shift+F11/F12: nudge current parameter."""
+    from ..lib import voice_libs
+
+    which = _voice_lib_which(secondary)
+    voice_libs.nudge_param(which, int(delta))
+    voice_libs.announce_param_value(which)
+
+
+def cmd_voice_lib_copy(interface):
+    """Left Shift+C: last primary utterance; Right Shift+C: last secondary."""
+    import pygame
+
+    from ..lib import voice_libs
+
+    which = voice_libs.which_from_shift_mod(pygame.key.get_mods())
+    voice_libs.copy_voice_info(which)
+
+
+def cmd_voice_lib_append_copy(interface):
+    """Shift+A: append last voice-library announcement."""
+    from ..lib import voice_libs
+
+    voice_libs.copy_last_announce(append=True)
+
+
 # 导出的函数供其他模块使用
 __all__ = [
     'cmd_say', 'cmd_say_players', 'cmd_say_time', 'cmd_toggle_music',
@@ -762,5 +821,7 @@ __all__ = [
     'cmd_toggle_tick', 'srv_restore_music', 'srv_resume_music',
     'cmd_move_forward_zoom', 'cmd_move_backward_zoom', 'cmd_move_left_zoom',
     'cmd_move_right_zoom', 'cmd_change_zoom_precision', 'cmd_get_zoom_precision',
+    'cmd_voice_lib_cycle', 'cmd_voice_lib_device', 'cmd_voice_lib_param', 'cmd_voice_lib_nudge',
+    'cmd_voice_lib_copy', 'cmd_voice_lib_append_copy',
     '_check_zoom_movement_collision', '_get_target_zoom_by_orientation'
 ]

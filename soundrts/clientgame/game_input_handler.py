@@ -59,6 +59,24 @@ def _process_events(interface):
                 _execute_order_shortcut(interface, e)
                 interface.shortcut_mode = False
             else:
+                # L/R Shift+C copy last utterance; Shift+A append when fresh
+                try:
+                    from pygame.locals import K_a, K_c
+                    from ..lib import voice_libs
+
+                    key = e.key
+                    if key in (ord("C"), ord("A")):
+                        key = ord(chr(key).lower())
+                    if (
+                        (e.mod & KMOD_SHIFT)
+                        and not (e.mod & KMOD_CTRL)
+                        and key in (K_a, K_c)
+                        and (key == K_c or voice_libs.announce_is_fresh())
+                        and voice_libs.handle_hotkey(key, e.mod)
+                    ):
+                        continue
+                except Exception:
+                    pass
                 try:
                     interface._bindings.process_keydown_event(e)
                 except KeyError:

@@ -16,6 +16,7 @@ Level 1 · Controls
 
 - `Layered hotkeys <layered-hotkeys.htm>`_
 - `Unit default behaviors <unit-default-behavior.htm>`_
+- `Primary & secondary voice libraries <voice-libraries.htm>`_
 
 Level 2 · Progress & campaigns
 -------------------------------

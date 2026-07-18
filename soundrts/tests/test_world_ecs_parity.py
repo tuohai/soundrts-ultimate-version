@@ -149,6 +149,10 @@ class _ObsUnit:
         self.id = uid
         self.is_inside = inside
         self.player = None
+        self.blocked_exit = None
+        self.is_invisible = False
+        self.is_cloaked = False
+        self.place = None
 
 
 def _ref_observers_seeing(units, tx, ty, A):
@@ -311,6 +315,17 @@ def test_batch_see_enemies_matches_is_seeing(monkeypatch):
     # Parity with single-target path (neighbor-based)
     assert viewer._py_is_seeing(near) is True
     assert viewer._py_is_seeing(far) is False
+
+    # vision_places prefilter: far place excluded → still not seen; near kept
+    batch2 = ecs.batch_see_enemies(
+        viewer, [near, far], A, vision_places={place_here}
+    )
+    assert near in batch2
+    assert far not in batch2
+    # Empty vision: neither Euclidean-visible (exit blockers not in this fixture)
+    batch3 = ecs.batch_see_enemies(viewer, [near, far], A, vision_places=set())
+    assert near not in batch3
+    assert far not in batch3
 
 
 def test_ecs_update_buckets_uses_incremental(monkeypatch):

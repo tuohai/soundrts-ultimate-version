@@ -13,6 +13,15 @@ _COLLAPSE_CACHE = {}
 _COLLAPSE_CACHE_MAX = 512
 
 
+def clear_collapse_cache():
+    """Drop cached translations when resource layers change (campaign/mod/map).
+
+    Colliding numeric IDs (e.g. nathan ``7501.ogg`` vs Raynor ``7501`` TTS)
+    must not reuse a previous campaign's collapsed result.
+    """
+    _COLLAPSE_CACHE.clear()
+
+
 def _sound_numbers_key(parts):
     key = []
     for p in parts:

@@ -4,6 +4,39 @@
 .. contents::
 
 
+1.4.5.4
+--------
+
+**改善：主语音 / 副语音双库与开关**
+
+- 对局内：玩家操作走**主语音库**，伤亡/发现等被动事件走**副语音库**（可并行；仅 Alt 打断副库）。
+- 选项 → 语音库设置：分别调节主/副库的音量、音调、语速、音色、声卡；可启用或禁用副语音。
+- **菜单内 F3** 切换副语音开/关（对局内无效）；禁用后主语音接管全部播报。
+- 可在 ``user/voices`` 安装 SAPI 语音或 ``voice.ini`` 语音包；读屏激活时主语音职责可由读屏接管。
+- **实现**：``lib/voice.py``、``lib/voicechannel.py``、``lib/game_tts.py``、``lib/voice_libs.py``、``lib/voice_packs.py``、``clientmenu.py``、``clientmain.py``、``config.py``。
+- **文档**：``player/voice-libraries.rst``。
+- **测试**：``test_secondary_voice_toggle.py``、``test_secondary_alt_interrupt.py``。
+
+**改善：卡牌增援与 AI ``starting_units`` 占用人口**
+
+- 战前卡牌 ``spawn`` / ``train_bonus`` 生成的单位按正常 ``population_cost`` 占用人口（不再免费占位）。
+- ``ai.txt`` 的 ``starting_units`` 加成单位同样占用人口（与地图开局单位一致）；可用 ``starting_population`` 提高上限。
+- **实现**：``card_loadout.py``、``worldplayercomputer.py``。
+- **文档**：``player/loadout-cards.rst``、``mod/aimaking.rst``、``mod/delayed-card-loadout.rst``、``mod/achievement-system.rst``。
+- **测试**：``test_card_loadout.py``、``test_ai_start_settings.py``。
+
+**改善：``ai.txt`` 可调训练时间、研究时间与单位血量**
+
+- 新增一次性指令（开局生效，不进脚本循环）：
+  - ``train_time <pct>`` — 训练时长百分比（``100`` = 正常，``50`` = 时间减半）
+  - ``research_time <pct>`` — 科技/时代研究时长百分比（``80`` = 快 20%）
+  - ``unit_hp <pct>`` — 该电脑单位血量百分比（``120`` = +20% HP）
+- 原版 ``res/ai.txt`` 示例：高级 ``train_time 50`` / ``research_time 80``；专家另加 ``unit_hp 120``；噩梦 ``train_time 40`` / ``research_time 60`` / ``unit_hp 140``。
+- **实现**：``definitions.py``、``worldplayercomputer.py``、``worldorders/base.py``、``worldorders/production.py``、``worldunit/worldcreature.py``；``res/ai.txt``。
+- **文档**：``mod/aimaking.rst``。
+- **测试**：``test_ai_start_settings.py``、``test_ai_train_research_hp.py``。
+
+
 1.4.5.3
 --------
 

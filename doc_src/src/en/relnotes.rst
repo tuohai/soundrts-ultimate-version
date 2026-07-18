@@ -5,6 +5,39 @@ Release notes
 .. contents::
 
 
+1.4.5.4
+--------
+
+**Improvement: primary / secondary voice libraries and toggle**
+
+- In-match: player ops use the **primary** library; passive events (casualties, discoveries, …) use the **secondary** library (can overlap; only Alt interrupts secondary).
+- Options → Voice library settings: edit volume / pitch / rate / voice / device per library; enable or disable secondary.
+- **F3 in menus** toggles secondary on/off (not in-match); when off, primary speaks everything.
+- Install SAPI voices or ``voice.ini`` packs under ``user/voices``; a detected screen reader may take over primary duties.
+- **Code**: ``lib/voice.py``, ``lib/voicechannel.py``, ``lib/game_tts.py``, ``lib/voice_libs.py``, ``lib/voice_packs.py``, ``clientmenu.py``, ``clientmain.py``, ``config.py``.
+- **Docs**: ``player/voice-libraries.rst``.
+- **Tests**: ``test_secondary_voice_toggle.py``, ``test_secondary_alt_interrupt.py``.
+
+**Improvement: card reinforcements and AI ``starting_units`` consume population**
+
+- Pre-mission card ``spawn`` / ``train_bonus`` units use normal ``population_cost`` (no longer free of population).
+- ``ai.txt`` ``starting_units`` bonuses also consume population (same as map starting units); raise the cap with ``starting_population`` if needed.
+- **Code**: ``card_loadout.py``, ``worldplayercomputer.py``.
+- **Docs**: ``player/loadout-cards.rst``, ``mod/aimaking.rst``, ``mod/delayed-card-loadout.rst``, ``mod/achievement-system.rst``.
+- **Tests**: ``test_card_loadout.py``, ``test_ai_start_settings.py``.
+
+**Improvement: ``ai.txt`` train time, research time, and unit HP multipliers**
+
+- New one-shot directives (applied at game start, not in the script loop):
+  - ``train_time <pct>`` — percent of normal training duration (``100`` = normal, ``50`` = half time)
+  - ``research_time <pct>`` — percent of normal research/advance duration (``80`` = 20% faster)
+  - ``unit_hp <pct>`` — percent of normal HP for this computer's units (``120`` = +20% HP)
+- Vanilla ``res/ai.txt`` examples: advanced ``train_time 50`` / ``research_time 80``; expert also ``unit_hp 120``; nightmare ``train_time 40`` / ``research_time 60`` / ``unit_hp 140``.
+- **Code**: ``definitions.py``, ``worldplayercomputer.py``, ``worldorders/base.py``, ``worldorders/production.py``, ``worldunit/worldcreature.py``; ``res/ai.txt``.
+- **Docs**: ``mod/aimaking.rst``.
+- **Tests**: ``test_ai_start_settings.py``, ``test_ai_train_research_hp.py``.
+
+
 1.4.5.3
 --------
 

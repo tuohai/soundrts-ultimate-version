@@ -418,12 +418,14 @@ class _Game:
             return
         try:
             from .achievements import process_game_end_achievements
+            from .lib import game_tts
 
             player = self.scoring_player()
             if player is None:
                 return
             for msg in process_game_end_achievements(self, player):
-                voice.info(msg)
+                # End-of-game summary → primary / screen reader, not secondary.
+                voice.important(msg, tts_channel=game_tts.PRIMARY)
             voice.flush()
         except Exception:
             pass
@@ -432,19 +434,22 @@ class _Game:
         if self.is_campaign_session():
             voice.flush()
             return
+        from .lib import game_tts
+
         player = self.scoring_player()
         if player is not None and hasattr(player, "stats"):
             for msg in player.stats.score_msgs(
                 effective_victory=self.scoring_victory(),
                 scored_enemy_ids=self.scored_enemy_ids(),
             ):
-                voice.info(msg)
+                # Post-match stats must use primary (SR owns primary when active).
+                voice.important(msg, tts_channel=game_tts.PRIMARY)
         elif (
             hasattr(self.local_client, "player")
             and self.local_client.player
             and getattr(self.local_client.player, "is_spectator", False)
         ):
-            voice.info(mp.SPECTATING_FINISHED)
+            voice.important(mp.SPECTATING_FINISHED, tts_channel=game_tts.PRIMARY)
         voice.flush()
 
 

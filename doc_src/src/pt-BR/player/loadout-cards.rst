@@ -46,7 +46,7 @@ Efeitos típicos
 
 
 - Cartas de recurso — bônus no início
-- Cartas de reforço — unidades perto do seu início (sem custo de população)
+- Cartas de reforço — unidades perto do seu início (consomem população)
 - Cartas atrasadas — carga gasta no início; unidades ou tech chegam após tempo de jogo
 
 O arsenal fala o efeito de cada carta quando você a percorre.

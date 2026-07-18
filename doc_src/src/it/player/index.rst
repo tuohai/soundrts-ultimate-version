@@ -16,6 +16,7 @@ Livello 1 · Controlli
 
 - `Tasti rapidi a livelli <layered-hotkeys.htm>`_
 - `Comportamenti predefiniti delle unità <unit-default-behavior.htm>`_
+- `Librerie vocali primaria e secondaria <voice-libraries.htm>`_
 
 Livello 2 · Progressi e campagne
 --------------------------------

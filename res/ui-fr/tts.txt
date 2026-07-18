@@ -1,4 +1,4 @@
-﻿;	coding: utf-8
+;	coding: utf-8
 0	Rien !
 1	Vous vous trouvez
 3	Devant vous,
@@ -1445,3 +1445,7 @@
 4654	bâtiment de mine d'or
 4662	plaine
 4663	terrain découvert
+5710	volume
+5711	tonalité
+5712	débit
+5713	voix

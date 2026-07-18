@@ -48,6 +48,9 @@ class PerceptionMixin:
         return False
 
     def _exit_blocker_visible(self, unit):
+        # Class default blocked_exit=None — skip observed-square walk for normal units.
+        if getattr(unit, "blocked_exit", None) is None:
+            return False
         return exit_blocker_visible_from_observed_squares(unit, self.observed_squares)
 
     def raise_threat(self, subsquare, delta):
@@ -340,7 +343,7 @@ class PerceptionMixin:
             return False
 
         # 墙/门等出口阻挡物：站在出口任一侧或相邻格观察时，应能看到阻挡物本身
-        if self._exit_blocker_visible(u):
+        if getattr(u, "blocked_exit", None) is not None and self._exit_blocker_visible(u):
             return True
 
         x = u.x
@@ -513,8 +516,13 @@ class PerceptionMixin:
             cached_vision = self.__class__._allied_vision_cache[alliance_key]
             self.observed_squares = cached_vision['observed_squares']
             partially_observed_squares = cached_vision['partially_observed_squares']
-            # 覆盖计数未入缓存：用严格观察区补上（全 1；本路径整表重建）
-            self._vision_cover_counts = {sq: 1 for sq in self.observed_squares}
+            # 覆盖计数：优先复用缓存中的真实计数；旧缓存条目退回全 1。
+            # 必须 copy——增量感知会原地 mutate _vision_cover_counts。
+            cached_covers = cached_vision.get("cover_counts")
+            if cached_covers is not None:
+                self._vision_cover_counts = dict(cached_covers)
+            else:
+                self._vision_cover_counts = {sq: 1 for sq in self.observed_squares}
         else:
             # 优化: 预计算相同特性单位组
             unit_vision_groups = {}
@@ -586,10 +594,11 @@ class PerceptionMixin:
             # 从部分可见方格中移除完全可见的方格
             partially_observed_squares -= self.observed_squares
             
-            # 保存联盟视野缓存
+            # 保存联盟视野缓存（含 cover_counts，命中时免重建）
             self.__class__._allied_vision_cache[alliance_key] = {
                 'observed_squares': self.observed_squares.copy(),
-                'partially_observed_squares': partially_observed_squares.copy()
+                'partially_observed_squares': partially_observed_squares.copy(),
+                'cover_counts': dict(self._vision_cover_counts),
             }
             self.__class__._allied_vision_timestamp[alliance_key] = vision_cache_key
                     
@@ -705,61 +714,59 @@ class PerceptionMixin:
             self._prev_partial_squares = set(partially_observed_squares)
 
         # 处理联盟观察到的对象 - 使用联盟视野缓存
-        if alliance_key in self.__class__._allied_vision_cache and 'observed_objects' in self.__class__._allied_vision_cache[alliance_key]:
-            cached_observed = {
-                o for o in self.__class__._allied_vision_cache[alliance_key]['observed_objects']
-                if getattr(o, "place", None) is not None
-            }
-            self.perception.update(cached_observed)
+        av_cache = self.__class__._allied_vision_cache.get(alliance_key)
+        if av_cache is not None and "observed_objects" in av_cache:
+            # place 在写入时已过滤；只剔除本桶内被删的对象
+            cached_observed = av_cache["observed_objects"]
+            if cached_observed:
+                self.perception.update(
+                    o for o in cached_observed if o.place is not None
+                )
         else:
-            # 处理观察到的对象 - 使用字典推导优化
+            # 处理观察到的对象
             observed_objects_to_add = set()
             for p in self.allied_vision:
-                # 过滤出有效的观察对象
-                valid_objects = {o for o, t in p.observed_objects.items() 
-                               if t >= self.world.time and o.place is not None}
-                
-                # 移除过期和无效对象
+                valid_objects = {
+                    o
+                    for o, t in p.observed_objects.items()
+                    if t >= self.world.time and o.place is not None
+                }
                 invalid_objects = set(p.observed_objects.keys()) - valid_objects
                 for o in invalid_objects:
                     del p.observed_objects[o]
-                    
                 observed_objects_to_add.update(valid_objects)
-            
+
             self.perception.update(observed_objects_to_add)
-            
-            # 更新缓存
-            if alliance_key in self.__class__._allied_vision_cache:
-                self.__class__._allied_vision_cache[alliance_key]['observed_objects'] = observed_objects_to_add
-        
+
+            if av_cache is not None:
+                av_cache["observed_objects"] = observed_objects_to_add
+
         # 添加盟友单位 - 使用联盟缓存优化
-        if alliance_key in self.__class__._allied_vision_cache and 'allied_units' in self.__class__._allied_vision_cache[alliance_key]:
+        if av_cache is not None and "allied_units" in av_cache:
             # 命中缓存：信任同 vision_cache_key 周期内的列表（存入时已过滤 place）
-            self.perception.update(
-                self.__class__._allied_vision_cache[alliance_key]['allied_units']
-            )
+            self.perception.update(av_cache["allied_units"])
         else:
-            # 重新收集盟友单位
             allied_units = set()
             for p in self.allied_vision:
                 for u in p.units:
                     if u.place is not None:
                         allied_units.add(u)
             self.perception.update(allied_units)
-            
-            # 更新缓存
-            if alliance_key in self.__class__._allied_vision_cache:
-                self.__class__._allied_vision_cache[alliance_key]['allied_units'] = allied_units
-        
+
+            if av_cache is not None:
+                av_cache["allied_units"] = allied_units
+
         # 处理敌方单位 —— 临时改回 1.3.8.1：每个敌人都跑欧氏 ``_is_seeing``，
         # 不做观察区预筛 / 150 配额（备份见 backup_perception_pre_1381style_20260714/）。
         # ECS=1：批量可见性（按敌军格分组 + SoA 欧氏），语义对齐 ``_is_seeing``。
+        # vision_places = 严格∪部分：欧氏前剔除不可能通过 place∈observed 的敌人
+        #（出口阻挡物仍在 batch_see 内单独处理，不依赖此集合）。
         enemy_units = set()
         # Cache enemy player list (allied_vision rarely changes mid-second).
         ep_bucket = current_time // 1000
         if (
-            getattr(self, "_enemy_players_batch_bucket", -1) != ep_bucket
-            or getattr(self, "_enemy_players_batch", None) is None
+            self._enemy_players_batch_bucket != ep_bucket
+            or self._enemy_players_batch is None
         ):
             self._enemy_players_batch = [
                 p for p in self.world.players if p not in self.allied_vision
@@ -774,11 +781,13 @@ class PerceptionMixin:
             and hasattr(ecs, "batch_see_enemies")
         )
 
+        vision_places = self.observed_squares | partially_observed_squares
+
         if use_batch:
             flat = []
             for p in enemy_players:
                 flat.extend(p.units)
-            enemy_units = ecs.batch_see_enemies(self, flat, A)
+            enemy_units = ecs.batch_see_enemies(self, flat, A, vision_places)
             for u in flat:
                 if u in enemy_units:
                     continue
@@ -1115,7 +1124,8 @@ class PerceptionMixin:
         index = self._memory_index
         extra = []
         for o in objects:
-            if not getattr(o, "is_an_exit", False):
+            # Exit.is_an_exit is a class bool; skip non-exits without getattr.
+            if not o.is_an_exit:
                 continue
             try:
                 other = o.other_side
@@ -1125,7 +1135,7 @@ class PerceptionMixin:
                 continue
             if other in perception or other in index:
                 continue
-            place = getattr(other, "place", None)
+            place = other.place
             if place is not None and place in observed:
                 continue
             extra.append(other)

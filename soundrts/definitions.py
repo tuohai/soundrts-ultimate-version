@@ -2040,6 +2040,9 @@ AI_ONE_SHOT_COMMANDS = frozenset({
     "starting_units",
     "starting_population",
     "defeat_score",
+    "train_time",
+    "research_time",
+    "unit_hp",
 })
 
 # Post-game bonus for defeating this AI difficulty (overridable per ``def`` in ai.txt).
@@ -2065,18 +2068,40 @@ def filter_ai_executable_plan(lines):
     return filtered
 
 
-def parse_ai_start_settings(name):
-    """Return (resource_bonus, unit_tokens, population_bonus) from the resolved AI script.
+def _parse_ai_percent_directive(words, name, default=100):
+    """Parse ``name <pct>`` from ai.txt; ``pct`` is a positive integer percent."""
+    if len(words) >= 2 and re.match("^[0-9]+$", words[1]):
+        return max(0, int(words[1]))
+    warning("%s: expected a non-negative integer percent (in ai.txt)", name)
+    return default
 
-    ``resource_bonus`` is a list of amounts **added** to the map/faction start
-    (same length as rules resource types). ``unit_tokens`` uses the same flat
-    syntax as map ``starting_units`` (counts before type names).
-    ``population_bonus`` is added to ``player.population`` after units spawn.
+
+def parse_ai_start_settings(name):
+    """Return start settings from the resolved AI script.
+
+    Returns
+    -------
+    resource_bonus
+        Amounts **added** to the map/faction start (same length as rules
+        resource types), or ``None``.
+    unit_tokens
+        Flat tokens like map ``starting_units`` (counts before type names).
+    population_bonus
+        Added to ``player.population`` after units spawn.
+    train_time_percent
+        Percent of normal training duration (100 = normal, 50 = half time).
+    research_time_percent
+        Percent of normal research/advance duration (100 = normal).
+    unit_hp_percent
+        Percent of normal unit HP (100 = normal, 120 = +20%).
     """
     lines = get_ai(name)
     resource_bonus = None
     unit_tokens = []
     population_bonus = 0
+    train_time_percent = 100
+    research_time_percent = 100
+    unit_hp_percent = 100
     for line in lines:
         words = line.split()
         if not words:
@@ -2097,7 +2122,20 @@ def parse_ai_start_settings(name):
                 population_bonus = int(words[1])
             else:
                 warning("starting_population: expected an integer (in ai.txt)")
-    return resource_bonus, unit_tokens, population_bonus
+        elif words[0] == "train_time":
+            train_time_percent = _parse_ai_percent_directive(words, "train_time")
+        elif words[0] == "research_time":
+            research_time_percent = _parse_ai_percent_directive(words, "research_time")
+        elif words[0] == "unit_hp":
+            unit_hp_percent = _parse_ai_percent_directive(words, "unit_hp")
+    return (
+        resource_bonus,
+        unit_tokens,
+        population_bonus,
+        train_time_percent,
+        research_time_percent,
+        unit_hp_percent,
+    )
 
 
 def get_ai_defeat_score(name):

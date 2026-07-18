@@ -143,7 +143,7 @@ def test_say_score_uses_scoring_player_after_change_player(monkeypatch):
     _apply_change_player(game, ai, monkeypatch)
 
     spoken = []
-    monkeypatch.setattr(game_mod.voice, "info", spoken.append)
+    monkeypatch.setattr(game_mod.voice, "important", lambda msg, **_k: spoken.append(msg))
     monkeypatch.setattr(game_mod.voice, "flush", lambda: None)
 
     game.say_score()
@@ -158,7 +158,7 @@ def test_say_score_after_human_win_while_on_ai_view(monkeypatch):
     _apply_change_player(game, ai, monkeypatch)
 
     spoken = []
-    monkeypatch.setattr(game_mod.voice, "info", spoken.append)
+    monkeypatch.setattr(game_mod.voice, "important", lambda msg, **_k: spoken.append(msg))
     monkeypatch.setattr(game_mod.voice, "flush", lambda: None)
 
     game.say_score()
@@ -174,7 +174,7 @@ def test_say_score_blocks_passive_win_when_npc_kills_ai_after_switch(monkeypatch
     game._defeated_ids = {ai.id}
 
     spoken = []
-    monkeypatch.setattr(game_mod.voice, "info", spoken.append)
+    monkeypatch.setattr(game_mod.voice, "important", lambda msg, **_k: spoken.append(msg))
     monkeypatch.setattr(game_mod.voice, "flush", lambda: None)
 
     game.say_score()
@@ -189,7 +189,7 @@ def test_say_score_after_defeat_in_ex_players(monkeypatch):
     game.world.ex_players = [human]
 
     spoken = []
-    monkeypatch.setattr(game_mod.voice, "info", spoken.append)
+    monkeypatch.setattr(game_mod.voice, "important", lambda msg, **_k: spoken.append(msg))
     monkeypatch.setattr(game_mod.voice, "flush", lambda: None)
 
     game.say_score()
@@ -213,7 +213,7 @@ def test_post_run_plays_defeat_not_victory_after_change_player(monkeypatch):
 
     monkeypatch.setattr("soundrts.lib.sound.play_victory_sound", _play_victory)
     monkeypatch.setattr("soundrts.lib.sound.play_defeat_sound", _play_defeat)
-    monkeypatch.setattr(game_mod.voice, "info", lambda *_a, **_k: None)
+    monkeypatch.setattr(game_mod.voice, "important", lambda *_a, **_k: None)
     monkeypatch.setattr(game_mod.voice, "flush", lambda: None)
     monkeypatch.setattr(game_mod.Upgrade, "reset", lambda: None)
 
@@ -240,7 +240,7 @@ def test_post_run_blocks_passive_win_music(monkeypatch):
         "soundrts.lib.sound.play_defeat_sound",
         lambda _s: played.__setitem__("sound", "defeat"),
     )
-    monkeypatch.setattr(game_mod.voice, "info", lambda *_a, **_k: None)
+    monkeypatch.setattr(game_mod.voice, "important", lambda *_a, **_k: None)
     monkeypatch.setattr(game_mod.voice, "flush", lambda: None)
     monkeypatch.setattr(game_mod.Upgrade, "reset", lambda: None)
 
@@ -280,7 +280,7 @@ def test_achievements_use_scoring_player_after_change_player(isolated_achievemen
     game = _TrainingGameStub(human, ai)
     _apply_change_player(game, ai, monkeypatch)
 
-    monkeypatch.setattr(game_mod.voice, "info", lambda *_a, **_k: None)
+    monkeypatch.setattr(game_mod.voice, "important", lambda *_a, **_k: None)
     monkeypatch.setattr(game_mod.voice, "flush", lambda: None)
 
     game._say_achievements()
@@ -312,7 +312,7 @@ def test_achievements_after_human_win_while_on_ai_view(isolated_achievements, mo
     _apply_change_player(game, ai, monkeypatch)
 
     spoken = []
-    monkeypatch.setattr(game_mod.voice, "info", spoken.append)
+    monkeypatch.setattr(game_mod.voice, "important", lambda msg, **_k: spoken.append(msg))
     monkeypatch.setattr(game_mod.voice, "flush", lambda: None)
 
     game._say_achievements()
@@ -346,7 +346,7 @@ def test_achievements_blocked_when_npc_kills_ai_after_switch(isolated_achievemen
     ai.has_been_defeated = True
     game._defeated_ids = {ai.id}
 
-    monkeypatch.setattr(game_mod.voice, "info", lambda *_a, **_k: None)
+    monkeypatch.setattr(game_mod.voice, "important", lambda *_a, **_k: None)
     monkeypatch.setattr(game_mod.voice, "flush", lambda: None)
 
     game._say_achievements()

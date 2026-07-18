@@ -1,4 +1,4 @@
-﻿;	coding: utf-8
+;	coding: utf-8
 0	Niente!
 1	sei
 3	di fronte a te
@@ -1445,3 +1445,7 @@
 4654	edificio miniera d'oro
 4662	pianura
 4663	spazio aperto
+5710	volume
+5711	tono
+5712	velocità
+5713	voce

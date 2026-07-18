@@ -1,0 +1,2 @@
+Main-Class: soundrts.nuance.Helper
+Class-Path: lib/jna.jar

@@ -1445,3 +1445,7 @@
 4654	budova zlatej bane
 4662	pláň
 4663	otvorený terén
+5710	hlasitosť
+5711	výška tónu
+5712	rýchlosť reči
+5713	hlas

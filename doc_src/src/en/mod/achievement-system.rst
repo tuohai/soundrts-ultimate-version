@@ -214,7 +214,7 @@ Phase 3 (done)
 - After Single player → Start on map → Start, pick up to N cards (N = rank ``loadout_slots``)
 - Effects apply after map populate (immediate or after ``delay`` / ``delay_minutes``); one charge consumed per card at game start
 - Card fields: ``spawn``, ``resource``, ``tech``; combo cards supported; delayed cards documented in `delayed-card-loadout.htm <delayed-card-loadout.htm>`_
-- Card spawns do not consume population
+- Card spawns consume population
 - TrainingGame only (skirmish vs AI); not campaign or multiplayer
 - Cards may require ``min_rank`` in ``cards.txt``
 

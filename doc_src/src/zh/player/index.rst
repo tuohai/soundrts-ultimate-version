@@ -16,6 +16,7 @@
 
 - `分层热键 <layered-hotkeys.htm>`_
 - `单位默认行为 <unit-default-behavior.htm>`_ （自动采集、探索、守卫）
+- `主语音与副语音 <voice-libraries.htm>`_
 
 第二层 · 进度与战役
 -------------------

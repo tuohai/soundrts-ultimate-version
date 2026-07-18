@@ -76,7 +76,7 @@ Combine with ``spawn`` and ``resource`` on one card; one shared delay, all effec
 At loadout apply time, ``delay \> 0`` registers ``world.schedule_after(delay_ms, callback)``.  
 ``delay_ms = delay_seconds × 1000 × world.timer_coefficient``.
 
-When the timer fires: apply resources → spawns near start (no population cost) → techs; local human gets LOADOUT_CARD_TRIGGERED voice.
+When the timer fires: apply resources → spawns near start (consume population) → techs; local human gets LOADOUT_CARD_TRIGGERED voice.
 
 Charge is consumed when the card is scheduled successfully at game start, not when effects fire.
 

@@ -176,7 +176,7 @@ def _apply_card_spawns(player, card: CardDef) -> bool:
         if place is None:
             break
         for _ in range(max(1, int(count))):
-            player.add_unit(unit_cls, place, population_cost=0)
+            player.add_unit(unit_cls, place)
     if len(getattr(player, "units", [])) > units_before:
         applied = True
     return applied
@@ -226,13 +226,6 @@ def _spawn_train_bonus_unit(player, unit_type, place, near_x, near_y, rally_poin
     if x is None:
         return None
     unit = unit_type(player, place, x, y)
-    try:
-        base_pop = max(0, int(getattr(unit_type, "population_cost", 0)))
-        if base_pop > 0:
-            unit.effective_population_cost = 0
-            player.used_population -= base_pop
-    except Exception:
-        pass
     unit.notify("complete")
     if rally_point is not None:
         unit.take_default_order(rally_point)

@@ -1445,3 +1445,7 @@
 4654	Goldminengebäude
 4662	Ebene
 4663	offenes Gelände
+5710	Lautstärke
+5711	Tonhöhe
+5712	Sprechtempo
+5713	Stimme

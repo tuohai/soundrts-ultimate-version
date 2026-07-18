@@ -333,6 +333,15 @@ class Square(_Space):
         pop_keys(d, SQUARE_STRIP_ON_SAVE)
         return d
 
+    def __setstate__(self, state):
+        # Empty state = Square.clean() wiped __dict__ before save; leave blank so
+        # rebuild_world_after_load can revive geometry from unit positions.
+        if not state:
+            return
+        self.__dict__.update(state)
+        if "name" not in self.__dict__ and "col" in self.__dict__ and "row" in self.__dict__:
+            self.name = f"{self.col},{self.row}"
+
     def is_near(self, square):  # FIXME: not used (remove?)
         try:
             return (abs(self.col - square.col), abs(self.row - square.row)) in (

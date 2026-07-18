@@ -606,12 +606,32 @@ class ComplexOrder(Order):
                     0, modified_time_cost * (100 + buff_pct) // 100
                 )
 
+            modified_time_cost = self._apply_ai_time_percent(modified_time_cost)
+
             return max(0, modified_time_cost)
 
         except Exception as e:
             warning(f"计算时间成本时出错: {e}")
         
         return base_time_cost
+
+    def _apply_ai_time_percent(self, time_cost):
+        """Scale train/research duration from ai.txt ``train_time`` / ``research_time``."""
+        player = getattr(self.unit, "player", None)
+        if player is None:
+            return time_cost
+        keyword = getattr(self, "keyword", None)
+        if keyword == "train":
+            pct = getattr(player, "ai_train_time_percent", 100)
+        elif keyword in ("research", "advance"):
+            pct = getattr(player, "ai_research_time_percent", 100)
+        else:
+            return time_cost
+        if pct == 100:
+            return time_cost
+        if pct <= 0:
+            return 0
+        return max(0, int(time_cost) * int(pct) // 100)
 
     @property
     def production_qty(self):

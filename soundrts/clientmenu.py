@@ -14,10 +14,15 @@ from pygame.locals import (
     K_ESCAPE,
     K_F1,
     K_F2,
+    K_F3,
     K_F5,
     K_F6,
     K_F7,
     K_F8,
+    K_F9,
+    K_F10,
+    K_F11,
+    K_F12,
     K_HOME,
     K_a,
     K_c,
@@ -54,7 +59,7 @@ from . import msgparts as mp
 from .clienthelp import help_msg
 from .clientmedia import modify_volume, sounds, toggle_fullscreen, voice
 from .lib.log import warning
-from .lib.msgs import LITERAL_TEXT_PREFIX, literal_text_msg, nb2msg
+from .lib.msgs import LITERAL_TEXT_PREFIX, NB_ENCODE_SHIFT, literal_text_msg, nb2msg
 from .lib.sound import psounds, toggle_music, adjust_music_volume, get_music_status
 from .paths import TMP_PATH
 from .definitions import style
@@ -588,8 +593,11 @@ def _first_letter(choice):
                 # Map names / literal labels (“m1”, “pm1”, …)：直接取首字符。
                 if sound_number and not sound_number.isdigit():
                     return sound_number[0].lower()
-            # 数字 TTS id（如随机地图 5033）：只查本地层，避免全局扫描。
+            # nb2msg(n) → 1000000+n：战役章节等数字前缀，本地解码，不走全局 TTS。
             key = "%s" % sound_number
+            if key.isdigit() and int(key) >= NB_ENCODE_SHIFT:
+                return str(int(key) - NB_ENCODE_SHIFT)[0].lower()
+            # 数字 TTS id（如随机地图 5033）：只查本地层，避免全局扫描。
             t = sounds.text(key)
             if t:
                 return str(t)[0].lower()
@@ -792,12 +800,38 @@ ALT MINUS: music_volume_down
             voice.item(help_msg("menu", -1))
         elif e.key == K_F1:
             voice.item(help_msg("menu"))
+        elif e.key == K_F3 and not (
+            e.mod & (KMOD_CTRL | KMOD_ALT | KMOD_SHIFT)
+        ):
+            # Menu only: enable/disable secondary voice (not available in-match).
+            try:
+                from .lib import voice_libs
+
+                voice_libs.toggle_secondary_voice_enabled(announce=True)
+            except Exception:
+                voice.item(mp.BEEP)
         elif e.key == K_F5:
             voice.previous()
         elif e.key in [K_LALT, K_RALT]:
             voice.say_next()
         elif e.key == K_F6:
             voice.say_next(history_only=True)
+        elif e.key in (K_F9, K_F10, K_F11, K_F12) or (
+            e.key in (K_c, K_a, ord("C"), ord("A"))
+            and (e.mod & KMOD_SHIFT)
+            and not (e.mod & KMOD_CTRL)
+        ):
+            # Dual voice libraries: F9–F12 / Shift+F9–F12; L/R Shift+C copy
+            try:
+                from .lib import voice_libs
+
+                key = e.key
+                if key in (ord("C"), ord("A")):
+                    key = ord(chr(key).lower())
+                if voice_libs.handle_hotkey(key, e.mod):
+                    return
+            except Exception:
+                voice.item(mp.BEEP)
         elif e.key in [K_HOME, K_KP_PLUS]:
             modify_volume(1)
         elif e.key in [K_END, K_KP_MINUS]:
