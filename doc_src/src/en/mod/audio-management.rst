@@ -120,6 +120,37 @@ Volumes and hotkeys
 | Music            | ``audio/music_volume``     | Alt+Home / Alt+End               |
 +------------------+----------------------------+----------------------------------+
 
+Mixer buffer and sample rate
+----------------------------
+
+``pygame.mixer.pre_init`` reads these from ``SoundRTS.ini`` at startup (``user/SoundRTS.ini`` or ``%APPDATA%/SoundRTS/SoundRTS.ini`` on Windows)::
+
+  [audio]
+  mixer_buffer = 2048
+  mixer_frequency = 44100
+
+  [general]
+  num_channels = 16
+
++-------------------+---------+--------------------------------------------------+
+| Key               | Default | Notes                                            |
++===================+=========+==================================================+
+| ``mixer_buffer``  | 2048    | Samples per SDL buffer. Larger = stabler SFX     |
+|                   |         | under load, slightly higher latency. Allowed:    |
+|                   |         | ``512``, ``1024``, ``2048``, ``4096``, ``8192``  |
+|                   |         | (other values snap to the nearest).              |
++-------------------+---------+--------------------------------------------------+
+| ``mixer_frequency`` | 44100 | Output sample rate in Hz (``22050``–``48000``).  |
++-------------------+---------+--------------------------------------------------+
+| ``num_channels``  | 16      | Concurrent SFX channels (try ``32`` if busy).    |
++-------------------+---------+--------------------------------------------------+
+
+Rough latency for common buffers at 44100 Hz: ``1024``≈23ms (more underruns in
+heavy matches), ``2048``≈46ms (default), ``4096``≈93ms (try if SFX still
+stutter). **Restart the game** after editing these keys — the mixer cannot
+re-init mid-session. Older ini files missing the keys get defaults on the next
+launch.
+
 For mod authors
 ---------------
 

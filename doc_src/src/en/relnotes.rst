@@ -5,6 +5,46 @@ Release notes
 .. contents::
 
 
+1.4.5.5
+--------
+
+**Improvement: directional square alerts (stereo pan follows the view)**
+
+- Square-linked passive lines (enemy spotted, casualties, scout info, combat-square alerts) pan left/right relative to the current view square (same math as minimap alert SFX).
+- **Pan updates mid-utterance** when you change squares (e.g. hear “enemy at a1” from the left on b1, then move to a1 → voice centers before the next message).
+- Nuance: PCM stereo gains plus live ``set_pan``; SAPI: render to a buffer and pan on the pygame voice channel.
+- Nuance helper must be built as **Java 7** bytecode (runtime ``user/voices/nuance/jre``); see ``tools/nuance_ve/README.md``.
+- **Code**: ``lib/voicechannel.py``, ``lib/message.py``, ``lib/game_tts.py``, ``lib/nuance_tts.py``, ``clientgame/game_unit_control.py``, ``clientgame/game_navigation.py``, ``tools/nuance_ve``, ``tools/sapi32``.
+- **Docs**: ``player/voice-libraries.rst``.
+- **Tests**: ``test_spatial_voice_alerts.py``.
+
+**Improvement: narrower secondary voice duties (economy / production → primary)**
+
+- Unit/building complete, research complete, age upgrade complete, resource stock changes, and “menu changed” now use the **primary** library.
+- Secondary focuses on battlefield passives (enemies spotted, casualties, scout, combat alerts, …).
+- **Code**: ``lib/message.py`` (``tts_channel``), ``lib/voice.py``, ``clientgameentity/events.py``, ``clientgame/game_resources.py``, ``clientgame/game_unit_control.py``.
+- **Docs**: ``player/voice-libraries.rst``.
+- **Tests**: ``test_primary_economy_voice.py``.
+
+**Improvement: Left Alt / Right Alt filter primary vs secondary**
+
+- **Left Alt** skips/stops the primary library; **Right Alt** skips/stops the secondary (no longer one shared Alt).
+- **With secondary disabled**: both Left and Right Alt skip the current line (everything is on primary).
+- Bindings: ``LALT: history_stop_primary``, ``RALT: history_stop_secondary``.
+- **Code**: ``lib/voice.py``, ``clientgame/game_audio.py``, ``clientmenu.py``, ``res/ui/*_bindings.txt``.
+- **Docs**: ``player/voice-libraries.rst``.
+- **Tests**: ``test_secondary_alt_interrupt.py``.
+
+**Improvement: configurable mixer buffer and sample rate (less in-match SFX stutter)**
+
+- ``SoundRTS.ini`` ``[audio]`` adds ``mixer_buffer`` (default ``2048``) and ``mixer_frequency`` (default ``44100``), applied at startup via ``pygame.mixer.pre_init``.
+- Larger buffer = stabler audio, slightly more latency: ``1024``≈23ms (prone to underruns), ``2048``≈46ms (default), ``4096``≈93ms (try if still stuttering). Invalid values snap to the nearest of ``512/1024/2048/4096/8192``.
+- SFX channel count remains ``[general] num_channels`` (default ``16``; try ``32`` in very busy matches).
+- **Restart the game** after changing these. Older ini files missing the keys get defaults on the next launch.
+- **Code**: ``config.py``, ``lib/sound.py``, ``clientmedia.py``.
+- **Docs**: ``mod/audio-management.rst``, ``player/getting-started.rst``.
+
+
 1.4.5.4
 --------
 

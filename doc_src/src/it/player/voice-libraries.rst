@@ -18,13 +18,16 @@ Compiti
    * - Libreria
      - Annuncia
    * - **Primaria**
-     - Menu, operazioni del giocatore (selezione, movimento, modalità…), tutto fuori partita
+     - Menu, operazioni del giocatore; tutto fuori partita; e in partita il **feedback economico/produzione** (unità/edificio pronto, ricerca, avanzamento era, risorse, menu cambiato…)
    * - **Secondaria**
-     - Solo eventi passivi in partita (perdite, scoperte, messaggi del mondo…)
+     - Eventi passivi di **campo di battaglia** (nemici, perdite, scout, allarmi di combattimento, messaggi del mondo…)
 
-Con secondaria **attiva**: le operazioni usano la primaria, gli eventi passivi la secondaria; possono sovrapporsi. Solo **Alt** interrompe la secondaria.
+Con secondaria **attiva**: primaria e secondaria possono sovrapporsi.
 
-Con secondaria **disattivata**: la primaria dice tutto (stile a canale unico); le operazioni interrompono le linee passive.
+- **Alt sinistro**: salta/ferma la libreria **primaria**
+- **Alt destro**: salta/ferma la libreria **secondaria**
+
+Con secondaria **disattivata**: la primaria dice tutto; **Alt sinistro e Alt destro saltano la riga corrente** (non c’è una secondaria da filtrare).
 
 
 ----
@@ -100,6 +103,22 @@ Nuance / voci Apple (opzionale)
 
 Se i dati Nuance sono in ``user/voices/nuance``, compaiono nell’elenco. Vedi le note di quella cartella.
 
+Primaria e secondaria possono usare **solo SAPI**; Nuance è opzionale e richiede l’helper Java a 32 bit in ``tools/nuance_ve``.
+
+
+----
+
+
+Avvisi direzionali in partita (pan stereo)
+------------------------------------------
+
+
+Alcune linee passive **legate a una casella** (nemico avvistato, perdite, scout, allarmi di combattimento) sono panoramizzate sinistra/destra rispetto alla casella di vista corrente (stessa logica dei SFX della minimappa).
+
+Con cuffie: in vista dall’alto verso nord, est a destra e ovest a sinistra.
+
+**Il pan si aggiorna se cambi casella a metà frase** (non serve attendere il messaggio successivo).
+
 
 ----
 
@@ -118,5 +137,5 @@ Vedi anche
 ----------
 
 
-- `Note di rilascio <../../relnotes.htm>`_ — 1.4.5.4
+- `Note di rilascio <../../relnotes.htm>`_ — 1.4.5.4 (doppie librerie), 1.4.5.5 (pan, compiti, Alt sx/dx)
 - `Manuale di gioco <manual.htm>`_

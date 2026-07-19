@@ -15,7 +15,7 @@ Mod 规则
 3. `Mod 制作手册 <modding.htm>`_ — 关键字大全（权威）
 4. `技能 / 治疗 / 效果 <skills-and-effects.htm>`_
 5. `战斗喊杀音效 <battle-shouts.htm>`_ — 分层喊杀、``shouts`` 配置
-6. `音频管理系统 <audio-management.htm>`_ — P0–P2 引擎重构、多格式 SFX、音量与预加载
+6. `音频管理系统 <audio-management.htm>`_ — P0–P2 引擎重构、多格式 SFX、音量、Mixer 缓冲与预加载
 
 地图
 

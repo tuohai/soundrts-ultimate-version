@@ -5,6 +5,38 @@ Notas de la versión
 .. contents::
 
 
+1.4.5.5
+-------
+
+**Mejora: alertas de casilla con pan estéreo (sigue la vista)**
+
+- Anuncios pasivos ligados a casilla (enemigo, bajas, scout, alertas de combate) se panoramizan respecto a la casilla de vista actual.
+- El pan se actualiza si cambias de casilla a mitad del anuncio.
+- **Código**: ``lib/voicechannel.py``, ``lib/message.py``, ``lib/game_tts.py``, ``lib/nuance_tts.py``, ``clientgame/game_unit_control.py``, ``clientgame/game_navigation.py``, ``tools/nuance_ve``, ``tools/sapi32``.
+- **Documentos**: ``player/voice-libraries.rst``.
+- **Pruebas**: ``test_spatial_voice_alerts.py``.
+
+**Mejora: la secundaria se centra en el campo de batalla (economía/producción → principal)**
+
+- Completar unidad/edificio, investigación, avance de era, cambios de recursos y «menú cambiado» pasan a la biblioteca **principal**.
+- **Documentos**: ``player/voice-libraries.rst``.
+
+**Mejora: Alt izquierdo / Alt derecho filtran principal vs secundaria**
+
+- **Alt izquierdo** omite/para la principal; **Alt derecho** omite/para la secundaria.
+- **Con secundaria desactivada**: ambos Alt omiten la línea actual.
+- **Documentos**: ``player/voice-libraries.rst``.
+
+**Mejora: búfer y frecuencia del mixer configurables (menos cortes de SFX en partida)**
+
+- En ``SoundRTS.ini`` ``[audio]``: ``mixer_buffer`` (por defecto ``2048``) y ``mixer_frequency`` (por defecto ``44100``), aplicados al iniciar con ``pygame.mixer.pre_init``.
+- Más búfer = audio más estable y un poco más de latencia (``1024`` / ``2048`` / ``4096``). Valores inválidos se ajustan al más cercano de ``512/1024/2048/4096/8192``.
+- Canales SFX: ``[general] num_channels`` (por defecto ``16``; prueba ``32`` si hace falta).
+- Tras cambiar, **reinicia el juego**.
+- **Código**: ``config.py``, ``lib/sound.py``, ``clientmedia.py``.
+- **Documentos**: ``mod/audio-management.rst``.
+
+
 1.4.5.4
 -------
 

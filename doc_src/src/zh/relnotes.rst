@@ -4,6 +4,46 @@
 .. contents::
 
 
+1.4.5.5
+--------
+
+**改善：对局内位置播报立体声方向（随视角跟新）**
+
+- 发现敌人、伤亡、侦察情报、战斗格警报等**带格子**的被动播报，按该格相对当前视角的方位做左右声道定位（与小地图警报音效一致）。
+- **播报中途换格会跟新**：例如在 b1 听左边 a1 有敌人，切到 a1 后声道收到中间，不必等下一条消息。
+- Nuance：合成 PCM 时按左右增益播放，并支持 ``set_pan`` 实时改增益；SAPI：合成到缓冲后在 pygame 声道上 pan。
+- Nuance helper 须以 **Java 7** 字节码构建（运行时为 ``user/voices/nuance/jre``）；详见 ``tools/nuance_ve/README.md``。
+- **实现**：``lib/voicechannel.py``、``lib/message.py``、``lib/game_tts.py``、``lib/nuance_tts.py``、``clientgame/game_unit_control.py``、``clientgame/game_navigation.py``、``tools/nuance_ve``、``tools/sapi32``。
+- **文档**：``player/voice-libraries.rst``。
+- **测试**：``test_spatial_voice_alerts.py``。
+
+**改善：副语音库职责收窄（生产/经济反馈改走主库）**
+
+- 单位/建筑完成（如「农民已就绪」「房屋完成」）、科技研究完成、时代升级完成、资源库存变化、菜单已改变等改由**主语音库**播报。
+- 副语音库专注战场被动事件（发现敌人、伤亡、侦察、战斗警报等）。
+- **实现**：``lib/message.py``（``tts_channel``）、``lib/voice.py``、``clientgameentity/events.py``、``clientgame/game_resources.py``、``clientgame/game_unit_control.py``。
+- **文档**：``player/voice-libraries.rst``。
+- **测试**：``test_primary_economy_voice.py``。
+
+**改善：左 Alt / 右 Alt 分别过滤主库与副库**
+
+- **左 Alt**：跳过或停止主语音库当前播报；**右 Alt**：跳过或停止副语音库当前播报（不再共用同一个 Alt）。
+- **禁用副语音时**：左右 Alt 均可跳过当前播报（此时全部走主库，没有副库可过滤）。
+- 绑定：``LALT: history_stop_primary``，``RALT: history_stop_secondary``。
+- **实现**：``lib/voice.py``、``clientgame/game_audio.py``、``clientmenu.py``、``res/ui/*_bindings.txt``。
+- **文档**：``player/voice-libraries.rst``。
+- **测试**：``test_secondary_alt_interrupt.py``。
+
+**改善：Mixer 缓冲与采样率可配置（缓解对局音效卡顿）**
+
+- ``SoundRTS.ini`` 的 ``[audio]`` 新增 ``mixer_buffer``（默认 ``2048``）与 ``mixer_frequency``（默认 ``44100``）；启动时读入 ``pygame.mixer.pre_init``。
+- 缓冲越大越稳、延迟略增：``1024``≈23ms（易卡）、``2048``≈46ms（默认）、``4096``≈93ms（仍卡再试）。非法值会靠到最近的 ``512/1024/2048/4096/8192``。
+- 音效通道数仍由 ``[general] num_channels`` 控制（默认 ``16``；对局很挤时可试 ``32``）。
+- 改配置后须**重启游戏**才生效。旧 ini 缺少这两项时，下次启动会自动补上默认值。
+- **实现**：``config.py``、``lib/sound.py``、``clientmedia.py``。
+- **文档**：``mod/audio-management.rst``、``player/getting-started.rst``。
+
+
 1.4.5.4
 --------
 

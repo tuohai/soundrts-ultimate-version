@@ -18,13 +18,16 @@ Funciones
    * - Biblioteca
      - Anuncia
    * - **Principal**
-     - Menús, operaciones del jugador (selección, movimiento, modos…), todo fuera de partida
+     - Menús, operaciones del jugador; todo fuera de partida; y en partida el **feedback económico/producción** (unidad/edificio listo, investigación, mejora de era, recursos, menú cambiado…)
    * - **Secundaria**
-     - Solo eventos pasivos en partida (bajas, descubrimientos, mensajes del mundo…)
+     - Eventos pasivos de **campo de batalla** (enemigos, bajas, scout, alertas de combate, mensajes del mundo…)
 
-Con la secundaria **activada**: las operaciones van por la principal y los eventos pasivos por la secundaria; pueden solaparse. Solo **Alt** interrumpe la secundaria.
+Con la secundaria **activada**: principal y secundaria pueden solaparse.
 
-Con la secundaria **desactivada**: la principal lo dice todo (modo de un solo canal); las operaciones interrumpen las líneas pasivas.
+- **Alt izquierdo**: omite/para la biblioteca **principal**
+- **Alt derecho**: omite/para la biblioteca **secundaria**
+
+Con la secundaria **desactivada**: la principal lo dice todo; **Alt izquierdo y Alt derecho omiten la línea actual** (no hay secundaria que filtrar).
 
 
 ----
@@ -100,6 +103,22 @@ Nuance / voces Apple (opcional)
 
 Si hay datos Nuance en ``user/voices/nuance``, aparecen en la lista. Consulta las notas de esa carpeta.
 
+Principal y secundaria pueden usar **solo SAPI**; Nuance es opcional y requiere el ayudante Java 32 bits en ``tools/nuance_ve``.
+
+
+----
+
+
+Alertas direccionales en partida (pan estéreo)
+----------------------------------------------
+
+
+Algunos anuncios pasivos **ligados a una casilla** (enemigo detectado, bajas, exploración, alertas de combate) se panoramizan izquierda/derecha respecto a tu casilla de vista actual (misma lógica que los SFX del minimapa).
+
+Con auriculares: en vista cenital hacia el norte, el este suena más a la derecha y el oeste a la izquierda.
+
+**El pan se actualiza si cambias de casilla a mitad del anuncio** (no hace falta esperar al siguiente mensaje).
+
 
 ----
 
@@ -118,5 +137,5 @@ Ver también
 -----------
 
 
-- `Notas de la versión <../../relnotes.htm>`_ — 1.4.5.4
+- `Notas de la versión <../../relnotes.htm>`_ — 1.4.5.4 (doble biblioteca), 1.4.5.5 (pan, deberes, Alt izq./der.)
 - `Manual del juego <manual.htm>`_

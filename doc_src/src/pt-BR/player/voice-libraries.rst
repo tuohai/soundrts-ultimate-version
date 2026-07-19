@@ -18,13 +18,16 @@ Funções
    * - Biblioteca
      - Anuncia
    * - **Principal**
-     - Menus, operações do jogador (seleção, movimento, modos…), tudo fora da partida
+     - Menus, operações do jogador; tudo fora da partida; e na partida o **feedback econômico/produção** (unidade/prédio pronto, pesquisa, avanço de era, recursos, menu alterado…)
    * - **Secundária**
-     - Apenas eventos passivos na partida (baixas, descobertas, mensagens do mundo…)
+     - Eventos passivos de **campo de batalha** (inimigos, baixas, scout, alertas de combate, mensagens do mundo…)
 
-Com a secundária **ativada**: operações usam a principal; eventos passivos usam a secundária; podem sobrepor-se. Só **Alt** interrompe a secundária.
+Com a secundária **ativada**: principal e secundária podem sobrepor-se.
 
-Com a secundária **desativada**: a principal fala tudo (modo de canal único); operações interrompem linhas passivas.
+- **Alt esquerdo**: pula/para a biblioteca **principal**
+- **Alt direito**: pula/para a biblioteca **secundária**
+
+Com a secundária **desativada**: a principal fala tudo; **Alt esquerdo e Alt direito pulam a fala atual** (não há secundária para filtrar).
 
 
 ----
@@ -100,6 +103,22 @@ Nuance / vozes Apple (opcional)
 
 Se houver dados Nuance em ``user/voices/nuance``, aparecem na lista. Veja as notas dessa pasta.
 
+Principal e secundária podem usar **só SAPI**; Nuance é opcional e precisa do helper Java 32 bits em ``tools/nuance_ve``.
+
+
+----
+
+
+Alertas direcionais na partida (pan estéreo)
+--------------------------------------------
+
+
+Algumas falas passivas **ligadas a uma casa** (inimigo avistado, baixas, scout, alertas de combate) são panoramizadas esquerda/direita em relação à casa de vista atual (mesma lógica dos SFX do minimapa).
+
+Com fones: na vista aérea olhando para o norte, leste à direita e oeste à esquerda.
+
+**O pan atualiza se você mudar de casa no meio da fala** (não precisa esperar a próxima mensagem).
+
 
 ----
 
@@ -118,5 +137,5 @@ Ver também
 ----------
 
 
-- `Notas de lançamento <../../relnotes.htm>`_ — 1.4.5.4
+- `Notas de lançamento <../../relnotes.htm>`_ — 1.4.5.4 (duas bibliotecas), 1.4.5.5 (pan, funções, Alt esq./dir.)
 - `Manual do jogo <manual.htm>`_

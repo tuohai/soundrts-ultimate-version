@@ -18,13 +18,18 @@ Duties
    * - Library
      - Speaks
    * - **Primary**
-     - Menus, player ops (select, move, mode changes, …), all out-of-match speech
+     - Menus, player ops (select, move, mode changes, …); all out-of-match speech; and in-match **own economy / production feedback** (unit/building complete, research complete, age upgrade complete, resource stock changes, menu changed, …)
    * - **Secondary**
-     - In-match passive events only (casualties, discoveries, world messages, …)
+     - In-match **battlefield passive** events (enemies spotted, casualties, scout reports, combat-square alerts, world messages, …)
 
-With secondary **enabled**: ops use primary, passive events use secondary; they can overlap. Only **Alt** interrupts secondary.
+With secondary **enabled**: primary and secondary can overlap.
 
-With secondary **disabled**: primary speaks everything (single-channel style); ops interrupt passive lines.
+Skip / stop the current line:
+
+- **Left Alt**: filter (skip / stop) the **primary** library
+- **Right Alt**: filter (skip / stop) the **secondary** library
+
+With secondary **disabled**: primary speaks everything (single-channel style); **both Left Alt and Right Alt skip the current line** (there is no secondary to filter).
 
 
 ----
@@ -100,6 +105,28 @@ Nuance / Apple voices (optional)
 
 If Nuance data is under ``user/voices/nuance``, those voices appear in the list. See that folder’s notes or the release tools for import steps.
 
+Primary and secondary can both use **SAPI only**; Nuance is optional. Nuance needs the 32-bit Java helper shipped in ``tools/nuance_ve``; the SAPI path does not use Java.
+
+
+----
+
+
+Directional in-match alerts (stereo pan)
+----------------------------------------
+
+
+Some **square-linked** passive lines in a match (enemy spotted, casualties, scout reports, combat-square alerts) are panned left/right (with front/back attenuation) relative to your **current view square**, using the same positioning as minimap alert SFX.
+
+Headphones recommended. In the default overhead view facing north: squares to the east are louder on the right; west on the left.
+
+**Pan follows mid-utterance moves:** if you hear “enemy at a1” from the left while on b1, then switch to a1 before the line ends, the voice moves to center (in front)—you do not wait for the next message.
+
+Notes:
+
+- Direction applies to the secondary library when enabled, otherwise to primary. It works with SAPI or Nuance.
+- Menu and selection speech stay centered.
+- When a screen reader owns primary, primary pan is unavailable; secondary can still pan as above.
+
 
 ----
 
@@ -118,5 +145,5 @@ See also
 --------
 
 
-- `Release notes <../../relnotes.htm>`_ — 1.4.5.4
+- `Release notes <../../relnotes.htm>`_ — 1.4.5.4 (dual libraries), 1.4.5.5 (directional alerts, duties, Left/Right Alt)
 - `Game manual <manual.htm>`_

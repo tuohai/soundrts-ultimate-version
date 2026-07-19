@@ -160,6 +160,11 @@ Enable in ``user/SoundRTS.ini``: ``mods = soundpack,starcraft`` or ``--mods=...`
      - [starcraft-zerg-creep.md](starcraft-zerg-creep.htm)
 
 
+If in-match SFX stutter or cut out, raise ``mixer_buffer`` under ``[audio]`` in
+``SoundRTS.ini`` (default ``2048``; try ``4096``), and optionally
+``[general] num_channels`` (try ``32``). Restart after editing. Details:
+:doc:`../mod/audio-management`.
+
 
 Release notes: `Release notes <../../relnotes.htm>`_ — full version history.
 

@@ -4,6 +4,38 @@ Note di rilascio
 .. contents::
 
 
+1.4.5.5
+--------
+
+**Miglioramento: avvisi di casella con pan stereo (segue la vista)**
+
+- Linee passive legate a casella (nemico, perdite, scout, allarmi) panoramizzate rispetto alla casella di vista corrente.
+- Il pan si aggiorna se cambi casella a metà frase.
+- **Codice**: ``lib/voicechannel.py``, ``lib/message.py``, ``lib/game_tts.py``, ``lib/nuance_tts.py``, ``clientgame/game_unit_control.py``, ``clientgame/game_navigation.py``, ``tools/nuance_ve``, ``tools/sapi32``.
+- **Documentazione**: ``player/voice-libraries.rst``.
+- **Test**: ``test_spatial_voice_alerts.py``.
+
+**Miglioramento: la secondaria si concentra sul campo di battaglia (economia/produzione → primaria)**
+
+- Completamento unità/edificio, ricerca, avanzamento era, risorse e «menu cambiato» passano alla libreria **primaria**.
+- **Documentazione**: ``player/voice-libraries.rst``.
+
+**Miglioramento: Alt sinistro / Alt destro filtrano primaria vs secondaria**
+
+- **Alt sinistro** salta/ferma la primaria; **Alt destro** salta/ferma la secondaria.
+- **Con secondaria disattivata**: entrambi gli Alt saltano la riga corrente.
+- **Documentazione**: ``player/voice-libraries.rst``.
+
+**Miglioramento: buffer e frequenza mixer configurabili (meno stutter degli SFX in partita)**
+
+- In ``SoundRTS.ini`` ``[audio]``: ``mixer_buffer`` (default ``2048``) e ``mixer_frequency`` (default ``44100``), applicati all'avvio con ``pygame.mixer.pre_init``.
+- Buffer più grande = audio più stabile, latenza un po' più alta (``1024`` / ``2048`` / ``4096``). Valori non validi vanno al più vicino tra ``512/1024/2048/4096/8192``.
+- Canali SFX: ``[general] num_channels`` (default ``16``; prova ``32`` se serve).
+- Dopo la modifica **riavvia il gioco**.
+- **Codice**: ``config.py``, ``lib/sound.py``, ``clientmedia.py``.
+- **Documentazione**: ``mod/audio-management.rst``.
+
+
 1.4.5.4
 --------
 

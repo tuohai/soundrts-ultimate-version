@@ -15,7 +15,7 @@ Mod rules
 3. `Modding manual <modding.htm>`_
 4. `Skills / heal / effects (zh) <../../zh/mod/skills-and-effects.htm>`_
 5. `Battle shouts <battle-shouts.htm>`_ · `Battle shouts (zh) <../../zh/mod/battle-shouts.htm>`_
-6. `Audio management <audio-management.htm>`_ — P0–P2 refactor, multi-format SFX, volumes
+6. `Audio management <audio-management.htm>`_ — P0–P2 refactor, multi-format SFX, volumes, mixer buffer
 
 Maps
 
