@@ -74,10 +74,10 @@ CTRL SHIFT F4: change_player
 F5: history_previous
 F6: history_next
 
-LALT: history_stop
-RALT: history_stop
-LSHIFT: history_stop
-RSHIFT: history_stop
+LALT: history_stop_primary
+RALT: history_stop_secondary
+LSHIFT: history_stop_secondary
+RSHIFT: history_stop_secondary
 
 F9: objectives 1
 SHIFT F9: objectives -1

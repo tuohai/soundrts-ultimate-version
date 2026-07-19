@@ -812,8 +812,10 @@ ALT MINUS: music_volume_down
                 voice.item(mp.BEEP)
         elif e.key == K_F5:
             voice.previous()
-        elif e.key in [K_LALT, K_RALT]:
-            voice.say_next()
+        elif e.key == K_LALT:
+            voice.say_next(tts_channel="primary")
+        elif e.key == K_RALT:
+            voice.say_next(tts_channel="secondary")
         elif e.key == K_F6:
             voice.say_next(history_only=True)
         elif e.key in (K_F9, K_F10, K_F11, K_F12) or (

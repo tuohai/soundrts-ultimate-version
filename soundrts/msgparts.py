@@ -216,14 +216,18 @@ VOICE_LIB_EDITOR_HINT = [
     "上下光标选择参数，左右光标调整。回车或 Esc 返回。"
 ]
 VOICE_LIB_HELP = [
-    "主语音库用于对局外的菜单与玩家操作。若检测到屏幕阅读器（争渡/NVDA等），则读屏接管主语音职责，避免与主库抢播。"
-    "副语音库仅用于对局内的被动事件，例如伤亡与发现。对局内操作不会打断副库；仅按 Alt 可打断副库。"
+    "主语音库用于对局外的菜单与玩家操作，以及对局内生产与经济反馈。若检测到屏幕阅读器（争渡/NVDA等），则读屏接管主语音职责，避免与主库抢播。"
+    "副语音库用于对局内战场被动事件，例如伤亡与发现敌人。"
+    "左 Alt 跳过或打断主语音库，右 Alt 跳过或打断副语音库；对局内操作不会打断副库。"
+    "禁用副语音时左右 Alt 均可跳过当前播报。"
     "可在本菜单启用或禁用副语音：禁用后主语音接管全部播报（与单通道模式相同）；启用后恢复主副分工。"
     "在任意菜单中按 F3 也可切换副语音（对局内无效）。"
     "在语音库设置中：上下光标选择参数，左右光标调整。"
     "局内热键：F9切换声卡，F10切换参数类型，F11和F12调节当前参数。"
     "Shift加F9到F12调节副库。左Shift加C复制主库最近播报，右Shift加C复制副库最近播报，Shift加A追加到剪贴板。"
 ]
+HOTKEY_HISTORY_STOP_PRIMARY = ["跳过主语音库"]
+HOTKEY_HISTORY_STOP_SECONDARY = ["跳过副语音库"]
 OPEN_VOICES_FOLDER = ["打开语音安装文件夹"]
 GAME_VOICE_IMPORT_NUANCE = ["导入苹果音库到本游戏"]
 OPTIONS = [4037]
@@ -995,7 +999,7 @@ HOTKEY_ZOOM_PRECISION_DECREASE = [5645]   # 减少缩放精细度
 HOTKEY_ZOOM_PRECISION_INCREASE = [5646]   # 增加缩放精细度
 HOTKEY_QUERY_ZOOM_PRECISION = [5647]      # 查询缩放精细度
 HOTKEY_RELOAD_PARAMETERS = [5648]         # 重新加载参数
-HOTKEY_HISTORY_STOP = [5649]              # 停止历史回放
+HOTKEY_HISTORY_STOP = [5649]              # 停止历史回放（兼容旧绑定；现等同副库）
 HOTKEY_MUSIC_VOLUME_UP = [5650]           # 增大音乐音量
 HOTKEY_MUSIC_VOLUME_DOWN = [5651]         # 减小音乐音量
 HOTKEY_VALIDATE_QUEUE = [5652]            # 排队确认

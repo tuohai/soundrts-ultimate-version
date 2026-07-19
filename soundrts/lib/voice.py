@@ -48,21 +48,63 @@ class _Voice:
     def _current_message_is_unsaid(self):
         return self._exists(self.current) and not self.msgs[self.current].said
 
-    def say_next(self, history_only=False):
-        """Advance / stop current queue line (Alt = history_stop).
+    def _queue_msg_channel(self, msg) -> str:
+        """Resolve which library a queued Message uses."""
+        from . import game_tts as _game_tts
 
-        This is the in-match way to interrupt the secondary library.
+        ch = getattr(msg, "tts_channel", None) or _game_tts.passive_channel()
+        if ch not in (_game_tts.PRIMARY, _game_tts.SECONDARY):
+            return _game_tts.passive_channel()
+        return ch
+
+    def say_next(self, history_only=False, *, tts_channel=None):
+        """Advance / stop the current queue line for one voice library.
+
+        ``tts_channel``:
+        - ``primary``: Left Alt — skip/stop the primary library only
+        - ``secondary``: Right Alt — skip/stop the secondary library only
+        - ``None``: legacy (treat as secondary in-match; full stop out of match)
         """
-        if self.active:
+        from . import game_tts as _game_tts
+
+        target = (
+            tts_channel
+            if tts_channel in (_game_tts.PRIMARY, _game_tts.SECONDARY)
+            else None
+        )
+        if target is None and not history_only:
+            # Unspecified Alt: keep old in-match meaning (filter secondary).
+            target = (
+                _game_tts.SECONDARY if _game_tts.in_match() else _game_tts.PRIMARY
+            )
+        # Secondary off: everything speaks on primary — both Alts skip primary.
+        if (
+            target == _game_tts.SECONDARY
+            and (not _game_tts.in_match() or not _game_tts.secondary_voice_enabled())
+        ):
+            target = _game_tts.PRIMARY
+
+        if self.active and self._exists(self.current):
+            cur_ch = self._queue_msg_channel(self.msgs[self.current])
+            if target is not None and cur_ch != target:
+                # Wrong Alt for the active queue line: only silence that library
+                # (e.g. Left Alt while a secondary enemy alert is speaking).
+                self.channel.stop(tts_channel=target)
+                return
             if self._current_message_is_unsaid():
-                if not history_only:
-                    self._mark_current_as_said()  # give up current message
-                    self.current += 1
-                else:
+                if history_only:
                     return
+                self._mark_current_as_said()
+                self.current += 1
             else:
                 self.current += 1
-            self._start_current()
+            # Stop only the filtered library, then continue the queue.
+            if target is not None:
+                self.channel.stop(tts_channel=target)
+                self.active = False
+                self.update()
+            else:
+                self._start_current()
         elif self.history and history_only:
             # F6 after the current history line finished: keep browsing.
             if self.current + 1 < len(self.msgs):
@@ -71,12 +113,9 @@ class _Voice:
             else:
                 self.history = False
         elif not history_only:
-            # Alt with no active queue: still stop any leftover secondary TTS.
+            # No active queue line: stop leftover TTS on the filtered library.
             try:
-                from . import game_tts as _game_tts
-
-                if _game_tts.in_match():
-                    self.channel.stop(tts_channel=_game_tts.SECONDARY)
+                self.channel.stop(tts_channel=target or _game_tts.SECONDARY)
             except Exception:
                 self.channel.stop()
             self.history = False
@@ -111,7 +150,13 @@ class _Voice:
         self._say_now(keep_key=True, *args, **keywords)
 
     def info(self, list_of_sound_numbers, *args, **keywords):
-        """Say sooner or later."""
+        """Say sooner or later.
+
+        By default the info queue uses the passive library (secondary in-match).
+        Pass ``tts_channel="primary"`` for player-economy feedback that should
+        not use the secondary library (unit/building complete, research,
+        resources, menu-changed, …).
+        """
         if self.muted:
             return
         if list_of_sound_numbers:
@@ -130,7 +175,8 @@ class _Voice:
     ):
         """Say now (give up saying sentences not said yet) until the end or a keypress.
 
-        In-match secondary lines: only Alt may interrupt (other keys are ignored).
+        In-match: Right Alt may interrupt secondary; Left Alt may interrupt
+        primary blocking lines. Other keys still interrupt primary (menus/ops).
         """
         if self.muted:
             return
@@ -145,18 +191,44 @@ class _Voice:
                     else _game_tts.PRIMARY
                 )
                 secondary_line = ch == _game_tts.SECONDARY and _game_tts.in_match()
+                primary_line = ch == _game_tts.PRIMARY and _game_tts.in_match()
                 self.channel.play(
                     Message(list_of_sound_numbers, lv, rv), tts_channel=ch
                 )
                 while self.channel.get_busy():
                     if interruptible:
                         if secondary_line:
-                            if self._alt_hit(keep_key=keep_key):
+                            if self._right_alt_hit(keep_key=keep_key):
                                 self.channel.stop(tts_channel=_game_tts.SECONDARY)
                                 break
+                            # Left Alt: silence primary without abandoning secondary.
+                            if self._left_alt_hit(keep_key=False):
+                                self.channel.stop(tts_channel=_game_tts.PRIMARY)
+                        elif primary_line:
+                            if self._right_alt_hit(keep_key=keep_key):
+                                if _game_tts.secondary_voice_enabled():
+                                    self.channel.stop(
+                                        tts_channel=_game_tts.SECONDARY
+                                    )
+                                else:
+                                    # Secondary off: Right Alt also skips primary.
+                                    self.channel.stop(
+                                        tts_channel=_game_tts.PRIMARY
+                                    )
+                                    break
+                            if self._left_alt_hit(keep_key=keep_key):
+                                self.channel.stop(tts_channel=_game_tts.PRIMARY)
+                                break
+                            if self._non_alt_key_hit(keep_key=keep_key):
+                                self.channel.stop(tts_channel=_game_tts.PRIMARY)
+                                break
                         elif self._key_hit(keep_key=keep_key):
+                            # Out-of-match / menus: any key skips and silences
+                            # (1.3.8.1 only broke the wait; audio could linger).
+                            self.channel.stop()
                             break
-                    time.sleep(0.1)
+                    # Short sleep so opening-objective skip stays responsive.
+                    time.sleep(0.02)
                     self.channel.update()
                 if not interruptible:
                     pygame.event.get([KEYDOWN])
@@ -258,11 +330,13 @@ class _Voice:
             if self._exists(self.current):
                 from . import game_tts as _game_tts
 
-                # Info / history queue: secondary in-match only, else primary.
-                self.channel.play(
-                    self.msgs[self.current],
-                    tts_channel=_game_tts.passive_channel(),
-                )
+                msg = self.msgs[self.current]
+                # Default: passive (secondary in-match). Per-message override
+                # for primary-library economy / production feedback.
+                ch = getattr(msg, "tts_channel", None) or _game_tts.passive_channel()
+                if ch not in (_game_tts.PRIMARY, _game_tts.SECONDARY):
+                    ch = _game_tts.passive_channel()
+                self.channel.play(msg, tts_channel=ch)
                 self.active = True
             else:
                 self.active = False
@@ -302,8 +376,44 @@ class _Voice:
             pygame.event.post(l[0])
         return len(l) != 0
 
+    def _non_alt_key_hit(self, keep_key=True) -> bool:
+        """True if a non-Alt KEYDOWN arrived (Alt is handled separately)."""
+        events = pygame.event.get([KEYDOWN])
+        alts = [e for e in events if e.key in (K_LALT, K_RALT)]
+        others = [e for e in events if e not in alts]
+        for e in alts:
+            pygame.event.post(e)
+        if keep_key and others:
+            pygame.event.post(others[0])
+            for e in others[1:]:
+                pygame.event.post(e)
+        elif others:
+            for e in others[1:]:
+                pygame.event.post(e)
+        return bool(others)
+
+    def _alt_side_hit(self, *, left: bool, keep_key=True) -> bool:
+        """True if the matching Alt was pressed; re-queue other KEYDOWNs."""
+        want = K_LALT if left else K_RALT
+        events = pygame.event.get([KEYDOWN])
+        hit = [e for e in events if e.key == want]
+        other = [e for e in events if e not in hit]
+        for e in other:
+            pygame.event.post(e)
+        if keep_key and hit:
+            pygame.event.post(hit[0])
+        return bool(hit)
+
+    def _left_alt_hit(self, keep_key=True) -> bool:
+        """Left Alt — filter / interrupt the primary library."""
+        return self._alt_side_hit(left=True, keep_key=keep_key)
+
+    def _right_alt_hit(self, keep_key=True) -> bool:
+        """Right Alt — filter / interrupt the secondary library."""
+        return self._alt_side_hit(left=False, keep_key=keep_key)
+
     def _alt_hit(self, keep_key=True):
-        """True if Alt was pressed (only key that may interrupt secondary in-match)."""
+        """True if either Alt was pressed (legacy helper)."""
         events = pygame.event.get([KEYDOWN])
         alt_events = [
             e
@@ -311,7 +421,6 @@ class _Voice:
             if e.key in (K_LALT, K_RALT) or (getattr(e, "mod", 0) & KMOD_ALT)
         ]
         other = [e for e in events if e not in alt_events]
-        # Re-queue non-Alt keys so gameplay bindings still see them.
         for e in other:
             pygame.event.post(e)
         if keep_key and alt_events:

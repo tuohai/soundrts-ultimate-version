@@ -1165,8 +1165,13 @@ sfx_volume = 0.5
 voice_volume = 1.0  # for sounds played on the voice channel (not for the TTS)
 
 
-def init(num_channels):
-    pygame.mixer.pre_init(44100, -16, 2, 1024)
+def init(num_channels, mixer_buffer=2048, frequency=44100):
+    """Initialize pygame mixer.
+
+    mixer_buffer: samples per buffer (512–8192). Larger = less stutter, more latency.
+    frequency: output sample rate in Hz (typically 44100).
+    """
+    pygame.mixer.pre_init(frequency, -16, 2, mixer_buffer)
     pygame.init()
     pygame.mixer.set_reserved(1)
     pygame.mixer.set_num_channels(num_channels)

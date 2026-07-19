@@ -537,10 +537,13 @@ def speak(
     interrupt: bool = True,
     volume: int = 80,
     pitch: int = 50,
+    lv: float = 1.0,
+    rv: float = 1.0,
 ) -> None:
     """Start Nuance speech (non-blocking). New speak interrupts the previous one.
 
     ``rate`` / ``volume`` / ``pitch`` are MW-style 0..100.
+    ``lv`` / ``rv`` (0..1) pan synthesized PCM left/right in the Java helper.
     """
     global _speaking, _speak_end, _speak_gen
     if not text:
@@ -554,6 +557,11 @@ def speak(
     gen = _speak_gen
     _speaking = True
     _speak_end = time.time() + max(0.4, len(text) * 0.08)
+    try:
+        gain_l = max(0.0, min(1.0, float(lv)))
+        gain_r = max(0.0, min(1.0, float(rv)))
+    except Exception:
+        gain_l, gain_r = 1.0, 1.0
     resp = _send(
         {
             "cmd": "speak",
@@ -562,6 +570,8 @@ def speak(
             "rate": max(0, min(100, int(rate))),
             "volume": max(0, min(100, int(volume))),
             "pitch": max(0, min(100, int(pitch))),
+            "lv": gain_l,
+            "rv": gain_r,
         },
         wait_cmd="speak",
         timeout=10.0,
@@ -571,6 +581,18 @@ def speak(
             _speaking = False
             _speak_end = time.time()
         warning("Nuance speak failed: %r", resp)
+
+
+def set_pan(lv: float = 1.0, rv: float = 1.0) -> None:
+    """Update stereo gains for the utterance currently playing (no ACK wait)."""
+    if _proc is None:
+        return
+    try:
+        gain_l = max(0.0, min(1.0, float(lv)))
+        gain_r = max(0.0, min(1.0, float(rv)))
+    except Exception:
+        return
+    _send({"cmd": "set_pan", "lv": gain_l, "rv": gain_r}, wait_cmd="", timeout=0)
 
 
 def stop() -> None:

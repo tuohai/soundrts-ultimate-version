@@ -14,7 +14,9 @@ not fight Nuance/SAPI. Secondary still uses this module when enabled.
 
 from __future__ import annotations
 
+import os
 import sys
+import tempfile
 import threading
 import time
 from queue import Queue
@@ -326,13 +328,42 @@ def last_spoken(channel: str) -> str:
     return _last_spoken.get(channel, "") or ""
 
 
+def _clamp_pan(lv: float | None, rv: float | None) -> tuple[float, float]:
+    try:
+        gain_l = 1.0 if lv is None else max(0.0, min(1.0, float(lv)))
+    except Exception:
+        gain_l = 1.0
+    try:
+        gain_r = 1.0 if rv is None else max(0.0, min(1.0, float(rv)))
+    except Exception:
+        gain_r = 1.0
+    return gain_l, gain_r
+
+
+def set_pan(lv: float, rv: float) -> None:
+    """Live-update Nuance stereo pan for the active secondary/primary utterance."""
+    from . import nuance_tts
+
+    gain_l, gain_r = _clamp_pan(lv, rv)
+    try:
+        nuance_tts.set_pan(gain_l, gain_r)
+    except Exception:
+        pass
+
+
 def speak(
     text: str,
     interrupt: bool = True,
     *,
     channel: str | None = None,
+    lv: float | None = None,
+    rv: float | None = None,
 ) -> None:
-    """Speak on a game voice library (or AO2 when primary + screen reader)."""
+    """Speak on a game voice library (or AO2 when primary + screen reader).
+
+    Optional ``lv`` / ``rv`` (0..1) pan Nuance PCM. For SAPI, prefer
+    ``synthesize_sound`` + pygame ``Channel.set_volume`` when pan is needed.
+    """
     global _pending, _is_speaking, _end_time, _active_channel, _configured_voice
     global _configured_rate, _configured_volume, _configured_audio_output
     if not text:
@@ -343,6 +374,7 @@ def speak(
     else:
         channel = PRIMARY if channel == PRIMARY else SECONDARY
     remember_spoken(channel, text)
+    gain_l, gain_r = _clamp_pan(lv, rv)
 
     # Dedicated SR owns primary duties — do not also drive Nuance/SAPI primary.
     if channel == PRIMARY:
@@ -418,6 +450,8 @@ def speak(
                     interrupt=True,
                     volume=volume,
                     pitch=pitch,
+                    lv=gain_l,
+                    rv=gain_r,
                 )
             finally:
                 _channel_speaking[channel] = False
@@ -472,6 +506,133 @@ def speak(
     _queue.put((_speak, [text, interrupt, volume]))
 
 
+def synthesize_sound(text: str, *, channel: str | None = None):
+    """Render SAPI TTS to a ``pygame.mixer.Sound`` for stereo pan.
+
+    Returns ``None`` when the active library cannot render to a buffer
+    (Nuance, screen reader, or helper failure). Caller should fall back to
+    ``speak(..., lv=, rv=)`` for Nuance pan, or plain ``speak`` otherwise.
+    """
+    if not text:
+        return None
+    if channel is None:
+        channel = passive_channel()
+    else:
+        channel = PRIMARY if channel == PRIMARY else SECONDARY
+    remember_spoken(channel, text)
+
+    if channel == PRIMARY:
+        try:
+            from . import tts as _ao2
+
+            if _ao2.using_screen_reader():
+                return None
+        except Exception:
+            pass
+
+    from . import nuance_tts, voice_libs
+
+    voice_libs.load_from_config()
+    voice_id = voice_libs.get_voice(channel)
+    if nuance_tts.is_nuance_voice(voice_id):
+        return None
+
+    rate_100 = voice_libs.get_rate(channel)
+    volume = voice_libs.get_volume(channel)
+    sapi_rate = voice_libs.sapi_rate_from_100(rate_100)
+    from . import voice_packs
+
+    sapi_voice_id, _pack = voice_packs.resolve_sapi(voice_id)
+    if not sapi_voice_id:
+        sapi_voice_id = voice_id
+    if needs_sapi32(sapi_voice_id):
+        try:
+            from . import sapi32_tts
+
+            path = sapi32_tts.speak_to_file(
+                text,
+                voice=sapi_voice_id,
+                rate=sapi_rate,
+                volume=int(volume),
+            )
+            if not path:
+                return None
+            try:
+                import pygame
+
+                return pygame.mixer.Sound(path)
+            finally:
+                try:
+                    os.remove(path)
+                except Exception:
+                    pass
+        except Exception:
+            exception("sapi32 synthesize_sound failed")
+            return None
+
+    def _render(spvoice):
+        if spvoice is None:
+            return None
+        import pygame
+        import win32com.client
+
+        fd, path = tempfile.mkstemp(suffix=".wav")
+        os.close(fd)
+        stream = None
+        prev_stream = None
+        try:
+            _apply_voice_token(spvoice, sapi_voice_id)
+            _apply_rate(spvoice, sapi_rate)
+            try:
+                from . import sound as _sound
+
+                base = max(0, min(100, int(float(_sound.voice_volume) * 100)))
+            except Exception:
+                base = 100
+            spvoice.Volume = max(
+                0, min(100, int(base * max(0, min(100, int(volume))) / 100))
+            )
+            stream = win32com.client.Dispatch("SAPI.SpFileStream")
+            # SSFMCreateForWrite = 3
+            stream.Open(path, 3)
+            try:
+                prev_stream = spvoice.AudioOutputStream
+            except Exception:
+                prev_stream = None
+            spvoice.AudioOutputStream = stream
+            # Synchronous speak into the WAV file.
+            spvoice.Speak(str(text), 0)
+            try:
+                spvoice.AudioOutputStream = prev_stream
+            except Exception:
+                pass
+            try:
+                stream.Close()
+            except Exception:
+                pass
+            stream = None
+            return pygame.mixer.Sound(path)
+        except Exception:
+            exception("SAPI synthesize_sound failed for %r", text[:80])
+            return None
+        finally:
+            if stream is not None:
+                try:
+                    spvoice.AudioOutputStream = prev_stream
+                except Exception:
+                    pass
+                try:
+                    stream.Close()
+                except Exception:
+                    pass
+            try:
+                os.remove(path)
+            except Exception:
+                pass
+
+    return _run_on_worker(_render, timeout=60.0)
+
+
 def _stop() -> None:
     global _is_speaking, _end_time
     if _voice is not None:
@@ -490,7 +651,7 @@ def stop(channel: str | None = None) -> None:
     Per-channel stop must not silence the other library (in-match: ops on
     primary must leave secondary running until Alt / explicit secondary stop).
     """
-    global _is_speaking, _end_time
+    global _is_speaking, _end_time, _pending
     from . import nuance_tts
 
     if channel is None:
@@ -535,8 +696,25 @@ def stop(channel: str | None = None) -> None:
         except Exception:
             pass
 
-        # Purge SAPI primary mouth; never call nuance_tts.stop() here — secondary
-        # may be mid-utterance on Nuance.
+        # Drop busy hold immediately so VoiceChannel.get_busy() can exit
+        # (e.g. opening-objective any-key skip). Mirror the secondary path.
+        with _lock:
+            if _active_channel == PRIMARY:
+                _is_speaking = False
+                _end_time = None
+                _pending = 0
+
+        # Shared Nuance mouth: stop only when secondary is not mid-utterance.
+        try:
+            from . import voice_libs
+
+            voice_libs.load_from_config()
+            if nuance_tts.is_nuance_voice(voice_libs.get_voice(PRIMARY)):
+                if not _channel_speaking[SECONDARY]:
+                    nuance_tts.stop()
+        except Exception:
+            pass
+
         def _purge_sapi_primary() -> None:
             if _voice is not None and _active_channel == PRIMARY:
                 try:

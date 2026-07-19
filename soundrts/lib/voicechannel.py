@@ -1,13 +1,41 @@
+import threading
 import time
-from typing import Any, List, Optional, Tuple
+from typing import Any, Callable, List, Optional, Tuple
 
 import pygame
 
 from .. import version
 from . import game_tts, sound
 from .message import is_text
+from .sound import DEFAULT_VOLUME
 
 DEBUG_MODE = version.IS_DEV_VERSION
+
+PanFn = Callable[[], Tuple[float, float]]
+
+
+def _wants_spatial_tts(lv: float, rv: float, pan_fn=None) -> bool:
+    """True when message volumes imply a directional (non-centered) cue."""
+    if pan_fn is not None:
+        return True
+    try:
+        left = float(lv)
+        right = float(rv)
+    except Exception:
+        return False
+    return abs(left - right) > 0.02 or min(left, right) < DEFAULT_VOLUME - 0.05
+
+
+def _clamp_pan(lv: float, rv: float) -> Tuple[float, float]:
+    try:
+        left = max(0.0, min(1.0, float(lv)))
+    except Exception:
+        left = DEFAULT_VOLUME
+    try:
+        right = max(0.0, min(1.0, float(rv)))
+    except Exception:
+        right = DEFAULT_VOLUME
+    return left, right
 
 
 class VoiceChannel:
@@ -35,6 +63,13 @@ class VoiceChannel:
         game_tts.init(delay)
         tts.init(delay)
         self._tts_channel = game_tts.PRIMARY
+        self._spatial_gen = 0
+        self._spatial_busy = False
+        self._spatial_ready: Optional[Tuple[Any, float, float]] = None
+        self._active_pan_fn: Optional[PanFn] = None
+        # "pygame_tts" | "pygame_sfx" | "nuance" | None
+        self._live_pan_backend: Optional[str] = None
+        self._last_live_pan: Optional[Tuple[float, float]] = None
 
     def play(self, msg, *, tts_channel: str | None = None, parallel_primary: bool = False):
         if DEBUG_MODE:
@@ -56,6 +91,7 @@ class VoiceChannel:
         self._tts_channel = (
             game_tts.PRIMARY if want_primary else game_tts.SECONDARY
         )
+        self._active_pan_fn = getattr(msg, "pan_fn", None)
         for p in msg.translate_and_collapse():
             self._queue.append((p, msg.lv, msg.rv))
         self.update()
@@ -85,6 +121,14 @@ class VoiceChannel:
         else:
             return False
 
+    def _cancel_spatial(self) -> None:
+        self._spatial_gen += 1
+        self._spatial_busy = False
+        self._spatial_ready = None
+        self._active_pan_fn = None
+        self._live_pan_backend = None
+        self._last_live_pan = None
+
     def stop(self, *, tts_channel: str | None = None):
         """Stop mixer queue and TTS.
 
@@ -97,6 +141,7 @@ class VoiceChannel:
         part queue only when it belongs to that library.
         """
         if tts_channel is None:
+            self._cancel_spatial()
             self.c.stop()
             game_tts.stop()
             self._queue = []
@@ -113,26 +158,131 @@ class VoiceChannel:
             except Exception:
                 pass
         if self._tts_channel == ch:
+            self._cancel_spatial()
             self.c.stop()
             self._queue = []
 
     def update(self):
+        self._refresh_live_pan()
+        # Finish a background SAPI render before advancing the part queue.
+        if self._spatial_ready is not None and not self.c.get_busy():
+            snd, lv, rv = self._spatial_ready
+            self._spatial_ready = None
+            self._spatial_busy = False
+            # Re-resolve pan at playback start (player may have moved while rendering).
+            if self._active_pan_fn is not None:
+                try:
+                    lv, rv = self._active_pan_fn()
+                except Exception:
+                    pass
+            self._play_spatial_tts(snd, lv, rv)
+            return
         # Advance the *active* library's part queue; ignore the other library's TTS.
-        if not self.c.get_busy() and not game_tts.is_speaking(self._tts_channel):
+        if (
+            not self.c.get_busy()
+            and not self._spatial_busy
+            and not game_tts.is_speaking(self._tts_channel)
+        ):
             if self._queue:
                 self._play_next_msg_part()
 
+    def _resolve_part_pan(self, lv: float, rv: float) -> Tuple[float, float]:
+        if self._active_pan_fn is not None:
+            try:
+                return _clamp_pan(*self._active_pan_fn())
+            except Exception:
+                pass
+        return _clamp_pan(lv, rv)
+
+    def _refresh_live_pan(self) -> None:
+        """Update left/right gains while an utterance is still playing."""
+        if self._active_pan_fn is None or self._live_pan_backend is None:
+            return
+        busy = self.c.get_busy() or game_tts.is_speaking(self._tts_channel)
+        if not busy and not self._spatial_busy:
+            return
+        try:
+            lv, rv = _clamp_pan(*self._active_pan_fn())
+        except Exception:
+            return
+        prev = self._last_live_pan
+        if (
+            prev is not None
+            and abs(prev[0] - lv) < 0.02
+            and abs(prev[1] - rv) < 0.02
+        ):
+            return
+        self._last_live_pan = (lv, rv)
+        backend = self._live_pan_backend
+        if backend == "pygame_tts" and self.c.get_busy():
+            self.c.set_volume(lv, rv)
+        elif backend == "pygame_sfx" and self.c.get_busy():
+            v = sound.main_volume * sound.voice_volume
+            self.c.set_volume(lv * v, rv * v)
+        elif backend == "nuance":
+            try:
+                game_tts.set_pan(lv, rv)
+            except Exception:
+                pass
+
     def _play_next_msg_part(self):
         s, lv, rv = self._queue.pop(0)
+        lv, rv = self._resolve_part_pan(lv, rv)
         if is_text(s):
             ch = getattr(self, "_tts_channel", None) or game_tts.passive_channel()
-            game_tts.speak(s, channel=ch)
+            if _wants_spatial_tts(lv, rv, self._active_pan_fn):
+                self._play_spatial_text(s, ch, lv, rv)
+            else:
+                self._live_pan_backend = None
+                game_tts.speak(s, channel=ch)
         else:
             self._play(s, lv, rv)
+
+    def _play_spatial_text(self, text: str, channel: str, lv: float, rv: float) -> None:
+        """Pan TTS: Nuance via helper gains; SAPI via background WAV + pygame."""
+        try:
+            from . import nuance_tts, voice_libs
+
+            voice_libs.load_from_config()
+            voice_id = voice_libs.get_voice(channel)
+            if nuance_tts.is_nuance_voice(voice_id):
+                self._live_pan_backend = "nuance"
+                self._last_live_pan = (lv, rv)
+                game_tts.speak(text, channel=channel, lv=lv, rv=rv)
+                return
+        except Exception:
+            pass
+
+        # SAPI / sapi32: synthesize off the UI thread, then pan on channel 0.
+        self._spatial_gen += 1
+        gen = self._spatial_gen
+        self._spatial_busy = True
+        self._spatial_ready = None
+        self._live_pan_backend = "pygame_tts"
+
+        def _work():
+            snd = None
+            try:
+                snd = game_tts.synthesize_sound(text, channel=channel)
+            except Exception:
+                snd = None
+            if gen != self._spatial_gen:
+                return
+            if snd is not None:
+                # Pan may be refreshed again in update() before play.
+                self._spatial_ready = (snd, lv, rv)
+            else:
+                self._spatial_busy = False
+                self._live_pan_backend = None
+                game_tts.speak(text, channel=channel)
+
+        threading.Thread(target=_work, name="spatial-tts", daemon=True).start()
 
     def get_busy(self):
         return (
             self.c.get_busy()
+            or self._spatial_busy
+            or self._spatial_ready is not None
             or self._queue
             or (self.c.get_queue() is not None)
             or game_tts.is_speaking(self._tts_channel)
@@ -140,8 +290,26 @@ class VoiceChannel:
 
     def _play(self, s, lv, rv):
         # note: set_volume() doesn't seem to work with queued sounds
+        if self._active_pan_fn is not None:
+            self._live_pan_backend = "pygame_sfx"
+            self._last_live_pan = (lv, rv)
+        else:
+            self._live_pan_backend = None
         v = sound.main_volume * sound.voice_volume
         self.c.set_volume(lv * v, rv * v)
+        self.c.play(s)
+        self.c.set_endevent(pygame.locals.USEREVENT)
+
+    def _play_spatial_tts(self, s, lv, rv):
+        """Play a pre-rendered TTS buffer with stereo pan.
+
+        Volume is already baked into the WAV (same as live SAPI Speak), so only
+        apply left/right balance here — not ``main_volume * voice_volume`` again.
+        """
+        lv, rv = _clamp_pan(lv, rv)
+        self._live_pan_backend = "pygame_tts"
+        self._last_live_pan = (lv, rv)
+        self.c.set_volume(lv, rv)
         self.c.play(s)
         self.c.set_endevent(pygame.locals.USEREVENT)
 
@@ -149,12 +317,20 @@ class VoiceChannel:
         state = self.__dict__.copy()
         state.pop("c", None)
         state.pop("_ops_channel", None)
+        state.pop("_spatial_ready", None)
+        state.pop("_active_pan_fn", None)
         return state
 
     def __setstate__(self, state):
         self.__dict__.update(state)
         self.c = pygame.mixer.Channel(0)
         self._ops_channel = None
+        self._spatial_gen = 0
+        self._spatial_busy = False
+        self._spatial_ready = None
+        self._active_pan_fn = None
+        self._live_pan_backend = None
+        self._last_live_pan = None
         try:
             n = pygame.mixer.get_num_channels()
             if n > 2:

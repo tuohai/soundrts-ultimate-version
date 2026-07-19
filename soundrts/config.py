@@ -69,6 +69,24 @@ def voice_lib_param_type(s):
     return int(s) % 4
 
 
+_MIXER_BUFFERS = (512, 1024, 2048, 4096, 8192)
+
+
+def mixer_buffer_type(s):
+    """SDL mixer buffer size in samples; snap to a supported power of two."""
+    v = int(s)
+    if v in _MIXER_BUFFERS:
+        return v
+    return min(_MIXER_BUFFERS, key=lambda x: abs(x - v))
+
+
+def mixer_frequency_type(s):
+    v = int(s)
+    if v < 22050 or v > 48000:
+        raise ValueError
+    return v
+
+
 _options = [
     ("general", "login", DEFAULT_LOGIN, login_type),
     ("general", "mods", ""),
@@ -112,6 +130,10 @@ _options = [
     ("audio", "sfx_volume", 0.5, volume_type),
     ("audio", "music_volume", 0.5, volume_type),
     ("audio", "music_enabled", 1, int),
+    # Larger buffer = stabler SFX under load, slightly higher latency.
+    # 1024≈23ms, 2048≈46ms (default), 4096≈93ms.
+    ("audio", "mixer_buffer", 2048, mixer_buffer_type),
+    ("audio", "mixer_frequency", 44100, mixer_frequency_type),
 ]
 
 

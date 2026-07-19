@@ -140,6 +140,8 @@ def _classic_supplement_catalog() -> Catalog:
         ("classic.help.-1", list(mp.HOTKEY_HELP_PREV)),
         ("classic.history_next", list(mp.HOTKEY_HISTORY_NEXT)),
         ("classic.history_stop", list(mp.HOTKEY_HISTORY_STOP)),
+        ("classic.history_stop_primary", list(mp.HOTKEY_HISTORY_STOP_PRIMARY)),
+        ("classic.history_stop_secondary", list(mp.HOTKEY_HISTORY_STOP_SECONDARY)),
         (
             "classic.select_alliance_candidate.-1",
             list(mp.HOTKEY_ALLIANCE_CANDIDATE_PREV),
@@ -719,6 +721,8 @@ def variant_label_for_binding_id(binding_id: str, layer: str) -> list:
 
     simple = {
         "history_stop": list(mp.HOTKEY_HISTORY_STOP),
+        "history_stop_primary": list(mp.HOTKEY_HISTORY_STOP_PRIMARY),
+        "history_stop_secondary": list(mp.HOTKEY_HISTORY_STOP_SECONDARY),
         "reload_parameters": list(mp.HOTKEY_RELOAD_PARAMETERS),
         "music_volume_up": list(mp.HOTKEY_MUSIC_VOLUME_UP),
         "music_volume_down": list(mp.HOTKEY_MUSIC_VOLUME_DOWN),

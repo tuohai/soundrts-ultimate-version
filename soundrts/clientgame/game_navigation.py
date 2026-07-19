@@ -1145,13 +1145,20 @@ def scout_info_if_needed(interface):
         getattr(interface, 'previous_scout_info', None) is None
         or time.time() > interface.previous_scout_info + 10
     ):
+        from .game_unit_control import _place_pan_fn, _place_voice_pan, place_summary
+
         for place in interface.scout_info:
             if place is None or not getattr(place, "title", None):
                 continue
-            from .game_unit_control import place_summary
             s = place_summary(interface, place, me=False, brief=True)
             if s:
-                voice.info(s + mp.AT + place.title)
+                lv, rv = _place_voice_pan(interface, place)
+                voice.info(
+                    s + mp.AT + place.title,
+                    lv,
+                    rv,
+                    pan_fn=_place_pan_fn(interface, place),
+                )
         interface.scout_info = set()
         interface.previous_scout_info = time.time()
 
@@ -1161,18 +1168,23 @@ def squares_alert_if_needed(interface):
         getattr(interface, 'previous_squares_alert', None) is None
         or time.time() > interface.previous_squares_alert + 10
     ):
-        titles = sorted(
-            [
-                sq.title
-                for sq, t in list(interface.alert_squares.items())
-                if time.time() < t + 5
-            ],
-            key=lambda parts: " ".join(map(str, parts)),
-        )  # recent attacks only; normalize for mixed int/str
-        if len(titles) > 1:
-            titles.insert(-1, mp.AND)
-        if titles:
-            voice.info(sum(titles, mp.ALERT + mp.AT))
+        from .game_unit_control import _place_pan_fn, _place_voice_pan
+
+        recent = [
+            sq
+            for sq, t in list(interface.alert_squares.items())
+            if time.time() < t + 5 and getattr(sq, "title", None)
+        ]
+        recent.sort(key=lambda sq: " ".join(map(str, sq.title)))
+        if recent:
+            for sq in recent:
+                lv, rv = _place_voice_pan(interface, sq)
+                voice.info(
+                    mp.ALERT + mp.AT + sq.title,
+                    lv,
+                    rv,
+                    pan_fn=_place_pan_fn(interface, sq),
+                )
             interface.previous_squares_alert = time.time()
         interface.alert_squares = {}
 

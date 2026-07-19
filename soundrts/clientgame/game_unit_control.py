@@ -704,6 +704,27 @@ def say_group(interface, prefix=[]):
         voice.item(msg + mp.NO_UNIT_CONTROLLED)
 
 
+def _place_voice_pan(interface, place):
+    """Stereo pan for a square relative to the current view (minimap style)."""
+    from .game_resources import _minimap_stereo
+
+    try:
+        return _minimap_stereo(interface, place)
+    except Exception:
+        from ..lib.sound import DEFAULT_VOLUME
+
+        return DEFAULT_VOLUME, DEFAULT_VOLUME
+
+
+def _place_pan_fn(interface, place):
+    """Callable pan that tracks the player when they change squares mid-line."""
+
+    def _pan():
+        return _place_voice_pan(interface, place)
+
+    return _pan
+
+
 def tell_enemies_in_square(interface, place):
     enemies = []
     neutrals = []
@@ -718,17 +739,28 @@ def tell_enemies_in_square(interface, place):
             neutrals.append(entry)
         else:
             enemies.append(entry)
+    lv, rv = _place_voice_pan(interface, place)
+    pan_fn = _place_pan_fn(interface, place)
     if enemies:
         voice.info(
-            summary(interface, enemies, brief=True) + mp.ENEMY + mp.AT + place.title
+            summary(interface, enemies, brief=True) + mp.ENEMY + mp.AT + place.title,
+            lv,
+            rv,
+            pan_fn=pan_fn,
         )
     if animals:
         voice.info(
-            summary(interface, animals, brief=True) + mp.ANIMAL + mp.AT + place.title
+            summary(interface, animals, brief=True) + mp.ANIMAL + mp.AT + place.title,
+            lv,
+            rv,
+            pan_fn=pan_fn,
         )
     if neutrals:
         voice.info(
-            summary(interface, neutrals, brief=True) + mp.NEUTRAL + mp.AT + place.title
+            summary(interface, neutrals, brief=True) + mp.NEUTRAL + mp.AT + place.title,
+            lv,
+            rv,
+            pan_fn=pan_fn,
         )
 
 
@@ -742,7 +774,13 @@ def units_alert(interface, units_list, msg_end, brief=True):
         ]
         s = summary(interface, units_in_place, brief=brief)
         if s:
-            voice.info(s + msg_end + mp.AT + place.title)
+            lv, rv = _place_voice_pan(interface, place)
+            voice.info(
+                s + msg_end + mp.AT + place.title,
+                lv,
+                rv,
+                pan_fn=_place_pan_fn(interface, place),
+            )
     while units_list:
         units_list.pop()
 
@@ -1079,9 +1117,14 @@ def _send_menu_alert_if_needed(interface, type_name, menu, title):
                     is_resource_producer = True
                     break
         
-        # Only send menu alert if it's not a resource producer
+        # Only send menu alert if it's not a resource producer → primary library
         if not is_resource_producer:
-            voice.info(mp.MENU_OF + title + mp.CHANGED)
+            from ..lib import game_tts
+
+            voice.info(
+                mp.MENU_OF + title + mp.CHANGED,
+                tts_channel=game_tts.PRIMARY,
+            )
     _remember_menu(interface, type_name, menu)
 
 

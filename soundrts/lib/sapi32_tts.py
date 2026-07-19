@@ -296,6 +296,48 @@ def speak(
     return ok
 
 
+def speak_to_file(
+    text: str,
+    *,
+    voice: str = "",
+    rate: int = 0,
+    volume: int = 100,
+    path: str | None = None,
+) -> str | None:
+    """Synchronously render speech to a WAV file. Returns the path, or None."""
+    import os
+    import tempfile
+
+    if not text:
+        return None
+    if not _ensure_proc():
+        return None
+    out = path
+    if not out:
+        fd, out = tempfile.mkstemp(suffix=".wav")
+        os.close(fd)
+    resp = _send(
+        {
+            "cmd": "speak_to_file",
+            "text": text,
+            "voice": voice or "",
+            "rate": int(rate),
+            "volume": int(volume),
+            "path": out,
+        },
+        wait_cmd="speak_to_file",
+        timeout=60.0,
+    )
+    if resp and resp.get("ok"):
+        return out
+    try:
+        if not path and out and os.path.isfile(out):
+            os.remove(out)
+    except Exception:
+        pass
+    return None
+
+
 def stop() -> None:
     global _speaking, _speak_end
     if _proc is None:

@@ -41,6 +41,8 @@ class Message:
         said=False,
         expiration_delay=45,
         update_type=None,
+        pan_fn=None,
+        tts_channel=None,
     ):
         self.list_of_sound_numbers = list_of_sound_numbers
         self.lv = lv
@@ -48,6 +50,12 @@ class Message:
         self.said = said
         self.expiration_time = time.time() + expiration_delay
         self.update_type = update_type
+        # Optional callable () -> (lv, rv); refreshed while the line plays so
+        # pan follows the player when they change squares mid-utterance.
+        self.pan_fn = pan_fn
+        # None = use passive_channel() at play time; "primary" / "secondary"
+        # forces that library (e.g. production complete → primary).
+        self.tts_channel = tts_channel
 
     def has_expired(self):
         return self.expiration_time < time.time()

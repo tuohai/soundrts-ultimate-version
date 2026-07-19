@@ -1,4 +1,4 @@
-"""In-match: only Alt interrupts secondary; ops must not stop it."""
+"""Left Alt filters primary; Right Alt filters secondary."""
 from __future__ import annotations
 
 import os
@@ -22,12 +22,11 @@ finally:
     sys.argv = _saved_argv
 
 
-def test_bindings_only_alt_history_stop():
+def test_bindings_split_alt_history_stop():
     for name in ("legacy_bindings.txt", "global_bindings.txt"):
-        text = Path("res/ui") / name
-        src = text.read_text(encoding="utf-8")
-        assert "LALT: history_stop" in src
-        assert "RALT: history_stop" in src
+        src = (Path("res/ui") / name).read_text(encoding="utf-8")
+        assert "LALT: history_stop_primary" in src
+        assert "RALT: history_stop_secondary" in src
         assert "LSHIFT: history_stop" not in src
         assert "RSHIFT: history_stop" not in src
 
@@ -89,8 +88,122 @@ def test_voicechannel_play_parallel_primary_source():
     assert "_play_primary_parallel" in text
 
 
-def test_say_now_secondary_uses_alt_hit():
+def test_say_now_secondary_uses_right_alt():
     text = Path("soundrts/lib/voice.py").read_text(encoding="utf-8")
     block = text.split("def _say_now(", 1)[1].split("\n    def ", 1)[0]
-    assert "_alt_hit" in block
+    assert "_right_alt_hit" in block
+    assert "_left_alt_hit" in block
     assert "SECONDARY" in block
+
+
+def test_say_next_right_alt_skips_secondary_queue_line():
+    v = voice_mod._Voice()
+    stop_calls = []
+
+    class FakeChannel:
+        _tts_channel = game_tts.SECONDARY
+
+        def play(self, msg, *, tts_channel=None, parallel_primary=False):
+            self._tts_channel = tts_channel
+
+        def stop(self, *, tts_channel=None):
+            stop_calls.append(tts_channel)
+
+        def update(self):
+            pass
+
+        def get_busy(self):
+            return False
+
+    v.channel = FakeChannel()
+    alert = Message(
+        ["knight", "enemy"], said=False, tts_channel=game_tts.SECONDARY
+    )
+    done = Message(["house"], said=False, tts_channel=game_tts.PRIMARY)
+    v.msgs = [alert, done]
+    v.current = 0
+    v.active = True
+    game_tts.set_in_match(True)
+    try:
+        v.say_next(tts_channel=game_tts.SECONDARY)
+    finally:
+        game_tts.set_in_match(False)
+
+    assert alert.said is True
+    assert game_tts.SECONDARY in stop_calls
+
+
+def test_say_next_left_alt_does_not_skip_secondary_queue_line():
+    v = voice_mod._Voice()
+    stop_calls = []
+
+    class FakeChannel:
+        _tts_channel = game_tts.SECONDARY
+
+        def play(self, msg, *, tts_channel=None, parallel_primary=False):
+            pass
+
+        def stop(self, *, tts_channel=None):
+            stop_calls.append(tts_channel)
+
+        def update(self):
+            pass
+
+        def get_busy(self):
+            return True
+
+    v.channel = FakeChannel()
+    alert = Message(
+        ["knight", "enemy"], said=False, tts_channel=game_tts.SECONDARY
+    )
+    v.msgs = [alert]
+    v.current = 0
+    v.active = True
+    game_tts.set_in_match(True)
+    try:
+        v.say_next(tts_channel=game_tts.PRIMARY)
+    finally:
+        game_tts.set_in_match(False)
+
+    assert alert.said is False
+    assert v.current == 0
+    assert stop_calls == [game_tts.PRIMARY]
+
+
+def test_say_next_right_alt_skips_primary_when_secondary_disabled():
+    import soundrts.config as config
+
+    v = voice_mod._Voice()
+    stop_calls = []
+
+    class FakeChannel:
+        _tts_channel = game_tts.PRIMARY
+
+        def play(self, msg, *, tts_channel=None, parallel_primary=False):
+            self._tts_channel = tts_channel
+
+        def stop(self, *, tts_channel=None):
+            stop_calls.append(tts_channel)
+
+        def update(self):
+            pass
+
+        def get_busy(self):
+            return False
+
+    v.channel = FakeChannel()
+    line = Message(["house", "complete"], said=False, tts_channel=game_tts.PRIMARY)
+    v.msgs = [line]
+    v.current = 0
+    v.active = True
+    old = getattr(config, "secondary_voice_enabled", 1)
+    try:
+        config.secondary_voice_enabled = 0
+        game_tts.set_in_match(True)
+        v.say_next(tts_channel=game_tts.SECONDARY)
+    finally:
+        game_tts.set_in_match(False)
+        config.secondary_voice_enabled = old
+
+    assert line.said is True
+    assert game_tts.PRIMARY in stop_calls

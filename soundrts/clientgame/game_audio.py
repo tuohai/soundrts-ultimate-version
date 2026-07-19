@@ -335,8 +335,18 @@ def cmd_history_previous(interface):
 
 
 def cmd_history_stop(interface):
-    """停止当前语音"""
-    voice.say_next()
+    """兼容旧绑定：等同于打断副语音库（右 Alt）。"""
+    voice.say_next(tts_channel="secondary")
+
+
+def cmd_history_stop_primary(interface):
+    """左 Alt：跳过 / 停止主语音库当前播报。"""
+    voice.say_next(tts_channel="primary")
+
+
+def cmd_history_stop_secondary(interface):
+    """右 Alt：跳过 / 停止副语音库当前播报。"""
+    voice.say_next(tts_channel="secondary")
 
 
 def cmd_history_next(interface):
@@ -816,7 +826,9 @@ def cmd_voice_lib_append_copy(interface):
 __all__ = [
     'cmd_say', 'cmd_say_players', 'cmd_say_time', 'cmd_toggle_music',
     'cmd_music_volume_up', 'cmd_music_volume_down', 'cmd_volume', 'cmd_sfx_volume',
-    'cmd_history_previous', 'cmd_history_stop', 'cmd_history_next',
+    'cmd_history_previous', 'cmd_history_stop',
+    'cmd_history_stop_primary', 'cmd_history_stop_secondary',
+    'cmd_history_next',
     'cmd_select_sound', 'cmd_sound_volume', 'cmd_toggle_talking_clock',
     'cmd_toggle_tick', 'srv_restore_music', 'srv_resume_music',
     'cmd_move_forward_zoom', 'cmd_move_backward_zoom', 'cmd_move_left_zoom',

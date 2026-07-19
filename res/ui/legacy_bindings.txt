@@ -255,9 +255,9 @@ SHIFT F5: history_next
 
 ; wx 盲文/读屏摸读：最新播报 ↔ 消息日志 ↔ 游戏输入
 
-; 对局内仅 Alt 可打断副语音库（Shift 不再 history_stop）
-LALT: history_stop
-RALT: history_stop
+; 左 Alt 打断主语音库，右 Alt 打断副语音库（Shift 不再 history_stop）
+LALT: history_stop_primary
+RALT: history_stop_secondary
 
 F9: objectives 1
 SHIFT F9: objectives -1

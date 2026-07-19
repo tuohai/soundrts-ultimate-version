@@ -85,9 +85,16 @@ def cmd_population_status(interface):
 
 
 def send_msg_if_playing(interface, msg, update_type=None):
-    # say only if game started
+    # say only if game started — resource/population totals → primary library
     if interface.last_virtual_time != 0:
-        voice.info(msg, expiration_delay=1.5, update_type=update_type)
+        from ..lib import game_tts
+
+        voice.info(
+            msg,
+            expiration_delay=1.5,
+            update_type=update_type,
+            tts_channel=game_tts.PRIMARY,
+        )
 
 
 def send_resource_alerts_if_needed(interface):

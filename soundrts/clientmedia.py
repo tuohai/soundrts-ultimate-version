@@ -31,7 +31,11 @@ def update_display_caption():
 
 def minimal_init():
     """initialize sound, voice, screen, window title, keyboard"""
-    sound.init(config.num_channels)
+    sound.init(
+        config.num_channels,
+        mixer_buffer=config.mixer_buffer,
+        frequency=config.mixer_frequency,
+    )
     config.apply_audio_settings()
     voice.init(config)
     try:

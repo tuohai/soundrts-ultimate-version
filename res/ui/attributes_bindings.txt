@@ -67,8 +67,8 @@ F9: attributes_attr RANGED_RANGE
 F5: history_previous
 F6: history_next
 
-LALT: history_stop
-RALT: history_stop
+LALT: history_stop_primary
+RALT: history_stop_secondary
 
 LCTRL: examine
 RCTRL: examine

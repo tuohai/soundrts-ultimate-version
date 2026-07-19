@@ -140,7 +140,7 @@ def test_scout_info_if_needed_skips_none_place():
     try:
         config.verbosity = "scout_info"
         uc.place_summary = lambda *_a, **_k: ["goldmine"]
-        nav.voice.info = lambda msg: spoken.append(msg)
+        nav.voice.info = lambda msg, *a, **k: spoken.append(msg)
         scout_info_if_needed(interface)
     finally:
         uc.place_summary = orig_summary

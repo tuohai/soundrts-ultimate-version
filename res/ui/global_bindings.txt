@@ -102,9 +102,9 @@ SHIFT A: voice_lib_append_copy
 ; 系统功能
 F5: history_previous
 F6: history_next
-; 对局内仅 Alt 可打断副语音库（Shift 不再 history_stop）
-LALT: history_stop
-RALT: history_stop
+; 左 Alt 打断主语音库，右 Alt 打断副语音库（Shift 不再 history_stop）
+LALT: history_stop_primary
+RALT: history_stop_secondary
 
 ; wx 盲文/读屏摸读：最新播报 ↔ 消息日志 ↔ 游戏输入
 

@@ -8,12 +8,16 @@ from .. import config
 from ..clientmedia import voice
 from ..clientgameorder import substitute_args
 from ..definitions import style
+from ..lib import game_tts
 from ..lib.log import exception
 from ..lib.msgs import nb2msg, nb2msg_float
 from .. import msgparts as mp
 from ..attributes.utils import get_stat_tts_name
 from .properties import summary_omit_single_count_at_death
 from .battle_shout_audio import clash_unit_count
+
+# Player economy / production feedback → primary library (not secondary).
+_PRIMARY = dict(tts_channel=game_tts.PRIMARY)
 
 
 class EntityViewEvents:
@@ -486,9 +490,15 @@ class EntityViewEvents:
                 if count > 1:
                     # 构建带数量的标题
                     title_with_count = nb2msg(count) + self.title
-                    voice.info(substitute_args(self.get_style("complete_msg"), [title_with_count]))
+                    voice.info(
+                        substitute_args(self.get_style("complete_msg"), [title_with_count]),
+                        **_PRIMARY,
+                    )
                 else:
-                    voice.info(substitute_args(self.get_style("complete_msg"), [self.title]))
+                    voice.info(
+                        substitute_args(self.get_style("complete_msg"), [self.title]),
+                        **_PRIMARY,
+                    )
         self.interface.send_menu_alerts_if_needed()  # not necessary for "on_repair_complete" (if it existed)
         
     def on_resource_complete(self):
@@ -512,11 +522,11 @@ class EntityViewEvents:
             pass
     
     def on_research_complete(self):
-        voice.info(self.get_style("research_complete_msg"))
+        voice.info(self.get_style("research_complete_msg"), **_PRIMARY)
         self.interface.send_menu_alerts_if_needed()
 
     def on_upgrade_complete(self):
-        voice.info(self.get_style("upgrade_complete_msg"))
+        voice.info(self.get_style("upgrade_complete_msg"), **_PRIMARY)
         self.interface.send_menu_alerts_if_needed()
 
     def on_added(self):
@@ -524,7 +534,10 @@ class EntityViewEvents:
         if "unit_added" in config.verbosity:
             from ..clientgamenews import must_be_said
             if must_be_said(self.number):
-                voice.info(substitute_args(self.get_style("added_msg"), [self.ext_title]))
+                voice.info(
+                    substitute_args(self.get_style("added_msg"), [self.ext_title]),
+                    **_PRIMARY,
+                )
 
     def on_placed(self):
         """Play sound when a building site is placed."""

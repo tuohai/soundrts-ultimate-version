@@ -343,20 +343,21 @@ class GameInterface(AttributesInterface):
     def run_game(self, game, new=True):
         from ..lib import game_tts as _game_tts
 
-        _game_tts.set_in_match(True)
+        # in_match stays False through opening intro/objective so any-key skip
+        # uses the simple VoiceChannel path (like 1.3.8.1). World start enables it.
         try:
             self._run_game_body(game, new=new)
         finally:
             _game_tts.set_in_match(False)
 
     def _run_game_body(self, game, new=True):
-        t = threading.Thread(target=game.world.loop)
-        t.daemon = True
-        t.start()
-
+        from ..lib import game_tts as _game_tts
         from ..clientgameorder import update_orders_list
         update_orders_list()  # when style has changed
-        
+
+        # Opening intro/objective must run BEFORE world.loop starts. On heavy
+        # maps (e.g. sg4) the simulation thread otherwise starves the GIL and
+        # key-polling in voice.confirmation becomes sluggish.
         if new:
             game.pre_run()
             # 播放游戏背景音乐，优先使用阵营专属音乐，其次是地图指定的音乐
@@ -474,7 +475,12 @@ class GameInterface(AttributesInterface):
             map_music = getattr(game.world, 'map_music', None)
             debug(f"加载存档：播放游戏音乐 map_music={map_music}, faction_music={faction_music}")
             sound.play_game_music(map_music, faction_music)
-            
+
+        t = threading.Thread(target=game.world.loop)
+        t.daemon = True
+        _game_tts.set_in_match(True)
+        t.start()
+
         from .interface_modes import init_interface_modes
         init_interface_modes(self)
         # 主循环：支持性能分析输出（与 1.3.8.1 行为对齐，且生成 .txt 报告）
