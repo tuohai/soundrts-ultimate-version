@@ -5,6 +5,26 @@ Notas de lançamento
 .. contents::
 
 
+1.4.5.6
+-------
+
+**Correção: Alt+Z só podia enfileirar mais um treino**
+
+- **Sintoma**: após confirmar treinar camponês no hall, Alt+Z (``do_again now``) só adicionava mais um à fila; novas pressões não alongavam a fila (substituíam o único follow-up enfileirado).
+- **Causa**: na 1.4, só um pedido normal podia ficar atrás de uma cabeça imperativa (para proteger ``auto_explore``). Pedidos de produção (train/research) também são ``is_imperative``, e foram atingidos por engano. 1.3.8.1 não tinha esse limite.
+- **Correção**: pedidos de produção com ``never_forget_previous`` podem empilhar; o slot único continua para follow-ups normais atrás de cabeças imperativas de verdade.
+- **Código**: ``worldunit/world_order.py``.
+- **Testes**: ``test_train_queue_repeat.py``.
+
+**Correção: primeiro Alt+Z (e semelhantes) trava ~0.6–1s**
+
+- **Sintoma**: ao começar, o primeiro Alt+Z congela ~0.5–1s; 1.3.8.1 Alt+G não fazia isso.
+- **Causa**: ``LALT`` → ``history_stop_primary`` → ``needs_sapi32`` iniciava a frio o helper SAPI 32-bit (PowerShell) mesmo com Nuance.
+- **Correção**: vozes Nuance saltam o probe; cache de ``needs_sapi32``.
+- **Código**: ``lib/game_tts.py``.
+- **Testes**: ``test_nuance_skip_sapi32_probe.py``.
+
+
 1.4.5.5
 -------
 

@@ -5,6 +5,26 @@ Release notes
 .. contents::
 
 
+1.4.5.6
+--------
+
+**Fix: Alt+Z could only queue one extra train**
+
+- **Symptom**: After confirming train peasant on a town hall, Alt+Z (``do_again now``) could add only one more to the queue; further presses did not grow the queue (they replaced the single queued follow-up).
+- **Cause**: 1.4 limited “only one normal order behind an imperative head” to protect ``auto_explore``. Production orders (train/research) are also marked ``is_imperative``, so they were hit by mistake. 1.3.8.1 had no such limit and stacked trains correctly.
+- **Fix**: ``never_forget_previous`` production orders may stack freely; the single follow-up slot still applies to normal orders behind true imperative heads (e.g. explore).
+- **Code**: ``worldunit/world_order.py``.
+- **Tests**: ``test_train_queue_repeat.py``.
+
+**Fix: first Alt+Z (and similar) hitch ~0.6–1s**
+
+- **Symptom**: After starting a match, the first Alt+Z to repeat train (etc.) freezes the game for about half a second to one second; later presses are usually fine. 1.3.8.1 Alt+G (same feature) did not hitch.
+- **Cause**: Alt+Z / Alt+G both deliver a lone ``LALT`` key first (``history_stop_primary`` → ``game_tts.stop``). ``stop`` called ``needs_sapi32`` for the primary voice; with Nuance that still probed the 32-bit SAPI helper (cold-start PowerShell) ~1s on the UI thread.
+- **Fix**: Nuance voices skip sapi32 probing; cache ``needs_sapi32`` results; ``stop`` skips the probe for Nuance.
+- **Code**: ``lib/game_tts.py``.
+- **Tests**: ``test_nuance_skip_sapi32_probe.py``.
+
+
 1.4.5.5
 --------
 

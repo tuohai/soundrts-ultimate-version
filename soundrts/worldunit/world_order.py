@@ -46,12 +46,16 @@ class CreatureOrders(Entity):
             return
         if forget_previous and not cls.never_forget_previous:
             self.cancel_all_orders()
-        # 强制命令后只允许一个排队命令：新的普通命令替换已有排队项
+        # After an imperative head (e.g. auto_explore), only one *normal* follow-up
+        # may sit in the queue; a newer normal order replaces the previous follow-up.
+        # Production orders (train/research/…) use never_forget_previous and must be
+        # allowed to stack (Alt+Z / repeated train), so they skip this limit.
         if (
             not imperative
             and imperative_head
             and o[0] != "stop"
             and len(self.orders) >= 2
+            and not cls.never_forget_previous
         ):
             while len(self.orders) > 1:
                 self.orders.pop().cancel()

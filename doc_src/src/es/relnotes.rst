@@ -5,6 +5,26 @@ Notas de la versión
 .. contents::
 
 
+1.4.5.6
+-------
+
+**Corrección: Alt+Z solo podía encolar un entrenamiento más**
+
+- **Síntoma**: tras confirmar entrenar campesino en el ayuntamiento, Alt+Z (``do_again now``) solo añadía una unidad más a la cola; pulsaciones siguientes no alargaban la cola (reemplazaban el único seguimiento encolado).
+- **Causa**: en 1.4 se limitó a «un solo orden normal tras una cabeza imperativa» para proteger ``auto_explore``. Los órdenes de producción (train/research) también son ``is_imperative``, así que se vieron afectados por error. 1.3.8.1 no tenía ese límite.
+- **Corrección**: los órdenes de producción con ``never_forget_previous`` pueden apilarse; el hueco único sigue aplicando a seguimientos normales tras cabezas imperativas reales.
+- **Código**: ``worldunit/world_order.py``.
+- **Pruebas**: ``test_train_queue_repeat.py``.
+
+**Corrección: primer Alt+Z (y similares) tirón ~0.6–1s**
+
+- **Síntoma**: al empezar, el primer Alt+Z congela ~0.5–1s; 1.3.8.1 Alt+G no lo hacía.
+- **Causa**: ``LALT`` → ``history_stop_primary`` → ``needs_sapi32`` arrancaba en frío el helper SAPI 32-bit (PowerShell) incluso con Nuance.
+- **Corrección**: voces Nuance omiten el sondeo; caché de ``needs_sapi32``.
+- **Código**: ``lib/game_tts.py``.
+- **Pruebas**: ``test_nuance_skip_sapi32_probe.py``.
+
+
 1.4.5.5
 -------
 

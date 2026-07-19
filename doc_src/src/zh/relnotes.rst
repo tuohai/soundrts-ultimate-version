@@ -4,6 +4,26 @@
 .. contents::
 
 
+1.4.5.6
+--------
+
+**修复：Alt+Z 重复训练只能再排队一次**
+
+- **现象**：市政厅等建筑确认训练农民后，按 Alt+Z（``do_again now``）只能再往队列加一次；继续按不会继续加长队列（只会顶掉已排队的那一条）。
+- **原因**：1.4 为保护 ``auto_explore`` 等强制队首，限制「强制命令后只允许再排 1 个普通命令」。训练/研究等生产命令本身也标为 ``is_imperative``，因而被误伤。1.3.8.1 无此限制，可连续排队。
+- **修复**：``never_forget_previous`` 的生产类命令（train/research 等）不受该单槽限制，可连续排队；探索等强制命令后的普通跟进仍保持单槽行为。
+- **实现**：``worldunit/world_order.py``。
+- **测试**：``test_train_queue_repeat.py``。
+
+**修复：首次 Alt+Z（或同类命令播报）卡顿约 0.6 秒**
+
+- **现象**：开局后第一次用 Alt+Z 重复训练等命令时，游戏会顿一下约半秒到一秒；之后再按通常正常。1.3.8.1 的 Alt+G（同功能）无此问题。
+- **原因**：Alt+Z / Alt+G 都会先收到单独的 ``LALT`` 键（``history_stop_primary`` → ``game_tts.stop``）。``stop`` 里对当前主语音调用 ``needs_sapi32``；在 Nuance 语音下仍会去探测 32 位 SAPI 助手（冷启动 PowerShell），首次约 1 秒，主线程被堵住。
+- **修复**：Nuance 语音直接判定不需要 sapi32，并缓存探测结果；``stop`` 对 Nuance 跳过该探测。
+- **实现**：``lib/game_tts.py``。
+- **测试**：``test_nuance_skip_sapi32_probe.py``。
+
+
 1.4.5.5
 --------
 

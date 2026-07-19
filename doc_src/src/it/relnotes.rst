@@ -4,6 +4,26 @@ Note di rilascio
 .. contents::
 
 
+1.4.5.6
+--------
+
+**Correzione: Alt+Z poteva mettere in coda un solo addestramento in più**
+
+- **Sintomo**: dopo aver confermato l’addestramento di un contadino, Alt+Z (``do_again now``) aggiungeva solo un’altra voce in coda; le pressioni successive non allungavano la coda (sostituivano l’unico follow-up in coda).
+- **Causa**: in 1.4, dietro una testa imperativa era consentito un solo ordine normale (per proteggere ``auto_explore``). Gli ordini di produzione (train/research) sono anch’essi ``is_imperative``, quindi venivano colpiti per errore. 1.3.8.1 non aveva questo limite.
+- **Correzione**: gli ordini di produzione con ``never_forget_previous`` possono accumularsi; lo slot singolo resta per i follow-up normali dietro vere teste imperative.
+- **Codice**: ``worldunit/world_order.py``.
+- **Test**: ``test_train_queue_repeat.py``.
+
+**Correzione: primo Alt+Z (e simili) blocco ~0.6–1s**
+
+- **Sintomo**: all’inizio partita, il primo Alt+Z congela ~0.5–1s; 1.3.8.1 Alt+G non lo faceva.
+- **Causa**: ``LALT`` → ``history_stop_primary`` → ``needs_sapi32`` avviava a freddo l’helper SAPI 32-bit (PowerShell) anche con Nuance.
+- **Correzione**: le voci Nuance saltano il probe; cache di ``needs_sapi32``.
+- **Codice**: ``lib/game_tts.py``.
+- **Test**: ``test_nuance_skip_sapi32_probe.py``.
+
+
 1.4.5.5
 --------
 

@@ -54,6 +54,8 @@ _last_spoken = {PRIMARY: "", SECONDARY: ""}
 _last_spoken_time = {PRIMARY: 0.0, SECONDARY: 0.0}
 # Secondary library is reserved for in-match passive lines only.
 _in_match = False
+# Cache needs_sapi32(voice) — probing sapi32 (PowerShell) is expensive.
+_needs_sapi32_cache: dict[str, bool] = {}
 
 
 def set_in_match(active: bool) -> None:
@@ -678,11 +680,15 @@ def stop(channel: str | None = None) -> None:
     _channel_speaking[channel] = False
 
     # Stop 32-bit helper only when this channel owns a 32-bit-only voice.
+    # Skip entirely for Nuance — needs_sapi32 used to cold-start PowerShell.
     try:
-        from . import sapi32_tts, voice_libs
+        from . import nuance_tts, voice_libs
 
         voice_libs.load_from_config()
-        if needs_sapi32(voice_libs.get_voice(channel)):
+        vid = voice_libs.get_voice(channel)
+        if not nuance_tts.is_nuance_voice(vid) and needs_sapi32(vid):
+            from . import sapi32_tts
+
             sapi32_tts.stop()
     except Exception:
         pass
@@ -868,6 +874,19 @@ def needs_sapi32(voice_name: str) -> bool:
     name = (voice_name or "").strip()
     if not name or name in (AUTO, DEFAULT):
         return False
+    # Nuance ids never use sapi32. Probing the helper (PowerShell cold start)
+    # on every Alt / history_stop used to freeze the UI ~1s on first chord
+    # (1.3.8.1 Alt+G / 1.4 Alt+Z both fire LALT → stop before do_again).
+    try:
+        from . import nuance_tts
+
+        if nuance_tts.is_nuance_voice(name):
+            return False
+    except Exception:
+        pass
+    cached = _needs_sapi32_cache.get(name)
+    if cached is not None:
+        return cached
     try:
         from . import voice_packs
 
@@ -897,6 +916,7 @@ def needs_sapi32(voice_name: str) -> bool:
         return False
 
     if _run_on_worker(_has_native):
+        _needs_sapi32_cache[name] = False
         return False
     try:
         from . import sapi32_tts
@@ -904,14 +924,17 @@ def needs_sapi32(voice_name: str) -> bool:
         for n in sapi32_tts.list_wow6432_token_names() or []:
             low = (n or "").lower()
             if name_low == low or name_low in low or low in name_low:
+                _needs_sapi32_cache[name] = True
                 return True
         if sapi32_tts.available():
             for n in sapi32_tts.list_voices() or []:
                 low = (n or "").lower()
                 if name_low == low or name_low in low or low in name_low:
+                    _needs_sapi32_cache[name] = True
                     return True
     except Exception:
         pass
+    _needs_sapi32_cache[name] = False
     return False
 
 
