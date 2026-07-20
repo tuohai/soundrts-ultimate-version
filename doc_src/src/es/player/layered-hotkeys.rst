@@ -599,6 +599,12 @@ Que archivo editar
 - Una interfaz: la correspondiente `*_bindings.txt`
 - No edite el cuerpo de ``bindings.txt`` (solo fragmento) a menos que comprenda el comportamiento de adición del mod heredado
 
+Modificadores
+~~~~~~~~~~~~~
+
+- Permitidos: ``CTRL``, ``ALT``, ``SHIFT`` (cualquier lado), ``LSHIFT``, ``RSHIFT`` (más teclas standalone como ``LALT`` / ``RALT``).
+- No ponga ``LSHIFT``/``RSHIFT`` y ``SHIFT`` en la misma línea; la búsqueda prefiere el lado concreto y luego el ``SHIFT`` genérico.
+
 Anulaciones de usuario
 ~~~~~~~~~~~~~~~~~~~~~~
 

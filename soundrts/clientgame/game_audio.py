@@ -805,21 +805,24 @@ def cmd_voice_lib_nudge(interface, delta=1, secondary=0):
     voice_libs.announce_param_value(which)
 
 
-def cmd_voice_lib_copy(interface):
-    """Left Shift+C: last primary utterance; Right Shift+C: last secondary."""
+def cmd_voice_lib_copy(interface, which=""):
+    """LSHIFT C → primary last utterance; RSHIFT C → secondary."""
     import pygame
 
     from ..lib import voice_libs
 
-    which = voice_libs.which_from_shift_mod(pygame.key.get_mods())
-    voice_libs.copy_voice_info(which)
+    lib = voice_libs.parse_voice_lib_which(which, pygame.key.get_mods())
+    voice_libs.copy_voice_info(lib)
 
 
-def cmd_voice_lib_append_copy(interface):
-    """Shift+A: append last voice-library announcement."""
+def cmd_voice_lib_append_copy(interface, which=""):
+    """LSHIFT B → append primary; RSHIFT B → append secondary."""
+    import pygame
+
     from ..lib import voice_libs
 
-    voice_libs.copy_last_announce(append=True)
+    lib = voice_libs.parse_voice_lib_which(which, pygame.key.get_mods())
+    voice_libs.copy_voice_info(lib, append=True)
 
 
 # 导出的函数供其他模块使用

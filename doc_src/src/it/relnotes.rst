@@ -4,6 +4,46 @@ Note di rilascio
 .. contents::
 
 
+1.4.5.7
+--------
+
+**Correzione: unità bloccate ad attaccare edifici senza minaccia invece dei combattenti**
+
+- **Sintomo**: mentre le unità demoliscono una fattoria, municipio o edificio simile, i combattenti nemici possono avvicinarsi e ucciderle; gli attaccanti continuano a colpire l’edificio invece di cambiare bersaglio.
+- **Causa**: in 1.4 si saltava la riselezione del bersaglio durante l’ingaggio (prestazioni). Gli edifici contano come nemici vivi, quindi l’ingaggio restava sulle fattorie. 1.3.8.1 restava solo su bersagli con ``menace > 0`` e riselezionava se il bersaglio corrente non aveva minaccia.
+- **Correzione**: ripristinato il comportamento 1.3.8.1—ingaggio sticky e cache decisioni solo con ``menace > 0``; edifici a minaccia 0 possono essere riselezionati, preferendo le unità da combattimento. Contro unità minacciose si esce ancora in anticipo (hot path invariato).
+- **Codice**: ``worldunit/world_ai_decision.py``.
+- **Test**: ``test_retarget_zero_menace.py``.
+
+**Miglioramento: i bindings distinguono Shift sinistro/destro (``LSHIFT`` / ``RSHIFT``)**
+
+- Oltre a ``SHIFT``, si possono usare ``LSHIFT`` e ``RSHIFT`` come modificatori (non mescolare con ``SHIFT`` sulla stessa riga).
+- La ricerca preferisce il lato specifico, poi cade su ``SHIFT`` generico.
+- Attivi di default: ``RSHIFT C`` / ``RSHIFT B`` (copia/aggiungi **secondaria**).
+- ``LSHIFT C`` / ``LSHIFT B`` (primaria) sono **commentati** in ``res/ui/global_bindings.txt``; togliere il ``;`` iniziale per attivarli.
+- **Consiglio:** usare uno screen reader come voce primaria per non impegnare ``F9``–``F12`` sulla primaria; i tasti sono densissimi. Vedi ``player/voice-libraries.rst``.
+- **Codice**: ``lib/bindings.py``, ``res/ui/global_bindings.txt``, ``hotkey_editor.py``.
+- **Test**: ``test_lshift_rshift_bindings.py``.
+
+**Miglioramento: volume minimo per caselle lontane nel pan vocale**
+
+- Le avvisaglie parlate con posizione non si attenuano senza limite: il volume resta vicino a quello di una casella adiacente (un po’ più basso consentito). I beep della minimappa usano ancora l’attenuazione completa.
+- **Codice**: ``lib/sound.py``, ``clientgame/game_resources.py``, ``clientgame/game_unit_control.py``.
+- **Test**: ``test_spatial_voice_alerts.py``.
+
+**Miglioramento: moltiplicatore ``build_time`` in ``ai.txt``**
+
+- Nuova direttiva ``build_time <pct>`` (a inizio partita, fuori dal loop): percentuale della durata normale di costruzione (``100`` = normale, ``50`` = il doppio di veloce).
+- Esempi: advanced/expert ``build_time 50``; nightmare ``build_time 40``.
+- **Test**: ``test_ai_start_settings.py``, ``test_ai_train_research_hp.py``.
+
+**Miglioramento: moltiplicatore ``gather_time`` in ``ai.txt``**
+
+- Nuova direttiva ``gather_time <pct>``: percentuale della durata normale di raccolta (``100`` = normale, ``50`` = il doppio di veloce). Diversa dal campo ``gather_time`` dei lavoratori in ``rules.txt``.
+- Esempi: advanced/expert ``gather_time 50``; nightmare ``gather_time 40``.
+- **Test**: ``test_ai_start_settings.py``, ``test_ai_train_research_hp.py``.
+
+
 1.4.5.6
 --------
 

@@ -10,6 +10,8 @@ from pygame import (
     K_RSHIFT,
     KMOD_ALT,
     KMOD_CTRL,
+    KMOD_LSHIFT,
+    KMOD_RSHIFT,
     KMOD_SHIFT,
 )
 
@@ -21,7 +23,9 @@ class _Error(Exception):
     pass
 
 
-_allowed_mods = ("CTRL", "ALT", "SHIFT")
+# SHIFT = either side; LSHIFT / RSHIFT = that side only (must not mix with SHIFT).
+_allowed_mods = ("CTRL", "ALT", "SHIFT", "LSHIFT", "RSHIFT")
+_SHIFT_SIDE_MODS = frozenset({"SHIFT", "LSHIFT", "RSHIFT"})
 
 
 # These constants are missing in some pygame builds.
@@ -42,6 +46,9 @@ def _normalized_key(s):
     for mod in mods:
         if mod not in _allowed_mods:
             raise _Error("'%s' is not an allowed key modifier" % mod)
+    shift_sides = [m for m in mods if m in _SHIFT_SIDE_MODS]
+    if len(shift_sides) > 1:
+        raise _Error("use only one of SHIFT, LSHIFT, RSHIFT")
     normalized_mods = tuple(1 if m in mods else 0 for m in _allowed_mods)
     key_name = words[-1]
 
@@ -66,26 +73,82 @@ def _normalized_key(s):
     return normalized_mods, key, False
 
 
-_mod_masks = (KMOD_CTRL, KMOD_ALT, KMOD_SHIFT)
 _modifiers_as_keys = (K_LCTRL, K_LALT, K_LSHIFT, K_RCTRL, K_RALT, K_RSHIFT)
+
+
+def _live_shift_sides(mod):
+    """Return (any_shift, left, right).
+
+    Prefer pygame L/R bits when present. Only consult Win32 when the event
+    has generic SHIFT but neither KMOD_LSHIFT nor KMOD_RSHIFT (wx / some
+    pygame paths lose the side).
+    """
+    left = bool(mod & KMOD_LSHIFT)
+    right = bool(mod & KMOD_RSHIFT)
+    if (mod & KMOD_SHIFT) and not left and not right:
+        try:
+            import ctypes
+
+            win_left = bool(ctypes.windll.user32.GetKeyState(0xA0) & 0x8000)
+            win_right = bool(ctypes.windll.user32.GetKeyState(0xA1) & 0x8000)
+            if win_left or win_right:
+                left, right = win_left, win_right
+        except Exception:
+            pass
+    any_shift = bool(mod & KMOD_SHIFT) or left or right
+    return any_shift, left, right
 
 
 def _normalized_event(e):
     if e.key in _modifiers_as_keys:
         # modifiers never modify another modifier
-        normalized_mods = (0, 0, 0)
-    else:
-        normalized_mods = tuple(1 if e.mod & m else 0 for m in _mod_masks)
-    
+        return (0, 0, 0, 0, 0), e.key
+
+    ctrl = 1 if e.mod & KMOD_CTRL else 0
+    alt = 1 if e.mod & KMOD_ALT else 0
+    any_shift, left, right = _live_shift_sides(e.mod)
+    # Event tuple always records live L/R; lookup tries specific then SHIFT.
+    mods = (ctrl, alt, 1 if any_shift else 0, 1 if left else 0, 1 if right else 0)
+
     # 修复：正确处理pygame按键常量到ASCII字符的转换
     # 对于字母按键，需要直接映射到对应的ASCII大写字母
     if pygame.K_a <= e.key <= pygame.K_z:  # 字母按键范围
         # 将pygame字母按键转换为对应的ASCII大写字母
-        key = ord('A') + (e.key - pygame.K_a)  # A=65, B=66, ...
+        key = ord("A") + (e.key - pygame.K_a)  # A=65, B=66, ...
     else:
         key = e.key  # 使用原始key代码
-        
-    return normalized_mods, key
+
+    return mods, key
+
+
+def _binding_mod_candidates(event_mods):
+    """Prefer LSHIFT/RSHIFT bindings, then generic SHIFT, then no-shift.
+
+    event_mods: (ctrl, alt, any_shift, left, right)
+    binding mods: (ctrl, alt, SHIFT, LSHIFT, RSHIFT) flags from _allowed_mods.
+    """
+    ctrl, alt, any_shift, left, right = event_mods
+    out = []
+    if left and not right:
+        out.append((ctrl, alt, 0, 1, 0))  # LSHIFT
+    if right and not left:
+        out.append((ctrl, alt, 0, 0, 1))  # RSHIFT
+    if left and right:
+        # both held: try left-specific then right-specific
+        out.append((ctrl, alt, 0, 1, 0))
+        out.append((ctrl, alt, 0, 0, 1))
+    if any_shift:
+        out.append((ctrl, alt, 1, 0, 0))  # SHIFT (either)
+    if not any_shift:
+        out.append((ctrl, alt, 0, 0, 0))
+    # de-dupe while preserving order
+    seen = set()
+    uniq = []
+    for m in out:
+        if m not in seen:
+            seen.add(m)
+            uniq.append(m)
+    return uniq
 
 
 class Bindings:
@@ -152,21 +215,26 @@ class Bindings:
             except _Error as err:
                 warning("error in bindings.txt (line ignored):\n%s\n(%s)", line, err)
 
+    def _run_binding(self, table, mods, key):
+        entry = table.get((mods, key))
+        if entry is None:
+            return False
+        cmd, args = entry
+        cmd(*args)
+        return True
+
     def process_keydown_event(self, e):
         # 尝试找到绑定的命令并执行
         try:
-            normalized_mods, key = _normalized_event(e)
+            event_mods, key = _normalized_event(e)
             scancode = getattr(e, "scancode", None)
-            if scancode is not None:
-                scan_key = (normalized_mods, scancode)
-                if scan_key in self._scan_bindings:
-                    cmd, args = self._scan_bindings[scan_key]
-                    cmd(*args)
+            for mods in _binding_mod_candidates(event_mods):
+                if scancode is not None and self._run_binding(
+                    self._scan_bindings, mods, scancode
+                ):
                     return True
-            if (normalized_mods, key) in self._bindings:
-                cmd, args = self._bindings[(normalized_mods, key)]
-                cmd(*args)
-                return True
+                if self._run_binding(self._bindings, mods, key):
+                    return True
             return False
         except (KeyError, AttributeError) as err:
             # 该键没有绑定

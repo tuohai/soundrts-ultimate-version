@@ -355,6 +355,15 @@ class Worker(Unit):
                     # 处理固定值bonus
                     final_time = base_time + int(bonus_value)
         
+        # ai.txt gather_time：电脑开采时长百分比（100 = 正常，50 = 快一倍）
+        player = getattr(self, "player", None)
+        pct = getattr(player, "ai_gather_time_percent", 100) if player else 100
+        if pct != 100:
+            if pct <= 0:
+                final_time = 0.1
+            else:
+                final_time = float(final_time) * int(pct) / 100.0
+
         # 确保至少需要0.1秒
         return max(0.1, final_time)
 

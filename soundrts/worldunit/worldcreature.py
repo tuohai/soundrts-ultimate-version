@@ -1597,7 +1597,8 @@ class BuildingSite(_Building):
         self.hp_max = building_type.hp_max
         self._starting_hp = building_type.hp_max * 5 // 100
         self.hp = self._starting_hp
-        self.timer = building_type.time_cost // VIRTUAL_TIME_INTERVAL
+        # Prefer scaled time_cost (ai.txt build_time) over the raw type value.
+        self.timer = self.time_cost // VIRTUAL_TIME_INTERVAL
         self.damage_during_construction = 0
         self.addon_host = None
         self.build_deposit = None
@@ -1648,7 +1649,14 @@ class BuildingSite(_Building):
 
     @property
     def time_cost(self):
-        return self.type.time_cost
+        base = self.type.time_cost
+        player = getattr(self, "player", None)
+        pct = getattr(player, "ai_build_time_percent", 100) if player else 100
+        if pct == 100:
+            return base
+        if pct <= 0:
+            return 0
+        return max(0, int(base) * int(pct) // 100)
 
     @property
     def hp_delta(self):

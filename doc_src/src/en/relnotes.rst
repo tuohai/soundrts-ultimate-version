@@ -5,6 +5,52 @@ Release notes
 .. contents::
 
 
+1.4.5.7
+--------
+
+**Fix: units stuck attacking non-threatening buildings instead of enemy combatants**
+
+- **Symptom**: While units smash a farm, town hall, or similar building, enemy combatants can walk up and kill them; the attackers keep hitting the building instead of switching.
+- **Cause**: 1.4 skipped target re-scan while already engaged (performance). Buildings count as living enemies, so engagement stuck on farms. 1.3.8.1 only stuck on targets with ``menace > 0`` and re-chose when the current target had no threat.
+- **Fix**: Restore 1.3.8.1 behavior—sticky engage and decision cache only for ``menace > 0``; zero-menace buildings may be re-scanned so combat units are preferred. Fighting threatening units still early-returns (hot path unchanged).
+- **Code**: ``worldunit/world_ai_decision.py``.
+- **Tests**: ``test_retarget_zero_menace.py``.
+
+**Improvement: bindings distinguish Left/Right Shift (``LSHIFT`` / ``RSHIFT``)**
+
+- Binding files may use ``LSHIFT`` or ``RSHIFT`` as modifiers in addition to generic ``SHIFT`` (do not mix ``SHIFT`` with ``LSHIFT``/``RSHIFT`` on the same line).
+- Lookup prefers side-specific bindings, then falls back to generic ``SHIFT`` (e.g. ``SHIFT F9`` for the secondary voice library still works with either Shift).
+- Enabled by default: ``RSHIFT C`` / ``RSHIFT B`` (copy/append **secondary** last utterance).
+- ``LSHIFT C`` / ``LSHIFT B`` (primary) are **commented out** in ``res/ui/global_bindings.txt``; remove the leading ``;`` to enable them.
+- **Tip:** Prefer a screen reader as the primary voice (it takes over primary duties) so ``F9``–``F12`` need not adjust the primary library. Hotkeys are nearly saturated—save keys when you can. See ``player/voice-libraries.rst``.
+- **Code**: ``lib/bindings.py``, ``res/ui/global_bindings.txt``, ``hotkey_editor.py``.
+- **Tests**: ``test_lshift_rshift_bindings.py``.
+
+**Improvement: volume floor for distant square speech pan**
+
+- **Symptom**: Square-linked passive speech (secondary library, etc.) attenuated too much for far squares and was hard to hear while playing.
+- **Change**: Distance attenuation for spoken directional cues is capped near one-square loudness (slightly quieter allowed); there is always that floor no matter how far. Left/right and rear attenuation remain. Minimap alert SFX still use full distance falloff.
+- **Code**: ``lib/sound.py`` (``distance_cap``), ``clientgame/game_resources.py``, ``clientgame/game_unit_control.py``.
+- **Docs**: ``player/voice-libraries.rst``.
+- **Tests**: ``test_spatial_voice_alerts.py``.
+
+**Improvement: ``ai.txt`` ``build_time`` multiplier**
+
+- New one-shot directive ``build_time <pct>`` (applied at game start, not in the script loop): percent of normal building-construction duration (``100`` = normal, ``50`` = twice as fast). Alongside ``train_time`` / ``research_time``.
+- Vanilla examples: advanced/expert ``build_time 50``; nightmare ``build_time 40``.
+- **Code**: ``definitions.py``, ``worldplayercomputer.py``, ``worldorders/base.py``, ``worldunit/worldcreature.py``; ``res/ai.txt``.
+- **Docs**: ``mod/aimaking.rst``.
+- **Tests**: ``test_ai_start_settings.py``, ``test_ai_train_research_hp.py``.
+
+**Improvement: ``ai.txt`` ``gather_time`` multiplier**
+
+- New one-shot directive ``gather_time <pct>``: percent of normal resource-gathering duration for computer workers (``100`` = normal, ``50`` = twice as fast). Applied in ``Worker.get_gather_time`` (distinct from the worker ``gather_time`` field in ``rules.txt``).
+- Vanilla examples: advanced/expert ``gather_time 50``; nightmare ``gather_time 40``.
+- **Code**: ``definitions.py``, ``worldplayercomputer.py``, ``worldunit/worldworker.py``; ``res/ai.txt``.
+- **Docs**: ``mod/aimaking.rst``.
+- **Tests**: ``test_ai_start_settings.py``, ``test_ai_train_research_hp.py``.
+
+
 1.4.5.6
 --------
 

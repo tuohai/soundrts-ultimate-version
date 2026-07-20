@@ -4,6 +4,8 @@ Librerie vocali primaria e secondaria (giocatori)
 
 Il gioco usa due librerie vocali configurabili separatamente: primaria e secondaria. Puoi attivare o disattivare la secondaria; se è disattivata, la primaria annuncia tutto.
 
+**Consiglio:** usare preferibilmente uno **screen reader** come voce primaria. Se il lettore è attivo, assume i compiti della libreria primaria e non serve impegnare ``F9``–``F12`` per «regolare la primaria». I tasti di questo gioco sono densissimi: **risparmiate scorciatoie quando potete**. La secondaria (campo di battaglia) si regola ancora con ``Shift+F9``–``F12``.
+
 
 ----
 
@@ -60,9 +62,9 @@ Nell’editor:
 In partita (e nei menu):
 
 - **F9–F12**: libreria primaria
-- **Shift+F9–F12**: libreria secondaria
-- **Shift sinistro+C** / **Shift destro+C**: copia ultima riga primaria / secondaria
-- **Shift+A**: aggiungi agli appunti
+- **Shift+F9–F12**: libreria secondaria (qualsiasi Shift)
+- **Shift destro+C**: copia ultima riga secondaria; **Shift destro+B**: aggiungi secondaria agli appunti
+- **Shift sinistro+C / Shift sinistro+B** (primaria): **commentati** di default in ``res/ui/global_bindings.txt`` per ridurre i conflitti; togliere il ``;`` iniziale per attivarli
 - **F3 nei menu**: attiva/disattiva secondaria (non in partita)
 
 

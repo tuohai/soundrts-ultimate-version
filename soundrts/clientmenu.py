@@ -24,7 +24,7 @@ from pygame.locals import (
     K_F11,
     K_F12,
     K_HOME,
-    K_a,
+    K_b,
     K_c,
     K_i,
     K_KP_ENTER,
@@ -819,16 +819,16 @@ ALT MINUS: music_volume_down
         elif e.key == K_F6:
             voice.say_next(history_only=True)
         elif e.key in (K_F9, K_F10, K_F11, K_F12) or (
-            e.key in (K_c, K_a, ord("C"), ord("A"))
+            e.key in (K_c, K_b, ord("C"), ord("B"))
             and (e.mod & KMOD_SHIFT)
             and not (e.mod & KMOD_CTRL)
         ):
-            # Dual voice libraries: F9–F12 / Shift+F9–F12; L/R Shift+C copy
+            # Dual voice libraries: F9–F12 / Shift+F9–F12; L/R Shift+C/B copy/append
             try:
                 from .lib import voice_libs
 
                 key = e.key
-                if key in (ord("C"), ord("A")):
+                if key in (ord("C"), ord("B")):
                     key = ord(chr(key).lower())
                 if voice_libs.handle_hotkey(key, e.mod):
                     return

@@ -600,6 +600,13 @@ Mod 配置：在 ``style.txt`` 为单位设置 ``keyboard building1`` … ``keyb
 - 调整某一界面：改对应的 `*_bindings.txt`
 - 不要直接改 ``bindings.txt`` 正文（仅为 stub 说明）；除非知悉其作为 Mod 追加层的兼容行为
 
+修饰键
+~~~~~~
+
+- 可用：``CTRL``、``ALT``、``SHIFT``（任意一侧）、``LSHIFT``、``RSHIFT``（以及单独的 ``LALT`` / ``RALT`` 等键）。
+- ``LSHIFT`` / ``RSHIFT`` 与 ``SHIFT`` **不可写在同一行**；匹配时先找左右专用绑定，再回退到通用 ``SHIFT``。
+- 示例：``LSHIFT C`` 与 ``RSHIFT C`` 可绑定不同命令；``SHIFT F9`` 仍对左右 Shift 都生效。
+
 用户覆盖
 ~~~~~~~~
 

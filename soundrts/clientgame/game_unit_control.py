@@ -705,11 +705,18 @@ def say_group(interface, prefix=[]):
 
 
 def _place_voice_pan(interface, place):
-    """Stereo pan for a square relative to the current view (minimap style)."""
+    """Stereo pan for a square relative to the current view (minimap style).
+
+    Distance attenuation is capped near one-square loudness so far-square
+    alerts stay audible (about adjacent volume or slightly quieter).
+    """
     from .game_resources import _minimap_stereo
 
     try:
-        return _minimap_stereo(interface, place)
+        # Same scale as _minimap_stereo: one column step in stereo coords.
+        col_step = 6.0 / (float(interface.xcmax) + 1.0)
+        distance_cap = max(col_step, 1.0) * 1.15
+        return _minimap_stereo(interface, place, distance_cap=distance_cap)
     except Exception:
         from ..lib.sound import DEFAULT_VOLUME
 

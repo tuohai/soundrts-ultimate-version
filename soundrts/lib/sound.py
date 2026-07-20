@@ -65,7 +65,7 @@ def angle(x1, y1, x2, y2, o=0):
     return a - math.radians(o)
 
 
-def stereo(x, y, xo, yo, o, volume=1, no_distance=False):
+def stereo(x, y, xo, yo, o, volume=1, no_distance=False, distance_cap=None):
     a = angle(x, y, xo, yo, o)
     if no_distance:
         d = 1
@@ -73,6 +73,14 @@ def stereo(x, y, xo, yo, o, volume=1, no_distance=False):
         d = distance(x, y, xo, yo)
         if d < 1:
             d = 1
+        if distance_cap is not None:
+            try:
+                cap = float(distance_cap)
+            except (TypeError, ValueError):
+                cap = 0.0
+            if cap > 0:
+                # Keep far sources near "one step" loudness (never quieter floor).
+                d = min(d, max(cap, 1.0))
     vg = (math.sin(a) + 1) / 2.0
     vd = 1 - vg
     vg = math.sin(vg * math.pi / 2.0)

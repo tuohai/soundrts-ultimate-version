@@ -151,6 +151,14 @@ research turned on, more bases and more willingness to attack.
 - ``research_time \<pct\>`` -- percent of normal research / advance duration
   (``100`` = normal, ``80`` = 20% faster). Affects ``research`` / ``advance``
   only. Omitted = ``100``.
+- ``build_time \<pct\>`` -- percent of normal building-construction duration
+  (``100`` = normal, ``50`` = builds twice as fast). Affects construction-site
+  progress. Omitted = ``100``.
+- ``gather_time \<pct\>`` -- percent of normal resource-gathering duration
+  (``100`` = normal, ``50`` = gathers twice as fast). Affects computer workers'
+  harvest time only (``Worker.get_gather_time``). **Note:** this is the ``ai.txt``
+  difficulty multiplier, not the worker ``gather_time`` field in ``rules.txt``.
+  Omitted = ``100``.
 - ``unit_hp \<pct\>`` -- percent of normal HP for all of this computer's units
   (``100`` = normal, ``120`` = +20% HP). Applied after coop
   ``enemy_hp_factor``. Omitted = ``100``.
@@ -162,11 +170,13 @@ research turned on, more bases and more willingness to attack.
 
   - intermediate: ``starting_resources 50 50``, ``starting_population 10``
   - advanced: ``100 100`` + ``2 footman 2 archer``, ``starting_population 20``,
-    ``train_time 50``, ``research_time 80``
+    ``train_time 50``, ``research_time 80``, ``build_time 50``, ``gather_time 50``
   - expert: ``200 200`` + ``5 footman 4 archer 2 knight``, ``starting_population 40``,
-    ``train_time 50``, ``research_time 70``, ``unit_hp 120``
+    ``train_time 50``, ``research_time 70``, ``build_time 50``, ``gather_time 50``,
+    ``unit_hp 120``
   - nightmare: ``400 400`` + ``8 footman 6 archer 4 knight``, ``starting_population 60``,
-    ``train_time 40``, ``research_time 60``, ``unit_hp 140``
+    ``train_time 40``, ``research_time 60``, ``build_time 40``, ``gather_time 40``,
+    ``unit_hp 140``
 - ``watchdog \<seconds\>`` -- a safety net: if the AI is stuck on the same line
   for this long, it moves on to the next line. ``0`` disables it.
 

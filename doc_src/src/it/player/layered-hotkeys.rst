@@ -600,6 +600,12 @@ Quale file modificare
 - Una interfaccia: il corrispondente `*_bindings.txt`
 - Non modificare il corpo di ``bindings.txt`` (solo stub) a meno di conoscere il comportamento di append legacy delle mod
 
+Modificatori
+~~~~~~~~~~~~
+
+- Consentiti: ``CTRL``, ``ALT``, ``SHIFT`` (qualsiasi lato), ``LSHIFT``, ``RSHIFT`` (più tasti standalone come ``LALT`` / ``RALT``).
+- Non mettere ``LSHIFT``/``RSHIFT`` e ``SHIFT`` sulla stessa riga; la ricerca preferisce il lato specifico, poi ``SHIFT`` generico.
+
 Sovrascritture utente
 ~~~~~~~~~~~~~~~~~~~~~
 

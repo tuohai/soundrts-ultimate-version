@@ -137,6 +137,11 @@ AI 制作教程
   训练更快）。仅影响 ``train`` 与按训练计时的变形。不写则 ``100``。
 - ``research_time \<pct\>`` —— 科技研究 / 时代推进时长百分比（``100`` = 正常，
   ``80`` = 快 20%）。仅影响 ``research`` / ``advance``。不写则 ``100``。
+- ``build_time \<pct\>`` —— 建造建筑时长百分比（``100`` = 正常，``50`` = 建造快一倍）。
+  影响工地施工进度。不写则 ``100``。
+- ``gather_time \<pct\>`` —— 开采资源时长百分比（``100`` = 正常，``50`` = 开采快一倍）。
+  仅影响电脑工人的采集耗时（``Worker.get_gather_time``）。**注意**：这是 ``ai.txt``
+  的难度倍率，与 ``rules.txt`` 里工人字段 ``gather_time`` 不是同一回事。不写则 ``100``。
 - ``unit_hp \<pct\>`` —— 该电脑所有单位血量百分比（``100`` = 正常，``120`` =
   +20% HP）。在合作战役 ``enemy_hp_factor`` 之后再乘。不写则 ``100``。
 
@@ -147,11 +152,13 @@ AI 制作教程
 
   - 中级：``starting_resources 50 50``、``starting_population 10``
   - 高级：``100 100`` + ``2 footman 2 archer``、``starting_population 20``、
-    ``train_time 50``、``research_time 80``
+    ``train_time 50``、``research_time 80``、``build_time 50``、``gather_time 50``
   - 专家：``200 200`` + ``5 footman 4 archer 2 knight``、``starting_population 40``、
-    ``train_time 50``、``research_time 70``、``unit_hp 120``
+    ``train_time 50``、``research_time 70``、``build_time 50``、``gather_time 50``、
+    ``unit_hp 120``
   - 噩梦：``400 400`` + ``8 footman 6 archer 4 knight``、``starting_population 60``、
-    ``train_time 40``、``research_time 60``、``unit_hp 140``
+    ``train_time 40``、``research_time 60``、``build_time 40``、``gather_time 40``、
+    ``unit_hp 140``
 - ``watchdog \<秒\>`` —— 安全机制：若 AI 在同一行卡住超过这么久，就跳到下一行。
   ``0`` 表示关闭。
 

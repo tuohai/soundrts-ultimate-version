@@ -74,6 +74,8 @@ class Computer(Player):
     # One-shot ai.txt multipliers (100 = normal). See parse_ai_start_settings.
     ai_train_time_percent = 100
     ai_research_time_percent = 100
+    ai_build_time_percent = 100
+    ai_gather_time_percent = 100
     ai_unit_hp_percent = 100
     _wait_deadline = None  # internal state for the "wait <seconds>" command
 
@@ -95,13 +97,17 @@ class Computer(Player):
         self._apply_ai_start_settings()
 
     def _apply_ai_multipliers(self):
-        """Load train_time / research_time / unit_hp from ai.txt onto this player."""
+        """Load train/research/build/gather_time / unit_hp from ai.txt onto this player."""
         if self.AI_type == "timers" or self.neutral:
             return
         script_name = self.faction_ai_type(self.AI_type)
-        *_, train_time, research_time, unit_hp = parse_ai_start_settings(script_name)
+        *_, train_time, research_time, build_time, gather_time, unit_hp = (
+            parse_ai_start_settings(script_name)
+        )
         self.ai_train_time_percent = train_time
         self.ai_research_time_percent = research_time
+        self.ai_build_time_percent = build_time
+        self.ai_gather_time_percent = gather_time
         self.ai_unit_hp_percent = unit_hp
 
     def _default_start_place(self):
@@ -131,10 +137,14 @@ class Computer(Player):
             population_bonus,
             train_time,
             research_time,
+            build_time,
+            gather_time,
             unit_hp,
         ) = parse_ai_start_settings(script_name)
         self.ai_train_time_percent = train_time
         self.ai_research_time_percent = research_time
+        self.ai_build_time_percent = build_time
+        self.ai_gather_time_percent = gather_time
         self.ai_unit_hp_percent = unit_hp
         if resource_bonus:
             for index, qty in enumerate(resource_bonus):
@@ -207,6 +217,8 @@ class Computer(Player):
             self.counter_skill = type(self).counter_skill
             self.ai_train_time_percent = type(self).ai_train_time_percent
             self.ai_research_time_percent = type(self).ai_research_time_percent
+            self.ai_build_time_percent = type(self).ai_build_time_percent
+            self.ai_gather_time_percent = type(self).ai_gather_time_percent
             self.ai_unit_hp_percent = type(self).ai_unit_hp_percent
             self._wait_deadline = None
             self._update_effect_users_and_workers()  # required by some tests

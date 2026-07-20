@@ -166,6 +166,14 @@ atacar.
 - ``research_time \<pct\>`` -- porcentagem da duração normal de pesquisa /
   avanço (``100`` = normal, ``80`` = 20% mais rápido). Só ``research`` /
   ``advance``. Omitido = ``100``.
+- ``build_time \<pct\>`` -- porcentagem da duração normal de construção
+  (``100`` = normal, ``50`` = o dobro de rápido). Afeta o progresso no
+  canteiro. Omitido = ``100``.
+- ``gather_time \<pct\>`` -- porcentagem da duração normal de coleta
+  (``100`` = normal, ``50`` = o dobro de rápido). Só o tempo de coleta dos
+  trabalhadores do computador (``Worker.get_gather_time``). **Nota:** é o
+  multiplicador de dificuldade em ``ai.txt``, não o campo ``gather_time`` de
+  trabalhadores em ``rules.txt``. Omitido = ``100``.
 - ``unit_hp \<pct\>`` -- porcentagem do HP normal de todas as unidades deste
   computador (``100`` = normal, ``120`` = +20% HP). Depois do
   ``enemy_hp_factor`` coop. Omitido = ``100``.
@@ -177,11 +185,13 @@ atacar.
 
   - intermediate: ``starting_resources 50 50``, ``starting_population 10``
   - advanced: ``100 100`` + ``2 footman 2 archer``, ``starting_population 20``,
-    ``train_time 50``, ``research_time 80``
+    ``train_time 50``, ``research_time 80``, ``build_time 50``, ``gather_time 50``
   - expert: ``200 200`` + ``5 footman 4 archer 2 knight``, ``starting_population 40``,
-    ``train_time 50``, ``research_time 70``, ``unit_hp 120``
+    ``train_time 50``, ``research_time 70``, ``build_time 50``, ``gather_time 50``,
+    ``unit_hp 120``
   - nightmare: ``400 400`` + ``8 footman 6 archer 4 knight``, ``starting_population 60``,
-    ``train_time 40``, ``research_time 60``, ``unit_hp 140``
+    ``train_time 40``, ``research_time 60``, ``build_time 40``, ``gather_time 40``,
+    ``unit_hp 140``
 - ``watchdog \<seconds\>`` -- rede de segurança: se a IA ficar presa na mesma
   linha por esse tempo, avança para a próxima linha. ``0`` desativa.
 

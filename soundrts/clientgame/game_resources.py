@@ -288,7 +288,8 @@ def gm_save(interface):
     """保存游戏"""
     try:
         interface.server.save_game()
-        voice.info(mp.OK)
+        # Player action feedback → primary (same as economy / production OK lines).
+        voice.info(mp.OK, tts_channel="primary")
     except:
         exception("save game failed")
         voice.alert(mp.BEEP)
@@ -552,8 +553,12 @@ def direction_to_msg(interface, o):
     return mp.TO_THE + mp_direction
 
 
-def _minimap_stereo(interface, place):
-    """小地图立体声定位"""
+def _minimap_stereo(interface, place, *, distance_cap=None):
+    """小地图立体声定位。
+
+    distance_cap: optional max distance used for /d attenuation (voice pan uses
+    this so far squares stay near adjacent-square loudness).
+    """
     from .game_navigation import coords_in_map
     from ..lib.sound import stereo
     x, y = coords_in_map(interface, place)
@@ -561,7 +566,7 @@ def _minimap_stereo(interface, place):
     xc, yc = coords_in_map(interface, interface.place)
     dx = (x - xc) * 6.0 / (interface.xcmax + 1)
     dy = (y - yc) * 6.0 / (interface.ycmax + 1) / flattening_factor
-    return stereo(0, 0, dx, dy, 90)
+    return stereo(0, 0, dx, dy, 90, distance_cap=distance_cap)
 
 
 def launch_alert(interface, place, sound_id):

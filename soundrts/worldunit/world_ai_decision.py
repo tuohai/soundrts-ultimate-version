@@ -322,12 +322,23 @@ class CreatureAIDecision(Entity):
                 # 确保目标仍然有效；中立单位仅在有强制攻击命令时才继续。
                 # 额外校验目标仍是敌人：可被夺取的建筑一旦被占领即转为友方，
                 # 此时必须停止攻击，避免对自己人下达无效的攻击/占领命令。
-                if (target.place is not None and target.hp > 0
-                        and self.is_an_enemy(target)
-                        and (not self._is_neutral_target(target)
-                             or self._player_ordered_attack_on(target))):
+                valid = (
+                    target.place is not None and target.hp > 0
+                    and self.is_an_enemy(target)
+                    and (not self._is_neutral_target(target)
+                         or self._player_ordered_attack_on(target))
+                )
+                # PERF PITFALL (1.4.5.7 / SESSION_PERF 会话 9):
+                # 1.3.8.1 only sticks when action_target.menace > 0.
+                # Do NOT restore "any living is_creature enemy sticks" — farms
+                # (menace 0) must fall through so _choose_enemy can switch to
+                # combat units. Fighting menace>0 still early-returns (hot path).
+                if valid and getattr(target, "menace", 0):
                     self._attack(target)
-                return
+                    return
+                if not valid:
+                    return
+                # valid but menace==0: fall through
 
             # 如果是逃跑决策且时间未过期，继续逃跑
             elif decision.get('action') == 'flee' and current_time - decision.get('time', 0) < 3000:
@@ -336,8 +347,12 @@ class CreatureAIDecision(Entity):
                     self.take_order(["go", decision['escape_square'].id], imperative=True)
                     return
 
-        # Already engaged on a living enemy: skip expensive re-scan.
+        # Already engaged on a living *menacing* enemy: skip expensive re-scan.
+        # PERF PITFALL (1.4.5.7 / SESSION_PERF 会话 9): stick ONLY if menace > 0.
+        # Buildings are is_creature too; farms/townhalls have menace 0 — sticking
+        # to them prevents switching to attacking combat units (1.3.8.1 parity).
         # Same-square engage: only is_an_enemy / neutral，不跑 can_attack→near_enough。
+        # menace is 5s-cached → cheap; common path (fighting units) still early-returns.
         action = getattr(self, "action", None)
         if action is not None:
             cur = getattr(action, "target", None)
@@ -351,7 +366,7 @@ class CreatureAIDecision(Entity):
                 if self._is_neutral_target(cur):
                     if not self._player_ordered_attack_on(cur):
                         cur = None
-                if cur is not None:
+                if cur is not None and getattr(cur, "menace", 0):
                     if cur.place is self.place:
                         decision_cache[cache_key] = {"action": "attack", "target": cur}
                         return

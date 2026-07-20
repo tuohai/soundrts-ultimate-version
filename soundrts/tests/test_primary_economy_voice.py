@@ -71,6 +71,9 @@ def test_resource_and_menu_alerts_route_primary():
     block = resources.split("def send_msg_if_playing", 1)[1].split("\ndef ", 1)[0]
     assert "tts_channel=game_tts.PRIMARY" in block
 
+    save = resources.split("def gm_save", 1)[1].split("\ndef ", 1)[0]
+    assert 'voice.info(mp.OK, tts_channel="primary")' in save
+
     unit = (_ROOT / "clientgame" / "game_unit_control.py").read_text(encoding="utf-8")
     menu = unit.split("def _send_menu_alert_if_needed", 1)[1].split("\ndef ", 1)[0]
     assert "tts_channel=game_tts.PRIMARY" in menu

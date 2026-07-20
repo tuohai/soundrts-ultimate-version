@@ -4,6 +4,8 @@ Primary and secondary voice libraries (players)
 
 The game uses two independently configurable voice libraries: primary and secondary. You can enable or disable the secondary library; when disabled, the primary library speaks everything.
 
+**Tip:** Prefer a **screen reader** (NVDA, JAWS, Contending Reader / 争渡, etc.) as the primary voice. When a reader is active it takes over primary duties, so you need not spend ``F9``–``F12`` on “adjust primary.” Hotkeys in this game are extremely dense and nearly saturated—**save a key whenever you can**. You can still tune the secondary (battlefield) library with ``Shift+F9``–``F12``.
+
 
 ----
 
@@ -62,9 +64,9 @@ In a library editor:
 In-match (and menus):
 
 - **F9–F12**: adjust primary (device / param type / decrease / increase)
-- **Shift+F9–F12**: adjust secondary
-- **Left Shift+C**: copy last primary line; **Right Shift+C**: last secondary line
-- **Shift+A**: append to clipboard
+- **Shift+F9–F12**: adjust secondary (either Shift)
+- **Right Shift+C**: copy last secondary line; **Right Shift+B**: append secondary to clipboard
+- **Left Shift+C / Left Shift+B** (copy/append primary): **commented out** by default in ``res/ui/global_bindings.txt`` to reduce hotkey clashes; uncomment the lines (remove the leading ``;``) to enable
 - **F3 in menus**: toggle secondary on/off (not bound in-match)
 
 
@@ -115,9 +117,11 @@ Directional in-match alerts (stereo pan)
 ----------------------------------------
 
 
-Some **square-linked** passive lines in a match (enemy spotted, casualties, scout reports, combat-square alerts) are panned left/right (with front/back attenuation) relative to your **current view square**, using the same positioning as minimap alert SFX.
+Some **square-linked** passive lines in a match (enemy spotted, casualties, scout reports, combat-square alerts) are panned left/right (with front/back attenuation) relative to your **current view square**, using the same positioning math as minimap alert SFX.
 
 Headphones recommended. In the default overhead view facing north: squares to the east are louder on the right; west on the left.
+
+**Volume floor:** Spoken directional cues do not keep getting quieter with distance—far squares stay about as loud as an adjacent square (slightly quieter allowed) so you can hear them while playing. Left/right and rear attenuation still apply. Minimap alert beeps still use full distance falloff.
 
 **Pan follows mid-utterance moves:** if you hear “enemy at a1” from the left while on b1, then switch to a1 before the line ends, the voice moves to center (in front)—you do not wait for the next message.
 

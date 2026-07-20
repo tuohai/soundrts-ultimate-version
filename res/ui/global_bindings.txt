@@ -95,9 +95,12 @@ SHIFT F9: voice_lib_device 1
 SHIFT F10: voice_lib_param 1
 SHIFT F11: voice_lib_nudge -5 1
 SHIFT F12: voice_lib_nudge 5 1
-; 左 Shift+C 复制主语音库最近播报正文，右 Shift+C 复制副语音库最近播报正文；Shift+A 追加音库热键提示
-SHIFT C: voice_lib_copy
-SHIFT A: voice_lib_append_copy
+; 右 Shift+C/B：复制/追加副库（默认启用）
+; 左 Shift+C/B：复制/追加主库（默认注释；去掉行首 ; 即可启用）
+; LSHIFT C: voice_lib_copy primary
+; LSHIFT B: voice_lib_append_copy primary
+RSHIFT C: voice_lib_copy secondary
+RSHIFT B: voice_lib_append_copy secondary
 
 ; 系统功能
 F5: history_previous

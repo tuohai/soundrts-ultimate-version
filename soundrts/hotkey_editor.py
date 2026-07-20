@@ -41,6 +41,8 @@ from pygame.locals import (
     KEYDOWN,
     KMOD_ALT,
     KMOD_CTRL,
+    KMOD_LSHIFT,
+    KMOD_RSHIFT,
     KMOD_SHIFT,
     QUIT,
 )
@@ -615,7 +617,23 @@ def key_event_to_binding_string(e) -> Optional[str]:
     mods: List[str] = []
     if e.mod & KMOD_CTRL:
         mods.append("CTRL")
-    if e.mod & KMOD_SHIFT:
+    # Prefer LSHIFT/RSHIFT over generic SHIFT when the side is known.
+    left = bool(e.mod & KMOD_LSHIFT)
+    right = bool(e.mod & KMOD_RSHIFT)
+    try:
+        import ctypes
+
+        win_left = bool(ctypes.windll.user32.GetKeyState(0xA0) & 0x8000)
+        win_right = bool(ctypes.windll.user32.GetKeyState(0xA1) & 0x8000)
+        if win_left or win_right:
+            left, right = win_left, win_right
+    except Exception:
+        pass
+    if left and not right:
+        mods.append("LSHIFT")
+    elif right and not left:
+        mods.append("RSHIFT")
+    elif e.mod & KMOD_SHIFT:
         mods.append("SHIFT")
     if e.mod & KMOD_ALT:
         mods.append("ALT")

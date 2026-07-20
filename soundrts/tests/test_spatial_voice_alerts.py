@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from soundrts.lib.sound import DEFAULT_VOLUME
+from soundrts.lib.sound import DEFAULT_VOLUME, stereo
 from soundrts.lib.voicechannel import _wants_spatial_tts
 
 _ROOT = Path(__file__).resolve().parents[1]
@@ -17,6 +17,31 @@ def test_wants_spatial_tts_detects_left_right_imbalance():
 def test_wants_spatial_tts_detects_attenuated_rear():
     quiet = DEFAULT_VOLUME / 2.0
     assert _wants_spatial_tts(quiet, quiet) is True
+
+
+def test_stereo_distance_cap_keeps_far_near_adjacent_loudness():
+    """Far sources without a cap go very quiet; with cap they stay near adjacent."""
+    adjacent = stereo(0, 0, 1.0, 0, 90)
+    far = stereo(0, 0, 12.0, 0, 90)
+    far_capped = stereo(0, 0, 12.0, 0, 90, distance_cap=1.15)
+    adj_peak = max(adjacent)
+    far_peak = max(far)
+    capped_peak = max(far_capped)
+    assert far_peak < adj_peak * 0.25
+    # Floor ≈ adjacent / 1.15 (slightly quieter than one-square)
+    assert capped_peak >= adj_peak / 1.15 * 0.95
+    assert capped_peak <= adj_peak * 1.01
+
+
+def test_place_voice_pan_caps_distance_attenuation():
+    text = (_ROOT / "clientgame" / "game_unit_control.py").read_text(encoding="utf-8")
+    assert "distance_cap" in text.split("def _place_voice_pan", 1)[1].split(
+        "\ndef ", 1
+    )[0]
+    text_res = (_ROOT / "clientgame" / "game_resources.py").read_text(encoding="utf-8")
+    assert "distance_cap" in text_res.split("def _minimap_stereo", 1)[1].split(
+        "\ndef ", 1
+    )[0]
 
 
 def test_units_alert_passes_minimap_stereo_pan():

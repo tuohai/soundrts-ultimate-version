@@ -4,6 +4,52 @@
 .. contents::
 
 
+1.4.5.7
+--------
+
+**修复：攻击无威胁建筑时不会切换到敌方作战单位**
+
+- **现象**：单位在打农庄、市政厅等建筑时，敌方单位冲过来攻击，己方仍砸建筑而不还击，容易被打死。
+- **原因**：1.4 为性能做了「已交战则跳过重选目标」；建筑也算存活敌人，因而粘在农庄等目标上。1.3.8.1 仅对有威胁（``menace > 0``）的目标粘住，无威胁目标会重选。
+- **修复**：恢复 1.3.8.1 语义——仅对 ``menace > 0`` 的目标粘住/决策缓存；威胁为 0 的建筑允许重选，优先打作战单位。打有威胁单位时仍提前返回，不影响性能热点。
+- **实现**：``worldunit/world_ai_decision.py``。
+- **测试**：``test_retarget_zero_menace.py``。
+
+**改善：bindings 支持区分左/右 Shift（``LSHIFT`` / ``RSHIFT``）**
+
+- 热键文件除统一 ``SHIFT`` 外，可写 ``LSHIFT``、``RSHIFT`` 作为修饰键（不可与 ``SHIFT`` 混写在同一行）。
+- 匹配时优先左右专用绑定，再回退到通用 ``SHIFT``（例如 ``SHIFT F9`` 调节副语音库仍可用任意一侧 Shift）。
+- 默认启用：``RSHIFT C`` / ``RSHIFT B``（复制/追加**副库**最近播报）。
+- ``LSHIFT C`` / ``LSHIFT B``（主库）在 ``res/ui/global_bindings.txt`` 中**默认注释**；需要时去掉行首 ``;`` 即可启用。
+- **建议**：尽量用读屏软件 / 屏幕阅读器作主语音（读屏会接管主库），可少占 ``F9``–``F12``；本游戏热键几乎饱和，能省则省。详见 ``player/voice-libraries.rst``。
+- **实现**：``lib/bindings.py``、``res/ui/global_bindings.txt``、``hotkey_editor.py``。
+- **测试**：``test_lshift_rshift_bindings.py``。
+
+**改善：对局方向播报远端格子音量下限**
+
+- **现象**：带格子的被动播报（副库等）对很远的格子距离衰减过强，操作中几乎听不清。
+- **改善**：文字方向定位的距离衰减封顶在约「相邻一格」音量（可略弱一点）；无论多远都保留该下限。左右方位与后方衰减仍保留。小地图警报音效仍按完整距离衰减。
+- **实现**：``lib/sound.py``（``distance_cap``）、``clientgame/game_resources.py``、``clientgame/game_unit_control.py``。
+- **文档**：``player/voice-libraries.rst``。
+- **测试**：``test_spatial_voice_alerts.py``。
+
+**改善：``ai.txt`` 可调建造时间 ``build_time``**
+
+- 新增一次性指令 ``build_time <pct>``（开局生效，不进脚本循环）：建造建筑时长百分比（``100`` = 正常，``50`` = 建造快一倍）。与 ``train_time`` / ``research_time`` 并列。
+- 原版示例：高级/专家 ``build_time 50``；噩梦 ``build_time 40``。
+- **实现**：``definitions.py``、``worldplayercomputer.py``、``worldorders/base.py``、``worldunit/worldcreature.py``；``res/ai.txt``。
+- **文档**：``mod/aimaking.rst``。
+- **测试**：``test_ai_start_settings.py``、``test_ai_train_research_hp.py``。
+
+**改善：``ai.txt`` 可调开采时间 ``gather_time``**
+
+- 新增一次性指令 ``gather_time <pct>``：电脑开采资源时长百分比（``100`` = 正常，``50`` = 快一倍）。作用于工人 ``get_gather_time``（与 ``rules.txt`` 工人字段 ``gather_time`` 不同）。
+- 原版示例：高级/专家 ``gather_time 50``；噩梦 ``gather_time 40``。
+- **实现**：``definitions.py``、``worldplayercomputer.py``、``worldunit/worldworker.py``；``res/ai.txt``。
+- **文档**：``mod/aimaking.rst``。
+- **测试**：``test_ai_start_settings.py``、``test_ai_train_research_hp.py``。
+
+
 1.4.5.6
 --------
 

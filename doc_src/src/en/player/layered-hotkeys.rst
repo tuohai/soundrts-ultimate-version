@@ -600,6 +600,13 @@ Which file to edit
 - One interface: the matching `*_bindings.txt`
 - Do not edit ``bindings.txt`` body (stub only) unless you understand legacy mod append behavior
 
+Modifiers
+~~~~~~~~~
+
+- Allowed: ``CTRL``, ``ALT``, ``SHIFT`` (either side), ``LSHIFT``, ``RSHIFT`` (plus standalone keys like ``LALT`` / ``RALT``).
+- Do **not** put ``LSHIFT``/``RSHIFT`` and ``SHIFT`` on the same line; lookup prefers side-specific bindings, then generic ``SHIFT``.
+- Example: ``LSHIFT C`` and ``RSHIFT C`` can bind different commands; ``SHIFT F9`` still works with either Shift.
+
 User overrides
 ~~~~~~~~~~~~~~~
 

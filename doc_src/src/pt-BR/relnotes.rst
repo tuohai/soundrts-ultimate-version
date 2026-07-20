@@ -5,6 +5,46 @@ Notas de lançamento
 .. contents::
 
 
+1.4.5.7
+-------
+
+**Correção: unidades presas atacando prédios sem ameaça em vez de combatentes**
+
+- **Sintoma**: enquanto unidades destroem uma fazenda, prefeitura ou prédio semelhante, combatentes inimigos podem se aproximar e matá-las; os atacantes continuam batendo no prédio em vez de trocar de alvo.
+- **Causa**: na 1.4, a resseleção de alvo era pulada durante o engajamento (desempenho). Prédios contam como inimigos vivos, então o combate grudava em fazendas. 1.3.8.1 só grudava em alvos com ``menace > 0`` e reescolhia quando o alvo atual não tinha ameaça.
+- **Correção**: restaurado o comportamento 1.3.8.1—engajamento sticky e cache de decisão só com ``menace > 0``; prédios com ameaça 0 podem ser reescaneados, preferindo unidades de combate. Contra unidades ameaçadoras ainda retorna cedo (caminho quente intacto).
+- **Código**: ``worldunit/world_ai_decision.py``.
+- **Testes**: ``test_retarget_zero_menace.py``.
+
+**Melhoria: bindings distinguem Shift esquerdo/direito (``LSHIFT`` / ``RSHIFT``)**
+
+- Além de ``SHIFT``, pode-se usar ``LSHIFT`` e ``RSHIFT`` como modificadores (não misturar com ``SHIFT`` na mesma linha).
+- A busca prefere o lado específico e depois cai no ``SHIFT`` genérico.
+- Ativos por padrão: ``RSHIFT C`` / ``RSHIFT B`` (copiar/acrescentar **secundária**).
+- ``LSHIFT C`` / ``LSHIFT B`` (principal) estão **comentados** em ``res/ui/global_bindings.txt``; remova o ``;`` inicial para ativar.
+- **Dica:** use um leitor de tela como voz principal para não gastar ``F9``–``F12`` na principal; os atalhos estão quase saturados. Veja ``player/voice-libraries.rst``.
+- **Código**: ``lib/bindings.py``, ``res/ui/global_bindings.txt``, ``hotkey_editor.py``.
+- **Testes**: ``test_lshift_rshift_bindings.py``.
+
+**Melhoria: piso de volume para casas distantes no pan de voz**
+
+- Alertas faladas com posição não atenuam sem limite: o volume fica perto do de uma casa adjacente (um pouco mais baixo permitido). Os beeps do minimapa ainda usam atenuação completa por distância.
+- **Código**: ``lib/sound.py``, ``clientgame/game_resources.py``, ``clientgame/game_unit_control.py``.
+- **Testes**: ``test_spatial_voice_alerts.py``.
+
+**Melhoria: multiplicador ``build_time`` em ``ai.txt``**
+
+- Nova diretiva ``build_time <pct>`` (no início, fora do loop): porcentagem da duração normal de construção (``100`` = normal, ``50`` = o dobro de rápido).
+- Exemplos: advanced/expert ``build_time 50``; nightmare ``build_time 40``.
+- **Testes**: ``test_ai_start_settings.py``, ``test_ai_train_research_hp.py``.
+
+**Melhoria: multiplicador ``gather_time`` em ``ai.txt``**
+
+- Nova diretiva ``gather_time <pct>``: porcentagem da duração normal de coleta (``100`` = normal, ``50`` = o dobro de rápido). Diferente do campo ``gather_time`` de trabalhadores em ``rules.txt``.
+- Exemplos: advanced/expert ``gather_time 50``; nightmare ``gather_time 40``.
+- **Testes**: ``test_ai_start_settings.py``, ``test_ai_train_research_hp.py``.
+
+
 1.4.5.6
 -------
 

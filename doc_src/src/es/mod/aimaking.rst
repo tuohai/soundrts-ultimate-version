@@ -154,6 +154,14 @@ Investigación activada, más bases y más voluntad de atacar.
 - ``research_time \<pct\>`` -- porcentaje de la duración normal de investigación /
   avance (``100`` = normal, ``80`` = 20% más rápido). Solo ``research`` /
   ``advance``. Omitido = ``100``.
+- ``build_time \<pct\>`` -- porcentaje de la duración normal de construcción
+  (``100`` = normal, ``50`` = el doble de rápido). Afecta el progreso en obra.
+  Omitido = ``100``.
+- ``gather_time \<pct\>`` -- porcentaje de la duración normal de recolección
+  (``100`` = normal, ``50`` = el doble de rápido). Solo afecta al tiempo de
+  cosecha de los trabajadores del ordenador (``Worker.get_gather_time``).
+  **Nota:** es el multiplicador de dificultad de ``ai.txt``, no el campo
+  ``gather_time`` de trabajadores en ``rules.txt``. Omitido = ``100``.
 - ``unit_hp \<pct\>`` -- porcentaje de PV normales de todas las unidades de este
   ordenador (``100`` = normal, ``120`` = +20% PV). Tras el ``enemy_hp_factor``
   de coop. Omitido = ``100``.
@@ -165,11 +173,13 @@ Investigación activada, más bases y más voluntad de atacar.
 
   - intermedio: ``starting_resources 50 50``, ``starting_population 10``
   - avanzado: ``100 100`` + ``2 footman 2 archer``, ``starting_population 20``,
-    ``train_time 50``, ``research_time 80``
+    ``train_time 50``, ``research_time 80``, ``build_time 50``, ``gather_time 50``
   - experto: ``200 200`` + ``5 footman 4 archer 2 knight``, ``starting_population 40``,
-    ``train_time 50``, ``research_time 70``, ``unit_hp 120``
+    ``train_time 50``, ``research_time 70``, ``build_time 50``, ``gather_time 50``,
+    ``unit_hp 120``
   - pesadilla: ``400 400`` + ``8 footman 6 archer 4 knight``, ``starting_population 60``,
-    ``train_time 40``, ``research_time 60``, ``unit_hp 140``
+    ``train_time 40``, ``research_time 60``, ``build_time 40``, ``gather_time 40``,
+    ``unit_hp 140``
 - ``watchdog \<seconds\>`` -- una red de seguridad: si la IA está atrapada en la misma línea
   durante este tiempo, pasa a la siguiente línea. ``0`` lo desactiva.
 

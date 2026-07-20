@@ -616,7 +616,7 @@ class ComplexOrder(Order):
         return base_time_cost
 
     def _apply_ai_time_percent(self, time_cost):
-        """Scale train/research duration from ai.txt ``train_time`` / ``research_time``."""
+        """Scale duration from ai.txt ``train_time`` / ``research_time`` / ``build_time``."""
         player = getattr(self.unit, "player", None)
         if player is None:
             return time_cost
@@ -625,6 +625,8 @@ class ComplexOrder(Order):
             pct = getattr(player, "ai_train_time_percent", 100)
         elif keyword in ("research", "advance"):
             pct = getattr(player, "ai_research_time_percent", 100)
+        elif keyword == "build":
+            pct = getattr(player, "ai_build_time_percent", 100)
         else:
             return time_cost
         if pct == 100:

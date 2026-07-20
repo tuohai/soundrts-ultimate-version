@@ -31,14 +31,16 @@ def test_parse_ai_start_settings(isolated_ai):
         workers 20
         attack
     """)
-    bonus, units, population, train_time, research_time, unit_hp = parse_ai_start_settings(
-        "expert"
+    bonus, units, population, train_time, research_time, build_time, gather_time, unit_hp = (
+        parse_ai_start_settings("expert")
     )
     assert bonus[:2] == [200 * 1000, 150 * 1000]
     assert units == ["3", "footman", "2", "archer"]
     assert population == 0
     assert train_time == 100
     assert research_time == 100
+    assert build_time == 100
+    assert gather_time == 100
     assert unit_hp == 100
 
 
@@ -48,13 +50,19 @@ def test_parse_ai_start_settings_population(isolated_ai):
         starting_population 60
         attack
     """)
-    bonus, units, population, train_time, research_time, unit_hp = parse_ai_start_settings(
-        "expert"
+    bonus, units, population, train_time, research_time, build_time, gather_time, unit_hp = (
+        parse_ai_start_settings("expert")
     )
     assert bonus is None
     assert units == []
     assert population == 60
-    assert (train_time, research_time, unit_hp) == (100, 100, 100)
+    assert (train_time, research_time, build_time, gather_time, unit_hp) == (
+        100,
+        100,
+        100,
+        100,
+        100,
+    )
 
 
 def test_parse_ai_start_settings_speed_and_hp(isolated_ai):
@@ -62,12 +70,18 @@ def test_parse_ai_start_settings_speed_and_hp(isolated_ai):
         def advanced
         train_time 50
         research_time 80
+        build_time 50
+        gather_time 50
         unit_hp 120
         attack
     """)
-    *_, train_time, research_time, unit_hp = parse_ai_start_settings("advanced")
+    *_, train_time, research_time, build_time, gather_time, unit_hp = (
+        parse_ai_start_settings("advanced")
+    )
     assert train_time == 50
     assert research_time == 80
+    assert build_time == 50
+    assert gather_time == 50
     assert unit_hp == 120
 
 
@@ -80,6 +94,8 @@ def test_filter_ai_executable_plan_drops_start_directives():
         "defeat_score 25",
         "train_time 50",
         "research_time 80",
+        "build_time 50",
+        "gather_time 50",
         "unit_hp 120",
         "attack",
     ]
@@ -163,6 +179,8 @@ def test_computer_applies_ai_start_bonus(monkeypatch, isolated_ai):
         starting_population 30
         train_time 40
         research_time 60
+        build_time 40
+        gather_time 40
         unit_hp 140
         goto -1
     """)
@@ -207,6 +225,8 @@ def test_computer_applies_ai_start_bonus(monkeypatch, isolated_ai):
     assert c.population == 35
     assert c.ai_train_time_percent == 40
     assert c.ai_research_time_percent == 60
+    assert c.ai_build_time_percent == 40
+    assert c.ai_gather_time_percent == 40
     assert c.ai_unit_hp_percent == 140
     assert [entry[0] for entry in added] == ["footman", "footman", "archer"]
     # starting_units now consume normal population (no population_cost=0 override)

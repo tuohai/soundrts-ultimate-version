@@ -600,6 +600,12 @@ Qual arquivo editar
 - Uma interface: o `*_bindings.txt` correspondente
 - Não edite o corpo de ``bindings.txt`` (apenas stub) a menos que entenda o comportamento legado de acréscimo de mod
 
+Modificadores
+~~~~~~~~~~~~~
+
+- Permitidos: ``CTRL``, ``ALT``, ``SHIFT`` (qualquer lado), ``LSHIFT``, ``RSHIFT`` (mais teclas standalone como ``LALT`` / ``RALT``).
+- Não coloque ``LSHIFT``/``RSHIFT`` e ``SHIFT`` na mesma linha; a busca prefere o lado específico e depois o ``SHIFT`` genérico.
+
 Substituições do usuário
 ~~~~~~~~~~~~~~~
 

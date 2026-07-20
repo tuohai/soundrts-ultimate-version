@@ -12,7 +12,8 @@ F9–F12 adjust primary; Shift+F9–F12 adjust secondary:
   F12 increase / next value of current parameter
   Left Shift+C  copy last text spoken by primary library
   Right Shift+C copy last text spoken by secondary library
-  Shift+A       append last voice-lib hotkey announcement to clipboard
+  Left Shift+B  append primary last utterance to clipboard
+  Right Shift+B append secondary last utterance to clipboard
 """
 
 from __future__ import annotations
@@ -423,25 +424,25 @@ def _clipboard_set(text: str) -> bool:
 def which_from_shift_mod(mod: int) -> str:
     """Left Shift → primary; Right Shift alone → secondary.
 
-    Prefer live Win32 key state when available — wx→pygame injection and
-    ``pygame.key.get_mods()`` often lose the L/R distinction on the
-    screen-reader channel.
+    Prefer pygame L/R bits when present. Only use Win32 when the event has
+    generic SHIFT but lost the L/R distinction (wx→pygame injection).
     """
     try:
-        from pygame.locals import KMOD_LSHIFT, KMOD_RSHIFT
+        from pygame.locals import KMOD_LSHIFT, KMOD_RSHIFT, KMOD_SHIFT
     except Exception:
         return PRIMARY
     left = bool(mod & KMOD_LSHIFT)
     right = bool(mod & KMOD_RSHIFT)
-    try:
-        import ctypes
+    if (mod & KMOD_SHIFT) and not left and not right:
+        try:
+            import ctypes
 
-        win_left = bool(ctypes.windll.user32.GetKeyState(0xA0) & 0x8000)  # VK_LSHIFT
-        win_right = bool(ctypes.windll.user32.GetKeyState(0xA1) & 0x8000)  # VK_RSHIFT
-        if win_left or win_right:
-            left, right = win_left, win_right
-    except Exception:
-        pass
+            win_left = bool(ctypes.windll.user32.GetKeyState(0xA0) & 0x8000)  # VK_LSHIFT
+            win_right = bool(ctypes.windll.user32.GetKeyState(0xA1) & 0x8000)  # VK_RSHIFT
+            if win_left or win_right:
+                left, right = win_left, win_right
+        except Exception:
+            pass
     if right and not left:
         return SECONDARY
     return PRIMARY
@@ -462,8 +463,8 @@ def _clipboard_feedback(ok: bool, *, append: bool = False) -> None:
         pass
 
 
-def copy_voice_info(which: str) -> bool:
-    """Copy the last text spoken on this voice library (not the status blurb)."""
+def copy_voice_info(which: str, *, append: bool = False) -> bool:
+    """Copy (or append) the last text spoken on this voice library."""
     try:
         from . import game_tts
 
@@ -479,13 +480,18 @@ def copy_voice_info(which: str) -> bool:
         except Exception:
             pass
         return True
-    ok = _clipboard_set(text)
-    _clipboard_feedback(ok, append=False)
+    if append:
+        prev = _clipboard_get().rstrip()
+        out = f"{prev}\n{text}" if prev else text
+    else:
+        out = text
+    ok = _clipboard_set(out)
+    _clipboard_feedback(ok, append=append)
     return True
 
 
 def copy_last_announce(*, append: bool = False) -> bool:
-    """Shift+A append (or overwrite) last voice-library announcement."""
+    """Append (or overwrite) last voice-library status announcement (F9–F12)."""
     text = (_last_announce_text or "").strip()
     if not text:
         try:
@@ -504,6 +510,18 @@ def copy_last_announce(*, append: bool = False) -> bool:
     ok = _clipboard_set(out)
     _clipboard_feedback(ok, append=append)
     return True
+
+
+def parse_voice_lib_which(arg, mod: int = 0) -> str:
+    """Resolve binding arg or fall back to L/R Shift from ``mod``."""
+    if arg is None or arg == "":
+        return which_from_shift_mod(mod)
+    s = str(arg).strip().lower()
+    if s in ("1", "secondary", "sec", "副", "副库"):
+        return SECONDARY
+    if s in ("0", "primary", "pri", "主", "主库"):
+        return PRIMARY
+    return which_from_shift_mod(mod)
 
 
 def _remember_announce(text: str) -> None:
@@ -598,14 +616,14 @@ def toggle_secondary_voice_enabled(*, announce: bool = True) -> bool:
 
 
 def handle_hotkey(key: int, mod: int) -> bool:
-    """Handle F9–F12 / Shift+F9–F12 and Shift+C / Shift+A."""
+    """Handle F9–F12 / Shift+F9–F12 and L/R Shift+C / Shift+B."""
     try:
         from pygame.locals import (
             K_F9,
             K_F10,
             K_F11,
             K_F12,
-            K_a,
+            K_b,
             K_c,
             KMOD_CTRL,
             KMOD_SHIFT,
@@ -616,8 +634,8 @@ def handle_hotkey(key: int, mod: int) -> bool:
         return False
     if (mod & KMOD_SHIFT) and key == K_c:
         return copy_voice_info(which_from_shift_mod(mod))
-    if (mod & KMOD_SHIFT) and key == K_a:
-        return copy_last_announce(append=True)
+    if (mod & KMOD_SHIFT) and key == K_b:
+        return copy_voice_info(which_from_shift_mod(mod), append=True)
     which = SECONDARY if (mod & KMOD_SHIFT) else PRIMARY
     if key == K_F9:
         cycle_device(which, step=1)

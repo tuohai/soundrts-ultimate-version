@@ -2042,6 +2042,8 @@ AI_ONE_SHOT_COMMANDS = frozenset({
     "defeat_score",
     "train_time",
     "research_time",
+    "build_time",
+    "gather_time",
     "unit_hp",
 })
 
@@ -2092,6 +2094,10 @@ def parse_ai_start_settings(name):
         Percent of normal training duration (100 = normal, 50 = half time).
     research_time_percent
         Percent of normal research/advance duration (100 = normal).
+    build_time_percent
+        Percent of normal building-construction duration (100 = normal).
+    gather_time_percent
+        Percent of normal resource-gathering duration (100 = normal, 50 = twice as fast).
     unit_hp_percent
         Percent of normal unit HP (100 = normal, 120 = +20%).
     """
@@ -2101,6 +2107,8 @@ def parse_ai_start_settings(name):
     population_bonus = 0
     train_time_percent = 100
     research_time_percent = 100
+    build_time_percent = 100
+    gather_time_percent = 100
     unit_hp_percent = 100
     for line in lines:
         words = line.split()
@@ -2126,6 +2134,10 @@ def parse_ai_start_settings(name):
             train_time_percent = _parse_ai_percent_directive(words, "train_time")
         elif words[0] == "research_time":
             research_time_percent = _parse_ai_percent_directive(words, "research_time")
+        elif words[0] == "build_time":
+            build_time_percent = _parse_ai_percent_directive(words, "build_time")
+        elif words[0] == "gather_time":
+            gather_time_percent = _parse_ai_percent_directive(words, "gather_time")
         elif words[0] == "unit_hp":
             unit_hp_percent = _parse_ai_percent_directive(words, "unit_hp")
     return (
@@ -2134,6 +2146,8 @@ def parse_ai_start_settings(name):
         population_bonus,
         train_time_percent,
         research_time_percent,
+        build_time_percent,
+        gather_time_percent,
         unit_hp_percent,
     )
 

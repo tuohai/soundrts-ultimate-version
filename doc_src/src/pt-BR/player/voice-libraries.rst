@@ -4,6 +4,8 @@ Bibliotecas de voz principal e secundária (jogadores)
 
 O jogo usa duas bibliotecas de voz configuráveis em separado: principal e secundária. Você pode ativar ou desativar a secundária; desativada, a principal anuncia tudo.
 
+**Dica:** prefira um **leitor de tela** como voz principal. Com o leitor ativo, ele assume as funções da biblioteca principal e você não precisa gastar ``F9``–``F12`` em «ajustar a principal». Os atalhos deste jogo são densíssimos: **economize teclas sempre que puder**. A secundária (campo de batalha) ainda se ajusta com ``Shift+F9``–``F12``.
+
 
 ----
 
@@ -60,9 +62,9 @@ No editor:
 Na partida (e menus):
 
 - **F9–F12**: biblioteca principal
-- **Shift+F9–F12**: biblioteca secundária
-- **Shift esquerdo+C** / **Shift direito+C**: copiar última linha principal / secundária
-- **Shift+A**: acrescentar à área de transferência
+- **Shift+F9–F12**: biblioteca secundária (qualquer Shift)
+- **Shift direito+C**: copiar última linha secundária; **Shift direito+B**: acrescentar secundária à área de transferência
+- **Shift esquerdo+C / Shift esquerdo+B** (principal): **comentados** por padrão em ``res/ui/global_bindings.txt`` para reduzir conflitos; remova o ``;`` inicial dessas linhas para ativar
 - **F3 nos menus**: ativar/desativar secundária (não na partida)
 
 
