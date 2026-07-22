@@ -331,6 +331,14 @@ Treinar novas unidades exige população e não pode exceder seu limite de popul
 
 Se casas forem destruídas, ou novas unidades forem obtidas sem treinamento e a população usada exceder o limite, as unidades existentes são mantidas mas nenhum treinamento adicional é permitido até haver população disponível novamente.
 
+Ocupação do quadrado
+^^^^^^^^^^^^^^^^^^^^
+
+Algumas unidades também ocupam ``space`` abstrato num quadrado (separado da população). Se um
+quadrado estiver cheio nessa camada (ar, terra ou água), mais unidades não podem entrar e o
+treinamento que spawnaria ali é recusado («espaço insuficiente»). Aliados e inimigos compartilham
+a mesma capacidade.
+
 Comida
 ^^^^
 
@@ -358,6 +366,13 @@ Para se defender de uma unidade invisível, há pelo menos 3 formas:
 - trazer uma unidade detectora (ou usar feitiço detector) e atacar a unidade
 - usar feitiço de destruição em área no quadrado que contém a unidade
 - ignorar a unidade invisível e destruir todos os edifícios inimigos rápido o suficiente
+
+Maravilha (contagem regressiva de vitória)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Novo no SoundRTS 1.4.5.8.
+
+Após a Idade Imperial, camponeses podem construir uma **Maravilha** (atalho ``o``): cara e lenta de construir. Ao terminar, começa uma contagem de cinco minutos. Se a Maravilha ainda existir ao fim do tempo, você (e seus aliados) vence. Destruir a Maravilha inimiga cancela a contagem deles. A vitória por conquista continua disponível.
 
 6. Mais detalhes para personalização
 -----------------------------------

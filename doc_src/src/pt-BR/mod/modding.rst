@@ -160,6 +160,30 @@ Novo no SoundRTS 1.2 alpha 9.
 
 Ter pelo menos uma unidade (ou edificação) com ``provides_survival`` igual a 1 impede que um jogador perca em partida multijogador (não em campanha single-player). O gatilho afetado é ``no_building_left``. Por padrão, apenas edificações têm essa propriedade definida como 1. Canteiros de obras têm essa propriedade em 0 e não pode ser alterada.
 
+victory_time
+=============
+
+Novo no SoundRTS 1.4.5.8.
+
+``victory_time <segundos>``
+
+O valor padrão é 0 (sem temporizador de vitória). Quando maior que 0 em um prédio **concluído**, a contagem regressiva começa assim que o prédio existe. Se o temporizador chegar a zero e o prédio ainda existir, o dono (e o campo de vitória aliada) vence. Destruir o prédio cancela essa contagem.
+
+Aplica-se a qualquer tipo ``class building``, não só à Maravilha vanilla. Exemplo:
+
+::
+
+    def wonder
+    class building
+    cost 100 120
+    time_cost 900
+    hp_max 2500
+    requirements imperial_age
+    count_limit 1
+    victory_time 300
+
+O vanilla inclui ``wonder`` com ``victory_time 300`` (5 minutos após a conclusão). Vozes: TTS 5720 (início), 5721 (cancelamento), 5722 (restante).
+
 storage_bonus
 ==============
 
@@ -756,6 +780,25 @@ fase atual.
 ``hide_locked_commands 1`` em ``def parameters`` oculta comandos cujos requisitos ainda não foram
 atendidos.
 
+Além de nomes de tipo simples (todos devem ser possuídos — AND), ``requirements`` pode pedir
+quaisquer N prédios de um grupo nomeado (desde 1.4.5.8)::
+
+    def stables
+    class building
+    requirements castle_age
+
+    def imperial_age
+    class phase
+    requirements castle_age any_buildings 2 castle_age_buildings
+
+    def castle
+    class building
+    requirements any_buildings 2 castle_age_buildings
+
+``any_buildings <n> <group>_buildings`` remove ``_buildings`` e coleta prédios cujo
+``requirements`` simples lista essa chave. Use ``castle_age_buildings``, não o nome nu
+da fase. O token de grupo não dispara ``units_auto_upgrade``.
+
 Economia (desde 1.4.0.x)
 -------------------------
 
@@ -977,6 +1020,35 @@ Exemplo::
 
 - Sem ``passenger_attack_types``, passageiros não podem atacar alvos externos por padrão.
 - ``load_bonus`` e ``passenger_bonus`` podem ser combinados no mesmo contêiner.
+
+Ocupação do quadrado (``space``, desde 1.4.5.8)
+-----------------------------------------------
+
+``space`` é uma propriedade precision (decimais permitidos). Indica quanto a unidade ocupa
+na sua camada ar/terra/água. A capacidade é o ``square_width`` do mapa nas mesmas unidades.
+
+| Ajuste | Efeito |
+| --- | --- |
+| ``space 0`` (padrão) | Não consome capacidade (ilimitado, legado) |
+| ``space 1`` com ``square_width 12`` | No máximo 12 unidades nessa camada |
+| ``space 0.5`` com ``square_width 12`` | No máximo 24 |
+| ``space`` > ``square_width`` | A unidade não pode entrar nesse quadrado |
+
+A capacidade é compartilhada por todos os lados. Se o quadrado estiver cheio, movimento e
+treinamento que spawnaria ali são recusados (voz ``not_enough_space``).
+As camadas são independentes: ocupação terrestre não bloqueia unidades aéreas.
+
+Exemplo::
+
+    def peasant
+    class worker
+    space 1
+
+    def siege_engine
+    class soldier
+    space 4
+
+Veja também ``square_width`` em ``mod/mapmaking.rst``.
 
 Itens (desde 1.4.1.3)
 ----------------------

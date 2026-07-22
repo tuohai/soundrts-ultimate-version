@@ -4,6 +4,38 @@
 .. contents::
 
 
+1.4.5.8
+--------
+
+**新增：格子抽象占地（``space``）**
+
+- 单位属性 ``space``（精度属性，可写小数）表示同层（空/地/水）在一格内占用的体积。容量与地图 ``square_width`` 同单位（例如 ``square_width 12`` + ``space 1`` → 最多 12；``space 0.5`` → 最多 24）。
+- 默认 ``space 0`` = 不占容量（兼容旧行为）。容量敌我共享；格子已满时，同层任何一方都不能再进入或在此训练。语音：``not_enough_space``（TTS 5338）；属性名 TTS 5733（占地体积）。
+- 原版：多数地面单位（如农民、步兵）为 ``space 1``。
+- **实现**：``definitions.py``、``worldentity.py``、``worldroom.py``、``worldunit/world_movement.py``、``worldorders/production.py``、``worldplayercomputer_water.py``、``msgparts.py``；``res/rules.txt``、``res/ui/style.txt``、``res/ui*/tts.txt``。
+- **文档**：各语言 ``mod/modding.rst``、``mod/mapmaking.rst``、玩家手册。
+- **测试**：``test_unit_square_space.py``、``test_train_square_space.py``。
+
+**新增：建筑胜利倒计时（victory_time）与奇观**
+
+- 任意已建成建筑若带有 victory_time N（秒），会开始倒计时；到期且该建筑仍在，则其拥有者（及同盟胜利阵营）获胜。建筑被摧毁则取消倒计时并播报。
+- 原版奇观建筑 wonder（需帝国时代）：昂贵后期建筑；victory_time 为 300（建成后 5 分钟）。快捷键 o。
+- 语音编号 5720–5722（倒计时开始 / 取消 / 剩余）；剩余时间在 120/60/30/10 秒以及 5…1 秒播报。
+- **实现**：building_victory.py、worldunit/worldcreature.py、world/world_core.py、world/world_game.py、definitions.py、msgparts.py；res/rules.txt、res/ui/style.txt、res/ui/tts.txt、res/ui-zh/tts.txt。
+- **文档**：模组手册 mod/modding.rst（victory_time）、玩家手册。
+- **测试**：test_building_victory.py。
+
+**新增：``any_buildings`` 建筑分组要求**
+
+- ``requirements`` 可写 ``any_buildings <n> <group>_buildings``：玩家须拥有该分组中任意 ``<n>`` 种不同建筑（可与同一行上的普通类型名 AND 混用）。
+- 分组成员：简单 ``requirements`` 含该键的建筑（去掉 ``_buildings`` 后缀得到键）。例如写 ``requirements castle_age`` 即进入 ``castle_age_buildings``。
+- 原版：``imperial_age`` 与 ``castle``（要塞→城堡）均使用 ``any_buildings 2 castle_age_buildings``。
+- 语音：style ``parameters.any`` / ``parameters.buildings_of``（TTS 5730–5731）；属性界面「所属时代」（TTS 5732）由简单 ``requirements`` 中的 phase 名推断。
+- **实现**：``worldrequirements.py``、``worldplayerbase/base.py``、``worldphase.py``、``worldplayercomputer.py``、``clientgameorder.py``、``attributes/display_interface.py``、``attributes/basic_attributes.py``、``definitions.py``、``msgparts.py``；``res/rules.txt``、``res/ui/style.txt``、``res/ui/tts.txt``、``res/ui-zh/tts.txt``。
+- **文档**：各语言 ``mod/modding.rst``。
+- **测试**：``test_any_buildings_requirements.py``、``test_tech_detail_attributes.py``。
+
+
 1.4.5.7
 --------
 

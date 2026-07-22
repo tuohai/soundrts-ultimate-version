@@ -5,7 +5,13 @@ from .definitions import rules, style
 from .lib.log import warning
 from .lib.msgs import nb2msg
 from . import msgparts as mp
-from .lib.nofloat import int_angle, int_cos_1000, int_distance, int_sin_1000
+from .lib.nofloat import (
+    PRECISION,
+    int_angle,
+    int_cos_1000,
+    int_distance,
+    int_sin_1000,
+)
 from .lib.priodict import priorityDictionary
 from heapq import heappush, heappop
 from .worldentity import COLLISION_RADIUS
@@ -719,7 +725,47 @@ class Square(_Space):
                 y += square_width * 35 // 100 * int_sin_1000(a) // 1000
             o.move_to(o.place, x, y)
 
-    def can_receive(self, airground_type, player=None):
+    @property
+    def square_capacity(self):
+        """格子可容纳的抽象直径上限（mm）= 地图 ``square_width`` × PRECISION。
+
+        与 precision 属性 ``space`` 同单位：``space 1`` → 1000，``square_width 12`` → 12000。
+        """
+        return max(0, self.xmax - self.xmin)
+
+    def used_square_space(self, airground_type, exclude=None):
+        """同层已占用的占地体积总和（``space > 0`` 的单位）。"""
+        used = 0
+        for o in self.objects:
+            if o is exclude:
+                continue
+            if getattr(o, "airground_type", None) != airground_type:
+                continue
+            s = int(getattr(o, "space", 0) or 0)
+            if s > 0:
+                used += s
+        return used
+
+    def have_enough_square_space(self, unit):
+        """该格子是否还能容纳 *unit* 的占地体积。
+
+        - ``space <= 0``：不占容量，始终允许（默认，兼容旧行为）
+        - 单位 ``space`` 大于格子 ``square_width``：格子“不够厚”，拒绝
+        - 已占用 + 新单位 > 容量：拒绝（全员共享，敌我一视同仁）
+        """
+        space = int(getattr(unit, "space", 0) or 0)
+        if space <= 0:
+            return True
+        capacity = self.square_capacity
+        if space > capacity:
+            return False
+        ag = getattr(unit, "airground_type", "ground")
+        used = self.used_square_space(ag, exclude=unit)
+        return used + space <= capacity
+
+    def can_receive(self, airground_type, player=None, unit=None):
+        if unit is not None and not self.have_enough_square_space(unit):
+            return False
         if player is not None:
             f = player.is_an_enemy
         else:
@@ -760,6 +806,8 @@ class Square(_Space):
         return None, None
 
     def find_free_space_for(self, o, x, y):
+        if not self.have_enough_square_space(o):
+            return None, None
         o.free_space()
         x, y = self.find_free_space(o.airground_type, x, y)
         o.occupy_space()

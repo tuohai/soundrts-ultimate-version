@@ -331,6 +331,13 @@ Entrenar nuevas unidades requiere población y no puede exceder su límite de po
 
 Si se destruyen casas o se obtienen nuevas unidades sin capacitación y la población utilizada excede el límite, las unidades existentes se mantienen pero no se permite más capacitación hasta que la población vuelva a estar disponible.
 
+Ocupación de casilla
+^^^^^^^^^^^^^^^^^^^^
+
+Algunas unidades también ocupan ``space`` abstracto en una casilla (aparte de la población). Si una
+casilla está llena en esa capa (aire, tierra o agua), no pueden entrar más unidades ni entrenarse
+allí («espacio insuficiente»). Aliados y enemigos comparten la misma capacidad.
+
 comida
 ^^^^^^
 
@@ -358,6 +365,13 @@ Para defenderse de una unidad invisible, existen al menos 3 formas:
 - traer una unidad detectora (o usar un hechizo detector) y atacar la unidad
 - utilizar un hechizo de destrucción de área de efecto en la casilla que contiene la unidad
 - ignora la unidad invisible y destruye todos los edificios enemigos lo suficientemente rápido
+
+Maravilla (cuenta atrás de victoria)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Nuevo en SoundRTS 1.4.5.8.
+
+Tras la Edad Imperial, los campesinos pueden construir una **Maravilla** (atajo ``o``): cara y lenta de construir. Al terminarla empieza una cuenta atrás de cinco minutos. Si la Maravilla sigue en pie al acabar el tiempo, ganas tú (y tus aliados). Destruir la Maravilla enemiga cancela su cuenta atrás. La victoria por conquista sigue disponible.
 
 6. Más detalles para personalización
 ------------------------------------

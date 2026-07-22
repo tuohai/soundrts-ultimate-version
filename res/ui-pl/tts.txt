@@ -928,6 +928,7 @@
 5065	tryb drużyn
 5066	każdy na każdego
 5067	dwie drużyny
+5338	za mało miejsca
 5750	jeden przeciw wielu
 5068	woda
 5069	bez wody

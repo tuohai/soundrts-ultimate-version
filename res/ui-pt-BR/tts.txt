@@ -928,6 +928,7 @@
 5065	modo de equipes
 5066	todos contra todos
 5067	duas equipes
+5338	espaço insuficiente
 5750	um contra muitos
 5068	água
 5069	sem água

@@ -547,7 +547,7 @@ class Skill(CreatureAttributes):  # or UnitOption or UnitMenuItem or ActiveSkill
             target = target.place
             
         for u in units:
-            if target.can_receive(u.airground_type):
+            if target.can_receive(u.airground_type, unit=u):
                 u.move_to(target, None, None)
         return True
 
@@ -566,7 +566,7 @@ class Skill(CreatureAttributes):  # or UnitOption or UnitMenuItem or ActiveSkill
                 place = nearest_water
                 if place is None:
                     continue
-            if place.can_receive(u.airground_type):
+            if place.can_receive(u.airground_type, unit=u):
                 u.move_to(place, None, None)
         return True
 

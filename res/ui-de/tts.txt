@@ -928,6 +928,7 @@
 5065	Team-Modus
 5066	jeder gegen jeden
 5067	zwei Teams
+5338	nicht genug Platz
 5750	einer gegen viele
 5068	Gewässer
 5069	ohne Gewässer

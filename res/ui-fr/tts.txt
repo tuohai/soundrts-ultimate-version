@@ -928,6 +928,7 @@
 5065	mode d'équipe
 5066	chacun pour soi
 5067	deux équipes
+5338	pas assez d'espace
 5750	un contre plusieurs
 5068	eau
 5069	sans eau

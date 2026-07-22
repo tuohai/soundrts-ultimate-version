@@ -331,6 +331,13 @@ Training new units requires population and cannot exceed your population cap. Ho
 
 If houses are destroyed, or new units are obtained without training and used population exceeds the cap, existing units are kept but no further training is allowed until population is available again.
 
+Square occupancy
+^^^^^^^^^^^^^^^^
+
+Some units also take abstract ``space`` on a map square (separate from population). When a square
+is full on that layer (air, ground, or water), more units cannot enter it and training that would
+spawn there is refused ("not enough space"). Allies and enemies share the same capacity.
+
 Food
 ^^^^
 
@@ -358,6 +365,13 @@ To defend against an invisible unit, there are at least 3 ways:
 - bring a detector unit (or use a detector spell) and attack the unit
 - use an area of effect destruction spell on the square containing the unit
 - ignore the invisible unit and destroy all the enemy buildings quickly enough
+
+Wonder (victory countdown)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+New in SoundRTS 1.4.5.8.
+
+After reaching the Imperial Age, peasants can build a **Wonder** (shortcut ``o``): costly and slow to build. When it finishes, a five-minute countdown starts. If the Wonder still stands when the timer ends, you (and your allies) win. Destroying an enemy Wonder cancels their countdown. Conquest victory still works as before.
 
 6. More details for customization
 -----------------------------------

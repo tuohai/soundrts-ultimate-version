@@ -874,6 +874,40 @@ class TrainOrder(ProductionOrder):
             return 0
         return min(requested, room)
 
+    def _train_space_place(self):
+        """Square where the trained unit is expected to appear (for space checks)."""
+        building = self.unit
+        unit_type = self.type
+        building_place = getattr(building, "place", None)
+        if getattr(unit_type, "airground_type", None) != "water":
+            return building_place
+        building_type = getattr(building, "type", type(building))
+        if not getattr(building_type, "is_buildable_near_water_only", False):
+            return building_place
+        nearest = building.nearest_water() if hasattr(building, "nearest_water") else None
+        if nearest is not None:
+            return nearest
+        if building_place is not None:
+            for sq in building_place.strict_neighbors:
+                if getattr(sq, "is_water", False):
+                    return sq
+        return building_place
+
+    def _max_train_count_for_square_space(self, requested):
+        """How many units still fit by abstract ``space`` on the spawn square."""
+        space = int(getattr(self.type, "space", 0) or 0)
+        if space <= 0 or requested <= 0:
+            return requested
+        place = self._train_space_place()
+        if place is None or not hasattr(place, "square_capacity"):
+            return requested
+        ag = getattr(self.type, "airground_type", "ground")
+        used = place.used_square_space(ag)
+        room = place.square_capacity - used
+        if room < space:
+            return 0
+        return min(requested, room // space)
+
     def immediate_action(self):
         if len(self.unit.orders) >= ORDERS_QUEUE_LIMIT:
             self.unit.notify("order_impossible,the_queue_is_full")
@@ -885,6 +919,13 @@ class TrainOrder(ProductionOrder):
             )
             if affordable == 0:
                 self.unit.notify("order_impossible,not_enough_population")
+                return
+        if not self.unit.orders:
+            affordable = self._max_train_count_for_square_space(
+                self._requested_train_count()
+            )
+            if affordable == 0:
+                self.unit.notify("order_impossible,not_enough_space")
                 return
         self.unit.orders.append(self)
         self.on_queued()
@@ -911,7 +952,13 @@ class TrainOrder(ProductionOrder):
             self.mark_as_impossible("count_limit_reached")
             return
         self.train_count = affordable
-        
+
+        affordable = self._max_train_count_for_square_space(self.train_count)
+        if affordable == 0:
+            self.mark_as_impossible("not_enough_space")
+            return
+        self.train_count = affordable
+
         # 修改成本计算逻辑
         # 先获取未经修正的基础单位成本
         base_unit_cost = self.type.cost
@@ -1513,7 +1560,10 @@ class BuildOrder(ComplexOrder):
                 x, y = self.unit.place.find_free_space(
                     self.type.airground_type, self.target.x, self.target.y
                 )
-            if x is None:
+            if x is None or (
+                hasattr(self.unit.place, "have_enough_square_space")
+                and not self.unit.place.have_enough_square_space(self.type)
+            ):
                 self.cancel(unpay=False)  # 不需要返还资源，因为没有创建BuildingSite
                 self.mark_as_impossible("not_enough_space")
                 return

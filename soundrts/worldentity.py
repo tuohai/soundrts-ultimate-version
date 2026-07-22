@@ -78,6 +78,10 @@ class Entity:
 
     transport_capacity = 0
     transport_volume = 99
+    # 抽象直径（rules: space N，precision，可小数）。0=不占格子容量（默认）。
+    # 格子容量 = square_width；同 airground_type 的 space 之和不可超过。
+    # 例：square_width 12 + space 0.5 → 最多 24 个；space 1 → 最多 12 个。
+    space = 0
 
     is_invisible = False
     is_cloakable = False
@@ -245,7 +249,7 @@ class Entity:
             self.initial_model.move_to(new_place, x, y, o)
             return
 
-        # 检查空间是否足够
+        # 检查空间是否足够（碰撞占位 + 格子占地体积）
         if new_place and self.collision:
             x, y = new_place.find_free_space_for(self, x, y)
             if x is None:
@@ -253,6 +257,16 @@ class Entity:
                     return
                 else:
                     raise NotEnoughSpaceError
+        elif (
+            new_place
+            and new_place is not self.place
+            and hasattr(new_place, "have_enough_square_space")
+            and not new_place.have_enough_square_space(self)
+        ):
+            if self.place:
+                return
+            else:
+                raise NotEnoughSpaceError
 
         # 执行移动
         if self.collision:

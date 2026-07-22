@@ -4,7 +4,15 @@
 ; can_train: units that the building can train
 ; can_use_tech : abilities that the unit can use and upgrades by which the unit is affected
 ; can_capture: 1 = default order on capture_hp_threshold 100 targets is occupy (capture), 0 = attack/move instead
-; requirements: objects (units, upgrades) required by the object to be acquired (unit or building) or used (ability)
+; space: occupancy on a square (precision; decimals ok). 0 = unlimited (legacy).
+;   Same-layer units' space must fit in square_width (shared by all sides).
+;   e.g. square_width 12 + space 0.5 → at most 24; space 1 → at most 12.
+;   space > square_width cannot enter that square.
+; requirements: objects (units, upgrades, phases) required to acquire/use the object
+;   Plain names are AND: requirements stables workshop
+;   any_buildings <n> <group>_buildings: need any <n> buildings whose simple
+;   requirements list <key> (group key = name without _buildings suffix)
+;   e.g. any_buildings 2 castle_age_buildings
 
 
 ; factions (this part is not ready yet)
@@ -229,6 +237,7 @@ mdg_range 0
 corpse 0
 no_number 1
 is_vulnerable 1
+space 0.1
 
 def sheep
 class soldier
@@ -251,6 +260,7 @@ mdg_range 0
 corpse 0
 no_number 1
 is_vulnerable 1
+space 0.1
 
 def boar
 class soldier
@@ -273,7 +283,7 @@ mdg_range 1
 corpse 0
 no_number 1
 is_vulnerable 1
-
+space 0.1
 
 ; items (random map treasure chests, etc.)
 
@@ -570,13 +580,13 @@ population_cost 1
 time_cost 10
 hp_max 4
 speed 1.5
-speed_vs townhall 4
-can_build gold_house gold_mint house farm barracks lumbermill blacksmith wall gate wooden_bridge scouttower townhall stables workshop dragonslair magestower temple necropolis shipyard 
+can_build gold_house gold_mint house farm barracks lumbermill blacksmith wall gate wooden_bridge scouttower townhall stables workshop dragonslair magestower temple necropolis shipyard wonder 
 can_use_tech hunting_techniques
 sight_range 6
 mdg_range 0.8
 mdg_cd 1
 mdg 1
+space 0.25
 
 def footman
 class soldier
@@ -591,6 +601,7 @@ mdg_cd 1.5
 mdg_bonus 2.5
 mdg_range 1
 can_use_tech melee_weapon melee_armor dsc
+space 0.25
 
 
 def knight
@@ -611,6 +622,7 @@ mdg_cd 1.5
 mdg 6
 mdg_bonus 6
 can_auto_explore 1
+space 0.5
 
 ; Hero Raynor (final stage; card loadout / skirmish)
 def raynor
@@ -701,6 +713,7 @@ mdg_bonus 2.5
 corpse 0
 is_healable 0
 is_undead 1
+space 0.25
 
 def archer
 class soldier
@@ -721,6 +734,7 @@ requirements feudal_age
 can_use_tech archer_weapon archer_armor archer_range dsc
 rdf 0
 can_upgrade_to darkarcher
+space 0.25
 
 def repeating_crossbowman
 class soldier
@@ -739,7 +753,7 @@ damage_seq rdg 3 (interval 0.25)
 requirements feudal_age
 can_use_tech archer_weapon archer_armor archer_range dsc
 rdf 0
-
+space 0.75
 
 def darkarcher
 class soldier
@@ -760,6 +774,7 @@ rdg_delay 0.02
 rdg 10
 rdg_projectile 1
 is_invisible 1
+space 0.25
 
 def skeleton
 class soldier
@@ -779,7 +794,7 @@ rdg_projectile 1
 corpse 0
 is_healable 0
 is_undead 1
-
+space 0.25
 
 def catapult
 class soldier
@@ -801,6 +816,7 @@ is_repairable 1
 is_healable 0
 transport_volume 4
 corpse 0
+space 1
 
 def dragon
 class soldier
@@ -822,6 +838,7 @@ rdg_splash 4
 rdg_projectile 1
 transport_volume 99
 corpse 0
+space 0.5
 
 def mage
 class soldier
@@ -841,6 +858,7 @@ rdg 8
 rdg_targets ground air
 rdg_projectile 1
 transport_volume 2
+space 0.25
 
 def necromancer
 class soldier
@@ -862,6 +880,7 @@ rdg 8
 rdg_targets ground air
 rdg_projectile 1
 transport_volume 2
+space 0.25
 
 def priest
 class soldier
@@ -886,6 +905,7 @@ mdg_radius 6
 can_use_skill superhealer a_holy_vision a_exorcism a_conversion a_resurrection
 heal_level 1
 transport_volume 2
+space 0.25
 
 def new_flyingmachine
 class soldier
@@ -904,7 +924,7 @@ transport_volume 99
 is_a_detector 1
 corpse 0
 passenger_attack_types archer
-
+space 0.35
 
 def flyingmachine
 class soldier
@@ -926,6 +946,7 @@ is_repairable 1
 is_healable 0
 transport_volume 99
 corpse 0
+space 0.35
 
 def boat
 class worker
@@ -944,6 +965,7 @@ is_healable 0
 transport_capacity 8
 transport_volume 99
 corpse 0
+space 0.5
 
 def destroyer
 class soldier
@@ -968,6 +990,7 @@ rdf 1
 can_use_tech archer_weapon archer_range
 transport_volume 99
 corpse 0
+space 0.5
 
 def battleship
 class soldier
@@ -992,6 +1015,7 @@ is_healable 0
 airground_type water
 transport_volume 99
 corpse 0
+space 1
 
 def submarine
 class soldier
@@ -1017,6 +1041,7 @@ transport_volume 99
 corpse 0
 is_invisible 1
 is_a_detector 1
+space 0.5
 
 ; buildings
 
@@ -1037,6 +1062,7 @@ production_cost 0 50
 production_qty 50
 resource_volume_max 50
 resource_volume_start 25
+space 2
 
 
 def house
@@ -1046,6 +1072,7 @@ population_provided 8; 4 * 2
 hp_max 133.3;  400/3
 time_cost 45
 requirements townhall
+space 2
 
 def lumbermill
 class building
@@ -1053,10 +1080,11 @@ cost 6 9
 population_provided 0
 hp_max 200;  600/3
 time_cost 68
-requirements townhall
+requirements feudal_age
 storable_resource_types resource2
 can_research archer_weapon archer_armor archer_range
 storage_bonus 0 1 ; gold bonus is +0, wood bonus is +1
+space 2
 
 def barracks
 class building
@@ -1068,7 +1096,7 @@ requirements feudal_age
 can_train footman archer knight
 can_research dsb dsc
 can_use_tech dsb
-
+space 2
 
 def townhall
 class building
@@ -1083,7 +1111,7 @@ can_research hunting_techniques
 square_terrain town 60
 ;can_upgrade_to keep
 can_advance feudal_age castle_age imperial_age
-
+space 3
 
 def keep
 class building
@@ -1113,6 +1141,7 @@ hp_max 266.7;  800/3
 time_cost 90
 requirements feudal_age
 can_research melee_weapon melee_armor
+space 2
 
 def stables
 class building
@@ -1122,6 +1151,7 @@ hp_max 266.7;  800/3
 time_cost 90
 requirements castle_age
 can_research horse_speed
+space 2
 
 def workshop
 class building
@@ -1131,6 +1161,7 @@ hp_max 266.7;  800/3
 time_cost 90
 requirements castle_age
 can_train catapult new_flyingmachine flyingmachine
+space 2
 
 def dragonslair
 class building
@@ -1140,6 +1171,7 @@ hp_max 266.7;  800/3
 time_cost 90
 requirements imperial_age
 can_train dragon
+space 2
 
 def magestower
 class building
@@ -1150,6 +1182,7 @@ time_cost 90
 requirements imperial_age
 can_train mage
 can_research u_recall u_summon_dragon u_meteors
+space 2
 
 def temple
 class building
@@ -1160,6 +1193,7 @@ time_cost 90
 requirements castle_age
 can_train priest
 can_research superhealer u_exorcism u_conversion u_resurrection
+space 2
 
 def necropolis
 class building
@@ -1170,6 +1204,20 @@ time_cost 90
 requirements imperial_age
 can_train necromancer
 can_research u_deadly_fog
+space 2
+
+def wonder
+class building
+cost 100 120
+population_provided 0
+hp_max 2500
+time_cost 900
+heal_level 4
+requirements imperial_age
+count_limit 1
+victory_time 300
+provides_survival 1
+space 4
 
 def scouttower
 class building
@@ -1181,6 +1229,7 @@ can_upgrade_to guardtower cannontower
 is_buildable_anywhere 1
 transport_capacity 4
 provides_survival 0
+space 3
 
 def guardtower
 class building
@@ -1200,6 +1249,7 @@ can_use_tech archer_weapon archer_range
 is_buildable_anywhere 1
 transport_capacity 8
 provides_survival 0
+space 3
 
 def cannontower
 class building
@@ -1220,6 +1270,7 @@ mdf 1 ; armor 20
 is_buildable_anywhere 1
 transport_capacity 8
 provides_survival 0
+space 3
 
 def wall
 class building
@@ -1231,7 +1282,6 @@ is_buildable_on_exits_only 1
 transport_capacity 4
 provides_survival 0
 passenger_attack_types archer catapult
-
 capture_hp_threshold 30   # 30%血量时可被夺取
 can_upgrade_to massive_wall
 
@@ -1283,6 +1333,7 @@ time_cost 90
 is_buildable_near_water_only 1
 requirements townhall lumbermill
 can_train boat destroyer battleship submarine
+space 2
 
 def wooden_bridge
 class building
@@ -1305,6 +1356,7 @@ manual_production 1
 production_type resource1
 production_time 100
 production_qty 200
+space 2
 
 ; 铸币厂：生产金币落在地上，工人拾取后金子直接入库
 def gold_mint
@@ -1457,9 +1509,10 @@ rdg_trigger_rate 10  ; 远程攻击只有10%几率触发
 ;       （非 ``-`` 排除）且同时写了成本类 bonus 时，引擎会发出一次性警告。
 ;   units_auto_upgrade 0/1
 ;       1 时研究完成后，仅"与本时代绑定"的形态升级会被瞬时执行：
-;         单位的 can_upgrade_to 中，若存在某个目标的 requirements 列表里
+;         单位的 can_upgrade_to 中，若存在某个目标的 *简单* requirements
 ;         显式包含本时代名（例如 castle_age），那个目标会被免费瞬时升级。
-;       未把本时代写入 requirements 的常规手动升级链（如
+;         any_buildings 子句里的分组名（如 castle_age_buildings）不会触发自动升级。
+;       未把本时代写入简单 requirements 的常规手动升级链（如
 ;       townhall→keep→castle、scouttower→guardtower 等）不会被影响。
 ;       想让某形态随某时代自动取代旧形态，把该时代名加到目标形态的
 ;       requirements 里即可（示例：让 swordsman 在城堡时代取代 footman，
@@ -1467,6 +1520,9 @@ rdg_trigger_rate 10  ; 远程攻击只有10%几率触发
 ;       若同时设置了 phase_targets，仍先按 phase_targets 过滤源单位。
 ;   can_upgrade_to <next_phase>
 ;       仅作 UI 展示用途；链式升级请通过 requirements 实现。
+;   requirements 还可写 any_buildings <n> <group>_buildings：
+;       自动收集简单 requirements 含该键的建筑（如 castle_age_buildings）。
+;       例：imperial_age / castle 均可写 any_buildings 2 castle_age_buildings。
 ;
 ; 在哪个建筑/单位里推进时代：把时代名加到该建筑/单位的 can_advance 列表即可。
 ; 默认示例把它放在 townhall（及其派生的 keep/castle）上，符合 AoE 玩家直觉，
@@ -1492,7 +1548,7 @@ def castle_age
 class phase
 cost 20 30
 time_cost 160
-requirements feudal_age barracks blacksmith
+requirements feudal_age any_buildings 2 feudal_age_buildings
 phase bonus mdg 2 rdg 2 sight_range 1
 units_auto_upgrade 1
 can_upgrade_to imperial_age
@@ -1501,6 +1557,6 @@ def imperial_age
 class phase
 cost 35 45
 time_cost 260
-requirements castle_age stables workshop
+requirements castle_age any_buildings 2 castle_age_buildings
 phase bonus mdg 2 rdg 2 sight_range 1
 units_auto_upgrade 1

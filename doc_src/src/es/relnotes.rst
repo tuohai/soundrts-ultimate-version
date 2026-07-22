@@ -5,6 +5,38 @@ Notas de la versión
 .. contents::
 
 
+1.4.5.8
+-------
+
+**Novedad: ocupación abstracta de casilla (``space``)**
+
+- La propiedad ``space`` (precisión; admite decimales) indica cuánto ocupa la unidad en su capa aire/tierra/agua. La capacidad es el ``square_width`` del mapa en las mismas unidades (p. ej. ``square_width 12`` + ``space 1`` → máx. 12; ``space 0.5`` → máx. 24).
+- Por defecto ``space 0`` = ilimitado (legado). La capacidad es compartida por todos los bandos; si la casilla está llena, nadie de esa capa puede entrar ni entrenar allí. Voz: ``not_enough_space`` (TTS 5338); etiqueta TTS 5733.
+- Vanilla: muchas unidades terrestres (p. ej. peasant, footman) usan ``space 1``.
+- **Código**: ``definitions.py``, ``worldentity.py``, ``worldroom.py``, ``worldunit/world_movement.py``, ``worldorders/production.py``, ``worldplayercomputer_water.py``, ``msgparts.py``; ``res/rules.txt``, ``res/ui/style.txt``, ``res/ui*/tts.txt``.
+- **Docs**: ``mod/modding.rst``, ``mod/mapmaking.rst``, manuales (todos los idiomas).
+- **Pruebas**: ``test_unit_square_space.py``, ``test_train_square_space.py``.
+
+**Novedad: cuenta atrás de victoria de edificio (``victory_time``) y Maravilla**
+
+- Cualquier edificio terminado con ``victory_time N`` (segundos) inicia una cuenta atrás. Si el temporizador termina y el edificio sigue en pie, gana su dueño (y el bando de victoria aliada). Destruir el edificio cancela la cuenta atrás y lo anuncia.
+- ``wonder`` (Maravilla) en vanilla (Edad Imperial): edificio tardío costoso; ``victory_time 300`` (5 minutos). Atajo ``o``.
+- Voces 5720–5722 (inicio / cancelación / restante); avisos a 120/60/30/10 s y 5…1.
+- **Código**: ``building_victory.py``, ``worldunit/worldcreature.py``, ``world/world_core.py``, ``world/world_game.py``, ``definitions.py``, ``msgparts.py``; ``res/rules.txt``, ``res/ui/style.txt``, ``res/ui/tts.txt``, ``res/ui-zh/tts.txt``.
+- **Docs**: ``mod/modding.rst`` (``victory_time``), manuales de jugador.
+- **Pruebas**: ``test_building_victory.py``.
+
+**Novedad: requisitos ``any_buildings`` por grupo**
+
+- ``requirements`` admite ``any_buildings <n> <group>_buildings``: el jugador debe poseer cualesquiera ``<n>`` edificios distintos del grupo (AND con otros nombres simples en la misma línea).
+- Pertenencia: edificios cuyo ``requirements`` simple incluye ``<clave>`` (tras quitar el sufijo ``_buildings``). Ejemplo: ``requirements castle_age`` entra en ``castle_age_buildings``.
+- Vanilla: ``imperial_age`` y ``castle`` (keep→castle) usan ``any_buildings 2 castle_age_buildings``.
+- Voz: style ``parameters.any`` / ``parameters.buildings_of`` (TTS 5730–5731).
+- **Código**: ``worldrequirements.py``, ``worldplayerbase/base.py``, ``worldphase.py``, ``worldplayercomputer.py``, ``clientgameorder.py``, ``attributes/display_interface.py``, ``definitions.py``, ``worldunit/worldcreature.py``; ``res/rules.txt``, ``res/ui/style.txt``, ``res/ui/tts.txt``, ``res/ui-zh/tts.txt``.
+- **Docs**: ``mod/modding.rst`` (todos los idiomas).
+- **Pruebas**: ``test_any_buildings_requirements.py``.
+
+
 1.4.5.7
 -------
 

@@ -133,3 +133,16 @@ def test_castle_age_shows_requirements_and_next_age():
     assert _has_label(attrs, mp.REQUIREMENTS)
     assert _has_label(attrs, mp.CAN_UPGRADE_TO)
     assert _has_label(attrs, mp.UNITS_AUTO_UPGRADE)
+
+
+def test_building_shows_belongs_to_age_from_phase_requirement():
+    attrs = _build_tech_attrs("barracks")
+    assert _has_label(attrs, mp.BELONGS_TO_AGE)
+    row = next(r for r in attrs if r[1] == mp.BELONGS_TO_AGE)
+    # feudal_age title id from style
+    assert row[2]
+
+
+def test_townhall_has_no_belongs_to_age_without_phase_requirement():
+    attrs = _build_tech_attrs("townhall")
+    assert not _has_label(attrs, mp.BELONGS_TO_AGE)

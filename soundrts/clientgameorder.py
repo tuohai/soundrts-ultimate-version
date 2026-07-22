@@ -191,12 +191,14 @@ class OrderTypeView:  # future order
                 return str(s[0])
 
     def _get_requirements_msg(self):
+        from .worldrequirements import format_clause_titles, missing_requirement_clauses
+
         and_index = 0
         msg = []
-        missing = [r for r in self.requirements if not self.unit.player.has(r)]
-        for t in missing:
+        missing = missing_requirement_clauses(self.unit.player, self.requirements)
+        for clause in missing:
             and_index = len(msg)
-            msg += style.get(t, "title")
+            msg += format_clause_titles(clause)
         if not missing:
             # 检查是否是生产或耕种命令，如果是，显示其资源成本
             if self.cls.keyword in ["auto_produce", "manual_produce", "start_automatic_cultivate", "start_manual_cultivate"]:

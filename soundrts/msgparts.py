@@ -192,6 +192,7 @@ NORTH = [67]
 NORTHEAST = [71]
 NORTHWEST = [72]
 NOT_ENOUGH_PLAYERS = [4244]
+NOT_ENOUGH_SPACE = [5338]  # 空间不足
 NOTHING = [0]
 OBJECTIVE = [4020]
 OBJECTIVE_COMPLETE = [4269]
@@ -1124,3 +1125,15 @@ PHASE_TARGETS = [5111]              # 时代加成作用目标
 UNITS_AUTO_UPGRADE = [5112]         # 单位自动升级
 PHASE_EXCEPT_PREFIX = [5113]        # 除了（phase_targets 排除项前缀）
 PHASE_EXCEPT_SUFFIX = [5114]        # 之外的任何目标（phase_targets 排除项后缀）
+
+# Building victory timer
+WONDER = [5723]  # building title only
+VICTORY_TIMER_STARTED = [5720]
+VICTORY_TIMER_CANCELLED = [5721]
+VICTORY_TIMER_REMAINING = [5722]
+
+# 建筑/单位所属时代（由 requirements 中的 phase 推断）
+BELONGS_TO_AGE = [5732]
+
+# 单位占地体积（rules: space；格子容量 = square_width）
+SPACE = [5733]

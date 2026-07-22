@@ -154,6 +154,30 @@ SoundRTS 1.2 alpha 9 新增。
 
 只要拥有至少一个 "provides_survival" 等于 1 的单位（或建筑），就能防止玩家在多人游戏中落败（单人战役除外）。受影响的触发器是 "no_building_left"。默认情况下只有建筑将此属性设为 1。建筑工地的该属性被设为 0 且无法更改。
 
+victory_time
+=============
+
+SoundRTS 1.4.5.8 新增。
+
+``victory_time <秒>``
+
+默认值为 0（无胜利倒计时）。在**已建成**的建筑上大于 0 时，该建筑一出现即开始倒计时。到期且建筑仍在，则其拥有者（及同盟胜利阵营）获胜。摧毁该建筑会取消倒计时。
+
+适用于任意 ``class building``，不限于原版奇观。示例（帝国时代风格奇观）：
+
+::
+
+    def wonder
+    class building
+    cost 100 120
+    time_cost 900
+    hp_max 2500
+    requirements imperial_age
+    count_limit 1
+    victory_time 300
+
+原版含 ``wonder``（奇观），``victory_time 300``（建成后 5 分钟）。语音：TTS 5720（开始）、5721（取消）、5722（剩余）。
+
 storage_bonus
 ==============
 
@@ -748,6 +772,34 @@ Phase system (since 1.4.2.4)
 
 在 ``def parameters`` 中设置 ``hide_locked_commands 1`` 可隐藏尚未满足要求的命令。
 
+``requirements`` 除了写具体类型名（全部满足，AND）外，还可要求“某分组的任意 N 座建筑”（自 1.4.5.8）::
+
+    ; 建筑写 requirements castle_age 即自动属于 castle_age_buildings
+    def stables
+    class building
+    requirements castle_age
+
+    ; 时代推进 / 主基地升级都可复用同一分组
+    def imperial_age
+    class phase
+    requirements castle_age any_buildings 2 castle_age_buildings
+
+    def castle
+    class building
+    requirements any_buildings 2 castle_age_buildings
+
+``any_buildings <n> <group>_buildings`` 去掉 ``_buildings`` 得到键，收集所有
+简单 ``requirements`` 中包含该键的建筑。例如 ``castle_age_buildings`` 收集
+写了 ``requirements castle_age`` 的建筑。主基地阶段同理：成员写
+``requirements keep``，门槛写 ``any_buildings 2 keep_buildings``。
+
+请用 ``castle_age_buildings`` 这类名字，不要直接写 phase 名。
+分组参数不会触发 ``units_auto_upgrade``。
+
+属性界面会显示「所属时代」：读取该建筑简单 ``requirements`` 里的 phase 名
+（例如兵营 ``requirements feudal_age`` → 显示封建时代）。
+市政厅等没有时代要求的建筑则不显示此项。
+
 Economy (since 1.4.0.x)
 ------------------------
 
@@ -968,6 +1020,34 @@ Heroes (since 1.4)
 
 - 未写 ``passenger_attack_types`` 时，容器内单位默认不能攻击外部目标。
 - ``load_bonus`` 与 ``passenger_bonus`` 可叠加使用。
+
+格子占地（``space``，自 1.4.5.8 起）
+------------------------------------
+
+``space`` 为精度属性（可写小数），表示单位在同层（空/地/水）占一格地图的体积。
+容量与地图 ``square_width`` 同单位。
+
+| 设置 | 效果 |
+| --- | --- |
+| ``space 0``（默认） | 不占容量（兼容旧版无限堆叠） |
+| ``square_width 12`` 下 ``space 1`` | 同层最多 12 个 |
+| ``square_width 12`` 下 ``space 0.5`` | 同层最多 24 个 |
+| ``space`` > ``square_width`` | 无法进入该格 |
+
+容量敌我共享。格子已满时，无法再进入，也无法在此训练出新单位（语音 ``not_enough_space`` / 「空间不足」）。
+空/地/水分层独立：地面占满不影响空中单位。
+
+示例::
+
+    def peasant
+    class worker
+    space 1
+
+    def siege_engine
+    class soldier
+    space 4
+
+地图侧见 ``mod/mapmaking.rst`` 中的 ``square_width``。
 
 Items (since 1.4.1.3)
 ----------------------

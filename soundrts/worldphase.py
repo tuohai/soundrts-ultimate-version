@@ -3,9 +3,12 @@
 提供类似帝国时代中"时代推进"的机制：
 - 研究后立即将 phase bonus 应用到玩家所有（或 phase_targets 指定的）单位
 - 可选地把"与本时代绑定"的单位形态瞬时升级到其 can_upgrade_to 目标
-  （绑定方式：把本时代名加入目标形态的 requirements 列表中）
+  （绑定方式：把本时代名作为*简单* requirement 写入目标形态；
+  ``any_buildings N <group>_buildings`` 子句里的分组名不计入）
 - 时代名进入 player.upgrades，便于后续 phase 的 requirements 链式约束
 
+``requirements`` 支持 ``any_buildings <n> <group>_buildings``：收集简单
+requirements 含该键的建筑，玩家至少拥有 n 种即可。
 DSL 示例（rules.txt）::
 
     def 城堡时代
@@ -488,8 +491,10 @@ class Phase(Upgrade):
                 candidate = rules.unit_class(target_name)
                 if candidate is None:
                     continue
+                from .worldrequirements import has_phase_as_simple_requirement
+
                 requirements = getattr(candidate, "requirements", ()) or ()
-                if phase_name in requirements:
+                if has_phase_as_simple_requirement(requirements, phase_name):
                     chosen_cls = candidate
                     chosen_name = target_name
                     break

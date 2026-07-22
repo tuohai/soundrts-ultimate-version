@@ -2647,13 +2647,33 @@ class Computer(Player):
         return True
 
     def _get_requirements(self, t):
-        for r in t.requirements:
-            if not self.has(r):  # requirement (eventually is_a)
-                if rules.get(r, "class") == ["deposit"]:
-                    return False
-                if not rules.get_makers(r):
-                    return False
-                return self._get(1, r)  # exact type
+        from .worldrequirements import (
+            ANY_BUILDINGS,
+            count_owned_buildings_of_group,
+            iter_unmet_building_candidates,
+            parse_requirement_clauses,
+        )
+
+        for clause in parse_requirement_clauses(t.requirements):
+            if clause[0] == "has":
+                r = clause[1]
+                if not self.has(r):  # requirement (eventually is_a)
+                    if rules.get(r, "class") == ["deposit"]:
+                        return False
+                    if not rules.get_makers(r):
+                        return False
+                    return self._get(1, r)  # exact type
+            elif clause[0] == ANY_BUILDINGS:
+                _, count, group = clause
+                if count_owned_buildings_of_group(self, group) >= count:
+                    continue
+                for r in iter_unmet_building_candidates(self, group):
+                    if rules.get(r, "class") == ["deposit"]:
+                        continue
+                    if not rules.get_makers(r):
+                        continue
+                    return self._get(1, r)
+                return False
         return True
 
     def _builders_place(self):

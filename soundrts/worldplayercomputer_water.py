@@ -209,6 +209,10 @@ def spawn_place_for_trained_water_unit(building, unit_type):
     def _spawn_on(place, ox, oy):
         if place is None or ox is None or oy is None:
             return None, None, None
+        if hasattr(place, "have_enough_square_space") and not place.have_enough_square_space(
+            unit_type
+        ):
+            return None, None, None
         x, y = place.find_free_space(unit_type.airground_type, ox, oy)
         if x is None:
             return None, None, None

@@ -4,6 +4,38 @@ Note di rilascio
 .. contents::
 
 
+1.4.5.8
+--------
+
+**Novità: occupazione astratta della casella (``space``)**
+
+- La proprietà ``space`` (precision; ammessi decimali) indica quanto occupa l’unità sul proprio strato aria/terra/acqua. La capacità è ``square_width`` della mappa nelle stesse unità (es. ``square_width 12`` + ``space 1`` → al massimo 12; ``space 0.5`` → al massimo 24).
+- Predefinito ``space 0`` = illimitato (legacy). La capacità è condivisa da tutte le fazioni; se la casella è piena, nessuno di quello strato può entrare o addestrare lì. Voce: ``not_enough_space`` (TTS 5338); etichetta TTS 5733.
+- Vanilla: molte unità di terra (es. peasant, footman) usano ``space 1``.
+- **Codice**: ``definitions.py``, ``worldentity.py``, ``worldroom.py``, ``worldunit/world_movement.py``, ``worldorders/production.py``, ``worldplayercomputer_water.py``, ``msgparts.py``; ``res/rules.txt``, ``res/ui/style.txt``, ``res/ui*/tts.txt``.
+- **Documentazione**: ``mod/modding.rst``, ``mod/mapmaking.rst``, manuali (tutte le lingue).
+- **Test**: ``test_unit_square_space.py``, ``test_train_square_space.py``.
+
+**Novità: conto alla rovescia di vittoria edificio (``victory_time``) e Meraviglia**
+
+- Qualsiasi edificio completato con ``victory_time N`` (secondi) avvia un conto alla rovescia. Se il timer scade e l’edificio è ancora in piedi, vince il proprietario (e il campo di vittoria alleata). Distruggere l’edificio annulla il conto alla rovescia e lo annuncia.
+- ``wonder`` (Meraviglia) in vanilla (Età Imperiale): edificio tardivo costoso; ``victory_time 300`` (5 minuti). Scorciatoia ``o``.
+- Voci 5720–5722 (avvio / annullamento / rimanente); avvisi a 120/60/30/10 s e 5…1.
+- **Codice**: ``building_victory.py``, ``worldunit/worldcreature.py``, ``world/world_core.py``, ``world/world_game.py``, ``definitions.py``, ``msgparts.py``; ``res/rules.txt``, ``res/ui/style.txt``, ``res/ui/tts.txt``, ``res/ui-zh/tts.txt``.
+- **Documentazione**: ``mod/modding.rst`` (``victory_time``), manuali giocatore.
+- **Test**: ``test_building_victory.py``.
+
+**Novità: requisiti ``any_buildings`` per gruppo**
+
+- ``requirements`` può usare ``any_buildings <n> <group>_buildings``: il giocatore deve possedere almeno ``<n>`` edifici distinti del gruppo (AND con altri nomi semplici sulla stessa riga).
+- Appartenenza: edifici il cui ``requirements`` semplice elenca ``<chiave>`` (dopo aver tolto il suffisso ``_buildings``). Esempio: ``requirements castle_age`` entra in ``castle_age_buildings``.
+- Vanilla: ``imperial_age`` e ``castle`` (keep→castle) usano ``any_buildings 2 castle_age_buildings``.
+- Voce: style ``parameters.any`` / ``parameters.buildings_of`` (TTS 5730–5731).
+- **Codice**: ``worldrequirements.py``, ``worldplayerbase/base.py``, ``worldphase.py``, ``worldplayercomputer.py``, ``clientgameorder.py``, ``attributes/display_interface.py``, ``definitions.py``, ``worldunit/worldcreature.py``; ``res/rules.txt``, ``res/ui/style.txt``, ``res/ui/tts.txt``, ``res/ui-zh/tts.txt``.
+- **Documentazione**: ``mod/modding.rst`` (tutte le lingue).
+- **Test**: ``test_any_buildings_requirements.py``.
+
+
 1.4.5.7
 --------
 

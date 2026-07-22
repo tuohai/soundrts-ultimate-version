@@ -108,6 +108,16 @@ class BasicAttributes:
         if hasattr(u.model, "time_cost") and u.model.time_cost > 0:
             time_text = nb2msg_float(u.model.time_cost / 1000) + mp.SECONDS
             attrs.append(("", mp.TIME, time_text))
+
+        # 所属时代：简单 requirements 中的 phase（如 barracks → feudal_age）
+        try:
+            from ..worldrequirements import format_belonging_phase_titles
+
+            phase_text = format_belonging_phase_titles(u.model)
+            if phase_text:
+                attrs.append(("", mp.BELONGS_TO_AGE, phase_text))
+        except Exception:
+            pass
     
     def add_healing_attributes(self, u, attrs):
         """添加治疗相关属性"""

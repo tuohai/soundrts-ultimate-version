@@ -186,6 +186,22 @@ class Order:
             return True
         return False
 
+    def _reject_if_not_enough_square_space(self, target):
+        """Reject immediately when destination square has no room for this unit.
+
+        Used for direct go/patrol to a square. Exit-targeted go remaps to the
+        far square but skips this check so the unit can walk to the exit first.
+        """
+        square = _order_target_square(target)
+        if square is None or square is self.unit.place:
+            return False
+        if not hasattr(square, "have_enough_square_space"):
+            return False
+        if square.have_enough_square_space(self.unit):
+            return False
+        self.mark_as_impossible("not_enough_space")
+        return True
+
     def mark_as_complete(self):
         self.is_complete = True
         self.unit.distance_to_goal = 0

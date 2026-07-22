@@ -161,6 +161,30 @@ New in SoundRTS 1.2 alpha 9.
 
 Having at least one unit (or building) with "provides_survival" equal to 1 prevents a player from losing in a multiplayer game (not in a single player campaign). The affected trigger is "no_building_left". By default only the buildings have this property set to 1. Construction sites have this property set to 0 and it cannot be changed.
 
+victory_time
+=============
+
+New in SoundRTS 1.4.5.8.
+
+``victory_time <seconds>``
+
+The default value is 0 (no victory timer). When greater than 0 on a **finished** building, a countdown starts as soon as that building exists. If the timer reaches zero while the building still stands, its owner (and allied victory camp) wins. Destroying the building cancels that countdown.
+
+Applies to any ``class building`` type—not only the vanilla Wonder. Example (Age of Empires-style Wonder):
+
+::
+
+    def wonder
+    class building
+    cost 100 120
+    time_cost 900
+    hp_max 2500
+    requirements imperial_age
+    count_limit 1
+    victory_time 300
+
+Vanilla includes ``wonder`` with ``victory_time 300`` (5 minutes after completion). Voice messages: TTS 5720 (started), 5721 (cancelled), 5722 (remaining).
+
 storage_bonus
 ==============
 
@@ -756,6 +780,36 @@ current phase.
 ``hide_locked_commands 1`` in ``def parameters`` hides commands whose requirements are not
 yet met.
 
+Besides plain type names (all must be owned — AND), ``requirements`` can ask for any N
+buildings of a named group (since 1.4.5.8)::
+
+    ; buildings with requirements castle_age join castle_age_buildings
+    def stables
+    class building
+    requirements castle_age
+
+    ; age advance and HQ upgrades can share the same group
+    def imperial_age
+    class phase
+    requirements castle_age any_buildings 2 castle_age_buildings
+
+    def castle
+    class building
+    requirements any_buildings 2 castle_age_buildings
+
+``any_buildings <n> <group>_buildings`` strips ``_buildings`` to get the key, then
+collects every building whose simple ``requirements`` list that key. Example:
+``castle_age_buildings`` collects buildings with ``requirements castle_age``.
+For an HQ stage, members use ``requirements keep`` and the gate uses
+``any_buildings 2 keep_buildings``.
+
+Use names like ``castle_age_buildings``, not bare phase names.
+The group token does not trigger ``units_auto_upgrade``.
+
+The attributes screen shows “belongs to age” from phase names in the building’s
+simple ``requirements`` (e.g. barracks with ``requirements feudal_age`` → Feudal Age).
+Buildings without a phase requirement omit this row.
+
 Economy (since 1.4.0.x)
 ------------------------
 
@@ -977,6 +1031,36 @@ Example::
 
 - Without ``passenger_attack_types``, passengers cannot attack outside targets by default.
 - ``load_bonus`` and ``passenger_bonus`` can be combined on the same container.
+
+Square occupancy (``space``, since 1.4.5.8)
+---------------------------------------------
+
+``space`` is a precision property (decimals allowed). It is how much of a map square
+the unit occupies on its air/ground/water layer. Capacity equals map ``square_width``
+in the same units.
+
+| Setting | Effect |
+| --- | --- |
+| ``space 0`` (default) | Does not consume capacity (legacy unlimited) |
+| ``space 1`` on ``square_width 12`` | At most 12 such units on that layer |
+| ``space 0.5`` on ``square_width 12`` | At most 24 |
+| ``space`` > ``square_width`` | Unit cannot enter that square |
+
+Capacity is shared by all sides. When the square is full, movement into it and training
+that would spawn there are refused (voice ``not_enough_space``). Layers are separate:
+ground occupancy does not block air units.
+
+Example::
+
+    def peasant
+    class worker
+    space 1
+
+    def siege_engine
+    class soldier
+    space 4
+
+See also map ``square_width`` in ``mod/mapmaking.rst``.
 
 Items (since 1.4.1.3)
 ----------------------

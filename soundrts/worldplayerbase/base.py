@@ -498,10 +498,9 @@ class Player:
         return False
 
     def has_all(self, type_names):
-        for t in type_names:
-            if not self.has(t):
-                return False
-        return True
+        from ..worldrequirements import requirements_satisfied
+
+        return requirements_satisfied(self, type_names)
 
     def get_object_by_id(self, i):
         if isinstance(i, str) and i.startswith("zoom"):
@@ -1019,6 +1018,8 @@ class Player:
             return
             
         x, y, land = place.find_and_remove_meadow(type_)
+        if not place.have_enough_square_space(type_):
+            return
         x, y = place.find_free_space(type_.airground_type, x, y)
         if x is not None:
             unit = type_(self, place, x, y)
@@ -1486,9 +1487,13 @@ class Player:
                 if all_phase_names:
                     phase_name_set = set(all_phase_names)
                     root_phases = []
+                    from ..worldrequirements import simple_requirement_names
+
                     for pname in all_phase_names:
                         pcls = rules.unit_class(pname)
-                        reqs = list(getattr(pcls, "requirements", ()) or ())
+                        reqs = simple_requirement_names(
+                            getattr(pcls, "requirements", ()) or ()
+                        )
                         if not any(r in phase_name_set for r in reqs):
                             root_phases.append(pname)
                     if root_phases:

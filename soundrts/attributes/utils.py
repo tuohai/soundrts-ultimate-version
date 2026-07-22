@@ -121,6 +121,7 @@ STAT_TTS_NAMES = {
     "time_cost": mp.TIME_COST_NAME,
     "population_cost": mp.POPULATION_COST_NAME,
     "population_provided": mp.POPULATION_PROVIDED,
+    "space": mp.SPACE,
     "heal": mp.HEAL_LEVEL,
     "heal_level": mp.HEAL_LEVEL,
     "heal_cd": mp.HEAL_CD,

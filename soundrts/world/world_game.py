@@ -302,6 +302,9 @@ class WorldGameMixin:
                 from ..world_build_rules import tick_hatchery_larva
 
                 tick_hatchery_larva(self)
+                from ..building_victory import update_victory_timers
+
+                update_victory_timers(self)
             except Exception:
                 exception("")
             for o in self._active_objects_snapshot():

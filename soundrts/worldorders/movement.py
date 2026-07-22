@@ -40,12 +40,17 @@ class GoOrder(BasicOrder):
         if self.target is None:
             self.mark_as_impossible()
             return
-        if hasattr(self.target, "other_side"):  # target is an exit
+        # 点出口：允许先走到出口，满格检查推迟到真正跨格时（见 world_movement）
+        via_exit = hasattr(self.target, "other_side")
+        if via_exit:  # target is an exit
             # the new target is the square on the other side
             self.target = self.target.other_side.place
         else:
             self.target = go_target_for_flying_building_addon(self.unit, self.target)
         if self._reject_if_terrain_impassable(self.target):
+            return
+        # 直接点满格（或格上单位/草地等）：立刻打断并提示空间不足
+        if not via_exit and self._reject_if_not_enough_square_space(self.target):
             return
         # 在RPG模式下（强制性命令）不播放order_ok音效
         if not self.is_imperative:
@@ -222,6 +227,8 @@ class PatrolOrder(BasicOrder):
                 return
         self.target = square
         if self._reject_if_terrain_impassable(self.target):
+            return
+        if self._reject_if_not_enough_square_space(self.target):
             return
         self.unit.notify("order_ok")
         if (

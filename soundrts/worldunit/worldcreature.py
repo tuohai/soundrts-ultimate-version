@@ -1579,7 +1579,9 @@ class _Building(Creature):
 
     def die(self, attacker=None):
         from ..world_build_rules import cleanup_build_rules_on_death
+        from ..building_victory import cancel_victory_timer_if_needed
 
+        cancel_victory_timer_if_needed(self)
         cleanup_build_rules_on_death(self)
         place, x, y = self.place, self.x, self.y
         Creature.die(self, attacker)
@@ -1782,6 +1784,7 @@ class Building(_Building):
     resource_regen = 0 # 资源再生
     can_repair_ships = 0  # 0表示不允许修理船只，1表示允许
     _last_repair_time = 0  # 上次修理时间，用于控制修理频率
+    victory_time = 0  # >0：建成后倒计时 N 秒，到期且建筑仍在则胜利
 
     @property
     def can_train(self):
@@ -1815,6 +1818,9 @@ class Building(_Building):
         # 初始化修理船只相关属性
         self.can_repair_ships = getattr(type(self), 'can_repair_ships', 0)
         self._last_repair_time = 0
+        from ..building_victory import register_victory_timer_if_needed
+
+        register_victory_timer_if_needed(self)
 
     def next_stage(self, target, avoid=False):
         """为Building类添加next_stage方法，用于向后兼容

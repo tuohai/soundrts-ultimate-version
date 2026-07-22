@@ -385,7 +385,7 @@ def test_auto_upgrade_units_requires_phase_in_target_requirements():
     src = _source("soundrts", "worldphase.py")
     s = src.index("def _auto_upgrade_units(cls, player):")
     block = src[s:s + 3500]
-    assert "if phase_name in requirements:" in block
+    assert "has_phase_as_simple_requirement" in block
     assert "_instant_morph" in block
 
 

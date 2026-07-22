@@ -131,6 +131,14 @@ class DisplayInterface:
         #     else:
         #         attrs.append(("", ["可传送"], mp.YES))
         
+        # 占地体积（格子容量 = 地图 square_width）
+        if hasattr(u.model, "space") and u.model.space > 0:
+            space_text = nb2msg_float(u.model.space / PRECISION)
+            if hasattr(mp, "SPACE"):
+                attrs.append(("", mp.SPACE, space_text))
+            else:
+                attrs.append(("", ["占地体积"], space_text))
+
         # 体积属性
         if hasattr(u.model, "transport_volume") and u.model.transport_volume > 0:
             transport_volume_text = nb2msg(u.model.transport_volume)
@@ -305,6 +313,15 @@ class DisplayInterface:
             pop_text = nb2msg(model.population_cost)
             attrs.append(("p", mp.POPULATION, pop_text))
 
+        try:
+            from ..worldrequirements import format_belonging_phase_titles
+
+            phase_text = format_belonging_phase_titles(model)
+            if phase_text:
+                attrs.append(("", mp.BELONGS_TO_AGE, phase_text))
+        except Exception:
+            pass
+
         effect_rows = []
         if hasattr(model, "effect") and model.effect:
             effects = model.effect
@@ -329,14 +346,13 @@ class DisplayInterface:
                 attrs.append(("e", mp.EFFECT, ("EFFECT_ITEMS", effect_items)))
 
         if hasattr(model, "requirements") and model.requirements:
+            from ..worldrequirements import format_clause_titles, parse_requirement_clauses
+
             req_text = []
-            for req in model.requirements:
-                req_title = style.get(req, "title")
-                if req_title:
-                    if isinstance(req_title, list):
-                        req_text.extend(req_title)
-                    else:
-                        req_text.append(str(req_title))
+            for clause in parse_requirement_clauses(model.requirements):
+                clause_title = format_clause_titles(clause)
+                if clause_title:
+                    req_text.extend(clause_title)
                     req_text.extend(mp.COMMA)
             if req_text:
                 attrs.append(("r", mp.REQUIREMENTS, req_text[:-len(mp.COMMA)]))

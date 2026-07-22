@@ -928,6 +928,7 @@
 5065	režim týmů
 5066	každý proti každému
 5067	dva týmy
+5338	nedostatek místa
 5750	jeden proti mnoha
 5068	voda
 5069	bez vody

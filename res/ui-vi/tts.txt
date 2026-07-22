@@ -929,6 +929,7 @@
 5065	chế độ đội
 5066	mỗi người một phe
 5067	hai đội đối đầu
+5338	không đủ chỗ trống
 5750	một chống nhiều
 5068	mặt nước
 5069	không có nước

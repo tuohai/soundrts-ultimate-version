@@ -721,6 +721,7 @@ _precision_properties = {
     "rdg_range",
     "heal_radius",
     "harm_radius",
+    "space",  # 抽象直径；同层之和 ≤ square_width（支持小数，如 space 0.5）
     "heal_range",
     "harm_range",
     "mdg_minimal_range",
@@ -1236,6 +1237,7 @@ class Rules(_Definitions):
         "can_repair_ships",  # 是否允许修理船只，1允许，0不允许
         "count_limit",
         "global_count_limit",
+        "victory_time",  # 建成后倒计时秒数；到期且该建筑仍在则胜利
         "is_revivable",
         "campaign_carryover",  # 1 = 单人战役跨章保存（见 campaign_carryover_stats / inventory）
         "campaign_carryover_stats",  # 1 = 跨章保存等级与经验（默认随 campaign_carryover 开启）
@@ -1472,6 +1474,12 @@ class Rules(_Definitions):
             self._get_cache.clear()
         if hasattr(self, "_makers_cache"):
             self._makers_cache.clear()
+        try:
+            from .worldrequirements import clear_caches
+
+            clear_caches()
+        except ImportError:
+            pass
         try:
             from .lib.square_terrain_rules import clear_terrain_lookup_caches
 

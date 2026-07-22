@@ -160,6 +160,8 @@ class World:
         self._scheduled_events = []
         # 条约结束时间（毫秒，0表示无条约）
         self.treaty_until_time = 0
+        # Building victory countdowns: unit_id -> {player_id, deadline, announced}
+        self.victory_countdowns = {}
 
         # Build fields: live providers (psi) + persistent square marks (creep).
         self._build_field_provider_ids = set()

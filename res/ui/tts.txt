@@ -1006,6 +1006,7 @@
 5065 team mode
 5066 free for all
 5067 two teams
+5338	not enough space
 5750 one versus many
 5068 water
 5069 no water
@@ -1550,3 +1551,12 @@
 5711	pitch
 5712	speech rate
 5713	voice
+5720	's victory countdown started. Victory in
+5721	's victory building destroyed. Countdown cancelled
+5722	's victory countdown remaining
+5723	wonder
+
+5730	any
+5731	buildings of
+5732	belongs to age
+5733	space

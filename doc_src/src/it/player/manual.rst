@@ -331,6 +331,14 @@ Addestrare nuove unità richiede popolazione e non può superare il tetto di pop
 
 Se le case vengono distrutte, o si ottengono nuove unità senza addestramento e la popolazione usata supera il tetto, le unità esistenti vengono mantenute ma non è consentito ulteriore addestramento finché non torna disponibile popolazione.
 
+Occupazione della casella
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Alcune unità occupano anche ``space`` astratto su una casella (separato dalla popolazione). Se una
+casella è piena su quello strato (aria, terra o acqua), altre unità non possono entrare e
+l’addestramento che spawnerebbe lì viene rifiutato («spazio insufficiente»). Alleati e nemici
+condividono la stessa capacità.
+
 Cibo
 ^^^^
 
@@ -358,6 +366,13 @@ Per difendersi da un’unità invisibile ci sono almeno 3 modi:
 - portare un’unità rivelatrice (o usare un incantesimo rivelatore) e attaccare l’unità
 - usare un incantesimo di distruzione ad area sulla casella che contiene l’unità
 - ignorare l’unità invisibile e distruggere abbastanza in fretta tutti gli edifici nemici
+
+Meraviglia (conto alla rovescia di vittoria)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Novità in SoundRTS 1.4.5.8.
+
+Dopo l’Età Imperiale, i contadini possono costruire una **Meraviglia** (scorciatoia ``o``): costosa e lenta da costruire. Al completamento parte un conto alla rovescia di cinque minuti. Se la Meraviglia è ancora in piedi allo scadere, vinci tu (e i tuoi alleati). Distruggere la Meraviglia nemica annulla il loro conto alla rovescia. La vittoria per conquista resta disponibile.
 
 6. Maggiori dettagli per la personalizzazione
 ---------------------------------------------

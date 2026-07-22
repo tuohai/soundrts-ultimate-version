@@ -10,7 +10,7 @@ cannot_build_here 4204
 missing_build_field 4204
 not_enough_mana 4252
 cooldown 4509
-not_enough_space 1027
+not_enough_space 5338
 count_limit_reached 4335
 water_impassable 4976
 land_impassable 4977
@@ -89,6 +89,8 @@ def parameters
 no_path_in_this_direction 1027
 requires 129
 and 23
+any 5730
+buildings_of 5731
 resource1_title 131
 resource2_title 132
 population_title 133
@@ -769,6 +771,12 @@ def necropolis
 is_a building
 title 4304
 shortcut n
+
+def wonder
+is_a building
+title 5723
+noise repeat 6 1308
+shortcut o
 
 def scouttower
 is_a building

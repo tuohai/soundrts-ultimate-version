@@ -230,6 +230,40 @@ class CreatureMovement(Entity):
     def _must_not_go_to(self, x, y):
         return self._must_hold() and not self.position_to_hold.contains(x, y)
 
+    def _order_destination_square(self, order):
+        """Square the current order is trying to reach (for space-block notify)."""
+        from ..worldorders.base import _order_target_square
+
+        if order is None:
+            return None
+        if getattr(order, "keyword", None) == "patrol" and hasattr(order, "targets"):
+            try:
+                return _order_target_square(order.targets[order.mode])
+            except Exception:
+                return None
+        return _order_target_square(getattr(order, "target", None))
+
+    def _on_square_space_blocked(self, new_place):
+        """At the exit / border: destination square is full → stop and announce.
+
+        Only fires when *new_place* is the active order's destination, so probing
+        other adjacent full squares during pathfinding does not cancel the order.
+        """
+        orders = getattr(self, "orders", None)
+        if not orders:
+            return
+        order = orders[0]
+        if getattr(order, "is_impossible", False) or getattr(order, "is_complete", False):
+            return
+        if getattr(order, "_notified_square_space", False):
+            return
+        dest = self._order_destination_square(order)
+        if dest is not new_place:
+            return
+        order._notified_square_space = True
+        order.mark_as_impossible("not_enough_space")
+        self.stop()
+
     def _try(self, rotation, target_d):
         x, y = self._future_coords(rotation, target_d)
         new_place = self.world.get_place_from_xy(x, y)
@@ -237,6 +271,15 @@ class CreatureMovement(Entity):
             return False
         if (new_place is not None and hasattr(new_place, "is_passable_for")
                 and not new_place.is_passable_for(self, x, y)):
+            return False
+        # 跨格时检查目标格占地体积是否已满 / 是否够厚
+        if (
+            new_place is not None
+            and new_place is not self.place
+            and hasattr(new_place, "have_enough_square_space")
+            and not new_place.have_enough_square_space(self)
+        ):
+            self._on_square_space_blocked(new_place)
             return False
         if self._can_go(new_place) and not self.would_collide_if(x, y):
             if abs(rotation) >= 90:

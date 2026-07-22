@@ -95,6 +95,10 @@ Square_width
 "square_width 12" significa: "la larghezza della cella è di 12 metri".
 Non si dovrebbe modificare questo parametro, poiché gli oggetti potrebbero risultare inudibili se troppo lontani.
 
+Dal 1.4.5.8, ``square_width`` è anche la capacità di ``space`` delle unità su ogni strato
+aria/terra/acqua (stesse unità: ``space 1`` → al massimo 12 se ``square_width`` è 12). Vedi
+``mod/modding.rst`` (Occupazione della casella).
+
 Nb_lines e nb_columns
 '''''''''''''''''''''
 

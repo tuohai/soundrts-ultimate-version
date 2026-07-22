@@ -164,6 +164,30 @@ Novità in SoundRTS 1.2 alpha 9.
 
 Avere almeno un’unità (o edificio) con "provides_survival" uguale a 1 impedisce a un giocatore di perdere in una partita multiplayer (non in una campagna single player). Il trigger interessato è "no_building_left". Per impostazione predefinita solo gli edifici hanno questa proprietà impostata a 1. I cantieri di costruzione hanno questa proprietà impostata a 0 e non può essere cambiata.
 
+victory_time
+=============
+
+Novità in SoundRTS 1.4.5.8.
+
+``victory_time <secondi>``
+
+Il valore predefinito è 0 (nessun timer di vittoria). Se è maggiore di 0 su un edificio **completato**, il conto alla rovescia parte non appena l’edificio esiste. Se il timer arriva a zero e l’edificio è ancora in piedi, vince il proprietario (e il campo di vittoria alleata). Distruggere l’edificio annulla quel conto alla rovescia.
+
+Si applica a qualsiasi tipo ``class building``, non solo alla Meraviglia vanilla. Esempio:
+
+::
+
+    def wonder
+    class building
+    cost 100 120
+    time_cost 900
+    hp_max 2500
+    requirements imperial_age
+    count_limit 1
+    victory_time 300
+
+Vanilla include ``wonder`` con ``victory_time 300`` (5 minuti dopo il completamento). Voci: TTS 5720 (avvio), 5721 (annullamento), 5722 (rimanente).
+
 storage_bonus
 ==============
 
@@ -758,6 +782,25 @@ fase attuale.
 ``hide_locked_commands 1`` in ``def parameters`` nasconde i comandi i cui requisiti non sono
 ancora soddisfatti.
 
+Oltre ai nomi di tipo semplici (tutti devono essere posseduti — AND), ``requirements`` può
+chiedere almeno N edifici di un gruppo nominato (da 1.4.5.8)::
+
+    def stables
+    class building
+    requirements castle_age
+
+    def imperial_age
+    class phase
+    requirements castle_age any_buildings 2 castle_age_buildings
+
+    def castle
+    class building
+    requirements any_buildings 2 castle_age_buildings
+
+``any_buildings <n> <group>_buildings`` toglie ``_buildings`` e raccoglie gli edifici il cui
+``requirements`` semplice elenca quella chiave. Usare ``castle_age_buildings``, non il nome
+nudo della fase. Il token di gruppo non attiva ``units_auto_upgrade``.
+
 Economia (da 1.4.0.x)
 ---------------------
 
@@ -979,6 +1022,35 @@ Esempio::
 
 - Senza ``passenger_attack_types``, i passeggeri non possono attaccare bersagli esterni per impostazione predefinita.
 - ``load_bonus`` e ``passenger_bonus`` possono essere combinati sullo stesso contenitore.
+
+Occupazione della casella (``space``, da 1.4.5.8)
+-------------------------------------------------
+
+``space`` è una proprietà precision (decimali ammessi). Indica quanto l’unità occupa
+sul proprio strato aria/terra/acqua. La capacità è ``square_width`` della mappa nelle stesse unità.
+
+| Impostazione | Effetto |
+| --- | --- |
+| ``space 0`` (predefinito) | Non consuma capacità (illimitato, legacy) |
+| ``space 1`` con ``square_width 12`` | Al massimo 12 unità su quello strato |
+| ``space 0.5`` con ``square_width 12`` | Al massimo 24 |
+| ``space`` > ``square_width`` | L’unità non può entrare in quella casella |
+
+La capacità è condivisa da tutte le fazioni. Se la casella è piena, movimento e
+addestramento che spawnerebbe lì vengono rifiutati (voce ``not_enough_space``).
+Gli strati sono separati: l’occupazione a terra non blocca le unità aeree.
+
+Esempio::
+
+    def peasant
+    class worker
+    space 1
+
+    def siege_engine
+    class soldier
+    space 4
+
+Vedi anche ``square_width`` in ``mod/mapmaking.rst``.
 
 Oggetti (da 1.4.1.3)
 ---------------------

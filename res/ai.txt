@@ -77,8 +77,7 @@ def intermediate
 defeat_score 20
 
 counter_skill 50
-starting_resources 50 50
-starting_population 10
+starting_resources 10 10
 watchdog 600 ; never stay on the same line for more than 10 minutes
 constant_attacks 1 ; constantly attack if powerful enough
 research 1 ; do the research if enough resources
@@ -149,13 +148,12 @@ def advanced
 defeat_score 40
 
 counter_skill 75
-starting_resources 100 100
+starting_resources 20 20
 starting_units 2 footman 2 archer
-starting_population 20
-train_time 50       ; trains twice as fast (half duration)
-research_time 80    ; research 20% faster
-build_time 50       ; builds twice as fast (half duration)
-gather_time 50      ; gathers twice as fast (half duration)
+train_time 10       ; trains twice as fast (half duration)
+research_time 10    ; research 20% faster
+build_time 10       ; builds twice as fast (half duration)
+gather_time 5      ; gathers twice as fast (half duration)
 watchdog 480
 constant_attacks 1
 research 1
@@ -196,13 +194,12 @@ def expert
 defeat_score 80
 
 counter_skill 90
-starting_resources 200 200
-starting_units 5 footman 4 archer 2 knight
-starting_population 40
-train_time 50
-research_time 70
-build_time 50
-gather_time 50
+starting_resources 30 30
+starting_units 2 footman 2 archer 2 knight
+train_time 20
+research_time 20
+build_time 20
+gather_time 20
 unit_hp 120       ; units have +20% HP
 watchdog 360
 constant_attacks 1
@@ -237,11 +234,10 @@ def nightmare
 defeat_score 200
 
 counter_skill 100
-starting_resources 400 400
-starting_units 8 footman 6 archer 4 knight
-starting_population 60
+starting_resources 40 40
+starting_units 3 footman 3 archer 3 knight
 train_time 40
-research_time 60
+research_time 40
 build_time 40
 gather_time 40
 unit_hp 140
