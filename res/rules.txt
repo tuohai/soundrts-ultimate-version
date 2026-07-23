@@ -1114,7 +1114,6 @@ can_research hunting_techniques
 square_terrain town 60
 ;can_upgrade_to keep
 can_advance feudal_age castle_age imperial_age
-space 3
 
 def keep
 class building
@@ -1144,7 +1143,6 @@ hp_max 266.7;  800/3
 time_cost 90
 requirements feudal_age
 can_research melee_weapon melee_armor
-space 2
 
 def stables
 class building
@@ -1154,7 +1152,7 @@ hp_max 266.7;  800/3
 time_cost 90
 requirements castle_age
 can_research horse_speed
-space 2
+
 
 def workshop
 class building
@@ -1164,7 +1162,7 @@ hp_max 266.7;  800/3
 time_cost 90
 requirements castle_age
 can_train catapult new_flyingmachine flyingmachine
-space 2
+
 
 def dragonslair
 class building
@@ -1174,7 +1172,7 @@ hp_max 266.7;  800/3
 time_cost 90
 requirements imperial_age
 can_train dragon
-space 2
+
 
 def magestower
 class building
@@ -1185,7 +1183,7 @@ time_cost 90
 requirements imperial_age
 can_train mage
 can_research u_recall u_summon_dragon u_meteors
-space 2
+
 
 def temple
 class building
@@ -1196,7 +1194,7 @@ time_cost 90
 requirements castle_age
 can_train priest
 can_research superhealer u_exorcism u_conversion u_resurrection
-space 2
+
 
 def necropolis
 class building
@@ -1207,7 +1205,7 @@ time_cost 90
 requirements imperial_age
 can_train necromancer
 can_research u_deadly_fog
-space 2
+
 
 def wonder
 class building
@@ -1220,7 +1218,7 @@ requirements imperial_age
 count_limit 1
 victory_time 300
 provides_survival 1
-space 4
+
 
 def scouttower
 class building
@@ -1232,7 +1230,7 @@ can_upgrade_to guardtower cannontower
 is_buildable_anywhere 1
 transport_capacity 4
 provides_survival 0
-space 3
+space 2
 
 def guardtower
 class building
@@ -1336,7 +1334,7 @@ time_cost 90
 is_buildable_near_water_only 1
 requirements townhall lumbermill
 can_train boat destroyer battleship submarine
-space 2
+
 
 def wooden_bridge
 class building
@@ -1359,7 +1357,7 @@ manual_production 1
 production_type resource1
 production_time 100
 production_qty 200
-space 2
+
 
 ; 铸币厂：生产金币落在地上，工人拾取后金子直接入库
 def gold_mint
