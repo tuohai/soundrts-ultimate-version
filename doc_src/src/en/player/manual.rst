@@ -334,9 +334,11 @@ If houses are destroyed, or new units are obtained without training and used pop
 Square occupancy
 ^^^^^^^^^^^^^^^^
 
-Some units also take abstract ``space`` on a map square (separate from population). When a square
-is full on that layer (air, ground, or water), more units cannot enter it and training that would
-spawn there is refused ("not enough space"). Allies and enemies share the same capacity.
+Some units also take abstract ``space`` on a map square (separate from population).
+Capacity is per alliance (each side up to ``square_width``); enemy occupancy does not
+block you. When your side is full on that layer (air, ground, or water), more units
+cannot enter it and training that would spawn there is refused ("not enough space").
+Allies share one budget.
 
 Food
 ^^^^

@@ -95,8 +95,8 @@ Square_width
 "square_width 12" 表示："格子宽度为 12 米"。
 你不应修改此参数，因为如果对象太远可能会听不到。
 
-自 1.4.5.8 起，``square_width`` 同时是各层（空/地/水）单位 ``space`` 的容量上限（同单位：
-``square_width 12`` 时 ``space 1`` → 最多 12 个）。详见 ``mod/modding.rst``（格子占地）。
+自 1.4.5.8 起，``square_width`` 同时是各层（空/地/水）单位 ``space`` 的**每方**容量上限（同单位：
+格子大小 12 时每方同盟可容纳十二个 ``space 1``；自 1.4.5.9 起按同盟分别计）。详见 ``mod/modding.rst``（格子占地）。
 
 Nb_lines 和 nb_columns
 ''''''''''''''''''''''

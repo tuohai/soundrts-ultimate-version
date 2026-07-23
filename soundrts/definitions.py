@@ -721,7 +721,7 @@ _precision_properties = {
     "rdg_range",
     "heal_radius",
     "harm_radius",
-    "space",  # 抽象直径；同层之和 ≤ square_width（支持小数，如 space 0.5）
+    "space",  # 抽象占地；按同盟分别 ≤ square_width（支持小数，如 space 0.5）
     "heal_range",
     "harm_range",
     "mdg_minimal_range",

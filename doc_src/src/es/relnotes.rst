@@ -5,14 +5,33 @@ Notas de la versión
 .. contents::
 
 
+1.4.5.9
+-------
+
+**Mejora: ``space`` de casilla contado por alianza**
+
+- **Antes**: La capacidad era compartida; la artillería enemiga llenando una casilla impedía entrar a melé/caballería.
+- **Ahora**: Cada alianza tiene su propio cupo hasta ``square_width``; la ocupación enemiga no usa el tuyo. P. ej. con ``square_width 12``, cada bando puede tener doce ``space 1``. Los aliados comparten un cupo.
+- **Código**: ``worldroom.py``; entrenamiento/aparición pasan el jugador.
+- **Pruebas**: ``test_unit_square_space.py``, ``test_train_square_space.py``.
+
+**Corrección: recursos recolectados se almacenaban sin almacén**
+
+- **Síntoma**: Tras recolectar, los trabajadores podían añadir recursos al almacén aunque no hubiera ayuntamiento / aserradero u otro edificio de almacenamiento.
+- **Causa**: En tierra, ``bring_back`` seguía llamando a ``_store_cargo()`` si ``nearest_warehouse`` devolvía ninguno. En 1.3.8.1 se vaciaba la carga y fallaba la orden; una reescritura posterior almacenaba por error.
+- **Corrección**: Sin almacén no se guarda; se conserva la carga, se avisa una vez ``order_impossible`` y se detiene. La entrega continúa cuando haya almacén.
+- **Código**: ``worldorders/gathering.py``.
+- **Pruebas**: ``test_gather_requires_warehouse.py``.
+
+
 1.4.5.8
 -------
 
 **Novedad: ocupación abstracta de casilla (``space``)**
 
-- La propiedad ``space`` (precisión; admite decimales) indica cuánto ocupa la unidad en su capa aire/tierra/agua. La capacidad es el ``square_width`` del mapa en las mismas unidades (p. ej. ``square_width 12`` + ``space 1`` → máx. 12; ``space 0.5`` → máx. 24).
-- Por defecto ``space 0`` = ilimitado (legado). La capacidad es compartida por todos los bandos; si la casilla está llena, nadie de esa capa puede entrar ni entrenar allí. Voz: ``not_enough_space`` (TTS 5338); etiqueta TTS 5733.
-- Vanilla: muchas unidades terrestres (p. ej. peasant, footman) usan ``space 1``.
+- La propiedad ``space`` (precisión; admite decimales) usa las **mismas unidades que ``square_width``**. ``square_width 12`` = cada casilla (p. ej. a1) mide 12; ``space 1`` ocupa 1 de esos 12 (máx. 12); ``space 0.5`` → máx. 24.
+- Por defecto ``space 0`` = ilimitado (legado). La capacidad es por alianza (véase 1.4.5.9); si tu bando está lleno, no puedes entrar ni entrenar allí. Voz: ``not_enough_space`` (TTS 5338); etiqueta TTS 5733.
+- Vanilla: peasant/footman ``space 0.25``; catapult ``space 1``.
 - **Código**: ``definitions.py``, ``worldentity.py``, ``worldroom.py``, ``worldunit/world_movement.py``, ``worldorders/production.py``, ``worldplayercomputer_water.py``, ``msgparts.py``; ``res/rules.txt``, ``res/ui/style.txt``, ``res/ui*/tts.txt``.
 - **Docs**: ``mod/modding.rst``, ``mod/mapmaking.rst``, manuales (todos los idiomas).
 - **Pruebas**: ``test_unit_square_space.py``, ``test_train_square_space.py``.

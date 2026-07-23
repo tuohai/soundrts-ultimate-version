@@ -78,9 +78,9 @@ class Entity:
 
     transport_capacity = 0
     transport_volume = 99
-    # 抽象直径（rules: space N，precision，可小数）。0=不占格子容量（默认）。
-    # 格子容量 = square_width；同 airground_type 的 space 之和不可超过。
-    # 例：square_width 12 + space 0.5 → 最多 24 个；space 1 → 最多 12 个。
+    # 抽象占地（rules: space N，precision，可小数）。0=不占格子容量（默认）。
+    # 容量 = square_width；按同盟分别累计，敌军不占己方名额。
+    # 例：square_width 12 + space 1 → 每方同层最多 12 个。
     space = 0
 
     is_invisible = False

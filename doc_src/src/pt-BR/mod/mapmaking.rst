@@ -95,8 +95,8 @@ Square_width
 "square_width 12" significa: "a largura do quadrado é 12 metros".
 Você não deveria modificar esse parâmetro, pois objetos podem ficar inaudíveis se estiverem muito distantes.
 
-Desde 1.4.5.8, ``square_width`` também é a capacidade de ``space`` das unidades em cada camada
-ar/terra/água (mesmas unidades: ``space 1`` → no máximo 12 se ``square_width`` for 12). Veja
+Desde 1.4.5.8, ``square_width`` também é a capacidade **por aliança** de ``space`` das unidades em cada camada
+ar/terra/água (mesmas unidades: ``space 1`` → no máximo 12 por lado se ``square_width`` for 12; contagem por aliança desde 1.4.5.9). Veja
 ``mod/modding.rst`` (Ocupação do quadrado).
 
 Nb_lines e nb_columns

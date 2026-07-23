@@ -95,9 +95,10 @@ Square_width
 "square_width 12" means: "the square width is 12 meters".
 You shouldn't modify this parameter, since objects may be inaudible if they are too far.
 
-Since 1.4.5.8, ``square_width`` is also the capacity for unit ``space`` on each air/ground/water
-layer (same units: ``space 1`` → at most 12 units when ``square_width`` is 12). See
-``mod/modding.rst`` (Square occupancy).
+Since 1.4.5.8, ``square_width`` is also the **per-alliance** capacity budget for unit ``space``
+on each air/ground/water layer (same units: a square of size 12 holds twelve ``space 1`` units
+per side; per-alliance counting since 1.4.5.9). See ``mod/modding.rst`` (square occupancy).
+See ``mod/modding.rst`` (Square occupancy).
 
 Nb_lines and nb_columns
 '''''''''''''''''''''''

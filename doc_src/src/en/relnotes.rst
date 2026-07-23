@@ -5,14 +5,34 @@ Release notes
 .. contents::
 
 
+1.4.5.9
+--------
+
+**Improvement: square ``space`` counted per alliance**
+
+- **Before**: Capacity was shared by all sides; enemy siege filling a square blocked friendly melee/cavalry from entering.
+- **Now**: Each alliance has its own budget up to ``square_width``; enemy occupancy does not use your budget. E.g. with ``square_width 12``, each side may field twelve ``space 1`` units. Allies share one budget.
+- **Code**: ``worldroom.py`` (``used_square_space`` / ``have_enough_square_space``); train/spawn call sites pass the player.
+- **Docs**: ``res/rules.txt``, ``mod/modding.rst``, player manuals, release notes.
+- **Tests**: ``test_unit_square_space.py``, ``test_train_square_space.py``.
+
+**Fix: gathered resources stored without a warehouse**
+
+- **Symptom**: After gathering, workers could add resources to the stockpile even with no town hall / lumber mill / other storage building present.
+- **Cause**: Land ``bring_back`` still called ``_store_cargo()`` when ``nearest_warehouse`` returned none. In 1.3.8.1 cargo was cleared and the order failed; a later rewrite incorrectly stored instead.
+- **Fix**: Without a warehouse, do not store; keep cargo, notify ``order_impossible`` once, and stop. Delivery resumes after a warehouse is built.
+- **Code**: ``worldorders/gathering.py``.
+- **Tests**: ``test_gather_requires_warehouse.py``.
+
+
 1.4.5.8
 --------
 
 **New: abstract square occupancy (``space``)**
 
-- Unit property ``space`` (precision; decimals allowed) is how much of a square the unit occupies on its air/ground/water layer. Capacity equals map ``square_width`` in the same units (e.g. ``square_width 12`` + ``space 1`` → at most 12; ``space 0.5`` → at most 24).
-- Default ``space 0`` = unlimited (legacy). Capacity is shared by all sides; when the square is full, nobody of that layer can enter or train there. Voice: ``not_enough_space`` (TTS 5338); attribute label TTS 5733.
-- Vanilla: many ground units (e.g. peasant, footman) use ``space 1``.
+- Unit property ``space`` (precision; decimals allowed) uses the **same units as map ``square_width``**. ``square_width 12`` means each square (e.g. a1) has size 12; ``space 1`` occupies 1 of that 12 (at most 12); ``space 0.5`` → at most 24. **Abstract capacity only**; it does not change physical collision size.
+- Default ``space 0`` = unlimited abstract capacity (legacy). Capacity is per alliance (see 1.4.5.9); when your side is full, you cannot enter or train there. Voice: ``not_enough_space`` (TTS 5338); attribute label TTS 5733.
+- Vanilla examples: peasant/footman ``space 0.25``; catapult ``space 1``.
 - **Code**: ``definitions.py``, ``worldentity.py``, ``worldroom.py``, ``worldunit/world_movement.py``, ``worldorders/production.py``, ``worldplayercomputer_water.py``, ``msgparts.py``; ``res/rules.txt``, ``res/ui/style.txt``, ``res/ui*/tts.txt``.
 - **Docs**: ``mod/modding.rst``, ``mod/mapmaking.rst``, player manuals (all languages).
 - **Tests**: ``test_unit_square_space.py``, ``test_train_square_space.py``.

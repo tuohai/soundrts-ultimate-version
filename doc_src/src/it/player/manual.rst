@@ -334,10 +334,11 @@ Se le case vengono distrutte, o si ottengono nuove unità senza addestramento e 
 Occupazione della casella
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Alcune unità occupano anche ``space`` astratto su una casella (separato dalla popolazione). Se una
-casella è piena su quello strato (aria, terra o acqua), altre unità non possono entrare e
-l’addestramento che spawnerebbe lì viene rifiutato («spazio insufficiente»). Alleati e nemici
-condividono la stessa capacità.
+Alcune unità occupano anche ``space`` astratto su una casella (separato dalla popolazione).
+La capacità è per alleanza (ogni lato fino a ``square_width``); l’occupazione nemica non ti
+blocca. Se il tuo lato è pieno su quello strato (aria, terra o acqua), altre unità non possono
+entrare e l’addestramento che spawnerebbe lì viene rifiutato («spazio insufficiente»).
+Gli alleati condividono un budget.
 
 Cibo
 ^^^^

@@ -5,14 +5,33 @@ Notas de lançamento
 .. contents::
 
 
+1.4.5.9
+-------
+
+**Melhoria: ``space`` do quadrado contado por aliança**
+
+- **Antes**: Capacidade compartilhada; artilharia inimiga enchendo um quadrado bloqueava melee/cavalaria.
+- **Agora**: Cada aliança tem o próprio orçamento até ``square_width``; ocupação inimiga não usa o seu. Ex.: com ``square_width 12``, cada lado pode ter doze ``space 1``. Aliados compartilham um orçamento.
+- **Código**: ``worldroom.py``; treino/spawn passam o jogador.
+- **Testes**: ``test_unit_square_space.py``, ``test_train_square_space.py``.
+
+**Correção: recursos coletados entravam no estoque sem armazém**
+
+- **Sintoma**: Após coletar, os trabalhadores podiam adicionar recursos ao estoque mesmo sem prefeitura / serraria ou outro prédio de armazenamento.
+- **Causa**: Em terra, ``bring_back`` ainda chamava ``_store_cargo()`` quando ``nearest_warehouse`` não achava nada. Em 1.3.8.1 a carga era limpa e a ordem falhava; uma reescrita posterior depositava por engano.
+- **Correção**: Sem armazém não deposita; mantém a carga, avisa uma vez ``order_impossible`` e para. A entrega continua depois de um armazém ser construído.
+- **Código**: ``worldorders/gathering.py``.
+- **Testes**: ``test_gather_requires_warehouse.py``.
+
+
 1.4.5.8
 -------
 
 **Novo: ocupação abstrata do quadrado (``space``)**
 
-- A propriedade ``space`` (precision; decimais permitidos) indica quanto a unidade ocupa na sua camada ar/terra/água. A capacidade é o ``square_width`` do mapa nas mesmas unidades (ex.: ``square_width 12`` + ``space 1`` → no máximo 12; ``space 0.5`` → no máximo 24).
-- Padrão ``space 0`` = ilimitado (legado). A capacidade é compartilhada por todos os lados; se o quadrado estiver cheio, ninguém dessa camada pode entrar ou treinar ali. Voz: ``not_enough_space`` (TTS 5338); rótulo TTS 5733.
-- Vanilla: muitas unidades terrestres (ex.: peasant, footman) usam ``space 1``.
+- A propriedade ``space`` (precision; decimais permitidos) usa as **mesmas unidades que ``square_width``**. ``square_width 12`` = cada quadrado (ex.: a1) tem tamanho 12; ``space 1`` ocupa 1 desses 12 (no máximo 12); ``space 0.5`` → no máximo 24.
+- Padrão ``space 0`` = ilimitado (legado). A capacidade é por aliança (veja 1.4.5.9); se o seu lado estiver cheio, você não pode entrar nem treinar ali. Voz: ``not_enough_space`` (TTS 5338); rótulo TTS 5733.
+- Vanilla: peasant/footman ``space 0.25``; catapult ``space 1``.
 - **Código**: ``definitions.py``, ``worldentity.py``, ``worldroom.py``, ``worldunit/world_movement.py``, ``worldorders/production.py``, ``worldplayercomputer_water.py``, ``msgparts.py``; ``res/rules.txt``, ``res/ui/style.txt``, ``res/ui*/tts.txt``.
 - **Docs**: ``mod/modding.rst``, ``mod/mapmaking.rst``, manuais (todos os idiomas).
 - **Testes**: ``test_unit_square_space.py``, ``test_train_square_space.py``.

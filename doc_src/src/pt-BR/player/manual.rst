@@ -334,10 +334,11 @@ Se casas forem destruídas, ou novas unidades forem obtidas sem treinamento e a 
 Ocupação do quadrado
 ^^^^^^^^^^^^^^^^^^^^
 
-Algumas unidades também ocupam ``space`` abstrato num quadrado (separado da população). Se um
-quadrado estiver cheio nessa camada (ar, terra ou água), mais unidades não podem entrar e o
-treinamento que spawnaria ali é recusado («espaço insuficiente»). Aliados e inimigos compartilham
-a mesma capacidade.
+Algumas unidades também ocupam ``space`` abstrato num quadrado (separado da população).
+A capacidade é por aliança (cada lado até ``square_width``); ocupação inimiga não bloqueia
+você. Se o seu lado estiver cheio nessa camada (ar, terra ou água), mais unidades não podem
+entrar e o treinamento que spawnaria ali é recusado («espaço insuficiente»).
+Aliados compartilham um orçamento.
 
 Comida
 ^^^^

@@ -902,7 +902,8 @@ class TrainOrder(ProductionOrder):
         if place is None or not hasattr(place, "square_capacity"):
             return requested
         ag = getattr(self.type, "airground_type", "ground")
-        used = place.used_square_space(ag)
+        player = getattr(self.unit, "player", None) or getattr(self, "player", None)
+        used = place.used_square_space(ag, for_player=player)
         room = place.square_capacity - used
         if room < space:
             return 0
@@ -1562,7 +1563,9 @@ class BuildOrder(ComplexOrder):
                 )
             if x is None or (
                 hasattr(self.unit.place, "have_enough_square_space")
-                and not self.unit.place.have_enough_square_space(self.type)
+                and not self.unit.place.have_enough_square_space(
+                    self.type, player=self.player
+                )
             ):
                 self.cancel(unpay=False)  # 不需要返还资源，因为没有创建BuildingSite
                 self.mark_as_impossible("not_enough_space")

@@ -369,9 +369,14 @@ class GatherOrder(BasicOrder):
                     self.unit.place, self.unit.cargo[0]
                 )
                 if self.storage is None:
-                    self._store_cargo()
-                    self.mode = "go_gather"
+                    # 没有可存储该资源的建筑（市政厅/伐木场等）时不能入库；
+                    # 保留货物，稍后仓库建成后再送回。
+                    if not getattr(self, "_notified_no_warehouse", False):
+                        self._notified_no_warehouse = True
+                        self.unit.notify("order_impossible")
+                    self.unit.stop()
                     return
+                self._notified_no_warehouse = False
                 self.unit.start_moving_to(self.storage)
             elif self.unit._near_enough(self.storage):
                 self.mode = "store"

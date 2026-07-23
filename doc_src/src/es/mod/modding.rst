@@ -1063,11 +1063,13 @@ en su capa aire/tierra/agua. La capacidad es el ``square_width`` del mapa en las
 | Ajuste | Efecto |
 | --- | --- |
 | ``space 0`` (predeterminado) | No consume capacidad (ilimitado, legado) |
-| ``space 1`` con ``square_width 12`` | Como máximo 12 unidades en esa capa |
-| ``space 0.5`` con ``square_width 12`` | Como máximo 24 |
+| ``space 1`` con ``square_width 12`` | Ocupa 1 del tamaño 12; máx. 12 |
+| ``space 0.5`` con ``square_width 12`` | Máx. 24 |
 | ``space`` > ``square_width`` | La unidad no puede entrar en esa casilla |
 
-La capacidad es compartida por todos los bandos. Si la casilla está llena, se rechazan
+``square_width`` es el tamaño de cada casilla (p. ej. a1). ``space`` usa las mismas unidades.
+La capacidad se cuenta **por alianza** (cada bando hasta ``square_width``); la ocupación
+enemiga no usa tu cupo. Los aliados comparten un cupo. Si tu bando está lleno, se rechazan
 el movimiento y el entrenamiento que spawnearía allí (voz ``not_enough_space``).
 Las capas son independientes: la ocupación terrestre no bloquea a las unidades aéreas.
 

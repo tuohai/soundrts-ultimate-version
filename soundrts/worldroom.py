@@ -733,25 +733,42 @@ class Square(_Space):
         """
         return max(0, self.xmax - self.xmin)
 
-    def used_square_space(self, airground_type, exclude=None):
-        """同层已占用的占地体积总和（``space > 0`` 的单位）。"""
+    def used_square_space(self, airground_type, exclude=None, for_player=None):
+        """同层已占用的抽象 ``space`` 总和。
+
+        *for_player* 若给出：只统计与该玩家同盟（``player.allied``）的单位占用，
+        敌军不占其名额。为 ``None`` 时统计全部（兼容无玩家上下文的调用）。
+        """
         used = 0
+        allied = None
+        if for_player is not None:
+            allied = getattr(for_player, "allied", None)
+            if allied is None:
+                allied = (for_player,)
         for o in self.objects:
             if o is exclude:
                 continue
             if getattr(o, "airground_type", None) != airground_type:
                 continue
             s = int(getattr(o, "space", 0) or 0)
-            if s > 0:
-                used += s
+            if s <= 0:
+                continue
+            if allied is not None:
+                op = getattr(o, "player", None)
+                if op is None or op not in allied:
+                    continue
+            used += s
         return used
 
-    def have_enough_square_space(self, unit):
-        """该格子是否还能容纳 *unit* 的占地体积。
+    def have_enough_square_space(self, unit, player=None):
+        """该格子是否还能容纳 *unit* 的抽象占地（按同盟分别算容量）。
 
         - ``space <= 0``：不占容量，始终允许（默认，兼容旧行为）
-        - 单位 ``space`` 大于格子 ``square_width``：格子“不够厚”，拒绝
-        - 已占用 + 新单位 > 容量：拒绝（全员共享，敌我一视同仁）
+        - 单位 ``space`` 大于格子 ``square_width``：放不下，拒绝
+        - 仅统计与 *player*（或 ``unit.player``）同盟的已占用；敌军不挡己方名额
+        - 已占用（本方）+ 新单位 > 容量：拒绝
+        - 尚无玩家上下文（``Entity.__init__`` 里 ``set_player`` 之前）：跳过抽象检查
+          （出生/训练调用方会先带 ``player=`` 预检）
         """
         space = int(getattr(unit, "space", 0) or 0)
         if space <= 0:
@@ -759,8 +776,12 @@ class Square(_Space):
         capacity = self.square_capacity
         if space > capacity:
             return False
+        if player is None:
+            player = getattr(unit, "player", None)
+        if player is None:
+            return True
         ag = getattr(unit, "airground_type", "ground")
-        used = self.used_square_space(ag, exclude=unit)
+        used = self.used_square_space(ag, exclude=unit, for_player=player)
         return used + space <= capacity
 
     def can_receive(self, airground_type, player=None, unit=None):

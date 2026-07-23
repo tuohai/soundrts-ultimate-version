@@ -4,10 +4,13 @@
 ; can_train: units that the building can train
 ; can_use_tech : abilities that the unit can use and upgrades by which the unit is affected
 ; can_capture: 1 = default order on capture_hp_threshold 100 targets is occupy (capture), 0 = attack/move instead
-; space: occupancy on a square (precision; decimals ok). 0 = unlimited (legacy).
-;   Same-layer units' space must fit in square_width (shared by all sides).
-;   e.g. square_width 12 + space 0.5 → at most 24; space 1 → at most 12.
+; space: occupancy on a square (same units as square_width; decimals ok).
+;   square_width 12 means each square (e.g. a1) is size 12; space 1 occupies 1 of that 12.
+;   0 = unlimited abstract capacity (legacy). Counted per alliance (enemies do not
+;   share your budget): each side may use up to square_width on the same layer.
+;   e.g. square_width 12 + space 1 → at most 12 per side; space 0.5 → at most 24 per side.
 ;   space > square_width cannot enter that square.
+;   Abstract only: does not change physical collision size.
 ; requirements: objects (units, upgrades, phases) required to acquire/use the object
 ;   Plain names are AND: requirements stables workshop
 ;   any_buildings <n> <group>_buildings: need any <n> buildings whose simple

@@ -4,14 +4,34 @@
 .. contents::
 
 
+1.4.5.9
+--------
+
+**改善：格子 ``space`` 按同盟分别计容量**
+
+- **原规则**：同层容量敌我共享；对方投石车等占满一格后，己方近战/骑兵无法进入接战。
+- **现规则**：容量按同盟分别累计（各方上限仍为 ``square_width``）；敌军占用不占己方名额。例如 ``square_width 12`` 时双方可各塞 12 个 ``space 1``。同盟共享同一份名额。
+- **实现**：``worldroom.py``（``used_square_space`` / ``have_enough_square_space``）、训练与出生点调用处传入玩家。
+- **文档**：``res/rules.txt``、各语言 ``mod/modding.rst``、玩家手册、发行说明。
+- **测试**：``test_unit_square_space.py``、``test_train_square_space.py``。
+
+**修复：没有市政厅/仓库时开采资源仍会入库**
+
+- **现象**：工人采到资源后，即使场上没有可存储该资源的建筑（市政厅、伐木场等），资源仍会直接进入库存。
+- **原因**：陆地工人 ``bring_back`` 找不到仓库时仍调用 ``_store_cargo()``；1.3.8.1 原为清空货物并判定订单失败，迭代后误改成直接入库。
+- **修复**：无仓库时不入库，保留手上货物，提示一次 ``order_impossible`` 并停下；建成仓库后可继续送回。
+- **实现**：``worldorders/gathering.py``。
+- **测试**：``test_gather_requires_warehouse.py``。
+
+
 1.4.5.8
 --------
 
 **新增：格子抽象占地（``space``）**
 
-- 单位属性 ``space``（精度属性，可写小数）表示同层（空/地/水）在一格内占用的体积。容量与地图 ``square_width`` 同单位（例如 ``square_width 12`` + ``space 1`` → 最多 12；``space 0.5`` → 最多 24）。
-- 默认 ``space 0`` = 不占容量（兼容旧行为）。容量敌我共享；格子已满时，同层任何一方都不能再进入或在此训练。语音：``not_enough_space``（TTS 5338）；属性名 TTS 5733（占地体积）。
-- 原版：多数地面单位（如农民、步兵）为 ``space 1``。
+- 单位属性 ``space``（精度属性，可写小数）与地图 ``square_width`` **同单位**。``square_width 12`` 表示每格（如 a1）大小为 12；``space 1`` 占用其中的 1（最多 12）；``space 0.5`` → 最多 24。仅为**抽象容量**，不改变物理碰撞大小。
+- 默认 ``space 0`` = 不占抽象容量（兼容旧行为）。容量按同盟分别累计（见 1.4.5.9）；格子已满时，本方同层不能再进入或在此训练。语音：``not_enough_space``（TTS 5338）；属性名 TTS 5733（占地体积）。
+- 原版示例：农民/步兵 ``space 0.25``；投石车 ``space 1``。
 - **实现**：``definitions.py``、``worldentity.py``、``worldroom.py``、``worldunit/world_movement.py``、``worldorders/production.py``、``worldplayercomputer_water.py``、``msgparts.py``；``res/rules.txt``、``res/ui/style.txt``、``res/ui*/tts.txt``。
 - **文档**：各语言 ``mod/modding.rst``、``mod/mapmaking.rst``、玩家手册。
 - **测试**：``test_unit_square_space.py``、``test_train_square_space.py``。

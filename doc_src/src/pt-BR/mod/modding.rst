@@ -1030,12 +1030,14 @@ na sua camada ar/terra/água. A capacidade é o ``square_width`` do mapa nas mes
 | Ajuste | Efeito |
 | --- | --- |
 | ``space 0`` (padrão) | Não consome capacidade (ilimitado, legado) |
-| ``space 1`` com ``square_width 12`` | No máximo 12 unidades nessa camada |
+| ``space 1`` com ``square_width 12`` | Ocupa 1 do tamanho 12; no máximo 12 |
 | ``space 0.5`` com ``square_width 12`` | No máximo 24 |
 | ``space`` > ``square_width`` | A unidade não pode entrar nesse quadrado |
 
-A capacidade é compartilhada por todos os lados. Se o quadrado estiver cheio, movimento e
-treinamento que spawnaria ali são recusados (voz ``not_enough_space``).
+``square_width`` é o tamanho de cada quadrado (ex.: a1). ``space`` usa as mesmas unidades.
+A capacidade é contada **por aliança** (cada lado até ``square_width``); ocupação inimiga
+não usa o seu orçamento. Aliados compartilham um orçamento. Se o seu lado estiver cheio,
+movimento e treinamento que spawnaria ali são recusados (voz ``not_enough_space``).
 As camadas são independentes: ocupação terrestre não bloqueia unidades aéreas.
 
 Exemplo::

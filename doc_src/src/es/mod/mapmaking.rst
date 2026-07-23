@@ -95,8 +95,8 @@ Ancho_cuadrado
 "square_width 12" significa: "el ancho del cuadrado es de 12 metros".
 No debes modificar este parámetro, ya que los objetos pueden ser inaudibles si están demasiado lejos.
 
-Desde 1.4.5.8, ``square_width`` también es la capacidad de ``space`` de las unidades en cada capa
-aire/tierra/agua (mismas unidades: ``space 1`` → máximo 12 si ``square_width`` es 12). Véase
+Desde 1.4.5.8, ``square_width`` también es la capacidad **por alianza** de ``space`` de las unidades en cada capa
+aire/tierra/agua (mismas unidades: ``space 1`` → máximo 12 por bando si ``square_width`` es 12; conteo por alianza desde 1.4.5.9). Véase
 ``mod/modding.rst`` (Ocupación de casilla).
 
 Nb_lines y nb_columns

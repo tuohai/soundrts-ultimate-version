@@ -1032,12 +1032,14 @@ sul proprio strato aria/terra/acqua. La capacità è ``square_width`` della mapp
 | Impostazione | Effetto |
 | --- | --- |
 | ``space 0`` (predefinito) | Non consuma capacità (illimitato, legacy) |
-| ``space 1`` con ``square_width 12`` | Al massimo 12 unità su quello strato |
+| ``space 1`` con ``square_width 12`` | Occupa 1 della misura 12; al massimo 12 |
 | ``space 0.5`` con ``square_width 12`` | Al massimo 24 |
 | ``space`` > ``square_width`` | L’unità non può entrare in quella casella |
 
-La capacità è condivisa da tutte le fazioni. Se la casella è piena, movimento e
-addestramento che spawnerebbe lì vengono rifiutati (voce ``not_enough_space``).
+``square_width`` è la misura di ogni casella (es. a1). ``space`` usa le stesse unità.
+La capacità è conteggiata **per alleanza** (ogni lato fino a ``square_width``); l’occupazione
+nemica non usa il tuo budget. Gli alleati condividono un budget. Se il tuo lato è pieno,
+movimento e addestramento che spawnerebbe lì vengono rifiutati (voce ``not_enough_space``).
 Gli strati sono separati: l’occupazione a terra non blocca le unità aeree.
 
 Esempio::

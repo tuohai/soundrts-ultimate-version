@@ -1035,20 +1035,26 @@ Example::
 Square occupancy (``space``, since 1.4.5.8)
 ---------------------------------------------
 
-``space`` is a precision property (decimals allowed). It is how much of a map square
-the unit occupies on its air/ground/water layer. Capacity equals map ``square_width``
-in the same units.
+``space`` is a precision property (decimals allowed). It is how much **abstract
+capacity** a unit takes on its air/ground/water layer of a map square. Capacity
+equals map ``square_width`` in the same units. It does not change physical
+collision size.
 
 | Setting | Effect |
 | --- | --- |
-| ``space 0`` (default) | Does not consume capacity (legacy unlimited) |
-| ``space 1`` on ``square_width 12`` | At most 12 such units on that layer |
+| ``space 0`` (default) | No abstract capacity use (unlimited on that layer, legacy) |
+| ``space 1`` on ``square_width 12`` | Occupies 1 of size 12 (at most 12) |
 | ``space 0.5`` on ``square_width 12`` | At most 24 |
+| ``space 12`` on ``square_width 12`` | Fills the whole square alone |
 | ``space`` > ``square_width`` | Unit cannot enter that square |
 
-Capacity is shared by all sides. When the square is full, movement into it and training
-that would spawn there are refused (voice ``not_enough_space``). Layers are separate:
-ground occupancy does not block air units.
+``square_width`` is the size of each map square (e.g. a1). ``space`` uses the same
+units for **abstract capacity only**.
+Capacity is counted **per alliance** (each side up to ``square_width``); enemy
+occupancy does not use your budget. Allies share one budget.
+When your side is full, movement into it and training that would spawn there are
+refused (voice ``not_enough_space``). Layers are separate: ground occupancy does
+not block air units.
 
 Example::
 

@@ -1018,7 +1018,7 @@ class Player:
             return
             
         x, y, land = place.find_and_remove_meadow(type_)
-        if not place.have_enough_square_space(type_):
+        if not place.have_enough_square_space(type_, player=self):
             return
         x, y = place.find_free_space(type_.airground_type, x, y)
         if x is not None:

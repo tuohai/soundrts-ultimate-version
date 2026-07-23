@@ -334,9 +334,10 @@ Si se destruyen casas o se obtienen nuevas unidades sin capacitación y la pobla
 Ocupación de casilla
 ^^^^^^^^^^^^^^^^^^^^
 
-Algunas unidades también ocupan ``space`` abstracto en una casilla (aparte de la población). Si una
-casilla está llena en esa capa (aire, tierra o agua), no pueden entrar más unidades ni entrenarse
-allí («espacio insuficiente»). Aliados y enemigos comparten la misma capacidad.
+Algunas unidades también ocupan ``space`` abstracto en una casilla (aparte de la población).
+La capacidad es por alianza (cada bando hasta ``square_width``); la ocupación enemiga no te
+bloquea. Si tu bando está lleno en esa capa (aire, tierra o agua), no pueden entrar más
+unidades ni entrenarse allí («espacio insuficiente»). Los aliados comparten un cupo.
 
 comida
 ^^^^^^
