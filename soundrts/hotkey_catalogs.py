@@ -541,6 +541,7 @@ def _build_map_catalog() -> Catalog:
         ("map.select_meadow.-1", list(mp.HOTKEY_MEADOW_PREV)),
         ("map.select_passage.1", list(mp.HOTKEY_PASSAGE_NEXT)),
         ("map.select_passage.-1", list(mp.HOTKEY_PASSAGE_PREV)),
+        ("map.say_square_info", list(mp.HOTKEY_SAY_SQUARE_INFO)),
         ("map.toggle_zoom", list(mp.HOTKEY_TOGGLE_ZOOM)),
         ("map.exit_overlay_mode", list(mp.HOTKEY_EXIT_MAP)),
     ]
@@ -573,6 +574,7 @@ def _build_classic_catalog() -> Catalog:
         ("classic.toggle_gear_screen", list(mp.HOTKEY_TOGGLE_GEAR_SCREEN)),
         ("classic.unit_hp_status", list(mp.HOTKEY_UNIT_HP_STATUS)),
         ("classic.examine", list(mp.HOTKEY_EXAMINE)),
+        ("classic.say_square_info", list(mp.HOTKEY_SAY_SQUARE_INFO)),
         ("classic.unit_status", list(mp.HOTKEY_UNIT_STATUS)),
         ("classic.select_square.0.1", list(mp.HOTKEY_MOVE_NORTH)),
         ("classic.select_square.0.-1", list(mp.HOTKEY_MOVE_SOUTH)),

@@ -182,6 +182,8 @@ MULTIPLAYER = [4018]
 MULTIPLAYER2 = [4033]
 MULTIPLAYER2_EXPLANATION = [4034]
 NEUTRALIZED = [145]
+# Classic map objective "145 88" as one phrase (word order varies by language).
+NEUTRALIZE_ENEMY = [4027]
 NEW_LOGIN = [4239]
 NEW_OBJECTIVE = [4268]
 PRIMARY_OBJECTIVE = [5032]
@@ -208,6 +210,11 @@ VOICE_LIB_SECONDARY = ["副语音库"]
 VOICE_LIB_SECONDARY_TOGGLE = ["启用或禁用副语音"]
 VOICE_LIB_SECONDARY_ON = ["副语音已启用"]
 VOICE_LIB_SECONDARY_OFF = ["副语音已禁用，主语音接管全部播报"]
+# F4 无障碍语音开关（关掉后无 TTS，方便明眼人）
+ACCESSIBILITY_VOICE = [5740]
+ACCESSIBILITY_VOICE_ON = [5741]
+ACCESSIBILITY_VOICE_OFF = [5742]
+ACCESSIBILITY_VOICE_TOGGLE = [5743]
 VOICE_LIB_VOLUME = [5710]  # 音量
 VOICE_LIB_PITCH = [5711]  # 音调
 VOICE_LIB_RATE = [5712]  # 语速
@@ -224,6 +231,7 @@ VOICE_LIB_HELP = [
     "禁用副语音时左右 Alt 均可跳过当前播报。"
     "可在本菜单启用或禁用副语音：禁用后主语音接管全部播报（与单通道模式相同）；启用后恢复主副分工。"
     "在任意菜单中按 F3 也可切换副语音（对局内无效）。"
+    "在任意菜单中按 F4 可开关无障碍语音：关闭后不再播报 TTS，方便明眼人用画面游玩；再按 F4 可重新开启（对局内 F4 仍是帮助界面）。"
     "在语音库设置中：上下光标选择参数，左右光标调整。"
     "局内热键：F9切换声卡，F10切换参数类型，F11和F12调节当前参数。"
     "Shift加F9到F12调节副库。右Shift加C复制副库最近播报，右Shift加B追加副库到剪贴板。左Shift加C与左Shift加B默认在global_bindings.txt中注释；若要用，去掉行首分号即可启用。"
@@ -902,6 +910,7 @@ HOTKEY_TOGGLE_SELECTION_MODE = [5515]     # 切换单位与建筑界面
 HOTKEY_TOGGLE_ACTION_MODE = [5516]        # 切换命令与技能界面
 HOTKEY_TOGGLE_GEAR_SCREEN = [5517]        # 切换背包与装备栏
 HOTKEY_ENTER_HELP_MODE = [5518]           # 进入帮助与查询
+HOTKEY_TOGGLE_SPEECH = [5743]             # 开关无障碍语音（F4）
 HOTKEY_ENTER_DIPLOMACY_MODE = [5519]      # 进入外交界面
 HOTKEY_ATTRIBUTES_SCREEN = [5520]         # 属性界面
 HOTKEY_INVENTORY_SCREEN = [5521]          # 背包
@@ -1137,3 +1146,11 @@ BELONGS_TO_AGE = [5732]
 
 # 单位占地体积（rules: space；格子容量 = square_width）
 SPACE = [5733]
+
+# 方格地形信息界面（say_square_info）
+SQUARE_WIDTH = [5734]  # square width / 格子大小
+HEIGHT = [5735]  # height / 高度（高地等）
+COVER_VS = [5736]  # cover_vs
+DODGE_VS = [5737]  # dodge_vs
+HOTKEY_SAY_SQUARE_INFO = [5738]  # 方格地形信息
+TERRAIN_COVER = [5739]  # terrain cover / 地形掩护

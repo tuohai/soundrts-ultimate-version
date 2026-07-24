@@ -232,6 +232,34 @@ Alt: interrumpe la oración actual.
 
 Para salir de un juego o acceder al menú del juego, presione F10. Alt F4 y Control C hacen lo mismo.
 
+**Ctrl+F2: conmutar pantalla y calidad visual (modo visual)**
+
+Con la pantalla activada se muestra el mapa en planta con mejor calidad que la vista de depuración antigua: colores de terreno, terreno alto más claro, niebla con tono, mapa centrado; rejilla y muros/salidas; formas, colores de equipo, selección, barras de vida; coordenadas, nombres, panel izquierdo. Con la pantalla on puede usar el ratón:
+
+- Clic izquierdo selecciona; doble clic selecciona todas las unidades visibles del mismo tipo; Shift+clic añade/quita; Shift+arrastra añade a la selección; clic en suelo vacío salta de casilla y limpia la selección.
+- Clic derecho: órdenes por defecto (colas Shift/Ctrl sin cambios).
+- Con selección: rejilla de comandos 5×3 abajo a la derecha y cola/cancelar abajo a la izquierda. PNG opcionales en ``res/ui/icons/<tipo>.png``.
+- **Pack inicial**: ya hay PNG geométricos en ``res/ui/icons/``; sustituye el mismo nombre para personalizar; ``python tools/gen_hud_icons.py`` regenera.
+
+Con la pantalla off, teclado y voz siguen siendo lo principal. El estado se guarda (``display_enabled``) y se restaura al reiniciar. Véase `teclas por capas <layered-hotkeys.htm>`_.
+
+**Lista de menú y ratón (visual pygame)**
+
+Los menús dibujan una lista en la ventana. Ratón: pasar, clic para seleccionar, otro clic o doble clic para confirmar; teclado igual.
+
+**Escenas, sinopsis y texto de objetivos**
+
+Sinopsis de campaña, escenas (sequence / cut_scene), intro de mapa y objetivo inicial muestran texto. F9 / Shift+F9 en partida también.
+
+- **Objetivo inicial**: siempre **scroll** (continúa al terminar; cualquier tecla salta). En partida se puede volver a ver con el botón Objetivos / atajo.
+- **Escenas / sinopsis / intro**: local / entrenamiento / solo vs PCs: **Enter** / **Esc**; en línea con dos o más humanos: scroll.
+
+El texto en píxeles suele no llegar a lectores/braille; el juego a ciegas sigue con TTS.
+
+**F4 en menús: voz de accesibilidad**
+
+En cualquier menú (incluido el de pausa), F4 o el ítem del menú de juego conmuta todo el TTS. Apagado: siguen SFX y música. Por defecto activado. **F4 en partida sigue siendo Ayuda**; solo en menús. Véase `bibliotecas de voz <voice-libraries.htm>`_.
+
 Alt+Espacio o Control+Espacio: ingresa al modo RPG en primera persona. Escape: vuelve al modo mapa.
 
 En modo primera persona:

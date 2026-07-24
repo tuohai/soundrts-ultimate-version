@@ -96,6 +96,10 @@ class AttributesInterface:
 
     def _process_keyboard_event(self, e):
         """处理键盘事件"""
+        from ..clientgame.square_info_screen import process_keyboard_event as square_info_keys
+
+        if square_info_keys(self.interface, e):
+            return True
         if self.equipment_screen._process_keyboard_event(e):
             return True
         if self.inventory_screen._process_keyboard_event(e):

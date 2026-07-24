@@ -189,80 +189,78 @@ class Zoom:
 
     def move_to(self, o):
         self.parent.place = o.place
-        
-        # 更新精细度设置
-        self.precision = getattr(self.parent, '_zoom_precision', 3)
+        self.precision = getattr(self.parent, "_zoom_precision", 3)
         self.half_precision = self.precision // 2
         sq = self.parent.place
         self.xstep = (sq.xmax - sq.xmin) / self.precision
         self.ystep = (sq.ymax - sq.ymin) / self.precision
-        
-        # 更新当前主方格记录
         self.current_main_square = self.parent.place
-        
-        # 在当前精细度下找到包含目标对象的子区域
-        found = False
-        
-        # 计算正确的搜索范围
-        if self.precision % 2 == 0:
-            # 偶数精细度
-            max_coord = self.half_precision - 1
-            min_coord = -self.half_precision
-        else:
-            # 奇数精细度
-            max_coord = self.half_precision
-            min_coord = -self.half_precision
-            
-        # 首先尝试基于对象位置直接计算子区域坐标
-        obj_x = o.model.x if hasattr(o, 'model') else o.x
-        obj_y = o.model.y if hasattr(o, 'model') else o.y
-        
-        # 计算对象在方格内的相对位置
-        rel_x = (obj_x - sq.xmin) / (sq.xmax - sq.xmin)
-        rel_y = (obj_y - sq.ymin) / (sq.ymax - sq.ymin)
-        
-        # 将相对位置转换为子区域坐标
-        # 注意：我们需要考虑坐标系统的中心偏移
-        grid_x = rel_x * self.precision - self.half_precision - 0.5
-        grid_y = rel_y * self.precision - self.half_precision - 0.5
-        
-        # 取最接近的整数坐标
-        best_sub_x = round(grid_x)
-        best_sub_y = round(grid_y)
-        
-        # 确保坐标在有效范围内
-        best_sub_x = max(min_coord, min(max_coord, best_sub_x))
-        best_sub_y = max(min_coord, min(max_coord, best_sub_y))
-        
-        # 验证计算出的坐标
-        self.sub_x = best_sub_x
-        self.sub_y = best_sub_y
-        self.update_coords()
-        
-        if self.contains(o):
-            self.parent.set_obs_pos()
-            found = True
-        else:
-            # 如果直接计算的坐标不包含对象，使用遍历搜索
+
+        obj_x = o.model.x if hasattr(o, "model") else o.x
+        obj_y = o.model.y if hasattr(o, "model") else o.y
+        self.move_to_world(obj_x, obj_y)
+        if not self.contains(o):
+            # Fallback: scan subcells
+            if self.precision % 2 == 0:
+                max_coord = self.half_precision - 1
+                min_coord = -self.half_precision
+            else:
+                max_coord = self.half_precision
+                min_coord = -self.half_precision
+            found = False
             for sub_y in range(min_coord, max_coord + 1):
                 for sub_x in range(min_coord, max_coord + 1):
                     self.sub_x = sub_x
                     self.sub_y = sub_y
                     self.update_coords()
                     if self.contains(o):
-                        self.parent.set_obs_pos()
                         found = True
                         break
                 if found:
                     break
-                
-        if not found:
-            # 如果找不到合适的子区域，默认到中心
-            self.sub_x = 0
-            self.sub_y = 0
-            self.update_coords()
-            self.parent.set_obs_pos()
-            warning("zoom: couldn't find suitable subarea for object, defaulting to center")
+            if not found:
+                self.sub_x = 0
+                self.sub_y = 0
+                self.update_coords()
+                warning(
+                    "zoom: couldn't find suitable subarea for object, defaulting to center"
+                )
+        self.parent.set_obs_pos()
+
+    def move_to_world(self, world_x, world_y):
+        """Move zoom focus to the sub-cell containing world (x, y) in the current square.
+
+        Returns True if sub_x/sub_y changed.
+        """
+        self.precision = getattr(self.parent, "_zoom_precision", 3)
+        self.half_precision = self.precision // 2
+        sq = self.parent.place
+        if sq is None:
+            return False
+        self.xstep = (sq.xmax - sq.xmin) / self.precision
+        self.ystep = (sq.ymax - sq.ymin) / self.precision
+        self.current_main_square = sq
+
+        if self.precision % 2 == 0:
+            max_coord = self.half_precision - 1
+            min_coord = -self.half_precision
+        else:
+            max_coord = self.half_precision
+            min_coord = -self.half_precision
+
+        rel_x = (world_x - sq.xmin) / max(sq.xmax - sq.xmin, 1e-9)
+        rel_y = (world_y - sq.ymin) / max(sq.ymax - sq.ymin, 1e-9)
+        grid_x = rel_x * self.precision - self.half_precision - 0.5
+        grid_y = rel_y * self.precision - self.half_precision - 0.5
+        best_sub_x = max(min_coord, min(max_coord, int(round(grid_x))))
+        best_sub_y = max(min_coord, min(max_coord, int(round(grid_y))))
+
+        old = (self.sub_x, self.sub_y)
+        self.sub_x = best_sub_x
+        self.sub_y = best_sub_y
+        self.update_coords()
+        self.parent.set_obs_pos()
+        return old != (self.sub_x, self.sub_y)
 
     def select(self):
         self.parent.target = None

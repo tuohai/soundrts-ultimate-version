@@ -5,20 +5,38 @@ from pathlib import Path
 
 def test_world_loop_starts_after_opening_objective():
     text = Path("soundrts/clientgame/game_interface_base.py").read_text(encoding="utf-8")
-    body = text.split("def _run_game_body(self, game, new=True):", 1)[1]
+    body = text.split("def _run_game_body_with_narratives(self, game, new=True):", 1)[1]
     body = body.split("\n    def ", 1)[0]
-    obj_at = body.find("voice.confirmation(mp.OBJECTIVE")
+    obj_block = body.find("if game.world.objective:")
+    assert obj_block != -1
+    obj_at = body.find("play_scrolling_line(", obj_block)
+    if obj_at == -1:
+        obj_at = body.find("play_narrative_line(", obj_block)
+    if obj_at == -1:
+        obj_at = body.find("play_cutscene_line(", obj_block)
+    if obj_at == -1:
+        obj_at = body.find("voice.confirmation(", obj_block)
     world_at = body.find("threading.Thread(target=game.world.loop)")
     assert obj_at != -1
     assert world_at != -1
     assert obj_at < world_at
+    assert "mp.OBJECTIVE" in body[obj_block : obj_block + 800]
 
 
 def test_in_match_enabled_when_world_starts():
     text = Path("soundrts/clientgame/game_interface_base.py").read_text(encoding="utf-8")
-    body = text.split("def _run_game_body(self, game, new=True):", 1)[1]
+    body = text.split("def _run_game_body_with_narratives(self, game, new=True):", 1)[1]
     body = body.split("\n    def ", 1)[0]
-    assert body.find("set_in_match(True)") > body.find("voice.confirmation(mp.OBJECTIVE")
+    obj_block = body.find("if game.world.objective:")
+    obj_at = body.find("play_scrolling_line(", obj_block)
+    if obj_at == -1:
+        obj_at = body.find("play_narrative_line(", obj_block)
+    if obj_at == -1:
+        obj_at = body.find("play_cutscene_line(", obj_block)
+    if obj_at == -1:
+        obj_at = body.find("voice.confirmation(", obj_block)
+    assert obj_at != -1
+    assert body.find("set_in_match(True)") > obj_at
 
 
 def test_say_now_stops_on_any_key_out_of_match():

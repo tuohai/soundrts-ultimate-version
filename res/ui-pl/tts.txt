@@ -210,6 +210,7 @@
 4024	zużyto
 4025	budynek
 4026	wynik
+4027	zneutralizować przeciwnika
 4028	Naciśnij F1, aby uzyskać pomoc
 4029	menu główne
 4030	Czego chcesz?

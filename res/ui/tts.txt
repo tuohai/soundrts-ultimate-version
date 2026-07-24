@@ -222,7 +222,7 @@
 4024	consumed
 4025	building
 4026	score
-
+4027	neutralized enemy
 4028	press F1 for help
 4029	main menu
 4030	please make a selection
@@ -1560,3 +1560,13 @@
 5731	buildings of
 5732	belongs to age
 5733	space
+5734	square width
+5735	height
+5736	cover_vs
+5737	dodge_vs
+5738	square terrain info
+5739	terrain cover
+5740	accessibility voice
+5741	accessibility voice is now on
+5742	accessibility voice is now off
+5743	toggle accessibility voice

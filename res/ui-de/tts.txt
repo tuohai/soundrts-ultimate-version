@@ -210,6 +210,7 @@
 4024	benötigt
 4025	Gebäude
 4026	punkte
+4027	Feind neutralisieren
 4028	F1 für Hilfe
 4029	Hauptmenü,
 4030	bitte wählen Sie einen Eintrag.

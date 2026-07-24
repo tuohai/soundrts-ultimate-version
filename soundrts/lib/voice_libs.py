@@ -615,6 +615,65 @@ def toggle_secondary_voice_enabled(*, announce: bool = True) -> bool:
     return bool(config.secondary_voice_enabled)
 
 
+def speech_is_enabled() -> bool:
+    from .. import config
+
+    return bool(int(getattr(config, "speech_enabled", 1)))
+
+
+def apply_speech_enabled() -> None:
+    """Sync ``voice.speech_enabled`` from config."""
+    try:
+        from ..clientmedia import voice
+
+        voice.speech_enabled = speech_is_enabled()
+    except Exception:
+        pass
+
+
+def toggle_speech_enabled(*, announce: bool = True) -> bool:
+    """F4 无障碍语音开关。关闭后不再播报 TTS（音效/音乐仍可用）。
+
+    关闭前会强制播报一次「已关闭」；开启后播报「已开启」。
+    """
+    from .. import config
+    from .. import msgparts as mp
+
+    enabled = int(getattr(config, "speech_enabled", 1))
+    turning_off = bool(enabled)
+    try:
+        from ..clientmedia import voice
+
+        if turning_off:
+            if announce:
+                try:
+                    voice.channel.stop()
+                except Exception:
+                    pass
+                # force：在关掉开关前把状态说完
+                voice.item(mp.ACCESSIBILITY_VOICE_OFF, force=True)
+            config.speech_enabled = 0
+            voice.speech_enabled = False
+            # 不 silent_flush，让「已关闭」播完；之后的新消息会被挡住
+        else:
+            config.speech_enabled = 1
+            voice.speech_enabled = True
+            if announce:
+                try:
+                    voice.channel.stop()
+                except Exception:
+                    pass
+                voice.item(mp.ACCESSIBILITY_VOICE_ON)
+    except Exception:
+        config.speech_enabled = 0 if turning_off else 1
+        apply_speech_enabled()
+    try:
+        config.save()
+    except Exception:
+        pass
+    return speech_is_enabled()
+
+
 def handle_hotkey(key: int, mod: int) -> bool:
     """Handle F9–F12 / Shift+F9–F12 and L/R Shift+C / Shift+B."""
     try:

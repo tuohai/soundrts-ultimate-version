@@ -80,6 +80,8 @@ LCTRL: examine
 RCTRL: examine
 SPACE: unit_status
 v: unit_hp_status
+; 当前方格地形详情（可浏览：上下键切换，左右键浏览多项 *_vs，Esc 退出）
+CTRL SHIFT F7: say_square_info
 ; 目标 / 玩家列表（原 F9/F11，让位给语音库热键）
 CTRL F9: objectives 1
 CTRL SHIFT F9: objectives -1
@@ -88,13 +90,7 @@ CTRL F11: say_players
 ; 语音库设置（迷雾世界风格：主=玩家操作，副=被动事件）
 ; F9 切换该库输出声卡；F10 音量/音调/语速/音库；F11/F12 调节当前项
 F9: voice_lib_device 0
-F10: voice_lib_param 0
-F11: voice_lib_nudge -5 0
-F12: voice_lib_nudge 5 0
-SHIFT F9: voice_lib_device 1
-SHIFT F10: voice_lib_param 1
-SHIFT F11: voice_lib_nudge -5 1
-SHIFT F12: voice_lib_nudge 5 1
+F10: gamemenu
 ; 右 Shift+C/B：复制/追加副库（默认启用）
 ; 左 Shift+C/B：复制/追加主库（默认注释；去掉行首 ; 即可启用）
 ; LSHIFT C: voice_lib_copy primary
@@ -114,7 +110,6 @@ RALT: history_stop_secondary
 ; 游戏菜单（原 F10，保留 Ctrl+C / Alt+F4）
 CTRL c: gamemenu
 ALT F4: gamemenu
-CTRL F10: gamemenu
 
 ; 外交（原 F12）
 CTRL F12: enter_diplomacy_mode

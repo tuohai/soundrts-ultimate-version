@@ -22,6 +22,9 @@ SHIFT m: select_meadow -1
 p: select_passage 1
 SHIFT p: select_passage -1
 
+; 当前方格地形详情（上下键切换条目，左右键浏览 *_vs，Esc 退出）
+i: say_square_info
+
 F8: toggle_zoom
 CTRL F8: change_zoom_precision
 SHIFT F8: change_zoom_precision -1

@@ -84,10 +84,11 @@ def set_screen(fullscreen):
         x, y = get_desktop_screen_mode()
         window_style = FULLSCREEN
     else:
+        # Large enough for pygame menus / narrative (sighted UI); TTS still works.
         if version.IS_DEV_VERSION:
-            x, y = 200, 200
+            x, y = 800, 560
         else:
-            x, y = 400, 75
+            x, y = 960, 640
         window_style = 0
     try:
         _screen = pygame.display.set_mode((x, y), window_style)

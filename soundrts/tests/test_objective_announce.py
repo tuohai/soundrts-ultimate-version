@@ -4,6 +4,8 @@ from soundrts.lib.msgs import nb2msg
 from soundrts.objective_announce import (
     collect_objective_entries,
     collect_planned_objective_numbers,
+    flatten_objective_description,
+    localize_objective_phrases,
     navigate_objective_index,
     objective_prefix_msg,
     should_announce_objective_number,
@@ -88,3 +90,16 @@ def test_collect_objective_entries_orders_primary_before_secondary():
     assert len(entries) == 2
     assert entries[0] == mp.PRIMARY_OBJECTIVE + mp.COLON + ["7583"]
     assert entries[1] == mp.SECONDARY_OBJECTIVE + mp.COLON + ["7599"]
+
+
+def test_localize_objective_145_88_collapses_to_phrase():
+    assert localize_objective_phrases([145, 88]) == mp.NEUTRALIZE_ENEMY
+    assert flatten_objective_description([145, 88]) == mp.NEUTRALIZE_ENEMY
+    assert flatten_objective_description(["145", "88"]) == mp.NEUTRALIZE_ENEMY
+
+
+def test_localize_objective_leaves_standalone_145():
+    assert localize_objective_phrases([145]) == [145]
+    assert localize_objective_phrases([4021, 145, 88]) == (
+        [4021] + mp.NEUTRALIZE_ENEMY
+    )

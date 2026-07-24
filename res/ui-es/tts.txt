@@ -210,6 +210,7 @@
 4024	consumido
 4025	construcción
 4026	puntuación
+4027	neutralizar al enemigo
 4028	para ayuda, pulsa f1
 4029	menú principal
 4030	¿qué deseas hacer?

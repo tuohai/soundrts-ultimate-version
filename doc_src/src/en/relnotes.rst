@@ -5,6 +5,63 @@ Release notes
 .. contents::
 
 
+1.4.6.0
+--------
+
+**New / improved: Ctrl+F2 visual quality (sighted top-down view)**
+
+Compared with the old debug-style map (flat blocks, black walls, tiny dots), this release raises readability and information density:
+
+- **Terrain and mood**: readable default colors when style has no ``color`` (plains/forest/water/mountains, etc.); high ground brightened with a slight warm bias (no harsh ×2 blowout); fog-of-war memory darkened but keeps hue; map centered with margins.
+- **Structure cues**: grid lines; walls (no-exit edges) vs exits/passages drawn differently.
+- **Units and resources**: distinct shapes for units/buildings/resources; team colors; selection highlight; HP bars; air markers.
+- **Labels and info panel**: 1-based numeric coords (e.g. 2,7), place names and resource amounts when cells are large enough; left hover panel for terrain and unit/building basics (HP, attack/defense, etc.).
+- **Readability extras**: soft fog fringes; pulsing selection; target cross + march lines; hurt/attack flashes and short particles; build/train progress rings; movement lerp (visual only).
+- **Minimap**: top-right global overview (hidden in F8 zoom); left-click jumps square, right-click jumps and issues default order.
+- **Objectives button**: top-left; left-click next, Shift+click previous (same as objectives hotkey); Esc dismisses caption.
+- **Mouse (display on only)**: click select; double-click same type; Shift+click add/remove; Shift+box append; empty click jumps square and clears; right-click default orders unchanged.
+- **Command-card HUD**: 5×3 icon grid (bottom-right); queue + cancel-last (bottom-left); optional ``res/ui/icons/<type>.png``.
+- **Starter icon pack**: flat geometric PNGs already in ``res/ui/icons/`` for common units/buildings/orders; replace same filename to customize; regenerate via ``python tools/gen_hud_icons.py``.
+- **F8 zoom + display**: current square fills the view with a sub-cell grid; mouse moves focus, selects units, box-selects, right-clicks orders onto a sub-cell.
+- **Code**: ``clientgamegridview.py``, ``clientgame/game_visual_fx.py``, ``clientgame/game_input_handler.py``, ``clientgame/game_unit_control.py``, ``clientgame/game_hud.py``.
+- **Docs**: player manuals and layered-hotkeys.
+
+**New: F4 accessibility voice toggle in menus**
+
+- In **any menu** (including the in-game pause menu), press **F4**, or use “toggle accessibility voice” in the game menu, to turn all TTS off/on.
+- **Off**: no speech; SFX and music still work—handy with Ctrl+F2 for sighted play.
+- **Default on** (blind-friendly); saved in ``SoundRTS.ini`` (``speech_enabled``).
+- **In-match F4 unchanged** (layered hotkeys: still Help & Query); this toggle is menu-only.
+- **Code**: ``config.py``, ``lib/voice.py``, ``lib/voice_libs.py`` / ``lib/speech_accessibility.py``, ``clientmenu.py``, ``clientgame/game_resources.py``, ``msgparts.py``; TTS 5740–5743.
+- **Docs**: ``player/voice-libraries.rst``, player manuals.
+
+**New: pygame menu visuals and mouse (no wxPython)**
+
+- Main / sub / pause menus draw a selectable list in the SDL window (default about 960×640).
+- **Mouse**: hover highlight; click to select and announce; click again or double-click to confirm. Keyboard behavior unchanged.
+- Blind play remains TTS + keyboard; on-screen text is pixel-drawn and **usually not available to screen readers / braille displays** (same class of limit as the in-match map view).
+- **Code**: ``lib/pygame_ui.py``, ``clientmenu.py``, ``lib/screen.py``.
+
+**New: on-screen cut-scenes / campaign synopsis / objectives**
+
+- Campaign ``synopsis``, cut-scene ``sequence``, map ``intro``, opening objectives, and in-match objective browse (hotkey or top-left Objectives button) show text on screen.
+- **Opening objectives**: always **scroll** (auto-continue; any key skips); re-check in-match via Objectives button / hotkey.
+- **Cut-scenes / synopsis / intro**: local / training / vs computers only still **Enter** / **Esc**; online with two or more humans scrolls so one player cannot stall everyone.
+- **Code**: ``lib/voice.py`` (``play_cutscene_line`` / ``play_scrolling_line`` / ``play_narrative_line``), ``clientmedia.play_sequence``, ``campaign.py``, ``game_interface_base.py``, ``game_resources.py``, ``game_display.py``.
+
+**Improvement: Ctrl+F2 display toggle persisted**
+
+- Saved as ``display_enabled`` under ``[general]`` in ``SoundRTS.ini``; restored on next launch.
+- **Code**: ``config.py``, ``clientmedia.py``.
+
+**Fix: letter-jump lag in long map lists**
+
+- **Symptom**: After “start a game”, jumping to a map by first letter lagged ~0.8 s.
+- **Cause**: Menu redraw ran a global campaign TTS scan per map name.
+- **Fix**: Local fast labels + cache; drop redundant redraw after every key.
+- **Code**: ``lib/pygame_ui.py``, ``clientmenu.py``.
+
+
 1.4.5.9
 --------
 

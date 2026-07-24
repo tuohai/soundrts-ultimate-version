@@ -211,6 +211,7 @@
 4024	đã tiêu thụ
 4025	công trình
 4026	điểm số
+4027	tiêu diệt kẻ địch
 4028	nhấn F1 để xem trợ giúp
 4029	menu chính
 4030	vui lòng chọn

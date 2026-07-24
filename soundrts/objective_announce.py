@@ -3,6 +3,37 @@ from . import msgparts as mp
 from .lib.msgs import nb2msg
 
 
+def _part_sound_id(part):
+    """Normalize a message part to a digit string id, or None."""
+    if isinstance(part, int):
+        return str(part)
+    if isinstance(part, str) and part.isdigit():
+        return part
+    return None
+
+
+def localize_objective_phrases(parts):
+    """Collapse classic objective fragments into natural whole phrases.
+
+    Maps hardcode English word order ``145 88`` (neutralized + enemy). Speaking
+    those two ids in order is awkward in many languages, so objective speech
+    uses ``4027`` instead. Standalone ``145`` stays for combat alerts.
+    """
+    parts = list(parts or [])
+    out = []
+    i = 0
+    while i < len(parts):
+        cur = _part_sound_id(parts[i])
+        nxt = _part_sound_id(parts[i + 1]) if i + 1 < len(parts) else None
+        if cur == "145" and nxt == "88":
+            out.extend(mp.NEUTRALIZE_ENEMY)
+            i += 2
+            continue
+        out.append(parts[i])
+        i += 1
+    return out
+
+
 def collect_planned_objective_numbers(triggers):
     """从地图触发器树中统计计划添加的主要/可选目标编号。"""
     primary = set()
@@ -87,27 +118,36 @@ def flatten_objective_description(items):
     """将目标描述转为可播报的消息片段。"""
     result = []
     items = items or []
-    all_digits = all(isinstance(x, str) and x.isdigit() for x in items)
+    all_digits = all(
+        (isinstance(x, str) and x.isdigit()) or isinstance(x, int) for x in items
+    )
     if all_digits:
-        return list(items)
+        return localize_objective_phrases(list(items))
 
     for it in items:
-        if isinstance(it, str) and it.isdigit():
+        if isinstance(it, int):
+            result.append(it)
+        elif isinstance(it, str) and it.isdigit():
             result += nb2msg(int(it))
         elif isinstance(it, list):
             inner = it
-            inner_all_digits = all(isinstance(s, str) and s.isdigit() for s in inner)
+            inner_all_digits = all(
+                (isinstance(s, str) and s.isdigit()) or isinstance(s, int)
+                for s in inner
+            )
             if inner_all_digits:
                 result.extend(inner)
             else:
                 for sub in inner:
-                    if isinstance(sub, str) and sub.isdigit():
+                    if isinstance(sub, int):
+                        result.append(sub)
+                    elif isinstance(sub, str) and sub.isdigit():
                         result += nb2msg(int(sub))
                     else:
                         result.append(sub)
         else:
             result.append(it)
-    return result
+    return localize_objective_phrases(result)
 
 
 def collect_objective_entries(world, player):

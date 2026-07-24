@@ -29,6 +29,23 @@ def update_display_caption():
     pygame.display.set_caption(app_title())
 
 
+def _apply_display_from_config():
+    """Restore Ctrl+F2 display state from SoundRTS.ini."""
+    global fullscreen
+    try:
+        fullscreen = bool(int(getattr(config, "display_enabled", 0)))
+    except Exception:
+        fullscreen = False
+
+
+def _persist_display_enabled():
+    try:
+        config.display_enabled = 1 if fullscreen else 0
+        config.save()
+    except Exception:
+        pass
+
+
 def minimal_init():
     """initialize sound, voice, screen, window title, keyboard"""
     sound.init(
@@ -42,8 +59,10 @@ def minimal_init():
         from .lib import voice_libs
 
         voice_libs.apply_all()
+        voice_libs.apply_speech_enabled()
     except Exception:
         pass
+    _apply_display_from_config()
     set_screen(fullscreen)
     res.register(update_display_caption)
     pygame.key.set_repeat(500, 100)
@@ -80,6 +99,7 @@ def toggle_fullscreen():
     global fullscreen
     fullscreen = not fullscreen
     set_screen(fullscreen)
+    _persist_display_enabled()
     if fullscreen:
         voice.item(mp.DISPLAY_ON)
     else:
@@ -127,12 +147,14 @@ def play_sequence(names):
     sound.stop(stop_voice_too=False)  # 不停止语音通道
     
     from .lib import game_tts
+    from .lib.pygame_ui import end_narrative
 
-    # 播放序列
+    # 本地：Enter/Esc；联机多人（must_scroll_narratives）：滚动播完即过
     for name in names:
-        # 检查是否是数字ID，但不要立即判断它是聊天文本
-        # 先检查它是否是一个有效的声音ID
-        voice.important([name], tts_channel=game_tts.PRIMARY)
+        cmd = voice.play_narrative_line([name], tts_channel=game_tts.PRIMARY)
+        if cmd == "skip":
+            break
+    end_narrative()
             
     # 只有当我们暂停了音乐时才恢复
     if music_controlled_by_us:

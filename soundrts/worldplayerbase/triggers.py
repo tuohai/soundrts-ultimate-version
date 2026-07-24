@@ -12,7 +12,11 @@ from ..worldentity import NotEnoughSpaceError
 from ..worldupgrade import is_an_upgrade
 from ..worldskill import Skill
 from ..worlditem import Item
-from ..objective_announce import objective_prefix_msg, should_announce_objective_number
+from ..objective_announce import (
+    flatten_objective_description,
+    objective_prefix_msg,
+    should_announce_objective_number,
+)
 from .base import alliance_ids_equal, normalize_alliance_id
 from .allied_control import mark_allied_control_changed
 
@@ -2504,7 +2508,10 @@ class TriggersMixin:
             sound.pause_music()
             prefix = mp.SECONDARY_OBJECTIVE if optional else mp.PRIMARY_OBJECTIVE
             show_number = should_announce_objective_number(self, optional=optional)
-            announcement = objective_prefix_msg(prefix, n, show_number) + o.description
+            announcement = (
+                objective_prefix_msg(prefix, n, show_number)
+                + flatten_objective_description(o.description)
+            )
             self.send_voice_important(announcement)
             self.push("resume_music", None)
 
@@ -2523,9 +2530,12 @@ class TriggersMixin:
                             ally_show_number = should_announce_objective_number(
                                 ally, optional=optional
                             )
-                            ally_announcement = objective_prefix_msg(
-                                prefix, n, ally_show_number
-                            ) + ally_obj.description
+                            ally_announcement = (
+                                objective_prefix_msg(
+                                    prefix, n, ally_show_number
+                                )
+                                + flatten_objective_description(ally_obj.description)
+                            )
                             ally.send_voice_important(ally_announcement)
                         except Exception:
                             pass
@@ -2593,7 +2603,9 @@ class TriggersMixin:
 
         if description is not None:
             sound.pause_music()
-            self.send_voice_important(mp.OBJECTIVE_COMPLETE + description)
+            self.send_voice_important(
+                mp.OBJECTIVE_COMPLETE + flatten_objective_description(description)
+            )
 
         try:
             for ally in getattr(self, 'allied', []) or []:
@@ -2610,7 +2622,8 @@ class TriggersMixin:
                 if ally_description is not None:
                     try:
                         ally.send_voice_important(
-                            mp.OBJECTIVE_COMPLETE + ally_description
+                            mp.OBJECTIVE_COMPLETE
+                            + flatten_objective_description(ally_description)
                         )
                     except Exception:
                         pass
@@ -2647,7 +2660,10 @@ class TriggersMixin:
         from ..lib import sound
 
         sound.pause_music()
-        self.send_voice_important(mp.OPTIONAL_OBJECTIVE_ABANDONED + o.description)
+        self.send_voice_important(
+            mp.OPTIONAL_OBJECTIVE_ABANDONED
+            + flatten_objective_description(o.description)
+        )
         del self.objectives[key]
 
         try:
@@ -2657,7 +2673,10 @@ class TriggersMixin:
                 if hasattr(ally, 'objectives') and key in ally.objectives:
                     try:
                         ally.send_voice_important(
-                            mp.OPTIONAL_OBJECTIVE_ABANDONED + ally.objectives[key].description
+                            mp.OPTIONAL_OBJECTIVE_ABANDONED
+                            + flatten_objective_description(
+                                ally.objectives[key].description
+                            )
                         )
                     except Exception:
                         pass

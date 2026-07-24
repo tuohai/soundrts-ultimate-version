@@ -199,6 +199,10 @@ def legacy_handle_escape(interface):
     if getattr(interface, "_in_equipment_screen", False):
         interface.equipment_screen.cmd__equipment_escape()
         return True
+    if getattr(interface, "_in_square_info_screen", False):
+        from .square_info_screen import cmd__exit_square_info_screen
+        cmd__exit_square_info_screen(interface)
+        return True
     if getattr(interface, "_in_attributes_screen", False):
         interface.cmd__exit_attributes_screen()
         return True
@@ -353,6 +357,10 @@ def handle_escape(interface):
         return True
     if getattr(interface, "_in_equipment_screen", False):
         interface.equipment_screen.cmd__equipment_escape()
+        return True
+    if getattr(interface, "_in_square_info_screen", False):
+        from .square_info_screen import cmd__exit_square_info_screen
+        cmd__exit_square_info_screen(interface)
         return True
     if getattr(interface, "_in_attributes_screen", False):
         interface.cmd__exit_attributes_screen()

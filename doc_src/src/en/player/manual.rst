@@ -232,6 +232,38 @@ Alt: interrupt the current sentence.
 
 To quit a game or access to the game menu, press F10. Alt F4 and Control C do the same.
 
+**Ctrl+F2: display toggle and visual quality (sighted mode)**
+
+When on, shows a top-down map. Compared with the old debug view, this build improves visual quality and readability: default terrain colors, brighter high ground, fog that keeps hue, centered map; grid and wall/exit cues; distinct unit/building/resource shapes, team colors, selection, HP bars, air markers; numeric coords, place names, resource amounts; left hover info panel. With the display on you can use the mouse:
+
+- Left-click select; double-click select all visible units of the same type; Shift+click add/remove; Shift+box-select append; click empty ground to jump square and clear selection.
+- Right-click default orders (Shift/Ctrl queue and imperative unchanged).
+- With a selection, a 5×3 command icon grid (bottom-right) and queue icons with cancel-last (bottom-left). Optional PNGs in ``res/ui/icons/<type>.png``; otherwise generated letter icons.
+- **Starter icon pack**: ``res/ui/icons/`` already includes flat geometric PNGs for common units/buildings/orders (peasant, footman, townhall, train/build/attack, …). Replace any file with better art under the same name. Regenerate with ``python tools/gen_hud_icons.py``.
+- **F8 zoom** (with display on): the current square fills the view with a sub-cell grid; mouse hover/click moves the zoom focus; select units, box-select, and right-click orders on a sub-cell or unit (same as keyboard zoom targets).
+- **Visual extras**: soft fog fringes, pulsing selection, target markers and march lines, hurt/attack flashes, build progress rings, movement lerp (visual only; TTS unchanged).
+- **Minimap**: top-right overview (hidden during F8 zoom); left-click jumps square; right-click jumps and issues default order.
+- **Objectives button**: top-left “Objectives”; left-click next, Shift+click previous (same as the objectives hotkey); Esc dismisses the caption.
+
+The on/off state is saved (``display_enabled``) and restored next launch. With the display off, keyboard and speech remain primary (default blind-friendly path). See `layered hotkeys <layered-hotkeys.htm>`_.
+
+**Menu list and mouse (pygame visuals)**
+
+Main, sub, and pause menus draw a selectable list in the window. Mouse: hover, click to select, click again or double-click to confirm; keyboard unchanged.
+
+**Cut-scenes, synopsis, and objective text**
+
+Campaign synopsis, cut-scenes (sequence / cut_scene), map intro, and opening objectives show on-screen text. In-match objectives hotkey or the top-left Objectives button also shows text.
+
+- **Opening objectives**: always **scroll**—auto-continue when speech ends; any key skips. Re-check anytime with the Objectives button or hotkey.
+- **Cut-scenes / synopsis / intro**: **local single-player, training, or server vs computers only** (one human) still uses **Enter** next / **Esc** skip; **online with other humans** (two or more) scrolls so one player cannot stall the start.
+
+Pixel text is usually invisible to screen readers / braille; blind play should keep relying on TTS.
+
+**F4 in menus: accessibility voice toggle**
+
+In any menu (including the in-game pause menu), press F4 or use “toggle accessibility voice” in the game menu to turn all TTS off/on. When off, SFX and music still work—handy with the display on. Default on; saved in config. **In-match F4 is still Help & Query** (layered hotkeys); this toggle is menu-only. See `voice libraries <voice-libraries.htm>`_.
+
 Alt+Space or Control+Space: enter first-person RPG mode. Escape: return to map mode.
 
 In first-person mode:

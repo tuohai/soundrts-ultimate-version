@@ -210,6 +210,7 @@
 4024	consommé
 4025	bâtiment
 4026	score
+4027	neutraliser l'ennemi
 4028	Appuyez sur F1 pour obtenir de l'aide.
 4029	Menu principal
 4030	Que souhaitez-vous ?

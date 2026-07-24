@@ -313,7 +313,7 @@ Observation and query
    * - ``v``
      - Hit points
    * - ``F9`` / ``SHIFT F9``
-     - Objectives
+     - Objectives (on-screen text; with display on, also click top-left Objectives; opening controls: see manual “Cut-scenes, synopsis, and objective text”)
    * - ``F11``
      - Player list
 
@@ -338,7 +338,7 @@ System
    * - ``ALT SPACE`` / ``CTRL SPACE``
      - First-person mode
    * - ``CTRL F2``
-     - Display toggle
+     - Display toggle + visual quality (persisted; when on: mouse + HUD; see player manual)
    * - ``CTRL F3``
      - Talking clock toggle
    * - ``CTRL SHIFT F4``

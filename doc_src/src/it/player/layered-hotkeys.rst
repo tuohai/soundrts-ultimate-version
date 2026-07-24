@@ -338,7 +338,7 @@ Sistema
    * - ``ALT SPACE`` / ``CTRL SPACE``
      - Modalità prima persona
    * - ``CTRL F2``
-     - Attiva/disattiva display
+     - Display + qualità visuale (persistente; vedi manuale)
    * - ``CTRL F3``
      - Attiva/disattiva orologio parlante
    * - ``CTRL SHIFT F4``

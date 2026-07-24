@@ -19,6 +19,8 @@ sfx_volume: float
 music_volume: float
 music_enabled: int
 secondary_voice_enabled: int
+speech_enabled: int
+display_enabled: int
 
 _LOGIN_FORBIDDEN_CHARS = set('\\/:*?"<>|\0')
 _LOGIN_MAX_LENGTH = 20
@@ -100,6 +102,8 @@ _options = [
     ),
     ("general", "debug_mode", 0),
     ("general", "layered_hotkeys", 1, int),
+    # 1 = Ctrl+F2 画面开启（下次启动恢复）; 0 = 关闭
+    ("general", "display_enabled", 0, int),
     ("server", "timeout", 60.0),
     # fpct must be as small as possible while respecting test_fpct()
     ("server", "fpct_coef", 2.3),
@@ -126,6 +130,8 @@ _options = [
     ("tts", "secondary_param", 0, voice_lib_param_type),
     # 1 = dual voice (副库播被动事件); 0 = primary handles everything (E-style)
     ("tts", "secondary_voice_enabled", 1, int),
+    # 1 = 无障碍语音开（默认，盲玩）; 0 = 关闭全部 TTS（明眼人 / Ctrl+F2）
+    ("tts", "speech_enabled", 1, int),
     ("audio", "main_volume", 0.5, volume_type),
     ("audio", "sfx_volume", 0.5, volume_type),
     ("audio", "music_volume", 0.5, volume_type),

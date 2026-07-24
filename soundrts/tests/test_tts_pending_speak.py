@@ -15,7 +15,7 @@ def test_tts_tracks_pending_speak():
 def test_play_sequence_not_auto_skippable():
     text = Path("soundrts/clientmedia.py").read_text(encoding="utf-8")
     block = text.split("def play_sequence(names):", 1)[1].split("\ndef ", 1)[0]
-    assert "play_cutscene_line" in block
+    assert "play_narrative_line" in block
     assert '== "skip"' in block
     # Must not wipe VoiceChannel before hybrid .ogg / important lines.
     assert "voice.channel.stop()" not in block

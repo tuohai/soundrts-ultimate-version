@@ -5,6 +5,54 @@ Notas de la versión
 .. contents::
 
 
+1.4.6.0
+-------
+
+**Nuevo / mejora: calidad visual Ctrl+F2 (vista cenital)**
+
+Respecto al mapa de depuración antiguo (bloques planos, muros negros, puntos), esta versión mejora legibilidad e información:
+
+- **Terreno y ambiente**: colores por defecto legibles sin ``color`` en style; terreno alto más claro y ligeramente cálido; niebla oscurecida pero con tono; mapa centrado con márgenes.
+- **Estructura**: rejilla; muros vs salidas/pasos diferenciados.
+- **Unidades y recursos**: formas distintas; colores de equipo; selección; barras de vida; marcadores aéreos.
+- **Etiquetas y panel**: coordenadas base 1 (p. ej. 2,7), nombres y recursos; panel izquierdo al pasar el ratón.
+- **Ratón / HUD**: igual que antes (selección, comando 5×3, cola).
+- **Código**: ``clientgamegridview.py``, ``game_hud.py``, etc.
+
+**Nuevo: F4 conmuta la voz de accesibilidad en menús**
+
+- En **cualquier menú** (incluido el menú de pausa), **F4** o el ítem «conmutar voz de accesibilidad» apaga/enciende todo el TTS.
+- **Apagado**: sin voz; SFX y música siguen; útil con Ctrl+F2.
+- **Por defecto activado**; se guarda en ``SoundRTS.ini`` (``speech_enabled``).
+- **F4 en partida sin cambios** (teclas por capas: sigue siendo Ayuda); solo en menús.
+- **Código**: ``config.py``, ``lib/voice.py``, etc.; TTS 5740–5743.
+- **Docs**: ``player/voice-libraries.rst``, manuales.
+
+**Nuevo: menús visuales pygame y ratón (sin wxPython)**
+
+- Menús principal/sub/pausa dibujan una lista en la ventana SDL (~960×640).
+- **Ratón**: resalta al pasar; clic selecciona y anuncia; otro clic o doble clic confirma. Teclado sin cambios.
+- Juego a ciegas: TTS + teclado; el texto en pantalla es de píxeles y **suele no llegar a lectores/braille**.
+- **Código**: ``lib/pygame_ui.py``, ``clientmenu.py``, ``lib/screen.py``.
+
+**Nuevo: escenas / sinopsis / objetivos en pantalla**
+
+- ``synopsis`` de campaña, ``sequence`` de corte, ``intro`` de mapa, objetivo inicial y F9 en partida muestran texto.
+- **Objetivo inicial**: siempre scroll; en partida se puede volver a ver.
+- **Escenas / sinopsis / intro**: local / entrenamiento / solo vs PCs: Enter / Esc; en línea (dos o más humanos): scroll.
+- **Código**: ``lib/voice.py`` (play_cutscene_line / play_scrolling_line / play_narrative_line), ``clientmedia.py``, ``campaign.py``, etc.
+
+**Mejora: Ctrl+F2 persistente**
+
+- Se guarda ``display_enabled`` en ``SoundRTS.ini``; se restaura al reiniciar.
+- **Código**: ``config.py``, ``clientmedia.py``.
+
+**Corrección: retraso al saltar mapas por letra**
+
+- Listas largas ~0,8 s por escaneo TTS global; ahora etiquetas locales + caché.
+- **Código**: ``lib/pygame_ui.py``, ``clientmenu.py``.
+
+
 1.4.5.9
 -------
 

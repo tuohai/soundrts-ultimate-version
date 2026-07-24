@@ -210,6 +210,7 @@
 4024	využitých
 4025	stavba
 4026	skóre
+4027	neutralizovať nepriateľa
 4028	stlačte F1 pre pomoc
 4029	hlavné menu
 4030	vyberte si

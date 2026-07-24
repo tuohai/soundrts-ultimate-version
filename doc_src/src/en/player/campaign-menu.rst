@@ -40,8 +40,8 @@ After (1.4.3.9)
      - Enemy HP / outgoing damage by %
      - Server computes once, broadcast to all clients / replays
    * - Story
-     - ``intro``, objective-driven win/loss
-     - Shared ``intro``, cutscenes, F9 objectives; not “destroy all enemies”
+     - ``intro``, objective-driven win/loss; opening objectives **scroll**; cut-scenes local: **Enter** / **Esc**
+     - Shared ``intro``, cutscenes, objectives; cut-scenes/opening objectives **scroll** (no Enter stall)
    * - Slots
      - One human
      - One slot per human; empty slots filled by allied AI
@@ -64,7 +64,7 @@ Core code: `soundrts/coop_difficulty.py <../../../soundrts/coop_difficulty.py>`_
 
 After picking a campaign from the main menu:
 
-1. Campaign synopsis (optional) — only if ``campaign.txt`` defines ``synopsis``; plays TTS then returns to the list.
+1. Campaign synopsis (optional) — only if ``campaign.txt`` defines ``synopsis``; on-screen text with **Enter** next / **Esc** skip, then returns to the list.
 2. Difficulty: … — current tier; submenu to pick Easy / Standard / Moderate / Hard / Extreme.
 3. Continue — shortcut to the latest unlocked chapter when applicable.
 4. Chapter list with status:

@@ -44,6 +44,7 @@ Where to configure
 1. Main menu → **Options** → **Voice library settings**
 2. Choices:
    - **Enable or disable secondary voice** (or press **F3** in any menu; not available in-match)
+   - **F4 in menus**: toggle accessibility voice (all TTS; in-match F4 remains Help)
    - **Primary** / **Secondary** library editors: volume, pitch, rate, voice, sound card
    - **Open voices folder**: opens ``user/voices`` for installing packs
 
@@ -68,6 +69,7 @@ In-match (and menus):
 - **Right Shift+C**: copy last secondary line; **Right Shift+B**: append secondary to clipboard
 - **Left Shift+C / Left Shift+B** (copy/append primary): **commented out** by default in ``res/ui/global_bindings.txt`` to reduce hotkey clashes; uncomment the lines (remove the leading ``;``) to enable
 - **F3 in menus**: toggle secondary on/off (not bound in-match)
+- **F4 in menus**: toggle accessibility voice (all TTS; in-match F4 remains Help—see layered hotkeys)
 
 
 ----

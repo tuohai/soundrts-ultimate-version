@@ -816,6 +816,52 @@ def cmd_command_unit(interface):
         command_unit(interface, interface.target)
 
 
+def mouse_select_same_type(interface, unit):
+    """Ctrl+F2：双击单位 → 全选当前可见的同类型可控单位。"""
+    type_name = getattr(unit, "type_name", None)
+    if not type_name:
+        interface.group = []
+        say_group(interface)
+        return
+    ids = []
+    grid = getattr(interface, "grid_view", None)
+    for u in interface.player.allied_control_units:
+        if u.type_name != type_name:
+            continue
+        if getattr(u, "is_inside", False) or u.id not in interface.dobjets:
+            continue
+        ev = interface.dobjets[u.id]
+        if grid is not None and hasattr(grid, "_is_object_visible"):
+            if not grid._is_object_visible(ev):
+                continue
+        ids.append(u.id)
+    interface.group = ids
+    interface.order = None
+    say_group(interface)
+
+
+def mouse_toggle_unit_in_group(interface, unit):
+    """Ctrl+F2：Shift+单击 → 加选/减选。"""
+    uid = unit.id
+    if uid in interface.group:
+        interface.group = [x for x in interface.group if x != uid]
+    else:
+        interface.group = list(interface.group) + [uid]
+    interface.order = None
+    say_group(interface)
+
+
+def mouse_add_units_to_group(interface, unit_ids):
+    """Ctrl+F2：Shift+框选 → 并入当前编组。"""
+    seen = set(interface.group)
+    for uid in unit_ids:
+        if uid not in seen:
+            interface.group.append(uid)
+            seen.add(uid)
+    interface.order = None
+    say_group(interface)
+
+
 def _select_unit(interface, inc, types, local, idle, even_if_no_menu, silent=False):
     units_list = units(interface, even_if_no_menu=even_if_no_menu, sort=True)
     if types:

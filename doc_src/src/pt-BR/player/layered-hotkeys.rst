@@ -338,7 +338,7 @@ Sistema
    * - ``ALT SPACE`` / ``CTRL SPACE``
      - Modo primeira pessoa
    * - ``CTRL F2``
-     - Alternar exibição
+     - Alternar tela + qualidade visual (persistente; ver manual)
    * - ``CTRL F3``
      - Alternar relógio falante
    * - ``CTRL SHIFT F4``

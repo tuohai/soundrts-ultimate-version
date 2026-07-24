@@ -27,6 +27,33 @@ from ..lib.msgs import literal_text_msg
 from ..lib.mouse import set_cursor
 from ..lib.screen import get_screen, set_game_mode
 
+# Ctrl+F2 鼠标：双击判定
+_MOUSE_DOUBLE_CLICK_MS = 400
+_MOUSE_CLICK_TOLERANCE_PX = 5
+
+
+def _mouse_is_click(origin, pos, tol=_MOUSE_CLICK_TOLERANCE_PX):
+    if origin is None or pos is None:
+        return False
+    return abs(origin[0] - pos[0]) <= tol and abs(origin[1] - pos[1]) <= tol
+
+
+def _mouse_is_double_click(interface, type_name, pos):
+    now = pygame.time.get_ticks()
+    last_t = getattr(interface, "_mouse_dbl_t", -10**9)
+    last_type = getattr(interface, "_mouse_dbl_type", None)
+    last_pos = getattr(interface, "_mouse_dbl_pos", None)
+    ok = (
+        now - last_t <= _MOUSE_DOUBLE_CLICK_MS
+        and last_type == type_name
+        and last_pos is not None
+        and _mouse_is_click(last_pos, pos, tol=12)
+    )
+    interface._mouse_dbl_t = now
+    interface._mouse_dbl_type = type_name
+    interface._mouse_dbl_pos = pos
+    return ok
+
 
 def _process_events(interface):
     """处理用户输入事件"""
@@ -46,6 +73,19 @@ def _process_events(interface):
         elif e.type == QUIT:
             sys.exit()
         elif e.type == KEYDOWN:
+            # F9 目标字幕：Esc 关闭（开场目标播完后本就不该残留）
+            if e.key == K_ESCAPE:
+                try:
+                    from ..lib import pygame_ui
+
+                    if pygame_ui.narrative_is_active():
+                        pygame_ui.end_narrative()
+                        from .game_display import display
+
+                        display(interface)
+                        continue
+                except Exception:
+                    pass
             # 首先检查是否在缩放输入模式
             if interface._zoom_input_mode:
                 if _handle_zoom_input(interface, e):
@@ -86,7 +126,70 @@ def _process_events(interface):
 
 def _process_fullscreen_mode_mouse_event(interface, e):
     """处理全屏模式下的鼠标事件"""
+    # 第二阶段 HUD：先吃掉命令条/队列点击，避免误点地图
+    if e.type in (MOUSEBUTTONDOWN, MOUSEBUTTONUP) and e.button == 1:
+        try:
+            from .game_hud import handle_hud_click, hit_test_hud
+
+            if hit_test_hud(interface, e.pos) is not None:
+                if e.type == MOUSEBUTTONDOWN:
+                    mods = pygame.key.get_mods()
+                    handle_hud_click(interface, e.pos, mods)
+                    from .game_display import display
+
+                    display(interface)
+                # DOWN 已处理则忽略成对的 UP，避免再走框选
+                if e.type == MOUSEBUTTONUP:
+                    interface.mouse_select_origin = None
+                return
+        except Exception:
+            pass
+
+    # 小地图点击：跳格（非缩放模式）
+    if e.type == MOUSEBUTTONDOWN and e.button in (1, 3):
+        try:
+            sq = interface.grid_view.minimap_square_from_mousepos(e.pos)
+        except Exception:
+            sq = None
+        if sq is not None:
+            from .game_navigation import _select_and_say_square
+            from .game_display import display
+
+            if e.button == 1:
+                interface.group = []
+                interface.order = None
+                interface.target = None
+                _select_and_say_square(interface, sq)
+                display(interface)
+                return
+            # 右键：跳到该格并作为默认命令目标
+            _select_and_say_square(interface, sq)
+            interface.target = None
+            mods = pygame.key.get_mods()
+            args = []
+            if mods & KMOD_SHIFT:
+                args += ["queue_order"]
+            if mods & KMOD_CTRL:
+                args += ["imperative"]
+            from .game_orders import cmd_default
+
+            cmd_default(interface, *args)
+            display(interface)
+            return
+
+    if getattr(interface, "zoom_mode", False):
+        _process_zoom_mode_mouse_event(interface, e)
+        return
+
     if e.type == MOUSEMOTION:
+        # 悬停在 HUD 上时不跳格/读目标
+        try:
+            from .game_hud import hit_test_hud
+
+            if hit_test_hud(interface, e.pos) is not None:
+                return
+        except Exception:
+            pass
         square = interface.grid_view.square_from_mousepos(e.pos)
         target = interface.grid_view.object_from_mousepos(e.pos)
         if target is not None:
@@ -129,6 +232,14 @@ def _process_fullscreen_mode_mouse_event(interface, e):
             else:
                 interface.mouse_select_origin = e.pos
         elif e.button == 3:  # right mouse button
+            # HUD 上右键不发默认命令
+            try:
+                from .game_hud import hit_test_hud
+
+                if hit_test_hud(interface, e.pos) is not None:
+                    return
+            except Exception:
+                pass
             # do nothing if the mouse is pointing on nothing
             if interface.grid_view.square_from_mousepos(e.pos) is not None:
                 mods = pygame.key.get_mods()
@@ -141,17 +252,242 @@ def _process_fullscreen_mode_mouse_event(interface, e):
                 cmd_default(interface, *args)
     elif e.type == MOUSEBUTTONUP:
         if e.button == 1:  # left mouse button
-            if interface.mouse_select_origin == e.pos:
-                if interface.grid_view.object_from_mousepos(e.pos):
-                    from .game_unit_control import cmd_command_unit
-                    cmd_command_unit(interface)
-            elif interface.mouse_select_origin:
-                interface.group = interface.grid_view.units_from_mouserect(
-                    interface.mouse_select_origin, e.pos
+            _handle_left_mouse_up(interface, e)
+
+
+def _process_zoom_mode_mouse_event(interface, e):
+    """F8 缩放 + Ctrl+F2：鼠标操作当前大方格的子格与单位。"""
+    try:
+        from .game_hud import hit_test_hud
+
+        if e.type == MOUSEMOTION and hit_test_hud(interface, e.pos) is not None:
+            return
+        if e.type == MOUSEBUTTONDOWN and e.button == 3:
+            if hit_test_hud(interface, e.pos) is not None:
+                return
+    except Exception:
+        pass
+
+    from .game_display import display
+
+    if e.type == MOUSEMOTION:
+        target = interface.grid_view.object_from_mousepos(e.pos)
+        if target is not None:
+            if target != interface.target:
+                interface.target = target
+                from .game_unit_control import say_target
+
+                say_target(interface)
+                display(interface)
+            if interface.an_order_requiring_a_target_is_selected:
+                set_cursor(
+                    "square"
+                    if interface.order.cls.keyword == "build"
+                    else "target"
                 )
-                from .game_unit_control import say_group
-                say_group(interface)
-            interface.mouse_select_origin = None
+            else:
+                set_cursor("diamond")
+            return
+
+        # 空地：移动子格焦点（变了才播报）
+        if interface.grid_view.world_from_mousepos(e.pos) is None:
+            return
+        changed = interface.grid_view.move_zoom_to_mousepos(e.pos)
+        if changed:
+            interface.target = None
+            interface.zoom.select()
+            interface.zoom.say()
+            display(interface)
+        if interface.an_order_requiring_a_target_is_selected:
+            set_cursor(
+                "square" if interface.order.cls.keyword == "build" else "target"
+            )
+        else:
+            set_cursor("tri_left")
+        return
+
+    if e.type == MOUSEBUTTONDOWN:
+        if e.button == 1:
+            if interface.an_order_requiring_a_target_is_selected:
+                # 先对准点击的子格 / 单位，再确认命令
+                obj = interface.grid_view.object_from_mousepos(e.pos)
+                if obj is not None:
+                    interface.target = obj
+                else:
+                    interface.grid_view.move_zoom_to_mousepos(e.pos)
+                    interface.target = None
+                mods = pygame.key.get_mods()
+                args = []
+                if mods & KMOD_SHIFT:
+                    args += ["queue_order"]
+                if mods & KMOD_CTRL:
+                    args += ["imperative"]
+                from .game_orders import cmd_validate
+
+                cmd_validate(interface, *args)
+                display(interface)
+            else:
+                interface.mouse_select_origin = e.pos
+        elif e.button == 3:
+            obj = interface.grid_view.object_from_mousepos(e.pos)
+            if obj is not None:
+                interface.target = obj
+            else:
+                if interface.grid_view.world_from_mousepos(e.pos) is None:
+                    return
+                interface.grid_view.move_zoom_to_mousepos(e.pos)
+                interface.target = None
+            mods = pygame.key.get_mods()
+            args = []
+            if mods & KMOD_SHIFT:
+                args += ["queue_order"]
+            if mods & KMOD_CTRL:
+                args += ["imperative"]
+            from .game_orders import cmd_default
+
+            cmd_default(interface, *args)
+            display(interface)
+        return
+
+    if e.type == MOUSEBUTTONUP and e.button == 1:
+        _handle_left_mouse_up_zoom(interface, e)
+
+
+def _handle_left_mouse_up_zoom(interface, e):
+    """缩放模式下左键抬起：点选单位 / 框选 / 点击子格。"""
+    origin = interface.mouse_select_origin
+    interface.mouse_select_origin = None
+    if origin is None:
+        return
+    if interface.an_order_requiring_a_target_is_selected:
+        return
+
+    from .game_unit_control import (
+        command_unit,
+        mouse_add_units_to_group,
+        mouse_select_same_type,
+        mouse_toggle_unit_in_group,
+        say_group,
+        units as controllable_units,
+    )
+    from .game_display import display
+
+    mods = pygame.key.get_mods()
+    shift = bool(mods & KMOD_SHIFT)
+
+    if _mouse_is_click(origin, e.pos):
+        obj = interface.grid_view.object_from_mousepos(e.pos)
+        controllable = set(controllable_units(interface))
+        if obj is not None and obj in controllable:
+            if shift:
+                mouse_toggle_unit_in_group(interface, obj)
+            elif _mouse_is_double_click(interface, obj.type_name, e.pos):
+                mouse_select_same_type(interface, obj)
+            else:
+                interface._mouse_dbl_t = pygame.time.get_ticks()
+                interface._mouse_dbl_type = obj.type_name
+                interface._mouse_dbl_pos = e.pos
+                command_unit(interface, obj)
+                interface.order = None
+            interface.target = obj
+            # 焦点跟到单位所在子格
+            try:
+                interface.zoom.move_to(obj)
+            except Exception:
+                pass
+            display(interface)
+            return
+
+        if interface.grid_view.world_from_mousepos(e.pos) is None:
+            return
+        if not shift:
+            interface.group = []
+            interface.order = None
+        interface.grid_view.move_zoom_to_mousepos(e.pos)
+        interface.target = None if obj is None else obj
+        interface._mouse_dbl_t = -(10**9)
+        interface._mouse_dbl_type = None
+        interface.zoom.select()
+        interface.zoom.say()
+        display(interface)
+        return
+
+    ids = interface.grid_view.units_from_mouserect(origin, e.pos)
+    if shift:
+        mouse_add_units_to_group(interface, ids)
+    else:
+        interface.group = ids
+        interface.order = None
+        say_group(interface)
+    display(interface)
+
+
+def _handle_left_mouse_up(interface, e):
+    """左键抬起：点选 / 双击同类型 / Shift 加选 / 框选 / 空地点格跳转。"""
+    origin = interface.mouse_select_origin
+    interface.mouse_select_origin = None
+    if origin is None:
+        return
+    if interface.an_order_requiring_a_target_is_selected:
+        return
+
+    from .game_unit_control import (
+        command_unit,
+        mouse_add_units_to_group,
+        mouse_select_same_type,
+        mouse_toggle_unit_in_group,
+        say_group,
+        units as controllable_units,
+    )
+    from .game_display import display
+
+    mods = pygame.key.get_mods()
+    shift = bool(mods & KMOD_SHIFT)
+
+    if _mouse_is_click(origin, e.pos):
+        obj = interface.grid_view.object_from_mousepos(e.pos)
+        controllable = set(controllable_units(interface))
+        if obj is not None and obj in controllable:
+            if shift:
+                mouse_toggle_unit_in_group(interface, obj)
+            elif _mouse_is_double_click(interface, obj.type_name, e.pos):
+                mouse_select_same_type(interface, obj)
+            else:
+                # 记录单击，供下一次双击判定；并点选该单位
+                interface._mouse_dbl_t = pygame.time.get_ticks()
+                interface._mouse_dbl_type = obj.type_name
+                interface._mouse_dbl_pos = e.pos
+                command_unit(interface, obj)
+                interface.order = None
+            interface.target = obj
+            display(interface)
+            return
+
+        # 点空地 / 非可控目标：跳转到该格（传统 RTS 左键空地也取消选择）
+        square = interface.grid_view.square_from_mousepos(e.pos)
+        if square is not None:
+            if not shift:
+                interface.group = []
+                interface.order = None
+            from .game_navigation import _select_and_say_square
+
+            _select_and_say_square(interface, square)
+            interface.target = None if obj is None else obj
+            # 空地点击不算单位双击
+            interface._mouse_dbl_t = -10**9
+            interface._mouse_dbl_type = None
+            display(interface)
+        return
+
+    # 框选
+    ids = interface.grid_view.units_from_mouserect(origin, e.pos)
+    if shift:
+        mouse_add_units_to_group(interface, ids)
+    else:
+        interface.group = ids
+        interface.order = None
+        say_group(interface)
+    display(interface)
 
 
 def _execute_order_shortcut(interface, e):
@@ -279,7 +615,10 @@ def _loop(interface):
 # 导出的函数供其他模块使用
 __all__ = [
     '_process_events',
-    '_process_fullscreen_mode_mouse_event', 
+    '_process_fullscreen_mode_mouse_event',
+    '_process_zoom_mode_mouse_event',
+    '_handle_left_mouse_up',
+    '_handle_left_mouse_up_zoom',
     '_execute_order_shortcut',
     '_handle_zoom_input',
     '_start_zoom_input_mode',

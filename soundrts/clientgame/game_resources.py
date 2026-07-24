@@ -199,6 +199,7 @@ def cmd_gamemenu(interface):
     voice.silent_flush()
     from ..lib import sound
     from ..lib.screen import set_game_mode
+    from ..lib import voice_libs
     sound.stop()
     menu = Menu(mp.MENU, menu_type="submenu")  # 指定这是子菜单
     menu.append(mp.CANCEL_GAME, lambda: gm_quit(interface))
@@ -209,6 +210,17 @@ def cmd_gamemenu(interface):
         menu.append(mp.SET_SPEED_TO_FAST + nb2msg(4), lambda: gm_very_fast_speed(interface))
     if interface.can_save():
         menu.append(mp.SAVE, lambda: gm_save(interface))
+
+    def _speech_status():
+        if voice_libs.speech_is_enabled():
+            return mp.ACCESSIBILITY_VOICE_ON
+        return mp.ACCESSIBILITY_VOICE_OFF
+
+    menu.append(
+        mp.ACCESSIBILITY_VOICE_TOGGLE,
+        lambda: voice_libs.toggle_speech_enabled(announce=True),
+        _speech_status(),
+    )
     menu.append(mp.CONTINUE_GAME, None)
     set_game_mode(False)
     menu.run()
@@ -511,7 +523,7 @@ def cmd_change_player(interface):
 
 # 其他功能
 def cmd_objectives(interface, inc=1):
-    """逐条播报任务目标。F9 下一条，Shift+F9 上一条。"""
+    """逐条播报任务目标。热键或画面左上角「目标」按钮：下一条 / Shift+点击上一条。"""
     entries = collect_objective_entries(interface.world, interface.player)
     if not entries:
         voice.item(mp.BEEP)
@@ -525,7 +537,17 @@ def cmd_objectives(interface, inc=1):
     current = getattr(interface, "_objective_view_index", -1)
     new_index = navigate_objective_index(current, int(inc), count)
     interface._objective_view_index = new_index
-    voice.item(entries[new_index])
+    entry = entries[new_index]
+    try:
+        from ..lib.pygame_ui import msgparts_to_text, show_narrative
+
+        show_narrative(
+            msgparts_to_text(entry),
+            hint="Objectives / Shift+click: next / previous   Esc: dismiss",
+        )
+    except Exception:
+        pass
+    voice.item(entry)
 
 
 def cmd_help(interface, incr):

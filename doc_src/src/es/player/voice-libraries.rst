@@ -42,6 +42,7 @@ Dónde configurar
 1. Menú principal → **Opciones** → **Ajustes de biblioteca de voz**
 2. Opciones:
    - **Activar o desactivar la voz secundaria** (o **F3** en cualquier menú; no en partida)
+   - **F4 en menús**: conmutar voz de accesibilidad (todo el TTS; en partida F4 sigue siendo Ayuda)
    - Editores **principal** / **secundaria**: volumen, tono, velocidad, voz, tarjeta de sonido
    - **Abrir carpeta de voces**: abre ``user/voices``
 
@@ -66,6 +67,7 @@ En partida (y menús):
 - **Shift derecho+C**: copiar última línea secundaria; **Shift derecho+B**: añadir secundaria al portapapeles
 - **Shift izquierdo+C / Shift izquierdo+B** (principal): **comentados** por defecto en ``res/ui/global_bindings.txt`` para reducir conflictos; quite el ``;`` inicial de esas líneas para activarlos
 - **F3 en menús**: activar/desactivar secundaria (no en partida)
+- **F4 en menús**: conmutar voz de accesibilidad (todo el TTS; en partida F4 sigue siendo Ayuda—véase teclas por capas)
 
 
 ----

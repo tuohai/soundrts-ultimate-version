@@ -232,6 +232,34 @@ Alt: interrompe la frase corrente.
 
 Per uscire da una partita o accedere al menu di gioco, premi F10. Alt F4 e Control C fanno lo stesso.
 
+**Ctrl+F2: attiva/disattiva display e qualità visuale (modalità visuale)**
+
+Con il display attivo mostra la mappa dall’alto con qualità migliore rispetto alla vecchia vista di debug: colori terreno, alture più chiare, nebbia con tinta, mappa centrata; griglia e muri/uscite; forme, colori squadra, selezione, barre vita; coordinate, nomi, pannello sinistro. Con il display on puoi usare il mouse:
+
+- Clic sinistro seleziona; doppio clic seleziona tutte le unità visibili dello stesso tipo; Shift+clic aggiunge/rimuove; Shift+box aggiunge; clic su terreno vuoto salta casella e azzera la selezione.
+- Clic destro: ordini predefiniti (code Shift/Ctrl invariate).
+- Con selezione: griglia comandi 5×3 in basso a destra e coda/annulla in basso a sinistra. PNG opzionali in ``res/ui/icons/<tipo>.png``.
+- **Pacchetto iniziale**: PNG geometrici già in ``res/ui/icons/``; sostituisci lo stesso nome per personalizzare; ``python tools/gen_hud_icons.py`` rigenera.
+
+Con il display off, tastiera e voce restano primarie. Lo stato è salvato (``display_enabled``) e ripristinato all’avvio. Vedi `tasti a livelli <layered-hotkeys.htm>`_.
+
+**Elenco menu e mouse (visuale pygame)**
+
+I menu disegnano un elenco nella finestra. Mouse: passaggio, clic per selezionare, altro clic o doppio clic per confermare; tastiera invariata.
+
+**Cut-scene, sinossi e testo obiettivi**
+
+Sinossi campagna, cut-scene (sequence / cut_scene), intro mappa e obiettivo iniziale mostrano testo. Anche F9 / Shift+F9 in partita.
+
+- **Obiettivo iniziale**: sempre **scroll** (prosegue a fine voce; qualsiasi tasto salta). In partita si può rileggere col pulsante Obiettivi / scorciatoia.
+- **Cut-scene / sinossi / intro**: locale / allenamento / solo vs PC: **Enter** / **Esc**; online con due o più umani: scroll.
+
+Il testo a pixel di solito non arriva a screen reader/braille; il gioco cieco resta sul TTS.
+
+**F4 nei menu: voce di accessibilità**
+
+In qualsiasi menu (incluso il menu di pausa), F4 o la voce del menu di gioco attiva/disattiva tutto il TTS. Spento: restano SFX e musica. Predefinito attivo. **F4 in partita resta Aiuto**; solo nei menu. Vedi `librerie vocali <voice-libraries.htm>`_.
+
 Alt+Spazio o Control+Spazio: entra in modalità RPG in prima persona. Escape: torna alla modalità mappa.
 
 In modalità prima persona:

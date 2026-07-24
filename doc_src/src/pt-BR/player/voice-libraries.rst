@@ -42,6 +42,7 @@ Onde configurar
 1. Menu principal → **Opções** → **Configurações da biblioteca de voz**
 2. Opções:
    - **Ativar ou desativar a voz secundária** (ou **F3** em qualquer menu; não na partida)
+   - **F4 nos menus**: ligar/desligar voz de acessibilidade (todo o TTS; na partida F4 continua Ajuda)
    - Editores **principal** / **secundária**: volume, tom, velocidade, voz, placa de som
    - **Abrir pasta de vozes**: abre ``user/voices``
 
@@ -66,6 +67,7 @@ Na partida (e menus):
 - **Shift direito+C**: copiar última linha secundária; **Shift direito+B**: acrescentar secundária à área de transferência
 - **Shift esquerdo+C / Shift esquerdo+B** (principal): **comentados** por padrão em ``res/ui/global_bindings.txt`` para reduzir conflitos; remova o ``;`` inicial dessas linhas para ativar
 - **F3 nos menus**: ativar/desativar secundária (não na partida)
+- **F4 nos menus**: ligar/desligar voz de acessibilidade (todo o TTS; na partida F4 continua Ajuda—veja teclas em camadas)
 
 
 ----

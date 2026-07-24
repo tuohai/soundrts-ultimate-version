@@ -51,6 +51,13 @@ def display(interface):
     if getattr(interface, '_must_display_target_info', False) and get_fullscreen():
         _display_target_info(interface)
     screen_render_subtitle()
+    try:
+        from ..lib import pygame_ui
+
+        if pygame_ui.narrative_is_active():
+            pygame_ui.draw_narrative_onto(get_screen())
+    except Exception:
+        pass
     pygame.display.flip()
     chrono.stop("display")
 

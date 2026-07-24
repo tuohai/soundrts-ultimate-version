@@ -16,6 +16,10 @@ class _Voice:
     active = False  # currently talking (not just self.item())
     history = False  # in "history" mode
     muted = False  # suppress all speech (used during spectator catch-up fast-forward)
+    # F4 无障碍开关：False 时不播 TTS（明眼人）；与 muted 独立
+    speech_enabled = True
+    # 联机多人：过场/目标必须滚动（播完即过），避免一人按 Enter 卡住全场
+    must_scroll_narratives = False
     current = 0  # index of the message currently said
     # == len(self.msgs) if no message
 
@@ -32,6 +36,19 @@ class _Voice:
     def init(self, *args, **kwargs):
         self.lock = threading.Lock()
         self.channel = VoiceChannel(*args, **kwargs)
+        try:
+            from .. import config
+
+            self.speech_enabled = bool(int(getattr(config, "speech_enabled", 1)))
+        except Exception:
+            self.speech_enabled = True
+
+    def _speech_blocked(self, *, force=False):
+        if self.muted:
+            return True
+        if force:
+            return False
+        return not self.speech_enabled
 
     def _start_current(self):
         # Full stop (incl. secondary) — used by Alt history skip / F5.
@@ -157,7 +174,7 @@ class _Voice:
         not use the secondary library (unit/building complete, research,
         resources, menu-changed, …).
         """
-        if self.muted:
+        if self._speech_blocked():
             return
         if list_of_sound_numbers:
             self.msgs.append(Message(list_of_sound_numbers, *args, **keywords))
@@ -172,13 +189,14 @@ class _Voice:
         keep_key=False,
         *,
         tts_channel=None,
+        force=False,
     ):
         """Say now (give up saying sentences not said yet) until the end or a keypress.
 
         In-match: Right Alt may interrupt secondary; Left Alt may interrupt
         primary blocking lines. Other keys still interrupt primary (menus/ops).
         """
-        if self.muted:
+        if self._speech_blocked(force=force):
             return
         if list_of_sound_numbers:
             with self.lock:
@@ -251,7 +269,7 @@ class _Voice:
         if self._current_message_is_unsaid() and self.channel.is_almost_done():
             self._mark_current_as_said()
 
-    def item(self, list_of_sound_numbers, lv=DEFAULT_VOLUME, rv=DEFAULT_VOLUME):
+    def item(self, list_of_sound_numbers, lv=DEFAULT_VOLUME, rv=DEFAULT_VOLUME, *, force=False):
         """Say now without recording (player ops → primary library).
 
         In-match with secondary enabled: ops speak on primary **alongside**
@@ -259,7 +277,7 @@ class _Voice:
         history_stop may). When secondary is disabled (or out of match):
         classic preempt on the shared primary channel.
         """
-        if self.muted:
+        if self._speech_blocked(force=force):
             return
         if list_of_sound_numbers:
             with self.lock:
@@ -318,6 +336,17 @@ class _Voice:
             self.current = max(0, self.current)
 
     def update(self):
+        if not self.speech_enabled and not self.muted:
+            # 无障碍语音关闭：让当前强制播报播完，不再接队列
+            if self.channel.get_busy():
+                self.channel.update()
+                return
+            for m in self.msgs:
+                m.said = True
+            self.current = len(self.msgs)
+            self.active = False
+            self.history = False
+            return
         if self.channel.get_busy():
             self.channel.update()
         else:
@@ -426,6 +455,236 @@ class _Voice:
         if keep_key and alt_events:
             pygame.event.post(alt_events[0])
         return bool(alt_events)
+
+    def _cutscene_parts_have_audio(self, parts) -> bool:
+        """True if the line includes an SFX / voice clip (not pure TTS text)."""
+        try:
+            from .message import Message, is_text
+
+            collapsed = Message(list(parts)).translate_and_collapse(remove_sounds=False)
+            for p in collapsed:
+                if p is not None and not is_text(p):
+                    return True
+        except Exception:
+            pass
+        return False
+
+    def _poll_cutscene_command(self):
+        """Enter/Return → next; Esc → skip remaining. Other keys ignored here."""
+        from pygame.locals import K_ESCAPE, K_KP_ENTER, K_RETURN, QUIT
+
+        events = pygame.event.get()
+        cmd = None
+        for e in events:
+            if e.type == QUIT:
+                import sys
+
+                sys.exit()
+            if e.type != KEYDOWN:
+                continue
+            if time.time() < getattr(self, "_ignore_enter_until", 0):
+                if e.key in (K_RETURN, K_KP_ENTER, K_ESCAPE):
+                    continue
+            if e.key in (K_RETURN, K_KP_ENTER):
+                cmd = "next"
+            elif e.key == K_ESCAPE:
+                cmd = "skip"
+        return cmd
+
+    def set_must_scroll_narratives(self, value: bool) -> None:
+        """Enable scrolling for cut-scenes/objectives (online multi-human games)."""
+        self.must_scroll_narratives = bool(value)
+
+    def play_narrative_line(
+        self,
+        list_of_sound_numbers,
+        lv=DEFAULT_VOLUME,
+        rv=DEFAULT_VOLUME,
+        *,
+        tts_channel=None,
+        force=False,
+        keep_key=True,
+    ):
+        """Local: Enter/Esc cut-scene. Online multi-human: scrolling auto-advance."""
+        if self.must_scroll_narratives:
+            return self.play_scrolling_line(
+                list_of_sound_numbers,
+                lv,
+                rv,
+                tts_channel=tts_channel,
+                force=force,
+                keep_key=keep_key,
+            )
+        return self.play_cutscene_line(
+            list_of_sound_numbers,
+            lv,
+            rv,
+            tts_channel=tts_channel,
+            force=force,
+        )
+
+    def play_cutscene_line(
+        self,
+        list_of_sound_numbers,
+        lv=DEFAULT_VOLUME,
+        rv=DEFAULT_VOLUME,
+        *,
+        tts_channel=None,
+        force=False,
+    ):
+        """Play one cut-scene / synopsis line with on-screen text (pygame).
+
+        Returns ``\"next\"`` (line done or Enter) or ``\"skip\"`` (Esc).
+        Online multi-human games should use ``play_narrative_line`` instead.
+        """
+        from . import game_tts as _game_tts
+        from .pygame_ui import (
+            draw_narrative,
+            end_narrative,
+            ensure_window_for_ui,
+            msgparts_to_text,
+            show_narrative,
+        )
+
+        if not list_of_sound_numbers:
+            return "next"
+
+        ensure_window_for_ui()
+        text = msgparts_to_text(list_of_sound_numbers)
+        show_narrative(text)
+
+        # Ignore Enter leftover from confirming the campaign menu item.
+        self._ignore_enter_until = time.time() + 0.35
+
+        if self._speech_blocked(force=force):
+            # Sighted / speech-off: still show text until Enter/Esc.
+            while True:
+                draw_narrative()
+                cmd = self._poll_cutscene_command()
+                if cmd:
+                    end_narrative()
+                    return cmd
+                time.sleep(0.02)
+
+        ch = (
+            tts_channel
+            if tts_channel in (_game_tts.PRIMARY, _game_tts.SECONDARY)
+            else _game_tts.PRIMARY
+        )
+        with self.lock:
+            self._give_up_current_if_partially_said()
+            # Cut-scenes with .ogg must still play VoiceChannel under screen reader.
+            self.channel.play(
+                Message(list_of_sound_numbers, lv, rv),
+                tts_channel=ch,
+            )
+            result = None  # None = speech ended without Enter/Esc
+            while self.channel.get_busy():
+                draw_narrative()
+                cmd = self._poll_cutscene_command()
+                if cmd == "skip":
+                    self.channel.stop()
+                    result = "skip"
+                    break
+                if cmd == "next":
+                    self.channel.stop()
+                    result = "next"
+                    break
+                time.sleep(0.02)
+                self.channel.update()
+            self.msgs.append(Message(list_of_sound_numbers, lv, rv, said=True))
+            self._go_to_next_unsaid()
+            self.active = False
+        if result == "skip":
+            end_narrative()
+            return "skip"
+        if result == "next":
+            end_narrative()
+            return "next"
+        # 语音自然播完：仍等 Enter 下一条 / Esc 跳过（其它键无效）
+        while True:
+            draw_narrative()
+            cmd = self._poll_cutscene_command()
+            if cmd == "skip":
+                end_narrative()
+                return "skip"
+            if cmd == "next":
+                end_narrative()
+                return "next"
+            time.sleep(0.02)
+
+    def play_scrolling_line(
+        self,
+        list_of_sound_numbers,
+        lv=DEFAULT_VOLUME,
+        rv=DEFAULT_VOLUME,
+        *,
+        tts_channel=None,
+        force=False,
+        keep_key=True,
+    ):
+        """Show on-screen text and speak; auto-advance when done (objectives).
+
+        Unlike ``play_cutscene_line``, does **not** wait for Enter after speech.
+        Any key interrupts (same idea as classic ``confirmation`` / scroll).
+        Returns ``\"next\"``.
+        """
+        from . import game_tts as _game_tts
+        from .pygame_ui import (
+            draw_narrative,
+            end_narrative,
+            ensure_window_for_ui,
+            msgparts_to_text,
+            show_narrative,
+        )
+        from pygame.locals import KEYDOWN, QUIT
+
+        if not list_of_sound_numbers:
+            return "next"
+
+        ensure_window_for_ui()
+        text = msgparts_to_text(list_of_sound_numbers)
+        show_narrative(text, hint="scrolling…  any key: skip")
+
+        if self._speech_blocked(force=force):
+            # Sighted / speech-off: keep text until any key.
+            while True:
+                draw_narrative()
+                events = pygame.event.get()
+                for e in events:
+                    if e.type == QUIT:
+                        import sys
+
+                        sys.exit()
+                    if e.type == KEYDOWN:
+                        end_narrative()
+                        return "next"
+                time.sleep(0.02)
+
+        ch = (
+            tts_channel
+            if tts_channel in (_game_tts.PRIMARY, _game_tts.SECONDARY)
+            else _game_tts.PRIMARY
+        )
+        with self.lock:
+            self._give_up_current_if_partially_said()
+            self.channel.play(
+                Message(list_of_sound_numbers, lv, rv),
+                tts_channel=ch,
+            )
+            while self.channel.get_busy():
+                draw_narrative()
+                # Any key skips (classic objective / confirmation scroll).
+                if self._key_hit(keep_key=keep_key):
+                    self.channel.stop()
+                    break
+                time.sleep(0.02)
+                self.channel.update()
+            self.msgs.append(Message(list_of_sound_numbers, lv, rv, said=True))
+            self._go_to_next_unsaid()
+            self.active = False
+        end_narrative()
+        return "next"
 
 
 voice = _Voice()

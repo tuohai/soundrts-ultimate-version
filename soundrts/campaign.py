@@ -191,7 +191,7 @@ class CutSceneChapter(Chapter):
         if music_was_playing:
             sound.stop_music()
         
-        voice.important(self.title)
+        # 菜单确认时已播过标题；勿用 important（任意键打断）。正文走 play_sequence。
         play_sequence(self.sequence)
         self.campaign.unlock_next(self)
         
@@ -210,7 +210,7 @@ class CutSceneChapter(Chapter):
         if music_was_playing:
             sound.stop_music()
 
-        voice.important(self.title)
+        # 勿用 important（任意键打断）；正文走 play_sequence。
         play_sequence(self.sequence)
         self.campaign.unlock_next_coop(self)
 
@@ -546,7 +546,8 @@ class Campaign:
 
     def _play_synopsis(self, _ignored=None):
         if self.synopsis:
-            voice.important(self.synopsis)
+            # pygame 字幕；Enter 下一条，Esc 跳过（勿用 important：任意键都会打断）
+            play_sequence(self.synopsis)
         self._reopen_menu()
 
     def _difficulty_menu(self, _ignored=None):

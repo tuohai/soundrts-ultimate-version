@@ -15,6 +15,7 @@ from pygame.locals import (
     K_F1,
     K_F2,
     K_F3,
+    K_F4,
     K_F5,
     K_F6,
     K_F7,
@@ -50,6 +51,8 @@ from pygame.locals import (
     KMOD_ALT,
     KMOD_CTRL,
     KMOD_SHIFT,
+    MOUSEBUTTONDOWN,
+    MOUSEMOTION,
     QUIT,
     TEXTINPUT,
     USEREVENT,
@@ -623,6 +626,9 @@ class Menu:
         self.end_loop = False
         # 标记菜单类型，默认为主菜单
         self.menu_type = menu_type
+        self._hover_index = None
+        self._last_click_index = None
+        self._last_click_time = 0.0
         # 每个菜单项可以附带 rename / delete 回调（用于存档、回放等列表）。
         # 以选项在 self.choices 中的索引为 key，存储 {"rename": fn, "delete": fn}。
         self._choice_extras = {}
@@ -668,6 +674,51 @@ ALT MINUS: music_volume_down
         if len(choice) > 2:
             msg += mp.COMMA + choice[2]
         voice.item(msg)
+        self._draw_menu()
+
+    def _draw_menu(self):
+        try:
+            from .lib import pygame_ui
+
+            pygame_ui.draw_menu(
+                self.title,
+                self.choices,
+                self.choice_index,
+                self._hover_index,
+            )
+        except Exception:
+            pass
+
+    def _process_mouse(self, e):
+        from .lib import pygame_ui
+
+        if e.type == MOUSEMOTION:
+            idx = pygame_ui.menu_index_at(e.pos)
+            if idx != self._hover_index:
+                self._hover_index = idx
+                self._draw_menu()
+            return
+        if e.type != MOUSEBUTTONDOWN or getattr(e, "button", 1) != 1:
+            return
+        idx = pygame_ui.menu_index_at(e.pos)
+        if idx is None:
+            return
+        now = time.time()
+        double = (
+            self._last_click_index == idx
+            and (now - self._last_click_time) < 0.45
+        )
+        self._last_click_index = idx
+        self._last_click_time = now
+        if double:
+            self.choice_index = idx
+            self._draw_menu()
+            return self._confirm_choice()
+        if self.choice_index == idx:
+            # Second click on the same item (after pause) also confirms.
+            return self._confirm_choice()
+        self.choice_index = idx
+        self._say_choice()
 
     def _choice_exists(self):
         return self.choice_index is not None and 0 <= self.choice_index < len(
@@ -808,6 +859,16 @@ ALT MINUS: music_volume_down
                 from .lib import voice_libs
 
                 voice_libs.toggle_secondary_voice_enabled(announce=True)
+            except Exception:
+                voice.item(mp.BEEP)
+        elif e.key == K_F4 and not (
+            e.mod & (KMOD_CTRL | KMOD_ALT | KMOD_SHIFT)
+        ):
+            # 任意菜单：F4 开关无障碍语音（关闭后无 TTS）
+            try:
+                from .lib import voice_libs
+
+                voice_libs.toggle_speech_enabled(announce=True)
             except Exception:
                 voice.item(mp.BEEP)
         elif e.key == K_F5:
@@ -979,22 +1040,31 @@ ALT MINUS: music_volume_down
         if e.type == USEREVENT:
             voice.update()
         elif e.type == KEYDOWN:
+            # Selection handlers (_say_choice / Esc confirm) already redraw.
+            # Do not redraw again here — rebuilding labels used to stall ~0.8s.
             self._process_keydown(e)
+        elif e.type in (MOUSEMOTION, MOUSEBUTTONDOWN):
+            self._process_mouse(e)
         voice.update()  # useful for SAPI
 
     def _get_choice_from_static_menu(self):
         self.choice_done = False
+        self._draw_menu()
         while not self.choice_done:
             self._try_to_get_choice(pygame.event.poll())
             time.sleep(0.01)
 
     def step(self):
         self.choice_done = False
+        self._draw_menu()
         self._try_to_get_choice(pygame.event.poll())
         if self.choice_done:
             self._execute_choice()
 
     def run(self):
+        # Draw before announcing so the list is ready when letter-jump starts
+        # (and so cold label build does not sit after the first keypress).
+        self._draw_menu()
         if self.title:
             voice.menu(self.title)
         else:
@@ -1006,3 +1076,9 @@ ALT MINUS: music_volume_down
         self.end_loop = False
         while not self.end_loop:
             self.run()
+        try:
+            from .lib import pygame_ui
+
+            pygame_ui.clear_menu_view()
+        except Exception:
+            pass

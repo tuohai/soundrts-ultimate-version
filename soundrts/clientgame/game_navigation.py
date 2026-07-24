@@ -564,6 +564,18 @@ def say_square(interface, place, prefix=[]):
     )
 
 
+# 方格地形信息界面（CTRL+SHIFT+F7 / 地图浏览 I）
+from .square_info_screen import (  # noqa: E402
+    build_square_info_attrs,
+    cmd_say_square_info,
+    cmd__exit_square_info_screen,
+    cmd__square_info_next,
+    cmd__square_info_prev,
+    cmd__square_info_sub_next,
+    cmd__square_info_sub_prev,
+)
+
+
 def place_xy(interface):
     return interface.place.x / 1000.0, interface.place.y / 1000.0
 
@@ -1197,6 +1209,10 @@ __all__ = [
     'cmd_toggle_zoom', '_select_and_say_square', 'move_to_square', 'say_square',
     'cmd_select_square', 'cmd_select_scouted_square', 'cmd_select_conflict_square',
     'cmd_select_unknown_square', 'cmd_select_resource_square',
+    'cmd_say_square_info', 'build_square_info_attrs',
+    'cmd__exit_square_info_screen',
+    'cmd__square_info_prev', 'cmd__square_info_next',
+    'cmd__square_info_sub_prev', 'cmd__square_info_sub_next',
     'cmd_ui_escape',
     'set_obs_pos', '_follow_if_needed', 'update_fog_of_war', 'scout_info_if_needed',
     'squares_alert_if_needed', 'coords_in_map', 'square_postfix',

@@ -351,9 +351,28 @@ class GameInterface(AttributesInterface):
             _game_tts.set_in_match(False)
 
     def _run_game_body(self, game, new=True):
-        from ..lib import game_tts as _game_tts
         from ..clientgameorder import update_orders_list
         update_orders_list()  # when style has changed
+
+        # 联机多人：过场滚动；开场目标始终滚动（见下方 play_scrolling_line）
+        try:
+            voice.set_must_scroll_narratives(self._game_needs_scroll_narratives(game))
+            self._run_game_body_with_narratives(game, new=new)
+        finally:
+            voice.set_must_scroll_narratives(False)
+
+    @staticmethod
+    def _game_needs_scroll_narratives(game) -> bool:
+        humans = getattr(game, "humans", None)
+        if humans is not None:
+            return len(humans) > 1
+        try:
+            return int(getattr(game, "nb_human_players", 1) or 1) > 1
+        except (TypeError, ValueError):
+            return False
+
+    def _run_game_body_with_narratives(self, game, new=True):
+        from ..lib import game_tts as _game_tts
 
         # Opening intro/objective must run BEFORE world.loop starts. On heavy
         # maps (e.g. sg4) the simulation thread otherwise starves the GIL and
@@ -415,8 +434,16 @@ class GameInterface(AttributesInterface):
                 # 暂停背景音乐（保留播放位置）
                 sound.pause_music()
                 
-                # 播放任务目标
-                voice.confirmation(mp.OBJECTIVE + game.world.objective)
+                # 开场目标一律滚动（播完即过；任意键可跳过）。
+                # 对局内可点左上角「目标」或热键再查，不必卡在 Enter。
+                from ..objective_announce import flatten_objective_description
+
+                voice.play_scrolling_line(
+                    mp.OBJECTIVE + flatten_objective_description(game.world.objective)
+                )
+                from ..lib.pygame_ui import end_narrative
+
+                end_narrative()
                 
                 # 恢复背景音乐（从暂停位置继续）
                 sound.unpause_music()

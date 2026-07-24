@@ -210,6 +210,7 @@
 4024	consumati
 4025	costruzioni
 4026	punteggio
+4027	neutralizzare il nemico
 4028	premi f1 per l'aiuto
 4029	menu principale
 4030	Cosa desideri fare?
