@@ -1506,6 +1506,67 @@ style
 
 The style is defined in "ui/style.txt" and in the localized version of "style.txt".
 
+Ctrl+F2 map view: icons and unit animation (since 1.4.6.1)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+With the display on (Ctrl+F2), mods may ship optional art and animation. **TTS / blind play are unchanged**; missing assets fall back automatically.
+
+**Draw priority on the map** (first match wins)::
+
+    1. ui/anims/<type_name>/     ; animation pack (spritesheet, or optional Spine)
+    2. ui/map/<type_name>.png    ; static map sprite (separate from command card)
+    3. geometric shapes          ; circle / square schematic
+
+Attack beams, mining chips, and similar FX overlay on top regardless of animation.
+
+**Command-card icons** ``ui/icons/``
+  Filename = ``rules.txt`` type name or order keyword, e.g. ``peasant.png``, ``townhall.png``, ``train.png``.
+  Used by the command card and production queue **only**; **not** drawn on the top-down map.
+  The command card may generate letter icons if a PNG is missing.
+
+**Map sprites** ``ui/map/``
+  Filename = ``rules.txt`` type name, e.g. ``peasant.png``, ``goldmine.png``.
+  Used by the Ctrl+F2 top-down map **only**; missing files fall back to geometric shapes (never generated letters).
+  ``python tools/gen_hud_icons.py`` writes both icons and map starter packs; replace same filenames for custom art.
+
+**Animation packs** ``ui/anims/<type_name>/``
+  Full format: ``res/ui/anims/README.txt``. Same layout in a mod, e.g. ``mods/mymod/ui/anims/peasant/``.
+
+  Spritesheet (recommended; no extra dependencies) ``meta.json`` example::
+
+      {
+        "backend": "spritesheet",
+        "sheet": "sheet.png",
+        "frame_w": 32,
+        "frame_h": 32,
+        "fps": 8,
+        "animations": {
+          "idle":   {"row": 0, "frames": 4},
+          "walk":   {"row": 1, "frames": 6},
+          "attack": {"row": 2, "frames": 4},
+          "gather": {"row": 3, "frames": 4}
+        }
+      }
+
+  You may also list frame filenames under ``animations``, or use folders such as ``idle/0.png``.
+  The engine switches among ``idle`` / ``walk`` / ``attack`` / ``gather`` / ``build`` from current orders.
+
+  Optional Spine skeletal::
+
+      {
+        "backend": "spine",
+        "spine": {
+          "skeleton": "skeleton.json",
+          "atlas": "skeleton.atlas"
+        }
+      }
+
+  Needs a Spine runtime usable with pygame (e.g. ``spine_pygame`` / ``spine``).
+  **If missing or load fails, silently falls back**: spritesheet in the same folder → ``ui/map`` → shapes.
+  SoundRTS does **not** require Spine to run.
+
+Code: ``soundrts/clientgame/game_unit_anim.py``, ``game_hud.py`` (``get_map_sprite``), ``clientgamegridview.py``.
+
 shortcut
 >>>>>>>>
 

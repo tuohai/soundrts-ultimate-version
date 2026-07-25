@@ -4,6 +4,16 @@ Note di rilascio
 .. contents::
 
 
+1.4.6.1
+--------
+
+**Correzione / miglioramento: unità sulla mappa Ctrl+F2 e livelli grafici**
+
+- **Correzione**: unità/edifici della mappa principale quasi bloccati sul bordo superiore per conversione mondo→schermo errata; l’asse Y ora coincide con le caselle.
+- **Mouse / HUD / F8**: selezione, griglia comandi 5×3, coda; ``ui/icons`` (HUD) vs ``ui/map`` (mappa) vs ``ui/anims``.
+- **Codice**: ``clientgamegridview.py``, ``game_hud.py``, ``game_unit_anim.py``, ecc.
+
+
 1.4.6.0
 --------
 
@@ -15,8 +25,8 @@ Rispetto alla vecchia mappa di debug (blocchi piatti, muri neri, puntini), quest
 - **Struttura**: griglia; muri vs uscite/passaggi distinti.
 - **Unità e risorse**: forme distinte; colori squadra; selezione; barre vita; marker aerei.
 - **Etichette e pannello**: coordinate base 1 (es. 2,7), nomi e risorse; pannello sinistro al passaggio del mouse.
-- **Mouse / HUD**: come già documentato (selezione, griglia comandi 5×3, coda).
-- **Codice**: ``clientgamegridview.py``, ``game_hud.py``, ecc.
+- **Minimappa e pulsante obiettivi**: come nel manuale.
+- **Codice**: ``clientgamegridview.py``, ``game_visual_fx.py``, ecc.
 
 **Nuovo: F4 attiva/disattiva la voce di accessibilità nei menu**
 

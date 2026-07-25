@@ -25,9 +25,21 @@ def test_minimap_hit_flip_y():
 
 def test_visual_fx_attack_spawns_particles():
     fx = VisualFxState()
-    fx.note_attack(0, 0, 20, 20, (255, 0, 0))
+    fx.note_attack(0, 0, 20, 20, (255, 0, 0), ranged=True)
     assert fx.particles
     assert fx.attack_beams
+
+
+def test_visual_fx_shot_and_gather():
+    fx = VisualFxState()
+    fx.note_shot(0, 0, 40, 0, (80, 255, 120))
+    assert fx.projectiles
+    fx.note_gather(10, 10, 30, 10, "0")
+    assert fx.projectiles
+    fx.note_store(0, 0, 50, 0, "1")
+    assert len(fx.projectiles) >= 2
+    fx.note_slash(0, 0, 20, 20, (255, 80, 60))
+    assert fx.slashes
 
 
 def test_lerp_snaps_on_teleport():
@@ -48,5 +60,12 @@ def test_gridview_wires_minimap_and_fx():
     assert "lerped_screen_pos" in text
     assert "_draw_order_progress" in text
     assert "note_attack" in text
+    assert "display_gather" in text
+    assert "display_launch" in text
     inp = Path("soundrts/clientgame/game_input_handler.py").read_text(encoding="utf-8")
     assert "minimap_square_from_mousepos" in inp
+    events = Path("soundrts/clientgameentity/events.py").read_text(encoding="utf-8")
+    assert "display_launch" in events
+    assert "on_gather" in events
+    gather = Path("soundrts/worldorders/gathering.py").read_text(encoding="utf-8")
+    assert 'notify("gather,' in gather

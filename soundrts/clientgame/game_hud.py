@@ -1,7 +1,7 @@
 """Ctrl+F2：图标命令卡 + 生产队列。
 
-- 优先加载 ``ui/icons/<name>.png``（有则用真图）
-- 否则程序生成色块+字母图标
+- 命令卡 / 队列：``ui/icons/<name>.png``（有则用真图，否则生成色块字母）
+- 俯视图静态单位图：``ui/map/<type>.png``（见 ``get_map_icon``；与命令卡分离）
 - 点击逻辑同前：复用 orders / validate / cancel
 """
 
@@ -44,8 +44,8 @@ _KW_COLORS = {
     "default": (55, 60, 72),
 }
 
-_icon_cache = {}  # (key, size) -> Surface
-_png_miss = set()  # keys already checked missing
+_icon_cache = {}  # (folder, key, size) -> Surface  or legacy (key, size)
+_png_miss = set()  # (folder, key) already checked missing
 
 
 def _voice_to_text(parts):
@@ -132,20 +132,23 @@ def _kw_color(keyword):
     return _KW_COLORS.get(keyword, _KW_COLORS["default"])
 
 
-def _load_png_icon(key, size):
-    """从资源包 ``ui/icons/<key>.png`` 加载；找不到返回 None。"""
-    if not key or key in _png_miss:
+def _load_png_asset(folder, key, size):
+    """从资源包 ``ui/<folder>/<key>.png`` 加载；找不到返回 None。"""
+    if not key:
         return None
-    cache_key = ("png", key, size)
+    miss_key = (folder, key)
+    if miss_key in _png_miss:
+        return None
+    cache_key = ("png", folder, key, size)
     if cache_key in _icon_cache:
         return _icon_cache[cache_key]
     try:
         from ..lib.resource import res
 
         candidates = (
-            "ui/icons/%s.png" % key,
-            "ui/icons/%s.PNG" % key,
-            "ui/icons/%s.jpg" % key,
+            "ui/%s/%s.png" % (folder, key),
+            "ui/%s/%s.PNG" % (folder, key),
+            "ui/%s/%s.jpg" % (folder, key),
         )
         for rel in candidates:
             for package, path in res.paths(rel, localize=False):
@@ -178,8 +181,24 @@ def _load_png_icon(key, size):
                     pass
     except Exception:
         pass
-    _png_miss.add(key)
+    _png_miss.add(miss_key)
     return None
+
+
+def _load_png_icon(key, size):
+    """命令卡：``ui/icons/<key>.png``。"""
+    return _load_png_asset("icons", key, size)
+
+
+def get_map_sprite(type_name, size):
+    """俯视图静态图：仅 ``ui/map/<type>.png``（不读 icons，不生成字母）。"""
+    if not type_name:
+        return None
+    return _load_png_asset("map", str(type_name).strip(), size)
+
+
+# 兼容旧名
+get_map_icon = get_map_sprite
 
 
 def _make_generated_icon(key, keyword, title_text, size):
@@ -222,7 +241,7 @@ def _make_generated_icon(key, keyword, title_text, size):
 
 
 def get_icon(key, keyword="default", title_text="", size=_ICON):
-    """真图优先，否则生成。"""
+    """命令卡真图优先，否则生成。"""
     key = (key or keyword or "default").strip()
     png = _load_png_icon(key, size)
     if png is not None:

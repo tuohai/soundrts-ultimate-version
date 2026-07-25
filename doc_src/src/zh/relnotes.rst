@@ -4,6 +4,22 @@
 .. contents::
 
 
+1.4.6.1
+--------
+
+**修复 / 改善：Ctrl+F2 俯视图单位显示与资源分层**
+
+- **修复**：主地图单位/建筑因世界坐标换算错误几乎挤在屏幕顶边（小地图仍可见点）；已与格子 Y 轴方向对齐。
+- **鼠标（仅画面开启时）**：单击选中；双击全选可见同类型；Shift+单击加选/减选；Shift+框选并入；单击空地跳格并清空选择；右键默认命令（Shift/Ctrl 队列不变）。
+- **命令卡 HUD**：右下角 5×3 图标命令格；左下角生产队列与取消队尾；可选 ``res/ui/icons/<类型或命令名>.png``。
+- **地图静态图**：俯视图使用独立目录 ``res/ui/map/<类型名>.png``（与命令卡分离）；无图仍用色块。
+- **可选单位动画**：``res/ui/anims/<类型>/`` 精灵表或可选 Spine；回退顺序：动画 → ``ui/map`` → 色块（``clientgame/game_unit_anim.py``）。
+- **起步图包**：``res/ui/icons/``（HUD）与 ``res/ui/map/``（地图）已含常见扁平 PNG；同名覆盖即可换图；``python tools/gen_hud_icons.py`` 可重生成。
+- **F8 缩放 + 画面**：当前大方格放大并画子格网格；鼠标可切换子格、点选单位、框选、右键对子格下命令。
+- **实现**：``clientgamegridview.py``、``clientgame/game_visual_fx.py``、``clientgame/game_input_handler.py``、``clientgame/game_unit_control.py``、``clientgame/game_hud.py``、``clientgame/game_unit_anim.py``。
+- **文档**：各语言玩家手册、模组手册、分层热键说明。
+
+
 1.4.6.0
 --------
 
@@ -16,13 +32,10 @@
 - **单位与资源**：单位/建筑/资源形状区分；阵营色；选中高亮；血条；空中单位标识。
 - **标注与信息板**：数字坐标（1 基，如 2,7）、地名与资源数量（格够大时）；左侧悬停信息板显示当前格地形属性与指向单位/建筑要点（生命、攻防等）。
 - **可读性增强**：迷雾交界柔边；选中脉冲高亮；目标十字与行军线；受伤/开火闪光与短粒子；建造/训练进度环；单位移动插值（仅画面）。
+- **战斗 / 采集特效**：远程弹道光点、近战挥砍弧；采矿飞屑、入库飞货。
 - **小地图**：右上角全局缩略图（缩放模式下隐藏）；左键跳格，右键跳格并下默认命令。
 - **任务目标按钮**：左上角「目标」；左键下一条，Shift+左键上一条（同目标热键）；Esc 关闭字幕。
-- **鼠标（仅画面开启时）**：单击选中；双击全选可见同类型；Shift+单击加选/减选；Shift+框选并入；单击空地跳格并清空选择；右键默认命令（Shift/Ctrl 队列不变）。
-- **命令卡 HUD**：右下角 5×3 图标命令格；左下角生产队列与取消队尾；可选 ``res/ui/icons/<类型名>.png``。
-- **起步图标包**：``res/ui/icons/`` 已含常见单位/建筑/命令的扁平 PNG；同名覆盖即可换图；``python tools/gen_hud_icons.py`` 可重生成。
-- **F8 缩放 + 画面**：当前大方格放大并画子格网格；鼠标可切换子格、点选单位、框选、右键对子格下命令。
-- **实现**：``clientgamegridview.py``、``clientgame/game_visual_fx.py``、``clientgame/game_input_handler.py``、``clientgame/game_unit_control.py``、``clientgame/game_hud.py``。
+- **实现**：``clientgamegridview.py``、``clientgame/game_visual_fx.py``、``clientgame/game_display.py``。
 - **文档**：各语言玩家手册、分层热键说明。
 
 **新增：菜单内 F4 无障碍语音开关**

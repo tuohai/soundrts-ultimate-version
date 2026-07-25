@@ -5,6 +5,16 @@ Notas de la versión
 .. contents::
 
 
+1.4.6.1
+-------
+
+**Corrección / mejora: unidades en mapa Ctrl+F2 y capas de arte**
+
+- **Corrección**: unidades/edificios del mapa principal casi pegados al borde superior por conversión mundo→pantalla incorrecta; el eje Y ahora coincide con las casillas.
+- **Ratón / HUD / F8**: selección, rejilla de comandos 5×3, cola; ``ui/icons`` (HUD) vs ``ui/map`` (mapa) vs ``ui/anims``.
+- **Código**: ``clientgamegridview.py``, ``game_hud.py``, ``game_unit_anim.py``, etc.
+
+
 1.4.6.0
 -------
 
@@ -16,8 +26,8 @@ Respecto al mapa de depuración antiguo (bloques planos, muros negros, puntos), 
 - **Estructura**: rejilla; muros vs salidas/pasos diferenciados.
 - **Unidades y recursos**: formas distintas; colores de equipo; selección; barras de vida; marcadores aéreos.
 - **Etiquetas y panel**: coordenadas base 1 (p. ej. 2,7), nombres y recursos; panel izquierdo al pasar el ratón.
-- **Ratón / HUD**: igual que antes (selección, comando 5×3, cola).
-- **Código**: ``clientgamegridview.py``, ``game_hud.py``, etc.
+- **Minimapa y botón de objetivos**: como en el manual.
+- **Código**: ``clientgamegridview.py``, ``game_visual_fx.py``, etc.
 
 **Nuevo: F4 conmuta la voz de accesibilidad en menús**
 

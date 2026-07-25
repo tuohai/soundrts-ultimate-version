@@ -564,23 +564,51 @@ class GridView:
         self._blit_label(screen, font, head, (left + 6, top + 4), (255, 235, 160))
 
     def _get_view_coords_from_world_coords(self, ox, oy):
+        """Map client-scale coords (raw_world / 1000) to screen pixels.
+
+        Same contract as SoundRTS 1.3.8.1: ``EntityView.x`` / ``interface.x``
+        are already divided by 1000. Raw millisecond coords must go through
+        ``_xy_coords`` first.
+        """
+        try:
+            ox = float(ox)
+            oy = float(oy)
+        except (TypeError, ValueError):
+            return 0, 0
         if self.interface.zoom_mode and self.interface.place is not None:
             sq = self.interface.place
             left, top, w, h = self._zoom_view_rect()
-            x = int(left + (ox - sq.xmin) / max(sq.xmax - sq.xmin, 1e-9) * w)
-            # world Y up → screen Y down
-            y = int(top + (sq.ymax - oy) / max(sq.ymax - sq.ymin, 1e-9) * h)
+            xmin = sq.xmin / 1000.0
+            xmax = sq.xmax / 1000.0
+            ymin = sq.ymin / 1000.0
+            ymax = sq.ymax / 1000.0
+            x = int(left + (ox - xmin) / max(xmax - xmin, 1e-9) * w)
+            y = int(top + (ymax - oy) / max(ymax - ymin, 1e-9) * h)
             return x, y
-        sw = self.interface.world.square_width
+        sw = float(self.interface.square_width) or 1.0
         x = int(self._map_origin[0] + ox / sw * self.square_view_width)
-        y = int(self._map_origin[1] + oy / sw * self.square_view_height)
+        y = int(
+            self._map_origin[1]
+            + self.ymax
+            - oy / sw * self.square_view_height
+        )
         return x, y
 
     def _object_coords(self, o):
+        # EntityView.x / .y are already /1000 (1.3.8.1)
         return self._get_view_coords_from_world_coords(o.x, o.y)
 
     def _xy_coords(self, ox, oy):
-        return self._get_view_coords_from_world_coords(ox, oy)
+        # Square / model raw milliseconds → client scale (1.3.8.1)
+        return self._get_view_coords_from_world_coords(ox / 1000.0, oy / 1000.0)
+
+    def _target_view_coords(self, target):
+        """Screen coords for an EntityView (scaled) or world object (raw)."""
+        if target is None:
+            return None
+        if getattr(target, "model", None) is not None and hasattr(target, "interface"):
+            return self._object_coords(target)
+        return self._xy_coords(target.x, target.y)
 
     def _object_color(self, o):
         if getattr(o.model, "player", None) is not None:
@@ -612,12 +640,78 @@ class GridView:
             return "land"
         return "unit"
 
+    def _object_type_name(self, o):
+        model = getattr(o, "model", o)
+        return (
+            getattr(o, "type_name", None)
+            or getattr(model, "type_name", None)
+            or getattr(model, "type", None)
+            or ""
+        )
+
+    def _try_blit_map_anim(self, screen, o, x, y, *, size, color, selected, pulse):
+        """Optional ``ui/anims/<type>/`` pack; returns True if drawn."""
+        if size < 10:
+            return False
+        try:
+            from .clientgame.game_unit_anim import try_blit_unit_anim
+
+            facing = float(getattr(o, "o", 0) or 0)
+            ok = try_blit_unit_anim(screen, o, x, y, size, facing=facing)
+        except Exception:
+            return False
+        if not ok:
+            return False
+        # team outline so anim packs stay readable vs fog
+        half = size // 2
+        pygame.draw.rect(
+            screen,
+            color,
+            pygame.Rect(int(x) - half - 1, int(y) - half - 1, size + 2, size + 2),
+            2,
+            border_radius=3,
+        )
+        if selected and pulse is not None:
+            pygame.draw.rect(
+                screen,
+                pulse,
+                pygame.Rect(int(x) - half - 3, int(y) - half - 3, size + 6, size + 6),
+                2,
+                border_radius=4,
+            )
+        return True
+
+    def _try_blit_map_icon(self, screen, o, x, y, *, size, color, selected, pulse):
+        """若 ``ui/map/<type>.png`` 存在则画在地图上，返回 True（不读 icons）。"""
+        if size < 10:
+            return False
+        try:
+            from .clientgame.game_hud import get_map_sprite
+
+            icon = get_map_sprite(self._object_type_name(o), size)
+        except Exception:
+            return False
+        if icon is None:
+            return False
+        rect = icon.get_rect(center=(int(x), int(y)))
+        # 半透明阵营底，图标叠上更易辨认敌我
+        pad = pygame.Surface((size + 4, size + 4), pygame.SRCALPHA)
+        fill = (*color[:3], 90)
+        pygame.draw.rect(pad, fill, pad.get_rect(), border_radius=4)
+        screen.blit(pad, pad.get_rect(center=(int(x), int(y))))
+        screen.blit(icon, rect)
+        pygame.draw.rect(screen, color, rect.inflate(2, 2), 2, border_radius=3)
+        if selected and pulse is not None:
+            pygame.draw.rect(screen, pulse, rect.inflate(6, 6), 2, border_radius=4)
+            pygame.draw.rect(screen, (255, 255, 220), rect.inflate(2, 2), 1, border_radius=3)
+        return True
+
     def display_object(self, o):
         # 检查对象是否可见
         if not self._is_object_visible(o):
             return
 
-        target_xy = self._get_view_coords_from_world_coords(o.x, o.y)
+        target_xy = self._object_coords(o)
         x, y = self.fx.lerped_screen_pos(o.id, target_xy)
         color = self._object_color(o)
 
@@ -636,23 +730,63 @@ class GridView:
 
         pulse = self.fx.selection_pulse_color() if selected else None
 
-        if kind == "building":
-            s = radius * 2
-            rect = pygame.Rect(x - s // 2, y - s // 2, s, s)
-            pygame.draw.rect(screen, color, rect)
-            pygame.draw.rect(screen, (20, 20, 20), rect, 1)
-            if selected:
-                pygame.draw.rect(screen, pulse, rect.inflate(6, 6), 2)
-                pygame.draw.rect(screen, (255, 255, 220), rect.inflate(2, 2), 1)
-        elif kind == "resource":
-            pts = (
-                (x, y - radius),
-                (x + radius, y),
-                (x, y + radius),
-                (x - radius, y),
+        # 绘制优先级：动画包 → ui/map PNG → 几何示意；特效仍叠在上层
+        # （命令卡 icons 不参与地图绘制）
+        icon_size = max(radius * 2, 12)
+        if self.square_view_width >= 28:
+            icon_size = max(icon_size, min(40, self.square_view_width // 3))
+        used_sprite = False
+        if kind in ("unit", "building", "resource"):
+            used_sprite = self._try_blit_map_anim(
+                screen,
+                o,
+                x,
+                y,
+                size=icon_size,
+                color=color,
+                selected=selected,
+                pulse=pulse,
             )
-            pygame.draw.polygon(screen, color, pts)
-            pygame.draw.polygon(screen, (40, 30, 10), pts, 1)
+            if not used_sprite:
+                used_sprite = self._try_blit_map_icon(
+                    screen,
+                    o,
+                    x,
+                    y,
+                    size=icon_size,
+                    color=color,
+                    selected=selected,
+                    pulse=pulse,
+                )
+            if used_sprite:
+                radius = max(radius, icon_size // 2)
+
+        if not used_sprite:
+            if kind == "building":
+                s = radius * 2
+                rect = pygame.Rect(x - s // 2, y - s // 2, s, s)
+                pygame.draw.rect(screen, color, rect)
+                pygame.draw.rect(screen, (20, 20, 20), rect, 1)
+                if selected:
+                    pygame.draw.rect(screen, pulse, rect.inflate(6, 6), 2)
+                    pygame.draw.rect(screen, (255, 255, 220), rect.inflate(2, 2), 1)
+            elif kind == "resource":
+                pts = (
+                    (x, y - radius),
+                    (x + radius, y),
+                    (x, y + radius),
+                    (x - radius, y),
+                )
+                pygame.draw.polygon(screen, color, pts)
+                pygame.draw.polygon(screen, (40, 30, 10), pts, 1)
+            else:
+                pygame.draw.circle(screen, color, (x, y), radius, 0)
+                pygame.draw.circle(screen, (15, 15, 15), (x, y), radius, 1)
+                if selected:
+                    pygame.draw.circle(screen, pulse, (x, y), radius + 4, 2)
+                    pygame.draw.circle(screen, (255, 255, 220), (x, y), radius + 2, 1)
+
+        if kind == "resource":
             qty_text = _resource_qty_label(o)
             if qty_text and self.square_view_width >= 20:
                 self._ensure_fonts()
@@ -663,12 +797,6 @@ class GridView:
                     (x + radius + 1, y - self._font_qty.get_height() // 2),
                     (255, 240, 120),
                 )
-        else:
-            pygame.draw.circle(screen, color, (x, y), radius, 0)
-            pygame.draw.circle(screen, (15, 15, 15), (x, y), radius, 1)
-            if selected:
-                pygame.draw.circle(screen, pulse, (x, y), radius + 4, 2)
-                pygame.draw.circle(screen, (255, 255, 220), (x, y), radius + 2, 1)
 
         # 空气单位：细白圈
         if getattr(getattr(o, "model", o), "airground_type", None) == "air":
@@ -803,7 +931,7 @@ class GridView:
                     pygame.draw.circle(
                         get_screen(),
                         c,
-                        self._get_view_coords_from_world_coords(ox, oy),
+                        self._xy_coords(ox, oy),
                         0,
                         0,
                     )
@@ -812,8 +940,8 @@ class GridView:
         screen = get_screen()
         if self.interface.zoom_mode:
             zoom = self.interface.zoom
-            left, bottom = self._get_view_coords_from_world_coords(zoom.xmin, zoom.ymin)
-            right, top = self._get_view_coords_from_world_coords(zoom.xmax, zoom.ymax)
+            left, bottom = self._xy_coords(zoom.xmin, zoom.ymin)
+            right, top = self._xy_coords(zoom.xmax, zoom.ymax)
             rect = left, top, right - left, bottom - top
         else:
             xc, yc = self.interface.coords_in_map(self.interface.place)
@@ -1077,7 +1205,7 @@ class GridView:
         if target is not None and hasattr(target, "x") and hasattr(target, "y"):
             try:
                 if (not self.interface.zoom_mode) or self._is_object_visible(target):
-                    x, y = self._get_view_coords_from_world_coords(target.x, target.y)
+                    x, y = self._target_view_coords(target)
                     draw_target_marker(screen, x, y, (120, 220, 255), max(8, R))
             except Exception:
                 pass
@@ -1085,7 +1213,7 @@ class GridView:
             z = self.interface.zoom
             cx = (z.xmin + z.xmax) / 2.0
             cy = (z.ymin + z.ymax) / 2.0
-            x, y = self._get_view_coords_from_world_coords(cx, cy)
+            x, y = self._xy_coords(cx, cy)
             draw_target_marker(screen, x, y, (255, 210, 90), max(8, R))
 
         for uid in getattr(self.interface, "group", ()) or ():
@@ -1100,10 +1228,8 @@ class GridView:
             if dest is None or not hasattr(dest, "x"):
                 continue
             try:
-                x0, y0 = self.fx.lerped_screen_pos(
-                    o.id, self._get_view_coords_from_world_coords(o.x, o.y)
-                )
-                x1, y1 = self._get_view_coords_from_world_coords(dest.x, dest.y)
+                x0, y0 = self.fx.lerped_screen_pos(o.id, self._object_coords(o))
+                x1, y1 = self._target_view_coords(dest)
                 pygame.draw.line(screen, (100, 180, 220), (x0, y0), (x1, y1), 1)
                 draw_target_marker(screen, x1, y1, (80, 200, 255), 6)
             except Exception:
@@ -1266,13 +1392,97 @@ class GridView:
             color = (80, 255, 120)
         ax, ay = self._object_coords(a)
         tx, ty = self._object_coords(target)
-        self.fx.note_attack(ax, ay, tx, ty, color)
+        model = getattr(a, "model", a)
+        ranged = bool(getattr(model, "rdg", 0) or getattr(model, "rdg_projectile", 0))
+        self.fx.note_attack(ax, ay, tx, ty, color, ranged=ranged)
         tid = getattr(target, "id", None)
         if tid is not None:
             self.fx.note_hurt(tid)
-        screen = get_screen()
-        r1 = pygame.draw.line(screen, color, (tx, ty), (ax, ay), 2)
-        r2 = pygame.draw.circle(
-            screen, (220, 220, 220), (tx, ty), max(4, R * 3 // 2), 0
-        )
-        pygame.display.update(r1.union(r2))
+
+    def display_launch(self, attacker, event_name="launch_rdg"):
+        """Attack wind-up / shot leave the barrel (visual only)."""
+        if attacker is None or not self.interface.display_is_active:
+            return
+        model = getattr(attacker, "model", attacker)
+        action = getattr(model, "action", None)
+        target = getattr(action, "target", None) if action is not None else None
+        if target is None or not hasattr(target, "x"):
+            # fall back: current interface target if same fight
+            target = getattr(self.interface, "target", None)
+        if target is None or not hasattr(target, "x"):
+            return
+        self._update_coefs()
+        try:
+            ax, ay = self._object_coords(attacker)
+            # world target may be raw model — use _target_view_coords when possible
+            if getattr(target, "model", None) is not None or target in getattr(
+                self.interface, "dobjets", {}
+            ).values():
+                tx, ty = self._object_coords(target)
+            else:
+                # raw world object
+                view = None
+                tid = getattr(target, "id", None)
+                if tid is not None:
+                    view = self.interface.dobjets.get(tid)
+                if view is not None:
+                    tx, ty = self._object_coords(view)
+                else:
+                    tx, ty = self._xy_coords(target.x, target.y)
+        except Exception:
+            return
+        if self.interface.player.is_an_enemy(attacker):
+            color = (255, 100, 70)
+        else:
+            color = (120, 255, 140)
+        if event_name.startswith("launch_rdg"):
+            self.fx.note_shot(ax, ay, tx, ty, color)
+        else:
+            self.fx.note_slash(ax, ay, tx, ty, color)
+
+    def display_gather(self, worker, resource_type="0"):
+        if worker is None or not self.interface.display_is_active:
+            return
+        model = getattr(worker, "model", worker)
+        orders = getattr(model, "orders", None) or []
+        deposit = None
+        if orders:
+            deposit = getattr(orders[0], "target", None)
+        self._update_coefs()
+        try:
+            wx, wy = self._object_coords(worker)
+            if deposit is not None and hasattr(deposit, "x"):
+                did = getattr(deposit, "id", None)
+                dview = self.interface.dobjets.get(did) if did is not None else None
+                if dview is not None:
+                    mx, my = self._object_coords(dview)
+                else:
+                    mx, my = self._xy_coords(deposit.x, deposit.y)
+            else:
+                mx, my = wx + 8, wy
+        except Exception:
+            return
+        self.fx.note_gather(wx, wy, mx, my, resource_type)
+
+    def display_store(self, storage, resource_type="0"):
+        if storage is None or not self.interface.display_is_active:
+            return
+        self._update_coefs()
+        try:
+            sx, sy = self._object_coords(storage)
+        except Exception:
+            return
+        # nearest worker of same player with cargo (optional)
+        wx, wy = sx - 12, sy
+        player = getattr(storage, "player", None)
+        for o in self.interface.dobjets.values():
+            if getattr(o, "player", None) is not player:
+                continue
+            cargo = getattr(getattr(o, "model", o), "cargo", None)
+            if cargo:
+                try:
+                    wx, wy = self._object_coords(o)
+                    break
+                except Exception:
+                    pass
+        self.fx.note_store(wx, wy, sx, sy, resource_type)

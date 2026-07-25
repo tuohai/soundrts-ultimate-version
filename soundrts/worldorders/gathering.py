@@ -107,6 +107,10 @@ class GatherOrder(BasicOrder):
             
         # 资源正常提取，设置工人的货物
         self.unit.cargo = (self.target.resource_type, extracted_qty)
+        try:
+            self.unit.notify("gather,%s" % self.target.resource_type)
+        except Exception:
+            pass
 
     def _handle_water_unit_transport(self):
         """处理水上单位的资源运输：先移动到最佳岸边位置，然后将资源运输到相邻陆地的仓库"""

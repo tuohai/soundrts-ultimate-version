@@ -63,6 +63,8 @@ class VisualFxState:
         self.hurt_until = {}  # id -> time
         self.particles: List[dict] = []
         self.attack_beams: List[dict] = []  # lingering attack lines
+        self.projectiles: List[dict] = []  # flying shots
+        self.slashes: List[dict] = []  # melee arcs
         self.select_pulse_t0 = time.time()
 
     def clear(self):
@@ -71,46 +73,198 @@ class VisualFxState:
         self.hurt_until.clear()
         self.particles.clear()
         self.attack_beams.clear()
+        self.projectiles.clear()
+        self.slashes.clear()
 
     def note_hurt(self, oid, duration=0.28):
         self.hurt_until[oid] = time.time() + duration
 
-    def note_attack(self, ax, ay, tx, ty, color, duration=0.22):
+    def _burst(self, x, y, color, n=8, speed=55, life=0.4, r=2):
         now = time.time()
+        for i in range(n):
+            ang = (i / float(n)) * math.tau + (now % 1) * 0.7
+            sp = speed * (0.55 + 0.45 * ((i * 37) % 10) / 10.0)
+            self.particles.append(
+                {
+                    "x": float(x),
+                    "y": float(y),
+                    "vx": math.cos(ang) * sp,
+                    "vy": math.sin(ang) * sp,
+                    "until": now + life,
+                    "life0": life,
+                    "color": color,
+                    "r": r,
+                    "kind": "spark",
+                }
+            )
+
+    def note_attack(self, ax, ay, tx, ty, color, *, ranged=False, duration=0.22):
+        """Hit feedback. Prefer note_shot/note_slash at launch; this covers wound."""
+        now = time.time()
+        if ranged:
+            self.attack_beams.append(
+                {
+                    "a": (ax, ay),
+                    "b": (tx, ty),
+                    "color": color,
+                    "until": now + duration,
+                    "w0": 2,
+                }
+            )
+        else:
+            self.slashes.append(
+                {
+                    "cx": float(tx),
+                    "cy": float(ty),
+                    "ax": float(ax),
+                    "ay": float(ay),
+                    "color": color,
+                    "until": now + 0.18,
+                }
+            )
+        self._burst(tx, ty, color, n=10 if ranged else 7, speed=70 if ranged else 45)
+
+    def note_shot(self, ax, ay, tx, ty, color, flight=0.28):
+        """Ranged projectile from attacker to target (launch time)."""
+        now = time.time()
+        self.projectiles.append(
+            {
+                "x0": float(ax),
+                "y0": float(ay),
+                "x1": float(tx),
+                "y1": float(ty),
+                "t0": now,
+                "t1": now + flight,
+                "color": color,
+                "r": 3,
+            }
+        )
+        # muzzle puff
+        self._burst(ax, ay, color, n=4, speed=30, life=0.2, r=2)
+
+    def note_slash(self, ax, ay, tx, ty, color):
+        now = time.time()
+        self.slashes.append(
+            {
+                "cx": float(tx),
+                "cy": float(ty),
+                "ax": float(ax),
+                "ay": float(ay),
+                "color": color,
+                "until": now + 0.2,
+            }
+        )
         self.attack_beams.append(
             {
                 "a": (ax, ay),
                 "b": (tx, ty),
                 "color": color,
-                "until": now + duration,
+                "until": now + 0.12,
+                "w0": 3,
             }
         )
-        # hit spark
-        for i in range(6):
-            ang = (i / 6.0) * math.tau
-            self.particles.append(
+
+    def note_gather(self, wx, wy, mx, my, resource_type="0"):
+        """Worker gathers at mine/wood: chips fly from deposit to worker."""
+        now = time.time()
+        if str(resource_type) in ("1", "resource1", "gold", "0"):
+            color = (255, 210, 60)
+        else:
+            color = (140, 190, 80)
+        # sparkles on deposit
+        self._burst(mx, my, color, n=6, speed=35, life=0.35, r=2)
+        # chips toward worker
+        for i in range(5):
+            t = 0.12 + i * 0.04
+            self.projectiles.append(
                 {
-                    "x": float(tx),
-                    "y": float(ty),
-                    "vx": math.cos(ang) * 40,
-                    "vy": math.sin(ang) * 40,
-                    "until": now + 0.35,
+                    "x0": float(mx),
+                    "y0": float(my),
+                    "x1": float(wx),
+                    "y1": float(wy),
+                    "t0": now + i * 0.03,
+                    "t1": now + t,
                     "color": color,
                     "r": 2,
                 }
             )
 
+    def note_store(self, wx, wy, sx, sy, resource_type="0"):
+        """Cargo delivered into townhall/lumbermill."""
+        now = time.time()
+        if str(resource_type) in ("1", "resource1", "gold", "0"):
+            color = (255, 220, 70)
+        else:
+            color = (150, 200, 90)
+        self.projectiles.append(
+            {
+                "x0": float(wx),
+                "y0": float(wy),
+                "x1": float(sx),
+                "y1": float(sy),
+                "t0": now,
+                "t1": now + 0.35,
+                "color": color,
+                "r": 3,
+            }
+        )
+        self._burst(sx, sy, color, n=8, speed=40, life=0.4, r=2)
+
     def update_and_draw_overlays(self, screen, dt=0.05):
         now = time.time()
+        # projectiles (fly along segment)
+        keep_proj = []
+        for p in self.projectiles:
+            if now < p["t0"]:
+                keep_proj.append(p)
+                continue
+            if now >= p["t1"]:
+                # impact spark at end
+                self._burst(p["x1"], p["y1"], p["color"], n=5, speed=50, life=0.25, r=2)
+                continue
+            u = (now - p["t0"]) / max(1e-6, p["t1"] - p["t0"])
+            # slight arc
+            x = p["x0"] + (p["x1"] - p["x0"]) * u
+            y = p["y0"] + (p["y1"] - p["y0"]) * u - math.sin(u * math.pi) * 10
+            keep_proj.append(p)
+            pygame.draw.circle(screen, p["color"], (int(x), int(y)), p["r"])
+            pygame.draw.circle(screen, (255, 255, 255), (int(x), int(y)), max(1, p["r"] - 1), 1)
+        self.projectiles = keep_proj
+
+        # melee slashes
+        keep_s = []
+        for s in self.slashes:
+            if s["until"] <= now:
+                continue
+            keep_s.append(s)
+            life = max(0.0, (s["until"] - now) / 0.2)
+            # arc around target facing attacker
+            ang0 = math.atan2(s["ay"] - s["cy"], s["ax"] - s["cx"])
+            radius = 14
+            pts = []
+            for i in range(7):
+                a = ang0 - 0.9 + 1.8 * (i / 6.0)
+                pts.append(
+                    (
+                        s["cx"] + math.cos(a) * radius * (0.7 + 0.3 * life),
+                        s["cy"] + math.sin(a) * radius * (0.7 + 0.3 * life),
+                    )
+                )
+            if len(pts) >= 2:
+                pygame.draw.lines(screen, s["color"], False, pts, max(1, int(3 * life)))
+        self.slashes = keep_s
+
         # beams
         keep_beams = []
         for b in self.attack_beams:
             if b["until"] <= now:
                 continue
             keep_beams.append(b)
-            alpha_t = max(0.0, (b["until"] - now) / 0.22)
+            span = 0.22
+            alpha_t = max(0.0, (b["until"] - now) / span)
             col = b["color"]
-            pygame.draw.line(screen, col, b["a"], b["b"], max(1, int(3 * alpha_t)))
+            w0 = int(b.get("w0", 3))
+            pygame.draw.line(screen, col, b["a"], b["b"], max(1, int(w0 * alpha_t)))
         self.attack_beams = keep_beams
 
         # particles
@@ -121,10 +275,12 @@ class VisualFxState:
             p["x"] += p["vx"] * dt
             p["y"] += p["vy"] * dt
             p["vx"] *= 0.88
-            p["vy"] *= 0.88
+            p["vy"] *= 0.88 + (0.02 if p.get("kind") == "spark" else 0)
+            p["vy"] += 25 * dt  # light gravity
             keep_p.append(p)
-            life = max(0.0, (p["until"] - now) / 0.35)
-            r = max(1, int(p["r"] * (0.5 + life)))
+            life0 = float(p.get("life0", 0.35))
+            life = max(0.0, (p["until"] - now) / max(life0, 1e-6))
+            r = max(1, int(p["r"] * (0.4 + 0.6 * life)))
             pygame.draw.circle(screen, p["color"], (int(p["x"]), int(p["y"])), r)
         self.particles = keep_p
 

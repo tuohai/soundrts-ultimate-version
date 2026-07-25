@@ -1542,6 +1542,15 @@ estilo
 
 El estilo se define en "ui/style.txt" y en la versión localizada de "style.txt".
 
+Vista Ctrl+F2: iconos y animación (desde 1.4.6.1)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Con la pantalla activa, los mods pueden aportar arte opcional. Prioridad en el mapa:
+``ui/anims/<tipo>/`` → ``ui/map/<tipo>.png`` → formas geométricas.
+Los efectos de combate/recolección se superponen igual. Formato detallado:
+``res/ui/anims/README.txt``. Spine es opcional; si falta, se vuelve a spritesheet/iconos/formas.
+Código: ``game_unit_anim.py``.
+
 atajo
 >>>>>>>
 

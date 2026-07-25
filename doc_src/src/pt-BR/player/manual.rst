@@ -239,7 +239,7 @@ Com a tela ligada mostra o mapa de cima com qualidade melhor que a vista de depu
 - Clique esquerdo seleciona; duplo clique seleciona todas as unidades visíveis do mesmo tipo; Shift+clique adiciona/remove; Shift+caixa acrescenta; clique em chão vazio salta de casa e limpa a seleção.
 - Clique direito: ordens padrão (filas Shift/Ctrl inalteradas).
 - Com seleção: grade de comandos 5×3 no canto inferior direito e fila/cancelar no inferior esquerdo. PNGs opcionais em ``res/ui/icons/<tipo>.png``.
-- **Pacote inicial**: PNGs geométricos já em ``res/ui/icons/``; substitua o mesmo nome para personalizar; ``python tools/gen_hud_icons.py`` regenera.
+- **Sprites do mapa**: ``res/ui/map/<tipo>.png`` (separado de icons); anims → map → formas. Pacote também em ``res/ui/map/``; ``python tools/gen_hud_icons.py`` regenera.
 
 Com a tela off, teclado e voz continuam primários. O estado é salvo (``display_enabled``) e restaurado na próxima abertura. Veja `teclas em camadas <layered-hotkeys.htm>`_.
 

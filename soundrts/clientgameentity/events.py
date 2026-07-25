@@ -80,6 +80,12 @@ class EntityViewEvents:
             else:
                 # 使用自己的音效
                 self.launch_event_style(event)
+            # 画面：开火 / 挥砍
+            try:
+                if self.interface.display_is_active:
+                    self.interface.grid_view.display_launch(self, event)
+            except Exception:
+                pass
         # 处理资源生产完成通知
         elif event.startswith("produced_"):
             # 例如: produced_1,50 (生产了50个金子)
@@ -305,7 +311,19 @@ class EntityViewEvents:
 
     def on_store(self, resource_type):
         self.launch_event_style(f"store_{resource_type}")
+        try:
+            if self.interface.display_is_active:
+                self.interface.grid_view.display_store(self, resource_type)
+        except Exception:
+            pass
 
+    def on_gather(self, resource_type="0"):
+        """Visual-only gather chip FX (world notifies after extract)."""
+        try:
+            if self.interface.display_is_active:
+                self.interface.grid_view.display_gather(self, resource_type)
+        except Exception:
+            pass
     def on_order_ok(self):
         if self.player is not self.interface.player:
             return

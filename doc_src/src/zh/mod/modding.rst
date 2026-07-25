@@ -1590,6 +1590,67 @@ style
 
 样式定义在 "ui/style.txt" 以及 "style.txt" 的本地化版本中。
 
+Ctrl+F2 俯视图：图标与单位动画（自 1.4.6.1）
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+开启画面（Ctrl+F2）时，模组可提供可选贴图与动画。**不影响 TTS / 盲玩**；缺失资源时自动回退。
+
+**地图绘制优先级**（先命中先用）::
+
+    1. ui/anims/<类型名>/     ; 动画包（精灵表，或可选 Spine 骨骼）
+    2. ui/map/<类型名>.png    ; 俯视图静态图（与命令卡分离）
+    3. 几何色块               ; 圆点 / 方块示意
+
+攻击线、采矿飞屑等示意特效叠在上述图层之上，与有无动画无关。
+
+**命令卡图标** ``ui/icons/``
+  文件名 = ``rules.txt`` 中的类型名或命令关键字，如 ``peasant.png``、``townhall.png``、``train.png``。
+  **仅用于**右下角命令卡与生产队列；**不参与**俯视图绘制。
+  缺图时会生成色块字母。
+
+**地图静态图** ``ui/map/``
+  文件名 = ``rules.txt`` 类型名，如 ``peasant.png``、``goldmine.png``。
+  **仅用于** Ctrl+F2 俯视图；缺图则用几何色块（不用生成字母）。
+  起步包可用 ``python tools/gen_hud_icons.py`` 同时写入 icons 与 map；同名覆盖即可换更好的图。
+
+**动画包** ``ui/anims/<类型名>/``
+  详细格式见仓库 ``res/ui/anims/README.txt``。模组路径相同，例如 ``mods/mymod/ui/anims/peasant/``。
+
+  精灵表（推荐，无需额外依赖）示例 ``meta.json``::
+
+      {
+        "backend": "spritesheet",
+        "sheet": "sheet.png",
+        "frame_w": 32,
+        "frame_h": 32,
+        "fps": 8,
+        "animations": {
+          "idle":   {"row": 0, "frames": 4},
+          "walk":   {"row": 1, "frames": 6},
+          "attack": {"row": 2, "frames": 4},
+          "gather": {"row": 3, "frames": 4}
+        }
+      }
+
+  也可在 ``animations`` 里列出单帧文件名，或使用 ``idle/0.png``、``idle/1.png`` 这类目录。
+  引擎按当前命令在 ``idle`` / ``walk`` / ``attack`` / ``gather`` / ``build`` 间切换。
+
+  Spine 骨骼（可选）::
+
+      {
+        "backend": "spine",
+        "spine": {
+          "skeleton": "skeleton.json",
+          "atlas": "skeleton.atlas"
+        }
+      }
+
+  需要本机有可用的 Spine↔pygame 运行库（如 ``spine_pygame`` / ``spine``）。
+  **未安装或加载失败时静默回退**：同目录精灵表 → ``ui/map`` → 色块。
+  SoundRTS **不依赖** Spine 即可运行。
+
+实现：``soundrts/clientgame/game_unit_anim.py``、``game_hud.py``（``get_map_sprite``）、``clientgamegridview.py``。
+
 shortcut
 >>>>>>>>
 
