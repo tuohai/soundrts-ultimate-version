@@ -1451,3 +1451,41 @@
 5711	вышыня тону
 5712	хуткасць маўлення
 5713	голас
+5760	voice libraries
+5761	primary voice library
+5762	secondary voice library
+5763	enable or disable secondary voice
+5764	secondary voice is enabled
+5765	The primary voice library is used for menus and player actions outside matches, and for production and economy feedback in matches. If a screen reader such as Zhengdu or NVDA is detected, the screen reader takes over the primary voice role to avoid fighting the primary library.
+5766	Prefer a screen reader as the primary voice when possible, so F9 through F12 need not be used for the primary library. Hotkeys in this game are very dense and nearly saturated, so save keys when you can. The secondary library can still be adjusted with Shift plus F9 through F12.
+5767	The secondary voice library is used for passive battlefield events in matches, such as casualties and discovering enemies.
+5768	Left Alt skips or interrupts the primary voice library. Right Alt skips or interrupts the secondary voice library. In-match actions do not interrupt the secondary library.
+5769	When secondary voice is disabled, either Alt key can skip the current utterance.
+5770	You can enable or disable secondary voice in this menu. When disabled, the primary voice handles all speech, same as single-channel mode. When enabled, primary and secondary roles are restored.
+5771	In any menu, press F3 to toggle secondary voice. This does nothing during a match.
+5772	In any menu, press F4 to toggle accessibility voice. When off, TTS is silenced so sighted players can use the display. Press F4 again to turn it back on. During a match, F4 remains the help screen.
+5773	In voice library settings, use up and down arrows to select a parameter, and left and right arrows to adjust it.
+5774	In-match hotkeys: F9 changes the sound card, F10 changes the parameter type, F11 and F12 adjust the current parameter.
+5775	Shift plus F9 through F12 adjust the secondary library. Right Shift plus C copies the latest secondary utterance. Right Shift plus B appends the secondary utterance to the clipboard. Left Shift plus C and Left Shift plus B are commented out by default in global_bindings.txt; remove the leading semicolon to enable them.
+5776	secondary voice is disabled, primary voice handles all speech
+5777	sound card
+5778	Use up and down arrows to select a parameter, left and right to adjust. Enter or Esc to go back.
+5779	skip primary voice library
+5780	skip secondary voice library
+5781	open voice install folder
+5782	import Apple voice pack into this game
+5783	press Enter to update, Esc to cancel
+5784	read the update notes? Enter to read, Esc to skip
+5785	press Enter to continue updating
+5786	downloading update
+5787	downloaded
+5788	download complete, restarting to install the update
+5789	update failed, still using the current version
+5790	opening download page
+5791	check for updates when starting the game
+5792	on
+5793	off
+5794	check for updates now
+5795	checking for updates
+5796	you already have the latest version
+5797	update check failed

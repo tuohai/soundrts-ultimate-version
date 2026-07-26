@@ -6,7 +6,7 @@ Configuração de idioma
 ----------------------
 
 
-Em ``cfg/language.txt``, escreva o código do idioma (ex.: ``zh``, ``fr``, ``pt-BR``). O jogo varre pastas ``ui-xx`` nos recursos carregados e escolhe a melhor correspondência.
+Os jogadores podem trocar o idioma em menu principal → **Opções** → **Idioma** (salvo em ``language.txt`` do usuário). Também é possível editar esse arquivo, ou usar ``cfg/language.txt`` da instalação como fallback se o arquivo do usuário não existir (ex.: ``zh``, ``fr``, ``pt-BR``). O jogo varre pastas ``ui-xx`` nos recursos carregados e escolhe a melhor correspondência.
 
 Estrutura de diretórios
 -----------------------

@@ -157,3 +157,129 @@ def test_fetch_latest_release_parses_api_payload(monkeypatch):
     assert info.version == "1.4.6.9"
     assert info.download_url.endswith("file.zip")
     assert info.digest == "sha256:abc"
+
+
+def test_check_for_updates_now_up_to_date(monkeypatch):
+    from soundrts import clientversion
+    from soundrts import msgparts as mp
+
+    spoken = []
+    monkeypatch.setattr(clientversion.voice, "alert", lambda msg: spoken.append(msg))
+    monkeypatch.setattr(auto_update, "check_for_update", lambda: None)
+    clientversion.check_for_updates_now()
+    assert spoken[0] == mp.CHECKING_FOR_UPDATES
+    assert spoken[-1] == mp.UPDATE_UP_TO_DATE
+
+
+def test_check_for_updates_now_offers_when_newer(monkeypatch):
+    from soundrts import clientversion
+
+    info = ReleaseInfo(
+        version="9.9.9.9",
+        tag_name="9.9.9.9",
+        html_url="https://example.test/r",
+        body="",
+        asset_name="x.zip",
+        download_url="https://example.test/a.zip",
+        size=1,
+        digest="",
+    )
+    offered = []
+    monkeypatch.setattr(clientversion.voice, "alert", lambda msg: None)
+    monkeypatch.setattr(auto_update, "check_for_update", lambda: info)
+    monkeypatch.setattr(clientversion, "offer_update", lambda i: offered.append(i))
+    clientversion.check_for_updates_now()
+    assert offered == [info]
+
+
+def test_check_for_updates_now_reports_failure(monkeypatch):
+    from soundrts import clientversion
+    from soundrts import msgparts as mp
+
+    spoken = []
+    monkeypatch.setattr(clientversion.voice, "alert", lambda msg: spoken.append(msg))
+    monkeypatch.setattr(
+        auto_update, "check_for_update", lambda: (_ for _ in ()).throw(RuntimeError("net"))
+    )
+    clientversion.check_for_updates_now()
+    assert spoken[-1] == mp.UPDATE_CHECK_FAILED
+
+
+def test_options_menu_has_manual_check_for_updates():
+    from pathlib import Path
+
+    src = Path("soundrts/clientmain.py").read_text(encoding="utf-8")
+    block = src.split("def options_menu")[1].split("\ndef ")[0]
+    assert "CHECK_FOR_UPDATES_NOW" in block
+    assert "check_for_updates_now" in block
+    assert "CHECK_UPDATES_ON_START" in block
+
+
+def test_check_for_updates_now_up_to_date(monkeypatch):
+    from soundrts import clientversion
+    from soundrts import msgparts as mp
+
+    alerts = []
+    monkeypatch.setattr(clientversion.voice, "alert", lambda msg: alerts.append(msg))
+    monkeypatch.setattr(auto_update, "check_for_update", lambda: None)
+    offered = []
+    monkeypatch.setattr(clientversion, "offer_update", lambda info: offered.append(info))
+
+    clientversion.check_for_updates_now()
+    assert alerts[0] == mp.CHECKING_FOR_UPDATES
+    assert alerts[-1] == mp.UPDATE_UP_TO_DATE
+    assert offered == []
+
+
+def test_check_for_updates_now_offers_when_newer(monkeypatch):
+    from soundrts import clientversion
+    from soundrts import msgparts as mp
+
+    info = ReleaseInfo(
+        version="9.9.9.9",
+        tag_name="9.9.9.9",
+        html_url="https://example.test/r",
+        body="",
+        asset_name="a.zip",
+        download_url="https://example.test/a.zip",
+        size=1,
+        digest="",
+    )
+    alerts = []
+    monkeypatch.setattr(clientversion.voice, "alert", lambda msg: alerts.append(msg))
+    monkeypatch.setattr(auto_update, "check_for_update", lambda: info)
+    offered = []
+    monkeypatch.setattr(clientversion, "offer_update", lambda i: offered.append(i))
+
+    clientversion.check_for_updates_now()
+    assert alerts == [mp.CHECKING_FOR_UPDATES]
+    assert offered == [info]
+
+
+def test_check_for_updates_now_ignores_startup_toggle(monkeypatch):
+    """Manual check must work even when startup auto-check is off."""
+    from soundrts import clientversion
+    from soundrts import config
+    from soundrts import msgparts as mp
+
+    old = getattr(config, "check_updates_on_start", 1)
+    alerts = []
+    try:
+        config.check_updates_on_start = 0
+        monkeypatch.setattr(clientversion.voice, "alert", lambda msg: alerts.append(msg))
+        monkeypatch.setattr(auto_update, "check_for_update", lambda: None)
+        monkeypatch.setattr(clientversion, "offer_update", lambda info: None)
+        clientversion.check_for_updates_now()
+        assert mp.UPDATE_UP_TO_DATE in alerts
+    finally:
+        config.check_updates_on_start = old
+
+
+def test_options_menu_has_manual_check_updates():
+    from pathlib import Path
+
+    src = Path(__file__).resolve().parents[1] / "clientmain.py"
+    text = src.read_text(encoding="utf-8")
+    block = text.split("def options_menu")[1].split("\ndef ")[0]
+    assert "CHECK_FOR_UPDATES_NOW" in block
+    assert "check_for_updates_now" in block

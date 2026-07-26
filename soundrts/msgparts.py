@@ -204,12 +204,12 @@ OK = [105]
 ON_THE_SERVER_OF = [4260]
 ONE_F = [151]
 OPEN_USER_FOLDER = [4336]
-VOICE_LIBS_MENU = ["语音库设置"]
-VOICE_LIB_PRIMARY = ["主语音库"]
-VOICE_LIB_SECONDARY = ["副语音库"]
-VOICE_LIB_SECONDARY_TOGGLE = ["启用或禁用副语音"]
-VOICE_LIB_SECONDARY_ON = ["副语音已启用"]
-VOICE_LIB_SECONDARY_OFF = ["副语音已禁用，主语音接管全部播报"]
+VOICE_LIBS_MENU = [5760]
+VOICE_LIB_PRIMARY = [5761]
+VOICE_LIB_SECONDARY = [5762]
+VOICE_LIB_SECONDARY_TOGGLE = [5763]
+VOICE_LIB_SECONDARY_ON = [5764]
+VOICE_LIB_SECONDARY_OFF = [5776]
 # F4 无障碍语音开关（关掉后无 TTS，方便明眼人）
 ACCESSIBILITY_VOICE = [5740]
 ACCESSIBILITY_VOICE_ON = [5741]
@@ -219,27 +219,14 @@ VOICE_LIB_VOLUME = [5710]  # 音量
 VOICE_LIB_PITCH = [5711]  # 音调
 VOICE_LIB_RATE = [5712]  # 语速
 VOICE_LIB_VOICE_PARAM = [5713]  # 语音（角色/音色）
-VOICE_LIB_DEVICE = ["声卡"]
-VOICE_LIB_EDITOR_HINT = [
-    "上下光标选择参数，左右光标调整。回车或 Esc 返回。"
-]
-VOICE_LIB_HELP = [
-    "主语音库用于对局外的菜单与玩家操作，以及对局内生产与经济反馈。若检测到屏幕阅读器（争渡/NVDA等），则读屏接管主语音职责，避免与主库抢播。"
-    "建议尽量用读屏软件或屏幕阅读器作为主语音：这样不必再占用F9到F12去调节主库。本游戏热键非常密集、几乎饱和，容易冲突，能省则省；副库仍可用Shift加F9到F12调节。"
-    "副语音库用于对局内战场被动事件，例如伤亡与发现敌人。"
-    "左 Alt 跳过或打断主语音库，右 Alt 跳过或打断副语音库；对局内操作不会打断副库。"
-    "禁用副语音时左右 Alt 均可跳过当前播报。"
-    "可在本菜单启用或禁用副语音：禁用后主语音接管全部播报（与单通道模式相同）；启用后恢复主副分工。"
-    "在任意菜单中按 F3 也可切换副语音（对局内无效）。"
-    "在任意菜单中按 F4 可开关无障碍语音：关闭后不再播报 TTS，方便明眼人用画面游玩；再按 F4 可重新开启（对局内 F4 仍是帮助界面）。"
-    "在语音库设置中：上下光标选择参数，左右光标调整。"
-    "局内热键：F9切换声卡，F10切换参数类型，F11和F12调节当前参数。"
-    "Shift加F9到F12调节副库。右Shift加C复制副库最近播报，右Shift加B追加副库到剪贴板。左Shift加C与左Shift加B默认在global_bindings.txt中注释；若要用，去掉行首分号即可启用。"
-]
-HOTKEY_HISTORY_STOP_PRIMARY = ["跳过主语音库"]
-HOTKEY_HISTORY_STOP_SECONDARY = ["跳过副语音库"]
-OPEN_VOICES_FOLDER = ["打开语音安装文件夹"]
-GAME_VOICE_IMPORT_NUANCE = ["导入苹果音库到本游戏"]
+VOICE_LIB_DEVICE = [5777]
+VOICE_LIB_EDITOR_HINT = [5778]
+# 分段帮助：菜单朗读时按序号依次播报
+VOICE_LIB_HELP = [5765, 5766, 5767, 5768, 5769, 5770, 5771, 5772, 5773, 5774, 5775]
+HOTKEY_HISTORY_STOP_PRIMARY = [5779]
+HOTKEY_HISTORY_STOP_SECONDARY = [5780]
+OPEN_VOICES_FOLDER = [5781]
+GAME_VOICE_IMPORT_NUANCE = [5782]
 OPTIONS = [4037]
 OPTIONS_EXPLANATION = [4038]
 OPTIONS_MENU = [4086]
@@ -302,17 +289,21 @@ UNEXPECTED_REPLY = [4082]
 UNITS = [130]
 UNKNOWN = [4208]
 UPDATE_AVAILABLE = [4234]
-UPDATE_PROMPT_DETAIL = ["按回车开始更新，按 Esc 取消"]
-UPDATE_CHANGELOG_PROMPT = ["是否朗读更新说明？按回车朗读，按 Esc 跳过"]
-UPDATE_CHANGELOG_DONE = ["按回车继续更新"]
-UPDATE_DOWNLOADING = ["正在下载更新"]
-UPDATE_DOWNLOAD_PROGRESS = ["已下载"]
-UPDATE_APPLYING = ["下载完成，即将重启并安装更新"]
-UPDATE_FAILED = ["更新失败，仍使用当前版本"]
-UPDATE_OPENING_DOWNLOAD_PAGE = ["正在打开下载页面"]
-CHECK_UPDATES_ON_START = ["运行游戏时检查更新"]
-CHECK_UPDATES_ON = ["已开启"]
-CHECK_UPDATES_OFF = ["已关闭"]
+UPDATE_PROMPT_DETAIL = [5783]
+UPDATE_CHANGELOG_PROMPT = [5784]
+UPDATE_CHANGELOG_DONE = [5785]
+UPDATE_DOWNLOADING = [5786]
+UPDATE_DOWNLOAD_PROGRESS = [5787]
+UPDATE_APPLYING = [5788]
+UPDATE_FAILED = [5789]
+UPDATE_OPENING_DOWNLOAD_PAGE = [5790]
+CHECK_UPDATES_ON_START = [5791]
+CHECK_UPDATES_ON = [5792]
+CHECK_UPDATES_OFF = [5793]
+CHECK_FOR_UPDATES_NOW = [5794]
+CHECKING_FOR_UPDATES = [5795]
+UPDATE_UP_TO_DATE = [5796]
+UPDATE_CHECK_FAILED = [5797]
 USE_LETTERS_AND_NUMBERS_ONLY = [4236]
 VERSION_ERROR = [4012]
 VICTORY = [149]

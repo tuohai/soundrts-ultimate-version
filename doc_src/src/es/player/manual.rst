@@ -234,10 +234,11 @@ Para salir de un juego o acceder al menú del juego, presione F10. Alt F4 y Cont
 
 **Ctrl+F2: conmutar pantalla y calidad visual (modo visual)**
 
-Con la pantalla activada se muestra el mapa en planta con mejor calidad que la vista de depuración antigua: colores de terreno, terreno alto más claro, niebla con tono, mapa centrado; rejilla y muros/salidas; formas, colores de equipo, selección, barras de vida; coordenadas, nombres, panel izquierdo. Con la pantalla on puede usar el ratón:
+Con la pantalla activada se muestra el mapa en planta con mejor calidad que la vista de depuración antigua: colores de terreno, terreno alto más claro, niebla con tono, mapa centrado; rejilla y muros/salidas; formas, colores de equipo, selección, barras de vida; coordenadas, nombres, panel izquierdo. En mapas grandes: scroll solo en el **borde del mapa**, zoom con la **rueda**; pasar por casillas no salta la cámara. Con la pantalla on puede usar el ratón:
 
 - Clic izquierdo selecciona; doble clic selecciona todas las unidades visibles del mismo tipo; Shift+clic añade/quita; Shift+arrastra añade a la selección; clic en suelo vacío salta de casilla y limpia la selección.
 - Clic derecho: órdenes por defecto (colas Shift/Ctrl sin cambios).
+- **Scroll por bordes / zoom con rueda**: desplazar en el borde del viewport; rueda arriba/abajo acerca/aleja.
 - Con selección: panel de atributos abajo a la izquierda (HP/ataque/defensa…); rejilla 5×3 a la derecha; cola junto al panel. PNG opcionales en ``res/ui/icons/<tipo>.png``.
 - **Sprites del mapa**: ``res/ui/map/<tipo>.png`` (separado de icons); anims → map → formas. Pack inicial también en ``res/ui/map/``; ``python tools/gen_hud_icons.py`` regenera.
 
@@ -497,9 +498,27 @@ con sumas de verificación para asegurarse de que no hayan sido modificados.
 ¿Cómo seleccionar un idioma diferente?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Si cfg/language.txt está vacío, el programa seleccionará automáticamente el idioma del sistema.
-Para seleccionar un idioma específico, ingrese el código de idioma en cfg/language.txt, por ejemplo "en", "fr-ca", "pt" o "pt-BR".
-Consulte la carpeta res para encontrar los códigos de idioma que se proporcionan.
+Recomendado: menú principal → **Opciones** → **Idioma**, elija un idioma o **Predeterminado del sistema**. La voz y el estilo de la interfaz se recargan.
+
+La preferencia se guarda en ``language.txt`` del usuario (``user/language.txt`` o ``%APPDATA%\\SoundRTS\\language.txt``). También puede editar ese archivo con códigos como ``en``, ``zh`` o ``es``.
+
+``cfg/language.txt`` de la carpeta de instalación sigue siendo un respaldo de solo lectura: solo se usa si el ``language.txt`` del usuario **no existe**. Tras cambiar el idioma desde opciones, manda el archivo de usuario. Un archivo de usuario vacío sigue el idioma del sistema.
+
+Consulte las carpetas ``ui`` / ``ui-*`` en ``res`` para ver los códigos disponibles.
+
+¿El juego se actualiza solo?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Sí, por defecto. Al iniciar comprueba el Release de GitHub; si hay versión más nueva: **Intro** para actualizar, **Esc** para cancelar. También puede oír primero las notas del Release.
+
+Menú principal → **Opciones** → **Comprobar actualizaciones al iniciar el juego**: Intro para activar/desactivar (activado por defecto). Se guarda como ``check_updates_on_start`` en ``SoundRTS.ini``.
+
+Menú principal → **Opciones** → **Comprobar actualizaciones ahora**: comprobación manual en cualquier momento (también con la comprobación al iniciar desactivada).
+
+- **Paquete Windows**: tras confirmar, descarga dentro del juego, sobrescribe la carpeta de instalación y reinicia. Omite ``user`` para conservar partidas/ajustes locales.
+- **Desde el código fuente**: solo abre la página de descarga; no sobrescribe el proyecto.
+
+Releases: https://github.com/tuohai/soundrts-ultimate-version/releases
 
 6. Funciones modernas (desde 1.4)
 ---------------------------------

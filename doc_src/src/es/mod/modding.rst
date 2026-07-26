@@ -19,7 +19,7 @@ El archivo reglas.txt parcheará el archivo predeterminado. Por ejemplo, un arch
 Localización de mods (ui-xx)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-Las carpetas Mod reflejan el árbol ``res``. Agregue carpetas localizadas junto a ``ui/`` (``ui-zh``, ``ui-fr``, ``ui-de``, etc.). El juego carga el idioma desde ``cfg/language.txt`` (o la configuración regional del sistema); las entradas que faltan vuelven a ``ui/tts.txt``.
+Las carpetas Mod reflejan el árbol ``res``. Agregue carpetas localizadas junto a ``ui/`` (``ui-zh``, ``ui-fr``, ``ui-de``, etc.). El juego carga el idioma desde ``language.txt`` del usuario / Opciones → Idioma (con ``cfg/language.txt`` o la configuración regional como respaldo); las entradas que faltan vuelven a ``ui/tts.txt``.
 
 Recommended layout (``mods/mymod/``)::
 

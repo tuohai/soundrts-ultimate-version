@@ -4,7 +4,7 @@ Internacionalización de mods
 Ajuste de idioma
 ----------------
 
-Escribe el código de idioma en ``cfg/language.txt`` (p. ej. ``zh``, ``fr``, ``es``). El juego escanea las carpetas ``ui-xx`` de los recursos cargados y elige la mejor coincidencia.
+Los jugadores pueden cambiar el idioma en menú principal → **Opciones** → **Idioma** (se guarda en ``language.txt`` del usuario). También se puede editar ese archivo, o usar ``cfg/language.txt`` de la instalación como respaldo si el archivo de usuario no existe (p. ej. ``zh``, ``fr``, ``es``). El juego escanea las carpetas ``ui-xx`` de los recursos cargados y elige la mejor coincidencia.
 
 Estructura de directorios
 -------------------------

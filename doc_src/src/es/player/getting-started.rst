@@ -129,6 +129,12 @@ Activa en ``user/SoundRTS.ini``: ``mods = soundpack,starcraft`` o ``--mods=...``
    * - Mapas estilo Héroes / Civ 5
      - [homm-civ5-play.htm](homm-civ5-play.htm)
 
+Actualizaciones automáticas
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Al iniciar, el juego comprueba por defecto si hay un Release más nuevo en GitHub. Intro actualiza, Esc cancela.
+Active o desactive en Opciones → **Comprobar actualizaciones al iniciar el juego**. El paquete Windows puede descargar e instalar; desde el código fuente solo se abre la página de descarga. Véase el manual y las `Notas de la versión <../../relnotes.htm>`_ (1.4.6.3).
+
 Notas de la versión: `Notas de la versión <../../relnotes.htm>`_ — historial completo de versiones.
 
 ----

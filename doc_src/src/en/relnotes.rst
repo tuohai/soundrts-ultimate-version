@@ -5,8 +5,74 @@ Release notes
 .. contents::
 
 
+1.4.6.4
+--------
+
+**New: Options → Check for updates now**
+
+- If startup update checks are turned off, you can still check GitHub manually from Options; a newer release uses the same confirm / download flow as the startup prompt.
+- Announces when you are already up to date, or if the check fails.
+- **Code**: ``clientversion.py`` (``check_for_updates_now``), ``clientmain.py``, ``msgparts.py``, per-language ``tts.txt`` (``5794``–``5797``).
+- **Tests**: ``test_auto_update.py``.
+
+**Fix: lag when browsing the Voice libraries menu with arrow keys**
+
+- **Symptom**: Options → Voice libraries felt sluggish on up/down even when a short row was selected, as long as a long help line stayed visible.
+- **Cause**: every redraw truncated long visible lines with a linear ``font.size`` loop; a ~hundreds-of-characters help line was expensive.
+- **Fix**: menu text fitting now uses binary search plus a cache, so arrow navigation stays responsive.
+- **Code**: ``lib/pygame_ui.py`` (``_fit_menu_text``).
+- **Tests**: ``test_voice_libs_menu_arrow_profile.py``.
+
+**Improvement: voice-library / update-check copy moved to multilingual TTS ids**
+
+- Some strings lived only as Chinese literals in ``msgparts.py`` (e.g. “voice libraries”, primary/secondary labels, secondary toggle, help text, “check for updates when starting the game”), so they did not follow the UI language via ``tts.txt``.
+- They are now numeric ids (about ``5760``–``5793``) in ``res/ui`` and each ``ui-*`` ``tts.txt`` (full zh/en; other languages translate short labels, with English fallback for long help where needed).
+- **Code**: ``msgparts.py``, per-language ``tts.txt``.
+
+**New: check for updates manually from the Options menu**
+
+- Main menu → **Options** → **Check for updates now**: queries GitHub Release immediately (**independent** of the “check when starting” toggle).
+- Announces up-to-date / check failed; if a newer release exists, uses the same update flow as startup (confirm, optional notes, download/install or open the download page).
+- **Code**: ``clientversion.py`` (``check_for_updates_now``), ``clientmain.py``, ``msgparts.py``, per-language ``tts.txt`` (``5794``–``5797``).
+- **Tests**: ``test_auto_update.py``.
+- **Docs**: player manuals, getting started, release notes.
+
+
+1.4.6.3
+--------
+
+**New: check GitHub for updates at startup and one-click install (Windows packaged builds)**
+
+- On launch, the game queries the GitHub Release for ``tuohai/soundrts-ultimate-version``. If the online version is newer, you are prompted: **Enter** to update, **Esc** to cancel.
+- Optionally hear the Release notes before downloading.
+- **Windows packaged build**: downloads and extracts in-process, then a short script overwrites the install folder and relaunches after exit. The ``user`` folder is **skipped** so local saves/settings are kept.
+- **Source / development runs**: opens the Release download page only (does not overwrite the project tree).
+- Options menu: **Check for updates when starting the game** (on by default; Enter toggles). Stored as ``check_updates_on_start`` in ``SoundRTS.ini``.
+- **Code**: ``auto_update.py``, ``clientversion.py``, ``clientmain.py``, ``config.py``.
+- **Tests**: ``test_auto_update.py``.
+- **Docs**: player manuals, getting started, release notes.
+
+**Improvement: Ctrl+F2 large-map edge scroll and mouse-wheel zoom (Age of Empires-style)**
+
+- **Issue**: on large maps (e.g. cw1), moving the mouse across squares jumped the camera with every hover—hard to play visually.
+- **Edge scroll**: the view pans only when the pointer is at the **main map viewport edge** (Age of Empires-style). Hovering still selects squares / targets but **does not jump the camera**.
+- **Mouse-wheel zoom**: scroll up to zoom in, down to zoom out (anchored under the cursor); zooming out until the whole map fits recenters it.
+- **Jump-to-center**: minimap clicks and keyboard square jumps still center the view; edge scroll is disabled over the command HUD / minimap.
+- **Code**: ``clientgamegridview.py``, ``clientgame/game_input_handler.py``, ``clientgame/game_navigation.py``.
+- **Tests**: ``test_gridview_viewport.py``, ``test_zoom_mouse.py``.
+- **Docs**: player manuals, release notes.
+
+
 1.4.6.2
 --------
+
+**New: switch UI language from the options menu**
+
+- Main menu → **Options** → **Language**: pick a language or **System default** without editing install-folder files.
+- Preference is saved to the user ``language.txt`` (portable ``user/language.txt``, or ``%APPDATA%\\SoundRTS\\language.txt`` on Windows installs). Install ``cfg/language.txt`` remains a read-only fallback.
+- The user file overrides ``cfg/language.txt``. Choosing **System default** writes an empty user file and ignores a forced language in ``cfg``.
+- **Code**: ``clientmain.py``, ``lib/resource.py``, ``paths.py``.
+- **Docs**: player manuals, getting started, mod i18n guides, release notes.
 
 **Improvement: Ctrl+F2 selection stats / backpack & gear / large-map viewport**
 

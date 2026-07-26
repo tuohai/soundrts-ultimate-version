@@ -166,6 +166,13 @@ If in-match SFX stutter or cut out, raise ``mixer_buffer`` under ``[audio]`` in
 :doc:`../mod/audio-management`.
 
 
+Automatic updates
+~~~~~~~~~~~~~~~~~
+
+On startup the game checks GitHub for a newer Release (on by default). Enter updates, Esc cancels.
+Toggle under Options → **Check for updates when starting the game**. Use Options → **Check for updates now** for a manual check (works even if startup checks are off). Packaged Windows builds can download and install in place; source runs only open the download page. See the game manual FAQ and `Release notes <../../relnotes.htm>`_ (1.4.6.4).
+
+
 Release notes: `Release notes <../../relnotes.htm>`_ — full version history.
 
 

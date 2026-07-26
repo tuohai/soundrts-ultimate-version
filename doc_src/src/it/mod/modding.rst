@@ -19,7 +19,7 @@ Il file rules.txt applicherà una patch al file predefinito. Ad esempio, un rule
 Localizzazione delle mod (ui-xx)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-Le cartelle delle mod rispecchiano l’albero ``res``. Aggiungi cartelle localizzate accanto a ``ui/`` (``ui-zh``, ``ui-fr``, ``ui-de``, ``ui-it``, ecc.). Il gioco carica la lingua da ``cfg/language.txt`` (o dalla locale di sistema); le voci mancanti ripiegano su ``ui/tts.txt``.
+Le cartelle delle mod rispecchiano l’albero ``res``. Aggiungi cartelle localizzate accanto a ``ui/`` (``ui-zh``, ``ui-fr``, ``ui-de``, ``ui-it``, ecc.). Il gioco carica la lingua da ``language.txt`` utente / Opzioni → Lingua (con ``cfg/language.txt`` o la locale di sistema come ripiego); le voci mancanti ripiegano su ``ui/tts.txt``.
 
 Layout consigliato (``mods/mymod/``)::
 

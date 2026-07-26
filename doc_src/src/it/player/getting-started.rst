@@ -158,6 +158,13 @@ Attiva in ``user/SoundRTS.ini``: ``mods = soundpack,starcraft`` oppure ``--mods=
 
 
 
+Aggiornamenti automatici
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+All’avvio il gioco controlla di default se c’è un Release più recente su GitHub. Invio aggiorna, Esc annulla.
+Attiva/disattiva in Opzioni → **Controlla aggiornamenti all’avvio del gioco**. La build Windows può scaricare e installare; dal codice sorgente si apre solo la pagina di download. Vedi il manuale e le `Note di rilascio <../../relnotes.htm>`_ (1.4.6.3).
+
+
 Note di rilascio: `Note di rilascio <../../relnotes.htm>`_ — cronologia completa delle versioni.
 
 

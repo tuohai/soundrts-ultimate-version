@@ -1168,6 +1168,7 @@ def voice_libs_menu():
 
 def options_menu():
     from .hotkey_remapping_menu import hotkey_mapping_menu
+    from .clientversion import check_for_updates_now
 
     menu = Menu(mp.OPTIONS_MENU, menu_type="submenu")
 
@@ -1198,6 +1199,7 @@ def options_menu():
                 _toggle_check_updates,
                 _check_updates_status(),
             ),
+            (mp.CHECK_FOR_UPDATES_NOW, check_for_updates_now),
             (mp.OPEN_USER_FOLDER, open_user_folder),
             (mp.BACK, CLOSE_MENU),
         ]

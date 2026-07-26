@@ -130,6 +130,48 @@ def _menu_labels_for(choices) -> list[str]:
     return labels
 
 
+# (font_id, max_width, text) -> fitted text; avoids O(n) font.size on long help rows.
+_fit_text_cache: dict[tuple, str] = {}
+_FIT_TEXT_CACHE_MAX = 256
+
+
+def _fit_menu_text(font: pygame.font.Font, text: str, max_width: int) -> str:
+    """Clip ``text`` to ``max_width`` pixels (ellipsis if clipped).
+
+    Binary search: a 500+ char 语音库帮助 line costs ~O(log n) ``font.size``
+    calls instead of one call per two characters (froze ↑↓ for ~1s each).
+    """
+    if not text:
+        return ""
+    if max_width <= 0:
+        return "…"
+    cache_key = (id(font), int(max_width), text)
+    cached = _fit_text_cache.get(cache_key)
+    if cached is not None:
+        return cached
+    if font.size(text)[0] <= max_width:
+        _fit_text_cache[cache_key] = text
+        return text
+    ell = "…"
+    ell_w = font.size(ell)[0]
+    budget = max_width - ell_w
+    if budget <= 0:
+        _fit_text_cache[cache_key] = ell
+        return ell
+    lo, hi = 0, len(text)
+    while lo < hi:
+        mid = (lo + hi + 1) // 2
+        if font.size(text[:mid])[0] <= budget:
+            lo = mid
+        else:
+            hi = mid - 1
+    fitted = (text[:lo] + ell) if lo < len(text) else text
+    if len(_fit_text_cache) >= _FIT_TEXT_CACHE_MAX:
+        _fit_text_cache.clear()
+    _fit_text_cache[cache_key] = fitted
+    return fitted
+
+
 def _pick_font(size: int, bold: bool = False) -> pygame.font.Font:
     key = f"{size}:{int(bold)}"
     cached = _fonts.get(key)
@@ -356,12 +398,7 @@ def draw_menu(
             pygame.draw.rect(surf, (28, 32, 40), rect)
         pygame.draw.rect(surf, (70, 78, 95), rect, 1)
         color = (255, 240, 180) if is_sel else (220, 224, 230)
-        text = labels[i]
-        # Truncate visually if needed
-        while text and item_font.size(text)[0] > rect.width - 20:
-            text = text[:-2]
-        if text != labels[i] and text:
-            text = text[:-1] + "…"
+        text = _fit_menu_text(item_font, labels[i], rect.width - 20)
         img = item_font.render(text, True, color)
         surf.blit(img, (rect.x + 10, rect.y + (row_h - 2 - img.get_height()) // 2))
         y += row_h

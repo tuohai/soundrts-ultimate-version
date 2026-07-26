@@ -234,10 +234,11 @@ To quit a game or access to the game menu, press F10. Alt F4 and Control C do th
 
 **Ctrl+F2: display toggle and visual quality (sighted mode)**
 
-When on, shows a top-down map. Compared with the old debug view, this build improves visual quality and readability: default terrain colors, brighter high ground, fog that keeps hue; grid and wall/exit cues; distinct unit/building/resource shapes, team colors, selection, HP bars, air markers; numeric coords, place names, resource amounts; left hover info panel. **Large maps** (e.g. cw1) are not shrunk to fit: cells stay near the size used on small maps and the rest extends off-screen (Age of Empires-style), with the view following the focused square; use the minimap or arrow keys to browse. Small maps still fit centered on screen. With the display on you can use the mouse:
+When on, shows a top-down map. Compared with the old debug view, this build improves visual quality and readability: default terrain colors, brighter high ground, fog that keeps hue; grid and wall/exit cues; distinct unit/building/resource shapes, team colors, selection, HP bars, air markers; numeric coords, place names, resource amounts; left hover info panel. **Large maps** (e.g. cw1) are not shrunk to fit: cells stay near the size used on small maps and the rest extends off-screen (Age of Empires-style). To browse: move the pointer to the **main map edge** to scroll; use the **mouse wheel** to zoom; hovering squares does not jump the camera; minimap clicks and arrow-key jumps still center the view. Small maps still fit centered on screen. With the display on you can use the mouse:
 
 - Left-click select; double-click select all visible units of the same type; Shift+click add/remove; Shift+box-select append; click empty ground to jump square and clear selection.
 - Right-click default orders (Shift/Ctrl queue and imperative unchanged).
+- **Edge scroll / wheel zoom**: pan when the pointer is at the main viewport edge; scroll wheel up/down zooms in/out (anchored under the cursor).
 - With a selection, a **bottom-left stats panel** shows portrait, HP/MP bars, attack/defense/range/speed (Age of Empires / StarCraft-style; full Alt+V list remains TTS). A 5×3 command icon grid is bottom-right; the production queue sits beside the stats panel. Optional PNGs in ``res/ui/icons/<type_or_order>.png``; otherwise generated letter icons.
 - **Map sprites**: the top-down map uses ``res/ui/map/<type>.png`` (separate from HUD ``ui/icons``); otherwise colored circles/squares.
 - **Optional unit animation**: put packs under ``res/ui/anims/<type>/`` (spritesheet, or optional Spine). Priority: anim → ``ui/map`` → shapes. See ``res/ui/anims/README.txt``.
@@ -505,9 +506,27 @@ with checksums to make sure that they haven't been modified.
 How to select a different language?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If cfg/language.txt is empty, the program will select automatically the system's language.
-To select a specific language, enter the language code in cfg/language.txt, for example "en", "fr-ca", "pt" or "pt-BR".
-Check the res folder to find which language codes are provided.
+Recommended: main menu → **Options** → **Language**, then pick a language or **System default**. The UI speech and style reload with the new language.
+
+The preference is stored in the user ``language.txt`` (portable ``user/language.txt``; on Windows installs usually ``%APPDATA%\\SoundRTS\\language.txt``). You can also edit that file directly with a code such as ``en``, ``zh``, or ``pt-BR``.
+
+Install-folder ``cfg/language.txt`` remains a read-only fallback: it is used only when the user ``language.txt`` does **not** exist. After you change language from the options menu, the user file wins. An empty user file means follow the system language.
+
+Check the ``ui`` / ``ui-*`` folders under ``res`` for available language codes.
+
+Does the game update itself?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Yes by default. On startup it checks the GitHub Release feed; if a newer version exists, you are prompted: **Enter** to update, **Esc** to cancel. You can also choose to hear the Release notes first.
+
+Main menu → **Options** → **Check for updates when starting the game**: press Enter to toggle (on by default). Saved as ``check_updates_on_start`` in ``SoundRTS.ini``.
+
+Main menu → **Options** → **Check for updates now**: run a manual check anytime (still works if startup checks are off). Announces when you are already up to date, or if the check fails.
+
+- **Windows packaged build**: after you confirm, the game downloads in-process, then overwrites the install folder and relaunches. The ``user`` folder is skipped so local saves/settings are kept.
+- **Running from source**: opens the Release download page only; it does not overwrite the project tree.
+
+Releases: https://github.com/tuohai/soundrts-ultimate-version/releases
 
 6. Modern features (since 1.4)
 --------------------------------

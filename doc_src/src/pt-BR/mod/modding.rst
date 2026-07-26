@@ -18,7 +18,7 @@ O arquivo rules.txt fará patch no arquivo padrão. Por exemplo, um rules.txt co
 Localização de mods (ui-xx)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-Pastas de mod espelham a árvore ``res``. Adicione pastas localizadas ao lado de ``ui/`` (``ui-zh``, ``ui-fr``, ``ui-de``, etc.). O jogo carrega o idioma de ``cfg/language.txt`` (ou do locale do sistema); entradas ausentes recorrem a ``ui/tts.txt``.
+Pastas de mod espelham a árvore ``res``. Adicione pastas localizadas ao lado de ``ui/`` (``ui-zh``, ``ui-fr``, ``ui-de``, etc.). O jogo carrega o idioma de ``language.txt`` do usuário / Opções → Idioma (com ``cfg/language.txt`` ou o locale do sistema como fallback); entradas ausentes recorrem a ``ui/tts.txt``.
 
 Layout recomendado (``mods/mymod/``)::
 

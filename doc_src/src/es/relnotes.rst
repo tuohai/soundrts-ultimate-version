@@ -5,8 +5,61 @@ Notas de la versión
 .. contents::
 
 
+1.4.6.4
+-------
+
+**Novedad: Opciones → Comprobar actualizaciones ahora**
+
+- Si desactivas la comprobación al iniciar, aún puedes comprobar GitHub manualmente desde Opciones; si hay versión nueva, el flujo de confirmación/descarga es el mismo.
+- Anuncia si ya tienes la última versión o si falla la comprobación.
+- **Código**: ``clientversion.py``, ``clientmain.py``, ``msgparts.py``, ``tts.txt`` (``5794``–``5797``).
+
+**Corrección: lentitud al recorrer el menú de bibliotecas de voz con las flechas**
+
+- En Opciones → bibliotecas de voz, subir/bajar se notaba lento aunque la fila activa fuera corta, porque el texto de ayuda largo seguía visible.
+- Cada redibujado truncaba líneas largas con un bucle lineal de ``font.size``.
+- Ahora el ajuste de texto del menú usa búsqueda binaria y caché.
+- **Código**: ``lib/pygame_ui.py`` (``_fit_menu_text``).
+- **Pruebas**: ``test_voice_libs_menu_arrow_profile.py``.
+
+**Mejora: textos de bibliotecas de voz / comprobar actualizaciones pasan a ids TTS multilingües**
+
+- Algunos textos estaban solo en chino en ``msgparts.py`` y no seguían el idioma de la interfaz vía ``tts.txt``.
+- Ahora son ids numéricos (aprox. ``5760``–``5793``) en ``res/ui`` y cada ``ui-*`` ``tts.txt`` (zh/en completos; otras lenguas traducen etiquetas cortas, con inglés de reserva en textos largos).
+- **Código**: ``msgparts.py``, ``tts.txt`` por idioma.
+
+
+1.4.6.3
+-------
+
+**Novedad: comprobar actualizaciones de GitHub al iniciar e instalar con un clic (paquete Windows)**
+
+- Al iniciar, consulta el Release de GitHub ``tuohai/soundrts-ultimate-version``. Si hay versión más nueva: **Intro** para actualizar, **Esc** para cancelar.
+- Opcionalmente se puede oír el changelog del Release antes de descargar.
+- **Paquete Windows**: descarga y descomprime en el juego; al salir un script corto sobrescribe la carpeta e inicia de nuevo. Se **omite** la carpeta ``user`` (partidas/ajustes locales).
+- **Ejecución desde el código fuente**: solo abre la página de descarga (no sobrescribe el proyecto).
+- Menú de opciones: **Comprobar actualizaciones al iniciar el juego** (activado por defecto; Intro alterna). Opción ``check_updates_on_start`` en ``SoundRTS.ini``.
+- **Código**: ``auto_update.py``, ``clientversion.py``, ``clientmain.py``, ``config.py``.
+- **Pruebas**: ``test_auto_update.py``.
+
+**Mejora: scroll por bordes y zoom con rueda en mapas grandes Ctrl+F2 (estilo Age of Empires)**
+
+- En mapas grandes, pasar el ratón por las casillas ya **no salta la cámara**.
+- La vista solo se desplaza con el puntero en el **borde del mapa**; rueda arriba/abajo para acercar/alejar.
+- Clic en el minimapa y saltos con teclado siguen centrando la vista.
+- **Código**: ``clientgamegridview.py``, ``game_input_handler.py``, ``game_navigation.py``.
+- **Pruebas**: ``test_gridview_viewport.py``, ``test_zoom_mouse.py``.
+
+
 1.4.6.2
 -------
+
+**Novedad: cambiar el idioma de la interfaz desde el menú de opciones**
+
+- Menú principal → **Opciones** → **Idioma**: elige un idioma o **Predeterminado del sistema** sin editar archivos de la carpeta de instalación.
+- La preferencia se guarda en ``language.txt`` del usuario (``user/language.txt`` o ``%APPDATA%\\SoundRTS\\language.txt``). ``cfg/language.txt`` sigue siendo un respaldo de solo lectura.
+- El archivo de usuario tiene prioridad sobre ``cfg/language.txt``.
+- **Código**: ``clientmain.py``, ``lib/resource.py``, ``paths.py``.
 
 **Mejora: panel de atributos / mochila y equipo / viewport de mapas grandes**
 

@@ -19,7 +19,7 @@ The rules.txt file will patch the default file. For example, a rules.txt file co
 Mod localization (ui-xx)
 >>>>>>>>>>>>>>>>>>>>>>>>
 
-Mod folders mirror the ``res`` tree. Add localized folders next to ``ui/`` (``ui-zh``, ``ui-fr``, ``ui-de``, etc.). The game loads the language from ``cfg/language.txt`` (or the system locale); missing entries fall back to ``ui/tts.txt``.
+Mod folders mirror the ``res`` tree. Add localized folders next to ``ui/`` (``ui-zh``, ``ui-fr``, ``ui-de``, etc.). The game loads the language from the user ``language.txt`` / Options → Language (with ``cfg/language.txt`` or the system locale as fallback); missing entries fall back to ``ui/tts.txt``.
 
 Recommended layout (``mods/mymod/``)::
 

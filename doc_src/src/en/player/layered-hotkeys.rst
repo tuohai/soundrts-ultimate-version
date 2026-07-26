@@ -338,7 +338,7 @@ System
    * - ``ALT SPACE`` / ``CTRL SPACE``
      - First-person mode
    * - ``CTRL F2``
-     - Display toggle + visual quality (persisted; when on: mouse + HUD; see player manual)
+     - Display toggle + visual quality (persisted; when on: mouse + HUD + edge scroll / wheel zoom; see player manual)
    * - ``CTRL F3``
      - Talking clock toggle
    * - ``CTRL SHIFT F4``

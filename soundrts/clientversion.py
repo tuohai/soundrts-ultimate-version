@@ -37,19 +37,12 @@ class RevisionChecker(threading.Thread):
 revision_checker = RevisionChecker()
 
 
-def offer_pending_update(timeout: float = 8.0) -> None:
-    """If a newer release was found, prompt and optionally apply it.
-
-    Call from the main thread after media init (needs pygame + TTS).
-    """
+def offer_update(info) -> None:
+    """Prompt and optionally apply a known newer release (main thread)."""
     import sys
 
     from .clientmenu import confirm_yes_no
     from .lib.msgs import literal_text_msg
-
-    info = auto_update.get_pending(wait_timeout=timeout)
-    if info is None:
-        return
 
     prompt = list(mp.UPDATE_AVAILABLE) + list(mp.UPDATE_PROMPT_DETAIL)
     prompt.append(literal_text_msg(info.version))
@@ -90,3 +83,28 @@ def offer_pending_update(timeout: float = 8.0) -> None:
         pass
     auto_update.launch_apply_and_exit(script)
     raise SystemExit(0)
+
+
+def offer_pending_update(timeout: float = 8.0) -> None:
+    """If a newer release was found at startup, prompt and optionally apply it.
+
+    Call from the main thread after media init (needs pygame + TTS).
+    """
+    info = auto_update.get_pending(wait_timeout=timeout)
+    if info is None:
+        return
+    offer_update(info)
+
+
+def check_for_updates_now() -> None:
+    """Synchronous update check from the options menu (ignores startup toggle)."""
+    voice.alert(mp.CHECKING_FOR_UPDATES)
+    try:
+        info = auto_update.check_for_update()
+    except Exception:
+        voice.alert(mp.UPDATE_CHECK_FAILED)
+        return
+    if info is None:
+        voice.alert(mp.UPDATE_UP_TO_DATE)
+        return
+    offer_update(info)

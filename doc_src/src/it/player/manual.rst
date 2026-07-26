@@ -234,10 +234,11 @@ Per uscire da una partita o accedere al menu di gioco, premi F10. Alt F4 e Contr
 
 **Ctrl+F2: attiva/disattiva display e qualità visuale (modalità visuale)**
 
-Con il display attivo mostra la mappa dall’alto con qualità migliore rispetto alla vecchia vista di debug: colori terreno, alture più chiare, nebbia con tinta, mappa centrata; griglia e muri/uscite; forme, colori squadra, selezione, barre vita; coordinate, nomi, pannello sinistro. Con il display on puoi usare il mouse:
+Con il display attivo mostra la mappa dall’alto con qualità migliore rispetto alla vecchia vista di debug: colori terreno, alture più chiare, nebbia con tinta, mappa centrata; griglia e muri/uscite; forme, colori squadra, selezione, barre vita; coordinate, nomi, pannello sinistro. Sulle mappe grandi: scorrimento solo ai **bordi**, zoom con la **rotella**; passare sulle caselle non salta la telecamera. Con il display on puoi usare il mouse:
 
 - Clic sinistro seleziona; doppio clic seleziona tutte le unità visibili dello stesso tipo; Shift+clic aggiunge/rimuove; Shift+box aggiunge; clic su terreno vuoto salta casella e azzera la selezione.
 - Clic destro: ordini predefiniti (code Shift/Ctrl invariate).
+- **Scorrimento ai bordi / zoom rotella**: pan sul bordo del viewport; rotella su/giù zoom avanti/indietro.
 - Con selezione: pannello attributi in basso a sinistra (HP/attacco/difesa…); griglia 5×3 a destra; coda accanto al pannello. PNG opzionali in ``res/ui/icons/<tipo>.png``.
 - **Sprite mappa**: ``res/ui/map/<tipo>.png`` (separato da icons); anims → map → forme. Pacchetto anche in ``res/ui/map/``; ``python tools/gen_hud_icons.py`` rigenera.
 
@@ -498,9 +499,27 @@ con checksum per assicurarsi che non siano state modificate.
 Come selezionare una lingua diversa?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Se cfg/language.txt è vuoto, il programma selezionerà automaticamente la lingua del sistema.
-Per selezionare una lingua specifica, inserisci il codice lingua in cfg/language.txt, ad esempio "en", "fr-ca", "pt" o "pt-BR".
-Controlla la cartella res per vedere quali codici lingua sono disponibili.
+Consigliato: menu principale → **Opzioni** → **Lingua**, scegli una lingua o **Predefinita di sistema**. Voce e stile dell’interfaccia vengono ricaricati.
+
+La preferenza è in ``language.txt`` dell’utente (``user/language.txt`` oppure ``%APPDATA%\\SoundRTS\\language.txt``). Puoi anche modificare quel file con codici come ``en``, ``zh`` o ``it``.
+
+``cfg/language.txt`` nella cartella di installazione resta un ripiego in sola lettura: si usa solo se il ``language.txt`` utente **non esiste**. Dopo il cambio dal menu opzioni, vale il file utente. Un file utente vuoto segue la lingua di sistema.
+
+Controlla le cartelle ``ui`` / ``ui-*`` in ``res`` per i codici disponibili.
+
+Il gioco si aggiorna da solo?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Sì, di default. All’avvio controlla il Release GitHub; se c’è una versione più recente: **Invio** per aggiornare, **Esc** per annullare. Puoi anche ascoltare prima le note del Release.
+
+Menu principale → **Opzioni** → **Controlla aggiornamenti all’avvio del gioco**: Invio per attivare/disattivare (attivo di default). Salvato come ``check_updates_on_start`` in ``SoundRTS.ini``.
+
+Menu principale → **Opzioni** → **Controlla aggiornamenti ora**: controllo manuale in qualsiasi momento (funziona anche con il controllo all’avvio disattivato).
+
+- **Build Windows**: dopo la conferma scarica nel gioco, sovrascrive la cartella di installazione e riavvia. Salta ``user`` per conservare salvataggi/impostazioni locali.
+- **Dal codice sorgente**: apre solo la pagina di download; non sovrascrive il progetto.
+
+Release: https://github.com/tuohai/soundrts-ultimate-version/releases
 
 6. Funzioni moderne (dal 1.4)
 -----------------------------
