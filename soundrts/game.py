@@ -67,7 +67,7 @@ def cloudpickle_dump_game(obj, f, *, square_count=0):
 
 
 class SaveTooLargeError(Exception):
-    """pickle 在拉高 recursion limit 后仍失败."""
+    """存档因世界过大导致 RecursionError / MemoryError."""
 
     def __init__(self, square_count):
         self.square_count = square_count
@@ -656,7 +656,7 @@ class _Savable:
                     ).read()
                 try:
                     cloudpickle_dump_game(self, f, square_count=square_count)
-                except Exception as exc:
+                except (RecursionError, MemoryError) as exc:
                     raise SaveTooLargeError(square_count) from exc
                 f.flush()
                 try:

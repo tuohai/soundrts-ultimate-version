@@ -126,6 +126,26 @@ def _process_events(interface):
 
 def _process_fullscreen_mode_mouse_event(interface, e):
     """处理全屏模式下的鼠标事件"""
+    # 背包 / 装备栏覆盖层打开时拦截鼠标，避免误点地图
+    try:
+        from .game_gear_hud import gear_screen_active, handle_gear_click, hit_test_gear
+
+        if gear_screen_active(interface):
+            if e.type in (MOUSEBUTTONDOWN, MOUSEBUTTONUP) and e.button == 1:
+                if hit_test_gear(interface, e.pos) is not None and e.type == MOUSEBUTTONDOWN:
+                    mods = pygame.key.get_mods()
+                    handle_gear_click(interface, e.pos, mods)
+                    from .game_display import display
+
+                    display(interface)
+                if e.type == MOUSEBUTTONUP:
+                    interface.mouse_select_origin = None
+                return
+            if e.type == MOUSEBUTTONDOWN:
+                return
+    except Exception:
+        pass
+
     # 第二阶段 HUD：先吃掉命令条/队列点击，避免误点地图
     if e.type in (MOUSEBUTTONDOWN, MOUSEBUTTONUP) and e.button == 1:
         try:

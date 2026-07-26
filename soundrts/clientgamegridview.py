@@ -12,6 +12,9 @@ from .worldentity import COLLISION_RADIUS
 R = 3
 R2 = 9
 
+# 大地图不整图缩小：偏好格像素（接近小地图观感）；装不下则延伸到屏外并跟随当前格
+_PREFERRED_CELL_PX = 48
+
 # style 未写 color 时的可读默认色（Ctrl+F2 俯视图）
 _DEFAULT_TERRAIN_COLORS = {
     "plain": (48, 92, 48),
@@ -219,6 +222,19 @@ class GridView:
 
         self.fx = VisualFxState()
         self._minimap_hit = None  # (left, top, w, h, cell, cols, rows)
+        self._view_rect = (0, 0, 1, 1)  # 主地图可视区（不含底栏 HUD）
+        self._viewport_panned = False  # True：大地图相机跟随，地图可伸出屏外
+
+    def _main_view_rect(self):
+        """主地图可用矩形（为底栏命令卡/属性板留空）。"""
+        screen = get_screen()
+        sw, sh = screen.get_width(), screen.get_height()
+        left, top = 8, 8
+        right = sw - 8
+        bottom = sh - 140
+        if bottom - top < 120:
+            bottom = sh - 12
+        return left, top, max(1, right - left), max(1, bottom - top)
 
     def _ensure_fonts(self):
         size = max(10, min(16, self.square_view_width // 4))
@@ -261,18 +277,27 @@ class GridView:
         if not hasattr(o, "x") or not hasattr(o, "y"):
             return False
 
-        if not self.interface.zoom_mode:
-            # 全图显示模式：dobjets 已由战争迷雾过滤，无需再按当前方格裁剪
-            return True
+        if self.interface.zoom_mode:
+            # 缩放模式：显示当前主方格内全部单位（子格网格可见，便于鼠标点选）
+            place = self.interface.place
+            if place is None:
+                return False
+            if hasattr(o, "is_in"):
+                return o.is_in(place)
+            o_place = getattr(o, "place", None)
+            return o_place is place
 
-        # 缩放模式：显示当前主方格内全部单位（子格网格可见，便于鼠标点选）
-        place = self.interface.place
-        if place is None:
-            return False
-        if hasattr(o, "is_in"):
-            return o.is_in(place)
-        o_place = getattr(o, "place", None)
-        return o_place is place
+        # 俯视图：大地图时只画屏上附近的单位（迷雾仍由 dobjets 过滤）
+        try:
+            x, y = self._object_coords(o)
+        except Exception:
+            return True
+        screen = get_screen()
+        if screen is None:
+            return True
+        margin = max(24, int(getattr(self, "square_view_width", 48) or 48))
+        sw, sh = screen.get_width(), screen.get_height()
+        return -margin <= x <= sw + margin and -margin <= y <= sh + margin
 
     def _zoom_view_rect(self):
         """Screen rect mapping to the current main square in zoom mode (leave HUD/info)."""
@@ -887,14 +912,14 @@ class GridView:
 
     def _update_coefs(self):
         global R, R2
-        screen = get_screen()
-        sw, sh = screen.get_width(), screen.get_height()
         if self.interface.zoom_mode and self.interface.place is not None:
             left, top, w, h = self._zoom_view_rect()
+            self._view_rect = (left, top, w, h)
             self._map_origin = (left, top)
             self.ymax = h
             self.square_view_width = max(1, w)
             self.square_view_height = max(1, h)
+            self._viewport_panned = False
             precision = 3
             zoom = getattr(self.interface, "zoom", None)
             if zoom is not None:
@@ -903,16 +928,50 @@ class GridView:
             R = max(6, int(cell * 0.28))
             R2 = R * R
             return
+
+        left, top, vw, vh = self._main_view_rect()
+        self._view_rect = (left, top, vw, vh)
         cols = self.interface.xcmax + 1
         rows = self.interface.ycmax + 1
-        self.square_view_width = self.square_view_height = max(
-            1, min(sw // cols, sh // rows)
-        )
-        map_w = self.square_view_width * cols
-        map_h = self.square_view_height * rows
-        self.ymax = map_h
-        # 地图居中，四周留黑边
-        self._map_origin = ((sw - map_w) // 2, (sh - map_h) // 2)
+        fit = max(1, min(vw // max(cols, 1), vh // max(rows, 1)))
+        preferred = _PREFERRED_CELL_PX
+
+        if fit >= preferred:
+            # 小地图：整图居中铺满（格可大于偏好尺寸）
+            cell = fit
+            map_w = cell * cols
+            map_h = cell * rows
+            self.square_view_width = self.square_view_height = cell
+            self.ymax = map_h
+            self._map_origin = (left + (vw - map_w) // 2, top + (vh - map_h) // 2)
+            self._viewport_panned = False
+        else:
+            # 大地图（帝国式）：固定格大小，多出部分伸到屏外；相机跟随当前格
+            cell = preferred
+            map_w = cell * cols
+            map_h = cell * rows
+            self.square_view_width = self.square_view_height = cell
+            self.ymax = map_h
+            fxc, fyc = 0, 0
+            place = getattr(self.interface, "place", None)
+            if place is not None and hasattr(place, "col"):
+                fxc = int(place.col)
+                fyc = int(place.row)
+            view_cx = left + vw // 2
+            view_cy = top + vh // 2
+            ox = view_cx - fxc * cell - cell // 2
+            oy = view_cy - (map_h - fyc * cell - cell // 2)
+            if map_w > vw:
+                ox = min(left, max(left + vw - map_w, ox))
+            else:
+                ox = left + (vw - map_w) // 2
+            if map_h > vh:
+                oy = min(top, max(top + vh - map_h, oy))
+            else:
+                oy = top + (vh - map_h) // 2
+            self._map_origin = (int(ox), int(oy))
+            self._viewport_panned = True
+
         R = max(
             3,
             int(
@@ -1289,6 +1348,26 @@ class GridView:
                 screen, (255, 230, 120), (px, py, cell, cell), max(1, cell // 6)
             )
 
+        # 大地图：在小地图上标出当前主画面视口（帝国式相机）
+        if getattr(self, "_viewport_panned", False) and cell > 0:
+            vl, vt, vw, vh = self._view_rect
+            ox, oy = self._map_origin
+            main_cell = max(1, self.square_view_width)
+            map_w = main_cell * cols
+            map_h = self.ymax
+            # 可视区相对整图的比例
+            x0 = (vl - ox) / float(map_w)
+            y0 = (vt - oy) / float(map_h)
+            x1 = (vl + vw - ox) / float(map_w)
+            y1 = (vt + vh - oy) / float(map_h)
+            x0, x1 = max(0.0, min(1.0, x0)), max(0.0, min(1.0, x1))
+            y0, y1 = max(0.0, min(1.0, y0)), max(0.0, min(1.0, y1))
+            rx = left + int(x0 * w)
+            rw = max(2, int((x1 - x0) * w))
+            ry = top + int(y0 * h)
+            rh = max(2, int((y1 - y0) * h))
+            pygame.draw.rect(screen, (255, 255, 255), (rx, ry, rw, rh), 1)
+
     def minimap_square_from_mousepos(self, pos):
         from .clientgame.game_visual_fx import hit_test_minimap
 
@@ -1299,11 +1378,18 @@ class GridView:
             return None
         return self.interface.server.player.world.grid.get(hit)
 
+    def _pos_in_main_view(self, pos):
+        x, y = pos
+        left, top, vw, vh = self._view_rect
+        return left <= x < left + vw and top <= y < top + vh
+
     def square_from_mousepos(self, pos):
         self._update_coefs()
         if self.interface.zoom_mode and self.interface.place is not None:
             if self.world_from_mousepos(pos) is not None:
                 return self.interface.place
+            return None
+        if not self._pos_in_main_view(pos):
             return None
         x, y = pos
         ox, oy = self._map_origin
@@ -1326,6 +1412,8 @@ class GridView:
             wx = sq.xmin + (x - left) / w * (sq.xmax - sq.xmin)
             wy = sq.ymax - (y - top) / h * (sq.ymax - sq.ymin)
             return wx, wy
+        if not self._pos_in_main_view(pos):
+            return None
         ox, oy = self._map_origin
         if self.square_view_width <= 0 or self.square_view_height <= 0:
             return None

@@ -4,6 +4,27 @@
 .. contents::
 
 
+1.4.6.2
+--------
+
+**改善：Ctrl+F2 选中栏 / 背包装备 / 大地图视口**
+
+- **选中属性板**：左下角常驻头像与生命/攻防/射程/速度等（对齐帝国/星际；完整属性仍用 Alt+V TTS）。
+- **背包 / 装备栏画面**：Ctrl+F2 下可选中单位旁按钮打开；中央物品格 + 使用/卸下/丢弃等鼠标操作（键盘 Shift+V / Ctrl+V 仍可用）。
+- **大地图视口**：cw1 等大图不再整图缩小塞进窗口；格子保持与小地图相近的可读大小，多余部分伸出屏幕外，画面跟随当前焦点格（帝国式）。
+- 右上角小地图仍显示全局，并标出当前主画面视口；左键跳格、右键跳格并下默认命令。小地图（格数少、能铺满时）仍整图居中。
+- **实现**：``clientgame/game_hud.py``、``clientgame/game_gear_hud.py``、``clientgamegridview.py``、``clientgame/game_input_handler.py``。
+- **文档**：各语言玩家手册、发行说明。
+
+**修复：大地图中途退出时自动续玩存档失败**
+
+- **现象**：在 ``cw1-mm``（100×100）等大图对局中退出时，日志出现 ``auto save resume skipped: world too large (10000 squares)``，主菜单无法「继续未完成的游戏」。
+- **原因**：存档会经 ``local_client.interface`` 误带入界面对象（pygame 字体、锁等），序列化失败；任意异常又被统一标成「地图过大」，掩盖真实原因。
+- **修复**：客户端 ``__getstate__`` 不再写入 ``interface``（读档时重建界面）；仅 ``RecursionError`` / ``MemoryError`` 才报「地图过大」。
+- **实现**：``worldclient.py``、``game.py``、``clientgame/game_resources.py``。
+- **测试**：``test_save_resume_pickle.py``（含带界面对象的 cw1-mm 存档往返）。
+
+
 1.4.6.1
 --------
 
@@ -11,7 +32,7 @@
 
 - **修复**：主地图单位/建筑因世界坐标换算错误几乎挤在屏幕顶边（小地图仍可见点）；已与格子 Y 轴方向对齐。
 - **鼠标（仅画面开启时）**：单击选中；双击全选可见同类型；Shift+单击加选/减选；Shift+框选并入；单击空地跳格并清空选择；右键默认命令（Shift/Ctrl 队列不变）。
-- **命令卡 HUD**：右下角 5×3 图标命令格；左下角生产队列与取消队尾；可选 ``res/ui/icons/<类型或命令名>.png``。
+- **命令卡 HUD**：右下角 5×3 图标命令格；生产队列；可选 ``res/ui/icons/<类型或命令名>.png``。
 - **地图静态图**：俯视图使用独立目录 ``res/ui/map/<类型名>.png``（与命令卡分离）；无图仍用色块。
 - **可选单位动画**：``res/ui/anims/<类型>/`` 精灵表或可选 Spine；回退顺序：动画 → ``ui/map`` → 色块（``clientgame/game_unit_anim.py``）。
 - **起步图包**：``res/ui/icons/``（HUD）与 ``res/ui/map/``（地图）已含常见扁平 PNG；同名覆盖即可换图；``python tools/gen_hud_icons.py`` 可重生成。

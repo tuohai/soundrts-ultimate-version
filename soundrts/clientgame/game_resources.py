@@ -239,9 +239,11 @@ def _try_save_resume(interface):
         from ..game import SaveTooLargeError
 
         if isinstance(exc, SaveTooLargeError):
+            cause = exc.__cause__
             warning(
-                "auto save resume skipped: world too large (%s squares)",
+                "auto save resume skipped: world too large (%s squares)%s",
                 exc.square_count,
+                f" ({cause!r})" if cause is not None else "",
             )
         else:
             exception("auto save resume game failed")

@@ -234,11 +234,11 @@ To quit a game or access to the game menu, press F10. Alt F4 and Control C do th
 
 **Ctrl+F2: display toggle and visual quality (sighted mode)**
 
-When on, shows a top-down map. Compared with the old debug view, this build improves visual quality and readability: default terrain colors, brighter high ground, fog that keeps hue, centered map; grid and wall/exit cues; distinct unit/building/resource shapes, team colors, selection, HP bars, air markers; numeric coords, place names, resource amounts; left hover info panel. With the display on you can use the mouse:
+When on, shows a top-down map. Compared with the old debug view, this build improves visual quality and readability: default terrain colors, brighter high ground, fog that keeps hue; grid and wall/exit cues; distinct unit/building/resource shapes, team colors, selection, HP bars, air markers; numeric coords, place names, resource amounts; left hover info panel. **Large maps** (e.g. cw1) are not shrunk to fit: cells stay near the size used on small maps and the rest extends off-screen (Age of Empires-style), with the view following the focused square; use the minimap or arrow keys to browse. Small maps still fit centered on screen. With the display on you can use the mouse:
 
 - Left-click select; double-click select all visible units of the same type; Shift+click add/remove; Shift+box-select append; click empty ground to jump square and clear selection.
 - Right-click default orders (Shift/Ctrl queue and imperative unchanged).
-- With a selection, a 5×3 command icon grid (bottom-right) and queue icons with cancel-last (bottom-left). Optional PNGs in ``res/ui/icons/<type_or_order>.png``; otherwise generated letter icons.
+- With a selection, a **bottom-left stats panel** shows portrait, HP/MP bars, attack/defense/range/speed (Age of Empires / StarCraft-style; full Alt+V list remains TTS). A 5×3 command icon grid is bottom-right; the production queue sits beside the stats panel. Optional PNGs in ``res/ui/icons/<type_or_order>.png``; otherwise generated letter icons.
 - **Map sprites**: the top-down map uses ``res/ui/map/<type>.png`` (separate from HUD ``ui/icons``); otherwise colored circles/squares.
 - **Optional unit animation**: put packs under ``res/ui/anims/<type>/`` (spritesheet, or optional Spine). Priority: anim → ``ui/map`` → shapes. See ``res/ui/anims/README.txt``.
 - **Starter packs**: flat geometric PNGs in ``res/ui/icons/`` (HUD) and ``res/ui/map/`` (map). Replace same filename to customize. Regenerate with ``python tools/gen_hud_icons.py``.
@@ -515,10 +515,10 @@ Check the res folder to find which language codes are provided.
 Properties interface
 ^^^^^^^^^^^^^^^^^^^^^
 
-Alt+V opens the unit or building properties screen. Use arrow keys to browse attributes, or
+Alt+V opens the unit or building properties screen (full list via speech). Use arrow keys to browse attributes, or
 assign quick keys in ``attributes_bindings.txt``. Some entries are interactive: browse
 ``can_train``, skills, research, or ``can_build`` with left/right and press Enter to inspect
-details.
+details. With Ctrl+F2 display on, a bottom-left panel also shows common combat stats while a unit is selected (HP, attack/defense, range, speed).
 
 Inventory and equipment (since 1.4.3.1)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -555,6 +555,12 @@ In backpack or equipment, the same keys apply:
 - Shift+Enter: unequip equipped weapon or armor
 - Delete: drop (confirm with Enter); Shift+Delete: drop immediately
 - Esc: exit (or cancel a pending drop)
+
+With Ctrl+F2 display on, you can also use the mouse:
+
+- With exactly one friendly unit selected, Bag / Gear buttons appear beside the stats panel (when items/gear exist).
+- The open screen shows item slots; click to select; buttons: Use/Equip, Unequip, Drop, Info; switch Bag↔Gear or close.
+- Click the dimmed area outside the panel to close (same as Esc). Keyboard controls still work.
 
 Pickup and drop outside these screens:
 

@@ -5,6 +5,27 @@ Release notes
 .. contents::
 
 
+1.4.6.2
+--------
+
+**Improvement: Ctrl+F2 selection stats / backpack & gear / large-map viewport**
+
+- **Selection stats panel**: bottom-left portrait + HP/attack/defense/range/speed (Age of Empires / StarCraft-style; full Alt+V list remains TTS).
+- **Backpack / equipment visuals**: with Ctrl+F2, open via buttons beside the selection panel; clickable item grid + Use/Unequip/Drop (Shift+V / Ctrl+V keyboard still work).
+- **Large-map viewport**: big maps (e.g. cw1) no longer shrink-to-fit; cells stay near the size used on small maps, the rest extends off-screen, and the view follows the focused square (Age of Empires-style).
+- The top-right minimap still shows the whole map and outlines the current viewport; left-click jumps square, right-click jumps and issues default order. Small maps still fit centered.
+- **Code**: ``clientgame/game_hud.py``, ``clientgame/game_gear_hud.py``, ``clientgamegridview.py``, ``clientgame/game_input_handler.py``.
+- **Docs**: player manuals, release notes.
+
+**Fix: auto resume save failed when quitting large maps mid-game**
+
+- **Symptom**: quitting a large map such as ``cw1-mm`` (100×100) logged ``auto save resume skipped: world too large (10000 squares)``, so “continue unfinished game” was unavailable.
+- **Cause**: the save path pickled ``local_client.interface`` (pygame fonts, locks, etc.); any dump failure was then mislabeled as “world too large.”
+- **Fix**: client ``__getstate__`` omits ``interface`` (UI rebuilt on load); only ``RecursionError`` / ``MemoryError`` are reported as “world too large.”
+- **Code**: ``worldclient.py``, ``game.py``, ``clientgame/game_resources.py``.
+- **Tests**: ``test_save_resume_pickle.py`` (including cw1-mm round-trip with a fake UI attached).
+
+
 1.4.6.1
 --------
 
@@ -12,7 +33,7 @@ Release notes
 
 - **Fix**: main-map units/buildings were almost stuck at the top edge due to wrong world→screen conversion (minimap dots still showed); Y axis now matches square layout.
 - **Mouse (display on only)**: click select; double-click same type; Shift+click add/remove; Shift+box append; empty click jumps square and clears; right-click default orders unchanged.
-- **Command-card HUD**: 5×3 icon grid (bottom-right); queue + cancel-last (bottom-left); optional ``res/ui/icons/<type_or_order>.png``.
+- **Command-card HUD**: 5×3 icon grid (bottom-right); production queue; optional ``res/ui/icons/<type_or_order>.png``.
 - **Map sprites**: top-down map uses ``res/ui/map/<type>.png`` (separate from HUD icons); else colored shapes.
 - **Optional unit animation**: ``res/ui/anims/<type>/`` spritesheets or optional Spine; fallback: anim → ``ui/map`` → shapes (``clientgame/game_unit_anim.py``).
 - **Starter packs**: flat geometric PNGs in ``res/ui/icons/`` and ``res/ui/map/``; replace same filename to customize; regenerate via ``python tools/gen_hud_icons.py``.

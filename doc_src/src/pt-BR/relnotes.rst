@@ -5,6 +5,21 @@ Notas de lançamento
 .. contents::
 
 
+1.4.6.2
+-------
+
+**Melhoria: painel de atributos / mochila e equipamento / viewport de mapas grandes**
+
+- Painel de atributos na seleção; mochila/equipamento com mouse; mapas grandes estilo Age of Empires (sem encolher).
+
+**Correção: falha ao salvar retomada automática em mapas grandes**
+
+- Ao sair no meio da partida em mapas grandes (ex.: ``cw1-mm`` 100×100), o autosalvamento de «continuar jogo» falhava e o log dizia incorretamente «mundo grande demais».
+- **Causa**: ``local_client.interface`` era serializado (fontes/locks do pygame).
+- **Correção**: ``interface`` não é salva (reconstruída ao carregar); só ``RecursionError`` / ``MemoryError`` são reportados como mapa grande demais.
+- **Código**: ``worldclient.py``, ``game.py``, ``clientgame/game_resources.py``.
+
+
 1.4.6.1
 -------
 

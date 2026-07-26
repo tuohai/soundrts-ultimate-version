@@ -238,7 +238,7 @@ Con il display attivo mostra la mappa dall’alto con qualità migliore rispetto
 
 - Clic sinistro seleziona; doppio clic seleziona tutte le unità visibili dello stesso tipo; Shift+clic aggiunge/rimuove; Shift+box aggiunge; clic su terreno vuoto salta casella e azzera la selezione.
 - Clic destro: ordini predefiniti (code Shift/Ctrl invariate).
-- Con selezione: griglia comandi 5×3 in basso a destra e coda/annulla in basso a sinistra. PNG opzionali in ``res/ui/icons/<tipo>.png``.
+- Con selezione: pannello attributi in basso a sinistra (HP/attacco/difesa…); griglia 5×3 a destra; coda accanto al pannello. PNG opzionali in ``res/ui/icons/<tipo>.png``.
 - **Sprite mappa**: ``res/ui/map/<tipo>.png`` (separato da icons); anims → map → forme. Pacchetto anche in ``res/ui/map/``; ``python tools/gen_hud_icons.py`` rigenera.
 
 Con il display off, tastiera e voce restano primarie. Lo stato è salvato (``display_enabled``) e ripristinato all’avvio. Vedi `tasti a livelli <layered-hotkeys.htm>`_.

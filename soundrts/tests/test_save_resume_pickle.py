@@ -198,10 +198,54 @@ def test_rebuild_revives_blank_square_and_exit():
     assert blank_exit in blank.exits
 
 
+def test_controller_getstate_omits_interface():
+    """Mid-game resume must not pickle GameInterface via local_client."""
+    import threading
+
+    from soundrts.worldclient import DirectClient
+
+    class _FakeGame:
+        allow_cheatmode = True
+        record_replay = False
+
+    client = DirectClient("test", _FakeGame())
+    client.interface = type(
+        "FakeUI",
+        (),
+        {"_lock": threading.Lock(), "grid_view": object()},
+    )()
+    state = client.__getstate__()
+    assert "interface" not in state
+    assert "player" not in state
+
+
+def test_write_save_does_not_wrap_typeerror_as_too_large(tmp_path, monkeypatch):
+    """Only RecursionError/MemoryError become SaveTooLargeError."""
+    from soundrts.game import SaveTooLargeError, TrainingGame
+
+    game = TrainingGame.__new__(TrainingGame)
+    game.world = type("W", (), {"squares": [None] * 10})()
+    game.record_replay = False
+
+    def _boom(*_a, **_k):
+        raise TypeError("cannot pickle '_thread.lock' object")
+
+    monkeypatch.setattr("soundrts.game.cloudpickle_dump_game", _boom)
+    path = str(tmp_path / "t.sav")
+    try:
+        game._write_save_to(path)
+        assert False, "expected TypeError"
+    except TypeError as exc:
+        assert "lock" in str(exc)
+    except SaveTooLargeError:
+        assert False, "TypeError must not be relabeled as SaveTooLargeError"
+
+
 def test_cw1_mm_save_roundtrip():
     """Regression: 100x100 cw1-mm must save/load without stack overflow."""
     import os
     import sys
+    import threading
     import warnings
     from io import BytesIO
 
@@ -223,6 +267,13 @@ def test_cw1_mm_save_roundtrip():
         game.world = World(game.default_triggers, game.seed)
         game.world.load_and_build_map(m)
         game.world.populate_map(game.players, equivalents=True)
+        # Mid-game path: UI hangs off local_client (must be stripped on save).
+        game.local_client.interface = type(
+            "FakeUI",
+            (),
+            {"_lock": threading.Lock(), "grid_view": object()},
+        )()
+        game.interface = game.local_client.interface
 
         buf = BytesIO()
         cloudpickle_dump_game(game, buf, square_count=len(game.world.squares))
@@ -236,4 +287,5 @@ def test_cw1_mm_save_roundtrip():
     finally:
         sys.setrecursionlimit(saved)
     assert len(loaded.world.squares) == 10000
+    assert getattr(loaded.local_client, "interface", None) is None
 

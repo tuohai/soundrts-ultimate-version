@@ -81,11 +81,15 @@ class _Controller:
         player = state.pop("player", None)
         if player is not None and getattr(player, "id", None):
             state["_pickle_player_id"] = player.id
+        # UI is rebuilt by Game._ensure_interface_for_restore; pickling it
+        # pulls pygame Fonts / locks and breaks mid-game resume on big maps.
+        state.pop("interface", None)
         return state
 
     def __setstate__(self, state):
         self.__dict__.update(state)
         self.player = None
+        self.interface = None
 
 
 

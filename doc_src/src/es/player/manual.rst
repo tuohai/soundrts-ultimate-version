@@ -238,7 +238,7 @@ Con la pantalla activada se muestra el mapa en planta con mejor calidad que la v
 
 - Clic izquierdo selecciona; doble clic selecciona todas las unidades visibles del mismo tipo; Shift+clic añade/quita; Shift+arrastra añade a la selección; clic en suelo vacío salta de casilla y limpia la selección.
 - Clic derecho: órdenes por defecto (colas Shift/Ctrl sin cambios).
-- Con selección: rejilla de comandos 5×3 abajo a la derecha y cola/cancelar abajo a la izquierda. PNG opcionales en ``res/ui/icons/<tipo>.png``.
+- Con selección: panel de atributos abajo a la izquierda (HP/ataque/defensa…); rejilla 5×3 a la derecha; cola junto al panel. PNG opcionales en ``res/ui/icons/<tipo>.png``.
 - **Sprites del mapa**: ``res/ui/map/<tipo>.png`` (separado de icons); anims → map → formas. Pack inicial también en ``res/ui/map/``; ``python tools/gen_hud_icons.py`` regenera.
 
 Con la pantalla off, teclado y voz siguen siendo lo principal. El estado se guarda (``display_enabled``) y se restaura al reiniciar. Véase `teclas por capas <layered-hotkeys.htm>`_.

@@ -1,7 +1,8 @@
-"""Ctrl+F2：图标命令卡 + 生产队列。
+"""Ctrl+F2：图标命令卡 + 生产队列 + 选中单位属性板。
 
 - 命令卡 / 队列：``ui/icons/<name>.png``（有则用真图，否则生成色块字母）
-- 俯视图静态单位图：``ui/map/<type>.png``（见 ``get_map_icon``；与命令卡分离）
+- 俯视图静态单位图：``ui/map/<type>.png``（见 ``get_map_sprite``；与命令卡分离）
+- 选中属性板：左下角常驻（对齐帝国/星际选中栏；常用战斗属性）
 - 点击逻辑同前：复用 orders / validate / cancel
 """
 
@@ -12,6 +13,7 @@ import os
 
 import pygame
 
+from ..lib.nofloat import PRECISION
 from ..lib.screen import get_screen
 
 # 布局：右下角命令卡（类似传统 RTS）
@@ -23,6 +25,8 @@ _COLS = 5
 _ROWS = 3
 _LABEL_H = 22
 _QUEUE_H = _QICON + _PAD
+_STAT_PORTRAIT = 56
+_STAT_PANEL_W = 300
 
 _KW_COLORS = {
     "train": (52, 118, 68),
@@ -312,7 +316,8 @@ def hud_panel_rect(screen=None):
         return pygame.Rect(0, 0, 0, 0)
     sw, sh = screen.get_width(), screen.get_height()
     _cw, ch = _card_size()
-    h = max(ch, _QUEUE_H + _PAD) + _PAD
+    stat_h = _STAT_PORTRAIT + 72
+    h = max(ch, stat_h, _QUEUE_H + _PAD) + _PAD
     return pygame.Rect(0, sh - h, sw, h)
 
 
@@ -352,6 +357,16 @@ def handle_hud_click(interface, pos, mods=0):
 
         # 左键下一条；Shift+左键上一条（对齐 F9 / Shift+F9）
         cmd_objectives(interface, -1 if shift else 1)
+        return True
+
+    if kind == "open_inv":
+        if hasattr(interface, "cmd_unit_inventory_screen"):
+            interface.cmd_unit_inventory_screen()
+        return True
+
+    if kind == "open_eq":
+        if hasattr(interface, "cmd_unit_equipment_screen"):
+            interface.cmd_unit_equipment_screen()
         return True
 
     if kind == "order":
@@ -406,6 +421,245 @@ def _objectives_button_label(interface):
     return "Objectives"
 
 
+def _prec_num(value, *, digits=1):
+    """PRECISION 属性 → 可读数字字符串。"""
+    try:
+        v = float(value) / float(PRECISION)
+    except Exception:
+        return "?"
+    if abs(v - round(v)) < 1e-6:
+        return str(int(round(v)))
+    fmt = "%%.%df" % max(0, int(digits))
+    return (fmt % v).rstrip("0").rstrip(".")
+
+
+def _attr_of(ev, name, default=0):
+    model = getattr(ev, "model", ev)
+    v = getattr(ev, name, None)
+    if v is None:
+        v = getattr(model, name, default)
+    return default if v is None else v
+
+
+def _selection_entities(interface):
+    out = []
+    for uid in getattr(interface, "group", None) or ():
+        ev = interface.dobjets.get(uid)
+        if ev is not None:
+            out.append(ev)
+    return out
+
+
+def _unit_display_title(ev):
+    title = _voice_to_text(getattr(ev, "title", None) or [])
+    if title:
+        return title
+    try:
+        from ..definitions import style
+
+        tn = getattr(ev, "type_name", None) or getattr(
+            getattr(ev, "model", None), "type_name", None
+        )
+        if tn:
+            title = _voice_to_text(style.get(tn, "title", warn_if_not_found=False) or [])
+            if title:
+                return title
+            return str(tn)
+    except Exception:
+        pass
+    return "?"
+
+
+def _draw_meter(screen, rect, ratio, *, fill, back=(40, 44, 52), border=(90, 100, 120)):
+    pygame.draw.rect(screen, back, rect, border_radius=3)
+    ratio = max(0.0, min(1.0, float(ratio)))
+    if ratio > 0:
+        fr = pygame.Rect(rect.x, rect.y, max(1, int(rect.w * ratio)), rect.h)
+        pygame.draw.rect(screen, fill, fr, border_radius=3)
+    pygame.draw.rect(screen, border, rect, 1, border_radius=3)
+
+
+def _draw_selection_stats(interface, screen, *, panel, card_x, font, font_s):
+    """左下角选中单位属性板（帝国/星际风格常驻栏）。"""
+    entities = _selection_entities(interface)
+    if not entities:
+        return _PAD, pygame.Rect(_PAD, panel.top + _PAD, 1, 1)
+
+    primary = entities[0]
+    model = getattr(primary, "model", primary)
+    n = len(entities)
+    title = _unit_display_title(primary)
+    if n > 1:
+        same = all(
+            (
+                getattr(e, "type_name", None)
+                or getattr(getattr(e, "model", None), "type_name", None)
+            )
+            == (
+                getattr(primary, "type_name", None)
+                or getattr(model, "type_name", None)
+            )
+            for e in entities
+        )
+        title = "%s  ×%d" % (title, n) if same else "%d selected" % n
+
+    type_name = getattr(primary, "type_name", None) or getattr(model, "type_name", None)
+    portrait = None
+    if type_name:
+        portrait = get_map_sprite(type_name, _STAT_PORTRAIT)
+        if portrait is None:
+            portrait = get_icon(type_name, "default", title, _STAT_PORTRAIT)
+
+    box_w = min(_STAT_PANEL_W, max(180, card_x - _PAD * 2))
+    box_h = panel.h - _PAD * 2
+    if box_w < 120 or box_h < 48:
+        return _PAD, pygame.Rect(_PAD, panel.top + _PAD, 1, 1)
+    box = pygame.Rect(_PAD, panel.top + _PAD, box_w, box_h)
+    pygame.draw.rect(screen, (22, 26, 34), box, border_radius=8)
+    pygame.draw.rect(screen, (90, 100, 120), box, 1, border_radius=8)
+
+    px = box.x + 6
+    py = box.y + 6
+    if portrait is not None:
+        screen.blit(portrait, (px, py))
+        pygame.draw.rect(
+            screen,
+            (140, 155, 180),
+            (px, py, _STAT_PORTRAIT, _STAT_PORTRAIT),
+            1,
+            border_radius=4,
+        )
+        text_x = px + _STAT_PORTRAIT + 8
+    else:
+        text_x = px
+
+    title_s = font.render(_short_label(title, 22), True, (255, 235, 160))
+    screen.blit(title_s, (text_x, py))
+
+    hp = _attr_of(primary, "hp", None)
+    hp_max = _attr_of(primary, "hp_max", None)
+    y = py + title_s.get_height() + 4
+    meter_w = box.right - text_x - 8
+    if hp is not None and hp_max:
+        try:
+            ratio = float(hp) / float(hp_max) if hp_max else 0.0
+        except Exception:
+            ratio = 0.0
+        if ratio > 0.6:
+            fill = (60, 200, 80)
+        elif ratio > 0.3:
+            fill = (220, 180, 40)
+        else:
+            fill = (210, 70, 60)
+        mrect = pygame.Rect(text_x, y, max(40, meter_w), 10)
+        _draw_meter(screen, mrect, ratio, fill=fill)
+        hp_txt = font_s.render(
+            "HP %s/%s" % (_prec_num(hp), _prec_num(hp_max)),
+            True,
+            (230, 235, 245),
+        )
+        screen.blit(hp_txt, (text_x, mrect.bottom + 2))
+        y = mrect.bottom + 2 + hp_txt.get_height() + 2
+    else:
+        y = py + _STAT_PORTRAIT + 4 if portrait is not None else y + 4
+
+    mana = _attr_of(primary, "mana", None)
+    mana_max = _attr_of(primary, "mana_max", 0) or 0
+    if mana is not None and mana_max:
+        try:
+            mratio = float(mana) / float(mana_max)
+        except Exception:
+            mratio = 0.0
+        mrect = pygame.Rect(text_x, y, max(40, meter_w), 8)
+        _draw_meter(screen, mrect, mratio, fill=(70, 130, 220))
+        mp_txt = font_s.render(
+            "MP %s/%s" % (_prec_num(mana), _prec_num(mana_max)),
+            True,
+            (200, 220, 255),
+        )
+        screen.blit(mp_txt, (text_x, mrect.bottom + 1))
+        y = mrect.bottom + 1 + mp_txt.get_height() + 2
+
+    # 战斗数值行（与 Alt+V 常用项对齐；PRECISION → 可读）
+    mdg = _attr_of(primary, "mdg", 0) or 0
+    rdg = _attr_of(primary, "rdg", 0) or 0
+    mdf = _attr_of(primary, "mdf", 0) or 0
+    rdf = _attr_of(primary, "rdf", 0) or 0
+    lines = []
+    if mdg or rdg:
+        lines.append("ATK %s / %s" % (_prec_num(mdg), _prec_num(rdg)))
+    if mdf or rdf:
+        lines.append("DEF %s / %s" % (_prec_num(mdf), _prec_num(rdf)))
+
+    mdg_range = _attr_of(primary, "mdg_range", 0) or 0
+    rdg_range = _attr_of(primary, "rdg_range", 0) or 0
+    if mdg_range or rdg_range:
+        # 射程按格子读（÷1000），与 Alt+V 一致
+        def _rng(v):
+            s = "%.1f" % (float(v) / 1000.0)
+            return s.rstrip("0").rstrip(".")
+
+        lines.append("RNG %s / %s" % (_rng(mdg_range), _rng(rdg_range)))
+
+    speed = _attr_of(primary, "speed", 0) or 0
+    if speed:
+        lines.append("SPD %s" % _prec_num(speed))
+
+    armor = _attr_of(primary, "armor", None)
+    if armor:
+        try:
+            from ..definitions import style
+
+            armor_title = _voice_to_text(
+                style.get(armor, "title", warn_if_not_found=False) or []
+            ) or str(armor)
+            lines.append("ARM %s" % _short_label(armor_title, 14))
+        except Exception:
+            lines.append("ARM %s" % armor)
+
+    level = _attr_of(primary, "level", None)
+    if level:
+        try:
+            if int(level) > 0:
+                lines.append("LV %s" % int(level))
+        except Exception:
+            pass
+
+    # 资源储量（矿等）
+    qty = getattr(primary, "qty", None)
+    if qty is None:
+        qty = getattr(model, "qty", None)
+    if qty:
+        lines.append("QTY %s" % _prec_num(qty))
+
+    # 多选时补充总生命
+    if n > 1 and hp_max:
+        try:
+            thp = sum(float(_attr_of(e, "hp", 0) or 0) for e in entities)
+            tmax = sum(float(_attr_of(e, "hp_max", 0) or 0) for e in entities)
+            if tmax > 0:
+                lines.append("ΣHP %s/%s" % (_prec_num(thp), _prec_num(tmax)))
+        except Exception:
+            pass
+
+    stats_x = box.x + 6
+    stats_y = max(y, py + (_STAT_PORTRAIT if portrait is not None else 0) + 4)
+    for i in range(0, len(lines), 2):
+        left = lines[i]
+        right = lines[i + 1] if i + 1 < len(lines) else ""
+        ls = font_s.render(left, True, (220, 225, 235))
+        screen.blit(ls, (stats_x, stats_y))
+        if right:
+            rs = font_s.render(right, True, (220, 225, 235))
+            screen.blit(rs, (stats_x + box_w // 2 - 4, stats_y))
+        stats_y += font_s.get_height() + 1
+        if stats_y > box.bottom - 4:
+            break
+
+    # 队列从属性板右侧开始，避免重叠；同时返回面板矩形供背包/装备入口按钮定位
+    return box.right + _GAP, box
+
+
 def _draw_objectives_button(interface, screen):
     """Always-visible objectives button (sighted; same as hotkey browse)."""
     _ensure_fonts(interface)
@@ -432,7 +686,7 @@ def _draw_objectives_button(interface, screen):
 
 
 def draw_hud(interface):
-    """绘制图标命令卡与队列；写入 ``interface._hud_hits``。"""
+    """绘制选中属性板、图标命令卡与队列；写入 ``interface._hud_hits``。"""
     interface._hud_hits = []
     screen = get_screen()
     if screen is None:
@@ -461,7 +715,9 @@ def draw_hud(interface):
     show_queue = bool(queue)
 
     cw, ch = _card_size()
-    panel_h = max(ch, (_QUEUE_H if show_queue else 0) + _PAD) + _PAD
+    # 属性板需要一定高度；与命令卡取较大者
+    stat_h = _STAT_PORTRAIT + 72
+    panel_h = max(ch, stat_h, (_QUEUE_H if show_queue else 0) + _PAD) + _PAD
     panel = pygame.Rect(0, sh - panel_h, sw, panel_h)
     bg = pygame.Surface((panel.w, panel.h), pygame.SRCALPHA)
     bg.fill((12, 14, 20, 215))
@@ -473,6 +729,18 @@ def draw_hud(interface):
     card_y = sh - ch - _PAD
     pygame.draw.rect(screen, (22, 26, 34), (card_x, card_y, cw, ch), border_radius=8)
     pygame.draw.rect(screen, (90, 100, 120), (card_x, card_y, cw, ch), 1, border_radius=8)
+
+    # --- 左下角选中属性板（帝国/星际风格）---
+    queue_x0, stats_box = _draw_selection_stats(
+        interface, screen, panel=panel, card_x=card_x, font=font, font_s=font_s
+    )
+    try:
+        from .game_gear_hud import draw_gear_open_buttons
+
+        btn_right = draw_gear_open_buttons(interface, screen, anchor_rect=stats_box)
+        queue_x0 = max(queue_x0, btn_right)
+    except Exception:
+        pass
 
     selected = getattr(interface, "order", None)
     hover_label = None
@@ -513,9 +781,9 @@ def draw_hud(interface):
         ts = font_s.render(tip, True, (255, 235, 160))
         screen.blit(ts, (card_x + (cw - ts.get_width()) // 2, label_y))
 
-    # --- 左侧队列图标条 ---
+    # --- 队列图标条（属性板右侧）---
     if show_queue:
-        qx = _PAD
+        qx = queue_x0
         qy = sh - _QICON - _PAD - 4
         cancel_kw = getattr(queue[-1], "cancel_order", None) if queue else None
         if cancel_kw:
@@ -567,3 +835,11 @@ def draw_hud(interface):
         if hover_label and mx < card_x:
             ts = font_s.render(hover_label, True, (255, 235, 160))
             screen.blit(ts, (_PAD, panel.top + 4))
+
+    # 背包 / 装备栏覆盖层（键盘打开或入口按钮打开后）
+    try:
+        from .game_gear_hud import draw_gear_hud
+
+        draw_gear_hud(interface)
+    except Exception:
+        pass
