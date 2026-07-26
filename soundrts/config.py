@@ -21,6 +21,7 @@ music_enabled: int
 secondary_voice_enabled: int
 speech_enabled: int
 display_enabled: int
+check_updates_on_start: int
 
 _LOGIN_FORBIDDEN_CHARS = set('\\/:*?"<>|\0')
 _LOGIN_MAX_LENGTH = 20
@@ -102,6 +103,8 @@ _options = [
     ),
     ("general", "debug_mode", 0),
     ("general", "layered_hotkeys", 1, int),
+    # 1 = 启动时检查 GitHub 更新（默认开）; 0 = 关闭
+    ("general", "check_updates_on_start", 1, int),
     # 1 = Ctrl+F2 画面开启（下次启动恢复）; 0 = 关闭
     ("general", "display_enabled", 0, int),
     ("server", "timeout", 60.0),

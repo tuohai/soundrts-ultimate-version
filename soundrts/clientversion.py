@@ -1,22 +1,12 @@
 import threading
-import urllib.error
-import urllib.parse
-import urllib.request
 
+from . import auto_update
 from . import msgparts as mp
 from . import stats
 from .clientmedia import voice
 from .metaserver import METASERVER_URL
 from .paths import STATS_PATH
 from .update import update_packages_from_servers
-from .version import VERSION
-
-
-def _patch(version):
-    try:
-        return int(version.split(".")[2])
-    except (ValueError, IndexError):
-        return -1
 
 
 class RevisionChecker(threading.Thread):
@@ -26,21 +16,17 @@ class RevisionChecker(threading.Thread):
 
     def run(self):
         try:
-            if _patch(VERSION) != -1:
-                major_minor = ".".join(VERSION.split(".")[:2])
-                url = f"http://jlpo.free.fr/soundrts/{major_minor}version.txt"
-                latest_version = urllib.request.urlopen(url).read().strip().decode()
-                if "404" not in latest_version and _patch(VERSION) < _patch(
-                    latest_version
-                ):
-                    voice.important(mp.UPDATE_AVAILABLE)
-        except:
+            auto_update.run_background_check()
+        except Exception:
             pass
         try:
             stats.Stats(STATS_PATH, METASERVER_URL).send()
-        except:
+        except Exception:
             pass
-        update_packages_from_servers()
+        try:
+            update_packages_from_servers()
+        except Exception:
+            pass
 
     def start_if_needed(self):
         if self.never_started:
@@ -49,3 +35,58 @@ class RevisionChecker(threading.Thread):
 
 
 revision_checker = RevisionChecker()
+
+
+def offer_pending_update(timeout: float = 8.0) -> None:
+    """If a newer release was found, prompt and optionally apply it.
+
+    Call from the main thread after media init (needs pygame + TTS).
+    """
+    import sys
+
+    from .clientmenu import confirm_yes_no
+    from .lib.msgs import literal_text_msg
+
+    info = auto_update.get_pending(wait_timeout=timeout)
+    if info is None:
+        return
+
+    prompt = list(mp.UPDATE_AVAILABLE) + list(mp.UPDATE_PROMPT_DETAIL)
+    prompt.append(literal_text_msg(info.version))
+    if not confirm_yes_no(prompt):
+        return
+
+    if info.body and confirm_yes_no(mp.UPDATE_CHANGELOG_PROMPT):
+        voice.item([literal_text_msg(info.body)])
+        # Wait until the player acknowledges before downloading.
+        confirm_yes_no(mp.UPDATE_CHANGELOG_DONE)
+
+    if not auto_update.is_packaged_install() or sys.platform != "win32":
+        voice.alert(mp.UPDATE_OPENING_DOWNLOAD_PAGE)
+        auto_update.open_release_page(info)
+        return
+
+    voice.alert(mp.UPDATE_DOWNLOADING)
+
+    last_spoken = [-1]
+
+    def _progress(pct, _done, _total):
+        if pct >= last_spoken[0] + 20 or pct == 100:
+            last_spoken[0] = pct
+            voice.alert(list(mp.UPDATE_DOWNLOAD_PROGRESS) + [literal_text_msg(f"{pct}%")])
+
+    try:
+        script = auto_update.prepare_and_apply(info, progress_callback=_progress)
+    except Exception:
+        voice.alert(mp.UPDATE_FAILED)
+        return
+
+    voice.alert(mp.UPDATE_APPLYING)
+    try:
+        from .clientmedia import close_media
+
+        close_media()
+    except Exception:
+        pass
+    auto_update.launch_apply_and_exit(script)
+    raise SystemExit(0)

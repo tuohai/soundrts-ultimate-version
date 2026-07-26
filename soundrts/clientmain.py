@@ -44,7 +44,7 @@ from .clientserver import (
     server_delay,
     start_server_and_connect,
 )
-from .clientversion import revision_checker
+from .clientversion import offer_pending_update, revision_checker
 from .definitions import ai_invite_label, get_menu_ai_difficulties, rules, style
 from .achievements_menu import achievements_menu
 from .game import ReplayGame, TrainingGame, pickle_recursion_limit_for_file_size
@@ -1169,9 +1169,23 @@ def voice_libs_menu():
 def options_menu():
     from .hotkey_remapping_menu import hotkey_mapping_menu
 
-    Menu(
-        mp.OPTIONS_MENU,
-        [
+    menu = Menu(mp.OPTIONS_MENU, menu_type="submenu")
+
+    def _check_updates_status():
+        if int(getattr(config, "check_updates_on_start", 1)):
+            return mp.CHECK_UPDATES_ON
+        return mp.CHECK_UPDATES_OFF
+
+    def _toggle_check_updates():
+        config.check_updates_on_start = 0 if int(
+            getattr(config, "check_updates_on_start", 1)
+        ) else 1
+        config.save()
+        voice.confirmation(_check_updates_status())
+        _refresh_choices()
+
+    def _refresh_choices():
+        menu.choices = [
             (mp.MODIFY_LOGIN, modify_login),
             (mp.LANGUAGE_MENU, language_menu),
             (mp.HOTKEYS_MENU, hotkeys_menu),
@@ -1179,11 +1193,17 @@ def options_menu():
             (mp.MODS, mods_menu),
             (mp.SOUNDPACKS, soundpacks_menu),
             (mp.VOICE_LIBS_MENU, voice_libs_menu),
+            (
+                mp.CHECK_UPDATES_ON_START,
+                _toggle_check_updates,
+                _check_updates_status(),
+            ),
             (mp.OPEN_USER_FOLDER, open_user_folder),
             (mp.BACK, CLOSE_MENU),
-        ],
-        menu_type="submenu"  # 指定这是子菜单
-    ).loop()
+        ]
+
+    _refresh_choices()
+    menu.loop()
 
 
 def quit_game():
@@ -1246,10 +1266,13 @@ def main():
     try:
         init_media()
         revision_checker.start_if_needed()
-        
+
         # 设置并启动菜单音乐
         sound.play_menu_music()
-        
+
+        if "connect_localhost" not in sys.argv:
+            offer_pending_update()
+
         if "connect_localhost" in sys.argv:
             connect_and_play()
         else:
