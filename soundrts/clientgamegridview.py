@@ -12,8 +12,13 @@ from .worldentity import COLLISION_RADIUS
 R = 3
 R2 = 9
 
-# 大地图不整图缩小：偏好格像素（接近小地图观感）；装不下则延伸到屏外并跟随当前格
+# 大地图不整图缩小：偏好格像素；装不下则延伸到屏外，用边缘滚屏（帝国式）移动镜头
 _PREFERRED_CELL_PX = 48
+_MIN_CELL_PX = 16
+_MAX_CELL_PX = 160
+_ZOOM_CELL_LEVELS = (16, 20, 24, 28, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160)
+_EDGE_SCROLL_MARGIN_PX = 14
+_EDGE_SCROLL_SPEED_PX = 700.0  # 像素/秒
 
 # style 未写 color 时的可读默认色（Ctrl+F2 俯视图）
 _DEFAULT_TERRAIN_COLORS = {
@@ -223,7 +228,11 @@ class GridView:
         self.fx = VisualFxState()
         self._minimap_hit = None  # (left, top, w, h, cell, cols, rows)
         self._view_rect = (0, 0, 1, 1)  # 主地图可视区（不含底栏 HUD）
-        self._viewport_panned = False  # True：大地图相机跟随，地图可伸出屏外
+        self._viewport_panned = False  # True：地图大于视口，可边缘滚屏
+        # 自由镜头（帝国式）：与 interface.place 解耦，避免鼠标划过就跳屏
+        self._cam_cell = None  # 用户滚轮缩放后的格像素；None=自动
+        self._cam_origin = None  # (ox, oy)；None=下次按当前格居中初始化
+        self._cam_force_center = True
 
     def _main_view_rect(self):
         """主地图可用矩形（为底栏命令卡/属性板留空）。"""
@@ -910,6 +919,141 @@ class GridView:
                 if o.is_memory:
                     warning("(memory)")
 
+    def _clamp_cam_origin(self, ox, oy, left, top, vw, vh, map_w, map_h):
+        if map_w > vw:
+            ox = min(left, max(left + vw - map_w, ox))
+        else:
+            ox = left + (vw - map_w) // 2
+        if map_h > vh:
+            oy = min(top, max(top + vh - map_h, oy))
+        else:
+            oy = top + (vh - map_h) // 2
+        return int(ox), int(oy)
+
+    def _origin_centered_on_place(self, left, top, vw, vh, cell, map_h):
+        fxc, fyc = 0, 0
+        place = getattr(self.interface, "place", None)
+        if place is not None and hasattr(place, "col"):
+            fxc = int(place.col)
+            fyc = int(place.row)
+        view_cx = left + vw // 2
+        view_cy = top + vh // 2
+        ox = view_cx - fxc * cell - cell // 2
+        oy = view_cy - (map_h - fyc * cell - cell // 2)
+        return ox, oy
+
+    def center_on_square(self, square=None):
+        """键盘/小地图跳格：把镜头对准当前格（或调用方已设好的 place）。"""
+        self._cam_force_center = True
+        self._cam_origin = None
+        self._update_coefs()
+
+    def pan_camera(self, dx, dy):
+        """平移自由镜头（dx/dy 为屏幕像素：正 dx 让地图内容右移）。"""
+        self._update_coefs()
+        if not self._viewport_panned:
+            return False
+        ox, oy = self._map_origin
+        left, top, vw, vh = self._view_rect
+        cols = self.interface.xcmax + 1
+        rows = self.interface.ycmax + 1
+        map_w = self.square_view_width * cols
+        map_h = self.ymax
+        new_ox, new_oy = self._clamp_cam_origin(
+            ox + dx, oy + dy, left, top, vw, vh, map_w, map_h
+        )
+        if (new_ox, new_oy) == (ox, oy):
+            return False
+        self._cam_origin = (new_ox, new_oy)
+        self._cam_force_center = False
+        self._map_origin = self._cam_origin
+        return True
+
+    def update_edge_scroll(self, dt):
+        """鼠标贴主视口边缘时滚动地图。返回是否发生了平移。"""
+        if self.interface.zoom_mode:
+            return False
+        self._update_coefs()
+        if not self._viewport_panned:
+            return False
+        try:
+            mx, my = pygame.mouse.get_pos()
+        except Exception:
+            return False
+        # 在 HUD / 小地图上不边缘滚，避免抢命令条
+        try:
+            from .clientgame.game_hud import hit_test_hud
+
+            if hit_test_hud(self.interface, (mx, my)) is not None:
+                return False
+        except Exception:
+            pass
+        if self._minimap_hit:
+            ml, mt, mw, mh = self._minimap_hit[:4]
+            if ml <= mx < ml + mw and mt <= my < mt + mh:
+                return False
+
+        left, top, vw, vh = self._view_rect
+        margin = _EDGE_SCROLL_MARGIN_PX
+        dx = dy = 0.0
+        if mx <= left + margin:
+            dx = 1.0
+        elif mx >= left + vw - margin:
+            dx = -1.0
+        if my <= top + margin:
+            dy = 1.0
+        elif my >= top + vh - margin:
+            dy = -1.0
+        if dx == 0.0 and dy == 0.0:
+            return False
+        # 对角滚屏时速度归一，手感接近帝国
+        length = (dx * dx + dy * dy) ** 0.5
+        speed = _EDGE_SCROLL_SPEED_PX * max(0.0, min(float(dt), 0.05))
+        return self.pan_camera(dx / length * speed, dy / length * speed)
+
+    def zoom_at_mouse(self, pos, zoom_in):
+        """滚轮缩放：以鼠标下地图点为锚，放大/缩小格像素。"""
+        if self.interface.zoom_mode:
+            return False
+        self._update_coefs()
+        x, y = pos
+        if not self._pos_in_main_view(pos):
+            return False
+        old_cell = max(1, self.square_view_width)
+        ox, oy = self._map_origin
+        mx = x - ox
+        my = y - oy
+
+        left, top, vw, vh = self._view_rect
+        cols = max(1, self.interface.xcmax + 1)
+        rows = max(1, self.interface.ycmax + 1)
+        fit = max(1, min(vw // cols, vh // rows))
+        levels = [lv for lv in _ZOOM_CELL_LEVELS if lv >= min(_MIN_CELL_PX, fit)]
+        if fit not in levels:
+            levels = sorted(set(levels + [fit]))
+        idx = min(range(len(levels)), key=lambda i: abs(levels[i] - old_cell))
+        new_idx = idx + (1 if zoom_in else -1)
+        if new_idx < 0 or new_idx >= len(levels):
+            return False
+        new_cell = levels[new_idx]
+        if new_cell == old_cell:
+            return False
+
+        # 缩到刚好整图可装下时恢复自动适配
+        if not zoom_in and new_cell <= fit:
+            self._cam_cell = None
+            self._cam_origin = None
+            self._cam_force_center = True
+            self._update_coefs()
+            return True
+
+        self._cam_cell = new_cell
+        scale = new_cell / float(old_cell)
+        self._cam_origin = (int(x - mx * scale), int(y - my * scale))
+        self._cam_force_center = False
+        self._update_coefs()
+        return True
+
     def _update_coefs(self):
         global R, R2
         if self.interface.zoom_mode and self.interface.place is not None:
@@ -936,40 +1080,44 @@ class GridView:
         fit = max(1, min(vw // max(cols, 1), vh // max(rows, 1)))
         preferred = _PREFERRED_CELL_PX
 
-        if fit >= preferred:
-            # 小地图：整图居中铺满（格可大于偏好尺寸）
+        if self._cam_cell is not None:
+            cell = max(_MIN_CELL_PX, min(_MAX_CELL_PX, int(self._cam_cell)))
+        elif fit >= preferred:
             cell = fit
-            map_w = cell * cols
-            map_h = cell * rows
-            self.square_view_width = self.square_view_height = cell
-            self.ymax = map_h
+        else:
+            cell = preferred
+
+        map_w = cell * cols
+        map_h = cell * rows
+        self.square_view_width = self.square_view_height = cell
+        self.ymax = map_h
+        needs_pan = map_w > vw or map_h > vh
+
+        if not needs_pan:
+            # 整图可装下：居中，关闭边缘滚屏
             self._map_origin = (left + (vw - map_w) // 2, top + (vh - map_h) // 2)
             self._viewport_panned = False
+            self._cam_origin = None
         else:
-            # 大地图（帝国式）：固定格大小，多出部分伸到屏外；相机跟随当前格
-            cell = preferred
-            map_w = cell * cols
-            map_h = cell * rows
-            self.square_view_width = self.square_view_height = cell
-            self.ymax = map_h
-            fxc, fyc = 0, 0
-            place = getattr(self.interface, "place", None)
-            if place is not None and hasattr(place, "col"):
-                fxc = int(place.col)
-                fyc = int(place.row)
-            view_cx = left + vw // 2
-            view_cy = top + vh // 2
-            ox = view_cx - fxc * cell - cell // 2
-            oy = view_cy - (map_h - fyc * cell - cell // 2)
-            if map_w > vw:
-                ox = min(left, max(left + vw - map_w, ox))
+            # 地图大于视口：自由镜头 + 边缘滚屏（不再每帧跟随 place）
+            if self._cam_force_center or self._cam_origin is None:
+                ox, oy = self._origin_centered_on_place(left, top, vw, vh, cell, map_h)
+                self._cam_origin = self._clamp_cam_origin(
+                    ox, oy, left, top, vw, vh, map_w, map_h
+                )
+                self._cam_force_center = False
             else:
-                ox = left + (vw - map_w) // 2
-            if map_h > vh:
-                oy = min(top, max(top + vh - map_h, oy))
-            else:
-                oy = top + (vh - map_h) // 2
-            self._map_origin = (int(ox), int(oy))
+                self._cam_origin = self._clamp_cam_origin(
+                    self._cam_origin[0],
+                    self._cam_origin[1],
+                    left,
+                    top,
+                    vw,
+                    vh,
+                    map_w,
+                    map_h,
+                )
+            self._map_origin = self._cam_origin
             self._viewport_panned = True
 
         R = max(

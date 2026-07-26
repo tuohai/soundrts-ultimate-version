@@ -459,8 +459,16 @@ def cmd_toggle_zoom(interface):
 
 
 # 方格选择和移动功能
-def _select_and_say_square(interface, square, prefix=[]):
+def _select_and_say_square(interface, square, prefix=[], *, center_view=True):
     # 注意：是否跨越主区域的判断应在调用方完成，并将主区域前缀合入 prefix
+    # 键盘/小地图：先标记镜头对准，再 move（内部 display 会居中）
+    # 鼠标划过选格：不跳屏，靠边缘滚屏移动镜头
+    if center_view and getattr(interface, "display_is_active", False):
+        try:
+            interface.grid_view._cam_force_center = True
+            interface.grid_view._cam_origin = None
+        except Exception:
+            pass
     move_to_square(interface, square)
     interface.target = None
     say_square(interface, square, prefix)

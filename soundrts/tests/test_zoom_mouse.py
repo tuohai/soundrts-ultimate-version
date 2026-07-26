@@ -68,7 +68,13 @@ def test_zoom_mouse_handlers_wired():
     text = Path("soundrts/clientgame/game_input_handler.py").read_text(encoding="utf-8")
     assert "def _process_zoom_mode_mouse_event" in text
     assert "move_zoom_to_mousepos" in text
+    assert "MOUSEWHEEL" in text
+    assert "zoom_at_mouse" in text
+    assert "update_edge_scroll" in text
+    assert "center_view=False" in text
     gv = Path("soundrts/clientgamegridview.py").read_text(encoding="utf-8")
     assert "def _display_zoom_square" in text or "def _display_zoom_square" in gv
     assert "def world_from_mousepos" in gv
     assert "def move_zoom_to_mousepos" in gv
+    assert "def update_edge_scroll" in gv
+    assert "def zoom_at_mouse" in gv

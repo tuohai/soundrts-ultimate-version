@@ -10,6 +10,7 @@ from pygame.locals import (
     MOUSEBUTTONDOWN,
     MOUSEBUTTONUP,
     MOUSEMOTION,
+    MOUSEWHEEL,
     QUIT,
     USEREVENT,
     K_RETURN,
@@ -179,11 +180,11 @@ def _process_fullscreen_mode_mouse_event(interface, e):
                 interface.group = []
                 interface.order = None
                 interface.target = None
-                _select_and_say_square(interface, sq)
+                _select_and_say_square(interface, sq, center_view=True)
                 display(interface)
                 return
             # 右键：跳到该格并作为默认命令目标
-            _select_and_say_square(interface, sq)
+            _select_and_say_square(interface, sq, center_view=True)
             interface.target = None
             mods = pygame.key.get_mods()
             args = []
@@ -199,6 +200,21 @@ def _process_fullscreen_mode_mouse_event(interface, e):
 
     if getattr(interface, "zoom_mode", False):
         _process_zoom_mode_mouse_event(interface, e)
+        return
+
+    # 滚轮：主地图放大/缩小（以鼠标位置为锚）
+    if e.type == MOUSEWHEEL:
+        if interface.grid_view.zoom_at_mouse(pygame.mouse.get_pos(), e.y > 0):
+            from .game_display import display
+
+            display(interface)
+        return
+    if e.type == MOUSEBUTTONDOWN and e.button in (4, 5):
+        # 兼容部分环境仍发 button 4/5
+        if interface.grid_view.zoom_at_mouse(e.pos, e.button == 4):
+            from .game_display import display
+
+            display(interface)
         return
 
     if e.type == MOUSEMOTION:
@@ -229,7 +245,8 @@ def _process_fullscreen_mode_mouse_event(interface, e):
         elif square is not None:
             if square != interface.place or interface.target is not None:
                 from .game_navigation import _select_and_say_square
-                _select_and_say_square(interface, square)
+                # 划过选格不带动镜头，避免大地图无法玩
+                _select_and_say_square(interface, square, center_view=False)
                 interface.target = target
                 if interface.an_order_requiring_a_target_is_selected:
                     if interface.order.cls.keyword == "build":
@@ -491,7 +508,7 @@ def _handle_left_mouse_up(interface, e):
                 interface.order = None
             from .game_navigation import _select_and_say_square
 
-            _select_and_say_square(interface, square)
+            _select_and_say_square(interface, square, center_view=False)
             interface.target = None if obj is None else obj
             # 空地点击不算单位双击
             interface._mouse_dbl_t = -10**9
@@ -602,6 +619,7 @@ def _loop(interface):
     pygame.event.clear()
     interface.next_update = time.time()
     interface.end_loop = False
+    interface._last_edge_scroll_t = time.time()
     while not interface.end_loop:
         try:
             if 0 and interface.display_is_active:
@@ -617,6 +635,21 @@ def _loop(interface):
             from .game_display import _animate_objects
             _animate_objects(interface)
             _process_events(interface)
+            # 帝国式边缘滚屏：每帧根据鼠标贴边平移镜头
+            if (
+                interface.display_is_active
+                and not getattr(interface, "zoom_mode", False)
+            ):
+                now = time.time()
+                dt = now - getattr(interface, "_last_edge_scroll_t", now)
+                interface._last_edge_scroll_t = now
+                try:
+                    if interface.grid_view.update_edge_scroll(dt):
+                        from .game_display import display
+
+                        display(interface)
+                except Exception:
+                    pass
             if interface.auto:
                 if interface.auto[0].run(interface):
                     del interface.auto[0]
