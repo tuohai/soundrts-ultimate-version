@@ -295,11 +295,11 @@ def test_side_filter_cycles_through_friend_enemy_all():
 
 def test_language_txt_loading_order():
     src = _source("soundrts", "lib", "resource.py")
-    block = _section(src, '"cfg/language.txt"', "def ")
-    # 不存在或为空时回退到系统默认
-    assert "open(\"cfg/language.txt\")" in src
-    # 持久化保存逻辑
-    assert 'open("cfg/language.txt", "w")' in src
+    # Install cfg/language.txt remains a read fallback; user file is writable.
+    assert "cfg" in src and "language.txt" in src
+    assert "LANGUAGE_FILE_PATH" in src
+    assert "_write_language_preference" in src
+    assert "_configured_language_code" in src or "language_preference" in src
 
 
 # =============================================================================

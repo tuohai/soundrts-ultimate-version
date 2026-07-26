@@ -50,7 +50,7 @@ from .achievements_menu import achievements_menu
 from .game import ReplayGame, TrainingGame, pickle_recursion_limit_for_file_size
 from .lib.msgs import literal_text_msg, nb2msg
 from .lib.package import mod_menu_label
-from .lib.resource import best_language_match, preferred_language, res
+from .lib.resource import best_language_match, res
 from .lib import sound
 from .metaserver import servers_list
 from .paths import (
@@ -859,6 +859,64 @@ def soundpacks_menu():
     return CLOSE_MENU
 
 
+_LANGUAGE_NATIVE_NAMES = {
+    "en": "English",
+    "be": "Беларуская",
+    "cs": "Čeština",
+    "de": "Deutsch",
+    "es": "Español",
+    "fr": "Français",
+    "it": "Italiano",
+    "pl": "Polski",
+    "pt-BR": "Português Brasil",
+    "ru": "Русский",
+    "sk": "Slovenčina",
+    "vi": "Tiếng Việt",
+    "zh": "中文",
+}
+
+
+def _language_menu_label(lang, *, current=False):
+    name = _LANGUAGE_NATIVE_NAMES.get(lang, lang)
+    label = literal_text_msg(name)
+    if current:
+        label = label + mp.COMMA + mp.LANGUAGE_CURRENT
+    return label
+
+
+def set_and_launch_language(lang_code):
+    if not res.set_language(lang_code):
+        voice.alert(mp.BEEP)
+        return
+    sound.clear_music_cache()
+    sound.play_menu_music()
+    main_menu()
+    raise SystemExit
+
+
+def language_menu():
+    """选项 → 语言：写入用户目录 language.txt 并重载本地化资源。"""
+    from .lib.resource import language_preference
+
+    menu = Menu(mp.LANGUAGE_MENU, menu_type="submenu")
+    pref = language_preference()
+    languages = res.available_languages()
+    current_lang = best_language_match(pref, languages) if pref else None
+    menu.append(
+        mp.LANGUAGE_SYSTEM_DEFAULT
+        + (mp.COMMA + mp.LANGUAGE_CURRENT if not pref else []),
+        (set_and_launch_language, ""),
+    )
+    for lang in languages:
+        menu.append(
+            _language_menu_label(lang, current=lang == current_lang),
+            (set_and_launch_language, lang),
+        )
+    menu.append(mp.BACK, CLOSE_MENU)
+    menu.run()
+    return CLOSE_MENU
+
+
 def _layered_hotkeys_active():
     from .hotkey_editor import get_layered_hotkeys_scheme
 
@@ -1115,6 +1173,7 @@ def options_menu():
         mp.OPTIONS_MENU,
         [
             (mp.MODIFY_LOGIN, modify_login),
+            (mp.LANGUAGE_MENU, language_menu),
             (mp.HOTKEYS_MENU, hotkeys_menu),
             (mp.HOTKEY_MAPPING, hotkey_mapping_menu),
             (mp.MODS, mods_menu),
@@ -1172,9 +1231,11 @@ def main_menu():
 
 
 def launch_manual():
+    from .lib import resource as resource_mod
+
     p = "doc"
     try:
-        lang = best_language_match(preferred_language, os.listdir(p))
+        lang = best_language_match(resource_mod.preferred_language, os.listdir(p))
     except OSError:
         voice.alert(mp.BEEP)
     else:

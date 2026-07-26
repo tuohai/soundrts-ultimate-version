@@ -35,6 +35,8 @@ CLIENT_LOG_PATH = os.path.join(TMP_PATH, "client.log")
 SERVER_LOG_PATH = os.path.join(TMP_PATH, "server.log")
 
 CONFIG_FILE_PATH = os.path.join(CONFIG_DIR_PATH, "SoundRTS.ini")
+# User-writable language preference (cfg/language.txt is often read-only in installs).
+LANGUAGE_FILE_PATH = os.path.join(CONFIG_DIR_PATH, "language.txt")
 CAMPAIGNS_CONFIG_PATH = os.path.join(CONFIG_DIR_PATH, "campaigns.ini")
 STATS_PATH = os.path.join(CONFIG_DIR_PATH, "stats.tmp")
 # 旧版的单存档路径，仅为兼容性保留

@@ -28,7 +28,10 @@ except ModuleNotFoundError:
 from .. import config, options
 from ..mapfile import Map
 from ..pack import unpack_file
-from ..paths import BASE_PACKAGE_PATH, packages_paths, DOWNLOADED_PATH
+from ..paths import BASE_PACKAGE_PATH, LANGUAGE_FILE_PATH, packages_paths, DOWNLOADED_PATH
+
+# Install-tree default (often read-only after packaging / under Program Files).
+_CFG_LANGUAGE_FILE = os.path.join("cfg", "language.txt")
 
 
 def localized_path(path, lang):
@@ -74,29 +77,68 @@ def best_language_match(lang, available_languages):
     return "en"
 
 
-def _preferred_language():
-    # 首先尝试从配置文件读取用户指定的语言
+def _read_text_file(path):
+    with open(path, encoding="utf-8") as t:
+        return t.read().strip()
+
+
+def language_preference():
+    """Stored language preference for menus.
+
+    Returns the raw preference string: a language code, or ``""`` for system
+    default. Priority: user ``language.txt`` (even if empty) → non-empty
+    ``cfg/language.txt`` → ``""``.
+    """
     try:
-        with open("cfg/language.txt") as t:
-            cfg = t.read().strip()
+        if os.path.isfile(LANGUAGE_FILE_PATH):
+            return _read_text_file(LANGUAGE_FILE_PATH)
+    except OSError as e:
+        warning("couldn't read %s: %s", LANGUAGE_FILE_PATH, e)
+    try:
+        if os.path.isfile(_CFG_LANGUAGE_FILE):
+            cfg = _read_text_file(_CFG_LANGUAGE_FILE)
             if cfg:
                 return cfg
-    except IOError:
-        warning("couldn't read cfg/language.txt")
-    
-    # 如果配置文件不存在或为空，则尝试获取系统语言
+    except OSError as e:
+        warning("couldn't read %s: %s", _CFG_LANGUAGE_FILE, e)
+    return ""
+
+
+def _configured_language_code():
+    """Non-empty configured language, or None to follow the system locale."""
+    pref = language_preference()
+    return pref or None
+
+
+def _write_language_preference(lang_code):
+    """Write preference to the user-writable language file."""
     try:
-        system_lang = locale.getdefaultlocale()[0]  # 使用getdefaultlocale代替getlocale
+        parent = os.path.dirname(LANGUAGE_FILE_PATH)
+        if parent:
+            os.makedirs(parent, exist_ok=True)
+        with open(LANGUAGE_FILE_PATH, "w", encoding="utf-8") as f:
+            f.write(lang_code or "")
+        return True
+    except OSError as e:
+        warning("couldn't write to %s: %s", LANGUAGE_FILE_PATH, e)
+        return False
+
+
+def _system_language_code():
+    try:
+        system_lang = locale.getdefaultlocale()[0]
         if system_lang:
-            # 从类似 'zh_CN' 这样的格式中提取主要语言代码
-            main_lang = system_lang.split('_')[0].lower()
-            return main_lang
+            return system_lang.split("_")[0].lower()
     except (ValueError, AttributeError, IndexError):
-        # 如果获取系统语言失败，记录警告
         warning("Couldn't get the system language.")
-    
-    # 默认使用英语
-    return "en"
+    return None
+
+
+def _preferred_language():
+    configured = _configured_language_code()
+    if configured:
+        return configured
+    return _system_language_code() or "en"
 
 
 preferred_language = _preferred_language()
@@ -150,26 +192,41 @@ class ResourceStack:
                     result.add(name[len(prefix):])
         return result
 
+    def available_languages(self):
+        """Sorted language codes available from ui / ui-* packages."""
+        return sorted(self._available_languages(), key=str.lower)
+
+    def set_language(self, lang_code):
+        """Set preferred language and reload localized UI resources.
+
+        ``lang_code`` empty means follow the system locale (write empty
+        user ``language.txt``). Install ``cfg/language.txt`` is only a
+        read-only fallback and is never written from the options menu.
+        """
+        global preferred_language
+        lang_code = (lang_code or "").strip()
+        if not _write_language_preference(lang_code):
+            return False
+        preferred_language = _preferred_language()
+        self.language = self._best_available_language()
+        self.load_style()
+        sounds.load_default(self)
+        if self._notify:
+            self._notify()
+        return True
+
     def _best_available_language(self):
         """确定最佳可用语言"""
         available_languages = self._available_languages()
-        
-        # 首先尝试从language.txt读取用户指定的语言
-        try:
-            with open("cfg/language.txt") as t:
-                cfg = t.read().strip()
-                if cfg:
-                    return best_language_match(cfg, available_languages)
-        except IOError:
-            pass
-        
-        # 如果language.txt不存在或为空，尝试使用在初始化时检测到的系统语言
-        if hasattr(self, '_system_language') and self._system_language:
-            system_match = best_language_match(self._system_language, available_languages)
+        configured = _configured_language_code()
+        if configured:
+            return best_language_match(configured, available_languages)
+        if hasattr(self, "_system_language") and self._system_language:
+            system_match = best_language_match(
+                self._system_language, available_languages
+            )
             if system_match:
                 return system_match
-        
-        # 使用默认语言
         return "en"
 
     def _add_layers(self, packages, mods):
@@ -376,22 +433,14 @@ class ResourceStack:
         return None
 
     def save_language_to_file(self):
-        """保存当前语言设置到language.txt文件"""
-        # 检查是否是从language.txt文件读取的语言设置
+        """Normalize an explicit user language preference to the resolved code."""
         try:
-            with open("cfg/language.txt", "r") as f:
-                existing_content = f.read().strip()
-            
-            # 只有当文件存在且有内容时才更新
-            if existing_content:
-                try:
-                    os.makedirs("cfg", exist_ok=True)
-                    with open("cfg/language.txt", "w") as f:
-                        f.write(self.language)
-                except IOError:
-                    warning("couldn't write to cfg/language.txt")
-        except (IOError, FileNotFoundError):
-            # 文件不存在或无法读取，不需要更新
+            if not os.path.isfile(LANGUAGE_FILE_PATH):
+                return
+            existing = _read_text_file(LANGUAGE_FILE_PATH)
+            if existing and existing != self.language:
+                _write_language_preference(self.language)
+        except OSError:
             pass
 
 
