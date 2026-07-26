@@ -93,6 +93,9 @@ def test_write_apply_script_contains_robocopy_and_skip_user(tmp_path: Path, monk
     assert "/XD user" in text
     assert "12345" in text
     assert "soundrts.exe" in text
+    # Git's find.exe breaks `tasklist | find "pid"`; wait must not use find.
+    assert "| find " not in text.lower()
+    assert "tasklist" in text.lower()
 
 
 def test_run_background_check_respects_config(monkeypatch):
@@ -205,59 +208,7 @@ def test_check_for_updates_now_reports_failure(monkeypatch):
     assert spoken[-1] == mp.UPDATE_CHECK_FAILED
 
 
-def test_options_menu_has_manual_check_for_updates():
-    from pathlib import Path
-
-    src = Path("soundrts/clientmain.py").read_text(encoding="utf-8")
-    block = src.split("def options_menu")[1].split("\ndef ")[0]
-    assert "CHECK_FOR_UPDATES_NOW" in block
-    assert "check_for_updates_now" in block
-    assert "CHECK_UPDATES_ON_START" in block
-
-
-def test_check_for_updates_now_up_to_date(monkeypatch):
-    from soundrts import clientversion
-    from soundrts import msgparts as mp
-
-    alerts = []
-    monkeypatch.setattr(clientversion.voice, "alert", lambda msg: alerts.append(msg))
-    monkeypatch.setattr(auto_update, "check_for_update", lambda: None)
-    offered = []
-    monkeypatch.setattr(clientversion, "offer_update", lambda info: offered.append(info))
-
-    clientversion.check_for_updates_now()
-    assert alerts[0] == mp.CHECKING_FOR_UPDATES
-    assert alerts[-1] == mp.UPDATE_UP_TO_DATE
-    assert offered == []
-
-
-def test_check_for_updates_now_offers_when_newer(monkeypatch):
-    from soundrts import clientversion
-    from soundrts import msgparts as mp
-
-    info = ReleaseInfo(
-        version="9.9.9.9",
-        tag_name="9.9.9.9",
-        html_url="https://example.test/r",
-        body="",
-        asset_name="a.zip",
-        download_url="https://example.test/a.zip",
-        size=1,
-        digest="",
-    )
-    alerts = []
-    monkeypatch.setattr(clientversion.voice, "alert", lambda msg: alerts.append(msg))
-    monkeypatch.setattr(auto_update, "check_for_update", lambda: info)
-    offered = []
-    monkeypatch.setattr(clientversion, "offer_update", lambda i: offered.append(i))
-
-    clientversion.check_for_updates_now()
-    assert alerts == [mp.CHECKING_FOR_UPDATES]
-    assert offered == [info]
-
-
 def test_check_for_updates_now_ignores_startup_toggle(monkeypatch):
-    """Manual check must work even when startup auto-check is off."""
     from soundrts import clientversion
     from soundrts import config
     from soundrts import msgparts as mp
@@ -275,11 +226,96 @@ def test_check_for_updates_now_ignores_startup_toggle(monkeypatch):
         config.check_updates_on_start = old
 
 
-def test_options_menu_has_manual_check_updates():
-    from pathlib import Path
-
-    src = Path(__file__).resolve().parents[1] / "clientmain.py"
-    text = src.read_text(encoding="utf-8")
-    block = text.split("def options_menu")[1].split("\ndef ")[0]
+def test_options_menu_has_manual_check_for_updates():
+    src = Path("soundrts/clientmain.py").read_text(encoding="utf-8")
+    block = src.split("def options_menu")[1].split("\ndef ")[0]
     assert "CHECK_FOR_UPDATES_NOW" in block
     assert "check_for_updates_now" in block
+    assert "CHECK_UPDATES_ON_START" in block
+
+
+def test_write_update_job_roundtrip(tmp_path: Path, monkeypatch):
+    monkeypatch.setattr(auto_update, "TMP_PATH", str(tmp_path))
+    monkeypatch.setattr(auto_update, "install_dir", lambda: tmp_path / "game")
+    monkeypatch.setattr(auto_update, "client_executable_name", lambda directory=None: "soundrts.exe")
+    info = ReleaseInfo(
+        version="1.4.6.4",
+        tag_name="1.4.6.4",
+        html_url="https://example.test/r",
+        body="",
+        asset_name="pack.zip",
+        download_url="https://example.test/pack.zip",
+        size=99,
+        digest="sha256:abc",
+    )
+    job_path = auto_update.write_update_job(info, wait_pid=4242)
+    data = __import__("json").loads(job_path.read_text(encoding="utf-8"))
+    assert data["version"] == "1.4.6.4"
+    assert data["wait_pid"] == 4242
+    assert data["download_url"].endswith("pack.zip")
+    assert data["tmp_dir"]
+
+
+def test_offer_update_launches_external_then_exits(monkeypatch):
+    from soundrts import clientversion
+    from soundrts import msgparts as mp
+    import soundrts.clientmenu as clientmenu
+
+    info = ReleaseInfo(
+        version="9.9.9.9",
+        tag_name="9.9.9.9",
+        html_url="https://example.test/r",
+        body="",
+        asset_name="x.zip",
+        download_url="https://example.test/a.zip",
+        size=1,
+        digest="",
+    )
+    alerts = []
+    launched = []
+    monkeypatch.setattr(clientversion.voice, "alert", lambda msg: alerts.append(msg))
+    monkeypatch.setattr(clientmenu, "confirm_yes_no", lambda *_a, **_k: True)
+    monkeypatch.setattr(auto_update, "is_packaged_install", lambda: True)
+    monkeypatch.setattr(auto_update, "write_update_job", lambda i: Path("job.json"))
+    monkeypatch.setattr(
+        auto_update, "launch_external_updater", lambda p: launched.append(str(p))
+    )
+    monkeypatch.setattr("sys.platform", "win32")
+    monkeypatch.setattr(
+        "soundrts.clientmedia.close_media", lambda: None, raising=False
+    )
+
+    try:
+        clientversion.offer_update(info)
+        assert False, "expected SystemExit"
+    except SystemExit as e:
+        assert e.code in (0, None)
+    assert mp.UPDATE_LAUNCHING_EXTERNAL in alerts
+    assert launched == ["job.json"]
+
+
+def test_soundrts_entry_handles_update_flag():
+    entry = Path("soundrts.py").read_text(encoding="utf-8")
+    assert "--soundrts-update" in entry
+    assert "update_window" in entry
+
+
+def test_update_window_pid_helper():
+    from soundrts.update_window import _pid_alive
+
+    assert _pid_alive(0) is False
+    assert _pid_alive(-1) is False
+
+
+def test_update_window_uses_ui_queue():
+    src = Path("soundrts/update_window.py").read_text(encoding="utf-8")
+    assert "queue.Queue" in src
+    assert "_poll_ui" in src
+
+
+def test_update_window_avoids_auto_update_import():
+    """Updater process must not import auto_update (config/resource hang)."""
+    src = Path("soundrts/update_window.py").read_text(encoding="utf-8")
+    assert "from . import auto_update" not in src
+    assert "import auto_update\n" not in src
+    assert "update_core" in src

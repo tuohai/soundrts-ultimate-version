@@ -10,10 +10,16 @@ Release notes
 
 **New: Options → Check for updates now**
 
-- If startup update checks are turned off, you can still check GitHub manually from Options; a newer release uses the same confirm / download flow as the startup prompt.
+- If startup update checks are turned off, you can still check GitHub manually from Options; a newer release uses the same confirm flow as the startup prompt.
 - Announces when you are already up to date, or if the check fails.
-- **Code**: ``clientversion.py`` (``check_for_updates_now``), ``clientmain.py``, ``msgparts.py``, per-language ``tts.txt`` (``5794``–``5797``).
+
+**Improvement / fix: Windows packaged builds use a standalone update window (with progress)**
+
+- **Issues**: downloading inside the game UI caused “Not Responding”; an early external updater that imported full ``auto_update`` (and thus ``config`` / ``resource``) could hang on “Loading updater…”; ``tasklist | find "pid"`` in the apply script could be hijacked by Git’s GNU ``find``, spamming ``find "xxxxx"`` and stalling install.
+- **Approach**: after confirm, the game exits and ``soundrts.exe --soundrts-update`` opens a standalone **SoundRTS Update** window for download/extract with a progress bar. Download/apply helpers live in stdlib-only ``update_core.py`` (no game config/resource imports). ``apply.bat`` waits via ``tasklist`` only (**no** ``find``), then ``robocopy`` overwrites the install (skipping ``user``) and relaunches. Staging remains under ``user/tmp/`` (or ``%APPDATA%\\SoundRTS\\tmp/``).
+- **Code**: ``update_window.py``, ``update_core.py``, ``auto_update.py``, ``clientversion.py``, ``clientmain.py``, ``soundrts.py``, ``msgparts.py``, per-language ``tts.txt`` (``5794``–``5798``).
 - **Tests**: ``test_auto_update.py``.
+- **Docs**: player manuals, getting started, release notes.
 
 **Fix: lag when browsing the Voice libraries menu with arrow keys**
 
@@ -29,14 +35,6 @@ Release notes
 - They are now numeric ids (about ``5760``–``5793``) in ``res/ui`` and each ``ui-*`` ``tts.txt`` (full zh/en; other languages translate short labels, with English fallback for long help where needed).
 - **Code**: ``msgparts.py``, per-language ``tts.txt``.
 
-**New: check for updates manually from the Options menu**
-
-- Main menu → **Options** → **Check for updates now**: queries GitHub Release immediately (**independent** of the “check when starting” toggle).
-- Announces up-to-date / check failed; if a newer release exists, uses the same update flow as startup (confirm, optional notes, download/install or open the download page).
-- **Code**: ``clientversion.py`` (``check_for_updates_now``), ``clientmain.py``, ``msgparts.py``, per-language ``tts.txt`` (``5794``–``5797``).
-- **Tests**: ``test_auto_update.py``.
-- **Docs**: player manuals, getting started, release notes.
-
 
 1.4.6.3
 --------
@@ -45,7 +43,7 @@ Release notes
 
 - On launch, the game queries the GitHub Release for ``tuohai/soundrts-ultimate-version``. If the online version is newer, you are prompted: **Enter** to update, **Esc** to cancel.
 - Optionally hear the Release notes before downloading.
-- **Windows packaged build**: downloads and extracts in-process, then a short script overwrites the install folder and relaunches after exit. The ``user`` folder is **skipped** so local saves/settings are kept.
+- **Windows packaged build**: downloads and extracts under the config ``tmp`` folder (portable ``user/tmp/``, installed ``%APPDATA%\\SoundRTS\\tmp/``), then a short script overwrites the install folder and relaunches after exit. The ``user`` folder is **skipped** so local saves/settings are kept. Temp update files under ``tmp`` are removed after a successful apply.
 - **Source / development runs**: opens the Release download page only (does not overwrite the project tree).
 - Options menu: **Check for updates when starting the game** (on by default; Enter toggles). Stored as ``check_updates_on_start`` in ``SoundRTS.ini``.
 - **Code**: ``auto_update.py``, ``clientversion.py``, ``clientmain.py``, ``config.py``.

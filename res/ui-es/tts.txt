@@ -1489,3 +1489,4 @@
 5795	comprobando actualizaciones
 5796	ya tienes la ultima version
 5797	error al comprobar actualizaciones
+5798	abriendo la ventana de actualizacion; el juego se cerrara

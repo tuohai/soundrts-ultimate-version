@@ -9,10 +9,16 @@
 
 **新增：选项菜单「立即检查更新」**
 
-- 关掉「运行游戏时检查更新」后，仍可在选项中手动检查 GitHub 是否有新版本；有则走与启动检查相同的更新确认 / 下载流程。
+- 关掉「运行游戏时检查更新」后，仍可在选项中手动检查 GitHub 是否有新版本；有则走与启动检查相同的更新确认流程。
 - 已是最新或检查失败时会播报提示。
-- **实现**：``clientversion.py``（``check_for_updates_now``）、``clientmain.py``、``msgparts.py``、各语言 ``tts.txt``（``5794``–``5797``）。
+
+**改善 / 修复：Windows 打包版改用独立更新窗口（带进度条）**
+
+- **问题**：原先在游戏界面内下载会导致窗口「未响应」；早期外部更新进程若加载整套 ``auto_update``（连带 ``config`` / ``resource``）会卡在「正在加载更新模块」；安装脚本里 ``tasklist | find "pid"`` 在装有 Git 的机器上会被 GNU ``find`` 抢走，控制台反复出现 ``find "xxxxx"``、安装卡住。
+- **做法**：确认更新后游戏退出，由 ``soundrts.exe --soundrts-update`` 打开独立 ``SoundRTS Update`` 窗口下载/解压并显示进度；下载逻辑放在仅用标准库的 ``update_core.py``，不导入游戏配置与资源。完成后由 ``apply.bat`` 用 ``tasklist`` 判断进程退出（**不再调用** ``find``），``robocopy`` 覆盖安装并重启；覆盖时跳过 ``user``。暂存仍在 ``user/tmp/``（或 ``%APPDATA%\\SoundRTS\\tmp/``）。
+- **实现**：``update_window.py``、``update_core.py``、``auto_update.py``、``clientversion.py``、``clientmain.py``、``soundrts.py``、``msgparts.py``、各语言 ``tts.txt``（``5794``–``5798``）。
 - **测试**：``test_auto_update.py``。
+- **文档**：各语言玩家手册、入门指南、发行说明。
 
 **修复：语音库设置菜单上下浏览卡顿**
 
@@ -28,14 +34,6 @@
 - 现已改为数字条目（约 ``5760``–``5793``），并写入 ``res/ui`` 与各 ``ui-*`` 的 ``tts.txt``（中英完整；其他语言短标签有译，长帮助多为英文兜底）。
 - **实现**：``msgparts.py``、各语言 ``tts.txt``。
 
-**新增：选项菜单可手动检查更新**
-
-- 主菜单 → **选项** → **立即检查更新**：立即查询 GitHub Release（**不受**「运行游戏时检查更新」开关影响）。
-- 已是最新 / 检查失败会语音提示；有新版本则与启动检查相同的更新流程（确认、可选朗读说明、下载安装或打开下载页）。
-- **实现**：``clientversion.py``（``check_for_updates_now``）、``clientmain.py``、``msgparts.py``、各语言 ``tts.txt``（``5794``–``5797``）。
-- **测试**：``test_auto_update.py``。
-- **文档**：各语言玩家手册、入门指南、发行说明。
-
 
 1.4.6.3
 --------
@@ -44,7 +42,7 @@
 
 - 启动游戏时后台查询 GitHub Release（``tuohai/soundrts-ultimate-version``）；若线上版本高于本地，提示「有新版本」：**回车**开始更新，**Esc** 取消。
 - 可选朗读 Release 更新说明后再下载。
-- **Windows 打包版**：在游戏内下载并解压到临时目录，退出后由短脚本覆盖安装文件并重启；覆盖时**跳过** ``user`` 文件夹，避免冲掉本地存档/设置。
+- **Windows 打包版**：在游戏内下载并解压到配置目录的 ``tmp``（便携版 ``user/tmp/``，安装版 ``%APPDATA%\\SoundRTS\\tmp/``），退出后由短脚本覆盖安装文件并重启；覆盖时**跳过** ``user`` 文件夹，避免冲掉本地存档/设置。成功后清理 ``tmp`` 中的更新临时文件。
 - **源码运行**：仅打开 Release 下载页，不覆盖工程目录。
 - 选项菜单新增「运行游戏时检查更新」（默认开启，回车切换开/关）；配置项 ``check_updates_on_start`` 写入 ``SoundRTS.ini``。
 - **实现**：``auto_update.py``、``clientversion.py``、``clientmain.py``、``config.py``。

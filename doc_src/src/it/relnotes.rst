@@ -9,9 +9,14 @@ Note di rilascio
 
 **Novità: Opzioni → Controlla aggiornamenti ora**
 
-- Se disattivi il controllo all’avvio, puoi comunque controllare GitHub manualmente da Opzioni; se c’è una versione più nuova, il flusso di conferma/download è lo stesso.
+- Se disattivi il controllo all’avvio, puoi comunque controllare GitHub manualmente da Opzioni; se c’è una versione più nuova, il flusso di conferma è lo stesso.
 - Annuncia se hai già l’ultima versione o se il controllo fallisce.
-- **Codice**: ``clientversion.py``, ``clientmain.py``, ``msgparts.py``, ``tts.txt`` (``5794``–``5797``).
+
+**Miglioramento / correzione: build Windows con finestra di aggiornamento separata (con avanzamento)**
+
+- Dopo la conferma il gioco esce e ``soundrts.exe --soundrts-update`` apre **SoundRTS Update** per scaricare/scompattare con barra di avanzamento (evita «Non risponde» e blocchi sul caricamento del modulo). L’installazione usa ``tasklist`` senza ``find`` (conflitto con Git), salta ``user`` e riavvia. Temporanei in ``user/tmp/`` (o ``%APPDATA%\\SoundRTS\\tmp/``).
+- **Codice**: ``update_window.py``, ``update_core.py``, ``auto_update.py``, ``clientversion.py``, ``clientmain.py``, ``soundrts.py``, ``msgparts.py``, ``tts.txt`` (``5794``–``5798``).
+- **Test**: ``test_auto_update.py``.
 
 **Correzione: lentezza nel menu Biblioteche vocali con le frecce**
 
@@ -35,7 +40,7 @@ Note di rilascio
 
 - All’avvio interroga il Release GitHub ``tuohai/soundrts-ultimate-version``. Se la versione online è più recente: **Invio** per aggiornare, **Esc** per annullare.
 - Opzionale: ascoltare le note del Release prima del download.
-- **Build Windows**: scarica e scompatta nel gioco; all’uscita uno script breve sovrascrive la cartella e riavvia. La cartella ``user`` viene **saltata** (salvataggi/impostazioni locali).
+- **Build Windows**: scarica e scompatta in ``tmp`` della configurazione (portatile ``user/tmp/``, installato ``%APPDATA%\\SoundRTS\\tmp/``); all’uscita uno script breve sovrascrive la cartella e riavvia. La cartella ``user`` viene **saltata** (salvataggi/impostazioni locali). Dopo l’applicazione i temporanei vengono eliminati.
 - **Esecuzione dal codice sorgente**: apre solo la pagina di download (non sovrascrive il progetto).
 - Menu opzioni: **Controlla aggiornamenti all’avvio del gioco** (attivo di default; Invio attiva/disattiva). Voce ``check_updates_on_start`` in ``SoundRTS.ini``.
 - **Codice**: ``auto_update.py``, ``clientversion.py``, ``clientmain.py``, ``config.py``.

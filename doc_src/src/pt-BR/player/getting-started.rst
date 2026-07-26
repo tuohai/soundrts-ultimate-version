@@ -162,7 +162,7 @@ Atualizações automáticas
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 Na abertura o jogo verifica por padrão se há um Release mais novo no GitHub. Enter atualiza, Esc cancela.
-Ligue/desligue em Opções → **Verificar atualizações ao iniciar o jogo**. O pacote Windows pode baixar e instalar; a partir do código-fonte só abre a página de download. Veja o manual e as `Notas de versão <../../relnotes.htm>`_ (1.4.6.3).
+Ligue/desligue em Opções → **Verificar atualizações ao iniciar o jogo**. Use Opções → **Verificar atualizações agora** para checagem manual. O pacote Windows baixa em ``user/tmp/`` (ou ``%APPDATA%\\SoundRTS\\tmp/`` se instalado); a partir do código-fonte só abre a página de download. Veja o manual e as `Notas de versão <../../relnotes.htm>`_ (1.4.6.4).
 
 
 Notas de versão: `Notas de versão <../../relnotes.htm>`_ — histórico completo.

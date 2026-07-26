@@ -516,6 +516,7 @@ Menú principal → **Opciones** → **Comprobar actualizaciones al iniciar el j
 Menú principal → **Opciones** → **Comprobar actualizaciones ahora**: comprobación manual en cualquier momento (también con la comprobación al iniciar desactivada).
 
 - **Paquete Windows**: tras confirmar, descarga dentro del juego, sobrescribe la carpeta de instalación y reinicia. Omite ``user`` para conservar partidas/ajustes locales.
+- **Dónde se guarda la descarga**: el zip y la extracción van en ``tmp`` del directorio de configuración (portable: ``user/tmp``; instalado: ``%APPDATA%\\SoundRTS\\tmp``), p. ej. ``soundrts_update_1_4_6_4.zip`` y una carpeta ``*_extract``. El script ``soundrts_apply_update.bat`` también está ahí; tras un update correcto se borran estos temporales.
 - **Desde el código fuente**: solo abre la página de descarga; no sobrescribe el proyecto.
 
 Releases: https://github.com/tuohai/soundrts-ultimate-version/releases

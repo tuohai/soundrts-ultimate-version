@@ -59,29 +59,22 @@ def offer_update(info) -> None:
         auto_update.open_release_page(info)
         return
 
-    voice.alert(mp.UPDATE_DOWNLOADING)
-
-    last_spoken = [-1]
-
-    def _progress(pct, _done, _total):
-        if pct >= last_spoken[0] + 20 or pct == 100:
-            last_spoken[0] = pct
-            voice.alert(list(mp.UPDATE_DOWNLOAD_PROGRESS) + [literal_text_msg(f"{pct}%")])
-
+    # Packaged Windows: leave download/install to a separate update window
+    # so the game UI is not frozen / "Not Responding".
+    voice.alert(mp.UPDATE_LAUNCHING_EXTERNAL)
     try:
-        script = auto_update.prepare_and_apply(info, progress_callback=_progress)
+        job = auto_update.write_update_job(info)
+        auto_update.launch_external_updater(job)
     except Exception:
         voice.alert(mp.UPDATE_FAILED)
         return
 
-    voice.alert(mp.UPDATE_APPLYING)
     try:
         from .clientmedia import close_media
 
         close_media()
     except Exception:
         pass
-    auto_update.launch_apply_and_exit(script)
     raise SystemExit(0)
 
 

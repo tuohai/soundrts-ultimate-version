@@ -1,8 +1,8 @@
 """GitHub release auto-updater for packaged Windows builds.
 
-Flow: check latest release → prompt → download/extract in-process →
-write a short apply.bat that waits for this process to exit, copies files
-(skipping ``user``), relaunches the game, then cleans up.
+Flow: check latest release → prompt in game → launch a separate update
+window process → game exits → updater downloads/extracts with a progress
+UI → apply.bat overwrites install (skipping ``user``) and relaunches.
 """
 
 from __future__ import annotations
@@ -10,21 +10,24 @@ from __future__ import annotations
 import json
 import os
 import re
-import shutil
 import subprocess
 import sys
 import threading
 import time
-import urllib.error
 import urllib.request
-import zipfile
-from dataclasses import dataclass
-from hashlib import sha256
 from pathlib import Path
 
 from . import config
 from .lib.log import warning
 from .paths import TMP_PATH
+from .update_core import (
+    ReleaseInfo,
+    download_release,
+    extract_zip,
+    find_game_root,
+    launch_apply_and_exit,
+    write_apply_script as _write_apply_script_core,
+)
 from .version import VERSION
 
 GITHUB_OWNER = "tuohai"
@@ -36,25 +39,23 @@ GITHUB_RELEASES_PAGE = (
     f"https://github.com/{GITHUB_OWNER}/{GITHUB_REPO}/releases/latest"
 )
 _USER_AGENT = f"SoundRTS-AutoUpdate/{VERSION}"
-_SKIP_DIR_NAMES = frozenset({"user"})
 _CLIENT_EXE_NAMES = ("soundrts.exe", "SoundRTS.exe")
+UPDATE_JOB_NAME = "soundrts_update_job.json"
 
 _lock = threading.Lock()
 _check_done = False
 _pending: "ReleaseInfo | None" = None
 _check_error: str | None = None
 
-
-@dataclass(frozen=True)
-class ReleaseInfo:
-    version: str
-    tag_name: str
-    html_url: str
-    body: str
-    asset_name: str
-    download_url: str
-    size: int
-    digest: str  # "" or "sha256:hex"
+# Re-export for tests / callers.
+__all__ = [
+    "ReleaseInfo",
+    "download_release",
+    "extract_zip",
+    "find_game_root",
+    "launch_apply_and_exit",
+    "write_apply_script",
+]
 
 
 def parse_version(text: str) -> tuple[int, ...]:
@@ -108,7 +109,6 @@ def select_windows_asset(assets: list[dict]) -> dict | None:
         candidates.append(asset)
     if not candidates:
         return None
-    # Prefer names that look like the game package.
     candidates.sort(
         key=lambda a: (
             0 if "ultimate" in str(a.get("name") or "").lower() else 1,
@@ -161,148 +161,65 @@ def check_for_update() -> ReleaseInfo | None:
     return info
 
 
-def find_game_root(extract_dir: Path) -> Path | None:
-    """Locate the folder that contains the client executable after extract."""
-    extract_dir = extract_dir.resolve()
-    for name in _CLIENT_EXE_NAMES:
-        direct = extract_dir / name
-        if direct.is_file():
-            return extract_dir
-    matches: list[Path] = []
-    for dirpath, dirnames, filenames in os.walk(extract_dir):
-        # Do not descend into nested user trees while searching.
-        dirnames[:] = [d for d in dirnames if d.lower() not in _SKIP_DIR_NAMES]
-        lower = {f.lower() for f in filenames}
-        if "soundrts.exe" in lower:
-            matches.append(Path(dirpath))
-    if not matches:
-        return None
-    matches.sort(key=lambda p: (len(p.parts), str(p).lower()))
-    return matches[0]
-
-
-def _verify_digest(path: Path, digest: str) -> bool:
-    if not digest:
-        return True
-    kind, _, hexdigest = digest.partition(":")
-    if kind.lower() != "sha256" or not hexdigest:
-        return True
-    h = sha256()
-    with open(path, "rb") as f:
-        while True:
-            chunk = f.read(1024 * 1024)
-            if not chunk:
-                break
-            h.update(chunk)
-    return h.hexdigest().lower() == hexdigest.lower()
-
-
-def download_release(
-    info: ReleaseInfo,
-    dest: Path,
-    progress_callback=None,
-) -> Path:
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    if dest.exists():
-        dest.unlink()
-    req = urllib.request.Request(
-        info.download_url,
-        headers={"User-Agent": _USER_AGENT},
-    )
-    with urllib.request.urlopen(req, timeout=120) as resp, open(dest, "wb") as out:
-        total = int(resp.headers.get("Content-Length") or info.size or 0)
-        done = 0
-        last_report = -1
-        while True:
-            chunk = resp.read(256 * 1024)
-            if not chunk:
-                break
-            out.write(chunk)
-            done += len(chunk)
-            if progress_callback and total > 0:
-                pct = min(100, int(done * 100 / total))
-                if pct >= last_report + 10 or pct == 100:
-                    last_report = pct
-                    progress_callback(pct, done, total)
-    if not _verify_digest(dest, info.digest):
-        dest.unlink(missing_ok=True)
-        raise ValueError("download digest mismatch")
-    return dest
-
-
-def extract_zip(zip_path: Path, dest_dir: Path) -> Path:
-    if dest_dir.exists():
-        shutil.rmtree(dest_dir, ignore_errors=True)
-    dest_dir.mkdir(parents=True, exist_ok=True)
-    with zipfile.ZipFile(zip_path, "r") as zf:
-        for member in zf.infolist():
-            name = member.filename.replace("\\", "/")
-            if ".." in name.split("/"):
-                continue
-            zf.extract(member, dest_dir)
-    root = find_game_root(dest_dir)
-    if root is None:
-        raise FileNotFoundError("client executable not found in archive")
-    return root
-
-
-def _bat_quote(path: str | Path) -> str:
-    return f'"{path}"'
-
-
 def write_apply_script(
     staging_root: Path,
     target_dir: Path,
     exe_name: str,
     pid: int,
     cleanup_paths: list[Path],
+    tmp_dir: Path | None = None,
 ) -> Path:
-    """Write a minimal Windows batch that applies the staged update after exit."""
-    script_path = Path(TMP_PATH) / "soundrts_apply_update.bat"
-    log_path = Path(TMP_PATH) / "soundrts_apply_update.log"
-    cleanup_lines = []
-    for p in cleanup_paths:
-        cleanup_lines.append(f'if exist {_bat_quote(p)} rmdir /s /q {_bat_quote(p)} 2>nul')
-        cleanup_lines.append(f'if exist {_bat_quote(p)} del /f /q {_bat_quote(p)} 2>nul')
-    cleanup_block = "\n".join(cleanup_lines)
-    content = f"""@echo off
-setlocal EnableExtensions
-set "LOG={log_path}"
-echo SoundRTS update apply started > "%LOG%"
-echo waiting for pid {pid} >> "%LOG%"
-:wait
-tasklist /FI "PID eq {pid}" 2>NUL | find "{pid}" >NUL
-if not errorlevel 1 (
-  timeout /t 1 /nobreak >NUL
-  goto wait
-)
-echo copying from {staging_root} to {target_dir} >> "%LOG%"
-robocopy {_bat_quote(staging_root)} {_bat_quote(target_dir)} /E /XD user /R:2 /W:1 /NFL /NDL /NJH /NJS /NC /NS /NP
-set "RC=%ERRORLEVEL%"
-echo robocopy exit %RC% >> "%LOG%"
-if %RC% GEQ 8 (
-  echo copy failed >> "%LOG%"
-  exit /b 1
-)
-echo launching {exe_name} >> "%LOG%"
-start "" {_bat_quote(target_dir / exe_name)}
-{cleanup_block}
-del /f /q {_bat_quote(script_path)} >nul 2>&1
-endlocal
-"""
-    script_path.write_text(content, encoding="utf-8")
-    return script_path
+    return _write_apply_script_core(
+        staging_root=staging_root,
+        target_dir=target_dir,
+        exe_name=exe_name,
+        pid=pid,
+        cleanup_paths=cleanup_paths,
+        tmp_dir=Path(tmp_dir) if tmp_dir is not None else Path(TMP_PATH),
+    )
 
 
-def launch_apply_and_exit(script_path: Path) -> None:
-    creationflags = 0
-    if sys.platform == "win32":
-        creationflags = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0) | getattr(
-            subprocess, "DETACHED_PROCESS", 0x00000008
-        )
+def write_update_job(info: ReleaseInfo, wait_pid: int | None = None) -> Path:
+    """Persist release info for the external updater process."""
+    job_path = Path(TMP_PATH) / UPDATE_JOB_NAME
+    payload = {
+        "version": info.version,
+        "tag_name": info.tag_name,
+        "html_url": info.html_url,
+        "asset_name": info.asset_name,
+        "download_url": info.download_url,
+        "size": int(info.size or 0),
+        "digest": info.digest or "",
+        "target_dir": str(install_dir()),
+        "exe_name": client_executable_name(),
+        "wait_pid": int(wait_pid if wait_pid is not None else os.getpid()),
+        "tmp_dir": str(Path(TMP_PATH).resolve()),
+    }
+    job_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    return job_path
+
+
+def launch_external_updater(job_path: Path) -> None:
+    """Start the standalone update window, then the caller should exit the game."""
+    if sys.platform != "win32":
+        raise RuntimeError("external updater is only supported on Windows")
+    job_path = Path(job_path).resolve()
+    creationflags = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0) | getattr(
+        subprocess, "DETACHED_PROCESS", 0x00000008
+    )
+    if is_packaged_install():
+        cmd = [sys.executable, "--soundrts-update", str(job_path)]
+        cwd = str(install_dir())
+    else:
+        entry = Path(sys.argv[0]).resolve()
+        if entry.suffix.lower() == ".py":
+            cmd = [sys.executable, str(entry), "--soundrts-update", str(job_path)]
+        else:
+            cmd = [sys.executable, "-m", "soundrts.update_window", str(job_path)]
+        cwd = str(install_dir())
     subprocess.Popen(
-        ["cmd.exe", "/c", str(script_path)],
-        cwd=str(script_path.parent),
+        cmd,
+        cwd=cwd,
         close_fds=True,
         creationflags=creationflags,
         stdin=subprocess.DEVNULL,
@@ -312,7 +229,7 @@ def launch_apply_and_exit(script_path: Path) -> None:
 
 
 def prepare_and_apply(info: ReleaseInfo, progress_callback=None) -> Path:
-    """Download, extract, write apply script. Returns the script path."""
+    """Legacy in-process download/extract (tests / fallback). Prefer external UI."""
     if sys.platform != "win32":
         raise RuntimeError("in-place auto-update is only supported on Windows")
     if not is_packaged_install():

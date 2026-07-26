@@ -1489,3 +1489,4 @@
 5795	suche nach Updates
 5796	Sie haben bereits die neueste Version
 5797	Update-Pruefung fehlgeschlagen
+5798	Update-Fenster wird geoeffnet; das Spiel wird beendet

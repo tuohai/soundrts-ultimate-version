@@ -523,7 +523,8 @@ Main menu → **Options** → **Check for updates when starting the game**: pres
 
 Main menu → **Options** → **Check for updates now**: run a manual check anytime (still works if startup checks are off). Announces when you are already up to date, or if the check fails.
 
-- **Windows packaged build**: after you confirm, the game downloads in-process, then overwrites the install folder and relaunches. The ``user`` folder is skipped so local saves/settings are kept.
+- **Windows packaged build**: after you confirm, the **game exits** and a separate **SoundRTS Update** window downloads/extracts (with a progress bar), then a script overwrites the install folder and relaunches. The ``user`` folder is skipped.
+- **Where the download is stored**: the zip and extract tree go under the config ``tmp`` folder (portable: ``user/tmp``; installed: ``%APPDATA%\\SoundRTS\\tmp``), e.g. ``soundrts_update_1_4_6_4.zip`` and a matching ``*_extract`` folder. The apply script (``soundrts_apply_update.bat``) is there too. After a successful update, that script removes these temporary files.
 - **Running from source**: opens the Release download page only; it does not overwrite the project tree.
 
 Releases: https://github.com/tuohai/soundrts-ultimate-version/releases

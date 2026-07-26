@@ -517,6 +517,7 @@ Menu principale → **Opzioni** → **Controlla aggiornamenti all’avvio del gi
 Menu principale → **Opzioni** → **Controlla aggiornamenti ora**: controllo manuale in qualsiasi momento (funziona anche con il controllo all’avvio disattivato).
 
 - **Build Windows**: dopo la conferma scarica nel gioco, sovrascrive la cartella di installazione e riavvia. Salta ``user`` per conservare salvataggi/impostazioni locali.
+- **Dove finisce il download**: zip e cartella estratta stanno in ``tmp`` della directory di configurazione (portatile: ``user/tmp``; installato: ``%APPDATA%\\SoundRTS\\tmp``), es. ``soundrts_update_1_4_6_4.zip`` e una cartella ``*_extract``. Anche ``soundrts_apply_update.bat`` è lì; dopo un aggiornamento riuscito questi file temporanei vengono eliminati.
 - **Dal codice sorgente**: apre solo la pagina di download; non sovrascrive il progetto.
 
 Release: https://github.com/tuohai/soundrts-ultimate-version/releases

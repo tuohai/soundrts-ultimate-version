@@ -10,9 +10,14 @@ Notas de la versión
 
 **Novedad: Opciones → Comprobar actualizaciones ahora**
 
-- Si desactivas la comprobación al iniciar, aún puedes comprobar GitHub manualmente desde Opciones; si hay versión nueva, el flujo de confirmación/descarga es el mismo.
+- Si desactivas la comprobación al iniciar, aún puedes comprobar GitHub manualmente desde Opciones; si hay versión nueva, el flujo de confirmación es el mismo.
 - Anuncia si ya tienes la última versión o si falla la comprobación.
-- **Código**: ``clientversion.py``, ``clientmain.py``, ``msgparts.py``, ``tts.txt`` (``5794``–``5797``).
+
+**Mejora / corrección: paquete Windows usa una ventana de actualización aparte (con progreso)**
+
+- Tras confirmar, el juego sale y ``soundrts.exe --soundrts-update`` abre **SoundRTS Update** para descargar/descomprimir con barra de progreso (evita «No responde» y cuelgues al cargar el módulo de actualización). La instalación usa ``tasklist`` sin ``find`` (conflicto con Git), omite ``user``, y reinicia. Temporal en ``user/tmp/`` (o ``%APPDATA%\\SoundRTS\\tmp/``).
+- **Código**: ``update_window.py``, ``update_core.py``, ``auto_update.py``, ``clientversion.py``, ``clientmain.py``, ``soundrts.py``, ``msgparts.py``, ``tts.txt`` (``5794``–``5798``).
+- **Pruebas**: ``test_auto_update.py``.
 
 **Corrección: lentitud al recorrer el menú de bibliotecas de voz con las flechas**
 
@@ -36,7 +41,7 @@ Notas de la versión
 
 - Al iniciar, consulta el Release de GitHub ``tuohai/soundrts-ultimate-version``. Si hay versión más nueva: **Intro** para actualizar, **Esc** para cancelar.
 - Opcionalmente se puede oír el changelog del Release antes de descargar.
-- **Paquete Windows**: descarga y descomprime en el juego; al salir un script corto sobrescribe la carpeta e inicia de nuevo. Se **omite** la carpeta ``user`` (partidas/ajustes locales).
+- **Paquete Windows**: descarga y descomprime en ``tmp`` de la configuración (portable ``user/tmp/``, instalado ``%APPDATA%\\SoundRTS\\tmp/``); al salir un script corto sobrescribe la carpeta e inicia de nuevo. Se **omite** la carpeta ``user`` (partidas/ajustes locales). Tras aplicar, se borran esos temporales.
 - **Ejecución desde el código fuente**: solo abre la página de descarga (no sobrescribe el proyecto).
 - Menú de opciones: **Comprobar actualizaciones al iniciar el juego** (activado por defecto; Intro alterna). Opción ``check_updates_on_start`` en ``SoundRTS.ini``.
 - **Código**: ``auto_update.py``, ``clientversion.py``, ``clientmain.py``, ``config.py``.

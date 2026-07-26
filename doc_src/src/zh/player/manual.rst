@@ -521,7 +521,8 @@ wait_delay_per_character
 
 主菜单 → **选项** → **立即检查更新**：随时手动查询；关掉启动检查后仍可用此项更新。已是最新或检查失败时会播报提示。
 
-- **Windows 打包版**：确认后在游戏内下载，退出后自动覆盖安装目录并重启；覆盖时跳过 ``user``，本地存档与设置通常不受影响。
+- **Windows 打包版**：确认后**退出游戏**并打开独立「SoundRTS Update」窗口下载/解压（可看进度条）；完成后由脚本覆盖安装目录并重启。覆盖时跳过 ``user``。
+- **下载暂存位置**：压缩包与解压内容放在配置目录下的 ``tmp``（便携版为 ``user/tmp``，安装版为 ``%APPDATA%\\SoundRTS\\tmp``），例如 ``soundrts_update_1_4_6_4.zip`` 与对应 ``*_extract`` 文件夹；覆盖安装用的脚本也在此（``soundrts_apply_update.bat``）。更新成功后脚本会清理这些临时文件。
 - **从源码运行**：只打开 Release 下载页，不会覆盖工程目录。
 
 Release 仓库：https://github.com/tuohai/soundrts-ultimate-version/releases
