@@ -31,25 +31,30 @@ def _source_morphs_as_train(unit):
     return bool(getattr(unit, "morph_as_train", 0))
 
 
-def _hatchery_inject_time_multiplier(unit):
-    """幼虫变形时继承同格主巢的注卵加速（time_cost 百分比 buff）。"""
+def _spawn_host_inject_time_multiplier(unit):
+    """变形单位继承同格「生成它的建筑」上的加速 buff（如注卵）。"""
     place = getattr(unit, "place", None)
     if place is None:
         return 100
+    unit_type = getattr(unit, "type_name", None)
+    if not unit_type:
+        return 100
     for obj in place.objects:
-        if (
-            getattr(obj, "type_name", None) == "hatchery"
-            and getattr(obj, "player", None) is unit.player
-        ):
-            pct = getattr(obj, "_buff_time_cost_percent", 0)
-            if pct:
-                return max(1, 100 + int(pct))
+        if getattr(obj, "player", None) is not unit.player:
+            continue
+        from ..world_build_rules import spawns_unit_type
+
+        if spawns_unit_type(obj) != unit_type:
+            continue
+        pct = getattr(obj, "_buff_time_cost_percent", 0)
+        if pct:
+            return max(1, 100 + int(pct))
     return 100
 
 
 def _morph_train_time_cost(unit, target_type):
     base = getattr(target_type, "time_cost", 0) or 0
-    mult = _hatchery_inject_time_multiplier(unit)
+    mult = _spawn_host_inject_time_multiplier(unit)
     if mult != 100:
         base = max(0, base * mult // 100)
     unit_time = getattr(unit, "time_cost", 0) or 0
@@ -285,8 +290,10 @@ class StartProduceOrder(ImmediateOrder):
         # 更新单位的生产时间
         self.unit.production_time = modified_time
         
-        # 更新产量 - 使用单位类的原始值
-        base_qty = getattr(unit_class, "production_qty", 0)
+        # 更新产量 - 使用单位类的原始值（萃取建筑矿脉耗尽后用 depleted_production_qty）
+        from ..world_extractor import base_production_qty_for
+
+        base_qty = base_production_qty_for(self.unit)
         modified_qty = base_qty
         
         # 应用固定值修正
@@ -316,11 +323,20 @@ class AutoProduceOrder(StartProduceOrder):
         
         # 如果is_gather=1且资源已满，则不允许生产
         if getattr(unit, "is_gather", 0) == 1:
-            if (hasattr(unit, "resource_volume_max") and unit.resource_volume_max > 0 and
-                hasattr(unit, "resource_qty") and unit.resource_qty >= unit.resource_volume_max):
+            from ..world_extractor import (
+                depleted_production_qty_of,
+                effective_resource_volume_max,
+                is_extractor_source_depleted,
+            )
+
+            if is_extractor_source_depleted(unit) and depleted_production_qty_of(unit) <= 0:
+                return False
+            vol_max = effective_resource_volume_max(unit)
+            if (vol_max > 0 and
+                hasattr(unit, "resource_qty") and unit.resource_qty >= vol_max):
                 # 资源已满，设置为自动生产模式但不启动生产
                 if hasattr(unit, "debug_log"):
-                    unit.debug_log(f"is_gather模式下资源已满({unit.resource_qty}/{unit.resource_volume_max})，设置为自动生产模式但暂不启动")
+                    unit.debug_log(f"is_gather模式下资源已满({unit.resource_qty}/{vol_max})，设置为自动生产模式但暂不启动")
                 return False
         
         # 当建筑设置了auto_production=1且当前没有生产时显示
@@ -347,11 +363,14 @@ class AutoProduceOrder(StartProduceOrder):
         
         # 检查is_gather=1模式下资源是否已满
         if getattr(self.unit, "is_gather", 0) == 1:
-            if (hasattr(self.unit, "resource_volume_max") and self.unit.resource_volume_max > 0 and
-                hasattr(self.unit, "resource_qty") and self.unit.resource_qty >= self.unit.resource_volume_max):
+            from ..world_extractor import effective_resource_volume_max
+
+            vol_max = effective_resource_volume_max(self.unit)
+            if (vol_max > 0 and
+                hasattr(self.unit, "resource_qty") and self.unit.resource_qty >= vol_max):
                 # 资源已满，设置为自动生产模式但不启动生产
                 if hasattr(self.unit, "debug_log"):
-                    self.unit.debug_log(f"is_gather模式下资源已满({self.unit.resource_qty}/{self.unit.resource_volume_max})，设置为自动生产模式但暂不启动")
+                    self.unit.debug_log(f"is_gather模式下资源已满({self.unit.resource_qty}/{vol_max})，设置为自动生产模式但暂不启动")
                 self.unit.notify("order_ok")
                 return
                 

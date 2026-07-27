@@ -1034,10 +1034,10 @@ class Player:
             unit.building_land = land
             if hasattr(self, "_assign_map_select_slot"):
                 self._assign_map_select_slot(unit, place)
-            if getattr(unit, "type_name", None) == "hatchery":
-                from ..world_build_rules import fill_hatchery_larva
+            from ..world_build_rules import fill_spawn_host, is_unit_spawn_host
 
-                fill_hatchery_larva(unit, notify=False)
+            if is_unit_spawn_host(unit):
+                fill_spawn_host(unit, notify=False)
 
     @property
     def available_population(self):

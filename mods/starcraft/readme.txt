@@ -36,9 +36,9 @@ Resources (minerals + vespene)
 
 - ``mineral_field`` — map deposit (``mineral_field 1500 a1``); workers gather directly.
 
-- ``geyser`` — vespene geyser (``geyser 1 e1``); build Assimilator / Extractor / Refinery on it.
+- ``geyser`` — vespene geyser (``geyser 1 e1``); build Assimilator / Extractor / Refinery on it. Marker qty ``1`` uses ``deposit_volume`` (default 5000); or write ``geyser 5000 e1``.
 
-- Gas buildings use ``requires_deposit geyser`` + ``is_gather`` / ``auto_production`` (``production_time`` = fill duration, ``production_qty`` = gas per cycle; engine keyword ``requires_deposit``). They **cannot** be built on meadows — only on a geyser square (Tab the geyser, then build).
+- Gas buildings use ``requires_deposit geyser`` + ``is_an_extractor`` + ``is_gather`` / ``auto_production``. Each cycle fills ``production_qty`` (8) and debits the geyser reserve; after empty, ``depleted_production_qty`` (2). They **cannot** be built on meadows — only on a geyser square (Tab the geyser, then build).
 
 - Map win example: ``(and (has assimilator) (has_resources resource2 8))`` — built gas structure **and** 8 vespene stored.
 

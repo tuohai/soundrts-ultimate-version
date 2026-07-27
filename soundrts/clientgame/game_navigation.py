@@ -1029,9 +1029,50 @@ def _apply_hp_tracking(view, previous_hp, previous_soldiers):
         view._previous_soldiers_alive = previous_soldiers
 
 
+def _world_model_is_placed(m):
+    """True if the world object still has a map square (or is inside a transport)."""
+    if m is None:
+        return False
+    if getattr(m, "is_inside", False):
+        return True
+    return getattr(m, "place", None) is not None
+
+
+def _purge_placeless_world_models(interface):
+    """Remove deleted entities from perception / memory before rebuilding dobjets."""
+    player = getattr(interface, "player", None)
+    perception = getattr(interface, "perception", None)
+    if perception is not None:
+        for m in tuple(perception):
+            if _world_model_is_placed(m):
+                continue
+            perception.discard(m)
+            if player is not None:
+                observed = getattr(player, "observed_objects", None)
+                if isinstance(observed, dict):
+                    observed.pop(m, None)
+
+    memory = getattr(interface, "memory", None)
+    if memory is None or player is None:
+        return
+    forget = getattr(player, "_forget", None)
+    for rem in tuple(memory):
+        model = getattr(rem, "initial_model", rem)
+        if _world_model_is_placed(model):
+            continue
+        if callable(forget):
+            forget(rem)
+        else:
+            memory.discard(rem)
+
+
 def update_fog_of_war(interface):
     # updates dobjets (the dictionary of view objects)
     found_new_enemy = False
+
+    # Drop deleted world models still lingering in perception/memory (place cleared).
+    # Otherwise Ctrl+F2 keeps drawing them and spams "X.place is None".
+    _purge_placeless_world_models(interface)
     
     # add or update objects
     for m in interface.memory:
@@ -1093,11 +1134,11 @@ def update_fog_of_war(interface):
     from ..lib.log import warning
     if IS_DEV_VERSION:
         for m in interface.perception.union(interface.memory):
-            if m.place is None:
+            if getattr(m, "place", None) is None and not getattr(m, "is_inside", False):
                 warning(
                     "%s.model is in memory or perception "
                     "and yet its place is None",
-                    m.type_name,
+                    getattr(m, "type_name", "?"),
                 )
                 
     # 如果发现新敌人，触发战斗音乐

@@ -734,12 +734,15 @@ def _tier_quantities(tier: Tuple[int, ...], slot_count: int) -> Tuple[int, ...]:
 
 
 def _deposit_spot_qty(keyword: str, tier_qty: int) -> int:
-    """Build-site deposits (no worker extraction) use qty 1; others use tier quantity."""
+    """Build-site deposits use deposit_volume when set; else qty 1 if not harvestable."""
     singular = keyword[:-1] if keyword.endswith("s") else keyword
     try:
         from .definitions import rules
 
         if rules.get(singular, "class") == ["deposit"]:
+            deposit_volume = rules.get(singular, "deposit_volume", 0)
+            if deposit_volume:
+                return int(deposit_volume)
             has_extraction = bool(rules.get(singular, "extraction_time")) or bool(
                 rules.get(singular, "extraction_qty")
             )

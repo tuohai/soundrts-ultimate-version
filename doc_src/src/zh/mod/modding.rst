@@ -1446,15 +1446,36 @@ npc_has_item 触发器条件：
 
 UI 语音：在 ``ui/style.txt`` 定义 ``def build_field_\<名称\>`` + ``title \<TTS编号\>``\ ；可选 ``noise repeat N \<音效\>``\ 。进入可见格时会播报场类型；无法建造时播报「不能建在那里」+ 场名。
 
-矿床与气矿（``requires_deposit``）
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+矿床与气矿（``requires_deposit`` / ``is_an_extractor``）
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 | 属性 | 说明 |
 | --- | --- |
 | ``requires_deposit \<类型\>`` | 只能建在地图矿床对象上（如 ``geyser``）；完工后移除该矿床 |
 | ``is_buildable_anywhere 0`` | 与 ``requires_deposit`` 配合，禁止建在建造用地上 |
+| ``is_an_extractor 1`` | 完工时把矿床储量转入建筑 ``source_qty``；每生产周期从中扣减 |
+| ``deposit_volume N`` | 矿床默认储量（地图写标记量 ``1`` 时采用） |
+| ``depleted_production_qty N`` | ``source_qty`` 归零后的每周期产量（``0`` = 停止；星际气矿用 ``2``） |
 
-气矿模板 ``sc_gas_building`` 使用 ``auto_production`` + ``is_gather`` + ``production_time`` / ``production_qty``\ 。工人 ``can_gather`` 须包含气矿建筑类型名（如 ``assimilator``），而非 ``geyser`` 矿床本身。
+气矿模板 ``sc_gas_building`` 使用 ``is_an_extractor`` + ``auto_production`` + ``is_gather`` + ``production_time`` / ``production_qty`` / ``depleted_production_qty``\ 。工人 ``can_gather`` 须包含气矿建筑类型名（如 ``assimilator``），而非 ``geyser`` 矿床本身。资源类型用 ``production_type`` / ``resource_type``（无单独的 ``resource_extracted_type`` 关键字）。
+
+单位生成点（``spawns_unit``）
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+任意建筑都可自动生成单位（星际主巢产幼虫只是一例）::
+
+    spawns_unit larva
+    larva_cap 3
+    larva_spawn_time 15
+
+| 属性 | 说明 |
+| --- | --- |
+| ``spawns_unit \<类型\>`` | 在本建筑同格自动生成该类型单位 |
+| ``larva_cap N`` | 同格、同玩家已生成单位上限 |
+| ``larva_spawn_time N`` | 生成间隔（秒） |
+| ``morph_as_train 1`` | 变形按目标单位训练成本/时间计费（幼虫变虫族单位） |
+
+建成时填满至 ``larva_cap``，之后按间隔补员。同格生成宿主上的 ``time_cost`` 百分比 buff（如注卵）会加速由其 ``spawns_unit`` 生成的单位变形。仅设 ``larva_cap`` 不写 ``spawns_unit`` 时，兼容默认生成 ``larva``。
 
 工人施工模式
 >>>>>>>>>>>>

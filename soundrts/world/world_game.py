@@ -299,9 +299,9 @@ class WorldGameMixin:
                 from ..world_build_rules import tick_build_fields
 
                 tick_build_fields(self)
-                from ..world_build_rules import tick_hatchery_larva
+                from ..world_build_rules import tick_unit_spawns
 
-                tick_hatchery_larva(self)
+                tick_unit_spawns(self)
                 from ..building_victory import update_victory_timers
 
                 update_victory_timers(self)

@@ -6,6 +6,7 @@
 def parameters
 nb_of_resource_types 2
 achievements_enabled 0
+default_building_land build_site
 
 ; ---------- SC2 armor / damage types (mdg_vs / rdg_vs) ----------
 ; Armor tags on units (is_a). Attackers use vs bonuses (additive, 0.5x => -half base damage).
@@ -34,11 +35,13 @@ extraction_qty 8
 def geyser
 class deposit
 resource_type resource2
+deposit_volume 5000
 
 def sc_gas_building
 is_a sc_building
 is_buildable_anywhere 0
 requires_deposit geyser
+is_an_extractor 1
 resource_type resource2
 extraction_time 2
 extraction_qty 8
@@ -48,6 +51,7 @@ production_type resource2
 production_cost 0 0
 production_time 18
 production_qty 8
+depleted_production_qty 2
 resource_volume_max 8
 resource_volume_start 0
 
@@ -273,6 +277,7 @@ cost 30 0
 hp_max 800
 time_cost 90
 population_provided 10
+spawns_unit larva
 larva_cap 3
 larva_spawn_time 15
 

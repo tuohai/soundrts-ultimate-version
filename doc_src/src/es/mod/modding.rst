@@ -1416,15 +1416,18 @@ Criadero: ``provides_build_field creep`` + ``build_field_radius_m 12`` + ``build
 
 Interfaz de usuario: ``def build_field_\<name\>`` + ``title \<tts_id\>`` en ``ui/style.txt``; ambiente opcional ``noise``.
 
-Depósitos y gas (``requires_deposit``)
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Depósitos y gas (``requires_deposit`` / ``is_an_extractor``)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 | Atributo | Rol |
 | --- | --- |
 | ``requires_deposit \<type\>`` | Debe basarse en un depósito de mapas (por ejemplo, ``geyser``); el depósito se elimina al finalizar |
 | ``is_buildable_anywhere 0`` | Con ``requires_deposit``, bloques de construcción en terreno edificable |
+| ``is_an_extractor 1`` | Al completar, copia la reserva del depósito a ``source_qty``; cada ciclo de producción la descuenta |
+| ``deposit_volume N`` | Reserva por defecto del depósito cuando el mapa usa qty ``1`` |
+| ``depleted_production_qty N`` | Rendimiento por ciclo tras vaciar ``source_qty`` (``0`` = parar; gas SC usa ``2``) |
 
-La plantilla de gas ``sc_gas_building`` utiliza ``auto_production`` + ``is_gather`` + ``production_time`` / ``production_qty``.
+La plantilla de gas ``sc_gas_building`` utiliza ``is_an_extractor`` + ``auto_production`` + ``is_gather`` + ``production_time`` / ``production_qty`` / ``depleted_production_qty``.
 Los trabajadores necesitan ``can_gather assimilator`` (tipo de edificio), no ``geyser`` (depósito).
 
 Modos de construcción de trabajadores

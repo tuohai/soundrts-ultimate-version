@@ -4,7 +4,6 @@ import time
 import pygame
 
 from .definitions import style
-from .lib.log import warning
 from .lib.nofloat import PRECISION, square_of_distance
 from .lib.screen import draw_line, draw_rect, get_screen
 from .worldentity import COLLISION_RADIUS
@@ -284,6 +283,9 @@ class GridView:
     def _is_object_visible(self, o):
         """判断对象是否在视野内"""
         if not hasattr(o, "x") or not hasattr(o, "y"):
+            return False
+        # Deleted / despawned world models: keep out of the map (and stop warning spam).
+        if getattr(o, "place", None) is None and not getattr(o, "is_inside", False):
             return False
 
         if self.interface.zoom_mode:
@@ -908,16 +910,6 @@ class GridView:
 
         for o in sorted(visible_objects, key=_sort_key):
             self.display_object(o)
-            if (
-                o.place is None
-                and not o.is_inside
-                and not (
-                    self.interface.already_asked_to_quit or self.interface.end_loop
-                )
-            ):
-                warning("%s.place is None", o.type_name)
-                if o.is_memory:
-                    warning("(memory)")
 
     def _clamp_cam_origin(self, ox, oy, left, top, vw, vh, map_w, map_h):
         if map_w > vw:

@@ -25,6 +25,7 @@ mineral_field 1500 a1 b1
 mineral_field 1200 a2 b2
 mineral_field 800 a1 b2
 geyser 1 a1 b1 a2 b2
+building_land build_site
 nb_meadows_by_square 2
 
 nb_players_min 2

@@ -300,8 +300,8 @@
 4214	aggiorna
 4215	spade
 4216	frecce
-4217	armature dei braccianti
-4218	armature degli arcieri
+4217	armatura di fanteria
+4218	armatura dell'arciere
 4219	in
 4220	fortezza
 4221	castello

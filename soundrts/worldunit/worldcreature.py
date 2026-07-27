@@ -1740,6 +1740,10 @@ class BuildingSite(_Building):
         building = self.type(player, place, x, y)
         building.building_land = building_land
         if build_deposit is not None and getattr(build_deposit, "place", None) is not None:
+            if getattr(building, "is_an_extractor", 0):
+                from ..world_extractor import transfer_extractor_source
+
+                transfer_extractor_source(building, build_deposit)
             build_deposit.delete()
         if blocked_exit:
             building.block(blocked_exit)
@@ -1770,8 +1774,11 @@ class Building(_Building):
     production_cost = (0, 0)  # 默认不消耗资源
     production_time = 0  # 默认生产时间为0
     production_qty = 0  # 默认产量为0
-    larva_cap = 0  # 主巢：同格幼虫上限（异虫 mod）
-    larva_spawn_time = 0  # 主巢：幼虫生成间隔（秒）
+    depleted_production_qty = 0  # 矿脉耗尽后的每周期产量（需 is_an_extractor）
+    is_an_extractor = 0  # 1=从建成时吞并的矿床储量中扣减产出
+    spawns_unit = None  # 自动生成的单位类型名（如 larva）
+    larva_cap = 0  # 生成点：同格已生成单位上限
+    larva_spawn_time = 0  # 生成点：生成间隔（秒）
     is_producing = False  # 当前是否正在生产
     production_progress = 0  # 当前生产进度
     resource_volume_max = 0  # 最大资源量

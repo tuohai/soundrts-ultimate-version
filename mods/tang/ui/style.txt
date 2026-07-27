@@ -7,7 +7,7 @@ population_limit_reached 4246
 production_deferred 142
 cannot_build_here 4204
 not_enough_mana 4252
-not_enough_space 1027
+not_enough_space 5338
 count_limit_reached 4335
 capture_success 4370
 target_captured 4371

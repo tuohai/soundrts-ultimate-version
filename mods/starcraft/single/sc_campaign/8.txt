@@ -11,6 +11,7 @@ west_east_paths a1 b1 c1 d1 e1 f1 g1 h1 i1
 
 mineral_field 3000 a1
 geyser 1 b1
+building_land build_site
 nb_meadows_by_square 2
 
 nb_players_min 1

@@ -5,6 +5,38 @@ Release notes
 .. contents::
 
 
+1.4.6.5
+--------
+
+**Fix / new: StarCraft gas depletes (generic extractor buildings)**
+
+- **Issue**: Assimilator / Extractor / Refinery produced unlimited vespene at ``production_qty`` (default 8) after building on a geyser — unlike StarCraft.
+- **Rules**: geysers have a reserve (default ``deposit_volume 5000``; map ``geyser 1`` is a build marker that uses that default, or write ``geyser 5000``); each production cycle debits the reserve; when empty, yield drops to ``depleted_production_qty`` (default 2).
+- **Generic keywords** (reusable for other mods, e.g. gold-vein extractors):
+  - ``is_an_extractor 1`` — on completion, take over deposit reserve and debit on production
+  - ``deposit_volume N`` — default deposit reserve
+  - ``depleted_production_qty N`` — per-cycle yield after empty (``0`` = stop)
+  - Still uses existing ``requires_deposit``, ``production_type`` / ``resource_type``, ``is_gather``, ``auto_production``
+- **Code**: ``world_extractor.py``, ``worldcreature.py``, ``world_status_update.py``, ``worldorders/production.py``, ``definitions.py``, ``randommap.py``, ``mods/starcraft/rules.txt``.
+- **Tests**: ``test_extractor_depletion.py``, ``test_build_rules.py``.
+- **Docs**: player StarCraft resources guide, modding (Deposits & gas), ``mods/starcraft/readme.txt``, release notes.
+
+**Improvement: larva/hatchery spawning is now generic ``spawns_unit`` (no hardcoded type names)**
+
+- **Issue**: the engine keyed off ``type_name == "hatchery"`` / ``"larva"`` for auto-spawn and inject morph speed — other mods could not reuse it.
+- **Approach**: buildings use ``spawns_unit \<type\>`` + ``larva_cap`` + ``larva_spawn_time``; inject-style buffs apply to the same-square host that spawns the morphing unit. StarCraft ``hatchery`` sets ``spawns_unit larva``. ``larva_cap`` alone still defaults to spawning ``larva`` (compat).
+- **Code**: ``world_build_rules.py``, ``worldorders/production.py``, ``world/world_game.py``, ``worldplayerbase/base.py``, ``mods/starcraft/rules.txt``.
+- **Tests**: ``test_starcraft_larva.py``, ``test_build_rules.py``.
+- **Docs**: modding (Unit spawn hosts), release notes.
+
+**Fix: Ctrl+F2 top-down view spamming ``X.place is None``**
+
+- **Cause**: after a building site finishes, a geyser is consumed, or a unit is deleted, the entity briefly stayed in perception/memory and the map warned every frame.
+- **Fix**: purge placeless models during fog sync; do not draw/warn about ``place is None`` objects on the map.
+- **Code**: ``clientgame/game_navigation.py``, ``clientgamegridview.py``.
+- **Tests**: ``test_purge_placeless_fow.py``.
+
+
 1.4.6.4
 --------
 

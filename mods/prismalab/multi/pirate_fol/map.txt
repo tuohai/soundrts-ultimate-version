@@ -27,8 +27,8 @@ nb_meadows_by_square 0
 ; 1 meadow
 additional_meadows b39 i9 i9 i9 i9 i9  b5 k11 t2 y2 b5 k11 t2 y2 b3 b4 b6 b7 b8 b9 b11 b12 b14 b18 b19 b28 b29 b30 b31 b32 b37 b38 c39 d39 e39 f2 f39 g39 h39 i2 i39 j11 l11 r2 r39 s2 s39 t39 u2 u39 v2 v39 w2 w39 x2 y3 y4 y6 y7 y9 y10 y11 y12 y13 y14 y16 y17 y27 y28 y29 y30 y31 y33 y34 y36 y37 y39 b3 b4 b6 b7 b8 b9 b11 b12 b14 b18 b19 b28 b29 b30 b31 b32 b37 b38 c39 d39 e39 f2 f39 g39 h39 i2 i39 j11 l11 r2 r39 s2 s39 t39 u2 u39 v2 v39 w2 w39 x2 y3 y4 y6 y7 y9 y10 y11 y12 y13 y14 y16 y17 y27 y28 y29 y30 y31 y33 y34 y36 y37 y39 b3 b4 b6 b7 b8 b9 b11 b12 b14 b18 b19 b28 b29 b30 b31 b32 b37 b38 c39 d39 e39 f2 f39 g39 h39 i2 i39 j11 l11 r2 r39 s2 s39 t39 u2 u39 v2 v39 w2 w39 x2 y3 y4 y6 y7 y9 y10 y11 y12 y13 y14 y16 y17 y27 y28 y29 y30 y31 y33 y34 y36 y37 y39 l10 l10 l10 l10 l10 j10 j12 k10 k12 l12 j10 j12 k10 k12 l12 j10 j12 k10 k12 l12 j10 j12 k10 k12 l12 j10 j12 k10 k12 l12 p29 p29 p29 p29 q29 q29 q29 q29 q30 q30 q30 q30 q30 q30 q31 q31 q31 q31 q31 q31 x39 x39 x39 x39 y38 y38 y38 y38
 
-terrain _forest b3 b4 b5 b6 b7 b8 b33 b34 b35 b36 b37 b38 r31 y3 y4 y5 y6 y7 y8 y33 y34 y35 y36 y37 y38
-terrain _meadows b2 b3 b4 b5 b6 b9 b11 b12 b14 b30 b31 b32 c39 d39 e39 f2 f39 g39 h39 i2 i9 i39 j10 j12 k10 k12 l10 l12 q30 r2 r30 r39 s2 s39 t2 t39 u2 u39 v2 v39 w2 w39 x2 x39 y9 y10 y11 y12 y13 y14 y16 y17 y27 y28 y29 y30 y31
+terrain forest b3 b4 b5 b6 b7 b8 b33 b34 b35 b36 b37 b38 r31 y3 y4 y5 y6 y7 y8 y33 y34 y35 y36 y37 y38
+terrain meadows b2 b3 b4 b5 b6 b9 b11 b12 b14 b30 b31 b32 c39 d39 e39 f2 f39 g39 h39 i2 i9 i39 j10 j12 k10 k12 l10 l12 q30 r2 r30 r39 s2 s39 t2 t39 u2 u39 v2 v39 w2 w39 x2 x39 y9 y10 y11 y12 y13 y14 y16 y17 y27 y28 y29 y30 y31
 terrain big_bridge a26 z26
 terrain ford b26 y26
 terrain lake m20 o20

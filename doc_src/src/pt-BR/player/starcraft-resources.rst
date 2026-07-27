@@ -19,6 +19,8 @@ Sintaxe de mapa:
    geyser 1 e1
 
 
+``geyser 1`` é um local de construção; a reserva padrão vem de ``deposit_volume`` (5000). Também pode escrever ``geyser 5000 e1``.
+
 Estruturas de gás
 -----------------
 
@@ -27,17 +29,19 @@ Assimilator / Extractor / Refinery devem ser construídos sobre um geyser (Tab n
 
 Após a conclusão:
 
-1. A estrutura produz automaticamente (``auto_production``): a cada ``production_time`` segundos adiciona ``production_qty`` de vespene no edifício (padrão 18 s / 8 unidades)
-2. Trabalhadores coletam do edifício de gás (``can_gather assimilator``, etc.) e carregam ``extraction_qty`` por viagem (padrão 8)
-3. Vespene é armazenado no Nexus / Hatchery / Command Center (``storable_resource_types resource1 resource2``)
+1. A estrutura assume a reserva do geyser (``is_an_extractor``) e produz automaticamente (``auto_production``)
+2. A cada ``production_time`` segundos adiciona ``production_qty`` de vespene (padrão 18 s / 8), debitando da reserva
+3. Trabalhadores coletam do edifício e carregam ``extraction_qty`` por viagem (padrão 8)
+4. Quando a reserva chega a 0, o rendimento cai para ``depleted_production_qty`` (padrão 2)
+5. Vespene é armazenado no Nexus / Hatchery / Command Center (``storable_resource_types resource1 resource2``)
 
-Use auto_production para gás, não auto_cultivate estilo fazenda (fazendas só reiniciam quando o armazenamento está vazio).
+Use auto_production para gás, não auto_cultivate estilo fazenda.
 
 Tela de atributos
 -----------------
 
 
-Selecione uma estrutura de gás e pressione V para ouvir requires deposit (nome do tipo de depósito, ex.: geyser). Tempo e quantidade de produção usam as entradas de atributo de produção existentes.
+Selecione uma estrutura de gás e pressione V para ouvir requires deposit e a reserva restante.
 
 Referência de regras: ``mod/modding.rst`` (Economy e Deposits & gas).
 

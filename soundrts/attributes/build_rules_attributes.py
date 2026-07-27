@@ -121,6 +121,11 @@ class BuildRulesAttributes:
             if deposit_text:
                 attrs.append(("", mp.REQUIRES_DEPOSIT, deposit_text))
 
+        if getattr(model, "is_an_extractor", 0) and hasattr(u, "source_qty_max"):
+            attrs.append(
+                ("", mp.FOOD_DEPOSIT_QTY, nb2msg(int(getattr(u, "source_qty", 0) or 0)))
+            )
+
         unit_classes = getattr(model, "class", ()) or ()
         if getattr(model, "is_buildable_anywhere", 0) and "building" in unit_classes:
             attrs.append(("", mp.IS_BUILDABLE_ANYWHERE, mp.YES))

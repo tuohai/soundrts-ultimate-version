@@ -160,17 +160,32 @@ class CreatureStatusUpdate(Entity):
                     self.debug_log("用户已手动停止生产，不自动重启")
                     return
                 
+                # 矿脉耗尽且枯竭产量为 0：不再自动重启
+                from ..world_extractor import (
+                    depleted_production_qty_of,
+                    effective_resource_volume_max,
+                    is_extractor_source_depleted,
+                )
+
+                if (
+                    is_extractor_source_depleted(self)
+                    and depleted_production_qty_of(self) <= 0
+                ):
+                    self.debug_log("萃取建筑矿脉已耗尽且无枯竭产量，不自动重启生产")
+                    return
+
                 # 检查资源是否已满
                 resource_is_full = False
-                if (hasattr(self, "resource_volume_max") and self.resource_volume_max > 0 and
-                    hasattr(self, "resource_qty") and self.resource_qty >= self.resource_volume_max):
+                vol_max = effective_resource_volume_max(self)
+                if (vol_max > 0 and
+                    hasattr(self, "resource_qty") and self.resource_qty >= vol_max):
                     resource_is_full = True
-                    self.debug_log(f"is_gather模式下资源已满({self.resource_qty}/{self.resource_volume_max})，暂停自动生产")
+                    self.debug_log(f"is_gather模式下资源已满({self.resource_qty}/{vol_max})，暂停自动生产")
                 
                 # 只有当资源不满时，才检查是否需要重启生产
                 if not resource_is_full:
                     # 检查资源是否枯竭（资源量为0）
-                    resource_depleted = (hasattr(self, "resource_volume_max") and self.resource_volume_max > 0 and
+                    resource_depleted = (vol_max > 0 and
                                       hasattr(self, "resource_qty") and self.resource_qty == 0)
                     
                     # 修改耕种机制：只有在资源完全枯竭时才重新耕种
@@ -325,21 +340,28 @@ class CreatureStatusUpdate(Entity):
             if resource_type is None:
                 resource_type = "resource1"
             production_qty = getattr(self, "production_qty", 0)
+            if getattr(self, "is_an_extractor", 0):
+                from ..world_extractor import apply_extractor_production
+
+                production_qty = apply_extractor_production(self, production_qty)
             production_qty *= 1000
             self.debug_log(f"完成资源生产，类型：{resource_type}，数量：{production_qty}")
 
             # 检查是否需要将产出的资源添加到建筑自身 (is_gather = 1)
-            if getattr(self, "is_gather", 0) == 1:
+            if production_qty > 0 and getattr(self, "is_gather", 0) == 1:
                 if hasattr(self, "resource_volume_max") and self.resource_volume_max > 0:
                     if not hasattr(self, "resource_qty"):
                         self.resource_qty = 0
                     if not hasattr(self, "resource_type") or self.resource_type is None:
                         self.resource_type = resource_type
+                    from ..world_extractor import effective_resource_volume_max
+
+                    vol_max = effective_resource_volume_max(self)
                     add_qty = production_qty // 1000
-                    self.resource_qty = min(self.resource_qty + add_qty, self.resource_volume_max)
+                    self.resource_qty = min(self.resource_qty + add_qty, vol_max)
                     self.debug_log(
                         f"自身收集模式：将产出的资源添加到建筑，资源类型：{resource_type}，"
-                        f"数量：{add_qty}，建筑当前资源量：{self.resource_qty}/{self.resource_volume_max}"
+                        f"数量：{add_qty}，建筑当前资源量：{self.resource_qty}/{vol_max}"
                     )
                     self.notify(f"qty_update,{self.resource_qty}")
                     self.notify(
@@ -356,16 +378,17 @@ class CreatureStatusUpdate(Entity):
                         "produced_%s,%s"
                         % (resource_type.replace("resource", ""), production_qty)
                     )
-            else:
-                if production_qty > 0:
-                    before_resources = self.player.resources[:]
-                    self.player.store(resource_type, production_qty)
-                    after_resources = self.player.resources[:]
-                    self.debug_log(f"资源变化: {before_resources} -> {after_resources}")
-                    self.notify(
-                        "produced_%s,%s"
-                        % (resource_type.replace("resource", ""), production_qty)
-                    )
+            elif production_qty > 0:
+                before_resources = self.player.resources[:]
+                self.player.store(resource_type, production_qty)
+                after_resources = self.player.resources[:]
+                self.debug_log(f"资源变化: {before_resources} -> {after_resources}")
+                self.notify(
+                    "produced_%s,%s"
+                    % (resource_type.replace("resource", ""), production_qty)
+                )
+            elif getattr(self, "is_an_extractor", 0):
+                self.debug_log("萃取建筑矿脉已耗尽且 depleted_production_qty 为 0，停止产出")
 
         # 播放资源生产完成声音
         for player in self.player.world.players:
@@ -395,8 +418,15 @@ class CreatureStatusUpdate(Entity):
             resource_is_full = False
             
             if is_gather_mode:
-                if (hasattr(self, "resource_volume_max") and self.resource_volume_max > 0 and
-                    hasattr(self, "resource_qty") and self.resource_qty >= self.resource_volume_max):
+                from ..world_extractor import (
+                    depleted_production_qty_of,
+                    effective_resource_volume_max,
+                    is_extractor_source_depleted,
+                )
+
+                vol_max = effective_resource_volume_max(self)
+                if (vol_max > 0 and
+                    hasattr(self, "resource_qty") and self.resource_qty >= vol_max):
                     resource_is_full = True
                     
                     # 检查是否同时设置了自动和手动生产/耕种
@@ -406,7 +436,7 @@ class CreatureStatusUpdate(Entity):
                         is_auto_manual_both = True
                         self.debug_log("检测到同时设置了自动和手动生产/耕种，资源满时的行为与手动生产一致")
                     
-                    self.debug_log(f"is_gather模式下资源已满({self.resource_qty}/{self.resource_volume_max})，暂停自动生产")
+                    self.debug_log(f"is_gather模式下资源已满({self.resource_qty}/{vol_max})，暂停自动生产")
                     # 停止生产
                     self.is_producing = False
                     self.production_progress = 0
@@ -419,6 +449,21 @@ class CreatureStatusUpdate(Entity):
                             break
                     
                     # 跳过后续的资源检查和生产逻辑
+                    return
+
+                # 矿脉耗尽且枯竭产量为 0：停止自动生产
+                if (
+                    is_extractor_source_depleted(self)
+                    and depleted_production_qty_of(self) <= 0
+                ):
+                    self.is_producing = False
+                    self.production_progress = 0
+                    self._previous_completeness = None
+                    for i, order in enumerate(self.orders[:]):
+                        if isinstance(order, ProducingOrder):
+                            self.orders.pop(i)
+                            break
+                    self.debug_log("萃取建筑矿脉已耗尽且无枯竭产量，停止自动生产")
                     return
             
             # 自动生产模式：检查是否有足够资源开始新的生产周期

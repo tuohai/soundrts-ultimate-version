@@ -1454,8 +1454,8 @@ def finalize_new_building(building, site=None):
     if host is not None and is_addon_type(building):
         attach_addon(host, building)
     _auto_start_gas_production(building)
-    if getattr(building, "type_name", None) == "hatchery":
-        fill_hatchery_larva(building, notify=False)
+    if is_unit_spawn_host(building):
+        fill_spawn_host(building, notify=False)
 
 
 def _auto_start_gas_production(building):
@@ -1477,17 +1477,46 @@ def _auto_start_gas_production(building):
         pass
 
 
-def hatchery_larva_cap(hatchery):
-    cap = getattr(hatchery, "larva_cap", 0) or getattr(
-        rules.unit_class("hatchery"), "larva_cap", 0
-    )
+def spawns_unit_type(host):
+    """Unit type name auto-spawned by this building, or None.
+
+    Prefer ``spawns_unit``; if only ``larva_cap`` is set (legacy), default to ``larva``.
+    """
+    name = getattr(host, "spawns_unit", None) or ""
+    if name and str(name) != "0":
+        return str(name)
+    if getattr(host, "larva_cap", 0):
+        return "larva"
+    return None
+
+
+def is_unit_spawn_host(host):
+    return spawns_unit_type(host) is not None
+
+
+def spawn_host_cap(host):
+    cap = getattr(host, "larva_cap", 0)
+    if not cap:
+        unit_type = getattr(host, "type_name", None)
+        if unit_type:
+            try:
+                cls = rules.unit_class(unit_type)
+                cap = getattr(cls, "larva_cap", 0) if cls is not None else 0
+            except Exception:
+                cap = 0
     return int(cap) if cap else 3
 
 
-def hatchery_larva_spawn_interval(hatchery):
-    interval = getattr(hatchery, "larva_spawn_time", 0) or getattr(
-        rules.unit_class("hatchery"), "larva_spawn_time", 0
-    )
+def spawn_host_interval(host):
+    interval = getattr(host, "larva_spawn_time", 0)
+    if not interval:
+        unit_type = getattr(host, "type_name", None)
+        if unit_type:
+            try:
+                cls = rules.unit_class(unit_type)
+                interval = getattr(cls, "larva_spawn_time", 0) if cls is not None else 0
+            except Exception:
+                interval = 0
     if interval:
         return int(interval)
     from .lib.nofloat import to_int
@@ -1495,36 +1524,43 @@ def hatchery_larva_spawn_interval(hatchery):
     return to_int("15")
 
 
-def count_larva_on_square(hatchery):
-    place = getattr(hatchery, "place", None)
-    if place is None:
+def count_spawned_on_square(host):
+    place = getattr(host, "place", None)
+    spawn_type = spawns_unit_type(host)
+    if place is None or not spawn_type:
         return 0
     n = 0
     for obj in place.objects:
         if (
-            getattr(obj, "type_name", None) == "larva"
-            and getattr(obj, "player", None) is hatchery.player
+            getattr(obj, "type_name", None) == spawn_type
+            and getattr(obj, "player", None) is host.player
             and obj.hp > 0
         ):
             n += 1
     return n
 
 
-def spawn_larva_at_hatchery(hatchery, count=1, notify=True):
-    larva_cls = rules.unit_class("larva")
-    if larva_cls is None or count <= 0:
+def spawn_unit_at_host(host, count=1, notify=True):
+    spawn_type = spawns_unit_type(host)
+    if not spawn_type or count <= 0:
         return 0
-    place = hatchery.place
+    unit_cls = rules.unit_class(spawn_type)
+    if unit_cls is None:
+        return 0
+    place = host.place
+    if place is None:
+        return 0
     spawned = 0
+    cap = spawn_host_cap(host)
     for _ in range(count):
-        if count_larva_on_square(hatchery) >= hatchery_larva_cap(hatchery):
+        if count_spawned_on_square(host) >= cap:
             break
-        x, y = hatchery.x, hatchery.y
+        x, y = host.x, host.y
         found = place.find_free_space("ground", x, y)
         if found[0] is not None:
             x, y = found[0], found[1]
         try:
-            u = larva_cls(hatchery.player, place, x, y)
+            u = unit_cls(host.player, place, x, y)
             if notify:
                 u.notify("added")
             spawned += 1
@@ -1533,32 +1569,45 @@ def spawn_larva_at_hatchery(hatchery, count=1, notify=True):
     return spawned
 
 
-def fill_hatchery_larva(hatchery, notify=True):
-    cap = hatchery_larva_cap(hatchery)
-    missing = cap - count_larva_on_square(hatchery)
+def fill_spawn_host(host, notify=True):
+    if not is_unit_spawn_host(host):
+        return
+    missing = spawn_host_cap(host) - count_spawned_on_square(host)
     if missing > 0:
-        spawn_larva_at_hatchery(hatchery, missing, notify=notify)
+        spawn_unit_at_host(host, missing, notify=notify)
 
 
-def tick_hatchery_larva(world):
+def tick_unit_spawns(world):
     if world is None:
         return
     for player in world.players:
         if not getattr(player, "is_playing", True):
             continue
         for unit in list(getattr(player, "units", ())):
-            if getattr(unit, "type_name", None) != "hatchery" or unit.hp <= 0:
+            if not is_unit_spawn_host(unit) or unit.hp <= 0:
                 continue
-            if count_larva_on_square(unit) >= hatchery_larva_cap(unit):
+            if count_spawned_on_square(unit) >= spawn_host_cap(unit):
                 continue
-            interval = hatchery_larva_spawn_interval(unit)
-            last = getattr(unit, "_larva_spawn_time", None)
+            interval = spawn_host_interval(unit)
+            last = getattr(unit, "_unit_spawn_time", None)
             if last is None:
-                unit._larva_spawn_time = world.time
+                # migrate legacy timer attribute if present
+                last = getattr(unit, "_larva_spawn_time", None)
+            if last is None:
+                unit._unit_spawn_time = world.time
                 continue
             if world.time - last >= interval:
-                if spawn_larva_at_hatchery(unit, 1):
-                    unit._larva_spawn_time = world.time
+                if spawn_unit_at_host(unit, 1):
+                    unit._unit_spawn_time = world.time
+
+
+# Backward-compatible aliases (StarCraft hatchery/larva naming)
+hatchery_larva_cap = spawn_host_cap
+hatchery_larva_spawn_interval = spawn_host_interval
+count_larva_on_square = count_spawned_on_square
+spawn_larva_at_hatchery = spawn_unit_at_host
+fill_hatchery_larva = fill_spawn_host
+tick_hatchery_larva = tick_unit_spawns
 
 
 def addon_build_target_coords(host, building_type, place):

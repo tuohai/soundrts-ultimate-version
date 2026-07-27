@@ -4,6 +4,38 @@
 .. contents::
 
 
+1.4.6.5
+--------
+
+**修复 / 新增：星际模组气矿可耗尽（通用萃取建筑机制）**
+
+- **问题**：同化炉 / 萃取器 / 精炼厂建在气泉上后，按 ``production_qty``（默认 8）无限产出瓦斯，与原版星际不符。
+- **规则**：气泉有储量（默认 ``deposit_volume 5000``，地图 ``geyser 1`` 为建造标记并采用该默认值，也可写 ``geyser 5000``）；建成萃取建筑后每周期产出从储量扣除；储量归零后产量降为 ``depleted_production_qty``（默认 2）。
+- **通用关键字**（可供其他模组复用，例如黄金矿脉萃取）：
+  - ``is_an_extractor 1`` — 建成时吞并矿床储量，生产时扣减
+  - ``deposit_volume N`` — 矿床默认储量
+  - ``depleted_production_qty N`` — 耗尽后的每周期产量（``0`` = 完全停止）
+  - 仍用已有 ``requires_deposit``、``production_type`` / ``resource_type``、``is_gather``、``auto_production``
+- **实现**：``world_extractor.py``、``worldcreature.py``、``world_status_update.py``、``worldorders/production.py``、``definitions.py``、``randommap.py``、``mods/starcraft/rules.txt``。
+- **测试**：``test_extractor_depletion.py``、``test_build_rules.py``。
+- **文档**：玩家手册（星际资源）、模组手册（矿床与气矿）、``mods/starcraft/readme.txt``、发行说明。
+
+**改善：幼虫/主巢生成改为通用 ``spawns_unit``（不再写死类型名）**
+
+- **问题**：引擎按 ``type_name == "hatchery"`` / ``"larva"`` 硬编码产卵与注卵加速，其他模组无法复用。
+- **做法**：建筑用 ``spawns_unit \<类型\>`` + ``larva_cap`` + ``larva_spawn_time``；注卵类 buff 作用于「生成该单位的同格宿主」。星际 ``hatchery`` 增加 ``spawns_unit larva``。仅有 ``larva_cap`` 时仍默认生成 ``larva``（兼容）。
+- **实现**：``world_build_rules.py``、``worldorders/production.py``、``world/world_game.py``、``worldplayerbase/base.py``、``mods/starcraft/rules.txt``。
+- **测试**：``test_starcraft_larva.py``、``test_build_rules.py``。
+- **文档**：模组手册（单位生成点）、发行说明。
+
+**修复：Ctrl+F2 俯视图刷屏 ``X.place is None`` 警告**
+
+- **原因**：工地完工、气泉被吞并、单位删除后，实体仍短暂留在感知/记忆里，俯视图每帧告警。
+- **修复**：雾战同步时清除无格子实体；俯视图不再绘制/告警 ``place is None`` 对象。
+- **实现**：``clientgame/game_navigation.py``、``clientgamegridview.py``。
+- **测试**：``test_purge_placeless_fow.py``。
+
+
 1.4.6.4
 --------
 

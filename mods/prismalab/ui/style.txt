@@ -328,19 +328,19 @@ exhausted
 
 ; terrain
 
-def _meadows ; this terrain is applied automatically to any square with meadows and without woods
+def meadows ; this terrain is applied automatically to any square with meadows and without woods
 title 4362
 noise
 ground ; footstep noise determined by the nearest object
 color
 
-def _forest ; this terrain is applied automatically to any square with some woods
+def forest ; this terrain is applied automatically to any square with some woods
 title 4363
 noise
 ground ; footstep noise determined by the nearest object
 color
 
-def _dense_forest ; this terrain is applied automatically to any square with many woods
+def dense_forest ; this terrain is applied automatically to any square with many woods
 title 4364
 noise
 ground ; footstep noise determined by the nearest object

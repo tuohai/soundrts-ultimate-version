@@ -19,6 +19,8 @@
    geyser 1 e1
 
 
+``geyser 1`` 表示建造位点；气泉默认储量来自规则里的 ``deposit_volume``（默认 5000）。也可写成 ``geyser 5000 e1`` 指定储量。
+
 气矿建筑
 --------
 
@@ -27,9 +29,11 @@
 
 建成后的流程：
 
-1. 建筑自动 生产（``auto_production``），每 ``production_time`` 秒向建筑内积攒 ``production_qty`` 瓦斯（默认 18 秒 / 8 单位）
-2. 工人对气矿建筑使用采集（``can_gather assimilator`` 等），每次运回 ``extraction_qty`` （默认 8）
-3. 瓦斯存入主基地等带 ``storable_resource_types resource1 resource2`` 的建筑
+1. 建筑吞并气泉储量（``is_an_extractor``），自动生产（``auto_production``）
+2. 每 ``production_time`` 秒向建筑内积攒 ``production_qty`` 瓦斯（默认 18 秒 / 8 单位），并从气泉储量中扣除
+3. 工人对气矿建筑采集，每次运回 ``extraction_qty`` （默认 8）
+4. 储量降为 0 后，产量降为 ``depleted_production_qty``（默认 2），类似原版星际的枯竭气泉
+5. 瓦斯存入主基地等带 ``storable_resource_types resource1 resource2`` 的建筑
 
 气矿用 自动生产，不用农田的 ``auto_cultivate`` （农田要储量抽空才再种）。
 
@@ -37,7 +41,7 @@
 --------
 
 
-选中气矿建筑，按 V 打开属性界面，可听到 需要矿床（对应矿床类型名称，如瓦斯气泉）。生产时间、生产数量等沿用游戏原有的生产属性条目。
+选中气矿建筑，按 V 打开属性界面，可听到 需要矿床、当前矿脉储量等。生产时间、生产数量等沿用游戏原有的生产属性条目。
 
 规则关键字详见 ``mod/modding.rst`` （Economy 与「矿床与气矿」两节）。
 

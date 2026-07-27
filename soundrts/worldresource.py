@@ -11,6 +11,7 @@ class Deposit(Entity):
     resource_regen = 0
     extraction_time = None  # 提取时间
     extraction_qty = None  # 提取量
+    deposit_volume = 0  # 默认储量（萃取建筑建成时，地图 qty 为 1 则用此值）
     type_name = "deposit"  # 添加type_name属性
 
     def __init__(self, square, qty, x=None, y=None):

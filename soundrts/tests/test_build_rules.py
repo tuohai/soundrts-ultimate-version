@@ -1046,6 +1046,8 @@ def test_starcraft_mod_rules_parse():
     hatchery = r.unit_class("hatchery")
     assert hatchery.build_field_persists
     assert hatchery.build_field_spreads
+    assert hatchery.spawns_unit == "larva"
+    assert hatchery.larva_cap == 3
     creep_tumor = r.unit_class("creep_tumor")
     assert creep_tumor.provides_build_field == "creep"
     assert creep_tumor.build_field_spreads
@@ -1071,6 +1073,11 @@ def test_starcraft_mod_rules_parse():
     assert assimilator.is_gather == 1
     assert assimilator.auto_production == 1
     assert assimilator.auto_cultivate == 0
+    assert assimilator.is_an_extractor == 1
+    assert assimilator.depleted_production_qty == 2
+    assert assimilator.production_qty == 8
+    geyser = r.unit_class("geyser")
+    assert geyser.deposit_volume == 5000
     assert "mineral_field" in probe.can_gather_deposit
     assert "assimilator" in probe.can_gather_building
     assert "geyser" not in probe.can_gather_deposit

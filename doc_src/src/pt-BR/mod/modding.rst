@@ -1365,15 +1365,18 @@ Hatchery: ``provides_build_field creep`` + ``build_field_radius_m 12`` + ``build
 
 UI: ``def build_field_\<name\>`` + ``title \<tts_id\>`` em ``ui/style.txt``; ``noise`` ambiente opcional.
 
-Depósitos e gás (``requires_deposit``)
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Depósitos e gás (``requires_deposit`` / ``is_an_extractor``)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 | Atributo | Função |
 | --- | --- |
 | ``requires_deposit \<type\>`` | Deve construir em depósito do mapa (ex.: ``geyser``); depósito é removido ao concluir |
 | ``is_buildable_anywhere 0`` | Com ``requires_deposit``, bloqueia construção em building land |
+| ``is_an_extractor 1`` | Ao concluir, copia a reserva do depósito para ``source_qty``; cada ciclo de produção debita |
+| ``deposit_volume N`` | Reserva padrão do depósito quando o mapa usa qty ``1`` |
+| ``depleted_production_qty N`` | Rendimento por ciclo após ``source_qty`` zerar (``0`` = parar; gás SC usa ``2``) |
 
-Template de gás ``sc_gas_building`` usa ``auto_production`` + ``is_gather`` + ``production_time`` / ``production_qty``.
+Template de gás ``sc_gas_building`` usa ``is_an_extractor`` + ``auto_production`` + ``is_gather`` + ``production_time`` / ``production_qty`` / ``depleted_production_qty``.
 Trabalhadores precisam ``can_gather assimilator`` (tipo de edificação), não ``geyser`` (depósito).
 
 Modos de construção de trabalhador

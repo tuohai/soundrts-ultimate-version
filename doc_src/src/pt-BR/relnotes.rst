@@ -5,6 +5,21 @@ Notas de lançamento
 .. contents::
 
 
+1.4.6.5
+-------
+
+**Correção / novidade: gás do mod StarCraft esgota (extratores genéricos)**
+
+- **Problema**: Assimilator / Extractor / Refinery produziam vespene ilimitado em ``production_qty`` (padrão 8) — diferente de StarCraft.
+- **Regras**: o geyser tem reserva (padrão ``deposit_volume 5000``; ``geyser 1`` no mapa é marcador e usa esse valor, ou ``geyser 5000``); cada ciclo debita da reserva; ao zerar, o rendimento cai para ``depleted_production_qty`` (2).
+- **Palavras-chave**: ``is_an_extractor``, ``deposit_volume``, ``depleted_production_qty`` (reutilizáveis em outros mods).
+- **Código / testes / docs**: ver notas em inglês/chinês; ``mods/starcraft/readme.txt``.
+
+**Melhoria: spawn larva/hatchery genérico com ``spawns_unit``**
+
+- Sem nomes fixos ``hatchery``/``larva``; qualquer edifício pode usar ``spawns_unit`` + ``larva_cap`` + ``larva_spawn_time``.
+
+
 1.4.6.4
 -------
 

@@ -761,7 +761,7 @@ _precision_properties = {
     "mana_start",
     "time_cost",
     "change_time",     # 单位变形所需时间
-    "larva_spawn_time",  # 主巢幼虫生成间隔（秒）
+    "larva_spawn_time",  # 单位生成点：生成间隔（秒；配合 spawns_unit）
     "hp_regen",
     "hp_regen_per_level",
     "mana_regen",
@@ -828,6 +828,7 @@ class Rules(_Definitions):
         "build_mode",  # 工人施工模式：assisted / place_and_leave / sacrifice
         "ground_form",  # 飞行建筑落地后的地面形态（如 flying_barracks → barracks）
         "requires_deposit",  # 必须建在指定矿床类型上（如气矿 geyser）
+        "spawns_unit",  # 自动生成单位类型（如 larva）；与 larva_cap / larva_spawn_time 配合
         "summon_requires_build_field",  # 召唤技能：目标格需有指定建造场（如 creep）
         "bridge_terrain",  # 建成后将该格变为指定桥梁地形（如 big_bridge）
     }
@@ -1229,7 +1230,7 @@ class Rules(_Definitions):
         "requires_build_field_on_square",
         "summon_requires_marked_field",
         "morph_as_train",  # can_upgrade_to / can_change_to 均按目标单位训练成本/时间计费
-        "larva_cap",  # 主巢：该格最多同时存在的幼虫数
+        "larva_cap",  # 单位生成点：同格已生成单位上限（配合 spawns_unit）
         "loses_power_without_field",
         "is_addon",
         "addon_max",
@@ -1246,6 +1247,9 @@ class Rules(_Definitions):
         "xp",
         "production_time",
         "production_qty",
+        "depleted_production_qty",  # 萃取建筑：矿脉耗尽后的每周期产量（0=停止）
+        "deposit_volume",  # 矿床默认储量（地图写 qty 1 时用作萃取源储量）
+        "is_an_extractor",  # 1=建成时吞并矿床储量，生产时扣减，耗尽后用 depleted_production_qty
         "level",
         "max_level",  # 英雄等级上限；与 xp_threshold_growth 配合，加载时展开为 xp_thresholds
         "level_up_heal_full",  # 1 = 升级后生命/法力回满（默认 0：仅加上限增量）

@@ -1382,16 +1382,38 @@ Hatchery: ``provides_build_field creep`` + ``build_field_radius_m 12`` + ``build
 
 UI: ``def build_field_\<name\>`` + ``title \<tts_id\>`` in ``ui/style.txt``; optional ambient ``noise``.
 
-Deposits & gas (``requires_deposit``)
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Deposits & gas (``requires_deposit`` / ``is_an_extractor``)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 | Attribute | Role |
 | --- | --- |
 | ``requires_deposit \<type\>`` | Must build on a map deposit (e.g. ``geyser``); deposit is removed on completion |
 | ``is_buildable_anywhere 0`` | With ``requires_deposit``, blocks building on building land |
+| ``is_an_extractor 1`` | On completion, copy deposit reserve onto the building as ``source_qty``; each production cycle debits it |
+| ``deposit_volume N`` | Default reserve on the deposit type when the map uses marker qty ``1`` |
+| ``depleted_production_qty N`` | Per-cycle yield after ``source_qty`` hits 0 (``0`` = stop; StarCraft gas uses ``2``) |
 
-Gas template ``sc_gas_building`` uses ``auto_production`` + ``is_gather`` + ``production_time`` / ``production_qty``.
+Gas template ``sc_gas_building`` uses ``is_an_extractor`` + ``auto_production`` + ``is_gather`` + ``production_time`` / ``production_qty`` / ``depleted_production_qty``.
 Workers need ``can_gather assimilator`` (building type), not ``geyser`` (deposit).
+Resource type is ``production_type`` / ``resource_type`` (no separate ``resource_extracted_type`` keyword).
+
+Unit spawn hosts (``spawns_unit``)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Any building can auto-spawn units (Zerg Hatchery → larva is just one use)::
+
+    spawns_unit larva
+    larva_cap 3
+    larva_spawn_time 15
+
+| Attribute | Role |
+| --- | --- |
+| ``spawns_unit \<type\>`` | Auto-spawn this unit type on the same square |
+| ``larva_cap N`` | Max owned units of that type on the square |
+| ``larva_spawn_time N`` | Seconds between spawns |
+| ``morph_as_train 1`` | Morph uses the target unit's train cost/time (larva → Zerg units) |
+
+On completion the host fills up to ``larva_cap``, then tops up on the interval. A ``time_cost`` percent buff on the spawn host (e.g. Queen inject) speeds morphs of units it spawns. ``larva_cap`` alone (no ``spawns_unit``) still defaults to spawning ``larva`` for compatibility.
 
 Worker build modes
 >>>>>>>>>>>>>>>>>>
