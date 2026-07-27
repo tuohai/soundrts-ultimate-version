@@ -930,7 +930,7 @@
 5066	chacun pour soi
 5067	deux équipes
 5338	pas assez d'espace
-5750	un contre plusieurs
+5750	langue
 5068	eau
 5069	sans eau
 5070	lac

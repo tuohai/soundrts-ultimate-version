@@ -930,7 +930,7 @@
 5066	todos contra todos
 5067	duas equipes
 5338	espaço insuficiente
-5750	um contra muitos
+5750	linguagem
 5068	água
 5069	sem água
 5070	lago
