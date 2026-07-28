@@ -1,0 +1,20 @@
+# Crowdin project configuration for the SoundRTS translation catalog.
+# See tools/i18n/README.md for the full workflow (extract -> Crowdin -> build).
+#
+# This only prepares the file mapping. Actually creating/configuring the
+# Crowdin project itself (project id, API token, and possibly a custom
+# language mapping if a code below doesn't match Crowdin's own locale ids)
+# is left to whoever sets up the Crowdin integration.
+
+files:
+  - source: /i18n/tts.pot
+    translation: /i18n/tts-%locale%.po
+    type: gettext
+
+# Crowdin's built-in locale codes mostly match the ones already used under
+# res/ui-<lang>, but double-check these against your Crowdin project's
+# language list before the first sync (Crowdin defaults to "zh-CN" for
+# Chinese, for example, while this repo uses "zh").
+languages_mapping:
+  locale:
+    zh: zh
