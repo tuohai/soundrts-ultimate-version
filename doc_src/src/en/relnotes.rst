@@ -25,7 +25,8 @@ Release notes
 
 - **Issue**: several UI languages lagged behind English ``tts.txt`` (about 27 newer ids such as impassable ground/air, threat attributes, victory countdown, accessibility voice, system default language), and some entries were wrong or conflated (e.g. Italian footman as farmhand, stealth as invisible, rally as reorganize; Spanish/Portuguese stealth as “stolen”; German rally as “you command”; population vs food sharing one word; speech rate colliding with unit speed; long voice-library help left in English).
 - **Fix**: fill missing ids for ``ui-it``, ``ui-fr``, ``ui-es``, ``ui-de``, ``ui-pt-BR``, ``ui-ru``, ``ui-pl``, ``ui-cs``, ``ui-sk``, ``ui-be``, ``ui-vi`` (Chinese was already complete); correct clear mistranslations across those packs; translate leftover English voice-library / update help strings where they were still untranslated.
-- **Files**: ``res/ui-*/tts.txt`` (and related campaign/map overlays unchanged unless already covered).
+- **i18n sync**: ran ``python tools/i18n/extract_pot.py`` so ``i18n/tts.pot`` and each ``i18n/tts-*.po`` match ``res/ui-*/tts.txt``; running ``build_tts.py`` afterwards will not wipe these updates.
+- **Files**: ``res/ui-*/tts.txt``, ``i18n/tts.pot``, ``i18n/tts-*.po``.
 
 
 1.4.6.5

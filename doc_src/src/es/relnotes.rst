@@ -24,7 +24,8 @@ Notas de la versión
 
 - Varios idiomas iban detrás del ``tts.txt`` inglés (unas 27 claves nuevas: terreno/aire intransitables, amenaza, cuenta regresiva de victoria, voz de accesibilidad, idioma predeterminado del sistema, etc.), con errores o confusiones (p. ej. italiano: soldado raso como peón, sigilo = invisible, reunión = reorganizar; es/pt: sigilo como «robado»; alemán: reunión como «usted comanda»; población vs comida; velocidad del habla = velocidad de unidad; ayuda larga de bibliotecas de voz aún en inglés).
 - Se completaron las claves faltantes en ``ui-it``, ``ui-fr``, ``ui-es``, ``ui-de``, ``ui-pt-BR``, ``ui-ru``, ``ui-pl``, ``ui-cs``, ``ui-sk``, ``ui-be``, ``ui-vi`` (el chino ya estaba completo); se corrigieron errores claros; se tradujo la ayuda de voz/actualización que seguía en inglés.
-- **Archivos**: ``res/ui-*/tts.txt``.
+- **Alineación i18n**: se ejecutó ``python tools/i18n/extract_pot.py`` para que ``i18n/tts.pot`` y cada ``i18n/tts-*.po`` coincidan con ``res/ui-*/tts.txt``; volver a ejecutar ``build_tts.py`` no borrará estas actualizaciones.
+- **Archivos**: ``res/ui-*/tts.txt``, ``i18n/tts.pot``, ``i18n/tts-*.po``.
 
 
 1.4.6.5
