@@ -1,3 +1,7 @@
+; coding: utf-8
+; Portuguese (Brazil) shortcut overrides for localized unit/building/ability names.
+; Loaded as a patch on top of res/ui/style.txt (do not copy the full English style here).
+
 def peasant
 shortcut o
 
@@ -7,8 +11,14 @@ shortcut s
 def archer
 shortcut a
 
+def darkarcher
+shortcut o
+
+def repeating_crossbowman
+shortcut b
+
 def knight
-shortcut  c
+shortcut c
 
 def catapult
 shortcut c
@@ -49,6 +59,9 @@ shortcut s
 def farm
 shortcut f
 
+def house
+shortcut c
+
 def barracks
 shortcut q
 
@@ -79,8 +92,77 @@ shortcut c
 def scouttower
 shortcut n
 
+def wonder
+shortcut m
+
+def gold_house
+shortcut o
+
+def pickup
+shortcut k
+
+def drop
+shortcut d
+
+def give
+shortcut g
+
+def patrol
+shortcut p
+
+def switch_weapon
+shortcut x
+
+def start_produce
+shortcut p
+
+def auto_produce
+shortcut a
+
+def manual_produce
+shortcut m
+
+def start_automatic_cultivate
+shortcut c
+
+def start_manual_cultivate
+shortcut v
+
+def stop_produce
+shortcut s
+
+def stop_cultivate
+shortcut c
+
+def auto_explore
+shortcut e
+
+def a_teleportation
+shortcut t
+
+def a_recall
+shortcut r
+
+def a_holy_vision
+shortcut s
+
+def a_conversion
+shortcut c
+
+def a_summon_dragon
+shortcut i
+
 def a_deadly_fog
 shortcut m
 
 def a_raise_dead
 shortcut r
+
+def a_resurrection
+shortcut r
+
+def a_meteors
+shortcut m
+
+def a_exorcism
+shortcut e
