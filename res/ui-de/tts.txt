@@ -59,7 +59,7 @@
 122	Aue
 123	rekrutiere
 124	fertig!
-125	Sie befehligen
+125	Sammelpunkt
 126	abgeschlossen
 127	abbrechen von
 128	bauen
@@ -67,7 +67,7 @@
 130	Einheiten
 131	Gold
 132	Holz
-133	Nahrung
+133	Bevölkerung
 134	enthält
 135	nicht genügend
 136	dasselbe !
@@ -567,7 +567,7 @@
 4502	Alle
 4503	Gebäude
 4504	Einheiten
-4505	Elemente
+4505	statische Objekte
 4506	Alle Typen
 4507	Verstärkungen
 4508	wechseln zu
@@ -1447,41 +1447,68 @@
 4654	Goldminengebäude
 4662	Ebene
 4663	offenes Gelände
+4979	Boden ist unpassierbar
+5700	Luft ist unpassierbar
+5701	kann nicht passieren
+5702	Bedrohung
+5703	Bedrohungsmultiplikator
+5704	Bedrohung gegen
+5705	Bedrohungsmultiplikator gegen
 5710	Lautstärke
 5711	Tonhöhe
 5712	Sprechtempo
 5713	Stimme
+5720	s Sieg-Countdown gestartet. Sieg in
+5721	s Siegesgebäude zerstört. Countdown abgebrochen
+5722	s verbleibender Sieg-Countdown
+5723	Wunder
+5730	beliebig
+5731	Gebäude von
+5732	gehört zum Zeitalter
+5733	Platz
+5734	Feldbreite
+5735	Höhe
+5736	Deckung gegen
+5737	Ausweichen gegen
+5738	Geländeinfo des Feldes
+5739	Geländedeckung
+5740	Barrierefreie Stimme
+5741	Barrierefreie Stimme ist jetzt an
+5742	Barrierefreie Stimme ist jetzt aus
+5743	Barrierefreie Stimme umschalten
+5751	Systemstandard
+5752	aktuell
 5760	Sprachbibliotheken
 5761	primaere Sprachbibliothek
 5762	sekundaere Sprachbibliothek
 5763	sekundaere Stimme ein- oder ausschalten
 5764	sekundaere Stimme ist aktiviert
-5765	The primary voice library is used for menus and player actions outside matches, and for production and economy feedback in matches. If a screen reader such as Zhengdu or NVDA is detected, the screen reader takes over the primary voice role to avoid fighting the primary library.
-5766	Prefer a screen reader as the primary voice when possible, so F9 through F12 need not be used for the primary library. Hotkeys in this game are very dense and nearly saturated, so save keys when you can. The secondary library can still be adjusted with Shift plus F9 through F12.
-5767	The secondary voice library is used for passive battlefield events in matches, such as casualties and discovering enemies.
-5768	Left Alt skips or interrupts the primary voice library. Right Alt skips or interrupts the secondary voice library. In-match actions do not interrupt the secondary library.
-5769	When secondary voice is disabled, either Alt key can skip the current utterance.
-5770	You can enable or disable secondary voice in this menu. When disabled, the primary voice handles all speech, same as single-channel mode. When enabled, primary and secondary roles are restored.
-5771	In any menu, press F3 to toggle secondary voice. This does nothing during a match.
-5772	In any menu, press F4 to toggle accessibility voice. When off, TTS is silenced so sighted players can use the display. Press F4 again to turn it back on. During a match, F4 remains the help screen.
-5773	In voice library settings, use up and down arrows to select a parameter, and left and right arrows to adjust it.
-5774	In-match hotkeys: F9 changes the sound card, F10 changes the parameter type, F11 and F12 adjust the current parameter.
-5775	Shift plus F9 through F12 adjust the secondary library. Right Shift plus C copies the latest secondary utterance. Right Shift plus B appends the secondary utterance to the clipboard. Left Shift plus C and Left Shift plus B are commented out by default in global_bindings.txt; remove the leading semicolon to enable them.
+5765	Die primäre Sprachbibliothek wird für Menüs und Spieleraktionen außerhalb von Partien sowie für Produktion und Wirtschaft in Partien genutzt. Wird ein Screenreader wie Zhengdu oder NVDA erkannt, übernimmt er die primäre Stimme, um Konflikte zu vermeiden.
+5766	Bevorzuge nach Möglichkeit einen Screenreader als primäre Stimme, damit F9–F12 nicht für die Primärbibliothek nötig sind. Die Hotkeys sind sehr dicht; die Sekundärbibliothek lässt sich weiter mit Umschalt plus F9–F12 einstellen.
+5767	Die sekundäre Sprachbibliothek wird für passive Schlachtereignisse in Partien genutzt, etwa Verluste und entdeckte Feinde.
+5768	Linke Alt-Taste überspringt oder unterbricht die Primärbibliothek. Rechte Alt-Taste die Sekundärbibliothek. Aktionen in der Partie unterbrechen die Sekundärbibliothek nicht.
+5769	Ist die Sekundärstimme deaktiviert, können beide Alt-Tasten die aktuelle Ansage überspringen.
+5770	In diesem Menü kannst du die Sekundärstimme ein- oder ausschalten. Ausgeschaltet übernimmt die Primärstimme alles wie im Einzelkanalmodus. Eingeschaltet werden die Rollen wiederhergestellt.
+5771	In jedem Menü schaltet F3 die Sekundärstimme um. In einer Partie ohne Wirkung.
+5772	In jedem Menü schaltet F4 die Barrierefreie Stimme um. Ausgeschaltet ist TTS stumm für sehende Spieler. Erneut F4 zum Einschalten. In der Partie bleibt F4 die Hilfe.
+5773	In den Sprachbibliotheks-Einstellungen: Hoch/Runter wählt einen Parameter, Links/Rechts stellt ihn ein.
+5774	Hotkeys in der Partie: F9 wechselt die Soundkarte, F10 den Parametertyp, F11 und F12 stellen den aktuellen Parameter ein.
+5775	Umschalt plus F9–F12 stellt die Sekundärbibliothek ein. Rechts-Umschalt plus C kopiert die letzte sekundäre Ansage. Rechts-Umschalt plus B hängt sie in die Zwischenablage an. Links-Umschalt plus C und B sind standardmäßig in global_bindings.txt auskommentiert; Semikolon am Zeilenanfang entfernen zum Aktivieren.
 5776	sekundaere Stimme deaktiviert, primaere Stimme uebernimmt alles
 5777	Soundkarte
-5778	Use up and down arrows to select a parameter, left and right to adjust. Enter or Esc to go back.
-5779	skip primary voice library
-5780	skip secondary voice library
+5778	Hoch/Runter wählt einen Parameter, Links/Rechts stellt ein. Enter oder Esc zurück.
+5779	primäre Sprachbibliothek überspringen
+5780	sekundäre Sprachbibliothek überspringen
 5781	Sprachinstallationsordner oeffnen
-5782	import Apple voice pack into this game
-5783	press Enter to update, Esc to cancel
-5784	read the update notes? Enter to read, Esc to skip
-5785	press Enter to continue updating
-5786	downloading update
-5787	downloaded
-5788	download complete, restarting to install the update
-5789	update failed, still using the current version
-5790	opening download page
+5782	Apple-StimmPaket in dieses Spiel importieren
+5783	Enter zum Aktualisieren, Esc zum Abbrechen
+5784	Update-Hinweise vorlesen? Enter zum Lesen, Esc zum Überspringen
+5785	Enter zum Fortsetzen der Aktualisierung
+5786	Update wird heruntergeladen
+5787	heruntergeladen
+5788	Download abgeschlossen, Neustart zur Installation
+5789	Update fehlgeschlagen, aktuelle Version bleibt aktiv
+5790	Download-Seite wird geöffnet
 5791	beim Start nach Updates suchen
 5792	ein
 5793	aus

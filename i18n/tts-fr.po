@@ -7721,7 +7721,7 @@ msgstr "bois"
 #: res/ui/tts.txt:133
 msgctxt "133"
 msgid "population"
-msgstr "rations"
+msgstr "population"
 
 #. CONTAINS
 #: res/ui/tts.txt:134
@@ -10347,7 +10347,7 @@ msgstr "unités"
 #: res/ui/tts.txt:4505
 msgctxt "4505"
 msgid "Static objects"
-msgstr "éléments"
+msgstr "objets statiques"
 
 #. ALL_TYPE_FILTER
 #: res/ui/tts.txt:4506
@@ -12140,7 +12140,7 @@ msgstr "inachevé, infranchissable"
 #: res/ui/tts.txt:4979
 msgctxt "4979"
 msgid "ground is impassable"
-msgstr ""
+msgstr "le sol est infranchissable"
 
 #. CURRENT_AGE: 当前时代
 #: res/ui/tts.txt:4980
@@ -12571,7 +12571,7 @@ msgstr "aléatoire"
 #: res/ui/tts.txt:5055
 msgctxt "5055"
 msgid "grasslands"
-msgstr "plaine"
+msgstr "prairies"
 
 #. RMG_MARSH: 沼泽
 #: res/ui/tts.txt:5056
@@ -15596,36 +15596,36 @@ msgstr "colline"
 #: res/ui/tts.txt:5700
 msgctxt "5700"
 msgid "air is impassable"
-msgstr ""
+msgstr "l'air est infranchissable"
 
 #: res/ui/tts.txt:5701
 msgctxt "5701"
 msgid "cannot pass"
-msgstr ""
+msgstr "ne peut pas passer"
 
 #. MENACE: 威胁
 #: res/ui/tts.txt:5702
 msgctxt "5702"
 msgid "threat"
-msgstr ""
+msgstr "menace"
 
 #. MENACE_MULT: 威胁倍率
 #: res/ui/tts.txt:5703
 msgctxt "5703"
 msgid "threat multiplier"
-msgstr ""
+msgstr "multiplicateur de menace"
 
 #. MENACE_VS: 对特定单位的威胁
 #: res/ui/tts.txt:5704
 msgctxt "5704"
 msgid "threat versus"
-msgstr ""
+msgstr "menace contre"
 
 #. MENACE_MULT_VS: 对特定单位的威胁倍率
 #: res/ui/tts.txt:5705
 msgctxt "5705"
 msgid "threat multiplier versus"
-msgstr ""
+msgstr "multiplicateur de menace contre"
 
 #. VOICE_LIB_VOLUME: 音量
 #: res/ui/tts.txt:5710
@@ -15655,108 +15655,108 @@ msgstr "voix"
 #: res/ui/tts.txt:5720
 msgctxt "5720"
 msgid "'s victory countdown started. Victory in"
-msgstr ""
+msgstr "compte à rebours de victoire démarré. Victoire dans"
 
 #. VICTORY_TIMER_CANCELLED
 #: res/ui/tts.txt:5721
 msgctxt "5721"
 msgid "'s victory building destroyed. Countdown cancelled"
-msgstr ""
+msgstr "bâtiment de victoire détruit. Compte à rebours annulé"
 
 #. VICTORY_TIMER_REMAINING
 #: res/ui/tts.txt:5722
 msgctxt "5722"
 msgid "'s victory countdown remaining"
-msgstr ""
+msgstr "compte à rebours de victoire restant"
 
 #. WONDER: building title only
 #: res/ui/tts.txt:5723
 msgctxt "5723"
 msgid "wonder"
-msgstr ""
+msgstr "merveille"
 
 #: res/ui/tts.txt:5730
 msgctxt "5730"
 msgid "any"
-msgstr ""
+msgstr "n'importe quel"
 
 #: res/ui/tts.txt:5731
 msgctxt "5731"
 msgid "buildings of"
-msgstr ""
+msgstr "bâtiments de"
 
 #. BELONGS_TO_AGE
 #: res/ui/tts.txt:5732
 msgctxt "5732"
 msgid "belongs to age"
-msgstr ""
+msgstr "appartient à l'âge"
 
 #. SPACE
 #: res/ui/tts.txt:5733
 msgctxt "5733"
 msgid "space"
-msgstr ""
+msgstr "espace"
 
 #. SQUARE_WIDTH: square width / 格子大小
 #: res/ui/tts.txt:5734
 msgctxt "5734"
 msgid "square width"
-msgstr ""
+msgstr "largeur de case"
 
 #. HEIGHT: height / 高度（高地等）
 #: res/ui/tts.txt:5735
 msgctxt "5735"
 msgid "height"
-msgstr ""
+msgstr "hauteur"
 
 #. COVER_VS: cover_vs
 #: res/ui/tts.txt:5736
 msgctxt "5736"
 msgid "cover_vs"
-msgstr ""
+msgstr "couverture contre"
 
 #. DODGE_VS: dodge_vs
 #: res/ui/tts.txt:5737
 msgctxt "5737"
 msgid "dodge_vs"
-msgstr ""
+msgstr "esquive contre"
 
 #. HOTKEY_SAY_SQUARE_INFO: 方格地形信息
 #: res/ui/tts.txt:5738
 msgctxt "5738"
 msgid "square terrain info"
-msgstr ""
+msgstr "info terrain de case"
 
 #. TERRAIN_COVER: terrain cover / 地形掩护
 #: res/ui/tts.txt:5739
 msgctxt "5739"
 msgid "terrain cover"
-msgstr ""
+msgstr "couverture du terrain"
 
 #. ACCESSIBILITY_VOICE
 #: res/ui/tts.txt:5740
 msgctxt "5740"
 msgid "accessibility voice"
-msgstr ""
+msgstr "voix d'accessibilité"
 
 #. ACCESSIBILITY_VOICE_ON
 #: res/ui/tts.txt:5741
 msgctxt "5741"
 msgid "accessibility voice is now on"
-msgstr ""
+msgstr "voix d'accessibilité maintenant activée"
 
 #. ACCESSIBILITY_VOICE_OFF
 #: res/ui/tts.txt:5742
 msgctxt "5742"
 msgid "accessibility voice is now off"
-msgstr ""
+msgstr "voix d'accessibilité maintenant désactivée"
 
 #. ACCESSIBILITY_VOICE_TOGGLE
 #. HOTKEY_TOGGLE_SPEECH: 开关无障碍语音（F4）
 #: res/ui/tts.txt:5743
 msgctxt "5743"
 msgid "toggle accessibility voice"
-msgstr ""
+msgstr "activer/désactiver la voix d'accessibilité"
 
 #. LANGUAGE_MENU
 #. RMG_ONE_VS_MANY: 以一敌多（玩家独自对抗结盟的其余玩家）
@@ -15769,13 +15769,13 @@ msgstr "langue"
 #: res/ui/tts.txt:5751
 msgctxt "5751"
 msgid "system default"
-msgstr ""
+msgstr "défaut système"
 
 #. LANGUAGE_CURRENT
 #: res/ui/tts.txt:5752
 msgctxt "5752"
 msgid "current"
-msgstr ""
+msgstr "actuel"
 
 #. VOICE_LIBS_MENU
 #: res/ui/tts.txt:5760
@@ -15811,67 +15811,67 @@ msgstr "voix secondaire activee"
 #: res/ui/tts.txt:5765
 msgctxt "5765"
 msgid "The primary voice library is used for menus and player actions outside matches, and for production and economy feedback in matches. If a screen reader such as Zhengdu or NVDA is detected, the screen reader takes over the primary voice role to avoid fighting the primary library."
-msgstr "The primary voice library is used for menus and player actions outside matches, and for production and economy feedback in matches. If a screen reader such as Zhengdu or NVDA is detected, the screen reader takes over the primary voice role to avoid fighting the primary library."
+msgstr "La bibliothèque vocale principale sert aux menus et actions hors partie, et à la production et l'économie en partie. Si un lecteur d'écran comme Zhengdu ou NVDA est détecté, il prend le rôle de la voix principale pour éviter les conflits."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5766
 msgctxt "5766"
 msgid "Prefer a screen reader as the primary voice when possible, so F9 through F12 need not be used for the primary library. Hotkeys in this game are very dense and nearly saturated, so save keys when you can. The secondary library can still be adjusted with Shift plus F9 through F12."
-msgstr "Prefer a screen reader as the primary voice when possible, so F9 through F12 need not be used for the primary library. Hotkeys in this game are very dense and nearly saturated, so save keys when you can. The secondary library can still be adjusted with Shift plus F9 through F12."
+msgstr "Préférez un lecteur d'écran comme voix principale si possible, afin de ne pas utiliser F9–F12 pour la bibliothèque principale. Les raccourcis sont très denses ; la bibliothèque secondaire se règle encore avec Maj plus F9–F12."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5767
 msgctxt "5767"
 msgid "The secondary voice library is used for passive battlefield events in matches, such as casualties and discovering enemies."
-msgstr "The secondary voice library is used for passive battlefield events in matches, such as casualties and discovering enemies."
+msgstr "La bibliothèque vocale secondaire sert aux événements passifs de bataille en partie, comme les pertes et la découverte d'ennemis."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5768
 msgctxt "5768"
 msgid "Left Alt skips or interrupts the primary voice library. Right Alt skips or interrupts the secondary voice library. In-match actions do not interrupt the secondary library."
-msgstr "Left Alt skips or interrupts the primary voice library. Right Alt skips or interrupts the secondary voice library. In-match actions do not interrupt the secondary library."
+msgstr "Alt gauche saute ou interrompt la bibliothèque principale. Alt droit saute ou interrompt la secondaire. Les actions en partie n'interrompent pas la bibliothèque secondaire."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5769
 msgctxt "5769"
 msgid "When secondary voice is disabled, either Alt key can skip the current utterance."
-msgstr "When secondary voice is disabled, either Alt key can skip the current utterance."
+msgstr "Quand la voix secondaire est désactivée, les deux touches Alt peuvent sauter l'annonce en cours."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5770
 msgctxt "5770"
 msgid "You can enable or disable secondary voice in this menu. When disabled, the primary voice handles all speech, same as single-channel mode. When enabled, primary and secondary roles are restored."
-msgstr "You can enable or disable secondary voice in this menu. When disabled, the primary voice handles all speech, same as single-channel mode. When enabled, primary and secondary roles are restored."
+msgstr "Dans ce menu vous pouvez activer ou désactiver la voix secondaire. Désactivée, la voix principale gère tout, comme en mode canal unique. Activée, les rôles principal et secondaire sont rétablis."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5771
 msgctxt "5771"
 msgid "In any menu, press F3 to toggle secondary voice. This does nothing during a match."
-msgstr "In any menu, press F3 to toggle secondary voice. This does nothing during a match."
+msgstr "Dans n'importe quel menu, appuyez sur F3 pour activer/désactiver la voix secondaire. Sans effet en partie."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5772
 msgctxt "5772"
 msgid "In any menu, press F4 to toggle accessibility voice. When off, TTS is silenced so sighted players can use the display. Press F4 again to turn it back on. During a match, F4 remains the help screen."
-msgstr "In any menu, press F4 to toggle accessibility voice. When off, TTS is silenced so sighted players can use the display. Press F4 again to turn it back on. During a match, F4 remains the help screen."
+msgstr "Dans n'importe quel menu, appuyez sur F4 pour activer/désactiver la voix d'accessibilité. Désactivée, le TTS est silencieux pour les joueurs voyants. F4 à nouveau pour la réactiver. En partie, F4 reste l'aide."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5773
 msgctxt "5773"
 msgid "In voice library settings, use up and down arrows to select a parameter, and left and right arrows to adjust it."
-msgstr "In voice library settings, use up and down arrows to select a parameter, and left and right arrows to adjust it."
+msgstr "Dans les réglages de bibliothèque vocale, haut/bas pour choisir un paramètre, gauche/droite pour l'ajuster."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5774
 msgctxt "5774"
 msgid "In-match hotkeys: F9 changes the sound card, F10 changes the parameter type, F11 and F12 adjust the current parameter."
-msgstr "In-match hotkeys: F9 changes the sound card, F10 changes the parameter type, F11 and F12 adjust the current parameter."
+msgstr "Raccourcis en partie : F9 change la carte son, F10 le type de paramètre, F11 et F12 ajustent le paramètre courant."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5775
 msgctxt "5775"
 msgid "Shift plus F9 through F12 adjust the secondary library. Right Shift plus C copies the latest secondary utterance. Right Shift plus B appends the secondary utterance to the clipboard. Left Shift plus C and Left Shift plus B are commented out by default in global_bindings.txt; remove the leading semicolon to enable them."
-msgstr "Shift plus F9 through F12 adjust the secondary library. Right Shift plus C copies the latest secondary utterance. Right Shift plus B appends the secondary utterance to the clipboard. Left Shift plus C and Left Shift plus B are commented out by default in global_bindings.txt; remove the leading semicolon to enable them."
+msgstr "Maj plus F9–F12 règle la bibliothèque secondaire. Maj droit plus C copie la dernière annonce secondaire. Maj droit plus B l'ajoute au presse-papiers. Maj gauche plus C et B sont commentés par défaut dans global_bindings.txt ; retirez le point-virgule initial pour les activer."
 
 #. VOICE_LIB_SECONDARY_OFF
 #: res/ui/tts.txt:5776
@@ -15889,19 +15889,19 @@ msgstr "carte son"
 #: res/ui/tts.txt:5778
 msgctxt "5778"
 msgid "Use up and down arrows to select a parameter, left and right to adjust. Enter or Esc to go back."
-msgstr "Use up and down arrows to select a parameter, left and right to adjust. Enter or Esc to go back."
+msgstr "Haut/bas pour choisir un paramètre, gauche/droite pour ajuster. Entrée ou Échap pour revenir."
 
 #. HOTKEY_HISTORY_STOP_PRIMARY
 #: res/ui/tts.txt:5779
 msgctxt "5779"
 msgid "skip primary voice library"
-msgstr "skip primary voice library"
+msgstr "sauter la bibliothèque vocale principale"
 
 #. HOTKEY_HISTORY_STOP_SECONDARY
 #: res/ui/tts.txt:5780
 msgctxt "5780"
 msgid "skip secondary voice library"
-msgstr "skip secondary voice library"
+msgstr "sauter la bibliothèque vocale secondaire"
 
 #. OPEN_VOICES_FOLDER
 #: res/ui/tts.txt:5781
@@ -15913,55 +15913,55 @@ msgstr "ouvrir le dossier d installation des voix"
 #: res/ui/tts.txt:5782
 msgctxt "5782"
 msgid "import Apple voice pack into this game"
-msgstr "import Apple voice pack into this game"
+msgstr "importer un pack de voix Apple dans ce jeu"
 
 #. UPDATE_PROMPT_DETAIL
 #: res/ui/tts.txt:5783
 msgctxt "5783"
 msgid "press Enter to update, Esc to cancel"
-msgstr "press Enter to update, Esc to cancel"
+msgstr "appuyez sur Entrée pour mettre à jour, Échap pour annuler"
 
 #. UPDATE_CHANGELOG_PROMPT
 #: res/ui/tts.txt:5784
 msgctxt "5784"
 msgid "read the update notes? Enter to read, Esc to skip"
-msgstr "read the update notes? Enter to read, Esc to skip"
+msgstr "lire les notes de mise à jour ? Entrée pour lire, Échap pour passer"
 
 #. UPDATE_CHANGELOG_DONE
 #: res/ui/tts.txt:5785
 msgctxt "5785"
 msgid "press Enter to continue updating"
-msgstr "press Enter to continue updating"
+msgstr "appuyez sur Entrée pour continuer la mise à jour"
 
 #. UPDATE_DOWNLOADING
 #: res/ui/tts.txt:5786
 msgctxt "5786"
 msgid "downloading update"
-msgstr "downloading update"
+msgstr "téléchargement de la mise à jour"
 
 #. UPDATE_DOWNLOAD_PROGRESS
 #: res/ui/tts.txt:5787
 msgctxt "5787"
 msgid "downloaded"
-msgstr "downloaded"
+msgstr "téléchargé"
 
 #. UPDATE_APPLYING
 #: res/ui/tts.txt:5788
 msgctxt "5788"
 msgid "download complete, restarting to install the update"
-msgstr "download complete, restarting to install the update"
+msgstr "téléchargement terminé, redémarrage pour installer la mise à jour"
 
 #. UPDATE_FAILED
 #: res/ui/tts.txt:5789
 msgctxt "5789"
 msgid "update failed, still using the current version"
-msgstr "update failed, still using the current version"
+msgstr "mise à jour échouée, version actuelle conservée"
 
 #. UPDATE_OPENING_DOWNLOAD_PAGE
 #: res/ui/tts.txt:5790
 msgctxt "5790"
 msgid "opening download page"
-msgstr "opening download page"
+msgstr "ouverture de la page de téléchargement"
 
 #. CHECK_UPDATES_ON_START
 #: res/ui/tts.txt:5791

@@ -7680,7 +7680,7 @@ msgstr "гатовы!"
 #: res/ui/tts.txt:125
 msgctxt "125"
 msgid "rally"
-msgstr "накіроўваць"
+msgstr "збор"
 
 #: res/ui/tts.txt:126
 msgctxt "126"
@@ -7721,7 +7721,7 @@ msgstr "дрэва"
 #: res/ui/tts.txt:133
 msgctxt "133"
 msgid "population"
-msgstr "ежы"
+msgstr "насельніцтва"
 
 #. CONTAINS
 #: res/ui/tts.txt:134
@@ -9416,7 +9416,7 @@ msgstr "дэтэктар"
 #: res/ui/tts.txt:4291
 msgctxt "4291"
 msgid "cloaker"
-msgstr "заступнік"
+msgstr "маскіроўшчык"
 
 #: res/ui/tts.txt:4292
 msgctxt "4292"
@@ -10347,7 +10347,7 @@ msgstr "юніты"
 #: res/ui/tts.txt:4505
 msgctxt "4505"
 msgid "Static objects"
-msgstr "элементы"
+msgstr "статычныя аб'екты"
 
 #. ALL_TYPE_FILTER
 #: res/ui/tts.txt:4506
@@ -12140,7 +12140,7 @@ msgstr "незавершана, непраходна"
 #: res/ui/tts.txt:4979
 msgctxt "4979"
 msgid "ground is impassable"
-msgstr ""
+msgstr "зямля непраходная"
 
 #. CURRENT_AGE: 当前时代
 #: res/ui/tts.txt:4980
@@ -12571,7 +12571,7 @@ msgstr "выпадковая"
 #: res/ui/tts.txt:5055
 msgctxt "5055"
 msgid "grasslands"
-msgstr "раўніна"
+msgstr "лугі"
 
 #. RMG_MARSH: 沼泽
 #: res/ui/tts.txt:5056
@@ -15596,36 +15596,36 @@ msgstr "узгорак"
 #: res/ui/tts.txt:5700
 msgctxt "5700"
 msgid "air is impassable"
-msgstr ""
+msgstr "паветра непраходнае"
 
 #: res/ui/tts.txt:5701
 msgctxt "5701"
 msgid "cannot pass"
-msgstr ""
+msgstr "нельга прайсці"
 
 #. MENACE: 威胁
 #: res/ui/tts.txt:5702
 msgctxt "5702"
 msgid "threat"
-msgstr ""
+msgstr "пагроза"
 
 #. MENACE_MULT: 威胁倍率
 #: res/ui/tts.txt:5703
 msgctxt "5703"
 msgid "threat multiplier"
-msgstr ""
+msgstr "множнік пагрозы"
 
 #. MENACE_VS: 对特定单位的威胁
 #: res/ui/tts.txt:5704
 msgctxt "5704"
 msgid "threat versus"
-msgstr ""
+msgstr "пагроза супраць"
 
 #. MENACE_MULT_VS: 对特定单位的威胁倍率
 #: res/ui/tts.txt:5705
 msgctxt "5705"
 msgid "threat multiplier versus"
-msgstr ""
+msgstr "множнік пагрозы супраць"
 
 #. VOICE_LIB_VOLUME: 音量
 #: res/ui/tts.txt:5710
@@ -15655,108 +15655,108 @@ msgstr "голас"
 #: res/ui/tts.txt:5720
 msgctxt "5720"
 msgid "'s victory countdown started. Victory in"
-msgstr ""
+msgstr "адваротны адлік перамогі пачаты. Перамога праз"
 
 #. VICTORY_TIMER_CANCELLED
 #: res/ui/tts.txt:5721
 msgctxt "5721"
 msgid "'s victory building destroyed. Countdown cancelled"
-msgstr ""
+msgstr "будынак перамогі знішчаны. Адлік скасаваны"
 
 #. VICTORY_TIMER_REMAINING
 #: res/ui/tts.txt:5722
 msgctxt "5722"
 msgid "'s victory countdown remaining"
-msgstr ""
+msgstr "застаўшыся адлік перамогі"
 
 #. WONDER: building title only
 #: res/ui/tts.txt:5723
 msgctxt "5723"
 msgid "wonder"
-msgstr ""
+msgstr "цуд"
 
 #: res/ui/tts.txt:5730
 msgctxt "5730"
 msgid "any"
-msgstr ""
+msgstr "любы"
 
 #: res/ui/tts.txt:5731
 msgctxt "5731"
 msgid "buildings of"
-msgstr ""
+msgstr "будынкаў"
 
 #. BELONGS_TO_AGE
 #: res/ui/tts.txt:5732
 msgctxt "5732"
 msgid "belongs to age"
-msgstr ""
+msgstr "належыць эпосе"
 
 #. SPACE
 #: res/ui/tts.txt:5733
 msgctxt "5733"
 msgid "space"
-msgstr ""
+msgstr "месца"
 
 #. SQUARE_WIDTH: square width / 格子大小
 #: res/ui/tts.txt:5734
 msgctxt "5734"
 msgid "square width"
-msgstr ""
+msgstr "шырыня клеткі"
 
 #. HEIGHT: height / 高度（高地等）
 #: res/ui/tts.txt:5735
 msgctxt "5735"
 msgid "height"
-msgstr ""
+msgstr "вышыня"
 
 #. COVER_VS: cover_vs
 #: res/ui/tts.txt:5736
 msgctxt "5736"
 msgid "cover_vs"
-msgstr ""
+msgstr "укрыццё супраць"
 
 #. DODGE_VS: dodge_vs
 #: res/ui/tts.txt:5737
 msgctxt "5737"
 msgid "dodge_vs"
-msgstr ""
+msgstr "ухіленне супраць"
 
 #. HOTKEY_SAY_SQUARE_INFO: 方格地形信息
 #: res/ui/tts.txt:5738
 msgctxt "5738"
 msgid "square terrain info"
-msgstr ""
+msgstr "інфармацыя пра мясцовасць клеткі"
 
 #. TERRAIN_COVER: terrain cover / 地形掩护
 #: res/ui/tts.txt:5739
 msgctxt "5739"
 msgid "terrain cover"
-msgstr ""
+msgstr "укрыццё мясцовасці"
 
 #. ACCESSIBILITY_VOICE
 #: res/ui/tts.txt:5740
 msgctxt "5740"
 msgid "accessibility voice"
-msgstr ""
+msgstr "голас даступнасці"
 
 #. ACCESSIBILITY_VOICE_ON
 #: res/ui/tts.txt:5741
 msgctxt "5741"
 msgid "accessibility voice is now on"
-msgstr ""
+msgstr "голас даступнасці зараз уключаны"
 
 #. ACCESSIBILITY_VOICE_OFF
 #: res/ui/tts.txt:5742
 msgctxt "5742"
 msgid "accessibility voice is now off"
-msgstr ""
+msgstr "голас даступнасці зараз выключаны"
 
 #. ACCESSIBILITY_VOICE_TOGGLE
 #. HOTKEY_TOGGLE_SPEECH: 开关无障碍语音（F4）
 #: res/ui/tts.txt:5743
 msgctxt "5743"
 msgid "toggle accessibility voice"
-msgstr ""
+msgstr "пераключыць голас даступнасці"
 
 #. LANGUAGE_MENU
 #. RMG_ONE_VS_MANY: 以一敌多（玩家独自对抗结盟的其余玩家）
@@ -15769,13 +15769,13 @@ msgstr "адзін супраць многіх"
 #: res/ui/tts.txt:5751
 msgctxt "5751"
 msgid "system default"
-msgstr ""
+msgstr "сістэмны па змаўчанні"
 
 #. LANGUAGE_CURRENT
 #: res/ui/tts.txt:5752
 msgctxt "5752"
 msgid "current"
-msgstr ""
+msgstr "бягучы"
 
 #. VOICE_LIBS_MENU
 #: res/ui/tts.txt:5760
@@ -15811,73 +15811,73 @@ msgstr "secondary voice is enabled"
 #: res/ui/tts.txt:5765
 msgctxt "5765"
 msgid "The primary voice library is used for menus and player actions outside matches, and for production and economy feedback in matches. If a screen reader such as Zhengdu or NVDA is detected, the screen reader takes over the primary voice role to avoid fighting the primary library."
-msgstr "The primary voice library is used for menus and player actions outside matches, and for production and economy feedback in matches. If a screen reader such as Zhengdu or NVDA is detected, the screen reader takes over the primary voice role to avoid fighting the primary library."
+msgstr "Асноўная галасавая бібліятэка выкарыстоўваецца для меню і дзеянняў гульца па-за матчамі, а таксама для вытворчасці і эканомікі ў матчах. Калі выяўлены экранны дыктар (Zhengdu або NVDA), ён бярэ ролю асноўнага голасу, каб пазбегнуць канфліктаў."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5766
 msgctxt "5766"
 msgid "Prefer a screen reader as the primary voice when possible, so F9 through F12 need not be used for the primary library. Hotkeys in this game are very dense and nearly saturated, so save keys when you can. The secondary library can still be adjusted with Shift plus F9 through F12."
-msgstr "Prefer a screen reader as the primary voice when possible, so F9 through F12 need not be used for the primary library. Hotkeys in this game are very dense and nearly saturated, so save keys when you can. The secondary library can still be adjusted with Shift plus F9 through F12."
+msgstr "Па магчымасці аддавайце перавагу экраннаму дыктару як асноўнаму голасу, каб не займаць F9–F12 для асноўнай бібліятэкі. Гарачыя клавішы вельмі шчыльныя; другасную бібліятэку па-ранейшаму можна наладжваць Shift плюс F9–F12."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5767
 msgctxt "5767"
 msgid "The secondary voice library is used for passive battlefield events in matches, such as casualties and discovering enemies."
-msgstr "The secondary voice library is used for passive battlefield events in matches, such as casualties and discovering enemies."
+msgstr "Другасная галасавая бібліятэка выкарыстоўваецца для пасіўных баявых падзей у матчы, напрыклад страт і выяўлення ворагаў."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5768
 msgctxt "5768"
 msgid "Left Alt skips or interrupts the primary voice library. Right Alt skips or interrupts the secondary voice library. In-match actions do not interrupt the secondary library."
-msgstr "Left Alt skips or interrupts the primary voice library. Right Alt skips or interrupts the secondary voice library. In-match actions do not interrupt the secondary library."
+msgstr "Левы Alt прапускае або перарывае асноўную бібліятэку. Правы Alt — другасную. Дзеянні ў матчы не перарываюць другасную бібліятэку."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5769
 msgctxt "5769"
 msgid "When secondary voice is disabled, either Alt key can skip the current utterance."
-msgstr "When secondary voice is disabled, either Alt key can skip the current utterance."
+msgstr "Калі другасны голас адключаны, абедзве клавішы Alt могуць прапусціць бягучае абвяшчэнне."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5770
 msgctxt "5770"
 msgid "You can enable or disable secondary voice in this menu. When disabled, the primary voice handles all speech, same as single-channel mode. When enabled, primary and secondary roles are restored."
-msgstr "You can enable or disable secondary voice in this menu. When disabled, the primary voice handles all speech, same as single-channel mode. When enabled, primary and secondary roles are restored."
+msgstr "У гэтым меню можна ўключыць або адключыць другасны голас. Калі адключаны, асноўны голас вядзе ўсё, як у аднаканальным рэжыме. Калі ўключаны, ролі аднаўляюцца."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5771
 msgctxt "5771"
 msgid "In any menu, press F3 to toggle secondary voice. This does nothing during a match."
-msgstr "In any menu, press F3 to toggle secondary voice. This does nothing during a match."
+msgstr "У любым меню націсніце F3, каб пераключыць другасны голас. У матчы не дзейнічае."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5772
 msgctxt "5772"
 msgid "In any menu, press F4 to toggle accessibility voice. When off, TTS is silenced so sighted players can use the display. Press F4 again to turn it back on. During a match, F4 remains the help screen."
-msgstr "In any menu, press F4 to toggle accessibility voice. When off, TTS is silenced so sighted players can use the display. Press F4 again to turn it back on. During a match, F4 remains the help screen."
+msgstr "У любым меню націсніце F4, каб пераключыць голас даступнасці. Калі выключаны, TTS маўчыць для відзячых гульцоў. Зноў F4 — уключыць. У матчы F4 застаецца даведкай."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5773
 msgctxt "5773"
 msgid "In voice library settings, use up and down arrows to select a parameter, and left and right arrows to adjust it."
-msgstr "In voice library settings, use up and down arrows to select a parameter, and left and right arrows to adjust it."
+msgstr "У наладах галасавой бібліятэкі: уверх/уніз выбіраюць параметр, улева/ўправа змяняюць яго."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5774
 msgctxt "5774"
 msgid "In-match hotkeys: F9 changes the sound card, F10 changes the parameter type, F11 and F12 adjust the current parameter."
-msgstr "In-match hotkeys: F9 changes the sound card, F10 changes the parameter type, F11 and F12 adjust the current parameter."
+msgstr "Гарачыя клавішы ў матчы: F9 мяняе гукавую карту, F10 — тып параметра, F11 і F12 наладжваюць бягучы параметр."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5775
 msgctxt "5775"
 msgid "Shift plus F9 through F12 adjust the secondary library. Right Shift plus C copies the latest secondary utterance. Right Shift plus B appends the secondary utterance to the clipboard. Left Shift plus C and Left Shift plus B are commented out by default in global_bindings.txt; remove the leading semicolon to enable them."
-msgstr "Shift plus F9 through F12 adjust the secondary library. Right Shift plus C copies the latest secondary utterance. Right Shift plus B appends the secondary utterance to the clipboard. Left Shift plus C and Left Shift plus B are commented out by default in global_bindings.txt; remove the leading semicolon to enable them."
+msgstr "Shift плюс F9–F12 наладжвае другасную бібліятэку. Правы Shift плюс C капіюе апошняе другаснае абвяшчэнне. Правы Shift плюс B дадае яго ў буфер. Левы Shift плюс C і B па змаўчанні закаментаваныя ў global_bindings.txt; прыбярыце пачатковую кропку з коскай, каб уключыць."
 
 #. VOICE_LIB_SECONDARY_OFF
 #: res/ui/tts.txt:5776
 msgctxt "5776"
 msgid "secondary voice is disabled, primary voice handles all speech"
-msgstr "secondary voice is disabled, primary voice handles all speech"
+msgstr "другасны голас адключаны, асноўны голас вядзе ўсё"
 
 #. VOICE_LIB_DEVICE
 #: res/ui/tts.txt:5777
@@ -15889,19 +15889,19 @@ msgstr "sound card"
 #: res/ui/tts.txt:5778
 msgctxt "5778"
 msgid "Use up and down arrows to select a parameter, left and right to adjust. Enter or Esc to go back."
-msgstr "Use up and down arrows to select a parameter, left and right to adjust. Enter or Esc to go back."
+msgstr "Уверх/уніз выбіраюць параметр, улева/ўправа змяняюць. Enter або Esc — назад."
 
 #. HOTKEY_HISTORY_STOP_PRIMARY
 #: res/ui/tts.txt:5779
 msgctxt "5779"
 msgid "skip primary voice library"
-msgstr "skip primary voice library"
+msgstr "прапусціць асноўную галасавую бібліятэку"
 
 #. HOTKEY_HISTORY_STOP_SECONDARY
 #: res/ui/tts.txt:5780
 msgctxt "5780"
 msgid "skip secondary voice library"
-msgstr "skip secondary voice library"
+msgstr "прапусціць другасную галасавую бібліятэку"
 
 #. OPEN_VOICES_FOLDER
 #: res/ui/tts.txt:5781
@@ -15913,61 +15913,61 @@ msgstr "open voice install folder"
 #: res/ui/tts.txt:5782
 msgctxt "5782"
 msgid "import Apple voice pack into this game"
-msgstr "import Apple voice pack into this game"
+msgstr "імпартаваць пакет галасоў Apple у гэтую гульню"
 
 #. UPDATE_PROMPT_DETAIL
 #: res/ui/tts.txt:5783
 msgctxt "5783"
 msgid "press Enter to update, Esc to cancel"
-msgstr "press Enter to update, Esc to cancel"
+msgstr "націсніце Enter для абнаўлення, Esc для скасавання"
 
 #. UPDATE_CHANGELOG_PROMPT
 #: res/ui/tts.txt:5784
 msgctxt "5784"
 msgid "read the update notes? Enter to read, Esc to skip"
-msgstr "read the update notes? Enter to read, Esc to skip"
+msgstr "прачытаць нататкі аб абнаўленні? Enter — чытаць, Esc — прапусціць"
 
 #. UPDATE_CHANGELOG_DONE
 #: res/ui/tts.txt:5785
 msgctxt "5785"
 msgid "press Enter to continue updating"
-msgstr "press Enter to continue updating"
+msgstr "націсніце Enter, каб працягнуць абнаўленне"
 
 #. UPDATE_DOWNLOADING
 #: res/ui/tts.txt:5786
 msgctxt "5786"
 msgid "downloading update"
-msgstr "downloading update"
+msgstr "спампоўка абнаўлення"
 
 #. UPDATE_DOWNLOAD_PROGRESS
 #: res/ui/tts.txt:5787
 msgctxt "5787"
 msgid "downloaded"
-msgstr "downloaded"
+msgstr "спампавана"
 
 #. UPDATE_APPLYING
 #: res/ui/tts.txt:5788
 msgctxt "5788"
 msgid "download complete, restarting to install the update"
-msgstr "download complete, restarting to install the update"
+msgstr "спампоўка завершана, перазапуск для ўсталёўкі абнаўлення"
 
 #. UPDATE_FAILED
 #: res/ui/tts.txt:5789
 msgctxt "5789"
 msgid "update failed, still using the current version"
-msgstr "update failed, still using the current version"
+msgstr "абнаўленне не ўдалося, выкарыстоўваецца бягучая версія"
 
 #. UPDATE_OPENING_DOWNLOAD_PAGE
 #: res/ui/tts.txt:5790
 msgctxt "5790"
 msgid "opening download page"
-msgstr "opening download page"
+msgstr "адкрыццё старонкі спампоўкі"
 
 #. CHECK_UPDATES_ON_START
 #: res/ui/tts.txt:5791
 msgctxt "5791"
 msgid "check for updates when starting the game"
-msgstr "check for updates when starting the game"
+msgstr "правяраць абнаўленні пры запуску гульні"
 
 #. CHECK_UPDATES_ON
 #: res/ui/tts.txt:5792
@@ -16009,7 +16009,7 @@ msgstr "update check failed"
 #: res/ui/tts.txt:5798
 msgctxt "5798"
 msgid "launching the update window; the game will exit"
-msgstr "launching the update window; the game will exit"
+msgstr "адкрыццё вакна абнаўлення; гульня будзе закрыта"
 
 #: res/ui/tts.txt:59
 msgctxt "59"

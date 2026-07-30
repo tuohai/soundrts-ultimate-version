@@ -7721,7 +7721,7 @@ msgstr "dřeva"
 #: res/ui/tts.txt:133
 msgctxt "133"
 msgid "population"
-msgstr "jídla"
+msgstr "populace"
 
 #. CONTAINS
 #: res/ui/tts.txt:134
@@ -10347,7 +10347,7 @@ msgstr "jednotky"
 #: res/ui/tts.txt:4505
 msgctxt "4505"
 msgid "Static objects"
-msgstr "prvky"
+msgstr "statické objekty"
 
 #. ALL_TYPE_FILTER
 #: res/ui/tts.txt:4506
@@ -12140,7 +12140,7 @@ msgstr "nedokončené, neprůchodné"
 #: res/ui/tts.txt:4979
 msgctxt "4979"
 msgid "ground is impassable"
-msgstr ""
+msgstr "země je neprůchodná"
 
 #. CURRENT_AGE: 当前时代
 #: res/ui/tts.txt:4980
@@ -12571,7 +12571,7 @@ msgstr "náhodný"
 #: res/ui/tts.txt:5055
 msgctxt "5055"
 msgid "grasslands"
-msgstr "planina"
+msgstr "traviny"
 
 #. RMG_MARSH: 沼泽
 #: res/ui/tts.txt:5056
@@ -15596,36 +15596,36 @@ msgstr "kopec"
 #: res/ui/tts.txt:5700
 msgctxt "5700"
 msgid "air is impassable"
-msgstr ""
+msgstr "vzduch je neprůchodný"
 
 #: res/ui/tts.txt:5701
 msgctxt "5701"
 msgid "cannot pass"
-msgstr ""
+msgstr "nelze projít"
 
 #. MENACE: 威胁
 #: res/ui/tts.txt:5702
 msgctxt "5702"
 msgid "threat"
-msgstr ""
+msgstr "hrozba"
 
 #. MENACE_MULT: 威胁倍率
 #: res/ui/tts.txt:5703
 msgctxt "5703"
 msgid "threat multiplier"
-msgstr ""
+msgstr "násobič hrozby"
 
 #. MENACE_VS: 对特定单位的威胁
 #: res/ui/tts.txt:5704
 msgctxt "5704"
 msgid "threat versus"
-msgstr ""
+msgstr "hrozba proti"
 
 #. MENACE_MULT_VS: 对特定单位的威胁倍率
 #: res/ui/tts.txt:5705
 msgctxt "5705"
 msgid "threat multiplier versus"
-msgstr ""
+msgstr "násobič hrozby proti"
 
 #. VOICE_LIB_VOLUME: 音量
 #: res/ui/tts.txt:5710
@@ -15655,108 +15655,108 @@ msgstr "hlas"
 #: res/ui/tts.txt:5720
 msgctxt "5720"
 msgid "'s victory countdown started. Victory in"
-msgstr ""
+msgstr "odpočet vítězství spuštěn. Vítězství za"
 
 #. VICTORY_TIMER_CANCELLED
 #: res/ui/tts.txt:5721
 msgctxt "5721"
 msgid "'s victory building destroyed. Countdown cancelled"
-msgstr ""
+msgstr "vítězná budova zničena. Odpočet zrušen"
 
 #. VICTORY_TIMER_REMAINING
 #: res/ui/tts.txt:5722
 msgctxt "5722"
 msgid "'s victory countdown remaining"
-msgstr ""
+msgstr "zbývající odpočet vítězství"
 
 #. WONDER: building title only
 #: res/ui/tts.txt:5723
 msgctxt "5723"
 msgid "wonder"
-msgstr ""
+msgstr "div"
 
 #: res/ui/tts.txt:5730
 msgctxt "5730"
 msgid "any"
-msgstr ""
+msgstr "libovolný"
 
 #: res/ui/tts.txt:5731
 msgctxt "5731"
 msgid "buildings of"
-msgstr ""
+msgstr "budov"
 
 #. BELONGS_TO_AGE
 #: res/ui/tts.txt:5732
 msgctxt "5732"
 msgid "belongs to age"
-msgstr ""
+msgstr "patří do věku"
 
 #. SPACE
 #: res/ui/tts.txt:5733
 msgctxt "5733"
 msgid "space"
-msgstr ""
+msgstr "prostor"
 
 #. SQUARE_WIDTH: square width / 格子大小
 #: res/ui/tts.txt:5734
 msgctxt "5734"
 msgid "square width"
-msgstr ""
+msgstr "šířka pole"
 
 #. HEIGHT: height / 高度（高地等）
 #: res/ui/tts.txt:5735
 msgctxt "5735"
 msgid "height"
-msgstr ""
+msgstr "výška"
 
 #. COVER_VS: cover_vs
 #: res/ui/tts.txt:5736
 msgctxt "5736"
 msgid "cover_vs"
-msgstr ""
+msgstr "krytí proti"
 
 #. DODGE_VS: dodge_vs
 #: res/ui/tts.txt:5737
 msgctxt "5737"
 msgid "dodge_vs"
-msgstr ""
+msgstr "uhýbání proti"
 
 #. HOTKEY_SAY_SQUARE_INFO: 方格地形信息
 #: res/ui/tts.txt:5738
 msgctxt "5738"
 msgid "square terrain info"
-msgstr ""
+msgstr "info terénu pole"
 
 #. TERRAIN_COVER: terrain cover / 地形掩护
 #: res/ui/tts.txt:5739
 msgctxt "5739"
 msgid "terrain cover"
-msgstr ""
+msgstr "krytí terénu"
 
 #. ACCESSIBILITY_VOICE
 #: res/ui/tts.txt:5740
 msgctxt "5740"
 msgid "accessibility voice"
-msgstr ""
+msgstr "hlas přístupnosti"
 
 #. ACCESSIBILITY_VOICE_ON
 #: res/ui/tts.txt:5741
 msgctxt "5741"
 msgid "accessibility voice is now on"
-msgstr ""
+msgstr "hlas přístupnosti je nyní zapnutý"
 
 #. ACCESSIBILITY_VOICE_OFF
 #: res/ui/tts.txt:5742
 msgctxt "5742"
 msgid "accessibility voice is now off"
-msgstr ""
+msgstr "hlas přístupnosti je nyní vypnutý"
 
 #. ACCESSIBILITY_VOICE_TOGGLE
 #. HOTKEY_TOGGLE_SPEECH: 开关无障碍语音（F4）
 #: res/ui/tts.txt:5743
 msgctxt "5743"
 msgid "toggle accessibility voice"
-msgstr ""
+msgstr "přepnout hlas přístupnosti"
 
 #. LANGUAGE_MENU
 #. RMG_ONE_VS_MANY: 以一敌多（玩家独自对抗结盟的其余玩家）
@@ -15769,13 +15769,13 @@ msgstr "jeden proti mnoha"
 #: res/ui/tts.txt:5751
 msgctxt "5751"
 msgid "system default"
-msgstr ""
+msgstr "systémové výchozí"
 
 #. LANGUAGE_CURRENT
 #: res/ui/tts.txt:5752
 msgctxt "5752"
 msgid "current"
-msgstr ""
+msgstr "aktuální"
 
 #. VOICE_LIBS_MENU
 #: res/ui/tts.txt:5760
@@ -15811,73 +15811,73 @@ msgstr "secondary voice is enabled"
 #: res/ui/tts.txt:5765
 msgctxt "5765"
 msgid "The primary voice library is used for menus and player actions outside matches, and for production and economy feedback in matches. If a screen reader such as Zhengdu or NVDA is detected, the screen reader takes over the primary voice role to avoid fighting the primary library."
-msgstr "The primary voice library is used for menus and player actions outside matches, and for production and economy feedback in matches. If a screen reader such as Zhengdu or NVDA is detected, the screen reader takes over the primary voice role to avoid fighting the primary library."
+msgstr "Hlavní hlasová knihovna slouží pro nabídky a akce hráče mimo zápas a pro výrobu a ekonomiku v zápase. Pokud je zjištěna čtečka obrazovky (Zhengdu nebo NVDA), převezme roli hlavního hlasu, aby se předešlo konfliktům."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5766
 msgctxt "5766"
 msgid "Prefer a screen reader as the primary voice when possible, so F9 through F12 need not be used for the primary library. Hotkeys in this game are very dense and nearly saturated, so save keys when you can. The secondary library can still be adjusted with Shift plus F9 through F12."
-msgstr "Prefer a screen reader as the primary voice when possible, so F9 through F12 need not be used for the primary library. Hotkeys in this game are very dense and nearly saturated, so save keys when you can. The secondary library can still be adjusted with Shift plus F9 through F12."
+msgstr "Pokud možno preferujte čtečku obrazovky jako hlavní hlas, abyste nemuseli používat F9–F12 pro hlavní knihovnu. Zkratky jsou velmi husté; vedlejší knihovnu stále nastavíte Shift plus F9–F12."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5767
 msgctxt "5767"
 msgid "The secondary voice library is used for passive battlefield events in matches, such as casualties and discovering enemies."
-msgstr "The secondary voice library is used for passive battlefield events in matches, such as casualties and discovering enemies."
+msgstr "Vedlejší hlasová knihovna slouží pro pasivní bitevní události v zápase, například ztráty a objevení nepřátel."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5768
 msgctxt "5768"
 msgid "Left Alt skips or interrupts the primary voice library. Right Alt skips or interrupts the secondary voice library. In-match actions do not interrupt the secondary library."
-msgstr "Left Alt skips or interrupts the primary voice library. Right Alt skips or interrupts the secondary voice library. In-match actions do not interrupt the secondary library."
+msgstr "Levý Alt přeskočí nebo přeruší hlavní knihovnu. Pravý Alt vedlejší. Akce v zápase nepřerušují vedlejší knihovnu."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5769
 msgctxt "5769"
 msgid "When secondary voice is disabled, either Alt key can skip the current utterance."
-msgstr "When secondary voice is disabled, either Alt key can skip the current utterance."
+msgstr "Když je vedlejší hlas vypnutý, obě klávesy Alt mohou přeskočit aktuální hlášení."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5770
 msgctxt "5770"
 msgid "You can enable or disable secondary voice in this menu. When disabled, the primary voice handles all speech, same as single-channel mode. When enabled, primary and secondary roles are restored."
-msgstr "You can enable or disable secondary voice in this menu. When disabled, the primary voice handles all speech, same as single-channel mode. When enabled, primary and secondary roles are restored."
+msgstr "V této nabídce můžete zapnout nebo vypnout vedlejší hlas. Vypnutý — hlavní hlas zvládá vše jako v jednokanálovém režimu. Zapnutý — role se obnoví."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5771
 msgctxt "5771"
 msgid "In any menu, press F3 to toggle secondary voice. This does nothing during a match."
-msgstr "In any menu, press F3 to toggle secondary voice. This does nothing during a match."
+msgstr "V libovolné nabídce stiskněte F3 pro přepnutí vedlejšího hlasu. V zápase bez účinku."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5772
 msgctxt "5772"
 msgid "In any menu, press F4 to toggle accessibility voice. When off, TTS is silenced so sighted players can use the display. Press F4 again to turn it back on. During a match, F4 remains the help screen."
-msgstr "In any menu, press F4 to toggle accessibility voice. When off, TTS is silenced so sighted players can use the display. Press F4 again to turn it back on. During a match, F4 remains the help screen."
+msgstr "V libovolné nabídce stiskněte F4 pro přepnutí hlasu přístupnosti. Vypnutý — TTS mlčí pro vidící hráče. Znovu F4 zapne. V zápase zůstává F4 nápovědou."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5773
 msgctxt "5773"
 msgid "In voice library settings, use up and down arrows to select a parameter, and left and right arrows to adjust it."
-msgstr "In voice library settings, use up and down arrows to select a parameter, and left and right arrows to adjust it."
+msgstr "V nastavení hlasové knihovny: nahoru/dolů vybere parametr, doleva/doprava jej upraví."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5774
 msgctxt "5774"
 msgid "In-match hotkeys: F9 changes the sound card, F10 changes the parameter type, F11 and F12 adjust the current parameter."
-msgstr "In-match hotkeys: F9 changes the sound card, F10 changes the parameter type, F11 and F12 adjust the current parameter."
+msgstr "Zkratky v zápase: F9 mění zvukovou kartu, F10 typ parametru, F11 a F12 upravují aktuální parametr."
 
 #. VOICE_LIB_HELP
 #: res/ui/tts.txt:5775
 msgctxt "5775"
 msgid "Shift plus F9 through F12 adjust the secondary library. Right Shift plus C copies the latest secondary utterance. Right Shift plus B appends the secondary utterance to the clipboard. Left Shift plus C and Left Shift plus B are commented out by default in global_bindings.txt; remove the leading semicolon to enable them."
-msgstr "Shift plus F9 through F12 adjust the secondary library. Right Shift plus C copies the latest secondary utterance. Right Shift plus B appends the secondary utterance to the clipboard. Left Shift plus C and Left Shift plus B are commented out by default in global_bindings.txt; remove the leading semicolon to enable them."
+msgstr "Shift plus F9–F12 upravuje vedlejší knihovnu. Pravý Shift plus C zkopíruje poslední vedlejší hlášení. Pravý Shift plus B jej připojí do schránky. Levý Shift plus C a B jsou ve výchozím stavu zakomentovány v global_bindings.txt; odstraňte úvodní středník pro zapnutí."
 
 #. VOICE_LIB_SECONDARY_OFF
 #: res/ui/tts.txt:5776
 msgctxt "5776"
 msgid "secondary voice is disabled, primary voice handles all speech"
-msgstr "secondary voice is disabled, primary voice handles all speech"
+msgstr "vedlejší hlas vypnut, hlavní hlas zvládá vše"
 
 #. VOICE_LIB_DEVICE
 #: res/ui/tts.txt:5777
@@ -15889,19 +15889,19 @@ msgstr "sound card"
 #: res/ui/tts.txt:5778
 msgctxt "5778"
 msgid "Use up and down arrows to select a parameter, left and right to adjust. Enter or Esc to go back."
-msgstr "Use up and down arrows to select a parameter, left and right to adjust. Enter or Esc to go back."
+msgstr "Nahoru/dolů vybere parametr, doleva/doprava upraví. Enter nebo Esc zpět."
 
 #. HOTKEY_HISTORY_STOP_PRIMARY
 #: res/ui/tts.txt:5779
 msgctxt "5779"
 msgid "skip primary voice library"
-msgstr "skip primary voice library"
+msgstr "přeskočit hlavní hlasovou knihovnu"
 
 #. HOTKEY_HISTORY_STOP_SECONDARY
 #: res/ui/tts.txt:5780
 msgctxt "5780"
 msgid "skip secondary voice library"
-msgstr "skip secondary voice library"
+msgstr "přeskočit vedlejší hlasovou knihovnu"
 
 #. OPEN_VOICES_FOLDER
 #: res/ui/tts.txt:5781
@@ -15913,61 +15913,61 @@ msgstr "open voice install folder"
 #: res/ui/tts.txt:5782
 msgctxt "5782"
 msgid "import Apple voice pack into this game"
-msgstr "import Apple voice pack into this game"
+msgstr "importovat balíček hlasů Apple do této hry"
 
 #. UPDATE_PROMPT_DETAIL
 #: res/ui/tts.txt:5783
 msgctxt "5783"
 msgid "press Enter to update, Esc to cancel"
-msgstr "press Enter to update, Esc to cancel"
+msgstr "stiskněte Enter pro aktualizaci, Esc pro zrušení"
 
 #. UPDATE_CHANGELOG_PROMPT
 #: res/ui/tts.txt:5784
 msgctxt "5784"
 msgid "read the update notes? Enter to read, Esc to skip"
-msgstr "read the update notes? Enter to read, Esc to skip"
+msgstr "přečíst poznámky k aktualizaci? Enter — číst, Esc — přeskočit"
 
 #. UPDATE_CHANGELOG_DONE
 #: res/ui/tts.txt:5785
 msgctxt "5785"
 msgid "press Enter to continue updating"
-msgstr "press Enter to continue updating"
+msgstr "stiskněte Enter pro pokračování aktualizace"
 
 #. UPDATE_DOWNLOADING
 #: res/ui/tts.txt:5786
 msgctxt "5786"
 msgid "downloading update"
-msgstr "downloading update"
+msgstr "stahování aktualizace"
 
 #. UPDATE_DOWNLOAD_PROGRESS
 #: res/ui/tts.txt:5787
 msgctxt "5787"
 msgid "downloaded"
-msgstr "downloaded"
+msgstr "staženo"
 
 #. UPDATE_APPLYING
 #: res/ui/tts.txt:5788
 msgctxt "5788"
 msgid "download complete, restarting to install the update"
-msgstr "download complete, restarting to install the update"
+msgstr "stahování dokončeno, restart pro instalaci aktualizace"
 
 #. UPDATE_FAILED
 #: res/ui/tts.txt:5789
 msgctxt "5789"
 msgid "update failed, still using the current version"
-msgstr "update failed, still using the current version"
+msgstr "aktualizace selhala, stále se používá aktuální verze"
 
 #. UPDATE_OPENING_DOWNLOAD_PAGE
 #: res/ui/tts.txt:5790
 msgctxt "5790"
 msgid "opening download page"
-msgstr "opening download page"
+msgstr "otevírání stránky ke stažení"
 
 #. CHECK_UPDATES_ON_START
 #: res/ui/tts.txt:5791
 msgctxt "5791"
 msgid "check for updates when starting the game"
-msgstr "check for updates when starting the game"
+msgstr "kontrolovat aktualizace při spuštění hry"
 
 #. CHECK_UPDATES_ON
 #: res/ui/tts.txt:5792
@@ -16009,7 +16009,7 @@ msgstr "update check failed"
 #: res/ui/tts.txt:5798
 msgctxt "5798"
 msgid "launching the update window; the game will exit"
-msgstr "launching the update window; the game will exit"
+msgstr "otevírání okna aktualizace; hra bude ukončena"
 
 #: res/ui/tts.txt:59
 msgctxt "59"

@@ -59,7 +59,7 @@
 122	поле
 123	нанять
 124	готов!
-125	направлять
+125	сбор
 126	завершено
 127	отмена
 128	строить
@@ -67,7 +67,7 @@
 130	юнитов
 131	золота
 132	дерева
-133	продовольствия
+133	население
 134	содержит
 135	недостаточно
 136	то же самое!
@@ -401,7 +401,7 @@
 4288	введите ваше сообщение
 4289	невидимый
 4290	детектор
-4291	покровитель
+4291	маскировщик
 4292	вызвать
 4293	поднять мертвецов
 4294	воскрешение
@@ -567,7 +567,7 @@
 4502	все
 4503	здания
 4504	юниты
-4505	элементы
+4505	статические объекты
 4506	все типы
 4507	подкрепления
 4508	переключить на
@@ -916,7 +916,7 @@
 5052	скученное
 5053	местность
 5054	случайная
-5055	равнина
+5055	луга
 5056	болото
 5057	горы
 5058	зерно
@@ -1447,46 +1447,73 @@
 4654	здание золотого рудника
 4662	равнина
 4663	открытая местность
+4979	земля непроходима
+5700	воздух непроходим
+5701	нельзя пройти
+5702	угроза
+5703	множитель угрозы
+5704	угроза против
+5705	множитель угрозы против
 5710	громкость
 5711	высота тона
 5712	скорость речи
 5713	голос
+5720	 обратный отсчёт победы начат. Победа через
+5721	 здание победы уничтожено. Отсчёт отменён
+5722	 оставшийся отсчёт победы
+5723	чудо
+5730	любой
+5731	зданий
+5732	принадлежит эпохе
+5733	место
+5734	ширина клетки
+5735	высота
+5736	укрытие против
+5737	уклонение против
+5738	информация о местности клетки
+5739	укрытие местности
+5740	голос доступности
+5741	голос доступности теперь включён
+5742	голос доступности теперь выключен
+5743	переключить голос доступности
+5751	системный по умолчанию
+5752	текущий
 5760	voice libraries
 5761	primary voice library
 5762	secondary voice library
 5763	enable or disable secondary voice
 5764	secondary voice is enabled
-5765	The primary voice library is used for menus and player actions outside matches, and for production and economy feedback in matches. If a screen reader such as Zhengdu or NVDA is detected, the screen reader takes over the primary voice role to avoid fighting the primary library.
-5766	Prefer a screen reader as the primary voice when possible, so F9 through F12 need not be used for the primary library. Hotkeys in this game are very dense and nearly saturated, so save keys when you can. The secondary library can still be adjusted with Shift plus F9 through F12.
-5767	The secondary voice library is used for passive battlefield events in matches, such as casualties and discovering enemies.
-5768	Left Alt skips or interrupts the primary voice library. Right Alt skips or interrupts the secondary voice library. In-match actions do not interrupt the secondary library.
-5769	When secondary voice is disabled, either Alt key can skip the current utterance.
-5770	You can enable or disable secondary voice in this menu. When disabled, the primary voice handles all speech, same as single-channel mode. When enabled, primary and secondary roles are restored.
-5771	In any menu, press F3 to toggle secondary voice. This does nothing during a match.
-5772	In any menu, press F4 to toggle accessibility voice. When off, TTS is silenced so sighted players can use the display. Press F4 again to turn it back on. During a match, F4 remains the help screen.
-5773	In voice library settings, use up and down arrows to select a parameter, and left and right arrows to adjust it.
-5774	In-match hotkeys: F9 changes the sound card, F10 changes the parameter type, F11 and F12 adjust the current parameter.
-5775	Shift plus F9 through F12 adjust the secondary library. Right Shift plus C copies the latest secondary utterance. Right Shift plus B appends the secondary utterance to the clipboard. Left Shift plus C and Left Shift plus B are commented out by default in global_bindings.txt; remove the leading semicolon to enable them.
-5776	secondary voice is disabled, primary voice handles all speech
+5765	Основная голосовая библиотека используется для меню и действий игрока вне матчей, а также для производства и экономики в матчах. Если обнаружен экранный диктор (Zhengdu или NVDA), он берёт роль основного голоса, чтобы избежать конфликтов.
+5766	По возможности предпочитайте экранный диктор как основной голос, чтобы не занимать F9–F12 для основной библиотеки. Горячие клавиши очень плотные; вторичную библиотеку по-прежнему можно настраивать Shift плюс F9–F12.
+5767	Вторичная голосовая библиотека используется для пассивных боевых событий в матче, например потерь и обнаружения врагов.
+5768	Левый Alt пропускает или прерывает основную библиотеку. Правый Alt — вторичную. Действия в матче не прерывают вторичную библиотеку.
+5769	Если вторичный голос отключён, обе клавиши Alt могут пропустить текущее объявление.
+5770	В этом меню можно включить или отключить вторичный голос. Если отключён, основной голос ведёт всё, как в одноканальном режиме. Если включён, роли восстанавливаются.
+5771	В любом меню нажмите F3, чтобы переключить вторичный голос. В матче не действует.
+5772	В любом меню нажмите F4, чтобы переключить голос доступности. Если выключен, TTS молчит для зрячих игроков. Снова F4 — включить. В матче F4 остаётся справкой.
+5773	В настройках голосовой библиотеки: вверх/вниз выбирают параметр, влево/вправо изменяют его.
+5774	Горячие клавиши в матче: F9 меняет звуковую карту, F10 — тип параметра, F11 и F12 настраивают текущий параметр.
+5775	Shift плюс F9–F12 настраивает вторичную библиотеку. Правый Shift плюс C копирует последнее вторичное объявление. Правый Shift плюс B добавляет его в буфер. Левый Shift плюс C и B по умолчанию закомментированы в global_bindings.txt; уберите начальную точку с запятой, чтобы включить.
+5776	вторичный голос отключён, основной голос ведёт всё
 5777	sound card
-5778	Use up and down arrows to select a parameter, left and right to adjust. Enter or Esc to go back.
-5779	skip primary voice library
-5780	skip secondary voice library
+5778	Вверх/вниз выбирают параметр, влево/вправо изменяют. Enter или Esc — назад.
+5779	пропустить основную голосовую библиотеку
+5780	пропустить вторичную голосовую библиотеку
 5781	open voice install folder
-5782	import Apple voice pack into this game
-5783	press Enter to update, Esc to cancel
-5784	read the update notes? Enter to read, Esc to skip
-5785	press Enter to continue updating
-5786	downloading update
-5787	downloaded
-5788	download complete, restarting to install the update
-5789	update failed, still using the current version
-5790	opening download page
-5791	check for updates when starting the game
+5782	импортировать пакет голосов Apple в эту игру
+5783	нажмите Enter для обновления, Esc для отмены
+5784	прочитать заметки об обновлении? Enter — читать, Esc — пропустить
+5785	нажмите Enter, чтобы продолжить обновление
+5786	загрузка обновления
+5787	загружено
+5788	загрузка завершена, перезапуск для установки обновления
+5789	обновление не удалось, используется текущая версия
+5790	открытие страницы загрузки
+5791	проверять обновления при запуске игры
 5792	on
 5793	off
 5794	check for updates now
 5795	checking for updates
 5796	you already have the latest version
 5797	update check failed
-5798	launching the update window; the game will exit
+5798	открытие окна обновления; игра будет закрыта

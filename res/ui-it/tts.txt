@@ -6,7 +6,7 @@
 5	Cosa vuoi fare?
 23	e
 38	hai
-39	punti su
+39	punti vita su
 40	livello
 54	a
 55	metri
@@ -30,7 +30,7 @@
 83	fattoria
 84	un sentiero
 85	contadino
-86	bracciante
+86	fante
 87	arciere
 88	nemico
 89	amico
@@ -47,7 +47,7 @@
 110	offensivo
 111	difensivo
 112	mantiene la posizione
-113	invisibile
+113	furtivo
 114	attacca
 115	in
 116	verso est
@@ -59,7 +59,7 @@
 122	un prato
 123	recluta
 124	pronto!
-125	riorganizza
+125	raduno
 126	completo
 127	annulla
 128	costruendo
@@ -67,7 +67,7 @@
 130	unita'
 131	oro
 132	legno
-133	cibo
+133	popolazione
 134	contiene
 135	non c'e' abbastanza
 136	idem!
@@ -115,7 +115,7 @@
 2032	escape
 2033	cancella
 2034	shift
-2035	verso dietro
+2035	indietro
 2036	apre il menu
 2037	le frecce direzionali
 2038	permettono il movimento sulla mappa
@@ -348,7 +348,7 @@
 4262	suoni opzionali aggiuntivi
 4263	e' ora attivato
 4264	e' ora disattivato
-4265	modalita' gioco facilitato
+4265	modalità cheat
 4266	riavviare
 4267	campagna
 4268	nuovo obiettivo
@@ -401,7 +401,7 @@
 4288	scrivi il tuo messaggio
 4289	invisibile
 4290	detector
-4291	spia
+4291	camuffatore
 4292	convocazione
 4293	recuperare i cadaveri
 4294	risurrezione
@@ -567,7 +567,7 @@
 4502	tutti
 4503	edifici
 4504	unità
-4505	elementi
+4505	oggetti statici
 4506	tutti i tipi
 4507	rinforzi
 4508	passa a
@@ -768,7 +768,7 @@
 4852	terra
 4853	aria
 4854	acqua
-4855	produce
+4855	produci
 4856	non produce
 4857	è non-morto
 4858	risorsa
@@ -792,7 +792,7 @@
 4879	è bottino
 4880	ricompense risorse
 4881	abilità
-4882	bonus
+4882	potenziamenti
 4883	oggetto
 4885	eroe
 4886	spada corta
@@ -916,7 +916,7 @@
 5052	concentrata
 5053	terreno
 5054	casuale
-5055	pianura
+5055	praterie
 5056	palude
 5057	montagna
 5058	seme
@@ -1447,41 +1447,68 @@
 4654	edificio miniera d'oro
 4662	pianura
 4663	spazio aperto
+4979	il suolo è invalicabile
+5700	l'aria è invalicabile
+5701	non può passare
+5702	minaccia
+5703	moltiplicatore di minaccia
+5704	minaccia contro
+5705	moltiplicatore di minaccia contro
 5710	volume
 5711	tono
-5712	velocità
+5712	velocità vocale
 5713	voce
+5720	conto alla rovescia della vittoria avviato. Vittoria tra
+5721	edificio della vittoria distrutto. Conto alla rovescia annullato
+5722	conto alla rovescia della vittoria rimanente
+5723	meraviglia
+5730	qualsiasi
+5731	edifici di
+5732	appartiene all'età
+5733	spazio
+5734	larghezza casella
+5735	altezza
+5736	copertura contro
+5737	schivata contro
+5738	info terreno casella
+5739	copertura del terreno
+5740	voce di accessibilità
+5741	voce di accessibilità ora attiva
+5742	voce di accessibilità ora disattiva
+5743	attiva/disattiva voce di accessibilità
+5751	predefinito di sistema
+5752	corrente
 5760	librerie vocali
 5761	libreria vocale principale
 5762	libreria vocale secondaria
 5763	attiva o disattiva la voce secondaria
 5764	voce secondaria abilitata
-5765	The primary voice library is used for menus and player actions outside matches, and for production and economy feedback in matches. If a screen reader such as Zhengdu or NVDA is detected, the screen reader takes over the primary voice role to avoid fighting the primary library.
-5766	Prefer a screen reader as the primary voice when possible, so F9 through F12 need not be used for the primary library. Hotkeys in this game are very dense and nearly saturated, so save keys when you can. The secondary library can still be adjusted with Shift plus F9 through F12.
-5767	The secondary voice library is used for passive battlefield events in matches, such as casualties and discovering enemies.
-5768	Left Alt skips or interrupts the primary voice library. Right Alt skips or interrupts the secondary voice library. In-match actions do not interrupt the secondary library.
-5769	When secondary voice is disabled, either Alt key can skip the current utterance.
-5770	You can enable or disable secondary voice in this menu. When disabled, the primary voice handles all speech, same as single-channel mode. When enabled, primary and secondary roles are restored.
-5771	In any menu, press F3 to toggle secondary voice. This does nothing during a match.
-5772	In any menu, press F4 to toggle accessibility voice. When off, TTS is silenced so sighted players can use the display. Press F4 again to turn it back on. During a match, F4 remains the help screen.
-5773	In voice library settings, use up and down arrows to select a parameter, and left and right arrows to adjust it.
-5774	In-match hotkeys: F9 changes the sound card, F10 changes the parameter type, F11 and F12 adjust the current parameter.
-5775	Shift plus F9 through F12 adjust the secondary library. Right Shift plus C copies the latest secondary utterance. Right Shift plus B appends the secondary utterance to the clipboard. Left Shift plus C and Left Shift plus B are commented out by default in global_bindings.txt; remove the leading semicolon to enable them.
+5765	La libreria vocale principale è usata per i menu e le azioni del giocatore fuori partita, e per produzione ed economia in partita. Se viene rilevato uno screen reader come Zhengdu o NVDA, lo screen reader assume il ruolo della voce principale per evitare conflitti.
+5766	Preferisci uno screen reader come voce principale quando possibile, così non serve usare F9–F12 per la libreria principale. I tasti di questo gioco sono molto densi; la libreria secondaria si regola ancora con Maiusc più F9–F12.
+5767	La libreria vocale secondaria è usata per eventi passivi di battaglia in partita, come perdite e scoperta di nemici.
+5768	Alt sinistro salta o interrompe la libreria principale. Alt destro salta o interrompe la secondaria. Le azioni in partita non interrompono la libreria secondaria.
+5769	Quando la voce secondaria è disabilitata, entrambi i tasti Alt possono saltare l'annuncio corrente.
+5770	In questo menu puoi abilitare o disabilitare la voce secondaria. Se disabilitata, la voce principale gestisce tutto, come in modalità a canale singolo. Se abilitata, i ruoli principale e secondario vengono ripristinati.
+5771	In qualsiasi menu, premi F3 per attivare/disattivare la voce secondaria. In partita non ha effetto.
+5772	In qualsiasi menu, premi F4 per attivare/disattivare la voce di accessibilità. Se disattivata, il TTS è silenziato così i giocatori vedenti possono usare lo schermo. Premi di nuovo F4 per riattivarla. In partita F4 resta la schermata di aiuto.
+5773	Nelle impostazioni della libreria vocale, usa freccia su/giù per scegliere un parametro e sinistra/destra per regolarlo.
+5774	Tasti in partita: F9 cambia scheda audio, F10 cambia tipo di parametro, F11 e F12 regolano il parametro corrente.
+5775	Maiusc più F9–F12 regola la libreria secondaria. Maiusc destro più C copia l'ultimo annuncio secondario. Maiusc destro più B lo aggiunge agli appunti. Maiusc sinistro più C e B sono commentati di default in global_bindings.txt; togli il punto e virgola iniziale per attivarli.
 5776	voce secondaria disabilitata, la voce principale gestisce tutto
 5777	scheda audio
-5778	Use up and down arrows to select a parameter, left and right to adjust. Enter or Esc to go back.
-5779	skip primary voice library
-5780	skip secondary voice library
+5778	Usa freccia su/giù per scegliere un parametro, sinistra/destra per regolare. Invio o Esc per tornare indietro.
+5779	salta libreria vocale principale
+5780	salta libreria vocale secondaria
 5781	apri cartella di installazione voci
-5782	import Apple voice pack into this game
-5783	press Enter to update, Esc to cancel
-5784	read the update notes? Enter to read, Esc to skip
-5785	press Enter to continue updating
-5786	downloading update
-5787	downloaded
-5788	download complete, restarting to install the update
-5789	update failed, still using the current version
-5790	opening download page
+5782	importa pacchetto voci Apple in questo gioco
+5783	premi Invio per aggiornare, Esc per annullare
+5784	leggere le note di aggiornamento? Invio per leggere, Esc per saltare
+5785	premi Invio per continuare l'aggiornamento
+5786	download dell'aggiornamento in corso
+5787	scaricato
+5788	download completato, riavvio per installare l'aggiornamento
+5789	aggiornamento non riuscito, si continua con la versione attuale
+5790	apertura della pagina di download
 5791	controlla aggiornamenti all avvio del gioco
 5792	attivo
 5793	disattivo

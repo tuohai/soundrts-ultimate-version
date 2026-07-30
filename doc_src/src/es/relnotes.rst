@@ -5,6 +5,28 @@ Notas de la versión
 .. contents::
 
 
+1.4.6.6
+-------
+
+**Corrección: al elegir leer las notas de actualización no se oían**
+
+- Tras confirmar una actualización nueva, aceptar «leer las notas» no reproducía el cuerpo del Release de GitHub (o se cortaba al instante por el aviso de continuar).
+- Causa: lista de ``literal_text_msg`` anidada de más, y ``voice.item`` no bloqueante interrumpido por el siguiente aviso.
+- Ahora se usan ``voice.menu(literal_text_msg(...))`` (bloqueo hasta terminar o saltar) y luego la confirmación de continuar.
+- **Código / pruebas**: ``clientversion.py``, ``test_auto_update.py``.
+
+**Corrección: desplazamiento de traducción en TTS (clave ``5750``)**
+
+- En de / es / fr / it / pt-BR, la clave ``5750`` (idioma) decía erróneamente texto de «uno contra muchos» por un desfase de líneas.
+- Corregido en ``res/ui-de``, ``ui-es``, ``ui-fr``, ``ui-it``, ``ui-pt-BR`` ``tts.txt`` → Sprache / idioma / langue / lingua / linguagem.
+
+**Corrección: auditoría TTS multilingüe (ids faltantes y errores claros)**
+
+- Varios idiomas iban detrás del ``tts.txt`` inglés (unas 27 claves nuevas: terreno/aire intransitables, amenaza, cuenta regresiva de victoria, voz de accesibilidad, idioma predeterminado del sistema, etc.), con errores o confusiones (p. ej. italiano: soldado raso como peón, sigilo = invisible, reunión = reorganizar; es/pt: sigilo como «robado»; alemán: reunión como «usted comanda»; población vs comida; velocidad del habla = velocidad de unidad; ayuda larga de bibliotecas de voz aún en inglés).
+- Se completaron las claves faltantes en ``ui-it``, ``ui-fr``, ``ui-es``, ``ui-de``, ``ui-pt-BR``, ``ui-ru``, ``ui-pl``, ``ui-cs``, ``ui-sk``, ``ui-be``, ``ui-vi`` (el chino ya estaba completo); se corrigieron errores claros; se tradujo la ayuda de voz/actualización que seguía en inglés.
+- **Archivos**: ``res/ui-*/tts.txt``.
+
+
 1.4.6.5
 -------
 

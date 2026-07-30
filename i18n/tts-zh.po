@@ -10347,7 +10347,7 @@ msgstr "单位"
 #: res/ui/tts.txt:4505
 msgctxt "4505"
 msgid "Static objects"
-msgstr "元素"
+msgstr "静态物体"
 
 #. ALL_TYPE_FILTER
 #: res/ui/tts.txt:4506
@@ -12571,7 +12571,7 @@ msgstr "随机"
 #: res/ui/tts.txt:5055
 msgctxt "5055"
 msgid "grasslands"
-msgstr "平原"
+msgstr "草地"
 
 #. RMG_MARSH: 沼泽
 #: res/ui/tts.txt:5056

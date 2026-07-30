@@ -568,7 +568,7 @@
 4502	tất cả
 4503	công trình
 4504	đơn vị
-4505	yếu tố
+4505	vật thể tĩnh
 4506	mọi loại
 4507	viện binh
 4508	đổi thành
@@ -1448,46 +1448,73 @@
 4654	công trình mỏ vàng
 4662	đồng bằng
 4663	đất trống
+4979	mặt đất không thể đi qua
+5700	không phận không thể đi qua
+5701	không thể đi qua
+5702	mối đe dọa
+5703	hệ số đe dọa
+5704	đe dọa đối với
+5705	hệ số đe dọa đối với
 5710	âm lượng
 5711	cao độ
 5712	tốc độ nói
 5713	giọng nói
+5720	 đã bắt đầu đếm ngược chiến thắng. Chiến thắng sau
+5721	 công trình chiến thắng đã bị phá. Đếm ngược bị hủy
+5722	 thời gian đếm ngược chiến thắng còn lại
+5723	kỳ quan
+5730	bất kỳ
+5731	công trình của
+5732	thuộc thời đại
+5733	không gian
+5734	chiều rộng ô
+5735	độ cao
+5736	che chắn đối với
+5737	né tránh đối với
+5738	thông tin địa hình ô
+5739	che chắn địa hình
+5740	giọng tiếp cận
+5741	giọng tiếp cận đã bật
+5742	giọng tiếp cận đã tắt
+5743	bật/tắt giọng tiếp cận
+5751	mặc định hệ thống
+5752	hiện tại
 5760	voice libraries
 5761	primary voice library
 5762	secondary voice library
 5763	enable or disable secondary voice
 5764	secondary voice is enabled
-5765	The primary voice library is used for menus and player actions outside matches, and for production and economy feedback in matches. If a screen reader such as Zhengdu or NVDA is detected, the screen reader takes over the primary voice role to avoid fighting the primary library.
-5766	Prefer a screen reader as the primary voice when possible, so F9 through F12 need not be used for the primary library. Hotkeys in this game are very dense and nearly saturated, so save keys when you can. The secondary library can still be adjusted with Shift plus F9 through F12.
-5767	The secondary voice library is used for passive battlefield events in matches, such as casualties and discovering enemies.
-5768	Left Alt skips or interrupts the primary voice library. Right Alt skips or interrupts the secondary voice library. In-match actions do not interrupt the secondary library.
-5769	When secondary voice is disabled, either Alt key can skip the current utterance.
-5770	You can enable or disable secondary voice in this menu. When disabled, the primary voice handles all speech, same as single-channel mode. When enabled, primary and secondary roles are restored.
-5771	In any menu, press F3 to toggle secondary voice. This does nothing during a match.
-5772	In any menu, press F4 to toggle accessibility voice. When off, TTS is silenced so sighted players can use the display. Press F4 again to turn it back on. During a match, F4 remains the help screen.
-5773	In voice library settings, use up and down arrows to select a parameter, and left and right arrows to adjust it.
-5774	In-match hotkeys: F9 changes the sound card, F10 changes the parameter type, F11 and F12 adjust the current parameter.
-5775	Shift plus F9 through F12 adjust the secondary library. Right Shift plus C copies the latest secondary utterance. Right Shift plus B appends the secondary utterance to the clipboard. Left Shift plus C and Left Shift plus B are commented out by default in global_bindings.txt; remove the leading semicolon to enable them.
-5776	secondary voice is disabled, primary voice handles all speech
+5765	Thư viện giọng chính dùng cho menu và thao tác người chơi ngoài trận, cũng như sản xuất và kinh tế trong trận. Nếu phát hiện trình đọc màn hình như Zhengdu hoặc NVDA, nó sẽ đảm nhận vai trò giọng chính để tránh xung đột.
+5766	Nên ưu tiên trình đọc màn hình làm giọng chính nếu có thể, để không chiếm F9–F12 cho thư viện chính. Phím tắt rất dày; thư viện phụ vẫn chỉnh bằng Shift cộng F9–F12.
+5767	Thư viện giọng phụ dùng cho sự kiện chiến trường thụ động trong trận, như thương vong và phát hiện kẻ địch.
+5768	Alt trái bỏ qua hoặc cắt thư viện chính. Alt phải bỏ qua hoặc cắt thư viện phụ. Thao tác trong trận không cắt thư viện phụ.
+5769	Khi tắt giọng phụ, cả hai phím Alt đều có thể bỏ qua thông báo hiện tại.
+5770	Trong menu này bạn có thể bật hoặc tắt giọng phụ. Tắt thì giọng chính đảm nhận tất cả, như chế độ một kênh. Bật thì khôi phục phân công chính/phụ.
+5771	Trong mọi menu, nhấn F3 để bật/tắt giọng phụ. Trong trận không có tác dụng.
+5772	Trong mọi menu, nhấn F4 để bật/tắt giọng tiếp cận. Tắt thì TTS im lặng cho người chơi nhìn được. Nhấn F4 lại để bật. Trong trận F4 vẫn là trợ giúp.
+5773	Trong cài đặt thư viện giọng: lên/xuống chọn tham số, trái/phải chỉnh.
+5774	Phím tắt trong trận: F9 đổi card âm thanh, F10 đổi loại tham số, F11 và F12 chỉnh tham số hiện tại.
+5775	Shift cộng F9–F12 chỉnh thư viện phụ. Shift phải cộng C sao chép thông báo phụ gần nhất. Shift phải cộng B nối vào clipboard. Shift trái cộng C và B mặc định bị chú thích trong global_bindings.txt; bỏ dấu chấm phẩy đầu dòng để bật.
+5776	giọng phụ đã tắt, giọng chính đảm nhận tất cả
 5777	sound card
-5778	Use up and down arrows to select a parameter, left and right to adjust. Enter or Esc to go back.
-5779	skip primary voice library
-5780	skip secondary voice library
+5778	Lên/xuống chọn tham số, trái/phải chỉnh. Enter hoặc Esc để quay lại.
+5779	bỏ qua thư viện giọng chính
+5780	bỏ qua thư viện giọng phụ
 5781	open voice install folder
-5782	import Apple voice pack into this game
-5783	press Enter to update, Esc to cancel
-5784	read the update notes? Enter to read, Esc to skip
-5785	press Enter to continue updating
-5786	downloading update
-5787	downloaded
-5788	download complete, restarting to install the update
-5789	update failed, still using the current version
-5790	opening download page
-5791	check for updates when starting the game
+5782	nhập gói giọng Apple vào trò chơi này
+5783	nhấn Enter để cập nhật, Esc để hủy
+5784	đọc ghi chú cập nhật? Enter để đọc, Esc để bỏ qua
+5785	nhấn Enter để tiếp tục cập nhật
+5786	đang tải cập nhật
+5787	đã tải
+5788	tải xong, đang khởi động lại để cài cập nhật
+5789	cập nhật thất bại, vẫn dùng phiên bản hiện tại
+5790	đang mở trang tải xuống
+5791	kiểm tra cập nhật khi khởi động trò chơi
 5792	on
 5793	off
 5794	check for updates now
 5795	checking for updates
 5796	you already have the latest version
 5797	update check failed
-5798	launching the update window; the game will exit
+5798	đang mở cửa sổ cập nhật; trò chơi sẽ đóng

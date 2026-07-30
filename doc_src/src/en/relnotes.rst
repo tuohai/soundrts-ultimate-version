@@ -5,6 +5,29 @@ Release notes
 .. contents::
 
 
+1.4.6.6
+--------
+
+**Fix: choosing “read the update notes” after an update prompt did not speak the release notes**
+
+- **Issue**: after a newer release was found and confirmed, answering yes to the changelog prompt produced no notes (or they were cut off at once by “press Enter to continue updating”), even though the GitHub Release body was fetched correctly.
+- **Cause**: ``literal_text_msg`` already returns a list and was wrapped again, so TTS could not parse it; non-blocking ``voice.item`` was immediately preempted by the continue prompt.
+- **Fix**: speak the notes with blocking ``voice.menu(literal_text_msg(...))`` (finish or skip with a key), then ask to continue updating.
+- **Code**: ``clientversion.py``.
+- **Tests**: ``test_auto_update.py`` (``test_offer_update_speaks_changelog_body``).
+
+**Fix: translation shift in multilingual TTS (key ``5750``)**
+
+- **Issue**: in German / Spanish / French / Italian / Brazilian Portuguese UI strings, key ``5750`` (language) was wrongly set to “one vs many”-style text after a line shift.
+- **Fix**: correct ``tts.txt`` under ``res/ui-de``, ``ui-es``, ``ui-fr``, ``ui-it``, and ``ui-pt-BR`` so ``5750`` reads as language (Sprache / idioma / langue / lingua / linguagem).
+
+**Fix: multilingual TTS audit (missing ids and clear mistranslations)**
+
+- **Issue**: several UI languages lagged behind English ``tts.txt`` (about 27 newer ids such as impassable ground/air, threat attributes, victory countdown, accessibility voice, system default language), and some entries were wrong or conflated (e.g. Italian footman as farmhand, stealth as invisible, rally as reorganize; Spanish/Portuguese stealth as “stolen”; German rally as “you command”; population vs food sharing one word; speech rate colliding with unit speed; long voice-library help left in English).
+- **Fix**: fill missing ids for ``ui-it``, ``ui-fr``, ``ui-es``, ``ui-de``, ``ui-pt-BR``, ``ui-ru``, ``ui-pl``, ``ui-cs``, ``ui-sk``, ``ui-be``, ``ui-vi`` (Chinese was already complete); correct clear mistranslations across those packs; translate leftover English voice-library / update help strings where they were still untranslated.
+- **Files**: ``res/ui-*/tts.txt`` (and related campaign/map overlays unchanged unless already covered).
+
+
 1.4.6.5
 --------
 

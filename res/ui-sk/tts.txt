@@ -67,7 +67,7 @@
 130	jednotky
 131	zlata
 132	dreva
-133	jedla
+133	populácia
 134	obsahuje
 135	nie je dosť
 136	totiž!
@@ -567,7 +567,7 @@
 4502	všetky
 4503	budovy
 4504	jednotky
-4505	prvky
+4505	statické objekty
 4506	všetky typy
 4507	posily
 4508	prepnúť na
@@ -916,7 +916,7 @@
 5052	sústredené
 5053	terén
 5054	náhodný
-5055	rovina
+5055	trávnaté plochy
 5056	močiar
 5057	hory
 5058	semienko
@@ -1447,46 +1447,73 @@
 4654	budova zlatej bane
 4662	pláň
 4663	otvorený terén
+4979	zem je nepriechodná
+5700	vzduch je nepriechodný
+5701	nedá sa prejsť
+5702	hrozba
+5703	násobič hrozby
+5704	hrozba proti
+5705	násobič hrozby proti
 5710	hlasitosť
 5711	výška tónu
 5712	rýchlosť reči
 5713	hlas
+5720	 odpočet víťazstva spustený. Víťazstvo za
+5721	 víťazná budova zničená. Odpočet zrušený
+5722	 zostávajúci odpočet víťazstva
+5723	div
+5730	ľubovoľný
+5731	budov
+5732	patrí do veku
+5733	priestor
+5734	šírka poľa
+5735	výška
+5736	krytie proti
+5737	uhýbanie proti
+5738	info terénu poľa
+5739	krytie terénu
+5740	hlas prístupnosti
+5741	hlas prístupnosti je teraz zapnutý
+5742	hlas prístupnosti je teraz vypnutý
+5743	prepnúť hlas prístupnosti
+5751	systémové predvolené
+5752	aktuálne
 5760	voice libraries
 5761	primary voice library
 5762	secondary voice library
 5763	enable or disable secondary voice
 5764	secondary voice is enabled
-5765	The primary voice library is used for menus and player actions outside matches, and for production and economy feedback in matches. If a screen reader such as Zhengdu or NVDA is detected, the screen reader takes over the primary voice role to avoid fighting the primary library.
-5766	Prefer a screen reader as the primary voice when possible, so F9 through F12 need not be used for the primary library. Hotkeys in this game are very dense and nearly saturated, so save keys when you can. The secondary library can still be adjusted with Shift plus F9 through F12.
-5767	The secondary voice library is used for passive battlefield events in matches, such as casualties and discovering enemies.
-5768	Left Alt skips or interrupts the primary voice library. Right Alt skips or interrupts the secondary voice library. In-match actions do not interrupt the secondary library.
-5769	When secondary voice is disabled, either Alt key can skip the current utterance.
-5770	You can enable or disable secondary voice in this menu. When disabled, the primary voice handles all speech, same as single-channel mode. When enabled, primary and secondary roles are restored.
-5771	In any menu, press F3 to toggle secondary voice. This does nothing during a match.
-5772	In any menu, press F4 to toggle accessibility voice. When off, TTS is silenced so sighted players can use the display. Press F4 again to turn it back on. During a match, F4 remains the help screen.
-5773	In voice library settings, use up and down arrows to select a parameter, and left and right arrows to adjust it.
-5774	In-match hotkeys: F9 changes the sound card, F10 changes the parameter type, F11 and F12 adjust the current parameter.
-5775	Shift plus F9 through F12 adjust the secondary library. Right Shift plus C copies the latest secondary utterance. Right Shift plus B appends the secondary utterance to the clipboard. Left Shift plus C and Left Shift plus B are commented out by default in global_bindings.txt; remove the leading semicolon to enable them.
-5776	secondary voice is disabled, primary voice handles all speech
+5765	Hlavná hlasová knižnica slúži na ponuky a akcie hráča mimo zápasu a na výrobu a ekonomiku v zápase. Ak sa zistí čítačka obrazovky (Zhengdu alebo NVDA), prevezme úlohu hlavného hlasu, aby sa predišlo konfliktom.
+5766	Ak je to možné, preferujte čítačku obrazovky ako hlavný hlas, aby ste nemuseli používať F9–F12 pre hlavnú knižnicu. Skratky sú veľmi husté; vedľajšiu knižnicu stále nastavíte Shift plus F9–F12.
+5767	Vedľajšia hlasová knižnica slúži na pasívne bojové udalosti v zápase, napríklad straty a objavenie nepriateľov.
+5768	Ľavý Alt preskočí alebo preruší hlavnú knižnicu. Pravý Alt vedľajšiu. Akcie v zápase neprerušujú vedľajšiu knižnicu.
+5769	Keď je vedľajší hlas vypnutý, obe klávesy Alt môžu preskočiť aktuálne hlásenie.
+5770	V tejto ponuke môžete zapnúť alebo vypnúť vedľajší hlas. Vypnutý — hlavný hlas zvláda všetko ako v jednokanálovom režime. Zapnutý — úlohy sa obnovia.
+5771	V ľubovoľnej ponuke stlačte F3 na prepnutie vedľajšieho hlasu. V zápase bez účinku.
+5772	V ľubovoľnej ponuke stlačte F4 na prepnutie hlasu prístupnosti. Vypnutý — TTS mlčí pre vidiacich hráčov. Znova F4 zapne. V zápase zostáva F4 nápovedou.
+5773	V nastaveniach hlasovej knižnice: hore/dole vyberie parameter, doľava/doprava ho upraví.
+5774	Skratky v zápase: F9 mení zvukovú kartu, F10 typ parametra, F11 a F12 upravujú aktuálny parameter.
+5775	Shift plus F9–F12 upravuje vedľajšiu knižnicu. Pravý Shift plus C skopíruje posledné vedľajšie hlásenie. Pravý Shift plus B ho pripojí do schránky. Ľavý Shift plus C a B sú predvolene zakomentované v global_bindings.txt; odstráňte úvodnú bodkočiarku na zapnutie.
+5776	vedľajší hlas vypnutý, hlavný hlas zvláda všetko
 5777	sound card
-5778	Use up and down arrows to select a parameter, left and right to adjust. Enter or Esc to go back.
-5779	skip primary voice library
-5780	skip secondary voice library
+5778	Hore/dole vyberie parameter, doľava/doprava upraví. Enter alebo Esc späť.
+5779	preskočiť hlavnú hlasovú knižnicu
+5780	preskočiť vedľajšiu hlasovú knižnicu
 5781	open voice install folder
-5782	import Apple voice pack into this game
-5783	press Enter to update, Esc to cancel
-5784	read the update notes? Enter to read, Esc to skip
-5785	press Enter to continue updating
-5786	downloading update
-5787	downloaded
-5788	download complete, restarting to install the update
-5789	update failed, still using the current version
-5790	opening download page
-5791	check for updates when starting the game
+5782	importovať balík hlasov Apple do tejto hry
+5783	stlačte Enter na aktualizáciu, Esc na zrušenie
+5784	prečítať poznámky k aktualizácii? Enter — čítať, Esc — preskočiť
+5785	stlačte Enter na pokračovanie aktualizácie
+5786	sťahovanie aktualizácie
+5787	stiahnuté
+5788	sťahovanie dokončené, reštart na inštaláciu aktualizácie
+5789	aktualizácia zlyhala, stále sa používa aktuálna verzia
+5790	otváranie stránky na stiahnutie
+5791	kontrolovať aktualizácie pri spustení hry
 5792	on
 5793	off
 5794	check for updates now
 5795	checking for updates
 5796	you already have the latest version
 5797	update check failed
-5798	launching the update window; the game will exit
+5798	otváranie okna aktualizácie; hra bude ukončená
