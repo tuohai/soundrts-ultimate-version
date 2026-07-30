@@ -6,6 +6,8 @@ sighted play gets a readable list and mouse hits.
 
 from __future__ import annotations
 
+import sys
+
 import pygame
 
 from .screen import get_screen
@@ -17,6 +19,9 @@ _fonts: dict[str, pygame.font.Font | None] = {}
 _narrative_text = ""
 _narrative_hint = ""
 _narrative_active = False
+_confirm_active = False
+_confirm_yes_rect: pygame.Rect | None = None
+_confirm_no_rect: pygame.Rect | None = None
 _menu_item_rects: list[pygame.Rect] = []
 _last_menu_key: tuple | None = None
 _menu_label_cache_key = None
@@ -232,6 +237,24 @@ def ensure_window_for_ui() -> None:
         pass
 
 
+def raise_game_window() -> None:
+    """Bring the SDL window to the foreground (Windows) so prompts are visible."""
+    if sys.platform != "win32":
+        return
+    try:
+        import ctypes
+
+        info = pygame.display.get_wm_info()
+        hwnd = info.get("window")
+        if not hwnd:
+            return
+        user32 = ctypes.windll.user32
+        user32.ShowWindow(hwnd, 9)  # SW_RESTORE
+        user32.SetForegroundWindow(hwnd)
+    except Exception:
+        pass
+
+
 def narrative_is_active() -> bool:
     return _narrative_active
 
@@ -253,6 +276,131 @@ def end_narrative() -> None:
     _narrative_active = False
     _narrative_text = ""
     _narrative_hint = ""
+
+
+def show_confirm(text: str, hint: str | None = None) -> None:
+    """Show a yes/no prompt with on-screen text and clickable buttons."""
+    global _narrative_text, _narrative_hint, _narrative_active, _confirm_active
+    ensure_window_for_ui()
+    raise_game_window()
+    _narrative_text = (text or "").strip()
+    if hint is None:
+        hint = "Enter: Yes    Esc: No    or click a button"
+    _narrative_hint = hint
+    _narrative_active = True
+    _confirm_active = True
+    draw_confirm()
+
+
+def end_confirm() -> None:
+    global _confirm_active, _confirm_yes_rect, _confirm_no_rect
+    _confirm_active = False
+    _confirm_yes_rect = None
+    _confirm_no_rect = None
+    end_narrative()
+
+
+def confirm_is_active() -> bool:
+    return _confirm_active
+
+
+def draw_confirm(*, flip: bool = True) -> None:
+    """Paint confirm prompt + Yes/No buttons."""
+    global _confirm_yes_rect, _confirm_no_rect, _narrative_hint
+    if not _confirm_active:
+        return
+    surf = get_screen()
+    if surf is None:
+        return
+    # Leave room at the bottom for Yes/No buttons.
+    saved_hint = _narrative_hint
+    _narrative_hint = ""
+    try:
+        w, h = surf.get_size()
+        # Dim + text box without the usual bottom hint (buttons replace it).
+        overlay = pygame.Surface((w, h), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 210))
+        surf.blit(overlay, (0, 0))
+
+        margin = max(24, w // 20)
+        box_w = w - margin * 2
+        box_h = min(h - margin * 2 - 90, max(160, h // 2))
+        box = pygame.Rect(margin, max(margin, (h - box_h - 90) // 2), box_w, box_h)
+        pygame.draw.rect(surf, (28, 32, 40), box)
+        pygame.draw.rect(surf, (180, 190, 210), box, 2)
+
+        body_font = _pick_font(22, bold=False)
+        max_text_w = box_w - 32
+        lines = _wrap_lines(body_font, _narrative_text, max_text_w)
+        y = box.y + 20
+        line_h = body_font.get_height() + 4
+        for line in lines:
+            if y + line_h > box.bottom - 16:
+                more = body_font.render("…", True, (200, 200, 200))
+                surf.blit(more, (box.x + 16, y))
+                break
+            img = body_font.render(line, True, (235, 235, 240))
+            surf.blit(img, (box.x + 16, y))
+            y += line_h
+    finally:
+        _narrative_hint = saved_hint
+
+    btn_font = _pick_font(20, bold=True)
+    hint_font = _pick_font(15, bold=False)
+    btn_w, btn_h = 140, 44
+    gap = 24
+    total = btn_w * 2 + gap
+    x0 = (w - total) // 2
+    y = h - 72
+    yes_r = pygame.Rect(x0, y, btn_w, btn_h)
+    no_r = pygame.Rect(x0 + btn_w + gap, y, btn_w, btn_h)
+    pygame.draw.rect(surf, (46, 120, 72), yes_r)
+    pygame.draw.rect(surf, (200, 220, 200), yes_r, 2)
+    pygame.draw.rect(surf, (120, 50, 50), no_r)
+    pygame.draw.rect(surf, (220, 180, 180), no_r, 2)
+    yes_img = btn_font.render("Yes / 是", True, (245, 245, 245))
+    no_img = btn_font.render("No / 否", True, (245, 245, 245))
+    surf.blit(
+        yes_img,
+        (
+            yes_r.x + (btn_w - yes_img.get_width()) // 2,
+            yes_r.y + (btn_h - yes_img.get_height()) // 2,
+        ),
+    )
+    surf.blit(
+        no_img,
+        (
+            no_r.x + (btn_w - no_img.get_width()) // 2,
+            no_r.y + (btn_h - no_img.get_height()) // 2,
+        ),
+    )
+    if saved_hint:
+        hint = hint_font.render(saved_hint[:80], True, (160, 170, 190))
+        surf.blit(hint, (28, h - 28))
+    _confirm_yes_rect = yes_r
+    _confirm_no_rect = no_r
+    if flip:
+        pygame.display.flip()
+
+
+def confirm_button_at(pos) -> bool | None:
+    """Return True (Yes), False (No), or None if no button under ``pos``."""
+    if not _confirm_active:
+        return None
+    x, y = pos
+    if _confirm_yes_rect is not None and _confirm_yes_rect.collidepoint(x, y):
+        return True
+    if _confirm_no_rect is not None and _confirm_no_rect.collidepoint(x, y):
+        return False
+    return None
+
+
+def show_status_banner(text: str, hint: str | None = None) -> None:
+    """Show a short status line (checking / up to date / launching…)."""
+    show_narrative(
+        text,
+        hint=hint if hint is not None else "Esc or Enter: dismiss",
+    )
 
 
 def _wrap_lines(font: pygame.font.Font, text: str, max_width: int) -> list[str]:

@@ -543,29 +543,78 @@ def input_text(msg=None, default="", max_length=80, char_filter=None):
 
 
 def confirm_yes_no(prompt_msg):
-    """显示一个确认提示并等待玩家按回车（确认）或 Esc（取消）。
+    """显示确认提示：语音播报 + 画面文字/按钮，等待回车（是）或 Esc（否）。
 
     返回 True 表示玩家确认，False 表示取消。
 
     使用 voice.menu 而不是 voice.alert：这样玩家在提示朗读过程中按下回车 / Esc
     可以立刻打断并被识别（voice.alert 会丢弃这些键），从而让"按回车确认、按 Esc 取消"
-    的体验更加灵敏。
+    的体验更加灵敏。画面同步显示文案与 Yes/No 按钮，方便明眼人操作。
     """
+    from .lib.pygame_ui import (
+        confirm_button_at,
+        draw_confirm,
+        end_confirm,
+        ensure_window_for_ui,
+        msgparts_to_text,
+        show_confirm,
+    )
+
+    ensure_window_for_ui()
+    try:
+        show_confirm(
+            msgparts_to_text(prompt_msg),
+            hint="Enter: Yes / 确认    Esc: No / 取消",
+        )
+    except Exception:
+        pass
+
     # 先把可能误触的旧键事件清空，但 voice.menu 会保留新按下的键给我们处理。
-    pygame.event.clear([KEYDOWN, TEXTINPUT])
+    pygame.event.clear([KEYDOWN, TEXTINPUT, MOUSEBUTTONDOWN])
     voice.menu(prompt_msg)
+    try:
+        draw_confirm()
+    except Exception:
+        pass
     while True:
         e = pygame.event.poll()
         if e.type == QUIT:
+            try:
+                end_confirm()
+            except Exception:
+                pass
             sys.exit()
         elif e.type == KEYDOWN:
             if e.key in (K_RETURN, K_KP_ENTER):
+                try:
+                    end_confirm()
+                except Exception:
+                    pass
                 return True
             elif e.key == K_ESCAPE:
+                try:
+                    end_confirm()
+                except Exception:
+                    pass
                 return False
             # 其它键不退出循环，等待明确的回车或 Esc。
+        elif e.type == MOUSEBUTTONDOWN and getattr(e, "button", 1) == 1:
+            try:
+                hit = confirm_button_at(e.pos)
+            except Exception:
+                hit = None
+            if hit is not None:
+                try:
+                    end_confirm()
+                except Exception:
+                    pass
+                return hit
         elif e.type == USEREVENT:
             voice.update()
+        try:
+            draw_confirm()
+        except Exception:
+            pass
         voice.update()
 
 

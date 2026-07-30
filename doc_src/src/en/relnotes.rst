@@ -8,6 +8,20 @@ Release notes
 1.4.6.6
 --------
 
+**Fix: startup “check for updates” could miss a newer release (only Options → Check now worked)**
+
+- **Issue**: with check-on-start enabled, a newer GitHub release sometimes produced no prompt after launch, while Options → Check for updates now found it.
+- **Cause**: the HTTP request may take up to about 20 seconds, but the main thread only waited about 8 seconds; a timeout was treated as “up to date”, and a late background result was never offered.
+- **Fix**: start the background check earlier (overlap media init); wait until the check actually finishes (~30s); if still unfinished, fall back to the same synchronous check as the Options menu.
+- **Code**: ``auto_update.py``, ``clientversion.py``, ``clientmain.py``.
+- **Tests**: ``test_auto_update.py`` (timeout / sync-fallback cases).
+
+**Improvement: visible update prompts for sighted players**
+
+- **Issue**: update prompts were voice-only; the game window showed no text or buttons.
+- **Change**: confirmation dialogs show on-screen text plus Yes/No buttons (mouse-clickable); changelog text is shown while spoken; status banners for checking / up to date; try to raise the game window to the foreground.
+- **Code**: ``pygame_ui.py`` (``show_confirm`` / ``draw_confirm``), ``clientmenu.py`` (``confirm_yes_no``), ``clientversion.py``.
+
 **Fix: choosing “read the update notes” after an update prompt did not speak the release notes**
 
 - **Issue**: after a newer release was found and confirmed, answering yes to the changelog prompt produced no notes (or they were cut off at once by “press Enter to continue updating”), even though the GitHub Release body was fetched correctly.

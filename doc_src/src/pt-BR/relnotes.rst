@@ -8,6 +8,18 @@ Notas de lançamento
 1.4.6.6
 -------
 
+**Correção: a verificação na inicialização às vezes não detectava versão nova**
+
+- Com a verificação ao iniciar ligada, às vezes não havia aviso após abrir o jogo, mas Opções → Verificar agora encontrava a versão.
+- Causa: o pedido ao GitHub pode levar ~20 s e a thread principal só esperava ~8 s; o tempo esgotado era tratado como «já atualizado».
+- Agora a verificação começa mais cedo, espera terminar (~30 s) e, se ainda estiver pendente, usa a mesma verificação síncrona do menu.
+- **Código / testes**: ``auto_update.py``, ``clientversion.py``, ``clientmain.py``, ``test_auto_update.py``.
+
+**Melhoria: avisos de atualização visíveis na tela**
+
+- Não só por voz: texto na janela, botões Yes/No (clicáveis), notas do changelog visíveis, e tentativa de trazer a janela para a frente.
+- **Código**: ``pygame_ui.py``, ``clientmenu.py``, ``clientversion.py``.
+
 **Correção: ao escolher ouvir as notas de atualização nada era lido**
 
 - Depois de confirmar uma atualização nova, aceitar ouvir as notas não reproduzia o body do Release no GitHub (ou era cortado na hora pelo aviso de continuar).

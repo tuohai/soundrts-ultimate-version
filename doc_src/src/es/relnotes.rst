@@ -8,6 +8,18 @@ Notas de la versión
 1.4.6.6
 -------
 
+**Corrección: la comprobación al iniciar a veces no detectaba una versión nueva**
+
+- Con la comprobación al inicio activa, a veces no había aviso tras arrancar, pero Opciones → Comprobar ahora sí encontraba la versión.
+- Causa: la petición a GitHub puede tardar ~20 s y el hilo principal solo esperaba ~8 s; el tiempo agotado se trataba como «ya actualizado».
+- Ahora la comprobación arranca antes, espera a terminar (~30 s) y, si sigue pendiente, usa la misma comprobación síncrona que el menú.
+- **Código / pruebas**: ``auto_update.py``, ``clientversion.py``, ``clientmain.py``, ``test_auto_update.py``.
+
+**Mejora: avisos de actualización visibles en pantalla**
+
+- Los avisos ya no son solo por voz: texto en pantalla, botones Yes/No (clic), notas del changelog visibles, e intento de traer la ventana al frente.
+- **Código**: ``pygame_ui.py``, ``clientmenu.py``, ``clientversion.py``.
+
 **Corrección: al elegir leer las notas de actualización no se oían**
 
 - Tras confirmar una actualización nueva, aceptar «leer las notas» no reproducía el cuerpo del Release de GitHub (o se cortaba al instante por el aviso de continuar).

@@ -265,14 +265,27 @@ def set_pending(info: ReleaseInfo | None, error: str | None = None) -> None:
         _check_done = True
 
 
+def is_check_done() -> bool:
+    with _lock:
+        return _check_done
+
+
 def get_pending(wait_timeout: float = 0.0) -> ReleaseInfo | None:
+    """Return the background-check result, waiting up to ``wait_timeout``.
+
+    If the timeout expires before the check finishes, returns ``None`` and
+    ``is_check_done()`` stays false — callers must not treat that as
+    "already up to date".
+    """
     deadline = time.time() + max(0.0, wait_timeout)
     while True:
         with _lock:
             done = _check_done
             pending = _pending
-        if done or time.time() >= deadline:
+        if done:
             return pending
+        if time.time() >= deadline:
+            return None
         time.sleep(0.05)
 
 

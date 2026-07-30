@@ -135,8 +135,90 @@ def test_run_background_check_stores_newer_release(monkeypatch):
         pending = auto_update.get_pending(wait_timeout=0)
         assert pending is not None
         assert pending.version == "9.9.9.9"
+        assert auto_update.is_check_done()
     finally:
         config.check_updates_on_start = old
+        auto_update.reset_check_state_for_tests()
+
+
+def test_get_pending_timeout_before_done_is_not_up_to_date():
+    """A short wait must not be treated as 'no update available'."""
+    auto_update.reset_check_state_for_tests()
+    assert auto_update.get_pending(wait_timeout=0.05) is None
+    assert not auto_update.is_check_done()
+
+
+def test_offer_pending_update_sync_fallback_when_bg_slow(monkeypatch):
+    """If the background check has not finished, fall back to a sync check."""
+    from soundrts import clientversion
+    from soundrts import config
+
+    info = ReleaseInfo(
+        version="9.9.9.9",
+        tag_name="9.9.9.9",
+        html_url="https://example.test/r",
+        body="",
+        asset_name="x.zip",
+        download_url="https://example.test/a.zip",
+        size=1,
+        digest="",
+    )
+    offered = []
+    auto_update.reset_check_state_for_tests()
+    clientversion._update_prompt_done = False
+    old = getattr(config, "check_updates_on_start", 1)
+    try:
+        config.check_updates_on_start = 1
+        # Simulate: wait expires, check still not done.
+        monkeypatch.setattr(auto_update, "get_pending", lambda wait_timeout=0.0: None)
+        monkeypatch.setattr(auto_update, "is_check_done", lambda: False)
+        monkeypatch.setattr(auto_update, "check_for_update", lambda: info)
+        monkeypatch.setattr(auto_update, "set_pending", lambda i, error=None: None)
+        monkeypatch.setattr(clientversion, "offer_update", lambda i: offered.append(i))
+        clientversion.offer_pending_update(timeout=0.0)
+        assert offered == [info]
+        assert clientversion._update_prompt_done is True
+    finally:
+        config.check_updates_on_start = old
+        clientversion._update_prompt_done = False
+        auto_update.reset_check_state_for_tests()
+
+
+def test_offer_pending_update_uses_bg_result(monkeypatch):
+    from soundrts import clientversion
+    from soundrts import config
+
+    info = ReleaseInfo(
+        version="9.9.9.9",
+        tag_name="9.9.9.9",
+        html_url="https://example.test/r",
+        body="",
+        asset_name="x.zip",
+        download_url="https://example.test/a.zip",
+        size=1,
+        digest="",
+    )
+    offered = []
+    sync_calls = []
+    auto_update.reset_check_state_for_tests()
+    clientversion._update_prompt_done = False
+    old = getattr(config, "check_updates_on_start", 1)
+    try:
+        config.check_updates_on_start = 1
+        monkeypatch.setattr(auto_update, "get_pending", lambda wait_timeout=0.0: info)
+        monkeypatch.setattr(auto_update, "is_check_done", lambda: True)
+        monkeypatch.setattr(
+            auto_update,
+            "check_for_update",
+            lambda: sync_calls.append(1) or None,
+        )
+        monkeypatch.setattr(clientversion, "offer_update", lambda i: offered.append(i))
+        clientversion.offer_pending_update(timeout=0.0)
+        assert offered == [info]
+        assert sync_calls == []
+    finally:
+        config.check_updates_on_start = old
+        clientversion._update_prompt_done = False
         auto_update.reset_check_state_for_tests()
 
 
@@ -169,6 +251,18 @@ def test_check_for_updates_now_up_to_date(monkeypatch):
     spoken = []
     monkeypatch.setattr(clientversion.voice, "alert", lambda msg: spoken.append(msg))
     monkeypatch.setattr(auto_update, "check_for_update", lambda: None)
+    monkeypatch.setattr(
+        "soundrts.lib.pygame_ui.ensure_window_for_ui", lambda: None, raising=False
+    )
+    monkeypatch.setattr(
+        "soundrts.lib.pygame_ui.show_status_banner", lambda *a, **k: None, raising=False
+    )
+    monkeypatch.setattr(
+        "soundrts.lib.pygame_ui.end_narrative", lambda: None, raising=False
+    )
+    monkeypatch.setattr(
+        "soundrts.lib.pygame_ui.msgparts_to_text", lambda p: "x", raising=False
+    )
     clientversion.check_for_updates_now()
     assert spoken[0] == mp.CHECKING_FOR_UPDATES
     assert spoken[-1] == mp.UPDATE_UP_TO_DATE
@@ -191,6 +285,18 @@ def test_check_for_updates_now_offers_when_newer(monkeypatch):
     monkeypatch.setattr(clientversion.voice, "alert", lambda msg: None)
     monkeypatch.setattr(auto_update, "check_for_update", lambda: info)
     monkeypatch.setattr(clientversion, "offer_update", lambda i: offered.append(i))
+    monkeypatch.setattr(
+        "soundrts.lib.pygame_ui.ensure_window_for_ui", lambda: None, raising=False
+    )
+    monkeypatch.setattr(
+        "soundrts.lib.pygame_ui.show_status_banner", lambda *a, **k: None, raising=False
+    )
+    monkeypatch.setattr(
+        "soundrts.lib.pygame_ui.end_narrative", lambda: None, raising=False
+    )
+    monkeypatch.setattr(
+        "soundrts.lib.pygame_ui.msgparts_to_text", lambda p: "x", raising=False
+    )
     clientversion.check_for_updates_now()
     assert offered == [info]
 
@@ -203,6 +309,18 @@ def test_check_for_updates_now_reports_failure(monkeypatch):
     monkeypatch.setattr(clientversion.voice, "alert", lambda msg: spoken.append(msg))
     monkeypatch.setattr(
         auto_update, "check_for_update", lambda: (_ for _ in ()).throw(RuntimeError("net"))
+    )
+    monkeypatch.setattr(
+        "soundrts.lib.pygame_ui.ensure_window_for_ui", lambda: None, raising=False
+    )
+    monkeypatch.setattr(
+        "soundrts.lib.pygame_ui.show_status_banner", lambda *a, **k: None, raising=False
+    )
+    monkeypatch.setattr(
+        "soundrts.lib.pygame_ui.end_narrative", lambda: None, raising=False
+    )
+    monkeypatch.setattr(
+        "soundrts.lib.pygame_ui.msgparts_to_text", lambda p: "x", raising=False
     )
     clientversion.check_for_updates_now()
     assert spoken[-1] == mp.UPDATE_CHECK_FAILED
@@ -220,6 +338,20 @@ def test_check_for_updates_now_ignores_startup_toggle(monkeypatch):
         monkeypatch.setattr(clientversion.voice, "alert", lambda msg: alerts.append(msg))
         monkeypatch.setattr(auto_update, "check_for_update", lambda: None)
         monkeypatch.setattr(clientversion, "offer_update", lambda info: None)
+        monkeypatch.setattr(
+            "soundrts.lib.pygame_ui.ensure_window_for_ui", lambda: None, raising=False
+        )
+        monkeypatch.setattr(
+            "soundrts.lib.pygame_ui.show_status_banner",
+            lambda *a, **k: None,
+            raising=False,
+        )
+        monkeypatch.setattr(
+            "soundrts.lib.pygame_ui.end_narrative", lambda: None, raising=False
+        )
+        monkeypatch.setattr(
+            "soundrts.lib.pygame_ui.msgparts_to_text", lambda p: "x", raising=False
+        )
         clientversion.check_for_updates_now()
         assert mp.UPDATE_UP_TO_DATE in alerts
     finally:
@@ -284,6 +416,15 @@ def test_offer_update_launches_external_then_exits(monkeypatch):
     monkeypatch.setattr(
         "soundrts.clientmedia.close_media", lambda: None, raising=False
     )
+    monkeypatch.setattr(
+        "soundrts.lib.pygame_ui.ensure_window_for_ui", lambda: None, raising=False
+    )
+    monkeypatch.setattr(
+        "soundrts.lib.pygame_ui.show_status_banner", lambda *a, **k: None, raising=False
+    )
+    monkeypatch.setattr(
+        "soundrts.lib.pygame_ui.msgparts_to_text", lambda p: "x", raising=False
+    )
 
     try:
         clientversion.offer_update(info)
@@ -318,6 +459,23 @@ def test_offer_update_speaks_changelog_body(monkeypatch):
     monkeypatch.setattr(clientversion.voice, "alert", lambda msg: None)
     monkeypatch.setattr(auto_update, "is_packaged_install", lambda: False)
     monkeypatch.setattr(auto_update, "open_release_page", lambda i: None)
+    monkeypatch.setattr(
+        "soundrts.lib.pygame_ui.ensure_window_for_ui", lambda: None, raising=False
+    )
+    monkeypatch.setattr(
+        "soundrts.lib.pygame_ui.show_narrative", lambda *a, **k: None, raising=False
+    )
+    monkeypatch.setattr(
+        "soundrts.lib.pygame_ui.show_status_banner", lambda *a, **k: None, raising=False
+    )
+    monkeypatch.setattr(
+        "soundrts.lib.pygame_ui.end_narrative", lambda: None, raising=False
+    )
+    monkeypatch.setattr(
+        "soundrts.lib.pygame_ui.msgparts_to_text",
+        lambda parts: "fixed gas depletes",
+        raising=False,
+    )
 
     clientversion.offer_update(info)
 
@@ -325,6 +483,22 @@ def test_offer_update_speaks_changelog_body(monkeypatch):
     assert spoken[0] == [LITERAL_TEXT_PREFIX + "fixed gas depletes"]
     # Must not nest the literal list: [["文本: ..."]]
     assert not isinstance(spoken[0][0], list)
+
+
+def test_confirm_yes_no_uses_visual_prompt():
+    src = Path("soundrts/clientmenu.py").read_text(encoding="utf-8")
+    block = src.split("def confirm_yes_no", 1)[1].split("\ndef ", 1)[0]
+    assert "show_confirm" in block
+    assert "confirm_button_at" in block
+    assert "draw_confirm" in block
+
+
+def test_pygame_ui_has_confirm_helpers():
+    src = Path("soundrts/lib/pygame_ui.py").read_text(encoding="utf-8")
+    assert "def show_confirm" in src
+    assert "def draw_confirm" in src
+    assert "def confirm_button_at" in src
+    assert "def raise_game_window" in src
 
 
 def test_soundrts_entry_handles_update_flag():

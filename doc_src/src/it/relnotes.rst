@@ -7,6 +7,18 @@ Note di rilascio
 1.4.6.6
 --------
 
+**Correzione: il controllo all’avvio a volte non rilevava una versione più recente**
+
+- Con il controllo all’avvio attivo, a volte nessun avviso dopo il lancio, mentre Opzioni → Controlla ora trovava correttamente la versione.
+- Causa: la richiesta a GitHub può richiedere ~20 s, ma il thread principale aspettava solo ~8 s; il timeout veniva trattato come «già aggiornato».
+- Ora il controllo parte prima, attende il completamento (~30 s) e, se ancora in corso, usa lo stesso controllo sincrono del menu.
+- **Codice / test**: ``auto_update.py``, ``clientversion.py``, ``clientmain.py``, ``test_auto_update.py``.
+
+**Miglioramento: avvisi di aggiornamento visibili a schermo**
+
+- Non più solo voce: testo a schermo, pulsanti Yes/No (cliccabili), note del changelog visibili, e tentativo di portare la finestra in primo piano.
+- **Codice**: ``pygame_ui.py``, ``clientmenu.py``, ``clientversion.py``.
+
 **Correzione: scegliendo di ascoltare le note di aggiornamento non venivano lette**
 
 - Dopo aver confermato un aggiornamento, accettare di ascoltare le note non riproduceva il body del Release GitHub (o veniva interrotto subito dal prompt di continuare).

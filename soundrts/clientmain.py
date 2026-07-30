@@ -1266,8 +1266,10 @@ def launch_manual():
 
 def main():
     try:
-        init_media()
+        # Start the update check ASAP so it overlaps with media init
+        # (GitHub can take longer than a short post-init wait).
         revision_checker.start_if_needed()
+        init_media()
 
         # 设置并启动菜单音乐
         sound.play_menu_music()
