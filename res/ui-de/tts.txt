@@ -1,40 +1,8 @@
-;	coding: utf-8
+; coding: utf-8
+
+#	attributbezogene Meldungskonstanten
 0	unbekannt!
-1	Sie 
-3	vor Ihnen
-4	hinter Ihnen
-5	Wie sind Ihre Befehle?
-23	und
-38	Sie haben
-39	Lebenspunkte von
-40	Level
-54	auf
-55	Meter
-59	der Spieler
-60	Sie sind
-61	getötet
-65	Minuten
-66	Sekunden
-67	Norden
-68	Süden
-69	Osten
-70	Westen
-71	Nord-Osten
-72	Nord-Westen
-73	Süd-Osten
-74	Süd-Westen
-79	Aue
-80	Wald
-81	Goldmine
-82	Rathaus
-83	Farm
-84	Weg
-85	Arbeiter
-86	Soldat
-87	Schütze
-88	Feind
-89	Freund
-99	kaserne
+1	Sie
 100	Gehe
 101	baue
 102	abbau von
@@ -80,7 +48,7 @@
 145	neutralisiert
 146	verloren
 147	Produktion
-148	Sägemühle 
+148	Sägemühle
 149	Sieg!
 150	Niederlage
 151	1
@@ -140,6 +108,8 @@
 2057	das Befehligen aller Arbeiter im aktuellen Sektor.
 2058	das Befehligen des nächsten Gebäudes.
 2059	das Befehligen des nächsten Arbeiters.
+23	und
+3	vor Ihnen
 3000	0
 3001	1
 3002	2
@@ -185,6 +155,10 @@
 3100	Hundert
 3101	Tausend
 3102	millionen
+38	Sie haben
+39	Lebenspunkte von
+4	hinter Ihnen
+40	Level
 4000	spiel
 4001	Internet
 4002	lokal
@@ -203,7 +177,7 @@
 4017	Karte
 4018	Mehrspieler,
 4019	wechsel
-4020	ziel: 
+4020	ziel:
 4021	emun gegen feindliche angriffe.
 4022	produziert,
 4023	produziert,
@@ -245,7 +219,7 @@
 4062	das spiel startet in 5 sekunden...
 4063	das Spiel startet, wenn der Spielleiter bereit ist.
 4064	drücken Sie Eingabe um zu bestädigen.
-4066	drücken sie TAB um zwischen den sichtbaren objekten zu wählen. 
+4066	drücken sie TAB um zwischen den sichtbaren objekten zu wählen.
 4067	drücken sie TAB um ein ziel auszuwählen, und Enter um zu bestätigen.
 4070	Spiel abbrechen
 4071	Spiel fortsetzen
@@ -367,33 +341,6 @@
 4281	lade alle ab nach
 4282	gehe in
 4283	unsichtbarer schütze
-5000	a
-5001	b
-5002	c
-5003	d
-5004	e
-5005	f
-5006	g
-5007	h
-5008	i
-5009	j
-5010	k
-5011	l
-5012	m
-5013	n
-5014	o
-5015	p
-5016	q
-5017	r
-5018	s
-5019	t
-5020	u
-5021	v
-5022	w
-5023	x
-5024	y
-5025	z
-5026	punkt
 4284	bewege
 4285	zu Allianz
 4286	verbunden
@@ -480,6 +427,7 @@
 4368	Wache
 4369	Verfolgung
 4370	Erobern
+4371	besetzt
 4372	Goldhaus
 4373	Produktion läuft
 4375	Produktion stoppen
@@ -500,9 +448,9 @@
 4390	Drücken Sie den entsprechenden Buchstaben für Informationen
 4391	Drücken Sie Escape zum Beenden
 4392	Attributbildschirm verlassen
-4393	Mehrere Einheiten ausgewählt: 
+4393	Mehrere Einheiten ausgewählt:
 4394	Keine Attribute verfügbar
-4395	: 
+4395	:
 4396	Nahkampfschaden
 4397	Fernkampfschaden
 4398	Nahkampfverteidigung
@@ -511,7 +459,7 @@
 4401	Fernkampf-Abklingzeit
 4402	Nahkampfreichweite
 4403	Fernkampfreichweite
-4404	gegen 
+4404	gegen
 4405	Nahkampfschaden-Bonus
 4406	Fernkampfschaden-Bonus
 4407	Trefferpunkte
@@ -573,6 +521,7 @@
 4508	wechseln zu
 4509	zu früh
 4510	aufheben
+4511	verlangsamen
 4600	Stufe
 4601	EP
 4602	/
@@ -608,8 +557,10 @@
 4635	Musik an
 4636	Musik aus
 4637	Lautstärke in Prozent
+4638	manuelle Produktion
 4650	Automatische Produktion starten
 4651	Manuelle Produktion starten
+4654	Goldminengebäude
 4655	Automatischen Anbau starten
 4656	Manuellen Anbau starten
 4657	Anbau
@@ -617,6 +568,8 @@
 4659	Anbau stoppen
 4660	Haus
 4661	Obstgarten
+4662	Ebene
+4663	offenes Gelände
 4700	Spiel zuschauen
 4701	Spiel läuft
 4702	Keine Spiele zum Zuschauen verfügbar
@@ -634,7 +587,6 @@
 4714	Zoomfaktor muss zwischen 2 und 20 liegen
 4715	Zoomfaktor eingeben, z. B. 3x3 oder 4x4
 4716	kann ausbilden
-#	attributbezogene Meldungskonstanten
 4717	Nahkampf-Ansturm-Schaden
 4718	Nahkampf-Sturmangriffschaden-Bonus
 4719	Fernkampf-Ansturm-Schaden
@@ -713,7 +665,7 @@
 4799	Kosten
 4800	Zeitkosten
 4801	Bevölkerungskosten
-4802	s Attribute: 
+4802	s Attribute:
 4803	kein solches Attribut
 4804	kein Bonus
 4805	Minuten
@@ -762,8 +714,6 @@
 4848	Transportvolumen
 4849	angreifbare Passagiere
 4850	Ladebonus
-4927	Passagierbonus
-4928	Trefferchance innen von außen
 4851	Leiche
 4852	Boden
 4853	Luft
@@ -829,13 +779,15 @@
 4917	Fernkampf-Projektilverzögerung
 4918	Nahkampf-Statusdauer
 4919	Fernkampf-Statusdauer
-4924	Erzwungener Schaden
-4925	minimale Nahkampf-Ansturmdistanz
-4926	minimale Fernkampf-Ansturmdistanz
 4920	Vertrag
 4921	Vertrag aktiv, Angriffe verboten
 4922	Vertrag beendet, Kampf erlaubt
 4923	kein Vertrag
+4924	Erzwungener Schaden
+4925	minimale Nahkampf-Ansturmdistanz
+4926	minimale Fernkampf-Ansturmdistanz
+4927	Passagierbonus
+4928	Trefferchance innen von außen
 4930	Hirsch
 4931	Schaf
 4932	Kadaver
@@ -868,6 +820,7 @@
 4976	Wasser ist unpassierbar
 4977	Land ist unpassierbar
 4978	unfertig, unpassierbar
+4979	Boden ist unpassierbar
 4980	Aktuelle Epoche
 4981	Dunkles Zeitalter
 4982	Feudalzeitalter
@@ -888,6 +841,34 @@
 4997	umbenannt
 4998	ungültiger Name
 4999	abgebrochen
+5	Wie sind Ihre Befehle?
+5000	a
+5001	b
+5002	c
+5003	d
+5004	e
+5005	f
+5006	g
+5007	h
+5008	i
+5009	j
+5010	k
+5011	l
+5012	m
+5013	n
+5014	o
+5015	p
+5016	q
+5017	r
+5018	s
+5019	t
+5020	u
+5021	v
+5022	w
+5023	x
+5024	y
+5025	z
+5026	punkt
 5027	neutral
 5028	replay
 5029	nicht neutral
@@ -929,8 +910,6 @@
 5065	Team-Modus
 5066	jeder gegen jeden
 5067	zwei Teams
-5338	nicht genug Platz
-5750	Sprache
 5068	Gewässer
 5069	ohne Gewässer
 5070	See
@@ -974,6 +953,8 @@
 5110	Vorratsmenge
 5111	Phasenbonus-Ziele
 5112	Einheiten steigen automatisch auf
+5113	außer
+5114	jedes Ziel außer
 5115	Fleisch
 5116	Obst
 5117	Produktionsgegenstand
@@ -983,8 +964,6 @@
 5121	manueller Anbau
 5122	Münzprägeanstalt
 5123	Goldmünze
-5113	außer
-5114	jedes Ziel außer
 5190	Missionsbriefing
 5191	Hauptziele
 5192	Nebenziele
@@ -1064,7 +1043,7 @@
 5286	Tastenbelegung für klassische Hotkeys kommt in einer späteren Version
 5287	globale Hotkeys auf Standard zurücksetzen
 5288	globale Hotkeys auf Standard zurückgesetzt
-5289	Taste bereits verwendet von 
+5289	Taste bereits verwendet von
 5290	Enter zum Ersetzen bestätigen, Escape zum Abbrechen
 5291	nicht belegt
 5292	gesetzt auf
@@ -1095,8 +1074,28 @@
 5317	Rang, Ehren, Medaillen und Karten dieses Mods anzeigen
 5318	Medaillen gesamt
 5319	Ladungen
+5320	Goldversorgungskarte
+5321	Holzversorgungskarte
+5322	Infanterieverstärkungs-Karte
+5323	Kavallerieverstärkungs-Karte
+5324	Bogenschützenverstärkungs-Karte
+5325	Magierverstärkungs-Karte
+5326	Drachenverstärkungs-Karte
+5327	Belagerungsverstärkungs-Karte
+5328	Luftverstärkungs-Karte
+5329	Infanterie-Kavallerie-Kombi-Karte
+5330	Infanterie-Bogenschützen-Kombi-Karte
+5331	Bogenschützen-Kavallerie-Kombi-Karte
+5332	gemischte Armee-Karte
+5333	verzögerte Infanterieverstärkungs-Karte
+5334	verzögerte Nahkampfwaffen-Karte
+5338	nicht genug Platz
+5340	noch keine Karten oder Medaillen verdient
 5350	aktueller Rang
 5351	nächster Rang
+5352	Ehrentitel
+5353	Kartenplätze vor der Mission
+5354	benötigt Rang
 5355	noch nötig
 5356	automatisches Sammeln deaktivieren
 5357	Schiffswerft
@@ -1107,7 +1106,6 @@
 5362	Slot
 5363	Ausrüstungsplätze erhöht, jetzt
 5364	vor Gefecht oder Zufallskarte gegen Computer mitnehmen
-5450	wirkt sofort beim Spielstart
 5365	extra zu Beginn
 5366	erscheint zu Spielbeginn nahe Ihrem Start
 5367	Wiederholung
@@ -1134,32 +1132,15 @@
 5388	Effekt der Ausrüstungskarte ausgelöst
 5389	erscheint nahe Ihrem Start
 5390	gewährt extra
+5392	.
 5393	gewährt Technologie
 5394	extra nach erstem abgeschlossenen Training von
 5395	in diesem Spiel extra nach erstem abgeschlossenen Training von
-5392	.
-5352	Ehrentitel
-5353	Kartenplätze vor der Mission
-5354	benötigt Rang
-5320	Goldversorgungskarte
-5321	Holzversorgungskarte
-5322	Infanterieverstärkungs-Karte
-5323	Kavallerieverstärkungs-Karte
-5324	Bogenschützenverstärkungs-Karte
-5325	Magierverstärkungs-Karte
-5326	Drachenverstärkungs-Karte
-5327	Belagerungsverstärkungs-Karte
-5328	Luftverstärkungs-Karte
-5329	Infanterie-Kavallerie-Kombi-Karte
-5330	Infanterie-Bogenschützen-Kombi-Karte
-5331	Bogenschützen-Kavallerie-Kombi-Karte
-5332	gemischte Armee-Karte
-5333	verzögerte Infanterieverstärkungs-Karte
-5334	verzögerte Nahkampfwaffen-Karte
 5396	Infanterie-Trainingsbonus-Karte
-5340	noch keine Karten oder Medaillen verdient
+5397	Hotkey-Belegung für Mod
+5398	kein Mod
 5399	klassische Hotkeys auf Standard zurückgesetzt
-5397	Hotkey-Belegung für Mod 
+54	auf
 5400	Rekrut
 5401	Obergefreiter
 5402	Unteroffizier
@@ -1190,8 +1171,6 @@
 5435	angesammelte Ressourcen erreichen
 5436	halten für
 5437	Minuten
-5451	alle feindlichen Spieler vernichten
-5452	und Ihr Rathaus behalten
 5438	eine Goldmünze dem Stadtstaat-Händler liefern
 5439	der Händler belohnt Sie mit Vorräten
 5440	einen Heiltrank dem Dorfheiler liefern
@@ -1203,6 +1182,9 @@
 5447	Ruinenjäger
 5448	Überlebender
 5449	Meister der vier Modi
+5450	wirkt sofort beim Spielstart
+5451	alle feindlichen Spieler vernichten
+5452	und Ihr Rathaus behalten
 5453	Laden ungültig
 5454	Laden fehlgeschlagen
 5455	Entladen ungültig
@@ -1244,8 +1226,7 @@
 5491	die versteckte Kammer birgt zusätzliche Beute
 5492	noch unentdeckte Ruinen
 5493	nur noch eine Ruine zu entdecken
-7736	Raynor, Herr der Koalition
-5398	kein Mod
+55	Meter
 5500	lokal alles auswählen
 5501	Einheit durchschalten
 5502	Arbeiter
@@ -1441,13 +1422,6 @@
 5697	Bach
 5698	Hochland
 5699	Hügel
-4371	besetzt
-4511	verlangsamen
-4638	manuelle Produktion
-4654	Goldminengebäude
-4662	Ebene
-4663	offenes Gelände
-4979	Boden ist unpassierbar
 5700	Luft ist unpassierbar
 5701	kann nicht passieren
 5702	Bedrohung
@@ -1476,6 +1450,7 @@
 5741	Barrierefreie Stimme ist jetzt an
 5742	Barrierefreie Stimme ist jetzt aus
 5743	Barrierefreie Stimme umschalten
+5750	Sprache
 5751	Systemstandard
 5752	aktuell
 5760	Sprachbibliotheken
@@ -1517,3 +1492,29 @@
 5796	Sie haben bereits die neueste Version
 5797	Update-Pruefung fehlgeschlagen
 5798	Update-Fenster wird geoeffnet; das Spiel wird beendet
+59	der Spieler
+60	Sie sind
+61	getötet
+65	Minuten
+66	Sekunden
+67	Norden
+68	Süden
+69	Osten
+70	Westen
+71	Nord-Osten
+72	Nord-Westen
+73	Süd-Osten
+74	Süd-Westen
+7736	Raynor, Herr der Koalition
+79	Aue
+80	Wald
+81	Goldmine
+82	Rathaus
+83	Farm
+84	Weg
+85	Arbeiter
+86	Soldat
+87	Schütze
+88	Feind
+89	Freund
+99	kaserne

@@ -1,7 +1,8 @@
-﻿; coding: utf-8
+; coding: utf-8
 
-7000 schweinefarm
-7001 kaserne
-7002 haupthaus
-7003 peon
-7004 grunzer
+7000	schweinefarm
+7001	kaserne
+7002	haupthaus
+7003	peon
+7004	grunzer
+777754	Ork

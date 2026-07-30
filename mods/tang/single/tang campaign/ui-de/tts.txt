@@ -1,0 +1,38 @@
+; coding: utf-8
+
+8500	Die Türken standen kurz davor, die Grenzen der Tang-Dynastie zu überfallen, und das Tang-Reich war erfüllt von der Vorahnung eines bevorstehenden Krieges.
+8501	Der Marschall beabsichtigt, euch zur Grenze zu entsenden, um dort zu garnisonieren und euch auf den Krieg vorzubereiten. Hinweis: Entfernt euch nicht zu weit von der Grenze.
+8502	Gut gemacht!
+8504	Die Vorhut des türkischen Heeres naht, wir müssen ihr einen frontalen Schlag versetzen und sie zurückschlagen; wir haben allerdings nicht viel Kavallerie, also müssen wir sie an der richtigen Stelle einsetzen.
+8505	Die türkische Vorhut zurückschlagen.
+8506	Seht ihr das? Das Gelände bei b4 liegt höher; stellt man dort Bogenschützen auf, können ihre Pfeile weiter fliegen, und der Feind wird ohne beträchtliche Verluste nicht hinaufkommen. Haltet diese Anhöhe um jeden Preis, denn sie ist zugleich der Zugang zur Stadt — solange wir sie halten, kann der Feind nicht eindringen.
+8507	Diese Speerkämpfer sind ein Vorstoß des Feindes zum Austesten. Speerkämpfer sind der Kavallerie überlegen; bei gleicher Anzahl darf man daher keinesfalls Kavallerie gegen Speerkämpfer einsetzen, sondern sollte Modao-Schwertkämpfer oder billige Bogenschützen verwenden.
+8508	Wenn es darum geht, Kavallerie zu bekämpfen, wagt niemand zu behaupten, besser zu sein als unsere Tang-Modao-Schwertkämpfer.
+8509	Ein Dorf errichten
+8510	Eine Kaserne errichten
+8511	Kapitel 1: Vorbereitungen vor dem Krieg
+8512	Kapitel 2: Vorbereitung von Soldaten und Pferden
+8530	Nachdem ihr die grundlegende Konstruktion von Gebäuden gelernt habt, müsst ihr lernen, eure Basis auszubauen, Truppen zu rekrutieren und andere Aktionen durchzuführen.
+8531	Anleitung für Anfänger
+8532	Baut das Kreisamt zum Gouverneurspalast aus, rekrutiert 20 Pikeniere, 20 Bogenschützen, 20 Modao-Fußsoldaten, 20 leichte Kavallerie, 5 Marschwagen, 5 Belagerungsfahrzeuge, 5 taoistische Priester und 5 Basilisken-Kavallerie.
+8533	Kreisämter zum Gouverneurspalast ausbauen
+8534	20 Pikeniere, 20 Bogenschützen, 20 Modao-Fußsoldaten und 20 leichte Kavallerie rekrutieren
+8535	5 Marschwagen und 5 Belagerungsfahrzeuge rekrutieren
+8536	5 taoistische Priester und 5 Schwarze Kavallerie rekrutieren
+8537	Gut gemacht, sobald die Kaserne verfügbar ist, könnt ihr eure Basis auf Stufe 2 ausbauen.
+8538	Ihr erfüllt die Voraussetzungen, um eure Basis auf Stufe 3 auszubauen.
+8539	Kapitel 3: Kampffertigkeiten
+8540	Da die Truppen nun ausreichen, ist es Zeit, sich mit dem Kampf vertraut zu machen. Das Spiel kennt bestimmte Konterbeziehungen: Grundsätzlich schlägt die Klasse der Speer- und Lanzenkämpfer die Kavallerie, Kavallerie schlägt Fernkampf, Fernkampf schlägt Speer-/Lanzenkämpfer und schwere Infanterie, Belagerungsgerät schlägt Fernkampf. Über diese grundlegenden Konterbeziehungen hinaus warten weitere, detailliertere Beziehungen darauf, von euch entdeckt zu werden.
+8541	Das türkische Heer im Norden war stets eine Bedrohung für unser Tang-Reich; gestützt auf seinen Kavallerievorteil kam und ging es nach Belieben und zwang unsere Truppen oft zur überstürzten Flucht. Die Kundschafter haben tatsächlich eine beträchtliche Zahl türkischer Truppen entdeckt, die unweit der Grenze unseres Tang-Reiches zu unbekanntem Zweck umherziehen. Nach reiflicher Beratung haben wir beschlossen, ein Risiko einzugehen und uns aus der Stadt zu schleichen, um ihr Lager anzugreifen.
+8542	Alle Feinde vernichten
+8543	Kapitel 4: Ein Frontalangriff.
+8544	Ab diesem Kapitel beginnt die eigentliche Kampfphase; der Feind wird Welle um Welle von Angriffen starten — die Zeit, die Gesamtstärke des Spielers auf die Probe zu stellen, ist gekommen.
+8545	Kapitel 5: Die letzte Entscheidungsschlacht
+8546	Die Hauptstreitmacht der Türken hat mit voller Wucht unsere Armee bedrängt; es scheint, dass eine erbitterte Schlacht unmittelbar bevorsteht, und ich denke, sie wird recht tragisch ausfallen.
+8549	Die Stadt halten
+8551	Meldung … Soeben die Nachricht erhalten: Der Marschall ist besorgt, dass unsere Kräfte zur Verteidigung der Stadt knapp sind, und hat beschlossen, uns Verstärkung zu schicken. Er hofft, dass der General unbedingt sicherstellt, dass die Stadt nicht verloren geht.
+8552	Seht, das ist die Verstärkung, die Verstärkung ist da, bei b5!!!
+8553	Dies war die letzte Unterstützungswelle, die uns der Marschall gewährte; da wir Verluste befürchteten, betrat diese Verstärkung die Stadt durch das Südtor, bei a3 und c3.
+8554	Die Schlacht hat ein Ausmaß erreicht, das ihr nicht erwartet habt; die Soldaten sind übermüdet, die Stadt ist verzweifelt auf Nahrung angewiesen, doch die türkische Offensive scheint keineswegs nachzulassen. Ihr könnt nicht umhin, euch Sorgen zu machen, und beschließt daher, die Generäle zusammenzurufen, um Gegenmaßnahmen zu besprechen.
+8555	Nach der Beratung waren wir uns alle einig, dass wir nicht an den Stadttoren festhalten können; wir müssen die Lage nach dem Fall der Tore bedenken. Nach wiederholter Diskussion und Überlegung habt ihr die Gegenmaßnahme entwickelt, das verwinkelte Gelände im Inneren der Stadt zu nutzen, um den Feind aufzuhalten — schwache Stellungen sind nicht zu halten; gebt die Stadttore sofort auf und zieht euch in die Stadt zurück.
+8556	Ihr fühlt euch bereits bis an die Grenze erschöpft und wisst nicht mehr weiter, doch plötzlich bemerkt ihr, dass sich das türkische Lager gegenüber langsam zurückzuziehen scheint, während von drüben der Klang von Gongs zum Rückzug ertönt. Kaum hört das türkische Heer das Signal, löst es sich sofort vom Schlachtfeld. Es stellt sich heraus, dass nicht nur ihr euch hilflos gefühlt habt — auch die Türken gegenüber waren ratlos: Trotz so hoher Verluste konnten sie die Stadt nicht einnehmen, die Moral des türkischen Heeres war auf den Tiefpunkt gesunken, und ein Weiterkämpfen war nicht mehr angebracht. Da sie zudem jederzeit euren Hauptstreitkräften fürchteten, entschieden sie sich, die Belagerung dieser Stadt aufzugeben und einen anderen Weg zu suchen.

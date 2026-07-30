@@ -644,7 +644,7 @@
 4614 mdg_crit_vs
 4615 rdg_crit_vs
 4616 mdg_crit_rate_vs
-4617 rdg_crit_rate_vs = [4617]   # 远程暴击几率对特定单位
+4617 rdg_crit_rate_vs
 
 4618 melee critical resistance
 4619 ranged critical resistance
@@ -658,7 +658,7 @@
 4626 mdg_piercing_vs
 4627 rdg_piercing_vs
 4628 mdg_piercing_rate_vs
-4629 rdg_piercing_rate_vs = [4629] # 远程穿甲几率对特定单位
+4629 rdg_piercing_rate_vs
 
 4630 melee piercing resistance
 4631 ranged piercing resistance

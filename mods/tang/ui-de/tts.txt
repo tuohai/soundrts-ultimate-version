@@ -1,0 +1,231 @@
+; coding: utf-8
+
+12800	Rüstungsgewicht-Reduzierung verringert die Verteidigung
+12801	Glänzende Rüstung
+12802	Schwarze Rüstung
+12803	Schwarz gepanzerte Kavallerie
+12804	Ballista
+12805	Beschützer
+12806	Donner beschwören
+12807	Modao-Schwerinfanterie
+12808	Langmesser
+12809	Säbel
+12810	Infanterierüstung
+12811	Sichtweite
+12812	Vorhalle
+12813	Donnerverbindung
+12814	Segen des Drachengottes
+12815	Den Drachen beschwören
+12816	Goldener Drache
+12817	Verjüngung
+12818	Tang-Armbrustschütze
+12819	Wiederauferstehung
+12820	Taoistischer Tempel
+12821	Dorf
+12822	Waffenforschungsinstitut
+12823	Taoistische Medizin
+12824	Holzvogel
+12825	Kreisamt
+12826	Kreisverwaltung
+12827	Amtsgebäude
+12828	Gouverneurspalast
+12829	Okkultismus
+12830	Tang-Reich
+12831	Behandlung
+12832	Tang-Reich
+12833	Dorfbewohner
+12834	Tang-Kaserne
+12835	Leichte Tang-Kavallerie
+12836	Reiterlanze
+12837	Armbrust
+12838	Leichte Tang-Infanterie
+12839	Hengdao-Schwert
+12840	Tang-Kavallerie-Bogenschütze
+12841	Reiterbogen
+12842	Reiterbogen-Reichweite
+12843	Seeadler
+12844	Kampfschiff
+12845	Kundschafterschiff
+12846	Großes Turmschiff
+12847	Sturmschiff
+12848	Stein
+12849	Steine schleudern
+12850	Kampfschiff im Nahkampfmodus
+12851	Pfeile schießen
+12852	Pfeil
+12853	Tang-Marschwagen
+12854	Pfeifpfeil
+12855	Kurzklinge
+12856	Tang-Marschwagen
+12857	Speer
+12858	Wurfklinge
+12859	Wurfschwert
+12860	Fußfessel
+12861	Byzantinische Armbrust-Kavallerie
+12862	Gießereiamt
+12863	Achtochsen-Armbrust
+12864	Wachturm
+12865	Türkisches Khanat
+12866	Bogenholz-Lager
+12867	Holzfällerlager
+12868	Lager des Paschas
+12869	Türkischer Pferdehof
+12870	Lederwerkstatt
+12871	Schamanenhalle
+12872	Voliere
+12873	Türkische Hirten
+12874	Türkische Speerkämpfer
+12875	Türkischer Scharfschütze
+12876	Türkischer Kavallerie-Bogenschütze
+12877	Türkische Kurzschwert-Kavallerie
+12878	Türkische Säbel-Kavallerie
+12879	Türkische Klingen-Kavallerie
+12880	Türkische Schwere Kavallerie
+12881	Türkische Scharfschützen-Kavallerie
+12882	Türkischer Vogel
+12883	Goldener Wolf
+12884	Türkischer Schamane
+12885	Segen des Wolfsgottes
+12886	Goldenen Wolf beschwören
+12887	Um Regen bitten
+12888	Wahrsagerei
+12889	Verhext
+12890	Fluch
+12891	Tang-Pionierfahrzeug
+12892	Türkische Blide
+12893	Tang-Bogenschütze
+12894	Türkischer Bogenschütze
+12895	Wagenwerkstatt
+12896	Regen
+12897	Die Macht des Fluchs
+12898	Trigramme
+12899	Waffenwerkstatt
+12900	Lederrüstung
+12901	Ringpanzer
+12902	Fahrbares Zelt
+12903	Türkische Kaserne
+12904	Schmiede
+12905	Türkisches Sägewerk
+12906	Tang-Sägewerk
+12907	Kleine Werft
+12908	Schiffsamt
+12909	Tang-Stallungen
+12910	Türkische Stallungen
+12911	Türkischen Vogel beschwören
+12912	Kleiner Docksteg
+12913	Tang-Werft
+12914	Fußfessel legen
+12915	Floß
+12916	Fischerboot
+12917	Wurfsteinschiff
+12918	Kontinuierlicher Verteidigungsanstieg
+12919	Rüstungsverteidigung erhöhen
+12920	Ernährung verbessern
+12921	Lederwerkstatt
+12922	Geschwindigkeit erhöhen
+12923	Geschwindigkeit verringern
+12924	Rüstungsverteidigung erhöhen (Fußsoldatenrüstung)
+12925	Ernährung verbessern
+12926	Laufbursche
+12927	Laufburschen beschwören
+12928	Stadtzentrum
+12929	Gouverneurspalast
+12930	Konstantinopel
+12931	Obstgut
+12932	Werft
+12933	Mine
+12934	Kirche
+12935	Schwerer Schild
+12936	Rüstungsinstitut
+12937	Schuppenpanzer
+12938	Anlegestelle
+12939	Wachturm
+12940	Leichter Schild
+12941	Schwerer Schild
+12942	Rundschild
+12943	Schuppenpanzer
+12944	Kettenhemd
+12945	Pike
+12946	Schweres Schwert
+12947	Zugkraft
+12948	Leibeigener
+12949	Byzantinische Pikeniere
+12950	Byzantinische Schwert-Schildkämpfer
+12951	Byzantinische Pike-Kavallerie
+12952	Byzantinischer Kavallerie-Bogenschütze
+12953	Eiserner Paladin
+12954	Doppeladler
+12955	Doppeladler beschwören
+12956	Wurfspieß
+12957	Wurfspieß werfen
+12958	Leichte Dromone
+12959	Schwere Dromone
+12960	Königliche Dromone
+12961	Griechisches Feuer
+12962	Griechisches Feuer abfeuern
+12963	Axtkämpfer
+12964	Axt
+12965	Festung
+12966	Katapultturm
+12967	Byzantinisches Reich
+12968	Schwere Dromone im Nahkampfmodus
+12969	Königliche Dromone im Fernkampfmodus
+12970	Byzantinischer Bogenschütze
+12971	Neuer Wurfspieß
+12972	Prüfung Gottes
+12973	Segen Gottes
+12974	Gnade Gottes
+12975	Byzantinisches Katapult
+12976	Söldner zum Kampf befehligen
+12977	Einheimische Husaren
+12978	Türkischer Söldner-Reiterbogenschütze
+12979	Türkische Kavallerie im Nahkampfmodus
+12980	Warägergarde
+12981	Angriffsgeschwindigkeit erhöht sich
+12982	Angriffsgeschwindigkeit verringert
+12983	Husar Stufe 1 Sichtweite
+12984	Husar Stufe 2 Sichtweite
+12985	Husar Stufe 3 Sichtweite
+12986	Bogenschütze Stufe 1 Angriffsgeschwindigkeit
+12987	Bogenschütze Stufe 2 Angriffsgeschwindigkeit
+12988	Bogenschütze Stufe 3 Angriffsgeschwindigkeit
+12989	Tang-Stallungen
+12990	Türkische Stallungen
+12991	Byzantinische Stallungen
+12992	Türkische Schmiede
+12993	Byzantinische Schmiede
+12994	Schwert-Schildkämpfer im Beschleunigungsmodus
+12995	Diener zum Kampf befehligen
+12996	Nanzhao-Schwerinfanterist
+12997	Wangman-Speerkämpfer
+12998	Leichte Shatuo-Kavallerie
+12999	Shatuo-Kavallerie-Bogenschütze
+13000	Schwere Nanzhao-Kavallerie
+13001	Eingeborener Bogenschütze
+13002	Stadtmauer
+13003	Riesige Stadtmauer
+13004	Stadttor
+13005	Riesiges Stadttor
+13006	Schwere Pike-Kavallerie
+13007	Regensturm
+13008	verhext
+13009	Tang-Arbalest-Schütze
+13010	Byzantinischer Armbrustschütze
+13011	Mittlere Blide
+13012	Mittleres Katapult
+13013	Schweres Katapult
+13014	Rammbock
+13015	Tang-Plänkler
+13016	Tang-Elite-Plänkler
+13017	Tang-Kaiserlicher Plänkler
+13018	Türkischer Plänkler
+13019	Türkischer Elite-Plänkler
+13020	Byzantinischer Plänkler
+13021	Byzantinischer Elite-Plänkler
+13022	Byzantinischer Kaiserlicher Plänkler
+13027	Türkische Mittlere Kavallerie
+13028	Türkischer Kavallerie-Bogenschütze
+13029	Hinterhaltskreis
+13030	Hinterhalt
+13031	Tang-Pikeniere
+7777	Unsterbliche Tang-Dynastie

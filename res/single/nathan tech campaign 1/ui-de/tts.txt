@@ -1,0 +1,21 @@
+; coding: utf-8
+
+56001	3000 Gold sammeln,
+56002	600 Holz sammeln, und
+56003	Pferd und Wagen
+56004	schließlich die Ressourcen in den Wagen laden
+56007	30 Fußsoldaten rekrutieren
+56008	folgt dem Weg nach j10
+56009	den Weg für Galahan freimachen
+56010	zeigt einem seiner Bauern, wie er zu eurer Burg gelangt
+56011	Der Kommandant möchte, dass ihr ein Vorbild seid. Baut 30 Kanonentürme, 30 Wachtürme und rekrutiert 60 Fußsoldaten.
+56012	Schickt einen Spion hinein.
+56013	Verstärkt die Verteidigung an der Ostseite. 50 Ritter, 50 Fußsoldaten, 50 Bogenschützen, 50 Katapulte und 10 Magier sollten bei f1 auf der Anhöhe stationiert werden.
+56014	Bezwingt den Feind!
+56015	Zeit, unseren Gegenangriff vorzubereiten. Bringt 50 Ritter nach d1.
+56016	Gut. Zeigen wir ihnen, wer hier das Sagen hat!
+56017	Zahlt Galahan aus. Sammelt das Gold und Holz und ladet es dann in einen großen Wagen.
+56018	Gebt ihm seine Ehrengarde. 50 Ritter und 50 Fußsoldaten sollten genügen.
+56019	riesiger Transportwagen
+56020	Streitwagen des Anführers
+56021	letzte Worte

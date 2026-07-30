@@ -1,0 +1,22 @@
+; coding: utf-8
+
+76000	Prolog.
+76001	Ihr seid ein Lehnsherr im Dienste von König Konrad.
+76010	Kapitel 1: eine neue Basis.
+76011	Ihr verfügt über einige Leibeigene, um die Karte zu erkunden und einen idealen Ort zum Abbau von Ressourcen zu finden. Baut ein Kastell, sorgt dafür, dass es sich zu einem Bergfried weiterentwickelt, und rekrutiert 5 Armbrustschützen, um das Gebiet zu sichern.
+76012	Einen Bergfried und 5 Armbrustschützen besitzen.
+76013	Oh, seht mal dort bei A3, da gibt es Wiesen und Ressourcen, genau das, was ihr braucht!
+76020	Kapitel 2: ein unsichtbarer Feind.
+76021	König Konrad hat euch in aller Eile geschickt, um eine seltsame Angelegenheit zu klären, die die Bewohner in Angst und Schrecken versetzt. Man vermutet, dass Teufel und Gespenster die Gegend auf der Suche nach Opfern heimsuchen. Findet einen Weg, die Anwesenheit dieser Wesen aufzuspüren, und vernichtet sie.
+76022	Alle Gespenster finden und unschädlich machen.
+76030	Kapitel 3: das Gespensternest.
+76031	Es ist euch gelungen, die Bedrohung durch die Gespenster abzuwenden, doch ihr habt erfahren, dass sie ein Nest in einem Wald besitzen. Mit einer kleinen Armee ausgestattet, seid ihr vor Ort angekommen und müsst nun den Wald auf der Suche nach der feindlichen Basis durchqueren.
+76032	Das Gespensternest zerstören.
+76033	Oh! Seht dort! Ein Spukanwesen liegt bei i6! Das ist zweifellos das Gespensternest!
+76040	Kapitel 4: die Rache der Finsternis.
+76041	Wütend und rachedurstig haben die Gespenster, die eurem Angriff entkommen sind, beschlossen, die Mächte des Bösen zu Hilfe zu rufen. Ghule, Skelette, Liche und andere Nekromanten sind dem Ruf gefolgt und schicken sich an, euch anzugreifen. Sie sind viel zu zahlreich, als dass ihr sie unschädlich machen könntet, also müsst ihr lediglich eure Verteidigung organisieren, bis die von König Konrad entsandten Verstärkungen eintreffen.
+76042	Dem Feind standhalten, bis die Verstärkung eintrifft.
+76043	Haltet durch! Die Verstärkung ist auf halbem Weg! Nur Mut!
+76044	Die Verstärkung ist jetzt ganz nah! Noch eine letzte Anstrengung vor der Befreiung!
+76400	Spukanwesen
+76401	Gespensterwache

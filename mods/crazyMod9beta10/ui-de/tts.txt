@@ -1,215 +1,525 @@
-; ; CrazyMod v8.3
 ; coding: utf-8
 
-77000 Bombenflugmaschine
-77001 Sprengstoff-Magazin
-77002 hochwertiger Sprengstoff
-77003 um zu explodieren
-77004 dragons' life*
-77005 Bau
-77006 Wild
-77007 Obsthof
-77008 Unterschlupf
-77009 Dickicht der R�uber
-77010 Freibeuters H�tte
-77011 Krankenhaus
-77012 �ffentliche Gesundheit
-77013 Ausbildungsbiwak
-77014 Musketier
-77015 Magnesitschleuder
-77016 elektrische Falle
-77017 K�fig der wilden Tiere
-77018 magnetisches Gewitter
-77019 hypnotische Welle
-77020 Magnet-Turm
-77021 Hexenhaus
-77022 J�gerin
-77023 Wolf
-77024 Wachbaum
-77025 um einen Wachturm zu pflanzen
-77026 Verzauberung
-77027 Ektoplasma
-77028 um Ektoplasma herbeizurufen
-77029 b�ser Nebel
-77030 Geisterturm
-77031 Ghul
-77032 Friedhof
-77033 um W�lfe zu b�ndigen
-77034 Paladin
-77035 um einen Baum der Dunkelheit zu pflanzen
-77036 um einen Baum der Ruhe zu pflanzen
-77037 Baum der Dunkelheit
-77038 Baum der Ruhe
-77039 um Tote in fleischfressende Pflanzen zu recyceln
-77040 um Tote in Heilpflanzen zu recyceln
-77041 fleischfressende Pflanze
-77042 Heilpflanze
-77043 hochwertiger Magnesit
-77044 bester Magnesit
-77045 Explosion
-77046 Blitz
-77047 Transportflugzeug
-77048 L�we
-77049 um L�wen zu b�ndigen
-77050 Armbrustsch�tze
-77051 Tr�nengas
-77052 Granatenwerfer
-77053 Ausgangspunkt
-77054 Vision
-77055 kleine Festung
-77056 Leibeigene
-77057 verfluchter Wasserspeier
-77058 Dornenpflanze
-77059 Rathaus
-77060 Haus des Gouverneurs
-77061 Palast des Kanzlers
-77062 anti-Luft Batterie
-77063 Milit�rlager
-77064 Energieball
-77065 um einen Energieball zu generieren
-77066 Arbeiter
-77067 Gelehrte
-77068 Gewitterwolken
-77069 dragons' attack*
-77070 Flugzeugfabrik
-77071 um zu klonen
-77072 Schurke
-77073 geklonter flinker Bogensch�tze
-77074 Spionageflugzeug
-77075 Super-R�stung
-77076 Super-Angriff
-77077 Super-Leben
-77078 Super-Geschwindigkeit
-77079 Super-Exorzismus
-77080 �berhitzte Plasmakanone
-77081 animal farm*
-77082 Kampfflugmaschine
-77083 pigsty*
-77084 Garage
-77085 Minicomputer
-77086 gro�er Computer
-77087 Supercomputer
-77088 hydroponic farm*
-77089 Roboterfabrik
-77090 Optiklabor
-77091 scavengers' breeding*
-77092 Signalmodulator
-77093 Teilchenbeschleuniger
-77094 Laserturm
-77095 Radar-Turm
-77096 Aussenseiter
-77097 power farm*
-77098 Laserschie�er
-77099 hunting-ground*
-77100 Magnetkanone
-77101 Plasmakanone
-77102 dragons' range*
-77103 mobiler Sensor
-77104 dragons' armor*
-77105 Drohne
-77106 Laserflugschiff
-77107 dragons' speed*
-77108 Laserkraft
-77109 Plasmakraft
-77110 Radarbild
-77111 sunny library*
-77112 flesh golem*
-77113 Mausoleum
-77114 Gew�lbe
-77115 skeletal dragon*
-77116 death's breath*
-77117 Krypta
-77118 Labyrinth
-77119 Knochenfalle
-77120 undead slave*
-77121 magic power*
-77122 Geist
-77123 Spektrum in R�stung
-77124 winged horse*
-77125 tame winged horse*
-77126 Thestral
-77128 Lich
-77129 arrows' trap*
-77130 um durch die Wand zu gehen
-77131 Spuklicht
-77132 um Spuklichter herbeizurufen
-
-77136 instabiles Portal
-77137 Portal
-
-77141 Lichtung
-77142 baumartige Stadt
-77143 Dom�ne
-77144 Waldgebiet
-77145 belaubter Garten
-77148 Zauberwald
-77149 Wurzelfalle
-
-77150 Erntearbeiter
-77152 flinker Bogensch�tze
-77153 Bogensch�tze des Waldes
-77154 Zentaur
-77159 Druide
-77160 Hexe
-77161 Fee
-
-77165 Schwarm
-
-77167 gr�ner Sturm
-
-77169 durchdringende Wurzeln
-
-77175 Feldlager
-77176 befestigtes Lager
-77177 Festung
-77178 Grube
-77179 Gehege
-
-77181 Nest
-77182 Tipi
-77183 Dornenfalle
-
-77184 Peon
-77185 Rabauke
-77186 Troll
-
-77189 Oger Steinwerfer
-
-77190 Schlange
-
-77192 gefl�gelte Schlange
-77193 Hippogreif
-77194 Voodoo-Priester
-
-77196 kamikaze
-77197 Transportball
-77198 bester Sprengstoff
-
-77199 Kontrolle
-
-77200 traditionell
-77201 technisch
-77202 Roboter
-77203 finster
-77204 Elfen
-77205 Ork
-
-77208 h�lzerne Illusion
-
-77213 um Schlangen zu b�ndigen
-77212 Aggressivit�t
-
-77216 versteckte Bombe
-77217 verst�rkte Struktur
-
-77218 Elementarkreis
-77219 Feuerturm
-77220 Wasserturm
-77221 Luftturm
-77222 Erdturm
-77223 Feuerelement
-77224 Wasserelement
-77225 Luftelement
-77226 Erdelement
-77227 Elemente
-77228 Magnetschie�er
+4307	Rückruf
+77000	Bombenflugmaschine
+77001	Sprengstoff-Magazin
+77002	hochwertiger Sprengstoff
+77003	um zu explodieren
+77004	dragons' life*
+77005	Bau
+77006	Wild
+77007	Obsthof
+77008	Unterschlupf
+77009	Dickicht der R�uber
+77010	Freibeuters H�tte
+77011	Krankenhaus
+77012	�ffentliche Gesundheit
+77013	Ausbildungsbiwak
+77014	Musketier
+77015	Magnesitschleuder
+77016	elektrische Falle
+77017	K�fig der wilden Tiere
+77018	magnetisches Gewitter
+77019	hypnotische Welle
+77020	Magnet-Turm
+77021	Hexenhaus
+77022	J�gerin
+77023	Wolf
+77024	Wachbaum
+77025	um einen Wachturm zu pflanzen
+77026	Verzauberung
+77027	Ektoplasma
+77028	um Ektoplasma herbeizurufen
+77029	b�ser Nebel
+77030	Geisterturm
+77031	Ghul
+77032	Friedhof
+77033	um W�lfe zu b�ndigen
+77034	Paladin
+77035	um einen Baum der Dunkelheit zu pflanzen
+77036	um einen Baum der Ruhe zu pflanzen
+77037	Baum der Dunkelheit
+77038	Baum der Ruhe
+77039	um Tote in fleischfressende Pflanzen zu recyceln
+77040	um Tote in Heilpflanzen zu recyceln
+77041	fleischfressende Pflanze
+77042	Heilpflanze
+77043	hochwertiger Magnesit
+77044	bester Magnesit
+77045	Explosion
+77046	Blitz
+77047	Transportflugzeug
+77048	L�we
+77049	um L�wen zu b�ndigen
+77050	Armbrustsch�tze
+77051	Tr�nengas
+77052	Granatenwerfer
+77053	Ausgangspunkt
+77054	Vision
+77055	kleine Festung
+77056	Leibeigene
+77057	verfluchter Wasserspeier
+77058	Dornenpflanze
+77059	Rathaus
+77060	Haus des Gouverneurs
+77061	Palast des Kanzlers
+77062	anti-Luft Batterie
+77063	Milit�rlager
+77064	Energieball
+77065	um einen Energieball zu generieren
+77066	Arbeiter
+77067	Gelehrte
+77068	Gewitterwolken
+77069	dragons' attack*
+77070	Flugzeugfabrik
+77071	um zu klonen
+77072	Schurke
+77073	geklonter flinker Bogensch�tze
+77074	Spionageflugzeug
+77075	Super-R�stung
+77076	Super-Angriff
+77077	Super-Leben
+77078	Super-Geschwindigkeit
+77079	Super-Exorzismus
+77080	�berhitzte Plasmakanone
+77081	animal farm*
+77082	Kampfflugmaschine
+77083	pigsty*
+77084	Garage
+77085	Minicomputer
+77086	gro�er Computer
+77087	Supercomputer
+77088	hydroponic farm*
+77089	Roboterfabrik
+77090	Optiklabor
+77091	scavengers' breeding*
+77092	Signalmodulator
+77093	Teilchenbeschleuniger
+77094	Laserturm
+77095	Radar-Turm
+77096	Aussenseiter
+77097	power farm*
+77098	Laserschie�er
+77099	hunting-ground*
+77100	Magnetkanone
+77101	Plasmakanone
+77102	dragons' range*
+77103	mobiler Sensor
+77104	dragons' armor*
+77105	Drohne
+77106	Laserflugschiff
+77107	dragons' speed*
+77108	Laserkraft
+77109	Plasmakraft
+77110	Radarbild
+77111	sunny library*
+77112	flesh golem*
+77113	Mausoleum
+77114	Gew�lbe
+77115	skeletal dragon*
+77116	death's breath*
+77117	Krypta
+77118	Labyrinth
+77119	Knochenfalle
+77120	undead slave*
+77121	magic power*
+77122	Geist
+77123	Spektrum in R�stung
+77124	winged horse*
+77125	tame winged horse*
+77126	Thestral
+77127	Überwachungsturm
+77128	Lich
+77129	arrows' trap*
+77130	um durch die Wand zu gehen
+77131	Spuklicht
+77132	um Spuklichter herbeizurufen
+77133	Versorgungstunnel
+77134	Versorgungstunnel graben
+77135	Brand
+77136	instabiles Portal
+77137	Portal
+77138	Feuerwerkswerfer
+77139	Kriegstroll
+77140	Verteidigungsturm
+77141	Lichtung
+77142	baumartige Stadt
+77143	Dom�ne
+77144	Waldgebiet
+77145	belaubter Garten
+77146	Ballistenturm
+77147	Glockenturm
+77148	Zauberwald
+77149	Wurzelfalle
+77150	Erntearbeiter
+77151	Belfried
+77152	flinker Bogensch�tze
+77153	Bogensch�tze des Waldes
+77154	Zentaur
+77155	Zähigkeit im Kampf
+77156	Kampfeifer
+77157	Beobachtungsposten
+77158	Flugabwehr-Raketenbatterie
+77159	Druide
+77160	Hexe
+77161	Fee
+77162	Dunkler Turm
+77163	Nebelturm
+77164	Turm der Qualen
+77165	Schwarm
+77166	Turm des Schreckens
+77167	gr�ner Sturm
+77168	Leichen in Geister verwandeln
+77169	durchdringende Wurzeln
+77170	Leichen in Zombies verwandeln
+77171	Leichen in Fleischgolems verwandeln
+77172	Magnetfeld
+77173	unkontrolliertes Magnetfeld
+77174	Wachsamkeitsturm
+77175	Feldlager
+77176	befestigtes Lager
+77177	Festung
+77178	Grube
+77179	Gehege
+77180	Hoher Wachturm
+77181	Nest
+77182	Tipi
+77183	Dornenfalle
+77184	Peon
+77185	Rabauke
+77186	Troll
+77187	Blätterturm
+77188	Turm mit scharfen Blättern
+77189	Oger Steinwerfer
+77190	Schlange
+77191	Spiegelturm
+77192	gefl�gelte Schlange
+77193	Hippogreif
+77194	Voodoo-Priester
+77195	Sonnenturm
+77196	kamikaze
+77197	Transportball
+77198	bester Sprengstoff
+77199	Kontrolle
+77200	traditionell
+77201	technisch
+77202	Roboter
+77203	finster
+77204	Elfen
+77205	Ork
+77206	Sonnenstrahl
+77207	Vorgebirge
+77208	h�lzerne Illusion
+77209	Kartätschenturm
+77210	Bombardenturm
+77211	Geröll
+77212	Aggressivit�t
+77213	um Schlangen zu b�ndigen
+77214	Aggressivität
+77215	Wachtürmchen
+77216	versteckte Bombe
+77217	verst�rkte Struktur
+77218	Elementarkreis
+77219	Feuerturm
+77220	Wasserturm
+77221	Luftturm
+77222	Erdturm
+77223	Feuerelement
+77224	Wasserelement
+77225	Luftelement
+77226	Erdelement
+77227	Elemente
+77228	Magnetschie�er
+77229	Ungeziefer
+77230	Baumstumpf
+77231	Brutstätte
+77232	Brutkammer
+77233	Larvenlabor
+77234	Transgener Vermehrer
+77235	Vermehrungsinkubator
+77236	Obstbaum
+77237	Termitennest
+77238	Honigbaum
+77239	Schlammkammer
+77240	Pilzgalerie
+77241	Funkelbaum
+77242	Verschlinger-Baum
+77243	Wächtertermite
+77244	Eroberertermite
+77245	Königliche Arbeiterin
+77246	Gepanzerte Termite
+77247	Zornige Wespe
+77248	Stachelschütze-Wespe
+77249	Wespe der tausend Stiche
+77250	Unersättliche Mücke
+77251	Furchtbare Mücke
+77252	Blutrünstige Mücke
+77253	Kneifkrabbe
+77254	Schalenschütze-Krabbe
+77255	Belagerungskrabbe
+77256	Rüpelpilz
+77257	Giftpilz
+77258	Verheerender Pilz
+77259	Kundschafter-Glühwürmchen
+77260	Blendendes Glühwürmchen
+77261	Loderndes Glühwürmchen
+77262	Baumstumpf erzeugen
+77263	Larven erzeugen
+77264	Larve
+77265	Überlebenspheromon
+77266	Giftsporen
+77267	Halluzinogene Sporen
+77268	Pflegesporen
+77269	Laufende Arbeiterin
+77270	Geflügelte Arbeiterin
+77271	Dunkelelf
+77272	Hütte
+77273	Villa
+77274	Herrenhaus
+77275	Besteck
+77276	Spielhaus
+77277	Versammlungssaal
+77278	Windturm
+77279	Dieb
+77280	Schleicher
+77281	Meuchelmörder
+77282	Meister-Meuchelmörder
+77283	Illusionist
+77284	Marionette
+77285	Ärztin
+77286	Fliegender Shuriken
+77287	Wirbel
+77288	Wirbelwind
+77289	Wurftechnik
+77290	Animationsgeschwindigkeit
+77291	Tödliche Klinge
+77292	Rauch
+77293	Schatten rufen
+77294	Haus der Elefantenführer
+77295	Voliere
+77296	Taube
+77297	Pfeilregen
+77298	Hinterhaltsturm
+77299	Hoher Hinterhaltsturm
+77300	Ansitzturm
+77301	Fleischfressender Baum
+77302	Gefräßiger Baum
+77303	Wurzelsystem
+77304	Berserkerwut
+77305	Berserkertroll
+77306	Stahlblatt
+77307	Tauben zähmen
+77308	Marionette beleben
+77309	Elefant
+77310	Elefant zähmen
+77311	Friedliche Ranke
+77312	Invasive Ranke
+77313	Friedliche Ranke säen
+77314	Pfeilfalle stellen
+77315	Erdbeben
+77316	Feuerstoß
+77317	Erholen
+77318	Windstoß
+77319	Vulkanausbruch
+77320	Schlammgolem
+77321	Sandsturm
+77322	Dampfwolke
+77323	Eishimmel
+77324	Elefantenführer
+77325	Elefant mit Turm
+77326	Seelenabsorption
+77327	Feld der Nekromantie
+77328	Leichenexplosion
+77329	Verseuchte Leiche
+77330	Die Seuche auf die Leichen übertragen
+77331	Schatten
+77332	Geheimagent
+77333	Versteckte Bombe legen
+77334	Elektrofalle stellen
+77335	Knochenfalle stellen
+77336	Wurzelfalle stellen
+77337	Stachelfalle stellen
+77338	Geheimagent absetzen
+77339	Nahkampfeinheit
+77340	Fernkampfeinheit
+77341	Lufteinheit
+77342	Unterstützungseinheit
+77343	Arbeiter
+77344	Gebäude
+777777	crazyMod
+79500	Goldnachschub-Karte
+79501	Holznachschub-Karte
+79600	Knappe
+79601	Waffenknecht
+79602	Sergeant
+79603	Bannerritter
+79604	Lord
+79605	Marschall
+79610	Lehrling
+79611	Soldat
+79612	Korporal
+79613	Leutnant
+79614	Hauptmann
+79615	General
+79620	Script-Kiddie
+79621	Drohnentechniker
+79622	Root-Administrator
+79623	Kernel-Hauptmann
+79624	KI-Aufseher
+79625	Mainframe-Marschall
+79630	Schemen
+79631	Ghul-Diener
+79632	Nekromanten-Gehilfe
+79633	Dunkler Ritter
+79634	Lich-Graf
+79635	Herr der Schatten
+79640	Setzling
+79641	Waldhüter
+79642	Lichtungshauptmann
+79643	Klingenmeister
+79644	Herr des Waldlandes
+79645	Erzdruide
+79650	Kriegspeon
+79651	Raufbold
+79652	Kriegsschamane
+79653	Kriegsherr
+79654	Clanhäuptling
+79655	Kriegshäuptling
+79660	Funke
+79661	Manifestation
+79662	Elementbinder
+79663	Archon
+79664	Planarer Prinz
+79665	Avatar
+79670	Schurke
+79671	Wegelagerer
+79672	Banditenhäuptling
+79673	Meisterjäger
+79674	Banditenkönig
+79675	Schrecken der Straße
+79680	Neugeborene Larve
+79681	Arbeiterin
+79682	Termitenwächter
+79683	Brutadjutant
+79684	Matriarchin
+79685	Souveräner Schwarm
+79690	Dieb
+79691	Verfolger
+79692	Schattenhauptmann
+79693	Illusionsmeister
+79694	Dunkler Herr
+79695	Prinz der Nacht
+79700	Verstärkungskarte: Armbrustschützen
+79701	Verstärkungskarte: Musketiere
+79702	Verstärkungskarte: Lasergewehr
+79703	Verstärkungskarte: Ghule
+79704	Verstärkungskarte: Elfenbogenschützen
+79705	Verstärkungskarte: Trollraufbold
+79706	Verstärkungskarte: Erdelementar
+79707	Verstärkungskarte: Jägerin
+79708	Verstärkungskarte: Larvenschwarm
+79709	Verstärkungskarte: Verfolger
+79710	Verstärkungskarte: Ritter
+79711	Verstärkungskarte: Grenadier
+79712	Verstärkungskarte: Kampfdrohne
+79713	Verstärkungskarte: Skelett
+79714	Verstärkungskarte: Zentaur
+79715	Verstärkungskarte: Raketensoldat
+79716	Verstärkungskarte: Feuerelementar
+79717	Verstärkungskarte: Banditenbogenschütze
+79718	Verstärkungskarte: Termitenwächter
+79719	Verstärkungskarte: Dunkler Bogenschütze
+79720	Verstärkungskarte: Priester
+79721	Verstärkungskarte: Beobachtungsluftschiff
+79722	Verstärkungskarte: Laserkreuzer
+79723	Verstärkungskarte: Nekromant
+79724	Verstärkungskarte: Druide
+79725	Verstärkungskarte: Felsoger
+79726	Verstärkungskarte: Elementarmagier
+79727	Verstärkungskarte: Zauberin
+79728	Verstärkungskarte: Geflügelte Arbeiterin
+79729	Verstärkungskarte: Illusionist
+79800	Traditionell: perfekte Schlacht
+79801	Traditionell: exzellente Schlacht
+79802	Traditionell: Meister der Sparsamkeit
+79803	Traditionell: Hüter der Armee
+79804	Traditionell: Festungswächter
+79805	Technisch: perfekte Schlacht
+79806	Technisch: exzellente Schlacht
+79807	Technisch: Meister der Sparsamkeit
+79808	Technisch: Hüter der Armee
+79809	Technisch: Festungswächter
+79810	Robotisch: perfekte Schlacht
+79811	Robotisch: exzellente Schlacht
+79812	Robotisch: Meister der Sparsamkeit
+79813	Robotisch: Hüter der Armee
+79814	Robotisch: Festungswächter
+79815	Dunkel: perfekte Schlacht
+79816	Dunkel: exzellente Schlacht
+79817	Dunkel: Meister der Sparsamkeit
+79818	Dunkel: Hüter der Armee
+79819	Dunkel: Festungswächter
+79820	Elfen: perfekte Schlacht
+79821	Elfen: exzellente Schlacht
+79822	Elfen: Meister der Sparsamkeit
+79823	Elfen: Hüter der Armee
+79824	Elfen: Festungswächter
+79825	Ork: perfekte Schlacht
+79826	Ork: exzellente Schlacht
+79827	Ork: Meister der Sparsamkeit
+79828	Ork: Hüter der Armee
+79829	Ork: Festungswächter
+79830	Elementar: perfekte Schlacht
+79831	Elementar: exzellente Schlacht
+79832	Elementar: Meister der Sparsamkeit
+79833	Elementar: Hüter der Armee
+79834	Elementar: Festungswächter
+79835	Wild: perfekte Schlacht
+79836	Wild: exzellente Schlacht
+79837	Wild: Meister der Sparsamkeit
+79838	Wild: Hüter der Armee
+79839	Wild: Festungswächter
+79840	Ungeziefer: perfekte Schlacht
+79841	Ungeziefer: exzellente Schlacht
+79842	Ungeziefer: Meister der Sparsamkeit
+79843	Ungeziefer: Hüter der Armee
+79844	Ungeziefer: Festungswächter
+79845	Dunkelelfen: perfekte Schlacht
+79846	Dunkelelfen: exzellente Schlacht
+79847	Dunkelelfen: Meister der Sparsamkeit
+79848	Dunkelelfen: Hüter der Armee
+79849	Dunkelelfen: Festungswächter
+79850	Tapferer Ritter
+79851	Effizienter Ingenieur
+79852	Übertakteter Geist
+79853	Hüter der Gräber
+79854	Herz des Waldes
+79855	Blutrausch-Krieger
+79856	Sturmrufer
+79857	König der Gesetzlosen
+79858	Schwarmbewusstsein
+79859	Nachtklinge
+79860	Multiversum-Rekrut
+79861	Befehlshaber der Heerscharen
+79862	Wanderer der Reiche
+79863	Eroberer von allem
+79900	Fünf Anfängersiege
+79901	Fünfzehn Anfängersiege
+79902	Fünf Siege der Mittelstufe
+79903	Drei fortgeschrittene Siege
+79904	Zwei Expertensiege
+79905	Ein Albtraumsieg
+79920	Grenzglut
+79921	Turmbezwinger
+79922	Ofenrauch
+79923	Abgrundfinale
+79924	Uraltes Bollwerk
+79925	Wildes Jagdgebiet
+79926	Elementarschub
+79927	Wilde Prüfung
+79928	Zombie-Ausbruch
+79929	Schattenriss
+79950	Drei Reiche berührt
+79951	Sergeant der fünf Armeen
+79952	Pilgerfahrt über acht Karten
+79953	Zehnfache Meisterschaft

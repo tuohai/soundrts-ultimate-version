@@ -1,0 +1,300 @@
+; coding: utf-8
+
+7200	StarCraft-Bau-Mechanik-Demo
+7210	Nexus
+7211	Pylon
+7212	Gateway
+7213	Assimilator
+7214	Photonenkanone
+7215	Probe
+7216	Zealot
+7220	Hatchery
+7221	Spawning Pool
+7222	Extractor
+7223	Drohne
+7224	Zergling
+7230	Kommandozentrale
+7231	Kaserne
+7232	Fabrik
+7233	Raumhafen
+7234	Tech Lab
+7235	Reactor
+7236	SCV
+7237	Marine
+7240	Psi-Feld
+7241	Creep
+7242	Infanteriewaffen Stufe 1
+7250	Fliegende Kaserne
+7251	Fliegende Fabrik
+7252	Fliegender Raumhafen
+7253	Marauder
+7254	Hellion
+7255	Siege Tank
+7256	Medivac
+7260	Terraner
+7261	Protoss
+7262	Zerg
+7263	Versorgungsdepot
+7264	Overlord
+7270	Mineralien
+7271	Vespengas
+7272	auf einem Vespengeysir bauen
+7273	Mineralienfeld
+7274	Vespengeysir
+7275	Refinery
+7276	Prolog
+7277	Willkommen im StarCraft-Bau-Mechanik-Tutorial. Fünf Kapitel führen euch durch die grundlegenden Bauregeln für Protoss, Zerg und Terraner.
+7278	Kapitel eins beginnt mit dem Protoss-Psi-Feld: Erweitert die Energieversorgung von eurem Nexus, um auch abseits der Basis zu bauen.
+7279	Beliebige Taste zum Überspringen drücken. Bereit? Dann fangen wir an.
+7280	Forge
+7281	Cybernetics Core
+7282	Stargate
+7283	Dragoon
+7284	Observer
+7285	Bodenwaffen Stufe 1
+7286	Bodenwaffen Stufe 2
+7287	Plasmaschilde Stufe 1
+7288	Plasmaschilde Stufe 2
+7289	Roach Warren
+7290	Hydralisk Den
+7291	Roach
+7292	Hydralisk
+7293	Nahkampfangriffe Stufe 1
+7294	Nahkampfangriffe Stufe 2
+7295	Panzerung Stufe 1
+7296	Panzerung Stufe 2
+7297	Engineering Bay
+7298	Armory
+7299	Bunker
+7305	Infanteriewaffen Stufe 2
+7306	Infanteriepanzerung Stufe 1
+7307	Infanteriepanzerung Stufe 2
+7308	Fahrzeugwaffen Stufe 1
+7309	Fahrzeugwaffen Stufe 2
+7310	Fahrzeugpanzerung Stufe 1
+7311	Fahrzeugpanzerung Stufe 2
+7313	Terraner: Versorgung
+7320	Zerg: Creep
+7321	Wartet, bis sich der Creep bis zum fernen Feld ausgebreitet hat, und opfert dann eine Drohne für ein Spawning Pool.
+7322	Zerg-Creep-Test abgeschlossen.
+7323	Zerstört das Hatchery und opfert dann eine Drohne für ein Extractor auf dem verbleibenden Creep.
+7324	Das Hatchery bedeckt sieben Felder mit Creep, der sich jede Sekunde weiter ausbreitet. Das ferne Feld braucht ein paar Sekunden, bevor ihr dort bauen könnt. Sobald das Spawning Pool fertig ist, zerstört das Hatchery und baut ein Extractor auf dem verbleibenden Creep.
+7330	Terraner: Anbau
+7331	Baut ein Tech Lab an eurer Kaserne.
+7332	Terraner-Anbau-Test abgeschlossen.
+7340	Terraner: Anbau neu kombinieren
+7341	Baut ein Tech Lab an der Kaserne, hebt die Kaserne ab, hebt die Fabrik ab. Wählt das Tech Lab über Tab an, fliegt hin, landet zum Ankoppeln und bildet dann einen Tank aus.
+7342	Terraner-Rekombinations-Test abgeschlossen.
+7350	Fliegt zuerst zum Tech Lab und landet dann, um den Anbau anzukoppeln.
+7360	StarCraft-KI-Mehrspielertest
+7361	Aktiviert den starcraft-Mod und wählt Terraner, Protoss oder Zerg. Ladet leichte oder aggressive Computerspieler für freie Plätze ein und beobachtet Psi-Feld, Creep, Anbauten und Rekombination.
+7370	StarCraft: Mineralien und Vespengas
+7371	Baut ein Assimilator auf dem Vespengeysir und sammelt dann 8 Vespengas zu eurem Nexus zurück.
+7372	Test zu Mineralien und Vespengas abgeschlossen.
+7380	StarCraft: Techbaum
+7381	Baut ein Cybernetics Core und bildet dann einen Dragoon in eurem Gateway aus.
+7382	Techbaum-Test abgeschlossen.
+7393	Das Psi-Feld des Nexus reicht etwa 18 Meter weit. Jeder Pylon fügt 12 Meter hinzu. Vier in Kette geschaltete Pylonen vom Nexus aus können Feld f1 versorgen; warpt dort ein Gateway hin.
+7394	Nicht in Reichweite des Psi-Felds
+7395	Nicht auf Creep
+7396	Kommandozentrale, Nexus und Hatchery liefern jeweils 10 Versorgung. Baut Versorgungsdepots, Pylonen, oder wertet eine Larve zu einem Overlord auf für jeweils 8 zusätzliche.
+7397	Baut ein Versorgungsdepot und bildet dann zwölf Marines in eurer Kaserne aus.
+7398	Versorgungstest abgeschlossen.
+7399	Nicht genug Versorgung
+7400	Singularity Charge Stufe 1
+7401	Singularity Charge Stufe 2
+7402	Metabolic Boost
+7403	Raketenangriffe Stufe 1
+7404	Raketenangriffe Stufe 2
+7405	Stim Pack
+7406	Stim Pack einsetzen
+7407	Heilen
+7410	Belagerungsmodus
+7420	Templar Archives
+7421	High Templar
+7422	Dark Templar
+7423	Psi Storm
+7424	Psi-Storm-Forschung
+7425	Fleet Beacon
+7426	Phoenix
+7427	Carrier
+7428	Luftwaffen Stufe 1
+7429	Luftwaffen Stufe 2
+7430	Luftpanzerung Stufe 1
+7431	Luftpanzerung Stufe 2
+7432	Spire
+7433	Mutalisk
+7434	Ultralisk Cavern
+7435	Ultralisk
+7436	Queen
+7437	Burrow
+7438	eingegrabene Form
+7439	Fliegerangriffe Stufe 1
+7440	Fliegerangriffe Stufe 2
+7441	Fliegerpanzerung Stufe 1
+7442	Fliegerpanzerung Stufe 2
+7443	Larve erzeugen
+7444	Larve einspritzen
+7445	Ghost Academy
+7446	Ghost
+7447	Atomschlag-Forschung
+7448	Atomschlag
+7449	Thor
+7450	Battlecruiser
+7451	Schiffswaffen Stufe 1
+7452	Schiffswaffen Stufe 2
+7453	Schiffspanzerung Stufe 1
+7454	Schiffspanzerung Stufe 2
+7455	Eingegrabener Zergling
+7456	Persönliche Tarnung
+7457	Yamato-Kanone
+7458	Getarnter Ghost
+7459	eingegrabene Form
+7460	Queen's Nest
+7480	StarCraft-Endgame-Tests
+7481	Kapitel 6: Protoss-Endgame — Templar, Carrier, Luftupgrades
+7482	Kapitel 7: Zerg-Endgame — Mutalisk, Ultralisk, Queen, Burrow
+7483	Kapitel 8: Terraner-Endgame — Ghost, Atomschlag, Thor, Battlecruiser
+7485	Willkommen zur StarCraft-Endgame-Testkampagne. Drei Kapitel behandeln fortgeschrittene Einheiten, Fähigkeiten und Technologien für jede Rasse.
+7486	Diese Mission testet das Protoss-Endgame: Templar, Psi Storm und Carrier. Folgt der Zielliste; es gibt keine Feinde.
+7487	Diese Mission testet das Zerg-Endgame: Spire, Ultralisk, Queen und Burrow. Kampfeinheiten entstehen durch das Aufwerten von Larven an eurem Hatchery; erforscht Burrow an eurem Spawning Pool und formt dann einen Zergling um. Folgt der Zielliste.
+7488	Diese Mission testet das Terraner-Endgame: Ghost, Atomschlag, Thor und Battlecruiser. Bildet Thor und Battlecruiser an einer Fabrik oder einem Raumhafen mit angekoppeltem Tech Lab aus; steht das Tech Lab separat, wählt es per Tab an und landet die Fabrik zum Ankoppeln. Folgt der Zielliste.
+7489	Endgame-Tests abgeschlossen.
+7490	Templar Archives bauen
+7491	Psi Storm erforschen
+7492	Einen High Templar ausbilden
+7493	Einen Dark Templar ausbilden
+7494	Fleet Beacon bauen
+7495	Einen Carrier ausbilden
+7496	Spire bauen
+7497	Eine Larve zu einem Mutalisk aufwerten
+7498	Queen's Nest bauen
+7499	Eine Larve zu einer Queen aufwerten
+7500	Ultralisk Cavern bauen
+7501	Eine Larve zu einem Ultralisk aufwerten
+7502	Burrow am Spawning Pool erforschen
+7503	Einen Zergling in die eingegrabene Form umformen
+7504	Ghost Academy bauen
+7505	Einen Ghost ausbilden
+7506	Persönliche Tarnung erforschen
+7507	Atomschlag erforschen
+7508	Einen Thor an einer Fabrik mit angekoppeltem Tech Lab ausbilden
+7509	Einen Battlecruiser an einem Raumhafen mit angekoppeltem Tech Lab ausbilden
+7510	Mindestens 4 Pylonen bauen
+7511	Ein Gateway auf Feld f1 bauen
+7512	Auf Creep warten und ein Spawning Pool bauen
+7513	Das Hatchery zerstören und dann ein Extractor auf verbleibendem Creep bauen
+7514	Ein Versorgungsdepot bauen
+7515	Zwölf Marines ausbilden
+7520	Creep-Tumor
+7521	Creep-Tumor erzeugen
+7522	Creep-Tumor ausbreiten
+7523	Zerg: Creep-Tumor
+7524	Nutzt die Queen, um einen Creep-Tumor zu erzeugen, breitet Tumore zum fernen Feld hin aus und opfert dann eine Drohne für ein Spawning Pool auf markiertem Creep.
+7525	Erzeugt einen Creep-Tumor auf Creep in der Nähe des Hatchery.
+7526	Breitet Creep-Tumore aus, bis das ferne Feld Creep hat, und baut dort dann ein Spawning Pool.
+7530	Larve
+7531	Larve-Einspritzung-Boost
+7532	Zielt auf ein Hatchery, um dort 3 Larven zu erzeugen.
+7533	Zielt auf ein Hatchery; für 30 Sekunden ist seine Ausbildungszeit um 30 Prozent verkürzt.
+7534	Platziert einen unsichtbaren Creep-Tumor auf Creep; er breitet in der Nähe Creep aus. Der Tumor selbst ist nicht sichtbar — nutzt Tab oder bewegt euch auf das Feld, um es zu bestätigen.
+7535	Effekt: Ausbildungszeit -30%, 30 Sekunden lang
+7536	Effekt: beschwört 3 Larven
+7537	Effekt: beschwört 1 Creep-Tumor
+7539	Eine Larve zu einem Zergling aufwerten
+7540	StarCraft-Bau-Tests
+7541	Kapitel 1: Protoss-Psi-Feld — baut ein Gateway außerhalb der Nexus-Reichweite.
+7542	Kapitel 2: Zerg-Creep — ausbreiten, Spawning Pool, Hatchery zerstören, Extractor auf verbleibendem Creep.
+7543	Kapitel 3: Terraner-Anbau — koppelt ein Tech Lab an die Kaserne an.
+7544	Kapitel 4: Kaserne abheben, Tech Lab zurücklassen, Fabrik zum Rekombinieren landen, Tank ausbilden.
+7545	Kapitel 5: Terraner-Versorgung — baut ein Versorgungsdepot und bildet dann zwölf Marines aus.
+7546	Protoss: Psi-Feld
+7547	Baut mindestens 4 Pylonen entlang des Weges und dann ein Gateway auf Feld f1.
+7548	Test zum Protoss-Psi-Feld abgeschlossen.
+7550	StarCraft-Mod-Mechanik-Tutorial
+7552	Willkommen im StarCraft-Mod-Mechanik-Tutorial. Insgesamt acht Missionen: die ersten fünf behandeln Protoss-Psi-Felder, Zerg-Creep, Terraner-Anbauten, Rekombination und Versorgung; die letzten drei behandeln Endgame-Einheiten, Fähigkeiten und Technologien für jede Rasse.
+7553	Folgt der Zielliste jeder Mission in eurem eigenen Tempo. Es gibt keine Feinde.
+7600	Ein Mineralienvorkommen. Arbeiter sammeln hier Mineralien und bringen sie zu einem Rathaus zurück.
+7601	Ein Vespengeysir. Baut einen Gas-Extractor darauf, bevor Arbeiter Vespengas ernten können.
+7602	Protoss-Rathaus. Speichert Ressourcen, bildet Probes aus, liefert 10 Versorgung und projiziert ein Psi-Feld für Bauten in der Nähe.
+7603	Erweitert das Psi-Feld und liefert 8 Versorgung. Die meisten Protoss-Bauwerke müssen innerhalb der versorgten Reichweite errichtet werden.
+7604	Bildet Zealots und Dragoons aus. Das zentrale Produktionsgebäude für Protoss-Bodentruppen.
+7605	Wird auf einem Vespengeysir gebaut. Probes sammeln hier Vespengas und bringen es zum Nexus zurück.
+7606	Ein Verteidigungsbauwerk, das nahe Feinde angreift. Kann überall gewarpt werden, ohne ein Psi-Feld zu benötigen.
+7607	Protoss-Arbeiter. Sammelt Mineralien und Vespengas und warpt Protoss-Gebäude innerhalb des Psi-Felds herbei.
+7608	Nahkampfinfanterie mit starken Schilden. Günstige Frontlinieneinheit, ausgebildet im Gateway.
+7609	Erforscht Bodenwaffen-Upgrades für Zealots, Dragoons und Dark Templars.
+7610	Schaltet die Dragoon-Produktion frei und erforscht Schild- und Singularity-Charge-Upgrades.
+7611	Schaltet die Produktion von Observer und Phoenix frei. Benötigt ein Cybernetics Core.
+7612	Fernkampfinfanterie, die ein Cybernetics Core benötigt. Feuert Anti-Panzerungs-Angriffe aus der Distanz ab.
+7613	Unsichtbarer Detektor mit erweiterter Sichtweite. Enttarnt getarnte und eingegrabene Feinde, ohne selbst anzugreifen.
+7614	Zerg-Rathaus. Speichert Ressourcen, liefert 10 Versorgung, erzeugt Larven und breitet Creep für Zerg-Bauten aus.
+7615	Erforderlich für die Zergling-Produktion. Erforscht außerdem Nahkampf-, Panzerungs-, Metabolic-Boost- und Burrow-Upgrades.
+7616	Wird auf einem Vespengeysir gebaut. Drohnen sammeln hier Vespengas, nachdem eine Drohne zum Bau geopfert wurde.
+7617	Zerg-Arbeiter. Sammelt Ressourcen und wird geopfert, um sich auf Creep in Zerg-Bauwerke umzuformen.
+7618	Schneller Nahkampf-Schwarmkämpfer, der ein Spawning Pool benötigt. Günstig und schnell in großer Zahl produzierbar.
+7619	Schaltet die Roach-Produktion frei. Benötigt ein Spawning Pool.
+7620	Schaltet die Hydralisk-Produktion und Raketenangriffs-Upgrades frei. Benötigt ein Spawning Pool.
+7621	Gepanzerte Bodeneinheit mit moderater Panzerung. Guter Allround-Frontkämpfer aus dem Roach Warren.
+7622	Fernkampfeinheit, die aus der Distanz angreift. Wirksam gegen Luft- und Bodenziele aus dem Hydralisk Den.
+7623	Fliegende Versorgungseinheit, die 8 Bevölkerung liefert. Unverzichtbar für den frühen Ausbau der Zerg-Armee.
+7624	Terraner-Rathaus. Speichert Ressourcen, bildet SCVs aus und liefert 10 Versorgung.
+7625	Bildet Marines aus. Kann ein Tech Lab oder Reactor ankoppeln und zur Verlegung abheben.
+7626	Eine abgehobene Kaserne. Bewegt sie zu einem neuen Ort und landet dann, um die Ausbildung fortzusetzen.
+7627	Bildet Hellions aus. Kann ein Tech Lab oder Reactor ankoppeln und zur Verlegung abheben.
+7628	Eine abgehobene Fabrik. Bewegt sie zu einem neuen Ort und landet dann, um die Ausbildung fortzusetzen.
+7629	Bildet in Kombination mit Anbauten Lufteinheiten aus. Kann ein Tech Lab oder Reactor ankoppeln und abheben.
+7630	Wird auf einem Vespengeysir gebaut. SCVs sammeln hier Vespengas und bringen es zur Kommandozentrale zurück.
+7631	Erforscht Infanteriewaffen-, Panzerungs- und Stim-Pack-Upgrades für Terraner-Infanterie.
+7632	Erforscht Fahrzeug- und Schiffswaffen- sowie Panzerungs-Upgrades. Erforderlich für Thor- und Battlecruiser-Technologie.
+7633	Verteidigungsbauwerk, das vier Infanterieeinheiten zum Schutz und zur Feuerunterstützung aufnehmen kann.
+7634	Liefert 8 Versorgung. Baut weitere, wenn ihr euch dem Bevölkerungslimit nähert.
+7635	Ein abgehobener Raumhafen. Bewegt ihn zu einem neuen Ort und landet dann, um die Ausbildung fortzusetzen.
+7636	Anbau, der fortgeschrittene Einheiten freischaltet: Marauder aus der Kaserne, Tank und Thor aus der Fabrik, Medivac und Battlecruiser aus dem Raumhafen.
+7637	Anbau, der die Produktionsgeschwindigkeit der Kaserne, Fabrik oder des Raumhafens verdoppelt, an die er angekoppelt ist.
+7638	Terraner-Arbeiter. Sammelt Mineralien und Vespengas und errichtet Terraner-Gebäude auf dem Schlachtfeld.
+7639	Einfache Fernkampfinfanterie aus der Kaserne. Günstiges Rückgrat der Terraner-Armee; kann Stim Pack einsetzen.
+7640	Schwere Infanterie, ausgebildet in einer Kaserne mit Tech Lab. Langsamer, aber widerstandsfähiger als Marines.
+7641	Schnelles Fahrzeug aus der Fabrik. Hervorragend geeignet, um leicht gepanzerte Ziele zu überfallen.
+7642	Gepanzerter Panzer aus einer Fabrik mit Tech Lab. Kann in den Belagerungsmodus wechseln für Bombardement über große Reichweite.
+7643	Stationäre Artillerieform des Siege Tank. Große Reichweite und Flächenschaden, kann sich aber im Belagerungsmodus nicht bewegen.
+7644	Lufttransporter aus einem Raumhafen mit Tech Lab. Transportiert Bodeneinheiten und heilt nahe Infanterie.
+7645	Schaltet die Ausbildung von High Templar und Dark Templar sowie die Psi-Storm-Forschung frei. Benötigt ein Cybernetics Core.
+7646	Schaltet die Carrier-Produktion sowie Luftwaffen- und Luftpanzerungs-Upgrades frei. Benötigt ein Stargate.
+7647	Psionischer Zauberwirker, ausgebildet in den Templar Archives. Wirkt Psi Storm, um gruppierte Feinde zu verwüsten.
+7648	Getarnter Nahkampf-Attentäter aus den Templar Archives. Unsichtbar bis zum Angriff; hoher Schaden auf kurze Distanz.
+7649	Luftabwehrjäger aus dem Stargate. Schnell und wirksam gegen feindliche Lufteinheiten.
+7650	Flaggschiff aus dem Fleet Beacon. Schwere Lufteinheit mit weitreichenden Luftabwehr-Angriffen und Flächenschaden.
+7651	Schaltet die Mutalisk-Produktion sowie Flieger-Angriffs- und Panzerungs-Upgrades frei. Benötigt ein Spawning Pool.
+7652	Schaltet die Ultralisk-Produktion frei. Benötigt ein Spire.
+7653	Schaltet die Queen-Produktion frei. Benötigt ein Spawning Pool.
+7654	Schneller Luft-Störer aus dem Spire. Greift sowohl Boden- als auch Luftziele an.
+7655	Schwere Nahkampfbestie aus der Ultralisk Cavern. Hohe Lebenspunkte und Schaden; zermalmt feindliche Bodenarmeen.
+7656	Unterstützungs-Zauberwirker aus dem Queen's Nest. Erzeugt Larven, injiziert Hatcheries und breitet Creep-Tumore aus.
+7657	Unsichtbares Bauwerk, das von der Queen platziert wird. Breitet in der Nähe Creep aus, damit die Zerg weiter entfernt vom Hatchery bauen können.
+7658	Eingegrabener Zergling. Unsichtbar und bewegungsunfähig, bis er sich wieder ausgräbt; benötigt Burrow-Forschung am Spawning Pool.
+7659	Vom Hatchery erzeugte Larve. Wertet die Larve zu einem beliebigen freigeschalteten Zerg-Einheitentyp auf.
+7660	Bildet Ghosts aus und erforscht Tarnung und Atomschlag. Benötigt eine Kaserne.
+7661	Verdeckter Agent aus der Ghost Academy. Angriffe über große Reichweite; kann sich tarnen und einen Atomschlag auslösen.
+7662	Getarnter Ghost. Unsichtbar bis zum Angriff oder bis er entdeckt wird; behält die Atomschlag-Fähigkeit.
+7663	Massiver Läufer aus einer Fabrik mit Tech Lab und Armory. Hoher Flächenschaden über große Reichweite.
+7664	Terraner-Flaggschiff aus einem Raumhafen mit Tech Lab und Armory. Kann die Yamato-Kanone gegen wertvolle Ziele einsetzen.
+7680	StarCraft: Fähigkeitstest
+7681	Willkommen im Fähigkeiten-Sandkasten. Terraner-Zone links, Protoss in der Mitte, Zerg rechts; neutrale Zealots ganz im Osten (o) für Flächenfähigkeiten. Erforderliche Upgrades sind bereits erforscht und die Einheiten sind bereit. High Templar startet mit null Energie — wartet auf 75 Mana für Psi Storm. Verwundet einen Marine, bevor ihr die Medivac-Heilung testet. Kein Auto-Sieg; drückt F9 und überprüft jede Fähigkeit manuell.
+7682	Drückt F9 für die Fähigkeitscheckliste. Überprüft manuell, dass jede Fähigkeit eingesetzt werden kann.
+7683	Terraner: wählt einen Marine oder Marauder aus und setzt Stim Pack ein.
+7684	Terraner: wählt einen Medivac aus und heilt verwundete Infanterie.
+7685	Terraner: wählt einen Ghost aus und startet einen Atomschlag auf die Zealots bei o.
+7686	Terraner: wählt einen Battlecruiser aus und setzt die Yamato-Kanone gegen die Zealots bei o ein.
+7687	Protoss: wählt einen High Templar aus und wirkt Psi Storm auf die Zealots bei o (75 Mana).
+7688	Zerg: wählt die Queen aus und erzeugt Larve am Hatchery.
+7689	Zerg: wählt die Queen aus und injiziert Larve am Hatchery.
+7690	Zerg: wählt die Queen aus und erzeugt einen Creep-Tumor auf Creep.
+7691	Zerg: wählt einen Creep-Tumor aus und breitet ihn auf ein markiertes Creep-Feld aus.
+7692	leichte Panzerung
+7693	gepanzert
+7694	massiv
+7695	Bauwerk
+7696	Atomexplosion
+7697	Yamato-Explosion
+7698	Psi Storm
