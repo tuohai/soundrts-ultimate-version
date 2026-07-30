@@ -50,7 +50,10 @@ def offer_update(info) -> None:
         return
 
     if info.body and confirm_yes_no(mp.UPDATE_CHANGELOG_PROMPT):
-        voice.item([literal_text_msg(info.body)])
+        # literal_text_msg already returns a list; do not wrap it again.
+        # Use menu (blocking) so the notes finish (or are skipped) before the
+        # "continue updating" prompt — voice.item would be cut off immediately.
+        voice.menu(literal_text_msg(info.body))
         # Wait until the player acknowledges before downloading.
         confirm_yes_no(mp.UPDATE_CHANGELOG_DONE)
 

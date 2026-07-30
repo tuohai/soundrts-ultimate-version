@@ -294,6 +294,39 @@ def test_offer_update_launches_external_then_exits(monkeypatch):
     assert launched == ["job.json"]
 
 
+def test_offer_update_speaks_changelog_body(monkeypatch):
+    """Release notes must be spoken as a flat literal list via blocking menu."""
+    from soundrts import clientversion
+    from soundrts.lib.msgs import LITERAL_TEXT_PREFIX
+    import soundrts.clientmenu as clientmenu
+
+    info = ReleaseInfo(
+        version="9.9.9.9",
+        tag_name="9.9.9.9",
+        html_url="https://example.test/r",
+        body="fixed gas depletes",
+        asset_name="x.zip",
+        download_url="https://example.test/a.zip",
+        size=1,
+        digest="",
+    )
+    spoken = []
+    monkeypatch.setattr(clientmenu, "confirm_yes_no", lambda *_a, **_k: True)
+    monkeypatch.setattr(
+        clientversion.voice, "menu", lambda msg, *a, **k: spoken.append(msg)
+    )
+    monkeypatch.setattr(clientversion.voice, "alert", lambda msg: None)
+    monkeypatch.setattr(auto_update, "is_packaged_install", lambda: False)
+    monkeypatch.setattr(auto_update, "open_release_page", lambda i: None)
+
+    clientversion.offer_update(info)
+
+    assert spoken, "changelog should be spoken"
+    assert spoken[0] == [LITERAL_TEXT_PREFIX + "fixed gas depletes"]
+    # Must not nest the literal list: [["文本: ..."]]
+    assert not isinstance(spoken[0][0], list)
+
+
 def test_soundrts_entry_handles_update_flag():
     entry = Path("soundrts.py").read_text(encoding="utf-8")
     assert "--soundrts-update" in entry
