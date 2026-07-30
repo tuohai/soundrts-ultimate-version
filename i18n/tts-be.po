@@ -10465,16 +10465,11 @@ msgctxt "4616"
 msgid "mdg_crit_rate_vs"
 msgstr "бонус шансу крыту блізкага бою"
 
-#. only defined in a translation layer under res/ui, no matching key in that tree's own ui/tts.txt
+#. RDG_CRIT_RATE_VS: 远程暴击几率对特定单位
 #: res/ui/tts.txt:4617
 msgctxt "4617"
-msgid "бонус шансу крыту дальняга бою"
+msgid "rdg_crit_rate_vs"
 msgstr "бонус шансу крыту дальняга бою"
-
-#: res/ui/tts.txt:4617 rdg_crit_rate_vs
-msgctxt "4617 rdg_crit_rate_vs"
-msgid "[4617]   # 远程暴击几率对特定单位"
-msgstr ""
 
 #. MDF_CRIT_RATE: 抵抗近战暴击几率
 #: res/ui/tts.txt:4618
@@ -10542,16 +10537,11 @@ msgctxt "4628"
 msgid "mdg_piercing_rate_vs"
 msgstr "бонус шансу прабіцця блізкага бою"
 
-#. only defined in a translation layer under res/ui, no matching key in that tree's own ui/tts.txt
+#. RDG_PIERCING_RATE_VS: 远程穿甲几率对特定单位
 #: res/ui/tts.txt:4629
 msgctxt "4629"
-msgid "бонус шансу прабіцця дальняга бою"
+msgid "rdg_piercing_rate_vs"
 msgstr "бонус шансу прабіцця дальняга бою"
-
-#: res/ui/tts.txt:4629 rdg_piercing_rate_vs
-msgctxt "4629 rdg_piercing_rate_vs"
-msgid "[4629] # 远程穿甲几率对特定单位"
-msgstr ""
 
 #. MDF_PIERCING: 抵抗近战穿甲
 #: res/ui/tts.txt:4630
