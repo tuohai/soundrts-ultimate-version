@@ -57,6 +57,61 @@ A `#.` comment surfaces the symbolic constant name from `soundrts/msgparts.py`
    python tools/i18n/check_translations.py --lang fr --strict   # CI gate
    ```
 
+## Translating with an LLM (e.g. Claude)
+
+`i18n/tts-<lang>.po` files can be filled in by an LLM instead of (or before)
+a human translator. `dump_missing.py` and `apply_translations.py` support
+that workflow directly:
+
+1. **Survey** what's missing and how it's grouped:
+   ```
+   python tools/i18n/dump_missing.py --lang de --list-groups
+   ```
+   Groups are `base` (the core game), `single:<campaign name>`, and
+   `mod:<mod name>`. Translate one group at a time, not the whole file at
+   once — a campaign's dialogue shares character names, place names, and
+   tone, and mixing groups makes that consistency harder to hold onto.
+
+2. **Dump** one group's missing entries to a scratch JSON file:
+   ```
+   python tools/i18n/dump_missing.py --lang de --group "mod:tang" -o /tmp/tang.json
+   ```
+
+3. **Translate** into a scratch Python file, not JSON — it sidesteps string
+   escaping entirely if you use the target language's own quotation marks
+   (e.g. German „…", French «…») instead of ASCII `"`:
+   ```python
+   # /tmp/batch_tang.py
+   TRANSLATIONS = {
+       "8500@mods/tang/single/tang campaign/ui": "Die Türken standen kurz davor, …",
+       "12801@mods/tang/ui": "Glänzende Rüstung",
+       ...
+   }
+   ```
+   Proper nouns from licensed game IPs referenced by a mod (e.g. `Zealot`,
+   `Marine`, `Nexus` in the `starcraft` mod) are usually best left
+   untranslated — that's how players actually refer to them — while the
+   surrounding descriptive/instructional text still gets translated.
+
+4. **Verify** the batch exactly covers what was dumped, before writing
+   anything, catching missed or misspelled keys early:
+   ```
+   python tools/i18n/apply_translations.py --lang de --check /tmp/tang.json /tmp/batch_tang.py
+   ```
+
+5. **Merge** one or more verified batches into the `.po` (existing non-empty
+   `msgstr` values are left alone unless `--force` is given, so re-running
+   is always safe):
+   ```
+   python tools/i18n/apply_translations.py --lang de /tmp/batch_tang.py /tmp/batch_raynor.py
+   ```
+
+6. **Build and confirm**, same as any other translation update:
+   ```
+   python tools/i18n/build_tts.py --lang de
+   python tools/i18n/check_translations.py --lang de --strict
+   ```
+
 ## Adding a new language
 
 Add the language to Crowdin (or create `i18n/tts-<code>.po` by hand from
