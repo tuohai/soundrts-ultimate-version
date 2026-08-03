@@ -33,6 +33,26 @@ _MOUSE_DOUBLE_CLICK_MS = 400
 _MOUSE_CLICK_TOLERANCE_PX = 5
 
 
+def _collapse_keydown_repeats(events):
+    """同一批次里同键的重复 KEYDOWN 只保留第一次。
+
+    作弊模式 / 大地图下 ``select_square`` 很重时，pygame key-repeat 会在
+    一次物理按键期间往队列塞入多个 KEYDOWN；若本帧 ``event.get()`` 一次
+    取到整串，就会连续跳多格（a1→b1→c1→d1）。菜单侧用
+    ``pygame.event.clear([KEYDOWN])`` 解决；游戏循环还需折叠已取出的批次。
+    """
+    seen_keys = set()
+    out = []
+    for e in events:
+        if getattr(e, "type", None) == KEYDOWN:
+            key = getattr(e, "key", None)
+            if key in seen_keys:
+                continue
+            seen_keys.add(key)
+        out.append(e)
+    return out
+
+
 def _mouse_is_click(origin, pos, tol=_MOUSE_CLICK_TOLERANCE_PX):
     if origin is None or pos is None:
         return False
@@ -61,7 +81,7 @@ def _process_events(interface):
     # Warning: only sound/voice/keyboard events here, no server event.
     # Because a bad loop might occur when called from a function
     # waiting for a combat sound to end.
-    for e in pygame.event.get():
+    for e in _collapse_keydown_repeats(pygame.event.get()):
         if e.type == USEREVENT:
             voice.update()
         elif e.type == USEREVENT + 1:
@@ -84,16 +104,19 @@ def _process_events(interface):
                         from .game_display import display
 
                         display(interface)
+                        pygame.event.clear([KEYDOWN])
                         continue
                 except Exception:
                     pass
             # 首先检查是否在缩放输入模式
             if interface._zoom_input_mode:
                 if _handle_zoom_input(interface, e):
+                    pygame.event.clear([KEYDOWN])
                     continue  # 输入已处理，跳过其他处理
             
             # 然后尝试属性界面的键盘处理
             if hasattr(interface, "_process_keyboard_event") and interface._process_keyboard_event(e):
+                pygame.event.clear([KEYDOWN])
                 continue
                 
             if interface.shortcut_mode:
@@ -114,6 +137,7 @@ def _process_events(interface):
                         and key in (K_b, K_c)
                         and voice_libs.handle_hotkey(key, e.mod)
                     ):
+                        pygame.event.clear([KEYDOWN])
                         continue
                 except Exception:
                     pass
@@ -121,6 +145,10 @@ def _process_events(interface):
                     interface._bindings.process_keydown_event(e)
                 except KeyError:
                     voice.item(mp.BEEP)
+            # 处理可能很慢（作弊全图 + 大地图 select_square / TTS）。
+            # 清掉处理期间 key-repeat 再塞进队列的 KEYDOWN，否则下一帧
+            # 会连续跳多格。与 Menu._process_keydown 同模式。
+            pygame.event.clear([KEYDOWN])
         elif interface.display_is_active:
             _process_fullscreen_mode_mouse_event(interface, e)
 
@@ -667,6 +695,7 @@ def _loop(interface):
 
 # 导出的函数供其他模块使用
 __all__ = [
+    '_collapse_keydown_repeats',
     '_process_events',
     '_process_fullscreen_mode_mouse_event',
     '_process_zoom_mode_mouse_event',

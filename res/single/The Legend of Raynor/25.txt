@@ -82,14 +82,14 @@ trigger players (timer 0) (add_objective 3 7704)
 trigger players (timer 0) (add_secondary_objective 1 7599)
 
 trigger players (npc_has_item npc_count_roland garrek_token o8) (do (cut_scene 7701) (objective_complete 1) (set_campaign_flag ch25_duel_started))
-trigger computer1 (npc_has_item npc_count_roland garrek_token o8) (do (set_ai_mode offensive o8 1 npc_count_roland 6 npc_roland_guard) (set_yield_on_defeat 1 o8 1 npc_count_roland 6 npc_roland_guard))
+trigger computer1 (npc_has_item npc_count_roland garrek_token o8) (do (set_neutral 0) (set_ai_mode offensive o8 1 npc_count_roland 6 npc_roland_guard) (set_yield_on_defeat 1 o8 1 npc_count_roland 6 npc_roland_guard))
 
 trigger players (and (not (campaign_flag ch25_duel_started)) (key_unit_killed npc_count_roland npc_roland_guard)) (defeat)
 
 trigger players (units_yielded 1 npc_count_roland 6 npc_roland_guard enemy) (do (cut_scene 7702) (stop_all_units) (stop_all_units computer1) (alliance_request computer1) (objective_complete 2))
 
 trigger players (alliance_with computer1) (do (stop_all_units) (stop_all_units computer1) (release_yielded_units computer1) (cut_scene 7586) (allied_assist computer1) (secondary_objective_complete 1) (set_campaign_flag ch25_roland_allied))
-trigger players (alliance_declined_with computer1) (do (release_yielded_units computer1) (cut_scene 7598) (add_units h8 6 knight) (objective_abandon 2) (set_campaign_flag ch25_roland_knights))
+trigger players (alliance_declined_with computer1) (do (release_yielded_units computer1) (stop_all_units) (stop_all_units computer1) (set_neutral 1 computer1) (cut_scene 7598) (add_units h8 6 knight) (objective_abandon 2) (set_campaign_flag ch25_roland_knights))
 
 trigger players (has_killed 6 traitor_guard enemy) (do (cut_scene 7587) (objective_complete 3))
 

@@ -5,6 +5,33 @@ Release notes
 .. contents::
 
 
+1.4.6.7
+--------
+
+**Fix: attacking a neutral story NPC did not make them hostile (army would not auto-attack)**
+
+- **Issue**: e.g. Raynor campaign ch. 25 — royal guards fought back after being hit, but ``neutral`` stayed set, so offensive/chase units still treated them as passive creeps and would not auto-engage.
+- **Cause**: duel start only ran ``set_ai_mode offensive`` and never cleared ``Player.neutral``; combat AI intentionally skips neutrals via ``player_is_a_hostile_enemy`` / ``can_attack``.
+- **Fix**: new trigger ``(set_neutral 0|1 [player])``; ``set_ai_mode offensive`` auto-clears neutral on non-wildlife computers; ch. 25 sets ``set_neutral 0`` at duel start and ``set_neutral 1 computer1`` after declining an alliance (restore guard).
+- **Code**: ``worldplayerbase/base.py``, ``triggers.py``, ``res/single/The Legend of Raynor/25.txt``.
+- **Tests**: ``test_campaign_alliance_transfer_triggers.py``, ``test_neutral_no_auto_attack.py``.
+
+**Fix: Marco’s escorts attacked Raynor during the ch. 27 duel**
+
+- **Issue**: escorts were supposed to leave the arena, but ``_notify_guard_units`` pulled them into counterattacks; leave orders only targeted 8 of 12 escorts.
+- **Fix**: new ``(set_counterattack 0|1 …)``; on duel start disable counterattack for all 12 escorts (clear ``last_attacker``), set Marco offensive, then ``imperative go`` to o1.
+- **Code**: ``worldplayerbase/triggers.py``, ``res/single/The Legend of Raynor/27.txt``.
+- **Tests**: ``test_campaign_alliance_transfer_triggers.py``.
+
+**Fix: with cheat mode on, one arrow key press browsed several squares**
+
+- **Issue**: on large maps (e.g. ch. 28) with cheatmode, Right once went a1→b1→c1→d1 instead of one step.
+- **Cause**: full-map perception made ``select_square`` slow; pygame key-repeat queued multiple KEYDOWNs while the handler ran; the game loop (unlike menus) did not collapse/clear repeats.
+- **Fix**: keep only the first KEYDOWN per key in a batch; ``pygame.event.clear([KEYDOWN])`` after handling.
+- **Code**: ``clientgame/game_input_handler.py``.
+- **Tests**: ``test_game_keydown_repeat_collapse.py``.
+
+
 1.4.6.6
 --------
 

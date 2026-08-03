@@ -752,9 +752,21 @@ unset_campaign_flag clears mistakenly persisted flags.
 set_ai_mode — change AI mode on the trigger owner's units::
 
     trigger computer1 (npc_has_item npc_count_roland garrek_token c2)
-        (do (set_ai_mode offensive c2 1 npc_count_roland c2 2 npc_roland_guard) (set_yield_on_defeat 1 ...))
+        (do (set_neutral 0) (set_ai_mode offensive c2 1 npc_count_roland c2 2 npc_roland_guard) (set_yield_on_defeat 1 ...))
 
 Syntax: ``(set_ai_mode \<offensive|defensive|guard|chase\> [\<square\> \<count\> \<type\> ...])``.
+Setting ``offensive`` on a non-wildlife neutral computer also clears ``neutral`` automatically
+(so player units start auto-attacking them). Prefer an explicit ``(set_neutral 0)`` for clarity.
+
+set_neutral — toggle a player's ``neutral`` flag::
+
+    trigger computer1 (npc_has_item npc_count_roland garrek_token c2) (set_neutral 0)
+    trigger player1 (alliance_declined_with computer1) (set_neutral 1 computer1)
+
+Syntax: ``(set_neutral \<0|1> [\<player1|computer1|...>])``.
+Use ``0`` when a story NPC leaves passive-creep status and enters a real fight;
+use ``1`` (optionally with a player ref) to restore neutrality after declining an alliance.
+Setting ``1`` also restores units to ``guard`` + counterattack. Keep wildlife-only slots neutral.
 
 set_yield_on_defeat — toggle per-unit yield (zero HP → yield instead of die)::
 
@@ -762,6 +774,15 @@ set_yield_on_defeat — toggle per-unit yield (zero HP → yield instead of die)
         (set_yield_on_defeat 1 c2 1 npc_count_roland c2 2 npc_roland_guard)
 
 Syntax: ``(set_yield_on_defeat \<0|1\> [\<square\> \<count\> \<type\> ...])``. Can also set ``yield_on_defeat 1`` in ``rules.txt``.
+
+set_counterattack — toggle per-unit guard counterattack::
+
+    trigger computer1 (map_flag ch27_duel_started)
+        (set_counterattack 0 c2 12 npc_knight_escort c2 12 npc_footman_escort c2 12 npc_archer_escort)
+
+Syntax: ``(set_counterattack \<0|1\> [\<square\> \<count\> \<type\> ...])``.
+Use ``0`` so story escorts leave a duel arena without joining when the boss is hit
+(``_notify_guard_units`` only wakes units with counterattack enabled).
 
 units_yielded — count of yielded enemy units::
 
@@ -789,9 +810,9 @@ Run ``cut_scene`` on player1 triggers so the human client hears voice. AI mode /
 The Legend of Raynor northern arc (ch. 24–27): continuous storyline with shared ``traitor_guard`` objective and ``campaign_flag`` carryover. See ``../player/campaign-northern-arc.htm``:
 
 - ch. 24 (letter to Garrek): ``allied_control``; ``add_inventory_item garrek_token`` after traitors die
-- ch. 25 (token to Roland): killable before delivery; then ``set_ai_mode`` + ``set_yield_on_defeat``; ``alliance_request``
+- ch. 25 (token to Roland): killable before delivery; then ``set_neutral 0`` + ``set_ai_mode`` + ``set_yield_on_defeat``; ``alliance_request``
 - ch. 26 (banner to Vera): ``transfer_units``
-- ch. 27 (duel with Marco): ``has_entered c2 raynor7`` + cutscene 7718; Marco-only ``set_ai_mode offensive``; escorts ``order`` to ``c1`` to clear the arena; ``units_yielded_by raynor7``; ``stop_all_units`` + selective ``allied_control`` (4 escort knights)
+- ch. 27 (duel with Marco): ``has_entered c2 raynor7`` + cutscene 7718; Marco-only ``set_ai_mode offensive``; escorts ``set_counterattack 0`` then ``imperative go`` to ``c1`` to clear the arena; ``units_yielded_by raynor7``; ``stop_all_units`` + selective ``allied_control`` (8 escort knights)
 
 Chapter 25 must register three primary objectives (deliver token, defeat Roland, kill traitors) plus optional objective 1 (alliance) at start. Press F9 for primary and optional objectives. Script computers display as NPC (``Player.name`` + ``is_script_npc``).
 

@@ -5,6 +5,30 @@ Notas de lançamento
 .. contents::
 
 
+1.4.6.7
+-------
+
+**Correção: atacar um NPC neutro da história não o tornava hostil**
+
+- Na campanha de Raynor (cap. 25), os guardas revidavam, mas continuavam ``neutral``, então o exército não os atacava sozinho.
+- Causa: o duelo só fazia ``set_ai_mode offensive`` sem limpar ``Player.neutral``.
+- Novo ``(set_neutral 0|1 [player])``; ``set_ai_mode offensive`` limpa a neutralidade (não fauna); cap. 25 usa ``set_neutral 0`` no duelo e ``set_neutral 1 computer1`` ao recusar a aliança.
+- **Código / testes**: ``worldplayerbase/base.py``, ``triggers.py``, ``25.txt``, ``test_campaign_alliance_transfer_triggers.py``, ``test_neutral_no_auto_attack.py``.
+
+**Correção: a escolta de Marco atacava Raynor no duelo (cap. 27)**
+
+- Deviam sair da arena; ``_notify_guard_units`` puxava o contra-ataque e a ordem só movia 8 de 12.
+- Novo ``(set_counterattack 0|1 …)``; no início do duelo desativa o contra-ataque das 12 escoltas e elas saem com ``imperative go``.
+- **Código / testes**: ``triggers.py``, ``27.txt``, ``test_campaign_alliance_transfer_triggers.py``.
+
+**Correção: com cheats ativos, uma seta saltava várias casas**
+
+- Em mapas grandes (ex. cap. 28) com cheatmode, Right uma vez ia a1→b1→c1→d1.
+- Causa: ``select_square`` lento + key-repeat do pygame; o loop do jogo não limpava KEYDOWNs repetidos (o menu sim).
+- Agora mantém só o primeiro KEYDOWN por tecla no lote e faz ``clear([KEYDOWN])`` depois de tratar.
+- **Código / testes**: ``game_input_handler.py``, ``test_game_keydown_repeat_collapse.py``.
+
+
 1.4.6.6
 -------
 

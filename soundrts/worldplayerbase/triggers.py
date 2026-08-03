@@ -970,6 +970,9 @@ class TriggersMixin:
         用法：``(set_ai_mode <offensive|defensive|guard|chase> [<方格> <数量> <类型> ...])``
 
         带单位选择符时仅作用于匹配单位；省略时作用于该玩家全部存活单位。
+
+        当模式为 ``offensive`` 且本玩家仍是中立非野生动物电脑时，会自动
+        ``set_neutral 0``：否则单位虽会主动进攻，玩家侧自动攻击仍会忽略他们。
         """
         if not args:
             return
@@ -985,6 +988,58 @@ class TriggersMixin:
             targets = self._units(args[1:])
         for u in targets:
             u.ai_mode = mode
+        if mode == "offensive" and getattr(self, "neutral", False):
+            from .base import player_is_wildlife_only
+
+            if not player_is_wildlife_only(self):
+                self.lang_set_neutral([0])
+
+    def lang_set_neutral(self, args):
+        """设置玩家的中立标记。
+
+        用法：
+            ``(set_neutral <0|1>)`` — 作用于触发器所属玩家
+            ``(set_neutral <0|1> <player1|computer1|...>)`` — 作用于指定玩家
+
+        ``0`` 清除中立（成为可被自动攻击的敌对电脑）；``1`` 重新标为中立
+        （并恢复 guard + 反击）。战役决斗开局用 ``(set_neutral 0)``；
+        拒绝结盟后可用 ``(set_neutral 1 computer1)`` 恢复中立关系。
+        ``set_ai_mode offensive`` 本身也会自动对非野生动物电脑清中立。
+        """
+        if not args:
+            return
+        try:
+            value = int(args[0])
+        except (TypeError, ValueError):
+            warning("set_neutral: invalid value %s", args[0])
+            return
+        if value not in (0, 1):
+            warning("set_neutral: expected 0 or 1, got %s", args[0])
+            return
+        if len(args) == 1:
+            targets = [self]
+        else:
+            targets = []
+            for ref in args[1:]:
+                player = self._resolve_map_player_ref(ref)
+                if player is None:
+                    warning("set_neutral: unknown player %s", ref)
+                    continue
+                targets.append(player)
+        flag = bool(value)
+        for player in targets:
+            if hasattr(player, "set_neutral"):
+                player.set_neutral(flag)
+            else:
+                player.neutral = flag
+                if flag:
+                    for u in list(getattr(player, "units", []) or ()):
+                        if not getattr(u, "presence", True):
+                            continue
+                        if hasattr(u, "ai_mode"):
+                            u.ai_mode = "guard"
+                        if hasattr(u, "counterattack_enabled"):
+                            u.counterattack_enabled = True
 
     def lang_set_yield_on_defeat(self, args):
         """设置触发器所属玩家单位的战败投降开关。
@@ -1008,6 +1063,41 @@ class TriggersMixin:
             targets = self._units(args[1:])
         for u in targets:
             u.yield_on_defeat = value
+
+    def lang_set_counterattack(self, args):
+        """设置触发器所属玩家单位的反击开关。
+
+        用法：``(set_counterattack <0|1> [<方格> <数量> <类型> ...])``
+
+        带单位选择符时仅作用于匹配单位；省略时作用于该玩家全部存活单位。
+        ``0`` 会同时清空 ``last_attacker`` 并中止当前攻击目标，避免护卫
+        在比武开场时因 ``_notify_guard_units`` 被拉进决斗。
+        """
+        if not args:
+            return
+        try:
+            value = int(args[0])
+        except (TypeError, ValueError):
+            warning("set_counterattack: invalid value %s", args[0])
+            return
+        if value not in (0, 1):
+            warning("set_counterattack: expected 0 or 1, got %s", args[0])
+            return
+        if len(args) == 1:
+            targets = [
+                u for u in self.units if getattr(u, "presence", True)
+            ]
+        else:
+            targets = self._units(args[1:])
+        enabled = bool(value)
+        for u in targets:
+            if hasattr(u, "counterattack_enabled"):
+                u.counterattack_enabled = enabled
+            if not enabled:
+                if hasattr(u, "last_attacker"):
+                    u.last_attacker = None
+                if getattr(u, "action_target", None) is not None:
+                    u.action_target = None
 
     def lang_release_yielded_units(self, args):
         """结束指定玩家名下单位的认输无敌（Ctrl+F4/Shift+F4 后恢复可战）。

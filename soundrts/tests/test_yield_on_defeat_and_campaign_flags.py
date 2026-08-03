@@ -400,6 +400,7 @@ def test_chapter_maps_use_distinct_heroes_and_carryover():
     assert "npc_count_roland" in ch25
     assert "garrek_token" in ch25
     assert "npc_has_item npc_count_roland garrek_token" in ch25
+    assert "set_neutral 0" in ch25
     assert "set_ai_mode offensive" in ch25
     assert "set_yield_on_defeat 1" in ch25
     assert "ch25_duel_started" in ch25

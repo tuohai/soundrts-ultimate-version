@@ -62,7 +62,7 @@ Write these in the unit’s `def <name>` block. Omitted fields use the defaults 
 Campaign example (ch. 24–27): key NPCs use ``escort`` or ``ai_mode guard`` so they do not chase before delivery/duel. After alliance, triggers switch modes:
 
 - `(set_ai_mode offensive c2 1 npc_count_roland …)` — Roland goes offensive after token (ch. 25)
-- `(set_ai_mode offensive c2 1 npc_marco_ironhand)` + `(order … ((go c1)))` — ch. 27 (``raynor7``): Marco only goes offensive; escorts move to c1 to clear the arena
+- `(set_counterattack 0 …)` + `(set_ai_mode offensive c2 1 npc_marco_ironhand)` + `(order … ((imperative go c1)))` — ch. 27 (``raynor7``): escorts stand down and leave; Marco only goes offensive
 - `(allied_assist computer1)` — all allied combat units on guard → chase
 - `(allied_assist computer1 c2 4 npc_archer_escort)` — only escort archers → chase
 - `(allied_control computer1 c2 4 npc_knight_escort)` — escort knights under player command (stay on guard); others auto → chase

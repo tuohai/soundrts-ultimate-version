@@ -225,7 +225,7 @@ Flow:
 
 1. Raynor ``enters ``c2`` (Marco's camp / 3,2)`` → player1: ``cut_scene 7718``, ``set_map_flag ch27_duel_started`` (``raynor7`` must enter; escorts alone do not trigger).
 
-2. computer1 (flag set): Marco only `(set_ai_mode offensive c2 1 npc_marco_ironhand)`; escorts `(order … ((go c1)))` to c1 to clear the arena.
+2. computer1 (flag set): escorts `(set_counterattack 0)` then `(imperative go c1)` to clear the arena; Marco only `(set_ai_mode offensive c2 1 npc_marco_ironhand)`.
 
 3. Raynor must defeat Marco personally: `(units_yielded_by raynor7 1 npc_marco_ironhand enemy)` completes the primary objective. If escorts or other units force Marco to yield → ``defeat``.
 

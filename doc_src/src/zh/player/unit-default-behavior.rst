@@ -65,7 +65,7 @@
 交付/比武前不主动远距追击。结盟后可用触发器切换模式：
 
 - `(set_ai_mode offensive c2 1 npc_count_roland …)` — 交信物后罗兰切追击（第 25 章）
-- `(set_ai_mode offensive c2 1 npc_marco_ironhand)` + `(order (c2 4 npc_knight_escort) ((go c1)))` 等 — 第 27 章（``raynor7``）：仅马尔科切进攻；护卫前往 ``c1`` 让出阵前
+- `(set_counterattack 0 …)` + `(set_ai_mode offensive c2 1 npc_marco_ironhand)` + `(order … ((imperative go c1)))` — 第 27 章（``raynor7``）：护卫关闭反击并离场；仅马尔科切进攻
 - `(allied_assist computer1)` — 全盟友可战斗站岗单位切追击
 - `(allied_assist computer1 c2 4 npc_archer_escort)` — 仅护卫射手切追击
 - `(allied_control computer1 c2 4 npc_knight_escort)` — 护卫骑士交玩家指挥（保持站岗），其余自动切追击

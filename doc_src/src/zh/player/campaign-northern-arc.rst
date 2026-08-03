@@ -232,7 +232,7 @@ carryover：24–26 全部奖励单位按标记刷入。玩家开局为 ``raynor
 流程：
 
 1. 雷诺``进入 ``c2`` （马尔科阵前 / 3,2）`` → ``player1``：``cut_scene 7718``、``set_map_flag ch27_duel_started`` （须 ``raynor7`` 本人进入，亲卫先到不触发）。
-2. ``computer1`` （同标记已设）：仅马尔科 `(set_ai_mode offensive c2 1 npc_marco_ironhand)`；其余护卫 `(order … ((go c1)))` 前往 ``c1`` 让出阵前。
+2. ``computer1`` （同标记已设）：护卫先 `(set_counterattack 0)` 再 `(imperative go c1)` 让出阵前；仅马尔科 `(set_ai_mode offensive c2 1 npc_marco_ironhand)`。
 3. 须由雷诺亲自击败马尔科：`(units_yielded_by raynor7 1 npc_marco_ironhand enemy)` 完成主要目标。亲卫或其他单位令马尔科认输 → ``defeat``。
 4. 认输后 ``cut_scene 7710`` → `(alliance 1 player1 computer1)`、``stop_all_units`` （含 carryover 友军）、``release_yielded_units``。
 5. `(allied_control computer1 c2 4 npc_knight_escort)` — 仅 4 名护卫骑士交玩家指挥；此前撤至 ``c1`` 的护卫 `(order … ((go c2)))` 列队回阵前。

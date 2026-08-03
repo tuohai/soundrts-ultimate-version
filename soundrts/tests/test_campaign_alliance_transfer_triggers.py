@@ -436,6 +436,54 @@ def test_lang_set_ai_mode_on_selected_units():
     assert brother.ai_mode == "offensive"
 
 
+def test_lang_set_ai_mode_offensive_clears_neutral():
+    """决斗开局：set_ai_mode offensive 必须解除中立，否则玩家不会自动攻击。"""
+    human = _TriggerOwner(is_human=True, player_id="h1", name="Player 1")
+    computer = _TriggerOwner(is_human=False, player_id="ai1", name="Knight Lord")
+    computer.neutral = True
+    world = _StubWorld([human, computer])
+    world.update_alliances()
+    roland = _StubUnit(computer, type_name="npc_count_roland", unit_id="r1")
+    roland.ai_mode = "guard"
+    t = _make_triggers(computer, world)
+    t.lang_set_ai_mode(["offensive"])
+    assert roland.ai_mode == "offensive"
+    assert computer.neutral is False
+
+
+def test_lang_set_neutral_toggles_flag():
+    computer = _TriggerOwner(is_human=False, player_id="ai1", name="Knight Lord")
+    computer.neutral = True
+    world = _StubWorld([computer])
+    t = _make_triggers(computer, world)
+    t.lang_set_neutral([0])
+    assert computer.neutral is False
+    t.lang_set_neutral([1])
+    assert computer.neutral is True
+
+
+def test_lang_set_neutral_on_other_player_restores_guard():
+    """拒绝结盟后：玩家触发器可对 computer1 执行 set_neutral 1，并恢复 guard。"""
+    human = _TriggerOwner(is_human=True, player_id="h1", name="Player 1")
+    computer = _TriggerOwner(is_human=False, player_id="ai1", name="Knight Lord")
+    computer.neutral = False
+    world = _StubWorld([human, computer])
+    roland = _StubUnit(computer, type_name="npc_count_roland", unit_id="r1")
+    brother = _StubUnit(computer, type_name="npc_roland_guard", unit_id="b1")
+    roland.ai_mode = "offensive"
+    brother.ai_mode = "offensive"
+    roland.counterattack_enabled = False
+    brother.counterattack_enabled = False
+    t = _make_triggers(human, world)
+    t.lang_set_neutral([1, "computer1"])
+    assert computer.neutral is True
+    assert human.neutral is False
+    assert roland.ai_mode == "guard"
+    assert brother.ai_mode == "guard"
+    assert roland.counterattack_enabled is True
+    assert brother.counterattack_enabled is True
+
+
 def test_lang_set_yield_on_defeat_on_selected_units():
     human = _TriggerOwner(is_human=True, player_id="h1", name="Player 1")
     computer = _TriggerOwner(is_human=False, player_id="ai1", name="Knight Lord")
@@ -487,13 +535,37 @@ def test_chapter_27_uses_selective_allied_control():
     assert "(unset_campaign_flag ch27_duel_started)" in text
     assert "(cut_scene 7718)" in text
     assert "(set_ai_mode offensive o8 1 npc_marco_ironhand)" in text
-    assert "(order (o8 8 npc_knight_escort) ((go o1)))" in text
-    assert "(order (o8 8 npc_footman_escort) ((go o1)))" in text
-    assert "(order (o8 8 npc_archer_escort) ((go o1)))" in text
+    assert "(set_counterattack 0 o8 12 npc_knight_escort o8 12 npc_footman_escort o8 12 npc_archer_escort)" in text
+    assert "(order (o8 12 npc_knight_escort) ((imperative go o1)))" in text
+    assert "(order (o8 12 npc_footman_escort) ((imperative go o1)))" in text
+    assert "(order (o8 12 npc_archer_escort) ((imperative go o1)))" in text
     assert "(set_map_flag ch27_escorts_return)" in text
-    assert "(order (o1 8 npc_knight_escort) ((go o8)))" in text
-    assert "(order (o1 8 npc_footman_escort) ((go o8)))" in text
-    assert "(order (o1 8 npc_archer_escort) ((go o8)))" in text
+    assert "(order (o1 12 npc_knight_escort) ((go o8)))" in text
+    assert "(order (o1 12 npc_footman_escort) ((go o8)))" in text
+    assert "(order (o1 12 npc_archer_escort) ((go o8)))" in text
+    duel = [
+        line
+        for line in text.splitlines()
+        if "set_ai_mode offensive o8 1 npc_marco_ironhand" in line
+    ][0]
+    assert duel.index("set_counterattack 0") < duel.index("set_ai_mode offensive")
+    assert duel.index("set_counterattack 0") < duel.index("imperative go o1")
+
+
+def test_lang_set_counterattack_disables_and_clears_attacker():
+    computer = _TriggerOwner(is_human=False, player_id="ai1", name="Marco")
+    world = _StubWorld([computer])
+    escort = _StubUnit(computer, type_name="npc_knight_escort", unit_id="e1")
+    escort.counterattack_enabled = True
+    escort.last_attacker = object()
+    escort.action_target = object()
+    t = _make_triggers(computer, world)
+    t.lang_set_counterattack(["0"])
+    assert escort.counterattack_enabled is False
+    assert escort.last_attacker is None
+    assert escort.action_target is None
+    t.lang_set_counterattack(["1"])
+    assert escort.counterattack_enabled is True
 
 
 def test_script_npc_name_is_npc_not_ai_timers_login():
@@ -842,12 +914,13 @@ def test_chapter_25_uses_duel_and_optional_alliance():
     assert "npc_count_roland" in text
     assert "garrek_token" in text
     assert "(npc_has_item npc_count_roland garrek_token o8)" in text
+    assert "(set_neutral 0)" in text
     assert "(set_ai_mode offensive o8 1 npc_count_roland 6 npc_roland_guard)" in text
     assert "(set_yield_on_defeat 1 o8 1 npc_count_roland 6 npc_roland_guard)" in text
     assert "(set_campaign_flag ch25_duel_started)" in text
     assert "trigger players (npc_has_item npc_count_roland garrek_token o8) (do (cut_scene 7701)" in text
     assert "(set_campaign_flag ch25_duel_started))" in text.split("(cut_scene 7701)")[1].split("trigger computer1")[0]
-    assert "trigger computer1 (npc_has_item npc_count_roland garrek_token o8) (do (set_ai_mode offensive" in text
+    assert "trigger computer1 (npc_has_item npc_count_roland garrek_token o8) (do (set_neutral 0) (set_ai_mode offensive" in text
     assert "(campaign_flag ch25_duel_started)" in text
     assert "(key_unit_killed npc_count_roland npc_roland_guard)" in text
     assert "trigger players (and (not (campaign_flag ch25_duel_started)) (key_unit_killed npc_count_roland npc_roland_guard)) (defeat)" in text
@@ -861,9 +934,14 @@ def test_chapter_25_uses_duel_and_optional_alliance():
     assert "(allied_assist computer1)" in text
     assert "(alliance_with computer1)" in text
     assert "(alliance_declined_with computer1)" in text
+    assert "(set_neutral 1 computer1)" in text
     assert "(add_units h8 6 knight)" in text
     assert "(set_campaign_flag ch25_roland_allied)" in text
     assert "(set_campaign_flag ch25_roland_knights)" in text
+    declined = text.split("alliance_declined_with computer1")[1].split("trigger")[0]
+    assert "(set_neutral 1 computer1)" in declined
+    assert "(stop_all_units)" in declined
+    assert "(stop_all_units computer1)" in declined
     assert "(campaign_flag ch24_garrek)" in text
     assert "(add_secondary_objective 1 7599)" in text
     assert "(stop_all_units)" in text

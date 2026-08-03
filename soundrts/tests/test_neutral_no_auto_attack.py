@@ -109,6 +109,18 @@ def test_player_is_a_hostile_enemy_excludes_neutral():
     assert human.player_is_a_hostile_enemy(human) is False
 
 
+def test_clearing_neutral_makes_hostile_enemy():
+    """决斗开局清掉 neutral 后，玩家战斗 AI 应把对方当作可自动攻击的敌对目标。"""
+    human = _CombatPlayer(neutral=False)
+    duel_npc = _CombatPlayer(neutral=True)
+    human.allied = [human]
+    duel_npc.id = "ai1"
+
+    assert human.player_is_a_hostile_enemy(duel_npc) is False
+    duel_npc.neutral = False
+    assert human.player_is_a_hostile_enemy(duel_npc) is True
+
+
 def test_can_attack_refuses_neutral_without_imperative_order():
     unit = _CanAttackStub()
     neutral = _NeutralTarget()

@@ -4,6 +4,33 @@
 .. contents::
 
 
+1.4.6.7
+--------
+
+**修复：攻击中立剧情 NPC 后关系不变敌对，己方单位不自动还击**
+
+- **问题**：例如雷诺传第 25 章，攻击亲卫骑士后对方会反击，但 ``neutral`` 标记未清除，己方进攻/追击单位仍把他们当中立 creep，不会自动攻击。
+- **原因**：中立电脑开战时只切了 ``set_ai_mode offensive``，引擎没有清掉 ``Player.neutral``；战斗 AI 用 ``player_is_a_hostile_enemy`` / ``can_attack`` 刻意忽略中立目标。
+- **修复**：新增触发器 ``(set_neutral 0|1 [player])``；``set_ai_mode offensive`` 对非野生动物中立电脑自动清中立；第 25 章决斗开始 ``set_neutral 0``，拒绝结盟后 ``set_neutral 1 computer1`` 恢复中立并切回 guard。
+- **实现**：``worldplayerbase/base.py``、``triggers.py``、``res/single/The Legend of Raynor/25.txt``。
+- **测试**：``test_campaign_alliance_transfer_triggers.py``、``test_neutral_no_auto_attack.py``。
+
+**修复：第 27 章与马尔科比武时护卫会攻击雷诺**
+
+- **问题**：决斗开始后护卫本应离场让出阵前，却会因 ``_notify_guard_units`` 被拉进反击；且离场命令原先只点到 8 个，实际有 12 个护卫。
+- **修复**：新增 ``(set_counterattack 0|1 …)``；决斗开场先关闭全部 12 名护卫反击并清空 ``last_attacker``，再让马尔科进攻，护卫 ``imperative go`` 撤往 o1。
+- **实现**：``worldplayerbase/triggers.py``、``res/single/The Legend of Raynor/27.txt``。
+- **测试**：``test_campaign_alliance_transfer_triggers.py``。
+
+**修复：作弊模式下方向键浏览地图会一次连跳多格**
+
+- **问题**：第 28 章等大地图开作弊后，按一下右键会 a1→b1→c1→d1 连续跳格，而不是只到相邻一格。
+- **原因**：作弊全图感知使 ``select_square`` 变慢；pygame key-repeat 在处理期间往队列塞入多个 KEYDOWN；游戏循环（不像菜单）未折叠/清除重复按键。
+- **修复**：同一批次同键 KEYDOWN 只保留第一次；处理完后 ``pygame.event.clear([KEYDOWN])``。
+- **实现**：``clientgame/game_input_handler.py``。
+- **测试**：``test_game_keydown_repeat_collapse.py``。
+
+
 1.4.6.6
 --------
 

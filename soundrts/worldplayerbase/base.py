@@ -1008,6 +1008,64 @@ class Player:
         except Exception:
             pass
 
+    def set_neutral(self, value):
+        """设置/清除中立标记，并立刻失效各玩家的敌对目标缓存。
+
+        ``computer_only ... neutral`` 开局的中立电脑在进入正式交战
+        （例如决斗触发 ``set_ai_mode offensive`` / ``set_neutral 0``）后
+        必须清掉 ``neutral``，否则玩家单位的自动攻击会继续忽略他们
+        （``player_is_a_hostile_enemy`` / ``can_attack`` 排除中立）。
+
+        重新标为中立（``set_neutral 1``，例如拒绝结盟后）会把存活单位
+        恢复为 guard + 反击，避免仍以 offensive 主动追杀玩家。
+        狩猎动物槽位应保持中立，不要对 wildlife-only 玩家调用本方法清中立。
+        """
+        value = bool(value)
+        prev = bool(getattr(self, "neutral", False))
+        self.neutral = value
+        if value:
+            for u in list(getattr(self, "units", []) or ()):
+                if not getattr(u, "presence", True):
+                    continue
+                if hasattr(u, "ai_mode"):
+                    u.ai_mode = "guard"
+                if hasattr(u, "counterattack_enabled"):
+                    u.counterattack_enabled = True
+        if prev == value:
+            return
+        world = getattr(self, "world", None)
+        if world is None:
+            return
+        for p in getattr(world, "players", []) or ():
+            if hasattr(p, "_enemy_players_cache_time"):
+                p._enemy_players_cache_time = -1
+            if hasattr(p, "_enemy_units_cache_time"):
+                p._enemy_units_cache_time = -1
+            if hasattr(p, "_enemy_units_set_time"):
+                p._enemy_units_set_time = -1
+            if hasattr(p, "_perception_set_time"):
+                p._perception_set_time = -1
+            if hasattr(p, "_enemy_menace_cache_time"):
+                p._enemy_menace_cache_time = -1
+            if hasattr(p, "_known_enemies"):
+                try:
+                    p._known_enemies.clear()
+                except Exception:
+                    p._known_enemies = {}
+            if hasattr(p, "_known_enemies_time"):
+                try:
+                    p._known_enemies_time.clear()
+                except Exception:
+                    p._known_enemies_time = {}
+            hit = getattr(p, "_known_enemies_hit", None)
+            if isinstance(hit, list) and len(hit) >= 3:
+                hit[0] = None
+                hit[1] = -1
+                hit[2] = ()
+            if hasattr(p, "_enemy_player_cache"):
+                p._enemy_player_cache = {}
+                p._enemy_player_timestamp = 0
+
     def set_ai(self, ai_type):
         pass
 
