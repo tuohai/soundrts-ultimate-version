@@ -12,8 +12,8 @@ Release notes
 
 - **Issue**: e.g. Raynor campaign ch. 25 — royal guards fought back after being hit, but ``neutral`` stayed set, so offensive/chase units still treated them as passive creeps and would not auto-engage.
 - **Cause**: duel start only ran ``set_ai_mode offensive`` and never cleared ``Player.neutral``; combat AI intentionally skips neutrals via ``player_is_a_hostile_enemy`` / ``can_attack``.
-- **Fix**: new trigger ``(set_neutral 0|1 [player])``; ``set_ai_mode offensive`` auto-clears neutral on non-wildlife computers; ch. 25 sets ``set_neutral 0`` at duel start and ``set_neutral 1 computer1`` after declining an alliance (restore guard).
-- **Code**: ``worldplayerbase/base.py``, ``triggers.py``, ``res/single/The Legend of Raynor/25.txt``.
+- **Fix**: new trigger ``(set_neutral 0|1 [player])``; neutrality is tied to guard — switching to offensive/defensive/chase (UI or ``set_ai_mode``) clears ``neutral``; being hit by a non-neutral side also clears it; ch. 25 sets ``set_neutral 0`` at duel start and ``set_neutral 1 computer1`` after declining an alliance (restore guard).
+- **Code**: ``worldplayerbase/base.py``, ``triggers.py``, ``worldorders/immediate.py``, ``combat/damage_effects.py``, ``res/single/The Legend of Raynor/25.txt``.
 - **Tests**: ``test_campaign_alliance_transfer_triggers.py``, ``test_neutral_no_auto_attack.py``.
 
 **Fix: Marco’s escorts attacked Raynor during the ch. 27 duel**

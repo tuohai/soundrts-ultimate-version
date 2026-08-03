@@ -11,7 +11,7 @@ Note di rilascio
 
 - Nella campagna di Raynor (cap. 25) le guardie rispondevano al fuoco ma restavano ``neutral``, quindi l’esercito non le attaccava in automatico.
 - Causa: il duello impostava solo ``set_ai_mode offensive`` senza togliere ``Player.neutral``.
-- Nuovo ``(set_neutral 0|1 [player])``; ``set_ai_mode offensive`` azzera la neutralità (non fauna); cap. 25 usa ``set_neutral 0`` all’inizio del duello e ``set_neutral 1 computer1`` se si rifiuta l’alleanza.
+- Nuovo ``(set_neutral 0|1 [player])``; la neutralità è legata a guard — passare a offensivo/difensivo/inseguimento (UI o ``set_ai_mode``) la toglie; anche se colpiti da una parte non neutrale (non fauna); cap. 25 usa ``set_neutral 0`` all’inizio del duello e ``set_neutral 1 computer1`` se si rifiuta l’alleanza.
 - **Codice / test**: ``worldplayerbase/base.py``, ``triggers.py``, ``25.txt``, ``test_campaign_alliance_transfer_triggers.py``, ``test_neutral_no_auto_attack.py``.
 
 **Correzione: le scorte di Marco attaccavano Raynor nel duello (cap. 27)**

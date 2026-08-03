@@ -420,6 +420,14 @@ class DisableAutoExplore(ImmediateOrder):
         self.unit.notify("order_ok")
 
 
+def _apply_unit_ai_mode(unit, mode):
+    """设置单位 AI 模式；离开站岗时中立非野生电脑解除中立。"""
+    unit.ai_mode = mode
+    player = getattr(unit, "player", None)
+    if player is not None and hasattr(player, "on_unit_ai_mode_changed"):
+        player.on_unit_ai_mode_changed(mode)
+
+
 class ModeOffensive(ImmediateOrder):
     keyword = "mode_offensive"
 
@@ -428,7 +436,7 @@ class ModeOffensive(ImmediateOrder):
         return unit.can_switch_ai_mode and (unit.ai_mode == "chase")
 
     def immediate_action(self):
-        self.unit.ai_mode = "offensive"
+        _apply_unit_ai_mode(self.unit, "offensive")
         self.unit.notify("order_ok")
 
 
@@ -440,7 +448,7 @@ class ModeDefensive(ImmediateOrder):
         return unit.can_switch_ai_mode and (unit.ai_mode == "offensive")
 
     def immediate_action(self):
-        self.unit.ai_mode = "defensive"
+        _apply_unit_ai_mode(self.unit, "defensive")
         self.unit.notify("order_ok")
 
 class ModeGuard(ImmediateOrder):
@@ -451,7 +459,7 @@ class ModeGuard(ImmediateOrder):
         return unit.can_switch_ai_mode and (unit.ai_mode == "defensive")
         
     def immediate_action(self):
-        self.unit.ai_mode = "guard"
+        _apply_unit_ai_mode(self.unit, "guard")
         self.unit.notify("order_ok")
 
 class ModeChase(ImmediateOrder):
@@ -462,7 +470,7 @@ class ModeChase(ImmediateOrder):
         return unit.can_switch_ai_mode and (unit.ai_mode == "guard")
         
     def immediate_action(self):
-        self.unit.ai_mode = "chase"
+        _apply_unit_ai_mode(self.unit, "chase")
         self.unit.notify("order_ok")
 
 class ModeToggle(ImmediateOrder):
@@ -494,7 +502,7 @@ class ModeToggle(ImmediateOrder):
             "guard": "chase",
             "chase": "offensive"
         }[self.unit.ai_mode]
-        self.unit.ai_mode = next_mode
+        _apply_unit_ai_mode(self.unit, next_mode)
         self.unit.notify("order_ok")
 
 class RallyingPointOrder(ImmediateOrder):

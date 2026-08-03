@@ -755,6 +755,9 @@ class Skill(CreatureAttributes):  # or UnitOption or UnitMenuItem or ActiveSkill
         if victim.player:
             victim.player.observe(caster)
             victim.last_attacker = caster
+            attacker_player = getattr(caster, "player", None)
+            if hasattr(victim.player, "note_combat_with"):
+                victim.player.note_combat_with(attacker_player)
         victim.hp -= hp
         if victim.hp <= 0:
             victim.die(caster)

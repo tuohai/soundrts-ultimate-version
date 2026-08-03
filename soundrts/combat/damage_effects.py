@@ -182,6 +182,12 @@ class DamageEffectsMixin(DamageCalculationMixin):
                 self.player.observe(attacker)
             self.last_attacker = attacker
 
+            # 中立 creep 遭到非中立攻击 → 解除中立（野生动物除外）
+            attacker_player = getattr(attacker, "player", None)
+            victim_player = self.player
+            if hasattr(victim_player, "note_combat_with"):
+                victim_player.note_combat_with(attacker_player)
+
             # 通知友军单位（仅当攻击者存在时）
             if self.place:
                 self._notify_guard_units(attacker)

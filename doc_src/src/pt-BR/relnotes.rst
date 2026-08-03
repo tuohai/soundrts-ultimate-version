@@ -12,7 +12,7 @@ Notas de lançamento
 
 - Na campanha de Raynor (cap. 25), os guardas revidavam, mas continuavam ``neutral``, então o exército não os atacava sozinho.
 - Causa: o duelo só fazia ``set_ai_mode offensive`` sem limpar ``Player.neutral``.
-- Novo ``(set_neutral 0|1 [player])``; ``set_ai_mode offensive`` limpa a neutralidade (não fauna); cap. 25 usa ``set_neutral 0`` no duelo e ``set_neutral 1 computer1`` ao recusar a aliança.
+- Novo ``(set_neutral 0|1 [player])``; o modo de IA não muda a neutralidade; combate com um lado não neutro a remove (não fauna); cap. 25 usa ``set_neutral 0`` no duelo e ``set_neutral 1 computer1`` ao recusar a aliança.
 - **Código / testes**: ``worldplayerbase/base.py``, ``triggers.py``, ``25.txt``, ``test_campaign_alliance_transfer_triggers.py``, ``test_neutral_no_auto_attack.py``.
 
 **Correção: a escolta de Marco atacava Raynor no duelo (cap. 27)**

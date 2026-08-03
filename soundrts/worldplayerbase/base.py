@@ -1008,11 +1008,44 @@ class Player:
         except Exception:
             pass
 
+    def on_unit_ai_mode_changed(self, mode):
+        """中立与站岗绑定：离开站岗进入主动 AI 时解除中立。
+
+        ``computer_only ... neutral`` 开局为 guard + 反击的被动 creep。
+        一旦切到 ``offensive`` / ``defensive`` / ``chase``（UI 或
+        ``set_ai_mode``），清掉 ``neutral`` 变为正式敌对，避免「会打你
+        但仍显示中立、己方不自动交战」。纯野生动物电脑保持中立。
+        """
+        if mode not in ("offensive", "defensive", "chase"):
+            return
+        if not getattr(self, "neutral", False):
+            return
+        if player_is_wildlife_only(self):
+            return
+        self.set_neutral(False)
+
+    def note_combat_with(self, other_player):
+        """本方单位遭到非中立势力攻击时，解除中立。
+
+        与切 AI 模式解中立互补：站岗中立 creep 被打后应变为正式敌对，
+        以便对方自动交战与「中立」标注一致。主动出手不改中立。
+        纯野生动物电脑保持中立。
+        """
+        if other_player is None or other_player is self:
+            return
+        if not getattr(self, "neutral", False):
+            return
+        if getattr(other_player, "neutral", False):
+            return
+        if player_is_wildlife_only(self):
+            return
+        self.set_neutral(False)
+
     def set_neutral(self, value):
         """设置/清除中立标记，并立刻失效各玩家的敌对目标缓存。
 
         ``computer_only ... neutral`` 开局的中立电脑在进入正式交战
-        （例如决斗触发 ``set_ai_mode offensive`` / ``set_neutral 0``）后
+        （挨打 ``note_combat_with``、切非站岗模式、或地图 ``set_neutral 0``）后
         必须清掉 ``neutral``，否则玩家单位的自动攻击会继续忽略他们
         （``player_is_a_hostile_enemy`` / ``can_attack`` 排除中立）。
 

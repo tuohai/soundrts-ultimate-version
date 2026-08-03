@@ -971,8 +971,9 @@ class TriggersMixin:
 
         带单位选择符时仅作用于匹配单位；省略时作用于该玩家全部存活单位。
 
-        当模式为 ``offensive`` 且本玩家仍是中立非野生动物电脑时，会自动
-        ``set_neutral 0``：否则单位虽会主动进攻，玩家侧自动攻击仍会忽略他们。
+        当模式为 ``offensive`` / ``defensive`` / ``chase`` 且本玩家仍是
+        中立非野生动物电脑时，会自动 ``set_neutral 0``：否则单位虽会主动
+        出击，玩家侧仍显示中立且自动攻击会忽略他们。
         """
         if not args:
             return
@@ -988,11 +989,8 @@ class TriggersMixin:
             targets = self._units(args[1:])
         for u in targets:
             u.ai_mode = mode
-        if mode == "offensive" and getattr(self, "neutral", False):
-            from .base import player_is_wildlife_only
-
-            if not player_is_wildlife_only(self):
-                self.lang_set_neutral([0])
+        if targets and hasattr(self, "on_unit_ai_mode_changed"):
+            self.on_unit_ai_mode_changed(mode)
 
     def lang_set_neutral(self, args):
         """设置玩家的中立标记。
@@ -1004,7 +1002,8 @@ class TriggersMixin:
         ``0`` 清除中立（成为可被自动攻击的敌对电脑）；``1`` 重新标为中立
         （并恢复 guard + 反击）。战役决斗开局用 ``(set_neutral 0)``；
         拒绝结盟后可用 ``(set_neutral 1 computer1)`` 恢复中立关系。
-        ``set_ai_mode offensive`` 本身也会自动对非野生动物电脑清中立。
+        ``set_ai_mode`` 切到非站岗模式、以及中立单位遭到非中立攻击时，
+        也会自动对非野生动物电脑清中立。
         """
         if not args:
             return

@@ -185,6 +185,11 @@ Neutral computer creeps still use forced ``guard`` + counter-attack on their sid
 
 - Invalid values are ignored (logged) and fall back to default.
 - Neutral creeps (`computer_only ... neutral`) are still forced to ``guard`` + counter-attack regardless of ``ai_mode``.
+- Neutrality is tied to guard: leaving guard for ``offensive`` / ``defensive`` / ``chase``
+  (UI or ``set_ai_mode``) clears ``neutral`` (wildlife-only excluded). Switching back to
+  guard does not restore neutral; use ``(set_neutral 1)``.
+- Being hit by a non-neutral side also clears ``neutral`` (complements mode switch),
+  so the player's army can auto-engage; wildlife excluded.
 
 
 ----

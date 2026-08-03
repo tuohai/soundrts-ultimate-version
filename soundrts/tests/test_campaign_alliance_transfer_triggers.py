@@ -94,6 +94,32 @@ class _StubPlayer:
                 if alliance_ids_equal(p.client.alliance, self.client.alliance)
             ]
 
+    def set_neutral(self, value):
+        value = bool(value)
+        self.neutral = value
+        if value:
+            for u in self.units:
+                if hasattr(u, "ai_mode"):
+                    u.ai_mode = "guard"
+                if hasattr(u, "counterattack_enabled"):
+                    u.counterattack_enabled = True
+
+    def on_unit_ai_mode_changed(self, mode):
+        if mode not in ("offensive", "defensive", "chase"):
+            return
+        if not self.neutral:
+            return
+        self.set_neutral(False)
+
+    def note_combat_with(self, other_player):
+        if other_player is None or other_player is self:
+            return
+        if not self.neutral:
+            return
+        if getattr(other_player, "neutral", False):
+            return
+        self.set_neutral(False)
+
 
 class _StubAttackOrder:
     keyword = "attack"
@@ -449,6 +475,75 @@ def test_lang_set_ai_mode_offensive_clears_neutral():
     t.lang_set_ai_mode(["offensive"])
     assert roland.ai_mode == "offensive"
     assert computer.neutral is False
+
+
+def test_lang_set_ai_mode_chase_clears_neutral():
+    """离开站岗的任意主动模式都应解除中立（不仅是 offensive）。"""
+    computer = _TriggerOwner(is_human=False, player_id="ai1", name="Creep")
+    computer.neutral = True
+    world = _StubWorld([computer])
+    unit = _StubUnit(computer, type_name="knight", unit_id="k1")
+    unit.ai_mode = "guard"
+    t = _make_triggers(computer, world)
+    t.lang_set_ai_mode(["chase"])
+    assert unit.ai_mode == "chase"
+    assert computer.neutral is False
+
+
+def test_lang_set_ai_mode_guard_keeps_neutral():
+    computer = _TriggerOwner(is_human=False, player_id="ai1", name="Creep")
+    computer.neutral = True
+    world = _StubWorld([computer])
+    unit = _StubUnit(computer, type_name="knight", unit_id="k1")
+    unit.ai_mode = "offensive"
+    t = _make_triggers(computer, world)
+    t.lang_set_ai_mode(["guard"])
+    assert unit.ai_mode == "guard"
+    assert computer.neutral is True
+
+
+def test_mode_toggle_order_clears_neutral_when_leaving_guard():
+    """UI 切 AI 模式（站岗→追击）须解除中立，与触发器路径一致。"""
+    from soundrts.worldorders.immediate import ModeToggle
+
+    computer = _TriggerOwner(is_human=False, player_id="ai1", name="Creep")
+    computer.neutral = True
+    unit = _StubUnit(computer, type_name="knight", unit_id="k1")
+    unit.ai_mode = "guard"
+    unit.can_switch_ai_mode = True
+    unit.notify = lambda *_a, **_k: None
+    order = ModeToggle(unit, [])
+    order.immediate_action()
+    assert unit.ai_mode == "chase"
+    assert computer.neutral is False
+
+
+def test_note_combat_with_clears_neutral_when_hit_by_player():
+    """中立 creep 被非中立玩家打中后解除中立。"""
+    human = _TriggerOwner(is_human=True, player_id="h1", name="Player 1")
+    computer = _TriggerOwner(is_human=False, player_id="ai1", name="Creep")
+    computer.neutral = True
+    computer.note_combat_with(human)
+    assert computer.neutral is False
+
+
+def test_note_combat_attacker_stays_neutral_if_already_neutral():
+    """中立方主动出手不经 note_combat_with 清自己；人类被打也不变中立。"""
+    human = _TriggerOwner(is_human=True, player_id="h1", name="Player 1")
+    computer = _TriggerOwner(is_human=False, player_id="ai1", name="Creep")
+    computer.neutral = True
+    human.note_combat_with(computer)
+    assert computer.neutral is True
+    assert human.neutral is False
+
+
+def test_note_combat_with_ignores_other_neutrals():
+    a = _TriggerOwner(is_human=False, player_id="a1", name="CreepA")
+    b = _TriggerOwner(is_human=False, player_id="b1", name="CreepB")
+    a.neutral = True
+    b.neutral = True
+    a.note_combat_with(b)
+    assert a.neutral is True
 
 
 def test_lang_set_neutral_toggles_flag():

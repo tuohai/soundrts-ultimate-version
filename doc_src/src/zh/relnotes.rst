@@ -11,8 +11,8 @@
 
 - **问题**：例如雷诺传第 25 章，攻击亲卫骑士后对方会反击，但 ``neutral`` 标记未清除，己方进攻/追击单位仍把他们当中立 creep，不会自动攻击。
 - **原因**：中立电脑开战时只切了 ``set_ai_mode offensive``，引擎没有清掉 ``Player.neutral``；战斗 AI 用 ``player_is_a_hostile_enemy`` / ``can_attack`` 刻意忽略中立目标。
-- **修复**：新增触发器 ``(set_neutral 0|1 [player])``；``set_ai_mode offensive`` 对非野生动物中立电脑自动清中立；第 25 章决斗开始 ``set_neutral 0``，拒绝结盟后 ``set_neutral 1 computer1`` 恢复中立并切回 guard。
-- **实现**：``worldplayerbase/base.py``、``triggers.py``、``res/single/The Legend of Raynor/25.txt``。
+- **修复**：新增触发器 ``(set_neutral 0|1 [player])``；中立与站岗绑定，切到进攻/防御/追击（UI 或 ``set_ai_mode``）自动解除中立；中立 creep 遭到非中立攻击时也会解除中立；第 25 章决斗开始 ``set_neutral 0``，拒绝结盟后 ``set_neutral 1 computer1`` 恢复中立并切回 guard。
+- **实现**：``worldplayerbase/base.py``、``triggers.py``、``worldorders/immediate.py``、``combat/damage_effects.py``、``res/single/The Legend of Raynor/25.txt``。
 - **测试**：``test_campaign_alliance_transfer_triggers.py``、``test_neutral_no_auto_attack.py``。
 
 **修复：第 27 章与马尔科比武时护卫会攻击雷诺**

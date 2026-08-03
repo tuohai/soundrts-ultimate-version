@@ -55,8 +55,8 @@ class CreatureAIDecision(Entity):
     last_attacker = None
 
     def _is_neutral_target(self, other):
-        p = other.player
-        return p is not None and p.neutral
+        p = getattr(other, "player", None)
+        return p is not None and getattr(p, "neutral", False)
 
     def _flee_from_attacker(self):
         """受击后向远离攻击者的相邻方格逃跑（鹿、羊等狩猎动物）。"""
@@ -758,7 +758,11 @@ class CreatureAIDecision(Entity):
         modes = ["offensive", "defensive", "guard", "chase"]
         current_index = modes.index(self.ai_mode)
         next_index = (current_index + 1) % len(modes)
-        self.ai_mode = modes[next_index]
+        next_mode = modes[next_index]
+        self.ai_mode = next_mode
+        player = getattr(self, "player", None)
+        if player is not None and hasattr(player, "on_unit_ai_mode_changed"):
+            player.on_unit_ai_mode_changed(next_mode)
         self.notify("order_ok")
     def immediate_order_toggle_counterattack(self):
         """处理反击开关命令"""
