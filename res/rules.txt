@@ -1065,7 +1065,6 @@ production_cost 0 50
 production_qty 50
 resource_volume_max 50
 resource_volume_start 25
-space 2
 
 
 def house
@@ -1075,7 +1074,6 @@ population_provided 8; 4 * 2
 hp_max 133.3;  400/3
 time_cost 45
 requirements townhall
-space 2
 
 def lumbermill
 class building
@@ -1087,7 +1085,6 @@ requirements feudal_age
 storable_resource_types resource2
 can_research archer_weapon archer_armor archer_range
 storage_bonus 0 1 ; gold bonus is +0, wood bonus is +1
-space 2
 
 def barracks
 class building
@@ -1099,7 +1096,6 @@ requirements feudal_age
 can_train footman archer knight
 can_research dsb dsc
 can_use_tech dsb
-space 2
 
 def townhall
 class building
