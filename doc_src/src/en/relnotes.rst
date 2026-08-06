@@ -5,6 +5,18 @@ Release notes
 .. contents::
 
 
+1.4.6.8
+--------
+
+**New: auto-cast skills on death/destruction (``trigger_timing on_death``)**
+
+- **Use**: units or buildings can trigger extra effects when they die — e.g. an ammo depot exploding for area damage; also death summons, short ``class effect`` deploy, etc.
+- **Setup**: on a ``class skill``, set ``auto_trigger 1``, ``manual_use 0``, ``trigger_timing on_death``, then attach it with ``can_use_skill`` (or legacy ``death_trigger_skills``). Example: ``effect harm_area 40 6`` (flat damage 40, radius 6); ``effect deploy`` / ``summon`` / ``buffs`` and other existing effect types also work.
+- **Behavior**: fires in ``die()`` before the entity is deleted; allows HP already at 0; **skips mana and cooldown** (no wind-up); centers on self (prefer ``effect_target self`` for AoE); chain kills can fire further ``on_death`` skills. Different from attack suicide ``mdg_explode`` / ``rdg_explode`` (those only fire when the unit attacks). The same skill may be ``manual_use 1`` + ``on_death`` (e.g. ammo depot self-detonate): a successful manual cast is recorded so the ensuing self-kill does **not** explode again; enemy destruction still fires once.
+- **Code**: ``worldunit/world_attributes.py``, ``worldunit/worldcreature.py``, ``worldskill.py``.
+- **Docs / tests**: ``GENERIC_SKILL_SYSTEM.md``; ``test_death_skills.py``, ``test_level_skills.py``.
+
+
 1.4.6.7
 --------
 

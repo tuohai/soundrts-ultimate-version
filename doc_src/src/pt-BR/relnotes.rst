@@ -5,6 +5,17 @@ Notas de lançamento
 .. contents::
 
 
+1.4.6.8
+-------
+
+**Novidade: habilidades automáticas na morte/destruição (``trigger_timing on_death``)**
+
+- **Uso**: unidades ou edifícios podem disparar efeitos ao morrer — p.ex. um depósito de munição que explode com dano em área; também invocações, ``effect deploy``, etc.
+- **Configuração**: em ``class skill``, ``auto_trigger 1``, ``manual_use 0``, ``trigger_timing on_death``, e ligar com ``can_use_skill`` (ou o legado ``death_trigger_skills``). Exemplo: ``effect harm_area 40 6`` (dano fixo 40, raio 6); também ``deploy`` / ``summon`` / ``buffs``.
+- **Comportamento**: dispara em ``die()`` antes de apagar a entidade; permite HP já em 0; **ignora mana e cooldown**; centra em si (para AoE use ``effect_target self``); mortes em cadeia podem encadear mais ``on_death``. Diferente de ``mdg_explode`` / ``rdg_explode`` (só ao atacar). O mesmo skill pode ser ``manual_use 1`` + ``on_death`` (ex. depósito que se detona): um cast manual bem-sucedido é registado para a autodestruição **não explodir de novo**; destruído pelo inimigo ainda dispara uma vez.
+- **Código / testes**: ``world_attributes.py``, ``worldcreature.py``, ``worldskill.py``; ``GENERIC_SKILL_SYSTEM.md``; ``test_death_skills.py``.
+
+
 1.4.6.7
 -------
 
@@ -12,7 +23,7 @@ Notas de lançamento
 
 - Na campanha de Raynor (cap. 25), os guardas revidavam, mas continuavam ``neutral``, então o exército não os atacava sozinho.
 - Causa: o duelo só fazia ``set_ai_mode offensive`` sem limpar ``Player.neutral``.
-- Novo ``(set_neutral 0|1 [player])``; o modo de IA não muda a neutralidade; combate com um lado não neutro a remove (não fauna); cap. 25 usa ``set_neutral 0`` no duelo e ``set_neutral 1 computer1`` ao recusar a aliança.
+- Novo ``(set_neutral 0|1 [player])``; a neutralidade fica com guard — mudar para ofensivo/defensivo/perseguição (UI ou ``set_ai_mode``) remove; também ao ser atingido por um lado não neutro (não fauna); cap. 25 usa ``set_neutral 0`` no duelo e ``set_neutral 1 computer1`` ao recusar a aliança.
 - **Código / testes**: ``worldplayerbase/base.py``, ``triggers.py``, ``25.txt``, ``test_campaign_alliance_transfer_triggers.py``, ``test_neutral_no_auto_attack.py``.
 
 **Correção: a escolta de Marco atacava Raynor no duelo (cap. 27)**

@@ -5,6 +5,17 @@ Notas de la versión
 .. contents::
 
 
+1.4.6.8
+-------
+
+**Novedad: habilidades automáticas al morir/destruir (``trigger_timing on_death``)**
+
+- **Uso**: unidades o edificios pueden lanzar efectos al morir — p. ej. un depósito de munición que explota con daño en área; también invocaciones, ``effect deploy``, etc.
+- **Configuración**: en ``class skill``, ``auto_trigger 1``, ``manual_use 0``, ``trigger_timing on_death``, y enlazar con ``can_use_skill`` (o el legado ``death_trigger_skills``). Ejemplo: ``effect harm_area 40 6`` (daño fijo 40, radio 6); también sirven ``deploy`` / ``summon`` / ``buffs``.
+- **Comportamiento**: se dispara en ``die()`` antes de borrar la entidad; permite HP ya en 0; **no usa maná ni enfriamiento**; centra en sí misma (para AoE, ``effect_target self``); las muertes en cadena pueden encadenar más ``on_death``. Distinto de ``mdg_explode`` / ``rdg_explode`` (solo al atacar). El mismo skill puede ser ``manual_use 1`` + ``on_death`` (p. ej. depósito que se detona): un lanzamiento manual exitoso se registra para que la autodestrucción **no vuelva a explotar**; destruido por el enemigo sí dispara una vez.
+- **Código / pruebas**: ``world_attributes.py``, ``worldcreature.py``, ``worldskill.py``; ``GENERIC_SKILL_SYSTEM.md``; ``test_death_skills.py``.
+
+
 1.4.6.7
 -------
 

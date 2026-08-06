@@ -32,7 +32,7 @@ class Skill(CreatureAttributes):  # or UnitOption or UnitMenuItem or ActiveSkill
     passive_trigger_rate = 100
     auto_trigger = 0  # 1=学会后可在战斗中自动触发（can_use_skill）
     manual_use = 1  # 1=学会后可手动释放（can_use_skill）
-    trigger_timing = "on_hit"  # on_hit | on_attack | on_attack_replace | on_damaged
+    trigger_timing = "on_hit"  # on_hit | on_attack | on_attack_replace | on_damaged | on_death
     mdg_trigger_rate = 0
     rdg_trigger_rate = 0
     hp_threshold = 0
@@ -244,14 +244,28 @@ class Skill(CreatureAttributes):  # or UnitOption or UnitMenuItem or ActiveSkill
         method_name = f"_execute_{effect_type}"
         if hasattr(cls, method_name):
             try:
-                return bool(getattr(cls, method_name)(caster, target, world))
+                success = bool(getattr(cls, method_name)(caster, target, world))
             except Exception as e:
                 from .lib.log import warning
                 warning(f"技能 {cls.type_name} 执行失败: {e}")
                 return False
-        
-        # 如果没有找到对应的方法，尝试通用处理
-        return cls._execute_generic_effect(caster, target, world)
+        else:
+            # 如果没有找到对应的方法，尝试通用处理
+            success = bool(cls._execute_generic_effect(caster, target, world))
+
+        # Manual (or any) cast of an on_death skill counts as the death blast:
+        # when the blast then destroys the caster, die() must not fire it again.
+        if success and str(getattr(cls, "trigger_timing", "") or "") == "on_death":
+            skill_name = getattr(cls, "type_name", None)
+            if skill_name and hasattr(caster, "_mark_death_skill_done"):
+                caster._mark_death_skill_done(skill_name)
+            elif skill_name and caster is not None:
+                done = getattr(caster, "_death_skills_done", None)
+                if done is None:
+                    done = set()
+                    caster._death_skills_done = done
+                done.add(skill_name)
+        return success
 
     @classmethod
     def _execute_generic_effect(cls, caster, target, world):

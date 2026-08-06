@@ -22,7 +22,16 @@ class deposit
 resource_type resource2 ; wood
 extraction_time 20
 extraction_qty 2
+square_terrain forest 80
+square_terrain dense_forest 90 7
 
+def meadow
+class building_land
+square_terrain meadows 40
+
+def build_site
+class building_land
+square_terrain build_sites 50
 
 
 ; races
@@ -312,11 +321,16 @@ harm_target_type ground
 def grande_explosion
 class effect
 harm_level 800
+harm_radius 3
 
 def a_faire_exploser_poudriere
 class skill
+auto_trigger 1
+manual_use 1
+trigger_timing on_death
 mana_cost 200
 effect summon 2 grande_explosion
+effect_target self
 universal_notification 1
 
 def a_envoutement
@@ -4952,3 +4966,137 @@ mana_cost 200
 effect summon 300 vortex
 effect_target ask
 effect_range 6
+
+; terrains (class terrain)
+
+; low land
+
+def plain
+class terrain
+is_dynamic 1
+
+def rocky_plain
+class terrain
+is_dynamic 1
+
+; high land
+
+def plateau
+class terrain
+is_dynamic 0
+
+def hill
+class terrain
+is_high_ground 1
+is_dynamic 0
+height 1
+
+def high_rocky_plain
+class terrain
+is_high_ground 1
+is_dynamic 1
+
+def mountain_pass
+class terrain
+is_high_ground 1
+is_dynamic 0
+speed .5 1
+
+def basin
+class terrain
+is_dynamic 0
+height -1
+
+; water (terrain <name> sets is_water; ground units blocked unless is_ground 1)
+
+def lake
+class terrain
+is_water 1
+is_dynamic 0
+rmg_water 1
+
+def sea
+class terrain
+is_water 1
+is_dynamic 0
+speed 0 .25
+
+def ocean
+class terrain
+is_water 1
+is_dynamic 0
+speed 0 .25
+
+def river
+class terrain
+is_water 1
+is_dynamic 0
+
+def creek
+class terrain
+is_water 1
+is_dynamic 0
+
+def ford
+class terrain
+is_water 1
+is_ground 1
+is_dynamic 0
+speed .5 1
+rmg_ford 1
+
+def big_bridge
+class terrain
+is_water 1
+is_ground 1
+is_dynamic 0
+
+def bridge_deck
+class terrain
+is_water 1
+is_ground 1
+is_dynamic 0
+
+def marsh
+class terrain
+is_dynamic 0
+speed .5 1
+cover .5 0
+rmg_terrain 1
+
+; impassable
+
+def mountain
+class terrain
+is_high_ground 1
+is_ground 0
+is_air 0
+is_dynamic 0
+blocks_path 1
+rmg_terrain 1
+rmg_border 1
+
+; object-driven square terrain (usable on map too)
+
+def town
+class terrain
+is_dynamic 1
+
+def meadows
+class terrain
+is_dynamic 1
+rdg_vs archer 5
+
+def build_sites
+class terrain
+is_dynamic 0
+
+def forest
+class terrain
+cover .5 0
+
+def dense_forest
+class terrain
+is_dynamic 1
+blocks_path 1
+cover .5 0

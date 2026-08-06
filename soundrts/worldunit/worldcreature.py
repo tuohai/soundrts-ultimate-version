@@ -445,6 +445,9 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
                 if hasattr(attacker.player, 'record_unit_killed'):
                     attacker.player.record_unit_killed(self)
 
+        # on_death 技能：delete 前触发（仍有 place/player；允许 hp<=0）
+        self._trigger_death_skills(attacker)
+
         if self.player is not None:
             self.player.observed_objects.pop(self, None)
             self.player.perception.discard(self)
@@ -821,6 +824,7 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     learn_level_skills = ()  # 单位侧技能书门槛（可选，与物品 learn_level 取较高者）
     active_trigger_skills = ()
     passive_trigger_skills = ()
+    death_trigger_skills = ()
     attack_trigger_skills = ()
     attack_replace_skills = ()
     attack_trigger_buffs = ()

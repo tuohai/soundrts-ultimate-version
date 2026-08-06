@@ -4,6 +4,18 @@
 .. contents::
 
 
+1.4.6.8
+--------
+
+**新增：死亡/摧毁时自动释放技能（``trigger_timing on_death``）**
+
+- **用途**：单位或建筑死亡时可触发额外效果，例如炸药库被摧毁后爆炸造成范围伤害；也可用于死亡召唤、部署 ``class effect`` 等。
+- **配置**：在 ``class skill`` 上设 ``auto_trigger 1``、``manual_use 0``、``trigger_timing on_death``，再用 ``can_use_skill``（或旧字段 ``death_trigger_skills``）挂到单位/建筑上。示例：``effect harm_area 40 6``（固定伤害 40、半径 6）；也可用 ``effect deploy`` / ``summon`` / ``buffs`` 等已有效果类型。
+- **行为**：在 ``die()`` 删除实体前触发；允许 HP 已为 0；**不检查、不消耗**法力与冷却，无前摇；以自身为中心（范围伤害建议 ``effect_target self``）；连锁击杀会继续触发对方的 ``on_death``。与攻击自爆 ``mdg_explode`` / ``rdg_explode`` 不同（后者仅在主动攻击时触发）。同一技能可 ``manual_use 1`` + ``on_death``（如炸药库手动引爆）：手动成功释放后记为已引爆，随后自我摧毁时**不会再炸一次**；被敌人摧毁仍触发一次。
+- **实现**：``worldunit/world_attributes.py``、``worldunit/worldcreature.py``、``worldskill.py``。
+- **文档 / 测试**：``GENERIC_SKILL_SYSTEM.md``；``test_death_skills.py``、``test_level_skills.py``。
+
+
 1.4.6.7
 --------
 

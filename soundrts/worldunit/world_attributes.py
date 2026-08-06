@@ -679,7 +679,7 @@ class CreatureAttributes(Entity):
         return names
 
     def _skill_trigger_timing(self, skill_name, *, legacy_list_attr=None):
-        """Return when an auto skill fires: on_hit / on_attack / on_attack_replace / on_damaged."""
+        """Return when an auto skill fires: on_hit / on_attack / on_attack_replace / on_damaged / on_death."""
         cls = self._skill_class(skill_name)
         if cls is not None:
             timing = getattr(cls, "trigger_timing", "on_hit") or "on_hit"
@@ -692,6 +692,8 @@ class CreatureAttributes(Entity):
             return "on_attack_replace"
         if legacy_list_attr == "passive_trigger_skills":
             return "on_damaged"
+        if legacy_list_attr == "death_trigger_skills":
+            return "on_death"
         return "on_hit"
 
     def iter_skills_with_trigger_timing(self, timing):
@@ -701,6 +703,7 @@ class CreatureAttributes(Entity):
             "on_attack": "attack_trigger_skills",
             "on_attack_replace": "attack_replace_skills",
             "on_damaged": "passive_trigger_skills",
+            "on_death": "death_trigger_skills",
         }.get(timing)
         seen = set()
         if legacy_attr:
@@ -734,6 +737,80 @@ class CreatureAttributes(Entity):
     def iter_passive_trigger_skill_names(self):
         """Skills that fire when this unit is hit by an enemy."""
         yield from self.iter_skills_with_trigger_timing("on_damaged")
+
+    def iter_death_trigger_skill_names(self):
+        """Skills that fire when this unit/building dies (legacy: death_trigger_skills)."""
+        yield from self.iter_skills_with_trigger_timing("on_death")
+
+    def _mark_death_skill_done(self, skill_name):
+        """Record that an on_death skill already ran (manual cast or death trigger)."""
+        if not skill_name:
+            return
+        done = getattr(self, "_death_skills_done", None)
+        if done is None:
+            done = set()
+            self._death_skills_done = done
+        done.add(skill_name)
+
+    def _death_skill_already_done(self, skill_name):
+        done = getattr(self, "_death_skills_done", None)
+        return bool(done) and skill_name in done
+
+    def _trigger_death_skills(self, attacker=None):
+        """Fire on_death auto skills. Allows hp<=0; skips mana/cooldown/ready.
+
+        Skills already cast manually (same on_death skill) are skipped so self-detonate
+        does not explode twice when the blast then destroys the caster.
+        """
+        if getattr(self, "_death_effect_fired", False):
+            return
+        if getattr(self, "place", None) is None:
+            return
+        if getattr(self, "player", None) is None:
+            return
+        skill_names = [
+            name
+            for name in self.iter_death_trigger_skill_names()
+            if not self._death_skill_already_done(name)
+        ]
+        # Always latch: even if every on_death skill was already used manually,
+        # do not re-enter after the ensuing self-kill.
+        self._death_effect_fired = True
+        if not skill_names:
+            return
+        world = getattr(self, "world", None)
+        for skill_name in skill_names:
+            skill_cls = self._skill_class(skill_name)
+            if skill_cls is None or not getattr(skill_cls, "effect", None):
+                continue
+            rate = getattr(skill_cls, "passive_trigger_rate", 100)
+            try:
+                rate = int(rate)
+            except (TypeError, ValueError):
+                rate = 100
+            if rate <= 0:
+                continue
+            if rate < 100 and world is not None and hasattr(world, "random"):
+                if world.random.randint(1, 100) > rate:
+                    continue
+            effect_target = getattr(skill_cls, "effect_target", ()) or ["self"]
+            if isinstance(effect_target, str):
+                effect_target = [effect_target]
+            if list(effect_target) == ["ask"] and attacker is not None:
+                skill_target = attacker
+            else:
+                skill_target = self
+            try:
+                self._triggering_skill = True
+                success = bool(skill_cls.execute_skill(self, skill_target, world))
+            finally:
+                self._triggering_skill = False
+            if success:
+                self._mark_death_skill_done(skill_name)
+                if hasattr(self, "notify"):
+                    self.notify(
+                        f"skill_triggered,{skill_name},{getattr(skill_target, 'id', None)}"
+                    )
 
     def iter_manual_skill_names(self):
         """Skills that may appear in the manual command menu."""

@@ -56,8 +56,10 @@ def _make_unit(**overrides):
             "iter_attack_trigger_skill_names",
             "iter_attack_replace_skill_names",
             "iter_passive_trigger_skill_names",
+            "iter_death_trigger_skill_names",
             "iter_skills_with_trigger_timing",
             "iter_manual_skill_names",
+            "_skill_trigger_timing",
             "_skill_class",
             "increase_xp",
         ):
@@ -186,7 +188,7 @@ def test_legacy_active_trigger_skills_still_auto_and_manual():
 
 
 def test_trigger_timing_routes_can_use_skill():
-    unit = _make_unit(level=10, can_use_skill=["skill_a", "skill_b", "skill_c"])
+    unit = _make_unit(level=10, can_use_skill=["skill_a", "skill_b", "skill_c", "skill_d"])
 
     class _ClsA:
         auto_trigger = 1
@@ -200,17 +202,34 @@ def test_trigger_timing_routes_can_use_skill():
         auto_trigger = 1
         trigger_timing = "on_damaged"
 
+    class _ClsD:
+        auto_trigger = 1
+        trigger_timing = "on_death"
+
     mapping = {
         "skill_a": _ClsA,
         "skill_b": _ClsB,
         "skill_c": _ClsC,
+        "skill_d": _ClsD,
     }
     unit._skill_class = lambda name: mapping.get(name)
 
     assert list(unit.iter_attack_trigger_skill_names()) == ["skill_a"]
     assert list(unit.iter_attack_replace_skill_names()) == ["skill_b"]
     assert list(unit.iter_passive_trigger_skill_names()) == ["skill_c"]
+    assert list(unit.iter_death_trigger_skill_names()) == ["skill_d"]
     assert list(unit.iter_auto_trigger_skill_names()) == []
+
+
+def test_legacy_death_trigger_skills_still_enumerate():
+    unit = _make_unit(
+        level=1,
+        can_use_skill=(),
+        death_trigger_skills=("skill_boom",),
+    )
+    unit._skill_class = lambda name: None
+    assert list(unit.iter_death_trigger_skill_names()) == ["skill_boom"]
+    assert list(unit.iter_skills_with_trigger_timing("on_death")) == ["skill_boom"]
 
 
 def test_item_learn_level_gates_skill_book():
