@@ -113,6 +113,9 @@ class WorldObjectsMixin:
             rules_train = _raw_class_attr(uc, "_rules_can_train", None)
             if rules_train and t in rules_train:
                 return True
+            rules_build = _raw_class_attr(uc, "_rules_can_build", None)
+            if rules_build and t in rules_build:
+                return True
             for a in ("can_build", "can_train", "can_upgrade_to", "can_research", "can_advance"):
                 if t in _raw_class_attr(uc, a, ()):
                     return True

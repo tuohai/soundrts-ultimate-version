@@ -1,0 +1,39 @@
+; 5 — The Battle of Stirling
+
+title 8606
+intro 8614
+
+square_width 12
+nb_columns 5
+nb_lines 4
+
+nb_players_min 1
+nb_players_max 1
+random_starts 0
+
+square_name 8632 2,2 3,2
+square_name 8631 5,3 5,4
+
+west_east_paths a1 a2 a3 a4 b1 b2 b3 b4 c1 c2 c3 c4 d1 d2 d3
+south_north_paths a1 a2 a3 b1 b2 b3 c1 c2 c3 d1 d2 d3 e1 e2 e3
+
+goldmines 200 a1
+woods 250 a1
+orchard 150 a1
+nb_meadows_by_square 2
+
+; Scots force + small base
+player 100 200 200 100 a1 town_center 3 house barracks 4 peasant 8 militia 4 man_at_arms 4 aoe_archer feudal_age
+
+; English army + watch tower
+computer_only 0 0 0 0 e4 scouttower 10 militia 6 man_at_arms 4 aoe_archer e3 4 militia
+
+timer_coefficient 40
+
+trigger player1 (timer 0) (alliance 1)
+trigger computers (timer 0) (alliance 2)
+
+trigger player1 (timer 0) (add_objective 1 8624)
+trigger computers (no_unit_left) (defeat)
+trigger player1 (no_enemy_left) (do (objective_complete 1) (victory))
+trigger player1 (building_lost town_center) (defeat)

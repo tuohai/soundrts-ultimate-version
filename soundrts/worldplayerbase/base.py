@@ -151,9 +151,11 @@ class Player:
         self.stats = Stats(self)
         self._counterattack_places = []
         self.neutral = client.neutral
+        # Remember lobby pick so match-start TTS only speaks after a random roll.
+        self.faction_was_random = client.faction == "random_faction"
         self.faction = (
             world.random.choice(rules.factions)
-            if client.faction == "random_faction"
+            if self.faction_was_random
             else client.faction
         )
         self.allied = [self]
@@ -321,6 +323,10 @@ class Player:
         self.phase_time_cost_percent_bonus = 0.0
         self.phase_population_cost_bonus = 0
         self.phase_population_cost_percent_bonus = 0.0
+
+        # 阵营规则 research_cost_discount → 仅 ResearchOrder / UpgradeToOrder
+        self.research_cost_bonus = [0] * MAX_NB_OF_RESOURCE_TYPES
+        self.research_cost_percent_bonus = [0.0] * MAX_NB_OF_RESOURCE_TYPES
         
         # 添加生产相关的修正属性
         self.production_cost_bonus = [0] * MAX_NB_OF_RESOURCE_TYPES
@@ -453,7 +459,14 @@ class Player:
 
     def remove(self, unit):
         self.units.remove(unit)
-        self.population -= unit.population_provided
+        # Mongol Nomads: destroyed houses keep their population headroom.
+        retain_house_pop = (
+            unit.population_provided
+            and "nomads" in getattr(self, "upgrades", ())
+            and self.check_type(unit, "house")
+        )
+        if not retain_house_pop:
+            self.population -= unit.population_provided
         # 返还与创建时一致的人口消耗
         try:
             eff = getattr(unit, 'effective_population_cost', None)
@@ -927,9 +940,46 @@ class Player:
     nb_buildings_killed = 0
 
     def equivalent(self, tn):
-        if rules.get(self.faction, tn):
-            return rules.get(self.faction, tn)[0]
-        return tn
+        """Map a semantic type through the faction table when useful.
+
+        Civ building shells (e.g. ``portuguese_barracks`` / ``teuton_farm``) may
+        appear to have makers via race-equivalent expansion, but workers still
+        ``can_build`` the semantic name (``barracks`` / ``farm``). ``BuildOrder``
+        applies the shell through ``resolve_buildable_type``. Returning the shell
+        from AI ``get`` leaves the plan stuck (``trouble getting``).
+
+        Race worker / unit skins (``chinese_villager`` / ``portuguese_knight``)
+        inherit from the semantic type and are trained via buildings that list
+        the semantic name; keep the skin so ``effective_can_train`` matches.
+        """
+        mapped = rules.get(self.faction, tn)
+        if not mapped:
+            return tn
+        eq = mapped[0]
+        if eq == tn:
+            return tn
+        # Prefer shells only when something literally lists them in can_*.
+        get_direct = getattr(rules, "get_direct_makers", None)
+        if callable(get_direct):
+            if get_direct(eq):
+                return eq
+        elif rules.get_makers(eq):
+            return eq
+        eq_cls = rules.unit_class(eq)
+        if eq_cls is not None and rules.get_makers(tn):
+            parents = set(getattr(eq_cls, "expanded_is_a", ()) or ())
+            parents.update(getattr(eq_cls, "is_a", ()) or ())
+            if tn in parents:
+                # Mobile skins stay; building shells fall back to semantic.
+                if (getattr(eq_cls, "speed", 0) or 0) > 0:
+                    return eq
+                return tn
+        if rules.get_makers(tn):
+            return tn
+        for parent in getattr(eq_cls, "expanded_is_a", ()) or ():
+            if parent != eq and rules.get_makers(parent):
+                return parent
+        return eq
 
     def init_alliance(self):
         if player_is_wildlife_only(self):
@@ -1154,10 +1204,16 @@ class Player:
         elif inspect.isclass(t):  # Deposit, BuildingSite, Worker, Meadow...
             return isinstance(o, t)
         elif isinstance(t, str):
-            return o.type_name == t
+            # Line-upgraded units (man_at_arms is_a militia) must still count
+            # toward AI get quotas for the root type.
+            if getattr(o, "type_name", None) == t:
+                return True
+            return t in (getattr(o, "expanded_is_a", None) or ())
         type_name = getattr(t, "type_name", None)
         if type_name is not None:
-            return o.type_name == type_name
+            if getattr(o, "type_name", None) == type_name:
+                return True
+            return type_name in (getattr(o, "expanded_is_a", None) or ())
 
     @staticmethod
     def effective_count_limit(type_name):
@@ -1554,7 +1610,7 @@ class Player:
                 cls = rules.unit_class(upgrade_name)
                 if cls is not None and isinstance(cls, type) and issubclass(cls, Phase):
                     bonus_args = list(getattr(cls, "phase_bonus", ()) or ())
-                    targets = list(getattr(cls, "phase_targets", ()) or ())
+                    targets = list(cls._phase_bonus_target_list())
                     if bonus_args:
                         Phase._apply_phase_bonus_to_player(self, bonus_args)
                         self._phase_bonus_pool.append((bonus_args, targets))
@@ -1597,6 +1653,13 @@ class Player:
                         if chosen not in self.upgrades:
                             self.upgrades.append(chosen)
                         self.current_phase = chosen
+            from ..worldphase import (
+                apply_faction_on_phase_effects,
+                refresh_faction_age_cost_discounts,
+            )
+            for upgrade_name in list(self.upgrades):
+                apply_faction_on_phase_effects(self, upgrade_name)
+            refresh_faction_age_cost_discounts(self)
         except Exception as e:
             warning("error initializing phase state from starting upgrades: %s", str(e))
 

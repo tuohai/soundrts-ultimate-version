@@ -1,0 +1,288 @@
+; coding: utf-8
+; Age of Empires II DE — Tiếng Việt (chuỗi DE chính thức via aoe2techtree)
+
+
+8000 Age of Empires 2 Definitive Edition
+8001 Briton
+8002 Frank
+8003 Trung Quốc
+8004 Mông Cổ
+8005 Đông La Mã
+8006 Nhật Bản
+8007 Teuton
+8008 Viking
+8009 Đại Việt
+8011 Bồ Đào Nha
+8012 Aztec
+
+8070 Samurai
+8071 Samurai siêu cấp
+8072 Hiệp sĩ Teuton
+8073 Hiệp sĩ Teuton siêu cấp
+8074 Cuồng binh
+8075 Cuồng binh siêu cấp
+8076 Cung thủ giáp mây
+8077 Cung thủ giáp mây siêu cấp
+8078 Súng đa nòng
+8079 Súng đa nòng siêu cấp
+
+8080 Khe bắn tên
+8081 Máy bắn đá
+8082 Bọc sắt
+8083 Tường răng cưa
+8084 Thủ lĩnh
+8085 Bogsveigar
+8086 Dù che
+8087 Tiền giấy
+8088 Đi vòng quanh thế giới
+8089 Súng hỏa mai
+8090 Chiến binh báo đốm
+8091 Chiến binh báo đốm tinh nhuệ
+8092 Atlatl
+8093 Chiến tranh vòng hoa
+
+
+8010 Trường cung binh
+8015 Trường cung binh siêu cấp
+8020 Lính ném rìu
+8025 Lính ném rìu siêu cấp
+8030 Nỏ liên châu
+8031 Dân làng
+8035 Nỏ liên châu siêu cấp
+8040 Kỵ xạ Mông Cổ
+8041 Dân làng
+8045 Kỵ xạ Mông Cổ siêu cấp
+8050 Thiết kỵ
+8055 Thiết kỵ siêu cấp
+
+8060 Nghĩa dũng binh
+8061 Rìu râu
+8062 Tinh thần hiệp sĩ
+8063 Thuật hỏa tiễn
+8064 Thao luyện
+8065 Hậu cần học
+8066 Sói chiến
+8067 Trường thành
+8068 Du mục
+8069 Lửa Hy Lạp
+
+8100 Thức ăn
+8101 Gỗ
+8102 Vàng
+8103 Đá
+
+8110 Trường bắn
+8111 Đại học
+8112 Tu viện
+8113 Lâu đài
+8114 Thầy tu
+8115 Truyền đạo sư
+8300 Nhà chính
+8301 Nhà lính
+8302 Chuồng ngựa
+8303 Lò rèn
+8304 Nhà ở
+8305 Nông trại
+8306 Bãi đốn gỗ
+8307 Xưởng vũ khí công thành
+8308 Bến tàu
+8309 Tường đá
+8310 Cổng
+8325 Tường rào
+8326 Cổng rào
+8311 Tháp quan sát
+8312 Tháp phòng vệ
+8313 Tháp chính
+8327 Tháp pháo
+8328 Tường gia cố
+8329 Cổng thành gia cố
+8319 Tiền đồn
+8314 Nhà xay lương
+8315 Bãi khai thác
+8316 Chợ
+8317 Kỳ quan
+8318 Mỏ đá
+8320 Bụi quả mọng
+8321 Nai
+8322 Cừu
+8323 Lợn rừng
+8324 Xác thú
+
+8120 Dân binh
+8121 Quân binh
+8122 Lính gươm dài
+8123 Song thủ kiếm sĩ
+8124 Kiếm sĩ vô địch
+8125 Lính giáo
+8126 Lính mác
+8127 Lính kích
+
+8130 Cung thủ
+8131 Nỏ binh
+8132 Lính siêu nỏ
+8133 Lính giao tranh
+8134 Lính giao tranh siêu cấp
+8137 Lính giao tranh đế quốc
+8135 Cung kỵ binh
+8136 Cung kỵ binh hạng nặng
+
+8140 Kỵ binh do thám
+8141 Kỵ binh hạng nhẹ
+8142 Kỵ binh cánh
+8143 Hiệp sĩ
+8144 Kỵ sĩ
+8145 Paladin
+8146 Kỵ sĩ lạc đà
+8147 Kỵ sĩ lạc đà hạng nặng
+8148 Kỵ sĩ lạc đà đế quốc
+8160 Voi chiến
+8161 Voi chiến siêu cấp
+8162 Kỵ binh giáo thảo nguyên
+8163 Kỵ binh giáo thảo nguyên siêu cấp
+
+8150 Trục phá
+8151 Xe bắn đá
+8152 Xe bắn đá cải tiến
+8153 Nỏ máy
+8154 Máy lăng đá
+8155 Trục phá có mái che
+8156 Trục công thành
+8157 Xe bắn đá công thành
+8158 Nỏ máy hạng nặng
+8159 Dân làng
+8170 Đại bác oanh tạc
+8171 Lính vác bom
+8172 Tháp công thành
+8173 Pháo thủ
+8174 Lính do thám đại bàng
+8175 Chiến binh đại bàng
+8176 Chiến binh đại bàng siêu cấp
+8177 Voi chiến
+8178 Voi chiến siêu cấp
+8179 Voi bọc thép
+8180 Voi bọc thép tinh nhuệ
+8181 Cung thủ cưỡi voi
+8182 Cung thủ voi siêu cấp
+8183 Tư lệnh
+
+8400 Tàu đánh cá
+8401 Tàu vận chuyển
+8402 Tàu chiến
+8403 Thuyền chiến ga-lê
+8404 Chiến hạm
+8405 Tàu chiến bắn lửa
+8406 Tàu bắn lửa
+8407 Tàu bắn lửa nhanh
+8408 Bè tự hủy
+8409 Tàu tự hủy
+8410 Tàu phá hủy hạng nặng
+8411 Pháo hạm
+8412 Pháo hạm siêu cấp
+8413 Tàu rùa
+8414 Tàu rùa siêu cấp
+8415 Thuyền dài
+8416 Thuyền dài siêu cấp
+8417 Tàu Caravel
+8418 Tàu Caravel siêu cấp
+8419 Tàu Dromon
+8420 Thuyền thương mại
+8421 Bẫy cá
+8422 Lưới rê
+8423 Thợ đóng tàu
+8424 Nối đất
+8425 Xưởng cạn
+
+8200 Rèn
+8201 Đúc gang
+8202 Lò luyện kim
+8203 Giáp vảy
+8204 Giáp xích
+8205 Giáp tấm
+8206 Giáp ngựa vảy
+8207 Giáp ngựa xích
+8208 Giáp ngựa tấm
+8209 Lông gắn chuôi tên
+8210 Tên xuyên giáp
+8211 Bao cổ tay
+8212 Giáp vải cung thủ
+8213 Giáp da cung thủ
+8214 Giáp vòng cung thủ
+
+8220 Huyết mạch
+8221 Chăn nuôi
+8222 Truy vết
+8223 Hộ vệ
+8224 Ban chỉ
+8225 Đạn đạo
+8226 Hóa học
+8227 Dệt may
+8228 Xe rùa
+8229 Xe kéo tay
+8230 Rìu hai lưỡi
+8231 Cưa cung
+8232 Cưa hai đầu
+8233 Khai thác vàng
+8234 Giếng đào vàng
+8235 Phóng hỏa
+8236 Độn giáp
+8237 Chiến thuật Parthia
+8238 Kỹ sư công thành
+8239 Cưỡng chế tòng quân
+8250 Lỗ sát nhân
+8251 Công tác nề
+8252 Kiến trúc
+8253 Đạn pháo nóng
+8254 Cần trục guồng xoay
+8255 Tròng cổ ngựa
+8256 Cày sâu
+8257 Luân canh
+8270 Rào quây
+8271 Công binh
+8272 Gián điệp/phản quốc
+8273 Xe lưu động
+8274 Phường hội
+8275 Đúc tiền
+8276 Ngân hàng
+8277 Xe giao thương
+8278 Trạm mậu dịch
+8279 Mua
+8280 Bán
+8281 Cống nạp
+8282 Thương mại
+8240 Gác thành
+8241 Tuần tra thành
+8242 Tiếp tế
+8243 Khai thác đá
+8244 Giếng đào đá
+
+8260 Cứu chuộc
+8261 Chuộc tội
+8262 Thảo dược
+8263 Dị giáo
+8264 Sự thiêng liêng
+8265 Nhiệt huyết
+8266 Đức tin
+8267 Khai sáng
+8268 In khuôn
+8269 Thần quyền
+
+; Ages (do not reuse 8250–8257 university/mill tech IDs)
+8290 Thời tăm tối
+8291 Thời phong kiến
+8292 Thời lâu đài
+8293 Thời đế quốc
+
+; Unit category roots (armor / is_a / passenger attack filters)
+8500 Bộ binh
+8501 Kỵ binh
+8502 Cung thủ
+8503 Đơn vị công thành
+8504 Đơn vị độc quyền
+
+; Tech effect blurbs (engine-handled techs with no numeric bonus)
+8510 Đạn đạo đoán trước và bắn trúng mục tiêu đang di chuyển
+8511 Tu sĩ có thể cải đạo máy công thành và hầu hết công trình
+8512 Tu sĩ có thể cải đạo tu sĩ địch
+8513 Đơn vị của bạn chết thay vì gia nhập kẻ địch khi bị cải đạo
+8514 Cải đạo của địch nhắm vào bạn mất nhiều thời gian hơn
+8515 Khi nhiều tu sĩ cùng cải đạo, chỉ người thành công phải nghỉ

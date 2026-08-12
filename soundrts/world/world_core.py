@@ -50,6 +50,13 @@ class World:
         self.objects = {}
         self.harm_target_types = {}
         self._command_queue = queue.Queue()
+        # Shared commodity buy/sell prices (from rules parameters / market attrs)
+        try:
+            from ..worldmarket import WorldCommodityMarket, commodities_for
+
+            self.commodity_market = WorldCommodityMarket(commodities_for())
+        except Exception:
+            self.commodity_market = None
         # Hybrid C++ ECS (Phase 1–2): on by default when extension is built;
         # disable with SOUNDRTS_ECS=0
         self._ecs = None

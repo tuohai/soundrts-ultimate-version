@@ -1,4 +1,4 @@
-﻿# Mejoras en campañas y campañas cooperativas (1.4.3.9)
+# Mejoras en campañas y campañas cooperativas (1.4.3.9)
 
 Esta guía describe las campañas cooperativas y para un jugador al estilo SoundRTS Age of Empires Definitive Edition: navegador de misiones, cinco niveles de dificultad, historia y misión cooperativa, escalamiento de enemigos y sincronización segura. Para jugadores, autores de campañas y modders.
 

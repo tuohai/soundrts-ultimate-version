@@ -242,7 +242,15 @@ class EntityViewBase:
         if name in ["x", "y"]:
             v /= 1000.0
         elif name in ("qty", "hp", "hp_max", "mana", "mana_max"):
-            v = int(v / PRECISION)
+            try:
+                v = int(v / PRECISION)
+            except TypeError:
+                # Model occasionally holds a non-numeric (e.g. bad rules/sync);
+                # avoid crashing the animate loop.
+                try:
+                    v = int(float(v) / PRECISION)
+                except (TypeError, ValueError):
+                    v = 0
         return v
 
     def __getstate__(self):

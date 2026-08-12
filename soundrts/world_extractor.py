@@ -2,11 +2,15 @@
 
 Keywords (rules.txt):
   is_an_extractor 1          — building consumes a transferred deposit reserve
-  depleted_production_qty N  — per-cycle yield after the reserve hits 0 (0 = stop)
+  depleted_production_qty N  — per-trip yield after the reserve hits 0 (0 = stop)
   deposit_volume N           — default reserve on the deposit type (map qty ``1`` = use this)
 
-Related existing keywords: requires_deposit, production_type / resource_type,
-production_qty, is_gather, auto_production, resource_volume_max.
+SC1 Brood War alignment: workers gather from the building (extraction_qty 8 /
+depleted 2); geyser reserve is on ``source_qty``. Prefer ``auto_production 0``
+so trips debit the reserve directly via Building.extract_resource.
+``gather_slots 3`` caps concurrent extractors (4th waits) like SC gas saturation.
+
+Related: requires_deposit, resource_type, extraction_qty, is_gather, gather_slots.
 """
 
 from .lib.nofloat import PRECISION
@@ -32,8 +36,12 @@ def transfer_extractor_source(building, deposit):
     source = resolve_deposit_source_qty(deposit)
     building.source_qty = source
     building.source_qty_max = source
+    # Mirror reserve onto resource_qty so trip gather / UI see remaining gas.
+    building.resource_qty = source
+    building._resource_qty_frac = 0
     if source > 0:
         building.notify(f"source_qty_update,{source}")
+        building.notify(f"qty_update,{source}")
 
 
 def extractor_source_ready(building):
@@ -47,8 +55,107 @@ def is_extractor_source_depleted(building):
     return extractor_source_ready(building) and getattr(building, "source_qty", 0) <= 0
 
 
+def extractor_can_still_yield(building):
+    """True while workers can still take trips (full or depleted rate)."""
+    if not getattr(building, "is_an_extractor", 0):
+        return False
+    if not extractor_source_ready(building):
+        return False
+    if int(getattr(building, "source_qty", 0) or 0) > 0:
+        return True
+    return depleted_production_qty_of(building) > 0
+
+
 def depleted_production_qty_of(building):
     return int(getattr(type(building), "depleted_production_qty", 0) or 0)
+
+
+def gather_slots_of(target):
+    """Max concurrent workers extracting from target; 0 = unlimited."""
+    n = getattr(target, "gather_slots", None)
+    if n is None:
+        n = getattr(type(target), "gather_slots", 0)
+    try:
+        return int(n or 0)
+    except (TypeError, ValueError):
+        return 0
+
+
+def worker_holds_gather_slot(unit, target):
+    """True while the worker is actively extracting (occupies a gather slot)."""
+    if unit is None or target is None:
+        return False
+    orders = getattr(unit, "orders", None) or []
+    if not orders:
+        return False
+    order = orders[0]
+    if getattr(order, "keyword", None) != "gather":
+        return False
+    if getattr(order, "target", None) is not target:
+        return False
+    return getattr(order, "mode", None) == "gather"
+
+
+def count_gather_slot_holders(target, exclude=None):
+    """How many workers currently occupy gather slots on ``target``."""
+    if target is None:
+        return 0
+    place = getattr(target, "place", None)
+    world = getattr(place, "world", None) if place is not None else None
+    if world is None:
+        world = getattr(target, "world", None)
+    if world is None:
+        return 0
+    n = 0
+    for player in getattr(world, "players", ()) or ():
+        for unit in getattr(player, "units", ()) or ():
+            if unit is exclude:
+                continue
+            if worker_holds_gather_slot(unit, target):
+                n += 1
+    return n
+
+
+def gather_slot_available(target, unit=None):
+    """True if ``unit`` may start extracting now (unlimited or free slot)."""
+    slots = gather_slots_of(target)
+    if slots <= 0:
+        return True
+    return count_gather_slot_holders(target, exclude=unit) < slots
+
+
+def count_workers_assigned_to_gather_target(target, exclude=None):
+    """Workers with an active gather order aimed at ``target`` (any mode)."""
+    if target is None:
+        return 0
+    place = getattr(target, "place", None)
+    world = getattr(place, "world", None) if place is not None else None
+    if world is None:
+        world = getattr(target, "world", None)
+    if world is None:
+        return 0
+    n = 0
+    for player in getattr(world, "players", ()) or ():
+        for unit in getattr(player, "units", ()) or ():
+            if unit is exclude:
+                continue
+            orders = getattr(unit, "orders", None) or []
+            if not orders:
+                continue
+            order = orders[0]
+            if getattr(order, "keyword", None) != "gather":
+                continue
+            if getattr(order, "target", None) is target:
+                n += 1
+    return n
+
+
+def gather_target_wants_more_workers(target, unit=None):
+    """AI helper: respect gather_slots when assigning workers to a target."""
+    slots = gather_slots_of(target)
+    if slots <= 0:
+        return True
+    return count_workers_assigned_to_gather_target(target, exclude=unit) < slots
 
 
 def effective_resource_volume_max(building):

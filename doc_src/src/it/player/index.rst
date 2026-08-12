@@ -32,6 +32,7 @@ Livello 3 · Inventario e combattimento
 
 - `Inventario e equipaggiamento <inventory.htm>`_
 - `Caccia <hunting.htm>`_
+- `Mercato e commercio <market-and-trade.htm>`_ (compra/vendita, tributo, tratte; aoe2…)
 - `Attacchi a raffica <burst-attacks.htm>`_
 - `Portare oggetti su una casella <brought-items.htm>`_
 

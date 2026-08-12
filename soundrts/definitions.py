@@ -49,13 +49,9 @@ def _get_base_classes():
 
 
 def _update_old_definitions(d, name):
-    if "sight_range" in d and d["sight_range"] == 1 * PRECISION:
-        d["sight_range"] = 12 * PRECISION
-        d["bonus_height"] = 1
-        info(
-            "in %s: replacing sight_range 1 with sight_range 12 and bonus_height 1",
-            name,
-        )
+    # Do not rewrite sight_range 1 → 12. That was an old tower shorthand; it
+    # incorrectly inflated intentional LOS 1 (e.g. aoe2 fish_trap). Write
+    # sight_range 12 + bonus_height 1 explicitly for elevated vision.
     if "special_range" in d:
         del d["special_range"]
         d["range"] = 12 * PRECISION
@@ -238,39 +234,58 @@ class _Definitions:
                         interval = float(interval_match.group(1)) if interval_match else 0.0
                         damages = None
                         times = requested_times
+                        secondary_mode = False
+                        secondary_rdg = 0
+                        secondary_mdg = 0
 
-                        # 解析伤害序列；省略 (damage ...) 时均分基础伤害（诸葛弩式连发）
-                        damage_match = re.search(r'\(damage\s+([0-9\s]+)\)', seq_str)
-                        if damage_match:
-                            raw_damages = [int(x) for x in damage_match.group(1).split()]
-                            actual_times = len(raw_damages)
-
-                            if actual_times > requested_times:
-                                warning(f"Got {actual_times} damage values but only {requested_times} attacks requested - will truncate damage sequence")
-                                raw_damages = raw_damages[:requested_times]
-                                actual_times = requested_times
-                            elif actual_times < requested_times:
-                                warning(f"Requested {requested_times} attacks but got only {actual_times} damage values - will use actual damage sequence length")
-
-                            base_damage = base_prec // PRECISION
-                            if sum(raw_damages) == base_damage:
-                                damages = [x * PRECISION for x in raw_damages]
-                                times = actual_times
-                            else:
-                                warning(f"Total sequence damage {sum(raw_damages)} does not match base damage {base_damage}")
+                        # AoE2 Chu Ko Nu style:
+                        # damage_seq rdg 3 (secondary 3 0) (interval 0.23)
+                        # first shot = live unit attack; later shots = fixed pierce + melee
+                        secondary_match = re.search(
+                            r'\(secondary\s+(-?\d+)\s+(-?\d+)\)', seq_str
+                        )
+                        if secondary_match:
+                            secondary_mode = True
+                            secondary_rdg = int(secondary_match.group(1)) * PRECISION
+                            secondary_mdg = int(secondary_match.group(2)) * PRECISION
+                            times = max(1, min(requested_times, 6))
+                            damages = []  # primary uses live damage; secondaries use flags
                         else:
-                            per_shot = base_prec // requested_times
-                            remainder = base_prec % requested_times
-                            damages = [
-                                per_shot + (1 if i < remainder else 0)
-                                for i in range(requested_times)
-                            ]
+                            # 解析伤害序列；省略 (damage ...) 时均分基础伤害
+                            damage_match = re.search(r'\(damage\s+([0-9\s]+)\)', seq_str)
+                            if damage_match:
+                                raw_damages = [int(x) for x in damage_match.group(1).split()]
+                                actual_times = len(raw_damages)
 
-                        if damages and sum(damages) == base_prec:
+                                if actual_times > requested_times:
+                                    warning(f"Got {actual_times} damage values but only {requested_times} attacks requested - will truncate damage sequence")
+                                    raw_damages = raw_damages[:requested_times]
+                                    actual_times = requested_times
+                                elif actual_times < requested_times:
+                                    warning(f"Requested {requested_times} attacks but got only {actual_times} damage values - will use actual damage sequence length")
+
+                                base_damage = base_prec // PRECISION
+                                if sum(raw_damages) == base_damage:
+                                    damages = [x * PRECISION for x in raw_damages]
+                                    times = actual_times
+                                else:
+                                    warning(f"Total sequence damage {sum(raw_damages)} does not match base damage {base_damage}")
+                            else:
+                                per_shot = base_prec // requested_times
+                                remainder = base_prec % requested_times
+                                damages = [
+                                    per_shot + (1 if i < remainder else 0)
+                                    for i in range(requested_times)
+                                ]
+
+                        if secondary_mode or (damages and sum(damages) == base_prec):
                             d[name][words[0]] = seq_str
                             d[name][f"{damage_type}_seq_times"] = times
-                            d[name][f"{damage_type}_seq_damages"] = damages
+                            d[name][f"{damage_type}_seq_damages"] = damages if damages else []
                             d[name][f"{damage_type}_seq_interval"] = interval
+                            d[name][f"{damage_type}_seq_secondary"] = 1 if secondary_mode else 0
+                            d[name][f"{damage_type}_seq_secondary_rdg"] = secondary_rdg
+                            d[name][f"{damage_type}_seq_secondary_mdg"] = secondary_mdg
                 elif words[0] == "square_terrain":
                     from .lib.square_terrain_rules import parse_square_terrain_entries
 
@@ -325,66 +340,76 @@ class _Definitions:
                         # 如果第二个词是等号，则跳过等号
                         d[name][words[0]] = words[2:]
                     elif (words[0] == "effect" and words[1] == "bonus"):
-                        # 处理多个属性-值对
-                        processed_words = [words[0], words[1]]  # 保留 "effect bonus"
-                        
-                        # 从第三个词开始,每两个词为一组(属性和值)
-                        for i in range(2, len(words), 2):
-                            if i + 1 >= len(words):  # 确保有值
-                                break
+                        # effect bonus <stat> <val> … only — NEVER unit names.
+                        # Units: ``effect_bonus_targets`` (aliases kept).
+                        from .worldupgrade.effect_bonus_parse import split_effect_bonus_args
+                        from .lib.log import warning as _warn
 
-                            stat = words[i]
-                            # can_train accepts variable tokens (unit/count pairs); do not pair-parse.
-                            if stat == "can_train":
-                                processed_words.append(stat)
-                                processed_words.extend(words[i + 1 :])
-                                break
+                        bonus_tokens, stray = split_effect_bonus_args(words[2:])
+                        if stray:
+                            _warn(
+                                "in %s: effect bonus does not accept unit filters "
+                                "(ignored: %s); put units on effect_bonus_targets",
+                                name,
+                                " ".join(str(x) for x in stray),
+                            )
+                        pending = d[name].pop("_effect_pending_targets", None)
+                        unit_types = list(pending) if pending is not None else []
+                        processed = ["bonus"] + list(bonus_tokens) + list(unit_types)
 
-                            value = words[i + 1]
-                            
-                            # 特殊处理time_cost属性，支持百分比
-                            if stat == "time_cost" and str(value).endswith('%'):
-                                # 保持百分比格式，不转换
-                                processed_words.extend([stat, value])
-                                continue
-                            
-                            # 如果是精确属性,转换为整数
-                            if stat in self.precision_properties:
-                                try:
-                                    value = to_int(value)
-                                except ValueError:
-                                    warning(f"Invalid value for {stat}: {value}")
-                                    continue
-                                    
-                            processed_words.extend([stat, value])
-                        
-                        # 合并多个effect bonus，而不是覆盖
-                        if words[0] in d[name]:
-                            # 已经存在effect属性，检查是否为列表
-                            if isinstance(d[name][words[0]], list):
-                                # 检查第一个元素是否是"bonus"
-                                if d[name][words[0]] and d[name][words[0]][0] == "bonus":
-                                    # 这是已有的一个effect bonus定义
-                                    # 现在我们要添加一个新的effect bonus定义，而不是合并
-                                    # 将单个effect bonus列表转换为多个effect列表
-                                    d[name][words[0]] = [d[name][words[0]], processed_words[1:]]
-                                else:
-                                    # 已经是多个effect的列表，简单添加新的effect
-                                    d[name][words[0]].append(processed_words[1:])
+                        if "effect" in d[name]:
+                            cur = d[name]["effect"]
+                            if isinstance(cur, list) and cur and isinstance(cur[0], list):
+                                cur.append(processed)
+                            elif isinstance(cur, list) and cur and cur[0] == "bonus":
+                                d[name]["effect"] = [cur, processed]
                             else:
-                                # 不是列表，需要转换为包含多个效果的列表
-                                d[name][words[0]] = [d[name][words[0]], processed_words[1:]]
+                                d[name]["effect"] = [cur, processed]
                         else:
-                            # 第一次添加effect
-                            d[name][words[0]] = processed_words[1:]  # 存储处理后的结果
+                            d[name]["effect"] = processed
+                        d[name]["_effect_group_closed"] = False
+                    elif words[0] in (
+                        "effect_bonus_targets",
+                        "tech_effect_targets",
+                        "effect_targets",
+                    ):
+                        # Pair with the preceding ``effect bonus`` (or stash for next).
+                        # Supports ``-type`` exclusions (same as phase_bonus_targets).
+                        targets = list(words[1:])
+                        eff = d[name].get("effect")
+                        if not eff:
+                            d[name]["_effect_pending_targets"] = targets
+                            continue
+                        from .worldupgrade.effect_bonus_parse import split_effect_bonus_args
+
+                        def _set_last_effect_targets(effect_row, tgt):
+                            if not effect_row or effect_row[0] != "bonus":
+                                return effect_row
+                            bonus_toks, _old = split_effect_bonus_args(effect_row[1:])
+                            return ["bonus"] + list(bonus_toks) + list(tgt)
+
+                        if isinstance(eff, list) and eff and isinstance(eff[0], list):
+                            eff[-1] = _set_last_effect_targets(eff[-1], targets)
+                            d[name]["effect"] = eff
+                        else:
+                            d[name]["effect"] = _set_last_effect_targets(eff, targets)
+                        d[name]["_effect_group_closed"] = True
                     elif (words[0] == "phase" and len(words) >= 2
                           and words[1] == "bonus"):
-                        # 特殊处理 phase bonus（时代加成），与 effect bonus 对齐：
-                        #   phase bonus stat1 val1 stat2 val2 ...
-                        # 其中 cost / production_cost 等列表型属性
-                        # 可以连续给多个数值（按资源类型）：cost -5 -3 -2
-                        # time_cost、population_cost 等为单值，可与 cost 混写在同一行
-                        # 内部存储键为 "phase_bonus"（Python 标识符不能含空格）
+                        # phase bonus …  [then phase_bonus_targets …]
+                        # Multiple pairs: each phase_bonus_targets binds to the current group.
+                        # Legacy: phase_targets first, then one or more phase bonus lines
+                        # (consecutive bonuses without a new targets merge into one group).
+                        if len(words) == 2 or (
+                            len(words) == 3 and str(words[2]).lower() == "clear"
+                        ):
+                            d[name]["phase_bonus_groups"] = []
+                            d[name]["phase_bonus"] = []
+                            d[name]["phase_bonus_targets"] = []
+                            d[name]["phase_targets"] = []
+                            d[name].pop("_phase_pending_targets", None)
+                            d[name].pop("_phase_group_closed", None)
+                            continue
                         list_attrs = set(self.precision_list_properties)
                         known_attrs = (
                             set(self.precision_properties)
@@ -413,7 +438,6 @@ class _Definitions:
                             if i >= len(words):
                                 break
                             if stat in list_attrs:
-                                # 收集连续的数字 token，直到遇到下一个已知属性名或结尾
                                 values = []
                                 while (
                                     i < len(words)
@@ -447,13 +471,58 @@ class _Definitions:
                                         continue
                                 parsed.extend([stat, value])
 
-                        # 多次声明合并，而不是覆盖
-                        if "phase_bonus" in d[name] and isinstance(
-                            d[name]["phase_bonus"], list
-                        ):
-                            d[name]["phase_bonus"].extend(parsed)
+                        groups = d[name].setdefault("phase_bonus_groups", [])
+                        closed = d[name].get("_phase_group_closed")
+                        pending = d[name].pop("_phase_pending_targets", None)
+                        if groups and not closed:
+                            groups[-1][0].extend(parsed)
                         else:
-                            d[name]["phase_bonus"] = parsed
+                            groups.append([parsed, list(pending or [])])
+                        d[name]["_phase_group_closed"] = False
+                        self._sync_phase_bonus_compat_fields(d[name])
+                    elif words[0] in ("phase_bonus_targets", "phase_targets"):
+                        targets = list(words[1:])
+                        groups = d[name].setdefault("phase_bonus_groups", [])
+                        if groups and not d[name].get("_phase_group_closed"):
+                            groups[-1][1] = targets
+                            d[name]["_phase_group_closed"] = True
+                        else:
+                            # targets-first (legacy), or only targets, or next-group pending
+                            d[name]["_phase_pending_targets"] = targets
+                            if not groups:
+                                d[name]["phase_bonus_targets"] = targets
+                                d[name]["phase_targets"] = targets
+                        self._sync_phase_bonus_compat_fields(d[name])
+                    elif words[0] == "on_phase" and len(words) >= 2:
+                        # Race/faction reward when a phase enters player.upgrades:
+                        #   on_phase castle_age rdg_range 1 aoe_archer crossbowman ...
+                        # Stored as on_phase_effects: list of [phase, *effect_bonus_args]
+                        phase_name = words[1]
+                        effect_tokens = words[2:]
+                        # Precision-convert known stats (same spirit as effect bonus)
+                        processed = [phase_name]
+                        i = 0
+                        while i < len(effect_tokens):
+                            tok = effect_tokens[i]
+                            processed.append(tok)
+                            if (
+                                i + 1 < len(effect_tokens)
+                                and tok in self.precision_properties
+                            ):
+                                val = effect_tokens[i + 1]
+                                if not (
+                                    isinstance(val, str) and str(val).endswith("%")
+                                ):
+                                    try:
+                                        processed.append(to_int(val))
+                                    except (ValueError, TypeError):
+                                        processed.append(val)
+                                else:
+                                    processed.append(val)
+                                i += 2
+                                continue
+                            i += 1
+                        d[name].setdefault("on_phase_effects", []).append(processed)
                     elif words[0] == "can_train":
                         d[name][words[0]] = parse_can_train_words(words)
                     elif (
@@ -462,13 +531,26 @@ class _Definitions:
                     ):
                         d[name][words[0]] = self.parse_property(words[0], words[1:])
                     # 特殊处理gather相关属性，支持百分比格式
-                    elif (words[0] == "gather_time" or words[0] == "gather_qty" or 
-                          words[0].startswith("gather_time_") or words[0].startswith("gather_qty_")):
+                    elif (words[0] == "gather_time" or words[0] == "gather_qty" or words[0] == "gather_rate" or
+                          words[0].startswith("gather_time_") or words[0].startswith("gather_qty_") or
+                          words[0].startswith("gather_rate_") or words[0].startswith("carry_capacity_")):
                         # 处理gather属性的不同格式
                         if len(words) == 2:
-                            # 简单格式：gather_time 3 或 gather_time 50%
+                            # 简单格式：gather_time 3 或 gather_rate 0.39
                             value = words[1]
-                            if str(value).endswith('%'):
+                            if words[0].startswith("carry_capacity_"):
+                                try:
+                                    d[name][words[0]] = int(float(value))
+                                except ValueError:
+                                    warning(f"Invalid value for {words[0]}: {value}")
+                                    d[name][words[0]] = 0
+                            elif words[0] == "gather_rate" or words[0].startswith("gather_rate_"):
+                                try:
+                                    d[name][words[0]] = float(value)
+                                except ValueError:
+                                    warning(f"Invalid value for {words[0]}: {value}")
+                                    d[name][words[0]] = 0.0
+                            elif str(value).endswith('%'):
                                 # 保留百分比格式
                                 d[name][words[0]] = value
                             else:
@@ -479,11 +561,23 @@ class _Definitions:
                                     warning(f"Invalid value for {words[0]}: {value}")
                                     d[name][words[0]] = 0
                         elif len(words) == 3:
-                            # 资源特定格式：gather_time goldmine 3 或 gather_time goldmine 50%
+                            # 资源特定格式：gather_time goldmine 3 或 gather_rate wood 0.39
                             resource_type = words[1]
                             value = words[2]
                             combined_key = f"{words[0]}_{resource_type}"
-                            if str(value).endswith('%'):
+                            if words[0] == "gather_rate":
+                                try:
+                                    d[name][combined_key] = float(value)
+                                except ValueError:
+                                    warning(f"Invalid value for {combined_key}: {value}")
+                                    d[name][combined_key] = 0.0
+                            elif words[0] == "carry_capacity":
+                                try:
+                                    d[name][combined_key] = int(float(value))
+                                except ValueError:
+                                    warning(f"Invalid value for {combined_key}: {value}")
+                                    d[name][combined_key] = 0
+                            elif str(value).endswith('%'):
                                 # 保留百分比格式
                                 d[name][combined_key] = value
                             else:
@@ -497,7 +591,21 @@ class _Definitions:
                             # 其他格式，保持原样
                             d[name][words[0]] = words[1:]
                     else:
-                        d[name][words[0]] = words[1:]
+                        # ``*_vs`` pair lists merge across repeated lines and
+                        # accept many pairs on one line:
+                        #   mdg_vs building 150
+                        #   mdg_vs siege_unit 40
+                        #   mdg_vs building 150 siege_unit 40
+                        key = words[0]
+                        vals = words[1:]
+                        if key.endswith("_vs") and vals:
+                            cur = d[name].get(key)
+                            if isinstance(cur, list):
+                                cur.extend(vals)
+                            else:
+                                d[name][key] = list(vals)
+                        else:
+                            d[name][key] = vals
             except:
                 warning("error in line: %s", line)
 
@@ -543,7 +651,8 @@ class _Definitions:
                                             o[k] += [is_a]
                                             modified = True
                                 # 处理增强继承语法
-                                elif k not in o and k != "is_a" and k != "class":  # 排除class，因为已经在上面处理过了
+                                elif k not in o and k not in ("is_a", "class", "abstract"):
+                                    # ``abstract`` stays on the parent only (faction templates).
                                     if is_exclude_mode:
                                         # 排除模式: 如果属性不在排除列表中，则继承
                                         if k not in exclude_attrs:
@@ -750,16 +859,21 @@ _precision_properties = {
     "charge_rdg_splash_decay_min",
         "mdg_delay",
         "rdg_delay",
+        "mdg_projectile_speed",  # 近战投射物飞行速度（格/秒）
+        "rdg_projectile_speed",  # 远程投射物飞行速度（格/秒）
+        "projectile_speed",  # deprecated：加载时迁到 mdg_/rdg_projectile_speed
     "decay",
     "corpse_decay",
     "qty",
     "hp_start",
+    "hp",  # effect bonus hp N：上限与当前生命同加（见 attribute_effects）
     "hp_max",
     "hp_max_per_level",
     "mana_cost",
     "mana_max",
     "mana_start",
     "time_cost",
+    "conversion_channel_bonus_time",  # upgrade: flat seconds added to conversion channel
     "change_time",     # 单位变形所需时间
     "larva_spawn_time",  # 单位生成点：生成间隔（秒；配合 spawns_unit）
     "hp_regen",
@@ -810,8 +924,10 @@ class Rules(_Definitions):
 
     # 键值对属性集合
     key_value_properties = {
-        "load_bonus",          # 每装载一名单位 → 容器属性加成
-        "passenger_bonus",     # 进入容器后 → 乘客属性加成
+        # 每装载一名单位 → 容器属性加成（支持 mdg_vs.building 10 这类虚线 vs 键）
+        "load_bonus",
+        # 进入容器后 → 乘客属性加成（同样支持 mdg_vs.building 等虚线 vs 键）
+        "passenger_bonus",
     }
 
     string_properties = {
@@ -826,11 +942,13 @@ class Rules(_Definitions):
         "provides_build_field",  # 提供建造场：psi、creep 等
         "requires_build_field",  # 需要建造场；0 表示豁免
         "build_mode",  # 工人施工模式：assisted / place_and_leave / sacrifice
+        "gather_mode",  # 采集模式：trip（默认，一趟一采）/ continuous（连续灌满运载）
         "ground_form",  # 飞行建筑落地后的地面形态（如 flying_barracks → barracks）
         "requires_deposit",  # 必须建在指定矿床类型上（如气矿 geyser）
         "spawns_unit",  # 自动生成单位类型（如 larva）；与 larva_cap / larva_spawn_time 配合
         "summon_requires_build_field",  # 召唤技能：目标格需有指定建造场（如 creep）
         "bridge_terrain",  # 建成后将该格变为指定桥梁地形（如 big_bridge）
+        "market_currency",  # resource token used as buy/sell currency (default resource1)
     }
 
     # vs属性集合
@@ -1199,6 +1317,19 @@ class Rules(_Definitions):
         "population_provided",
         "harm_level",
         "heal_level",
+        "heal_garrisoned",  # 1 = heal only units inside (AoE2 TC/castle/tower style)
+        # Conversion (rules-driven; see world_conversion.py — no tech type-name checks)
+        "conversion_tech_gated",  # caster: use researched allow/rest/channel upgrade attrs
+        "conversion_cleric",  # target needs conversion_allows_monk when caster is gated
+        "conversion_immune",  # never convertible (TC / monastery / castle / wall / …)
+        "conversion_allows_monk",  # upgrade: may convert conversion_cleric targets
+        "conversion_allows_siege",  # upgrade: may convert siege_unit
+        "conversion_allows_building",  # upgrade: may convert buildings (except immune)
+        "conversion_victim_dies",  # upgrade: die instead of changing owner when converted
+        "conversion_rest_only_success",  # upgrade: only succeeding converter pays mana rest
+        "conversion_channel_scale_num",  # upgrade: channel *= num/den (e.g. Faith 5/3)
+        "conversion_channel_scale_den",
+        "conversion_channel_bonus_pct",  # upgrade: channel *= (100+pct)/100
 
         "is_repairable",
         "is_healable",
@@ -1209,7 +1340,14 @@ class Rules(_Definitions):
         "bonus_height",
         "transport_capacity",
         "transport_volume",
+        "can_unload_over_walls",  # 1 = ground transport may unload across a blocked exit (siege tower)
         "inventory_capacity",  # 添加inventory_capacity
+        # 1 = host applies inventory items' inventory_production_rates each second
+        "apply_inventory_production",
+        "inventory_victory",  # item: counts toward hold-all timed victory
+        "inventory_production_bonus_pct",  # race/upgrade: % bonus to inventory rates
+        "team_inventory_production_bonus_pct",  # race team bonus (self + allies)
+        "research_stack_hp",  # upgrade: stacks race research_stack_hp_bonus on complete
         "is_invisible",
         "is_cloakable",
         "is_a_detector",
@@ -1230,6 +1368,19 @@ class Rules(_Definitions):
         "requires_build_field_on_square",
         "summon_requires_marked_field",
         "morph_as_train",  # can_upgrade_to / can_change_to 均按目标单位训练成本/时间计费
+        "no_auto_upgrade",  # 1 = units_auto_upgrade 跳过该形态（精锐特色/圣骑士等）
+        "line_upgrade",  # 1 = 在建筑 can_research 中研究后解锁训练并升级场上同线单位
+        "farm_food_bonus",  # 升级：新建农田 resource_volume_max 加成（马轭/重犁/轮作）
+        "reveal_enemies",  # 升级：感知全部敌方单位/建筑（间谍）
+        "reveal_map",  # 升级：探索全部格子（环球航行 Circumnavigation）
+        "cost_per_enemy_worker",  # 升级：研究费用 += 该值×敌方工人数（间谍金；原始数×PRECISION）
+        "is_market",
+        "is_trade_unit",
+        "is_dock",
+        "market_tax_guilds",  # 1 = use market_tax_guilds_permille
+        "tribute_fee_permille",  # research: set player tribute fee (permille; 0=free)
+        "market_batch",  # building override; 0 = use parameters
+        "market_tax_permille",  # building override; -1 = use parameters
         "larva_cap",  # 单位生成点：同格已生成单位上限（配合 spawns_unit）
         "loses_power_without_field",
         "is_addon",
@@ -1250,6 +1401,7 @@ class Rules(_Definitions):
         "depleted_production_qty",  # 萃取建筑：矿脉耗尽后的每周期产量（0=停止）
         "deposit_volume",  # 矿床默认储量（地图写 qty 1 时用作萃取源储量）
         "is_an_extractor",  # 1=建成时吞并矿床储量，生产时扣减，耗尽后用 depleted_production_qty
+        "gather_slots",  # >0：同时开采该点的工人上限（星际气矿=3）；0=不限制
         "level",
         "max_level",  # 英雄等级上限；与 xp_threshold_growth 配合，加载时展开为 xp_thresholds
         "level_up_heal_full",  # 1 = 升级后生命/法力回满（默认 0：仅加上限增量）
@@ -1261,8 +1413,10 @@ class Rules(_Definitions):
         "reflect_percent",  # buff：反弹所受伤害比例（0-100）
         "mdg_projectile",  # 近战攻击是否为投射物
         "rdg_projectile",  # 远程攻击是否为投射物
+        "projectile_lead",  # 远程投射物预判移动目标（0/1；科技 effect bonus）
         "extraction_time",  # 资源开采时间
         "extraction_qty",   # 资源开采量
+        "carry_capacity",  # continuous 采集：运载上限（显示单位，如 AoE2 的 10）
         "auto_production",   # 建筑物是否可以生产资源
         "manual_production",   # 建筑物是否可以生产资源
         "auto_cultivate",   # 建筑物是否可以生产资源
@@ -1323,7 +1477,15 @@ class Rules(_Definitions):
         "resource_rewards",  # 物品/单位击杀奖励，[资源1数量, 资源2数量]
         "xp_thresholds",
     }
-    precision_list_properties = {"cost", "storage_bonus", "production_cost"}
+    precision_list_properties = {
+        "cost",
+        "train_cost",
+        "storage_bonus",
+        "production_cost",
+        "production_rates",
+        # item: per-second income while held by apply_inventory_production host
+        "inventory_production_rates",
+    }
     
     # 字符串列表属性
     string_list_properties = {
@@ -1343,10 +1505,12 @@ class Rules(_Definitions):
         "charge_mdg_cd_on_terrain",
         "charge_rdg_cd_on_terrain",
         "passenger_attack_types",  # 容器内可攻击的单位类型列表
+        "transport_passenger_types",  # 可装载类型；-name 排除（如 infantry -cavalry）；空=不限
         "can_gather",          # 已废弃，见 can_gather_deposit / can_gather_building
         "can_gather_deposit",  # 可开采的矿床（deposit）类型列表
         "can_gather_building", # 可开采的建筑类型列表（如 farm）
         "can_change_to",       # 单位可以变形为的单位类型列表
+        "line_upgrade_also",   # 研究 line_upgrade 时一并解锁/变形的其它形态（如垛墙+垛门）
         "addon_host_types",    # 附属建筑可依附的主建筑类型
         "can_have_addon",      # 主建筑可挂载的附属建筑类型
         "addon_grants_train",  # 附件为任意宿主增加的 train 列表
@@ -1358,6 +1522,10 @@ class Rules(_Definitions):
         "accept_from",         # 仅接收来自这些关系的给予者：self/ally/neutral/enemy（空=不限）
         "accept_givers",       # 仅接收这些单位类型交来的物品（type_name，支持is_a；空=不限）
         "passable_units",      # 地形允许通行的单位类型（type_name，支持 is_a 继承链）
+        "market_commodities",  # resourceN [price] pairs (buy/sell table; building or parameters)
+        "trade_hubs",          # hub type names and/or flags (market, is_dock, …)
+        "trade_rewards",       # resource indices a trade unit may earn on routes
+        "tribute_resources",   # parameters: resources that can be tributed
         "speed_vs",
         "cover_vs",
         "dodge_vs",
@@ -1423,8 +1591,117 @@ class Rules(_Definitions):
         return lst
 
     _DOC_ONLY_PROPERTIES = frozenset({"name", "desc", "description"})
-    _PARSE_ONLY_PROPERTIES = frozenset({"max_level", "xp_threshold_growth"})
+    _PARSE_ONLY_PROPERTIES = frozenset({
+        "max_level",
+        "xp_threshold_growth",
+        "_phase_group_closed",
+        "_phase_pending_targets",
+        "_effect_group_closed",
+        "_effect_pending_targets",
+    })
+
+    @staticmethod
+    def _sync_phase_bonus_compat_fields(entry):
+        """Keep flat ``phase_bonus`` / ``phase_bonus_targets`` in sync with groups.
+
+        ``phase_targets`` is kept as an alias of ``phase_bonus_targets``.
+        """
+        groups = entry.get("phase_bonus_groups") or []
+        if not groups:
+            if "_phase_pending_targets" in entry:
+                targets = list(entry.get("_phase_pending_targets") or [])
+            elif "phase_bonus_targets" in entry:
+                targets = list(entry.get("phase_bonus_targets") or [])
+            elif "phase_targets" in entry:
+                targets = list(entry.get("phase_targets") or [])
+            else:
+                targets = []
+            entry["phase_bonus_targets"] = targets
+            entry["phase_targets"] = targets
+            entry["phase_bonus"] = []
+            return
+        flat = []
+        for bonus, _targets in groups:
+            flat.extend(bonus)
+        entry["phase_bonus"] = flat
+        if len(groups) == 1:
+            targets = list(groups[0][1] or [])
+        else:
+            # Multi-group: legacy single field shows the last group's targets
+            targets = list(groups[-1][1] or [])
+        entry["phase_bonus_targets"] = targets
+        entry["phase_targets"] = targets
     _RULES_ONLY_PROPERTIES = frozenset({"square_terrain"})
+
+    def _migrate_legacy_projectile_delay(self):
+        """将 mdg_delay/rdg_delay/projectile_speed 迁到分路 mdg_/rdg_projectile_speed。
+
+        旧 delay：flight_ms ≈ dist_grids × delay_internal
+        → speed_internal = PRECISION² / delay_internal
+        """
+        from .lib.nofloat import PRECISION
+
+        def _delay_to_speed(delay_i: int) -> int:
+            return (PRECISION * PRECISION) // delay_i
+
+        def _truthy_flag(val) -> bool:
+            if val is None or val == "" or val == []:
+                return False
+            if isinstance(val, (list, tuple)):
+                try:
+                    return int(val[0] if val else 0) != 0
+                except (TypeError, ValueError):
+                    return bool(val)
+            try:
+                return int(val) != 0
+            except (TypeError, ValueError):
+                return bool(val)
+
+        for _name, defn in self._dict.items():
+            if not isinstance(defn, dict):
+                continue
+
+            if not defn.get("rdg_projectile_speed"):
+                rdg_delay = defn.get("rdg_delay")
+                if rdg_delay:
+                    try:
+                        di = int(rdg_delay)
+                        if di > 0:
+                            defn["rdg_projectile_speed"] = _delay_to_speed(di)
+                    except (TypeError, ValueError):
+                        pass
+
+            if not defn.get("mdg_projectile_speed"):
+                mdg_delay = defn.get("mdg_delay")
+                if mdg_delay:
+                    try:
+                        di = int(mdg_delay)
+                        if di > 0:
+                            defn["mdg_projectile_speed"] = _delay_to_speed(di)
+                    except (TypeError, ValueError):
+                        pass
+
+            legacy = defn.get("projectile_speed")
+            if not legacy:
+                continue
+            try:
+                speed_i = int(legacy)
+            except (TypeError, ValueError):
+                continue
+            if speed_i <= 0:
+                continue
+            has_rdg = _truthy_flag(defn.get("rdg_projectile"))
+            has_mdg = _truthy_flag(defn.get("mdg_projectile"))
+            if has_rdg and not defn.get("rdg_projectile_speed"):
+                defn["rdg_projectile_speed"] = speed_i
+            if has_mdg and not defn.get("mdg_projectile_speed"):
+                defn["mdg_projectile_speed"] = speed_i
+            # 未标投射物标志的旧单位：两路都写上，避免行为丢失
+            if not has_rdg and not has_mdg:
+                if not defn.get("rdg_projectile_speed"):
+                    defn["rdg_projectile_speed"] = speed_i
+                if not defn.get("mdg_projectile_speed"):
+                    defn["mdg_projectile_speed"] = speed_i
 
     def _expand_xp_thresholds_for_all_units(self):
         from .xp_threshold_growth import expand_xp_thresholds_in_definition
@@ -1440,10 +1717,16 @@ class Rules(_Definitions):
             d.setdefault("mdg_seq_times", 1)
             d.setdefault("mdg_seq_damages", [])
             d.setdefault("mdg_seq_interval", 0)
+            d.setdefault("mdg_seq_secondary", 0)
+            d.setdefault("mdg_seq_secondary_rdg", 0)
+            d.setdefault("mdg_seq_secondary_mdg", 0)
         if hasattr(base, "rdg_seq_times"):
             d.setdefault("rdg_seq_times", 1)
             d.setdefault("rdg_seq_damages", [])
             d.setdefault("rdg_seq_interval", 0)
+            d.setdefault("rdg_seq_secondary", 0)
+            d.setdefault("rdg_seq_secondary_rdg", 0)
+            d.setdefault("rdg_seq_secondary_mdg", 0)
         if "cost" not in d and hasattr(base, "cost"):
             d["cost"] = [0] * self.get("parameters", "nb_of_resource_types", 2)
         d = _update_old_definitions(d, name)
@@ -1460,14 +1743,15 @@ class Rules(_Definitions):
             if (
                 not hasattr(base, k)
                 and not (k.endswith("_bonus") and hasattr(base, k[:-6]))
-                and not (k.startswith("gather_time_") or k.startswith("gather_qty_"))
+                and not (k.startswith("gather_time_") or k.startswith("gather_qty_")
+                         or k.startswith("gather_rate_") or k.startswith("carry_capacity_"))
                 and not (k.endswith("_per_level") and k[:-10] in LEVEL_UP_STAT_ATTRS)
             ) or callable(getattr(base, k, None)):
                 del d[k]
                 warning(
                     "in %s: %s doesn't have any attribute called '%s'", name, base, k,
                 )
-            elif k == "cost":
+            elif k in ("cost", "train_cost"):
                 d[k] = self.normalized_cost_or_resources(v)
 
     def load(self, *strings, base_classes=None):
@@ -1478,6 +1762,8 @@ class Rules(_Definitions):
             self._get_cache.clear()
         if hasattr(self, "_makers_cache"):
             self._makers_cache.clear()
+        if hasattr(self, "_direct_makers_cache"):
+            self._direct_makers_cache.clear()
         try:
             from .worldrequirements import clear_caches
 
@@ -1494,6 +1780,7 @@ class Rules(_Definitions):
             s = re.sub(r"^[ \t]*class +race\b", "class faction", s, flags=re.M)
             self.read(s)
         self.apply_inheritance(expanded_is_a=True)
+        self._migrate_legacy_projectile_delay()
         self._expand_xp_thresholds_for_all_units()
         from .worldunit.worldworker import Worker
         previous_interp_rules = getattr(Worker, "_interp_rules_dict", None)
@@ -1513,6 +1800,10 @@ class Rules(_Definitions):
                     # can_train 解析为 dict 时会遮蔽 Building.can_train @property
                     if isinstance(v.get("can_train"), dict):
                         v["_rules_can_train"] = v.pop("can_train")
+                    # can_build 列表会遮蔽 Creature.can_build @property
+                    # （须经 equivalent / line resolve，才能建成 race 壳如 chinese_castle）
+                    if "can_build" in v and not isinstance(v.get("can_build"), property):
+                        v["_rules_can_build"] = v.pop("can_build")
                     d[k] = type(k, (base,), v)
                     d[k].type_name = k
                     d[k].cls = base
@@ -1526,12 +1817,34 @@ class Rules(_Definitions):
 
     def classnames(self):
         result = _Definitions.classnames(self)
-        result.remove("parameters")
+        if "parameters" in result:
+            result.remove("parameters")
         return result
 
     @property
     def factions(self):
-        return [c for c in self.classnames() if self.get(c, "class") == ["faction"]]
+        """Playable races/factions (``class faction`` / ``class race``).
+
+        Definitions with ``abstract 1`` are templates for ``is_a`` inheritance
+        only and are omitted from the faction picker.
+        """
+        return [
+            c
+            for c in self.classnames()
+            if self.get(c, "class") == ["faction"] and not self._faction_is_abstract(c)
+        ]
+
+    def _faction_is_abstract(self, name):
+        # Only the definition's own ``abstract`` counts — do not walk ``is_a``,
+        # or every child of an abstract Civilization would be hidden too.
+        o = self._dict.get(name)
+        if not o:
+            return False
+        val = o.get("abstract")
+        if not val:
+            return False
+        token = str(val[0]).strip().lower()
+        return token in ("1", "true", "yes")
 
     def unit_class(self, s):
         """Get a custom unit class from its name.
@@ -1560,6 +1873,12 @@ class Rules(_Definitions):
         return result
 
     def class_rules_attr(self, cls, name, default=()):
+        if name == "can_build":
+            raw = _raw_class_attr(cls, "_rules_can_build", None)
+            if raw is not None and raw != ():
+                return raw
+        if name == "can_train":
+            return self.class_can_train(cls)
         return _raw_class_attr(cls, name, default)
 
     def class_can_train(self, cls):
@@ -1568,22 +1887,42 @@ class Rules(_Definitions):
             return raw
         return _raw_class_attr(cls, "can_train", ())
 
-    def get_makers(self, t):
-        def can_make(uc, t):
-            rules_train = _raw_class_attr(uc, "_rules_can_train", None)
-            if rules_train and t in rules_train:
+    def _unit_can_make(self, uc, target):
+        """True if *uc* lists *target* in can_train / can_build / … (exact name)."""
+        rules_train = _raw_class_attr(uc, "_rules_can_train", None)
+        if rules_train and target in rules_train:
+            return True
+        rules_build = _raw_class_attr(uc, "_rules_can_build", None)
+        if rules_build and target in rules_build:
+            return True
+        for a in ("can_build", "can_train", "can_upgrade_to", "can_research", "can_advance"):
+            if target in _raw_class_attr(uc, a, ()):
                 return True
-            for a in ("can_build", "can_train", "can_upgrade_to", "can_research", "can_advance"):
-                if t in _raw_class_attr(uc, a, ()):
-                    return True
-            for skill in _raw_class_attr(uc, "can_use", ()):
-                effect = self.get(skill, "effect")
-                if effect and "summon" in effect[:1] and t in effect:
-                    return True
-            if getattr(uc, "morph_as_train", 0):
-                if t in _raw_class_attr(uc, "can_change_to", ()):
-                    return True
+        for skill in _raw_class_attr(uc, "can_use", ()):
+            effect = self.get(skill, "effect")
+            if effect and "summon" in effect[:1] and target in effect:
+                return True
+        if getattr(uc, "morph_as_train", 0):
+            if target in _raw_class_attr(uc, "can_change_to", ()):
+                return True
+        return False
 
+    def get_direct_makers(self, t):
+        """Makers that literally list *t* (no race-equivalent expansion)."""
+        if t.__class__ != str:
+            t = t.__name__
+        cache = getattr(self, "_direct_makers_cache", None)
+        if cache is None:
+            cache = {}
+            self._direct_makers_cache = cache
+        cached = cache.get(t)
+        if cached is not None:
+            return cached
+        result = self._get_classnames(lambda uc: self._unit_can_make(uc, t))
+        cache[t] = result
+        return result
+
+    def get_makers(self, t):
         if t.__class__ != str:
             t = t.__name__
         cache = getattr(self, "_makers_cache", None)
@@ -1593,9 +1932,34 @@ class Rules(_Definitions):
         cached = cache.get(t)
         if cached is not None:
             return cached
-        result = self._get_classnames(lambda uc: can_make(uc, t))
+        result = list(self.get_direct_makers(t))
+        # Race skins (chinese_villager): trained via buildings that list the
+        # semantic type (peasant) which a faction maps to this unit.
+        if not result:
+            for semantic in self._race_equivalent_sources(t):
+                for maker in self.get_direct_makers(semantic):
+                    if maker not in result:
+                        result.append(maker)
         cache[t] = result
         return result
+
+    def _race_equivalent_sources(self, type_name):
+        """Semantic keys that some race maps onto *type_name* (e.g. peasant→chinese_villager)."""
+        sources = []
+        seen = set()
+        for faction in getattr(self, "factions", ()) or ():
+            for key, val in (self._dict.get(faction) or {}).items():
+                if key == type_name or key in ("class", "is_a", "abstract"):
+                    continue
+                if not isinstance(val, (list, tuple)) or not val:
+                    continue
+                if val[0] != type_name:
+                    continue
+                if key in seen:
+                    continue
+                seen.add(key)
+                sources.append(key)
+        return sources
 
 
 def parse_noise(st):

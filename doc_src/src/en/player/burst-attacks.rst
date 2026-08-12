@@ -25,11 +25,11 @@ Official reference: ``mod/modding.rst`` (Combat system → ``damage_seq``).
    * - Aspect
      - Behavior
    * - Total damage per cycle
-     - Still equals base ``mdg`` / ``rdg`` (split across shots)
+     - Even/manual split: still equals ``mdg`` / ``rdg``; ``secondary`` mode: first live + later fixed arrows (may exceed base)
    * - Shots per cycle
      - Up to 6 (`damage_seq … <times>`)
    * - Hit rolls
-     - Independent per shot
+     - Independent per shot; secondary arrows are 100% accurate
    * - Cooldown
      - ``mdg_cd`` / ``rdg_cd`` starts after the full burst ends
    * - Launch sounds
@@ -51,7 +51,7 @@ Official reference: ``mod/modding.rst`` (Combat system → ``damage_seq``).
 
 .. code-block:: text
 
-   damage_seq mdg|rdg <times> [(damage d1 d2 ...)] [(interval seconds)]
+   damage_seq mdg|rdg <times> [(damage d1 d2 ...)] [(secondary pierce melee)] [(interval seconds)]
 
 
 Define base ``mdg`` or ``rdg`` before ``damage_seq``.
@@ -83,6 +83,20 @@ Integer segment values must sum to the base damage (same units as in rules):
 
 
 Manual ``(damage …)`` uses integer values only; fractional base damage (e.g. ``rdg 2.5``) cannot be expressed this way — use auto split instead.
+
+2.3b AoE2 secondary arrows (``secondary``)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Matches Age of Empires II DE Chu Ko Nu: first shot = live unit attack (upgrades apply) + fixed melee; later shots = fixed pierce + melee (**not** upgraded by blacksmith/chemistry). Melee may be ``0`` (still damages negative melee armor such as rams).
+
+.. code-block:: text
+
+   rdg 8
+   rdg_cd 2.77
+   rdg_ready 0.23
+   damage_seq rdg 3 (secondary 3 0) (interval 0.23)
+
+Elite Chu Ko Nu uses ``rdg 5 (secondary 3 0)`` (5 arrows). This mode does **not** require the damage sum to equal ``rdg``.
 
 2.4 Interval
 ~~~~~~~~~~~~~

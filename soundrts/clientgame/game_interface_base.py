@@ -447,6 +447,15 @@ class GameInterface(AttributesInterface):
                 
                 # 恢复背景音乐（从暂停位置继续）
                 sound.unpause_music()
+
+            # 在目标之后播报文明，避免被 objective 的 scrolling 立刻打断。
+            # 随机阵营已在 Player.__init__ 落定。
+            try:
+                from ..faction_announce import announce_resolved_faction
+
+                announce_resolved_faction(self.player)
+            except Exception:
+                pass
         else:
             # 对于加载的存档游戏，也需要重新播放游戏音乐
             from ..lib import sound

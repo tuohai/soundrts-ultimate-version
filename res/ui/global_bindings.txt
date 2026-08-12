@@ -8,6 +8,8 @@ z: resource_status resource1
 x: resource_status resource2
 SHIFT Z: resource_status resource3
 c: population_status
+; 已确定的阵营/文明（随机开局后可再听）
+ALT C: faction_status
 
 ; ESC：取消命令/退出子界面/进入地图浏览
 ESCAPE: ui_escape

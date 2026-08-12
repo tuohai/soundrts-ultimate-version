@@ -21,6 +21,8 @@ from ..world_build_rules import (
     can_host_addon,
     is_addon_type,
     is_pure_water_square,
+    unit_train_cost,
+    unit_train_time,
 )
 from ..worldresource import recreate_building_land
 from .base import ComplexOrder, Order, ORDERS_QUEUE_LIMIT
@@ -820,6 +822,19 @@ class TrainOrder(ProductionOrder):
     keyword = "train"
     cancel_order = "cancel_training"
 
+    def _train_type_cost(self):
+        """Line-root train cost (AoE2: champion trains at militia price)."""
+        return unit_train_cost(self.type)
+
+    def _train_type_time(self):
+        return unit_train_time(self.type)
+
+    def _order_base_cost(self):
+        return self._train_type_cost()
+
+    def _order_base_time_cost(self):
+        return self._train_type_time()
+
     def _requested_train_count(self):
         train_count = 1
         if hasattr(self.unit, "can_train") and isinstance(self.unit.can_train, dict):
@@ -980,8 +995,8 @@ class TrainOrder(ProductionOrder):
         self.train_count = affordable
 
         # 修改成本计算逻辑
-        # 先获取未经修正的基础单位成本
-        base_unit_cost = self.type.cost
+        # 兵种线：用训练价（线根 cost），不是形态升级研究价
+        base_unit_cost = self._train_type_cost()
         
         # 计算多个单位的总基础成本
         base_total_cost = [c * self.train_count for c in base_unit_cost]
@@ -1164,8 +1179,55 @@ class ResearchOrder(ProductionOrder):
     keyword = "research"
     cancel_order = "cancel_upgrading"
 
+    @property
+    def cost(self):
+        modified = list(super().cost)
+        self._merge_research_resource_cost(self.unit.player, modified)
+        per = int(getattr(self.type, "cost_per_enemy_worker", 0) or 0)
+        if per > 0 and self.unit.player is not None:
+            from ..lib.nofloat import PRECISION
+            from ..worldunit.worldworker import Worker
+
+            n = 0
+            allied = getattr(self.unit.player, "allied_vision", None)
+            world = getattr(self.unit.player, "world", None)
+            players = getattr(world, "players", ()) or ()
+            for p in players:
+                if p is self.unit.player:
+                    continue
+                if allied is not None and p in allied:
+                    continue
+                if getattr(p, "neutral", False):
+                    continue
+                for u in getattr(p, "units", ()) or ():
+                    if isinstance(u, Worker):
+                        n += 1
+            # rules int (e.g. 200) → gold slot 0, same PRECISION as ``cost``
+            if len(modified) < 1:
+                modified = [0]
+            modified[0] = max(0, int(modified[0]) + per * n * PRECISION)
+        for i in range(len(modified)):
+            modified[i] = max(0, modified[i])
+        return tuple(modified)
+
     def complete(self):
-        self.type.upgrade_player(self.player)
+        # Generic DE line unlock: researching a ``line_upgrade`` unit type unlocks
+        # training that form and morphs existing previous-tier units.
+        if int(getattr(self.type, "line_upgrade", 0) or 0):
+            from ..world_build_rules import apply_unit_line_upgrade
+
+            type_name = getattr(self.type, "type_name", None) or getattr(
+                self.type, "__name__", None
+            )
+            apply_unit_line_upgrade(self.player, type_name)
+            also = getattr(self.type, "line_upgrade_also", ()) or ()
+            if not isinstance(also, (list, tuple)):
+                also = [also]
+            for extra in also:
+                if extra:
+                    apply_unit_line_upgrade(self.player, extra)
+        elif hasattr(self.type, "upgrade_player"):
+            self.type.upgrade_player(self.player)
         self.unit.notify("research_complete")
 
     @staticmethod
@@ -1198,11 +1260,24 @@ class AdvanceOrder(ResearchOrder):
     - ``keyword``: ``advance``
     - ``complete()`` 发送 ``upgrade_complete`` 通知（更贴合时代切换的语义）
     - ``additional_condition`` 在并发推进同一时代时排重
+    - 成本走 ``advance_cost_discount``，不走 ``research_cost_discount``
     """
 
     unit_menu_attribute = "can_advance"
     keyword = "advance"
     cancel_order = "cancel_upgrading"
+
+    @property
+    def cost(self):
+        # Skip ResearchOrder.cost (research discount); keep ComplexOrder/phase.
+        modified = list(super(ResearchOrder, self).cost)
+        age_name = getattr(self.type, "type_name", None) or getattr(
+            self.type, "__name__", None
+        )
+        self._merge_advance_resource_cost(self.unit.player, modified, age_name)
+        for i in range(len(modified)):
+            modified[i] = max(0, modified[i])
+        return tuple(modified)
 
     def complete(self):
         self.type.upgrade_player(self.player)
@@ -1233,7 +1308,13 @@ class UpgradeToOrder(ProductionOrder):
     
     @property
     def cost(self):
-        return _upgrade_cost_diff(self.unit, self.type)
+        modified = list(_upgrade_cost_diff(self.unit, self.type))
+        player = getattr(self.unit, "player", None)
+        self._merge_phase_resource_cost(player, modified)
+        self._merge_research_resource_cost(player, modified)
+        for i in range(len(modified)):
+            modified[i] = max(0, modified[i])
+        return tuple(modified)
 
     @property
     def population_cost(self):
@@ -1291,8 +1372,18 @@ class UpgradeToOrder(ProductionOrder):
             )
 
     @staticmethod
-    def additional_condition(unit, unused_type_name):
-        return not unit.orders
+    def additional_condition(unit, type_name):
+        if unit.orders:
+            return False
+        # DE line forms are unlocked via building research, not per-unit upgrade_to.
+        if type_name:
+            try:
+                cls = rules.unit_class(type_name)
+            except Exception:
+                cls = None
+            if cls is not None and int(getattr(cls, "line_upgrade", 0) or 0):
+                return False
+        return True
 
 
 class ChangeToOrder(ProductionOrder):
@@ -1396,25 +1487,72 @@ class BuildOrder(ComplexOrder):
     nb_args = 1
     
     def __init__(self, unit, args):
-        super().__init__(unit, args)
-        # 添加一个标记，用于跟踪资源预留状态
+        # Remap semantic menu name → race shell before ComplexOrder binds self.type.
+        from ..world_build_rules import resolve_buildable_type
+
+        type_name = args[0]
+        player = getattr(unit, "player", None)
+        resolved = resolve_buildable_type(player, type_name)
+        Order.__init__(self, unit, args[1:])
+        self.type = rules.unit_class(resolved)
         self.resources_reserved = False
-        
+
+    def _order_base_cost(self):
+        # Line-upgraded buildings (Guard Tower, Fortified Wall, …) keep root build cost.
+        return unit_train_cost(self.type)
+
+    def _order_base_time_cost(self):
+        return unit_train_time(self.type)
+    
     @staticmethod
     def additional_condition(unit, type_name):
         """确保只有建筑物能被建造，不允许建造任何单位"""
         from ..definitions import rules
-        unit_class = rules.unit_class(type_name)
+        from ..world_build_rules import resolve_buildable_type
+
+        resolved = resolve_buildable_type(getattr(unit, "player", None), type_name)
+        unit_class = rules.unit_class(resolved)
+        # Unknown type (e.g. listed in can_build after clear but never defined):
+        # must not appear in the browse menu — OrderTypeView would crash on cost.
+        if unit_class is None:
+            return False
         # 检查是否为建筑物类型，只有建筑物可以建造
-        if unit_class and hasattr(unit_class, "class"):
+        if hasattr(unit_class, "class"):
             unit_classes = getattr(unit_class, "class")
             # 如果class是building，允许建造
             if "building" in unit_classes:
                 return True
             # 否则不允许建造（包括soldier、worker等所有非建筑单位）
-            else:
-                return False
+            return False
         return True
+
+    @classmethod
+    def _is_almost_allowed(cls, unit, type_name):
+        from ..world_build_rules import menu_allows_build, resolve_buildable_type
+
+        if not menu_allows_build(unit, type_name):
+            return False
+        resolved = resolve_buildable_type(getattr(unit, "player", None), type_name)
+        return (
+            unit.player is not None
+            and resolved not in unit.player.forbidden_techs
+            and type_name not in unit.player.forbidden_techs
+            and (not unit.orders or unit.orders[-1].can_be_followed)
+            and cls.additional_condition(unit, type_name)
+            and unit.player.check_count_limit(resolved)
+        )
+
+    @classmethod
+    def is_allowed(cls, unit, type_name, *unused_args):
+        from ..world_build_rules import resolve_buildable_type
+
+        if not cls._is_almost_allowed(unit, type_name):
+            return False
+        resolved = resolve_buildable_type(getattr(unit, "player", None), type_name)
+        uc = rules.unit_class(resolved)
+        if uc is None:
+            return False
+        return unit.player.has_all(uc.requirements)
 
     def __eq__(self, other):
         # BuildOrder.id is used to make the difference between 2 successive

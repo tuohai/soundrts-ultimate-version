@@ -1,4 +1,4 @@
-﻿# StarCraft mod: Terran addons & recombine
+# StarCraft mod: Terran addons & recombine
 
 Mod: enable ``mods = starcraft`` in ``SoundRTS.ini``.
 

@@ -53,7 +53,7 @@ nb_meadows_by_square 35
 
 war_banner h1
 
-computer_only 0 0 o8 2 npc_general_vera 9 npc_knight_escort 6 footman 6 archer
+computer_only 0 0 neutral o8 2 npc_general_vera 9 npc_knight_escort 6 footman 6 archer
 computer_only 0 0 h15 9 traitor_guard o15 9 traitor_guard
 computer_only 0 0 non_neutral a2
 computer_only 0 0 non_neutral a3

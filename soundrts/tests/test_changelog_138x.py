@@ -561,10 +561,11 @@ def test_mdg_splash_rdg_splash_replace_simple_splash():
 
 
 def test_mdg_delay_rdg_delay_for_pseudo_projectile():
-    """1.3.8.2：mdg_delay / rdg_delay 用延长命中时间模拟投射物。"""
+    """Legacy delay attrs still parse; flight uses mdg_/rdg_projectile_speed."""
     src = _source("soundrts", "definitions.py")
-    assert '"mdg_delay"' in src
-    assert '"rdg_delay"' in src
+    assert '"mdg_projectile_speed"' in src
+    assert '"rdg_projectile_speed"' in src
+    assert "_migrate_legacy_projectile_delay" in src
 
 
 def test_damage_seq_parsing_in_definitions():

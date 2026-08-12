@@ -4,6 +4,131 @@
 .. contents::
 
 
+1.4.6.9
+--------
+
+**新增：规则驱动驻军治疗 ``heal_garrisoned``**
+
+- **用途**：城镇中心 / 城堡 / 箭塔等只治疗载具内单位（帝国 2 式），僧侣等仍用范围光环；引擎**不按建筑名硬编码**。
+- **属性**：``heal_garrisoned 1`` 时 ``heal_nearby_units`` 只治疗 ``self.inside`` 乘客；默认 ``0`` 行为不变（``heal_range`` 单体或 ``heal_radius`` 范围）。
+- **aoe2 数值（贴 DE）**：TC/箭塔 ``heal_level 1`` + ``heal_cd 10`` → 0.1 HP/s；城堡 ``heal_level 1`` + ``heal_cd 5`` → 0.2 HP/s；草药学 ``heal_level +5``（×6）→ 0.6 / 1.2 HP/s，目标含 ``keeptower``。
+- **文档**：`技能 / 治疗 / 效果 <mod/skills-and-effects.htm>`_、``mod/modding``。
+- **测试**：``test_heal_garrisoned.py``。已同步修复8 / 修复14 / 原始1 / 原始2。
+
+**新增：规则驱动投射物预判 ``projectile_lead`` 与分路飞行速度**
+
+- **飞行**：``rdg_projectile_speed`` / ``mdg_projectile_speed`` 是**速度**（格/秒），不是「飞了多少秒」；仅当对应 ``*_projectile`` 时生效。命中时刻 = 距离÷速度。共用 ``projectile_speed`` 与旧 ``*_delay`` 已弃用（加载时迁到分路速度）。
+- **预判**：``projectile_lead 0|1``（仅远程投射物）。引擎不写死 ``ballistics``。
+- **科技 / UI**：``effect bonus projectile_lead 1``；``effect info``。
+- **文档**：`投射物预判与飞行速度 <mod/projectile-lead.htm>`_；``mod/modding``。
+- **测试**：``test_projectile_speed.py``。同步修复8 / 修复14。
+
+**新增：规则驱动市场机制（买卖 / 进贡 / 路线贸易）**
+
+- **用途**：模组自定可买卖资源、货币、税率、进贡列表，以及贸易单位赚什么资源、停靠哪些枢纽；引擎**不硬编码**木/粮/石或「只赚黄金」。
+- **参数**（``def parameters``）：``market_currency``、``market_commodities``、``market_menu_labels``、``market_batch`` / 税率 / ``tribute_*``、``trade_tile_scale`` / ``trade_shrink`` / ``trade_reward_cap`` 等。
+- **单位属性**：``is_market``、``is_trade_unit``、``trade_hubs``、``trade_rewards``（可多个 → 菜单选贸易类型）；科技 ``market_tax_guilds``、``tribute_fee_permille``。
+- **命令**：``market_buy`` / ``market_sell`` / ``tribute`` / ``trade``；路程按**格距**结算，过近可为 0。
+- **aoe2**：黄金货币 + 木/粮/石商品；马车对市场赚金，贸易船对码头赚金。
+- **文档**：``mod/market-system``（中/英）、``mod/modding``、``player/market-and-trade``；``mods/aoe2/SOURCES.md``。
+- **实现 / 测试**：``worldmarket.py``、``worldorders/market.py``；``test_aoe2_market.py``、``test_aoe2_dock_economy.py``。
+
+**改进：加成目标字段更名 ``phase_bonus_targets`` / ``effect_bonus_targets``**
+
+- **主名**：与 ``phase bonus`` / ``effect bonus`` 成对——``phase_bonus_targets``、``effect_bonus_targets``。
+- **别名仍可用**：``phase_targets``、``tech_effect_targets``、``effect_targets``。
+- **文档**：``mod/modding``（中/英）。
+- **测试**：``test_phase_bonus_groups.py``、``test_effect_bonus_unit_filter.py``。
+
+**新增：双采集机制 ``gather_mode trip|continuous``**
+
+- 默认 ``trip``：一趟采 ``gather_qty`` 后送回（原行为）。
+- ``continuous``：按速率灌满 ``carry_capacity`` 再送回（帝国2/4 式）。
+- 规则字段：``gather_mode``、``carry_capacity``、``carry_capacity_<类型>``、``gather_rate``；详见模组文档。
+- ``mods/aoe2`` 已启用 continuous（运载 10，猎物尸体 35）。
+
+**新增：阵营时代奖励 ``on_phase`` 与 ``research_cost_discount`` / ``advance_cost_discount``**
+
+- **用途**：文明专属时代奖励写在 ``class race`` / ``class faction`` 上，**不写死文明名**；共享 ``phase bonus`` 可留空，避免全体文明吃到同一套演示加成。
+- **``on_phase <phase> <属性> <值> … [单位…]``**：该 phase 进入 ``player.upgrades`` 时，对匹配单位施加类似 ``effect bonus`` 的属性。开局与推进 phase 后都会应用；写入 ``_phase_bonus_pool``。
+- **``research_cost_discount <时代> <百分比> …``**：按已达最高匹配时代**替换**科技费用百分比；只影响 ``ResearchOrder`` / ``UpgradeToOrder``，不影响训练/建造/时代推进。
+- **``advance_cost_discount <时代> <百分比> …``**：按正在购买的时代查表，只影响 ``AdvanceOrder``。
+- **辅助**：裸 ``phase bonus`` / ``phase bonus clear`` 清空合并加成；``no_auto_upgrade 1`` 跳过自动变形。
+- **实现**：``definitions.py``、``worldphase.py``、``worldorders/*``、``worldplayerbase/base.py``、``worldcreature.py``。
+- **测试**：``test_faction_age_cost_discounts.py``、``test_aoe2_age_rewards.py``、``test_phase_bonus_clear.py``。
+
+**新增：单位线 ``line_upgrade`` 与最高阶训练（帝国 DE 式）**
+
+- **用途**：``can_train`` 写线根（如民兵），实际训练当前已研究解锁的最高形态；线升级在建筑 ``can_research`` 中研究，不靠时代 alone 变形。
+- **``line_upgrade 1``**：该形态须研究后写入 ``player.upgrades``；``ResearchOrder`` 完成时 ``apply_unit_line_upgrade``（解锁 + 变形 ``can_upgrade_to`` 含该形态的场上单位）。时代 ``units_auto_upgrade`` 跳过此类目标。
+- **训练费用**：默认按线根 ``cost``/``time_cost``（``unit_train_cost`` / ``unit_train_time``）；可用 ``train_cost``/``train_time`` 覆盖。
+- **可选**：科技 ``effect unit_line_upgrade <形态>``。引擎不硬编码单位名。
+- **文档**：`单位线升级与最高阶训练 <mod/unit-line-upgrade.htm>`_、``mod/modding``；aoe2 见 ``mods/aoe2/SOURCES.md``。
+- **实现**：``world_build_rules.py``、``worldorders/production.py``、``worldupgrade/attribute_effects.py``、``worldphase.py``、``definitions.py``、``worldcreature.py``。
+- **测试**：``test_train_line_resolve.py``。
+
+**改进：随机文明开局播报已确定的阵营**
+
+- **问题**：选「随机」后城镇中心/村民等名称常共用，听不出是哪一文明（明眼人 DE 靠旗帜识别）。
+- **改进**：仅当大厅选了「随机」且模组有多个可选阵营时，开场目标播完后再播报一次「你是：某某文明」（避免被 objective 打断）；手选阵营、或模组只有一个阵营（如基础 ``res``）不播报。局内 ``Alt+C``（``faction_status``）同样只在上述情况下可再听。
+- **实现**：``faction_announce.py``、``worldplayerbase/base.py``（``faction_was_random``）、``clientgame/game_resources.py``、``game_interface_base.py``；``res/ui/global_bindings.txt``、``mods/aoe2/ui/global_bindings.txt``。
+- **测试**：``test_faction_status_announce.py``。
+
+**改进：多文明模组中可听出敌方文明**
+
+- **问题**：敌方通用单位名称相同（如民兵），不遇到特色单位时无法判断对方是哪个文明。
+- **改进**：模组有多个阵营时，查看敌方/友方单位会读出文明名（如「民兵，敌人，不列颠，电脑1」）；``F11`` 玩家列表与外交候选人选择也会在玩家名后读出文明（如「拓海，不列颠」）。单阵营模组不变。
+- **实现**：``faction_announce.py``、``clientgameentity/properties.py``、``clientgame/game_audio.py``。
+- **测试**：``test_faction_status_announce.py``。
+
+**新增：阵营 ``abstract`` 模板与 ``is_a`` 继承初始资源/单位**
+
+- **用途**：在 ``rules.txt`` 里用抽象父阵营（如 ``Civilization``）写默认 ``starting_resources`` / ``starting_units``；各文明 ``is_a`` 该父类。子文明写了的字段覆盖父类，没写的继承默认值。这样地图未写开局单位时，每个文明仍有默认开局，不会因缺单位立刻结束。
+- **``abstract 1``**：仅作继承模板，**不出现在选人列表**；``abstract`` 本身不向下继承。
+- **继承**：``class race`` 与 ``class faction`` 相同；``is_a`` 可多层。地图若显式写了 ``starting_units`` / ``starting_resources``，仍优先地图。
+- **实现**：``definitions.py``（``apply_inheritance`` 跳过 ``abstract``；``factions`` 过滤抽象模板）。
+- **测试**：``test_faction_starting_inheritance.py``。
+
+**改进：启用模组后隔离地图与战役（不再回退显示 ``res`` 内容）**
+
+- **问题**：模组若没有自己的 ``multi/`` 地图或 ``single/`` 战役，菜单仍会列出基础包 ``res`` 下的地图与战役，未真正隔离。
+- **改进**：只要启用了模组，只显示 ``mods/<模组>/multi`` 与 ``mods/<模组>/single``；没有专属内容时列表为空，**不再**回退到 ``res/multi``、``res/single`` 或下载目录。无模组时行为不变。
+- **实现**：``lib/resource.py``（``_get_multi_maps`` / ``_add_custom_multi`` / ``_campaigns``）；旁观回退避免空列表下标（``game.py``）。
+- **测试**：``test_mod_map_campaign_isolation.py``。
+
+**修复：地图未写 ``starting_resources`` 时种族默认初始资源不生效（显示为 0）**
+
+- **问题**：规则里种族已设 ``starting_resources``（如 ``100 200 200 200``），但地图未写该行时开局仍为 0。
+- **原因**：``_parse_map`` 把未定义的起始资源预填成 ``[0, 0, …]``；``populate_map`` 只在资源列表为空时才回退到种族默认，全 0 不算空。
+- **修复**：地图未显式定义时改为空列表 ``[]``，再正确套用种族 / 阵营 ``starting_resources``；地图写了该行（含故意写 ``0``）仍优先用地图值。
+- **实现**：``world/world_map.py``。
+- **测试**：``test_race_starting_resources.py``。
+
+**修复：注释掉 ``LSHIFT C`` / ``LSHIFT B`` 后局内仍能复制语音**
+
+- **问题**：``global_bindings.txt`` 默认注释了左 Shift+C/B（主语音库复制 / 追加），但局内按键仍生效。
+- **原因**：``game_input_handler`` 在走 bindings 之前硬编码调用 ``voice_libs.handle_hotkey``，绕过热键表。
+- **修复**：局内 Shift+C/B **只认 bindings**；行首加 ``;`` 注释后即不生效。菜单仍保留硬编码，左/右 Shift+C/B 照常可用。右 Shift+C/B（副库）默认仍启用。
+- **实现**：``clientgame/game_input_handler.py``；菜单侧 ``clientmenu.py`` / ``voice_libs.handle_hotkey``。
+- **测试**：``test_lshift_rshift_bindings.py``。
+
+**改进：星际气矿对齐母巢之战（工人行程 + ``gather_slots``）**
+
+- **机制**：气矿不再用 ``auto_production`` 自灌仓；建成后工人对建筑行程采集，每趟 ``extraction_qty``（默认 8），耗尽后 ``depleted_production_qty``（默认 2），并从 ``source_qty`` 扣减。
+- **``gather_slots 3``**：同时真正在采的工人最多 3 个（第 4 个起等待）；派更多人仍可出气（轮流），但效率约等于 3 人。实操建议每气矿挂 **3** 个工人。
+- **建造场**：水晶塔 / 吸收塔 ``requires_build_field 0``；光子炮须在灵能场内，断电不能攻击。
+- **文档**：``player/starcraft-resources``（中/英/西/意/巴葡）、``mod/modding``（矿床与气矿）、``mods/starcraft/readme.txt``。
+- **实现**：``world_extractor.py``、``worldorders/gathering.py``、``definitions.py``、``worldplayercomputer.py``、``mods/starcraft/rules.txt``。
+
+**改进：帝国修道院转化科技改为规则驱动（不再硬编码科技名）**
+
+- **问题**：救赎 / 赎罪 / 异教 / 信念 / 神权在引擎里写死 ``"redemption"`` 等类型名。
+- **做法**：科技与单位用通用属性（``conversion_allows_*``、``conversion_victim_dies``、``conversion_channel_*``、``conversion_rest_only_success``、``conversion_tech_gated``、``conversion_cleric``、``conversion_immune``）；引擎只读属性。
+- **aoe2**：上述科技与僧侣 / 不可转化建筑已接线；属性界面仍用 ``effect info`` 播报说明。
+- **实现**：``world_conversion.py``、``worldskill.py``、``definitions.py``、``mods/aoe2/rules.txt``。
+- **测试**：``test_aoe2_monastery_techs.py``。
+
+
 1.4.6.8
 --------
 

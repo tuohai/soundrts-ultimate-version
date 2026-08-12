@@ -25,11 +25,11 @@ Referência oficial: ``mod/modding.rst`` (Combat system → ``damage_seq``).
    * - Aspecto
      - Comportamento
    * - Dano total por ciclo
-     - Continua igual ao ``mdg`` / ``rdg`` base (dividido entre os tiros)
+     - Divisão igual/manual: continua igual a ``mdg`` / ``rdg``; modo ``secondary``: primeiro ao vivo + flechas fixas seguintes (pode superar a base)
    * - Tiros por ciclo
      - Até 6 (`damage_seq … <times>`)
    * - Rolagens de acerto
-     - Independentes por tiro
+     - Independentes por tiro; flechas secundárias acertam 100%
    * - Cooldown
      - ``mdg_cd`` / ``rdg_cd`` começa após o fim da rajada completa
    * - Sons de lançamento
@@ -51,7 +51,7 @@ Referência oficial: ``mod/modding.rst`` (Combat system → ``damage_seq``).
 
 .. code-block:: text
 
-   damage_seq mdg|rdg <times> [(damage d1 d2 ...)] [(interval seconds)]
+   damage_seq mdg|rdg <times> [(damage d1 d2 ...)] [(secondary pierce melee)] [(interval seconds)]
 
 
 Defina o ``mdg`` ou ``rdg`` base antes de ``damage_seq``.
@@ -83,6 +83,21 @@ Valores inteiros dos segmentos devem somar o dano base (mesmas unidades das rule
 
 
 ``(damage …)`` manual usa apenas valores inteiros; dano base fracionário (ex.: ``rdg 2.5``) não pode ser expresso assim — use divisão automática.
+
+
+2.3b Flechas secundárias AoE2 (``secondary``)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Alinhado ao Chu Ko Nu de Age of Empires II DE: primeiro tiro = ataque ao vivo da unidade (upgrades aplicam) + melee fixo; tiros seguintes = pierce + melee fixos (**não** aprimorados por ferreiro/química). O melee pode ser ``0`` (ainda causa dano a armadura melee negativa como aríetes).
+
+.. code-block:: text
+
+   rdg 8
+   rdg_cd 2.77
+   rdg_ready 0.23
+   damage_seq rdg 3 (secondary 3 0) (interval 0.23)
+
+O Chu Ko Nu de elite usa ``rdg 5 (secondary 3 0)`` (5 flechas). Este modo **não** exige que a soma iguale ``rdg``.
 
 2.4 Intervalo
 ~~~~~~~~~~~~~

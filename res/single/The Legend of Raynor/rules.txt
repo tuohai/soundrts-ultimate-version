@@ -163,7 +163,7 @@ def bow
 is_a ranged
 rdg 2.5
 rdg_projectile 1
-rdg_delay 0.02
+rdg_projectile_speed 50
 rdg_cd 1.5
 rdg_range 4
 rdg_targets ground air
@@ -408,11 +408,7 @@ is_a escort knight
 cost 0 0
 population_cost 0
 time_cost 1
-hp_max 180
 ai_mode guard
-mdg 16
-mdg_cd 1.5
-mdg_range 1
 
 ; 薇拉女将 — 第26章献旗收服（title 7713）
 def npc_general_vera

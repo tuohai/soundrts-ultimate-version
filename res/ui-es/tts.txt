@@ -708,6 +708,8 @@
 4794	maná máximo
 4795	tiempo de recolección
 4796	cantidad recolectada
+5412	tasa de recolección
+5415	capacidad de carga
 4797	tiempo de producción
 4798	cantidad producida
 4799	coste
@@ -741,6 +743,9 @@
 4827	puede recolectar
 4828	tiempo de recolección
 4829	cantidad recolectada
+5413	tasa de recolección
+5414	por segundo
+5416	capacidad de carga
 4830	puede reparar
 4831	objetivo terrestre
 4832	objetivo aéreo

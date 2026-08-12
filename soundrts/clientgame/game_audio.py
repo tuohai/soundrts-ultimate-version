@@ -22,6 +22,8 @@ def cmd_say(interface):
 
 def cmd_say_players(interface):
     """播报当前游戏中的玩家"""
+    from ..faction_announce import name_with_faction_msgs
+
     msg = []
     for p in interface.world.players:
         if getattr(p, "_is_pure_spectator", False):
@@ -29,7 +31,7 @@ def cmd_say_players(interface):
         # 地图脚本 NPC、战役触发器电脑、纯野生动物等不算对局参与者，F11 不播报。
         if not p.broadcasts_defeat_and_quit:
             continue
-        msg += p.name + mp.COMMA
+        msg += name_with_faction_msgs(p)
     voice.item(msg)
 
 
@@ -155,6 +157,8 @@ def _diplo_relation_msg(interface, p):
 
 def cmd_select_alliance_candidate(interface, inc=1):
     """F12/Shift+F12 选择（或反向选择）同盟候选玩家"""
+    from ..faction_announce import name_with_faction_msgs
+
     reverse = False
     try:
         reverse = int(inc) < 0
@@ -164,13 +168,15 @@ def cmd_select_alliance_candidate(interface, inc=1):
     if p is None:
         voice.item(mp.DIPLOMACY + mp.NO_CANDIDATE)
         return
-    # 播报候选人 + 敌对/联盟状态
+    # 播报候选人 + 阵营（多文明）+ 敌对/联盟状态
     # 注：``_diplo_players`` 已过滤掉 neutral 玩家，所以这里不再有 neutral 分支。
     try:
-        voice.item(p.name + mp.COMMA + _diplo_relation_msg(interface, p))
+        voice.item(name_with_faction_msgs(p) + _diplo_relation_msg(interface, p))
     except Exception:
-        voice.item([getattr(p.client, 'login', '?')] + mp.COMMA + _diplo_relation_msg(interface, p))
-
+        voice.item(
+            name_with_faction_msgs(p, [getattr(p.client, "login", "?")])
+            + _diplo_relation_msg(interface, p)
+        )
 
 def cmd_alliance_request(interface):
     """F4 发送结盟申请，目标由最近一次选择确定"""

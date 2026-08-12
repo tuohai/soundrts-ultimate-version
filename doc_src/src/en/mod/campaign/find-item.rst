@@ -1,4 +1,4 @@
-﻿# Find-item victory (``has_item`` trigger)
+# Find-item victory (``has_item`` trigger)
 
 Design objectives where picking up an item completes the goal.
 

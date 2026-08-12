@@ -1,0 +1,46 @@
+; 6 — Forge an Alliance (relics + ally)
+
+title 8607
+intro 8615
+
+square_width 12
+nb_columns 5
+nb_lines 4
+
+nb_players_min 1
+nb_players_max 1
+random_starts 0
+
+square_name 8633 1,4
+square_name 8631 5,4
+
+west_east_paths a1 a2 a3 a4 b1 b2 b3 b4 c1 c2 c3 c4 d1 d2 d3
+south_north_paths a1 a2 a3 b1 b2 b3 c1 c2 c3 d1 d2 d3 e1 e2 e3
+
+goldmines 250 a1
+woods 300 a1
+orchard 150 a1
+nb_meadows_by_square 2
+
+; Relics: home, ally town, English camp
+relic 1 a1 a4 e4
+
+; Castle Age Scots with monastery + monk; bring relics to a1 monastery
+player 200 300 400 200 a1 town_center monastery 3 monk 4 house barracks 4 peasant 6 militia castle_age
+
+; Scottish ally (computer1)
+computer_only 0 0 0 0 a4 6 militia 2 aoe_archer monastery
+
+; English (computer2)
+computer_only 0 0 0 0 e4 scouttower 8 militia 4 man_at_arms 3 aoe_archer
+
+timer_coefficient 40
+
+trigger player1 (timer 0) (alliance 1)
+trigger computer1 (timer 0) (alliance 1)
+trigger computer2 (timer 0) (alliance 2)
+
+trigger player1 (timer 0) (add_objective 1 8625)
+; Three relics carried into the monastery square (a1)
+trigger player1 (has_brought_item a1 relic 3) (do (objective_complete 1) (victory))
+trigger player1 (building_lost town_center) (defeat)

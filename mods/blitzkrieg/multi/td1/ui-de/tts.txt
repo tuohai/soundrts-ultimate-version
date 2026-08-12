@@ -1,0 +1,5 @@
+; coding: utf-8
+
+5028	Wiederholung
+7000	Schlammturm
+7001	langsam

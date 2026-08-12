@@ -7,6 +7,11 @@ def parameters
 nb_of_resource_types 2
 achievements_enabled 0
 default_building_land build_site
+menace_armor_weight 1
+menace_dodge_weight 1
+menace_range_weight 0.15
+menace_speed_weight 0.2
+menace_hp_ref 50
 
 ; ---------- SC2 armor / damage types (mdg_vs / rdg_vs) ----------
 ; Armor tags on units (is_a). Attackers use vs bonuses (additive, 0.5x => -half base damage).
@@ -37,6 +42,8 @@ class deposit
 resource_type resource2
 deposit_volume 5000
 
+; SC1 Brood War gas: build on geyser; workers trip-gather 8 (depleted 2).
+; No auto_production buffer — workers pull the geyser reserve directly.
 def sc_gas_building
 is_a sc_building
 is_buildable_anywhere 0
@@ -45,14 +52,14 @@ is_an_extractor 1
 resource_type resource2
 extraction_time 2
 extraction_qty 8
-auto_production 1
+auto_production 0
 is_gather 1
 production_type resource2
-production_cost 0 0
-production_time 18
 production_qty 8
 depleted_production_qty 2
-resource_volume_max 8
+; SC1/SC2: 3 workers saturate a geyser; 4th waits for a free slot
+gather_slots 3
+resource_volume_max 5000
 resource_volume_start 0
 
 ; ---------- shared bases ----------
@@ -105,7 +112,8 @@ can_train probe
 
 def pylon
 is_a sc_building
-requires_build_field psi
+; SC: Pylons may be warped anywhere (they create psi; they do not need psi)
+requires_build_field 0
 is_buildable_anywhere 1
 provides_build_field psi
 build_field_radius_m 12
@@ -147,15 +155,15 @@ can_train observer phoenix
 def assimilator
 is_a protoss_building sc_gas_building
 is_buildable_anywhere 0
-cost 16 0
+requires_build_field 0
+; SC1 Assimilator 100 minerals → ×0.1 cost scale
+cost 10 0
 hp_max 500
 time_cost 40
 
 def photon_cannon
-is_a sc_building
-requires_build_field 0
-is_buildable_anywhere 1
-self_constructs 1
+is_a protoss_building
+; SC: must warp in psi; unpowered cannons do not attack (loses_power_without_field)
 cost 15 0
 hp_max 200
 time_cost 35
@@ -224,44 +232,54 @@ def protoss_ground_weapons
 class upgrade
 cost 10 0
 time_cost 45
-effect bonus mdg 2 zealot
-effect bonus rdg 2 dragoon
-effect bonus mdg 2 dark_templar
+effect bonus mdg 2
+effect_bonus_targets zealot
+effect bonus rdg 2
+effect_bonus_targets dragoon
+effect bonus mdg 2
+effect_bonus_targets dark_templar
 
 def protoss_ground_weapons_2
 class upgrade
 requirements protoss_ground_weapons
 cost 10 3
 time_cost 60
-effect bonus mdg 2 zealot
-effect bonus rdg 2 dragoon
-effect bonus mdg 2 dark_templar
+effect bonus mdg 2
+effect_bonus_targets zealot
+effect bonus rdg 2
+effect_bonus_targets dragoon
+effect bonus mdg 2
+effect_bonus_targets dark_templar
 
 def protoss_plasma_shields
 class upgrade
 cost 10 0
 time_cost 45
-effect bonus mdf 1 zealot dragoon
+effect bonus mdf 1
+effect_bonus_targets zealot dragoon
 
 def protoss_plasma_shields_2
 class upgrade
 requirements protoss_plasma_shields
 cost 10 3
 time_cost 60
-effect bonus mdf 1 zealot dragoon dark_templar
+effect bonus mdf 1
+effect_bonus_targets zealot dragoon dark_templar
 
 def protoss_singularity_charge
 class upgrade
 cost 10 1
 time_cost 45
-effect bonus rdg_range 1 dragoon
+effect bonus rdg_range 1
+effect_bonus_targets dragoon
 
 def protoss_singularity_charge_2
 class upgrade
 requirements protoss_singularity_charge
 cost 10 2
 time_cost 60
-effect bonus rdg_range 1 dragoon
+effect bonus rdg_range 1
+effect_bonus_targets dragoon
 
 ; ---------- Zerg ----------
 
@@ -306,9 +324,12 @@ can_research zerg_missile zerg_missile_2
 def extractor
 is_a zerg_building sc_gas_building
 is_buildable_anywhere 0
-cost 15 0
+; SC: Extractor sits on a geyser and does not require creep
+requires_build_field 0
+; SC1 Extractor 50 minerals → ×0.1 cost scale
+cost 5 0
 hp_max 500
-time_cost 50
+time_cost 40
 
 def drone
 class worker
@@ -401,46 +422,53 @@ def zerg_melee
 class upgrade
 cost 10 0
 time_cost 45
-effect bonus mdg 1 zergling roach ultralisk
+effect bonus mdg 1
+effect_bonus_targets zergling roach ultralisk
 
 def zerg_melee_2
 class upgrade
 requirements zerg_melee
 cost 10 2
 time_cost 60
-effect bonus mdg 1 zergling roach ultralisk
+effect bonus mdg 1
+effect_bonus_targets zergling roach ultralisk
 
 def zerg_carapace
 class upgrade
 cost 10 0
 time_cost 45
-effect bonus mdf 1 zergling roach hydralisk ultralisk
+effect bonus mdf 1
+effect_bonus_targets zergling roach hydralisk ultralisk
 
 def zerg_carapace_2
 class upgrade
 requirements zerg_carapace
 cost 10 2
 time_cost 60
-effect bonus mdf 1 zergling roach hydralisk ultralisk
+effect bonus mdf 1
+effect_bonus_targets zergling roach hydralisk ultralisk
 
 def zerg_metabolic_boost
 class upgrade
 cost 10 1
 time_cost 45
-effect bonus speed 0.5 zergling
+effect bonus speed 0.5
+effect_bonus_targets zergling
 
 def zerg_missile
 class upgrade
 cost 10 0
 time_cost 45
-effect bonus rdg 1 hydralisk
+effect bonus rdg 1
+effect_bonus_targets hydralisk
 
 def zerg_missile_2
 class upgrade
 requirements zerg_missile
 cost 10 2
 time_cost 60
-effect bonus rdg 1 hydralisk
+effect bonus rdg 1
+effect_bonus_targets hydralisk
 
 ; ---------- Terran (addons + lift-off recombine) ----------
 
@@ -487,9 +515,10 @@ change_time 45
 def refinery
 is_a terran_building sc_gas_building
 is_buildable_anywhere 0
-cost 16 0
+; SC1 Refinery 100 minerals → ×0.1 cost scale
+cost 10 0
 hp_max 500
-time_cost 45
+time_cost 40
 
 def engineering_bay
 is_a terran_building
@@ -568,53 +597,61 @@ def infantry_weapons
 class upgrade
 cost 10 0
 time_cost 45
-effect bonus rdg 1 marine marauder
+effect bonus rdg 1
+effect_bonus_targets marine marauder
 
 def infantry_weapons_2
 class upgrade
 requirements infantry_weapons
 cost 10 1
 time_cost 60
-effect bonus rdg 1 marine marauder
+effect bonus rdg 1
+effect_bonus_targets marine marauder
 
 def infantry_armor
 class upgrade
 cost 10 0
 time_cost 45
-effect bonus mdf 1 marine marauder
+effect bonus mdf 1
+effect_bonus_targets marine marauder
 
 def infantry_armor_2
 class upgrade
 requirements infantry_armor
 cost 10 1
 time_cost 60
-effect bonus mdf 1 marine marauder
+effect bonus mdf 1
+effect_bonus_targets marine marauder
 
 def vehicle_weapons
 class upgrade
 cost 10 1
 time_cost 50
-effect bonus rdg 2 hellion tank siege_tank
+effect bonus rdg 2
+effect_bonus_targets hellion tank siege_tank
 
 def vehicle_weapons_2
 class upgrade
 requirements vehicle_weapons
 cost 10 3
 time_cost 70
-effect bonus rdg 2 hellion tank siege_tank
+effect bonus rdg 2
+effect_bonus_targets hellion tank siege_tank
 
 def vehicle_armor
 class upgrade
 cost 10 1
 time_cost 50
-effect bonus mdf 1 hellion tank siege_tank
+effect bonus mdf 1
+effect_bonus_targets hellion tank siege_tank
 
 def vehicle_armor_2
 class upgrade
 requirements vehicle_armor
 cost 10 3
 time_cost 70
-effect bonus mdf 1 hellion tank siege_tank
+effect bonus mdf 1
+effect_bonus_targets hellion tank siege_tank
 
 def u_stim
 class upgrade
@@ -766,27 +803,31 @@ def protoss_air_weapons
 class upgrade
 cost 10 1
 time_cost 45
-effect bonus rdg 2 phoenix carrier
+effect bonus rdg 2
+effect_bonus_targets phoenix carrier
 
 def protoss_air_weapons_2
 class upgrade
 requirements protoss_air_weapons
 cost 10 3
 time_cost 60
-effect bonus rdg 2 phoenix carrier
+effect bonus rdg 2
+effect_bonus_targets phoenix carrier
 
 def protoss_air_armor
 class upgrade
 cost 10 1
 time_cost 45
-effect bonus mdf 1 phoenix carrier
+effect bonus mdf 1
+effect_bonus_targets phoenix carrier
 
 def protoss_air_armor_2
 class upgrade
 requirements protoss_air_armor
 cost 10 3
 time_cost 60
-effect bonus mdf 1 phoenix carrier
+effect bonus mdf 1
+effect_bonus_targets phoenix carrier
 
 def sc_psi_storm_fx
 class effect
@@ -949,27 +990,31 @@ def zerg_flyer_attacks
 class upgrade
 cost 10 1
 time_cost 45
-effect bonus rdg 1 mutalisk
+effect bonus rdg 1
+effect_bonus_targets mutalisk
 
 def zerg_flyer_attacks_2
 class upgrade
 requirements zerg_flyer_attacks
 cost 10 3
 time_cost 60
-effect bonus rdg 1 mutalisk
+effect bonus rdg 1
+effect_bonus_targets mutalisk
 
 def zerg_flyer_carapace
 class upgrade
 cost 10 1
 time_cost 45
-effect bonus mdf 1 mutalisk
+effect bonus mdf 1
+effect_bonus_targets mutalisk
 
 def zerg_flyer_carapace_2
 class upgrade
 requirements zerg_flyer_carapace
 cost 10 3
 time_cost 60
-effect bonus mdf 1 mutalisk
+effect bonus mdf 1
+effect_bonus_targets mutalisk
 
 def sc_spawn_larva
 class skill
@@ -1117,27 +1162,31 @@ def ship_weapons
 class upgrade
 cost 10 2
 time_cost 50
-effect bonus rdg 2 medivac battlecruiser
+effect bonus rdg 2
+effect_bonus_targets medivac battlecruiser
 
 def ship_weapons_2
 class upgrade
 requirements ship_weapons
 cost 10 4
 time_cost 70
-effect bonus rdg 2 medivac battlecruiser
+effect bonus rdg 2
+effect_bonus_targets medivac battlecruiser
 
 def ship_armor
 class upgrade
 cost 10 2
 time_cost 50
-effect bonus mdf 1 medivac battlecruiser
+effect bonus mdf 1
+effect_bonus_targets medivac battlecruiser
 
 def ship_armor_2
 class upgrade
 requirements ship_armor
 cost 10 4
 time_cost 70
-effect bonus mdf 1 medivac battlecruiser
+effect bonus mdf 1
+effect_bonus_targets medivac battlecruiser
 
 def sc_nuclear_blast
 class effect

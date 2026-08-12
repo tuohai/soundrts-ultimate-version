@@ -404,6 +404,35 @@ class ComplexOrder(Order):
                     modified_cost[i] += int(modified_cost[i] * percent_bonus)
 
     @staticmethod
+    def _merge_research_resource_cost(player, modified_cost):
+        """合并阵营 ``research_cost_discount``（仅科技/单位升级订单调用）。"""
+        if player is None or not modified_cost:
+            return
+        rb = getattr(player, "research_cost_bonus", None)
+        if rb:
+            for i, bonus in enumerate(rb):
+                if i < len(modified_cost):
+                    modified_cost[i] += bonus
+        rbp = getattr(player, "research_cost_percent_bonus", None)
+        if rbp:
+            for i, percent_bonus in enumerate(rbp):
+                if i < len(modified_cost) and percent_bonus != 0:
+                    modified_cost[i] += int(modified_cost[i] * percent_bonus)
+
+    @staticmethod
+    def _merge_advance_resource_cost(player, modified_cost, age_name=None):
+        """合并阵营 ``advance_cost_discount``（仅 AdvanceOrder 调用）。"""
+        if player is None or not modified_cost:
+            return
+        from ..worldphase import advance_cost_percent_for_age
+
+        pct = advance_cost_percent_for_age(player, age_name) if age_name else 0.0
+        if pct == 0:
+            return
+        for i in range(len(modified_cost)):
+            modified_cost[i] += int(modified_cost[i] * pct)
+
+    @staticmethod
     def _merge_phase_scalar_cost(player, base, abs_attr, pct_attr):
         """合并 phase 的标量成本修正（time_cost / population_cost）与百分比。"""
         if player is None:
@@ -414,10 +443,16 @@ class ComplexOrder(Order):
             r += int(r * p)
         return r
 
+    def _order_base_cost(self):
+        return self.type.cost
+
+    def _order_base_time_cost(self):
+        return self.type.time_cost
+
     @property
     def cost(self):
         # 获取基础成本
-        base_cost = self.type.cost
+        base_cost = self._order_base_cost()
         
         try:
             from ..definitions import rules
@@ -565,7 +600,7 @@ class ComplexOrder(Order):
     @property
     def time_cost(self):
         # 获取基础时间成本
-        base_time_cost = self.type.time_cost
+        base_time_cost = self._order_base_time_cost()
         
         try:
             from ..lib.log import warning, info
@@ -621,6 +656,17 @@ class ComplexOrder(Order):
                 modified_time_cost = max(
                     0, modified_time_cost * (100 + buff_pct) // 100
                 )
+
+            # Villager build speed (e.g. Treadmill Crane → time_cost -20% on worker).
+            if getattr(self, "keyword", None) == "build":
+                worker_pct = getattr(self.unit, "time_cost_percent_bonus", 0) or 0
+                if worker_pct:
+                    modified_time_cost = max(
+                        0, int(modified_time_cost * (1.0 + float(worker_pct)))
+                    )
+                worker_flat = getattr(self.unit, "time_cost_bonus", 0) or 0
+                if worker_flat:
+                    modified_time_cost = max(0, int(modified_time_cost) + int(worker_flat))
 
             modified_time_cost = self._apply_ai_time_percent(modified_time_cost)
 
@@ -731,8 +777,11 @@ class ComplexOrder(Order):
 
     @classmethod
     def is_allowed(cls, unit, type_name, *unused_args):
+        type_cls = rules.unit_class(type_name)
+        if type_cls is None:
+            return False
         return cls._is_almost_allowed(unit, type_name) and unit.player.has_all(
-            rules.unit_class(type_name).requirements
+            type_cls.requirements
         )
 
     @classmethod

@@ -1,0 +1,1 @@
+; Campaign-local rules (kept minimal; monk inventory + relic live in mods/aoe2/rules.txt)

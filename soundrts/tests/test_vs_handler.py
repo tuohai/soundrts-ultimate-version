@@ -107,3 +107,19 @@ def test_boolean_vs_attribute_splits_targets():
     assert len(attrs[0][2][1]) == 2
 
 
+def test_same_value_targets_joined_with_comma():
+    attrs = []
+    vs = VsHandler(_Parent())
+    vs._add_vs_attribute(
+        attrs,
+        {"archer_unit": 3000, "spearman": 3000},
+        "rdg",
+        precision_divide=True,
+    )
+    assert len(attrs) == 1
+    _, name, value = attrs[0]
+    assert name == mp.RDG_VS
+    assert not isinstance(value, tuple)
+    # Two targets sharing a bonus must not be space-glued for TTS.
+    assert mp.COMMA[0] in value
+

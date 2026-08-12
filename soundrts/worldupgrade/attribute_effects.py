@@ -21,36 +21,49 @@ class AttributeEffectsMixin:
         参数：
             unit: 要应用效果的单位
             start_level: 起始等级
-            *args: 属性参数，格式为 属性名 值 属性名 值...
+            *args: 属性名/值（``*_vs`` 三元组），末尾可为已存储的
+                   ``effect_bonus_targets``（含 ``-type`` 排除）。
+                   rules 里不要在 ``effect bonus`` 行写单位名。
         """
+        from .effect_bonus_parse import split_effect_bonus_args, unit_matches_effect_types
+
+        bonus_args, unit_types = split_effect_bonus_args(args)
+        if not unit_matches_effect_types(unit, unit_types):
+            return
+
         i = 0
-        while i < len(args):
+        while i < len(bonus_args):
             # 获取属性名和值
-            stat = args[i]
+            stat = bonus_args[i]
             
             # 确保i+1在args范围内
-            if i + 1 >= len(args):
+            if i + 1 >= len(bonus_args):
                 i += 1
                 continue
+
+            # mdg_vs / rdg_vs / … ：stat target value
+            if str(stat).endswith("_vs"):
+                if i + 2 >= len(bonus_args):
+                    break
+                target = bonus_args[i + 1]
+                value = bonus_args[i + 2]
+                cls._handle_vs_attribute_bonus(unit, stat, target, value)
+                i += 3
+                continue
                 
-            value = args[i + 1]
+            value = bonus_args[i + 1]
             
             # 处理 can_train 参数，增加或减少建筑物可同时训练的单位数量
             if stat == "can_train":
                 # 让处理函数返回已消费到的位置，避免后续的数字被当作属性名处理
-                i = cls._handle_can_train_bonus(unit, args, i)
+                i = cls._handle_can_train_bonus(unit, bonus_args, i)
                 continue
             
-            # 处理storage_bonus（存储奖励）
-            if stat == "storage_bonus":
-                cls._handle_storage_bonus(unit, value)
-                i += 2
-                continue
-            
-            # 处理资源消耗修正
+            # 处理资源消耗修正（可跟多个资源槽：cost -50% 0）
             if stat == "cost":
-                cls._handle_cost_bonus(unit, value)
-                i += 2
+                values, next_i = cls._take_list_bonus_values(bonus_args, i)
+                cls._handle_cost_bonus(unit, values)
+                i = next_i
                 continue
                 
             # 处理人口成本修正
@@ -65,10 +78,18 @@ class AttributeEffectsMixin:
                 i += 2
                 continue
                 
-            # 处理生产成本修正（与cost类似）
+            # 处理生产成本修正（与cost类似，可多槽）
             if stat == "production_cost":
-                cls._handle_production_cost_bonus(unit, value)
-                i += 2
+                values, next_i = cls._take_list_bonus_values(bonus_args, i)
+                cls._handle_production_cost_bonus(unit, values)
+                i = next_i
+                continue
+
+            # storage_bonus 0 1 …
+            if stat == "storage_bonus":
+                values, next_i = cls._take_list_bonus_values(bonus_args, i)
+                cls._handle_storage_bonus(unit, values)
+                i = next_i
                 continue
                 
             # 处理运输相关属性
@@ -92,15 +113,15 @@ class AttributeEffectsMixin:
                 continue
                 
             # 处理攻击目标类型
-            if stat.endswith("_targets"):
-                # 处理攻击目标类型（如air_targets, ground_targets等）
+            if stat.endswith("_targets") or stat == "passenger_attack_types":
+                # 处理攻击目标类型（如air_targets, ground_targets等）及驻军开火类型
                 try:
                     if isinstance(value, str):
                         # 字符串格式，可能是空格分隔的多个目标
                         new_targets = value.split()
                         current_targets = getattr(unit, stat, [])
                         if not isinstance(current_targets, list):
-                            current_targets = []
+                            current_targets = list(current_targets) if current_targets else []
                         
                         # 添加新的目标类型（避免重复）
                         for target in new_targets:
@@ -112,7 +133,7 @@ class AttributeEffectsMixin:
                         # 列表格式
                         current_targets = getattr(unit, stat, [])
                         if not isinstance(current_targets, list):
-                            current_targets = []
+                            current_targets = list(current_targets) if current_targets else []
                         
                         for target in value:
                             if target not in current_targets:
@@ -123,6 +144,90 @@ class AttributeEffectsMixin:
                     from ..lib.log import warning
                     warning(f"Error in bonus {stat}: {str(e)}")
                 i += 2
+                continue
+
+            # damage_seq fields: SET (not add) — Yasama etc.
+            if stat in (
+                "rdg_seq_times",
+                "mdg_seq_times",
+                "rdg_seq_secondary",
+                "mdg_seq_secondary",
+                "rdg_seq_secondary_live",
+                "mdg_seq_secondary_live",
+            ):
+                try:
+                    setattr(unit, stat, int(float(value)))
+                except (TypeError, ValueError) as e:
+                    from ..lib.log import warning
+                    warning(f"Error in bonus {stat}: {str(e)}")
+                i += 2
+                continue
+            if stat in (
+                "rdg_seq_interval",
+                "mdg_seq_interval",
+                "unpack_time",
+            ):
+                try:
+                    if str(value).endswith("%"):
+                        cur = float(getattr(unit, stat, 0) or 0)
+                        pct = float(str(value).rstrip("%")) / 100.0
+                        setattr(unit, stat, cur * (1.0 + pct))
+                    else:
+                        setattr(unit, stat, float(value))
+                except (TypeError, ValueError) as e:
+                    from ..lib.log import warning
+                    warning(f"Error in bonus {stat}: {str(e)}")
+                i += 2
+                continue
+            if stat in (
+                "rdg_seq_secondary_rdg",
+                "rdg_seq_secondary_mdg",
+                "mdg_seq_secondary_rdg",
+                "mdg_seq_secondary_mdg",
+            ):
+                try:
+                    from ..lib.nofloat import PRECISION
+                    setattr(unit, stat, int(float(value)) * PRECISION)
+                except (TypeError, ValueError) as e:
+                    from ..lib.log import warning
+                    warning(f"Error in bonus {stat}: {str(e)}")
+                i += 2
+                continue
+
+            # kill_gold_vs <type> <amount> — Chieftains
+            if stat == "kill_gold_vs":
+                if i + 2 >= len(bonus_args):
+                    break
+                victim = bonus_args[i + 1]
+                amount = bonus_args[i + 2]
+                try:
+                    cur = getattr(unit, "kill_gold_vs", None)
+                    if not isinstance(cur, dict):
+                        cur = {}
+                    cur[str(victim)] = int(float(amount))
+                    unit.kill_gold_vs = cur
+                except (TypeError, ValueError) as e:
+                    from ..lib.log import warning
+                    warning(f"Error in bonus kill_gold_vs: {str(e)}")
+                i += 3
+                continue
+
+            # gather_byproduct <deposit> <rate_per_sec> — Paper Money (gold = resource1)
+            if stat == "gather_byproduct":
+                if i + 2 >= len(bonus_args):
+                    break
+                deposit = bonus_args[i + 1]
+                rate = bonus_args[i + 2]
+                try:
+                    cur = getattr(unit, "gather_byproduct", None)
+                    if not isinstance(cur, dict):
+                        cur = {}
+                    cur[str(deposit)] = float(rate)
+                    unit.gather_byproduct = cur
+                except (TypeError, ValueError) as e:
+                    from ..lib.log import warning
+                    warning(f"Error in bonus gather_byproduct: {str(e)}")
+                i += 3
                 continue
                 
             # 处理gather_time（应用到玩家级别）
@@ -204,6 +309,50 @@ class AttributeEffectsMixin:
             # 处理普通数值属性
             cls._handle_general_attribute_bonus(unit, stat, value)
             i += 2
+
+    @classmethod
+    def effect_unit_line_upgrade(cls, unit, start_level, *args):
+        """Unlock a unit-line form for training and morph field units.
+
+        rules::
+
+            effect unit_line_upgrade man_at_arms
+
+        Generic: any type name; no engine hardcoding of civ/unit ids.
+        """
+        from ..world_build_rules import apply_unit_line_upgrade
+
+        if not args:
+            return
+        target = args[0]
+        player = getattr(unit, "player", None)
+        if player is None:
+            return
+        # upgrade_player may invoke this once per matching unit — run morph once.
+        flag = f"_line_upgrade_done_{target}"
+        if getattr(player, flag, False):
+            return
+        setattr(player, flag, True)
+        apply_unit_line_upgrade(player, target)
+
+    @classmethod
+    def _handle_vs_attribute_bonus(cls, unit, stat, target, value):
+        """Apply ``effect bonus mdg_vs building 2`` style bonuses."""
+        from ..lib.log import warning
+
+        try:
+            current = getattr(unit, stat, None)
+            if not isinstance(current, dict):
+                current = {}
+                setattr(unit, stat, current)
+            key = str(target)
+            try:
+                add = int(value) if not isinstance(value, float) else int(value)
+            except (TypeError, ValueError):
+                add = int(float(value))
+            current[key] = int(current.get(key, 0) or 0) + add
+        except Exception as e:
+            warning(f"Error in bonus {stat} {target}: {str(e)}")
 
     @classmethod
     def _baseline_can_train_dict(cls, unit):
@@ -345,6 +494,57 @@ class AttributeEffectsMixin:
             return min(len(args), i + 2)
 
     @classmethod
+    def _take_list_bonus_values(cls, bonus_args, i):
+        """Consume ``stat v1 [v2 …]`` starting at index ``i``.
+
+        Returns ``(values, next_index)``. Used for multi-slot bonuses such as
+        ``cost -50% 0`` and ``storage_bonus 0 1``.
+        """
+        from .effect_bonus_parse import _looks_numeric, is_effect_bonus_stat
+
+        values = [bonus_args[i + 1]]
+        j = i + 2
+        while (
+            j < len(bonus_args)
+            and _looks_numeric(bonus_args[j])
+            and not is_effect_bonus_stat(bonus_args[j])
+        ):
+            values.append(bonus_args[j])
+            j += 1
+        return values, j
+
+    @staticmethod
+    def _iter_bonus_value_parts(value):
+        """Normalize a bonus value to a list of per-slot tokens."""
+        if isinstance(value, (list, tuple)):
+            return [str(v) for v in value]
+        s = str(value).strip()
+        if " " in s:
+            return s.split()
+        return [s]
+
+    @classmethod
+    def _parse_cost_like_bonus_parts(cls, value):
+        """Parse cost/production_cost slots; mix of ``-50%`` and ``0`` allowed.
+
+        Returns ``(is_percent_mode, values)``. In percent mode, non-``%`` slots
+        contribute ``0.0`` (same as ``cost_effects.py``).
+        """
+        parts = cls._iter_bonus_value_parts(value)
+        if any(p.endswith("%") for p in parts):
+            out = []
+            for p in parts:
+                if p.endswith("%"):
+                    out.append(float(p.rstrip("%")) / 100.0)
+                else:
+                    out.append(0.0)
+            return True, out
+        out = []
+        for p in parts:
+            out.append(int(float(p) * PRECISION))
+        return False, out
+
+    @classmethod
     def _handle_storage_bonus(cls, unit, value):
         """处理storage_bonus属性"""
         if not hasattr(unit, 'storage_bonus') or not unit.storage_bonus:
@@ -352,15 +552,10 @@ class AttributeEffectsMixin:
             unit.storage_bonus = [0] * MAX_NB_OF_RESOURCE_TYPES
         
         try:
-            # 解析参数值
+            # 解析参数值（支持 list 或多空格分隔）
             bonus_values = []
-            if ' ' in str(value):
-                # 多个值用空格分隔
-                for val in str(value).split():
-                    bonus_values.append(int(float(val)))
-            else:
-                # 单个值
-                bonus_values = [int(float(value))]
+            for val in cls._iter_bonus_value_parts(value):
+                bonus_values.append(int(float(val)))
             
             # 确保长度不超过资源类型数量
             while len(bonus_values) < MAX_NB_OF_RESOURCE_TYPES:
@@ -382,30 +577,7 @@ class AttributeEffectsMixin:
     def _handle_cost_bonus(cls, unit, value):
         """处理cost属性加成"""
         try:
-            # 解析参数值
-            cost_values = []
-            is_percent = False
-            
-            # 检查是否是百分比表示
-            if str(value).endswith('%'):
-                is_percent = True
-                val_str = str(value).rstrip('%')
-                if ' ' in val_str:
-                    # 多个百分比值用空格分隔
-                    for val in val_str.split():
-                        cost_values.append(float(val) / 100.0)
-                else:
-                    # 单个百分比值
-                    cost_values = [float(val_str) / 100.0]
-            else:
-                if ' ' in str(value):
-                    # 多个值用空格分隔
-                    for val in str(value).split():
-                        # 乘以PRECISION，确保精度统一
-                        cost_values.append(int(float(val) * PRECISION))
-                else:
-                    # 单个值，乘以PRECISION
-                    cost_values = [int(float(value) * PRECISION)]
+            is_percent, cost_values = cls._parse_cost_like_bonus_parts(value)
             
             # 确保长度不超过资源类型数量
             while len(cost_values) < MAX_NB_OF_RESOURCE_TYPES:
@@ -493,30 +665,7 @@ class AttributeEffectsMixin:
     def _handle_production_cost_bonus(cls, unit, value):
         """处理production_cost属性加成"""
         try:
-            # 解析参数值
-            cost_values = []
-            is_percent = False
-            
-            # 检查是否是百分比表示
-            if str(value).endswith('%'):
-                is_percent = True
-                val_str = str(value).rstrip('%')
-                if ' ' in val_str:
-                    # 多个百分比值用空格分隔
-                    for val in val_str.split():
-                        cost_values.append(float(val) / 100.0)
-                else:
-                    # 单个百分比值
-                    cost_values = [float(val_str) / 100.0]
-            else:
-                if ' ' in str(value):
-                    # 多个值用空格分隔
-                    for val in str(value).split():
-                        # 乘以PRECISION，确保精度统一
-                        cost_values.append(int(float(val) * PRECISION))
-                else:
-                    # 单个值，乘以PRECISION
-                    cost_values = [int(float(value) * PRECISION)]
+            is_percent, cost_values = cls._parse_cost_like_bonus_parts(value)
             
             # 确保长度不超过资源类型数量
             while len(cost_values) < MAX_NB_OF_RESOURCE_TYPES:
@@ -539,6 +688,22 @@ class AttributeEffectsMixin:
         except (ValueError, IndexError) as e:
             from ..lib.log import warning
             warning(f"Error in bonus production_cost: {str(e)}")
+
+    @staticmethod
+    def _combine_gather_bonus_value(old, new):
+        """Stack gather bonuses for ints (add). Percents overwrite.
+
+        Percent gather techs are applied once per villager with ``can_use_tech``;
+        multiplying would N-stack incorrectly. Each tech should set the *cumulative*
+        percent (e.g. second wood upgrade writes ``-31%``, not another ``-17%``).
+        """
+        if old is None:
+            return new
+        old_pct = isinstance(old, str) and str(old).endswith("%")
+        new_pct = isinstance(new, str) and str(new).endswith("%")
+        if old_pct or new_pct:
+            return new
+        return int(float(old)) + int(float(new))
 
     @classmethod
     def _handle_gather_time_bonus(cls, unit, stat, value):
@@ -563,7 +728,10 @@ class AttributeEffectsMixin:
                     # 普通数值格式
                     value_to_store = int(float(value))
                 
-                player.gather_time_bonus[resource_identifier] = value_to_store
+                old = player.gather_time_bonus.get(resource_identifier)
+                player.gather_time_bonus[resource_identifier] = cls._combine_gather_bonus_value(
+                    old, value_to_store
+                )
                 
                 from ..lib.log import debug
                 debug(f"Applied gather_time bonus {value_to_store} to {resource_identifier} for player {player.number}")
@@ -591,13 +759,19 @@ class AttributeEffectsMixin:
                         )
                         if len(gather_perms) == 1:
                             gather_identifier = gather_perms[0]
-                            player.gather_time_bonus[gather_identifier] = value_to_store
+                            old = player.gather_time_bonus.get(gather_identifier)
+                            player.gather_time_bonus[gather_identifier] = (
+                                cls._combine_gather_bonus_value(old, value_to_store)
+                            )
                             
                             from ..lib.log import debug
                             debug(f"Applied gather_time bonus {value_to_store} to {gather_identifier} for player {player.number}")
                         else:
                             # 对所有可采集类型设置相同的时间增量
-                            player.gather_time_bonus["all"] = value_to_store
+                            old = player.gather_time_bonus.get("all")
+                            player.gather_time_bonus["all"] = cls._combine_gather_bonus_value(
+                                old, value_to_store
+                            )
                             
                             from ..lib.log import debug
                             debug(f"Applied gather_time bonus {value_to_store} to all for player {player.number}")
@@ -621,7 +795,10 @@ class AttributeEffectsMixin:
                                 value_to_store = int(float(resource_value))
                             
                             # 直接使用resource_identifier应用到玩家级别
-                            player.gather_time_bonus[resource_identifier] = value_to_store
+                            old = player.gather_time_bonus.get(resource_identifier)
+                            player.gather_time_bonus[resource_identifier] = (
+                                cls._combine_gather_bonus_value(old, value_to_store)
+                            )
                             
                             from ..lib.log import debug
                             debug(f"Applied gather_time bonus {value_to_store} to {resource_identifier} for player {player.number}")
@@ -654,7 +831,10 @@ class AttributeEffectsMixin:
                     # 普通数值格式
                     value_to_store = int(float(value))
                 
-                player.gather_qty_bonus[resource_identifier] = value_to_store
+                old = player.gather_qty_bonus.get(resource_identifier)
+                player.gather_qty_bonus[resource_identifier] = cls._combine_gather_bonus_value(
+                    old, value_to_store
+                )
                 
                 from ..lib.log import debug
                 debug(f"Applied gather_qty bonus {value_to_store} to {resource_identifier} for player {player.number}")
@@ -682,13 +862,19 @@ class AttributeEffectsMixin:
                         )
                         if len(gather_perms) == 1:
                             gather_identifier = gather_perms[0]
-                            player.gather_qty_bonus[gather_identifier] = value_to_store
+                            old = player.gather_qty_bonus.get(gather_identifier)
+                            player.gather_qty_bonus[gather_identifier] = (
+                                cls._combine_gather_bonus_value(old, value_to_store)
+                            )
                             
                             from ..lib.log import debug
                             debug(f"Applied gather_qty bonus {value_to_store} to {gather_identifier} for player {player.number}")
                         else:
                             # 对所有可采集类型设置相同的数量增量
-                            player.gather_qty_bonus["all"] = value_to_store
+                            old = player.gather_qty_bonus.get("all")
+                            player.gather_qty_bonus["all"] = cls._combine_gather_bonus_value(
+                                old, value_to_store
+                            )
                             
                             from ..lib.log import debug
                             debug(f"Applied gather_qty bonus {value_to_store} to all for player {player.number}")
@@ -712,7 +898,10 @@ class AttributeEffectsMixin:
                                 value_to_store = int(float(resource_value))
                             
                             # 直接使用resource_identifier应用到玩家级别
-                            player.gather_qty_bonus[resource_identifier] = value_to_store
+                            old = player.gather_qty_bonus.get(resource_identifier)
+                            player.gather_qty_bonus[resource_identifier] = (
+                                cls._combine_gather_bonus_value(old, value_to_store)
+                            )
                             
                             from ..lib.log import debug
                             debug(f"Applied gather_qty bonus {value_to_store} to {resource_identifier} for player {player.number}")
@@ -880,40 +1069,109 @@ class AttributeEffectsMixin:
 
     @classmethod
     def _handle_general_attribute_bonus(cls, unit, stat, value):
-        """处理普通数值属性加成"""
-        from ..lib.log import debug
+        """处理普通数值属性加成
+
+        ``hp`` vs ``hp_max`` (effect bonus):
+        - ``hp_max``: only raises maximum HP (current HP unchanged).
+        - ``hp``: raises current HP *and* ``hp_max`` by the same amount
+          (flat delta, or the absolute growth from a percent of ``hp_max``).
+        """
+        from ..lib.log import debug, warning
         debug(f"Processing general attribute '{stat}' with value: {value}")
         
         # 检查是否是采集相关属性，如果是则不在这里处理
         if stat in ('gather_time', 'gather_qty') or stat.startswith('gather_time_') or stat.startswith('gather_qty_'):
-            from ..lib.log import warning
             warning(f"Gather-related attribute '{stat}' should be handled specially, skipping general processing")
+            return
+
+        if stat == "hp":
+            cls._handle_hp_bonus(unit, value)
             return
         
         current = getattr(unit, stat, 0)
         try:
-            # 检查是否是百分比格式，如果是则跳过数值转换
+            # Percent: multiply current numeric value (never store "10%" on combat stats).
             if isinstance(value, str) and value.endswith('%'):
-                # 百分比格式，直接设置
-                setattr(unit, stat, value)
-            elif stat in cls.integer_stats:  # 必须使用整数的属性
+                try:
+                    percent = float(str(value).rstrip('%')) / 100.0
+                except (TypeError, ValueError):
+                    warning(f"Cannot parse percent '{value}' for attribute '{stat}' - skipping")
+                    return
+                try:
+                    if isinstance(current, str) and str(current).endswith('%'):
+                        warning(
+                            f"Attribute '{stat}' already holds percent '{current}' "
+                            f"on {getattr(unit, 'type_name', unit)}; skipping '{value}'"
+                        )
+                        return
+                    current_num = float(current or 0)
+                except (TypeError, ValueError):
+                    warning(
+                        f"Cannot apply percent '{value}' to non-numeric '{stat}'="
+                        f"{current!r} on {getattr(unit, 'type_name', unit)}"
+                    )
+                    return
+                new_value = current_num * (1.0 + percent)
+                if stat in cls.integer_stats:
+                    new_value = int(new_value)
+                setattr(unit, stat, new_value)
+                # hp_max percent: max only (no current HP change).
+                return
+            if stat in cls.integer_stats:  # 必须使用整数的属性
                 setattr(unit, stat, current + int(float(value)))
             else:
                 value_float = float(value)
                 setattr(unit, stat, current + value_float)
         except ValueError:
             try:
-                # 如果转换失败，检查是否是百分比格式
-                if isinstance(value, str) and value.endswith('%'):
-                    # 百分比格式，直接设置
-                    setattr(unit, stat, value)
-                else:
-                    # 尝试使用int
-                    setattr(unit, stat, current + int(value))
+                setattr(unit, stat, current + int(value))
             except ValueError:
-                # 如果仍然失败，记录警告并跳过
-                from ..lib.log import warning
                 warning(f"Cannot convert value '{value}' for attribute '{stat}' - skipping")
+
+    @classmethod
+    def _handle_hp_bonus(cls, unit, value):
+        """``effect bonus hp …``: grow ``hp_max`` and current ``hp`` together."""
+        from ..lib.log import warning
+
+        try:
+            old_max = float(getattr(unit, "hp_max", 0) or 0)
+            old_hp = float(getattr(unit, "hp", 0) or 0)
+        except (TypeError, ValueError):
+            warning(
+                f"Cannot apply hp bonus to non-numeric hp/hp_max on "
+                f"{getattr(unit, 'type_name', unit)}"
+            )
+            return
+
+        as_int = "hp" in cls.integer_stats or "hp_max" in cls.integer_stats
+
+        if isinstance(value, str) and value.endswith("%"):
+            try:
+                percent = float(str(value).rstrip("%")) / 100.0
+            except (TypeError, ValueError):
+                warning(f"Cannot parse percent '{value}' for hp - skipping")
+                return
+            if old_max <= 0:
+                return
+            delta = old_max * percent
+        else:
+            try:
+                delta = float(value)
+            except (TypeError, ValueError):
+                warning(f"Cannot convert value '{value}' for hp - skipping")
+                return
+
+        if as_int:
+            delta = int(delta)
+            new_max = int(old_max + delta)
+            new_hp = int(old_hp + delta)
+        else:
+            new_max = old_max + delta
+            new_hp = old_hp + delta
+        if new_hp > new_max:
+            new_hp = new_max
+        unit.hp_max = new_max
+        unit.hp = new_hp
 
     @classmethod
     def effect_apply_bonus(cls, unit, start_level, *stats):

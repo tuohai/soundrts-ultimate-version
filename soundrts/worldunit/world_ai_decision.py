@@ -78,6 +78,9 @@ class CreatureAIDecision(Entity):
         self._herd_leader = None
         self.notify("flee")
         self.take_order(["go", best.other_side.place.id], imperative=True)
+        # Consume the hit trigger. Otherwise last_attacker sticks forever and
+        # flee_on_hit re-flees every decide() (looks like permanent defensive retreat).
+        self.last_attacker = None
         return True
 
     @staticmethod
@@ -702,6 +705,14 @@ class CreatureAIDecision(Entity):
     def can_attack(self, other):  # without moving to another square
         if other is None or other.place is None or other.hp <= 0:
             return False
+        # Protoss (etc.): unpowered buildings neither train nor shoot
+        if getattr(self, "is_a_building", False) and getattr(
+            self, "loses_power_without_field", 0
+        ):
+            from ..world_build_rules import building_can_operate
+
+            if not building_can_operate(self):
+                return False
         if not self.is_an_enemy(other):
             return False
         # 进攻/防御/追击等 AI 不主动攻击中立者；仅强制攻击命令例外

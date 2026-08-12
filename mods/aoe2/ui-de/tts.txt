@@ -1,0 +1,288 @@
+; coding: utf-8
+; Age of Empires II DE — Deutsch (offizielle DE-Strings via aoe2techtree)
+
+
+8000 Age of Empires 2 Definitive Edition
+8001 Briten
+8002 Franken
+8003 Chinesen
+8004 Mongolen
+8005 Byzantiner
+8006 Japaner
+8007 Teutonen
+8008 Wikinger
+8009 Vietnamesen
+8011 Portugiesen
+8012 Azteken
+
+8070 Samurai
+8071 Elite-Samurai
+8072 Deutsch-ritter
+8073 Elite-Deutschritter
+8074 Berserker
+8075 Elite-Berserker
+8076 Rattanschütze
+8077 Elite-Rattanschütze
+8078 Orgelkanone
+8079 Elite-Orgelkanone
+
+8080 Yasama
+8081 Kataparuto
+8082 Panzerung
+8083 Zinnen
+8084 Stammesführer
+8085 Bogsveigar
+8086 Chatras
+8087 Papiergeld
+8088 Weltumsegelung
+8089 Arkebuse
+8090 Jaguarkrieger
+8091 Elite-Jaguarkrieger
+8092 Atlatl
+8093 Blumenkrieg
+
+
+8010 Langbogen-schütze
+8015 Elite-Lang-bogenschütze
+8020 Axtwerfer
+8025 Elite-Axtwerfer
+8030 Chu Ko Nu
+8031 Dorfbewohner
+8035 Elite-Chu Ko Nu
+8040 Mangudai
+8041 Dorfbewohner
+8045 Elite-Mangudai
+8050 Kataphrakt
+8055 Elite-Kataphrakt
+
+8060 Freisassen
+8061 Bartaxt
+8062 Rittertum
+8063 Raketentechnik
+8064 Drill
+8065 Logistik
+8066 Warwolf
+8067 Große Mauer
+8068 Nomaden
+8069 Griechisches Feuer
+
+8100 Nahrung
+8101 Holz
+8102 Gold
+8103 Stein
+
+8110 Schießstand
+8111 Universität
+8112 Kloster
+8113 Burg
+8114 Mönch
+8115 Missionar
+8300 Dorfzentrum
+8301 Kaserne
+8302 Stall
+8303 Schmiede
+8304 Haus
+8305 Feld
+8306 Holzfäller-lager
+8307 Waffen-schmiede
+8308 Hafen
+8309 Steinwall
+8310 Tor
+8325 Palisadenwall
+8326 Palisadentor
+8311 Beobachtungs-turm
+8312 Wachturm
+8313 Hauptturm
+8327 Kanonenturm
+8328 Befestigter Wall
+8329 Befestigtes Tor
+8319 Außenposten
+8314 Mühle
+8315 Bergarbeiter-lager
+8316 Marktplatz
+8317 Weltwunder
+8318 Steinmine
+8320 Beerenstrauch
+8321 Hirsch
+8322 Schaf
+8323 Wildschwein
+8324 Tierkadaver
+
+8120 Milizsoldat
+8121 Schwertkämpfer
+8122 Langschwert-kämpfer
+8123 Zweihand-schwertkämpf.
+8124 Elitekämpfer
+8125 Speerkämpfer
+8126 Pikenier
+8127 Hellebardier
+
+8130 Bogenschütze
+8131 Armbrustschütze
+8132 Arbalesten-schütze
+8133 Plänkler
+8134 Elite-Plänkler
+8137 Imperialer Plänkler
+8135 Berittener Bogenschütze
+8136 Schwerer berittener Bogenschütze
+
+8140 Berittener Späher
+8141 Leichte Kavallerie
+8142 Husar
+8143 Ritter
+8144 Chevalier
+8145 Paladin
+8146 Kamelreiter
+8147 Schwerer Kamelreiter
+8148 Imperialer Kamelreiter
+8160 Elefantenreiter
+8161 Elite-Elefantenreiter
+8162 Steppenreiter
+8163 Elite-Steppenreiter
+
+8150 Rammbock
+8151 Mange
+8152 Onager
+8153 Skorpion
+8154 Tribok
+8155 Sturmbock
+8156 Belagerungs-ramme
+8157 Belagerungs-onager
+8158 Schwerer Skorpion
+8159 Dorfbewohner
+8170 Belagerungs-kanone
+8171 Petardier
+8172 Belagerungs-turm
+8173 Handkanonier
+8174 Adlerspäher
+8175 Adlerkrieger
+8176 Elite-Adlerkrieger
+8177 Kriegselefant
+8178 Elite-Kriegselefant
+8179 Gepanzerter Elefant
+8180 Elite-Panzerelefant
+8181 Elefantenbogenschütze
+8182 Elite-Elefanten-bogenschütze
+8183 Condottiere
+
+8400 Fischkutter
+8401 Transport-schiff
+8402 Galeere
+8403 Kriegsgaleere
+8404 Galeone
+8405 Feuer-Galeere
+8406 Feuerschiff
+8407 Schnelles Feuerschiff
+8408 Sprengfloß
+8409 Brander
+8410 Schwere Demolitionseinheit
+8411 Kanonen-schiff
+8412 Elite-Kanonenschiff
+8413 Schildkröten-schiff
+8414 Elite-Schild-krötenschiff
+8415 Langschiff
+8416 Elite-Langschiff
+8417 Karavelle
+8418 Elite-Karavelle
+8419 Dromone
+8420 Handelskogge
+8421 Reuse
+8422 Stellnetze
+8423 Schiffbauer
+8424 Kielholen
+8425 Trockendock
+
+8200 Schmiedekunst
+8201 Eisen gießen
+8202 Schmelz ofen
+8203 Schuppen-panzer
+8204 Ketten panzer
+8205 Platten panzer
+8206 Schuppenpz. für Pferde
+8207 Kettenpanzer für Pferde
+8208 Plattenpanzer für Pferde
+8209 Befiederung
+8210 Bodkin pfeil
+8211 Armschutz
+8212 Gefütt. Bogen-schützenrüst.
+8213 Lederpanzer f. Bogenschütz.
+8214 Kettenhemd f. Bogenschütz.
+
+8220 Zuchtauswahl
+8221 Pferdehaltung
+8222 Fährtenlesen
+8223 Knappen
+8224 Daumen-ring
+8225 Ballistik
+8226 Chemie
+8227 Webstuhl
+8228 Schubkarre
+8229 Handkarren
+8230 Doppelschnei-dige Axt
+8231 Bogensäge
+8232 Zwei-Mann-Säge
+8233 Gold abbau
+8234 Goldberg bau
+8235 Brandstiftung
+8236 Gambesons
+8237 Parthisches Manöver
+8238 Belagerungs-ingenieure
+8239 Wehrpflicht
+8250 Mord löcher
+8251 Maurer-handwerk
+8252 Architektur
+8253 Glühendes Geschoss
+8254 Bau kran
+8255 Brust-geschirr
+8256 Schwerer Pflug
+8257 Dreifelder-wirtschaft
+8270 Wehrgänge
+8271 Sappeure
+8272 Spione/Verrat
+8273 Karawane
+8274 Gilden
+8275 Münzprägung
+8276 Bankwesen
+8277 Marktkarren
+8278 Feitoria
+8279 Kaufen
+8280 Verkaufen
+8281 Tribut
+8282 Handel
+8240 Stadt wache
+8241 Stadt-patrouille
+8242 Vorräte
+8243 Stein abbau
+8244 Steinberg bau
+
+8260 Erlösung
+8261 Sühne
+8262 Kräuter-medizin
+8263 Ketzerei
+8264 Heiligkeit
+8265 Eifer
+8266 Glauben
+8267 Illumination
+8268 Block druck
+8269 Theokratie
+
+; Ages (do not reuse 8250–8257 university/mill tech IDs)
+8290 Dunkle Zeit
+8291 Feudalzeit
+8292 Ritterzeit
+8293 Imperialzeit
+
+; Unit category roots (armor / is_a / passenger attack filters)
+8500 Infanterie
+8501 Kavallerie
+8502 Bogenschützen
+8503 Belagerungseinheiten
+8504 Einheiten mit Spezialfähigkeit
+
+; Tech effect blurbs (engine-handled techs with no numeric bonus)
+8510 Projektile führen und treffen bewegte Ziele
+8511 Mönche können Belagerungswaffen und die meisten Gebäude bekehren
+8512 Mönche können feindliche Mönche bekehren
+8513 Eure Einheiten sterben statt zum Feind überzulaufen, wenn sie bekehrt werden
+8514 Feindliche Bekehrungen gegen euch dauern deutlich länger
+8515 Wenn mehrere Mönche gemeinsam bekehren, ruht nur der Erfolgreiche

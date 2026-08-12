@@ -11,6 +11,8 @@
 分组键 = 去掉 ``_buildings`` 后缀（``castle_age_buildings`` → ``castle_age``）。
 成员 = 所有 ``class building`` 且其*简单* requirements 中包含该键的类型
 （例如马厩写 ``requirements castle_age`` 即进入 ``castle_age_buildings``）。
+若某建筑 ``is_a`` 指向同组另一建筑（文明壳如 ``aztec_archery is_a archery_range``），
+则只保留父类型，避免一座壳建筑被 ``has`` 计成两种。
 
 请写 ``*_buildings`` 后缀，避免与 phase 名直接混淆。
 子句参数不会触发 ``units_auto_upgrade``。
@@ -85,7 +87,12 @@ def has_phase_as_simple_requirement(tokens: Optional[Sequence], phase_name: str)
 
 
 def buildings_of_group(group_name: str) -> List[str]:
-    """按分组名收集建筑：简单 requirements 含该键的 building（稳定排序）。"""
+    """按分组名收集建筑：简单 requirements 含该键的 building（稳定排序）。
+
+    Civ shells (``aztec_archery is_a archery_range``) are omitted when their
+    ``is_a`` parent is also in the group. Otherwise owning one shell makes
+    ``player.has`` true for both names and ``any_buildings 2`` unlocks early.
+    """
     from . import definitions
 
     rules = definitions.rules
@@ -105,9 +112,17 @@ def buildings_of_group(group_name: str) -> List[str]:
         reqs = getattr(cls, "requirements", ()) or ()
         if key in simple_requirement_names(reqs):
             names.append(name)
-    names.sort()
-    _buildings_of_group_cache[cache_key] = tuple(names)
-    return list(names)
+    name_set = set(names)
+    filtered = []
+    for name in names:
+        cls = rules.unit_class(name)
+        parents = getattr(cls, "is_a", ()) or ()
+        if any(p in name_set for p in parents):
+            continue
+        filtered.append(name)
+    filtered.sort()
+    _buildings_of_group_cache[cache_key] = tuple(filtered)
+    return list(filtered)
 
 
 def buildings_of_phase(phase_name: str) -> List[str]:
@@ -143,9 +158,20 @@ def requirements_satisfied(player, tokens: Optional[Sequence]) -> bool:
 def missing_requirement_clauses(
     player, tokens: Optional[Sequence]
 ) -> List[RequirementClause]:
-    return [
-        c for c in parse_requirement_clauses(tokens) if not clause_is_satisfied(player, c)
-    ]
+    """未满足的子句；``any_buildings`` 的 count 改为还差的座数（便于播报）。"""
+    result: List[RequirementClause] = []
+    for clause in parse_requirement_clauses(tokens):
+        if clause_is_satisfied(player, clause):
+            continue
+        if clause[0] == ANY_BUILDINGS:
+            _, count, group = clause
+            owned = count_owned_buildings_of_group(player, group)
+            remaining = max(0, int(count) - int(owned))
+            if remaining > 0:
+                result.append((ANY_BUILDINGS, remaining, group))
+            continue
+        result.append(clause)
+    return result
 
 
 def format_clause_titles(clause: RequirementClause) -> list:
@@ -201,17 +227,29 @@ def format_belonging_phase_titles(model) -> list:
 
 
 def iter_unmet_building_candidates(player, group_name: str) -> Iterable[str]:
-    """AI 用：尚未拥有的该分组建筑，按总成本升序。"""
+    """AI 用：尚未拥有的该分组建筑，按总成本升序。
+
+    Exit-only walls/gates are deferred: they are often the cheapest feudal/castle
+    members, but AI meadow targeting makes them spam ``cannot_build_here``.
+    """
     from . import definitions
 
     rules = definitions.rules
-    missing = []
+    meadow = []
+    exits_only = []
     for name in buildings_of_group(group_name):
         if player.has(name):
             continue
         cls = rules.unit_class(name)
         cost = sum(getattr(cls, "cost", ()) or ()) if cls is not None else 0
-        missing.append((cost, name))
-    missing.sort()
-    for _, name in missing:
+        if cls is not None and (
+            getattr(cls, "is_buildable_on_exits_only", 0)
+            or getattr(cls, "is_a_gate", 0)
+        ):
+            exits_only.append((cost, name))
+        else:
+            meadow.append((cost, name))
+    meadow.sort()
+    exits_only.sort()
+    for _, name in meadow + exits_only:
         yield name

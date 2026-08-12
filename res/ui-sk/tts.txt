@@ -708,6 +708,8 @@
 4794	maximálna mana
 4795	čas zberu
 4796	množstvo zberu
+5412	rýchlosť zberu
+5415	nosnosť
 4797	čas výroby
 4798	množstvo výroby
 4799	cena
@@ -741,6 +743,9 @@
 4827	môže zbierať
 4828	čas zberu
 4829	množstvo zberu
+5413	rýchlosť zberu
+5414	za sekundu
+5416	nosnosť
 4830	môže opravovať
 4831	pozemný cieľ
 4832	vzdušný cieľ

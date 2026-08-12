@@ -79,3 +79,50 @@ def test_generic_shift_still_matches_either_side():
     assert b.process_keydown_event(left)
     assert b.process_keydown_event(right)
     assert client.calls == [("device", ("1",)), ("device", ("1",))]
+
+
+def test_commented_lshift_c_does_not_fire_when_only_rshift_bound():
+    """If LSHIFT C is omitted (commented out), left Shift+C must not run."""
+    client = _Stub()
+    b = Bindings()
+    b.load(
+        "RSHIFT C: voice_lib_copy secondary\n"
+        "RSHIFT B: voice_lib_append_copy secondary\n",
+        client,
+    )
+    left_c = pygame.event.Event(
+        pygame.KEYDOWN, key=pygame.K_c, mod=KMOD_LSHIFT, scancode=0
+    )
+    left_b = pygame.event.Event(
+        pygame.KEYDOWN, key=pygame.K_b, mod=KMOD_LSHIFT, scancode=0
+    )
+    right_c = pygame.event.Event(
+        pygame.KEYDOWN, key=pygame.K_c, mod=KMOD_RSHIFT, scancode=0
+    )
+    assert not b.process_keydown_event(left_c)
+    assert not b.process_keydown_event(left_b)
+    assert b.process_keydown_event(right_c)
+    assert client.calls == [("copy", ("secondary",))]
+
+
+def test_handle_hotkey_still_supports_menu_shift_c_b(monkeypatch):
+    """Menus keep hardcoded Shift+C/B via handle_hotkey; game uses bindings."""
+    from soundrts.lib import voice_libs
+
+    calls = []
+
+    def _fake_copy(which, *, append=False):
+        calls.append((which, append))
+        return True
+
+    monkeypatch.setattr(voice_libs, "copy_voice_info", _fake_copy)
+    assert voice_libs.handle_hotkey(pygame.K_c, KMOD_LSHIFT)
+    assert voice_libs.handle_hotkey(pygame.K_c, KMOD_RSHIFT)
+    assert voice_libs.handle_hotkey(pygame.K_b, KMOD_LSHIFT)
+    assert voice_libs.handle_hotkey(pygame.K_b, KMOD_RSHIFT)
+    assert calls == [
+        (voice_libs.PRIMARY, False),
+        (voice_libs.SECONDARY, False),
+        (voice_libs.PRIMARY, True),
+        (voice_libs.SECONDARY, True),
+    ]

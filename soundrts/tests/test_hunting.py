@@ -91,6 +91,15 @@ def test_flee_from_attacker_moves_away():
     assert wad.CreatureAIDecision._flee_from_attacker(animal) is True
     assert animal.orders_taken[0][0] == ["go", "far"]
     assert animal.orders_taken[0][1] is True
+    assert animal.last_attacker is None
+
+
+def test_flee_on_hit_clears_attacker_so_no_perpetual_flee():
+    """One hit → one flee; sticky last_attacker must not re-flee every decide."""
+    src = Path("soundrts/worldunit/world_ai_decision.py").read_text(encoding="utf-8")
+    assert "self.last_attacker = None" in src
+    block = src[src.find("def _flee_from_attacker") : src.find("def _is_wildlife_unit")]
+    assert "last_attacker = None" in block
 
 
 def test_rules_define_hunting_units():

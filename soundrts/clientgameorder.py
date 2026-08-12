@@ -45,7 +45,12 @@ class OrderTypeView:  # future order
         self.cls = ORDERS_DICT[o[0]]
         if len(o) > 1:
             self.type = o[1]
-            self.requirements = rules.unit_class(self.type).requirements
+            # Args may be commodities (market_buy wood) or other non-unit tokens;
+            # only unit/upgrade classes expose ``requirements``.
+            type_cls = rules.unit_class(self.type)
+            self.requirements = list(getattr(type_cls, "requirements", None) or ())
+        else:
+            self.requirements = []
 
         # 创建命令对象以便获取类型和成本信息
         order_obj = self.cls(unit, [self.type])
@@ -138,10 +143,18 @@ class OrderTypeView:  # future order
             self.population_cost = modified_population_cost
         else:
             # 非训练命令或单个单位训练，使用标准逻辑
-            self.single_cost = order_obj.cost
-            self.single_population_cost = order_obj.population_cost
-            self.cost = self.single_cost
-            self.population_cost = self.single_population_cost
+            # ComplexOrder with unresolved type (None) has no cost accessors.
+            if getattr(order_obj, "type", None) is None and self.type is not None:
+                warning("order %r: unknown type %r", self.cls.keyword, self.type)
+                self.single_cost = ()
+                self.single_population_cost = 0
+                self.cost = ()
+                self.population_cost = 0
+            else:
+                self.single_cost = order_obj.cost
+                self.single_population_cost = order_obj.population_cost
+                self.cost = self.single_cost
+                self.population_cost = self.single_population_cost
             
         self.nb_args = order_obj.nb_args
 

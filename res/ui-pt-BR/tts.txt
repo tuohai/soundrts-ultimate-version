@@ -708,6 +708,8 @@
 4794	mana máxima
 4795	tempo de coleta
 4796	quantidade coletada
+5412	taxa de coleta
+5415	capacidade de carga
 4797	tempo de produção
 4798	quantidade produzida
 4799	custo
@@ -741,6 +743,9 @@
 4827	pode coletar
 4828	tempo de coleta
 4829	quantidade coletada
+5413	taxa de coleta
+5414	por segundo
+5416	capacidade de carga
 4830	pode reparar
 4831	alvo terrestre
 4832	alvo aéreo

@@ -529,10 +529,12 @@ def test_creep_spread_squares_custom_rate():
     assert has_marked_build_field_on_square(world, c1, player, "creep")
 
 
-def test_pylon_unpowered_when_isolated():
+def test_pylon_provides_psi_without_needing_psi():
+    """SC: pylons create psi and may stand alone; they do not require psi themselves."""
     from soundrts.world_build_rules import (
         building_is_powered,
         register_build_field_provider,
+        requires_build_field_type,
     )
 
     class _Sq:
@@ -548,11 +550,11 @@ def test_pylon_unpowered_when_isolated():
         id=3,
         type_name="pylon",
         provides_build_field="psi",
-        requires_build_field="psi",
+        requires_build_field="0",
         build_field_radius=6,
         build_field_persists=0,
         build_field_spreads=0,
-        loses_power_without_field=1,
+        loses_power_without_field=0,
         player=player,
         place=b1,
         world=world,
@@ -561,16 +563,18 @@ def test_pylon_unpowered_when_isolated():
         y=0,
     )
     world.objects[3] = pylon
-    assert not building_is_powered(pylon)
-    nexus = types.SimpleNamespace(
-        id=4,
-        type_name="nexus",
-        provides_build_field="psi",
-        requires_build_field="0",
-        build_field_radius=8,
+    assert requires_build_field_type(pylon) is None
+    assert building_is_powered(pylon)
+    register_build_field_provider(pylon)
+    gateway = types.SimpleNamespace(
+        id=5,
+        type_name="gateway",
+        provides_build_field="",
+        requires_build_field="psi",
+        build_field_radius=0,
         build_field_persists=0,
         build_field_spreads=0,
-        loses_power_without_field=0,
+        loses_power_without_field=1,
         player=player,
         place=a1,
         world=world,
@@ -578,9 +582,8 @@ def test_pylon_unpowered_when_isolated():
         x=0,
         y=0,
     )
-    world.objects[4] = nexus
-    register_build_field_provider(nexus)
-    assert building_is_powered(pylon)
+    world.objects[5] = gateway
+    assert building_is_powered(gateway)
 
 
 def test_worker_build_modes():
@@ -1028,9 +1031,14 @@ def test_starcraft_mod_rules_parse():
     assert probe.build_mode == "place_and_leave"
     assert drone.build_mode == "sacrifice"
     assert pylon.self_constructs == 1
+    assert requires_build_field_type(pylon) is None
     assert protoss_building.self_constructs == 1
     assert gateway.self_constructs == 1
     assert photon_cannon.self_constructs == 1
+    assert requires_build_field_type(photon_cannon) == "psi"
+    assert photon_cannon.loses_power_without_field
+    extractor = r.unit_class("extractor")
+    assert requires_build_field_type(extractor) is None
     assert tech_lab.is_addon == 1
     assert "barracks" in tech_lab.addon_host_types
     flying_barracks = r.unit_class("flying_barracks")
@@ -1071,13 +1079,21 @@ def test_starcraft_mod_rules_parse():
     assert "protoss_building" in assimilator.is_a
     assert "sc_gas_building" in assimilator.is_a
     assert assimilator.is_gather == 1
-    assert assimilator.auto_production == 1
+    assert assimilator.auto_production == 0
     assert assimilator.auto_cultivate == 0
     assert assimilator.is_an_extractor == 1
     assert assimilator.depleted_production_qty == 2
     assert assimilator.production_qty == 8
+    assert assimilator.extraction_qty == 8
+    assert int(getattr(assimilator, "gather_slots", 0) or 0) == 3
+    from soundrts.lib.nofloat import PRECISION
+
+    assert int(assimilator.cost[0]) in (10, 10 * PRECISION)
     geyser = r.unit_class("geyser")
     assert geyser.deposit_volume == 5000
+    # Assimilator must not require psi (SC1/SC2)
+    rbf = getattr(assimilator, "requires_build_field", 0)
+    assert rbf in (0, "0", None, "", ()) or rbf == 0
     assert "mineral_field" in probe.can_gather_deposit
     assert "assimilator" in probe.can_gather_building
     assert "geyser" not in probe.can_gather_deposit

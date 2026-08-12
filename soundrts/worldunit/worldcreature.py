@@ -420,6 +420,29 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
                         except (ValueError, IndexError):
                             pass  # 忽略无效的资源数据
 
+            # AoE2 Chieftains etc.: gold on the killer when matching victim types
+            kill_gold = getattr(attacker, "kill_gold_vs", None)
+            if isinstance(kill_gold, dict) and kill_gold:
+                gold_amt = 0
+                names = set()
+                tn = getattr(self, "type_name", None)
+                if tn:
+                    names.add(tn)
+                for x in getattr(self, "expanded_is_a", ()) or ():
+                    names.add(x)
+                for key, amt in kill_gold.items():
+                    if key in names:
+                        try:
+                            gold_amt = max(gold_amt, int(amt))
+                        except (TypeError, ValueError):
+                            pass
+                if gold_amt > 0:
+                    attacker.player.store("resource1", gold_amt * 1000)
+                    try:
+                        attacker.player.send_event(attacker, "resource1_reward")
+                    except Exception:
+                        pass
+
 
         # 在通知和删除前处理经验值奖励 - 确保attacker能获得经验
         if attacker is not None and hasattr(self, 'xp_reward') and self.xp_reward > 0:
@@ -692,7 +715,6 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
         elif (
             getattr(target, "player", None) is not None
             and target is not self
-            and not getattr(target, "is_a_building", False)
             and getattr(self, "inventory", None)
             and callable(getattr(target, "accepts_item", None))
             and any(target.accepts_item(it, self) for it in self.inventory)
@@ -763,10 +785,24 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     level_up_heal_full = 0  # 1 = 每次升级后 hp/mana 回满（rules.txt: level_up_heal_full 1）
     level_up_reset_xp = 0  # 1 = 每次升级后当前经验清零（rules.txt: level_up_reset_xp 1）
     cost = (0,) * MAX_NB_OF_RESOURCE_TYPES
+    # AoE2 line_upgrade forms: research uses ``cost``; build/train menu uses ``train_cost``
+    train_cost = (0,) * MAX_NB_OF_RESOURCE_TYPES
     time_cost = 0
     change_time = 0
     morph_as_train = 0  # can_upgrade_to / can_change_to 均按目标单位训练成本/时间计费
     population_cost = 0
+    no_auto_upgrade = 0  # phase units_auto_upgrade skips this morph target when 1
+    line_upgrade = 0  # 1 = research via can_research to unlock train + morph line
+    line_upgrade_also = ()  # extra type names unlocked with this line_upgrade research
+    is_market = 0  # market building (buy/sell/tribute menu)
+    is_trade_unit = 0  # route-trade unit (cart / cog / …)
+    is_dock = 0  # dock / shipyard (naval trade hub)
+    market_commodities = ()  # resourceN [price] pairs; empty → parameters
+    market_currency = ""  # buy/sell currency token; empty → parameters
+    market_batch = 0  # batch size; 0 → parameters
+    market_tax_permille = -1  # -1 → parameters
+    trade_hubs = ()  # hub type names and/or flags (market, is_dock, …)
+    trade_rewards = ()  # resources earned on trade routes; empty → currency
     population_provided = 0
     ai_mode: Optional[str] = None
     can_switch_ai_mode = False
@@ -811,12 +847,15 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     accepted_items = ()  # 仅接收这些物品类型（type_name，支持 is_a 继承）；空=接收任意物品
     accept_from = ()  # 仅接收来自这些关系的给予者：self/ally/neutral/enemy；空=不限关系
     accept_givers = ()  # 仅接收这些单位类型（type_name，支持 is_a 继承）交来的物品；空=不限单位
+    # 1 = each slow_update, apply inventory items' inventory_production_rates to player
+    apply_inventory_production = 0
     transport_capacity = 0
     transport_volume = 1
+    can_unload_over_walls = 0
+    transport_passenger_types = ()
     requirements = ()
     is_a = ()
-    can_build = ()
-    can_train = ()
+    # can_build / can_train：rules 写入 _rules_can_*；实例经 @property → effective_*
     can_use = ()
     can_use_tech = ()
     can_use_skill = ()
@@ -886,6 +925,12 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     charge_rdg_min_dist = 0
     mdg_projectile = 0  # 近战攻击是否为投射物
     rdg_projectile = 0  # 远程攻击是否为投射物
+    # 1 = 远程投射物预判/跟踪移动目标（由科技 effect bonus 施加，非写死科技名）
+    projectile_lead = 0
+    # Conversion gates (rules-driven; see world_conversion.py)
+    conversion_tech_gated = 0  # caster uses researched allow/rest upgrade attrs
+    conversion_cleric = 0  # target needs conversion_allows_monk when caster is gated
+    conversion_immune = 0  # never convertible even with conversion_allows_building
     mdg_targets = ["ground"]
     rdg_targets = ["ground"]
     mdg_bang_targets = ["ground"]
@@ -900,8 +945,12 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     yield_on_defeat = 0  # 战败后投降（不死亡），用于比武收服等剧情
     _last_capture_time = 0  # 上次夺取尝试的时间
     _capture_cooldown = 10000  # 10秒冷却时间(毫秒)
-    mdg_delay = 0  # 近战伤害弹道
-    rdg_delay = 0  # 远程伤害弹道
+    mdg_delay = 0  # deprecated
+    rdg_delay = 0  # deprecated
+    # 分路投射物飞行速度（格/秒，PRECISION）；仅当对应 mdg_projectile/rdg_projectile 时生效
+    mdg_projectile_speed = 0
+    rdg_projectile_speed = 0
+    projectile_speed = 0  # deprecated alias → migrate to mdg_/rdg_projectile_speed
     mdg_radius = 0
     rdg_radius = 0
     mdg_splash = 0
@@ -937,6 +986,21 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     rdg_seq_times: int = 1  # 远程攻击次数
     rdg_seq_damages: List[int] = []  # 远程伤害序列
     rdg_seq_interval: float = 0  # 远程攻击间隔
+    # AoE2-style secondary projectiles (Chu Ko Nu): first shot = live rdg;
+    # later shots = fixed pierce (rdg) + melee (mdg), upgrades do not apply.
+    rdg_seq_secondary: int = 0
+    rdg_seq_secondary_rdg: int = 0
+    rdg_seq_secondary_mdg: int = 0
+    rdg_seq_secondary_live: int = 0  # 1 = secondary shots use live attack (Yasama)
+    mdg_seq_secondary: int = 0
+    mdg_seq_secondary_rdg: int = 0
+    mdg_seq_secondary_mdg: int = 0
+    mdg_seq_secondary_live: int = 0
+    # attacker-side gold/etc when this unit kills a matching type (Chieftains)
+    kill_gold_vs = None  # dict type_name -> display gold
+    # while gathering deposit type X, also gain gold/sec (Paper Money)
+    gather_byproduct = None  # dict deposit_type -> rate/sec of resource1
+    unpack_time = 0  # seconds; first shot after move (Kataparuto / trebuchet)
     speed = 0
     # 添加自爆相关
     mdg_explode = False
@@ -1235,6 +1299,9 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
         self.rdg_splash = type(self).rdg_splash
         self.mdg_delay = type(self).mdg_delay
         self.rdg_delay = type(self).rdg_delay
+        self.mdg_projectile_speed = type(self).mdg_projectile_speed
+        self.rdg_projectile_speed = type(self).rdg_projectile_speed
+        self.projectile_speed = type(self).projectile_speed
         self.mdg_cd = type(self).mdg_cd  # 冷却时长（毫秒）
         self.rdg_cd = type(self).rdg_cd
         self.mdg_ready = type(self).mdg_ready
@@ -1396,6 +1463,7 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
                 self.resource_qty = self.resource_volume_start
             else:
                 self.resource_qty = self.resource_volume_max
+            self._resource_qty_frac = 0
             # 确保在初始化后通知客户端
             self.notify(f"qty_update,{self.resource_qty}")
 
@@ -1526,6 +1594,8 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     def start_moving_to(self, target, avoid=False):
         # note: it can be an attack
         # note: several calls might be necessary
+        if float(getattr(self, "unpack_time", 0) or 0) > 0:
+            self._needs_unpack = True
         self.action_target = self.next_stage(target, avoid=avoid)
 
     def _next_stage_to_enemy(self):
@@ -1561,6 +1631,18 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
         pop_keys(state, CREATURE_STRIP_ON_SAVE)
         state["walked"] = []
         return state
+
+    @property
+    def can_build(self):
+        from ..world_build_rules import effective_can_build
+
+        return effective_can_build(self)
+
+    @property
+    def can_train(self):
+        from ..world_build_rules import effective_can_train
+
+        return effective_can_train(self)
 
 
 for _level_up_stat in LEVEL_UP_STAT_ATTRS:
@@ -1780,6 +1862,7 @@ class Building(_Building):
     production_qty = 0  # 默认产量为0
     depleted_production_qty = 0  # 矿脉耗尽后的每周期产量（需 is_an_extractor）
     is_an_extractor = 0  # 1=从建成时吞并的矿床储量中扣减产出
+    gather_slots = 0  # >0：同时开采工人上限；0=不限制
     spawns_unit = None  # 自动生成的单位类型名（如 larva）
     larva_cap = 0  # 生成点：同格已生成单位上限
     larva_spawn_time = 0  # 生成点：生成间隔（秒）
@@ -1796,12 +1879,20 @@ class Building(_Building):
     can_repair_ships = 0  # 0表示不允许修理船只，1表示允许
     _last_repair_time = 0  # 上次修理时间，用于控制修理频率
     victory_time = 0  # >0：建成后倒计时 N 秒，到期且建筑仍在则胜利
+    # AoE2 Feitoria: per-second income [gold, wood, food, stone] (PRECISION units after load)
+    production_rates = ()
 
     @property
     def can_train(self):
         from ..world_build_rules import effective_can_train
 
         return effective_can_train(self)
+
+    @property
+    def can_build(self):
+        from ..world_build_rules import effective_can_build
+
+        return effective_can_build(self)
 
     @property
     def can_research(self):
@@ -1823,6 +1914,7 @@ class Building(_Building):
                 self.resource_qty = self.resource_volume_start
             else:
                 self.resource_qty = self.resource_volume_max
+            self._resource_qty_frac = 0
             # 确保在初始化后通知客户端
             self.notify(f"qty_update,{self.resource_qty}")
         
@@ -1922,39 +2014,71 @@ class Building(_Building):
         """从建筑物中提取资源
         
         Args:
-            qty: 提取的资源量（游戏内部单位，已乘以1000）
+            qty: 提取的资源量（游戏内部单位，已乘以 PRECISION）
             
         Returns:
             int: 实际提取的资源量（游戏内部单位）
         """
+        from ..lib.nofloat import PRECISION
+
+        # StarCraft gas: workers pull from the transferred geyser reserve
+        # (not from an auto_production buffer).
+        if getattr(self, "is_an_extractor", 0):
+            from ..world_extractor import (
+                apply_extractor_production,
+                extractor_can_still_yield,
+            )
+
+            if not extractor_can_still_yield(self):
+                return 0
+            requested = int(qty) // PRECISION
+            # Trip gather requests full extraction_qty; ignore sub-unit continuous crumbs.
+            if requested <= 0:
+                return 0
+            actual = apply_extractor_production(self, requested)
+            if actual <= 0:
+                return 0
+            # Surface remaining geyser reserve for UI / square name reads.
+            if hasattr(self, "source_qty"):
+                self.resource_qty = int(self.source_qty)
+                self._resource_qty_frac = 0
+                self.notify(f"qty_update,{self.resource_qty}")
+            return int(actual) * PRECISION
+
         # 确保建筑物有资源可以提取
         if not hasattr(self, 'resource_qty'):
             self.resource_qty = 0
             
         # 只有当建筑物有资源类型且资源量大于0时才能提取
         if hasattr(self, 'resource_type') and self.resource_type and self.resource_qty > 0:
-            # 计算可提取的资源量
-            # 注意：resource_qty是普通单位（1），而qty是游戏内部单位（1000）
-            # 为了保持一致，我们将resource_qty乘以1000转换为游戏内部单位
-            resource_qty_internal = self.resource_qty * 1000
-            actual_qty = min(qty, resource_qty_internal)
-            
-            # 从建筑物中减去相应的资源量（转换回普通单位）
-            self.resource_qty -= actual_qty // 1000
+            # resource_qty 为显示单位。连续采集常一次不足 1 显示单位；
+            # ``_resource_qty_frac`` 记录当前显示单位上已采走的内部量，
+            # 凑满 PRECISION 再减 1，避免 ``qty // PRECISION == 0`` 时储量永不减。
+            removed_frac = int(getattr(self, "_resource_qty_frac", 0) or 0)
+            available_internal = int(self.resource_qty) * PRECISION - removed_frac
+            actual_qty = min(int(qty), available_internal)
+            if actual_qty <= 0:
+                return 0
+
+            removed_frac += actual_qty
+            self.resource_qty -= removed_frac // PRECISION
+            self._resource_qty_frac = removed_frac % PRECISION
             
             # 发送资源量更新通知
             self.notify(f"qty_update,{self.resource_qty}")
             
             # 如果资源耗尽，发送耗尽通知
-            if self.resource_qty <= 0:
+            if self.resource_qty <= 0 and self._resource_qty_frac <= 0:
                 self.notify("exhausted")
                 # 如果定义了resource_volume_max小于等于0，说明资源是无限的，重置资源量
                 if hasattr(self, 'resource_volume_max') and self.resource_volume_max < 0:
                     self.resource_qty = 1000  # 设置一个较大的默认值
+                    self._resource_qty_frac = 0
                     return actual_qty  # 返回工人实际获得的量（内部单位）
                 else:
                     # 资源确实耗尽了
                     self.resource_qty = 0
+                    self._resource_qty_frac = 0
             
             return actual_qty  # 返回工人实际获得的量（内部单位）
         return 0

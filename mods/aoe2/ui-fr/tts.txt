@@ -1,0 +1,288 @@
+; coding: utf-8
+; Age of Empires II DE — Français (chaînes officielles DE via aoe2techtree)
+
+
+8000 Age of Empires 2 Definitive Edition
+8001 Britanniques
+8002 Francs
+8003 Chinois
+8004 Mongols
+8005 Byzantins
+8006 Japonais
+8007 Teutons
+8008 Vikings
+8009 Vietnamiens
+8011 Portugais
+8012 Aztèques
+
+8070 Samouraï
+8071 Samouraï d'élite
+8072 Chevalier teutonique
+8073 Chevalier teuton. d'élite
+8074 Fou de guerre
+8075 Fou de guerre d'élite
+8076 Fantassin à arc en rotin
+8077 Fantassin à arc en rotin d'élite
+8078 Ribaudequin
+8079 Ribaudequin d'élite
+
+8080 Yasama
+8081 Kataparuto
+8082 Cuirasses
+8083 Crénelures
+8084 Chefs de tribu
+8085 Bogsveigar
+8086 Chatras
+8087 Monnaie papier
+8088 Circumnavigation
+8089 Arquebuse
+8090 Guerrier jaguar
+8091 Guerrier jaguar d'élite
+8092 Atlatl
+8093 Guerres fleuries
+
+
+8010 Fantassin à arc long
+8015 Fantassin à arc long d'élite
+8020 Lanceur de hache
+8025 Lanceur de hache d'élite
+8030 Chu Ko Nu
+8031 Villageois
+8035 Chu Ko Nu d'élite
+8040 Mangudaï
+8041 Villageois
+8045 Mangudaï d'élite
+8050 Cataphractaire
+8055 Cataphractaire d'élite
+
+8060 Yeomen
+8061 Hache francisque
+8062 Chevalerie
+8063 Propulsion
+8064 Manœuvres
+8065 Logistique
+8066 Loup de guerre
+8067 Grande muraille
+8068 Nomades
+8069 Feu grégeois
+
+8100 Nourriture
+8101 Bois
+8102 Or
+8103 Pierre
+
+8110 Camp de tir à l'arc
+8111 Université
+8112 Monastère
+8113 Château
+8114 Moine
+8115 Missionnaire
+8300 Forum
+8301 Casernes
+8302 Écurie
+8303 Forge
+8304 Habitation
+8305 Ferme
+8306 Camp de bûcherons
+8307 Atelier de siège
+8308 Port
+8309 Mur de pierre
+8310 Porte
+8325 Palissade
+8326 Porte de palissade
+8311 Tour de guet
+8312 Tour de garde
+8313 Donjon
+8327 Tour de Bombarde
+8328 Mur fortifié
+8329 Porte fortifiée
+8319 Poste avancé
+8314 Moulin
+8315 Camp de mineurs
+8316 Marché
+8317 Merveille
+8318 Mine de pierre
+8320 Buisson de baies
+8321 Cerf
+8322 Mouton
+8323 Sanglier
+8324 Carcasse
+
+8120 Milicien
+8121 Homme d'armes
+8122 Fantassin à épée longue
+8123 Fant. à épée à deux mains
+8124 Champion
+8125 Lancier
+8126 Piquier
+8127 Hallebardier
+
+8130 Archer
+8131 Arbalétrier
+8132 Arbalétrier lourd
+8133 Tirailleur
+8134 Tirailleur d'élite
+8137 Tirailleur impérial
+8135 Archer de cavalerie
+8136 Archer de cav. lourde
+
+8140 Cavalerie d'éclairage
+8141 Cavalerie légère
+8142 Hussard
+8143 Chevalier
+8144 Cavalier
+8145 Paladin
+8146 Chamelier
+8147 Chamelier lourd
+8148 Chamelier impérial
+8160 Éléphant de combat
+8161 Éléphant de combat d'élite
+8162 Lancier des steppes
+8163 Lancier des steppes d'élite
+
+8150 Bélier
+8151 Mangonneau
+8152 Onagre
+8153 Scorpion
+8154 Trébuchet
+8155 Bélier renforcé
+8156 Bélier de siège
+8157 Onagre de siège
+8158 Scorpion lourd
+8159 Villageois
+8170 Canon à bombarde
+8171 Bombardier
+8172 Tour de siège
+8173 Canonnier à main
+8174 Éclaireur aigle
+8175 Guerrier aigle
+8176 Guerrier aigle d'élite
+8177 Éléphant de guerre
+8178 Éléphant de guerre d'élite
+8179 Éléphant blindé
+8180 Éléphant cuirassé d'élite
+8181 Éléphant archer
+8182 Éléphant archer d'élite
+8183 Condottière
+
+8400 Navire de pêche
+8401 Navire de transport
+8402 Galère
+8403 Galère de guerre
+8404 Galion
+8405 Galère d'incendie
+8406 Navire d'incendie
+8407 Nav. incendie rapide
+8408 Radeau de démolition
+8409 Navire de démolition
+8410 Navire démolisseur lourd
+8411 Galion à canon
+8412 Galion à canon d'élite
+8413 Navire tortue
+8414 Navire tortue d'élite
+8415 Drakkar
+8416 Drakkar d'élite
+8417 Caravelle
+8418 Caravelle d'élite
+8419 Dromon
+8420 Cogue marchande
+8421 Piège à poissons
+8422 Filets m.
+8423 Chantier naval
+8424 Carénage
+8425 Cale sèche
+
+8200 Forge
+8201 Fonderie
+8202 Haut fourneau
+8203 Cotte mailles écaillée
+8204 Cotte mailles chaînée
+8205 Cotte mailles plaquée
+8206 Barde écaillée
+8207 Barde chaînée
+8208 Barde plaquée
+8209 Empennage
+8210 Flèche à poinçon
+8211 Brassard
+8212 Arm. d'archer matelassée
+8213 Arm. d'archer en cuir
+8214 Arm. d'archer à chaînes
+
+8220 Lignes de sang
+8221 Élevage
+8222 Pistage
+8223 Écuyers
+8224 Bague de pouce
+8225 Balistique
+8226 Chimie
+8227 Métier à tisser
+8228 Brouette
+8229 Charrette à bras
+8230 Hache double tranchant
+8231 Scie à archet
+8232 Scie à deux bras
+8233 Mine d'or
+8234 Puits de forage d'or
+8235 Brasier
+8236 Jaques
+8237 Tactiques parthes
+8238 Experts de siège
+8239 Conscription
+8250 Mâchicoulis
+8251 Maçonnerie
+8252 Architecture
+8253 Projectile en feu
+8254 Grue à poulie
+8255 Harnais de cheval
+8256 Labourage lourd
+8257 Alternance des cultures
+8270 Hourds
+8271 Artificiers
+8272 Espions/ Trahison
+8273 Caravane
+8274 Guildes
+8275 Monnaie
+8276 Banques
+8277 Charrette de commerce
+8278 Feitoria
+8279 Acheter
+8280 Vendre
+8281 Tribut
+8282 Commerce
+8240 Tour de guet
+8241 Patrouille de ville
+8242 Provisions
+8243 Carrière
+8244 Puits de forage de pierre
+
+8260 Rédemption
+8261 Expiation
+8262 Médecine aux plantes
+8263 Hérésie
+8264 Sainteté
+8265 Ferveur
+8266 Foi
+8267 Illumination
+8268 Imprimerie
+8269 Théocratie
+
+; Ages (do not reuse 8250–8257 university/mill tech IDs)
+8290 Âge sombre
+8291 Âge féodal
+8292 Âge des châteaux
+8293 Âge impérial
+
+; Unit category roots (armor / is_a / passenger attack filters)
+8500 Infanterie
+8501 Cavalerie
+8502 Archers
+8503 Unités de siège
+8504 Unités uniques
+
+; Tech effect blurbs (engine-handled techs with no numeric bonus)
+8510 Les projectiles anticipent et touchent les cibles mobiles
+8511 Les moines peuvent convertir les armes de siège et la plupart des bâtiments
+8512 Les moines peuvent convertir les moines ennemis
+8513 Vos unités meurent au lieu de rejoindre l'ennemi lorsqu'elles sont converties
+8514 Les conversions ennemies contre vous prennent beaucoup plus de temps
+8515 Quand plusieurs moines convertissent ensemble, seul celui qui réussit se repose

@@ -1,0 +1,4 @@
+﻿; coding: utf-8
+
+9000	kamenný golem
+5028	replay

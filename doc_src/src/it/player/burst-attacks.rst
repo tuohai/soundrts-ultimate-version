@@ -25,11 +25,11 @@ Riferimento ufficiale: ``mod/modding.rst`` (Combat system → ``damage_seq``).
    * - Aspetto
      - Comportamento
    * - Danno totale per ciclo
-     - Resta uguale al ``mdg`` / ``rdg`` di base (suddiviso tra i colpi)
+     - Suddivisione pari/manuale: resta uguale a ``mdg`` / ``rdg``; modalità ``secondary``: primo live + frecce fisse successive (può superare la base)
    * - Colpi per ciclo
      - Fino a 6 (`damage_seq … <times>`)
    * - Tiraggi di colpo
-     - Indipendenti per ogni colpo
+     - Indipendenti per ogni colpo; le frecce secondarie colpiscono al 100%
    * - Tempo di ricarica
      - ``mdg_cd`` / ``rdg_cd`` inizia dopo la fine dell'intera raffica
    * - Suoni di lancio
@@ -51,7 +51,7 @@ Riferimento ufficiale: ``mod/modding.rst`` (Combat system → ``damage_seq``).
 
 .. code-block:: text
 
-   damage_seq mdg|rdg <times> [(damage d1 d2 ...)] [(interval seconds)]
+   damage_seq mdg|rdg <times> [(damage d1 d2 ...)] [(secondary pierce melee)] [(interval seconds)]
 
 
 Definisci il ``mdg`` o ``rdg`` di base prima di ``damage_seq``.
@@ -83,6 +83,21 @@ I valori interi dei segmenti devono sommare al danno di base (stesse unità dell
 
 
 Il ``(damage …)`` manuale usa solo valori interi; il danno di base frazionario (es. ``rdg 2.5``) non si può esprimere così — usa invece la suddivisione automatica.
+
+
+2.3b Frecce secondarie AoE2 (``secondary``)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Allineato al Chu Ko Nu di Age of Empires II DE: primo colpo = attacco live dell’unità (applicano gli upgrade) + melee fisso; colpi successivi = pierce + melee fissi (**non** potenziati da fabbro/chimica). Il melee può essere ``0`` (danneggia ancora armature melee negative come gli arieti).
+
+.. code-block:: text
+
+   rdg 8
+   rdg_cd 2.77
+   rdg_ready 0.23
+   damage_seq rdg 3 (secondary 3 0) (interval 0.23)
+
+Il Chu Ko Nu elite usa ``rdg 5 (secondary 3 0)`` (5 frecce). Questa modalità **non** richiede che la somma eguagli ``rdg``.
 
 2.4 Intervallo
 ~~~~~~~~~~~~~~~

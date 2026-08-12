@@ -46,6 +46,11 @@ def stables
 class building
 requirements castle_age
 
+def frank_stables
+class building
+is_a stables
+requirements castle_age
+
 def workshop
 class building
 requirements castle_age
@@ -123,8 +128,54 @@ def test_group_membership_from_simple_requirements_only():
     ]
     assert "catapult" not in buildings_of_group("castle_age_buildings")
     assert "farm" not in buildings_of_group("castle_age_buildings")
+    # civ shell of a group member is excluded (parent already counts via has/is_a)
+    assert "frank_stables" not in buildings_of_group("castle_age_buildings")
     # without requirements keep, keep_buildings is empty
     assert buildings_of_group("keep_buildings") == []
+
+
+def test_civ_shell_counts_as_one_group_building():
+    """Owning frank_stables must not satisfy any_buildings 2 by itself."""
+    from soundrts.worldrequirements import count_owned_buildings_of_group
+
+    _load()
+
+    def has(name):
+        # mimics Player.has: exact type or expanded_is_a parent
+        if name == "frank_stables":
+            return True
+        if name == "stables":
+            return True  # via is_a
+        return False
+
+    player = types.SimpleNamespace(has=has, upgrades=["castle_age"], units=[])
+    assert count_owned_buildings_of_group(player, "castle_age_buildings") == 1
+    imperial = rules.unit_class("imperial_age")
+    assert requirements_satisfied(player, imperial.requirements) is False
+
+
+def test_missing_any_buildings_announces_remaining_count():
+    """With 1 of 2 owned, announce remaining 1 (not the original 2)."""
+    from soundrts.worldrequirements import (
+        ANY_BUILDINGS,
+        format_clause_titles,
+        missing_requirement_clauses,
+    )
+
+    _load()
+    imperial = rules.unit_class("imperial_age")
+    player = _player(owned=["stables"], upgrades=["castle_age"])
+    missing = missing_requirement_clauses(player, imperial.requirements)
+    assert missing == [(ANY_BUILDINGS, 1, "castle_age_buildings")]
+    title = format_clause_titles(missing[0])
+    # nb2msg(n) encodes as 1_000_000 + n
+    assert 1000001 in title
+    assert 1000002 not in title
+
+    player0 = _player(owned=[], upgrades=["castle_age"])
+    missing0 = missing_requirement_clauses(player0, imperial.requirements)
+    assert missing0 == [(ANY_BUILDINGS, 2, "castle_age_buildings")]
+    assert 1000002 in format_clause_titles(missing0[0])
 
 
 def test_imperial_age_needs_phase_and_any_two_castle_buildings():

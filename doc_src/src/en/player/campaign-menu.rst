@@ -1,4 +1,4 @@
-﻿# Campaign & co-op campaign improvements (1.4.3.9)
+# Campaign & co-op campaign improvements (1.4.3.9)
 
 This guide describes SoundRTS Age of Empires Definitive Edition–style single-player and cooperative campaigns: mission browser, five difficulty tiers, story-mission co-op, enemy scaling, and lockstep-safe sync. For players, campaign authors, and modders.
 

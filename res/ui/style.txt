@@ -483,7 +483,7 @@ pickup health	  ; 生命药水拾取音效
 drop health
 complete_msg $1 124
 launch_attack
-casting 1010
+casting 
 death if_me 1310 else 1309 1051
 alert 1078 ; horn
 production 1327 ; research, train or upgrade_to
@@ -1035,19 +1035,24 @@ def deer
 is_a walking_unit
 title 4930
 color tan
-noise repeat 8 1059 1060
+noise repeat 8 deer_hey
+death deer_death
 
 def sheep
 is_a walking_unit
 title 4931
 color white
-noise repeat 10 1059 1060
+noise repeat 10 sheep_hey
+death sheep_death
 
 def boar
 is_a walking_unit
 title 4933
 color saddlebrown
-noise repeat 6 1059 1060
+noise repeat 6 boar_hey boar_shout
+mdg_hit paw paw2
+death boar_death
+
 mdg_hit 1008
 
 def meadow

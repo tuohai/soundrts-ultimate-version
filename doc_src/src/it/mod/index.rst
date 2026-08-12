@@ -14,8 +14,11 @@ Regole mod
 2. `Guida avanzata <advanced.htm>`_ — abilità, fazioni, meta, IA
 3. `Manuale di modding <modding.htm>`_ — riferimento completo delle parole chiave
 4. `Abilità / cura / effetti <skills-and-effects.htm>`_
-5. `Urla di battaglia <battle-shouts.htm>`_ — urla a livelli, configurazione ``shouts``
-6. `Gestione audio <audio-management.htm>`_ — refactor P0–P2, SFX multiformato, volumi
+5. `Sistema di mercato <market-system.htm>`_ — compra/vendita, tributo, commercio di tratta
+6. `Upgrade di linea e addestramento di livello massimo <unit-line-upgrade.htm>`_ — ``line_upgrade``, risoluzione addestramento
+7. `Predizione proiettili e velocità di volo <projectile-lead.htm>`_ — ``projectile_lead``, ``*_projectile_speed``
+8. `Urla di battaglia <battle-shouts.htm>`_ — urla a livelli, configurazione ``shouts``
+9. `Gestione audio <audio-management.htm>`_ — refactor P0–P2, SFX multiformato, volumi
 
 Mappe
 

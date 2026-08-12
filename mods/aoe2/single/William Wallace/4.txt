@@ -1,0 +1,35 @@
+; 4 — Research and Technology
+
+title 8605
+intro 8613
+
+square_width 12
+nb_columns 3
+nb_lines 3
+
+nb_players_min 1
+nb_players_max 1
+random_starts 0
+
+west_east_paths a1 a2 a3 b1 b2
+south_north_paths a1 a2 b1 b2 c1 c2
+
+goldmines 150 a1
+woods 400 a1
+orchard 200 a1
+nb_meadows_by_square 3
+
+; Dark Age start with enough food for Feudal (500) + Man-at-Arms research
+player 100 300 700 0 a1 town_center barracks 4 house 6 peasant 4 militia
+
+; Light English raid (optional pressure)
+computer_only 0 0 0 0 c3 3 militia
+
+timer_coefficient 40
+
+trigger player1 (timer 0) (alliance 1)
+trigger computers (timer 0) (alliance 2)
+
+trigger player1 (timer 0) (add_objective 1 8623)
+trigger player1 (has man_at_arms) (do (objective_complete 1) (victory))
+trigger player1 (building_lost town_center) (defeat)

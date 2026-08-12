@@ -1,0 +1,37 @@
+; coding: utf-8
+; William Wallace — výuková kampaň AoE2 DE (čeština)
+
+8600 William Wallace
+8601 Skotsko, 1297. Naučte se umění války, zatímco William Wallace sjednocuje Skoty proti anglické nadvládě. Sedm krátkých lekcí — od pochodu a sběru surovin po Stirling a Falkirk.
+
+8602 Pochod a boj
+8603 Zásobování armády
+8604 Výcvik vojsk
+8605 Výzkum a technologie
+8606 Bitva u Stirlingu
+8607 Uzavřít spojenectví
+8608 Bitva u Falkirku
+
+8610 Přesuňte milici na východ ke skotské vesnici. Vyberte jednotky a pošlete je na označené pole.
+8611 Sbírejte jídlo, dřevo a zlato. Stavějte farmy, pokud potřebujete více jídla. Dosáhněte 50 od každé suroviny.
+8612 Pokud potřebujete, postavte kasárna a vycvičte čtyři milicionáře.
+8613 Postupte do Feudálního věku a vyzkoumejte Šermíře v kasárnách.
+8614 Porazte anglickou armádu a zničte jejich strážní věž.
+8615 Získejte mnichy tři relikvie a odneste je do kláštera.
+8616 Postavte hrad a poté zničte anglický hrad.
+
+8620 Dorazit ke skotské vesnici
+8621 Nasbírat 50 jídla, 50 dřeva a 50 zlata
+8622 Vycvičit 4 milicionáře
+8623 Vyzkoumat Šermíře
+8624 Porazit Angličany a zničit jejich věž
+8625 Získat 3 relikvie a odnést je do kláštera
+8626 Postavit hrad
+8627 Zničit anglický hrad
+
+8630 Skotská vesnice
+8631 Anglický tábor
+8632 Stirlingské pole
+8633 Skotské spojenecké město
+8634 Falkirk
+8640 Relikvie

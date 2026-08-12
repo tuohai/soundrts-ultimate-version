@@ -773,6 +773,7 @@ effect_desc 7535
 
 
 def larva
+is_a unit
 title 7530
 intro 7659
 

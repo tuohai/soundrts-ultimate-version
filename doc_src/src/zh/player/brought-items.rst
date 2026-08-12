@@ -1,4 +1,4 @@
-﻿# 携带物品到达与剧情交付说明（has_brought_item + remove_item）
+# 携带物品到达与剧情交付说明（has_brought_item + remove_item）
 
 本说明介绍两个配合使用的战役/地图功能：
 

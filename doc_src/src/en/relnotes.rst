@@ -4,6 +4,119 @@ Release notes
 
 .. contents::
 
+1.4.6.9
+--------
+
+**New: rules-driven garrison heal ``heal_garrisoned``**
+
+- **Use**: TC / castle / towers heal only units inside (AoE2-style); monks keep area auras — **no** building-name hardcoding in the engine.
+- **Flag**: ``heal_garrisoned 1`` → ``heal_nearby_units`` heals ``self.inside`` passengers only; default ``0`` keeps ``heal_range`` / ``heal_radius`` behavior.
+- **aoe2 rates (DE)**: TC/towers ``heal_level 1`` + ``heal_cd 10`` → 0.1 HP/s; castle ``heal_level 1`` + ``heal_cd 5`` → 0.2 HP/s; Herbal Medicine ``heal_level +5`` (×6) → 0.6 / 1.2 HP/s; targets include ``keeptower``.
+- **Docs**: Chinese `skills / heal / effects <../zh/mod/skills-and-effects.htm>`_; ``mod/modding``.
+- **Tests**: ``test_heal_garrisoned.py``. Synced to 修复8 / 修复14 / 原始1 / 原始2.
+
+**New: rules-driven projectile lead and per-lane flight speed**
+
+- **Flight**: ``rdg_projectile_speed`` / ``mdg_projectile_speed`` are **speeds** (tiles/s), not “seconds of flight”; only when the matching ``*_projectile`` flag is set. Time-to-hit = distance ÷ speed. Shared ``projectile_speed`` and legacy ``*_delay`` are deprecated (migrated on load).
+- **Lead**: ``projectile_lead 0|1`` (ranged projectiles only). No hardcoded ``ballistics``.
+- **Tech / UI**: ``effect bonus projectile_lead 1``; ``effect info``.
+- **Docs**: `Projectile lead & flight speed <mod/projectile-lead.htm>`_; ``mod/modding``.
+- **Tests**: ``test_projectile_speed.py``. Synced to 修复8 / 修复14.
+
+**New: rules-driven market (buy/sell, tribute, route trade)**
+
+- **Use**: mods choose commodities, currency, tax, tribute list, and which resources/hubs trade units use — **no** engine hardcoding of wood/food/stone or gold-only payouts.
+- **Parameters** (``def parameters``): ``market_currency``, ``market_commodities``, ``market_menu_labels``, batch/tax/tribute keys, ``trade_tile_scale`` / ``trade_shrink`` / ``trade_reward_cap``, etc.
+- **Unit attrs**: ``is_market``, ``is_trade_unit``, ``trade_hubs``, ``trade_rewards`` (several → pick trade type in the menu); techs ``market_tax_guilds``, ``tribute_fee_permille``.
+- **Orders**: ``market_buy`` / ``market_sell`` / ``tribute`` / ``trade``; payout uses **square hops** (very short routes may pay 0).
+- **aoe2**: gold currency + wood/food/stone goods; carts trade between markets for gold, cogs between docks.
+- **Docs**: ``mod/market-system`` (zh/en), ``mod/modding``, ``player/market-and-trade`` (zh); ``mods/aoe2/SOURCES.md``.
+- **Code / tests**: ``worldmarket.py``, ``worldorders/market.py``; ``test_aoe2_market.py``, ``test_aoe2_dock_economy.py``.
+
+**Improvement: rename bonus filter fields to ``phase_bonus_targets`` / ``effect_bonus_targets``**
+
+- **Primary names**: pair with ``phase bonus`` / ``effect bonus``.
+- **Aliases still work**: ``phase_targets``, ``tech_effect_targets``, ``effect_targets``.
+- **Docs**: ``mod/modding`` (zh/en).
+- **Tests**: ``test_phase_bonus_groups.py``, ``test_effect_bonus_unit_filter.py``.
+
+**New: dual gather modes ``gather_mode trip|continuous``**
+
+- Default ``trip``: one ``gather_qty`` pulse then drop-off (previous behaviour).
+- ``continuous``: fill ``carry_capacity`` at a per-second rate, then drop-off (AoE II/IV style).
+- Rules: ``gather_mode``, ``carry_capacity``, ``carry_capacity_<type>``, ``gather_rate`` — see modding docs.
+- ``mods/aoe2`` enables continuous (carry 10, hunt carcass 35).
+
+**New: faction age rewards ``on_phase`` and ``research_cost_discount`` / ``advance_cost_discount``**
+
+- **Use**: civ-specific age rewards on ``class race`` / ``class faction`` — **no civ names in engine code**. Shared ``phase bonus`` can stay empty.
+- **``on_phase``**: when that phase is in ``player.upgrades``, apply ``effect bonus``-style stats to matching units (start + after advance; ``_phase_bonus_pool``).
+- **``research_cost_discount``**: replaces research-cost % for highest matching age; ``ResearchOrder`` / ``UpgradeToOrder`` only.
+- **``advance_cost_discount``**: by purchased age; ``AdvanceOrder`` only.
+- **Helpers**: bare ``phase bonus`` / ``phase bonus clear``; ``no_auto_upgrade 1``.
+- **Code / tests**: ``worldphase.py``, orders, ``definitions.py``; ``test_faction_age_cost_discounts.py``, etc.
+
+**Improvement: announce the resolved faction after a random civ roll**
+
+- **Issue**: with Random, shared names like town center / villager do not reveal the civ (sighted AoE2 uses flags).
+- **Change**: speak “you are” plus the civ title only when the lobby pick was Random **and** the mod has more than one faction (after the opening objective, so scrolling does not cut it off). Manual picks and single-faction mods (e.g. base ``res``) stay silent. ``Alt+C`` (``faction_status``) uses the same rule.
+- **Code**: ``faction_announce.py``, ``worldplayerbase/base.py`` (``faction_was_random``), ``clientgame/game_resources.py``, ``game_interface_base.py``; ``global_bindings.txt`` (base + aoe2).
+- **Tests**: ``test_faction_status_announce.py``.
+
+**Improvement: hear enemy civilization in multi-civ mods**
+
+- **Issue**: shared unit names (militia, etc.) do not reveal which civ an opponent is playing.
+- **Change**: with more than one faction, enemy/ally unit titles include the civ; ``F11`` player roster and diplomacy candidate selection also speak the civ after the player name (e.g. “Takumi, Britons”). Unchanged for single-faction mods.
+- **Code**: ``faction_announce.py``, ``clientgameentity/properties.py``, ``clientgame/game_audio.py``.
+- **Tests**: ``test_faction_status_announce.py``.
+
+**New: abstract faction templates and ``is_a`` inheritance for starting units/resources**
+
+- **Use**: define default ``starting_resources`` / ``starting_units`` on an abstract parent (e.g. ``Civilization``); each civ ``is_a`` that parent. Child overrides win; omitted fields inherit. Maps without starting units still get race defaults so games do not end immediately.
+- **``abstract 1``**: inheritance-only template — **hidden from the faction picker**; ``abstract`` is not copied to children.
+- **Inheritance**: ``class race`` equals ``class faction``; ``is_a`` chains work. Explicit map ``starting_units`` / ``starting_resources`` still take priority.
+- **Code**: ``definitions.py`` (skip ``abstract`` in ``apply_inheritance``; filter abstract in ``factions``).
+- **Tests**: ``test_faction_starting_inheritance.py``.
+
+**Improvement: isolate maps and campaigns when a mod is active (no ``res`` fallback)**
+
+- **Issue**: if a mod had no own ``multi/`` maps or ``single/`` campaigns, menus still listed base ``res`` content.
+- **Change**: with any mod enabled, only ``mods/<mod>/multi`` and ``mods/<mod>/single`` are listed; if the mod has none, the lists are empty — **no** fallback to ``res/multi``, ``res/single``, or downloads. Unchanged with no mod.
+- **Code**: ``lib/resource.py`` (``_get_multi_maps`` / ``_add_custom_multi`` / ``_campaigns``); spectator default avoids empty-list index (``game.py``).
+- **Tests**: ``test_mod_map_campaign_isolation.py``.
+
+**Fix: race ``starting_resources`` ignored when the map omits them (start at 0)**
+
+- **Issue**: factions set ``starting_resources`` in rules (e.g. ``100 200 200 200``), but maps without that line still started at 0.
+- **Cause**: ``_parse_map`` pre-filled ``[0, 0, …]``; ``populate_map`` only falls back to race defaults when the resource list is empty — all zeros are not empty.
+- **Fix**: leave an empty list ``[]`` until the map defines ``starting_resources``, then apply race/faction defaults; an explicit map line (including intentional ``0``) still wins.
+- **Code**: ``world/world_map.py``.
+- **Tests**: ``test_race_starting_resources.py``.
+
+**Fix: commenting out ``LSHIFT C`` / ``LSHIFT B`` still copied speech in-game**
+
+- **Issue**: ``global_bindings.txt`` comments out Left Shift+C/B (primary voice-library copy / append) by default, but the keys still worked in a match.
+- **Cause**: ``game_input_handler`` called ``voice_libs.handle_hotkey`` before bindings, bypassing the hotkey table.
+- **Fix**: in-game Shift+C/B follow **bindings only** — a leading ``;`` disables them. Menus keep the hardcoded Left/Right Shift+C/B. Right Shift+C/B (secondary library) stay enabled by default.
+- **Code**: ``clientgame/game_input_handler.py``; menus via ``clientmenu.py`` / ``voice_libs.handle_hotkey``.
+- **Tests**: ``test_lshift_rshift_bindings.py``.
+
+**Improvement: StarCraft gas aligned with Brood War (worker trips + ``gather_slots``)**
+
+- **Mechanism**: gas buildings no longer fill via ``auto_production``; workers trip-gather from the structure (default ``extraction_qty`` 8, depleted ``2``), debiting ``source_qty``.
+- **``gather_slots 3``**: at most 3 workers extract at once (extras wait); more workers still produce gas via rotation, but throughput ≈ 3. **Tip: put 3 workers on each gas.**
+- **Build fields**: Pylon / Assimilator ``requires_build_field 0``; Photon Cannons need psi and do not attack while unpowered.
+- **Docs**: ``player/starcraft-resources`` (zh/en/es/it/pt-BR), ``mod/modding`` (Deposits & gas), ``mods/starcraft/readme.txt``.
+- **Code**: ``world_extractor.py``, ``worldorders/gathering.py``, ``definitions.py``, ``worldplayercomputer.py``, ``mods/starcraft/rules.txt``.
+
+**Improvement: AoE2 monastery conversion techs are rules-driven (no tech-name hardcoding)**
+
+- **Issue**: Redemption / Atonement / Heresy / Faith / Theocracy checked string names like ``"redemption"`` in the engine.
+- **Change**: generic attrs (``conversion_allows_*``, ``conversion_victim_dies``, ``conversion_channel_*``, ``conversion_rest_only_success``, ``conversion_tech_gated``, ``conversion_cleric``, ``conversion_immune``); engine reads attrs only.
+- **aoe2**: those techs and monk / immune buildings are wired; attributes UI still uses ``effect info``.
+- **Code**: ``world_conversion.py``, ``worldskill.py``, ``definitions.py``, ``mods/aoe2/rules.txt``.
+- **Tests**: ``test_aoe2_monastery_techs.py``.
+
 
 1.4.6.8
 --------

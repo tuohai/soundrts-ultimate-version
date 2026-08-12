@@ -1,4 +1,4 @@
-﻿# 星际 mod：人族附属建筑与重组说明
+# 星际 mod：人族附属建筑与重组说明
 
 适用模组：``mods = starcraft`` （在 ``SoundRTS.ini`` 中启用）。
 

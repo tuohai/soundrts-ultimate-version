@@ -74,6 +74,33 @@ def cmd_resource_status(interface, resource_type):
         voice.item(mp.BEEP)
 
 
+def player_faction_you_are_msgs(player):
+    """``YOU_ARE`` + resolved faction title, or None if unknown / still random."""
+    from ..faction_announce import player_faction_you_are_msgs as _impl
+
+    return _impl(player)
+
+
+def announce_resolved_faction(player):
+    """Speak the civ once after random faction is resolved (match start).
+
+    Call after opening objective so ``play_scrolling_line`` does not cut it off.
+    ``flush`` waits until the line finishes before the match continues.
+    """
+    from ..faction_announce import announce_resolved_faction as _impl
+
+    _impl(player, voice=voice)
+
+
+def cmd_faction_status(interface):
+    """再听一次已确定的阵营/文明（随机开局后也能查）。"""
+    msgs = player_faction_you_are_msgs(getattr(interface, "player", None))
+    if msgs:
+        voice.item(msgs)
+    else:
+        voice.item(mp.BEEP)
+
+
 def cmd_population_status(interface):
     """显示人口状态"""
     voice.item(
@@ -610,7 +637,9 @@ def srv_alert(interface, s):
 # 导出的函数供其他模块使用
 __all__ = [
     'resources', 'available_population', 'used_population',
-    'cmd_resource_status', 'cmd_population_status', 'send_resource_alerts_if_needed',
+    'cmd_resource_status', 'cmd_population_status', 'cmd_faction_status',
+    'announce_resolved_faction', 'player_faction_you_are_msgs',
+    'send_resource_alerts_if_needed',
     'cmd_toggle_side_filter', 'cmd_toggle_type_filter', 'cmd_gamemenu',
     'cmd_toggle_cheatmode', 'cmd_cmd', 'cmd_console', 'cmd_reload_parameters',
     'cmd_change_player', 'cmd_objectives', 'cmd_help', 'direction_to_msg',

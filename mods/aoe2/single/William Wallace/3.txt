@@ -1,0 +1,29 @@
+; 3 — Training the Troops
+
+title 8604
+intro 8612
+
+square_width 12
+nb_columns 3
+nb_lines 2
+
+nb_players_min 1
+nb_players_max 1
+random_starts 0
+
+west_east_paths a1 a2 b1
+south_north_paths a1 b1 c1
+
+goldmines 100 a1
+woods 300 a1
+orchard 100 a1
+nb_meadows_by_square 3
+
+; Food/wood/gold for houses + militia; barracks already built
+player 80 250 250 0 a1 town_center barracks 4 house 4 peasant
+
+timer_coefficient 40
+
+trigger player1 (timer 0) (add_objective 1 8622)
+trigger player1 (has 4 militia) (do (objective_complete 1) (victory))
+trigger player1 (building_lost town_center) (defeat)

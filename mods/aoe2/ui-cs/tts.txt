@@ -1,0 +1,288 @@
+; coding: utf-8
+; Age of Empires II DE — Čeština (prozatím polské DE názvy + ruční blurby; upravte dle potřeby)
+
+
+8000 Age of Empires 2 Definitive Edition
+8001 Brytowie
+8002 Frankowie
+8003 Chińczycy
+8004 Mongołowie
+8005 Bizantyjczycy
+8006 Japończycy
+8007 Teutoni
+8008 Wikingowie
+8009 Wietnamczycy
+8011 Portugalczycy
+8012 Aztékové
+
+8070 Samuraj
+8071 Elitarny samuraj
+8072 Teutoński rycerz
+8073 Elitarny teutoński rycerz
+8074 Berserker
+8075 Elitarny berserker
+8076 Łucznik rattanowy
+8077 Elitarny łucznik rattanowy
+8078 Organki
+8079 Elitarne organki
+
+8080 Yasama
+8081 Kataparuto
+8082 Opancerzenie
+8083 Blanki
+8084 Wodzowie
+8085 Bogsveigar
+8086 Chatra
+8087 Pieniądze papierowe
+8088 Cesta kolem světa
+8089 Arkebuz
+8090 Jaguární válečník
+8091 Elitní jaguární válečník
+8092 Atlatl
+8093 Květinové války
+
+
+8010 Wojownik z długim łukiem
+8015 Elitarny wojownik z długim łukiem
+8020 Wojownik z toporami
+8025 Elitarny wojownik z toporami
+8030 Chu-ko-nu
+8031 Mieszkaniec
+8035 Elitarny chu-ko-nu
+8040 Mangudai
+8041 Mieszkaniec
+8045 Elitarny mangudai
+8050 Katafrakt
+8055 Elitarny katafrakt
+
+8060 Yeoman
+8061 Topór brodaty
+8062 Rycerskość
+8063 Rakiety
+8064 Musztra
+8065 Logistike
+8066 Warwolf
+8067 Wielki Mur
+8068 Koczownicy
+8069 Grecki ogień
+
+8100 Jídlo
+8101 Dřevo
+8102 Zlato
+8103 Kámen
+
+8110 Strzelnica
+8111 Uniwersytet
+8112 Klasztor
+8113 Zamek
+8114 Mnich
+8115 Misjonarz
+8300 Centrum miasta
+8301 Koszary
+8302 Stajnia
+8303 Kuźnia
+8304 Dom
+8305 Farma
+8306 Skład drewna
+8307 Zakład artyleryjski
+8308 Port
+8309 Mur kamienny
+8310 Brama
+8325 Palisada
+8326 Brama palisadowa
+8311 Wieża obserwacyjna
+8312 Wieża obronna
+8313 Twierdza
+8327 Wieża z bombardą
+8328 Umocniony mur
+8329 Opevněná brána
+8319 Strażnica
+8314 Młyn
+8315 Kopalnia
+8316 Rynek
+8317 Cud
+8318 Kamenný důl
+8320 Keř s bobulemi
+8321 Jelen
+8322 Ovce
+8323 Divočák
+8324 Mršina
+
+8120 Straż obywatelska
+8121 Piechur z mieczem
+8122 Wojownik z długim mieczem
+8123 Wojownik z mieczem dwuręcznym
+8124 Czempion
+8125 Włócznik
+8126 Pikinier
+8127 Halabardnik
+
+8130 Łucznik
+8131 Kusznik
+8132 Wojownik z arbaletem
+8133 Oszczepnik
+8134 Elitarny oszczepnik
+8137 Imperialny oszczepnik
+8135 Kawaleria z łukami
+8136 Ciężka kawaleria z łukami
+
+8140 Kawaleria zwiadowcza
+8141 Lekka kawaleria
+8142 Huzar
+8143 Rycerz
+8144 Kawalerzysta
+8145 Paladyn
+8146 Jeździec na wielbłądzie
+8147 Ciężki jeździec na wielbłądzie
+8148 Imperialny jeździec na wielbłądzie
+8160 Słoń bojowy
+8161 Elitarny słoń bojowy
+8162 Ułan
+8163 Elitarny ułan
+
+8150 Taran
+8151 Mangonela
+8152 Onager
+8153 Skorpion
+8154 Trebusz
+8155 Umocniony taran
+8156 Taran oblężniczy
+8157 Onager oblężniczy
+8158 Ciężki skorpion
+8159 Mieszkaniec
+8170 Bombarda
+8171 Petarda
+8172 Wieża oblężnicza
+8173 Kanonier
+8174 Zwiadowca orłów
+8175 Wojownik orłów
+8176 Elitarny wojownik orłów
+8177 Słoń bojowy
+8178 Elitarny słoń bojowy
+8179 Opancerzony słoń
+8180 Elitní obrněný slon
+8181 Łucznik na słoniu
+8182 Elitarny łucznik na słoniu
+8183 Kondotier
+
+8400 Łódź rybacka
+8401 Statek transportowy
+8402 Galera
+8403 Galera bojowa
+8404 Galeon
+8405 Galera ogniowa
+8406 Łódź ogniowa
+8407 Szybka łódź ogniowa
+8408 Wybuchowa tratwa
+8409 Wybuchowy statek
+8410 Těžká demoliční loď
+8411 Galeon z armatą
+8412 Elitarny galeon z armatą
+8413 Okręt-żółw
+8414 Elitarny okręt-żółw
+8415 Langskip
+8416 Elitarny langskip
+8417 Karawela
+8418 Elitarna karawela
+8419 Dromon
+8420 Żaglowiec handlowy
+8421 Pułapka na ryby
+8422 Sieci skrzelowe
+8423 Szkutnik
+8424 Karenaż
+8425 Suchy dok
+
+8200 Wykuwanie
+8201 Odlewanie żelaza
+8202 Piec hutniczy
+8203 Zbroja łuskowa
+8204 Kolczuga
+8205 Zbroja płytowa
+8206 Końska zbroja łuskowa
+8207 Końska kolczuga
+8208 Końska zbroja płytowa
+8209 Lotka
+8210 Grot bodkin
+8211 Karwasz
+8212 Pikowana zbroja łucznicza
+8213 Skórzana zbroja łucznicza
+8214 Pierścieniowa zbroja łucznicza
+
+8220 Rodowody
+8221 Hodowla
+8222 Tropienie
+8223 Giermkowie
+8224 Zekier
+8225 Balistyka
+8226 Chemia
+8227 Krosno
+8228 Taczka
+8229 Wóz ręczny
+8230 Siekiera dwustronna
+8231 Piła kabłąkowa
+8232 Piła dwuosobowa
+8233 Wydobycie złota
+8234 Kopalnie złota
+8235 Podpalenie
+8236 Przeszywanice
+8237 Partyjski strzał
+8238 Konstruktorzy machin wojennych
+8239 Pobór
+8250 Mordownie
+8251 Murarstwo
+8252 Architektura
+8253 Ogniste strzały
+8254 Żuraw z kołem deptakowym
+8255 Chomąto
+8256 Ciężki pług
+8257 Rotacja upraw
+8270 Ogrodzenie
+8271 Saperzy
+8272 Szpiedzy/Zdrada
+8273 Wózek
+8274 Gildie
+8275 Bicie monet
+8276 Bankowość
+8277 Wóz handlowy
+8278 Faktoria
+8279 Koupit
+8280 Prodat
+8281 Tribut
+8282 Obchod
+8240 Straż miejska
+8241 Patrol miejski
+8242 Zásoby
+8243 Wydobycie kamienia
+8244 Kopalnie kamienia
+
+8260 Odkupienie
+8261 Pokuta
+8262 Ziołolecznictwo
+8263 Herezja
+8264 Świętość
+8265 Zapał
+8266 Wiara
+8267 Iluminacja
+8268 Druk stemplami
+8269 Teokracja
+
+; Ages (do not reuse 8250–8257 university/mill tech IDs)
+8290 Era Mroku
+8291 Era Feudalna
+8292 Era Zamków
+8293 Era Imperiów
+
+; Unit category roots (armor / is_a / passenger attack filters)
+8500 Pěchota
+8501 Jízda
+8502 Lučištníci
+8503 Obléhací jednotky
+8504 Unikátní jednotky
+
+; Tech effect blurbs (engine-handled techs with no numeric bonus)
+8510 Projektily předvídají a zasahují pohybující se cíle
+8511 Mniši mohou konvertovat obléhací zbraně a většinu budov
+8512 Mniši mohou konvertovat nepřátelské mnichy
+8513 Vaše jednotky při konverzi zemřou místo připojení k nepříteli
+8514 Nepřátelské konverze proti vám trvají mnohem déle
+8515 Když více mnichů konvertuje najednou, odpočívá jen úspěšný

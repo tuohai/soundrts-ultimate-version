@@ -8,6 +8,11 @@ def parameters
 nb_of_resource_types 2 ; or, bois
 achievements_enabled 1
 achievements_per_faction 1
+menace_armor_weight 1
+menace_dodge_weight 1
+menace_range_weight 0.15
+menace_speed_weight 0.2
+menace_hp_ref 50
 
 ; resource deposits
 

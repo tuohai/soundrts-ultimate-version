@@ -1,0 +1,37 @@
+; coding: utf-8
+; William Wallace — campanha tutorial AoE2 DE (português BR)
+
+8600 William Wallace
+8601 Escócia, 1297. Aprenda a arte da guerra enquanto William Wallace reúne os escoceses contra o domínio inglês. Sete lições curtas — da marcha e coleta a Stirling e Falkirk.
+
+8602 Marcha e combate
+8603 Alimentar nosso exército
+8604 Treinar as tropas
+8605 Pesquisa e tecnologia
+8606 A batalha de Stirling
+8607 Forjar uma aliança
+8608 A batalha de Falkirk
+
+8610 Mova sua milícia para o leste até a aldeia escocesa. Selecione as unidades e ordene que vão ao quadrado marcado.
+8611 Colete comida, madeira e ouro. Construa fazendas se precisar de mais comida. Alcance 50 de cada.
+8612 Construa um quartel se precisar e então treine quatro milícias.
+8613 Avance para a Idade Feudal e pesquise Homem de Armas no quartel.
+8614 Derrote o exército inglês e destrua a torre de vigia deles.
+8615 Capture três relíquias com monges e leve-as ao seu mosteiro.
+8616 Construa um castelo e depois destrua o castelo inglês.
+
+8620 Chegue à aldeia escocesa
+8621 Colete 50 de comida, 50 de madeira e 50 de ouro
+8622 Treine 4 milícias
+8623 Pesquisar Homem de Armas
+8624 Derrote os ingleses e destrua a torre deles
+8625 Capture 3 relíquias e leve-as ao mosteiro
+8626 Construa um castelo
+8627 Destrua o castelo inglês
+
+8630 Aldeia escocesa
+8631 Acampamento inglês
+8632 Campo de Stirling
+8633 Cidade aliada escocesa
+8634 Falkirk
+8640 Relíquia

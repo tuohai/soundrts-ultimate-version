@@ -1,0 +1,288 @@
+; coding: utf-8
+; Age of Empires II DE — Português (Brasil) (strings oficiais DE via aoe2techtree)
+
+
+8000 Age of Empires 2 Definitive Edition
+8001 Bretões
+8002 Francos
+8003 Chineses
+8004 Mongóis
+8005 Bizantinos
+8006 Japoneses
+8007 Teutões
+8008 Vikings
+8009 Vietnamitas
+8011 Portugueses
+8012 Astecas
+
+8070 Samurai
+8071 Samurai de Elite
+8072 Cavaleiro Teutão
+8073 Cav. Teutão de Elite
+8074 Berserker
+8075 Berserker de Elite
+8076 Arqueiro de Rattan
+8077 Arq. de Rattan de Elite
+8078 Rabadoquim
+8079 Rabadoquim de Elite
+
+8080 Yasama
+8081 Kataparuto
+8082 Revestimento de Ferro
+8083 Ameias
+8084 Chefes de Tribo
+8085 Bogsveigar
+8086 Chatras
+8087 Papel-Moeda
+8088 Circumnavegação
+8089 Arcabuz
+8090 Guerreiro jaguar
+8091 Guerreiro jaguar de elite
+8092 Atlatl
+8093 Guerras floridas
+
+
+8010 Arqueiro de Arco Longo
+8015 Arqueiro de Arc. Lon. Elite
+8020 Lançador de Machado
+8025 Lançador de M. de Elite
+8030 Chu Ko Nu
+8031 Aldeão
+8035 Chu Ko Nu de Elite
+8040 Mangudai
+8041 Aldeão
+8045 Mangudai de Elite
+8050 Catafractário
+8055 Catafractário de Elite
+
+8060 Yeomen
+8061 Machado Franco
+8062 Ordens de Cavalaria
+8063 Pirotecnia
+8064 Treino
+8065 Sobrepujamento
+8066 Licantropo
+8067 Grande Muralha
+8068 Nômades
+8069 Fogo Grego
+
+8100 Comida
+8101 Madeira
+8102 Ouro
+8103 Pedra
+
+8110 Campo de Arqueiros
+8111 Universidade
+8112 Mosteiro
+8113 Castelo
+8114 Monge
+8115 Missionário
+8300 Centro da Cidade
+8301 Quartel
+8302 Estábulo
+8303 Ferraria
+8304 Casa
+8305 Fazenda
+8306 Campo Madeireiro
+8307 Oficina de Cerco
+8308 Doca
+8309 Muralha
+8310 Portão
+8325 Paliçada
+8326 Portão Paliçado
+8311 Torre de Vigia
+8312 Torre de Guarda
+8313 Torre de Menagem
+8327 Torre de Bombardeio
+8328 Muralha Fortificada
+8329 Portão fortificado
+8319 Posto Avançado
+8314 Moinho
+8315 Campo de Mineração
+8316 Mercado
+8317 Maravilha
+8318 Mina de pedra
+8320 Arbusto de frutas
+8321 Cervo
+8322 Ovelha
+8323 Javali
+8324 Carcaça
+
+8120 Milícia
+8121 Homem de Armas
+8122 Espadachim
+8123 Espadachim de Duas Mãos
+8124 Campeão
+8125 Lanceiro
+8126 Piqueiro
+8127 Alabardeiro
+
+8130 Arqueiro
+8131 Besteiro
+8132 Arbalesteiro
+8133 Escaramuçador
+8134 Escaramuçador de Elite
+8137 Escaramuçador Imperial
+8135 Arqueiro Montado
+8136 Arqueiro Montado Pesado
+
+8140 Batedor a Cavalo
+8141 Cavalaria Ligeira
+8142 Hussardo
+8143 Cavaleiro
+8144 Fidalgo
+8145 Paladino
+8146 Cameleiro
+8147 Cameleiro Pesado
+8148 Cameleiro Imperial
+8160 Elefante de Batalha
+8161 Elefante de Bat. de Elite
+8162 Lanceiro das Estepes
+8163 Lanceiro das Estepes de Elite
+
+8150 Aríete
+8151 Manganela
+8152 Onagro
+8153 Escorpião
+8154 Trabuco
+8155 Aríete de Metal
+8156 Aríete de Cerco
+8157 Onagro de Cerco
+8158 Escorpião Pesado
+8159 Aldeão
+8170 Canhão
+8171 Petardeiro
+8172 Torre de Cerco
+8173 Canhoneiro de Mão
+8174 Batedor Águia
+8175 Guerreiro Águia
+8176 Guerreiro Águia de Elite
+8177 Elefante de Guerra
+8178 Elefante de G. de Elite
+8179 Elefante Blindado
+8180 Elefante encouraçado de elite
+8181 Arqueiro a Elefante
+8182 Arqueiro a Elefante de Elite
+8183 Condotiero
+
+8400 Navio de Pesca
+8401 Navio de Transporte
+8402 Galé
+8403 Galé de Guerra
+8404 Galeão
+8405 Galé de Fogo
+8406 Navio de Fogo
+8407 Navio de Fogo Veloz
+8408 Balsa de Demolição
+8409 Navio de Demolição
+8410 Navio demolidor pesado
+8411 Galeão Canhoneiro
+8412 Galeão C. de Elite
+8413 Navio Tartaruga
+8414 Navio Tartaruga de Elite
+8415 Dracar
+8416 Dracar de Elite
+8417 Caravela
+8418 Caravela de Elite
+8419 Drómon
+8420 Barco de Comércio
+8421 Armadilha de Peixe
+8422 Rede de emalhar
+8423 Construtores Navais
+8424 Carenagem
+8425 Doca Seca
+
+8200 Forja
+8201 Forja de Ferro
+8202 Alto-Forno
+8203 Armadura de Escamas
+8204 Armadura de Malha
+8205 Armadura de Placas
+8206 Barda de Escamas
+8207 Barda de Malha
+8208 Barda de Placas
+8209 Rêmige
+8210 Flecha Afiada
+8211 Braçadeira
+8212 Armadura Ar. Acolchoada
+8213 Armadura Ar. de Couro
+8214 Armadura Ar. de Anéis
+
+8220 Linhagem
+8221 Pecuária
+8222 Rastreamento
+8223 Escudeiros
+8224 Anel de Arqueria
+8225 Balística
+8226 Química
+8227 Tear
+8228 Carrinho de Mão
+8229 Carroça de Mão
+8230 Machado Duplo
+8231 Serra em Arco
+8232 Serra de Dois Homens
+8233 Mineração de Ouro
+8234 Mineração Sub. de Ouro
+8235 Incêndio
+8236 Perpontes
+8237 Táticas Partas
+8238 Engenharia de Cerco
+8239 Conscrição
+8250 Fossos Mortais
+8251 Alvenaria
+8252 Arquitetura
+8253 Tiro Aquecido
+8254 Guindaste de Esteira
+8255 Cabresto
+8256 Arado Forte
+8257 Rotação de Culturas
+8270 Cadafalsos
+8271 Sapadores
+8272 Espiões/Traição
+8273 Caravana
+8274 Guildas
+8275 Cunhagem
+8276 Finanças
+8277 Carroça de Comércio
+8278 Feitoria
+8279 Comprar
+8280 Vender
+8281 Tributo
+8282 Comércio
+8240 Vigia da Cidade
+8241 Patrulha da Cidade
+8242 Suprimentos
+8243 Mineração de Pedra
+8244 Mineração Sub. de Pedra
+
+8260 Redenção
+8261 Penitência
+8262 Medicina Herbal
+8263 Heresia
+8264 Santidade
+8265 Fervor
+8266 Fé
+8267 Iluminação
+8268 Xilogravura
+8269 Teocracia
+
+; Ages (do not reuse 8250–8257 university/mill tech IDs)
+8290 Idade das Trevas
+8291 Idade Feudal
+8292 Idade dos Castelos
+8293 Idade Imperial
+
+; Unit category roots (armor / is_a / passenger attack filters)
+8500 Infantaria
+8501 Cavalaria
+8502 Arqueiros
+8503 Unidades de cerco
+8504 Unidades únicas
+
+; Tech effect blurbs (engine-handled techs with no numeric bonus)
+8510 Projéteis antecipam e atingem alvos em movimento
+8511 Monges podem converter armas de cerco e a maioria dos edifícios
+8512 Monges podem converter monges inimigos
+8513 Suas unidades morrem em vez de se juntar ao inimigo quando convertidas
+8514 Conversões inimigas contra você demoram bem mais
+8515 Quando vários monges convertem juntos, só o bem-sucedido descansa

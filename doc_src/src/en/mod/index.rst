@@ -14,23 +14,26 @@ Mod rules
 2. `Advanced guide <advanced.htm>`_ — skills, factions, meta, AI
 3. `Modding manual <modding.htm>`_
 4. `Skills / heal / effects (zh) <../../zh/mod/skills-and-effects.htm>`_
-5. `Battle shouts <battle-shouts.htm>`_ · `Battle shouts (zh) <../../zh/mod/battle-shouts.htm>`_
-6. `Audio management <audio-management.htm>`_ — P0–P2 refactor, multi-format SFX, volumes, mixer buffer
+5. `Market system <market-system.htm>`_ — buy/sell, tribute, route trade (rules-driven)
+6. `Unit-line upgrades & top-tier training <unit-line-upgrade.htm>`_ — ``line_upgrade``, train resolve, field morph
+7. `Projectile lead & flight speed <projectile-lead.htm>`_ — ``projectile_lead``, per-lane ``*_projectile_speed``
+8. `Battle shouts <battle-shouts.htm>`_ · `Battle shouts (zh) <../../zh/mod/battle-shouts.htm>`_
+9. `Audio management <audio-management.htm>`_ — P0–P2 refactor, multi-format SFX, volumes, mixer buffer
 
 Maps
 
-4. `Map guide <map-guide.htm>`_ → `Mapmaking manual <mapmaking.htm>`_
-5. `Square terrain & building land <building-land-terrain.htm>`_ (full tables: `zh <../../zh/mod/building-land-terrain.htm>`_)
-6. `Building bridges on water <water-bridge-building.htm>`_ (`zh <../../zh/mod/water-bridge-building.htm>`_) — tile spans, ``bridge_terrain``
-7. `Random maps <randommap.htm>`_
+10. `Map guide <map-guide.htm>`_ → `Mapmaking manual <mapmaking.htm>`_
+11. `Square terrain & building land <building-land-terrain.htm>`_ (full tables: `zh <../../zh/mod/building-land-terrain.htm>`_)
+12. `Building bridges on water <water-bridge-building.htm>`_ (`zh <../../zh/mod/water-bridge-building.htm>`_) — tile spans, ``bridge_terrain``
+13. `Random maps <randommap.htm>`_
 
 Campaigns
 
-7. `Campaign guide <campaign-guide.htm>`_
+14. `Campaign guide <campaign-guide.htm>`_
 
 Other
 
-8. `AI tutorial <aimaking.htm>`_ · `Server <server.htm>`_ · `Release notes <../relnotes.htm>`_
+15. `AI tutorial <aimaking.htm>`_ · `Server <server.htm>`_ · `Release notes <../relnotes.htm>`_
 
 Meta progress
 --------------

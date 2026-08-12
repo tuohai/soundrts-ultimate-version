@@ -14,25 +14,28 @@ Mod 规则
 2. `Mod 进阶 <advanced.htm>`_ — 技能、阵营、成就、AI
 3. `Mod 制作手册 <modding.htm>`_ — 关键字大全（权威）
 4. `技能 / 治疗 / 效果 <skills-and-effects.htm>`_
-5. `战斗喊杀音效 <battle-shouts.htm>`_ — 分层喊杀、``shouts`` 配置
-6. `音频管理系统 <audio-management.htm>`_ — P0–P2 引擎重构、多格式 SFX、音量、Mixer 缓冲与预加载
+5. `市场机制 <market-system.htm>`_ — 买卖、进贡、路线贸易（规则驱动）
+6. `单位线升级与最高阶训练 <unit-line-upgrade.htm>`_ — ``line_upgrade``、训练解析、场上变形
+7. `投射物预判与飞行速度 <projectile-lead.htm>`_ — ``projectile_lead``、分路 ``*_projectile_speed``
+8. `战斗喊杀音效 <battle-shouts.htm>`_ — 分层喊杀、``shouts`` 配置
+9. `音频管理系统 <audio-management.htm>`_ — P0–P2 引擎重构、多格式 SFX、音量、Mixer 缓冲与预加载
 
 地图
 
-4. `地图入门与进阶 <map-guide.htm>`_ — 第一张多人图、触发器、子格地形
-5. `地图制作手册 <mapmaking.htm>`_ — 语法大全（权威）
-6. `方格地形与建造用地 <building-land-terrain.htm>`_ — ``class terrain`` / ``building_land`` / ``square_terrain``
-7. `水上铺桥 <water-bridge-building.htm>`_ — 逐格桥段、``is_buildable_on_water_only`` / ``bridge_terrain``
-8. `随机地图 <randommap.htm>`_ — RMG 参数与分享码
+10. `地图入门与进阶 <map-guide.htm>`_ — 第一张多人图、触发器、子格地形
+11. `地图制作手册 <mapmaking.htm>`_ — 语法大全（权威）
+12. `方格地形与建造用地 <building-land-terrain.htm>`_ — ``class terrain`` / ``building_land`` / ``square_terrain``
+13. `水上铺桥 <water-bridge-building.htm>`_ — 逐格桥段、``is_buildable_on_water_only`` / ``bridge_terrain``
+14. `随机地图 <randommap.htm>`_ — RMG 参数与分享码
 
 战役
 
-9. `战役入门与进阶 <campaign-guide.htm>`_ — 多章结构、目标、物品、NPC、合作、跨章携带
+15. `战役入门与进阶 <campaign-guide.htm>`_ — 多章结构、目标、物品、NPC、合作、跨章携带
 
 其它
 
-10. `AI 制作 <aimaking.htm>`_ · `独立服务器 <server.htm>`_
-11. `版本说明 <../relnotes.htm>`_
+16. `AI 制作 <aimaking.htm>`_ · `独立服务器 <server.htm>`_
+17. `版本说明 <../relnotes.htm>`_
 
 元进度与界面（按需）
 --------------------

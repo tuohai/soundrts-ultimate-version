@@ -1,0 +1,30 @@
+; 2 — Feeding Our Army
+
+title 8603
+intro 8611
+
+square_width 12
+nb_columns 3
+nb_lines 3
+
+nb_players_min 1
+nb_players_max 1
+random_starts 0
+
+west_east_paths a1 a2 a3 b1 b2
+south_north_paths a1 a2 b1 b2 c1 c2
+
+goldmines 200 a1
+woods 200 a1 b1
+orchard 150 a2
+nb_meadows_by_square 4
+additional_meadows a1
+
+; Start nearly empty so gathering is required
+player 0 0 0 0 a1 town_center 4 peasant 2 house
+
+timer_coefficient 40
+
+trigger player1 (timer 0) (add_objective 1 8621)
+trigger player1 (and (has_resources resource1 50) (has_resources resource2 50) (has_resources resource3 50)) (do (objective_complete 1) (victory))
+trigger player1 (building_lost town_center) (defeat)

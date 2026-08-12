@@ -10,10 +10,10 @@ F9–F12 adjust primary; Shift+F9–F12 adjust secondary:
   F10 cycle parameter type (volume / pitch / rate / voice)
   F11 decrease / previous value of current parameter
   F12 increase / next value of current parameter
-  Left Shift+C  copy last text spoken by primary library
-  Right Shift+C copy last text spoken by secondary library
-  Left Shift+B  append primary last utterance to clipboard
-  Right Shift+B append secondary last utterance to clipboard
+  Left Shift+C  copy last text spoken by primary library (menus; in-game via bindings)
+  Right Shift+C copy last text spoken by secondary library (menus; in-game via bindings)
+  Left Shift+B  append primary last utterance to clipboard (menus; in-game via bindings)
+  Right Shift+B append secondary last utterance to clipboard (menus; in-game via bindings)
 """
 
 from __future__ import annotations
@@ -675,7 +675,11 @@ def toggle_speech_enabled(*, announce: bool = True) -> bool:
 
 
 def handle_hotkey(key: int, mod: int) -> bool:
-    """Handle F9–F12 / Shift+F9–F12 and L/R Shift+C / Shift+B."""
+    """Handle F9–F12 / Shift+F9–F12 and L/R Shift+C / Shift+B.
+
+    Shift+C / Shift+B here are for menus. In-game copy/append must go through
+    bindings so commenting those lines in global_bindings.txt disables them.
+    """
     try:
         from pygame.locals import (
             K_F9,

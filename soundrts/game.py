@@ -749,6 +749,22 @@ class MissionGame(_Game, _Savable):
         self.map = chapter.map
         self.seed = random.randint(0, 10000)
         self.local_client = DirectClient(config.login, self)
+        # Prefer campaign.txt ``default_faction``; else first rules faction.
+        # Without this, MissionGame keeps random_faction and aoe2 civs shuffle.
+        faction = getattr(getattr(chapter, "campaign", None), "default_faction", None)
+        if not faction:
+            try:
+                from . import definitions
+
+                faction = (
+                    definitions.rules.factions[0]
+                    if definitions.rules.factions
+                    else None
+                )
+            except Exception:
+                faction = None
+        if faction:
+            self.local_client.faction = faction
         self.players = [self.local_client]
 
     def _replay_write_map(self):
@@ -896,8 +912,10 @@ class SpectatorGame(_MultiplayerGame):
                 break
         
         if not self.map:
-            # 如果找不到地图，使用第一个可用地图作为默认
-            self.map = res.multiplayer_maps()[0]
+            # 如果找不到地图，使用第一个可用地图作为默认（模组隔离下列表可能为空）
+            available = res.multiplayer_maps()
+            if available:
+                self.map = available[0]
         
         # 必须使用与真实对局相同的种子，否则世界生成（随机阵营/起始位置/地形等）
         # 就会与对局分叉，导致看到的根本不是同一局游戏。

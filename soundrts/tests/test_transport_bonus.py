@@ -40,3 +40,41 @@ def test_passenger_bonus_tracked_separately_from_container():
     _remove_transport_bonus(passenger, passenger_stats)
     assert container.speed == 1000
     assert passenger.rdg_range == 4
+
+
+def test_load_bonus_dotted_vs_updates_dict():
+    unit = types.SimpleNamespace(speed=600, mdg_vs={"building": 150000})
+    stats = {}
+    _apply_transport_bonus(
+        unit, {"speed": 0.05, "mdg_vs.building": 10}, stats
+    )
+    assert unit.speed == 650
+    assert unit.mdg_vs["building"] == 160000
+    assert stats == {"speed": 50, "mdg_vs.building": 10000}
+    _remove_transport_bonus(unit, stats)
+    assert unit.speed == 600
+    assert unit.mdg_vs["building"] == 150000
+    assert stats == {}
+
+
+def test_passenger_bonus_dotted_vs_updates_dict():
+    """passenger_bonus uses the same dotted vs path as load_bonus."""
+    passenger = types.SimpleNamespace(mdg_vs={"building": 5000, "siege_unit": 0})
+    stats = {}
+    _apply_transport_bonus(passenger, {"mdg_vs.building": 10}, stats)
+    assert passenger.mdg_vs["building"] == 15000
+    assert passenger.mdg_vs["siege_unit"] == 0
+    assert stats == {"mdg_vs.building": 10000}
+    _remove_transport_bonus(passenger, stats)
+    assert passenger.mdg_vs["building"] == 5000
+    assert stats == {}
+
+
+def test_load_bonus_dotted_cover_vs_is_scaled():
+    unit = types.SimpleNamespace(mdg_cover_vs={"footman": 0})
+    stats = {}
+    _apply_transport_bonus(unit, {"mdg_cover_vs.footman": 10}, stats)
+    assert unit.mdg_cover_vs["footman"] == 10000
+    assert stats == {"mdg_cover_vs.footman": 10000}
+    _remove_transport_bonus(unit, stats)
+    assert unit.mdg_cover_vs["footman"] == 0

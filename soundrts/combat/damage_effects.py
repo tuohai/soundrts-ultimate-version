@@ -141,7 +141,7 @@ class DamageEffectsMixin(DamageCalculationMixin):
         ):
             self._try_trigger_skill(self, attacker, skill_name, "passive", is_melee)
 
-    def receive_hit(self, damage, attacker, notify=True, is_crit=False, is_charge=False, is_melee=None, is_reflect=False):
+    def receive_hit(self, damage, attacker, notify=True, is_crit=False, is_charge=False, is_melee=None, is_reflect=False, extra_melee_damage=None):
         """处理被命中。
 
         Args:
@@ -153,6 +153,7 @@ class DamageEffectsMixin(DamageCalculationMixin):
             is_melee: 明确指定本次攻击为近战(True)或远程(False)。
                       None 时回落到旧的距离/属性推断逻辑（保持向后兼容）。
             is_reflect: 是否为反弹伤害（不再二次反弹）
+            extra_melee_damage: AoE2 次级箭双攻击中的近战分量（可为 0）
         """
         # 防御性检查
         # 条约期内：禁止来自敌对单位的直接伤害
@@ -434,7 +435,9 @@ class DamageEffectsMixin(DamageCalculationMixin):
         if bypass_calc:
             actual_damage = damage
         else:
-            actual_damage = self._calculate_actual_damage(damage, attacker)
+            actual_damage = self._calculate_actual_damage(
+                damage, attacker, is_melee=is_melee, extra_melee_damage=extra_melee_damage
+            )
 
         # 合作战役难度：缩放"敌方（非人类、非中立）单位输出"的伤害。整数运算，
         # 确定性安全；只影响敌人打出的伤害，玩家自身输出不变（与决定版一致）。
@@ -670,26 +673,34 @@ class DamageEffectsMixin(DamageCalculationMixin):
                 # 取较小值作为新延迟
                 damage_delay_ms = min(damage_delay_ms, meet_time)
 
-        # 限制最大和最小延迟（即时命中不强制 100ms 最小延迟）
-        if is_projectile or (
-            (is_melee and self.mdg_delay > 0) or (not is_melee and self.rdg_delay > 0)
-        ):
-            damage_delay_ms = min(max(damage_delay_ms, 100), 5000)
-        else:
-            damage_delay_ms = min(max(damage_delay_ms, 0), 5000)
+        # 飞行时间上限；0 = 即时命中（不再用 mdg_delay/rdg_delay，也不强制最短 100ms）
+        damage_delay_ms = min(max(int(damage_delay_ms or 0), 0), 5000)
 
         # 攻击序列（诸葛弩式连发：一次攻击内多次命中，间隔由 rules 配置）
+        # secondary 模式（AoE2 Chu Ko Nu）：首发 = 单位实时攻击；后续 = 固定穿刺+近战
         if is_melee:
             times = min(self.mdg_seq_times, 6)
             damages = self.mdg_seq_damages
             interval = self.mdg_seq_interval
+            secondary_mode = bool(getattr(self, "mdg_seq_secondary", 0))
+            sec_rdg = int(getattr(self, "mdg_seq_secondary_rdg", 0) or 0)
+            sec_mdg = int(getattr(self, "mdg_seq_secondary_mdg", 0) or 0)
+            secondary_live = bool(getattr(self, "mdg_seq_secondary_live", 0))
         else:
             times = min(self.rdg_seq_times, 6)
             damages = self.rdg_seq_damages
             interval = self.rdg_seq_interval
+            secondary_mode = bool(getattr(self, "rdg_seq_secondary", 0))
+            sec_rdg = int(getattr(self, "rdg_seq_secondary_rdg", 0) or 0)
+            sec_mdg = int(getattr(self, "rdg_seq_secondary_mdg", 0) or 0)
+            secondary_live = bool(getattr(self, "rdg_seq_secondary_live", 0))
 
         # 如果没有设置序列,使用单次攻击
-        if not damages:
+        if secondary_mode:
+            times = max(1, min(times, 6))
+            if times > 1 and interval <= 0:
+                interval = 0.25
+        elif not damages:
             damages = [self._get_melee_damage_vs(target) if is_melee
                        else self._get_ranged_damage_vs(target)]
             times = 1
@@ -710,6 +721,8 @@ class DamageEffectsMixin(DamageCalculationMixin):
                 )
 
         # 预计算所有伤害值和时间
+        # 条目: (hit_time, pierce_or_main, extra_melee_or_None, is_secondary_shot)
+        # pierce_or_main is None → 命中时再取 live 伤害
         sequence = []
 
         # 计算基础延迟
@@ -717,13 +730,30 @@ class DamageEffectsMixin(DamageCalculationMixin):
 
         # 设置攻击动作时间（按序列）
         for i in range(times):
-            damage = damages[i] if i < len(damages) else damages[-1]
             hit_time = self.world.time + base_delay + int(i * interval * 1000)
-            sequence.append((hit_time, damage))
+            if secondary_mode:
+                if i == 0:
+                    # 首发：实时主伤害 + 固定近战分量（DE 诸葛弩主箭也有 0 melee）
+                    sequence.append((hit_time, None, sec_mdg, False))
+                elif secondary_live:
+                    # Yasama 等：次发也用实时主伤害（完整额外箭矢）
+                    sequence.append((hit_time, None, sec_mdg, True))
+                else:
+                    sequence.append((hit_time, sec_rdg, sec_mdg, True))
+            else:
+                damage = damages[i] if i < len(damages) else damages[-1]
+                sequence.append((hit_time, damage, None, False))
 
         # 按顺序创建攻击事件
-        for hit_time, damage in sequence:
-            def do_hit():
+        aim_x, aim_y = target.x, target.y
+        for hit_time, damage, extra_melee, is_secondary_shot in sequence:
+            def do_hit(
+                aim_x=aim_x,
+                aim_y=aim_y,
+                damage=damage,
+                extra_melee=extra_melee,
+                is_secondary_shot=is_secondary_shot,
+            ):
                 # 需要先保存目标的位置信息，以备目标死亡后溅射伤害使用
                 target_place = target.place
                 target_x = target.x
@@ -733,6 +763,18 @@ class DamageEffectsMixin(DamageCalculationMixin):
                 if (target is None or target.player is None or target.hp <= 0 or
                         self.player is None or self.hp <= 0):
                     return
+
+                # AoE2-style ballistics: without projectile_lead, arrows aim at fire-time
+                # position and miss if the target has moved (flag set by tech effect bonus).
+                if is_projectile and not is_melee:
+                    if not int(getattr(self, "projectile_lead", 0) or 0):
+                        from ..lib.nofloat import PRECISION, int_distance
+
+                        if int_distance(target.x, target.y, aim_x, aim_y) > (
+                            PRECISION // 2
+                        ):
+                            target.notify(f"missed,{self.type_name},0")
+                            return
 
                 # 检查攻击范围,但在强制攻击时忽略
                 self._sync_inside_combat_coords(target)
@@ -744,6 +786,14 @@ class DamageEffectsMixin(DamageCalculationMixin):
                             return
                 finally:
                     self._restore_inside_combat_coords(target)
+
+                # secondary 首发在命中时取 live 伤害（含升级）
+                if damage is None:
+                    damage = (
+                        self._get_melee_damage_vs(target)
+                        if is_melee
+                        else self._get_ranged_damage_vs(target)
+                    )
 
                 # 检查是否是自爆单位（无论是否命中都会触发溅射）
                 is_exploding_unit = False
@@ -819,7 +869,11 @@ class DamageEffectsMixin(DamageCalculationMixin):
                 # 每次都消耗 world.random 状态，且 is_hit 与"是否进入此分支"用了
                 # 不同的随机 roll。修复后只 roll 一次，is_hit 反映该 roll 的真实结果，
                 # 自爆单位即使 miss 仍会进入此分支（用于触发爆炸伤害逻辑）。
-                is_hit = self._hit_or_miss(target)
+                # AoE2 次级箭通常 100% 命中
+                if is_secondary_shot:
+                    is_hit = True
+                else:
+                    is_hit = self._hit_or_miss(target)
                 if is_hit or is_exploding_unit:
 
                     # 暴击判定
@@ -1133,7 +1187,14 @@ class DamageEffectsMixin(DamageCalculationMixin):
                             return
 
                         # 将最终伤害应用到目标（透传 is_melee，避免目标端误判双攻击单位的攻击类型）
-                        damage_target.receive_hit(final_damage, self, is_crit=is_crit, is_charge=False, is_melee=is_melee)
+                        damage_target.receive_hit(
+                            final_damage,
+                            self,
+                            is_crit=is_crit,
+                            is_charge=False,
+                            is_melee=is_melee,
+                            extra_melee_damage=extra_melee,
+                        )
                         damage_target.apply_damage_over_time(is_melee=is_melee, base_damage=damage)
 
                         # 检查是否有对目标生效的buff
@@ -1199,12 +1260,12 @@ class DamageEffectsMixin(DamageCalculationMixin):
                             # 目标未死亡或未命中但是自爆单位，使用原始目标位置进行溅射
                             self.splash_aim(target, is_melee=is_melee)
 
-            # 检查是否需要立即执行
-            if (is_melee and self.mdg_delay == 0) or (not is_melee and self.rdg_delay == 0):
+            # 飞行时间到点后结算；0 或已到期则即时命中
+            delay_until = hit_time - self.world.time
+            if delay_until <= 0:
                 do_hit()
             else:
-                # 加入延迟调度
-                self.world.schedule_after(hit_time - self.world.time, do_hit)
+                self.world.schedule_after(delay_until, do_hit)
 
         # 冷却由 attack_action.aim() 在发起攻击时设置，此处不再重复调度
 

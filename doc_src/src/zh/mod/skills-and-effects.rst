@@ -633,13 +633,21 @@ harm_target_type 行为说明
 +----+----+
 | `heal_ready` | 首次治疗前延迟 |
 +----+----+
-| `heal_range` | 作用距离 |
+| `heal_range` | 作用距离（单体瞄准；``heal_garrisoned`` 为 0 时生效） |
 +----+----+
-| `heal_radius` | 作用半径 |
+| `heal_radius` | 作用半径（范围光环；``heal_garrisoned`` 为 0 且未设 ``heal_range`` 时生效） |
++----+----+
+| `heal_garrisoned` | ``1`` = 只治疗本单位 ``inside`` 中的乘客/驻军；``0`` = 仍用范围或单体瞄准（默认） |
 +----+----+
 | `heal_target_type` | 目标筛选；正向标签为 **OR** |
 +----+----+
 
+
+治疗模式（由规则驱动，引擎不按建筑名硬编码）：
+
+1. ``heal_garrisoned 1`` — 仅治疗载具/掩体内单位（帝国 2 式城镇中心 / 城堡 / 箭塔驻军回复）
+2. 否则若 ``heal_range > 0`` — 单体瞄准治疗
+3. 否则 — ``heal_radius`` 范围光环
 
 示例（牧师式治疗光环）：
 
@@ -651,6 +659,17 @@ harm_target_type 行为说明
    heal_cd 2
    heal_radius 5
    heal_target_type allied unit -undead
+
+示例（仅驻军治疗，如城镇中心）：
+
+.. code-block:: text
+
+   def town_center
+   class building
+   heal_level 1
+   heal_garrisoned 1
+   transport_capacity 15
+   heal_target_type allied unit
 
 
 生命与法力回复（regen）
@@ -748,6 +767,8 @@ harm_target_type 行为说明
 | `harm_radius` | `heal_radius` | 半径 |
 +----+----+----+
 | `harm_target_type` | `heal_target_type` | 目标过滤 |
++----+----+----+
+| （无对称） | `heal_garrisoned` | ``1`` = 只治载具内单位 |
 +----+----+----+
 
 

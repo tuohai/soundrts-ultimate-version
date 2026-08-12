@@ -565,8 +565,8 @@
 4403        rdg_range
 4404        versus 
 
-4405 mdg_vs
-4406 rdg_vs
+4405 melee damage bonus vs
+4406 ranged damage bonus vs
 4407 hp
 4408 stats
 4409 techinc_stats
@@ -584,25 +584,25 @@
 4421 ranged splash radius
 4422 melee minimum splash decay
 4423 ranged minimum splash decay
-4424 mdf_vs
-4425 rdf_vs
-4426 mdg_range_vs
-4427 rdg_range_vs
-4428 mdg_minimal_range_vs
-4429 rdg_minimal_range_vs
-4430 mdg_ready_vs
-4431 rdg_ready_vs
-4432 mdg_cd_vs
-4433 rdg_cd_vs
-4434 mdg_cover_vs
-4435 rdg_cover_vs
-4436 mdg_dodge_vs
-4437 rdg_dodge_vs
+4424 melee defense bonus vs
+4425 ranged defense bonus vs
+4426 melee range bonus vs
+4427 ranged range bonus vs
+4428 melee minimal range bonus vs
+4429 ranged minimal range bonus vs
+4430 melee ready bonus vs
+4431 ranged ready bonus vs
+4432 melee cooldown bonus vs
+4433 ranged cooldown bonus vs
+4434 melee hit chance bonus vs
+4435 ranged hit chance bonus vs
+4436 melee dodge bonus vs
+4437 ranged dodge bonus vs
 4438 mdg_cover_on_terrain
 4439 rdg_cover_on_terrain
 4440 mdg_dodge_on_terrain
 4441 rdg_dodge_on_terrain
-4442 speed_vs
+4442 speed bonus vs
 4443 speed_on_terrain
 4444 mana
 4445 discount
@@ -615,7 +615,14 @@
 4457 charge_rdg_terrain
 4458 charge_mdg_cd_on_terrain
 4459 charge_rdg_cd_on_terrain
-
+4460 melee attack sequence
+4461 ranged attack sequence
+4462 shots
+4463 interval
+4464 primary hit
+4465 secondary hit
+4466 live damage
+4467 hit
 
 4500	Friendly units
 4501	Enemies
@@ -641,29 +648,29 @@
 4611 ranged critical multiplier
 4612 melee critical chance
 4613 ranged critical chance
-4614 mdg_crit_vs
-4615 rdg_crit_vs
-4616 mdg_crit_rate_vs
-4617 rdg_crit_rate_vs
+4614 melee critical multiplier bonus vs
+4615 ranged critical multiplier bonus vs
+4616 melee critical chance bonus vs
+4617 ranged critical chance bonus vs
 
 4618 melee critical resistance
 4619 ranged critical resistance
-4620 mdf_crit_rate_vs
-4621 rdf_crit_rate_vs
+4620 melee critical resistance bonus vs
+4621 ranged critical resistance bonus vs
 
 4622 melee armor piercing
 4623 ranged armor piercing
 4624 melee armor piercing chance
 4625 ranged armor piercing chance
-4626 mdg_piercing_vs
-4627 rdg_piercing_vs
-4628 mdg_piercing_rate_vs
-4629 rdg_piercing_rate_vs
+4626 melee armor piercing bonus vs
+4627 ranged armor piercing bonus vs
+4628 melee armor piercing chance bonus vs
+4629 ranged armor piercing chance bonus vs
 
 4630 melee piercing resistance
 4631 ranged piercing resistance
-4632 mdf_piercing_vs
-4633 rdf_piercing_vs
+4632 melee piercing resistance bonus vs
+4633 ranged piercing resistance bonus vs
 4634 music
 4635 music on
 4636 music off
@@ -702,31 +709,31 @@
 
 # 冲锋相关属性
 4717 melee charge damage
-4718 charge_mdg_vs
+4718 melee charge damage bonus vs
 4719 ranged charge damage
-4720 charge_rdg_vs
+4720 ranged charge damage bonus vs
 4721 melee charge cooldown
 4722 ranged charge cooldown
 4723 melee charge distance
 4724 ranged charge distance
 4725 melee charge splash
-4726 charge_mdg_splash_vs
+4726 melee charge splash bonus vs
 4727 ranged charge splash
-4728 charge_rdg_splash_vs
+4728 ranged charge splash bonus vs
 4729 melee charge splash decay minimum
-4730 charge_mdg_splash_decay_min_vs
+4730 melee charge splash decay bonus vs
 4731 ranged charge splash decay minimum
-4732 charge_rdg_splash_decay_min_vs
+4732 ranged charge splash decay bonus vs
 4733 melee charge splash radius
-4734 charge_mdg_radius_vs
+4734 melee charge splash radius bonus vs
 4735 ranged charge splash radius
-4736 charge_rdg_radius_vs
+4736 ranged charge splash radius bonus vs
 
 # OP冲锋相关属性
 4737 melee counter-charge damage
 4738 ranged counter-charge damage
-4739 op_charge_mdg_vs
-4740 op_charge_rdg_vs
+4739 melee counter-charge damage bonus vs
+4740 ranged counter-charge damage bonus vs
 4741 melee counter-charge cooldown
 4742 ranged counter-charge cooldown
 4743 melee counter-charge distance
@@ -778,6 +785,8 @@
 4794 max mana
 4795 gather time
 4796 gather quantity
+5412 gather rate
+5415 carry capacity
 4797 production time
 4798 production quantity
 4799 cost
@@ -813,6 +822,9 @@
 4827 can gather
 4828 gather time
 4829 gather quantity
+5413 gather rate
+5414 per second
+5416 carry capacity
 4830 can repair
 4831 target_ground
 4832 target_air
@@ -918,6 +930,9 @@
 4934 herd
 4935 herded
 4936 hunting techniques
+4940 projectile speed
+4941 melee projectile speed
+4942 ranged projectile speed
 4950 Co-op campaign
 4951 Local co-op campaign
 4952 Select co-op campaign
@@ -1562,14 +1577,16 @@
 5733	space
 5734	square width
 5735	height
-5736	cover_vs
-5737	dodge_vs
+5736	hit chance bonus vs
+5737	dodge bonus vs
 5738	square terrain info
 5739	terrain cover
 5740	accessibility voice
 5741	accessibility voice is now on
 5742	accessibility voice is now off
 5743	toggle accessibility voice
+5744	gold on kill
+5745	gold on kill bonus vs
 5750	language
 5751	system default
 5752	current

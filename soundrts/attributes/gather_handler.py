@@ -39,6 +39,14 @@ class GatherHandler:
                         elif attr_prefix == "gather_qty":
                             qty_text = format_signed_number(int(attr_value))
                             attrs.append(("", gather_msg, qty_text))
+
+                        elif attr_prefix == "gather_rate":
+                            rate_text = nb2msg_float(round(float(attr_value), 2)) + mp.PER_SECOND
+                            attrs.append(("", gather_msg, rate_text))
+
+                        elif attr_prefix == "carry_capacity":
+                            cap_text = format_signed_number(int(attr_value))
+                            attrs.append(("", gather_msg, cap_text))
                             
         except Exception as e:
             print(f"检测动态采集属性时出错: {e}")
@@ -71,6 +79,31 @@ class GatherHandler:
                         return True
                     voice.item(gather_qty_msg + mp.COLON + mp.NO_SUCH_ATTRIBUTE)
                     return True
+
+            elif attr_name.startswith("gather_rate_") or attr_name == "gather_rate":
+                if hasattr(unit.model, attr_name):
+                    attr_value = getattr(unit.model, attr_name, 0)
+                    gather_rate_msg = get_stat_tts_name(attr_name)
+                    if isinstance(attr_value, (int, float)) and attr_value != 0:
+                        voice.item(
+                            gather_rate_msg
+                            + mp.COLON
+                            + format_signed_number(round(float(attr_value), 2), as_float=True)
+                            + mp.PER_SECOND
+                        )
+                        return True
+                    voice.item(gather_rate_msg + mp.COLON + mp.NO_SUCH_ATTRIBUTE)
+                    return True
+
+            elif attr_name.startswith("carry_capacity_") or attr_name == "carry_capacity":
+                if hasattr(unit.model, attr_name):
+                    attr_value = getattr(unit.model, attr_name, 0)
+                    carry_msg = get_stat_tts_name(attr_name)
+                    if isinstance(attr_value, (int, float)) and attr_value != 0:
+                        voice.item(carry_msg + mp.COLON + format_signed_number(int(attr_value)))
+                        return True
+                    voice.item(carry_msg + mp.COLON + mp.NO_SUCH_ATTRIBUTE)
+                    return True
                         
             resource_name = self.parent._get_resource_type_name(attr_name)
             if resource_name != attr_name:
@@ -94,6 +127,27 @@ class GatherHandler:
                     if qty_value != 0:
                         gather_qty_msg = get_stat_tts_name(gather_qty_attr)
                         voice.item(gather_qty_msg + mp.COLON + format_signed_number(int(qty_value)))
+                        return True
+
+                gather_rate_attr = f"gather_rate_{attr_name}"
+                if hasattr(unit.model, gather_rate_attr):
+                    rate_value = getattr(unit.model, gather_rate_attr, 0)
+                    if isinstance(rate_value, (int, float)) and rate_value != 0:
+                        gather_rate_msg = get_stat_tts_name(gather_rate_attr)
+                        voice.item(
+                            gather_rate_msg
+                            + mp.COLON
+                            + format_signed_number(round(float(rate_value), 2), as_float=True)
+                            + mp.PER_SECOND
+                        )
+                        return True
+
+                carry_attr = f"carry_capacity_{attr_name}"
+                if hasattr(unit.model, carry_attr):
+                    cap_value = getattr(unit.model, carry_attr, 0)
+                    if isinstance(cap_value, (int, float)) and cap_value != 0:
+                        carry_msg = get_stat_tts_name(carry_attr)
+                        voice.item(carry_msg + mp.COLON + format_signed_number(int(cap_value)))
                         return True
                         
             return False

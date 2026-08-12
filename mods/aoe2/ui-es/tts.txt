@@ -1,0 +1,288 @@
+; coding: utf-8
+; Age of Empires II DE — Español (cadenas oficiales DE vía aoe2techtree)
+
+
+8000 Age of Empires 2 Definitive Edition
+8001 Britanos
+8002 Francos
+8003 Chinos
+8004 Mongoles
+8005 Bizantinos
+8006 Japoneses
+8007 Teutones
+8008 Vikingos
+8009 Vietnamitas
+8011 Portugueses
+8012 Aztecas
+
+8070 Samurai
+8071 Samurai de élite
+8072 Caballero teutónico
+8073 Caballero teutónico de élite
+8074 Berserker
+8075 Berserker de élite
+8076 Arquero de ratán
+8077 Arquero de ratán de élite
+8078 Cañón de salvas
+8079 Cañón de salvas de élite
+
+8080 Yasama
+8081 Kataparuto
+8082 Blindaje
+8083 Almenas
+8084 Hérsires
+8085 Bogsveigar
+8086 Chatras
+8087 Papel moneda
+8088 Circunnavegación
+8089 Arcabuz
+8090 Guerrero jaguar
+8091 Guerrero jaguar de élite
+8092 Átlatl
+8093 Guerras floridas
+
+
+8010 Arquero con arco largo
+8015 Arquero con arco largo de élite
+8020 Lanzador de hachas
+8025 Lanzador de hachas de élite
+8030 Chu ko nu
+8031 Aldeano
+8035 Chu ko nu de élite
+8040 Mangudai
+8041 Aldeano
+8045 Mangudai de élite
+8050 Catafracta
+8055 Catafracta de élite
+
+8060 Yeomen
+8061 Hacha de arista
+8062 Código caballeresco
+8063 Cohetería
+8064 Instrucción militar
+8065 Logística
+8066 Warwolf
+8067 Gran Muralla
+8068 Nómadas
+8069 Fuego griego
+
+8100 Comida
+8101 Madera
+8102 Oro
+8103 Piedra
+
+8110 Galería de tiro con arco
+8111 Universidad
+8112 Monasterio
+8113 Castillo
+8114 Monje
+8115 Misionero
+8300 Centro urbano
+8301 Cuarteles
+8302 Establo
+8303 Herrería
+8304 Casa
+8305 Granja
+8306 Campamento maderero
+8307 Taller de asedio
+8308 Muelle
+8309 Muro de piedra
+8310 Puerta
+8325 Empalizada
+8326 Portón de madera
+8311 Torre de guardia
+8312 Torre de vigilancia
+8313 Fortaleza
+8327 Torre de bombardeo
+8328 Muralla fortificada
+8329 Puerta fortificada
+8319 Puesto de avanzada
+8314 Molino
+8315 Campamento minero
+8316 Mercado
+8317 Maravilla
+8318 Mina de piedra
+8320 Arbusto de bayas
+8321 Ciervo
+8322 Oveja
+8323 Jabalí
+8324 Cadáver
+
+8120 Milicia
+8121 Hombre de armas
+8122 Soldado con espada larga
+8123 Espadachín de mandoble
+8124 Campeón
+8125 Lancero
+8126 Piquero
+8127 Alabardero
+
+8130 Arquero
+8131 Ballestero
+8132 Arbalestero
+8133 Hostigador
+8134 Hostigador de élite
+8137 Hostigador imperial
+8135 Arquero a caballo
+8136 Arquero de caballería pesada
+
+8140 Caballería de exploración
+8141 Caballería ligera
+8142 Húsar
+8143 Caballero
+8144 Caballero
+8145 Paladín
+8146 Jinete de camello
+8147 Jinete de camello pesado
+8148 Jinete de camello imperial
+8160 Elefante de combate
+8161 Elefante de combate de élite
+8162 Lancero estepario
+8163 Lancero estepario de élite
+
+8150 Ariete
+8151 Mangana
+8152 Onagro
+8153 Escorpión
+8154 Lanzapiedras
+8155 Ariete cubierto
+8156 Ariete de asedio
+8157 Onagro de asedio
+8158 Escorpión pesado
+8159 Aldeano
+8170 Cañón de asedio
+8171 Petardo
+8172 Torre de asedio
+8173 Artillero manual
+8174 Explorador águila
+8175 Guerrero águila
+8176 Guerrero águila de élite
+8177 Elefante de guerra
+8178 Elefante de guerra de élite
+8179 Elefante acorazado
+8180 Elefante acorazado de élite
+8181 Arquero en elefante
+8182 Arquero en elefante de élite
+8183 Condotiero
+
+8400 Pesquero
+8401 Barco de transporte
+8402 Galera
+8403 Galera de guerra
+8404 Galeón
+8405 Galera incendiaria
+8406 Barco incendiario
+8407 Barco incendiario rápido
+8408 Balsa de demolición
+8409 Buque de demolición
+8410 Barco demoledor pesado
+8411 Galeón artillado
+8412 Galeón artillado de élite
+8413 Barco tortuga
+8414 Barco tortuga de élite
+8415 Drakkar
+8416 Drakkar de élite
+8417 Carabela
+8418 Carabela de élite
+8419 Dromón
+8420 Barca mercante
+8421 Trampa para peces
+8422 Red agallera
+8423 Carpintero naval
+8424 Carenado
+8425 Dique seco
+
+8200 Forja
+8201 Fundición de hierro
+8202 Alto horno
+8203 Armadura de láminas
+8204 Cota de malla
+8205 Arm. placas de malla
+8206 Arm. láminas de cab. pesada
+8207 Arm. cota de malla de cab.
+8208 Arm. placas de cab.
+8209 Emplumado de flechas
+8210 Flecha de punzón
+8211 Brazal
+8212 Arm. acolch. para arqueros
+8213 Arm. de cuero para arqueros
+8214 Arm. anillos para arqueros
+
+8220 Pureza de sangre
+8221 Ganadería
+8222 Rastreo
+8223 Escuderos
+8224 Dactilera
+8225 Balística
+8226 Química
+8227 Telar
+8228 Carretilla
+8229 Carro de mano
+8230 Hacha de doble filo
+8231 Sierra de arco
+8232 Sierra a dos
+8233 Minería aurífera
+8234 Pozo minero aurífero
+8235 Incendiarismo
+8236 Gambesones
+8237 Tácticas de los partias
+8238 Ingenieros de asedio
+8239 Leva
+8250 Matacanes
+8251 Albañilería
+8252 Arquitectura
+8253 Bala roja
+8254 Grúa
+8255 Collera
+8256 Arado pesado
+8257 Rotación de cultivos
+8270 Ladronera
+8271 Zapadores
+8272 Espionaje y traición
+8273 Caravana
+8274 Gremios
+8275 Acuñación
+8276 Banca
+8277 Carreta de mercancías
+8278 Factoría
+8279 Comprar
+8280 Vender
+8281 Tributo
+8282 Comercio
+8240 Guardia urbana
+8241 Patrulla urbana
+8242 Suministros
+8243 Explotación de canteras
+8244 Pozo de cantera
+
+8260 Redención
+8261 Expiación
+8262 Hierbas medicinales
+8263 Herejía
+8264 Santidad
+8265 Fervor
+8266 Fe
+8267 Iluminación
+8268 Letras de imprenta
+8269 Teocracia
+
+; Ages (do not reuse 8250–8257 university/mill tech IDs)
+8290 Alta Edad Media
+8291 Edad Feudal
+8292 Edad de los Castillos
+8293 Edad Imperial
+
+; Unit category roots (armor / is_a / passenger attack filters)
+8500 Infantería
+8501 Caballería
+8502 Arqueros
+8503 Unidades de asedio
+8504 Unidades únicas
+
+; Tech effect blurbs (engine-handled techs with no numeric bonus)
+8510 Los proyectiles anticipan y alcanzan objetivos en movimiento
+8511 Los monjes pueden convertir armas de asedio y la mayoría de edificios
+8512 Los monjes pueden convertir monjes enemigos
+8513 Tus unidades mueren en lugar de unirse al enemigo al ser convertidas
+8514 Las conversiones enemigas contra ti tardan mucho más
+8515 Si varios monjes convierten juntos, solo descansa el que tiene éxito

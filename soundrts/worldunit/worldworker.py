@@ -26,6 +26,9 @@ class Worker(Unit):
     # 资源采集时间和数量
     gather_time = {}  # 采集各类资源的时间
     gather_qty = {}   # 采集各类资源的数量
+    gather_rate = {}  # continuous：每秒采集量（显示单位）；未设则用 qty/time
+    gather_mode = None  # None/trip = 一趟一采；continuous = 灌满运载再送回
+    carry_capacity = 0  # continuous 运载上限（0 = 回退为单次 gather_qty）
 
     def __init__(self, player, place, x, y, o=90):
         """初始化工人单位，确保ai_mode为defensive"""
@@ -565,6 +568,125 @@ class Worker(Unit):
         
         # 确保至少采集1个单位的资源
         return max(1, int(final_qty))
+
+    def get_gather_mode(self):
+        """``trip``（默认）或 ``continuous``（AoE2 式灌满运载）。
+
+        优先单位 ``gather_mode``，否则读 ``parameters gather_mode``。
+        """
+        mode = getattr(self, "gather_mode", None)
+        if isinstance(mode, (list, tuple)):
+            mode = mode[0] if mode else None
+        if mode:
+            return str(mode).lower().strip()
+        try:
+            from ..definitions import rules
+
+            raw = rules.get("parameters", "gather_mode")
+            if isinstance(raw, (list, tuple)):
+                raw = raw[0] if raw else None
+            if raw:
+                return str(raw).lower().strip()
+        except Exception:
+            pass
+        return "trip"
+
+    def uses_continuous_gather(self):
+        return self.get_gather_mode() in ("continuous", "aoe", "aoe2")
+
+    def get_carry_capacity(self, resource_type=None, target=None):
+        """continuous 模式下的运载上限（显示单位）。
+
+        优先 ``carry_capacity_<deposit>``，否则 ``carry_capacity``；
+        再叠加玩家 ``carry_capacity_bonus``（若有）。为 0 时回退为单次 ``gather_qty``。
+        """
+        cap = None
+        deposit_type = getattr(target, "type_name", None) if target is not None else None
+        if deposit_type:
+            attr = f"carry_capacity_{deposit_type}"
+            if hasattr(self, attr):
+                val = getattr(self, attr)
+                if isinstance(val, (list, tuple)):
+                    val = val[0] if val else 0
+                try:
+                    cap = int(float(val))
+                except (TypeError, ValueError):
+                    cap = None
+        if cap is None or cap <= 0:
+            val = getattr(self, "carry_capacity", 0) or 0
+            if isinstance(val, (list, tuple)):
+                val = val[0] if val else 0
+            try:
+                cap = int(float(val))
+            except (TypeError, ValueError):
+                cap = 0
+        player = getattr(self, "player", None)
+        if player is not None:
+            bonus = getattr(player, "carry_capacity_bonus", None)
+            if isinstance(bonus, dict):
+                if deposit_type and deposit_type in bonus:
+                    cap = int(cap) + int(bonus[deposit_type])
+                elif "all" in bonus:
+                    cap = int(cap) + int(bonus["all"])
+            elif bonus:
+                try:
+                    cap = int(cap) + int(bonus)
+                except (TypeError, ValueError):
+                    pass
+        if cap is None or cap <= 0:
+            return self.get_gather_qty(resource_type, target)
+        return max(1, int(cap))
+
+    def get_gather_rate(self, resource_type, target=None):
+        """continuous：每秒采集量（显示单位）。
+
+        优先显式 ``gather_rate`` / ``gather_rate_<deposit>``；
+        否则用 ``gather_qty / gather_time``（含 extraction 与科技加成）。
+        """
+        rate = None
+        deposit_type = getattr(target, "type_name", None) if target is not None else None
+        if deposit_type:
+            attr = f"gather_rate_{deposit_type}"
+            if hasattr(self, attr):
+                try:
+                    rate = float(getattr(self, attr))
+                except (TypeError, ValueError):
+                    rate = None
+        if rate is None:
+            gr = getattr(self, "gather_rate", None)
+            if isinstance(gr, dict) and deposit_type and deposit_type in gr:
+                try:
+                    rate = float(gr[deposit_type])
+                except (TypeError, ValueError):
+                    rate = None
+            elif isinstance(gr, (int, float)):
+                rate = float(gr)
+        if rate is not None and rate > 0:
+            # gather_time_% 科技：缩短时间 ≈ 提高速率
+            player = getattr(self, "player", None)
+            bonus = getattr(player, "gather_time_bonus", None) if player else None
+            if isinstance(bonus, dict):
+                bval = None
+                if deposit_type and deposit_type in bonus:
+                    bval = bonus[deposit_type]
+                elif resource_type in bonus:
+                    bval = bonus[resource_type]
+                elif "all" in bonus:
+                    bval = bonus["all"]
+                if isinstance(bval, str) and bval.endswith("%"):
+                    try:
+                        pct = float(bval[:-1])
+                        factor = 1.0 + pct / 100.0
+                        if factor > 0.01:
+                            rate = rate / factor
+                    except (TypeError, ValueError):
+                        pass
+            return max(0.01, float(rate))
+        qty = float(self.get_gather_qty(resource_type, target))
+        time_s = float(self.get_gather_time(resource_type, target))
+        if time_s <= 0:
+            return max(0.01, qty)
+        return max(0.01, qty / time_s)
 
     @classmethod
     def interpret(cls, d):

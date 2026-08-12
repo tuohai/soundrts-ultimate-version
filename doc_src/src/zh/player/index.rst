@@ -32,6 +32,7 @@
 
 - `背包与装备栏 <inventory.htm>`_
 - `狩猎系统 <hunting.htm>`_
+- `市场与贸易 <market-and-trade.htm>`_ （买卖、进贡、跑商；aoe2 等）
 - `连发攻击 <burst-attacks.htm>`_
 - `携带物品与剧情交付 <brought-items.htm>`_
 

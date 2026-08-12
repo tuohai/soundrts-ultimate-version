@@ -125,6 +125,55 @@ Ranged projectile example::
     rdg_range 4
     rdg_projectile 1
 
+projectile_lead
+================
+
+Unit flag (0/1, ``int_properties``, default 0): whether **ranged projectiles lead / hit moving targets**.
+
+- ``0``: projectile aims at the fire-time point; if the target has moved away on impact → miss
+- ``1``: projectiles can lead moving targets (Age of Empires II “Ballistics”-style)
+
+**Requires flight speed**: ranged needs `rdg_projectile` + `rdg_projectile_speed` (**tiles/s**, >0). Otherwise the hit is instant and the move-miss check never matters.
+
+These fields are **speed**, not “seconds of flight”. Example: ``7`` = seven tiles per second. Do not put a desired hit delay (e.g. 0.57) into the field.
+
+**Do not hardcode a tech type name in the engine.** Grant the flag with a tech bonus, e.g.::
+
+    effect info 8510
+    effect bonus projectile_lead 1
+    effect_bonus_targets archer_unit -hand_cannoneer galley scouttower
+
+Units still need the tech in ``can_use_tech``. The attributes UI does not announce ``+1`` for this flag; use ``effect info <tts_id>`` for a readable blurb (see *info* below).
+
+Distinct from ``rdg_projectile`` (projectile combat rules such as high-ground range). ``projectile_lead`` only controls miss-vs-moved-target.
+
+projectile_speed / mdg_projectile_speed / rdg_projectile_speed
+================================================================
+
+Per-attack-type projectile **flight speed** in tiles/second (PRECISION), default 0.
+
+- ``rdg_projectile_speed``: used only for **ranged** hits when ``rdg_projectile 1``
+- ``mdg_projectile_speed``: used only for **melee-projectile** hits when ``mdg_projectile 1``
+- ``projectile_speed``: deprecated shared name; migrated to the matching lane(s) on load
+
+Do **not** put “how many seconds until impact” here — that is speed. The engine derives arrival as **distance ÷ speed** (farther takes longer). Speed 0 or non-projectile attack → instant hit.
+
+A unit may have both ``mdg`` and ``rdg`` (even the same range): only the lane with ``*_projectile`` flies at that speed.
+
+aoe2 DE-ish (all **speeds**): arrows/towers ``7``, mangonel ``3.5``, trebuchet ``1.6``.
+
+Example::
+
+    def aoe_archer
+    rdg_projectile 1
+    rdg_projectile_speed 7
+
+    def mangonel
+    mdg_projectile 1
+    mdg_projectile_speed 3.5
+
+See also: `Projectile lead & flight speed <projectile-lead.htm>`_.
+
 is_teleportable
 ================
 
@@ -250,8 +299,29 @@ bonus
 
 Increases by the indicated value the property of the affected units.
 
-At least the following properties should work: damage, armor, range, heal_level, speed, hp_max (old units won't have their hp updated to hp_max though).
+Put unit filters on the next line as ``effect_bonus_targets`` (not on the same line as ``effect bonus``)::
+
+    effect bonus mdg_range 1
+    effect_bonus_targets mangonel onager
+    effect bonus rdg_range 1
+    effect_bonus_targets scorpion trebuchet -petard
+
+``effect_bonus_targets`` applies to the preceding ``effect bonus`` (units still need ``can_use_tech``). A leading ``-`` excludes a match (same as ``phase_bonus_targets``), e.g. ``effect_bonus_targets soldier -building``. Alias ``effect_targets`` is accepted.
+
+At least the following properties should work: damage, armor, range, heal_level, speed, hp_max, hp.
+
+- ``effect bonus hp_max N`` / ``hp_max N%``: raises maximum HP only; current HP is unchanged.
+- ``effect bonus hp N`` / ``hp N%``: raises current HP and ``hp_max`` by the same amount (flat: both += N; percent: both += N% of the old max). Use ``hp`` when researching should also heal living units (e.g. Bloodlines, Loom).
 food_cost and food_provided probably don't work correctly.
+
+``projectile_lead`` is a 0/1 combat flag; grant it with ``effect bonus projectile_lead 1`` (see *projectile_lead* above). The attributes UI omits the numeric ``+1`` for this flag.
+
+info
+^^^^^
+
+``effect info <tts_id>…``
+
+Display-only blurb in the tech/skill attributes screen (no runtime stat change). May be combined with other effects, e.g. Ballistics: ``effect info`` plus ``effect bonus projectile_lead 1``.
 
 conversion
 ^^^^^^^^^^^
@@ -457,10 +527,21 @@ Since 1.4, final damage is additive: ``final_mdg = mdg + mdg_vs`` (and the same 
 Main melee/ranged properties:
 
 - ``mdg`` / ``rdg``: base damage
-- ``mdg_vs`` / ``rdg_vs``: bonus vs specific unit types
+- ``mdg_vs`` / ``rdg_vs``: bonus vs specific unit types. Either form works
+  (they can be mixed; **repeated lines merge**, later lines do not overwrite)::
+
+      mdg_vs building 150 siege_unit 40
+      mdg_vs building 150
+      mdg_vs siege_unit 40
+
+  Other ``*_vs`` pair attributes (e.g. ``rdg_vs``, ``mdg_cover_vs``, ``menace_vs``)
+  also accept multiple pairs on one line and merge across lines.
 - ``mdf`` / ``rdf``: defense
 - ``mdg_range`` / ``rdg_range``, ``mdg_cd`` / ``rdg_cd``, ``mdg_ready`` / ``rdg_ready``
 - ``mdg_projectile`` / ``rdg_projectile``: projectile flag (high-ground range bonus, low vs high ground rules)
+- ``mdg_projectile_speed`` / ``rdg_projectile_speed``: per-lane projectile flight speed (tiles/s; replaces delay / shared ``projectile_speed``)
+- ``projectile_lead``: whether ranged projectiles lead moving targets (0/1; usually granted by tech ``effect bonus``)
+- AoE2-style unique-tech hooks (no civ names hardcoded): ``unpack_time`` (trebuchet unpack delay after move), ``gather_byproduct`` (e.g. Paper Money gold while chopping wood), ``reveal_map`` on upgrades (Circumnavigation explores the whole map)
 - ``mdg_splash`` / ``rdg_splash``, ``mdg_radius`` / ``rdg_radius``, ``mdg_splash_decay``
 - ``mdg_targets`` / ``rdg_targets``: ``ground``, ``air``, ``unit``, ``building``, or a type name
 - ``mdg_crit`` / ``rdg_crit``, ``mdg_crit_rate`` / ``rdg_crit_rate``, ``crit_vs``
@@ -592,17 +673,23 @@ Burst / sequence attacks (``damage_seq``, since 1.3.8.2, enhanced in 1.4.3.6)
 One attack cycle can fire multiple hits in quick succession (Age of Empires Chu Ko Nu
 style). Define base ``mdg`` / ``rdg`` first, then ``damage_seq``:
 
-``damage_seq mdg|rdg \<times\> [(damage d1 d2 ...)] [(interval seconds)]``
+``damage_seq mdg|rdg \<times\> [(damage d1 d2 ...)] [(secondary pierce melee)] [(interval seconds)]``
 
 - Explicit split: ``(damage 6 3 3)`` — integer segment values must sum to the base
   damage (same units as ``mdg`` / ``rdg`` in rules.txt)
 - Auto split (since 1.4.3.6): omit ``(damage ...)`` to divide base damage evenly across
   ``times`` (works with fractional damage, e.g. ``rdg 7.5`` with ``times 3`` → 2.5 per shot)
+- **Secondary projectiles (AoE2 Chu Ko Nu)**: ``(secondary 3 0)`` — first shot = live
+  unit attack (upgrades apply) plus fixed melee; later shots = fixed pierce + melee
+  (**not** upgraded by blacksmith/chemistry). Melee may be ``0`` (still damages negative
+  melee armor such as rams). Sum need **not** equal base damage in this mode.
 - Interval: ``(interval 0.25)`` seconds between shots; if omitted or 0 with ``times \> 1``,
   default 0.25 s
 - Limit: at most 6 shots per attack
-- Hit rolls: each segment rolls hit, crit, and debuff separately
+- Hit rolls: each segment rolls hit, crit, and debuff separately; secondary shots are
+  100% accurate
 - Cooldown: ``mdg_cd`` / ``rdg_cd`` starts after the full burst finishes
+  (next volley = ``(times-1)×interval + cd``, then ``ready``)
 - Sounds: each shot triggers ``launch_mdg`` / ``launch_rdg``; list multiple sound IDs
   in ``style.txt`` (e.g. ``launch_rdg 1042 1042 1042``)
 
@@ -614,6 +701,14 @@ Ranged burst example (built-in ``repeating_crossbowman``)::
     rdg_range 4
     rdg_projectile 1
     damage_seq rdg 3 (interval 0.25)
+
+AoE2 DE Chu Ko Nu (``mods/aoe2``; elite uses 5 arrows)::
+
+    def chu_ko_nu
+    rdg 8
+    rdg_cd 2.77
+    rdg_ready 0.23
+    damage_seq rdg 3 (secondary 3 0) (interval 0.23)
 
 Melee example with explicit damage split::
 
@@ -748,7 +843,49 @@ Harm and heal are split into detailed parameters::
     debuffs b_slow
 
 Similarly: ``heal_level``, ``heal_cd``, ``heal_radius``, ``heal_target_type``;
-``hp_regen_cd``, ``mana_regen_ready``, etc.
+``heal_garrisoned 1`` heals only units in this unit's ``inside`` transport/shelter
+(default ``0`` keeps area or single-target heal);
+``hp_regen_cd``, ``mana_regen_ready``, etc. See the Chinese `skills / heal / effects` guide
+(`../../zh/mod/skills-and-effects.htm`).
+
+Conversion techs (rules-driven; no upgrade type-name checks)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``effect conversion`` can gate targets, resist channel length, and mana rest from
+**attributes on researched upgrades** — the engine never looks up names like
+``redemption``::
+
+    def monk
+    conversion_tech_gated 1
+    conversion_cleric 1
+
+    def atonement
+    class upgrade
+    conversion_allows_monk 1
+
+    def redemption
+    class upgrade
+    conversion_allows_siege 1
+    conversion_allows_building 1
+
+    def heresy
+    class upgrade
+    conversion_victim_dies 1
+
+    def faith
+    class upgrade
+    conversion_channel_scale_num 5
+    conversion_channel_scale_den 3
+    conversion_channel_bonus_time 2
+
+    def theocracy
+    class upgrade
+    conversion_rest_only_success 1
+
+    def town_center
+    conversion_immune 1
+
+Use ``effect info <tts_id>`` for attributes-UI blurbs. See ``world_conversion.py``.
 
 Phase system (since 1.4.2.4)
 -----------------------------
@@ -766,9 +903,60 @@ Phase system (since 1.4.2.4)
     time_cost 130
     phase bonus mdg 1 hp_max 5 cost -2 0 time_cost -5
     units_auto_upgrade 0
-    phase_targets soldier
+    phase_bonus_targets soldier
 
-Optional ``phase_targets`` limits which units receive non-cost entries from ``phase bonus`` (cost-type bonuses always apply at player level). Leave empty for all units. Use category names (``soldier``, ``worker``, ``building``, ``unit``, etc.), specific unit names (``footman knight``), or any name in the ``is_a`` chain; any positive match counts. A leading ``-`` excludes a match — e.g. ``phase_targets -building`` means every unit except buildings; you can mix includes and excludes, e.g. ``phase_targets soldier -footman``.
+You can also write multiple bonus/target pairs (each ``phase_bonus_targets`` applies only to the preceding ``phase bonus`` group)::
+
+    phase bonus mdg 1 mdf 2
+    phase_bonus_targets footman knight
+    phase bonus rdg 2 rdf 2
+    phase_bonus_targets archer
+
+Legacy order (``phase_bonus_targets`` then ``phase bonus``) still works as one group. Consecutive ``phase bonus`` lines without a new ``phase_bonus_targets`` merge into the same group.
+
+Optional ``phase_bonus_targets`` limits which units receive non-cost entries from the paired ``phase bonus`` (cost-type bonuses always apply at player level). Leave empty for all units. Use category names (``soldier``, ``worker``, ``building``, ``unit``, etc.), specific unit names (``footman knight``), or any name in the ``is_a`` chain; any positive match counts. A leading ``-`` excludes a match — e.g. ``phase_bonus_targets -building`` means every unit except buildings; you can mix includes and excludes, e.g. ``phase_bonus_targets soldier -footman``.
+
+
+Age rewards can also live on the faction (since 1.4.6.9); the engine **never hardcodes civ names**::
+
+    def feudal_age
+    class phase
+    phase bonus
+    units_auto_upgrade 1
+
+    def britons
+    class race
+    on_phase castle_age rdg_range 1 aoe_archer longbowman
+
+    def chinese
+    class race
+    research_cost_discount feudal_age -10% castle_age -15% imperial_age -20%
+
+    def byzantines
+    class race
+    advance_cost_discount imperial_age -33%
+
+- ``on_phase``: apply bonuses when that phase is in upgrades.
+- ``research_cost_discount``: research / upgrade_to only.
+- ``advance_cost_discount``: AdvanceOrder only.
+- ``no_auto_upgrade 1``: skip age auto morph; train resolve also requires the form in ``player.upgrades``.
+- ``line_upgrade 1`` (since 1.4.6.9): researchable unit-line form. Put it on a building's ``can_research``; completing research unlocks training and morphs previous-tier field units. Age ``units_auto_upgrade`` skips these forms. Training uses ``effective_can_train`` / ``resolve_trainable_unit_type`` (list the line root in ``can_train``); cost/time default to the line root (override with ``train_cost`` / ``train_time``). Optional ``effect unit_line_upgrade <type>``. No hardcoded unit names in the engine. See `Unit-line upgrades & top-tier training <unit-line-upgrade.htm>`_.
+
+Example::
+
+    def militia
+    class soldier
+    can_upgrade_to man_at_arms
+
+    def man_at_arms
+    is_a militia
+    requirements feudal_age
+    line_upgrade 1
+
+    def barracks
+    class building
+    can_train militia
+    can_research man_at_arms
 
 On a building::
 
@@ -815,7 +1003,7 @@ Economy (since 1.4.0.x)
 
 ``population_cost`` replaced ``food_cost``. Buildings can produce or hold resources::
 
-    auto_production 1       ; auto produce (gas, etc.); restarts while not full
+    auto_production 1       ; auto produce (self-filling buffer); restarts while not full
     manual_production 1     ; player-started production
     auto_cultivate 1        ; farms; restarts only when storage is empty
     is_gather 1             ; output goes to building storage; workers haul to base
@@ -845,7 +1033,7 @@ For pickable loot instead, use ``production_item`` (instead of ``production_type
 | ``production_type`` | Resource produced (with ``production_time`` and ``production_qty`` defines production capability) |
 | ``production_time`` | Seconds per production cycle |
 | ``production_qty`` | Output per cycle; without ``is_gather``, added to player resources; with ``is_gather``, to building ``resource_qty`` |
-| ``auto_production`` | When ``1``, shows auto produce; loops after each cycle; use for gas (not ``auto_cultivate``) |
+| ``auto_production`` | When ``1``, shows auto produce; loops after each cycle; use for self-filling buffers (e.g. gold house). StarCraft gas uses worker trips instead (see Deposits & gas); do not confuse with farm ``auto_cultivate`` |
 | ``manual_production`` | When ``1``, shows manual produce; one cycle per click; independent from ``auto_production`` |
 | ``auto_cultivate`` | Auto cultivation on ``is_gather`` buildings (e.g. farms); parallels ``auto_production`` |
 | ``manual_cultivate`` | Manual cultivation; parallels ``manual_production``; set ``1`` explicitly when needed |
@@ -854,6 +1042,48 @@ For pickable loot instead, use ``production_item`` (instead of ``production_type
 | ``resource_volume_max`` | Max stored in building (e.g. 8 vespene) |
 | ``resource_volume_start`` | Initial stored amount when built (``0`` = empty) |
 | ``extraction_time`` / ``extraction_qty`` | Worker harvest time and per-trip amount from building or deposit |
+
+Gather modes (since 1.4.6.9)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Two gather mechanisms are available for mods:
+
+1. **``trip`` (default):** one ``gather_qty`` pulse (plus ``extraction_*``), then drop off — StarCraft-like trips.
+2. **``continuous``:** fill ``carry_capacity`` at a per-second rate, then drop off — Age of Empires II/IV style.
+
+::
+
+    def parameters
+    gather_mode continuous
+
+    def peasant
+    class worker
+    gather_mode continuous
+    carry_capacity 10
+    carry_capacity_food_carcass 35
+    gather_rate wood 0.39
+    gather_rate goldmine 0.38
+
+| Property | Meaning |
+| --- | --- |
+| ``gather_mode`` | ``trip`` (default) or ``continuous``; on ``parameters`` and/or the worker |
+| ``carry_capacity`` | continuous carry limit; ``0`` falls back to one ``gather_qty`` |
+| ``carry_capacity_<type>`` | per-deposit/building override |
+| ``gather_rate`` / ``gather_rate_<type>`` | continuous resources/sec; else ``qty/time`` |
+
+Use ``effect bonus carry_capacity N`` for wheelbarrow-style upgrades. Percent ``gather_time_*`` bonuses raise the effective continuous rate.
+
+Market system (since 1.4.6.9)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Buy/sell, tribute, and route trade are rules-driven — **no** hardcoded resource names or gold-only payouts. Full tables: `Market system <market-system.htm>`_.
+
+Highlights:
+
+- ``def parameters``: ``market_currency``, ``market_commodities``, ``market_menu_labels``, tax/tribute/trade distance keys.
+- Buildings: ``is_market 1``. Trade units: ``is_trade_unit 1``, ``trade_hubs``, ``trade_rewards`` (one or more).
+- Orders: ``market_buy`` / ``market_sell`` / ``tribute`` / ``trade``.
+- Example wiring: ``mods/aoe2/rules.txt``; player notes (zh): `market-and-trade <../../zh/player/market-and-trade.htm>`_.
 
 .. note::
 
@@ -875,7 +1105,7 @@ Gas structures must sit on the matching deposit::
 
 See ``sc_gas_building`` / ``assimilator`` in ``mods/starcraft/rules.txt``. Player guide:
 ``../player/starcraft-resources.htm``. The attributes screen (V) adds requires deposit;
-production time/qty use the existing production attribute entries.
+StarCraft gas debits ``source_qty`` via worker ``extraction_*``, with optional ``gather_slots`` for concurrent extractors.
 
 Heroes (since 1.4)
 -------------------
@@ -1113,6 +1343,43 @@ Inventory and equippable items (since 1.4.3.1)
 Units need ``inventory_capacity`` > 0 to hold items. Each item uses one slot (``transport_volume``
 is defined but capacity currently counts items, not volume).
 
+Inventory item passive income (rules-driven)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Items may set ``inventory_production_rates`` (same per-second resource list / PRECISION
+scaling as building ``production_rates``). The host needs ``apply_inventory_production 1``
+or ``slow_update`` will not credit anything. The engine never hardcodes relic/monastery
+type names.
+
+::
+
+    def relic
+    class item
+    inventory_production_rates 0.5 0 0 0
+
+    def monastery
+    class building
+    inventory_capacity 10
+    receive_items 1
+    accepted_items relic
+    accept_from self
+    accept_givers monk
+    apply_inventory_production 1
+
+When every ``inventory_victory 1`` item on the map is held by one allied camp,
+``parameters`` ``inventory_victory_time`` (seconds; 0 = off) starts the same
+countdown voice/victory path as building ``victory_time``. Races may set
+``team_inventory_production_bonus_pct`` (Aztec relic team bonus) or
+``inventory_production_bonus_pct``.
+
+Research HP stack (rules-driven)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Upgrades may set ``research_stack_hp 1``. A race may set
+``research_stack_hp_bonus 5 monk``. Each completed flagged research applies
+``effect bonus hp`` to matching units and stores the same entry in
+``_phase_bonus_pool`` for future trains (Aztec monks +5 HP per monastery tech).
+
 Built-in gear (traditional)::
 
     def footman
@@ -1324,7 +1591,7 @@ Build fields (Protoss psi / Zerg creep)
 | Attribute | Role |
 | --- | --- |
 | ``provides_build_field \<name\>`` | Marks nearby squares (e.g. ``psi``, ``creep``) |
-| ``requires_build_field \<name\>`` | Requires that field to place/build; ``0`` exempts the type (Nexus, Photon Cannon) |
+| ``requires_build_field \<name\>`` | Requires that field to place/build; ``0`` exempts the type (Nexus, Pylon, Assimilator; Photon Cannon **does** need psi) |
 | ``build_field_radius \<tiles\>`` | Provider radius (main-square BFS steps; use this or ``build_field_radius_m``) |
 | ``build_field_radius_m \<meters\>`` | Provider radius in meters (same scale as ``rdg_range``); Euclidean distance from provider `` (x,y)`` |
 | ``build_field_persists 1`` | Marks remain after provider is destroyed (Zerg creep) |
@@ -1370,6 +1637,8 @@ Protoss (``protoss_building``)::
     self_constructs 1
     loses_power_without_field 1
 
+Nexus: ``requires_build_field 0`` + ``provides_build_field psi``. Pylon: ``requires_build_field 0`` (may warp off-field; creates psi). Gateways etc. need psi. Photon Cannons must warp in psi and do not attack while unpowered (``loses_power_without_field``).
+
 Zerg (``zerg_building``)::
 
     requires_build_field creep
@@ -1389,13 +1658,14 @@ Deposits & gas (``requires_deposit`` / ``is_an_extractor``)
 | --- | --- |
 | ``requires_deposit \<type\>`` | Must build on a map deposit (e.g. ``geyser``); deposit is removed on completion |
 | ``is_buildable_anywhere 0`` | With ``requires_deposit``, blocks building on building land |
-| ``is_an_extractor 1`` | On completion, copy deposit reserve onto the building as ``source_qty``; each production cycle debits it |
+| ``is_an_extractor 1`` | On completion, copy deposit reserve onto the building as ``source_qty``; worker gathers debit it |
 | ``deposit_volume N`` | Default reserve on the deposit type when the map uses marker qty ``1`` |
-| ``depleted_production_qty N`` | Per-cycle yield after ``source_qty`` hits 0 (``0`` = stop; StarCraft gas uses ``2``) |
+| ``depleted_production_qty N`` | Per-trip yield after ``source_qty`` hits 0 (``0`` = stop; StarCraft gas uses ``2``) |
+| ``gather_slots N`` | Max workers extracting at once; ``0`` = unlimited. StarCraft gas uses ``3`` (4th+ wait) |
 
-Gas template ``sc_gas_building`` uses ``is_an_extractor`` + ``auto_production`` + ``is_gather`` + ``production_time`` / ``production_qty`` / ``depleted_production_qty``.
-Workers need ``can_gather assimilator`` (building type), not ``geyser`` (deposit).
-Resource type is ``production_type`` / ``resource_type`` (no separate ``resource_extracted_type`` keyword).
+Gas template ``sc_gas_building`` (SC1-style) uses ``is_an_extractor`` + worker trip gather (``auto_production 0``) + ``extraction_qty`` / ``depleted_production_qty`` + ``gather_slots 3``.
+Workers need ``can_gather assimilator`` (building type), not ``geyser`` (deposit). Resource type is ``resource_type``.
+Practical tip: **3** workers per gas structure is optimal; more still produces gas but does not scale much past three.
 
 Unit spawn hosts (``spawns_unit``)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

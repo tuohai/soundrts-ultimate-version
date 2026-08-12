@@ -1,0 +1,27 @@
+; 1 — Marching and Fighting (AoE2 DE Wallace)
+
+title 8602
+intro 8610
+
+square_width 12
+nb_columns 5
+nb_lines 1
+
+nb_players_min 1
+nb_players_max 1
+random_starts 0
+
+square_name 8630 5,1
+
+west_east_paths a1 b1 c1 d1
+
+nb_meadows_by_square 0
+
+; Player: 3 militia at west; walk east to village
+player 0 0 0 0 a1 3 militia
+
+timer_coefficient 40
+
+trigger player1 (timer 0) (add_objective 1 8620)
+trigger player1 (has_entered e1) (do (objective_complete 1) (victory))
+trigger player1 (no_unit_left) (defeat)

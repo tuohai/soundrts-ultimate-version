@@ -342,20 +342,41 @@ class DamageCalculationMixin:
 
         return base_defense  # 如果没有穿甲效果，返回原始防御值
         
-    def _calculate_actual_damage(self, damage, attacker):
-        """计算实际伤害，考虑防御值和特殊属性"""
+    def _calculate_actual_damage(self, damage, attacker, is_melee=None, extra_melee_damage=None):
+        """计算实际伤害，考虑防御值和特殊属性。
+
+        Args:
+            damage: 主伤害（近战或远程，由 is_melee 决定）
+            attacker: 攻击者
+            is_melee: 显式指定主伤害走近战/远程护甲；None 时回落旧推断
+            extra_melee_damage: AoE2 次级箭式双攻击——在远程主伤害之外再加一段近战
+                （可为 0；对负近战护甲如冲车仍造成伤害）。None 表示单通道。
+        """
         # 如果攻击者为None，直接返回原始伤害
         if attacker is None:
             return damage
 
         # 确定攻击类型
-        is_melee = not (hasattr(attacker, 'rdg_range') and attacker.rdg_range > 0)
-
-        # 获取防御值
-        defense = self._get_total_melee_defense_vs(attacker) if is_melee else self._get_total_ranged_defense_vs(attacker)
+        if is_melee is None:
+            is_melee = not (hasattr(attacker, 'rdg_range') and attacker.rdg_range > 0)
 
         minimal_damage = getattr(attacker, 'minimal_damage', 0)
         forced_damage = getattr(attacker, 'forced_damage', 0)
+
+        # AoE2 secondary projectile: pierce + melee in one hit, then max(1, sum)
+        if extra_melee_damage is not None and not is_melee:
+            rdf = self._get_total_ranged_defense_vs(attacker)
+            mdf = self._get_total_melee_defense_vs(attacker)
+            raw = (damage - rdf) + (extra_melee_damage - mdf)
+            actual_damage = max(1, raw)
+            if minimal_damage > 0:
+                actual_damage = max(actual_damage, minimal_damage)
+            if forced_damage > 0:
+                actual_damage = forced_damage
+            return actual_damage
+
+        # 获取防御值
+        defense = self._get_total_melee_defense_vs(attacker) if is_melee else self._get_total_ranged_defense_vs(attacker)
 
         # 算术外包给 combat_fast.calc_actual_damage（含 max/clamp/forced 覆盖）
         if _cf is not None:

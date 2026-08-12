@@ -729,7 +729,10 @@ class WorldMapMixin:
         from .world_core import check_squares, map_error, map_warning
         
         triggers = []
-        starting_resources = [0 for _ in range(self.nb_res)]
+        # Empty until the map sets ``starting_resources``. Pre-filling zeros
+        # would look like a real start bag and block race/faction defaults in
+        # ``populate_map`` (``need_resources_default`` requires an empty list).
+        starting_resources = []
 
         squares_words = [
             "starting_squares",

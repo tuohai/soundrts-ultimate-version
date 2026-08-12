@@ -234,9 +234,17 @@ class EntityViewProperties:
                 ):
                     # 随机地图敌对 creep 与狩猎电脑同属 alliance "ai"，切到
                     # 某个电脑视角时彼此会进 allied；仍应播报为敌人而非联盟。
-                    title += mp.ENEMY + mp.COMMA + owner_name + mp.COMMA
+                    from ..faction_announce import owner_label_with_faction_msgs
+
+                    title += mp.ENEMY + mp.COMMA + owner_label_with_faction_msgs(
+                        self.player, owner_name
+                    )
                 elif self.player in self.interface.player.allied:
-                    title += mp.ALLY + mp.COMMA + owner_name + mp.COMMA
+                    from ..faction_announce import owner_label_with_faction_msgs
+
+                    title += mp.ALLY + mp.COMMA + owner_label_with_faction_msgs(
+                        self.player, owner_name
+                    )
                 elif getattr(self.player, "neutral", False):
                     # `computer_only ... neutral` 的电脑：标注为"中立"而非"敌人"，
                     # 与 guard+counterattack 的被动 creep 行为保持一致。
@@ -245,7 +253,11 @@ class EntityViewProperties:
                     if is_npc:
                         title += owner_name + mp.COMMA
                 else:
-                    title += mp.ENEMY + mp.COMMA + owner_name + mp.COMMA
+                    from ..faction_announce import owner_label_with_faction_msgs
+
+                    title += mp.ENEMY + mp.COMMA + owner_label_with_faction_msgs(
+                        self.player, owner_name
+                    )
         if self.is_memory:
             title += mp.IN_THE_FOG + mp.COMMA
             if self.speed:

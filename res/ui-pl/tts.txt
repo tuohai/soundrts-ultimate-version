@@ -708,6 +708,8 @@
 4794	maksymalna mana
 4795	czas zbierania
 4796	ilość zbierana
+5412	szybkość zbierania
+5415	ładowność
 4797	czas produkcji
 4798	ilość produkcji
 4799	koszt
@@ -741,6 +743,9 @@
 4827	może zbierać
 4828	czas zbierania
 4829	ilość zbierana
+5413	szybkość zbierania
+5414	na sekundę
+5416	ładowność
 4830	może naprawiać
 4831	cel naziemny
 4832	cel powietrzny

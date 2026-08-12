@@ -71,21 +71,56 @@ def test_transport_bonus_attrs_formatted():
     assert "+2" in load_display or "2" in load_display
 
 
+def test_load_bonus_dotted_vs_uses_tts_not_raw_key():
+    """load_bonus mdg_vs.building 应读成「近战伤害加成 建筑 +10」，不是原文键名。"""
+    from soundrts.attributes.utils import get_stat_tts_name
+
+    name = get_stat_tts_name("mdg_vs.building")
+    assert mp.MDG_VS[0] in name
+    assert "mdg_vs.building" not in name
+
+    model = types.SimpleNamespace(
+        passenger_attack_types=None,
+        load_bonus={"speed": 0.05, "mdg_vs.building": 10},
+        passenger_bonus=None,
+        attack_inside_chance=0,
+    )
+    di = DisplayInterface(None, None, None, None, None)
+    attrs = []
+    di._add_transport_container_attributes(_U(model), attrs)
+    assert len(attrs) == 1 and attrs[0][1] == mp.LOAD_BONUS
+    load_text = attrs[0][2]
+    assert "mdg_vs.building" not in load_text
+    assert mp.MDG_VS[0] in load_text
+    display = Message(mp.LOAD_BONUS + mp.COLON + load_text).translate_and_collapse(
+        remove_sounds=True
+    )[0]
+    assert "mdg_vs.building" not in display
+    assert "10" in display
+
+
 def test_transport_bonus_list_format_from_rules_read():
-    """rules.txt 中 load_bonus rdg 3 读入为列表时，属性界面应显示 +3 而非 tts 方向词。"""
+    """rules 中 load_bonus / passenger_bonus 读入后，属性界面应显示数值而非 tts 方向词。"""
+    snippet = """
+def parameters
+nb_of_resource_types 2
+
+def bonus_flyer
+class soldier
+transport_capacity 2
+load_bonus rdg 3
+passenger_bonus rdg 4
+"""
     saved_argv = __import__("sys").argv
     try:
         __import__("sys").argv = ["test"]
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             r = Rules()
-            r.load(
-                Path("res/rules.txt").read_text(encoding="utf-8"),
-                base_classes=_get_base_classes(),
-            )
-            cls = r.unit_class("new_flyingmachine")
-            assert cls.load_bonus == {"rdg": 3}
-            assert cls.passenger_bonus == {"rdg": 4}
+            r.load(snippet, base_classes=_get_base_classes())
+            cls = r.unit_class("bonus_flyer")
+            assert cls.load_bonus == {"rdg": 3.0}
+            assert cls.passenger_bonus == {"rdg": 4.0}
     finally:
         __import__("sys").argv = saved_argv
 

@@ -429,6 +429,22 @@ class PerceptionMixin:
                 return False
         return True
 
+    def _has_reveal_enemies(self):
+        """AoE2 Spies: see all hostile units/buildings without LOS."""
+        if getattr(self, "reveal_enemies", False):
+            return True
+        from ..definitions import rules
+
+        for name in getattr(self, "upgrades", ()) or ():
+            try:
+                tech = rules.unit_class(name)
+            except Exception:
+                tech = None
+            if tech is not None and int(getattr(tech, "reveal_enemies", 0) or 0):
+                self.reveal_enemies = True
+                return True
+        return False
+
     def _update_perception(self):
         """更新玩家的感知.
 
@@ -774,37 +790,50 @@ class PerceptionMixin:
             self._enemy_players_batch_bucket = ep_bucket
         enemy_players = self._enemy_players_batch
 
-        ecs = getattr(self.world, "_ecs", None)
-        use_batch = (
-            ecs is not None
-            and _ecs_enabled_flag()
-            and hasattr(ecs, "batch_see_enemies")
-        )
-
-        vision_places = self.observed_squares | partially_observed_squares
-
-        if use_batch:
-            flat = []
+        # AoE2 Spies: reveal all hostile units/buildings (not full-map cheatmode).
+        if self._has_reveal_enemies():
             for p in enemy_players:
-                flat.extend(p.units)
-            enemy_units = ecs.batch_see_enemies(self, flat, A, vision_places)
-            for u in flat:
-                if u in enemy_units:
+                if getattr(p, "neutral", False):
                     continue
-                pl = u.place
-                if pl is not None and pl.is_inside_place and self._open_container_passenger_visible(u):
-                    enemy_units.add(u)
-        else:
-            for p in enemy_players:
                 for u in p.units:
-                    if self._is_seeing(u):
+                    if u.place is not None:
                         enemy_units.add(u)
-                    else:
                         pl = u.place
-                        if pl is not None and pl.is_inside_place and self._open_container_passenger_visible(u):
-                            enemy_units.add(u)
+                        if pl is not None:
+                            self.observed_squares.add(pl)
+            self.perception.update(enemy_units)
+        else:
+            ecs = getattr(self.world, "_ecs", None)
+            use_batch = (
+                ecs is not None
+                and _ecs_enabled_flag()
+                and hasattr(ecs, "batch_see_enemies")
+            )
 
-        self.perception.update(enemy_units)
+            vision_places = self.observed_squares | partially_observed_squares
+
+            if use_batch:
+                flat = []
+                for p in enemy_players:
+                    flat.extend(p.units)
+                enemy_units = ecs.batch_see_enemies(self, flat, A, vision_places)
+                for u in flat:
+                    if u in enemy_units:
+                        continue
+                    pl = u.place
+                    if pl is not None and pl.is_inside_place and self._open_container_passenger_visible(u):
+                        enemy_units.add(u)
+            else:
+                for p in enemy_players:
+                    for u in p.units:
+                        if self._is_seeing(u):
+                            enemy_units.add(u)
+                        else:
+                            pl = u.place
+                            if pl is not None and pl.is_inside_place and self._open_container_passenger_visible(u):
+                                enemy_units.add(u)
+
+            self.perception.update(enemy_units)
         
         # 移除位于建筑内部的单位 - 使用集合推导，按ID排序确保顺序
         # Round 4: Entity.place 默认 None, _Space.is_inside_place 默认 False;

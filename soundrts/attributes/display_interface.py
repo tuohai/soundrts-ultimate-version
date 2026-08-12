@@ -104,12 +104,30 @@ class DisplayInterface:
                 attrs.append(("", mp.MDG_PROJECTILE, mp.YES))
             else:
                 attrs.append(("", ["近战投射物"], mp.YES))
+            mdg_ps = int(getattr(u.model, "mdg_projectile_speed", 0) or 0)
+            if not mdg_ps:
+                mdg_ps = int(getattr(u.model, "projectile_speed", 0) or 0)
+            if mdg_ps > 0:
+                mdg_ps_text = nb2msg_float(mdg_ps / PRECISION)
+                if hasattr(mp, "MDG_PROJECTILE_SPEED"):
+                    attrs.append(("", mp.MDG_PROJECTILE_SPEED, mdg_ps_text))
+                else:
+                    attrs.append(("", ["近战投射物飞行速度"], mdg_ps_text))
         
         if hasattr(u.model, "rdg_projectile") and u.model.rdg_projectile:
             if hasattr(mp, 'RDG_PROJECTILE'):
                 attrs.append(("", mp.RDG_PROJECTILE, mp.YES))
             else:
                 attrs.append(("", ["远程投射物"], mp.YES))
+            rdg_ps = int(getattr(u.model, "rdg_projectile_speed", 0) or 0)
+            if not rdg_ps:
+                rdg_ps = int(getattr(u.model, "projectile_speed", 0) or 0)
+            if rdg_ps > 0:
+                rdg_ps_text = nb2msg_float(rdg_ps / PRECISION)
+                if hasattr(mp, "RDG_PROJECTILE_SPEED"):
+                    attrs.append(("", mp.RDG_PROJECTILE_SPEED, rdg_ps_text))
+                else:
+                    attrs.append(("", ["远程投射物飞行速度"], rdg_ps_text))
         
         # 等级相关属性 - 每级增长（所有战斗属性均支持 <stat>_per_level）
         for stat in LEVEL_UP_STAT_ATTRS:
@@ -358,7 +376,8 @@ class DisplayInterface:
                 attrs.append(("r", mp.REQUIREMENTS, req_text[:-len(mp.COMMA)]))
 
         phase_targets = effect_formatter._format_phase_targets_text(
-            getattr(model, "phase_targets", None)
+            getattr(model, "phase_bonus_targets", None)
+            or getattr(model, "phase_targets", None)
         )
         if phase_targets:
             attrs.append(("", mp.PHASE_TARGETS, phase_targets))
@@ -417,6 +436,7 @@ class DisplayInterface:
             self.combat_attributes.add_target_attributes,
             self.combat_attributes.add_minimal_range_attributes,
             self.combat_attributes.add_ready_attributes,
+            self.combat_attributes.add_damage_seq_attributes,
             self.combat_attributes.add_splash_decay_attributes,
             self.combat_attributes.add_splash_decay_vs_attributes,
             self.combat_attributes.add_terrain_modifier_attributes,

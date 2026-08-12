@@ -13,6 +13,18 @@ class Deposit(Entity):
     extraction_qty = None  # 提取量
     deposit_volume = 0  # 默认储量（萃取建筑建成时，地图 qty 为 1 则用此值）
     type_name = "deposit"  # 添加type_name属性
+    is_a = ()
+    expanded_is_a = ()
+
+    def is_a_type(self, type_name):
+        cls = type(self)
+        if getattr(cls, "type_name", None) == type_name:
+            return True
+        is_a = getattr(cls, "is_a", ()) or ()
+        if type_name in is_a:
+            return True
+        expanded = getattr(cls, "expanded_is_a", ()) or ()
+        return type_name in expanded
 
     def __init__(self, square, qty, x=None, y=None):
         if isinstance(qty, str):

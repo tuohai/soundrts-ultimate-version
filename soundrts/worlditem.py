@@ -1,6 +1,90 @@
 from soundrts.worldentity import Entity
 
 
+def _as_int(val, default=0):
+    if isinstance(val, (list, tuple)):
+        val = val[0] if val else default
+    try:
+        return int(val)
+    except (TypeError, ValueError):
+        return default
+
+
+def faction_int_attr(player, attr, default=0):
+    """Read an integer from the player's race/faction rules entry."""
+    if player is None:
+        return default
+    faction = getattr(player, "faction", None)
+    if not faction:
+        return default
+    try:
+        from .definitions import rules
+
+        return _as_int(rules.get(faction, attr), default)
+    except Exception:
+        return default
+
+
+def player_inventory_production_bonus_pct(player):
+    """Percent bonus to inventory_production_rates (rules-driven).
+
+    Uses the max of:
+    - own race ``inventory_production_bonus_pct``
+    - any allied_victory member's ``team_inventory_production_bonus_pct``
+    - researched upgrade ``inventory_production_bonus_pct``
+    """
+    best = 0
+    if player is None:
+        return 0
+    best = max(best, faction_int_attr(player, "inventory_production_bonus_pct", 0))
+    allies = getattr(player, "allied_victory", None) or (player,)
+    for ally in allies:
+        best = max(
+            best, faction_int_attr(ally, "team_inventory_production_bonus_pct", 0)
+        )
+    try:
+        from .world_conversion import player_upgrade_attr_max
+
+        best = max(
+            best, player_upgrade_attr_max(player, "inventory_production_bonus_pct", 0)
+        )
+    except Exception:
+        pass
+    return best
+
+
+def apply_inventory_production_rates(owner):
+    """Credit ``owner.player`` for each inventory item's ``inventory_production_rates``.
+
+    Rules-driven: host needs ``apply_inventory_production 1``; each item may list
+    per-second amounts in the same order/PRECISION as building ``production_rates``.
+    Optional percent bonus via race/upgrade attrs (no type-name checks).
+    """
+    if not getattr(owner, "apply_inventory_production", 0):
+        return
+    player = getattr(owner, "player", None)
+    if player is None:
+        return
+    inventory = getattr(owner, "inventory", None) or ()
+    resources = getattr(player, "resources", None)
+    if not resources:
+        return
+    pct = player_inventory_production_bonus_pct(player)
+    for item in inventory:
+        rates = getattr(item, "inventory_production_rates", None) or ()
+        for i, qty in enumerate(rates):
+            try:
+                q = int(qty)
+            except (TypeError, ValueError):
+                continue
+            if not q or i >= len(resources):
+                continue
+            if pct:
+                q = q * (100 + pct) // 100
+            if q:
+                resources[i] += q
+
+
 class Item(Entity):
     default_order = "pickup"
     skills = ()
@@ -17,7 +101,12 @@ class Item(Entity):
     # 宝藏物品属性
     resource_rewards = ()  # 资源奖励，格式: [resource1_amount, resource2_amount, ...]
     consume_on_pickup = 0  # 拾取时是否消耗物品
-    
+    # Per-second income while in an inventory whose host has apply_inventory_production 1
+    # (same resource order / PRECISION scaling as building production_rates).
+    inventory_production_rates = ()
+    # 1 = counts toward hold-all inventory victory (see world_inventory_victory.py)
+    inventory_victory = 0
+
     # 物品基本属性
     collision = 0  # 物品不阻挡移动
     transport_volume = 1  # 在库存中占据的空间
@@ -135,6 +224,7 @@ class Item(Entity):
             ("equippable_as_weapon", int),
             ("equippable_as_armor", int),
             ("learn_level", int),
+            ("inventory_victory", int),
         ]:
             if k in d:
                 d[k] = f(d[k][0] if isinstance(d[k], list) else d[k])

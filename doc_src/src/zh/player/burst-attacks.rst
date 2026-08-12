@@ -25,11 +25,11 @@
    * - 项目
      - 行为
    * - 单次攻击总伤害
-     - 仍等于 ``mdg`` / ``rdg`` 基础值（拆成多段）
+     - 均分/手动分段：仍等于 ``mdg`` / ``rdg``；``secondary`` 模式：首发 live + 后续固定箭（可高于基础值）
    * - 每轮段数
      - 最多 6 段（`damage_seq … <次数>`）
    * - 命中判定
-     - 每段独立 roll
+     - 每段独立 roll；次级箭 100% 命中
    * - 冷却
      - ``mdg_cd`` / ``rdg_cd`` 在整轮连发结束后开始
    * - 发射音效
@@ -51,7 +51,7 @@
 
 .. code-block:: text
 
-   damage_seq mdg|rdg <次数> [(damage d1 d2 ...)] [(interval 秒)]
+   damage_seq mdg|rdg <次数> [(damage d1 d2 ...)] [(secondary 穿刺 近战)] [(interval 秒)]
 
 
 须先定义 ``mdg`` 或 ``rdg``，再写 ``damage_seq``。
@@ -84,12 +84,30 @@
 
 若基础伤害为小数（如 ``rdg 2.5``），无法用整数 `` (damage …)`` 表达，请改用自动均分。
 
+2.3b AoE2 次级箭（``secondary``）
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+完全对齐帝国 2 DE 诸葛弩：首发 = 单位实时攻击（吃升级）+ 固定近战分量；后续箭 =
+固定穿刺 + 近战（**不吃**攻击升级）。近战可为 ``0``（对冲车等负近战护甲仍有效）。
+
+.. code-block:: text
+
+   rdg 8
+   rdg_cd 2.77
+   rdg_ready 0.23
+   damage_seq rdg 3 (secondary 3 0) (interval 0.23)
+
+
+精锐诸葛弩改为 ``rdg 5 (secondary 3 0)``（共 5 箭）。此模式不要求伤害总和等于 ``rdg``。
+
 2.4 间隔
 ~~~~~~~~
 
 
 - `(interval 0.25)` — 每发之间的秒数
 - 多段且未写 interval 或为 0 时，默认 0.25 秒
+- 冷却在整轮结束后起算：下一轮 ≈ ``(次数-1)×interval + rdg_cd``，再加 ``rdg_ready``
 
 2.5 远程连发建议
 ~~~~~~~~~~~~~~~~
@@ -98,7 +116,7 @@
 - 配合 ``rdg_projectile 1`` 使用投射物逻辑（高地等）
 - ``rdg_cd`` 宜比单发弓箭手更长：连发 DPS 更高，但每轮仍受总 ``rdg`` 与冷却约束
 
-内置示例：
+内置均分示例：
 
 .. code-block:: text
 

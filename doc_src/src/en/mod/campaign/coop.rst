@@ -1,4 +1,4 @@
-﻿# Age-of-Empires-style co-op campaigns
+# Age-of-Empires-style co-op campaigns
 
 
 Full guide (1.4.3.9): `../player/campaign-and-co-op-improvements.md <../player/campaign-and-co-op-improvements.htm>`_ — mission browser, difficulty tiers, AI partners, determinism, map authoring.

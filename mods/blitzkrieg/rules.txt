@@ -1,0 +1,1072 @@
+clear
+
+def parameters
+nb_of_resource_types 1 ; just gold
+
+; resources
+
+def goldmine
+class deposit
+resource_type resource1 ; supplies
+extraction_time 10
+extraction_qty 2
+
+; to not break old maps, we turn woods into supply stashes... or try to anyway
+def wood
+is_a goldmine
+
+def meadow
+class building_land
+square_terrain meadows 40
+
+def build_site
+class building_land
+square_terrain build_sites 50
+
+; races
+
+def allies_race
+class race
+townhall allies_command_center
+farm oil_depot
+house oil_depot
+lumbermill supply_center
+scouttower guardtower
+barracks allies_barracks
+blacksmith allies_barracks
+stables allies_factory
+workshop allies_factory
+temple allies_air_command_center
+dragonslair allies_bomber_command
+magestower allies_tech_center
+necropolis allies_bomber_command
+peasant allies_workman
+footman allies_rifleman
+archer allies_rocket_infantry
+knight allies_light_tank
+mage allies_medium_tank
+necromancer allies_heavy_tank
+dragon allies_super_heavy_tank
+catapult allies_artillery
+flyingmachine allies_scout
+easy allies_easy
+aggressive allies_aggressive
+
+def german_race
+class race
+townhall german_command_center
+farm oil_depot
+house oil_depot
+lumbermill supply_center
+scouttower german_guardtower
+barracks german_barracks
+blacksmith german_barracks
+stables german_factory
+workshop german_factory
+temple german_air_command_center
+dragonslair german_bomber_command
+magestower german_tech_center
+necropolis german_bomber_command
+peasant german_workman
+footman german_rifleman
+archer german_rocket_infantry
+knight german_light_tank
+mage german_medium_tank
+necromancer german_heavy_tank
+dragon german_super_heavy_tank
+catapult german_artillery
+flyingmachine german_scout
+easy german_easy
+aggressive german_aggressive
+
+def soviet_race
+class race
+townhall soviet_command_center
+farm oil_depot
+house oil_depot
+lumbermill supply_center
+scouttower guardtower
+barracks soviet_barracks
+blacksmith soviet_barracks
+stables soviet_factory
+workshop soviet_factory
+temple soviet_air_command_center
+dragonslair soviet_bomber_command
+magestower soviet_tech_center
+necropolis soviet_bomber_command
+peasant soviet_workman
+footman soviet_rifleman
+archer soviet_rocket_infantry
+knight soviet_light_tank
+mage soviet_medium_tank
+necromancer soviet_heavy_tank
+dragon soviet_super_heavy_tank
+catapult soviet_artillery
+flyingmachine soviet_scout
+easy soviet_easy
+aggressive soviet_aggressive
+
+; infantry
+
+def workman
+class worker
+cost 300
+time_cost 15
+population_cost 0
+hp_max 40
+speed 1.5
+
+def labourer
+is_a workman
+cost 5
+time_cost 12
+hp_max 25
+population_cost 0 ; no oil needed to run a labourer
+
+def allies_workman
+is_a workman
+can_build allies_barracks oil_depot supply_center allies_factory allies_air_command_center allies_bomber_command allies_tech_center allies_command_center guardtower cannontower flak_cannon
+
+def german_workman
+is_a workman
+can_build german_barracks oil_depot supply_center german_factory german_air_command_center german_bomber_command german_tech_center v2_rocket_launcher german_command_center german_guardtower cannontower flak_cannon
+
+def soviet_workman
+is_a workman
+can_build soviet_barracks oil_depot supply_center soviet_factory soviet_air_command_center soviet_bomber_command soviet_tech_center soviet_command_center guardtower cannontower flak_cannon
+cost 280
+time_cost 16
+
+def rifleman
+class soldier
+cost 200
+time_cost 18
+population_cost 0
+hp_max 50
+speed 1.5
+mdf 0.5
+rdf 0.5
+rdg_range 3
+rdg_cd 2
+rdg 10
+sight_range 5
+
+def allies_rifleman
+is_a rifleman
+rdg_cd 1.75 ; improved ROF for Allied riflemen
+
+def german_rifleman
+is_a rifleman
+rdg_range 4 ; Improved range for German riflemen
+
+def soviet_rifleman
+is_a rifleman
+time_cost 13 ; Quicker training for Soviet riflemen
+
+; these discount infantry are identical except half the price and time
+def discount_soviet_rifleman
+is_a soviet_rifleman
+cost 100
+time_cost 7
+
+def rocket_infantry ; generic anti tank and structure infantry
+class soldier
+cost 400
+time_cost 22
+population_cost 0
+hp_max 50
+speed 1.3
+rdg_range 4
+sight_range 6
+rdg_cd 5
+rdg 30
+
+def allies_rocket_infantry
+is_a rocket_infantry
+
+def german_rocket_infantry
+is_a rocket_infantry
+
+def soviet_rocket_infantry
+is_a rocket_infantry
+rdg_range 2
+
+def discount_soviet_rocket_infantry
+is_a soviet_rocket_infantry
+cost 200
+time_cost 11
+
+def partisan ; close quarters anti-tank saboteur
+class soldier
+cost 525
+time_cost 30
+population_cost 0
+hp_max 40
+speed 1.9
+mdg_range 0.1
+sight_range 6
+mdg_cd 10
+mdg 70
+is_invisible 1
+
+; vehicles
+
+def scout; anti-infantry quick vehicle
+class soldier
+cost 450
+time_cost 25
+population_cost 1
+corpse 0
+is_healable 0
+is_repairable 1
+hp_max 150
+speed 4
+rdg_range 3
+sight_range 5
+rdg_cd 1
+rdg 15
+transport_capacity 3
+transport_volume 99
+
+def allies_scout
+is_a scout
+speed 4.3
+hp_max 125
+
+def german_scout
+is_a scout
+transport_capacity 4
+mdg 2.5
+cost 550
+time_cost 30
+
+def soviet_scout
+is_a scout
+
+def light_tank ; generic light tank template
+class soldier
+cost 550
+time_cost 35
+population_cost 1 ; tanks cost oil
+corpse 0
+is_healable 0
+is_repairable 1
+hp_max 150
+rdf 7.5
+speed 3
+mdg_range 4
+sight_range 6
+mdg_cd 5
+mdg 35
+transport_volume 6
+
+def allies_light_tank
+is_a light_tank
+
+def german_light_tank
+is_a light_tank
+
+def soviet_light_tank
+is_a light_tank
+hp_max 130 ; the T70 was the weakest light tank
+
+def medium_tank
+class soldier
+cost 850
+time_cost 50
+population_cost 1
+corpse 0
+is_healable 0
+is_repairable 1
+hp_max 250
+rdf 13
+speed 2
+mdg_range 4
+sight_range 6
+mdg_cd 5
+mdg 50
+transport_volume 7
+
+def allies_medium_tank
+is_a medium_tank
+speed 2.3
+cost 750
+mdg 45
+
+def german_medium_tank
+is_a medium_tank
+rdg 15
+
+def soviet_medium_tank
+is_a medium_tank
+cost 700; discount on medium tanks for soviets
+time_cost 45
+speed 2.2
+
+def artillery
+class soldier
+cost 1000
+population_cost 2
+time_cost 60
+hp_max 50
+speed 0.75
+sight_range 14
+mdg_range 12
+mdg_cd 7
+mdg 80
+mdg_radius 0.5
+mdg_splash 40
+is_repairable 1
+is_healable 0
+transport_volume 8
+corpse 0
+requirements air_command_center
+
+def allies_artillery
+is_a artillery
+mdg 90
+
+def german_artillery
+is_a artillery
+mdg_cd 8
+
+def soviet_artillery
+is_a artillery
+mdg_cd 5
+mdg 50
+
+def heavy_tank
+class soldier
+cost 1500
+time_cost 100
+population_cost 2
+corpse 0
+is_healable 0
+is_repairable 1
+hp_max 400
+rdf 25
+speed 0.75
+mdg_range 8
+sight_range 10
+mdg_cd 7
+mdg 80
+mdg_splash 40
+mdg_radius 0.25
+transport_volume 9
+requirements tech_center
+mdg_projectile 1
+
+def allies_heavy_tank
+is_a heavy_tank
+mdg_radius 0.5
+
+def german_heavy_tank
+is_a heavy_tank
+population_cost 3; not the best fuel economy on the Tiger tank
+mdg 100; deadly tank though!
+
+def soviet_heavy_tank
+is_a heavy_tank
+rdf 27.5; KV 1's were renoundly tough
+
+def super_heavy_tank
+is_a heavy_tank
+cost 2500
+time_cost 130
+population_cost 4
+hp_max 600
+rdf 40
+mdg 100
+mdg_radius 0.5
+
+def allies_super_heavy_tank
+is_a super_heavy_tank
+speed 0.9
+time_cost 120
+
+def german_super_heavy_tank
+is_a super_heavy_tank
+mdg 120
+
+def soviet_super_heavy_tank
+is_a super_heavy_tank
+hp_max 550
+speed 1
+population_cost 3
+
+def flak_trak ; mobile anti-air
+class soldier
+cost 550
+time_cost 35
+population_cost 1
+corpse 0
+is_healable 0
+is_repairable 1
+hp_max 150
+rdf 5
+speed 2
+rdg_range 4
+sight_range 6
+rdg_cd 3
+rdg 40
+rdg_radius 0.5
+rdg_splash 20
+rdg_targets air
+transport_volume 6
+
+def german_flak_trak
+is_a flak_trak
+
+def soviet_flak_trak
+is_a flak_trak
+rdg_cd 2
+rdg 22
+
+def allies_flak_trak ; machinegun anti-air halftrack
+is_a flak_trak
+rdg 10
+rdg_cd 1
+rdg_splash 0
+rdg_radius 0
+rdg_targets ground air
+
+; aircraft
+
+def bomber ; strategic support bomber
+class soldier
+hp_max 100
+speed 1
+mdg 70
+mdg_radius 0.25
+mdg_splash 35
+mdg_range 0.2
+mdg_cd 4
+is_healable 0
+corpse 0
+is_repairable 1
+airground_type air
+
+def allies_bomber ; fires a rocket, confusingly. No splash but higher damage?
+is_a bomber
+mdg_range 1
+mdg_range 6
+mdg_radius 0
+mdg_splash 0
+mdg 80
+
+def german_bomber
+is_a bomber
+hp_max 80
+mdg 80
+
+def soviet_bomber
+is_a bomber
+mdg_cd 6
+
+def fighter
+class soldier
+hp_max 100
+rdf 5
+speed 2
+rdg 15
+rdg_range 3
+sight_range 5
+rdg_cd 2
+is_healable 0
+corpse 0
+is_repairable 1
+airground_type air
+rdg_targets ground air
+
+def allies_fighter
+is_a fighter
+
+def german_fighter
+is_a fighter
+hp_max 120
+rdg 20
+
+def soviet_fighter ; actually good vs tanks
+is_a fighter
+rdf 2.5
+rdg_cd 3
+rdg 25
+
+; effects
+
+def nuke
+class effect
+harm_level 1200
+decay 4
+
+def radiation
+class effect
+harm_level 10
+harm_target_type healable
+decay 600
+
+def v2_rocket_blast
+class effect
+harm_level 1500
+decay 2
+
+; buildings
+
+def command_center
+class building
+cost 3000
+hp_max 900
+rdf 7.5
+time_cost 180
+; didn't want to have this, but with all old maps having townhalls and not that high a starting resource count
+; players could get into situations where they can't afford anything. 
+; here's hoping for a parameter to apply a modifier to starting resources
+storable_resource_types 0
+storage_bonus 48 ; takes every 2 supplies up to 50 credits worth
+; air raid siren (couldn't think how else to do this)
+rdg 0.01
+rdg_range 25
+sight_range 27
+rdg_cd 60
+rdg_targets air
+
+def undecided_command_center
+is_a command_center
+; lets players turn townhalls into a specific command center
+can_upgrade_to allies_command_center german_command_center soviet_command_center
+
+def townhall ; turns all townhalls left on maps into something that can upgrade into a command center
+is_a undecided_command_center
+
+def allies_command_center
+is_a command_center
+can_train labourer allies_workman
+can_upgrade_to nuclear_command_center
+
+def nuclear_command_center
+is_a allies_command_center
+cost 8000
+requirements air_command_center allies_tech_center
+time_cost 300
+mana_max 600
+mana_regen 1
+hp_max 1500
+can_use nuclear_strike
+can_upgrade_to ; need to blank this out to remove the ability to upgrade
+
+def german_command_center
+is_a command_center
+can_train labourer german_workman
+
+def soviet_command_center
+is_a command_center
+can_train labourer soviet_workman
+
+def oil_depot
+class building
+cost 1000
+population_provided 8; yeah, its oil really, but heh
+hp_max 300
+rdf 2.5
+time_cost 60
+
+def supply_center
+class building
+cost 300
+hp_max 500
+rdf 2.5
+time_cost 30
+storable_resource_types 0
+storage_bonus 68 ; turns every 2 supplies into 70 credits
+
+def barracks
+class building
+cost 500
+hp_max 600
+rdf 2.5
+time_cost 50
+
+def allies_barracks
+is_a barracks
+can_train allies_rifleman allies_rocket_infantry
+requirements allies_command_center
+
+def german_barracks
+is_a barracks
+can_train german_rifleman german_rocket_infantry
+requirements german_command_center
+
+def soviet_barracks
+is_a barracks
+can_train soviet_rifleman soviet_rocket_infantry partisan
+requirements soviet_command_center
+can_upgrade_to advanced_soviet_barracks
+
+def advanced_soviet_barracks
+is_a barracks
+cost 2000 ; 1500 after already having a barracks
+time_cost 180
+hp_max 750
+can_train discount_soviet_rifleman discount_soviet_rocket_infantry partisan
+requirements soviet_command_center soviet_tech_center
+
+def guardtower
+class building
+cost 500
+requirements barracks
+hp_max 200
+time_cost 100
+sight_range 9 ; can see the adjacent squares
+rdg_range 7
+rdg_cd 1.25
+rdg 20
+rdg_targets ground
+rdf 5
+is_buildable_anywhere 1
+rdg_projectile 1
+is_a_detector 1
+
+def german_guardtower
+is_a guardtower
+rdg_range 8 ; range bonus for german guard towers
+
+def cannontower
+class building
+cost 700
+requirements barracks
+hp_max 300
+time_cost 120
+sight_range 9 ; can see the adjacent squares
+mdg_range 7
+mdg_cd 7
+mdg 60
+mdg_targets ground
+rdf 7.5
+is_buildable_anywhere 1
+mdg_projectile 1
+
+def flak_cannon
+class building
+cost 500
+requirements barracks
+hp_max 200
+time_cost 60
+sight_range 17
+mdg_range 15
+mdg_cd 3
+mdg 25
+mdg_splash 12
+mdg_radius 0.5
+mdg_targets air
+rdf 5
+is_buildable_anywhere 1
+
+def factory
+class building
+cost 1000
+hp_max 800
+rdf 2.5
+time_cost 120
+requirements oil_depot
+
+def allies_factory
+is_a factory
+can_train allies_scout allies_light_tank allies_medium_tank allies_heavy_tank allies_super_heavy_tank allies_artillery allies_flak_trak
+requirements allies_command_center
+
+def german_factory
+is_a factory
+can_train german_scout german_light_tank german_medium_tank german_heavy_tank german_super_heavy_tank german_artillery german_flak_trak
+requirements german_command_center
+
+def soviet_factory
+is_a factory
+cost 900 ; discount for soviet factories
+time_cost 100 ; also build quicker
+can_train soviet_scout soviet_light_tank soviet_medium_tank soviet_heavy_tank soviet_super_heavy_tank soviet_artillery soviet_flak_trak
+requirements soviet_command_center
+
+def air_command_center
+class building
+cost 800
+population_cost 4
+hp_max 500
+rdf 2.5
+time_cost 120
+sight_range 14
+mana_max 300
+mana_regen 1
+requirements oil_depot
+
+def allies_air_command_center
+is_a air_command_center
+can_use allies_a_callin_fighters
+
+def german_air_command_center
+is_a air_command_center
+can_use german_a_callin_fighters
+
+def soviet_air_command_center
+is_a air_command_center
+can_use soviet_a_callin_fighters
+
+def tech_center
+class building
+cost 1200
+hp_max 800
+rdf 2.5
+time_cost 150
+requirements air_command_center
+
+def allies_tech_center
+is_a tech_center
+cost 1100 ; slight discount for allies tech center
+
+def german_tech_center
+is_a tech_center
+
+def soviet_tech_center
+is_a tech_center
+
+def bomber_command
+class building
+cost 600
+time_cost 100
+population_cost 4
+hp_max 500
+mana_max 200
+mana_regen 1
+rdf 2.5
+requirements air_command_center
+
+def allies_bomber_command
+is_a bomber_command
+can_use allies_a_callin_bombers
+
+def german_bomber_command
+is_a bomber_command
+can_use german_a_callin_bombers
+
+def soviet_bomber_command
+is_a bomber_command
+can_use soviet_a_callin_bombers
+
+def v2_rocket_launcher
+class building
+cost 3000
+hp_max 1000
+rdf 2.5
+time_cost 300
+mana_max 480
+mana_regen 1
+requirements german_command_center german_air_command_center german_tech_center
+can_use v2_rocket
+
+; abilities
+
+def allies_a_callin_bombers
+class ability
+;cost 400 ; looks like it should cost credits but this hasn't been implemented
+mana_cost 200
+effect summon 20 4 allies_bomber
+effect_target ask
+effect_range anywhere
+
+def german_a_callin_bombers
+class ability
+;cost 400
+mana_cost 200
+effect summon 20 4 german_bomber
+effect_target ask
+effect_range anywhere
+
+def soviet_a_callin_bombers
+class ability
+;cost 400
+mana_cost 200
+effect summon 20 4 soviet_bomber
+effect_target ask
+effect_range anywhere
+
+def allies_a_callin_fighters
+class ability
+mana_cost 300
+effect summon 60 3 allies_fighter
+effect_target ask
+effect_range anywhere
+
+def german_a_callin_fighters
+class ability
+mana_cost 300
+effect summon 60 3 german_fighter
+effect_target ask
+effect_range anywhere
+
+def soviet_a_callin_fighters
+class ability
+mana_cost 300
+effect summon 60 2 soviet_fighter
+effect_target ask
+effect_range anywhere
+
+def nuclear_strike
+class ability
+mana_cost 600
+effect summon 0 nuke radiation
+effect_target ask
+effect_range anywhere
+universal_notification 1
+
+def v2_rocket
+class ability
+mana_cost 480
+effect summon 0 v2_rocket_blast
+effect_target ask
+effect_range anywhere
+universal_notification 1
+
+; old units and structures
+; we're just wiping them out for now, we could do some fancy turn into new structure stuff if we needed to
+; when new code is released, we can nuke this bit
+
+def farm
+class building
+decay 1
+
+def house
+class building
+decay 1
+
+def keep
+class building
+decay 1
+
+def castle
+class building
+decay 1
+
+def scouttower
+class building
+decay 1
+
+def stables
+class building
+decay 1
+
+def temple
+class building
+decay 1
+
+def workshop
+class building
+decay 1
+
+def blacksmith
+class building
+decay 1
+
+def lumbermill
+class building
+decay 1
+
+def dragonslair
+class building
+decay 1
+
+def magestower
+class building
+decay 1
+
+def necropolis
+class building
+decay 1
+
+def peasant
+class soldier
+decay 1
+
+def footman
+class soldier
+decay 1
+
+def archer
+class soldier
+decay 1
+
+def darkarcher
+class soldier
+decay 1
+
+def knight
+class soldier
+decay 1
+
+def dragon
+class soldier
+decay 1
+
+def catapult
+class soldier
+decay 1
+
+def flyingmachine
+class soldier
+decay 1
+
+def new_flyingmachine
+class soldier
+decay 1
+
+def mage
+class soldier
+decay 1
+
+def priest
+class soldier
+decay 1
+
+def necromancer
+class soldier
+decay 1
+
+def skeleton
+class soldier
+decay 1
+
+def zombie
+class soldier
+decay 1
+
+; terrains (class terrain)
+
+; low land
+
+def plain
+class terrain
+is_dynamic 1
+
+def rocky_plain
+class terrain
+is_dynamic 1
+
+; high land
+
+def plateau
+class terrain
+is_dynamic 0
+
+def hill
+class terrain
+is_high_ground 1
+is_dynamic 0
+height 1
+
+def high_rocky_plain
+class terrain
+is_high_ground 1
+is_dynamic 1
+
+def mountain_pass
+class terrain
+is_high_ground 1
+is_dynamic 0
+speed .5 1
+
+def basin
+class terrain
+is_dynamic 0
+height -1
+
+; water (terrain <name> sets is_water; ground units blocked unless is_ground 1)
+
+def lake
+class terrain
+is_water 1
+is_dynamic 0
+rmg_water 1
+
+def sea
+class terrain
+is_water 1
+is_dynamic 0
+speed 0 .25
+
+def ocean
+class terrain
+is_water 1
+is_dynamic 0
+speed 0 .25
+
+def river
+class terrain
+is_water 1
+is_dynamic 0
+
+def creek
+class terrain
+is_water 1
+is_dynamic 0
+
+def ford
+class terrain
+is_water 1
+is_ground 1
+is_dynamic 0
+speed .5 1
+rmg_ford 1
+
+def big_bridge
+class terrain
+is_water 1
+is_ground 1
+is_dynamic 0
+
+def bridge_deck
+class terrain
+is_water 1
+is_ground 1
+is_dynamic 0
+
+def marsh
+class terrain
+is_dynamic 0
+speed .5 1
+cover .5 0
+rmg_terrain 1
+
+; impassable
+
+def mountain
+class terrain
+is_high_ground 1
+is_ground 0
+is_air 0
+is_dynamic 0
+blocks_path 1
+rmg_terrain 1
+rmg_border 1
+
+; object-driven square terrain (usable on map too)
+
+def town
+class terrain
+is_dynamic 1
+
+def meadows
+class terrain
+is_dynamic 1
+rdg_vs archer 5
+
+def build_sites
+class terrain
+is_dynamic 0
+
+def forest
+class terrain
+cover .5 0
+
+def dense_forest
+class terrain
+is_dynamic 1
+blocks_path 1
+cover .5 0

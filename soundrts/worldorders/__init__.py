@@ -94,6 +94,14 @@ from .computer import (
     WaitOrder,
 )
 
+# Market / trade (AoE2)
+from .market import (
+    MarketBuyOrder,
+    MarketSellOrder,
+    TributeOrder,
+    TradeOrder,
+)
+
 # Skill orders
 from .skills import (
     UseOrder,

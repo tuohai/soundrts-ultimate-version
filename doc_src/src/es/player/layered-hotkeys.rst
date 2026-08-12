@@ -1,4 +1,4 @@
-﻿# Esquema de teclas de acceso rápido en capas
+# Esquema de teclas de acceso rápido en capas
 
 Esta guía describe las teclas de acceso rápido de la interfaz en capas de SoundRTS: una capa base global más una capa por interfaz, por lo que la misma tecla física puede significar diferentes cosas en diferentes modos. Destinado a jugadores y autores de mods que personalizan enlaces.
 

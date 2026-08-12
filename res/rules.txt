@@ -173,7 +173,6 @@ nb_of_resource_types 3 ; gold, wood, food
 minimal_damage 0.17
 hide_locked_commands 0
 achievements_enabled 1 ; 0 = mod disables achievements, cards, ranks, loadout
-default_building_land meadow
 menace_armor_weight 1
 menace_dodge_weight 1
 menace_range_weight 0.15
@@ -320,7 +319,9 @@ hp_regen 0
 capture_hp_threshold 0
 provides_survival 0
 is_buildable_anywhere 0
-sight_range 1
+; was sight_range 1 (legacy tower shorthand → 12 + bonus_height)
+sight_range 12
+bonus_height 1
 
 def captured_barracks
 class building
@@ -730,7 +731,7 @@ sight_range 6
 rdg 2.5
 rdg_cd 1.5
 rdg_range 4
-rdg_delay 0.02
+rdg_projectile_speed 7
 rdg_projectile 1
 rdg_targets ground air
 requirements feudal_age
@@ -773,7 +774,7 @@ rdg_cd 3
 rdg_targets ground air
 sight_range 7
 rdg_range 5
-rdg_delay 0.02
+rdg_projectile_speed 7
 rdg 10
 rdg_projectile 1
 is_invisible 1
@@ -791,7 +792,7 @@ rdg_cd 1.5
 rdg_targets ground air
 rdg_range 4
 sight_range 6
-rdg_delay 0.02
+rdg_projectile_speed 7
 rdg 2.5
 rdg_projectile 1
 corpse 0
@@ -809,7 +810,7 @@ hp_max 30
 speed 0.75
 mdg_range 12
 sight_range 14
-mdg_delay 0.05
+mdg_projectile_speed 3.5
 mdg_cd 4
 mdg 8
 mdg_radius 1.5
@@ -984,7 +985,7 @@ is_healable 0
 airground_type water
 rdg_range 6
 sight_range 8
-rdg_delay 0.02
+rdg_projectile_speed 7
 rdg_cd 1.5
 rdg 6 ; 6-16
 rdg_targets ground air
@@ -1007,7 +1008,7 @@ speed 0.75
 mdg_range 12
 sight_range 14
 mdg_minimal_range 4
-mdg_delay 0.05
+mdg_projectile_speed 3.5
 mdg_cd 4
 mdg 8
 mdg_radius 0.25
@@ -1033,7 +1034,7 @@ is_healable 0
 airground_type water
 rdg_range 6
 sight_range 8
-rdg_delay 0.02
+rdg_projectile_speed 7
 rdg_cd 1.5
 rdg 6 ; 6-16
 rdg_projectile 1
@@ -1236,7 +1237,7 @@ hp_max 43;  130/3
 time_cost 140
 bonus_height 1
 rdg_range 6
-rdg_delay 0.02
+rdg_projectile_speed 7
 rdg_cd 1.5
 rdg 6 ; 6-16
 rdg_targets ground air
@@ -1256,7 +1257,7 @@ hp_max 53;  160/3
 time_cost 190
 bonus_height 1
 mdg_range 7
-mdg_delay 0.05
+mdg_projectile_speed 3.5
 mdg_cd 4
 mdg 8 ; 10-50
 mdg_targets ground
@@ -1412,6 +1413,8 @@ class upgrade
 
 cost 10 5
 time_cost 20
+; food -50%; other resources unchanged (``cost -50%`` pads remaining slots with 0;
+; multi-slot form ``cost -50% 0`` is also valid — bare trailing tokens are only for effect_bonus_targets)
 effect bonus cost -50% 0
 effect bonus time_cost -5
 effect bonus population_cost -1
@@ -1490,19 +1493,20 @@ rdg_trigger_rate 10  ; 远程攻击只有10%几率触发
 ; ===== 时代（phase）系统示例 =====
 ; phase 是一种特殊的 upgrade。
 ; 默认情况下研究后会对玩家所有现有及未来的单位生效；
-; 若设置了 phase_targets，则仅作用于匹配的单位。
+; 若设置了 phase_bonus_targets，则仅作用于匹配的单位。
 ;
 ; 关键字段：
 ;   phase bonus stat1 val1 stat2 val2 ...
 ;       两个词的关键字（与 effect bonus 对齐）；cost 等列表型属性可写多个值，
 ;       例如  phase bonus cost -5 -3 -2 mdg 1
-;   phase_targets <type1> <type2> ...
+;       裸写 ``phase bonus`` 或 ``phase bonus clear`` 可清空（模组覆盖本示例时用）
+;   phase_bonus_targets <type1> <type2> ...
 ;       可选；当设置时，phase bonus 中的非成本项仅作用于匹配的单位。
 ;       匹配规则：精确 type_name / is_a 继承链 / 类别（worker/soldier/building 等）
-;       任一命中。前缀 ``-`` 表示排除（如 ``phase_targets -building`` 表示除建筑外
-;       的所有单位）；可与正向项混用（如 ``phase_targets soldier -footman``）。
+;       任一命中。前缀 ``-`` 表示排除（如 ``phase_bonus_targets -building`` 表示除建筑外
+;       的所有单位）；可与正向项混用（如 ``phase_bonus_targets soldier -footman``）。
 ;       注意：cost/time_cost/population_cost 等成本类加成始终走玩家
-;       全局，不受 phase_targets 限制。仅当 phase_targets 含正向匹配项
+;       全局，不受 phase_bonus_targets 限制。仅当 phase_bonus_targets 含正向匹配项
 ;       （非 ``-`` 排除）且同时写了成本类 bonus 时，引擎会发出一次性警告。
 ;   units_auto_upgrade 0/1
 ;       1 时研究完成后，仅"与本时代绑定"的形态升级会被瞬时执行：
@@ -1514,7 +1518,7 @@ rdg_trigger_rate 10  ; 远程攻击只有10%几率触发
 ;       想让某形态随某时代自动取代旧形态，把该时代名加到目标形态的
 ;       requirements 里即可（示例：让 swordsman 在城堡时代取代 footman，
 ;       在 swordsman 的 requirements 里追加 castle_age）。
-;       若同时设置了 phase_targets，仍先按 phase_targets 过滤源单位。
+;       若同时设置了 phase_bonus_targets，仍先按 phase_bonus_targets 过滤源单位。
 ;   can_upgrade_to <next_phase>
 ;       仅作 UI 展示用途；链式升级请通过 requirements 实现。
 ;   requirements 还可写 any_buildings <n> <group>_buildings：
@@ -1536,7 +1540,7 @@ def feudal_age
 class phase
 cost 10 15
 time_cost 130
-phase_targets -building
+phase_bonus_targets -building
 phase bonus mdg 1 hp_max 5 cost -2 0 time_cost -5
 units_auto_upgrade 0
 can_upgrade_to castle_age

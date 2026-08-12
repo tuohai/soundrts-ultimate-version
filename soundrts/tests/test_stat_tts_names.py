@@ -19,6 +19,74 @@ def test_gather_time_orchard_uses_deposit_title():
     assert 5108 not in name
 
 
+def test_dotted_vs_stat_uses_vs_msg_and_target_title():
+    name = get_stat_tts_name("mdg_vs.building")
+    assert name[: len(mp.MDG_VS)] == list(mp.MDG_VS)
+    assert "mdg_vs.building" not in name
+    # building has a style title in base ui
+    assert name[-1] != "mdg_vs.building"
+
+
+def test_plain_mdg_vs_uses_translated_msg():
+    """effect bonus rows use plain mdg_vs (not dotted); must not speak the raw key."""
+    assert get_stat_tts_name("mdg_vs") == list(mp.MDG_VS)
+    assert get_stat_tts_name("rdg_vs") == list(mp.RDG_VS)
+    assert "mdg_vs" not in get_stat_tts_name("mdg_vs")
+
+
+def test_other_plain_vs_stats_use_translated_msg():
+    assert get_stat_tts_name("mdf_vs") == list(mp.MDF_VS)
+    assert get_stat_tts_name("rdf_vs") == list(mp.RDF_VS)
+    assert get_stat_tts_name("mdg_cover_vs") == list(mp.MDG_COVER_VS)
+    assert get_stat_tts_name("rdg_dodge_vs") == list(mp.RDG_DODGE_VS)
+    for raw in ("mdf_vs", "rdf_vs", "mdg_cover_vs", "rdg_dodge_vs"):
+        assert raw not in get_stat_tts_name(raw)
+
+
+def test_kill_gold_vs_uses_translated_msg():
+    """Chieftains-style kill_gold_vs must not speak the raw key."""
+    assert get_stat_tts_name("kill_gold_vs") == list(mp.KILL_GOLD_VS)
+    assert "kill_gold" not in get_stat_tts_name("kill_gold_vs")
+    assert get_stat_tts_name("kill_gold") == list(mp.KILL_GOLD)
+
+
+def test_all_msgparts_vs_constants_resolve_without_raw_keys():
+    """Cooldown/ready/range/crit/pierce/charge *_vs must map to message IDs."""
+    from soundrts.attributes.utils import AttributeUtils
+    from soundrts.worldupgrade.effect_bonus_parse import (
+        _rules_stat_sets,
+        split_effect_bonus_args,
+    )
+
+    vs_names = sorted(
+        n.lower()
+        for n in dir(mp)
+        if n.endswith("_VS") and isinstance(getattr(mp, n), list)
+    )
+    assert "mdg_cd_vs" in vs_names
+    assert "mdg_ready_vs" in vs_names
+    assert "mdg_range_vs" in vs_names
+    assert "mdg_crit_vs" in vs_names
+    assert "mdg_piercing_vs" in vs_names
+    assert "charge_mdg_vs" in vs_names
+    utils = AttributeUtils(None)
+    precision, _ = _rules_stat_sets()
+    for name in vs_names:
+        label = get_stat_tts_name(name)
+        assert label == list(getattr(mp, name.upper())), name
+        assert name not in label, name
+        root = name[:-3]
+        bonus, _ = split_effect_bonus_args([name, "building", "2"])
+        stored = bonus[2]
+        if root in precision:
+            assert stored == 2000, (name, stored)
+            assert utils._is_precision_stat(name) is True, name
+        else:
+            # rates / int bonuses stay as raw "2"
+            assert stored in (2, "2"), (name, stored)
+            assert utils._is_precision_stat(name) is False, name
+
+
 def test_gather_time_food_carcass_uses_deposit_title():
     name = get_stat_tts_name("gather_time_food_carcass")
     assert mp.GATHER_TIME[0] in name

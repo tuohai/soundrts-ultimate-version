@@ -1,6 +1,19 @@
 from .base import BasicOrder
 
 
+def _target_has_gatherable_resource(target):
+    """True if workers can still extract from this deposit/building."""
+    if target is None:
+        return False
+    if getattr(target, "is_an_extractor", 0):
+        from ..world_extractor import extractor_can_still_yield
+
+        return extractor_can_still_yield(target)
+    if hasattr(target, "resource_qty"):
+        return target.resource_qty > 0
+    return True
+
+
 class GatherOrder(BasicOrder):
 
     keyword = "gather"
@@ -40,8 +53,8 @@ class GatherOrder(BasicOrder):
             self.mark_as_impossible()
             return
             
-        # 检查资源是否耗尽
-        if hasattr(self.target, "resource_qty") and self.target.resource_qty <= 0:
+        # 检查资源是否耗尽（气矿萃取建筑看气泉储量，不是建筑缓冲仓）
+        if not _target_has_gatherable_resource(self.target):
             self.mark_as_impossible()
             return
             
@@ -92,7 +105,9 @@ class GatherOrder(BasicOrder):
     def _extract_cargo(self):
         # 使用工人的gather_qty属性并考虑Deposit的extraction_qty
         # gather_qty方法返回的是基础单位数量，需要乘以1000转换为游戏内部资源单位
-        gather_qty = self.unit.get_gather_qty(self.target.resource_type, self.target) * 1000
+        from ..lib.nofloat import PRECISION
+
+        gather_qty = self.unit.get_gather_qty(self.target.resource_type, self.target) * PRECISION
         
         # 提取资源并获取返回值
         extracted_qty = self.target.extract_resource(gather_qty)
@@ -111,6 +126,164 @@ class GatherOrder(BasicOrder):
             self.unit.notify("gather,%s" % self.target.resource_type)
         except Exception:
             pass
+
+    def _cargo_amount(self):
+        if self.unit.cargo is None:
+            return 0
+        if not isinstance(self.unit.cargo, tuple) or len(self.unit.cargo) != 2:
+            return 0
+        return int(self.unit.cargo[1] or 0)
+
+    def _continuous_carry_cap_internal(self):
+        from ..lib.nofloat import PRECISION
+
+        cap = self.unit.get_carry_capacity(self.target.resource_type, self.target)
+        return max(PRECISION, int(cap) * PRECISION)
+
+    def _add_to_cargo(self, resource_type, amount_internal):
+        if amount_internal <= 0:
+            return
+        if self.unit.cargo is None:
+            self.unit.cargo = (resource_type, amount_internal)
+        else:
+            cur_type, cur_qty = self.unit.cargo
+            if cur_type != resource_type:
+                # 换资源类型：先视为应送回；此处覆盖
+                self.unit.cargo = (resource_type, amount_internal)
+            else:
+                self.unit.cargo = (resource_type, int(cur_qty) + amount_internal)
+
+    def _continuous_gather_tick(self):
+        """AoE2-style: accumulate at gather_rate until carry_capacity, then return."""
+        from ..lib.nofloat import PRECISION
+
+        if self.target is None:
+            if self._cargo_amount() > 0:
+                self.mode = "bring_back"
+                self.storage = None
+            else:
+                self.mark_as_complete()
+            return
+        if not _target_has_gatherable_resource(self.target):
+            if self._cargo_amount() > 0:
+                self.mode = "bring_back"
+                self.storage = None
+            else:
+                self.mark_as_complete()
+                self.unit.deploy()
+            return
+        if not self.unit._near_enough(self.target):
+            self.mode = "go_gather"
+            self.unit.stop()
+            self._cont_last_t = None
+            return
+
+        now = self.unit.place.world.time
+        if getattr(self, "_cont_last_t", None) is None:
+            self._cont_last_t = now
+            self._cont_accum = getattr(self, "_cont_accum", 0.0) or 0.0
+            return
+
+        dt = (now - self._cont_last_t) / 1000.0
+        self._cont_last_t = now
+        if dt <= 0:
+            return
+
+        rate = float(self.unit.get_gather_rate(self.target.resource_type, self.target))
+        # AI gather_time percent: lower percent → faster (same as trip mode)
+        player = getattr(self.unit, "player", None)
+        pct = getattr(player, "ai_gather_time_percent", 100) if player else 100
+        if pct and pct != 100:
+            if pct <= 0:
+                rate *= 10.0
+            else:
+                rate *= 100.0 / float(pct)
+
+        self._cont_accum = float(getattr(self, "_cont_accum", 0.0) or 0.0)
+        self._cont_accum += rate * PRECISION * dt
+
+        cap = self._continuous_carry_cap_internal()
+        current = self._cargo_amount()
+        room = cap - current
+        if room <= 0:
+            self.mode = "bring_back"
+            self.storage = None
+            self._cont_last_t = None
+            return
+
+        take = int(self._cont_accum)
+        if take < 1:
+            return
+        take = min(take, room)
+        extracted = self.target.extract_resource(take)
+        self._cont_accum -= extracted
+        if extracted <= 0:
+            if self._cargo_amount() > 0:
+                self.mode = "bring_back"
+                self.storage = None
+            else:
+                self.target = None
+                self.mark_as_complete()
+            self._cont_last_t = None
+            return
+
+        had = current
+        self._add_to_cargo(self.target.resource_type, extracted)
+        if had == 0:
+            try:
+                self.unit.notify("gather,%s" % self.target.resource_type)
+            except Exception:
+                pass
+
+        # AoE2 Paper Money: lumberjacks generate gold while chopping wood
+        self._apply_gather_byproduct(dt)
+
+        if self._cargo_amount() >= cap:
+            self.mode = "bring_back"
+            self.storage = None
+            self._cont_last_t = None
+            return
+
+        # Deposit may have died mid-tick after extract
+        if self.target is None or not _target_has_gatherable_resource(self.target):
+            if self._cargo_amount() > 0:
+                self.mode = "bring_back"
+                self.storage = None
+            self._cont_last_t = None
+
+    def _apply_gather_byproduct(self, dt):
+        """While gathering, grant byproduct resources (e.g. Paper Money gold/s on wood)."""
+        from ..lib.nofloat import PRECISION
+
+        byproduct = getattr(self.unit, "gather_byproduct", None)
+        if not isinstance(byproduct, dict) or not byproduct or dt <= 0:
+            return
+        player = getattr(self.unit, "player", None)
+        if player is None or self.target is None:
+            return
+        deposit_type = getattr(self.target, "type_name", None)
+        rate = None
+        if deposit_type and deposit_type in byproduct:
+            rate = byproduct[deposit_type]
+        else:
+            rt = getattr(self.target, "resource_type", None)
+            if rt and rt in byproduct:
+                rate = byproduct[rt]
+        if rate is None:
+            return
+        try:
+            rate_f = float(rate)
+        except (TypeError, ValueError):
+            return
+        if rate_f <= 0:
+            return
+        acc = float(getattr(self, "_byproduct_accum", 0.0) or 0.0)
+        acc += rate_f * dt
+        whole = int(acc)
+        if whole >= 1:
+            player.store("resource1", whole * PRECISION)
+            acc -= whole
+        self._byproduct_accum = acc
 
     def _handle_water_unit_transport(self):
         """处理水上单位的资源运输：先移动到最佳岸边位置，然后将资源运输到相邻陆地的仓库"""
@@ -399,24 +572,45 @@ class GatherOrder(BasicOrder):
             if self.target is None:  # resource exhausted
                 self.mark_as_complete()
                 self.unit.deploy()
-            # 添加对资源是否耗尽的检查
-            elif hasattr(self.target, "resource_qty") and self.target.resource_qty <= 0:
+            elif not _target_has_gatherable_resource(self.target):
                 self.mark_as_complete()
                 self.unit.deploy()
             elif self.unit._near_enough(self.target):
+                from ..world_extractor import gather_slot_available
+
+                # StarCraft gas: only gather_slots workers extract at once; extras wait.
+                if not gather_slot_available(self.target, self.unit):
+                    self.unit.stop()
+                    return
+                continuous = False
+                try:
+                    continuous = bool(self.unit.uses_continuous_gather())
+                except Exception:
+                    continuous = False
                 self.mode = "gather"
-                # 使用工人的gather_time属性并考虑Deposit的extraction_time
-                # gather_time方法返回的是秒，需要乘以1000转换为毫秒
-                gather_time = self.unit.get_gather_time(self.target.resource_type, self.target) * 1000
-                self.delay = self.unit.place.world.time + gather_time
                 self.unit.stop()
+                if continuous:
+                    self._cont_last_t = self.unit.place.world.time
+                    self._cont_accum = float(getattr(self, "_cont_accum", 0.0) or 0.0)
+                    self.delay = 0
+                else:
+                    # 使用工人的gather_time属性并考虑Deposit的extraction_time
+                    # gather_time方法返回的是秒，需要乘以1000转换为毫秒
+                    gather_time = self.unit.get_gather_time(self.target.resource_type, self.target) * 1000
+                    self.delay = self.unit.place.world.time + gather_time
             elif self.unit.is_idle:
                 self.move_to_or_fail(self.target)
         elif self.mode == "gather":
-            if self.target is None:  # resource exhausted
+            continuous = False
+            try:
+                continuous = bool(self.unit.uses_continuous_gather())
+            except Exception:
+                continuous = False
+            if continuous:
+                self._continuous_gather_tick()
+            elif self.target is None:  # resource exhausted
                 self.mark_as_complete()
-            # 添加对资源是否耗尽的检查
-            elif hasattr(self.target, "resource_qty") and self.target.resource_qty <= 0:
+            elif not _target_has_gatherable_resource(self.target):
                 self.mark_as_complete()
             elif not self.unit._near_enough(self.target):
                 self.mode = "go_gather"

@@ -708,6 +708,8 @@
 4794	mana massimo
 4795	tempo di raccolta
 4796	quantità raccolta
+5412	tasso di raccolta
+5415	capacità di carico
 4797	tempo di produzione
 4798	quantità prodotta
 4799	costo
@@ -741,6 +743,9 @@
 4827	può raccogliere
 4828	tempo di raccolta
 4829	quantità raccolta
+5413	tasso di raccolta
+5414	al secondo
+5416	capacità di carico
 4830	può riparare
 4831	bersaglio terrestre
 4832	bersaglio aereo

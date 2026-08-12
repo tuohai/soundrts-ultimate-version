@@ -154,6 +154,9 @@ class WeaponDetail:
                 rdg_cd_text = nb2msg_float(rdg_cd_value / PRECISION) + mp.SECONDS
                 attrs.append(("c", mp.RDG_CD, rdg_cd_text))
 
+            from .combat_attributes import CombatAttributes
+            CombatAttributes.append_damage_seq_attrs(attrs, weapon_class)
+
             
             # 显示攻击范围
             mdg_range_value = getattr(weapon_class, "mdg_range", 0) if hasattr(weapon_class, "mdg_range") else 0

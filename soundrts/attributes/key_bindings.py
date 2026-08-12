@@ -94,6 +94,8 @@ class KeyBindings:
             'c': ('can_repair', ['修理能力']),
             't': ('gather_time', ['采集时间']),
             'q': ('gather_qty', ['采集数量']),
+            'a': ('gather_rate', ['采集速率']),
+            'y': ('carry_capacity', ['运载上限']),
             'k': ('armor', ['护甲']),
             'p': ('production_type', ['生产类型']),
             "cost": mp.COST_NAME,
@@ -155,7 +157,7 @@ class KeyBindings:
         dynamic_bindings = ""
         
         try:
-            # 收集所有gather_time和gather_qty属性
+            # 收集所有 gather_time / gather_qty / gather_rate 动态属性
             gather_attrs = []
             
             # 遍历单位模型的所有属性
@@ -165,7 +167,12 @@ class KeyBindings:
                     continue
                 
                 # 检查是否是gather相关属性
-                if attr_name.startswith("gather_time_") or attr_name.startswith("gather_qty_"):
+                if (
+                    attr_name.startswith("gather_time_")
+                    or attr_name.startswith("gather_qty_")
+                    or attr_name.startswith("gather_rate_")
+                    or attr_name.startswith("carry_capacity_")
+                ):
                     attr_value = getattr(unit.model, attr_name, 0)
                     if isinstance(attr_value, (int, float)) and attr_value != 0:
                         gather_attrs.append(attr_name)
@@ -183,6 +190,10 @@ class KeyBindings:
                     resource_type = attr_name[12:]
                 elif attr_name.startswith("gather_qty_"):
                     resource_type = attr_name[11:]
+                elif attr_name.startswith("gather_rate_"):
+                    resource_type = attr_name[12:]
+                elif attr_name.startswith("carry_capacity_"):
+                    resource_type = attr_name[15:]
                 else:
                     continue
                 
@@ -235,6 +246,8 @@ class KeyBindings:
             'RDG_DODGE': 'dodge',
             'MDG_READY': 'mready',
             'RDG_READY': 'rready',
+            'DAMAGE_SEQ_MDG': 'mdg_seq_times',
+            'DAMAGE_SEQ_RDG': 'rdg_seq_times',
             'MDG_COVER': 'mcover',
             'RDG_COVER': 'rcover',
             'MDG_VS': 'mdg_vs',
@@ -244,6 +257,8 @@ class KeyBindings:
             'CAN_GATHER': 'can_gather_deposit',
             'GATHER_TIME': 'gather_time',
             'GATHER_QTY': 'gather_qty',
+            'GATHER_RATE': 'gather_rate',
+            'CARRY_CAPACITY': 'carry_capacity',
             'CAN_REPAIR': 'can_repair',
         }
         

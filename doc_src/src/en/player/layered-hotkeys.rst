@@ -1,4 +1,4 @@
-﻿# Layered Hotkey Scheme
+# Layered Hotkey Scheme
 
 This guide describes SoundRTS layered interface hotkeys: a global base layer plus a per-interface layer, so the same physical key can mean different things in different modes. Intended for players and mod authors customizing bindings.
 

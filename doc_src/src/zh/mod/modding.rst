@@ -118,6 +118,55 @@ SoundRTS 1.3.8.2 新增。SoundRTS 1.3.9.1 补充低击高限制。取代已废�
     rdg_range 4
     rdg_projectile 1
 
+projectile_lead
+================
+
+单位远程投射物是否**预判/命中移动目标**的 0/1 开关（``int_properties``），默认 0。
+
+- ``0``：远程投射物按开火瞬间的瞄准点结算；若落地时目标已离开该点则 miss
+- ``1``：可预判/跟踪移动目标（帝国时代 2「弹道学」类效果）
+
+**需要飞行速度才有意义**：远程须 ``rdg_projectile`` + ``rdg_projectile_speed``（**格/秒**，>0）。否则即时命中，移动 miss 判定不会触发。
+
+字段是**速度**，不是「飞了多少秒」。例如写 ``7`` = 每秒 7 格；不要把期望命中秒数（如 0.57）填进该字段。
+
+**不要在引擎里写死科技名。** 用科技加成打开该标记，例如::
+
+    effect info 8510
+    effect bonus projectile_lead 1
+    effect_bonus_targets archer_unit -hand_cannoneer galley scouttower
+
+单位仍需 ``can_use_tech`` 含该科技。属性界面不播报 ``projectile_lead`` 的 ``+1``；可读说明用 ``effect info <tts_id>``（见下方 *info*）。
+
+与 ``rdg_projectile`` 不同：后者表示攻击是否按投射物规则（高地射程等）；``projectile_lead`` 只控制移动目标是否 miss。
+
+projectile_speed / mdg_projectile_speed / rdg_projectile_speed
+================================================================
+
+分路投射物**飞行速度**（格/秒，PRECISION），默认 0。
+
+- ``rdg_projectile_speed``：仅当 ``rdg_projectile 1`` 的**远程**攻击使用
+- ``mdg_projectile_speed``：仅当 ``mdg_projectile 1`` 的**近战投射物**攻击使用
+- ``projectile_speed``：已弃用共用名；加载时按投射物标志迁到对应分路
+
+**不要**把「希望飞多久（秒）」写进这些字段——那是速度。引擎用 **距离 ÷ 速度** 推算到达时刻（远则久）；速度为 0 或该路不是投射物 → 即时命中。
+
+同一单位可同时有 ``mdg`` 与 ``rdg``（甚至 range 相同）：只有带 ``*_projectile`` 的那一路会按速度飞行。
+
+aoe2 约略对齐 DE（均为速度）：箭/塔 ``7``，投石车 ``3.5``，投石机 ``1.6``。
+
+示例::
+
+    def aoe_archer
+    rdg_projectile 1
+    rdg_projectile_speed 7
+
+    def mangonel
+    mdg_projectile 1
+    mdg_projectile_speed 3.5
+
+详见 `投射物预判与飞行速度 <projectile-lead.htm>`_。
+
 is_teleportable
 ================
 
@@ -240,8 +289,28 @@ bonus
 
 将受影响单位的某项属性提升指定数值。
 
-至少以下属性应当有效：damage、armor、range、heal_level、speed、hp_max（不过老单位的 hp 不会被更新到 hp_max）。
-food_cost 和 food_provided 大概无法正常工作。
+单位过滤写在下一行 ``effect_bonus_targets``（勿写在 ``effect bonus`` 同一行）::
+
+    effect bonus mdg_range 1
+    effect_bonus_targets mangonel onager
+    effect bonus rdg_range 1
+    effect_bonus_targets scorpion trebuchet -petard
+
+``effect_bonus_targets`` 作用于紧邻的上一行 ``effect bonus``（仍需单位 ``can_use_tech`` 含该科技）。前缀 ``-`` 表示排除（与 ``phase_bonus_targets`` 相同），例如 ``effect_bonus_targets soldier -building``。别名 ``tech_effect_targets`` / ``effect_targets`` 仍可用。
+
+至少以下属性应当有效：damage、armor、range、heal_level、speed、hp_max、hp。
+
+- ``effect bonus hp_max N`` / ``hp_max N%``：只提高生命上限，**不**改当前生命。
+- ``effect bonus hp N`` / ``hp N%``：当前生命与上限同时增加（固定值两端同加；百分比按原上限算出增量后两端同加）。需要「研究后现有单位也回血」时用 ``hp``（如血统、织布机）。
+
+``projectile_lead`` 为 0/1 战斗开关，可用 ``effect bonus projectile_lead 1`` 施加（详见上文 *projectile_lead*）。属性详情里该字段的 ``+1`` 不播报。
+
+info
+^^^^^
+
+``effect info <tts_id>…``
+
+仅用于科技/技能**属性界面**播报说明文字（无运行时数值效果）。可与其它 ``effect`` 并存，例如弹道学：``effect info`` + ``effect bonus projectile_lead 1``。
 
 conversion
 ^^^^^^^^^^^
@@ -448,10 +517,19 @@ Combat system (since 1.4)
 主要近战/远程属性：
 
 - ``mdg`` / ``rdg``：基础伤害
-- ``mdg_vs`` / ``rdg_vs``：针对特定单位类型的加成
+- ``mdg_vs`` / ``rdg_vs``：针对特定单位类型的加成。写法二选一（可混用；**多行会合并**，不会后写覆盖前写）::
+
+      mdg_vs building 150 siege_unit 40
+      mdg_vs building 150
+      mdg_vs siege_unit 40
+
+  其它 ``*_vs`` 键值对属性（如 ``rdg_vs``、``mdg_cover_vs``、``menace_vs``）同样支持一行多对与多行合并。
 - ``mdf`` / ``rdf``：防御
 - ``mdg_range`` / ``rdg_range``、``mdg_cd`` / ``rdg_cd``、``mdg_ready`` / ``rdg_ready``
 - ``mdg_projectile`` / ``rdg_projectile``：投射物标志（高地射程加成、低击高规则）
+- ``mdg_projectile_speed`` / ``rdg_projectile_speed``：分路投射物飞行速度（格/秒；取代 delay / 共用 projectile_speed）
+- ``projectile_lead``：远程投射物是否预判移动目标（0/1；通常由科技 ``effect bonus`` 打开）
+- 帝国时代 2 特色科技常用引擎钩子（不写死文明名）：``unpack_time``（投石机移动后架设延迟）、``gather_byproduct``（如造纸术伐木附带黄金）、升级上的 ``reveal_map``（环球航行探索全图）
 - ``mdg_splash`` / ``rdg_splash``、``mdg_radius`` / ``rdg_radius``、``mdg_splash_decay``
 - ``mdg_targets`` / ``rdg_targets``：``ground``、``air``、``unit``、``building`` 或类型名
 - ``mdg_crit`` / ``rdg_crit``、``mdg_crit_rate`` / ``rdg_crit_rate``、``crit_vs``
@@ -577,19 +655,23 @@ Combat system (since 1.4)
 一次攻击可在冷却周期内快速连击多次 （类似帝国时代诸葛弩）。须先定义 ``mdg`` / ``rdg``，再写
 ``damage_seq``：
 
-``damage_seq mdg|rdg \<次数\> [(damage d1 d2 ...)] [(interval 秒)]``
+``damage_seq mdg|rdg \<次数\> [(damage d1 d2 ...)] [(secondary 穿刺 近战)] [(interval 秒)]``
 
 - 手动分段：``(damage 6 3 3)`` — 各段为整数，总和须等于 ``mdg`` / ``rdg`` 基础值
 - 自动均分 （1.4.3.6 起）：省略 ``(damage ...)`` 时按次数均分基础伤害（支持小数，如
   ``rdg 7.5`` 配 3 次 → 每发 2.5）
+- **次级箭（AoE2 诸葛弩，完全对齐）**：``(secondary 3 0)`` — 首发 = 单位实时 ``rdg``/``mdg``
+  （吃升级），并附带固定近战分量；第 2 发起 = 固定穿刺 + 近战（**不吃**铁匠/化学等攻击升级）。
+  近战可为 ``0``（对负近战护甲如冲车仍造成伤害）。此模式**不要求**伤害总和等于基础值。
 - 间隔：``(interval 0.25)`` 为每发之间的秒数；多段且未写 interval 或为 0 时默认 0.25 秒
 - 上限：单次攻击最多 6 段
-- 判定：每段独立计算命中、暴击、debuff
+- 判定：每段独立计算命中、暴击、debuff；次级箭默认 100% 命中
 - 冷却：``mdg_cd`` / ``rdg_cd`` 在`` 整轮连发结束后``才开始
+  （下一轮 = ``(次数-1)×interval + cd``，再加 ``ready``）
 - 音效：每发触发 ``launch_mdg`` / ``launch_rdg``；可在 ``style.txt`` 写多个音效 ID
   （如 ``launch_rdg 1042 1042 1042``）
 
-远程连发示例（内置 ``repeating_crossbowman`` 诸葛弩手）::
+远程连发示例（内置 ``repeating_crossbowman`` 诸葛弩手，均分模式）::
 
     def repeating_crossbowman
     rdg 6
@@ -597,6 +679,14 @@ Combat system (since 1.4)
     rdg_range 4
     rdg_projectile 1
     damage_seq rdg 3 (interval 0.25)
+
+AoE2 DE 诸葛弩（``mods/aoe2``；精锐为 5 箭）::
+
+    def chu_ko_nu
+    rdg 8
+    rdg_cd 2.77
+    rdg_ready 0.23
+    damage_seq rdg 3 (secondary 3 0) (interval 0.23)
 
 近战手动分段示例::
 
@@ -742,7 +832,45 @@ Effects (class effect, since 1.4.1.7)
     debuffs b_slow
 
 同理：``heal_level``、``heal_cd``、``heal_radius``、``heal_target_type``；
-``hp_regen_cd``、``mana_regen_ready`` 等。
+``heal_garrisoned 1`` 时只治疗本单位 ``inside`` 中的乘客/驻军（默认 ``0`` 仍为范围或单体瞄准）；
+``hp_regen_cd``、``mana_regen_ready`` 等。详见 `技能 / 治疗 / 效果 <skills-and-effects.htm>`_。
+
+转化科技（规则驱动，无科技名硬编码）
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``effect conversion`` 可按已研究科技上的**属性**限制目标、抗性与休息，引擎不检查 ``redemption`` 等类型名::
+
+    def monk
+    conversion_tech_gated 1   ; 启用下列「允许/休息」规则
+    conversion_cleric 1       ; 作为目标时需对方有 conversion_allows_monk
+
+    def atonement
+    class upgrade
+    conversion_allows_monk 1
+
+    def redemption
+    class upgrade
+    conversion_allows_siege 1
+    conversion_allows_building 1
+
+    def heresy
+    class upgrade
+    conversion_victim_dies 1
+
+    def faith
+    class upgrade
+    conversion_channel_scale_num 5
+    conversion_channel_scale_den 3
+    conversion_channel_bonus_time 2
+
+    def theocracy
+    class upgrade
+    conversion_rest_only_success 1
+
+    def town_center
+    conversion_immune 1       ; 即使有 allows_building 也不可转化
+
+属性界面可读说明仍用 ``effect info <tts_id>``。实现见 ``world_conversion.py``。
 
 Phase system (since 1.4.2.4)
 -----------------------------
@@ -760,9 +888,63 @@ Phase system (since 1.4.2.4)
     time_cost 130
     phase bonus mdg 1 hp_max 5 cost -2 0 time_cost -5
     units_auto_upgrade 0
-    phase_targets soldier
+    phase_bonus_targets soldier
 
-``phase_targets`` 可选，控制哪些单位获得 ``phase bonus`` 中的非成本项加成（成本类加成始终作用于玩家全局）。留空表示所有单位受益。可写类别名（``soldier``\ 、``worker``\ 、``building``\ 、``unit`` 等）、具体单位名（``footman knight``），或 ``is_a`` 继承链中的类型名；任一正向项命中即匹配。前缀 ``-`` 表示排除，例如 ``phase_targets -building`` 表示除建筑外的所有单位；可与正向项混用，例如 ``phase_targets soldier -footman``。
+也可写多组「加成 + 目标」配对（每组 ``phase_bonus_targets`` 只作用于紧邻的上一组 ``phase bonus``）::
+
+    phase bonus mdg 1 mdf 2
+    phase_bonus_targets footman knight
+    phase bonus rdg 2 rdf 2
+    phase_bonus_targets archer
+
+兼容旧写法：先写 ``phase_bonus_targets`` 再写 ``phase bonus``（同一组）。连续多行 ``phase bonus`` 中间没有新的 ``phase_bonus_targets`` 时会合并到同一组。
+
+``phase_bonus_targets``（别名 ``phase_targets``）可选，控制哪些单位获得对应 ``phase bonus`` 中的非成本项加成（成本类加成始终作用于玩家全局）。留空表示所有单位受益。可写类别名（``soldier``\ 、``worker``\ 、``building``\ 、``unit`` 等）、具体单位名（``footman knight``），或 ``is_a`` 继承链中的类型名；任一正向项命中即匹配。前缀 ``-`` 表示排除，例如 ``phase_bonus_targets -building`` 表示除建筑外的所有单位；可与正向项混用，例如 ``phase_bonus_targets soldier -footman``。
+
+
+时代奖励也可写在阵营上（自 1.4.6.9），引擎**不硬编码文明名**::
+
+    def feudal_age
+    class phase
+    phase bonus
+    units_auto_upgrade 1
+
+    def britons
+    class race
+    on_phase castle_age rdg_range 1 aoe_archer longbowman
+
+    def chinese
+    class race
+    research_cost_discount feudal_age -10% castle_age -15% imperial_age -20%
+
+    def byzantines
+    class race
+    advance_cost_discount imperial_age -33%
+
+- ``on_phase``：某个 ``class phase`` 进入 upgrades 时，给列出单位加属性（类似 effect bonus）。
+- ``research_cost_discount``：按已达最高时代替换科技费%；只影响研究与 upgrade_to。
+- ``advance_cost_discount``：按购买的时代查表，只影响 AdvanceOrder。
+- ``no_auto_upgrade 1``：跳过 units_auto_upgrade 自动变形；训练解析也要求该形态已在 ``player.upgrades``。
+- ``line_upgrade 1``（自 1.4.6.9）：可研究的单位线形态。写入建筑 ``can_research``；研究后解锁训练并变形场上上一阶。时代 ``units_auto_upgrade`` **不会**自动升到该形态。训练菜单走 ``effective_can_train`` / ``resolve_trainable_unit_type``（``can_train`` 写线根即可）；费用默认按线根 ``cost``/``time_cost``（可用 ``train_cost``/``train_time`` 覆盖）。也可在科技上写 ``effect unit_line_upgrade <形态>``。引擎不硬编码单位名。详见 `单位线升级与最高阶训练 <unit-line-upgrade.htm>`_。
+
+示例（帝国式剑线）::
+
+    def militia
+    class soldier
+    can_upgrade_to man_at_arms
+
+    def man_at_arms
+    is_a militia
+    cost 40 0 100 0
+    time_cost 40
+    requirements feudal_age
+    line_upgrade 1
+    can_upgrade_to long_swordsman
+
+    def barracks
+    class building
+    can_train militia
+    can_research man_at_arms long_swordsman
 
 在建筑上::
 
@@ -805,7 +987,7 @@ Economy (since 1.4.0.x)
 
 ``population_cost`` 取代了 ``food_cost``。建筑可以生产或存放资源::
 
-    auto_production 1       ; 自动生产（气矿等）；资源未满即可重启
+    auto_production 1       ; 自动生产（自灌仓等）；资源未满即可重启
     manual_production 1     ; 手动开始生产
     auto_cultivate 1        ; 自动耕种（农田）；储量抽空后才重启
     is_gather 1             ; 产出进入建筑储量，由工人运回基地
@@ -835,7 +1017,7 @@ Economy (since 1.4.0.x)
 | ``production_type`` | 生产的资源类型（与 ``production_time``\ 、``production_qty`` 共同定义生产能力） |
 | ``production_time`` | 完成一轮生产所需时间（秒） |
 | ``production_qty`` | 每轮产出量；无 ``is_gather`` 时入库玩家资源；有 ``is_gather`` 时写入建筑 ``resource_qty`` |
-| ``auto_production`` | 为 ``1`` 时显示自动生产 命令；完成后自动开始下一轮；气矿 用此项（非 ``auto_cultivate``） |
+| ``auto_production`` | 为 ``1`` 时显示自动生产 命令；完成后自动开始下一轮；金矿屋等自产建筑用此项。星际气矿改为工人行程采集（见下文「矿床与气矿」），勿与农田 ``auto_cultivate`` 混用 |
 | ``manual_production`` | 为 ``1`` 时显示手动生产 命令；每轮完成后需再次点击；与 ``auto_production`` 独立，须分别开启 |
 | ``auto_cultivate`` | 农田等 ``is_gather`` 建筑的自动耕种；与 ``auto_production`` 对应 |
 | ``manual_cultivate`` | 农田等的手动耕种；与 ``manual_production`` 对应，须单独设为 ``1`` |
@@ -844,6 +1026,49 @@ Economy (since 1.4.0.x)
 | ``resource_volume_max`` | 建筑内最大储量（如气矿 8） |
 | ``resource_volume_start`` | 建成时初始储量（``0`` 表示空） |
 | ``extraction_time`` / ``extraction_qty`` | 工人从建筑（或矿床）开采的耗时与单次数量 |
+
+采集模式（自 1.4.6.9）
+~~~~~~~~~~~~~~~~~~~~~~
+
+支持两种采集机制，模组可任选：
+
+1. **``trip``（默认）**：采满一次 ``gather_qty``（含 ``extraction_*``）后立刻送回——偏星际式一趟一采。
+2. **``continuous``**：按每秒速率往运载里灌，达到 ``carry_capacity`` 后再送回——帝国2/4 式。
+
+::
+
+    def parameters
+    gather_mode continuous          ; 全局默认（工人未写时生效）
+
+    def peasant
+    class worker
+    gather_mode continuous          ; 也可只写在工人上
+    carry_capacity 10               ; 运载上限（显示单位）
+    carry_capacity_food_carcass 35  ; 可选：按矿床/建筑类型覆盖
+    ; 速率：显式 gather_rate，或由 gather_qty/gather_time（含 extraction）推导
+    gather_rate wood 0.39
+    gather_rate goldmine 0.38
+
+| 属性 | 说明 |
+| --- | --- |
+| ``gather_mode`` | ``trip``（默认）或 ``continuous``；可写在 ``parameters`` 或工人上 |
+| ``carry_capacity`` | continuous 运载上限；0 则回退为单次 ``gather_qty`` |
+| ``carry_capacity_<类型>`` | 按矿床/建筑类型覆盖运载（如猎物尸体） |
+| ``gather_rate`` / ``gather_rate_<类型>`` | continuous 每秒采集量；未设则用 qty÷time |
+
+科技可用 ``effect bonus carry_capacity N`` 提高运载（如独轮车）。``gather_time_*`` 百分比加成在 continuous 下会换算为更快的有效速率。
+
+市场机制（自 1.4.6.9）
+~~~~~~~~~~~~~~~~~~~~~~
+
+买卖、进贡、路线贸易由 ``parameters`` 与单位属性配置，**不写死**资源名或「只赚黄金」。完整字段表与示例见 `市场机制 <market-system.htm>`_。
+
+要点：
+
+- ``market_currency`` / ``market_commodities`` / ``market_menu_labels`` / 税率与 ``trade_*`` 路程参数写在 ``def parameters``。
+- 建筑 ``is_market 1``；贸易单位 ``is_trade_unit 1``、``trade_hubs``、``trade_rewards``（可多个资源）。
+- 命令：``market_buy`` / ``market_sell`` / ``tribute`` / ``trade``。
+- 参考接法：``mods/aoe2/rules.txt``；玩家向：`市场与贸易 <../player/market-and-trade.htm>`_。
 
 .. note::
 
@@ -863,7 +1088,7 @@ Economy (since 1.4.0.x)
     requires_deposit geyser
     is_buildable_anywhere 0
 
-完整示例见 ``mods/starcraft/rules.txt`` 中的 ``sc_gas_building`` / ``assimilator``；玩家说明见 ``../player/starcraft-resources.htm``。属性界面（V）新增 需要矿床 （``requires_deposit``）；生产时间/数量等沿用既有生产属性显示。
+完整示例见 ``mods/starcraft/rules.txt`` 中的 ``sc_gas_building`` / ``assimilator``；玩家说明见 ``../player/starcraft-resources.htm``。属性界面（V）新增 需要矿床 （``requires_deposit``）；星际气矿靠工人 ``extraction_*`` 扣减 ``source_qty``，并可用 ``gather_slots`` 限制同时开采人数。
 
 Heroes (since 1.4)
 -------------------
@@ -1095,6 +1320,33 @@ Items (since 1.4.1.3)
 ----------------------------------
 
 单位需要 ``inventory_capacity``\ > 0 才能持有物品。每件物品占一格（``transport_volume``\ 已定义，但当前容量按物品件数 计算，与 ``transport_volume``\ 无关）。
+
+背包物品被动产出（规则驱动）
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+物品可写 ``inventory_production_rates``\ （与建筑 ``production_rates`` 相同：每秒各资源数量，经 PRECISION 缩放）。宿主单位须 ``apply_inventory_production 1``\ 才会在 ``slow_update`` 中结算；引擎不按 type_name 特判「圣物/修道院」。
+
+::
+
+    def relic
+    class item
+    inventory_production_rates 0.5 0 0 0
+
+    def monastery
+    class building
+    inventory_capacity 10
+    receive_items 1
+    accepted_items relic
+    accept_from self
+    accept_givers monk
+    apply_inventory_production 1
+
+持有全部 ``inventory_victory 1`` 物品时，``parameters`` 的 ``inventory_victory_time`` （秒；0=关闭）启动与奇观相同的倒计时胜利。阵营可写 ``team_inventory_production_bonus_pct 33`` （阿兹特克团队圣物金）或 ``inventory_production_bonus_pct``。
+
+研究叠生命（规则驱动，阿兹特克僧侣）
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+升级写 ``research_stack_hp 1``；阵营写 ``research_stack_hp_bonus 5 monk``。每完成一项带标志的科技，对匹配单位 ``effect bonus hp`` 一次，并写入 ``_phase_bonus_pool`` 供后续新兵继承。引擎不按科技名硬编码。
 
 两套装备系统
 
@@ -1387,7 +1639,7 @@ npc_has_item 触发器条件：
 | 属性 | 说明 |
 | --- | --- |
 | ``provides_build_field \<名称\>`` | 该单位/建筑为周围格提供建造场标记（如 ``psi``\ 、``creep``\ ） |
-| ``requires_build_field \<名称\>`` | 需要指定建造场才能放置/施工；``0`` 表示 该建筑豁免（如主基地、光子炮） |
+| ``requires_build_field \<名称\>`` | 需要指定建造场才能放置/施工；``0`` 表示豁免（如主基地、水晶塔、吸收塔；光子炮**需要**灵能场） |
 | ``build_field_radius \<格数\>`` | 提供建造场的半径（沿主方格 BFS 计格；与 ``build_field_radius_m`` 二选一） |
 | ``build_field_radius_m \<米\>`` | 供能半径（米，与 ``rdg_range`` 同尺度）；按提供者 `` (x,y)`` 到目标点的距离判定 |
 | ``build_field_persists 1`` | 提供者被毁后，已标记的格子仍保留建造场（异虫菌毯） |
@@ -1432,7 +1684,7 @@ npc_has_item 触发器条件：
     self_constructs 1
     loses_power_without_field 1
 
-主基地 ``requires_build_field 0`` + ``provides_build_field psi``\ ；水晶塔/传送门依赖灵能场。
+主基地 ``requires_build_field 0`` + ``provides_build_field psi``\ ；水晶塔 ``requires_build_field 0`` （可在场外开荒，自己供能）；传送门等神族建筑依赖灵能场；光子炮须在灵能场内建造，断电不能攻击（``loses_power_without_field``）。
 星际模组示例：``build_field_radius_m 18`` （主基地）、``12`` （水晶塔）；一格地图宽度约 12 米。
 
 异虫示例 （``zerg_building``\ ）::
@@ -1453,11 +1705,14 @@ UI 语音：在 ``ui/style.txt`` 定义 ``def build_field_\<名称\>`` + ``title
 | --- | --- |
 | ``requires_deposit \<类型\>`` | 只能建在地图矿床对象上（如 ``geyser``）；完工后移除该矿床 |
 | ``is_buildable_anywhere 0`` | 与 ``requires_deposit`` 配合，禁止建在建造用地上 |
-| ``is_an_extractor 1`` | 完工时把矿床储量转入建筑 ``source_qty``；每生产周期从中扣减 |
+| ``is_an_extractor 1`` | 完工时把矿床储量转入建筑 ``source_qty``；工人采集时从中扣减 |
 | ``deposit_volume N`` | 矿床默认储量（地图写标记量 ``1`` 时采用） |
-| ``depleted_production_qty N`` | ``source_qty`` 归零后的每周期产量（``0`` = 停止；星际气矿用 ``2``） |
+| ``depleted_production_qty N`` | ``source_qty`` 归零后的每趟产量（``0`` = 停止；星际气矿用 ``2``） |
+| ``gather_slots N`` | 同时开采该点的工人上限；``0`` = 不限制。星际气矿用 ``3``（第 4 个起等待） |
 
-气矿模板 ``sc_gas_building`` 使用 ``is_an_extractor`` + ``auto_production`` + ``is_gather`` + ``production_time`` / ``production_qty`` / ``depleted_production_qty``\ 。工人 ``can_gather`` 须包含气矿建筑类型名（如 ``assimilator``），而非 ``geyser`` 矿床本身。资源类型用 ``production_type`` / ``resource_type``（无单独的 ``resource_extracted_type`` 关键字）。
+气矿模板 ``sc_gas_building``（星际 1 风格）使用 ``is_an_extractor`` + 工人行程采集（``auto_production 0``）+ ``extraction_qty`` / ``depleted_production_qty`` + ``gather_slots 3``\ 。
+工人 ``can_gather`` 须包含气矿建筑类型名（如 ``assimilator``），而非 ``geyser`` 矿床本身。资源类型用 ``resource_type``。
+玩家操作：每个气矿挂 **3** 个工人效率最佳；多派仍可出气，但不会明显更快。
 
 单位生成点（``spawns_unit``）
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>

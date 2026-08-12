@@ -85,8 +85,11 @@ STAT_TTS_NAMES = {
     "rdg_range": mp.RANGED_RANGE_NAME,
     "mdg_cd": mp.MELEE_COOLDOWN_NAME,
     "rdg_cd": mp.RANGED_COOLDOWN_NAME,
-    "mdg_ready": mp.MDG_READY,
+            "mdg_ready": mp.MDG_READY,
     "rdg_ready": mp.RDG_READY,
+    "damage_seq": mp.DAMAGE_SEQ_RDG,
+    "mdg_seq_times": mp.DAMAGE_SEQ_MDG,
+    "rdg_seq_times": mp.DAMAGE_SEQ_RDG,
     "mdg_cover": mp.MDG_COVER,
     "rdg_cover": mp.RDG_COVER,
     "mdg_dodge": mp.MDG_DODGE,
@@ -107,6 +110,8 @@ STAT_TTS_NAMES = {
     "mana_regen": mp.MANA_REGEN_NAME,
     "gather_time": mp.GATHER_TIME_NAME,
     "gather_qty": mp.GATHER_QUANTITY_NAME,
+    "gather_rate": mp.GATHER_RATE_NAME,
+    "carry_capacity": mp.CARRY_CAPACITY_NAME,
     "production_type": mp.PRODUCTION_TYPE,
     "production_time": mp.PRODUCTION_TIME_NAME,
     "production_qty": mp.PRODUCTION_QUANTITY_NAME,
@@ -167,6 +172,9 @@ STAT_TTS_NAMES = {
     "rdg_minimal_damage": mp.RDG_MINIMAL_DAMAGE,
     "mdg_delay": mp.MDG_DELAY,
     "rdg_delay": mp.RDG_DELAY,
+    "projectile_speed": mp.PROJECTILE_SPEED,
+    "mdg_projectile_speed": mp.MDG_PROJECTILE_SPEED,
+    "rdg_projectile_speed": mp.RDG_PROJECTILE_SPEED,
     "mdg_status_duration": mp.MDG_STATUS_DURATION,
     "rdg_status_duration": mp.RDG_STATUS_DURATION,
     "charge_mdg": mp.CHARGE_MDG,
@@ -202,6 +210,51 @@ STAT_TTS_NAMES = {
     "rdg_piercing_rate": mp.RDG_PIERCING_RATE,
     "mdf_crit_rate": mp.MDF_CRIT_RATE,
     "rdf_crit_rate": mp.RDF_CRIT_RATE,
+    "mdg_vs": mp.MDG_VS,
+    "rdg_vs": mp.RDG_VS,
+    "mdf_vs": mp.MDF_VS,
+    "rdf_vs": mp.RDF_VS,
+    "mdg_range_vs": mp.MDG_RANGE_VS,
+    "rdg_range_vs": mp.RDG_RANGE_VS,
+    "mdg_minimal_range_vs": mp.MDG_MINIMAL_RANGE_VS,
+    "rdg_minimal_range_vs": mp.RDG_MINIMAL_RANGE_VS,
+    "mdg_ready_vs": mp.MDG_READY_VS,
+    "rdg_ready_vs": mp.RDG_READY_VS,
+    "mdg_cd_vs": mp.MDG_CD_VS,
+    "rdg_cd_vs": mp.RDG_CD_VS,
+    "mdg_cover_vs": mp.MDG_COVER_VS,
+    "rdg_cover_vs": mp.RDG_COVER_VS,
+    "mdg_dodge_vs": mp.MDG_DODGE_VS,
+    "rdg_dodge_vs": mp.RDG_DODGE_VS,
+    "speed_vs": mp.SPEED_VS,
+    "mdg_crit_vs": mp.MDG_CRIT_VS,
+    "rdg_crit_vs": mp.RDG_CRIT_VS,
+    "mdg_crit_rate_vs": mp.MDG_CRIT_RATE_VS,
+    "rdg_crit_rate_vs": mp.RDG_CRIT_RATE_VS,
+    "mdf_crit_rate_vs": mp.MDF_CRIT_RATE_VS,
+    "rdf_crit_rate_vs": mp.RDF_CRIT_RATE_VS,
+    "mdg_piercing_vs": mp.MDG_PIERCING_VS,
+    "rdg_piercing_vs": mp.RDG_PIERCING_VS,
+    "mdg_piercing_rate_vs": mp.MDG_PIERCING_RATE_VS,
+    "rdg_piercing_rate_vs": mp.RDG_PIERCING_RATE_VS,
+    "mdf_piercing_vs": mp.MDF_PIERCING_VS,
+    "rdf_piercing_vs": mp.RDF_PIERCING_VS,
+    "charge_mdg_vs": mp.CHARGE_MDG_VS,
+    "charge_rdg_vs": mp.CHARGE_RDG_VS,
+    "charge_mdg_splash_vs": mp.CHARGE_MDG_SPLASH_VS,
+    "charge_rdg_splash_vs": mp.CHARGE_RDG_SPLASH_VS,
+    "charge_mdg_splash_decay_min_vs": mp.CHARGE_MDG_SPLASH_DECAY_MIN_VS,
+    "charge_rdg_splash_decay_min_vs": mp.CHARGE_RDG_SPLASH_DECAY_MIN_VS,
+    "charge_mdg_radius_vs": mp.CHARGE_MDG_RADIUS_VS,
+    "charge_rdg_radius_vs": mp.CHARGE_RDG_RADIUS_VS,
+    "op_charge_mdg_vs": mp.OP_CHARGE_MDG_VS,
+    "op_charge_rdg_vs": mp.OP_CHARGE_RDG_VS,
+    "menace_vs": mp.MENACE_VS,
+    "menace_mult_vs": mp.MENACE_MULT_VS,
+    "cover_vs": mp.COVER_VS,
+    "dodge_vs": mp.DODGE_VS,
+    "kill_gold": mp.KILL_GOLD,
+    "kill_gold_vs": mp.KILL_GOLD_VS,
 }
 
 
@@ -226,12 +279,38 @@ def get_stat_tts_name(stat):
     """将属性名转换为 TTS 消息 ID 列表（具体语言由 ui/tts.txt 决定）。"""
     if stat in STAT_TTS_NAMES:
         return STAT_TTS_NAMES[stat]
+    # ``mdg_vs.building`` / ``rdg_vs.ship`` — load_bonus / passenger_bonus dotted vs
+    if isinstance(stat, str) and "." in stat:
+        base, target = stat.split(".", 1)
+        if base.endswith("_vs") and target:
+            vs_const = getattr(mp, base.upper(), None)
+            if vs_const is not None:
+                vs_label = list(vs_const)
+            else:
+                root = base[:-3]
+                root_name = STAT_TTS_NAMES.get(root, [root])
+                vs_label = list(root_name) + list(mp.VERSUS)
+            return vs_label + [" "] + _style_title_msg(target)
+    # Plain ``mdg_vs`` / ``rdg_vs`` (effect bonus rows) — same labels as dotted form.
+    if isinstance(stat, str) and stat.endswith("_vs"):
+        vs_const = getattr(mp, stat.upper(), None)
+        if vs_const is not None:
+            return list(vs_const)
+        root = stat[:-3]
+        root_name = STAT_TTS_NAMES.get(root, [root])
+        return list(root_name) + list(mp.VERSUS)
     if stat.startswith("gather_time_") and stat != "gather_time":
         deposit_type = stat[len("gather_time_"):]
         return list(mp.GATHER_TIME) + ["_"] + _style_title_msg(deposit_type)
     if stat.startswith("gather_qty_") and stat != "gather_qty":
         deposit_type = stat[len("gather_qty_"):]
         return list(mp.GATHER_QTY) + ["_"] + _style_title_msg(deposit_type)
+    if stat.startswith("gather_rate_") and stat != "gather_rate":
+        deposit_type = stat[len("gather_rate_"):]
+        return list(mp.GATHER_RATE) + ["_"] + _style_title_msg(deposit_type)
+    if stat.startswith("carry_capacity_") and stat != "carry_capacity":
+        deposit_type = stat[len("carry_capacity_"):]
+        return list(mp.CARRY_CAPACITY) + ["_"] + _style_title_msg(deposit_type)
     if stat == "food_deposit_qty":
         return _style_title_msg("resource3") + list(mp.FOOD_DEPOSIT_QTY)
     return [stat]
@@ -250,19 +329,27 @@ class AttributeUtils:
         # 这些属性在游戏内部以PRECISION为单位存储，显示时需要除以PRECISION
         precision_stats = {
             "hp", "hp_max", "mana", "mana_max",
-            "mdg", "rdg", "mdf", "rdf", 
+            "mdg", "rdg", "mdf", "rdf",
             "mdg_range", "rdg_range",
             "speed", "sight_range",
             "gather_qty", "production_qty",
-            # 添加其他可能的精度相关属性
             "minimal_damage",
             "mdg_crit", "rdg_crit",
             "mdg_piercing", "rdg_piercing",
+            "mdg_cover", "rdg_cover",
+            "mdg_dodge", "rdg_dodge",
         }
-        # 以下属性需要特殊处理（乘以1000而不是除以PRECISION）
-        # "heal_level", "harm_level"
-        # 以下属性通常不需要除以PRECISION（整数类属性）
-        # "population_cost", "time_cost", "mdg_cd", "rdg_cd", "gather_time", "production_time"
+        if isinstance(stat, str):
+            base = stat.split(".", 1)[0] if "." in stat else stat
+            # ``*_vs`` / ``mdg_vs.building``: match effect_bonus_parse (root in
+            # rules.precision_properties → stored × PRECISION).
+            if base.endswith("_vs"):
+                from ..worldupgrade.effect_bonus_parse import _rules_stat_sets
+
+                precision, _ = _rules_stat_sets()
+                return base[:-3] in precision
+            if base in precision_stats:
+                return True
         return stat in precision_stats
 
 

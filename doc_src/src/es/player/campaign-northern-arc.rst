@@ -1,4 +1,4 @@
-﻿# Arco de la campaña del Norte (La leyenda de Raynor cap. 24-27)
+# Arco de la campaña del Norte (La leyenda de Raynor cap. 24-27)
 
 
 

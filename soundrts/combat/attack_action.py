@@ -788,6 +788,30 @@ class AttackActionMixin:
     def _apply_ranged_cd_on_terrain(self, cd: int) -> int:
         return max(0, cd + self._get_ranged_cd_on_terrain())
     
+    def _get_volley_attack_cooldown(self, is_melee, target=None) -> int:
+        """攻击冷却（含 damage_seq 连发：整轮结束后才允许下一轮）。
+
+        下一轮可开始时间 = now + (times-1)*interval + cd
+        （与文档「冷却在整轮连发结束后开始」一致；DE 诸葛弩实用射速 ≈ RoF+(n-1)*AD）
+        """
+        if is_melee:
+            cd = self._get_melee_cd_vs(target) if target else self._get_melee_cd_base()
+            times = min(int(getattr(self, "mdg_seq_times", 1) or 1), 6)
+            interval = float(getattr(self, "mdg_seq_interval", 0) or 0)
+            damages = getattr(self, "mdg_seq_damages", None) or []
+            secondary = bool(getattr(self, "mdg_seq_secondary", 0))
+        else:
+            cd = self._get_ranged_cd_vs(target) if target else self._get_ranged_cd_base()
+            times = min(int(getattr(self, "rdg_seq_times", 1) or 1), 6)
+            interval = float(getattr(self, "rdg_seq_interval", 0) or 0)
+            damages = getattr(self, "rdg_seq_damages", None) or []
+            secondary = bool(getattr(self, "rdg_seq_secondary", 0))
+        if times > 1 and (damages or secondary):
+            if interval <= 0:
+                interval = 0.25
+            return cd + int((times - 1) * interval * 1000)
+        return cd
+
     def _set_attack_cooldown(self, is_melee, target=None):
         """设置攻击冷却时间
 
@@ -796,11 +820,10 @@ class AttackActionMixin:
             target: 攻击目标,可选
         """
         now = self.world.time
+        cd = self._get_volley_attack_cooldown(is_melee, target)
         if is_melee:
-            cd = self._get_melee_cd_vs(target) if target else self._get_melee_cd_base()
             self.mdg_next_attack_time = now + cd
         else:
-            cd = self._get_ranged_cd_vs(target) if target else self._get_ranged_cd_base()
             self.rdg_next_attack_time = now + cd
 
     def aim(self, target):
@@ -987,6 +1010,11 @@ class AttackActionMixin:
             # 检查前摇（ready=0 时跳过，冷却结束即攻击）
             if self.rdg_prep_end_time <= 0:
                 ready = self._get_range_ready_vs(target)
+                # AoE2 trebuchet unpack: first shot after moving waits unpack_time
+                unpack = float(getattr(self, "unpack_time", 0) or 0)
+                if unpack > 0 and getattr(self, "_needs_unpack", False):
+                    ready = int(ready) + int(unpack * 1000)
+                    self._needs_unpack = False
                 if ready > 0:
                     self.rdg_prep_end_time = now + ready
                     self.notify("rdg_ready")
@@ -1000,14 +1028,14 @@ class AttackActionMixin:
             replace_triggered = self._trigger_attack_start_buffs(target, is_melee=False, replace=True)
             replace_triggered = self._trigger_attack_start_skills(target, is_melee=False, replace=True) or replace_triggered
             if replace_triggered:
-                self.rdg_next_attack_time = now + self._get_ranged_cd_vs(target)
+                self.rdg_next_attack_time = now + self._get_volley_attack_cooldown(False, target)
                 self.rdg_prep_end_time = 0
                 return
-            damage_delay = self._calc_rdg_delay(target)
+            damage_delay = self._calc_projectile_flight_ms(target, is_melee=False)
             self._schedule_ballistic_hit(target, damage_delay, is_melee=False)
 
-            # 设置冷却时间并重置前摇时间
-            self.rdg_next_attack_time = now + self._get_ranged_cd_vs(target)
+            # 设置冷却时间并重置前摇时间（连发：含整轮间隔）
+            self.rdg_next_attack_time = now + self._get_volley_attack_cooldown(False, target)
             self.rdg_prep_end_time = 0
 
         # 近战攻击逻辑类似
@@ -1029,35 +1057,46 @@ class AttackActionMixin:
             replace_triggered = self._trigger_attack_start_buffs(target, is_melee=True, replace=True)
             replace_triggered = self._trigger_attack_start_skills(target, is_melee=True, replace=True) or replace_triggered
             if replace_triggered:
-                self.mdg_next_attack_time = now + self._get_melee_cd_vs(target)
+                self.mdg_next_attack_time = now + self._get_volley_attack_cooldown(True, target)
                 self.mdg_prep_end_time = 0
                 return
-            damage_delay = self._calc_mdg_delay(target)
+            damage_delay = self._calc_projectile_flight_ms(target, is_melee=True)
             self._schedule_ballistic_hit(target, damage_delay, is_melee=True)
 
-            self.mdg_next_attack_time = now + self._get_melee_cd_vs(target)
+            self.mdg_next_attack_time = now + self._get_volley_attack_cooldown(True, target)
             self.mdg_prep_end_time = 0
             
-    def _calc_mdg_delay(self, target) -> int:
-        dist_in_grids = self._int_distance(self.x, self.y, target.x, target.y) / 1000
-        if dist_in_grids <= 0:
+    def _calc_projectile_flight_ms(self, target, is_melee=False) -> int:
+        """投射物飞行时间（毫秒）；非投射物攻击返回 0（即时命中）。
+
+        - 近战：仅当 ``mdg_projectile`` 且 ``mdg_projectile_speed`` > 0
+        - 远程：仅当 ``rdg_projectile`` 且 ``rdg_projectile_speed`` > 0
+        - 兼容旧字段 ``projectile_speed``（作对应一路的后备）
+        """
+        if is_melee:
+            if not int(getattr(self, "mdg_projectile", 0) or 0):
+                return 0
+            speed = int(getattr(self, "mdg_projectile_speed", 0) or 0)
+        else:
+            if not int(getattr(self, "rdg_projectile", 0) or 0):
+                return 0
+            speed = int(getattr(self, "rdg_projectile_speed", 0) or 0)
+        if speed <= 0:
+            speed = int(getattr(self, "projectile_speed", 0) or 0)
+        if speed <= 0:
             return 0
+        dist = self._int_distance(self.x, self.y, target.x, target.y)
+        if dist <= 0:
+            return 0
+        return max(0, int(round(dist * 1000 / speed)))
 
-        # 计算基础延迟
-        base_delay = dist_in_grids * self.mdg_delay
-
-        return int(round(base_delay))
+    def _calc_mdg_delay(self, target) -> int:
+        """兼容旧名：近战投射物飞行时间。"""
+        return self._calc_projectile_flight_ms(target, is_melee=True)
 
     def _calc_rdg_delay(self, target) -> int:
-        # 计算基础距离(转换为实际格子数)
-        dist_in_grids = self._int_distance(self.x, self.y, target.x, target.y) / 1000
-        if dist_in_grids <= 0:
-            return 0
-
-        # 计算基础延迟
-        base_delay = dist_in_grids * self.rdg_delay
-
-        return int(round(base_delay))
+        """兼容旧名：远程投射物飞行时间。"""
+        return self._calc_projectile_flight_ms(target, is_melee=False)
         
     def _int_distance(self, x1, y1, x2, y2):
         """计算两点之间的距离（委托给模块级 Cython 加速函数）"""

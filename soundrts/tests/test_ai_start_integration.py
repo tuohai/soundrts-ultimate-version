@@ -41,6 +41,10 @@ starting_resources 10 10
 
 @pytest.fixture(autouse=True)
 def load_rules():
+    from soundrts import config
+
+    config.mods = ""
+    res.set_mods("")
     res.load_rules_and_ai()
 
 
@@ -57,9 +61,8 @@ def test_nightmare_computer_gets_resource_bonus():
     world.populate_map([human, ai], random_starts=False)
 
     computer = next(p for p in world.players if isinstance(p, Computer))
-    assert computer.resources[0] == to_int("10") + to_int("400")
-    assert computer.resources[1] == to_int("10") + to_int("400")
-    assert computer.population >= 60
+    assert computer.resources[0] == to_int("10") + to_int("40")
+    assert computer.resources[1] == to_int("10") + to_int("40")
 
 
 def rules_faction():

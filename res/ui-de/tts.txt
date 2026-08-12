@@ -660,6 +660,8 @@
 4794	maximales Mana
 4795	Sammelzeit
 4796	Sammelmenge
+5412	Sammelrate
+5415	Tragkapazität
 4797	Produktionszeit
 4798	Produktionsmenge
 4799	Kosten
@@ -693,6 +695,9 @@
 4827	kann sammeln
 4828	Sammelzeit
 4829	Sammelmenge
+5413	Sammelrate
+5414	pro Sekunde
+5416	Tragkapazität
 4830	kann reparieren
 4831	Bodenziel
 4832	Luftziel

@@ -82,7 +82,9 @@ def worker_can_repair(worker):
 
 
 def worker_can_build(worker, type_name):
-    return type_name in getattr(worker, "can_build", ())
+    from .world_build_rules import menu_allows_build
+
+    return menu_allows_build(worker, type_name)
 
 
 def _peasant_class(ai):

@@ -196,6 +196,7 @@ GameInterface._get_target_zoom_by_orientation = game_audio._get_target_zoom_by_o
 # 资源和状态管理方法
 GameInterface.cmd_resource_status = game_resources.cmd_resource_status
 GameInterface.cmd_population_status = game_resources.cmd_population_status
+GameInterface.cmd_faction_status = game_resources.cmd_faction_status
 GameInterface.send_resource_alerts_if_needed = game_resources.send_resource_alerts_if_needed
 GameInterface.cmd_toggle_side_filter = game_resources.cmd_toggle_side_filter
 GameInterface.cmd_toggle_type_filter = game_resources.cmd_toggle_type_filter

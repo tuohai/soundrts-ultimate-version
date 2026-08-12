@@ -933,7 +933,8 @@ ALT MINUS: music_volume_down
             and (e.mod & KMOD_SHIFT)
             and not (e.mod & KMOD_CTRL)
         ):
-            # Dual voice libraries: F9–F12 / Shift+F9–F12; L/R Shift+C/B copy/append
+            # Menus: F9–F12 / Shift+F9–F12; L/R Shift+C/B copy/append
+            # (in-game Shift+C/B is bindings-only)
             try:
                 from .lib import voice_libs
 

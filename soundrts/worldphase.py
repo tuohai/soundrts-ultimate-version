@@ -1,7 +1,7 @@
 """时代（phase）系统模块
 
 提供类似帝国时代中"时代推进"的机制：
-- 研究后立即将 phase bonus 应用到玩家所有（或 phase_targets 指定的）单位
+- 研究后立即将 phase bonus 应用到玩家所有（或 phase_bonus_targets 指定的）单位
 - 可选地把"与本时代绑定"的单位形态瞬时升级到其 can_upgrade_to 目标
   （绑定方式：把本时代名作为*简单* requirement 写入目标形态；
   ``any_buildings N <group>_buildings`` 子句里的分组名不计入）
@@ -34,8 +34,8 @@ DSL 示例（rules.txt）::
     class phase
     cost 100 50
     time_cost 60
-    phase_targets boat destroyer        ; 仅这些类型/继承链匹配的单位
-    phase_targets -building             ; 除建筑外的所有单位
+    phase_bonus_targets boat destroyer  ; 仅这些类型/继承链匹配的单位
+    phase_bonus_targets -building       ; 除建筑外的所有单位
     phase bonus speed 0.5 hp_max 10
 """
 
@@ -76,24 +76,283 @@ ARMOR_CLEARED_STATS = frozenset({
     "mdf_piercing_bonus", "rdf_piercing_bonus",
 })
 
+# Prefer later ages when several match ``research_cost_discount`` /
+# ``advance_cost_discount``.
+_DEFAULT_AGE_DISCOUNT_PRIORITY = (
+    "imperial_age",
+    "castle_age",
+    "feudal_age",
+    "dark_age",
+)
+
+
+def _parse_faction_age_percent_table(raw):
+    """Parse ``feudal_age -10% castle_age -15% …`` → {age: float_fraction}."""
+    table = {}
+    if not raw:
+        return table
+    tokens = list(raw)
+    i = 0
+    while i + 1 < len(tokens):
+        age_name = str(tokens[i])
+        pct_token = str(tokens[i + 1])
+        i += 2
+        try:
+            if pct_token.endswith("%"):
+                pct = float(pct_token.rstrip("%")) / 100.0
+            else:
+                pct = float(pct_token) / 100.0
+        except ValueError:
+            warning(
+                "faction age discount: bad percent %r for %s",
+                pct_token, age_name,
+            )
+            continue
+        table[age_name] = pct
+    return table
+
+
+def _pick_age_discount(table, upgrades):
+    """Highest matching age wins (replace, do not stack rates)."""
+    if not table:
+        return None
+    upgrades = set(upgrades or ())
+    ordered = list(table.keys())
+    for age in list(reversed(ordered)) + list(_DEFAULT_AGE_DISCOUNT_PRIORITY):
+        if age in table and age in upgrades:
+            return age, table[age]
+    return None
+
+
+def refresh_faction_research_cost_discount(player):
+    """Set research-cost % from race ``research_cost_discount`` (any faction).
+
+    Rules (no civ names in engine code)::
+
+        research_cost_discount feudal_age -10% castle_age -15% imperial_age -20%
+
+    Applies only to ResearchOrder / UpgradeToOrder via ``research_cost_*``.
+    """
+    from .definitions import rules
+
+    n = MAX_NB_OF_RESOURCE_TYPES
+    if not hasattr(player, "research_cost_percent_bonus"):
+        player.research_cost_percent_bonus = [0.0] * n
+    if not hasattr(player, "research_cost_bonus"):
+        player.research_cost_bonus = [0] * n
+
+    prev = getattr(player, "_faction_research_cost_percent", None)
+    if prev:
+        for i, v in enumerate(prev):
+            if i < len(player.research_cost_percent_bonus):
+                player.research_cost_percent_bonus[i] -= v
+
+    new = [0.0] * n
+    faction = getattr(player, "faction", None)
+    raw = rules.get(faction, "research_cost_discount") if faction else None
+    picked = _pick_age_discount(
+        _parse_faction_age_percent_table(raw),
+        getattr(player, "upgrades", ()),
+    )
+    if picked is not None:
+        new = [picked[1]] * n
+
+    for i, v in enumerate(new):
+        if i < len(player.research_cost_percent_bonus):
+            player.research_cost_percent_bonus[i] += v
+    player._faction_research_cost_percent = new
+
+
+def advance_cost_percent_for_age(player, age_name):
+    """Percent for advancing to ``age_name`` from race ``advance_cost_discount``.
+
+    Rules (no civ names in engine)::
+
+        advance_cost_discount imperial_age -33%
+
+    Lookup is by the age being purchased (AdvanceOrder type), not current age.
+    """
+    from .definitions import rules
+
+    faction = getattr(player, "faction", None)
+    if not faction or not age_name:
+        return 0.0
+    table = _parse_faction_age_percent_table(
+        rules.get(faction, "advance_cost_discount")
+    )
+    return float(table.get(str(age_name), 0.0) or 0.0)
+
+
+def refresh_faction_age_cost_discounts(player):
+    """Refresh age-tied cost discounts after init / age advance."""
+    refresh_faction_research_cost_discount(player)
+
+
 # phase type_name -> already warned about cost + positive phase_targets
 _PHASE_COST_TARGET_WARNED = set()
+
+
+def apply_faction_on_phase_effects(player, phase_name):
+    """Apply race ``on_phase <phase> …`` bonuses when that phase is reached.
+
+    Example in rules::
+
+        on_phase castle_age rdg_range 1 aoe_archer crossbowman longbowman
+
+    Only the player's faction definition is read; shared ``phase bonus`` stays empty
+    for aoe2 so every civ does not get the res demo combat buffs.
+    """
+    from .definitions import rules
+
+    faction = getattr(player, "faction", None)
+    if not faction or not phase_name:
+        return
+    entries = rules.get(faction, "on_phase_effects") or []
+    if not entries:
+        # Also accept raw multi-line storage if interpret flattened oddly
+        raw = rules._dict.get(faction, {}).get("on_phase_effects")
+        entries = raw or []
+    for entry in entries:
+        if not entry:
+            continue
+        if isinstance(entry[0], list):
+            # nested list from interpret — flatten one level
+            tokens = entry
+        else:
+            tokens = list(entry)
+        if not tokens or str(tokens[0]) != str(phase_name):
+            continue
+        rest = tokens[1:]
+        if not rest:
+            continue
+        # Split into effect pairs + trailing unit type names (like effect bonus).
+        from .definitions import Rules as _Rules
+
+        precision = set(getattr(rules, "precision_properties", ()) or ())
+        # Fallback: common combat/range stats
+        precision = precision or {
+            "rdg_range", "mdg_range", "rdg", "mdg", "hp_max", "sight_range",
+            "speed", "mdf", "rdf",
+        }
+        bonus_args = []
+        unit_types = []
+        i = 0
+        while i < len(rest):
+            stat = rest[i]
+            # Unit type names: not a known bonus stat, or no following value
+            if i + 1 >= len(rest):
+                unit_types.extend(rest[i:])
+                break
+            # Heuristic: if next token looks like a unit name and stat isn't known,
+            # treat remainder as unit types.
+            nxt = rest[i + 1]
+            is_stat = str(stat) in precision or str(stat) in {
+                "cost", "time_cost", "population_cost", "production_cost",
+            }
+            st = str(stat)
+            if st.startswith("gather_time") or st.startswith("gather_qty"):
+                is_stat = True
+            if not is_stat:
+                unit_types.extend(rest[i:])
+                break
+            bonus_args.extend([stat, nxt])
+            i += 2
+        if not bonus_args:
+            continue
+        # Persist for future units (same pool as phase non-cost bonuses).
+        if not hasattr(player, "_phase_bonus_pool"):
+            player._phase_bonus_pool = []
+        player._phase_bonus_pool.append((list(bonus_args), list(unit_types)))
+        # Player-level gather_* bonuses must run once (not per matching unit).
+        gather_only = all(
+            str(bonus_args[i]).startswith("gather_time")
+            or str(bonus_args[i]).startswith("gather_qty")
+            for i in range(0, len(bonus_args), 2)
+        )
+        from .worldupgrade import Upgrade
+
+        if gather_only:
+            host = None
+            for unit in list(getattr(player, "units", ()) or ()):
+                if unit_types and not _unit_matches_type_names(unit, unit_types):
+                    continue
+                host = unit
+                break
+            if host is None:
+                # No unit yet — attach a lightweight holder so effect_bonus can reach player.
+                class _GatherBonusHost:
+                    pass
+
+                host = _GatherBonusHost()
+                host.player = player
+                host.can_gather_deposit = []
+                host.can_gather_building = []
+            try:
+                Upgrade.effect_bonus(host, 0, *bonus_args)
+            except Exception as e:
+                warning(
+                    "on_phase %s gather bonus for %s failed: %s",
+                    phase_name,
+                    faction,
+                    str(e),
+                )
+            continue
+        for unit in list(getattr(player, "units", ()) or ()):
+            if unit_types and not _unit_matches_type_names(unit, unit_types):
+                continue
+            try:
+                Upgrade.effect_bonus(unit, 0, *bonus_args)
+            except Exception as e:
+                warning(
+                    "on_phase %s for %s failed on %s: %s",
+                    phase_name,
+                    faction,
+                    getattr(unit, "type_name", unit),
+                    str(e),
+                )
+
+
+def _unit_matches_type_names(unit, type_names):
+    tn = getattr(unit, "type_name", None)
+    if tn in type_names:
+        return True
+    expanded = getattr(unit, "expanded_is_a", None) or ()
+    for name in type_names:
+        if name in expanded:
+            return True
+    return False
 
 
 class Phase(Upgrade):
     """时代类——一种特殊的升级。
 
-    若未设置 phase_targets，则 phase bonus 作用于该玩家的所有现有及未来单位；
-    若设置了 phase_targets，则只作用于匹配（按 type_name、is_a 链或类别）的单位。
+    若未设置 phase_bonus_targets，则 phase bonus 作用于该玩家的所有现有及未来单位；
+    若设置了 phase_bonus_targets，则只作用于匹配（按 type_name、is_a 链或类别）的单位。
     前缀 ``-`` 表示排除（如 ``-building`` = 除建筑外全部）；可与正向项混用。
     注意：cost/time_cost/population_cost/production_* 等成本类加成始终作用于
-    玩家级别（不受 phase_targets 限制），因为这些字段在引擎中本就是玩家全局聚合的。
+    玩家级别（不受 phase_bonus_targets 限制），因为这些字段在引擎中本就是玩家全局聚合的。
     """
 
     phase_bonus = ()
-    phase_targets = ()
+    phase_bonus_targets = ()
+    phase_targets = ()  # alias of phase_bonus_targets (compat)
+    # ((bonus_args, targets), …) — each phase_bonus_targets binds to one phase bonus group
+    phase_bonus_groups = ()
     units_auto_upgrade = 0
     can_upgrade_to = ()
+
+    @classmethod
+    def _phase_bonus_target_list(cls):
+        """Prefer ``phase_bonus_targets``; fall back to legacy ``phase_targets``."""
+        primary = getattr(cls, "phase_bonus_targets", None)
+        legacy = getattr(cls, "phase_targets", None)
+        if primary:
+            return list(primary)
+        if legacy:
+            return list(legacy)
+        if primary is not None:
+            return list(primary or ())
+        return list(legacy or ())
 
     @staticmethod
     def _targets_have_positive_includes(targets):
@@ -152,44 +411,63 @@ class Phase(Upgrade):
             return False
 
     @classmethod
+    def _iter_phase_bonus_groups(cls):
+        """Yield ``(bonus_args, targets)`` for this phase.
+
+        Prefers ``phase_bonus_groups``; falls back to legacy flat
+        ``phase_bonus`` + ``phase_targets``.
+        """
+        groups = getattr(cls, "phase_bonus_groups", None) or ()
+        if groups:
+            for bonus, targets in groups:
+                yield list(bonus or ()), list(targets or ())
+            return
+        bonus_args = list(getattr(cls, "phase_bonus", ()) or ())
+        if bonus_args:
+            yield bonus_args, list(cls._phase_bonus_target_list())
+
+    @classmethod
     def upgrade_player(cls, player):
         """研究完成时被 ResearchOrder 调用。"""
-        bonus_args = list(getattr(cls, "phase_bonus", ()) or ())
-        targets = list(getattr(cls, "phase_targets", ()) or ())
+        groups = list(cls._iter_phase_bonus_groups())
 
-        if bonus_args:
-            # 若设置了正向 phase_targets 且 bonus 中有成本类项目，给一次性警告。
-            # 仅写排除项（如 ``phase_targets -building``）是常见写法：全局减费 +
-            # 仅对非建筑叠战斗属性，不算配置错误。
-            if targets and cls._targets_have_positive_includes(targets):
-                cost_stats = {
-                    "cost", "production_cost", "time_cost", "population_cost",
-                    "production_time", "production_qty",
-                }
-                cost_items = [
-                    bonus_args[i] for i in range(0, len(bonus_args), 2)
-                    if i < len(bonus_args) and bonus_args[i] in cost_stats
-                ]
-                if cost_items and cls.type_name not in _PHASE_COST_TARGET_WARNED:
-                    _PHASE_COST_TARGET_WARNED.add(cls.type_name)
-                    warning(
-                        "phase %s: phase_targets is set but cost-type bonuses "
-                        "(%s) are applied at player level globally and are NOT "
-                        "filtered by phase_targets",
-                        cls.type_name, ",".join(cost_items),
-                    )
-
-            cls._apply_phase_bonus_to_player(player, bonus_args)
-            cls._apply_phase_bonus_to_existing_units(player, bonus_args, targets)
-
+        if groups:
             if not hasattr(player, "_phase_bonus_pool"):
                 player._phase_bonus_pool = []
-            # 同时把 targets 一起存入，以便新加入的单位也能正确过滤
-            player._phase_bonus_pool.append((bonus_args, targets))
+            cost_stats = {
+                "cost", "production_cost", "time_cost", "population_cost",
+                "production_time", "production_qty",
+            }
+            for bonus_args, targets in groups:
+                if not bonus_args:
+                    continue
+                # 若设置了正向 phase_targets 且 bonus 中有成本类项目，给一次性警告。
+                # 仅写排除项（如 ``phase_targets -building``）是常见写法：全局减费 +
+                # 仅对非建筑叠战斗属性，不算配置错误。
+                if targets and cls._targets_have_positive_includes(targets):
+                    cost_items = [
+                        bonus_args[i] for i in range(0, len(bonus_args), 2)
+                        if i < len(bonus_args) and bonus_args[i] in cost_stats
+                    ]
+                    if cost_items and cls.type_name not in _PHASE_COST_TARGET_WARNED:
+                        _PHASE_COST_TARGET_WARNED.add(cls.type_name)
+                        warning(
+                            "phase %s: phase_targets is set but cost-type bonuses "
+                            "(%s) are applied at player level globally and are NOT "
+                            "filtered by phase_targets",
+                            cls.type_name, ",".join(cost_items),
+                        )
+
+                cls._apply_phase_bonus_to_player(player, bonus_args)
+                cls._apply_phase_bonus_to_existing_units(player, bonus_args, targets)
+                # 同时把 targets 一起存入，以便新加入的单位也能正确过滤
+                player._phase_bonus_pool.append((bonus_args, targets))
 
         if cls.type_name not in player.upgrades:
             player.upgrades.append(cls.type_name)
         player.current_phase = cls.type_name
+        apply_faction_on_phase_effects(player, cls.type_name)
+        refresh_faction_age_cost_discounts(player)
 
         if int(getattr(cls, "units_auto_upgrade", 0) or 0):
             cls._auto_upgrade_units(player)
@@ -406,6 +684,13 @@ class Phase(Upgrade):
             filtered = cls._filter_args_by_stats(non_cost_args, denied_stats=denied)
             if not filtered:
                 continue
+            # gather_* is stored on the player once; re-applying per new unit would stack.
+            if all(
+                str(filtered[i]).startswith("gather_time")
+                or str(filtered[i]).startswith("gather_qty")
+                for i in range(0, len(filtered), 2)
+            ):
+                continue
             try:
                 cls.effect_bonus(unit, 0, *filtered)
             except Exception as e:
@@ -475,7 +760,29 @@ class Phase(Upgrade):
         """
         from .definitions import rules
         phase_name = cls.type_name
-        targets = list(getattr(cls, "phase_targets", ()) or ())
+        # Multi-group: union of targets; empty targets in any group = no filter
+        groups = list(cls._iter_phase_bonus_groups())
+        if groups:
+            targets = []
+            unrestricted = False
+            for _bonus, t in groups:
+                if not t:
+                    unrestricted = True
+                    break
+                targets.extend(t)
+            if unrestricted:
+                targets = []
+            else:
+                # unique, keep order
+                seen = set()
+                uniq = []
+                for t in targets:
+                    if t not in seen:
+                        seen.add(t)
+                        uniq.append(t)
+                targets = uniq
+        else:
+            targets = list(cls._phase_bonus_target_list())
         for unit in list(player.units):
             if targets and not cls._unit_matches_targets(unit, targets):
                 continue
@@ -490,6 +797,12 @@ class Phase(Upgrade):
             for target_name in target_names:
                 candidate = rules.unit_class(target_name)
                 if candidate is None:
+                    continue
+                if int(getattr(candidate, "no_auto_upgrade", 0) or 0):
+                    # Elite / optional final upgrades stay manual (paid upgrade_to).
+                    continue
+                if int(getattr(candidate, "line_upgrade", 0) or 0):
+                    # DE-style: unlocked by researching the form, not by age alone.
                     continue
                 from .worldrequirements import has_phase_as_simple_requirement
 

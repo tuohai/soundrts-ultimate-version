@@ -17,6 +17,7 @@ SoundRTS 文档
 ---------------
 
 - `Mod 入门 <mod/getting-started.htm>`_ → `Mod 进阶 <mod/advanced.htm>`_ → `Mod 手册 <mod/modding.htm>`_
+- `市场机制 <mod/market-system.htm>`_ — 买卖、进贡、路线贸易
 - `地图入门 <mod/map-guide.htm>`_ → `地图手册 <mod/mapmaking.htm>`_
 - `战役指南 <mod/campaign-guide.htm>`_
 - `技能 / 治疗 / 效果 <mod/skills-and-effects.htm>`_
@@ -25,7 +26,7 @@ SoundRTS 文档
 玩家 · 专题
 -----------
 
-见 `玩家文档 <player/index.htm>`_ （成就、背包、星际 mod、随机图等）
+见 `玩家文档 <player/index.htm>`_ （成就、背包、市场与贸易、星际 mod、随机图等）
 
 共享
 ----

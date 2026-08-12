@@ -708,6 +708,8 @@
 4794	mana maximum
 4795	temps de collecte
 4796	quantité collectée
+5412	taux de collecte
+5415	capacité de transport
 4797	temps de production
 4798	quantité produite
 4799	coût
@@ -741,6 +743,9 @@
 4827	peut collecter
 4828	temps de collecte
 4829	quantité collectée
+5413	taux de collecte
+5414	par seconde
+5416	capacité de transport
 4830	peut réparer
 4831	cible terrestre
 4832	cible aérienne

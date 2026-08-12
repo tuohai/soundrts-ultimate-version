@@ -32,6 +32,7 @@ Nível 3 · Inventário e combate
 
 - `Inventário e equipamento <inventory.htm>`_
 - `Caça <hunting.htm>`_
+- `Mercado e comércio <market-and-trade.htm>`_ (compra/venda, tributo, rotas; aoe2…)
 - `Ataques em rajada <burst-attacks.htm>`_
 - `Levar itens a um quadrado <brought-items.htm>`_
 

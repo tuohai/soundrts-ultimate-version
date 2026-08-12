@@ -34,11 +34,18 @@ def preprocess(s):
     A comment line doesn't count if between two joined lines.
     >>> preprocess("on\\\n; comment\nthe same line")
     'on the same line'
+
+    UTF-8 BOM may appear mid-string when ``append=True`` joins a BOM-prefixed
+    layer after another file; strip those too (not only a leading BOM).
+    >>> preprocess("def a\n\ufeff; c\ndef b")
+    'def a\ndef b'
     """
     if s.startswith("\ufeff"):
         s = s[1:]
     # Windows CRLF：若只按 \n 切行，空行会变成 lone \r，后续解析会误报警
     s = s.replace("\r\n", "\n").replace("\r", "\n")
+    # Mid-file BOM from joined UTF-8-with-BOM layers (e.g. mods/aoe2/rules.txt)
+    s = s.replace("\n\ufeff", "\n")
     s = _remove_comments(s)
     s = _remove_empty_lines(s)
     s = _join_lines(s)

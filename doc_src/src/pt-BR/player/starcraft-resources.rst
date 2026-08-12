@@ -27,15 +27,32 @@ Estruturas de gás
 
 Assimilator / Extractor / Refinery devem ser construídos sobre um geyser (Tab no geyser, depois construir). Construir em terreno edificável toca “não é possível construir ali”.
 
-Após a conclusão:
+Após a conclusão (estilo StarCraft 1):
 
-1. A estrutura assume a reserva do geyser (``is_an_extractor``) e produz automaticamente (``auto_production``)
-2. A cada ``production_time`` segundos adiciona ``production_qty`` de vespene (padrão 18 s / 8), debitando da reserva
-3. Trabalhadores coletam do edifício e carregam ``extraction_qty`` por viagem (padrão 8)
-4. Quando a reserva chega a 0, o rendimento cai para ``depleted_production_qty`` (padrão 2)
-5. Vespene é armazenado no Nexus / Hatchery / Command Center (``storable_resource_types resource1 resource2``)
+1. A estrutura assume a reserva do geyser (``is_an_extractor``); trabalhadores coletam dela (**sem** buffer ``auto_production``)
+2. Cada viagem rende ``extraction_qty`` (padrão **8**) e debita ``source_qty``
+3. Quando a reserva chega a 0, o rendimento cai para ``depleted_production_qty`` (padrão **2**)
+4. Vespene é armazenado no Nexus / Hatchery / Command Center (``storable_resource_types resource1 resource2``)
 
-Use auto_production para gás, não auto_cultivate estilo fazenda.
+Número de trabalhadores (``gather_slots``)
+------------------------------------------
+
+
+Padrão ``gather_slots 3``:
+
+- No máximo **3** trabalhadores extraem ao mesmo tempo
+- Os demais esperam até haver vaga
+- Enviar 8 ainda produz gás (rodízio), mas o ritmo ≈ 3, não 8×
+
+Dica: coloque **3** trabalhadores em cada gás.
+
+Notas Protoss / Zerg
+--------------------
+
+
+- Assimilator: só geyser (**sem** psi)
+- Extractor: só geyser (**sem** creep)
+- Pylons podem warp em qualquer lugar; Photon Cannons precisam de psi e não atacam sem energia
 
 Tela de atributos
 -----------------

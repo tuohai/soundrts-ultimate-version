@@ -128,6 +128,55 @@ Ranged projectile example::
     rdg_range 4
     rdg_projectile 1
 
+projectile_lead
+===============
+
+Bandera de unidad (0/1, ``int_properties``, predeterminado 0): si los **proyectiles a distancia predicen / aciertan objetivos en movimiento**.
+
+- ``0``: el proyectil apunta al punto del momento del disparo; si el objetivo se ha alejado al impactar → fallo
+- ``1``: los proyectiles pueden predecir objetivos en movimiento (estilo «Balística» de Age of Empires II)
+
+**Requiere velocidad de vuelo**: a distancia hace falta ``rdg_projectile`` + ``rdg_projectile_speed`` (**casillas/s**, >0). Si no, el impacto es instantáneo y la comprobación de fallo por movimiento nunca importa.
+
+Estos campos son **velocidad**, no «segundos de vuelo». Ejemplo: ``7`` = siete casillas por segundo. No ponga un retraso de impacto deseado (p. ej. 0.57) en el campo.
+
+**No hardcodee el nombre de una tecnología en el motor.** Otorgue la bandera con un bonus de tecnología, p. ej.::
+
+    effect info 8510
+    effect bonus projectile_lead 1
+    effect_bonus_targets archer_unit -hand_cannoneer galley scouttower
+
+Las unidades aún necesitan la tecnología en ``can_use_tech``. La UI de atributos no anuncia el ``+1`` de esta bandera; use ``effect info <tts_id>`` para un texto legible (véase *info* más abajo).
+
+Distinto de ``rdg_projectile`` (reglas de combate de proyectil como alcance en terreno alto). ``projectile_lead`` solo controla el fallo frente a un objetivo que se movió.
+
+projectile_speed / mdg_projectile_speed / rdg_projectile_speed
+==============================================================
+
+**Velocidad de vuelo** del proyectil por tipo de ataque en casillas/segundo (PRECISION), predeterminado 0.
+
+- ``rdg_projectile_speed``: solo para golpes **a distancia** cuando ``rdg_projectile 1``
+- ``mdg_projectile_speed``: solo para golpes de **proyectil cuerpo a cuerpo** cuando ``mdg_projectile 1``
+- ``projectile_speed``: nombre compartido obsoleto; al cargar se migra a la(s) vía(s) correspondiente(s)
+
+**No** ponga aquí «cuántos segundos hasta el impacto» — es velocidad. El motor calcula la llegada como **distancia ÷ velocidad** (más lejos = más tarda). Velocidad 0 o ataque no proyectil → impacto instantáneo.
+
+Una unidad puede tener ``mdg`` y ``rdg`` a la vez (incluso el mismo alcance): solo la vía con ``*_projectile`` vuela a esa velocidad.
+
+aoe2 aprox. DE (todas **velocidades**): flechas/torres ``7``, mangonel ``3.5``, trabuquete ``1.6``.
+
+Ejemplo::
+
+    def aoe_archer
+    rdg_projectile 1
+    rdg_projectile_speed 7
+
+    def mangonel
+    mdg_projectile 1
+    mdg_projectile_speed 3.5
+
+Véase también: `Predicción de proyectiles y velocidad de vuelo <projectile-lead.htm>`_.
+
 es_teleportable
 ===============
 
@@ -252,8 +301,29 @@ bonificación
 
 Incrementa en el valor indicado la propiedad de las unidades afectadas.
 
-Al menos las siguientes propiedades deberían funcionar: daño, armadura, alcance, nivel de curación, velocidad, hp_max (aunque las unidades antiguas no tendrán su hp actualizado a hp_max).
+Ponga los filtros de unidad en la línea siguiente como `effect_bonus_targets` (no en la misma línea que `effect bonus`)::
+
+    effect bonus mdg_range 1
+    effect_bonus_targets mangonel onager
+    effect bonus rdg_range 1
+    effect_bonus_targets scorpion trebuchet -petard
+
+`effect_bonus_targets` se aplica al `effect bonus` precedente (las unidades aún necesitan `can_use_tech`). Un `-` inicial excluye una coincidencia (igual que `phase_bonus_targets`), p. ej. `effect_bonus_targets soldier -building`. Se acepta el alias `effect_targets`.
+
+Al menos las siguientes propiedades deberían funcionar: daño, armadura, alcance, nivel de curación, velocidad, hp_max, hp.
+
+- ``effect bonus hp_max N`` / ``hp_max N%``: solo sube el máximo; el HP actual no cambia.
+- ``effect bonus hp N`` / ``hp N%``: sube HP actual y ``hp_max`` en la misma cantidad. Use ``hp`` si la investigación también debe curar unidades vivas.
 food_cost y food_provided probablemente no funcionen correctamente.
+
+`projectile_lead` es una bandera de combate 0/1; otórguela con `effect bonus projectile_lead 1` (véase *projectile_lead* arriba). La UI de atributos omite el `+1` numérico de esta bandera.
+
+info
+^^^^^
+
+`effect info <tts_id>…`
+
+Texto solo de visualización en la pantalla de atributos de tecnología/habilidad (sin cambio de stats en tiempo de ejecución). Puede combinarse con otros efectos, p. ej. Balística: `effect info` más `effect bonus projectile_lead 1`.
 
 conversión
 ^^^^^^^^^^
@@ -463,10 +533,23 @@ Desde 1.4, el daño final es aditivo: ``final_mdg = mdg + mdg_vs`` (y lo mismo p
 Principales propiedades cuerpo a cuerpo/a distancia:
 
 - ``mdg`` / ``rdg``: daño base
-- ``mdg_vs`` / ``rdg_vs``: bonificación frente a tipos de unidades específicas
+- ``mdg_vs`` / ``rdg_vs``: bonificación frente a tipos de unidades específicas.
+  Cualquiera de las dos formas vale (se pueden mezclar; **varias líneas se
+  fusionan**, la posterior no sobrescribe la anterior)::
+
+      mdg_vs building 150 siege_unit 40
+      mdg_vs building 150
+      mdg_vs siege_unit 40
+
+  Otros atributos ``*_vs`` por pares (p. ej. ``rdg_vs``, ``mdg_cover_vs``,
+  ``menace_vs``) también aceptan varios pares en una línea y fusionan líneas
+  repetidas.
 - ``mdf`` / ``rdf``: defensa
 - ``mdg_range`` / ``rdg_range``, ``mdg_cd`` / ``rdg_cd``, ``mdg_ready`` / ``rdg_ready``
 - ``mdg_projectile`` / ``rdg_projectile``: bandera de proyectil (bonificación de alcance en terreno alto, reglas básicas bajas versus altas)
+- ``mdg_projectile_speed`` / ``rdg_projectile_speed``: velocidad de vuelo del proyectil por vía (casillas/s; sustituye delay / ``projectile_speed`` compartido)
+- ``projectile_lead``: si los proyectiles a distancia predicen objetivos en movimiento (0/1; suele otorgarse con ``effect bonus`` de tecnología)
+- Ganchos del motor usados por tecnologías únicas estilo AoE2 (sin nombres de civ hardcodeados): ``unpack_time`` (retraso de despliegue del trabuquete tras moverse), ``gather_byproduct`` (p. ej. Papel moneda: oro al talar madera), ``reveal_map`` en mejoras (Circunnavegación explora todo el mapa)
 - ``mdg_splash`` / ``rdg_splash``, ``mdg_radius`` / ``rdg_radius``, ``mdg_splash_decay``
 - ``mdg_targets`` / ``rdg_targets``: ``ground``, ``air``, ``unit``, ``building``, o un nombre de tipo
 - ``mdg_crit`` / ``rdg_crit``, ``mdg_crit_rate`` / ``rdg_crit_rate``, ``crit_vs``
@@ -602,17 +685,23 @@ Ataques de ráfaga/secuencia (``damage_seq``, desde 1.3.8.2, mejorado en 1.4.3.6
 Un ciclo de ataque puede disparar múltiples golpes en rápida sucesión (Age of Empires Chu Ko Nu
 estilo). Defina la base ``mdg`` / ``rdg`` primero, luego ``damage_seq``:
 
-``damage_seq mdg|rdg \<times\> [(damage d1 d2 ...)] [(interval seconds)]``
+``damage_seq mdg|rdg \<times\> [(damage d1 d2 ...)] [(secondary pierce melee)] [(interval seconds)]``
 
 - División explícita: ``(damage 6 3 3)``: los valores del segmento entero deben sumar la base
   daño (las mismas unidades que ``mdg`` / ``rdg`` en reglas.txt)
 - División automática (desde 1.4.3.6): omite ``(damage ...)`` para dividir el daño base uniformemente
   ``times`` (funciona con daño fraccional, por ejemplo, ``rdg 7.5`` con ``times 3`` → 2,5 por disparo)
+- **Proyectiles secundarios (Chu Ko Nu de AoE2)**: ``(secondary 3 0)`` — el primer disparo = ataque
+  vivo de la unidad (aplican mejoras) más melee fijo; disparos posteriores = pierce + melee fijos
+  (**no** mejorados por herrería/química). El melee puede ser ``0`` (aún daña armadura melee
+  negativa como arietes). La suma **no** necesita igualar el daño base en este modo.
 - Intervalo: ``(interval 0.25)`` segundos entre disparos; si se omite o 0 con ``times \> 1``,
   predeterminado 0,25 s
 - Límite: como máximo 6 disparos por ataque
-- Tiradas de golpe: cada segmento tira golpe, crítico y desventaja por separado
+- Tiradas de golpe: cada segmento tira golpe, crítico y desventaja por separado; los disparos
+  secundarios aciertan al 100%
 - Enfriamiento: ``mdg_cd`` / ``rdg_cd`` comienza después de que termina la ráfaga completa
+  (siguiente volea = ``(times-1)×interval + cd``, luego ``ready``)
 - Sonidos: cada disparo activa ``launch_mdg`` / ``launch_rdg``; enumerar múltiples ID de sonido
   en ``style.txt`` (por ejemplo, ``launch_rdg 1042 1042 1042``)
 
@@ -625,6 +714,13 @@ Ranged burst example (built-in ``repeating_crossbowman``)::
     rdg_projectile 1
     damage_seq rdg 3 (interval 0.25)
 
+Chu Ko Nu de AoE2 DE (``mods/aoe2``; la élite usa 5 flechas)::
+
+    def chu_ko_nu
+    rdg 8
+    rdg_cd 2.77
+    rdg_ready 0.23
+    damage_seq rdg 3 (secondary 3 0) (interval 0.23)
 
 Melee example with explicit damage split::
 
@@ -788,6 +884,9 @@ Sistema de fases (desde 1.4.2.4)
 
 Opcional ``phase_targets`` limita qué unidades reciben entradas sin costo de ``phase bonus`` (las bonificaciones de tipo costo siempre se aplican a nivel de jugador). Dejar vacío para todas las unidades. Utilice nombres de categorías (``soldier``, ``worker``, ``building``, ``unit``, etc.), nombres de unidades específicas (``footman knight``) o cualquier nombre en la cadena ``is_a``; cualquier coincidencia positiva cuenta. Un ``-`` inicial excluye una coincidencia, p. ``phase_targets -building`` significa todas las unidades excepto los edificios; puede mezclar incluye y excluye, p. ``phase_targets soldier -footman``.
 
+
+Faction age rewards (since 1.4.6.9): ``on_phase``, ``research_cost_discount``, ``advance_cost_discount`` — no civ names hardcoded. Also ``phase bonus clear``, ``no_auto_upgrade 1``.
+
 On a building::
 
     can_advance feudal_age
@@ -856,7 +955,7 @@ For pickable loot instead, use ``production_item`` (instead of ``production_type
 | ``production_type`` | Recurso producido (con ``production_time`` y ``production_qty`` define la capacidad de producción) |
 | ``production_time`` | Segundos por ciclo de producción |
 | ``production_qty`` | Producción por ciclo; sin ``is_gather``, agregado a los recursos del jugador; con ``is_gather``, al edificio ``resource_qty`` |
-| ``auto_production`` | Cuando ``1``, muestra producción automática; bucles después de cada ciclo; uso para gas (no ``auto_cultivate``) |
+| ``auto_production`` | Cuando ``1``, muestra producción automática; bucles después de cada ciclo; uso para buffers (p. ej. gold house). El gas SC usa viajes de trabajadores (véase Depósitos y gas); no confundir con ``auto_cultivate`` de granjas |
 | ``manual_production`` | Cuando ``1``, muestra producción manual; un ciclo por clic; independiente de ``auto_production`` |
 | ``auto_cultivate`` | Autocultivo en edificios ``is_gather`` (por ejemplo, granjas); paralelos ``auto_production`` |
 | ``manual_cultivate`` | Cultivo manual; paralelos ``manual_production``; establezca ``1`` explícitamente cuando sea necesario |
@@ -865,6 +964,50 @@ For pickable loot instead, use ``production_item`` (instead of ``production_type
 | ``resource_volume_max`` | Máximo almacenado en el edificio (por ejemplo, 8 vespeno) |
 | ``resource_volume_start`` | Cantidad inicial almacenada cuando se construye (``0`` = vacío) |
 | ``extraction_time`` / ``extraction_qty`` | Tiempo de cosecha de los trabajadores y monto por viaje desde el edificio o depósito |
+
+
+Modos de recolección (desde 1.4.6.9)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Hay dos mecanismos de recolección disponibles para mods:
+
+1. **``trip`` (predeterminado):** un pulso ``gather_qty`` (más ``extraction_*``), luego entregar — viajes estilo StarCraft.
+2. **``continuous``:** llena ``carry_capacity`` a un ritmo por segundo, luego entrega — estilo Age of Empires II/IV.
+
+::
+
+    def parameters
+    gather_mode continuous
+
+    def peasant
+    class worker
+    gather_mode continuous
+    carry_capacity 10
+    carry_capacity_food_carcass 35
+    gather_rate wood 0.39
+    gather_rate goldmine 0.38
+
+| Propiedad | Significado |
+| --- | --- |
+| ``gather_mode`` | ``trip`` (predeterminado) o ``continuous``; en ``parameters`` y/o en el trabajador |
+| ``carry_capacity`` | límite de carga continuous; ``0`` vuelve a un ``gather_qty`` |
+| ``carry_capacity_<type>`` | anulación por depósito/edificio |
+| ``gather_rate`` / ``gather_rate_<type>`` | continuous recursos/s; si no, ``qty/time`` |
+
+Use ``effect bonus carry_capacity N`` para mejoras estilo carretilla. Los bonus porcentuales ``gather_time_*`` aumentan la tasa continuous efectiva.
+
+Sistema de mercado (desde 1.4.6.9)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Compra/venta, tributo y comercio de rutas son impulsados por reglas — **sin** nombres de recurso hardcodeados ni pagos solo en oro. Tablas completas: `Sistema de mercado <market-system.htm>`_.
+
+Aspectos destacados:
+
+- ``def parameters``: ``market_currency``, ``market_commodities``, ``market_menu_labels``, claves de impuesto/tributo/distancia de comercio.
+- Edificios: ``is_market 1``. Unidades de comercio: ``is_trade_unit 1``, ``trade_hubs``, ``trade_rewards`` (uno o más).
+- Órdenes: ``market_buy`` / ``market_sell`` / ``tribute`` / ``trade``.
+- Cableado de ejemplo: ``mods/aoe2/rules.txt``; notas para jugadores: `mercado y comercio <../player/market-and-trade.htm>`_.
+
 
 .. note::
 
@@ -1356,7 +1499,7 @@ Campos de construcción (Protoss psi / Zerg creep)
 | Atributo | Rol |
 | --- | --- |
 | ``provides_build_field \<name\>`` | Marca cuadrados cercanos (por ejemplo, ``psi``, ``creep``) |
-| ``requires_build_field \<name\>`` | Requiere ese campo para colocar/construir; ``0`` exime el tipo (Nexus, Photon Cannon) |
+| ``requires_build_field \<name\>`` | Requiere ese campo para colocar/construir; ``0`` exime el tipo (Nexus, Pylon, Assimilator; Photon Cannon **sí** necesita psi) |
 | ``build_field_radius \<tiles\>`` | Radio del proveedor (pasos BFS de la plaza principal; use esto o ``build_field_radius_m``) |
 | ``build_field_radius_m \<meters\>`` | Radio del proveedor en metros (misma escala que ``rdg_range``); Distancia euclidiana del proveedor `` (x,y)`` |
 | ``build_field_persists 1`` | Las marcas permanecen después de que se destruye el proveedor (arrastre Zerg) |
@@ -1423,12 +1566,13 @@ Depósitos y gas (``requires_deposit`` / ``is_an_extractor``)
 | --- | --- |
 | ``requires_deposit \<type\>`` | Debe basarse en un depósito de mapas (por ejemplo, ``geyser``); el depósito se elimina al finalizar |
 | ``is_buildable_anywhere 0`` | Con ``requires_deposit``, bloques de construcción en terreno edificable |
-| ``is_an_extractor 1`` | Al completar, copia la reserva del depósito a ``source_qty``; cada ciclo de producción la descuenta |
+| ``is_an_extractor 1`` | Al completar, copia la reserva del depósito a ``source_qty``; los trabajadores la descuentan al recolectar |
 | ``deposit_volume N`` | Reserva por defecto del depósito cuando el mapa usa qty ``1`` |
-| ``depleted_production_qty N`` | Rendimiento por ciclo tras vaciar ``source_qty`` (``0`` = parar; gas SC usa ``2``) |
+| ``depleted_production_qty N`` | Rendimiento por viaje tras vaciar ``source_qty`` (``0`` = parar; gas SC usa ``2``) |
+| ``gather_slots N`` | Máximo de trabajadores extrayendo a la vez; ``0`` = sin límite. Gas SC usa ``3`` |
 
-La plantilla de gas ``sc_gas_building`` utiliza ``is_an_extractor`` + ``auto_production`` + ``is_gather`` + ``production_time`` / ``production_qty`` / ``depleted_production_qty``.
-Los trabajadores necesitan ``can_gather assimilator`` (tipo de edificio), no ``geyser`` (depósito).
+La plantilla de gas ``sc_gas_building`` (estilo SC1) utiliza ``is_an_extractor`` + recolección por viaje (``auto_production 0``) + ``extraction_qty`` / ``depleted_production_qty`` + ``gather_slots 3``.
+Los trabajadores necesitan ``can_gather assimilator`` (tipo de edificio), no ``geyser`` (depósito). Consejo: **3** trabajadores por gas.
 
 Modos de construcción de trabajadores
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

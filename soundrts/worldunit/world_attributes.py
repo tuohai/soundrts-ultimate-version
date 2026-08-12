@@ -433,7 +433,9 @@ class CreatureAttributes(Entity):
                 continue
             raw = d.get(bonus_key, {})
             if isinstance(raw, dict):
-                setattr(cls, attr_name, {str(k): float(v) for k, v in raw.items()})
+                # Write back into d — unit classes are type(name, (base,), d).
+                # Do not setattr on the shared base (pollutes Soldier across loads).
+                d[bonus_key] = {str(k): float(v) for k, v in raw.items()}
                 continue
             bonus = {}
             items = raw
@@ -448,7 +450,7 @@ class CreatureAttributes(Entity):
                     i += 2
                 except (ValueError, IndexError):
                     i += 1
-            setattr(cls, attr_name, bonus)
+            d[bonus_key] = bonus
 
         # 解析近战溅射衰减
         if "mdg_splash_decay" in d:
@@ -517,11 +519,24 @@ class CreatureAttributes(Entity):
                 # 解析伤害序列
                 damage_match = re.search(r'\(damage\s+([0-9\s]+)\)', seq_str)
                 interval_match = re.search(r'\(interval\s+([\d\.]+)\)', seq_str)
+                secondary_match = re.search(
+                    r'\(secondary\s+(-?\d+)\s+(-?\d+)\)', seq_str
+                )
                 interval = float(interval_match.group(1)) if interval_match else 0.0
                 base_prec = d.get(damage_type, 0)
                 damages = None
+                secondary_mode = False
+                secondary_rdg = 0
+                secondary_mdg = 0
 
-                if damage_match:
+                if secondary_match:
+                    # AoE2 Chu Ko Nu: first = live attack; rest = fixed pierce + melee
+                    secondary_mode = True
+                    secondary_rdg = int(secondary_match.group(1)) * PRECISION
+                    secondary_mdg = int(secondary_match.group(2)) * PRECISION
+                    times = max(1, min(times, 6))
+                    damages = []
+                elif damage_match:
                     damages = [int(x) * PRECISION for x in damage_match.group(1).split()]
                     times = len(damages)
                 elif base_prec > 0 and times > 0:
@@ -532,15 +547,21 @@ class CreatureAttributes(Entity):
                         for i in range(times)
                     ]
 
-                if damages and sum(damages) == base_prec:
+                if secondary_mode or (damages and sum(damages) == base_prec):
                     if damage_type == "mdg":
                         cls.mdg_seq_times = times
-                        cls.mdg_seq_damages = damages
+                        cls.mdg_seq_damages = damages if damages else []
                         cls.mdg_seq_interval = interval
+                        cls.mdg_seq_secondary = 1 if secondary_mode else 0
+                        cls.mdg_seq_secondary_rdg = secondary_rdg
+                        cls.mdg_seq_secondary_mdg = secondary_mdg
                     else:
                         cls.rdg_seq_times = times
-                        cls.rdg_seq_damages = damages
+                        cls.rdg_seq_damages = damages if damages else []
                         cls.rdg_seq_interval = interval
+                        cls.rdg_seq_secondary = 1 if secondary_mode else 0
+                        cls.rdg_seq_secondary_rdg = secondary_rdg
+                        cls.rdg_seq_secondary_mdg = secondary_mdg
 
         # 解析近战目标
         mdg_targets_val = d.get("mdg_targets", "")

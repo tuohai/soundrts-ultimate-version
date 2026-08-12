@@ -1,4 +1,4 @@
-﻿# Bring item to square & story hand-in (``has_brought_item`` + ``remove_item``)
+# Bring item to square & story hand-in (``has_brought_item`` + ``remove_item``)
 
 Two triggers used together:
 

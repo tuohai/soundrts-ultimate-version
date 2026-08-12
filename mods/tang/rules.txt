@@ -850,7 +850,7 @@ class soldier
 
 def archers
 is_a range_unit
-rdg_delay 0.05
+rdg_projectile_speed 20
 rdg_ready 0.7
 
 def archer
@@ -946,9 +946,7 @@ def cavalry_archers
 is_a range_unit
 rdg_projectile 1
 rdg_ready 0.7
-rdg_delay 0.05
-
-def cavalry_archer
+rdg_projectile_speed 20def cavalry_archer
 is_a cavalry_archers
 cost 10 1
 population_cost 2
@@ -1012,7 +1010,7 @@ rdf  6
 mdg_vs buildings 80 transporters 20 m_s 123 cavalrys 2
 mdg_splash 1
 mdg_splash_decay_min 10
-mdg_delay 0.1
+mdg_projectile_speed 10
 mdg_ready 0.7
 is_repairable 1
 is_healable 0
@@ -1058,7 +1056,7 @@ time_cost 414
 hp_max 70
 rdg 75
 rdg_radius 1.5
-rdg_delay 0.1
+rdg_projectile_speed 10
 rdg_ready 0.7
 mdf 8
 rdf 0
@@ -1505,7 +1503,7 @@ rdg 4
 rdg_targets ground air
 rdg_radius 1
 rdg_ready 0.7
-rdg_delay 0.05
+rdg_projectile_speed 20
 is_a_detector 1
 is_cloakable 0
 rdg_splash 4
@@ -1672,7 +1670,7 @@ mdg_bonus 2
 mdg_radius 1
 rdf 4
 mdg_splash 1
-mdg_delay 0.7
+mdg_projectile_speed 1.43
 is_repairable 1
 is_healable 0
 airground_type water
@@ -1734,7 +1732,7 @@ rdg_range_bonus 1
 rdg_cd 2
 rdg 4
 rdg_ready 0.7
-rdg_delay 0.05
+rdg_projectile_speed 20
 can_use archer_weapon archer_range
 is_repairable 1
 is_healable 0
@@ -1758,7 +1756,7 @@ mdg 15
 mdg_radius 1
 mdf 3
 mdg_splash 1
-mdg_delay 0.1
+mdg_projectile_speed 10
 mdg_ready 0.7
 is_repairable 1
 is_healable 0
@@ -1788,7 +1786,7 @@ mdf 1
 rdf 1
 rdg_targets ground air
 rdg_ready 0.7
-rdg_delay 0.05
+rdg_projectile_speed 20
 can_use archer_weapon archer_range fire_greek_fire
 transport_capacity 15
 transport_volume 99
@@ -1815,7 +1813,7 @@ mdg 10
 mdg_radius 1
 mdg_projectile 1
 mdg_splash 1
-mdg_delay 0.1
+mdg_projectile_speed 10
 mdg_ready 0.7
 transport_volume 99
 corpse 0
@@ -1850,7 +1848,7 @@ mdg_range 1
 sight_range 3
 mdg_cd 2
 mdg 15
-mdg_delay 0.1
+rdg_projectile_speed 10
 mdg_ready 0.7
 transport_volume 99
 corpse 0
@@ -1867,7 +1865,7 @@ mdg 20
 mdg_projectile 1
 mdg_splash 1
 mdg_radius 1.5
-mdg_delay 0.05
+mdg_projectile_speed 20
 can_use traction_power
 requirements constantinople
 can_upgrade_to royal_dromon

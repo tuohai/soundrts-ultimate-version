@@ -305,6 +305,9 @@ class WorldGameMixin:
                 from ..building_victory import update_victory_timers
 
                 update_victory_timers(self)
+                from ..world_inventory_victory import update_inventory_victory
+
+                update_inventory_victory(self)
             except Exception:
                 exception("")
             for o in self._active_objects_snapshot():

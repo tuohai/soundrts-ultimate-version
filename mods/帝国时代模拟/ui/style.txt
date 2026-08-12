@@ -1,0 +1,4121 @@
+def parameters
+recommended_maps jl1 jl2 jl3 jl4 jl5 jl6 jl7 jl8 jl10 js1 js2 js3 js4 js5 js6 js7 js8 js9 js10 js11 js12 js13 js14 js15 kel1 kel2 kel3 kel4 kel5 kel6 b1 b2 bs1 bs2 ce1 ce2 ce3 ce4 ce5 can1 can2 can3 can4 can5 can5b m1 m2 m3 m4 m5 m6 m7 m8 mb1 mb2 mb3 mb4 mb5 mb6 mb7 mb8 mb9 onj1 onj2 pm1 pm2 pm3 pm4 pm5 pm6  pra1 pra2 pra3 pra4 pra5 pra6 pra7 pra8 pra9 pra10 pra11 pra12 qc1 qc2 qc3 sg1 sg2 sg3 sg4 swk1 swk2a swk2b swk2c z1 z2 z3 z4 z5
+resource_2_title 4308
+resource_3_title 82706
+food_title 82705
+
+
+; messages
+
+def messages
+not_enough_resource_2 135 4308
+not_enough_resource_2 135 82706
+not_enough_food 82704
+
+;resource
+
+def stone_mine
+is_a resource_deposit
+title 4309
+exhausted 1047
+ground gravel
+
+def supply_station
+is_a resource_deposit
+title 82711
+ground gravel
+
+def thing
+title
+noise
+missed 1012
+attack_hit
+death
+proportion_0 if_me 6100 else 6000
+proportion_1 if_me 6101 else 6001
+proportion_2 if_me 6102 else 6002
+proportion_3 if_me 6103 else 6003
+proportion_4 if_me 6104 else 6004
+proportion_5 if_me 6105 else 6005
+proportion_6 if_me 6106 else 6006
+proportion_7 if_me 6107 else 6007
+proportion_8 if_me 6108 else 6008
+proportion_9 if_me 6109 else 6009
+proportion_10 if_me 76710 else 6010
+ground
+lose_fight 1324
+order_ok if_me 1194 1195 1196 else 1094 1095 1096
+order_impossible 1029
+research_complete_msg 4248 126
+added 1329
+added_msg $1 
+enter 1330
+exit 1331
+
+def unit
+is_a thing
+attack if_me x else y
+
+
+def building
+is_a unit
+shape square
+complete if_me 76709 else 1100
+complete_msg $1 126
+death 76734
+alert 1079 ; bell
+noise_if_damaged loop 1016 .5 ; half volume
+noise_if_very_damaged loop 1016
+ground grass
+keyboard building
+
+def load
+title 4278
+index 3
+
+def load_all
+title 4279
+index 3
+shortcut l
+
+def unload
+title 4280 $1 115
+index 3
+
+def unload_all
+title 4281
+index 3
+shortcut u
+
+def stop
+title 106
+index 12
+shortcut s
+
+; upgrades research
+
+def dark_stage
+title 82692
+
+def early_stage
+title 82689
+
+def mid_stage
+title 82690
+
+def late_stage
+title 82691
+
+def ch_dark_stage
+is_a dark_stage
+
+def ch_early_stage
+is_a early_stage
+
+def ch_mid_stage
+is_a mid_stage
+
+def ch_late_stage
+is_a late_stage
+
+def menggu_dark_stage
+is_a dark_stage
+
+def menggu_early_stage
+is_a early_stage
+
+def menggu_mid_stage
+is_a mid_stage
+
+def menggu_late_stage
+is_a late_stage
+
+def b_dark_stage
+is_a dark_stage
+
+def b_early_stage
+is_a early_stage
+
+def b_mid_stage
+is_a mid_stage
+
+def b_late_stage
+is_a late_stage
+
+def u_tower2
+title 82122
+
+def u_tower3
+title 82123
+
+def u_cannon_tower
+title 82124
+
+def u_wall3
+title 82127
+
+def ch_u_tower2
+is_a u_tower2
+
+def ch_u_tower3
+is_a u_tower3
+
+def ch_u_cannon_tower
+is_a u_cannon_tower
+
+def ch_u_wall3
+is_a u_wall3
+
+def menggu_u_tower2
+is_a u_tower2
+
+def menggu_u_tower3
+is_a u_tower3
+
+def menggu_u_cannon_tower
+is_a u_cannon_tower
+
+def menggu_u_wall3
+is_a u_wall3
+
+def b_u_tower2
+is_a u_tower2
+
+def b_u_tower3
+is_a u_tower3
+
+def b_u_cannon_tower
+is_a u_cannon_tower
+
+def b_u_wall3
+is_a u_wall3
+
+
+def melee_weapon1
+title 82178
+
+def melee_weapon2
+title 82179
+
+def melee_weapon3
+title 82180
+
+def infantry_armor1
+title 82189
+
+def infantry_armor2
+title 82190
+
+def infantry_armor3
+title 82191
+
+def cavalry_armor1
+title 82192
+
+def cavalry_armor2
+title 82193
+
+def cavalry_armor3
+title 82194
+
+def archer_weapon1
+title 82181
+
+def archer_weapon2
+title 82182
+
+def archer_weapon3
+title 82183
+
+def archer_armor1
+title 82184
+
+def archer_armor2
+title 82185
+
+def archer_armor3
+title 82186
+
+def archer_range1
+title 82667
+
+def archer_range2
+title 82668
+
+def archer_range3
+title 82669
+
+def archer_sightrange1
+title 82670
+
+def archer_sightrange2
+title 82671
+
+def archer_sightrange3
+title 82673
+
+def ch_melee_weapon1
+is_a melee_weapon1
+
+def ch_melee_weapon2
+is_a melee_weapon2
+
+def ch_melee_weapon3
+is_a melee_weapon3
+
+def ch_infantry_armor1
+is_a infantry_armor1
+
+def ch_infantry_armor2
+is_a infantry_armor2
+
+def ch_infantry_armor3
+is_a infantry_armor3
+
+def ch_cavalry_armor1
+is_a cavalry_armor1
+
+def ch_cavalry_armor2
+is_a cavalry_armor2
+
+def ch_cavalry_armor3
+is_a cavalry_armor3
+
+def ch_archer_weapon1
+is_a archer_weapon1
+
+def ch_archer_weapon2
+is_a archer_weapon2
+
+def ch_archer_weapon3
+is_a archer_weapon3
+
+def ch_archer_armor1
+is_a archer_armor1
+
+def ch_archer_armor2
+is_a archer_armor2
+
+def ch_archer_armor3
+is_a archer_armor3
+
+def ch_archer_range1
+is_a archer_range1
+
+def ch_archer_range2
+is_a archer_range2
+
+def ch_archer_range3
+is_a archer_range3
+
+def ch_archer_sightrange1
+is_a archer_sightrange1
+
+def ch_archer_sightrange2
+is_a archer_sightrange2
+
+def ch_archer_sightrange3
+is_a archer_sightrange3
+
+def menggu_melee_weapon1
+is_a melee_weapon1
+
+def menggu_melee_weapon2
+is_a melee_weapon2
+
+def menggu_melee_weapon3
+is_a melee_weapon3
+
+def menggu_infantry_armor1
+is_a infantry_armor1
+
+def menggu_infantry_armor2
+is_a infantry_armor2
+
+def menggu_infantry_armor3
+is_a infantry_armor3
+
+def menggu_cavalry_armor1
+is_a cavalry_armor1
+
+def menggu_cavalry_armor2
+is_a cavalry_armor2
+
+def menggu_cavalry_armor3
+is_a cavalry_armor3
+
+def menggu_archer_weapon1
+is_a archer_weapon1
+
+def menggu_archer_weapon2
+is_a archer_weapon2
+
+def menggu_archer_weapon3
+is_a archer_weapon3
+
+def menggu_archer_armor1
+is_a archer_armor1
+
+def menggu_archer_armor2
+is_a archer_armor2
+
+def menggu_archer_armor3
+is_a archer_armor3
+
+def menggu_archer_range1
+is_a archer_range1
+
+def menggu_archer_range2
+is_a archer_range2
+
+def menggu_archer_range3
+is_a archer_range3
+
+def menggu_archer_sightrange1
+is_a archer_sightrange1
+
+def menggu_archer_sightrange2
+is_a archer_sightrange2
+
+def menggu_archer_sightrange3
+is_a archer_sightrange3
+
+def b_melee_weapon1
+is_a melee_weapon1
+
+def b_melee_weapon2
+is_a melee_weapon2
+
+def b_melee_weapon3
+is_a melee_weapon3
+
+def b_infantry_armor1
+is_a infantry_armor1
+
+def b_infantry_armor2
+is_a infantry_armor2
+
+def b_infantry_armor3
+is_a infantry_armor3
+
+def b_cavalry_armor1
+is_a cavalry_armor1
+
+def b_cavalry_armor2
+is_a cavalry_armor2
+
+def b_cavalry_armor3
+is_a cavalry_armor3
+
+def b_archer_weapon1
+is_a archer_weapon1
+
+def b_archer_weapon2
+is_a archer_weapon2
+
+def b_archer_weapon3
+is_a archer_weapon3
+
+def b_archer_armor1
+is_a archer_armor1
+
+def b_archer_armor2
+is_a archer_armor2
+
+def b_archer_armor3
+is_a archer_armor3
+
+def b_archer_range1
+is_a archer_range1
+
+def b_archer_range2
+is_a archer_range2
+
+def b_archer_range3
+is_a archer_range3
+
+def b_archer_sightrange1
+is_a archer_sightrange1
+
+def b_archer_sightrange2
+is_a archer_sightrange2
+
+def b_archer_sightrange3
+is_a archer_sightrange3
+
+
+def finger_wrench;  ָ
+title 82176
+
+
+def parthian_tactics;      ս  
+title 82177
+
+def ch_finger_wrench;  ָ
+is_a finger_wrench
+
+def ch_parthian_tactics;      ս  
+is_a parthian_tactics
+
+def menggu_finger_wrench;  ָ
+is_a finger_wrench
+
+def menggu_parthian_tactics;      ս  
+is_a parthian_tactics
+
+def b_finger_wrench;  ָ
+is_a finger_wrench
+
+def b_parthian_tactics;      ս  
+is_a parthian_tactics
+
+
+def reinforced_ship;  ֻ ӹ 
+title 82227
+
+def increase_carrying_capacity1;          1
+title 82228
+
+def increase_ship_speed;        
+title 82229
+
+
+
+def increase_carrying_capacity2;          2
+title 82230
+
+
+def gunboat_technology1; ڽ  Ƽ 
+title 82231
+
+
+def gunboat_technology2
+title 82232
+
+
+def shipwright; 촬  
+title 82233
+
+def ch_reinforced_ship;  ֻ ӹ 
+is_a reinforced_ship
+
+def ch_increase_carrying_capacity1;          1
+is_a increase_carrying_capacity1
+
+def ch_increase_ship_speed;        
+is_a increase_ship_speed
+
+def ch_increase_carrying_capacity2;          2
+is_a increase_carrying_capacity2
+
+def ch_gunboat_technology1; ڽ  Ƽ 
+is_a gunboat_technology1
+
+def ch_gunboat_technology2
+is_a gunboat_technology2
+
+def ch_shipwright; 촬  
+is_a shipwright
+
+def menggu_reinforced_ship;  ֻ ӹ 
+is_a reinforced_ship
+
+def menggu_increase_carrying_capacity1;          1
+is_a increase_carrying_capacity1
+
+def menggu_increase_ship_speed;        
+is_a increase_ship_speed
+
+def menggu_increase_carrying_capacity2;          2
+is_a increase_carrying_capacity2
+
+def menggu_gunboat_technology1; ڽ  Ƽ 
+is_a gunboat_technology1
+
+def menggu_gunboat_technology2
+is_a gunboat_technology2
+
+def menggu_shipwright; 촬  
+is_a shipwright
+
+def b_reinforced_ship;  ֻ ӹ 
+is_a reinforced_ship
+
+def b_increase_carrying_capacity1;          1
+is_a increase_carrying_capacity1
+
+def b_increase_ship_speed;        
+is_a increase_ship_speed
+
+def b_increase_carrying_capacity2;          2
+is_a increase_carrying_capacity2
+
+def b_gunboat_technology1; ڽ  Ƽ 
+is_a gunboat_technology1
+
+def b_gunboat_technology2
+is_a gunboat_technology2
+
+def b_shipwright; 촬  
+is_a shipwright
+
+
+def enlist;    
+title 82237
+
+def ch_enlist;    
+is_a enlist
+
+def menggu_enlist
+is_a enlist
+
+def b_enlist
+is_a enlist
+
+def supply;    
+title 82174
+
+def ch_supply
+is_a supply
+
+def menggu_supply
+is_a supply
+
+def b_supply
+is_a supply
+
+def lineage;Ѫͳ
+title 82172
+
+def ch_lineage;Ѫͳ
+is_a lineage
+
+def menggu_lineage
+is_a lineage
+
+def b_lineage
+is_a lineage
+
+
+def animal_husbandry;    
+title 82173
+
+def ch_animal_husbandry;    
+is_a animal_husbandry
+
+def menggu_animal_husbandry
+is_a animal_husbandry
+
+def b_animal_husbandry
+is_a animal_husbandry
+
+
+def guard;    
+title 82175
+
+def ch_guard
+is_a guard
+
+def menggu_guard
+is_a guard
+
+def b_guard
+is_a guard
+
+
+def fence;Χǽ
+title 82238
+
+def ch_fence
+is_a fence
+
+def menggu_fence
+is_a fence
+
+def b_fence
+is_a fence
+
+
+def great_wall; й    ǣ   ɫ Ƽ   
+title 82261
+
+def rocketry; й          ɫ Ƽ   
+title 82674
+
+def nomadic;       ɹ   ɫ Ƽ   
+title 82262
+
+def practice;    
+title 82703
+
+def mason1;ʯ  1
+title 82239
+
+def mason2;ʯ  2
+title 82240
+
+def strengthen_building1;    ѧ1
+title 82241
+
+def strengthen_building2;    ѧ2
+title 82242
+
+def ch_mason1;ʯ  1
+is_a mason1
+
+def ch_mason2;ʯ  2
+is_a mason2
+
+def ch_strengthen_building1;    ѧ1
+is_a strengthen_building1
+
+def ch_strengthen_building2;    ѧ2
+is_a strengthen_building2
+
+def menggu_mason1;ʯ  1
+is_a mason1
+
+def menggu_mason2;ʯ  2
+is_a mason2
+
+def menggu_strengthen_building1;    ѧ1
+is_a strengthen_building1
+
+def menggu_strengthen_building2;    ѧ2
+is_a strengthen_building2
+
+
+
+def near_perforation;     
+title 82243
+
+def chemical;  ѧ
+title 82244
+
+def archery_slot;     
+title 82245
+
+def engineering_technician;   ̼ ʦ
+title 82246
+
+def pedal_crane;  ̤   ػ 
+title 82247
+
+def ch_near_perforation;     
+is_a near_perforation
+
+def ch_chemical;  ѧ
+is_a chemical
+
+def ch_archery_slot;     
+is_a archery_slot
+
+def ch_engineering_technician;   ̼ ʦ
+is_a engineering_technician
+
+def ch_pedal_crane;  ̤   ػ 
+is_a pedal_crane
+
+def menggu_near_perforation;     
+is_a near_perforation
+
+def menggu_chemical;  ѧ
+is_a chemical
+
+def menggu_archery_slot;     
+is_a archery_slot
+
+def menggu_engineering_technician;   ̼ ʦ
+is_a engineering_technician
+
+def menggu_pedal_crane;  ̤   ػ 
+is_a pedal_crane
+
+def b_near_perforation;     
+is_a near_perforation
+
+def b_chemical;  ѧ
+is_a chemical
+
+def b_archery_slot;     
+is_a archery_slot
+
+def b_engineering_technician;   ̼ ʦ
+is_a engineering_technician
+
+def b_pedal_crane;  ̤   ػ 
+is_a pedal_crane
+
+def u_goldmining1; ɽ 
+title 82713
+
+def u_goldmining2; 꾮 ɽ 
+title 82714
+
+def u_quarrying1;  ʯ  
+title 82715
+
+def u_quarrying2; 꾮  ʯ  
+title 82716
+
+def u_double_edged_ax;˫ и 
+title 82717
+
+def u_bow_bell;    
+title 82718
+
+def u_double_saw;˫ ˾ 
+title 82719
+
+def ch_u_goldmining1; ɽ 
+is_a u_goldmining1
+
+def ch_u_goldmining2
+is_a u_goldmining2
+
+def ch_u_quarrying1;  ʯ  
+is_a u_quarrying1
+
+def ch_u_quarrying2; 꾮  ʯ  
+is_a u_quarrying2
+
+def ch_u_double_edged_ax;˫ и 
+is_a u_double_edged_ax
+
+def ch_u_bow_bell;    
+is_a u_bow_bell
+
+def ch_u_double_saw;˫ ˾ 
+is_a u_double_saw
+
+
+def menggu_u_goldmining1; ɽ 
+is_a u_goldmining1
+
+def menggu_u_goldmining2
+is_a u_goldmining2
+
+def menggu_u_quarrying1;  ʯ  
+is_a u_quarrying1
+
+def menggu_u_quarrying2; 꾮  ʯ  
+is_a u_quarrying2
+
+def menggu_u_double_edged_ax;˫ и 
+is_a u_double_edged_ax
+
+def menggu_u_bow_bell;    
+is_a u_bow_bell
+
+def menggu_u_double_saw;˫ ˾ 
+is_a u_double_saw
+
+def b_u_goldmining1; ɽ 
+is_a u_goldmining1
+
+def b_u_goldmining2
+is_a u_goldmining2
+
+def b_u_quarrying1;  ʯ  
+is_a u_quarrying1
+
+def b_u_quarrying2; 꾮  ʯ  
+is_a u_quarrying2
+
+def b_u_double_edged_ax;˫ и 
+is_a u_double_edged_ax
+
+def b_u_bow_bell;    
+is_a u_bow_bell
+
+def b_u_double_saw;˫ ˾ 
+is_a u_double_saw
+
+
+def horse_yoke;    
+title 82257
+
+def heavy_plow;    
+title 82258
+
+def crop_rotation;    
+title 82259
+
+def sewing_machine1;֯    
+title 82253
+
+def sewing_machine2
+title 82254
+
+def wheelbarrow;       Ƴ 
+title 82251
+
+def trolley;   Ƴ 
+title 82252
+
+def ch_horse_yoke;    
+is_a horse_yoke
+
+def ch_heavy_plow;    
+is_a heavy_plow
+
+def ch_crop_rotation;    
+is_a crop_rotation
+
+def ch_sewing_machine1;֯    
+is_a sewing_machine1
+
+def ch_sewing_machine2
+is_a sewing_machine2
+
+def ch_wheelbarrow;       Ƴ 
+is_a wheelbarrow
+
+def ch_trolley;   Ƴ 
+is_a trolley
+
+def menggu_horse_yoke;    
+is_a horse_yoke
+
+def menggu_heavy_plow;    
+is_a heavy_plow
+
+def menggu_crop_rotation;    
+is_a crop_rotation
+
+def menggu_sewing_machine1;֯    
+is_a sewing_machine1
+
+def menggu_sewing_machine2
+is_a sewing_machine2
+
+def menggu_wheelbarrow;       Ƴ 
+is_a wheelbarrow
+
+def menggu_trolley;   Ƴ 
+is_a trolley
+
+def b_horse_yoke;    
+is_a horse_yoke
+
+def b_heavy_plow;    
+is_a heavy_plow
+
+def b_crop_rotation;    
+is_a crop_rotation
+
+def b_sewing_machine1;֯    
+is_a sewing_machine1
+
+def b_sewing_machine2
+is_a sewing_machine2
+
+def b_wheelbarrow;       Ƴ 
+is_a wheelbarrow
+
+def b_trolley;   Ƴ 
+is_a trolley
+
+def town_scout;    t  
+title 82255
+
+def ch_town_scout;    t  
+is_a town_scout;    t  
+
+def menggu_town_scout;    t  
+is_a town_scout;    t  
+
+def b_town_scout;    t  
+is_a town_scout;    t  
+
+
+def town_patrol;    Ѳ  
+title 82256
+
+def ch_town_patrol;    Ѳ  
+is_a town_patrol;    Ѳ  
+
+def menggu_town_patrol;    Ѳ  
+is_a town_patrol;    Ѳ  
+
+def b_town_patrol;    Ѳ  
+is_a town_patrol;    Ѳ  
+
+
+; research
+
+
+
+def a_lobby
+title 82264
+alert 76711
+shortcut c
+
+
+def summon_servant_army
+title 82680
+
+;building
+
+def mill
+is_a building
+title 82116
+
+def ch_mill
+is_a mill
+
+def menggu_mill
+is_a mill
+
+def b_mill
+is_a mill
+
+def farmland1
+is_a farm
+title 82707
+
+def farmland2
+is_a farm
+title 82708
+
+def farmland3
+is_a farm
+title 82709
+
+def farmland4
+is_a farm
+title 82710
+
+def ch_farmland1
+is_a farmland1
+
+def ch_farmland2
+is_a farmland2
+
+def ch_farmland3
+is_a farmland3
+
+def ch_farmland4
+is_a farmland4
+
+def menggu_farmland1
+is_a farmland1
+
+def menggu_farmland2
+is_a farmland2
+
+def menggu_farmland3
+is_a farmland3
+
+def menggu_farmland4
+is_a farmland4
+
+def b_farmland1
+is_a farmland1
+
+def b_farmland2
+is_a farmland2
+
+def b_farmland3
+is_a farmland3
+
+def b_farmland4
+is_a farmland4
+
+
+def house
+is_a building
+title 82107
+shortcut f
+
+
+def ch_house
+is_a house
+
+def menggu_house
+is_a house
+
+def b_house
+is_a house
+
+
+
+def lumbermill1
+is_a building
+noise repeat 15 1052
+title 82101 82110
+shortcut l
+
+def lumbermill2
+is_a lumbermill1
+title 82102 82110
+
+def lumbermill3
+is_a lumbermill1
+title 82103 82110
+
+def lumbermill4
+is_a lumbermill1
+title 82104 82110
+
+def ch_lumbermill1
+is_a lumbermill1
+
+def ch_lumbermill2
+is_a lumbermill2
+
+def ch_lumbermill3
+is_a lumbermill3
+
+def ch_lumbermill4
+is_a lumbermill4
+
+def menggu_lumbermill1
+is_a lumbermill1
+
+def menggu_lumbermill2
+is_a lumbermill2
+
+def menggu_lumbermill3
+is_a lumbermill3
+
+def menggu_lumbermill4
+is_a lumbermill4
+
+def b_lumbermill1
+is_a lumbermill1
+
+def b_lumbermill2
+is_a lumbermill2
+
+def b_lumbermill3
+is_a lumbermill3
+
+def b_lumbermill4
+is_a lumbermill4
+
+def mine1
+is_a building
+title 82101 82111
+noise repeat 30 76809
+
+def mine2
+is_a mine1
+title 82102 82111
+
+def mine3
+is_a mine1
+title 82103 82111
+
+def ch_mine1
+is_a mine1
+
+def ch_mine2
+is_a mine2
+
+def ch_mine3
+is_a mine3
+
+def menggu_mine1
+is_a mine1
+
+def menggu_mine2
+is_a mine2
+
+def menggu_mine3
+is_a mine3
+
+def b_mine1
+is_a mine1
+
+def b_mine2
+is_a mine2
+
+def b_mine3
+is_a mine3
+
+def quarry1
+is_a building
+title 82720
+
+def quarry2
+is_a building
+title 82721
+
+def quarry3
+is_a building
+title 82722
+def ch_quarry1
+
+
+is_a quarry1
+
+def ch_quarry2
+is_a quarry2
+
+def ch_quarry3
+is_a quarry3
+
+
+def menggu_quarry1
+is_a quarry1
+
+def menggu_quarry2
+is_a quarry2
+
+def menggu_quarry3
+is_a quarry3
+
+def b_quarry1
+is_a quarry1
+
+def b_quarry2
+is_a quarry2
+
+def b_quarry3
+is_a quarry3
+
+
+def barracks
+is_a building
+title 82112
+
+def barracks2
+is_a barracks
+title 82712
+
+def ch_barracks
+is_a barracks
+noise repeat 30 76741
+color violetred
+shortcut b
+
+def menggu_barracks
+is_a barracks
+noise repeat 110 76803
+
+def b_barracks
+is_a barracks
+noise repeat 9 76808
+
+def ch_barracks2
+is_a barracks2
+noise repeat 30 76741
+color violetred
+shortcut b
+
+def menggu_barracks2
+is_a barracks2
+noise repeat 110 76803
+
+def b_barracks2
+is_a barracks2
+noise repeat 9 76808
+
+
+def towncenter1
+is_a building
+title 82101 82105
+noise repeat 6 1064
+noise_if_damaged loop 1018 .5; half volume
+noise_if_very_damaged loop 1018
+shortcut h
+
+def towncenter2
+is_a towncenter1
+title 82102 82105
+noise repeat 6 1307
+noise_if_damaged loop 1018 .5; half volume
+noise_if_very_damaged loop 1018
+shortcut h
+
+def towncenter3
+is_a towncenter2
+title 82103 82105
+noise repeat 6 1308
+noise_if_damaged loop 1018 .5; half volume
+noise_if_very_damaged loop 1018
+shortcut h
+
+def towncenter4
+is_a towncenter3
+title 82104 82105
+noise repeat 6 1307
+noise_if_damaged loop 1018 .5; half volume
+noise_if_very_damaged loop 1018
+shortcut h
+
+def towncenter-b
+is_a towncenter2
+title 82725 82105
+
+def towncenter-c
+is_a towncenter3
+title 82726 82105
+
+def towncenter-d
+is_a towncenter4
+title 82727 82105
+
+def towncenter-e
+is_a towncenter3
+title 82726 82105
+
+def towncenter-f
+is_a towncenter4
+title 82727 82105
+
+def towncenter-g
+is_a towncenter4
+title 82727 82105
+
+def ch_towncenter1
+is_a towncenter1
+
+def ch_towncenter1.1
+is_a ch_towncenter1
+
+def ch_towncenter2
+is_a towncenter2
+
+def ch_towncenter3
+is_a towncenter3
+
+def ch_towncenter4
+is_a towncenter4
+
+def ch_towncenter-b
+is_a towncenter-b
+
+def ch_towncenter-c
+is_a towncenter-c
+
+def ch_towncenter-d
+is_a towncenter-d
+
+def ch_towncenter-e
+is_a towncenter-e
+
+def ch_towncenter-f
+is_a towncenter-f
+
+def ch_towncenter-g
+is_a towncenter-g
+
+def b_towncenter1
+is_a towncenter1
+
+def b_towncenter2
+is_a towncenter2
+
+def b_towncenter3
+is_a towncenter3
+
+def b_towncenter4
+is_a towncenter4
+
+def b_towncenter-b
+is_a towncenter-b
+
+def b_towncenter-c
+is_a towncenter-c
+
+def b_towncenter-d
+is_a towncenter-d
+
+def b_towncenter-e
+is_a towncenter-e
+
+def b_towncenter-f
+is_a towncenter-f
+
+def b_towncenter-g
+is_a towncenter-g
+
+
+def camp1
+is_a building
+title 82101 82106
+noise repeat 40 76795
+noise_if_damaged loop 76796 .5; half volume
+noise_if_very_damaged loop 76796
+shortcut h
+
+def camp2
+is_a building
+title 82102 82106
+noise repeat 28 76797
+shortcut h
+
+def camp3
+is_a building
+title 82103 82106
+noise repeat 40 76798
+shortcut h
+
+def camp4
+is_a building
+title 82104 82106
+noise repeat 40 76798
+shortcut h
+
+def camp-b
+is_a camp2
+title 82725 82106
+
+def camp-c
+is_a camp3
+title 82726 82106
+
+def camp-d
+is_a camp4
+title 82727 82106
+
+def camp-e
+is_a camp3
+title 82726 82106
+
+def camp-f
+is_a camp4
+title 82727 82106
+
+def camp-g
+is_a camp4
+title 82727 82106
+
+
+def menggu_camp1
+is_a camp1
+
+def movekhan_camp1
+is_a camp1
+title 82678
+move 76802
+
+def movekhan_camp2
+is_a movekhan_camp1
+
+def movekhan_camp3
+is_a movekhan_camp2
+
+def movekhan_camp4
+is_a movekhan_camp3
+
+def menggu_camp2
+is_a camp2
+
+def menggu_camp3
+is_a camp3
+
+def menggu_camp4
+is_a camp4
+
+def menggu_camp-b
+is_a camp-b
+
+def menggu_camp-c
+is_a camp-c
+
+def menggu_camp-d
+is_a camp-d
+
+def menggu_camp-e
+is_a camp-e
+
+def menggu_camp-f
+is_a camp-f
+
+def menggu_camp-g
+is_a camp-g
+
+
+def blacksmith
+is_a building
+title 82115
+noise repeat 15 1300
+shortcut k
+
+def ch_blacksmith
+is_a blacksmith
+noise repeat 20 76733
+
+def menggu_blacksmith
+is_a blacksmith
+
+def b_blacksmith
+is_a blacksmith
+
+
+def stables
+is_a building
+title 82114
+noise repeat 15 1305 1306
+shortcut s
+
+def ch_stables
+is_a stables
+
+def menggu_stables
+is_a stables
+
+def b_stables
+is_a stables
+
+def factory
+is_a building
+title 82119
+shortcut w
+
+def ch_factory
+is_a factory
+noise repeat 15 1321
+
+def menggu_factory
+is_a factory
+noise repeat 6 76801
+
+def b_factory
+is_a factory
+noise repedit 10 76810
+
+
+def monastery
+is_a building
+title 82120
+shortcut m
+
+def ch_temple
+is_a monastery
+noise repeat 46 76712 76713
+
+def menggu_temple
+is_a monastery
+noise repeat 15 1319
+
+def b_church
+is_a monastery
+noise repeat 40 76811
+
+
+def archer_battalion
+is_a building
+title 82113
+shortcut a
+
+def ch_archer_battalion
+is_a archer_battalion
+
+def menggu_archer_battalion
+is_a archer_battalion
+
+def b_archer_battalion
+is_a archer_battalion
+
+
+def tower1
+is_a guardtower
+title 82121
+shortcut t
+
+def tower2
+is_a tower1
+title 82122
+
+def tower3
+is_a tower1
+title 82123
+
+def tower-b
+is_a tower2
+title 82122 82728
+
+def tower-c
+is_a tower3
+title 82123 82729
+
+def ch_tower1
+is_a tower1
+
+def ch_tower2
+is_a tower2
+
+def ch_tower3
+is_a tower3
+
+def ch_tower-b
+is_a tower-b
+
+def ch_tower-c
+is_a tower-c
+
+def menggu_tower1
+is_a tower1
+
+def menggu_tower2
+is_a tower2
+
+def menggu_tower3
+is_a tower3
+
+def menggu_tower-b
+is_a tower-b
+
+def menggu_tower-c
+is_a tower-c
+
+def b_tower1
+is_a tower1
+
+def b_tower2
+is_a tower2
+
+def b_tower3
+is_a tower3
+
+def b_tower-b
+is_a tower-b
+
+def b_tower-c
+is_a tower-c
+
+
+
+def cannon_tower
+is_a building
+title 82124
+launch_attack 76917
+attack_hit 76921
+
+def ch_cannon_tower
+is_a cannon_tower
+
+def menggu_cannon_tower
+is_a cannon_tower
+
+def b_cannon_tower
+is_a cannon_tower
+
+def wall1
+is_a building
+title 82125
+shortcut w
+
+def wall2
+is_a wall1
+title 82126
+
+def wall3
+is_a wall1
+title 82127
+
+def wall-c
+is_a wall3
+title 82127 82728
+
+
+def ch_wall1
+is_a wall1
+
+def ch_wall2
+is_a wall2
+
+def ch_wall3
+is_a wall3
+
+
+def menggu_wall1
+is_a wall1
+
+def menggu_wall2
+is_a wall2
+
+def menggu_wall3
+is_a wall3
+
+
+def b_wall1
+is_a wall1
+
+def b_wall2
+is_a wall2
+
+def b_wall3
+is_a wall3
+
+
+def gate1
+is_a building
+title 82128
+shortcut g
+
+def gate2
+is_a gate1
+title 82129
+
+
+def ch_gate1
+is_a gate1
+
+def ch_gate2
+is_a gate2
+
+
+def menggu_gate1
+is_a gate1
+
+def menggu_gate2
+is_a gate2
+
+
+def b_gate1
+is_a gate1
+
+def b_gate2
+is_a gate2
+
+
+def shipyard
+is_a building
+title 82130
+noise repeat 180 76812
+shortcut s
+
+def shipyard2
+is_a shipyard1
+title 82723
+
+
+def ch_shipyard
+is_a shipyard
+
+def menggu_shipyard
+is_a shipyard
+
+def b_shipyard
+is_a shipyard
+
+def ch_shipyard2
+is_a shipyard2
+
+def menggu_shipyard2
+is_a shipyard2
+
+def b_shipyard2
+is_a shipyard2
+
+def castle
+is_a guardtower
+title 82118
+shortcut c
+
+def ch_castle
+is_a castle
+
+def menggu_castle
+is_a castle
+
+def b_castle
+is_a castle
+
+def school
+is_a building
+title 82117
+noise repeat 30 76868
+
+def ch_school
+is_a school
+
+def menggu_school
+is_a school
+
+def b_school
+is_a school
+
+
+; units
+
+def workman
+is_a walking_unit
+title 4399
+noise_when_exploiting_goldmine repeat 1.6 1038 ; 1081
+noise_when_exploiting_wood repeat 1.5 1034 1035 1036 1037 10371
+noise_when_building repeat 4 1046 1048 1049
+noise_when_exploiting_stone_mine repeat 1.6 76940
+noise_when_exploiting_supply_station repeat 1.6 76942 76943
+attack_hit 1008
+store_resource_0 1099
+store_resource_1 1098
+store_resource_2 76939
+store_resource_3 76941
+death if_me 13111 else 13112
+keyboard worker
+shortcut p
+
+def villagers
+is_a workman
+title 82248
+order_ok if_me 76856 76861 else 1094 1095 1096
+death if_me 76853 76854 else 1309
+
+def menggu_herdsmen
+is_a workman
+title 82249
+attack_hit 1041
+
+def serf
+is_a workman
+title 82250
+
+def archer1
+is_a walking_unit
+title 82145
+complete 76723
+noise repeat 300 76723
+launch_attack 1042
+attack_hit 1043
+death if_me 13111 else 13112
+keyboard soldier2
+shortcut a
+
+def archer2
+is_a walking_unit
+title 82146
+complete 76724
+launch_attack 76721
+attack_hit 76722
+shortcut a
+keyboard soldier2
+
+
+def archer3
+is_a archer2
+title 82147
+
+def archer-b
+is_a archer2
+
+def archer-c
+is_a archer3
+
+def archer-d
+is_a archer3
+
+def ch_archer1
+is_a archer1
+noise repeat 300 76723
+order_ok if_me 76844 76845 else 1094 1095 1096
+death if_me 76849 76850 else 1309
+
+def ch_archer2
+is_a archer2
+death if_me 76849 76850 else 1309
+
+def ch_archer3
+is_a archer3
+
+def ch_archer-b
+is_a archer-b
+
+def ch_archer-c
+is_a archer-c
+
+def ch_archer-d
+is_a archer-d
+
+
+def menggu_archer1
+is_a archer1
+complete 76742
+noise repeat 300 76742
+launch_attack 76743
+
+def menggu_archer2
+is_a archer2
+complete 76742
+noise repeat 300 76742
+launch_attack 76743
+
+def menggu_archer3
+is_a archer3
+complete 76742
+noise repeat 300 76742
+launch_attack 76743
+
+def menggu_archer-b
+is_a menggu_archer2
+
+def menggu_archer-c
+is_a menggu_archer3
+
+def menggu_archer-d
+is_a menggu_archer3
+
+
+def b_archer1
+is_a archer1
+
+def b_archer2
+is_a archer2
+
+def b_archer3
+is_a archer3
+
+def b_archer-b
+is_a archer-b
+
+def b_archer-c
+is_a archer-c
+
+def b_archer-d
+is_a archer-d
+
+def sk1
+is_a walking_unit
+title 82148
+complete 76729
+launch_attack 76867
+attack_hit 76745
+keyboard soldier2
+shortcut a
+
+def sk2
+is_a sk1
+title 82149
+
+def sk3
+is_a sk2
+title 82150
+
+def sk-b
+is_a sk2
+
+def sk-c
+is_a sk3
+
+def sk-d
+is_a sk3
+
+
+def ch_sk1
+is_a sk1
+order_ok if_me 76844 76845 else 1094 1095 1096
+death if_me 76849 76850 else 1309
+
+def ch_sk2
+is_a sk2
+order_ok if_me 76844 76845 else 1094 1095 1096
+death if_me 76849 76850 else 1309
+
+def ch_sk3
+is_a sk3
+order_ok if_me 76844 76845 else 1094 1095 1096
+death if_me 76849 76850 else 1309
+
+def ch_sk-b
+is_a ch_sk2
+
+def ch_sk-c
+is_a ch_sk3
+
+def ch_sk-d
+is_a ch_sk3
+
+def menggu_sk1
+is_a sk1
+
+def menggu_sk2
+is_a sk2
+
+def menggu_sk3
+is_a sk3
+
+def menggu_sk-b
+is_a menggu_sk2
+
+def menggu_sk-c
+is_a menggu_sk3
+
+def menggu_sk-d
+is_a menggu_sk3
+
+
+def b_sk1
+is_a sk1
+
+def b_sk2
+is_a sk2
+
+def b_sk3
+is_a sk3
+
+def b_sk-b
+is_a b_sk2
+
+def b_sk-c
+is_a b_sk3
+
+def b_sk-d
+is_a b_sk3
+
+def cavalry_archer1
+is_a unit
+title 82151
+noise repeat 300 76747 76748 76749
+complete 76723
+launch_attack 1042
+attack_hit 1043
+death if_me 131101 else 13093
+move 76751 76751
+keyboard soldier3
+shortcut k
+
+def cavalry_archer2
+is_a cavalry_archer1
+noise repeat 300 76705
+title 82152
+complete 76724
+launch_attack 76721
+attack_hit 76722
+move 76708 76708 
+
+def cavalry_archer-b
+is_a cavalry_archer2
+
+def ch_cavalry_archer1
+is_a cavalry_archer1
+order_ok if_me 76862 else 1094 1095 1096
+
+def ch_cavalry_archer2
+is_a cavalry_archer2
+order_ok if_me 76855 else 1094 1095 1096
+
+def ch_cavalry_archer-b
+is_a ch_cavalry_archer2
+
+def menggu_cavalry_archer1
+is_a cavalry_archer1
+complete 76742
+launch_attack 76743
+
+def menggu_cavalry_archer2
+is_a cavalry_archer2
+complete 76742
+launch_attack 76756 76757 76758
+attack_hit 76759
+
+def menggu_cavalry_archer-b
+is_a menggu_cavalry_archer2
+
+def b_cavalry_archer1
+is_a cavalry_archer1
+
+def b_cavalry_archer2
+is_a cavalry_archer2
+
+def b_cavalry_archer-b
+is_a cavalry_archer-b
+def gen1
+is_a unit
+title 82153
+noise repeat 300 76747 76748 76749
+move 76751 76751
+death if_me 131101 else 13093
+complete 76729
+launch_attack 76867
+attack_hit 76745
+keyboard soldier3
+
+def gen2
+is_a gen1
+title 82686 82153
+
+def feidao;飞刀女兵
+launch_attack 76825
+attack_hit 76826
+
+def gen-b
+is_a gen2
+
+def ch_gen1
+is_a gen1
+
+def ch_gen2
+is_a gen2
+
+def ch_gen-b
+is_a gen-b
+
+def menggu_gen1
+is_a gen1
+
+def menggu_gen2
+is_a gen2
+
+def menggu_gen-b
+is_a gen-b
+
+def b_gen1
+is_a gen1
+
+def b_gen2
+is_a gen2
+
+def b_gen-b
+is_a gen-b
+
+def slinger
+is_a walking_unit
+title 82154
+launch_attack 76869
+attack_hit 76870 76871
+keyboard soldier2
+
+def ch_slinger
+is_a slinger
+order_ok if_me 76844 76845 else 1094 1095 1096
+death if_me 76849 76850 else 1309
+
+def menggu_slinger
+is_a slinger
+
+def b_slinger
+is_a slinger
+
+def musketeer;  ǹ  
+is_a walking_unit
+title 82679
+noise repeat 25 76935 76936 76937 76938
+attack_hit 76875
+shortcut m
+keyboard soldier1
+
+def ch_musketeer
+is_a musketeer
+launch_attack 76873
+order_ok if_me 76844 76845 else 1094 1095 1096
+death if_me 76849 76850 else 1309
+
+def menggu_musketeer
+is_a musketeer
+launch_attack 76873
+
+def b_musketeer
+is_a musketeer
+launch_attack 76873
+
+def melee_infantry1
+is_a walking_unit
+title 82131
+launch_attack 76880
+attack_hit 76877 76878 76879
+shortcut f
+keyboard soldier1
+
+def melee_infantry2
+is_a walking_unit
+complete 76726
+noise repeat 300 76726
+launch_attack 76728
+attack_hit 1040 1041 76737	
+keyboard soldier1
+shortcut f
+
+def melee_infantry3
+is_a melee_infantry2
+
+
+def melee_infantry4
+is_a walking_unit
+complete 76727
+noise repeat 300 76727
+launch_attack 76725
+attack_hit 1040 1041 10401
+keyboard soldier1
+shortcut f
+
+def melee_infantry5
+is_a melee_infantry4
+
+def melee_infantry-b
+is_a melee_infantry2
+
+def melee_infantry-c
+is_a melee_infantry3
+
+def melee_infantry-d
+is_a melee_infantry4
+
+def melee_infantry-e
+is_a melee_infantry5
+
+def melee_infantry-f
+is_a melee_infantry3
+
+def melee_infantry-g
+is_a melee_infantry4
+
+def melee_infantry-h
+is_a melee_infantry5
+
+def melee_infantry-i
+is_a melee_infantry4
+
+def melee_infantry-j
+is_a melee_infantry5
+
+def melee_infantry-k
+is_a melee_infantry5
+
+def melee_infantry11
+is_a melee_infantry1
+
+def melee_infantry22
+is_a melee_infantry2
+
+def melee_infantry33
+is_a melee_infantry3
+
+def melee_infantry44
+is_a melee_infantry4
+
+def melee_infantry55
+is_a melee_infantry5
+
+def melee_infantry-bb
+is_a melee_infantry-b
+
+def melee_infantry-cc
+is_a melee_infantry-c
+
+def melee_infantry-dd
+is_a melee_infantry-d
+
+def melee_infantry-ee
+is_a melee_infantry-e
+
+def melee_infantry-ff
+is_a melee_infantry-f
+
+def melee_infantry-gg
+is_a melee_infantry-g
+
+def melee_infantry-hh
+is_a melee_infantry-h
+
+def melee_infantry-ii
+is_a melee_infantry-i
+
+def melee_infantry-jj
+is_a melee_infantry-j
+
+def melee_infantry-kk
+is_a melee_infantry-k
+
+
+def ch_melee_infantry1
+is_a melee_infantry1
+order_ok if_me 76844 76845 else 1094 1095 1096
+death if_me 76849 76850 else 1309
+
+def ch_melee_infantry2
+is_a melee_infantry2
+title 82132
+order_ok if_me 76844 76845 else 1094 1095 1096
+death if_me 76849 76850 else 1309
+
+def ch_melee_infantry3
+is_a ch_melee_infantry2
+title 82133
+
+def ch_melee_infantry4
+is_a melee_infantry4
+title 82134
+order_ok if_me 76844 76845 else 1094 1095 1096
+death if_me 76849 76850 else 1309
+
+def ch_melee_infantry5
+is_a ch_melee_infantry4
+title 82135
+
+def ch_melee_infantry-b
+is_a ch_melee_infantry2
+
+def ch_melee_infantry-c
+is_a ch_melee_infantry3
+
+def ch_melee_infantry-d
+is_a ch_melee_infantry4
+
+def ch_melee_infantry-e
+is_a ch_melee_infantry5
+
+def ch_melee_infantry-f
+is_a ch_melee_infantry3
+
+def ch_melee_infantry-g
+is_a ch_melee_infantry4
+
+def ch_melee_infantry-h
+is_a ch_melee_infantry5
+
+def ch_melee_infantry-i
+is_a ch_melee_infantry4
+
+def ch_melee_infantry-j
+is_a ch_melee_infantry5
+
+def ch_melee_infantry-k
+is_a ch_melee_infantry5
+
+def ch_melee_infantry11
+is_a melee_infantry11
+order_ok if_me 76844 76845 else 1094 1095 1096
+death if_me 76849 76850 else 1309
+
+def ch_melee_infantry22
+is_a melee_infantry22
+title 82132
+order_ok if_me 76844 76845 else 1094 1095 1096
+death if_me 76849 76850 else 1309
+
+def ch_melee_infantry33
+is_a ch_melee_infantry2
+title 82133
+
+def ch_melee_infantry44
+is_a melee_infantry4
+title 82134
+order_ok if_me 76844 76845 else 1094 1095 1096
+death if_me 76849 76850 else 1309
+
+def ch_melee_infantry55
+is_a ch_melee_infantry4
+title 82135
+
+def ch_melee_infantry-bb
+is_a ch_melee_infantry2
+
+def ch_melee_infantry-cc
+is_a ch_melee_infantry3
+
+def ch_melee_infantry-dd
+is_a ch_melee_infantry4
+
+def ch_melee_infantry-ee
+is_a ch_melee_infantry5
+
+def ch_melee_infantry-ff
+is_a ch_melee_infantry3
+
+def ch_melee_infantry-gg
+is_a ch_melee_infantry4
+
+def ch_melee_infantry-hh
+is_a ch_melee_infantry5
+
+def ch_melee_infantry-ii
+is_a ch_melee_infantry4
+
+def ch_melee_infantry-jj
+is_a ch_melee_infantry5
+
+def ch_melee_infantry-kk
+is_a ch_melee_infantry5
+
+def menggu_melee_infantry1
+is_a melee_infantry1
+
+def menggu_melee_infantry2
+is_a melee_infantry2
+title 82137
+launch_attack 76881
+attack_hit 76882 76883
+
+def menggu_melee_infantry3
+is_a menggu_melee_infantry2
+title 82138
+
+def menggu_melee_infantry4
+is_a melee_infantry4
+title 82139
+complete 76746
+noise repeat 300 76746
+launch_attack 76750
+attack_hit 1039 76884
+
+def menggu_melee_infantry5
+is_a menggu_melee_infantry4
+title 82140
+
+def menggu_melee_infantry-b
+is_a menggu_melee_infantry2
+
+def menggu_melee_infantry-c
+is_a menggu_melee_infantry3
+
+def menggu_melee_infantry-d
+is_a menggu_melee_infantry4
+
+def menggu_melee_infantry-e
+is_a menggu_melee_infantry5
+
+def menggu_melee_infantry-f
+is_a menggu_melee_infantry3
+
+def menggu_melee_infantry-g
+is_a menggu_melee_infantry4
+
+def menggu_melee_infantry-h
+is_a menggu_melee_infantry5
+
+def menggu_melee_infantry-i
+is_a menggu_melee_infantry4
+
+def menggu_melee_infantry-j
+is_a menggu_melee_infantry5
+
+def menggu_melee_infantry-k
+is_a menggu_melee_infantry5
+
+def menggu_melee_infantry11
+is_a melee_infantry11
+
+def menggu_melee_infantry22
+is_a melee_infantry22
+title 82137
+launch_attack 76881
+attack_hit 76882 76883
+
+def menggu_melee_infantry33
+is_a menggu_melee_infantry2
+title 82138
+
+def menggu_melee_infantry44
+is_a melee_infantry44
+title 82139
+complete 76746
+noise repeat 300 76746
+launch_attack 76750
+attack_hit 1039 76884
+
+def menggu_melee_infantry55
+is_a menggu_melee_infantry4
+title 82140
+
+def menggu_melee_infantry-bb
+is_a menggu_melee_infantry2
+
+def menggu_melee_infantry-cc
+is_a menggu_melee_infantry3
+
+def menggu_melee_infantry-dd
+is_a menggu_melee_infantry4
+
+def menggu_melee_infantry-ee
+is_a menggu_melee_infantry5
+
+def menggu_melee_infantry-ff
+is_a menggu_melee_infantry3
+
+def menggu_melee_infantry-gg
+is_a menggu_melee_infantry4
+
+def menggu_melee_infantry-hh
+is_a menggu_melee_infantry5
+
+def menggu_melee_infantry-ii
+is_a menggu_melee_infantry4
+
+def menggu_melee_infantry-jj
+is_a menggu_melee_infantry5
+
+def menggu_melee_infantry-kk
+is_a menggu_melee_infantry5
+
+def b_melee_infantry1
+is_a melee_infantry1
+
+def b_melee_infantry2
+is_a melee_infantry2
+title 82141
+launch_attack 76885
+attack_hit 1040 1041 76886
+
+def b_melee_infantry3
+is_a b_melee_infantry2
+title 82142
+
+def b_melee_infantry4
+is_a melee_infantry4
+title 82143
+launch_attack 76887
+attack_hit 1040 1041 76888
+
+def b_melee_infantry5
+is_a b_melee_infantry4
+title 82144
+
+def b_melee_infantry-b
+is_a b_melee_infantry2
+
+def b_melee_infantry-c
+is_a b_melee_infantry3
+
+def b_melee_infantry-d
+is_a b_melee_infantry4
+
+def b_melee_infantry-e
+is_a b_melee_infantry5
+
+def b_melee_infantry-f
+is_a b_melee_infantry3
+
+def b_melee_infantry-g
+is_a b_melee_infantry4
+
+def b_melee_infantry-h
+is_a b_melee_infantry5
+
+def b_melee_infantry-i
+is_a b_melee_infantry4
+
+def b_melee_infantry-j
+is_a b_melee_infantry5
+
+def b_melee_infantry-k
+is_a b_melee_infantry5
+
+def b_melee_infantry11
+is_a melee_infantry11
+
+def b_melee_infantry22
+is_a melee_infantry22
+title 82141
+launch_attack 76885
+attack_hit 1040 1041 76886
+
+def b_melee_infantry33
+is_a b_melee_infantry2
+title 82142
+
+def b_melee_infantry44
+is_a melee_infantry44
+title 82143
+launch_attack 76887
+attack_hit 1040 1041 76888
+
+def b_melee_infantry55
+is_a b_melee_infantry4
+title 82144
+
+def b_melee_infantry-bb
+is_a b_melee_infantry2
+
+def b_melee_infantry-cc
+is_a b_melee_infantry3
+
+def b_melee_infantry-dd
+is_a b_melee_infantry4
+
+def b_melee_infantry-ee
+is_a b_melee_infantry5
+
+def b_melee_infantry-ff
+is_a b_melee_infantry3
+
+def b_melee_infantry-gg
+is_a b_melee_infantry4
+
+def b_melee_infantry-hh
+is_a b_melee_infantry5
+
+def b_melee_infantry-ii
+is_a b_melee_infantry4
+
+def b_melee_infantry-jj
+is_a b_melee_infantry5
+
+def b_melee_infantry-kk
+is_a b_melee_infantry5
+
+
+def sp1
+is_a walking_unit
+title 82683
+complete 76729
+noise repeat 300 76729
+launch_attack 76744
+attack_hit 1040 1041 76745
+keyboard soldier1
+shortcut f
+
+def sp2
+is_a sp1
+title 82684
+launch_attack 76744
+attack_hit 1040 1041 76829
+
+def sp3
+is_a sp2
+title 82685
+attack 1040 1041 76924
+
+def sp-b
+is_a sp2
+
+def sp-c
+is_a sp3
+
+def sp-d
+is_a sp3
+
+def ch_sp1
+is_a sp1
+
+def ch_sp2
+is_a sp2
+
+def ch_sp3
+is_a sp3
+
+def ch_sp-b
+is_a sp-b
+
+def ch_sp-c
+is_a sp-c
+
+def ch_sp-d
+is_a sp3
+
+def menggu_sp1
+is_a sp1
+
+def menggu_sp2
+is_a sp2
+
+def menggu_sp3
+is_a sp3
+
+def menggu_sp-b
+is_a sp-b
+
+def menggu_sp-c
+is_a sp-c
+
+def menggu_sp-d
+is_a sp-d
+
+def b_sp1
+is_a sp1
+
+def b_sp2
+is_a sp2
+
+def b_sp3
+is_a sp3
+
+def b_sp-b
+is_a sp-b
+
+def b_sp-c
+is_a sp-c
+
+def b_sp-d
+is_a sp-d
+
+def italian_ercenary
+is_a walking_unit
+title 82136
+launch_attack 76889
+attack_hit 1040 1041 76890
+keyboard soldier1
+
+def ch_italian_ercenary
+is_a italian_ercenary
+
+def menggu_italian_ercenary
+is_a italian_ercenary
+
+def b_italian_ercenary
+is_a italian_ercenary
+
+def l_cavalry1
+is_a unit
+title 82156
+complete 76739
+noise repeat 300 76747 76748 76749
+launch_attack 12349
+attack_hit 1040 1041 10391
+death if_me 131101 else 13093
+move 76891 76892
+keyboard soldier3
+shortcut k
+
+def l_cavalry2
+is_a l_cavalry1
+title 82157
+move 76751 76751
+
+def l_cavalry3
+is_a l_cavalry2
+title 82158
+
+def l_cavalry-b
+is_a l_cavalry2
+
+def l_cavalry-c
+is_a l_cavalry3
+
+def l_cavalry-d
+is_a l_cavalry3
+
+def ch_l_cavalry1
+is_a l_cavalry1
+
+def ch_l_cavalry2
+is_a l_cavalry2
+
+def ch_l_cavalry3
+is_a l_cavalry3
+
+def ch_l_cavalry-b
+is_a l_cavalry-b
+
+def ch_l_cavalry-c
+is_a l_cavalry-c
+
+def ch_l_cavalry-d
+is_a l_cavalry-d
+
+def menggu_l_cavalry1
+is_a l_cavalry1
+
+def menggu_l_cavalry2
+is_a l_cavalry2
+
+def menggu_l_cavalry3
+is_a l_cavalry3
+
+def menggu_l_cavalry-b
+is_a l_cavalry-b
+
+def menggu_l_cavalry-c
+is_a l_cavalry-c
+
+def menggu_l_cavalry-d
+is_a l_cavalry-d
+
+def b_l_cavalry1
+is_a l_cavalry1
+
+def b_l_cavalry2
+is_a l_cavalry2
+
+def b_l_cavalry3
+is_a l_cavalry3
+
+def b_l_cavalry-b
+is_a l_cavalry-b
+
+def b_l_cavalry-c
+is_a l_cavalry-c
+
+def b_l_cavalry-d
+is_a l_cavalry-d
+
+
+def h_cavalry1
+is_a unit
+title 82159
+noise repeat 300 1305 1306
+complete 76739
+launch_attack 12349
+attack_hit 1040 1041 10391
+move 1303 1303
+death if_me 131101 else 13093
+keyboard soldier3
+shortcut k
+
+def h_cavalry2
+is_a unit
+title 82160
+complete 76730
+noise repeat 300 76705
+launch_attack 76731
+attack_hit 1040 1041 76706 76707
+death if_me 131101 else 13093
+move 76708 76708
+keyboard soldier3
+shortcut k
+
+def h_cavalry3
+is_a h_cavalry2
+title 82161
+
+def h_cavalry-b
+is_a h_cavalry2
+
+def h_cavalry-c
+is_a h_cavalry3
+
+def h_cavalry-d
+is_a h_cavalry3
+
+
+def ch_h_cavalry1
+is_a h_cavalry1
+
+def ch_h_cavalry2
+is_a h_cavalry2
+
+def ch_h_cavalry3
+is_a h_cavalry3
+
+def ch_h_cavalry-b
+is_a h_cavalry-b
+
+def ch_h_cavalry-c
+is_a h_cavalry-c
+
+def ch_h_cavalry-d
+is_a h_cavalry-d
+
+def menggu_h_cavalry1
+is_a h_cavalry1
+
+def menggu_h_cavalry2
+is_a h_cavalry2
+
+def menggu_h_cavalry3
+is_a h_cavalry3
+
+def menggu_h_cavalry-b
+is_a h_cavalry-b
+
+def menggu_h_cavalry-c
+is_a h_cavalry-c
+
+def menggu_h_cavalry-d
+is_a h_cavalry-d
+
+def b_h_cavalry1
+is_a h_cavalry1
+title 82162
+launch_attack 76895
+attack_hit 1040 1041 76896
+
+def b_h_cavalry2
+is_a h_cavalry2
+title 82163
+launch_attack 76893
+attack_hit 1040 1041 76894
+
+def b_h_cavalry3
+is_a b_h_cavalry2
+title 82164
+
+def b_h_cavalry-b
+is_a b_h_cavalry2
+
+def b_h_cavalry-c
+is_a b_h_cavalry3
+
+def b_h_cavalry-d
+is_a b_h_cavalry3
+
+
+def steppe_lancer1;  ԭͻ  
+is_a l_cavalry3
+title 82170
+complete 76729
+launch_attack 76744
+attack_hit 1040 1041 76829
+keyboard soldier4
+shortcut k
+
+def steppe_lancer2
+is_a steppe_lancer1
+title 82171
+
+def steppe_lancer-b
+is_a steppe_lancer2
+
+def menggu_steppe_lancer1
+is_a steppe_lancer1
+
+def menggu_steppe_lancer2
+is_a steppe_lancer2
+
+def menggu_steppe_lancer-b
+is_a menggu_steppe_lancer2
+
+def armor_cavalry1
+is_a cavalry6
+title 82212
+launch_attack 76889
+attack_hit 1302 1040 1041 76890
+
+def armor_cavalry2
+is_a armor_cavalry1
+title 82213
+
+def armor_cavalry-b
+is_a armor_cavalry2
+
+def menggu_featured_cavalry1; ɹ ͻ  
+is_a menggu_cavalry_archer1
+title 82210
+move 76944 76945
+
+def menggu_featured_cavalry2
+is_a menggu_featured_cavalry1
+title 82211
+
+def menggu_featured_cavalry-b
+is_a menggu_featured_cavalry2
+
+
+def zhuge_crossbow1
+is_a walking_unit
+title 82208
+noise repeat 60 76700
+launch_attack 76922
+attack_hit 76923
+order_ok if_me 76844 76845 else 1094 1095 1096
+death if_me 76849 76850 else 1309
+shortcut z
+keyboard soldier2
+
+def zhuge_crossbow2
+is_a zhuge_crossbow1
+title 82209
+
+def zhuge_crossbow-b
+is_a zhuge_crossbow2
+
+def camel_rider1;    ϵ
+is_a unit
+title 82165
+noise repeat 300 76898 76899 76900
+move 76897 76897
+complete 76813
+launch_attack 76902
+attack_hit 1040 1041
+death 76901
+shortcut c
+keyboard soldier4
+
+def camel_rider2;  װ    ϵ
+is_a camel_rider1
+title 82166
+launch_attack 76815
+
+def camel_rider3
+is_a camel_rider2
+title 82167
+
+def camel_rider-b
+is_a camel_rider2
+
+def camel_rider-c
+is_a camel_rider3
+
+def ch_camel_rider1
+is_a camel_rider1
+
+def ch_camel_rider2
+is_a camel_rider2
+
+def ch_camel_rider-b
+is_a camel_rider-b
+
+def menggu_camel_rider1
+is_a camel_rider1
+
+def menggu_camel_rider2
+is_a camel_rider2
+
+def menggu_camel_rider-b
+is_a camel_rider-b
+
+def b_camel_rider1
+is_a camel_rider1
+
+def b_camel_rider2
+is_a camel_rider2
+
+def b_camel_rider-b
+is_a camel_rider-b
+
+def battle_elephant1;   ϵ
+is_a unit
+title 82168
+noise repeat 180 76904 76905 76906
+move 76908 76909
+death 76903
+attack_hit 76907
+shortcut a
+keyboard soldier4
+
+def battle_elephant2
+is_a battle_elephant1;   ϵ
+title 82169
+
+def battle_elephant-b
+is_a battle_elephant2
+
+
+def catapult1
+is_a unit
+title 82195
+noise repeat 9 1311 1312 1313 ; 1082 1083 ?
+launch_attack 1084
+attack_hit 1085
+move 1082 1083
+death 76837
+keyboard soldier4
+shortcut c
+
+def catapult2
+is_a catapult1
+title 82196
+
+def catapult3
+is_a catapult2
+title 82197
+attack_hit 76864
+
+def catapult-b
+is_a catapult2
+
+def catapult-c
+is_a catapult3
+
+def catapult-d
+is_a catapult3
+
+def ch_catapult1
+is_a catapult1
+
+def ch_catapult2
+is_a catapult2
+
+def ch_catapult3
+is_a catapult3
+
+def ch_catapult-b
+is_a catapult-b
+
+def ch_catapult-c
+is_a catapult-c
+
+def ch_catapult-d
+is_a catapult-d
+
+def menggu_catapult1
+is_a catapult1
+
+def menggu_catapult2
+is_a catapult2
+
+def menggu_catapult3
+is_a catapult3
+
+def menggu_catapult-b
+is_a catapult-b
+
+def menggu_catapult-c
+is_a catapult-c
+
+def menggu_catapult-d
+is_a catapult-d
+
+def b_catapult1
+is_a catapult1
+
+def b_catapult2
+is_a catapult2
+
+def b_catapult3
+is_a catapult3
+
+def b_catapult-b
+is_a catapult-b
+
+def b_catapult-c
+is_a catapult-c
+
+def b_catapult-d
+is_a catapult-d
+
+def siege_ram1
+is_a unit
+title 82198
+noise repeat 9 1311 1312 1313
+move 76866 76866
+attack_hit 76865
+death 76837
+keyboard soldier4
+shortcut c
+
+def siege_ram2
+is_a siege_ram1
+title 82199
+
+def siege_ram3
+is_a siege_ram2
+title 82200
+
+def siege_ram-b
+is_a siege_ram2
+
+def siege_ram-c
+is_a siege_ram3
+
+def siege_ram-d
+is_a siege_ram3
+
+
+def ch_siege_ram1
+is_a siege_ram1
+
+def ch_siege_ram2
+is_a siege_ram2
+
+def ch_siege_ram3
+is_a siege_ram3
+
+def ch_siege_ram-b
+is_a siege_ram-b
+
+def ch_siege_ram-c
+is_a siege_ram-c
+
+def ch_siege_ram-d
+is_a siege_ram-d
+
+def menggu_siege_ram1
+is_a siege_ram1
+
+def menggu_siege_ram2
+is_a siege_ram2
+
+def menggu_siege_ram3
+is_a siege_ram3
+
+def menggu_siege_ram-b
+is_a siege_ram-b
+
+def menggu_siege_ram-c
+is_a siege_ram-c
+
+def menggu_siege_ram-d
+is_a siege_ram-d
+
+def b_siege_ram1
+is_a siege_ram1
+
+def b_siege_ram2
+is_a siege_ram2
+
+def b_siege_ram3
+is_a siege_ram3
+
+def b_siege_ram-b
+is_a siege_ram-b
+
+def b_siege_ram-c
+is_a siege_ram-c
+
+def b_siege_ram-d
+is_a siege_ram-d
+
+
+def scorpion1;    
+is_a unit
+title 82201
+noise repeat 60 76700
+launch_attack 76701
+attack_hit 76702
+move 76703
+death 76704
+keyboard soldier4
+
+def scorpion2
+is_a ballista1
+title 82202
+
+def scorpion-b
+is_a scorpion2
+
+def ch_scorpion1
+is_a scorpion1
+
+def ch_scorpion2
+is_a scorpion2
+
+def ch_scorpion-b
+is_a scorpion-b
+
+def menggu_scorpion1
+is_a scorpion1
+launch_attack 76911
+attack_hit 76912
+
+def menggu_scorpion2
+is_a scorpion2
+launch_attack 76911
+attack_hit 76912
+
+def menggu_scorpion-b
+is_a menggu_scorpion2
+
+
+def b_scorpion1
+is_a scorpion1
+
+def b_scorpion2
+is_a scorpion2
+
+def b_scorpion-b
+is_a scorpion-b
+
+
+def siege_tower;      
+is_a unit
+title 82203
+noise repeat 9 1311 1312 1313
+move 76910 76910
+death 76837
+shortcut s
+keyboard soldier4
+
+def ch_siege_tower
+is_a siege_tower
+
+def menggu_siege_tower
+is_a siege_tower
+
+def b_siege_tower
+is_a siege_tower
+
+def push_cannon;      
+is_a unit
+title 82204
+move 76910
+launch_attack 76917
+attack_hit 76921
+death 76837
+shortcut c
+keyboard soldier4
+
+def ch_push_cannon
+is_a push_cannon
+
+def menggu_push_cannon
+is_a push_cannon
+
+def b_push_cannon
+is_a push_cannon
+
+
+def marching_vehicle
+is_a unit
+title 4422
+noise repeat 30 76732
+move 76720
+death 76704
+keyboard soldier4
+shortcut f
+
+def ascetic
+is_a walking_unit
+title 82205
+keyboard soldier6
+shortcut m
+
+def taoist_priest
+is_a ascetic
+order_ok if_me 76857 else 1094 1095 1096
+death if_me 76859 76860 else 1309
+
+def menggu_shaman
+is_a ascetic
+
+def b_priest
+is_a ascetic
+
+
+def ship1
+is_a unit
+title 82216
+complete 76839
+launch_attack 1042
+attack_hit 1043
+move 76715 
+death 76821
+keyboard soldier7
+shortcut f
+
+def ship2
+is_a ship1
+title 82217
+
+def ship3
+is_a ship2
+title 82218
+
+def ship-b
+is_a ship2
+
+def ship-c
+is_a ship3
+
+def ship-d
+is_a ship3
+
+def ship11
+is_a ship1
+
+def ship22
+is_a ship2
+
+def ship33
+is_a ship3
+
+def ship-bb
+is_a ship-b
+
+def ship-cc
+is_a ship-c
+
+def ship-dd
+is_a ship-d
+
+
+def ch_ship1
+is_a ship1
+
+def ch_ship2
+is_a ship2
+
+def ch_ship3
+is_a ship3
+
+def ch_ship-b
+is_a ship-b
+
+def ch_ship-c
+is_a ship-c
+
+def ch_ship-d
+is_a ship-d
+
+def ch_ship11
+is_a ship11
+
+def ch_ship22
+is_a ship22
+
+def ch_ship33
+is_a ship33
+
+def ch_ship-bb
+is_a ship-bb
+
+def ch_ship-cc
+is_a ship-cc
+
+def ch_ship-dd
+is_a ship-dd
+
+
+def menggu_ship1
+is_a ship1
+
+def menggu_ship2
+is_a ship2
+
+def menggu_ship3
+is_a ship3
+
+def menggu_ship-b
+is_a ship-b
+
+def menggu_ship-c
+is_a ship-c
+
+def menggu_ship-d
+is_a ship-d
+
+def menggu_ship11
+is_a ship11
+
+def menggu_ship22
+is_a ship22
+
+def menggu_ship33
+is_a ship33
+
+def menggu_ship-bb
+is_a ship-bb
+
+def menggu_ship-cc
+is_a ship-cc
+
+def menggu_ship-dd
+is_a ship-dd
+
+def b_ship1
+is_a ship1
+
+def b_ship2
+is_a ship2
+
+def b_ship3
+is_a ship3
+
+def b_ship-b
+is_a ship-b
+
+def b_ship-c
+is_a ship-c
+
+def b_ship-d
+is_a ship-d
+
+def b_ship11
+is_a ship11
+
+def b_ship22
+is_a ship22
+
+def b_ship33
+is_a ship33
+
+def b_ship-bb
+is_a ship-bb
+
+def b_ship-cc
+is_a ship-cc
+
+def b_ship-dd
+is_a ship-dd
+
+
+def fireship1
+is_a unit
+title 82219
+move 76716
+launch_attack 76915
+attack_hit 76916
+death 76821
+keyboard soldier7
+
+def fireship2
+is_a fireship1
+title 82220
+
+def fireship3
+is_a fireship2
+title 82221
+
+def fireship-b
+is_a fireship2
+
+def fireship-c
+is_a fireship3
+
+def fireship-d
+is_a fireship3
+
+def fireship11
+is_a fireship1
+
+def fireship22
+is_a fireship2
+
+def fireship33
+is_a fireship3
+
+def fireship-bb
+is_a fireship-b
+
+def fireship-cc
+is_a fireship-c
+
+def fireship-dd
+is_a fireship-d
+
+
+def ch_fireship1
+is_a fireship1
+
+def ch_fireship2
+is_a fireship2
+
+def ch_fireship3
+is_a fireship3
+
+def ch_fireship-b
+is_a fireship-b
+
+def ch_fireship-c
+is_a fireship-c
+
+def ch_fireship-d
+is_a fireship-d
+
+def ch_fireship11
+is_a fireship11
+
+def ch_fireship22
+is_a fireship22
+
+def ch_fireship33
+is_a fireship33
+
+def ch_fireship-bb
+is_a fireship-bb
+
+def ch_fireship-cc
+is_a fireship-cc
+
+def ch_fireship-dd
+is_a fireship-dd
+
+
+def menggu_fireship1
+is_a fireship1
+
+def menggu_fireship2
+is_a fireship2
+
+def menggu_fireship3
+is_a fireship3
+
+def menggu_fireship-b
+is_a fireship-b
+
+def menggu_fireship-c
+is_a fireship-c
+
+def menggu_fireship-d
+is_a fireship-d
+
+def menggu_fireship11
+is_a fireship11
+
+def menggu_fireship22
+is_a fireship22
+
+def menggu_fireship33
+is_a fireship33
+
+def menggu_fireship-bb
+is_a fireship-bb
+
+def menggu_fireship-cc
+is_a fireship-cc
+
+def menggu_fireship-dd
+is_a fireship-dd
+
+
+def b_fireship1
+is_a fireship1
+
+def b_fireship2
+is_a fireship2
+
+def b_fireship3
+is_a fireship3
+
+def b_fireship-b
+is_a fireship-b
+
+def b_fireship-c
+is_a fireship-c
+
+def b_fireship-d
+is_a fireship-d
+
+def b_fireship11
+is_a fireship11
+
+def b_fireship22
+is_a fireship22
+
+def b_fireship33
+is_a fireship33
+
+def b_fireship-bb
+is_a fireship-bb
+
+def b_fireship-cc
+is_a fireship-cc
+
+def b_fireship-dd
+is_a fireship-dd
+
+
+def bangship1
+is_a unit
+title 82222
+move 76717
+death 76821
+keyboard soldier7
+
+def bangship2
+is_a bangship1
+title 82223
+
+def bangship3
+is_a bangship2
+title 82224
+
+def bangship-b
+is_a bangship2
+
+def bangship-c
+is_a bangship3
+
+def bangship-d
+is_a bangship3
+
+def bangship11
+is_a bangship1
+
+def bangship22
+is_a bangship2
+
+def bangship33
+is_a bangship3
+
+def bangship-bb
+is_a bangship-b
+
+def bangship-cc
+is_a bangship-c
+
+def bangship-dd
+is_a bangship-d
+
+
+
+def ch_bangship1
+is_a bangship1
+
+def ch_bangship2
+is_a bangship2
+
+def ch_bangship3
+is_a bangship3
+
+def ch_bangship-b
+is_a bangship-b
+
+def ch_bangship-c
+is_a bangship-c
+
+def ch_bangship-d
+is_a bangship-d
+
+def ch_bangship11
+is_a bangship11
+
+def ch_bangship22
+is_a bangship22
+
+def ch_bangship33
+is_a bangship33
+
+def ch_bangship-bb
+is_a bangship-bb
+
+def ch_bangship-cc
+is_a bangship-cc
+
+def ch_bangship-dd
+is_a bangship-dd
+
+
+def menggu_bangship1
+is_a bangship1
+
+def menggu_bangship2
+is_a bangship2
+
+def menggu_bangship3
+is_a bangship3
+
+def menggu_bangship-b
+is_a bangship-b
+
+def menggu_bangship-c
+is_a bangship-c
+
+def menggu_bangship-d
+is_a bangship-d
+
+def menggu_bangship11
+is_a bangship11
+
+def menggu_bangship22
+is_a bangship22
+
+def menggu_bangship33
+is_a bangship33
+
+def menggu_bangship-bb
+is_a bangship-bb
+
+def menggu_bangship-cc
+is_a bangship-cc
+
+def menggu_bangship-dd
+is_a bangship-dd
+
+def b_bangship1
+is_a bangship1
+
+def b_bangship2
+is_a bangship2
+
+def b_bangship3
+is_a bangship3
+
+def b_bangship-b
+is_a bangship-b
+
+def b_bangship-c
+is_a bangship-c
+
+def b_bangship-d
+is_a bangship-d
+
+def b_bangship11
+is_a bangship11
+
+def b_bangship22
+is_a bangship22
+
+def b_bangship33
+is_a bangship33
+
+def b_bangship-bb
+is_a bangship-bb
+
+def b_bangship-cc
+is_a bangship-cc
+
+def b_bangship-dd
+is_a bangship-dd
+
+
+def cannonship1
+is_a unit
+title 82226
+launch_attack 76917 76918 76919 76920
+attack_hit 76921
+move 76715
+death 76821
+keyboard soldier7
+
+def cannonship2
+is_a cannonship1
+title 82681
+
+def cannonship-b
+is_a cannonship2
+
+def cannonship11
+is_a cannonship1
+
+def cannonship22
+is_a cannonship2
+
+def cannonship-bb
+is_a cannonship-b
+
+
+def ch_cannonship1
+is_a cannonship1
+
+def ch_cannonship2
+is_a cannonship2
+
+def ch_cannonship-b
+is_a cannonship-b
+
+def ch_cannonship11
+is_a cannonship11
+
+def ch_cannonship22
+is_a cannonship22
+
+def ch_cannonship-bb
+is_a cannonship-bb
+
+
+def menggu_cannonship1
+is_a cannonship1
+
+def menggu_cannonship2
+is_a cannonship2
+
+def menggu_cannonship-b
+is_a cannonship-b
+
+def menggu_cannonship11
+is_a cannonship11
+
+def menggu_cannonship22
+is_a cannonship22
+
+def menggu_cannonship-bb
+is_a cannonship-bb
+
+
+def b_cannonship1
+is_a cannonship1
+
+def b_cannonship2
+is_a cannonship2
+
+def b_cannonship-b
+is_a cannonship-b
+
+def b_cannonship11
+is_a cannonship11
+
+def b_cannonship22
+is_a cannonship22
+
+def b_cannonship-bb
+is_a cannonship-bb
+
+
+def transport_ship
+is_a unit
+title 82225
+move 76717
+death 76821
+keyboard soldier7
+
+def transport_ship11
+is_a transport_ship
+
+
+def ch_transport_ship
+is_a transport_ship
+
+def ch_transport_ship11
+is_a transport_ship11
+
+def menggu_transport_ship
+is_a transport_ship
+
+def menggu_transport_ship11
+is_a transport_ship11
+
+
+def b_transport_ship
+is_a transport_ship
+
+def b_transport_ship11
+is_a transport_ship11
+
+
+def demoman
+is_a walking_unit
+title 82235
+shortcut d
+keyboard soldier1
+
+def ch_demoman
+is_a demoman
+
+def menggu_demoman
+is_a demoman
+
+def b_demoman
+is_a demoman
+
+def large_catapult1
+is_a catapult3
+title 82236
+production 76928 76929 76930 76931 76932 76933
+complete 76927
+shortcut l
+keyboard soldier4
+
+def large_catapult2
+is_a catapult3
+title 82682
+production 76928 76929 76930 76931 76932 76933
+complete 76927
+
+def ch_large_catapult1
+is_a large_catapult1
+
+def ch_large_catapult2
+is_a large_catapult2
+
+def menggu_large_catapult1
+is_a large_catapult1
+
+def menggu_large_catapult2
+is_a large_catapult2
+
+def b_large_catapult1
+is_a large_catapult1
+
+def b_large_catapult2
+is_a large_catapult2
+
+
+
+def china
+title 82000
+
+def byzantine
+title 82002
+
+def menggu
+title 82001
+
+
+
+
+def set_stumbling_blocks
+title 4480
+alert 76792
+shortcut s
+
+def mengguic_finch
+is_a unit
+title 4448
+noise repeat 30 76760 76761 76762 76763 76764
+attack_hit 76766 76767 76768
+move 76769 76770 76771
+death 76765
+keyboard soldier7
+
+
+def u_rain
+title 4574
+
+def a_rain
+title 4453
+alert 76789
+shortcut r
+
+def rain
+title 4462
+noise repeat 120 76790
+death 76719
+
+def bewitched
+title 82265
+alert 76794
+
+def trip_lock
+is_a building
+title 4426
+death 76704
+
+
+def summon_mengguic_finch
+title 4477
+alert 76804 76805
+shortcut f
+
+
+
+
+
+def raft
+is_a unit
+title 4481
+move 1088 1088
+death 76821
+keyboard soldier7
+
+def fishingship
+is_a unit
+title 4482
+launch_attack 1042
+attack_hit 1043
+move 1088 1088
+death 76821
+keyboard soldier7
+
+def riprapship
+is_a unit
+title 4483
+noise repeat 9 1311 1312 1313 ; 1082 1083 ?
+launch_attack 1084
+attack_hit 1085
+move 1088 1088
+death 76821
+keyboard soldier7
+
+
+
+
+
+def dromon
+is_a unit
+title 4525
+move 76820
+launch_attack 1042
+attack_hit 1043
+death 76821
+keyboard soldier7
+
+def heavy_dromon
+is_a unit
+title 4526
+move 76822
+launch_attack 1084
+attack_hit 1085
+death 76821
+keyboard soldier7
+
+def royal_dromon
+is_a unit
+title 4527
+move 76823
+attack_hit 76824
+death 76821
+keyboard soldier7
+
+def dromon_melee_mode
+is_a unit
+title 4535
+complete 76840
+move 76823
+attack_hit  76824
+death 76821
+keyboard soldier7
+
+def dromon_remote_mode
+is_a unit
+title 4536
+complete 76841
+launch_attack 1084
+attack_hit 1085
+move 76823
+death 76821
+keyboard soldier7
+
+;research upgrade
+
+
+def javelin
+title 4523
+attack_hit 76826
+death 76719
+
+def a_javelin
+title 4538
+
+def throwing_javelin
+title 4524
+alert 76825
+
+def greek_fire
+title 4528
+noise loop 76828
+
+def fire_greek_fire
+title 4529
+alert 76827
+
+
+def b_conversion
+title 82266
+alert 76831
+shortcut c
+
+
+def lv1sightrange
+title 82675
+
+def lv2sightrange
+title 82676
+
+def lv3sightrange
+title 82677
+
+def ch_lv1sightrange
+is_a lv1sightrange
+
+def ch_lv2sightrange
+is_a lv2sightrange
+
+def ch_lv3sightrange
+is_a lv3sightrange
+
+def menggu_lv1sightrange
+is_a lv1sightrange
+
+def menggu_lv2sightrange
+is_a lv2sightrange
+
+def menggu_lv3sightrange
+is_a lv3sightrange
+
+def b_lv1sightrange
+is_a lv1sightrange
+
+def b_lv2sightrange
+is_a lv2sightrange
+
+def b_lv3sightrange
+is_a lv3sightrange
+
+def greek_fire
+title 82263
+
+def logistics
+title 82724
+
+def bigbang0
+is_a unit
+launch_attack 76926
+death 0101
+
+
+def a_bigbang0
+title 82260
+alert 76934
+
+def bigbang1
+is_a bigbang0
+
+def a_bigbang1
+title 82260
+alert 76934
+
+def bigbang2
+is_a bigbang1
+
+def a_bigbang2
+title 82260
+alert 76934
+
+def bigbang3
+is_a bigbang2
+
+def a_bigbang3
+title 82260
+alert 76934
+
+def bigbang4
+is_a bigbang3
+
+def a_bigbang4
+title 82260
+alert 76934

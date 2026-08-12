@@ -477,7 +477,13 @@ class Skill(CreatureAttributes):  # or UnitOption or UnitMenuItem or ActiveSkill
         # 特殊检查：不能转换memory单位
         if target and getattr(target, 'is_memory', False):
             return False
-        return target and caster.is_an_enemy(target)  # 只对敌人使用
+        if not (target and caster.is_an_enemy(target)):
+            return False
+        if cls._conversion_tech_gated_caster(caster) and not cls._conversion_target_allowed(
+            caster, target
+        ):
+            return False
+        return True
 
     @classmethod 
     def _is_buffs_necessary(cls, caster, target):
@@ -585,12 +591,212 @@ class Skill(CreatureAttributes):  # or UnitOption or UnitMenuItem or ActiveSkill
         return True
 
     @classmethod
-    def _execute_conversion(cls, caster, target, world):
-        """转换技能处理"""
-        if target and hasattr(target, 'set_player') and caster.is_an_enemy(target):
-            target.set_player(caster.player)
+    def _conversion_tech_gated_caster(cls, caster):
+        """True when caster uses researched conversion allow/rest rules."""
+        from .world_conversion import is_conversion_tech_gated
+
+        return is_conversion_tech_gated(caster)
+
+    @classmethod
+    def _is_aoe2_monk_caster(cls, caster):
+        """Deprecated alias — prefer ``_conversion_tech_gated_caster``."""
+        return cls._conversion_tech_gated_caster(caster)
+
+    @classmethod
+    def _conversion_unconvertible_building(cls, target):
+        """Buildings marked ``conversion_immune`` (or legacy name heuristics)."""
+        from .world_conversion import is_conversion_immune
+
+        if is_conversion_immune(target):
+            return True
+        # Legacy fallback for maps/mods that have not set conversion_immune yet
+        tn = getattr(target, "type_name", None)
+        if tn in (
+            "town_center",
+            "townhall",
+            "monastery",
+            "aoe_castle",
+            "farm",
+            "wall",
+            "gate",
+            "wonder",
+        ):
+            return True
+        if tn and (
+            tn.endswith("_town_center")
+            or tn.endswith("_castle")
+            or tn.endswith("_wall")
+            or tn.endswith("_monastery")
+        ):
             return True
         return False
+
+    @classmethod
+    def _conversion_target_allowed(cls, caster, target):
+        """Tech-gated conversion filters (allows_monk / siege / building)."""
+        from .world_conversion import (
+            is_conversion_cleric,
+            player_has_upgrade_flag,
+        )
+        from .worldunit.worldcreature import Building, BuildingSite
+
+        upgrades_player = getattr(caster, "player", None)
+        if is_conversion_cleric(target) and not player_has_upgrade_flag(
+            upgrades_player, "conversion_allows_monk"
+        ):
+            return False
+
+        expanded = getattr(target, "expanded_is_a", None) or ()
+        is_building = isinstance(target, (Building, BuildingSite)) or (
+            "building" in expanded
+        )
+        is_siege = "siege_unit" in expanded
+        if is_building or is_siege:
+            if is_siege and not player_has_upgrade_flag(
+                upgrades_player, "conversion_allows_siege"
+            ):
+                return False
+            if is_building and not player_has_upgrade_flag(
+                upgrades_player, "conversion_allows_building"
+            ):
+                return False
+            if is_building and cls._conversion_unconvertible_building(target):
+                return False
+        return True
+
+    @classmethod
+    def _conversion_target_allowed_for_monk(cls, caster, target):
+        """Deprecated alias for ``_conversion_target_allowed``."""
+        return cls._conversion_target_allowed(caster, target)
+
+    @classmethod
+    def conversion_channel_time(cls, caster, target, skill_cls=None):
+        """Conversion channel length (ms / PRECISION units).
+
+        Base unit ~6s; siege/buildings longer; researched resist attrs on the
+        target's owner lengthen the channel (``conversion_channel_*``).
+        """
+        from .lib.nofloat import PRECISION
+        from .world_conversion import apply_conversion_channel_resist
+        from .worldunit.worldcreature import Building, BuildingSite
+
+        base = getattr(skill_cls, "time_cost", 0) if skill_cls is not None else 0
+        if not base:
+            base = 6 * PRECISION
+
+        expanded = getattr(target, "expanded_is_a", None) or ()
+        is_building = isinstance(target, (Building, BuildingSite)) or (
+            "building" in expanded
+        )
+        is_siege = "siege_unit" in expanded
+        if is_building:
+            base = max(int(base), 15 * PRECISION)
+        elif is_siege:
+            base = max(int(base), 10 * PRECISION)
+
+        enemy = getattr(target, "player", None)
+        return apply_conversion_channel_resist(base, enemy)
+
+    @classmethod
+    def _execute_conversion(cls, caster, target, world):
+        """转换技能处理（规则驱动：allows_* / conversion_victim_dies）"""
+        from .world_conversion import player_has_upgrade_flag
+
+        if not (target and hasattr(target, "set_player") and caster.is_an_enemy(target)):
+            return False
+
+        if cls._conversion_tech_gated_caster(caster):
+            if not cls._conversion_target_allowed(caster, target):
+                return False
+
+        # Victim dies instead of changing owner (e.g. Heresy)
+        enemy = getattr(target, "player", None)
+        if enemy and player_has_upgrade_flag(enemy, "conversion_victim_dies"):
+            if hasattr(target, "die"):
+                try:
+                    target.die(attacker=caster)
+                except TypeError:
+                    target.die()
+                return True
+            try:
+                target.hp = 0
+            except Exception:
+                pass
+            return True
+
+        target.set_player(caster.player)
+        return True
+
+    @classmethod
+    def _skill_effect_is_conversion(cls, skill_cls):
+        effect = getattr(skill_cls, "effect", None)
+        if not effect:
+            return False
+        et = effect[0] if isinstance(effect, (list, tuple)) else effect
+        return et == "conversion"
+
+    @classmethod
+    def _monk_is_converting_target(cls, unit, target):
+        """True if *unit* has an active conversion UseOrder on *target*."""
+        if target is None or unit is None:
+            return False
+        tid = getattr(target, "id", None)
+        for order in getattr(unit, "orders", ()) or ():
+            if getattr(order, "keyword", None) != "use":
+                continue
+            otype = getattr(order, "type", None)
+            if otype is None or not cls._skill_effect_is_conversion(otype):
+                continue
+            ot = getattr(order, "target", None)
+            if ot is target:
+                return True
+            if tid is not None and getattr(ot, "id", None) == tid:
+                return True
+        return False
+
+    @classmethod
+    def conversion_mana_participants(cls, caster, target):
+        """Converters that should rest after a group conversion.
+
+        Without ``conversion_rest_only_success``, every tech-gated ally also
+        converting the same target rests; with the flag only *caster* rests.
+        Non-gated casters always just return [caster].
+        """
+        from .world_conversion import player_has_upgrade_flag
+
+        if caster is None:
+            return []
+        if not cls._conversion_tech_gated_caster(caster):
+            return [caster]
+        player = getattr(caster, "player", None)
+        if player_has_upgrade_flag(player, "conversion_rest_only_success"):
+            return [caster]
+        if player is None:
+            return [caster]
+        participants = []
+        for u in list(getattr(player, "units", ()) or ()):
+            if not cls._conversion_tech_gated_caster(u):
+                continue
+            if u is caster or cls._monk_is_converting_target(u, target):
+                participants.append(u)
+        if caster not in participants:
+            participants.append(caster)
+        return participants
+
+    @classmethod
+    def apply_conversion_mana_costs(cls, caster, target, mana_cost):
+        """Apply faith/mana rest after a successful conversion."""
+        try:
+            cost = int(mana_cost or 0)
+        except (TypeError, ValueError):
+            cost = 0
+        if cost <= 0 or caster is None:
+            return
+        for u in cls.conversion_mana_participants(caster, target):
+            try:
+                u.mana = max(0, int(getattr(u, "mana", 0)) - cost)
+            except (TypeError, ValueError):
+                pass
 
     @classmethod
     def _execute_raise_dead(cls, caster, target, world):
@@ -683,6 +889,14 @@ class Skill(CreatureAttributes):  # or UnitOption or UnitMenuItem or ActiveSkill
     @staticmethod
     def _skill_effect_range_met(skill_cls, caster, target):
         max_range = getattr(skill_cls, "effect_range", 0)
+        # Unit rdg_range (e.g. Block Printing) can extend conversion / skill reach.
+        unit_range = getattr(caster, "rdg_range", 0) or 0
+        try:
+            unit_range = int(unit_range)
+        except (TypeError, ValueError):
+            unit_range = 0
+        if unit_range > max_range:
+            max_range = unit_range
         if max_range <= 0:
             return True
         x, y = Skill._skill_target_xy(target)

@@ -1,0 +1,1380 @@
+; AoE2 DE — titles (TTS IDs). Chinese strings in ui-zh/tts.txt (biligame names).
+; Resource order: gold, wood, food, stone (z/x/ShiftZ/ShiftX)
+
+def messages
+not_enough_resource1 135 8102
+not_enough_resource2 135 8101
+not_enough_resource3 135 8100
+not_enough_resource4 135 8103
+
+def parameters
+resource1_title 8102
+resource2_title 8101
+resource3_title 8100
+resource4_title 8103
+
+; Resource names for menus (market_buy resource2, etc.) — do NOT reuse deposit type ``wood``
+def resource1
+title 8102
+def resource2
+title 8101
+def resource3
+title 8100
+def resource4
+title 8103
+
+; Optional aliases for gold/food/stone (not deposit type names)
+def gold
+title 8102
+def food
+title 8100
+def stone
+title 8103
+
+; civilizations
+def britons
+title 8001
+def franks
+title 8002
+def chinese
+title 8003
+def mongols
+title 8004
+def byzantines
+title 8005
+def japanese
+title 8006
+def teutons
+title 8007
+def vikings
+title 8008
+def vietnamese
+title 8009
+def portuguese
+title 8011
+def aztecs
+title 8012
+
+; Category roots (armor / is_a / passenger filters) — spoken names for attribute UI
+def infantry
+title 8500
+def cavalry
+title 8501
+def archer_unit
+title 8502
+def siege_unit
+title 8503
+def unique_unit
+title 8504
+
+; ---------- override base buildings / workers / ages to biligame names ----------
+def townhall
+title 8300
+def town_center
+is_a building
+title 8300
+color white
+noise repeat 6 1064
+store_resource1 1099
+store_resource2 1098
+store_resource3 76941
+store_resource4 76939
+launch_rdg 1042
+rdg_hit 1043
+keyboard building building1
+shortcut h
+
+def keep
+title 8300
+def castle
+title 8113
+def barracks
+title 8301
+def stables
+title 8302
+def blacksmith
+title 8303
+def house
+title 8304
+def farm
+title 8305
+def lumbermill
+title 8306
+store_resource2 1098
+def workshop
+title 8307
+def shipyard
+title 8308
+def wall
+title 8309
+def gate
+title 8310
+def palisade_wall
+is_a building
+title 8325
+keyboard building
+def palisade_gate
+is_a building
+title 8326
+keyboard building
+def outpost
+is_a building
+title 8319
+keyboard building
+def scouttower
+title 8311
+def guardtower
+title 8312
+def keeptower
+is_a building
+title 8313
+def cannontower
+is_a building
+title 8327
+def fortified_wall
+is_a building
+title 8328
+def fortified_gate
+is_a building
+title 8329
+def peasant
+title 8159
+keyboard worker
+shortcut p
+noise_when_exploiting_stone_mine repeat 1.6 76940
+def wonder
+title 8317
+def mill
+is_a building
+title 8314
+store_resource3 store_food
+keyboard building
+shortcut m
+def market
+is_a building
+title 8316
+keyboard building
+shortcut k
+def mining_camp
+is_a building
+title 8315
+store_resource1 1099
+store_resource4 1099
+keyboard building
+shortcut i
+def stone_mine
+is_a resource_deposit
+title 8318
+
+; Wood grove deposit (type name ``wood``). Title = 树林, not resource 「木材」.
+def wood
+is_a resource_deposit
+title 80
+color forestgreen
+noise repeat 6 1055 1056 1057 1058 9999 9999
+ground leaves
+
+def orchard
+is_a resource_deposit
+title 8320
+qty_unit_title 5116
+color gold
+ground gravel
+
+def food_carcass
+is_a resource_deposit
+title 8324
+qty_unit_title 5115
+color saddlebrown
+noise repeat 4 gather_food1 gather_food2
+ground grass
+
+def deer
+is_a walking_unit
+title 8321
+color tan
+noise repeat 8 deer_hey
+death deer_death
+
+def sheep
+is_a walking_unit
+title 8322
+color white
+noise repeat 10 sheep_hey
+death sheep_death
+
+def boar
+is_a walking_unit
+title 8323
+color saddlebrown
+noise repeat 6 boar_hey boar_shout
+mdg_hit paw paw2
+death boar_death
+
+def dark_age
+title 8290
+def feudal_age
+title 8291
+def castle_age
+title 8292
+def imperial_age
+title 8293
+
+; ---------- mod buildings ----------
+def archery_range
+is_a building
+title 8110
+def university
+is_a building
+title 8111
+def monastery
+is_a building
+title 8112
+def relic
+title 8640
+
+def monk
+is_a walking_unit
+title 8114
+keyboard soldier6
+short_cut m
+def missionary
+is_a walking_unit
+title 8115
+keyboard soldier6
+short_cut m
+def aoe_castle
+is_a building
+title 8113
+
+def byzantine_town_center
+is_a town_center
+
+
+def chinese_town_center
+is_a town_center
+
+def briton_barracks
+is_a building
+title 8301
+def frank_barracks
+is_a building
+title 8301
+def chinese_barracks
+is_a building
+title 8301
+def mongol_barracks
+is_a building
+title 8301
+def byzantine_barracks
+is_a building
+title 8301
+
+def briton_archery
+is_a building
+title 8110
+def frank_archery
+is_a building
+title 8110
+def chinese_archery
+is_a building
+title 8110
+def mongol_archery
+is_a building
+title 8110
+def byzantine_archery
+is_a building
+title 8110
+
+def briton_stable
+is_a building
+title 8302
+def frank_stable
+is_a building
+title 8302
+def chinese_stable
+is_a building
+title 8302
+def mongol_stable
+is_a building
+title 8302
+def byzantine_stable
+is_a building
+title 8302
+
+def briton_blacksmith
+is_a building
+title 8303
+def frank_blacksmith
+is_a building
+title 8303
+def chinese_blacksmith
+is_a building
+title 8303
+def mongol_blacksmith
+is_a building
+title 8303
+def byzantine_blacksmith
+is_a building
+title 8303
+
+def briton_castle
+is_a building
+title 8113
+def frank_castle
+is_a building
+title 8113
+def chinese_castle
+is_a building
+title 8113
+def mongol_castle
+is_a building
+title 8113
+def byzantine_castle
+is_a building
+title 8113
+
+def byzantine_house
+is_a building
+title 8304
+def byzantine_wall
+is_a building
+title 8309
+def byzantine_scouttower
+is_a building
+title 8311
+def byzantine_guardtower
+is_a building
+title 8312
+
+def briton_university
+is_a building
+title 8111
+def frank_university
+is_a building
+title 8111
+def chinese_university
+is_a building
+title 8111
+def mongol_university
+is_a building
+title 8111
+def byzantine_university
+is_a building
+title 8111
+
+; Later civ shells (style was only filled for britons–byzantines).
+; Built units use these type names; without title, building list is silent.
+def frank_mill
+is_a mill
+def byzantine_mill
+is_a mill
+def japanese_mill
+is_a mill
+
+def japanese_barracks
+is_a barracks
+def teuton_barracks
+is_a barracks
+def viking_barracks
+is_a barracks
+def vietnamese_barracks
+is_a barracks
+def portuguese_barracks
+is_a barracks
+
+def japanese_archery
+is_a archery_range
+def teuton_archery
+is_a archery_range
+def viking_archery
+is_a archery_range
+def vietnamese_archery
+is_a archery_range
+def portuguese_archery
+is_a archery_range
+
+def japanese_stable
+is_a stables
+def teuton_stable
+is_a stables
+def viking_stable
+is_a stables
+def vietnamese_stable
+is_a stables
+def portuguese_stable
+is_a stables
+
+def japanese_blacksmith
+is_a blacksmith
+def teuton_blacksmith
+is_a blacksmith
+def viking_blacksmith
+is_a blacksmith
+def vietnamese_blacksmith
+is_a blacksmith
+def portuguese_blacksmith
+is_a blacksmith
+
+def japanese_university
+is_a university
+def teuton_university
+is_a university
+def viking_university
+is_a university
+def vietnamese_university
+is_a university
+def portuguese_university
+is_a university
+
+def japanese_workshop
+is_a workshop
+def teuton_workshop
+is_a workshop
+def viking_workshop
+is_a workshop
+def vietnamese_workshop
+is_a workshop
+def portuguese_workshop
+is_a workshop
+def byzantine_workshop
+is_a workshop
+
+def japanese_castle
+is_a aoe_castle
+def teuton_castle
+is_a aoe_castle
+def viking_castle
+is_a aoe_castle
+def vietnamese_castle
+is_a aoe_castle
+def portuguese_castle
+is_a aoe_castle
+
+def portuguese_shipyard
+is_a shipyard
+def viking_shipyard
+is_a shipyard
+def byzantine_shipyard
+is_a shipyard
+def briton_shipyard
+is_a shipyard
+def frank_shipyard
+is_a shipyard
+def chinese_shipyard
+is_a shipyard
+def mongol_shipyard
+is_a shipyard
+def japanese_shipyard
+is_a shipyard
+def teuton_shipyard
+is_a shipyard
+def vietnamese_shipyard
+is_a shipyard
+
+; Aztecs: civ-specific building shells (titles inherit from base types)
+def aztec_barracks
+is_a barracks
+def aztec_archery
+is_a archery_range
+def aztec_blacksmith
+is_a blacksmith
+def aztec_university
+is_a university
+def aztec_workshop
+is_a workshop
+def aztec_shipyard
+is_a shipyard
+def aztec_castle
+is_a aoe_castle
+def aztec_monastery
+is_a monastery
+
+; ---------- units ----------
+def militia
+is_a walking_unit
+title 8120
+launch_mdg 76880
+mdg_hit 76877 76878 76879
+shortcut f
+keyboard soldier1
+
+def man_at_arms
+is_a walking_unit
+title 8121
+complete 76726
+noise repeat 300 76726
+launch_mdg 76728
+mdg_hit 1040 1041 76737	
+keyboard soldier1
+shortcut f
+
+def long_swordsman
+is_a man_at_arms
+title 8122
+
+def two_handed_swordsman
+is_a walking_unit
+title 8123
+complete 76727
+noise repeat 300 76727
+launch_mdg 76725
+mdg_hit 1040 1041 10401
+keyboard soldier1
+shortcut f
+
+def champion
+is_a two_handed_swordsman
+title 8124
+
+def spearman
+is_a walking_unit
+title 8125
+complete 76729
+noise repeat 300 76729
+launch_mdg 76744
+mdg_hit 1040 1041 76745
+keyboard soldier1
+shortcut f
+
+def pikeman
+is_a spearman
+title 8126
+
+def halberdier
+is_a pikeman
+title 8127
+mdg_hit 1040 1041 76924
+
+def aoe_archer
+is_a walking_unit
+title 8130
+complete 76723
+noise repeat 300 76723
+launch_rdg 1042
+rdg_hit 1043
+death if_me 13111 else 13112
+keyboard soldier2
+shortcut a
+
+def crossbowman
+is_a walking_unit
+title 8131
+complete 76724
+launch_rdg 76721
+rdg_hit 76722
+shortcut a
+keyboard soldier2
+
+def arbalester
+is_a crossbowman
+title 8132
+
+def skirmisher
+is_a walking_unit
+title 8133
+complete 76729
+launch_rdg 76867
+rdg_hit 76745
+keyboard soldier2
+shortcut a
+
+def elite_skirmisher
+is_a skirmisher
+title 8134
+
+def imperial_skirmisher
+is_a elite_skirmisher
+title 8137
+
+def cavalry_archer
+is_a unit
+title 8135
+noise repeat 300 76747 76748 76749
+complete 76723
+launch_rdg 1042
+rdg_hit 1043
+death if_me 131101 else 13093
+move 76751 76751
+keyboard soldier3
+shortcut k
+
+def heavy_cavalry_archer
+is_a cavalry_archer
+title 8136
+noise repeat 300 76705
+complete 76724
+launch_rdg 76721
+rdg_hit 76722
+move 76708 76708 
+
+def mongol_cavalry_archer
+is_a cavalry_archer
+title 8135
+
+def scout_cavalry
+is_a unit
+title 8140
+complete 76739
+noise repeat 300 76747 76748 76749
+launch_mdg 12349
+mdg_hit 1040 1041 10391
+death if_me 131101 else 13093
+move 76891 76892
+keyboard soldier3
+shortcut k
+
+def light_cavalry
+is_a scout_cavalry
+title 8141
+
+def hussar
+is_a light_cavalry
+title 8142
+
+def aoe_knight
+is_a unit
+title 8143
+noise repeat 300 1305 1306
+complete 76739
+launch_mdg 12349
+mdg_hit 1040 1041 10391
+move 1303 1303
+death if_me 131101 else 13093
+keyboard soldier3
+shortcut k
+
+def cavalier
+is_a unit
+title 8144
+complete 76730
+noise repeat 300 76705
+launch_mdg 76731
+mdg_hit 1040 1041 76706 76707
+death if_me 131101 else 13093
+move 76708 76708
+keyboard soldier3
+shortcut k
+
+def paladin
+is_a cavalier
+title 8145
+
+def cavalier_end
+is_a cavalier
+title 8144
+
+def camel_rider
+is_a unit
+title 8146
+noise repeat 300 76898 76899 76900
+move 76897 76897
+complete 76813
+launch_rdg 76902
+rdg_hit 1040 1041
+death 76901
+shortcut c
+keyboard soldier4
+
+def heavy_camel_rider
+is_a camel_rider
+title 8147
+launch_rdg 76815
+
+def imperial_camel_rider
+is_a heavy_camel_rider
+title 8148
+
+def battle_elephant
+is_a unit
+title 8160
+noise repeat 180 76904 76905 76906
+move 76908 76909
+death 76903
+mdg 76907
+shortcut a
+keyboard soldier4
+
+def elite_battle_elephant
+is_a battle_elephant
+title 8161
+
+def steppe_lancer
+is_a light_cavalry
+title 8162
+complete 76729
+launch_mdg 76744
+mdg_hit 1040 1041 76829
+keyboard soldier4
+shortcut k
+
+def elite_steppe_lancer
+is_a steppe_lancer
+title 8163
+
+def battering_ram
+is_a unit
+title 8150
+noise repeat 9 1311 1312 1313
+move 76866 76866
+mdg_hit 76865
+death 76837
+keyboard soldier4
+shortcut c
+
+def capped_ram
+is_a battering_ram
+title 8155
+
+def siege_ram
+is_a capped_ram
+title 8156
+
+def mangonel
+is_a unit
+title 8151
+noise repeat 9 1311 1312 1313 ; 1082 1083 ?
+launch_mdg 1084
+mdg_hit 1085
+move 1082 1083
+death 76837
+keyboard soldier4
+shortcut c
+
+def onager
+is_a mangonel
+title 8152
+
+def siege_onager
+is_a onager
+title 8157
+mdg_hit 76864
+
+def scorpion
+is_a unit
+title 8153
+noise repeat 60 76700
+launch_mdg 76701
+mdg_hit 76702
+move 76703
+death 76704
+keyboard soldier4
+
+def heavy_scorpion
+is_a scorpion
+title 8158
+
+def trebuchet
+is_a unit
+title 8154
+
+def bombard_cannon
+is_a unit
+title 8170
+move 76910
+launch_mdg 76917
+mdg_hit 76921
+death 76837
+shortcut c
+keyboard soldier4
+
+def petard
+is_a walking_unit
+title 8171
+noise repeat 300 76726
+move 76708 76708
+explode_effect 76934
+death if_me 131101 else 13093
+shortcut d
+keyboard soldier1
+
+def siege_tower
+is_a unit
+title 8172
+noise repeat 9 1311 1312 1313
+move 76910 76910
+death 76837
+shortcut s
+keyboard soldier4
+
+def hand_cannoneer
+is_a walking_unit
+title 8173
+noise repeat 25 76935 76936 76937 76938
+rdg_hit76875
+shortcut m
+keyboard soldier1
+
+def eagle_scout
+is_a walking_unit
+title 8174
+noise repeat 300 76726
+launch_mdg 76885
+mdg_hit 76886 1040 1041
+death if_me 131101 else 13093
+keyboard soldier1
+shortcut e
+
+def eagle_warrior
+is_a eagle_scout
+title 8175
+launch_mdg 76887
+mdg_hit 76888 1040 1041
+
+def elite_eagle_warrior
+is_a eagle_warrior
+title 8176
+
+def condottiero
+is_a walking_unit
+title 8183
+noise repeat 300 76726
+launch_mdg 76889
+mdg_hit 76890 1040 1041
+death if_me 131101 else 13093
+keyboard soldier1
+shortcut o
+
+def war_elephant
+is_a unit
+title 8177
+noise repeat 180 76904 76905 76906
+move 76908 76909
+death 76903
+mdg_hit 76907
+shortcut a
+keyboard soldier4
+
+def elite_war_elephant
+is_a war_elephant
+title 8178
+
+def armored_elephant
+is_a war_elephant
+title 8179
+
+def elite_armored_elephant
+is_a armored_elephant
+title 8180
+
+def elephant_archer
+is_a unit
+title 8181
+launch_rdg 76911
+
+def elite_elephant_archer
+is_a elephant_archer
+title 8182
+
+def fishing_ship
+is_a unit
+title 8400
+move 1088 1088
+death 76821
+keyboard soldier7
+shortcut f
+
+def trade_cog
+is_a unit
+title 8420
+move 1088 1088
+death 76821
+keyboard soldier7
+
+def fish_trap
+is_a building
+title 8421
+
+def gillnets
+title 8422
+keyboard research
+
+def shipwright
+title 8423
+keyboard research
+
+def transport_ship
+is_a unit
+title 8401
+move 1088 1088
+death 76821
+keyboard soldier7
+shortcut t
+
+; 战舰线 — 复用基础 destroyer / battleship 音效 ID（soundpack / res/ui/effects）
+def galley
+is_a unit
+title 8402
+noise repeat 9 1311 1312 1313
+launch_rdg 1042
+rdg_hit 1043
+move 1088 1088
+death 76821
+keyboard soldier7
+shortcut g
+
+def war_galley
+is_a galley
+title 8403
+
+def galleon
+is_a war_galley
+title 8404
+
+; 喷火船 — 近战火焰，复用 battleship 近战开火/命中
+def fire_galley
+is_a unit
+title 8405
+noise repeat 9 1311 1312 1313
+launch_mdg 76914
+mdg_hit 76915
+move 1088 1088
+death 76821
+keyboard soldier7
+shortcut f
+
+def fire_ship
+is_a fire_galley
+title 8406
+
+def fast_fire_ship
+is_a fire_ship
+title 8407
+
+; 爆破船 — 移动用船声，引爆用爆破兵爆炸
+def demolition_raft
+is_a unit
+title 8408
+noise repeat 9 1311 1312 1313
+move 1088 1088
+explode_effect 76934
+death 76821
+keyboard soldier7
+shortcut d
+
+def demolition_ship
+is_a demolition_raft
+title 8409
+
+def heavy_demolition_ship
+is_a demolition_ship
+title 8410
+
+; 炮舰 / 龟船 / 罗马炮舰 — 开火命中与手推炮相同（火药炮）
+def cannon_galleon
+is_a unit
+title 8411
+noise repeat 9 1311 1312 1313
+launch_mdg 76917
+mdg_hit 76921
+move 1088 1088
+death 76821
+keyboard soldier7
+shortcut c
+
+def elite_cannon_galleon
+is_a cannon_galleon
+title 8412
+
+def turtle_ship
+is_a unit
+title 8413
+noise repeat 9 1311 1312 1313
+launch_mdg 76917
+mdg_hit 76921
+move 1088 1088
+death 76821
+keyboard soldier7
+shortcut u
+
+def elite_turtle_ship
+is_a turtle_ship
+title 8414
+
+; 维京长船 / 卡拉维尔 — 同战舰线弓箭开火
+def longboat
+is_a galley
+title 8415
+
+def elite_longboat
+is_a longboat
+title 8416
+
+def caravel
+is_a galley
+title 8417
+
+def elite_caravel
+is_a caravel
+title 8418
+
+def dromon
+is_a cannon_galleon
+title 8419
+
+; 特色单位 — 继承同兵种通用线音效
+def longbowman
+is_a aoe_archer
+title 8010
+
+def elite_longbowman
+is_a longbowman
+title 8015
+
+def throwing_axeman
+is_a militia
+title 8020
+launch_mdg 76881
+mdg_hit 76890
+keyboard soldier1
+shortcut x
+
+def elite_throwing_axeman
+is_a throwing_axeman
+title 8025
+
+def chu_ko_nu
+is_a crossbowman
+title 8030
+
+def elite_chu_ko_nu
+is_a chu_ko_nu
+title 8035
+
+def mangudai
+is_a cavalry_archer
+title 8040
+
+def elite_mangudai
+is_a mangudai
+title 8045
+
+def cataphract
+is_a aoe_knight
+title 8050
+
+def elite_cataphract
+is_a cataphract
+title 8055
+
+def chinese_villager
+is_a peasant
+title 8159
+keyboard worker
+shortcut p
+def mongol_herdsman
+is_a peasant
+title 8159
+keyboard worker
+shortcut p
+def briton_militia
+is_a unit
+title 8120
+def chinese_militia
+is_a unit
+title 8120
+def byzantine_infantry
+is_a unit
+title 8120
+def frankish_archer
+is_a unit
+title 8130
+def byzantine_archer
+is_a unit
+title 8130
+def frankish_knight
+is_a unit
+title 8143
+def frankish_cavalier
+is_a unit
+title 8144
+def frankish_paladin
+is_a unit
+title 8145
+def briton_knight
+is_a unit
+title 8143
+def chinese_knight
+is_a unit
+title 8143
+def mongol_scout
+is_a unit
+title 8140
+def mongol_lancer
+is_a unit
+title 8143
+def byzantine_knight_line
+is_a unit
+title 8143
+
+; ---------- techs ----------
+def forging
+title 8200
+def iron_casting
+title 8201
+def blast_furnace
+title 8202
+def scale_mail_armor
+title 8203
+def chain_mail_armor
+title 8204
+def plate_mail_armor
+title 8205
+def scale_barding_armor
+title 8206
+def chain_barding_armor
+title 8207
+def plate_barding_armor
+title 8208
+def fletching
+title 8209
+def bodkin_arrow
+title 8210
+def bracer
+title 8211
+def padded_archer_armor
+title 8212
+def leather_archer_armor
+title 8213
+def ring_archer_armor
+title 8214
+
+def bloodlines
+title 8220
+def husbandry
+title 8221
+def tracking
+title 8222
+def squires
+title 8223
+def thumb_ring
+title 8224
+def ballistics
+title 8225
+def chemistry
+title 8226
+def loom
+title 8227
+def wheelbarrow
+title 8228
+def hand_cart
+title 8229
+def double_bit_axe
+title 8230
+def bow_saw
+title 8231
+def two_man_saw
+title 8232
+def gold_mining
+title 8233
+def gold_shaft_mining
+title 8234
+def stone_mining
+title 8243
+def stone_shaft_mining
+title 8244
+def arson
+title 8235
+def gambesons
+title 8236
+def supplies
+title 8242
+def parthian_tactics
+title 8237
+def siege_engineers
+title 8238
+def murder_holes
+title 8250
+def masonry
+title 8251
+def architecture
+title 8252
+def heated_shot
+title 8253
+def treadmill_crane
+title 8254
+def horse_collar
+title 8255
+def heavy_plow
+title 8256
+def crop_rotation
+title 8257
+def frank_horse_collar
+title 8255
+def frank_heavy_plow
+title 8256
+def frank_crop_rotation
+title 8257
+def town_watch
+title 8240
+def town_patrol
+title 8241
+def careening
+title 8424
+def dry_dock
+title 8425
+def conscription
+title 8239
+def hoardings
+title 8270
+def sappers
+title 8271
+def spies
+title 8272
+def caravan
+title 8273
+def guilds
+title 8274
+def coinage
+title 8275
+def banking
+title 8276
+def trade_cart
+is_a unit
+title 8277
+noise repeat 30 76732
+move 76720
+death 76704
+shortcut f
+keyboard soldier7
+
+def feitoria
+title 8278
+
+def market_buy
+title 8279 $1
+index 8.2
+def market_sell
+title 8280 $1
+index 8.3
+def tribute
+title 8281 $1
+index 8.4
+def trade
+title 8282
+index 5.5
+
+def redemption
+title 8260
+def atonement
+title 8261
+def herbal_medicine
+title 8262
+def heresy
+title 8263
+def sanctity
+title 8264
+def fervor
+title 8265
+def faith
+title 8266
+def illumination
+title 8267
+def block_printing
+title 8268
+def theocracy
+title 8269
+
+def yeomen
+title 8060
+def bearded_axe
+title 8061
+def chivalry
+title 8062
+def rocketry
+title 8063
+def drill
+title 8064
+def logistica
+title 8065
+def warwolf
+title 8066
+def great_wall
+title 8067
+def nomads
+title 8068
+def greek_fire
+title 8069
+
+def samurai
+is_a militia
+title 8070
+def elite_samurai
+is_a samurai
+title 8071
+
+def teutonic_knight
+is_a militia
+title 8072
+def elite_teutonic_knight
+is_a teutonic_knight
+title 8073
+
+def berserk
+is_a militia
+title 8074
+def elite_berserk
+is_a berserk
+title 8075
+
+def rattan_archer
+is_a aoe_archer
+title 8076
+def elite_rattan_archer
+is_a rattan_archer
+title 8077
+
+def organ_gun
+is_a mangonel
+title 8078
+def elite_organ_gun
+is_a organ_gun
+title 8079
+
+def yasama
+title 8080
+def kataparuto
+title 8081
+def ironclad
+title 8082
+def crenellations
+title 8083
+def chieftains
+title 8084
+def bogsveigar
+title 8085
+def chatras
+title 8086
+def paper_money
+title 8087
+def circumnavigation
+title 8088
+def arquebus
+title 8089
+
+def jaguar_warrior
+title 8090
+def elite_jaguar_warrior
+is_a jaguar_warrior
+title 8091
+def atlatl
+title 8092
+def garland_wars
+title 8093
+
+def portuguese_villager
+is_a peasant
+title 8159
+keyboard worker
+shortcut p
+
+def aztec_villager
+is_a peasant
+title 8159
+keyboard worker
+shortcut p
+
+def aztec_eagle_scout
+is_a eagle_scout
+title 8174
+

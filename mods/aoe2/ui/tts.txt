@@ -1,0 +1,287 @@
+; coding: utf-8
+; Age of Empires II DE — English labels (biligame Chinese is authoritative in ui-zh)
+
+8000 Age of Empires 2 Definitive Edition
+8001 Britons
+8002 Franks
+8003 Chinese
+8004 Mongols
+8005 Byzantines
+8006 Japanese
+8007 Teutons
+8008 Vikings
+8009 Vietnamese
+8011 Portuguese
+8012 Aztecs
+
+8070 samurai
+8071 elite samurai
+8072 teutonic knight
+8073 elite teutonic knight
+8074 berserk
+8075 elite berserk
+8076 rattan archer
+8077 elite rattan archer
+8078 organ gun
+8079 elite organ gun
+
+8080 Yasama
+8081 Kataparuto
+8082 Ironclad
+8083 Crenellations
+8084 Chieftains
+8085 Bogsveigar
+8086 Chatras
+8087 Paper Money
+8088 Circumnavigation
+8089 Arquebus
+8090 jaguar warrior
+8091 elite jaguar warrior
+8092 Atlatl
+8093 Garland Wars
+
+
+8010 longbowman
+8015 elite longbowman
+8020 throwing axeman
+8025 elite throwing axeman
+8030 chu ko nu
+8031 villager
+8035 elite chu ko nu
+8040 mangudai
+8041 villager
+8045 elite mangudai
+8050 cataphract
+8055 elite cataphract
+
+8060 Yeomen
+8061 Bearded Axe
+8062 Chivalry
+8063 Rocketry
+8064 Drill
+8065 Logistica
+8066 Warwolf
+8067 Great Wall
+8068 Nomads
+8069 Greek Fire
+
+8100 food
+8101 wood
+8102 gold
+8103 stone
+
+8110 archery range
+8111 university
+8112 monastery
+8113 castle
+8114 monk
+8115 missionary
+8300 town center
+8301 barracks
+8302 stable
+8303 blacksmith
+8304 house
+8305 farm
+8306 lumber camp
+8307 siege workshop
+8308 dock
+8309 wall
+8310 gate
+8325 palisade wall
+8326 palisade gate
+8311 watch tower
+8312 guard tower
+8313 keep
+8327 bombard tower
+8328 fortified wall
+8329 fortified gate
+8319 outpost
+8314 mill
+8315 mining camp
+8316 market
+8317 wonder
+8318 stone mine
+8320 berry bush
+8321 deer
+8322 sheep
+8323 boar
+8324 carcass
+
+8120 militia
+8121 man-at-arms
+8122 long swordsman
+8123 two-handed swordsman
+8124 champion
+8125 spearman
+8126 pikeman
+8127 halberdier
+
+8130 archer
+8131 crossbowman
+8132 arbalester
+8133 skirmisher
+8134 elite skirmisher
+8137 imperial skirmisher
+8135 cavalry archer
+8136 heavy cavalry archer
+
+8140 scout cavalry
+8141 light cavalry
+8142 hussar
+8143 knight
+8144 cavalier
+8145 paladin
+8146 camel rider
+8147 heavy camel rider
+8148 imperial camel rider
+8160 battle elephant
+8161 elite battle elephant
+8162 steppe lancer
+8163 elite steppe lancer
+
+8150 battering ram
+8151 mangonel
+8152 onager
+8153 scorpion
+8154 trebuchet
+8155 capped ram
+8156 siege ram
+8157 siege onager
+8158 heavy scorpion
+8159 villager
+8170 bombard cannon
+8171 petard
+8172 siege tower
+8173 hand cannoneer
+8174 eagle scout
+8175 eagle warrior
+8176 elite eagle warrior
+8177 war elephant
+8178 elite war elephant
+8179 armored elephant
+8180 elite armored elephant
+8181 elephant archer
+8182 elite elephant archer
+8183 condottiero
+
+8400 fishing ship
+8401 transport ship
+8402 galley
+8403 war galley
+8404 galleon
+8405 fire galley
+8406 fire ship
+8407 fast fire ship
+8408 demolition raft
+8409 demolition ship
+8410 heavy demolition ship
+8411 cannon galleon
+8412 elite cannon galleon
+8413 turtle ship
+8414 elite turtle ship
+8415 longboat
+8416 elite longboat
+8417 caravel
+8418 elite caravel
+8419 dromon
+8420 trade cog
+8421 fish trap
+8422 gillnets
+8423 shipwright
+8424 careening
+8425 dry dock
+
+8200 Forging
+8201 Iron Casting
+8202 Blast Furnace
+8203 Scale Mail Armor
+8204 Chain Mail Armor
+8205 Plate Mail Armor
+8206 Scale Barding Armor
+8207 Chain Barding Armor
+8208 Plate Barding Armor
+8209 Fletching
+8210 Bodkin Arrow
+8211 Bracer
+8212 Padded Archer Armor
+8213 Leather Archer Armor
+8214 Ring Archer Armor
+
+8220 Bloodlines
+8221 Husbandry
+8222 Tracking
+8223 Squires
+8224 Thumb Ring
+8225 Ballistics
+8226 Chemistry
+8227 Loom
+8228 Wheelbarrow
+8229 Hand Cart
+8230 Double-Bit Axe
+8231 Bow Saw
+8232 Two-Man Saw
+8233 Gold Mining
+8234 Gold Shaft Mining
+8235 Arson
+8236 Gambesons
+8237 Parthian Tactics
+8238 Siege Engineers
+8239 Conscription
+8250 Murder Holes
+8251 Masonry
+8252 Architecture
+8253 Heated Shot
+8254 Treadmill Crane
+8255 Horse Collar
+8256 Heavy Plow
+8257 Crop Rotation
+8270 Hoardings
+8271 Sappers
+8272 Spies
+8273 Caravan
+8274 Guilds
+8275 Coinage
+8276 Banking
+8277 Trade Cart
+8278 Feitoria
+8279 buy
+8280 sell
+8281 tribute
+8282 trade
+8240 Town Watch
+8241 Town Patrol
+8242 Supplies
+8243 Stone Mining
+8244 Stone Shaft Mining
+
+8260 Redemption
+8261 Atonement
+8262 Herbal Medicine
+8263 Heresy
+8264 Sanctity
+8265 Fervor
+8266 Faith
+8267 Illumination
+8268 Block Printing
+8269 Theocracy
+
+; Ages (do not reuse 8250–8257 university/mill tech IDs)
+8290 Dark Age
+8291 Feudal Age
+8292 Castle Age
+8293 Imperial Age
+
+; Unit category roots (armor / is_a / passenger attack filters)
+8500 infantry
+8501 cavalry
+8502 archers
+8503 siege units
+8504 unique units
+
+; Tech effect blurbs (engine-handled techs with no numeric bonus)
+8510 Projectiles lead and hit moving targets
+8511 Monks can convert siege weapons and most buildings
+8512 Monks can convert enemy monks
+8513 Your units die instead of joining the enemy when converted
+8514 Enemy conversions against you take much longer
+8515 When several monks convert together, only the one who succeeds rests

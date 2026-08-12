@@ -6,6 +6,8 @@ from .lib.nofloat import PRECISION
 
 
 def _type_name(obj):
+    if isinstance(obj, str):
+        return obj
     return getattr(obj, "type_name", None) or getattr(obj, "__name__", None)
 
 
@@ -18,6 +20,313 @@ def _unit_class(type_name):
         return rules.unit_class(type_name)
     except (KeyError, AttributeError, TypeError):
         return None
+
+
+def resolve_trainable_unit_type(player, type_name):
+    """AoE2-style: produce the highest unlocked form in a ``can_upgrade_to`` line.
+
+    Walks ``can_upgrade_to`` while the next form is allowed:
+    - ``line_upgrade`` / ``no_auto_upgrade`` forms require ``type_name`` in
+      ``player.upgrades`` (unlocked by researching that form);
+    - other forms unlock when ``requirements`` are met (legacy).
+    """
+    if not type_name:
+        return type_name
+    current = type_name
+    seen = set()
+    upgrades = getattr(player, "upgrades", ()) or () if player is not None else ()
+    while current and current not in seen:
+        seen.add(current)
+        cls = _unit_class(current)
+        if cls is None:
+            break
+        nexts = getattr(cls, "can_upgrade_to", ()) or ()
+        if not nexts:
+            break
+        if not isinstance(nexts, (list, tuple)):
+            nexts = [nexts]
+        advanced = None
+        for nxt in nexts:
+            if not nxt:
+                continue
+            ncls = _unit_class(nxt)
+            if ncls is None:
+                continue
+            needs_research = int(getattr(ncls, "line_upgrade", 0) or 0) or int(
+                getattr(ncls, "no_auto_upgrade", 0) or 0
+            )
+            if needs_research and nxt not in upgrades:
+                continue
+            if player is None:
+                break
+            reqs = getattr(ncls, "requirements", ()) or ()
+            try:
+                if not player.has_all(reqs):
+                    continue
+            except Exception:
+                continue
+            advanced = nxt
+            break
+        if advanced is None:
+            break
+        current = advanced
+    return current
+
+
+def _upgrade_parent_type_name(type_name):
+    """Parent that lists *type_name* in ``can_upgrade_to`` (line production root walk)."""
+    cls = _unit_class(type_name)
+    if cls is None:
+        return None
+    for parent in getattr(cls, "is_a", ()) or ():
+        pcls = _unit_class(parent)
+        if pcls is None:
+            continue
+        ups = getattr(pcls, "can_upgrade_to", ()) or ()
+        if not isinstance(ups, (list, tuple)):
+            ups = [ups]
+        if type_name in ups:
+            return parent
+    return None
+
+
+def line_train_root_type_name(type_name):
+    """Base unit of a morph line (militia for champion, etc.)."""
+    current = type_name
+    seen = set()
+    while current and current not in seen:
+        seen.add(current)
+        parent = _upgrade_parent_type_name(current)
+        if parent is None:
+            break
+        current = parent
+    return current
+
+
+def unit_train_cost(unit_cls_or_name):
+    """Resource cost to *train* a unit (not morph/research upgrade cost).
+
+    Prefer explicit ``train_cost``; else walk the upgrade line to the root and
+    use that unit's ``cost`` (AoE2: all sword-line tiers train at militia price).
+    """
+    name = _type_name(unit_cls_or_name)
+    cls = _unit_class(name) if isinstance(unit_cls_or_name, str) else unit_cls_or_name
+    if cls is None and name:
+        cls = _unit_class(name)
+    if cls is None:
+        return (0,)
+    explicit = getattr(cls, "train_cost", None)
+    if explicit is not None and explicit != 0 and explicit != ():
+        if isinstance(explicit, (list, tuple)):
+            if any(explicit):
+                return tuple(explicit)
+        else:
+            return explicit
+    root_name = line_train_root_type_name(name or _type_name(cls))
+    root = _unit_class(root_name) if root_name else cls
+    cost = getattr(root, "cost", None)
+    if cost is None:
+        cost = getattr(cls, "cost", (0,))
+    return tuple(cost) if isinstance(cost, (list, tuple)) else cost
+
+
+def unit_train_time(unit_cls_or_name):
+    """Train duration; same root-walk rule as :func:`unit_train_cost`."""
+    name = _type_name(unit_cls_or_name)
+    cls = _unit_class(name) if isinstance(unit_cls_or_name, str) else unit_cls_or_name
+    if cls is None and name:
+        cls = _unit_class(name)
+    if cls is None:
+        return 0
+    explicit = getattr(cls, "train_time", None)
+    if explicit is not None:
+        try:
+            return int(explicit)
+        except (TypeError, ValueError):
+            pass
+    root_name = line_train_root_type_name(name or _type_name(cls))
+    root = _unit_class(root_name) if root_name else cls
+    return getattr(root, "time_cost", getattr(cls, "time_cost", 0)) or 0
+
+
+def _faction_train_equivalent(player, type_name):
+    """Map a train slot through the player's race table (e.g. peasant → chinese_villager)."""
+    if not type_name or player is None:
+        return type_name
+    equiv = getattr(player, "equivalent", None)
+    if not callable(equiv):
+        return type_name
+    try:
+        mapped = equiv(type_name)
+    except Exception:
+        return type_name
+    return mapped or type_name
+
+
+def _faction_build_equivalent(player, type_name):
+    """Raw race-table shell for buildings (ignore AI producibility fallbacks).
+
+    ``Player.equivalent`` may keep semantic names (``barracks``) so AI ``get``
+    matches villager ``can_build``. Build placement still needs the civ shell
+    (``portuguese_barracks``) from ``rules.get(faction, name)``.
+    """
+    if not type_name or player is None:
+        return type_name
+    faction = getattr(player, "faction", None)
+    if not faction:
+        return type_name
+    try:
+        mapped = rules.get(faction, type_name)
+    except Exception:
+        return type_name
+    if mapped:
+        return mapped[0] or type_name
+    return type_name
+
+
+def _resolve_can_train_list(player, can_train):
+    """Map each train slot to the highest unlocked line form (and race equivalent)."""
+    if isinstance(can_train, dict):
+        out = {}
+        for name, count in can_train.items():
+            resolved = resolve_trainable_unit_type(player, name)
+            resolved = _faction_train_equivalent(player, resolved)
+            try:
+                count = max(1, int(count))
+            except (TypeError, ValueError):
+                count = 1
+            out[resolved] = max(out.get(resolved, 1), count)
+        return out
+    out = []
+    seen = set()
+    for name in can_train or ():
+        resolved = resolve_trainable_unit_type(player, name)
+        resolved = _faction_train_equivalent(player, resolved)
+        if resolved in seen:
+            continue
+        seen.add(resolved)
+        out.append(resolved)
+    return tuple(out)
+
+
+def _resolve_build_menu_list(player, can_build):
+    """Build menu: line-upgrade only — keep semantic rules names (farm, aoe_castle).
+
+    Race shells (``teuton_farm`` / ``chinese_castle``) are applied later when the
+    build order is issued via ``resolve_buildable_type``.
+    """
+    out = []
+    seen = set()
+    for name in can_build or ():
+        resolved = resolve_trainable_unit_type(player, name)
+        if resolved in seen:
+            continue
+        seen.add(resolved)
+        out.append(resolved)
+    return tuple(out)
+
+
+def resolve_buildable_type(player, type_name):
+    """Semantic build name → highest line form → race shell (no civ hardcoding)."""
+    if not type_name:
+        return type_name
+    resolved = resolve_trainable_unit_type(player, type_name)
+    return _faction_build_equivalent(player, resolved)
+
+
+def menu_allows_build(unit, type_name):
+    """True if *type_name* is on the build menu or is a race shell of a menu entry."""
+    if unit is None or not type_name:
+        return False
+    menu = effective_can_build(unit) or ()
+    if not menu:
+        # Stubs / tests may put a plain list on the instance (no rules class).
+        inst = getattr(unit, "__dict__", None) or {}
+        raw = inst.get("can_build")
+        if raw:
+            menu = tuple(raw.keys()) if isinstance(raw, dict) else tuple(raw)
+    if type_name in menu:
+        return True
+    player = getattr(unit, "player", None)
+    if player is None or not callable(getattr(player, "equivalent", None)):
+        return False
+    try:
+        if player.equivalent(type_name) in menu:
+            return True
+    except Exception:
+        pass
+    for semantic in menu:
+        try:
+            if player.equivalent(semantic) == type_name:
+                return True
+        except Exception:
+            continue
+    return False
+
+
+def apply_unit_line_upgrade(player, target_type_name):
+    """Unlock a line form for training and morph existing previous-tier units.
+
+    Generic (no hardcoded unit names): any type can be unlocked this way.
+    Typically triggered by researching a unit marked ``line_upgrade 1``, or by
+    ``effect unit_line_upgrade <type>``.
+    """
+    if player is None or not target_type_name:
+        return
+    target_name = str(target_type_name)
+    if not hasattr(player, "upgrades") or player.upgrades is None:
+        player.upgrades = []
+    if target_name not in player.upgrades:
+        player.upgrades.append(target_name)
+
+    target_cls = _unit_class(target_name)
+    if target_cls is None:
+        return
+
+    from .worldphase import Phase
+
+    for unit in list(getattr(player, "units", ()) or ()):
+        if getattr(unit, "type_name", None) == target_name:
+            continue
+        ups = getattr(unit, "can_upgrade_to", ()) or ()
+        if not isinstance(ups, (list, tuple)):
+            ups = [ups]
+        if target_name not in ups:
+            continue
+        try:
+            Phase._instant_morph(unit, target_cls)
+        except Exception as e:
+            warning(
+                "unit_line_upgrade morph %s -> %s failed: %s",
+                getattr(unit, "type_name", unit),
+                target_name,
+                e,
+            )
+
+
+def effective_can_build(unit):
+    """Villager build menu: semantic rules names + highest unlocked line form.
+
+    Race shells are *not* applied here (AoE2-style menu shows farm / aoe_castle).
+    ``BuildOrder`` calls ``resolve_buildable_type`` when placing the building.
+    """
+    if unit is None:
+        return ()
+    cls = _unit_type(unit)
+    raw = _raw_class_attr(cls, "_rules_can_build", None)
+    if raw is None or raw == ():
+        raw = _raw_class_attr(cls, "can_build", ()) or ()
+    names = list(_resolve_build_menu_list(getattr(unit, "player", None), raw) or ())
+    player = getattr(unit, "player", None)
+    upgrades = getattr(player, "upgrades", ()) or () if player is not None else ()
+    out = []
+    for name in names:
+        bcls = _unit_class(name)
+        if bcls is not None and int(getattr(bcls, "line_upgrade", 0) or 0):
+            if name not in upgrades:
+                continue
+        out.append(name)
+    return tuple(out)
 
 
 def _expanded_type_names(type_name):
@@ -547,7 +856,19 @@ def is_addon_unit(unit):
 
 
 def _unit_type(unit):
-    return getattr(unit, "type", type(unit))
+    """Rules class for a world unit or client EntityView (unwrap ``.model``)."""
+    if unit is None:
+        return None
+    # Client views forward most attrs via __getattr__, but units often have no
+    # ``.type`` field — only ``type(unit)``. Unwrapping ``.model`` first keeps
+    # build/train menu checks working on EntityView.
+    model = getattr(unit, "model", None)
+    if model is not None and model is not unit:
+        return _unit_type(model)
+    typed = unit.__dict__.get("type") if hasattr(unit, "__dict__") else None
+    if typed is not None:
+        return typed
+    return type(unit)
 
 
 def is_flying_building_unit(unit):
@@ -838,7 +1159,11 @@ def _merge_player_can_train_override(host, result):
 
 
 def effective_can_train(host):
-    """合并宿主基础训练列表与附件加成（科技实验室解锁、反应堆双产）。"""
+    """合并宿主基础训练列表与附件加成（科技实验室解锁、反应堆双产）。
+
+    Also remaps each line to the highest unlocked ``can_upgrade_to`` form
+    (AoE2: barracks trains Man-at-Arms after that upgrade/age unlock, not Militia).
+    """
     if host is None or is_flying_building_unit(host):
         return ()
     base = _normalize_train_list(_base_can_train(host))
@@ -861,9 +1186,11 @@ def effective_can_train(host):
                 count = max(count, multipliers[name])
             result[name] = max(1, int(count))
         if multipliers or any(v != 1 for v in result.values()):
-            return _merge_player_can_train_override(host, result)
+            merged = _merge_player_can_train_override(host, result)
+            return _resolve_can_train_list(getattr(host, "player", None), merged)
     base_result = tuple(train_names)
-    return _merge_player_can_train_override(host, base_result)
+    merged = _merge_player_can_train_override(host, base_result)
+    return _resolve_can_train_list(getattr(host, "player", None), merged)
 
 
 def effective_can_research(host):
@@ -1068,7 +1395,12 @@ def _bridge_subject_type(obj):
 def _bridge_terrain_providers(objects):
     """Completed bridge buildings that grant passage (not construction sites)."""
     for obj in objects or ():
-        if getattr(obj, "hp", 1) <= 0:
+        try:
+            hp = getattr(obj, "hp", 1)
+            if float(hp) <= 0:
+                continue
+        except (TypeError, ValueError):
+            # Corrupt/non-numeric hp must not break footstep / overlay resolution.
             continue
         if getattr(obj, "type_name", None) == "buildingsite":
             continue
@@ -1453,9 +1785,64 @@ def finalize_new_building(building, site=None):
         host = getattr(building, "addon_host", None)
     if host is not None and is_addon_type(building):
         attach_addon(host, building)
+    _apply_farm_food_tech_bonuses(building)
     _auto_start_gas_production(building)
     if is_unit_spawn_host(building):
         fill_spawn_host(building, notify=False)
+
+
+def _apply_farm_food_tech_bonuses(building):
+    """AoE2 mill techs: Horse Collar / Heavy Plow / Crop Rotation on *new* farms only.
+
+    Sums ``farm_food_bonus`` from researched upgrades and adds to
+    ``resource_volume_max`` / ``resource_qty`` / ``production_qty`` (reseed fill).
+    """
+    if building is None:
+        return
+    if not (
+        int(getattr(building, "auto_cultivate", 0) or 0)
+        or int(getattr(building, "is_gather", 0) or 0)
+    ):
+        return
+    if int(getattr(building, "resource_volume_max", 0) or 0) <= 0:
+        return
+    # Prefer explicit farm line (is_a / type_name), skip other gather buildings.
+    try:
+        from .worldphase import Phase
+
+        if not Phase._unit_matches_single_target(building, "farm"):
+            return
+    except Exception:
+        if getattr(building, "type_name", None) != "farm":
+            return
+    player = getattr(building, "player", None)
+    if player is None:
+        return
+    bonus = 0
+    for tech_name in getattr(player, "upgrades", ()) or ():
+        try:
+            tech = rules.unit_class(tech_name)
+        except Exception:
+            tech = None
+        if tech is None:
+            continue
+        try:
+            bonus += int(getattr(tech, "farm_food_bonus", 0) or 0)
+        except (TypeError, ValueError):
+            continue
+    if bonus <= 0:
+        return
+    building.resource_volume_max = int(building.resource_volume_max) + bonus
+    if hasattr(building, "resource_qty"):
+        building.resource_qty = int(building.resource_volume_max)
+        building._resource_qty_frac = 0
+        try:
+            building.notify(f"qty_update,{building.resource_qty}")
+        except Exception:
+            pass
+    pq = getattr(building, "production_qty", 0) or 0
+    if pq:
+        building.production_qty = int(pq) + bonus
 
 
 def _auto_start_gas_production(building):

@@ -40,8 +40,11 @@ class Weapon(Entity):
     rdg_projectile = 0  # 远程攻击是否为投射物
     mdg_targets = ["ground"]
     rdg_targets = ["ground"]
-    mdg_delay = 0 #近战伤害弹道
-    rdg_delay = 0 #远程伤害弹道
+    mdg_delay = 0  # deprecated
+    rdg_delay = 0  # deprecated
+    mdg_projectile_speed = 0
+    rdg_projectile_speed = 0
+    projectile_speed = 0  # deprecated
     mdg_radius = 0
     rdg_radius = 0
     mdg_splash = 0
@@ -70,6 +73,12 @@ class Weapon(Entity):
     rdg_seq_times: int = 1      # 远程攻击次数  
     rdg_seq_damages: List[int] = []  # 远程伤害序列
     rdg_seq_interval: float = 0  # 远程攻击间隔
+    rdg_seq_secondary: int = 0
+    rdg_seq_secondary_rdg: int = 0
+    rdg_seq_secondary_mdg: int = 0
+    mdg_seq_secondary: int = 0
+    mdg_seq_secondary_rdg: int = 0
+    mdg_seq_secondary_mdg: int = 0
     # 添加自爆相关
     mdg_explode = False
     rdg_explode = False
@@ -170,6 +179,9 @@ class Weapon(Entity):
             ("rdg_projectile", int),
             ("mdg_delay", int),
             ("rdg_delay", int),
+            ("mdg_projectile_speed", int),
+            ("rdg_projectile_speed", int),
+            ("projectile_speed", int),
             ("mdg_radius", int),
             ("rdg_radius", int),
             ("mdg_splash", int),
@@ -190,6 +202,12 @@ class Weapon(Entity):
             ("rdg_seq_times", int),
             ("mdg_seq_interval", float),
             ("rdg_seq_interval", float),
+            ("mdg_seq_secondary", int),
+            ("rdg_seq_secondary", int),
+            ("mdg_seq_secondary_rdg", int),
+            ("rdg_seq_secondary_rdg", int),
+            ("mdg_seq_secondary_mdg", int),
+            ("rdg_seq_secondary_mdg", int),
             ("exp_hp_cost", int),
             ("exp_dgf", int),
             # 添加更多bonus属性
@@ -585,11 +603,15 @@ class Weapon(Entity):
             "mdg_crit", "rdg_crit", "mdg_crit_rate", "rdg_crit_rate",
             "mdg_piercing", "rdg_piercing", "mdg_piercing_rate", "rdg_piercing_rate",
             "mdg_minimal_range", "rdg_minimal_range", "mdg_projectile", "rdg_projectile",
-            "mdg_delay", "rdg_delay", "mdg_radius", "rdg_radius",
+            "mdg_delay", "rdg_delay", "mdg_projectile_speed", "rdg_projectile_speed",
+            "projectile_speed", "mdg_radius", "rdg_radius",
             "mdg_splash", "rdg_splash", "mdg_splash_decay_min", "rdg_splash_decay_min",
             "mdg_ready", "rdg_ready", "mdg_cover", "rdg_cover",
             "mdg_dodge", "rdg_dodge", "mdg_status_duration", "rdg_status_duration",
             "mdg_seq_times", "rdg_seq_times", "mdg_seq_interval", "rdg_seq_interval",
+            "mdg_seq_secondary", "rdg_seq_secondary",
+            "mdg_seq_secondary_rdg", "rdg_seq_secondary_rdg",
+            "mdg_seq_secondary_mdg", "rdg_seq_secondary_mdg",
             "mdg_explode", "rdg_explode", "exp_hp_cost", "exp_dgf"
         ]
         

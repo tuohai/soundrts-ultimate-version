@@ -709,6 +709,8 @@
 4794	mana tối đa
 4795	thời gian thu thập
 4796	số lượng thu thập
+5412	tốc độ thu thập
+5415	sức chứa
 4797	thời gian sản xuất
 4798	số lượng sản xuất
 4799	chi phí
@@ -742,6 +744,9 @@
 4827	loại tài nguyên có thể thu thập
 4828	thời gian thu thập
 4829	số lượng thu thập
+5413	tốc độ thu thập
+5414	mỗi giây
+5416	sức chứa
 4830	có khả năng sửa chữa
 4831	mục tiêu mặt đất
 4832	mục tiêu trên không

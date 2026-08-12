@@ -307,14 +307,18 @@ class Computer(Player):
                 for w in cmd[1:]:
                     if re.match("^[0-9]+$", w):
                         n = int(w)
-                    elif w in rules.classnames():
-                        if not self.get(n, self.equivalent(w)):
-                            done = False
-                            break
-                        n = 1
                     else:
-                        warning("get: unknown unit: '%s' (in ai.txt)", w)
-                        n = 1
+                        # After mod ``clear``, ai.txt must name types that exist
+                        # in the mod (militia / aoe_archer / …). Unknown names
+                        # warn — do not silently map base aliases via race table.
+                        if rules.unit_class(w) is not None:
+                            if not self.get(n, w):
+                                done = False
+                                break
+                            n = 1
+                        else:
+                            warning("get: unknown unit: '%s' (in ai.txt)", w)
+                            n = 1
                 if done:
                     self._line_nb += 1
             else:
@@ -405,21 +409,35 @@ class Computer(Player):
         return self._discovery_cache_get("main_base_types", _compute)
 
     def _housing_type_names(self):
-        """Supply buildings: provide population and are not the main base."""
+        """Supply buildings: provide population and are not the main base.
+
+        Prefer real houses (high population_provided, meadow build) over castles
+        or exit-only walls/gates that also happen to grant a little pop.
+        """
 
         def _compute():
             main = set(self._main_base_type_names())
-            result = []
+            ranked = []
             for name in self._worker_buildable_type_names():
                 if name in main:
                     continue
                 uc = rules.unit_class(name)
                 if uc is None:
                     continue
-                if int(getattr(uc, "population_provided", 0) or 0) <= 0:
+                pop = int(getattr(uc, "population_provided", 0) or 0)
+                if pop <= 0:
                     continue
-                result.append(name)
-            return tuple(result)
+                # Walls/gates are not housing — building them for supply spams
+                # cannot_build_here on exits.
+                if getattr(uc, "is_buildable_on_exits_only", 0):
+                    continue
+                if getattr(uc, "is_a_gate", 0):
+                    continue
+                cost = sum(getattr(uc, "cost", ()) or ())
+                ranked.append((name, pop, cost))
+            # More pop first, then cheaper, then stable name order.
+            ranked.sort(key=lambda item: (-item[1], item[2], item[0]))
+            return tuple(item[0] for item in ranked)
 
         return self._discovery_cache_get("housing_types", _compute)
 
@@ -700,32 +718,80 @@ class Computer(Player):
         ]:
             self._build_a_warehouse_for(deposit)
 
+    def _plan_still_wants_trains_from(self, building):
+        """True if the current ai.txt get line still needs units this building trains."""
+        if not getattr(self, "_plan", None):
+            return False
+        try:
+            line = self._plan[self._line_nb]
+        except Exception:
+            return False
+        if not isinstance(line, str) or not line.startswith("get "):
+            return False
+        trainables = set(effective_can_train(building) or ())
+        if not trainables:
+            return False
+        n = 1
+        for token in line.split()[1:]:
+            if re.match("^[0-9]+$", token):
+                n = int(token)
+                continue
+            wanted = self.equivalent(token)
+            if wanted in trainables and self.nb(wanted) < n:
+                return True
+            # Line-upgraded forms still count toward the semantic quota.
+            wanted_cls = rules.unit_class(wanted)
+            for tn in trainables:
+                tc = rules.unit_class(tn)
+                if tc is None or wanted_cls is None:
+                    continue
+                if tn == wanted or wanted in getattr(tc, "expanded_is_a", ()):
+                    if self.nb(wanted) < n:
+                        return True
+            n = 1
+        return False
+
     def idle_buildings_research(self):
+        from .worldorders.production import AdvanceOrder, ResearchOrder
+
         for u in self.units:
             if u.orders:
                 continue
-            # 普通科技：can_research / research
-            for t in u.can_research:
-                unit_type = self.unit_class(t)
-                if unit_type is None:  # 跳过无效的研究类型
-                    continue
-                if (
-                    not self.future_nb([t])
-                    and not self.missing_resources(unit_type.cost)
-                    and self.potential(unit_type.cost) > 3
-                ):
-                    u.take_order(["research", t])
-            # 时代推进：can_advance / advance（与科技通道完全分离）
-            for t in getattr(u, "can_advance", ()) or ():
-                unit_type = self.unit_class(t)
-                if unit_type is None:
-                    continue
-                if (
-                    not self.future_nb([t])
-                    and not self.missing_resources(unit_type.cost)
-                    and self.potential(unit_type.cost) > 3
-                ):
-                    u.take_order(["advance", t])
+            # Finish get-line training before spending the building on tech.
+            if self._plan_still_wants_trains_from(u):
+                continue
+
+            def _try_start(keyword, type_names, order_cls):
+                names = list(type_names or ())
+                if keyword == "research":
+                    # Prefer unit-line unlocks; keep rules order otherwise.
+                    names.sort(
+                        key=lambda n: 0
+                        if int(
+                            getattr(self.unit_class(n), "line_upgrade", 0) or 0
+                        )
+                        else 1
+                    )
+                for t in names:
+                    unit_type = self.unit_class(t)
+                    if unit_type is None:
+                        continue
+                    if not order_cls.is_allowed(u, t):
+                        continue
+                    if (
+                        not self.future_nb([t])
+                        and not self.missing_resources(unit_type.cost)
+                        and self.potential(unit_type.cost) > 3
+                    ):
+                        u.take_order([keyword, t])
+                        return True
+                return False
+
+            if _try_start("research", u.can_research, ResearchOrder):
+                continue
+            _try_start(
+                "advance", getattr(u, "can_advance", ()) or (), AdvanceOrder
+            )
 
     def _is_powerful_enough(self, units, place):
         # sometimes population limit prevents units with more than 1 population cost
@@ -1232,13 +1298,24 @@ class Computer(Player):
         return self._pick_nearest_reachable(origin, safe or animals)
 
     def _gatherable_building_targets(self, worker):
+        from .world_extractor import (
+            extractor_can_still_yield,
+            gather_target_wants_more_workers,
+        )
+
         result = []
         for u in self.units:
             if not getattr(u, "is_a_building", False):
                 continue
-            if getattr(u, "resource_qty", 0) <= 0:
-                continue
             if not getattr(u, "resource_type", None):
+                continue
+            if getattr(u, "is_an_extractor", 0):
+                if not extractor_can_still_yield(u):
+                    continue
+                # SC gas: do not assign a 4th worker while 3 are already on it
+                if not gather_target_wants_more_workers(u, worker):
+                    continue
+            elif getattr(u, "resource_qty", 0) <= 0:
                 continue
             if u.place is None or self.square_is_dangerous(u.place):
                 continue
@@ -1656,14 +1733,23 @@ class Computer(Player):
                 self._send_units(wounded, heal_place)
 
         # build static defenses (any is_a_gate building workers can build)
+        # Beginner/timers: never auto-wall — repeated failed gate builds spam
+        # ``cannot_build_here`` (orders queued behind auto_explore, or many
+        # workers targeting the same exit).
+        if self.AI_type in ("beginner", "timers", "easy"):
+            return
         gate_names = self._gate_type_names()
         if self._sensible_building is not None and gate_names:
-            gate_name = gate_names[0]
+            gate_name = self._prefer_gate_type_name(gate_names)
             gate = rules.unit_class(gate_name)
 
             def nearest_exit(u):
+                place = getattr(u, "place", None)
+                if place is None:
+                    return None
                 result = sorted(
-                    u.place.exits, key=lambda e: square_of_distance(u.x, u.y, e.x, e.y)
+                    place.exits,
+                    key=lambda e: square_of_distance(u.x, u.y, e.x, e.y),
                 )
                 if result:
                     return result[0]
@@ -1673,10 +1759,49 @@ class Computer(Player):
                 e is not None
                 and not e.is_blocked()
                 and gate is not None
+                and self.get_object_by_id(e.id) is e
+                and not self._gate_build_already_pending(gate_name, e)
+                and self.future_nb(gate_name) <= self.nb(gate_name)
                 and self.gather(gate.cost, 0)
                 and any(worker_can_build(w, gate_name) for w in self._workers)
             ):
-                self._issue_build(gate_name, e, self._workers)
+                # requisition=True stops auto_explore so the build reaches queue head
+                worker_name = self._primary_worker_type_name()
+                if worker_name:
+                    self.order(
+                        1,
+                        worker_name,
+                        ["build", gate_name, e.id],
+                        near=e,
+                        requisition=True,
+                    )
+
+    def _prefer_gate_type_name(self, gate_names):
+        """Prefer cheap dark-age palisade gates over stone gates when both exist."""
+        names = list(gate_names or ())
+        for preferred in ("palisade_gate", "gate"):
+            if preferred in names:
+                return preferred
+        return names[0]
+
+    def _gate_build_already_pending(self, gate_name, exit_obj):
+        """True if a worker already has a gate build (any queue slot) for this exit."""
+        exit_id = getattr(exit_obj, "id", None)
+        for u in self._workers:
+            for o in getattr(u, "orders", ()) or ():
+                if getattr(o, "keyword", None) != "build":
+                    continue
+                t = getattr(o, "type", None)
+                tn = getattr(t, "__name__", None) or getattr(t, "type_name", None)
+                if tn != gate_name:
+                    continue
+                target = getattr(o, "target", None)
+                if target is exit_obj:
+                    return True
+                args = getattr(o, "args", None) or ()
+                if exit_id is not None and exit_id in args:
+                    return True
+        return False
 
     nb_workers_to_get = 10
 
@@ -2560,8 +2685,82 @@ class Computer(Player):
             # 获取制造者类型列表
             makers = rules.get_makers(wanted)
             if not makers:
+                # Civ equivalents (e.g. frank_barracks, chinese_villager) may have
+                # no direct makers; fall back to an is_a ancestor that does.
+                for parent in getattr(wanted, "expanded_is_a", ()) or ():
+                    if parent == getattr(wanted, "__name__", None):
+                        continue
+                    if rules.get_makers(parent):
+                        return self._get(nb, parent)
                 continue
-                
+
+            # Prefer makers we already own, then makers that are themselves
+            # obtainable. Collapse civ building shells (portuguese_barracks,
+            # vietnamese_archery, …) to a semantic name workers can produce so
+            # get(militia) does not recurse through every civ shell and burn
+            # safe_cnt with "trouble getting".
+            ordered = []
+            seen = set()
+
+            def _push(name):
+                if name and name not in seen:
+                    seen.add(name)
+                    ordered.append(name)
+
+            def _obtainable_maker(name):
+                if not name:
+                    return name
+                if self.nb(name) > 0:
+                    return name
+                get_direct = getattr(rules, "get_direct_makers", None)
+                if callable(get_direct) and get_direct(name):
+                    return name
+                race_sources = getattr(rules, "_race_equivalent_sources", None)
+                if callable(race_sources):
+                    for semantic in race_sources(name):
+                        if self.nb(semantic) > 0:
+                            return semantic
+                        if callable(get_direct) and get_direct(semantic):
+                            return semantic
+                        if rules.get_makers(semantic):
+                            return semantic
+                mc = rules.unit_class(name)
+                for parent in getattr(mc, "expanded_is_a", ()) or ():
+                    if parent == name:
+                        continue
+                    if self.nb(parent) > 0 or rules.get_makers(parent):
+                        return parent
+                return name
+
+            for m in makers:
+                if self.nb(m) > 0:
+                    _push(_obtainable_maker(m))
+            for m in makers:
+                if self.nb(m) > 0:
+                    continue
+                m2 = _obtainable_maker(m)
+                if self.nb(m2) > 0:
+                    _push(m2)
+                    continue
+                if rules.get_makers(m2):
+                    _push(m2)
+                    continue
+                mc = rules.unit_class(m2)
+                for parent in getattr(mc, "expanded_is_a", ()) or ():
+                    if parent == m2:
+                        continue
+                    if rules.get_makers(parent):
+                        _push(parent)
+                        break
+            makers = ordered
+            if not makers:
+                for parent in getattr(wanted, "expanded_is_a", ()) or ():
+                    if parent == getattr(wanted, "__name__", None):
+                        continue
+                    if rules.get_makers(parent):
+                        return self._get(nb, parent)
+                continue
+
             # 检查是否已有该类型的制造者
             if self.nb(makers) > 0:
                 try:
@@ -2610,6 +2809,8 @@ class Computer(Player):
 
     def _ensure_housing(self, min_headroom=2):
         """Build faction supply when population is tight (any pop-providing non-base)."""
+        from .worldrequirements import requirements_satisfied
+
         if self._population_headroom() > min_headroom:
             return False
         if self.available_population >= self.world.population_limit:
@@ -2617,18 +2818,23 @@ class Computer(Player):
         houses = self._housing_type_names()
         if not houses:
             return False
-        house = houses[0]
-        house_cls = rules.unit_class(house)
-        if house_cls is None:
-            return False
-        if house not in self._worker_buildable_type_names():
-            return False
-        if self.future_nb(house) > self.nb(house):
-            return False
-        if self.missing_resources(house_cls.cost):
-            return False
-        self.build_or_train_or_upgradeto_or_summon(house)
-        return True
+        buildable = self._worker_buildable_type_names()
+        for house in houses:
+            house_cls = rules.unit_class(house)
+            if house_cls is None:
+                continue
+            if house not in buildable:
+                continue
+            # Do not chase castle_age (via walls) just to unlock castle housing.
+            if not requirements_satisfied(self, getattr(house_cls, "requirements", ())):
+                continue
+            if self.future_nb(house) > self.nb(house):
+                continue
+            if self.missing_resources(house_cls.cost):
+                continue
+            self.build_or_train_or_upgradeto_or_summon(house)
+            return True
+        return False
 
     def gather(self, cost, population):
         missing = self.missing_resources(cost)
@@ -2709,6 +2915,23 @@ class Computer(Player):
                 return True
         return False
 
+    def _class_produces_type(self, maker_cls, type_name, attr):
+        """True if maker class lists type_name, or a semantic race source of it."""
+        if attr == "can_train":
+            raw = rules.class_can_train(maker_cls)
+            names = raw.keys() if isinstance(raw, dict) else (raw or ())
+        else:
+            names = rules.class_rules_attr(maker_cls, attr, ()) or ()
+        if type_name in names:
+            return True
+        race_sources = getattr(rules, "_race_equivalent_sources", None)
+        if not callable(race_sources):
+            return False
+        for semantic in race_sources(type_name):
+            if semantic in names:
+                return True
+        return False
+
     def build_or_train_or_upgradeto_or_summon(self, t, nb=1):
         if t.__class__ == str:
             t = rules.unit_class(t)
@@ -2730,7 +2953,7 @@ class Computer(Player):
                         self.order(nb, maker, ["upgrade_to", type])
                 else:
                     self._get(nb, maker)
-            elif type in rules.class_rules_attr(maker_cls, "can_build"):
+            elif self._class_produces_type(maker_cls, type, "can_build"):
                 if not self.gather(t.cost, t.population_cost):
                     return
                 if ensure_field_provider_before_build(self, t):
@@ -2776,15 +2999,25 @@ class Computer(Player):
                         starting_place=starting,
                     )
                 target = resolve_build_target(self, t, target)
+                # Workers list semantic names; race shells resolve in BuildOrder.
+                build_name = type
+                builds = rules.class_rules_attr(maker_cls, "can_build", ()) or ()
+                if build_name not in builds:
+                    race_sources = getattr(rules, "_race_equivalent_sources", None)
+                    if callable(race_sources):
+                        for semantic in race_sources(type):
+                            if semantic in builds:
+                                build_name = semantic
+                                break
                 if target:
                     self.order(
                         build_worker_count(maker_cls, t),
                         maker,
-                        ["build", type, target.id],
+                        ["build", build_name, target.id],
                         requisition=True,
                         near=target,
                     )
-            elif type in rules.class_can_train(maker_cls):
+            elif self._class_produces_type(maker_cls, type, "can_train"):
                 if (
                     self.nb(Worker)
                     and nb > self.nb(maker) * 3

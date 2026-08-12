@@ -1,4 +1,4 @@
-﻿# Northern campaign arc (The Legend of Raynor ch. 24–27)
+# Northern campaign arc (The Legend of Raynor ch. 24–27)
 
 
 

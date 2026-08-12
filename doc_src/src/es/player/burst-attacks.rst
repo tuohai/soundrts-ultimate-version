@@ -20,11 +20,11 @@ Referencia oficial: ``mod/modding.rst`` (Combat system → ``damage_seq``).
    * - Aspecto
      - Comportamiento
    * - Daño total por ciclo
-     - Sigue igualando el ``mdg`` / ``rdg`` base (repartido entre disparos)
+     - Reparto igual/manual: sigue igualando ``mdg`` / ``rdg``; modo ``secondary``: primera viva + flechas fijas posteriores (puede superar la base)
    * - Disparos por ciclo
      - Hasta 6 (`damage_seq … <times>`)
    * - Tiradas de impacto
-     - Independientes por disparo
+     - Independientes por disparo; las flechas secundarias aciertan al 100%
    * - Tiempo de reutilización
      - ``mdg_cd`` / ``rdg_cd`` empieza tras terminar la ráfaga completa
    * - Sonidos de lanzamiento
@@ -40,7 +40,7 @@ Referencia oficial: ``mod/modding.rst`` (Combat system → ``damage_seq``).
 
 .. code-block:: text
 
-   damage_seq mdg|rdg <times> [(damage d1 d2 ...)] [(interval seconds)]
+   damage_seq mdg|rdg <times> [(damage d1 d2 ...)] [(secondary pierce melee)] [(interval seconds)]
 
 Define el ``mdg`` o ``rdg`` base antes de ``damage_seq``.
 
@@ -67,6 +67,20 @@ Los valores enteros de segmento deben sumar el daño base (mismas unidades que e
    damage_seq mdg 3 (damage 6 3 3) (interval 0.2)
 
 El ``(damage …)`` manual solo usa valores enteros; el daño base fraccionario (p. ej. ``rdg 2.5``) no se puede expresar así — usa la división automática.
+
+2.3b Flechas secundarias AoE2 (``secondary``)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Alineado con el Chu Ko Nu de Age of Empires II DE: primer disparo = ataque vivo de la unidad (aplican mejoras) + melee fijo; disparos posteriores = pierce + melee fijos (**no** mejorados por herrería/química). El melee puede ser ``0`` (aún daña armadura melee negativa como arietes).
+
+.. code-block:: text
+
+   rdg 8
+   rdg_cd 2.77
+   rdg_ready 0.23
+   damage_seq rdg 3 (secondary 3 0) (interval 0.23)
+
+El Chu Ko Nu de élite usa ``rdg 5 (secondary 3 0)`` (5 flechas). Este modo **no** exige que la suma iguale ``rdg``.
 
 2.4 Intervalo
 ~~~~~~~~~~~~~

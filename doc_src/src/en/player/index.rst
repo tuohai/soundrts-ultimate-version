@@ -32,6 +32,7 @@ Level 3 · Inventory & combat
 
 - `Inventory & equipment <inventory.htm>`_
 - `Hunting <hunting.htm>`_
+- `Market and trade <market-and-trade.htm>`_ (buy/sell, tribute, route trade; aoe2 etc.)
 - `Burst attacks <burst-attacks.htm>`_
 - `Bring items to a square <brought-items.htm>`_
 

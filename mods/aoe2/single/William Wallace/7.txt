@@ -1,0 +1,45 @@
+; 7 — The Battle of Falkirk
+
+title 8608
+intro 8616
+
+square_width 12
+nb_columns 6
+nb_lines 5
+
+nb_players_min 1
+nb_players_max 1
+random_starts 0
+
+square_name 8634 1,2 2,2
+square_name 8631 5,5 6,5
+
+west_east_paths a1 a2 a3 a4 a5 b1 b2 b3 b4 b5 c1 c2 c3 c4 c5 d1 d2 d3 d4
+south_north_paths a1 a2 a3 a4 b1 b2 b3 b4 c1 c2 c3 c4 d1 d2 d3 d4 e1 e2 e3 e4 f1 f2 f3 f4
+
+goldmines 400 a1
+woods 500 a1 b1
+orchard 200 a1
+stone_mines 800 a1
+nb_meadows_by_square 3
+
+; Castle Age base with stone for a castle (650)
+player 300 400 500 700 a1 town_center barracks archery_range blacksmith stables workshop 6 house 8 peasant 6 militia 4 aoe_archer 2 aoe_knight castle_age
+
+; English fortified base with castle
+computer_only 0 0 0 0 f5 aoe_castle scouttower 8 longbowman 6 man_at_arms 4 aoe_knight e5 6 militia 2 scouttower
+
+timer_coefficient 40
+
+trigger player1 (timer 0) (alliance 1)
+trigger computers (timer 0) (alliance 2)
+
+trigger player1 (timer 0) (register_objective 1 2)
+trigger player1 (timer 0) (add_objective 1 8626)
+trigger player1 (timer 0) (add_objective 2 8627)
+
+trigger player1 (has aoe_castle) (objective_complete 1)
+trigger computer1 (building_lost aoe_castle) (defeat)
+trigger player1 (no_enemy_left) (objective_complete 2)
+
+trigger player1 (building_lost town_center) (defeat)

@@ -211,6 +211,23 @@ class EffectFormatter:
     def _format_bonus_value_parts(self, stat, value):
         if stat in ("cost", "production_cost") and isinstance(value, str) and " " in value.strip():
             return self._format_list_resource_bonus_parts(stat, value)
+        # Percent bonuses (``hp_max 10%``, ``speed -15%``): show +10%, never /PRECISION.
+        if isinstance(value, str) and value.strip().endswith("%"):
+            text = value.strip()
+            try:
+                pct = float(text[:-1])
+            except ValueError:
+                return []
+            if pct == 0:
+                return []
+            # Keep one decimal only when needed (87.5%).
+            if abs(pct - int(pct)) < 1e-9:
+                num = format_signed_number(int(abs(pct)))
+            else:
+                num = format_signed_number(abs(pct), as_float=True)
+            if pct > 0:
+                return ["+"] + num + list(mp.PERCENT)
+            return ["-"] + num + list(mp.PERCENT)
         coerced = self._coerce_bonus_value(value)
         if coerced is None or coerced == 0:
             return []
@@ -227,6 +244,26 @@ class EffectFormatter:
     def _format_list_resource_bonus_parts(self, stat, value):
         parts = []
         for i, token in enumerate(value.split()):
+            if isinstance(token, str) and token.endswith("%"):
+                try:
+                    pct = float(token[:-1])
+                except ValueError:
+                    continue
+                if pct == 0:
+                    continue
+                resource_title = style.get(f"resource{i + 1}", "title")
+                if resource_title:
+                    if isinstance(resource_title, list):
+                        parts.extend(resource_title)
+                    else:
+                        parts.append(str(resource_title))
+                if pct > 0:
+                    parts.extend(["+"])
+                else:
+                    parts.extend(["-"])
+                parts.extend(format_signed_number(int(abs(pct))))
+                parts.extend(list(mp.PERCENT))
+                continue
             coerced = self._coerce_bonus_value(token)
             if coerced is None or coerced == 0:
                 continue
@@ -252,16 +289,63 @@ class EffectFormatter:
         return rows
 
     def _format_bonus_effect_attribute_rows(self, effect_args):
+        from ..worldupgrade.effect_bonus_parse import split_effect_bonus_args
+
+        # Drop trailing unit filters (``building`` etc.) appended from effect_bonus_targets.
+        bonus_args, _targets = split_effect_bonus_args(list(effect_args or []))
         rows = []
-        for i in range(0, len(effect_args), 2):
-            if i + 1 >= len(effect_args):
+        i = 0
+        while i < len(bonus_args):
+            stat = bonus_args[i]
+            st = str(stat)
+            if st.endswith("_vs"):
+                if i + 2 >= len(bonus_args):
+                    break
+                target = bonus_args[i + 1]
+                value = bonus_args[i + 2]
+                stat_name = self.parent._get_stat_tts_name(stat)
+                target_title = style.get(target, "title") or [str(target)]
+                if not isinstance(target_title, list):
+                    target_title = [str(target_title)]
+                value_parts = self._format_bonus_value_parts(stat, value)
+                if value_parts:
+                    rows.append(("", list(stat_name) + list(mp.COMMA) + list(target_title), value_parts))
+                i += 3
+                continue
+            if i + 1 >= len(bonus_args):
                 break
-            stat = effect_args[i]
-            value = effect_args[i + 1]
+            value = bonus_args[i + 1]
+            # Applied at runtime; UI description comes from ``effect info`` (avoid "+1" noise).
+            if st == "projectile_lead":
+                i += 2
+                continue
+            # Multi-slot cost: ``cost -50% 0`` already in bonus_args as [cost, -50%, 0]?
+            # split keeps them; _format_bonus_value_parts handles space-joined via list path
+            # only when value is a string with spaces — cost slots are separate tokens.
+            if st in ("cost", "production_cost", "storage_bonus", "resource_rewards"):
+                values = [value]
+                j = i + 2
+                while j < len(bonus_args):
+                    tok = bonus_args[j]
+                    # next token looks like a value, not a new stat
+                    from ..worldupgrade.effect_bonus_parse import is_effect_bonus_stat
+
+                    if is_effect_bonus_stat(tok):
+                        break
+                    values.append(tok)
+                    j += 1
+                joined = " ".join(str(v) for v in values)
+                stat_name = self.parent._get_stat_tts_name(stat)
+                value_parts = self._format_bonus_value_parts(stat, joined)
+                if value_parts:
+                    rows.append(("", stat_name, value_parts))
+                i = j
+                continue
             stat_name = self.parent._get_stat_tts_name(stat)
             value_parts = self._format_bonus_value_parts(stat, value)
             if value_parts:
                 rows.append(("", stat_name, value_parts))
+            i += 2
         return rows
 
     def _format_phase_bonus_attribute_rows(self, phase_bonus):
@@ -405,12 +489,35 @@ class EffectFormatter:
                 return self._format_buffs_effect_attribute_rows(effect_args)
             if effect_type == "apply_bonus":
                 return self._format_apply_bonus_effect_attribute_rows(effect_args)
+            if effect_type == "info":
+                return self._format_info_effect_attribute_rows(effect_args)
             flat = self._format_effect_description(effect_def)
             if flat:
                 return [("", flat, ())]
         except Exception:
             pass
         return []
+
+    def _format_info_effect_attribute_rows(self, effect_args):
+        """Display-only tech/skill blurb: ``effect info <tts_id>…`` (no runtime apply)."""
+        parts = []
+        for arg in effect_args or []:
+            if arg is None or arg == "":
+                continue
+            try:
+                parts.append(int(str(arg)))
+            except (TypeError, ValueError):
+                title = style.get(arg, "title", warn_if_not_found=False)
+                if title:
+                    if isinstance(title, list):
+                        parts.extend(title)
+                    else:
+                        parts.append(title)
+                else:
+                    parts.append(str(arg))
+        if not parts:
+            return []
+        return [("", parts, ())]
 
     def _format_summon_effect(self, effect_args):
 
@@ -673,7 +780,9 @@ class EffectFormatter:
                         parts.extend(segment)
                     return parts
 
-
+                elif effect_type == "info":
+                    rows = self._format_info_effect_attribute_rows(effect_args)
+                    return rows[0][1] if rows else []
 
                 else:
 

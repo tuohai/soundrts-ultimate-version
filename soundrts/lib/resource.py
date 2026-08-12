@@ -444,42 +444,43 @@ class ResourceStack:
             pass
 
 
+def _active_mod_names():
+    """Comma-separated active mod folder names (empty ⇒ vanilla / no mod)."""
+    mods = (getattr(res, "mods", None) or "").strip()
+    if not mods:
+        return []
+    return [name.strip() for name in mods.split(",") if name.strip()]
+
+
 def _campaigns():
     from soundrts.campaign import Campaign
     campaigns = []
-    
-    # 检查当前是否有激活的mod
-    active_mod = res.mods.strip() if res.mods else ""
-    
-    # 标记是否找到了mod专用战役
-    found_mod_campaigns = False
-    
-    if active_mod:
-        # 如果有激活的mod，先尝试加载该mod目录下的战役
-        for package in res.packages:
-            mod_package = package.subpackage("mods/" + active_mod)
-            if mod_package:
+    active_mods = _active_mod_names()
+
+    if active_mods:
+        # Isolation: only mods/<name>/single — never fall back to res/single.
+        for active_mod in active_mods:
+            for package in res.packages:
+                mod_package = package.subpackage("mods/" + active_mod)
+                if not mod_package:
+                    continue
                 mod_single = mod_package.subpackage("single")
-                if mod_single:
-                    mod_campaign_dirs = mod_single.dirnames()
-                    if mod_campaign_dirs:  # 如果找到了专用战役
-                        found_mod_campaigns = True
-                        for n in mod_campaign_dirs:
-                            c = Campaign(mod_single.subpackage(n), n)
-                            # 添加标记表示这是mod专用战役
-                            c.mod_specific = True
-                            c.mod_name = active_mod
-                            campaigns.append(c)
-    
-    # 如果没有激活的mod或者没有找到mod专用战役，加载所有战役
-    if not active_mod or not found_mod_campaigns:
-        for package in res.packages:
-            single = package.subpackage("single")
-            if single:
-                for n in single.dirnames():
-                    c = Campaign(single.subpackage(n), n)
+                if not mod_single:
+                    continue
+                for n in mod_single.dirnames():
+                    c = Campaign(mod_single.subpackage(n), n)
+                    c.mod_specific = True
+                    c.mod_name = active_mod
                     campaigns.append(c)
-    
+        return campaigns
+
+    for package in res.packages:
+        single = package.subpackage("single")
+        if single:
+            for n in single.dirnames():
+                c = Campaign(single.subpackage(n), n)
+                campaigns.append(c)
+
     return campaigns
 
 
@@ -511,93 +512,82 @@ def official_multiplayer_maps():
     return maps
 
 
+def _load_mod_multi_into(maps, active_mod):
+    """Append maps from mods/<active_mod>/multi under non-base packages."""
+    for package in res.packages[1:]:
+        mod_package = package.subpackage("mods/" + active_mod)
+        if not mod_package:
+            continue
+        mod_multi = mod_package.subpackage("multi")
+        if not mod_multi:
+            continue
+        for n in list(mod_multi.filenames()):
+            try:
+                m = Map.load(mod_multi.open_binary(n), n)
+                m.title.insert(0, 1097)  # heal sound to alert player
+                m.mod_specific = True
+                m.mod_name = active_mod
+                maps.append(m)
+            except Exception as e:
+                exception("couldn't load map file %s: %s", n, e)
+        for n in list(mod_multi.dirnames()):
+            try:
+                dir_path = os.path.join(
+                    os.path.dirname(str(package)), "mods", active_mod, "multi", n
+                )
+                if os.path.isdir(dir_path):
+                    m = Map.load(dir_path, n)
+                else:
+                    warning("地图文件夹路径不存在: %s", dir_path)
+                    m = Map.load(mod_multi.subpackage(n), n)
+                m.title.insert(0, 1097)
+                m.mod_specific = True
+                m.mod_name = active_mod
+                maps.append(m)
+            except Exception as e:
+                exception("couldn't load map folder %s: %s", n, e)
+
+
 def _add_custom_multi(maps):
-    active_mod = res.mods.strip() if res.mods else ""
-    
-    # 用于标记是否找到了mod专用地图
-    found_mod_maps = False
-    
-    
-    # 如果有active mod，先尝试加载该mod目录下的multi地图
-    if active_mod:
-        # 在active mod的根目录下查找multi文件夹
-        for package in res.packages[1:]:
-            mod_package = package.subpackage("mods/" + active_mod)
-            if mod_package:
-                mod_multi = mod_package.subpackage("multi")
-                if mod_multi:
-                    mod_map_files = list(mod_multi.filenames())
-                    mod_map_dirs = list(mod_multi.dirnames())
-                    
-                    if mod_map_files or mod_map_dirs:  # 如果找到了mod专用地图
-                        found_mod_maps = True
-                        # 处理文件类型地图
-                        for n in mod_map_files:
-                            try:
-                                m = Map.load(mod_multi.open_binary(n), n)
-                                m.title.insert(0, 1097)  # heal sound to alert player
-                                m.mod_specific = True
-                                m.mod_name = active_mod
-                                maps.append(m)
-                            except Exception as e:
-                                exception("couldn't load map file %s: %s", n, e)
-                        
-                        # 处理文件夹类型地图
-                        for n in mod_map_dirs:
-                            try:
-                                # 获取文件夹的完整路径
-                                dir_path = os.path.join(os.path.dirname(str(package)), "mods", active_mod, "multi", n)
-                                if os.path.isdir(dir_path):
-                                    m = Map.load(dir_path, n)
-                                    m.title.insert(0, 1097)  # heal sound to alert player
-                                    m.mod_specific = True
-                                    m.mod_name = active_mod
-                                    maps.append(m)
-                                else:
-                                    warning("地图文件夹路径不存在: %s", dir_path)
-                                    # 尝试使用包路径加载
-                                    m = Map.load(mod_multi.subpackage(n), n)
-                                    m.title.insert(0, 1097)
-                                    m.mod_specific = True
-                                    m.mod_name = active_mod
-                                    maps.append(m)
-                            except Exception as e:
-                                exception("couldn't load map folder %s: %s", n, e)
-    
-    # 如果没有active mod或者没有找到mod专用地图，加载所有自定义地图
-    if not active_mod or not found_mod_maps:
-        for package in res.packages[1:] + [Package.from_path(DOWNLOADED_PATH)]:
-            multi = package.subpackage("multi")
-            if multi:
-                map_files = list(multi.filenames())
-                map_dirs = list(multi.dirnames())
-                
-                # 处理文件类型地图
-                for n in map_files:
-                    try:
-                        m = Map.load(multi.open_binary(n), n)
+    active_mods = _active_mod_names()
+    if active_mods:
+        # Isolation: only mods/<name>/multi — never user/downloaded/res fallback.
+        for active_mod in active_mods:
+            _load_mod_multi_into(maps, active_mod)
+        return
+
+    for package in res.packages[1:] + [Package.from_path(DOWNLOADED_PATH)]:
+        multi = package.subpackage("multi")
+        if multi:
+            map_files = list(multi.filenames())
+            map_dirs = list(multi.dirnames())
+            
+            # 处理文件类型地图
+            for n in map_files:
+                try:
+                    m = Map.load(multi.open_binary(n), n)
+                    m.title.insert(0, 1097)  # heal sound to alert player
+                    maps.append(m)
+                except Exception as e:
+                    exception("couldn't load map file %s: %s", n, e)
+            
+            # 处理文件夹类型地图
+            for n in map_dirs:
+                try:
+                    # 获取文件夹的完整路径
+                    dir_path = os.path.join(str(package), "multi", n)
+                    if os.path.isdir(dir_path):
+                        m = Map.load(dir_path, n)
                         m.title.insert(0, 1097)  # heal sound to alert player
                         maps.append(m)
-                    except Exception as e:
-                        exception("couldn't load map file %s: %s", n, e)
-                
-                # 处理文件夹类型地图
-                for n in map_dirs:
-                    try:
-                        # 获取文件夹的完整路径
-                        dir_path = os.path.join(str(package), "multi", n)
-                        if os.path.isdir(dir_path):
-                            m = Map.load(dir_path, n)
-                            m.title.insert(0, 1097)  # heal sound to alert player
-                            maps.append(m)
-                        else:
-                            warning("地图文件夹路径不存在: %s", dir_path)
-                            # 尝试使用包路径加载
-                            m = Map.load(multi.subpackage(n), n)
-                            m.title.insert(0, 1097)
-                            maps.append(m)
-                    except Exception as e:
-                        exception("couldn't load map folder %s: %s", n, e)
+                    else:
+                        warning("地图文件夹路径不存在: %s", dir_path)
+                        # 尝试使用包路径加载
+                        m = Map.load(multi.subpackage(n), n)
+                        m.title.insert(0, 1097)
+                        maps.append(m)
+                except Exception as e:
+                    exception("couldn't load map folder %s: %s", n, e)
 
 
 def _copy_recommended_maps(maps):
@@ -609,42 +599,24 @@ def _copy_recommended_maps(maps):
 
 def _get_multi_maps():
     maps = []
-    
-    # 检查当前是否有激活的mod
-    active_mod = res.mods.strip() if res.mods else ""
-    
-    # 用于标记是否找到了mod专用地图
-    found_mod_maps = False
-    
-    # 如果有激活的mod，先尝试检查该mod是否有专用地图
-    if active_mod:
-        for package in res.packages[1:]:
-            mod_package = package.subpackage("mods/" + active_mod)
-            if mod_package:
-                mod_multi = mod_package.subpackage("multi")
-                if mod_multi:
-                    mod_map_files = list(mod_multi.filenames()) + list(mod_multi.dirnames())
-                    if mod_map_files:  # 如果找到了mod专用地图
-                        found_mod_maps = True
-                        break
-    
-    # 只有当没有激活mod或没有找到mod专用地图时，才加载官方地图
-    if not active_mod or not found_mod_maps:
+    active_mods = _active_mod_names()
+
+    if not active_mods:
         maps.extend(official_multiplayer_maps())
-    
-    # 加载自定义地图（如果有激活的mod且有专用地图，则只加载该mod的专用地图；否则加载所有地图）
-    _add_custom_multi(maps)
+        _add_custom_multi(maps)
+    else:
+        # Isolation: only mods/<name>/multi — never res/multi when a mod is on.
+        _add_custom_multi(maps)
 
     def text_only_title(map_):
         # custom maps will appear after official maps
         return [part.lower() if isinstance(part, str) else chr(ord("z") + 1) for part in map_.title]
 
     maps.sort(key=text_only_title)
-    
-    # 只有当没有激活mod或没有找到mod专用地图时，才应用推荐地图排序
-    if not active_mod or not found_mod_maps:
+
+    if not active_mods:
         _copy_recommended_maps(maps)
-        
+
     return maps
 
 

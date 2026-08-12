@@ -21,7 +21,8 @@ class UseOrder(ComplexOrder):
 
 
     def _notify_casting_progress(self):
-        if self.type.time_cost == 0:
+        total = getattr(self, "_cast_duration", None) or self.type.time_cost
+        if not total:
             return
             
         if self.cast_time < 0:
@@ -29,8 +30,12 @@ class UseOrder(ComplexOrder):
         else:
             t = self.cast_time
             
-        # 计算完成度(0-10)
-        c = int((self.type.time_cost - t) * 10 / self.type.time_cost)
+        # 计算完成度(0-10)；读条总长可能因信念等被拉长
+        c = int((total - t) * 10 / total)
+        if c < 0:
+            c = 0
+        elif c > 10:
+            c = 10
         if c != self._previous_completeness:
             self.unit.notify("completeness,%s" % c)
             # 添加施法音效
@@ -65,6 +70,13 @@ class UseOrder(ComplexOrder):
 
     def _effect_range_to_target(self):
         effect_range = self.type.effect_range
+        unit_range = getattr(self.unit, "rdg_range", 0) or 0
+        try:
+            unit_range = int(unit_range)
+        except (TypeError, ValueError):
+            unit_range = 0
+        if unit_range > effect_range:
+            effect_range = unit_range
         if hasattr(self.unit, "radius") and hasattr(self.target, "radius"):
             return effect_range + self.unit.radius + self.target.radius
         return effect_range
@@ -160,7 +172,10 @@ class UseOrder(ComplexOrder):
             self.player.pay(self.type.cost)
             
         # 如果有施法时间，初始化计时器
-        if self.type.time_cost:
+        # 转化：进入射程后再读条（信念/建筑会延长），不在排队时开读条
+        from ..worldskill import Skill as _Skill
+
+        if self.type.time_cost and not _Skill._skill_effect_is_conversion(self.type):
             self.cast_time = self.type.time_cost
             self.is_casting = True
             
@@ -173,9 +188,28 @@ class UseOrder(ComplexOrder):
                 self.player.unpay(self.type.cost)
             self.mark_as_impossible()
             return
+
+        from ..worldskill import Skill as _Skill
+
+        is_conversion = _Skill._skill_effect_is_conversion(self.type)
+
+        # 转化读条中：超出射程则中断并靠近（对齐 DE 拉开距离会打断）
+        if self.is_casting and is_conversion:
+            effect_range = self._effect_range_to_target()
+            if (
+                square_of_distance(
+                    self.target.x, self.target.y, self.unit.x, self.unit.y
+                )
+                > effect_range * effect_range
+            ):
+                self.is_casting = False
+                self.cast_time = 0
+                self._conversion_channel_started = False
+                self.move_to_or_fail(self.target)
+                return
             
         # 检查是否正在施法
-        if self.type.time_cost and self.is_casting:
+        if self.is_casting:
             if self.cast_time > 0:
                 self.cast_time -= VIRTUAL_TIME_INTERVAL
                 self._notify_casting_progress()
@@ -204,6 +238,21 @@ class UseOrder(ComplexOrder):
             return
             
         self.unit.stop()
+
+        # 转化：进射程后开始读条（信念延长）
+        if (
+            is_conversion
+            and self.type.time_cost
+            and not getattr(self, "_conversion_channel_started", False)
+        ):
+            self.cast_time = _Skill.conversion_channel_time(
+                self.unit, self.target, self.type
+            )
+            self._cast_duration = self.cast_time
+            self.is_casting = True
+            self._conversion_channel_started = True
+            self.unit.notify("casting")
+            return
         
         # 检查法力值
         if self.unit.mana < self.type.mana_cost:
@@ -254,8 +303,15 @@ class UseOrder(ComplexOrder):
             self.mark_as_impossible()
             return
             
-        # 扣除法力值
-        self.unit.mana -= self.type.mana_cost
+        # 扣除法力值（转化：神权 → 仅成功者休息；未研究 → 同目标参与僧侣全休息）
+        from ..worldskill import Skill as _Skill
+
+        if _Skill._skill_effect_is_conversion(self.type):
+            _Skill.apply_conversion_mana_costs(
+                self.unit, self.target, self.type.mana_cost
+            )
+        else:
+            self.unit.mana -= self.type.mana_cost
         self.unit.add_cooldown(self.type)
         if hasattr(self.player, "record_skill_used"):
             self.player.record_skill_used(
@@ -486,7 +542,8 @@ class GiveOrder(Order):
 
     @classmethod
     def is_allowed(cls, unit, *unused_args):
-        return hasattr(unit, "inventory") and len(unit.inventory) > 0
+        inv = getattr(unit, "inventory", None)
+        return bool(inv)
 
     @classmethod
     def menu(cls, unit, strict=False):

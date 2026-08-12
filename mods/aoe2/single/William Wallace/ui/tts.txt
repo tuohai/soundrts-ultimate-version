@@ -1,0 +1,41 @@
+; coding: utf-8
+; William Wallace — AoE2 DE learning campaign
+
+8600 William Wallace
+8601 Scotland, 1297. Learn the arts of war as William Wallace rallies the Scots against English rule. Seven short lessons — from marching and gathering to Stirling and Falkirk.
+
+; Mission titles
+8602 Marching and Fighting
+8603 Feeding Our Army
+8604 Training the Troops
+8605 Research and Technology
+8606 The Battle of Stirling
+8607 Forge an Alliance
+8608 The Battle of Falkirk
+
+; Intros
+8610 Move your militia east to the Scottish village. Select units, then order them to the flagged square.
+8611 Gather food, wood, and gold. Build farms if you need more food. Reach 50 of each.
+8612 Build a barracks if you need one, then train four militia.
+8613 Advance to the Feudal Age and research Man-at-Arms at the barracks.
+8614 Defeat the English army and destroy their watch tower.
+8615 Capture three relics with monks and bring them to your monastery.
+8616 Build a castle, then destroy the English castle.
+
+; Objectives
+8620 Reach the Scottish village
+8621 Gather 50 food, 50 wood, and 50 gold
+8622 Train 4 militia
+8623 Research Man-at-Arms
+8624 Defeat the English and destroy their tower
+8625 Capture 3 relics and bring them to your monastery
+8626 Build a castle
+8627 Destroy the English castle
+
+; Place / item names
+8630 Scottish village
+8631 English camp
+8632 Stirling field
+8633 Scottish ally town
+8634 Falkirk
+8640 relic

@@ -5,7 +5,7 @@
 
 from .. import msgparts as mp
 from ..lib.nofloat import PRECISION
-from ..lib.msgs import nb2msg, nb2msg_float
+from ..lib.msgs import nb2msg, nb2msg_float, format_signed_number
 from ..definitions import style
 
 
@@ -463,6 +463,15 @@ class EquipmentAbilities:
         
         # 动态采集数量属性
         self.main_interface._add_dynamic_gather_attributes(attrs, u, "gather_qty")
+
+        # 动态采集速率（continuous / AoE2 风格）
+        self.main_interface._add_dynamic_gather_attributes(attrs, u, "gather_rate")
+
+        # 运载上限（默认 + 按资源类型）
+        carry = getattr(u.model, "carry_capacity", 0)
+        if isinstance(carry, (int, float)) and carry > 0:
+            attrs.append(("", mp.CARRY_CAPACITY_NAME, format_signed_number(int(carry))))
+        self.main_interface._add_dynamic_gather_attributes(attrs, u, "carry_capacity")
 
     @staticmethod
     def _scalar_time_text(time_val):

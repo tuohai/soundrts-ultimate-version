@@ -1,0 +1,37 @@
+; coding: utf-8
+; William Wallace — kampania edukacyjna AoE2 DE (polski)
+
+8600 William Wallace
+8601 Szkocja, 1297. Ucz się sztuki wojennej, gdy William Wallace jednoczy Szkotów przeciw angielskiej władzy. Siedem krótkich lekcji — od marszu i zbierania surowców po Stirling i Falkirk.
+
+8602 Marsz i walka
+8603 Wyżywienie armii
+8604 Szkolenie wojsk
+8605 Badania i technologia
+8606 Bitwa pod Stirling
+8607 Zawrzeć sojusz
+8608 Bitwa pod Falkirk
+
+8610 Przenieś milicję na wschód do szkockiej wioski. Zaznacz jednostki, a potem wyślij je na oznaczone pole.
+8611 Zbieraj żywność, drewno i złoto. Buduj farmy, jeśli brakuje żywności. Zbierz po 50 każdego surowca.
+8612 Zbuduj koszary, jeśli trzeba, a potem wyszkol czterech milicjantów.
+8613 Przejdź do Ery Feudalnej i zbadaj Zbrojnego w koszarach.
+8614 Pokonaj armię angielską i zniszcz ich wieżę strażniczą.
+8615 Zdobądź trzy relikwie mnichami i zanieś je do klasztoru.
+8616 Zbuduj zamek, a następnie zniszcz angielski zamek.
+
+8620 Dotrzyj do szkockiej wioski
+8621 Zbierz 50 żywności, 50 drewna i 50 złota
+8622 Wyszkol 4 milicjantów
+8623 Zbadaj Zbrojnego
+8624 Pokonaj Anglików i zniszcz ich wieżę
+8625 Zdobądź 3 relikwie i zanieś je do klasztoru
+8626 Zbuduj zamek
+8627 Zniszcz angielski zamek
+
+8630 Szkocka wioska
+8631 Angielski obóz
+8632 Pole pod Stirling
+8633 Szkockie miasto sojusznika
+8634 Falkirk
+8640 Relikwia

@@ -1,0 +1,3 @@
+SHIFT z: resource_status 2
+SHIFT x: resource_status 3
+b: order_shortcut ; order shortcuts are defined in style.txt

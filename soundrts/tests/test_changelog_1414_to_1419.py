@@ -478,6 +478,13 @@ def test_map_sets_map_defined_starting_resources_when_parsed():
     assert "self.map_defined_starting_resources = True" in block
 
 
+def test_map_leaves_starting_resources_empty_when_undefined():
+    src = _source("soundrts", "world", "world_map.py")
+    block = _section(src, "def _parse_map(self, map_definition):", "squares_words = [")
+    assert "starting_resources = []" in block
+    assert "starting_resources = [0 for _ in range(self.nb_res)]" not in block
+
+
 # =============================================================================
 # 1.4.1.9 — 三级 square_name + 跨级播报省略
 # =============================================================================

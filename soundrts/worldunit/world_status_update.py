@@ -121,6 +121,21 @@ class CreatureStatusUpdate(Entity):
 
     def slow_update(self):
         self.regenerate()
+        # AoE2 Feitoria / multi-resource passive income (per second)
+        rates = getattr(self, "production_rates", None) or ()
+        if rates and self.player is not None and getattr(self, "is_a_building", False):
+            for i, qty in enumerate(rates):
+                try:
+                    q = int(qty)
+                except (TypeError, ValueError):
+                    continue
+                if q:
+                    if i < len(self.player.resources):
+                        self.player.resources[i] += q
+        # Inventory item passive income (rules-driven; e.g. AoE2 relics in monastery)
+        from ..worlditem import apply_inventory_production_rates
+
+        apply_inventory_production_rates(self)
         # 处理资源再生
         if (hasattr(self, "resource_type") and self.resource_type and 
             hasattr(self, "resource_regen") and self.resource_regen and 
@@ -359,6 +374,8 @@ class CreatureStatusUpdate(Entity):
                     vol_max = effective_resource_volume_max(self)
                     add_qty = production_qty // 1000
                     self.resource_qty = min(self.resource_qty + add_qty, vol_max)
+                    # Whole-unit refill; clear fractional remainder from continuous gather.
+                    self._resource_qty_frac = 0
                     self.debug_log(
                         f"自身收集模式：将产出的资源添加到建筑，资源类型：{resource_type}，"
                         f"数量：{add_qty}，建筑当前资源量：{self.resource_qty}/{vol_max}"
@@ -816,6 +833,7 @@ class CreatureStatusUpdate(Entity):
         self.delete()  # 直接删除，不调用 die()
 
     heal_level = 0
+    heal_garrisoned = 0  # 1 = only heal transport passengers (rules-driven; no building-name checks)
     # 治疗/伤害冷却时间跟踪
     heal_next_time = 0
     harm_next_time = 0
@@ -828,7 +846,7 @@ class CreatureStatusUpdate(Entity):
     mana_regen_prep_end_time = 0  # 法力回复前摇结束时间
     
     def heal_nearby_units(self):
-        """治疗附近的单位，支持自定义范围和冷却时间"""
+        """治疗：附近范围 / 单体瞄准 / 仅载具内（``heal_garrisoned 1``）。"""
         # 检查冷却时间
         current_time = self.world.time
         if current_time < self.heal_next_time:
@@ -852,14 +870,13 @@ class CreatureStatusUpdate(Entity):
             # 无冷却时间：维持原始的分帧治疗逻辑（每25帧治疗完整量）
             hp = self.heal_level * PRECISION // 25
         
-
-        
         # 使用自定义的治疗范围
         heal_radius = getattr(self, 'heal_radius', 0)
         heal_range = getattr(self, 'heal_range', 0)
-        
-        # 如果设置了单体射程，使用瞄准模式
-        if heal_range > 0:
+
+        if int(getattr(self, "heal_garrisoned", 0) or 0):
+            self._heal_garrisoned_units(hp)
+        elif heal_range > 0:
             # 单体瞄准治疗模式
             self._heal_targeted_unit(hp, heal_range)
         else:
@@ -870,6 +887,21 @@ class CreatureStatusUpdate(Entity):
         if heal_cd > 0:
             self.heal_next_time = current_time + heal_cd
         self.heal_prep_end_time = 0  # 重置前摇时间
+
+    def _heal_garrisoned_units(self, hp):
+        """Only heal units currently inside this unit's transport/shelter."""
+        inside = getattr(self, "inside", None)
+        objects = getattr(inside, "objects", None) if inside is not None else None
+        if not objects:
+            return
+        for u in list(objects):
+            if getattr(u, "hp", 0) <= 0:
+                continue
+            if u.hp >= getattr(u, "hp_max", 0):
+                continue
+            if not self._can_heal(u):
+                continue
+            u.hp = min(u.hp_max, u.hp + hp)
         
     def _heal_area_units(self, hp, radius):
         """范围治疗模式"""

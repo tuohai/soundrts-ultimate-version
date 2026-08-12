@@ -1,0 +1,4 @@
+z: resource_status resource1
+x: resource_status resource2
+SHIFT Z: resource_status resource3
+SHIFT X: resource_status resource4

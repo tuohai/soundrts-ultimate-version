@@ -24,6 +24,24 @@ class Upgrade(CostEffectsMixin, AttributeEffectsMixin, ProductionEffectsMixin, G
     can_use = ()  # 添加can_use支持，表示科技可以使用的其他科技
     can_use_tech = ()  # 添加can_use_tech支持，表示单位可以使用的升级技术
     can_use_skill = ()  # 添加can_use_skill支持，表示单位可以使用的技能
+    farm_food_bonus = 0  # AoE2: added to NEW farm resource_volume_max (Horse Collar etc.)
+    reveal_enemies = 0  # AoE2 Spies: see all hostile units/buildings
+    reveal_map = 0  # AoE2 Circumnavigation: explore entire map
+    cost_per_enemy_worker = 0  # AoE2 Spies: gold per enemy villager (rules int × PRECISION)
+    market_tax_guilds = 0  # AoE2 Guilds: lower commodity tax
+    tribute_fee_permille = -1  # AoE2 Coinage/Banking: set player tribute fee (200=20%, 0=free)
+    # 1 = each research stacks race ``research_stack_hp_bonus`` (Aztec monks etc.)
+    research_stack_hp = 0
+    # Conversion (rules-driven; see world_conversion.py)
+    conversion_allows_monk = 0
+    conversion_allows_siege = 0
+    conversion_allows_building = 0
+    conversion_victim_dies = 0
+    conversion_rest_only_success = 0
+    conversion_channel_scale_num = 0
+    conversion_channel_scale_den = 0
+    conversion_channel_bonus_pct = 0
+    conversion_channel_bonus_time = 0
     
     # 定义必须使用整数的属性集合
     integer_stats = {'hp', 'hp_max', 'minimal_damage', 'population_cost', 'time_cost', 'resource_volume_max'}
@@ -262,6 +280,46 @@ class Upgrade(CostEffectsMixin, AttributeEffectsMixin, ProductionEffectsMixin, G
         # 记录升级
         if cls.type_name not in player.upgrades:
             player.upgrades.append(cls.type_name)
+
+        # AoE2 Spies etc.: permanent hostile reveal for perception
+        if int(getattr(cls, "reveal_enemies", 0) or 0):
+            player.reveal_enemies = True
+
+        # AoE2 Circumnavigation: explore entire map (fog memory of all squares)
+        if int(getattr(cls, "reveal_map", 0) or 0):
+            player.reveal_map = True
+            try:
+                squares = list(getattr(player.world, "squares", ()) or ())
+                player.observed_before_squares.update(squares)
+                player.strictly_observed_before_squares.update(squares)
+                statics = []
+                for sq in squares:
+                    for o in getattr(sq, "objects", ()) or ():
+                        if getattr(o, "player", None) is None or getattr(
+                            getattr(o, "player", None), "neutral", False
+                        ):
+                            statics.append(o)
+                if statics and hasattr(player, "_ensure_static_fog_memory"):
+                    player._ensure_static_fog_memory(statics)
+            except Exception as e:
+                from ..lib.log import warning
+                warning(f"reveal_map failed for {cls.type_name}: {e}")
+
+        # AoE2 Guilds / Coinage / Banking
+        if int(getattr(cls, "market_tax_guilds", 0) or 0):
+            player.market_tax_guilds = 1
+        fee_pm = int(getattr(cls, "tribute_fee_permille", -1))
+        if fee_pm >= 0:
+            player.tribute_fee = float(fee_pm) / 1000.0
+
+        try:
+            from ..world_research_stack import apply_research_stack_hp_on_complete
+
+            apply_research_stack_hp_on_complete(player, cls)
+        except Exception as e:
+            from ..lib.log import warning
+
+            warning(f"research_stack_hp failed for {cls.type_name}: {e}")
             
         # 新增：科技加入后再次为现有单位应用效果（带去重，确保仅应用新等级且仅限有权限单位）
         for unit in player.units:

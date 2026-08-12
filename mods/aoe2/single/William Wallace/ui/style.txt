@@ -1,0 +1,2 @@
+def relic
+title 8640

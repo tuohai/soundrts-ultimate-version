@@ -1,0 +1,35 @@
+;pm6 (map for tutorial purpuses)
+title 5015 5012 3006 1041 1040 1041
+objective 145 88
+square_width 12
+nb_lines 4
+nb_columns 4
+west_east_paths a1 b1 a2 b2 a3 b3 a4 b4
+west_east_bridges c1 c2 c3 c4
+south_north_paths a1 a2 b1 b2 c1 c2 d1 d2
+south_north_bridges a3 b3 c3 d3
+goldmines 1000 a1 b1 c1 d1 a2 b2 c2 d2 a3 b3 c3 d3 a4 b4 c4 d4
+woods 1000 a1 b1 c1 d1 a2 b2 c2 d2
+
+stone_mines 650 a1 a4 d1 d4
+orchard 125 a1 a4 d1 d4
+
+; AoE2 DE: stone/orchard on starts; wildlife ~3–4 squares away (herd distance)
+computer_only 0 0 0 0 neutral b4 2 sheep
+computer_only 0 0 0 0 neutral b1 2 sheep
+computer_only 0 0 0 0 neutral a2 2 sheep
+computer_only 0 0 0 0 neutral a3 2 sheep
+computer_only 0 0 0 0 neutral c4 3 deer 1 boar
+computer_only 0 0 0 0 neutral c1 3 deer 1 boar
+
+
+
+
+nb_meadows_by_square 4
+additional_meadows a1 a4 d1 d4
+remove_meadows c1
+nb_players_min 2
+nb_players_max 4
+starting_squares a1 a4 d1 d4
+computer_only 0 0 0 0 c1 10 house 9 knight b1 5 catapult b4 5 catapult c4 5 catapult
+global_population_limit 4000

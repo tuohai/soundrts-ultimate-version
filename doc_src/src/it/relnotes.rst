@@ -3,6 +3,79 @@ Note di rilascio
 
 .. contents::
 
+1.4.6.9
+--------
+
+**Novità: predizione proiettili guidata dalle regole e velocità di volo per corsia**
+
+- **Volo**: ``rdg_projectile_speed`` / ``mdg_projectile_speed`` sono **velocità** (caselle/s), non «secondi di volo»; solo con il flag ``*_projectile`` corrispondente. Tempo all’impatto = distanza ÷ velocità. ``projectile_speed`` condiviso e ``*_delay`` legacy sono deprecati (migrati al caricamento).
+- **Predizione**: ``projectile_lead 0|1`` (solo proiettili a distanza). Nessun ``ballistics`` hardcoded.
+- **Tech / UI**: ``effect bonus projectile_lead 1``; ``effect info``.
+- **Doc**: `Predizione proiettili <mod/projectile-lead.htm>`_; ``mod/modding``.
+
+**Novità: mercato configurabile (compra/vendita, tributo, commercio di tratta)**
+
+
+- Parametri ``market_currency``, ``market_commodities``, ``trade_hubs``, ``trade_rewards``, ecc. — niente risorse fisse nel motore.
+- Ordini ``market_buy`` / ``market_sell`` / ``tribute`` / ``trade``. Doc: ``mod/market-system``, ``player/market-and-trade``; ``mods/aoe2/SOURCES.md``.
+
+**Miglioria: rinomina filtri bonus in ``phase_bonus_targets`` / ``effect_bonus_targets``**
+
+- Nomi principali abbinati a ``phase bonus`` / ``effect bonus``.
+- Alias ancora validi: ``phase_targets``, ``tech_effect_targets``, ``effect_targets``.
+
+**Novità: modalità duali di raccolta ``gather_mode trip|continuous``**
+
+- Predefinito ``trip``: un impulso ``gather_qty`` poi consegna (comportamento precedente).
+- ``continuous``: riempie ``carry_capacity`` a un ritmo al secondo, poi consegna (stile AoE II/IV).
+- Rules: ``gather_mode``, ``carry_capacity``, ``carry_capacity_<type>``, ``gather_rate`` — vedi doc di modding.
+- ``mods/aoe2`` abilita continuous (carico 10, carcassa di caccia 35).
+
+
+
+**Miglioria: annuncio della fazione dopo civ casuale**
+
+- Solo se in lobby si è scelto Casuale **e** il mod ha più di una fazione: dopo l’obiettivo iniziale “sei” + civ; scelta manuale o una sola fazione (es. ``res`` base) resta silenzioso. ``Alt+C`` (``faction_status``) stessa regola.
+- Codice: ``faction_announce.py``, ``worldplayerbase/base.py`` (``faction_was_random``), ``game_resources.py``, ``game_interface_base.py``; test ``test_faction_status_announce.py``.
+
+**Miglioria: sentire la civ nemica nei mod multi-civ**
+
+- Con più di una fazione, il titolo unità nemiche/alleate include la civ; ``F11`` e la selezione diplomatica dicono la civ dopo il nome.
+- Codice: ``faction_announce.py``, ``properties.py``, ``game_audio.py``.
+
+**Novità: ``on_phase`` e ``research_cost_discount`` / ``advance_cost_discount``**
+
+- Ricompense per civ su ``class race``/``faction`` senza nomi hardcodati nel motore.
+- ``on_phase`` / ``research_cost_discount`` / ``advance_cost_discount``; ``phase bonus clear``; ``no_auto_upgrade 1``.
+- Codice: ``worldphase.py``, ordini, ``definitions.py``; test ``test_faction_age_cost_discounts.py``.
+
+**Novità: template fazione ``abstract`` e eredità ``is_a`` per start**
+
+- **Uso**: default ``starting_resources`` / ``starting_units`` su un padre astratto (es. ``Civilization``); ogni civ ``is_a`` quel padre. Ciò che scrive il figlio prevale; il resto si eredita. Mappe senza unità iniziali usano ancora il default di razza.
+- **``abstract 1``**: solo template — **nascosto dal selettore**; ``abstract`` non si eredita.
+- **Eredità**: ``class race`` = ``class faction``; catene ``is_a``. La mappa esplicita ha priorità.
+- **Codice / test**: ``definitions.py``, ``test_faction_starting_inheritance.py``.
+
+**Miglioramento: isolare mappe e campagne con un mod attivo (niente fallback su ``res``)**
+
+- **Problema**: se un mod non aveva ``multi/`` o ``single/`` propri, i menu elencavano ancora il contenuto base di ``res``.
+- **Cambio**: con qualsiasi mod attivo si elencano solo ``mods/<mod>/multi`` e ``mods/<mod>/single``; se mancano, le liste restano vuote — **senza** ricadere su ``res`` o download. Senza mod, invariato.
+- **Codice / test**: ``lib/resource.py``, ``game.py``, ``test_mod_map_campaign_isolation.py``.
+
+**Correzione: ``starting_resources`` della razza ignorate se la mappa le omette (inizio a 0)**
+
+- **Problema**: le razze avevano ``starting_resources`` nelle rules, ma le mappe senza quella riga partivano da 0.
+- **Causa**: ``_parse_map`` precompilava ``[0, 0, …]``; ``populate_map`` usa il default di razza solo se la lista è vuota.
+- **Correzione**: lista vuota ``[]`` finché la mappa non definisce ``starting_resources``; una riga esplicita (anche ``0``) ha priorità.
+- **Codice / test**: ``world_map.py``, ``test_race_starting_resources.py``.
+
+**Correzione: commentare ``LSHIFT C`` / ``LSHIFT B`` copiava ancora la voce in partita**
+
+- **Problema**: ``global_bindings.txt`` commenta di default Left Shift+C/B (copia / append della libreria vocale primaria), ma in partita funzionavano ancora.
+- **Causa**: ``game_input_handler`` chiamava ``voice_libs.handle_hotkey`` prima dei bindings, aggirando la tabella tasti.
+- **Correzione**: in partita Shift+C/B seguono **solo i bindings**; un ``;`` iniziale li disattiva. I menu mantengono Left/Right Shift+C/B hardcoded. Right Shift+C/B (libreria secondaria) restano attivi di default.
+- **Codice / test**: ``game_input_handler.py``, ``clientmenu.py``, ``voice_libs.handle_hotkey``, ``test_lshift_rshift_bindings.py``.
+
 
 1.4.6.8
 --------

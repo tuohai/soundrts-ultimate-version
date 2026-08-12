@@ -25,6 +25,7 @@ def test_damage_seq_auto_split_equal_shots():
     assert unit["rdg_seq_times"] == 3
     assert unit["rdg_seq_damages"] == [2000, 2000, 2000]
     assert unit["rdg_seq_interval"] == 0.25
+    assert unit.get("rdg_seq_secondary", 0) == 0
 
 
 def test_damage_seq_auto_split_fractional_base_damage():
@@ -45,6 +46,69 @@ def test_damage_seq_explicit_damage_values():
     assert unit["mdg_seq_times"] == 3
     assert unit["mdg_seq_damages"] == [6000, 3000, 3000]
     assert unit["mdg_seq_interval"] == 0.2
+
+
+def test_damage_seq_secondary_aoe2_chu_ko_nu():
+    """DE 诸葛弩：首发 live rdg；后续固定 3 pierce + 0 melee（不要求 sum==base）。"""
+    unit = _parse_unit_rules(
+        "rdg 8\n"
+        "damage_seq rdg 3 (secondary 3 0) (interval 0.23)\n"
+    )
+    assert unit["rdg_seq_times"] == 3
+    assert unit["rdg_seq_damages"] == []
+    assert unit["rdg_seq_interval"] == 0.23
+    assert unit["rdg_seq_secondary"] == 1
+    assert unit["rdg_seq_secondary_rdg"] == 3 * PRECISION
+    assert unit["rdg_seq_secondary_mdg"] == 0
+
+
+def test_damage_seq_secondary_elite_five_arrows():
+    unit = _parse_unit_rules(
+        "rdg 10\n"
+        "damage_seq rdg 5 (secondary 3 0) (interval 0.23)\n"
+    )
+    assert unit["rdg_seq_times"] == 5
+    assert unit["rdg_seq_secondary"] == 1
+    assert unit["rdg_seq_secondary_rdg"] == 3 * PRECISION
+
+
+def test_aoe2_chu_ko_nu_loaded_from_mod_rules():
+    rules = Rules()
+    base = (ROOT / "res/rules.txt").read_text(encoding="utf-8")
+    mod = (ROOT / "mods/aoe2/rules.txt").read_text(encoding="utf-8")
+    rules.load(base + "\n" + mod)
+    ckn = rules.unit_class("chu_ko_nu")
+    elite = rules.unit_class("elite_chu_ko_nu")
+    assert ckn is not None and elite is not None
+    assert ckn.rdg_seq_times == 3
+    assert ckn.rdg_seq_secondary == 1
+    assert ckn.rdg_seq_secondary_rdg == 3 * PRECISION
+    assert ckn.rdg_seq_secondary_mdg == 0
+    assert ckn.rdg_seq_interval == 0.23
+    assert elite.rdg_seq_times == 5
+    assert elite.rdg_seq_secondary == 1
+
+
+def test_dual_damage_zero_melee_vs_negative_armor():
+    """0 melee vs -3 mdf → +3；与 3 pierce vs 0 rdf 合计 6（冲车）。"""
+    from soundrts.combat.damage_calculation import DamageCalculationMixin
+
+    class T(DamageCalculationMixin):
+        def _get_total_ranged_defense_vs(self, attacker):
+            return 0
+
+        def _get_total_melee_defense_vs(self, attacker):
+            return -3 * PRECISION
+
+    class A:
+        minimal_damage = 0
+        forced_damage = 0
+        rdg_range = 4 * PRECISION
+
+    actual = T()._calculate_actual_damage(
+        3 * PRECISION, A(), is_melee=False, extra_melee_damage=0
+    )
+    assert actual == 6 * PRECISION
 
 
 def test_repeating_crossbowman_loaded_from_rules():
@@ -73,6 +137,14 @@ def test_schedule_ballistic_hit_uses_configured_interval():
     assert "interval = self.rdg_seq_interval" in src
     assert "interval = 0.4" not in src
     assert "launch_notify" in src
+    assert "rdg_seq_secondary" in src
+    assert "extra_melee_damage" in src
+
+
+def test_volley_cooldown_includes_sequence_span():
+    src = (ROOT / "soundrts/combat/attack_action.py").read_text(encoding="utf-8")
+    assert "_get_volley_attack_cooldown" in src
+    assert "(times - 1) * interval" in src
 
 
 def test_launch_sound_scheduled_per_shot_not_in_attack_action():

@@ -38,7 +38,7 @@ Resources (minerals + vespene)
 
 - ``geyser`` — vespene geyser (``geyser 1 e1``); build Assimilator / Extractor / Refinery on it. Marker qty ``1`` uses ``deposit_volume`` (default 5000); or write ``geyser 5000 e1``.
 
-- Gas buildings use ``requires_deposit geyser`` + ``is_an_extractor`` + ``is_gather`` / ``auto_production``. Each cycle fills ``production_qty`` (8) and debits the geyser reserve; after empty, ``depleted_production_qty`` (2). They **cannot** be built on meadows — only on a geyser square (Tab the geyser, then build).
+- Gas buildings use ``requires_deposit geyser`` + ``is_an_extractor``. Workers trip-gather from the building (SC1: 8 gas / trip, 2 when depleted). The geyser reserve transfers onto the building at completion; there is **no** auto_production buffer. ``gather_slots 3`` — at most 3 workers extract at once (extra workers wait nearby), matching SC1/SC2 gas saturation. **Tip: 3 workers per gas is optimal**; sending more still produces gas (they rotate) but does not scale much past three. They **cannot** be built on meadows — only on a geyser square (Tab the geyser, then build). Costs use the mod's ×0.1 mineral scale (Assimilator/Refinery 10, Extractor 5).
 
 - Map win example: ``(and (has assimilator) (has_resources resource2 8))`` — built gas structure **and** 8 vespene stored.
 
@@ -75,8 +75,12 @@ Tech tree (units + vespene upgrades)
 
 Protoss psi field (meters, ``build_field_radius_m``)
 
-- Nexus **18 m**; Pylon **12 m** (one map square ≈ 12 m — chain Pylons to extend)
+- Nexus **18 m**; Pylon **12 m** (one map square ≈ 12 m)
+- Pylons warp **without** existing psi (expansion pylons OK); other Protoss buildings need psi
+- Photon Cannon needs psi; unpowered cannons neither train nor attack
+- Assimilator: geyser only (no psi)
 - Zerg creep uses ``build_field_radius_m`` (Hatchery **12 m**); marks spread with ``build_field_spreads``
+- Extractor: geyser only (no creep required)
 - **Queen** — Spawn creep tumor (25 mana, range 11; needs creep on target square)
 - **Creep tumor** — invisible building, 4 m creep radius, spreads; **Extend creep tumor** (range 8; target must be a **marked** creep square)
 
@@ -259,9 +263,19 @@ Protoss: Probe places Pylon/Gateway and leaves; buildings self-construct.
 
          Psi = live radius from Nexus/Pylon; buildings power down if psi is lost.
 
+         Pylons may be placed **anywhere** (they create psi; they do not need psi).
+
+         Photon Cannons require psi to warp and do not attack while unpowered.
+
+         Assimilator does not need psi (geyser only).
+
 Zerg:    Drone is consumed when building; creep = persistent ground marks that spread.
 
          Zerg buildings must be on a creep-marked square (not just near Hatchery).
+
+         Hatchery / Extractor / creep tumor do **not** require creep to place
+
+         (Extractor needs a geyser; tumors are spawned onto creep via Queen skills).
 
          Creep spread: `build_field_spread_squares N` on the provider (default 1 per game second).
 

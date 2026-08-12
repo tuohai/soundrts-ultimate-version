@@ -25,7 +25,8 @@ class VsHandler:
         combined = []
         for index, target_type in enumerate(target_types):
             if index > 0:
-                combined.append(" ")
+                # Space alone merges names for TTS ("射手 长矛兵" → one unit).
+                combined.extend(mp.COMMA)
             combined.extend(self._target_type_tts(target_type))
         item = list(mp.VERSUS)
         if combined:

@@ -285,6 +285,79 @@ class CombatAttributes:
                 round_digits=1,
                 value_suffix_fn=lambda v: nb2msg_float(v) + mp.SECONDS,
             )
+
+    def add_damage_seq_attributes(self, u, attrs):
+        """添加 damage_seq 连发/序列攻击属性（可左右浏览各发）。"""
+        self.append_damage_seq_attrs(attrs, u.model)
+
+    @staticmethod
+    def append_damage_seq_attrs(attrs, model):
+        """把 mdg/rdg damage_seq 追加到属性列表（单位或武器类均可）。"""
+        CombatAttributes._append_one_damage_seq(attrs, model, is_melee=True)
+        CombatAttributes._append_one_damage_seq(attrs, model, is_melee=False)
+
+    @staticmethod
+    def _append_one_damage_seq(attrs, model, is_melee):
+        prefix = "mdg" if is_melee else "rdg"
+        times = int(getattr(model, f"{prefix}_seq_times", 1) or 1)
+        damages = list(getattr(model, f"{prefix}_seq_damages", None) or [])
+        interval = float(getattr(model, f"{prefix}_seq_interval", 0) or 0)
+        secondary = bool(getattr(model, f"{prefix}_seq_secondary", 0))
+        sec_rdg = int(getattr(model, f"{prefix}_seq_secondary_rdg", 0) or 0)
+        sec_mdg = int(getattr(model, f"{prefix}_seq_secondary_mdg", 0) or 0)
+
+        if not secondary and times <= 1 and len(damages) <= 1:
+            return
+
+        name_msg = mp.DAMAGE_SEQ_MDG if is_melee else mp.DAMAGE_SEQ_RDG
+        dmg_name = mp.MELEE_DAMAGE if is_melee else mp.RANGE_DAMAGE
+        items = []
+
+        # 发数总览
+        items.append(list(mp.DAMAGE_SEQ_SHOTS) + [" "] + nb2msg(times))
+
+        if secondary:
+            # 首发：实时主伤害 + 固定近战分量
+            primary = list(mp.DAMAGE_SEQ_PRIMARY) + list(mp.COLON)
+            primary.extend(mp.DAMAGE_SEQ_LIVE)
+            primary.append(" ")
+            primary.extend(dmg_name)
+            primary.extend(mp.COMMA)
+            primary.extend(mp.MELEE_DAMAGE)
+            primary.append(" ")
+            primary.extend(nb2msg_float(sec_mdg / PRECISION))
+            items.append(primary)
+
+            # 次发：固定远程分量 + 近战分量（与是否射箭无关）
+            secondary_item = list(mp.DAMAGE_SEQ_SECONDARY) + list(mp.COLON)
+            secondary_item.extend(mp.RANGE_DAMAGE)
+            secondary_item.append(" ")
+            secondary_item.extend(nb2msg_float(sec_rdg / PRECISION))
+            secondary_item.extend(mp.COMMA)
+            secondary_item.extend(mp.MELEE_DAMAGE)
+            secondary_item.append(" ")
+            secondary_item.extend(nb2msg_float(sec_mdg / PRECISION))
+            items.append(secondary_item)
+        else:
+            for i, dmg in enumerate(damages):
+                shot = nb2msg(i + 1) + [" "] + list(mp.DAMAGE_SEQ_SHOT) + list(mp.COLON)
+                shot.extend(dmg_name)
+                shot.append(" ")
+                shot.extend(nb2msg_float(dmg / PRECISION))
+                items.append(shot)
+
+        if interval > 0:
+            items.append(
+                list(mp.DAMAGE_SEQ_INTERVAL)
+                + [" "]
+                + nb2msg_float(interval)
+                + list(mp.SECONDS)
+            )
+
+        if len(items) == 1:
+            attrs.append(("", name_msg, items[0]))
+        else:
+            attrs.append(("", name_msg, ("VS_ITEMS", items)))
     
     def add_splash_decay_attributes(self, u, attrs):
         """添加溅射衰减相关属性"""

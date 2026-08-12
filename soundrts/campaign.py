@@ -288,6 +288,13 @@ class Campaign:
                     self.hero_min_level[int(ch_s)] = int(lv_s)
                 except ValueError:
                     pass
+        # Optional fixed faction for solo mission clients (avoids random_faction).
+        # Example: ``default_faction britons`` in campaign.txt.
+        m = re.search("(?m)^default_faction[ \t]+(.+)$", s)
+        if m:
+            self.default_faction = m.group(1).strip().split()[0]
+        else:
+            self.default_faction = None
 
     def _set_mods_from_mods_txt(self):
         if self.resources.isfile("mods.txt"):

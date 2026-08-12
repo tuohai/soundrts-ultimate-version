@@ -1,0 +1,37 @@
+; coding: utf-8
+; William Wallace — chiến dịch học AoE2 DE (tiếng Việt)
+
+8600 William Wallace
+8601 Scotland, 1297. Học nghệ thuật chiến tranh khi William Wallace tập hợp người Scots chống lại sự thống trị của Anh. Bảy bài học ngắn — từ hành quân và thu thập đến Stirling và Falkirk.
+
+8602 Hành quân và chiến đấu
+8603 Nuôi dưỡng quân đội
+8604 Huấn luyện quân đội
+8605 Nghiên cứu và công nghệ
+8606 Trận Stirling
+8607 Kết minh
+8608 Trận Falkirk
+
+8610 Đưa dân binh về phía đông tới làng Scotland. Chọn đơn vị rồi ra lệnh đến ô có cờ.
+8611 Thu thập thức ăn, gỗ và vàng. Xây nông trại nếu cần thêm thức ăn. Đạt 50 mỗi loại.
+8612 Xây doanh trại nếu cần, rồi huấn luyện bốn dân binh.
+8613 Tiến lên Thời phong kiến và nghiên cứu Kiếm sĩ tại doanh trại.
+8614 Đánh bại quân Anh và phá hủy tháp canh của họ.
+8615 Dùng tu sĩ chiếm ba thánh vật và mang về tu viện.
+8616 Xây một lâu đài, rồi phá hủy lâu đài Anh.
+
+8620 Đến làng Scotland
+8621 Thu thập 50 thức ăn, 50 gỗ và 50 vàng
+8622 Huấn luyện 4 dân binh
+8623 Nghiên cứu Kiếm sĩ
+8624 Đánh bại quân Anh và phá tháp của họ
+8625 Chiếm 3 thánh vật và mang về tu viện
+8626 Xây một lâu đài
+8627 Phá hủy lâu đài Anh
+
+8630 Làng Scotland
+8631 Trại Anh
+8632 Chiến trường Stirling
+8633 Thị trấn đồng minh Scotland
+8634 Falkirk
+8640 Thánh vật

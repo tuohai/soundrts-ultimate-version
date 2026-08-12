@@ -1,0 +1,103 @@
+title 5012 3004
+objective 145 88
+square_width 12
+nb_columns 26
+nb_lines 26
+
+west_east_paths d4 e4 f4 g4 h4 r4 s4 t4 u4 v4 d5 e5 f5 g5 h5 r5 s5 t5 u5 v5 d6 e6 f6 g6 h6 r6 s6 t6 u6 v6 d7 e7 f7 g7 h7 r7 s7 t7 u7 v7 d8 e8 f8 g8 h8 r8 s8 t8 u8 v8 d9 e9 f9 g9 h9 r9 s9 t9 u9 v9
+west_east_paths m6 m13 m14 m21
+west_east_paths d18 e18 f18 g18 h18 r18 s18 t18 u18 v18 d19 e19 f19 g19 h19 r19 s19 t19 u19 v19 d20 e20 f20 g20 h20 r20 s20 t20 u20 v20 d21 e21 f21 g21 h21 r21 s21 t21 u21 v21 d22 e22 f22 g22 h22 r22 s22 t22 u22 v22 d23 e23 f23 g23 h23 r23 s23 t23 u23 v23
+
+south_north_paths d4 e4 f4 g4 h4 i4 r4 s4 t4 u4 v4 w4 d5 e5 f5 g5 h5 i5 r5 s5 t5 u5 v5 w5 d6 e6 f6 g6 h6 i6 r6 s6 t6 u6 v6 w6 d7 e7 f7 g7 h7 i7 r7 s7 t7 u7 v7 w7 d8 e8 f8 g8 h8 i8 r8 s8 t8 u8 v8 w8
+south_north_paths f13  m13 n13 u13
+south_north_paths d18 e18 f18 g18 h18 i18 r18 s18 t18 u18 v18 w18 d19 e19 f19 g19 h19 i19 r19 s19 t19 u19 v19 w19 d20 e20 f20 g20 h20 i20 r20 s20 t20 u20 v20 w20 d21 e21 f21 g21 h21 i21 r21 s21 t21 u21 v21 w21 d22 e22 f22 g22 h22 i22 r22 s22 t22 u22 v22 w22
+
+nb_meadows_by_square 0
+additional_meadows d4 d4 e4 f4 g4 h4 i4 i4 r4 r4 s4 t4 u4 v4 w4 w4 d5 i5 r5 w5 d6 i6 r6 w6 d7 i7 r7 w7 d8 i8 r8 w8 d9 d9 e9 f9 g9 h9 i9 i9 r9 r9 s9 t9 u9 v9 w9 w9
+additional_meadows d18 d18 e18 f18 g18 h18 i18 i18 r18 r18 s18 t18 u18 v18 w18 w18 d19 i19 r19 w19 d20 i20 r20 w20 d21 i21 r21 w21 d22 i22 r22 w22 d23 d23 e23 f23 g23 h23 i23 i23 r23 r23 s23 t23 u23 v23 w23 w23
+additional_meadows f5 f5 f5 f5 g5 g5 g5 g5 t5 t5 t5 t5 u5 u5 u5 u5 e6 e6 e6 e6 h6 h6 h6 h6 s6 s6 s6 s6 v6 v6 v6 v6 e7 e7 e7 e7 h7 h7 h7 h7 s7 s7 s7 s7 v7 v7 v7 v7 f8 f8 f8 f8 g8 g8 g8 g8 t8 t8 t8 t8 u8 u8 u8 u8
+additional_meadows f19 f19 f19 f19 g19 g19 g19 g19 t19 t19 t19 t19 u19 u19 u19 u19 e20 e20 e20 e20 h20 h20 h20 h20 s20 s20 s20 s20 v20 v20 v20 v20 e21 e21 e21 e21 h21 h21 h21 h21 s21 s21 s21 s21 v21 v21 v21 v21 f22 f22 f22 f22 g22 g22 g22 g22 t22 t22 t22 t22 u22 u22 u22 u22
+additional_meadows e5 e5 e5 e5 e5 e5 e5 e5 h5 h5 h5 h5 h5 h5 h5 h5 s5 s5 s5 s5 s5 s5 s5 s5 v5 v5 v5 v5 v5 v5 v5 v5 e8 e8 e8 e8 e8 e8 e8 e8 h8 h8 h8 h8 h8 h8 h8 h8 s8 s8 s8 s8 s8 s8 s8 s8 v8 v8 v8 v8 v8 v8 v8 v8
+additional_meadows e19 e19 e19 e19 e19 e19 e19 e19 h19 h19 h19 h19 h19 h19 h19 h19 s19 s19 s19 s19 s19 s19 s19 s19 v19 v19 v19 v19 v19 v19 v19 v19 e22 e22 e22 e22 e22 e22 e22 e22 h22 h22 h22 h22 h22 h22 h22 h22 s22 s22 s22 s22 s22 s22 s22 s22 v22 v22 v22 v22 v22 v22 v22 v22
+additional_meadows f6 f6 f6 f6 f6 f6 f6 f6 f6 f6 f6 f6 f6 f6 f6 f6 f6 f6 g6 g6 g6 g6 g6 g6 g6 g6 g6 g6 g6 g6 g6 g6 g6 t6 t6 t6 t6 t6 t6 t6 t6 t6 t6 t6 t6 t6 t6 t6 u6 u6 u6 u6 u6 u6 u6 u6 u6 u6 u6 u6 u6 u6 u6 u6 u6 u6 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 g7 g7 g7 g7 g7 g7 g7 g7 g7 g7 g7 g7 g7 g7 g7 g7 t7 t7 t7 t7 t7 t7 t7 t7 t7 t7 t7 t7 t7 t7 t7 t7 u7 u7 u7 u7 u7 u7 u7 u7 u7 u7 u7 u7 u7 u7 u7
+additional_meadows f20 f20 f20 f20 f20 f20 f20 f20 f20 f20 f20 f20 f20 f20 f20 g20 g20 g20 g20 g20 g20 g20 g20 g20 g20 g20 g20 g20 g20 g20 g20 t20 t20 t20 t20 t20 t20 t20 t20 t20 t20 t20 t20 t20 t20 t20 t20 u20 u20 u20 u20 u20 u20 u20 u20 u20 u20 u20 u20 u20 u20 u20 f21 f21 f21 f21 f21 f21 f21 f21 f21 f21 f21 f21 f21 f21 f21 f21 f21 f21 g21 g21 g21 g21 g21 g21 g21 g21 g21 g21 g21 g21 g21 g21 g21 t21 t21 t21 t21 t21 t21 t21 t21 t21 t21 t21 t21 t21 t21 t21 u21 u21 u21 u21 u21 u21 u21 u21 u21 u21 u21 u21 u21 u21 u21 u21 u21 u21
+additional_meadows b2 b2 b2 b2 y2 y2 y2 y2 k11 k11 k11 k11 p11 p11 p11 p11 k16 k16 k16 k16 p16 p16 p16 p16 b25 b25 b25 b25 y25 y25 y25 y25
+additional_meadows m6 m6 m6 m6 m6 m6 m6 m6 n6 n6 n6 n6 n6 n6 n6 n6 f13 f13 f13 f13 f13 f13 f13 f13 u13 u13 u13 u13 u13 u13 u13 u13 f14 f14 f14 f14 f14 f14 f14 f14 u14 u14 u14 u14 u14 u14 u14 u14 m21 m21 m21 m21 m21 m21 m21 m21 n21 n21 n21 n21 n21 n21 n21 n21
+additional_meadows m13 m13 m13 m13 m13 m13 m13 m13 m13 m13 m13 m13 m13 m13 m13 m13 m13 n13 n13 n13 n13 n13 n13 n13 n13 n13 n13 n13 n13 n13 n13 n13 n13 n13 m14 m14 m14 m14 m14 m14 m14 m14 m14 m14 m14 m14 m14 m14 m14 m14 m14 n14 n14 n14 n14 n14 n14 n14 n14 n14 n14 n14 n14 n14 n14 n14 n14 n14
+
+water a1 b1 c1 d1 e1 f1 g1 h1 i1 j1 k1 l1 m1 n1 o1 p1 q1 r1 s1 t1 u1 v1 w1 x1 y1 z1
+water a2 c2 d2 e2 f2 g2 h2 i2 j2 k2 l2 m2 n2 o2 p2 q2 r2 s2 t2 u2 v2 w2 x2 z2
+water a3 b3 c3 d3 e3 f3 g3 h3 i3 j3 k3 l3 m3 n3 o3 p3 q3 r3 s3 t3 u3 v3 w3 x3 y3 z3
+water a4 b4 c4 j4 k4 l4 m4 n4 o4 p4 q4 x4 y4 z4
+water a5 b5 c5 j5 k5 l5 m5 n5 o5 p5 q5 x5 y5 z5
+water a6 b6 c6 j6 k6 l6 o6 p6 q6 x6 y6 z6
+water a7 b7 c7 j7 k7 l7 m7 n7 o7 p7 q7 x7 y7 z7
+water a8 b8 c8 j8 k8 l8 m8 n8 o8 p8 q8 x8 y8 z8
+water a9 b9 c9 j9 k9 l9 m9 n9 o9 p9 q9 x9 y9 z9
+water a10 b10 c10 d10 e10 f10 g10 h10 i10 j10 k10 l10 m10 n10 o10 p10 q10 r10 s10 t10 u10 v10 w10 x10 y10 z10
+water a11 b11 c11 d11 e11 f11 g11 h11 i11 j11 l11 m11 n11 o11 q11 r11 s11 t11 u11 v11 w11 x11 y11 z11
+water a12 b12 c12 d12 e12 f12 g12 h12 i12 j12 k12 l12 m12 n12 o12 p12 q12 r12 s12 t12 u12 v12 w12 x12 y12 z12
+water a13 b13 c13 d13 e13 g13 h13 i13 j13 k13 l13 o13 p13 q13 r13 s13 t13 v13 w13 x13 y13 z13
+water a14 b14 c14 d14 e14 g14 h14 i14 j14 k14 l14 o14 p14 q14 r14 s14 t14 v14 w14 x14 y14 z14
+water a15 b15 c15 d15 e15 f15 g15 h15 i15 j15 k15 l15 m15 n15 o15 p15 q15 r15 s15 t15 u15 v15 w15 x15 y15 z15
+water a16 b16 c16 d16 e16 f16 g16 h16 i16 j16 l16 m16 n16 o16 q16 r16 s16 t16 u16 v16 w16 x16 y16 z16
+water a17 b17 c17 d17 e17 f17 g17 h17 i17 j17 k17 l17 m17 n17 o17 p17 q17 r17 s17 t17 u17 v17 w17 x17 y17 z17
+water a18 b18 c18 j18 k18 l18 m18 n18 o18 p18 q18 x18 y18 z18
+water a19 b19 c19 j19 k19 l19 m19 n19 o19 p19 q19 x19 y19 z19
+water a20 b20 c20 j20 k20 l20 m20 n20 o20 p20 q20 x20 y20 z20
+water a21 b21 c21 j21 k21 l21 o21 p21 q21 x21 y21 z21
+water a22 b22 c22 j22 k22 l22 m22 n22 o22 p22 q22 x22 y22 z22
+water a23 b23 c23 j23 k23 l23 m23 n23 o23 p23 q23 x23 y23 z23
+water a24 b24 c24 d24 e24 f24 g24 h24 i24 j24 k24 l24 m24 n24 o24 p24 q24 r24 s24 t24 u24 v24 w24 x24 y24 z24
+water a25 c25 d25 e25 f25 g25 h25 i25 j25 k25 l25 m25 n25 o25 p25 q25 r25 s25 t25 u25 v25 w25 x25 z25
+water a26 b26 c26 d26 e26 f26 g26 h26 i26 j26 k26 l26 m26 n26 o26 p26 q26 r26 s26 t26 u26 v26 w26 x26 y26 z26
+
+terrain sea a1 b1 c1 d1 e1 f1 g1 h1 i1 j1 k1 l1 m1 n1 o1 p1 q1 r1 s1 t1 u1 v1 w1 x1 y1 z1
+terrain sea a2 c2 d2 e2 f2 g2 h2 i2 j2 k2 l2 m2 n2 o2 p2 q2 r2 s2 t2 u2 v2 w2 x2 z2
+terrain sea a3 b3 c3 d3 e3 f3 g3 h3 i3 j3 k3 l3 m3 n3 o3 p3 q3 r3 s3 t3 u3 v3 w3 x3 y3 z3
+terrain sea a4 b4 c4 j4 k4 l4 m4 n4 o4 p4 q4 x4 y4 z4
+terrain sea a5 b5 c5 j5 k5 l5 m5 n5 o5 p5 q5 x5 y5 z5
+terrain sea a6 b6 c6 j6 k6 l6 o6 p6 q6 x6 y6 z6
+terrain sea a7 b7 c7 j7 k7 l7 m7 n7 o7 p7 q7 x7 y7 z7
+terrain sea a8 b8 c8 j8 k8 l8 m8 n8 o8 p8 q8 x8 y8 z8
+terrain sea a9 b9 c9 j9 k9 l9 m9 n9 o9 p9 q9 x9 y9 z9
+terrain sea a10 b10 c10 d10 e10 f10 g10 h10 i10 j10 k10 l10 m10 n10 o10 p10 q10 r10 s10 t10 u10 v10 w10 x10 y10 z10
+terrain sea a11 b11 c11 d11 e11 f11 g11 h11 i11 j11 l11 m11 n11 o11 q11 r11 s11 t11 u11 v11 w11 x11 y11 z11
+terrain sea a12 b12 c12 d12 e12 f12 g12 h12 i12 j12 k12 l12 m12 n12 o12 p12 q12 r12 s12 t12 u12 v12 w12 x12 y12 z12
+terrain sea a13 b13 c13 d13 e13 g13 h13 i13 j13 k13 l13 o13 p13 q13 r13 s13 t13 v13 w13 x13 y13 z13
+terrain sea a14 b14 c14 d14 e14 g14 h14 i14 j14 k14 l14 o14 p14 q14 r14 s14 t14 v14 w14 x14 y14 z14
+terrain sea a15 b15 c15 d15 e15 f15 g15 h15 i15 j15 k15 l15 m15 n15 o15 p15 q15 r15 s15 t15 u15 v15 w15 x15 y15 z15
+terrain sea a16 b16 c16 d16 e16 f16 g16 h16 i16 j16 l16 m16 n16 o16 q16 r16 s16 t16 u16 v16 w16 x16 y16 z16
+terrain sea a17 b17 c17 d17 e17 f17 g17 h17 i17 j17 k17 l17 m17 n17 o17 p17 q17 r17 s17 t17 u17 v17 w17 x17 y17 z17
+terrain sea a18 b18 c18 j18 k18 l18 m18 n18 o18 p18 q18 x18 y18 z18
+terrain sea a19 b19 c19 j19 k19 l19 m19 n19 o19 p19 q19 x19 y19 z19
+terrain sea a20 b20 c20 j20 k20 l20 m20 n20 o20 p20 q20 x20 y20 z20
+terrain sea a21 b21 c21 j21 k21 l21 o21 p21 q21 x21 y21 z21
+terrain sea a22 b22 c22 j22 k22 l22 m22 n22 o22 p22 q22 x22 y22 z22
+terrain sea a23 b23 c23 j23 k23 l23 m23 n23 o23 p23 q23 x23 y23 z23
+terrain sea a24 b24 c24 d24 e24 f24 g24 h24 i24 j24 k24 l24 m24 n24 o24 p24 q24 r24 s24 t24 u24 v24 w24 x24 y24 z24
+terrain sea a25 c25 d25 e25 f25 g25 h25 i25 j25 k25 l25 m25 n25 o25 p25 q25 r25 s25 t25 u25 v25 w25 x25 z25
+terrain sea a26 b26 c26 d26 e26 f26 g26 h26 i26 j26 k26 l26 m26 n26 o26 p26 q26 r26 s26 t26 u26 v26 w26 x26 y26 z26
+
+terrain ocean d4 e4 f4 g4 h4 i4 r4 s4 t4 u4 v4 w4 d5 i5 r5 w5 d6 i6 r6 w6 d7 i7 r7 w7 d8 i8 r8 w8 d9 e9 f9 g9 h9 i9 r9 s9 t9 u9 v9 w9
+terrain ocean d18 e18 f18 g18 h18 i18 r18 s18 t18 u18 v18 w18 d19 i19 r19 w19 d20 i20 r20 w20 d21 i21 r21 w21 d22 i22 r22 w22 d23 e23 f23 g23 h23 i23 r23 s23 t23 u23 v23 w23
+
+high_grounds f6 f7 g6 g7 t6 t7 u6 u7 m13 n13 m14 n14 f20 f21 g20 g21 t20 t21 u20 u21
+
+goldmines 10000 k11 p11 k16 p16
+goldmines 15000 m6 u13 f14 n21
+goldmines 5000 g6 t6 g21 t21
+goldmines 20000 m13 n14
+woods 10000 b2 y2 b25 y25
+woods 15000 n6 f13 u14 m21
+woods 5000 f7 u7 f20 u20
+woods 20000 n13 m14
+orchard 20000 g7 t7 g20 t20
+
+nb_players_min 2
+nb_players_max 4
+
+starting_squares f6 u6 f21 u21
+starting_units townhall 5 house 5 peasant
+starting_resources 1000 1000 1000
+global_population_limit 10000

@@ -13,7 +13,7 @@ from ..lib.nofloat import (
 _SCALED_TRANSPORT_STATS = frozenset({
     'speed',
     'mdg', 'rdg', 'mdf', 'rdf', 'mdg_vs', 'rdg_vs', 'mdf_vs', 'rdf_vs',
-    'mdg_delay', 'rdg_delay',
+    'mdg_delay', 'rdg_delay', 'mdg_projectile_speed', 'rdg_projectile_speed', 'projectile_speed',
     'mdg_cd', 'rdg_cd', 'mdg_cd_vs', 'rdg_cd_vs',
     'mdg_ready', 'rdg_ready', 'mdg_ready_vs', 'rdg_ready_vs',
     'mdg_range', 'rdg_range', 'mdg_range_vs', 'rdg_range_vs',
@@ -21,6 +21,8 @@ _SCALED_TRANSPORT_STATS = frozenset({
     'mdg_minimal_range_vs', 'rdg_minimal_range_vs',
     'mdg_splash', 'rdg_splash',
     'mdg_radius', 'rdg_radius',
+    'mdg_cover', 'rdg_cover', 'mdg_cover_vs', 'rdg_cover_vs',
+    'mdg_dodge', 'rdg_dodge', 'mdg_dodge_vs', 'rdg_dodge_vs',
 })
 
 
@@ -46,8 +48,20 @@ def _bonus_amount(stat, value):
 
 
 def _apply_transport_bonus(unit, bonus, stats_tracker):
-    """对 unit 应用属性加成，并记录到 stats_tracker 以便卸载时回滚。"""
+    """对 unit 应用属性加成，并记录到 stats_tracker 以便卸载时回滚。
+
+    Supports dotted vs keys, e.g. ``mdg_vs.building`` updates ``unit.mdg_vs['building']``.
+    """
     for stat, value in _normalize_bonus_dict(bonus).items():
+        if "." in stat:
+            base, key = stat.split(".", 1)
+            current = getattr(unit, base, None)
+            if not isinstance(current, dict):
+                continue
+            bonus_value = _bonus_amount(base, value)
+            stats_tracker[stat] = stats_tracker.get(stat, 0) + bonus_value
+            current[key] = current.get(key, 0) + bonus_value
+            continue
         if not hasattr(unit, stat):
             continue
         current_value = getattr(unit, stat)
@@ -61,6 +75,12 @@ def _apply_transport_bonus(unit, bonus, stats_tracker):
 def _remove_transport_bonus(unit, stats_tracker):
     """按 stats_tracker 回滚 unit 上的属性加成。"""
     for stat, total_bonus in list(stats_tracker.items()):
+        if "." in stat:
+            base, key = stat.split(".", 1)
+            current = getattr(unit, base, None)
+            if isinstance(current, dict):
+                current[key] = current.get(key, 0) - total_bonus
+            continue
         current_value = getattr(unit, stat, 0)
         if isinstance(current_value, (int, float)):
             setattr(unit, stat, current_value - total_bonus)
@@ -68,7 +88,43 @@ def _remove_transport_bonus(unit, stats_tracker):
 
 
 class CreatureTransport(Entity):
+    def _split_passenger_type_filters(self):
+        """Split transport_passenger_types into allow / deny (-name)."""
+        raw = getattr(self, "transport_passenger_types", None) or ()
+        allow = []
+        deny = []
+        for name in raw:
+            token = str(name).strip()
+            if not token:
+                continue
+            if token.startswith("-") and len(token) > 1:
+                deny.append(token[1:])
+            else:
+                allow.append(token)
+        return allow, deny
+
+    def _passenger_matches_names(self, target, names):
+        if not names:
+            return False
+        type_name = getattr(target, "type_name", None)
+        expanded = getattr(target, "expanded_is_a", None) or ()
+        for name in names:
+            if type_name == name or name in expanded:
+                return True
+        return False
+
+    def _can_accept_passenger(self, target):
+        """Empty allow = any unit; ``-type`` excludes (beats allow)."""
+        allow, deny = self._split_passenger_type_filters()
+        if self._passenger_matches_names(target, deny):
+            return False
+        if not allow:
+            return True
+        return self._passenger_matches_names(target, allow)
+
     def have_enough_space(self, target):
+        if not self._can_accept_passenger(target):
+            return False
         if self.inside:
             return self.inside.have_enough_space(target)
 
@@ -79,6 +135,9 @@ class CreatureTransport(Entity):
 
         # 检查目标玩家是否为同一玩家，如果不是则退出
         if target.player is not self.player:
+            return False
+
+        if not self._can_accept_passenger(target):
             return False
 
         # 检查地形限制

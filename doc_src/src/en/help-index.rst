@@ -17,6 +17,7 @@ Mod author manuals
 -------------------
 
 - `Mod getting started <mod/getting-started.htm>`_ → `Mod advanced <mod/advanced.htm>`_ → `Modding manual <mod/modding.htm>`_
+- `Market system <mod/market-system.htm>`_ — buy/sell, tribute, route trade
 - `Map guide <mod/map-guide.htm>`_ → `Mapmaking manual <mod/mapmaking.htm>`_
 - `Campaign guide <mod/campaign-guide.htm>`_
 - `Skills / heal / effects (zh) <../../zh/mod/skills-and-effects.htm>`_
