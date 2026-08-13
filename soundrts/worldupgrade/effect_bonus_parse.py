@@ -52,7 +52,7 @@ _EXTRA_EFFECT_STATS = frozenset(
         "mdg_seq_secondary_rdg",
         "mdg_seq_secondary_mdg",
         "unpack_time",
-        "kill_gold_vs",
+        "kill_resource_vs",
         "gather_byproduct",
     }
 )
@@ -146,7 +146,14 @@ def split_effect_bonus_args(args):
             return bonus, [str(x) for x in args[i:]]
         if not is_effect_bonus_stat(stat):
             return bonus, [str(x) for x in args[i:]]
-        if st.endswith("_vs") or st in ("kill_gold_vs", "gather_byproduct"):
+        if st == "kill_resource_vs":
+            # kill_resource_vs <victim_type> <resource> <amount>
+            if i + 3 >= len(args) or not _looks_numeric(args[i + 3]):
+                return bonus, [str(x) for x in args[i:]]
+            bonus.extend([stat, args[i + 1], args[i + 2], args[i + 3]])
+            i += 4
+            continue
+        if st.endswith("_vs") or st in ("gather_byproduct",):
             if i + 2 >= len(args) or not _looks_numeric(args[i + 2]):
                 return bonus, [str(x) for x in args[i:]]
             target = args[i + 1]

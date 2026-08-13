@@ -3,6 +3,27 @@ Note di rilascio
 
 .. contents::
 
+1.4.7.0
+--------
+
+**Miglioria: SFX di passaggio/blocco in sovrapposizione alle coordinate in esplorazione mappa**
+
+- **Problema**: con le frecce, il suono di passaggio (es. ponte) o di blocco era in coda nella voce e finiva prima di coordinate / nomi, con ritardo percepito.
+- **Cambio**: quegli effetti partono subito sul mixer SFX; coordinate e nomi restano in coda voce, così iniziano insieme.
+- **Ambito**: esplorazione normale, cambio casella in zoom, blocco in prima persona; sincronizzato su 修复8 / 修复14 / 原始1 / 原始2.
+- **Codice**: ``clientgame/game_navigation.py`` (``_play_movement_sfx``), ``clientgamefocus.py``, ``clientgame/game_audio.py``.
+
+
+**Novità: ricompensa risorsa all’uccisione ``kill_resource_vs`` (senza oro hardcoded)**
+
+- **Uso**: uccidendo un tipo corrispondente, l’uccisore ottiene una **risorsa scelta** (es. Capi tribù: oro sui villager); il motore **non** fissa «oro» né ``resource1``.
+- **Sintassi**: ``effect bonus kill_resource_vs <tipo> <risorsa> <quantità>``, es. ``kill_resource_vs peasant resource1 5``. Risorsa ``resourceN`` o alias ``gold`` / ``wood`` / ``food`` / ``stone``. Match via ``type_name`` / ``is_a``.
+- **Archiviazione**: ``tipo_vittima → { resourceN: quantità }``; all’uccisione ``store`` ed evento ``resourceN_reward``.
+- **aoe2**: Capi tribù usa ``kill_resource_vs … resource1 5`` (villager / carretto / nave / monaco).
+- **TTS / UI**: «bonus risorsa all’uccisione vs» (niente chiave grezza ``kill_gold``).
+- **Doc**: ``mod/modding``. Codice / test come nella versione inglese; sincronizzato su 修复8 / 修复14.
+
+
 1.4.6.9
 --------
 

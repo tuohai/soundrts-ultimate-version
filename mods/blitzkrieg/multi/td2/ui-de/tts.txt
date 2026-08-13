@@ -1,7 +1,0 @@
-; coding: utf-8
-
-5028	Wiederholung
-7000	Ritter
-7001	langsam
-7002	Rüstung
-7003	Schwert

@@ -71,6 +71,14 @@ def resource_label(index: int) -> str:
     return f"resource{int(index) + 1}"
 
 
+def canonical_resource_name(token) -> Optional[str]:
+    """Normalize ``resource1`` / ``gold`` / ``0`` → ``resourceN``; None if unknown."""
+    idx = parse_resource_index(token)
+    if idx is None:
+        return None
+    return resource_label(idx)
+
+
 def menu_label_for_resource(index: int) -> str:
     """Order-arg token shown in menus (may be a style-friendly alias).
 

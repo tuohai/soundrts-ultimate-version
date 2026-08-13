@@ -253,8 +253,8 @@ STAT_TTS_NAMES = {
     "menace_mult_vs": mp.MENACE_MULT_VS,
     "cover_vs": mp.COVER_VS,
     "dodge_vs": mp.DODGE_VS,
-    "kill_gold": mp.KILL_GOLD,
-    "kill_gold_vs": mp.KILL_GOLD_VS,
+    "kill_resource": mp.KILL_RESOURCE,
+    "kill_resource_vs": mp.KILL_RESOURCE_VS,
 }
 
 

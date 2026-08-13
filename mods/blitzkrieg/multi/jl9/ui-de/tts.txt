@@ -1,4 +1,0 @@
-﻿; coding: utf-8
-
-9000 Stein Golem
-5028	replay

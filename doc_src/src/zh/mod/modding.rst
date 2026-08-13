@@ -529,7 +529,7 @@ Combat system (since 1.4)
 - ``mdg_projectile`` / ``rdg_projectile``：投射物标志（高地射程加成、低击高规则）
 - ``mdg_projectile_speed`` / ``rdg_projectile_speed``：分路投射物飞行速度（格/秒；取代 delay / 共用 projectile_speed）
 - ``projectile_lead``：远程投射物是否预判移动目标（0/1；通常由科技 ``effect bonus`` 打开）
-- 帝国时代 2 特色科技常用引擎钩子（不写死文明名）：``unpack_time``（投石机移动后架设延迟）、``gather_byproduct``（如造纸术伐木附带黄金）、升级上的 ``reveal_map``（环球航行探索全图）
+- 帝国时代 2 特色科技常用引擎钩子（不写死文明名）：``unpack_time``（投石机移动后架设延迟）、``gather_byproduct``（如造纸术伐木附带黄金）、``kill_resource_vs``（如酋长：击杀匹配类型单位时杀手获得指定资源；``effect bonus kill_resource_vs peasant resource1 5``，类型按 ``type_name`` / ``is_a`` 匹配，资源为 ``resourceN`` 或 ``gold``/``wood`` 等别名）、升级上的 ``reveal_map``（环球航行探索全图）
 - ``mdg_splash`` / ``rdg_splash``、``mdg_radius`` / ``rdg_radius``、``mdg_splash_decay``
 - ``mdg_targets`` / ``rdg_targets``：``ground``、``air``、``unit``、``building`` 或类型名
 - ``mdg_crit`` / ``rdg_crit``、``mdg_crit_rate`` / ``rdg_crit_rate``、``crit_vs``

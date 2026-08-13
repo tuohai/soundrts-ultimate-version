@@ -107,6 +107,7 @@ GameInterface.coords_in_map = game_navigation.coords_in_map
 GameInterface.square_postfix = game_navigation.square_postfix
 GameInterface._check_exit_connection = game_navigation._check_exit_connection
 GameInterface._get_prefix_and_collision = game_navigation._get_prefix_and_collision
+GameInterface._play_movement_sfx = game_navigation._play_movement_sfx
 GameInterface._shouldnt_collide = game_navigation._shouldnt_collide
 
 # 指令管理方法

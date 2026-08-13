@@ -598,9 +598,9 @@ def _check_zoom_movement_collision(interface, target_zoom):
     
     if not has_exit:
         # 没有出口连接，使用浏览地图的阻挡声音
-        from .game_navigation import _get_prefix_and_collision
+        from .game_navigation import _get_prefix_and_collision, _play_movement_sfx
         prefix, _ = _get_prefix_and_collision(interface, target_square, dxc, dyc)
-        voice.item(prefix)
+        _play_movement_sfx(prefix)
         return False
     else:
         # 路径畅通，可以移动

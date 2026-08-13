@@ -134,7 +134,10 @@ class Zoom:
             # 若无出口连接（被阻挡）且不忽略碰撞，则回退并播报阻挡提示
             if collision and not no_collision:
                 if prefix:
-                    voice.item(prefix)
+                    try:
+                        self.parent._play_movement_sfx(prefix)
+                    except Exception:
+                        voice.item(prefix)
                 # 回退子坐标到原位置
                 self.sub_x = original_sub_x
                 self.sub_y = original_sub_y
@@ -154,6 +157,12 @@ class Zoom:
 
             self.parent.place = target_square
             self.current_main_square = target_square
+            # Pass SFX alongside the upcoming zoom.say() coordinate speech.
+            if prefix and not no_collision:
+                try:
+                    self.parent._play_movement_sfx(prefix)
+                except Exception:
+                    pass
         
         self.update_coords()
         self.parent.set_obs_pos()

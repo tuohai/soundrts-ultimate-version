@@ -1,1 +1,0 @@
-SHIFT z: resource_status resource3

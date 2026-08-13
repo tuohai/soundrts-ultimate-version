@@ -164,7 +164,7 @@ def cmd_move_forward(interface):
         # 如果被阻挡，_check_rpg_movement_collision已经播放了阻挡音效
     else:
         # 移动到地图边界外，播放与浏览地图一致的阻挡声音
-        voice.item(style.get("parameters", "no_path_in_this_direction"))
+        _play_movement_sfx(style.get("parameters", "no_path_in_this_direction"))
 
 
 def cmd_move_backward(interface):
@@ -194,7 +194,7 @@ def cmd_move_backward(interface):
         # 如果被阻挡，_check_rpg_movement_collision已经播放了阻挡音效
     else:
         # 移动到地图边界外，播放与浏览地图一致的阻挡声音
-        voice.item(style.get("parameters", "no_path_in_this_direction"))
+        _play_movement_sfx(style.get("parameters", "no_path_in_this_direction"))
 
 
 def cmd_move_left(interface):
@@ -224,7 +224,7 @@ def cmd_move_left(interface):
         # 如果被阻挡，_check_rpg_movement_collision已经播放了阻挡音效
     else:
         # 移动到地图边界外，播放与浏览地图一致的阻挡声音
-        voice.item(style.get("parameters", "no_path_in_this_direction"))
+        _play_movement_sfx(style.get("parameters", "no_path_in_this_direction"))
 
 
 def cmd_move_right(interface):
@@ -254,7 +254,7 @@ def cmd_move_right(interface):
         # 如果被阻挡，_check_rpg_movement_collision已经播放了阻挡音效
     else:
         # 移动到地图边界外，播放与浏览地图一致的阻挡声音
-        voice.item(style.get("parameters", "no_path_in_this_direction"))
+        _play_movement_sfx(style.get("parameters", "no_path_in_this_direction"))
 
 
 def _check_rpg_movement_collision(interface, target_square):
@@ -269,7 +269,7 @@ def _check_rpg_movement_collision(interface, target_square):
     # 检查目标是否为当前方格
     if target_square == interface.place:
         # 试图移动到同一个方格，被阻挡
-        voice.item(style.get("parameters", "no_path_in_this_direction"))
+        _play_movement_sfx(style.get("parameters", "no_path_in_this_direction"))
         return False
     
     # 计算移动方向
@@ -283,7 +283,7 @@ def _check_rpg_movement_collision(interface, target_square):
     if (target_col < 0 or target_col > interface.xcmax or 
         target_row < 0 or target_row > interface.ycmax):
         # 超出地图边界
-        voice.item(style.get("parameters", "no_path_in_this_direction"))
+        _play_movement_sfx(style.get("parameters", "no_path_in_this_direction"))
         return False
     
     # 使用新的路径检查逻辑
@@ -292,7 +292,7 @@ def _check_rpg_movement_collision(interface, target_square):
     if not has_exit:
         # 没有出口连接，使用浏览地图的阻挡声音
         prefix, _ = _get_prefix_and_collision(interface, target_square, dxc, dyc)
-        voice.item(prefix)
+        _play_movement_sfx(prefix)
         return False
     else:
         # 路径畅通，可以移动
@@ -459,7 +459,28 @@ def cmd_toggle_zoom(interface):
 
 
 # 方格选择和移动功能
-def _select_and_say_square(interface, square, prefix=[], *, center_view=True):
+def _play_movement_sfx(sound_numbers):
+    """Play terrain pass/block SFX on the SFX mixer (not the voice queue).
+
+    So coordinate / place-name speech can start at the same time instead of
+    waiting for the movement cue to finish.
+    """
+    if not sound_numbers:
+        return
+    from ..clientmedia import sounds
+
+    for sn in sound_numbers:
+        if isinstance(sn, (list, tuple)):
+            _play_movement_sfx(sn)
+            continue
+        snd = sounds.get_sound(sn, warn=False)
+        if snd is not None:
+            psounds.play_stereo(snd)
+
+
+def _select_and_say_square(
+    interface, square, prefix=[], *, center_view=True, movement_sfx=None
+):
     # 注意：是否跨越主区域的判断应在调用方完成，并将主区域前缀合入 prefix
     # 键盘/小地图：先标记镜头对准，再 move（内部 display 会居中）
     # 鼠标划过选格：不跳屏，靠边缘滚屏移动镜头
@@ -471,6 +492,9 @@ def _select_and_say_square(interface, square, prefix=[], *, center_view=True):
             pass
     move_to_square(interface, square)
     interface.target = None
+    # After silence_previous_square: start SFX and speech together.
+    if movement_sfx:
+        _play_movement_sfx(movement_sfx)
     say_square(interface, square, prefix)
     interface.follow_mode = False
 
@@ -767,7 +791,8 @@ def cmd_select_square(interface, dxc, dyc, *args):
                 step = int(math.copysign(1, dxc)), 0
             else:
                 step = 0, int(math.copysign(1, dyc))
-            prefixes = []
+            speech_prefixes = []
+            movement_sfx = []
             inserted_region_prefix = False
             inserted_city_prefix = False
             for _ in range(int(math.copysign(dxc + dyc, 1))):
@@ -794,31 +819,26 @@ def cmd_select_square(interface, dxc, dyc, *args):
                 except Exception:
                     pass
 
-                if not no_collision:
-                    # 先加入通行音效，确保通行音效立即播放
-                    if prefix:
-                        prefixes += prefix
-                    # 再加入区域前缀，避免遮挡通行音效
-                    if region_prefix and not inserted_region_prefix:
-                        prefixes = prefixes + region_prefix
-                        inserted_region_prefix = True
-                    if city_prefix and not inserted_city_prefix:
-                        prefixes = prefixes + city_prefix
-                        inserted_city_prefix = True
-                else:
-                    # 即使不收集路径音效，也要收集一次主区域前缀
-                    if region_prefix and not inserted_region_prefix:
-                        prefixes = prefixes + region_prefix
-                        inserted_region_prefix = True
-                    if city_prefix and not inserted_city_prefix:
-                        prefixes = prefixes + city_prefix
-                        inserted_city_prefix = True
+                if not no_collision and prefix:
+                    # Keep only the last step's SFX; play with final speech.
+                    movement_sfx = list(prefix)
+                if region_prefix and not inserted_region_prefix:
+                    speech_prefixes = speech_prefixes + region_prefix
+                    inserted_region_prefix = True
+                if city_prefix and not inserted_city_prefix:
+                    speech_prefixes = speech_prefixes + city_prefix
+                    inserted_city_prefix = True
 
                 if not collision or no_collision:
                     move_to_square(interface, new_square)
                 else:
                     break
-            _select_and_say_square(interface, interface.place, prefixes)
+            _select_and_say_square(
+                interface,
+                interface.place,
+                speech_prefixes,
+                movement_sfx=movement_sfx,
+            )
         elif no_collision:  # one square at a time without collision
             new_square = _compute_move(interface, dxc, dyc)
             # 计算主区域跨越前缀
@@ -844,6 +864,7 @@ def cmd_select_square(interface, dxc, dyc, *args):
         else:  # one square at a time with collision
             new_square = _compute_move(interface, dxc, dyc)
             prefix, collision = _get_prefix_and_collision(interface, new_square, dxc, dyc)
+            speech_prefix = []
             if not collision:
                 # 计算主区域跨越前缀
                 province_prefix = []
@@ -864,9 +885,14 @@ def cmd_select_square(interface, dxc, dyc, *args):
                 except Exception:
                     pass
                 move_to_square(interface, new_square)
-                # 先播放通行音效，再播报地名，避免通行音效被延后
-                prefix = prefix + province_prefix + city_prefix
-            _select_and_say_square(interface, interface.place, prefix)
+                speech_prefix = province_prefix + city_prefix
+            # SFX on mixer + speech on voice queue → simultaneous
+            _select_and_say_square(
+                interface,
+                interface.place,
+                speech_prefix,
+                movement_sfx=prefix,
+            )
 
 
 def _select_square_from_list(interface, increment, squares):
@@ -1265,6 +1291,7 @@ __all__ = [
     'cmd_ui_escape',
     'set_obs_pos', '_follow_if_needed', 'update_fog_of_war', 'scout_info_if_needed',
     'squares_alert_if_needed', 'coords_in_map', 'square_postfix',
-    '_check_exit_connection', '_get_prefix_and_collision', '_shouldnt_collide',
+    '_check_exit_connection', '_get_prefix_and_collision', '_play_movement_sfx',
+    '_shouldnt_collide',
     'place_xy', 'xcmax', 'ycmax'
 ]

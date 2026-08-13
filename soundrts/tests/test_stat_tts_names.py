@@ -43,11 +43,12 @@ def test_other_plain_vs_stats_use_translated_msg():
         assert raw not in get_stat_tts_name(raw)
 
 
-def test_kill_gold_vs_uses_translated_msg():
-    """Chieftains-style kill_gold_vs must not speak the raw key."""
-    assert get_stat_tts_name("kill_gold_vs") == list(mp.KILL_GOLD_VS)
-    assert "kill_gold" not in get_stat_tts_name("kill_gold_vs")
-    assert get_stat_tts_name("kill_gold") == list(mp.KILL_GOLD)
+def test_kill_resource_vs_uses_translated_msg():
+    """Chieftains-style kill_resource_vs must not speak the raw key."""
+    assert get_stat_tts_name("kill_resource_vs") == list(mp.KILL_RESOURCE_VS)
+    assert "kill_resource" not in "".join(str(x) for x in get_stat_tts_name("kill_resource_vs"))
+    assert "kill_gold" not in get_stat_tts_name("kill_resource_vs")
+    assert get_stat_tts_name("kill_resource") == list(mp.KILL_RESOURCE)
 
 
 def test_all_msgparts_vs_constants_resolve_without_raw_keys():
@@ -75,6 +76,14 @@ def test_all_msgparts_vs_constants_resolve_without_raw_keys():
         label = get_stat_tts_name(name)
         assert label == list(getattr(mp, name.upper())), name
         assert name not in label, name
+        # kill_resource_vs is a 4-token form: type, resource, amount
+        if name == "kill_resource_vs":
+            bonus, _ = split_effect_bonus_args(
+                [name, "peasant", "resource1", "5"]
+            )
+            assert bonus == [name, "peasant", "resource1", "5"]
+            assert utils._is_precision_stat(name) is False
+            continue
         root = name[:-3]
         bonus, _ = split_effect_bonus_args([name, "building", "2"])
         stored = bonus[2]

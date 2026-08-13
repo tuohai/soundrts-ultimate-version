@@ -4,6 +4,28 @@
 .. contents::
 
 
+1.4.7.0
+--------
+
+**改进：地图浏览时通行/阻挡音效与坐标播报同时进行**
+
+- **问题**：方向键浏览地图时，地形通行音（如过桥）或阻挡音先进入语音队列，播完后才报坐标/地名，手感偏慢、不跟手。
+- **改进**：通行/阻挡音效改走音效通道立刻播放，坐标与地名仍走语音队列，两者同时开始，不再排队等待。
+- **范围**：普通地图浏览、缩放跨格、第一人称阻挡反馈；已同步修复8 / 修复14 / 原始1 / 原始2。
+- **实现**：``clientgame/game_navigation.py``（``_play_movement_sfx``）、``clientgamefocus.py``、``clientgame/game_audio.py``。
+
+
+**新增：规则驱动击杀资源奖励 ``kill_resource_vs``（不写死黄金）**
+
+- **用途**：击杀匹配类型单位时，杀手获得**指定资源槽**奖励（如酋长杀村民得金）；引擎不硬编码「黄金」或 ``resource1``。
+- **语法**：``effect bonus kill_resource_vs <单位类型> <资源> <数量>``，例如 ``kill_resource_vs peasant resource1 5``；资源可为 ``resourceN`` 或 ``gold`` / ``wood`` / ``food`` / ``stone`` 别名（规范为 ``resourceN``）。类型按 ``type_name`` / ``is_a`` 匹配。
+- **存储**：``victim_type → { resourceN: 显示数量 }``；击杀时 ``store`` 对应资源并播报 ``resourceN_reward``。
+- **aoe2**：酋长科技改为 ``kill_resource_vs … resource1 5``（村民 / 贸易车 / 贸易船 / 僧侣）。
+- **TTS / UI**：``击杀资源加成``（不再读出裸键 ``kill_gold``）；科技详情带目标类型与资源名。
+- **文档**：各语言 ``mod/modding``。
+- **实现 / 测试**：``worldmarket.canonical_resource_name``、``effect_bonus_parse``、``attribute_effects``、``worldcreature``；``test_aoe2_full_unique_techs.py``、``test_stat_tts_names.py``。已同步修复8 / 修复14；原始1 / 原始2 同步 TTS 命名。
+
+
 1.4.6.9
 --------
 

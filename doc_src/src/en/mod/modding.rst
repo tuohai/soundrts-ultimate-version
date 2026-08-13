@@ -541,7 +541,7 @@ Main melee/ranged properties:
 - ``mdg_projectile`` / ``rdg_projectile``: projectile flag (high-ground range bonus, low vs high ground rules)
 - ``mdg_projectile_speed`` / ``rdg_projectile_speed``: per-lane projectile flight speed (tiles/s; replaces delay / shared ``projectile_speed``)
 - ``projectile_lead``: whether ranged projectiles lead moving targets (0/1; usually granted by tech ``effect bonus``)
-- AoE2-style unique-tech hooks (no civ names hardcoded): ``unpack_time`` (trebuchet unpack delay after move), ``gather_byproduct`` (e.g. Paper Money gold while chopping wood), ``reveal_map`` on upgrades (Circumnavigation explores the whole map)
+- AoE2-style unique-tech hooks (no civ names hardcoded): ``unpack_time`` (trebuchet unpack delay after move), ``gather_byproduct`` (e.g. Paper Money gold while chopping wood), ``kill_resource_vs`` (e.g. Chieftains: killer gains a chosen resource when the victim matches a type; ``effect bonus kill_resource_vs peasant resource1 5``, matched via ``type_name`` / ``is_a``; resource is ``resourceN`` or aliases like ``gold``/``wood``), ``reveal_map`` on upgrades (Circumnavigation explores the whole map)
 - ``mdg_splash`` / ``rdg_splash``, ``mdg_radius`` / ``rdg_radius``, ``mdg_splash_decay``
 - ``mdg_targets`` / ``rdg_targets``: ``ground``, ``air``, ``unit``, ``building``, or a type name
 - ``mdg_crit`` / ``rdg_crit``, ``mdg_crit_rate`` / ``rdg_crit_rate``, ``crit_vs``

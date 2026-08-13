@@ -545,7 +545,7 @@ Proprietà principali mischia/distanza:
 - ``mdg_projectile`` / ``rdg_projectile``: flag proiettile (bonus portata da terreno alto, regole basso vs alto)
 - ``mdg_projectile_speed`` / ``rdg_projectile_speed``: velocità di volo del proiettile per corsia (caselle/s; sostituisce delay / ``projectile_speed`` condiviso)
 - ``projectile_lead``: se i proiettili a distanza predicono i bersagli in movimento (0/1; di solito concesso da ``effect bonus`` di tecnologia)
-- Hook del motore usati da tecnologie uniche stile AoE2 (nessun nome civ hardcoded): ``unpack_time`` (ritardo di schieramento del trabucco dopo lo spostamento), ``gather_byproduct`` (es. Banconote: oro mentre si taglia legna), ``reveal_map`` sugli upgrade (Circumnavigazione esplora l’intera mappa)
+- Hook del motore usati da tecnologie uniche stile AoE2 (nessun nome civ hardcoded): ``unpack_time`` (ritardo di schieramento del trabucco dopo lo spostamento), ``gather_byproduct`` (es. Banconote: oro mentre si taglia legna), ``kill_resource_vs`` (es. Capi tribù: l’uccisore guadagna una risorsa scelta se la vittima corrisponde a un tipo; ``effect bonus kill_resource_vs peasant resource1 5``, via ``type_name`` / ``is_a``; risorsa ``resourceN`` o alias ``gold``/``wood``), ``reveal_map`` sugli upgrade (Circumnavigazione esplora l’intera mappa)
 - ``mdg_splash`` / ``rdg_splash``, ``mdg_radius`` / ``rdg_radius``, ``mdg_splash_decay``
 - ``mdg_targets`` / ``rdg_targets``: ``ground``, ``air``, ``unit``, ``building``, o un nome di tipo
 - ``mdg_crit`` / ``rdg_crit``, ``mdg_crit_rate`` / ``rdg_crit_rate``, ``crit_vs``

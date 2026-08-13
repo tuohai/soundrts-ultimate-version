@@ -420,28 +420,38 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
                         except (ValueError, IndexError):
                             pass  # 忽略无效的资源数据
 
-            # AoE2 Chieftains etc.: gold on the killer when matching victim types
-            kill_gold = getattr(attacker, "kill_gold_vs", None)
-            if isinstance(kill_gold, dict) and kill_gold:
-                gold_amt = 0
+            # Kill rewards by victim type → resource slot (rules-driven; not gold-hardcoded)
+            kill_res = getattr(attacker, "kill_resource_vs", None)
+            if isinstance(kill_res, dict) and kill_res:
                 names = set()
                 tn = getattr(self, "type_name", None)
                 if tn:
                     names.add(tn)
                 for x in getattr(self, "expanded_is_a", ()) or ():
                     names.add(x)
-                for key, amt in kill_gold.items():
-                    if key in names:
+                # victim_type -> { resourceN: display_amount }
+                grants = {}
+                for key, by_res in kill_res.items():
+                    if key not in names:
+                        continue
+                    if not isinstance(by_res, dict):
+                        continue
+                    for res_name, amt in by_res.items():
                         try:
-                            gold_amt = max(gold_amt, int(amt))
+                            grants[res_name] = max(
+                                int(grants.get(res_name, 0) or 0), int(amt)
+                            )
                         except (TypeError, ValueError):
                             pass
-                if gold_amt > 0:
-                    attacker.player.store("resource1", gold_amt * 1000)
-                    try:
-                        attacker.player.send_event(attacker, "resource1_reward")
-                    except Exception:
-                        pass
+                for res_name, gold_amt in grants.items():
+                    if gold_amt > 0:
+                        attacker.player.store(res_name, gold_amt * 1000)
+                        try:
+                            attacker.player.send_event(
+                                attacker, f"{res_name}_reward"
+                            )
+                        except Exception:
+                            pass
 
 
         # 在通知和删除前处理经验值奖励 - 确保attacker能获得经验
@@ -996,8 +1006,9 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     mdg_seq_secondary_rdg: int = 0
     mdg_seq_secondary_mdg: int = 0
     mdg_seq_secondary_live: int = 0
-    # attacker-side gold/etc when this unit kills a matching type (Chieftains)
-    kill_gold_vs = None  # dict type_name -> display gold
+    # attacker-side resource when this unit kills a matching type
+    # dict: victim_type -> { resourceN: display_amount }
+    kill_resource_vs = None
     # while gathering deposit type X, also gain gold/sec (Paper Money)
     gather_byproduct = None  # dict deposit_type -> rate/sec of resource1
     unpack_time = 0  # seconds; first shot after move (Kataparuto / trebuchet)

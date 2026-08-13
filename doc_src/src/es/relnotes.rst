@@ -4,6 +4,27 @@ Notas de la versión
 
 .. contents::
 
+1.4.7.0
+-------
+
+**Mejora: el sonido de paso/bloqueo se solapa con las coordenadas al recorrer el mapa**
+
+- **Problema**: al navegar con las flechas, el sonido de paso (p. ej. puente) o de bloqueo iba en la cola de voz y terminaba antes de las coordenadas / nombres, con sensación de retraso.
+- **Cambio**: esos efectos se reproducen al instante en el mezclador de SFX; coordenadas y nombres siguen en la cola de voz, de modo que empiezan a la vez.
+- **Alcance**: recorrido normal, cruce de casilla en zoom, bloqueo en primera persona; sincronizado a 修复8 / 修复14 / 原始1 / 原始2.
+- **Código**: ``clientgame/game_navigation.py`` (``_play_movement_sfx``), ``clientgamefocus.py``, ``clientgame/game_audio.py``.
+
+
+**Novedad: recompensa de recurso al matar ``kill_resource_vs`` (sin oro hardcodeado)**
+
+- **Uso**: al matar un tipo coincidente, el asesino gana un **recurso elegido** (p. ej. Caudillos: oro al matar aldeanos); el motor **no** fija «oro» ni ``resource1``.
+- **Sintaxis**: ``effect bonus kill_resource_vs <tipo> <recurso> <cantidad>``, p. ej. ``kill_resource_vs peasant resource1 5``. El recurso puede ser ``resourceN`` o alias ``gold`` / ``wood`` / ``food`` / ``stone``. Coincidencia por ``type_name`` / ``is_a``.
+- **Almacenamiento**: ``tipo_víctima → { resourceN: cantidad }``; al matar, ``store`` y evento ``resourceN_reward``.
+- **aoe2**: Caudillos usa ``kill_resource_vs … resource1 5`` (aldeano / carreta / barco / monje).
+- **TTS / UI**: «bonificación de recurso al matar vs» (sin clave cruda ``kill_gold``).
+- **Docs**: ``mod/modding``. Código / pruebas alineados con la versión inglesa; sincronizado a 修复8 / 修复14.
+
+
 1.4.6.9
 -------
 

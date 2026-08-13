@@ -1585,8 +1585,8 @@
 5741	accessibility voice is now on
 5742	accessibility voice is now off
 5743	toggle accessibility voice
-5744	gold on kill
-5745	gold on kill bonus vs
+5744	resource on kill
+5745	resource on kill bonus vs
 5750	language
 5751	system default
 5752	current

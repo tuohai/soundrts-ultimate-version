@@ -4,6 +4,27 @@ Notas de lançamento
 
 .. contents::
 
+1.4.7.0
+-------
+
+**Melhoria: SFX de passagem/bloqueio sobrepõe as coordenadas na navegação do mapa**
+
+- **Problema**: com as setas, o som de passagem (ex. ponte) ou de bloqueio ia na fila de voz e terminava antes das coordenadas / nomes, com atraso perceptível.
+- **Mudança**: esses efeitos tocam de imediato no mixer de SFX; coordenadas e nomes continuam na fila de voz, começando juntos.
+- **Alcance**: navegação normal, troca de casa no zoom, bloqueio em primeira pessoa; sincronizado em 修复8 / 修复14 / 原始1 / 原始2.
+- **Código**: ``clientgame/game_navigation.py`` (``_play_movement_sfx``), ``clientgamefocus.py``, ``clientgame/game_audio.py``.
+
+
+**Novidade: recompensa de recurso ao matar ``kill_resource_vs`` (sem ouro fixo)**
+
+- **Uso**: ao matar um tipo correspondente, o matador ganha um **recurso escolhido** (ex. Chefes: ouro em aldeões); o motor **não** fixa «ouro» nem ``resource1``.
+- **Sintaxe**: ``effect bonus kill_resource_vs <tipo> <recurso> <quantidade>``, ex. ``kill_resource_vs peasant resource1 5``. Recurso ``resourceN`` ou alias ``gold`` / ``wood`` / ``food`` / ``stone``. Match via ``type_name`` / ``is_a``.
+- **Armazenamento**: ``tipo_vítima → { resourceN: quantidade }``; ao matar, ``store`` e evento ``resourceN_reward``.
+- **aoe2**: Chefes usa ``kill_resource_vs … resource1 5`` (aldeão / carroça / navio / monge).
+- **TTS / UI**: «bônus de recurso ao matar vs» (sem chave crua ``kill_gold``).
+- **Docs**: ``mod/modding``. Código / testes como na versão inglesa; sincronizado em 修复8 / 修复14.
+
+
 1.4.6.9
 -------
 

@@ -1177,5 +1177,5 @@ COVER_VS = [5736]  # cover_vs
 DODGE_VS = [5737]  # dodge_vs
 HOTKEY_SAY_SQUARE_INFO = [5738]  # 方格地形信息
 TERRAIN_COVER = [5739]  # terrain cover / 地形掩护
-KILL_GOLD = [5744]  # gold on kill
-KILL_GOLD_VS = [5745]  # gold on kill bonus vs
+KILL_RESOURCE = [5744]  # resource on kill
+KILL_RESOURCE_VS = [5745]  # resource on kill bonus vs

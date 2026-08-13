@@ -298,6 +298,37 @@ class EffectFormatter:
         while i < len(bonus_args):
             stat = bonus_args[i]
             st = str(stat)
+            if st == "kill_resource_vs":
+                if i + 3 >= len(bonus_args):
+                    break
+                target = bonus_args[i + 1]
+                resource = bonus_args[i + 2]
+                value = bonus_args[i + 3]
+                stat_name = self.parent._get_stat_tts_name(stat)
+                target_title = style.get(target, "title") or [str(target)]
+                if not isinstance(target_title, list):
+                    target_title = [str(target_title)]
+                from ..worldmarket import canonical_resource_name
+
+                res_name = canonical_resource_name(resource) or str(resource)
+                resource_title = style.get(res_name, "title") or [str(res_name)]
+                if not isinstance(resource_title, list):
+                    resource_title = [str(resource_title)]
+                value_parts = self._format_bonus_value_parts(stat, value)
+                if value_parts:
+                    rows.append(
+                        (
+                            "",
+                            list(stat_name)
+                            + list(mp.COMMA)
+                            + list(target_title)
+                            + list(mp.COMMA)
+                            + list(resource_title),
+                            value_parts,
+                        )
+                    )
+                i += 4
+                continue
             if st.endswith("_vs"):
                 if i + 2 >= len(bonus_args):
                     break

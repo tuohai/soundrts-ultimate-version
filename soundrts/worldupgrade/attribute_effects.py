@@ -41,6 +41,36 @@ class AttributeEffectsMixin:
                 i += 1
                 continue
 
+            # kill_resource_vs <type> <resource> <amount> — e.g. Chieftains
+            if str(stat) == "kill_resource_vs":
+                if i + 3 >= len(bonus_args):
+                    break
+                victim = bonus_args[i + 1]
+                resource = bonus_args[i + 2]
+                amount = bonus_args[i + 3]
+                try:
+                    from ..worldmarket import canonical_resource_name
+
+                    res_name = canonical_resource_name(resource)
+                    if res_name is None:
+                        raise ValueError(f"unknown resource {resource!r}")
+                    cur = getattr(unit, "kill_resource_vs", None)
+                    if not isinstance(cur, dict):
+                        cur = {}
+                    by_res = cur.get(str(victim))
+                    if not isinstance(by_res, dict):
+                        by_res = {}
+                    by_res[res_name] = int(by_res.get(res_name, 0) or 0) + int(
+                        float(amount)
+                    )
+                    cur[str(victim)] = by_res
+                    unit.kill_resource_vs = cur
+                except (TypeError, ValueError) as e:
+                    from ..lib.log import warning
+                    warning(f"Error in bonus kill_resource_vs: {str(e)}")
+                i += 4
+                continue
+
             # mdg_vs / rdg_vs / … ：stat target value
             if str(stat).endswith("_vs"):
                 if i + 2 >= len(bonus_args):
@@ -192,24 +222,6 @@ class AttributeEffectsMixin:
                     from ..lib.log import warning
                     warning(f"Error in bonus {stat}: {str(e)}")
                 i += 2
-                continue
-
-            # kill_gold_vs <type> <amount> — Chieftains
-            if stat == "kill_gold_vs":
-                if i + 2 >= len(bonus_args):
-                    break
-                victim = bonus_args[i + 1]
-                amount = bonus_args[i + 2]
-                try:
-                    cur = getattr(unit, "kill_gold_vs", None)
-                    if not isinstance(cur, dict):
-                        cur = {}
-                    cur[str(victim)] = int(float(amount))
-                    unit.kill_gold_vs = cur
-                except (TypeError, ValueError) as e:
-                    from ..lib.log import warning
-                    warning(f"Error in bonus kill_gold_vs: {str(e)}")
-                i += 3
                 continue
 
             # gather_byproduct <deposit> <rate_per_sec> — Paper Money (gold = resource1)

@@ -13,7 +13,7 @@ class _U:
         self.rdg_seq_secondary_live = 0
         self.rdg_seq_interval = 0
         self.passenger_attack_types = ["archer_unit", "peasant"]
-        self.kill_gold_vs = None
+        self.kill_resource_vs = None
         self.gather_byproduct = None
         self.unpack_time = 11.0
         self.mdg_vs = {}
@@ -44,14 +44,19 @@ def test_crenellations_appends_passenger_attack_types():
     assert "archer_unit" in u.passenger_attack_types
 
 
-def test_chieftains_kill_gold_vs_and_camel():
+def test_chieftains_kill_resource_vs_and_camel():
     u = _U()
     u.type_name = "militia"
     u.expanded_is_a = ["infantry"]
-    AttributeEffectsMixin.effect_bonus(u, 0, "kill_gold_vs", "peasant", 5)
+    AttributeEffectsMixin.effect_bonus(
+        u, 0, "kill_resource_vs", "peasant", "resource1", 5
+    )
     AttributeEffectsMixin.effect_bonus(u, 0, "mdg_vs", "camel_rider", 4)
-    assert u.kill_gold_vs["peasant"] == 5
+    assert u.kill_resource_vs["peasant"]["resource1"] == 5
     assert u.mdg_vs["camel_rider"] == 4
+    # gold alias normalizes to resource1
+    AttributeEffectsMixin.effect_bonus(u, 0, "kill_resource_vs", "monk", "gold", 5)
+    assert u.kill_resource_vs["monk"]["resource1"] == 5
 
 
 def test_paper_money_gather_byproduct():
@@ -67,13 +72,22 @@ def test_kataparuto_unpack_time_percent():
     assert abs(u.unpack_time - 11.0 * 0.25) < 1e-6
 
 
-def test_split_kill_gold_and_byproduct_triples():
+def test_split_kill_resource_and_byproduct():
     b, t = split_effect_bonus_args(
-        ["kill_gold_vs", "peasant", "5", "gather_byproduct", "wood", "0.014"]
+        [
+            "kill_resource_vs",
+            "peasant",
+            "resource1",
+            "5",
+            "gather_byproduct",
+            "wood",
+            "0.014",
+        ]
     )
     assert b == [
-        "kill_gold_vs",
+        "kill_resource_vs",
         "peasant",
+        "resource1",
         "5",
         "gather_byproduct",
         "wood",
@@ -104,10 +118,11 @@ def test_rules_unique_techs_no_approximations():
     assert "rdg_projectile_speed 0.5" in ab
     assert "mdg_projectile_speed 0.2" in ab
     assert "rdg_projectile_speed 50%" not in ab
-    # Chieftains camel + kill gold
+    # Chieftains camel + kill resource (resource1 = gold in aoe2)
     block = text.split("def chieftains")[1].split("def ")[0]
     assert "camel_rider 4" in block
-    assert "kill_gold_vs peasant 5" in block
+    assert "kill_resource_vs peasant resource1 5" in block
+    assert "kill_gold_vs" not in block
     # Crenellations infantry fire
     assert "passenger_attack_types infantry" in text.split("def crenellations")[1].split("def ")[0]
     # Kataparuto unpack

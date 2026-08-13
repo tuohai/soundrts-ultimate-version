@@ -1106,13 +1106,13 @@ effect bonus mdg_vs cavalry 5
 effect_bonus_targets infantry
 effect bonus mdg_vs camel_rider 4
 effect_bonus_targets infantry
-effect bonus kill_gold_vs peasant 5
+effect bonus kill_resource_vs peasant resource1 5
 effect_bonus_targets infantry
-effect bonus kill_gold_vs trade_cart 5
+effect bonus kill_resource_vs trade_cart resource1 5
 effect_bonus_targets infantry
-effect bonus kill_gold_vs trade_cog 5
+effect bonus kill_resource_vs trade_cog resource1 5
 effect_bonus_targets infantry
-effect bonus kill_gold_vs monk 5
+effect bonus kill_resource_vs monk resource1 5
 effect_bonus_targets infantry
 
 ; 弓矛兵 Bogsveigar — archer line + longboats +1 attack

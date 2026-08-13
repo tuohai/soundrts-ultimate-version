@@ -1,3 +1,0 @@
-def parameters
-game_music tang_empire
-victory_sound defeat

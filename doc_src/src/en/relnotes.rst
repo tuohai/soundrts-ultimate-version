@@ -4,6 +4,28 @@ Release notes
 
 .. contents::
 
+1.4.7.0
+--------
+
+**Improvement: map-browse path SFX overlaps coordinate speech**
+
+- **Issue**: When arrow-key browsing the map, terrain pass (e.g. bridge) or block cues were queued on the voice channel and finished before square coordinates / place names, so feedback felt laggy.
+- **Change**: Pass/block cues play immediately on the SFX mixer; coordinates and names still use the voice queue, so both start together instead of waiting in line.
+- **Scope**: Normal map browse, zoom square crossing, first-person block feedback; synced to 修复8 / 修复14 / 原始1 / 原始2.
+- **Code**: ``clientgame/game_navigation.py`` (``_play_movement_sfx``), ``clientgamefocus.py``, ``clientgame/game_audio.py``.
+
+
+**New: rules-driven kill resource reward ``kill_resource_vs`` (not gold-hardcoded)**
+
+- **Use**: when the killer slays a matching unit type, grant a **chosen resource slot** (e.g. Chieftains gold on villager kills) — the engine does **not** hardcode “gold” or ``resource1``.
+- **Syntax**: ``effect bonus kill_resource_vs <unit_type> <resource> <amount>``, e.g. ``kill_resource_vs peasant resource1 5``. Resource may be ``resourceN`` or aliases ``gold`` / ``wood`` / ``food`` / ``stone`` (normalized to ``resourceN``). Types match via ``type_name`` / ``is_a``.
+- **Storage**: ``victim_type → { resourceN: display_amount }``; on kill, ``store`` that resource and fire ``resourceN_reward``.
+- **aoe2**: Chieftains uses ``kill_resource_vs … resource1 5`` (villager / trade cart / trade cog / monk).
+- **TTS / UI**: “resource on kill bonus vs” (no raw ``kill_gold`` key); tech detail includes target type and resource title.
+- **Docs**: ``mod/modding`` (all languages).
+- **Code / tests**: ``worldmarket.canonical_resource_name``, ``effect_bonus_parse``, ``attribute_effects``, ``worldcreature``; ``test_aoe2_full_unique_techs.py``, ``test_stat_tts_names.py``. Synced to 修复8 / 修复14; TTS naming synced to 原始1 / 原始2.
+
+
 1.4.6.9
 --------
 

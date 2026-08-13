@@ -549,7 +549,7 @@ Principales propiedades cuerpo a cuerpo/a distancia:
 - ``mdg_projectile`` / ``rdg_projectile``: bandera de proyectil (bonificación de alcance en terreno alto, reglas básicas bajas versus altas)
 - ``mdg_projectile_speed`` / ``rdg_projectile_speed``: velocidad de vuelo del proyectil por vía (casillas/s; sustituye delay / ``projectile_speed`` compartido)
 - ``projectile_lead``: si los proyectiles a distancia predicen objetivos en movimiento (0/1; suele otorgarse con ``effect bonus`` de tecnología)
-- Ganchos del motor usados por tecnologías únicas estilo AoE2 (sin nombres de civ hardcodeados): ``unpack_time`` (retraso de despliegue del trabuquete tras moverse), ``gather_byproduct`` (p. ej. Papel moneda: oro al talar madera), ``reveal_map`` en mejoras (Circunnavegación explora todo el mapa)
+- Ganchos del motor usados por tecnologías únicas estilo AoE2 (sin nombres de civ hardcodeados): ``unpack_time`` (retraso de despliegue del trabuquete tras moverse), ``gather_byproduct`` (p. ej. Papel moneda: oro al talar madera), ``kill_resource_vs`` (p. ej. Caudillos: el asesino gana un recurso elegido si la víctima coincide con un tipo; ``effect bonus kill_resource_vs peasant resource1 5``, por ``type_name`` / ``is_a``; recurso ``resourceN`` o alias ``gold``/``wood``), ``reveal_map`` en mejoras (Circunnavegación explora todo el mapa)
 - ``mdg_splash`` / ``rdg_splash``, ``mdg_radius`` / ``rdg_radius``, ``mdg_splash_decay``
 - ``mdg_targets`` / ``rdg_targets``: ``ground``, ``air``, ``unit``, ``building``, o un nombre de tipo
 - ``mdg_crit`` / ``rdg_crit``, ``mdg_crit_rate`` / ``rdg_crit_rate``, ``crit_vs``
