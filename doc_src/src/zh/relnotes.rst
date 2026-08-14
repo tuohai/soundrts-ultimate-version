@@ -4,6 +4,30 @@
 .. contents::
 
 
+1.4.7.1
+--------
+
+**修复：未完工建筑不能训练单位**
+
+- **问题**：施工占位（``BuildingSite``）会露出目标建筑的训练/研究菜单，兵营等还没建成就能训练。
+- **改进**：未完工工地训练/研究列表为空，也不能作为可运转建筑接生产指令。
+- **范围**：全部模组（含 aoe2）；已同步修复8 / 修复14。
+- **实现 / 测试**：``world_build_rules.py``（``is_unfinished_building``、``effective_can_train`` / ``effective_can_research`` / ``building_can_operate``）；``test_can_train_upgrade.py``。
+
+**修复：建筑完工时按文明/时代加成满血，而不是先缺再修**
+
+- **问题**：完工时用规则类的 ``hp_max`` 写当前生命（如兵营 1200），实例上限已含加成（拜占庭黑暗时代 +10% → 1320），农民会自动把「缺口」修满。
+- **改进**：完工按实例 ``hp_max`` 设血（再减去施工中受伤）。与帝国 2 一致：建完就是加成后的满血，不是再修一截。
+- **范围**：全部模组；已同步修复8 / 修复14。
+- **实现 / 测试**：``worldcreature.py``（``BuildingSite._complete_construction``）；``test_z5_byzantine_barracks_hp.py``。
+
+**aoe2：新增凯尔特文明；威廉·华莱士战役玩家为凯尔特**
+
+- 凯尔特：独特单位靛蓝突袭者，独特科技堡垒 / 凯尔特狂暴，以及步兵移速、伐木、攻城射速等文明加成。
+- 华莱士战役：玩家 ``default_faction celts``；英格兰电脑 ``faction britons``（不列颠），不再把玩家写成英格兰。
+- 地图：``computer_only … faction <文明名> …`` 可为每台电脑指定文明。文档见 ``mod/mapmaking``。
+
+
 1.4.7.0
 --------
 

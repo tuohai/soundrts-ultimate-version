@@ -12,6 +12,8 @@ clear
 ;   https://github.com/SiegeEngineers/aoe2techtree
 ;
 ; Civs: britons 不列颠 / franks 法兰克 / chinese 中国 / mongols 蒙古 / byzantines 拜占庭
+;       japanese 日本 / teutons 条顿 / vikings 维京 / vietnamese 越南 / portuguese 葡萄牙
+;       aztecs 阿兹特克 / celts 凯尔特
 ; AI: beginner intermediate advanced expert nightmare
 ; Resources (SoundRTS order): resource1=gold 黄金, resource2=wood 木材,
 ;   resource3=food 食物, resource4=stone 石料
@@ -945,7 +947,8 @@ effect bonus gather_time_stone_mine -24%
 ; 不列颠 英皇侍卫·战狼号 | 法兰克 骑士精神·芒刺斧
 ; 中国 长城·火箭术 | 蒙古 游牧·操练 | 拜占庭 希腊之火·后勤学
 ; 日本 射箭孔·弹射器 | 条顿 重装甲·开垛口 | 维京 酋长·弓矛兵
-; 越南 宝伞·纸币 | 葡萄牙 环球航行·火绳枪
+; 越南 宝伞·纸币 | 葡萄牙 环球航行·火绳枪 | 阿兹特克 投矛器·花环战争
+; 凯尔特 堡垒·凯尔特狂暴
 ; Beneficiaries must list the tech in can_use_tech (see unit lines below).
 ; ===========================================================================
 
@@ -1186,6 +1189,27 @@ time_cost 60
 requirements aoe_castle imperial_age
 effect bonus mdg 4
 effect_bonus_targets infantry
+
+; 堡垒 Stronghold — castles/towers fire 33% faster; castles +5 LoS
+; (DE also heals nearby infantry 30 HP/min; omitted: castle garrison heal is exclusive)
+def stronghold
+class upgrade
+cost 0 0 250 200
+time_cost 30
+requirements aoe_castle castle_age
+effect bonus rdg_cd -25%
+effect_bonus_targets aoe_castle scouttower guardtower keeptower
+effect bonus sight_range 5
+effect_bonus_targets aoe_castle
+
+; 凯尔特狂暴 Furor Celtica — Siege Workshop units +40% HP (not trebuchet)
+def furor_celtica
+class upgrade
+cost 450 750 0 0
+time_cost 50
+requirements aoe_castle imperial_age
+effect bonus hp 40%
+effect_bonus_targets battering_ram capped_ram siege_ram mangonel onager siege_onager scorpion heavy_scorpion siege_tower
 
 
 ; Unit lines below inherit category roots (infantry / cavalry / archer_unit / siege_unit).
@@ -2112,7 +2136,7 @@ rdf 180
 mdg_vs building 150
 mdg_vs siege_unit 40
 can_upgrade_to capped_ram
-can_use_tech drill ironclad siege_engineers
+can_use_tech drill ironclad siege_engineers furor_celtica
 ; 中型冲车 / 重型冲车 — DE Imperial at Siege Workshop
 def capped_ram
 is_a battering_ram
@@ -2185,7 +2209,7 @@ rdf 6
 mdg_vs building 35
 mdg_vs siege_unit 12
 can_upgrade_to onager
-can_use_tech siege_engineers drill ironclad
+can_use_tech siege_engineers drill ironclad furor_celtica
 def onager
 is_a mangonel
 cost 500 0 800 0
@@ -2258,7 +2282,7 @@ rdg_vs building 3
 rdg_vs infantry 1
 rdg_vs siege_unit 1
 can_upgrade_to heavy_scorpion
-can_use_tech rocketry drill ironclad siege_engineers
+can_use_tech rocketry drill ironclad siege_engineers furor_celtica
 ; 重型弩炮 — DE Imperial at Siege Workshop
 def heavy_scorpion
 is_a scorpion
@@ -2374,7 +2398,7 @@ mdg_range 1
 mdf -2
 rdf 100
 can_upgrade_to
-can_use_tech drill ironclad
+can_use_tech drill ironclad furor_celtica
 def trebuchet
 class soldier
 is_a siege_unit
@@ -3226,6 +3250,46 @@ rdf 1
 mdg_vs building 3
 hp_regen 1
 hp_regen_cd 4
+can_upgrade_to
+; Celts — 靛蓝突袭者 Woad Raider (DE: 70F+25G, 10s; HP70/85 Atk11/15 Speed1.17)
+def woad_raider
+class soldier
+is_a infantry
+is_a unique_unit
+cost 25 0 70 0
+population_cost 1
+time_cost 10
+space 0.25
+requirements castle_age
+
+hp_max 70
+speed 1.17
+sight_range 3
+mdg 11
+mdg_cd 2
+mdg_range 1
+mdf 0
+rdf 1
+mdg_vs building 2
+can_upgrade_to elite_woad_raider
+can_use_tech forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor squires arson gambesons conscription
+def elite_woad_raider
+is_a woad_raider
+cost 800 0 1000 0
+time_cost 45
+line_upgrade 1
+requirements imperial_age
+no_auto_upgrade 1
+
+hp_max 85
+speed 1.17
+sight_range 5
+mdg 15
+mdg_cd 2
+mdg_range 1
+mdf 0
+rdf 1
+mdg_vs building 3
 can_upgrade_to
 ; Vietnamese — 藤甲弓兵 Rattan Archer
 def rattan_archer
@@ -4151,7 +4215,7 @@ transport_capacity 5
 transport_volume 99
 transport_passenger_types infantry archer_unit peasant monk -cavalry -siege_unit
 passenger_attack_types archer_unit peasant
-can_use_tech yeomen yasama crenellations great_wall herbal_medicine ballistics chemistry fletching bodkin_arrow bracer murder_holes heated_shot masonry architecture town_watch town_patrol
+can_use_tech yeomen yasama crenellations great_wall herbal_medicine ballistics chemistry fletching bodkin_arrow bracer murder_holes heated_shot masonry architecture town_watch town_patrol stronghold
 can_upgrade_to guardtower
 
 def guardtower
@@ -4172,7 +4236,7 @@ rdg_projectile_speed 7
 requirements castle_age
 line_upgrade 1
 transport_capacity 5
-can_use_tech yeomen yasama crenellations great_wall herbal_medicine ballistics chemistry fletching bodkin_arrow bracer murder_holes heated_shot masonry architecture town_watch town_patrol
+can_use_tech yeomen yasama crenellations great_wall herbal_medicine ballistics chemistry fletching bodkin_arrow bracer murder_holes heated_shot masonry architecture town_watch town_patrol stronghold
 can_upgrade_to keeptower
 
 def keeptower
@@ -4193,7 +4257,7 @@ rdg_projectile_speed 7
 requirements imperial_age
 line_upgrade 1
 transport_capacity 5
-can_use_tech yeomen yasama crenellations great_wall herbal_medicine ballistics chemistry fletching bodkin_arrow bracer murder_holes heated_shot masonry architecture town_watch town_patrol
+can_use_tech yeomen yasama crenellations great_wall herbal_medicine ballistics chemistry fletching bodkin_arrow bracer murder_holes heated_shot masonry architecture town_watch town_patrol stronghold
 can_upgrade_to
 
 ; Bombard Tower (炮塔): Imperial + Chemistry; does not morph Keeps; no garrison in AoE2
@@ -4357,7 +4421,7 @@ transport_volume 99
 transport_passenger_types infantry archer_unit peasant monk cavalry
 passenger_attack_types archer_unit peasant
 can_train
-can_use_tech herbal_medicine ballistics chemistry fletching bodkin_arrow bracer murder_holes heated_shot masonry architecture hoardings crenellations town_watch town_patrol
+can_use_tech herbal_medicine ballistics chemistry fletching bodkin_arrow bracer murder_holes heated_shot masonry architecture hoardings crenellations town_watch town_patrol stronghold
 
 
 ; Byzantine buildings: cheaper costs; HP/armor inherit age-scaled bases.
@@ -5339,6 +5403,101 @@ intermediate aztecs_intermediate
 advanced aztecs_advanced
 expert aztecs_expert
 nightmare aztecs_nightmare
+
+
+; ---------- 凯尔特 Celts ----------
+; no 2HS/Champion, Arbalester, Thumb Ring, CA, HC, Bloodlines, Hussar, Paladin,
+; Plate Barding, Bracer, Architecture, Bombard Tower, Crop Rotation, Cannon Galleon, BBC;
+; Ring Archer Armor yes; Woad Raider; Stronghold / Furor Celtica
+def celtic_mill
+is_a mill
+can_research horse_collar heavy_plow
+
+def celtic_barracks
+is_a barracks
+can_train militia spearman
+can_research squires arson gambesons man_at_arms long_swordsman pikeman halberdier
+
+def celtic_archery
+is_a archery_range
+can_train aoe_archer skirmisher
+can_research crossbowman elite_skirmisher
+
+def celtic_stable
+is_a stables
+can_train scout_cavalry aoe_knight
+can_research husbandry light_cavalry cavalier
+
+def celtic_blacksmith
+is_a blacksmith
+can_research forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor fletching bodkin_arrow padded_archer_armor leather_archer_armor ring_archer_armor
+
+def celtic_university
+is_a university
+can_research ballistics chemistry siege_engineers guardtower keeptower fortified_wall murder_holes masonry heated_shot treadmill_crane
+
+def celtic_shipyard
+is_a shipyard
+can_train fishing_ship trade_cog transport_ship galley fire_galley demolition_raft
+; DE: no Cannon Galleon
+can_research war_galley galleon fire_ship fast_fire_ship demolition_ship heavy_demolition_ship gillnets shipwright careening dry_dock
+
+def celtic_monastery
+is_a monastery
+can_train monk
+can_research herbal_medicine heresy sanctity fervor faith illumination theocracy
+
+def celtic_castle
+is_a aoe_castle
+can_train woad_raider
+can_research elite_woad_raider stronghold furor_celtica conscription hoardings sappers spies
+
+def celtic_knight
+is_a aoe_knight
+hp_max 100
+speed 1.35
+sight_range 4
+mdg 10
+mdg_cd 1.8
+mdg_range 1
+mdf 2
+rdf 2
+can_upgrade_to cavalier_end
+
+; 凯尔特: 步兵移速+15%（封建起）；伐木+15%；攻城射速+25%；攻城厂团队+20%
+def celts
+class race
+is_a Civilization
+peasant peasant
+footman militia
+archer aoe_archer
+knight celtic_knight
+catapult mangonel
+barracks celtic_barracks
+archery_range celtic_archery
+stables celtic_stable
+blacksmith celtic_blacksmith
+university celtic_university
+aoe_castle celtic_castle
+workshop workshop
+mill celtic_mill
+shipyard celtic_shipyard
+monastery celtic_monastery
+townhall town_center
+; biligame: infantry +15% speed from Feudal
+on_phase feudal_age speed 15% infantry
+; DE lumberjacks +15% → wood gather time ×1/1.15 ≈ -13%
+on_phase dark_age gather_time_wood -13%
+; DE siege fire 25% faster → reload ×1/1.25 = -20%
+on_phase castle_age mdg_cd -20% siege_unit
+on_phase castle_age rdg_cd -20% siege_unit
+; team bonus: Siege Workshops work 20% faster → train time ×1/1.2 ≈ -17%
+on_phase castle_age time_cost -17% battering_ram mangonel scorpion siege_tower
+beginner celts_beginner
+intermediate celts_intermediate
+advanced celts_advanced
+expert celts_expert
+nightmare celts_nightmare
 
 
 ; Legacy base-game names kept for map computer_only / older multi scripts.

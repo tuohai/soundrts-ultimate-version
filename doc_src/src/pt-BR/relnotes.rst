@@ -4,6 +4,30 @@ Notas de lançamento
 
 .. contents::
 
+1.4.7.1
+-------
+
+**Correção: edifícios inacabados não podem treinar unidades**
+
+- **Problema**: o canteiro (``BuildingSite``) expunha o menu de treino/pesquisa do prédio-alvo, então um quartel podia treinar antes de ficar pronto.
+- **Mudança**: canteiros inacabados não listam treino/pesquisa e não podem produzir.
+- **Alcance**: todos os mods (incluindo aoe2). Sincronizado em 修复8 / 修复14.
+- **Código / testes**: ``world_build_rules.py`` (``is_unfinished_building``, ``effective_can_train`` / ``effective_can_research`` / ``building_can_operate``); ``test_can_train_upgrade.py``.
+
+**Correção: ao concluir, o prédio nasce com o HP de bônus, não para ser consertado**
+
+- **Problema**: na conclusão o HP atual usava o ``hp_max`` da classe (ex. quartel 1200), enquanto o ``hp_max`` da instância já incluía bônus (bizantinos Idade das Trevas +10% → 1320). Aldeões consertavam a «falta».
+- **Mudança**: na conclusão usa-se o ``hp_max`` da instância (menos dano durante a obra). Como no AoE2: termina com HP cheio com bônus, não se repara depois.
+- **Alcance**: todos os mods. Sincronizado em 修复8 / 修复14.
+- **Código / testes**: ``worldcreature.py`` (``BuildingSite._complete_construction``); ``test_z5_byzantine_barracks_hp.py``.
+
+**aoe2: civilização Celtas; campanha de William Wallace como celtas**
+
+- Celtas: UU Saqueador woad; UT Fortaleza / Furor Céltica; bônus de infantaria, lenhadores e cerco.
+- Campanha Wallace: jogador ``default_faction celts``; PCs ingleses ``faction britons``.
+- Mapas: ``computer_only … faction <nome> …`` atribui civilização por PC. Ver ``mod/mapmaking``.
+
+
 1.4.7.0
 -------
 

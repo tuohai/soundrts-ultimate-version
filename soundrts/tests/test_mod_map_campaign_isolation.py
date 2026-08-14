@@ -91,6 +91,6 @@ def test_wallace_campaign_has_seven_missions(monkeypatch):
     res.set_mods("aoe2")
     res._campaigns = None
     wallace = next(c for c in res.campaigns() if "Wallace" in c.name)
-    assert getattr(wallace, "default_faction", None) == "britons"
+    assert getattr(wallace, "default_faction", None) == "celts"
     mission_nums = [ch.number for ch in wallace.chapters if isinstance(ch, MissionChapter)]
     assert mission_nums == [1, 2, 3, 4, 5, 6, 7], mission_nums

@@ -433,6 +433,23 @@ def test_computer_only_with_explicit_non_neutral_marker_is_hostile():
     assert "non_neutral" not in captured['items']
 
 
+def test_computer_only_faction_token_is_stripped():
+    """``faction britons`` is not a unit; it is stored on computers_factions."""
+    m, captured = _make_map_stub_for_add_start()
+    if m is None:
+        pytest.skip("world_map 无法在测试环境加载")
+    m.computers_factions = []
+    m._add_start(
+        "computer_only",
+        ["computer_only", "0", "0", "faction", "britons", "a3", "footman"],
+    )
+    assert captured.get("items") is not None
+    assert "faction" not in captured["items"]
+    assert "britons" not in captured["items"]
+    assert "footman" in captured["items"]
+    assert m.computers_factions == ["britons"]
+
+
 def test_world_map_source_default_is_false():
     """源码契约：world_map.py 的默认值必须翻成 False。"""
     src = _source(["soundrts", "world", "world_map.py"])

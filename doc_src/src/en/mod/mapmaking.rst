@@ -429,6 +429,10 @@ So use one AI if these units are not supposed to fight each other (several drago
 computer_only 0 0 a3 dragon b1 dragon
 means: "add a computer AI with 0 gold, 0 wood, a dragon at A3 and a dragon at B1."
 
+Optional ``faction <name>`` assigns that computer a rules civilization (instead of a random pick)::
+
+    computer_only 0 0 0 0 faction britons e4 scouttower 8 longbowman
+
 Neutral computers (since 1.4.2.8)
 ..................................
 

@@ -12,8 +12,10 @@
 8007 Teutoni
 8008 Wikingowie
 8009 Wietnamczycy
-8011 Portugalczycy
+8011 Portugalczycy
+
 8012 Aztekowie
+8013 Celtowie
 
 8070 Samuraj
 8071 Elitarny samuraj
@@ -35,11 +37,16 @@
 8086 Chatra
 8087 Pieniądze papierowe
 8088 Opłynięcie świata
-8089 Arkebuz
+8089 Arkebuz
+
 8090 Wojownik jaguar
 8091 Elitarny wojownik jaguar
 8092 Atlatl
 8093 Wojny kwiatowe
+8094 Wojownik z urzetem
+8095 Elitarny wojownik z urzetem
+8096 Twierdza
+8097 Furor Celtica
 
 
 8010 Wojownik z długim łukiem

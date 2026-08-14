@@ -267,7 +267,7 @@ class WorldObjectsMixin:
             players_starts = self.players_starts[:len(clients)]
         for client in clients:
             client.create_player(self)
-        for computer_start in self.computers_starts:
+        for idx, computer_start in enumerate(self.computers_starts):
             # 检查是否指定了neutral标志
             # 默认 False = 敌对，与 world_map.py 的解析默认保持一致。
             # 注：当前 _add_start 总会写第 4 位，所以这条 fallback 几乎只是兜底；
@@ -285,7 +285,11 @@ class WorldObjectsMixin:
                 if computer_start_is_wildlife_only(computer_start)
                 else "ai"
             )
-            DummyClient(neutral=neutral, alliance=alliance).create_player(self)
+            client = DummyClient(neutral=neutral, alliance=alliance)
+            factions = getattr(self, "computers_factions", None) or []
+            if idx < len(factions) and factions[idx]:
+                client.faction = factions[idx]
+            client.create_player(self)
         
         # 初始化所有玩家的联盟（在所有玩家创建后）
         for player in self.players:

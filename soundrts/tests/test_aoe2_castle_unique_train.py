@@ -20,6 +20,7 @@ CIV_CASTLE = [
     ("vikings", "viking_castle", "berserk"),
     ("vietnamese", "vietnamese_castle", "rattan_archer"),
     ("portuguese", "portuguese_castle", "organ_gun"),
+    ("celts", "celtic_castle", "woad_raider"),
 ]
 
 

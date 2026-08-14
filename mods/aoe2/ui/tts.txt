@@ -13,6 +13,7 @@
 8009 Vietnamese
 8011 Portuguese
 8012 Aztecs
+8013 Celts
 
 8070 samurai
 8071 elite samurai
@@ -39,6 +40,10 @@
 8091 elite jaguar warrior
 8092 Atlatl
 8093 Garland Wars
+8094 woad raider
+8095 elite woad raider
+8096 Stronghold
+8097 Furor Celtica
 
 
 8010 longbowman

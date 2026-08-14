@@ -432,6 +432,10 @@ player
 computer_only 0 0 a3 dragon b1 dragon
 表示："添加一个 0 黄金、0 木材的电脑 AI，在 A3 有一条巨龙、在 B1 有一条巨龙。"
 
+可选 ``faction <阵营名>`` 给该电脑指定规则里的文明（否则会随机抽文明）::
+
+    computer_only 0 0 0 0 faction britons e4 scouttower 8 longbowman
+
 中立电脑（自 1.4.2.8 起）
 ...........................
 

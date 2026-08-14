@@ -12,8 +12,10 @@
 8007 Teutonen
 8008 Wikinger
 8009 Vietnamesen
-8011 Portugiesen
+8011 Portugiesen
+
 8012 Azteken
+8013 Kelten
 
 8070 Samurai
 8071 Elite-Samurai
@@ -35,11 +37,16 @@
 8086 Chatras
 8087 Papiergeld
 8088 Weltumsegelung
-8089 Arkebuse
+8089 Arkebuse
+
 8090 Jaguarkrieger
 8091 Elite-Jaguarkrieger
 8092 Atlatl
 8093 Blumenkrieg
+8094 Waidläufer
+8095 Elite-Waidläufer
+8096 Festung
+8097 Keltische Wut
 
 
 8010 Langbogen-schütze

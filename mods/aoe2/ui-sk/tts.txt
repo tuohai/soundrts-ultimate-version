@@ -12,8 +12,10 @@
 8007 Teutoni
 8008 Wikingowie
 8009 Wietnamczycy
-8011 Portugalczycy
+8011 Portugalczycy
+
 8012 Aztékovia
+8013 Kelti
 
 8070 Samuraj
 8071 Elitarny samuraj
@@ -35,11 +37,16 @@
 8086 Chatra
 8087 Pieniądze papierowe
 8088 Cesta okolo sveta
-8089 Arkebuz
+8089 Arkebuz
+
 8090 Jaguári bojovník
 8091 Elitný jaguári bojovník
 8092 Atlatl
 8093 Kvetinové vojny
+8094 Woad Raider
+8095 Elitný Woad Raider
+8096 Pevnosť
+8097 Furor Celtica
 
 
 8010 Wojownik z długim łukiem

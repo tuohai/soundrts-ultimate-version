@@ -138,3 +138,24 @@ def test_nomads_defined_and_engine_hook():
     rules_path = Path(__file__).resolve().parents[2] / "mods" / "aoe2" / "rules.txt"
     text = rules_path.read_text(encoding="utf-8")
     assert "def nomads" in text
+
+
+def test_stronghold_towers_and_castles(aoe2_rules):
+    eff = str(_effect(aoe2_rules, "stronghold"))
+    assert "rdg_cd" in eff and "-25%" in eff
+    assert "sight_range" in eff
+    for u in ("aoe_castle", "scouttower", "guardtower", "keeptower"):
+        assert "stronghold" in _techs(aoe2_rules, u), u
+    castle_cls = aoe2_rules.unit_class("celtic_castle")
+    assert "woad_raider" in aoe2_rules.class_rules_attr(castle_cls, "can_train", ())
+    castle_res = aoe2_rules.class_rules_attr(castle_cls, "can_research", ())
+    assert "stronghold" in castle_res and "furor_celtica" in castle_res
+
+
+def test_furor_celtica_workshop_hp(aoe2_rules):
+    eff = str(_effect(aoe2_rules, "furor_celtica"))
+    assert "40%" in eff and "battering_ram" in eff
+    assert "trebuchet" not in eff
+    for u in ("battering_ram", "mangonel", "scorpion", "siege_tower"):
+        assert "furor_celtica" in _techs(aoe2_rules, u), u
+    assert "furor_celtica" not in _techs(aoe2_rules, "trebuchet")

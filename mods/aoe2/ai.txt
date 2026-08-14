@@ -1175,3 +1175,111 @@ attack
 get 16 aztec_villager 24 eagle_warrior 20 aoe_archer 8 mangonel 16 jaguar_warrior 12 monk
 attack
 goto az4
+
+
+; ======================== CELTS (woad_raider / infantry-siege) ========================
+
+def celts_beginner
+defeat_score 10
+counter_skill 25
+workers 8
+constant_attacks 0
+research 1
+get 8 peasant 8 militia 6 aoe_archer
+get 10 peasant 14 militia 12 aoe_archer 2 mangonel
+get 10 peasant 18 militia 6 celtic_knight 16 aoe_archer 4 woad_raider
+goto -1
+
+def celts_intermediate
+defeat_score 20
+counter_skill 50
+starting_resources 100 200 200 200
+watchdog 600
+constant_attacks 1
+research 1
+workers 12
+label ki1
+get 6 peasant 6 militia 4 aoe_archer
+attack
+get 10 peasant 14 militia 8 aoe_archer 4 celtic_knight 6 woad_raider
+attack
+get 12 peasant 20 militia 10 aoe_archer 6 celtic_knight 4 mangonel 12 woad_raider 4 monk
+attack
+goto ki1
+
+def celts_advanced
+defeat_score 40
+counter_skill 75
+starting_resources 150 250 250 200
+train_time 50
+research_time 80
+build_time 50
+gather_time 50
+watchdog 480
+constant_attacks 1
+research 1
+workers 18
+expand 2
+attack_ratio 150
+label ka1
+get 6 peasant 6 militia 4 aoe_archer
+attack
+get 10 peasant 14 militia 8 aoe_archer 4 celtic_knight 6 woad_raider
+attack
+goto_random ka_main ka_alt
+label ka_main
+get 12 peasant 20 militia 10 aoe_archer 6 celtic_knight 4 mangonel 12 woad_raider 4 monk
+attack
+goto ka1
+label ka_alt
+get 12 peasant 30 aoe_archer 8 celtic_knight 4 mangonel 10 woad_raider 4 monk
+attack
+goto ka1
+
+def celts_expert
+defeat_score 80
+counter_skill 90
+starting_resources 200 300 300 250
+train_time 50
+research_time 70
+build_time 50
+gather_time 50
+unit_hp 120
+watchdog 360
+constant_attacks 1
+research 1
+workers 24
+expand 3
+attack_ratio 120
+label ke1
+get 6 peasant 6 militia 4 aoe_archer
+attack
+get 10 peasant 14 militia 8 aoe_archer 4 celtic_knight 6 woad_raider
+attack
+get 12 peasant 20 militia 10 aoe_archer 6 celtic_knight 4 mangonel 12 woad_raider 4 monk
+attack
+goto ke1
+
+def celts_nightmare
+defeat_score 200
+counter_skill 100
+starting_resources 300 400 400 300
+train_time 40
+research_time 60
+build_time 40
+gather_time 40
+unit_hp 140
+watchdog 240
+constant_attacks 1
+research 1
+workers 36
+expand 4
+attack_ratio 90
+label kn1
+get 6 peasant 6 militia 4 aoe_archer
+attack
+get 10 peasant 14 militia 8 aoe_archer 4 celtic_knight 6 woad_raider
+attack
+get 16 peasant 40 militia 20 aoe_archer 12 celtic_knight 8 mangonel 24 woad_raider 12 monk
+attack
+goto kn1

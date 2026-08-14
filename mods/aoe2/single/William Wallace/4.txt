@@ -23,7 +23,7 @@ nb_meadows_by_square 3
 player 100 300 700 0 a1 town_center barracks 4 house 6 peasant 4 militia
 
 ; Light English raid (optional pressure)
-computer_only 0 0 0 0 c3 3 militia
+computer_only 0 0 0 0 faction britons c3 3 militia
 
 timer_coefficient 40
 

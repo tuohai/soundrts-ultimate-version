@@ -12,8 +12,10 @@
 8007 Teutones
 8008 Vikingos
 8009 Vietnamitas
-8011 Portugueses
+8011 Portugueses
+
 8012 Aztecas
+8013 Celtas
 
 8070 Samurai
 8071 Samurai de élite
@@ -35,11 +37,16 @@
 8086 Chatras
 8087 Papel moneda
 8088 Circunnavegación
-8089 Arcabuz
+8089 Arcabuz
+
 8090 Guerrero jaguar
 8091 Guerrero jaguar de élite
 8092 Átlatl
 8093 Guerras floridas
+8094 Invasor con woad
+8095 Invasor con woad de élite
+8096 Fortaleza
+8097 Furor celta
 
 
 8010 Arquero con arco largo

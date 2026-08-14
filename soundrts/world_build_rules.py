@@ -304,13 +304,18 @@ def apply_unit_line_upgrade(player, target_type_name):
             )
 
 
+def is_unfinished_building(unit):
+    """True for a construction placeholder that is not yet a completed building."""
+    return getattr(unit, "type_name", None) == "buildingsite"
+
+
 def effective_can_build(unit):
     """Villager build menu: semantic rules names + highest unlocked line form.
 
     Race shells are *not* applied here (AoE2-style menu shows farm / aoe_castle).
     ``BuildOrder`` calls ``resolve_buildable_type`` when placing the building.
     """
-    if unit is None:
+    if unit is None or is_unfinished_building(unit):
         return ()
     cls = _unit_type(unit)
     raw = _raw_class_attr(cls, "_rules_can_build", None)
@@ -729,6 +734,8 @@ def building_is_powered(unit):
 def building_can_operate(unit):
     if not getattr(unit, "is_a_building", False):
         return True
+    if is_unfinished_building(unit):
+        return False
     if is_flying_building_unit(unit):
         return False
     return building_is_powered(unit)
@@ -1164,7 +1171,7 @@ def effective_can_train(host):
     Also remaps each line to the highest unlocked ``can_upgrade_to`` form
     (AoE2: barracks trains Man-at-Arms after that upgrade/age unlock, not Militia).
     """
-    if host is None or is_flying_building_unit(host):
+    if host is None or is_unfinished_building(host) or is_flying_building_unit(host):
         return ()
     base = _normalize_train_list(_base_can_train(host))
     train_names = list(base)
@@ -1194,7 +1201,7 @@ def effective_can_train(host):
 
 
 def effective_can_research(host):
-    if host is None or is_flying_building_unit(host):
+    if host is None or is_unfinished_building(host) or is_flying_building_unit(host):
         return ()
     names = list(_normalize_train_list(_base_can_research(host)))
     for addon in host_attached_addons(host):

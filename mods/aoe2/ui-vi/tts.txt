@@ -12,8 +12,10 @@
 8007 Teuton
 8008 Viking
 8009 Đại Việt
-8011 Bồ Đào Nha
+8011 Bồ Đào Nha
+
 8012 Aztec
+8013 Celtic
 
 8070 Samurai
 8071 Samurai siêu cấp
@@ -35,11 +37,16 @@
 8086 Dù che
 8087 Tiền giấy
 8088 Đi vòng quanh thế giới
-8089 Súng hỏa mai
+8089 Súng hỏa mai
+
 8090 Chiến binh báo đốm
 8091 Chiến binh báo đốm tinh nhuệ
 8092 Atlatl
 8093 Chiến tranh vòng hoa
+8094 Lính đột kích sơn xanh
+8095 Lính đột kích sơn xanh siêu cấp
+8096 Pháo đài
+8097 Cuồng nộ Celtic
 
 
 8010 Trường cung binh

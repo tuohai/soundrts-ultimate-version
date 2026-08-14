@@ -4,6 +4,30 @@ Release notes
 
 .. contents::
 
+1.4.7.1
+--------
+
+**Fix: unfinished buildings could train units**
+
+- **Issue**: A construction site (``BuildingSite``) exposed the target building's train/research menu, so barracks could train before they finished.
+- **Change**: Unfinished sites have empty train/research lists and cannot run production.
+- **Scope**: All mods (including aoe2). Synced to 修复8 / 修复14.
+- **Code / tests**: ``world_build_rules.py`` (``is_unfinished_building``, ``effective_can_train`` / ``effective_can_research`` / ``building_can_operate``); ``test_can_train_upgrade.py``.
+
+**Fix: completed buildings spawned below civ/age bonus HP**
+
+- **Issue**: Completion wrote current HP from the rules class ``hp_max`` (e.g. barracks 1200), while instance ``hp_max`` already included bonuses (Byzantine Dark Age +10% → 1320). Villagers then auto-repaired the gap.
+- **Change**: On complete, current HP uses instance ``hp_max`` (minus damage taken during construction). Matches AoE2: finish at full bonus HP, not repair up to it.
+- **Scope**: All mods. Synced to 修复8 / 修复14.
+- **Code / tests**: ``worldcreature.py`` (``BuildingSite._complete_construction``); ``test_z5_byzantine_barracks_hp.py``.
+
+**aoe2: Celts civilization; William Wallace campaign plays as Celts**
+
+- Celts: UU Woad Raider; UTs Stronghold / Furor Celtica; infantry speed, lumberjack, and siege-fire bonuses.
+- Wallace campaign: player ``default_faction celts``; English computers ``faction britons`` (no longer playing England as the Scots).
+- Maps: ``computer_only … faction <name> …`` assigns a civilization per computer. See ``mod/mapmaking``.
+
+
 1.4.7.0
 --------
 

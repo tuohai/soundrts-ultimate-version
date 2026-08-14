@@ -63,6 +63,7 @@ def test_aoe2_ai_txt_uses_real_units_and_unique_units():
         "berserk",
         "rattan_archer",
         "organ_gun",
+        "woad_raider",
     ):
         assert uu in text, uu
     assert "militia" in text and "aoe_archer" in text and "mangonel" in text

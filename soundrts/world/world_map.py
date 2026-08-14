@@ -475,6 +475,25 @@ class WorldMapMixin:
                 i += 1
         return filtered, population
 
+    def _strip_faction_from_items(self, items):
+        """Pull ``faction <name>`` out of a computer_only unit list.
+
+        Maps may write ``computer_only 0 0 0 0 faction britons e4 scouttower``.
+        The token pair is not a unit spawn.
+        """
+        faction = None
+        filtered = []
+        i = 0
+        while i < len(items):
+            token = items[i]
+            if token == "faction" and i + 1 < len(items):
+                faction = str(items[i + 1])
+                i += 2
+            else:
+                filtered.append(token)
+                i += 1
+        return filtered, faction
+
     def _add_start_to(self, starts, resources, items, sq=None, neutral=None, population=0):
         items, from_items = self._strip_population_from_items(list(items))
         if from_items:
@@ -542,6 +561,9 @@ class WorldMapMixin:
                 neutral = True
                 units = [u for u in units if u != "neutral"]
         units, population = self._strip_population_from_items(units)
+        faction = None
+        if w in ["computer_only", "computer"]:
+            units, faction = self._strip_faction_from_items(units)
 
         start_info = [resources, units]
         if w in ["computer_only", "computer"]:
@@ -565,6 +587,10 @@ class WorldMapMixin:
             neutral=neutral if len(start_info) > 2 else None,
             population=population,
         )
+        if w in ["computer_only", "computer"]:
+            if not hasattr(self, "computers_factions"):
+                self.computers_factions = []
+            self.computers_factions.append(faction)
 
     def _apply_player_start_overrides(self, starting_resources):
         """把 ``player_start N <sq>`` 的指令落到 ``players_starts[N-1]`` 上。

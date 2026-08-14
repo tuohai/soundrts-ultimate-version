@@ -3,6 +3,30 @@ Note di rilascio
 
 .. contents::
 
+1.4.7.1
+--------
+
+**Correzione: gli edifici incompiuti non possono addestrare unità**
+
+- **Problema**: il cantiere (``BuildingSite``) esponeva il menu addestra/ricerca dell’edificio bersaglio, quindi una caserma poteva addestrare prima di essere finita.
+- **Cambio**: i cantieri incompiuti non elencano addestramento/ricerca e non possono produrre.
+- **Ambito**: tutti i mod (incluso aoe2). Sincronizzato su 修复8 / 修复14.
+- **Codice / test**: ``world_build_rules.py`` (``is_unfinished_building``, ``effective_can_train`` / ``effective_can_research`` / ``building_can_operate``); ``test_can_train_upgrade.py``.
+
+**Correzione: a fine costruzione l’edificio ha i PF con bonus, non da riparare**
+
+- **Problema**: al completamento i PF attuali usavano l’``hp_max`` di classe (es. caserma 1200), mentre l’``hp_max`` di istanza includeva già i bonus (bizantini Dark Age +10% → 1320). I villager riparavano il «buco».
+- **Cambio**: al completamento si usa l’``hp_max`` di istanza (meno i danni in cantiere). Come in AoE2: si finisce a PF pieni con bonus, non si ripara dopo.
+- **Ambito**: tutti i mod. Sincronizzato su 修复8 / 修复14.
+- **Codice / test**: ``worldcreature.py`` (``BuildingSite._complete_construction``); ``test_z5_byzantine_barracks_hp.py``.
+
+**aoe2: civiltà Celti; campagna di William Wallace come Celti**
+
+- Celti: UU Predone woad; UT Fortezza / Furor Celtica; bonus fanteria, boscaioli e assedio.
+- Campagna Wallace: giocatore ``default_faction celts``; PC inglesi ``faction britons``.
+- Mappe: ``computer_only … faction <nome> …`` assegna la civiltà per computer. Vedi ``mod/mapmaking``.
+
+
 1.4.7.0
 --------
 

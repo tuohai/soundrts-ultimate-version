@@ -12,8 +12,10 @@
 8007 Teutons
 8008 Vikings
 8009 Vietnamiens
-8011 Portugais
+8011 Portugais
+
 8012 Aztèques
+8013 Celtes
 
 8070 Samouraï
 8071 Samouraï d'élite
@@ -35,11 +37,16 @@
 8086 Chatras
 8087 Monnaie papier
 8088 Circumnavigation
-8089 Arquebuse
+8089 Arquebuse
+
 8090 Guerrier jaguar
 8091 Guerrier jaguar d'élite
 8092 Atlatl
 8093 Guerres fleuries
+8094 Guerrier à la peinture de guerre
+8095 Guerrier à la peinture de guerre d'élite
+8096 Forteresse
+8097 Furor Celtica
 
 
 8010 Fantassin à arc long

@@ -54,6 +54,8 @@ def portuguese
 title 8011
 def aztecs
 title 8012
+def celts
+title 8013
 
 ; Category roots (armor / is_a / passenger filters) — spoken names for attribute UI
 def infantry
@@ -489,6 +491,27 @@ def aztec_castle
 is_a aoe_castle
 def aztec_monastery
 is_a monastery
+
+def celtic_mill
+is_a mill
+def celtic_barracks
+is_a barracks
+def celtic_archery
+is_a archery_range
+def celtic_stable
+is_a stables
+def celtic_blacksmith
+is_a blacksmith
+def celtic_university
+is_a university
+def celtic_shipyard
+is_a shipyard
+def celtic_monastery
+is_a monastery
+def celtic_castle
+is_a aoe_castle
+def celtic_knight
+is_a aoe_knight
 
 ; ---------- units ----------
 def militia
@@ -1361,6 +1384,17 @@ def atlatl
 title 8092
 def garland_wars
 title 8093
+
+def woad_raider
+is_a militia
+title 8094
+def elite_woad_raider
+is_a woad_raider
+title 8095
+def stronghold
+title 8096
+def furor_celtica
+title 8097
 
 def portuguese_villager
 is_a peasant

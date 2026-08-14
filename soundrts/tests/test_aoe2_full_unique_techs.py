@@ -147,6 +147,10 @@ def test_unique_tech_can_use_tech_wiring():
     assert "kataparuto" in techs("trebuchet")
     assert "chieftains" in techs("militia")
     assert "paper_money" in techs("peasant")
+    assert "stronghold" in techs("aoe_castle")
+    assert "stronghold" in techs("scouttower")
+    assert "furor_celtica" in techs("battering_ram")
+    assert "furor_celtica" not in techs("trebuchet")
     for u in (
         "organ_gun",
         "elite_organ_gun",

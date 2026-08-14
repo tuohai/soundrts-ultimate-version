@@ -26,7 +26,7 @@ nb_meadows_by_square 2
 player 100 200 200 100 a1 town_center 3 house barracks 4 peasant 8 militia 4 man_at_arms 4 aoe_archer feudal_age
 
 ; English army + watch tower
-computer_only 0 0 0 0 e4 scouttower 10 militia 6 man_at_arms 4 aoe_archer e3 4 militia
+computer_only 0 0 0 0 faction britons e4 scouttower 10 militia 6 man_at_arms 4 aoe_archer e3 4 militia
 
 timer_coefficient 40
 

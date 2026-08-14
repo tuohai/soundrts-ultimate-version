@@ -3,7 +3,11 @@
 from types import SimpleNamespace
 
 from soundrts.definitions import rules
-from soundrts.world_build_rules import effective_can_train
+from soundrts.world_build_rules import (
+    building_can_operate,
+    effective_can_research,
+    effective_can_train,
+)
 
 
 def _load_rules():
@@ -161,3 +165,35 @@ effect bonus can_train footman 5 archer 3 knight 2
         "archer": 3,
         "knight": 2,
     }
+
+
+def test_building_site_cannot_train_or_research():
+    """Unfinished construction sites must not expose the target building's production menu."""
+    _load_rules()
+    barracks_cls = rules.unit_class("barracks")
+    site = SimpleNamespace(
+        player=None,
+        type_name="buildingsite",
+        type=barracks_cls,
+        attached_addons=[],
+        is_a_building=True,
+        place=object(),
+    )
+    assert effective_can_train(site) == ()
+    assert effective_can_research(site) == ()
+    assert building_can_operate(site) is False
+
+    barracks = SimpleNamespace(
+        player=None,
+        type_name="barracks",
+        type=barracks_cls,
+        attached_addons=[],
+        is_a_building=True,
+        place=object(),
+    )
+    trained = effective_can_train(barracks)
+    assert "footman" in trained
+    researched = effective_can_research(barracks)
+    assert "dsb" in researched
+    assert building_can_operate(barracks) is True
+

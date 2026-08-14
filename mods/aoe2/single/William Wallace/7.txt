@@ -27,7 +27,7 @@ nb_meadows_by_square 3
 player 300 400 500 700 a1 town_center barracks archery_range blacksmith stables workshop 6 house 8 peasant 6 militia 4 aoe_archer 2 aoe_knight castle_age
 
 ; English fortified base with castle
-computer_only 0 0 0 0 f5 aoe_castle scouttower 8 longbowman 6 man_at_arms 4 aoe_knight e5 6 militia 2 scouttower
+computer_only 0 0 0 0 faction britons f5 aoe_castle scouttower 8 longbowman 6 man_at_arms 4 aoe_knight e5 6 militia 2 scouttower
 
 timer_coefficient 40
 

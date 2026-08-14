@@ -29,10 +29,10 @@ relic 1 a1 a4 e4
 player 200 300 400 200 a1 town_center monastery 3 monk 4 house barracks 4 peasant 6 militia castle_age
 
 ; Scottish ally (computer1)
-computer_only 0 0 0 0 a4 6 militia 2 aoe_archer monastery
+computer_only 0 0 0 0 faction celts a4 6 militia 2 aoe_archer monastery
 
 ; English (computer2)
-computer_only 0 0 0 0 e4 scouttower 8 militia 4 man_at_arms 3 aoe_archer
+computer_only 0 0 0 0 faction britons e4 scouttower 8 militia 4 man_at_arms 3 aoe_archer
 
 timer_coefficient 40
 

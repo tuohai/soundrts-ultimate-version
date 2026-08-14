@@ -1844,7 +1844,10 @@ class BuildingSite(_Building):
             build_deposit.delete()
         if blocked_exit:
             building.block(blocked_exit)
-        building.hp = self.type.hp_max - self.damage_during_construction
+        # Instance hp_max already includes civ/age bonuses (e.g. Byzantine +10%).
+        # Using the rules class hp_max here left new buildings short, so villagers
+        # kept repairing after "complete" (1200 → 1320 in Dark Age).
+        building.hp = building.hp_max - self.damage_during_construction
         site_stub = type("SiteStub", (), {"addon_host": addon_host})()
         finalize_new_building(building, site_stub)
         building.notify("complete")

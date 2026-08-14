@@ -90,6 +90,7 @@ class World:
         self.map_deposit_capacity = [0] * MAX_NB_OF_RESOURCE_TYPES
 
         self.computers_starts = []
+        self.computers_factions = []
         self.players_starts = []
         self.starting_units = []
         self.starting_resources = []  # just for the editor

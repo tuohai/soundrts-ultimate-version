@@ -2,7 +2,7 @@
 ; William Wallace — AoE2 DE learning campaign
 
 8600 William Wallace
-8601 Scotland, 1297. Learn the arts of war as William Wallace rallies the Scots against English rule. Seven short lessons — from marching and gathering to Stirling and Falkirk.
+8601 Scotland, 1297. Play as the Celts under William Wallace against English (Briton) rule. Seven short lessons — from marching and gathering to Stirling and Falkirk.
 
 ; Mission titles
 8602 Marching and Fighting
