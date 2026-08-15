@@ -54,3 +54,18 @@ def test_architecture_effect_rows_show_percent_and_armor():
     assert any(x in mp.PERCENT or x == "%" for x in hp_row[2])
     # mdf 1000 → +1
     assert rows[1][2][0] == "+"
+
+
+def test_gather_byproduct_effect_row_shows_rate_not_raw_key():
+    fmt = EffectFormatter(_Parent())
+    # 3-token: deposit type + rate. Previously treated as 2-token and dropped 0.014.
+    rows = fmt._format_bonus_effect_attribute_rows(
+        ["gather_byproduct", "wood", "0.014"]
+    )
+    assert len(rows) == 1
+    name, value = rows[0][1], rows[0][2]
+    assert "gather_byproduct" in name
+    flat = " ".join(str(x) for x in value)
+    assert "0.014" in flat or "0,014" in flat
+    assert value[0] == "+"
+    assert any(x in mp.PER_SECOND or x == mp.PER_SECOND[0] for x in value)

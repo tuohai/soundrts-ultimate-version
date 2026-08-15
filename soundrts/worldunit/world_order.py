@@ -105,6 +105,33 @@ class CreatureOrders(Entity):
         ) and "herd" in self.basic_skills and getattr(target, "hp", 0) > 0
 
     @staticmethod
+    def _rules_flag_truthy(value):
+        if value in (1, "1", True):
+            return True
+        if isinstance(value, list) and value and str(value[0]) in ("1", "true", "True"):
+            return True
+        return False
+
+    def _target_is_claimable_neutral(self, target):
+        """Neutral ``claimable`` animals (AoE2 sheep). Kept for callers/tests."""
+        if target is None or getattr(target, "hp", 0) <= 0:
+            return False
+        raw = getattr(target, "claimable", None)
+        if raw is None:
+            raw = getattr(type(target), "claimable", 0)
+        if not CreatureOrders._rules_flag_truthy(raw):
+            return False
+        owner = getattr(target, "player", None)
+        return owner is not None and bool(getattr(owner, "neutral", False))
+
+    def _target_is_neutral_unit(self, target):
+        """Living unit belonging to a neutral player (wildlife, creep, NPC)."""
+        if target is None or target is self or getattr(target, "hp", 0) <= 0:
+            return False
+        owner = getattr(target, "player", None)
+        return owner is not None and bool(getattr(owner, "neutral", False))
+
+    @staticmethod
     def _unit_can_capture(unit):
         return bool(getattr(unit, "can_capture", 1))
 

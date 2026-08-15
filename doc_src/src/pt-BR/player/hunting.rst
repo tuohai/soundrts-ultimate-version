@@ -12,15 +12,16 @@ O SoundRTS oferece caça no estilo Age of Empires: trabalhadores atacam animais 
 -------------------
 
 
-1. Backspace / ordem padrão ou clique direito em um animal → ``attack`` em ``is_huntable`` (ataque normal causa dano; não precisa de imperativo)
-2. Ao matar → surge ``food_carcass``; a ordem de ataque completa (**sem** bip falso ``order_impossible``)
+1. Backspace / ordem padrão ou clique direito em um animal → ``go`` na fauna neutra (aproximar / reivindicar); trabalhadores com ``can_herd`` ainda usam ``herd`` por padrão em ``herdable``. Para **atacar** neutros use imperativo (Ctrl+Backspace, ou ``go`` + Ctrl+Enter)
+2. Ao matar → surge o depósito indicado por ``food_deposit`` do animal (base: ``food_carcass``; ovelhas aoe2: ``food_livestock``); a ordem de ataque completa (**sem** bip falso ``order_impossible``)
 3. Coleta automática → após matar, o trabalhador pode enfileirar coleta; com ``auto_gather`` também recolhe e entrega comida
-4. Fuga ao ser atingido → cervos e ovelhas fogem; javalis contra-atacam
-5. Condução (opcional) → trabalhadores com ``can_herd 1`` podem conduzir animais ``herdable`` (ex.: ovelhas)
+4. Fuga ao ser atingido → cervos e ovelhas fogem; javalis contra-atacam e perseguem entre casas (``pursue_attacker``, podem ser atraídos ao centro da cidade; ``pursue_leash_range`` solta a agressão se você abrir muita distância)
+5. Captura (opcional) → qualquer unidade não neutra perto de um animal ``claimable`` neutro toma posse (ovelhas estilo AoE2); ``can_herd`` continua sendo condução à parte
+6. Condução (opcional) → trabalhadores com ``can_herd 1`` podem conduzir animais ``herdable`` (ex.: ovelhas)
+7. Pasto (opcional) → um edifício com ``spawns_unit`` / ``spawn_player_cap`` (aoe2 ``pasture`` mongol) gera gado próprio
 
 
-Nota: a ordem padrão em creeps / NPCs neutros comuns é ``go`` (só mover); em animais caçáveis continua ``attack``.
-Modos ofensivo / defensivo / chase **não** atacam automaticamente animais neutros sem ataque imperativo.
+Nota: a ordem padrão em **todas** as unidades neutras (fauna, creeps, NPCs) é ``go`` (mover / aproximar). Modos ofensivo / defensivo / chase **não** atacam automaticamente neutros sem ataque imperativo.
 
 
 ----
@@ -128,17 +129,21 @@ Unidades integradas
    * - Tipo
      - Notas
    * - ``deer``
-     - 35 comida, foge ao ser atingido
+     - 35 comida, foge ao ser atingido; ``food_deposit food_carcass``
    * - ``sheep``
-     - 25 comida, herdable, foge
+     - herdable, foge; base ``food_carcass``, aoe2 ``food_livestock``
    * - ``boar``
-     - 50 comida, contra-ataca
+     - 50 comida, contra-ataca e persegue entre casas (``pursue_attacker``); ``food_deposit food_carcass``
    * - ``food_carcass``
-     - carcaça coletável (``collision 0``)
+     - depósito de caça (``collision 0``)
+   * - ``food_livestock``
+     - carcaça de gado aoe2 (bônus de pastores)
 
 
 
-Trabalhadores ``can_gather`` inclui ``food_carcass`` e ``orchard``.
+Trabalhadores ``can_gather`` / ``can_gather_deposit`` devem listar cada tipo de carcaça (ex.: ``food_carcass`` e, no aoe2, ``food_livestock``), mais ``orchard`` se usado.
+
+**Bônus de pastores / caçadores separados (orientado a rules):** use ``food_deposit`` diferentes e depois ``gather_time_<depósito>`` (britânicos ``gather_time_food_livestock``, mongóis ``gather_time_food_carcass``). O motor casa pelo ``type_name`` do depósito; a caça da IA segue ``is_huntable`` → ``food_deposit``, sem hardcode de civ.
 
 Propriedades dos animais
 ~~~~~~~~~~~~~~~~~~
@@ -154,8 +159,16 @@ Propriedades dos animais
      - caçável; clique direito padrão é atacar
    * - ``flee_on_hit 1``
      - foge do atacante
+   * - ``pursue_attacker 1``
+     - após contra-atacar, persegue entre casas (atrair javali ao centro da cidade)
+   * - ``pursue_leash_range``
+     - distância máxima ao alvo da perseguição em mm; além disso, esquece e volta para casa (``0`` = sem limite; javalis usam ``48000`` ≈ 4 casas)
    * - ``herdable 1``
      - pode ser conduzido por trabalhadores ``can_herd``
+   * - ``claimable 1``
+     - em neutro, qualquer unidade não neutra próxima o reivindica (ovelha AoE2); independente de ``can_herd``
+   * - ``claim_range``
+     - distância de reivindicação em mm (``0`` = só a mesma casa; ovelhas aoe2 ``12000``)
    * - ``food_deposit``
      - tipo de depósito de carcaça na morte
    * - ``food_deposit_qty``

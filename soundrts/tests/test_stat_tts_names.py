@@ -51,6 +51,11 @@ def test_kill_resource_vs_uses_translated_msg():
     assert get_stat_tts_name("kill_resource") == list(mp.KILL_RESOURCE)
 
 
+def test_gather_byproduct_uses_translated_msg():
+    assert get_stat_tts_name("gather_byproduct") == list(mp.GATHER_BYPRODUCT)
+    assert "gather_byproduct" not in get_stat_tts_name("gather_byproduct")
+
+
 def test_all_msgparts_vs_constants_resolve_without_raw_keys():
     """Cooldown/ready/range/crit/pierce/charge *_vs must map to message IDs."""
     from soundrts.attributes.utils import AttributeUtils

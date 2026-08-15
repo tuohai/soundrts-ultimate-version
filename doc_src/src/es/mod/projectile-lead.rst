@@ -66,11 +66,10 @@ Obsoleto
 
 ``mdg_delay`` / ``rdg_delay`` (antigua “duración en segundos”) y ``projectile_speed`` compartido: el combate no los lee; se convierten/migran a **velocidades** por vía al cargar. Mods nuevos: use ``*_projectile_speed`` directamente.
 
-Motor / sincronización
+Motor
 ----------------------
 
 - ``attack_action._calc_projectile_flight_ms(target, is_melee=…)`` (deriva ms de llegada desde la velocidad)
 - ``definitions._migrate_legacy_projectile_delay``
-- Sync: ``tools/_sync_projectile_lead_fix8_fix14.py`` → 修复8 / 修复14 (sin mods/aoe2)
 
 Véase también: `Manual de modding <modding.htm>`_, `Notas de la versión <../relnotes.htm>`_ (1.4.6.9).

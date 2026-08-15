@@ -79,6 +79,8 @@ Each faction is defined in rules.txt . For example::
 
 Note: the "orc_faction" name ends with "_faction" just to avoid name clashes. This "_faction" suffix is not mandatory as long as the name is unique.
 
+In the faction picker, arrows speak only ``title``. With ``intro``, press **G** for a sentence-by-sentence submenu (since 1.4.7.2).
+
 unit
 >>>>
 
@@ -541,13 +543,44 @@ Main melee/ranged properties:
 - ``mdg_projectile`` / ``rdg_projectile``: projectile flag (high-ground range bonus, low vs high ground rules)
 - ``mdg_projectile_speed`` / ``rdg_projectile_speed``: per-lane projectile flight speed (tiles/s; replaces delay / shared ``projectile_speed``)
 - ``projectile_lead``: whether ranged projectiles lead moving targets (0/1; usually granted by tech ``effect bonus``)
-- AoE2-style unique-tech hooks (no civ names hardcoded): ``unpack_time`` (trebuchet unpack delay after move), ``gather_byproduct`` (e.g. Paper Money gold while chopping wood), ``kill_resource_vs`` (e.g. Chieftains: killer gains a chosen resource when the victim matches a type; ``effect bonus kill_resource_vs peasant resource1 5``, matched via ``type_name`` / ``is_a``; resource is ``resourceN`` or aliases like ``gold``/``wood``), ``reveal_map`` on upgrades (Circumnavigation explores the whole map)
+- AoE2-style unique-tech hooks (no civ names hardcoded): ``unpack_time`` / ``pack_time`` (see *Pack / unpack siege mode* below), ``gather_byproduct`` (e.g. Paper Money gold while chopping wood), ``kill_resource_vs`` (e.g. Chieftains: killer gains a chosen resource when the victim matches a type; ``effect bonus kill_resource_vs peasant resource1 5``, matched via ``type_name`` / ``is_a``; resource is ``resourceN`` or aliases like ``gold``/``wood``), ``reveal_map`` on upgrades (Circumnavigation explores the whole map)
 - ``mdg_splash`` / ``rdg_splash``, ``mdg_radius`` / ``rdg_radius``, ``mdg_splash_decay``
 - ``mdg_targets`` / ``rdg_targets``: ``ground``, ``air``, ``unit``, ``building``, or a type name
 - ``mdg_crit`` / ``rdg_crit``, ``mdg_crit_rate`` / ``rdg_crit_rate``, ``crit_vs``
 - ``mdg_piercing`` / ``rdg_piercing`` (percent armor ignored), ``piercing_vs``
 - ``mdg_explode`` / ``rdg_explode``, ``exp_dgf``, ``exp_hp_cost``, ``mdg_explode_vs``
 - Per-**attacker terrain** modifiers (since 1.4.5.0): ``mdg_on_terrain`` / ``rdg_on_terrain``, ``mdg_cd_on_terrain`` / ``rdg_cd_on_terrain``, ``charge_mdg_terrain`` / ``charge_rdg_terrain``, ``charge_mdg_cd_on_terrain`` / ``charge_rdg_cd_on_terrain``; same syntax as ``speed_on_terrain`` — see ``building-land-terrain.rst`` *Unit combat modifiers on terrain*
+
+Pack / unpack siege mode (rules-driven)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+AoE2 trebuchet-style packing for any unit that opts in via ``rules.txt`` (no hardcoded type names). Chinese UI labels match AoE2: **打包** (pack) / **拆包** (unpack).
+
+======= ================ ============================================================
+Field   Type             Meaning
+======= ================ ============================================================
+``packable`` 0/1         Enable the mode (needs a positive ``unpack_time`` / ``pack_time``)
+``unpack_time`` seconds  Time to unpack (deploy to fire); stored as PRECISION ms
+``pack_time`` seconds    Time to pack for travel; if omitted, uses ``unpack_time``
+``spawn_packed`` 0/1     Spawn packed (default 1) or already unpacked (0)
+``packed_mdf`` / ``packed_rdf``  Optional melee/pierce armor while packed
+======= ================ ============================================================
+
+Behavior:
+
+- **Packed**: can move, cannot attack. **Unpacked**: can attack, cannot move.
+- A move order auto-packs; an attack order auto-unpacks. **Stop** cancels a transition instantly.
+- Progress uses the same ``completeness,0..10`` → ``proportion_*`` pipeline as training/research.
+- Explicit menu orders: ``pack`` / ``unpack``.
+
+Example (aoe2 trebuchet)::
+
+    packable 1
+    spawn_packed 1
+    unpack_time 11
+    pack_time 11
+    packed_mdf 2
+    packed_rdf 8
 
 Auto menace / targeting priority (since 1.4.5.2)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1071,7 +1104,7 @@ Two gather mechanisms are available for mods:
 | ``carry_capacity_<type>`` | per-deposit/building override |
 | ``gather_rate`` / ``gather_rate_<type>`` | continuous resources/sec; else ``qty/time`` |
 
-Use ``effect bonus carry_capacity N`` for wheelbarrow-style upgrades. Percent ``gather_time_*`` bonuses raise the effective continuous rate.
+Use ``effect bonus carry_capacity N`` for wheelbarrow-style upgrades. Percent ``gather_time_*`` bonuses raise the effective continuous rate. Keys match deposit ``type_name`` (e.g. ``gather_time_food_livestock`` vs ``gather_time_food_carcass``), so shepherd and hunter civ bonuses can target different carcasses without hardcoding civ names.
 
 Market system (since 1.4.6.9)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1683,7 +1716,7 @@ Any building can auto-spawn units (Zerg Hatchery → larva is just one use)::
 | ``larva_spawn_time N`` | Seconds between spawns |
 | ``morph_as_train 1`` | Morph uses the target unit's train cost/time (larva → Zerg units) |
 
-On completion the host fills up to ``larva_cap``, then tops up on the interval. A ``time_cost`` percent buff on the spawn host (e.g. Queen inject) speeds morphs of units it spawns. ``larva_cap`` alone (no ``spawns_unit``) still defaults to spawning ``larva`` for compatibility.
+By default (e.g. StarCraft hatchery): on completion the host fills up to ``larva_cap``, then tops up on the interval. With ``spawn_immediate 1`` (e.g. aoe2 pasture): spawn **one** on ready, then top up toward ``larva_cap`` on the interval. A ``time_cost`` percent buff on the spawn host (e.g. Queen inject) speeds morphs of units it spawns. ``larva_cap`` alone (no ``spawns_unit``) still defaults to spawning ``larva`` for compatibility.
 
 Worker build modes
 >>>>>>>>>>>>>>>>>>
@@ -1763,12 +1796,18 @@ Hunting system (Age of Empires style)
 
 See ``../player/hunting.htm``. Summary:
 
-- Workers Backspace/right-click ``is_huntable`` animals to attack (plain attack deals damage); kills spawn a ``food_deposit`` carcass (e.g. ``food_carcass``) and complete the attack order without a false ``order_impossible`` beep.
-- Animal attrs: ``is_huntable``, ``flee_on_hit``, ``herdable``, ``food_deposit``, ``food_deposit_qty``, ``no_number``.
+- Default order on **all** neutrals (including ``is_huntable`` wildlife) is ``go`` (approach / claim); attack requires imperative (Ctrl+Backspace, or ``go`` then Ctrl+Enter). Owned ``is_huntable`` still defaults to ``attack`` (slaughter).
+- Imperative / explicit ``attack`` on ``is_huntable`` deals damage; kills spawn a ``food_deposit`` carcass (e.g. ``food_carcass``, or aoe2 ``food_livestock`` for herdables) and complete the attack order without a false ``order_impossible`` beep.
+- Animal attrs: ``is_huntable``, ``flee_on_hit``, ``pursue_attacker``, ``herdable``, ``claimable``, ``claim_range``, ``food_deposit``, ``food_deposit_qty``, ``no_number``.
 - Map spawn: ``computer_only 0 0 neutral \<square\> \<count\> deer``; random maps add wildlife near starts.
 - Voice: units with ``is_huntable`` / ``herdable`` are announced as "deer , animal", not "neutral , NPC". Ctrl+Shift+F4 to a wildlife-only player says "you are animal". Story NPCs (``quest_npc``, etc.) still say "neutral , NPC".
 - Diplomacy: a ``computer_only`` slot with only wildlife (``deer`` / ``sheep`` / custom ``tiger``, etc.) does not join the ``"ai"`` alliance and does not ally with players, hostile creep, or other wildlife herds; mixed slots are unchanged. See ``../player/hunting.htm`` §3.1.
 - Tech ``hunting_techniques``: faster orchard/carcass gathering.
+- Separate shepherd / hunter speed: distinct ``food_deposit`` types + ``gather_time_<deposit>`` (aoe2: Britons ``food_livestock``, Mongols ``food_carcass``). Rules-driven — no civ hardcoding.
+- ``pursue_attacker 1``: after a counterattack, keep chasing across squares (AoE2-style boar lure to the town center). Deer/sheep use ``flee_on_hit`` instead.
+- ``pursue_leash_range N``: drop aggro when farther than N mm from the chase target (``0`` = unlimited). Boars use ``48000`` (~4 squares); then they forget and walk home.
+- ``claimable 1``: while the owner is neutral, any non-neutral unit in range claims the animal (AoE2 sheep). Independent of ``can_herd`` / ``herdable`` follow.
+- Pasture / breeder buildings: ``spawns_unit``, ``larva_spawn_time``, ``larva_cap``, optional ``spawn_player_cap`` / ``spawn_immediate`` (aoe2 Mongol ``pasture``: no mill, requires town center, stores food).
 
 Example animal::
 
@@ -1879,7 +1918,13 @@ Add a unit description below ``title``::
     title 87
     intro 1001
 
-The text must exist in ``tts.txt``.
+The text must exist in ``tts.txt``. Factions may also set ``intro``: press **G** in the faction picker for a sentence-by-sentence submenu (since 1.4.7.2). Long blurbs can use **indented continuation lines** in ``tts.txt``::
+
+    8520 Unique unit Longbowman.
+      Unique techs Yeomen and Warwolf.
+      Shepherds work faster.
+
+Continuations join the same TTS id; the G menu speaks one line at a time. Without newlines, text is still split on sentence punctuation.
 
 Combat sound system (since 1.3.8.2; 1.4.4.6 renamed matk/ratk to mdg/rdg)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

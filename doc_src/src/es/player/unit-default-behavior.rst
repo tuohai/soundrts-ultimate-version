@@ -143,10 +143,10 @@ Unidades del jugador en modo ``offensive``, ``defensive`` o ``chase``:
 
 - no autoatacan unidades neutrales (bichos / PNJ / fauna `computer_only ... neutral`);
 - no huyen por neutrales (el modo defensivo solo sopesa amenazas hostiles reales);
-- ``go`` por defecto / normal sobre un neutral (no imperativo) solo mueve, sin AttackAction;
-- el orden por defecto sobre ``is_huntable`` sigue siendo ``attack`` y hace daño;
-- para que la IA trate un creep / PNJ neutral como objetivo automático, emite un ataque forzado
-  (``imperative`` — p. ej. Ctrl+clic; el motor convierte el ``go`` imperativo en ``attack``).
+- la orden por defecto sobre **todas** las unidades neutrales (fauna / creeps / PNJ) es ``go`` (acercarse / reclamar); el ``go`` normal solo mueve, sin AttackAction;
+- para **atacar** un neutral (caza, matar ganado, pelear creeps), emite un ataque forzado
+  (``imperative`` — p. ej. Ctrl+Retroceso, o ``go`` + Ctrl+Enter; el motor convierte el ``go`` imperativo en ``attack``);
+- los ``is_huntable`` propios (no neutrales) siguen teniendo ``attack`` por defecto (sacrificio).
 
 Voz: los animales de caza (``is_huntable`` / ``herdable``, p. ej. ciervo, oveja) se anuncian como
 

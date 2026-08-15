@@ -34,28 +34,40 @@ title 8103
 ; civilizations
 def britons
 title 8001
+intro 8520
 def franks
 title 8002
+intro 8521
 def chinese
 title 8003
+intro 8522
 def mongols
 title 8004
+intro 8523
 def byzantines
 title 8005
+intro 8524
 def japanese
 title 8006
+intro 8525
 def teutons
 title 8007
+intro 8526
 def vikings
 title 8008
+intro 8527
 def vietnamese
 title 8009
+intro 8528
 def portuguese
 title 8011
+intro 8529
 def aztecs
 title 8012
+intro 8530
 def celts
 title 8013
+intro 8531
 
 ; Category roots (armor / is_a / passenger filters) — spoken names for attribute UI
 def infantry
@@ -100,6 +112,9 @@ def house
 title 8304
 def farm
 title 8305
+def pasture
+is_a building
+title 8331
 def lumbermill
 title 8306
 store_resource2 1098
@@ -186,6 +201,14 @@ ground gravel
 def food_carcass
 is_a resource_deposit
 title 8324
+qty_unit_title 5115
+color saddlebrown
+noise repeat 4 gather_food1 gather_food2
+ground grass
+
+def food_livestock
+is_a resource_deposit
+title 8330
 qty_unit_title 5115
 color saddlebrown
 noise repeat 4 gather_food1 gather_food2
@@ -790,6 +813,8 @@ title 8158
 def trebuchet
 is_a unit
 title 8154
+is_a onager
+mdg_hit 76864
 
 def bombard_cannon
 is_a unit
@@ -1081,6 +1106,11 @@ is_a cataphract
 title 8055
 
 def chinese_villager
+is_a peasant
+title 8159
+keyboard worker
+shortcut p
+def frank_villager
 is_a peasant
 title 8159
 keyboard worker

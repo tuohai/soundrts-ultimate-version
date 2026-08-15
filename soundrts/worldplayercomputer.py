@@ -1164,6 +1164,29 @@ class Computer(Player):
             return False
         return self._deposit_has_resources(target)
 
+    def _huntable_food_deposit_types(self):
+        """Deposit type names produced by ``is_huntable`` animals (from rules)."""
+        cached = getattr(self, "_cached_huntable_food_deposits", None)
+        if cached is not None:
+            return cached
+        types = set()
+        try:
+            from soundrts.definitions import rules
+
+            for name in rules.classnames():
+                raw = rules.get(name, "is_huntable")
+                if raw in (1, "1", True) or (
+                    isinstance(raw, list) and raw and str(raw[0]) in ("1", "true", "True")
+                ):
+                    fd = rules.get(name, "food_deposit")
+                    if not fd:
+                        continue
+                    types.add(fd[0] if isinstance(fd, list) else fd)
+        except Exception:
+            types = set()
+        self._cached_huntable_food_deposits = frozenset(types)
+        return self._cached_huntable_food_deposits
+
     def _worker_can_hunt(self, worker):
         skills = getattr(worker, "basic_skills", None) or getattr(
             worker, "_basic_skills", ()
@@ -1173,7 +1196,9 @@ class Computer(Player):
         deposits = getattr(worker, "can_gather_deposit", None) or []
         if not deposits:
             return False
-        return "food_carcass" in deposits or "all" in deposits
+        if "all" in deposits:
+            return True
+        return bool(set(deposits) & self._huntable_food_deposit_types())
 
     def _worker_can_herd(self, worker):
         if not getattr(worker, "can_herd", 0):
@@ -1186,8 +1211,6 @@ class Computer(Player):
     def _herded_animals(self, worker):
         result = []
         for p in self.world.players:
-            if not getattr(p, "neutral", False):
-                continue
             for u in p.units:
                 if (
                     getattr(u, "_herd_leader", None) is worker
@@ -1264,8 +1287,11 @@ class Computer(Player):
             if getattr(o, "herdable", 0)
             and getattr(o, "hp", 0) > 0
             and o.place is not None
-            and getattr(getattr(o, "player", None), "neutral", False)
             and getattr(o, "_herd_leader", None) is None
+            and (
+                getattr(getattr(o, "player", None), "neutral", False)
+                or o.player is self
+            )
         ]
         if not animals:
             return None
@@ -1286,9 +1312,17 @@ class Computer(Player):
             if getattr(o, "is_huntable", 0)
             and getattr(o, "hp", 0) > 0
             and o.place is not None
-            and getattr(getattr(o, "player", None), "neutral", False)
+            and (
+                getattr(getattr(o, "player", None), "neutral", False)
+                or (
+                    o.player is self
+                    and (getattr(o, "herdable", 0) or getattr(o, "claimable", 0))
+                )
+            )
             and not (
-                getattr(o, "herdable", 0) and self._worker_can_herd(worker)
+                getattr(o, "herdable", 0)
+                and self._worker_can_herd(worker)
+                and getattr(getattr(o, "player", None), "neutral", False)
             )
         ]
         if not animals:

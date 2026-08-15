@@ -113,7 +113,8 @@
 8321 Jeleń
 8322 Owca
 8323 Dzik
-8324 Padlina
+8324 Padlina
+8330 Padlina bydła
 
 8120 Straż obywatelska
 8121 Piechur z mieczem

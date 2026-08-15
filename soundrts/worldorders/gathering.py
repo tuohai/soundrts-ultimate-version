@@ -254,6 +254,10 @@ class GatherOrder(BasicOrder):
     def _apply_gather_byproduct(self, dt):
         """While gathering, grant byproduct resources (e.g. Paper Money gold/s on wood)."""
         from ..lib.nofloat import PRECISION
+        from ..worldmarket import (
+            resource_or_type_key,
+            unpack_gather_byproduct_entry,
+        )
 
         byproduct = getattr(self.unit, "gather_byproduct", None)
         if not isinstance(byproduct, dict) or not byproduct or dt <= 0:
@@ -261,27 +265,30 @@ class GatherOrder(BasicOrder):
         player = getattr(self.unit, "player", None)
         if player is None or self.target is None:
             return
-        deposit_type = getattr(self.target, "type_name", None)
-        rate = None
-        if deposit_type and deposit_type in byproduct:
-            rate = byproduct[deposit_type]
-        else:
-            rt = getattr(self.target, "resource_type", None)
-            if rt and rt in byproduct:
-                rate = byproduct[rt]
-        if rate is None:
+        entry = None
+        for tok in (
+            getattr(self.target, "type_name", None),
+            getattr(self.target, "resource_type", None),
+        ):
+            if not tok:
+                continue
+            if tok in byproduct:
+                entry = byproduct[tok]
+                break
+            key = resource_or_type_key(tok)
+            if key and key in byproduct:
+                entry = byproduct[key]
+                break
+        if entry is None:
             return
-        try:
-            rate_f = float(rate)
-        except (TypeError, ValueError):
-            return
+        rate_f, product = unpack_gather_byproduct_entry(entry)
         if rate_f <= 0:
             return
         acc = float(getattr(self, "_byproduct_accum", 0.0) or 0.0)
         acc += rate_f * dt
         whole = int(acc)
         if whole >= 1:
-            player.store("resource1", whole * PRECISION)
+            player.store(product, whole * PRECISION)
             acc -= whole
         self._byproduct_accum = acc
 

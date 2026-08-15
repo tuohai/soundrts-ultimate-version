@@ -245,6 +245,8 @@ def sheep
 class soldier
 is_huntable 1
 herdable 1
+claimable 1
+claim_range 12000
 flee_on_hit 1
 wander_range 12000
 food_deposit food_carcass
@@ -269,6 +271,9 @@ class soldier
 is_huntable 1
 flee_on_hit 0
 counterattack_enabled 1
+pursue_attacker 1
+; ~4 squares (12000 mm each): AoE2-like LOS deaggro if target opens a large gap
+pursue_leash_range 48000
 wander_range 12000
 food_deposit food_carcass
 food_deposit_qty 50
@@ -573,7 +578,7 @@ can_use_tech dsc
 
 def peasant
 class worker
-can_herd 1
+
 can_repair_ships 1
 can_gather_deposit goldmine wood orchard food_carcass
 can_gather_building farm

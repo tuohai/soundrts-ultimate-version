@@ -82,6 +82,8 @@ Ogni fazione è definita in rules.txt. Ad esempio::
 
 Nota: il nome "orc_faction" termina con "_faction" solo per evitare conflitti di nomi. Il suffisso "_faction" non è obbligatorio finché il nome è unico.
 
+Nel selettore di fazione le frecce leggono solo ``title``. Con ``intro``, premi **G** per un sottomenu frase per frase (da 1.4.7.2).
+
 unit
 >>>>
 
@@ -545,13 +547,32 @@ Proprietà principali mischia/distanza:
 - ``mdg_projectile`` / ``rdg_projectile``: flag proiettile (bonus portata da terreno alto, regole basso vs alto)
 - ``mdg_projectile_speed`` / ``rdg_projectile_speed``: velocità di volo del proiettile per corsia (caselle/s; sostituisce delay / ``projectile_speed`` condiviso)
 - ``projectile_lead``: se i proiettili a distanza predicono i bersagli in movimento (0/1; di solito concesso da ``effect bonus`` di tecnologia)
-- Hook del motore usati da tecnologie uniche stile AoE2 (nessun nome civ hardcoded): ``unpack_time`` (ritardo di schieramento del trabucco dopo lo spostamento), ``gather_byproduct`` (es. Banconote: oro mentre si taglia legna), ``kill_resource_vs`` (es. Capi tribù: l’uccisore guadagna una risorsa scelta se la vittima corrisponde a un tipo; ``effect bonus kill_resource_vs peasant resource1 5``, via ``type_name`` / ``is_a``; risorsa ``resourceN`` o alias ``gold``/``wood``), ``reveal_map`` sugli upgrade (Circumnavigazione esplora l’intera mappa)
+- Hook del motore usati da tecnologie uniche stile AoE2 (nessun nome civ hardcoded): ``unpack_time`` / ``pack_time`` (vedi *Impacchettare / spacchettare* sotto), ``gather_byproduct`` (es. Banconote: oro mentre si taglia legna), ``kill_resource_vs`` (es. Capi tribù: l’uccisore guadagna una risorsa scelta se la vittima corrisponde a un tipo; ``effect bonus kill_resource_vs peasant resource1 5``, via ``type_name`` / ``is_a``; risorsa ``resourceN`` o alias ``gold``/``wood``), ``reveal_map`` sugli upgrade (Circumnavigazione esplora l’intera mappa)
 - ``mdg_splash`` / ``rdg_splash``, ``mdg_radius`` / ``rdg_radius``, ``mdg_splash_decay``
 - ``mdg_targets`` / ``rdg_targets``: ``ground``, ``air``, ``unit``, ``building``, o un nome di tipo
 - ``mdg_crit`` / ``rdg_crit``, ``mdg_crit_rate`` / ``rdg_crit_rate``, ``crit_vs``
 - ``mdg_piercing`` / ``rdg_piercing`` (percentuale di armatura ignorata), ``piercing_vs``
 - ``mdg_explode`` / ``rdg_explode``, ``exp_dgf``, ``exp_hp_cost``, ``mdg_explode_vs``
 - Modificatori per **terreno dell’attaccante** (da 1.4.5.0): ``mdg_on_terrain`` / ``rdg_on_terrain``, ``mdg_cd_on_terrain`` / ``rdg_cd_on_terrain``, ``charge_mdg_terrain`` / ``charge_rdg_terrain``, ``charge_mdg_cd_on_terrain`` / ``charge_rdg_cd_on_terrain``; stessa sintassi di ``speed_on_terrain`` — vedi ``building-land-terrain.rst`` *Modificatori di combattimento delle unità sul terreno*
+
+Impacchettare / spacchettare (modalità assedio, da regole)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Stile trabucco AoE2: qualsiasi unità può attivarlo in ``rules.txt`` (nessun nome tipo fisso). Ordini UI: ``pack`` / ``unpack``.
+
+======= ================ ============================================================
+Campo   Tipo             Significato
+======= ================ ============================================================
+``packable`` 0/1         Abilita la modalità (serve un tempo positivo)
+``unpack_time`` secondi  Tempo per spacchettare (dispiegare e sparare); PRECISION ms
+``pack_time`` secondi    Tempo per impacchettare; se omesso usa ``unpack_time``
+``spawn_packed`` 0/1     Nasce impacchettato (1, default) o già dispiegato (0)
+``packed_mdf`` / ``packed_rdf``  Armatura opzionale da impacchettato
+======= ================ ============================================================
+
+Comportamento: impacchettato = muoversi senza attaccare; spacchettato = attaccare senza muoversi.
+Muoversi impacchetta da solo; attaccare spacchetta da solo. **Stop** annulla subito.
+Progresso: ``completeness,0..10`` → ``proportion_*`` (come l’addestramento).
 
 Menace automatica / priorità di bersaglio (da 1.4.5.2)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -974,7 +995,7 @@ Sono disponibili due meccanismi di raccolta per le mod:
 | ``carry_capacity_<type>`` | override per deposito/edificio |
 | ``gather_rate`` / ``gather_rate_<type>`` | continuous risorse/s; altrimenti ``qty/time`` |
 
-Usa ``effect bonus carry_capacity N`` per upgrade stile carriola. I bonus percentuali ``gather_time_*`` aumentano il tasso continuous effettivo.
+Usa ``effect bonus carry_capacity N`` per upgrade stile carriola. I bonus percentuali ``gather_time_*`` aumentano il tasso continuous effettivo. Le chiavi corrispondono al ``type_name`` del deposito (es. ``gather_time_food_livestock`` vs ``gather_time_food_carcass``), così i bonus pastori e cacciatori si possono separare senza hardcode dei nomi civ.
 
 Sistema di mercato (da 1.4.6.9)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1604,12 +1625,17 @@ Sistema di caccia (stile Age of Empires)
 
 Vedi ``../player/hunting.htm``. Riepilogo:
 
-- I lavoratori Backspace/clic destro su ``is_huntable`` attaccano (l’attacco normale infligge danno); le uccisioni generano ``food_deposit`` (es. ``food_carcass``) e completano l’ordine senza beep falso ``order_impossible``.
-- Attr animali: ``is_huntable``, ``flee_on_hit``, ``herdable``, ``food_deposit``, ``food_deposit_qty``, ``no_number``.
+- I lavoratori Backspace/clic destro su ``is_huntable`` attaccano (l’attacco normale infligge danno); le uccisioni generano ``food_deposit`` (es. ``food_carcass``, o aoe2 ``food_livestock`` per ``herdable``) e completano l’ordine senza beep falso ``order_impossible``.
+- Attr animali: ``is_huntable``, ``flee_on_hit``, ``pursue_attacker``, ``herdable``, ``food_deposit``, ``food_deposit_qty``, ``no_number``.
 - Spawn sulla mappa: ``computer_only 0 0 neutral \<casella\> \<conteggio\> deer``; le mappe casuali aggiungono fauna vicino agli inizi.
 - Voce: le unità con ``is_huntable`` / ``herdable`` sono annunciate come "deer , animal", non "neutral , NPC". Ctrl+Shift+F4 su un giocatore solo fauna dice "you are animal". Gli NPC di storia (``quest_npc``, ecc.) dicono ancora "neutral , NPC".
 - Diplomazia: uno slot ``computer_only`` con sola fauna (``deer`` / ``sheep`` / ``tiger`` personalizzato, ecc.) non entra nell’alleanza ``"ai"`` e non si allea con giocatori, creep ostili o altri branchi di fauna; gli slot misti restano invariati. Vedi ``../player/hunting.htm`` §3.1.
 - Tech ``hunting_techniques``: raccolta più veloce da frutteti/carcasse.
+- Velocità pastori / cacciatori separate: ``food_deposit`` distinti + ``gather_time_<deposito>`` (aoe2: britanni ``food_livestock``, mongoli ``food_carcass``). Guidato dalle rules, senza hardcode dei nomi civ.
+- ``pursue_attacker 1``: dopo il contrattacco, insegue tra le caselle (attirare il cinghiale al centro in stile AoE2). Cervi/pecore usano ``flee_on_hit``.
+- ``pursue_leash_range N``: perde l’aggro se è oltre N mm dal bersaglio (``0`` = illimitato). I cinghiali usano ``48000`` (~4 caselle); poi dimenticano e tornano a casa.
+- ``claimable 1``: da neutro, qualsiasi unità non neutrale vicina lo reclama (pecora AoE2). Indipendente da ``can_herd``.
+- Pascolo: ``spawns_unit``, ``larva_spawn_time``, ``larva_cap``, ``spawn_player_cap`` / ``spawn_immediate`` (aoe2 ``pasture`` mongolo).
 
 Esempio animale::
 
@@ -1667,7 +1693,7 @@ Aggiungi una descrizione dell’unità sotto ``title``::
     title 87
     intro 1001
 
-Il testo deve esistere in ``tts.txt``.
+Il testo deve esistere in ``tts.txt``. Anche le fazioni possono definire ``intro``: nel selettore premi **G** per un sottomenu frase per frase (da 1.4.7.2).
 
 Sistema sonoro di combattimento (da 1.3.8.2; 1.4.4.6 ha rinominato matk/ratk in mdg/rdg)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

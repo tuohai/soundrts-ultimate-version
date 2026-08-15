@@ -113,7 +113,8 @@
 8321 Nai
 8322 Cừu
 8323 Lợn rừng
-8324 Xác thú
+8324 Xác thú
+8330 Xác gia súc
 
 8120 Dân binh
 8121 Quân binh

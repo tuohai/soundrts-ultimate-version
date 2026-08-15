@@ -1007,14 +1007,15 @@ class AttackActionMixin:
             if now < self.rdg_next_attack_time:
                 return
 
+            # AoE2 trebuchet: must be unpacked to fire (auto-unpack if packed)
+            from ..world_siege_pack import ensure_unpacked, is_packable
+
+            if is_packable(self) and not ensure_unpacked(self):
+                return
+
             # 检查前摇（ready=0 时跳过，冷却结束即攻击）
             if self.rdg_prep_end_time <= 0:
                 ready = self._get_range_ready_vs(target)
-                # AoE2 trebuchet unpack: first shot after moving waits unpack_time
-                unpack = float(getattr(self, "unpack_time", 0) or 0)
-                if unpack > 0 and getattr(self, "_needs_unpack", False):
-                    ready = int(ready) + int(unpack * 1000)
-                    self._needs_unpack = False
                 if ready > 0:
                     self.rdg_prep_end_time = now + ready
                     self.notify("rdg_ready")

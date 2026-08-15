@@ -848,6 +848,13 @@
 4934	hnať
 4935	nasleduje
 4936	lovecké techniky
+4937	privlastnené
+4938	zbalit
+4939	rozbalit
+4943	balenie
+4944	rozbaľovanie
+4945	zbalené
+4946	rozbalené
 4950	kooperatívna kampaň
 4951	miestna kooperatívna kampaň
 4952	vyberte kooperatívnu kampaň

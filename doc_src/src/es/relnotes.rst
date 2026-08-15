@@ -4,21 +4,68 @@ Notas de la versión
 
 .. contents::
 
+1.4.7.2
+-------
+
+**aoe2 / motor: empacar / desempacar el trabuquete (por reglas) + progreso proportion**
+
+- **Problema**: las unidades asedio «packable» solo retrasaban el primer disparo tras moverse; no había estado real empacado/desempacado ni barra ``proportion_*``.
+- **Cambio**: reglas ``packable``, ``unpack_time`` / ``pack_time``, opcionales ``packed_mdf`` / ``packed_rdf``, ``spawn_packed``. Empacado = solo mover; desempacado = solo atacar. Progreso ``completeness`` → ``proportion_*``. UI: empacar / desempacar.
+- **Docs**: ``mod/modding.htm``.
+
+**aoe2: corrección de Collar de caballo / Arado pesado / Rotación de cultivos duplicados en aldeanos**
+
+- **Problema**: el ``can_use_tech`` del campesino incluía las mejoras de molino genéricas y los alias francos a coste 0 (``frank_horse_collar``, etc.). Los alias comparten título, así que la pantalla de atributos leía cada nombre dos veces.
+- **Cambio**: los aldeanos no francos conservan solo ``horse_collar`` / ``heavy_plow`` / ``crop_rotation``. Los francos usan ``frank_villager``, con las alias gratuitas.
+
+**Corrección: ``gather_byproduct`` (p. ej. Papel moneda) no aparecía en atributos**
+
+- **Problema**: el efecto es un triple (depósito, ritmo). La UI lo leía como par, tomaba el depósito como valor, perdía el ritmo y ocultaba la fila.
+- **Cambio**: se muestran depósito, recurso secundario y ritmo por segundo (Papel moneda: depósito de madera, oro, +0.014/s). Las reglas siguen usando el tipo de depósito (p. ej. ``wood``).
+
+**Novedad: oír las bonificaciones de civilización al elegir facción**
+
+- Las flechas solo leen el nombre. Con ``intro``, pulse **G** para un submenú y suba/baje frase a frase (Enter repite; Esc vuelve). Sin ``intro``, sin cambios.
+- aoe2: las doce civs tienen texto en inglés y chino.
+
+**aoe2: pastores y cazadores usan depósitos de cadáver distintos (por reglas)**
+
+- **Problema**: ovejas y ciervos/jabalíes compartían ``food_carcass``, así que el bonus de pastores britanos y el de cazadores mongoles aceleraban ambos trabajos.
+- **Cambio**: los ``herdable`` dejan ``food_livestock``; la caza sigue con ``food_carcass``. Britanos: ``gather_time_food_livestock -20%``. Mongoles: ``gather_time_food_carcass -29%``. El motor empareja ``gather_time_<depósito>`` y la caza de la IA desde las rules (``food_deposit`` / ``is_huntable``), sin hardcodear civs.
+- **Docs**: ``player/hunting.htm``, ``mod/modding.htm``.
+
+**Novedad: ``pursue_attacker`` — jabalíes persiguen entre casillas (estilo AoE2)**
+
+- **Problema**: los jabalíes contraatacaban en ``guard``, pero ``AttackAction`` solo perseguía entre casillas en modo ``chase``, así que al salir el aldeano se cortaba la persecución y no se podía atraer al centro urbano.
+- **Cambio**: el flag de rules ``pursue_attacker 1`` mantiene el ataque siguiendo entre casillas (sin exigir enemistad diplomática). Jabalíes en rules base y aoe2 lo activan; ciervos/ovejas siguen con ``flee_on_hit``.
+- **Docs**: ``player/hunting.htm``, ``mod/modding.htm``.
+
+**Novedad: ``pursue_leash_range`` — soltar agresión al abrir distancia**
+
+- **Problema**: solo con ``pursue_attacker``, ``last_attacker`` mantenía la persecución aunque abrieras un gran hueco (no es el deaggro por LOS de AoE2).
+- **Cambio**: entero de rules ``pursue_leash_range`` (mm; ``0`` = ilimitado). Más allá, olvida al atacante, detiene el ataque y vuelve a casa. Jabalíes usan ``48000`` (~4 casillas).
+- **Docs**: ``player/hunting.htm``, ``mod/modding.htm``.
+
+**Novedad: ``claimable`` + pastizal (reclamo AoE2 / pastizal AoE4, por reglas)**
+
+- **Problema**: el pastoreo solo seguía sin cambiar de dueño; no había reclamo al acercarse ni pastizales que críen ganado.
+- **Cambio**: animales ``claimable`` neutrales pasan a cualquier unidad no neutral cercana (``claim_range``; ``can_herd`` sigue aparte). Edificios: ``spawns_unit`` + ``spawn_player_cap`` / ``spawn_immediate`` (aoe2: oveja ``claimable``; ``pasture`` mongol).
+- **Docs**: ``player/hunting.htm``, ``mod/modding.htm``.
+
+
 1.4.7.1
 -------
 
-**Corrección: los edificios inacabados no pueden entrenar unidades**
-
 - **Problema**: el solar (``BuildingSite``) mostraba el menú de entrenamiento/investigación del edificio objetivo, así que un cuartel podía entrenar antes de terminarse.
 - **Cambio**: los solares inacabados no listan entrenamiento/investigación y no pueden producir.
-- **Alcance**: todos los mods (incluido aoe2). Sincronizado a 修复8 / 修复14.
+- **Alcance**: todos los mods (incluido aoe2).
 - **Código / pruebas**: ``world_build_rules.py`` (``is_unfinished_building``, ``effective_can_train`` / ``effective_can_research`` / ``building_can_operate``); ``test_can_train_upgrade.py``.
 
 **Corrección: al terminar, el edificio nace con el HP de bonificación, no a medio reparar**
 
 - **Problema**: al completar se escribía el HP actual con el ``hp_max`` de la clase (p. ej. cuartel 1200), mientras el ``hp_max`` de instancia ya incluía bonificaciones (bizantinos Edad Oscura +10% → 1320). Los aldeanos reparaban el «hueco».
 - **Cambio**: al completar se usa el ``hp_max`` de instancia (menos el daño durante la obra). Como en AoE2: termina a HP lleno con bonus, no se repara después.
-- **Alcance**: todos los mods. Sincronizado a 修复8 / 修复14.
+- **Alcance**: todos los mods.
 - **Código / pruebas**: ``worldcreature.py`` (``BuildingSite._complete_construction``); ``test_z5_byzantine_barracks_hp.py``.
 
 **aoe2: civilización Celtas; campaña de William Wallace como celtas**
@@ -35,7 +82,7 @@ Notas de la versión
 
 - **Problema**: al navegar con las flechas, el sonido de paso (p. ej. puente) o de bloqueo iba en la cola de voz y terminaba antes de las coordenadas / nombres, con sensación de retraso.
 - **Cambio**: esos efectos se reproducen al instante en el mezclador de SFX; coordenadas y nombres siguen en la cola de voz, de modo que empiezan a la vez.
-- **Alcance**: recorrido normal, cruce de casilla en zoom, bloqueo en primera persona; sincronizado a 修复8 / 修复14 / 原始1 / 原始2.
+- **Alcance**: recorrido normal, cruce de casilla en zoom, bloqueo en primera persona.
 - **Código**: ``clientgame/game_navigation.py`` (``_play_movement_sfx``), ``clientgamefocus.py``, ``clientgame/game_audio.py``.
 
 
@@ -46,7 +93,7 @@ Notas de la versión
 - **Almacenamiento**: ``tipo_víctima → { resourceN: cantidad }``; al matar, ``store`` y evento ``resourceN_reward``.
 - **aoe2**: Caudillos usa ``kill_resource_vs … resource1 5`` (aldeano / carreta / barco / monje).
 - **TTS / UI**: «bonificación de recurso al matar vs» (sin clave cruda ``kill_gold``).
-- **Docs**: ``mod/modding``. Código / pruebas alineados con la versión inglesa; sincronizado a 修复8 / 修复14.
+- **Docs**: ``mod/modding``. Código / pruebas alineados con la versión inglesa.
 
 
 1.4.6.9

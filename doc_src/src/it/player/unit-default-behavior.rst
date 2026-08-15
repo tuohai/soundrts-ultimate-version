@@ -162,10 +162,10 @@ Le unità del giocatore in modalità ``offensive``, ``defensive`` o ``chase``:
 
 - non attaccano automaticamente le unità neutrali (creep / NPC / fauna `computer_only ... neutral`);
 - non fuggono a causa dei neutrali (la modalità difensiva valuta solo le vere minacce ostili);
-- ``go`` predefinito / normale su un neutrale (non imperativo) si limita a muovere, senza AttackAction;
-- l’ordine predefinito su ``is_huntable`` resta ``attack`` e infligge danno;
-- per far trattare dalla IA un creep / NPC neutrale come bersaglio automatico, dai un attacco forzato (``imperative`` — ad es. Ctrl+clic sull’unità;
-  il motore converte l’``go`` imperativo in ``attack``).
+- l’ordine predefinito su **tutte** le unità neutrali (fauna / creep / NPC) è ``go`` (avvicinarsi / reclamare); il ``go`` normale solo muove, senza AttackAction;
+- per **attaccare** un neutrale (caccia, macellare, combattere creep) serve un attacco forzato (``imperative`` — ad es. Ctrl+Backspace, oppure ``go`` + Ctrl+Invio;
+  il motore converte l’``go`` imperativo in ``attack``);
+- gli ``is_huntable`` posseduti (non neutrali) restano su ``attack`` di default (macellazione).
 
 
 Voce: gli animali da caccia (``is_huntable`` / ``herdable``, ad es. cervi, pecore) vengono annunciati come

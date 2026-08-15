@@ -66,11 +66,10 @@ aoe2 约略（均为**速度**）：箭/塔 ``7``，投石车 ``3.5``，投石�
 
 ``mdg_delay`` / ``rdg_delay``（旧「延迟秒数」写法）与共用 ``projectile_speed``：战斗不直接读；加载时换算/迁到分路**速度**。新模组请直接写 ``*_projectile_speed``。
 
-引擎 / 同步
+引擎
 -----------
 
 - ``attack_action._calc_projectile_flight_ms(target, is_melee=…)``（由速度推算到达毫秒）
 - ``definitions._migrate_legacy_projectile_delay``
-- 同步：``tools/_sync_projectile_lead_fix8_fix14.py`` → 修复8 / 修复14（不含 mods/aoe2）
 
 另见：`Mod 制作手册 <modding.htm>`_、`版本说明 <../relnotes.htm>`_（1.4.6.9）。

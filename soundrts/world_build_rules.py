@@ -1795,7 +1795,7 @@ def finalize_new_building(building, site=None):
     _apply_farm_food_tech_bonuses(building)
     _auto_start_gas_production(building)
     if is_unit_spawn_host(building):
-        fill_spawn_host(building, notify=False)
+        init_spawn_host_on_ready(building, notify=False)
 
 
 def _apply_farm_food_tech_bonuses(building):
@@ -1934,6 +1934,35 @@ def count_spawned_on_square(host):
     return n
 
 
+def count_spawned_for_player(host):
+    """Living units of ``spawns_unit`` type owned by host.player (map-wide)."""
+    spawn_type = spawns_unit_type(host)
+    player = getattr(host, "player", None)
+    if not spawn_type or player is None:
+        return 0
+    n = 0
+    for obj in getattr(player, "units", ()) or ():
+        if (
+            getattr(obj, "type_name", None) == spawn_type
+            and getattr(obj, "hp", 0) > 0
+        ):
+            n += 1
+    return n
+
+
+def spawn_player_cap(host):
+    cap = getattr(host, "spawn_player_cap", 0)
+    if not cap:
+        unit_type = getattr(host, "type_name", None)
+        if unit_type:
+            try:
+                cls = rules.unit_class(unit_type)
+                cap = getattr(cls, "spawn_player_cap", 0) if cls is not None else 0
+            except Exception:
+                cap = 0
+    return int(cap) if cap else 0
+
+
 def spawn_unit_at_host(host, count=1, notify=True):
     spawn_type = spawns_unit_type(host)
     if not spawn_type or count <= 0:
@@ -1946,8 +1975,11 @@ def spawn_unit_at_host(host, count=1, notify=True):
         return 0
     spawned = 0
     cap = spawn_host_cap(host)
+    player_cap = spawn_player_cap(host)
     for _ in range(count):
         if count_spawned_on_square(host) >= cap:
+            break
+        if player_cap and count_spawned_for_player(host) >= player_cap:
             break
         x, y = host.x, host.y
         found = place.find_free_space("ground", x, y)
@@ -1955,6 +1987,9 @@ def spawn_unit_at_host(host, count=1, notify=True):
             x, y = found[0], found[1]
         try:
             u = unit_cls(host.player, place, x, y)
+            # Pasture/owned spawn: livestock should not flee when slaughtered by owner.
+            if getattr(u, "herdable", 0) or getattr(u, "claimable", 0):
+                u.flee_on_hit = 0
             if notify:
                 u.notify("added")
             spawned += 1
@@ -1963,12 +1998,51 @@ def spawn_unit_at_host(host, count=1, notify=True):
     return spawned
 
 
+def spawn_immediate_enabled(host):
+    """True when rules set ``spawn_immediate 1`` (pasture-style first spawn)."""
+    immediate = getattr(host, "spawn_immediate", None)
+    if immediate is None:
+        immediate = getattr(type(host), "spawn_immediate", 0)
+    return immediate in (1, "1", True) or (
+        isinstance(immediate, list)
+        and immediate
+        and str(immediate[0]) in ("1", "true", "True")
+    )
+
+
 def fill_spawn_host(host, notify=True):
     if not is_unit_spawn_host(host):
         return
     missing = spawn_host_cap(host) - count_spawned_on_square(host)
+    player_cap = spawn_player_cap(host)
+    if player_cap:
+        missing = min(missing, max(0, player_cap - count_spawned_for_player(host)))
     if missing > 0:
         spawn_unit_at_host(host, missing, notify=notify)
+
+
+def init_spawn_host_on_ready(host, notify=True):
+    """Building finished or map-placed spawn host.
+
+    - ``spawn_immediate 1`` (AoE2 pasture): spawn **one** unit and start the timer
+    - otherwise (StarCraft hatchery): fill up to ``larva_cap`` immediately
+
+    Idempotent for ``spawn_immediate``: ``Building.__init__`` and
+    ``BuildingSite._complete_construction`` both call ``finalize_new_building``,
+    so this must not spawn twice on the same host.
+    """
+    if not is_unit_spawn_host(host):
+        return
+    if spawn_immediate_enabled(host):
+        if getattr(host, "_unit_spawn_time", None) is not None:
+            return
+        spawn_unit_at_host(host, 1, notify=notify)
+        world = getattr(getattr(host, "player", None), "world", None)
+        if world is None:
+            world = getattr(host, "world", None)
+        host._unit_spawn_time = getattr(world, "time", 0) if world is not None else 0
+        return
+    fill_spawn_host(host, notify=notify)
 
 
 def tick_unit_spawns(world):
@@ -1982,12 +2056,19 @@ def tick_unit_spawns(world):
                 continue
             if count_spawned_on_square(unit) >= spawn_host_cap(unit):
                 continue
+            player_cap = spawn_player_cap(unit)
+            if player_cap and count_spawned_for_player(unit) >= player_cap:
+                continue
             interval = spawn_host_interval(unit)
             last = getattr(unit, "_unit_spawn_time", None)
             if last is None:
                 # migrate legacy timer attribute if present
                 last = getattr(unit, "_larva_spawn_time", None)
             if last is None:
+                # First tick only: spawn if immediate and square still empty
+                # (init may already have spawned via finalize_new_building).
+                if spawn_immediate_enabled(unit) and count_spawned_on_square(unit) == 0:
+                    spawn_unit_at_host(unit, 1)
                 unit._unit_spawn_time = world.time
                 continue
             if world.time - last >= interval:

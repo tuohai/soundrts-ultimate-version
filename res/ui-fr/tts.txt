@@ -848,6 +848,13 @@
 4934	rabattre
 4935	suivi
 4936	techniques de chasse
+4937	revendiqué
+4938	emballer
+4939	déballer
+4943	emballage
+4944	déballage
+4945	emballé
+4946	déballé
 4950	Campagne coopérative
 4951	Campagne coopérative locale
 4952	Sélectionner une campagne coopérative

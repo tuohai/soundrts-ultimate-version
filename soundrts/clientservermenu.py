@@ -616,12 +616,18 @@ class _BeforeGameMenu(_ServerMenu):
         voice.info(name(player_login) + mp.HAS_JUST_JOINED + self._game_status(players))
 
     def _add_faction_menu(self, menu, pn, p, pr):
+        from .faction_progress import faction_intro_msgs, show_faction_intro_menu
+
         if len(rules.factions) > 1:
             for r in ["random_faction"] + rules.factions:
                 if r != pr:
+                    on_info = None
+                    if faction_intro_msgs(r):
+                        on_info = lambda _r=r: show_faction_intro_menu(_r)
                     menu.append(
                         name(p) + style.get(r, "title"),
                         (self.server.write_line, f"faction {pn} {r}"),
+                        on_info=on_info,
                     )
 
     def srv_start_game(self, args):

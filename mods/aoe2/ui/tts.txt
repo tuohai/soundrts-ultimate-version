@@ -111,6 +111,8 @@
 8322 sheep
 8323 boar
 8324 carcass
+8330 livestock carcass
+8331 pasture
 
 8120 militia
 8121 man-at-arms
@@ -290,3 +292,61 @@
 8513 Your units die instead of joining the enemy when converted
 8514 Enemy conversions against you take much longer
 8515 When several monks convert together, only the one who succeeds rests
+
+; Civilization bonuses (spoken in the faction picker via G; indented lines continue)
+8520 Unique unit Longbowman.
+  Unique techs Yeomen and Warwolf.
+  Foot archers plus one range in Castle Age and plus one more in Imperial Age.
+  Shepherds work faster.
+  No Bloodlines, no Thumb Ring.
+8521 Unique unit Throwing Axeman.
+  Unique techs Bearded Axe and Chivalry.
+  Cavalry plus twenty percent hit points.
+  Foragers work faster.
+  Farm upgrades are free.
+  No Thumb Ring, Bracer, Ring Archer Armor, or Bloodlines.
+8522 Unique unit Chu Ko Nu.
+  Unique techs Rocketry and Great Wall.
+  Start with extra villagers.
+  Technologies cost ten, fifteen, and twenty percent less in Feudal, Castle, and Imperial Age.
+8523 Unique unit Mangudai.
+  Unique techs Drill and Nomads.
+  Hunters work faster.
+  Scout cavalry line plus thirty percent hit points.
+  Cavalry archers fire faster.
+  Build pastures instead of farms; no mill.
+8524 Unique unit Cataphract.
+  Unique techs Logistica and Greek Fire.
+  Buildings gain extra hit points each age.
+  Imperial Age costs thirty-three percent less.
+8525 Unique unit Samurai.
+  Unique techs Yasama and Kataparuto.
+  Infantry attack faster from the Feudal Age.
+8526 Unique unit Teutonic Knight.
+  Unique techs Ironclad and Crenellations.
+  Infantry melee armor plus one in Castle Age and plus one in Imperial Age.
+  Farms cost less wood.
+8527 Unique unit Berserk.
+  Unique techs Chieftains and Bogsveigar.
+  Infantry hit points plus ten percent in Feudal Age, plus five more in Castle Age, plus five more in Imperial Age.
+  Docks can train Longboats.
+8528 Unique unit Rattan Archer.
+  Unique techs Chatras and Paper Money.
+  Foot archers and cavalry archers plus twenty percent hit points.
+8529 Unique unit Organ Gun.
+  Unique techs Circumnavigation and Arquebus.
+  Ships plus ten percent hit points.
+  Can build a Feitoria.
+8530 Unique unit Jaguar Warrior.
+  Unique techs Atlatl and Garland Wars.
+  Start with fifty extra gold.
+  Villagers carry three more.
+  Military trains faster.
+  Monks gain five hit points per monastery technology.
+  Team bonus: relics generate extra gold.
+  No stables or cavalry.
+8531 Unique unit Woad Raider.
+  Unique techs Stronghold and Furor Celtica.
+  Infantry plus fifteen percent speed from the Feudal Age.
+  Lumberjacks work faster.
+  Siege weapons fire faster.

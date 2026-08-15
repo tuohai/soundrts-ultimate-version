@@ -79,6 +79,8 @@ faction
 
 注意："orc_faction" 名称以 "_faction" 结尾只是为了避免名称冲突。只要名称唯一，这个 "_faction" 后缀并非强制。
 
+选阵营时方向键只读 ``title``；有 ``intro`` 时按 **G** 打开简介子菜单，上下键逐句听（自 1.4.7.2）。
+
 unit
 >>>>
 
@@ -529,13 +531,44 @@ Combat system (since 1.4)
 - ``mdg_projectile`` / ``rdg_projectile``：投射物标志（高地射程加成、低击高规则）
 - ``mdg_projectile_speed`` / ``rdg_projectile_speed``：分路投射物飞行速度（格/秒；取代 delay / 共用 projectile_speed）
 - ``projectile_lead``：远程投射物是否预判移动目标（0/1；通常由科技 ``effect bonus`` 打开）
-- 帝国时代 2 特色科技常用引擎钩子（不写死文明名）：``unpack_time``（投石机移动后架设延迟）、``gather_byproduct``（如造纸术伐木附带黄金）、``kill_resource_vs``（如酋长：击杀匹配类型单位时杀手获得指定资源；``effect bonus kill_resource_vs peasant resource1 5``，类型按 ``type_name`` / ``is_a`` 匹配，资源为 ``resourceN`` 或 ``gold``/``wood`` 等别名）、升级上的 ``reveal_map``（环球航行探索全图）
+- 帝国时代 2 特色科技常用引擎钩子（不写死文明名）：``unpack_time`` / ``pack_time``（见下文 *打包 / 拆包*）、``gather_byproduct``（如造纸术伐木附带黄金）、``kill_resource_vs``（如酋长：击杀匹配类型单位时杀手获得指定资源；``effect bonus kill_resource_vs peasant resource1 5``，类型按 ``type_name`` / ``is_a`` 匹配，资源为 ``resourceN`` 或 ``gold``/``wood`` 等别名）、升级上的 ``reveal_map``（环球航行探索全图）
 - ``mdg_splash`` / ``rdg_splash``、``mdg_radius`` / ``rdg_radius``、``mdg_splash_decay``
 - ``mdg_targets`` / ``rdg_targets``：``ground``、``air``、``unit``、``building`` 或类型名
 - ``mdg_crit`` / ``rdg_crit``、``mdg_crit_rate`` / ``rdg_crit_rate``、``crit_vs``
 - ``mdg_piercing`` / ``rdg_piercing``\ `` （无视护甲百分比）``、``piercing_vs``
 - ``mdg_explode`` / ``rdg_explode``、``exp_dgf``、``exp_hp_cost``、``mdg_explode_vs``
 - 单位**所在地形**上的修正（自 1.4.5.0，1.4.5.1 起百分比）：``mdg_on_terrain`` / ``rdg_on_terrain``、``mdg_cd_on_terrain`` / ``rdg_cd_on_terrain``、``charge_*_terrain`` 等使用小数百分比（``.33`` = ±33%%）；地形 ``class terrain`` 上可用 ``speed_vs`` / ``cover_vs`` / ``dodge_vs`` / ``mdg_vs`` 等按单位类型修正。详见 ``building-land-terrain.rst`` *单位在地形上的战斗修正*
+
+打包 / 拆包（规则驱动，对齐帝国 2 巨型投石机）
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+任意单位可在 ``rules.txt`` 启用帝国 2 式打包/拆包（不写死单位名）。界面用语对齐原版：**打包** / **拆包**（不是「架设」）。
+
+======= ================ ============================================================
+字段      类型             含义
+======= ================ ============================================================
+``packable`` 0/1         启用（需正的 ``unpack_time`` / ``pack_time``）
+``unpack_time`` 秒       拆包（展开开火）时长；内部为 PRECISION 毫秒
+``pack_time`` 秒         打包（收起行军）时长；省略则用 ``unpack_time``
+``spawn_packed`` 0/1     出生为打包态（默认 1）或已拆包（0）
+``packed_mdf`` / ``packed_rdf``  可选：打包态近战/远程护甲
+======= ================ ============================================================
+
+行为：
+
+- **打包态**：可移动，不可攻击。**拆包态**：可攻击，不可移动。
+- 移动指令会自动打包；攻击指令会自动拆包。**停止**可立刻取消进行中的切换。
+- 进度与训练相同：``completeness,0..10`` → ``proportion_*``。
+- 菜单命令：``pack``（打包）/ ``unpack``（拆包）。
+
+示例（aoe2 巨型投石机）::
+
+    packable 1
+    spawn_packed 1
+    unpack_time 11
+    pack_time 11
+    packed_mdf 2
+    packed_rdf 8
 
 自动威胁度 / 选敌优先级（自 1.4.5.2）
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1056,7 +1089,7 @@ Economy (since 1.4.0.x)
 | ``carry_capacity_<类型>`` | 按矿床/建筑类型覆盖运载（如猎物尸体） |
 | ``gather_rate`` / ``gather_rate_<类型>`` | continuous 每秒采集量；未设则用 qty÷time |
 
-科技可用 ``effect bonus carry_capacity N`` 提高运载（如独轮车）。``gather_time_*`` 百分比加成在 continuous 下会换算为更快的有效速率。
+科技可用 ``effect bonus carry_capacity N`` 提高运载（如独轮车）。``gather_time_*`` 百分比加成在 continuous 下会换算为更快的有效速率；键名对应矿床 ``type_name``（如 ``gather_time_food_livestock`` 与 ``gather_time_food_carcass``），可把牧羊与打猎文明加成拆开，无需在引擎硬编码文明名。
 
 市场机制（自 1.4.6.9）
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -1528,7 +1561,7 @@ AI 模式（``ai_mode``\ ）
 
 ``ai_mode patrol``\ 无效——巡逻（patrol）是需要路线目标的命令，不是一种 AI 模式。中立电脑（``computer_only ... neutral``\ ）的单位仍会被引擎强制设为 guard + 反击。
 
-玩家单位在 ``offensive``\ / ``defensive``\ / ``chase``\ 模式下不会主动攻击 中立单位，防御模式也不会因中立者而撤退；对中立普通 ``go`` 只移动；对 ``is_huntable`` 默认仍可 ``attack`` 并造成伤害；若要 AI 把中立 creep/NPC 当自动目标，须下达 强制攻击命令 （``imperative``\ ，例如 Ctrl+点击）。
+玩家单位在 ``offensive``\ / ``defensive``\ / ``chase``\ 模式下不会主动攻击 中立单位，防御模式也不会因中立者而撤退；对**所有中立单位**默认命令是 ``go``（只移动 / 靠近）；要攻击中立须下达 强制攻击命令 （``imperative``\ ，例如 Ctrl+退格，或选 ``go`` 后 Ctrl+回车）。已归属的 ``is_huntable`` 默认仍可 ``attack``（屠宰）。
 
 自动采集 / 自动修理
 
@@ -1541,12 +1574,18 @@ AI 模式（``ai_mode``\ ）
 
 详见 ``../player/hunting.htm``\ 。概要：
 
-- 村民退格/右键 ``is_huntable`` 动物默认攻击（普通攻击即造成伤害）；击杀后生成 ``food_deposit``（如 ``food_carcass``\ ），攻击命令完成且不误播 ``order_impossible``\ 。
-- 动物属性：``is_huntable``\ 、``flee_on_hit``\ 、``herdable``\ 、``food_deposit``\ 、``food_deposit_qty``\ 、``no_number``\ 。
-- 地图放置：``computer_only 0 0 neutral \<方格\> \<数量\> deer``\ ；随机地图会自动生成野生动物。
+- 对中立单位（含可狩猎动物）默认命令是 ``go``（靠近 / 归属）；要攻击须强制命令（Ctrl+退格，或选 ``go`` 后 Ctrl+回车）。已归属的 ``is_huntable`` 默认仍是 ``attack``。
+- 村民强制攻击 ``is_huntable`` 动物可造成伤害并生成 ``food_deposit``（如 ``food_carcass``，aoe2 畜牧可用 ``food_livestock``），攻击命令完成且不误播 ``order_impossible``。
+- 动物属性：``is_huntable``、``flee_on_hit``、``pursue_attacker``、``herdable``、``claimable``、``claim_range``、``food_deposit``、``food_deposit_qty``、``no_number``。
+- 地图放置：``computer_only 0 0 neutral \<方格\> \<数量\> deer``；随机地图会自动生成野生动物。
 - 语音标识：配置了 ``is_huntable`` / ``herdable`` 的单位播报为「鹿 , 动物」，`` 不是`` 「中立 , NPC」。Ctrl+Shift+F4 切到仅含野生动物的玩家时播报「你是动物」。剧情 NPC（``quest_npc`` 等）仍播报「中立 , NPC」。
 - 外交隔离：仅含野生动物的 ``computer_only`` 槽位（如 ``deer`` / ``sheep`` / 自定义 ``tiger``）不进 ``ai`` 联盟，不与玩家、敌对 creep、其它动物群结盟；混编槽位除外。详见 ``../player/hunting.htm`` §3.1。
-- 科技 ``hunting_techniques``\ ：提升尸体与浆果采集效率。
+- 科技 ``hunting_techniques``：提升尸体与浆果采集效率。
+- 牧羊 / 打猎分开加速：不同 ``food_deposit`` + ``gather_time_<矿床>``（aoe2：不列颠 ``food_livestock``，蒙古 ``food_carcass``）。规则驱动，不硬编码文明名。
+- ``pursue_attacker 1``：反击后跨格追击攻击者（帝国 2 式拖野猪到城镇中心）。鹿/羊用 ``flee_on_hit`` 逃跑。
+- ``pursue_leash_range N``：与追击目标距离超过 N 毫米则脱仇（``0``=不限制）。野猪用 ``48000``（约 4 格），脱仇后忘仇并走回出生点。
+- ``claimable 1``：中立期间被任意非中立单位靠近即归属（帝国 2 领羊）；与 ``can_herd`` / ``herdable`` 驱赶独立。
+- 草场 / 刷单位建筑：``spawns_unit``、``larva_spawn_time``、``larva_cap``，可选 ``spawn_player_cap`` / ``spawn_immediate``（aoe2 蒙古 ``pasture``：无磨坊，需城镇中心，可存食物）。
 
 自动探索
 
@@ -1730,7 +1769,7 @@ UI 语音：在 ``ui/style.txt`` 定义 ``def build_field_\<名称\>`` + ``title
 | ``larva_spawn_time N`` | 生成间隔（秒） |
 | ``morph_as_train 1`` | 变形按目标单位训练成本/时间计费（幼虫变虫族单位） |
 
-建成时填满至 ``larva_cap``，之后按间隔补员。同格生成宿主上的 ``time_cost`` 百分比 buff（如注卵）会加速由其 ``spawns_unit`` 生成的单位变形。仅设 ``larva_cap`` 不写 ``spawns_unit`` 时，兼容默认生成 ``larva``。
+默认（如星际主巢）：建成时填满至 ``larva_cap``，之后按间隔补员。若设 ``spawn_immediate 1``（如 aoe2 草场）：建成时只刷 **1** 只，再按间隔补到 ``larva_cap``。同格生成宿主上的 ``time_cost`` 百分比 buff（如注卵）会加速由其 ``spawns_unit`` 生成的单位变形。仅设 ``larva_cap`` 不写 ``spawns_unit`` 时，兼容默认生成 ``larva``。
 
 工人施工模式
 >>>>>>>>>>>>
@@ -1947,7 +1986,13 @@ intro (since 1.4.1.5)
     title 87
     intro 1001
 
-文本须存在于 ``tts.txt`` 中。
+文本须存在于 ``tts.txt`` 中。阵营也可写 ``intro``：选阵营时按 **G** 打开简介子菜单逐句听（自 1.4.7.2）。长简介可在 ``tts.txt`` 用**缩进续行**排版，例如::
+
+    8520 独特单位长弓兵。
+      独特科技英皇侍卫、战狼号。
+      牧羊更快。
+
+续行会拼进同一 TTS 编号，G 菜单按行朗读；没有换行时仍按句号切开。
 
 Combat sound system (since 1.3.8.2; 1.4.4.6 renamed matk/ratk to mdg/rdg)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

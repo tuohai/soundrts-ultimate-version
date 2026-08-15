@@ -162,10 +162,10 @@ Player units in ``offensive``, ``defensive``, or ``chase`` mode:
 
 - do not auto-attack neutral units (`computer_only ... neutral` creeps / NPCs / wildlife);
 - do not flee because of neutrals (defensive mode only weighs real hostile threats);
-- default / plain ``go`` on a neutral (non-imperative) only moves — no AttackAction;
-- default order on ``is_huntable`` animals is still ``attack``, and plain attack deals damage;
-- to make the AI treat a neutral creep / NPC as an auto-engage target, issue a forced attack
-  (``imperative`` — e.g. Ctrl+click; the engine converts imperative ``go`` into ``attack``).
+- default order on **all** neutral units (wildlife / creep / NPC) is ``go`` (approach / move) — no AttackAction;
+- owned (non-neutral) ``is_huntable`` units still default to ``attack`` (e.g. slaughter claimed sheep); plain attack deals damage;
+- to attack neutrals or make AI treat them as auto-engage targets, issue a forced attack
+  (``imperative`` — Ctrl+Backspace, or ``go`` then Ctrl+Enter; the engine converts imperative ``go`` into ``attack``).
 
 
 Voice: hunt animals (``is_huntable`` / ``herdable``, e.g. deer, sheep) are announced as

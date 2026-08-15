@@ -113,7 +113,8 @@
 8321 Cerf
 8322 Mouton
 8323 Sanglier
-8324 Carcasse
+8324 Carcasse
+8330 Carcasse de bétail
 
 8120 Milicien
 8121 Homme d'armes

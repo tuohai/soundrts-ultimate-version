@@ -100,3 +100,15 @@ def test_worker_helpers_default_trip():
     assert Worker.get_gather_mode(w) == "trip"
     assert Worker.get_gather_mode(w) not in ("continuous", "aoe", "aoe2")
     assert abs(Worker.get_gather_rate(w, "resource2", None) - 0.4) < 1e-6
+
+
+def test_gather_byproduct_matches_wood_deposit_type_name():
+    stored = []
+    unit = _worker()
+    unit.gather_byproduct = {"wood": (0.5, "resource1")}
+    unit.player = types.SimpleNamespace(store=lambda res, amt: stored.append((res, amt)))
+    deposit = _deposit(type_name="wood", resource_type="resource2")
+    order = _order(unit, deposit)
+    order._apply_gather_byproduct(2.0)
+    assert stored == [("resource1", 1 * PRECISION)]
+    assert abs(order._byproduct_accum - 0.0) < 1e-9

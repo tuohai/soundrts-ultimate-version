@@ -930,9 +930,16 @@
 4934 herd
 4935 herded
 4936 hunting techniques
+4937 claimed
+4938 pack
+4939 unpack
 4940 projectile speed
 4941 melee projectile speed
 4942 ranged projectile speed
+4943 packing
+4944 unpacking
+4945 packed
+4946 unpacked
 4950 Co-op campaign
 4951 Local co-op campaign
 4952 Select co-op campaign
@@ -1587,6 +1594,7 @@
 5743	toggle accessibility voice
 5744	resource on kill
 5745	resource on kill bonus vs
+5746	gather byproduct
 5750	language
 5751	system default
 5752	current

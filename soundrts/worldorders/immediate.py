@@ -252,6 +252,9 @@ class StopOrder(ImmediateOrder):
                 pass
                 
         # 然后正常取消所有命令
+        from ..world_siege_pack import cancel_siege_transition
+
+        cancel_siege_transition(self.unit)
         self.unit.cancel_all_orders()
         self.unit.stop()
         

@@ -1179,3 +1179,4 @@ HOTKEY_SAY_SQUARE_INFO = [5738]  # 方格地形信息
 TERRAIN_COVER = [5739]  # terrain cover / 地形掩护
 KILL_RESOURCE = [5744]  # resource on kill
 KILL_RESOURCE_VS = [5745]  # resource on kill bonus vs
+GATHER_BYPRODUCT = [5746]  # gather byproduct (e.g. gold while chopping wood)

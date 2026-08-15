@@ -121,8 +121,64 @@ def test_aoe2_rules_market_block():
         "production_rates 0.7 1.0 1.6 0.3",
         "can_train trade_cart",
         "requirements market feudal_age",
+        "def mongol_market",
+        "market mongol_market",
     ):
         assert name in text, name
+
+
+def test_aoe2_mongol_market_requires_town_center_not_mill():
+    """Mongols have no mill; market is remapped to mongol_market (TC + Feudal)."""
+    from types import SimpleNamespace
+
+    from soundrts.definitions import Rules, rules as global_rules
+    from soundrts.world_build_rules import resolve_buildable_type
+
+    root = Path(__file__).resolve().parents[2]
+    base = (root / "res" / "rules.txt").read_text(encoding="utf-8")
+    mod = (root / "mods" / "aoe2" / "rules.txt").read_text(encoding="utf-8")
+    r = Rules()
+    r.load(base, mod)
+
+    mongol = r.unit_class("mongol_market")
+    assert mongol is not None
+    reqs = list(getattr(mongol, "requirements", None) or [])
+    assert "mill" not in reqs
+    assert "town_center" in reqs
+    assert "feudal_age" in reqs
+
+    generic = r.unit_class("market")
+    gen_reqs = list(getattr(generic, "requirements", None) or [])
+    assert "mill" in gen_reqs  # other civs still need mill
+
+    saved = global_rules._dict
+    saved_c = getattr(global_rules, "classes", None)
+    global_rules._dict = r._dict
+    global_rules.classes = r.classes
+    try:
+        player = SimpleNamespace(faction="mongols")
+        assert resolve_buildable_type(player, "market") == "mongol_market"
+
+        # Tab 播报须用重映射后的需求，不能仍读通用 market 的磨坊
+        from soundrts.clientgameorder import OrderTypeView, update_orders_list
+
+        update_orders_list()
+        villager = SimpleNamespace(
+            player=player,
+            can_build=("market",),
+            can_train=(),
+            can_research=(),
+            basic_skills=(),
+            orders=[],
+        )
+        view = OrderTypeView("build market", villager)
+        assert "mill" not in view.requirements
+        assert "town_center" in view.requirements
+        assert "feudal_age" in view.requirements
+    finally:
+        global_rules._dict = saved
+        if saved_c is not None:
+            global_rules.classes = saved_c
 
 
 def test_aoe2_market_menu_includes_train_trade_cart():

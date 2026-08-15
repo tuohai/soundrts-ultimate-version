@@ -12,15 +12,16 @@ SoundRTS 提供帝国时代风格的狩猎：村民攻击野生动物，击杀�
 -----------
 
 
-1. 退格 / 默认命令或右键动物 → 对 ``is_huntable`` 下 ``attack``（普通攻击即可造成伤害；不必强制命令）
-2. 击杀后 → 原地生成 ``food_carcass`` （食物尸体矿床）；攻击命令标记完成，**不会**误播 ``order_impossible``
+1. 退格 / 默认命令或右键动物 → ``go``（靠近 / 归属），**己方牲畜也一样**；有 ``can_herd`` 的工人对 ``herdable`` 仍默认 ``herd``。要**攻击**（打猎 / 屠宰）须用强制命令（Ctrl+退格，或选 ``go`` 后 Ctrl+回车）
+2. 击杀后 → 按动物 ``food_deposit`` 生成尸体矿床（原版多为 ``food_carcass``；aoe2 羊为 ``food_livestock``）；攻击命令标记完成，**不会**误播 ``order_impossible``
 3. 自动采集 → 工人击杀后可自动排队采集尸体；若开启 ``auto_gather``，也会采集并运回仓库
-4. 受击逃跑 → 鹿、羊被攻击后会逃离；野猪会反击
-5. 牧羊（可选）→ 配置了 ``can_herd 1`` 的工人可驱赶 ``herdable`` 动物（如羊）
+4. 受击逃跑 → 鹿、羊被攻击后会逃离；野猪会反击并跨格追击（``pursue_attacker``，可诱到城镇中心；拉开 ``pursue_leash_range`` 会脱仇）
+5. 靠近归属（可选）→ 任意非中立单位靠近中立 ``claimable`` 动物即归属（帝国 2 式领羊），并播放确认音效与「羊 , 已归属」类提示；``can_herd`` 仍是单独的驱赶跟随
+6. 牧羊（可选）→ 配置了 ``can_herd 1`` 的工人可驱赶 ``herdable`` 动物（如羊）
+7. 草场（可选）→ 建筑配置 ``spawns_unit`` / ``spawn_player_cap``（aoe2 蒙古 ``pasture``）周期性刷出己方牲畜；``spawn_immediate 1`` 建成时只出 **1** 只，之后按间隔补到同格 ``larva_cap``。蒙古牧民不建磨坊/农田，草场只需城镇中心，并可存放食物
 
 
-说明：对普通中立 creep / NPC 的默认命令是 ``go``（只移动）；对可狩猎动物默认仍是 ``attack``。
-进攻 / 防御 / 追击 AI **不会**自动去打中立动物，除非下达强制攻击。
+说明：对**所有中立单位**（野生动物、creep、NPC）默认命令都是 ``go``（移动 / 靠近）。进攻 / 防御 / 追击 AI **不会**自动攻击中立单位，除非下达强制攻击。
 
 
 ----
@@ -130,19 +131,23 @@ SoundRTS 提供帝国时代风格的狩猎：村民攻击野生动物，击杀�
    * - 类型
      - 说明
    * - ``deer`` （鹿）
-     - 35 食物，受击逃跑
+     - 35 食物，受击逃跑；``food_deposit food_carcass``
    * - ``sheep`` （羊）
-     - 25 食物，可驱赶，受击逃跑
+     - 可驱赶，受击逃跑；原版 ``food_carcass``，aoe2 ``food_livestock``
    * - ``boar`` （野猪）
-     - 50 食物，会反击
+     - 会反击并跨格追击（``pursue_attacker``，可诱到城镇中心）；``food_deposit food_carcass``
    * - ``food_carcass``
-     - 狩猎后留下的食物矿床（``collision 0``，不占格）
+     - 狩猎尸体矿床（``collision 0``，不占格）
+   * - ``food_livestock``
+     - aoe2 畜牧尸体矿床（牧羊加成针对此类型）
    * - ``orchard``
      - 浆果丛/果园矿床，采集后运回基地计入食物
 
 
 
-村民 ``can_gather`` 已包含 ``food_carcass`` （及 ``orchard``）。
+村民 ``can_gather`` / ``can_gather_deposit`` 应列出可采的尸体类型（如 ``food_carcass``，aoe2 另加 ``food_livestock``），以及用到的 ``orchard``。
+
+**牧羊 / 打猎分开加成（规则驱动）：** 给不同动物写不同 ``food_deposit``，再用 ``on_phase`` / 科技 ``gather_time_<矿床>``（例：不列颠 ``gather_time_food_livestock``，蒙古 ``gather_time_food_carcass``）。引擎按矿床 ``type_name`` 匹配加成；AI 能否狩猎由 ``is_huntable`` 动物的 ``food_deposit`` 推导，代码不写死文明名。
 
 4.1.1 储量播报名与入库资源
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -160,6 +165,10 @@ SoundRTS 提供帝国时代风格的狩猎：村民攻击野生动物，击杀�
 .. code-block:: text
 
    def food_carcass
+   class deposit
+   resource_type resource3
+
+   def food_livestock
    class deposit
    resource_type resource3
    
@@ -184,8 +193,16 @@ SoundRTS 提供帝国时代风格的狩猎：村民攻击野生动物，击杀�
      - 可被村民狩猎；右键默认攻击
    * - ``flee_on_hit 1``
      - 受击后向远离攻击者方向逃跑
+   * - ``pursue_attacker 1``
+     - 反击后跨格追击攻击者（野猪诱敌到城镇中心）
+   * - ``pursue_leash_range``
+     - 与追击目标的最大距离（毫米）；超出则忘仇并回出生点（``0``=不限制；野猪 ``48000``≈4 格）
    * - ``herdable 1``
      - 可被 ``can_herd`` 工人驱赶跟随
+   * - ``claimable 1``
+     - 仍为中立时，附近任意非中立单位靠近即归属（帝国 2 领羊）；与 ``can_herd`` 驱赶机制独立
+   * - ``claim_range``
+     - 归属距离（毫米；``0``=仅同格；aoe2 羊用 ``12000``）
    * - ``herd_leash_range``
      - 驱赶跟随的最大距离（毫米）
    * - ``food_deposit``

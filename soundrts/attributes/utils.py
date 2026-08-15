@@ -255,6 +255,7 @@ STAT_TTS_NAMES = {
     "dodge_vs": mp.DODGE_VS,
     "kill_resource": mp.KILL_RESOURCE,
     "kill_resource_vs": mp.KILL_RESOURCE_VS,
+    "gather_byproduct": mp.GATHER_BYPRODUCT,
 }
 
 

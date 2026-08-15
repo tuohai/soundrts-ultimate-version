@@ -8,15 +8,16 @@ SoundRTS admite caza al estilo Age of Empires: los trabajadores atacan a la faun
 1. Flujo del jugador
 --------------------
 
-1. Retroceso / orden por defecto o clic derecho en un animal → ``attack`` sobre ``is_huntable`` (el ataque normal hace daño; no hace falta imperativo)
-2. Al matar → aparece ``food_carcass``; la orden de ataque se completa (**sin** pitido falso ``order_impossible``)
+1. Retroceso / orden por defecto o clic derecho en un animal → ``go`` sobre fauna neutra (acercarse / reclamar); trabajadores con ``can_herd`` siguen usando ``herd`` por defecto en ``herdable``. Para **atacar** neutrales use imperativo (Ctrl+Retroceso, o ``go`` + Ctrl+Enter)
+2. Al matar → aparece el depósito indicado por ``food_deposit`` del animal (juego base: ``food_carcass``; ovejas aoe2: ``food_livestock``); la orden de ataque se completa (**sin** pitido falso ``order_impossible``)
 3. Recolección automática → tras matar, el trabajador puede encolar recolección; con ``auto_gather`` también recoge y lleva comida
-4. Huir al ser golpeado → ciervos y ovejas huyen; los jabalíes contraatacan
-5. Pastoreo (opcional) → los trabajadores con ``can_herd 1`` pueden pastorear animales ``herdable`` (p. ej. ovejas)
+4. Huir al ser golpeado → ciervos y ovejas huyen; los jabalíes contraatacan y persiguen entre casillas (``pursue_attacker``, se pueden atraer al centro urbano; ``pursue_leash_range`` corta la agresión si abre una gran distancia)
+5. Captura (opcional) → cualquier unidad no neutral cerca de un animal ``claimable`` neutro toma posesión (ovejas estilo AoE2); ``can_herd`` sigue siendo un pastoreo aparte
+6. Pastoreo (opcional) → los trabajadores con ``can_herd 1`` pueden pastorear animales ``herdable`` (p. ej. ovejas)
+7. Pastizal (opcional) → un edificio con ``spawns_unit`` / ``spawn_player_cap`` (aoe2 ``pasture`` mongol) genera ganado propio
 
 
-Nota: la orden por defecto sobre creeps / PNJ neutrales comunes es ``go`` (solo mover); sobre animales cazables sigue siendo ``attack``.
-Los modos ofensivo / defensivo / persecución **no** autoatacan animales neutrales sin un ataque imperativo.
+Nota: la orden por defecto sobre **todas** las unidades neutrales (fauna, creeps, PNJ) es ``go`` (mover / acercarse). Los modos ofensivo / defensivo / persecución **no** autoatacan neutrales sin un ataque imperativo.
 
 ----
 
@@ -104,15 +105,19 @@ Unidades integradas
    * - Tipo
      - Notas
    * - ``deer``
-     - 35 comida, huye al ser golpeado
+     - 35 comida, huye al ser golpeado; ``food_deposit food_carcass``
    * - ``sheep``
-     - 25 comida, pastoreable, huye
+     - pastoreable, huye; base ``food_carcass``, aoe2 ``food_livestock``
    * - ``boar``
-     - 50 comida, contraataca
+     - 50 comida, contraataca y persigue entre casillas (``pursue_attacker``); ``food_deposit food_carcass``
    * - ``food_carcass``
-     - cadáver recolectable (``collision 0``)
+     - depósito de caza (``collision 0``)
+   * - ``food_livestock``
+     - cadáver de ganado aoe2 (bonus de pastores)
 
-El ``can_gather`` de los trabajadores incluye ``food_carcass`` y ``orchard``.
+El ``can_gather`` / ``can_gather_deposit`` de los trabajadores debe listar cada tipo de cadáver (p. ej. ``food_carcass`` y, en aoe2, ``food_livestock``), más ``orchard`` si se usa.
+
+**Bonus de pastores / cazadores separados (por reglas):** use distintos ``food_deposit`` y luego ``gather_time_<depósito>`` (británicos ``gather_time_food_livestock``, mongoles ``gather_time_food_carcass``). El motor empareja por ``type_name`` del depósito; la IA caza según ``is_huntable`` → ``food_deposit``, sin hardcodear civs.
 
 Propiedades de animales
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -126,8 +131,16 @@ Propiedades de animales
      - cazable; el clic derecho por defecto es atacar
    * - ``flee_on_hit 1``
      - huir del atacante
+   * - ``pursue_attacker 1``
+     - tras contraatacar, seguir entre casillas (atraer jabalí al centro urbano)
+   * - ``pursue_leash_range``
+     - distancia máxima al objetivo de persecución en mm; más allá, olvida y vuelve a casa (``0`` = sin límite; jabalíes usan ``48000`` ≈ 4 casillas)
    * - ``herdable 1``
      - puede ser pastoreado por trabajadores ``can_herd``
+   * - ``claimable 1``
+     - en neutro, cualquier unidad no neutral cercana lo reclama (oveja AoE2); independiente de ``can_herd``
+   * - ``claim_range``
+     - distancia de reclamo en mm (``0`` = solo misma casilla; ovejas aoe2 ``12000``)
    * - ``food_deposit``
      - tipo de depósito de cadáver al morir
    * - ``food_deposit_qty``

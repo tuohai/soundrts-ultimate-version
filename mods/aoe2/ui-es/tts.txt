@@ -113,7 +113,8 @@
 8321 Ciervo
 8322 Oveja
 8323 Jabalí
-8324 Cadáver
+8324 Cadáver
+8330 Cadáver de ganado
 
 8120 Milicia
 8121 Hombre de armas

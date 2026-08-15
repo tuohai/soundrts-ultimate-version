@@ -89,7 +89,17 @@ def test_town_watch_and_careening_exist(aoe2_rules):
 
 
 def test_heavy_plow_on_peasant(aoe2_rules):
-    assert "heavy_plow" in (aoe2_rules.get("peasant", "can_use_tech") or [])
+    peasant_techs = aoe2_rules.get("peasant", "can_use_tech") or []
+    assert "heavy_plow" in peasant_techs
+    assert "horse_collar" in peasant_techs
+    assert "crop_rotation" in peasant_techs
+    assert "frank_horse_collar" not in peasant_techs
+    assert "frank_heavy_plow" not in peasant_techs
+    assert "frank_crop_rotation" not in peasant_techs
+    frank_techs = aoe2_rules.get("frank_villager", "can_use_tech") or []
+    assert "frank_heavy_plow" in frank_techs
+    assert "heavy_plow" not in frank_techs
+    assert aoe2_rules.get("franks", "peasant") == ["frank_villager"]
 
 
 def test_chinese_tc_bonus(aoe2_rules):

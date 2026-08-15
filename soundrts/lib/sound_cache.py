@@ -27,38 +27,55 @@ class TextTable(dict):
 
     def _update_from_text(self, txt):
         lines = txt.split("\n")
-        for line in lines:
-            line = line.strip()
+        current_key = None
+        for raw in lines:
+            stripped = raw.strip()
             # 跳过空行和注释行
-            if not line or line.startswith(";") or line.startswith("//"):
+            if not stripped or stripped.startswith(";") or stripped.startswith("//"):
                 continue
-                
+
+            # Indented continuation of the previous numeric/string TTS entry.
+            # Lets authors break long intros across lines in tts.txt:
+            #   8520 Unique unit …
+            #     Unique techs …
+            if current_key is not None and raw[:1] in " \t":
+                prev = self.get(current_key, "")
+                piece = stripped
+                self[current_key] = (prev + "\n" + piece) if prev else piece
+                continue
+
             try:
                 # 处理等号分隔的格式: 例如 "objective be to eliminate the enemy = 目标为消灭敌人"
-                if "=" in line:
-                    key, value = line.split("=", 1)
+                if "=" in stripped:
+                    key, value = stripped.split("=", 1)
                     key = key.strip()
                     value = value.strip()
                     
                     # 检查是否为词组翻译（包含空格的key）
                     if " " in key:
                         self.phrase_translations[key] = value
+                        current_key = None
                         continue
                     else:
                         # 处理常规带等号的键值对
                         if value:
                             self[key] = value
+                            current_key = key
                         else:
-                            warning("in '%s', empty value ignored: %s", TXT_FILE, line)
+                            warning("in '%s', empty value ignored: %s", TXT_FILE, stripped)
+                            current_key = None
                 # 处理原有的空格分隔格式: 例如 "123 翻译文本"
                 else:
-                    key, value = line.split(None, 1)
+                    key, value = stripped.split(None, 1)
                     if value:
                         self[key] = value
+                        current_key = key
                     else:
-                        warning("in '%s', empty value ignored: %s", TXT_FILE, line)
+                        warning("in '%s', empty value ignored: %s", TXT_FILE, stripped)
+                        current_key = None
             except ValueError:
-                warning("in '%s', syntax error: %s", TXT_FILE, line)
+                warning("in '%s', syntax error: %s", TXT_FILE, stripped)
+                current_key = None
                         
     def translate_phrase(self, phrase):
         """尝试翻译完整的词组"""

@@ -79,6 +79,34 @@ def canonical_resource_name(token) -> Optional[str]:
     return resource_label(idx)
 
 
+def resource_or_type_key(token) -> str:
+    """``wood`` / ``resource2`` → ``resource2``; unknown deposit names stay as-is."""
+    if token is None:
+        return ""
+    return canonical_resource_name(token) or str(token)
+
+
+def unpack_gather_byproduct_entry(entry, default_product="resource1"):
+    """Return ``(rate_per_sec, product_resourceN)``.
+
+    Stored as ``(rate, product)``; a bare rate keeps ``default_product``
+    (Paper Money gold = resource1).
+    """
+    if isinstance(entry, dict):
+        rate = entry.get("rate", 0)
+        product = entry.get("resource") or default_product
+    elif isinstance(entry, (list, tuple)) and len(entry) >= 2:
+        rate, product = entry[0], entry[1]
+    else:
+        rate, product = entry, default_product
+    try:
+        rate_f = float(rate)
+    except (TypeError, ValueError):
+        rate_f = 0.0
+    product_key = canonical_resource_name(product) or str(product or default_product)
+    return rate_f, product_key
+
+
 def menu_label_for_resource(index: int) -> str:
     """Order-arg token shown in menus (may be a style-friendly alias).
 

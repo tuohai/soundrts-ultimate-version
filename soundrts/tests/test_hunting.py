@@ -60,7 +60,7 @@ def test_attack_order_completes_when_huntable_target_gone():
     worker.orders = []
     worker.player = types.SimpleNamespace(get_object_by_id=lambda _id: _HuntableTarget())
 
-    assert worker.get_default_order(99) == "attack"
+    assert worker.get_default_order(99) == "go"
 
 
 def test_is_an_enemy_honors_imperative_attack_order():
@@ -203,9 +203,11 @@ def test_wildlife_wander_returns_toward_origin_when_too_far():
 def test_computer_ai_hunts_when_no_gather_target():
     src = Path("soundrts/worldplayercomputer.py").read_text(encoding="utf-8")
     assert "def _worker_can_hunt" in src
+    assert "def _huntable_food_deposit_types" in src
     assert "def _choose_hunt_target" in src
     assert "hunt_target = self._choose_hunt_target(u)" in src
     assert 'u.take_order(["attack", hunt_target.id], imperative=True)' in src
+    assert '"food_carcass" in deposits' not in src
 
 
 def test_computer_ai_herding_helpers():
@@ -216,7 +218,8 @@ def test_computer_ai_herding_helpers():
     assert "def _herded_animals" in src
     assert "herd_target = self._choose_herd_target(u)" in src
     assert 'u.take_order(["herd", herd_target.id], imperative=True)' in src
-    assert "getattr(o, \"herdable\", 0) and self._worker_can_herd(worker)" in src
+    assert "getattr(o, \"herdable\", 0)" in src
+    assert "_worker_can_herd(worker)" in src
 
 
 def test_attack_order_completes_when_huntable_target_gone():

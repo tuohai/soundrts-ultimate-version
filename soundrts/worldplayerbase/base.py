@@ -1175,10 +1175,10 @@ class Player:
             unit.building_land = land
             if hasattr(self, "_assign_map_select_slot"):
                 self._assign_map_select_slot(unit, place)
-            from ..world_build_rules import fill_spawn_host, is_unit_spawn_host
+            from ..world_build_rules import init_spawn_host_on_ready, is_unit_spawn_host
 
             if is_unit_spawn_host(unit):
-                fill_spawn_host(unit, notify=False)
+                init_spawn_host_on_ready(unit, notify=False)
 
     @property
     def available_population(self):

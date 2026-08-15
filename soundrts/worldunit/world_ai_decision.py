@@ -52,11 +52,106 @@ class CreatureAIDecision(Entity):
     _herd_leader = None
     herdable = 0
     flee_on_hit = 0
+    pursue_attacker = 0
+    pursue_leash_range = 0
     last_attacker = None
 
     def _is_neutral_target(self, other):
         p = getattr(other, "player", None)
         return p is not None and getattr(p, "neutral", False)
+
+    def _is_wildlife_animal(self, other):
+        """Living huntable/herdable/claimable unit (wild or owned livestock)."""
+        if other is None or other is self or getattr(other, "hp", 0) <= 0:
+            return False
+        if getattr(other, "player", None) is None:
+            return False
+        for attr in ("is_huntable", "herdable", "claimable"):
+            raw = getattr(other, attr, None)
+            if raw is None:
+                raw = getattr(type(other), attr, 0)
+            if CreatureAIDecision._rules_flag_truthy(raw):
+                return True
+        return False
+
+    def _is_approach_only_target(self, other):
+        """Default/go should approach, not fight: neutrals and wildlife/livestock."""
+        return self._is_neutral_target(other) or self._is_wildlife_animal(other)
+
+    @staticmethod
+    def _rules_flag_truthy(value):
+        if value in (1, "1", True):
+            return True
+        if isinstance(value, list) and value and str(value[0]) in ("1", "true", "True"):
+            return True
+        return False
+
+    @staticmethod
+    def _rules_int_attr(unit, name, default=0):
+        raw = getattr(unit, name, None)
+        if raw is None:
+            raw = getattr(type(unit), name, default)
+        if isinstance(raw, list):
+            raw = raw[0] if raw else default
+        try:
+            return int(raw)
+        except (TypeError, ValueError):
+            return default
+
+    def _has_pursue_attacker(self):
+        raw = getattr(self, "pursue_attacker", None)
+        if raw is None:
+            raw = getattr(type(self), "pursue_attacker", 0)
+        return CreatureAIDecision._rules_flag_truthy(raw)
+
+    def _pursue_target_too_far(self, target=None):
+        """True when target is beyond ``pursue_leash_range`` (mm). 0 = unlimited."""
+        leash = CreatureAIDecision._rules_int_attr(self, "pursue_leash_range", 0)
+        if leash <= 0:
+            return False
+        target = target if target is not None else self.last_attacker
+        if target is None or self.place is None:
+            return False
+        if getattr(target, "place", None) is None:
+            return True
+        return square_of_distance(self.x, self.y, target.x, target.y) > leash * leash
+
+    def _clear_pursue_aggro(self, return_home=True):
+        """Forget chase target (AoE2-style deaggro) and optionally walk home."""
+        self.last_attacker = None
+        action = getattr(self, "action", None)
+        if action is not None and action.__class__.__name__ == "AttackAction":
+            action.complete()
+        if not return_home or self.speed <= 0:
+            return False
+        origin = getattr(self, "_wander_origin", None)
+        if origin is None and self.place is not None:
+            self._wander_origin = (self.place, self.x, self.y)
+            origin = self._wander_origin
+        origin_place = origin[0] if origin else None
+        if origin_place is not None and getattr(origin_place, "id", None) is not None:
+            self.take_order(["go", origin_place.id], imperative=True)
+            return True
+        return False
+
+    def _flee_on_hit_enabled(self):
+        flee_raw = getattr(self, "flee_on_hit", None)
+        if flee_raw is None:
+            flee_raw = getattr(type(self), "flee_on_hit", 0)
+        return CreatureAIDecision._rules_flag_truthy(flee_raw)
+
+    def _attacker_is_owner_or_ally(self, attacker=None):
+        """True when the hit comes from this unit's owner/allies (e.g. slaughtering sheep)."""
+        attacker = attacker if attacker is not None else self.last_attacker
+        if attacker is None:
+            return False
+        ap = getattr(attacker, "player", None)
+        op = self.player
+        if ap is None or op is None:
+            return False
+        if ap is op:
+            return True
+        return ap in getattr(op, "allied", ())
 
     def _flee_from_attacker(self):
         """受击后向远离攻击者的相邻方格逃跑（鹿、羊等狩猎动物）。"""
@@ -64,6 +159,10 @@ class CreatureAIDecision(Entity):
             return False
         attacker = self.last_attacker
         if attacker is None or attacker.place is None:
+            return False
+        # Owned livestock: owner/ally attacks are slaughter, not a threat to flee from.
+        if getattr(self, "_attacker_is_owner_or_ally", None) and self._attacker_is_owner_or_ally(attacker):
+            self.last_attacker = None
             return False
         possible_squares = [s for s in self.place.exits if s.other_side]
         if not possible_squares:
@@ -95,6 +194,10 @@ class CreatureAIDecision(Entity):
     def _wildlife_wander(self):
         """野生动物在出生点附近随机徘徊（帝国时代式行为）。"""
         if not CreatureAIDecision._is_wildlife_unit(type(self)):
+            return False
+        # Owned livestock (after claim) must not wander as Gaia wildlife.
+        player = getattr(self, "player", None)
+        if player is not None and not getattr(player, "neutral", False):
             return False
         if self.speed <= 0 or self.place is None or self.orders:
             return False
@@ -272,8 +375,14 @@ class CreatureAIDecision(Entity):
             return
         self._last_decide_time = current_time
 
-        if getattr(type(self), "flee_on_hit", 0) and self.last_attacker is not None:
+        if self._flee_on_hit_enabled() and self.last_attacker is not None:
             if self._flee_from_attacker():
+                return
+
+        # pursue_attacker + pursue_leash_range: outrun → forget and go home
+        if self._has_pursue_attacker() and self.last_attacker is not None:
+            if self._pursue_target_too_far():
+                self._clear_pursue_aggro(return_home=True)
                 return
 
         if self._wildlife_wander():
@@ -328,7 +437,7 @@ class CreatureAIDecision(Entity):
                 valid = (
                     target.place is not None and target.hp > 0
                     and self.is_an_enemy(target)
-                    and (not self._is_neutral_target(target)
+                    and (not self._is_approach_only_target(target)
                          or self._player_ordered_attack_on(target))
                 )
                 # PERF PITFALL (1.4.5.7 / SESSION_PERF 会话 9):
@@ -366,7 +475,7 @@ class CreatureAIDecision(Entity):
                 and cur.hp > 0
                 and self.is_an_enemy(cur)
             ):
-                if self._is_neutral_target(cur):
+                if self._is_approach_only_target(cur):
                     if not self._player_ordered_attack_on(cur):
                         cur = None
                 if cur is not None and getattr(cur, "menace", 0):
@@ -602,7 +711,7 @@ class CreatureAIDecision(Entity):
             return False
         if getattr(obj, "is_inside", False) or getattr(obj, "hp", 0) <= 0:
             return False
-        if not self.is_an_enemy(obj) or self._is_neutral_target(obj):
+        if not self.is_an_enemy(obj) or self._is_approach_only_target(obj):
             return False
         # 武器根本上打不了的类型（如纯近战对空）不追
         can_if = getattr(self, "can_attack_if_in_range", None)
@@ -715,10 +824,8 @@ class CreatureAIDecision(Entity):
                 return False
         if not self.is_an_enemy(other):
             return False
-        # 进攻/防御/追击等 AI 不主动攻击中立者；仅强制攻击命令例外
-        # 先看 neutral，避免无谓地对非中立目标调 _player_ordered_attack_on
-        if self._is_neutral_target(other):
-            # 中立：仅响应明确的攻击命令（普通 attack，或强制 go/attack）
+        # 进攻/防御/追击等 AI 不主动攻击中立/野生动物；仅明确攻击命令例外
+        if self._is_approach_only_target(other):
             if not self._player_ordered_attack_on(other):
                 return False
         # 条约期内禁止攻击敌对单位

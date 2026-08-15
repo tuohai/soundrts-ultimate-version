@@ -113,7 +113,8 @@
 8321 Hirsch
 8322 Schaf
 8323 Wildschwein
-8324 Tierkadaver
+8324 Tierkadaver
+8330 Viehskadaver
 
 8120 Milizsoldat
 8121 Schwertkämpfer

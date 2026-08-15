@@ -52,6 +52,7 @@ _EXTRA_EFFECT_STATS = frozenset(
         "mdg_seq_secondary_rdg",
         "mdg_seq_secondary_mdg",
         "unpack_time",
+        "pack_time",
         "kill_resource_vs",
         "gather_byproduct",
     }
@@ -153,7 +154,22 @@ def split_effect_bonus_args(args):
             bonus.extend([stat, args[i + 1], args[i + 2], args[i + 3]])
             i += 4
             continue
-        if st.endswith("_vs") or st in ("gather_byproduct",):
+        if st == "gather_byproduct":
+            # 4-token: source product rate  |  3-token: source rate (product=resource1)
+            if (
+                i + 3 < len(args)
+                and _looks_numeric(args[i + 3])
+                and not _looks_numeric(args[i + 2])
+            ):
+                bonus.extend([stat, args[i + 1], args[i + 2], args[i + 3]])
+                i += 4
+                continue
+            if i + 2 >= len(args) or not _looks_numeric(args[i + 2]):
+                return bonus, [str(x) for x in args[i:]]
+            bonus.extend([stat, args[i + 1], args[i + 2]])
+            i += 3
+            continue
+        if st.endswith("_vs"):
             if i + 2 >= len(args) or not _looks_numeric(args[i + 2]):
                 return bonus, [str(x) for x in args[i:]]
             target = args[i + 1]

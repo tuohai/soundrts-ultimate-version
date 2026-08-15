@@ -288,6 +288,56 @@ class EffectFormatter:
             rows.append(("", text, ()))
         return rows
 
+    def format_gather_byproduct_row(self, source, product, rate):
+        """Label + per-second value for ``gather_byproduct`` (tech effect or unit)."""
+        from ..worldmarket import resource_or_type_key
+
+        try:
+            rate_f = float(rate)
+        except (TypeError, ValueError):
+            return None
+        if rate_f == 0:
+            return None
+        source_key = str(source)
+        product_key = resource_or_type_key(product) or "resource1"
+        source_title = style.get(source_key, "title") or [str(source_key)]
+        if not isinstance(source_title, list):
+            source_title = [str(source_title)]
+        product_title = style.get(product_key, "title") or [str(product_key)]
+        if not isinstance(product_title, list):
+            product_title = [str(product_title)]
+        stat_name = self.parent._get_stat_tts_name("gather_byproduct")
+        value_parts = ["+"] + nb2msg_float(rate_f) + list(mp.PER_SECOND)
+        return (
+            "",
+            list(stat_name)
+            + list(mp.COMMA)
+            + list(source_title)
+            + list(mp.COMMA)
+            + list(product_title),
+            value_parts,
+        )
+
+    def _format_gather_byproduct_bonus_row(self, bonus_args, i):
+        from ..worldupgrade.effect_bonus_parse import _looks_numeric
+
+        if i + 2 >= len(bonus_args):
+            return None, 0
+        source = bonus_args[i + 1]
+        if (
+            i + 3 < len(bonus_args)
+            and _looks_numeric(bonus_args[i + 3])
+            and not _looks_numeric(bonus_args[i + 2])
+        ):
+            product = bonus_args[i + 2]
+            rate = bonus_args[i + 3]
+            consumed = 4
+        else:
+            product = "resource1"
+            rate = bonus_args[i + 2]
+            consumed = 3
+        return self.format_gather_byproduct_row(source, product, rate), consumed
+
     def _format_bonus_effect_attribute_rows(self, effect_args):
         from ..worldupgrade.effect_bonus_parse import split_effect_bonus_args
 
@@ -328,6 +378,14 @@ class EffectFormatter:
                         )
                     )
                 i += 4
+                continue
+            if st == "gather_byproduct":
+                row, consumed = self._format_gather_byproduct_bonus_row(bonus_args, i)
+                if row:
+                    rows.append(row)
+                if consumed <= 0:
+                    break
+                i += consumed
                 continue
             if st.endswith("_vs"):
                 if i + 2 >= len(bonus_args):

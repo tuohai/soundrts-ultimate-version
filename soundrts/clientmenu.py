@@ -27,6 +27,7 @@ from pygame.locals import (
     K_HOME,
     K_b,
     K_c,
+    K_g,
     K_i,
     K_KP_ENTER,
     K_KP_MINUS,
@@ -960,6 +961,25 @@ ALT MINUS: music_volume_down
                 )
                 if msg:
                     self.server.write_line("say %s" % msg)
+        elif (
+            e.key == K_g
+            and not (e.mod & (KMOD_CTRL | KMOD_ALT | KMOD_SHIFT))
+            and self._choice_exists()
+        ):
+            extras = self._choice_extras.get(self.choice_index)
+            on_info = extras.get("info") if extras else None
+            if on_info:
+                try:
+                    on_info()
+                except Exception as ex:
+                    from .lib.log import exception as _log_exception
+
+                    _log_exception("info handler failed: %s" % ex)
+                    voice.alert(mp.BEEP)
+                return
+            self._select_next_choice("g")
+            pygame.event.clear([KEYDOWN])
+            return
         elif e.unicode and e.mod & KMOD_SHIFT:
             self._select_next_choice(e.unicode, -1)
             # Drop auto-repeat / duplicate KEYDOWNs so one physical press
@@ -971,13 +991,25 @@ ALT MINUS: music_volume_down
         elif e.key not in [K_LSHIFT, K_RSHIFT]:
             voice.item(mp.SELECT_AND_CONFIRM_EXPLANATION)
 
-    def append(self, label, action, explanation=None, on_rename=None, on_delete=None):
+    def append(
+        self,
+        label,
+        action,
+        explanation=None,
+        on_rename=None,
+        on_delete=None,
+        on_info=None,
+    ):
         if explanation is None:
             explanation = []
         self.choices.append((label, action, explanation))
         idx = len(self.choices) - 1
-        if on_rename is not None or on_delete is not None:
-            self._choice_extras[idx] = {"rename": on_rename, "delete": on_delete}
+        if on_rename is not None or on_delete is not None or on_info is not None:
+            self._choice_extras[idx] = {
+                "rename": on_rename,
+                "delete": on_delete,
+                "info": on_info,
+            }
         if self.remember is not None and self._remembered_choice == repr(label):
             # Remember last choice by default index — do not insert a duplicate
             # at the front (that made letter-jump hit the remembered map first,
@@ -1047,6 +1079,9 @@ ALT MINUS: music_volume_down
         except (IndexError, TypeError):
             old_choice = None
         self.title, self.choices = menu.title, menu.choices
+        # Keep rename/delete/info callbacks aligned with the new choice list
+        # (inviting AI rebuilds faction rows and shifts indices).
+        self._choice_extras = dict(getattr(menu, "_choice_extras", {}) or {})
         if self.title and self.title != old_title:
             voice.menu(self.title)
         if self.choices != old_choices:

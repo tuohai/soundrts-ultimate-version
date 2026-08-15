@@ -876,6 +876,10 @@ _precision_properties = {
     "conversion_channel_bonus_time",  # upgrade: flat seconds added to conversion channel
     "change_time",     # 单位变形所需时间
     "larva_spawn_time",  # 单位生成点：生成间隔（秒；配合 spawns_unit）
+    "unpack_time",  # 架设时长（秒；PRECISION ms；packable 单位）
+    "pack_time",  # 打包时长（秒；未写则用 unpack_time）
+    "packed_mdf",  # 打包形态近战护甲（未设则切换形态不改护甲）
+    "packed_rdf",  # 打包形态远程护甲
     "hp_regen",
     "hp_regen_per_level",
     "mana_regen",
@@ -1382,6 +1386,10 @@ class Rules(_Definitions):
         "market_batch",  # building override; 0 = use parameters
         "market_tax_permille",  # building override; -1 = use parameters
         "larva_cap",  # 单位生成点：同格已生成单位上限（配合 spawns_unit）
+        "spawn_player_cap",  # 单位生成点：玩家全图该类型存活上限（0=不限；草场用）
+        "spawn_immediate",  # 1=建成后立刻刷第 1 个（帝国 4 草场）；0=先等一个间隔
+        "packable",  # 1=可打包/架设（投石机等；需 unpack_time / pack_time）
+        "spawn_packed",  # 1=出生为打包态（默认）；0=出生已架设
         "loses_power_without_field",
         "is_addon",
         "addon_max",
@@ -1467,8 +1475,12 @@ class Rules(_Definitions):
         "is_huntable",  # 可被村民狩猎的动物（右键默认攻击）
         "food_deposit_qty",  # 死亡后留下的食物尸体储量
         "flee_on_hit",  # 受击后逃跑（鹿、羊等）
+        "pursue_attacker",  # 受击反击后跨格追击攻击者（野猪诱杀到 TC）
+        "pursue_leash_range",  # 追击脱仇：与目标距离超过此毫米则忘仇（0=不限制）
         "herdable",  # 可被村民驱赶跟随（羊）
         "herd_leash_range",  # 驱赶跟随的最大距离（毫米）
+        "claimable",  # 中立时可被非中立单位靠近自动归属（帝国 2 式领羊）
+        "claim_range",  # 自动归属距离（毫米；0=仅同格）
         "wander_range",  # 野生动物徘徊的最大半径（毫米）
     
     }

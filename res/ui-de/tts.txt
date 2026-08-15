@@ -800,6 +800,13 @@
 4934	treiben
 4935	folgt
 4936	Jagdtechniken
+4937	beansprucht
+4938	einpacken
+4939	auspacken
+4943	wird eingepackt
+4944	wird ausgepackt
+4945	eingepackt
+4946	ausgepackt
 4950	Koop-Kampagne
 4951	Lokale Koop-Kampagne
 4952	Koop-Kampagne wählen

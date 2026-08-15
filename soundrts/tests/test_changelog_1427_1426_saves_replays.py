@@ -242,7 +242,9 @@ def test_menu_has_delete_and_shift_delete_handler():
 def test_menu_append_accepts_on_rename_and_on_delete():
     """``Menu.append`` 必须接受 ``on_rename`` 和 ``on_delete`` 两个回调。"""
     src = _source("soundrts", "clientmenu.py")
-    assert "def append(self, label, action, explanation=None, on_rename=None, on_delete=None)" in src
+    assert "on_rename=None" in src
+    assert "on_delete=None" in src
+    assert "def append(" in src
 
 
 def test_menu_clear_choices_resets_extras():

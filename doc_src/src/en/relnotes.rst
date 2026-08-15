@@ -4,6 +4,61 @@ Release notes
 
 .. contents::
 
+1.4.7.2
+--------
+
+**aoe2 / engine: trebuchet pack / unpack (rules-driven) + proportion progress**
+
+- **Issue**: Packable siege units only delayed the first shot after moving; there was no real packed/unpacked state, no menu wording aligned with AoE2, and no ``proportion_*`` progress during the transition.
+- **Change**: Rules ``packable``, ``unpack_time`` / ``pack_time``, optional ``packed_mdf`` / ``packed_rdf``, ``spawn_packed``. Packed = move only; unpacked = attack only; move auto-packs, attack auto-unpacks; stop cancels. Progress via ``completeness`` → ``proportion_*``. UI: pack / unpack (Chinese **打包** / **拆包**).
+- **Docs**: ``mod/modding.htm`` (all locales with a modding chapter).
+
+**aoe2: Mongols lose the mill (AoE4-like pastoral food)**
+
+- **Issue**: Mongol herdsmen still built mills and listed farm mill techs, while pastures already replaced farms.
+- **Change**: ``mongol_herdsman`` cannot build ``mill`` or research Horse Collar / Heavy Plow / Crop Rotation. ``pasture`` requires ``town_center`` only and stores food (``resource3``).
+- **Docs**: ``player/hunting.htm``, ``mods/aoe2/SOURCES.md``.
+
+**aoe2 fix: duplicate Horse Collar / Heavy Plow / Crop Rotation on villagers**
+
+- **Issue**: Peasant ``can_use_tech`` listed both the generic mill farm techs and the Frank 0-cost aliases (``frank_horse_collar`` and so on). The aliases share titles with the generic techs, so the attributes screen spoke each name twice.
+- **Change**: Non-Frank villagers keep only ``horse_collar`` / ``heavy_plow`` / ``crop_rotation``. Franks use ``frank_villager``, whose farm techs are the free aliases only.
+
+**Fix: ``gather_byproduct`` (e.g. Paper Money) missing from the attributes screen**
+
+- **Issue**: The effect is a triple (deposit, rate). The UI parsed it as a pair, treated the deposit name as the value, dropped the rate, and hid the row.
+- **Change**: The screen shows deposit name, byproduct resource, and rate per second (Paper Money: wood deposit, gold, +0.014/s). Rules still name the deposit type (e.g. ``wood``).
+
+**New: hear civilization bonuses while picking a faction**
+
+- Arrow keys speak only the faction name. With an ``intro``, press **G** for a submenu and use up/down to hear one sentence at a time (Enter repeats the line; Esc returns). Mods without ``intro`` are unchanged.
+- aoe2: all twelve civs have English and Chinese blurbs. Indented continuation lines in ``tts.txt`` are one menu line each.
+
+**aoe2: shepherds vs hunters use separate carcass deposits (rules-driven)**
+
+- **Issue**: Sheep and deer/boar both used ``food_carcass``, so Britons' shepherd bonus and Mongols' hunter bonus each sped up both jobs.
+- **Change**: Herdables drop ``food_livestock``; huntables keep ``food_carcass``. Britons: ``gather_time_food_livestock -20%``. Mongols: ``gather_time_food_carcass -29%``. Engine matches ``gather_time_<deposit>`` and AI hunt ability from rules (``food_deposit`` / ``is_huntable``) — no civ-name hardcoding.
+- **Docs**: ``player/hunting.htm``, ``mod/modding.htm`` (hunting summary).
+
+**New: ``pursue_attacker`` — boar lure across squares (AoE2-style)**
+
+- **Issue**: Boars counterattacked in ``guard`` mode but ``AttackAction`` only chased across squares in ``chase`` mode, so a villager leaving the tile dropped the chase and TC lure failed.
+- **Change**: Rules flag ``pursue_attacker 1`` keeps the attack action following across squares (no diplomatic enmity required). Boars in base and aoe2 rules enable it; deer/sheep still ``flee_on_hit``.
+- **Docs**: ``player/hunting.htm``, ``mod/modding.htm``.
+
+**New: ``pursue_leash_range`` — deaggro when outrunning the boar**
+
+- **Issue**: With ``pursue_attacker`` alone, chase stuck via ``last_attacker`` even after opening a large gap (not AoE2-like LOS deaggro).
+- **Change**: Rules int ``pursue_leash_range`` (mm; ``0`` = unlimited). Beyond it, forget the attacker, stop the attack, and walk home. Boars use ``48000`` (~4 squares).
+- **Docs**: ``player/hunting.htm``, ``mod/modding.htm``.
+
+**New: ``claimable`` + pasture spawn (AoE2 claim / AoE4 pasture, rules-driven)**
+
+- **Issue**: Herding only followed without changing ownership, so AoE2-style sheep claim and AoE4-style breeding pastures were not available as optional mod rules.
+- **Change**: Neutral ``claimable`` animals join any nearby non-neutral player's units (``claim_range``; keeps ``can_herd`` separate). Buildings may use ``spawns_unit`` with ``spawn_player_cap`` / ``spawn_immediate`` (aoe2: sheep ``claimable``; Mongol ``pasture``).
+- **Docs**: ``player/hunting.htm``, ``mod/modding.htm``.
+
+
 1.4.7.1
 --------
 
@@ -11,14 +66,14 @@ Release notes
 
 - **Issue**: A construction site (``BuildingSite``) exposed the target building's train/research menu, so barracks could train before they finished.
 - **Change**: Unfinished sites have empty train/research lists and cannot run production.
-- **Scope**: All mods (including aoe2). Synced to 修复8 / 修复14.
+- **Scope**: All mods (including aoe2).
 - **Code / tests**: ``world_build_rules.py`` (``is_unfinished_building``, ``effective_can_train`` / ``effective_can_research`` / ``building_can_operate``); ``test_can_train_upgrade.py``.
 
 **Fix: completed buildings spawned below civ/age bonus HP**
 
 - **Issue**: Completion wrote current HP from the rules class ``hp_max`` (e.g. barracks 1200), while instance ``hp_max`` already included bonuses (Byzantine Dark Age +10% → 1320). Villagers then auto-repaired the gap.
 - **Change**: On complete, current HP uses instance ``hp_max`` (minus damage taken during construction). Matches AoE2: finish at full bonus HP, not repair up to it.
-- **Scope**: All mods. Synced to 修复8 / 修复14.
+- **Scope**: All mods.
 - **Code / tests**: ``worldcreature.py`` (``BuildingSite._complete_construction``); ``test_z5_byzantine_barracks_hp.py``.
 
 **aoe2: Celts civilization; William Wallace campaign plays as Celts**
@@ -35,7 +90,7 @@ Release notes
 
 - **Issue**: When arrow-key browsing the map, terrain pass (e.g. bridge) or block cues were queued on the voice channel and finished before square coordinates / place names, so feedback felt laggy.
 - **Change**: Pass/block cues play immediately on the SFX mixer; coordinates and names still use the voice queue, so both start together instead of waiting in line.
-- **Scope**: Normal map browse, zoom square crossing, first-person block feedback; synced to 修复8 / 修复14 / 原始1 / 原始2.
+- **Scope**: Normal map browse, zoom square crossing, first-person block feedback.
 - **Code**: ``clientgame/game_navigation.py`` (``_play_movement_sfx``), ``clientgamefocus.py``, ``clientgame/game_audio.py``.
 
 
@@ -47,7 +102,7 @@ Release notes
 - **aoe2**: Chieftains uses ``kill_resource_vs … resource1 5`` (villager / trade cart / trade cog / monk).
 - **TTS / UI**: “resource on kill bonus vs” (no raw ``kill_gold`` key); tech detail includes target type and resource title.
 - **Docs**: ``mod/modding`` (all languages).
-- **Code / tests**: ``worldmarket.canonical_resource_name``, ``effect_bonus_parse``, ``attribute_effects``, ``worldcreature``; ``test_aoe2_full_unique_techs.py``, ``test_stat_tts_names.py``. Synced to 修复8 / 修复14; TTS naming synced to 原始1 / 原始2.
+- **Code / tests**: ``worldmarket.canonical_resource_name``, ``effect_bonus_parse``, ``attribute_effects``, ``worldcreature``; ``test_aoe2_full_unique_techs.py``, ``test_stat_tts_names.py``.
 
 
 1.4.6.9
@@ -59,7 +114,7 @@ Release notes
 - **Flag**: ``heal_garrisoned 1`` → ``heal_nearby_units`` heals ``self.inside`` passengers only; default ``0`` keeps ``heal_range`` / ``heal_radius`` behavior.
 - **aoe2 rates (DE)**: TC/towers ``heal_level 1`` + ``heal_cd 10`` → 0.1 HP/s; castle ``heal_level 1`` + ``heal_cd 5`` → 0.2 HP/s; Herbal Medicine ``heal_level +5`` (×6) → 0.6 / 1.2 HP/s; targets include ``keeptower``.
 - **Docs**: Chinese `skills / heal / effects <../zh/mod/skills-and-effects.htm>`_; ``mod/modding``.
-- **Tests**: ``test_heal_garrisoned.py``. Synced to 修复8 / 修复14 / 原始1 / 原始2.
+- **Tests**: ``test_heal_garrisoned.py``.
 
 **New: rules-driven projectile lead and per-lane flight speed**
 
@@ -67,7 +122,7 @@ Release notes
 - **Lead**: ``projectile_lead 0|1`` (ranged projectiles only). No hardcoded ``ballistics``.
 - **Tech / UI**: ``effect bonus projectile_lead 1``; ``effect info``.
 - **Docs**: `Projectile lead & flight speed <mod/projectile-lead.htm>`_; ``mod/modding``.
-- **Tests**: ``test_projectile_speed.py``. Synced to 修复8 / 修复14.
+- **Tests**: ``test_projectile_speed.py``.
 
 **New: rules-driven market (buy/sell, tribute, route trade)**
 
@@ -685,11 +740,12 @@ Compared with the old debug-style map (flat blocks, black walls, tiny dots), thi
 
 **Fix: neutral default order and hunt damage**
 
-- Plain / default ``go`` on neutrals (non-imperative) only moves — no AttackAction with zero damage.
-- Plain ``attack`` on ``is_huntable`` animals (including Backspace default hunt) deals damage; only imperative attack lets AI treat neutrals as auto-engage targets.
-- **Code**: ``worldunit/world_ai_decision.py``, ``worldunit/worldcreature.py``.
+- Default order on **all** neutrals (wildlife / creep / NPC, including ``is_huntable``) is ``go`` — approach / claim; no AttackAction.
+- Attack neutrals with imperative (Ctrl+Backspace, or ``go`` then Ctrl+Enter). Owned ``is_huntable`` still defaults to ``attack`` (slaughter); plain attack deals damage.
+- Only imperative attack lets AI treat neutrals as auto-engage targets.
+- **Code**: ``worldunit/world_ai_decision.py``, ``worldunit/worldcreature.py``, ``worldunit/worldworker.py``, ``worldunit/world_order.py``.
 - **Docs**: ``player/hunting.rst``, ``player/unit-default-behavior.rst``.
-- **Tests**: ``test_neutral_no_auto_attack.py``, ``test_neutral_go_and_hunt_attack.py``.
+- **Tests**: ``test_neutral_no_auto_attack.py``, ``test_neutral_go_and_hunt_attack.py``, ``test_claimable_pasture.py``, ``test_hunting.py``.
 
 **Fix: Computer player perception update crash (missing ``_buckets``)**
 

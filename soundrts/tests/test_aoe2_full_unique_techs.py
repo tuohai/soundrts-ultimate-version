@@ -15,7 +15,7 @@ class _U:
         self.passenger_attack_types = ["archer_unit", "peasant"]
         self.kill_resource_vs = None
         self.gather_byproduct = None
-        self.unpack_time = 11.0
+        self.unpack_time = 11000.0
         self.mdg_vs = {}
 
 
@@ -63,13 +63,16 @@ def test_paper_money_gather_byproduct():
     u = _U()
     u.type_name = "peasant"
     AttributeEffectsMixin.effect_bonus(u, 0, "gather_byproduct", "wood", 0.014)
-    assert abs(u.gather_byproduct["wood"] - 0.014) < 1e-9
+    rate, product = u.gather_byproduct["wood"]
+    assert abs(rate - 0.014) < 1e-9
+    assert product == "resource1"
 
 
 def test_kataparuto_unpack_time_percent():
     u = _U()
+    u.unpack_time = 11000.0
     AttributeEffectsMixin.effect_bonus(u, 0, "unpack_time", "-75%")
-    assert abs(u.unpack_time - 11.0 * 0.25) < 1e-6
+    assert abs(u.unpack_time - 11000.0 * 0.25) < 1e-6
 
 
 def test_split_kill_resource_and_byproduct():
@@ -94,6 +97,11 @@ def test_split_kill_resource_and_byproduct():
         "0.014",
     ]
     assert t == []
+    b4, t4 = split_effect_bonus_args(
+        ["gather_byproduct", "resource2", "resource1", "0.014"]
+    )
+    assert b4 == ["gather_byproduct", "resource2", "resource1", "0.014"]
+    assert t4 == []
 
 
 def test_rules_unique_techs_no_approximations():
@@ -106,7 +114,7 @@ def test_rules_unique_techs_no_approximations():
     assert "def yasama" in text
     assert "rdg_seq_times 3" in text
     assert "rdg_seq_secondary_live 1" in text
-    # Paper Money byproduct, not wood gather speed hack
+    # Paper Money byproduct on the wood deposit (not a gather_time hack)
     assert "gather_byproduct wood 0.014" in text
     assert "gather_time_wood -10%" not in text.split("def paper_money")[1].split("def ")[0]
     # Circumnavigation map reveal

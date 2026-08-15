@@ -539,10 +539,10 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
         elif isinstance(value, ZoomTarget):
             self.action = MoveXYAction(self, (value.x, value.y))
         elif self.is_an_enemy(value):
-            # 中立在「非明确攻击命令」下 is_an_enemy 仍可能为 True（外交上的敌方）。
-            # 普通 go 跟随时必须 MoveAction，否则会挂 AttackAction：界面显示攻击却无伤害。
+            # 中立 / 野生动物在「非明确攻击命令」下 is_an_enemy 仍可能为 True。
+            # 普通 go 必须 MoveAction，否则会挂 AttackAction（界面像攻击）。
             if (
-                self._is_neutral_target(value)
+                self._is_approach_only_target(value)
                 and not self._player_ordered_attack_on(value)
             ):
                 self.action = MoveAction(self, value)
@@ -738,16 +738,19 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
         ):
             return "herd"
 
-        elif (
-            getattr(target, "is_huntable", 0)
-            and "attack" in self.basic_skills
-            and getattr(target, "hp", 0) > 0
-        ):
-            return "attack"
-
         capture_order = self._capture_on_contact_default_order(target)
         if capture_order:
             return capture_order
+
+        # Any living unit (enemy / neutral / own sheep…): default is go, never attack.
+        # Hunt/slaughter requires imperative (Ctrl+Backspace / imperative go).
+        elif (
+            getattr(target, "player", None) is not None
+            and "go" in self.basic_skills
+            and getattr(target, "hp", 0) > 0
+            and target is not self
+        ):
+            return "go"
 
         elif "gather" in self.basic_skills and isinstance(target, Deposit):
             from .worldworker import Worker
@@ -1009,9 +1012,14 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     # attacker-side resource when this unit kills a matching type
     # dict: victim_type -> { resourceN: display_amount }
     kill_resource_vs = None
-    # while gathering deposit type X, also gain gold/sec (Paper Money)
-    gather_byproduct = None  # dict deposit_type -> rate/sec of resource1
-    unpack_time = 0  # seconds; first shot after move (Kataparuto / trebuchet)
+    # while gathering this deposit type, also gain product/sec (Paper Money)
+    gather_byproduct = None  # dict deposit_type -> (rate/sec, product_resourceN)
+    unpack_time = 0  # PRECISION ms; unpack (deploy) transition
+    pack_time = 0  # PRECISION ms; pack transition (0 = use unpack_time)
+    packed_mdf = 0  # armor while packed (0 = keep unpacked armor)
+    packed_rdf = 0
+    packable = 0  # 1 = rules enable pack/unpack siege mode
+    spawn_packed = 1  # 1 = spawn packed (travel); 0 = spawn unpacked
     speed = 0
     # 添加自爆相关
     mdg_explode = False
@@ -1030,8 +1038,12 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     food_deposit = None
     food_deposit_qty = 0
     flee_on_hit = 0
+    pursue_attacker = 0
+    pursue_leash_range = 0
     herdable = 0
     herd_leash_range = 12000
+    claimable = 0
+    claim_range = 0
     wander_range = 0
     _herd_leader = None
     _herd_follow_place = None
@@ -1453,6 +1465,10 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
         # 电脑 AI（ai.txt unit_hp）：在合作难度之后再缩放。
         self._apply_ai_unit_hp()
 
+        from ..world_siege_pack import init_siege_pack
+
+        init_siege_pack(self)
+
         # 最小伤害
         self.minimal_damage = rules.get("parameters", "minimal_damage")
         if self.minimal_damage is None:
@@ -1605,8 +1621,10 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     def start_moving_to(self, target, avoid=False):
         # note: it can be an attack
         # note: several calls might be necessary
-        if float(getattr(self, "unpack_time", 0) or 0) > 0:
-            self._needs_unpack = True
+        from ..world_siege_pack import ensure_packed, is_packable
+
+        if is_packable(self) and not ensure_packed(self):
+            return
         self.action_target = self.next_stage(target, avoid=avoid)
 
     def _next_stage_to_enemy(self):
@@ -1880,6 +1898,8 @@ class Building(_Building):
     spawns_unit = None  # 自动生成的单位类型名（如 larva）
     larva_cap = 0  # 生成点：同格已生成单位上限
     larva_spawn_time = 0  # 生成点：生成间隔（秒）
+    spawn_player_cap = 0  # 玩家全图该类型存活上限（0=不限）
+    spawn_immediate = 0  # 1=首次立刻刷；0=先等一个间隔
     is_producing = False  # 当前是否正在生产
     production_progress = 0  # 当前生产进度
     resource_volume_max = 0  # 最大资源量

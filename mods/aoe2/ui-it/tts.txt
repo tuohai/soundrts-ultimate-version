@@ -113,7 +113,8 @@
 8321 Cervo
 8322 Pecora
 8323 Cinghiale
-8324 Carcassa
+8324 Carcassa
+8330 Carcassa di bestiame
 
 8120 Milizia
 8121 Fanteria scelta

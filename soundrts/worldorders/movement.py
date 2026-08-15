@@ -393,3 +393,51 @@ class RepairOrder(BasicOrder):
 class BuildPhaseTwoOrder(RepairOrder):
 
     keyword = "build_phase_two"
+
+
+class PackOrder(BasicOrder):
+    """AoE2 trebuchet: fold for travel (cannot attack while packing/packed)."""
+
+    keyword = "pack"
+    nb_args = 0
+
+    @classmethod
+    def is_allowed(cls, unit, *unused_args):
+        from ..world_siege_pack import is_packable, siege_mode
+
+        if not is_packable(unit):
+            return False
+        return siege_mode(unit) not in ("packed", "packing")
+
+    def on_queued(self):
+        self.unit.notify("order_ok")
+
+    def execute(self):
+        from ..world_siege_pack import ensure_packed
+
+        if ensure_packed(self.unit):
+            self.mark_as_complete()
+
+
+class UnpackOrder(BasicOrder):
+    """AoE2 trebuchet: deploy to fire (cannot move while unpacking/unpacked)."""
+
+    keyword = "unpack"
+    nb_args = 0
+
+    @classmethod
+    def is_allowed(cls, unit, *unused_args):
+        from ..world_siege_pack import is_packable, siege_mode
+
+        if not is_packable(unit):
+            return False
+        return siege_mode(unit) not in ("unpacked", "unpacking")
+
+    def on_queued(self):
+        self.unit.notify("order_ok")
+
+    def execute(self):
+        from ..world_siege_pack import ensure_unpacked
+
+        if ensure_unpacked(self.unit):
+            self.mark_as_complete()

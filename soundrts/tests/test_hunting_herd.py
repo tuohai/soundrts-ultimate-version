@@ -425,7 +425,10 @@ def test_computer_ai_maintain_herding_leads_and_slaughters():
         finally:
             sys.argv = old_argv
 
-    base = types.SimpleNamespace(id="base")
+    base = types.SimpleNamespace(
+        id="base",
+        shortest_path_distance_to=lambda other: 0,
+    )
     sheep = types.SimpleNamespace(
         id="sheep1",
         hp=4,
@@ -454,6 +457,7 @@ def test_computer_ai_maintain_herding_leads_and_slaughters():
     ai.world = types.SimpleNamespace(players=[wildlife])
     ai.units = [townhall]
     ai.nearest_warehouse = lambda place, resource_type, include_building_sites=False: townhall
+    ai._huntable_food_deposit_types = lambda: {"food_carcass"}
     sheep._herd_leader = worker
 
     assert ai._herded_animals(worker) == [sheep]
@@ -462,7 +466,11 @@ def test_computer_ai_maintain_herding_leads_and_slaughters():
     assert worker.orders[0][1] is True
 
     worker.orders = []
-    worker.place = types.SimpleNamespace(id="field")
-    sheep.place = types.SimpleNamespace(id="field")
+    field = types.SimpleNamespace(
+        id="field",
+        shortest_path_distance_to=lambda other: 1,
+    )
+    worker.place = field
+    sheep.place = field
     assert ai._maintain_worker_herding(worker) is True
     assert worker.orders[0][0] == ["go", "base"]

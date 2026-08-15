@@ -634,11 +634,18 @@ class TrainingMenu:
         self._players_menu.update_menu(self._build_players_menu())
 
     def _add_faction_menus(self, menu):
+        from .faction_progress import faction_intro_msgs, show_faction_intro_menu
+
         for pn, (p, pr) in enumerate(zip(self._players, self._factions)):
             for r in ["random_faction"] + rules.factions:
                 if r != pr:
+                    on_info = None
+                    if faction_intro_msgs(r):
+                        on_info = lambda _r=r: show_faction_intro_menu(_r)
                     menu.append(
-                        [p,] + style.get(r, "title"), (self._set_faction, pn, r)
+                        [p,] + style.get(r, "title"),
+                        (self._set_faction, pn, r),
+                        on_info=on_info,
                     )
 
     def _treaty_label(self):

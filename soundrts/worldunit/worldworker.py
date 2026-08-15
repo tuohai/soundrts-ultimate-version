@@ -854,16 +854,19 @@ class Worker(Unit):
         ):
             return "herd"
 
-        elif (
-            getattr(target, "is_huntable", 0)
-            and "attack" in self.basic_skills
-            and getattr(target, "hp", 0) > 0
-        ):
-            return "attack"
-
         capture_order = self._capture_on_contact_default_order(target)
         if capture_order:
             return capture_order
+
+        # Any living unit (enemy / neutral / own sheep…): default is go, never attack.
+        # Hunt/slaughter requires imperative (Ctrl+Backspace / imperative go).
+        elif (
+            getattr(target, "player", None) is not None
+            and "go" in self.basic_skills
+            and getattr(target, "hp", 0) > 0
+            and target is not self
+        ):
+            return "go"
 
         # 修改：检查目标是否是可开采的建筑物（具有resource_type属性）
         elif "gather" in self.basic_skills and (

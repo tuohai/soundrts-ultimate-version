@@ -849,6 +849,13 @@
 4934	dắt đàn
 4935	đã theo
 4936	kỹ thuật săn bắt
+4937	đã chiếm hữu
+4938	đóng gói
+4939	mở gói
+4943	đang đóng gói
+4944	đang mở gói
+4945	đã đóng gói
+4946	đã mở gói
 4950	Chiến dịch hợp tác
 4951	Chiến dịch hợp tác cục bộ
 4952	Chọn chiến dịch hợp tác

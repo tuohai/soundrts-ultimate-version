@@ -12,15 +12,16 @@ SoundRTS supporta la caccia in stile Age of Empires: i lavoratori attaccano la f
 ------------------------
 
 
-1. Backspace / ordine predefinito o clic destro su un animale → ``attack`` su ``is_huntable`` (l’attacco normale infligge danno; non serve imperative)
-2. Alla morte → nasce ``food_carcass``; l’ordine di attacco si completa (**nessun** beep falso ``order_impossible``)
+1. Backspace / ordine predefinito o clic destro su un animale → ``go`` sulla fauna neutrale (avvicinarsi / reclamare); i lavoratori con ``can_herd`` usano ancora ``herd`` di default su ``herdable``. Per **attaccare** i neutrali serve l’imperativo (Ctrl+Backspace, oppure ``go`` + Ctrl+Enter)
+2. Alla morte → nasce il deposito indicato da ``food_deposit`` dell’animale (base: ``food_carcass``; pecore aoe2: ``food_livestock``); l’ordine di attacco si completa (**nessun** beep falso ``order_impossible``)
 3. Raccolta automatica → dopo l’uccisione il lavoratore può accodare la raccolta; con ``auto_gather`` raccoglie e riporta il cibo
-4. Fuga al colpo → cervi e pecore scappano; i cinghiali contrattaccano
-5. Pastorizia (opzionale) → i lavoratori con ``can_herd 1`` possono guidare animali ``herdable`` (es. pecore)
+4. Fuga al colpo → cervi e pecore scappano; i cinghiali contrattaccano e inseguono tra le caselle (``pursue_attacker``, si possono attirare al centro cittadino; ``pursue_leash_range`` interrompe l’aggro se apri una grande distanza)
+5. Cattura (opzionale) → qualsiasi unità non neutrale vicino a un animale ``claimable`` neutro ne prende possesso (pecore stile AoE2); ``can_herd`` resta un inseguimento separato
+6. Pastorizia (opzionale) → i lavoratori con ``can_herd 1`` possono guidare animali ``herdable`` (es. pecore)
+7. Pascolo (opzionale) → un edificio con ``spawns_unit`` / ``spawn_player_cap`` (aoe2 ``pasture`` mongolo) genera bestiame posseduto
 
 
-Nota: l’ordine predefinito su creep / NPC neutrali comuni è ``go`` (solo movimento); sugli animali cacciabili resta ``attack``.
-Le modalità offensive / defensive / chase **non** attaccano automaticamente gli animali neutrali senza attacco imperativo.
+Nota: l’ordine predefinito su **tutte** le unità neutrali (fauna, creep, NPC) è ``go`` (muovere / avvicinarsi). Le modalità offensive / defensive / chase **non** attaccano automaticamente i neutrali senza attacco imperativo.
 
 
 ----
@@ -128,17 +129,21 @@ Unità integrate
    * - Tipo
      - Note
    * - ``deer``
-     - 35 cibo, fugge quando colpito
+     - 35 cibo, fugge quando colpito; ``food_deposit food_carcass``
    * - ``sheep``
-     - 25 cibo, guidibile, fugge
+     - guidibile, fugge; base ``food_carcass``, aoe2 ``food_livestock``
    * - ``boar``
-     - 50 cibo, contrattacca
+     - 50 cibo, contrattacca e insegue tra le caselle (``pursue_attacker``); ``food_deposit food_carcass``
    * - ``food_carcass``
-     - carcassa raccoglibile (``collision 0``)
+     - deposito di caccia (``collision 0``)
+   * - ``food_livestock``
+     - carcassa da allevamento aoe2 (bonus pastori)
 
 
 
-Il ``can_gather`` dei lavoratori include ``food_carcass`` e ``orchard``.
+Il ``can_gather`` / ``can_gather_deposit`` dei lavoratori deve elencare ogni tipo di carcassa (es. ``food_carcass`` e, in aoe2, ``food_livestock``), più ``orchard`` se usato.
+
+**Bonus pastori / cacciatori distinti (guidato dalle rules):** usare ``food_deposit`` diversi e poi ``gather_time_<deposito>`` (britanni ``gather_time_food_livestock``, mongoli ``gather_time_food_carcass``). Il motore abbina per ``type_name`` del deposito; la caccia IA segue ``is_huntable`` → ``food_deposit``, senza hardcode dei nomi civ.
 
 Proprietà degli animali
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -154,8 +159,16 @@ Proprietà degli animali
      - cacciabile; il clic destro predefinito è attacco
    * - ``flee_on_hit 1``
      - scappa dall'attaccante
+   * - ``pursue_attacker 1``
+     - dopo il contrattacco, insegue tra le caselle (attirare il cinghiale al centro)
+   * - ``pursue_leash_range``
+     - distanza massima dal bersaglio in mm; oltre, dimentica e torna a casa (``0`` = nessun limite; i cinghiali usano ``48000`` ≈ 4 caselle)
    * - ``herdable 1``
      - può essere guidato da lavoratori ``can_herd``
+   * - ``claimable 1``
+     - da neutro, qualsiasi unità non neutrale vicina lo reclama (pecora AoE2); indipendente da ``can_herd``
+   * - ``claim_range``
+     - distanza di reclamo in mm (``0`` = solo stessa casella; pecore aoe2 ``12000``)
    * - ``food_deposit``
      - tipo di deposito carcassa alla morte
    * - ``food_deposit_qty``

@@ -229,6 +229,15 @@ extraction_time 0
 extraction_qty 0
 collision 0
 
+; Herdable kill deposit (shepherding). Separate from food_carcass so
+; gather_time_food_livestock / gather_time_food_carcass civ bonuses do not overlap.
+def food_livestock
+class deposit
+resource_type resource3
+extraction_time 0
+extraction_qty 0
+collision 0
+
 ; ---------- building land (maps: nb_meadow_by_square / nb_build_site_by_square) ----------
 
 def meadow
@@ -265,9 +274,11 @@ def sheep
 class soldier
 is_huntable 1
 herdable 1
+claimable 1
+claim_range 12000
 flee_on_hit 1
 wander_range 12000
-food_deposit food_carcass
+food_deposit food_livestock
 food_deposit_qty 40
 herd_leash_range 12000
 cost 0 0
@@ -289,6 +300,9 @@ class soldier
 is_huntable 1
 flee_on_hit 0
 counterattack_enabled 1
+pursue_attacker 1
+; ~4 squares (12000 mm each): AoE2-like LOS deaggro if target opens a large gap
+pursue_leash_range 48000
 wander_range 12000
 food_deposit food_carcass
 food_deposit_qty 80
@@ -1077,6 +1091,8 @@ requirements aoe_castle imperial_age
 effect bonus rdg_cd -33%
 effect_bonus_targets trebuchet
 effect bonus unpack_time -75%
+effect_bonus_targets trebuchet
+effect bonus pack_time -75%
 effect_bonus_targets trebuchet
 
 ; 重装甲 Ironclad — siege +4 melee armor
@@ -2412,7 +2428,13 @@ is_repairable 1
 is_healable 0
 space 1.0
 requirements imperial_age
+packable 1
+spawn_packed 1
 unpack_time 11
+pack_time 11
+; Packed (travel) armor — DE: melee 2 / pierce 8; unpacked uses mdf/rdf below
+packed_mdf 2
+packed_rdf 8
 
 
 
@@ -2431,6 +2453,7 @@ rdg_range 16
 rdg_minimal_range 4
 rdg_vs building 250
 can_use_tech warwolf kataparuto drill ironclad siege_engineers conscription
+; Packable: spawn packed; move auto-packs, attack auto-unpacks; completeness → proportion_*
 ; ===========================================================================
 ; NAVY — dock lines (train base ships; line upgrades researched at shipyard)
 ; biligame: 渔船/运输船/箭船→战舰→大型战舰；火伽利→火战船→快速火战船；
@@ -3582,20 +3605,21 @@ mdf 0
 rdf 0
 mdg_vs building 3
 gather_mode continuous
-; AoE2 DE wiki: carry 10 (hunt carcass 35); rates are resources/sec
+; AoE2 DE wiki: carry 10 (hunt/livestock carcass 35); rates are resources/sec
 carry_capacity 10
 carry_capacity_food_carcass 35
+carry_capacity_food_livestock 35
 gather_rate goldmine 0.38
 gather_rate wood 0.39
 gather_rate stone_mine 0.36
 gather_rate orchard 0.31
 gather_rate food_carcass 0.41
+gather_rate food_livestock 0.41
 gather_rate farm 0.32
-can_herd 1
-can_gather_deposit goldmine wood orchard food_carcass stone_mine
+can_gather_deposit goldmine wood orchard food_carcass food_livestock stone_mine
 can_gather_building farm
 can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower cannontower town_center shipyard
-can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation frank_horse_collar frank_heavy_plow frank_crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
+can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
 can_research
 def chinese_villager
 is_a peasant
@@ -3612,10 +3636,10 @@ mdf 0
 rdf 0
 mdg_vs building 3
 can_herd 1
-can_gather_deposit goldmine wood orchard food_carcass stone_mine
+can_gather_deposit goldmine wood orchard food_carcass food_livestock stone_mine
 can_gather_building farm
 can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower cannontower town_center shipyard
-can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation frank_horse_collar frank_heavy_plow frank_crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
+can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
 def mongol_herdsman
 is_a peasant
 cost 0 0 50 0
@@ -3631,10 +3655,16 @@ mdf 0
 rdf 0
 mdg_vs building 3
 can_herd 1
-can_gather_deposit goldmine wood orchard food_carcass stone_mine
-can_gather_building farm
-can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower cannontower town_center shipyard
-can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation frank_horse_collar frank_heavy_plow frank_crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
+can_gather_deposit goldmine wood orchard food_carcass food_livestock stone_mine
+; AoE4-like: no farm/mill — pastures spawn sheep; food drop-off is TC or pasture
+can_build house pasture lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower cannontower town_center shipyard
+; No horse_collar / heavy_plow / crop_rotation (farm mill line)
+can_use_tech loom wheelbarrow hand_cart double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
+; Franks: mill researches 0-cost aliases; keep those on the Frank villager only
+; so other civs' attribute UI does not list 马轭/重犁/轮作 twice.
+def frank_villager
+is_a peasant
+can_use_tech loom wheelbarrow hand_cart frank_horse_collar frank_heavy_plow frank_crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
 ; AoE2 Town Center (replaces base-game townhall as the playable main base)
 ; HP fixed 2400; melee/pierce armor scales by age (3/5 → 4/6 → 5/7 → 6/8)
 def town_center
@@ -3748,6 +3778,25 @@ production_cost 0 60 0 0
 production_qty 175
 resource_volume_max 175
 resource_volume_start 175
+can_use_tech masonry architecture town_watch town_patrol
+
+; AoE4-style pasture: Mongol herdsman builds this instead of farm (no mill)
+def pasture
+class building
+cost 0 60 0 0
+time_cost 15
+requirements town_center
+hp_max 480
+mdf 0
+rdf 0
+conversion_immune 1
+; Food drop-off near flocks (AoE4 Ger role light; TC also stores food)
+storable_resource_types resource3
+spawns_unit sheep
+larva_spawn_time 112
+larva_cap 8
+spawn_player_cap 30
+spawn_immediate 1
 can_use_tech masonry architecture town_watch town_patrol
 
 ; Mill farm upgrades (马轭 / 重犁 / 轮作)
@@ -4665,6 +4714,11 @@ is_a shipyard
 ; DE: no Dry Dock; no Elite Cannon Galleon
 can_research war_galley galleon fire_ship fast_fire_ship demolition_ship heavy_demolition_ship gillnets shipwright careening
 
+; AoE4-like: no mill — market gated by town center + Feudal instead of mill
+def mongol_market
+is_a market
+requirements town_center feudal_age
+
 ; ---------- Ages (AoE2 DE) ----------
 ; Costs/times match DE. No universal combat phase bonuses (res demo cleared).
 ; Building HP/armor age tables (DE) applied here as additive phase bonus groups;
@@ -4790,8 +4844,8 @@ shipyard briton_shipyard
 townhall town_center
 on_phase castle_age rdg_range 1 aoe_archer crossbowman arbalester skirmisher elite_skirmisher imperial_skirmisher longbowman elite_longbowman
 on_phase imperial_age rdg_range 1 aoe_archer crossbowman arbalester skirmisher elite_skirmisher imperial_skirmisher longbowman elite_longbowman
-; DE: shepherds +25% → carcass gather time × 1/1.25 ≈ -20%
-on_phase dark_age gather_time_food_carcass -20%
+; DE: shepherds +25% → livestock gather time × 1/1.25 ≈ -20%
+on_phase dark_age gather_time_food_livestock -20%
 beginner britons_beginner
 intermediate britons_intermediate
 advanced britons_advanced
@@ -4802,7 +4856,7 @@ nightmare britons_nightmare
 def franks
 class race
 is_a Civilization
-peasant peasant
+peasant frank_villager
 footman militia
 archer aoe_archer
 knight aoe_knight
@@ -4855,7 +4909,7 @@ advanced chinese_advanced
 expert chinese_expert
 nightmare chinese_nightmare
 
-; 蒙古: 骑射攻速+25%（mangudai/CA rdg_cd）; 猎人效率（牧民移速）; 斥候系HP; 无板甲马铠/射手锁甲
+; 蒙古: 骑射攻速+25%（mangudai/CA rdg_cd）; 猎人效率（food_carcass）；斥候系HP; 无板甲马铠/射手锁甲
 def mongols
 class race
 is_a Civilization
@@ -4872,11 +4926,14 @@ university mongol_university
 aoe_castle mongol_castle
 workshop workshop
 shipyard mongol_shipyard
+market mongol_market
 townhall town_center
 ; DE: hunters +40% → carcass gather time × 1/1.4 ≈ -29%
 on_phase dark_age gather_time_food_carcass -29%
 ; DE: scout cavalry line +30% HP
 on_phase dark_age hp_max 30% scout_cavalry
+; AoE4-like: pasture instead of farm; no mill (herdsman cannot build mill)
+farm pasture
 beginner mongols_beginner
 intermediate mongols_intermediate
 advanced mongols_advanced
@@ -5136,7 +5193,7 @@ can_upgrade_to cavalier_end
 def portuguese_villager
 is_a peasant
 can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower cannontower town_center shipyard feitoria
-can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation frank_horse_collar frank_heavy_plow frank_crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
+can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
 
 def portuguese_barracks
 is_a barracks
@@ -5330,7 +5387,7 @@ def aztec_villager
 is_a peasant
 carry_capacity 13
 can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith workshop university monastery aoe_castle palisade_wall palisade_gate outpost scouttower town_center shipyard
-can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation frank_horse_collar frank_heavy_plow frank_crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
+can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
 
 def aztec_barracks
 is_a barracks

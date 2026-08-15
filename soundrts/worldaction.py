@@ -15,6 +15,31 @@ def should_capture_on_contact(unit, target):
     )
 
 
+def _truthy_rules_flag(value):
+    if value in (1, "1", True):
+        return True
+    if isinstance(value, list) and value and str(value[0]) in ("1", "true", "True"):
+        return True
+    return False
+
+
+def _may_pursue_across_squares(unit, target):
+    """Whether AttackAction may keep following across squares.
+
+    - ``ai_mode chase``: existing continuous pursuit (requires is_an_enemy).
+    - ``pursue_attacker``: rules-driven (e.g. AoE2 boar lure to TC); does not
+      require diplomatic enmity so neutral wildlife can chase the hitter.
+    """
+    if unit is None or target is None or getattr(unit, "speed", 0) <= 0:
+        return False
+    if getattr(unit, "ai_mode", None) == "chase":
+        return hasattr(unit, "is_an_enemy") and unit.is_an_enemy(target)
+    pursue = getattr(unit, "pursue_attacker", None)
+    if pursue is None:
+        pursue = getattr(type(unit), "pursue_attacker", 0)
+    return _truthy_rules_flag(pursue)
+
+
 class Action:
     def __init__(self, unit, target):
         self.unit = unit
@@ -131,13 +156,16 @@ class AttackAction(Action):
         if unit.can_attack(target):
             unit.aim(target)
             return
-        # 追击模式：保持 AttackAction，经出口路径持续跟随，不下 go 命令
-        if (
-            getattr(unit, "ai_mode", None) == "chase"
-            and unit.speed > 0
-            and hasattr(unit, "is_an_enemy")
-            and unit.is_an_enemy(target)
-        ):
+        # 追击模式 / 受击追击（pursue_attacker，如野猪诱敌到 TC）
+        if _may_pursue_across_squares(unit, target):
+            too_far = getattr(unit, "_pursue_target_too_far", None)
+            if callable(too_far) and too_far(target):
+                clear = getattr(unit, "_clear_pursue_aggro", None)
+                if callable(clear):
+                    clear(return_home=True)
+                else:
+                    self.complete()
+                return
             if self._chase_toward(unit, target):
                 return
         self.complete()

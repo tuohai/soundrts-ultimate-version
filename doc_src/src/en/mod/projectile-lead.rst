@@ -66,11 +66,10 @@ Deprecated
 
 ``mdg_delay`` / ``rdg_delay`` (old “seconds of delay”) and shared ``projectile_speed``: not read in combat; converted/migrated to per-lane **speeds** on load. New mods should set ``*_projectile_speed`` directly.
 
-Engine / sync
+Engine
 -------------
 
 - ``attack_action._calc_projectile_flight_ms(target, is_melee=…)`` (derives arrival ms from speed)
 - ``definitions._migrate_legacy_projectile_delay``
-- Sync: ``tools/_sync_projectile_lead_fix8_fix14.py`` → 修复8 / 修复14 (excludes mods/aoe2)
 
 See also: `Modding manual <modding.htm>`_, `Release notes <../relnotes.htm>`_ (1.4.6.9).

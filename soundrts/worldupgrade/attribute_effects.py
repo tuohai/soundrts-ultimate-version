@@ -196,14 +196,24 @@ class AttributeEffectsMixin:
                 "rdg_seq_interval",
                 "mdg_seq_interval",
                 "unpack_time",
+                "pack_time",
             ):
                 try:
+                    cur = getattr(unit, stat, 0) or 0
+                    if isinstance(cur, (list, tuple)):
+                        cur = cur[0] if cur else 0
+                    cur = float(cur)
+                    # Legacy seconds (<500) → ms so Kataparuto % matches PRECISION rules
+                    if stat in ("unpack_time", "pack_time") and 0 < cur < 500:
+                        cur *= 1000.0
                     if str(value).endswith("%"):
-                        cur = float(getattr(unit, stat, 0) or 0)
                         pct = float(str(value).rstrip("%")) / 100.0
                         setattr(unit, stat, cur * (1.0 + pct))
                     else:
-                        setattr(unit, stat, float(value))
+                        v = float(value)
+                        if stat in ("unpack_time", "pack_time") and 0 < v < 500:
+                            v *= 1000.0
+                        setattr(unit, stat, v)
                 except (TypeError, ValueError) as e:
                     from ..lib.log import warning
                     warning(f"Error in bonus {stat}: {str(e)}")
@@ -224,22 +234,39 @@ class AttributeEffectsMixin:
                 i += 2
                 continue
 
-            # gather_byproduct <deposit> <rate_per_sec> — Paper Money (gold = resource1)
+            # gather_byproduct <deposit_or_source> [product] <rate_per_sec>
+            # First token is a deposit type (e.g. wood) or resourceN; keep as written.
             if stat == "gather_byproduct":
+                from ..worldmarket import resource_or_type_key
+                from .effect_bonus_parse import _looks_numeric
+
                 if i + 2 >= len(bonus_args):
                     break
-                deposit = bonus_args[i + 1]
-                rate = bonus_args[i + 2]
+                source = bonus_args[i + 1]
+                if (
+                    i + 3 < len(bonus_args)
+                    and _looks_numeric(bonus_args[i + 3])
+                    and not _looks_numeric(bonus_args[i + 2])
+                ):
+                    product = bonus_args[i + 2]
+                    rate = bonus_args[i + 3]
+                    consumed = 4
+                else:
+                    product = "resource1"
+                    rate = bonus_args[i + 2]
+                    consumed = 3
                 try:
                     cur = getattr(unit, "gather_byproduct", None)
                     if not isinstance(cur, dict):
                         cur = {}
-                    cur[str(deposit)] = float(rate)
+                    source_key = str(source)
+                    product_key = resource_or_type_key(product) or "resource1"
+                    cur[source_key] = (float(rate), product_key)
                     unit.gather_byproduct = cur
                 except (TypeError, ValueError) as e:
                     from ..lib.log import warning
                     warning(f"Error in bonus gather_byproduct: {str(e)}")
-                i += 3
+                i += consumed
                 continue
                 
             # 处理gather_time（应用到玩家级别）

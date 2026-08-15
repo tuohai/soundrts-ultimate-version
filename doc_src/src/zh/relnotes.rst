@@ -4,6 +4,61 @@
 .. contents::
 
 
+1.4.7.2
+--------
+
+**aoe2 / 引擎：巨型投石机打包 / 拆包（规则驱动）+ 进度条**
+
+- **问题**：可打包攻城单位原先只是移动后首次开火多等一会儿，没有真正的打包/拆包形态，也没有对齐帝国 2 的用语与 ``proportion_*`` 进度。
+- **改进**：规则 ``packable``、``unpack_time`` / ``pack_time``，可选 ``packed_mdf`` / ``packed_rdf``、``spawn_packed``。打包可走不可打，拆包可打不可走；移动自动打包、攻击自动拆包；停止可立刻取消。进度走 ``completeness`` → ``proportion_*``。界面：**打包** / **拆包**。
+- **文档**：各语言 ``mod/modding.htm``。
+
+**aoe2：蒙古去掉磨坊（帝国 4 式放牧食物）**
+
+- **问题**：蒙古牧民仍能建磨坊，属性里还挂着马轭/重犁/轮作，与草场替农田不一致。
+- **改进**：``mongol_herdsman`` 不能建 ``mill``，也不研究农田磨坊科技。``pasture`` 只需 ``town_center``，并可存放食物（``resource3``）。
+- **文档**：``player/hunting.htm``、``mods/aoe2/SOURCES.md``。
+
+**aoe2 修复：村民属性里马轭 / 重犁 / 轮作重复**
+
+- **问题**：农民 ``can_use_tech`` 同时挂了普通农田科技和法兰克 0 费别名（``frank_horse_collar`` 等），别名与正牌共用标题，属性界面会把马轭、重犁、轮作各念两遍。
+- **改进**：非法兰克村民只保留 ``horse_collar`` / ``heavy_plow`` / ``crop_rotation``；法兰克用 ``frank_villager``，农田科技只用免费别名。
+
+**修复：采集副产 ``gather_byproduct``（如纸币）不在属性界面显示**
+
+- **问题**：效果是三元组（矿床、速率），界面按二元组解析，把矿床名当成数值、丢掉速率，整行不出现。
+- **改进**：按矿床名、副产资源和每秒速率显示（纸币：木材矿床、黄金、+0.014/秒）。规则仍写矿床类型（如 ``wood``）。
+
+**新增：选阵营时可听文明特色**
+
+- 方向键只朗读阵营名称；有 ``intro`` 时按 **G** 打开简介子菜单，上下键逐句听（回车可再听当前句，Esc 返回）。没有 ``intro`` 的模组行为不变。
+- aoe2 十二个文明已写好中英特色文本；``tts.txt`` 可用缩进续行排版，G 菜单按行朗读。
+
+**aoe2：牧羊与打猎分矿床（规则驱动）**
+
+- **问题**：羊与鹿/野猪共用 ``food_carcass``，不列颠「牧羊更快」与蒙古「猎人效率」会互相加成到对方工作。
+- **改进**：可驱赶动物死后生成 ``food_livestock``；野生狩猎仍用 ``food_carcass``。不列颠：``gather_time_food_livestock -20%``；蒙古：``gather_time_food_carcass -29%``。引擎按 ``gather_time_<矿床>`` 匹配，AI 狩猎能力由规则的 ``food_deposit`` / ``is_huntable`` 推导，不硬编码文明名。
+- **文档**：``player/hunting.htm``、``mod/modding.htm``（狩猎概要）。
+
+**新增：``pursue_attacker`` — 野猪跨格追击（帝国 2 式拖野猪）**
+
+- **问题**：野猪在 ``guard`` 下会反击，但 ``AttackAction`` 只在 ``chase`` 模式跨格跟随，村民一离开当前格追击就断，无法拖到城镇中心。
+- **改进**：规则属性 ``pursue_attacker 1`` 让攻击动作跨格持续跟随（不要求外交敌对）。原版与 aoe2 野猪已开启；鹿/羊仍用 ``flee_on_hit``。
+- **文档**：``player/hunting.htm``、``mod/modding.htm``。
+
+**新增：``pursue_leash_range`` — 拉开距离后脱仇**
+
+- **问题**：仅有 ``pursue_attacker`` 时，靠 ``last_attacker`` 会一直追，拉开很远也不脱仇（不像帝国 2 的视野脱仇）。
+- **改进**：规则整数 ``pursue_leash_range``（毫米；``0``=不限制）。超过则忘仇、停攻并走回出生点。野猪用 ``48000``（约 4 格）。
+- **文档**：``player/hunting.htm``、``mod/modding.htm``。
+
+**新增：``claimable`` + 草场刷羊（帝国 2 领羊 / 帝国 4 草场，规则驱动）**
+
+- **问题**：驱赶只跟随不改归属，模组无法选用帝国 2 式靠近领羊，也无法做帝国 4 式草场繁殖。
+- **改进**：中立 ``claimable`` 动物被任意附近非中立单位靠近即 ``set_player``（``claim_range``；保留独立的 ``can_herd``）。建筑可用 ``spawns_unit`` + ``spawn_player_cap`` / ``spawn_immediate``（aoe2：羊 ``claimable``；蒙古 ``pasture``）。
+- **文档**：``player/hunting.htm``、``mod/modding.htm``。
+
+
 1.4.7.1
 --------
 
@@ -11,14 +66,14 @@
 
 - **问题**：施工占位（``BuildingSite``）会露出目标建筑的训练/研究菜单，兵营等还没建成就能训练。
 - **改进**：未完工工地训练/研究列表为空，也不能作为可运转建筑接生产指令。
-- **范围**：全部模组（含 aoe2）；已同步修复8 / 修复14。
+- **范围**：全部模组（含 aoe2）。
 - **实现 / 测试**：``world_build_rules.py``（``is_unfinished_building``、``effective_can_train`` / ``effective_can_research`` / ``building_can_operate``）；``test_can_train_upgrade.py``。
 
 **修复：建筑完工时按文明/时代加成满血，而不是先缺再修**
 
 - **问题**：完工时用规则类的 ``hp_max`` 写当前生命（如兵营 1200），实例上限已含加成（拜占庭黑暗时代 +10% → 1320），农民会自动把「缺口」修满。
 - **改进**：完工按实例 ``hp_max`` 设血（再减去施工中受伤）。与帝国 2 一致：建完就是加成后的满血，不是再修一截。
-- **范围**：全部模组；已同步修复8 / 修复14。
+- **范围**：全部模组。
 - **实现 / 测试**：``worldcreature.py``（``BuildingSite._complete_construction``）；``test_z5_byzantine_barracks_hp.py``。
 
 **aoe2：新增凯尔特文明；威廉·华莱士战役玩家为凯尔特**
@@ -35,7 +90,7 @@
 
 - **问题**：方向键浏览地图时，地形通行音（如过桥）或阻挡音先进入语音队列，播完后才报坐标/地名，手感偏慢、不跟手。
 - **改进**：通行/阻挡音效改走音效通道立刻播放，坐标与地名仍走语音队列，两者同时开始，不再排队等待。
-- **范围**：普通地图浏览、缩放跨格、第一人称阻挡反馈；已同步修复8 / 修复14 / 原始1 / 原始2。
+- **范围**：普通地图浏览、缩放跨格、第一人称阻挡反馈。
 - **实现**：``clientgame/game_navigation.py``（``_play_movement_sfx``）、``clientgamefocus.py``、``clientgame/game_audio.py``。
 
 
@@ -47,7 +102,7 @@
 - **aoe2**：酋长科技改为 ``kill_resource_vs … resource1 5``（村民 / 贸易车 / 贸易船 / 僧侣）。
 - **TTS / UI**：``击杀资源加成``（不再读出裸键 ``kill_gold``）；科技详情带目标类型与资源名。
 - **文档**：各语言 ``mod/modding``。
-- **实现 / 测试**：``worldmarket.canonical_resource_name``、``effect_bonus_parse``、``attribute_effects``、``worldcreature``；``test_aoe2_full_unique_techs.py``、``test_stat_tts_names.py``。已同步修复8 / 修复14；原始1 / 原始2 同步 TTS 命名。
+- **实现 / 测试**：``worldmarket.canonical_resource_name``、``effect_bonus_parse``、``attribute_effects``、``worldcreature``；``test_aoe2_full_unique_techs.py``、``test_stat_tts_names.py``。
 
 
 1.4.6.9
@@ -59,7 +114,7 @@
 - **属性**：``heal_garrisoned 1`` 时 ``heal_nearby_units`` 只治疗 ``self.inside`` 乘客；默认 ``0`` 行为不变（``heal_range`` 单体或 ``heal_radius`` 范围）。
 - **aoe2 数值（贴 DE）**：TC/箭塔 ``heal_level 1`` + ``heal_cd 10`` → 0.1 HP/s；城堡 ``heal_level 1`` + ``heal_cd 5`` → 0.2 HP/s；草药学 ``heal_level +5``（×6）→ 0.6 / 1.2 HP/s，目标含 ``keeptower``。
 - **文档**：`技能 / 治疗 / 效果 <mod/skills-and-effects.htm>`_、``mod/modding``。
-- **测试**：``test_heal_garrisoned.py``。已同步修复8 / 修复14 / 原始1 / 原始2。
+- **测试**：``test_heal_garrisoned.py``。
 
 **新增：规则驱动投射物预判 ``projectile_lead`` 与分路飞行速度**
 
@@ -67,7 +122,7 @@
 - **预判**：``projectile_lead 0|1``（仅远程投射物）。引擎不写死 ``ballistics``。
 - **科技 / UI**：``effect bonus projectile_lead 1``；``effect info``。
 - **文档**：`投射物预判与飞行速度 <mod/projectile-lead.htm>`_；``mod/modding``。
-- **测试**：``test_projectile_speed.py``。同步修复8 / 修复14。
+- **测试**：``test_projectile_speed.py``。
 
 **新增：规则驱动市场机制（买卖 / 进贡 / 路线贸易）**
 
@@ -696,11 +751,12 @@
 
 **修复：中立默认命令与狩猎伤害**
 
-- 对中立单位（非强制攻击）的默认/普通 ``go`` 只移动，不再挂起攻击动作（界面显示攻击却无伤害）。
-- 对 ``is_huntable`` 动物的普通 ``attack``（含退格默认狩猎）可以正常造成伤害；仅强制攻击命令才能让 AI 把中立当作自动交战目标。
-- **实现**：``worldunit/world_ai_decision.py``、``worldunit/worldcreature.py``。
+- 对**所有中立单位**（含可狩猎动物）默认命令是 ``go``（靠近 / 归属），不挂攻击动作。
+- 攻击中立须强制命令（Ctrl+退格，或选 ``go`` 后 Ctrl+回车）。已归属的 ``is_huntable`` 默认仍是 ``attack``（屠宰）；普通攻击可正常造成伤害。
+- 仅强制攻击才能让 AI 把中立当作自动交战目标。
+- **实现**：``worldunit/world_ai_decision.py``、``worldunit/worldcreature.py``、``worldunit/worldworker.py``、``worldunit/world_order.py``。
 - **文档**：``player/hunting.rst``、``player/unit-default-behavior.rst``。
-- **测试**：``test_neutral_no_auto_attack.py``、``test_neutral_go_and_hunt_attack.py``。
+- **测试**：``test_neutral_no_auto_attack.py``、``test_neutral_go_and_hunt_attack.py``、``test_claimable_pasture.py``、``test_hunting.py``。
 
 **修复：Computer 玩家感知更新崩溃（``_buckets`` 缺失）**
 

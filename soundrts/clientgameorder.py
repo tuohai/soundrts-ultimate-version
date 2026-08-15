@@ -45,15 +45,20 @@ class OrderTypeView:  # future order
         self.cls = ORDERS_DICT[o[0]]
         if len(o) > 1:
             self.type = o[1]
-            # Args may be commodities (market_buy wood) or other non-unit tokens;
-            # only unit/upgrade classes expose ``requirements``.
-            type_cls = rules.unit_class(self.type)
+        else:
+            self.type = None
+
+        # 创建命令对象以便获取类型和成本信息（Build/Train 会做种族壳重映射）
+        order_obj = self.cls(unit, [self.type])
+
+        # 需求取自重映射后的类型（如蒙古 market → mongol_market），否则 Tab 提示仍显示通用磨坊需求
+        if self.type:
+            type_cls = getattr(order_obj, "type", None)
+            if type_cls is None:
+                type_cls = rules.unit_class(self.type)
             self.requirements = list(getattr(type_cls, "requirements", None) or ())
         else:
             self.requirements = []
-
-        # 创建命令对象以便获取类型和成本信息
-        order_obj = self.cls(unit, [self.type])
 
         # 初始化训练数量
         self.train_count = 1

@@ -600,6 +600,10 @@ class CreatureStatusUpdate(Entity):
 
         self.is_moving = False
 
+        from ..world_siege_pack import tick_siege_pack
+
+        tick_siege_pack(self)
+
         # 依次处理各种行为
         if self.heal_level:
             self.heal_nearby_units()
@@ -611,6 +615,12 @@ class CreatureStatusUpdate(Entity):
         # 再次检查单位是否仍然存在
         if self.player is None:
             return
+
+        # 帝国 2 式：中立 claimable 动物被非中立单位靠近 → 归属
+        if getattr(type(self), "claimable", 0):
+            self._try_auto_claim()
+            if self.player is None:
+                return
 
         # 牧羊：每帧维护跟随，避免 imperative 命令阻断 decide 后不再跟随
         if getattr(type(self), "herdable", 0) and getattr(self, "_herd_leader", None):
@@ -646,6 +656,68 @@ class CreatureStatusUpdate(Entity):
         queue[0].update()
     def _is_attacking(self):
         return isinstance(self.action, AttackAction)
+
+    def _try_auto_claim(self):
+        """Neutral ``claimable`` animals join a non-neutral player on proximity (AoE2 sheep)."""
+        from ..lib.nofloat import square_of_distance
+
+        raw = getattr(self, "claimable", None)
+        if raw is None:
+            raw = getattr(type(self), "claimable", 0)
+        if raw not in (1, "1", True) and not (
+            isinstance(raw, list) and raw and str(raw[0]) in ("1", "true", "True")
+        ):
+            return False
+        owner = self.player
+        if owner is None or not getattr(owner, "neutral", False):
+            return False
+        place = self.place
+        if place is None or getattr(self, "hp", 0) <= 0:
+            return False
+        claim_range = getattr(self, "claim_range", None)
+        if claim_range is None:
+            claim_range = getattr(type(self), "claim_range", 0)
+        try:
+            claim_range = int(claim_range[0] if isinstance(claim_range, list) else claim_range)
+        except (TypeError, ValueError):
+            claim_range = 0
+        candidates = list(getattr(place, "objects", ()) or ())
+        if claim_range > 0:
+            for nb in getattr(place, "neighbors", ()) or ():
+                candidates.extend(getattr(nb, "objects", ()) or ())
+        for obj in candidates:
+            if obj is self:
+                continue
+            if getattr(obj, "hp", 0) <= 0:
+                continue
+            p = getattr(obj, "player", None)
+            if p is None or p is owner or getattr(p, "neutral", False):
+                continue
+            if claim_range > 0:
+                if square_of_distance(self.x, self.y, obj.x, obj.y) > claim_range * claim_range:
+                    continue
+            elif getattr(obj, "place", None) is not place:
+                continue
+            self.set_player(p)
+            # Owned livestock: slaughter instead of fleeing; stop wild wandering.
+            self.flee_on_hit = 0
+            skills = getattr(obj, "basic_skills", None) or getattr(obj, "_basic_skills", ()) or ()
+            if "herd" in skills and getattr(type(self), "herdable", 0):
+                from ..worldorders.movement import _attach_herd
+
+                _attach_herd(self, obj)
+            animal_type = (
+                getattr(self, "type_name", None)
+                or getattr(type(self), "type_name", None)
+                or getattr(type(self), "__name__", "")
+            )
+            try:
+                # Feedback to the claimer (sound + TTS via client on_claim_ok).
+                obj.notify(f"claim_ok,{animal_type}")
+            except Exception:
+                pass
+            return True
+        return False
 
     # slow update
     def debug_log(self, message):

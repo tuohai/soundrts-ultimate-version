@@ -12,15 +12,16 @@ SoundRTS supports Age of Empires–style hunting: workers attack wildlife, hunte
 ----------------
 
 
-1. Backspace / default order or right-click an animal → ``attack`` on ``is_huntable`` (plain attack deals damage; imperative not required)
-2. On kill → ``food_carcass`` deposit spawns; the attack order completes (**no** false ``order_impossible`` beep)
+1. Backspace / default order or right-click an animal → ``go`` (approach / claim), including **owned** livestock; workers with ``can_herd`` still default to ``herd`` on ``herdable``. To **attack** (hunt / slaughter), use imperative (Ctrl+Backspace) or select ``go`` then Ctrl+Enter
+2. On kill → a deposit named by the animal's ``food_deposit`` spawns (base game: ``food_carcass``; aoe2 sheep: ``food_livestock``); the attack order completes (**no** false ``order_impossible`` beep)
 3. Auto-gather → workers may auto-queue gather on the carcass after the kill; with ``auto_gather`` they also collect and return food
-4. Flee on hit → deer and sheep run away; boars fight back
-5. Herding (optional) → workers with ``can_herd 1`` can herd ``herdable`` animals (e.g. sheep)
+4. Flee on hit → deer and sheep run away; boars counterattack and pursue across squares (``pursue_attacker``, can be lured to the town center; ``pursue_leash_range`` drops aggro if you open a large gap)
+5. Claim (optional) → any non-neutral unit near a neutral ``claimable`` animal (AoE2-style sheep) takes ownership, with a confirmation sound and a short “sheep , claimed” style tip; ``can_herd`` is separate and still only follows
+6. Herding (optional) → workers with ``can_herd 1`` can herd ``herdable`` animals (e.g. sheep)
+7. Pasture (optional) → a building with ``spawns_unit`` / ``spawn_player_cap`` (aoe2 Mongol ``pasture``) periodically spawns owned livestock; ``spawn_immediate 1`` means **one** sheep on complete, then top up toward ``larva_cap`` on the interval. Mongol herdsmen build no mill/farm; pasture only needs a town center and can store food
 
 
-Note: default order on ordinary neutral creeps / NPCs is ``go`` (move only); on huntable animals it remains ``attack``.
-Offensive / defensive / chase AI will **not** auto-attack neutral animals unless you issue an imperative attack.
+Note: default order on **all** neutral units (wildlife, creep, NPCs) is ``go`` (move / approach). Offensive / defensive / chase AI will **not** auto-attack neutrals unless you issue an imperative attack.
 
 
 ----
@@ -128,17 +129,20 @@ Built-in units
    * - Type
      - Notes
    * - ``deer``
-     - 35 food, flees when hit
+     - 35 food, flees when hit; ``food_deposit food_carcass``
    * - ``sheep``
-     - 25 food, herdable, flees
+     - herdable, flees; base game ``food_carcass``, aoe2 ``food_livestock``
    * - ``boar``
-     - 50 food, counter-attacks
+     - 50 food, counterattacks and pursues across squares (``pursue_attacker``); ``food_deposit food_carcass``
    * - ``food_carcass``
-     - gatherable carcass (``collision 0``)
+     - hunt carcass deposit (``collision 0``)
+   * - ``food_livestock``
+     - aoe2 herdable carcass (shepherd bonuses target this)
 
 
+Workers ``can_gather`` / ``can_gather_deposit`` should list every carcass type they may gather (e.g. ``food_carcass``, and in aoe2 also ``food_livestock``), plus ``orchard`` when used.
 
-Workers ``can_gather`` includes ``food_carcass`` and ``orchard``.
+**Separate shepherd / hunter bonuses (rules-driven):** use different ``food_deposit`` types, then ``on_phase`` / tech ``gather_time_<deposit>`` (e.g. Britons ``gather_time_food_livestock``, Mongols ``gather_time_food_carcass``). The engine keys bonuses by deposit ``type_name``; AI hunting allows any deposit produced by ``is_huntable`` animals — no civ names in code.
 
 Animal properties
 ~~~~~~~~~~~~~~~~~~
@@ -154,8 +158,16 @@ Animal properties
      - huntable; right-click defaults to attack
    * - ``flee_on_hit 1``
      - run away from attacker
+   * - ``pursue_attacker 1``
+     - after counterattack, keep chasing across squares (boar lure to TC)
+   * - ``pursue_leash_range``
+     - max distance to the chase target in mm; beyond it, forget and return home (``0`` = no limit; boars use ``48000`` ≈ 4 squares)
    * - ``herdable 1``
      - can be herded by ``can_herd`` workers
+   * - ``claimable 1``
+     - while neutral, any nearby non-neutral unit claims ownership (AoE2 sheep); keeps ``can_herd`` as a separate follow mechanic
+   * - ``claim_range``
+     - claim distance in mm (``0`` = same square only; aoe2 sheep use ``12000``)
    * - ``food_deposit``
      - carcass deposit type on death
    * - ``food_deposit_qty``
@@ -166,6 +178,8 @@ Animal properties
 
 
 Worker: ``can_herd 1`` enables herding (default ``0``).
+
+Pasture buildings (optional): ``spawns_unit sheep``, ``larva_spawn_time``, ``larva_cap`` (per-square max), ``spawn_player_cap`` (player-wide living count; aoe2 pasture uses ``30``), ``spawn_immediate 1`` (spawn **one** when the building is ready — not a full ``larva_cap`` dump; hatcheries without ``spawn_immediate`` still fill to cap).
 
 Custom animal example
 ~~~~~~~~~~~~~~~~~~~~~~

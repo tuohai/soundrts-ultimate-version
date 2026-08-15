@@ -467,6 +467,20 @@ class EquipmentAbilities:
         # 动态采集速率（continuous / AoE2 风格）
         self.main_interface._add_dynamic_gather_attributes(attrs, u, "gather_rate")
 
+        byproduct = getattr(u, "gather_byproduct", None)
+        if not isinstance(byproduct, dict) or not byproduct:
+            byproduct = getattr(getattr(u, "model", None), "gather_byproduct", None)
+        if isinstance(byproduct, dict) and byproduct:
+            from ..worldmarket import unpack_gather_byproduct_entry
+            from .effect_formatter import EffectFormatter
+
+            fmt = EffectFormatter(self.main_interface)
+            for source, entry in byproduct.items():
+                rate, product = unpack_gather_byproduct_entry(entry)
+                row = fmt.format_gather_byproduct_row(source, product, rate)
+                if row:
+                    attrs.append(row)
+
         # 运载上限（默认 + 按资源类型）
         carry = getattr(u.model, "carry_capacity", 0)
         if isinstance(carry, (int, float)) and carry > 0:

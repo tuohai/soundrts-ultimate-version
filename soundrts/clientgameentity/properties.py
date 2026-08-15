@@ -21,10 +21,14 @@ def deposit_qty_unit_title(type_name=None, resource_type=None):
 
 
 def carcass_short_title(model, type_name=None):
-    """狩猎尸体：有来源动物时显示「鹿的尸体」，否则回退为 deposit 类型名。"""
+    """动物尸体：有 ``carcass_of`` 时显示「鹿的尸体」，否则回退为 deposit 类型名。
+
+    不绑定具体 type_name（如 food_carcass / food_livestock），由规则里的
+    food_deposit 决定矿床类型。
+    """
     type_name = type_name or getattr(model, "type_name", None)
     carcass_of = getattr(model, "carcass_of", None)
-    if type_name == "food_carcass" and carcass_of:
+    if carcass_of:
         return compute_title(carcass_of) + mp.CORPSE
     return compute_title(type_name)
 
@@ -274,10 +278,8 @@ class EntityViewProperties:
     def short_title(self):
         if self.type_name == "buildingsite":
             return compute_title(self.type.type_name) + compute_title(self.type_name)
-        if self.model is not None:
-            carcass_of = getattr(self.model, "carcass_of", None)
-            if self.type_name == "food_carcass" and carcass_of:
-                return carcass_short_title(self.model)
+        if self.model is not None and getattr(self.model, "carcass_of", None):
+            return carcass_short_title(self.model)
         return compute_title(self.type_name)
 
     @property

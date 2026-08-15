@@ -848,6 +848,13 @@
 4934	zaganiaj
 4935	podąża
 4936	techniki łowieckie
+4937	przejęte
+4938	spakować
+4939	rozpakować
+4943	pakowanie
+4944	rozpakowywanie
+4945	spakowany
+4946	rozpakowany
 4950	kampania kooperacyjna
 4951	lokalna kampania kooperacyjna
 4952	wybierz kampanię kooperacyjną

@@ -848,6 +848,13 @@
 4934	arrear
 4935	seguido
 4936	técnicas de caza
+4937	reclamado
+4938	empacar
+4939	desempacar
+4943	empacando
+4944	desempacando
+4945	empacado
+4946	desempacado
 4950	Campaña cooperativa
 4951	Campaña cooperativa local
 4952	Seleccionar campaña cooperativa

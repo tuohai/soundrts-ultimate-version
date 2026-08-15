@@ -113,7 +113,8 @@
 8321 Cervo
 8322 Ovelha
 8323 Javali
-8324 Carcaça
+8324 Carcaça
+8330 Carcaça de gado
 
 8120 Milícia
 8121 Homem de Armas

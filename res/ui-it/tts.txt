@@ -848,6 +848,13 @@
 4934	guidare
 4935	seguito
 4936	tecniche di caccia
+4937	reclamato
+4938	impacchettare
+4939	spacchettare
+4943	impacchettamento
+4944	spacchettamento
+4945	impacchettato
+4946	spacchettato
 4950	Campagna cooperativa
 4951	Campagna cooperativa locale
 4952	Seleziona campagna cooperativa

@@ -125,14 +125,16 @@ def _menu_labels_for(choices) -> list[str]:
             labels.append("")
             continue
         label = msgparts_to_display_text(choice[0])
-        if len(choice) > 2 and choice[2]:
-            extra = msgparts_to_display_text(choice[2])
-            if extra:
-                label = f"{label} — {extra}" if label else extra
         labels.append(label or "(item)")
     _menu_label_cache_key = key
     _menu_label_cache = labels
     return labels
+
+
+def _menu_explanation_text(choice) -> str:
+    if not choice or len(choice) < 3 or not choice[2]:
+        return ""
+    return msgparts_to_display_text(choice[2])
 
 
 # (font_id, max_width, text) -> fitted text; avoids O(n) font.size on long help rows.
@@ -516,8 +518,13 @@ def draw_menu(
 
     labels = _menu_labels_for(choices)
 
+    detail = ""
+    if selected_index is not None and 0 <= selected_index < len(choices or []):
+        detail = _menu_explanation_text(choices[selected_index])
+    detail_h = min(168, max(88, h // 5)) if detail else 0
+
     list_top = 64
-    list_bottom = h - 48
+    list_bottom = h - 48 - detail_h
     row_h = max(28, item_font.get_height() + 10)
     pad_x = 28
     visible = max(1, (list_bottom - list_top) // row_h)
@@ -550,6 +557,23 @@ def draw_menu(
         img = item_font.render(text, True, color)
         surf.blit(img, (rect.x + 10, rect.y + (row_h - 2 - img.get_height()) // 2))
         y += row_h
+
+    if detail:
+        box = pygame.Rect(pad_x, list_bottom + 8, w - pad_x * 2, detail_h - 16)
+        pygame.draw.rect(surf, (24, 28, 36), box)
+        pygame.draw.rect(surf, (90, 110, 140), box, 1)
+        body_font = _pick_font(18, bold=False)
+        lines = _wrap_lines(body_font, detail, box.width - 20)
+        ty = box.y + 8
+        line_h = body_font.get_height() + 3
+        for line in lines:
+            if ty + line_h > box.bottom - 6:
+                more = body_font.render("…", True, (200, 200, 200))
+                surf.blit(more, (box.x + 10, ty))
+                break
+            img = body_font.render(line, True, (220, 228, 238))
+            surf.blit(img, (box.x + 10, ty))
+            ty += line_h
 
     hint = hint_font.render(
         "↑↓ / click: select   Enter / double-click: confirm   Esc: back",

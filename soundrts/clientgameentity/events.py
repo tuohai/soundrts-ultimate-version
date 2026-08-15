@@ -557,6 +557,36 @@ class EntityViewEvents:
                     **_PRIMARY,
                 )
 
+    def on_claim_ok(self, animal_type="", *_args):
+        """Proximity claim of a ``claimable`` animal (sound + short TTS)."""
+        if self.get_style("claim_ok"):
+            self.launch_event_style("claim_ok", alert=True)
+        else:
+            # Trees without claim_ok style still get a confirmation beep.
+            self.launch_event_style("order_ok", alert=True)
+        animal_title = []
+        if animal_type:
+            t = style.get(animal_type, "title", warn_if_not_found=False)
+            if t:
+                animal_title = list(t) if isinstance(t, list) else [t]
+        msg_style = self.get_style("claim_ok_msg")
+        info_kw = {}
+        try:
+            info_kw = _PRIMARY
+        except NameError:
+            pass
+        if msg_style:
+            voice.info(
+                substitute_args(msg_style, [animal_title]),
+                **info_kw,
+            )
+            return
+        claim_title = style.get("claim_ok", "title", warn_if_not_found=False) or ["4937"]
+        msg = list(animal_title)
+        msg.extend(claim_title if isinstance(claim_title, list) else [claim_title])
+        if msg:
+            voice.info(msg, **info_kw)
+
     def on_placed(self):
         """Play sound when a building site is placed."""
         if self.type_name != "buildingsite":

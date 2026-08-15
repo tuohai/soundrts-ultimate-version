@@ -113,7 +113,8 @@
 8321 Jelen
 8322 Ovce
 8323 Divočák
-8324 Mršina
+8324 Mršina
+8330 Mršina dobytka
 
 8120 Straż obywatelska
 8121 Piechur z mieczem

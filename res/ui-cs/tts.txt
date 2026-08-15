@@ -848,6 +848,13 @@
 4934	hnát
 4935	následuje
 4936	lovecké techniky
+4937	přivlastněno
+4938	sbalit
+4939	rozbalit
+4943	balení
+4944	rozbalování
+4945	sbaleno
+4946	rozbaleno
 4950	kooperativní kampaň
 4951	místní kooperativní kampaň
 4952	vyberte kooperativní kampaň

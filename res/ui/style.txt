@@ -137,6 +137,26 @@ def attack ; imperative go
 title 114
 ; no index (won't appear in the menu)
 
+def pack
+title 4938
+index 2.2
+
+def unpack
+title 4939
+index 2.3
+
+def siege_packing
+title 4943
+
+def siege_unpacking
+title 4944
+
+def siege_packed
+title 4945
+
+def siege_unpacked
+title 4946
+
 def capture ; imperative go
 title 4370
 ; no index (won't appear in the menu)
@@ -147,6 +167,9 @@ title 4934
 
 def herd_ok
 title 4935
+
+def claim_ok
+title 4937
 
 def pickup
 title 4366
@@ -496,6 +519,9 @@ noise_if_damaged if_me repeat 12 1172 else repeat 12 1072
 noise_if_very_damaged if_me repeat 12 1173 else repeat 12 1073
 captured_success 1855
 captured_lost 1856
+; claimable livestock proximity claim (AoE2-style sheep)
+claim_ok if_me 1194 1195 1196 else 1094 1095 1096
+claim_ok_msg $1 4937
 
 def building
 is_a unit

@@ -32,7 +32,7 @@ def test_town_center_rules_train_only_peasant(aoe2_rules):
     "faction,expected",
     [
         ("britons", "peasant"),
-        ("franks", "peasant"),
+        ("franks", "frank_villager"),
         ("byzantines", "peasant"),
         ("chinese", "chinese_villager"),
         ("mongols", "mongol_herdsman"),
@@ -74,3 +74,5 @@ def test_chinese_villager_has_makers_via_peasant(aoe2_rules):
     assert "town_center" in makers_m or "townhall" in makers_m
     makers_a = aoe2_rules.get_makers("aztec_villager")
     assert "town_center" in makers_a or "townhall" in makers_a
+    makers_f = aoe2_rules.get_makers("frank_villager")
+    assert "town_center" in makers_f or "townhall" in makers_f

@@ -3,21 +3,68 @@ Note di rilascio
 
 .. contents::
 
+1.4.7.2
+--------
+
+**aoe2 / motore: impacchettare / spacchettare il trabucco (da regole) + progresso proportion**
+
+- **Problema**: le unità d’assedio «packable» ritardavano solo il primo colpo dopo lo spostamento; non c’era uno stato reale né ``proportion_*``.
+- **Cambio**: regole ``packable``, ``unpack_time`` / ``pack_time``, opzionali ``packed_mdf`` / ``packed_rdf``, ``spawn_packed``. Impacchettato = solo muoversi; spacchettato = solo attaccare. Progresso ``completeness`` → ``proportion_*``. UI: impacchettare / spacchettare.
+- **Docs**: ``mod/modding.htm``.
+
+**aoe2: correzione di Collare / Aratro pesante / Rotazione colture duplicati sui villager**
+
+- **Problema**: ``can_use_tech`` del contadino elencava sia le tech del mulino generiche sia gli alias franchi a costo 0 (``frank_horse_collar`` ecc.). Gli alias condividono il titolo, quindi la schermata attributi leggeva ogni nome due volte.
+- **Cambio**: i villager non franchi tengono solo ``horse_collar`` / ``heavy_plow`` / ``crop_rotation``. I Franchi usano ``frank_villager``, con i soli alias gratuiti.
+
+**Correzione: ``gather_byproduct`` (es. Banconote) assente dagli attributi**
+
+- **Problema**: l’effetto è una terna (deposito, ritmo). L’UI la leggeva come coppia, usava il deposito come valore, perdeva il ritmo e nascondeva la riga.
+- **Cambio**: si mostrano deposito, risorsa secondaria e ritmo al secondo (Banconote: deposito legno, oro, +0.014/s). Le rules restano sul tipo di deposito (es. ``wood``).
+
+**Novità: ascoltare i bonus di civiltà scegliendo la fazione**
+
+- Le frecce leggono solo il nome. Con ``intro``, premi **G** per un sottomenu e usa su/giù frase per frase (Invio ripete; Esc torna indietro). Senza ``intro``, nessun cambiamento.
+- aoe2: le dodici civ hanno testi in inglese e cinese.
+
+**aoe2: pastori e cacciatori usano depositi carcassa distinti (guidato dalle rules)**
+
+- **Problema**: pecore e cervi/cinghiali condividevano ``food_carcass``, quindi il bonus pastori britanni e quello cacciatori mongoli acceleravano entrambi i lavori.
+- **Cambio**: gli ``herdable`` lasciano ``food_livestock``; la caccia resta su ``food_carcass``. Britanni: ``gather_time_food_livestock -20%``. Mongoli: ``gather_time_food_carcass -29%``. Il motore abbina ``gather_time_<deposito>`` e la caccia IA dalle rules (``food_deposit`` / ``is_huntable``), senza hardcode dei nomi civ.
+- **Docs**: ``player/hunting.htm``, ``mod/modding.htm``.
+
+**Novità: ``pursue_attacker`` — i cinghiali inseguono tra le caselle (stile AoE2)**
+
+- **Problema**: i cinghiali contrattaccavano in ``guard``, ma ``AttackAction`` inseguiva tra le caselle solo in modalità ``chase``, quindi uscendo il villager la caccia si interrompeva e non si poteva attirarli al centro cittadino.
+- **Cambio**: il flag rules ``pursue_attacker 1`` mantiene l’attacco inseguendo tra le caselle (senza richiedere inimicizia diplomatica). I cinghiali in rules base e aoe2 lo attivano; cervi/pecore restano su ``flee_on_hit``.
+- **Docs**: ``player/hunting.htm``, ``mod/modding.htm``.
+
+**Novità: ``pursue_leash_range`` — deaggro aprendo distanza**
+
+- **Problema**: con solo ``pursue_attacker``, ``last_attacker`` teneva l’inseguimento anche a grande distanza (non il deaggro LOS di AoE2).
+- **Cambio**: intero rules ``pursue_leash_range`` (mm; ``0`` = illimitato). Oltre, dimentica l’attaccante, ferma l’attacco e torna a casa. I cinghiali usano ``48000`` (~4 caselle).
+- **Docs**: ``player/hunting.htm``, ``mod/modding.htm``.
+
+**Novità: ``claimable`` + pascolo (reclamo AoE2 / pascolo AoE4, guidato dalle rules)**
+
+- **Problema**: la pastorizia seguiva senza cambiare proprietario; mancavano reclamo a distanza e pascoli che generano bestiame.
+- **Cambio**: animali ``claimable`` neutrali passano a qualsiasi unità non neutrale vicina (``claim_range``; ``can_herd`` resta separato). Edifici: ``spawns_unit`` + ``spawn_player_cap`` / ``spawn_immediate`` (aoe2: pecora ``claimable``; ``pasture`` mongolo).
+- **Docs**: ``player/hunting.htm``, ``mod/modding.htm``.
+
+
 1.4.7.1
 --------
 
-**Correzione: gli edifici incompiuti non possono addestrare unità**
-
 - **Problema**: il cantiere (``BuildingSite``) esponeva il menu addestra/ricerca dell’edificio bersaglio, quindi una caserma poteva addestrare prima di essere finita.
 - **Cambio**: i cantieri incompiuti non elencano addestramento/ricerca e non possono produrre.
-- **Ambito**: tutti i mod (incluso aoe2). Sincronizzato su 修复8 / 修复14.
+- **Ambito**: tutti i mod (incluso aoe2).
 - **Codice / test**: ``world_build_rules.py`` (``is_unfinished_building``, ``effective_can_train`` / ``effective_can_research`` / ``building_can_operate``); ``test_can_train_upgrade.py``.
 
 **Correzione: a fine costruzione l’edificio ha i PF con bonus, non da riparare**
 
 - **Problema**: al completamento i PF attuali usavano l’``hp_max`` di classe (es. caserma 1200), mentre l’``hp_max`` di istanza includeva già i bonus (bizantini Dark Age +10% → 1320). I villager riparavano il «buco».
 - **Cambio**: al completamento si usa l’``hp_max`` di istanza (meno i danni in cantiere). Come in AoE2: si finisce a PF pieni con bonus, non si ripara dopo.
-- **Ambito**: tutti i mod. Sincronizzato su 修复8 / 修复14.
+- **Ambito**: tutti i mod.
 - **Codice / test**: ``worldcreature.py`` (``BuildingSite._complete_construction``); ``test_z5_byzantine_barracks_hp.py``.
 
 **aoe2: civiltà Celti; campagna di William Wallace come Celti**
@@ -34,7 +81,7 @@ Note di rilascio
 
 - **Problema**: con le frecce, il suono di passaggio (es. ponte) o di blocco era in coda nella voce e finiva prima di coordinate / nomi, con ritardo percepito.
 - **Cambio**: quegli effetti partono subito sul mixer SFX; coordinate e nomi restano in coda voce, così iniziano insieme.
-- **Ambito**: esplorazione normale, cambio casella in zoom, blocco in prima persona; sincronizzato su 修复8 / 修复14 / 原始1 / 原始2.
+- **Ambito**: esplorazione normale, cambio casella in zoom, blocco in prima persona.
 - **Codice**: ``clientgame/game_navigation.py`` (``_play_movement_sfx``), ``clientgamefocus.py``, ``clientgame/game_audio.py``.
 
 
@@ -45,7 +92,7 @@ Note di rilascio
 - **Archiviazione**: ``tipo_vittima → { resourceN: quantità }``; all’uccisione ``store`` ed evento ``resourceN_reward``.
 - **aoe2**: Capi tribù usa ``kill_resource_vs … resource1 5`` (villager / carretto / nave / monaco).
 - **TTS / UI**: «bonus risorsa all’uccisione vs» (niente chiave grezza ``kill_gold``).
-- **Doc**: ``mod/modding``. Codice / test come nella versione inglese; sincronizzato su 修复8 / 修复14.
+- **Doc**: ``mod/modding``. Codice / test come nella versione inglese.
 
 
 1.4.6.9
