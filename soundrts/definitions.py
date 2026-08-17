@@ -1776,6 +1776,8 @@ class Rules(_Definitions):
             self._makers_cache.clear()
         if hasattr(self, "_direct_makers_cache"):
             self._direct_makers_cache.clear()
+        self._factions_cache = None
+        self._race_equiv_index = None
         try:
             from .worldrequirements import clear_caches
 
@@ -1840,11 +1842,16 @@ class Rules(_Definitions):
         Definitions with ``abstract 1`` are templates for ``is_a`` inheritance
         only and are omitted from the faction picker.
         """
-        return [
+        cached = getattr(self, "_factions_cache", None)
+        if cached is not None:
+            return cached
+        result = [
             c
             for c in self.classnames()
             if self.get(c, "class") == ["faction"] and not self._faction_is_abstract(c)
         ]
+        self._factions_cache = result
+        return result
 
     def _faction_is_abstract(self, name):
         # Only the definition's own ``abstract`` counts — do not walk ``is_a``,
@@ -1955,23 +1962,34 @@ class Rules(_Definitions):
         cache[t] = result
         return result
 
-    def _race_equivalent_sources(self, type_name):
-        """Semantic keys that some race maps onto *type_name* (e.g. peasant→chinese_villager)."""
-        sources = []
-        seen = set()
+    def _race_equivalent_index(self):
+        idx = getattr(self, "_race_equiv_index", None)
+        if idx is not None:
+            return idx
+        idx = {}
+        skip = ("class", "is_a", "abstract")
         for faction in getattr(self, "factions", ()) or ():
             for key, val in (self._dict.get(faction) or {}).items():
-                if key == type_name or key in ("class", "is_a", "abstract"):
+                if key in skip:
                     continue
                 if not isinstance(val, (list, tuple)) or not val:
                     continue
-                if val[0] != type_name:
+                dest = val[0]
+                if not isinstance(dest, str) or dest == key:
                     continue
-                if key in seen:
-                    continue
-                seen.add(key)
-                sources.append(key)
-        return sources
+                bucket = idx.get(dest)
+                if bucket is None:
+                    bucket = []
+                    idx[dest] = bucket
+                if key not in bucket:
+                    bucket.append(key)
+        self._race_equiv_index = idx
+        return idx
+
+    def _race_equivalent_sources(self, type_name):
+        """Semantic keys that some race maps onto *type_name* (e.g. peasant→chinese_villager)."""
+        return list(self._race_equivalent_index().get(type_name, ()))
+
 
 
 def parse_noise(st):

@@ -28,6 +28,10 @@ woods 50 c3 c1 d2 b1 a2 a3
 stone_mines 650 b1 b3 d1 d3
 orchard 125 b1 b3 d1 d3
 
+; AoE2: extra stone / berry patches beyond starts
+stone_mines 350 a3 c1 c3 e1
+orchard 250 a1 a3 c3 e3
+
 ; AoE2 DE: stone/orchard on starts; wildlife on mid/neutral squares
 computer_only 0 0 0 0 neutral a2 2 sheep
 computer_only 0 0 0 0 neutral e2 2 sheep

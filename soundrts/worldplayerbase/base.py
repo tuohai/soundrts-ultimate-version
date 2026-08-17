@@ -1,7 +1,6 @@
 """玩家基础类和初始化模块"""
 
 import copy
-import inspect
 import re
 from typing import Dict, List, Union
 
@@ -18,7 +17,7 @@ from ..worldskill import Skill
 from ..worldentity import NotEnoughSpaceError
 from ..worldexit import Exit
 from ..worldresource import Corpse, Deposit
-from ..worldroom import Square, ZoomTarget
+from ..worldroom import Square, ZoomTarget, parse_zoom_target_id
 from ..worldunit import BuildingSite
 from ..worldunit import Soldier
 from ..worldunit import Unit
@@ -26,6 +25,7 @@ from ..objective_announce import collect_planned_objective_numbers
 
 A = 12 * PRECISION  # bucket side length
 VERY_SLOW = int(0.01 * PRECISION)
+_A1_SQUARE_RE = re.compile(r"^[a-z]+[0-9]+$")
 
 
 _UNSET_ALLIANCE = (None, "None", "ai")
@@ -275,6 +275,18 @@ class Player:
         self._cached_static_perception = None
         self._prev_obs_squares = None
         self._prev_partial_squares = None
+        self._memory_unit_by_place = {}
+        self._perception_version = 0
+        self._last_snapshot_call_time = 0
+        self._combat_snapshot_bucket = -1
+        self._combat_snapshot = None
+        self._snapshot_extras_time = 0
+        self._snapshot_corpse_places = set()
+        self._snapshot_friend_places = set()
+        # Intra-tick only: same-place observers share topology. Not the
+        # cross-tick ``_clear_vision_cache`` path (that must stay every tick).
+        self._obs_sq_share_tick = -1
+        self._obs_sq_share = {}
         self._memory_scan_cursor = 0
         self._memory_list = []
         self._memory_list_snapshot_time = -1_000_000
@@ -516,17 +528,28 @@ class Player:
         return requirements_satisfied(self, type_names)
 
     def get_object_by_id(self, i):
+        if i is None:
+            return None
         if isinstance(i, str) and i.startswith("zoom"):
-            from ..worldroom import ZoomTarget, parse_zoom_target_id
-
             parsed = parse_zoom_target_id(i)
             if parsed is None:
                 return None
             place_id, x, y, precision = parsed
-            o = ZoomTarget(
+            return ZoomTarget(
                 self.get_object_by_id(place_id), x, y, id=i, precision=precision
             )
-            return o
+
+        # Live entity / square ids (numeric strings from get_next_id): O(1).
+        # Do this before trigger-string parsing so fog memory is not scanned
+        # for every order target (cw1: linear memory walk was ~16s / 30min).
+        o = self.world.objects.get(i)
+        if o is not None:
+            if isinstance(o, Square) or (o.place and o in self.perception):
+                return o
+            return self._memory_index.get(o)
+        g = self.world.grid.get(i)
+        if g is not None:
+            return g
 
         # 兼容地图触发器中的坐标与别名：
         # - 支持旧式字母+数字坐标（如 a1, n1 等，转为 0 基 "x,y"）
@@ -534,12 +557,11 @@ class Player:
         # - 支持通过 square_name 定义的别名（self.world.name_to_square 存储的一基坐标）
         if isinstance(i, str):
             token = i.strip()
-            # 优先处理通过 square_name 定义的别名（值为一基坐标字符串）
-            try:
-                if hasattr(self.world, "name_to_square") and token in self.world.name_to_square:
-                    token = self.world.name_to_square[token]
-            except Exception:
-                pass
+            names = getattr(self.world, "name_to_square", None)
+            if names is not None:
+                alias = names.get(token)
+                if alias is not None:
+                    token = alias
 
             # 去除可选的小括号
             if token.startswith("(") and token.endswith(")"):
@@ -553,41 +575,35 @@ class Player:
                         col1 = int(parts[0].strip())
                         row1 = int(parts[1].strip())
                         key0 = f"{col1-1},{row1-1}"
-                        if key0 in self.world.grid:
-                            return self.world.grid[key0]
-                        tup0 = (col1-1, row1-1)
-                        if tup0 in self.world.grid:
-                            return self.world.grid[tup0]
+                        g = self.world.grid.get(key0)
+                        if g is not None:
+                            return g
+                        g = self.world.grid.get((col1 - 1, row1 - 1))
+                        if g is not None:
+                            return g
                     except ValueError:
                         pass
 
             # 旧式 a1/a12 坐标：按 26 进制字母列转为 0 基
-            if re.match(r"^[a-z]+[0-9]+$", token):
-                letters = ''.join([c for c in token if c.isalpha()])
-                digits = ''.join([c for c in token if c.isdigit()])
+            if _A1_SQUARE_RE.match(token):
+                letters = "".join(c for c in token if c.isalpha())
+                digits = "".join(c for c in token if c.isdigit())
                 col = 0
                 for ch in letters:
-                    col = col * 26 + (ord(ch) - ord('a') + 1)
+                    col = col * 26 + (ord(ch) - ord("a") + 1)
                 col -= 1
                 try:
                     row = int(digits) - 1
-                    key0 = f"{col},{row}"
-                    if key0 in self.world.grid:
-                        return self.world.grid[key0]
-                    tup0 = (col, row)
-                    if tup0 in self.world.grid:
-                        return self.world.grid[tup0]
+                    g = self.world.grid.get(f"{col},{row}")
+                    if g is not None:
+                        return g
+                    g = self.world.grid.get((col, row))
+                    if g is not None:
+                        return g
                 except ValueError:
                     pass
 
-        if i in self.world.grid:
-            return self.world.grid[i]
-        if i in self.world.objects:
-            o = self.world.objects[i]
-            if isinstance(o, Square):
-                return o
-            if o.place and o in self.perception:
-                return o
+        # Deleted entity still in fog memory (not in world.objects).
         for o in self.memory:
             if o.id == i:
                 return o
@@ -1198,22 +1214,27 @@ class Player:
 
     def check_type(self, o, t):  # move method to Entity.check_type(t)?
         if isinstance(t, list):
-            for _ in t:
-                if self.check_type(o, _):
+            for item in t:
+                if self.check_type(o, item):
                     return True
-        elif inspect.isclass(t):  # Deposit, BuildingSite, Worker, Meadow...
+        elif isinstance(t, type):  # Deposit, BuildingSite, Worker, Meadow...
             return isinstance(o, t)
         elif isinstance(t, str):
             # Line-upgraded units (man_at_arms is_a militia) must still count
             # toward AI get quotas for the root type.
-            if getattr(o, "type_name", None) == t:
+            tn = getattr(o, "type_name", None)
+            if tn == t:
                 return True
-            return t in (getattr(o, "expanded_is_a", None) or ())
-        type_name = getattr(t, "type_name", None)
-        if type_name is not None:
-            if getattr(o, "type_name", None) == type_name:
-                return True
-            return type_name in (getattr(o, "expanded_is_a", None) or ())
+            expanded = getattr(o, "expanded_is_a", None)
+            return bool(expanded) and t in expanded
+        else:
+            type_name = getattr(t, "type_name", None)
+            if type_name is not None:
+                tn = getattr(o, "type_name", None)
+                if tn == type_name:
+                    return True
+                expanded = getattr(o, "expanded_is_a", None)
+                return bool(expanded) and type_name in expanded
 
     @staticmethod
     def effective_count_limit(type_name):
@@ -1259,10 +1280,54 @@ class Player:
             return False
         return True
 
+    def _warehouse_places_adjacent(self, a, b):
+        """True if two squares share an unblocked orthogonal exit."""
+        if a is None or b is None:
+            return False
+        if a is b:
+            return True
+        for e in getattr(a, "exits", ()) or ():
+            other = getattr(e, "other_side", None)
+            dest = getattr(other, "place", None) if other is not None else None
+            if dest is not b:
+                continue
+            try:
+                if e.is_blocked(self, ignore_enemy_walls=True):
+                    continue
+            except Exception:
+                continue
+            try:
+                if other.is_blocked(self, ignore_enemy_walls=True):
+                    continue
+            except Exception:
+                continue
+            return True
+        return False
+
+    def _warehouse_places_two_hops(self, a, b):
+        """True if two squares are two unblocked orthogonal exits apart."""
+        if a is None or b is None or a is b:
+            return False
+        for e in getattr(a, "exits", ()) or ():
+            other = getattr(e, "other_side", None)
+            mid = getattr(other, "place", None) if other is not None else None
+            if mid is None or mid is b:
+                continue
+            try:
+                if e.is_blocked(self, ignore_enemy_walls=True):
+                    continue
+                if other.is_blocked(self, ignore_enemy_walls=True):
+                    continue
+            except Exception:
+                continue
+            if self._warehouse_places_adjacent(mid, b):
+                return True
+        return False
+
     def nearest_warehouse(self, place, resource_type, include_building_sites=False):
-        # 优化：为nearest_warehouse添加缓存，减少重复计算（缓存窗口2秒）
+        # 优化：为nearest_warehouse添加缓存，减少重复计算（缓存窗口3秒，对齐寻路桶）
         current_time = self.world.time
-        time_bucket = current_time // 2000
+        time_bucket = current_time // 3000
         cache_key = (place.id, resource_type, include_building_sites, time_bucket)
 
         # (_warehouse_cache / _warehouse_candidates_cache /
@@ -1317,6 +1382,37 @@ class Player:
             return None
         tmp.sort(key=lambda t: (t[0], t[1].id))
 
+        # Home gold/wood drop-off: warehouse is on this square. Skip A*.
+        for lin_d2, u in tmp:
+            if lin_d2 == 0 or getattr(u, "place", None) is place:
+                self._warehouse_cache[cache_key] = u
+                return u
+
+        # Orthogonal neighbor mill: one exit, no A* (gather bring-back).
+        sw = getattr(self.world, "square_width", 0) or 0
+        adj_limit = sw * sw if sw else 0
+        if adj_limit:
+            for lin_d2, u in tmp:
+                if lin_d2 > adj_limit:
+                    break
+                dest = getattr(u, "place", None)
+                if dest is not None and self._warehouse_places_adjacent(place, dest):
+                    self._warehouse_cache[cache_key] = u
+                    return u
+
+        # Wood two tiles from a mill: two orthogonal exits, no A*.
+        two_limit = adj_limit * 4 if adj_limit else 0
+        if two_limit:
+            for lin_d2, u in tmp:
+                if lin_d2 > two_limit:
+                    break
+                if lin_d2 <= adj_limit:
+                    continue
+                dest = getattr(u, "place", None)
+                if dest is not None and self._warehouse_places_two_hops(place, dest):
+                    self._warehouse_cache[cache_key] = u
+                    return u
+
         # 按时间桶维护"地点间最短路距离"缓存，避免重复 A*
         # (_place_distance_cache / _place_distance_cache_bucket 已在 __init__ 预初始化)
         if self._place_distance_cache_bucket != time_bucket:
@@ -1324,6 +1420,8 @@ class Player:
             self._place_distance_cache_bucket = time_bucket
 
         def _dist_between_places(p_from, p_to):
+            if p_from is p_to:
+                return 0
             k = (p_from.id, p_to.id)
             d = self._place_distance_cache.get(k)
             if d is None:
@@ -1331,18 +1429,18 @@ class Player:
                 self._place_distance_cache[k] = d
             return d
 
-        # 仅对最近的前 N 个做路径距离评估
-        TOP_K = 4
-        best_dist = float('inf')
+        # Euclidean-nearest reachable drop-off. Stop at the first hit: bring-back
+        # does not need the true shortest among the old top-4 (that was ~3 A*
+        # per cache miss on cw1).
         best = None
-        for _, u in tmp[:TOP_K]:
-            d = _dist_between_places(place, u.place)
-            if d == 0:
+        for _, u in tmp[:12]:
+            dest = getattr(u, "place", None)
+            if dest is None:
+                continue
+            d = _dist_between_places(place, dest)
+            if d is not None and d < float("inf"):
                 best = u
                 break
-            if d is not None and d < best_dist:
-                best_dist = d
-                best = u
 
         result = best
 

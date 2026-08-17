@@ -218,8 +218,6 @@ woods 200 j1 k2
 #end_choice
 woods 200 j2 k1
 
-stone_mines 650 a1
-orchard 125 a1
 
 ; AoE2 DE: stone/orchard on starts; wildlife ~3–4 squares away (herd distance)
 computer_only 0 0 0 0 neutral q1 2 sheep
@@ -321,5 +319,9 @@ starting_squares t1
 #end_choice
 starting_squares t2
 #end_random_choice
+
+; AoE2: extra stone / berry patches beyond starts
+stone_mines 350 a2 c2 e1 f2 h2 j1 k2 m2 o1 p2 r2 t1
+orchard 250 a2 c2 e1 f2 h2 j1 k2 m2 o1 p2 r2 t1
 
 global_population_limit 250

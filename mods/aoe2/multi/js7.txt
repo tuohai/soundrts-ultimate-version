@@ -81,6 +81,12 @@ starting_squares g9
 starting_squares c10
 #end_random_choice
 
+; AoE2: extra stone / berry patches beyond starts
+stone_mines 650 b4 c2 c10 c16 e5 g9 h14
+orchard 125 b4 c2 c10 c16 e5 g9 h14
+stone_mines 350 a3 i5
+orchard 250 b5 e6 g3 j16
+
 nb_meadows_by_square 2
 nb_players_min 2
 nb_players_max 2

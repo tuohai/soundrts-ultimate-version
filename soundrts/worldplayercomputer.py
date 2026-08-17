@@ -1,6 +1,6 @@
 import re
 
-from soundrts.lib.nofloat import square_of_distance
+from soundrts.lib.nofloat import square_of_distance, to_int
 from soundrts.worldorders import UseOrder, ORDERS_DICT
 
 from .definitions import filter_ai_executable_plan, get_ai, parse_ai_start_settings, rules
@@ -38,6 +38,32 @@ from .worldresource import Deposit
 from .worldunit import BuildingSite
 from .worldunit import Soldier
 from .worldunit import Worker
+
+_PROD_ORDER_KEYWORDS = frozenset(
+    ("build", "train", "upgrade_to", "research", "advance")
+)
+_PLAY_PROD_MEMO_PREFIXES = frozenset(
+    (
+        "nbprod",
+        "futurenb",
+        "pending_makers",
+        "plan_wood",
+        "plan_expensive_wood",
+        "plan_next",
+        "first_startable",
+        "has_startable",
+        "wood_below",
+        "defer_token",
+        "unmet_phases_type",
+        "trainer_food",
+        "low_thr",
+        "age_missing",
+        "keep_farms",
+        "saving_food",
+        "plan_prod_types",
+        "upgrade_set",
+    )
+)
 
 
 def value_as_an_explorer(u):
@@ -231,15 +257,20 @@ class Computer(Player):
         return self.__line_nb
 
     def set_line_nb(self, value):
+        if value != self.__line_nb:
+            self._previous_linechange = self.world.time
         self.__line_nb = value
-        self._previous_linechange = self.world.time
 
     _line_nb = property(get_line_nb, set_line_nb)
 
     def _follow_plan(self):
         if not self._plan:
             return
-        if (
+        if self._watchdog_should_wait():
+            # Pause the stuck-line timer while the current get is still
+            # completable (dark-age eco, age click, unpaid workshop, ram wood).
+            self._previous_linechange = self.world.time
+        elif (
             self.watchdog
             and self.world.time > self._previous_linechange + self.watchdog * 1000
         ):
@@ -304,6 +335,7 @@ class Computer(Player):
             elif cmd[0] == "get":
                 n = 1
                 done = True
+                saving_for_feudal = self._saving_food_for_age()
                 for w in cmd[1:]:
                     if re.match("^[0-9]+$", w):
                         n = int(w)
@@ -312,9 +344,17 @@ class Computer(Player):
                         # in the mod (militia / aoe_archer / …). Unknown names
                         # warn — do not silently map base aliases via race table.
                         if rules.unit_class(w) is not None:
+                            name = self.equivalent(w)
+                            if self._defer_plan_get_token(
+                                name, saving_for_feudal=saving_for_feudal
+                            ):
+                                if not saving_for_feudal:
+                                    self._ensure_plan_production_building(name)
+                                done = False
+                                n = 1
+                                continue
                             if not self.get(n, w):
                                 done = False
-                                break
                             n = 1
                         else:
                             warning("get: unknown unit: '%s' (in ai.txt)", w)
@@ -341,6 +381,15 @@ class Computer(Player):
             cache[key] = factory()
         return cache[key]
 
+    def _play_memo_get(self, key, factory):
+        """Cache a value for the rest of this Computer.play() turn only."""
+        memo = getattr(self, "_play_memo", None)
+        if memo is None:
+            return factory()
+        if key not in memo:
+            memo[key] = factory()
+        return memo[key]
+
     def _iter_ground_worker_classes(self):
         for name in rules.classnames():
             uc = rules.unit_class(name)
@@ -358,8 +407,16 @@ class Computer(Player):
     def _worker_buildable_type_names(self):
         def _compute():
             names = set()
+            seen_types = set()
             for w in getattr(self, "_workers", ()) or ():
-                names.update(getattr(w, "can_build", ()) or ())
+                tn = getattr(w, "type_name", None)
+                if tn in seen_types:
+                    continue
+                if tn is not None:
+                    seen_types.add(tn)
+                built = getattr(w, "can_build", ()) or ()
+                if built:
+                    names.update(built)
             if names:
                 return frozenset(names)
             for _name, uc in self._iter_ground_worker_classes():
@@ -368,7 +425,10 @@ class Computer(Player):
                     names.update(built)
             return frozenset(names)
 
-        return self._discovery_cache_get("worker_buildables", _compute)
+        return self._play_memo_get(
+            "worker_buildables_play",
+            lambda: self._discovery_cache_get("worker_buildables", _compute),
+        )
 
     def _primary_worker_type_name(self):
         def _compute():
@@ -588,8 +648,33 @@ class Computer(Player):
         wh = self._preferred_warehouse_class()
         return wh is not None and bool(getattr(wh, "storable_resource_types", None))
 
+    def _has_dedicated_dropoff_types(self):
+        """True if workers can build a single-resource drop-off that is not the main base."""
+
+        def _compute():
+            main = set(self._main_base_type_names())
+            for name in self._worker_buildable_type_names():
+                if name in main:
+                    continue
+                uc = rules.unit_class(name)
+                if uc is None:
+                    continue
+                stores = tuple(getattr(uc, "storable_resource_types", ()) or ())
+                if len(stores) == 1:
+                    return True
+            return False
+
+        return self._discovery_cache_get("dedicated_dropoff", _compute)
+
     def _auto_warehouse_expansion_enabled(self):
-        """Only build extra warehouse buildings when they are not the main base."""
+        """Build extra drop-offs when a dedicated mill/lumber/mining type exists.
+
+        The generic warehouse lookup prefers the main hall (widest coverage).
+        That must not disable lumber mills just because the town center already
+        stores wood.
+        """
+        if self._has_dedicated_dropoff_types():
+            return True
         wh_type = self._preferred_warehouse_class()
         if wh_type is None:
             return False
@@ -597,6 +682,64 @@ class Computer(Player):
         if wh_type.type_name in main and self.nb(list(main)) >= 1:
             return False
         return True
+
+    def _warehouse_spend_blocked_by_wood_reserve(self, warehouse_cost, stores=None):
+        """True if this drop-off would steal wood needed for a get-line building."""
+        cost = warehouse_cost or ()
+        wood_cost = cost[1] if len(cost) > 1 else 0
+        if wood_cost <= 0:
+            return False
+        stores = tuple(stores or ())
+        later = self._later_age_startable_production_wood()
+        res = getattr(self, "resources", None) or ()
+        wood = res[1] if len(res) > 1 else 0
+        # Blacksmith (etc.) for any_buildings must beat mills/camps; the lumber
+        # "income investment" exception below must not spend that unlock stash.
+        unlock_w = self._next_plan_phase_building_wood_need()
+        if unlock_w and wood - wood_cost < unlock_w:
+            return True
+        # After castle, a gold/stone camp must not spend the workshop stash
+        # even if the get-line wood reserve is briefly unseen on a watchdog line.
+        if (
+            stores
+            and "resource2" not in stores
+            and (
+                self._wood_below_pending_building()
+                or (later and wood < later)
+                or (later and wood - wood_cost < later)
+            )
+        ):
+            return True
+        reserve = self._plan_expensive_wood_reserve(ignore_age_defer=True)
+        if not reserve:
+            return False
+        if wood >= reserve:
+            return True
+        if wood - wood_cost >= reserve:
+            return False
+        if not self._owns_get_line_production_building():
+            return True
+        # After barracks: a lumber drop-off is an income investment unless we
+        # are already close enough to place the next production building.
+        # Callers that only pass a cost are treated as lumber (legacy tests).
+        if not stores or "resource2" in stores:
+            return wood * 5 >= reserve * 4
+        # Gold/stone camps are not wood income; wait for the stash.
+        return True
+
+    def _dedicated_dropoff_at_cap(self, wh_type):
+        """True if we already have enough copies of this single-resource drop-off."""
+        if wh_type is None:
+            return True
+        stores = tuple(getattr(wh_type, "storable_resource_types", ()) or ())
+        if len(stores) != 1:
+            return False
+        name = getattr(wh_type, "type_name", None)
+        if not name:
+            return False
+        reserve = self._plan_expensive_wood_reserve(ignore_age_defer=True)
+        cap = 1 if reserve else 2
+        return self.future_nb(name) >= cap
 
     def _issue_build(self, type_name, target, workers=None):
         cls = rules.unit_class(type_name)
@@ -614,72 +757,178 @@ class Computer(Player):
                 break
             if worker_can_build(w, type_name):
                 w.take_order(["build", type_name, target_id])
+                self._invalidate_play_derived_counts()
                 issued += 1
         return issued > 0
 
-    def _build_a_warehouse_for(self, deposit):
-        def nearby_workers():
-            return [
-                v
-                for v in self._workers
-                if (
-                    v.place is deposit.place
-                    or v.orders
-                    and v.orders[0].keyword == "gather"
-                    and (
-                        v.orders[0].target is None
-                        or v.orders[0].target.place is deposit.place
-                    )
-                )
-            ]
+    def _square_has_finished_dropoff(self, place, resource_type):
+        """True if this square already has a completed building that stores the resource."""
+        if place is None or resource_type is None:
+            return False
+        for o in getattr(place, "objects", ()) or ():
+            if isinstance(o, BuildingSite):
+                continue
+            stores = getattr(o, "storable_resource_types", None)
+            if stores and resource_type in stores:
+                return True
+        return False
 
-        nearby_workers = nearby_workers()
+    def _dropoff_building_site_on_square(self, place, resource_type):
+        """BuildingSite on this square whose type would store the resource."""
+        if place is None or resource_type is None:
+            return None
+        for o in getattr(place, "objects", ()) or ():
+            if not isinstance(o, BuildingSite):
+                continue
+            stores = getattr(getattr(o, "type", None), "storable_resource_types", None)
+            if stores and resource_type in stores:
+                return o
+        return None
+
+    def _adjacent_usable_dropoff(self, place, resource_type):
+        """Finished drop-off or warehouse site on an orthogonally adjacent square.
+
+        Expansion only cares whether path distance exceeds one square_width.
+        Neighbor squares are the only ones that can be that close, so this
+        replaces nearest_warehouse + A*.
+        """
+        if place is None or resource_type is None:
+            return None
+        for e in getattr(place, "exits", ()) or ():
+            other = getattr(e, "other_side", None)
+            dest = getattr(other, "place", None) if other is not None else None
+            if dest is None:
+                continue
+            try:
+                if e.is_blocked(self, ignore_enemy_walls=True):
+                    continue
+            except Exception:
+                continue
+            try:
+                if other.is_blocked(self, ignore_enemy_walls=True):
+                    continue
+            except Exception:
+                continue
+            try:
+                if self.square_is_dangerous(dest):
+                    continue
+            except Exception:
+                pass
+            if self._square_has_finished_dropoff(dest, resource_type):
+                return ("finished", None)
+            site = self._dropoff_building_site_on_square(dest, resource_type)
+            if site is not None:
+                return ("site", site)
+        return None
+
+    def _warehouse_is_too_far(self, place, wh):
+        """True if the drop-off is farther than one square (or has no safe path).
+
+        Path length is at least Euclidean distance, so a warehouse more than
+        one square_width away cannot satisfy the old ``d > square_width``
+        test — skip A*. Orthogonal neighbors still need the avoid=True path.
+        """
+        if wh is None:
+            return True
+        wh_place = getattr(wh, "place", None)
+        if wh_place is None:
+            return True
+        if wh_place is place:
+            return False
+        try:
+            dx = place.x - wh_place.x
+            dy = place.y - wh_place.y
+            sw = self.world.square_width
+            if dx * dx + dy * dy > sw * sw:
+                return True
+            d = place.shortest_path_distance_to(wh_place, self, avoid=True)
+            return d > sw
+        except Exception:
+            return True
+
+    def _build_a_warehouse_for(self, deposit):
+        place = getattr(deposit, "place", None)
+        if place is None:
+            return
+        resource_type = getattr(deposit, "resource_type", None)
+
+        nearby_workers = [
+            v
+            for v in self._workers
+            if (
+                v.place is place
+                or v.orders
+                and v.orders[0].keyword == "gather"
+                and (
+                    v.orders[0].target is None
+                    or v.orders[0].target.place is place
+                )
+            )
+        ]
         if not nearby_workers:
             return
-        # 2秒时间桶缓存“就近仓库”结果，避免在同一时间窗口内重复最短路计算
-        try:
-            current_time = self.world.time
-            tb = current_time // 2000
-            if not hasattr(self, '_nearest_wh_cache'):
-                self._nearest_wh_cache = {}
-                self._nearest_wh_bucket = -1
-            if self._nearest_wh_bucket != tb:
-                self._nearest_wh_cache.clear()
-                self._nearest_wh_bucket = tb
-            wh_key = (deposit.place.id, deposit.resource_type, True)
-            wh = self._nearest_wh_cache.get(wh_key)
-            if wh is None:
-                wh = self.nearest_warehouse(
-                    deposit.place, deposit.resource_type, include_building_sites=True
-                )
-                self._nearest_wh_cache[wh_key] = wh
-        except Exception:
-            wh = self.nearest_warehouse(
-                deposit.place, deposit.resource_type, include_building_sites=True
-            )
-        if isinstance(wh, BuildingSite):
-            if getattr(wh, "_self_construct", False):
+
+        # Home gold/wood sits on the townhall square: no A* needed.
+        if self._square_has_finished_dropoff(place, resource_type):
+            return
+
+        site = self._dropoff_building_site_on_square(place, resource_type)
+        if site is not None:
+            if getattr(site, "_self_construct", False):
                 return
             for v in nearby_workers:
                 if worker_can_repair(v):
-                    v.take_order(["repair", wh.id])
+                    v.take_order(["repair", site.id])
                     return
-        elif (
-            wh is None
-            or deposit.place.shortest_path_distance_to(wh.place, self, avoid=True)
-            > self.world.square_width
-        ):
-            wh_type = self._best_warehouse(resource_type=getattr(deposit, "resource_type", None))
-            if wh_type is None:
+            return
+
+        adj = self._adjacent_usable_dropoff(place, resource_type)
+        if adj is not None:
+            kind, adj_site = adj
+            if kind == "finished":
                 return
-            meadow = choose_build_target(
-                self, wh_type, starting_place=deposit.place
-            ) or self.choose(
-                getattr(self.world, "building_land", "meadow"),
-                starting_place=deposit.place,
+            if adj_site is not None:
+                if getattr(adj_site, "_self_construct", False):
+                    return
+                for v in nearby_workers:
+                    if worker_can_repair(v):
+                        v.take_order(["repair", adj_site.id])
+                        return
+                return
+
+        # No drop-off within one square: equivalent to path d > square_width.
+        wh_type = self._best_warehouse(resource_type=getattr(deposit, "resource_type", None))
+        if wh_type is None:
+            return
+        # Never place a second town center / command center as a "drop-off".
+        if getattr(wh_type, "type_name", None) in set(self._main_base_type_names()):
+            return
+        if self._dedicated_dropoff_at_cap(wh_type):
+            return
+        meadow = choose_build_target(
+            self, wh_type, starting_place=deposit.place
+        ) or self.choose(
+            getattr(self.world, "building_land", "meadow"),
+            starting_place=deposit.place,
+        )
+        if meadow:
+            from .worldrequirements import requirements_satisfied
+
+            if not requirements_satisfied(
+                self, getattr(wh_type, "requirements", ()) or ()
+            ):
+                return
+            cost = getattr(wh_type, "cost", None) or ()
+            if self.missing_resources(cost):
+                return
+            stores = tuple(
+                getattr(wh_type, "storable_resource_types", ()) or ()
             )
-            if meadow:
-                self._issue_build(wh_type.type_name, meadow, nearby_workers)
+            if self._warehouse_spend_blocked_by_wood_reserve(
+                cost, stores=stores
+            ):
+                return
+            self._issue_build(wh_type.type_name, meadow, nearby_workers)
 
     def _maintain_expansions(self):
         """Build extra main bases up to the ``expand`` target.
@@ -705,18 +954,1388 @@ class Computer(Player):
     def _build_a_warehouse_if_useful(self):
         if not self._warehouse_economy_enabled() or not self._auto_warehouse_expansion_enabled():
             return
-        warehouse = self._best_warehouse()
-        if warehouse is None or self.missing_resources(warehouse.cost):
+        seen = set()
+        for u in self._workers:
+            for o in u.orders:
+                if o.keyword != "gather":
+                    continue
+                target = o.target
+                if target is None or target.place is None:
+                    continue
+                tid = getattr(target, "id", None)
+                if tid is None:
+                    tid = id(target)
+                if tid in seen:
+                    continue
+                seen.add(tid)
+                self._build_a_warehouse_for(target)
+
+    def _iter_types_on_get_line(self, line):
+        """Yield unit type names named on one ai.txt ``get`` line."""
+        yield from self._types_on_get_line(line)
+
+    def _types_on_get_line(self, line):
+        if not isinstance(line, str) or not line.startswith("get "):
+            return ()
+        return self._play_memo_get(
+            ("get_line_types", line),
+            lambda: self._types_on_get_line_compute(line),
+        )
+
+    def _types_on_get_line_compute(self, line):
+        names = []
+        for token in line.split()[1:]:
+            if re.match("^[0-9]+$", token):
+                continue
+            name = self.equivalent(token)
+            if rules.unit_class(name) is not None:
+                names.append(name)
+        return tuple(names)
+
+    def _iter_current_get_line_types(self):
+        """Yield unit type names named on the current ai.txt ``get`` line."""
+        yield from self._current_get_line_types()
+
+    def _current_get_line_types(self):
+        return self._play_memo_get(
+            ("cur_get_types", getattr(self, "_line_nb", 0)),
+            self._current_get_line_types_compute,
+        )
+
+    def _current_get_line_types_compute(self):
+        plan = getattr(self, "_plan", None) or []
+        try:
+            line = plan[self._line_nb]
+        except Exception:
+            return ()
+        return self._types_on_get_line(line)
+
+    def _iter_lookahead_get_line_types(self, extra_gets=2):
+        """Yield types on the current get line and the next few get lines.
+
+        Intermediate waves put castle/siege units on later ``get`` lines.
+        Looking ahead lets the AI click castle and save food while still
+        finishing the feudal barracks/archery wave.
+        """
+        yield from self._lookahead_get_line_types(extra_gets)
+
+    def _lookahead_get_line_types(self, extra_gets=2):
+        return self._play_memo_get(
+            ("look_get_types", int(extra_gets), getattr(self, "_line_nb", 0)),
+            lambda: self._lookahead_get_line_types_compute(extra_gets),
+        )
+
+    def _lookahead_get_line_types_compute(self, extra_gets=2):
+        plan = getattr(self, "_plan", None) or []
+        try:
+            start = int(self._line_nb or 0)
+        except Exception:
+            start = 0
+        names = []
+        yielded_gets = 0
+        i = start
+        n = len(plan)
+        while i < n and yielded_gets <= extra_gets:
+            line = plan[i]
+            if isinstance(line, str) and line.startswith("get "):
+                names.extend(self._types_on_get_line(line))
+                yielded_gets += 1
+            i += 1
+        return tuple(names)
+
+    def _phase_requirement_names(self, type_name):
+        """``class phase`` names listed in this type's ``has`` requirements."""
+        cache = getattr(self, "_phase_req_cache", None)
+        if cache is None:
+            cache = {}
+            self._phase_req_cache = cache
+        if type_name not in cache:
+            from .worldrequirements import parse_requirement_clauses
+
+            found = []
+            t = rules.unit_class(type_name)
+            if t is not None:
+                for clause in parse_requirement_clauses(
+                    getattr(t, "requirements", ()) or ()
+                ):
+                    if clause[0] != "has":
+                        continue
+                    r = clause[1]
+                    if rules.get(r, "class") == ["phase"] and r not in found:
+                        found.append(r)
+            cache[type_name] = tuple(found)
+        return cache[type_name]
+
+    def _upgrade_name_set(self):
+        return self._play_memo_get(
+            ("upgrade_set",),
+            lambda: frozenset(getattr(self, "upgrades", None) or ()),
+        )
+
+    def _unmet_phase_names_for_type(self, type_name, include_makers=True):
+        """Unmet ``class phase`` requirements of a unit (and optionally its makers)."""
+        return self._play_memo_get(
+            ("unmet_phases_type", type_name, bool(include_makers)),
+            lambda: self._unmet_phase_names_for_type_compute(
+                type_name, include_makers
+            ),
+        )
+
+    def _unmet_phase_names_for_type_compute(self, type_name, include_makers=True):
+        """Unmet ``class phase`` requirements of a unit (and optionally its makers)."""
+        upg = self._upgrade_name_set()
+        found = []
+
+        def _add_from(tn):
+            for r in self._phase_requirement_names(tn):
+                if r not in upg and r not in found:
+                    found.append(r)
+
+        _add_from(type_name)
+        if not include_makers:
+            return found
+        for maker in rules.get_makers(type_name) or ():
+            mc = rules.unit_class(maker)
+            if mc is None:
+                continue
+            try:
+                if issubclass(mc, Worker):
+                    continue
+            except TypeError:
+                continue
+            _add_from(maker)
+        return found
+
+    def _plan_unmet_phase_names(self, lookahead=False):
+        """Phases still needed by the current get line (and later waves if asked)."""
+        return self._play_memo_get(
+            ("unmet_phases", bool(lookahead), getattr(self, "_line_nb", 0)),
+            lambda: self._plan_unmet_phase_names_compute(lookahead),
+        )
+
+    def _plan_unmet_phase_names_compute(self, lookahead=False):
+        order = ("dark_age", "feudal_age", "castle_age", "imperial_age")
+        found = []
+        names = (
+            self._iter_lookahead_get_line_types()
+            if lookahead
+            else self._iter_current_get_line_types()
+        )
+        for name in names:
+            for phase in self._unmet_phase_names_for_type(name):
+                if phase not in found:
+                    found.append(phase)
+        found.sort(key=lambda p: order.index(p) if p in order else 99)
+        return found
+
+    def _plan_has_deferred_unit_phase(self):
+        """True if a current-line unit itself still needs an age (not just its building)."""
+        for name in self._iter_current_get_line_types():
+            if self._is_worker_type_name(name):
+                continue
+            if self._unmet_phase_names_for_type(name, include_makers=False):
+                return True
+        return False
+
+    def _should_click_plan_phase(self):
+        """Click the earliest unmet age for the current/next get waves."""
+        return self._play_memo_get(
+            ("click_phase", getattr(self, "_line_nb", 0)),
+            self._should_click_plan_phase_compute,
+        )
+
+    def _should_click_plan_phase_compute(self):
+        # Click an age the current get line itself still needs.
+        if self._plan_unmet_phase_names(lookahead=False):
+            return True
+        # Dark villager wave: feudal is only on later lines — still click it.
+        if self._before_first_expensive_food_age():
+            return bool(self._plan_unmet_phase_names(lookahead=True))
+        # Do not skip a feudal army to rush castle from a later get line.
+        return False
+
+    def _click_plan_phase_if_ready(self):
+        """Bank age cost and get() the next plan phase (buildings + advance)."""
+        phases = self._plan_unmet_phase_names(lookahead=True)
+        if not phases or not self._should_click_plan_phase():
             return
-        for deposit in [
-            o.target
-            for u in self._workers
-            for o in u.orders
-            if o.keyword == "gather"
-            and o.target is not None
-            and o.target.place is not None
-        ]:
-            self._build_a_warehouse_for(deposit)
+        pc = rules.unit_class(phases[0])
+        if pc is not None:
+            cost = getattr(pc, "cost", None) or ()
+            pop = getattr(pc, "population_cost", 0) or 0
+            if cost:
+                # Even if any_buildings still blocks advance, pull villagers onto
+                # food/gold so orchards are used while blacksmith is placed.
+                self.gather(cost, pop)
+        self.get(1, phases[0])
+
+    def _age_up_missing_resource_types(self):
+        """Resource type names still needed to click the next plan age-up."""
+        return self._play_memo_get(
+            ("age_missing", getattr(self, "_line_nb", 0)),
+            self._age_up_missing_resource_types_compute,
+        )
+
+    def _age_up_missing_resource_types_compute(self):
+        """Resource type names still needed to click the next plan age-up."""
+        if not self._should_click_plan_phase():
+            return frozenset()
+        phases = self._plan_unmet_phase_names(lookahead=True)
+        if not phases:
+            return frozenset()
+        pc = rules.unit_class(phases[0])
+        cost = getattr(pc, "cost", None) or ()
+        if not cost or getattr(self, "resources", None) is None:
+            return frozenset()
+        missing = self.missing_resources(cost) or ()
+        return frozenset(f"resource{i + 1}" for i in missing)
+
+    def _age_up_needs_food(self):
+        # Feudal already has a mill/farm path; do not steal barracks wood.
+        return self._play_memo_get("age_up_needs_food", self._age_up_needs_food_compute)
+
+    def _age_up_needs_food_compute(self):
+        if self._saving_food_for_age():
+            return False
+        return "resource3" in self._age_up_missing_resource_types()
+
+    def _spend_would_block_age_up(self, cost):
+        """True if this spend would leave too little for the next plan age-up.
+
+        Dark-age loom must still fire while saving for the first expensive age.
+        After that, do not dump castle food/gold into line upgrades, even on a
+        watchdog get line that is not itself clicking the age this turn.
+        """
+        cost = cost or ()
+        if self._saving_food_for_age():
+            return False
+        if not self._should_click_plan_phase():
+            return False
+        phases = self._plan_unmet_phase_names(lookahead=True)
+        if not phases or not self._phase_saves_food(phases[0]):
+            return False
+        pc = rules.unit_class(phases[0])
+        pcost = getattr(pc, "cost", None) or ()
+        if not pcost:
+            return False
+        res = getattr(self, "resources", None) or ()
+        for i, amount in enumerate(cost):
+            if not amount:
+                continue
+            need = pcost[i] if i < len(pcost) else 0
+            if not need:
+                continue
+            have = res[i] if i < len(res) else 0
+            if have - amount < need:
+                return True
+        return False
+
+    def _is_worker_type_name(self, name):
+        if not isinstance(name, str):
+            uc = name
+            try:
+                return uc is not None and issubclass(uc, Worker)
+            except TypeError:
+                return False
+        cache = self._discovery_cache_get("is_worker_name", dict)
+        if name not in cache:
+            uc = rules.unit_class(name)
+            try:
+                cache[name] = uc is not None and issubclass(uc, Worker)
+            except TypeError:
+                cache[name] = False
+        return cache[name]
+
+    def _phase_food_cost(self, phase_name):
+        pc = rules.unit_class(phase_name) if phase_name else None
+        cost = getattr(pc, "cost", None) or ()
+        return cost[2] if len(cost) > 2 else 0
+
+    def _phase_saves_food(self, phase_name):
+        """True when this age-up spends a large food stockpile (AoE2 feudal)."""
+        return self._phase_food_cost(phase_name) >= to_int("100")
+
+    def _feudal_age_saves_food(self):
+        """True if rules define feudal_age as an expensive-food click."""
+        return self._phase_saves_food("feudal_age")
+
+    def _saving_food_for_age(self):
+        """True when the get line is blocked on the first expensive-food age-up.
+
+        Later expensive ages (AoE2 castle is 800 food) must not freeze barracks
+        or militia after an earlier expensive age is already complete.
+        """
+        return self._play_memo_get(
+            ("saving_food", getattr(self, "_line_nb", 0)),
+            self._saving_food_for_age_compute,
+        )
+
+    def _saving_food_for_age_compute(self):
+        phases = self._plan_unmet_phase_names()
+        if not phases or not self._phase_saves_food(phases[0]):
+            return False
+        current = phases[0]
+        upgrades = getattr(self, "upgrades", None) or ()
+        for name in rules.classnames():
+            if name == current:
+                continue
+            if rules.get(name, "class") != ["phase"]:
+                continue
+            if not self._phase_saves_food(name):
+                continue
+            if name in upgrades:
+                return False
+        return True
+
+    def _first_expensive_food_phase_name(self):
+        """Earliest high-food age in the ruleset (AoE2 feudal), or None."""
+        for name in ("dark_age", "feudal_age", "castle_age", "imperial_age"):
+            if rules.get(name, "class") == ["phase"] and self._phase_saves_food(name):
+                return name
+        return None
+
+    def _plan_unit_type_names(self):
+        """Unit type names named on any ``get`` line of the current AI plan."""
+        found = []
+        seen = set()
+        for line in getattr(self, "_plan", None) or ():
+            for name in self._iter_types_on_get_line(line):
+                if name not in seen:
+                    seen.add(name)
+                    found.append(name)
+        return found
+
+    def _later_age_startable_production_wood(self):
+        """Wood cost of an unbuilt production building unlocked after the first expensive age.
+
+        Watchdog lines can hide workshop from the current get-line lookahead.
+        Scanning every get line for a startable trainer of a planned unit keeps
+        the 200-wood stash after castle even when the feudal get is active.
+        """
+        return self._play_memo_get(
+            (
+                "later_prod_wood",
+                getattr(self, "_line_nb", 0),
+                tuple(getattr(self, "upgrades", None) or ()),
+            ),
+            self._later_age_startable_production_wood_compute,
+        )
+
+    def _later_age_startable_production_wood_compute(self):
+        from .worldrequirements import parse_requirement_clauses, requirements_satisfied
+
+        first = self._first_expensive_food_phase_name()
+        upgrades = getattr(self, "upgrades", None) or ()
+        wanted = set(self._plan_unit_type_names())
+        if not wanted:
+            return 0
+        best = 0
+        for name in self._worker_buildable_type_names():
+            uc = rules.unit_class(name)
+            if uc is None:
+                continue
+            if self.nb(name) > 0 or self.future_nb(name) > 0:
+                continue
+            cost = getattr(uc, "cost", None) or ()
+            wood = cost[1] if len(cost) > 1 else 0
+            if wood < to_int("100"):
+                continue
+            reqs = getattr(uc, "requirements", ()) or ()
+            if not requirements_satisfied(self, reqs):
+                continue
+            unlocked = False
+            for clause in parse_requirement_clauses(reqs):
+                if clause[0] != "has":
+                    continue
+                phase = clause[1]
+                if (
+                    rules.get(phase, "class") == ["phase"]
+                    and self._phase_saves_food(phase)
+                    and phase != first
+                    and phase in upgrades
+                ):
+                    unlocked = True
+                    break
+            if not unlocked:
+                continue
+            trains = set(rules.class_rules_attr(uc, "can_train", ()) or ())
+            if not (trains & wanted):
+                continue
+            if wood > best:
+                best = wood
+        return best
+
+    def _before_first_expensive_food_age(self):
+        """True until the first high-food age-up is in upgrades (AoE2 dark age)."""
+        if self._saving_food_for_age():
+            return True
+        if not self._ruleset_has_expensive_food_age():
+            return False
+        return not any(
+            self._phase_saves_food(name)
+            for name in (getattr(self, "upgrades", None) or ())
+        )
+
+    def _watchdog_should_wait(self):
+        """True if the stuck-line timer must not skip the current plan row."""
+        if self._before_first_expensive_food_age():
+            return True
+        try:
+            line = self._plan[self._line_nb]
+        except Exception:
+            return False
+        if not isinstance(line, str) or not line.startswith("get "):
+            return False
+
+        def _ok(fn):
+            try:
+                return bool(fn())
+            except Exception:
+                return False
+
+        if _ok(self._age_click_in_progress):
+            return True
+        if _ok(self._should_click_plan_phase) and _ok(
+            self._age_up_missing_resource_types
+        ):
+            return True
+        # Feudal army get intentionally does not click castle. Later-wave wood
+        # (workshop) and trainer food must not freeze the stuck-line timer —
+        # soldiers dying at an AFK TC would never reach the castle/ram wave.
+        if (
+            not self._plan_unmet_phase_names(lookahead=False)
+            and self._plan_unmet_phase_names(lookahead=True)
+        ):
+            if self._pending_production_makers(ignore_age_defer=False):
+                return True
+            if _ok(self._plan_get_maker_in_progress):
+                return True
+            return False
+        if _ok(self._wood_below_pending_building):
+            return True
+        if _ok(self._has_startable_plan_production_building):
+            return True
+        if _ok(self._plan_get_maker_in_progress):
+            return True
+        if _ok(self._owned_trainer_wood_need) or _ok(self._owned_trainer_food_need):
+            return True
+        return False
+
+    def _ruleset_has_expensive_food_age(self):
+        """True if any ``class phase`` in the loaded rules costs much food."""
+
+        def _compute():
+            for name in rules.classnames():
+                if rules.get(name, "class") == ["phase"] and self._phase_saves_food(
+                    name
+                ):
+                    return True
+            return False
+
+        return self._discovery_cache_get("expensive_food_age", _compute)
+
+    def _first_startable_unpaid_maker_cost(self):
+        """Gold, wood of the first unpaid get-line production building current ages allow.
+
+        Does not call ``_defer_plan_get_token`` (that method must stay recursion-free).
+        """
+        return self._play_memo_get(
+            ("first_startable", getattr(self, "_line_nb", 0)),
+            self._first_startable_unpaid_maker_cost_compute,
+        )
+
+    def _first_startable_unpaid_maker_cost_compute(self):
+        from .worldrequirements import requirements_satisfied
+
+        nb = getattr(self, "nb", None)
+        future_nb = getattr(self, "future_nb", None)
+        if not callable(nb):
+            return 0, 0
+        if not callable(future_nb):
+            future_nb = lambda _n: 0
+        land_only = not self._map_has_water()
+        for name in self._iter_plan_production_type_names():
+            if self._is_worker_type_name(name):
+                continue
+            # Land maps never place shipyards; do not bank gold/wood for them
+            # (or unit→unit “makers” like darkarcher←archer) while barracks
+            # already owns the current wave.
+            if land_only and self._type_needs_water(name):
+                continue
+            owned_maker = False
+            pending = None
+            for maker in rules.get_makers(name) or ():
+                mc = rules.unit_class(maker)
+                if mc is None:
+                    continue
+                try:
+                    if issubclass(mc, Worker):
+                        continue
+                except TypeError:
+                    continue
+                if not getattr(mc, "is_a_building", False):
+                    continue
+                if land_only and self._type_needs_water(maker):
+                    continue
+                if nb(maker) > 0 or future_nb(maker) > 0:
+                    owned_maker = True
+                    break
+                cost = getattr(mc, "cost", None) or ()
+                gold = cost[0] if cost else 0
+                wood = cost[1] if len(cost) > 1 else 0
+                # Stone-only unique buildings (AoE2 castle) must not hide a later
+                # wood/gold workshop on the next get line.
+                if not gold and not wood:
+                    continue
+                if not requirements_satisfied(
+                    self, getattr(mc, "requirements", ()) or ()
+                ):
+                    continue
+                pending = mc
+                break
+            if owned_maker or pending is None:
+                continue
+            cost = getattr(pending, "cost", None) or ()
+            gold = cost[0] if cost else 0
+            wood = cost[1] if len(cost) > 1 else 0
+            return gold, wood
+        return 0, 0
+
+    def _defer_plan_get_token(self, type_name, saving_for_feudal=False):
+        """Skip a get-line token this turn (unmet age on the unit, or save food)."""
+        return self._play_memo_get(
+            (
+                "defer_token",
+                type_name,
+                bool(saving_for_feudal),
+                getattr(self, "_line_nb", 0),
+            ),
+            lambda: self._defer_plan_get_token_compute(
+                type_name, saving_for_feudal
+            ),
+        )
+
+    def _defer_plan_get_token_compute(self, type_name, saving_for_feudal=False):
+        """Skip a get-line token this turn (unmet age on the unit, or save food)."""
+        # Only the unit's own phase — maker buildings (barracks needs feudal in
+        # default res) must still go through get() so the AI clicks the age.
+        if self._unmet_phase_names_for_type(type_name, include_makers=False):
+            return True
+        if saving_for_feudal and not self._is_worker_type_name(type_name):
+            return True
+        if self._is_worker_type_name(type_name):
+            n = len(getattr(self, "_workers", ()) or ())
+            if n >= 6 and self._saving_food_for_age():
+                phases = self._plan_unmet_phase_names()
+                if phases and getattr(self, "resources", None) is not None:
+                    pc = rules.unit_class(phases[0])
+                    cost = getattr(pc, "cost", None) if pc is not None else None
+                    if cost and self.missing_resources(cost):
+                        return True
+            if n >= 8:
+                later = self._plan_unmet_phase_names(lookahead=False)
+                if (
+                    later
+                    and self._phase_saves_food(later[0])
+                    and getattr(self, "resources", None) is not None
+                ):
+                    pc = rules.unit_class(later[0])
+                    cost = getattr(pc, "cost", None) if pc is not None else None
+                    if cost and self.missing_resources(cost):
+                        wt = rules.unit_class(type_name)
+                        wcost = getattr(wt, "cost", None) or ()
+                        food = wcost[2] if len(wcost) > 2 else 0
+                        need = cost[2] if len(cost) > 2 else 0
+                        have = 0
+                        res = self.resources or ()
+                        if len(res) > 2:
+                            have = res[2]
+                        if food and need and have - food < need:
+                            return True
+                trainer_food = self._owned_trainer_food_need()
+                if trainer_food and getattr(self, "resources", None) is not None:
+                    wt = rules.unit_class(type_name)
+                    wcost = getattr(wt, "cost", None) or ()
+                    food = wcost[2] if len(wcost) > 2 else 0
+                    have = 0
+                    res = self.resources or ()
+                    if len(res) > 2:
+                        have = res[2]
+                    if food and have - food < trainer_food:
+                        return True
+            return False
+        # After the age-up, do not dump wood/gold into soldiers whose own
+        # production building is already up while a later startable get-line
+        # building (workshop after castle) is still unpaid. Must not call
+        # _iter_pending / _plan_next_production_building_cost (recursion).
+        nb = getattr(self, "nb", None)
+        future_nb = getattr(self, "future_nb", None)
+        if callable(nb):
+            uc = rules.unit_class(type_name)
+            cost = getattr(uc, "cost", None) or ()
+            sw = cost[1] if len(cost) > 1 else 0
+            sg = cost[0] if cost else 0
+            if sw or sg:
+                own_owned = False
+                for maker in rules.get_makers(type_name) or ():
+                    fut = future_nb(maker) if callable(future_nb) else 0
+                    if nb(maker) > 0 or fut > 0:
+                        own_owned = True
+                        break
+                if own_owned:
+                    pg, pw = self._first_startable_unpaid_maker_cost()
+                    if pw and sw:
+                        return True
+                    if pg and sg:
+                        return True
+        return False
+
+    def _phase_advance_in_progress(self, phase_name):
+        """True if a town center (or similar) is already researching this age."""
+        if not phase_name:
+            return False
+        fut = getattr(self, "future_nb", None)
+        nb = getattr(self, "nb", None)
+        if not callable(fut):
+            return False
+        try:
+            in_prod = fut(phase_name)
+            have = nb(phase_name) if callable(nb) else 0
+        except Exception:
+            return False
+        return in_prod > have
+
+    def _age_click_in_progress(self):
+        """True if the next plan age-up is already paying its research time."""
+        later = self._plan_unmet_phase_names(lookahead=True)
+        return bool(later) and self._phase_advance_in_progress(later[0])
+
+    def _iter_plan_production_type_names(self):
+        """Get-line unit names whose makers can still be the next wood/gold spend.
+
+        While an expensive later age still needs food, stay on the current line
+        so a later stables/workshop does not freeze farms. Once that age is
+        clicking (or paid), look ahead so the 160s castle research still banks
+        workshop wood.
+        """
+        yield from self._play_memo_get(
+            ("plan_prod_types", getattr(self, "_line_nb", 0)),
+            self._plan_production_type_names_compute,
+        )
+
+    def _plan_production_type_names_compute(self):
+        later = self._plan_unmet_phase_names(lookahead=True)
+        if (
+            later
+            and self._phase_saves_food(later[0])
+            and not self._phase_advance_in_progress(later[0])
+        ):
+            # Keep farms running for that age, but still see a later-line
+            # building that can already be placed (workshop after castle,
+            # while imperial food is still unpaid).
+            names = list(self._iter_current_get_line_types())
+            names.extend(self._iter_startable_later_get_line_types())
+            return tuple(names)
+        return tuple(self._iter_lookahead_get_line_types(extra_gets=2))
+
+    def _iter_startable_later_get_line_types(self):
+        """Later get-line units unlocked by a completed post-feudal expensive age.
+
+        Stables are placeable after feudal and must not freeze castle farms.
+        Workshop requires castle, so after castle it must still bank wood even
+        on a watchdog line while imperial food is unpaid.
+        """
+        from .worldrequirements import parse_requirement_clauses, requirements_satisfied
+
+        first_expensive = self._first_expensive_food_phase_name()
+        upgrades = getattr(self, "upgrades", None) or ()
+        seen = set()
+        for name in self._iter_current_get_line_types():
+            seen.add(name)
+        land_only = not self._map_has_water()
+        for name in self._iter_lookahead_get_line_types(extra_gets=2):
+            if name in seen:
+                continue
+            seen.add(name)
+            if self._is_worker_type_name(name):
+                continue
+            if land_only and self._type_needs_water(name):
+                continue
+            for maker in rules.get_makers(name) or ():
+                mc = rules.unit_class(maker)
+                if mc is None:
+                    continue
+                try:
+                    if issubclass(mc, Worker):
+                        continue
+                except TypeError:
+                    continue
+                if not getattr(mc, "is_a_building", False):
+                    continue
+                if land_only and self._type_needs_water(maker):
+                    continue
+                if self.nb(maker) > 0 or self.future_nb(maker) > 0:
+                    break
+                cost = getattr(mc, "cost", None) or ()
+                gold = cost[0] if cost else 0
+                wood = cost[1] if len(cost) > 1 else 0
+                if not gold and not wood:
+                    continue
+                if not requirements_satisfied(
+                    self, getattr(mc, "requirements", ()) or ()
+                ):
+                    continue
+                unlocked_by_later_age = False
+                for clause in parse_requirement_clauses(
+                    getattr(mc, "requirements", ()) or ()
+                ):
+                    if clause[0] != "has":
+                        continue
+                    phase = clause[1]
+                    if rules.get(phase, "class") != ["phase"]:
+                        continue
+                    if (
+                        self._phase_saves_food(phase)
+                        and phase != first_expensive
+                        and phase in upgrades
+                    ):
+                        unlocked_by_later_age = True
+                        break
+                if unlocked_by_later_age:
+                    yield name
+                    break
+
+    def _iter_pending_production_makers(self, ignore_age_defer=False):
+        """Maker classes of get-line units whose production building is not started."""
+        from .worldrequirements import requirements_satisfied
+
+        saving_for_feudal = (not ignore_age_defer) and self._saving_food_for_age()
+        buildable = self._worker_buildable_type_names()
+        land_only = not self._map_has_water()
+        for name in self._iter_plan_production_type_names():
+            if self._is_worker_type_name(name):
+                continue
+            if land_only and self._type_needs_water(name):
+                continue
+            # Full ``_defer_plan_get_token`` (soldier-hold / workshop tail) is for
+            # get(); pending buildings only need own-phase + feudal-save skip.
+            if saving_for_feudal:
+                continue
+            deferred = bool(
+                self._unmet_phase_names_for_type(name, include_makers=False)
+            )
+            if not deferred and self.nb(name) > 0:
+                continue
+            owned_maker = False
+            pending = []
+            for maker in rules.get_makers(name) or ():
+                mc = rules.unit_class(maker)
+                if mc is None:
+                    continue
+                try:
+                    if issubclass(mc, Worker):
+                        continue
+                except TypeError:
+                    continue
+                if not getattr(mc, "is_a_building", False):
+                    continue
+                if land_only and self._type_needs_water(maker):
+                    continue
+                if self.nb(maker) > 0 or self.future_nb(maker) > 0:
+                    # briton_barracks counts as barracks; do not also treat
+                    # frank_barracks / chinese_barracks as still-missing.
+                    owned_maker = True
+                    break
+                # captured_barracks (cost 0) lists as a footman maker but peasants
+                # cannot build it; using it as the "next" building zeroed the
+                # gold/wood reserve and let farms spend the barracks stash.
+                cost = getattr(mc, "cost", None) or ()
+                gold = cost[0] if cost else 0
+                wood = cost[1] if len(cost) > 1 else 0
+                # captured_barracks (all zeros) and stone-only unique buildings
+                # (AoE2 castle) must not zero the gold/wood reserve.
+                if not gold and not wood:
+                    continue
+                if (
+                    deferred
+                    and not requirements_satisfied(
+                        self, getattr(mc, "requirements", ()) or ()
+                    )
+                ):
+                    if not ignore_age_defer:
+                        continue
+                    # ignore_age_defer banks workshop wood during the castle
+                    # click. Before that click (e.g. still missing blacksmith
+                    # for any_buildings 2), do not reserve 200 wood or the
+                    # unlock building never gets paid.
+                    if not self._age_click_in_progress():
+                        continue
+                pending.append(mc)
+            if owned_maker:
+                continue
+            if not pending:
+                continue
+            pending.sort(
+                key=lambda mc: 0
+                if (
+                    getattr(mc, "type_name", None) in buildable
+                    or getattr(mc, "__name__", None) in buildable
+                )
+                else 1
+            )
+            for mc in pending:
+                yield mc
+            # First unbuilt production building only (barracks before range).
+            return
+
+    def _pending_production_makers(self, ignore_age_defer=False):
+        """Tuple of pending maker classes; shared by wood/next/startable checks."""
+        return self._play_memo_get(
+            (
+                "pending_makers",
+                bool(ignore_age_defer),
+                getattr(self, "_line_nb", 0),
+            ),
+            lambda: tuple(
+                self._iter_pending_production_makers(
+                    ignore_age_defer=ignore_age_defer
+                )
+            ),
+        )
+
+    def _plan_wood_building_cost(self, ignore_age_defer=False):
+        """Wood cost of the next unbuilt production building on the get line."""
+        return self._play_memo_get(
+            (
+                "plan_wood",
+                bool(ignore_age_defer),
+                getattr(self, "_line_nb", 0),
+            ),
+            lambda: self._plan_wood_building_cost_compute(ignore_age_defer),
+        )
+
+    def _plan_wood_building_cost_compute(self, ignore_age_defer=False):
+        """Wood cost of the next unbuilt production building on the get line."""
+        best = 0
+        for mc in self._pending_production_makers(
+            ignore_age_defer=ignore_age_defer
+        ):
+            cost = getattr(mc, "cost", None) or ()
+            if len(cost) > 1 and cost[1] > best:
+                best = cost[1]
+        return best
+
+    def _plan_next_production_building_cost(self, ignore_age_defer=False):
+        """Gold, wood of the first unbuilt get-line production building."""
+        return self._play_memo_get(
+            (
+                "plan_next",
+                bool(ignore_age_defer),
+                getattr(self, "_line_nb", 0),
+            ),
+            lambda: self._plan_next_production_building_cost_compute(
+                ignore_age_defer
+            ),
+        )
+
+    def _plan_next_production_building_cost_compute(self, ignore_age_defer=False):
+        for mc in self._pending_production_makers(
+            ignore_age_defer=ignore_age_defer
+        ):
+            cost = getattr(mc, "cost", None) or ()
+            gold = cost[0] if cost else 0
+            wood = cost[1] if len(cost) > 1 else 0
+            return gold, wood
+        return 0, 0
+
+    def _would_spend_past_plan_building(self, spend_cost, ignore_age_defer=False):
+        """True if this spend would leave too little gold/wood for the get-line building."""
+        pg, pw = self._plan_next_production_building_cost(
+            ignore_age_defer=ignore_age_defer
+        )
+        trainer_w = self._owned_trainer_wood_need()
+        if trainer_w > pw:
+            pw = trainer_w
+        spend_cost = spend_cost or ()
+        sg = spend_cost[0] if len(spend_cost) > 0 else 0
+        sw = spend_cost[1] if len(spend_cost) > 1 else 0
+        unlock_w = self._next_plan_phase_building_wood_need()
+        # Exact unlock cost (blacksmith 150) must beat a larger pending maker
+        # (barracks 175): castle any_buildings cannot wait on barracks wood.
+        if unlock_w and sw == unlock_w:
+            return False
+        if unlock_w and sw < unlock_w and unlock_w > pw:
+            pw = unlock_w
+        if not pg and not pw:
+            return False
+        if (
+            ignore_age_defer
+            and self._age_up_needs_food()
+            and not self._has_startable_plan_production_building()
+            and not self._age_click_in_progress()
+            and not unlock_w
+        ):
+            return False
+        res = getattr(self, "resources", None) or ()
+        gold = res[0] if len(res) > 0 else 0
+        wood = res[1] if len(res) > 1 else 0
+        return gold - sg < pg or wood - sw < pw
+
+    def _plan_expensive_wood_reserve(self, ignore_age_defer=False):
+        """Wood to keep for a costly production building (AoE2 175), else 0."""
+        return self._play_memo_get(
+            (
+                "plan_expensive_wood",
+                bool(ignore_age_defer),
+                getattr(self, "_line_nb", 0),
+            ),
+            lambda: self._plan_expensive_wood_reserve_compute(ignore_age_defer),
+        )
+
+    def _plan_expensive_wood_reserve_compute(self, ignore_age_defer=False):
+        cost = self._plan_wood_building_cost(ignore_age_defer=ignore_age_defer)
+        later = self._later_age_startable_production_wood()
+        if later > cost:
+            cost = later
+        trainer_w = self._owned_trainer_wood_need()
+        if trainer_w > cost:
+            cost = trainer_w
+        unlock_w = self._next_plan_phase_building_wood_need()
+        if unlock_w > cost:
+            cost = unlock_w
+        if cost >= to_int("100"):
+            return cost
+        return 0
+
+    def _wood_below_pending_building(self):
+        """True if wood is still short of the next get-line production building."""
+        return self._play_memo_get(
+            (
+                "wood_below",
+                getattr(self, "_line_nb", 0),
+                tuple(getattr(self, "resources", None) or ()),
+            ),
+            self._wood_below_pending_building_compute,
+        )
+
+    def _wood_below_pending_building_compute(self):
+        # Dark age must bank food for feudal; barracks wood is not the pinch yet.
+        if self._before_first_expensive_food_age():
+            return False
+        trainer_w = self._owned_trainer_wood_need()
+        _pg, pw = self._plan_next_production_building_cost(ignore_age_defer=True)
+        later = self._later_age_startable_production_wood()
+        if later > pw:
+            pw = later
+        if trainer_w > pw:
+            pw = trainer_w
+        if not pw:
+            return False
+        res = getattr(self, "resources", None) or ()
+        wood = res[1] if len(res) > 1 else 0
+        if wood >= pw:
+            return False
+        # Owned siege workshop still needs ram wood after the building is paid.
+        if trainer_w and wood < trainer_w:
+            return True
+        # Workshop cannot be placed until castle finishes, but the 160s click
+        # has already paid the food — chop then, instead of planting more farms.
+        if (
+            later
+            or self._has_startable_plan_production_building()
+            or self._age_click_in_progress()
+        ):
+            return True
+        return False
+
+    def _age_up_farm_wood_reserve(self):
+        """Wood to keep so auto-cultivate food buildings can restart for an age-up.
+
+        Bank one recultivate even while farms are still producing: they empty
+        together, and a house or tech would otherwise spend the last 40 wood.
+        """
+        if self._before_first_expensive_food_age():
+            return 0
+        if self._wood_below_pending_building():
+            return 0
+        if not self._age_up_needs_food():
+            return 0
+        need = self._cultivate_missing_wood()
+        if need:
+            return need
+        for u in getattr(self, "units", ()) or ():
+            if not getattr(u, "auto_cultivate", 0):
+                continue
+            prod = getattr(u, "production_cost", None)
+            if prod is None:
+                prod = getattr(getattr(u, "type", None), "production_cost", None)
+            prod = prod or ()
+            wood = prod[1] if len(prod) > 1 else 0
+            if wood:
+                return wood
+        return 0
+
+    def _need_wood_for_age_up_farms(self):
+        """True if a later expensive age needs food but recultivate wood is short."""
+        need = self._age_up_farm_wood_reserve()
+        if not need:
+            return False
+        res = getattr(self, "resources", None) or ()
+        wood = res[1] if len(res) > 1 else 0
+        return wood < need
+
+    def _keep_lumberjacks(self):
+        """True when lumberjacks must not be pulled onto farms or gold."""
+        return self._wood_below_pending_building() or self._need_wood_for_age_up_farms()
+
+    def _should_keep_farms_producing(self):
+        """True if idle mills should recultivate.
+
+        Pending production-building wood wins over a later expensive age-up:
+        a 60-wood farm must not freeze archery after barracks is already up.
+        Before the first expensive-food age is researched, keep farms even
+        on watchdog/timer lines that are not themselves a ``get``.
+        """
+        return self._play_memo_get(
+            (
+                "keep_farms",
+                getattr(self, "_line_nb", 0),
+                tuple(getattr(self, "resources", None) or ()),
+            ),
+            self._should_keep_farms_producing_compute,
+        )
+
+    def _should_keep_farms_producing_compute(self):
+        """True if idle mills should recultivate."""
+        if self._before_first_expensive_food_age():
+            return True
+        res = getattr(self, "resources", None) or ()
+        trainer_w = self._owned_trainer_wood_need()
+        wood = res[1] if len(res) > 1 else 0
+        if trainer_w and wood < trainer_w:
+            return False
+        _pg, pw = self._plan_next_production_building_cost(ignore_age_defer=True)
+        if pw and len(res) > 1 and res[1] < pw:
+            # Unpaid archery still wins; an unplaceable next-age workshop must not
+            # freeze farms — unless that age is already researching.
+            if not (
+                self._age_up_needs_food()
+                and not self._has_startable_plan_production_building()
+                and not self._age_click_in_progress()
+            ):
+                food_need = self._owned_trainer_food_need()
+                food = res[2] if len(res) > 2 else 0
+                if food_need and food < food_need:
+                    return True
+                return False
+        if self._age_up_needs_food():
+            # Castle food must not recultivate farms while any_buildings still
+            # needs a wood-cost unlock (blacksmith): farms eat the 150 wood.
+            need_w = self._next_plan_phase_building_wood_need()
+            wood = res[1] if len(res) > 1 else 0
+            if need_w and wood < need_w:
+                return False
+            return True
+        food_need = self._owned_trainer_food_need()
+        food = res[2] if len(res) > 2 else 0
+        return bool(food_need) and food < food_need
+
+    def _next_plan_phase_building_wood_need(self):
+        """Wood to place the next any_buildings unlock for the planned age-up."""
+        from .worldrequirements import (
+            ANY_BUILDINGS,
+            count_owned_buildings_of_group,
+            iter_unmet_building_candidates,
+            parse_requirement_clauses,
+        )
+
+        if not self._should_click_plan_phase():
+            return 0
+        phases = self._plan_unmet_phase_names(lookahead=True)
+        if not phases:
+            return 0
+        pc = rules.unit_class(phases[0])
+        if pc is None:
+            return 0
+        buildable = self._worker_buildable_type_names()
+        land_only = not self._map_has_water()
+        # Use full requirement counts (not missing_requirement_clauses): that
+        # helper already subtracts owned buildings, so owned>=missing_count would
+        # wrongly treat "need 1 more of 2" as satisfied.
+        for clause in parse_requirement_clauses(
+            getattr(pc, "requirements", ()) or ()
+        ):
+            if clause[0] != ANY_BUILDINGS:
+                continue
+            _, count, group = clause
+            if count_owned_buildings_of_group(self, group) >= count:
+                continue
+            for r in iter_unmet_building_candidates(self, group):
+                if land_only and self._type_needs_water(r):
+                    continue
+                eq = self.equivalent(r) if isinstance(r, str) else r
+                if r not in buildable and eq not in buildable:
+                    continue
+                if self.nb(r) > 0 or self.future_nb(r) > 0:
+                    continue
+                if self.nb(eq) > 0 or self.future_nb(eq) > 0:
+                    continue
+                uc = rules.unit_class(r)
+                cost = getattr(uc, "cost", None) or () if uc is not None else ()
+                wood = cost[1] if len(cost) > 1 else 0
+                if wood:
+                    return wood
+        return 0
+
+    def _plan_wants_unbuilt_wood_building(self, ignore_age_defer=False):
+        """True if the current get line still needs a wood-cost production building."""
+        return self._plan_wood_building_cost(ignore_age_defer=ignore_age_defer) > 0
+
+    def _owns_get_line_production_building(self):
+        """True if any get-line military production building is already up."""
+        for name in self._iter_current_get_line_types():
+            if self._is_worker_type_name(name):
+                continue
+            for maker in rules.get_makers(name) or ():
+                if self.nb(maker) > 0:
+                    return True
+        return False
+
+    def _has_startable_plan_production_building(self):
+        """True if a get-line production building can be placed with current ages."""
+        return self._play_memo_get(
+            ("has_startable", getattr(self, "_line_nb", 0)),
+            self._has_startable_plan_production_building_compute,
+        )
+
+    def _has_startable_plan_production_building_compute(self):
+        if self._saving_food_for_age():
+            return False
+        # Pending makers already skip unmet ages; do not re-check full
+        # requirements (town_center etc.) — stub AIs and the click-phase
+        # test only model owned ages via ``upgrades``.
+        return bool(self._pending_production_makers(ignore_age_defer=False))
+
+    def _plan_get_maker_in_progress(self):
+        """True if a get-line production building is already under construction."""
+        nb = getattr(self, "nb", None)
+        future_nb = getattr(self, "future_nb", None)
+        if not callable(nb) or not callable(future_nb):
+            return False
+        for name in self._iter_current_get_line_types():
+            if self._is_worker_type_name(name):
+                continue
+            for maker in rules.get_makers(name) or ():
+                try:
+                    if future_nb(maker) > nb(maker):
+                        return True
+                except Exception:
+                    continue
+        return False
+
+    def _need_later_age_production_wood(self):
+        """True when a castle-unlocked production building (workshop) still needs wood.
+
+        Watchdog lines hide workshop from ``_has_startable_plan_production_building``
+        after feudal barracks/range/stable are already up.
+        """
+        return bool(
+            self._wood_below_pending_building()
+            and self._later_age_startable_production_wood()
+        )
+
+    def _trainer_blocked_by_later_age_wood(self, type_name):
+        """True if this trainer would spend wood still needed for workshop.
+
+        Monastery costs 175 wood and is startable in the same age as workshop
+        (200 wood). ``get(monk)`` must not place it first and dump the stash.
+        """
+        later = self._later_age_startable_production_wood()
+        if not later:
+            return False
+        uc = (
+            rules.unit_class(type_name)
+            if isinstance(type_name, str)
+            else type_name
+        )
+        if uc is None:
+            return False
+        trains = rules.class_rules_attr(uc, "can_train", ()) or ()
+        if not trains:
+            return False
+        cost = getattr(uc, "cost", None) or ()
+        wood_cost = cost[1] if len(cost) > 1 else 0
+        if wood_cost <= 0:
+            return False
+        if wood_cost >= later:
+            return False
+        return True
+
+    def _should_hold_extra_workers(self, n_workers, worker_type):
+        """Stop extra villagers only when they spend the stockpile we are saving."""
+        if n_workers < 6:
+            return False
+        phases = self._plan_unmet_phase_names()
+        if self._saving_food_for_age() and phases:
+            pc = rules.unit_class(phases[0])
+            cost = getattr(pc, "cost", None) if pc is not None else None
+            if cost and self.missing_resources(cost):
+                return True
+        later = self._plan_unmet_phase_names(lookahead=True)
+        if n_workers >= 8 and later and self._phase_saves_food(later[0]):
+            pc = rules.unit_class(later[0])
+            cost = getattr(pc, "cost", None) if pc is not None else None
+            if cost and self.missing_resources(cost):
+                wt = rules.unit_class(worker_type) if worker_type else None
+                wcost = getattr(wt, "cost", None) or ()
+                food = wcost[2] if len(wcost) > 2 else 0
+                need = cost[2] if len(cost) > 2 else 0
+                have = 0
+                res = getattr(self, "resources", None) or ()
+                if len(res) > 2:
+                    have = res[2]
+                if food and need and have - food < need:
+                    return True
+        if n_workers >= 8:
+            trainer_food = self._owned_trainer_food_need()
+            if trainer_food and worker_type:
+                wt = rules.unit_class(worker_type)
+                wcost = getattr(wt, "cost", None) or ()
+                food = wcost[2] if len(wcost) > 2 else 0
+                have = 0
+                res = getattr(self, "resources", None) or ()
+                if len(res) > 2:
+                    have = res[2]
+                if food and have - food < trainer_food:
+                    return True
+        if not worker_type or not self._plan_expensive_wood_reserve():
+            return False
+        wt = rules.unit_class(worker_type)
+        wcost = getattr(wt, "cost", None) or ()
+        spends_gold = bool(wcost) and wcost[0]
+        spends_wood = len(wcost) > 1 and wcost[1]
+        if not spends_gold and not spends_wood:
+            return False
+        return self._would_spend_past_plan_building(wcost)
+
+    def _wood_gather_worker_cap(self, n_workers):
+        """How many workers to put on wood. Cap of 2 is only while saving food."""
+        n_w = max(1, int(n_workers or 0))
+        if self._before_first_expensive_food_age():
+            return 2
+        if self._plan_expensive_wood_reserve(ignore_age_defer=True):
+            return max(4, (n_w * 2) // 3)
+        if self._need_wood_for_age_up_farms():
+            return max(5, (n_w * 2) // 3)
+        return max(3, n_w // 2)
+
+    def _owned_trainer_food_need(self):
+        """Food to train one still-wanted get-line soldier from an owned building."""
+        return self._play_memo_get(
+            ("trainer_food", getattr(self, "_line_nb", 0)),
+            self._owned_trainer_food_need_compute,
+        )
+
+    def _owned_trainer_wood_need(self):
+        """Wood to train one still-wanted get-line soldier from an owned building."""
+        return self._play_memo_get(
+            ("trainer_wood", getattr(self, "_line_nb", 0)),
+            self._owned_trainer_wood_need_compute,
+        )
+
+    def _owned_trainer_food_need_compute(self):
+        return self._owned_trainer_resource_need_compute(2)
+
+    def _owned_trainer_wood_need_compute(self):
+        return self._owned_trainer_resource_need_compute(1)
+
+    def _owned_trainer_resource_need_compute(self, res_index):
+        """Cost of one still-wanted get-line soldier from an owned building."""
+        best = 0
+        nb = getattr(self, "nb", None)
+        if not callable(nb):
+            return 0
+        try:
+            line = self._plan[self._line_nb]
+        except Exception:
+            return 0
+        if not isinstance(line, str) or not line.startswith("get "):
+            return 0
+        wanted_amounts = []
+        n = 1
+        for token in str(line).split()[1:]:
+            if re.match("^[0-9]+$", token):
+                n = int(token)
+                continue
+            wanted = self.equivalent(token)
+            if self._is_worker_type_name(wanted):
+                n = 1
+                continue
+            uc = rules.unit_class(wanted)
+            cost = getattr(uc, "cost", None) or ()
+            amount = cost[res_index] if len(cost) > res_index else 0
+            if amount > 0 and nb(wanted) < n:
+                wanted_amounts.append((wanted, amount))
+            n = 1
+        if not wanted_amounts:
+            return 0
+        for u in getattr(self, "units", ()) or ():
+            if not getattr(u, "is_a_building", False):
+                continue
+            trainables = set(effective_can_train(u) or ())
+            if not trainables:
+                continue
+            for wanted, amount in wanted_amounts:
+                if amount <= best:
+                    continue
+                match = wanted in trainables
+                if not match:
+                    for tn in trainables:
+                        tc = rules.unit_class(tn)
+                        if tc is None:
+                            continue
+                        if wanted == tn or wanted in getattr(
+                            tc, "expanded_is_a", ()
+                        ):
+                            match = True
+                            break
+                if match:
+                    best = amount
+        return best
+
+    def _plan_wants_food_from_owned_trainers(self):
+        """True if an owned get-line building still needs a food-cost unit."""
+        return self._owned_trainer_food_need() > 0
+
+    def _ensure_plan_production_building(self, type_name):
+        """Start a get-line maker that can be placed now (stables before castle)."""
+        from .worldrequirements import requirements_satisfied
+
+        buildable = self._worker_buildable_type_names()
+        candidates = []
+        for maker in rules.get_makers(type_name) or ():
+            mc = rules.unit_class(maker)
+            if mc is None:
+                continue
+            try:
+                if issubclass(mc, Worker):
+                    continue
+            except TypeError:
+                continue
+            if self.nb(maker) > 0 or self.future_nb(maker) > 0:
+                return True
+            cost = getattr(mc, "cost", None) or ()
+            if not any(c > 0 for c in cost):
+                continue
+            if not requirements_satisfied(self, getattr(mc, "requirements", ()) or ()):
+                continue
+            candidates.append(maker)
+        if not candidates:
+            return False
+        for maker in candidates:
+            if maker in buildable:
+                return bool(self.get(1, maker))
+        return bool(self.get(1, candidates[0]))
 
     def _plan_still_wants_trains_from(self, building):
         """True if the current ai.txt get line still needs units this building trains."""
@@ -754,11 +2373,13 @@ class Computer(Player):
     def idle_buildings_research(self):
         from .worldorders.production import AdvanceOrder, ResearchOrder
 
+        plan_blocked_on_phase = self._saving_food_for_age()
         for u in self.units:
             if u.orders:
                 continue
-            # Finish get-line training before spending the building on tech.
-            if self._plan_still_wants_trains_from(u):
+            # Finish get-line training before spending the building on tech,
+            # unless the get line is waiting on an age we do not have yet.
+            if self._plan_still_wants_trains_from(u) and not plan_blocked_on_phase:
                 continue
 
             def _try_start(keyword, type_names, order_cls):
@@ -772,6 +2393,9 @@ class Computer(Player):
                         )
                         else 1
                     )
+                # Research: keep a 4x stockpile so cheap techs do not drain the
+                # last resources. Age-up must fire at 1x cost (feudal is 500 food).
+                stockpile = 3 if keyword == "research" else 0
                 for t in names:
                     unit_type = self.unit_class(t)
                     if unit_type is None:
@@ -781,17 +2405,50 @@ class Computer(Player):
                     if (
                         not self.future_nb([t])
                         and not self.missing_resources(unit_type.cost)
-                        and self.potential(unit_type.cost) > 3
+                        and self.potential(unit_type.cost) > stockpile
                     ):
+                        cost = getattr(unit_type, "cost", None) or ()
+                        if keyword == "research" and self._spend_would_block_age_up(
+                            cost
+                        ):
+                            continue
+                        reserve = self._plan_expensive_wood_reserve(
+                            ignore_age_defer=True
+                        )
+                        farm_w = self._age_up_farm_wood_reserve()
+                        if (
+                            keyword == "research"
+                            and len(cost) > 1
+                            and cost[1] > 0
+                            and (
+                                (
+                                    reserve
+                                    and self.resources[1] < to_int("200")
+                                )
+                                or (
+                                    farm_w
+                                    and self.resources[1] - cost[1] < farm_w
+                                )
+                            )
+                        ):
+                            continue
                         u.take_order([keyword, t])
                         return True
                 return False
 
-            if _try_start("research", u.can_research, ResearchOrder):
-                continue
-            _try_start(
-                "advance", getattr(u, "can_advance", ()) or (), AdvanceOrder
-            )
+            if plan_blocked_on_phase:
+                if _try_start(
+                    "advance", getattr(u, "can_advance", ()) or (), AdvanceOrder
+                ):
+                    continue
+                if _try_start("research", u.can_research, ResearchOrder):
+                    continue
+            else:
+                if _try_start("research", u.can_research, ResearchOrder):
+                    continue
+                _try_start(
+                    "advance", getattr(u, "can_advance", ()) or (), AdvanceOrder
+                )
 
     def _is_powerful_enough(self, units, place):
         # sometimes population limit prevents units with more than 1 population cost
@@ -852,10 +2509,37 @@ class Computer(Player):
 
     def _resource_need_ratio(self, resource_index):
         """Lower ratio = more urgently needed relative to the low threshold."""
+        return self._play_memo_get(
+            ("need_ratio", resource_index),
+            lambda: self._resource_need_ratio_compute(resource_index),
+        )
+
+    def _resource_need_ratio_compute(self, resource_index):
         if resource_index is None or resource_index >= len(self.resources):
             return 999.0
+        have = self.resources[resource_index]
+        pg, pw = self._plan_next_production_building_cost(ignore_age_defer=True)
+        # Pending production wood beats nearby farms so archery is not starved
+        # while a later expensive age-up is also missing food.
+        if resource_index == 1 and self._keep_lumberjacks():
+            if not (
+                self._age_up_needs_food()
+                and self._has_harvestable_food_buildings()
+                and not self._need_wood_for_age_up_farms()
+            ):
+                return -3.0
+        if resource_index == 0 and pg and have < pg:
+            return -2.5
+        age_missing = self._age_up_missing_resource_types()
+        if resource_index == 0 and "resource1" in age_missing:
+            return -2.0
+        if resource_index == 2 and "resource3" in age_missing:
+            return -1.0
+        need = self._owned_trainer_food_need()
+        if resource_index == 2 and need and have < need:
+            return -1.0
         threshold = max(1, self._resource_low_threshold(resource_index))
-        return self.resources[resource_index] / threshold
+        return have / threshold
 
     def _worker_can_gather_deposit(self, worker, deposit):
         allowed = getattr(worker, "can_gather_deposit", None) or []
@@ -865,13 +2549,14 @@ class Computer(Player):
         return type_name in allowed
 
     def _pick_nearest_reachable(
-        self, origin, candidates, plane="ground", avoid=True, top_k=12
+        self, origin, candidates, plane="ground", avoid=True, top_k=12, scan_rest=True
     ):
         """欧氏距离预排序后，按序 A* 直到找到第一个可达目标。
 
         对齐 nearest_warehouse 的预筛思路：避免 AI 对全部矿点/猎物
         做 O(n) 次 shortest_path_distance_to。默认最多探测 top_k 个；
-        若都不可达再扫描剩余，保证仍能找到可达目标。
+        ``scan_rest=True`` 时若都不可达再扫描剩余。采集路径应关扫描，
+        因为调用方已有欧氏回退，全表 A* 在 cw1 上约 50 次/次挑选。
         """
         if origin is None or not candidates:
             return None
@@ -895,6 +2580,23 @@ class Computer(Player):
         if not scored:
             return None
         scored.sort()
+        # Same square is always reachable; _shortest_path_to(self, self) is 0
+        # but skipping the call avoids cache/decorator overhead in the gather loop.
+        for _, _, _, o in scored:
+            if o.place is origin:
+                return o
+        sw = getattr(getattr(self, "world", None), "square_width", 0) or 0
+        adj_limit = sw * sw if sw else 0
+        adjacent = getattr(self, "_warehouse_places_adjacent", None)
+        if adj_limit and callable(adjacent):
+            for euclid, _, _, o in scored:
+                if euclid > adj_limit:
+                    break
+                try:
+                    if adjacent(origin, o.place):
+                        return o
+                except Exception:
+                    continue
         limit = top_k if top_k > 0 else len(scored)
         for _, _, _, o in scored[:limit]:
             dist = origin.shortest_path_distance_to(
@@ -902,12 +2604,13 @@ class Computer(Player):
             )
             if dist is not None and dist < float("inf"):
                 return o
-        for _, _, _, o in scored[limit:]:
-            dist = origin.shortest_path_distance_to(
-                o.place, self, plane, avoid=avoid
-            )
-            if dist is not None and dist < float("inf"):
-                return o
+        if scan_rest:
+            for _, _, _, o in scored[limit:]:
+                dist = origin.shortest_path_distance_to(
+                    o.place, self, plane, avoid=avoid
+                )
+                if dist is not None and dist < float("inf"):
+                    return o
         return None
 
     def _worker_origin_for_gather(self):
@@ -919,7 +2622,9 @@ class Computer(Player):
                     break
         return origin
 
-    def _reachable_deposits(self, from_place, resource_index=None, worker=None):
+    def _reachable_deposits(
+        self, from_place, resource_index=None, worker=None, first_only=False
+    ):
         if from_place is None:
             return []
         candidates = []
@@ -947,19 +2652,60 @@ class Computer(Player):
         candidates.sort()
         found = []
         for _, _, _, o in candidates:
-            dist = from_place.shortest_path_distance_to(o.place, self, avoid=True)
+            place = o.place
+            if place is from_place:
+                dist = 0
+            else:
+                dist = from_place.shortest_path_distance_to(place, self, avoid=True)
             if dist is not None and dist < float("inf"):
                 found.append((dist, o, "ground"))
-            elif find_amphibious_crossing(from_place, o.place, self):
+            elif find_amphibious_crossing(from_place, place, self):
                 found.append((float("inf"), o, "amphibious"))
+            else:
+                continue
+            if first_only:
+                break
         found.sort(key=lambda x: (0 if x[2] == "ground" else 1, x[0]))
         return [(o, mode) for _, o, mode in found]
 
     def _has_reachable_deposit(self, resource_index):
-        return bool(self._reachable_deposits(self._worker_origin_for_gather(), resource_index))
+        # Existence only: stop at the first reachable deposit (AoE2 cw1 has
+        # dozens of trees; a full A* pass was ~70ms per call).
+        memo = getattr(self, "_play_memo", None)
+        key = ("has_reach_dep", resource_index)
+        if memo is not None and key in memo:
+            return memo[key]
+        result = bool(
+            self._reachable_deposits(
+                self._worker_origin_for_gather(),
+                resource_index,
+                first_only=True,
+            )
+        )
+        if memo is not None:
+            memo[key] = result
+        return result
 
     def _resource_low_threshold(self, resource_index):
-        return 20 if resource_index == 2 else 40
+        # Food threshold 150 only if this ruleset has an expensive-food age-up.
+        # Cheap gold/wood ages (default res) keep the generic 40 so farms do
+        # not spend the barracks stash.
+        return self._play_memo_get(
+            ("low_thr", resource_index),
+            lambda: self._resource_low_threshold_compute(resource_index),
+        )
+
+    def _resource_low_threshold_compute(self, resource_index):
+        if resource_index == 2:
+            if self._age_up_needs_food():
+                phases = self._plan_unmet_phase_names(lookahead=True)
+                if phases:
+                    need = self._phase_food_cost(phases[0])
+                    if need:
+                        return need
+            if self._ruleset_has_expensive_food_age():
+                return to_int("150")
+        return to_int("40")
 
     def _storage_type_for_resource(self, resource_index):
         names = self._storage_building_type_names(resource_index)
@@ -1000,7 +2746,15 @@ class Computer(Player):
             and self.future_nb(storage) == 0
             and not self._has_storage_for_resource(resource_index)
         ):
-            self.get(1, storage)
+            sc = rules.unit_class(storage)
+            cost = getattr(sc, "cost", None) or () if sc is not None else ()
+            stores = (
+                tuple(getattr(sc, "storable_resource_types", ()) or ())
+                if sc is not None
+                else ()
+            )
+            if not self._warehouse_spend_blocked_by_wood_reserve(cost, stores=stores):
+                self.get(1, storage)
         self._try_remote_deposit_expansion(resource_index)
 
     def _send_workers_to_gather_amphibious(self, workers, deposit):
@@ -1062,7 +2816,15 @@ class Computer(Player):
             and self.future_nb(storage) == 0
             and not self._has_storage_for_resource(resource_index)
         ):
-            self.get(1, storage)
+            sc = rules.unit_class(storage)
+            cost = getattr(sc, "cost", None) or () if sc is not None else ()
+            stores = (
+                tuple(getattr(sc, "storable_resource_types", ()) or ())
+                if sc is not None
+                else ()
+            )
+            if not self._warehouse_spend_blocked_by_wood_reserve(cost, stores=stores):
+                self.get(1, storage)
         return True
 
     def _resource_building_types(self, resource_type):
@@ -1092,7 +2854,12 @@ class Computer(Player):
     def _target_resource_building_count(self, resource_index):
         workers = max(1, len(self._workers))
         if resource_index == 2:
-            return max(2, workers // 4)
+            n = max(2, workers // 4)
+            # Castle is 800 food: one 175-food cycle on 4 farms is ~700 and
+            # still dies if recultivate wood is spent elsewhere.
+            if self._age_up_needs_food() and not self._wood_below_pending_building():
+                n = max(n, max(6, workers // 2))
+            return n
         if resource_index == 0:
             return max(1, workers // 8)
         return 1
@@ -1134,23 +2901,103 @@ class Computer(Player):
                     continue
                 if self.missing_resources(t.cost):
                     continue
+                if self._would_spend_past_plan_building(
+                    t.cost, ignore_age_defer=True
+                ):
+                    continue
+                if i == 2 and self._should_defer_food_building_expansion(t.cost):
+                    continue
                 self.build_or_train_or_upgradeto_or_summon(t)
                 return
 
     def _idle_resource_buildings_produce(self):
+        keep_farms = self._should_keep_farms_producing()
         for u in self.units:
-            if not getattr(u, "is_a_building", False) or getattr(u, "is_producing", False):
-                continue
-            if u.orders:
+            if not getattr(u, "is_a_building", False):
                 continue
             if getattr(u, "auto_cultivate", 0):
+                prod = getattr(u, "production_cost", None)
+                if prod is None:
+                    prod = getattr(getattr(u, "type", None), "production_cost", None)
+                steal_wood = self._would_spend_past_plan_building(
+                    prod, ignore_age_defer=True
+                )
+                if not keep_farms or steal_wood:
+                    # The engine restarts depleted farms between AI turns while
+                    # current_production_mode is still "auto"; that 60 wood
+                    # never lets archery reach 175.
+                    if getattr(u, "current_production_mode", None) == "auto":
+                        u.current_production_mode = None
+                    continue
+                if getattr(u, "is_producing", False) or u.orders:
+                    continue
+                if getattr(u, "resource_qty", 0) > 0:
+                    continue
                 if not self._can_afford_production_cost(u):
                     continue
                 u.take_order(["start_automatic_cultivate"])
             elif getattr(u, "auto_production", 0):
+                if getattr(u, "is_producing", False) or u.orders:
+                    continue
                 if not self._can_afford_production_cost(u):
                     continue
                 u.take_order(["auto_produce"])
+
+    def _cultivate_missing_wood(self):
+        """Wood still needed to restart idle auto-cultivate buildings (farms)."""
+        need = 0
+        for u in getattr(self, "units", ()) or ():
+            if not getattr(u, "auto_cultivate", 0):
+                continue
+            if getattr(u, "is_producing", False) or u.orders:
+                continue
+            if getattr(u, "resource_qty", 0) > 0:
+                continue
+            prod = getattr(u, "production_cost", None)
+            if prod is None:
+                prod = getattr(getattr(u, "type", None), "production_cost", None)
+            prod = prod or ()
+            wood = prod[1] if len(prod) > 1 else 0
+            if wood > need:
+                need = wood
+        return need
+
+    def _should_defer_food_building_expansion(self, spend_cost=None):
+        """True if a new mill/farm would steal recultivate wood from an age-up.
+
+        Empty farms sitting idle while the AI plants more of them never reach
+        the 800-food castle click: each new farm costs the same 60 wood as
+        restarting one that is already built.
+        """
+        spend_cost = spend_cost or ()
+        sw = spend_cost[1] if len(spend_cost) > 1 else 0
+        res = getattr(self, "resources", None) or ()
+        wood = res[1] if len(res) > 1 else 0
+        unlock_w = self._next_plan_phase_building_wood_need()
+        if unlock_w and wood - sw < unlock_w:
+            return True
+        if not self._age_up_needs_food():
+            return False
+        if self._cultivate_missing_wood():
+            return True
+        farm_w = self._age_up_farm_wood_reserve()
+        if not farm_w:
+            return False
+        return wood - sw < farm_w
+
+    def _has_harvestable_food_buildings(self):
+        """True if an owned farm still has food that workers can gather."""
+        return self._play_memo_get(
+            "harvestable_food", self._has_harvestable_food_buildings_compute
+        )
+
+    def _has_harvestable_food_buildings_compute(self):
+        for u in getattr(self, "units", ()) or ():
+            if not getattr(u, "auto_cultivate", 0):
+                continue
+            if getattr(u, "resource_qty", 0) > 0:
+                return True
+        return False
 
     def _deposit_has_resources(self, target):
         if isinstance(target, Deposit):
@@ -1159,10 +3006,41 @@ class Computer(Player):
             return target.resource_qty > 0
         return True
 
+    def _wood_memory_square_worth_walking(self, deposit):
+        """True if an empty remembered forest is still a useful walk target.
+
+        After castle, chopped piles sit at qty 0. Random auto_explore then
+        never returns to those squares (or to still-stocked neighbors).
+        """
+        if self._deposit_resource_index(deposit) != 1:
+            return False
+        if not (
+            self._wood_below_pending_building()
+            and self._later_age_startable_production_wood()
+        ):
+            return False
+        if getattr(deposit, "qty", 0) > 0:
+            return True
+        return bool(
+            getattr(deposit, "resource_regen", 0)
+            or getattr(deposit, "qty_max", 0)
+        )
+
     def _gather_target_ok(self, target):
         if target is None or target.place is None:
             return False
         return self._deposit_has_resources(target)
+
+    def _known_ok_deposits(self):
+        """Deposits currently worth gathering; shared across workers this play()."""
+        return self._play_memo_get("ok_deposits", self._known_ok_deposits_compute)
+
+    def _known_ok_deposits_compute(self):
+        result = []
+        for o in self.perception.union(self.memory):
+            if isinstance(o, Deposit) and self._gather_target_ok(o):
+                result.append(o)
+        return result
 
     def _huntable_food_deposit_types(self):
         """Deposit type names produced by ``is_huntable`` animals (from rules)."""
@@ -1254,6 +3132,96 @@ class Computer(Player):
             return None
         return self._pick_nearest_reachable(place, buildings) or buildings[0]
 
+    def _is_livestock_unit(self, unit):
+        """Owned/claimable herd animals (sheep), not wild deer/boar."""
+        return bool(
+            getattr(unit, "is_huntable", 0)
+            and (getattr(unit, "herdable", 0) or getattr(unit, "claimable", 0))
+        )
+
+    def _livestock_food_dropoff(self):
+        """Town center / mill / pasture that stores food for livestock slaughter."""
+        for u in self.units:
+            if not getattr(u, "is_a_building", False) or u.place is None:
+                continue
+            if "resource3" in getattr(u, "storable_resource_types", ()):
+                return u
+        return None
+
+    def _maintain_owned_livestock(self):
+        """Send owned sheep to the food drop-off; workers slaughter them there.
+
+        AoE2 villagers often have ``can_herd 0``: claimed livestock are still
+        controllable units, so the AI orders the animals themselves to ``go``.
+        """
+        dropoff = self._livestock_food_dropoff()
+        if dropoff is None or dropoff.place is None:
+            return
+        dest = dropoff.place
+        for animal in self.units:
+            if not self._is_livestock_unit(animal):
+                continue
+            if getattr(animal, "hp", 0) <= 0 or animal.place is None:
+                continue
+            if getattr(animal, "is_inside", False):
+                continue
+            if animal.place is dest:
+                continue
+            orders = getattr(animal, "orders", None) or ()
+            if orders:
+                o0 = orders[0]
+                kw = getattr(o0, "keyword", None)
+                if kw == "go" and getattr(o0, "target", None) is dest:
+                    continue
+                # auto_explore is imperative and would keep sheep wandering forever.
+                if kw == "auto_explore":
+                    animal.take_order(["stop"])
+            animal.take_order(["go", dest.id], forget_previous=True)
+
+    def _choose_livestock_slaughter_target(self, worker):
+        """Owned livestock already at the food drop-off (ready to kill)."""
+        if not self._worker_can_hunt(worker):
+            return None
+        dropoff = self._herd_dropoff_building(worker)
+        if dropoff is None or dropoff.place is None:
+            dropoff = self._livestock_food_dropoff()
+        if dropoff is None or dropoff.place is None:
+            return None
+        dest = dropoff.place
+        origin = self._world_place_for_unit(worker)
+        if origin is None:
+            return None
+        ready = [
+            u
+            for u in self.units
+            if self._is_livestock_unit(u)
+            and getattr(u, "hp", 0) > 0
+            and u.place is dest
+        ]
+        if not ready:
+            return None
+        if worker.place is dest:
+            return ready[0]
+        return self._pick_nearest_reachable(origin, ready) or ready[0]
+
+    def _choose_claim_livestock_target(self, worker):
+        """Neutral claimable sheep: approach with ``go`` to take ownership."""
+        origin = self._world_place_for_unit(worker)
+        if origin is None:
+            return None
+        animals = [
+            o
+            for o in self.perception.union(self.memory)
+            if getattr(o, "claimable", 0)
+            and getattr(o, "hp", 0) > 0
+            and o.place is not None
+            and getattr(getattr(o, "player", None), "neutral", False)
+        ]
+        if not animals:
+            return None
+        safe = [a for a in animals if not self.square_is_dangerous(a.place)]
+        return self._pick_nearest_reachable(origin, safe or animals)
+
     def _maintain_worker_herding(self, worker):
         """已绑定羊群的工人：引回基地，到基地后宰杀采集。"""
         if getattr(worker, "is_inside", False):
@@ -1300,31 +3268,52 @@ class Computer(Player):
         safe = [a for a in animals if not self.square_is_dangerous(a.place)]
         return self._pick_nearest_reachable(origin, safe)
 
+    def _known_huntable_animals(self):
+        """Huntable animals in perception/memory; shared across workers this play()."""
+
+        def _compute():
+            result = []
+            for o in self.perception.union(self.memory):
+                if not getattr(o, "is_huntable", 0):
+                    continue
+                if getattr(o, "hp", 0) <= 0 or o.place is None:
+                    continue
+                owner = getattr(o, "player", None)
+                if getattr(owner, "neutral", False) or (
+                    owner is self
+                    and (getattr(o, "herdable", 0) or getattr(o, "claimable", 0))
+                ):
+                    result.append(o)
+            return result
+
+        return self._play_memo_get("huntable_animals", _compute)
+
     def _choose_hunt_target(self, worker):
         if not self._worker_can_hunt(worker):
             return None
         origin = self._world_place_for_unit(worker)
         if origin is None:
             return None
-        animals = [
-            o
-            for o in self.perception.union(self.memory)
-            if getattr(o, "is_huntable", 0)
-            and getattr(o, "hp", 0) > 0
-            and o.place is not None
-            and (
-                getattr(getattr(o, "player", None), "neutral", False)
-                or (
-                    o.player is self
-                    and (getattr(o, "herdable", 0) or getattr(o, "claimable", 0))
-                )
-            )
-            and not (
+        can_herd = self._worker_can_herd(worker)
+        dropoff = self._herd_dropoff_building(worker) or self._livestock_food_dropoff()
+        drop_place = getattr(dropoff, "place", None) if dropoff is not None else None
+        animals = []
+        for o in self._known_huntable_animals():
+            owner = getattr(o, "player", None)
+            # Livestock: never kill in the field. Owned sheep walk to the TC
+            # via ``_maintain_owned_livestock``; slaughter only at drop-off.
+            # Neutral claimable sheep are approached with ``go`` to claim.
+            if self._is_livestock_unit(o):
+                if owner is self and drop_place is not None and o.place is drop_place:
+                    animals.append(o)
+                continue
+            if (
                 getattr(o, "herdable", 0)
-                and self._worker_can_herd(worker)
-                and getattr(getattr(o, "player", None), "neutral", False)
-            )
-        ]
+                and can_herd
+                and getattr(owner, "neutral", False)
+            ):
+                continue
+            animals.append(o)
         if not animals:
             return None
         # 危险格在挑选时过滤，避免先 A* 全排序再丢弃
@@ -1547,13 +3536,28 @@ class Computer(Player):
         origin = self._world_place_for_unit(worker)
         if origin is None:
             return None
+        allowed = getattr(worker, "can_gather_deposit", None) or ()
+        try:
+            allowed_key = tuple(allowed)
+        except TypeError:
+            allowed_key = ("all",)
+        idx_key = tuple(resource_indices) if resource_indices is not None else None
+        return self._play_memo_get(
+            (
+                "gather_tgt",
+                getattr(origin, "id", None),
+                idx_key,
+                allowed_key,
+                getattr(worker, "airground_type", "ground"),
+            ),
+            lambda: self._choose_gather_target_compute(
+                worker, origin, resource_indices
+            ),
+        )
 
+    def _choose_gather_target_compute(self, worker, origin, resource_indices=None):
         candidates = []
-        for o in self.perception.union(self.memory):
-            if not isinstance(o, Deposit):
-                continue
-            if not self._gather_target_ok(o):
-                continue
+        for o in self._known_ok_deposits():
             if not self._worker_can_gather_deposit(worker, o):
                 continue
             if not Worker._gather_terrain_ok_for_unit(worker, o):
@@ -1585,33 +3589,220 @@ class Computer(Player):
                 if self._resource_need_ratio(self._target_resource_index(t))
                 <= best_ratio + 1e-9
             ]
-            picked = self._pick_nearest_reachable(origin, preferred)
+            avoid = True
+            picked = self._pick_nearest_reachable(
+                origin, preferred, avoid=avoid, scan_rest=False, top_k=4
+            )
             if picked is not None:
                 return picked
-            picked = self._pick_nearest_reachable(origin, candidates)
-            if picked is not None:
-                return picked
+            if len(preferred) < len(candidates):
+                picked = self._pick_nearest_reachable(
+                    origin, candidates, avoid=avoid, scan_rest=False, top_k=4
+                )
+                if picked is not None:
+                    return picked
+            # Workshop wood after castle: do not skip the last trees because a
+            # neighboring square was once flagged dangerous. Watchdog lines hide
+            # workshop from ``_has_startable_plan_production_building``.
+            if self._need_later_age_production_wood():
+                wood_only = [
+                    t
+                    for t in candidates
+                    if self._target_resource_index(t) == 1
+                ]
+                if wood_only:
+                    picked = self._pick_nearest_reachable(
+                        origin, wood_only, avoid=False, scan_rest=False, top_k=4
+                    )
+                    if picked is not None:
+                        return picked
+            # Path blocked: keep the Euclidean-nearest known deposit instead of
+            # rescanning perception via choose(Deposit) (that listcomp was ~21s
+            # of Computer.play on cw1 15-beginner).
+            return preferred[0] if preferred else candidates[0]
 
-        if resource_indices is not None:
-            return None
-
-        deposit = self.choose(Deposit, starting_place=origin, random=True)
-        if (
-            deposit
-            and self._gather_target_ok(deposit)
-            and Worker._gather_terrain_ok_for_unit(worker, deposit)
-        ):
-            return deposit
         return None
 
-    def _send_workers_toward_resources(self, resource_indices, max_workers=2):
+    def _send_worker_toward_known_wood(self, worker):
+        """Walk toward a remembered wood pile when gather targeting cannot path yet."""
+        origin = self._world_place_for_unit(worker)
+        dest = None
+        best = None
+        same_square = None
+        for o in self.perception.union(getattr(self, "memory", ()) or ()):
+            if not isinstance(o, Deposit):
+                continue
+            if self._deposit_resource_index(o) != 1:
+                continue
+            gatherable = self._gather_target_ok(o)
+            if not gatherable and not self._wood_memory_square_worth_walking(o):
+                continue
+            place = getattr(o, "place", None)
+            if place is None or getattr(place, "id", None) is None:
+                continue
+            if origin is not None and (
+                place is origin
+                or getattr(place, "id", None) == getattr(origin, "id", None)
+            ):
+                if same_square is None and (
+                    gatherable or self._wood_memory_square_worth_walking(o)
+                ):
+                    same_square = o
+                continue
+            try:
+                if (
+                    not self._need_later_age_production_wood()
+                    and self.square_is_dangerous(place)
+                ):
+                    continue
+            except Exception:
+                pass
+            if origin is not None:
+                try:
+                    dist = square_of_distance(origin.x, origin.y, place.x, place.y)
+                except Exception:
+                    dist = 0
+            else:
+                dist = 0
+            if best is None or dist < best:
+                best = dist
+                dest = place
+        # Chop the square we already stand on (including qty-0 regen after
+        # castle) before walking to another remembered forest.
+        if same_square is not None and (
+            dest is None or self._gather_target_ok(same_square)
+        ):
+            orders = getattr(worker, "orders", None) or ()
+            kw = getattr(orders[0], "keyword", None) if orders else None
+            tgt = getattr(orders[0], "target", None) if orders else None
+            if kw == "gather" and (
+                tgt is same_square
+                or getattr(tgt, "id", None) == getattr(same_square, "id", None)
+            ):
+                return True
+            if kw in ("auto_explore", "auto_attack", "go", "gather"):
+                worker.take_order(["stop"])
+            worker.take_order(["gather", same_square.id])
+            return True
+        if dest is None:
+            # Local piles are gone; scout instead of bouncing on one neighbor.
+            return self._send_worker_to_scout_for_wood(worker)
+        orders = getattr(worker, "orders", None) or ()
+        if orders and getattr(orders[0], "keyword", None) == "go":
+            tgt = getattr(orders[0], "target", None)
+            if tgt is dest or getattr(tgt, "id", None) == dest.id:
+                return True
+        if orders and getattr(orders[0], "keyword", None) in (
+            "auto_explore",
+            "auto_attack",
+            "gather",
+        ):
+            worker.take_order(["stop"])
+        worker.take_order(["go", dest.id])
+        return True
+
+    def _count_wood_scouts(self):
+        n = 0
+        for u in getattr(self, "_workers", ()) or ():
+            orders = getattr(u, "orders", None) or ()
+            if orders and getattr(orders[0], "keyword", None) == "auto_explore":
+                n += 1
+        return n
+
+    def _wood_scout_worker_cap(self):
+        """How many villagers may explore for wood.
+
+        Cap of 2 while a later expensive age is still unpaid or researching:
+        sending the town walking empties farms and walks into fights. After
+        that age, workshop wood (including watchdog lines that hide the
+        building from the current get) may take the lumberjack cap.
+        """
+        if not self._need_later_age_production_wood():
+            return 2
+        n_w = max(1, len(getattr(self, "_workers", ()) or ()))
+        return self._wood_gather_worker_cap(n_w)
+
+    def _send_worker_to_scout_for_wood(self, worker):
+        """Explore when remembered wood piles are empty so recultivate can restart."""
+        orders = getattr(worker, "orders", None) or ()
+        kw = getattr(orders[0], "keyword", None) if orders else None
+        if kw == "auto_explore":
+            return True
+        if kw in ("build", "repair"):
+            return False
+        # Keep lumberjacks and walks toward known piles. Farm/gold gatherers
+        # may scout only after a later age unlocks a production building
+        # (workshop). Doing this in feudal empties farms and walks into fights.
+        if kw == "gather":
+            tgt = getattr(orders[0], "target", None)
+            if self._target_resource_index(tgt) == 1:
+                return False
+            if not self._later_age_startable_production_wood():
+                return False
+        elif kw in ("go", "pickup"):
+            return False
+        if self._count_wood_scouts() >= self._wood_scout_worker_cap():
+            return False
+        if kw in ("auto_attack", "gather"):
+            worker.take_order(["stop"])
+        worker.take_order(["auto_explore"])
+        return True
+
+    def _send_worker_to_adjacent_square(self, worker):
+        """Walk a peasant into a neighboring square so off-spawn woods enter LOS."""
+        origin = self._world_place_for_unit(worker)
+        if origin is None:
+            return False
+        neighbors = [
+            n
+            for n in (getattr(origin, "neighbors", ()) or ())
+            if n is not None and getattr(n, "id", None) is not None
+        ]
+        if not neighbors:
+            return False
+        orders = getattr(worker, "orders", None) or ()
+        kw = getattr(orders[0], "keyword", None) if orders else None
+        if kw == "go":
+            return True
+        if kw == "auto_explore" and not self._need_later_age_production_wood():
+            return True
+        dest = neighbors[0]
+        if orders and getattr(orders[0], "keyword", None) in (
+            "auto_explore",
+            "auto_attack",
+            "gather",
+        ):
+            worker.take_order(["stop"])
+        worker.take_order(["go", dest.id])
+        return True
+
+    def _send_workers_toward_resources(self, resource_indices, max_workers=None):
         """Reassign a few workers to gather specifically needed resources (e.g. farm food)."""
         if not resource_indices:
             return
+        n_w = max(1, len(getattr(self, "_workers", ()) or ()))
         for resource_index in resource_indices:
+            cap = max_workers
+            if cap is None:
+                if resource_index == 1:
+                    cap = self._wood_gather_worker_cap(n_w)
+                elif (
+                    resource_index == 2
+                    and self._age_up_needs_food()
+                    and not self._keep_lumberjacks()
+                ):
+                    cap = max(2, n_w // 2)
+                elif (
+                    resource_index == 0
+                    and "resource1" in self._age_up_missing_resource_types()
+                    and not self._keep_lumberjacks()
+                ):
+                    cap = max(2, n_w // 3)
+                else:
+                    cap = 2
             sent = 0
             for u in self._workers:
-                if sent >= max_workers:
+                if sent >= cap:
                     break
                 if getattr(u, "is_inside", False):
                     continue
@@ -1626,6 +3817,20 @@ class Computer(Player):
                     current = u.orders[0].target
                     if self._target_resource_index(current) == resource_index:
                         sent += 1
+                        continue
+                    # Keep lumberjacks on wood while a production building is unpaid.
+                    if (
+                        resource_index != 1
+                        and self._target_resource_index(current) == 1
+                        and self._keep_lumberjacks()
+                    ):
+                        continue
+                    # Keep miners on gold while a later expensive age still needs it.
+                    if (
+                        resource_index == 2
+                        and self._target_resource_index(current) == 0
+                        and "resource1" in self._age_up_missing_resource_types()
+                    ):
                         continue
                 # gold_mint coins etc. before mines when that resource is missing
                 pickup = self._choose_pickup_target(
@@ -1645,8 +3850,20 @@ class Computer(Player):
                     u, resource_indices=[resource_index]
                 )
                 if target is None:
+                    if resource_index == 1 and self._send_worker_toward_known_wood(u):
+                        kw = (
+                            getattr(u.orders[0], "keyword", None) if u.orders else None
+                        )
+                        # auto_explore is not gathering; counting it filled the
+                        # lumberjack cap and left miners on gold/stone.
+                        if kw in ("gather", "go"):
+                            sent += 1
                     continue
-                if u.orders and u.orders[0].keyword in ("auto_explore", "auto_attack"):
+                if u.orders and u.orders[0].keyword in (
+                    "auto_explore",
+                    "auto_attack",
+                    "gather",
+                ):
                     u.take_order(["stop"])
                 if self._try_send_worker_to_gather_amphibious(u, target):
                     sent += 1
@@ -1672,17 +3889,16 @@ class Computer(Player):
         ]
         if deposits:
             deposit = self._pick_nearest_reachable(
-                origin, deposits, plane=plane, avoid=True
+                origin, deposits, plane=plane, avoid=True, scan_rest=False, top_k=4
             )
             if deposit is not None:
                 return deposit
-        deposit = self.choose(Deposit, starting_place=origin, random=True)
-        if (
-            deposit
-            and self._gather_target_ok(deposit)
-            and Worker._gather_terrain_ok_for_unit(worker, deposit)
-        ):
-            return deposit
+            return min(
+                deposits,
+                key=lambda o: square_of_distance(
+                    origin.x, origin.y, o.place.x, o.place.y
+                ),
+            )
         return None
 
     def _idle_water_workers_gather(self):
@@ -1699,13 +3915,51 @@ class Computer(Player):
                 except Exception:
                     self._gathered_deposits[target] = 1
 
+    def _count_gatherers_for_resource(self, resource_index):
+        n = 0
+        for u in getattr(self, "_workers", ()) or ():
+            orders = getattr(u, "orders", None) or ()
+            if not orders:
+                continue
+            kw = getattr(orders[0], "keyword", None)
+            tgt = getattr(orders[0], "target", None)
+            if kw == "gather":
+                if self._target_resource_index(tgt) == resource_index:
+                    n += 1
+            elif kw == "pickup":
+                indices = self._item_resource_indices(tgt) or ()
+                if resource_index in indices:
+                    n += 1
+        return n
+
     def _idle_workers_gather(self):
+        n_w = max(1, len(getattr(self, "_workers", ()) or ()))
+        wood_cap = self._wood_gather_worker_cap(n_w)
         for u in self._workers:
             if u.orders:
+                if (
+                    self._keep_lumberjacks()
+                    and getattr(u.orders[0], "keyword", None) == "auto_explore"
+                ):
+                    wood_t = self._choose_gather_target(u, resource_indices=[1])
+                    if wood_t is not None:
+                        u.take_order(["stop"])
+                        u.take_order(["gather", wood_t.id])
+                        try:
+                            self._gathered_deposits[wood_t] += 1
+                        except Exception:
+                            self._gathered_deposits[wood_t] = 1
+                    elif self._send_worker_toward_known_wood(u):
+                        pass
                 continue
             if getattr(u, "is_inside", False):
                 continue
             if self._maintain_worker_herding(u):
+                continue
+            # Owned sheep already at the TC/mill: slaughter before farms.
+            livestock = self._choose_livestock_slaughter_target(u)
+            if livestock is not None:
+                u.take_order(["attack", livestock.id], imperative=True)
                 continue
             # Prefer free loot (gold_mint coins) over mining when available
             pickup = self._choose_pickup_target(u)
@@ -1714,6 +3968,33 @@ class Computer(Player):
                 continue
             target = self._choose_gather_target(u)
             if target:
+                idx = self._target_resource_index(target)
+                on_wood = self._count_gatherers_for_resource(1)
+                if idx == 1 and on_wood >= wood_cap:
+                    others = [
+                        i
+                        for i in range(len(getattr(self, "resources", ()) or ()))
+                        if i != 1
+                    ]
+                    alt = self._choose_gather_target(u, resource_indices=others)
+                    if alt is not None:
+                        target = alt
+                elif (
+                    idx != 1
+                    and on_wood < wood_cap
+                    and self._keep_lumberjacks()
+                    and not (
+                        idx == 2
+                        and self._age_up_needs_food()
+                        and self._has_harvestable_food_buildings()
+                        and not self._need_wood_for_age_up_farms()
+                    )
+                ):
+                    wood_t = self._choose_gather_target(u, resource_indices=[1])
+                    if wood_t is not None:
+                        target = wood_t
+                    elif self._send_worker_toward_known_wood(u):
+                        continue
                 if self._try_send_worker_to_gather_amphibious(u, target):
                     continue
                 u.take_order(["gather", target.id])
@@ -1721,6 +4002,12 @@ class Computer(Player):
                     self._gathered_deposits[target] += 1
                 except:
                     self._gathered_deposits[target] = 1
+                continue
+            if self._keep_lumberjacks() and self._send_worker_toward_known_wood(u):
+                continue
+            claim_target = self._choose_claim_livestock_target(u)
+            if claim_target is not None:
+                u.take_order(["go", claim_target.id])
                 continue
             herd_target = self._choose_herd_target(u)
             if herd_target:
@@ -2196,6 +4483,13 @@ class Computer(Player):
             return
         if not self._should_play_this_turn():
             return
+        self._play_memo = {}
+        try:
+            self._play_body()
+        finally:
+            self._play_memo = None
+
+    def _play_body(self):
         # print self.number, "plays turn", self.world.turn
         self._update_effect_users_and_workers()
         self._update_time_has_come()
@@ -2203,6 +4497,7 @@ class Computer(Player):
         maintain_terran_recombine(self)
         self._maintain_resource_buildings()
         self._idle_resource_buildings_produce()
+        self._maintain_owned_livestock()
         self._idle_workers_gather()
         self._maintain_resource_pickups()
         self._idle_water_workers_gather()
@@ -2219,26 +4514,70 @@ class Computer(Player):
             self._eventually_attack(self._enemy_presence)
         else:
             self._defensive_routine()
+        # Click the plan age-up before line-upgrade research spends its food/gold.
+        # Bank age cost even while any_buildings (blacksmith, …) is still unpaid —
+        # otherwise gather() never runs and villagers stay on wood/gold.
+        self._click_plan_phase_if_ready()
         if self.research:
             self.idle_buildings_research()
         self._raise_dead()
-        self._build_a_warehouse_if_useful()
+        stash = self._plan_expensive_wood_reserve(ignore_age_defer=True)
+        wood_now = self.resources[1] if len(self.resources) > 1 else 0
+        hold_stash = bool(stash) and wood_now >= stash
+        # If wood already covers the next barracks/range/stable, place it this
+        # turn before a mill or house spends the stash.
+        if not hold_stash:
+            self._build_a_warehouse_if_useful()
         self._maintain_expansions()
-        self._ensure_housing(min_headroom=0)
+        if not hold_stash:
+            self._ensure_housing(min_headroom=0)
+        # Age-up before training more workers so 500 food is not spent on villagers.
+        # With a working eco, follow the get-line (barracks/range/stable) before
+        # flooding extra villagers onto the town center.
+        self._click_plan_phase_if_ready()
         worker_type = self._primary_worker_type_name()
-        if worker_type:
-            self.get(self.nb_workers_to_get, worker_type)
-        try:
-            self._follow_plan()
-        except RuntimeError:
-            warning(
-                "recursion error with %s; current ai.txt line is: %s",
-                self.AI_type,
-                self._plan[self._line_nb],
-            )
-            if IS_DEV_VERSION:
-                exception("")
-            self._line_nb += 1  # go to next step
+        n_workers = len(getattr(self, "_workers", ()) or ())
+        hold_workers = self._should_hold_extra_workers(n_workers, worker_type)
+
+        def _maybe_workers():
+            if worker_type and not hold_workers:
+                self.get(self.nb_workers_to_get, worker_type)
+
+        if n_workers < 6:
+            _maybe_workers()
+            try:
+                self._follow_plan()
+            except RuntimeError:
+                warning(
+                    "recursion error with %s; current ai.txt line is: %s",
+                    self.AI_type,
+                    self._plan[self._line_nb],
+                )
+                if IS_DEV_VERSION:
+                    exception("")
+                self._line_nb += 1
+        else:
+            try:
+                self._follow_plan()
+            except RuntimeError:
+                warning(
+                    "recursion error with %s; current ai.txt line is: %s",
+                    self.AI_type,
+                    self._plan[self._line_nb],
+                )
+                if IS_DEV_VERSION:
+                    exception("")
+                self._line_nb += 1
+            _maybe_workers()
+        if hold_stash:
+            self._build_a_warehouse_if_useful()
+            self._ensure_housing(min_headroom=0)
+        reserve = self._plan_expensive_wood_reserve(ignore_age_defer=True)
+        farm_w = self._age_up_farm_wood_reserve()
+        if reserve and self.resources[1] < to_int("200"):
+            self._send_workers_toward_resources([1])
+        elif farm_w and self.resources[1] < farm_w:
+            self._send_workers_toward_resources([1])
 
     def _deposit_priority(self, deposit):
         if deposit is None:
@@ -2383,6 +4722,7 @@ class Computer(Player):
                 if u.speed > 0
                 and getattr(u, "airground_type", "ground") != "water"
                 and not (u.orders and u.orders[0].keyword == "upgrade_to")
+                and not self._is_livestock_unit(u)
             ],
             key=value_as_an_explorer,
             reverse=True,
@@ -2393,10 +4733,17 @@ class Computer(Player):
         if not candidates:
             return
         best_explorer = candidates[0]
+        keep_wood_scouts = bool(
+            self._wood_below_pending_building()
+            and self._later_age_startable_production_wood()
+        )
+        workers = getattr(self, "_workers", ()) or ()
         explorers = [
             u
             for u in self.units
-            if u.orders and u.orders[0].keyword == "auto_explore"
+            if u.orders
+            and u.orders[0].keyword == "auto_explore"
+            and not (keep_wood_scouts and u in workers)
         ]
 
         def _recall(u):
@@ -2524,43 +4871,168 @@ class Computer(Player):
                 self._previous_choose[k] = o
             return o
 
-    def nb(self, types):
-        if (
-            types
-            and isinstance(types, list)
-            and isinstance(types[0], str)
-            and types[0] in self.upgrades
-        ):
-            return 1
-        n = 0
-        for u in self.units:
-            if self.check_type(u, types):
-                n += 1
-        return n
+    def _invalidate_play_derived_counts(self):
+        """Drop production/plan memo after a train/build/research order this turn."""
+        memo = getattr(self, "_play_memo", None)
+        if not memo:
+            return
+        memo.pop("_nb_prod_name_counts", None)
+        memo.pop("_nb_prod_class_counts", None)
+        for key in list(memo):
+            if isinstance(key, tuple) and key and key[0] in _PLAY_PROD_MEMO_PREFIXES:
+                del memo[key]
 
-    def _nb_in_production(self, types):
-        n = 0
+    def _add_type_name_counts(self, counts, obj):
+        names = set()
+        tn = getattr(obj, "type_name", None)
+        if tn:
+            names.add(tn)
+        expanded = getattr(obj, "expanded_is_a", None)
+        if expanded:
+            names.update(expanded)
+        for name in names:
+            counts[name] = counts.get(name, 0) + 1
+
+    def _ensure_nb_name_counts(self):
+        memo = getattr(self, "_play_memo", None)
+        if memo is None:
+            return None
+        counts = memo.get("_nb_name_counts")
+        if counts is not None:
+            return counts
+        counts = {}
         for u in self.units:
-            if isinstance(u, BuildingSite) and self.check_type(u.type, types):
-                n += 1
+            self._add_type_name_counts(counts, u)
+        memo["_nb_name_counts"] = counts
+        return counts
+
+    def _ensure_nb_prod_name_counts(self):
+        memo = getattr(self, "_play_memo", None)
+        if memo is None:
+            return None
+        counts = memo.get("_nb_prod_name_counts")
+        if counts is not None:
+            return counts
+        counts = {}
+        for u in self.units:
+            if isinstance(u, BuildingSite):
+                self._add_type_name_counts(counts, u.type)
                 continue
-            # 只统计正在执行（队首）的生产命令。auto_explore / auto_attack 是
-            # imperative，普通 build 会被 take_order 排到后面且永远到不了队首；
-            # 若把这些卡住的 build 算进 future_nb，AI 会以为兵营已在造而不再下单。
             if not u.orders:
                 continue
             o = u.orders[0]
             if getattr(o, "is_deferred", False):
                 continue
-            if o.keyword in (
-                "build",
-                "train",
-                "upgrade_to",
-                "research",
-                "advance",
-            ) and self.check_type(o.type, types):
-                n += 1
+            if o.keyword in _PROD_ORDER_KEYWORDS:
+                self._add_type_name_counts(counts, o.type)
+        memo["_nb_prod_name_counts"] = counts
+        return counts
+
+    def _nb_class_count(self, cls, production=False):
+        memo = getattr(self, "_play_memo", None)
+        cache_key = "_nb_prod_class_counts" if production else "_nb_class_counts"
+        cache = None if memo is None else memo.get(cache_key)
+        if cache is not None and cls in cache:
+            return cache[cls]
+        n = 0
+        if production:
+            for u in self.units:
+                if isinstance(u, BuildingSite) and isinstance(u.type, cls):
+                    n += 1
+                    continue
+                if not u.orders:
+                    continue
+                o = u.orders[0]
+                if getattr(o, "is_deferred", False):
+                    continue
+                if o.keyword in _PROD_ORDER_KEYWORDS and isinstance(o.type, cls):
+                    n += 1
+        else:
+            for u in self.units:
+                if isinstance(u, cls):
+                    n += 1
+        if memo is not None:
+            if cache is None:
+                cache = {}
+                memo[cache_key] = cache
+            cache[cls] = n
         return n
+
+    def _nb_scan(self, types, production=False):
+        n = 0
+        if production:
+            for u in self.units:
+                if isinstance(u, BuildingSite) and self.check_type(u.type, types):
+                    n += 1
+                    continue
+                if not u.orders:
+                    continue
+                o = u.orders[0]
+                if getattr(o, "is_deferred", False):
+                    continue
+                if o.keyword in _PROD_ORDER_KEYWORDS and self.check_type(
+                    o.type, types
+                ):
+                    n += 1
+        else:
+            for u in self.units:
+                if self.check_type(u, types):
+                    n += 1
+        return n
+
+    def _nb_lookup(self, types, production=False):
+        if (
+            types
+            and isinstance(types, list)
+            and isinstance(types[0], str)
+            and types[0] in (getattr(self, "upgrades", None) or ())
+        ):
+            return 0 if production else 1
+        if isinstance(types, list) and len(types) == 1:
+            return self._nb_lookup(types[0], production=production)
+        if isinstance(types, str):
+            counts = (
+                self._ensure_nb_prod_name_counts()
+                if production
+                else self._ensure_nb_name_counts()
+            )
+            if counts is not None:
+                return counts.get(types, 0)
+        elif isinstance(types, type):
+            return self._nb_class_count(cls=types, production=production)
+        else:
+            tn = getattr(types, "type_name", None)
+            if isinstance(tn, str) and not isinstance(types, type):
+                counts = (
+                    self._ensure_nb_prod_name_counts()
+                    if production
+                    else self._ensure_nb_name_counts()
+                )
+                if counts is not None:
+                    return counts.get(tn, 0)
+        memo = getattr(self, "_play_memo", None)
+        if memo is not None:
+            try:
+                key_types = tuple(types) if isinstance(types, list) else types
+                key = ("nbprod" if production else "nbscan", key_types)
+                if key in memo:
+                    return memo[key]
+            except TypeError:
+                key = None
+            n = self._nb_scan(types, production=production)
+            if key is not None:
+                memo[key] = n
+            return n
+        return self._nb_scan(types, production=production)
+
+    def nb(self, types):
+        return self._nb_lookup(types, production=False)
+
+    def _nb_in_production(self, types):
+        # 只统计正在执行（队首）的生产命令。auto_explore / auto_attack 是
+        # imperative，普通 build 会被 take_order 排到后面且永远到不了队首；
+        # 若把这些卡住的 build 算进 future_nb，AI 会以为兵营已在造而不再下单。
+        return self._nb_lookup(types, production=True)
 
     def future_nb(self, types):
         return self.nb(types) + self._nb_in_production(types)
@@ -2625,6 +5097,8 @@ class Computer(Player):
                 if order_cls is not None and not order_cls.is_allowed(u, *order[1:]):
                     continue
                 u.take_order(order)
+                if order and order[0] in _PROD_ORDER_KEYWORDS:
+                    self._invalidate_play_derived_counts()
                 if u.orders and u.orders[0].keyword == order[0]:
                     self._orders[order_id].append(u.orders[0])
                     if len(self._orders[order_id]) >= nb:
@@ -2786,7 +5260,13 @@ class Computer(Player):
                     if rules.get_makers(parent):
                         _push(parent)
                         break
-            makers = ordered
+            owned = [m for m in ordered if self.nb(m) > 0]
+            rest = [m for m in ordered if self.nb(m) == 0]
+            buildable = self._worker_buildable_type_names()
+            rest = [m for m in rest if m in buildable] + [
+                m for m in rest if m not in buildable
+            ]
+            makers = owned + rest
             if not makers:
                 for parent in getattr(wanted, "expanded_is_a", ()) or ():
                     if parent == getattr(wanted, "__name__", None):
@@ -2823,6 +5303,8 @@ class Computer(Player):
                     )
             elif makers:
                 # 递归获取制造者
+                if self._trainer_blocked_by_later_age_wood(makers[0]):
+                    return False
                 if not self._get(1, makers[0]):
                     # 如果无法获取制造者，尝试其他可能的制造者
                     for maker in makers[1:]:
@@ -2866,6 +5348,18 @@ class Computer(Player):
                 continue
             if self.missing_resources(house_cls.cost):
                 continue
+            cost = getattr(house_cls, "cost", None) or ()
+            reserve = self._plan_expensive_wood_reserve(ignore_age_defer=True)
+            farm_w = self._age_up_farm_wood_reserve()
+            if (
+                len(cost) > 1
+                and cost[1] > 0
+                and (
+                    (reserve and self.resources[1] - cost[1] < reserve)
+                    or (farm_w and self.resources[1] - cost[1] < farm_w)
+                )
+            ):
+                continue
             self.build_or_train_or_upgradeto_or_summon(house)
             return True
         return False
@@ -2877,6 +5371,10 @@ class Computer(Player):
             self._idle_resource_buildings_produce()
             # e.g. knight needs food: send peasants to harvest farms, not only gold/wood
             self._send_workers_toward_resources(missing)
+            if 2 in missing:
+                need_w = self._cultivate_missing_wood()
+                if need_w and self.resources[1] < need_w:
+                    self._send_workers_toward_resources([1])
             return
         if population != 0 and population > self._population_headroom():
             if self._ensure_housing(min_headroom=population - 1):
@@ -2907,10 +5405,28 @@ class Computer(Player):
                 _, count, group = clause
                 if count_owned_buildings_of_group(self, group) >= count:
                     continue
-                for r in iter_unmet_building_candidates(self, group):
+                pending = set()
+                for mc in self._pending_production_makers(ignore_age_defer=True):
+                    tn = getattr(mc, "type_name", None) or getattr(mc, "__name__", None)
+                    if tn:
+                        pending.add(tn)
+                cands = list(iter_unmet_building_candidates(self, group))
+                if pending:
+                    cands.sort(key=lambda n: 0 if n in pending else 1)
+                buildable = self._worker_buildable_type_names()
+                land_only = not self._map_has_water()
+                for r in cands:
                     if rules.get(r, "class") == ["deposit"]:
                         continue
-                    if not rules.get_makers(r):
+                    # Cheapest feudal member is often fish_trap (fishing_ship only).
+                    # On land maps get(water) returns True without building, so the
+                    # old "return first _get" never reached blacksmith/stables.
+                    if land_only and self._type_needs_water(r):
+                        continue
+                    eq = self.equivalent(r) if isinstance(r, str) else r
+                    if r not in buildable and eq not in buildable:
+                        continue
+                    if not rules.get_makers(r) and not rules.get_makers(eq):
                         continue
                     return self._get(1, r)
                 return False
@@ -2943,6 +5459,7 @@ class Computer(Player):
                 continue
             if type_name in u.can_upgrade_to and UpgradeToOrder.is_allowed(u, type_name):
                 u.take_order(["upgrade_to", type_name])
+                self._invalidate_play_derived_counts()
                 return True
             if type_name in u.can_change_to and ChangeToOrder.is_allowed(u, type_name):
                 u.take_order(["change_to", type_name])
@@ -2990,6 +5507,11 @@ class Computer(Player):
             elif self._class_produces_type(maker_cls, type, "can_build"):
                 if not self.gather(t.cost, t.population_cost):
                     return
+                stores = tuple(getattr(t, "storable_resource_types", ()) or ())
+                if stores and self._warehouse_spend_blocked_by_wood_reserve(
+                    getattr(t, "cost", None) or (), stores=stores
+                ):
+                    return
                 if ensure_field_provider_before_build(self, t):
                     return
                 resource_type = (
@@ -3008,12 +5530,16 @@ class Computer(Player):
                     target = choose_build_target(
                         self, t, starting_place=starting, resource_type=resource_type
                     )
-                if (
-                    target is None
-                    and resource_type is not None
-                    and self.nb(t)
-                ):
-                    return
+                if target is None and resource_type is not None:
+                    # Town center already stores food/wood/gold, so mill/lumber/
+                    # mining fail the "warehouse next to a deposit" check on the
+                    # home square. Still place the building on any meadow — mill
+                    # is required for farms even when the TC is the drop-off.
+                    if self.nb(t):
+                        return
+                    target = choose_build_target(
+                        self, t, starting_place=starting, resource_type=None
+                    )
                 if target is None and resource_type is None:
                     if getattr(t, "is_buildable_near_water_only", False):
                         target = choose_near_water_build_target(
@@ -3032,6 +5558,12 @@ class Computer(Player):
                         resource_type=resource_type,
                         starting_place=starting,
                     )
+                    if target is None and resource_type is not None:
+                        target = self.choose(
+                            getattr(self.world, "building_land", "meadow"),
+                            resource_type=None,
+                            starting_place=starting,
+                        )
                 target = resolve_build_target(self, t, target)
                 # Workers list semantic names; race shells resolve in BuildOrder.
                 build_name = type
@@ -3065,6 +5597,7 @@ class Computer(Player):
                 host = find_train_host(self, maker, type)
                 if host is not None:
                     host.take_order(["train", type])
+                    self._invalidate_play_derived_counts()
                     trained = True
                 elif self.nb(maker):
                     for u in self.units:
@@ -3075,6 +5608,7 @@ class Computer(Player):
                             and type in effective_can_train(u)
                         ):
                             u.take_order(["train", type])
+                            self._invalidate_play_derived_counts()
                             trained = True
                             break
                 if not trained:
@@ -3084,7 +5618,24 @@ class Computer(Player):
                     self.order(1, maker, ["research", type])
             elif type in rules.class_rules_attr(maker_cls, "can_advance"):
                 if self.gather(t.cost, t.population_cost):
-                    self.order(1, maker, ["advance", type])
+                    issued = False
+                    for u in self.units:
+                        if not self.check_type(u, maker):
+                            continue
+                        if not building_can_operate(u):
+                            continue
+                        if u.orders:
+                            kw = getattr(u.orders[0], "keyword", None)
+                            if kw in ("advance", "research"):
+                                issued = True
+                                break
+                            u.take_order(["stop"])
+                        u.take_order(["advance", type])
+                        self._invalidate_play_derived_counts()
+                        issued = True
+                        break
+                    if not issued:
+                        self.order(1, maker, ["advance", type], requisition=True)
             elif self._try_morph_from_larva(type):
                 pass
             else:
@@ -3251,6 +5802,7 @@ class Computer(Player):
             for u in self.units
             if isinstance(u, Soldier)
             and not getattr(u, "is_inside", False)
+            and not self._is_livestock_unit(u)
             and (
                 not u.orders
                 or len(u.orders) == 1

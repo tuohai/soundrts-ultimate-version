@@ -109,35 +109,75 @@ def _meadow_candidates(ai, starting_place=None, resource_type=None):
         return []
     if starting_place is None:
         starting_place = _builders_place(ai) or ai.units[0].place
+    if starting_place is None:
+        return []
 
     def is_ok(o):
-        return (
-            o.place is not None
-            and (
-                resource_type is None
-                or ai.is_ok_for_warehouse(o.place, resource_type)
-            )
-            and not ai.square_is_dangerous(o.place)
-        )
+        place = o.place
+        if place is None:
+            return False
+        if resource_type is not None and not ai.is_ok_for_warehouse(
+            place, resource_type
+        ):
+            return False
+        return not ai.square_is_dangerous(place)
 
-    candidates = [
-        o
-        for o in ai.perception.union(ai.memory)
-        if _is_building_land_obj(o) and is_ok(o)
-    ]
-    candidates.sort(key=lambda x: x.id)
-    if len(candidates) > 10:
-        candidates = ai._remove_far_candidates(candidates, starting_place, 10)
-    else:
-        candidates.sort(
-            key=lambda x: starting_place.shortest_path_distance_to(
-                x.place, ai, avoid=True
+    perc = ai.perception
+    mem = ai.memory
+    # Production squares have exits/objects. Unit-test stubs often don't;
+    # keep the old perception∪memory scan so those fixtures still work.
+    if not getattr(starting_place, "exits", None) and not getattr(
+        starting_place, "objects", None
+    ):
+        candidates = [
+            o
+            for o in perc.union(mem)
+            if _is_building_land_obj(o) and is_ok(o)
+        ]
+        candidates.sort(key=lambda x: x.id)
+        if len(candidates) > 10:
+            candidates = ai._remove_far_candidates(candidates, starting_place, 10)
+        else:
+            candidates.sort(
+                key=lambda x: starting_place.shortest_path_distance_to(
+                    x.place, ai, avoid=True
+                )
             )
-        )
-        while candidates and starting_place.shortest_path_distance_to(
-            candidates[-1].place, ai, avoid=True
-        ) is float("inf"):
-            del candidates[-1]
+            while candidates and starting_place.shortest_path_distance_to(
+                candidates[-1].place, ai, avoid=True
+            ) is float("inf"):
+                del candidates[-1]
+        return candidates
+
+    # Same 10-cap as _remove_far_candidates, walking the exit graph instead of
+    # scanning fog memory (AoE2 remembers thousands of trees per player).
+    limit = 10
+    candidates = []
+    seen = {starting_place}
+    queue = [starting_place]
+    qi = 0
+    while qi < len(queue) and len(candidates) < limit:
+        room = queue[qi]
+        qi += 1
+        for o in getattr(room, "objects", ()) or ():
+            if not _is_building_land_obj(o):
+                continue
+            if o not in perc and o not in mem:
+                continue
+            if not is_ok(o):
+                continue
+            candidates.append(o)
+            if len(candidates) >= limit:
+                break
+        if len(candidates) >= limit:
+            break
+        for e in getattr(room, "exits", ()) or ():
+            other = getattr(e, "other_side", None)
+            nxt = getattr(other, "place", None) if other is not None else None
+            if nxt is None or nxt in seen:
+                continue
+            seen.add(nxt)
+            queue.append(nxt)
     return candidates
 
 

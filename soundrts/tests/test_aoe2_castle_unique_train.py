@@ -76,6 +76,25 @@ def test_build_menu_stays_generic_then_resolves_shell(aoe2_rules, faction, castl
         player=player, type=castle_cls, type_name=castle, attached_addons=[]
     )
     assert uu in effective_can_train(cunit)
+    assert "trebuchet" in effective_can_train(cunit)
+
+
+def test_trebuchet_is_castle_not_workshop(aoe2_rules):
+    """AoE2 DE: Trebuchet is trained at the Castle in Imperial Age."""
+    workshop_train = aoe2_rules.class_rules_attr(
+        aoe2_rules.unit_class("workshop"), "can_train", ()
+    )
+    assert "trebuchet" not in workshop_train
+    assert "mangonel" in workshop_train
+    castle_train = aoe2_rules.class_rules_attr(
+        aoe2_rules.unit_class("aoe_castle"), "can_train", ()
+    )
+    assert "trebuchet" in castle_train
+    makers = aoe2_rules.get_makers("trebuchet") or []
+    assert "aoe_castle" in makers
+    assert "workshop" not in makers
+    assert "byzantine_workshop" not in makers
+    assert aoe2_rules.get("trebuchet", "requirements") == ["imperial_age"]
 
 
 def test_portuguese_resolve_buildable_uses_raw_race_shell(aoe2_rules):

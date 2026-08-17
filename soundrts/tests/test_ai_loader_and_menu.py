@@ -513,3 +513,33 @@ class TestFollowPlanTunables:
         c._follow_plan()
         assert c._wait_deadline is None
         assert c._line_nb == 1  # delay elapsed, moved on
+
+    def test_watchdog_skips_stuck_line_when_timer_is_not_reset(self):
+        c = _make_computer(["goto 0", "attack"])
+        c.watchdog = 2
+        c.constant_attacks = 0
+        c.world.time = 0
+        c._line_nb = 0
+        c._previous_linechange = 0
+        c.world.time = 500
+        c._follow_plan()
+        assert c._line_nb == 0
+        assert c.constant_attacks == 0
+        assert c._previous_linechange == 0
+        c.world.time = 2500
+        c._follow_plan()
+        assert c.constant_attacks == 1
+
+    def test_watchdog_pauses_while_saving_food_for_age(self):
+        c = _make_computer(["goto 0", "attack"])
+        c.watchdog = 2
+        c.constant_attacks = 0
+        c._saving_food_for_age = lambda: True
+        c.world.time = 0
+        c._line_nb = 0
+        c._previous_linechange = 0
+        c.world.time = 5000
+        c._follow_plan()
+        assert c._previous_linechange == 5000
+        assert c.constant_attacks == 0
+        assert c._line_nb == 0

@@ -39,6 +39,7 @@ class _Unit:
 
 class _Static:
     __slots__ = ("id", "player", "is_a_building_land")
+    is_deposit = False
 
     def __init__(self, sid):
         self.id = sid
@@ -102,6 +103,8 @@ def test_enemy_units_hash_accepts_str_ids():
 
 def test_bulk_static_cap_prefers_deposits():
     """When capping objects_to_check, Deposit/building land keep priority."""
+    from soundrts.worldplayerbase.perception import split_static_visibility_cap
+
     important = []
     other = []
     for i in range(5):
@@ -113,22 +116,84 @@ def test_bulk_static_cap_prefers_deposits():
     for i in range(200):
         other.append(_Static(1000 + i))
     objects_to_check = set(important + other)
-    _BULK_STATIC_CAP = 100
-    capped = []
-    for o in objects_to_check:
-        if isinstance(o, Deposit) or o.is_a_building_land:
-            capped.append(o)
-    if len(capped) > _BULK_STATIC_CAP:
-        capped.sort(key=lambda o: o.id if o.id is not None else 0)
-        capped = capped[:_BULK_STATIC_CAP]
-    elif len(capped) < _BULK_STATIC_CAP:
-        rest = [
-            o
-            for o in objects_to_check
-            if not (isinstance(o, Deposit) or o.is_a_building_land)
-        ]
-        rest.sort(key=lambda o: o.id if o.id is not None else 0)
-        capped.extend(rest[: _BULK_STATIC_CAP - len(capped)])
-    capped_set = set(capped)
-    assert len(capped_set) == 100
-    assert all(d in capped_set for d in important)
+    visibility_set, overflow = split_static_visibility_cap(objects_to_check, cap=100)
+    assert len(visibility_set) == 100
+    assert all(d in visibility_set for d in important)
+    assert overflow == objects_to_check - visibility_set
+
+
+def test_collect_partial_static_cap_prefers_deposits():
+    """Square walk + cap must match split_static_visibility_cap (session 7)."""
+    from soundrts.worldplayerbase.perception import (
+        collect_partial_static_cap,
+        split_static_visibility_cap,
+    )
+
+    class _Place:
+        def __init__(self):
+            self.objects = []
+
+    place = _Place()
+    important = []
+    for i in range(5):
+        d = Deposit.__new__(Deposit)
+        d.id = i
+        d.player = None
+        d.is_a_building_land = False
+        d.is_deposit = True
+        place.objects.append(d)
+        important.append(d)
+    for i in range(200):
+        place.objects.append(_Static(1000 + i))
+    visibility_set, overflow = collect_partial_static_cap([place], cap=100)
+    via_split = split_static_visibility_cap(set(place.objects), cap=100)
+    assert len(visibility_set) == 100
+    assert all(d in visibility_set for d in important)
+    assert visibility_set == via_split[0]
+    assert overflow == via_split[1]
+
+
+def test_observed_squares_shared_same_place_same_tick():
+    """Same-place observers share topology this tick only (not cross-tick)."""
+    from soundrts.worldunit.world_transport import CreatureTransport
+
+    class _World:
+        time = 300
+        square_width = 12
+
+    class _Player:
+        pass
+
+    class _Place:
+        pass
+
+    class _U(CreatureTransport):
+        is_inside = False
+        sight_range = 6
+        airground_type = "ground"
+        height = 0
+
+        def __init__(self, world, player, place):
+            self.world = world
+            self.player = player
+            self.place = place
+            self.calls = 0
+
+        def get_observed_squares(self, strict=False):
+            self.calls += 1
+            return [self.place]
+
+    world = _World()
+    player = _Player()
+    place = _Place()
+    a = _U(world, player, place)
+    b = _U(world, player, place)
+    first = a.get_observed_squares_optimized()
+    second = b.get_observed_squares_optimized()
+    assert a.calls == 1
+    assert b.calls == 0
+    assert first is second
+    world.time = 600
+    b.get_observed_squares_optimized()
+    assert b.calls == 1
+

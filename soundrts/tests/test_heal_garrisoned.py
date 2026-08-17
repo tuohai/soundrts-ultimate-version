@@ -90,6 +90,14 @@ def test_aoe2_town_center_rules_flag():
     tower = r.classes["scouttower"]
     assert int(getattr(tower, "heal_garrisoned", 0) or 0) == 1
     assert int(getattr(tower, "heal_cd", 0) or 0) == 10 * PRECISION
+    for name in (
+        "vietnamese_castle",
+        "celtic_castle",
+        "aztec_castle",
+        "viking_castle",
+    ):
+        shell = r.classes[name]
+        assert int(getattr(shell, "heal_garrisoned", 0) or 0) == 1
     monastery = r.classes["monastery"]
     assert int(getattr(monastery, "heal_level", 0) or 0) == 0
     monk = r.classes["monk"]

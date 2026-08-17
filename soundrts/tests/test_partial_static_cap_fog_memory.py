@@ -134,4 +134,4 @@ def test_source_partial_cap_uses_ensure_for_overflow():
     assert "overflow_to_memory" in src
     assert "_ensure_static_fog_memory" in src
     assert "to_ensure = set(memory_objects) | overflow_to_memory" in src
-    assert 'not getattr(o, "speed", 0)' in src
+    assert "not o.speed" in src

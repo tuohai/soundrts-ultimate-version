@@ -65,3 +65,47 @@ def test_aoe2_battering_ram_keeps_building_and_siege():
     vs = r.unit_class("battering_ram").mdg_vs
     assert vs.get("building") == 150 * PRECISION
     assert vs.get("siege_unit") == 40 * PRECISION
+
+
+def _isa(uc):
+    names = set(getattr(uc, "expanded_is_a", ()) or ())
+    names.update(getattr(uc, "is_a", ()) or ())
+    return names
+
+
+def test_aoe2_buildings_inherit_building_for_vs_bonus():
+    """Rams/masonry look up ``building`` on expanded_is_a, not Python class name."""
+    from pathlib import Path
+
+    from soundrts.combat.damage_calculation import _resolve_vs
+
+    mod = Path(__file__).resolve().parents[2] / "mods" / "aoe2" / "rules.txt"
+    if not mod.is_file():
+        import pytest
+
+        pytest.skip("aoe2 mod not present")
+    base = Path(__file__).resolve().parents[2] / "res" / "rules.txt"
+    r = Rules()
+    r.load(base.read_text(encoding="utf-8"), mod.read_text(encoding="utf-8"))
+    for name in (
+        "house",
+        "town_center",
+        "workshop",
+        "aoe_castle",
+        "wall",
+        "fortified_wall",
+        "scouttower",
+        "guardtower",
+        "chinese_town_center",
+        "briton_castle",
+        "farm",
+        "monastery",
+    ):
+        uc = r.unit_class(name)
+        assert uc is not None, name
+        assert "building" in _isa(uc), name
+    peasant = r.unit_class("peasant")
+    assert "building" not in _isa(peasant)
+    ram = r.unit_class("battering_ram")
+    house = r.unit_class("house")
+    assert _resolve_vs(ram.mdg_vs, house.type_name, house.expanded_is_a) == 150 * PRECISION

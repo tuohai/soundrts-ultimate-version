@@ -99,8 +99,6 @@ woods 50 i2
 woods 100 a10
 woods 150 i10
 
-stone_mines 650 a1
-orchard 125 a1
 
 ; AoE2 DE: stone/orchard on starts; wildlife ~3–4 squares away (herd distance)
 computer_only 0 0 0 0 neutral f1 2 sheep
@@ -111,6 +109,11 @@ computer_only 0 0 0 0 neutral e1 3 deer 1 boar
 
 starting_squares i2
 #end_random_choice
+
+; AoE2: extra stone / berry patches beyond starts
+stone_mines 650 a1 a9 a10 i1 i2 i10
+orchard 125 a1 a9 a10 i1 i2 i10
+
 nb_meadows_by_square 3
 
 nb_players_min 2

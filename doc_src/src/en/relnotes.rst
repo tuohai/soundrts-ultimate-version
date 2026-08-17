@@ -4,6 +4,39 @@ Release notes
 
 .. contents::
 
+1.4.7.3
+--------
+
+**Performance: computer AI turn counts and plan memo**
+
+- **Issue**: With many computers in one game, ``Computer.play`` repeatedly full-scanned ``nb`` / ``future_nb`` and recomputed get-line building / wood-reserve helpers many times per turn, so wall time barely kept up with game time.
+- **Change**: Build a per-AI-turn unit type index; drop expensive class checks in ``check_type``; memoize plan helpers (pending makers, wood reserve, and so on) for the turn and invalidate them after train/build orders. Combat throttle and perception semantics are unchanged.
+- **Scope**: Computer players in all mods.
+
+**aoe2: computer AI staged by age — trains and attacks**
+
+- **Issue**: ``mods/aoe2/ai.txt`` still mixed multi-age army tokens on one get line (res-style). Food banking deferred the current wave’s soldiers, then watchdog skipped unfinished gets, so computers barely trained or attacked.
+- **Change**: Stage aoe2 scripts by Dark / Feudal / Castle get waves; do not let watchdog skip dark-age eco banking early; keep feudal army on the current line from being held for later castle needs; after castle, bank wood for the siege workshop without freezing farms or age-appropriate troops. Civ scripts and difficulty knobs updated accordingly.
+- **Note**: Age-up can share engine helpers with other mods, but aoe2’s banking / wave staging follows its own ruleset — other age-based mods need not behave the same way.
+
+**Fix: default res computers built barracks but never trained**
+
+- **Issue**: AoE2 “unpaid maker” wood banking treated unit→unit makers (``darkarcher`` ← ``archer``) and land-map shipyards as buildings to save for, so footmen/archers stayed deferred after barracks finished.
+- **Change**: Unpaid makers must be real buildings; on land-only maps, skip water units / docks. Default res trains and attacks once barracks are up; AoE2 post-castle workshop wood banking is unchanged.
+
+**Fix: computers stuck on feudal army get — never reach castle / rams**
+
+- **Issue**: Plans intentionally keep the current feudal army wave from clicking Castle Age. When soldiers die at the enemy base, the get count never completes. Meanwhile ``_watchdog_should_wait`` treated later-wave workshop wood and ongoing trainer food/wood as “still progressing,” constantly resetting the stuck-line timer, so watchdog never skipped the feudal get and the later castle wave (blacksmith, Castle Age, workshop, rams) never started.
+- **Change**: When the current get line no longer needs an age but a later plan wave still needs Castle, pause the timer only for unpaid current-line production buildings (barracks / range, and so on)—not for later workshop wood or trainer food/wood. Siege get lines still pause correctly while an owned workshop waits on ram wood.
+- **Scope**: Computer players in all mods (not one aoe2 civ). Any aoe2 script shaped “feudal army → castle troops / siege” benefits.
+
+**Fix: computers never walk owned sheep to the town center before slaughter**
+
+- **Issue**: Many mods (including aoe2) leave villagers at ``can_herd 0`` and rely on ``claimable`` proximity ownership. Computers neither ordered owned sheep as controllable units to a food drop-off, nor kept them out of ``auto_explore`` / attack waves, so livestock wandered or were killed in the field instead of leaving ``food_livestock`` at the town center for gathering.
+- **Change**: Owned livestock (``herdable`` / ``claimable``) ``go`` themselves to a food-storing building (town center, and so on); villagers slaughter only there, then gather. Neutral claimable sheep are approached with ``go`` to claim first. Livestock are excluded from explorers and idle fighters. Does not require ``can_herd``; the existing herd-follow path remains.
+- **Scope**: Computer players in all mods; aoe2 sheep and Mongol pasture spawns benefit.
+
+
 1.4.7.2
 --------
 

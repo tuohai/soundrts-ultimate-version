@@ -17,6 +17,14 @@ goldmines 100 a2 b2 c2 d2 e2 f2 g2 h2 i2 j2 k2 l2 m2 n2
 woods 10 o1 o3 b1 b3 h3 g3 h1 g1 l1 l3 m1 n3
 woods 5000 o2
 woods 1000 b2 d2 g2 j2 l2 n2
+
+; AoE2: extra stone / berry patches beyond starts
+stone_mines 350 a2 b3 d1 e2 f2 g3 i1 j2 k2 l3 n1
+stone_mines 800 o2
+orchard 250 h1 m1 n3
+orchard 400 b2 d2 g2 j2 l2
+orchard 800 o2
+
 nb_meadows_by_square 1
 additional_meadows o2
 remove_meadows a1 b1 c1 a3 b3 c3

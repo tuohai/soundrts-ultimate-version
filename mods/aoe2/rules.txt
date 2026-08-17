@@ -1,3 +1,4 @@
+
 clear
 
 ; ===========================================================================
@@ -30,7 +31,6 @@ clear
 ; ---------- terrains (required after clear; same set as res/rules.txt) ----------
 
 ; low land
-
 def plain
 class terrain
 is_dynamic 1
@@ -340,6 +340,12 @@ class armor
 
 def unique_unit
 class armor
+
+; Category root for mdg_vs / rdg_vs / effect_bonus_targets building
+; (battering ram, arson, masonry, town_watch, …). Same pattern as infantry.
+def building
+class building
+menace 0
 
 
 ; ===========================================================================
@@ -2418,6 +2424,7 @@ can_use_tech drill ironclad furor_celtica
 def trebuchet
 class soldier
 is_a siege_unit
+; DE: Castle (Imperial), not Siege Workshop. Packed to move, unpacked to fire.
 cost 200 200 0 0
 population_cost 3
 time_cost 50
@@ -3635,7 +3642,7 @@ mdg_range 1
 mdf 0
 rdf 0
 mdg_vs building 3
-can_herd 1
+can_herd 0
 can_gather_deposit goldmine wood orchard food_carcass food_livestock stone_mine
 can_gather_building farm
 can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower cannontower town_center shipyard
@@ -3654,7 +3661,7 @@ mdg_range 1
 mdf 0
 rdf 0
 mdg_vs building 3
-can_herd 1
+can_herd 0
 can_gather_deposit goldmine wood orchard food_carcass food_livestock stone_mine
 ; AoE4-like: no farm/mill — pastures spawn sheep; food drop-off is TC or pasture
 can_build house pasture lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower cannontower town_center shipyard
@@ -3669,6 +3676,7 @@ can_use_tech loom wheelbarrow hand_cart frank_horse_collar frank_heavy_plow fran
 ; HP fixed 2400; melee/pierce armor scales by age (3/5 → 4/6 → 5/7 → 6/8)
 def town_center
 class building
+is_a building
 cost 0 275 0 100
 population_provided 5
 hp_max 2400
@@ -3705,6 +3713,7 @@ can_use_tech herbal_medicine masonry architecture fletching bodkin_arrow bracer 
 ; Compatibility alias: maps/AI that still say townhall resolve to the same building
 def townhall
 class building
+is_a building
 cost 0 275 0 100
 population_provided 5
 hp_max 2400
@@ -3737,6 +3746,7 @@ can_use_tech herbal_medicine masonry architecture fletching bodkin_arrow bracer 
 ; Disable base keep→castle chain (AoE2 uses town_center only)
 def keep
 class building
+is_a building
 cost 999 999 999 999
 requirements imperial_age wonder
 can_train
@@ -3748,6 +3758,7 @@ storable_resource_types
 ; apply additive phase bonus groups below. Farm/castle walls use fixed stats (no age scale).
 def house
 class building
+is_a building
 cost 0 25 0 0
 time_cost 25
 requirements town_center
@@ -3759,6 +3770,7 @@ can_use_tech masonry architecture town_watch town_patrol
 
 def farm
 class building
+is_a building
 cost 0 60 0 0
 time_cost 15
 requirements mill
@@ -3783,6 +3795,7 @@ can_use_tech masonry architecture town_watch town_patrol
 ; AoE4-style pasture: Mongol herdsman builds this instead of farm (no mill)
 def pasture
 class building
+is_a building
 cost 0 60 0 0
 time_cost 15
 requirements town_center
@@ -3840,6 +3853,7 @@ cost 0 0 0 0
 ; Mill / lumber / mining: 600/800/1000/1000 HP; armor 0/1/2/3 · 7/8/9/10
 def mill
 class building
+is_a building
 cost 0 100 0 0
 population_provided 0
 hp_max 600
@@ -3853,6 +3867,7 @@ can_use_tech masonry architecture town_watch town_patrol
 
 def lumbermill
 class building
+is_a building
 cost 0 100 0 0
 population_provided 0
 hp_max 600
@@ -3867,6 +3882,7 @@ storage_bonus 0 0 0 0
 can_use_tech masonry architecture town_watch town_patrol
 def mining_camp
 class building
+is_a building
 cost 0 100 0 0
 population_provided 0
 hp_max 600
@@ -3935,6 +3951,7 @@ can_use_tech caravan
 
 def market
 class building
+is_a building
 cost 0 175 0 0
 time_cost 60
 requirements mill feudal_age
@@ -3952,6 +3969,7 @@ can_use_tech masonry architecture town_watch town_patrol
 ; rates/sec: gold 0.7, wood 1.0, food 1.6, stone 0.3
 def feitoria
 class building
+is_a building
 cost 250 0 0 250
 time_cost 120
 requirements imperial_age
@@ -3968,6 +3986,7 @@ can_use_tech masonry architecture town_watch town_patrol
 
 def barracks
 class building
+is_a building
 cost 0 175 0 0
 population_provided 0
 hp_max 1200
@@ -3982,6 +4001,7 @@ can_use_tech masonry architecture town_watch town_patrol
 ; Feudal military (archery/stable): 1500/1800/2100; armor 1/2/3 · 8/9/10
 def archery_range
 class building
+is_a building
 cost 0 175 0 0
 population_provided 0
 hp_max 1500
@@ -3995,6 +4015,7 @@ can_use_tech masonry architecture town_watch town_patrol
 
 def blacksmith
 class building
+is_a building
 cost 0 150 0 0
 population_provided 0
 hp_max 1800
@@ -4007,6 +4028,7 @@ can_research forging iron_casting blast_furnace scale_mail_armor chain_mail_armo
 can_use_tech masonry architecture town_watch town_patrol
 def stables
 class building
+is_a building
 cost 0 175 0 0
 population_provided 0
 hp_max 1500
@@ -4022,6 +4044,7 @@ can_use_tech masonry architecture town_watch town_patrol
 
 def workshop
 class building
+is_a building
 cost 0 200 0 0
 population_provided 0
 hp_max 1800
@@ -4029,7 +4052,7 @@ mdf 2
 rdf 9
 time_cost 40
 requirements castle_age
-can_train battering_ram mangonel scorpion trebuchet siege_tower
+can_train battering_ram mangonel scorpion siege_tower
 ; DE: siege line upgrades researched here (Imperial), not at University
 can_research capped_ram siege_ram onager siege_onager heavy_scorpion
 
@@ -4095,6 +4118,7 @@ can_use_tech caravan shipwright careening dry_dock
 ; 养鱼场 Fish Trap — water farm for fishing ships (715 food)
 def fish_trap
 class building
+is_a building
 cost 0 100 0 0
 time_cost 40
 requirements feudal_age
@@ -4116,6 +4140,7 @@ resource_volume_start 715
 
 def shipyard
 class building
+is_a building
 cost 0 150 0 0
 population_provided 0
 hp_max 1800
@@ -4134,6 +4159,7 @@ can_use_tech masonry architecture town_watch town_patrol town_watch town_patrol
 
 def wall
 class building
+is_a building
 cost 0 0 0 5
 hp_max 1080
 mdf 8
@@ -4148,6 +4174,7 @@ can_upgrade_to fortified_wall
 
 def gate
 class building
+is_a building
 cost 0 0 0 30
 hp_max 1650
 mdf 6
@@ -4201,6 +4228,7 @@ can_upgrade_to
 
 def palisade_wall
 class building
+is_a building
 cost 0 3 0 0
 hp_max 250
 mdf 2
@@ -4213,6 +4241,7 @@ requirements town_center
 can_use_tech masonry architecture great_wall town_watch town_patrol
 def palisade_gate
 class building
+is_a building
 cost 0 30 0 0
 hp_max 400
 mdf 0
@@ -4228,6 +4257,7 @@ can_use_tech masonry architecture great_wall town_watch town_patrol
 
 def outpost
 class building
+is_a building
 cost 0 25 0 5
 hp_max 500
 mdf 0
@@ -4242,6 +4272,7 @@ can_use_tech masonry architecture great_wall town_watch town_patrol
 
 def scouttower
 class building
+is_a building
 cost 0 35 0 125
 hp_max 850
 mdf 1
@@ -4312,6 +4343,7 @@ can_upgrade_to
 ; Bombard Tower (炮塔): Imperial + Chemistry; does not morph Keeps; no garrison in AoE2
 def cannontower
 class building
+is_a building
 cost 0 400 800 0
 train_cost 0 100 0 125
 time_cost 60
@@ -4333,6 +4365,7 @@ can_use_tech herbal_medicine ballistics chemistry murder_holes heated_shot mason
 ; University / monastery: Castle base 2100/2/9; Imperial armor +1/+1
 def university
 class building
+is_a building
 cost 0 200 0 0
 population_provided 0
 hp_max 2100
@@ -4345,6 +4378,7 @@ can_use_tech masonry architecture town_watch town_patrol
 
 def monastery
 class building
+is_a building
 cost 0 175 0 0
 population_provided 0
 hp_max 2100
@@ -4445,6 +4479,7 @@ can_use_tech sanctity fervor illumination block_printing redemption atonement
 
 def aoe_castle
 class building
+is_a building
 cost 0 0 0 650
 population_provided 2
 hp_max 4800
@@ -4469,7 +4504,8 @@ transport_capacity 20
 transport_volume 99
 transport_passenger_types infantry archer_unit peasant monk cavalry
 passenger_attack_types archer_unit peasant
-can_train
+; DE: Trebuchet is a Castle unit (Imperial); civ shells add the unique unit.
+can_train trebuchet
 can_use_tech herbal_medicine ballistics chemistry fletching bodkin_arrow bracer murder_holes heated_shot masonry architecture hoardings crenellations town_watch town_patrol stronghold
 
 
@@ -4547,7 +4583,7 @@ cost 0 149 0 0
 def byzantine_workshop
 is_a workshop
 cost 0 170 0 0
-can_train battering_ram mangonel scorpion trebuchet siege_tower bombard_cannon
+can_train battering_ram mangonel scorpion siege_tower bombard_cannon
 ; DE: Siege Ram yes; no Heavy Scorpion, no Siege Onager
 can_research capped_ram siege_ram onager
 
@@ -4560,7 +4596,7 @@ can_research war_galley galleon fire_ship fast_fire_ship demolition_ship heavy_d
 
 def byzantine_castle
 is_a aoe_castle
-can_train cataphract
+can_train cataphract trebuchet
 can_research elite_cataphract greek_fire logistica conscription hoardings sappers spies
 
 ; ---------- civ-specific military buildings (tech tree from aoe2techtree) ----------
@@ -4591,7 +4627,7 @@ can_research ballistics chemistry siege_engineers guardtower keeptower cannontow
 
 def briton_castle
 is_a aoe_castle
-can_train longbowman
+can_train longbowman trebuchet
 can_research elite_longbowman yeomen warwolf conscription hoardings sappers spies
 
 def briton_shipyard
@@ -4631,7 +4667,7 @@ def frank_castle
 hp_max 4800
 is_a aoe_castle
 cost 0 0 0 488
-can_train throwing_axeman
+can_train throwing_axeman trebuchet
 can_research elite_throwing_axeman chivalry bearded_axe conscription hoardings sappers spies
 
 def frank_shipyard
@@ -4671,7 +4707,7 @@ can_research ballistics chemistry guardtower keeptower cannontower fortified_wal
 
 def chinese_castle
 is_a aoe_castle
-can_train chu_ko_nu
+can_train chu_ko_nu trebuchet
 can_research elite_chu_ko_nu great_wall rocketry conscription hoardings sappers spies
 
 def chinese_shipyard
@@ -4706,7 +4742,7 @@ can_research ballistics chemistry siege_engineers guardtower keeptower cannontow
 
 def mongol_castle
 is_a aoe_castle
-can_train mangudai
+can_train mangudai trebuchet
 can_research elite_mangudai nomads drill conscription hoardings sappers spies
 
 def mongol_shipyard
@@ -5018,7 +5054,7 @@ can_research capped_ram onager heavy_scorpion
 
 def japanese_castle
 is_a aoe_castle
-can_train samurai
+can_train samurai trebuchet
 can_research elite_samurai yasama kataparuto conscription hoardings spies
 
 def japanese_shipyard
@@ -5069,12 +5105,12 @@ can_research ballistics chemistry siege_engineers guardtower keeptower cannontow
 
 def teuton_castle
 is_a aoe_castle
-can_train teutonic_knight
+can_train teutonic_knight trebuchet
 can_research elite_teutonic_knight ironclad crenellations conscription hoardings sappers spies
 
 def teuton_workshop
 is_a workshop
-can_train battering_ram mangonel scorpion trebuchet siege_tower bombard_cannon
+can_train battering_ram mangonel scorpion siege_tower bombard_cannon
 can_research capped_ram siege_ram onager siege_onager heavy_scorpion
 
 def teuton_shipyard
@@ -5120,7 +5156,7 @@ can_research elite_longboat war_galley galleon fire_ship fast_fire_ship gillnets
 
 def viking_castle
 is_a aoe_castle
-can_train berserk
+can_train berserk trebuchet
 can_research elite_berserk chieftains bogsveigar conscription hoardings sappers spies
 
 def viking_knight
@@ -5162,7 +5198,7 @@ can_research ballistics chemistry siege_engineers guardtower keeptower cannontow
 
 def vietnamese_workshop
 is_a workshop
-can_train battering_ram mangonel scorpion trebuchet siege_tower bombard_cannon
+can_train battering_ram mangonel scorpion siege_tower bombard_cannon
 ; DE: no Siege Ram, no Siege Onager, no Heavy Scorpion
 can_research capped_ram onager
 
@@ -5173,7 +5209,7 @@ can_research war_galley galleon fire_ship demolition_ship heavy_demolition_ship 
 
 def vietnamese_castle
 is_a aoe_castle
-can_train rattan_archer
+can_train rattan_archer trebuchet
 can_research elite_rattan_archer chatras paper_money conscription hoardings sappers spies
 
 def vietnamese_knight
@@ -5220,7 +5256,7 @@ can_research ballistics chemistry siege_engineers guardtower keeptower cannontow
 
 def portuguese_workshop
 is_a workshop
-can_train battering_ram mangonel scorpion trebuchet siege_tower bombard_cannon
+can_train battering_ram mangonel scorpion siege_tower bombard_cannon
 ; DE: no Siege Ram, no Siege Onager, no Heavy Scorpion
 can_research capped_ram onager
 
@@ -5232,7 +5268,7 @@ can_research elite_caravel war_galley galleon fire_ship elite_cannon_galleon gil
 
 def portuguese_castle
 is_a aoe_castle
-can_train organ_gun
+can_train organ_gun trebuchet
 can_research elite_organ_gun circumnavigation arquebus conscription sappers spies
 
 def portuguese_knight
@@ -5412,7 +5448,7 @@ can_research ballistics chemistry guardtower murder_holes masonry treadmill_cran
 
 def aztec_workshop
 is_a workshop
-can_train battering_ram mangonel scorpion trebuchet siege_tower
+can_train battering_ram mangonel scorpion siege_tower
 can_research capped_ram siege_ram onager siege_onager heavy_scorpion
 
 def aztec_shipyard
@@ -5423,7 +5459,7 @@ can_research war_galley fire_ship fast_fire_ship demolition_ship heavy_demolitio
 
 def aztec_castle
 is_a aoe_castle
-can_train jaguar_warrior petard
+can_train jaguar_warrior petard trebuchet
 can_research elite_jaguar_warrior atlatl garland_wars conscription sappers spies
 
 def aztec_monastery
@@ -5506,7 +5542,7 @@ can_research herbal_medicine heresy sanctity fervor faith illumination theocracy
 
 def celtic_castle
 is_a aoe_castle
-can_train woad_raider
+can_train woad_raider trebuchet
 can_research elite_woad_raider stronghold furor_celtica conscription hoardings sappers spies
 
 def celtic_knight
@@ -5598,8 +5634,10 @@ decay 1
 
 def dragonslair
 class building
+is_a building
 decay 1
 
 def magestower
 class building
+is_a building
 decay 1

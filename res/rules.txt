@@ -1232,7 +1232,6 @@ can_upgrade_to guardtower cannontower
 is_buildable_anywhere 1
 transport_capacity 4
 provides_survival 0
-space 2
 
 def guardtower
 class building
@@ -1252,7 +1251,6 @@ can_use_tech archer_weapon archer_range
 is_buildable_anywhere 1
 transport_capacity 8
 provides_survival 0
-space 3
 
 def cannontower
 class building
@@ -1273,7 +1271,6 @@ mdf 1 ; armor 20
 is_buildable_anywhere 1
 transport_capacity 8
 provides_survival 0
-space 3
 
 def wall
 class building
@@ -1297,7 +1294,7 @@ time_cost 270
 is_buildable_on_exits_only 1
 transport_capacity 8
 provides_survival 0
-requirements keep
+requirements castle
 
 def gate
 class building
@@ -1324,7 +1321,7 @@ is_buildable_on_exits_only 1
 is_a_gate 1
 provides_survival 0
 transport_capacity 8
-requirements keep
+requirements castle
 
 def shipyard
 class building

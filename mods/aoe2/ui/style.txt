@@ -859,7 +859,6 @@ title 8174
 noise repeat 300 76726
 launch_mdg 76885
 mdg_hit 76886 1040 1041
-death if_me 131101 else 13093
 keyboard soldier1
 shortcut e
 

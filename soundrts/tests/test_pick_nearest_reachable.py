@@ -68,6 +68,50 @@ def test_pick_nearest_reachable_empty():
     assert Computer._pick_nearest_reachable(ai, origin, []) is None
 
 
+def test_pick_nearest_reachable_scan_rest_false_stops_at_top_k():
+    calls = []
+
+    class TrackingPlace(_Place):
+        def shortest_path_distance_to(self, dest, player, plane="ground", avoid=False):
+            calls.append(dest.id)
+            return super().shortest_path_distance_to(dest, player, plane, avoid)
+
+    origin = TrackingPlace(
+        0, 0, 0, {1: float("inf"), 2: float("inf"), 3: 5}
+    )
+    p1 = _Place(1, 10, 0, {})
+    p2 = _Place(2, 20, 0, {})
+    p3 = _Place(3, 1000, 0, {})
+    cands = [_candidate(1, p1), _candidate(2, p2), _candidate(3, p3)]
+    ai = Computer.__new__(Computer)
+    picked = Computer._pick_nearest_reachable(
+        ai, origin, cands, top_k=2, scan_rest=False
+    )
+    assert picked is None
+    assert 3 not in calls
+    assert calls == [1, 2]
+
+
+def test_pick_nearest_reachable_skips_astar_for_adjacent():
+    calls = []
+
+    class TrackingPlace(_Place):
+        def shortest_path_distance_to(self, dest, player, plane="ground", avoid=False):
+            calls.append(dest.id)
+            return super().shortest_path_distance_to(dest, player, plane, avoid)
+
+    origin = TrackingPlace(0, 0, 0, {1: 100, 2: 50})
+    p1 = _Place(1, 10, 0, {})
+    p2 = _Place(2, 1000, 0, {})
+    cands = [_candidate(1, p1), _candidate(2, p2)]
+    ai = Computer.__new__(Computer)
+    ai.world = SimpleNamespace(square_width=12)
+    ai._warehouse_places_adjacent = lambda a, b: b is p1
+    picked = Computer._pick_nearest_reachable(ai, origin, cands, top_k=12)
+    assert picked.id == 1
+    assert calls == []
+
+
 def test_pick_nearest_reachable_sorts_when_ids_are_none():
     """Regression: equal euclid + id=None must not compare entity instances."""
 

@@ -69,10 +69,21 @@ def transition_duration_ms(unit, target_mode: str) -> int:
 
 
 def is_packable(unit) -> bool:
-    """True when rules enable siege pack (``packable 1`` and/or a positive time)."""
-    has_time = unpack_duration_ms(unit) > 0 or _duration_raw_to_ms(
-        _raw_attr(unit, "pack_time", 0)
-    ) > 0
+    """True when rules enable siege pack (``packable 1`` and/or a positive time).
+
+    Fast reject: Creature defaults are unpack_time=0, pack_time=0, packable=0.
+    Almost every unit hits this every tick; avoid _raw_attr there.
+    """
+    unpack_time = unit.unpack_time
+    pack_time = unit.pack_time
+    packable = unit.packable
+    if unpack_time == 0 and pack_time == 0 and packable == 0:
+        return False
+    if isinstance(unpack_time, (list, tuple)):
+        unpack_time = unpack_time[0] if unpack_time else 0
+    if isinstance(pack_time, (list, tuple)):
+        pack_time = pack_time[0] if pack_time else 0
+    has_time = _duration_raw_to_ms(unpack_time) > 0 or _duration_raw_to_ms(pack_time) > 0
     if not has_time:
         return False
     # Explicit opt-in, or legacy: unpack_time alone

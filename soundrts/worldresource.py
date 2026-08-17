@@ -8,6 +8,7 @@ from .worldentity import Entity
 class Deposit(Entity):
 
     resource_type = None
+    is_deposit = True
     resource_regen = 0
     extraction_time = None  # 提取时间
     extraction_qty = None  # 提取量
@@ -134,6 +135,7 @@ from .lib.building_land import (  # noqa: E402
 class Corpse(Entity):
 
     type_name = "corpse"
+    is_corpse = True
     collision = 0
 
     def __init__(self, unit):

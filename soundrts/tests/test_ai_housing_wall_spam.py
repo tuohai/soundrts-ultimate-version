@@ -26,7 +26,10 @@ with warnings.catch_warnings():
     from soundrts.worldclient import DirectClient, DummyClient
     from soundrts.worldentity import Entity
     from soundrts.worldplayercomputer import Computer
-    from soundrts.worldrequirements import iter_unmet_building_candidates
+    from soundrts.worldrequirements import (
+        count_owned_buildings_of_group,
+        iter_unmet_building_candidates,
+    )
 
 sys.argv = saved
 
@@ -75,6 +78,114 @@ def test_feudal_age_candidates_defer_exit_only_walls(aoe2_loaded):
     assert names
     assert names[0] != "wall"
     assert "wall" in names  # still available, but not first
+
+
+def test_castle_age_reqs_skip_fish_trap_on_land(aoe2_loaded):
+    """Land AI must unlock castle via blacksmith, not stall on fish_trap."""
+    from soundrts.lib.nofloat import to_int
+
+    world = World([], 42)
+    world._parse_map((ROOT / "mods/aoe2/multi/m2.txt").read_text(encoding="utf-8"))
+    world.square_width = int(world.square_width * PRECISION)
+    world._build_map()
+    human = DirectClient("p1", None)
+    human.faction = "britons"
+    human.alliance = "1"
+    ai = DummyClient("intermediate")
+    ai.faction = "aztecs"
+    ai.alliance = "2"
+    world.populate_map([human, ai], random_starts=False, equivalents=True)
+    for p in world.players:
+        p.interface = type(
+            "I", (), {"queue_srv_event": staticmethod(lambda *a, **k: None)}
+        )()
+    comp = next(
+        p for p in world.players if isinstance(p, Computer) and p.faction == "aztecs"
+    )
+    for up in ("dark_age", "feudal_age"):
+        if up not in comp.upgrades:
+            comp.upgrades.append(up)
+    tc = next(u for u in comp.units if u.type_name == "town_center")
+    if not comp.has("archery_range"):
+        rules.unit_class("aztec_archery")(comp, tc.place, tc.x, tc.y)
+    assert count_owned_buildings_of_group(comp, "feudal_age_buildings") == 1
+    assert not comp.has("blacksmith")
+    comp.resources = [to_int("400"), to_int("400"), to_int("100"), to_int("400")]
+    comp._play_memo = {}
+    comp._type_discovery_cache = None
+    asked = []
+    real_get = comp._get
+
+    def _spy(nb, types):
+        name = types[0] if isinstance(types, (list, tuple)) else types
+        asked.append(getattr(name, "__name__", name))
+        return real_get(nb, types)
+
+    comp._get = _spy
+    comp._get_requirements(rules.unit_class("castle_age"))
+    assert "fish_trap" not in asked
+    assert "blacksmith" in asked or comp.future_nb("blacksmith") > 0
+
+
+def test_castle_unlock_wood_blocks_mill_and_warehouse(aoe2_loaded):
+    """While missing a feudal unlock building, 150 wood must not go to mill/camp."""
+    from soundrts.lib.nofloat import to_int
+
+    world = World([], 42)
+    world._parse_map((ROOT / "mods/aoe2/multi/m2.txt").read_text(encoding="utf-8"))
+    world.square_width = int(world.square_width * PRECISION)
+    world._build_map()
+    human = DirectClient("p1", None)
+    human.faction = "britons"
+    human.alliance = "1"
+    ai = DummyClient("intermediate")
+    ai.faction = "aztecs"
+    ai.alliance = "2"
+    world.populate_map([human, ai], random_starts=False, equivalents=True)
+    for p in world.players:
+        p.interface = type(
+            "I", (), {"queue_srv_event": staticmethod(lambda *a, **k: None)}
+        )()
+    comp = next(
+        p for p in world.players if isinstance(p, Computer) and p.faction == "aztecs"
+    )
+    for up in ("dark_age", "feudal_age"):
+        if up not in comp.upgrades:
+            comp.upgrades.append(up)
+    tc = next(u for u in comp.units if u.type_name == "town_center")
+    if not comp.has("archery_range"):
+        rules.unit_class("aztec_archery")(comp, tc.place, tc.x, tc.y)
+    assert count_owned_buildings_of_group(comp, "feudal_age_buildings") == 1
+    assert not comp.has("blacksmith")
+    # Castle get-wave (rams / castle units), not the feudal army line.
+    for i, line in enumerate(comp._plan):
+        if line.startswith("get ") and "battering_ram" in line:
+            comp._line_nb = i
+            break
+    # Enough food/gold for castle click intent; wood just under blacksmith.
+    comp.resources = [to_int("650"), to_int("140"), to_int("200"), to_int("400")]
+    comp._play_memo = {}
+    comp._type_discovery_cache = None
+    assert comp._should_click_plan_phase()
+    unlock = comp._next_plan_phase_building_wood_need()
+    assert unlock == to_int("150")
+    mill_cost = (0, to_int("100"), 0, 0)
+    assert comp._would_spend_past_plan_building(mill_cost, ignore_age_defer=True)
+    assert comp._should_defer_food_building_expansion(mill_cost)
+    assert comp._warehouse_spend_blocked_by_wood_reserve(
+        (0, to_int("100")), stores=("resource2",)
+    )
+    # Blacksmith itself may spend the unlock wood.
+    assert not comp._would_spend_past_plan_building(
+        (0, to_int("150")), ignore_age_defer=True
+    )
+    # Once wood covers unlock, camps still wait so blacksmith can click first.
+    comp.resources = [to_int("650"), to_int("160"), to_int("200"), to_int("400")]
+    comp._play_memo = {}
+    assert comp._plan_expensive_wood_reserve(ignore_age_defer=True) >= to_int("150")
+    assert comp._warehouse_spend_blocked_by_wood_reserve(
+        (0, to_int("100")), stores=("resource1", "resource4")
+    )
 
 
 def test_byzantine_equivalent_scouttower_is_buildable(aoe2_loaded):

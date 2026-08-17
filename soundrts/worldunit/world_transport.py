@@ -386,8 +386,21 @@ class CreatureTransport(Entity):
             and self._obs_cache is not None
         ):
             return self._obs_cache
+        short = self.sight_range < self.world.square_width
+        player = self.player
+        share_key = (place, self.height, short, self.airground_type)
+        if player is not None:
+            if getattr(player, "_obs_sq_share_tick", None) != t:
+                player._obs_sq_share_tick = t
+                player._obs_sq_share = {}
+            shared = player._obs_sq_share.get(share_key)
+            if shared is not None:
+                self._obs_cache_time = t
+                self._obs_cache_place = place
+                self._obs_cache = shared
+                return shared
         all_squares = set(self.get_observed_squares(strict=False))
-        if self.sight_range < self.world.square_width:
+        if short:
             strict_squares = {place}
         else:
             strict_squares = all_squares
@@ -395,4 +408,6 @@ class CreatureTransport(Entity):
         self._obs_cache_time = t
         self._obs_cache_place = place
         self._obs_cache = result
+        if player is not None:
+            player._obs_sq_share[share_key] = result
         return result

@@ -99,6 +99,12 @@ woods 5000 a8 o8
 stone_mines 650 d4 d12 l4 l12
 orchard 125 d4 d12 l4 l12
 
+; AoE2: extra stone / berry patches beyond starts
+stone_mines 350 c13 g4 g11 i5 i12 m3
+stone_mines 500 a15 d11 f10 j6 l5 o1
+orchard 250 c13 g4 g11 i5 i12 m3
+orchard 400 a15 d11 f10 j6 l5 o1
+
 ; AoE2 DE: stone/orchard on starts; wildlife ~3–4 squares away (herd distance)
 computer_only 0 0 0 0 neutral a1 2 sheep
 computer_only 0 0 0 0 neutral a10 2 sheep

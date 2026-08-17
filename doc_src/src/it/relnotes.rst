@@ -3,6 +3,39 @@ Note di rilascio
 
 .. contents::
 
+1.4.7.3
+--------
+
+**Prestazioni: conteggi e memo del turno IA**
+
+- **Problema**: con molti computer, ``Computer.play`` scansava ripetutamente ``nb`` / ``future_nb`` e ricalcolava edifici/riserva legno della riga get più volte per turno.
+- **Cambio**: indice tipi per turno IA; ``check_type`` più economico; memo delle query di piano (maker in sospeso, legno, ecc.), invalidato dopo train/build. Combattimento e percezione invariati.
+- **Ambito**: computer in tutti i mod.
+
+**aoe2: IA per età — addestra e attacca**
+
+- **Problema**: ``mods/aoe2/ai.txt`` mescolava età su una sola get; il risparmio cibo rimandava l’esercito e il watchdog saltava get incomplete.
+- **Cambio**: onde Dark / Feudal / Castle; il watchdog non taglia l’eco dell’età Oscura; l’esercito feudale della riga corrente non resta bloccato dal castello successivo; dopo il castello, riserva legno per l’officina d’assedio senza congelare le fattorie. Script e difficoltà aggiornati.
+- **Nota**: l’avanzamento età può condividere il motore, ma risparmio/onde aoe2 seguono le proprie rules — altri mod con età non devono comportarsi allo stesso modo.
+
+**Correzione: res di base costruiva la caserma e non addestrava**
+
+- **Problema**: la logica «maker non pagato» aoe2 trattava maker unità→unità (``darkarcher``) e cantieri navali su mappe terrestri come edifici da risparmiare, rimandando fanti/arcieri.
+- **Cambio**: solo edifici veri; su mappe senza acqua, ignora unità/dock aquatici. Il res di base addestra e attacca con la caserma pronta; la riserva legno officina aoe2 resta.
+
+**Correzione: computer bloccati sulla get feudale — niente castello / arieti**
+
+- **Problema**: il piano tiene volutamente l’esercito feudale corrente dal cliccare Età dei Castelli. Se i soldati muoiono alla base nemica, il get non si completa mai. Intanto ``_watchdog_should_wait`` trattava il legno dell’officina successiva e cibo/legno di addestramento come «ancora in corso», azzerando il timer, così il watchdog non saltava la get feudale e l’onda castello (fabbro, Età dei Castelli, officina, arieti) non partiva.
+- **Cambio**: se la get corrente non richiede più un’età ma un’onda successiva richiede il castello, il timer aspetta solo edifici di produzione della riga corrente non pagati (caserma / tiro, ecc.), non il legno officina né l’addestramento. Le get d’assedio restano in pausa correttamente con officina pronta e legno ariete mancante.
+- **Ambito**: computer in tutti i mod. Qualsiasi script aoe2 «esercito feudale → truppe/assedio castello» ne beneficia.
+
+**Correzione: i computer non riportano le pecore proprie al centro civico prima di abbatterle**
+
+- **Problema**: molti mod (incluso aoe2) lasciano ``can_herd 0`` e usano ``claimable``. L’IA non inviava le pecore possedute come unità controllabili al deposito cibo e le metteva in ``auto_explore`` / ondate d’attacco, così vagavano o morivano in campo invece di lasciare ``food_livestock`` al centro civico.
+- **Cambio**: il bestiame posseduto (``herdable`` / ``claimable``) fa ``go`` da solo verso un edificio che conserva cibo; i villager uccidono solo lì e poi raccolgono. Pecore claimable neutre: prima ``go`` per reclamare. Escluse da esploratori e combattenti idle. Non richiede ``can_herd``; il percorso di pastorizia resta.
+- **Ambito**: computer in tutti i mod; pecore aoe2 e pascoli mongoli ne beneficiano.
+
+
 1.4.7.2
 --------
 

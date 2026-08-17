@@ -60,6 +60,17 @@ def test_ai_semantic_units_have_makers(aoe2_rules):
             assert makers, f"{civ}.{semantic} -> {name} has no makers"
 
 
+def test_race_equivalent_sources_are_cached(aoe2_rules):
+    sources = rules._race_equivalent_sources("chinese_villager")
+    assert "peasant" in sources
+    assert sources == rules._race_equivalent_sources("chinese_villager")
+    assert getattr(rules, "_race_equiv_index", None)
+    first = rules.factions
+    assert first is rules.factions
+    assert "britons" in first
+    assert "chinese" in first
+
+
 def test_franks_beginner_can_start_barracks_path(aoe2_rules):
     """Franks beginner must build barracks for militia, not stall on throwing_axeman."""
     world = World([], 42)
@@ -131,8 +142,9 @@ def test_portuguese_building_shells_fall_back_for_ai_get(aoe2_rules):
     comp._enemy_presence = []
     comp._attacked_places = []
     comp._update_perception()
-    # Race-remapped train must queue on TC.
-    comp.get(2, comp.equivalent("peasant"))
+    # Race-remapped train must queue on TC (ask for more than the AI start already has).
+    want = max(2, int(comp.nb(comp.equivalent("peasant"))) + 2)
+    comp.get(want, comp.equivalent("peasant"))
     assert any(
         getattr(o, "keyword", None) == "train"
         for u in comp.units

@@ -246,3 +246,47 @@ def test_upgrade_to_hidden_for_line_upgrade_targets():
         global_rules._dict = saved
         if saved_c is not None:
             global_rules.classes = saved_c
+
+
+def test_allied_upgrades_shares_line_upgrade_without_upgrade_player():
+    """Allied sync must not call upgrade_player on soldier line forms."""
+    from soundrts.definitions import Rules
+    from soundrts.definitions import rules as global_rules
+    from soundrts.worldplayerbase.resources import ResourcesMixin
+
+    r = Rules()
+    r.load(_LINE_RULES)
+    saved = global_rules._dict
+    saved_c = getattr(global_rules, "classes", None)
+    global_rules._dict = r._dict
+    global_rules.classes = r.classes
+    try:
+
+        class P(ResourcesMixin):
+            def __init__(self, upgrades=None):
+                self.upgrades = list(upgrades or [])
+                self.allied = []
+                self.units = []
+
+            def level(self, type_name):
+                return self.upgrades.count(type_name)
+
+        maa = global_rules.unit_class("man_at_arms")
+        assert maa is not None
+        assert not hasattr(maa, "upgrade_player")
+
+        ally = P(upgrades=["man_at_arms"])
+        me = P()
+        me.allied = [ally]
+        me._update_allied_upgrades()
+        assert "man_at_arms" in me.upgrades
+
+        leftover = P(upgrades=["militia"])
+        other = P()
+        other.allied = [leftover]
+        other._update_allied_upgrades()
+        assert other.upgrades == []
+    finally:
+        global_rules._dict = saved
+        if saved_c is not None:
+            global_rules.classes = saved_c

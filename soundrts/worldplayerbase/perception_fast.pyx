@@ -13,6 +13,7 @@
 
 cimport cython
 import copy as _copy_mod
+import heapq as _heapq
 
 
 cpdef list filter_in_radius(objects, long long cx, long long cy,
@@ -95,6 +96,57 @@ cpdef list filter_inside_units(units):
         if pl is not None and pl.is_inside_place:
             result.append(u)
     return result
+
+
+cpdef object _obj_id_key(o):
+    i = o.id
+    return 0 if i is None else i
+
+
+cpdef tuple collect_partial_static_cap(object squares, int cap=100):
+    """One pass over square.objects; same quota as Python collect_partial_static_cap.
+
+    Overflow still goes to fog memory (session 7). Grass is not fully sorted.
+    """
+    cdef list important = []
+    cdef list rest = []
+    cdef object all_objs = set()
+    cdef object s, objs, o, extra, capped, visibility_set
+    cdef int n_imp, need
+    cdef object oid
+
+    for s in squares:
+        objs = s.objects
+        if not objs:
+            continue
+        for o in objs:
+            if o.player is not None:
+                continue
+            if o in all_objs:
+                continue
+            all_objs.add(o)
+            if o.is_a_building_land or o.is_deposit:
+                important.append(o)
+            else:
+                oid = o.id
+                rest.append((0 if oid is None else oid, id(o), o))
+
+    if len(all_objs) <= cap:
+        return all_objs, set()
+
+    n_imp = len(important)
+    if n_imp >= cap:
+        important.sort(key=_obj_id_key)
+        capped = important[:cap]
+    else:
+        need = cap - n_imp
+        if need < len(rest):
+            extra = _heapq.nsmallest(need, rest)
+            capped = important + [t[2] for t in extra]
+        else:
+            capped = important + [t[2] for t in rest]
+    visibility_set = set(capped)
+    return visibility_set, all_objs - visibility_set
 
 
 cpdef tuple scan_memories_for_forget(
@@ -215,44 +267,25 @@ cpdef bulk_memorize(self, objects):
     cdef dict memory_index = self._memory_index
     cdef object memory_set = self.memory
     cdef object _copy = _copy_mod.copy
-    cdef object obj, remembrance, existing, place, by_place, bag
+    cdef object obj, remembrance, existing
     cdef object add_place
-    add_place = getattr(self, "_memory_place_index_add", None)
+    add_place = self._memory_place_index_add
     for obj in objects:
-        if getattr(obj, "_is_skill_combat_proxy", False):
+        if obj._is_skill_combat_proxy:
             continue
         if obj.is_invisible or obj.is_cloaked:
             continue
         existing = memory_index.get(obj)
         if existing is not None:
             existing.time_stamp = current_time
-            if hasattr(obj, "hp"):
-                existing.hp = obj.hp
+            existing.hp = obj.hp
         else:
             remembrance = _copy(obj)
             remembrance.time_stamp = current_time
             remembrance.initial_model = obj
             memory_set.add(remembrance)
             memory_index[obj] = remembrance
-            # Keep place index in sync for observed-square forget (SESSION 4).
-            if add_place is not None:
-                add_place(remembrance)
-            else:
-                place = remembrance.place
-                if place is not None:
-                    by_place = getattr(self, "_memory_by_place", None)
-                    if by_place is None:
-                        by_place = {}
-                        self._memory_by_place = by_place
-                        self._memory_by_place_count = 0
-                    bag = by_place.get(place)
-                    if bag is None:
-                        bag = set()
-                        by_place[place] = bag
-                    bag.add(remembrance)
-                    self._memory_by_place_count = getattr(
-                        self, "_memory_by_place_count", 0
-                    ) + 1
+            add_place(remembrance)
 
 
 cpdef list merge_buckets_3x3(dict buckets, long long grid_x, long long grid_y):
@@ -311,14 +344,14 @@ cpdef bint is_seeing(self, u) except -1:
         return False
 
     # Most units have blocked_exit=None; avoid Python exit-blocker walk.
-    if getattr(u, "blocked_exit", None) is not None and self._exit_blocker_visible(u):
+    if u.blocked_exit is not None and self._exit_blocker_visible(u):
         return True
 
     x = u.x
     y = u.y
     for avp in self.allied_vision:
         for avu in avp._potential_neighbors(x, y):
-            if getattr(avu, "is_inside", False):
+            if avu.is_inside:
                 continue
             sr = avu.sight_range
             if not sr:

@@ -1,11 +1,13 @@
-﻿; ===========================================================================
-; AoE2 DE-style AI 鈥?civilizations 脳 difficulties
+; ===========================================================================
+; AoE2 DE-style AI — civilizations × difficulties
 ; Difficulties: beginner intermediate advanced expert nightmare
 ;
-; After rules ``clear``, get lines must use real aoe2 unit type names
-; (militia / aoe_archer / mangonel / longbowman / 鈥?. Base aliases
-; (footman / archer / knight / catapult) do not exist and will warn.
-; Shared units use the shared mod names; civ skins / castle UUs where needed.
+; Age-staged get lines (not res-style mixed waves):
+;   dark   = villagers only
+;   feudal = militia + feudal trainables (archers / scouts / spears)
+;   castle = knights / unique units + battering rams
+;   siege  = more rams / mangonels (building-breakers)
+; Unit names are real aoe2 rules types, not footman/archer/knight aliases.
 ; ===========================================================================
 
 ; ======================== BRITONS (archers / longbowman) ========================
@@ -13,28 +15,31 @@
 def britons_beginner
 defeat_score 10
 counter_skill 25
-workers 8
+workers 10
 constant_attacks 0
 research 1
-get 8 peasant 4 militia 12 aoe_archer
-get 10 peasant 6 militia 20 aoe_archer 2 mangonel
-get 10 peasant 8 aoe_knight 30 aoe_archer 4 longbowman
+get 8 peasant
+get 4 militia 8 aoe_archer
+get 10 peasant 8 aoe_knight 8 longbowman 2 battering_ram
 goto -1
 
 def britons_intermediate
 defeat_score 20
 counter_skill 50
 starting_resources 100 200 200 200
-watchdog 600
+starting_units 2 peasant
+watchdog 720
 constant_attacks 1
 research 1
-workers 12
+workers 16
+attack_ratio 120
 label bi1
-get 6 peasant 2 militia 6 aoe_archer
+get 8 peasant
+get 4 militia 8 aoe_archer
 attack
-get 10 peasant 4 militia 16 aoe_archer 4 aoe_knight 4 longbowman
+get 12 peasant 8 aoe_knight 8 longbowman 3 battering_ram
 attack
-get 12 peasant 30 aoe_archer 8 aoe_knight 4 mangonel 10 longbowman 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto bi1
 
@@ -42,28 +47,24 @@ def britons_advanced
 defeat_score 40
 counter_skill 75
 starting_resources 150 250 250 200
+starting_units 2 peasant
 train_time 50
 research_time 80
 build_time 50
 gather_time 50
-watchdog 480
+watchdog 600
 constant_attacks 1
 research 1
-workers 18
+workers 22
 expand 2
-attack_ratio 150
+attack_ratio 110
 label ba1
-get 6 peasant 2 militia 6 aoe_archer
+get 8 peasant
+get 4 militia 8 aoe_archer
 attack
-get 10 peasant 4 militia 16 aoe_archer 4 aoe_knight 4 longbowman
+get 12 peasant 8 aoe_knight 8 longbowman 3 battering_ram
 attack
-goto_random ba_main ba_alt
-label ba_main
-get 12 peasant 30 aoe_archer 8 aoe_knight 4 mangonel 10 longbowman 4 monk
-attack
-goto ba1
-label ba_alt
-get 12 peasant 20 aoe_knight 10 aoe_archer 4 mangonel 10 longbowman 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto ba1
 
@@ -71,23 +72,25 @@ def britons_expert
 defeat_score 80
 counter_skill 90
 starting_resources 200 300 300 250
+starting_units 3 peasant
 train_time 50
 research_time 70
 build_time 50
 gather_time 50
 unit_hp 120
-watchdog 360
+watchdog 600
 constant_attacks 1
 research 1
-workers 24
-expand 3
-attack_ratio 120
+workers 28
+expand 2
+attack_ratio 100
 label be1
-get 6 peasant 2 militia 6 aoe_archer
+get 10 peasant
+get 4 militia 8 aoe_archer
 attack
-get 10 peasant 4 militia 16 aoe_archer 4 aoe_knight 4 longbowman
+get 12 peasant 8 aoe_knight 8 longbowman 3 battering_ram
 attack
-get 12 peasant 30 aoe_archer 8 aoe_knight 4 mangonel 10 longbowman 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto be1
 
@@ -95,23 +98,25 @@ def britons_nightmare
 defeat_score 200
 counter_skill 100
 starting_resources 300 400 400 300
+starting_units 4 peasant
 train_time 40
 research_time 60
 build_time 40
 gather_time 40
 unit_hp 140
-watchdog 240
+watchdog 540
 constant_attacks 1
 research 1
 workers 36
-expand 4
-attack_ratio 90
+expand 2
+attack_ratio 80
 label bn1
-get 6 peasant 2 militia 6 aoe_archer
+get 10 peasant
+get 4 militia 8 aoe_archer
 attack
-get 10 peasant 4 militia 16 aoe_archer 4 aoe_knight 4 longbowman
+get 14 peasant 8 aoe_knight 8 longbowman 3 battering_ram
 attack
-get 16 peasant 50 aoe_archer 16 aoe_knight 8 mangonel 20 longbowman 12 monk
+get 6 battering_ram 4 mangonel
 attack
 goto bn1
 
@@ -121,28 +126,31 @@ goto bn1
 def franks_beginner
 defeat_score 10
 counter_skill 25
-workers 8
+workers 10
 constant_attacks 0
 research 1
-get 8 peasant 6 militia 4 aoe_archer
-get 10 peasant 8 militia 10 aoe_knight 8 aoe_archer
-get 10 peasant 16 aoe_knight 10 aoe_archer 2 mangonel 4 throwing_axeman
+get 8 peasant
+get 6 militia 4 scout_cavalry
+get 10 peasant 12 aoe_knight 8 throwing_axeman 2 battering_ram
 goto -1
 
 def franks_intermediate
 defeat_score 20
 counter_skill 50
 starting_resources 100 200 200 200
-watchdog 600
+starting_units 2 peasant
+watchdog 720
 constant_attacks 1
 research 1
-workers 12
+workers 16
+attack_ratio 120
 label fi1
-get 6 peasant 4 militia 2 aoe_knight
+get 8 peasant
+get 6 militia 4 scout_cavalry
 attack
-get 10 peasant 6 militia 12 aoe_knight 6 aoe_archer 4 throwing_axeman
+get 12 peasant 12 aoe_knight 8 throwing_axeman 3 battering_ram
 attack
-get 12 peasant 20 aoe_knight 10 aoe_archer 4 mangonel 10 throwing_axeman 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto fi1
 
@@ -150,28 +158,24 @@ def franks_advanced
 defeat_score 40
 counter_skill 75
 starting_resources 150 250 250 200
+starting_units 2 peasant
 train_time 50
 research_time 80
 build_time 50
 gather_time 50
-watchdog 480
+watchdog 600
 constant_attacks 1
 research 1
-workers 18
+workers 22
 expand 2
-attack_ratio 150
+attack_ratio 110
 label fa1
-get 6 peasant 4 militia 2 aoe_knight
+get 8 peasant
+get 6 militia 4 scout_cavalry
 attack
-get 10 peasant 6 militia 12 aoe_knight 6 aoe_archer 4 throwing_axeman
+get 12 peasant 12 aoe_knight 8 throwing_axeman 3 battering_ram
 attack
-goto_random fa_main fa_alt
-label fa_main
-get 12 peasant 20 aoe_knight 10 aoe_archer 4 mangonel 10 throwing_axeman 4 monk
-attack
-goto fa1
-label fa_alt
-get 12 peasant 30 aoe_archer 8 aoe_knight 4 mangonel 10 throwing_axeman 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto fa1
 
@@ -179,23 +183,25 @@ def franks_expert
 defeat_score 80
 counter_skill 90
 starting_resources 200 300 300 250
+starting_units 3 peasant
 train_time 50
 research_time 70
 build_time 50
 gather_time 50
 unit_hp 120
-watchdog 360
+watchdog 600
 constant_attacks 1
 research 1
-workers 24
-expand 3
-attack_ratio 120
+workers 28
+expand 2
+attack_ratio 100
 label fe1
-get 6 peasant 4 militia 2 aoe_knight
+get 10 peasant
+get 6 militia 4 scout_cavalry
 attack
-get 10 peasant 6 militia 12 aoe_knight 6 aoe_archer 4 throwing_axeman
+get 12 peasant 12 aoe_knight 8 throwing_axeman 3 battering_ram
 attack
-get 12 peasant 20 aoe_knight 10 aoe_archer 4 mangonel 10 throwing_axeman 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto fe1
 
@@ -203,23 +209,25 @@ def franks_nightmare
 defeat_score 200
 counter_skill 100
 starting_resources 300 400 400 300
+starting_units 4 peasant
 train_time 40
 research_time 60
 build_time 40
 gather_time 40
 unit_hp 140
-watchdog 240
+watchdog 540
 constant_attacks 1
 research 1
 workers 36
-expand 4
-attack_ratio 90
+expand 2
+attack_ratio 80
 label fn1
-get 6 peasant 4 militia 2 aoe_knight
+get 10 peasant
+get 6 militia 4 scout_cavalry
 attack
-get 10 peasant 6 militia 12 aoe_knight 6 aoe_archer 4 throwing_axeman
+get 14 peasant 12 aoe_knight 8 throwing_axeman 3 battering_ram
 attack
-get 16 peasant 40 aoe_knight 20 aoe_archer 8 mangonel 20 throwing_axeman 12 monk
+get 6 battering_ram 4 mangonel
 attack
 goto fn1
 
@@ -229,28 +237,31 @@ goto fn1
 def chinese_beginner
 defeat_score 10
 counter_skill 25
-workers 8
+workers 10
 constant_attacks 0
 research 1
-get 8 chinese_villager 4 militia 12 aoe_archer
-get 10 chinese_villager 6 militia 20 aoe_archer 2 mangonel
-get 10 chinese_villager 8 aoe_knight 30 aoe_archer 4 chu_ko_nu
+get 8 chinese_villager
+get 4 militia 8 aoe_archer
+get 10 chinese_villager 8 aoe_knight 8 chu_ko_nu 2 battering_ram
 goto -1
 
 def chinese_intermediate
 defeat_score 20
 counter_skill 50
 starting_resources 100 200 200 200
-watchdog 600
+starting_units 2 chinese_villager
+watchdog 720
 constant_attacks 1
 research 1
-workers 12
+workers 16
+attack_ratio 120
 label ci1
-get 6 chinese_villager 2 militia 6 aoe_archer
+get 8 chinese_villager
+get 4 militia 8 aoe_archer
 attack
-get 10 chinese_villager 4 militia 16 aoe_archer 4 aoe_knight 4 chu_ko_nu
+get 12 chinese_villager 8 aoe_knight 8 chu_ko_nu 3 battering_ram
 attack
-get 12 chinese_villager 30 aoe_archer 8 aoe_knight 4 mangonel 10 chu_ko_nu 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto ci1
 
@@ -258,28 +269,24 @@ def chinese_advanced
 defeat_score 40
 counter_skill 75
 starting_resources 150 250 250 200
+starting_units 2 chinese_villager
 train_time 50
 research_time 80
 build_time 50
 gather_time 50
-watchdog 480
+watchdog 600
 constant_attacks 1
 research 1
-workers 18
+workers 22
 expand 2
-attack_ratio 150
+attack_ratio 110
 label ca1
-get 6 chinese_villager 2 militia 6 aoe_archer
+get 8 chinese_villager
+get 4 militia 8 aoe_archer
 attack
-get 10 chinese_villager 4 militia 16 aoe_archer 4 aoe_knight 4 chu_ko_nu
+get 12 chinese_villager 8 aoe_knight 8 chu_ko_nu 3 battering_ram
 attack
-goto_random ca_main ca_alt
-label ca_main
-get 12 chinese_villager 30 aoe_archer 8 aoe_knight 4 mangonel 10 chu_ko_nu 4 monk
-attack
-goto ca1
-label ca_alt
-get 12 chinese_villager 20 aoe_knight 10 aoe_archer 4 mangonel 10 chu_ko_nu 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto ca1
 
@@ -287,23 +294,25 @@ def chinese_expert
 defeat_score 80
 counter_skill 90
 starting_resources 200 300 300 250
+starting_units 3 chinese_villager
 train_time 50
 research_time 70
 build_time 50
 gather_time 50
 unit_hp 120
-watchdog 360
+watchdog 600
 constant_attacks 1
 research 1
-workers 24
-expand 3
-attack_ratio 120
+workers 28
+expand 2
+attack_ratio 100
 label ce1
-get 6 chinese_villager 2 militia 6 aoe_archer
+get 10 chinese_villager
+get 4 militia 8 aoe_archer
 attack
-get 10 chinese_villager 4 militia 16 aoe_archer 4 aoe_knight 4 chu_ko_nu
+get 12 chinese_villager 8 aoe_knight 8 chu_ko_nu 3 battering_ram
 attack
-get 12 chinese_villager 30 aoe_archer 8 aoe_knight 4 mangonel 10 chu_ko_nu 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto ce1
 
@@ -311,23 +320,25 @@ def chinese_nightmare
 defeat_score 200
 counter_skill 100
 starting_resources 300 400 400 300
+starting_units 4 chinese_villager
 train_time 40
 research_time 60
 build_time 40
 gather_time 40
 unit_hp 140
-watchdog 240
+watchdog 540
 constant_attacks 1
 research 1
 workers 36
-expand 4
-attack_ratio 90
+expand 2
+attack_ratio 80
 label cn1
-get 6 chinese_villager 2 militia 6 aoe_archer
+get 10 chinese_villager
+get 4 militia 8 aoe_archer
 attack
-get 10 chinese_villager 4 militia 16 aoe_archer 4 aoe_knight 4 chu_ko_nu
+get 14 chinese_villager 8 aoe_knight 8 chu_ko_nu 3 battering_ram
 attack
-get 16 chinese_villager 50 aoe_archer 16 aoe_knight 8 mangonel 20 chu_ko_nu 12 monk
+get 6 battering_ram 4 mangonel
 attack
 goto cn1
 
@@ -337,28 +348,31 @@ goto cn1
 def mongols_beginner
 defeat_score 10
 counter_skill 25
-workers 8
+workers 10
 constant_attacks 0
 research 1
-get 8 mongol_herdsman 4 militia 8 aoe_archer
-get 10 mongol_herdsman 6 militia 12 aoe_archer 6 aoe_knight
-get 12 mongol_herdsman 10 aoe_knight 16 cavalry_archer 2 mangonel 4 mangudai
+get 8 mongol_herdsman
+get 4 militia 6 aoe_archer 3 scout_cavalry
+get 10 mongol_herdsman 8 cavalry_archer 8 aoe_knight 8 mangudai 2 battering_ram
 goto -1
 
 def mongols_intermediate
 defeat_score 20
 counter_skill 50
 starting_resources 100 200 200 200
-watchdog 600
+starting_units 2 mongol_herdsman
+watchdog 720
 constant_attacks 1
 research 1
-workers 12
+workers 16
+attack_ratio 120
 label mi1
-get 6 mongol_herdsman 3 militia 4 aoe_archer 2 aoe_knight
+get 8 mongol_herdsman
+get 4 militia 6 aoe_archer 3 scout_cavalry
 attack
-get 10 mongol_herdsman 4 militia 10 cavalry_archer 8 aoe_knight 6 mangudai
+get 12 mongol_herdsman 8 cavalry_archer 8 aoe_knight 8 mangudai 3 battering_ram
 attack
-get 12 mongol_herdsman 18 cavalry_archer 12 aoe_knight 4 mangonel 12 mangudai 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto mi1
 
@@ -366,28 +380,24 @@ def mongols_advanced
 defeat_score 40
 counter_skill 75
 starting_resources 150 250 250 200
+starting_units 2 mongol_herdsman
 train_time 50
 research_time 80
 build_time 50
 gather_time 50
-watchdog 480
+watchdog 600
 constant_attacks 1
 research 1
-workers 18
+workers 22
 expand 2
-attack_ratio 150
+attack_ratio 110
 label ma1
-get 6 mongol_herdsman 3 militia 4 aoe_archer 2 aoe_knight
+get 8 mongol_herdsman
+get 4 militia 6 aoe_archer 3 scout_cavalry
 attack
-get 10 mongol_herdsman 4 militia 10 cavalry_archer 8 aoe_knight 6 mangudai
+get 12 mongol_herdsman 8 cavalry_archer 8 aoe_knight 8 mangudai 3 battering_ram
 attack
-goto_random ma_main ma_alt
-label ma_main
-get 12 mongol_herdsman 18 cavalry_archer 12 aoe_knight 4 mangonel 12 mangudai 4 monk
-attack
-goto ma1
-label ma_alt
-get 12 mongol_herdsman 30 aoe_archer 8 aoe_knight 4 mangonel 10 mangudai 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto ma1
 
@@ -395,23 +405,25 @@ def mongols_expert
 defeat_score 80
 counter_skill 90
 starting_resources 200 300 300 250
+starting_units 3 mongol_herdsman
 train_time 50
 research_time 70
 build_time 50
 gather_time 50
 unit_hp 120
-watchdog 360
+watchdog 600
 constant_attacks 1
 research 1
-workers 24
-expand 3
-attack_ratio 120
+workers 28
+expand 2
+attack_ratio 100
 label me1
-get 6 mongol_herdsman 3 militia 4 aoe_archer 2 aoe_knight
+get 10 mongol_herdsman
+get 4 militia 6 aoe_archer 3 scout_cavalry
 attack
-get 10 mongol_herdsman 4 militia 10 cavalry_archer 8 aoe_knight 6 mangudai
+get 12 mongol_herdsman 8 cavalry_archer 8 aoe_knight 8 mangudai 3 battering_ram
 attack
-get 12 mongol_herdsman 18 cavalry_archer 12 aoe_knight 4 mangonel 12 mangudai 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto me1
 
@@ -419,23 +431,25 @@ def mongols_nightmare
 defeat_score 200
 counter_skill 100
 starting_resources 300 400 400 300
+starting_units 4 mongol_herdsman
 train_time 40
 research_time 60
 build_time 40
 gather_time 40
 unit_hp 140
-watchdog 240
+watchdog 540
 constant_attacks 1
 research 1
 workers 36
-expand 4
-attack_ratio 90
+expand 2
+attack_ratio 80
 label mn1
-get 6 mongol_herdsman 3 militia 4 aoe_archer 2 aoe_knight
+get 10 mongol_herdsman
+get 4 militia 6 aoe_archer 3 scout_cavalry
 attack
-get 10 mongol_herdsman 4 militia 10 cavalry_archer 8 aoe_knight 6 mangudai
+get 14 mongol_herdsman 8 cavalry_archer 8 aoe_knight 8 mangudai 3 battering_ram
 attack
-get 16 mongol_herdsman 30 cavalry_archer 24 aoe_knight 8 mangonel 24 mangudai 12 monk
+get 6 battering_ram 4 mangonel
 attack
 goto mn1
 
@@ -445,28 +459,31 @@ goto mn1
 def byzantines_beginner
 defeat_score 10
 counter_skill 25
-workers 8
+workers 10
 constant_attacks 0
 research 1
-get 8 peasant 6 militia 8 aoe_archer
-get 4 scouttower 10 peasant 8 militia 8 aoe_knight 10 aoe_archer
-get 6 guardtower 10 peasant 12 aoe_knight 14 aoe_archer 2 mangonel 4 cataphract
+get 8 peasant
+get 6 militia 6 aoe_archer
+get 4 scouttower 10 peasant 8 aoe_knight 6 cataphract 2 battering_ram
 goto -1
 
 def byzantines_intermediate
 defeat_score 20
 counter_skill 50
 starting_resources 100 200 200 200
-watchdog 600
+starting_units 2 peasant
+watchdog 720
 constant_attacks 1
 research 1
-workers 12
+workers 16
+attack_ratio 120
 label yi1
-get 6 peasant 5 militia 4 aoe_archer
+get 8 peasant
+get 6 militia 6 aoe_archer
 attack
-get 4 scouttower 10 peasant 8 militia 10 aoe_knight 10 aoe_archer 4 cataphract
+get 4 scouttower 12 peasant 8 aoe_knight 6 cataphract 3 battering_ram
 attack
-get 6 guardtower 12 peasant 16 aoe_knight 14 aoe_archer 4 mangonel 10 cataphract 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto yi1
 
@@ -474,28 +491,24 @@ def byzantines_advanced
 defeat_score 40
 counter_skill 75
 starting_resources 150 250 250 200
+starting_units 2 peasant
 train_time 50
 research_time 80
 build_time 50
 gather_time 50
-watchdog 480
+watchdog 600
 constant_attacks 1
 research 1
-workers 18
+workers 22
 expand 2
-attack_ratio 150
+attack_ratio 110
 label ya1
-get 6 peasant 5 militia 4 aoe_archer
+get 8 peasant
+get 6 militia 6 aoe_archer
 attack
-get 4 scouttower 10 peasant 8 militia 10 aoe_knight 10 aoe_archer 4 cataphract
+get 4 scouttower 12 peasant 8 aoe_knight 6 cataphract 3 battering_ram
 attack
-goto_random ya_main ya_alt
-label ya_main
-get 6 guardtower 12 peasant 16 aoe_knight 14 aoe_archer 4 mangonel 10 cataphract 4 monk
-attack
-goto ya1
-label ya_alt
-get 12 peasant 30 aoe_archer 8 aoe_knight 4 mangonel 10 cataphract 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto ya1
 
@@ -503,23 +516,25 @@ def byzantines_expert
 defeat_score 80
 counter_skill 90
 starting_resources 200 300 300 250
+starting_units 3 peasant
 train_time 50
 research_time 70
 build_time 50
 gather_time 50
 unit_hp 120
-watchdog 360
+watchdog 600
 constant_attacks 1
 research 1
-workers 24
-expand 3
-attack_ratio 120
+workers 28
+expand 2
+attack_ratio 100
 label ye1
-get 6 peasant 5 militia 4 aoe_archer
+get 10 peasant
+get 6 militia 6 aoe_archer
 attack
-get 4 scouttower 10 peasant 8 militia 10 aoe_knight 10 aoe_archer 4 cataphract
+get 4 scouttower 12 peasant 8 aoe_knight 6 cataphract 3 battering_ram
 attack
-get 6 guardtower 12 peasant 16 aoe_knight 14 aoe_archer 4 mangonel 10 cataphract 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto ye1
 
@@ -527,23 +542,25 @@ def byzantines_nightmare
 defeat_score 200
 counter_skill 100
 starting_resources 300 400 400 300
+starting_units 4 peasant
 train_time 40
 research_time 60
 build_time 40
 gather_time 40
 unit_hp 140
-watchdog 240
+watchdog 540
 constant_attacks 1
 research 1
 workers 36
-expand 4
-attack_ratio 90
+expand 2
+attack_ratio 80
 label yn1
-get 6 peasant 5 militia 4 aoe_archer
+get 10 peasant
+get 6 militia 6 aoe_archer
 attack
-get 4 scouttower 10 peasant 8 militia 10 aoe_knight 10 aoe_archer 4 cataphract
+get 4 scouttower 14 peasant 8 aoe_knight 6 cataphract 3 battering_ram
 attack
-get 12 guardtower 16 peasant 30 aoe_knight 24 aoe_archer 8 mangonel 20 cataphract 12 monk
+get 6 battering_ram 4 mangonel
 attack
 goto yn1
 
@@ -553,28 +570,31 @@ goto yn1
 def japanese_beginner
 defeat_score 10
 counter_skill 25
-workers 8
+workers 10
 constant_attacks 0
 research 1
-get 8 peasant 8 militia 6 aoe_archer
-get 10 peasant 14 militia 12 aoe_archer 2 mangonel
-get 10 peasant 18 militia 6 japanese_knight 16 aoe_archer 4 samurai
+get 8 peasant
+get 8 militia 4 spearman
+get 10 peasant 8 japanese_knight 10 samurai 2 battering_ram
 goto -1
 
 def japanese_intermediate
 defeat_score 20
 counter_skill 50
 starting_resources 100 200 200 200
-watchdog 600
+starting_units 2 peasant
+watchdog 720
 constant_attacks 1
 research 1
-workers 12
+workers 16
+attack_ratio 120
 label ji1
-get 6 peasant 6 militia 4 aoe_archer
+get 8 peasant
+get 8 militia 4 spearman
 attack
-get 10 peasant 14 militia 8 aoe_archer 4 japanese_knight 6 samurai
+get 12 peasant 8 japanese_knight 10 samurai 3 battering_ram
 attack
-get 12 peasant 20 militia 10 aoe_archer 6 japanese_knight 4 mangonel 12 samurai 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto ji1
 
@@ -582,28 +602,24 @@ def japanese_advanced
 defeat_score 40
 counter_skill 75
 starting_resources 150 250 250 200
+starting_units 2 peasant
 train_time 50
 research_time 80
 build_time 50
 gather_time 50
-watchdog 480
+watchdog 600
 constant_attacks 1
 research 1
-workers 18
+workers 22
 expand 2
-attack_ratio 150
+attack_ratio 110
 label ja1
-get 6 peasant 6 militia 4 aoe_archer
+get 8 peasant
+get 8 militia 4 spearman
 attack
-get 10 peasant 14 militia 8 aoe_archer 4 japanese_knight 6 samurai
+get 12 peasant 8 japanese_knight 10 samurai 3 battering_ram
 attack
-goto_random ja_main ja_alt
-label ja_main
-get 12 peasant 20 militia 10 aoe_archer 6 japanese_knight 4 mangonel 12 samurai 4 monk
-attack
-goto ja1
-label ja_alt
-get 12 peasant 30 aoe_archer 8 japanese_knight 4 mangonel 10 samurai 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto ja1
 
@@ -611,23 +627,25 @@ def japanese_expert
 defeat_score 80
 counter_skill 90
 starting_resources 200 300 300 250
+starting_units 3 peasant
 train_time 50
 research_time 70
 build_time 50
 gather_time 50
 unit_hp 120
-watchdog 360
+watchdog 600
 constant_attacks 1
 research 1
-workers 24
-expand 3
-attack_ratio 120
+workers 28
+expand 2
+attack_ratio 100
 label je1
-get 6 peasant 6 militia 4 aoe_archer
+get 10 peasant
+get 8 militia 4 spearman
 attack
-get 10 peasant 14 militia 8 aoe_archer 4 japanese_knight 6 samurai
+get 12 peasant 8 japanese_knight 10 samurai 3 battering_ram
 attack
-get 12 peasant 20 militia 10 aoe_archer 6 japanese_knight 4 mangonel 12 samurai 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto je1
 
@@ -635,23 +653,25 @@ def japanese_nightmare
 defeat_score 200
 counter_skill 100
 starting_resources 300 400 400 300
+starting_units 4 peasant
 train_time 40
 research_time 60
 build_time 40
 gather_time 40
 unit_hp 140
-watchdog 240
+watchdog 540
 constant_attacks 1
 research 1
 workers 36
-expand 4
-attack_ratio 90
+expand 2
+attack_ratio 80
 label jn1
-get 6 peasant 6 militia 4 aoe_archer
+get 10 peasant
+get 8 militia 4 spearman
 attack
-get 10 peasant 14 militia 8 aoe_archer 4 japanese_knight 6 samurai
+get 14 peasant 8 japanese_knight 10 samurai 3 battering_ram
 attack
-get 16 peasant 40 militia 20 aoe_archer 12 japanese_knight 8 mangonel 24 samurai 12 monk
+get 6 battering_ram 4 mangonel
 attack
 goto jn1
 
@@ -661,28 +681,31 @@ goto jn1
 def teutons_beginner
 defeat_score 10
 counter_skill 25
-workers 8
+workers 10
 constant_attacks 0
 research 1
-get 8 peasant 6 militia 4 aoe_archer
-get 10 peasant 8 militia 10 aoe_knight 8 aoe_archer
-get 10 peasant 16 aoe_knight 10 aoe_archer 2 mangonel 4 teutonic_knight
+get 8 peasant
+get 6 militia 4 scout_cavalry
+get 10 peasant 12 aoe_knight 8 teutonic_knight 2 battering_ram
 goto -1
 
 def teutons_intermediate
 defeat_score 20
 counter_skill 50
 starting_resources 100 200 200 200
-watchdog 600
+starting_units 2 peasant
+watchdog 720
 constant_attacks 1
 research 1
-workers 12
+workers 16
+attack_ratio 120
 label ti1
-get 6 peasant 4 militia 2 aoe_knight
+get 8 peasant
+get 6 militia 4 scout_cavalry
 attack
-get 10 peasant 6 militia 12 aoe_knight 6 aoe_archer 4 teutonic_knight
+get 12 peasant 12 aoe_knight 8 teutonic_knight 3 battering_ram
 attack
-get 12 peasant 20 aoe_knight 10 aoe_archer 4 mangonel 10 teutonic_knight 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto ti1
 
@@ -690,28 +713,24 @@ def teutons_advanced
 defeat_score 40
 counter_skill 75
 starting_resources 150 250 250 200
+starting_units 2 peasant
 train_time 50
 research_time 80
 build_time 50
 gather_time 50
-watchdog 480
+watchdog 600
 constant_attacks 1
 research 1
-workers 18
+workers 22
 expand 2
-attack_ratio 150
+attack_ratio 110
 label ta1
-get 6 peasant 4 militia 2 aoe_knight
+get 8 peasant
+get 6 militia 4 scout_cavalry
 attack
-get 10 peasant 6 militia 12 aoe_knight 6 aoe_archer 4 teutonic_knight
+get 12 peasant 12 aoe_knight 8 teutonic_knight 3 battering_ram
 attack
-goto_random ta_main ta_alt
-label ta_main
-get 12 peasant 20 aoe_knight 10 aoe_archer 4 mangonel 10 teutonic_knight 4 monk
-attack
-goto ta1
-label ta_alt
-get 12 peasant 30 aoe_archer 8 aoe_knight 4 mangonel 10 teutonic_knight 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto ta1
 
@@ -719,23 +738,25 @@ def teutons_expert
 defeat_score 80
 counter_skill 90
 starting_resources 200 300 300 250
+starting_units 3 peasant
 train_time 50
 research_time 70
 build_time 50
 gather_time 50
 unit_hp 120
-watchdog 360
+watchdog 600
 constant_attacks 1
 research 1
-workers 24
-expand 3
-attack_ratio 120
+workers 28
+expand 2
+attack_ratio 100
 label te1
-get 6 peasant 4 militia 2 aoe_knight
+get 10 peasant
+get 6 militia 4 scout_cavalry
 attack
-get 10 peasant 6 militia 12 aoe_knight 6 aoe_archer 4 teutonic_knight
+get 12 peasant 12 aoe_knight 8 teutonic_knight 3 battering_ram
 attack
-get 12 peasant 20 aoe_knight 10 aoe_archer 4 mangonel 10 teutonic_knight 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto te1
 
@@ -743,23 +764,25 @@ def teutons_nightmare
 defeat_score 200
 counter_skill 100
 starting_resources 300 400 400 300
+starting_units 4 peasant
 train_time 40
 research_time 60
 build_time 40
 gather_time 40
 unit_hp 140
-watchdog 240
+watchdog 540
 constant_attacks 1
 research 1
 workers 36
-expand 4
-attack_ratio 90
+expand 2
+attack_ratio 80
 label tn1
-get 6 peasant 4 militia 2 aoe_knight
+get 10 peasant
+get 6 militia 4 scout_cavalry
 attack
-get 10 peasant 6 militia 12 aoe_knight 6 aoe_archer 4 teutonic_knight
+get 14 peasant 12 aoe_knight 8 teutonic_knight 3 battering_ram
 attack
-get 16 peasant 40 aoe_knight 20 aoe_archer 8 mangonel 20 teutonic_knight 12 monk
+get 6 battering_ram 4 mangonel
 attack
 goto tn1
 
@@ -769,28 +792,31 @@ goto tn1
 def vikings_beginner
 defeat_score 10
 counter_skill 25
-workers 8
+workers 10
 constant_attacks 0
 research 1
-get 8 peasant 8 militia 6 aoe_archer
-get 10 peasant 14 militia 12 aoe_archer 2 mangonel
-get 10 peasant 18 militia 6 viking_knight 16 aoe_archer 4 berserk
+get 8 peasant
+get 8 militia 4 spearman
+get 10 peasant 8 viking_knight 10 berserk 2 battering_ram
 goto -1
 
 def vikings_intermediate
 defeat_score 20
 counter_skill 50
 starting_resources 100 200 200 200
-watchdog 600
+starting_units 2 peasant
+watchdog 720
 constant_attacks 1
 research 1
-workers 12
+workers 16
+attack_ratio 120
 label vi1
-get 6 peasant 6 militia 4 aoe_archer
+get 8 peasant
+get 8 militia 4 spearman
 attack
-get 10 peasant 14 militia 8 aoe_archer 4 viking_knight 6 berserk
+get 12 peasant 8 viking_knight 10 berserk 3 battering_ram
 attack
-get 12 peasant 20 militia 10 aoe_archer 6 viking_knight 4 mangonel 12 berserk 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto vi1
 
@@ -798,28 +824,24 @@ def vikings_advanced
 defeat_score 40
 counter_skill 75
 starting_resources 150 250 250 200
+starting_units 2 peasant
 train_time 50
 research_time 80
 build_time 50
 gather_time 50
-watchdog 480
+watchdog 600
 constant_attacks 1
 research 1
-workers 18
+workers 22
 expand 2
-attack_ratio 150
+attack_ratio 110
 label va1
-get 6 peasant 6 militia 4 aoe_archer
+get 8 peasant
+get 8 militia 4 spearman
 attack
-get 10 peasant 14 militia 8 aoe_archer 4 viking_knight 6 berserk
+get 12 peasant 8 viking_knight 10 berserk 3 battering_ram
 attack
-goto_random va_main va_alt
-label va_main
-get 12 peasant 20 militia 10 aoe_archer 6 viking_knight 4 mangonel 12 berserk 4 monk
-attack
-goto va1
-label va_alt
-get 12 peasant 30 aoe_archer 8 viking_knight 4 mangonel 10 berserk 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto va1
 
@@ -827,23 +849,25 @@ def vikings_expert
 defeat_score 80
 counter_skill 90
 starting_resources 200 300 300 250
+starting_units 3 peasant
 train_time 50
 research_time 70
 build_time 50
 gather_time 50
 unit_hp 120
-watchdog 360
+watchdog 600
 constant_attacks 1
 research 1
-workers 24
-expand 3
-attack_ratio 120
+workers 28
+expand 2
+attack_ratio 100
 label ve1
-get 6 peasant 6 militia 4 aoe_archer
+get 10 peasant
+get 8 militia 4 spearman
 attack
-get 10 peasant 14 militia 8 aoe_archer 4 viking_knight 6 berserk
+get 12 peasant 8 viking_knight 10 berserk 3 battering_ram
 attack
-get 12 peasant 20 militia 10 aoe_archer 6 viking_knight 4 mangonel 12 berserk 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto ve1
 
@@ -851,23 +875,25 @@ def vikings_nightmare
 defeat_score 200
 counter_skill 100
 starting_resources 300 400 400 300
+starting_units 4 peasant
 train_time 40
 research_time 60
 build_time 40
 gather_time 40
 unit_hp 140
-watchdog 240
+watchdog 540
 constant_attacks 1
 research 1
 workers 36
-expand 4
-attack_ratio 90
+expand 2
+attack_ratio 80
 label vn1
-get 6 peasant 6 militia 4 aoe_archer
+get 10 peasant
+get 8 militia 4 spearman
 attack
-get 10 peasant 14 militia 8 aoe_archer 4 viking_knight 6 berserk
+get 14 peasant 8 viking_knight 10 berserk 3 battering_ram
 attack
-get 16 peasant 40 militia 20 aoe_archer 12 viking_knight 8 mangonel 24 berserk 12 monk
+get 6 battering_ram 4 mangonel
 attack
 goto vn1
 
@@ -877,28 +903,31 @@ goto vn1
 def vietnamese_beginner
 defeat_score 10
 counter_skill 25
-workers 8
+workers 10
 constant_attacks 0
 research 1
-get 8 peasant 4 militia 12 aoe_archer
-get 10 peasant 6 militia 20 aoe_archer 2 mangonel
-get 10 peasant 8 vietnamese_knight 30 aoe_archer 4 rattan_archer
+get 8 peasant
+get 4 militia 8 aoe_archer
+get 10 peasant 8 vietnamese_knight 8 rattan_archer 2 battering_ram
 goto -1
 
 def vietnamese_intermediate
 defeat_score 20
 counter_skill 50
 starting_resources 100 200 200 200
-watchdog 600
+starting_units 2 peasant
+watchdog 720
 constant_attacks 1
 research 1
-workers 12
+workers 16
+attack_ratio 120
 label ni1
-get 6 peasant 2 militia 6 aoe_archer
+get 8 peasant
+get 4 militia 8 aoe_archer
 attack
-get 10 peasant 4 militia 16 aoe_archer 4 vietnamese_knight 4 rattan_archer
+get 12 peasant 8 vietnamese_knight 8 rattan_archer 3 battering_ram
 attack
-get 12 peasant 30 aoe_archer 8 vietnamese_knight 4 mangonel 10 rattan_archer 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto ni1
 
@@ -906,28 +935,24 @@ def vietnamese_advanced
 defeat_score 40
 counter_skill 75
 starting_resources 150 250 250 200
+starting_units 2 peasant
 train_time 50
 research_time 80
 build_time 50
 gather_time 50
-watchdog 480
+watchdog 600
 constant_attacks 1
 research 1
-workers 18
+workers 22
 expand 2
-attack_ratio 150
+attack_ratio 110
 label na1
-get 6 peasant 2 militia 6 aoe_archer
+get 8 peasant
+get 4 militia 8 aoe_archer
 attack
-get 10 peasant 4 militia 16 aoe_archer 4 vietnamese_knight 4 rattan_archer
+get 12 peasant 8 vietnamese_knight 8 rattan_archer 3 battering_ram
 attack
-goto_random na_main na_alt
-label na_main
-get 12 peasant 30 aoe_archer 8 vietnamese_knight 4 mangonel 10 rattan_archer 4 monk
-attack
-goto na1
-label na_alt
-get 12 peasant 20 vietnamese_knight 10 aoe_archer 4 mangonel 10 rattan_archer 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto na1
 
@@ -935,23 +960,25 @@ def vietnamese_expert
 defeat_score 80
 counter_skill 90
 starting_resources 200 300 300 250
+starting_units 3 peasant
 train_time 50
 research_time 70
 build_time 50
 gather_time 50
 unit_hp 120
-watchdog 360
+watchdog 600
 constant_attacks 1
 research 1
-workers 24
-expand 3
-attack_ratio 120
+workers 28
+expand 2
+attack_ratio 100
 label ne1
-get 6 peasant 2 militia 6 aoe_archer
+get 10 peasant
+get 4 militia 8 aoe_archer
 attack
-get 10 peasant 4 militia 16 aoe_archer 4 vietnamese_knight 4 rattan_archer
+get 12 peasant 8 vietnamese_knight 8 rattan_archer 3 battering_ram
 attack
-get 12 peasant 30 aoe_archer 8 vietnamese_knight 4 mangonel 10 rattan_archer 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto ne1
 
@@ -959,23 +986,25 @@ def vietnamese_nightmare
 defeat_score 200
 counter_skill 100
 starting_resources 300 400 400 300
+starting_units 4 peasant
 train_time 40
 research_time 60
 build_time 40
 gather_time 40
 unit_hp 140
-watchdog 240
+watchdog 540
 constant_attacks 1
 research 1
 workers 36
-expand 4
-attack_ratio 90
+expand 2
+attack_ratio 80
 label nn1
-get 6 peasant 2 militia 6 aoe_archer
+get 10 peasant
+get 4 militia 8 aoe_archer
 attack
-get 10 peasant 4 militia 16 aoe_archer 4 vietnamese_knight 4 rattan_archer
+get 14 peasant 8 vietnamese_knight 8 rattan_archer 3 battering_ram
 attack
-get 16 peasant 50 aoe_archer 16 vietnamese_knight 8 mangonel 20 rattan_archer 12 monk
+get 6 battering_ram 4 mangonel
 attack
 goto nn1
 
@@ -985,28 +1014,31 @@ goto nn1
 def portuguese_beginner
 defeat_score 10
 counter_skill 25
-workers 8
+workers 10
 constant_attacks 0
 research 1
-get 8 portuguese_villager 4 militia 8 aoe_archer
-get 10 portuguese_villager 6 militia 12 aoe_archer 4 portuguese_knight
-get 10 portuguese_villager 8 portuguese_knight 14 aoe_archer 2 mangonel 4 organ_gun
+get 8 portuguese_villager
+get 4 militia 6 aoe_archer
+get 10 portuguese_villager 6 portuguese_knight 8 organ_gun 2 battering_ram
 goto -1
 
 def portuguese_intermediate
 defeat_score 20
 counter_skill 50
 starting_resources 100 200 200 200
-watchdog 600
+starting_units 2 portuguese_villager
+watchdog 720
 constant_attacks 1
 research 1
-workers 12
+workers 16
+attack_ratio 120
 label pi1
-get 6 portuguese_villager 3 militia 4 aoe_archer
+get 8 portuguese_villager
+get 4 militia 6 aoe_archer
 attack
-get 10 portuguese_villager 6 militia 10 aoe_archer 6 portuguese_knight 4 organ_gun
+get 12 portuguese_villager 6 portuguese_knight 8 organ_gun 3 battering_ram
 attack
-get 12 portuguese_villager 12 aoe_archer 10 portuguese_knight 4 mangonel 12 organ_gun 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto pi1
 
@@ -1014,28 +1046,24 @@ def portuguese_advanced
 defeat_score 40
 counter_skill 75
 starting_resources 150 250 250 200
+starting_units 2 portuguese_villager
 train_time 50
 research_time 80
 build_time 50
 gather_time 50
-watchdog 480
+watchdog 600
 constant_attacks 1
 research 1
-workers 18
+workers 22
 expand 2
-attack_ratio 150
+attack_ratio 110
 label pa1
-get 6 portuguese_villager 3 militia 4 aoe_archer
+get 8 portuguese_villager
+get 4 militia 6 aoe_archer
 attack
-get 10 portuguese_villager 6 militia 10 aoe_archer 6 portuguese_knight 4 organ_gun
+get 12 portuguese_villager 6 portuguese_knight 8 organ_gun 3 battering_ram
 attack
-goto_random pa_main pa_alt
-label pa_main
-get 12 portuguese_villager 12 aoe_archer 10 portuguese_knight 4 mangonel 12 organ_gun 4 monk
-attack
-goto pa1
-label pa_alt
-get 12 portuguese_villager 30 aoe_archer 8 portuguese_knight 4 mangonel 10 organ_gun 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto pa1
 
@@ -1043,23 +1071,25 @@ def portuguese_expert
 defeat_score 80
 counter_skill 90
 starting_resources 200 300 300 250
+starting_units 3 portuguese_villager
 train_time 50
 research_time 70
 build_time 50
 gather_time 50
 unit_hp 120
-watchdog 360
+watchdog 600
 constant_attacks 1
 research 1
-workers 24
-expand 3
-attack_ratio 120
+workers 28
+expand 2
+attack_ratio 100
 label pe1
-get 6 portuguese_villager 3 militia 4 aoe_archer
+get 10 portuguese_villager
+get 4 militia 6 aoe_archer
 attack
-get 10 portuguese_villager 6 militia 10 aoe_archer 6 portuguese_knight 4 organ_gun
+get 12 portuguese_villager 6 portuguese_knight 8 organ_gun 3 battering_ram
 attack
-get 12 portuguese_villager 12 aoe_archer 10 portuguese_knight 4 mangonel 12 organ_gun 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto pe1
 
@@ -1067,23 +1097,25 @@ def portuguese_nightmare
 defeat_score 200
 counter_skill 100
 starting_resources 300 400 400 300
+starting_units 4 portuguese_villager
 train_time 40
 research_time 60
 build_time 40
 gather_time 40
 unit_hp 140
-watchdog 240
+watchdog 540
 constant_attacks 1
 research 1
 workers 36
-expand 4
-attack_ratio 90
+expand 2
+attack_ratio 80
 label pn1
-get 6 portuguese_villager 3 militia 4 aoe_archer
+get 10 portuguese_villager
+get 4 militia 6 aoe_archer
 attack
-get 10 portuguese_villager 6 militia 10 aoe_archer 6 portuguese_knight 4 organ_gun
+get 14 portuguese_villager 6 portuguese_knight 8 organ_gun 3 battering_ram
 attack
-get 16 portuguese_villager 24 aoe_archer 20 portuguese_knight 8 mangonel 24 organ_gun 12 monk
+get 6 battering_ram 4 mangonel
 attack
 goto pn1
 
@@ -1093,88 +1125,110 @@ goto pn1
 def aztecs_beginner
 defeat_score 10
 counter_skill 25
-workers 8
+workers 10
 constant_attacks 0
 research 1
-get 8 aztec_villager 4 militia 4 aztec_eagle_scout 6 aoe_archer
-get 10 aztec_villager 6 militia 8 eagle_warrior 10 aoe_archer 4 jaguar_warrior
-get 10 aztec_villager 10 eagle_warrior 12 aoe_archer 2 mangonel 6 jaguar_warrior 4 monk
+get 8 aztec_villager
+get 4 militia 4 aztec_eagle_scout 4 aoe_archer
+get 10 aztec_villager 10 eagle_warrior 8 jaguar_warrior 2 battering_ram
 goto -1
 
 def aztecs_intermediate
 defeat_score 20
 counter_skill 50
-starting_resources 150 200 200 200
-watchdog 600
-constant_attacks 1
-research 1
-workers 12
-label az1
-get 6 aztec_villager 3 militia 4 aztec_eagle_scout 4 aoe_archer
-attack
-get 10 aztec_villager 6 militia 8 eagle_warrior 10 aoe_archer 4 jaguar_warrior
-attack
-get 12 aztec_villager 12 eagle_warrior 12 aoe_archer 4 mangonel 8 jaguar_warrior 4 monk
-attack
-goto az1
-
-def aztecs_advanced
-defeat_score 40
-counter_skill 70
-starting_resources 150 200 200 200
-watchdog 480
+starting_resources 100 200 200 200
+starting_units 2 aztec_villager
+watchdog 720
 constant_attacks 1
 research 1
 workers 16
+attack_ratio 120
+label zi1
+get 8 aztec_villager
+get 4 militia 4 aztec_eagle_scout 4 aoe_archer
+attack
+get 12 aztec_villager 10 eagle_warrior 8 jaguar_warrior 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto zi1
+
+def aztecs_advanced
+defeat_score 40
+counter_skill 75
+starting_resources 150 250 250 200
+starting_units 2 aztec_villager
+train_time 50
+research_time 80
+build_time 50
+gather_time 50
+watchdog 600
+constant_attacks 1
+research 1
+workers 22
 expand 2
-label az2
-get 6 aztec_villager 3 militia 4 aztec_eagle_scout 4 aoe_archer
+attack_ratio 110
+label za1
+get 8 aztec_villager
+get 4 militia 4 aztec_eagle_scout 4 aoe_archer
 attack
-get 10 aztec_villager 6 militia 10 eagle_warrior 10 aoe_archer 6 jaguar_warrior
+get 12 aztec_villager 10 eagle_warrior 8 jaguar_warrior 3 battering_ram
 attack
-get 12 aztec_villager 14 eagle_warrior 12 aoe_archer 4 mangonel 10 jaguar_warrior 6 monk
+get 4 battering_ram 2 mangonel
 attack
-get 12 aztec_villager 20 eagle_warrior 16 aoe_archer 6 mangonel 12 jaguar_warrior 6 monk
-attack
-goto az2
+goto za1
 
 def aztecs_expert
 defeat_score 80
-counter_skill 85
-starting_resources 150 200 200 200
-watchdog 360
+counter_skill 90
+starting_resources 200 300 300 250
+starting_units 3 aztec_villager
+train_time 50
+research_time 70
+build_time 50
+gather_time 50
+unit_hp 120
+watchdog 600
 constant_attacks 1
 research 1
-workers 24
-expand 3
-attack_ratio 80
-label az3
-get 6 aztec_villager 3 militia 4 aztec_eagle_scout 4 aoe_archer
+workers 28
+expand 2
+attack_ratio 100
+label ze1
+get 10 aztec_villager
+get 4 militia 4 aztec_eagle_scout 4 aoe_archer
 attack
-get 10 aztec_villager 6 militia 10 eagle_warrior 10 aoe_archer 6 jaguar_warrior
+get 12 aztec_villager 10 eagle_warrior 8 jaguar_warrior 3 battering_ram
 attack
-get 12 aztec_villager 16 eagle_warrior 14 aoe_archer 6 mangonel 12 jaguar_warrior 6 monk
+get 4 battering_ram 2 mangonel
 attack
-goto az3
+goto ze1
 
 def aztecs_nightmare
 defeat_score 200
-counter_skill 95
-starting_resources 150 200 200 200
-watchdog 240
+counter_skill 100
+starting_resources 300 400 400 300
+starting_units 4 aztec_villager
+train_time 40
+research_time 60
+build_time 40
+gather_time 40
+unit_hp 140
+watchdog 540
 constant_attacks 1
 research 1
 workers 36
-expand 4
-attack_ratio 90
-label az4
-get 6 aztec_villager 3 militia 4 aztec_eagle_scout 4 aoe_archer
+expand 2
+attack_ratio 80
+label zn1
+get 10 aztec_villager
+get 4 militia 4 aztec_eagle_scout 4 aoe_archer
 attack
-get 10 aztec_villager 6 militia 10 eagle_warrior 10 aoe_archer 6 jaguar_warrior
+get 14 aztec_villager 10 eagle_warrior 8 jaguar_warrior 3 battering_ram
 attack
-get 16 aztec_villager 24 eagle_warrior 20 aoe_archer 8 mangonel 16 jaguar_warrior 12 monk
+get 6 battering_ram 4 mangonel
 attack
-goto az4
+goto zn1
 
 
 ; ======================== CELTS (woad_raider / infantry-siege) ========================
@@ -1182,28 +1236,31 @@ goto az4
 def celts_beginner
 defeat_score 10
 counter_skill 25
-workers 8
+workers 10
 constant_attacks 0
 research 1
-get 8 peasant 8 militia 6 aoe_archer
-get 10 peasant 14 militia 12 aoe_archer 2 mangonel
-get 10 peasant 18 militia 6 celtic_knight 16 aoe_archer 4 woad_raider
+get 8 peasant
+get 8 militia 4 spearman
+get 10 peasant 8 celtic_knight 10 woad_raider 2 battering_ram
 goto -1
 
 def celts_intermediate
 defeat_score 20
 counter_skill 50
 starting_resources 100 200 200 200
-watchdog 600
+starting_units 2 peasant
+watchdog 720
 constant_attacks 1
 research 1
-workers 12
+workers 16
+attack_ratio 120
 label ki1
-get 6 peasant 6 militia 4 aoe_archer
+get 8 peasant
+get 8 militia 4 spearman
 attack
-get 10 peasant 14 militia 8 aoe_archer 4 celtic_knight 6 woad_raider
+get 12 peasant 8 celtic_knight 10 woad_raider 3 battering_ram
 attack
-get 12 peasant 20 militia 10 aoe_archer 6 celtic_knight 4 mangonel 12 woad_raider 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto ki1
 
@@ -1211,28 +1268,24 @@ def celts_advanced
 defeat_score 40
 counter_skill 75
 starting_resources 150 250 250 200
+starting_units 2 peasant
 train_time 50
 research_time 80
 build_time 50
 gather_time 50
-watchdog 480
+watchdog 600
 constant_attacks 1
 research 1
-workers 18
+workers 22
 expand 2
-attack_ratio 150
+attack_ratio 110
 label ka1
-get 6 peasant 6 militia 4 aoe_archer
+get 8 peasant
+get 8 militia 4 spearman
 attack
-get 10 peasant 14 militia 8 aoe_archer 4 celtic_knight 6 woad_raider
+get 12 peasant 8 celtic_knight 10 woad_raider 3 battering_ram
 attack
-goto_random ka_main ka_alt
-label ka_main
-get 12 peasant 20 militia 10 aoe_archer 6 celtic_knight 4 mangonel 12 woad_raider 4 monk
-attack
-goto ka1
-label ka_alt
-get 12 peasant 30 aoe_archer 8 celtic_knight 4 mangonel 10 woad_raider 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto ka1
 
@@ -1240,23 +1293,25 @@ def celts_expert
 defeat_score 80
 counter_skill 90
 starting_resources 200 300 300 250
+starting_units 3 peasant
 train_time 50
 research_time 70
 build_time 50
 gather_time 50
 unit_hp 120
-watchdog 360
+watchdog 600
 constant_attacks 1
 research 1
-workers 24
-expand 3
-attack_ratio 120
+workers 28
+expand 2
+attack_ratio 100
 label ke1
-get 6 peasant 6 militia 4 aoe_archer
+get 10 peasant
+get 8 militia 4 spearman
 attack
-get 10 peasant 14 militia 8 aoe_archer 4 celtic_knight 6 woad_raider
+get 12 peasant 8 celtic_knight 10 woad_raider 3 battering_ram
 attack
-get 12 peasant 20 militia 10 aoe_archer 6 celtic_knight 4 mangonel 12 woad_raider 4 monk
+get 4 battering_ram 2 mangonel
 attack
 goto ke1
 
@@ -1264,22 +1319,24 @@ def celts_nightmare
 defeat_score 200
 counter_skill 100
 starting_resources 300 400 400 300
+starting_units 4 peasant
 train_time 40
 research_time 60
 build_time 40
 gather_time 40
 unit_hp 140
-watchdog 240
+watchdog 540
 constant_attacks 1
 research 1
 workers 36
-expand 4
-attack_ratio 90
+expand 2
+attack_ratio 80
 label kn1
-get 6 peasant 6 militia 4 aoe_archer
+get 10 peasant
+get 8 militia 4 spearman
 attack
-get 10 peasant 14 militia 8 aoe_archer 4 celtic_knight 6 woad_raider
+get 14 peasant 8 celtic_knight 10 woad_raider 3 battering_ram
 attack
-get 16 peasant 40 militia 20 aoe_archer 12 celtic_knight 8 mangonel 24 woad_raider 12 monk
+get 6 battering_ram 4 mangonel
 attack
 goto kn1

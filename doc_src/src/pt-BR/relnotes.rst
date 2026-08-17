@@ -4,6 +4,39 @@ Notas de lançamento
 
 .. contents::
 
+1.4.7.3
+-------
+
+**Desempenho: contagens e memo do turno da IA**
+
+- **Problema**: com muitos computadores, ``Computer.play`` varría ``nb`` / ``future_nb`` e recalculava prédios/reserva de madeira da linha get várias vezes por turno.
+- **Mudança**: índice de tipos por turno da IA; ``check_type`` mais barato; memo das consultas do plano (makers pendentes, madeira, etc.), invalidado após treino/construção. Sem mudar o combate/percepção.
+- **Alcance**: computadores em todos os mods.
+
+**aoe2: IA por idade — treina e ataca**
+
+- **Problema**: ``mods/aoe2/ai.txt`` misturava eras numa só linha get; a poupança de comida adiava o exército e o watchdog saltava gets incompletos.
+- **Mudança**: ondas Dark / Feudal / Castle; watchdog não corta a eco da Idade das Trevas; exército feudal da linha atual não fica preso pelo castelo seguinte; após o castelo, reserva madeira para a oficina de cerco sem congelar fazendas. Scripts e dificuldades atualizados.
+- **Nota**: a subida de idade pode partilhar o motor, mas a poupança/ondas do aoe2 seguem as próprias rules — outros mods com eras não precisam do mesmo comportamento.
+
+**Correção: res padrão construía quartel e não treinava**
+
+- **Problema**: a lógica de «maker não pago» do aoe2 tratava makers unidade→unidade (``darkarcher``) e estaleiros em mapa terrestre como prédios a poupar, adiando infantaria/arqueiros.
+- **Mudança**: só prédios reais; em mapas sem água, ignora unidades/docas aquáticas. O res padrão treina e ataca com o quartel pronto; a reserva de madeira da oficina no aoe2 mantém-se.
+
+**Correção: computadores presos na get feudal — não chegam a castelo / aríetes**
+
+- **Problema**: o plano mantém de propósito o exército feudal atual sem clicar Idade dos Castelos. Se as tropas morrem na base inimiga, o get nunca completa. Ao mesmo tempo ``_watchdog_should_wait`` tratava a madeira da oficina seguinte e comida/madeira de treino como «ainda a progredir», reiniciando o temporizador, pelo que o watchdog nunca saltava a get feudal e a onda de castelo (ferreiro, Idade dos Castelos, oficina, aríetes) não começava.
+- **Mudança**: quando a get atual já não precisa de uma idade mas uma onda posterior ainda precisa de castelo, o temporizador só espera prédios de produção da linha atual por pagar (quartel / campo de tiro, etc.) — não a madeira da oficina nem o treino. Gets de cerco continuam a pausar corretamente com oficina pronta e madeira de aríete em falta.
+- **Alcance**: computadores em todos os mods. Qualquer script aoe2 «exército feudal → tropas/cerco de castelo» beneficia.
+
+**Correção: computadores não levam ovelhas próprias ao centro da cidade antes de abater**
+
+- **Problema**: muitos mods (incluindo aoe2) deixam ``can_herd 0`` e usam ``claimable``. A IA não enviava ovelhas próprias como unidades controláveis ao depósito de comida e metia-as em ``auto_explore`` / ondas de ataque, pelo que vagueavam ou morriam no campo em vez de deixar ``food_livestock`` no centro da cidade.
+- **Mudança**: gado próprio (``herdable`` / ``claimable``) faz ``go`` sozinho para um prédio que guarda comida; aldeões só abatem lá e depois recolhem. Ovelhas claimable neutras: primeiro ``go`` para reivindicar. Ficam de fora de exploradores e lutadores idle. Não exige ``can_herd``; o caminho de pastoreio mantém-se.
+- **Alcance**: computadores em todos os mods; ovelhas aoe2 e pastagens mongóis beneficiam.
+
+
 1.4.7.2
 -------
 

@@ -33,10 +33,27 @@ class ResourcesMixin:
                 self.storage_bonus[res] = max(self.storage_bonus[res], bonus)
 
     def _update_allied_upgrades(self):
+        from ..world_build_rules import apply_unit_line_upgrade
+        from ..worldupgrade import is_an_upgrade
+
         for p in self.allied:
             for upgrade_name in p.upgrades:
+                cls = rules.unit_class(upgrade_name)
+                if cls is None:
+                    continue
                 while self.level(upgrade_name) < p.level(upgrade_name):
-                    rules.unit_class(upgrade_name).upgrade_player(self)
+                    before = self.level(upgrade_name)
+                    if is_an_upgrade(cls):
+                        cls.upgrade_player(self)
+                    elif int(getattr(cls, "line_upgrade", 0) or 0):
+                        # man_at_arms etc. are soldier types stored in
+                        # player.upgrades after research; they have no
+                        # upgrade_player.
+                        apply_unit_line_upgrade(self, upgrade_name)
+                    else:
+                        break
+                    if self.level(upgrade_name) <= before:
+                        break
 
     def _update_menace(self):
         from ..worldunit import Soldier

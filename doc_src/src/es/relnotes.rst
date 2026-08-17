@@ -4,6 +4,39 @@ Notas de la versión
 
 .. contents::
 
+1.4.7.3
+-------
+
+**Rendimiento: conteos y memo del turno de la IA**
+
+- **Problema**: con muchos ordenadores, ``Computer.play`` recorría una y otra vez ``nb`` / ``future_nb`` y recalculaba edificios/reserva de madera de la línea get varias veces por turno.
+- **Cambio**: índice de tipos por turno de IA; ``check_type`` más barato; memo de las consultas del plan (makers pendientes, madera, etc.), invalidado tras entrenar/construir. Sin cambiar combate ni percepción.
+- **Alcance**: ordenadores en todos los mods.
+
+**aoe2: IA por edades — entrena y ataca**
+
+- **Problema**: ``mods/aoe2/ai.txt`` mezclaba edades en una sola get; el ahorro de comida aplazaba el ejército y el watchdog saltaba gets incompletos.
+- **Cambio**: oleadas Dark / Feudal / Castle; el watchdog no corta la eco de la Edad Oscura; el ejército feudal de la línea actual no queda retenido por el castillo siguiente; tras el castillo, reserva madera para el taller de asedio sin congelar granjas. Scripts y dificultades actualizados.
+- **Nota**: el avance de edad puede compartir el motor, pero el ahorro/oleadas de aoe2 siguen sus propias rules — otros mods con edades no tienen que comportarse igual.
+
+**Corrección: el res base construía cuartel y no entrenaba**
+
+- **Problema**: la lógica de «maker sin pagar» de aoe2 trataba makers unidad→unidad (``darkarcher``) y astilleros en mapas terrestres como edificios a ahorrar, aplazando peones/arqueros.
+- **Cambio**: solo edificios reales; en mapas sin agua, ignora unidades/muelles acuáticos. El res base entrena y ataca con el cuartel listo; la reserva de madera del taller en aoe2 se mantiene.
+
+**Corrección: ordenadores atrapados en la get feudal — no llegan a castillo / arietes**
+
+- **Problema**: el plan mantiene a propósito el ejército feudal actual sin pulsar Edad de los Castillos. Si las tropas mueren en la base enemiga, el get nunca se completa. A la vez ``_watchdog_should_wait`` trataba la madera del taller posterior y la comida/madera de entrenamiento como «aún progresando», reiniciando el temporizador, de modo que el watchdog no saltaba la get feudal y no arrancaba la oleada de castillo (herrería, Edad de los Castillos, taller, arietes).
+- **Cambio**: si la get actual ya no necesita una edad pero una oleada posterior sí necesita castillo, el temporizador solo espera edificios de producción de la línea actual sin pagar (cuartel / campo de tiro, etc.), no la madera del taller ni el entrenamiento. Las gets de asedio siguen pausando correctamente con el taller listo y madera de ariete pendiente.
+- **Alcance**: ordenadores en todos los mods. Cualquier script aoe2 «ejército feudal → tropas/asedio de castillo» se beneficia.
+
+**Corrección: los ordenadores no llevan las ovejas propias al centro urbano antes de matarlas**
+
+- **Problema**: muchos mods (incluido aoe2) dejan ``can_herd 0`` y usan ``claimable``. La IA no enviaba ovejas propias como unidades controlables al depósito de comida, y las metía en ``auto_explore`` / oleadas de ataque, así que vagaban o morían en el campo en lugar de dejar ``food_livestock`` en el centro urbano.
+- **Cambio**: el ganado propio (``herdable`` / ``claimable``) hace ``go`` solo al edificio que guarda comida; los aldeanos solo matan allí y luego recolectan. Ovejas neutrales claimable: primero ``go`` para reclamar. Quedan fuera de exploradores y luchadores idle. No exige ``can_herd``; el pastoreo por seguimiento sigue disponible.
+- **Alcance**: ordenadores en todos los mods; ovejas aoe2 y pastos mongoles se benefician.
+
+
 1.4.7.2
 -------
 

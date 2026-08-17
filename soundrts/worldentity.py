@@ -58,6 +58,9 @@ class Entity:
     hp = 0
 
     is_a_building_land = False
+    is_deposit = False
+    is_corpse = False
+    _is_skill_combat_proxy = False
 
     # D-Phase 2: Entity 上提 class-level defaults, 让所有非 Creature 实体
     # (Resource/Item/Corpse 等) 也能直接 LOAD_ATTR 走类属性, 替代 hot path 上

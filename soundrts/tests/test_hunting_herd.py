@@ -474,3 +474,160 @@ def test_computer_ai_maintain_herding_leads_and_slaughters():
     sheep.place = field
     assert ai._maintain_worker_herding(worker) is True
     assert worker.orders[0][0] == ["go", "base"]
+
+
+def test_owned_livestock_walks_to_food_dropoff_without_can_herd():
+    """Claimed sheep are ordered to go to the TC themselves (no can_herd)."""
+    import sys
+    import warnings
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        old_argv = sys.argv
+        sys.argv = ["pytest"]
+        try:
+            from soundrts.worldplayercomputer import Computer
+        finally:
+            sys.argv = old_argv
+
+    base = types.SimpleNamespace(id="base")
+    field = types.SimpleNamespace(id="field")
+    sheep_orders = []
+    sheep = types.SimpleNamespace(
+        id="sheep1",
+        hp=4,
+        place=field,
+        is_huntable=1,
+        herdable=1,
+        claimable=1,
+        is_inside=False,
+        orders=[],
+        take_order=lambda cmd, imperative=False, forget_previous=False: sheep_orders.append(
+            (cmd, forget_previous)
+        ),
+    )
+    townhall = types.SimpleNamespace(
+        is_a_building=True,
+        place=base,
+        storable_resource_types=["resource1", "resource2", "resource3"],
+    )
+    ai = Computer.__new__(Computer)
+    ai.units = [townhall, sheep]
+    ai._maintain_owned_livestock()
+    assert sheep_orders == [(["go", "base"], True)]
+
+    sheep_orders.clear()
+    sheep.orders = [types.SimpleNamespace(keyword="go", target=base)]
+    ai._maintain_owned_livestock()
+    assert sheep_orders == []
+
+    sheep.orders = []
+    sheep.place = base
+    ai._maintain_owned_livestock()
+    assert sheep_orders == []
+
+    sheep.place = field
+    sheep.orders = [types.SimpleNamespace(keyword="auto_explore", target=None)]
+    ai._maintain_owned_livestock()
+    assert sheep_orders[0] == (["stop"], False)
+    assert sheep_orders[1] == (["go", "base"], True)
+
+
+def test_slaughter_only_owned_livestock_at_dropoff():
+    """Do not field-kill owned sheep; slaughter when they reach the TC."""
+    import sys
+    import warnings
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        old_argv = sys.argv
+        sys.argv = ["pytest"]
+        try:
+            from soundrts.worldplayercomputer import Computer
+        finally:
+            sys.argv = old_argv
+
+    base = types.SimpleNamespace(
+        id="base",
+        shortest_path_distance_to=lambda other: 0,
+    )
+    field = types.SimpleNamespace(
+        id="field",
+        shortest_path_distance_to=lambda other: 1,
+    )
+    sheep = types.SimpleNamespace(
+        id="sheep1",
+        hp=4,
+        place=field,
+        player=None,
+        is_huntable=1,
+        herdable=1,
+        claimable=1,
+    )
+    deer = types.SimpleNamespace(
+        id="deer1",
+        hp=5,
+        place=field,
+        player=types.SimpleNamespace(neutral=True),
+        is_huntable=1,
+        herdable=0,
+        claimable=0,
+    )
+    worker = types.SimpleNamespace(
+        place=base,
+        can_gather_deposit=["food_livestock", "food_carcass"],
+        _basic_skills={"attack", "gather", "go"},
+        is_inside=False,
+    )
+    townhall = types.SimpleNamespace(
+        is_a_building=True,
+        place=base,
+        storable_resource_types=["resource1", "resource2", "resource3"],
+    )
+    ai = Computer.__new__(Computer)
+    sheep.player = ai
+    ai.units = [townhall, sheep]
+    ai._known_huntable_animals = lambda: [sheep, deer]
+    ai.nearest_warehouse = (
+        lambda place, resource_type, include_building_sites=False: townhall
+    )
+    ai._huntable_food_deposit_types = lambda: {"food_livestock", "food_carcass"}
+    ai.square_is_dangerous = lambda place: False
+    ai._pick_nearest_reachable = lambda origin, cands: cands[0] if cands else None
+    ai._play_memo = None
+    ai._worker_can_herd = lambda w: False
+
+    assert ai._choose_livestock_slaughter_target(worker) is None
+    assert ai._choose_hunt_target(worker) is deer
+
+    sheep.place = base
+    assert ai._choose_livestock_slaughter_target(worker) is sheep
+    assert ai._choose_hunt_target(worker) is sheep
+
+
+def test_idle_fighters_exclude_livestock():
+    import sys
+    import warnings
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        old_argv = sys.argv
+        sys.argv = ["pytest"]
+        try:
+            from soundrts.worldplayercomputer import Computer
+        finally:
+            sys.argv = old_argv
+
+    ai = Computer.__new__(Computer)
+    sheep = types.SimpleNamespace(
+        is_huntable=1, herdable=1, claimable=1
+    )
+    fighter = types.SimpleNamespace(
+        is_huntable=0, herdable=0, claimable=0
+    )
+    assert ai._is_livestock_unit(sheep)
+    assert not ai._is_livestock_unit(fighter)
+    # Mirror ``_idle_fighters`` livestock filter.
+    pool = [sheep, fighter]
+    idle = [u for u in pool if not ai._is_livestock_unit(u)]
+    assert idle == [fighter]

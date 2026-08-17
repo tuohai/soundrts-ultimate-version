@@ -1,6 +1,7 @@
 """玩家视野、感知和记忆系统模块"""
 
 import copy
+import heapq
 import os
 from typing import Union, List
 
@@ -23,6 +24,99 @@ if os.environ.get("SOUNDRTS_NO_CYTHON", "").strip() not in ("1", "true", "True")
     except ImportError:
         _fast = None
 
+_FAST_SCAN_MEMORIES = _fast is not None and hasattr(
+    _fast, "scan_memories_for_forget"
+)
+_HAS_FAST_MENACE = _fast is not None and hasattr(
+    _fast, "build_enemy_place_menace"
+)
+_HAS_FAST_MENACE_BY_PLACE = _fast is not None and hasattr(
+    _fast, "add_memory_enemy_menace_by_place"
+)
+_HAS_FAST_FILTER_INSIDE = _fast is not None and hasattr(
+    _fast, "filter_inside_units"
+)
+_HAS_FAST_COLLECT_CAP = _fast is not None and hasattr(
+    _fast, "collect_partial_static_cap"
+)
+
+
+def _static_obj_id(o):
+    i = o.id
+    return 0 if i is None else i
+
+
+def split_static_visibility_cap(objects_to_check, cap=100):
+    """Prefer deposits/building-land for the Euclidean quota; rest → fog memory.
+
+    Overflow still goes to ``_ensure_static_fog_memory`` (session 7). Does not
+    ``isinstance`` or fully sort the grass table.
+    """
+    if len(objects_to_check) <= cap:
+        return objects_to_check, set()
+    important = []
+    rest = []
+    for o in objects_to_check:
+        if o.is_a_building_land or o.is_deposit:
+            important.append(o)
+        else:
+            i = o.id
+            rest.append((0 if i is None else i, id(o), o))
+    n_imp = len(important)
+    if n_imp >= cap:
+        important.sort(key=_static_obj_id)
+        capped = important[:cap]
+    else:
+        need = cap - n_imp
+        if need < len(rest):
+            extra = heapq.nsmallest(need, rest)
+            capped = important + [t[2] for t in extra]
+        else:
+            capped = important + [t[2] for t in rest]
+    visibility_set = set(capped)
+    return visibility_set, objects_to_check - visibility_set
+
+
+def collect_partial_static_cap(squares, cap=100):
+    """One pass over square.objects: same quota as ``split_static_visibility_cap``.
+
+    Avoids building an intermediate set of every grass tile, then partitioning it.
+    Overflow still goes to ``_ensure_static_fog_memory`` (session 7).
+    """
+    if _HAS_FAST_COLLECT_CAP:
+        return _fast.collect_partial_static_cap(squares, cap)
+    important = []
+    rest = []
+    all_objs = set()
+    for s in squares:
+        objs = s.objects
+        if not objs:
+            continue
+        for o in objs:
+            if o.player is not None or o in all_objs:
+                continue
+            all_objs.add(o)
+            if o.is_a_building_land or o.is_deposit:
+                important.append(o)
+            else:
+                i = o.id
+                rest.append((0 if i is None else i, id(o), o))
+    if len(all_objs) <= cap:
+        return all_objs, set()
+    n_imp = len(important)
+    if n_imp >= cap:
+        important.sort(key=_static_obj_id)
+        capped = important[:cap]
+    else:
+        need = cap - n_imp
+        if need < len(rest):
+            extra = heapq.nsmallest(need, rest)
+            capped = important + [t[2] for t in extra]
+        else:
+            capped = important + [t[2] for t in rest]
+    visibility_set = set(capped)
+    return visibility_set, all_objs - visibility_set
+
 try:
     from soundrts.world.world_ecs import ecs_enabled as _ecs_enabled_flag
 except ImportError:
@@ -35,10 +129,13 @@ except ImportError:
 class PerceptionMixin:
     """视野、感知和记忆相关的方法混入类"""
 
+    _relation_cache = {}
+
     def _open_container_passenger_visible(self, unit):
-        if not getattr(unit, "is_inside", False):
+        if not unit.is_inside:
             return False
-        container = getattr(getattr(unit, "place", None), "container", None)
+        place = unit.place
+        container = getattr(place, "container", None) if place is not None else None
         if not is_open_container(container):
             return False
         observed = self.observed_squares
@@ -49,7 +146,7 @@ class PerceptionMixin:
 
     def _exit_blocker_visible(self, unit):
         # Class default blocked_exit=None — skip observed-square walk for normal units.
-        if getattr(unit, "blocked_exit", None) is None:
+        if unit.blocked_exit is None:
             return False
         return exit_blocker_visible_from_observed_squares(unit, self.observed_squares)
 
@@ -127,7 +224,7 @@ class PerceptionMixin:
             enemy_inside = self._enemy_inside_units
         else:
             enemy_units_set = set(self._enemy_units_cache)
-            if _fast is not None and hasattr(_fast, "filter_inside_units"):
+            if _HAS_FAST_FILTER_INSIDE:
                 enemy_inside = tuple(_fast.filter_inside_units(enemy_units_set))
             else:
                 enemy_inside = tuple(
@@ -343,14 +440,14 @@ class PerceptionMixin:
             return False
 
         # 墙/门等出口阻挡物：站在出口任一侧或相邻格观察时，应能看到阻挡物本身
-        if getattr(u, "blocked_exit", None) is not None and self._exit_blocker_visible(u):
+        if u.blocked_exit is not None and self._exit_blocker_visible(u):
             return True
 
         x = u.x
         y = u.y
         for avp in self.allied_vision:
             for avu in avp._potential_neighbors(x, y):
-                if getattr(avu, "is_inside", False):
+                if avu.is_inside:
                     continue
                 sr = avu.sight_range
                 if not sr:
@@ -428,22 +525,6 @@ class PerceptionMixin:
             if not p.has_been_defeated:
                 return False
         return True
-
-    def _has_reveal_enemies(self):
-        """AoE2 Spies: see all hostile units/buildings without LOS."""
-        if getattr(self, "reveal_enemies", False):
-            return True
-        from ..definitions import rules
-
-        for name in getattr(self, "upgrades", ()) or ():
-            try:
-                tech = rules.unit_class(name)
-            except Exception:
-                tech = None
-            if tech is not None and int(getattr(tech, "reveal_enemies", 0) or 0):
-                self.reveal_enemies = True
-                return True
-        return False
 
     def _update_perception(self):
         """更新玩家的感知.
@@ -679,37 +760,10 @@ class PerceptionMixin:
             # 昂贵的欧氏可见性检查仍可按配额截断；配额外的静态对象必须直接
             # memorize，否则战云格会只剩出口（出口另有 _memorize_unseen_exit_pairs）
             # 而草地/矿点/树林消失，直到单位到场才重新显示。
-            objects_to_check = set()
-            for s in partially_observed_squares:
-                objs = s.objects
-                if objs:
-                    for o in objs:
-                        if o.player is None:
-                            objects_to_check.add(o)
-
-            if objects_to_check:
-                _BULK_STATIC_CAP = 100
-                visibility_set = objects_to_check
-                overflow_to_memory = set()
-                if len(objects_to_check) > _BULK_STATIC_CAP:
-                    # 先装重要目标，再补其余；避免对整表 sort（曾 ~2 万次/局）
-                    capped = []
-                    for o in objects_to_check:
-                        if isinstance(o, Deposit) or o.is_a_building_land:
-                            capped.append(o)
-                    if len(capped) > _BULK_STATIC_CAP:
-                        capped.sort(key=lambda o: o.id if o.id is not None else 0)
-                        capped = capped[:_BULK_STATIC_CAP]
-                    elif len(capped) < _BULK_STATIC_CAP:
-                        rest = [
-                            o
-                            for o in objects_to_check
-                            if not (isinstance(o, Deposit) or o.is_a_building_land)
-                        ]
-                        rest.sort(key=lambda o: o.id if o.id is not None else 0)
-                        capped.extend(rest[: _BULK_STATIC_CAP - len(capped)])
-                    visibility_set = set(capped)
-                    overflow_to_memory = objects_to_check - visibility_set
+            if partially_observed_squares:
+                visibility_set, overflow_to_memory = collect_partial_static_cap(
+                    partially_observed_squares
+                )
                 visible_objects, memory_objects = self._bulk_visibility_check(
                     visibility_set
                 )
@@ -790,63 +844,52 @@ class PerceptionMixin:
             self._enemy_players_batch_bucket = ep_bucket
         enemy_players = self._enemy_players_batch
 
-        # AoE2 Spies: reveal all hostile units/buildings (not full-map cheatmode).
-        if self._has_reveal_enemies():
+        ecs = getattr(self.world, "_ecs", None)
+        use_batch = (
+            ecs is not None
+            and _ecs_enabled_flag()
+            and hasattr(ecs, "batch_see_enemies")
+        )
+
+        vision_places = self.observed_squares | partially_observed_squares
+
+        if use_batch:
+            flat = []
             for p in enemy_players:
-                if getattr(p, "neutral", False):
+                flat.extend(p.units)
+            enemy_units = ecs.batch_see_enemies(self, flat, A, vision_places)
+            for u in flat:
+                if u in enemy_units:
                     continue
-                for u in p.units:
-                    if u.place is not None:
-                        enemy_units.add(u)
-                        pl = u.place
-                        if pl is not None:
-                            self.observed_squares.add(pl)
-            self.perception.update(enemy_units)
+                pl = u.place
+                if pl is not None and pl.is_inside_place and self._open_container_passenger_visible(u):
+                    enemy_units.add(u)
         else:
-            ecs = getattr(self.world, "_ecs", None)
-            use_batch = (
-                ecs is not None
-                and _ecs_enabled_flag()
-                and hasattr(ecs, "batch_see_enemies")
-            )
-
-            vision_places = self.observed_squares | partially_observed_squares
-
-            if use_batch:
-                flat = []
-                for p in enemy_players:
-                    flat.extend(p.units)
-                enemy_units = ecs.batch_see_enemies(self, flat, A, vision_places)
-                for u in flat:
-                    if u in enemy_units:
-                        continue
-                    pl = u.place
-                    if pl is not None and pl.is_inside_place and self._open_container_passenger_visible(u):
+            for p in enemy_players:
+                for u in p.units:
+                    if self._is_seeing(u):
                         enemy_units.add(u)
-            else:
-                for p in enemy_players:
-                    for u in p.units:
-                        if self._is_seeing(u):
+                    else:
+                        pl = u.place
+                        if pl is not None and pl.is_inside_place and self._open_container_passenger_visible(u):
                             enemy_units.add(u)
-                        else:
-                            pl = u.place
-                            if pl is not None and pl.is_inside_place and self._open_container_passenger_visible(u):
-                                enemy_units.add(u)
 
-            self.perception.update(enemy_units)
+        self.perception.update(enemy_units)
         
-        # 移除位于建筑内部的单位 - 使用集合推导，按ID排序确保顺序
-        # Round 4: Entity.place 默认 None, _Space.is_inside_place 默认 False;
-        # 改用 obj.place is not None and obj.place.is_inside_place 替代嵌套 getattr.
-        self_units = self.units
+        # Round 4: Entity.place 默认 None, _Space.is_inside_place 默认 False.
+        # Skip player-less statics (grass); own units stay in perception.
+        self_units = set(self.units)
         inside_units = set()
         for o in self.perception:
+            if o.player is None:
+                continue
             p = o.place
             if p is not None and p.is_inside_place and o not in self_units:
                 if self._open_container_passenger_visible(o):
                     continue
                 inside_units.add(o)
-        self.perception -= inside_units
+        if inside_units:
+            self.perception -= inside_units
 
     def _record_new_enemy_units(self, previous_perception):
         """Diff perception for UI / alert (was inlined in _update_perception)."""
@@ -1255,29 +1298,47 @@ class PerceptionMixin:
             by_place[pl] = bag
         bag.add(remembrance)
         self._memory_by_place_count = getattr(self, "_memory_by_place_count", 0) + 1
+        # Menace snapshot only cares about owned units, not grass/deposits.
+        if getattr(remembrance.initial_model, "player", None) is not None:
+            unit_by = getattr(self, "_memory_unit_by_place", None)
+            if unit_by is None:
+                unit_by = {}
+                self._memory_unit_by_place = unit_by
+            ubag = unit_by.get(pl)
+            if ubag is None:
+                ubag = set()
+                unit_by[pl] = ubag
+            ubag.add(remembrance)
 
     def _memory_place_index_remove(self, remembrance, place):
         by_place = getattr(self, "_memory_by_place", None)
-        if not by_place or place is None:
-            return
-        bag = by_place.get(place)
-        if bag is None:
-            return
-        bag.discard(remembrance)
-        if not bag:
-            del by_place[place]
-        count = getattr(self, "_memory_by_place_count", 0)
-        if count > 0:
-            self._memory_by_place_count = count - 1
+        if by_place and place is not None:
+            bag = by_place.get(place)
+            if bag is not None:
+                bag.discard(remembrance)
+                if not bag:
+                    del by_place[place]
+                count = getattr(self, "_memory_by_place_count", 0)
+                if count > 0:
+                    self._memory_by_place_count = count - 1
+        unit_by = getattr(self, "_memory_unit_by_place", None)
+        if unit_by and place is not None:
+            ubag = unit_by.get(place)
+            if ubag is not None:
+                ubag.discard(remembrance)
+                if not ubag:
+                    del unit_by[place]
 
     def _ensure_memory_by_place(self):
         """Rebuild place→memory index when stale (tests / pickle edge cases)."""
         by_place = getattr(self, "_memory_by_place", None)
         count = getattr(self, "_memory_by_place_count", -1)
         memory = self.memory
-        if by_place is not None and count == len(memory):
+        unit_by = getattr(self, "_memory_unit_by_place", None)
+        if by_place is not None and unit_by is not None and count == len(memory):
             return by_place
         by_place = {}
+        unit_by = {}
         for m in memory:
             pl = m.place
             if pl is None:
@@ -1287,7 +1348,14 @@ class PerceptionMixin:
                 bag = set()
                 by_place[pl] = bag
             bag.add(m)
+            if getattr(m.initial_model, "player", None) is not None:
+                ubag = unit_by.get(pl)
+                if ubag is None:
+                    ubag = set()
+                    unit_by[pl] = ubag
+                ubag.add(m)
         self._memory_by_place = by_place
+        self._memory_unit_by_place = unit_by
         self._memory_by_place_count = len(memory)
         return by_place
 
@@ -1315,7 +1383,10 @@ class PerceptionMixin:
         # 处理需要遗忘的记忆（自适应批次：随单位量缩放）
         units_to_forget = []
         # 分帧配额：限制每次完整清理中昂贵判断的数量，避免爆发
-        total_units = len(self.world.units) if hasattr(self.world, 'units') else 0
+        try:
+            total_units = len(self.world.units)
+        except AttributeError:
+            total_units = 0
         cleanup_quota = 200 + (total_units // 80)
         display_expired_initial_models = set()
 
@@ -1337,7 +1408,7 @@ class PerceptionMixin:
             self, "display_memory_duration", self.memory_duration
         )
 
-        if _fast is not None and hasattr(_fast, "scan_memories_for_forget"):
+        if _FAST_SCAN_MEMORIES:
             to_forget, display_expired_initial_models = _fast.scan_memories_for_forget(
                 iterable_memories,
                 perception,
@@ -1412,12 +1483,12 @@ class PerceptionMixin:
                 o for o in disappeared_units
                 if not (o.is_invisible or o.is_cloaked) and o.place is not None
                 and (
-                    not getattr(o, "speed", 0)
+                    not o.speed
                     or o not in forgotten_initial_models
                 )
                 and not (
-                    getattr(o, "player", None) is self
-                    and getattr(o, "id", None) not in own_unit_ids
+                    o.player is self
+                    and o.id not in own_unit_ids
                 )
             }
 
@@ -1495,7 +1566,7 @@ class PerceptionMixin:
             self._last_unit_positions = current_unit_positions
             self._update_memory(previous_perception)
             self._record_new_enemy_units(previous_perception)
-            self._perception_version = getattr(self, '_perception_version', 0) + 1
+            self._perception_version += 1
             return
 
         # 执行完整的感知更新
@@ -1512,18 +1583,17 @@ class PerceptionMixin:
         self._update_memory(previous_perception)
         self._record_new_enemy_units(previous_perception)
         # 感知版本号：完整更新后递增
-        self._perception_version = getattr(self, '_perception_version', 0) + 1
+        self._perception_version += 1
 
         # 生成供战斗模块复用的“战斗快照”，避免其重复聚合。
         # combat.py 允许快照 ≤2000ms；此前每 1000ms 全量重刷与此不对齐，
         # 30min cw1 上 _refresh_combat_snapshot ~50s tottime。
-        if hasattr(self, '_refresh_combat_snapshot'):
-            last_call = getattr(self, '_last_snapshot_call_time', 0)
-            if current_time - last_call >= 2000:
-                self._refresh_combat_snapshot()
-                self._last_snapshot_call_time = current_time
-                self._last_snapshot_perception_size = len(self.perception)
-                self._last_snapshot_memory_size = len(self.memory)
+        last_call = self._last_snapshot_call_time
+        if current_time - last_call >= 2000:
+            self._refresh_combat_snapshot()
+            self._last_snapshot_call_time = current_time
+            self._last_snapshot_perception_size = len(self.perception)
+            self._last_snapshot_memory_size = len(self.memory)
         
         # 内存管理 - 定期释放Python GC不会立即回收的内存
         # (_last_gc_time 已在 Player.__init__ 预初始化)
@@ -1691,7 +1761,7 @@ class PerceptionMixin:
         """
         current_time = self.world.time
         time_bucket = current_time // 2000
-        if getattr(self, '_combat_snapshot_bucket', -1) == time_bucket:
+        if self._combat_snapshot_bucket == time_bucket:
             return
 
         # 准备集合引用，减少属性访问
@@ -1699,38 +1769,57 @@ class PerceptionMixin:
         mem_set = self.memory
 
         # 预先构建敌我玩家ID集合，加速归类判断（按玩家+节流缓存）
-        if not hasattr(self.__class__, '_relation_cache'):
-            self.__class__._relation_cache = {}
         rel_key = self.id
-        rel_entry = self.__class__._relation_cache.get(rel_key)
+        rel_entry = self._relation_cache.get(rel_key)
         if not rel_entry or current_time - rel_entry['ts'] > 1000:
             try:
-                enemy_ids = {p.id for p in self.world.players if self.player_is_a_hostile_enemy(p)}
+                enemy_players = [
+                    p for p in self.world.players if self.player_is_a_hostile_enemy(p)
+                ]
+                enemy_ids = {p.id for p in enemy_players}
                 allied_ids = {p.id for p in self.allied}
             except Exception:
+                enemy_players = []
                 enemy_ids = set()
                 allied_ids = set()
-            self.__class__._relation_cache[rel_key] = {'ts': current_time, 'enemy': enemy_ids, 'allied': allied_ids}
+            self._relation_cache[rel_key] = {
+                'ts': current_time,
+                'enemy': enemy_ids,
+                'allied': allied_ids,
+                'enemy_players': enemy_players,
+            }
             enemy_player_ids = enemy_ids
             allied_player_ids = allied_ids
         else:
             enemy_player_ids = rel_entry['enemy']
             allied_player_ids = rel_entry['allied']
+            enemy_players = rel_entry.get('enemy_players')
+            if enemy_players is None:
+                enemy_players = [
+                    p for p in self.world.players if p.id in enemy_player_ids
+                ]
 
         # 敌方单位威胁：必须每桶全量按 place 重算（勿做“只算增量差”）。
         # 旧增量逻辑曾导致交战中 menace 被清空 → AI「刚打过又停手」。
-        if _fast is not None and hasattr(_fast, "build_enemy_place_menace"):
+        # Walk enemy units ∩ perception, not the grass-heavy perception set.
+        live_candidates = []
+        for p in enemy_players:
+            for o in p.units:
+                if o in perceived:
+                    live_candidates.append(o)
+        if _HAS_FAST_MENACE:
             place_enemy_menace, enemy_presence_places = _fast.build_enemy_place_menace(
-                perceived, enemy_player_ids
+                live_candidates, enemy_player_ids
             )
             live_presence = set(enemy_presence_places)
-            by_place = self._ensure_memory_by_place()
-            if hasattr(_fast, "add_memory_enemy_menace_by_place") and by_place:
+            self._ensure_memory_by_place()
+            unit_by = self._memory_unit_by_place
+            if _HAS_FAST_MENACE_BY_PLACE and unit_by:
                 _fast.add_memory_enemy_menace_by_place(
                     place_enemy_menace,
                     enemy_presence_places,
                     live_presence,
-                    by_place,
+                    unit_by,
                     enemy_player_ids,
                 )
             else:
@@ -1744,7 +1833,7 @@ class PerceptionMixin:
         else:
             place_enemy_menace = {}
             enemy_presence_places = []
-            for o in perceived:
+            for o in live_candidates:
                 p = o.player
                 if p is None:
                     continue
@@ -1765,9 +1854,10 @@ class PerceptionMixin:
                     place_enemy_menace[pl] = current_sum + men
 
             live_presence = set(enemy_presence_places)
-            by_place = self._ensure_memory_by_place()
-            if by_place:
-                for pl, bag in by_place.items():
+            self._ensure_memory_by_place()
+            unit_by = self._memory_unit_by_place
+            if unit_by:
+                for pl, bag in unit_by.items():
                     if pl in live_presence or not bag:
                         continue
                     for rem in bag:
@@ -1808,14 +1898,14 @@ class PerceptionMixin:
                         place_enemy_menace[pl] = current_sum + men
 
         # 尸体与友军位置：≥2000ms 才刷新一次，否则复用上次结果
-        last_extras_ts = getattr(self, '_snapshot_extras_time', 0)
+        last_extras_ts = self._snapshot_extras_time
         if current_time - last_extras_ts >= 2000:
             tmp_corpse = set()
             tmp_friend = set()
             for o in perceived:
-                if isinstance(o, Corpse):
+                if o.is_corpse:
                     pl = o.place
-                    if isinstance(pl, Square):
+                    if pl is not None and not pl.is_inside_place:
                         tmp_corpse.add(pl)
                     continue
                 p = o.player
@@ -1824,9 +1914,9 @@ class PerceptionMixin:
                 if p.id in allied_player_ids:
                     pl = o.place
                     if (
-                        isinstance(pl, Square)
-                        and o.is_vulnerable
+                        pl is not None
                         and not pl.is_inside_place
+                        and o.is_vulnerable
                     ):
                         tmp_friend.add(pl)
             self._snapshot_corpse_places = tmp_corpse
@@ -1834,8 +1924,8 @@ class PerceptionMixin:
             self._snapshot_extras_time = current_time
 
         # Reuse frozen snapshots (no per-refresh set() copy).
-        corpse_places = getattr(self, '_snapshot_corpse_places', None) or set()
-        friend_places = getattr(self, '_snapshot_friend_places', None) or set()
+        corpse_places = self._snapshot_corpse_places
+        friend_places = self._snapshot_friend_places
 
         # 写入快照
         self._combat_snapshot = {
@@ -2059,18 +2149,40 @@ class PerceptionMixin:
 
     @property
     def squares_to_watch(self) -> List[Square]:
+        # Same tick: every explorer used to rescan all fog memories (AoE2 trees).
+        now = getattr(getattr(self, "world", None), "time", None)
+        cached = getattr(self, "_squares_to_watch_cache", None)
+        if cached is not None and cached[0] == now:
+            return cached[1]
+
         squares = set()  # desync risk
-        for m in self.memory:  # desync risk
-            # Round 4: m.place 默认 None; _Space.is_inside_place 默认 False
-            p = m.place
-            if p is not None and p.is_inside_place:
+        by_place = self._ensure_memory_by_place()
+        unit_by = getattr(self, "_memory_unit_by_place", None) or {}
+        for p, bag in by_place.items():
+            if p is None or getattr(p, "is_inside_place", False):
                 continue
-            if self.is_an_enemy(m):
+            enemy = False
+            units = unit_by.get(p)
+            if units:
+                for m in units:
+                    if self.is_an_enemy(m):
+                        enemy = True
+                        break
+            if enemy:
                 squares.add(p)
-                for e in getattr(m.place, "exits", []):
-                    if e.other_side is not None:
-                        squares.add(e.other_side.place)
-            elif isinstance(m, Deposit):
-                squares.add(m.place)
+                for e in getattr(p, "exits", []) or ():
+                    other = getattr(e, "other_side", None)
+                    if other is not None:
+                        squares.add(other.place)
+                continue
+            for m in bag:
+                if getattr(m, "is_deposit", False) or isinstance(m, Deposit):
+                    squares.add(p)
+                    break
         result = sorted(squares, key=lambda s: s.name)  # avoid desync
-        return self.world.random.sample(result, len(result))
+        world = getattr(self, "world", None)
+        if world is None:
+            return result
+        result = world.random.sample(result, len(result))
+        self._squares_to_watch_cache = (now, result)
+        return result

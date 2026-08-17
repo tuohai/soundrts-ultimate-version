@@ -175,3 +175,14 @@ def test_completeness_progress_during_pack():
 def test_not_packable_without_time():
     u = _unit(unpack_time=0, pack_time=0, packable=1)
     assert not is_packable(u)
+
+
+def test_not_packable_creature_defaults():
+    """Villager-like defaults must reject without _raw_attr."""
+    u = _unit(unpack_time=0, pack_time=0, packable=0)
+    assert not is_packable(u)
+
+
+def test_packable_list_unpack_time():
+    u = _unit(unpack_time=[11000], pack_time=0, packable=1)
+    assert is_packable(u)
