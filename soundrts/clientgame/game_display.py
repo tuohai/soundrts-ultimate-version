@@ -150,50 +150,163 @@ def _display_target_info(interface):
             exception("error inspecting player: %s", interface.player)
 
 
+def _animation_nearby_places(interface):
+    """Places whose EntityViews may pass ``is_local`` (current + optional neighbors)."""
+    place = getattr(interface, "place", None)
+    if place is None:
+        return None
+    nearby = {place}
+    if parameters.d.get("render_nearby_objects", False):
+        for n in getattr(place, "neighbors", ()) or ():
+            nearby.add(n)
+    return nearby
+
+
+def _entity_view_audio_place(o):
+    """Match EntityView._client_audio_place without going through animate()."""
+    try:
+        if getattr(o, "is_inside", False):
+            container = getattr(getattr(o, "place", None), "container", None)
+            if container is not None:
+                return getattr(container, "place", None)
+        return getattr(o, "place", None)
+    except Exception:
+        return None
+
+
+def _iter_animation_candidates(interface):
+    """Prefer in-range objects so distant memory views do not pay animate() setup."""
+    nearby = _animation_nearby_places(interface)
+    objs = list(interface.dobjets.values())
+    if nearby is None:
+        return objs
+    local = []
+    for o in objs:
+        if _entity_view_audio_place(o) in nearby:
+            local.append(o)
+    # Fallback: if filter emptied oddly, keep full list.
+    return local if local else objs
+
+
+def _finish_animation_wave(interface):
+    interface.previous_animation = time.time()
+    interface._animate_resume = None
+    chrono.stop("animate")
+
+
+def _animation_post_steps():
+    """Deferred end-of-wave work (each step may run on its own frame)."""
+
+    def _terrain(iface):
+        _animate_terrain(iface)
+
+    def _build_field(iface):
+        from .build_field_voice import animate_build_field_noises
+
+        animate_build_field_noises(iface)
+
+    def _battle(iface):
+        _check_battle_status(iface)
+
+    def _rpg(iface):
+        _check_rpg_unit_place_change(iface)
+
+    return (
+        ("terrain", _terrain),
+        ("build_field", _build_field),
+        ("battle", _battle),
+        ("rpg", _rpg),
+    )
+
+
 def _animate_objects(interface):
-    """动画对象"""
-    if time.time() >= getattr(interface, 'previous_animation', 0) + parameters.d.get("animation_delay", 0.1):
+    """动画对象。
+
+    Heavy early-game waves (many local units + footsteps/noise) used to block the
+    client loop for 0.5–1s+, delaying the next world ask and dropping F-key speed.
+    Work is now budgeted across frames (~8ms) so voila/ask can keep pace; sound
+    content is unchanged, only when each unit is refreshed within the wave.
+    """
+    resume = getattr(interface, "_animate_resume", None)
+    delay = parameters.d.get("animation_delay", 0.1)
+    # Default 8ms keeps main-loop ask cadence near the 300ms tick.
+    budget_s = float(parameters.d.get("animation_budget_ms", 8)) / 1000.0
+    if budget_s < 0.002:
+        budget_s = 0.002
+
+    if resume is None:
+        if time.time() < getattr(interface, "previous_animation", 0) + delay:
+            return
         chrono.start("animate")
+        # setup_obs → setup_cand → objs → post (one frame each at least)
+        resume = {"phase": "setup_obs"}
+        interface._animate_resume = resume
+
+    deadline = time.perf_counter() + budget_s
+
+    if resume.get("phase") == "setup_obs":
         try:
             from .game_navigation import set_obs_pos
-            set_obs_pos(interface)
-        except:
+
+            # Stereo refresh is handled on a throttle / mixer events; skip the
+            # full psounds.update() here so animation waves stay cheap.
+            set_obs_pos(interface, update_sounds=False)
+        except Exception:
             exception("couldn't set user interface position")
+        resume = {"phase": "setup_cand"}
+        interface._animate_resume = resume
+        return
+
+    if resume.get("phase") == "setup_cand":
         try:
-            from ..clientgameentity.formation_sound_queue import flush_formation_sound_queue
+            from ..clientgameentity.formation_sound_queue import (
+                flush_formation_sound_queue,
+            )
+
             flush_formation_sound_queue(interface)
         except Exception:
             exception("couldn't flush formation sound queue")
-        for o in interface.dobjets.values():
+        objs = _iter_animation_candidates(interface)
+        resume = {"phase": "objs", "objs": objs, "i": 0}
+        interface._animate_resume = resume
+        return
+
+    if resume.get("phase") == "objs":
+        objs = resume["objs"]
+        i = resume["i"]
+        n = len(objs)
+        while i < n:
+            if time.perf_counter() >= deadline:
+                resume["i"] = i
+                interface._animate_resume = resume
+                return
+            o = objs[i]
+            i += 1
             try:
                 o.animate()
-            except:
+            except Exception:
                 exception("couldn't animate object")
-        try:
-            _animate_terrain(interface)
-        except:
-            exception("couldn't animate terrain")
-        try:
-            from .build_field_voice import animate_build_field_noises
-            animate_build_field_noises(interface)
-        except:
-            exception("couldn't animate build field noises")
-            
-        # 定期检查战斗状态
-        try:
-            _check_battle_status(interface)
-        except:
-            exception("couldn't check battle status")
-            
-        # 检查RPG模式下单位是否进入新方格
-        try:
-            _check_rpg_unit_place_change(interface)
-        except:
-            exception("couldn't check RPG unit place change")
-            
-        interface.previous_animation = time.time()
-        chrono.stop("animate")
+        # Never fall through into post on the same frame.
+        resume = {"phase": "post", "step": 0}
+        interface._animate_resume = resume
+        return
 
+    if resume.get("phase") == "post":
+        steps = _animation_post_steps()
+        step = int(resume.get("step", 0))
+        while step < len(steps):
+            name, fn = steps[step]
+            try:
+                fn(interface)
+            except Exception:
+                exception("couldn't animate post-step %s" % name)
+            step += 1
+            # Terrain/battle can spike; always yield after one post-step.
+            if step < len(steps):
+                resume["step"] = step
+                interface._animate_resume = resume
+                return
+        _finish_animation_wave(interface)
 
 def _animate_terrain(interface):
     """动画地形"""

@@ -360,8 +360,17 @@ class EntityViewAudio:
             volume *= parameters.d.get("fog_of_war_factor", 0.5)
         sx = self.x if x is None else x
         sy = self.y if y is None else y
+        # Footsteps / ambient (priority <= -10): never decode OGG on the hot
+        # animate path — cold loads were measured at 300–800ms per sound.
+        allow_load = priority > -10
         return psounds.play(
-            sounds.get_sound(sound), volume, sx, sy, priority, limit, ambient
+            sounds.get_sound(sound, allow_load=allow_load),
+            volume,
+            sx,
+            sy,
+            priority,
+            limit,
+            ambient,
         )
 
     def launch_staggered_shouts(

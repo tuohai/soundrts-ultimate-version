@@ -232,21 +232,33 @@ class SoundManager:
 
     def find_a_channel(self, priority):
         c = find_idle_channel()
-        if c is None:
-            playing = [
-                s for s in self._sources if s.is_playing() and s.priority < priority
-            ]
-            if playing:
-                playing = sorted(
-                    playing, key=lambda x: (x.priority, max(x.previous_vol))
-                )
-                c = playing[0].channel
-                c.stop()
-                return c
-        else:
+        if c is not None:
             if c.get_endevent() == pygame.locals.USEREVENT:
                 warning("find_channel() have chosen the reserved channel!")
             return c
+        # Footsteps / ambient are low priority: never steal (avoids O(n log n)
+        # scans of every live source when the mixer is saturated early-game).
+        if priority <= -10:
+            return None
+        victim = None
+        victim_key = None
+        for s in self._sources:
+            ch = s.channel
+            if ch is None or s.priority >= priority:
+                continue
+            try:
+                if not ch.get_busy():
+                    continue
+            except Exception:
+                continue
+            key = (s.priority, max(s.previous_vol) if s.previous_vol else 0.0)
+            if victim is None or key < victim_key:
+                victim = s
+                victim_key = key
+        if victim is not None and victim.channel is not None:
+            victim.channel.stop()
+            return victim.channel
+        return None
 
     def get_stereo_volume(self, source):
         if self.listener.immersion:

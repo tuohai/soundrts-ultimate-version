@@ -174,13 +174,90 @@ class SoundCache:
             if hasattr(s, "update_volume")
         ]
 
-    def get_sound(self, name, warn=True, restrict_to_mod=None):
+    # Lazy Sound() decode can take hundreds of ms per OGG. Low-priority SFX
+    # queue onto a daemon thread so the client loop never blocks on decode.
+    _deferred_sound_loads = None  # legacy list (unused after bg loader)
+    _bg_queue = None
+    _bg_thread = None
+    _bg_pending = None
+
+    def _ensure_bg_sound_loader(self):
+        if self._bg_thread is not None:
+            return
+        import queue as _queue
+        import threading
+
+        self._bg_queue = _queue.Queue()
+        if self._bg_pending is None:
+            self._bg_pending = set()
+        self._bg_thread = threading.Thread(
+            target=self._bg_sound_load_loop,
+            name="soundrts-sound-loader",
+            daemon=True,
+        )
+        self._bg_thread.start()
+
+    def _queue_deferred_sound_load(self, layer, raw_key):
+        if self._bg_pending is None:
+            self._bg_pending = set()
+        token = (id(layer), raw_key)
+        if token in self._bg_pending:
+            return
+        s = layer.sounds.get(raw_key)
+        if s is None or isinstance(s, Sound):
+            return
+        self._bg_pending.add(token)
+        self._ensure_bg_sound_loader()
+        self._bg_queue.put((layer, raw_key, token))
+
+    def _bg_sound_load_loop(self):
+        from io import BytesIO
+
+        while True:
+            layer, raw_key, token = self._bg_queue.get()
+            try:
+                s = layer.sounds.get(raw_key)
+                if s is None or isinstance(s, Sound):
+                    continue
+                package, sound_name = s
+                mod_name = package.name
+                try:
+                    raw = package.open_binary(sound_name)
+                    try:
+                        data = raw.read()
+                    finally:
+                        try:
+                            raw.close()
+                        except Exception:
+                            pass
+                    layer.sounds[raw_key] = Sound(
+                        BytesIO(data), mod_name, raw_key
+                    )
+                except Exception:
+                    warning("couldn't load %s from %s", s, mod_name)
+                    try:
+                        del layer.sounds[raw_key]
+                    except KeyError:
+                        pass
+            finally:
+                try:
+                    self._bg_pending.discard(token)
+                except Exception:
+                    pass
+
+    def pump_deferred_sound_loads(self, budget_ms=3.0, max_items=1):
+        """No-op on the main thread: loads run on the background loader."""
+        return 0
+
+    def get_sound(self, name, warn=True, restrict_to_mod=None, allow_load=True):
         """return the sound corresponding to the given name
         
         Args:
             name: 声音名称
             warn: 是否在未找到声音时发出警告
             restrict_to_mod: 如果设置，只在指定的mod中查找声音
+            allow_load: if False, never decode an unloaded OGG on this call;
+                queue it for the background loader instead (returns None)
         """
         original_key = "%s" % name
         
@@ -205,6 +282,9 @@ class SoundCache:
                 if isinstance(s, Sound):
                     return s
                 else:
+                    if not allow_load:
+                        self._queue_deferred_sound_load(layer, raw_key)
+                        return None
                     package, sound_name = s
                     mod_name = package.name
                     try:

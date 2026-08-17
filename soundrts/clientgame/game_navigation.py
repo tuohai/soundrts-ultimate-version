@@ -970,25 +970,39 @@ def _initial_observer_place(interface):
 
 
 # 观察者位置设置
-def set_obs_pos(interface):
+def set_obs_pos(interface, update_sounds=True):
     if interface.place is None:  # first position
         first_place = _initial_observer_place(interface)
         if first_place is not None:
             # 初始进入：如目标方格有主区域，则先播主区域名
-            province_prefix = []
-            city_prefix = []
-            try:
-                if isinstance(first_place, Square):
-                    key_new = f"{first_place.col},{first_place.row}"
-                    new_region = getattr(interface.world, 'square_provinces', {}).get(key_new)
-                    if new_region:
-                        province_prefix = [new_region] + mp.COMMA
-                    new_city = getattr(interface.world, 'square_cities', {}).get(key_new)
-                    if new_city:
-                        city_prefix = [new_city] + mp.COMMA
-            except Exception:
-                pass
-            _select_and_say_square(interface, first_place, province_prefix + city_prefix)
+            # Animate waves call with update_sounds=False — skip speech so voice
+            # OGG decode cannot stall the client loop (~0.5s was measured).
+            if update_sounds:
+                province_prefix = []
+                city_prefix = []
+                try:
+                    if isinstance(first_place, Square):
+                        key_new = f"{first_place.col},{first_place.row}"
+                        new_region = getattr(interface.world, 'square_provinces', {}).get(key_new)
+                        if new_region:
+                            province_prefix = [new_region] + mp.COMMA
+                        new_city = getattr(interface.world, 'square_cities', {}).get(key_new)
+                        if new_city:
+                            city_prefix = [new_city] + mp.COMMA
+                except Exception:
+                    pass
+                _select_and_say_square(interface, first_place, province_prefix + city_prefix)
+            else:
+                move_to_square(interface, first_place)
+                interface.target = None
+                interface.follow_mode = False
+                # Announce once on a later non-animate set_obs_pos.
+                interface._pending_square_announce = first_place
+    elif update_sounds and getattr(interface, "_pending_square_announce", None):
+        place = interface._pending_square_announce
+        interface._pending_square_announce = None
+        if interface.place is place:
+            say_square(interface, place)
     _follow_if_needed(interface)
     if interface.immersion and interface.group and interface.group[0] in interface.dobjets:
         interface.x = interface.dobjets[interface.group[0]].x
@@ -1006,8 +1020,17 @@ def set_obs_pos(interface):
             interface.y += (y - interface.y) * k
     if not interface.immersion:
         interface.o = 90
-    from ..lib.sound import psounds
-    psounds.update()
+    if update_sounds:
+        from ..lib.sound import psounds
+
+        # Full stereo refresh is O(sources); animation used to call this every
+        # wave and stall the client loop for hundreds of ms early-game.
+        now = time.time()
+        last = getattr(interface, "_psounds_update_t", 0.0)
+        min_interval = float(parameters.d.get("observer_sound_update_interval", 0.05))
+        if now - last >= min_interval:
+            interface._psounds_update_t = now
+            psounds.update()
 
 
 # 跟随模式

@@ -160,8 +160,7 @@ class GameInterface(AttributesInterface):
     def _process_srv_events(self):
         # 恢复逐帧仅处理一个事件的行为，避免改变音效触发节奏
         if not self._srv_queue.empty():
-            e = self._srv_queue.get()
-            self._process_srv_event(*e)
+            self._process_srv_event(*self._srv_queue.get())
 
     def srv_quit(self):
         voice.silent_flush()

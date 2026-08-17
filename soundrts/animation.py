@@ -28,6 +28,13 @@ class LoopNoise(_Noise):
             volume = self.volume
             if self.obj.fow:
                 volume *= parameters.d.get("fog_of_war_factor", 0.5)
+            # Skip stereo recomputation when nothing moved / volume unchanged.
+            if (
+                getattr(self._source, "v", None) == volume
+                and getattr(self._source, "x", None) == self.obj.x
+                and getattr(self._source, "y", None) == self.obj.y
+            ):
+                return
             self._source.v = volume
             self._source.move(self.obj.x, self.obj.y)
         else:
@@ -35,7 +42,7 @@ class LoopNoise(_Noise):
             if self.obj.fow:
                 volume *= parameters.d.get("fog_of_war_factor", 0.5)
             self._source = psounds.play_loop(
-                sounds.get_sound(self._sound),
+                sounds.get_sound(self._sound, allow_load=False),
                 volume,
                 self.obj.x,
                 self.obj.y,
@@ -60,7 +67,7 @@ class RepeatNoise(_Noise):
             if self.obj.fow:
                 volume *= parameters.d.get("fog_of_war_factor", 0.5)
             self._source = psounds.play(
-                sounds.get_sound(random.choice(self._sounds)),
+                sounds.get_sound(random.choice(self._sounds), allow_load=False),
                 volume,
                 self.obj.x,
                 self.obj.y,
