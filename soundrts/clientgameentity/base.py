@@ -220,6 +220,12 @@ class EntityViewBase:
         self.footstep_random = (
             random.random() * 0.2
         )  # to avoid strange synchronicity of footsteps when several units are walking
+        try:
+            from .sfx_deferred import prefetch_type_combat_sfx
+
+            prefetch_type_combat_sfx(interface, getattr(model, "type_name", None))
+        except Exception:
+            pass
 
     def __getattr__(self, name):
         if name == "model":

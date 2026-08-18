@@ -25,10 +25,10 @@ def _unit_class(type_name):
 def resolve_trainable_unit_type(player, type_name):
     """AoE2-style: produce the highest unlocked form in a ``can_upgrade_to`` line.
 
-    Walks ``can_upgrade_to`` while the next form is allowed:
-    - ``line_upgrade`` / ``no_auto_upgrade`` forms require ``type_name`` in
-      ``player.upgrades`` (unlocked by researching that form);
-    - other forms unlock when ``requirements`` are met (legacy).
+    Only ``line_upgrade`` / ``no_auto_upgrade`` forms replace the train slot
+    (after that form is in ``player.upgrades``). Plain morph targets such as
+    archer→darkarcher stay on the unit's upgrade menu and do not rewrite
+    barracks ``can_train``.
     """
     if not type_name:
         return type_name
@@ -55,7 +55,9 @@ def resolve_trainable_unit_type(player, type_name):
             needs_research = int(getattr(ncls, "line_upgrade", 0) or 0) or int(
                 getattr(ncls, "no_auto_upgrade", 0) or 0
             )
-            if needs_research and nxt not in upgrades:
+            if not needs_research:
+                continue
+            if nxt not in upgrades:
                 continue
             if player is None:
                 break

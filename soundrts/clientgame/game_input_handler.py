@@ -665,6 +665,12 @@ def _loop(interface):
                 if interface.auto[0].run(interface):
                     del interface.auto[0]
             interface._process_srv_events()
+            try:
+                from .game_navigation import flush_pending_square_announce
+
+                flush_pending_square_announce(interface)
+            except Exception:
+                pass
             voice.update()  # useful for SAPI
             time.sleep(0.001)
         except SystemExit:

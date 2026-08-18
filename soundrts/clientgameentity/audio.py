@@ -172,6 +172,10 @@ class EntityViewAudio:
                     now + random.random() * interval
                 )  # start at different moments
             elif now >= self.next_step:
+                from .combat_sfx_cap import move_sfx_consume
+
+                if not move_sfx_consume(self.interface, self):
+                    return
                 if self.interface.immersion and (self.x, self.y) == (
                     self.interface.x,
                     self.interface.y,
@@ -299,6 +303,20 @@ class EntityViewAudio:
                 del self._buff_noises[buff_type]
 
     def update_noise(self):
+        from .combat_sfx_cap import noise_sfx_consume
+
+        if not noise_sfx_consume(self.interface, self):
+            if self._noise:
+                self._noise.stop()
+                self._noise = None
+            if self._buff_noises:
+                for n in self._buff_noises.values():
+                    try:
+                        n.stop()
+                    except Exception:
+                        pass
+                self._buff_noises = {}
+            return
         st = self._get_noise_style()
         self._set_noise(st)
         self._update_buff_noises()
@@ -360,11 +378,25 @@ class EntityViewAudio:
             volume *= parameters.d.get("fog_of_war_factor", 0.5)
         sx = self.x if x is None else x
         sy = self.y if y is None else y
-        # Footsteps / ambient (priority <= -10): never decode OGG on the hot
-        # animate path — cold loads were measured at 300–800ms per sound.
-        allow_load = priority > -10
+        # Footsteps / ambient / combat: never decode OGG on this call.
+        # Combat types are prefetched in the background; a miss is retried.
+        s = sounds.get_sound(sound, allow_load=False)
+        if s is None and priority > -10:
+            from .sfx_deferred import queue_pending_sfx
+
+            queue_pending_sfx(
+                self.interface,
+                sound,
+                volume=volume,
+                x=sx,
+                y=sy,
+                priority=priority,
+                limit=limit,
+                ambient=ambient,
+            )
+            return None
         return psounds.play(
-            sounds.get_sound(sound, allow_load=allow_load),
+            s,
             volume,
             sx,
             sy,

@@ -241,6 +241,12 @@ def _animate_objects(interface):
         # setup_obs → setup_cand → objs → post (one frame each at least)
         resume = {"phase": "setup_obs"}
         interface._animate_resume = resume
+        try:
+            from ..clientgameentity.combat_sfx_cap import reset_animate_sfx_cap
+
+            reset_animate_sfx_cap(interface)
+        except Exception:
+            pass
 
     deadline = time.perf_counter() + budget_s
 

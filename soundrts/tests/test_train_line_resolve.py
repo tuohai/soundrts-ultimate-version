@@ -290,3 +290,52 @@ def test_allied_upgrades_shares_line_upgrade_without_upgrade_player():
         global_rules._dict = saved
         if saved_c is not None:
             global_rules.classes = saved_c
+
+
+def test_morph_upgrade_does_not_replace_train_slot():
+    """Vanilla archer→darkarcher is a unit morph, not an AoE2 train line."""
+    from soundrts.definitions import Rules
+    from soundrts.definitions import rules as global_rules
+    from soundrts.world_build_rules import effective_can_train
+
+    r = Rules()
+    r.load(
+        """
+def parameters
+nb_of_resource_types 4
+
+def magestower
+class building
+
+def archer
+class soldier
+can_upgrade_to darkarcher
+
+def darkarcher
+class soldier
+requirements magestower
+
+def barracks
+class building
+can_train footman archer knight
+"""
+    )
+    saved = global_rules._dict
+    saved_c = getattr(global_rules, "classes", None)
+    global_rules._dict = r._dict
+    global_rules.classes = r.classes
+    try:
+        player = _FakePlayer(ok_reqs=["magestower"], upgrades=["magestower"])
+
+        class B:
+            type_name = "barracks"
+            can_train = ("footman", "archer", "knight")
+            place = None
+
+        B.player = player
+        assert resolve_trainable_unit_type(player, "archer") == "archer"
+        assert effective_can_train(B()) == ("footman", "archer", "knight")
+    finally:
+        global_rules._dict = saved
+        if saved_c is not None:
+            global_rules.classes = saved_c

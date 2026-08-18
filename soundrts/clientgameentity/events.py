@@ -63,6 +63,23 @@ class EntityViewEvents:
         e_a = event_and_args.split(",")
         event = e_a[0]
         args = e_a[1:]
+        if event in (
+            "launch_mdg",
+            "launch_rdg",
+            "launch_charge_mdg",
+            "launch_charge_rdg",
+            "wounded",
+            "missed",
+            "dodge",
+            "splash_hit",
+            "charge_splash_hit",
+        ) and args:
+            try:
+                from .sfx_deferred import prefetch_type_combat_sfx
+
+                prefetch_type_combat_sfx(self.interface, args[0])
+            except Exception:
+                pass
         
         # 特殊处理攻击音效
         if event in ["launch_mdg", "launch_rdg"]:
@@ -214,6 +231,33 @@ class EntityViewEvents:
         self.__class__._last_attack_sound_time = current_time
 
     def on_wounded(self, attacker_type, attacker_id, level, is_crit="0", is_charge="0"):
+        from .combat_sfx_cap import combat_sfx_consume
+
+        local = self.player == self.interface.player
+        play = combat_sfx_consume(
+            self.interface, self.model if getattr(self, "model", None) is not None else self
+        )
+        if local:
+            self.unit_attacked_alert()
+        if not play:
+            if local:
+                attacker = self.interface.dobjets.get(attacker_id)
+                if attacker and hasattr(attacker, "player"):
+                    attacker_player = attacker.player
+                    is_neutral_involved = (
+                        getattr(attacker_player, "neutral", False)
+                        or getattr(getattr(self, "player", None), "neutral", False)
+                    )
+                    if (
+                        attacker_player != self.player
+                        and self.interface.player.player_is_an_enemy(attacker_player)
+                        and not is_neutral_involved
+                    ):
+                        self._set_battle_mode(True)
+                else:
+                    self._set_battle_mode(True)
+            return
+
         current_time = int(time.time() * 1000)
         self._play_layered_battle_shouts(attacker_id, current_time)
         
@@ -235,9 +279,6 @@ class EntityViewEvents:
                 self._set_battle_mode(True)
         else:
             self._set_battle_mode(True)
-        
-        if self.player == self.interface.player:
-            self.unit_attacked_alert()
         
         # 1. 确定是近战还是远程攻击
         is_melee = self._is_melee_attack(attacker_type, attacker_id)

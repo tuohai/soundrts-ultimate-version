@@ -7,6 +7,16 @@ from .. import msgparts as mp
 from .. import parameters
 from ..attributes_face import AttributesInterface
 from ..clientgameentity import EntityView
+from ..clientgameentity.combat_sfx_cap import (
+    combat_sfx_consume,
+    combat_sfx_would_allow,
+    event_kind,
+    is_capped_combat_event,
+    is_capped_order_event,
+    is_local_player_model,
+    order_sfx_consume,
+    reset_combat_sfx_cap,
+)
 from ..clientgamefocus import Zoom
 from ..clientgamegridview import GridView
 from ..clientmedia import voice
@@ -150,6 +160,20 @@ class GameInterface(AttributesInterface):
                 and time.time() > self.next_update + 3  # EVENT_LIMIT
             ):
                 return
+            kind = event_kind(e)
+            if is_capped_combat_event(kind):
+                # Own wounded still reaches the client (attacked alert).
+                # Excess enemy fire/hits are dropped before EntityView work.
+                if kind == "wounded":
+                    if not is_local_player_model(self, o) and not combat_sfx_would_allow(
+                        self, o
+                    ):
+                        return
+                elif not combat_sfx_consume(self, o):
+                    return
+            elif is_capped_order_event(kind):
+                if not is_local_player_model(self, o) or not order_sfx_consume(self, o):
+                    return
             EntityView(self, o).notify(e)
         except:
             exception("problem during srv_event")
@@ -158,9 +182,43 @@ class GameInterface(AttributesInterface):
         self._srv_queue.put(e)
 
     def _process_srv_events(self):
-        # 恢复逐帧仅处理一个事件的行为，避免改变音效触发节奏
-        if not self._srv_queue.empty():
-            self._process_srv_event(*self._srv_queue.get())
+        """Drain server events with a short time budget.
+
+        Combat ticks enqueue many notifies then voila last. One-event-per-frame
+        made F-key speed wait on the whole queue (100+ frames). Shouts are
+        already staggered, so bursting cheap notifies is safe; stop after voila
+        because fog/display is heavy.
+        """
+        try:
+            from ..clientgameentity.sfx_deferred import flush_pending_sfx
+
+            flush_pending_sfx(self)
+        except Exception:
+            pass
+        if self._srv_queue.empty():
+            return
+        budget_s = float(parameters.d.get("srv_event_budget_ms", 8)) / 1000.0
+        if budget_s < 0.002:
+            budget_s = 0.002
+        deadline = time.perf_counter() + budget_s
+        processed = 0
+        while not self._srv_queue.empty():
+            # Leave voila for the next frame if we already drained notifies.
+            if processed > 0:
+                nxt = None
+                q = self._srv_queue
+                with q.mutex:
+                    if q.queue:
+                        nxt = q.queue[0]
+                if nxt and nxt[0] == "voila":
+                    break
+            e = self._srv_queue.get()
+            self._process_srv_event(*e)
+            processed += 1
+            if e and e[0] == "voila":
+                break
+            if time.perf_counter() >= deadline:
+                break
 
     def srv_quit(self):
         voice.silent_flush()
@@ -238,6 +296,7 @@ class GameInterface(AttributesInterface):
         self.waiting_for_world_update = True
         interval = VIRTUAL_TIME_INTERVAL / 1000.0 / self.speed
         self.next_update = time.time() + interval
+        reset_combat_sfx_cap(self)
 
     def _time_to_ask_for_next_update(self):
         if self.waiting_for_world_update:

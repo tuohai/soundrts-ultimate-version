@@ -969,40 +969,62 @@ def _initial_observer_place(interface):
     return unit_list[0].place
 
 
+def _opening_square_prefix(interface, first_place):
+    province_prefix = []
+    city_prefix = []
+    try:
+        if isinstance(first_place, Square):
+            key_new = f"{first_place.col},{first_place.row}"
+            new_region = getattr(interface.world, "square_provinces", {}).get(key_new)
+            if new_region:
+                province_prefix = [new_region] + mp.COMMA
+            new_city = getattr(interface.world, "square_cities", {}).get(key_new)
+            if new_city:
+                city_prefix = [new_city] + mp.COMMA
+    except Exception:
+        pass
+    return province_prefix + city_prefix
+
+
+def flush_pending_square_announce(interface):
+    """Speak the opening square outside the animation time budget."""
+    pending = getattr(interface, "_pending_square_announce", None)
+    if not pending:
+        return
+    interface._pending_square_announce = None
+    if isinstance(pending, dict):
+        place = pending.get("place")
+        prefix = list(pending.get("prefix") or [])
+    else:
+        place = pending
+        prefix = []
+    if place is None:
+        return
+    if interface.place is not None and interface.place is not place:
+        return
+    say_square(interface, place, prefix)
+
+
 # 观察者位置设置
 def set_obs_pos(interface, update_sounds=True):
     if interface.place is None:  # first position
         first_place = _initial_observer_place(interface)
         if first_place is not None:
-            # 初始进入：如目标方格有主区域，则先播主区域名
-            # Animate waves call with update_sounds=False — skip speech so voice
-            # OGG decode cannot stall the client loop (~0.5s was measured).
+            # Animate waves call with update_sounds=False so TTS decode cannot
+            # stall the 8ms animation budget. Speech is flushed from the game loop.
+            prefix = _opening_square_prefix(interface, first_place)
             if update_sounds:
-                province_prefix = []
-                city_prefix = []
-                try:
-                    if isinstance(first_place, Square):
-                        key_new = f"{first_place.col},{first_place.row}"
-                        new_region = getattr(interface.world, 'square_provinces', {}).get(key_new)
-                        if new_region:
-                            province_prefix = [new_region] + mp.COMMA
-                        new_city = getattr(interface.world, 'square_cities', {}).get(key_new)
-                        if new_city:
-                            city_prefix = [new_city] + mp.COMMA
-                except Exception:
-                    pass
-                _select_and_say_square(interface, first_place, province_prefix + city_prefix)
+                _select_and_say_square(interface, first_place, prefix)
             else:
                 move_to_square(interface, first_place)
                 interface.target = None
                 interface.follow_mode = False
-                # Announce once on a later non-animate set_obs_pos.
-                interface._pending_square_announce = first_place
-    elif update_sounds and getattr(interface, "_pending_square_announce", None):
-        place = interface._pending_square_announce
-        interface._pending_square_announce = None
-        if interface.place is place:
-            say_square(interface, place)
+                interface._pending_square_announce = {
+                    "place": first_place,
+                    "prefix": prefix,
+                }
+    elif update_sounds:
+        flush_pending_square_announce(interface)
     _follow_if_needed(interface)
     if interface.immersion and interface.group and interface.group[0] in interface.dobjets:
         interface.x = interface.dobjets[interface.group[0]].x
@@ -1312,7 +1334,7 @@ __all__ = [
     'cmd__square_info_prev', 'cmd__square_info_next',
     'cmd__square_info_sub_prev', 'cmd__square_info_sub_next',
     'cmd_ui_escape',
-    'set_obs_pos', '_follow_if_needed', 'update_fog_of_war', 'scout_info_if_needed',
+    'set_obs_pos', 'flush_pending_square_announce', '_follow_if_needed', 'update_fog_of_war', 'scout_info_if_needed',
     'squares_alert_if_needed', 'coords_in_map', 'square_postfix',
     '_check_exit_connection', '_get_prefix_and_collision', '_play_movement_sfx',
     '_shouldnt_collide',
