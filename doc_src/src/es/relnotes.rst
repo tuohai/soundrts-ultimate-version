@@ -4,6 +4,52 @@ Notas de la versión
 
 .. contents::
 
+1.4.7.5
+-------
+
+**Corrección: la orden por defecto del aldeano sobre un edificio dañado no era reparar**
+
+- **Problema**: el cambio de caza hacía que cualquier objetivo vivo con dueño fuera ``go``. Los edificios aliados dañados (y las obras) caían ahí, así que el aldeano caminaba en vez de reparar.
+- **Cambio**: resolver primero la reparación por defecto en obras y objetivos ``is_repairable`` con ``hp < hp_max`` (sigue exigiendo ``can_repair`` / ``can_build``; se excluyen enemigos). Edificios intactos, fauna y enemigos siguen en ``go``.
+- **Alcance**: orden por defecto de los trabajadores en todos los mods.
+
+
+1.4.7.4
+-------
+
+**Rendimiento: velocidad de la tecla F al inicio (bucle del cliente)**
+
+- **Problema**: Al inicio, muchos pasos/ambientes decodificando OGG por primera vez podían bloquear el cliente un fotograma largo, retrasar la siguiente petición al mundo y bajar la velocidad relativa de F.
+- **Cambio**: Vaciar avisos del servidor con un presupuesto corto (dejar ``voila`` para el fotograma siguiente); repartir la animación de unidades; decodificar pasos/ambiente (prioridad ≤ −10) en segundo plano y no robar canales del mezclador.
+- **Alcance**: cliente local en todos los mods.
+
+**Límite de SFX: disparo/impacto, confirmación, pasos, noise en bucle**
+
+- **Problema**: En combates densos el hilo principal seguía ejecutando notify / animación de sonidos que el mezclador no puede superponer.
+- **Cambio**: Disparo/impacto como máximo 16 por tick (8 por casilla); ``order_ok`` / ``order_impossible`` 2 por tick; pasos 8 por oleada de animación (4 por casilla); noise en bucle como máximo 3 por tipo de unidad/edificio (los tipos no comparten tope; sin techo global de tipos). Muerte, caída, proporción de HP y alerta de unidad propia atacada no se limitan.
+- **Alcance**: cliente local en todos los mods.
+
+**Corrección: a veces no sonaban impacto, proporción de HP ni muerte**
+
+- **Problema**: Evitar decodificar OGG en el hilo principal callaba el SFX de combate si aún no estaba en caché.
+- **Cambio**: La reproducción no decodifica en el bucle. Se precargan estilos de combate (impacto / ``proportion_*`` / muerte, etc.) en segundo plano; si falta, se reintenta desde una cola breve. Se mantiene el vaciado de eventos.
+
+**Corrección: tras el objetivo no se anunciaban coordenadas ni resumen de la casilla inicial**
+
+- **Problema**: El primer refresco de cámara omitía el habla para no trabar la animación, guardaba la frase y nunca la decía.
+- **Cambio**: Tras vaciar eventos del servidor, anunciar una vez la casilla inicial (coordenadas, terreno, aldeanos / casas / centro urbano / mina de oro, etc.).
+
+**Corrección: el cuartel del res base entrenaba arqueros oscuros en vez de arqueros**
+
+- **Problema**: La resolución de línea de entrenamiento al estilo AoE2 trataba cualquier ``can_upgrade_to`` como la forma que el edificio debía entrenar. El morph archer→darkarcher (torre de magos) se aplicaba al cuartel.
+- **Cambio**: Solo las formas con ``line_upgrade`` / ``no_auto_upgrade`` sustituyen la ranura de entrenamiento (milicia→hombre de armas vive en las rules del mod aoe2). El cuartel base sigue entrenando arqueros; el arquero oscuro sigue siendo una mejora de arqueros existentes. Las ideas de un mod no deben reescribir el juego base ni los menús de otros mods.
+
+**Corrección: Opciones → biblioteca de voz secundaria leía 5762 y 5778**
+
+- **Problema**: al abrir el editor de voz secundaria desde Opciones se leían los ids ``5762`` / ``5778`` como dígitos, no como «biblioteca de voz secundaria» y la pista de teclas.
+- **Cambio**: resolver msgparts antes de hablar. El editor es una lista de submenú normal; la voz del menú da el feedback para que un canal secundario silenciado no parezca una pantalla vacía.
+
+
 1.4.7.3
 -------
 

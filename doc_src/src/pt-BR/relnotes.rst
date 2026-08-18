@@ -4,6 +4,52 @@ Notas de lançamento
 
 .. contents::
 
+1.4.7.5
+-------
+
+**Correção: a ordem padrão do trabalhador num edifício danificado não era reparar**
+
+- **Problema**: a alteração da caça fazia ``go`` em qualquer alvo vivo com dono. Edifícios aliados danificados (e estaleiros) caiam nesse ramo, por isso o aldeão andava em vez de reparar.
+- **Mudança**: resolver primeiro a reparação padrão em estaleiros e alvos ``is_repairable`` com ``hp < hp_max`` (continua a exigir ``can_repair`` / ``can_build``; inimigos excluídos). Edifícios intactos, fauna e inimigos continuam ``go``.
+- **Alcance**: ordem padrão dos trabalhadores em todos os mods.
+
+
+1.4.7.4
+-------
+
+**Desempenho: velocidade F no início (loop do cliente)**
+
+- **Problema**: com muitas unidades locais, o primeiro decode OGG de passos/ambiente podia travar um quadro e perder o tick seguinte, baixando a velocidade relativa de F.
+- **Mudança**: esvaziar notifies do servidor com orçamento de ~8 ms (deixar ``voila`` para o quadro seguinte); repartir a animação; decodificar passos/ambiente (prioridade ≤ −10) em segundo plano e não roubar canais do mixer para esses sons.
+- **Alcance**: cliente local, todos os mods.
+
+**Limite de SFX: tiro/acerto, confirmação de ordem, passos, noise em loop**
+
+- **Problema**: em combates densos o fio principal ainda processava sons que o mixer não consegue empilhar.
+- **Mudança**: tiro/acerto no máximo 16 por tick (8 por quadrado); ``order_ok`` / ``order_impossible`` 2 por tick; passos 8 por onda de animação (4 por quadrado); noise em loop no máximo 3 por tipo de unidade/edifício (sem teto global de tipos). Morte, queda, proporção de PV e alerta de unidade própria atacada não são limitados.
+- **Alcance**: cliente local, todos os mods.
+
+**Correção: por vezes não tocavam acerto, proporção de PV nem morte**
+
+- **Problema**: proibir decode OGG de combate no fio principal evitava engasgos, mas silenciava o primeiro acerto se o som ainda não estava em cache.
+- **Mudança**: não descodificar no caminho de reprodução; pré-carregar acerto / ``proportion_*`` / morte quando o tipo aparece; fila curta de repetição se o decode ainda corre. O esvaziamento em rajada mantém-se.
+
+**Correção: após o objetivo não se anunciava o quadrado inicial**
+
+- **Problema**: a primeira atualização da câmara saltava a fala para não travar, guardava o anúncio e nunca o reproduzia.
+- **Mudança**: anunciá-lo uma vez depois de esvaziar eventos (coordenadas, terreno e resumo de camponeses/casas/centro da cidade/mina).
+
+**Correção: o quartel base treinava arqueiro negro em vez de arqueiro**
+
+- **Problema**: a linha de treino ao estilo AoE2 tratava qualquer ``can_upgrade_to`` como a forma que o prédio devia treinar. Arqueiro→arqueiro negro (morph com torre de magos) não é linha de quartel.
+- **Mudança**: só formas ``line_upgrade`` / ``no_auto_upgrade`` alteram o menu de treino (milícia→homem de armas fica nas rules do aoe2). O quartel base continua a treinar arqueiro; o arqueiro negro continua a ser uma melhoria de arqueiros existentes. Um mod não deve reescrever os menus do jogo base nem de outros mods.
+
+**Correção: Opções → biblioteca de voz secundária lia 5762 e 5778**
+
+- **Problema**: ao abrir o editor da voz secundária em Opções, os ids ``5762`` / ``5778`` eram lidos como dígitos, não como «biblioteca de voz secundária» e a dica das teclas.
+- **Mudança**: resolver msgparts antes de falar. O editor é uma lista de submenu normal; o feedback usa a voz do menu para um canal secundário mudo não parecer um ecrã vazio.
+
+
 1.4.7.3
 -------
 

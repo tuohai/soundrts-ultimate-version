@@ -98,6 +98,20 @@ class CreatureOrders(Entity):
             return True
         return False
 
+    def _should_default_repair(self, target):
+        """Cheap gate: damaged repairable / building site default to repair, not go."""
+        from ..worldunit.worldcreature import BuildingSite
+
+        if target is None or target is self:
+            return False
+        if not isinstance(target, BuildingSite):
+            if not (
+                getattr(target, "is_repairable", False)
+                and getattr(target, "hp", 0) < getattr(target, "hp_max", 0)
+            ):
+                return False
+        return self._target_needs_imperative_repair(target)
+
     def _target_is_herdable_animal(self, target):
         return (
             getattr(type(target), "herdable", 0)

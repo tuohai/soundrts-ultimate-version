@@ -858,6 +858,9 @@ class Worker(Unit):
         if capture_order:
             return capture_order
 
+        if self._should_default_repair(target):
+            return "repair"
+
         # Any living unit (enemy / neutral / own sheep…): default is go, never attack.
         # Hunt/slaughter requires imperative (Ctrl+Backspace / imperative go).
         elif (

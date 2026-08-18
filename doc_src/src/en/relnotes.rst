@@ -4,6 +4,52 @@ Release notes
 
 .. contents::
 
+1.4.7.5
+--------
+
+**Fix: worker default order on a damaged building was not repair**
+
+- **Issue**: The hunting change made any living owned target default to ``go``. Damaged friendly buildings (and unfinished sites) hit that branch, so a worker walked there instead of repairing.
+- **Change**: Resolve default repair first for building sites and ``is_repairable`` targets with ``hp < hp_max`` (still requires ``can_repair`` / ``can_build``; enemies excluded). Intact buildings, wildlife, and enemies still default to ``go``.
+- **Scope**: Worker default orders in all mods.
+
+
+1.4.7.4
+--------
+
+**Performance: opening F-key speed (client loop)**
+
+- **Issue**: Early-game crowds plus first-time OGG decode of footsteps/ambient could stall the client for a long frame, delaying the next world ask and dropping F-key relative speed.
+- **Change**: Drain server notifies on a short time budget (leave ``voila`` for the next frame); spread unit animation across frames; decode footstep/ambient SFX (priority ≤ −10) on a background thread and never steal mixer channels for them.
+- **Scope**: Local client in all mods.
+
+**SFX rate limits: fire/hit, order ack, footsteps, looping noise**
+
+- **Issue**: Dense combat or many units on one square still ran every notify / animate for sounds the mixer cannot stack.
+- **Change**: Fire/hit at most 16 per tick (8 per square); ``order_ok`` / ``order_impossible`` 2 per tick; footsteps 8 per animation wave (4 per square); looping noise at most 3 per unit/building type (types do not share a cap; no global type ceiling). Death, falling, HP proportion, and own-unit-attacked alerts are not capped.
+- **Scope**: Local client in all mods.
+
+**Fix: hit, HP proportion, and death SFX sometimes silent**
+
+- **Issue**: Skipping on-thread OGG decode for combat SFX avoided hitches but returned silence when the sound was not cached yet.
+- **Change**: The play path never decodes on the client loop. Combat styles (hit / ``proportion_*`` / death, and so on) are prefetched in the background when a type appears; a miss is retried from a short pending queue. Event bursting is kept.
+
+**Fix: no opening square coords or summary after the objective**
+
+- **Issue**: The first camera refresh skipped speech to avoid TTS decode hitching animation, queued the line, and never spoke it.
+- **Change**: After draining server events, speak the opening square once (coords, terrain, peasants / houses / town hall / gold mine, and so on).
+
+**Fix: default barracks menu trained dark archers instead of archers**
+
+- **Issue**: AoE2-style train-line resolution treated any ``can_upgrade_to`` as the next form the building should train. Vanilla archer→darkarcher (mage tower morph) was remapped onto barracks.
+- **Change**: Only forms with ``line_upgrade`` / ``no_auto_upgrade`` replace the train slot (AoE2 militia→man-at-arms lives in that mod’s rules). Default barracks still train archers; dark archers remain an upgrade of existing archers. Mod features must not rewrite the base game or other mods’ menus.
+
+**Fix: Options → secondary voice library spoke 5762 and 5778**
+
+- **Issue**: Opening the secondary voice editor from Options read TTS ids ``5762`` / ``5778`` as literal digits instead of “secondary voice library” and the control hint.
+- **Change**: Resolve msgparts before speaking. The editor is a normal submenu list; feedback uses the menu voice so a muted secondary channel does not feel like an empty screen.
+
+
 1.4.7.3
 --------
 

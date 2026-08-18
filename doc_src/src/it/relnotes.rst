@@ -3,6 +3,52 @@ Note di rilascio
 
 .. contents::
 
+1.4.7.5
+--------
+
+**Correzione: l’ordine predefinito del lavoratore su un edificio danneggiato non era riparare**
+
+- **Problema**: la modifica della caccia rendeva ``go`` qualsiasi bersaglio vivo con proprietario. Edifici alleati danneggiati (e cantieri) finivano in quel ramo, quindi il villico camminava invece di riparare.
+- **Cambio**: risolvere prima la riparazione predefinita per i cantieri e i bersagli ``is_repairable`` con ``hp < hp_max`` (restano ``can_repair`` / ``can_build``; esclusi i nemici). Edifici intatti, fauna e nemici restano ``go``.
+- **Ambito**: ordine predefinito dei lavoratori in tutti i mod.
+
+
+1.4.7.4
+--------
+
+**Prestazioni: velocità del tasto F all’avvio (loop client)**
+
+- **Problema**: All’inizio, passi/ambienti al primo decode OGG potevano bloccare il client per un frame lungo, ritardare la richiesta al mondo e far cadere la velocità relativa di F.
+- **Cambio**: Svuotare gli eventi server con un budget breve (``voila`` al frame successivo); spartire l’animazione delle unità; decodificare passi/ambiente (priorità ≤ −10) in background e non rubare canali del mixer.
+- **Ambito**: client locale in tutti i mod.
+
+**Limite SFX: fuoco/colpo, conferma ordini, passi, noise in loop**
+
+- **Problema**: Nei combattimenti densi il thread principale eseguiva comunque notify / animazione per suoni che il mixer non può sovrapporre.
+- **Cambio**: Fuoco/colpo al massimo 16 per tick (8 per casella); ``order_ok`` / ``order_impossible`` 2 per tick; passi 8 per onda di animazione (4 per casella); noise in loop al massimo 3 per tipo di unità/edificio (i tipi non condividono il tetto; nessun tetto globale di tipi). Morte, caduta, proporzione HP e allarme unità propria attaccata non sono limitati.
+- **Ambito**: client locale in tutti i mod.
+
+**Correzione: a volte non si sentivano colpo, proporzione HP e morte**
+
+- **Problema**: Evitare il decode OGG sul thread principale silenziava gli SFX di combattimento se non erano ancora in cache.
+- **Cambio**: La riproduzione non decodifica nel loop. Gli stili di combattimento (colpo / ``proportion_*`` / morte, ecc.) si precaricano in background; un miss si ritenta da una coda breve. Lo svuotamento eventi resta.
+
+**Correzione: dopo l’obiettivo non si annunciavano coordinate né riepilogo della casella iniziale**
+
+- **Problema**: Il primo refresh della telecamera saltava la voce per non bloccare l’animazione, metteva in coda la frase e non la pronunciava mai.
+- **Cambio**: Dopo aver svuotato gli eventi server, annunciare una volta la casella iniziale (coordinate, terreno, contadini / case / municipio / miniera d’oro, ecc.).
+
+**Correzione: la caserma del res di base addestrava arcieri oscuri invece di arcieri**
+
+- **Problema**: La risoluzione della linea di addestramento in stile AoE2 trattava qualsiasi ``can_upgrade_to`` come la forma che l’edificio doveva addestrare. Il morph archer→darkarcher (torre dei maghi) finiva sulla caserma.
+- **Cambio**: Solo le forme con ``line_upgrade`` / ``no_auto_upgrade`` sostituiscono lo slot di addestramento (milizia→uomo d’arme sta nelle rules del mod aoe2). La caserma di base addestra ancora gli arcieri; l’arciere oscuro resta un upgrade degli arcieri esistenti. Le idee di un mod non devono riscrivere il gioco base né i menu degli altri mod.
+
+**Correzione: Opzioni → libreria vocale secondaria diceva 5762 e 5778**
+
+- **Problema**: aprendo l’editor della voce secondaria da Opzioni si leggevano gli id ``5762`` / ``5778`` come cifre, non «libreria vocale secondaria» e il suggerimento sui tasti.
+- **Cambio**: risolvere i msgparts prima di parlare. L’editor è un elenco di sottomenu normale; il feedback usa la voce del menu così un canale secondario muto non sembra una schermata vuota.
+
+
 1.4.7.3
 --------
 
