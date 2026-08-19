@@ -546,6 +546,19 @@ def _speak_line(text: str, which: str) -> None:
         pass
 
 
+def editor_intro_msgparts(which: str):
+    """Title + control hint as TTS ids (never stringify 5762/5778 as digits)."""
+    from .. import msgparts as mp
+
+    title = mp.VOICE_LIB_PRIMARY if which == PRIMARY else mp.VOICE_LIB_SECONDARY
+    hint = list(mp.VOICE_LIB_EDITOR_HINT or [])
+    parts = list(title)
+    if hint:
+        parts.extend(mp.PERIOD)
+        parts.extend(hint)
+    return parts
+
+
 def announce(which: str, extra: str = "") -> None:
     """Speak full status (options menu / explicit callers)."""
     text = status_text(which)

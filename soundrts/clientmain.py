@@ -1064,7 +1064,6 @@ def voice_lib_editor(which: str):
     )
 
     from .lib import voice_libs
-    from .lib.msgs import literal_text_msg
 
     voice_libs.load_from_config()
     rows = [
@@ -1075,11 +1074,6 @@ def voice_lib_editor(which: str):
         "device",
     ]
     idx = 0
-    title = (
-        mp.VOICE_LIB_PRIMARY[0]
-        if which == voice_libs.PRIMARY
-        else mp.VOICE_LIB_SECONDARY[0]
-    )
 
     def _announce_row():
         row = rows[idx]
@@ -1099,8 +1093,7 @@ def voice_lib_editor(which: str):
             voice_libs.nudge_param(which, delta)
             voice_libs.announce_param_value(which)
 
-    hint = mp.VOICE_LIB_EDITOR_HINT[0] if mp.VOICE_LIB_EDITOR_HINT else ""
-    voice.item(literal_text_msg(f"{title}。{hint}" if hint else title))
+    voice.item(voice_libs.editor_intro_msgparts(which))
     _announce_row()
     pygame.event.clear([KEYDOWN])
 
