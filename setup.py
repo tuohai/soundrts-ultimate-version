@@ -6,8 +6,9 @@ Or activate the virtual environment and type: python setup.py build
 Warning: the py launcher ignores the virtual environment if a "#!" line is specified!
 (see PEP 486)
 
-本脚本在 cx_Freeze 打包前会先用 setup_cython.py 编译所有 .pyx 模块，
-产物 (.pyd / .so) 会作为 include_files 一并打入发布目录。
+本脚本在 cx_Freeze 打包前会先用 setup_cython.py 编译所有 .pyx 模块。
+inplace 产物 (.pyd / .so) 会随 soundrts 包打进 lib/soundrts，不要再拷到安装根目录
+（否则会出现一份只有加速模块、实际不会被导入的 soundrts/）。
 若 Cython 未安装或编译失败，会回退到纯 Python 模式（功能完整、速度较慢）。
 可通过环境变量 SOUNDRTS_SKIP_CYTHON=1 显式跳过 Cython 构建。
 """
@@ -70,9 +71,8 @@ TMP = os.environ["TMP"]
 destination = rf"{TMP}\soundrts-{VERSION}-windows"
 
 # Campaigns live under res/single (not a top-level single/ directory).
+# Cython .pyds stay in the source tree; cx_Freeze copies them into lib/soundrts.
 include_files = ["res", "mods", "cfg", "doc"]
-for compiled in cython_outputs:
-    include_files.append((compiled, compiled))
 
 
 def _add_tkinter_runtime(files: list) -> None:
@@ -154,7 +154,16 @@ def _strip_fragile_mypyc(dest: str) -> None:
     print(f"[setup] stripped {removed} fragile mypyc/native chardet modules.")
 
 
+def _strip_duplicate_cython_tree(dest: str) -> None:
+    """Drop a leftover root soundrts/ (duplicate .pyds; imports use lib/soundrts)."""
+    extra = Path(dest) / "soundrts"
+    if extra.is_dir():
+        shutil.rmtree(extra)
+        print("[setup] removed leftover top-level soundrts/ (extensions live in lib/soundrts)")
+
+
 _strip_fragile_mypyc(destination)
+_strip_duplicate_cython_tree(destination)
 
 
 def _copy_nuance_helper(dest: str) -> None:
