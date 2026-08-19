@@ -113,7 +113,8 @@
 8321 Jeleň
 8322 Ovca
 8323 Diviak
-8324 Mršina
+8324 Mršina
+
 8330 Mršina dobytka
 
 8120 Straż obywatelska
@@ -294,3 +295,89 @@
 8513 Vaše jednotky pri konverzii zomrú namiesto pripojenia k nepriateľovi
 8514 Nepriateľské konverzie proti vám trvajú oveľa dlhšie
 8515 Keď viacerí mnísi konvertujú naraz, odpočíva len úspešný
+; Bonusy civilizácií (čítanie vo výbere frakcie klávesom G; odsadenie pokračuje)
+8520 Unikátna jednotka: dlhý lukostrelec.
+  Unikátne technológie: Yeomen a Warwolf.
+  Peší lukostrelci plus jeden dostrel v hradnom a plus jeden v cisárskom veku, okrem prakovníkov.
+  Pastieri pracujú rýchlejšie.
+  Radnice stoja od hradného veku polovicu dreva.
+  Tímový bonus: strelnice pracujú rýchlejšie.
+  Bez Krvi a Palcového prsteňa.
+8521 Unikátna jednotka: vrhač sekier.
+  Unikátne technológie: bradatá sekera a rytierstvo.
+  Jazda plus dvadsať percent životov od feudálneho veku.
+  Zberači pracujú rýchlejšie.
+  Vylepšenia fariem sú zadarmo.
+  Hrady stoja menej kameňa.
+  Tímový bonus: rytieri plus dve viditeľnosti.
+  Bez Palcového prsteňa, Náramku, Krúžkovej zbroje lukostrelca a Krvi.
+8522 Unikátna jednotka: Chu Ko Nu.
+  Unikátne technológie: rakety a Veľký múr.
+  Štart s tromi extra dedinčanmi, mínus päťdesiat dreva a dvesto jedla.
+  Technológie sú o päť, desať a pätnásť percent lacnejšie vo feudálnom, hradnom a cisárskom veku.
+  Radnice dávajú pätnásť populácie a plus sedem viditeľnosti.
+  Ohnivé lode sa v hradnom a cisárskom veku pohybujú rýchlejšie.
+  Tímový bonus: farmy obsahujú o desať percent viac jedla.
+8523 Unikátna jednotka: Mangudaj.
+  Unikátne technológie: Drill a Nomádi.
+  Lovci pracujú rýchlejšie.
+  Línia zvedov plus dvadsať, potom tridsať percent životov v hradnom a cisárskom veku.
+  Jazdní lukostrelci strieľajú rýchlejšie.
+  Pastviny namiesto fariem; žiadny mlyn.
+  Tímový bonus: línia zvedov plus dve viditeľnosti.
+8524 Unikátna jednotka: katafrakt.
+  Unikátne technológie: Logistika a Grécky oheň.
+  Budovy získavajú extra životy v každom veku.
+  Cisársky vek stojí o tridsať tri percent menej.
+  Ťavy, prakovníci a kopijníci sú lacnejší.
+  Ohnivé lode útočia rýchlejšie.
+  Mestská stráž a Mestská hliadka sú zadarmo.
+  Tímový bonus: mnísi liečia rýchlejšie.
+8525 Unikátna jednotka: samuraj.
+  Unikátne technológie: Yasama a Kataparuto.
+  Pechota útočí rýchlejšie od feudálneho veku.
+  Rybárske lode majú viac životov a pracujú rýchlejšie.
+  Mlyny a tábory sú lacnejšie.
+  Tímový bonus: galéry plus štyri viditeľnosti.
+8526 Unikátna jednotka: teutónsky rytier.
+  Unikátne technológie: Pancier a Cimburie.
+  Jednotky kasární a stajní plus zbroj na blízko v hradnom a cisárskom veku.
+  Farmy stoja menej dreva.
+  Strieľne a Bylinkárstvo sú zadarmo.
+  Tímový bonus: odolnosť voči obráteniu.
+8527 Unikátna jednotka: berserk.
+  Unikátne technológie: Náčelníci a Bogsveigar.
+  Pechota plus dvadsať percent životov od feudálneho veku.
+  Fúrik a Ručný vozík sú zadarmo.
+  Vojnové lode sú lacnejšie.
+  Doky môžu cvičiť drakkary.
+  Tímový bonus: doky sú lacnejšie.
+8528 Unikátna jednotka: ratanový lukostrelec.
+  Unikátne technológie: Chatras a Papierové peniaze.
+  Jednotky strelnice plus dvadsať percent životov.
+  Odhalia nepriateľské radnice na začiatku.
+  Odvedenie je zadarmo.
+  Ekonomické technológie nestoja drevo a skúmajú sa rýchlejšie.
+  Tímový bonus: cisársky prakovník je dostupný.
+8529 Unikátna jednotka: organ.
+  Unikátne technológie: Obeplávanie sveta a Arkebuza.
+  Lode plus desať percent životov.
+  Všetky jednotky stoja o dvadsať percent menej zlata.
+  Zberači zbierajú aj drevo.
+  Môžu stavať Feitoriu.
+  Tímový bonus: technológie sa skúmajú rýchlejšie.
+8530 Unikátna jednotka: jaguárí bojovník.
+  Unikátne technológie: Atlatl a Kvetinová vojna.
+  Štart s päťdesiatimi zlatami naviac.
+  Dedinčania nesú o tri viac.
+  Vojsko sa cvičí rýchlejšie.
+  Mnísi získavajú päť životov za každú technológiu kláštora.
+  Tímový bonus: relikvie dávajú extra zlato.
+  Žiadne stajne ani jazda.
+8531 Unikátna jednotka: woadský nájazdník.
+  Unikátne technológie: Pevnosť a Keltská zúrivosť.
+  Pechota plus päť percent rýchlosti v každom veku od temného veku.
+  Drevorubači pracujú rýchlejšie.
+  Obliehacie zbrane strieľajú rýchlejšie.
+  Môžu kradnúť nepriateľské stáda, aj keď vedľa stojí jednotka.
+  Tímový bonus: obliehacie dielne pracujú rýchlejšie.

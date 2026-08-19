@@ -598,6 +598,16 @@ class CreatureStatusUpdate(Entity):
         if self.player is None:
             return
 
+        # 帝国 2 式：claimable 牲畜 — 中立靠近归属；敌方羊可被抢（凯尔特无视看守）
+        if getattr(type(self), "claimable", 0) or getattr(type(self), "herdable", 0):
+            owner = self.player
+            if owner is not None and getattr(owner, "neutral", False):
+                self._try_auto_claim()
+            elif owner is not None:
+                self._try_steal_owned_herdable()
+            if self.player is None:
+                return
+
         # 牧羊：每帧维护跟随，避免 imperative 命令阻断 decide 后不再跟随
         if self.herdable and self._herd_leader is not None:
             self._maintain_herd_follow()
@@ -632,6 +642,156 @@ class CreatureStatusUpdate(Entity):
         queue[0].update()
     def _is_attacking(self):
         return isinstance(self.action, AttackAction)
+
+    def _claim_range_ok(self, obj, claim_range):
+        place = self.place
+        if claim_range > 0:
+            from ..lib.nofloat import square_of_distance
+
+            return square_of_distance(self.x, self.y, obj.x, obj.y) <= claim_range * claim_range
+        return getattr(obj, "place", None) is place
+
+    def _claim_range_value(self):
+        claim_range = getattr(self, "claim_range", None)
+        if claim_range is None:
+            claim_range = getattr(type(self), "claim_range", 0)
+        try:
+            return int(claim_range[0] if isinstance(claim_range, list) else claim_range)
+        except (TypeError, ValueError):
+            return 0
+
+    def _iter_claim_candidates(self, claim_range):
+        place = self.place
+        if place is None:
+            return
+        seen = set()
+        for obj in list(getattr(place, "objects", ()) or ()):
+            if obj is self or id(obj) in seen:
+                continue
+            seen.add(id(obj))
+            yield obj
+        if claim_range > 0:
+            for nb in getattr(place, "neighbors", ()) or ():
+                for obj in list(getattr(nb, "objects", ()) or ()):
+                    if obj is self or id(obj) in seen:
+                        continue
+                    seen.add(id(obj))
+                    yield obj
+
+    def _finish_herd_claim(self, claimer):
+        p = getattr(claimer, "player", None)
+        self.set_player(p)
+        self.flee_on_hit = 0
+        skills = getattr(claimer, "basic_skills", None) or getattr(
+            claimer, "_basic_skills", ()
+        ) or ()
+        if "herd" in skills and getattr(type(self), "herdable", 0):
+            from ..worldorders.movement import _attach_herd
+
+            _attach_herd(self, claimer)
+        animal_type = (
+            getattr(self, "type_name", None)
+            or getattr(type(self), "type_name", None)
+            or getattr(type(self), "__name__", "")
+        )
+        try:
+            claimer.notify(f"claim_ok,{animal_type}")
+        except Exception:
+            pass
+        return True
+
+    def _try_auto_claim(self):
+        """Neutral ``claimable`` animals join a non-neutral player on proximity (AoE2 sheep)."""
+        raw = getattr(self, "claimable", None)
+        if raw is None:
+            raw = getattr(type(self), "claimable", 0)
+        if raw not in (1, "1", True) and not (
+            isinstance(raw, list) and raw and str(raw[0]) in ("1", "true", "True")
+        ):
+            return False
+        owner = self.player
+        if owner is None or not getattr(owner, "neutral", False):
+            return False
+        if self.place is None or getattr(self, "hp", 0) <= 0:
+            return False
+        claim_range = self._claim_range_value()
+        for obj in self._iter_claim_candidates(claim_range):
+            if getattr(obj, "hp", 0) <= 0:
+                continue
+            if getattr(obj, "inside", None) is not None:
+                continue
+            p = getattr(obj, "player", None)
+            if p is None or p is owner or getattr(p, "neutral", False):
+                continue
+            if not self._claim_range_ok(obj, claim_range):
+                continue
+            return self._finish_herd_claim(obj)
+        return False
+
+    def _player_in_group(self, player, owner):
+        if player is owner:
+            return True
+        for ally in getattr(owner, "allied", None) or ():
+            if ally is player:
+                return True
+        return False
+
+    def _owner_guard_nearby(self, owner, claim_range):
+        """True if a living non-building unit allied to ``owner`` stands by the animal."""
+        for obj in self._iter_claim_candidates(claim_range):
+            if getattr(obj, "hp", 0) <= 0:
+                continue
+            if getattr(obj, "is_a_building", False):
+                continue
+            if getattr(obj, "inside", None) is not None:
+                continue
+            if getattr(obj, "herdable", 0) or getattr(obj, "claimable", 0):
+                continue
+            p = getattr(obj, "player", None)
+            if p is None or not self._player_in_group(p, owner):
+                continue
+            if not self._claim_range_ok(obj, claim_range):
+                continue
+            return True
+        return False
+
+    def _try_steal_owned_herdable(self):
+        """Steal enemy-owned herdables. Race flags decide guarded / protected flocks."""
+        from ..world_civ_bonuses import (
+            herdable_steal_ignore_guards,
+            herdable_steal_protected,
+        )
+
+        if not (
+            getattr(type(self), "claimable", 0) or getattr(type(self), "herdable", 0)
+        ):
+            return False
+        owner = self.player
+        if owner is None or getattr(owner, "neutral", False):
+            return False
+        if self.place is None or getattr(self, "hp", 0) <= 0:
+            return False
+        claim_range = self._claim_range_value()
+        guarded = self._owner_guard_nearby(owner, claim_range)
+        protected = bool(herdable_steal_protected(owner))
+        for obj in self._iter_claim_candidates(claim_range):
+            if getattr(obj, "hp", 0) <= 0:
+                continue
+            if getattr(obj, "inside", None) is not None:
+                continue
+            if getattr(obj, "is_a_building", False):
+                continue
+            p = getattr(obj, "player", None)
+            if p is None or p is owner or getattr(p, "neutral", False):
+                continue
+            if self._player_in_group(owner, p):
+                continue
+            if not self._claim_range_ok(obj, claim_range):
+                continue
+            if guarded and (protected or not herdable_steal_ignore_guards(p)):
+                continue
+            return self._finish_herd_claim(obj)
+        return False
 
     # slow update
     def debug_log(self, message):

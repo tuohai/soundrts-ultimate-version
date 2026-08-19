@@ -493,13 +493,13 @@ class _Definitions:
                                 d[name]["phase_bonus_targets"] = targets
                                 d[name]["phase_targets"] = targets
                         self._sync_phase_bonus_compat_fields(d[name])
-                    elif words[0] == "on_phase" and len(words) >= 2:
+                    elif words[0] in ("on_phase", "team_on_phase") and len(words) >= 2:
                         # Race/faction reward when a phase enters player.upgrades:
                         #   on_phase castle_age rdg_range 1 aoe_archer crossbowman ...
-                        # Stored as on_phase_effects: list of [phase, *effect_bonus_args]
+                        #   team_on_phase dark_age sight_range 2 scout_cavalry
+                        # Stored as on_phase_effects / team_on_phase_effects.
                         phase_name = words[1]
                         effect_tokens = words[2:]
-                        # Precision-convert known stats (same spirit as effect bonus)
                         processed = [phase_name]
                         i = 0
                         while i < len(effect_tokens):
@@ -522,7 +522,22 @@ class _Definitions:
                                 i += 2
                                 continue
                             i += 1
-                        d[name].setdefault("on_phase_effects", []).append(processed)
+                        store = (
+                            "team_on_phase_effects"
+                            if words[0] == "team_on_phase"
+                            else "on_phase_effects"
+                        )
+                        d[name].setdefault(store, []).append(processed)
+                    elif words[0] == "grant_tech_on_phase" and len(words) >= 3:
+                        d[name].setdefault("grant_tech_on_phase", []).append(
+                            list(words[1:])
+                        )
+                    elif words[0] == "team_share_research" and len(words) >= 2:
+                        # One row per line: tech [host types…]
+                        #   team_share_research imperial_skirmisher archery_range
+                        d[name].setdefault("team_share_research", []).append(
+                            list(words[1:])
+                        )
                     elif words[0] == "can_train":
                         d[name][words[0]] = parse_can_train_words(words)
                     elif (
@@ -1351,6 +1366,10 @@ class Rules(_Definitions):
         "inventory_victory",  # item: counts toward hold-all timed victory
         "inventory_production_bonus_pct",  # race/upgrade: % bonus to inventory rates
         "team_inventory_production_bonus_pct",  # race team bonus (self + allies)
+        "team_farm_food_pct",  # race team: farms contain +N% food
+        "team_conversion_channel_bonus_pct",  # race team: conversion resist
+        "herdable_steal_ignore_guards",  # race: steal guarded enemy herdables
+        "herdable_steal_protected",  # race: own herdables ignore steal-through-guards
         "research_stack_hp",  # upgrade: stacks race research_stack_hp_bonus on complete
         "is_invisible",
         "is_cloakable",
@@ -1538,6 +1557,7 @@ class Rules(_Definitions):
         "trade_hubs",          # hub type names and/or flags (market, is_dock, …)
         "trade_rewards",       # resource indices a trade unit may earn on routes
         "tribute_resources",   # parameters: resources that can be tributed
+        "reveal_enemy_town_centers",  # race: fog-memory these hostile types at start
         "speed_vs",
         "cover_vs",
         "dodge_vs",

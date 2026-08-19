@@ -261,7 +261,16 @@ class AttributeEffectsMixin:
                         cur = {}
                     source_key = str(source)
                     product_key = resource_or_type_key(product) or "resource1"
-                    cur[source_key] = (float(rate), product_key)
+                    mode = None
+                    if consumed == 4 and i + 4 < len(bonus_args):
+                        extra = str(bonus_args[i + 4]).lower()
+                        if extra in ("per_food", "ratio"):
+                            mode = "per_food"
+                            consumed = 5
+                    if mode:
+                        cur[source_key] = (float(rate), product_key, mode)
+                    else:
+                        cur[source_key] = (float(rate), product_key)
                     unit.gather_byproduct = cur
                 except (TypeError, ValueError) as e:
                     from ..lib.log import warning

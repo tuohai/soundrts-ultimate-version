@@ -113,7 +113,8 @@
 8321 Hirsch
 8322 Schaf
 8323 Wildschwein
-8324 Tierkadaver
+8324 Tierkadaver
+
 8330 Viehskadaver
 
 8120 Milizsoldat
@@ -294,3 +295,89 @@
 8513 Eure Einheiten sterben statt zum Feind überzulaufen, wenn sie bekehrt werden
 8514 Feindliche Bekehrungen gegen euch dauern deutlich länger
 8515 Wenn mehrere Mönche gemeinsam bekehren, ruht nur der Erfolgreiche
+; Civilization bonuses (spoken in the faction picker via G; indented lines continue)
+8520 Einheit: Langbogenschütze.
+  Unique Techs: Yeomen und Warwolf.
+  Fußschützen plus eine Reichweite in der Ritterzeit und plus eine in der Imperialzeit, außer Speerwerfer.
+  Hirten arbeiten schneller.
+  Gemeindezentren kosten ab der Ritterzeit die Hälfte Holz.
+  Team: Schießanlagen arbeiten schneller.
+  Keine Blutlinien, kein Daumenring.
+8521 Einheit: Axtwerfer.
+  Unique Techs: Bartaxt und Rittertum.
+  Kavallerie plus zwanzig Prozent Trefferpunkte ab der Feudalzeit.
+  Sammler arbeiten schneller.
+  Bauernhof-Upgrades sind kostenlos.
+  Burgen kosten weniger Stein.
+  Team: Ritter plus zwei Sichtweite.
+  Kein Daumenring, Armschutz, Bogenschützen-Kettenrüstung oder Blutlinien.
+8522 Einheit: Chu Ko Nu.
+  Unique Techs: Raketentechnik und Große Mauer.
+  Start mit drei extra Dorfbewohnern, minus fünfzig Holz und zweihundert Nahrung.
+  Technologien kosten fünf, zehn und fünfzehn Prozent weniger in Feudal-, Ritter- und Imperialzeit.
+  Gemeindezentren unterstützen fünfzehn Bevölkerung und plus sieben Sichtweite.
+  Feuerschiffe bewegen sich in Ritter- und Imperialzeit schneller.
+  Team: Bauernhöfe enthalten zehn Prozent mehr Nahrung.
+8523 Einheit: Mangudai.
+  Unique Techs: Drill und Nomaden.
+  Jäger arbeiten schneller.
+  Kundschafterlinie plus zwanzig dann dreißig Prozent Trefferpunkte in Ritter- und Imperialzeit.
+  Berittene Bogenschützen schießen schneller.
+  Weiden statt Bauernhöfe; keine Mühle.
+  Team: Kundschafterlinie plus zwei Sichtweite.
+8524 Einheit: Kataphrakt.
+  Unique Techs: Logistik und Griechisches Feuer.
+  Gebäude erhalten extra Trefferpunkte je Zeitalter.
+  Die Imperialzeit kostet dreiunddreißig Prozent weniger.
+  Kamele, Speerwerfer und Speerkämpfer sind billiger.
+  Feuerschiffe greifen schneller an.
+  Stadtwache und Stadtpatrouille sind kostenlos.
+  Team: Mönche heilen schneller.
+8525 Einheit: Samurai.
+  Unique Techs: Yasama und Kataparuto.
+  Infanterie greift ab der Feudalzeit schneller an.
+  Fischerboote haben mehr Trefferpunkte und arbeiten schneller.
+  Mühlen und Lager kosten weniger.
+  Team: Galeeren plus vier Sichtweite.
+8526 Einheit: Deutschritter.
+  Unique Techs: Panzerung und Zinnen.
+  Kasernen- und Stall-Einheiten plus Nahkampfrüstung in Ritter- und Imperialzeit.
+  Bauernhöfe kosten weniger Holz.
+  Mordlöcher und Kräutermedizin sind kostenlos.
+  Team: widerstehen Bekehrung.
+8527 Einheit: Berserker.
+  Unique Techs: Stammesführer und Bogsveigar.
+  Infanterie plus zwanzig Prozent Trefferpunkte ab der Feudalzeit.
+  Schubkarre und Handkarren sind kostenlos.
+  Kriegsschiffe kosten weniger.
+  Docks können Langboote ausbilden.
+  Team: Docks kosten weniger.
+8528 Einheit: Rattanschütze.
+  Unique Techs: Chatras und Papiergeld.
+  Schießanlagen-Einheiten plus zwanzig Prozent Trefferpunkte.
+  Feindliche Gemeindezentren werden zu Beginn aufgedeckt.
+  Aushebung ist kostenlos.
+  Wirtschaftstechnologien kosten kein Holz und werden schneller erforscht.
+  Team: Imperialer Speerwerfer ist erforschbar.
+8529 Einheit: Orgelkanone.
+  Unique Techs: Weltumsegelung und Arkebuse.
+  Schiffe plus zehn Prozent Trefferpunkte.
+  Alle Einheiten kosten zwanzig Prozent weniger Gold.
+  Sammler sammeln auch Holz.
+  Können eine Feitoria bauen.
+  Team: Technologien werden schneller erforscht.
+8530 Einheit: Jaguarkrieger.
+  Unique Techs: Atlatl und Blumenkrieg.
+  Start mit fünfzig extra Gold.
+  Dorfbewohner tragen drei mehr.
+  Militär wird schneller ausgebildet.
+  Mönche erhalten fünf Trefferpunkte je Klostertechnologie.
+  Team: Reliquien erzeugen extra Gold.
+  Keine Ställe und keine Kavallerie.
+8531 Einheit: Waidläufer.
+  Unique Techs: Festung und Keltische Wut.
+  Infanterie plus fünf Prozent Geschwindigkeit je Zeitalter ab der Dunklen Zeit.
+  Holzfäller arbeiten schneller.
+  Belagerungswaffen feuern schneller.
+  Können feindliche Herden stehlen, auch wenn eine Einheit daneben steht.
+  Team: Belagerungswerkstätten arbeiten schneller.

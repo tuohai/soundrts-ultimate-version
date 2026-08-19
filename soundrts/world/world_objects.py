@@ -395,6 +395,13 @@ class WorldObjectsMixin:
         
         # 在单位创建后再次确保联盟正确设置
         self.update_alliances()
+        try:
+            from ..world_civ_bonuses import reveal_enemy_town_centers
+
+            for player in self.players:
+                reveal_enemy_town_centers(player)
+        except Exception:
+            pass
 
     def parse_start(self, start, faction, must_apply_equivalent_type):
         from .world_core import start_population_bonus

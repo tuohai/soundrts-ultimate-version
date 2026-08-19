@@ -1210,7 +1210,43 @@ def effective_can_research(host):
         for name in _addon_research_grants_for_host(addon, host):
             if name not in names:
                 names.append(name)
+    try:
+        from .world_civ_bonuses import team_share_research_entries
+
+        extra_rows = team_share_research_entries(getattr(host, "player", None))
+    except Exception:
+        extra_rows = []
+    if extra_rows:
+        known = set(names)
+        for tech, hosts in extra_rows:
+            if not tech or tech in known:
+                continue
+            if _host_accepts_shared_research(host, names, tech, hosts):
+                names.append(tech)
+                known.add(tech)
     return tuple(names)
+
+
+def _host_accepts_shared_research(host, current_names, extra_name, host_types=()):
+    """Attach a shared tech to matching buildings (host types, else same unit line)."""
+    if host_types:
+        tname = getattr(host, "type_name", "") or ""
+        expanded = set(getattr(host, "expanded_is_a", ()) or ())
+        host_cls = getattr(host, "cls", None) or type(host)
+        expanded.update(getattr(host_cls, "expanded_is_a", ()) or ())
+        for ht in host_types:
+            ht = str(ht)
+            if tname == ht or ht in expanded:
+                return True
+        return False
+    cls = rules.unit_class(extra_name)
+    lineage = {extra_name}
+    if cls is not None:
+        lineage.update(getattr(cls, "expanded_is_a", ()) or ())
+    for n in current_names:
+        if n in lineage:
+            return True
+    return False
 
 
 def detach_addons_for_lift(host):
@@ -1839,9 +1875,22 @@ def _apply_farm_food_tech_bonuses(building):
             bonus += int(getattr(tech, "farm_food_bonus", 0) or 0)
         except (TypeError, ValueError):
             continue
-    if bonus <= 0:
-        return
-    building.resource_volume_max = int(building.resource_volume_max) + bonus
+    if bonus:
+        building.resource_volume_max = int(building.resource_volume_max) + bonus
+        pq = getattr(building, "production_qty", 0) or 0
+        if pq:
+            building.production_qty = int(pq) + bonus
+    try:
+        from .world_civ_bonuses import apply_farm_food_team_pct
+
+        building.resource_volume_max = apply_farm_food_team_pct(
+            building, building.resource_volume_max
+        )
+        pq2 = getattr(building, "production_qty", 0) or 0
+        if pq2:
+            building.production_qty = apply_farm_food_team_pct(building, pq2)
+    except Exception:
+        pass
     if hasattr(building, "resource_qty"):
         building.resource_qty = int(building.resource_volume_max)
         building._resource_qty_frac = 0
@@ -1849,9 +1898,6 @@ def _apply_farm_food_tech_bonuses(building):
             building.notify(f"qty_update,{building.resource_qty}")
         except Exception:
             pass
-    pq = getattr(building, "production_qty", 0) or 0
-    if pq:
-        building.production_qty = int(pq) + bonus
 
 
 def _auto_start_gas_production(building):

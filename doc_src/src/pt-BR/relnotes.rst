@@ -4,6 +4,33 @@ Notas de lançamento
 
 .. contents::
 
+1.4.7.6
+-------
+
+**aoe2: bónus das doze civilizações alinhados com a Definitive Edition atual**
+
+- **Problema**: os bónus civ ainda seguiam um snapshot ~2022 (p.ex. chineses 10/15/20 % nas tecnologias, centros da cidade 10 de população), não a DE atual. O motor também não exprimia pesquisa partilhada de equipa, roubo de rebanho vigiado nem descontos de custo por idade.
+- **Mudança**: as doze civs (bretões, francos, chineses, mongóis, bizantinos, japoneses, teutões, vikings, vietnamitas, portugueses, astecas, celtas) usam bónus e bónus de equipa DE atuais. Onde as rules não chegavam, o motor ganhou campos sem nomes de civ: ``team_on_phase``, ``grant_tech_on_phase``, ``team_share_research`` (tecnologia e edifícios anfitrião opcionais, p.ex. escaramuçador imperial vietnamita para aliados), ``team_farm_food_pct``, ``reveal_enemy_town_centers``, ``research_cost_zero_slot`` / ``research_time_percent``, ``gather_byproduct``, resistência de equipa à conversão, etc.
+- **Alcance**: mod aoe2; os novos campos de raça servem outros mods.
+
+**Motor: reclamar / roubar rebanhos (por regras)**
+
+- **Problema**: a posse por proximidade ``claimable`` não estava no ciclo da unidade. O «não se rouba rebanho vigiado / rouba-se se não estiver protegido» do AoE2 não tinha flags.
+- **Mudança**: animais ``claimable`` neutros passam a um jogador não neutro próximo. O rebanho com dono pode ser roubado: qualquer um se não houver guarda; bloqueado se houver uma unidade viva do dono; raça ``herdable_steal_ignore_guards 1`` ignora essa guarda; ``herdable_steal_protected 1`` (predefinição 0) bloqueia esse bónus nos teus próprios animais. O motor não testa nomes de civilização.
+- **Alcance**: todos os mods; os celtas aoe2 ativam ambos os flags.
+
+**aoe2: início na Idade das Trevas como AoE2 (incluindo chineses)**
+
+- **Problema**: o início era 1 aldeão, uma casa e sem batedor. Os chineses tinham 4 aldeões (+3 sobre uma base de 1), não os 6 + batedor da DE.
+- **Mudança**: civs padrão: centro da cidade + 3 aldeões + cavalaria de exploração. Chineses: 6 aldeões + batedor (−50 madeira, −200 comida, centro 15 de população). Astecas: 3 aldeões + batedor águia, +50 ouro. Sem casa inicial (população do centro). Os scripts de campanha e aldeões extra da dificuldade da IA não mudam.
+- **Alcance**: ``starting_units`` / ``starting_resources`` predefinidos das raças aoe2.
+
+**aoe2: textos do seletor de facção em todos os idiomas do mod**
+
+- **Problema**: as fichas G das civilizações só existiam em inglês e chinês.
+- **Mudança**: ids ``8520``–``8531`` em todos os pacotes UI aoe2 (en, zh, de, fr, es, it, ru, be, pl, cs, sk, pt-BR, vi).
+
+
 1.4.7.5
 -------
 

@@ -113,7 +113,8 @@
 8321 Ciervo
 8322 Oveja
 8323 Jabalí
-8324 Cadáver
+8324 Cadáver
+
 8330 Cadáver de ganado
 
 8120 Milicia
@@ -294,3 +295,89 @@
 8513 Tus unidades mueren en lugar de unirse al enemigo al ser convertidas
 8514 Las conversiones enemigas contra ti tardan mucho más
 8515 Si varios monjes convierten juntos, solo descansa el que tiene éxito
+; Bonos de civilización (se leen en el selector de facción con G; líneas sangradas continúan)
+8520 Unidad única: arquero de arco largo.
+  Tecnologías únicas: Yeomen y Warwolf.
+  Arqueros a pie más uno de alcance en Edad de los Castillos y más uno en Edad Imperial, excepto honderos.
+  Los pastores trabajan más rápido.
+  Los centros urbanos cuestan la mitad de madera desde la Edad de los Castillos.
+  Bono de equipo: los campos de tiro trabajan más rápido.
+  Sin Linaje ni Anillo de pulgar.
+8521 Unidad única: lanzador de hachas.
+  Tecnologías únicas: hacha barbada y caballería.
+  Caballería más veinte por ciento de puntos de resistencia desde la Edad Feudal.
+  Los recolectores trabajan más rápido.
+  Las mejoras de granja son gratis.
+  Los castillos cuestan menos piedra.
+  Bono de equipo: caballeros más dos de visión.
+  Sin Anillo de pulgar, Brazal, Cota de malla de arquero ni Linaje.
+8522 Unidad única: Chu Ko Nu.
+  Tecnologías únicas: cohetería y Gran Muralla.
+  Empiezan con tres aldeanos extra, menos cincuenta de madera y doscientos de comida.
+  Las tecnologías cuestan cinco, diez y quince por ciento menos en Feudal, Castillos e Imperial.
+  Los centros urbanos dan quince de población y más siete de visión.
+  Los barcos de fuego se mueven más rápido en Castillos e Imperial.
+  Bono de equipo: las granjas contienen diez por ciento más de comida.
+8523 Unidad única: Mangudai.
+  Tecnologías únicas: Drill y Nómadas.
+  Los cazadores trabajan más rápido.
+  Línea de exploradores más veinte y luego treinta por ciento de puntos de resistencia en Castillos e Imperial.
+  Los arqueros a caballo disparan más rápido.
+  Pastos en lugar de granjas; sin molino.
+  Bono de equipo: línea de exploradores más dos de visión.
+8524 Unidad única: catafracto.
+  Tecnologías únicas: Logística y Fuego griego.
+  Los edificios ganan puntos de resistencia extra en cada edad.
+  La Edad Imperial cuesta un treinta y tres por ciento menos.
+  Camellos, honderos y lanceros cuestan menos.
+  Los barcos de fuego atacan más rápido.
+  Vigilancia urbana y Patrulla urbana son gratis.
+  Bono de equipo: los monjes curan más rápido.
+8525 Unidad única: samurái.
+  Tecnologías únicas: Yasama y Kataparuto.
+  La infantería ataca más rápido desde la Edad Feudal.
+  Los barcos de pesca tienen más puntos de resistencia y trabajan más rápido.
+  Molinos y campamentos cuestan menos.
+  Bono de equipo: galeras más cuatro de visión.
+8526 Unidad única: caballero teutónico.
+  Tecnologías únicas: Blindaje y Almenas.
+  Unidades de cuartel y establo más armadura cuerpo a cuerpo en Castillos e Imperial.
+  Las granjas cuestan menos madera.
+  Saeteras y Medicina herbal son gratis.
+  Bono de equipo: resisten la conversión.
+8527 Unidad única: berserker.
+  Tecnologías únicas: Jefes tribales y Bogsveigar.
+  Infantería más veinte por ciento de puntos de resistencia desde la Edad Feudal.
+  Carretilla y Carro de mano son gratis.
+  Los barcos de guerra cuestan menos.
+  Los muelles pueden formar drakkars.
+  Bono de equipo: los muelles cuestan menos.
+8528 Unidad única: arquero de ratán.
+  Tecnologías únicas: Chatras y Papel moneda.
+  Unidades del campo de tiro más veinte por ciento de puntos de resistencia.
+  Revelan los centros urbanos enemigos al inicio.
+  Conscripción es gratis.
+  Las tecnologías económicas no cuestan madera y se investigan más rápido.
+  Bono de equipo: el hondero imperial está disponible.
+8529 Unidad única: organillo.
+  Tecnologías únicas: Circunnavegación y Arcabuz.
+  Barcos más diez por ciento de puntos de resistencia.
+  Todas las unidades cuestan veinte por ciento menos de oro.
+  Los recolectores también recogen madera.
+  Pueden construir una Feitoria.
+  Bono de equipo: las tecnologías se investigan más rápido.
+8530 Unidad única: guerrero jaguar.
+  Tecnologías únicas: Atlatl y Guerra florida.
+  Empiezan con cincuenta de oro extra.
+  Los aldeanos cargan tres más.
+  El ejército se entrena más rápido.
+  Los monjes ganan cinco puntos de resistencia por tecnología del monasterio.
+  Bono de equipo: las reliquias generan oro extra.
+  Sin establos ni caballería.
+8531 Unidad única: asaltante woad.
+  Tecnologías únicas: Fortaleza y Furor celta.
+  Infantería más cinco por ciento de velocidad en cada edad desde la Edad Oscura.
+  Los leñadores trabajan más rápido.
+  Las armas de asedio disparan más rápido.
+  Pueden robar rebaños enemigos aunque haya una unidad al lado.
+  Bono de equipo: los talleres de asedio trabajan más rápido.

@@ -87,14 +87,17 @@ def resource_or_type_key(token) -> str:
 
 
 def unpack_gather_byproduct_entry(entry, default_product="resource1"):
-    """Return ``(rate_per_sec, product_resourceN)``.
+    """Return ``(rate, product_resourceN, mode)``.
 
-    Stored as ``(rate, product)``; a bare rate keeps ``default_product``
-    (Paper Money gold = resource1).
+    ``mode`` is ``None`` (rate per second) or ``per_food`` (rate × food gathered).
     """
+    mode = None
     if isinstance(entry, dict):
         rate = entry.get("rate", 0)
         product = entry.get("resource") or default_product
+        mode = entry.get("mode")
+    elif isinstance(entry, (list, tuple)) and len(entry) >= 3:
+        rate, product, mode = entry[0], entry[1], entry[2]
     elif isinstance(entry, (list, tuple)) and len(entry) >= 2:
         rate, product = entry[0], entry[1]
     else:
@@ -104,7 +107,10 @@ def unpack_gather_byproduct_entry(entry, default_product="resource1"):
     except (TypeError, ValueError):
         rate_f = 0.0
     product_key = canonical_resource_name(product) or str(product or default_product)
-    return rate_f, product_key
+    mode_s = str(mode).lower() if mode else None
+    if mode_s not in ("per_food", "ratio"):
+        mode_s = None
+    return rate_f, product_key, mode_s
 
 
 def menu_label_for_resource(index: int) -> str:

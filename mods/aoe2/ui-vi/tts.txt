@@ -113,7 +113,8 @@
 8321 Nai
 8322 Cừu
 8323 Lợn rừng
-8324 Xác thú
+8324 Xác thú
+
 8330 Xác gia súc
 
 8120 Dân binh
@@ -294,3 +295,89 @@
 8513 Đơn vị của bạn chết thay vì gia nhập kẻ địch khi bị cải đạo
 8514 Cải đạo của địch nhắm vào bạn mất nhiều thời gian hơn
 8515 Khi nhiều tu sĩ cùng cải đạo, chỉ người thành công phải nghỉ
+; Đặc trưng civilization (đọc khi chọn phe bằng G; dòng thụt là câu tiếp)
+8520 Đơn vị độc quyền: trường cung binh.
+  Công nghệ độc quyền: Yeomen và Warwolf.
+  Cung thủ bộ cộng một tầm ở thời kỳ thành trì và cộng thêm một ở thời kỳ đế quốc, trừ lính phóng lao.
+  Người chăn cừu làm việc nhanh hơn.
+  Trung tâm thành phố tốn một nửa gỗ từ thời kỳ thành trì.
+  Đồng đội: trường bắn làm việc nhanh hơn.
+  Không Huyết thống, không Nhẫn ngón cái.
+8521 Đơn vị độc quyền: lính ném rìu.
+  Công nghệ độc quyền: rìu răng cưa và hiệp sĩ.
+  Kỵ binh cộng hai mươi phần trăm máu từ thời kỳ phong kiến.
+  Người hái lượm làm việc nhanh hơn.
+  Nâng cấp nông trại miễn phí.
+  Lâu đài tốn ít đá hơn.
+  Đồng đội: hiệp sĩ cộng hai tầm nhìn.
+  Không Nhẫn ngón cái, Bao tay, Giáp xích cung thủ hay Huyết thống.
+8522 Đơn vị độc quyền: nỏ liên châu.
+  Công nghệ độc quyền: hỏa tiễn và Vạn Lý Trường Thành.
+  Bắt đầu thêm ba dân, ít hơn năm mươi gỗ và hai trăm thức ăn.
+  Công nghệ rẻ hơn năm, mười và mười lăm phần trăm ở phong kiến, thành trì và đế quốc.
+  Trung tâm thành phố cho mười lăm dân số và cộng bảy tầm nhìn.
+  Thuyền lửa đi nhanh hơn ở thành trì và đế quốc.
+  Đồng đội: nông trại chứa thêm mười phần trăm thức ăn.
+8523 Đơn vị độc quyền: kỵ xạ Mông Cổ.
+  Công nghệ độc quyền: Drill và Du mục.
+  Thợ săn làm việc nhanh hơn.
+  Dây trinh sát cộng hai mươi rồi ba mươi phần trăm máu ở thành trì và đế quốc.
+  Cung kỵ bắn nhanh hơn.
+  Bãi chăn thay nông trại; không có cối xay.
+  Đồng đội: dây trinh sát cộng hai tầm nhìn.
+8524 Đơn vị độc quyền: thiết kỵ.
+  Công nghệ độc quyền: Hậu cần và Lửa Hy Lạp.
+  Công trình tăng máu theo từng thời kỳ.
+  Thời kỳ đế quốc rẻ hơn ba mươi ba phần trăm.
+  Lạc đà, lính phóng lao và lính giáo rẻ hơn.
+  Thuyền lửa tấn công nhanh hơn.
+  Tuần tra thành và Cảnh giới thành miễn phí.
+  Đồng đội: tu sĩ chữa nhanh hơn.
+8525 Đơn vị độc quyền: samurai.
+  Công nghệ độc quyền: Yasama và Kataparuto.
+  Bộ binh tấn công nhanh hơn từ thời kỳ phong kiến.
+  Thuyền đánh cá có nhiều máu hơn và làm việc nhanh hơn.
+  Cối xay và trại rẻ hơn.
+  Đồng đội: thuyền galley cộng bốn tầm nhìn.
+8526 Đơn vị độc quyền: hiệp sĩ Teuton.
+  Công nghệ độc quyền: Giáp trụ và Chóp tường.
+  Đơn vị doanh trại và chuồng ngựa cộng giáp cận chiến ở thành trì và đế quốc.
+  Nông trại tốn ít gỗ hơn.
+  Lỗ bắn và Thuốc thảo mộc miễn phí.
+  Đồng đội: kháng cải đạo.
+8527 Đơn vị độc quyền: cuồng binh.
+  Công nghệ độc quyền: Thủ lĩnh và Bogsveigar.
+  Bộ binh cộng hai mươi phần trăm máu từ thời kỳ phong kiến.
+  Xe cút kít và Xe đẩy tay miễn phí.
+  Tàu chiến rẻ hơn.
+  Bến tàu có thể huấn luyện thuyền dài.
+  Đồng đội: bến tàu rẻ hơn.
+8528 Đơn vị độc quyền: cung thủ giáp mây.
+  Công nghệ độc quyền: Chatras và Tiền giấy.
+  Đơn vị trường bắn cộng hai mươi phần trăm máu.
+  Hiện trung tâm thành phố địch lúc bắt đầu.
+  Trưng binh miễn phí.
+  Công nghệ kinh tế không tốn gỗ và nghiên cứu nhanh hơn.
+  Đồng đội: có thể nghiên cứu lính phóng lao đế quốc.
+8529 Đơn vị độc quyền: súng đa nòng.
+  Công nghệ độc quyền: Vòng quanh thế giới và Súng hỏa mai.
+  Tàu cộng mười phần trăm máu.
+  Mọi đơn vị tốn ít hơn hai mươi phần trăm vàng.
+  Người hái lượm cũng lấy gỗ.
+  Có thể xây Feitoria.
+  Đồng đội: công nghệ nghiên cứu nhanh hơn.
+8530 Đơn vị độc quyền: chiến binh báo đốm.
+  Công nghệ độc quyền: Atlatl và Chiến tranh hoa.
+  Bắt đầu thêm năm mươi vàng.
+  Dân mang thêm ba.
+  Quân sự huấn luyện nhanh hơn.
+  Tu sĩ cộng năm máu mỗi công nghệ tu viện.
+  Đồng đội: thánh tích sinh thêm vàng.
+  Không chuồng ngựa và kỵ binh.
+8531 Đơn vị độc quyền: lính đột kích sơn xanh.
+  Công nghệ độc quyền: Pháo đài và Cuồng nộ Celtic.
+  Bộ binh cộng năm phần trăm tốc độ mỗi thời kỳ từ thời kỳ đen tối.
+  Thợ đốn gỗ làm việc nhanh hơn.
+  Vũ khí công thành bắn nhanh hơn.
+  Có thể cướp đàn gia súc địch dù bên cạnh có đơn vị.
+  Đồng đội: xưởng công thành làm việc nhanh hơn.

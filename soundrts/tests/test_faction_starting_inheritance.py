@@ -89,16 +89,17 @@ def test_aoe2_civilization_inheritance_and_jl1_resources(monkeypatch):
     assert "britons" in rules.factions
     assert rules.get("britons", "starting_units") == [
         "town_center",
-        "house",
+        "3",
         "peasant",
+        "scout_cavalry",
     ]
     assert rules.get("chinese", "starting_units") == [
         "town_center",
-        "3",
-        "house",
         "6",
         "peasant",
+        "scout_cavalry",
     ]
+    assert rules.get("chinese", "starting_resources") == ["100", "150", "0", "200"]
     assert rules.get("franks", "starting_resources") == ["100", "200", "200", "200"]
 
     jl1 = Path("mods/aoe2/multi/jl1.txt").read_text(encoding="utf-8")
@@ -123,7 +124,12 @@ def test_aoe2_civilization_inheritance_and_jl1_resources(monkeypatch):
     world.populate_map([human, ai], random_starts=False)
 
     briton_parse = next(p for p in parsed if p[0] == "britons")
-    assert len(briton_parse[1]) == 3  # race starting_units applied into start
+    names = {
+        getattr(u[1], "type_name", None): u[2] for u in briton_parse[1]
+    }
+    assert names.get("peasant") == 3
+    assert names.get("scout_cavalry") == 1
+    assert "house" not in names
     assert briton_parse[3][0] == to_int("100")
     briton = next(p for p in world.players if getattr(p, "faction", None) == "britons")
     assert [round(x / 1000) for x in briton.resources] == [100, 200, 200, 200]

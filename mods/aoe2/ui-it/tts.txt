@@ -113,7 +113,8 @@
 8321 Cervo
 8322 Pecora
 8323 Cinghiale
-8324 Carcassa
+8324 Carcassa
+
 8330 Carcassa di bestiame
 
 8120 Milizia
@@ -294,3 +295,89 @@
 8513 Le tue unità muoiono invece di unirsi al nemico se convertite
 8514 Le conversioni nemiche contro di te richiedono molto più tempo
 8515 Quando più monaci convertono insieme, riposa solo chi ha successo
+; Bonus di civiltà (letti nel selettore fazione con G; le righe rientrate continuano)
+8520 Unità unica: arciere con arco lungo.
+  Tecnologie uniche: Yeomen e Warwolf.
+  Arcieri a piedi più uno di gittata nell'età dei castelli e più uno in età imperiale, tranne i frombolieri.
+  I pastori lavorano più in fretta.
+  I centri cittadini costano metà legno dall'età dei castelli.
+  Bonus di squadra: i campi di tiro lavorano più in fretta.
+  Niente Stirpe, niente Anello da pollice.
+8521 Unità unica: lanciatore d'ascia.
+  Tecnologie uniche: ascia barbuta e cavalleria.
+  Cavalleria più venti per cento di punti ferita dall'età feudale.
+  I raccoglitori lavorano più in fretta.
+  I potenziamenti della fattoria sono gratuiti.
+  I castelli costano meno pietra.
+  Bonus di squadra: cavalieri più due di visuale.
+  Niente Anello da pollice, Bracciale, Cotta da arciere o Stirpe.
+8522 Unità unica: Chu Ko Nu.
+  Tecnologie uniche: razzi e Grande Muraglia.
+  Inizio con tre villici extra, meno cinquanta legno e duecento cibo.
+  Le tecnologie costano il cinque, dieci e quindici per cento in meno in feudale, castelli e imperiale.
+  I centri cittadini danno quindici di popolazione e più sette di visuale.
+  Le navi incendiarie si muovono più in fretta in età dei castelli e imperiale.
+  Bonus di squadra: le fattorie contengono il dieci per cento di cibo in più.
+8523 Unità unica: Mangudai.
+  Tecnologie uniche: Drill e Nomadi.
+  I cacciatori lavorano più in fretta.
+  Linea esploratori più venti poi trenta per cento di punti ferita in castelli e imperiale.
+  Gli arcieri a cavallo sparano più in fretta.
+  Pascoli al posto delle fattorie; niente mulino.
+  Bonus di squadra: linea esploratori più due di visuale.
+8524 Unità unica: catafratto.
+  Tecnologie uniche: Logistica e Fuoco greco.
+  Gli edifici guadagnano punti ferita extra a ogni età.
+  L'età imperiale costa il trentatré per cento in meno.
+  Cammelli, frombolieri e lancieri costano meno.
+  Le navi incendiarie attaccano più in fretta.
+  Guardia urbana e Pattuglia urbana sono gratuite.
+  Bonus di squadra: i monaci curano più in fretta.
+8525 Unità unica: samurai.
+  Tecnologie uniche: Yasama e Kataparuto.
+  La fanteria attacca più in fretta dall'età feudale.
+  Le barche da pesca hanno più punti ferita e lavorano più in fretta.
+  Mulini e accampamenti costano meno.
+  Bonus di squadra: galee più quattro di visuale.
+8526 Unità unica: cavaliere teutonico.
+  Tecnologie uniche: Corazza e Merlature.
+  Unità di caserma e scuderia più armatura da mischia in castelli e imperiale.
+  Le fattorie costano meno legno.
+  Feritoie e Medicina erboristica sono gratuite.
+  Bonus di squadra: resistono alla conversione.
+8527 Unità unica: berserker.
+  Tecnologie uniche: Capi tribù e Bogsveigar.
+  Fanteria più venti per cento di punti ferita dall'età feudale.
+  Carriola e Carretto a mano sono gratuiti.
+  Le navi da guerra costano meno.
+  I moli possono addestrare drakkar.
+  Bonus di squadra: i moli costano meno.
+8528 Unità unica: arciere di rattan.
+  Tecnologie uniche: Chatras e Carta moneta.
+  Unità del campo di tiro più venti per cento di punti ferita.
+  Rivela i centri cittadini nemici all'inizio.
+  Coscrizione è gratuita.
+  Le tecnologie economiche non costano legno e si ricercano più in fretta.
+  Bonus di squadra: il fromboliere imperiale è disponibile.
+8529 Unità unica: organo da guerra.
+  Tecnologie uniche: Circumnavigazione e Archibugio.
+  Navi più dieci per cento di punti ferita.
+  Tutte le unità costano il venti per cento di oro in meno.
+  I raccoglitori raccolgono anche legno.
+  Possono costruire una Feitoria.
+  Bonus di squadra: le tecnologie si ricercano più in fretta.
+8530 Unità unica: guerriero giaguaro.
+  Tecnologie uniche: Atlatl e Guerra dei fiori.
+  Inizio con cinquanta oro extra.
+  I villici trasportano tre in più.
+  L'esercito si addestra più in fretta.
+  I monaci guadagnano cinque punti ferita per tecnologia del monastero.
+  Bonus di squadra: le reliquie producono oro extra.
+  Niente scuderie né cavalleria.
+8531 Unità unica: razziatore woad.
+  Tecnologie uniche: Fortezza e Furore celtico.
+  Fanteria più cinque per cento di velocità a ogni età dall'età oscura.
+  I boscaioli lavorano più in fretta.
+  Le armi d'assedio sparano più in fretta.
+  Possono rubare le mandrie nemiche anche se un'unità è accanto.
+  Bonus di squadra: le officine d'assedio lavorano più in fretta.

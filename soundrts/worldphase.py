@@ -192,6 +192,82 @@ def refresh_faction_age_cost_discounts(player):
 _PHASE_COST_TARGET_WARNED = set()
 
 
+def apply_parsed_on_phase_bonus(player, bonus_args, unit_types, phase_name, faction):
+    """Push one on_phase/team_on_phase bonus onto ``player`` (pool + live units)."""
+    from .world_civ_bonuses import apply_player_level_bonus_args
+    from .worldupgrade import Upgrade
+
+    if not bonus_args:
+        return
+    bonus_args = list(bonus_args)
+    unit_types = list(unit_types or ())
+    # Strip player-level ``research_time`` (Portuguese team: all techs faster).
+    leftover = []
+    i = 0
+    while i < len(bonus_args):
+        st = str(bonus_args[i])
+        if st in ("research_time", "research_time_percent") and i + 1 < len(bonus_args):
+            apply_player_level_bonus_args(player, [st, bonus_args[i + 1]])
+            i += 2
+            continue
+        leftover.append(bonus_args[i])
+        i += 1
+    bonus_args = leftover
+    if not bonus_args:
+        return
+    if not hasattr(player, "_phase_bonus_pool"):
+        player._phase_bonus_pool = []
+    player._phase_bonus_pool.append((list(bonus_args), list(unit_types)))
+    gather_only = True
+    i = 0
+    while i < len(bonus_args):
+        st = str(bonus_args[i])
+        if not (
+            st.startswith("gather_time") or st.startswith("gather_qty")
+        ):
+            gather_only = False
+            break
+        i += 2
+    if gather_only:
+        host = None
+        for unit in list(getattr(player, "units", ()) or ()):
+            if unit_types and not _unit_matches_type_names(unit, unit_types):
+                continue
+            host = unit
+            break
+        if host is None:
+            class _GatherBonusHost:
+                pass
+
+            host = _GatherBonusHost()
+            host.player = player
+            host.can_gather_deposit = []
+            host.can_gather_building = []
+        try:
+            Upgrade.effect_bonus(host, 0, *bonus_args)
+        except Exception as e:
+            warning(
+                "on_phase %s gather bonus for %s failed: %s",
+                phase_name,
+                faction,
+                str(e),
+            )
+        return
+    for unit in list(getattr(player, "units", ()) or ()):
+        if unit_types and not _unit_matches_type_names(unit, unit_types):
+            continue
+        try:
+            Upgrade.effect_bonus(unit, 0, *bonus_args)
+        except Exception as e:
+            warning(
+                "on_phase %s for %s failed on %s: %s",
+                phase_name,
+                faction,
+                getattr(unit, "type_name", unit),
+                str(e),
+            )
+
+
 def apply_faction_on_phase_effects(player, phase_name):
     """Apply race ``on_phase <phase> …`` bonuses when that phase is reached.
 
@@ -203,113 +279,36 @@ def apply_faction_on_phase_effects(player, phase_name):
     for aoe2 so every civ does not get the res demo combat buffs.
     """
     from .definitions import rules
+    from .worldupgrade.effect_bonus_parse import split_effect_bonus_args
+    from .world_civ_bonuses import (
+        apply_faction_team_on_phase_effects,
+        apply_grant_tech_on_phase,
+    )
 
     faction = getattr(player, "faction", None)
     if not faction or not phase_name:
         return
     entries = rules.get(faction, "on_phase_effects") or []
     if not entries:
-        # Also accept raw multi-line storage if interpret flattened oddly
         raw = rules._dict.get(faction, {}).get("on_phase_effects")
         entries = raw or []
     for entry in entries:
         if not entry:
             continue
-        if isinstance(entry[0], list):
-            # nested list from interpret — flatten one level
-            tokens = entry
-        else:
-            tokens = list(entry)
+        tokens = entry if isinstance(entry[0], list) else list(entry)
         if not tokens or str(tokens[0]) != str(phase_name):
             continue
         rest = tokens[1:]
         if not rest:
             continue
-        # Split into effect pairs + trailing unit type names (like effect bonus).
-        from .definitions import Rules as _Rules
-
-        precision = set(getattr(rules, "precision_properties", ()) or ())
-        # Fallback: common combat/range stats
-        precision = precision or {
-            "rdg_range", "mdg_range", "rdg", "mdg", "hp_max", "sight_range",
-            "speed", "mdf", "rdf",
-        }
-        bonus_args = []
-        unit_types = []
-        i = 0
-        while i < len(rest):
-            stat = rest[i]
-            # Unit type names: not a known bonus stat, or no following value
-            if i + 1 >= len(rest):
-                unit_types.extend(rest[i:])
-                break
-            # Heuristic: if next token looks like a unit name and stat isn't known,
-            # treat remainder as unit types.
-            nxt = rest[i + 1]
-            is_stat = str(stat) in precision or str(stat) in {
-                "cost", "time_cost", "population_cost", "production_cost",
-            }
-            st = str(stat)
-            if st.startswith("gather_time") or st.startswith("gather_qty"):
-                is_stat = True
-            if not is_stat:
-                unit_types.extend(rest[i:])
-                break
-            bonus_args.extend([stat, nxt])
-            i += 2
+        bonus_args, unit_types = split_effect_bonus_args(rest)
         if not bonus_args:
             continue
-        # Persist for future units (same pool as phase non-cost bonuses).
-        if not hasattr(player, "_phase_bonus_pool"):
-            player._phase_bonus_pool = []
-        player._phase_bonus_pool.append((list(bonus_args), list(unit_types)))
-        # Player-level gather_* bonuses must run once (not per matching unit).
-        gather_only = all(
-            str(bonus_args[i]).startswith("gather_time")
-            or str(bonus_args[i]).startswith("gather_qty")
-            for i in range(0, len(bonus_args), 2)
+        apply_parsed_on_phase_bonus(
+            player, bonus_args, unit_types, phase_name, faction
         )
-        from .worldupgrade import Upgrade
-
-        if gather_only:
-            host = None
-            for unit in list(getattr(player, "units", ()) or ()):
-                if unit_types and not _unit_matches_type_names(unit, unit_types):
-                    continue
-                host = unit
-                break
-            if host is None:
-                # No unit yet — attach a lightweight holder so effect_bonus can reach player.
-                class _GatherBonusHost:
-                    pass
-
-                host = _GatherBonusHost()
-                host.player = player
-                host.can_gather_deposit = []
-                host.can_gather_building = []
-            try:
-                Upgrade.effect_bonus(host, 0, *bonus_args)
-            except Exception as e:
-                warning(
-                    "on_phase %s gather bonus for %s failed: %s",
-                    phase_name,
-                    faction,
-                    str(e),
-                )
-            continue
-        for unit in list(getattr(player, "units", ()) or ()):
-            if unit_types and not _unit_matches_type_names(unit, unit_types):
-                continue
-            try:
-                Upgrade.effect_bonus(unit, 0, *bonus_args)
-            except Exception as e:
-                warning(
-                    "on_phase %s for %s failed on %s: %s",
-                    phase_name,
-                    faction,
-                    getattr(unit, "type_name", unit),
-                    str(e),
-                )
+    apply_grant_tech_on_phase(player, phase_name)
+    apply_faction_team_on_phase_effects(player, phase_name)
 
 
 def _unit_matches_type_names(unit, type_names):

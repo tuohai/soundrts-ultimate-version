@@ -113,7 +113,8 @@
 8321 Cervo
 8322 Ovelha
 8323 Javali
-8324 Carcaça
+8324 Carcaça
+
 8330 Carcaça de gado
 
 8120 Milícia
@@ -294,3 +295,89 @@
 8513 Suas unidades morrem em vez de se juntar ao inimigo quando convertidas
 8514 Conversões inimigas contra você demoram bem mais
 8515 Quando vários monges convertem juntos, só o bem-sucedido descansa
+; Bônus de civilização (lidos no seletor de facção com G; linhas recuadas continuam)
+8520 Unidade única: arqueiro de arco longo.
+  Tecnologias únicas: Yeomen e Warwolf.
+  Arqueiros a pé mais um de alcance na Idade dos Castelos e mais um na Imperial, exceto escaramuçadores.
+  Pastores trabalham mais rápido.
+  Centros da cidade custam metade da madeira a partir da Idade dos Castelos.
+  Bônus de equipe: campos de tiro trabalham mais rápido.
+  Sem Linhagem nem Anel de polegar.
+8521 Unidade única: lançador de machados.
+  Tecnologias únicas: machado barbado e cavalaria.
+  Cavalaria mais vinte por cento de pontos de vida a partir da Idade Feudal.
+  Coletores trabalham mais rápido.
+  Melhorias de fazenda são grátis.
+  Castelos custam menos pedra.
+  Bônus de equipe: cavaleiros mais dois de visão.
+  Sem Anel de polegar, Braçadeira, Cota de malha de arqueiro ou Linhagem.
+8522 Unidade única: Chu Ko Nu.
+  Tecnologias únicas: foguetes e Grande Muralha.
+  Começam com três aldeões extras, menos cinquenta de madeira e duzentos de comida.
+  Tecnologias custam cinco, dez e quinze por cento menos nas Idades Feudal, dos Castelos e Imperial.
+  Centros da cidade dão quinze de população e mais sete de visão.
+  Navios de fogo se movem mais rápido nas Idades dos Castelos e Imperial.
+  Bônus de equipe: fazendas contêm dez por cento a mais de comida.
+8523 Unidade única: Mangudai.
+  Tecnologias únicas: Drill e Nômades.
+  Caçadores trabalham mais rápido.
+  Linha de batedores mais vinte e depois trinta por cento de vida nas Idades dos Castelos e Imperial.
+  Arqueiros a cavalo atiram mais rápido.
+  Pastos em vez de fazendas; sem moinho.
+  Bônus de equipe: linha de batedores mais dois de visão.
+8524 Unidade única: catafractário.
+  Tecnologias únicas: Logística e Fogo grego.
+  Edifícios ganham pontos de vida extras em cada idade.
+  A Idade Imperial custa trinta e três por cento a menos.
+  Camelos, escaramuçadores e lanceiros custam menos.
+  Navios de fogo atacam mais rápido.
+  Vigia urbana e Patrulha urbana são grátis.
+  Bônus de equipe: monges curam mais rápido.
+8525 Unidade única: samurai.
+  Tecnologias únicas: Yasama e Kataparuto.
+  Infantaria ataca mais rápido a partir da Idade Feudal.
+  Barcos de pesca têm mais pontos de vida e trabalham mais rápido.
+  Moinhos e acampamentos custam menos.
+  Bônus de equipe: galés mais quatro de visão.
+8526 Unidade única: cavaleiro teutônico.
+  Tecnologias únicas: Blindagem e Ameias.
+  Unidades de quartel e estábulo mais armadura corpo a corpo nas Idades dos Castelos e Imperial.
+  Fazendas custam menos madeira.
+  seteiras e Medicina herbal são grátis.
+  Bônus de equipe: resistem à conversão.
+8527 Unidade única: berserker.
+  Tecnologias únicas: Chefes e Bogsveigar.
+  Infantaria mais vinte por cento de vida a partir da Idade Feudal.
+  Carrinho de mão e Carro de mão são grátis.
+  Navios de guerra custam menos.
+  Docas podem treinar dracares.
+  Bônus de equipe: docas custam menos.
+8528 Unidade única: arqueiro de rattan.
+  Tecnologias únicas: Chatras e Papel-moeda.
+  Unidades do campo de tiro mais vinte por cento de vida.
+  Revelam centros da cidade inimigos no início.
+  Conscrição é grátis.
+  Tecnologias econômicas não custam madeira e pesquisam mais rápido.
+  Bônus de equipe: o escaramuçador imperial está disponível.
+8529 Unidade única: órgão.
+  Tecnologias únicas: Circunavegação e Arcabuz.
+  Navios mais dez por cento de vida.
+  Todas as unidades custam vinte por cento menos ouro.
+  Coletores também recolhem madeira.
+  Podem construir uma Feitoria.
+  Bônus de equipe: tecnologias pesquisam mais rápido.
+8530 Unidade única: guerreiro jaguar.
+  Tecnologias únicas: Atlatl e Guerra das flores.
+  Começam com cinquenta de ouro extra.
+  Aldeões carregam três a mais.
+  O exército treina mais rápido.
+  Monges ganham cinco de vida por tecnologia do mosteiro.
+  Bônus de equipe: relíquias geram ouro extra.
+  Sem estábulos nem cavalaria.
+8531 Unidade única: saqueador woad.
+  Tecnologias únicas: Fortaleza e Furor celta.
+  Infantaria mais cinco por cento de velocidade em cada idade a partir da Idade das Trevas.
+  Lenhadores trabalham mais rápido.
+  Armas de cerco atiram mais rápido.
+  Podem roubar rebanhos inimigos mesmo se uma unidade estiver ao lado.
+  Bônus de equipe: oficinas de cerco trabalham mais rápido.

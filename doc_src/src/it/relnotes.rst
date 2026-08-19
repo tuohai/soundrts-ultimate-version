@@ -3,6 +3,33 @@ Note di rilascio
 
 .. contents::
 
+1.4.7.6
+--------
+
+**aoe2: bonus delle dodici civiltà allineati alla Definitive Edition attuale**
+
+- **Problema**: i bonus civ seguivano ancora uno snapshot ~2022 (es. cinesi 10/15/20 % sulle tecnologie, centri cittadini 10 di popolazione), non la DE attuale. Il motore non poteva esprimere ricerca condivisa di squadra, furto di gregge presidiato né sconti di costo per età.
+- **Cambio**: le dodici civ (britanni, franchi, cinesi, mongoli, bizantini, giapponesi, teutoni, vichinghi, vietnamiti, portoghesi, aztechi, celti) usano bonus e bonus di squadra DE attuali. Dove le rules non bastavano, il motore aggiunge campi senza nomi di civ: ``team_on_phase``, ``grant_tech_on_phase``, ``team_share_research`` (tecnologia e edifici ospite opzionali, es. fromboliere imperiale vietnamita per gli alleati), ``team_farm_food_pct``, ``reveal_enemy_town_centers``, ``research_cost_zero_slot`` / ``research_time_percent``, ``gather_byproduct``, resistenza di squadra alla conversione, ecc.
+- **Ambito**: mod aoe2; i nuovi campi razza sono usabili da altri mod.
+
+**Motore: reclamare / rubare greggi (guidato dalle rules)**
+
+- **Problema**: l’appartenenza per prossimità ``claimable`` non era nel ciclo unità. Il «non si ruba un gregge presidiato / si ruba se non è protetto» di AoE2 non aveva flag.
+- **Cambio**: gli animali ``claimable`` neutrali passano a un giocatore non neutrale vicino. Il gregge posseduto si può rubare: chiunque se non c’è guardia; bloccato se c’è un’unità viva del proprietario; razza ``herdable_steal_ignore_guards 1`` ignora quella guardia; ``herdable_steal_protected 1`` (default 0) blocca quel bonus sui propri animali. Il motore non testa i nomi di civiltà.
+- **Ambito**: tutti i mod; i Celti aoe2 attivano entrambi i flag.
+
+**aoe2: avvio Età oscura come AoE2 (compresi i Cinesi)**
+
+- **Problema**: l’avvio era 1 villico, una casa e nessuno scout. I Cinesi avevano 4 villici (+3 su una base di 1), non i 6 + scout della DE.
+- **Cambio**: civ standard: centro cittadino + 3 villici + cavalleria esploratrice. Cinesi: 6 villici + scout (−50 legno, −200 cibo, centro 15 di popolazione). Aztechi: 3 villici + esploratore aquila, +50 oro. Niente casa iniziale (popolazione dal centro). Gli script di campagna e i villici extra della difficoltà IA restano.
+- **Ambito**: ``starting_units`` / ``starting_resources`` predefiniti delle razze aoe2.
+
+**aoe2: testi del selettore fazione in tutti i pacchetti lingua del mod**
+
+- **Problema**: i testi G delle civiltà c’erano solo in inglese e cinese.
+- **Cambio**: id ``8520``–``8531`` in tutti i pacchetti UI aoe2 (en, zh, de, fr, es, it, ru, be, pl, cs, sk, pt-BR, vi).
+
+
 1.4.7.5
 --------
 

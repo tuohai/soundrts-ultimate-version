@@ -1019,6 +1019,12 @@ class TrainOrder(ProductionOrder):
                         modified_cost[i] += bonus_amount
 
         self._merge_phase_resource_cost(self.unit.player, modified_cost)
+        try:
+            from ..world_civ_bonuses import merge_pool_cost_for_type
+
+            merge_pool_cost_for_type(self.unit.player, self.type, modified_cost)
+        except Exception:
+            pass
         
         # 确保所有成本不为负
         for i in range(len(modified_cost)):

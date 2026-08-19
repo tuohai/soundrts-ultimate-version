@@ -123,7 +123,7 @@ def test_aoe2_chinese_and_byzantine_tables():
 
     sys.argv = saved
     cn = rules.get("chinese", "research_cost_discount")
-    assert cn and "feudal_age" in cn and "-10%" in cn
-    assert "imperial_age" in cn and "-20%" in cn
+    assert cn and "feudal_age" in cn and "-5%" in cn
+    assert "imperial_age" in cn and "-15%" in cn
     byz = rules.get("byzantines", "advance_cost_discount")
     assert byz and "imperial_age" in byz and "-33%" in byz

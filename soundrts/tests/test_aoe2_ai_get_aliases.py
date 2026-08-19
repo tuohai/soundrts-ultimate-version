@@ -126,3 +126,78 @@ def test_aoe2_ai_txt_asks_for_rams_after_feudal():
         if n >= 3 and "battering_ram" in line.split():
             found_ram = True
     assert n < 3 or found_ram
+
+
+_VIL = {
+    "peasant",
+    "chinese_villager",
+    "mongol_herdsman",
+    "portuguese_villager",
+    "aztec_villager",
+}
+
+
+def _ai_defs():
+    text = Path("mods/aoe2/ai.txt").read_text(encoding="utf-8")
+    current = None
+    blocks = {}
+    for line in text.splitlines():
+        if line.startswith("def "):
+            current = line.split()[1]
+            blocks[current] = []
+            continue
+        if current is not None:
+            blocks[current].append(line)
+    return blocks
+
+
+def _first_get_vil_target(lines):
+    for line in lines:
+        if not line.startswith("get "):
+            continue
+        toks = line.split()
+        for i, tok in enumerate(toks[:-1]):
+            if tok.isdigit() and toks[i + 1] in _VIL:
+                return int(tok), toks[i + 1]
+        return None
+    return None
+
+
+def test_aoe2_ai_txt_de_start_no_extra_vils_on_mid_tiers():
+    """intermediate/advanced must not gift extra Dark Age villagers."""
+    for name, lines in _ai_defs().items():
+        if name.endswith("_intermediate") or name.endswith("_advanced"):
+            assert not any(ln.startswith("starting_units ") for ln in lines), name
+
+
+def test_aoe2_ai_txt_difficulty_adds_no_food():
+    """AI gifts are gold/wood/food/stone; food (3rd number) stays 0 for every civ."""
+    for name, lines in _ai_defs().items():
+        for ln in lines:
+            if ln.startswith("starting_resources "):
+                parts = ln.split()
+                assert len(parts) >= 5, name
+                assert int(parts[3]) == 0, name
+
+
+def test_aoe2_ai_txt_dark_vil_targets_above_de_start():
+    """First get must still train after 3-vil (Chinese 6-vil) race start."""
+    for name, lines in _ai_defs().items():
+        got = _first_get_vil_target(lines)
+        assert got is not None, name
+        n, kind = got
+        if name.startswith("chinese_"):
+            assert kind == "chinese_villager" and n >= 12, name
+        else:
+            assert n >= 8, name
+
+
+def test_aoe2_ai_txt_expert_nightmare_extra_vils_are_small():
+    for name, lines in _ai_defs().items():
+        extras = [ln for ln in lines if ln.startswith("starting_units ")]
+        if name.endswith("_expert"):
+            assert extras and extras[0].split()[1] == "1", name
+        elif name.endswith("_nightmare"):
+            assert extras and extras[0].split()[1] == "2", name
+        elif name.endswith("_beginner"):
+            assert not extras, name

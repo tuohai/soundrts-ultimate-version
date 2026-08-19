@@ -476,7 +476,7 @@ class EquipmentAbilities:
 
             fmt = EffectFormatter(self.main_interface)
             for source, entry in byproduct.items():
-                rate, product = unpack_gather_byproduct_entry(entry)
+                rate, product, _mode = unpack_gather_byproduct_entry(entry)
                 row = fmt.format_gather_byproduct_row(source, product, rate)
                 if row:
                     attrs.append(row)

@@ -519,6 +519,23 @@ class ComplexOrder(Order):
 
             if hasattr(self.unit, "player") and self.unit.player:
                 self._merge_phase_resource_cost(self.unit.player, modified_cost)
+                try:
+                    from ..world_civ_bonuses import merge_pool_cost_for_type
+
+                    merge_pool_cost_for_type(
+                        self.unit.player, self.type, modified_cost
+                    )
+                except Exception:
+                    pass
+                if getattr(self, "keyword", None) == "research":
+                    try:
+                        from ..world_civ_bonuses import apply_research_cost_modifiers
+
+                        apply_research_cost_modifiers(
+                            self.unit.player, self.type, modified_cost
+                        )
+                    except Exception:
+                        pass
 
             # 确保所有成本不为负
             for i in range(len(modified_cost)):
@@ -667,6 +684,25 @@ class ComplexOrder(Order):
                 worker_flat = getattr(self.unit, "time_cost_bonus", 0) or 0
                 if worker_flat:
                     modified_time_cost = max(0, int(modified_time_cost) + int(worker_flat))
+
+            if hasattr(self, "unit") and getattr(self.unit, "player", None):
+                try:
+                    from ..world_civ_bonuses import merge_pool_time_for_type
+
+                    modified_time_cost = merge_pool_time_for_type(
+                        self.unit.player, self.type, modified_time_cost
+                    )
+                except Exception:
+                    pass
+                if getattr(self, "keyword", None) == "research":
+                    try:
+                        from ..world_civ_bonuses import apply_research_time_modifiers
+
+                        modified_time_cost = apply_research_time_modifiers(
+                            self.unit.player, self.type, modified_time_cost
+                        )
+                    except Exception:
+                        pass
 
             modified_time_cost = self._apply_ai_time_percent(modified_time_cost)
 

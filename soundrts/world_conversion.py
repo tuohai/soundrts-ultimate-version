@@ -97,6 +97,12 @@ def apply_conversion_channel_resist(base, player):
     if num > 0 and den > 0:
         base = base * num // den
     pct = player_upgrade_attr_max(player, "conversion_channel_bonus_pct", 0)
+    try:
+        from .world_civ_bonuses import team_conversion_channel_bonus_pct
+
+        pct = max(pct, team_conversion_channel_bonus_pct(player))
+    except Exception:
+        pass
     if pct:
         base = base * (100 + pct) // 100
     add = player_upgrade_attr_max(player, "conversion_channel_bonus_time", 0)

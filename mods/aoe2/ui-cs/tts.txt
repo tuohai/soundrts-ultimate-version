@@ -113,7 +113,8 @@
 8321 Jelen
 8322 Ovce
 8323 Divočák
-8324 Mršina
+8324 Mršina
+
 8330 Mršina dobytka
 
 8120 Straż obywatelska
@@ -294,3 +295,89 @@
 8513 Vaše jednotky při konverzi zemřou místo připojení k nepříteli
 8514 Nepřátelské konverze proti vám trvají mnohem déle
 8515 Když více mnichů konvertuje najednou, odpočívá jen úspěšný
+; Bonusy civilizací (čtení ve výběru frakce klávesou G; odsazení pokračuje)
+8520 Unikátní jednotka: dlouhý lukostřelec.
+  Unikátní technologie: Yeomen a Warwolf.
+  Pěší lučištníci plus jeden dostřel v hradním a plus jeden v císařském věku, kromě prakovníků.
+  Pastýři pracují rychleji.
+  Radnice stojí od hradního věku polovinu dřeva.
+  Týmový bonus: střelnice pracují rychleji.
+  Bez Krve a Palcového prstenu.
+8521 Unikátní jednotka: vrhač seker.
+  Unikátní technologie: vousatá sekera a rytířství.
+  Jízda plus dvacet procent životů od feudálního věku.
+  Sběrači pracují rychleji.
+  Vylepšení farem jsou zdarma.
+  Hrady stojí méně kamene.
+  Týmový bonus: rytíři plus dvě viditelnosti.
+  Bez Palcového prstenu, Náramku, Kroužkové zbroje lučištníka a Krve.
+8522 Unikátní jednotka: Chu Ko Nu.
+  Unikátní technologie: rakety a Velká zeď.
+  Start se třemi extra vesničany, minus padesát dřeva a dvě stě jídla.
+  Technologie jsou o pět, deset a patnáct procent levnější ve feudálním, hradním a císařském věku.
+  Radnice dávají patnáct populace a plus sedm viditelnosti.
+  Ohnivé lodě se v hradním a císařském věku pohybují rychleji.
+  Týmový bonus: farmy obsahují o deset procent více jídla.
+8523 Unikátní jednotka: Mangudaj.
+  Unikátní technologie: Drill a Nomádi.
+  Lovci pracují rychleji.
+  Linie zvědů plus dvacet, pak třicet procent životů v hradním a císařském věku.
+  Jezdečtí lučištníci střílejí rychleji.
+  Pastviny místo farem; žádný mlýn.
+  Týmový bonus: linie zvědů plus dvě viditelnosti.
+8524 Unikátní jednotka: katafrakt.
+  Unikátní technologie: Logistika a Řecký oheň.
+  Budovy získávají extra životy v každém věku.
+  Císařský věk stojí o třicet tři procent méně.
+  Velbloudi, prakovníci a kopiníci jsou levnější.
+  Ohnivé lodě útočí rychleji.
+  Městská hlídka a Městská hlídka jsou zdarma.
+  Týmový bonus: mniši léčí rychleji.
+8525 Unikátní jednotka: samuraj.
+  Unikátní technologie: Yasama a Kataparuto.
+  Pěchota útočí rychleji od feudálního věku.
+  Rybářské lodě mají více životů a pracují rychleji.
+  Mlýny a tábory jsou levnější.
+  Týmový bonus: galéry plus čtyři viditelnosti.
+8526 Unikátní jednotka: teutonský rytíř.
+  Unikátní technologie: Pancíř a Cimbuří.
+  Jednotky kasáren a stájí plus zbroj na blízko v hradním a císařském věku.
+  Farmy stojí méně dřeva.
+  Střílny a Bylinkářství jsou zdarma.
+  Týmový bonus: odolnost vůči obrácení.
+8527 Unikátní jednotka: berserk.
+  Unikátní technologie: Náčelníci a Bogsveigar.
+  Pěchota plus dvacet procent životů od feudálního věku.
+  Trakař a Ruční vozík jsou zdarma.
+  Válečné lodě jsou levnější.
+  Doky mohou cvičit drakkary.
+  Týmový bonus: doky jsou levnější.
+8528 Unikátní jednotka: ratanový lučištník.
+  Unikátní technologie: Chatras a Papírové peníze.
+  Jednotky střelnice plus dvacet procent životů.
+  Odhalí nepřátelské radnice na začátku.
+  Odvedení je zdarma.
+  Ekonomické technologie nestojí dřevo a zkoumají se rychleji.
+  Týmový bonus: císařský prakovník je dostupný.
+8529 Unikátní jednotka: varhany.
+  Unikátní technologie: Obeplutí světa a Arkebuza.
+  Lodě plus deset procent životů.
+  Všechny jednotky stojí o dvacet procent méně zlata.
+  Sběrači sbírají i dřevo.
+  Mohou stavět Feitorii.
+  Týmový bonus: technologie se zkoumají rychleji.
+8530 Unikátní jednotka: jaguáří válečník.
+  Unikátní technologie: Atlatl a Květinová válka.
+  Start s padesáti zlaty navíc.
+  Vesničané nesou o tři více.
+  Vojsko se cvičí rychleji.
+  Mniši získávají pět životů za každou technologii kláštera.
+  Týmový bonus: relikvie dávají extra zlato.
+  Žádné stáje ani jízda.
+8531 Unikátní jednotka: woadský nájezdník.
+  Unikátní technologie: Pevnost a Keltská zuřivost.
+  Pěchota plus pět procent rychlosti v každém věku od temného věku.
+  Dřevorubci pracují rychleji.
+  Obléhací zbraně střílejí rychleji.
+  Mohou krást nepřátelská stáda, i když vedle stojí jednotka.
+  Týmový bonus: obléhací dílny pracují rychleji.

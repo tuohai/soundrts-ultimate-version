@@ -104,7 +104,10 @@ def test_heavy_plow_on_peasant(aoe2_rules):
 
 def test_chinese_tc_bonus(aoe2_rules):
     assert aoe2_rules.get("chinese", "townhall") == ["chinese_town_center"]
-    assert aoe2_rules.get("chinese_town_center", "population_provided")
+    pop = aoe2_rules.get("chinese_town_center", "population_provided")
+    assert pop in (["15"], 15, ["15"]) or (pop and str(pop[0]) == "15")
+    sight = aoe2_rules.get("chinese_town_center", "sight_range")
+    assert sight
 
 
 def test_franks_cavalry_hp_phase(aoe2_rules):

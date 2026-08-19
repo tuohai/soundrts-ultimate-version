@@ -209,3 +209,10 @@ def test_aoe2_civs_have_intro_style_and_tts():
         assert tid, f"missing intro for {civ}"
         assert tid in en_ids, f"en tts missing {tid} ({civ})"
         assert tid in zh_ids, f"zh tts missing {tid} ({civ})"
+    locale_tts = [ROOT / "mods" / "aoe2" / "ui" / "tts.txt"]
+    locale_tts.extend(sorted((ROOT / "mods" / "aoe2").glob("ui-*/tts.txt")))
+    for path in locale_tts:
+        ids = _tts_ids(path)
+        for civ in AOE2_CIVS:
+            tid = intros[civ]
+            assert tid in ids, f"{path.parent.name} tts missing {tid} ({civ})"

@@ -55,6 +55,8 @@ _EXTRA_EFFECT_STATS = frozenset(
         "pack_time",
         "kill_resource_vs",
         "gather_byproduct",
+        "research_time",
+        "research_time_percent",
     }
 )
 
@@ -156,11 +158,21 @@ def split_effect_bonus_args(args):
             continue
         if st == "gather_byproduct":
             # 4-token: source product rate  |  3-token: source rate (product=resource1)
+            # Optional trailing per_food / ratio = wood per food gathered.
             if (
                 i + 3 < len(args)
                 and _looks_numeric(args[i + 3])
                 and not _looks_numeric(args[i + 2])
             ):
+                if (
+                    i + 4 < len(args)
+                    and str(args[i + 4]).lower() in ("per_food", "ratio")
+                ):
+                    bonus.extend(
+                        [stat, args[i + 1], args[i + 2], args[i + 3], "per_food"]
+                    )
+                    i += 5
+                    continue
                 bonus.extend([stat, args[i + 1], args[i + 2], args[i + 3]])
                 i += 4
                 continue

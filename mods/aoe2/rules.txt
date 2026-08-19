@@ -1505,7 +1505,7 @@ is_a elite_skirmisher
 cost 300 300 0 0
 time_cost 50
 line_upgrade 1
-requirements imperial_age
+requirements imperial_age elite_skirmisher
 no_auto_upgrade 1
 
 hp_max 35
@@ -3630,23 +3630,6 @@ can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation do
 can_research
 def chinese_villager
 is_a peasant
-cost 0 0 42 0
-time_cost 25
-
-hp_max 25
-speed 0.8
-sight_range 4
-mdg 3
-mdg_cd 2
-mdg_range 1
-mdf 0
-rdf 0
-mdg_vs building 3
-can_herd 0
-can_gather_deposit goldmine wood orchard food_carcass food_livestock stone_mine
-can_gather_building farm
-can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower cannontower town_center shipyard
-can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
 def mongol_herdsman
 is_a peasant
 cost 0 0 50 0
@@ -4666,7 +4649,6 @@ can_research ballistics chemistry siege_engineers guardtower keeptower cannontow
 def frank_castle
 hp_max 4800
 is_a aoe_castle
-cost 0 0 0 488
 can_train throwing_axeman trebuchet
 can_research elite_throwing_axeman chivalry bearded_axe conscription hoardings sappers spies
 
@@ -4675,11 +4657,11 @@ is_a shipyard
 ; DE: no Shipwright; no Elite Cannon Galleon
 can_research war_galley galleon fire_ship fast_fire_ship demolition_ship heavy_demolition_ship gillnets careening dry_dock
 
-; Chinese TC: +5 population, +5 LOS (DE)
+; Chinese TC: +10 population (15 total), +7 LOS (DE update 99311)
 def chinese_town_center
 is_a town_center
-population_provided 10
-sight_range 13
+population_provided 15
+sight_range 15
 
 ; 中国: Thumb Ring + Bloodlines; no Parthian; no Siege Engineers; no Gambesons; 诸葛弩
 def chinese_barracks
@@ -4846,7 +4828,8 @@ phase bonus sight_range 2
 phase_bonus_targets outpost
 
 ; ===========================================================================
-; CIVILIZATIONS — bonuses from biligame civ pages
+; CIVILIZATIONS — bonuses from current AoE2 DE wiki (Fandom civ bonus list)
+; Cross-check: biligame names, SiegeEngineers aoe2techtree, liquipedia.
 ; Base template: ``is_a Civilization`` inherits starting_resources / starting_units.
 ; A civ may override either field; omit to keep the Civilization defaults.
 ; ``abstract 1`` keeps Civilization out of the faction picker.
@@ -4856,7 +4839,9 @@ def Civilization
 class race
 abstract 1
 starting_resources 100 200 200 200
-starting_units town_center house peasant
+; DE Dark Age: Town Center, 3 villagers, 1 scout. No house (TC pop 5).
+; Chinese overrides to 6 villagers + scout; Aztecs replace scout with eagle.
+starting_units town_center 3 peasant scout_cavalry
 
 ; AI ``get footman/archer/knight`` must map to dark/feudal trainables
 ; (barracks / archery_range / stables). Castle unique units stay castle-only.
@@ -4878,10 +4863,14 @@ aoe_castle briton_castle
 workshop workshop
 shipyard briton_shipyard
 townhall town_center
-on_phase castle_age rdg_range 1 aoe_archer crossbowman arbalester skirmisher elite_skirmisher imperial_skirmisher longbowman elite_longbowman
-on_phase imperial_age rdg_range 1 aoe_archer crossbowman arbalester skirmisher elite_skirmisher imperial_skirmisher longbowman elite_longbowman
+on_phase castle_age rdg_range 1 aoe_archer crossbowman arbalester longbowman elite_longbowman
+on_phase imperial_age rdg_range 1 aoe_archer crossbowman arbalester longbowman elite_longbowman
 ; DE: shepherds +25% → livestock gather time × 1/1.25 ≈ -20%
 on_phase dark_age gather_time_food_livestock -20%
+; DE: Town Centers -50% wood from Castle Age
+on_phase castle_age cost 0 -50% 0 0 town_center
+; Team: Archery Ranges work 10% faster → train time ×1/1.1 ≈ -9%
+team_on_phase dark_age time_cost -9% aoe_archer crossbowman arbalester skirmisher elite_skirmisher imperial_skirmisher cavalry_archer heavy_cavalry_archer longbowman elite_longbowman
 beginner britons_beginner
 intermediate britons_intermediate
 advanced britons_advanced
@@ -4907,18 +4896,23 @@ workshop workshop
 mill frank_mill
 shipyard frank_shipyard
 townhall town_center
-; DE: cavalry HP +20%
-on_phase dark_age hp_max 20% cavalry
+; DE: cavalry HP +20% from Feudal (mounted units)
+on_phase feudal_age hp_max 20% cavalry
 ; DE: foragers +15% → orchard gather time × 1/1.15 ≈ -13%
 on_phase dark_age gather_time_orchard -13%
+; DE: Castles 15%/25% cheaper Castle/Imperial Age (stone)
+on_phase castle_age cost 0 0 0 -15% aoe_castle
+on_phase imperial_age cost 0 0 0 -10% aoe_castle
+; Team: Knights +2 LOS
+team_on_phase dark_age sight_range 2 aoe_knight cavalier paladin frankish_cavalier frankish_paladin
 beginner franks_beginner
 intermediate franks_intermediate
 advanced franks_advanced
 expert franks_expert
 nightmare franks_nightmare
 
-; 中国: 开局+村民; 科技更便宜（村民更便宜）; 城镇中心人口/视野; 诸葛弩
-; biligame: 封建/城堡/帝王科技费用 -10%/-15%/-20%（规则表驱动，引擎无 civ 硬编码）
+; 中国: 开局 6 村民（+3）−50木 −200食物; 科技 5/10/15%; TC 15人口/+7视野; 火战船移速; 组队农田+10%
+; DE (post-87863 / 99311 / 141935)
 def chinese
 class race
 is_a Civilization
@@ -4935,10 +4929,14 @@ university chinese_university
 aoe_castle chinese_castle
 workshop workshop
 shipyard chinese_shipyard
-starting_units town_center 3 house 6 peasant
+starting_resources 100 150 0 200
+starting_units town_center 6 peasant scout_cavalry
 townhall chinese_town_center
 town_center chinese_town_center
-research_cost_discount feudal_age -10% castle_age -15% imperial_age -20%
+research_cost_discount feudal_age -5% castle_age -10% imperial_age -15%
+team_farm_food_pct 10
+on_phase castle_age speed 5% fire_galley fire_ship
+on_phase imperial_age speed 5% fire_galley fire_ship
 beginner chinese_beginner
 intermediate chinese_intermediate
 advanced chinese_advanced
@@ -4966,8 +4964,11 @@ market mongol_market
 townhall town_center
 ; DE: hunters +40% → carcass gather time × 1/1.4 ≈ -29%
 on_phase dark_age gather_time_food_carcass -29%
-; DE: scout cavalry line +30% HP
-on_phase dark_age hp_max 30% scout_cavalry
+; DE: scout cavalry line +20%/+30% HP Castle/Imperial
+on_phase castle_age hp_max 20% scout_cavalry
+on_phase imperial_age hp_max 10% scout_cavalry
+; Team: Scout Cavalry line +2 LOS
+team_on_phase dark_age sight_range 2 scout_cavalry
 ; AoE4-like: pasture instead of farm; no mill (herdsman cannot build mill)
 farm pasture
 beginner mongols_beginner
@@ -5007,10 +5008,18 @@ archer aoe_archer
 knight aoe_knight
 catapult mangonel
 advance_cost_discount imperial_age -33%
-on_phase dark_age hp 10% house barracks mill lumbermill mining_camp market town_center townhall wall fortified_wall palisade_wall palisade_gate scouttower outpost aoe_castle
-on_phase feudal_age hp 10% house barracks mill lumbermill mining_camp market town_center townhall wall fortified_wall palisade_wall palisade_gate scouttower outpost guardtower archery_range stables blacksmith shipyard market feitoria aoe_castle
-on_phase castle_age hp 10% house barracks mill lumbermill mining_camp market town_center townhall wall fortified_wall palisade_wall palisade_gate scouttower outpost guardtower archery_range stables blacksmith shipyard university monastery workshop aoe_castle
-on_phase imperial_age hp 10% house barracks mill lumbermill mining_camp market town_center townhall wall fortified_wall palisade_wall palisade_gate scouttower outpost guardtower archery_range stables blacksmith shipyard university monastery workshop aoe_castle
+on_phase dark_age hp 10% house barracks mill lumbermill mining_camp market town_center townhall wall fortified_wall palisade_wall palisade_gate scouttower outpost aoe_castle farm
+on_phase feudal_age hp 10% house barracks mill lumbermill mining_camp market town_center townhall wall fortified_wall palisade_wall palisade_gate scouttower outpost guardtower archery_range stables blacksmith shipyard market feitoria aoe_castle farm
+on_phase castle_age hp 10% house barracks mill lumbermill mining_camp market town_center townhall wall fortified_wall palisade_wall palisade_gate scouttower outpost guardtower archery_range stables blacksmith shipyard university monastery workshop aoe_castle farm
+on_phase imperial_age hp 10% house barracks mill lumbermill mining_camp market town_center townhall wall fortified_wall palisade_wall palisade_gate scouttower outpost guardtower archery_range stables blacksmith shipyard university monastery workshop aoe_castle farm
+; DE: camel / skirmisher / spearman lines 25% cheaper
+on_phase dark_age cost -25% spearman pikeman halberdier skirmisher elite_skirmisher imperial_skirmisher camel_rider heavy_camel_rider
+; DE: fire ships fire 25% faster → reload ×1/1.25 = -20%
+on_phase dark_age mdg_cd -20% fire_galley fire_ship fast_fire_ship
+grant_tech_on_phase feudal_age town_watch
+grant_tech_on_phase castle_age town_patrol
+; Team: monks heal 100% faster → heal_cd -50%
+team_on_phase dark_age heal_cd -50% monk
 beginner byzantines_beginner
 intermediate byzantines_intermediate
 advanced byzantines_advanced
@@ -5022,7 +5031,16 @@ nightmare byzantines_nightmare
 ; no Plate Barding, Architecture, Bombard Tower, Heated Shot, Sappers, Crop Rotation, Stone Shaft; Cavalier end (no Paladin)
 def japanese_mill
 is_a mill
+cost 0 50 0 0
 can_research horse_collar heavy_plow
+
+def japanese_lumbermill
+is_a lumbermill
+cost 0 50 0 0
+
+def japanese_mining_camp
+is_a mining_camp
+cost 0 50 0 0
 
 def japanese_barracks
 is_a barracks
@@ -5079,6 +5097,10 @@ can_upgrade_to cavalier_end
 def teuton_farm
 is_a farm
 cost 0 36 0 0
+
+def teuton_town_center
+is_a town_center
+transport_capacity 25
 
 def teuton_barracks
 is_a barracks
@@ -5301,9 +5323,23 @@ university japanese_university
 aoe_castle japanese_castle
 workshop japanese_workshop
 mill japanese_mill
+lumbermill japanese_lumbermill
+mining_camp japanese_mining_camp
 shipyard japanese_shipyard
 townhall town_center
 on_phase feudal_age mdg_cd -25% infantry
+; DE: fishing ships double HP, +2 pierce, work 5/10/15/20% faster by age
+on_phase dark_age hp_max 100% rdf 2 fishing_ship
+on_phase dark_age gather_time_fish_trap -5%
+on_phase feudal_age gather_time_fish_trap -5%
+on_phase castle_age gather_time_fish_trap -5%
+on_phase imperial_age gather_time_fish_trap -5%
+; DE: mounted archers +2 vs archers (except skirmishers)
+on_phase dark_age rdg_vs aoe_archer 2 cavalry_archer heavy_cavalry_archer
+on_phase dark_age rdg_vs crossbowman 2 cavalry_archer heavy_cavalry_archer
+on_phase dark_age rdg_vs arbalester 2 cavalry_archer heavy_cavalry_archer
+; Team: Galleys +4 LOS
+team_on_phase dark_age sight_range 4 galley
 beginner japanese_beginner
 intermediate japanese_intermediate
 advanced japanese_advanced
@@ -5328,9 +5364,17 @@ aoe_castle teuton_castle
 workshop teuton_workshop
 farm teuton_farm
 shipyard teuton_shipyard
-townhall town_center
-on_phase castle_age mdf 1 infantry
-on_phase imperial_age mdf 1 infantry
+townhall teuton_town_center
+town_center teuton_town_center
+; DE: barracks and stable units +1/+2 melee armor Castle/Imperial
+on_phase castle_age mdf 1 infantry cavalry
+on_phase imperial_age mdf 1 infantry cavalry
+; DE: monks double heal range (generic area → targeted 8)
+on_phase dark_age heal_range 8 monk
+; DE: towers garrison twice as many (5→10)
+on_phase dark_age transport_capacity 5 scouttower
+grant_tech_on_phase castle_age murder_holes herbal_medicine
+team_conversion_channel_bonus_pct 50
 beginner teutons_beginner
 intermediate teutons_intermediate
 advanced teutons_advanced
@@ -5355,9 +5399,16 @@ aoe_castle viking_castle
 workshop viking_workshop
 shipyard viking_shipyard
 townhall town_center
-on_phase feudal_age hp_max 10% infantry
-on_phase castle_age hp_max 5% infantry
-on_phase imperial_age hp_max 5% infantry
+; DE: infantry +20% HP from Feudal Age
+on_phase feudal_age hp_max 20% infantry
+grant_tech_on_phase feudal_age wheelbarrow
+grant_tech_on_phase castle_age hand_cart
+; DE: warships -10/-15/-20% Feudal/Castle/Imperial
+on_phase feudal_age cost -10% galley fire_galley demolition_raft longboat
+on_phase castle_age cost -5% galley fire_galley demolition_raft longboat
+on_phase imperial_age cost -5% galley fire_galley demolition_raft longboat
+; Team: Docks 15% cheaper
+team_on_phase dark_age cost -15% shipyard
 beginner vikings_beginner
 intermediate vikings_intermediate
 advanced vikings_advanced
@@ -5382,7 +5433,13 @@ aoe_castle vietnamese_castle
 workshop vietnamese_workshop
 shipyard vietnamese_shipyard
 townhall town_center
-on_phase dark_age hp_max 20% aoe_archer crossbowman arbalester cavalry_archer heavy_cavalry_archer rattan_archer elite_rattan_archer
+; DE: Archery Range units +20% HP
+on_phase dark_age hp_max 20% aoe_archer crossbowman arbalester skirmisher elite_skirmisher imperial_skirmisher cavalry_archer heavy_cavalry_archer rattan_archer elite_rattan_archer
+reveal_enemy_town_centers town_center
+grant_tech_on_phase imperial_age conscription
+research_cost_zero_slot 1 wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining
+research_time_percent -50% loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining
+team_share_research imperial_skirmisher archery_range
 beginner vietnamese_beginner
 intermediate vietnamese_intermediate
 advanced vietnamese_advanced
@@ -5408,6 +5465,12 @@ workshop portuguese_workshop
 shipyard portuguese_shipyard
 townhall town_center
 on_phase dark_age hp_max 10% ship
+; DE: all units -20% gold
+on_phase dark_age cost -20% 0 0 0 infantry archer_unit cavalry siege_unit ship peasant monk
+; DE: foragers generate 0.33 wood per food
+on_phase dark_age gather_byproduct orchard resource2 0.33 per_food peasant
+; Team: all technologies (not age-ups) researched 25% faster → time ×1/1.25 = -20%
+team_on_phase dark_age research_time -20%
 beginner portuguese_beginner
 intermediate portuguese_intermediate
 advanced portuguese_advanced
@@ -5486,7 +5549,7 @@ shipyard aztec_shipyard
 monastery aztec_monastery
 townhall town_center
 starting_resources 150 200 200 200
-starting_units town_center house peasant aztec_eagle_scout
+starting_units town_center 3 peasant aztec_eagle_scout
 team_inventory_production_bonus_pct 33
 research_stack_hp_bonus 5 monk
 ; DE: military created 15% faster → time ×1/1.15 ≈ -13%
@@ -5577,15 +5640,21 @@ mill celtic_mill
 shipyard celtic_shipyard
 monastery celtic_monastery
 townhall town_center
-; biligame: infantry +15% speed from Feudal
-on_phase feudal_age speed 15% infantry
+; DE: infantry +5/10/15/20% speed Dark/Feudal/Castle/Imperial
+on_phase dark_age speed 5% infantry
+on_phase feudal_age speed 5% infantry
+on_phase castle_age speed 5% infantry
+on_phase imperial_age speed 5% infantry
 ; DE lumberjacks +15% → wood gather time ×1/1.15 ≈ -13%
 on_phase dark_age gather_time_wood -13%
+; steal guarded enemy herdables; own flock ignores that steal bonus
+herdable_steal_ignore_guards 1
+herdable_steal_protected 1
 ; DE siege fire 25% faster → reload ×1/1.25 = -20%
 on_phase castle_age mdg_cd -20% siege_unit
 on_phase castle_age rdg_cd -20% siege_unit
-; team bonus: Siege Workshops work 20% faster → train time ×1/1.2 ≈ -17%
-on_phase castle_age time_cost -17% battering_ram mangonel scorpion siege_tower
+; Team: Siege Workshops work 20% faster → train time ×1/1.2 ≈ -17%
+team_on_phase castle_age time_cost -17% battering_ram mangonel scorpion siege_tower
 beginner celts_beginner
 intermediate celts_intermediate
 advanced celts_advanced

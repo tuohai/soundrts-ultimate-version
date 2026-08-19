@@ -296,47 +296,74 @@
 ; Civilization bonuses (spoken in the faction picker via G; indented lines continue)
 8520 Unique unit Longbowman.
   Unique techs Yeomen and Warwolf.
-  Foot archers plus one range in Castle Age and plus one more in Imperial Age.
+  Foot archers plus one range in Castle Age and plus one more in Imperial Age, except skirmishers.
   Shepherds work faster.
+  Town Centers cost half wood from Castle Age.
+  Team bonus: Archery Ranges work faster.
   No Bloodlines, no Thumb Ring.
 8521 Unique unit Throwing Axeman.
   Unique techs Bearded Axe and Chivalry.
-  Cavalry plus twenty percent hit points.
+  Cavalry plus twenty percent hit points from Feudal Age.
   Foragers work faster.
   Farm upgrades are free.
+  Castles cost less stone.
+  Team bonus: Knights plus two line of sight.
   No Thumb Ring, Bracer, Ring Archer Armor, or Bloodlines.
 8522 Unique unit Chu Ko Nu.
   Unique techs Rocketry and Great Wall.
-  Start with extra villagers.
-  Technologies cost ten, fifteen, and twenty percent less in Feudal, Castle, and Imperial Age.
+  Start with three extra villagers, minus fifty wood and two hundred food.
+  Technologies cost five, ten, and fifteen percent less in Feudal, Castle, and Imperial Age.
+  Town Centers support fifteen population and plus seven line of sight.
+  Fire ships move faster in Castle and Imperial Age.
+  Team bonus: Farms contain ten percent more food.
 8523 Unique unit Mangudai.
   Unique techs Drill and Nomads.
   Hunters work faster.
-  Scout cavalry line plus thirty percent hit points.
+  Scout cavalry line plus twenty then thirty percent hit points in Castle and Imperial Age.
   Cavalry archers fire faster.
   Build pastures instead of farms; no mill.
+  Team bonus: Scout cavalry line plus two line of sight.
 8524 Unique unit Cataphract.
   Unique techs Logistica and Greek Fire.
   Buildings gain extra hit points each age.
   Imperial Age costs thirty-three percent less.
+  Camels, skirmishers, and spearmen cost less.
+  Fire ships attack faster.
+  Town Watch and Town Patrol are free.
+  Team bonus: Monks heal faster.
 8525 Unique unit Samurai.
   Unique techs Yasama and Kataparuto.
   Infantry attack faster from the Feudal Age.
+  Fishing ships have more hit points and work faster.
+  Mills and camps cost less.
+  Team bonus: Galleys plus four line of sight.
 8526 Unique unit Teutonic Knight.
   Unique techs Ironclad and Crenellations.
-  Infantry melee armor plus one in Castle Age and plus one in Imperial Age.
+  Barracks and stable units plus melee armor in Castle and Imperial Age.
   Farms cost less wood.
+  Murder Holes and Herbal Medicine are free.
+  Team bonus: resist conversion.
 8527 Unique unit Berserk.
   Unique techs Chieftains and Bogsveigar.
-  Infantry hit points plus ten percent in Feudal Age, plus five more in Castle Age, plus five more in Imperial Age.
+  Infantry hit points plus twenty percent from Feudal Age.
+  Wheelbarrow and Hand Cart are free.
+  Warships cost less.
   Docks can train Longboats.
+  Team bonus: Docks cost less.
 8528 Unique unit Rattan Archer.
   Unique techs Chatras and Paper Money.
-  Foot archers and cavalry archers plus twenty percent hit points.
+  Archery Range units plus twenty percent hit points.
+  Reveal enemy Town Centers at the start.
+  Conscription is free.
+  Economic technologies cost no wood and research faster.
+  Team bonus: Imperial Skirmisher upgrade is available.
 8529 Unique unit Organ Gun.
   Unique techs Circumnavigation and Arquebus.
   Ships plus ten percent hit points.
+  All units cost twenty percent less gold.
+  Foragers also gather wood.
   Can build a Feitoria.
+  Team bonus: technologies research faster.
 8530 Unique unit Jaguar Warrior.
   Unique techs Atlatl and Garland Wars.
   Start with fifty extra gold.
@@ -347,6 +374,8 @@
   No stables or cavalry.
 8531 Unique unit Woad Raider.
   Unique techs Stronghold and Furor Celtica.
-  Infantry plus fifteen percent speed from the Feudal Age.
+  Infantry speed plus five percent each age from Dark Age.
   Lumberjacks work faster.
   Siege weapons fire faster.
+  Can steal enemy flock even if a unit stands next to it.
+  Team bonus: Siege Workshops work faster.

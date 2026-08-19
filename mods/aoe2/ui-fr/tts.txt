@@ -113,7 +113,8 @@
 8321 Cerf
 8322 Mouton
 8323 Sanglier
-8324 Carcasse
+8324 Carcasse
+
 8330 Carcasse de bétail
 
 8120 Milicien
@@ -294,3 +295,89 @@
 8513 Vos unités meurent au lieu de rejoindre l'ennemi lorsqu'elles sont converties
 8514 Les conversions ennemies contre vous prennent beaucoup plus de temps
 8515 Quand plusieurs moines convertissent ensemble, seul celui qui réussit se repose
+; Bonus de civilisation (lu dans le sélecteur de faction via G ; lignes indentées = suite)
+8520 Unité unique : fantassin à arc long.
+  Techs uniques : Yeomen et Warwolf.
+  Archers à pied plus une portée à l'âge des châteaux et plus une à l'âge impérial, sauf javeliniers.
+  Les bergers travaillent plus vite.
+  Les forums coûtent moitié moins de bois dès l'âge des châteaux.
+  Bonus d'équipe : les camps de tir travaillent plus vite.
+  Pas de Lignées, pas d'Anneau de pouce.
+8521 Unité unique : lanceur de hache.
+  Techs uniques : hache barbue et chevalerie.
+  Cavalerie plus vingt pour cent de points de vie dès l'âge féodal.
+  Les cueilleurs travaillent plus vite.
+  Les améliorations de ferme sont gratuites.
+  Les châteaux coûtent moins de pierre.
+  Bonus d'équipe : chevaliers plus deux de vision.
+  Pas d'Anneau de pouce, Brassard, Cotte de mailles d'archer ni Lignées.
+8522 Unité unique : Chu Ko Nu.
+  Techs uniques : fusées et Grande Muraille.
+  Départ avec trois villageois en plus, moins cinquante bois et deux cents nourriture.
+  Technologies moins chères de cinq, dix et quinze pour cent aux âges féodal, des châteaux et impérial.
+  Les forums abritent quinze de population et plus sept de vision.
+  Les navires de feu vont plus vite aux âges des châteaux et impérial.
+  Bonus d'équipe : les fermes contiennent dix pour cent de nourriture en plus.
+8523 Unité unique : Mangudaï.
+  Techs uniques : Drill et Nomades.
+  Les chasseurs travaillent plus vite.
+  Ligne d'éclaireurs plus vingt puis trente pour cent de points de vie aux âges des châteaux et impérial.
+  Les archers montés tirent plus vite.
+  Pâturages au lieu de fermes ; pas de moulin.
+  Bonus d'équipe : ligne d'éclaireurs plus deux de vision.
+8524 Unité unique : cataphractaire.
+  Techs uniques : Logistique et Feu grégeois.
+  Les bâtiments gagnent des points de vie à chaque âge.
+  L'âge impérial coûte trente-trois pour cent de moins.
+  Chameaux, javeliniers et lanciers coûtent moins.
+  Les navires de feu attaquent plus vite.
+  Guet et Patrouille urbaine sont gratuits.
+  Bonus d'équipe : les moines soignent plus vite.
+8525 Unité unique : samouraï.
+  Techs uniques : Yasama et Kataparuto.
+  L'infanterie attaque plus vite dès l'âge féodal.
+  Les bateaux de pêche ont plus de points de vie et travaillent plus vite.
+  Moulins et camps coûtent moins.
+  Bonus d'équipe : galères plus quatre de vision.
+8526 Unité unique : chevalier teutonique.
+  Techs uniques : Blindage et Créneaux.
+  Unités de caserne et d'écurie plus armure de mêlée aux âges des châteaux et impérial.
+  Les fermes coûtent moins de bois.
+  Meurtrières et Herbes médicinales sont gratuits.
+  Bonus d'équipe : résistent à la conversion.
+8527 Unité unique : fou de guerre.
+  Techs uniques : Chefs de clan et Bogsveigar.
+  Infanterie plus vingt pour cent de points de vie dès l'âge féodal.
+  Brouette et Chariot à bras sont gratuits.
+  Les navires de guerre coûtent moins.
+  Les docks peuvent former des drakkars.
+  Bonus d'équipe : les docks coûtent moins.
+8528 Unité unique : fantassin à arc en rotin.
+  Techs uniques : Chatras et Papier-monnaie.
+  Unités du camp de tir plus vingt pour cent de points de vie.
+  Révèle les forums ennemis au départ.
+  Conscription est gratuite.
+  Les technologies économiques ne coûtent pas de bois et se recherchent plus vite.
+  Bonus d'équipe : le javelineur impérial est disponible.
+8529 Unité unique : ribaudequin.
+  Techs uniques : Circumnavigation et Arquebuse.
+  Navires plus dix pour cent de points de vie.
+  Toutes les unités coûtent vingt pour cent d'or en moins.
+  Les cueilleurs récoltent aussi du bois.
+  Peuvent construire une Feitoria.
+  Bonus d'équipe : les technologies se recherchent plus vite.
+8530 Unité unique : guerrier jaguar.
+  Techs uniques : Atlatl et Guerre des fleurs.
+  Départ avec cinquante or en plus.
+  Les villageois portent trois de plus.
+  L'armée s'entraîne plus vite.
+  Les moines gagnent cinq points de vie par technologie du monastère.
+  Bonus d'équipe : les reliques produisent plus d'or.
+  Pas d'écuries ni de cavalerie.
+8531 Unité unique : guerrier à la peinture de guerre.
+  Techs uniques : Fortin et Furie celtique.
+  Infanterie plus cinq pour cent de vitesse à chaque âge dès l'âge sombre.
+  Les bûcherons travaillent plus vite.
+  Les armes de siège tirent plus vite.
+  Peuvent voler les troupeaux ennemis même si une unité est à côté.
+  Bonus d'équipe : les ateliers de siège travaillent plus vite.

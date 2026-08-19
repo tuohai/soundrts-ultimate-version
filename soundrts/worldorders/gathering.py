@@ -236,7 +236,7 @@ class GatherOrder(BasicOrder):
                 pass
 
         # AoE2 Paper Money: lumberjacks generate gold while chopping wood
-        self._apply_gather_byproduct(dt)
+        self._apply_gather_byproduct(dt, extracted)
 
         if self._cargo_amount() >= cap:
             self.mode = "bring_back"
@@ -251,7 +251,7 @@ class GatherOrder(BasicOrder):
                 self.storage = None
             self._cont_last_t = None
 
-    def _apply_gather_byproduct(self, dt):
+    def _apply_gather_byproduct(self, dt, gathered=0):
         """While gathering, grant byproduct resources (e.g. Paper Money gold/s on wood)."""
         from ..lib.nofloat import PRECISION
         from ..worldmarket import (
@@ -260,7 +260,7 @@ class GatherOrder(BasicOrder):
         )
 
         byproduct = getattr(self.unit, "gather_byproduct", None)
-        if not isinstance(byproduct, dict) or not byproduct or dt <= 0:
+        if not isinstance(byproduct, dict) or not byproduct or (dt <= 0 and not gathered):
             return
         player = getattr(self.unit, "player", None)
         if player is None or self.target is None:
@@ -281,11 +281,14 @@ class GatherOrder(BasicOrder):
                 break
         if entry is None:
             return
-        rate_f, product = unpack_gather_byproduct_entry(entry)
+        rate_f, product, mode = unpack_gather_byproduct_entry(entry)
         if rate_f <= 0:
             return
         acc = float(getattr(self, "_byproduct_accum", 0.0) or 0.0)
-        acc += rate_f * dt
+        if mode == "per_food":
+            acc += rate_f * (float(gathered) / float(PRECISION or 1))
+        else:
+            acc += rate_f * dt
         whole = int(acc)
         if whole >= 1:
             player.store(product, whole * PRECISION)

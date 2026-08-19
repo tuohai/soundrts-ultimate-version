@@ -113,7 +113,8 @@
 8321 Jeleń
 8322 Owca
 8323 Dzik
-8324 Padlina
+8324 Padlina
+
 8330 Padlina bydła
 
 8120 Straż obywatelska
@@ -294,3 +295,89 @@
 8513 Twoje jednostki giną zamiast dołączać do wroga po nawróceniu
 8514 Wrogie nawracanie przeciwko tobie trwa znacznie dłużej
 8515 Gdy kilku mnichów nawraca razem, odpoczywa tylko ten, któremu się udało
+; Bonusy cywilizacji (czytane w wyborze frakcji klawiszem G; wcięcia kontynuują)
+8520 Unikalna jednostka: łucznik długi.
+  Unikalne technologie: Yeomen i Warwolf.
+  Łucznicy piesi plus jeden zasięg w epoce zamków i plus jeden w imperialnej, oprócz oszczepników.
+  Pasterze pracują szybciej.
+  Ratusze kosztują o połowę mniej drewna od epoki zamków.
+  Bonus drużynowy: strzelnice pracują szybciej.
+  Brak Krwi i Pierścienia na kciuk.
+8521 Unikalna jednostka: miotacz toporów.
+  Unikalne technologie: topór brodaty i rycerstwo.
+  Kawaleria plus dwadzieścia procent punktów życia od epoki feudalnej.
+  Zbieracze pracują szybciej.
+  Ulepszenia farm są darmowe.
+  Zamki kosztują mniej kamienia.
+  Bonus drużynowy: rycerze plus dwa pola widzenia.
+  Brak Pierścienia, Naramiennika, Kolczugi łucznika i Krwi.
+8522 Unikalna jednostka: Chu Ko Nu.
+  Unikalne technologie: rakiety i Wielki Mur.
+  Start z trzema dodatkowymi wieśniakami, minus pięćdziesiąt drewna i dwieście żywności.
+  Technologie tańsze o pięć, dziesięć i piętnaście procent w epoce feudalnej, zamków i imperialnej.
+  Ratusze dają piętnaście populacji i plus siedem widzenia.
+  Okręty ogniowe poruszają się szybciej w epoce zamków i imperialnej.
+  Bonus drużynowy: farmy zawierają o dziesięć procent więcej żywności.
+8523 Unikalna jednostka: Mangudaj.
+  Unikalne technologie: Drill i Nomadzi.
+  Myśliwi pracują szybciej.
+  Linia zwiadowców plus dwadzieścia, potem trzydzieści procent życia w epoce zamków i imperialnej.
+  Łucznicy konni strzelają szybciej.
+  Pastwiska zamiast farm; brak młyna.
+  Bonus drużynowy: linia zwiadowców plus dwa widzenia.
+8524 Unikalna jednostka: katafrakt.
+  Unikalne technologie: Logistyka i Ogień grecki.
+  Budynki zyskują dodatkowe życie z każdą epoką.
+  Epoka imperialna kosztuje o trzydzieści trzy procent mniej.
+  Wielbłądy, oszczepnicy i włócznicy są tańsi.
+  Okręty ogniowe atakują szybciej.
+  Straż miejska i Patrol miejski są darmowe.
+  Bonus drużynowy: mnisi leczą szybciej.
+8525 Unikalna jednostka: samuraj.
+  Unikalne technologie: Yasama i Kataparuto.
+  Piechota atakuje szybciej od epoki feudalnej.
+  Łodzie rybackie mają więcej życia i pracują szybciej.
+  Młyny i obozy są tańsze.
+  Bonus drużynowy: galeony plus cztery widzenia.
+8526 Unikalna jednostka: rycerz teutoński.
+  Unikalne technologie: Pancerz i Blanki.
+  Jednostki koszar i stajni plus pancerz wręcz w epoce zamków i imperialnej.
+  Farmy kosztują mniej drewna.
+  Otwory strzelnicze i Ziołolecznictwo są darmowe.
+  Bonus drużynowy: opór wobec nawracania.
+8527 Unikalna jednostka: berserk.
+  Unikalne technologie: Wodzowie i Bogsveigar.
+  Piechota plus dwadzieścia procent życia od epoki feudalnej.
+  Taczka i Wózek ręczny są darmowe.
+  Okręty wojenne są tańsze.
+  Doki mogą szkolić drakkary.
+  Bonus drużynowy: doki są tańsze.
+8528 Unikalna jednostka: łucznik rattanowy.
+  Unikalne technologie: Chatras i Papierowy pieniądz.
+  Jednostki strzelnicy plus dwadzieścia procent życia.
+  Ujawniają wrogie ratusze na starcie.
+  Pobór jest darmowy.
+  Technologie ekonomiczne nie kosztują drewna i badają się szybciej.
+  Bonus drużynowy: imperialny oszczepnik jest dostępny.
+8529 Unikalna jednostka: organ.
+  Unikalne technologie: Okrążenie świata i Arkebuz.
+  Statki plus dziesięć procent życia.
+  Wszystkie jednostki kosztują o dwadzieścia procent mniej złota.
+  Zbieracze zbierają też drewno.
+  Mogą budować Feitorię.
+  Bonus drużynowy: technologie badają się szybciej.
+8530 Unikalna jednostka: wojownik jaguar.
+  Unikalne technologie: Atlatl i Wojna kwiatów.
+  Start z pięćdziesięcioma złota extra.
+  Wieśniacy noszą o trzy więcej.
+  Wojsko szkoli się szybciej.
+  Mnisi zyskują pięć życia za każdą technologię klasztoru.
+  Bonus drużynowy: relikwie dają extra złoto.
+  Brak stajni i kawalerii.
+8531 Unikalna jednostka: wojownik woad.
+  Unikalne technologie: Twierdza i Celtycki szał.
+  Piechota plus pięć procent szybkości w każdej epoce od epoki ciemnej.
+  Drwale pracują szybciej.
+  Machiny oblężnicze strzelają szybciej.
+  Mogą kraść wrogie stada nawet gdy obok stoi jednostka.
+  Bonus drużynowy: warsztaty oblężnicze pracują szybciej.

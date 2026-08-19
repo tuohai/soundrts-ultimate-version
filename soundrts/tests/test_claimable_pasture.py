@@ -572,3 +572,126 @@ def test_imperative_go_attacks_claimable_neutral():
         wo.ORDERS_DICT.update(old)
 
     assert recorded and recorded[0][0] == "attack"
+
+
+def _make_claim_animal(place, owner, CreatureStatusUpdate):
+    class _Animal(CreatureStatusUpdate):
+        claimable = 1
+        claim_range = 0
+        herdable = 1
+        type_name = "sheep"
+        is_a_building = False
+
+        def set_player(self, player):
+            self.player = player
+
+        def stop(self):
+            pass
+
+        def cancel_all_orders(self, unpay=False):
+            pass
+
+    animal = object.__new__(_Animal)
+    animal.player = owner
+    animal.flee_on_hit = 1
+    animal.place = place
+    animal.x = 0
+    animal.y = 0
+    animal.hp = 10
+    animal.inside = None
+    animal._herd_leader = None
+    return animal
+
+
+def _make_unit(place, player, x=1, y=0):
+    u = types.SimpleNamespace(
+        place=place,
+        x=x,
+        y=y,
+        hp=20,
+        player=player,
+        inside=None,
+        is_a_building=False,
+        herdable=0,
+        claimable=0,
+        basic_skills=(),
+    )
+    u.notify = lambda ev: None
+    return u
+
+
+def test_unguarded_owned_sheep_can_be_stolen():
+    import soundrts.worldunit  # noqa: F401
+    from soundrts.worldunit.world_status_update import CreatureStatusUpdate
+
+    place = types.SimpleNamespace(objects=[], neighbors=[], id="a")
+    owner = types.SimpleNamespace(neutral=False, allied=[], faction="britons")
+    thief = types.SimpleNamespace(neutral=False, allied=[], faction="franks")
+    animal = _make_claim_animal(place, owner, CreatureStatusUpdate)
+    scout = _make_unit(place, thief)
+    place.objects = [animal, scout]
+    assert animal._try_steal_owned_herdable() is True
+    assert animal.player is thief
+
+
+def test_guarded_owned_sheep_blocks_without_ignore_flag(monkeypatch):
+    import soundrts.worldunit  # noqa: F401
+    from soundrts.worldunit.world_status_update import CreatureStatusUpdate
+    import soundrts.world_civ_bonuses as wcb
+
+    monkeypatch.setattr(wcb, "herdable_steal_ignore_guards", lambda p: False)
+    monkeypatch.setattr(wcb, "herdable_steal_protected", lambda p: False)
+
+    place = types.SimpleNamespace(objects=[], neighbors=[], id="a")
+    owner = types.SimpleNamespace(neutral=False, allied=[])
+    thief = types.SimpleNamespace(neutral=False, allied=[])
+    animal = _make_claim_animal(place, owner, CreatureStatusUpdate)
+    guard = _make_unit(place, owner, x=2)
+    scout = _make_unit(place, thief, x=3)
+    place.objects = [animal, guard, scout]
+    assert animal._try_steal_owned_herdable() is False
+    assert animal.player is owner
+
+
+def test_ignore_guards_steals_unguarded_flag_owner(monkeypatch):
+    import soundrts.worldunit  # noqa: F401
+    from soundrts.worldunit.world_status_update import CreatureStatusUpdate
+    import soundrts.world_civ_bonuses as wcb
+
+    monkeypatch.setattr(
+        wcb, "herdable_steal_ignore_guards", lambda p: bool(getattr(p, "ignore_guards", False))
+    )
+    monkeypatch.setattr(
+        wcb, "herdable_steal_protected", lambda p: bool(getattr(p, "flock_protected", False))
+    )
+
+    place = types.SimpleNamespace(objects=[], neighbors=[], id="a")
+    owner = types.SimpleNamespace(neutral=False, allied=[], flock_protected=False)
+    thief = types.SimpleNamespace(neutral=False, allied=[], ignore_guards=True)
+    animal = _make_claim_animal(place, owner, CreatureStatusUpdate)
+    guard = _make_unit(place, owner, x=2)
+    scout = _make_unit(place, thief, x=3)
+    place.objects = [animal, guard, scout]
+    assert animal._try_steal_owned_herdable() is True
+    assert animal.player is thief
+
+
+def test_protected_flock_stays_when_guarded(monkeypatch):
+    import soundrts.worldunit  # noqa: F401
+    from soundrts.worldunit.world_status_update import CreatureStatusUpdate
+    import soundrts.world_civ_bonuses as wcb
+
+    monkeypatch.setattr(wcb, "herdable_steal_ignore_guards", lambda p: True)
+    monkeypatch.setattr(
+        wcb, "herdable_steal_protected", lambda p: bool(getattr(p, "flock_protected", False))
+    )
+
+    place = types.SimpleNamespace(objects=[], neighbors=[], id="a")
+    owner = types.SimpleNamespace(neutral=False, allied=[], flock_protected=True)
+    thief = types.SimpleNamespace(neutral=False, allied=[], ignore_guards=True)
+    animal = _make_claim_animal(place, owner, CreatureStatusUpdate)
+    guard = _make_unit(place, owner, x=2)
+    scout = _make_unit(place, thief, x=3)
+    place.objects = [animal, guard, scout]
+    assert animal._try_steal_owned_herdable() is False
+    assert animal.player is owner

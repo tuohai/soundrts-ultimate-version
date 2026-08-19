@@ -4,6 +4,33 @@ Notas de la versión
 
 .. contents::
 
+1.4.7.6
+-------
+
+**aoe2: bonos de las doce civilizaciones alineados con Definitive Edition actual**
+
+- **Problema**: los bonos aún seguían una instantánea ~2022 (p. ej. chinos 10/15/20 % en tecnologías, centros urbanos 10 de población), no la DE actual. El motor tampoco podía expresar investigación compartida de equipo, robo de rebaño vigilado ni descuentos de coste por edad.
+- **Cambio**: las doce civs (britanos, francos, chinos, mongoles, bizantinos, japoneses, teutones, vikingos, vietnamitas, portugueses, aztecas, celtas) usan bonos y bonos de equipo DE actuales. Donde las rules no bastaban, el motor añade campos sin nombres de civ: ``team_on_phase``, ``grant_tech_on_phase``, ``team_share_research`` (tecnología y edificios anfitrión opcionales, p. ej. hondero imperial vietnamita para aliados), ``team_farm_food_pct``, ``reveal_enemy_town_centers``, ``research_cost_zero_slot`` / ``research_time_percent``, ``gather_byproduct``, resistencia de equipo a la conversión, etc.
+- **Alcance**: mod aoe2; los campos nuevos sirven a otros mods.
+
+**Motor: reclamar / robar rebaños (por reglas)**
+
+- **Problema**: la pertenencia por proximidad ``claimable`` no estaba en el bucle de unidad. El «no se puede robar un rebaño vigilado / sí se puede si no está protegido» de AoE2 no tenía flags.
+- **Cambio**: los animales ``claimable`` neutrales pasan a un jugador no neutral cercano. El rebaño con dueño se puede robar: cualquiera si no hay guarda; bloqueado si hay una unidad viva del dueño; raza ``herdable_steal_ignore_guards 1`` ignora esa guarda; ``herdable_steal_protected 1`` (por defecto 0) impide ese bono sobre tus propios animales. El motor no comprueba nombres de civilización.
+- **Alcance**: todos los mods; los celtas aoe2 activan ambos flags.
+
+**aoe2: inicio en Edad Oscura como AoE2 (incluidos chinos)**
+
+- **Problema**: el inicio era 1 aldeano, una casa y sin explorador. Los chinos tenían 4 aldeanos (+3 sobre una base de 1), no los 6 + explorador de DE.
+- **Cambio**: civs estándar: centro urbano + 3 aldeanos + caballería de exploración. Chinos: 6 aldeanos + explorador (−50 madera, −200 comida, centro 15 de población). Aztecas: 3 aldeanos + explorador águila, +50 oro. Sin casa inicial (población del centro urbano). Los guiones de campaña y aldeanos extra de dificultad de la IA no cambian.
+- **Alcance**: ``starting_units`` / ``starting_resources`` por defecto de las razas aoe2.
+
+**aoe2: textos del selector de facción en todos los idiomas del mod**
+
+- **Problema**: las fichas G de civilización solo estaban en inglés y chino.
+- **Cambio**: ids ``8520``–``8531`` en todos los paquetes UI de aoe2 (en, zh, de, fr, es, it, ru, be, pl, cs, sk, pt-BR, vi).
+
+
 1.4.7.5
 -------
 

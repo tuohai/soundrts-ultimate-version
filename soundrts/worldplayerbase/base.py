@@ -327,6 +327,7 @@ class Player:
         self.cost_percent_bonus = [0.0] * MAX_NB_OF_RESOURCE_TYPES
         self.population_cost_percent_bonus = 0.0
         self.time_cost_percent_bonus = 0.0
+        self.research_time_percent_bonus = 0.0
         
         # 时代（phase）专用：训练/建造/研究等全局成本修正，与科技 can_use 判定无关
         self.phase_cost_bonus = [0] * MAX_NB_OF_RESOURCE_TYPES

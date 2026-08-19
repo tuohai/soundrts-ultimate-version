@@ -4,6 +4,34 @@ Release notes
 
 .. contents::
 
+
+1.4.7.6
+--------
+
+**aoe2: twelve civilization bonuses aligned to current Definitive Edition**
+
+- **Issue**: Civ bonuses still matched a ~2022 snapshot (for example Chinese techs 10/15/20%, Town Centers 10 population), not current DE. The engine also could not express team-shared research, stealing guarded flock, or pooled age cost discounts.
+- **Change**: All twelve civs (Britons, Franks, Chinese, Mongols, Byzantines, Japanese, Teutons, Vikings, Vietnamese, Portuguese, Aztecs, Celts) now use current DE bonuses and team bonuses. Where rules were not enough, the engine gained rules-driven fields with no civ type-name checks: ``team_on_phase``, ``grant_tech_on_phase``, ``team_share_research`` (tech plus optional host buildings, e.g. Vietnamese Imperial Skirmisher for allies), ``team_farm_food_pct``, ``reveal_enemy_town_centers``, ``research_cost_zero_slot`` / ``research_time_percent``, gather ``gather_byproduct``, team conversion resist, and so on.
+- **Scope**: aoe2 mod; the new race fields are available to other mods.
+
+**Engine: claim / steal herdables (rules-driven)**
+
+- **Issue**: ``claimable`` proximity ownership was not wired into the unit loop. AoE2 “cannot steal a guarded flock / can steal an unprotected flock through guards” had no rules knobs.
+- **Change**: Neutral ``claimable`` animals join a nearby non-neutral player. Owned flock can be stolen: anyone if unguarded; blocked if a living owner unit stands by; race ``herdable_steal_ignore_guards 1`` ignores that guard; ``herdable_steal_protected 1`` (default 0) blocks the ignore-guards bonus on your own animals. The engine does not test civilization names.
+- **Scope**: All mods; aoe2 Celts enable both flags.
+
+**aoe2: Dark Age start matches AoE2 (including Chinese)**
+
+- **Issue**: Default start was 1 villager, a house, and no scout. Chinese used 4 villagers ( +3 vs a 1-vil baseline), not DE’s 6 villagers plus scout.
+- **Change**: Standard civs: Town Center + 3 villagers + scout cavalry. Chinese: 6 villagers + scout (−50 wood, −200 food, TC 15 population). Aztecs: 3 villagers + eagle scout, +50 gold. No starting house (population from the Town Center). Campaign map scripts and AI difficulty extra villagers are unchanged.
+- **Scope**: aoe2 race default ``starting_units`` / ``starting_resources``.
+
+**aoe2: faction-picker intros in every locale pack**
+
+- **Issue**: Civilization G-key blurbs existed only in English and Chinese.
+- **Change**: Ids ``8520``–``8531`` are in every aoe2 UI pack (en, zh, de, fr, es, it, ru, be, pl, cs, sk, pt-BR, vi).
+
+
 1.4.7.5
 --------
 
