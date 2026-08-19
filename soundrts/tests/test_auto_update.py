@@ -520,6 +520,23 @@ def test_update_window_uses_ui_queue():
     assert "_poll_ui" in src
 
 
+def test_update_window_has_tkinter_fallback():
+    src = Path("soundrts/update_window.py").read_text(encoding="utf-8")
+    assert "except ImportError" in src
+    assert "run_update_headless" in src
+    assert "if tk is None" in src
+    assert "_ensure_tcl_env" in src
+
+
+def test_setup_py_does_not_exclude_tkinter():
+    src = Path("setup.py").read_text(encoding="utf-8")
+    start = src.index('"excludes"')
+    end = src.index("]", start)
+    excludes = src[start:end]
+    assert "tkinter" not in excludes
+    assert '"packages": ["tkinter"]' in src or '"tkinter"' in src.split("packages")[1].split("excludes")[0]
+
+
 def test_update_window_avoids_auto_update_import():
     """Updater process must not import auto_update (config/resource hang)."""
     src = Path("soundrts/update_window.py").read_text(encoding="utf-8")

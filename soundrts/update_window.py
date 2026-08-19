@@ -20,9 +20,34 @@ import sys
 import threading
 import time
 import traceback
-import tkinter as tk
 from pathlib import Path
-from tkinter import ttk
+
+
+def _ensure_tcl_env() -> None:
+    """Point Tcl/Tk at files shipped next to a frozen exe."""
+    if not getattr(sys, "frozen", False):
+        return
+    base = Path(sys.executable).resolve().parent
+    candidates = (
+        (base / "tcl8.6", base / "tk8.6"),
+        (base / "lib" / "tcl8.6", base / "lib" / "tk8.6"),
+        (base / "tcl" / "tcl8.6", base / "tcl" / "tk8.6"),
+    )
+    for tcl, tk in candidates:
+        if tcl.is_dir():
+            os.environ.setdefault("TCL_LIBRARY", str(tcl))
+        if tk.is_dir():
+            os.environ.setdefault("TK_LIBRARY", str(tk))
+
+
+_ensure_tcl_env()
+
+try:
+    import tkinter as tk
+    from tkinter import ttk
+except ImportError:  # packaged builds used to exclude tkinter
+    tk = None
+    ttk = None
 
 
 def _log(tmp_dir: Path | str | None, message: str) -> None:
@@ -168,8 +193,47 @@ def run_update_job(job: dict, status_cb, progress_cb) -> None:
     os._exit(0)
 
 
+def _win_message(title: str, text: str, *, error: bool = False) -> None:
+    if sys.platform != "win32":
+        print(f"{title}: {text}", file=sys.stderr if error else sys.stdout)
+        return
+    try:
+        import ctypes
+
+        flags = 0x00000010 if error else 0x00000040
+        ctypes.windll.user32.MessageBoxW(None, str(text), str(title), flags)
+    except Exception:
+        pass
+
+
+def run_update_headless(job_path: str) -> int:
+    """Apply the update with no Tk window (log + MessageBox on failure)."""
+    tmp_hint = None
+
+    def status_cb(text: str) -> None:
+        _log(tmp_hint, text)
+
+    def progress_cb(pct: int) -> None:
+        _log(tmp_hint, f"progress {pct}")
+
+    try:
+        job = _load_job(job_path)
+        job["job_path"] = str(Path(job_path).resolve())
+        tmp_hint = job.get("tmp_dir")
+        _log(tmp_hint, f"headless updater job={job_path}")
+        run_update_job(job, status_cb, progress_cb)
+        return 0
+    except Exception as e:
+        _log(tmp_hint, "ERROR " + traceback.format_exc())
+        _win_message("SoundRTS Update", f"Update failed / 更新失败:\n{e}", error=True)
+        return 1
+
+
 def run_update_ui(job_path: str) -> int:
     """Show progress window and run the update job. Returns process exit code."""
+    if tk is None or ttk is None:
+        return run_update_headless(job_path)
+
     root = tk.Tk()
     root.title("SoundRTS Update")
     root.geometry("420x160")
