@@ -17,6 +17,7 @@
 8012 Azteken
 8013 Kelten
 
+8014 Malier
 8070 Samurai
 8071 Elite-Samurai
 8072 Deutsch-ritter
@@ -49,6 +50,10 @@
 8097 Keltische Wut
 
 
+8098 Gbeto
+8099 Elite-Gbeto
+8104 Tigui
+8105 Farimba
 8010 Langbogen-schütze
 8015 Elite-Lang-bogenschütze
 8020 Axtwerfer
@@ -381,3 +386,9 @@
   Belagerungswaffen feuern schneller.
   Können feindliche Herden stehlen, auch wenn eine Einheit daneben steht.
   Team: Belagerungswerkstätten arbeiten schneller.
+8532 Einheit: Gbeto.
+  Unique Techs: Tigui und Farimba.
+  Gebäude kosten fünfzehn Prozent weniger Holz, außer Farmen.
+  Kasernen-Einheiten erhalten Durchschlagrüstung je Zeitalter.
+  Dorfbewohner liefern zehn Prozent mehr Gold ab.
+  Team: Universitäten arbeiten schneller.

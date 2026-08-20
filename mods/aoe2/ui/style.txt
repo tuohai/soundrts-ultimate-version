@@ -68,6 +68,9 @@ intro 8530
 def celts
 title 8013
 intro 8531
+def malians
+title 8014
+intro 8532
 
 ; Category roots (armor / is_a / passenger filters) — spoken names for attribute UI
 def infantry
@@ -278,6 +281,8 @@ is_a town_center
 
 def chinese_town_center
 is_a town_center
+def teuton_town_center
+is_a town_center
 
 def briton_barracks
 is_a building
@@ -396,6 +401,8 @@ def byzantine_mill
 is_a mill
 def japanese_mill
 is_a mill
+def teuton_farm
+is_a farm
 
 def japanese_barracks
 is_a barracks
@@ -464,6 +471,8 @@ def portuguese_workshop
 is_a workshop
 def byzantine_workshop
 is_a workshop
+def byzantine_monastery
+is_a monastery
 
 def japanese_castle
 is_a aoe_castle
@@ -535,6 +544,25 @@ def celtic_castle
 is_a aoe_castle
 def celtic_knight
 is_a aoe_knight
+
+def malian_barracks
+is_a barracks
+def malian_archery
+is_a archery_range
+def malian_stable
+is_a stables
+def malian_blacksmith
+is_a blacksmith
+def malian_university
+is_a university
+def malian_workshop
+is_a workshop
+def malian_shipyard
+is_a shipyard
+def malian_monastery
+is_a monastery
+def malian_castle
+is_a aoe_castle
 
 ; ---------- units ----------
 def militia
@@ -1424,6 +1452,22 @@ def stronghold
 title 8096
 def furor_celtica
 title 8097
+
+def gbeto
+is_a militia
+title 8098
+launch_mdg 76825
+mdg_hit 76826
+death gbeto_death
+keyboard soldier1
+shortcut x
+def elite_gbeto
+is_a gbeto
+title 8099
+def tigui
+title 8104
+def farimba
+title 8105
 
 def portuguese_villager
 is_a peasant

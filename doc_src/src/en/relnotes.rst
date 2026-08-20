@@ -5,6 +5,28 @@ Release notes
 .. contents::
 
 
+1.4.7.7
+--------
+
+**Engine: Town Center garrison arrows (rules-driven)**
+
+- **Issue**: aoe2 empty Town Centers still fired (building pierce damage), unlike DE. Teuton empty-TC +5 arrows and Malian Tigui +8 could not be expressed in rules.
+- **Change**: With ``garrison_arrows 1``, arrows = ``base_arrows`` + firing garrison units, capped by ``max_garrison_arrows`` (default 10). Empty TCs with ``base_arrows 0`` do not fire; Teutons use ``base_arrows 5``; Tigui uses existing ``effect bonus base_arrows 8``. The volley is the building’s, not passenger shots. The engine does not test civilization names.
+- **Scope**: All mods; aoe2 Town Centers enable it. Castles and towers still fire when empty.
+
+**aoe2: Malians**
+
+- **Issue**: The mod had no Malians civilization.
+- **Change**: Thirteenth civ. Buildings −15% wood except farms; barracks militia/spearman lines +1/+2/+3 pierce armor Feudal/Castle/Imperial (not Gbeto); villagers drop off +10% gold; team university research 80% faster (``team_on_phase`` + ``time_cost -44%``). Unique unit Gbeto; Castle tech Tigui (200 food 300 wood, Town Center ``base_arrows`` +8); Imperial tech Farimba (cavalry melee +5). Faction intro ``8532``.
+- **Scope**: aoe2 mod.
+
+**aoe2: civ building shells had no style titles**
+
+- **Issue**: Rule shells such as ``malian_barracks`` did not inherit titles, so finished buildings were nameless. Teuton farms/Town Centers and the Byzantine monastery also lacked ``style.txt`` ``is_a``.
+- **Change**: Give those shells ``is_a`` pointing at the generic building; a test requires later civ shells to have titles.
+- **Scope**: aoe2 UI style.
+
+
 1.4.7.6
 --------
 

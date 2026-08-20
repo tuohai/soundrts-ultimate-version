@@ -14,7 +14,7 @@ clear
 ;
 ; Civs: britons 不列颠 / franks 法兰克 / chinese 中国 / mongols 蒙古 / byzantines 拜占庭
 ;       japanese 日本 / teutons 条顿 / vikings 维京 / vietnamese 越南 / portuguese 葡萄牙
-;       aztecs 阿兹特克 / celts 凯尔特
+;       aztecs 阿兹特克 / celts 凯尔特 / malians 马里
 ; AI: beginner intermediate advanced expert nightmare
 ; Resources (SoundRTS order): resource1=gold 黄金, resource2=wood 木材,
 ;   resource3=food 食物, resource4=stone 石料
@@ -1233,6 +1233,24 @@ requirements aoe_castle imperial_age
 effect bonus hp 40%
 effect_bonus_targets battering_ram capped_ram siege_ram mangonel onager siege_onager scorpion heavy_scorpion siege_tower
 
+; 提圭 Tigui — Malians Castle UT: Town Centers fire +8 arrows even when empty
+def tigui
+class upgrade
+cost 0 300 200 0
+time_cost 40
+requirements aoe_castle castle_age
+effect bonus base_arrows 8
+effect_bonus_targets town_center townhall
+
+; 法林巴 Farimba — Malians Imperial UT: cavalry +5 melee attack
+def farimba
+class upgrade
+cost 400 0 650 0
+time_cost 40
+requirements aoe_castle imperial_age
+effect bonus mdg 5
+effect_bonus_targets cavalry
+
 
 ; Unit lines below inherit category roots (infantry / cavalry / archer_unit / siege_unit).
 ; Prefer effect_bonus_targets <root> [-exclude] over listing every upgrade tier.
@@ -1607,7 +1625,7 @@ mdf 0
 rdf 2
 mdg_vs camel_rider 6
 can_auto_explore 1
-can_use_tech chivalry forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry conscription
+can_use_tech chivalry forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry conscription farimba
 can_upgrade_to light_cavalry
 def light_cavalry
 is_a scout_cavalry
@@ -1660,7 +1678,7 @@ mdg_cd 1.8
 mdg_range 1
 mdf 2
 rdf 2
-can_use_tech chivalry forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry conscription
+can_use_tech chivalry forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry conscription farimba
 can_upgrade_to cavalier
 def cavalier
 is_a aoe_knight
@@ -1713,7 +1731,7 @@ mdg_range 1
 mdf 0
 rdf 0
 mdg_vs cavalry 9
-can_use_tech forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry chivalry conscription
+can_use_tech forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry chivalry conscription farimba
 can_upgrade_to heavy_camel_rider
 def heavy_camel_rider
 is_a camel_rider
@@ -3321,6 +3339,49 @@ mdf 0
 rdf 1
 mdg_vs building 3
 can_upgrade_to
+; Malians — 女卫兵 Gbeto (DE: 50F+40G, 17s; melee projectile, RoF 2 / delay 1)
+def gbeto
+class soldier
+is_a infantry
+is_a unique_unit
+cost 40 0 50 0
+population_cost 1
+time_cost 17
+mdg_projectile 1
+mdg_projectile_speed 5
+mdg_targets ground
+space 0.25
+requirements castle_age
+
+hp_max 40
+speed 1.25
+sight_range 6
+mdg 10
+mdg_cd 1
+mdg_ready 1
+mdg_range 5
+mdf 0
+rdf 0
+can_upgrade_to elite_gbeto
+can_use_tech forging iron_casting scale_mail_armor chain_mail_armor plate_mail_armor squires arson conscription
+def elite_gbeto
+is_a gbeto
+cost 600 0 900 0
+time_cost 45
+line_upgrade 1
+requirements imperial_age
+no_auto_upgrade 1
+
+hp_max 50
+speed 1.25
+sight_range 7
+mdg 13
+mdg_cd 1
+mdg_ready 1
+mdg_range 6
+mdf 0
+rdf 0
+can_upgrade_to
 ; Vietnamese — 藤甲弓兵 Rattan Archer
 def rattan_archer
 class soldier
@@ -3671,6 +3732,11 @@ conversion_immune 1
 heal_level 1
 heal_cd 10
 heal_garrisoned 1
+; AoE2 DE: empty TC does not fire (base_arrows 0). Villagers/archers inside
+; add one building arrow each (cap 10). Teutons override base_arrows 5.
+garrison_arrows 1
+base_arrows 0
+max_garrison_arrows 10
 ; AoE2 DE: base arrow attack 5 / range 6 / LOS 8 (Fletching line: atk+LOS only on TC)
 sight_range 8
 rdg 5
@@ -3679,7 +3745,7 @@ rdg_range 6
 rdg_projectile 1
 rdg_projectile_speed 7
 rdg_targets ground air
-; Defensive garrison (AoE2 DE): 15 foot units; villagers/archers fire from inside.
+; Defensive garrison (AoE2 DE): 15 foot units; villagers/archers add TC arrows.
 ; Exclude cavalry so cavalry archers cannot enter TC.
 transport_capacity 15
 transport_volume 99
@@ -3691,7 +3757,7 @@ can_train peasant
 can_research loom wheelbarrow hand_cart town_watch town_patrol
 can_advance feudal_age castle_age imperial_age
 square_terrain town 60
-can_use_tech herbal_medicine masonry architecture fletching bodkin_arrow bracer ballistics crenellations town_watch town_patrol
+can_use_tech herbal_medicine masonry architecture fletching bodkin_arrow bracer ballistics crenellations town_watch town_patrol tigui
 
 ; Compatibility alias: maps/AI that still say townhall resolve to the same building
 def townhall
@@ -3707,6 +3773,9 @@ conversion_immune 1
 heal_level 1
 heal_cd 10
 heal_garrisoned 1
+garrison_arrows 1
+base_arrows 0
+max_garrison_arrows 10
 sight_range 8
 rdg 5
 rdg_cd 2
@@ -3724,7 +3793,7 @@ can_research loom wheelbarrow hand_cart town_watch town_patrol
 can_advance feudal_age castle_age imperial_age
 square_terrain town 60
 can_upgrade_to
-can_use_tech herbal_medicine masonry architecture fletching bodkin_arrow bracer ballistics crenellations town_watch town_patrol
+can_use_tech herbal_medicine masonry architecture fletching bodkin_arrow bracer ballistics crenellations town_watch town_patrol tigui
 
 ; Disable base keep→castle chain (AoE2 uses town_center only)
 def keep
@@ -5101,6 +5170,8 @@ cost 0 36 0 0
 def teuton_town_center
 is_a town_center
 transport_capacity 25
+; DE: Town Centers fire +5 extra arrows (including when empty)
+base_arrows 5
 
 def teuton_barracks
 is_a barracks
@@ -5660,6 +5731,93 @@ intermediate celts_intermediate
 advanced celts_advanced
 expert celts_expert
 nightmare celts_nightmare
+
+
+; ---------- 马里 Malians ----------
+; no Gambesons, Halberdier, Blast Furnace, Bracer, Plate Barding, Arbalester,
+; Heavy CA, Hand Cannoneer, Paladin, Hussar, Parthian, Architecture,
+; Siege Engineers, Bombard Tower, Siege Ram, Galleon, Elite Cannon Galleon,
+; Illumination; Champion / Keep / Thumb Ring / Bloodlines / Cavalier /
+; Heavy Camel / Capped Ram / Siege Onager / Heavy Scorpion / BBC / Cannon Galleon yes
+def malian_barracks
+is_a barracks
+can_train militia spearman
+can_research tracking squires supplies arson man_at_arms long_swordsman two_handed_swordsman champion pikeman
+
+def malian_archery
+is_a archery_range
+can_train aoe_archer skirmisher cavalry_archer
+can_research thumb_ring crossbowman elite_skirmisher
+
+def malian_stable
+is_a stables
+can_train scout_cavalry aoe_knight camel_rider
+can_research bloodlines husbandry light_cavalry cavalier heavy_camel_rider
+
+def malian_blacksmith
+is_a blacksmith
+can_research forging iron_casting scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor fletching bodkin_arrow padded_archer_armor leather_archer_armor ring_archer_armor
+
+def malian_university
+is_a university
+can_research ballistics chemistry guardtower keeptower fortified_wall murder_holes masonry heated_shot treadmill_crane
+
+def malian_workshop
+is_a workshop
+can_train battering_ram mangonel scorpion siege_tower bombard_cannon
+can_research capped_ram onager siege_onager heavy_scorpion
+
+def malian_shipyard
+is_a shipyard
+can_train fishing_ship trade_cog transport_ship galley fire_galley demolition_raft cannon_galleon
+; DE: no Galleon, no Elite Cannon Galleon
+can_research war_galley fire_ship fast_fire_ship demolition_ship heavy_demolition_ship gillnets shipwright careening dry_dock
+
+def malian_monastery
+is_a monastery
+can_train monk
+can_research redemption atonement herbal_medicine heresy sanctity fervor faith block_printing theocracy
+
+def malian_castle
+is_a aoe_castle
+can_train gbeto trebuchet
+can_research elite_gbeto tigui farimba conscription hoardings sappers spies
+
+; 马里: 建筑-15%木（农田除外）；兵营单位封建/城堡/帝王+1/+2/+3远程甲；
+; 村民上缴黄金+10%；提圭空中心+8箭；法林巴骑兵+5攻；大学团队+80%
+def malians
+class race
+is_a Civilization
+peasant peasant
+footman militia
+archer aoe_archer
+knight aoe_knight
+catapult mangonel
+barracks malian_barracks
+archery_range malian_archery
+stables malian_stable
+blacksmith malian_blacksmith
+university malian_university
+aoe_castle malian_castle
+workshop malian_workshop
+shipyard malian_shipyard
+monastery malian_monastery
+townhall town_center
+; DE: buildings -15% wood except farms (later TCs included; starting TC is already placed)
+on_phase dark_age cost 0 -15% 0 0 building -farm
+; DE: barracks units +1/+2/+3 pierce armor Feudal/Castle/Imperial (not Gbeto)
+on_phase feudal_age rdf 1 militia spearman
+on_phase castle_age rdf 1 militia spearman
+on_phase imperial_age rdf 1 militia spearman
+; DE update 87863: villagers drop off +10% gold
+on_phase dark_age gather_qty_goldmine 10%
+; Team: Universities work 80% faster → research time ×1/1.8 ≈ -44%
+team_on_phase dark_age time_cost -44% ballistics chemistry siege_engineers guardtower keeptower cannontower fortified_wall murder_holes masonry architecture heated_shot treadmill_crane
+beginner malians_beginner
+intermediate malians_intermediate
+advanced malians_advanced
+expert malians_expert
+nightmare malians_nightmare
 
 
 ; Legacy base-game names kept for map computer_only / older multi scripts.

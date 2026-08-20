@@ -65,6 +65,7 @@ def test_aoe2_ai_txt_uses_real_units_and_unique_units():
         "organ_gun",
         "woad_raider",
         "jaguar_warrior",
+        "gbeto",
     ):
         assert uu in text, uu
     assert "militia" in text and "aoe_archer" in text and "mangonel" in text
@@ -94,6 +95,8 @@ def test_aoe2_ai_txt_dark_feudal_lines_have_no_castle_units():
         "woad_raider",
         "eagle_warrior",
         "cavalry_archer",
+        "gbeto",
+        "camel_rider",
     }
     n = 0
     for line in Path("mods/aoe2/ai.txt").read_text(encoding="utf-8").splitlines():

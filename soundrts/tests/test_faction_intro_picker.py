@@ -23,6 +23,7 @@ AOE2_CIVS = (
     "portuguese",
     "aztecs",
     "celts",
+    "malians",
 )
 
 

@@ -1008,6 +1008,10 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     rdg_seq_secondary_rdg: int = 0
     rdg_seq_secondary_mdg: int = 0
     rdg_seq_secondary_live: int = 0  # 1 = secondary shots use live attack (Yasama)
+    # AoE2 Town Center: fire building arrows from garrison, not when empty
+    garrison_arrows = 0
+    base_arrows = 0
+    max_garrison_arrows = 0
     mdg_seq_secondary: int = 0
     mdg_seq_secondary_rdg: int = 0
     mdg_seq_secondary_mdg: int = 0

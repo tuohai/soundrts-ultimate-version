@@ -159,3 +159,19 @@ def test_furor_celtica_workshop_hp(aoe2_rules):
     for u in ("battering_ram", "mangonel", "scorpion", "siege_tower"):
         assert "furor_celtica" in _techs(aoe2_rules, u), u
     assert "furor_celtica" not in _techs(aoe2_rules, "trebuchet")
+
+
+def test_tigui_and_farimba(aoe2_rules):
+    eff = str(_effect(aoe2_rules, "tigui"))
+    assert "base_arrows" in eff and "8" in eff
+    for u in ("town_center", "townhall"):
+        assert "tigui" in _techs(aoe2_rules, u), u
+    castle_cls = aoe2_rules.unit_class("malian_castle")
+    assert "gbeto" in aoe2_rules.class_rules_attr(castle_cls, "can_train", ())
+    castle_res = aoe2_rules.class_rules_attr(castle_cls, "can_research", ())
+    assert "tigui" in castle_res and "farimba" in castle_res
+    fe = str(_effect(aoe2_rules, "farimba"))
+    assert "mdg" in fe and "5" in fe
+    for u in ("scout_cavalry", "aoe_knight", "camel_rider"):
+        assert "farimba" in _techs(aoe2_rules, u), u
+    assert "farimba" not in _techs(aoe2_rules, "gbeto")

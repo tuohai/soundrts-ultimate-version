@@ -801,6 +801,14 @@ class AttackActionMixin:
             damages = getattr(self, "mdg_seq_damages", None) or []
             secondary = bool(getattr(self, "mdg_seq_secondary", 0))
         else:
+            volley = getattr(self, "garrison_arrow_volley", None)
+            garrison = volley() if volley is not None else None
+            if garrison is not None:
+                times, interval = garrison
+                cd = self._get_ranged_cd_vs(target) if target else self._get_ranged_cd_base()
+                if times > 1:
+                    return cd + int((times - 1) * interval * 1000)
+                return cd
             cd = self._get_ranged_cd_vs(target) if target else self._get_ranged_cd_base()
             times = min(int(getattr(self, "rdg_seq_times", 1) or 1), 6)
             interval = float(getattr(self, "rdg_seq_interval", 0) or 0)
@@ -1451,7 +1459,11 @@ class AttackActionMixin:
         container = self.place.container
         if not container:
             return False
-            
+
+        if int(getattr(container, "garrison_arrows", 0) or 0):
+            # Building fires AoE2-style arrows; passengers do not shoot themselves.
+            return False
+
         # 检查是否允许所有单位攻击
         attack_types = getattr(container, 'passenger_attack_types', None)
         if attack_types:
@@ -1468,6 +1480,10 @@ class AttackActionMixin:
         """检查是否可以攻击目标"""
         # 防御性检查
         if target is None or target.hp <= 0 or self.hp <= 0:
+            return False
+
+        prevent = getattr(self, "_garrison_arrows_prevent_attack", None)
+        if prevent is not None and prevent():
             return False
 
         forced = self._player_ordered_attack_on(target)

@@ -678,7 +678,18 @@ class DamageEffectsMixin(DamageCalculationMixin):
 
         # 攻击序列（诸葛弩式连发：一次攻击内多次命中，间隔由 rules 配置）
         # secondary 模式（AoE2 Chu Ko Nu）：首发 = 单位实时攻击；后续 = 固定穿刺+近战
-        if is_melee:
+        garrison_volley = None if is_melee else getattr(self, "garrison_arrow_volley", None)
+        garrison = garrison_volley() if garrison_volley is not None else None
+        seq_cap = 6
+        if garrison is not None:
+            times, interval = garrison
+            damages = []
+            secondary_mode = True
+            sec_rdg = 0
+            sec_mdg = 0
+            secondary_live = True
+            seq_cap = 20  # world_transport.GARRISON_ARROW_SEQ_MAX (avoid circular import)
+        elif is_melee:
             times = min(self.mdg_seq_times, 6)
             damages = self.mdg_seq_damages
             interval = self.mdg_seq_interval
@@ -697,7 +708,7 @@ class DamageEffectsMixin(DamageCalculationMixin):
 
         # 如果没有设置序列,使用单次攻击
         if secondary_mode:
-            times = max(1, min(times, 6))
+            times = max(1, min(times, seq_cap))
             if times > 1 and interval <= 0:
                 interval = 0.25
         elif not damages:

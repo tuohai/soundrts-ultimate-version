@@ -1337,6 +1337,10 @@ class Rules(_Definitions):
         "harm_level",
         "heal_level",
         "heal_garrisoned",  # 1 = heal only units inside (AoE2 TC/castle/tower style)
+        # AoE2 TC-style: building arrows = base_arrows + firing garrison (not passenger shots)
+        "garrison_arrows",  # 1 = use garrison-arrow volley; empty fires only if base_arrows > 0
+        "base_arrows",  # arrows when empty (generic TC 0; Teutons 5)
+        "max_garrison_arrows",  # extra arrows from passenger_attack_types inside (0 → 10)
         # Conversion (rules-driven; see world_conversion.py — no tech type-name checks)
         "conversion_tech_gated",  # caster: use researched allow/rest/channel upgrade attrs
         "conversion_cleric",  # target needs conversion_allows_monk when caster is gated

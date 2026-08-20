@@ -53,8 +53,9 @@ Custom attribute blurbs (`8510`–`8515`) and market verbs are hand-translated i
 | 葡萄牙 | https://wiki.biligame.com/aoe2de/葡萄牙 |
 | 阿兹特克 | https://wiki.biligame.com/aoe2de/阿兹特克 |
 | 凯尔特 | https://wiki.biligame.com/aoe2de/凯尔特 |
+| 马里 | https://wiki.biligame.com/aoe2de/马里 |
 
-Unique units: 长弓兵 / 掷斧兵 / 诸葛弩 / 蒙古突骑 / 甲胄骑兵 / 武士 / 条顿骑士 / 狂战士 / 藤甲弓兵 / 风琴炮 / 美洲豹武士 / 靛蓝突袭者
+Unique units: 长弓兵 / 掷斧兵 / 诸葛弩 / 蒙古突骑 / 甲胄骑兵 / 武士 / 条顿骑士 / 狂战士 / 藤甲弓兵 / 风琴炮 / 美洲豹武士 / 靛蓝突袭者 / 女卫兵
 
 ## SoundRTS adaptations
 
@@ -63,6 +64,7 @@ Unique units: 长弓兵 / 掷斧兵 / 诸葛弩 / 蒙古突骑 / 甲胄骑兵 / 
 - **Monastery relics (rules-driven):** monks ``inventory_capacity 1`` pick up ``relic``. Monastery: ``inventory_capacity 10``, ``receive_items 1``, ``accepted_items relic``, ``accept_from self``, ``accept_givers monk``, ``apply_inventory_production 1``. Relic: ``inventory_production_rates 0.5 0 0 0`` + ``inventory_victory 1``. Parameters: ``inventory_victory_time 1000`` (≈ DE 200 years). Engine: ``apply_inventory_production`` / ``inventory_production_rates`` / ``team_inventory_production_bonus_pct`` / hold-all timer in ``world_inventory_victory.py`` — no type-name hardcoding.
 - **Aztecs:** ``team_inventory_production_bonus_pct 33``; +50 start gold; villager ``carry_capacity 13``; military ``time_cost -13%``; ``research_stack_hp_bonus 5 monk`` (each monastery tech has ``research_stack_hp 1``); no stables/cavalry/stone walls/Thumb Ring/Ring Archer Armor/Keep/Galleon/Heated Shot; Dark Age ``aztec_eagle_scout``; ``jaguar_warrior`` + ``atlatl`` / ``garland_wars``.
 - **Celts:** infantry +15% speed from Feudal; lumberjacks +15%; siege fire 25% faster; workshop train −17%; ``woad_raider`` + ``stronghold`` / ``furor_celtica``. No 2HS/Champion, Arbalester, Thumb Ring, CA, Bloodlines, Hussar, Paladin, Bracer, Plate Barding, Architecture, Bombard Tower, Crop Rotation, Cannon Galleon. William Wallace campaign: player ``celts``, English ``faction britons``.
+- **Malians:** buildings wood −15% except farms; barracks units +1/+2/+3 pierce armor Feudal/Castle/Imperial (``militia spearman``, not Gbeto); villagers ``gather_qty_goldmine 10%`` (DE drop-off +10% gold); ``gbeto`` + ``tigui`` (``base_arrows 8``) / ``farimba`` (cavalry +5 mdg). Team: university techs ``time_cost -44%`` (80% faster). No Gambesons, Halberdier, Blast Furnace, Bracer, Plate Barding, Arbalester, Heavy CA, Hand Cannoneer, Paladin, Hussar, Architecture, Siege Engineers, Bombard Tower, Siege Ram, Galleon, Elite Cannon Galleon, Illumination.
 - **Farm mill techs (DE):** Horse Collar / Heavy Plow / Crop Rotation (farm_food_bonus 75/125/175). Base farm food 175; new farms only get the bonus (via finalize_new_building). Heavy Plow also carry_capacity +1 on villagers. Reseed production_cost = 60 wood. **Mongols (AoE4-like):** ``mongol_herdsman`` builds ``pasture`` (not farm), cannot build mill, no farm mill techs; pasture needs ``town_center`` only and stores food (``resource3``). Market remapped to ``mongol_market`` (``town_center`` + Feudal, no mill).
 - **Market (rules-driven, 1.4.6.9):** Engine API in `worldmarket.py` / `worldorders/market.py` — no hardcoded wood/food/stone or gold-only trade.
   - **parameters:** `market_currency resource1`; `market_commodities resource2 100 resource3 100 resource4 100`; `market_menu_labels` use `resourceN` (not deposit type `wood`, which is the grove titled 树林); tax 300‰ / Guilds 150‰; `tribute_resources` all four; `trade_tile_scale` / `trade_shrink` / `trade_reward_cap`.

@@ -135,6 +135,13 @@ def test_rules_unique_techs_no_approximations():
     assert "passenger_attack_types infantry" in text.split("def crenellations")[1].split("def ")[0]
     # Kataparuto unpack
     assert "unpack_time -75%" in text.split("def kataparuto")[1].split("def ")[0]
+    # Tigui empty-TC arrows; Farimba cavalry attack
+    tg = text.split("def tigui")[1].split("def ")[0]
+    assert "base_arrows 8" in tg
+    assert "town_center" in tg
+    fb = text.split("def farimba")[1].split("def ")[0]
+    assert "mdg 5" in fb
+    assert "cavalry" in fb
 
 
 def test_unique_tech_can_use_tech_wiring():
@@ -159,6 +166,11 @@ def test_unique_tech_can_use_tech_wiring():
     assert "stronghold" in techs("scouttower")
     assert "furor_celtica" in techs("battering_ram")
     assert "furor_celtica" not in techs("trebuchet")
+    for u in ("town_center", "townhall"):
+        assert "tigui" in techs(u), u
+    for u in ("scout_cavalry", "aoe_knight", "camel_rider"):
+        assert "farimba" in techs(u), u
+    assert "farimba" not in techs("gbeto")
     for u in (
         "organ_gun",
         "elite_organ_gun",

@@ -4,6 +4,28 @@ Notas de la versión
 
 .. contents::
 
+1.4.7.7
+-------
+
+**Motor: flechas de guarnición del centro urbano (por reglas)**
+
+- **Problema**: los centros urbanos aoe2 vacíos seguían disparando (daño a distancia del edificio), a diferencia de DE. Las +5 flechas teutonas con el centro vacío y Tigui maliense +8 no se podían expresar en rules.
+- **Cambio**: con ``garrison_arrows 1``, flechas = ``base_arrows`` + unidades de guarnición que disparan, tope ``max_garrison_arrows`` (por defecto 10). Un centro vacío con ``base_arrows 0`` no dispara; teutones ``base_arrows 5``; Tigui usa el ``effect bonus base_arrows 8`` existente. La andanada es del edificio, no disparos de pasajeros. El motor no comprueba nombres de civilización.
+- **Alcance**: todos los mods; los centros urbanos aoe2 lo activan. Castillos y torres siguen disparando vacíos.
+
+**aoe2: malienses**
+
+- **Problema**: el mod no tenía la civilización maliense.
+- **Cambio**: decimotercera civ. Edificios −15 % de madera salvo granjas; milicia/lanceros del cuartel +1/+2/+3 de armadura perforante Feudal/Castillo/Imperial (no Gbeto); aldeanos entregan +10 % de oro; investigación universitaria de equipo 80 % más rápida (``team_on_phase`` + ``time_cost -44%``). Unidad única Gbeto; tecnología de castillo Tigui (200 comida 300 madera, ``base_arrows`` +8 en el centro); tecnología imperial Farimba (cuerpo a cuerpo de caballería +5). Introducción ``8532``.
+- **Alcance**: mod aoe2.
+
+**aoe2: las cáscaras de edificios de civ no tenían título de estilo**
+
+- **Problema**: cáscaras como ``malian_barracks`` no heredaban título, así que el edificio terminado no tenía nombre. Granjas/centros teutones y el monasterio bizantino tampoco tenían ``is_a`` en ``style.txt``.
+- **Cambio**: esas cáscaras apuntan con ``is_a`` al edificio genérico; una prueba exige títulos en cáscaras posteriores.
+- **Alcance**: estilo UI aoe2.
+
+
 1.4.7.6
 -------
 

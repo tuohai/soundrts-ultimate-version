@@ -63,6 +63,7 @@ _AOE2_CIVS = (
     "portuguese",
     "aztecs",
     "celts",
+    "malians",
 )
 
 
@@ -265,3 +266,35 @@ def test_reveal_enemy_types_are_rules_not_hardcoded(monkeypatch):
     wcb.reveal_enemy_town_centers(spy)
     assert place_castle in spy.observed_before_squares
     assert place_tc not in spy.observed_before_squares
+
+
+def test_malians_wood_rdf_gold_and_university_team(aoe2_rules):
+    entries = _effects(aoe2_rules, "malians")
+    cost_dark = [
+        e
+        for e in entries
+        if e and e[0] == "dark_age" and "cost" in e
+    ]
+    assert cost_dark
+    flat_cost = " ".join(str(x) for x in cost_dark[0])
+    assert "-15%" in flat_cost and "building" in flat_cost and "-farm" in flat_cost
+    rdf = [e for e in entries if e and "rdf" in e]
+    ages = {e[0] for e in rdf}
+    assert ages == {"feudal_age", "castle_age", "imperial_age"}
+    assert all("militia" in e and "spearman" in e for e in rdf)
+    assert not any("gbeto" in e for e in rdf)
+    gold = [e for e in entries if e and "gather_qty_goldmine" in e]
+    assert gold and "10%" in gold[0]
+    team = _flat(_team(aoe2_rules, "malians"))
+    assert "time_cost" in team and "-44%" in team
+    assert "ballistics" in team and "architecture" in team
+    barracks = aoe2_rules.get("malian_barracks", "can_research") or []
+    assert "champion" in barracks
+    assert "gambesons" not in barracks and "halberdier" not in barracks
+    smith = aoe2_rules.get("malian_blacksmith", "can_research") or []
+    assert "blast_furnace" not in smith and "bracer" not in smith
+    uni = aoe2_rules.get("malian_university", "can_research") or []
+    assert "keeptower" in uni
+    assert "architecture" not in uni and "siege_engineers" not in uni
+    castle = aoe2_rules.get("malian_castle", "can_research") or []
+    assert "tigui" in castle and "farimba" in castle

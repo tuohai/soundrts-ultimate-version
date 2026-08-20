@@ -17,6 +17,7 @@
 8012 Aztec
 8013 Celtic
 
+8014 Mali
 8070 Samurai
 8071 Samurai siêu cấp
 8072 Hiệp sĩ Teuton
@@ -49,6 +50,10 @@
 8097 Cuồng nộ Celtic
 
 
+8098 Lính phi dao
+8099 Lính phi dao siêu cấp
+8104 Tigui
+8105 Farimba
 8010 Trường cung binh
 8015 Trường cung binh siêu cấp
 8020 Lính ném rìu
@@ -381,3 +386,9 @@
   Vũ khí công thành bắn nhanh hơn.
   Có thể cướp đàn gia súc địch dù bên cạnh có đơn vị.
   Đồng đội: xưởng công thành làm việc nhanh hơn.
+8532 Đơn vị độc quyền: lính phi dao.
+  Công nghệ độc quyền: Tigui và Farimba.
+  Công trình rẻ hơn mười lăm phần trăm gỗ, trừ nông trại.
+  Đơn vị nhà lính được giáp xuyên theo thời đại.
+  Dân làng nộp thêm mười phần trăm vàng.
+  Đồng đội: đại học làm việc nhanh hơn.

@@ -14,6 +14,7 @@
 8011 Portuguese
 8012 Aztecs
 8013 Celts
+8014 Malians
 
 8070 samurai
 8071 elite samurai
@@ -44,6 +45,10 @@
 8095 elite woad raider
 8096 Stronghold
 8097 Furor Celtica
+8098 gbeto
+8099 elite gbeto
+8104 Tigui
+8105 Farimba
 
 
 8010 longbowman
@@ -379,3 +384,9 @@
   Siege weapons fire faster.
   Can steal enemy flock even if a unit stands next to it.
   Team bonus: Siege Workshops work faster.
+8532 Unique unit Gbeto.
+  Unique techs Tigui and Farimba.
+  Buildings cost fifteen percent less wood except farms.
+  Barracks units gain pierce armor by age.
+  Villagers drop off ten percent more gold.
+  Team bonus: Universities work faster.

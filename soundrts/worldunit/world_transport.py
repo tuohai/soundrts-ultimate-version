@@ -9,6 +9,11 @@ from ..lib.nofloat import (
     to_int,
 )
 
+# AoE2 DE Town Center: extra arrows from garrison (cap 10; Teuton empty 5; Malian Tigui 18)
+GARRISON_ARROW_SEQ_MAX = 20
+GARRISON_ARROW_INTERVAL = 0.05
+GARRISON_ARROW_DEFAULT_CAP = 10
+
 # 速度和战斗属性在内部以 ×1000 存储
 _SCALED_TRANSPORT_STATS = frozenset({
     'speed',
@@ -121,6 +126,48 @@ class CreatureTransport(Entity):
         if not allow:
             return True
         return self._passenger_matches_names(target, allow)
+
+    def garrison_arrow_count(self):
+        """Arrows this tick: ``base_arrows`` + firing passengers, or None if unused.
+
+        ``garrison_arrows 1`` (AoE2 Town Center): empty generic TCs return 0.
+        Passengers listed in ``passenger_attack_types`` each add one extra arrow,
+        capped by ``max_garrison_arrows`` (default 10).
+        """
+        if not int(getattr(self, "garrison_arrows", 0) or 0):
+            return None
+        extra_cap = int(getattr(self, "max_garrison_arrows", 0) or 0)
+        if extra_cap <= 0:
+            extra_cap = GARRISON_ARROW_DEFAULT_CAP
+        extra = 0
+        inside = getattr(self, "inside", None)
+        objects = getattr(inside, "objects", None) or ()
+        attack_types = getattr(self, "passenger_attack_types", None) or ()
+        if objects and attack_types:
+            allow_all = "all" in attack_types
+            for passenger in objects:
+                if getattr(passenger, "hp", 0) <= 0:
+                    continue
+                if allow_all or self._passenger_matches_names(passenger, attack_types):
+                    extra += 1
+                    if extra >= extra_cap:
+                        break
+        return int(getattr(self, "base_arrows", 0) or 0) + extra
+
+    def garrison_arrow_volley(self):
+        """``(times, interval)`` for a garrison-arrow shot, or None."""
+        count = self.garrison_arrow_count()
+        if count is None or count <= 0:
+            return None
+        times = min(int(count), GARRISON_ARROW_SEQ_MAX)
+        interval = float(getattr(self, "rdg_seq_interval", 0) or 0)
+        if times > 1 and interval <= 0:
+            interval = GARRISON_ARROW_INTERVAL
+        return times, interval
+
+    def _garrison_arrows_prevent_attack(self):
+        count = self.garrison_arrow_count()
+        return count is not None and count <= 0
 
     def have_enough_space(self, target):
         if not self._can_accept_passenger(target):

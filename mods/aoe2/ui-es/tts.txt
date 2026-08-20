@@ -17,6 +17,7 @@
 8012 Aztecas
 8013 Celtas
 
+8014 Malíes
 8070 Samurai
 8071 Samurai de élite
 8072 Caballero teutónico
@@ -49,6 +50,10 @@
 8097 Furor celta
 
 
+8098 Guardiana gbeto
+8099 Guardiana gbeto de élite
+8104 Gran asamblea
+8105 Farimba
 8010 Arquero con arco largo
 8015 Arquero con arco largo de élite
 8020 Lanzador de hachas
@@ -381,3 +386,9 @@
   Las armas de asedio disparan más rápido.
   Pueden robar rebaños enemigos aunque haya una unidad al lado.
   Bono de equipo: los talleres de asedio trabajan más rápido.
+8532 Unidad única: guardiana gbeto.
+  Tecnologías únicas: Gran asamblea y Farimba.
+  Los edificios cuestan un quince por ciento menos de madera, excepto granjas.
+  Las unidades de cuarteles ganan armadura antiperforación por edad.
+  Los aldeanos depositan un diez por ciento más de oro.
+  Equipo: las universidades funcionan más rápido.

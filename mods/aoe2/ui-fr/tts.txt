@@ -17,6 +17,7 @@
 8012 Aztèques
 8013 Celtes
 
+8014 Maliens
 8070 Samouraï
 8071 Samouraï d'élite
 8072 Chevalier teutonique
@@ -49,6 +50,10 @@
 8097 Furor Celtica
 
 
+8098 Gbeto
+8099 Gbeto d'élite
+8104 Tigui
+8105 Farimba
 8010 Fantassin à arc long
 8015 Fantassin à arc long d'élite
 8020 Lanceur de hache
@@ -381,3 +386,9 @@
   Les armes de siège tirent plus vite.
   Peuvent voler les troupeaux ennemis même si une unité est à côté.
   Bonus d'équipe : les ateliers de siège travaillent plus vite.
+8532 Unité unique : Gbeto.
+  Technologies uniques : Tigui et Farimba.
+  Les bâtiments coûtent quinze pour cent moins de bois, sauf les fermes.
+  Les unités de caserne gagnent de l'armure de perçage par âge.
+  Les villageois déposent dix pour cent plus d'or.
+  Équipe : les universités travaillent plus vite.

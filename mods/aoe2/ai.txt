@@ -1322,3 +1322,112 @@ attack
 get 6 battering_ram 4 mangonel
 attack
 goto kn1
+
+
+; ======================== MALIANS (gbeto / infantry-cavalry) ========================
+
+def malians_beginner
+defeat_score 10
+counter_skill 25
+workers 12
+constant_attacks 0
+research 1
+get 8 peasant
+get 8 militia 4 spearman
+get 12 peasant 8 aoe_knight 10 gbeto 2 battering_ram
+goto -1
+
+def malians_intermediate
+defeat_score 20
+counter_skill 50
+starting_resources 100 200 0 200
+watchdog 720
+constant_attacks 1
+research 1
+workers 16
+attack_ratio 120
+label mi1
+get 8 peasant
+get 8 militia 4 spearman
+attack
+get 14 peasant 8 aoe_knight 10 gbeto 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto mi1
+
+def malians_advanced
+defeat_score 40
+counter_skill 75
+starting_resources 150 250 0 200
+train_time 50
+research_time 80
+build_time 50
+gather_time 50
+watchdog 600
+constant_attacks 1
+research 1
+workers 22
+expand 2
+attack_ratio 110
+label ma1
+get 8 peasant
+get 8 militia 4 spearman
+attack
+get 14 peasant 8 aoe_knight 6 camel_rider 10 gbeto 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto ma1
+
+def malians_expert
+defeat_score 80
+counter_skill 90
+starting_resources 200 300 0 250
+starting_units 1 peasant
+train_time 50
+research_time 70
+build_time 50
+gather_time 50
+unit_hp 120
+watchdog 600
+constant_attacks 1
+research 1
+workers 28
+expand 2
+attack_ratio 100
+label me1
+get 12 peasant
+get 8 militia 4 spearman
+attack
+get 16 peasant 8 aoe_knight 6 camel_rider 10 gbeto 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto me1
+
+def malians_nightmare
+defeat_score 200
+counter_skill 100
+starting_resources 300 400 0 300
+starting_units 2 peasant
+train_time 40
+research_time 60
+build_time 40
+gather_time 40
+unit_hp 140
+watchdog 540
+constant_attacks 1
+research 1
+workers 36
+expand 2
+attack_ratio 80
+label mn1
+get 12 peasant
+get 8 militia 4 spearman
+attack
+get 18 peasant 8 aoe_knight 8 camel_rider 10 gbeto 3 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto mn1

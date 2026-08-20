@@ -17,6 +17,7 @@
 8012 Astecas
 8013 Celtas
 
+8014 Malineses
 8070 Samurai
 8071 Samurai de Elite
 8072 Cavaleiro Teutão
@@ -49,6 +50,10 @@
 8097 Furor Céltica
 
 
+8098 Gbeto
+8099 Gbeto de Elite
+8104 Tigui
+8105 Farimba
 8010 Arqueiro de Arco Longo
 8015 Arqueiro de Arc. Lon. Elite
 8020 Lançador de Machado
@@ -381,3 +386,9 @@
   Armas de cerco atiram mais rápido.
   Podem roubar rebanhos inimigos mesmo se uma unidade estiver ao lado.
   Bônus de equipe: oficinas de cerco trabalham mais rápido.
+8532 Unidade exclusiva: Gbeto.
+  Tecnologias exclusivas: Tigui e Farimba.
+  Construções custam quinze por cento menos madeira, exceto fazendas.
+  Unidades do quartel ganham armadura antiprojétil por era.
+  Aldeões depositam dez por cento mais ouro.
+  Equipe: universidades trabalham mais rápido.

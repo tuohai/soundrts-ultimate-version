@@ -17,6 +17,7 @@
 8012 Aztékovia
 8013 Kelti
 
+8014 Malijczycy
 8070 Samuraj
 8071 Elitarny samuraj
 8072 Teutoński rycerz
@@ -49,6 +50,10 @@
 8097 Furor Celtica
 
 
+8098 Gbeto
+8099 Elitarny gbeto
+8104 Tigui
+8105 Farimba
 8010 Wojownik z długim łukiem
 8015 Elitarny wojownik z długim łukiem
 8020 Wojownik z toporami
@@ -381,3 +386,9 @@
   Obliehacie zbrane strieľajú rýchlejšie.
   Môžu kradnúť nepriateľské stáda, aj keď vedľa stojí jednotka.
   Tímový bonus: obliehacie dielne pracujú rýchlejšie.
+8532 Unikátna jednotka: Gbeto.
+  Unikátne technológie: Tigui a Farimba.
+  Budovy stoja o pätnásť percent menej dreva, okrem fariem.
+  Jednotky kasární získavajú priebojnú zbroj podľa veku.
+  Dedinčania odovzdávajú o desať percent viac zlata.
+  Tím: univerzity pracujú rýchlejšie.

@@ -17,6 +17,7 @@
 8012 Aztekowie
 8013 Celtowie
 
+8014 Malijczycy
 8070 Samuraj
 8071 Elitarny samuraj
 8072 Teutoński rycerz
@@ -49,6 +50,10 @@
 8097 Furor Celtica
 
 
+8098 Gbeto
+8099 Elitarny gbeto
+8104 Tigui
+8105 Farimba
 8010 Wojownik z długim łukiem
 8015 Elitarny wojownik z długim łukiem
 8020 Wojownik z toporami
@@ -381,3 +386,9 @@
   Machiny oblężnicze strzelają szybciej.
   Mogą kraść wrogie stada nawet gdy obok stoi jednostka.
   Bonus drużynowy: warsztaty oblężnicze pracują szybciej.
+8532 Unikalna jednostka: Gbeto.
+  Unikalne technologie: Tigui i Farimba.
+  Budynki kosztują piętnaście procent mniej drewna, oprócz farm.
+  Jednostki koszar zyskują pancerz dystansowy z epoką.
+  Mieszkańcy oddają dziesięć procent więcej złota.
+  Drużyna: uniwersytety pracują szybciej.

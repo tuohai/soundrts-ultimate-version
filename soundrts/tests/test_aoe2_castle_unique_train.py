@@ -21,6 +21,7 @@ CIV_CASTLE = [
     ("vietnamese", "vietnamese_castle", "rattan_archer"),
     ("portuguese", "portuguese_castle", "organ_gun"),
     ("celts", "celtic_castle", "woad_raider"),
+    ("malians", "malian_castle", "gbeto"),
 ]
 
 
@@ -127,3 +128,44 @@ def test_teuton_farm_not_on_build_menu(aoe2_rules):
     assert "farm" in builds
     assert "teuton_farm" not in builds
     assert resolve_buildable_type(player, "farm") == "teuton_farm"
+
+
+_BUILDING_RACE_KEYS = (
+    "barracks",
+    "archery_range",
+    "stables",
+    "blacksmith",
+    "university",
+    "aoe_castle",
+    "workshop",
+    "shipyard",
+    "monastery",
+    "mill",
+    "townhall",
+    "farm",
+)
+
+
+def test_civ_building_shells_have_style_titles(aoe2_rules):
+    """Built shells (malian_barracks, …) must inherit a spoken title."""
+    from soundrts.definitions import Style
+
+    st = Style()
+    st.load(
+        (ROOT / "res" / "ui" / "style.txt").read_text(encoding="utf-8"),
+        (ROOT / "mods" / "aoe2" / "ui" / "style.txt").read_text(encoding="utf-8"),
+    )
+    missing = []
+    for faction, _castle, uu in CIV_CASTLE:
+        race = aoe2_rules._dict.get(faction) or {}
+        names = [uu]
+        for key in _BUILDING_RACE_KEYS:
+            raw = race.get(key)
+            if not raw:
+                continue
+            names.append(raw[0] if isinstance(raw, (list, tuple)) else raw)
+        for name in names:
+            title = st.get(name, "title", warn_if_not_found=False)
+            if not title:
+                missing.append((faction, name))
+    assert not missing, "style.txt missing title/is_a for %s" % missing

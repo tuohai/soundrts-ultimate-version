@@ -17,6 +17,7 @@
 8012 Aztechi
 8013 Celti
 
+8014 Maliani
 8070 Samurai
 8071 Samurai d'élite
 8072 Cavaliere teutonico
@@ -49,6 +50,10 @@
 8097 Furor Celtica
 
 
+8098 Gbeto
+8099 Gbeto d'élite
+8104 Tigui
+8105 Farimba
 8010 Arciere arco lungo
 8015 Arciere arco lungo d'élite
 8020 Lanciatore di ascia
@@ -381,3 +386,9 @@
   Le armi d'assedio sparano più in fretta.
   Possono rubare le mandrie nemiche anche se un'unità è accanto.
   Bonus di squadra: le officine d'assedio lavorano più in fretta.
+8532 Unità unica: Gbeto.
+  Tecnologie uniche: Tigui e Farimba.
+  Gli edifici costano il quindici per cento in meno di legno, tranne le fattorie.
+  Le unità della caserma guadagnano armatura perforante per età.
+  Gli abitanti depositano il dieci per cento di oro in più.
+  Squadra: le università lavorano più velocemente.
