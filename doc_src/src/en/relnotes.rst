@@ -8,16 +8,16 @@ Release notes
 1.4.7.7
 --------
 
-**Engine: Town Center garrison arrows (rules-driven)**
+**Engine: building garrison volley (rules-driven, weapon-agnostic)**
 
-- **Issue**: aoe2 empty Town Centers still fired (building pierce damage), unlike DE. Teuton empty-TC +5 arrows and Malian Tigui +8 could not be expressed in rules.
-- **Change**: With ``garrison_arrows 1``, arrows = ``base_arrows`` + firing garrison units, capped by ``max_garrison_arrows`` (default 10). Empty TCs with ``base_arrows 0`` do not fire; Teutons use ``base_arrows 5``; Tigui uses existing ``effect bonus base_arrows 8``. The volley is the building’s, not passenger shots. The engine does not test civilization names.
+- **Issue**: aoe2 empty Town Centers still fired (building pierce damage), unlike DE. Teuton empty-TC +5 shots and Malian Tigui +8 could not be expressed in rules. A field named arrows would not fit a cannon building.
+- **Change**: With ``garrison_shots 1``, shots = ``base_shots`` + firing garrison units, capped by ``max_garrison_shots`` (default 10). Empty buildings with ``base_shots 0`` do not fire; Teutons use ``base_shots 5``; Tigui uses existing ``effect bonus base_shots 8``. Damage type is still the building’s ``rdg`` (arrow, cannon, or other ranged). The volley is the building’s, not passenger shots. The engine does not test civilization names.
 - **Scope**: All mods; aoe2 Town Centers enable it. Castles and towers still fire when empty.
 
 **aoe2: Malians**
 
 - **Issue**: The mod had no Malians civilization.
-- **Change**: Thirteenth civ. Buildings −15% wood except farms; barracks militia/spearman lines +1/+2/+3 pierce armor Feudal/Castle/Imperial (not Gbeto); villagers drop off +10% gold; team university research 80% faster (``team_on_phase`` + ``time_cost -44%``). Unique unit Gbeto; Castle tech Tigui (200 food 300 wood, Town Center ``base_arrows`` +8); Imperial tech Farimba (cavalry melee +5). Faction intro ``8532``.
+- **Change**: Thirteenth civ. Buildings −15% wood except farms; barracks militia/spearman lines +1/+2/+3 pierce armor Feudal/Castle/Imperial (not Gbeto); villagers drop off +10% gold; team university research 80% faster (``team_on_phase`` + ``time_cost -44%``). Unique unit Gbeto; Castle tech Tigui (200 food 300 wood, Town Center ``base_shots`` +8); Imperial tech Farimba (cavalry melee +5). Faction intro ``8532``.
 - **Scope**: aoe2 mod.
 
 **aoe2: civ building shells had no style titles**

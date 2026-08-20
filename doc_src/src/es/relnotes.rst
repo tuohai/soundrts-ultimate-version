@@ -7,16 +7,16 @@ Notas de la versión
 1.4.7.7
 -------
 
-**Motor: flechas de guarnición del centro urbano (por reglas)**
+**Motor: andanada de guarnición del edificio (por reglas, sin tipo de arma)**
 
-- **Problema**: los centros urbanos aoe2 vacíos seguían disparando (daño a distancia del edificio), a diferencia de DE. Las +5 flechas teutonas con el centro vacío y Tigui maliense +8 no se podían expresar en rules.
-- **Cambio**: con ``garrison_arrows 1``, flechas = ``base_arrows`` + unidades de guarnición que disparan, tope ``max_garrison_arrows`` (por defecto 10). Un centro vacío con ``base_arrows 0`` no dispara; teutones ``base_arrows 5``; Tigui usa el ``effect bonus base_arrows 8`` existente. La andanada es del edificio, no disparos de pasajeros. El motor no comprueba nombres de civilización.
+- **Problema**: los centros urbanos aoe2 vacíos seguían disparando (daño a distancia del edificio), a diferencia de DE. Las +5 disparos teutones con el centro vacío y Tigui maliense +8 no se podían expresar en rules. Un campo llamado arrows no valdría para un edificio de cañón.
+- **Cambio**: con ``garrison_shots 1``, disparos = ``base_shots`` + unidades de guarnición que disparan, tope ``max_garrison_shots`` (por defecto 10). Un edificio vacío con ``base_shots 0`` no dispara; teutones ``base_shots 5``; Tigui usa el ``effect bonus base_shots 8`` existente. El tipo de daño sigue siendo el ``rdg`` del edificio (flecha, cañón u otro a distancia). La andanada es del edificio, no disparos de pasajeros. El motor no comprueba nombres de civilización.
 - **Alcance**: todos los mods; los centros urbanos aoe2 lo activan. Castillos y torres siguen disparando vacíos.
 
 **aoe2: malienses**
 
 - **Problema**: el mod no tenía la civilización maliense.
-- **Cambio**: decimotercera civ. Edificios −15 % de madera salvo granjas; milicia/lanceros del cuartel +1/+2/+3 de armadura perforante Feudal/Castillo/Imperial (no Gbeto); aldeanos entregan +10 % de oro; investigación universitaria de equipo 80 % más rápida (``team_on_phase`` + ``time_cost -44%``). Unidad única Gbeto; tecnología de castillo Tigui (200 comida 300 madera, ``base_arrows`` +8 en el centro); tecnología imperial Farimba (cuerpo a cuerpo de caballería +5). Introducción ``8532``.
+- **Cambio**: decimotercera civ. Edificios −15 % de madera salvo granjas; milicia/lanceros del cuartel +1/+2/+3 de armadura perforante Feudal/Castillo/Imperial (no Gbeto); aldeanos entregan +10 % de oro; investigación universitaria de equipo 80 % más rápida (``team_on_phase`` + ``time_cost -44%``). Unidad única Gbeto; tecnología de castillo Tigui (200 comida 300 madera, ``base_shots`` +8 en el centro); tecnología imperial Farimba (cuerpo a cuerpo de caballería +5). Introducción ``8532``.
 - **Alcance**: mod aoe2.
 
 **aoe2: las cáscaras de edificios de civ no tenían título de estilo**

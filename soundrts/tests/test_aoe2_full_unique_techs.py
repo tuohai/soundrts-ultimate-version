@@ -135,9 +135,9 @@ def test_rules_unique_techs_no_approximations():
     assert "passenger_attack_types infantry" in text.split("def crenellations")[1].split("def ")[0]
     # Kataparuto unpack
     assert "unpack_time -75%" in text.split("def kataparuto")[1].split("def ")[0]
-    # Tigui empty-TC arrows; Farimba cavalry attack
+    # Tigui empty-TC shots; Farimba cavalry attack
     tg = text.split("def tigui")[1].split("def ")[0]
-    assert "base_arrows 8" in tg
+    assert "base_shots 8" in tg
     assert "town_center" in tg
     fb = text.split("def farimba")[1].split("def ")[0]
     assert "mdg 5" in fb

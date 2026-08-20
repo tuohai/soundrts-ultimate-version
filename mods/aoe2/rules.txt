@@ -1233,13 +1233,13 @@ requirements aoe_castle imperial_age
 effect bonus hp 40%
 effect_bonus_targets battering_ram capped_ram siege_ram mangonel onager siege_onager scorpion heavy_scorpion siege_tower
 
-; 提圭 Tigui — Malians Castle UT: Town Centers fire +8 arrows even when empty
+; 提圭 Tigui — Malians Castle UT: Town Centers fire +8 shots even when empty
 def tigui
 class upgrade
 cost 0 300 200 0
 time_cost 40
 requirements aoe_castle castle_age
-effect bonus base_arrows 8
+effect bonus base_shots 8
 effect_bonus_targets town_center townhall
 
 ; 法林巴 Farimba — Malians Imperial UT: cavalry +5 melee attack
@@ -3732,11 +3732,11 @@ conversion_immune 1
 heal_level 1
 heal_cd 10
 heal_garrisoned 1
-; AoE2 DE: empty TC does not fire (base_arrows 0). Villagers/archers inside
-; add one building arrow each (cap 10). Teutons override base_arrows 5.
-garrison_arrows 1
-base_arrows 0
-max_garrison_arrows 10
+; AoE2 DE: empty TC does not fire (base_shots 0). Villagers/archers inside
+; add one building shot each (cap 10). Teutons override base_shots 5.
+garrison_shots 1
+base_shots 0
+max_garrison_shots 10
 ; AoE2 DE: base arrow attack 5 / range 6 / LOS 8 (Fletching line: atk+LOS only on TC)
 sight_range 8
 rdg 5
@@ -3773,9 +3773,9 @@ conversion_immune 1
 heal_level 1
 heal_cd 10
 heal_garrisoned 1
-garrison_arrows 1
-base_arrows 0
-max_garrison_arrows 10
+garrison_shots 1
+base_shots 0
+max_garrison_shots 10
 sight_range 8
 rdg 5
 rdg_cd 2
@@ -5170,8 +5170,8 @@ cost 0 36 0 0
 def teuton_town_center
 is_a town_center
 transport_capacity 25
-; DE: Town Centers fire +5 extra arrows (including when empty)
-base_arrows 5
+; DE: Town Centers fire +5 extra shots when empty (and with garrison)
+base_shots 5
 
 def teuton_barracks
 is_a barracks

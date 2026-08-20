@@ -801,7 +801,7 @@ class AttackActionMixin:
             damages = getattr(self, "mdg_seq_damages", None) or []
             secondary = bool(getattr(self, "mdg_seq_secondary", 0))
         else:
-            volley = getattr(self, "garrison_arrow_volley", None)
+            volley = getattr(self, "garrison_shot_volley", None)
             garrison = volley() if volley is not None else None
             if garrison is not None:
                 times, interval = garrison
@@ -1460,8 +1460,8 @@ class AttackActionMixin:
         if not container:
             return False
 
-        if int(getattr(container, "garrison_arrows", 0) or 0):
-            # Building fires AoE2-style arrows; passengers do not shoot themselves.
+        if int(getattr(container, "garrison_shots", 0) or 0):
+            # Building fires the volley; passengers do not shoot themselves.
             return False
 
         # 检查是否允许所有单位攻击
@@ -1482,7 +1482,7 @@ class AttackActionMixin:
         if target is None or target.hp <= 0 or self.hp <= 0:
             return False
 
-        prevent = getattr(self, "_garrison_arrows_prevent_attack", None)
+        prevent = getattr(self, "_garrison_shots_prevent_attack", None)
         if prevent is not None and prevent():
             return False
 

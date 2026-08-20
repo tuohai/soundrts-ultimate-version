@@ -357,7 +357,7 @@ class TargetingMixin:
         bucketed cache + damage_vs (已 §3.2 cython) + basic system 兼容性.
         Fallback 是 Python 等价实现 (见 _py_can_attack_if_in_range).
         """
-        prevent = getattr(self, "_garrison_arrows_prevent_attack", None)
+        prevent = getattr(self, "_garrison_shots_prevent_attack", None)
         if prevent is not None and prevent():
             return False
         if _cf is not None:

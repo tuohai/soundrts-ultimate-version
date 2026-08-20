@@ -1,4 +1,4 @@
-"""审计：1.4.7.7 — 城镇中心驻军射箭、马里文明、文明建筑壳样式标题。"""
+"""审计：1.4.7.7 — 建筑驻军齐射、马里文明、文明建筑壳样式标题。"""
 from __future__ import annotations
 
 from pathlib import Path
@@ -30,9 +30,9 @@ def test_all_relnotes_have_1477_heading():
 
 def test_zh_relnotes_1477_session_topics():
     s = _section_1477("zh")
-    assert "garrison_arrows" in s
-    assert "base_arrows" in s
-    assert "max_garrison_arrows" in s
+    assert "garrison_shots" in s
+    assert "base_shots" in s
+    assert "max_garrison_shots" in s
     assert "马里" in s
     assert "提圭" in s
     assert "法林巴" in s
@@ -44,8 +44,8 @@ def test_zh_relnotes_1477_session_topics():
 
 def test_en_relnotes_1477_session_topics():
     s = _section_1477("en")
-    assert "garrison_arrows" in s
-    assert "base_arrows" in s
+    assert "garrison_shots" in s
+    assert "base_shots" in s
     assert "Malians" in s
     assert "Tigui" in s
     assert "Farimba" in s
@@ -58,8 +58,8 @@ def test_en_relnotes_1477_session_topics():
 def test_es_it_pt_relnotes_1477_session_topics():
     for lang in ("es", "it", "pt-BR"):
         s = _section_1477(lang)
-        assert "garrison_arrows" in s, lang
-        assert "base_arrows" in s, lang
+        assert "garrison_shots" in s, lang
+        assert "base_shots" in s, lang
         assert "Tigui" in s, lang
         assert "Farimba" in s, lang
         assert "Gbeto" in s, lang

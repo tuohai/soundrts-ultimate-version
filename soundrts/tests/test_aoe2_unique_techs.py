@@ -163,7 +163,7 @@ def test_furor_celtica_workshop_hp(aoe2_rules):
 
 def test_tigui_and_farimba(aoe2_rules):
     eff = str(_effect(aoe2_rules, "tigui"))
-    assert "base_arrows" in eff and "8" in eff
+    assert "base_shots" in eff and "8" in eff
     for u in ("town_center", "townhall"):
         assert "tigui" in _techs(aoe2_rules, u), u
     castle_cls = aoe2_rules.unit_class("malian_castle")

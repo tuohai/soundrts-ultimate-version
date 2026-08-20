@@ -6,16 +6,16 @@ Note di rilascio
 1.4.7.7
 --------
 
-**Motore: frecce di guarnigione del centro cittadino (guidato dalle rules)**
+**Motore: salva di guarnigione dell’edificio (guidato dalle rules, indipendente dall’arma)**
 
-- **Problema**: i centri cittadini aoe2 vuoti sparavano comunque (danno a distanza dell’edificio), a differenza della DE. Le +5 frecce teutoniche a centro vuoto e Tigui maliano +8 non si potevano esprimere nelle rules.
-- **Cambio**: con ``garrison_arrows 1``, frecce = ``base_arrows`` + unità di guarnigione che sparano, tetto ``max_garrison_arrows`` (predefinito 10). Un centro vuoto con ``base_arrows 0`` non spara; teutoni ``base_arrows 5``; Tigui usa l’esistente ``effect bonus base_arrows 8``. La salva è dell’edificio, non tiri dei passeggeri. Il motore non testa i nomi di civiltà.
+- **Problema**: i centri cittadini aoe2 vuoti sparavano comunque (danno a distanza dell’edificio), a differenza della DE. Le +5 salve teutoniche a centro vuoto e Tigui maliano +8 non si potevano esprimere nelle rules. Un campo chiamato arrows non andrebbe per un edificio a cannone.
+- **Cambio**: con ``garrison_shots 1``, colpi = ``base_shots`` + unità di guarnigione che sparano, tetto ``max_garrison_shots`` (predefinito 10). Un edificio vuoto con ``base_shots 0`` non spara; teutoni ``base_shots 5``; Tigui usa l’esistente ``effect bonus base_shots 8``. Il tipo di danno resta il ``rdg`` dell’edificio (freccia, cannone o altro a distanza). La salva è dell’edificio, non tiri dei passeggeri. Il motore non testa i nomi di civiltà.
 - **Ambito**: tutti i mod; i centri cittadini aoe2 lo attivano. Castelli e torri sparano ancora da vuoti.
 
 **aoe2: Maliani**
 
 - **Problema**: il mod non aveva la civiltà maliana.
-- **Cambio**: tredicesima civ. Edifici −15 % legno tranne fattorie; milizia/lancieri della caserma +1/+2/+3 armatura perforante Feudale/Castello/Imperiale (non Gbeto); villici depositano +10 % oro; ricerca universitaria di squadra 80 % più veloce (``team_on_phase`` + ``time_cost -44%``). Unità unica Gbeto; tecnologia del castello Tigui (200 cibo 300 legno, ``base_arrows`` +8 sul centro); tecnologia imperiale Farimba (mischia di cavalleria +5). Introduzione ``8532``.
+- **Cambio**: tredicesima civ. Edifici −15 % legno tranne fattorie; milizia/lancieri della caserma +1/+2/+3 armatura perforante Feudale/Castello/Imperiale (non Gbeto); villici depositano +10 % oro; ricerca universitaria di squadra 80 % più veloce (``team_on_phase`` + ``time_cost -44%``). Unità unica Gbeto; tecnologia del castello Tigui (200 cibo 300 legno, ``base_shots`` +8 sul centro); tecnologia imperiale Farimba (mischia di cavalleria +5). Introduzione ``8532``.
 - **Ambito**: mod aoe2.
 
 **aoe2: gli involucri di edifici civ non avevano titolo di stile**
