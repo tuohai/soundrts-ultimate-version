@@ -522,12 +522,17 @@ class MultiplayerGame(_MultiplayerGame):
             self._countdown()
 
     def post_run(self):
-        # 首先播放胜利/失败音效并显示统计信息
-        _Game.post_run(self)
-        
-        self.main_server.write_line("quit_game")
-        # say score only after quit_game to avoid blocking the main server
-        # 注意：由于_Game.post_run()已经调用了say_score()，这里不需要再次调用
+        # Unregister before score TTS. If _Game.post_run hangs or raises,
+        # the server would otherwise keep this room listed as in progress.
+        try:
+            self.main_server.write_line("quit_game")
+            self._quit_game_sent = True
+        except Exception:
+            pass
+        try:
+            _Game.post_run(self)
+        except Exception:
+            pass
         voice.menu(mp.MENU + mp.MAKE_A_SELECTION)
         # (long enough to allow history navigation)
 

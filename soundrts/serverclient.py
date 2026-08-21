@@ -64,11 +64,43 @@ class ConnectionToClient(asynchat.async_chat):
     def collect_incoming_data(self, data):
         self.inbuffer += data
 
+    def _maybe_leave_stale_game(self, cmd_name):
+        """Treat a lobby command from Playing as leaving a leftover room.
+
+        The client can already be back in the server menu while this connection
+        is still Playing, if ``quit_game`` never arrived. Without this, the
+        room stays listed as in progress and lobby commands are rejected.
+        """
+        if not isinstance(self.state, Playing):
+            return False
+        if cmd_name not in InTheLobby.allowed_commands:
+            return False
+        if cmd_name in Playing.allowed_commands:
+            return False
+        warning("leaving stale game after lobby command: %s", cmd_name)
+        try:
+            self.cmd_quit_game([])
+        except Exception as e:
+            warning("stale quit_game: %s", e)
+            self.state = InTheLobby()
+            game = self.game
+            if game is not None:
+                try:
+                    game.remove(self)
+                except Exception:
+                    pass
+                self.game = None
+        return True
+
     def _execute_command(self, data):
         args = data.decode("utf-8").split(" ")
         if args[0] not in self.state.allowed_commands:
-            warning("action not allowed: %s" % args[0])
-            return
+            if not self._maybe_leave_stale_game(args[0]):
+                warning("action not allowed: %s" % args[0])
+                return
+            if args[0] not in self.state.allowed_commands:
+                warning("action not allowed: %s" % args[0])
+                return
         cmd = "cmd_" + args[0]
         if hasattr(self, cmd):
             getattr(self, cmd)(args[1:])
@@ -423,6 +455,7 @@ class ConnectionToClient(asynchat.async_chat):
 
     def cmd_list_games(self, unused_args):
         """发送正在进行的游戏列表给客户端"""
+        self.server._cleanup()
         running_games = []
         for game in self.server.games:
             if game.started:
@@ -571,8 +604,20 @@ class ConnectionToClient(asynchat.async_chat):
         self.game.orders(self, *args)
 
     def cmd_quit_game(self, unused_args):
-        self.game.orders(self, "quit")
-        self.game.remove(self)
+        # post_run and srv_start_game finally both send this; second is a no-op.
+        if isinstance(self.state, InTheLobby) and self.game is None:
+            return
+        game = self.game
+        if game is not None:
+            try:
+                game.orders(self, "quit")
+            except Exception as e:
+                warning("quit_game orders: %s", e)
+            try:
+                game.remove(self)
+            except Exception as e:
+                warning("quit_game remove: %s", e)
+        self.game = None
         self.state = InTheLobby()
         self.server.update_menus()
 

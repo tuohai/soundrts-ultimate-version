@@ -526,6 +526,7 @@ def test_update_window_has_tkinter_fallback():
     assert "run_update_headless" in src
     assert "if tk is None" in src
     assert "_ensure_tcl_env" in src
+    assert 'base / "share" / "tcl8.6"' in src
 
 
 def test_setup_py_does_not_exclude_tkinter():
@@ -535,6 +536,9 @@ def test_setup_py_does_not_exclude_tkinter():
     excludes = src[start:end]
     assert "tkinter" not in excludes
     assert '"packages": ["tkinter"]' in src or '"tkinter"' in src.split("packages")[1].split("excludes")[0]
+    # cx_Freeze already copies Tcl/Tk into share/; do not duplicate at install root.
+    assert "_add_tkinter_runtime" not in src
+    assert 'for name in ("tcl8.6", "tk8.6", "tcl8")' not in src
 
 
 def test_update_window_avoids_auto_update_import():

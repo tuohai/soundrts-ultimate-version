@@ -5,6 +5,22 @@ Release notes
 .. contents::
 
 
+1.4.7.8
+--------
+
+**Fix: server still listed a match as in progress after it ended**
+
+- **Issue**: After a multiplayer match, the client sometimes never sent ``quit_game`` (score TTS error, map load failure, or the command ran only after the recap). If anyone was still in the lobby, the room stayed on the in-progress / spectate list.
+- **Change**: Unregister the room before score TTS; send ``quit_game`` again when leaving the match UI if it was not sent. Lobby commands and a server sweep close rooms with no one still playing. A duplicate ``quit_game`` from the lobby is ignored (no warning).
+- **Scope**: Multiplayer server and client.
+
+**Packaging: Windows install no longer duplicates Tcl/Tk**
+
+- **Issue**: ``tcl8`` / ``tcl8.6`` / ``tk8.6`` existed both at the install root and under ``share/``, identical copies, about 5 MB extra.
+- **Change**: Keep only the cx_Freeze copy under ``share/``; the update window prefers ``share/``.
+- **Scope**: Windows package.
+
+
 1.4.7.7
 --------
 

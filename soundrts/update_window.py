@@ -24,11 +24,16 @@ from pathlib import Path
 
 
 def _ensure_tcl_env() -> None:
-    """Point Tcl/Tk at files shipped next to a frozen exe."""
+    """Point Tcl/Tk at files shipped next to a frozen exe.
+
+    cx_Freeze puts the libraries under ``share/``; older packages also copied
+    them to the install root, ``lib/``, or ``tcl/``.
+    """
     if not getattr(sys, "frozen", False):
         return
     base = Path(sys.executable).resolve().parent
     candidates = (
+        (base / "share" / "tcl8.6", base / "share" / "tk8.6"),
         (base / "tcl8.6", base / "tk8.6"),
         (base / "lib" / "tcl8.6", base / "lib" / "tk8.6"),
         (base / "tcl" / "tcl8.6", base / "tcl" / "tk8.6"),

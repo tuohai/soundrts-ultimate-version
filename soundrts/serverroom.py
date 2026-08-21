@@ -40,7 +40,7 @@ class Anonymous(_State):
 
 class InTheLobby(_State):
 
-    allowed_commands = ("create", "create_random", "create_campaign", "register", "quit", "say", "list_games", "spectate")
+    allowed_commands = ("create", "create_random", "create_campaign", "register", "quit", "say", "list_games", "spectate", "quit_game")
 
     def send_menu(self, client):
         client.send_maps()
@@ -282,9 +282,15 @@ class Game:
 
     def remove(self, client):
         info("%s has quit game %s after %s turns", client.login, self.id, self.time)
-        self.players.remove(client)
+        if client in self.players:
+            self.players.remove(client)
+        if getattr(client, "game", None) is self:
+            client.game = None
         if self.human_players:
-            self._orders.remove(client)
+            try:
+                self._orders.remove(client)
+            except KeyError:
+                pass
             self._dispatch_orders_if_needed()
         else:
             self.close()
@@ -617,19 +623,28 @@ class Game:
         )
 
     def unregister(self, client):
-        self.players.remove(client)
-        client.notify("quit")
+        if client in self.players:
+            self.players.remove(client)
+        prev = getattr(client, "state", None)
+        if getattr(client, "game", None) is self:
+            client.game = None
         client.state = InTheLobby()
+        # Only kick pre-start room menus. A Playing/InTheLobby client is already
+        # in (or returning to) the server lobby; "quit" would drop them to the
+        # main menu and can arrive after the match UI has already exited.
+        if isinstance(prev, (WaitingForTheGameToStart, OrganizingAGame)):
+            client.notify("quit")
 
     def cancel(self):
-        for c in self.human_players:
+        for c in list(self.human_players):
             self.unregister(c)
         for c in self.guests[:]:
             self.uninvite(c)
         # 清理旁观者
         for c in self.spectators[:]:
             self.remove_spectator(c)
-        self.server.games.remove(self)
+        if self in self.server.games:
+            self.server.games.remove(self)
 
     _timeout_reference = None
 

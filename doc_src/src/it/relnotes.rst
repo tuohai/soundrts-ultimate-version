@@ -3,6 +3,22 @@ Note di rilascio
 
 .. contents::
 
+1.4.7.8
+--------
+
+**Correzione: il server elencava ancora la partita in corso dopo la fine**
+
+- **Problema**: a fine partita multigiocatore il client a volte non inviava ``quit_game`` (errore nella TTS del punteggio, fallimento nel caricare la mappa, o il comando partiva solo dopo il riepilogo). Se qualcuno restava in lobby, la stanza restava nell’elenco in corso / spettatore.
+- **Cambio**: la stanza viene cancellata prima della TTS del punteggio; uscendo dall’UI di partita si reinvia ``quit_game`` se non era partito. I comandi della lobby e una pulizia del server chiudono le stanze senza nessuno in gioco. Un ``quit_game`` duplicato dalla lobby viene ignorato (nessun avviso).
+- **Ambito**: server e client multigiocatore.
+
+**Pacchetto: l’installazione Windows non duplica più Tcl/Tk**
+
+- **Problema**: ``tcl8`` / ``tcl8.6`` / ``tk8.6`` esistevano sia nella radice di installazione sia in ``share/``, copie identiche, circa 5 MB in più.
+- **Cambio**: resta solo la copia di cx_Freeze in ``share/``; la finestra di aggiornamento preferisce ``share/``.
+- **Ambito**: pacchetto Windows.
+
+
 1.4.7.7
 --------
 

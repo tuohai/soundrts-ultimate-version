@@ -145,8 +145,42 @@ class Server(asyncore.dispatcher):
         for c in self.clients[:]:
             if c not in list(asyncore.socket_map.values()):
                 self.clients.remove(c)
+        self._cleanup_stale_games()
         if self.games and not self.clients:
             self.games = []
+
+    def _cleanup_stale_games(self):
+        """Close started rooms that no connected client is still playing.
+
+        Happens when every human returned to the lobby or disconnected without
+        a successful ``quit_game``; otherwise the room stays in list_games.
+        """
+        if getattr(self, "_cleaning_stale_games", False):
+            return
+        self._cleaning_stale_games = True
+        try:
+            self._cleanup_stale_games_body()
+        finally:
+            self._cleaning_stale_games = False
+
+    def _cleanup_stale_games_body(self):
+        for game in self.games[:]:
+            if not getattr(game, "started", False):
+                continue
+            live = [
+                p
+                for p in game.human_players
+                if p in self.clients
+                and isinstance(getattr(p, "state", None), Playing)
+            ]
+            if live:
+                continue
+            try:
+                game.close()
+            except Exception:
+                exception("stale game close")
+                if game in self.games:
+                    self.games.remove(game)
 
     def log_status(self):
         self._cleanup()
@@ -254,6 +288,7 @@ class Server(asyncore.dispatcher):
         asyncore.loop()
 
     def update_menus(self):
+        self._cleanup()
         for c in self.clients:
             c.send_menu()
 

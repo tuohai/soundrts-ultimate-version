@@ -74,24 +74,8 @@ destination = rf"{TMP}\soundrts-{VERSION}-windows"
 # Cython .pyds stay in the source tree; cx_Freeze copies them into lib/soundrts.
 include_files = ["res", "mods", "cfg", "doc"]
 
-
-def _add_tkinter_runtime(files: list) -> None:
-    """Ship Tcl/Tk so ``soundrts.exe --soundrts-update`` can show a progress window."""
-    root = Path(sys.base_prefix)
-    tcl_root = root / "tcl"
-    for name in ("tcl8.6", "tk8.6", "tcl8"):
-        src = tcl_root / name
-        if src.is_dir():
-            files.append((str(src), name))
-    dlls = root / "DLLs"
-    for name in ("tcl86t.dll", "tk86t.dll", "_tkinter.pyd"):
-        src = dlls / name
-        if src.is_file():
-            files.append((str(src), f"lib/{name}"))
-    print(f"[setup] tkinter runtime files: {len([f for f in files if 'tcl' in str(f).lower() or 'tk' in str(f).lower()])}")
-
-
-_add_tkinter_runtime(include_files)
+# Tcl/Tk is shipped under share/ by cx_Freeze's tkinter hook (packages: ["tkinter"]).
+# Do not also copy tcl8 / tcl8.6 / tk8.6 to the install root — that duplicates ~5 MB.
 
 build_exe_options = {
     "build_exe": destination,

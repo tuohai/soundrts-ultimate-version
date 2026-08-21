@@ -686,6 +686,13 @@ class _BeforeGameMenu(_ServerMenu):
         try:
             game.run()
         finally:
+            # Always leave the server room, even if run() never reached post_run
+            # (map error, exception). Otherwise the room stays "in progress".
+            try:
+                if not getattr(game, "_quit_game_sent", False):
+                    self.server.write_line("quit_game")
+            except Exception:
+                pass
             # 游戏结束后还原资源层，避免污染服务器大厅与后续对局
             if coop_campaign_obj is not None:
                 res.set_campaign()
