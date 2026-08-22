@@ -1504,6 +1504,7 @@
 5796	Sie haben bereits die neueste Version
 5797	Update-Pruefung fehlgeschlagen
 5798	Update-Fenster wird geoeffnet; das Spiel wird beendet
+5799	eingenommen
 59	der Spieler
 60	Sie sind
 61	getötet

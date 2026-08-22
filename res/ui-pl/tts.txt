@@ -1529,3 +1529,4 @@
 5796	you already have the latest version
 5797	update check failed
 5798	otwieranie okna aktualizacji; gra zostanie zamknięta
+5799	zdobyto

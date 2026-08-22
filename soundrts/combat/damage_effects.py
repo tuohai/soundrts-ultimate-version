@@ -573,19 +573,10 @@ class DamageEffectsMixin(DamageCalculationMixin):
                 attacker is not None and attacker.player is not None and self.player is not None and
                 attacker.player.player_is_an_enemy(self.player)):
 
-            # 执行自动转变阵营
-            old_player = self.player
-            self.set_player(attacker.player)
+            # 先播报被占领（仍属原主、带原序号），再改归属，再播报已占领（新序号）
+            from ..worldaction import apply_capture_transfer
 
-            # 通知双方玩家
-            if notify:
-                # 对于被占领方播放被占领音效
-                if old_player and hasattr(old_player, 'interface'):
-                    self.notify("captured_lost")  # 播放被占领音效
-
-                # 对于占领方播放占领成功音效
-                if attacker and hasattr(attacker, 'notify'):
-                    attacker.notify("captured_success")  # 播放占领成功音效
+            apply_capture_transfer(self, attacker.player, notify=notify)
 
     def _send_hit_notification(self, attacker, actual_damage, is_crit=False, is_charge=False, is_melee=None):
         """发送受击通知。

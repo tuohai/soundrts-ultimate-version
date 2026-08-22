@@ -598,6 +598,28 @@ class EntityViewEvents:
                     **_PRIMARY,
                 )
 
+    def _claim_ok_owner_suffix(self):
+        """When someone else claims: faction + enemy/ally (own claim stays short)."""
+        interface = getattr(self, "interface", None)
+        local = getattr(interface, "player", None) if interface is not None else None
+        owner = getattr(self, "player", None)
+        if local is None or owner is None or owner is local:
+            return []
+        from ..faction_announce import player_faction_label_msgs
+
+        fac = player_faction_label_msgs(owner) or []
+        allied = getattr(local, "allied", None) or ()
+        if owner in allied:
+            rel = list(mp.ALLY)
+        elif getattr(owner, "neutral", False):
+            return []
+        else:
+            rel = list(mp.ENEMY)
+        suffix = list(fac) if fac else []
+        suffix.extend(list(mp.COMMA))
+        suffix.extend(rel)
+        return suffix
+
     def on_claim_ok(self, animal_type="", *_args):
         """Proximity claim of a ``claimable`` animal (sound + short TTS)."""
         if self.get_style("claim_ok"):
@@ -610,6 +632,7 @@ class EntityViewEvents:
             t = style.get(animal_type, "title", warn_if_not_found=False)
             if t:
                 animal_title = list(t) if isinstance(t, list) else [t]
+        owner_suffix = self._claim_ok_owner_suffix()
         msg_style = self.get_style("claim_ok_msg")
         info_kw = {}
         try:
@@ -617,16 +640,125 @@ class EntityViewEvents:
         except NameError:
             pass
         if msg_style:
-            voice.info(
-                substitute_args(msg_style, [animal_title]),
-                **info_kw,
-            )
+            msg = list(substitute_args(list(msg_style), [animal_title]) or [])
+            msg.extend(owner_suffix)
+            if msg:
+                voice.info(msg, **info_kw)
             return
         claim_title = style.get("claim_ok", "title", warn_if_not_found=False) or ["4937"]
         msg = list(animal_title)
         msg.extend(claim_title if isinstance(claim_title, list) else [claim_title])
+        msg.extend(owner_suffix)
         if msg:
             voice.info(msg, **info_kw)
+
+    def _is_local_side(self):
+        interface = getattr(self, "interface", None)
+        local = getattr(interface, "player", None) if interface is not None else None
+        owner = getattr(self, "player", None)
+        if local is None or owner is None:
+            return False
+        if owner is local:
+            return True
+        allied = getattr(local, "allied", None) or ()
+        return owner in allied
+
+    def _unit_title_msgs(self, unit_type):
+        if not unit_type:
+            unit_type = getattr(self, "type_name", "") or ""
+        if not unit_type:
+            return []
+        t = style.get(unit_type, "title", warn_if_not_found=False)
+        if not t:
+            return []
+        return list(t) if isinstance(t, list) else [t]
+
+    def _parse_capture_number(self, number_arg):
+        if number_arg not in ("", None):
+            try:
+                return int(number_arg)
+            except (TypeError, ValueError):
+                pass
+        try:
+            return int(getattr(self, "number", 0) or 0)
+        except (TypeError, ValueError):
+            return 0
+
+    def _capture_omit_single_count(self):
+        model = getattr(self, "model", None)
+        if model is None:
+            return False
+        return summary_omit_single_count_at_death(model)
+
+    def _capture_label_msgs(self, unit_type, numbers, omit_single=False):
+        """Same pattern as death alerts: ``1 步兵阵亡`` / ``2 兵营被消灭``."""
+        title = self._unit_title_msgs(unit_type)
+        count = len(numbers)
+        if omit_single and count == 1:
+            return title
+        return nb2msg(count) + title
+
+    def _speak_capture_group(self, kind, unit_type, numbers, omit_single=False):
+        if kind == "lost":
+            style_attr, fallback = "captured_lost_msg", mp.BEEN_CAPTURED
+        else:
+            style_attr, fallback = "captured_success_msg", mp.CAPTURED
+        label = self._capture_label_msgs(unit_type, numbers, omit_single)
+        self._speak_named_style(style_attr, label, fallback)
+
+    def _speak_named_style(self, style_attr, title_or_type, fallback_ids):
+        if isinstance(title_or_type, list):
+            title = title_or_type
+        else:
+            title = self._unit_title_msgs(title_or_type)
+        msg_style = self.get_style(style_attr)
+        info_kw = {}
+        try:
+            info_kw = _PRIMARY
+        except NameError:
+            pass
+        if msg_style:
+            msg = list(substitute_args(list(msg_style), [title]) or [])
+        else:
+            msg = list(title)
+            msg.extend(list(fallback_ids))
+        if msg:
+            voice.info(msg, **info_kw)
+
+    def _enqueue_capture_tts(self, kind, unit_type, number, omit_single=False):
+        interface = getattr(self, "interface", None)
+        if interface is not None and hasattr(interface, "_srv_queue"):
+            bag = getattr(interface, "_pending_capture_tts", None)
+            if bag is None:
+                bag = []
+                interface._pending_capture_tts = bag
+            bag.append((kind, unit_type, number, omit_single, self))
+            return
+        self._speak_capture_group(kind, unit_type, [number], omit_single)
+
+    def on_captured_lost(self, unit_type="", number="", *_args):
+        """Own/ally building taken: same count style as death (「1市政厅被占领」)."""
+        self.launch_event_style("captured_lost", alert=True)
+        if not self._is_local_side():
+            return
+        self._enqueue_capture_tts(
+            "lost",
+            unit_type,
+            self._parse_capture_number(number),
+            self._capture_omit_single_count(),
+        )
+
+    def on_captured_success(self, unit_type="", number="", *_args):
+        """Local/ally capture: same count style as killing (「1市政厅已占领」)."""
+        self.launch_event_style("captured_success", alert=True)
+        if not self._is_local_side():
+            return
+        self._enqueue_capture_tts(
+            "success",
+            unit_type,
+            self._parse_capture_number(number),
+            self._capture_omit_single_count(),
+        )
 
     def on_placed(self):
         """Play sound when a building site is placed."""
@@ -1041,3 +1173,26 @@ class EntityViewEvents:
         
         # 播放冲锋攻击音效
         self.launch_event_style("launch_charge_rdg")
+
+
+def flush_pending_capture_tts(interface):
+    """Merge same-type capture lines from one event burst (「2兵营被占领」)."""
+    bag = getattr(interface, "_pending_capture_tts", None)
+    if not bag:
+        return
+    interface._pending_capture_tts = []
+    grouped = []
+    index = {}
+    for kind, unit_type, number, omit_single, view in bag:
+        key = (kind, unit_type)
+        slot = index.get(key)
+        if slot is None:
+            index[key] = len(grouped)
+            grouped.append([kind, unit_type, [number], omit_single, view])
+        else:
+            grouped[slot][2].append(number)
+            grouped[slot][3] = grouped[slot][3] and omit_single
+    for kind, unit_type, numbers, omit_single, view in grouped:
+        view._speak_capture_group(
+            kind, unit_type, numbers, omit_single=omit_single and len(numbers) == 1
+        )

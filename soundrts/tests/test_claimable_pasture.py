@@ -37,12 +37,118 @@ def test_on_claim_ok_plays_style_and_voice(monkeypatch):
     v.on_claim_ok("sheep")
     assert played == [("claim_ok", True)]
     assert spoken and "4937" in spoken[0] and "4931" in spoken[0]
+    from soundrts import msgparts as mp
+
+    assert mp.ENEMY[0] not in spoken[0]
     from soundrts.definitions import Rules
 
     assert "claimable" in Rules.int_properties
     assert "claim_range" in Rules.int_properties
     assert "spawn_player_cap" in Rules.int_properties
     assert "spawn_immediate" in Rules.int_properties
+
+
+def _claim_ok_view(local, owner, monkeypatch, spoken):
+    import soundrts.clientgameentity.events as ev
+    from soundrts.clientgameentity.events import EntityViewEvents
+
+    class _V(EntityViewEvents):
+        def launch_event_style(self, attr, alert=False, priority=0):
+            pass
+
+        def get_style(self, attr):
+            if attr == "claim_ok":
+                return ["1194"]
+            if attr == "claim_ok_msg":
+                return ["$1", "4937"]
+            return None
+
+    v = _V()
+    v.player = owner
+    v.interface = types.SimpleNamespace(player=local)
+    monkeypatch.setattr(ev.voice, "info", lambda msg, **k: spoken.append(list(msg)))
+    monkeypatch.setattr(
+        ev.style,
+        "get",
+        lambda type_name, key, warn_if_not_found=True: (
+            ["4931"] if type_name == "sheep" and key == "title" else None
+        ),
+    )
+    return v
+
+
+def test_on_claim_ok_own_claim_stays_short(monkeypatch):
+    from soundrts import msgparts as mp
+
+    spoken = []
+    local = types.SimpleNamespace(allied=[], faction="britons", neutral=False)
+    local.allied = [local]
+    v = _claim_ok_view(local, local, monkeypatch, spoken)
+    v.on_claim_ok("sheep")
+    assert spoken
+    assert spoken[0] == ["4931", "4937"]
+    assert mp.ENEMY[0] not in spoken[0]
+    assert mp.ALLY[0] not in spoken[0]
+
+
+def test_on_claim_ok_enemy_speaks_faction_and_enemy(monkeypatch):
+    """Enemy steal/claim: 「羊 已归属 拜占庭 ， 敌人」."""
+    from soundrts import msgparts as mp
+
+    spoken = []
+    local = types.SimpleNamespace(allied=[], faction="britons", neutral=False)
+    local.allied = [local]
+    enemy = types.SimpleNamespace(allied=[], faction="byzantines", neutral=False)
+    monkeypatch.setattr(
+        "soundrts.faction_announce.player_faction_label_msgs",
+        lambda p: ["8005"] if p is enemy else None,
+    )
+    v = _claim_ok_view(local, enemy, monkeypatch, spoken)
+    v.on_claim_ok("sheep")
+    assert spoken
+    msg = spoken[0]
+    assert msg[:2] == ["4931", "4937"]
+    assert "8005" in msg
+    assert mp.COMMA[0] in msg
+    assert mp.ENEMY[0] in msg
+    assert mp.ALLY[0] not in msg
+    assert msg.index("4937") < msg.index("8005") < msg.index(mp.ENEMY[0])
+
+
+def test_on_claim_ok_enemy_without_faction_still_says_enemy(monkeypatch):
+    from soundrts import msgparts as mp
+
+    spoken = []
+    local = types.SimpleNamespace(allied=[], faction="human", neutral=False)
+    local.allied = [local]
+    enemy = types.SimpleNamespace(allied=[], faction="computer", neutral=False)
+    monkeypatch.setattr(
+        "soundrts.faction_announce.player_faction_label_msgs",
+        lambda p: None,
+    )
+    v = _claim_ok_view(local, enemy, monkeypatch, spoken)
+    v.on_claim_ok("sheep")
+    assert spoken[0] == ["4931", "4937", mp.COMMA[0], mp.ENEMY[0]]
+
+
+def test_on_claim_ok_ally_speaks_faction_and_ally(monkeypatch):
+    from soundrts import msgparts as mp
+
+    spoken = []
+    local = types.SimpleNamespace(allied=[], faction="britons", neutral=False)
+    ally = types.SimpleNamespace(allied=[], faction="franks", neutral=False)
+    local.allied = [local, ally]
+    monkeypatch.setattr(
+        "soundrts.faction_announce.player_faction_label_msgs",
+        lambda p: ["8002"] if p is ally else None,
+    )
+    v = _claim_ok_view(local, ally, monkeypatch, spoken)
+    v.on_claim_ok("sheep")
+    msg = spoken[0]
+    assert msg[:2] == ["4931", "4937"]
+    assert "8002" in msg
+    assert mp.ALLY[0] in msg
+    assert mp.ENEMY[0] not in msg
 
 
 def test_aoe2_sheep_is_claimable_and_pasture_spawns_sheep():

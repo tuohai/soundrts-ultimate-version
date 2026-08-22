@@ -1530,3 +1530,4 @@
 5796	you already have the latest version
 5797	update check failed
 5798	đang mở cửa sổ cập nhật; trò chơi sẽ đóng
+5799	đã chiếm

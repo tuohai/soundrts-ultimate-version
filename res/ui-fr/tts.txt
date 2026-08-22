@@ -1529,3 +1529,4 @@
 5796	vous avez deja la derniere version
 5797	echec de la verification des mises a jour
 5798	ouverture de la fenetre de mise a jour; le jeu va quitter
+5799	capturé

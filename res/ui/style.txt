@@ -519,6 +519,8 @@ noise_if_damaged if_me repeat 12 1172 else repeat 12 1072
 noise_if_very_damaged if_me repeat 12 1173 else repeat 12 1073
 captured_success 1855
 captured_lost 1856
+captured_success_msg $1 5799
+captured_lost_msg $1 4371
 ; claimable livestock proximity claim (AoE2-style sheep)
 claim_ok if_me 1194 1195 1196 else 1094 1095 1096
 claim_ok_msg $1 4937

@@ -1,4 +1,4 @@
-from ..worldaction import Action, AttackAction, MoveAction, MoveXYAction, should_capture_on_contact
+from ..worldaction import Action, AttackAction, MoveAction, MoveXYAction, apply_capture_transfer, should_capture_on_contact
 from ..lib.nofloat import int_distance as _int_distance, square_of_distance as _square_of_distance
 import random
 
@@ -1279,13 +1279,7 @@ class AttackActionMixin:
             or not unit_player.player_is_an_enemy(target.player)
         ):
             return
-        old_player = target.player
-        target.set_player(self.player)
-        # 被占领方（人类玩家）播放被占领音效
-        if old_player is not None and hasattr(old_player, "interface"):
-            target.notify("captured_lost")
-        # 占领方播放占领成功音效
-        self.notify("captured_success")
+        apply_capture_transfer(target, self.player)
 
     def _attack(self, target):
         if getattr(self, "_has_yielded", False):

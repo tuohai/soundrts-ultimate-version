@@ -1529,3 +1529,4 @@
 5796	voce ja tem a versao mais recente
 5797	falha ao verificar atualizacoes
 5798	abrindo a janela de atualizacao; o jogo sera fechado
+5799	capturado

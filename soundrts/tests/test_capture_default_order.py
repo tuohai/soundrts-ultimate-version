@@ -30,6 +30,9 @@ class _CaptureTarget:
     def __init__(self, owner):
         self.player = owner
 
+    def set_player(self, player):
+        self.player = player
+
 
 def _make_unit(cls):
     unit = cls.__new__(cls)
@@ -178,6 +181,8 @@ def test_imperative_attack_on_captured_barracks_deals_damage_not_capture():
     owner = _EnemyPlayer()
     building = _CaptureTarget(owner)
     building.id = "b1"
+    place = types.SimpleNamespace(objects=[building])
+    building.place = place
 
     class _Unit:
         player = owner
@@ -185,7 +190,6 @@ def test_imperative_attack_on_captured_barracks_deals_damage_not_capture():
         notifications = []
         can_capture = 1
         speed = 0
-        place = types.SimpleNamespace(objects=[building])
         aim_calls = []
         capture_calls = []
 
@@ -213,10 +217,45 @@ def test_imperative_attack_on_captured_barracks_deals_damage_not_capture():
             self.notifications.append(msg)
 
     unit = _Unit()
+    unit.place = place
     action = AttackAction(unit, building)
     action.update()
 
     assert unit.aim_calls == [building]
     assert unit.capture_calls == []
     assert "captured_success" not in unit.notifications
+
+
+def test_perform_capture_notifies_type_before_owner_change():
+    from soundrts.combat.attack_action import AttackActionMixin
+
+    events = []
+    owner = _EnemyPlayer()
+    captor = _EnemyPlayer()
+    building = _CaptureTarget(owner)
+    building.type_name = "town_center"
+    building.number = 4
+
+    def set_player(player):
+        building.player = player
+        building.number = 7
+
+    building.set_player = set_player
+
+    def _building_notify(ev, *_a, **_k):
+        events.append((ev, building.player, building.number))
+
+    building.notify = _building_notify
+
+    class _Unit(AttackActionMixin):
+        player = captor
+        _has_yielded = False
+
+        def notify(self, ev, *_a, **_k):
+            events.append(("unit", ev, self.player))
+
+    _Unit()._perform_capture(building)
+    assert building.player is captor
+    assert events[0] == ("captured_lost,town_center,4", owner, 4)
+    assert events[1] == ("captured_success,town_center,7", captor, 7)
 

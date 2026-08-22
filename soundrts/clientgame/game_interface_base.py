@@ -195,30 +195,40 @@ class GameInterface(AttributesInterface):
             flush_pending_sfx(self)
         except Exception:
             pass
+        try:
+            from ..clientgameentity.events import flush_pending_capture_tts
+        except Exception:
+            flush_pending_capture_tts = None
         if self._srv_queue.empty():
+            if flush_pending_capture_tts is not None:
+                flush_pending_capture_tts(self)
             return
         budget_s = float(parameters.d.get("srv_event_budget_ms", 8)) / 1000.0
         if budget_s < 0.002:
             budget_s = 0.002
         deadline = time.perf_counter() + budget_s
         processed = 0
-        while not self._srv_queue.empty():
-            # Leave voila for the next frame if we already drained notifies.
-            if processed > 0:
-                nxt = None
-                q = self._srv_queue
-                with q.mutex:
-                    if q.queue:
-                        nxt = q.queue[0]
-                if nxt and nxt[0] == "voila":
+        try:
+            while not self._srv_queue.empty():
+                # Leave voila for the next frame if we already drained notifies.
+                if processed > 0:
+                    nxt = None
+                    q = self._srv_queue
+                    with q.mutex:
+                        if q.queue:
+                            nxt = q.queue[0]
+                    if nxt and nxt[0] == "voila":
+                        break
+                e = self._srv_queue.get()
+                self._process_srv_event(*e)
+                processed += 1
+                if e and e[0] == "voila":
                     break
-            e = self._srv_queue.get()
-            self._process_srv_event(*e)
-            processed += 1
-            if e and e[0] == "voila":
-                break
-            if time.perf_counter() >= deadline:
-                break
+                if time.perf_counter() >= deadline:
+                    break
+        finally:
+            if flush_pending_capture_tts is not None:
+                flush_pending_capture_tts(self)
 
     def srv_quit(self):
         voice.silent_flush()

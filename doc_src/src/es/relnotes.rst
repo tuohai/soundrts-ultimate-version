@@ -4,6 +4,22 @@ Notas de la versión
 
 .. contents::
 
+1.4.7.9
+-------
+
+**Mejora: al reclamar/robar ovejas se anuncia la civilización y si es enemigo**
+
+- **Problema**: reclamar o robar una oveja siempre decía «oveja , reclamado», sin saber qué civilización se la llevaba.
+- **Cambio**: la reclamación propia sigue corta. Si un enemigo se la lleva (y ves al que reclama) se dice «oveja reclamada bizantinos , enemigo»; un aliado nombra la civ y «aliado». Mods de una sola facción omiten el nombre de civ pero siguen diciendo enemigo/aliado. En la niebla, si no ves al que reclama, no hay anuncio.
+- **Alcance**: TTS del cliente; todos los mods con ganado ``claimable`` (incluidas las ovejas aoe2).
+
+**Mejora: al capturar edificios se anuncia el nombre y la cantidad (igual que las muertes)**
+
+- **Problema**: la captura solo reproducía un sonido, sin decir qué edificio se había tomado.
+- **Cambio**: si pierdes el tuyo: «1 ayuntamiento ocupado». Si tomas uno enemigo: «1 centro urbano capturado». Varios del mismo tipo en el mismo momento: «2 cuarteles ocupados / capturados». La cantidad sigue las muertes: los tipos con número la incluyen; los ``no_number`` únicos omiten el «1». Ver a otros capturar sigue siendo solo el sonido.
+- **Alcance**: TTS del cliente; todos los edificios capturables (incluidos muros, puertas y centros urbanos aoe2).
+
+
 1.4.7.8
 -------
 

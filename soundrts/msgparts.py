@@ -880,6 +880,8 @@ RMG_OBJECTIVE_CONQUEST = [5451]  # 歼灭所有敌方玩家
 RMG_OBJECTIVE_KEEP_BASE = [5452]  # 并保留主基地
 RMG_RUIN_DISCOVERED = [5433]   # 遗迹已发现
 RMG_DWELLING_CAPTURED = [5434] # 兵营已占领
+BEEN_CAPTURED = [4371]  # 被占领（己方某某被占领）
+CAPTURED = [5799]  # 已占领（己方占领敌方某某）
 
 # 背包 / 库存界面相关消息常量
 BACKPACK = ["背包"]                       # 背包

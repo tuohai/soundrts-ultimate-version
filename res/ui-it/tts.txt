@@ -1529,3 +1529,4 @@
 5796	hai gia la versione piu recente
 5797	controllo aggiornamenti non riuscito
 5798	apertura della finestra di aggiornamento; il gioco si chiudera
+5799	catturato

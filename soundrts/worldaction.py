@@ -15,6 +15,55 @@ def should_capture_on_contact(unit, target):
     )
 
 
+def capture_type_name(obj):
+    return (
+        getattr(obj, "type_name", None)
+        or getattr(type(obj), "type_name", None)
+        or getattr(type(obj), "__name__", "")
+        or ""
+    )
+
+
+def _capture_unit_number(obj):
+    try:
+        return int(getattr(obj, "number", 0) or 0)
+    except (TypeError, ValueError):
+        return 0
+
+
+def notify_capture_lost(target):
+    """己方某某被占领：在改归属前发送，建筑仍带原主序号。"""
+    if target is None:
+        return
+    try:
+        target.notify(
+            f"captured_lost,{capture_type_name(target)},{_capture_unit_number(target)}"
+        )
+    except Exception:
+        pass
+
+
+def notify_capture_success(target):
+    """某某已占领：在改归属后发送，建筑已是新主人的序号。"""
+    if target is None:
+        return
+    try:
+        target.notify(
+            f"captured_success,{capture_type_name(target)},{_capture_unit_number(target)}"
+        )
+    except Exception:
+        pass
+
+
+def apply_capture_transfer(target, new_player, notify=True):
+    """Lost TTS while still the victim's, then set_player, then success TTS."""
+    if notify:
+        notify_capture_lost(target)
+    target.set_player(new_player)
+    if notify:
+        notify_capture_success(target)
+
+
 def _truthy_rules_flag(value):
     if value in (1, "1", True):
         return True

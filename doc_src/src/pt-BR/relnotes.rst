@@ -4,6 +4,22 @@ Notas de lançamento
 
 .. contents::
 
+1.4.7.9
+-------
+
+**Melhoria: reivindicar/roubar ovelhas anuncia a civilização e se é inimigo**
+
+- **Problema**: reivindicar ou roubar uma ovelha dizia sempre «ovelha , reivindicado», sem saber que civilização a levava.
+- **Mudança**: a reivindicação própria continua curta. Se um inimigo a leva (e vês quem reivindica) diz-se «ovelha reivindicada bizantinos , inimigo»; um aliado nomeia a civ e «aliado». Mods de uma só facção omitem o nome da civ mas ainda dizem inimigo/aliado. No nevoeiro, se não vires quem reivindica, não há anúncio.
+- **Alcance**: TTS do cliente; todos os mods com gado ``claimable`` (incluindo ovelhas aoe2).
+
+**Melhoria: capturar edifícios anuncia o nome e a quantidade (igual às mortes)**
+
+- **Problema**: a captura só tocava um som, sem dizer que edifício tinha sido tomado.
+- **Mudança**: se perdes o teu: «1 câmara municipal ocupado». Se tomas um inimigo: «1 centro da cidade capturado». Vários do mesmo tipo no mesmo momento: «2 quartéis ocupados / capturados». A quantidade segue as mortes: tipos com número incluem a contagem; ``no_number`` únicos omitem o «1». Ver outros capturar continua a ser só o som.
+- **Alcance**: TTS do cliente; todos os edifícios capturáveis (incluindo muros, portões e centros da cidade aoe2).
+
+
 1.4.7.8
 -------
 

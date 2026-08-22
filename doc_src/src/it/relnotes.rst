@@ -3,6 +3,22 @@ Note di rilascio
 
 .. contents::
 
+1.4.7.9
+--------
+
+**Miglioramento: reclamo/furto di pecore annuncia civiltà e nemico**
+
+- **Problema**: reclamare o rubare una pecora diceva sempre «pecora , reclamato», senza sapere quale civiltà se la fosse presa.
+- **Cambio**: il reclamo proprio resta breve. Se un nemico se la prende (e vedi chi reclama) si dice «pecora reclamata bizantini , nemico»; un alleato nomina la civ e «alleato». I mod a una sola fazione omettono il nome della civ ma dicono comunque nemico/alleato. Nella nebbia, se non vedi chi reclama, nessun annuncio.
+- **Ambito**: TTS del client; tutti i mod con bestiame ``claimable`` (incluse le pecore aoe2).
+
+**Miglioramento: la cattura degli edifici annuncia nome e quantità (come le morti)**
+
+- **Problema**: la cattura riproduceva solo un suono, senza dire quale edificio fosse stato preso.
+- **Cambio**: se perdi il tuo: «1 municipio occupato». Se prendi uno nemico: «1 centro cittadino catturato». Più dello stesso tipo nello stesso momento: «2 caserme occupate / catturate». Il conteggio segue le morti: i tipi numerati includono la quantità; i ``no_number`` unici omettono l’«1». Vedere altri catturare resta solo il suono.
+- **Ambito**: TTS del client; tutti gli edifici catturabili (incluse mura, porte e centri cittadini aoe2).
+
+
 1.4.7.8
 --------
 

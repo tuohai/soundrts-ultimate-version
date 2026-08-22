@@ -5,6 +5,22 @@ Release notes
 .. contents::
 
 
+1.4.7.9
+--------
+
+**Improvement: sheep claim/steal names the taker's civilization and relation**
+
+- **Issue**: Claiming or stealing a sheep always said “sheep , claimed”, so you could not tell which civilization took it.
+- **Change**: Own claims stay short. An enemy take (if you can see the claimer) says “sheep claimed Byzantines , enemy”; an ally take names the civ and “ally”. Single-faction mods omit the civ name but still say enemy/ally. No announcement in fog if you cannot see the claimer.
+- **Scope**: Client TTS; all mods with ``claimable`` livestock (including aoe2 sheep).
+
+**Improvement: capturing buildings speaks the name and count (same as death alerts)**
+
+- **Issue**: Capture only played a sound, with no TTS for which building was taken.
+- **Change**: Losing your own: “1 town hall occupied”. Taking an enemy’s: “1 town center captured”. Several of the same type in one burst: “2 barracks occupied / captured”. Count rules match death: numbered types include the count; ``no_number`` uniques omit “1”. Watching others capture still only plays the sound.
+- **Scope**: Client TTS; all capturable buildings (including aoe2 walls, gates, town centers).
+
+
 1.4.7.8
 --------
 

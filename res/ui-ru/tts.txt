@@ -1529,3 +1529,4 @@
 5796	you already have the latest version
 5797	update check failed
 5798	открытие окна обновления; игра будет закрыта
+5799	захвачено
