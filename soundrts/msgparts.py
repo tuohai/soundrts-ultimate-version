@@ -929,6 +929,7 @@ HOTKEY_GENERIC_BUILDING = [5507]          # 通用建筑
 HOTKEY_RESOURCE1_STATUS = [5510]          # 资源1状态
 HOTKEY_RESOURCE2_STATUS = [5511]          # 资源2状态
 HOTKEY_RESOURCE3_STATUS = [5512]          # 资源3状态
+HOTKEY_RESOURCE4_STATUS = [5508]          # 资源4状态（5513 已是人口）
 HOTKEY_POPULATION_STATUS = [5513]         # 人口状态
 HOTKEY_UI_ESCAPE = [5514]                 # 取消或进入地图浏览
 HOTKEY_TOGGLE_SELECTION_MODE = [5515]     # 切换单位与建筑界面

@@ -631,3 +631,163 @@ def test_idle_fighters_exclude_livestock():
     pool = [sheep, fighter]
     idle = [u for u in pool if not ai._is_livestock_unit(u)]
     assert idle == [fighter]
+
+
+def _computer_ai():
+    import sys
+    import warnings
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        old_argv = sys.argv
+        sys.argv = ["pytest"]
+        try:
+            from soundrts.worldplayercomputer import Computer
+        finally:
+            sys.argv = old_argv
+    return Computer.__new__(Computer)
+
+
+def _lure_worker(place, orders=None):
+    worker = types.SimpleNamespace(
+        place=place,
+        is_inside=False,
+        can_gather_deposit=["food_carcass"],
+        _basic_skills={"attack", "gather", "go"},
+        orders=list(orders or []),
+        _lure_animal=None,
+        _lure_run_home=False,
+    )
+    worker.take_order = lambda cmd, forget_previous=True, imperative=False, order_id=None: worker.orders.append(
+        types.SimpleNamespace(
+            keyword=cmd[0],
+            target=cmd[1] if len(cmd) > 1 else None,
+            cmd=cmd,
+            forget_previous=forget_previous,
+            imperative=imperative,
+        )
+    )
+    return worker
+
+
+def test_boar_is_lureable_deer_is_not():
+    ai = _computer_ai()
+    boar = types.SimpleNamespace(
+        is_huntable=1, herdable=0, claimable=0, pursue_attacker=1
+    )
+    deer = types.SimpleNamespace(
+        is_huntable=1, herdable=0, claimable=0, pursue_attacker=0
+    )
+    sheep = types.SimpleNamespace(
+        is_huntable=1, herdable=1, claimable=1, pursue_attacker=0
+    )
+    assert ai._is_lureable_huntable(boar)
+    assert not ai._is_lureable_huntable(deer)
+    assert not ai._is_lureable_huntable(sheep)
+
+
+def test_field_boar_is_lured_not_field_killed():
+    ai = _computer_ai()
+    base = types.SimpleNamespace(
+        id="base",
+        shortest_path_distance_to=lambda other: 0,
+    )
+    field = types.SimpleNamespace(
+        id="field",
+        shortest_path_distance_to=lambda other: 1,
+    )
+    boar = types.SimpleNamespace(
+        id="boar1",
+        hp=15,
+        place=field,
+        player=types.SimpleNamespace(neutral=True),
+        is_huntable=1,
+        herdable=0,
+        claimable=0,
+        pursue_attacker=1,
+        last_attacker=None,
+    )
+    deer = types.SimpleNamespace(
+        id="deer1",
+        hp=5,
+        place=field,
+        player=types.SimpleNamespace(neutral=True),
+        is_huntable=1,
+        herdable=0,
+        claimable=0,
+        pursue_attacker=0,
+    )
+    townhall = types.SimpleNamespace(
+        is_a_building=True,
+        place=base,
+        storable_resource_types=["resource1", "resource2", "resource3"],
+    )
+    worker = _lure_worker(base)
+    ai.units = [townhall]
+    ai._workers = [worker]
+    ai._known_huntable_animals = lambda: [boar, deer]
+    ai._world_place_for_unit = lambda u: u.place
+    ai._worker_can_hunt = lambda w: True
+    ai.nearest_warehouse = (
+        lambda place, resource_type, include_building_sites=False: townhall
+    )
+    ai._huntable_food_deposit_types = lambda: {"food_carcass"}
+    ai.square_is_dangerous = lambda place: False
+    ai._pick_nearest_reachable = lambda origin, cands: cands[0] if cands else None
+    ai._play_memo = None
+    ai._worker_can_herd = lambda w: False
+
+    assert ai._choose_hunt_target(worker) is deer
+    assert ai._choose_boar_lure_target(worker) is boar
+    assert ai._try_start_boar_lure(worker) is True
+    assert worker._lure_animal is boar
+    assert worker.orders[0].keyword == "attack"
+    assert worker.orders[0].target == "boar1"
+
+
+def test_lure_runs_home_after_first_hit_then_kills_at_tc():
+    ai = _computer_ai()
+    base = types.SimpleNamespace(id="base")
+    field = types.SimpleNamespace(id="field")
+    townhall = types.SimpleNamespace(place=base, id="tc")
+    boar = types.SimpleNamespace(
+        id="boar1",
+        hp=15,
+        place=field,
+        last_attacker=None,
+        is_huntable=1,
+        herdable=0,
+        claimable=0,
+        pursue_attacker=1,
+    )
+    worker = _lure_worker(field)
+    worker._lure_animal = boar
+    ai.units = [townhall]
+    ai._workers = [worker]
+    ai._known_huntable_animals = lambda: [boar]
+    ai._world_place_for_unit = lambda u: u.place
+    ai._worker_can_hunt = lambda w: True
+    ai._herd_dropoff_building = lambda w: townhall
+    ai.square_is_dangerous = lambda place: False
+
+    assert ai._maintain_boar_lure(worker) is True
+    assert worker._lure_run_home is False
+    assert worker.orders[-1].keyword == "attack"
+
+    boar.last_attacker = worker
+    worker.orders.clear()
+    assert ai._maintain_boar_lure(worker) is True
+    assert worker._lure_run_home is True
+    keywords = [o.keyword for o in worker.orders]
+    assert "stop" in keywords
+    assert "go" in keywords
+    assert worker.orders[-1].target == "base"
+
+    worker.place = base
+    boar.place = base
+    worker.orders.clear()
+    worker._lure_run_home = True
+    assert ai._maintain_boar_lure(worker) is True
+    assert worker._lure_run_home is False
+    assert worker.orders[-1].keyword == "attack"
+    assert ai._choose_lure_kill_target(worker) is boar

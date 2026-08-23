@@ -4,6 +4,34 @@ Notas de la versión
 
 .. contents::
 
+1.4.8.0
+-------
+
+**Corrección: la TTS de un buff al recogerlo leía milipuntos de vida**
+
+- **Problema**: en td2, recoger una espada decía daño cuerpo a cuerpo +7000000. Las rules ``stat mdg`` / ``v 7000`` guardan 7_000_000 milipuntos; el anuncio tomaba ese valor interno como el de pantalla.
+- **Cambio**: los buffs temporales dividen las stats de precisión (hp, mdg, etc.) por ``PRECISION`` antes de la TTS. Los acumuladores de producción siguen en unidades de pantalla.
+- **Alcance**: TTS al ganar un buff en todos los mods.
+
+**Ordenador: atraer presas que contraatacan al depósito de comida antes de matarlas**
+
+- **Problema**: los aldeanos ociosos atacaban animales ``is_huntable`` in situ. Los jabalíes con ``pursue_attacker`` pelean en el campo. No había «golpear una vez y arrastrar a casa».
+- **Cambio**: un cazable que no es ``herdable`` / ``claimable`` y tiene ``pursue_attacker`` (jabalíes aoe2) recibe un golpe; el aldeano corre a un edificio que guarda el recurso 3 (centro urbano, molino, etc.) y lo mata allí. Los cazables que no contraatacan (ciervos) se siguen matando in situ. Las ovejas se siguen llevando al depósito. Sin nombres de tipo fijos. El corredor no se gira a pelear de camino.
+- **Alcance**: jugadores ordenador; mods con esos flags (incluido aoe2).
+
+**Asignación de teclas: estado del recurso 4**
+
+- **Problema**: aoe2 ya asignaba la piedra a Mayús+X, pero el catálogo de reasignación solo listaba los recursos 1–3.
+- **Cambio**: los catálogos global y clásico incluyen el estado del recurso 4. En aoe2 el valor por defecto sigue siendo Mayús+X.
+- **Alcance**: reasignación de teclas; id TTS 5508.
+
+**Teclas clásicas: Mayús derecho+C / B copian la voz secundaria**
+
+- **Problema**: las teclas por capas podían copiar la voz secundaria al portapapeles; el ``legacy_bindings.txt`` clásico no tenía esas teclas.
+- **Cambio**: ``res/ui`` y ``mods/aoe2/ui`` ``legacy_bindings.txt`` añaden Mayús derecho+C copiar y Mayús derecho+B añadir al portapapeles la voz secundaria.
+- **Alcance**: esquema de teclas clásico.
+
+
 1.4.7.9
 -------
 

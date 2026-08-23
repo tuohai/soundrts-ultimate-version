@@ -1269,6 +1269,7 @@
 5510	status zasobu 1
 5511	status zasobu 2
 5512	status zasobu 3
+5508	status zasobu 4
 5513	status populacji
 5514	anuluj lub wejdź do przeglądarki map
 5515	przełącz interfejs jednostek i budynków

@@ -1250,6 +1250,7 @@
 5510	Status Ressource 1
 5511	Status Ressource 2
 5512	Status Ressource 3
+5508	Status Ressource 4
 5513	Bevölkerungsstatus
 5514	abbrechen oder Kartenbrowser öffnen
 5515	Einheiten- und Gebäudeoberfläche umschalten

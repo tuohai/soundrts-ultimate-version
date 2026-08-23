@@ -1373,6 +1373,7 @@
 5510 resource 1 status
 5511 resource 2 status
 5512 resource 3 status
+5508 resource 4 status
 5513 population status
 5514 cancel or enter map browse
 5515 toggle unit and building interface

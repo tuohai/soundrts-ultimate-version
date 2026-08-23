@@ -18,6 +18,29 @@ _PRODUCTION_BUFF_STATS = frozenset(
     {"time_cost", "population_cost", "production_time", "production_qty"}
 )
 
+
+def buff_stat_display_value(stat, stored_delta, temporary=True):
+    """把 buff 内部增量换成玩家听到的数值。
+
+    ``_apply_variation`` 对 precision 属性（mdg / hp 等）按毫生命值写入单位，
+    ``_variations`` 记的也是同一内部量。td2 剑 ``v 7000`` 内部是 7_000_000，
+    播报必须是 +7000，而不是 +7000000。生产类累加器和其它非 precision
+    属性在 ``_variations`` 里已经是显示单位。
+    """
+    if not temporary:
+        return stored_delta // PRECISION
+    if stat in _PRODUCTION_BUFF_STATS:
+        return stored_delta
+    from .definitions import _precision_properties
+
+    if stat in _precision_properties:
+        display = stored_delta / PRECISION
+        if display == int(display):
+            return int(display)
+        return display
+    return stored_delta
+
+
 # 注意：属性的精度处理现在使用definitions._precision_properties来判断
 
 # The following stats would require specific code:
@@ -261,24 +284,12 @@ class Buff:
             stat_msgs = []
             for i, stat in enumerate(self.stats):
                 if self.temporary:
-                    var = self._variations[i]  # 临时buff使用实际变化值
-                    # 根据实际的_variations存储方式分类处理
-                    from .definitions import _precision_properties
-                    
-                    # 这些precision属性在_variations中存储显示值，直接使用
-                    display_value_stats = {"hp", "hp_max", "mana", "mana_max", "mdg", "rdg", "mdf", "rdf"}
-                    
-                    if stat in display_value_stats:
-                        display_value = var  # 直接显示
-                    elif stat in _precision_properties:
-                        display_value = var / PRECISION  # 除以1000显示
-                    else:
-                        display_value = var  # 直接显示
+                    stored = self._variations[i]
                 else:
-                    var = self.v[i]  # 非临时buff使用原始配置值
-                    # 对于非临时buff，所有属性都需要除以PRECISION得到显示值
-                    # 因为self.v[i]都是经过to_int()处理的（乘以了PRECISION）
-                    display_value = var // PRECISION
+                    stored = self.v[i]
+                display_value = buff_stat_display_value(
+                    stat, stored, temporary=self.temporary
+                )
                 stat_msgs.append(f"{stat} {'+'if display_value > 0 else ''}{str(display_value)}")
             host.notify(
                 "buff,add,%s,%s" % (self.type_name, " ".join(stat_msgs))

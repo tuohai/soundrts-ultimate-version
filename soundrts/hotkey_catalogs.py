@@ -569,6 +569,7 @@ def _build_classic_catalog() -> Catalog:
         ("classic.resource_status.resource1", list(mp.HOTKEY_RESOURCE1_STATUS)),
         ("classic.resource_status.resource2", list(mp.HOTKEY_RESOURCE2_STATUS)),
         ("classic.resource_status.resource3", list(mp.HOTKEY_RESOURCE3_STATUS)),
+        ("classic.resource_status.resource4", list(mp.HOTKEY_RESOURCE4_STATUS)),
         ("classic.population_status", list(mp.HOTKEY_POPULATION_STATUS)),
         ("classic.unit_attributes_screen", list(mp.HOTKEY_ATTRIBUTES_SCREEN)),
         ("classic.toggle_gear_screen", list(mp.HOTKEY_TOGGLE_GEAR_SCREEN)),

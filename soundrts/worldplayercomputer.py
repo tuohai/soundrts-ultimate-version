@@ -3313,12 +3313,204 @@ class Computer(Player):
                 and getattr(owner, "neutral", False)
             ):
                 continue
+            # Wild boar (pursue_attacker): lure to the TC instead of field-killing.
+            if self._is_lureable_huntable(o):
+                if drop_place is None or o.place is drop_place:
+                    animals.append(o)
+                continue
             animals.append(o)
         if not animals:
             return None
         # 危险格在挑选时过滤，避免先 A* 全排序再丢弃
         safe = [a for a in animals if not self.square_is_dangerous(a.place)]
         return self._pick_nearest_reachable(origin, safe or animals)
+
+    @staticmethod
+    def _rules_flag_on(value):
+        if value in (1, True, "1"):
+            return True
+        if isinstance(value, str) and value.lower() in ("1", "true"):
+            return True
+        if isinstance(value, (list, tuple)) and value:
+            return str(value[0]).lower() in ("1", "true")
+        return False
+
+    def _is_lureable_huntable(self, unit):
+        """Wild hunt that chase the hitter (AoE2 boar), not sheep/deer."""
+        if not getattr(unit, "is_huntable", 0):
+            return False
+        if getattr(unit, "herdable", 0) or getattr(unit, "claimable", 0):
+            return False
+        pursue = getattr(unit, "pursue_attacker", None)
+        if pursue is None:
+            pursue = getattr(type(unit), "pursue_attacker", 0)
+        return self._rules_flag_on(pursue)
+
+    def _hunt_lure_dropoff_place(self, worker):
+        dropoff = self._herd_dropoff_building(worker)
+        if dropoff is None:
+            alt = getattr(self, "_livestock_food_dropoff", None)
+            if callable(alt):
+                dropoff = alt()
+        return getattr(dropoff, "place", None) if dropoff is not None else None
+
+    def _worker_order_matches(self, worker, keyword, target=None, target_id=None):
+        orders = getattr(worker, "orders", None) or ()
+        if not orders:
+            return False
+        o0 = orders[0]
+        if getattr(o0, "keyword", None) != keyword:
+            return False
+        if target is None and target_id is None:
+            return True
+        tgt = getattr(o0, "target", None)
+        if target is not None and tgt is target:
+            return True
+        tid = target_id
+        if tid is None and target is not None:
+            tid = getattr(target, "id", None)
+        if tid is not None and (tgt == tid or getattr(tgt, "id", None) == tid):
+            return True
+        return False
+
+    def _clear_boar_lure(self, worker):
+        setattr(worker, "_lure_animal", None)
+        setattr(worker, "_lure_run_home", False)
+
+    def _other_lure_workers(self, worker):
+        others = []
+        pool = list(getattr(self, "_workers", ()) or ())
+        if worker is not None and worker not in pool:
+            pool.append(worker)
+        for u in pool:
+            if u is worker:
+                continue
+            animal = getattr(u, "_lure_animal", None)
+            if animal is not None and getattr(animal, "hp", 0) > 0:
+                others.append(u)
+        return others
+
+    def _choose_boar_lure_target(self, worker):
+        if not self._worker_can_hunt(worker):
+            return None
+        origin = self._world_place_for_unit(worker)
+        drop_place = self._hunt_lure_dropoff_place(worker)
+        if origin is None or drop_place is None:
+            return None
+        taken_ids = {
+            id(getattr(u, "_lure_animal", None))
+            for u in (getattr(self, "_workers", ()) or ())
+            if getattr(u, "_lure_animal", None) is not None
+        }
+        animals = []
+        for o in self._known_huntable_animals():
+            if not self._is_lureable_huntable(o):
+                continue
+            if o.place is drop_place:
+                continue
+            if id(o) in taken_ids:
+                continue
+            animals.append(o)
+        if not animals:
+            return None
+        safe = [a for a in animals if not self.square_is_dangerous(a.place)]
+        return self._pick_nearest_reachable(origin, safe or animals)
+
+    def _choose_lure_kill_target(self, worker):
+        """Boar already at the town center / mill: all hunters may finish it."""
+        if not self._worker_can_hunt(worker):
+            return None
+        drop_place = self._hunt_lure_dropoff_place(worker)
+        origin = self._world_place_for_unit(worker)
+        if drop_place is None or origin is None:
+            return None
+        ready = [
+            o
+            for o in self._known_huntable_animals()
+            if self._is_lureable_huntable(o) and o.place is drop_place
+        ]
+        if not ready:
+            return None
+        if getattr(worker, "place", None) is drop_place:
+            return ready[0]
+        return self._pick_nearest_reachable(origin, ready) or ready[0]
+
+    def _try_start_boar_lure(self, worker):
+        if getattr(worker, "_lure_animal", None) is not None:
+            return False
+        if getattr(worker, "is_inside", False):
+            return False
+        if self._other_lure_workers(worker):
+            return False
+        animal = self._choose_boar_lure_target(worker)
+        if animal is None:
+            return False
+        worker._lure_animal = animal
+        worker._lure_run_home = False
+        worker.take_order(["attack", animal.id], imperative=True)
+        return True
+
+    def _maintain_boar_lure(self, worker):
+        """Hit the boar once, run to the TC, then kill it when it arrives."""
+        animal = getattr(worker, "_lure_animal", None)
+        if animal is None:
+            return False
+        if getattr(animal, "hp", 0) <= 0 or getattr(animal, "place", None) is None:
+            self._clear_boar_lure(worker)
+            return False
+        drop_place = self._hunt_lure_dropoff_place(worker)
+        if drop_place is None:
+            worker._lure_run_home = False
+            if not self._worker_order_matches(worker, "attack", target=animal):
+                worker.take_order(["attack", animal.id], imperative=True)
+            return True
+        if animal.place is drop_place:
+            worker._lure_run_home = False
+            if not self._worker_order_matches(worker, "attack", target=animal):
+                worker.take_order(["attack", animal.id], imperative=True)
+            return True
+        hit = getattr(animal, "last_attacker", None) is worker
+        if hit:
+            worker._lure_run_home = True
+            if getattr(worker, "place", None) is drop_place:
+                if self._worker_order_matches(worker, "attack"):
+                    worker.take_order(["stop"])
+                return True
+            if self._worker_order_matches(
+                worker, "go", target=drop_place, target_id=getattr(drop_place, "id", None)
+            ):
+                return True
+            # Imperative attack cannot be replaced by a normal go (would queue
+            # behind it). stop is allowed to cancel, then walk home.
+            worker.take_order(["stop"])
+            worker.take_order(["go", drop_place.id], forget_previous=True)
+            return True
+        worker._lure_run_home = False
+        if not self._worker_order_matches(worker, "attack", target=animal):
+            worker.take_order(["attack", animal.id], imperative=True)
+        return True
+
+    def _ensure_boar_lure(self):
+        """Keep one hunter luring a boar, even if others are already gathering."""
+        workers = list(getattr(self, "_workers", ()) or ())
+        if not workers:
+            return
+        if self._other_lure_workers(None):
+            return
+        idle = []
+        steal = []
+        for u in workers:
+            if getattr(u, "is_inside", False) or not self._worker_can_hunt(u):
+                continue
+            if not getattr(u, "orders", None):
+                idle.append(u)
+                continue
+            kw = getattr(u.orders[0], "keyword", None)
+            if kw in ("gather", "pickup", "auto_explore"):
+                steal.append(u)
+        for worker in idle + steal:
+            if self._try_start_boar_lure(worker):
+                return
 
     def _gatherable_building_targets(self, worker):
         from .world_extractor import (
@@ -3935,7 +4127,11 @@ class Computer(Player):
     def _idle_workers_gather(self):
         n_w = max(1, len(getattr(self, "_workers", ()) or ()))
         wood_cap = self._wood_gather_worker_cap(n_w)
+        self._ensure_boar_lure()
         for u in self._workers:
+            if getattr(u, "_lure_animal", None) is not None:
+                self._maintain_boar_lure(u)
+                continue
             if u.orders:
                 if (
                     self._keep_lumberjacks()
@@ -3960,6 +4156,12 @@ class Computer(Player):
             livestock = self._choose_livestock_slaughter_target(u)
             if livestock is not None:
                 u.take_order(["attack", livestock.id], imperative=True)
+                continue
+            lure_kill = self._choose_lure_kill_target(u)
+            if lure_kill is not None:
+                u.take_order(["attack", lure_kill.id], imperative=True)
+                continue
+            if self._try_start_boar_lure(u):
                 continue
             # Prefer free loot (gold_mint coins) over mining when available
             pickup = self._choose_pickup_target(u)

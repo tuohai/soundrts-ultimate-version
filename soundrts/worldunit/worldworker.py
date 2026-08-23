@@ -93,6 +93,9 @@ class Worker(Unit):
         # ~15s / 10min for workers that mostly return at _cached_has_attack=False.
         player = self.player
         if not player.is_human:
+            # Running a boar back to the TC: do not turn around to fight it.
+            if getattr(self, "_lure_run_home", False):
+                return
             if (
                 self.last_attacker is None
                 and not self.mdg

@@ -160,6 +160,7 @@ GLOBAL_PRIMARY_CATALOG: List[Tuple[str, list]] = [
     ("global.resource_status.resource1", list(mp.HOTKEY_RESOURCE1_STATUS)),
     ("global.resource_status.resource2", list(mp.HOTKEY_RESOURCE2_STATUS)),
     ("global.resource_status.resource3", list(mp.HOTKEY_RESOURCE3_STATUS)),
+    ("global.resource_status.resource4", list(mp.HOTKEY_RESOURCE4_STATUS)),
     ("global.population_status", list(mp.HOTKEY_POPULATION_STATUS)),
     ("global.faction_status", list(mp.META_FACTIONS)),
     ("global.ui_escape", list(mp.HOTKEY_UI_ESCAPE)),

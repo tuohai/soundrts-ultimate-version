@@ -5,6 +5,34 @@ Release notes
 .. contents::
 
 
+1.4.8.0
+--------
+
+**Fix: pickup buff TTS used millihitpoints as the spoken number**
+
+- **Issue**: On td2, picking up a sword said melee damage +7000000. Rules ``stat mdg`` / ``v 7000`` store 7_000_000 millihp; the announcement treated that internal value as the display amount.
+- **Change**: Temporary buffs divide precision stats (hp, mdg, and so on) by ``PRECISION`` before TTS. Production accumulators stay in display units.
+- **Scope**: Buff-gained TTS in all mods.
+
+**Computer: lure retaliating huntables to a food drop-off before the kill**
+
+- **Issue**: Idle workers attacked ``is_huntable`` animals in place. Boars with ``pursue_attacker`` fight back in the field. There was no hit-once-and-drag-home behaviour.
+- **Change**: A huntable that is not ``herdable`` / ``claimable`` and has ``pursue_attacker`` (aoe2 boars) is hit once, then the villager runs to a building that stores resource 3 (town center, mill, and so on) and kills it there. Non-retaliating huntables (deer) are still killed in the field. Sheep are still herded to the drop-off. No type-name checks. The runner does not turn around to fight on the way home.
+- **Scope**: Computer players; mods that use those rule flags (including aoe2).
+
+**Hotkey map: resource 4 status**
+
+- **Issue**: aoe2 already bound stone to Shift+X, but the remap catalog only listed resources 1–3.
+- **Change**: Global and classic catalogs include resource 4 status. aoe2 default remains Shift+X.
+- **Scope**: Hotkey remapping; TTS id 5508.
+
+**Classic bindings: Right Shift+C / B copy the secondary voice**
+
+- **Issue**: Layered hotkeys could copy secondary speech to the clipboard; classic ``legacy_bindings.txt`` had no matching keys.
+- **Change**: ``res/ui`` and ``mods/aoe2/ui`` ``legacy_bindings.txt`` add Right Shift+C copy and Right Shift+B append-copy of the secondary voice.
+- **Scope**: Classic hotkey scheme.
+
+
 1.4.7.9
 --------
 

@@ -207,6 +207,9 @@ def test_computer_ai_hunts_when_no_gather_target():
     assert "def _choose_hunt_target" in src
     assert "hunt_target = self._choose_hunt_target(u)" in src
     assert 'u.take_order(["attack", hunt_target.id], imperative=True)' in src
+    assert "def _try_start_boar_lure" in src
+    assert "def _maintain_boar_lure" in src
+    assert "self._ensure_boar_lure()" in src
     assert '"food_carcass" in deposits' not in src
 
 

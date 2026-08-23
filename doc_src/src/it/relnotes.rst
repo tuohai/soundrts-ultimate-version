@@ -3,6 +3,34 @@ Note di rilascio
 
 .. contents::
 
+1.4.8.0
+--------
+
+**Correzione: la TTS del buff alla raccolta leggeva i millesimi di vita**
+
+- **Problema**: su td2, raccogliere una spada diceva danno da mischia +7000000. Le rules ``stat mdg`` / ``v 7000`` memorizzano 7_000_000 millesimi; l’annuncio usava quel valore interno come cifra a schermo.
+- **Cambio**: i buff temporanei dividono le stat di precisione (hp, mdg, ecc.) per ``PRECISION`` prima della TTS. Gli accumulatori di produzione restano in unità a schermo.
+- **Ambito**: TTS all’ottenimento di un buff in tutti i mod.
+
+**Computer: attirare le prede che contrattaccano al deposito cibo prima di ucciderle**
+
+- **Problema**: i villici oziosi attaccavano gli animali ``is_huntable`` sul posto. I cinghiali con ``pursue_attacker`` combattono in campo. Non c’era «colpisci una volta e trascina a casa».
+- **Cambio**: un cacciabile che non è ``herdable`` / ``claimable`` e ha ``pursue_attacker`` (cinghiali aoe2) viene colpito una volta; il villico corre a un edificio che deposita la risorsa 3 (centro cittadino, mulino, ecc.) e lo uccide lì. I cacciabili che non contrattaccano (cervi) si uccidono ancora sul posto. Le pecore si portano ancora al deposito. Nessun nome di tipo fisso. Il corridore non si gira a combattere lungo la strada.
+- **Ambito**: giocatori computer; mod con quei flag (incluso aoe2).
+
+**Mappa tasti: stato della risorsa 4**
+
+- **Problema**: aoe2 assegnava già la pietra a Maiusc+X, ma il catalogo di riassegnazione elencava solo le risorse 1–3.
+- **Cambio**: i cataloghi globale e classico includono lo stato della risorsa 4. In aoe2 il predefinito resta Maiusc+X.
+- **Ambito**: riassegnazione tasti; id TTS 5508.
+
+**Tasti classici: Maiusc destro+C / B copiano la voce secondaria**
+
+- **Problema**: i tasti a strati potevano copiare la voce secondaria negli appunti; il ``legacy_bindings.txt`` classico non aveva quei tasti.
+- **Cambio**: ``res/ui`` e ``mods/aoe2/ui`` ``legacy_bindings.txt`` aggiungono Maiusc destro+C copia e Maiusc destro+B accoda la voce secondaria.
+- **Ambito**: schema tasti classico.
+
+
 1.4.7.9
 --------
 

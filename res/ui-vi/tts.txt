@@ -1270,6 +1270,7 @@
 5510	trạng thái tài nguyên 1
 5511	trạng thái tài nguyên 2
 5512	trạng thái tài nguyên 3
+5508	trạng thái tài nguyên 4
 5513	trạng thái dân số
 5514	hủy hoặc vào duyệt bản đồ
 5515	chuyển giao diện đơn vị và công trình

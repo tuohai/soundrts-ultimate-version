@@ -309,3 +309,5 @@ SHIFT F12: select_alliance_candidate -1
 F4: alliance_request
 CTRL F4: alliance_accept
 SHIFT F4: alliance_decline_or_cancel
+RSHIFT C: voice_lib_copy secondary
+RSHIFT B: voice_lib_append_copy secondary

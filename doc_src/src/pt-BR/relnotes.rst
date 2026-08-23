@@ -4,6 +4,34 @@ Notas de lançamento
 
 .. contents::
 
+1.4.8.0
+-------
+
+**Correção: a TTS do buff ao apanhar lia milipontos de vida**
+
+- **Problema**: no td2, apanhar uma espada dizia dano corpo a corpo +7000000. As rules ``stat mdg`` / ``v 7000`` guardam 7_000_000 milipontos; o anúncio tratava esse valor interno como o de ecrã.
+- **Mudança**: os buffs temporários dividem as stats de precisão (hp, mdg, etc.) por ``PRECISION`` antes da TTS. Os acumuladores de produção ficam em unidades de ecrã.
+- **Alcance**: TTS ao ganhar um buff em todos os mods.
+
+**Computador: atrair presas que contra-atacam ao depósito de comida antes de as matar**
+
+- **Problema**: aldeões ociosos atacavam animais ``is_huntable`` no sítio. Javalis com ``pursue_attacker`` lutam no campo. Não havia «bater uma vez e arrastar para casa».
+- **Mudança**: um caçável que não é ``herdable`` / ``claimable`` e tem ``pursue_attacker`` (javalis aoe2) leva um golpe; o aldeão corre para um edifício que guarda o recurso 3 (centro da cidade, moinho, etc.) e mata-o lá. Caçáveis que não contra-atacam (veados) continuam a ser mortos no sítio. As ovelhas continuam a ser levadas ao depósito. Sem nomes de tipo fixos. O corredor não se vira a lutar a caminho.
+- **Alcance**: jogadores computador; mods com esses flags (incluindo aoe2).
+
+**Mapeamento de teclas: estado do recurso 4**
+
+- **Problema**: o aoe2 já ligava a pedra a Shift+X, mas o catálogo de reatribuição só listava os recursos 1–3.
+- **Mudança**: os catálogos global e clássico incluem o estado do recurso 4. No aoe2 o predefinido continua Shift+X.
+- **Alcance**: reatribuição de teclas; id TTS 5508.
+
+**Teclas clássicas: Shift direito+C / B copiam a voz secundária**
+
+- **Problema**: as teclas em camadas podiam copiar a voz secundária para a área de transferência; o ``legacy_bindings.txt`` clássico não tinha essas teclas.
+- **Mudança**: ``res/ui`` e ``mods/aoe2/ui`` ``legacy_bindings.txt`` acrescentam Shift direito+C copiar e Shift direito+B acrescentar a voz secundária.
+- **Alcance**: esquema de teclas clássico.
+
+
 1.4.7.9
 -------
 

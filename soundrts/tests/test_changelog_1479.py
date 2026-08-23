@@ -19,7 +19,8 @@ def _section_1479(lang: str) -> str:
 
 
 def test_version_is_1479():
-    assert 'VERSION = "1.4.7.9"' in _source("soundrts", "version.py")
+    # 1.4.7.9 notes remain after later bumps; current VERSION is owned by 1480+.
+    assert "1.4.7.9" in _source("doc_src", "src", "zh", "relnotes.rst")
 
 
 def test_all_relnotes_have_1479_heading():

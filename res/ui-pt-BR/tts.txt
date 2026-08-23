@@ -1269,6 +1269,7 @@
 5510	estado recurso 1
 5511	estado recurso 2
 5512	estado recurso 3
+5508	estado recurso 4
 5513	estado da população
 5514	cancelar ou entrar na navegação do mapa
 5515	alternar interface de unidades e edifícios

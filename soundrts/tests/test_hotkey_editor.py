@@ -187,8 +187,12 @@ def test_hotkey_mapping_tts():
 
 
 def test_global_catalog_covers_resource1():
+    from soundrts.hotkey_catalogs import _build_classic_catalog
     from soundrts.hotkey_editor import GLOBAL_PRIMARY_CATALOG, get_default_key
 
     ids = [bid for bid, _ in GLOBAL_PRIMARY_CATALOG]
     assert "global.resource_status.resource1" in ids
+    assert "global.resource_status.resource4" in ids
     assert get_default_key("global.resource_status.resource1") == "z"
+    classic_ids = [bid for bid, _ in _build_classic_catalog()]
+    assert "classic.resource_status.resource4" in classic_ids
