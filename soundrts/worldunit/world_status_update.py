@@ -648,7 +648,17 @@ class CreatureStatusUpdate(Entity):
         if claim_range > 0:
             from ..lib.nofloat import square_of_distance
 
-            return square_of_distance(self.x, self.y, obj.x, obj.y) <= claim_range * claim_range
+            # Edge-to-edge like combat range: centers + both collision radii.
+            reach = claim_range
+            try:
+                reach += int(getattr(self, "radius", 0) or 0)
+            except (TypeError, ValueError):
+                pass
+            try:
+                reach += int(getattr(obj, "radius", 0) or 0)
+            except (TypeError, ValueError):
+                pass
+            return square_of_distance(self.x, self.y, obj.x, obj.y) <= reach * reach
         return getattr(obj, "place", None) is place
 
     def _claim_range_value(self):

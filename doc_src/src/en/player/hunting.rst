@@ -167,7 +167,7 @@ Animal properties
    * - ``claimable 1``
      - while neutral, any nearby non-neutral unit claims ownership (AoE2 sheep); keeps ``can_herd`` as a separate follow mechanic
    * - ``claim_range``
-     - claim distance in mm (``0`` = same square only; aoe2 sheep use ``12000``)
+     - claim distance in mm (``0`` = same square only; sheep use ``4000`` ≈ AoE2 DE 4 tiles; check includes both collision radii)
    * - ``food_deposit``
      - carcass deposit type on death
    * - ``food_deposit_qty``

@@ -140,7 +140,7 @@ Propiedades de animales
    * - ``claimable 1``
      - en neutro, cualquier unidad no neutral cercana lo reclama (oveja AoE2); independiente de ``can_herd``
    * - ``claim_range``
-     - distancia de reclamo en mm (``0`` = solo misma casilla; ovejas aoe2 ``12000``)
+     - distancia de reclamo en mm (``0`` = solo misma casilla; ovejas ``4000`` ≈ 4 casillas AoE2 DE)
    * - ``food_deposit``
      - tipo de depósito de cadáver al morir
    * - ``food_deposit_qty``

@@ -179,11 +179,18 @@ def _replay_display_name(filename):
             ts_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(ts))
             return [mp.REPLAY[0], " " + num + ", " + ts_str]
         except (OSError, OverflowError):
-            return [stem]
-    try:
-        return [time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(stem)))]
-    except (ValueError, OSError, OverflowError):
-        return [stem]
+            return literal_text_msg(stem)
+    # Legacy auto name: unix timestamp as the whole stem (about 9+ digits).
+    # A player-chosen name like "1" must not become tts.txt id 1 ("you are")
+    # or localtime(1) (1970).
+    if stem.isdigit() and len(stem) >= 9:
+        try:
+            return [
+                time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(stem)))
+            ]
+        except (ValueError, OSError, OverflowError):
+            pass
+    return literal_text_msg(stem)
 
 
 def _sanitize_filename(name):
@@ -475,7 +482,7 @@ def _list_save_slots():
             time_label = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(ts))
         except OSError:
             time_label = ""
-        label = [name]
+        label = literal_text_msg(name)
         explanation = [time_label] if time_label else []
         slots.append((label, explanation, p))
     return slots
@@ -557,7 +564,9 @@ def _delete_save(path, menu, immediate):
         _refresh_save_menu(menu)
         return
     if not immediate:
-        if not confirm_yes_no(list(mp.CONFIRM_DELETE) + [_save_display_name(path)]):
+        if not confirm_yes_no(
+            list(mp.CONFIRM_DELETE) + literal_text_msg(_save_display_name(path))
+        ):
             voice.alert(mp.CANCELED)
             return
     try:

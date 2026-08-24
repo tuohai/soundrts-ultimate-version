@@ -4,6 +4,22 @@ Notas de lançamento
 
 .. contents::
 
+1.4.8.1
+-------
+
+**Melhoria: alcance ao reivindicar ovelhas alinhado ao AoE2 DE (4 m + raios de colisão)**
+
+- **Problema**: as ovelhas usavam ``claim_range 12000`` (um quadrado inteiro de 12 m), muito além do raio de busca do DE (~4 casas). O quadrado de 12 m é uma célula de navegação para jogo sem visão; as coordenadas continuam contínuas, cerca de 1 m por casa. A reivindicação comparava só os centros, sem raios de colisão.
+- **Mudança**: as ovelhas usam ``claim_range 4000`` (~4 m). Reivindicar/roubar é bordo a bordo: distância entre centros ≤ ``claim_range`` + ambos os ``radius`` (175 mm cada se houver colisão).
+- **Alcance**: rules de base e ovelhas aoe2; todo o gado ``claimable`` com ``claim_range``.
+
+**Correção: nomes numéricos de gravações/replays eram lidos como IDs do tts.txt**
+
+- **Problema**: ao renomear uma gravação para ``1`` dizia «estás» / «you are» (id 1 do tts.txt) em vez do número 1. O mesmo nos replays.
+- **Mudança**: nomes escolhidos pelo jogador (gravações e replays, incluindo a confirmação ao apagar) usam ``literal_text_msg``. Nomes automáticos ``replayN_timestamp`` e ficheiros antigos só com carimbo de data longo continuam a ler a hora e o índice.
+- **Alcance**: menus de carregar jogo e de replay.
+
+
 1.4.8.0
 -------
 

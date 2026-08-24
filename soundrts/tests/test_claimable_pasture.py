@@ -160,7 +160,7 @@ def test_aoe2_sheep_is_claimable_and_pasture_spawns_sheep():
     text = path.read_text(encoding="utf-8")
     sheep = text.split("def sheep", 1)[1].split("def ", 1)[0]
     assert "claimable 1" in sheep
-    assert "claim_range 12000" in sheep
+    assert "claim_range 4000" in sheep
     assert "herdable 1" in sheep
     pasture = text.split("def pasture", 1)[1].split("def ", 1)[0]
     assert "spawns_unit sheep" in pasture
@@ -191,7 +191,7 @@ def test_base_sheep_is_claimable():
         pytest.skip("res rules not present")
     sheep = path.read_text(encoding="utf-8").split("def sheep", 1)[1].split("def ", 1)[0]
     assert "claimable 1" in sheep
-    assert "claim_range 12000" in sheep
+    assert "claim_range 4000" in sheep
     assert "herdable 1" in sheep
 
 
@@ -278,6 +278,36 @@ def test_try_auto_claim_ignores_neutral_neighbors():
     other = types.SimpleNamespace(place=place, x=1, y=0, hp=5, player=wildlife_b)
     place.objects = [animal, other]
     assert animal._try_auto_claim() is False
+
+
+def test_claim_range_ok_adds_collision_radii():
+    import soundrts.worldunit  # noqa: F401
+    from soundrts.worldentity import COLLISION_RADIUS
+    from soundrts.worldunit.world_status_update import CreatureStatusUpdate
+
+    class _Animal(CreatureStatusUpdate):
+        claimable = 1
+        claim_range = 4000
+        collision = 1
+
+    animal = object.__new__(_Animal)
+    animal.x = 0
+    animal.y = 0
+    animal.place = types.SimpleNamespace()
+
+    class _Scout:
+        radius = COLLISION_RADIUS
+        y = 0
+        place = animal.place
+
+    scout = _Scout()
+    reach = 4000 + COLLISION_RADIUS + COLLISION_RADIUS
+    scout.x = 4000 + 1
+    assert animal._claim_range_ok(scout, 4000) is True
+    scout.x = reach
+    assert animal._claim_range_ok(scout, 4000) is True
+    scout.x = reach + 1
+    assert animal._claim_range_ok(scout, 4000) is False
 
 
 def test_spawn_player_cap_blocks_further_spawns(monkeypatch):

@@ -168,7 +168,7 @@ Proprietà degli animali
    * - ``claimable 1``
      - da neutro, qualsiasi unità non neutrale vicina lo reclama (pecora AoE2); indipendente da ``can_herd``
    * - ``claim_range``
-     - distanza di reclamo in mm (``0`` = solo stessa casella; pecore aoe2 ``12000``)
+     - distanza di reclamo in mm (``0`` = solo stessa casella; pecore ``4000`` ≈ 4 tile AoE2 DE)
    * - ``food_deposit``
      - tipo di deposito carcassa alla morte
    * - ``food_deposit_qty``

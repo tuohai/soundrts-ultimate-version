@@ -5,6 +5,22 @@ Release notes
 .. contents::
 
 
+1.4.8.1
+--------
+
+**Improvement: sheep claim range matches AoE2 DE (4 m + collision radii)**
+
+- **Issue**: Sheep used ``claim_range 12000`` (a full 12 m square), far beyond DE’s ~4-tile search radius. The 12 m square is a navigation cell for blind play; coordinates stay continuous at about 1 m per tile. Claims compared centers only, with no collision radii.
+- **Change**: Sheep use ``claim_range 4000`` (~4 m). Claim/steal is edge-to-edge: center distance ≤ ``claim_range`` + both ``radius`` values (175 mm each when collision is on).
+- **Scope**: Base rules and aoe2 sheep; all ``claimable`` livestock that set ``claim_range``.
+
+**Fix: numeric save/replay names were spoken as tts.txt IDs**
+
+- **Issue**: Renaming a save to ``1`` said “you are” (tts.txt id 1) instead of the number 1. Replays had the same bug.
+- **Change**: Player-chosen save and replay names (including delete confirm) use ``literal_text_msg``. Auto ``replayN_timestamp`` names and old long timestamp-only files still speak the time and index.
+- **Scope**: Load-game and replay menus.
+
+
 1.4.8.0
 --------
 

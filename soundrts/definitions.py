@@ -1503,7 +1503,7 @@ class Rules(_Definitions):
         "herdable",  # 可被村民驱赶跟随（羊）
         "herd_leash_range",  # 驱赶跟随的最大距离（毫米）
         "claimable",  # 中立时可被非中立单位靠近自动归属（帝国 2 式领羊）
-        "claim_range",  # 自动归属距离（毫米；0=仅同格）
+        "claim_range",  # 自动归属距离（毫米；0=仅同格；判定含双方碰撞半径）
         "wander_range",  # 野生动物徘徊的最大半径（毫米）
     
     }

@@ -37,6 +37,13 @@ import pytest
 
 
 REPLAY_ENCODED = 1005028  # NB_ENCODE_SHIFT + 5028
+LITERAL_TEXT_PREFIX = "文本: "
+
+
+def _literal_text_msg(text):
+    if not text:
+        return []
+    return [LITERAL_TEXT_PREFIX + str(text)]
 def _source(*path_parts):
     return (Path(__file__).resolve().parents[2]
             .joinpath(*path_parts).read_text(encoding="utf-8"))
@@ -76,11 +83,13 @@ def _replay_display_name(filename):
             ts_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(ts))
             return [REPLAY_ENCODED, " " + num + ", " + ts_str]
         except (OSError, OverflowError):
-            return [stem]
-    try:
-        return [time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(stem)))]
-    except (ValueError, OSError, OverflowError):
-        return [stem]
+            return _literal_text_msg(stem)
+    if stem.isdigit() and len(stem) >= 9:
+        try:
+            return [time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(stem)))]
+        except (ValueError, OSError, OverflowError):
+            pass
+    return _literal_text_msg(stem)
 
 
 # ---------------------------------------------------------------------------
@@ -109,6 +118,8 @@ def test_replay_display_name_source_contract():
     assert "def _replay_display_name(filename):" in src
     assert 'time.strftime("%Y-%m-%d %H:%M:%S"' in src
     assert "mp.REPLAY" in src
+    assert "literal_text_msg(stem)" in src
+    assert "len(stem) >= 9" in src
 
 
 # ---------------------------------------------------------------------------
@@ -212,8 +223,14 @@ def test_replay_display_name_formats_old_timestamp():
 
 
 def test_replay_display_name_keeps_custom_name():
-    assert _replay_display_name("录像1.txt") == ["录像1"]
-    assert _replay_display_name("my_replay.txt") == ["my_replay"]
+    assert _replay_display_name("录像1.txt") == _literal_text_msg("录像1")
+    assert _replay_display_name("my_replay.txt") == _literal_text_msg("my_replay")
+
+
+def test_replay_display_name_numeric_custom_is_literal_not_tts_id():
+    """Renaming a replay to ``1`` must speak 1, not tts.txt id 1 (you are)."""
+    assert _replay_display_name("1.txt") == _literal_text_msg("1")
+    assert _replay_display_name("60.txt") == _literal_text_msg("60")
 
 
 # ---------------------------------------------------------------------------
@@ -284,6 +301,17 @@ def test_refresh_save_menu_attaches_rename_and_delete():
     assert "on_delete=" in block
     assert "_rename_save" in block
     assert "_delete_save" in block
+
+
+def test_custom_save_and_delete_use_literal_filename():
+    """Renamed save ``1`` must be spoken as text, not tts.txt id 1."""
+    src = _source("soundrts", "clientmain.py")
+    s = src.index("def _list_save_slots(")
+    e = src.index("\n\ndef ", s + 1)
+    assert "literal_text_msg(name)" in src[s:e]
+    d = src.index("def _delete_save(")
+    de = src.index("\n\ndef ", d + 1)
+    assert "literal_text_msg(_save_display_name(path))" in src[d:de]
 
 
 def test_rename_replay_appends_txt_suffix():

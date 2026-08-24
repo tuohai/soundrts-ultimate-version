@@ -246,7 +246,9 @@ class soldier
 is_huntable 1
 herdable 1
 claimable 1
-claim_range 12000
+; AoE2 DE Search Radius ≈ 4 tiles (not a full square / 12000).
+; Claim check is edge-to-edge: claim_range + both collision radii.
+claim_range 4000
 flee_on_hit 1
 wander_range 12000
 food_deposit food_carcass

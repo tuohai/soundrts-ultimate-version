@@ -168,7 +168,7 @@ Propriedades dos animais
    * - ``claimable 1``
      - em neutro, qualquer unidade não neutra próxima o reivindica (ovelha AoE2); independente de ``can_herd``
    * - ``claim_range``
-     - distância de reivindicação em mm (``0`` = só a mesma casa; ovelhas aoe2 ``12000``)
+     - distância de reivindicação em mm (``0`` = só a mesma casa; ovelhas ``4000`` ≈ 4 tiles AoE2 DE)
    * - ``food_deposit``
      - tipo de depósito de carcaça na morte
    * - ``food_deposit_qty``

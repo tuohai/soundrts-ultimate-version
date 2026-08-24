@@ -3,6 +3,22 @@ Note di rilascio
 
 .. contents::
 
+1.4.8.1
+--------
+
+**Miglioramento: raggio di reclamo delle pecore allineato ad AoE2 DE (4 m + raggi di collisione)**
+
+- **Problema**: le pecore usavano ``claim_range 12000`` (un intero quadrato da 12 m), ben oltre il raggio di ricerca DE (~4 caselle). Il quadrato da 12 m è una cella di navigazione per il gioco senza vista; le coordinate restano continue, circa 1 m per casella. Il reclamo confrontava solo i centri, senza raggi di collisione.
+- **Cambio**: le pecore usano ``claim_range 4000`` (~4 m). Reclamo/furto è bordo-bordo: distanza tra centri ≤ ``claim_range`` + entrambi i ``radius`` (175 mm ciascuno se c’è collisione).
+- **Ambito**: rules di base e pecore aoe2; tutto il bestiame ``claimable`` con ``claim_range``.
+
+**Correzione: i nomi numerici di salvataggi/replay venivano letti come ID di tts.txt**
+
+- **Problema**: rinominare un salvataggio in ``1`` diceva «sei» / «you are» (id 1 di tts.txt) invece del numero 1. Stesso buco nei replay.
+- **Cambio**: i nomi scelti dal giocatore (salvataggi e replay, conferma di cancellazione inclusa) usano ``literal_text_msg``. I nomi automatici ``replayN_timestamp`` e i vecchi file solo con timestamp lungo continuano a leggere ora e indice.
+- **Ambito**: menu carica partita e replay.
+
+
 1.4.8.0
 --------
 
