@@ -1088,8 +1088,9 @@ Economy (since 1.4.0.x)
 | ``carry_capacity`` | continuous 运载上限；0 则回退为单次 ``gather_qty`` |
 | ``carry_capacity_<类型>`` | 按矿床/建筑类型覆盖运载（如猎物尸体） |
 | ``gather_rate`` / ``gather_rate_<类型>`` | continuous 每秒采集量；未设则用 qty÷time |
+| ``gather_from_shore`` | 矿床为 ``1`` 时，地面工人可从**相邻陆格**采集水路矿床（不必上船）。渔船仍在同格水上采集。地图把矿床放在 ``water`` 格上即可。 |
 
-科技可用 ``effect bonus carry_capacity N`` 提高运载（如独轮车）。``gather_time_*`` 百分比加成在 continuous 下会换算为更快的有效速率；键名对应矿床 ``type_name``（如 ``gather_time_food_livestock`` 与 ``gather_time_food_carcass``），可把牧羊与打猎文明加成拆开，无需在引擎硬编码文明名。
+科技可用 ``effect bonus carry_capacity N`` 提高运载（如独轮车）。``gather_time_*`` 百分比加成在 continuous 下会换算为更快的有效速率；键名对应矿床 ``type_name``（如 ``gather_time_food_livestock`` 与 ``gather_time_food_carcass``），可把牧羊与打猎文明加成拆开，无需在引擎硬编码文明名。随机地图：``rmg_deposit 0`` 避免该矿床抢占资源槽默认关键字；``rmg_water 1`` 把矿床撒在水域内部。
 
 市场机制（自 1.4.6.9）
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -1904,6 +1905,21 @@ style
 ------
 
 样式定义在 "ui/style.txt" 以及 "style.txt" 的本地化版本中。
+
+采集、建造、修理与入库音（自 1.4.8.1 / 1.4.8.2）
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+采集/建造/修理循环音写在**工人**上：``noise_when_exploiting_*``、``noise_when_building``，修理可另写 ``noise_when_repairing``。立体声坐标用矿床或建筑。工地有农民施工时不再叠播工地自己的锤子声。
+
+入库一击音：``store_resource1``、``store_resource2``…（与 ``resource1`` 金/木/食物/石料对齐）。**不要**写 ``store_resource_0``。字段可写在农民/渔船 **或** 仓库建筑；两边都写时用工人那条。立体声仍从仓库播出。
+
+::
+
+    def peasant
+    store_resource1 1041
+    store_resource2 1042
+    store_resource3 1043
+    store_resource4 1044
 
 Ctrl+F2 俯视图：图标与单位动画（自 1.4.6.1）
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

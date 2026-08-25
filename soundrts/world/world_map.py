@@ -533,6 +533,8 @@ class WorldMapMixin:
             start_data.append(neutral)
         if population:
             start_data.append(population)
+        from .world_core import set_start_slot_square
+        set_start_slot_square(start_data, sq)
         starts.append(start_data)
 
     def _add_start(self, w, words):
@@ -646,10 +648,18 @@ class WorldMapMixin:
                 self.players_starts[n_idx - 1] = [built[0], built[1], triggers]
                 if len(built) >= 4 and isinstance(built[3], bool):
                     self.players_starts[n_idx - 1].append(built[3])
-                from .world_core import start_population_bonus
+                from .world_core import (
+                    set_start_slot_square,
+                    start_population_bonus,
+                    start_slot_square,
+                )
                 pop = start_population_bonus(built)
                 if pop:
                     self.players_starts[n_idx - 1].append(pop)
+                set_start_slot_square(
+                    self.players_starts[n_idx - 1],
+                    start_slot_square(built) or pad_sq,
+                )
                 continue
             sq = override
             # 补齐到长度 == n_idx 的 slot 数量
@@ -672,6 +682,8 @@ class WorldMapMixin:
                         # 例如 [None, "-tech", None] 这种禁用条目原样保留
                         rewritten.append(item)
                 slot[1] = rewritten
+            from .world_core import set_start_slot_square
+            set_start_slot_square(slot, sq)
 
     def _list_to_tree(self, words):
         # 预处理：标记和保留引号内的文本

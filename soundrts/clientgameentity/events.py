@@ -350,8 +350,10 @@ class EntityViewEvents:
         # 检查是否需要停止战斗音乐
         self._check_battle_status_for_music()
 
-    def on_store(self, resource_type):
-        self.launch_event_style(f"store_{resource_type}")
+    def on_store(self, resource_type, worker_type=None, *unused):
+        st = self.store_event_style(resource_type, worker_type)
+        if st:
+            self.launch_event(random.choice(st))
         try:
             if self.interface.display_is_active:
                 self.interface.grid_view.display_store(self, resource_type)

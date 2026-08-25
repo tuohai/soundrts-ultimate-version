@@ -82,6 +82,27 @@ def test_maintain_naval_requests_shipyard_on_m3(monkeypatch):
     assert calls == [(1, "shipyard")]
 
 
+def test_maintain_naval_beginner_requests_dock_not_navy(monkeypatch):
+    world = _load_m3_world()
+    comp = Computer.__new__(Computer)
+    comp.world = world
+    comp.AI_type = "beginner"
+    comp._workers = []
+    comp._type_discovery_cache = None
+    comp.nb = lambda name: 0
+    comp.future_nb = lambda name: 0
+    calls = []
+    comp.get = lambda n, t: calls.append((n, t)) or True
+    comp._try_maintain_naval()
+    assert calls == [(1, "shipyard")]
+
+    calls.clear()
+    comp.nb = lambda name: 1 if name == "shipyard" else 0
+    comp._water_worker_type_names = lambda: ["fishing_ship"]
+    comp._try_maintain_naval()
+    assert calls == [(2, "fishing_ship")]
+
+
 def test_maintain_naval_requests_boats_when_dock_ready(monkeypatch):
     world = _load_m3_world()
     comp = Computer.__new__(Computer)

@@ -51,6 +51,11 @@ terrain ocean a4 a9 b4 b9 c9 d1 d2 d3 d11 d12 e7 f5 g8 h6 i1 i2 i10 i11 i12 j4 k
 terrain sea a5 a6 a7 a8 b5 b6 b7 b8 c7 c8 d4 d5 d7 d8 d9 e1 e2 e3 e4 e5 e8 e9 e11 e12 f1 f2 f3 f4 f11 f12 g1 g2 g9 g10 g11 g12 h1 h2 h4 h5 h8 h9 h10 h11 h12 i4 i5 i6 i8 i9 j5 j6 k5 k6 k7 k8 l5 l6 l7 l8
 high_grounds a1 l1 a12 l12
 water a4 a5 a6 a7 a8 a9 b4 b5 b6 b7 b8 b9 c4 c5 c7 c8 c9 d1 d2 d3 d4 d5 d6 d7 d8 d9 d10 d11 d12 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 f1 f2 f3 f4 f5 f8 f9 f11 f12 g1 g2 g4 g5 g8 g9 g10 g11 g12 h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 i1 i2 i3 i4 i5 i6 i7 i8 i9 i10 i11 i12 j4 j5 j6 j8 j9 k4 k5 k6 k7 k8 k9 l4 l5 l6 l7 l8 l9
+
+; AoE2: shore / deep fish on water
+shore_fish 200 a4 b9 d2 e7 g2 i1 i12 k7
+deep_fish 225 a5 d4 e4 f4 h4 i5
+
 ground c4 c5 c6 d6 d10 e6 e10 f8 f9 f10 g3 g4 g5 h3 h7 i3 i7 j7 j8 j9
 no_air 
 ;speed 0.0 0.25 a4 a5 a6 a7 a8 a9 b4 b5 b6 b7 b8 b9 c7 c8 c9 d1 d2 d3 d4 d5 d7 d8 d9 d11 d12 e1 e2 e3 e4 e5 e7 e8 e9 e11 e12 f1 f2 f3 f4 f5 f11 f12 g1 g2 g8 g9 g10 g11 g12 h1 h2 h4 h5 h6 h8 h9 h10 h11 h12 i1 i2 i4 i5 i6 i8 i9 i10 i11 i12 j4 j5 j6 k4 k5 k6 k7 k8 k9 l4 l5 l6 l7 l8 l9

@@ -63,7 +63,7 @@ Scaffold restrictions
 - Only one temporary exit to the **shore square where the order was given**; **no** direct scaffold-to-scaffold steps.
 - Passage sync runs only for **finished`` ``bridge_terrain``**, not for bare scaffolds.
 - Water ``BuildingSite`` units are **not** drowned (``is_a_building`` exempt).
-- Hammer sounds play on the **site** (``buildingsite`` ``noise_when_building``), not on the worker.
+- Hammer sounds: define ``noise_when_building`` on the **worker**; stereo plays at the **site**. A site with active builders does not stack its own hammer loop.
 
 Voice & footsteps (``style.txt`` / ``tts.txt``)
 ------------------------------------------------

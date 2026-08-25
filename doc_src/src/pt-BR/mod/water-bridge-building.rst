@@ -82,8 +82,7 @@ Restrições de andaime
   não para andaimes vazios.
 - Unidades ``BuildingSite`` aquáticas **não** afogam (``is_a_building``
   isento).
-- Sons de martelo tocam no **canteiro** (``buildingsite``
-  ``noise_when_building``), não no trabalhador.
+- Sons de martelo: defina ``noise_when_building`` no **trabalhador**; o estéreo toca no **canteiro**. Um canteiro com construtores não sobrepõe o próprio ciclo de martelo.
 
 Voz e passos (``style.txt`` / ``tts.txt``)
 ------------------------------------------

@@ -64,6 +64,9 @@ def test_feudal_group_excludes_civ_archery_shells(aoe2_loaded):
     assert "aztec_archery" not in names
     assert "portuguese_archery" not in names
     assert "chinese_archery" not in names
+    # DE Dark Age dock / fish trap must not count toward the Castle Age 2-building gate
+    assert "shipyard" not in names
+    assert "fish_trap" not in names
 
 
 def test_z5_aztec_one_archery_not_enough_for_castle_age(aoe2_loaded):

@@ -78,6 +78,32 @@ class GatherOrder(BasicOrder):
         self.unit.notify("order_ok")
         self.mode = None
 
+    def _gather_near_enough(self):
+        """Same-square contact, or standing on adjacent land for shore deposits."""
+        target = self.target
+        if target is None:
+            return False
+        if self.unit._near_enough(target):
+            return True
+        from ..worldunit.worldworker import Worker
+
+        stand = Worker.gather_stand_place(self.unit, target)
+        unit_place = getattr(self.unit, "place", None)
+        target_place = Worker._gather_target_place(target)
+        return stand is not None and unit_place is stand and stand is not target_place
+
+    def _gather_move_target(self):
+        from ..worldunit.worldworker import Worker
+
+        target = self.target
+        stand = Worker.gather_stand_place(self.unit, target)
+        if stand is None:
+            return target
+        target_place = Worker._gather_target_place(target)
+        if stand is target_place:
+            return target
+        return stand
+
     def _store_cargo(self):
         # 检查cargo是否有效
         if self.unit.cargo is None:
@@ -172,7 +198,7 @@ class GatherOrder(BasicOrder):
                 self.mark_as_complete()
                 self.unit.deploy()
             return
-        if not self.unit._near_enough(self.target):
+        if not self._gather_near_enough():
             self.mode = "go_gather"
             self.unit.stop()
             self._cont_last_t = None
@@ -308,7 +334,9 @@ class GatherOrder(BasicOrder):
             # 使用标准的陆地单位存储逻辑
             if self.unit._near_enough(self.storage):
                 self.mode = "store"
-                self.storage.notify("store,%s" % self.unit.cargo[0])
+                self.storage.notify(
+                    "store,%s,%s" % (self.unit.cargo[0], self.unit.type_name)
+                )
                 self.delay = self.unit.place.world.time + 1000  # 1 second
                 self.unit.stop()
             elif self.unit.is_idle:
@@ -389,7 +417,7 @@ class GatherOrder(BasicOrder):
         self._store_cargo()
         
         # 通知资源已存储（音效在仓库位置播放）
-        storage.notify("store,%s" % resource_type)
+        storage.notify("store,%s,%s" % (resource_type, self.unit.type_name))
         
         # 返回采集模式
         self.mode = "go_gather"
@@ -567,7 +595,9 @@ class GatherOrder(BasicOrder):
                 self.unit.start_moving_to(self.storage)
             elif self.unit._near_enough(self.storage):
                 self.mode = "store"
-                self.storage.notify("store,%s" % self.unit.cargo[0])
+                self.storage.notify(
+                    "store,%s,%s" % (self.unit.cargo[0], self.unit.type_name)
+                )
                 self.delay = self.unit.place.world.time + 1000  # 1 second
                 self.unit.stop()
             elif self.unit.is_idle:
@@ -585,7 +615,7 @@ class GatherOrder(BasicOrder):
             elif not _target_has_gatherable_resource(self.target):
                 self.mark_as_complete()
                 self.unit.deploy()
-            elif self.unit._near_enough(self.target):
+            elif self._gather_near_enough():
                 from ..world_extractor import gather_slot_available
 
                 # StarCraft gas: only gather_slots workers extract at once; extras wait.
@@ -609,7 +639,7 @@ class GatherOrder(BasicOrder):
                     gather_time = self.unit.get_gather_time(self.target.resource_type, self.target) * 1000
                     self.delay = self.unit.place.world.time + gather_time
             elif self.unit.is_idle:
-                self.move_to_or_fail(self.target)
+                self.move_to_or_fail(self._gather_move_target())
         elif self.mode == "gather":
             continuous = False
             try:
@@ -622,7 +652,7 @@ class GatherOrder(BasicOrder):
                 self.mark_as_complete()
             elif not _target_has_gatherable_resource(self.target):
                 self.mark_as_complete()
-            elif not self.unit._near_enough(self.target):
+            elif not self._gather_near_enough():
                 self.mode = "go_gather"
                 self.unit.stop()
             elif self.unit.place.world.time > self.delay:

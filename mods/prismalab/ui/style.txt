@@ -552,8 +552,8 @@ noise_when_exploiting_goldmine repeat 1.6 mining1
 noise_when_exploiting_wood repeat 1.5 cutingwood1 cutingwood2 cutingwood3 cutingwood4
 noise_when_building repeat 4 1046 1048 1049
 mdg_hit 1008
-store_resource_0 1099
-store_resource_1 1098
+store_resource1 1099
+store_resource2 1098
 keyboard worker
 shortcut p
 
@@ -683,8 +683,8 @@ noise_when_building repeat 4 building1 building2 building3
 attack_hit 1008
 attack if_me friend_ship_attack1 friend_ship_attack2 friend_ship_attack3 else enemi_knight_attack1
 death boatdeath
-store_resource_0 1099
-store_resource_1 1098
+store_resource1 1099
+store_resource2 1098
 keyboard worker
 
 def destroyer

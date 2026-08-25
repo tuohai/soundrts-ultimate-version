@@ -121,6 +121,8 @@
 8324 Carcassa
 
 8330 Carcassa di bestiame
+8332 Pesce costiero
+8333 Pesce d'altura
 
 8120 Milizia
 8121 Fanteria scelta

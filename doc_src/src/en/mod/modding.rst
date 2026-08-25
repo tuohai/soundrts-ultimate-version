@@ -1103,8 +1103,9 @@ Two gather mechanisms are available for mods:
 | ``carry_capacity`` | continuous carry limit; ``0`` falls back to one ``gather_qty`` |
 | ``carry_capacity_<type>`` | per-deposit/building override |
 | ``gather_rate`` / ``gather_rate_<type>`` | continuous resources/sec; else ``qty/time`` |
+| ``gather_from_shore`` | On a deposit, ``1`` lets ground workers gather from an **adjacent land** square (no boarding). Water workers still gather on the water square. Place the deposit on a ``water`` square. |
 
-Use ``effect bonus carry_capacity N`` for wheelbarrow-style upgrades. Percent ``gather_time_*`` bonuses raise the effective continuous rate. Keys match deposit ``type_name`` (e.g. ``gather_time_food_livestock`` vs ``gather_time_food_carcass``), so shepherd and hunter civ bonuses can target different carcasses without hardcoding civ names.
+Use ``effect bonus carry_capacity N`` for wheelbarrow-style upgrades. Percent ``gather_time_*`` bonuses raise the effective continuous rate. Keys match deposit ``type_name`` (e.g. ``gather_time_food_livestock`` vs ``gather_time_food_carcass``), so shepherd and hunter civ bonuses can target different carcasses without hardcoding civ names. Random maps: ``rmg_deposit 0`` keeps the deposit from stealing a resource-slot keyword; ``rmg_water 1`` scatters it on interior water.
 
 Market system (since 1.4.6.9)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1836,6 +1837,21 @@ style
 ------
 
 The style is defined in "ui/style.txt" and in the localized version of "style.txt".
+
+Activity and store sounds (since 1.4.8.1 / 1.4.8.2)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Gather / build / repair loops go on the **worker**: ``noise_when_exploiting_*``, ``noise_when_building``, optional ``noise_when_repairing``. Stereo uses the deposit or building. A construction site with workers no longer stacks its own hammer loop.
+
+Store dump one-shots: ``store_resource1``, ``store_resource2``, … (aligned with ``resource1`` gold/wood/food/stone). Do **not** use ``store_resource_0``. The key may be on the villager / fishing ship **or** the warehouse; if both are set, the worker wins. Playback is always at the warehouse.
+
+::
+
+    def peasant
+    store_resource1 1041
+    store_resource2 1042
+    store_resource3 1043
+    store_resource4 1044
 
 Ctrl+F2 map view: icons and unit animation (since 1.4.6.1)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

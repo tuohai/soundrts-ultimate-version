@@ -63,7 +63,7 @@ Restrizioni dell’impalcatura
 - Una sola uscita temporanea verso la **casella di riva da cui è stato dato l’ordine**; **nessun** passo diretto impalcatura-impalcatura.
 - La sincronizzazione dei passaggi gira solo per ``bridge_terrain`` **finito**, non per impalcature nude.
 - Le unità ``BuildingSite`` sull’acqua **non** annegono (esenzione ``is_a_building``).
-- I suoni del martello suonano sul **cantiere** (``buildingsite`` ``noise_when_building``), non sul lavoratore.
+- I suoni del martello si definiscono sul **lavoratore** (``noise_when_building``); lo stereo suona sul **cantiere**. Un cantiere con costruttori non sovrappone il proprio loop di martello.
 
 Voce e passi (``style.txt`` / ``tts.txt``)
 ------------------------------------------

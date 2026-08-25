@@ -316,6 +316,8 @@ The starting units and buildings will be created in these squares.
 
 ``starting_squares`` only fixes which squares each spawn slot uses; by default it does not fix which joining human gets which slot (see random_starts_ and player_start_).
 
+If the map omits ``starting_units`` / ``starting_resources``, race defaults from ``rules.txt`` are placed on those squares. Since 1.4.8.2, ``random_starts 1`` still shuffles those squares. Previously an empty slot dropped the square, so player 1 always spawned on the first listed square (Age of Empires II DE multiplayer maps were affected).
+
 .. _random_starts:
 
 random_starts
@@ -354,7 +356,7 @@ Spawn semantics: player vs player_start
 
 Both can place units/buildings on specific squares (e.g. ``a1``), but they do not mean the same kind of "fixed spawn":
 
-- ``player`` / ``starting_squares``: define spawn slots and their contents. Square coordinates are fixed, but with ``random_starts 1`` which human gets which slot is shuffled.
+- ``player`` / ``starting_squares``: define spawn slots and their contents. Square coordinates are fixed, but with ``random_starts 1`` which human gets which slot is shuffled. Maps that only list ``starting_squares`` and take race default units also shuffle (since 1.4.8.2).
 - ``player_start``: pins player N to slot N (and can change that slot's square), regardless of ``random_starts``.
 
 Common patterns:

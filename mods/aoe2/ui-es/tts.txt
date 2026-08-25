@@ -121,6 +121,8 @@
 8324 Cadáver
 
 8330 Cadáver de ganado
+8332 Pez de costa
+8333 Pez de alta mar
 
 8120 Milicia
 8121 Hombre de armas

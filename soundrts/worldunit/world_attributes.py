@@ -229,10 +229,8 @@ class CreatureAttributes(Entity):
             o._cached_has_mode = hasattr(o, "mode")
         
         if o._cached_has_mode and o.mode == "build":
-            target = getattr(o, "target", None)
-            # 施工声由 BuildingSite 在工地播放（岸建/水上脚手架等）
-            if getattr(target, "type_name", None) == "buildingsite":
-                return
+            # Hammer SFX uses the worker's noise_when_building, spatialized
+            # on the site / building (see EntityView.noise_position).
             return "building"
         if o._cached_has_mode and o.mode == "gather":
             # 缓存target的type_name属性检查 - 添加空值检查

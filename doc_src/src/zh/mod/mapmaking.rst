@@ -311,6 +311,8 @@ starting_squares
 
 ``starting_squares`` 只固定每个出生槽位里的单位落在哪些格子；默认情况下并不固定“第几个加入的真人玩家拿哪个槽位”（见 random_starts_ 与 player_start_）。
 
+若地图没有写 ``starting_units`` / ``starting_resources``，会使用 ``rules.txt`` 里阵营的默认起始单位和资源，并放到对应出生格。自 1.4.8.2 起，``random_starts 1`` 仍会在这些格子之间洗牌；此前空槽会丢掉格子信息，导致第 1 个玩家总是出现在列表第一格（帝国时代2决定版模组多人图受影响）。
+
 .. _random_starts:
 
 random_starts
@@ -355,7 +357,7 @@ player 与 player_start 的出生点语义
 
 两者都能把单位/建筑生成在指定格子（如 ``a1``），但“固定”的含义不同：
 
-- ``player`` / ``starting_squares``：定义出生槽位及其内容；单位坐标固定，但哪个真人玩家拿哪个槽位在 ``random_starts 1`` 时会被随机分配。
+- ``player`` / ``starting_squares``：定义出生槽位及其内容；单位坐标固定，但哪个真人玩家拿哪个槽位在 ``random_starts 1`` 时会被随机分配。仅写 ``starting_squares``、起始单位来自阵营规则时（自 1.4.8.2）同样会洗牌。
 - ``player_start``：把第 N 个玩家钉到第 N 个槽位（并可改该槽位的格子），无视 ``random_starts`` 洗牌。
 
 常见写法：

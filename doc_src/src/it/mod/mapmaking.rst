@@ -315,6 +315,8 @@ Le unità e gli edifici iniziali verranno creati in queste celle.
 
 ``starting_squares`` fissa solo quali celle usa ogni slot di generazione; per impostazione predefinita non fissa quale umano che si unisce ottiene quale slot (vedere random_starts_ e player_start_).
 
+Se la mappa omette ``starting_units`` / ``starting_resources``, i valori della razza in ``rules.txt`` vengono piazzati su quelle celle. Da 1.4.8.2, ``random_starts 1`` mescola ancora quelle celle. Prima uno slot vuoto perdeva la cella, così il giocatore 1 nasceva sempre sulla prima dell’elenco (le mappe multiplayer di Age of Empires II DE ne risentivano).
+
 .. _random_starts:
 
 random_starts
@@ -353,7 +355,7 @@ Semantica di generazione: player vs player_start
 
 Entrambi possono posizionare unità/edifici su celle specifiche (ad es. ``a1``), ma non indicano lo stesso tipo di "generazione fissa":
 
-- ``player`` / ``starting_squares``: definiscono gli slot di generazione e i loro contenuti. Le coordinate delle celle sono fisse, ma con ``random_starts 1`` quale umano ottiene quale slot viene mescolato.
+- ``player`` / ``starting_squares``: definiscono gli slot di generazione e i loro contenuti. Le coordinate delle celle sono fisse, ma con ``random_starts 1`` quale umano ottiene quale slot viene mescolato. Anche le mappe che elencano solo ``starting_squares`` e usano le unità predefinite della razza vengono mescolate (da 1.4.8.2).
 - ``player_start``: fissa il giocatore N allo slot N (e può cambiare la cella di quello slot), indipendentemente da ``random_starts``.
 
 Pattern comuni:

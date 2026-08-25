@@ -4,6 +4,28 @@ Notas de la versión
 
 .. contents::
 
+1.4.8.2
+-------
+
+**aoe2: pesca según rules (peces de orilla / mar profundo)**
+
+- **Problema**: el mod DE solo tenía viveros de barco pesquero. No había yacimientos de orilla ni de mar profundo; los aldeanos no pescaban desde tierra. El muelle y el vivero eran feudales, así que no había pesca en Edad Oscura.
+- **Cambio**: un yacimiento con ``gather_from_shore 1`` lo recolectan trabajadores de tierra en una casilla terrestre adyacente. aoe2: ``shore_fish`` (200 comida) y ``deep_fish`` (225, solo barcos). Redes de enmalle y el ritmo japonés cubren las tres fuentes. Muelle y vivero en Edad Oscura (transporte / galera / nao mercantil siguen feudales).
+- **Alcance**: recolección/IA/mapas aleatorios; rules aoe2 y mapas de agua.
+
+**Corrección: recolectar / construir / reparar / depositar suenan en el objetivo**
+
+- **Problema**: los bucles iban en el aldeano, así que el estéreo sonaba en el trabajador. La pesca de orilla sonaba en tierra.
+- **Cambio**: ``noise_when_exploiting_*`` / ``noise_when_building`` (opcional ``noise_when_repairing``) en el trabajador; coordenadas en el yacimiento o edificio. ``store_resource1`` … en aldeano/barco **o** almacén; si hay ambas, gana el trabajador. Estéreo en el almacén. ``store_resource_0`` está obsoleto.
+- **Alcance**: todos los mods.
+
+**Corrección: los mapas con solo starting_squares siempre usaban un nacimiento fijo**
+
+- **Problema**: los mapas multijugador de AoE2 DE listan ``starting_squares`` y omiten ``starting_units`` (valores de la raza). Los huecos vacíos perdían la casilla, así que el centro urbano / aldeanos de la facción usaban siempre ``starting_squares[índice_de_jugador]``. ``random_starts 1`` no barajaba.
+- **Cambio**: cada ranura de nacimiento recuerda su casilla. Con inicios aleatorios por defecto se barajan esas casillas y los valores de la raza caen en la sorteada. ``random_starts 0`` sigue el orden de la lista.
+- **Alcance**: todos los mapas que usan ``starting_squares`` sin unidades por ranura (incluido aoe2).
+
+
 1.4.8.1
 -------
 

@@ -121,6 +121,8 @@
 8324 Xác thú
 
 8330 Xác gia súc
+8332 Cá ven bờ
+8333 Cá biển sâu
 
 8120 Dân binh
 8121 Quân binh

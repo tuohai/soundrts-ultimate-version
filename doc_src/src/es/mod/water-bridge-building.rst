@@ -62,7 +62,7 @@ Restricciones del andamiaje
 - Solo una salida temporal a la **casilla de orilla donde se dio la orden**; **sin** pasos directos andamiaje-a-andamiaje.
 - La sincronización de paso solo corre para **``bridge_terrain`` terminado**, no para andamiajes desnudos.
 - Las unidades ``BuildingSite`` de agua **no** se ahogan (exentas por ``is_a_building``).
-- Los sonidos de martillo se reproducen en la **obra** (``buildingsite`` ``noise_when_building``), no en el trabajador.
+- Los sonidos de martillo se definen en el **trabajador** (``noise_when_building``); el estéreo suena en la **obra**. Una obra con constructores no superpone su propio bucle de martillo.
 
 Voz y pasos (``style.txt`` / ``tts.txt``)
 -----------------------------------------

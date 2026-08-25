@@ -1505,6 +1505,9 @@ class Rules(_Definitions):
         "claimable",  # 中立时可被非中立单位靠近自动归属（帝国 2 式领羊）
         "claim_range",  # 自动归属距离（毫米；0=仅同格；判定含双方碰撞半径）
         "wander_range",  # 野生动物徘徊的最大半径（毫米）
+        "gather_from_shore",  # 矿床：地面工人可从相邻陆格采集水路资源（岸边鱼）
+        "rmg_deposit",  # 随机地图：0=不作为该资源槽的默认矿床关键字
+        "rmg_water",  # 随机地图：1=放在水域内部（深海鱼）
     
     }
     precision_properties = _precision_properties_extended
@@ -1667,7 +1670,7 @@ class Rules(_Definitions):
             targets = list(groups[-1][1] or [])
         entry["phase_bonus_targets"] = targets
         entry["phase_targets"] = targets
-    _RULES_ONLY_PROPERTIES = frozenset({"square_terrain"})
+    _RULES_ONLY_PROPERTIES = frozenset({"square_terrain", "rmg_deposit", "rmg_water"})
 
     def _migrate_legacy_projectile_delay(self):
         """将 mdg_delay/rdg_delay/projectile_speed 迁到分路 mdg_/rdg_projectile_speed。

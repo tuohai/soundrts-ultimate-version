@@ -222,6 +222,7 @@ class WorldObjectsMixin:
     def populate_map(self, clients, random_starts=True, equivalents=False):
         # 确保有足够的起始位置
         overrides = getattr(self, "player_start_overrides", None) or {}
+        shuffle_starts = bool(getattr(self, "random_starts", 1)) and bool(random_starts)
         if len(clients) > len(self.players_starts):
             # 如果客户端数量超过起始位置数量，使用非随机模式并重复使用起始位置
             from ..lib.log import warning
@@ -242,7 +243,7 @@ class WorldObjectsMixin:
                 i for i in range(len(clients)) if i not in pinned_client_idxs
             ]
             n_to_pick = min(len(remaining_slot_idxs), len(unpinned_client_idxs))
-            if self.random_starts:
+            if shuffle_starts:
                 chosen = self.random.sample(remaining_slot_idxs, n_to_pick)
             else:
                 chosen = remaining_slot_idxs[:n_to_pick]
@@ -261,7 +262,7 @@ class WorldObjectsMixin:
                         "fallback to players_starts[0]" % i
                     )
                     players_starts[i] = self.players_starts[0] if self.players_starts else None
-        elif self.random_starts and len(clients) <= len(self.players_starts):
+        elif shuffle_starts and len(clients) <= len(self.players_starts):
             players_starts = self.random.sample(self.players_starts, len(clients))
         else:
             players_starts = self.players_starts[:len(clients)]
@@ -362,13 +363,8 @@ class WorldObjectsMixin:
             current_resources = current_start[0] if len(current_start) >= 1 else []
             current_units = current_start[1] if len(current_start) >= 2 else []
 
-            # 确定该玩家的首选起始落点
-            square_for_player = None
-            # 若已有单位条目中带有坐标，沿用该坐标
-            for item in current_units:
-                if isinstance(item, (list, tuple)) and item and item[0]:
-                    square_for_player = item[0]
-                    break
+            from .world_core import start_slot_square
+            square_for_player = start_slot_square(current_start)
             # 否则回退到 starting_squares 的第 idx 个
             if not square_for_player and idx < len(self.starting_squares):
                 square_for_player = self.starting_squares[idx]
@@ -385,9 +381,11 @@ class WorldObjectsMixin:
                 new_resources = default_start[0] if need_resources_default else current_resources
                 # 单位：若需回退则替换；否则保留地图值
                 new_units = default_start[1] if need_units_default else current_units
-                # 触发器保持不变
+                # 触发器保持不变；人口加成 / 出生格标记等附加字段也要保留
                 new_triggers = current_start[2] if len(current_start) >= 3 else []
                 starts[idx] = [new_resources, new_units, new_triggers]
+                if len(current_start) > 3:
+                    starts[idx].extend(current_start[3:])
 
         for player, start in zip(self.players, starts):
             parsed_start = self.parse_start(start, player.faction, equivalents)

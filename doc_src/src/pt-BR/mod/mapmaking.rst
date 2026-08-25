@@ -315,6 +315,8 @@ As unidades e edifícios iniciais serão criados nesses quadrados.
 
 ``starting_squares`` apenas fixa quais quadrados cada slot de spawn usa; por padrão não fixa qual humano que entra recebe qual slot (veja random_starts_ e player_start_).
 
+Se o mapa omite ``starting_units`` / ``starting_resources``, as predefinições da raça em ``rules.txt`` são colocadas nessas casas. Desde 1.4.8.2, ``random_starts 1`` continua a baralhar essas casas. Antes um slot vazio perdia a casa, por isso o jogador 1 nascia sempre na primeira da lista (os mapas multiplayer de Age of Empires II DE eram afectados).
+
 .. _random_starts:
 
 random_starts
@@ -353,7 +355,7 @@ Semântica de spawn: player vs player_start
 
 Ambos podem colocar unidades/edifícios em quadrados específicos (por exemplo, ``a1``), mas não significam o mesmo tipo de "spawn fixo":
 
-- ``player`` / ``starting_squares``: definem os slots de spawn e seus conteúdos. As coordenadas dos quadrados são fixas, mas com ``random_starts 1`` qual humano recebe qual slot é embaralhado.
+- ``player`` / ``starting_squares``: definem os slots de spawn e seus conteúdos. As coordenadas dos quadrados são fixas, mas com ``random_starts 1`` qual humano recebe qual slot é embaralhado. Mapas que só listam ``starting_squares`` e usam unidades predefinidas da raça também baralham (desde 1.4.8.2).
 - ``player_start``: fixa o jogador N ao slot N (e pode alterar o quadrado daquele slot), independentemente de ``random_starts``.
 
 Padrões comuns:

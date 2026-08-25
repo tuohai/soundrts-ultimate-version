@@ -13,6 +13,7 @@ class Deposit(Entity):
     extraction_time = None  # 提取时间
     extraction_qty = None  # 提取量
     deposit_volume = 0  # 默认储量（萃取建筑建成时，地图 qty 为 1 则用此值）
+    gather_from_shore = 0  # 1=地面工人可从相邻陆格采集水路矿床（岸边鱼）
     type_name = "deposit"  # 添加type_name属性
     is_a = ()
     expanded_is_a = ()

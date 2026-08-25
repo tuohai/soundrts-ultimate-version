@@ -121,6 +121,8 @@
 8324 Carcaça
 
 8330 Carcaça de gado
+8332 Peixe costeiro
+8333 Peixe de alto-mar
 
 8120 Milícia
 8121 Homem de Armas

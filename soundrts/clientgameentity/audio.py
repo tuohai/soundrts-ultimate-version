@@ -14,6 +14,57 @@ from ..lib.sound import psounds, distance
 from .base import FOOTSTEP_LIMIT
 
 
+def store_style_attr_names(resource_type):
+    """Dump SFX key: ``store_resource1`` … (``store_resource_0`` is obsolete)."""
+    raw = "" if resource_type is None else str(resource_type)
+    idx = None
+    if raw:
+        try:
+            from ..definitions import rules
+
+            idx = rules.parse_resource_type(raw)
+        except Exception:
+            idx = None
+        if idx is None and raw.isdigit():
+            idx = int(raw)
+    if idx is None:
+        return []
+    return [f"store_resource{idx + 1}"]
+
+
+class _ActivityNoiseHost:
+    """Stereo origin for unit activity noise (idle/damaged stay on the unit).
+
+    Gather / build / repair loops use the deposit or building coordinates.
+    Buff noises keep using the unit view itself.
+    """
+
+    __slots__ = ("_view",)
+
+    def __init__(self, view):
+        self._view = view
+
+    def _xy(self):
+        getter = getattr(self._view, "noise_position", None)
+        if callable(getter):
+            pos = getter()
+            if pos is not None:
+                return pos
+        return self._view.x, self._view.y
+
+    @property
+    def x(self):
+        return self._xy()[0]
+
+    @property
+    def y(self):
+        return self._xy()[1]
+
+    @property
+    def fow(self):
+        return self._view.fow
+
+
 class EntityViewAudio:
     """EntityView的音效相关方法"""
     
@@ -206,17 +257,87 @@ class EntityViewAudio:
                 return st[2]
         return st
 
+    def style_for_type(self, type_name, attr):
+        if not type_name:
+            return None
+        st = style.get(type_name, attr, warn_if_not_found=False)
+        if st and st[0] == "if_me":
+            if self.player in self.interface.player.allied:
+                return st[1]
+            return st[2]
+        return st
+
+    def store_event_style(self, resource_type, worker_type=None):
+        """Worker style first (1.3.8.1), then this building; playback stays here."""
+        attrs = store_style_attr_names(resource_type)
+        if worker_type:
+            for attr in attrs:
+                st = self.style_for_type(worker_type, attr)
+                if st:
+                    return st
+        tn = getattr(self, "type_name", None)
+        for attr in attrs:
+            st = self.style_for_type(tn, attr)
+            if st:
+                return st
+        return None
+
+    def _order_target(self):
+        try:
+            orders = self.orders
+        except AttributeError:
+            return None
+        if not orders:
+            return None
+        return getattr(orders[0], "target", None)
+
+    def _target_noise_when_building(self):
+        target = self._order_target()
+        if target is None:
+            return None
+        tn = getattr(target, "type_name", None)
+        if tn == "buildingsite":
+            btype = getattr(target, "type", None)
+            st = self.style_for_type(
+                getattr(btype, "type_name", None), "noise_when_building"
+            )
+            if st:
+                return st
+        return self.style_for_type(tn, "noise_when_building")
+
     def _get_noise_style(self):
         # 缓存常用阈值，减少属性访问与除法开销
         activity = getattr(self, 'activity', None)
-        if activity:
-            if activity == "building" and self.type_name == "buildingsite":
-                building_type = getattr(getattr(self, "model", None), "type", None)
-                bt_name = getattr(building_type, "type_name", None)
-                if bt_name:
-                    st = style.get(bt_name, "noise_when_building", warn_if_not_found=False)
-                    if st:
-                        return st
+        if activity == "building" and self.type_name == "buildingsite":
+            model = getattr(self, "model", None)
+            has_builder = getattr(model, "_has_active_builder", None)
+            if callable(has_builder) and has_builder():
+                # Workers play hammer SFX spatialized on this site.
+                return None
+            building_type = getattr(model, "type", None)
+            bt_name = getattr(building_type, "type_name", None)
+            st = self.style_for_type(bt_name, "noise_when_building")
+            if st:
+                return st
+            st = self.get_style("noise_when_building")
+            if st:
+                return st
+        elif activity == "building":
+            try:
+                kw = getattr(self.orders[0], "keyword", None)
+            except (AttributeError, IndexError):
+                kw = None
+            if kw == "repair":
+                st = self.get_style("noise_when_repairing")
+                if st:
+                    return st
+            st = self.get_style("noise_when_building")
+            if st:
+                return st
+            st = self._target_noise_when_building()
+            if st:
+                return st
+        elif activity:
             st = self.get_style(f"noise_when_{activity}")
             if st:
                 return st
@@ -236,24 +357,52 @@ class EntityViewAudio:
                         return st
         return self.get_style("noise")
 
+    def noise_position(self):
+        """Metres for activity noise, or None to keep the unit.
+
+        Gather / build / repair loops sit on the deposit or building.
+        """
+        activity = getattr(self, "activity", None)
+        if not isinstance(activity, str):
+            return None
+        if not (activity.startswith("exploiting_") or activity == "building"):
+            return None
+        target = self._order_target()
+        if target is None:
+            return None
+        tid = getattr(target, "id", None)
+        dobjets = getattr(getattr(self, "interface", None), "dobjets", None) or {}
+        view = dobjets.get(tid) if tid is not None else None
+        if view is not None and view is not self:
+            x, y = getattr(view, "x", None), getattr(view, "y", None)
+            if x is not None and y is not None:
+                return x, y
+        wx = getattr(target, "x", None)
+        wy = getattr(target, "y", None)
+        if wx is None or wy is None:
+            return None
+        # World coords are millimetres; EntityView.x / .y are metres.
+        return wx / 1000.0, wy / 1000.0
+
     _noise = None
 
     def _set_noise(self, st):
         # 检查noise函数是否可用，防止序列化后函数变成None
         from ..animation import noise as noise_func
-        
+
+        host = _ActivityNoiseHost(self)
         if self._noise:
             if st is self._noise.style:
                 self._noise.update()
             else:
                 self._noise.stop()
                 try:
-                    self._noise = noise_func(self, st) if noise_func else None
+                    self._noise = noise_func(host, st) if noise_func else None
                 except (TypeError, AttributeError):
                     self._noise = None
         else:
             try:
-                self._noise = noise_func(self, st) if noise_func else None
+                self._noise = noise_func(host, st) if noise_func else None
             except (TypeError, AttributeError):
                 self._noise = None
 

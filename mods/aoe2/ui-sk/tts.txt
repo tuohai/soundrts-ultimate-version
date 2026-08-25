@@ -121,6 +121,8 @@
 8324 Mršina
 
 8330 Mršina dobytka
+8332 Pobrežná ryba
+8333 Hlbinná ryba
 
 8120 Straż obywatelska
 8121 Piechur z mieczem

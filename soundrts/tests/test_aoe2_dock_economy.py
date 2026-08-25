@@ -45,9 +45,13 @@ def test_aoe2_dock_economy_rules():
         "def shipwright",
         "is_dock 1",
         "can_train fishing_ship trade_cog",
-        "can_research gillnets shipwright",
+        "gillnets shipwright careening dry_dock",
         "can_build fish_trap",
+        "can_gather_deposit shore_fish deep_fish",
         "gather_time_fish_trap -20%",
+        "gather_from_shore 1",
+        "def shore_fish",
+        "def deep_fish",
         "resource_volume_max 715",
     ):
         assert s in text, s
@@ -85,6 +89,21 @@ def test_aoe2_fish_trap_keeps_sight_range_1():
         assert ft is not None
         assert ft.sight_range == 1 * PRECISION
         assert not getattr(ft, "bonus_height", 0)
+        shore = rules.unit_class("shore_fish")
+        deep = rules.unit_class("deep_fish")
+        ship = rules.unit_class("fishing_ship")
+        villager = rules.unit_class("peasant")
+        assert shore is not None and getattr(shore, "gather_from_shore", 0)
+        assert deep is not None and not getattr(deep, "gather_from_shore", 0)
+        assert "shore_fish" in (getattr(ship, "can_gather_deposit", None) or [])
+        assert "deep_fish" in (getattr(ship, "can_gather_deposit", None) or [])
+        assert "shore_fish" in (getattr(villager, "can_gather_deposit", None) or [])
+        assert "deep_fish" not in (getattr(villager, "can_gather_deposit", None) or [])
+        req_ft = list(getattr(ft, "requirements", ()) or ())
+        yard = rules.unit_class("shipyard")
+        req_yard = list(getattr(yard, "requirements", ()) or ())
+        assert "dark_age" in req_ft and "feudal_age" not in req_ft
+        assert "dark_age" in req_yard and "feudal_age" not in req_yard
     finally:
         config.mods = old
         res.set_mods(old or "")

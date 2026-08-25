@@ -632,6 +632,18 @@ def _deposit_map_keyword(resource_slot: str) -> str | None:
                 rt = rt[0] if rt else None
             if rt != resource_slot:
                 continue
+            if _is_truthy_rules_flag(rules.get(name, "gather_from_shore", 0)):
+                continue
+            if _is_truthy_rules_flag(rules.get(name, "rmg_water", 0)):
+                continue
+            rmg = rules.get(name, "rmg_deposit", 1)
+            if isinstance(rmg, list):
+                rmg = rmg[0] if rmg else 1
+            try:
+                if int(rmg) == 0:
+                    continue
+            except (TypeError, ValueError):
+                pass
             keyword = name + "s"
             if name in _FALLBACK_DEPOSIT_NAMES:
                 fallback = keyword
@@ -1426,6 +1438,86 @@ def _append_resources(
             lines_out.append(f"additional_meadows {' '.join(meadow_tokens)}")
 
 
+def _rules_deposit_names_with_flag(flag: str) -> List[str]:
+    try:
+        from .definitions import rules
+
+        names = []
+        for name in rules.classnames():
+            if rules.get(name, "class") != ["deposit"]:
+                continue
+            if _is_truthy_rules_flag(rules.get(name, flag, 0)):
+                names.append(name)
+        return names
+    except Exception:
+        return []
+
+
+def _deposit_volume_qty(name: str, fallback: int) -> int:
+    try:
+        from .definitions import rules
+
+        vol = rules.get(name, "deposit_volume", 0)
+        if isinstance(vol, list):
+            vol = vol[0] if vol else 0
+        vol = int(vol or 0)
+        return vol if vol > 0 else fallback
+    except Exception:
+        return fallback
+
+
+def _orth_neighbors(x: int, y: int, cols: int, lines: int):
+    for dx, dy in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+        nx, ny = x + dx, y + dy
+        if 1 <= nx <= cols and 1 <= ny <= lines:
+            yield nx, ny
+
+
+def _append_water_fish(
+    lines_out: List[str],
+    water: Set[Tuple[int, int]],
+    cols: int,
+    lines: int,
+    rng: random.Random,
+) -> None:
+    """Place rule-defined shore/deep fish on water squares (no type-name hardcoding)."""
+    if not water:
+        return
+    shore_types = _rules_deposit_names_with_flag("gather_from_shore")
+    deep_types = _rules_deposit_names_with_flag("rmg_water")
+    if not shore_types and not deep_types:
+        return
+    shore_sq: List[Tuple[int, int]] = []
+    deep_sq: List[Tuple[int, int]] = []
+    for x, y in water:
+        land_adj = any(
+            (nx, ny) not in water for nx, ny in _orth_neighbors(x, y, cols, lines)
+        )
+        if land_adj:
+            shore_sq.append((x, y))
+        else:
+            deep_sq.append((x, y))
+    placed = False
+    if shore_types and shore_sq:
+        name = shore_types[0]
+        qty = _deposit_volume_qty(name, 200)
+        rng.shuffle(shore_sq)
+        n = min(8, max(2, len(shore_sq) // 3))
+        tokens = " ".join(_sq(x, y) for x, y in shore_sq[:n])
+        lines_out.append(f"{name} {qty} {tokens}")
+        placed = True
+    if deep_types and deep_sq:
+        name = deep_types[0]
+        qty = _deposit_volume_qty(name, 225)
+        rng.shuffle(deep_sq)
+        n = min(6, max(1, len(deep_sq) // 4))
+        tokens = " ".join(_sq(x, y) for x, y in deep_sq[:n])
+        lines_out.append(f"{name} {qty} {tokens}")
+        placed = True
+    if placed:
+        lines_out.append("")
+
+
 def _append_player_block(
     lines_out: List[str],
     spec: _TemplateSpec,
@@ -1508,6 +1600,7 @@ def _generate_grid_definition(
         lines_out.append("")
 
     _append_resources(lines_out, spec, cfg, rng, cols, lines, starts)
+    _append_water_fish(lines_out, water_set, cols, lines, rng)
     _append_treasure(lines_out, cfg, rng, cols, lines, starts)
     _append_hunting(lines_out, cfg, rng, cols, lines, starts)
     start_tokens = [_sq(x, y) for x, y in starts]

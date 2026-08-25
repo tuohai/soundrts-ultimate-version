@@ -74,6 +74,11 @@ computer_only 0 0 0 0 neutral g5 3 deer 1 boar
 high_grounds e2 g2 f1 a6 b5 b7 j5 j7 k6 e10 g10 f11
 
 water e4 f4 g4 d5 e5 f5 g5 h5 d6 e6 g6 h6 d7 e7 f7 g7 h7 e8 f8 g8
+
+; AoE2: shore / deep fish on water
+shore_fish 200 d5 e4 f4 f8 g8
+deep_fish 225 e5
+
 terrain lake e4 f4 g4 d5 e5 f5 g5 h5 d6 e6 g6 h6 d7 e7 f7 g7 h7 e8 f8 g8
 
 terrain mountain a1 b1 c1 d1 h1 i1 j1 k1

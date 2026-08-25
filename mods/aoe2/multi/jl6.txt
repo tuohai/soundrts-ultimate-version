@@ -53,6 +53,10 @@ nb_meadows_by_square 2
 additional_meadows b1 b6
 
 water a3 b3 c3 a4 b4 c4
+
+; AoE2: shore / deep fish on water
+shore_fish 200 a3 b4
+
 terrain ocean a3 b3 c3 a4 b4 c4
 remove_meadows a3 b3 c3 a4 b4 c4
 remove_meadows a3 b3 c3 a4 b4 c4

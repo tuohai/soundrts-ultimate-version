@@ -121,6 +121,8 @@
 8324 Padlina
 
 8330 Padlina bydła
+8332 Ryba przybrzeżna
+8333 Ryba głębinowa
 
 8120 Straż obywatelska
 8121 Piechur z mieczem

@@ -92,10 +92,6 @@ is_a building
 title 8300
 color white
 noise repeat 6 1064
-store_resource1 1099
-store_resource2 1098
-store_resource3 76941
-store_resource4 76939
 launch_rdg 1042
 rdg_hit 1043
 keyboard building building1
@@ -120,7 +116,6 @@ is_a building
 title 8331
 def lumbermill
 title 8306
-store_resource2 1098
 def workshop
 title 8307
 def shipyard
@@ -161,13 +156,18 @@ def peasant
 title 8159
 keyboard worker
 shortcut p
-noise_when_exploiting_stone_mine repeat 1.6 76940
+noise_when_exploiting_stone_mine repeat 5 76940
+noise_when_exploiting_shore_fish repeat 1.6 fishing
+store_resource1 1099
+store_resource2 1098
+store_resource3 76941
+store_resource4 76939
+
 def wonder
 title 8317
 def mill
 is_a building
 title 8314
-store_resource3 store_food
 keyboard building
 shortcut m
 def market
@@ -178,8 +178,6 @@ shortcut k
 def mining_camp
 is_a building
 title 8315
-store_resource1 1099
-store_resource4 1099
 keyboard building
 shortcut i
 def stone_mine
@@ -200,6 +198,18 @@ title 8320
 qty_unit_title 5116
 color gold
 ground gravel
+
+def shore_fish
+is_a resource_deposit
+title 8332
+qty_unit_title 5115
+color aqua
+
+def deep_fish
+is_a resource_deposit
+title 8333
+qty_unit_title 5115
+color teal
 
 def food_carcass
 is_a resource_deposit
@@ -948,6 +958,9 @@ move 1088 1088
 death 76821
 keyboard soldier7
 shortcut f
+noise_when_exploiting_shore_fish repeat 5 fishing
+noise_when_exploiting_deep_fish repeat 5 fishing2
+store_resource3 76941
 
 def trade_cog
 is_a unit

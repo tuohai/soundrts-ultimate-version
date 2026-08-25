@@ -612,6 +612,37 @@ class Computer(Player):
 
         return self._discovery_cache_get("water_warships", _compute)
 
+    def _water_worker_type_names(self):
+        """Trainable water workers (fishing ships): gather deposit/building, no warship."""
+
+        def _compute():
+            candidates = self._trainable_from_types(self._naval_yard_type_names())
+            if not candidates:
+                candidates = list(rules.classnames())
+            result = []
+            for name in candidates:
+                uc = rules.unit_class(name)
+                if uc is None:
+                    continue
+                if getattr(uc, "airground_type", None) != "water":
+                    continue
+                if getattr(uc, "transport_capacity", 0) > 0:
+                    continue
+                if getattr(uc, "mdg", 0) or getattr(uc, "rdg", 0):
+                    continue
+                if not (
+                    getattr(uc, "can_gather_deposit", None)
+                    or getattr(uc, "can_gather_building", None)
+                ):
+                    continue
+                result.append(name)
+            result.sort(
+                key=lambda n: sum(getattr(rules.unit_class(n), "cost", ()) or ())
+            )
+            return tuple(result)
+
+        return self._discovery_cache_get("water_workers", _compute)
+
     def _preferred_warehouse_class(self, resource_type=None):
         """Pick a buildable warehouse class; prefer dedicated storage when possible."""
         candidates = []
@@ -2549,7 +2580,8 @@ class Computer(Player):
         return type_name in allowed
 
     def _pick_nearest_reachable(
-        self, origin, candidates, plane="ground", avoid=True, top_k=12, scan_rest=True
+        self, origin, candidates, plane="ground", avoid=True, top_k=12, scan_rest=True,
+        place_of=None,
     ):
         """欧氏距离预排序后，按序 A* 直到找到第一个可达目标。
 
@@ -2557,14 +2589,23 @@ class Computer(Player):
         做 O(n) 次 shortest_path_distance_to。默认最多探测 top_k 个；
         ``scan_rest=True`` 时若都不可达再扫描剩余。采集路径应关扫描，
         因为调用方已有欧氏回退，全表 A* 在 cw1 上约 50 次/次挑选。
+        ``place_of``：可选，返回寻路方格（岸边鱼用相邻陆地）。
         """
         if origin is None or not candidates:
             return None
+
+        def _place(o):
+            if place_of is not None:
+                p = place_of(o)
+                if p is not None:
+                    return p
+            return getattr(o, "place", None)
+
         scored = []
         ox = origin.x
         oy = origin.y
         for o in candidates:
-            place = o.place
+            place = _place(o)
             if place is None:
                 continue
             try:
@@ -2576,38 +2617,38 @@ class Computer(Player):
             oid = o.id
             if oid is None:
                 oid = 0
-            scored.append((euclid, oid, id(o), o))
+            scored.append((euclid, oid, id(o), o, place))
         if not scored:
             return None
         scored.sort()
         # Same square is always reachable; _shortest_path_to(self, self) is 0
         # but skipping the call avoids cache/decorator overhead in the gather loop.
-        for _, _, _, o in scored:
-            if o.place is origin:
+        for _, _, _, o, place in scored:
+            if place is origin:
                 return o
         sw = getattr(getattr(self, "world", None), "square_width", 0) or 0
         adj_limit = sw * sw if sw else 0
         adjacent = getattr(self, "_warehouse_places_adjacent", None)
         if adj_limit and callable(adjacent):
-            for euclid, _, _, o in scored:
+            for euclid, _, _, o, place in scored:
                 if euclid > adj_limit:
                     break
                 try:
-                    if adjacent(origin, o.place):
+                    if adjacent(origin, place):
                         return o
                 except Exception:
                     continue
         limit = top_k if top_k > 0 else len(scored)
-        for _, _, _, o in scored[:limit]:
+        for _, _, _, o, place in scored[:limit]:
             dist = origin.shortest_path_distance_to(
-                o.place, self, plane, avoid=avoid
+                place, self, plane, avoid=avoid
             )
             if dist is not None and dist < float("inf"):
                 return o
         if scan_rest:
-            for _, _, _, o in scored[limit:]:
+            for _, _, _, o, place in scored[limit:]:
                 dist = origin.shortest_path_distance_to(
-                    o.place, self, plane, avoid=avoid
+                    place, self, plane, avoid=avoid
                 )
                 if dist is not None and dist < float("inf"):
                     return o
@@ -2636,7 +2677,9 @@ class Computer(Player):
                 continue
             if worker is not None and not self._worker_can_gather_deposit(worker, o):
                 continue
-            place = o.place
+            place = Worker.gather_path_place_for_plane(o, "ground")
+            if worker is not None:
+                place = Worker.gather_stand_place(worker, o) or place
             if place is None:
                 continue
             try:
@@ -2648,11 +2691,10 @@ class Computer(Player):
             oid = o.id
             if oid is None:
                 oid = 0
-            candidates.append((euclid, oid, id(o), o))
+            candidates.append((euclid, oid, id(o), o, place))
         candidates.sort()
         found = []
-        for _, _, _, o in candidates:
-            place = o.place
+        for _, _, _, o, place in candidates:
             if place is from_place:
                 dist = 0
             else:
@@ -3782,14 +3824,20 @@ class Computer(Player):
                 <= best_ratio + 1e-9
             ]
             avoid = True
+
+            def _gather_place(t):
+                return Worker.gather_stand_place(worker, t) or getattr(t, "place", None)
+
             picked = self._pick_nearest_reachable(
-                origin, preferred, avoid=avoid, scan_rest=False, top_k=4
+                origin, preferred, avoid=avoid, scan_rest=False, top_k=4,
+                place_of=_gather_place,
             )
             if picked is not None:
                 return picked
             if len(preferred) < len(candidates):
                 picked = self._pick_nearest_reachable(
-                    origin, candidates, avoid=avoid, scan_rest=False, top_k=4
+                    origin, candidates, avoid=avoid, scan_rest=False, top_k=4,
+                    place_of=_gather_place,
                 )
                 if picked is not None:
                     return picked
@@ -3804,7 +3852,8 @@ class Computer(Player):
                 ]
                 if wood_only:
                     picked = self._pick_nearest_reachable(
-                        origin, wood_only, avoid=False, scan_rest=False, top_k=4
+                        origin, wood_only, avoid=False, scan_rest=False, top_k=4,
+                        place_of=_gather_place,
                     )
                     if picked is not None:
                         return picked
@@ -4079,14 +4128,16 @@ class Computer(Player):
             and self._gather_target_ok(o)
             and Worker._gather_terrain_ok_for_unit(worker, o)
         ]
-        if deposits:
+        buildings = self._gatherable_building_targets(worker)
+        candidates = deposits + buildings
+        if candidates:
             deposit = self._pick_nearest_reachable(
-                origin, deposits, plane=plane, avoid=True, scan_rest=False, top_k=4
+                origin, candidates, plane=plane, avoid=True, scan_rest=False, top_k=4
             )
             if deposit is not None:
                 return deposit
             return min(
-                deposits,
+                candidates,
                 key=lambda o: square_of_distance(
                     origin.x, origin.y, o.place.x, o.place.y
                 ),
@@ -4338,11 +4389,24 @@ class Computer(Player):
             return 2
         return 0
 
+    def _try_maintain_fishing(self):
+        """If a dock exists, keep a few water gatherers (rules-driven, not type-hardcoded)."""
+        yards = self._naval_yard_type_names()
+        if not yards:
+            return
+        if self.nb(yards[0]) == 0:
+            return
+        names = self._water_worker_type_names()
+        if not names:
+            return
+        name = names[0]
+        want = 3 if self.AI_type in ("nightmare", "expert") else 2
+        if self.nb(name) < want and self.future_nb(name) < want:
+            self.get(want, name)
+
     def _try_maintain_naval(self):
         """On water maps, keep a dock and a small navy for crossing / river fights."""
         if not self._map_has_water():
-            return
-        if self.AI_type in ("beginner", "timers"):
             return
         yards = self._naval_yard_type_names()
         if not yards:
@@ -4352,6 +4416,10 @@ class Computer(Player):
             # Requirements (e.g. lumbermill) are pulled by get()/_get_requirements.
             if self.future_nb(shipyard) == 0:
                 self.get(1, shipyard)
+            return
+        # Dock first (including beginner/timers) so Dark Age fishing can start.
+        self._try_maintain_fishing()
+        if self.AI_type in ("beginner", "timers"):
             return
         boats = self._water_transport_type_names()
         if boats:

@@ -5,6 +5,28 @@ Release notes
 .. contents::
 
 
+1.4.8.2
+--------
+
+**aoe2: rules-driven fishing (shore fish / deep sea fish)**
+
+- **Issue**: The DE mod only had fishing-ship fish traps. There were no shore or deep-sea fish deposits, fishing ships could not gather natural fish, and villagers could not fish from the shore. The dock and fish trap were Feudal, so Dark Age fishing was impossible unlike DE.
+- **Change**: Deposits with ``gather_from_shore 1`` can be gathered by ground workers on an adjacent land square (generic engine flag). aoe2: ``shore_fish`` (200 food, villagers + ships) and ``deep_fish`` (225 food, ships only). Gillnets and the Japanese fishing-ship work-rate cover all three sources. Water maps and random lakes/rivers place fish. Dock and fish trap are Dark Age (transport / galley / trade cog stay Feudal). Computers request a dock on water maps, then train water gatherers.
+- **Scope**: Engine gather/AI/random maps; aoe2 rules and water multiplayer maps.
+
+**Fix: gather / build / repair / store sounds play at the target, not the worker**
+
+- **Issue**: Mining, woodcutting, shore fishing, building, and repair loops were attached to the worker, so stereo played at the villager. Shore fishing sounded on land; repair hammers sat on the peasant instead of the building.
+- **Change**: Gather / build / repair activity noise can still be defined on the worker (``noise_when_exploiting_*`` / ``noise_when_building``, optional ``noise_when_repairing``), but stereo coordinates come from the deposit or building. A construction site with workers no longer stacks its own hammer loop (self-constructing sites still play on the site). Store cues ``store_resource1`` … may be on the villager / fishing ship **or** the warehouse; if both are set, the worker wins. Stereo still plays at the warehouse. ``store_resource_0`` is obsolete.
+- **Scope**: Gather / build / repair loops and store one-shots in all mods.
+
+**Fix: maps with only starting_squares always used a fixed spawn**
+
+- **Issue**: AoE2 DE multiplayer maps list ``starting_squares`` and omit ``starting_units`` (race defaults). Empty slots dropped the square, so faction town centers / villagers always used ``starting_squares[player_index]``. ``random_starts 1`` did not shuffle.
+- **Change**: Each spawn slot remembers its square. Default random starts shuffle those squares, then race defaults land on the drawn one. ``random_starts 0`` still uses list order.
+- **Scope**: All maps that use ``starting_squares`` without per-slot units (including aoe2).
+
+
 1.4.8.1
 --------
 

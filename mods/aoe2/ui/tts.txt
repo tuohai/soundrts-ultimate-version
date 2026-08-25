@@ -118,6 +118,8 @@
 8324 carcass
 8330 livestock carcass
 8331 pasture
+8332 shore fish
+8333 deep sea fish
 
 8120 militia
 8121 man-at-arms

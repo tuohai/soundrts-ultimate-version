@@ -4,6 +4,28 @@ Notas de lançamento
 
 .. contents::
 
+1.4.8.2
+-------
+
+**aoe2: pesca guiada pelas rules (peixe de costa / mar fundo)**
+
+- **Problema**: o mod DE só tinha viveiros do barco de pesca. Não havia depósitos de costa nem de mar fundo; os aldeões não pescavam de terra. Cais e viveiro eram feudais, por isso não havia pesca na Idade das Trevas.
+- **Mudança**: um depósito com ``gather_from_shore 1`` é recolhido por trabalhadores de terra numa casa terrestre adjacente. aoe2: ``shore_fish`` (200 comida) e ``deep_fish`` (225, só barcos). Redes de emalhar e o ritmo japonês cobrem as três fontes. Cais e viveiro na Idade das Trevas (transporte / galé / nau mercante ficam feudais).
+- **Alcance**: recolha/IA/mapas aleatórios; rules aoe2 e mapas de água.
+
+**Correção: recolher / construir / reparar / depositar soam no alvo**
+
+- **Problema**: os ciclos estavam no aldeão, por isso o estéreo soava no trabalhador. A pesca de costa soava em terra.
+- **Mudança**: ``noise_when_exploiting_*`` / ``noise_when_building`` (opcional ``noise_when_repairing``) no trabalhador; coordenadas no depósito ou edifício. ``store_resource1`` … no aldeão/barco **ou** armazém; se ambos existirem, ganha o trabalhador. Estéreo no armazém. ``store_resource_0`` está obsoleto.
+- **Alcance**: todos os mods.
+
+**Correção: mapas só com starting_squares usavam sempre um spawn fixo**
+
+- **Problema**: os mapas multiplayer AoE2 DE listam ``starting_squares`` e omitem ``starting_units`` (predefinições da raça). Slots vazios perdiam a casa, por isso o centro da cidade / aldeões da facção usavam sempre ``starting_squares[índice_do_jogador]``. ``random_starts 1`` não baralhava.
+- **Mudança**: cada slot de spawn guarda a sua casa. Com inícios aleatórios por omissão essas casas são baralhadas e as predefinições da raça caem na sorteada. ``random_starts 0`` continua a ordem da lista.
+- **Alcance**: todos os mapas que usam ``starting_squares`` sem unidades por slot (incluindo aoe2).
+
+
 1.4.8.1
 -------
 

@@ -222,6 +222,26 @@ resource_type resource3
 extraction_time 0
 extraction_qty 0
 
+; Shore fish (AoE2): water square, villagers gather from adjacent land
+def shore_fish
+class deposit
+resource_type resource3
+extraction_time 0
+extraction_qty 0
+gather_from_shore 1
+rmg_deposit 0
+deposit_volume 200
+
+; Deep sea fish: water only (fishing ships)
+def deep_fish
+class deposit
+resource_type resource3
+extraction_time 0
+extraction_qty 0
+rmg_deposit 0
+rmg_water 1
+deposit_volume 225
+
 def food_carcass
 class deposit
 resource_type resource3
@@ -2511,7 +2531,10 @@ rdf 4
 carry_capacity 10
 gather_mode continuous
 gather_rate fish_trap 0.35
+gather_rate shore_fish 0.28
+gather_rate deep_fish 0.41
 can_build fish_trap
+can_gather_deposit shore_fish deep_fish
 can_gather_building fish_trap
 can_use_tech gillnets shipwright careening dry_dock
 can_upgrade_to
@@ -3686,7 +3709,8 @@ gather_rate orchard 0.31
 gather_rate food_carcass 0.41
 gather_rate food_livestock 0.41
 gather_rate farm 0.32
-can_gather_deposit goldmine wood orchard food_carcass food_livestock stone_mine
+gather_rate shore_fish 0.23
+can_gather_deposit goldmine wood orchard food_carcass food_livestock stone_mine shore_fish
 can_gather_building farm
 can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower cannontower town_center shipyard
 can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
@@ -3708,7 +3732,7 @@ mdf 0
 rdf 0
 mdg_vs building 3
 can_herd 0
-can_gather_deposit goldmine wood orchard food_carcass food_livestock stone_mine
+can_gather_deposit goldmine wood orchard food_carcass food_livestock stone_mine shore_fish
 ; AoE4-like: no farm/mill — pastures spawn sheep; food drop-off is TC or pasture
 can_build house pasture lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower cannontower town_center shipyard
 ; No horse_collar / heavy_plow / crop_rotation (farm mill line)
@@ -4138,6 +4162,8 @@ cost 0 200 150 0
 time_cost 40
 requirements shipyard castle_age
 effect bonus gather_time_fish_trap -20%
+effect bonus gather_time_shore_fish -20%
+effect bonus gather_time_deep_fish -20%
 
 ; 造船匠 Shipwright — ships −20% wood, create +54% (time ≈ −35%)
 def shipwright
@@ -4169,13 +4195,13 @@ trade_hubs is_dock shipyard
 trade_rewards resource1
 can_use_tech caravan shipwright careening dry_dock
 
-; 养鱼场 Fish Trap — water farm for fishing ships (715 food)
+; 养鱼场 Fish Trap — water farm for fishing ships (715 food); DE: Dark Age
 def fish_trap
 class building
 is_a building
 cost 0 100 0 0
 time_cost 40
-requirements feudal_age
+requirements dark_age
 hp_max 50
 mdf 0
 rdf 0
@@ -4201,7 +4227,8 @@ hp_max 1800
 mdf 1
 rdf 8
 time_cost 35
-requirements feudal_age
+; DE: Dock available in Dark Age (transport / galley / trade cog stay Feudal)
+requirements dark_age
 is_buildable_near_water_only 1
 is_dock 1
 can_repair_ships 1
@@ -5079,7 +5106,7 @@ archer aoe_archer
 knight aoe_knight
 catapult mangonel
 advance_cost_discount imperial_age -33%
-on_phase dark_age hp 10% house barracks mill lumbermill mining_camp market town_center townhall wall fortified_wall palisade_wall palisade_gate scouttower outpost aoe_castle farm
+on_phase dark_age hp 10% house barracks mill lumbermill mining_camp market town_center townhall wall fortified_wall palisade_wall palisade_gate scouttower outpost shipyard aoe_castle farm
 on_phase feudal_age hp 10% house barracks mill lumbermill mining_camp market town_center townhall wall fortified_wall palisade_wall palisade_gate scouttower outpost guardtower archery_range stables blacksmith shipyard market feitoria aoe_castle farm
 on_phase castle_age hp 10% house barracks mill lumbermill mining_camp market town_center townhall wall fortified_wall palisade_wall palisade_gate scouttower outpost guardtower archery_range stables blacksmith shipyard university monastery workshop aoe_castle farm
 on_phase imperial_age hp 10% house barracks mill lumbermill mining_camp market town_center townhall wall fortified_wall palisade_wall palisade_gate scouttower outpost guardtower archery_range stables blacksmith shipyard university monastery workshop aoe_castle farm
@@ -5404,9 +5431,17 @@ on_phase feudal_age mdg_cd -25% infantry
 ; DE: fishing ships double HP, +2 pierce, work 5/10/15/20% faster by age
 on_phase dark_age hp_max 100% rdf 2 fishing_ship
 on_phase dark_age gather_time_fish_trap -5%
+on_phase dark_age gather_time_shore_fish -5%
+on_phase dark_age gather_time_deep_fish -5%
 on_phase feudal_age gather_time_fish_trap -5%
+on_phase feudal_age gather_time_shore_fish -5%
+on_phase feudal_age gather_time_deep_fish -5%
 on_phase castle_age gather_time_fish_trap -5%
+on_phase castle_age gather_time_shore_fish -5%
+on_phase castle_age gather_time_deep_fish -5%
 on_phase imperial_age gather_time_fish_trap -5%
+on_phase imperial_age gather_time_shore_fish -5%
+on_phase imperial_age gather_time_deep_fish -5%
 ; DE: mounted archers +2 vs archers (except skirmishers)
 on_phase dark_age rdg_vs aoe_archer 2 cavalry_archer heavy_cavalry_archer
 on_phase dark_age rdg_vs crossbowman 2 cavalry_archer heavy_cavalry_archer

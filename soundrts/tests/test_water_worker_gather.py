@@ -88,6 +88,45 @@ def test_ford_deposit_ok_for_ground_worker():
     assert Worker._can_gather_target(worker, deposit)
 
 
+def test_ground_worker_can_gather_shore_deposit_from_adjacent_land():
+    land = types.SimpleNamespace(is_water=False, is_ground=True, x=0, y=0, strict_neighbors=[])
+    water = types.SimpleNamespace(is_water=True, is_ground=False, x=12, y=0, strict_neighbors=[])
+    land.strict_neighbors = [water]
+    water.strict_neighbors = [land]
+    deposit = Deposit.__new__(Deposit)
+    deposit.type_name = "shore_fish"
+    deposit.place = water
+    deposit.gather_from_shore = 1
+    deposit.resource_type = "resource3"
+    deposit.resource_qty = 200
+    peasant = _make_worker(airground_type="ground", can_gather_deposit=["shore_fish"])
+    peasant.place = land
+    assert Worker._gather_terrain_ok_for_unit(peasant, deposit)
+    assert Worker._can_gather_target(peasant, deposit)
+    assert Worker.gather_stand_place(peasant, deposit) is land
+
+    boat = _make_worker(airground_type="water", can_gather_deposit=["shore_fish"])
+    boat.place = water
+    assert Worker._can_gather_target(boat, deposit)
+    assert Worker.gather_stand_place(boat, deposit) is water
+
+
+def test_ground_worker_cannot_gather_deep_water_fish():
+    water = types.SimpleNamespace(is_water=True, is_ground=False, strict_neighbors=[])
+    deposit = Deposit.__new__(Deposit)
+    deposit.type_name = "deep_fish"
+    deposit.place = water
+    deposit.gather_from_shore = 0
+    deposit.resource_type = "resource3"
+    deposit.resource_qty = 225
+    peasant = _make_worker(airground_type="ground", can_gather_deposit=["deep_fish"])
+    assert not Worker._gather_terrain_ok_for_unit(peasant, deposit)
+    assert not Worker._can_gather_target(peasant, deposit)
+
+    boat = _make_worker(airground_type="water", can_gather_deposit=["deep_fish"])
+    assert Worker._can_gather_target(boat, deposit)
+
+
 def test_gather_order_to_land_deposit_impossible_for_boat():
     deposit = _make_deposit(is_water=False, is_ground=True)
     deposit.id = "d1"

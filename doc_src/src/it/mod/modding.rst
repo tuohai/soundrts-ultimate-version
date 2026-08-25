@@ -1665,6 +1665,13 @@ style
 
 Lo stile è definito in "ui/style.txt" e nella versione localizzata di "style.txt".
 
+Suoni di attività e deposito (da 1.4.8.1 / 1.4.8.2)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+I loop di raccolta / costruzione / riparazione stanno sul **lavoratore**: ``noise_when_exploiting_*``, ``noise_when_building``, opzionale ``noise_when_repairing``. Lo stereo usa il giacimento o l’edificio.
+
+Deposito: ``store_resource1``, ``store_resource2``, … (allineati a ``resource1``). **Non** usare ``store_resource_0``. Si può definire sul villico / peschereccio **o** sul magazzino; se ci sono entrambi, vince il lavoratore. Lo stereo suona dal magazzino.
+
 Vista Ctrl+F2: icone e animazione (da 1.4.6.1)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

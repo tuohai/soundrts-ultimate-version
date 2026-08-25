@@ -380,6 +380,44 @@ def start_population_bonus(start):
     return 0
 
 
+START_SQUARE_MARK = "square"
+
+
+def start_slot_square(start):
+    """Spawn square recorded on a ``players_starts`` / ``computers_starts`` slot.
+
+    Maps that only list ``starting_squares`` (no per-slot units) used to create
+    indistinguishable empty slots, so faction default units always landed on
+    ``starting_squares[player_index]`` even after ``random_starts`` shuffled.
+    """
+    if not start or not isinstance(start, list):
+        return None
+    units = start[1] if len(start) >= 2 else []
+    for item in units:
+        if isinstance(item, (list, tuple)) and item and item[0]:
+            return item[0]
+    for extra in start[3:]:
+        if (
+            isinstance(extra, tuple)
+            and len(extra) == 2
+            and extra[0] == START_SQUARE_MARK
+            and extra[1]
+        ):
+            return extra[1]
+    return None
+
+
+def set_start_slot_square(start, sq):
+    """Remember ``sq`` on a start slot without inventing a dummy unit."""
+    if not start or not isinstance(start, list) or not sq:
+        return
+    for i, extra in enumerate(start):
+        if isinstance(extra, tuple) and len(extra) == 2 and extra[0] == START_SQUARE_MARK:
+            start[i] = (START_SQUARE_MARK, sq)
+            return
+    start.append((START_SQUARE_MARK, sq))
+
+
 def convert_and_split_first_numbers(words):
     i = -1
     for i, w in enumerate(words):

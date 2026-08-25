@@ -1715,6 +1715,13 @@ estilo
 
 El estilo se define en "ui/style.txt" y en la versión localizada de "style.txt".
 
+Sonidos de actividad y depósito (desde 1.4.8.1 / 1.4.8.2)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Los bucles de recolectar / construir / reparar van en el **trabajador**: ``noise_when_exploiting_*``, ``noise_when_building``, opcional ``noise_when_repairing``. El estéreo usa el yacimiento o el edificio.
+
+Depósito: ``store_resource1``, ``store_resource2``, … (alineado con ``resource1``). **No** use ``store_resource_0``. Puede ir en el aldeano / barco de pesca **o** en el almacén; si hay ambas, gana el trabajador. El estéreo suena en el almacén.
+
 Vista Ctrl+F2: iconos y animación (desde 1.4.6.1)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

@@ -121,6 +121,8 @@
 8324 Carcasse
 
 8330 Carcasse de bétail
+8332 Poisson côtier
+8333 Poisson de haute mer
 
 8120 Milicien
 8121 Homme d'armes

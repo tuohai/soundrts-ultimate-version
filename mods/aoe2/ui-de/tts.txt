@@ -121,6 +121,8 @@
 8324 Tierkadaver
 
 8330 Viehskadaver
+8332 Küstenfisch
+8333 Hochseefisch
 
 8120 Milizsoldat
 8121 Schwertkämpfer

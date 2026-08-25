@@ -314,6 +314,8 @@ Las unidades y edificios iniciales se crearán en estos cuadrados.
 
 ``starting_squares`` solo corrige qué cuadrados usa cada ranura de generación; de forma predeterminada, no fija qué humano que se une obtiene qué espacio (consulte random_starts_ y player_start_).
 
+Si el mapa omite ``starting_units`` / ``starting_resources``, los valores de la raza en ``rules.txt`` se colocan en esas casillas. Desde 1.4.8.2, ``random_starts 1`` sigue barajando esas casillas. Antes un hueco vacío perdía la casilla, así que el jugador 1 nacía siempre en la primera de la lista (los mapas multijugador de Age of Empires II DE se veían afectados).
+
 .. _random_starts:
 
 inicios_aleatorios
@@ -352,7 +354,7 @@ Semántica de generación: jugador vs jugador_start
 
 Ambos pueden colocar unidades/edificios en casillas específicas (por ejemplo, ``a1``), pero no significan el mismo tipo de "generación fija":
 
-- ``player`` / ``starting_squares``: define espacios de generación y su contenido. Las coordenadas cuadradas son fijas, pero con ``random_starts 1`` se baraja qué humano obtiene qué ranura.
+- ``player`` / ``starting_squares``: define espacios de generación y su contenido. Las coordenadas cuadradas son fijas, pero con ``random_starts 1`` se baraja qué humano obtiene qué ranura. Los mapas que solo listan ``starting_squares`` y usan unidades por defecto de la raza también se barajan (desde 1.4.8.2).
 - ``player_start``: fija al jugador N en la ranura N (y puede cambiar el cuadrado de esa ranura), independientemente de ``random_starts``.
 
 Patrones comunes:

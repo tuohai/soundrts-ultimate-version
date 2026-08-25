@@ -726,7 +726,6 @@ def lumbermill
 is_a building
 title 148
 noise repeat 15 1052
-store_resource2 1098
 keyboard building building5
 shortcut l
 
@@ -743,9 +742,6 @@ is_a building
 title 82
 color white
 noise repeat 6 1064
-store_resource1 1099
-store_resource2 1098
-store_resource3 store_food
 keyboard building building1
 shortcut h
 
@@ -866,6 +862,9 @@ noise_when_exploiting_wood repeat 1.5 1034 1035 1036 1037
 noise_when_exploiting_resource2 repeat 1.5 1034 1035 1036 1037
 noise_when_building repeat 4 1046 1048 1049
 mdg_hit 1008
+store_resource1 1099
+store_resource2 1098
+store_resource3 store_food
 keyboard worker
 shortcut p
 

@@ -1041,8 +1041,87 @@ class Worker(Unit):
         return None
 
     @staticmethod
+    def _is_pure_water_square(place):
+        return bool(
+            place is not None
+            and getattr(place, "is_water", False)
+            and not getattr(place, "is_ground", True)
+        )
+
+    @staticmethod
+    def _is_standable_land_square(place):
+        if place is None or not getattr(place, "is_ground", False):
+            return False
+        return not Worker._is_pure_water_square(place)
+
+    @staticmethod
+    def deposit_allows_shore_gather(target):
+        return bool(getattr(target, "gather_from_shore", 0))
+
+    @staticmethod
+    def shore_stand_squares(target):
+        place = Worker._gather_target_place(target)
+        if place is None:
+            return []
+        neighbors = getattr(place, "strict_neighbors", None) or ()
+        return [n for n in neighbors if Worker._is_standable_land_square(n)]
+
+    @staticmethod
+    def gather_stand_place(unit, target):
+        """方格：该工人应站在此格采集 *target*（同格，或岸边鱼的相邻陆地）。"""
+        from ..worldorders.base import (
+            _is_impassable_land_for_water_unit,
+            _is_impassable_water_for_ground_unit,
+        )
+
+        place = Worker._gather_target_place(target)
+        if place is None:
+            return None
+        if not _is_impassable_land_for_water_unit(unit, place) and not _is_impassable_water_for_ground_unit(
+            unit, place
+        ):
+            return place
+        if not Worker.deposit_allows_shore_gather(target):
+            return None
+        if getattr(unit, "airground_type", "ground") != "ground":
+            return None
+        shores = Worker.shore_stand_squares(target)
+        if not shores:
+            return None
+        unit_place = getattr(unit, "place", None)
+        if unit_place in shores:
+            return unit_place
+        ux = getattr(unit_place, "x", None)
+        uy = getattr(unit_place, "y", None)
+        if ux is None:
+            ux = getattr(unit, "x", 0) or 0
+        if uy is None:
+            uy = getattr(unit, "y", 0) or 0
+        return min(shores, key=lambda s: (getattr(s, "x", 0) - ux) ** 2 + (getattr(s, "y", 0) - uy) ** 2)
+
+    @staticmethod
+    def gather_path_place_for_plane(target, plane="ground"):
+        """地面/水路寻路时应走到的方格；该平面无法采集则 None。"""
+        place = Worker._gather_target_place(target)
+        if place is None:
+            return None
+        if plane == "water":
+            if getattr(place, "is_water", False):
+                return place
+            return None
+        if not Worker._is_pure_water_square(place):
+            return place
+        if Worker.deposit_allows_shore_gather(target):
+            shores = Worker.shore_stand_squares(target)
+            return shores[0] if shores else None
+        return None
+
+    @staticmethod
     def _gather_terrain_ok_for_unit(unit, target):
-        """采集是否合法取决于目标所在方格（如 goldmines a3 中 a3 是否为水路）。"""
+        """采集是否合法取决于目标所在方格（如 goldmines a3 中 a3 是否为水路）。
+
+        ``gather_from_shore 1`` 的水路矿床允许地面工人从相邻陆格采集，不必上船。
+        """
         from ..worldorders.base import (
             _is_impassable_land_for_water_unit,
             _is_impassable_water_for_ground_unit,
@@ -1051,11 +1130,11 @@ class Worker(Unit):
         place = Worker._gather_target_place(target)
         if place is None:
             return False
-        if _is_impassable_land_for_water_unit(unit, place):
-            return False
-        if _is_impassable_water_for_ground_unit(unit, place):
-            return False
-        return True
+        if not _is_impassable_land_for_water_unit(unit, place) and not _is_impassable_water_for_ground_unit(
+            unit, place
+        ):
+            return True
+        return Worker.gather_stand_place(unit, target) is not None
 
     def _can_gather_target(self, target):
         """检查工人是否可以采集矿床或可采集建筑。"""

@@ -3,6 +3,28 @@ Note di rilascio
 
 .. contents::
 
+1.4.8.2
+--------
+
+**aoe2: pesca guidata dalle rules (pesce di riva / mare profondo)**
+
+- **Problema**: la mod DE aveva solo vivai del peschereccio. Non c’erano giacimenti di riva né di mare profondo; i villici non pescavano da terra. Molo e vivaio erano feudali, quindi niente pesca in Età Oscura.
+- **Cambio**: un giacimento con ``gather_from_shore 1`` è raccolto da lavoratori di terra su una casella terrestre adiacente. aoe2: ``shore_fish`` (200 cibo) e ``deep_fish`` (225, solo navi). Reti da imbrocco e il ritmo giapponese coprono le tre fonti. Molo e vivaio in Età Oscura (trasporto / galea / cocca mercantile restano feudali).
+- **Ambito**: raccolta/IA/mappe casuali; rules aoe2 e mappe d’acqua.
+
+**Correzione: raccolta / costruzione / riparazione / deposito suonano sul bersaglio**
+
+- **Problema**: i loop stavano sul villico, così lo stereo suonava sul lavoratore. La pesca di riva suonava a terra.
+- **Cambio**: ``noise_when_exploiting_*`` / ``noise_when_building`` (opzionale ``noise_when_repairing``) sul lavoratore; coordinate sul giacimento o edificio. ``store_resource1`` … su villico/peschereccio **o** magazzino; se ci sono entrambi, vince il lavoratore. Stereo dal magazzino. ``store_resource_0`` è obsoleto.
+- **Ambito**: tutte le mod.
+
+**Correzione: le mappe con solo starting_squares usavano sempre uno spawn fisso**
+
+- **Problema**: le mappe multiplayer AoE2 DE elencano ``starting_squares`` e omettono ``starting_units`` (valori della razza). Gli slot vuoti perdevano la cella, così centro cittadino / villici della fazione usavano sempre ``starting_squares[indice_giocatore]``. ``random_starts 1`` non mescolava.
+- **Cambio**: ogni slot di generazione ricorda la propria cella. Con avvii casuali predefiniti quelle celle vengono mescolate e i valori della razza finiscono su quella estratta. ``random_starts 0`` segue ancora l’ordine dell’elenco.
+- **Ambito**: tutte le mappe che usano ``starting_squares`` senza unità per slot (incluso aoe2).
+
+
 1.4.8.1
 --------
 

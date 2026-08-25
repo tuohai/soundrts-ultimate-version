@@ -583,7 +583,7 @@ def test_building_site_silent_without_active_builder():
 
 
 def test_building_site_activity_while_worker_builds():
-    from soundrts.worldorders.movement import BuildPhaseTwoOrder
+    from soundrts.worldunit.world_attributes import CreatureAttributes
 
     world, player = _world_from_map(
         _mini_map(
@@ -597,16 +597,18 @@ def test_building_site_activity_while_worker_builds():
     site = _make_water_scaffold(player, river, land)
     player.units.append(site)
 
-    peasant_cls = rules.unit_class("peasant")
-    peasant = peasant_cls(player, river, river.x, river.y)
+    class _Worker:
+        activity = CreatureAttributes.activity
+
+    peasant = _Worker()
+    peasant.place = land
+    peasant.orders = [
+        types.SimpleNamespace(mode="build", target=site, keyword="build")
+    ]
     player.units.append(peasant)
 
-    order = BuildPhaseTwoOrder(peasant, [site.id])
-    order.on_queued()
-    order.mode = "build"
-    peasant.orders = [order]
-
     assert site.activity == "building"
+    assert peasant.activity == "building"
 
 
 def test_scaffold_no_move_between_adjacent_scaffolds_via_shore():
