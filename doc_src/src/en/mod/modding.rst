@@ -1875,6 +1875,14 @@ Attack beams, mining chips, and similar FX overlay on top regardless of animatio
   Filename = ``rules.txt`` type name, e.g. ``peasant.png``, ``goldmine.png``.
   Used by the Ctrl+F2 top-down map **only**; missing files fall back to geometric shapes (never generated letters).
   ``python tools/gen_hud_icons.py`` writes both icons and map starter packs; replace same filenames for custom art.
+  Later resource layers (active mods) overlay same-named PNGs from the base pack.
+
+**Architecture sets** (since 1.4.8.3)
+  When several factions share the same ``rules.txt`` type names (aoe2 militia is always ``militia``), do not ship one unique unit PNG per civ. DE uses regional architecture sets.
+  In ``ui/architecture.txt``, ``def <set_name>`` plus ``factions civ1 civ2 …`` groups civs. Lookup tries ``ui/map/<set>/<type>.png`` then ``ui/map/<type>.png`` (same for command-card ``ui/icons``).
+  Neutral deposits and wildlife stay at the top level, not in set subfolders.
+  ``rim`` and other RGB values feed ``python tools/gen_aoe2_hud_icons.py`` only; custom PNGs do not need that script.
+  StarCraft-style mods already use distinct type names per race (``marine`` / ``zergling`` / ``zealot``); one PNG per type is enough — no architecture subfolders.
 
 **Animation packs** ``ui/anims/<type_name>/``
   Full format: ``res/ui/anims/README.txt``. Same layout in a mod, e.g. ``mods/mymod/ui/anims/peasant/``.

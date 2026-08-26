@@ -1,0 +1,107 @@
+; Age of Empires II DE architecture sets (data, not engine hardcode).
+; Civilizations listed on `factions` share unit/building art
+; (same Militia, same Town Center silhouette, etc.).
+;
+; Lookup at runtime: ui/map/<set_name>/<type>.png then ui/map/<type>.png
+; Starter PNGs: python tools/gen_aoe2_hud_icons.py  (reads this file)
+;
+; `kit` names a silhouette recipe in the generator (western/central/med/east/
+; yurt/sea/meso/african). Colors are RGB triples.
+
+neutral goldmine wood stone_mine orchard shore_fish deep_fish food_carcass food_livestock relic deer sheep boar meadow build_site
+
+def western_european
+factions britons franks celts
+kit western
+rim 196 168 84
+armor 70 90 130
+tunic 120 78 42
+horse 90 70 50
+wood 140 110 70
+roof 160 60 50
+stone 110 110 120
+tab 160 40 40
+
+def central_european
+factions teutons vikings
+kit central
+rim 150 150 160
+armor 60 60 72
+tunic 90 70 50
+horse 70 60 50
+wood 100 80 55
+roof 120 50 45
+stone 90 90 100
+tab 50 50 55
+
+def mediterranean
+factions byzantines portuguese
+kit med
+rim 200 180 120
+armor 90 100 110
+tunic 160 140 90
+horse 100 80 55
+wood 180 160 120
+roof 180 90 50
+stone 200 195 185
+tab 40 80 140
+
+def east_asian
+factions chinese japanese
+kit east
+rim 180 50 50
+armor 80 50 50
+tunic 140 40 40
+horse 50 50 50
+wood 90 55 40
+roof 40 40 48
+stone 160 120 70
+tab 200 40 40
+
+def central_asian
+factions mongols
+kit yurt
+rim 200 120 40
+armor 100 80 50
+tunic 160 90 40
+horse 80 50 30
+wood 120 80 40
+roof 180 100 50
+stone 140 110 70
+tab 200 100 30
+
+def southeast_asian
+factions vietnamese
+kit sea
+rim 180 160 50
+armor 70 100 70
+tunic 50 110 70
+horse 90 70 40
+wood 140 100 50
+roof 180 50 40
+stone 160 130 80
+tab 40 130 70
+
+def mesoamerican
+factions aztecs
+kit meso
+rim 40 140 130
+armor 180 120 50
+tunic 200 140 50
+horse 90 70 50
+wood 120 90 50
+roof 80 140 80
+stone 160 140 90
+tab 20 140 130
+
+def african
+factions malians
+kit african
+rim 200 160 60
+armor 140 100 50
+tunic 180 140 70
+horse 100 70 40
+wood 160 120 70
+roof 180 140 70
+stone 180 150 90
+tab 160 110 40

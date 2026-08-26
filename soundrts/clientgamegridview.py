@@ -724,7 +724,12 @@ class GridView:
         try:
             from .clientgame.game_hud import get_map_sprite
 
-            icon = get_map_sprite(self._object_type_name(o), size)
+            from .clientgame.game_arch_set import architecture_set_for_entity
+
+            style = None
+            if self._object_kind(o) in ("unit", "building"):
+                style = architecture_set_for_entity(o)
+            icon = get_map_sprite(self._object_type_name(o), size, style=style)
         except Exception:
             return False
         if icon is None:

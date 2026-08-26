@@ -241,6 +241,7 @@ Com a tela ligada mostra o mapa de cima com qualidade melhor que a vista de depu
 - **Scroll pelas bordas / zoom com a roda**: pan na borda do viewport; roda para cima/baixo aproxima/afasta.
 - Com seleção: painel de atributos embaixo à esquerda (HP/ataque/defesa…); grade 5×3 à direita; fila ao lado do painel. PNGs opcionais em ``res/ui/icons/<tipo>.png``.
 - **Sprites do mapa**: ``res/ui/map/<tipo>.png`` (separado de icons); anims → map → formas. Pacote também em ``res/ui/map/``; ``python tools/gen_hud_icons.py`` regenera.
+- **Arte de mods** (desde 1.4.8.3): ``mods/<nome>/ui/icons`` e ``ui/map`` cobrem PNG base. aoe2 usa subpastas de conjunto (``ui/architecture.txt``); StarCraft um PNG por tipo.
 
 Com a tela off, teclado e voz continuam primários. O estado é salvo (``display_enabled``) e restaurado na próxima abertura. Veja `teclas em camadas <layered-hotkeys.htm>`_.
 

@@ -28,7 +28,9 @@ def _open_rel(rel: str):
     try:
         from ..lib.resource import res
 
-        for package, path in res.paths(rel, localize=False):
+        hits = list(res.paths(rel, localize=False))
+        # Later layers (active mods) win, matching HUD PNG overlay.
+        for package, path in reversed(hits):
             try:
                 if hasattr(package, "has_file") and not package.has_file(path):
                     if not (hasattr(package, "isfile") and package.isfile(path)):

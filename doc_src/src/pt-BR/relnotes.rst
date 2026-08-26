@@ -4,6 +4,16 @@ Notas de lançamento
 
 .. contents::
 
+1.4.8.3
+-------
+
+**aoe2: arte HUD / mapa e conjuntos de arquitetura DE**
+
+- **Problema**: o mod Age of Empires II DE não tinha PNG próprios de carta de comandos nem de mapa; Ctrl+F2 caía na arte base. Civilizações compartilham tipos como ``militia``; um miliciano distinto por civ não bate com DE (conjuntos regionais, não IDs por civ).
+- **Mudança**: camadas de recursos posteriores cobrem PNG de mesmo nome. aoe2 traz ``mods/aoe2/ui/icons`` e ``ui/map``. Geometria inicial: ``python tools/gen_aoe2_hud_icons.py``; PNG próprias não precisam do script. ``ui/architecture.txt`` agrupa civs (ex. ``western_european``); a busca é ``ui/map/<conjunto>/<tipo>.png``. Civs do mesmo conjunto compartilham arte. Depósitos e fauna neutros ficam no nível superior. RGB (``rim``, etc.) só afetam o gerador. Mods estilo StarCraft com tipos distintos por raça (``marine`` / ``zergling`` / ``zealot``) não precisam de subpastas de arquitetura.
+- **Alcance**: carga de PNG HUD/mapa; arte aoe2 e ``architecture.txt``. TTS / jogo às cegas inalterados.
+
+
 1.4.8.2
 -------
 

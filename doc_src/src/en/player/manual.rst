@@ -243,6 +243,7 @@ When on, shows a top-down map. Compared with the old debug view, this build impr
 - **Map sprites**: the top-down map uses ``res/ui/map/<type>.png`` (separate from HUD ``ui/icons``); otherwise colored circles/squares.
 - **Optional unit animation**: put packs under ``res/ui/anims/<type>/`` (spritesheet, or optional Spine). Priority: anim → ``ui/map`` → shapes. See ``res/ui/anims/README.txt``.
 - **Starter packs**: flat geometric PNGs in ``res/ui/icons/`` (HUD) and ``res/ui/map/`` (map). Replace same filename to customize. Regenerate with ``python tools/gen_hud_icons.py``.
+- **Mod art** (since 1.4.8.3): ``mods/<name>/ui/icons`` and ``ui/map`` overlay same-named base PNGs. aoe2 also uses architecture-set subfolders from ``ui/architecture.txt`` (e.g. ``western_european/militia.png``); StarCraft uses one PNG per type name.
 - **F8 zoom** (with display on): the current square fills the view with a sub-cell grid; mouse hover/click moves the zoom focus; select units, box-select, and right-click orders on a sub-cell or unit (same as keyboard zoom targets).
 - **Visual extras**: soft fog fringes, pulsing selection, target markers and march lines, hurt/attack flashes, build progress rings, movement lerp (visual only; TTS unchanged).
 - **Combat / gather FX**: ranged shots fly as dots; melee shows a slash arc; mining sparks chips toward the worker; store flies cargo into the townhall/lumber mill.

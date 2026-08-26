@@ -4,6 +4,16 @@
 .. contents::
 
 
+1.4.8.3
+--------
+
+**aoe2：命令卡 / 地图图与决定版建筑风格套**
+
+- **问题**：帝国时代2决定版模组没有自己的命令卡和俯视图 PNG，Ctrl+F2 会落到主包农民/步兵图。各文明共用 ``militia`` 等类型名；若按文明各做一套民兵图，也不符合决定版（决定版是区域建筑风格，不是每文明独立单位 ID）。
+- **改进**：模组 PNG 后加载层覆盖主包同名文件。aoe2 自带 ``mods/aoe2/ui/icons``（命令卡/队列）与 ``ui/map``（俯视图）；起步几何图用 ``python tools/gen_aoe2_hud_icons.py``，自己换 PNG 不必跑脚本。``ui/architecture.txt`` 把文明分到 ``western_european`` / ``east_asian`` 等套；运行时先找 ``ui/map/<套名>/<类型>.png``。同套文明同图（英/法民兵一样）。中立矿与野兽只放顶层。``rim`` 等颜色只影响生成器。星际争霸模组类型名按种族分开（``marine`` / ``zergling`` / ``zealot``），一张 PNG 对应一个类型即可，不需要 architecture 子目录。
+- **范围**：引擎 HUD/地图 PNG 加载；aoe2 贴图与 ``architecture.txt``。TTS / 盲玩不变。
+
+
 1.4.8.2
 --------
 

@@ -1943,6 +1943,14 @@ Ctrl+F2 俯视图：图标与单位动画（自 1.4.6.1）
   文件名 = ``rules.txt`` 类型名，如 ``peasant.png``、``goldmine.png``。
   **仅用于** Ctrl+F2 俯视图；缺图则用几何色块（不用生成字母）。
   起步包可用 ``python tools/gen_hud_icons.py`` 同时写入 icons 与 map；同名覆盖即可换更好的图。
+  后加入的资源层（活动模组）覆盖主包同名 PNG。
+
+**建筑风格套**（自 1.4.8.3）
+  多文明共用同一 ``rules.txt`` 类型名时（aoe2 民兵都是 ``militia``），不要按文明各做一套单位图。决定版做法是区域建筑风格套。
+  在 ``ui/architecture.txt`` 里用 ``def <套名>`` + ``factions civ1 civ2 …`` 分组；运行时先找 ``ui/map/<套名>/<类型>.png``，没有再找 ``ui/map/<类型>.png``（命令卡 ``ui/icons`` 同样）。
+  中立矿床与野兽只放顶层，不进套子目录。
+  ``rim`` 等 RGB 只给 ``python tools/gen_aoe2_hud_icons.py`` 生成起步图用；自己放 PNG 不必跑脚本。
+  星际争霸这类模组每种族已有独立类型名（``marine`` / ``zergling`` / ``zealot``），一张 PNG 对一个类型即可，不需要 architecture 子目录。
 
 **动画包** ``ui/anims/<类型名>/``
   详细格式见仓库 ``res/ui/anims/README.txt``。模组路径相同，例如 ``mods/mymod/ui/anims/peasant/``。

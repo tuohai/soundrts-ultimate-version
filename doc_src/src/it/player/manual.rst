@@ -241,6 +241,7 @@ Con il display attivo mostra la mappa dall’alto con qualità migliore rispetto
 - **Scorrimento ai bordi / zoom rotella**: pan sul bordo del viewport; rotella su/giù zoom avanti/indietro.
 - Con selezione: pannello attributi in basso a sinistra (HP/attacco/difesa…); griglia 5×3 a destra; coda accanto al pannello. PNG opzionali in ``res/ui/icons/<tipo>.png``.
 - **Sprite mappa**: ``res/ui/map/<tipo>.png`` (separato da icons); anims → map → forme. Pacchetto anche in ``res/ui/map/``; ``python tools/gen_hud_icons.py`` rigenera.
+- **Arte delle mod** (da 1.4.8.3): ``mods/<nome>/ui/icons`` e ``ui/map`` coprono i PNG base. aoe2 usa sottocartelle di set (``ui/architecture.txt``); StarCraft un PNG per tipo.
 
 Con il display off, tastiera e voce restano primarie. Lo stato è salvato (``display_enabled``) e ripristinato all’avvio. Vedi `tasti a livelli <layered-hotkeys.htm>`_.
 

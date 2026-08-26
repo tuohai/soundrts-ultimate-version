@@ -136,26 +136,49 @@ def _kw_color(keyword):
     return _KW_COLORS.get(keyword, _KW_COLORS["default"])
 
 
-def _load_png_asset(folder, key, size):
-    """从资源包 ``ui/<folder>/<key>.png`` 加载；找不到返回 None。"""
-    if not key:
+def _safe_asset_token(name):
+    if not name:
         return None
-    miss_key = (folder, key)
+    name = str(name).strip().replace("\\", "/")
+    if "/" in name or name in (".", ".."):
+        return None
+    if not all(ch.isalnum() or ch in "_-" for ch in name):
+        return None
+    return name
+
+
+def _png_name_candidates(key, style=None):
+    key = _safe_asset_token(key)
+    if not key:
+        return []
+    names = []
+    style = _safe_asset_token(style)
+    if style:
+        names.append("%s/%s" % (style, key))
+    names.append(key)
+    return names
+
+
+def _load_png_named(folder, name, size):
+    """Load ``ui/<folder>/<name>.png`` (name may be ``set/type``)."""
+    miss_key = (folder, name)
     if miss_key in _png_miss:
         return None
-    cache_key = ("png", folder, key, size)
+    cache_key = ("png", folder, name, size)
     if cache_key in _icon_cache:
         return _icon_cache[cache_key]
     try:
         from ..lib.resource import res
 
         candidates = (
-            "ui/%s/%s.png" % (folder, key),
-            "ui/%s/%s.PNG" % (folder, key),
-            "ui/%s/%s.jpg" % (folder, key),
+            "ui/%s/%s.png" % (folder, name),
+            "ui/%s/%s.PNG" % (folder, name),
+            "ui/%s/%s.jpg" % (folder, name),
         )
         for rel in candidates:
-            for package, path in res.paths(rel, localize=False):
+            # Later layers (active mods) win, matching text() last-layer overlay.
+            hits = list(res.paths(rel, localize=False))
+            for package, path in reversed(hits):
                 try:
                     if hasattr(package, "has_file") and not package.has_file(path):
                         if not (hasattr(package, "isfile") and package.isfile(path)):
@@ -189,16 +212,25 @@ def _load_png_asset(folder, key, size):
     return None
 
 
-def _load_png_icon(key, size):
-    """命令卡：``ui/icons/<key>.png``。"""
-    return _load_png_asset("icons", key, size)
+def _load_png_asset(folder, key, size, style=None):
+    """从资源包加载；``style`` 为建筑风格目录（先 ``ui/<folder>/<style>/<key>``）。"""
+    for name in _png_name_candidates(key, style):
+        surf = _load_png_named(folder, name, size)
+        if surf is not None:
+            return surf
+    return None
 
 
-def get_map_sprite(type_name, size):
-    """俯视图静态图：仅 ``ui/map/<type>.png``（不读 icons，不生成字母）。"""
+def _load_png_icon(key, size, style=None):
+    """命令卡：``ui/icons/<key>.png``，可先试建筑风格子目录。"""
+    return _load_png_asset("icons", key, size, style=style)
+
+
+def get_map_sprite(type_name, size, style=None):
+    """俯视图静态图：``ui/map/<style>/<type>.png`` 然后 ``ui/map/<type>.png``。"""
     if not type_name:
         return None
-    return _load_png_asset("map", str(type_name).strip(), size)
+    return _load_png_asset("map", str(type_name).strip(), size, style=style)
 
 
 # 兼容旧名
@@ -244,17 +276,29 @@ def _make_generated_icon(key, keyword, title_text, size):
     return surf
 
 
-def get_icon(key, keyword="default", title_text="", size=_ICON):
-    """命令卡真图优先，否则生成。"""
+def get_icon(key, keyword="default", title_text="", size=_ICON, style=None):
+    """命令卡真图优先，否则生成。``style`` 为 DE 建筑风格目录。"""
     key = (key or keyword or "default").strip()
-    png = _load_png_icon(key, size)
+    png = _load_png_icon(key, size, style=style)
     if png is not None:
         return png
     if key != keyword:
-        png = _load_png_icon(keyword, size)
+        png = _load_png_icon(keyword, size, style=style)
         if png is not None:
             return png
     return _make_generated_icon(key, keyword or "default", title_text, size)
+
+
+def _selection_arch_style(interface, entity=None):
+    try:
+        from .game_arch_set import architecture_set_for_entity
+
+        if entity is not None:
+            return architecture_set_for_entity(entity)
+        ev, model, _ = _queue_unit(interface)
+        return architecture_set_for_entity(ev or model)
+    except Exception:
+        return None
 
 
 def _order_icon_key(order_view):
@@ -506,9 +550,10 @@ def _draw_selection_stats(interface, screen, *, panel, card_x, font, font_s):
     type_name = getattr(primary, "type_name", None) or getattr(model, "type_name", None)
     portrait = None
     if type_name:
-        portrait = get_map_sprite(type_name, _STAT_PORTRAIT)
+        style = _selection_arch_style(interface, primary)
+        portrait = get_map_sprite(type_name, _STAT_PORTRAIT, style=style)
         if portrait is None:
-            portrait = get_icon(type_name, "default", title, _STAT_PORTRAIT)
+            portrait = get_icon(type_name, "default", title, _STAT_PORTRAIT, style=style)
 
     box_w = min(_STAT_PANEL_W, max(180, card_x - _PAD * 2))
     box_h = panel.h - _PAD * 2
@@ -754,7 +799,7 @@ def draw_hud(interface):
         title = _short_label(o.title)
         key = _order_icon_key(o)
         kw = getattr(getattr(o, "cls", None), "keyword", "default")
-        icon = get_icon(key, kw, title, _ICON)
+        icon = get_icon(key, kw, title, _ICON, style=_selection_arch_style(interface))
         is_sel = selected is not None and selected == o
         needs_tgt = bool(getattr(o, "nb_args", 0))
         hot = rect.collidepoint(mx, my)
@@ -807,7 +852,7 @@ def draw_hud(interface):
             kw = getattr(o, "keyword", "default")
             typ = getattr(getattr(o, "type", None), "type_name", None) or kw
             title = _order_label(o, interface)
-            icon = get_icon(typ, kw, title, _QICON)
+            icon = get_icon(typ, kw, title, _QICON, style=_selection_arch_style(interface))
             r = pygame.Rect(qx, qy, _QICON, _QICON)
             fill = (45, 70, 50) if i == 0 else (35, 40, 50)
             pygame.draw.rect(screen, fill, r, border_radius=5)

@@ -5,6 +5,16 @@ Release notes
 .. contents::
 
 
+1.4.8.3
+--------
+
+**aoe2: HUD / map art and DE architecture sets**
+
+- **Issue**: The Age of Empires II DE mod had no command-card or map PNGs of its own, so Ctrl+F2 fell back to the base peasant/footman art. Civilizations share type names such as ``militia``; making a unique militia per civ would not match DE (DE uses regional architecture sets, not per-civ unit IDs).
+- **Change**: Later resource layers overlay same-named PNGs from the base pack. aoe2 ships ``mods/aoe2/ui/icons`` (command card / queue) and ``ui/map`` (top-down). Starter geometry: ``python tools/gen_aoe2_hud_icons.py``; custom PNGs do not need that script. ``ui/architecture.txt`` groups civs into sets such as ``western_european`` / ``east_asian``; lookup tries ``ui/map/<set>/<type>.png`` first. Civs in the same set share art (Britons and Franks use the same militia). Neutral deposits and wildlife stay at the top level. ``rim`` and other RGB values affect the generator only. StarCraft-style mods already use distinct type names per race (``marine`` / ``zergling`` / ``zealot``), so one PNG per type is enough — no architecture subfolders.
+- **Scope**: Engine HUD/map PNG loading; aoe2 art and ``architecture.txt``. TTS / blind play unchanged.
+
+
 1.4.8.2
 --------
 

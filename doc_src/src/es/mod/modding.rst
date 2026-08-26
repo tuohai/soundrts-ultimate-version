@@ -1726,10 +1726,16 @@ Vista Ctrl+F2: iconos y animación (desde 1.4.6.1)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 Con la pantalla activa, los mods pueden aportar arte opcional. Prioridad en el mapa:
-``ui/anims/<tipo>/`` → ``ui/map/<tipo>.png`` → formas geométricas.
-Los efectos de combate/recolección se superponen igual. Formato detallado:
+``ui/anims/<tipo>/`` → ``ui/map/<conjunto>/<tipo>.png`` → ``ui/map/<tipo>.png`` → formas geométricas.
+Las capas posteriores cubren PNG del mismo nombre. Formato detallado:
 ``res/ui/anims/README.txt``. Spine es opcional; si falta, se vuelve a spritesheet/iconos/formas.
 Código: ``game_unit_anim.py``.
+
+Conjuntos de arquitectura (desde 1.4.8.3): ``ui/architecture.txt`` agrupa civs
+(``def <conjunto>`` + ``factions …``). aoe2 usa sets DE, no un miliciano por civ.
+Minerales y fauna neutrales quedan en la raíz. RGB (``rim``, etc.) solo para
+``python tools/gen_aoe2_hud_icons.py``. Mods con tipos distintos por raza
+(StarCraft: ``marine`` / ``zergling`` / ``zealot``) no necesitan subcarpetas.
 
 atajo
 >>>>>>>
