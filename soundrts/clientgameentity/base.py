@@ -217,6 +217,10 @@ class EntityViewBase:
     def __init__(self, interface, model):
         self.interface = interface
         self.model = model
+        # Instance flag: avoid EntityView.__getattr__ → model.is_memory → hasattr.
+        self.is_memory = (
+            model is not None and getattr(model, "time_stamp", None) is not None
+        )
         self.footstep_random = (
             random.random() * 0.2
         )  # to avoid strange synchronicity of footsteps when several units are walking

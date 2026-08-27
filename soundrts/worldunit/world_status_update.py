@@ -541,14 +541,7 @@ class CreatureStatusUpdate(Entity):
         if self.player is None:
             return
 
-        # 确保位置坐标是整数，但避免每次转换
-        # 只有在值不是整数时才进行转换
-        if not isinstance(self.x, int):
-            self.x = int(self.x)
-        if not isinstance(self.y, int):
-            self.y = int(self.y)
-        if not isinstance(self.o, int):
-            self.o = int(self.o)
+        # nofloat 路径下 x/y/o 已是 int；每帧 isinstance 在 9M+ update 上很贵。
 
         # 优化：缓存排序结果，避免每次update都重新排序
         # (_cached_*_hash / _cached_sorted_* 已在类体设默认值)
@@ -580,11 +573,13 @@ class CreatureStatusUpdate(Entity):
                     if self.is_dead:
                         return
 
-        self._update_cooldowns()
+        if self._cooldowns:
+            self._update_cooldowns()
 
         self.is_moving = False
 
-        tick_siege_pack(self)
+        if self.packable or self.unpack_time or self.pack_time:
+            tick_siege_pack(self)
 
         # 依次处理各种行为
         if self.heal_level:
@@ -599,7 +594,7 @@ class CreatureStatusUpdate(Entity):
             return
 
         # 帝国 2 式：claimable 牲畜 — 中立靠近归属；敌方羊可被抢（凯尔特无视看守）
-        if getattr(type(self), "claimable", 0) or getattr(type(self), "herdable", 0):
+        if self.claimable or self.herdable:
             owner = self.player
             if owner is not None and getattr(owner, "neutral", False):
                 self._try_auto_claim()
@@ -625,7 +620,13 @@ class CreatureStatusUpdate(Entity):
             # warning: completing UpgradeToOrder deletes the object
             self._execute_orders()
         else:
-            self.decide()
+            # Tick is 300ms; most units' decide interval is 150–700ms.
+            # last_attacker forces a call so hit reaction stays on the next tick.
+            if (
+                self.world.time >= self._next_decide_time
+                or self.last_attacker is not None
+            ):
+                self.decide()
             if not self._is_attacking() and self.orders:
                 self._execute_orders()
     # update

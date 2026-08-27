@@ -5,6 +5,16 @@ Release notes
 .. contents::
 
 
+1.4.8.4
+--------
+
+**Performance: Ctrl+F2 map view and world simulation**
+
+- **Issue**: With Ctrl+F2 on and many computers, map painting and world updates could not keep real time. The hot path repeatedly used EntityView ``__getattr__``, rebuilt fog every tick, and reclassified every object and sprite. Unit ``decide`` and square occupancy ran too often.
+- **Change**: The map view reads kind and coordinates from the world model (``stamp_map_view_cache``, ``_map_kind``). ``display_objects`` paints in layer buckets; resources skip unit animation and hit-point bars. Fog skips unchanged objects and caches ``is_memory``, sprites, and labels. ``memory_for_display`` is cached per tick. Idle units delay ``decide`` (``_next_decide_time``). Squares cache ``used_square_space``. Combat-idle status updates take a cheap path. Viewport cell clipping (``visible_cell_range``) was tried; the object loop got slower, so it was not kept.
+- **Scope**: Ctrl+F2 map view, client fog, computer updates. TTS and rules gameplay unchanged.
+
+
 1.4.8.3
 --------
 

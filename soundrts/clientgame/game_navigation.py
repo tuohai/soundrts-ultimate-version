@@ -14,6 +14,7 @@ from ..lib.log import exception, debug
 from ..lib.msgs import localize_voice_msg, nb2msg
 from ..lib.sound import distance, stereo
 from ..worldroom import Square
+from ..clientgamegridview import stamp_map_view_cache
 
 
 # 第一人称RPG模式相关功能
@@ -1081,8 +1082,11 @@ def _follow_if_needed(interface):
 # 雾战更新相关功能
 def _sync_memory_hp_from_live(m):
     im = getattr(m, "initial_model", None)
-    if im is not None and hasattr(im, "hp"):
-        m.hp = im.hp
+    if im is None:
+        return
+    hp = getattr(im, "hp", None)
+    if hp is not None:
+        m.hp = hp
 
 
 def _take_hp_tracking(view):
@@ -1104,9 +1108,9 @@ def _world_model_is_placed(m):
     """True if the world object still has a map square (or is inside a transport)."""
     if m is None:
         return False
-    if getattr(m, "is_inside", False):
+    if getattr(m, "place", None) is not None:
         return True
-    return getattr(m, "place", None) is not None
+    return bool(getattr(m, "is_inside", False))
 
 
 def _purge_placeless_world_models(interface):
@@ -1114,27 +1118,37 @@ def _purge_placeless_world_models(interface):
     player = getattr(interface, "player", None)
     perception = getattr(interface, "perception", None)
     if perception is not None:
-        for m in tuple(perception):
-            if _world_model_is_placed(m):
-                continue
-            perception.discard(m)
-            if player is not None:
-                observed = getattr(player, "observed_objects", None)
-                if isinstance(observed, dict):
+        drop = [m for m in perception if not _world_model_is_placed(m)]
+        if drop:
+            observed = getattr(player, "observed_objects", None) if player is not None else None
+            is_dict = isinstance(observed, dict)
+            for m in drop:
+                perception.discard(m)
+                if is_dict:
                     observed.pop(m, None)
 
     memory = getattr(interface, "memory", None)
     if memory is None or player is None:
         return
     forget = getattr(player, "_forget", None)
-    for rem in tuple(memory):
-        model = getattr(rem, "initial_model", rem)
-        if _world_model_is_placed(model):
-            continue
+    drop = [rem for rem in memory if not _world_model_is_placed(getattr(rem, "initial_model", rem))]
+    if not drop:
+        return
+    for rem in drop:
         if callable(forget):
             forget(rem)
         else:
             memory.discard(rem)
+
+
+def _bind_dobject(interface, m, prev_hp=None, prev_soldiers=None):
+    view = EntityView(interface, m)
+    stamp_map_view_cache(view, m)
+    interface.dobjets[m.id] = view
+    _apply_hp_tracking(view, prev_hp, prev_soldiers)
+    if interface.target is not None and m.id == interface.target.id:
+        interface.target = view
+    return view
 
 
 def update_fog_of_war(interface):
@@ -1144,26 +1158,37 @@ def update_fog_of_war(interface):
     # Drop deleted world models still lingering in perception/memory (place cleared).
     # Otherwise Ctrl+F2 keeps drawing them and spams "X.place is None".
     _purge_placeless_world_models(interface)
-    
+
+    dobjets = interface.dobjets
+    seen = set()
+    seen_add = seen.add
+
     # add or update objects
     for m in interface.memory:
+        mid = m.id
+        seen_add(mid)
         _sync_memory_hp_from_live(m)
+        view = dobjets.get(mid)
         prev_hp, prev_soldiers = None, None
-        if m.id in interface.dobjets and not interface.dobjets[m.id].is_memory:
-            prev_hp, prev_soldiers = _take_hp_tracking(interface.dobjets.get(m.id))
-            _delete_object(interface, m.id)  # memory will replace perception
-        if m.id not in interface.dobjets:
-            interface.dobjets[m.id] = EntityView(interface, m)
-            _apply_hp_tracking(interface.dobjets[m.id], prev_hp, prev_soldiers)
-            if interface.target and m.id == interface.target.id:  # keep target
-                interface.target = interface.dobjets[m.id]
+        if view is not None and not view.is_memory:
+            prev_hp, prev_soldiers = _take_hp_tracking(view)
+            _delete_object(interface, mid)  # memory will replace perception
+            view = None
+        if view is None:
+            _bind_dobject(interface, m, prev_hp, prev_soldiers)
             if _must_report_resource(interface, m):
                 interface.scout_info.add(m.place)
-        else:
-            interface.dobjets[m.id].model = m
+        elif view.model is not m:
+            view.model = m
+            stamp_map_view_cache(view, m)
+        elif view.__dict__.get("_map_kind") is None:
+            stamp_map_view_cache(view, m)
     for m in interface.perception:
+        mid = m.id
+        seen_add(mid)
+        view = dobjets.get(mid)
         prev_hp, prev_soldiers = None, None
-        if m.id not in interface.dobjets:
+        if view is None:
             # 中立电脑（`computer_only ... neutral`）的单位是被动 creep，不视为
             # 主动敌人——不进"新敌人提示"，也不触发战斗音乐。它们仍走 is_an_enemy
             # 真值路径（保留视野/自动开火/伤害逻辑），但 UI 提示与音乐采用更弱的语义。
@@ -1180,31 +1205,37 @@ def update_fog_of_war(interface):
                 found_new_enemy = True
             if _must_report_resource(interface, m):
                 interface.scout_info.add(m.place)
-        elif interface.dobjets[m.id].is_memory:
-            prev_hp, prev_soldiers = _take_hp_tracking(interface.dobjets.get(m.id))
-            _delete_object(interface, m.id)  # perception will replace memory
-        if m.id not in interface.dobjets:
-            interface.dobjets[m.id] = EntityView(interface, m)
-            _apply_hp_tracking(interface.dobjets[m.id], prev_hp, prev_soldiers)
-            if interface.target and m.id == interface.target.id:  # keep target
-                interface.target = interface.dobjets[m.id]
-        else:
-            interface.dobjets[m.id].model = m
+        elif view.is_memory:
+            prev_hp, prev_soldiers = _take_hp_tracking(view)
+            _delete_object(interface, mid)  # perception will replace memory
+            view = None
+        if view is None:
+            _bind_dobject(interface, m, prev_hp, prev_soldiers)
+        elif view.model is not m:
+            view.model = m
+            stamp_map_view_cache(view, m)
+        elif view.__dict__.get("_map_kind") is None:
+            stamp_map_view_cache(view, m)
 
     # remove missing objects
-    pm = {o.id for o in interface.memory}
-    pm.update(o.id for o in interface.perception)
-    for i in list(interface.dobjets.keys()):
-        if i in pm:
+    for i in list(dobjets.keys()):
+        if i in seen:
             continue
         _delete_object(interface, i)
-        if interface.target and i == interface.target.id:
+        if interface.target is not None and i == interface.target.id:
             interface.target = None
-    
+
     from ..version import IS_DEV_VERSION
-    from ..lib.log import warning
     if IS_DEV_VERSION:
-        for m in interface.perception.union(interface.memory):
+        from ..lib.log import warning
+        for m in interface.perception:
+            if getattr(m, "place", None) is None and not getattr(m, "is_inside", False):
+                warning(
+                    "%s.model is in memory or perception "
+                    "and yet its place is None",
+                    getattr(m, "type_name", "?"),
+                )
+        for m in interface.memory:
             if getattr(m, "place", None) is None and not getattr(m, "is_inside", False):
                 warning(
                     "%s.model is in memory or perception "

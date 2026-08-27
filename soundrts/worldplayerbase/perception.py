@@ -1745,10 +1745,25 @@ class PerceptionMixin:
 
     def memory_for_display(self):
         current_time = self.world.time
-        return {
-            memory for memory in self.memory
-            if self._memory_visible_for_display(memory, current_time)
-        }
+        mem = self.memory
+        cache = getattr(self, "_memory_for_display_cache", None)
+        # Same set object + same tick: voila may be the only caller, but skip rebuilds.
+        if (
+            cache is not None
+            and cache[0] is mem
+            and cache[1] == current_time
+            and cache[2] == len(mem)
+        ):
+            return cache[3]
+        display_duration = getattr(self, "display_memory_duration", self.memory_duration)
+        result = set()
+        add = result.add
+        for memory in mem:
+            unit = memory.initial_model
+            if not unit.speed or memory.time_stamp + display_duration >= current_time:
+                add(memory)
+        self._memory_for_display_cache = (mem, current_time, len(mem), result)
+        return result
 
     def _refresh_combat_snapshot(self):
         """构建战斗快照，供战斗模块直接读取，减少重复聚合成本。

@@ -64,6 +64,8 @@ class CreatureOrders(Entity):
         if imperative:
             order.is_imperative = imperative
         order.immediate_action()
+        # New orders shorten the decide interval; wake AI on the next tick.
+        self._next_decide_time = 0
 
     def _target_is_enter_container(self, target):
         return (

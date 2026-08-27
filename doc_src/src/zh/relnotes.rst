@@ -4,6 +4,16 @@
 .. contents::
 
 
+1.4.8.4
+--------
+
+**性能：Ctrl+F2 俯视图与世界模拟**
+
+- **问题**：开着 Ctrl+F2、多电脑对战时，俯视图绘制和世界更新都跟不上实时。热路径反复走 EntityView 的 ``__getattr__``、每 tick 全量同步迷雾、对每个对象重复分类与贴图查找；单位 ``decide`` 与格子占用计算也过频。
+- **改进**：俯视图用 world model 做种类与坐标（``stamp_map_view_cache``、``_map_kind``），``display_objects`` 图层分桶后绘制；资源不走单位动画与血条。迷雾跳过未变对象，缓存 ``is_memory``、贴图与标签；``memory_for_display`` 按 tick 缓存。世界侧：空闲单位推迟 ``decide``（``_next_decide_time``）；格子 ``used_square_space`` 缓存；无战斗状态廉价跳过。镜头格子裁剪（``visible_cell_range``）试过，物体循环更慢，未保留。
+- **范围**：Ctrl+F2 俯视图、客户端迷雾、电脑玩家更新。TTS 与规则玩法不变。
+
+
 1.4.8.3
 --------
 

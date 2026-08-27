@@ -50,6 +50,8 @@ _KW_COLORS = {
 
 _icon_cache = {}  # (folder, key, size) -> Surface  or legacy (key, size)
 _png_miss = set()  # (folder, key) already checked missing
+_map_sprite_memo = {}
+_MAP_SPRITE_NONE = object()
 
 
 def _voice_to_text(parts):
@@ -230,7 +232,13 @@ def get_map_sprite(type_name, size, style=None):
     """俯视图静态图：``ui/map/<style>/<type>.png`` 然后 ``ui/map/<type>.png``。"""
     if not type_name:
         return None
-    return _load_png_asset("map", str(type_name).strip(), size, style=style)
+    key = (type_name, size, style)
+    hit = _map_sprite_memo.get(key, _MAP_SPRITE_NONE)
+    if hit is not _MAP_SPRITE_NONE:
+        return hit
+    surf = _load_png_asset("map", str(type_name).strip(), size, style=style)
+    _map_sprite_memo[key] = surf
+    return surf
 
 
 # 兼容旧名

@@ -42,6 +42,9 @@ class CreatureAIDecision(Entity):
     # decide 被每帧每单位调 (1.10M calls/5min); 每个 None sentinel 用 LOAD_ATTR
     # 一次即可判断是否计算过, 比 hasattr 慢路径快 3-4x.
     _last_decide_time = 0
+    # update() skips calling decide until world.time reaches this.
+    # Set after a real decide / interval skip; cleared on take_order / ai_mode.
+    _next_decide_time = 0
     _cached_has_attack = None
     _cached_counterattack_enabled = None
     # D-Phase 2: counterattack_enabled class default = False, 替代 hot path
@@ -342,6 +345,7 @@ class CreatureAIDecision(Entity):
         dt = current_time - self._last_decide_time
         # Absolute floor (attacker/orders path uses 80ms). Skip work on sub-floor gaps.
         if dt < 80:
+            self._next_decide_time = self._last_decide_time + 80
             return
 
         # D-Phase 1 T4: interval 计算抽到 Cython (1.1M calls/5min).
@@ -372,8 +376,10 @@ class CreatureAIDecision(Entity):
                     interval = 80
 
         if dt < interval:
+            self._next_decide_time = self._last_decide_time + interval
             return
         self._last_decide_time = current_time
+        self._next_decide_time = current_time + interval
 
         if self._flee_on_hit_enabled() and self.last_attacker is not None:
             if self._flee_from_attacker():

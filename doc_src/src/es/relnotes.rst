@@ -4,6 +4,16 @@ Notas de la versión
 
 .. contents::
 
+1.4.8.4
+-------
+
+**Rendimiento: vista de mapa Ctrl+F2 y simulación del mundo**
+
+- **Problema**: con Ctrl+F2 y muchos ordenadores, pintar el mapa y actualizar el mundo no llegaban a tiempo real. La ruta caliente usaba ``__getattr__`` de EntityView, reconstruía la niebla cada tick y reclasificaba cada objeto y sprite. ``decide`` y el espacio de casilla corrían demasiado.
+- **Cambio**: la vista lee tipo y coordenadas del modelo (``stamp_map_view_cache``, ``_map_kind``). ``display_objects`` pinta por capas; los recursos omiten animación de unidad y barras de vida. La niebla salta objetos sin cambio y guarda ``is_memory``, sprites y etiquetas. ``memory_for_display`` se guarda por tick. Unidades ociosas retrasan ``decide`` (``_next_decide_time``). Las casillas guardan ``used_square_space``. Los estados sin combate van por una vía barata. El recorte por celda (``visible_cell_range``) se probó; el bucle de objetos fue más lento y no se conservó.
+- **Alcance**: vista Ctrl+F2, niebla del cliente, actualizaciones del ordenador. TTS y reglas de juego sin cambios.
+
+
 1.4.8.3
 -------
 

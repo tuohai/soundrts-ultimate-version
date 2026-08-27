@@ -92,17 +92,23 @@ class _Space:
     # A* 图节点含 Square 与 Exit；仅 Exit 有 is_blocked。用 is_an_exit 替代
     # hasattr(v, 'is_blocked')，避免千万级 HasAttr 慢路径。
     is_an_exit = False
+    # Square occupancy: increment on enter/leave so used_square_space can cache.
+    _space_gen = 0
+    # Only Square implements have_enough_square_space; Inside / others stay False.
+    checks_square_space = False
 
     def __init__(self):
         self.objects = []
 
     def enter(self, o):
         self.objects.append(o)
+        self._space_gen = self._space_gen + 1
         if o.id is None:
             self.world.register_entity(o)
 
     def leave(self, o):
         self.objects.remove(o)
+        self._space_gen = self._space_gen + 1
 
 
 class Square(_Space):
@@ -115,6 +121,7 @@ class Square(_Space):
     is_ground = True
     is_water = False
     is_air = True
+    checks_square_space = True
 
     def __init__(self, world, col, row, width):
         super().__init__()
@@ -738,26 +745,67 @@ class Square(_Space):
 
         *for_player* 若给出：只统计与该玩家同盟（``player.allied``）的单位占用，
         敌军不占其名额。为 ``None`` 时统计全部（兼容无玩家上下文的调用）。
+
+        Cached per (airground_type, player) until enter/leave or objects-list
+        length changes (tests that ``append`` directly still invalidate).
         """
-        used = 0
-        allied = None
-        if for_player is not None:
-            allied = getattr(for_player, "allied", None)
-            if allied is None:
-                allied = (for_player,)
-        for o in self.objects:
-            if o is exclude:
-                continue
-            if getattr(o, "airground_type", None) != airground_type:
-                continue
-            s = int(getattr(o, "space", 0) or 0)
-            if s <= 0:
-                continue
-            if allied is not None:
-                op = getattr(o, "player", None)
-                if op is None or op not in allied:
+        pid = id(for_player) if for_player is not None else 0
+        gen = self._space_gen
+        n = len(self.objects)
+        cache = self.__dict__.get("_used_space_cache")
+        if cache is None:
+            cache = {}
+            self._used_space_cache = cache
+        key = (airground_type, pid)
+        hit = cache.get(key)
+        if hit is not None and hit[0] == gen and hit[1] == n:
+            used = hit[2]
+        else:
+            used = 0
+            allied = None
+            if for_player is not None:
+                allied = getattr(for_player, "allied", None)
+                if allied is None:
+                    allied = (for_player,)
+            for o in self.objects:
+                if getattr(o, "airground_type", None) != airground_type:
                     continue
-            used += s
+                s = int(getattr(o, "space", 0) or 0)
+                if s <= 0:
+                    continue
+                if allied is not None:
+                    op = getattr(o, "player", None)
+                    if op is None or op not in allied:
+                        continue
+                used += s
+            cache[key] = (gen, n, used)
+        if exclude is not None and used:
+            s = int(getattr(exclude, "space", 0) or 0)
+            if s > 0 and getattr(exclude, "airground_type", None) == airground_type:
+                place = getattr(exclude, "place", None)
+                if place is self:
+                    on_here = True
+                elif place is not None:
+                    on_here = False
+                else:
+                    on_here = False
+                    for o in self.objects:
+                        if o is exclude:
+                            on_here = True
+                            break
+                if on_here:
+                    skip = False
+                    if for_player is not None:
+                        allied = getattr(for_player, "allied", None)
+                        if allied is None:
+                            allied = (for_player,)
+                        op = getattr(exclude, "player", None)
+                        if op is None or op not in allied:
+                            skip = True
+                    if not skip:
+                        used -= s
+                        if used < 0:
+                            used = 0
         return used
 
     def have_enough_square_space(self, unit, player=None):

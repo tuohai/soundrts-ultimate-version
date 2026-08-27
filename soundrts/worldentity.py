@@ -263,7 +263,7 @@ class Entity:
         elif (
             new_place
             and new_place is not self.place
-            and hasattr(new_place, "have_enough_square_space")
+            and getattr(new_place, "checks_square_space", False)
             and not new_place.have_enough_square_space(self)
         ):
             if self.place:

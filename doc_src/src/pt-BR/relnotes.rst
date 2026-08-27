@@ -4,6 +4,16 @@ Notas de lançamento
 
 .. contents::
 
+1.4.8.4
+-------
+
+**Desempenho: vista de mapa Ctrl+F2 e simulação do mundo**
+
+- **Problema**: com Ctrl+F2 e muitos computadores, pintar o mapa e atualizar o mundo não acompanhavam o tempo real. O caminho quente usava ``__getattr__`` de EntityView, reconstruía o nevoeiro a cada tick e reclassificava cada objeto e sprite. ``decide`` e o espaço das casas corriam demais.
+- **Mudança**: a vista lê tipo e coordenadas do modelo (``stamp_map_view_cache``, ``_map_kind``). ``display_objects`` pinta por camadas; recursos saltam animação de unidade e barras de vida. O nevoeiro ignora objetos inalterados e guarda ``is_memory``, sprites e rótulos. ``memory_for_display`` é cacheado por tick. Unidades ociosas atrasam ``decide`` (``_next_decide_time``). Casas guardam ``used_square_space``. Atualizações de estado sem combate usam um caminho barato. O recorte por célula (``visible_cell_range``) foi testado; o ciclo de objetos ficou mais lento e não foi mantido.
+- **Alcance**: vista Ctrl+F2, nevoeiro do cliente, atualizações do computador. TTS e regras de jogo inalterados.
+
+
 1.4.8.3
 -------
 

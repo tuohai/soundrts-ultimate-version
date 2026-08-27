@@ -3,6 +3,16 @@ Note di rilascio
 
 .. contents::
 
+1.4.8.4
+--------
+
+**Prestazioni: vista mappa Ctrl+F2 e simulazione del mondo**
+
+- **Problema**: con Ctrl+F2 e molti computer, disegno mappa e aggiornamento del mondo non tenevano il tempo reale. Il percorso caldo usava ``__getattr__`` di EntityView, ricostruiva la nebbia ogni tick e riclassificava ogni oggetto e sprite. ``decide`` e lo spazio delle caselle giravano troppo spesso.
+- **Cambio**: la vista legge tipo e coordinate dal modello (``stamp_map_view_cache``, ``_map_kind``). ``display_objects`` dipinge a strati; le risorse saltano animazione unità e barre vita. La nebbia salta oggetti invariati e memorizza ``is_memory``, sprite ed etichette. ``memory_for_display`` è in cache per tick. Le unità oziose ritardano ``decide`` (``_next_decide_time``). Le caselle memorizzano ``used_square_space``. Gli aggiornamenti di stato senza combattimento usano un percorso economico. Il ritaglio per cella (``visible_cell_range``) è stato provato; il ciclo oggetti è diventato più lento e non è stato tenuto.
+- **Ambito**: vista Ctrl+F2, nebbia client, aggiornamenti del computer. TTS e regole di gioco invariati.
+
+
 1.4.8.3
 --------
 

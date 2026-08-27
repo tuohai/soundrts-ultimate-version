@@ -426,6 +426,7 @@ class DisableAutoExplore(ImmediateOrder):
 def _apply_unit_ai_mode(unit, mode):
     """设置单位 AI 模式；离开站岗时中立非野生电脑解除中立。"""
     unit.ai_mode = mode
+    unit._next_decide_time = 0
     player = getattr(unit, "player", None)
     if player is not None and hasattr(player, "on_unit_ai_mode_changed"):
         player.on_unit_ai_mode_changed(mode)

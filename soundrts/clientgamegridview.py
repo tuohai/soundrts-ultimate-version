@@ -11,6 +11,59 @@ from .worldentity import COLLISION_RADIUS
 R = 3
 R2 = 9
 
+# display_objects 图层：空地 → 资源 → 建筑 → 单位
+_KIND_LAYER = {"land": 0, "resource": 1, "building": 2, "unit": 3}
+
+# 热路径里懒加载一次，避免每对象 import
+_fn_get_map_sprite = None
+_fn_arch_set_for_entity = None
+_fn_try_blit_anim = None
+_fn_get_anim_pack = None
+_fn_draw_progress_ring = None
+
+
+def _kind_from_model(model):
+    """Classify from the world model (no EntityView.__getattr__)."""
+    if model is None:
+        return "unit"
+    if getattr(model, "resource_type", None) is not None:
+        return "resource"
+    if getattr(model, "is_a_building", False):
+        return "building"
+    if getattr(model, "is_a_building_land", False):
+        return "land"
+    return "unit"
+
+
+def stamp_map_view_cache(view, model):
+    """Store map-view fields on the EntityView so paint/minimap skip __getattr__."""
+    if view is None:
+        return
+    kind = _kind_from_model(model)
+    view._map_kind = kind
+    if model is None:
+        view.is_memory = False
+        view._map_type_name = ""
+        view._map_air = False
+        return
+    view.is_memory = getattr(model, "time_stamp", None) is not None
+    view._map_type_name = (
+        getattr(model, "type_name", None) or getattr(model, "type", None) or ""
+    )
+    view._map_air = getattr(model, "airground_type", None) == "air"
+
+
+def _model_unplaced(model):
+    """True when the world object has no square and is not inside a transport."""
+    if getattr(model, "place", None) is not None:
+        return False
+    return not getattr(model, "is_inside", False)
+
+
+_LABEL_SURF = {}
+_LABEL_SURF_MAX = 2048
+_anim_pack_miss = set()
+
 # 大地图不整图缩小：偏好格像素；装不下则延伸到屏外，用边缘滚屏（帝国式）移动镜头
 _PREFERRED_CELL_PX = 48
 _MIN_CELL_PX = 16
@@ -149,9 +202,7 @@ def _square_place_name(square, world):
 
 def _resource_qty_label(o):
     model = getattr(o, "model", o)
-    qty = getattr(o, "qty", None)
-    if qty is None:
-        qty = getattr(model, "qty", None)
+    qty = getattr(model, "qty", None)
     if qty is None:
         qty = getattr(model, "resource_qty", None)
     if qty is None:
@@ -232,6 +283,18 @@ class GridView:
         self._cam_cell = None  # 用户滚轮缩放后的格像素；None=自动
         self._cam_origin = None  # (ox, oy)；None=下次按当前格居中初始化
         self._cam_force_center = True
+        # Cached camera / screen for the Ctrl+F2 hot path (filled in _update_coefs)
+        self._sw = 0.0
+        self._w2px = 0.0
+        self._h2px = 0.0
+        self._scr_w = 0
+        self._scr_h = 0
+        self._vis_margin = 24
+        self._icon_pads = {}
+        self._minimap_terrain = None
+        self._minimap_terrain_key = None
+        self._arch_by_player = {}
+        self._team_color_by_pid = {}
 
     def _main_view_rect(self):
         """主地图可用矩形（为底栏命令卡/属性板留空）。"""
@@ -265,10 +328,18 @@ class GridView:
         if not text or font is None:
             return
         x, y = pos
-        if shadow:
-            sh = font.render(text, True, (0, 0, 0))
+        key = (id(font), text, color, shadow)
+        pair = _LABEL_SURF.get(key)
+        if pair is None:
+            surf = font.render(text, True, color)
+            sh = font.render(text, True, (0, 0, 0)) if shadow else None
+            if len(_LABEL_SURF) >= _LABEL_SURF_MAX:
+                _LABEL_SURF.clear()
+            pair = (surf, sh)
+            _LABEL_SURF[key] = pair
+        surf, sh = pair
+        if sh is not None:
             screen.blit(sh, (x + 1, y + 1))
-        surf = font.render(text, True, color)
         screen.blit(surf, (x, y))
 
     def _update_object_cache(self):
@@ -282,32 +353,49 @@ class GridView:
 
     def _is_object_visible(self, o):
         """判断对象是否在视野内"""
-        if not hasattr(o, "x") or not hasattr(o, "y"):
-            return False
-        # Deleted / despawned world models: keep out of the map (and stop warning spam).
-        if getattr(o, "place", None) is None and not getattr(o, "is_inside", False):
-            return False
-
-        if self.interface.zoom_mode:
-            # 缩放模式：显示当前主方格内全部单位（子格网格可见，便于鼠标点选）
-            place = self.interface.place
-            if place is None:
+        model = getattr(o, "model", None)
+        if model is not None:
+            if _model_unplaced(model):
                 return False
-            if hasattr(o, "is_in"):
-                return o.is_in(place)
-            o_place = getattr(o, "place", None)
-            return o_place is place
+            if self.interface.zoom_mode:
+                place = self.interface.place
+                if place is None:
+                    return False
+                o_place = getattr(model, "place", None)
+                if hasattr(o, "is_in"):
+                    return o.is_in(place)
+                return o_place is place
+            try:
+                x, y = self._xy_coords(model.x, model.y)
+            except Exception:
+                return True
+        else:
+            if not hasattr(o, "x") or not hasattr(o, "y"):
+                return False
+            if _model_unplaced(o):
+                return False
+            if self.interface.zoom_mode:
+                place = self.interface.place
+                if place is None:
+                    return False
+                if hasattr(o, "is_in"):
+                    return o.is_in(place)
+                return getattr(o, "place", None) is place
+            try:
+                x, y = self._object_coords(o)
+            except Exception:
+                return True
 
-        # 俯视图：大地图时只画屏上附近的单位（迷雾仍由 dobjets 过滤）
-        try:
-            x, y = self._object_coords(o)
-        except Exception:
-            return True
-        screen = get_screen()
-        if screen is None:
-            return True
-        margin = max(24, int(getattr(self, "square_view_width", 48) or 48))
-        sw, sh = screen.get_width(), screen.get_height()
+        sw = self._scr_w
+        sh = self._scr_h
+        if not sw:
+            screen = get_screen()
+            if screen is None:
+                return True
+            sw, sh = screen.get_width(), screen.get_height()
+        margin = self._vis_margin or max(
+            24, int(getattr(self, "square_view_width", 48) or 48)
+        )
         return -margin <= x <= sw + margin and -margin <= y <= sh + margin
 
     def _zoom_view_rect(self):
@@ -621,21 +709,31 @@ class GridView:
             x = int(left + (ox - xmin) / max(xmax - xmin, 1e-9) * w)
             y = int(top + (ymax - oy) / max(ymax - ymin, 1e-9) * h)
             return x, y
-        sw = float(self.interface.square_width) or 1.0
-        x = int(self._map_origin[0] + ox / sw * self.square_view_width)
-        y = int(
-            self._map_origin[1]
-            + self.ymax
-            - oy / sw * self.square_view_height
-        )
+        sw = self._sw or (float(getattr(self.interface, "square_width", 1.0) or 1.0))
+        ox0, oy0 = self._map_origin
+        x = int(ox0 + ox / sw * self.square_view_width)
+        y = int(oy0 + self.ymax - oy / sw * self.square_view_height)
         return x, y
 
     def _object_coords(self, o):
+        # Prefer raw world milliseconds on the model (skips EntityView.__getattr__).
+        model = getattr(o, "model", None)
+        if model is not None:
+            try:
+                return self._xy_coords(model.x, model.y)
+            except Exception:
+                pass
         # EntityView.x / .y are already /1000 (1.3.8.1)
         return self._get_view_coords_from_world_coords(o.x, o.y)
 
     def _xy_coords(self, ox, oy):
         # Square / model raw milliseconds → client scale (1.3.8.1)
+        w2px = self._w2px
+        if w2px:
+            return (
+                int(self._map_origin[0] + ox * w2px),
+                int(self._map_origin[1] + self.ymax - oy * self._h2px),
+            )
         return self._get_view_coords_from_world_coords(ox / 1000.0, oy / 1000.0)
 
     def _target_view_coords(self, target):
@@ -647,53 +745,103 @@ class GridView:
         return self._xy_coords(target.x, target.y)
 
     def _object_color(self, o):
-        if getattr(o.model, "player", None) is not None:
-            if o.id in self.interface.group:
-                return (80, 255, 120)  # 选中：亮绿
-            if o.player is self.interface.player:
-                return (70, 210, 90)
-            if o.player in self.interface.player.allied:
-                return (70, 140, 255)
-            if o.player.player_is_an_enemy(self.interface.player):
-                return (230, 70, 60)
-            return (180, 180, 80)
-        # 中立：资源偏金，其它偏灰
-        if getattr(o.model, "resource_type", None) is not None or getattr(
-            o, "resource_type", None
-        ):
+        model = getattr(o, "model", o)
+        selected = False
+        try:
+            oid = getattr(model, "id", None)
+            selected = oid is not None and oid in (self.interface.group or ())
+        except Exception:
+            pass
+        return self._color_from_model(model, selected)
+
+    def _color_from_model(self, model, selected=False, kind=None):
+        if selected:
+            return (80, 255, 120)  # 选中：亮绿
+        p = getattr(model, "player", None)
+        if p is not None:
+            cache = self._team_color_by_pid
+            pid = id(p)
+            c = cache.get(pid)
+            if c is not None:
+                return c
+            me = self.interface.player
+            if p is me:
+                c = (70, 210, 90)
+            else:
+                allied = getattr(me, "allied", None)
+                if allied is not None and p in allied:
+                    c = (70, 140, 255)
+                elif p.player_is_an_enemy(me):
+                    c = (230, 70, 60)
+                else:
+                    c = (180, 180, 80)
+            cache[pid] = c
+            return c
+        if kind == "resource" or getattr(model, "resource_type", None) is not None:
             return (240, 200, 60)
-        if getattr(o.model, "is_a_building_land", False):
+        if kind == "land" or getattr(model, "is_a_building_land", False):
             return (90, 140, 70)
         return (150, 150, 155)
 
     def _object_kind(self, o):
-        model = getattr(o, "model", o)
-        if getattr(model, "resource_type", None) is not None:
-            return "resource"
-        if getattr(model, "is_a_building", False):
-            return "building"
-        if getattr(model, "is_a_building_land", False):
-            return "land"
-        return "unit"
+        return _kind_from_model(getattr(o, "model", o))
 
     def _object_type_name(self, o):
         model = getattr(o, "model", o)
         return (
-            getattr(o, "type_name", None)
-            or getattr(model, "type_name", None)
+            getattr(model, "type_name", None)
+            or getattr(o, "type_name", None)
             or getattr(model, "type", None)
             or ""
         )
 
-    def _try_blit_map_anim(self, screen, o, x, y, *, size, color, selected, pulse):
+    def _arch_style_for_model(self, model):
+        p = getattr(model, "player", None)
+        if p is None:
+            return None
+        cache = self._arch_by_player
+        pid = id(p)
+        if pid not in cache:
+            global _fn_arch_set_for_entity
+            if _fn_arch_set_for_entity is None:
+                try:
+                    from .clientgame.game_arch_set import architecture_set_for_entity
+
+                    _fn_arch_set_for_entity = architecture_set_for_entity
+                except Exception:
+                    _fn_arch_set_for_entity = False
+            if not _fn_arch_set_for_entity:
+                cache[pid] = None
+            else:
+                cache[pid] = _fn_arch_set_for_entity(model)
+        return cache[pid]
+
+    def _try_blit_map_anim(self, screen, o, x, y, *, size, color, selected, pulse, type_name=""):
         """Optional ``ui/anims/<type>/`` pack; returns True if drawn."""
         if size < 10:
             return False
-        try:
-            from .clientgame.game_unit_anim import try_blit_unit_anim
+        global _fn_try_blit_anim, _fn_get_anim_pack
+        if _fn_get_anim_pack is None:
+            try:
+                from .clientgame.game_unit_anim import get_anim_pack, try_blit_unit_anim
 
-            facing = float(getattr(o, "o", 0) or 0)
-            ok = try_blit_unit_anim(screen, o, x, y, size, facing=facing)
+                _fn_get_anim_pack = get_anim_pack
+                _fn_try_blit_anim = try_blit_unit_anim
+            except Exception:
+                _fn_get_anim_pack = False
+                _fn_try_blit_anim = False
+        if not _fn_get_anim_pack:
+            return False
+        tn = type_name or self._object_type_name(o)
+        if not tn or tn in _anim_pack_miss:
+            return False
+        if _fn_get_anim_pack(str(tn)) is None:
+            _anim_pack_miss.add(tn)
+            return False
+        try:
+            model = getattr(o, "model", o)
+            facing = float(getattr(model, "o", 0) or 0)
+            ok = _fn_try_blit_anim(screen, o, x, y, size, facing=facing)
         except Exception:
             return False
         if not ok:
@@ -717,28 +865,46 @@ class GridView:
             )
         return True
 
-    def _try_blit_map_icon(self, screen, o, x, y, *, size, color, selected, pulse):
+    def _team_pad(self, size, color):
+        key = (size, int(color[0]), int(color[1]), int(color[2]))
+        pad = self._icon_pads.get(key)
+        if pad is None:
+            pad = pygame.Surface((size + 4, size + 4), pygame.SRCALPHA)
+            pygame.draw.rect(pad, (*color[:3], 90), pad.get_rect(), border_radius=4)
+            self._icon_pads[key] = pad
+        return pad
+
+    def _try_blit_map_icon(
+        self, screen, o, x, y, *, size, color, selected, pulse, type_name="", kind=""
+    ):
         """若 ``ui/map/<type>.png`` 存在则画在地图上，返回 True（不读 icons）。"""
         if size < 10:
             return False
+        global _fn_get_map_sprite
+        if _fn_get_map_sprite is None:
+            try:
+                from .clientgame.game_hud import get_map_sprite
+
+                _fn_get_map_sprite = get_map_sprite
+            except Exception:
+                _fn_get_map_sprite = False
+        if not _fn_get_map_sprite:
+            return False
         try:
-            from .clientgame.game_hud import get_map_sprite
-
-            from .clientgame.game_arch_set import architecture_set_for_entity
-
+            model = getattr(o, "model", o)
             style = None
-            if self._object_kind(o) in ("unit", "building"):
-                style = architecture_set_for_entity(o)
-            icon = get_map_sprite(self._object_type_name(o), size, style=style)
+            k = kind or "unit"
+            if k in ("unit", "building"):
+                style = self._arch_style_for_model(model)
+            icon = _fn_get_map_sprite(
+                type_name or self._object_type_name(o), size, style=style
+            )
         except Exception:
             return False
         if icon is None:
             return False
         rect = icon.get_rect(center=(int(x), int(y)))
-        # 半透明阵营底，图标叠上更易辨认敌我
-        pad = pygame.Surface((size + 4, size + 4), pygame.SRCALPHA)
-        fill = (*color[:3], 90)
-        pygame.draw.rect(pad, fill, pad.get_rect(), border_radius=4)
+        pad = self._team_pad(size, color)
         screen.blit(pad, pad.get_rect(center=(int(x), int(y))))
         screen.blit(icon, rect)
         pygame.draw.rect(screen, color, rect.inflate(2, 2), 2, border_radius=3)
@@ -751,22 +917,41 @@ class GridView:
         # 检查对象是否可见
         if not self._is_object_visible(o):
             return
+        model = getattr(o, "model", o)
+        kind = _kind_from_model(model)
+        try:
+            if model is not None and hasattr(model, "x") and hasattr(model, "y"):
+                target_xy = self._xy_coords(model.x, model.y)
+            else:
+                target_xy = self._object_coords(o)
+        except Exception:
+            target_xy = self._object_coords(o)
+        self._paint_object(o, model, kind, target_xy)
 
-        target_xy = self._object_coords(o)
-        x, y = self.fx.lerped_screen_pos(o.id, target_xy)
-        color = self._object_color(o)
+    def _paint_object(
+        self, o, model, kind, target_xy, screen=None, selected=None, now=0.0
+    ):
+        if screen is None:
+            screen = get_screen()
+        oid = getattr(model, "id", None)
+        if selected is None:
+            selected = oid is not None and oid in (self.interface.group or ())
+        # Buildings / resources / land do not need per-frame lerp (35M calls).
+        if kind == "unit":
+            x, y = self.fx.lerped_screen_pos(
+                oid if oid is not None else id(o), target_xy
+            )
+        else:
+            x, y = target_xy[0], target_xy[1]
+        color = self._color_from_model(model, selected, kind)
 
-        screen = get_screen()
-        kind = self._object_kind(o)
-        selected = o.id in self.interface.group
         radius = max(3, R // 2)
         if kind == "building":
             radius = max(4, int(R * 0.85))
         elif kind == "resource":
             radius = max(3, int(R * 0.7))
 
-        hurt = time.time() < self.fx.hurt_until.get(o.id, 0)
-        if hurt:
+        if now and oid is not None and now < self.fx.hurt_until.get(oid, 0):
             color = _blend(color, (255, 255, 255), 0.55)
 
         pulse = self.fx.selection_pulse_color() if selected else None
@@ -777,7 +962,13 @@ class GridView:
         if self.square_view_width >= 28:
             icon_size = max(icon_size, min(40, self.square_view_width // 3))
         used_sprite = False
-        if kind in ("unit", "building", "resource"):
+        od = o.__dict__
+        type_name = od.get("_map_type_name") or ""
+        if kind in ("unit", "building"):
+            if not type_name:
+                type_name = (
+                    getattr(model, "type_name", None) or getattr(model, "type", None) or ""
+                )
             used_sprite = self._try_blit_map_anim(
                 screen,
                 o,
@@ -787,6 +978,7 @@ class GridView:
                 color=color,
                 selected=selected,
                 pulse=pulse,
+                type_name=type_name,
             )
             if not used_sprite:
                 used_sprite = self._try_blit_map_icon(
@@ -798,7 +990,28 @@ class GridView:
                     color=color,
                     selected=selected,
                     pulse=pulse,
+                    type_name=type_name,
+                    kind=kind,
                 )
+            if used_sprite:
+                radius = max(radius, icon_size // 2)
+        elif kind == "resource":
+            if not type_name:
+                type_name = (
+                    getattr(model, "type_name", None) or getattr(model, "type", None) or ""
+                )
+            used_sprite = self._try_blit_map_icon(
+                screen,
+                o,
+                x,
+                y,
+                size=icon_size,
+                color=color,
+                selected=selected,
+                pulse=pulse,
+                type_name=type_name,
+                kind=kind,
+            )
             if used_sprite:
                 radius = max(radius, icon_size // 2)
 
@@ -840,46 +1053,56 @@ class GridView:
                 )
 
         # 空气单位：细白圈
-        if getattr(getattr(o, "model", o), "airground_type", None) == "air":
+        air = od.get("_map_air")
+        if air is None:
+            air = getattr(model, "airground_type", None) == "air"
+        if kind == "unit" and air:
             pygame.draw.circle(screen, (220, 220, 255), (x, y), radius + 1, 1)
 
-        # 渲染血条
-        hp = getattr(o, "hp", None)
-        hp_max = getattr(o, "hp_max", None)
-        self.fx.check_hp_flash(o.id, hp)
-        if hp is not None and hp_max and hp != hp_max and hp_max > 0:
-            hp_prop = max(0, min(100, 100 * hp // hp_max))
-            if hp_prop > 60:
-                bar_color = (60, 220, 80)
-            elif hp_prop > 30:
-                bar_color = (230, 190, 40)
-            else:
-                bar_color = (240, 50, 50)
-            W = max(4, radius)
-            bar_y = y - radius - 3
-            pygame.draw.line(
-                screen,
-                (30, 30, 30),
-                (x - W, bar_y),
-                (x + W, bar_y),
-                2,
-            )
-            pygame.draw.line(
-                screen,
-                bar_color,
-                (x - W, bar_y),
-                (x - W + hp_prop * (2 * W) // 100, bar_y),
-                2,
-            )
+        # 渲染血条（空地/资源没有战斗 HP 条）
+        if kind not in ("land", "resource"):
+            hp = getattr(model, "hp", None)
+            hp_max = getattr(model, "hp_max", None)
+            if hp is not None and hp_max:
+                try:
+                    hp = int(hp / PRECISION)
+                    hp_max = int(hp_max / PRECISION)
+                except (TypeError, ValueError, ZeroDivisionError):
+                    hp, hp_max = None, None
+            self.fx.check_hp_flash(oid, hp)
+            if hp is not None and hp_max and hp != hp_max and hp_max > 0:
+                hp_prop = max(0, min(100, 100 * hp // hp_max))
+                if hp_prop > 60:
+                    bar_color = (60, 220, 80)
+                elif hp_prop > 30:
+                    bar_color = (230, 190, 40)
+                else:
+                    bar_color = (240, 50, 50)
+                W = max(4, radius)
+                bar_y = y - radius - 3
+                pygame.draw.line(
+                    screen,
+                    (30, 30, 30),
+                    (x - W, bar_y),
+                    (x + W, bar_y),
+                    2,
+                )
+                pygame.draw.line(
+                    screen,
+                    bar_color,
+                    (x - W, bar_y),
+                    (x - W + hp_prop * (2 * W) // 100, bar_y),
+                    2,
+                )
 
-        # 建造 / 训练进度环（仅画面，不影响语音）
-        self._draw_order_progress(screen, o, x, y, radius)
+            # 建造 / 训练进度环（仅画面，不影响语音）
+            self._draw_order_progress(screen, o, x, y, radius, model=model)
 
-    def _draw_order_progress(self, screen, o, x, y, radius):
-        from .clientgame.game_visual_fx import draw_progress_ring
-
-        model = getattr(o, "model", o)
-        orders = getattr(model, "orders", None) or getattr(o, "orders", None) or []
+    def _draw_order_progress(self, screen, o, x, y, radius, model=None):
+        global _fn_draw_progress_ring
+        if model is None:
+            model = getattr(o, "model", o)
+        orders = getattr(model, "orders", None) or []
         if not orders:
             return
         wo = orders[0]
@@ -893,28 +1116,93 @@ class GridView:
             return
         kw = getattr(wo, "keyword", "") or ""
         if kw in ("build", "train", "research", "upgrade_to", "advance", "repair"):
-            color = (90, 200, 255)
+            ring_color = (90, 200, 255)
         else:
-            color = (180, 180, 100)
-        draw_progress_ring(screen, x, y, max(radius + 5, 8), ratio, color)
+            ring_color = (180, 180, 100)
+        if _fn_draw_progress_ring is None:
+            try:
+                from .clientgame.game_visual_fx import draw_progress_ring
+
+                _fn_draw_progress_ring = draw_progress_ring
+            except Exception:
+                _fn_draw_progress_ring = False
+        if not _fn_draw_progress_ring:
+            return
+        _fn_draw_progress_ring(
+            screen, x, y, max(radius + 5, 8), ratio, ring_color
+        )
 
     def display_objects(self):
-        # 更新对象缓存
-        self._update_object_cache()
+        zoom = self.interface.zoom_mode
+        margin = self._vis_margin
+        sw, sh = self._scr_w, self._scr_h
+        screen = get_screen()
+        if not sw and screen is not None:
+            sw, sh = screen.get_width(), screen.get_height()
+        g = self.interface.group or ()
+        group = g if isinstance(g, (set, dict, frozenset)) else set(g)
 
-        visible_objects = [
-            o for o in self.interface.dobjets.values() if self._is_object_visible(o)
-        ]
+        ox0, oy0 = self._map_origin
+        w2px = self._w2px
+        h2px = self._h2px
+        ymax = self.ymax
+        kind_of = _kind_from_model
+        layer_of = _KIND_LAYER
 
-        # 底层资源/空地 → 建筑 → 单位 → 选中置顶
-        def _sort_key(o):
-            kind = self._object_kind(o)
-            layer = {"land": 0, "resource": 1, "building": 2, "unit": 3}.get(kind, 3)
-            selected = 1 if o.id in self.interface.group else 0
-            return (layer, selected)
+        buckets = ([], [], [], [])
+        sel_buckets = ([], [], [], [])
 
-        for o in sorted(visible_objects, key=_sort_key):
-            self.display_object(o)
+        hurt_until = self.fx.hurt_until
+        now = time.time() if hurt_until else 0.0
+        team_colors = self._team_color_by_pid
+        team_colors.clear()
+
+        is_visible = self._is_object_visible
+        unplaced = _model_unplaced
+        for o in self.interface.dobjets.values():
+            od = o.__dict__
+            model = od.get("model")
+            if model is None:
+                if not is_visible(o):
+                    continue
+                kind = od.get("_map_kind") or self._object_kind(o)
+                try:
+                    xy = self._object_coords(o)
+                except Exception:
+                    continue
+                oid = od.get("id")
+                selected = oid in group if oid is not None else False
+                item = (o, o, kind, xy, selected)
+                layer = layer_of.get(kind, 3)
+                (sel_buckets if selected else buckets)[layer].append(item)
+                continue
+            if unplaced(model):
+                continue
+            try:
+                xy = (int(ox0 + model.x * w2px), int(oy0 + ymax - model.y * h2px))
+            except Exception:
+                continue
+            if zoom:
+                if not is_visible(o):
+                    continue
+            else:
+                x, y = xy
+                if x < -margin or y < -margin or x > sw + margin or y > sh + margin:
+                    continue
+            kind = od.get("_map_kind") or kind_of(model)
+            oid = getattr(model, "id", None)
+            selected = oid in group if oid is not None else False
+            item = (o, model, kind, xy, selected)
+            layer = layer_of.get(kind, 3)
+            (sel_buckets if selected else buckets)[layer].append(item)
+
+        paint = self._paint_object
+        for bucket in buckets:
+            for o, model, kind, xy, selected in bucket:
+                paint(o, model, kind, xy, screen, selected, now)
+        for bucket in sel_buckets:
+            for o, model, kind, xy, selected in bucket:
+                paint(o, model, kind, xy, screen, selected, now)
 
     def _clamp_cam_origin(self, ox, oy, left, top, vw, vh, map_w, map_h):
         if map_w > vw:
@@ -1068,6 +1356,7 @@ class GridView:
             cell = min(w, h) / max(precision, 1)
             R = max(6, int(cell * 0.28))
             R2 = R * R
+            self._cache_view_transform()
             return
 
         left, top, vw, vh = self._main_view_rect()
@@ -1127,6 +1416,26 @@ class GridView:
             ),
         )
         R2 = R * R
+        self._cache_view_transform()
+
+    def _cache_view_transform(self):
+        """Snapshot camera numbers so per-object draws skip property lookups."""
+        try:
+            self._sw = float(self.interface.square_width) or 1.0
+        except Exception:
+            self._sw = 1.0
+        world_w = self._sw * 1000.0
+        cell_w = float(getattr(self, "square_view_width", 1) or 1)
+        cell_h = float(getattr(self, "square_view_height", cell_w) or cell_w)
+        self._w2px = cell_w / world_w
+        self._h2px = cell_h / world_w
+        self._vis_margin = max(24, int(cell_w or 48))
+        screen = get_screen()
+        if screen is not None:
+            self._scr_w = screen.get_width()
+            self._scr_h = screen.get_height()
+        else:
+            self._scr_w = self._scr_h = 0
 
     def _collision_display(self):
         for t, c in (("ground", (0, 0, 255)), ("air", (255, 0, 0))):
@@ -1450,39 +1759,50 @@ class GridView:
         self._minimap_hit = (left, top, w, h, cell, cols, rows)
 
         player = self.interface.player
-        bg = pygame.Surface((w + 4, h + 4), pygame.SRCALPHA)
-        bg.fill((8, 10, 16, 210))
-        screen.blit(bg, (left - 2, top - 2))
-        pygame.draw.rect(screen, (160, 170, 190), (left - 2, top - 2, w + 4, h + 4), 1)
+        obs = player.observed_squares
+        before = player.observed_before_squares
+        terrain_key = (cols, rows, cell, len(obs), len(before), id(obs), id(before))
+        if self._minimap_terrain is None or self._minimap_terrain_key != terrain_key:
+            surf = pygame.Surface((w + 4, h + 4), pygame.SRCALPHA)
+            surf.fill((8, 10, 16, 210))
+            pygame.draw.rect(surf, (160, 170, 190), (0, 0, w + 4, h + 4), 1)
+            grid = player.world.grid
+            for xc in range(cols):
+                for yc in range(rows):
+                    sq = grid.get((xc, yc))
+                    if sq is None:
+                        continue
+                    px = 2 + xc * cell
+                    py = 2 + (rows - 1 - yc) * cell
+                    if sq in obs:
+                        col = square_color(sq)
+                    elif sq in before:
+                        col = soft_fog_color(square_color(sq), 0.35)
+                    else:
+                        col = (22, 24, 28)
+                    pygame.draw.rect(surf, col, (px, py, cell, cell))
+            self._minimap_terrain = surf
+            self._minimap_terrain_key = terrain_key
+        screen.blit(self._minimap_terrain, (left - 2, top - 2))
 
-        for xc in range(cols):
-            for yc in range(rows):
-                sq = player.world.grid.get((xc, yc))
-                if sq is None:
-                    continue
-                px = left + xc * cell
-                py = top + (rows - 1 - yc) * cell
-                if sq in player.observed_squares:
-                    col = square_color(sq)
-                elif sq in player.observed_before_squares:
-                    col = soft_fog_color(square_color(sq), 0.35)
-                else:
-                    col = (22, 24, 28)
-                pygame.draw.rect(screen, col, (px, py, cell, cell))
-
+        r = max(1, cell // 4)
+        kind_of = _kind_from_model
+        color_of = self._color_from_model
         for o in self.interface.dobjets.values():
-            place = getattr(o, "place", None)
+            od = o.__dict__
+            model = od.get("model", o)
+            kind = od.get("_map_kind") or kind_of(model)
+            if kind == "land":
+                continue
+            place = getattr(model, "place", None)
             if place is None or not hasattr(place, "col"):
                 continue
-            if (
-                place not in player.observed_squares
-                and place not in player.observed_before_squares
-            ):
+            if place not in obs and place not in before:
                 continue
             px = left + place.col * cell + cell // 2
             py = top + (rows - 1 - place.row) * cell + cell // 2
             pygame.draw.circle(
-                screen, self._object_color(o), (px, py), max(1, cell // 4)
+                screen, color_of(model, False, kind), (px, py), r
             )
 
         place = self.interface.place
