@@ -40,6 +40,8 @@ def test_zh_relnotes_1485_session_topics():
     assert "停止耕种" in s or "stop cultivate" in s.lower()
     assert "get_default_order" in s
     assert "gather" in s
+    assert "frank_horse_collar" in s
+    assert "player.has" in s
 
 
 def test_en_relnotes_1485_session_topics():
@@ -53,6 +55,8 @@ def test_en_relnotes_1485_session_topics():
     assert "walk" in s
     assert "stop cultivate" in s.lower()
     assert "get_default_order" in s
+    assert "frank_horse_collar" in s
+    assert "player.has" in s
 
 
 def test_es_it_pt_relnotes_1485_session_topics():
@@ -63,3 +67,5 @@ def test_es_it_pt_relnotes_1485_session_topics():
         assert "gen_unit_anims" in s, lang
         assert "Spine" in s, lang
         assert "get_default_order" in s, lang
+        assert "frank_horse_collar" in s, lang
+        assert "player.has" in s, lang

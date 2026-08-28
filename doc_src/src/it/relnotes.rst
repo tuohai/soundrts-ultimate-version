@@ -30,6 +30,12 @@ Note di rilascio
 - **Cambio**: ``Worker.get_default_order`` controlla depositi/edifici raccoglibili (fattorie con ``can_gather_building``) prima del ``go`` generico per unità vive.
 - **Ambito**: clic destro predefinito del villico; obiettivi esauriti o vietati restano ``go``.
 
+**Correzione: alias gratuiti fattoria franchi aoe2 non soddisfacevano il requisito padre**
+
+- **Problema**: dopo ``frank_horse_collar`` (``is_a horse_collar``, gratis), Aratro pesante / Rotazione chiedevano ancora ``horse_collar`` / ``heavy_plow``. Altre civ col nome padre ok.
+- **Cambio**: ``player.has()`` considera ``is_a`` / ``expanded_is_a`` delle tech ricercate. Tech fattoria gratis (bonus franchi) invariati.
+- **Ambito**: requisiti di ricerca (alias di civ).
+
 
 1.4.8.4
 --------

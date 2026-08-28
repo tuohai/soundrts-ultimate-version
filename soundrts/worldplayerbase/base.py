@@ -521,6 +521,22 @@ class Player:
         for u in self.units:
             if u.type_name == type_name or type_name in u.expanded_is_a:
                 return True
+        # Civ tech aliases (e.g. frank_horse_collar is_a horse_collar): researching
+        # the alias must satisfy requirements that name the parent tech.
+        from .. import definitions as _definitions
+
+        for upgrade_name in self.upgrades:
+            if upgrade_name == type_name:
+                return True
+            cls = _definitions.rules.unit_class(upgrade_name)
+            if cls is None:
+                continue
+            expanded = getattr(cls, "expanded_is_a", None) or ()
+            if type_name in expanded:
+                return True
+            parents = getattr(cls, "is_a", None) or ()
+            if type_name in parents:
+                return True
         return False
 
     def has_all(self, type_names):

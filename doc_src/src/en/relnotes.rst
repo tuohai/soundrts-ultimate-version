@@ -32,6 +32,12 @@ Release notes
 - **Change**: ``Worker.get_default_order`` checks gatherable deposits/buildings (including ``can_gather_building`` farms) before the generic living-unit ``go`` fallback.
 - **Scope**: Worker default right-click; depleted or forbidden targets still use ``go``.
 
+**Fix: aoe2 Frank free farm-tech aliases did not satisfy parent requirements**
+
+- **Issue**: After researching ``frank_horse_collar`` (``is_a horse_collar``, free), Heavy Plow / Crop Rotation still required ``horse_collar`` / ``heavy_plow``. Other civs that research the parent names worked.
+- **Change**: ``player.has()`` treats researched upgrades’ ``is_a`` / ``expanded_is_a`` as satisfying the parent. Free farm techs (Frank civ bonus) unchanged.
+- **Scope**: Tech requirement checks (civ tech aliases).
+
 
 1.4.8.4
 --------

@@ -31,6 +31,12 @@ Notas de lançamento
 - **Mudança**: ``Worker.get_default_order`` verifica depósitos/edifícios coletáveis (fazendas com ``can_gather_building``) antes do ``go`` genérico para unidades vivas.
 - **Alcance**: clique direito padrão do aldeão; alvos esgotados ou proibidos continuam com ``go``.
 
+**Correção: aliases gratuitos de fazenda francos aoe2 não satisfaziam o requisito pai**
+
+- **Problema**: após ``frank_horse_collar`` (``is_a horse_collar``, grátis), Arado pesado / Rotação ainda pediam ``horse_collar`` / ``heavy_plow``. Outras civs com o nome pai ok.
+- **Mudança**: ``player.has()`` considera ``is_a`` / ``expanded_is_a`` das techs pesquisadas. Techs de fazenda grátis (bónus franco) iguais.
+- **Alcance**: requisitos de pesquisa (aliases de civ).
+
 
 1.4.8.4
 -------

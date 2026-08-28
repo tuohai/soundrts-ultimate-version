@@ -31,6 +31,12 @@ Notas de la versión
 - **Cambio**: ``Worker.get_default_order`` comprueba depósitos/edificios recolectables (granjas con ``can_gather_building``) antes del ``go`` genérico para unidades vivas.
 - **Alcance**: clic derecho por defecto del aldeano; objetivos vacíos o prohibidos siguen con ``go``.
 
+**Corrección: alias gratuitos de granja francos aoe2 no cumplían el requisito padre**
+
+- **Problema**: tras investigar ``frank_horse_collar`` (``is_a horse_collar``, gratis), Arado pesado / Rotación seguían pidiendo ``horse_collar`` / ``heavy_plow``. Otras civs con el nombre padre iban bien.
+- **Cambio**: ``player.has()`` cuenta ``is_a`` / ``expanded_is_a`` de mejoras investigadas. Techs de granja gratis (bono franco) sin cambio.
+- **Alcance**: requisitos de investigación (alias de civ).
+
 
 1.4.8.4
 -------
