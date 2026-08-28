@@ -864,6 +864,25 @@ class Worker(Unit):
         if self._should_default_repair(target):
             return "repair"
 
+        # 可采集矿床/建筑（农田等）优先于「活着的单位 → go」
+        elif "gather" in self.basic_skills and (
+            isinstance(target, Deposit) or
+            (hasattr(target, "is_a_building") and target.is_a_building and
+             hasattr(target, "resource_type") and target.resource_type)
+        ):
+            # 添加：检查目标是否是敌方建筑物，如果是敌方建筑则不开采
+            if hasattr(target, "player") and target.player and self.is_an_enemy(target):
+                return "go"  # 敌方可开采建筑，默认使用"go"命令而非"gather"
+
+            # 检查工人是否可以采集此目标
+            if not self._can_gather_target(target):
+                return "go"
+
+            # 检查资源是否耗尽
+            if hasattr(target, "resource_qty") and target.resource_qty <= 0:
+                return "go"  # 资源已耗尽，返回go命令
+            return "gather"
+
         # Any living unit (enemy / neutral / own sheep…): default is go, never attack.
         # Hunt/slaughter requires imperative (Ctrl+Backspace / imperative go).
         elif (
@@ -874,24 +893,6 @@ class Worker(Unit):
         ):
             return "go"
 
-        # 修改：检查目标是否是可开采的建筑物（具有resource_type属性）
-        elif "gather" in self.basic_skills and (
-            isinstance(target, Deposit) or
-            (hasattr(target, "is_a_building") and target.is_a_building and
-             hasattr(target, "resource_type") and target.resource_type)
-        ):
-            # 添加：检查目标是否是敌方建筑物，如果是敌方建筑则不开采
-            if hasattr(target, "player") and target.player and self.is_an_enemy(target):
-                return "go"  # 敌方可开采建筑，默认使用"go"命令而非"gather"
-                
-            # 检查工人是否可以采集此目标
-            if not self._can_gather_target(target):
-                return "go"
-                
-            # 检查资源是否耗尽
-            if hasattr(target, "resource_qty") and target.resource_qty <= 0:
-                return "go"  # 资源已耗尽，返回go命令
-            return "gather"
         elif (
                 isinstance(target, BuildingSite)
                 and target.type.__name__ in self.can_build

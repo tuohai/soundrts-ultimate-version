@@ -20,6 +20,18 @@ Release notes
 - **Change**: ``python tools/gen_unit_anims.py`` writes 4-direction sheets (idle/walk/attack/gather) for base and aoe2 mobile types. ``go``/``use`` → ``walk``; ``meta.json`` supports ``dirs: 4``; ``backend: spine`` silently falls back to a spritesheet in the same folder when no runtime is installed.
 - **Scope**: ``game_unit_anim.py``, ``res/ui/anims/``, ``mods/aoe2/ui/anims/``. TTS / blind play unchanged; missing packs still fall back to map PNG / shapes.
 
+**Fix: farm auto-replant no longer shows redundant “start auto cultivate”**
+
+- **Issue**: While a farm was already in auto-cultivate mode (including between auto-replant cycles), the command card showed both “start auto cultivate” and “stop cultivate”.
+- **Change**: When ``current_production_mode`` is already ``auto``, hide the start-auto command and keep only stop. Same for manual ``auto_produce`` / ``manual_produce`` menus.
+- **Scope**: ``AutoCultivateOrder`` / ``StopCultivateOrder`` and matching production menus.
+
+**Fix: worker default order on farms is gather, not go**
+
+- **Issue**: With a worker selected, right-clicking a farm issued ``go`` instead of ``gather``.
+- **Change**: ``Worker.get_default_order`` checks gatherable deposits/buildings (including ``can_gather_building`` farms) before the generic living-unit ``go`` fallback.
+- **Scope**: Worker default right-click; depleted or forbidden targets still use ``go``.
+
 
 1.4.8.4
 --------

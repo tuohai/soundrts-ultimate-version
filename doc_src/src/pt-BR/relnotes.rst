@@ -19,6 +19,18 @@ Notas de lançamento
 - **Mudança**: ``python tools/gen_unit_anims.py`` gera folhas 4 direções (idle/walk/attack/gather) para tipos móveis base e aoe2. ``go``/``use`` → ``walk``; ``dirs: 4`` no meta; ``backend: spine`` volta ao spritesheet na mesma pasta sem runtime.
 - **Alcance**: ``game_unit_anim.py``, ``res/ui/anims/``, ``mods/aoe2/ui/anims/``. TTS / jogo às cegas inalterados.
 
+**Correção: fazenda em auto-cultivo não mostra «iniciar auto-cultivo» a mais**
+
+- **Problema**: com a fazenda já em modo auto-cultivo (inclusive entre replantios), a carta mostrava «iniciar auto-cultivo» e «parar cultivo» ao mesmo tempo.
+- **Mudança**: se ``current_production_mode`` já é ``auto``, ocultar o início e manter só parar. Idem para ``auto_produce`` / ``manual_produce``.
+- **Alcance**: menus ``AutoCultivateOrder`` / ``StopCultivateOrder`` e produção equivalente.
+
+**Correção: ordem padrão do aldeão sobre fazenda é gather, não go**
+
+- **Problema**: com aldeão selecionado, clique direito na fazenda emitia ``go`` em vez de ``gather``.
+- **Mudança**: ``Worker.get_default_order`` verifica depósitos/edifícios coletáveis (fazendas com ``can_gather_building``) antes do ``go`` genérico para unidades vivas.
+- **Alcance**: clique direito padrão do aldeão; alvos esgotados ou proibidos continuam com ``go``.
+
 
 1.4.8.4
 -------

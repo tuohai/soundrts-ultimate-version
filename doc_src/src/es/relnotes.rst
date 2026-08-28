@@ -19,6 +19,18 @@ Notas de la versión
 - **Cambio**: ``python tools/gen_unit_anims.py`` genera hojas 4 direcciones (idle/walk/attack/gather) para tipos móviles base y aoe2. ``go``/``use`` → ``walk``; ``dirs: 4`` en meta; ``backend: spine`` vuelve al spritesheet de la misma carpeta sin runtime.
 - **Alcance**: ``game_unit_anim.py``, ``res/ui/anims/``, ``mods/aoe2/ui/anims/``. TTS / juego a ciegas sin cambios.
 
+**Corrección: granja en auto-cultivo ya no muestra «empezar auto-cultivo» de más**
+
+- **Problema**: con la granja ya en modo auto-cultivo (incluso entre replantíos), la carta mostraba «empezar auto-cultivo» y «parar cultivo» a la vez.
+- **Cambio**: si ``current_production_mode`` ya es ``auto``, ocultar el comando de inicio y dejar solo parar. Igual para ``auto_produce`` / ``manual_produce``.
+- **Alcance**: menús ``AutoCultivateOrder`` / ``StopCultivateOrder`` y producción equivalente.
+
+**Corrección: el comando por defecto del aldeano sobre granja es gather, no go**
+
+- **Problema**: con un aldeano seleccionado, clic derecho en granja emitía ``go`` en lugar de ``gather``.
+- **Cambio**: ``Worker.get_default_order`` comprueba depósitos/edificios recolectables (granjas con ``can_gather_building``) antes del ``go`` genérico para unidades vivas.
+- **Alcance**: clic derecho por defecto del aldeano; objetivos vacíos o prohibidos siguen con ``go``.
+
 
 1.4.8.4
 -------

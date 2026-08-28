@@ -342,7 +342,12 @@ class AutoProduceOrder(StartProduceOrder):
                 return False
         
         # 当建筑设置了auto_production=1且当前没有生产时显示
-        return auto_prod and not unit.is_producing
+        # 已在 auto 模式时不显示「开始自动生产」（只保留停止）
+        return (
+            auto_prod
+            and not unit.is_producing
+            and getattr(unit, "current_production_mode", None) != "auto"
+        )
 
     @classmethod
     def menu(cls, unit, strict=False):
@@ -399,7 +404,12 @@ class ManualProduceOrder(StartProduceOrder):
                 return False
         
         # 当建筑设置了manual_production=1且当前没有生产时显示
-        return manual_prod and not unit.is_producing
+        # 已在 manual 模式时不显示「开始手动生产」
+        return (
+            manual_prod
+            and not unit.is_producing
+            and getattr(unit, "current_production_mode", None) != "manual"
+        )
 
     @classmethod
     def menu(cls, unit, strict=False):
@@ -443,7 +453,12 @@ class AutoCultivateOrder(AutoProduceOrder):
                 return False
         
         # 当建筑设置了auto_cultivate=1且当前没有生产时显示
-        return auto_cultivate and not unit.is_producing
+        # 已在 auto 模式时不显示「开始自动耕种」（补种等待期间只保留停止）
+        return (
+            auto_cultivate
+            and not unit.is_producing
+            and getattr(unit, "current_production_mode", None) != "auto"
+        )
 
     @classmethod
     def menu(cls, unit, strict=False):
@@ -530,7 +545,12 @@ class ManualCultivateOrder(ManualProduceOrder):
                 return False
         
         # 当建筑设置了manual_cultivate=1且当前没有生产时显示
-        return manual_cultivate and not unit.is_producing
+        # 已在 manual 模式时不显示「开始手动耕种」
+        return (
+            manual_cultivate
+            and not unit.is_producing
+            and getattr(unit, "current_production_mode", None) != "manual"
+        )
 
     @classmethod
     def menu(cls, unit, strict=False):
@@ -1725,7 +1745,7 @@ class BuildOrder(ComplexOrder):
                     self.type.airground_type, self.target.x, self.target.y
                 )
             if x is None or (
-                hasattr(self.unit.place, "have_enough_square_space")
+                getattr(self.unit.place, "checks_square_space", False)
                 and not self.unit.place.have_enough_square_space(
                     self.type, player=self.player
                 )

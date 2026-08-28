@@ -130,3 +130,36 @@ def test_soldier_default_order_on_damaged_building_is_go():
     b.player = owner
     soldier.player.get_object_by_id = lambda _id: b
     assert soldier.get_default_order(1) == "go"
+
+
+class _FarmBuilding:
+    is_a_building = True
+    is_an_exit = False
+    herdable = 0
+    hp = 100
+    hp_max = 100
+    resource_type = "resource3"
+    resource_qty = 25
+    type_name = "farm"
+
+    def have_enough_space(self, _unit):
+        return False
+
+
+def test_worker_default_order_on_farm_is_gather():
+    farm = _FarmBuilding()
+    worker = _make_worker(farm)
+    worker.can_gather_building = ["farm"]
+    worker.can_gather_deposit = []
+    worker._can_gather_target = lambda _t: True
+    assert worker.get_default_order(1) == "gather"
+
+
+def test_worker_default_order_on_depleted_farm_is_go():
+    farm = _FarmBuilding()
+    farm.resource_qty = 0
+    worker = _make_worker(farm)
+    worker.can_gather_building = ["farm"]
+    worker.can_gather_deposit = []
+    worker._can_gather_target = lambda _t: True
+    assert worker.get_default_order(1) == "go"

@@ -19,6 +19,18 @@
 - **改进**：``python tools/gen_unit_anims.py`` 生成主包与 aoe2 常见单位的 4 向精灵表（idle/walk/attack/gather）。``go``/``use`` 走步态；``meta.json`` 支持 ``dirs: 4``；``backend: spine`` 无运行库时静默回退同目录精灵表。
 - **范围**：``game_unit_anim.py``、``res/ui/anims/``、``mods/aoe2/ui/anims/``。TTS / 盲玩不变；无动画包时仍回退 map PNG / 色块。
 
+**修复：农田自动补种后命令卡多出一个「开始自动耕种」**
+
+- **问题**：农田已在自动耕种模式（含自动补种等待期间）时，命令卡同时出现「开始自动耕种」与「停止耕种」。
+- **改进**：``current_production_mode`` 已是 ``auto`` 时不再显示「开始自动耕种/生产」，只保留「停止耕种」。手动模式同理。
+- **范围**：``AutoCultivateOrder`` / ``StopCultivateOrder`` 及对应 ``auto_produce`` / ``manual_produce`` 菜单。
+
+**修复：工人对农田右键默认命令应为 gather 而非 go**
+
+- **问题**：选中工人对农田右键时，默认命令是 ``go`` 而不是 ``gather``。
+- **改进**：``Worker.get_default_order`` 将可采集矿床/建筑（含 ``can_gather_building`` 的农田）判断提前于「活着的单位 → go``。
+- **范围**：工人默认右键命令；资源采空或无权采集时仍为 ``go``。
+
 
 1.4.8.4
 --------

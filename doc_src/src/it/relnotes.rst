@@ -18,6 +18,18 @@ Note di rilascio
 - **Cambio**: ``python tools/gen_unit_anims.py`` scrive fogli a 4 direzioni (idle/walk/attack/gather) per unità mobili base e aoe2. ``go``/``use`` → ``walk``; ``dirs: 4`` in meta; ``backend: spine`` torna al spritesheet nella stessa cartella senza runtime.
 - **Ambito**: ``game_unit_anim.py``, ``res/ui/anims/``, ``mods/aoe2/ui/anims/``. TTS / gioco cieco invariati.
 
+**Correzione: fattoria in auto-coltivazione non mostra più «avvia auto-coltivazione» in eccesso**
+
+- **Problema**: con la fattoria già in modalità auto-coltivazione (anche tra i replant), la scheda mostrava sia «avvia auto-coltivazione» sia «ferma coltivazione».
+- **Cambio**: se ``current_production_mode`` è già ``auto``, nascondere l’avvio e lasciare solo stop. Stesso per ``auto_produce`` / ``manual_produce``.
+- **Ambito**: menu ``AutoCultivateOrder`` / ``StopCultivateOrder`` e produzione equivalente.
+
+**Correzione: ordine predefinito del villico su fattoria è gather, non go**
+
+- **Problema**: con un villico selezionato, clic destro su fattoria inviava ``go`` invece di ``gather``.
+- **Cambio**: ``Worker.get_default_order`` controlla depositi/edifici raccoglibili (fattorie con ``can_gather_building``) prima del ``go`` generico per unità vive.
+- **Ambito**: clic destro predefinito del villico; obiettivi esauriti o vietati restano ``go``.
+
 
 1.4.8.4
 --------

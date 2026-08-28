@@ -37,6 +37,9 @@ def test_zh_relnotes_1485_session_topics():
     assert "dirs: 4" in s or '"dirs": 4' in s
     assert "Spine" in s
     assert "walk" in s
+    assert "停止耕种" in s or "stop cultivate" in s.lower()
+    assert "get_default_order" in s
+    assert "gather" in s
 
 
 def test_en_relnotes_1485_session_topics():
@@ -48,6 +51,8 @@ def test_en_relnotes_1485_session_topics():
     assert "dirs: 4" in s or '"dirs": 4' in s
     assert "Spine" in s
     assert "walk" in s
+    assert "stop cultivate" in s.lower()
+    assert "get_default_order" in s
 
 
 def test_es_it_pt_relnotes_1485_session_topics():
@@ -57,3 +62,4 @@ def test_es_it_pt_relnotes_1485_session_topics():
         assert "class worker" in s, lang
         assert "gen_unit_anims" in s, lang
         assert "Spine" in s, lang
+        assert "get_default_order" in s, lang
