@@ -533,6 +533,7 @@ Combat system (since 1.4)
 - ``projectile_lead``：远程投射物是否预判移动目标（0/1；通常由科技 ``effect bonus`` 打开）
 - 帝国时代 2 特色科技常用引擎钩子（不写死文明名）：``unpack_time`` / ``pack_time``（见下文 *打包 / 拆包*）、``gather_byproduct``（如造纸术伐木附带黄金）、``kill_resource_vs``（如酋长：击杀匹配类型单位时杀手获得指定资源；``effect bonus kill_resource_vs peasant resource1 5``，类型按 ``type_name`` / ``is_a`` 匹配，资源为 ``resourceN`` 或 ``gold``/``wood`` 等别名）、升级上的 ``reveal_map``（环球航行探索全图）
 - ``mdg_splash`` / ``rdg_splash``、``mdg_radius`` / ``rdg_radius``、``mdg_splash_decay``
+- ``rdg_pierce_line`` / ``mdg_pierce_line``（0/1）、``rdg_pierce_width`` / ``mdg_pierce_width``（半宽，格）、``rdg_pierce_max`` / ``mdg_pierce_max``（额外命中上限，0=不限）：投射物沿线穿透（帝国 2 弩炮式）；溅射仍只伤敌方
 - ``mdg_targets`` / ``rdg_targets``：``ground``、``air``、``unit``、``building`` 或类型名
 - ``mdg_crit`` / ``rdg_crit``、``mdg_crit_rate`` / ``rdg_crit_rate``、``crit_vs``
 - ``mdg_piercing`` / ``rdg_piercing``\ `` （无视护甲百分比）``、``piercing_vs``

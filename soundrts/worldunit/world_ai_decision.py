@@ -855,7 +855,11 @@ class CreatureAIDecision(Entity):
         if is_same_place and (mdg_range == 0 or rdg_range == 0):
             minimal = getattr(self, 'minimal_damage', 0)
             if mdg_range == 0:
-                if self._get_melee_damage_vs(other) > 0 or minimal > 0:
+                if (
+                    self._get_melee_damage_vs(other) > 0
+                    or minimal > 0
+                    or self._offensive_melee_vs(other)
+                ):
                     return True
             if rdg_range == 0:
                 if self._get_ranged_damage_vs(other) > 0 or minimal > 0:

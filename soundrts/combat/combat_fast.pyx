@@ -262,8 +262,15 @@ cpdef object can_attack_if_in_range(self, other):
         if mdg_explode or rdg_explode:
             has_attack = True
         else:
-            cache_dict[other_id] = False
-            return False
+            try:
+                if self._offensive_melee_vs(other):
+                    has_attack = True
+                else:
+                    cache_dict[other_id] = False
+                    return False
+            except Exception:
+                cache_dict[other_id] = False
+                return False
 
     # 目标地面/空中 (复刻 world_public_method.ground_or_air)
     cdef object airground = other.airground_type
@@ -275,6 +282,7 @@ cpdef object can_attack_if_in_range(self, other):
 
     # 武器/目标兼容性
     cdef bint can_attack_target = False
+    cdef bint has_mdg_cap = False
     cdef object weapons = self.weapons
     cdef object weapon_instances = getattr(self, '_weapon_instances', None)
     cdef object weapon, current_weapon, weapon_name
@@ -300,7 +308,12 @@ cpdef object can_attack_if_in_range(self, other):
         # 回退基础系统 (大多数单位走这里)
         mdg = self.mdg
         rdg = self.rdg
-        has_melee_system = (mdg > 0 or mdg_explode)
+        has_mdg_cap = False
+        try:
+            has_mdg_cap = bool(self._has_melee_attack_capability())
+        except Exception:
+            has_mdg_cap = False
+        has_melee_system = (mdg > 0 or mdg_explode or has_mdg_cap)
         has_ranged_system = (rdg > 0 or rdg_explode)
 
         if has_melee_system and not has_ranged_system:

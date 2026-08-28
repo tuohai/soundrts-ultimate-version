@@ -1442,6 +1442,8 @@ hp_max 30
 speed 0.96
 sight_range 6
 mdg 0
+; 0 melee vs ram mdf -3 → 3 dmg (needs mdg_range for swing)
+mdg_range 1
 mdf 0
 rdf 0
 rdg 4
@@ -1506,6 +1508,7 @@ hp_max 30
 speed 0.96
 sight_range 6
 mdg 0
+mdg_range 1
 mdf 0
 rdf 3
 rdg 2
@@ -1579,6 +1582,7 @@ hp_max 50
 speed 1.4
 sight_range 5
 mdg 0
+mdg_range 1
 mdf 0
 rdf 0
 rdg 6
@@ -2262,7 +2266,8 @@ requirements castle_age
 hp_max 50
 speed 0.6
 sight_range 9
-mdg 40
+; No ally splash in engine — ~25% less raw damage vs DE for balance
+mdg 30
 mdg_cd 6
 mdg_range 7
 mdg_minimal_range 3
@@ -2282,7 +2287,7 @@ requirements imperial_age
 hp_max 60
 speed 0.6
 sight_range 10
-mdg 50
+mdg 38
 mdg_cd 6
 mdg_range 8
 mdg_minimal_range 3
@@ -2304,7 +2309,7 @@ no_auto_upgrade 1
 hp_max 70
 speed 0.6
 sight_range 10
-mdg 75
+mdg 56
 mdg_cd 6
 mdg_range 8
 mdg_minimal_range 3
@@ -2314,7 +2319,7 @@ rdf 8
 mdg_vs building 60
 mdg_vs siege_unit 12
 can_upgrade_to
-; 弩炮 — DE pierce attack (rdg)
+; 弩炮 — DE pierce attack (rdg) + line pierce-through
 def scorpion
 class soldier
 is_a siege_unit
@@ -2324,6 +2329,8 @@ time_cost 30
 rdg_projectile 1
 rdg_projectile_speed 7
 rdg_targets ground
+rdg_pierce_line 1
+rdg_pierce_width 0.5
 is_repairable 1
 is_healable 0
 space 0.6

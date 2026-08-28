@@ -872,6 +872,8 @@ _precision_properties = {
     "charge_rdg_splash",
     "charge_mdg_splash_decay_min",
     "charge_rdg_splash_decay_min",
+    "mdg_pierce_width",  # 穿透半宽（格；PRECISION）
+    "rdg_pierce_width",
         "mdg_delay",
         "rdg_delay",
         "mdg_projectile_speed",  # 近战投射物飞行速度（格/秒）
@@ -1489,6 +1491,10 @@ class Rules(_Definitions):
         "drop_loot",  # 是否掉落物品
         "mdg_explode",  # 近战攻击是否自爆
         "rdg_explode",  # 远程攻击是否自爆
+        "mdg_pierce_line",  # 近战投射物沿线穿透（0/1）
+        "rdg_pierce_line",  # 远程投射物沿线穿透（0/1）
+        "mdg_pierce_max",  # 穿透额外命中上限（0=不限）
+        "rdg_pierce_max",
         "consume_on_pickup",  # 拾取时是否消耗物品
         "units_auto_upgrade",  # phase（时代）研究完成后是否自动把所有单位形态升级到 can_upgrade_to 目标
         "hide_locked_commands",  # 未满足 requirements 时是否隐藏建造/训练/研究/升级命令

@@ -4,6 +4,28 @@ Notas de la versión
 
 .. contents::
 
+1.4.8.7
+-------
+
+**Mejora: perforación en línea de proyectiles (escorpión), por reglas**
+
+- **Problema**: el escorpión de AoE2 debe atravesar unidades en la línea de tiro; solo había splash circular.
+- **Cambio**: ``rdg_pierce_line`` / ``mdg_pierce_line``, ``*_pierce_width``, ``*_pierce_max``. Golpes extra a lo largo del segmento (sin el objetivo principal). aoe2 scorpion / heavy scorpion con ``rdg_pierce_line 1``.
+- **Alcance**: combate y escorpiones aoe2; el splash sigue sin aliados.
+
+**Equilibrio: menos daño de mangonel (sin fuego amigo)**
+
+- **Problema**: el splash ya no hiere aliados; el daño base DE dejaba la línea demasiado fuerte.
+- **Cambio**: mangonel / onager / siege onager ~−25% (40→30, 50→38, 75→56).
+- **Alcance**: ``mods/aoe2/rules.txt``.
+
+**Mejora: ataque cuerpo a cuerpo 0 puede golpear armadura negativa (arietes)**
+
+- **Problema**: ``mdg 0`` se bloqueaba antes de la armadura; arietes con ``mdf -3`` no recibían 3.
+- **Cambio**: con ``mdg_range`` (o explode) se permite melee si el daño tras armadura > 0. Monjes sin rango melee no. Arqueros / skirmishers / arqueros a caballo con ``mdg_range 1``. 0 vs 0 armadura sigue en mínimo 1.
+- **Alcance**: puertas de ataque / aoe2 arqueros y arietes.
+
+
 1.4.8.6
 -------
 

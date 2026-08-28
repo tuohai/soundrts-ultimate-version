@@ -5,6 +5,28 @@ Release notes
 .. contents::
 
 
+1.4.8.7
+--------
+
+**Improvement: rules-driven projectile line pierce (scorpion)**
+
+- **Issue**: AoE2 scorpions should pierce units along the shot line; the engine only had circular splash.
+- **Change**: Added ``rdg_pierce_line`` / ``mdg_pierce_line``, ``*_pierce_width``, ``*_pierce_max``. Projectiles deal extra hits along the aim segment (excluding the primary target; pierce still applies if the primary misses). aoe2 scorpion / heavy scorpion enable ``rdg_pierce_line 1``.
+- **Scope**: Combat resolution and aoe2 scorpions; splash remains enemies-only.
+
+**Balance: mangonel line damage nerf (no friendly splash)**
+
+- **Issue**: Splash already skips allies; keeping DE-level base damage made mangonels too strong.
+- **Change**: Mangonel / Onager / Siege Onager melee damage cut ~25% (40→30, 50→38, 75→56).
+- **Scope**: ``mods/aoe2/rules.txt`` mangonel line.
+
+**Improvement: 0 melee attack can hit negative-armor targets (rams)**
+
+- **Issue**: ``mdg 0`` was gated out before armor, so rams with ``mdf -3`` never took ``max(1, 0−(−3))=3``.
+- **Change**: Units with ``mdg_range`` (or explode) may melee when post-armor damage would be > 0; units without melee range (e.g. monks) stay blocked. Archers / skirmishers / cavalry archers gain ``mdg_range 1``. 0 attack vs 0 armor still floors at 1 (AoE2-like).
+- **Scope**: Attack gates / melee range / aoe2 archers and rams.
+
+
 1.4.8.6
 --------
 

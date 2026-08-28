@@ -873,7 +873,8 @@ class AttackActionMixin:
 
         # 修复：攻击类型判断应该只依赖于该类型的伤害值，不应该被minimal_damage影响
         # minimal_damage只在实际伤害计算时作为最小伤害保证使用
-        can_mdg = (melee_damage > 0 or getattr(self, 'mdg_explode', False)) and self.can_attack(target)
+        # 0 mdg + mdg_range 对负护甲（冲车）仍可近战（见 _offensive_melee_vs）
+        can_mdg = self._offensive_melee_vs(target) and self.can_attack(target)
         can_rdg = (ranged_damage > 0 or getattr(self, 'rdg_explode', False)) and self.can_attack(target)
         
         # 1.4.0.1 spec：冲锋伤害 = mdg × charge_mdg，因此发动冲锋本质上要求 can_mdg。
@@ -1313,10 +1314,13 @@ class AttackActionMixin:
         # 获取最小伤害值
         minimal_damage = getattr(self, 'minimal_damage', 0)
 
-        # 如果近战和远程伤害都是0且最小伤害也为0，检查是否是自爆单位
+        # 近战/远程伤害与最小伤害均为 0：自爆或 0 攻对负护甲仍可打
         if melee_damage == 0 and ranged_damage == 0 and minimal_damage == 0:
-            # 如果是自爆单位，则允许攻击
-            if not (getattr(self, 'mdg_explode', False) or getattr(self, 'rdg_explode', False)):
+            if not (
+                getattr(self, "mdg_explode", False)
+                or getattr(self, "rdg_explode", False)
+                or self._offensive_melee_vs(target)
+            ):
                 return
 
         # don't notify or attack if already attacking the same target

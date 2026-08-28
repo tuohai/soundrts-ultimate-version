@@ -545,6 +545,7 @@ Main melee/ranged properties:
 - ``projectile_lead``: whether ranged projectiles lead moving targets (0/1; usually granted by tech ``effect bonus``)
 - AoE2-style unique-tech hooks (no civ names hardcoded): ``unpack_time`` / ``pack_time`` (see *Pack / unpack siege mode* below), ``gather_byproduct`` (e.g. Paper Money gold while chopping wood), ``kill_resource_vs`` (e.g. Chieftains: killer gains a chosen resource when the victim matches a type; ``effect bonus kill_resource_vs peasant resource1 5``, matched via ``type_name`` / ``is_a``; resource is ``resourceN`` or aliases like ``gold``/``wood``), ``reveal_map`` on upgrades (Circumnavigation explores the whole map)
 - ``mdg_splash`` / ``rdg_splash``, ``mdg_radius`` / ``rdg_radius``, ``mdg_splash_decay``
+- ``rdg_pierce_line`` / ``mdg_pierce_line`` (0/1), ``rdg_pierce_width`` / ``mdg_pierce_width`` (half-width in tiles), ``rdg_pierce_max`` / ``mdg_pierce_max`` (extra hit cap, 0=unlimited): projectile line pierce (AoE2 scorpion-style); splash still enemies-only
 - ``mdg_targets`` / ``rdg_targets``: ``ground``, ``air``, ``unit``, ``building``, or a type name
 - ``mdg_crit`` / ``rdg_crit``, ``mdg_crit_rate`` / ``rdg_crit_rate``, ``crit_vs``
 - ``mdg_piercing`` / ``rdg_piercing`` (percent armor ignored), ``piercing_vs``

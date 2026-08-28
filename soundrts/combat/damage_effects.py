@@ -1262,6 +1262,19 @@ class DamageEffectsMixin(DamageCalculationMixin):
                             # 目标未死亡或未命中但是自爆单位，使用原始目标位置进行溅射
                             self.splash_aim(target, is_melee=is_melee)
 
+                # Rules-driven line pierce (scorpion etc.): along aim even if primary missed
+                if is_projectile:
+                    try:
+                        self.apply_projectile_pierce_line(
+                            aim_x,
+                            aim_y,
+                            primary_target=target,
+                            is_melee=is_melee,
+                            damage=None,
+                        )
+                    except Exception:
+                        pass
+
             # 飞行时间到点后结算；0 或已到期则即时命中
             delay_until = hit_time - self.world.time
             if delay_until <= 0:
