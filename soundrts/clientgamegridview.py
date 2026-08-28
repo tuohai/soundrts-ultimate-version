@@ -20,6 +20,82 @@ _fn_arch_set_for_entity = None
 _fn_try_blit_anim = None
 _fn_get_anim_pack = None
 _fn_draw_progress_ring = None
+_WorkerCls = None
+
+# 框选优先级（帝国 2 决定版）：军事 0 < 工人 1 < 建筑 2；框里有更高档则丢掉更低档
+_BOX_TIER_MILITARY = 0
+_BOX_TIER_WORKER = 1
+_BOX_TIER_BUILDING = 2
+
+
+def _worker_cls():
+    global _WorkerCls
+    if _WorkerCls is None:
+        try:
+            from .worldunit import Worker
+
+            _WorkerCls = Worker
+        except Exception:
+            _WorkerCls = False
+    return _WorkerCls
+
+
+def _model_is_worker(model):
+    """True for ``class worker`` (villager, fishing ship, …)."""
+    if model is None:
+        return False
+    cls = _worker_cls()
+    if cls and isinstance(model, cls):
+        return True
+    skills = getattr(model, "_basic_skills", None) or ()
+    if "gather" in skills:
+        return True
+    tn = getattr(model, "type_name", None) or getattr(model, "type", None) or ""
+    if not tn:
+        return False
+    keys = style.get(tn, "keyboard", warn_if_not_found=False) or []
+    return "worker" in keys
+
+
+def box_select_tier(obj):
+    """0 = military, 1 = worker, 2 = building. Lower wins when mixed in a box."""
+    model = getattr(obj, "model", obj)
+    if getattr(model, "is_a_building", False):
+        return _BOX_TIER_BUILDING
+    if _model_is_worker(model):
+        return _BOX_TIER_WORKER
+    return _BOX_TIER_MILITARY
+
+
+def filter_box_selection(units):
+    """Keep only the highest-priority class present (AoE2 DE box-select).
+
+    Military (soldiers, siege, warships) beats workers; workers beat buildings.
+    A box with only one class is unchanged. Click-select is not filtered.
+    """
+    if len(units) <= 1:
+        return units
+    ranked = [(box_select_tier(o), o) for o in units]
+    best = min(t for t, _ in ranked)
+    return [o for t, o in ranked if t == best]
+
+
+def map_icon_size_for(cell_px, kind, crowd=1):
+    """Sprite size in pixels. Units shrink when many share a square."""
+    radius = max(3, R // 2)
+    size = max(radius * 2, 10)
+    cell = cell_px
+    if cell >= 28:
+        if kind == "building":
+            size = max(size, min(40, cell // 3))
+        elif kind == "resource":
+            size = max(size, min(28, cell // 4))
+        else:
+            size = max(size, min(22, cell // 5))
+    if kind == "unit" and crowd > 1:
+        packed = max(8, int(cell * 0.65 / (crowd ** 0.5)))
+        size = min(size, packed)
+    return size
 
 
 def _kind_from_model(model):
@@ -291,6 +367,7 @@ class GridView:
         self._scr_h = 0
         self._vis_margin = 24
         self._icon_pads = {}
+        self._unit_crowd = {}
         self._minimap_terrain = None
         self._minimap_terrain_key = None
         self._arch_by_player = {}
@@ -816,6 +893,9 @@ class GridView:
                 cache[pid] = _fn_arch_set_for_entity(model)
         return cache[pid]
 
+    def _map_icon_size(self, kind, crowd=1):
+        return map_icon_size_for(self.square_view_width, kind, crowd)
+
     def _try_blit_map_anim(self, screen, o, x, y, *, size, color, selected, pulse, type_name=""):
         """Optional ``ui/anims/<type>/`` pack; returns True if drawn."""
         if size < 10:
@@ -904,8 +984,9 @@ class GridView:
         if icon is None:
             return False
         rect = icon.get_rect(center=(int(x), int(y)))
-        pad = self._team_pad(size, color)
-        screen.blit(pad, pad.get_rect(center=(int(x), int(y))))
+        if size >= 14:
+            pad = self._team_pad(size, color)
+            screen.blit(pad, pad.get_rect(center=(int(x), int(y))))
         screen.blit(icon, rect)
         pygame.draw.rect(screen, color, rect.inflate(2, 2), 2, border_radius=3)
         if selected and pulse is not None:
@@ -958,9 +1039,11 @@ class GridView:
 
         # 绘制优先级：动画包 → ui/map PNG → 几何示意；特效仍叠在上层
         # （命令卡 icons 不参与地图绘制）
-        icon_size = max(radius * 2, 12)
-        if self.square_view_width >= 28:
-            icon_size = max(icon_size, min(40, self.square_view_width // 3))
+        crowd = 1
+        if kind == "unit":
+            place = getattr(model, "place", None)
+            crowd = self._unit_crowd.get(id(place) if place is not None else id(o), 1)
+        icon_size = self._map_icon_size(kind, crowd)
         used_sprite = False
         od = o.__dict__
         type_name = od.get("_map_type_name") or ""
@@ -1039,6 +1122,12 @@ class GridView:
                 if selected:
                     pygame.draw.circle(screen, pulse, (x, y), radius + 4, 2)
                     pygame.draw.circle(screen, (255, 255, 220), (x, y), radius + 2, 1)
+
+        # 贴图会互相挡住：在精确坐标叠一个阵营色圆点，挤在一起时仍能数清
+        if used_sprite and kind == "unit":
+            pip = 2 if icon_size < 14 else 3
+            pygame.draw.circle(screen, color, (int(x), int(y)), pip, 0)
+            pygame.draw.circle(screen, (20, 20, 20), (int(x), int(y)), pip, 1)
 
         if kind == "resource":
             qty_text = _resource_qty_label(o)
@@ -1195,6 +1284,18 @@ class GridView:
             item = (o, model, kind, xy, selected)
             layer = layer_of.get(kind, 3)
             (sel_buckets if selected else buckets)[layer].append(item)
+
+        crowd = {}
+        for bucket in (*buckets, *sel_buckets):
+            for o, model, kind, _xy, _sel in bucket:
+                if kind != "unit":
+                    continue
+                place = getattr(model, "place", None)
+                key = id(place) if place is not None else id(o)
+                crowd[key] = crowd.get(key, 0) + 1
+        self._unit_crowd = crowd
+        buckets[3].sort(key=lambda it: it[3][1])
+        sel_buckets[3].sort(key=lambda it: it[3][1])
 
         paint = self._paint_object
         for bucket in buckets:
@@ -1906,12 +2007,15 @@ class GridView:
         x, y = pos
         best = None
         best_d = None
+        # 贴图比碰撞圆大：点选按可见图标半径，避免点到图却点不中
+        icon_r = max(R, min(16, max(6, self.square_view_width // 8)))
+        hit_r2 = max(R2 + 1, icon_r * icon_r)
         for o in list(self.interface.dobjets.values()):
             if not self._is_object_visible(o):
                 continue
             xo, yo = self._object_coords(o)
             d = square_of_distance(x, y, xo, yo)
-            if d <= R2 + 1:  # is + 1 necessary?
+            if d <= hit_r2:
                 if best is None or d < best_d:
                     best = o
                     best_d = d
@@ -1931,8 +2035,8 @@ class GridView:
                 continue
             xo, yo = self._object_coords(o)
             if x < xo < x2 and y < yo < y2:
-                result.append(o.id)
-        return result
+                result.append(o)
+        return [o.id for o in filter_box_selection(result)]
 
     def display_attack(self, attacker_id, target):
         a = self.interface.dobjets.get(attacker_id)

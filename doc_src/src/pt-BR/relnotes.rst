@@ -4,6 +4,22 @@ Notas de lançamento
 
 .. contents::
 
+1.4.8.5
+-------
+
+**Melhoria: a caixa prefere militares; sprites amontoados encolhem**
+
+- **Problema**: arrastar selecionava aldeões, soldados e edifícios juntos, ao contrário de Age of Empires II DE. Os PNG de ``ui/map`` são maiores que o ponto de colisão e tapam-se.
+- **Mudança**: se a caixa tiver militares (``class soldier``), só militares; senão trabalhadores (``class worker``); senão edifícios. O clique não muda. Sprites encolhem quando muitos partilham a casa, com um ponto da cor da equipa.
+- **Alcance**: caixa do rato Ctrl+F2 / F8 e desenho do mapa. Teclado e TTS iguais.
+
+**Melhoria: animações spritesheet de unidades (Spine opcional)**
+
+- **Problema**: ``ui/anims/`` só tinha documentação; Ctrl+F2 ficava em PNG estáticos ``ui/map``; ``go`` não mudava para ``walk``.
+- **Mudança**: ``python tools/gen_unit_anims.py`` gera folhas 4 direções (idle/walk/attack/gather) para tipos móveis base e aoe2. ``go``/``use`` → ``walk``; ``dirs: 4`` no meta; ``backend: spine`` volta ao spritesheet na mesma pasta sem runtime.
+- **Alcance**: ``game_unit_anim.py``, ``res/ui/anims/``, ``mods/aoe2/ui/anims/``. TTS / jogo às cegas inalterados.
+
+
 1.4.8.4
 -------
 

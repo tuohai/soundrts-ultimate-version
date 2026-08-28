@@ -44,6 +44,14 @@ Or folders: idle/0.png, idle/1.png, ...
 
 The game picks idle / walk / attack / gather / build from current orders.
 
+Four directions (optional): set "dirs": 4 in meta.json. Each animation
+uses four consecutive rows (east / north / west / south). Example row
+layout: idle rows 0-3, walk 4-7, attack 8-11, gather/build 12-15.
+
+Regenerate starter geometric packs:
+  python tools/gen_unit_anims.py
+(writes res/ui/anims/ and mods/aoe2/ui/anims/ for common mobile types)
+
 ------------------------------------------------
 B) Spine skeletal (optional)
 

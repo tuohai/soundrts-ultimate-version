@@ -5,6 +5,22 @@ Release notes
 .. contents::
 
 
+1.4.8.5
+--------
+
+**Improvement: box-select prefers military; crowded map sprites shrink**
+
+- **Issue**: A drag box selected workers, soldiers, and buildings together, unlike Age of Empires II Definitive Edition. ``ui/map`` sprites are larger than the collision dot, so stacked units in one square covered each other.
+- **Change**: Box-select follows DE: if the box has military (``class soldier``), keep only military; else if it has workers (``class worker``, including fishing ships), keep only workers; else buildings. Click-select is unchanged. Map sprites shrink when many units share a square, with a team-color pip at the true position.
+- **Scope**: Ctrl+F2 / F8 mouse box-select and map painting. Keyboard selection and TTS unchanged.
+
+**Improvement: starter unit spritesheet anims (optional Spine)**
+
+- **Issue**: ``ui/anims/`` had only docs, so Ctrl+F2 kept using static ``ui/map`` PNGs; ``go`` orders did not switch to ``walk``.
+- **Change**: ``python tools/gen_unit_anims.py`` writes 4-direction sheets (idle/walk/attack/gather) for base and aoe2 mobile types. ``go``/``use`` → ``walk``; ``meta.json`` supports ``dirs: 4``; ``backend: spine`` silently falls back to a spritesheet in the same folder when no runtime is installed.
+- **Scope**: ``game_unit_anim.py``, ``res/ui/anims/``, ``mods/aoe2/ui/anims/``. TTS / blind play unchanged; missing packs still fall back to map PNG / shapes.
+
+
 1.4.8.4
 --------
 

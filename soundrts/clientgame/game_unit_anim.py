@@ -68,6 +68,20 @@ def _load_surface(rel: str) -> Optional[pygame.Surface]:
         return None
 
 
+def _facing_dir_index(facing: float, dirs: int) -> int:
+    """Map world orientation (degrees) to spritesheet row when ``dirs: 4``."""
+    if dirs <= 1:
+        return 0
+    ang = float(facing) % 360.0
+    if 45.0 <= ang < 135.0:
+        return 1  # north
+    if 135.0 <= ang < 225.0:
+        return 2  # west
+    if 225.0 <= ang < 315.0:
+        return 3  # south
+    return 0  # east
+
+
 def infer_anim_name(entity) -> str:
     """Pick a logical clip from unit orders / action."""
     model = getattr(entity, "model", entity)
@@ -80,6 +94,8 @@ def infer_anim_name(entity) -> str:
             return "attack"
         if kw in ("build", "repair"):
             return "build"
+        if kw in ("go", "use"):
+            return "walk"
     action = getattr(model, "action", None)
     if action is not None:
         an = type(action).__name__.lower()
@@ -104,8 +120,19 @@ class AnimPack:
         self.backend = (meta.get("backend") or "spritesheet").lower()
         self._sheet = None
         self._frames: Dict[str, list] = {}
+        self._dirs = max(1, int(meta.get("dirs") or 1))
         self._spine = None  # optional runtime object
         self._spine_failed = False
+
+    def _row_frames(self, surf, fw, fh, cols, row, n):
+        frames = []
+        for i in range(n):
+            x = i * fw
+            y = row * fh
+            if x + fw > surf.get_width() or y + fh > surf.get_height():
+                break
+            frames.append(surf.subsurface(pygame.Rect(x, y, fw, fh)).copy())
+        return frames
 
     def _ensure_spritesheet(self):
         if self._sheet is not None or self._frames:
@@ -124,19 +151,24 @@ class AnimPack:
             self._frames["idle"] = [surf]
             return
         cols = max(1, surf.get_width() // fw)
+        dirs = self._dirs
         for name, spec in anims.items():
             if isinstance(spec, dict):
-                row = int(spec.get("row", 0))
+                base_row = int(spec.get("row", 0))
                 n = int(spec.get("frames", cols))
-                frames = []
-                for i in range(n):
-                    x = (i % cols) * fw
-                    y = row * fh
-                    if x + fw > surf.get_width() or y + fh > surf.get_height():
-                        break
-                    frames.append(surf.subsurface(pygame.Rect(x, y, fw, fh)).copy())
-                if frames:
-                    self._frames[name] = frames
+                if dirs > 1:
+                    by_dir = []
+                    for d in range(dirs):
+                        row = base_row + d
+                        row_frames = self._row_frames(surf, fw, fh, cols, row, n)
+                        if row_frames:
+                            by_dir.append(row_frames)
+                    if by_dir:
+                        self._frames[name] = by_dir
+                else:
+                    frames = self._row_frames(surf, fw, fh, cols, base_row, n)
+                    if frames:
+                        self._frames[name] = frames
             elif isinstance(spec, list):
                 # list of file names relative to pack
                 frames = []
@@ -217,11 +249,11 @@ class AnimPack:
                         return True
                 except Exception:
                     self._spine_failed = True
-            # Spine missing → try spritesheet in same pack, else fail
+            # Spine missing → try spritesheet in the same folder, else fail
             self.backend = "spritesheet"
 
         self._ensure_spritesheet()
-        frames = self._frames.get(anim) or self._frames.get("idle")
+        frames = self._pick_frames(anim, facing)
         if not frames:
             # try folder of loose frames: anim/0.png
             loose = []
@@ -249,12 +281,26 @@ class AnimPack:
         frame = frames[idx]
         if frame.get_width() != size or frame.get_height() != size:
             frame = pygame.transform.smoothscale(frame, (size, size))
-        # facing: flip when facing left (west)
-        ang = facing % 360.0
-        if 90.0 < ang < 270.0:
-            frame = pygame.transform.flip(frame, True, False)
+        if self._dirs <= 1:
+            ang = facing % 360.0
+            if 90.0 < ang < 270.0:
+                frame = pygame.transform.flip(frame, True, False)
         screen.blit(frame, frame.get_rect(center=(int(x), int(y))))
         return True
+
+    def _pick_frames(self, anim: str, facing: float):
+        data = self._frames.get(anim) or self._frames.get("idle")
+        if not data:
+            return None
+        if self._dirs > 1 and isinstance(data[0], list):
+            d = _facing_dir_index(facing, self._dirs)
+            if d < len(data) and data[d]:
+                return data[d]
+            for row in data:
+                if row:
+                    return row
+            return None
+        return data
 
 
 def _load_meta(type_name: str) -> Optional[Tuple[dict, str]]:
