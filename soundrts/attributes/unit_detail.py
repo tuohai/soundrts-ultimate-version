@@ -9,7 +9,11 @@ from ..lib.nofloat import PRECISION
 from .. import msgparts as mp
 from ..definitions import style
 from .effect_formatter import EffectFormatter
-from .utils import RULES_DETAIL_ATTRS, class_attr_for_detail
+from .utils import (
+    RULES_DETAIL_ATTRS,
+    apply_player_phase_bonuses_for_detail,
+    class_attr_for_detail,
+)
 
 class UnitDetail:
     def __init__(self, parent):
@@ -23,7 +27,20 @@ class UnitDetail:
             from ..definitions import rules
             from ..worldupgrade import Upgrade
             from ..worldskill import Skill
-            
+            from ..world_build_rules import resolve_buildable_type
+
+            # 村民「可建造」菜单保留语义名（aoe_castle），实际建造用文明壳。
+            # 钻入详情时按当前玩家解析，否则只能看到通用壳的 can_train（无特色单位）。
+            source = getattr(self.parent, "_attributes_screen_unit", None)
+            player = getattr(source, "player", None)
+            if player is not None:
+                try:
+                    resolved = resolve_buildable_type(player, unit_type_name)
+                    if resolved:
+                        unit_type_name = resolved
+                except Exception:
+                    pass
+
             # 获取单位类型定义
             unit_class = rules.unit_class(unit_type_name)
             
@@ -32,11 +49,12 @@ class UnitDetail:
             
             # 创建一个更完整的临时单位对象，模拟真实单位的所有属性 - 完全复制原始代码
             class TempUnit:
-                def __init__(self, unit_class, unit_type_name):
+                def __init__(self, unit_class, unit_type_name, player=None):
                     # 设置基本属性
                     self.model = unit_class
                     self.title = style.get(unit_type_name, "title")
                     self.type_name = unit_type_name  # 添加type_name属性
+                    self.player = player  # 嵌套钻入时继续按文明解析建筑壳
                     
                     # 从单位类获取所有属性，保持原始值
                     # 生命值
@@ -114,8 +132,12 @@ class UnitDetail:
                     return []
             
             # 创建临时单位对象
-            temp_unit = TempUnit(unit_class, unit_type_name)
-            
+            temp_unit = TempUnit(unit_class, unit_type_name, player=player)
+            if not is_tech:
+                apply_player_phase_bonuses_for_detail(
+                    temp_unit, unit_class, player
+                )
+
             # 保存当前状态，以便返回
             self.parent._saved_attributes_state = {
                 'unit': self.parent._attributes_screen_unit,

@@ -1874,7 +1874,7 @@ mdg_range 1
 mdf 0
 rdf 2
 can_upgrade_to
-; 火枪兵 Hand Cannoneer
+; 火枪兵 Hand Cannoneer (Imperial + Chemistry; train at Archery Range)
 def hand_cannoneer
 class soldier
 is_a archer_unit
@@ -1885,7 +1885,7 @@ rdg_projectile 1
 rdg_projectile_speed 5.5
 rdg_targets ground
 space 0.25
-requirements imperial_age
+requirements imperial_age chemistry
 no_auto_upgrade 1
 
 hp_max 40
@@ -4087,7 +4087,7 @@ mdf 1
 rdf 8
 time_cost 50
 requirements feudal_age
-can_train aoe_archer skirmisher cavalry_archer
+can_train aoe_archer skirmisher cavalry_archer hand_cannoneer
 can_research thumb_ring crossbowman arbalester elite_skirmisher heavy_cavalry_archer
 can_use_tech masonry architecture town_watch town_patrol
 
@@ -4638,8 +4638,9 @@ cost 0 149 0 0
 def byzantine_archery
 is_a archery_range
 cost 0 149 0 0
-can_train aoe_archer skirmisher
-can_research thumb_ring crossbowman arbalester elite_skirmisher heavy_cavalry_archer
+; DE: no Cavalry Archer; Hand Cannoneer yes
+can_train aoe_archer skirmisher hand_cannoneer
+can_research thumb_ring crossbowman arbalester elite_skirmisher
 
 def byzantine_stable
 is_a stables
@@ -4728,7 +4729,8 @@ can_research squires arson gambesons man_at_arms long_swordsman two_handed_sword
 
 def frank_archery
 is_a archery_range
-can_train aoe_archer skirmisher
+; DE: no Cavalry Archer / Thumb Ring; Hand Cannoneer yes
+can_train aoe_archer skirmisher hand_cannoneer
 can_research
 
 def frank_stable
@@ -5147,8 +5149,8 @@ can_research squires arson gambesons man_at_arms long_swordsman two_handed_sword
 
 def japanese_archery
 is_a archery_range
-can_train aoe_archer skirmisher cavalry_archer
-can_research thumb_ring crossbowman arbalester elite_skirmisher heavy_cavalry_archer hand_cannoneer
+can_train aoe_archer skirmisher cavalry_archer hand_cannoneer
+can_research thumb_ring crossbowman arbalester elite_skirmisher heavy_cavalry_archer
 
 def japanese_stable
 is_a stables
@@ -5209,8 +5211,9 @@ can_research squires arson gambesons man_at_arms long_swordsman two_handed_sword
 
 def teuton_archery
 is_a archery_range
-can_train aoe_archer skirmisher cavalry_archer
-can_research crossbowman elite_skirmisher hand_cannoneer
+; DE: no Thumb Ring / Heavy CA / Arbalester; Hand Cannoneer yes
+can_train aoe_archer skirmisher cavalry_archer hand_cannoneer
+can_research crossbowman elite_skirmisher
 
 def teuton_stable
 is_a stables
@@ -5360,8 +5363,9 @@ can_research arson gambesons man_at_arms long_swordsman two_handed_swordsman cha
 
 def portuguese_archery
 is_a archery_range
-can_train aoe_archer skirmisher cavalry_archer
-can_research thumb_ring crossbowman arbalester elite_skirmisher hand_cannoneer
+; DE: no Heavy CA; Hand Cannoneer yes
+can_train aoe_archer skirmisher cavalry_archer hand_cannoneer
+can_research thumb_ring crossbowman arbalester elite_skirmisher
 
 def portuguese_stable
 is_a stables
@@ -5783,7 +5787,8 @@ can_research tracking squires supplies arson man_at_arms long_swordsman two_hand
 
 def malian_archery
 is_a archery_range
-can_train aoe_archer skirmisher cavalry_archer
+; DE: no Arbalester / Heavy CA; Hand Cannoneer yes
+can_train aoe_archer skirmisher cavalry_archer hand_cannoneer
 can_research thumb_ring crossbowman elite_skirmisher
 
 def malian_stable

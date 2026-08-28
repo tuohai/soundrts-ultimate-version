@@ -4,6 +4,28 @@ Notas de lançamento
 
 .. contents::
 
+1.4.8.6
+-------
+
+**Correção: aoe2 Hand Cannoneer treinável no Campo de Arqueiros**
+
+- **Problema**: Hand Cannoneers não apareciam na lista de treino; algumas civs os punham em ``can_research`` e só pediam Idade Imperial (sem Química).
+- **Mudança**: ``hand_cannoneer`` exige ``imperial_age chemistry``; Campo genérico e shells das civs com a unidade listam em ``can_train`` (bizantinos, japoneses, francos, teutões, portugueses, malineses, …). Bretões, chineses, mongóis, vikings, vietnamitas, astecas e celtas continuam sem (árvore DE).
+- **Alcance**: ``mods/aoe2/rules.txt`` Campo de Arqueiros e Hand Cannoneer.
+
+**Correção: detalhe de «pode construir» resolve o shell da civ**
+
+- **Problema**: o menu guarda nomes semânticos (ex. ``aoe_castle``). Abrir o detalhe lia o shell genérico: castelo bretão só Trebuchet até construir (Longbowman).
+- **Mudança**: ``_show_unit_detail`` usa ``resolve_buildable_type`` (``aoe_castle`` → ``briton_castle``, etc.) para treino/pesquisa coincidirem com o edifício real.
+- **Alcance**: detalhes de tipo a partir de pode construir / pode treinar.
+
+**Correção: detalhe de tipo aplica bónus de idade / civ**
+
+- **Problema**: milícia, arqueiro, etc. a partir de pode treinar mostravam só stats base, sem armadura de perfuração malinesa, alcance bretão e outros ``on_phase``.
+- **Mudança**: o proxy reutiliza ``Player._phase_bonus_pool`` com ``Phase.apply_pool_*`` como em ``Player.add``.
+- **Alcance**: detalhes de tipo (não tech/habilidade).
+
+
 1.4.8.5
 -------
 

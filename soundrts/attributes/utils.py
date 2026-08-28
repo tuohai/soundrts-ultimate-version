@@ -379,6 +379,98 @@ def class_attr_for_detail(unit_class, attr):
     return value
 
 
+# Stats copied onto type-detail proxies so phase / civ pool bonuses can stack
+# (effect_bonus reads/writes instance attrs; class-only values would start at 0).
+_DETAIL_BONUS_SEED_STATS = (
+    "hp",
+    "hp_max",
+    "mana",
+    "mana_max",
+    "speed",
+    "sight_range",
+    "mdg_vs",
+    "rdg_vs",
+    "mdf_vs",
+    "rdf_vs",
+    "mdg_range_vs",
+    "rdg_range_vs",
+    "mdg_cd_vs",
+    "rdg_cd_vs",
+    "mdg_cover_vs",
+    "rdg_cover_vs",
+)
+
+
+def _copy_class_stat(unit_class, stat):
+    if not hasattr(unit_class, stat):
+        return None
+    value = getattr(unit_class, stat)
+    if isinstance(value, property) or callable(value):
+        return None
+    if isinstance(value, dict):
+        return dict(value)
+    if isinstance(value, list):
+        return list(value)
+    if isinstance(value, tuple):
+        return tuple(value)
+    return value
+
+
+def apply_player_phase_bonuses_for_detail(temp_unit, unit_class, player):
+    """叠上玩家 ``_phase_bonus_pool``（时代/文明 on_phase、研究堆叠等）。
+
+    可训练/可建造类型详情若只读 rules 底数，会漏掉马里民兵穿甲、
+    不列颠弓兵射程等实战加成。已造成的单位在 ``Player.add`` 时已应用；
+    此处对详情临时单位复用同一套 pool 逻辑。
+    """
+    if temp_unit is None or unit_class is None or player is None:
+        return
+    pool = getattr(player, "_phase_bonus_pool", None)
+    if not pool:
+        return
+
+    from ..worldphase import (
+        ARMOR_CLEARED_STATS,
+        Phase,
+        WEAPON_CLEARED_STATS,
+    )
+
+    expanded = set(getattr(unit_class, "expanded_is_a", ()) or ())
+    for parent in getattr(unit_class, "is_a", ()) or ():
+        expanded.add(parent)
+    type_name = getattr(temp_unit, "type_name", None) or getattr(
+        unit_class, "type_name", None
+    ) or getattr(unit_class, "__name__", "")
+    if type_name:
+        expanded.add(type_name)
+    temp_unit.expanded_is_a = expanded
+    temp_unit.player = player
+
+    for stat in WEAPON_CLEARED_STATS | ARMOR_CLEARED_STATS | frozenset(
+        _DETAIL_BONUS_SEED_STATS
+    ):
+        copied = _copy_class_stat(unit_class, stat)
+        if copied is None:
+            continue
+        # Keep hp already set on the proxy unless missing.
+        if stat in ("hp", "hp_max", "mana", "mana_max") and getattr(
+            temp_unit, stat, None
+        ) is not None:
+            continue
+        setattr(temp_unit, stat, copied)
+
+    try:
+        Phase.apply_pool_to_unit(temp_unit)
+        Phase.apply_pool_weapon_subset_to_unit(temp_unit)
+        Phase.apply_pool_armor_subset_to_unit(temp_unit)
+    except Exception:
+        return
+
+    # Preview as full HP after hp_max bonuses.
+    if getattr(temp_unit, "hp_max", None) is not None:
+        temp_unit.hp = temp_unit.hp_max
+
+
 def gather_type_names(unit):
     """矿床与可采集建筑类型名合并列表（与属性界面显示顺序一致）。"""
     model = getattr(unit, "model", unit)

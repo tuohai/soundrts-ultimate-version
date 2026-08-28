@@ -3,6 +3,28 @@ Note di rilascio
 
 .. contents::
 
+1.4.8.6
+--------
+
+**Correzione: aoe2 Hand Cannoneer addestrabile al Campo di tiro**
+
+- **Problema**: gli Hand Cannoneer non comparivano nell’elenco addestramento; alcune civ li mettevano in ``can_research`` e richiedevano solo Età Imperiale (non Chimica).
+- **Cambio**: ``hand_cannoneer`` richiede ``imperial_age chemistry``; Campo generico e gusci civ con l’unità lo elencano in ``can_train`` (bizantini, giapponesi, franchi, teutoni, portoghesi, maliani, …). Britanni, cinesi, mongoli, vichinghi, vietnamiti, aztechi e celti restano senza (albero DE).
+- **Ambito**: ``mods/aoe2/rules.txt`` Campo di tiro e Hand Cannoneer.
+
+**Correzione: il dettaglio «può costruire» risolve il guscio civ**
+
+- **Problema**: il menu tiene nomi semantici (es. ``aoe_castle``). Aprendo il dettaglio si leggeva il guscio generico: castello britanno solo Trebuchet fino alla costruzione (Longbowman).
+- **Cambio**: ``_show_unit_detail`` usa ``resolve_buildable_type`` (``aoe_castle`` → ``briton_castle``, ecc.) così addestramento/ricerca coincidono con l’edificio reale.
+- **Ambito**: dettagli tipo da può costruire / può addestrare.
+
+**Correzione: il dettaglio tipo applica bonus età / civ**
+
+- **Problema**: milizia, arciere, ecc. dal può addestrare mostravano solo stats base, senza armatura pierce maliana, gittata britanna e altri ``on_phase``.
+- **Cambio**: il proxy riusa ``Player._phase_bonus_pool`` con ``Phase.apply_pool_*`` come in ``Player.add``.
+- **Ambito**: dettagli tipo (non tech/abilità).
+
+
 1.4.8.5
 --------
 

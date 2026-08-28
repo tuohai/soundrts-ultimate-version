@@ -5,6 +5,28 @@ Release notes
 .. contents::
 
 
+1.4.8.6
+--------
+
+**Fix: aoe2 Hand Cannoneer trainable at the Archery Range**
+
+- **Issue**: Hand Cannoneers did not appear in the Archery Range train list; some civs listed them under ``can_research``, and the unit only required Imperial Age (not Chemistry).
+- **Change**: ``hand_cannoneer`` requires ``imperial_age chemistry``; generic Archery Range and civ shells that have the unit list it under ``can_train`` (Byzantines, Japanese, Franks, Teutons, Portuguese, Malians, …). Britons, Chinese, Mongols, Vikings, Vietnamese, Aztecs, and Celts still lack them (DE tech tree).
+- **Scope**: ``mods/aoe2/rules.txt`` Archery Range and Hand Cannoneer definitions.
+
+**Fix: villager “can build” detail resolves civ building shells**
+
+- **Issue**: The build menu keeps semantic names (e.g. ``aoe_castle``). Drilling into details used the generic shell, so a Briton castle preview showed only the Trebuchet until the real castle was built (Longbowman).
+- **Change**: ``_show_unit_detail`` uses ``resolve_buildable_type`` for the current faction shell (``aoe_castle`` → ``briton_castle``, etc.) so train/research lists match the built building.
+- **Scope**: Attribute-screen type details opened from can-build / can-train entries.
+
+**Fix: unit type details stack age / civ bonuses**
+
+- **Issue**: Opening Militia, Archer, etc. from a can-train list showed rules base stats only, missing Malian pierce armor, Briton archer range, and other ``on_phase`` / research-stack bonuses.
+- **Change**: Detail proxies reuse ``Player._phase_bonus_pool`` via the same ``Phase.apply_pool_*`` path as ``Player.add``, so preview stats match trained units.
+- **Scope**: Attribute type details (not tech/skill entries).
+
+
 1.4.8.5
 --------
 
