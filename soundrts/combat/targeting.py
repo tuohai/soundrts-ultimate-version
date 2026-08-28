@@ -415,8 +415,6 @@ class TargetingMixin:
         if not has_attack:
             if self.mdg_explode or self.rdg_explode:
                 has_attack = True
-            elif self._offensive_melee_vs(other):
-                has_attack = True
             else:
                 cache_dict[other_id] = False
                 return False
@@ -449,9 +447,7 @@ class TargetingMixin:
             rdg = self.rdg
             mdg_explode = self.mdg_explode
             rdg_explode = self.rdg_explode
-            has_melee_system = (
-                mdg > 0 or mdg_explode or self._has_melee_attack_capability()
-            )
+            has_melee_system = (mdg > 0 or mdg_explode)
             has_ranged_system = (rdg > 0 or rdg_explode)
 
             if has_melee_system and not has_ranged_system:

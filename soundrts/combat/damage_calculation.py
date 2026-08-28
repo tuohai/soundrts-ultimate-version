@@ -389,34 +389,6 @@ class DamageCalculationMixin:
         if forced_damage > 0:
             actual_damage = forced_damage
         return actual_damage
-
-    def _has_melee_attack_capability(self) -> bool:
-        """True if rules give this unit a melee swing (``mdg_range`` / explode)."""
-        if getattr(self, "mdg_explode", False):
-            return True
-        return int(getattr(self, "mdg_range", 0) or 0) > 0
-
-    def _projected_melee_hit_damage_vs(self, target) -> int:
-        """Melee damage after armor (0 base vs negative ``mdf`` still hits)."""
-        if target is None:
-            return 0
-        raw = self._get_melee_damage_vs(target)
-        try:
-            return int(
-                target._calculate_actual_damage(raw, self, is_melee=True) or 0
-            )
-        except Exception:
-            return 0
-
-    def _offensive_melee_vs(self, target) -> bool:
-        """Whether a melee swing should be attempted (AoE2 0-atk vs -armor)."""
-        if self._get_melee_damage_vs(target) > 0:
-            return True
-        if getattr(self, "mdg_explode", False):
-            return True
-        if not self._has_melee_attack_capability():
-            return False
-        return self._projected_melee_hit_damage_vs(target) > 0
     
     def _get_speed_vs(self, target):
         """获取单位对特定目标的移动速度"""

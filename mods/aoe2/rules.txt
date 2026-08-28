@@ -1442,8 +1442,6 @@ hp_max 30
 speed 0.96
 sight_range 6
 mdg 0
-; 0 melee vs ram mdf -3 → 3 dmg (needs mdg_range for swing)
-mdg_range 1
 mdf 0
 rdf 0
 rdg 4
@@ -1508,7 +1506,6 @@ hp_max 30
 speed 0.96
 sight_range 6
 mdg 0
-mdg_range 1
 mdf 0
 rdf 3
 rdg 2
@@ -1582,7 +1579,6 @@ hp_max 50
 speed 1.4
 sight_range 5
 mdg 0
-mdg_range 1
 mdf 0
 rdf 0
 rdg 6

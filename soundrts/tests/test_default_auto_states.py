@@ -225,10 +225,13 @@ class _DecideStub:
 
     # CreatureAIDecision 的类级默认
     _last_decide_time = 0
+    _next_decide_time = 0
     last_attacker = None
     _decision_cache = {}
     _decision_cache_bucket = -1
     _cached_has_attack = None
+    _flee_on_hit_enabled = wad.CreatureAIDecision._flee_on_hit_enabled
+    _has_pursue_attacker = wad.CreatureAIDecision._has_pursue_attacker
 
     def __init__(self, auto_explore, speed, orders):
         self.world = types.SimpleNamespace(time=100000)

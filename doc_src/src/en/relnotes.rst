@@ -5,6 +5,16 @@ Release notes
 .. contents::
 
 
+1.4.8.8
+--------
+
+**Change: revert “0 melee attack vs negative armor”**
+
+- **Issue**: Allowing ``mdg 0`` to melee negative ``mdf`` made “0 attack” feel wrong.
+- **Change**: ``mdg == 0`` (non-explode) cannot start melee again; ``max(1, attack−armor)`` stays for real hits. aoe2 archers no longer get a free melee ``mdg_range``.
+- **Scope**: Attack gates / AI attack-capability cache / aoe2 archers. Scorpion pierce and mangonel nerf from 1.4.8.7 remain.
+
+
 1.4.8.7
 --------
 

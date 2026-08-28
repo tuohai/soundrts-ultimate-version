@@ -102,14 +102,8 @@ cpdef bint near_enough_to_aim(self, target) except -1:
     cdef object expanded_is_a
     cdef object type_name
 
-    # 近战检查（含 0 mdg vs 负护甲）
-    cdef bint can_try_mdg = (melee_damage > 0 or minimal_damage > 0)
-    if not can_try_mdg:
-        try:
-            can_try_mdg = bool(self._offensive_melee_vs(target))
-        except Exception:
-            can_try_mdg = False
-    if can_try_mdg:
+    # 近战检查
+    if melee_damage > 0 or minimal_damage > 0:
         eff_range = self.get_effective_mdg_range(target)
         max_range = eff_range if eff_range > 0 else _DEFAULT_ATTACK_RANGE
         max_r2 = (max_range + collision) * (max_range + collision)

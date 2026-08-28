@@ -3,6 +3,16 @@ Note di rilascio
 
 .. contents::
 
+1.4.8.8
+--------
+
+**Cambio: annullare «attacco melee 0 vs armatura negativa»**
+
+- **Problema**: permettere ``mdg 0`` contro ``mdf`` negativo rendeva strano l’«attacco 0».
+- **Cambio**: ``mdg == 0`` (senza explode) non avvia più il melee; resta ``max(1, attacco−armatura)``. Arcieri aoe2 senza ``mdg_range`` melee gratis.
+- **Ambito**: gate d’attacco / cache AI / arcieri aoe2. Perforazione scorpione e nerf mangonel di 1.4.8.7 restano.
+
+
 1.4.8.7
 --------
 

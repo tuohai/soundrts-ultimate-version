@@ -4,6 +4,16 @@ Notas de la versión
 
 .. contents::
 
+1.4.8.8
+-------
+
+**Cambio: revertir «ataque cuerpo a cuerpo 0 vs armadura negativa»**
+
+- **Problema**: permitir ``mdg 0`` contra ``mdf`` negativo hacía raro el «ataque 0».
+- **Cambio**: ``mdg == 0`` (sin explode) ya no inicia melee; se mantiene ``max(1, ataque−armadura)``. Los arqueros aoe2 sin ``mdg_range`` melee gratis.
+- **Alcance**: puertas de ataque / caché AI / arqueros aoe2. Perforación de escorpión y nerf de mangonel de 1.4.8.7 se conservan.
+
+
 1.4.8.7
 -------
 

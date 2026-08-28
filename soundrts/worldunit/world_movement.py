@@ -384,12 +384,8 @@ class CreatureMovement(Entity):
         minimal_damage = self.minimal_damage
 
         can_use_mdg = False
-        # 最终伤害，或 0 攻 + mdg_range 对负护甲（冲车）
-        if (
-            melee_damage > 0
-            or minimal_damage > 0
-            or self._offensive_melee_vs(target)
-        ):
+        # 判断条件修改为检查最终伤害
+        if melee_damage > 0 or minimal_damage > 0:
             eff_range = self.get_effective_mdg_range(target)
             max_range = eff_range if eff_range > 0 else DEFAULT_ATTACK_RANGE
             max_r2 = (max_range + collision) ** 2
