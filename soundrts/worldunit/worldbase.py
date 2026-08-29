@@ -611,6 +611,12 @@ class Unit(Creature):
         self.rdg_splash = getattr(base_class, 'rdg_splash', 0)
         self.mdg_radius = getattr(base_class, 'mdg_radius', 0)
         self.rdg_radius = getattr(base_class, 'rdg_radius', 0)
+        self.mdg_pierce_line = getattr(base_class, 'mdg_pierce_line', 0)
+        self.rdg_pierce_line = getattr(base_class, 'rdg_pierce_line', 0)
+        self.mdg_pierce_width = getattr(base_class, 'mdg_pierce_width', 0)
+        self.rdg_pierce_width = getattr(base_class, 'rdg_pierce_width', 0)
+        self.mdg_pierce_max = getattr(base_class, 'mdg_pierce_max', 0)
+        self.rdg_pierce_max = getattr(base_class, 'rdg_pierce_max', 0)
         
         # 清除bonus属性
         self.mdg_bonus = 0

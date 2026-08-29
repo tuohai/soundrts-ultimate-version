@@ -127,6 +127,194 @@ def test_order_requisition_stops_auto_explore_before_build():
     assert peasant.orders[0].keyword == "build"
 
 
+def _hashable_deposit(deposit_id, resource_type="resource3"):
+    """Deposit-like object usable as a _gathered_deposits key."""
+
+    class _Deposit:
+        def __init__(self):
+            self.id = deposit_id
+            self.resource_type = resource_type
+
+        def __hash__(self):
+            return hash(self.id)
+
+        def __eq__(self, other):
+            return isinstance(other, _Deposit) and other.id == self.id
+
+        def __repr__(self):
+            return "deep_fish()" if resource_type == "resource3" else self.id
+
+    return _Deposit()
+
+
+def _repair_order_fixture(site_on_water=False):
+    """Minimal AI + gatherer for Computer.order(repair, requisition=True)."""
+    ai = Computer.__new__(Computer)
+    ai._orders = {}
+    ai._gathered_deposits = {}
+    ai.resources = [0, 0, 0, 0]
+    land = SimpleNamespace(id="land", is_water=False)
+    water = SimpleNamespace(id="water", is_water=True)
+    site_place = water if site_on_water else land
+    site = SimpleNamespace(
+        id="site1",
+        place=site_place,
+        airground_type="ground",
+        is_repairable=True,
+        _self_construct=False,
+        type=SimpleNamespace(self_constructs=0),
+    )
+    deep_fish = _hashable_deposit("df1")
+    ship_orders = [
+        SimpleNamespace(keyword="gather", target=deep_fish, is_complete=False),
+    ]
+    issued = []
+
+    def ship_take_order(order, *args, **kwargs):
+        issued.append(("ship", list(order)))
+        if order[0] == "repair":
+            ship_orders[:] = [
+                SimpleNamespace(
+                    keyword="repair",
+                    target=site,
+                    is_complete=False,
+                    unit=ship,
+                )
+            ]
+
+    ship = SimpleNamespace(
+        orders=ship_orders,
+        place=water,
+        type_name="fishing_ship",
+        airground_type="water",
+        can_repair=1,
+        player=ai,
+        take_order=ship_take_order,
+        id="ship1",
+    )
+    ai.units = [ship]
+    ai.check_type = lambda u, types: True
+    ai.get_object_by_id = lambda _id: site if _id == site.id else deep_fish
+    return ai, ship, site, deep_fish, issued
+
+
+def test_order_requisition_repair_untracked_deep_fish_does_not_keyerror():
+    """Fishing ships gather deep_fish, which is not in _gathered_deposits."""
+    ai, ship, site, deep_fish, issued = _repair_order_fixture(site_on_water=True)
+    import soundrts.worldorders.movement as movement
+
+    orig_allowed = movement.RepairOrder.is_allowed
+    movement.RepairOrder.is_allowed = staticmethod(lambda *_a, **_k: True)
+    try:
+        Computer.order(
+            ai, 1, "fishing_ship", ["repair", site.id], near=site, requisition=True
+        )
+    finally:
+        movement.RepairOrder.is_allowed = orig_allowed
+
+    assert ship.orders[0].keyword == "repair"
+    assert deep_fish not in ai._gathered_deposits
+
+
+def test_order_requisition_skips_water_worker_for_land_repair():
+    """Forgotten land sites must not pull fishing ships off deep_fish."""
+    ai, ship, site, deep_fish, issued = _repair_order_fixture(site_on_water=False)
+    villager_orders = []
+
+    def villager_take_order(order, *args, **kwargs):
+        issued.append(("villager", list(order)))
+        if order[0] == "repair":
+            villager_orders[:] = [
+                SimpleNamespace(
+                    keyword="repair",
+                    target=site,
+                    is_complete=False,
+                    unit=villager,
+                )
+            ]
+
+    villager = SimpleNamespace(
+        orders=villager_orders,
+        place=SimpleNamespace(id="land", is_water=False),
+        type_name="villager",
+        airground_type="ground",
+        can_repair=1,
+        player=ai,
+        take_order=villager_take_order,
+        id="v1",
+    )
+    ai.units = [ship, villager]
+    import soundrts.worldorders.movement as movement
+
+    orig_allowed = movement.RepairOrder.is_allowed
+    movement.RepairOrder.is_allowed = staticmethod(lambda *_a, **_k: True)
+    try:
+        Computer.order(
+            ai, 1, "worker", ["repair", site.id], near=site, requisition=True
+        )
+    finally:
+        movement.RepairOrder.is_allowed = orig_allowed
+
+    assert ship.orders[0].keyword == "gather"
+    assert ship.orders[0].target is deep_fish
+    assert villager.orders[0].keyword == "repair"
+
+
+def test_order_requisition_decrements_tracked_gather_deposit():
+    ai = Computer.__new__(Computer)
+    ai._orders = {}
+    ai.resources = [0, 0, 0, 0]
+    site = SimpleNamespace(
+        id="site1",
+        place=SimpleNamespace(id="land", is_water=False),
+        airground_type="ground",
+        is_repairable=True,
+        _self_construct=False,
+        type=SimpleNamespace(self_constructs=0),
+    )
+    mine = _hashable_deposit("gold1", resource_type="resource1")
+    ai._gathered_deposits = {mine: 2}
+    orders = [SimpleNamespace(keyword="gather", target=mine, is_complete=False)]
+
+    def take_order(order, *args, **kwargs):
+        if order[0] == "repair":
+            orders[:] = [
+                SimpleNamespace(
+                    keyword="repair",
+                    target=site,
+                    is_complete=False,
+                    unit=villager,
+                )
+            ]
+
+    villager = SimpleNamespace(
+        orders=orders,
+        place=SimpleNamespace(id="land", is_water=False),
+        type_name="villager",
+        airground_type="ground",
+        can_repair=1,
+        player=ai,
+        take_order=take_order,
+        id="v1",
+    )
+    ai.units = [villager]
+    ai.check_type = lambda u, types: True
+    ai.get_object_by_id = lambda _id: site
+    import soundrts.worldorders.movement as movement
+
+    orig_allowed = movement.RepairOrder.is_allowed
+    movement.RepairOrder.is_allowed = staticmethod(lambda *_a, **_k: True)
+    try:
+        Computer.order(
+            ai, 1, "villager", ["repair", site.id], near=site, requisition=True
+        )
+    finally:
+        movement.RepairOrder.is_allowed = orig_allowed
+
+    assert villager.orders[0].keyword == "repair"
+    assert ai._gathered_deposits[mine] == 1
+
+
 def _load_m2_with_beginners(n_ai=8):
     world = World([], 42)
     world._parse_map(M2.read_text(encoding="utf-8"))

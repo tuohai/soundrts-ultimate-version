@@ -971,6 +971,13 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     rdg_radius = 0
     mdg_splash = 0
     rdg_splash = 0
+    # Projectile line pierce (AoE2 scorpion). 0/1 flags; width is PRECISION tiles.
+    mdg_pierce_line = 0
+    rdg_pierce_line = 0
+    mdg_pierce_width = 0
+    rdg_pierce_width = 0
+    mdg_pierce_max = 0
+    rdg_pierce_max = 0
     mdg_splash_decay_min = 0  # 近战默认最小衰减
     rdg_splash_decay_min = 0  # 远程默认最小衰减
     mdg_cd = 0
@@ -1327,6 +1334,12 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
         self.rdg_radius = type(self).rdg_radius
         self.mdg_splash = type(self).mdg_splash
         self.rdg_splash = type(self).rdg_splash
+        self.mdg_pierce_line = type(self).mdg_pierce_line
+        self.rdg_pierce_line = type(self).rdg_pierce_line
+        self.mdg_pierce_width = type(self).mdg_pierce_width
+        self.rdg_pierce_width = type(self).rdg_pierce_width
+        self.mdg_pierce_max = type(self).mdg_pierce_max
+        self.rdg_pierce_max = type(self).rdg_pierce_max
         self.mdg_delay = type(self).mdg_delay
         self.rdg_delay = type(self).rdg_delay
         self.mdg_projectile_speed = type(self).mdg_projectile_speed

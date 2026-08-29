@@ -3,6 +3,28 @@ Note di rilascio
 
 .. contents::
 
+1.4.8.9
+--------
+
+**Correzione: crash del PC nel requisire pescherecci per impalcature a terra (``KeyError: deep_fish()``)**
+
+- **Problema**: la riparazione di cantieri dimenticati requisiva qualsiasi ``Worker``, inclusi pescherecci su ``deep_fish``. ``_gathered_deposits`` conta solo contadini; il decremento crashava.
+- **Cambio**: i lavoratori d’acqua non vanno su impalcature terrestri; il conteggio raccolta scende solo se l’ordine è accettato e il giacimento era tracciato.
+- **Ambito**: ``order()`` di riparazione del PC.
+
+**Correzione: le regole di perforazione dello scorpione venivano scartate al load**
+
+- **Problema**: ``rdg_pierce_line`` / ``rdg_pierce_width`` erano in regole e tabelle, ma ``Soldier``/``Creature`` non avevano l’attributo; warning e cancellazione.
+- **Cambio**: campi di perforazione su ``Creature`` e sulle istanze; scorpione / scorpione pesante aoe2 tengono i flag.
+- **Ambito**: attributi unità e scorpioni aoe2.
+
+**Correzione: raccogliere pesce costiero dalla memoria nebbia avvisava lo spostamento dell’oggetto reale**
+
+- **Problema**: senza visione dell’acqua, il gather usava una copia ``shore_fish``; svuotandola ``delete()`` sulla copia e l’avviso ``Will move the real object instead of its memorized version``.
+- **Cambio**: ``extract_resource`` sulla memoria addebita il giacimento reale.
+- **Ambito**: raccolta giacimenti (pesce costiero, ecc.).
+
+
 1.4.8.8
 --------
 

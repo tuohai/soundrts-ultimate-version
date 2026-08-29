@@ -5361,11 +5361,25 @@ class Computer(Player):
                             or getattr(getattr(target, "type", None), "self_constructs", 0)
                         ):
                             continue
-                if requisition and u.orders and u.orders[0].keyword == "gather":
-                    self._gathered_deposits[u.orders[0].target] -= 1
+                        # fishing_ship is a Worker with can_repair, but land
+                        # scaffolds must not pull boats off deep_fish / shore_fish.
+                        if getattr(u, "airground_type", "ground") == "water":
+                            tgt_place = getattr(target, "place", None)
+                            if getattr(target, "airground_type", None) != "water" and not getattr(
+                                tgt_place, "is_water", False
+                            ):
+                                continue
                 order_cls = ORDERS_DICT.get(order[0])
                 if order_cls is not None and not order_cls.is_allowed(u, *order[1:]):
                     continue
+                # Water gatherers are not counted in _gathered_deposits (only
+                # ground peasants are). Decrement only when the worker actually
+                # takes the new order, and only if the deposit was tracked.
+                if requisition and u.orders and u.orders[0].keyword == "gather":
+                    try:
+                        self._gathered_deposits[u.orders[0].target] -= 1
+                    except Exception:
+                        pass
                 u.take_order(order)
                 if order and order[0] in _PROD_ORDER_KEYWORDS:
                     self._invalidate_play_derived_counts()

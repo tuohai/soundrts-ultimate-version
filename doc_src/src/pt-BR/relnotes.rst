@@ -4,6 +4,28 @@ Notas de lançamento
 
 .. contents::
 
+1.4.8.9
+-------
+
+**Correção: crash do PC ao requisitar barcos de pesca para andaimes em terra (``KeyError: deep_fish()``)**
+
+- **Problema**: reparo de obras esquecidas requisitava qualquer ``Worker``, inclusive barcos em ``deep_fish``. ``_gathered_deposits`` só conta camponeses; o decremento crashava.
+- **Mudança**: trabalhadores de água não vão a andaimes terrestres; a contagem de coleta só cai se a ordem for aceite e o depósito estava registado.
+- **Alcance**: ``order()`` de reparo do PC.
+
+**Correção: regras de perfuração do escorpião eram descartadas no load**
+
+- **Problema**: ``rdg_pierce_line`` / ``rdg_pierce_width`` estavam nas regras e tabelas, mas ``Soldier``/``Creature`` não tinham o atributo; aviso e remoção.
+- **Mudança**: campos de perfuração em ``Creature`` e nas instâncias; escorpião / escorpião pesado aoe2 mantêm os flags.
+- **Alcance**: atributos de unidade e escorpiões aoe2.
+
+**Correção: coletar peixe costeiro da memória de névoa avisava ao mover o objeto real**
+
+- **Problema**: sem visão da água, o gather usava uma cópia de ``shore_fish``; ao esvaziar, ``delete()`` na cópia e o aviso ``Will move the real object instead of its memorized version``.
+- **Mudança**: ``extract_resource`` na memória debita o depósito real.
+- **Alcance**: coleta de depósitos (peixe costeiro, etc.).
+
+
 1.4.8.8
 -------
 

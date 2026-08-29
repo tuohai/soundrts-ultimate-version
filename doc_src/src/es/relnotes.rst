@@ -4,6 +4,28 @@ Notas de la versión
 
 .. contents::
 
+1.4.8.9
+-------
+
+**Corrección: crash del PC al requisar barcos de pesca para andamios terrestres (``KeyError: deep_fish()``)**
+
+- **Problema**: la reparación de obras olvidadas requisaba cualquier ``Worker``, incluidos barcos en ``deep_fish``. ``_gathered_deposits`` solo cuenta campesinos; al restar petaba.
+- **Cambio**: los trabajadores de agua no van a andamios de tierra; el recuento de recolección solo baja si la orden se acepta y el yacimiento estaba registrado.
+- **Alcance**: ``order()`` de reparación del PC.
+
+**Corrección: las reglas de perforación del escorpión se perdían al cargar**
+
+- **Problema**: ``rdg_pierce_line`` / ``rdg_pierce_width`` estaban en reglas y tablas, pero ``Soldier``/``Creature`` no tenían el atributo; se advertía y se borraban.
+- **Cambio**: campos de perforación en ``Creature`` y en instancias; escorpión / escorpión pesado aoe2 conservan los flags.
+- **Alcance**: atributos de unidad y escorpiones aoe2.
+
+**Corrección: recolectar pez de costa en memoria de niebla avisaba al mover el objeto real**
+
+- **Problema**: sin visión del agua, el gather usaba una copia de ``shore_fish``; al vaciarla ``delete()`` de la copia y el aviso ``Will move the real object instead of its memorized version``.
+- **Cambio**: ``extract_resource`` sobre memoria descuenta el yacimiento real.
+- **Alcance**: recolección de yacimientos (pez de costa, etc.).
+
+
 1.4.8.8
 -------
 

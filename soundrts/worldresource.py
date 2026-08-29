@@ -57,6 +57,18 @@ class Deposit(Entity):
         self._register_map_capacity(qty)
 
     def extract_resource(self, qty):
+        # Fog memory is a copy.copy with time_stamp. Gathering through it
+        # would deplete the snapshot then delete() the copy, which warns and
+        # moves the live deposit. Always extract from the real object.
+        if getattr(self, "is_memory", False):
+            real = getattr(self, "initial_model", None)
+            if (
+                real is not None
+                and real is not self
+                and getattr(real, "place", None) is not None
+            ):
+                return real.extract_resource(qty)
+            return 0
         actual_qty = min(qty, self.qty)
         self.qty -= actual_qty
         self.notify(f"qty_update,{self.qty}")

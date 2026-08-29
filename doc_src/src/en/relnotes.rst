@@ -5,6 +5,28 @@ Release notes
 .. contents::
 
 
+1.4.8.9
+--------
+
+**Fix: computer crash requisitioning fishing ships for land scaffolds (``KeyError: deep_fish()``)**
+
+- **Issue**: Forgotten-site repair requisitioned any ``Worker``, including fishing ships on ``deep_fish``. ``_gathered_deposits`` only counts land peasants, so decrementing crashed.
+- **Change**: Water workers are not pulled onto land scaffolds; gather counts decrement only after the new order is allowed and only if the deposit was tracked.
+- **Scope**: Computer ``order()`` repair requisition.
+
+**Fix: scorpion pierce rules dropped on load**
+
+- **Issue**: ``rdg_pierce_line`` / ``rdg_pierce_width`` were in rules and the parser tables, but ``Soldier``/``Creature`` lacked class attributes, so load warned and stripped them; pierce never applied.
+- **Change**: Pierce fields exist on ``Creature`` and are copied onto instances; aoe2 scorpion / heavy scorpion keep the flags.
+- **Scope**: Unit attributes and aoe2 scorpions.
+
+**Fix: gathering fog-memory shore fish warned about moving the real object**
+
+- **Issue**: When the water square was out of vision, gather targeted a ``shore_fish`` memory copy; emptying it ``delete()``'d the copy and logged ``Will move the real object instead of its memorized version``.
+- **Change**: ``extract_resource`` on a memory copy debits the live deposit.
+- **Scope**: Deposit gathering (shore fish, etc.).
+
+
 1.4.8.8
 --------
 

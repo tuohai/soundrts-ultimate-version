@@ -150,3 +150,26 @@ def test_gather_order_to_land_deposit_impossible_for_boat():
     assert order.is_impossible
     assert "order_impossible,land_impassable" in unit.notifications
     assert "order_ok" not in unit.notifications
+
+
+def test_extract_resource_on_fog_memory_uses_live_deposit():
+    """Gathering a memorized shore_fish must debit the real pile, not the copy."""
+    place = types.SimpleNamespace(is_water=True, is_ground=False)
+    live = Deposit.__new__(Deposit)
+    live.qty = 5000
+    live.qty_max = 5000
+    live.place = place
+    live.resource_type = "resource3"
+    live.notify = lambda *_a, **_k: None
+
+    memory = Deposit.__new__(Deposit)
+    memory.qty = 100
+    memory.place = place
+    memory.time_stamp = 1
+    memory.initial_model = live
+    memory.notify = lambda *_a, **_k: None
+
+    got = memory.extract_resource(1000)
+    assert got == 1000
+    assert live.qty == 4000
+    assert memory.qty == 100
