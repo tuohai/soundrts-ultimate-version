@@ -652,7 +652,12 @@ class KeyBindings:
                 voice.item(mp.BEEP)
                 return
 
-            tech_types = list(current_unit.can_use_tech)
+            # 与显示侧 filter 对齐，避免索引错位
+            from .utils import filter_can_use_tech_names
+
+            tech_types = filter_can_use_tech_names(
+                current_unit.can_use_tech, getattr(current_unit, "player", None)
+            )
             if self.parent._current_sub_item_index >= len(tech_types):
                 voice.item(mp.BEEP)
                 return

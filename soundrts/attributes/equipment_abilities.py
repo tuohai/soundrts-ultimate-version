@@ -399,10 +399,15 @@ class EquipmentAbilities:
     
     def add_tech_skill_attributes(self, u, attrs):
         """添加科技和技能相关属性"""
-        # 可使用的技术 - 直接从单位对象访问（原始代码方式）
+        # 可使用的技术：只列出本文明能研究的（含同盟 team_share / 已研究）
         if hasattr(u, "can_use_tech") and u.can_use_tech:
+            from .utils import filter_can_use_tech_names
+
+            tech_types = filter_can_use_tech_names(
+                u.can_use_tech, getattr(u, "player", None)
+            )
             tech_items = []
-            for tech_type in u.can_use_tech:
+            for tech_type in tech_types:
                 tech_title = style.get(tech_type, "title")
                 if tech_title:
                     if isinstance(tech_title, list):

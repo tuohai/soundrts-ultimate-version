@@ -14,6 +14,12 @@ Release notes
 - **Change**: ``mdg == 0`` (non-explode) cannot start melee again; ``max(1, attack−armor)`` stays for real hits. aoe2 archers no longer get a free melee ``mdg_range``.
 - **Scope**: Attack gates / AI attack-capability cache / aoe2 archers. Scorpion pierce and mangonel nerf from 1.4.8.7 remain.
 
+**Improvement: attribute “usable techs” filtered to civ-researchable**
+
+- **Issue**: Unit ``can_use_tech`` lists often include foreign unique techs for effect targeting, so attributes read out rocketry etc. for the wrong civ.
+- **Change**: The list shows only techs this civ can research (plus ally ``team_share_research`` and already researched). Actual upgrade application and allied ``_update_allied_upgrades`` sharing are unchanged. Base / crazyMod archer techs on the shared lumber mill still appear.
+- **Scope**: Attribute list and left/right navigation indexes.
+
 
 1.4.8.7
 --------

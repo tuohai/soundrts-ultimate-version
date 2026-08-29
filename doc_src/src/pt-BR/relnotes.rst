@@ -13,6 +13,12 @@ Notas de lançamento
 - **Mudança**: ``mdg == 0`` (sem explode) deixa de iniciar melee; mantém-se ``max(1, ataque−armadura)``. Arqueiros aoe2 sem ``mdg_range`` melee grátis.
 - **Alcance**: portas de ataque / cache AI / arqueiros aoe2. Perfuração de escorpião e nerf de mangonel de 1.4.8.7 mantêm-se.
 
+**Melhoria: atributos «tecnologias usáveis» filtradas às pesquisáveis da civ**
+
+- **Problema**: ``can_use_tech`` muitas vezes inclui tecnologias únicas estrangeiras para efeitos, e os atributos as liam.
+- **Mudança**: a lista mostra só o que esta civ pode pesquisar (mais ``team_share_research`` aliado e já pesquisado). Aplicação real e partilha aliada não mudam. Techs de arqueiro na serraria partilhada (base / crazyMod) continuam listadas.
+- **Alcance**: lista de atributos e índices de navegação.
+
 
 1.4.8.7
 -------

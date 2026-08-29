@@ -367,6 +367,84 @@ RULES_DETAIL_ATTRS = (
 )
 
 
+def _faction_equivalent_dests(faction):
+    """Race-table destination type names for *faction* (e.g. ``briton_castle``)."""
+    if not faction:
+        return set()
+    skip = ("class", "is_a", "abstract")
+    dests = set()
+    for key, val in (rules._dict.get(faction) or {}).items():
+        if key in skip:
+            continue
+        if not isinstance(val, (list, tuple)) or not val:
+            continue
+        dest = val[0]
+        if isinstance(dest, str) and dest:
+            dests.add(dest)
+    return dests
+
+
+def is_tech_researchable_by_player(player, tech_name):
+    """True if *player*'s civ can research *tech_name* (or already has it).
+
+    Used to filter attribute ``can_use_tech`` lists so foreign unique techs
+    (e.g. Chinese rocketry on a Briton scorpion) are not shown. Gameplay
+    application still keys off ``player.upgrades`` + ``can_use_tech``.
+    """
+    if not tech_name:
+        return False
+    if player is None:
+        return True
+    upgrades = getattr(player, "upgrades", ()) or ()
+    if tech_name in upgrades:
+        return True
+    forbidden = getattr(player, "forbidden_techs", ()) or ()
+    if tech_name in forbidden:
+        return False
+    try:
+        from ..world_civ_bonuses import team_share_research_names
+
+        if tech_name in team_share_research_names(player):
+            return True
+    except Exception:
+        pass
+    faction = getattr(player, "faction", None)
+    makers = rules.get_direct_makers(tech_name) or ()
+    if not makers:
+        return False
+    race_dests = _faction_equivalent_dests(faction)
+    race_skins = rules._race_equivalent_index()
+    for maker in makers:
+        if maker in race_skins:
+            if maker in race_dests:
+                return True
+            continue
+        check = maker
+        if faction:
+            mapped = rules.get(faction, maker)
+            if mapped:
+                check = mapped[0]
+        uc = rules.unit_class(check)
+        if uc is None:
+            continue
+        if tech_name in (rules.class_rules_attr(uc, "can_research", ()) or ()):
+            return True
+    return False
+
+
+def filter_can_use_tech_names(tech_names, player):
+    """Keep ``can_use_tech`` entries researchable by *player*'s civilization."""
+    if not tech_names:
+        return []
+    if player is None:
+        return list(tech_names)
+    return [
+        name
+        for name in tech_names
+        if is_tech_researchable_by_player(player, name)
+    ]
+
+
 def class_attr_for_detail(unit_class, attr):
     """从 rules 类读取详情界面需要的能力属性（避开 Building 上的 @property）。"""
     if attr == "can_train":

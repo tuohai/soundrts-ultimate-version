@@ -12,6 +12,12 @@ Note di rilascio
 - **Cambio**: ``mdg == 0`` (senza explode) non avvia più il melee; resta ``max(1, attacco−armatura)``. Arcieri aoe2 senza ``mdg_range`` melee gratis.
 - **Ambito**: gate d’attacco / cache AI / arcieri aoe2. Perforazione scorpione e nerf mangonel di 1.4.8.7 restano.
 
+**Miglioramento: attributi «tecnologie usabili» filtrate a quelle ricercabili dalla civ**
+
+- **Problema**: ``can_use_tech`` spesso include tech uniche straniere per gli effetti, e gli attributi le leggevano.
+- **Cambio**: l’elenco mostra solo ciò che questa civ può ricercare (più ``team_share_research`` alleato e già ricercato). Applicazione reale e condivisione alleata invariate. Tech arcieri sul segheria condivisa (base / crazyMod) restano in elenco.
+- **Ambito**: elenco attributi e indici di navigazione.
+
 
 1.4.8.7
 --------
