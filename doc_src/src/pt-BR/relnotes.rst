@@ -25,6 +25,18 @@ Notas de lançamento
 - **Mudança**: ``extract_resource`` na memória debita o depósito real.
 - **Alcance**: coleta de depósitos (peixe costeiro, etc.).
 
+**Correção: o menu de unidades (mago, etc.) crashava se ``player`` fosse None**
+
+- **Problema**: ``EnableAutoExplore.is_allowed`` lia ``unit.player.is_human``; memória de névoa, cadáveres e unidades sem dono têm ``player is None`` e levantavam ``AttributeError``. ``_menu`` abortava o ciclo e perdiam-se ordens seguintes.
+- **Mudança**: ``player`` em falta tratado como não humano, devolve False; mesma guarda em desativar auto-exploração e na do PC.
+- **Alcance**: menu de ordens da unidade.
+
+**Correção: crash do menu de ordens em EnableAutoExplore quando ``player`` é None (mago)**
+
+- **Problema**: ``EnableAutoExplore.is_allowed`` lia ``unit.player.is_human``; memória de névoa, cadáveres e unidades sem dono têm ``player is None`` e lançavam ``AttributeError``. ``_menu`` capturava o loop inteiro e as ordens seguintes eram perdidas.
+- **Mudança**: devolve False se ``player`` é None ou não é humano; mesma guarda ao desativar auto-exploração e na auto-exploração do PC.
+- **Alcance**: menu de ordens (interruptor de auto-exploração).
+
 
 1.4.8.8
 -------

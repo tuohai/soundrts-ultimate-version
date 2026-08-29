@@ -388,7 +388,9 @@ class EnableAutoExplore(ImmediateOrder):
     def is_allowed(cls, unit, *unused_args):
         # 仅人类玩家、且该单位类型在 rules.txt 里开放了自动探索选项
         # （can_auto_explore 1）、可移动、当前未开启自动探索时可启用。
-        if not unit.player.is_human:
+        # player 可能为 None（迷雾记忆、尸体、正在删除的单位、无 model 的客户端视图）。
+        player = getattr(unit, "player", None)
+        if player is None or not getattr(player, "is_human", False):
             return False
         if not getattr(unit, "can_auto_explore", False):
             return False
@@ -411,7 +413,8 @@ class DisableAutoExplore(ImmediateOrder):
         # 注意：即使未配置 can_auto_explore，只要当前 auto_explore 为开
         # （例如作者用 auto_explore 1 设了开局默认开启），也允许关闭，
         # 避免出现"开着却关不掉"的死角。
-        if not unit.player.is_human:
+        player = getattr(unit, "player", None)
+        if player is None or not getattr(player, "is_human", False):
             return False
         return bool(getattr(unit, "auto_explore", False))
 

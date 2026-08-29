@@ -25,6 +25,18 @@ Notas de la versión
 - **Cambio**: ``extract_resource`` sobre memoria descuenta el yacimiento real.
 - **Alcance**: recolección de yacimientos (pez de costa, etc.).
 
+**Corrección: el menú de unidades (mago, etc.) petaba si ``player`` era None**
+
+- **Problema**: ``EnableAutoExplore.is_allowed`` leía ``unit.player.is_human``; memoria de niebla, cadáveres y unidades sin dueño tienen ``player is None`` y lanzaban ``AttributeError``. ``_menu`` abortaba el bucle y se perdían órdenes posteriores.
+- **Cambio**: si falta ``player``, se trata como no humano y se devuelve False; misma guarda al desactivar auto-exploración y en la del PC.
+- **Alcance**: menú de órdenes de unidad.
+
+**Corrección: crash del menú de órdenes en EnableAutoExplore cuando ``player`` es None (mago)**
+
+- **Problema**: ``EnableAutoExplore.is_allowed`` leía ``unit.player.is_human``; memoria de niebla, cadáveres y unidades sin dueño tienen ``player is None`` y lanzaban ``AttributeError``. ``_menu`` capturaba todo el bucle y se perdían órdenes posteriores.
+- **Cambio**: devolver False si ``player`` es None o no es humano; misma guarda al desactivar auto-exploración y en auto-exploración del PC.
+- **Alcance**: menú de órdenes (conmutador de auto-exploración).
+
 
 1.4.8.8
 -------

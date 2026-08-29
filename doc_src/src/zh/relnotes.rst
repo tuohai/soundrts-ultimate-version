@@ -25,6 +25,18 @@
 - **改进**：``extract_resource`` 对记忆体改为扣真实矿床储量。
 - **范围**：矿床采集（岸边鱼等）。
 
+**修复：法师等单位命令菜单因 ``player`` 为 None 崩溃**
+
+- **问题**：``EnableAutoExplore.is_allowed`` 直接读 ``unit.player.is_human``；迷雾记忆、尸体、无归属单位 ``player`` 为 ``None`` 时抛 ``AttributeError``，``_menu`` 整段循环中断，后面的命令一并丢失。
+- **改进**：``player`` 为 ``None`` 时按非人类处理，不抛异常；禁用自动探索与电脑自动探索同样防护。
+- **范围**：单位命令菜单。
+
+**修复：法师等单位打开命令菜单时 EnableAutoExplore 崩溃（``player`` 为 None）**
+
+- **问题**：``EnableAutoExplore.is_allowed`` 直接读 ``unit.player.is_human``；迷雾记忆、尸体、无归属单位 ``player`` 为 None 时抛 ``AttributeError``。``_menu`` 一次捕获整段循环，后面的命令一并丢失。
+- **改进**：``player`` 为 None 或非人类时返回 False；禁用自动探索与电脑自动探索同样防护。
+- **范围**：命令菜单（自动探索开关）。
+
 
 1.4.8.8
 --------

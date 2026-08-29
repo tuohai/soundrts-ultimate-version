@@ -1,4 +1,4 @@
-"""审计：1.4.8.9 — 渔船征用崩溃；弩炮穿透挂属性；岸边鱼迷雾采集。"""
+"""审计：1.4.8.9 — 渔船征用崩溃；弩炮穿透挂属性；岸边鱼迷雾采集；player 为 None 的菜单崩溃。"""
 from __future__ import annotations
 
 from pathlib import Path
@@ -34,6 +34,8 @@ def test_zh_relnotes_1489_session_topics():
     assert "rdg_pierce_line" in s
     assert "shore_fish" in s or "岸边鱼" in s
     assert "memorized" in s or "记忆" in s
+    assert "EnableAutoExplore" in s
+    assert "is_human" in s
 
 
 def test_en_relnotes_1489_session_topics():
@@ -42,6 +44,8 @@ def test_en_relnotes_1489_session_topics():
     assert "rdg_pierce_line" in s
     assert "shore_fish" in s
     assert "memorized" in s.lower() or "memory" in s.lower()
+    assert "EnableAutoExplore" in s
+    assert "is_human" in s
 
 
 def test_es_it_pt_relnotes_1489_session_topics():
@@ -50,3 +54,5 @@ def test_es_it_pt_relnotes_1489_session_topics():
         assert "deep_fish" in s, lang
         assert "rdg_pierce_line" in s, lang
         assert "shore_fish" in s, lang
+        assert "EnableAutoExplore" in s, lang
+        assert "is_human" in s, lang

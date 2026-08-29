@@ -24,6 +24,18 @@ Note di rilascio
 - **Cambio**: ``extract_resource`` sulla memoria addebita il giacimento reale.
 - **Ambito**: raccolta giacimenti (pesce costiero, ecc.).
 
+**Correzione: il menu unità (mago, ecc.) crashava se ``player`` era None**
+
+- **Problema**: ``EnableAutoExplore.is_allowed`` leggeva ``unit.player.is_human``; memoria nebbia, cadaveri e unità senza proprietario hanno ``player is None`` e alzavano ``AttributeError``. ``_menu`` abortiva il ciclo e si perdevano gli ordini successivi.
+- **Cambio**: ``player`` mancante trattato come non umano, ritorno False; stessa guardia su disattiva auto-esplorazione e su quella del PC.
+- **Ambito**: menu comandi unità.
+
+**Correzione: crash del menu ordini su EnableAutoExplore quando ``player`` è None (mago)**
+
+- **Problema**: ``EnableAutoExplore.is_allowed`` leggeva ``unit.player.is_human``; memoria nebbia, cadaveri e unità senza proprietario hanno ``player is None`` e alzavano ``AttributeError``. ``_menu`` catturava tutto il ciclo e gli ordini successivi andavano persi.
+- **Cambio**: restituisce False se ``player`` è None o non è umano; stessa guardia su disattiva auto-esplorazione e auto-esplorazione del PC.
+- **Ambito**: menu ordini (interruttore auto-esplorazione).
+
 
 1.4.8.8
 --------

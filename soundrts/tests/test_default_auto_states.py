@@ -175,6 +175,12 @@ def test_enable_auto_explore_is_allowed():
     assert EnableAutoExplore.is_allowed(_StubUnit(True, auto_explore=False, speed=0)) is False
     # 非人类 → 不允许（计算机由 AI 自行管理探索）
     assert EnableAutoExplore.is_allowed(_StubUnit(False, auto_explore=False, speed=10)) is False
+    # player 为 None（迷雾记忆 / 尸体 / 无归属）→ 不允许，且不得抛 AttributeError
+    orphan = _StubUnit(True, auto_explore=False, speed=10)
+    orphan.player = None
+    assert EnableAutoExplore.is_allowed(orphan) is False
+    assert DisableAutoExplore.is_allowed(orphan) is False
+    assert AutoExploreOrder.is_allowed(orphan) is False
 
 
 def test_disable_auto_explore_allowed_even_without_capability():

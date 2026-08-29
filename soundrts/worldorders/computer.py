@@ -4,7 +4,8 @@ from .base import Order
 class ComputerOnlyOrder(Order):
     @classmethod
     def is_allowed(cls, unit, *unused_args):
-        return not unit.player.is_human
+        player = getattr(unit, "player", None)
+        return player is not None and not getattr(player, "is_human", False)
 
 
 class AutoAttackOrder(ComputerOnlyOrder):
@@ -26,7 +27,10 @@ class AutoExploreOrder(ComputerOnlyOrder):
     def is_allowed(cls, unit, *unused_args):
         # 计算机单位始终可下达自动探索；人类单位需显式开启 auto_explore
         # （通过 rules.txt 默认配置或玩家手动开启 enable_auto_explore）。
-        if not unit.player.is_human:
+        player = getattr(unit, "player", None)
+        if player is None:
+            return False
+        if not getattr(player, "is_human", False):
             return True
         return bool(getattr(unit, "auto_explore", False))
 

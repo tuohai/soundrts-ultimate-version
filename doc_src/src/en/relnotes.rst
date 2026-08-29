@@ -26,6 +26,18 @@ Release notes
 - **Change**: ``extract_resource`` on a memory copy debits the live deposit.
 - **Scope**: Deposit gathering (shore fish, etc.).
 
+**Fix: unit menu crash when ``player`` is None (mage, etc.)**
+
+- **Issue**: ``EnableAutoExplore.is_allowed`` read ``unit.player.is_human``; fog memory, corpses, and unowned units have ``player is None`` and raised ``AttributeError``. ``_menu`` aborted the whole loop, dropping later commands.
+- **Change**: Treat a missing ``player`` as non-human and return False; same guard on disable auto-explore and computer auto-explore.
+- **Scope**: Unit command menu.
+
+**Fix: command menu crash on EnableAutoExplore when ``player`` is None (mage)**
+
+- **Issue**: ``EnableAutoExplore.is_allowed`` read ``unit.player.is_human``; fog memory, corpses, and unowned units have ``player is None`` and raised ``AttributeError``. ``_menu`` caught the whole loop, so later commands were dropped.
+- **Change**: Return False when ``player`` is None or not human; same guard on disable auto-explore and computer auto-explore.
+- **Scope**: Command menu (auto-explore toggle).
+
 
 1.4.8.8
 --------
