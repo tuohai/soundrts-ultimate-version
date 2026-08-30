@@ -553,11 +553,30 @@ Principales propiedades cuerpo a cuerpo/a distancia:
 - ``projectile_lead``: si los proyectiles a distancia predicen objetivos en movimiento (0/1; suele otorgarse con ``effect bonus`` de tecnología)
 - Ganchos del motor usados por tecnologías únicas estilo AoE2 (sin nombres de civ hardcodeados): ``unpack_time`` / ``pack_time`` (véase *Empacar / desempacar* más abajo), ``gather_byproduct`` (p. ej. Papel moneda: oro al talar madera), ``kill_resource_vs`` (p. ej. Caudillos: el asesino gana un recurso elegido si la víctima coincide con un tipo; ``effect bonus kill_resource_vs peasant resource1 5``, por ``type_name`` / ``is_a``; recurso ``resourceN`` o alias ``gold``/``wood``), ``reveal_map`` en mejoras (Circunnavegación explora todo el mapa)
 - ``mdg_splash`` / ``rdg_splash``, ``mdg_radius`` / ``rdg_radius``, ``mdg_splash_decay``
+- ``mdg_splash_vs`` / ``rdg_splash_vs``, ``mdg_splash_decay_min_vs`` / ``rdg_splash_decay_min_vs``: se aplican a **cada unidad salpicada** (no al objetivo apuntado ni al pozo entero); ``mdg_splash`` base sigue repartido al azar
+- ``rdg_pierce_line`` / ``mdg_pierce_line``, ``*_pierce_width``, ``*_pierce_max``: penetración en línea (véase abajo; estilo escorpión AoE2). No es ``mdg_piercing``
 - ``mdg_targets`` / ``rdg_targets``: ``ground``, ``air``, ``unit``, ``building``, o un nombre de tipo
 - ``mdg_crit`` / ``rdg_crit``, ``mdg_crit_rate`` / ``rdg_crit_rate``, ``crit_vs``
-- ``mdg_piercing`` / ``rdg_piercing`` (porcentaje de armadura ignorado), ``piercing_vs``
+- ``mdg_piercing`` / ``rdg_piercing`` (porcentaje de armadura ignorado; no es penetración en línea), ``piercing_vs``
 - ``mdg_explode`` / ``rdg_explode``, ``exp_dgf``, ``exp_hp_cost``, ``mdg_explode_vs``
 - Modificadores de terreno por **atacante** (desde 1.4.5.0): ``mdg_on_terrain`` / ``rdg_on_terrain``, ``mdg_cd_on_terrain`` / ``rdg_cd_on_terrain``, ``charge_mdg_terrain`` / ``charge_rdg_terrain``, ``charge_mdg_cd_on_terrain`` / ``charge_rdg_cd_on_terrain``; Misma sintaxis que ``speed_on_terrain`` — ver ``building-land-terrain.rst`` *Modificadores de combate de unidades en el terreno*
+
+Penetración en línea (por reglas, estilo escorpión AoE2)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+No es lo mismo que ``mdg_piercing`` / ``rdg_piercing`` (porcentaje de armadura ignorado): esto son **golpes extra en la línea de tiro**.
+
+El proyectil recorre el segmento del tirador al punto de mira y vuelve a aplicar daño a **enemigos** cercanos al segmento (sin el objetivo principal). Si el primario falla, la penetración sigue. No daña aliados. Los golpes extra se ordenan de cerca a lejos; el daño es el ``rdg`` / ``mdg`` de esa víctima (con ``*_vs``).
+
+- ``rdg_pierce_line`` / ``mdg_pierce_line``: 0/1, activa penetración a distancia / cuerpo a cuerpo con proyectil
+- ``rdg_pierce_width`` / ``mdg_pierce_width``: semiancho (casillas); omitido o 0 = 0.5
+- ``rdg_pierce_max`` / ``mdg_pierce_max``: tope de golpes extra; 0 = sin límite
+
+Ejemplo (escorpión aoe2)::
+
+    rdg_projectile 1
+    rdg_pierce_line 1
+    rdg_pierce_width 0.5
 
 Empacar / desempacar (modo asedio, por reglas)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

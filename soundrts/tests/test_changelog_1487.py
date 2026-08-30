@@ -54,3 +54,12 @@ def test_es_it_pt_relnotes_1487_session_topics():
         assert "40→30" in s or "40->30" in s, lang
         assert "mdg_range" in s, lang
         assert "mdf -3" in s or "mdf −3" in s, lang
+
+
+def test_modding_docs_cover_pierce_line():
+    for lang in ("zh", "en", "es", "it", "pt-BR"):
+        src = _source("doc_src", "src", lang, "mod", "modding.rst")
+        assert "rdg_pierce_line" in src, lang
+        assert "rdg_pierce_width" in src, lang
+        assert "rdg_pierce_max" in src, lang
+        assert "mdg_piercing" in src, lang

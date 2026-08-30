@@ -545,12 +545,30 @@ Main melee/ranged properties:
 - ``projectile_lead``: whether ranged projectiles lead moving targets (0/1; usually granted by tech ``effect bonus``)
 - AoE2-style unique-tech hooks (no civ names hardcoded): ``unpack_time`` / ``pack_time`` (see *Pack / unpack siege mode* below), ``gather_byproduct`` (e.g. Paper Money gold while chopping wood), ``kill_resource_vs`` (e.g. Chieftains: killer gains a chosen resource when the victim matches a type; ``effect bonus kill_resource_vs peasant resource1 5``, matched via ``type_name`` / ``is_a``; resource is ``resourceN`` or aliases like ``gold``/``wood``), ``reveal_map`` on upgrades (Circumnavigation explores the whole map)
 - ``mdg_splash`` / ``rdg_splash``, ``mdg_radius`` / ``rdg_radius``, ``mdg_splash_decay``
-- ``rdg_pierce_line`` / ``mdg_pierce_line`` (0/1), ``rdg_pierce_width`` / ``mdg_pierce_width`` (half-width in tiles), ``rdg_pierce_max`` / ``mdg_pierce_max`` (extra hit cap, 0=unlimited): projectile line pierce (AoE2 scorpion-style); splash still enemies-only
+- ``mdg_splash_vs`` / ``rdg_splash_vs``, ``mdg_splash_decay_min_vs`` / ``rdg_splash_decay_min_vs``: per **splashed unit** (not the aimed target / shared pool); base ``mdg_splash`` is still randomly split
+- ``rdg_pierce_line`` / ``mdg_pierce_line``, ``*_pierce_width``, ``*_pierce_max``: projectile line pierce (see below; AoE2 scorpion-style). Not the same as ``mdg_piercing``
 - ``mdg_targets`` / ``rdg_targets``: ``ground``, ``air``, ``unit``, ``building``, or a type name
 - ``mdg_crit`` / ``rdg_crit``, ``mdg_crit_rate`` / ``rdg_crit_rate``, ``crit_vs``
-- ``mdg_piercing`` / ``rdg_piercing`` (percent armor ignored), ``piercing_vs``
+- ``mdg_piercing`` / ``rdg_piercing`` (percent armor ignored; not line pierce), ``piercing_vs``
 - ``mdg_explode`` / ``rdg_explode``, ``exp_dgf``, ``exp_hp_cost``, ``mdg_explode_vs``
 - Per-**attacker terrain** modifiers (since 1.4.5.0): ``mdg_on_terrain`` / ``rdg_on_terrain``, ``mdg_cd_on_terrain`` / ``rdg_cd_on_terrain``, ``charge_mdg_terrain`` / ``charge_rdg_terrain``, ``charge_mdg_cd_on_terrain`` / ``charge_rdg_cd_on_terrain``; same syntax as ``speed_on_terrain`` — see ``building-land-terrain.rst`` *Unit combat modifiers on terrain*
+
+Line pierce (rules-driven, AoE2 scorpion-style)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Not the same as ``mdg_piercing`` / ``rdg_piercing`` (percent armor ignored): this is **extra hits along the shot line**.
+
+The projectile follows the segment from shooter to aim point and applies damage again to **enemies** near the segment (excluding the primary). Pierce still applies if the primary misses. Allies are not hit. Extra hits are ordered near-to-far from the shooter; damage is that victim's ``rdg`` / ``mdg`` (including ``*_vs``).
+
+- ``rdg_pierce_line`` / ``mdg_pierce_line``: 0/1, enable ranged / melee-projectile pierce
+- ``rdg_pierce_width`` / ``mdg_pierce_width``: half-width in tiles; omitted or 0 means 0.5
+- ``rdg_pierce_max`` / ``mdg_pierce_max``: extra-hit cap; 0 or omitted = unlimited
+
+Example (aoe2 scorpion)::
+
+    rdg_projectile 1
+    rdg_pierce_line 1
+    rdg_pierce_width 0.5
 
 Pack / unpack siege mode (rules-driven)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

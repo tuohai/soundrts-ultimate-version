@@ -5,6 +5,28 @@ Release notes
 .. contents::
 
 
+1.4.9.0
+---------
+
+**Change: splash ``*_vs`` applies to the unit that is hit**
+
+- **Issue**: ``mdg_splash_vs`` / ``mdg_splash_decay_min_vs`` used the aimed unit to resize the whole splash pool, so a knight next to an aimed archer shared the archer bonus.
+- **Change**: Base ``mdg_splash`` / ``rdg_splash`` is still randomly split; ``*_splash_vs`` and ``*_splash_decay_min_vs`` apply to **each splashed unit**. Charge splash matches.
+- **Scope**: ``combat/splash.py`` and charge splash.
+
+**Balance: restore DE mangonel-line damage**
+
+- **Issue**: 1.4.8.7 cut ~25% assuming no friendly fire plus full per-target splash; splash is a shared pool, so the extra cut stacked.
+- **Change**: Mangonel / Onager / Siege Onager back to 40 / 50 / 75; ``mdg_splash`` matches melee.
+- **Scope**: ``mods/aoe2/rules.txt`` mangonel line.
+
+**Balance: AoE2 splash pools match main attack**
+
+- **Issue**: Mangonel already used ``mdg_splash`` = melee; bombard cannon, cannon galleons, dromon, turtle ships, Warwolf, elephant/ram trample, and bombard towers still had splash ``1`` as a flag, so the shared pool was empty.
+- **Change**: Splash pool equals main ``mdg`` / ``rdg``; Logistica trample 9/12; bombard tower gets 120 splash and 0.5 radius. Petards and demolition ships were already correct.
+- **Scope**: ``mods/aoe2/rules.txt``.
+
+
 1.4.8.9
 --------
 

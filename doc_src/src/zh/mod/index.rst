@@ -12,7 +12,7 @@ Mod 规则
 
 1. `Mod 入门 <getting-started.htm>`_ — 第一个 mod、rules 补丁、测试
 2. `Mod 进阶 <advanced.htm>`_ — 技能、阵营、成就、AI
-3. `Mod 制作手册 <modding.htm>`_ — 关键字大全（权威）
+3. `Mod 制作手册 <modding.htm>`_ — 关键字大全（权威）；沿线穿透 ``rdg_pierce_line`` 在「战斗系统」
 4. `技能 / 治疗 / 效果 <skills-and-effects.htm>`_
 5. `市场机制 <market-system.htm>`_ — 买卖、进贡、路线贸易（规则驱动）
 6. `单位线升级与最高阶训练 <unit-line-upgrade.htm>`_ — ``line_upgrade``、训练解析、场上变形

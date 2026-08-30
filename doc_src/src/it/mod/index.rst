@@ -12,7 +12,7 @@ Regole mod
 
 1. `Primi passi <getting-started.htm>`_ — prima patch e test
 2. `Guida avanzata <advanced.htm>`_ — abilità, fazioni, meta, IA
-3. `Manuale di modding <modding.htm>`_ — riferimento completo delle parole chiave
+3. `Manuale di modding <modding.htm>`_ — riferimento completo delle parole chiave; penetrazione in linea ``rdg_pierce_line`` nel sistema di combattimento
 4. `Abilità / cura / effetti <skills-and-effects.htm>`_
 5. `Sistema di mercato <market-system.htm>`_ — compra/vendita, tributo, commercio di tratta
 6. `Upgrade di linea e addestramento di livello massimo <unit-line-upgrade.htm>`_ — ``line_upgrade``, risoluzione addestramento

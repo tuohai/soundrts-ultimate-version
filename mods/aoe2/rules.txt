@@ -1005,15 +1005,18 @@ effect_bonus_targets archer_unit -cavalry
 effect bonus rdg 2
 effect_bonus_targets scouttower guardtower keeptower
 
-; 战狼号 Warwolf — trebuchets gain 0.5 blast (engine hit cover already defaults to 100%)
+; 战狼号 Warwolf — DE: 0.5 blast + accuracy 100% (additive rdg_cover, clamped)
+; splash pool matches trebuchet rdg (200); rdg_splash 1 was a leftover flag
 def warwolf
 class upgrade
 cost 400 800 0 0
 time_cost 40
 requirements aoe_castle imperial_age
-effect bonus rdg_splash 1
+effect bonus rdg_splash 200
 effect_bonus_targets trebuchet
 effect bonus rdg_radius 0.5
+effect_bonus_targets trebuchet
+effect bonus rdg_cover 100
 effect_bonus_targets trebuchet
 
 ; 骑士精神 Chivalry — stables work +40% → cavalry train time -40% (via can_use_tech + global time_cost)
@@ -1083,13 +1086,16 @@ effect bonus rdg_radius 0.5
 effect_bonus_targets cannontower
 
 ; 后勤学 Logistica — Cataphracts trample (0.5 radius) +6 attack vs infantry
+; splash pool matches melee (9 / 12); +5 was a leftover token
 def logistica
 class upgrade
 cost 600 0 800 0
 time_cost 50
 requirements aoe_castle imperial_age
-effect bonus mdg_splash 5
-effect_bonus_targets cataphract elite_cataphract
+effect bonus mdg_splash 9
+effect_bonus_targets cataphract
+effect bonus mdg_splash 12
+effect_bonus_targets elite_cataphract
 effect bonus mdg_radius 0.5
 effect_bonus_targets cataphract elite_cataphract
 effect bonus mdg_vs infantry 6
@@ -1805,7 +1811,7 @@ population_cost 3
 time_cost 24
 space 0.7
 requirements castle_age
-mdg_splash 1
+mdg_splash 12
 mdg_radius 0.4
 
 hp_max 250
@@ -1827,6 +1833,7 @@ time_cost 100
 line_upgrade 1
 requirements imperial_age
 no_auto_upgrade 1
+mdg_splash 14
 
 hp_max 300
 speed 0.9
@@ -2044,7 +2051,7 @@ is_a unique_unit
 cost 85 0 170 0
 population_cost 3
 time_cost 25
-mdg_splash 1
+mdg_splash 15
 mdg_radius 0.5
 space 0.8
 requirements castle_age
@@ -2067,6 +2074,7 @@ cost 800 0 1350 0
 time_cost 75
 requirements imperial_age
 no_auto_upgrade 1
+mdg_splash 20
 
 hp_max 600
 speed 0.8
@@ -2109,7 +2117,7 @@ cost 0 0 850 0
 time_cost 60
 requirements imperial_age
 no_auto_upgrade 1
-mdg_splash 1
+mdg_splash 4
 mdg_radius 1.5
 
 hp_max 220
@@ -2206,7 +2214,7 @@ cost 0 0 300 0
 time_cost 50
 line_upgrade 1
 requirements imperial_age
-mdg_splash 1
+mdg_splash 3
 mdg_radius 1.5
 
 hp_max 200
@@ -2227,7 +2235,7 @@ time_cost 75
 line_upgrade 1
 requirements imperial_age
 no_auto_upgrade 1
-mdg_splash 1
+mdg_splash 4
 mdg_radius 2
 
 hp_max 270
@@ -2252,7 +2260,7 @@ time_cost 46
 mdg_projectile 1
 mdg_projectile_speed 3.5
 mdg_targets ground
-mdg_splash 1
+mdg_splash 40
 mdg_radius 1
 is_repairable 1
 is_healable 0
@@ -2262,8 +2270,8 @@ requirements castle_age
 hp_max 50
 speed 0.6
 sight_range 9
-; No ally splash in engine — ~25% less raw damage vs DE for balance
-mdg 30
+; DE melee 40; splash pool matches mdg (AoE3-style split, no ally splash)
+mdg 40
 mdg_cd 6
 mdg_range 7
 mdg_minimal_range 3
@@ -2283,7 +2291,8 @@ requirements imperial_age
 hp_max 60
 speed 0.6
 sight_range 10
-mdg 38
+mdg 50
+mdg_splash 50
 mdg_cd 6
 mdg_range 8
 mdg_minimal_range 3
@@ -2305,7 +2314,8 @@ no_auto_upgrade 1
 hp_max 70
 speed 0.6
 sight_range 10
-mdg 56
+mdg 75
+mdg_splash 75
 mdg_cd 6
 mdg_range 8
 mdg_minimal_range 3
@@ -2381,7 +2391,7 @@ time_cost 56
 mdg_projectile 1
 mdg_projectile_speed 4
 mdg_targets ground building
-mdg_splash 1
+mdg_splash 40
 mdg_radius 0.5
 is_repairable 1
 is_healable 0
@@ -2497,8 +2507,9 @@ rdf 150
 rdg 200
 rdg_cd 9.12
 rdg_ready 0.88
-rdg_cover 80
-rdg_cover_vs building 20
+; DE Accuracy Percent 15% vs units; buildings hardcoded ~80% → +65 vs building
+rdg_cover 15
+rdg_cover_vs building 65
 rdg_range 16
 rdg_minimal_range 4
 rdg_vs building 250
@@ -2757,7 +2768,7 @@ time_cost 46
 mdg_projectile 1
 mdg_projectile_speed 4
 mdg_targets ground building
-mdg_splash 1
+mdg_splash 50
 mdg_radius 0.25
 requirements imperial_age chemistry
 no_auto_upgrade 1
@@ -2783,6 +2794,7 @@ time_cost 30
 line_upgrade 1
 requirements imperial_age
 no_auto_upgrade 1
+mdg_splash 60
 mdg_radius 0.3
 
 hp_max 150
@@ -2809,7 +2821,7 @@ time_cost 50
 rdg_projectile 1
 rdg_projectile_speed 7
 rdg_targets ground air
-rdg_splash 1
+rdg_splash 9
 rdg_radius 0.3
 requirements castle_age
 no_auto_upgrade 1
@@ -2833,6 +2845,7 @@ time_cost 65
 line_upgrade 1
 requirements imperial_age
 no_auto_upgrade 1
+rdg_splash 13
 
 hp_max 350
 speed 1
@@ -2944,7 +2957,7 @@ time_cost 65
 mdg_projectile 1
 mdg_projectile_speed 4
 mdg_targets ground building
-mdg_splash 1
+mdg_splash 8
 mdg_radius 0.8
 requirements imperial_age
 no_auto_upgrade 1
@@ -4335,10 +4348,9 @@ sight_range 6
 is_buildable_on_exits_only 1
 is_a_gate 1
 requirements town_center
-
-; Outpost (哨所): Dark Age LOS only — no attack, no garrison. DE 25w/5s, 500 HP, 15s, LOS 6/8/10/12
 can_use_tech masonry architecture great_wall town_watch town_patrol
 
+; Outpost (哨所): Dark Age LOS only — no attack, no garrison. DE 25w/5s, 500 HP, 15s, LOS 6/8/10/12
 def outpost
 class building
 is_a building
@@ -4349,14 +4361,17 @@ rdf 0
 time_cost 15
 sight_range 6
 requirements town_center
+; DE: any land tile (no meadow slot), same as base-pack scouttower
+is_buildable_anywhere 1
+can_use_tech masonry architecture great_wall town_watch town_patrol
 
 ; Watch Tower → Guard Tower → Keep (大学研究 line_upgrade)；炮塔单独解锁
 ; 建造费走线根 train_cost；cost/time_cost = 研究价
-can_use_tech masonry architecture great_wall town_watch town_patrol
-
 def scouttower
 class building
 is_a building
+; DE: any land tile (no meadow slot), same as base-pack scouttower
+is_buildable_anywhere 1
 cost 0 35 0 125
 hp_max 850
 mdf 1
@@ -4428,6 +4443,8 @@ can_upgrade_to
 def cannontower
 class building
 is_a building
+; DE: any land tile (no meadow slot), same as Watch Tower line
+is_buildable_anywhere 1
 cost 0 400 800 0
 train_cost 0 100 0 125
 time_cost 60
@@ -4441,6 +4458,9 @@ rdg_range 8
 rdg_minimal_range 1
 rdg_projectile 1
 rdg_projectile_speed 3
+; DE blast ~0.5; Greek Fire adds +0.5 radius. Pool matches rdg (120).
+rdg_splash 120
+rdg_radius 0.5
 requirements imperial_age chemistry
 line_upgrade 1
 transport_capacity 0

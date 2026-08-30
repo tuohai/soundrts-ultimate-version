@@ -4,6 +4,27 @@ Notas de lançamento
 
 .. contents::
 
+1.4.9.0
+--------
+
+**Mudança: ``*_vs`` de splash aplica-se à unidade atingida**
+
+- **Problema**: ``mdg_splash_vs`` / ``mdg_splash_decay_min_vs`` usavam o alvo apontado para mudar o poço inteiro.
+- **Mudança**: ``mdg_splash`` / ``rdg_splash`` continua repartido ao acaso; ``*_splash_vs`` e ``*_splash_decay_min_vs`` aplicam-se a **cada unidade atingida pelo splash**. O splash de carga igual.
+- **Alcance**: ``combat/splash.py`` e splash de carga.
+
+**Equilíbrio: restaurar o dano DE da linha mangonel**
+
+- **Problema**: 1.4.8.7 cortou ~25% como se o splash fosse cheio por alvo; o splash é um poço partilhado.
+- **Mudança**: Mangonel / Onager / Siege Onager voltam a 40 / 50 / 75; ``mdg_splash`` igual ao corpo a corpo.
+- **Alcance**: linha mangonel em ``mods/aoe2/rules.txt``.
+
+**Equilíbrio: splash AoE2 igual ao ataque principal**
+
+- **Problema**: mangonel já usava ``mdg_splash`` = corpo a corpo; canhão de bombardeio, galeões, dromon, navios tartaruga, Warwolf, elefantes/arietes e torres de bombardas tinham splash ``1`` (bandeira).
+- **Mudança**: o poço de splash iguala ``mdg`` / ``rdg``; Logistica 9/12; torre de bombardas 120 e raio 0.5. Petardos e navios de demolição já estavam certos.
+- **Alcance**: ``mods/aoe2/rules.txt``.
+
 1.4.8.9
 -------
 

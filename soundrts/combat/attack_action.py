@@ -1,5 +1,6 @@
 from ..worldaction import Action, AttackAction, MoveAction, MoveXYAction, apply_capture_transfer, should_capture_on_contact
 from ..lib.nofloat import int_distance as _int_distance, square_of_distance as _square_of_distance
+from .splash import _type_map_bonus
 import random
 
 class AttackActionMixin:
@@ -578,8 +579,6 @@ class AttackActionMixin:
         if is_melee:
             # 基础溅射伤害
             splash_damage = getattr(self, 'charge_mdg_splash', 0)
-            if splash_damage <= 0:
-                return
                 
             # 基础溅射半径
             splash_range = getattr(self, 'charge_mdg_radius', 0)
@@ -596,31 +595,12 @@ class AttackActionMixin:
                         splash_range += self.charge_mdg_radius_vs[t]
                         break
             
-            # 检查是否有针对目标类型的近战冲锋溅射伤害修正
-            if hasattr(target, "type_name") and hasattr(self, 'charge_mdg_splash_vs') and target.type_name in self.charge_mdg_splash_vs:
-                splash_damage += self.charge_mdg_splash_vs[target.type_name]
-            elif hasattr(target, 'expanded_is_a') and hasattr(self, 'charge_mdg_splash_vs'):
-                # 检查继承类型
-                for t in target.expanded_is_a:
-                    if t in self.charge_mdg_splash_vs:
-                        splash_damage += self.charge_mdg_splash_vs[t]
-                        break
-                        
-            # 获取衰减值
             splash_decay_min = getattr(self, 'charge_mdg_splash_decay_min', 0.5)
-            if hasattr(target, "type_name") and hasattr(self, 'charge_mdg_splash_decay_min_vs') and target.type_name in self.charge_mdg_splash_decay_min_vs:
-                splash_decay_min += self.charge_mdg_splash_decay_min_vs[target.type_name]
-            elif hasattr(target, 'expanded_is_a') and hasattr(self, 'charge_mdg_splash_decay_min_vs'):
-                # 检查继承类型
-                for t in target.expanded_is_a:
-                    if t in self.charge_mdg_splash_decay_min_vs:
-                        splash_decay_min += self.charge_mdg_splash_decay_min_vs[t]
-                        break
+            charge_splash_vs = getattr(self, 'charge_mdg_splash_vs', None) or {}
+            charge_decay_min_vs = getattr(self, 'charge_mdg_splash_decay_min_vs', None) or {}
         else:
             # 基础溅射伤害
             splash_damage = getattr(self, 'charge_rdg_splash', 0)
-            if splash_damage <= 0:
-                return
                 
             # 基础溅射半径
             splash_range = getattr(self, 'charge_rdg_radius', 0)
@@ -637,29 +617,12 @@ class AttackActionMixin:
                         splash_range += self.charge_rdg_radius_vs[t]
                         break
             
-            # 检查是否有针对目标类型的远程冲锋溅射伤害修正
-            if hasattr(target, "type_name") and hasattr(self, 'charge_rdg_splash_vs') and target.type_name in self.charge_rdg_splash_vs:
-                splash_damage += self.charge_rdg_splash_vs[target.type_name]
-            elif hasattr(target, 'expanded_is_a') and hasattr(self, 'charge_rdg_splash_vs'):
-                # 检查继承类型
-                for t in target.expanded_is_a:
-                    if t in self.charge_rdg_splash_vs:
-                        splash_damage += self.charge_rdg_splash_vs[t]
-                        break
-                        
-            # 获取衰减值
             splash_decay_min = getattr(self, 'charge_rdg_splash_decay_min', 0.5)
-            if hasattr(target, "type_name") and hasattr(self, 'charge_rdg_splash_decay_min_vs') and target.type_name in self.charge_rdg_splash_decay_min_vs:
-                splash_decay_min += self.charge_rdg_splash_decay_min_vs[target.type_name]
-            elif hasattr(target, 'expanded_is_a') and hasattr(self, 'charge_rdg_splash_decay_min_vs'):
-                # 检查继承类型
-                for t in target.expanded_is_a:
-                    if t in self.charge_rdg_splash_decay_min_vs:
-                        splash_decay_min += self.charge_rdg_splash_decay_min_vs[t]
-                        break
+            charge_splash_vs = getattr(self, 'charge_rdg_splash_vs', None) or {}
+            charge_decay_min_vs = getattr(self, 'charge_rdg_splash_decay_min_vs', None) or {}
         
         # 如果没有有效的溅射半径或伤害，直接返回
-        if splash_range <= 0 or splash_damage <= 0:
+        if splash_range <= 0 or (splash_damage <= 0 and not charge_splash_vs):
             return
         
         # 将溅射半径转换为距离平方，用于后续计算
@@ -690,12 +653,11 @@ class AttackActionMixin:
             # 计算与冲锋目标的距离
             dist2 = self._square_of_distance(target.x, target.y, obj.x, obj.y)
             if dist2 <= radius2:
-                # 确保衰减值是浮点数
-                decay_min_value = float(splash_decay_min)
+                decay_min_value = float(splash_decay_min) + _type_map_bonus(obj, charge_decay_min_vs)
                 decay_range = 1.0 - decay_min_value
-                # 计算距离系数：距离越近，伤害越高
                 dist_factor = 1.0 - (math.sqrt(dist2) / splash_range * decay_range)
-                victims_with_factors.append((obj, dist_factor))
+                extra = _type_map_bonus(obj, charge_splash_vs)
+                victims_with_factors.append((obj, dist_factor, extra))
         
         # 如果没有受影响的目标，直接返回
         if not victims_with_factors:
@@ -704,7 +666,7 @@ class AttackActionMixin:
         # 为每个目标生成随机权重，考虑距离因素
         n = len(victims_with_factors)
         rands = []
-        for _, factor in victims_with_factors:
+        for _, factor, _extra in victims_with_factors:
             # 距离越近，随机范围越大
             rand_max = 0.5 + (factor * 0.5)  # 0.5 ~ 1.0
             rands.append(self.world.random.random() * rand_max)
@@ -716,19 +678,20 @@ class AttackActionMixin:
         
         if sumRand == 0:
             # 平均分配伤害，但考虑距离衰减
-            for (victim, factor), _ in zip(victims_with_factors, rands):
-                damage = int(round(splash_damage * factor / n))
+            for (victim, factor, extra), _ in zip(victims_with_factors, rands):
+                damage = int(round(splash_damage * factor / n)) + int(round(extra * factor))
                 if damage > 0:
                     victim.receive_hit(damage, self, notify=False)
                     victim.notify("charge_splash_hit")
         else:
             # 随机分配伤害，但受距离影响
             distributedSum = 0
-            for (victim, factor), rand in zip(victims_with_factors, rands):
+            for (victim, factor, extra), rand in zip(victims_with_factors, rands):
                 portion = int(round(rand / sumRand * splash_damage * factor))
                 distributedSum += portion
-                if portion > 0:
-                    victim.receive_hit(portion, self, notify=False)
+                damage = portion + int(round(extra * factor))
+                if damage > 0:
+                    victim.receive_hit(damage, self, notify=False)
                     victim.notify("charge_splash_hit")
                     
             # 处理剩余伤害

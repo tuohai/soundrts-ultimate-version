@@ -533,12 +533,30 @@ Combat system (since 1.4)
 - ``projectile_lead``：远程投射物是否预判移动目标（0/1；通常由科技 ``effect bonus`` 打开）
 - 帝国时代 2 特色科技常用引擎钩子（不写死文明名）：``unpack_time`` / ``pack_time``（见下文 *打包 / 拆包*）、``gather_byproduct``（如造纸术伐木附带黄金）、``kill_resource_vs``（如酋长：击杀匹配类型单位时杀手获得指定资源；``effect bonus kill_resource_vs peasant resource1 5``，类型按 ``type_name`` / ``is_a`` 匹配，资源为 ``resourceN`` 或 ``gold``/``wood`` 等别名）、升级上的 ``reveal_map``（环球航行探索全图）
 - ``mdg_splash`` / ``rdg_splash``、``mdg_radius`` / ``rdg_radius``、``mdg_splash_decay``
-- ``rdg_pierce_line`` / ``mdg_pierce_line``（0/1）、``rdg_pierce_width`` / ``mdg_pierce_width``（半宽，格）、``rdg_pierce_max`` / ``mdg_pierce_max``（额外命中上限，0=不限）：投射物沿线穿透（帝国 2 弩炮式）；溅射仍只伤敌方
+- ``mdg_splash_vs`` / ``rdg_splash_vs``、``mdg_splash_decay_min_vs`` / ``rdg_splash_decay_min_vs``：按**被溅到的单位**加减伤害/衰减（不按瞄准目标改整池）；基础 ``mdg_splash`` 仍随机分摊
+- ``rdg_pierce_line`` / ``mdg_pierce_line``、``*_pierce_width``、``*_pierce_max``：投射物沿线穿透（见下文；帝国 2 弩炮式）。与 ``mdg_piercing`` 不是一回事
 - ``mdg_targets`` / ``rdg_targets``：``ground``、``air``、``unit``、``building`` 或类型名
 - ``mdg_crit`` / ``rdg_crit``、``mdg_crit_rate`` / ``rdg_crit_rate``、``crit_vs``
-- ``mdg_piercing`` / ``rdg_piercing``\ `` （无视护甲百分比）``、``piercing_vs``
+- ``mdg_piercing`` / ``rdg_piercing``（无视护甲百分比；不是沿线穿透）、``piercing_vs``
 - ``mdg_explode`` / ``rdg_explode``、``exp_dgf``、``exp_hp_cost``、``mdg_explode_vs``
 - 单位**所在地形**上的修正（自 1.4.5.0，1.4.5.1 起百分比）：``mdg_on_terrain`` / ``rdg_on_terrain``、``mdg_cd_on_terrain`` / ``rdg_cd_on_terrain``、``charge_*_terrain`` 等使用小数百分比（``.33`` = ±33%%）；地形 ``class terrain`` 上可用 ``speed_vs`` / ``cover_vs`` / ``dodge_vs`` / ``mdg_vs`` 等按单位类型修正。详见 ``building-land-terrain.rst`` *单位在地形上的战斗修正*
+
+沿线穿透（规则驱动，对齐帝国 2 弩炮）
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+与 ``mdg_piercing`` / ``rdg_piercing``（无视护甲百分比）不是一回事：这是**射线上的额外命中**。
+
+投射物沿射击者到瞄准点的线段，对靠近线段的**敌方**再结算一次伤害（不含主目标）。主目标未命中时仍可穿透。不伤友军。额外命中按距射击者从近到远；伤害与对该单位的 ``rdg`` / ``mdg``（含 ``*_vs``）相同。
+
+- ``rdg_pierce_line`` / ``mdg_pierce_line``：0/1，开启远程 / 近战投射物穿透
+- ``rdg_pierce_width`` / ``mdg_pierce_width``：半宽（格）；省略或 0 时按 0.5
+- ``rdg_pierce_max`` / ``mdg_pierce_max``：额外命中上限；0 或不写 = 不限
+
+示例（aoe2 弩炮）::
+
+    rdg_projectile 1
+    rdg_pierce_line 1
+    rdg_pierce_width 0.5
 
 打包 / 拆包（规则驱动，对齐帝国 2 巨型投石机）
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

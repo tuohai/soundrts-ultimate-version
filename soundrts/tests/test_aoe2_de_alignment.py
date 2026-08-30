@@ -2,6 +2,7 @@
 """AoE2 DE tech alignment smoke tests."""
 from __future__ import annotations
 
+import types
 from pathlib import Path
 
 import pytest
@@ -116,3 +117,86 @@ def test_franks_cavalry_hp_phase(aoe2_rules):
     assert any("hp_max" in str(v) and "cavalry" in str(v) for v in raw.values()) or "cavalry" in str(
         raw
     )
+
+
+def test_trebuchet_de_accuracy_units_15_buildings_80(aoe2_rules):
+    from soundrts.combat.hit_miss import HitMissMixin
+    from soundrts.lib.nofloat import to_int
+
+    cls = aoe2_rules.unit_class("trebuchet")
+    assert cls.rdg_cover == to_int("15")
+    assert cls.rdg_cover_vs.get("building") == to_int("65")
+
+    class _Treb(HitMissMixin):
+        rdg_cover = cls.rdg_cover
+        rdg_cover_vs = dict(cls.rdg_cover_vs)
+
+    treb = _Treb()
+    building = types.SimpleNamespace(
+        type_name="aoe_castle", expanded_is_a=("building",)
+    )
+    unit = types.SimpleNamespace(type_name="militia", expanded_is_a=("infantry",))
+    assert treb._get_ranged_cover_vs(building) == 80
+    assert treb._get_ranged_cover_vs(unit) == 15
+
+
+def test_aoe2_towers_and_outpost_buildable_anywhere(aoe2_rules):
+    for name in (
+        "outpost",
+        "scouttower",
+        "guardtower",
+        "keeptower",
+        "cannontower",
+        "byzantine_scouttower",
+        "byzantine_guardtower",
+    ):
+        cls = aoe2_rules.unit_class(name)
+        assert getattr(cls, "is_buildable_anywhere", 0) == 1, name
+    barracks = aoe2_rules.unit_class("barracks")
+    assert getattr(barracks, "is_buildable_anywhere", 0) in (0, False)
+
+
+def test_mangonel_line_de_melee_and_splash_pool(aoe2_rules):
+    from soundrts.lib.nofloat import PRECISION
+
+    for name, dmg in (("mangonel", 40), ("onager", 50), ("siege_onager", 75)):
+        cls = aoe2_rules.unit_class(name)
+        assert int(cls.mdg) == dmg * PRECISION, name
+        assert int(cls.mdg_splash) == dmg * PRECISION, name
+
+
+def test_aoe2_blast_units_splash_pool_matches_attack(aoe2_rules):
+    """Projectile blast / trample: splash pool equals main attack (not leftover flag 1)."""
+    from soundrts.lib.nofloat import PRECISION
+
+    melee = (
+        ("bombard_cannon", 40),
+        ("cannon_galleon", 50),
+        ("elite_cannon_galleon", 60),
+        ("dromon", 8),
+        ("petard", 25),
+        ("demolition_raft", 75),
+        ("demolition_ship", 95),
+        ("heavy_demolition_ship", 120),
+        ("battle_elephant", 12),
+        ("elite_battle_elephant", 14),
+        ("war_elephant", 15),
+        ("elite_war_elephant", 20),
+        ("elite_armored_elephant", 4),
+        ("capped_ram", 3),
+        ("siege_ram", 4),
+    )
+    for name, dmg in melee:
+        cls = aoe2_rules.unit_class(name)
+        assert int(cls.mdg) == dmg * PRECISION, name
+        assert int(cls.mdg_splash) == dmg * PRECISION, name
+
+    pierce = (
+        ("turtle_ship", 9),
+        ("elite_turtle_ship", 13),
+        ("cannontower", 120),
+    )
+    for name, dmg in pierce:
+        cls = aoe2_rules.unit_class(name)
+        assert int(cls.rdg) == dmg * PRECISION, name
+        assert int(cls.rdg_splash) == dmg * PRECISION, name

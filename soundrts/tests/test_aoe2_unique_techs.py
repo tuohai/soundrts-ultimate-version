@@ -52,6 +52,8 @@ def test_yeomen_effects_and_beneficiaries(aoe2_rules):
 def test_warwolf_trebuchet_blast(aoe2_rules):
     eff = str(_effect(aoe2_rules, "warwolf"))
     assert "rdg_splash" in eff and "rdg_radius" in eff and "trebuchet" in eff
+    assert "200" in eff
+    assert "rdg_cover" in eff and "100" in eff
     assert "warwolf" in _techs(aoe2_rules, "trebuchet")
 
 
@@ -85,8 +87,22 @@ def test_bearded_axe_axemen_range(aoe2_rules):
 
 def test_great_wall_hp(aoe2_rules):
     eff = str(_effect(aoe2_rules, "great_wall"))
-    assert "hp_max" in eff and "30%" in eff
-    for u in ("wall", "gate", "fortified_wall", "scouttower", "guardtower", "keeptower", "cannontower"):
+    # DE +30% HP: ``hp`` grows max and current together (not hp_max-only).
+    assert "'hp'" in eff and "30%" in eff
+    assert "hp_max" not in eff
+    for u in (
+        "wall",
+        "gate",
+        "fortified_wall",
+        "fortified_gate",
+        "palisade_wall",
+        "palisade_gate",
+        "outpost",
+        "scouttower",
+        "guardtower",
+        "keeptower",
+        "cannontower",
+    ):
         assert "great_wall" in _techs(aoe2_rules, u), u
 
 
@@ -125,6 +141,7 @@ def test_greek_fire_ships_and_tower(aoe2_rules):
 def test_logistica_cataphract_trample(aoe2_rules):
     eff = str(_effect(aoe2_rules, "logistica"))
     assert "mdg_splash" in eff and "mdg_radius" in eff and "mdg_vs" in eff
+    assert "9" in eff and "12" in eff
     assert "logistica" in _techs(aoe2_rules, "cataphract")
     assert "logistica" in _techs(aoe2_rules, "elite_cataphract")
 
