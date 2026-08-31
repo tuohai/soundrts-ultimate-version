@@ -3,7 +3,9 @@
 from soundrts.world_build_rules import (
     apply_unit_line_upgrade,
     line_train_root_type_name,
+    remap_queued_train_orders_for_line_upgrade,
     resolve_trainable_unit_type,
+    resolved_train_type_class,
     unit_train_cost,
     unit_train_time,
 )
@@ -217,6 +219,120 @@ def test_apply_unit_line_upgrade_unlocks_and_morphs():
             assert morphs == [("militia", "man_at_arms")]
         finally:
             worldphase.Phase._instant_morph = saved_morph
+    finally:
+        global_rules._dict = saved
+        if saved_c is not None:
+            global_rules.classes = saved_c
+
+
+def _type_name(cls):
+    return getattr(cls, "type_name", None) or getattr(cls, "__name__", None)
+
+
+def test_apply_unit_line_upgrade_remaps_queued_trains():
+    """AoE2 DE: queued previous-tier trains become the researched form."""
+    from soundrts.definitions import Rules
+    from soundrts.definitions import rules as global_rules
+
+    r = Rules()
+    r.load(_LINE_RULES)
+    saved = global_rules._dict
+    saved_c = getattr(global_rules, "classes", None)
+    global_rules._dict = r._dict
+    global_rules.classes = r.classes
+    try:
+        militia_cls = r.unit_class("militia")
+        maa_cls = r.unit_class("man_at_arms")
+
+        class LineTrain:
+            keyword = "train"
+            is_complete = False
+            is_impossible = False
+            type = militia_cls
+
+        class OtherTrain:
+            keyword = "train"
+            is_complete = False
+            is_impossible = False
+
+            class _Spear:
+                type_name = "spearman"
+                __name__ = "spearman"
+
+            type = _Spear
+
+        class Research:
+            keyword = "research"
+            is_complete = False
+            is_impossible = False
+            type = maa_cls
+
+        class Barracks:
+            type_name = "barracks"
+            can_upgrade_to = ()
+            orders = [LineTrain(), OtherTrain(), Research()]
+
+        player = _FakePlayer(
+            ok_reqs=["feudal_age"], upgrades=["feudal_age"], units=[Barracks()]
+        )
+
+        import soundrts.worldphase as worldphase
+
+        saved_morph = worldphase.Phase._instant_morph
+        worldphase.Phase._instant_morph = staticmethod(lambda *a, **k: None)
+        try:
+            apply_unit_line_upgrade(player, "man_at_arms")
+        finally:
+            worldphase.Phase._instant_morph = saved_morph
+
+        assert _type_name(Barracks.orders[0].type) == "man_at_arms"
+        assert Barracks.orders[0].type is maa_cls or _type_name(maa_cls) == "man_at_arms"
+        assert _type_name(Barracks.orders[1].type) == "spearman"
+        assert Barracks.orders[2].keyword == "research"
+        assert Barracks.orders[2].type is maa_cls
+    finally:
+        global_rules._dict = saved
+        if saved_c is not None:
+            global_rules.classes = saved_c
+
+
+def test_queued_militia_skips_to_long_swordsman_when_that_research_completes():
+    """Already-queued militia jump to the newly unlocked highest form."""
+    from soundrts.definitions import Rules
+    from soundrts.definitions import rules as global_rules
+
+    r = Rules()
+    r.load(_LINE_RULES)
+    saved = global_rules._dict
+    saved_c = getattr(global_rules, "classes", None)
+    global_rules._dict = r._dict
+    global_rules.classes = r.classes
+    try:
+        class LineTrain:
+            keyword = "train"
+            is_complete = False
+            is_impossible = False
+            type = r.unit_class("militia")
+
+        class Barracks:
+            type_name = "barracks"
+            can_upgrade_to = ()
+            orders = [LineTrain()]
+
+        player = _FakePlayer(
+            ok_reqs=["feudal_age", "castle_age"],
+            upgrades=["feudal_age", "castle_age", "man_at_arms"],
+            units=[Barracks()],
+        )
+        remap_queued_train_orders_for_line_upgrade(player, "long_swordsman")
+        # man_at_arms already unlocked → queued militia become that form first
+        assert _type_name(Barracks.orders[0].type) == "man_at_arms"
+
+        player.upgrades.append("long_swordsman")
+        remap_queued_train_orders_for_line_upgrade(player, "long_swordsman")
+        assert _type_name(Barracks.orders[0].type) == "long_swordsman"
+        spawn = resolved_train_type_class(player, r.unit_class("militia"))
+        assert _type_name(spawn) == "long_swordsman"
     finally:
         global_rules._dict = saved
         if saved_c is not None:

@@ -578,8 +578,8 @@ is_a aoe_castle
 def militia
 is_a walking_unit
 title 8120
-launch_mdg 76880
-mdg_hit 76877 76878 76879
+launch_mdg 76728
+mdg_hit 1040 1041 76737	
 shortcut f
 keyboard soldier1
 
@@ -1418,8 +1418,15 @@ is_a rattan_archer
 title 8077
 
 def organ_gun
-is_a mangonel
+is_a unit
 title 8078
+launch_rdg 76874
+rdg_hit 76875
+move 1082 1083
+death 76837
+shortcut g
+keyboard soldier4
+
 def elite_organ_gun
 is_a organ_gun
 title 8079

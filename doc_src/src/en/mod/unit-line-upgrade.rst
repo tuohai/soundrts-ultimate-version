@@ -17,6 +17,8 @@ Overview
      - Mark the form with ``line_upgrade 1`` and put it on a building ``can_research``; on complete it is stored in ``player.upgrades``
    * - Field morph
      - When research completes, field units whose ``can_upgrade_to`` includes that form morph to it instantly
+   * - Production queue
+     - Queued / in-progress ``train`` orders on the same line become the new form (AoE2 DE: queued Mangonels come out as Onagers). Cost and remaining time already paid stay unchanged
    * - Training cost
      - Default charge is the **line root** ``cost`` / ``time_cost`` (override with ``train_cost`` / ``train_time``)
 
@@ -104,6 +106,8 @@ Engine entry points (reference)
      - same
    * - ``apply_unit_line_upgrade``
      - same
+   * - ``remap_queued_train_orders_for_line_upgrade`` / ``resolved_train_type_class``
+     - same
    * - ``ResearchOrder.complete``
      - ``soundrts/worldorders/production.py``
    * - ``effect_unit_line_upgrade``
@@ -118,7 +122,7 @@ Engine entry points (reference)
 Tests
 -----
 
-``soundrts/tests/test_train_line_resolve.py``: age alone does not unlock; after upgrades / ``apply_unit_line_upgrade``, top-tier training and morph work.
+``soundrts/tests/test_train_line_resolve.py``: age alone does not unlock; after upgrades / ``apply_unit_line_upgrade``, top-tier training and morph work; completing research remaps queued trains on the same line.
 
 aoe2 mod
 --------

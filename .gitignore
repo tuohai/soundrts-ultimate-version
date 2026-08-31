@@ -222,6 +222,8 @@ __marimo__/
 /doc_src/src/*/stats.inc
 /user
 /doc
+/doc_src/**/*.htm
 /.mypy_cache
 /.venv
 build
+_aoe2_locale_cache/

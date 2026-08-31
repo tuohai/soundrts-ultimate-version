@@ -8,6 +8,61 @@ from ..lib.nofloat import PRECISION, to_int
 from ..lib.msgs import nb2msg, nb2msg_float
 from ..definitions import style
 
+try:
+    from ..combat.bounce import DEFAULT_BOUNCE_DECAY
+except ImportError:
+    DEFAULT_BOUNCE_DECAY = 33
+
+
+def _attr_int(src, name, default=0):
+    try:
+        return int(getattr(src, name, default) or 0)
+    except (TypeError, ValueError):
+        return default
+
+
+def append_pierce_line_attributes(src, attrs):
+    """Show line-pierce fields when ``*_pierce_line`` is on (scorpion / lurker)."""
+    for prefix, line_msg, width_msg, max_msg, decay_msg in (
+        ("mdg", mp.MDG_PIERCE_LINE, mp.MDG_PIERCE_WIDTH, mp.MDG_PIERCE_MAX, mp.MDG_PIERCE_DECAY),
+        ("rdg", mp.RDG_PIERCE_LINE, mp.RDG_PIERCE_WIDTH, mp.RDG_PIERCE_MAX, mp.RDG_PIERCE_DECAY),
+    ):
+        if _attr_int(src, f"{prefix}_pierce_line") <= 0:
+            continue
+        attrs.append(("", line_msg, mp.YES))
+        width = _attr_int(src, f"{prefix}_pierce_width")
+        if width <= 0:
+            width = PRECISION // 2
+        attrs.append(("", width_msg, nb2msg_float(width / PRECISION)))
+        max_extra = _attr_int(src, f"{prefix}_pierce_max")
+        if max_extra > 0:
+            attrs.append(("", max_msg, nb2msg(max_extra)))
+        decay = _attr_int(src, f"{prefix}_pierce_decay")
+        if decay <= 0:
+            decay = 100
+        attrs.append(("", decay_msg, nb2msg_float(decay) + ["%"]))
+
+
+def append_bounce_attributes(src, attrs):
+    """Show bounce hops / range / decay when ``*_bounce`` is on (mutalisk)."""
+    for prefix, hop_msg, range_msg, decay_msg, range_attr in (
+        ("mdg", mp.MDG_BOUNCE, mp.MDG_BOUNCE_RANGE, mp.MDG_BOUNCE_DECAY, "mdg_range"),
+        ("rdg", mp.RDG_BOUNCE, mp.RDG_BOUNCE_RANGE, mp.RDG_BOUNCE_DECAY, "rdg_range"),
+    ):
+        hops = _attr_int(src, f"{prefix}_bounce")
+        if hops <= 0:
+            continue
+        attrs.append(("", hop_msg, nb2msg(hops)))
+        hop_range = _attr_int(src, f"{prefix}_bounce_range")
+        if hop_range <= 0:
+            hop_range = _attr_int(src, range_attr)
+        if hop_range > 0:
+            attrs.append(("", range_msg, nb2msg_float(hop_range / PRECISION)))
+        decay = _attr_int(src, f"{prefix}_bounce_decay")
+        if decay <= 0:
+            decay = DEFAULT_BOUNCE_DECAY
+        attrs.append(("", decay_msg, nb2msg_float(decay) + ["%"]))
+
 
 class CombatAttributes:
     def __init__(self, main_interface):
@@ -431,3 +486,9 @@ class CombatAttributes:
             )
             if terrain_text:
                 attrs.append(("", msg_key, terrain_text))
+
+    def add_pierce_line_attributes(self, u, attrs):
+        append_pierce_line_attributes(getattr(u, "model", u), attrs)
+
+    def add_bounce_attributes(self, u, attrs):
+        append_bounce_attributes(getattr(u, "model", u), attrs)

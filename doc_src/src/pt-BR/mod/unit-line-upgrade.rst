@@ -17,6 +17,8 @@ Visão geral
      - Marque a forma com ``line_upgrade 1`` e coloque em ``can_research``; ao concluir, vai para ``player.upgrades``
    * - Transformação no campo
      - Ao concluir a pesquisa, unidades cujo ``can_upgrade_to`` inclui essa forma transformam-se na hora
+   * - Fila de produção
+     - Ordens ``train`` na fila ou em curso da mesma linha passam à forma nova (AoE2 DE: mangonéis na fila saem como onagros). Custo e tempo restante já pagos não mudam
    * - Custo de treinamento
      - Por padrão cobra-se ``cost`` / ``time_cost`` da **raiz** (substitua com ``train_cost`` / ``train_time``)
 
@@ -104,6 +106,8 @@ Pontos de entrada do motor (referência)
      - idem
    * - ``apply_unit_line_upgrade``
      - idem
+   * - ``remap_queued_train_orders_for_line_upgrade`` / ``resolved_train_type_class``
+     - idem
    * - ``ResearchOrder.complete``
      - ``soundrts/worldorders/production.py``
    * - ``effect_unit_line_upgrade``
@@ -118,7 +122,7 @@ Pontos de entrada do motor (referência)
 Testes
 ------
 
-``soundrts/tests/test_train_line_resolve.py``: a era sozinha não desbloqueia; após upgrades / ``apply_unit_line_upgrade``, treinamento de nível máximo e morph funcionam.
+``soundrts/tests/test_train_line_resolve.py``: a era sozinha não desbloqueia; após upgrades / ``apply_unit_line_upgrade``, treinamento de nível máximo e morph funcionam; concluir a pesquisa reatribui a fila da mesma linha.
 
 Mod aoe2
 --------

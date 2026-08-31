@@ -141,7 +141,7 @@ class DamageEffectsMixin(DamageCalculationMixin):
         ):
             self._try_trigger_skill(self, attacker, skill_name, "passive", is_melee)
 
-    def receive_hit(self, damage, attacker, notify=True, is_crit=False, is_charge=False, is_melee=None, is_reflect=False, extra_melee_damage=None):
+    def receive_hit(self, damage, attacker, notify=True, is_crit=False, is_charge=False, is_melee=None, is_reflect=False, extra_melee_damage=None, hit_scale=100):
         """处理被命中。
 
         Args:
@@ -442,6 +442,16 @@ class DamageEffectsMixin(DamageCalculationMixin):
         # 合作战役难度：缩放"敌方（非人类、非中立）单位输出"的伤害。整数运算，
         # 确定性安全；只影响敌人打出的伤害，玩家自身输出不变（与决定版一致）。
         actual_damage = self._scale_coop_difficulty_damage(actual_damage, attacker)
+
+        # AoE2 stray / scorpion pass-through: scale after armor (50 = half).
+        try:
+            scale = int(hit_scale)
+        except (TypeError, ValueError):
+            scale = 100
+        if scale != 100:
+            if scale < 0:
+                scale = 0
+            actual_damage = (int(actual_damage) * scale + 50) // 100
 
         # 应用伤害
         # 将伤害作用到单位
@@ -1271,6 +1281,16 @@ class DamageEffectsMixin(DamageCalculationMixin):
                             primary_target=target,
                             is_melee=is_melee,
                             damage=None,
+                        )
+                    except Exception:
+                        pass
+
+                # Rules-driven bounce (mutalisk etc.): hops from primary if it hit
+                if is_hit:
+                    try:
+                        self.apply_projectile_bounce(
+                            primary_target=target,
+                            is_melee=is_melee,
                         )
                     except Exception:
                         pass

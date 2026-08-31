@@ -4,6 +4,51 @@ Notas de la versión
 
 .. contents::
 
+1.4.9.2
+--------
+
+**Cambio: rebote por reglas (Glaive del Mutalisk)**
+
+- **Problema**: el motor tenía splash circular y penetración en línea, pero no un salto a enemigos cercanos con daño decreciente; el Mutalisk era de un solo objetivo.
+- **Cambio**: ``rdg_bounce`` / ``mdg_bounce`` (saltos extra), ``*_bounce_range`` (0 = alcance de ataque), ``*_bounce_decay`` (porcentaje que queda; 0 = 33, p. ej. 9→3→1). Solo tras el impacto principal; no hiere aliados; no se golpea dos veces en la misma cadena; filtros ``rdg_targets``.
+- **Alcance**: ``combat/bounce.py`` y combate; Mutalisk StarCraft ``rdg_bounce 2``, alcance 3, decay 33.
+
+**Cambio: Lurker y Coloso StarCraft con penetración en línea**
+
+- **Problema**: existía ``rdg_pierce_line`` estilo escorpión AoE2, pero el mod no tenía Lurker ni Coloso.
+- **Cambio**: Lurker Den + Lurker / Lurker enterrado (ancho 0.5); Robotics Facility / Robotics Bay + Coloso (ancho 0.6). El Hydralisk transforma y la larva puede mejorar; la IA expert / nightmare los construye.
+- **Alcance**: ``mods/starcraft/rules.txt``, UI, IA.
+
+**Cambio: extras del escorpión AoE2 al 50 % tras la armadura**
+
+- **Problema**: los golpes extra de penetración usaban daño completo, no el original (objetivo apuntado lleno, el resto la mitad tras armadura, como flecha desviada).
+- **Cambio**: ``rdg_pierce_decay`` / ``mdg_pierce_decay`` es el porcentaje que queda en extras tras la armadura; 0 = 100 %. Escorpión / Escorpión pesado usan 50. Lurker / Coloso lo omiten y siguen a pleno en la línea.
+- **Alcance**: ``combat/pierce_line.py``, ``hit_scale`` de ``receive_hit``; ``mods/aoe2/rules.txt``.
+
+**Cambio: la pantalla de atributos muestra penetración en línea, rebote y campos de pasto**
+
+- **Problema**: penetración en línea, rebote y el pasto AoE2 solo existían en reglas; la pantalla de atributos no los listaba.
+- **Cambio**: si las reglas están puestas, lista los campos (omite los vacíos):
+
+  - Penetración: ``rdg_pierce_line`` / ``mdg_pierce_line``, ``*_pierce_width``, ``*_pierce_max``, ``*_pierce_decay`` (0 muestra 100 %)
+  - Rebote: ``rdg_bounce`` / ``mdg_bounce``, ``*_bounce_range``, ``*_bounce_decay`` (0 muestra 33 %)
+  - Pasto / generación: ``spawns_unit``, ``larva_spawn_time``, ``larva_cap``, ``spawn_player_cap``, ``spawn_immediate``; almacenable ``storable_resource_types``; oveja ``claimable``; pastor ``can_herd``
+
+- **Alcance**: pantalla de atributos, ``msgparts`` 5800–5821.
+
+**Cambio: las mejoras de línea reescriben la cola de producción (AoE2 DE)**
+
+- **Problema**: investigar Onager solo transformaba mangoneles en el campo; los que seguían en cola en el taller salían como mangoneles.
+- **Cambio**: al completar, las órdenes ``train`` de la misma línea pasan a la forma nueva; al salir se resuelve el nivel más alto desbloqueado. Coste y tiempo restante ya pagados no cambian.
+- **Alcance**: ``apply_unit_line_upgrade``, ``TrainOrder.complete``.
+
+**Corrección: los exploradores águila aztecas no pasaban a guerreros águila**
+
+- **Problema**: la línea de milicia tenía ``can_upgrade_to man_at_arms``; el explorador águila tenía ``can_upgrade_to`` vacío. Investigar guerrero águila no transformaba a ``aztec_eagle_scout``.
+- **Cambio**: ``eagle_scout`` → ``eagle_warrior`` → ``elite_eagle_warrior``; jaguar → élite. El águila azteca de Edad Oscura ``is_a eagle_scout`` hereda la cadena.
+- **Alcance**: ``mods/aoe2/rules.txt``.
+
+
 1.4.9.1
 --------
 

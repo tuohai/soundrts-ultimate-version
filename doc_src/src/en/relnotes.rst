@@ -5,6 +5,51 @@ Release notes
 .. contents::
 
 
+1.4.9.2
+---------
+
+**Change: rules-driven bounce (StarCraft Mutalisk glaive)**
+
+- **Issue**: The engine had circular splash and line pierce, but no hop-to-nearby-enemies-with-decaying-damage keyword, so Mutalisks were single-target.
+- **Change**: Added ``rdg_bounce`` / ``mdg_bounce`` (extra hops), ``*_bounce_range`` (0 = attack range), ``*_bounce_decay`` (percent kept per hop; 0 defaults to 33, i.e. 9→3→1). Bounce runs only after a primary hit; allies are skipped; a unit is not hit twice in the same chain; filters follow ``rdg_targets``.
+- **Scope**: ``combat/bounce.py`` and combat resolution; StarCraft Mutalisk ``rdg_bounce 2``, range 3, decay 33.
+
+**Change: StarCraft Lurker and Colossus line pierce**
+
+- **Issue**: AoE2 scorpion-style ``rdg_pierce_line`` existed, but the StarCraft mod had no Lurker (spine line) or Colossus (thermal lances).
+- **Change**: Zerg Lurker Den + Lurker / burrowed Lurker (width 0.5); Protoss Robotics Facility / Robotics Bay + Colossus (width 0.6). Hydralisks morph and larva can upgrade; expert / nightmare AI builds them.
+- **Scope**: ``mods/starcraft/rules.txt``, UI, AI.
+
+**Change: AoE2 scorpion extras deal 50% after armor**
+
+- **Issue**: Pierce extras used full damage, unlike original (aimed unit full, others half after armor — same as a stray arrow).
+- **Change**: ``rdg_pierce_decay`` / ``mdg_pierce_decay`` is the percent kept on extras after armor; 0 = 100%. Scorpion / Heavy Scorpion use 50. Lurker / Colossus omit it and stay full along the line.
+- **Scope**: ``combat/pierce_line.py``, ``receive_hit`` ``hit_scale``; ``mods/aoe2/rules.txt``.
+
+**Change: attributes screen shows line pierce, bounce, and pasture fields**
+
+- **Issue**: Line pierce, bounce, and AoE2 pasture spawn only existed in rules; the attributes screen did not list them.
+- **Change**: When the rules are set, the screen lists the fields (omits empty ones):
+
+  - Pierce: ``rdg_pierce_line`` / ``mdg_pierce_line``, ``*_pierce_width``, ``*_pierce_max``, ``*_pierce_decay`` (0 shows 100%)
+  - Bounce: ``rdg_bounce`` / ``mdg_bounce``, ``*_bounce_range``, ``*_bounce_decay`` (0 shows 33%)
+  - Pasture / spawn: ``spawns_unit``, ``larva_spawn_time``, ``larva_cap``, ``spawn_player_cap``, ``spawn_immediate``; storable ``storable_resource_types``; sheep ``claimable``; herders ``can_herd``
+
+- **Scope**: attributes screen, ``msgparts`` 5800–5821.
+
+**Change: line upgrades remap the production queue (AoE2 DE)**
+
+- **Issue**: Researching Onager only morphed field Mangonels; units still queued at the Siege Workshop came out as Mangonels.
+- **Change**: Completing the research rewrites same-line ``train`` orders to the new form; spawn also resolves to the highest unlocked tier. Cost and remaining time already paid stay unchanged.
+- **Scope**: ``apply_unit_line_upgrade``, ``TrainOrder.complete``.
+
+**Fix: Aztec Eagle Scouts did not become Eagle Warriors**
+
+- **Issue**: The militia line had ``can_upgrade_to man_at_arms``; Eagle Scout's ``can_upgrade_to`` was empty. Researching Eagle Warrior unlocked the tech but left field ``aztec_eagle_scout`` unchanged.
+- **Change**: ``eagle_scout`` → ``eagle_warrior`` → ``elite_eagle_warrior``; Jaguar Warrior → Elite. Dark Age Aztec eagles ``is_a eagle_scout`` and inherit the chain.
+- **Scope**: ``mods/aoe2/rules.txt``.
+
+
 1.4.9.1
 ---------
 

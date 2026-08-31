@@ -874,6 +874,8 @@ _precision_properties = {
     "charge_rdg_splash_decay_min",
     "mdg_pierce_width",  # 穿透半宽（格；PRECISION）
     "rdg_pierce_width",
+    "mdg_bounce_range",  # 弹跳最大跃距（格；PRECISION）；0=用攻击射程
+    "rdg_bounce_range",
         "mdg_delay",
         "rdg_delay",
         "mdg_projectile_speed",  # 近战投射物飞行速度（格/秒）
@@ -1495,6 +1497,12 @@ class Rules(_Definitions):
         "rdg_pierce_line",  # 远程投射物沿线穿透（0/1）
         "mdg_pierce_max",  # 穿透额外命中上限（0=不限）
         "rdg_pierce_max",
+        "mdg_pierce_decay",  # 穿透额外命中保留百分比（0=100；弩炮50）
+        "rdg_pierce_decay",
+        "mdg_bounce",  # 近战弹跳额外跃次数（0=关闭）
+        "rdg_bounce",  # 远程弹跳额外跃次数（0=关闭）
+        "mdg_bounce_decay",  # 每跃保留伤害百分比（0=默认33）
+        "rdg_bounce_decay",
         "consume_on_pickup",  # 拾取时是否消耗物品
         "units_auto_upgrade",  # phase（时代）研究完成后是否自动把所有单位形态升级到 can_upgrade_to 目标
         "hide_locked_commands",  # 未满足 requirements 时是否隐藏建造/训练/研究/升级命令

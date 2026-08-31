@@ -524,6 +524,56 @@ class EquipmentAbilities:
             return None
         return cost_text[:-len(mp.COMMA)]
 
+    def add_spawn_claim_attributes(self, u, attrs):
+        """草场 / 主巢刷单位，以及可领属、可驱赶。"""
+        src = getattr(u, "model", u)
+        spawn_type = getattr(src, "spawns_unit", None) or getattr(u, "spawns_unit", None)
+        if isinstance(spawn_type, (list, tuple)):
+            spawn_type = spawn_type[0] if spawn_type else None
+        try:
+            larva_cap = int(getattr(src, "larva_cap", 0) or 0)
+        except (TypeError, ValueError):
+            larva_cap = 0
+        if spawn_type or larva_cap:
+            if spawn_type:
+                title = style.get(spawn_type, "title")
+                if title:
+                    name = list(title) if isinstance(title, list) else [str(title)]
+                else:
+                    name = [str(spawn_type)]
+                attrs.append(("", mp.SPAWNS_UNIT, name))
+            time_text = self._scalar_time_text(getattr(src, "larva_spawn_time", None))
+            if time_text:
+                attrs.append(("", mp.LARVA_SPAWN_TIME, time_text))
+            if larva_cap > 0:
+                attrs.append(("", mp.LARVA_CAP, nb2msg(larva_cap)))
+            try:
+                player_cap = int(getattr(src, "spawn_player_cap", 0) or 0)
+            except (TypeError, ValueError):
+                player_cap = 0
+            if player_cap > 0:
+                attrs.append(("", mp.SPAWN_PLAYER_CAP, nb2msg(player_cap)))
+            try:
+                immediate = int(getattr(src, "spawn_immediate", 0) or 0)
+            except (TypeError, ValueError):
+                immediate = 0
+            if immediate:
+                attrs.append(("", mp.SPAWN_IMMEDIATE, mp.YES))
+        try:
+            claimable = int(
+                getattr(src, "claimable", 0) or getattr(u, "claimable", 0) or 0
+            )
+        except (TypeError, ValueError):
+            claimable = 0
+        if claimable:
+            attrs.append(("", mp.CLAIMABLE, mp.YES))
+        try:
+            can_herd = int(getattr(src, "can_herd", 0) or getattr(u, "can_herd", 0) or 0)
+        except (TypeError, ValueError):
+            can_herd = 0
+        if can_herd:
+            attrs.append(("", mp.CAN_HERD, mp.YES))
+
     def add_building_resource_attributes(self, u, attrs):
         """添加可采集建筑（农庄等）的资源储量与开采参数。"""
         if not getattr(u, "is_a_building", False):
@@ -536,6 +586,23 @@ class EquipmentAbilities:
                 resource_type
             )
             attrs.append(("", mp.RESOURCE_TYPE, [resource_type_name]))
+
+        stores = getattr(model, "storable_resource_types", None) or getattr(
+            u, "storable_resource_types", None
+        )
+        if stores:
+            store_text = []
+            for item in stores:
+                if isinstance(item, int):
+                    key = "resource%s" % (item + 1)
+                else:
+                    key = str(item)
+                store_text.append(self.main_interface._get_resource_type_name(key))
+                store_text.extend(mp.COMMA)
+            if store_text:
+                attrs.append(
+                    ("", mp.STORABLE_RESOURCE_TYPES, store_text[: -len(mp.COMMA)])
+                )
 
         time_text = self._scalar_time_text(getattr(model, "extraction_time", None))
         if time_text:

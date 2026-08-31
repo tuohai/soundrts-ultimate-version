@@ -4,6 +4,51 @@
 .. contents::
 
 
+1.4.9.2
+---------
+
+**改进：规则驱动弹跳（星际飞龙飞镰虫）**
+
+- **问题**：引擎只有圆形溅射和沿线穿透，没有「命中后再跳到附近敌军、伤害递减」的关键字，星际飞龙只能单体输出。
+- **改进**：新增 ``rdg_bounce`` / ``mdg_bounce``（额外跃次数）、``*_bounce_range``（跃距；0 用攻击射程）、``*_bounce_decay``（每跃保留百分比；0 默认 33，即 9→3→1）。主目标命中后才弹跳，不伤友军，同一链不打同一单位两次，目标过滤跟 ``rdg_targets``。
+- **范围**：``combat/bounce.py``、战斗结算；星际模组飞龙 ``rdg_bounce 2``、跃距 3、衰减 33。
+
+**改进：星际补潜伏者与巨像直线穿透**
+
+- **问题**：帝国 2 弩炮式沿线穿透已有关键字，但星际模组没有潜伏者（脊刺）和巨像（热能射线）。
+- **改进**：虫族潜伏者巢穴 + 潜伏者 / 潜地潜伏者（``rdg_pierce_line``，半宽 0.5）；神族机械台 / 机械支援站 + 巨像（半宽 0.6）。刺蛇可变形，幼虫可升级；专家 / 噩梦 AI 会造。
+- **范围**：``mods/starcraft/rules.txt``、UI、AI。
+
+**改进：帝国 2 弩炮沿线额外命中 50%**
+
+- **问题**：穿透额外命中与主目标同额，和原版「瞄准单位满伤、其余单位护甲后再打一半（射偏箭）」不符。
+- **改进**：``rdg_pierce_decay`` / ``mdg_pierce_decay`` 为额外命中在护甲之后保留的百分比；0 = 100%。弩炮 / 重型弩炮写 50。潜伏者 / 巨像不写，沿线仍满伤。
+- **范围**：``combat/pierce_line.py``、``receive_hit`` 的 ``hit_scale``；``mods/aoe2/rules.txt``。
+
+**改进：属性界面显示沿线穿透、弹跳、草场参数**
+
+- **问题**：沿线穿透、弹跳和帝国 2 草场刷羊只在规则里生效，玩家打开属性界面看不到。
+- **改进**：有对应规则时列出参数（没有则不显示空项）：
+
+  - 穿透：``rdg_pierce_line`` / ``mdg_pierce_line``、``*_pierce_width``、``*_pierce_max``、``*_pierce_decay``（0 显示 100%）
+  - 弹跳：``rdg_bounce`` / ``mdg_bounce``、``*_bounce_range``、``*_bounce_decay``（0 显示 33%）
+  - 草场 / 刷单位：``spawns_unit``、``larva_spawn_time``、``larva_cap``、``spawn_player_cap``、``spawn_immediate``；可存放 ``storable_resource_types``；羊 ``claimable``；牧民 ``can_herd``
+
+- **范围**：属性界面、``msgparts`` 5800–5821。
+
+**改进：线升级同时改写训练队列（对齐帝国 2 DE）**
+
+- **问题**：研究中型投石车只变形场上轻型；攻城器厂队列里还在造的轻型出营后仍是轻型。
+- **改进**：研究完成时把同线 ``train`` 队列改成新形态；出营时再按已解锁最高阶解析。已付费用与剩余时间不变。
+- **范围**：``apply_unit_line_upgrade``、``TrainOrder.complete``。
+
+**修复：阿兹特克鹰斥候研究鹰勇士后不变形**
+
+- **问题**：兵营剑士线写了 ``can_upgrade_to man_at_arms``，鹰斥候的 ``can_upgrade_to`` 是空的。研究鹰勇士只解锁科技，场上 ``aztec_eagle_scout`` 不变成鹰勇士。
+- **改进**：``eagle_scout`` → ``eagle_warrior`` → ``elite_eagle_warrior``；美洲豹武士 → 精锐。阿兹特克黑暗时代鹰 ``is_a eagle_scout``，会继承这条链。
+- **范围**：``mods/aoe2/rules.txt``。
+
+
 1.4.9.1
 ---------
 

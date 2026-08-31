@@ -183,6 +183,8 @@ AI scripts (mods/starcraft/ai.txt)
 
 - sc_zerg_easy / sc_zerg_aggressive — drones, overlords, pool, roach warren / hydra den, gas
 
+Line-pierce units (AoE2 scorpion analogue): **Lurker** (``rdg_pierce_line``, Lurker Den) and **Colossus** (Robotics Facility + Robotics Bay). Bounce (Mutalisk glaive): **Mutalisk** (``rdg_bounce 2``, ``rdg_bounce_decay 33``).
+
 Faction defs map lobby ``easy`` / ``aggressive`` to the matching ``sc_*`` script.
 
 

@@ -430,6 +430,7 @@ class DisplayInterface:
             self.equipment_abilities.add_tech_skill_attributes,
             self.equipment_abilities.add_gather_attributes,
             self.equipment_abilities.add_building_resource_attributes,
+            self.equipment_abilities.add_spawn_claim_attributes,
             self.equipment_abilities.add_production_attributes,
             self.combat_attributes.add_explode_attributes,
             self.combat_attributes.add_explode_vs_attributes,
@@ -439,6 +440,8 @@ class DisplayInterface:
             self.combat_attributes.add_damage_seq_attributes,
             self.combat_attributes.add_splash_decay_attributes,
             self.combat_attributes.add_splash_decay_vs_attributes,
+            self.combat_attributes.add_pierce_line_attributes,
+            self.combat_attributes.add_bounce_attributes,
             self.combat_attributes.add_terrain_modifier_attributes,
             self._add_remaining_attributes,
         ]

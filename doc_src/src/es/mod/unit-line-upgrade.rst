@@ -17,6 +17,8 @@ Resumen
      - Marque la forma con ``line_upgrade 1`` y póngala en ``can_research``; al completar se guarda en ``player.upgrades``
    * - Transformación en el campo
      - Al completar la investigación, las unidades cuyo ``can_upgrade_to`` incluye esa forma se transforman al instante
+   * - Cola de producción
+     - Las órdenes ``train`` en cola o en curso de la misma línea pasan a la forma nueva (AoE2 DE: los mangoneles en cola salen como onagros). Coste y tiempo restante ya pagados no cambian
    * - Coste de entrenamiento
      - Por defecto se cobra el ``cost`` / ``time_cost`` de la **raíz** (anule con ``train_cost`` / ``train_time``)
 
@@ -104,6 +106,8 @@ Puntos de entrada del motor (referencia)
      - idem
    * - ``apply_unit_line_upgrade``
      - idem
+   * - ``remap_queued_train_orders_for_line_upgrade`` / ``resolved_train_type_class``
+     - idem
    * - ``ResearchOrder.complete``
      - ``soundrts/worldorders/production.py``
    * - ``effect_unit_line_upgrade``
@@ -118,7 +122,7 @@ Puntos de entrada del motor (referencia)
 Pruebas
 -------
 
-``soundrts/tests/test_train_line_resolve.py``: la edad sola no desbloquea; tras upgrades / ``apply_unit_line_upgrade``, el entrenamiento de nivel máximo y la morfosis funcionan.
+``soundrts/tests/test_train_line_resolve.py``: la edad sola no desbloquea; tras upgrades / ``apply_unit_line_upgrade``, el entrenamiento de nivel máximo y la morfosis funcionan; completar la investigación reasigna la cola de la misma línea.
 
 Mod aoe2
 --------

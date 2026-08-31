@@ -25,4 +25,12 @@ Building a package requires also:
 Testing requires:
 * pytest
 
+Building Cython extensions (optional, for full performance):
+* Python 3.11 (tested); on Windows you also need MSVC Build Tools
+* pip install -r requirements-build.txt
+* python setup_cython.py build_ext --inplace
+* verify: python -m pytest soundrts/tests/test_combat_fast_parity.py -q
+Without compiled extensions the game still runs (Python fallback) but large
+maps with many AIs will be noticeably slower.
+
 Official SoundRTS web site: http://jlpo.free.fr/soundrts

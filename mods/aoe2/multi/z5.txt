@@ -36,5 +36,5 @@ nb_players_max 2
 starting_squares a1 c1
 starting_resources 5000 5000 5000 5000
 global_population_limit 1000
-computer_only 0 0 0 0 b3 20 footman 20 archer
+computer_only 0 0 0 0 b3 80 footman 80 archer
 computer_only 0 0 0 0 neutral b3 3 deer 2 sheep 2 boar

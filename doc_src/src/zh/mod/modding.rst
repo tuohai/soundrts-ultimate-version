@@ -535,6 +535,7 @@ Combat system (since 1.4)
 - ``mdg_splash`` / ``rdg_splash``、``mdg_radius`` / ``rdg_radius``、``mdg_splash_decay``
 - ``mdg_splash_vs`` / ``rdg_splash_vs``、``mdg_splash_decay_min_vs`` / ``rdg_splash_decay_min_vs``：按**被溅到的单位**加减伤害/衰减（不按瞄准目标改整池）；基础 ``mdg_splash`` 仍随机分摊
 - ``rdg_pierce_line`` / ``mdg_pierce_line``、``*_pierce_width``、``*_pierce_max``：投射物沿线穿透（见下文；帝国 2 弩炮式）。与 ``mdg_piercing`` 不是一回事
+- ``rdg_bounce`` / ``mdg_bounce``、``*_bounce_range``、``*_bounce_decay``：命中后弹跳至附近敌军（见下文；星际飞龙飞镰虫式）。不是溅射，也不是沿线穿透
 - ``mdg_targets`` / ``rdg_targets``：``ground``、``air``、``unit``、``building`` 或类型名
 - ``mdg_crit`` / ``rdg_crit``、``mdg_crit_rate`` / ``rdg_crit_rate``、``crit_vs``
 - ``mdg_piercing`` / ``rdg_piercing``（无视护甲百分比；不是沿线穿透）、``piercing_vs``
@@ -546,17 +547,37 @@ Combat system (since 1.4)
 
 与 ``mdg_piercing`` / ``rdg_piercing``（无视护甲百分比）不是一回事：这是**射线上的额外命中**。
 
-投射物沿射击者到瞄准点的线段，对靠近线段的**敌方**再结算一次伤害（不含主目标）。主目标未命中时仍可穿透。不伤友军。额外命中按距射击者从近到远；伤害与对该单位的 ``rdg`` / ``mdg``（含 ``*_vs``）相同。
+投射物沿射击者到瞄准点的线段，对靠近线段的**敌方**再结算一次伤害（不含主目标）。主目标未命中时仍可穿透。不伤友军。额外命中按距射击者从近到远；伤害与对该单位的 ``rdg`` / ``mdg``（含 ``*_vs``）相同，再按 ``*_pierce_decay`` 缩放（弩炮沿线一半）。
 
 - ``rdg_pierce_line`` / ``mdg_pierce_line``：0/1，开启远程 / 近战投射物穿透
 - ``rdg_pierce_width`` / ``mdg_pierce_width``：半宽（格）；省略或 0 时按 0.5
 - ``rdg_pierce_max`` / ``mdg_pierce_max``：额外命中上限；0 或不写 = 不限
+- ``rdg_pierce_decay`` / ``mdg_pierce_decay``：额外命中在护甲之后保留的伤害百分比；0 或不写 = 100（满伤）。帝国 2 弩炮为 50（主目标满伤，沿线其余一半，等同射偏箭）
 
 示例（aoe2 弩炮）::
 
     rdg_projectile 1
     rdg_pierce_line 1
     rdg_pierce_width 0.5
+    rdg_pierce_decay 50
+
+弹跳（规则驱动，对齐星际争霸飞龙）
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+与圆形溅射（``rdg_splash``）和沿线穿透（``rdg_pierce_line``）都不是一回事：这是**主目标命中之后**，再跳到附近另一名敌军。
+
+每跃选距上一名受害者最近、且尚未被本链打过的敌方单位（须符合 ``rdg_targets`` / ``mdg_targets``）。不伤友军。主目标未命中则不弹跳。伤害按对该单位的 ``rdg`` / ``mdg``（含 ``*_vs``）再乘以每跃衰减。
+
+- ``rdg_bounce`` / ``mdg_bounce``：额外跃次数；0 或不写 = 关闭。飞龙为 2（共打 3 个目标）
+- ``rdg_bounce_range`` / ``mdg_bounce_range``：每跃最大距离（格）；省略或 0 时用 ``rdg_range`` / ``mdg_range``
+- ``rdg_bounce_decay`` / ``mdg_bounce_decay``：每跃保留的伤害百分比（四舍五入）；省略或 0 时按 33（9→3→1）
+
+示例（星际模组飞龙）::
+
+    rdg_projectile 1
+    rdg_bounce 2
+    rdg_bounce_range 3
+    rdg_bounce_decay 33
 
 打包 / 拆包（规则驱动，对齐帝国 2 巨型投石机）
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

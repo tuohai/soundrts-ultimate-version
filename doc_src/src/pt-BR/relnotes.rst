@@ -4,6 +4,51 @@ Notas de lançamento
 
 .. contents::
 
+1.4.9.2
+--------
+
+**Mudança: ricochete por regras (glaive do Mutalisk)**
+
+- **Problema**: o motor tinha splash circular e penetração em linha, mas não um salto para inimigos próximos com dano decrescente; o Mutalisk era de um alvo só.
+- **Mudança**: ``rdg_bounce`` / ``mdg_bounce`` (saltos extra), ``*_bounce_range`` (0 = alcance de ataque), ``*_bounce_decay`` (percentagem conservada; 0 = 33, ex. 9→3→1). Só após o acerto primário; não fere aliados; não se acerta duas vezes na mesma cadeia; filtros ``rdg_targets``.
+- **Alcance**: ``combat/bounce.py`` e combate; Mutalisk StarCraft ``rdg_bounce 2``, alcance 3, decay 33.
+
+**Mudança: Lurker e Colossus StarCraft com penetração em linha**
+
+- **Problema**: existia ``rdg_pierce_line`` estilo escorpião AoE2, mas o mod não tinha Lurker nem Colossus.
+- **Mudança**: Lurker Den + Lurker / Lurker enterrado (largura 0.5); Robotics Facility / Robotics Bay + Colossus (largura 0.6). O Hydralisk transforma e a larva pode melhorar; a IA expert / nightmare constrói-os.
+- **Alcance**: ``mods/starcraft/rules.txt``, UI, IA.
+
+**Mudança: extras do escorpião AoE2 a 50 % após a armadura**
+
+- **Problema**: os golpes extra de penetração usavam dano cheio, não o original (alvo apontado cheio, os outros metade após armadura, como flecha desviada).
+- **Mudança**: ``rdg_pierce_decay`` / ``mdg_pierce_decay`` é a percentagem conservada nos extras após a armadura; 0 = 100 %. Escorpião / Escorpião pesado usam 50. Lurker / Colossus omitem e ficam cheios na linha.
+- **Alcance**: ``combat/pierce_line.py``, ``hit_scale`` de ``receive_hit``; ``mods/aoe2/rules.txt``.
+
+**Mudança: o ecrã de atributos mostra penetração em linha, ricochete e campos do pasto**
+
+- **Problema**: penetração em linha, ricochete e o pasto AoE2 só existiam nas regras; o ecrã de atributos não os listava.
+- **Mudança**: quando as regras estão definidas, lista os campos (omite os vazios):
+
+  - Penetração: ``rdg_pierce_line`` / ``mdg_pierce_line``, ``*_pierce_width``, ``*_pierce_max``, ``*_pierce_decay`` (0 mostra 100 %)
+  - Ricochete: ``rdg_bounce`` / ``mdg_bounce``, ``*_bounce_range``, ``*_bounce_decay`` (0 mostra 33 %)
+  - Pasto / geração: ``spawns_unit``, ``larva_spawn_time``, ``larva_cap``, ``spawn_player_cap``, ``spawn_immediate``; armazenável ``storable_resource_types``; ovelha ``claimable``; pastor ``can_herd``
+
+- **Alcance**: ecrã de atributos, ``msgparts`` 5800–5821.
+
+**Mudança: upgrades de linha reescrevem a fila de produção (AoE2 DE)**
+
+- **Problema**: pesquisar Onagro só transformava mangonéis no campo; os que ainda estavam na fila da oficina saíam como mangonéis.
+- **Mudança**: ao concluir, ordens ``train`` da mesma linha passam à forma nova; ao sair resolve-se o nível mais alto desbloqueado. Custo e tempo restante já pagos não mudam.
+- **Alcance**: ``apply_unit_line_upgrade``, ``TrainOrder.complete``.
+
+**Correção: exploradores águia astecas não viravam guerreiros águia**
+
+- **Problema**: a linha da milícia tinha ``can_upgrade_to man_at_arms``; o explorador águia tinha ``can_upgrade_to`` vazio. Pesquisar guerreiro águia não transformava ``aztec_eagle_scout``.
+- **Mudança**: ``eagle_scout`` → ``eagle_warrior`` → ``elite_eagle_warrior``; jaguar → elite. A águia asteca da Idade das Trevas ``is_a eagle_scout`` herda a cadeia.
+- **Alcance**: ``mods/aoe2/rules.txt``.
+
+
 1.4.9.1
 --------
 

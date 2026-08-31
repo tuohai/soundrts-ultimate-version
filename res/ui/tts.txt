@@ -1639,3 +1639,25 @@
 5797	update check failed
 5798	launching the update window; the game will exit
 5799	captured
+5800	melee line pierce
+5801	ranged line pierce
+5802	melee pierce width
+5803	ranged pierce width
+5804	melee pierce extra hits cap
+5805	ranged pierce extra hits cap
+5806	melee pierce extra damage
+5807	ranged pierce extra damage
+5808	melee bounce hops
+5809	ranged bounce hops
+5810	melee bounce range
+5811	ranged bounce range
+5812	melee bounce decay
+5813	ranged bounce decay
+5814	spawns unit
+5815	spawn interval
+5816	local spawn cap
+5817	player spawn cap
+5818	spawn on completion
+5819	claimable
+5820	can herd
+5821	stores resources

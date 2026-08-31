@@ -1109,6 +1109,11 @@ class TrainOrder(ProductionOrder):
         
         # 循环创建多个单位
         from ..worldplayercomputer_water import spawn_place_for_trained_water_unit
+        from ..world_build_rules import resolved_train_type_class
+
+        spawn_cls = resolved_train_type_class(self.player, self.type)
+        if spawn_cls is not None:
+            self.type = spawn_cls
 
         for _ in range(self.train_count):
             place, x, y = spawn_place_for_trained_water_unit(self.unit, self.type)
@@ -1262,7 +1267,7 @@ class ResearchOrder(ProductionOrder):
 
     def complete(self):
         # Generic DE line unlock: researching a ``line_upgrade`` unit type unlocks
-        # training that form and morphs existing previous-tier units.
+        # training that form, morphs field units, and remaps queued trains.
         if int(getattr(self.type, "line_upgrade", 0) or 0):
             from ..world_build_rules import apply_unit_line_upgrade
 

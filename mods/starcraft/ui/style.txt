@@ -149,6 +149,22 @@ shortcut s
 
 
 
+def robotics_facility
+is_a building
+title 7669
+intro 7675
+shortcut b
+
+
+
+def robotics_bay
+is_a building
+title 7670
+intro 7676
+shortcut y
+
+
+
 def dragoon
 is_a footman
 title 7283
@@ -164,6 +180,15 @@ title 7284
 intro 7613
 keyboard soldier3
 shortcut o
+
+
+
+def colossus
+is_a footman
+title 7668
+intro 7674
+keyboard soldier8
+shortcut x
 
 
 
@@ -256,6 +281,31 @@ is_a building
 title 7290
 intro 7620
 shortcut y
+
+
+
+def lurker_den
+is_a building
+title 7665
+intro 7671
+shortcut n
+
+
+
+def lurker
+is_a footman
+title 7666
+intro 7672
+keyboard soldier8
+shortcut k
+
+
+
+def burrowed_lurker
+is_a footman
+title 7667
+intro 7673
+keyboard soldier8
 
 
 

@@ -547,6 +547,7 @@ Main melee/ranged properties:
 - ``mdg_splash`` / ``rdg_splash``, ``mdg_radius`` / ``rdg_radius``, ``mdg_splash_decay``
 - ``mdg_splash_vs`` / ``rdg_splash_vs``, ``mdg_splash_decay_min_vs`` / ``rdg_splash_decay_min_vs``: per **splashed unit** (not the aimed target / shared pool); base ``mdg_splash`` is still randomly split
 - ``rdg_pierce_line`` / ``mdg_pierce_line``, ``*_pierce_width``, ``*_pierce_max``: projectile line pierce (see below; AoE2 scorpion-style). Not the same as ``mdg_piercing``
+- ``rdg_bounce`` / ``mdg_bounce``, ``*_bounce_range``, ``*_bounce_decay``: hop to nearby enemies after a hit (see below; StarCraft Mutalisk-style). Not splash and not line pierce
 - ``mdg_targets`` / ``rdg_targets``: ``ground``, ``air``, ``unit``, ``building``, or a type name
 - ``mdg_crit`` / ``rdg_crit``, ``mdg_crit_rate`` / ``rdg_crit_rate``, ``crit_vs``
 - ``mdg_piercing`` / ``rdg_piercing`` (percent armor ignored; not line pierce), ``piercing_vs``
@@ -558,17 +559,37 @@ Line pierce (rules-driven, AoE2 scorpion-style)
 
 Not the same as ``mdg_piercing`` / ``rdg_piercing`` (percent armor ignored): this is **extra hits along the shot line**.
 
-The projectile follows the segment from shooter to aim point and applies damage again to **enemies** near the segment (excluding the primary). Pierce still applies if the primary misses. Allies are not hit. Extra hits are ordered near-to-far from the shooter; damage is that victim's ``rdg`` / ``mdg`` (including ``*_vs``).
+The projectile follows the segment from shooter to aim point and applies damage again to **enemies** near the segment (excluding the primary). Pierce still applies if the primary misses. Allies are not hit. Extra hits are ordered near-to-far from the shooter; damage is that victim's ``rdg`` / ``mdg`` (including ``*_vs``), then scaled by ``*_pierce_decay`` (scorpion extras are half).
 
 - ``rdg_pierce_line`` / ``mdg_pierce_line``: 0/1, enable ranged / melee-projectile pierce
 - ``rdg_pierce_width`` / ``mdg_pierce_width``: half-width in tiles; omitted or 0 means 0.5
 - ``rdg_pierce_max`` / ``mdg_pierce_max``: extra-hit cap; 0 or omitted = unlimited
+- ``rdg_pierce_decay`` / ``mdg_pierce_decay``: percent of extra-hit damage kept after armor; 0 or omitted = 100 (full). AoE2 scorpions use 50 (primary full, others half, same as a stray arrow)
 
 Example (aoe2 scorpion)::
 
     rdg_projectile 1
     rdg_pierce_line 1
     rdg_pierce_width 0.5
+    rdg_pierce_decay 50
+
+Bounce (rules-driven, StarCraft Mutalisk-style)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Not the same as circular splash (``rdg_splash``) or line pierce (``rdg_pierce_line``): after the **primary hit**, the shot hops to another nearby enemy.
+
+Each hop picks the nearest enemy that this chain has not already hit and that matches ``rdg_targets`` / ``mdg_targets``. Allies are not hit. No bounce if the primary misses. Damage is that victim's ``rdg`` / ``mdg`` (including ``*_vs``), then reduced per hop.
+
+- ``rdg_bounce`` / ``mdg_bounce``: extra hops; 0 or omitted = off. Mutalisk uses 2 (three targets total)
+- ``rdg_bounce_range`` / ``mdg_bounce_range``: max hop distance in tiles; omitted or 0 uses ``rdg_range`` / ``mdg_range``
+- ``rdg_bounce_decay`` / ``mdg_bounce_decay``: percent of previous hop remaining (round-nearest); omitted or 0 means 33 (9→3→1)
+
+Example (StarCraft mutalisk)::
+
+    rdg_projectile 1
+    rdg_bounce 2
+    rdg_bounce_range 3
+    rdg_bounce_decay 33
 
 Pack / unpack siege mode (rules-driven)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

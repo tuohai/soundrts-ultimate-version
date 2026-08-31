@@ -303,7 +303,7 @@
 7651 Unlocks Mutalisk production and flyer attack and carapace upgrades. Requires a Spawning Pool.
 7652 Unlocks Ultralisk production. Requires a Spire.
 7653 Unlocks Queen production. Requires a Spawning Pool.
-7654 Fast air harasser from the Spire. Attacks both ground and air targets.
+7654 Fast air harasser from the Spire. Glaive worms bounce to two nearby enemies with decaying damage.
 7655 Heavy melee beast from the Ultralisk Cavern. High health and damage; crushes enemy ground armies.
 7656 Support caster from the Queen's Nest. Spawns larva, injects Hatcheries, and spreads creep tumors.
 7657 Invisible structure placed by the Queen. Spreads creep nearby so Zerg can build farther from the Hatchery.
@@ -314,6 +314,18 @@
 7662 Cloaked Ghost. Invisible until attacking or detected; retains nuke capability.
 7663 Massive walker from a Factory with Tech Lab and Armory. Heavy splash damage at long range.
 7664 Terran capital ship from a Starport with Tech Lab and Armory. Can use Yamato Cannon against high-value targets.
+7665 Lurker Den
+7666 Lurker
+7667 Burrowed Lurker
+7668 Colossus
+7669 Robotics Facility
+7670 Robotics Bay
+7671 Unlocks Lurker morph from Hydralisks (or larva). Lurkers fire spines in a line through ground units, like an AoE2 scorpion.
+7672 Armored ambusher. Spines pierce in a straight line through ground enemies. Morph from a Hydralisk after building a Lurker Den, or from larva.
+7673 Burrowed Lurker. Invisible and stationary; the same line-pierce attack as the unburrowed form.
+7674 Protoss walker from the Robotics Facility. Thermal lances cut a line through ground units. Requires a Robotics Bay.
+7675 Warps in Colossi. Requires a Cybernetics Core.
+7676 Unlocks Colossus production. Requires a Robotics Facility.
 
 ; Skills sandbox test map sc_skills_test
 7680 StarCraft: Skills Test

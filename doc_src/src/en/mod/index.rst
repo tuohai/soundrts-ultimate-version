@@ -12,7 +12,7 @@ Mod rules
 
 1. `Getting started <getting-started.htm>`_ — first patch & test
 2. `Advanced guide <advanced.htm>`_ — skills, factions, meta, AI
-3. `Modding manual <modding.htm>`_ — keyword reference; line pierce ``rdg_pierce_line`` is under Combat system
+3. `Modding manual <modding.htm>`_ — keyword reference; line pierce ``rdg_pierce_line`` and bounce ``rdg_bounce`` are under Combat system
 4. `Skills / heal / effects (zh) <../../zh/mod/skills-and-effects.htm>`_
 5. `Market system <market-system.htm>`_ — buy/sell, tribute, route trade (rules-driven)
 6. `Unit-line upgrades & top-tier training <unit-line-upgrade.htm>`_ — ``line_upgrade``, train resolve, field morph

@@ -17,6 +17,8 @@
      - 形态标 ``line_upgrade 1``，并写入建筑 ``can_research``；研究后记入 ``player.upgrades``
    * - 场上变形
      - 研究完成时，把 ``can_upgrade_to`` 含该形态的场上单位瞬时升到该阶
+   * - 训练队列
+     - 研究完成时，同线已排队 / 正在训练的命令改成新形态（帝国 2 DE：队列里的轻型投石车造出来是中型）。已付训练费与剩余时间不变
    * - 训练费用
      - 默认按**线根**的 ``cost`` / ``time_cost`` 收费（可用 ``train_cost`` / ``train_time`` 覆盖）
 
@@ -104,6 +106,8 @@ AoE2 DE 军事线推荐统一用 ``line_upgrade 1``（研究解锁），不要�
      - 同上
    * - ``apply_unit_line_upgrade``
      - 同上
+   * - ``remap_queued_train_orders_for_line_upgrade`` / ``resolved_train_type_class``
+     - 同上
    * - ``ResearchOrder.complete``
      - ``soundrts/worldorders/production.py``
    * - ``effect_unit_line_upgrade``
@@ -118,7 +122,7 @@ AoE2 DE 军事线推荐统一用 ``line_upgrade 1``（研究解锁），不要�
 测试
 ----
 
-``soundrts/tests/test_train_line_resolve.py``：时代 alone 不解锁；写入 upgrades / ``apply_unit_line_upgrade`` 后才训练最高阶并变形。
+``soundrts/tests/test_train_line_resolve.py``：时代 alone 不解锁；写入 upgrades / ``apply_unit_line_upgrade`` 后才训练最高阶并变形；研究完成会改写同线训练队列。
 
 aoe2 模组
 ---------

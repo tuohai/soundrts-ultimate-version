@@ -617,6 +617,14 @@ class Unit(Creature):
         self.rdg_pierce_width = getattr(base_class, 'rdg_pierce_width', 0)
         self.mdg_pierce_max = getattr(base_class, 'mdg_pierce_max', 0)
         self.rdg_pierce_max = getattr(base_class, 'rdg_pierce_max', 0)
+        self.mdg_pierce_decay = getattr(base_class, 'mdg_pierce_decay', 0)
+        self.rdg_pierce_decay = getattr(base_class, 'rdg_pierce_decay', 0)
+        self.mdg_bounce = getattr(base_class, 'mdg_bounce', 0)
+        self.rdg_bounce = getattr(base_class, 'rdg_bounce', 0)
+        self.mdg_bounce_range = getattr(base_class, 'mdg_bounce_range', 0)
+        self.rdg_bounce_range = getattr(base_class, 'rdg_bounce_range', 0)
+        self.mdg_bounce_decay = getattr(base_class, 'mdg_bounce_decay', 0)
+        self.rdg_bounce_decay = getattr(base_class, 'rdg_bounce_decay', 0)
         
         # 清除bonus属性
         self.mdg_bonus = 0
@@ -720,6 +728,17 @@ class Unit(Creature):
             
         if hasattr(weapon, "rdg_radius"):
             self.rdg_radius = weapon.rdg_radius
+
+        for attr in (
+            "mdg_bounce",
+            "rdg_bounce",
+            "mdg_bounce_range",
+            "rdg_bounce_range",
+            "mdg_bounce_decay",
+            "rdg_bounce_decay",
+        ):
+            if hasattr(weapon, attr):
+                setattr(self, attr, getattr(weapon, attr))
         
         # 应用vs属性字典
         vs_attributes = [

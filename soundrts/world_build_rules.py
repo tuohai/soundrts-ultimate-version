@@ -266,8 +266,66 @@ def menu_allows_build(unit, type_name):
     return False
 
 
+def resolved_train_type_class(player, type_or_name):
+    """Unit class to spawn after line upgrades (AoE2 DE queue remap).
+
+    ``player`` may be None (no upgrades). Returns the original class when the
+    type is already the highest unlocked form or cannot be resolved.
+    """
+    if type_or_name is None:
+        return None
+    if isinstance(type_or_name, str):
+        name = type_or_name
+        cls = _unit_class(name)
+    else:
+        cls = type_or_name
+        name = getattr(cls, "type_name", None) or getattr(cls, "__name__", None)
+    if not name:
+        return cls
+    resolved = resolve_trainable_unit_type(player, name)
+    if not resolved or resolved == name:
+        return cls
+    new_cls = _unit_class(resolved)
+    return new_cls if new_cls is not None else cls
+
+
+def remap_queued_train_orders_for_line_upgrade(player, target_type_name):
+    """Rewrite in-progress / queued ``train`` orders on the same line.
+
+    AoE2 DE: researching Onager turns queued Mangonels into Onagers. Cost and
+    remaining time stay as paid at queue time (line-root price).
+    """
+    if player is None or not target_type_name:
+        return
+    target_root = line_train_root_type_name(str(target_type_name))
+    for unit in list(getattr(player, "units", ()) or ()):
+        for order in list(getattr(unit, "orders", ()) or ()):
+            if getattr(order, "keyword", None) != "train":
+                continue
+            if getattr(order, "is_complete", False) or getattr(
+                order, "is_impossible", False
+            ):
+                continue
+            otype = getattr(order, "type", None)
+            if otype is None:
+                continue
+            name = getattr(otype, "type_name", None) or getattr(otype, "__name__", None)
+            if not name:
+                continue
+            if line_train_root_type_name(name) != target_root:
+                continue
+            new_cls = resolved_train_type_class(player, otype)
+            if new_cls is None:
+                continue
+            new_name = getattr(new_cls, "type_name", None) or getattr(
+                new_cls, "__name__", None
+            )
+            if new_name and new_name != name:
+                order.type = new_cls
+
+
 def apply_unit_line_upgrade(player, target_type_name):
-    """Unlock a line form for training and morph existing previous-tier units.
+    """Unlock a line form, morph field units, and remap queued trains.
 
     Generic (no hardcoded unit names): any type can be unlocked this way.
     Typically triggered by researching a unit marked ``line_upgrade 1``, or by
@@ -304,6 +362,8 @@ def apply_unit_line_upgrade(player, target_type_name):
                 target_name,
                 e,
             )
+
+    remap_queued_train_orders_for_line_upgrade(player, target_name)
 
 
 def is_unfinished_building(unit):

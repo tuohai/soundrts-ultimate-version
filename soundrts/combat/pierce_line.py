@@ -11,6 +11,8 @@ Rules (``int_properties`` / ``precision_properties``)::
     mdg_pierce_width 0.5
     rdg_pierce_max 0           ; max extra hits (0 = unlimited)
     mdg_pierce_max 0
+    rdg_pierce_decay 50        ; extra-hit damage percent after armor (0 = 100)
+    mdg_pierce_decay 50
 """
 
 from __future__ import annotations
@@ -52,10 +54,12 @@ class PierceLineMixin:
             enabled = int(getattr(self, "mdg_pierce_line", 0) or 0)
             width = int(getattr(self, "mdg_pierce_width", 0) or 0)
             max_extra = int(getattr(self, "mdg_pierce_max", 0) or 0)
+            decay = int(getattr(self, "mdg_pierce_decay", 0) or 0)
         else:
             enabled = int(getattr(self, "rdg_pierce_line", 0) or 0)
             width = int(getattr(self, "rdg_pierce_width", 0) or 0)
             max_extra = int(getattr(self, "rdg_pierce_max", 0) or 0)
+            decay = int(getattr(self, "rdg_pierce_decay", 0) or 0)
         if not enabled:
             return
 
@@ -120,5 +124,12 @@ class PierceLineMixin:
                 )
             if not hit_damage and hit_damage != 0:
                 continue
-            # receive_hit applies armor (0 atk vs -mdf still deals damage).
-            victim.receive_hit(hit_damage, self, notify=True, is_melee=is_melee)
+            # receive_hit applies armor first; hit_scale is AoE2 stray (50% extras).
+            scale = decay if 0 < decay < 100 else 100
+            victim.receive_hit(
+                hit_damage,
+                self,
+                notify=True,
+                is_melee=is_melee,
+                hit_scale=scale,
+            )

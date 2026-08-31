@@ -548,6 +548,7 @@ Propriedades principais corpo a corpo/à distância:
 - ``mdg_splash`` / ``rdg_splash``, ``mdg_radius`` / ``rdg_radius``, ``mdg_splash_decay``
 - ``mdg_splash_vs`` / ``rdg_splash_vs``, ``mdg_splash_decay_min_vs`` / ``rdg_splash_decay_min_vs``: aplicam-se a **cada unidade atingida pelo splash** (não o alvo apontado nem o poço inteiro); ``mdg_splash`` base continua repartido ao acaso
 - ``rdg_pierce_line`` / ``mdg_pierce_line``, ``*_pierce_width``, ``*_pierce_max``: penetração em linha (veja abaixo; estilo escorpião AoE2). Não é ``mdg_piercing``
+- ``rdg_bounce`` / ``mdg_bounce``, ``*_bounce_range``, ``*_bounce_decay``: ricochete em inimigos próximos após um acerto (veja abaixo; estilo Mutalisk). Não é splash nem penetração em linha
 - ``mdg_targets`` / ``rdg_targets``: ``ground``, ``air``, ``unit``, ``building``, ou um nome de tipo
 - ``mdg_crit`` / ``rdg_crit``, ``mdg_crit_rate`` / ``rdg_crit_rate``, ``crit_vs``
 - ``mdg_piercing`` / ``rdg_piercing`` (percentual de armadura ignorada; não é penetração em linha), ``piercing_vs``
@@ -564,12 +565,32 @@ O projétil percorre o segmento do atirador ao ponto de mira e aplica dano de no
 - ``rdg_pierce_line`` / ``mdg_pierce_line``: 0/1, ativa penetração à distância / corpo a corpo com projétil
 - ``rdg_pierce_width`` / ``mdg_pierce_width``: meia-largura (casas); omitido ou 0 = 0.5
 - ``rdg_pierce_max`` / ``mdg_pierce_max``: teto de golpes extra; 0 = ilimitado
+- ``rdg_pierce_decay`` / ``mdg_pierce_decay``: percentagem de dano extra após a armadura; 0 ou omitido = 100. Escorpião AoE2 usa 50
 
 Exemplo (escorpião aoe2)::
 
     rdg_projectile 1
     rdg_pierce_line 1
     rdg_pierce_width 0.5
+    rdg_pierce_decay 50
+
+Ricochete (por regras, estilo Mutalisk de StarCraft)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Não é o mesmo que splash circular (``rdg_splash``) nem penetração em linha (``rdg_pierce_line``): depois do **acerto primário**, o tiro salta para outro inimigo próximo.
+
+Cada salto escolhe o inimigo mais próximo ainda não atingido nesta cadeia e que corresponda a ``rdg_targets`` / ``mdg_targets``. Não fere aliados. Se o primário falhar, não há ricochete. O dano é o ``rdg`` / ``mdg`` dessa vítima (com ``*_vs``), reduzido a cada salto.
+
+- ``rdg_bounce`` / ``mdg_bounce``: saltos extra; 0 ou omitido = desligado. Mutalisk usa 2 (três alvos no total)
+- ``rdg_bounce_range`` / ``mdg_bounce_range``: distância máxima por salto (casas); omitido ou 0 usa ``rdg_range`` / ``mdg_range``
+- ``rdg_bounce_decay`` / ``mdg_bounce_decay``: percentagem do salto anterior que permanece (arredondamento); omitido ou 0 = 33 (9→3→1)
+
+Exemplo (mutalisk StarCraft)::
+
+    rdg_projectile 1
+    rdg_bounce 2
+    rdg_bounce_range 3
+    rdg_bounce_decay 33
 
 Empacotar / desempacotar (modo cerco, por regras)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

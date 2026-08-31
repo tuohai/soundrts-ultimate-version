@@ -17,6 +17,8 @@ Panoramica
      - Segnare la forma con ``line_upgrade 1`` e metterla in ``can_research``; al completamento va in ``player.upgrades``
    * - Trasformazione sul campo
      - Al completamento della ricerca, le unità il cui ``can_upgrade_to`` include quella forma si trasformano all’istante
+   * - Coda di produzione
+     - Gli ordini ``train`` in coda o in corso sulla stessa linea diventano la nuova forma (AoE2 DE: i mangonelli in coda escono come onagri). Costo e tempo restante già pagati restano
    * - Costo di addestramento
      - Di default si addebita ``cost`` / ``time_cost`` della **radice** (override con ``train_cost`` / ``train_time``)
 
@@ -104,6 +106,8 @@ Punti di ingresso del motore (riferimento)
      - idem
    * - ``apply_unit_line_upgrade``
      - idem
+   * - ``remap_queued_train_orders_for_line_upgrade`` / ``resolved_train_type_class``
+     - idem
    * - ``ResearchOrder.complete``
      - ``soundrts/worldorders/production.py``
    * - ``effect_unit_line_upgrade``
@@ -118,7 +122,7 @@ Punti di ingresso del motore (riferimento)
 Test
 ----
 
-``soundrts/tests/test_train_line_resolve.py``: l’età da sola non sblocca; dopo upgrades / ``apply_unit_line_upgrade`` funzionano addestramento di livello massimo e morph.
+``soundrts/tests/test_train_line_resolve.py``: l’età da sola non sblocca; dopo upgrades / ``apply_unit_line_upgrade`` funzionano addestramento di livello massimo e morph; completare la ricerca riassegna la coda sulla stessa linea.
 
 Mod aoe2
 --------

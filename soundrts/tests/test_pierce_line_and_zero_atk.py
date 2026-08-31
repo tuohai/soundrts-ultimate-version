@@ -31,6 +31,8 @@ def test_soldier_has_pierce_line_rule_attrs():
         "mdg_pierce_line",
         "mdg_pierce_width",
         "mdg_pierce_max",
+        "rdg_pierce_decay",
+        "mdg_pierce_decay",
     ):
         assert hasattr(Soldier, name), name
 

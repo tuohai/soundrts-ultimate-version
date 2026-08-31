@@ -162,6 +162,21 @@ hp_max 600
 time_cost 43
 can_train observer phoenix
 
+def robotics_facility
+is_a protoss_building
+requirements cybernetics_core
+cost 15 10
+hp_max 450
+time_cost 46
+can_train colossus
+
+def robotics_bay
+is_a protoss_building
+requirements robotics_facility
+cost 20 20
+hp_max 500
+time_cost 46
+
 def assimilator
 is_a protoss_building sc_gas_building
 is_buildable_anywhere 0
@@ -195,7 +210,7 @@ cost 5 0
 hp_max 4
 speed 1.5
 time_cost 12
-can_build pylon gateway forge cybernetics_core stargate assimilator photon_cannon nexus templar_archives fleet_beacon
+can_build pylon gateway forge cybernetics_core stargate assimilator photon_cannon nexus templar_archives fleet_beacon robotics_facility robotics_bay
 
 def zealot
 class soldier
@@ -250,7 +265,7 @@ time_cost 114
 effect bonus mdg 2
 effect_bonus_targets zealot
 effect bonus rdg 2
-effect_bonus_targets dragoon
+effect_bonus_targets dragoon colossus
 effect bonus mdg 2
 effect_bonus_targets dark_templar
 
@@ -262,7 +277,7 @@ time_cost 136
 effect bonus mdg 2
 effect_bonus_targets zealot
 effect bonus rdg 2
-effect_bonus_targets dragoon
+effect_bonus_targets dragoon colossus
 effect bonus mdg 2
 effect_bonus_targets dark_templar
 
@@ -274,7 +289,7 @@ time_cost 157
 effect bonus mdg 2
 effect_bonus_targets zealot
 effect bonus rdg 2
-effect_bonus_targets dragoon
+effect_bonus_targets dragoon colossus
 effect bonus mdg 2
 effect_bonus_targets dark_templar
 
@@ -356,6 +371,13 @@ hp_max 500
 time_cost 29
 can_research zerg_missile zerg_missile_2 zerg_missile_3
 
+def lurker_den
+is_a zerg_building
+requirements hydralisk_den
+cost 10 15
+hp_max 500
+time_cost 41
+
 def extractor
 is_a zerg_building sc_gas_building
 is_buildable_anywhere 0
@@ -377,7 +399,7 @@ cost 5 0
 hp_max 4
 speed 1.4
 time_cost 12
-can_build hatchery spawning_pool roach_warren hydralisk_den extractor spire ultralisk_cavern queen_nest
+can_build hatchery spawning_pool roach_warren hydralisk_den lurker_den extractor spire ultralisk_cavern queen_nest
 
 def zergling
 class soldier
@@ -430,7 +452,30 @@ rdg_vs sc_light -4 sc_massive -4
 rdg_projectile 1
 rdg_projectile_speed 8
 can_use_tech zerg_melee zerg_melee_2 zerg_carapace zerg_carapace_2 zerg_missile zerg_missile_2 zerg_melee_3 zerg_carapace_3 zerg_missile_3
-can_change_to burrowed_hydralisk
+can_change_to burrowed_hydralisk lurker
+change_time 2
+
+def lurker
+class soldier
+is_a sc_armored
+requirements lurker_den
+cost 15 15
+population_cost 3
+time_cost 18
+hp_max 200
+speed 1.2
+mdf 1
+rdg 20
+rdg_range 8
+rdg_cd 1.4
+rdg_targets ground
+rdg_vs sc_light -10 sc_massive -10
+rdg_projectile 1
+rdg_projectile_speed 6
+rdg_pierce_line 1
+rdg_pierce_width 0.5
+can_use_tech zerg_carapace zerg_carapace_2 zerg_missile zerg_missile_2 zerg_carapace_3 zerg_missile_3
+can_change_to burrowed_lurker
 change_time 2
 
 def overlord
@@ -454,7 +499,7 @@ corpse 0
 mdg 0
 mdg_range 0
 no_number 1
-can_upgrade_to drone overlord zergling roach hydralisk mutalisk ultralisk queen
+can_upgrade_to drone overlord zergling roach hydralisk lurker mutalisk ultralisk queen
 
 def zerg_melee
 class upgrade
@@ -484,7 +529,7 @@ class upgrade
 cost 10 10
 time_cost 114
 effect bonus mdf 1
-effect_bonus_targets zergling roach hydralisk ultralisk
+effect_bonus_targets zergling roach hydralisk lurker burrowed_lurker ultralisk
 
 def zerg_carapace_2
 class upgrade
@@ -492,7 +537,7 @@ requirements zerg_carapace
 cost 15 15
 time_cost 136
 effect bonus mdf 1
-effect_bonus_targets zergling roach hydralisk ultralisk
+effect_bonus_targets zergling roach hydralisk lurker burrowed_lurker ultralisk
 
 def zerg_carapace_3
 class upgrade
@@ -500,7 +545,7 @@ requirements zerg_carapace_2
 cost 20 20
 time_cost 157
 effect bonus mdf 1
-effect_bonus_targets zergling roach hydralisk ultralisk
+effect_bonus_targets zergling roach hydralisk lurker burrowed_lurker ultralisk
 
 def zerg_metabolic_boost
 class upgrade
@@ -514,7 +559,7 @@ class upgrade
 cost 10 10
 time_cost 114
 effect bonus rdg 1
-effect_bonus_targets hydralisk
+effect_bonus_targets hydralisk lurker burrowed_lurker
 
 def zerg_missile_2
 class upgrade
@@ -522,7 +567,7 @@ requirements zerg_missile
 cost 15 15
 time_cost 136
 effect bonus rdg 1
-effect_bonus_targets hydralisk
+effect_bonus_targets hydralisk lurker burrowed_lurker
 
 ; ---------- Terran (addons + lift-off recombine) ----------
 
@@ -532,7 +577,7 @@ requirements zerg_missile_2
 cost 20 20
 time_cost 157
 effect bonus rdg 1
-effect_bonus_targets hydralisk
+effect_bonus_targets hydralisk lurker burrowed_lurker
 
 ; ---------- Terran (addons + lift-off recombine) ----------
 
@@ -820,6 +865,28 @@ time_cost 43
 can_research protoss_air_weapons protoss_air_weapons_2 protoss_air_weapons_3 protoss_air_armor protoss_air_armor_2 protoss_air_armor_3
 can_train carrier
 
+def colossus
+class soldier
+is_a sc_armored sc_massive
+requirements robotics_bay
+cost 30 20
+population_cost 6
+time_cost 54
+hp_max 350
+speed 1.1
+rdg 12
+rdg_range 6
+rdg_cd 1.1
+rdg_targets ground
+rdg_vs sc_light -6 sc_massive -6
+rdg_projectile 1
+rdg_projectile_speed 5
+rdg_pierce_line 1
+rdg_pierce_width 0.6
+is_repairable 1
+is_healable 0
+can_use_tech protoss_ground_weapons protoss_ground_weapons_2 protoss_plasma_shields protoss_plasma_shields_2 protoss_ground_weapons_3 protoss_plasma_shields_3
+
 def high_templar
 class soldier
 is_a sc_light
@@ -1002,6 +1069,9 @@ rdg_targets ground air
 rdg_vs sc_massive -3
 rdg_projectile 1
 rdg_projectile_speed 6
+rdg_bounce 2
+rdg_bounce_range 3
+rdg_bounce_decay 33
 can_use_tech zerg_flyer_attacks zerg_flyer_attacks_2 zerg_flyer_carapace zerg_flyer_carapace_2 zerg_flyer_attacks_3 zerg_flyer_carapace_3
 corpse 0
 
@@ -1098,6 +1168,28 @@ rdg_projectile 1
 rdg_projectile_speed 8
 is_invisible 1
 can_change_to hydralisk
+change_time 2
+corpse 0
+
+def burrowed_lurker
+class soldier
+is_a sc_armored
+requirements lurker_den
+population_cost 3
+hp_max 200
+speed 0
+mdf 1
+rdg 20
+rdg_range 8
+rdg_cd 1.4
+rdg_targets ground
+rdg_vs sc_light -10 sc_massive -10
+rdg_projectile 1
+rdg_projectile_speed 6
+rdg_pierce_line 1
+rdg_pierce_width 0.5
+is_invisible 1
+can_change_to lurker
 change_time 2
 corpse 0
 

@@ -1932,7 +1932,7 @@ mdf 0
 rdf 2
 mdg_vs camel_rider 8
 mdg_vs siege_unit 3
-can_upgrade_to
+can_upgrade_to eagle_warrior
 can_use_tech forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor tracking squires arson conscription chieftains
 ; Meso Dark Age eagle (Aztecs/Maya/Inca): trainable without Feudal
 def aztec_eagle_scout
@@ -1958,7 +1958,7 @@ rdf 3
 mdg_vs camel_rider 8
 mdg_vs cavalry 3
 mdg_vs siege_unit 3
-can_upgrade_to
+can_upgrade_to elite_eagle_warrior
 def elite_eagle_warrior
 is_a eagle_warrior
 cost 500 0 800 0
@@ -2001,7 +2001,7 @@ mdg_range 1
 mdf 1
 rdf 0
 mdg_vs infantry 10
-can_upgrade_to
+can_upgrade_to elite_jaguar_warrior
 can_use_tech forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor squires arson conscription garland_wars
 def elite_jaguar_warrior
 is_a jaguar_warrior
@@ -2338,6 +2338,7 @@ rdg_projectile_speed 7
 rdg_targets ground
 rdg_pierce_line 1
 rdg_pierce_width 0.5
+rdg_pierce_decay 50
 is_repairable 1
 is_healable 0
 space 0.6

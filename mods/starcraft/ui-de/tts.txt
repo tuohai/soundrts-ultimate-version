@@ -268,7 +268,7 @@
 7651	Schaltet die Mutalisk-Produktion sowie Flieger-Angriffs- und Panzerungs-Upgrades frei. Benötigt ein Spawning Pool.
 7652	Schaltet die Ultralisk-Produktion frei. Benötigt ein Spire.
 7653	Schaltet die Queen-Produktion frei. Benötigt ein Spawning Pool.
-7654	Schneller Luft-Störer aus dem Spire. Greift sowohl Boden- als auch Luftziele an.
+7654	Schneller Luft-Störer aus dem Spire. Gleven springen auf zwei nahe Feinde mit abnehmendem Schaden.
 7655	Schwere Nahkampfbestie aus der Ultralisk Cavern. Hohe Lebenspunkte und Schaden; zermalmt feindliche Bodenarmeen.
 7656	Unterstützungs-Zauberwirker aus dem Queen's Nest. Erzeugt Larven, injiziert Hatcheries und breitet Creep-Tumore aus.
 7657	Unsichtbares Bauwerk, das von der Queen platziert wird. Breitet in der Nähe Creep aus, damit die Zerg weiter entfernt vom Hatchery bauen können.
@@ -279,6 +279,18 @@
 7662	Getarnter Ghost. Unsichtbar bis zum Angriff oder bis er entdeckt wird; behält die Atomschlag-Fähigkeit.
 7663	Massiver Läufer aus einer Fabrik mit Tech Lab und Armory. Hoher Flächenschaden über große Reichweite.
 7664	Terraner-Flaggschiff aus einem Raumhafen mit Tech Lab und Armory. Kann die Yamato-Kanone gegen wertvolle Ziele einsetzen.
+7665	Lauererhöhle
+7666	Lauerer
+7667	Eingegrabener Lauerer
+7668	Koloss
+7669	Robotikfabrik
+7670	Robotikbucht
+7671	Schaltet die Verwandlung zum Lauerer frei. Lauerer schießen Stacheln in einer Linie durch Bodeneinheiten, ähnlich einem AoE2-Skorpion.
+7672	Gepanzerter Hinterhalt. Stacheln durchschlagen Bodeneinheiten in gerader Linie. Verwandlung aus Hydralisk nach Lauererhöhle, oder aus einer Larve.
+7673	Eingegrabener Lauerer. Unsichtbar und unbeweglich; derselbe Linienangriff wie die ungegrabene Form.
+7674	Protoss-Läufer aus der Robotikfabrik. Thermostrahlen schneiden eine Linie durch Bodeneinheiten. Benötigt eine Robotikbucht.
+7675	Stellt Kolosse her. Benötigt ein Cybernetics Core.
+7676	Schaltet die Koloss-Produktion frei. Benötigt eine Robotikfabrik.
 7680	StarCraft: Fähigkeitstest
 7681	Willkommen im Fähigkeiten-Sandkasten. Terraner-Zone links, Protoss in der Mitte, Zerg rechts; neutrale Zealots ganz im Osten (o) für Flächenfähigkeiten. Erforderliche Upgrades sind bereits erforscht und die Einheiten sind bereit. High Templar startet mit null Energie — wartet auf 75 Mana für Psi Storm. Verwundet einen Marine, bevor ihr die Medivac-Heilung testet. Kein Auto-Sieg; drückt F9 und überprüft jede Fähigkeit manuell.
 7682	Drückt F9 für die Fähigkeitscheckliste. Überprüft manuell, dass jede Fähigkeit eingesetzt werden kann.
