@@ -60,6 +60,12 @@ Note di rilascio
 - **Cambio**: prima le ripetizioni, poi i nuovi sblocchi. Il soldato semplice resta a 0 slot carte (il tenente ne ha 1).
 - **Ambito**: ``process_game_end_achievements``.
 
+**Correzione: pittura con la palette terreno della console**
+
+- **Problema**: la foresta senza ``is_dynamic 1`` restava bloccata. Il pennello miniera perdeva il legno. Dopo un lago la foresta cercava spazio come acqua.
+- **Cambio**: foresta dinamica; la palette imposta terra/acqua prima delle risorse; miniere e alberi senza collisione.
+- **Ambito**: applicazione palette, ``ensure_resources``; ``forest`` in base / AoE2 / StarCraft / CrazyMod.
+
 
 1.4.9.0
 ---------

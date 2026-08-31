@@ -985,17 +985,15 @@ class Square(_Space):
         entity_class = rules.unit_class(t)
         if entity_class is None:
             return
-        if n > 1:
-            for i in range(n):
-                x, y = self.deposit_arrange_xy(i, n)
-                obj = entity_class.__new__(entity_class)
-                obj.collision = 0
-                obj.__init__(self, q, x, y)
-            self.arrange_resources_symmetrically(self.x, self.y)
-        else:
-            x, y = self.find_free_space("ground", self.x, self.y)
-            if x is not None:
-                entity_class(self, q, x, y)
+        # n==1 used find_free_space, so a goldmine then a wood (palette
+        # ``goldmine``) dropped the wood when the mine already occupied the
+        # square. Arrange every deposit with collision off, like n>1.
+        for i in range(n):
+            x, y = self.deposit_arrange_xy(i, n)
+            obj = entity_class.__new__(entity_class)
+            obj.collision = 0
+            obj.__init__(self, q, x, y)
+        self.arrange_resources_symmetrically(self.x, self.y)
 
     @property
     def nb_meadows(self):

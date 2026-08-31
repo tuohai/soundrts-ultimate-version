@@ -43,6 +43,9 @@ def test_zh_relnotes_1491_session_topics():
     assert "time_cost" in s
     assert "重复完成" in s
     assert "once_keys" in s
+    assert "is_dynamic" in s
+    assert "ensure_resources" in s
+    assert "调色板" in s or "forest" in s
 
 
 def test_en_relnotes_1491_session_topics():
@@ -60,6 +63,9 @@ def test_en_relnotes_1491_session_topics():
     assert "time_cost" in s
     assert "repeat" in s.lower()
     assert "once_keys" in s
+    assert "is_dynamic" in s
+    assert "ensure_resources" in s
+    assert "palette" in s.lower()
 
 
 def test_es_it_pt_relnotes_1491_session_topics():
@@ -77,3 +83,5 @@ def test_es_it_pt_relnotes_1491_session_topics():
         assert "time_cost" in s, lang
         assert "once_keys" in s, lang
         assert "addon_grants_train" in s, lang
+        assert "is_dynamic" in s, lang
+        assert "ensure_resources" in s, lang

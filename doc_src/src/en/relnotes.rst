@@ -62,6 +62,12 @@ Release notes
 - **Change**: Evaluate repeats first, then new unlocks. Private still has 0 loadout slots (lieutenant gets 1); that is by design.
 - **Scope**: ``process_game_end_achievements``.
 
+**Fix: console terrain palette painting**
+
+- **Issue**: Forest lacked ``is_dynamic 1``, so painting locked the square and chopping trees did not revert. The goldmine brush dropped the wood after the mine took the free tile. Painting forest after a lake still searched for space as water, so trees never spawned.
+- **Change**: Forest is dynamic; the palette sets land/water before placing resources; mines and trees use collision-off arrange.
+- **Scope**: Palette apply, ``ensure_resources``; ``forest`` in base / AoE2 / StarCraft / CrazyMod.
+
 
 1.4.9.0
 ---------

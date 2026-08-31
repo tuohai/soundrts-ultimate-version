@@ -5183,6 +5183,7 @@ is_dynamic 0
 
 def forest
 class terrain
+is_dynamic 1
 cover .5 0
 
 def dense_forest

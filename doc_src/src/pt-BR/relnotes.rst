@@ -61,6 +61,12 @@ Notas de lançamento
 - **Mudança**: primeiro as repetições, depois os desbloqueios. O soldado raso continua com 0 slots de cartas (o tenente tem 1).
 - **Alcance**: ``process_game_end_achievements``.
 
+**Correção: pintar com a paleta de terreno da consola**
+
+- **Problema**: a floresta sem ``is_dynamic 1`` ficava bloqueada. O pincel de mina largava a madeira. Pintar floresta depois de um lago procurava espaço como água.
+- **Mudança**: floresta dinâmica; a paleta muda terra/água antes dos recursos; minas e árvores sem colisão.
+- **Alcance**: aplicação da paleta, ``ensure_resources``; ``forest`` em base / AoE2 / StarCraft / CrazyMod.
+
 
 1.4.9.0
 --------

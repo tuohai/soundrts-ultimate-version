@@ -13,10 +13,8 @@ def apply_palette_to_square(square, palette):
     """Apply one ``editor_palette.txt`` entry to a whole square."""
     style = palette.get("style")
 
-    square.ensure_resources("goldmine", *palette["goldmines"])
-    square.ensure_resources("wood", *palette["woods"])
-    square.ensure_meadows(palette["meadows"])
-
+    # Flags first so resource placement sees ground/water of *this* brush,
+    # not the previous square (e.g. forest after lake).
     if style and is_terrain_def(style):
         apply_terrain_map_flags(square, style)
 
@@ -24,6 +22,10 @@ def apply_palette_to_square(square, palette):
     square.is_ground = palette["ground"]
     square.is_air = palette["air"]
     square.high_ground = palette["high_ground"]
+
+    square.ensure_resources("goldmine", *palette["goldmines"])
+    square.ensure_resources("wood", *palette["woods"])
+    square.ensure_meadows(palette["meadows"])
 
     if style and is_terrain_def(style):
         if terrain_is_dynamic(style):

@@ -1,9 +1,15 @@
+import os
 import types
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
+os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
+os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
+
 from soundrts.clientgame import load_palette
+from soundrts.clientgame.game_resources import _execute_command
 from soundrts.definitions import _get_base_classes, rules
 from soundrts.lib.editor_palette import apply_palette_to_square
 from soundrts.worldroom import Square
@@ -123,3 +129,96 @@ def test_apply_palette_rocky_plain_locks_without_objects():
     apply_palette_to_square(sq, _palette_entry("rocky_plain"))
     assert sq.fixed_terrain is True
     assert sq.type_name == "rocky_plain"
+
+
+_TINY_MAP = """
+nb_columns 3
+nb_lines 3
+nb_players_min 1
+nb_players_max 1
+starting_squares 2,2
+"""
+
+
+def _tiny_world():
+    from soundrts.world import World
+
+    world = World([], 42)
+    world._parse_map(_TINY_MAP)
+    world._create_squares_and_grid()
+    return world
+
+
+def _editor_interface(square, world):
+    return types.SimpleNamespace(
+        place=square,
+        world=world,
+        zoom_mode=False,
+        _terrain_noises=[],
+    )
+
+
+@patch("soundrts.clientgame.game_resources.voice.item")
+def test_console_st_cycles_every_palette_entry(voice_item):
+    _load_default_rules()
+    pal = load_palette()
+    names = [k for k, _ in pal]
+    assert names, "editor_palette.txt must load"
+    interface = _editor_interface(_tiny_world().grid["1,1"], None)
+    spoken = []
+    voice_item.side_effect = lambda msg: spoken.append(msg)
+    for _ in names:
+        _execute_command(interface, "st 1")
+    cycled = [msg[0] for msg in spoken]
+    assert cycled == names
+
+
+@patch("soundrts.clientgame.game_resources.voice.item")
+def test_console_st_at_applies_every_palette_entry(voice_item):
+    _load_default_rules()
+    pal = load_palette()
+    world = _tiny_world()
+    sq = world.grid["1,1"]
+    interface = _editor_interface(sq, world)
+    voice_item.side_effect = lambda msg: None
+    for name, entry in pal:
+        _execute_command(interface, "st %s" % name)
+        _execute_command(interface, "at")
+        style = entry["style"]
+        assert bool(sq.is_water) is bool(entry["water"]), name
+        assert bool(sq.is_ground) is bool(entry["ground"]), name
+        assert bool(sq.is_air) is bool(entry["air"]), name
+        assert bool(sq.high_ground) is bool(entry["high_ground"]), name
+        woods = [o for o in sq.objects if getattr(o, "type_name", None) == "wood"]
+        gold = [o for o in sq.objects if getattr(o, "type_name", None) == "goldmine"]
+        assert len(woods) == entry["woods"][0], name
+        assert len(gold) == entry["goldmines"][0], name
+        if name in ("goldmine", "high_goldmine"):
+            # Brush style is meadows, but one wood makes object-driven forest.
+            assert sq.type_name in ("forest", "meadows"), name
+        else:
+            assert sq.type_name == style, name
+        if name == "forest":
+            assert sq.fixed_terrain is False
+        if name == "lake":
+            assert sq.fixed_terrain is True
+    _execute_command(interface, "st lake")
+    _execute_command(interface, "at")
+    assert sq.is_water
+    _execute_command(interface, "st forest")
+    _execute_command(interface, "at")
+    woods = [o for o in sq.objects if getattr(o, "type_name", None) == "wood"]
+    assert len(woods) == 3
+    assert not sq.is_water
+    assert sq.type_name == "forest"
+
+
+@patch("soundrts.clientgame.game_resources.voice.item")
+def test_console_at_without_st_beeps(voice_item):
+    from soundrts import msgparts as mp
+
+    _load_default_rules()
+    world = _tiny_world()
+    interface = _editor_interface(world.grid["1,1"], world)
+    _execute_command(interface, "at")
+    voice_item.assert_called_with(mp.BEEP)
