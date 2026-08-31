@@ -392,7 +392,7 @@ research 1
 label c_vermine1
 get couveuse 10 ouvriere_marcheuse
 get termitiere
-get 14 larve 10 termite_gardien
+get 10 termite_gardien
 get pouponniere
 get 12 termite_conquerant
 get arbre_a_miel
@@ -1396,7 +1396,7 @@ get couveuse termitiere
 goto vermine1
 
 label vermine0b
-get 12 larve 8 termite_gardien
+get 8 termite_gardien
 goto vermine1
 
 label vermine0c
@@ -2078,13 +2078,13 @@ attack_ratio 150
 label vermine_adv_loop
 get couveuse 10 ouvriere_marcheuse
 get termitiere
-get 14 larve 10 termite_gardien
+get 10 termite_gardien
 attack
-get 18 ouvriere_marcheuse 20 larve 18 termite_gardien 10 termite_conquerant 8 guepe_colerique
+get 18 ouvriere_marcheuse 18 termite_gardien 10 termite_conquerant 8 guepe_colerique
 attack
-get 30 ouvriere_marcheuse 30 larve 28 termite_gardien 20 termite_conquerant 15 guepe_colerique
+get 30 ouvriere_marcheuse 28 termite_gardien 20 termite_conquerant 15 guepe_colerique
 attack
-get 50 ouvriere_marcheuse 45 larve 40 termite_gardien 35 termite_conquerant 28 guepe_colerique 12 termite_tank
+get 50 ouvriere_marcheuse 40 termite_gardien 35 termite_conquerant 28 guepe_colerique 12 termite_tank
 attack
 goto vermine_adv_loop
 
@@ -2101,13 +2101,13 @@ attack_ratio 120
 label vermine_exp_loop
 get couveuse 10 ouvriere_marcheuse
 get termitiere
-get 14 larve 10 termite_gardien
+get 10 termite_gardien
 attack
-get 18 ouvriere_marcheuse 20 larve 18 termite_gardien 10 termite_conquerant 8 guepe_colerique
+get 18 ouvriere_marcheuse 18 termite_gardien 10 termite_conquerant 8 guepe_colerique
 attack
-get 30 ouvriere_marcheuse 30 larve 28 termite_gardien 20 termite_conquerant 15 guepe_colerique
+get 30 ouvriere_marcheuse 28 termite_gardien 20 termite_conquerant 15 guepe_colerique
 attack
-get 50 ouvriere_marcheuse 45 larve 40 termite_gardien 35 termite_conquerant 28 guepe_colerique 12 termite_tank
+get 50 ouvriere_marcheuse 40 termite_gardien 35 termite_conquerant 28 guepe_colerique 12 termite_tank
 attack
 goto vermine_exp_loop
 
@@ -2124,13 +2124,13 @@ attack_ratio 90
 label vermine_nm_loop
 get couveuse 10 ouvriere_marcheuse
 get termitiere
-get 14 larve 10 termite_gardien
+get 10 termite_gardien
 attack
-get 18 ouvriere_marcheuse 20 larve 18 termite_gardien 10 termite_conquerant 8 guepe_colerique
+get 18 ouvriere_marcheuse 18 termite_gardien 10 termite_conquerant 8 guepe_colerique
 attack
-get 30 ouvriere_marcheuse 30 larve 28 termite_gardien 20 termite_conquerant 15 guepe_colerique
+get 30 ouvriere_marcheuse 28 termite_gardien 20 termite_conquerant 15 guepe_colerique
 attack
-get 50 ouvriere_marcheuse 45 larve 40 termite_gardien 35 termite_conquerant 28 guepe_colerique 12 termite_tank
+get 50 ouvriere_marcheuse 40 termite_gardien 35 termite_conquerant 28 guepe_colerique 12 termite_tank
 attack
 goto vermine_nm_loop
 

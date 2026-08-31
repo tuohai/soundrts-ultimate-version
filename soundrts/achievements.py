@@ -1020,8 +1020,10 @@ def process_game_end_achievements(game, player) -> List[list]:
     state = load_unlock_state(faction)
     medals_before = int(state.get("medals", 0))
     progress_changed = record_defeat_progress(ctx, state)
-    newly, new_honors = evaluate_new_unlocks(ctx, state, faction)
+    # Repeats must run before new unlocks mark once_keys. Otherwise a first-time
+    # unlock is also treated as a recompletion (unlock + 重复完成 in one speech).
     repeats = evaluate_repeat_completions(ctx, state, faction)
+    newly, new_honors = evaluate_new_unlocks(ctx, state, faction)
     repeat_total = apply_repeat_medals(repeats, state)
     medals_after = int(state.get("medals", 0))
     msgs = achievement_unlock_msgs(newly)

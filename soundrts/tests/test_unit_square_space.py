@@ -174,3 +174,26 @@ speed 1.5
     )
     cls = rules.unit_class("peasant")
     assert cls.space == 500
+
+
+def test_enter_leave_invalidates_space_cache():
+    sq = _make_square(12)
+    p = _player()
+    u = _unit(12, player=p)
+    u.id = 1
+    sq.enter(u)
+    assert sq.used_square_space("ground", for_player=p) == 12 * PRECISION
+    sq.leave(u)
+    assert sq.used_square_space("ground", for_player=p) == 0
+    assert sq.have_enough_square_space(_unit(12, player=p)) is True
+
+
+def test_exclude_self_via_place_identity():
+    sq = _make_square(12)
+    p = _player()
+    me = _unit(6, player=p)
+    me.place = sq
+    sq.objects.append(me)
+    sq.objects.append(_unit(6, player=p))
+    assert sq.have_enough_square_space(me) is True
+    assert sq.checks_square_space is True

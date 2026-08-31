@@ -38,7 +38,7 @@ Resources (minerals + vespene)
 
 - ``geyser`` — vespene geyser (``geyser 1 e1``); build Assimilator / Extractor / Refinery on it. Marker qty ``1`` uses ``deposit_volume`` (default 5000); or write ``geyser 5000 e1``.
 
-- Gas buildings use ``requires_deposit geyser`` + ``is_an_extractor``. Workers trip-gather from the building (SC1: 8 gas / trip, 2 when depleted). The geyser reserve transfers onto the building at completion; there is **no** auto_production buffer. ``gather_slots 3`` — at most 3 workers extract at once (extra workers wait nearby), matching SC1/SC2 gas saturation. **Tip: 3 workers per gas is optimal**; sending more still produces gas (they rotate) but does not scale much past three. They **cannot** be built on meadows — only on a geyser square (Tab the geyser, then build). Costs use the mod's ×0.1 mineral scale (Assimilator/Refinery 10, Extractor 5).
+- Gas buildings use ``requires_deposit geyser`` + ``is_an_extractor``. Workers trip-gather from the building (SC2: 5 minerals / trip, 4 gas / trip, 2 when depleted; occupy ~2s). Geyser reserve is 2250. The reserve transfers onto the building at completion; there is **no** auto_production buffer. ``gather_slots 3`` — at most 3 workers extract at once (extra workers wait nearby), matching SC2 gas saturation. **Tip: 3 workers per gas is optimal**; sending more still produces gas (they rotate) but does not scale much past three. They **cannot** be built on meadows — only on a geyser square (Tab the geyser, then build). Costs use the mod's ×0.1 mineral scale (Assimilator/Refinery 10, Extractor 5). Train/build/research times use SC2 Faster real seconds.
 
 - Map win example: ``(and (has assimilator) (has_resources resource2 8))`` — built gas structure **and** 8 vespene stored.
 

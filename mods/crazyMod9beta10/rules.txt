@@ -502,6 +502,7 @@ rdg_cd 1
 rdg_ready 1.5
 rdg_targets ground air
 rdg_projectile 1
+rdg_projectile_speed 7
 can_upgrade_to tour_a_baliste
 
 def tour_a_baliste
@@ -513,6 +514,8 @@ requirements castle workshop
 hp_max 100
 rdf 1.5
 rdg_range 16
+rdg_projectile 1
+rdg_projectile_speed 3.5
 rdg_minimal_range 4
 sight_range 18
 rdg 10
@@ -582,7 +585,7 @@ rdg_cover_vs buildings 100
 sight_range 10
 rdg 5
 rdg_projectile 1
-
+rdg_projectile_speed 7
 def knight
 is_a cavalrys melee_unit
 cost 14 0
@@ -881,6 +884,8 @@ requirements blacksmith poudriere
 hp_max 60
 time_cost 100
 rdg_range 6
+rdg_projectile 1
+rdg_projectile_speed 5
 sight_range 8
 rdg_cd 1
 rdg_ready 2
@@ -899,6 +904,8 @@ requirements blacksmith poudriere
 hp_max 60
 time_cost 100
 rdg_range 12
+rdg_projectile 1
+rdg_projectile_speed 3.5
 sight_range 14
 rdg_minimal_range 4
 rdg_cd 5
@@ -940,7 +947,6 @@ sight_range 12
 rdg_ready 0.35
 rdg_cd 3.45
 rdg 7
-
 rdg_cover 65
 rdg_cover_vs buildings 100
 rdg_targets ground air
@@ -948,6 +954,7 @@ mdf 0.5
 mdf_bonus 1
 can_use_tech poudre_de_haute_qualite poudre_de_tres_haute_qualite melee_armor sante_publique
 rdg_projectile 1
+rdg_projectile_speed 10
 
 def lance_grenade
 is_a prtech_unit range_unit
@@ -958,6 +965,8 @@ hp_max 16
 hp_max_bonus 4
 speed 1
 rdg_range 8
+rdg_projectile 1
+rdg_projectile_speed 3.5
 sight_range 10
 rdg_ready 2
 rdg_cd 4
@@ -1002,6 +1011,8 @@ speed 1.75
 requirements poudriere
 sight_range 11
 rdg_range 9
+rdg_projectile 1
+rdg_projectile_speed 5
 rdg_cd 3
 rdg_ready 2
 rdg 12
@@ -1361,6 +1372,8 @@ rdg_cd 2
 rdg_ready 0.3
 rdg_targets ground air
 rdg_range 6
+rdg_projectile 1
+rdg_projectile_speed 6
 sight_range 8
 can_use_tech magnesite_de_haute_qualite magnesite_de_tres_haute_qualite
 
@@ -1392,6 +1405,7 @@ rdg_cd 3.33
 rdg_ready 0.3
 rdg_range 8
 rdg_projectile 1
+rdg_projectile_speed 6
 sight_range 10
 transport_volume 3
 can_use_tech magnesite_de_haute_qualite magnesite_de_tres_haute_qualite
@@ -1412,6 +1426,7 @@ rdg_range 9
 sight_range 11
 rdg_splash 9
 rdg_projectile 1
+rdg_projectile_speed 6
 transport_volume 5
 can_use_tech puissance_plasma
 rdg_targets ground air
@@ -1775,7 +1790,7 @@ rdg 4.5
 rdg_cover 80
 rdg_cover_vs buildings 100
 rdg_projectile 1
-
+rdg_projectile_speed 7
 def arbre_des_tenebres
 is_a range_unit
 is_teleportable 0
@@ -1788,6 +1803,8 @@ rdg_cd 1.5
 rdg_ready 0.5
 rdg_targets air
 rdg_range 4
+rdg_projectile 1
+rdg_projectile_speed 5
 rdg 3.5
 mana_max 500
 mana_regen 0.1
@@ -1838,6 +1855,8 @@ mana_regen 1 ; mana / second
 speed 1
 can_use_skill a_raise_dead a_explosion_de_cadavre a_cadavre_pestifere a_semer_arbre_des_tenebres a_champ_de_necromancie
 rdg_range 4.5
+rdg_projectile 1
+rdg_projectile_speed 6
 sight_range 6.5
 rdg_cd 2
 rdg_ready 1
@@ -1855,6 +1874,8 @@ mana_regen 1
 speed 1
 can_use_skill a_passe_muraille a_deadly_fog a_appeler_feu_follet
 rdg_range 4.5
+rdg_projectile 1
+rdg_projectile_speed 6
 sight_range 6.5
 rdg_cd 4
 rdg_ready 1
@@ -1928,6 +1949,8 @@ rdg 8
 rdg_cd 2.5
 rdg_ready 0.5
 rdg_range 5
+rdg_projectile 1
+rdg_projectile_speed 5
 rdg_splash 8
 rdg_radius 1.5
 rdg_targets ground air
@@ -2256,6 +2279,7 @@ rdg_targets ground air
 rdf 1
 can_use_tech archer_weapon archer_range
 rdg_projectile 1
+rdg_projectile_speed 7
 can_upgrade_to grande_tour_de_garde
 
 def grande_tour_de_garde
@@ -2266,6 +2290,8 @@ requirements domaine lumbermill
 time_cost 160
 hp_max 53
 rdg_range 12
+rdg_projectile 1
+rdg_projectile_speed 6
 sight_range 14
 rdg_cd 0.75
 rdg_ready 0.25
@@ -2287,6 +2313,8 @@ requirements bois_enchante
 time_cost 160
 hp_max 60
 rdg_range 12
+rdg_projectile 1
+rdg_projectile_speed 6
 sight_range 14
 rdg_cd 0.25
 rdg_ready 0.25
@@ -2362,6 +2390,8 @@ rdg_cd 1.5
 rdg_ready 0.5
 rdg_targets ground air
 rdg_range 4.5
+rdg_projectile 1
+rdg_projectile_speed 7
 sight_range 6.5
 rdg 3
 rdg_crit 2.5
@@ -2401,7 +2431,7 @@ mana_max 0
 can_upgrade_to
 sight_range 12
 rdg_projectile 1
-
+rdg_projectile_speed 7
 def centaure
 is_a cavalrys range_unit
 cost 8 4
@@ -2423,6 +2453,7 @@ is_a_detector 1
 mana_max 200
 mana_regen 0.4
 rdg_projectile 1
+rdg_projectile_speed 7
 transport_volume 3
 transport_capacity 1
 
@@ -2445,6 +2476,7 @@ rdg 10
 rdg_splash 10
 rdg_targets ground air
 rdg_projectile 1
+rdg_projectile_speed 7
 rdg_radius 0.25
 
 def boule_d_energie
@@ -2782,6 +2814,8 @@ rdg_splash 8
 rdg_radius 0.5
 rdf 1
 rdg_range 12
+rdg_projectile 1
+rdg_projectile_speed 4
 sight_range 14
 rdg_minimal_range 4
 can_use_tech poudre_de_haute_qualite poudre_de_tres_haute_qualite
@@ -2794,6 +2828,8 @@ population_cost 2
 requirements forteresse poudriere
 time_cost 200
 rdg 4
+rdg_projectile 1
+rdg_projectile_speed 8
 rdg_radius 4
 can_upgrade_to 
 
@@ -2804,6 +2840,8 @@ cost 15 13
 requirements forteresse poudriere
 time_cost 200
 rdg 16
+rdg_projectile 1
+rdg_projectile_speed 3
 can_upgrade_to 
 
 
@@ -2885,6 +2923,7 @@ rdg 4
 rdg_splash 4
 rdg_radius 0.25
 rdg_projectile 1
+rdg_projectile_speed 5
 rdg_targets air
 can_use_tech poudre_de_haute_qualite poudre_de_tres_haute_qualite
 
@@ -2904,6 +2943,7 @@ rdg_cover 70
 rdg_splash 15
 rdg_radius 1
 rdg_projectile 1
+rdg_projectile_speed 3
 transport_volume 3
 can_use_tech grande_agressivite
 
@@ -3070,6 +3110,8 @@ can_train fee
 rdg_cd 4
 rdg_ready 1
 rdg_range 6
+rdg_projectile 1
+rdg_projectile_speed 5
 rdg 5
 is_a_detector 1
 can_upgrade_to ; point_de_depart
@@ -3094,6 +3136,8 @@ can_train elemental_de_terre
 is_a_detector 1
 rdg 8
 rdg_range 4.5
+rdg_projectile 1
+rdg_projectile_speed 5
 rdg_cd 6
 rdg_ready 0.5
 rdg_splash 8
@@ -3127,6 +3171,8 @@ can_train elemental_d_eau
 is_a_detector 1
 rdg 2.5
 rdg_range 6
+rdg_projectile 1
+rdg_projectile_speed 5
 rdg_cd 2
 rdg_ready 0.5
 rdg_targets ground air
@@ -3144,6 +3190,8 @@ can_train elemental_d_air
 is_a_detector 1
 rdg 5
 rdg_range 4.5
+rdg_projectile 1
+rdg_projectile_speed 5
 rdg_cd 3
 rdg_ready 0.5
 rdg_targets air
@@ -3160,6 +3208,8 @@ time_cost 90
 can_train mage
 ; can_research u_portail_instable ; u_teleportation u_summon_dragon u_meteors
 rdg_range 4.5
+rdg_projectile 1
+rdg_projectile_speed 6
 sight_range 12
 rdg_cd 1.5
 rdg_ready 0.5
@@ -3216,6 +3266,8 @@ rdg_cd 2
 rdg_ready 1
 rdg_targets ground air
 rdg_range 8
+rdg_projectile 1
+rdg_projectile_speed 5
 sight_range 10
 rdg 30
 rdg_bonus 10
@@ -3238,6 +3290,8 @@ rdg_cd 6
 rdg_ready 0.5
 rdg_targets ground
 rdg_range 9
+rdg_projectile 1
+rdg_projectile_speed 4
 sight_range 11
 rdg 12
 rdg_radius 6
@@ -3259,6 +3313,8 @@ rdg_cd 2.5
 rdg_ready 1
 rdg_targets ground air
 rdg_range 4
+rdg_projectile 1
+rdg_projectile_speed 6
 rdg 8
 rdg_bonus 4
 rdg_splash 8
@@ -3282,6 +3338,8 @@ mana_regen 1
 speed 1
 can_use_skill a_seisme a_deflagration a_soin a_coup_de_vent a_mer_de_lave a_golem_de_boue a_tempete_de_sable a_nuage_de_vapeur a_orage a_ciel_de_glace
 rdg_range 4
+rdg_projectile 1
+rdg_projectile_speed 6
 sight_range 6
 rdg_cd 2.5
 rdg_ready 0.5
@@ -3572,6 +3630,8 @@ is_invisible 1
 is_buildable_anywhere 1
 hp_max 5
 rdg_range 5
+rdg_projectile 1
+rdg_projectile_speed 7
 sight_range 7
 rdg 3
 rdg_cd 3
@@ -3591,6 +3651,8 @@ hp_max 6
 can_build terrain_de_chasse bivouac_d_entrainement lumbermill terrier maison_des_cornacs cage_aux_fauves hutte_des_sortileges planque
 speed 1.6
 rdg_range 5.5
+rdg_projectile 1
+rdg_projectile_speed 7
 rdg_cd 2
 rdg 2.5
 rdg_splash 2.5
@@ -3644,6 +3706,7 @@ rdg 4
 rdg_cover 80
 rdf 0.5
 rdg_projectile 1
+rdg_projectile_speed 7
 mana_max 200
 mana_regen 0
 
@@ -3720,6 +3783,7 @@ mdg_cd 1.1
 mdg_ready 1
 mdf 1
 mdg_projectile 1
+mdg_projectile_speed 5
 mana_max 400
 mana_regen 0
 transport_volume 6
@@ -3737,6 +3801,8 @@ mana_regen 0.6
 speed 1.33
 can_use_skill a_tempete_verte a_essaim a_racines_penetrantes a_semer_arbre_sentinelle a_semer_vigne a_envoutement
 rdg_range 12
+rdg_projectile 1
+rdg_projectile_speed 5
 sight_range 14
 rdg_cd 8
 rdg_ready 1
@@ -3767,6 +3833,8 @@ rdg 4.5
 rdg_cd 2
 rdg_ready 0.5
 rdg_range 12
+rdg_projectile 1
+rdg_projectile_speed 4
 sight_range 14
 mana_max 200
 mana_regen 0.5
@@ -3866,6 +3934,8 @@ rdg_cd 1.5
 rdg_ready 0.5
 rdg_targets air
 rdg_range 4
+rdg_projectile 1
+rdg_projectile_speed 5
 rdg 3
 is_healable 0
 corpse 0
@@ -4029,6 +4099,8 @@ time_cost 75
 hp_max 50
 rdg 5
 rdg_range 5
+rdg_projectile 1
+rdg_projectile_speed 5
 sight_range 7
 rdg_cd 1
 rdg_ready 1
@@ -4043,6 +4115,8 @@ time_cost 150
 hp_max 90
 rdg 8
 rdg_range 8
+rdg_projectile 1
+rdg_projectile_speed 4.5
 sight_range 10
 rdg_cd 0.8
 rdg_ready 1
@@ -4057,6 +4131,8 @@ hp_max 120
 rdg 12
 rdg_cover 50
 rdg_range 12
+rdg_projectile 1
+rdg_projectile_speed 4
 sight_range 14
 rdg_cd 0.4
 can_upgrade_to 
@@ -4570,6 +4646,8 @@ requirements coutellerie
 hp_max 33
 can_use_tech melee_weapon technique_de_lancer
 rdg_range 4
+rdg_projectile 1
+rdg_projectile_speed 7
 rdg_range_bonus 1
 rdg_cd 1
 rdg_ready 0.5
@@ -4584,6 +4662,8 @@ time_cost 100
 requirements manoir coutellerie
 hp_max 50
 rdg_range 5
+rdg_projectile 1
+rdg_projectile_speed 7
 rdg_range_bonus 1.5
 rdg_cd 0.66
 rdg_ready 1
@@ -4703,6 +4783,7 @@ rdf 0.5
 is_invisible 1
 is_a_detector 1
 rdg_projectile 1
+rdg_projectile_speed 7
 mana_max 200
 mana_regen 0.75
 
@@ -4715,6 +4796,8 @@ speed 1.66
 can_use_tech melee_weapon technique_de_lancer
 can_use_skill a_appeler_ombre a_pantin a_fumigene
 rdg_range 4
+rdg_projectile 1
+rdg_projectile_speed 6
 sight_range 6
 rdg_range_bonus 1
 rdg_cd 2.75
@@ -4736,6 +4819,8 @@ speed 1.5
 can_use_tech technique_de_lancer
 can_use_skill a_shuriken_volant a_reseau_racinaire a_vortex a_envoutement
 rdg_range 5
+rdg_projectile 1
+rdg_projectile_speed 6
 sight_range 7
 rdg_range_bonus 1.5
 rdg_cd 2.25

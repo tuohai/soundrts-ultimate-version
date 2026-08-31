@@ -1728,7 +1728,7 @@ class Player:
                     targets = list(cls._phase_bonus_target_list())
                     if bonus_args:
                         Phase._apply_phase_bonus_to_player(self, bonus_args)
-                        self._phase_bonus_pool.append((bonus_args, targets))
+                        Phase._store_non_cost_pool_entry(self, bonus_args, targets)
                     self.current_phase = cls.type_name
 
             # 若地图未显式提供任何起始 phase，则自动选用"起源时代"——即 rules

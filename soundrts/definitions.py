@@ -1911,9 +1911,27 @@ class Rules(_Definitions):
             return
 
     def equivalent_type(self, t, faction):
-        tn = getattr(t, "type_name", "")
-        if rules.get(faction, tn):
-            return self.unit_class(rules.get(faction, tn)[0])
+        """Map a start-unit type through the faction table.
+
+        ``t`` may be a class, a type-name string (the map listed an alias
+        the current rules did not define), or None. Keep the name so a
+        StarCraft map ``peasant`` still becomes ``scv`` / ``probe`` / ``drone``.
+        """
+        if t is None:
+            return None
+        if isinstance(t, str):
+            if t.startswith("-"):
+                return t
+            tn = t
+        else:
+            tn = getattr(t, "type_name", None) or getattr(t, "__name__", "")
+        mapped = rules.get(faction, tn) if tn else None
+        if mapped:
+            cls = self.unit_class(mapped[0])
+            if cls is not None:
+                return cls
+        if isinstance(t, str):
+            return self.unit_class(t)
         return t
 
     def _get_classnames(self, condition):
@@ -1950,12 +1968,24 @@ class Rules(_Definitions):
         for a in ("can_build", "can_train", "can_upgrade_to", "can_research", "can_advance"):
             if target in _raw_class_attr(uc, a, ()):
                 return True
-        for skill in _raw_class_attr(uc, "can_use", ()):
-            effect = self.get(skill, "effect")
-            if effect and "summon" in effect[:1] and target in effect:
-                return True
+        for attr in ("can_use", "can_use_skill", "can_use_tech"):
+            for skill in _raw_class_attr(uc, attr, ()):
+                effect = self.get(skill, "effect")
+                if effect and "summon" in effect[:1] and target in effect:
+                    return True
         if getattr(uc, "morph_as_train", 0):
             if target in _raw_class_attr(uc, "can_change_to", ()):
+                return True
+        # StarCraft tech-lab: factory does not list tank in can_train; the
+        # addon grants it. Count the host as a maker so AI ``get 2 tank``
+        # builds the factory (train still attaches the addon).
+        host_name = getattr(uc, "__name__", None)
+        for addon_name in _raw_class_attr(uc, "can_have_addon", ()):
+            if not addon_name:
+                continue
+            specific = self.get(addon_name, "addon_grants_train_%s" % host_name) or ()
+            generic = self.get(addon_name, "addon_grants_train") or ()
+            if target in specific or target in generic:
                 return True
         return False
 

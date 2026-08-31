@@ -119,10 +119,11 @@ class WorldObjectsMixin:
             for a in ("can_build", "can_train", "can_upgrade_to", "can_research", "can_advance"):
                 if t in _raw_class_attr(uc, a, ()):
                     return True
-            for ability in _raw_class_attr(uc, "can_use", ()):
-                effect = rules.get(ability, "effect")
-                if effect and "summon" in effect[:1] and t in effect:
-                    return True
+            for attr in ("can_use", "can_use_skill", "can_use_tech"):
+                for ability in _raw_class_attr(uc, attr, ()):
+                    effect = rules.get(ability, "effect")
+                    if effect and "summon" in effect[:1] and t in effect:
+                        return True
             if getattr(uc, "morph_as_train", 0):
                 if t in _raw_class_attr(uc, "can_change_to", ()):
                     return True
@@ -415,11 +416,14 @@ class WorldObjectsMixin:
         upgrades = []
         forbidden_techs = []
         for place, type_, n in start[1]:
-            if must_apply_equivalent_type:
-                type_ = rules.equivalent_type(type_, faction)
             if isinstance(type_, str) and type_[0:1] == "-":
                 forbidden_techs.append(type_[1:])
-            elif is_an_upgrade(type_):
+                continue
+            if must_apply_equivalent_type:
+                type_ = rules.equivalent_type(type_, faction)
+            elif isinstance(type_, str):
+                type_ = rules.unit_class(type_)
+            if is_an_upgrade(type_):
                 upgrades.append(
                     type_.type_name
                 )  # type_.upgrade_player(self) would require the units already there

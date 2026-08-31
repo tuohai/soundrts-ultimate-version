@@ -99,6 +99,26 @@ def test_res_feudal_does_not_block_footman_get(res_loaded):
     assert hall.type_name == "townhall"
 
 
+def test_owned_townhall_is_not_held_for_later_barracks(res_loaded):
+    """Peasants must not count as an owned barracks when the opener is the hall."""
+    ai = _bare_ai(
+        plan=["get townhall 10 peasant", "get 5 footman"],
+        faction="human_faction",
+    )
+
+    def _nb(n):
+        if n == "townhall":
+            return 1
+        if n == "peasant":
+            return 10
+        return 0
+
+    ai.nb = _nb
+    ai.future_nb = lambda n: _nb(n)
+    assert not ai._defer_plan_get_token("townhall", saving_for_feudal=False)
+    assert not ai._defer_plan_get_token("peasant", saving_for_feudal=False)
+
+
 def test_res_barracks_army_not_held_for_darkarcher_or_shipyard(res_loaded):
     """Owned barracks must train; unit→unit makers and land-map docks must not bank."""
     from soundrts.lib.nofloat import to_int
@@ -172,6 +192,55 @@ def test_res_jl1_intermediate_builds_barracks(res_loaded):
         f"types={[(_type_names(c), list(getattr(c, 'upgrades', []) or [])) for c in comps]}"
     )
     assert mil_at <= 8 * 60 * 1000, mil_at
+
+
+def test_res_jl1_beginner_reaches_feudal_or_barracks(res_loaded):
+    """Beginner opener is peasants+footmen: must not ping-pong gold/wood forever."""
+    if not JL1.is_file():
+        pytest.skip("res jl1 map not present")
+    from soundrts.definitions import rules
+    from soundrts.lib.nofloat import PRECISION as P
+
+    faction = rules.factions[0] if rules.factions else "human_faction"
+    text = JL1.read_text(encoding="utf-8")
+    world = World([], 42)
+    world._parse_map(text)
+    world.square_width = int(world.square_width * P)
+    world._build_map()
+    human = DummyClient("timers")
+    human.faction = faction
+    human.alliance = "1"
+    cpu = DummyClient("beginner")
+    cpu.faction = faction
+    cpu.alliance = "2"
+    world.populate_map([human, cpu], random_starts=False)
+
+    comps = [
+        p
+        for p in world.players
+        if isinstance(p, Computer) and getattr(p, "AI_type", None) == "beginner"
+    ]
+    assert len(comps) == 1
+    c = comps[0]
+
+    done_at = None
+    game_limit_ms = 8 * 60 * 1000
+    ticks = int(game_limit_ms / VIRTUAL_TIME_INTERVAL)
+    wanted = ("barracks", "footman")
+    for _ in range(ticks):
+        world.update()
+        names = _type_names(c)
+        upg = list(getattr(c, "upgrades", []) or [])
+        if any(n in wanted for n in names) or "feudal_age" in upg:
+            done_at = world.time
+            break
+
+    assert done_at is not None, (
+        "beginner on jl1 stayed idle (no feudal/barracks); "
+        f"types={_type_names(c)} upgrades={list(getattr(c, 'upgrades', []) or [])} "
+        f"res={list(getattr(c, 'resources', []) or [])} line={getattr(c, '_line_nb', None)}"
+    )
+    assert done_at <= 8 * 60 * 1000, done_at
 
 
 @pytest.mark.skipif(

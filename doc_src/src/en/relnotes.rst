@@ -5,6 +5,64 @@ Release notes
 .. contents::
 
 
+1.4.9.1
+---------
+
+**Fix: CrazyMod pra1 computers froze on the hall opener**
+
+- **Issue**: Lines like ``get chatelet 10 serf`` never finished: an owned hall was treated as a soldier held for later barracks, and workers who can make halls counted as an already-owned barracks, so AIs only printed ``vermine_nm_loop`` and built nothing.
+- **Change**: Owned-building ``get`` lines complete; worker-made halls are not barracks; soldier-holds skip buildings. Skill summons (``can_use_skill`` → ``termitiere``) count as makers.
+- **Scope**: Computer plan parsing and makers; CrazyMod zerg AI dropped extra ``get larve`` (hatchery spawns larvae).
+
+**Fix: untargeted skills (larva) did nothing**
+
+- **Issue**: Empty ``effect_target`` left ``UseOrder`` with no target, so CrazyMod ``a_larve`` and similar skills no-op'd.
+- **Change**: Missing / ``self`` targets apply to the caster.
+- **Scope**: ``worldorders/skills.py``.
+
+**Change: CrazyMod ranged units get projectile speed**
+
+- **Issue**: Long-range units/buildings lacked ``rdg_projectile_speed``, so shots hit instantly.
+- **Change**: Added ``rdg_projectile`` / ``rdg_projectile_speed`` from range.
+- **Scope**: ``mods/crazyMod9beta10/rules.txt``.
+
+**Change: StarCraft AI uses this mod's unit names**
+
+- **Issue**: ``ai.txt`` still asked for vanilla ``peasant`` / ``footman`` / ``townhall``, so computers never trained.
+- **Change**: Terran/Protoss/Zerg scripts use SCV, probe, drone, marine, etc. Addon ``addon_grants_train`` counts as a maker so ``get tank`` builds a factory.
+- **Scope**: ``mods/starcraft/ai.txt`` and maker lookup.
+
+**Change: StarCraft maps use minerals/vespene; start peasants spawn**
+
+- **Issue**: Maps still listed ``goldmines`` / ``woods``; start ``peasant`` is undefined in this mod (``couldn't create an initial unit``).
+- **Change**: Multi maps use ``mineral_field`` / ``geyser``; the faction table maps map ``peasant`` to SCV / probe / drone even when peasant has no class.
+- **Scope**: StarCraft multi maps, ``equivalent_type``, start parsing.
+
+**Change: StarCraft times and gather match SC2 Faster**
+
+- **Issue**: Train, upgrade, research times and gather yields were still closer to SC1.
+- **Change**: Align with SC2 Faster (5 minerals, 4 gas / 2 depleted, geyser 2250); ranged units get ``rdg_projectile_speed``.
+- **Scope**: ``mods/starcraft/rules.txt``.
+
+**Fix: jl1 beginner computers ping-ponged gold and wood**
+
+- **Issue**: When feudal needed both gold and wood, every AI turn stole the same peasants from gold to wood and back, so trips never finished and beginners idled.
+- **Change**: Do not steal a worker from another missing resource that is still at or under its cap.
+- **Scope**: Computer ``_send_workers_toward_resources``.
+
+**Fix: feudal ``time_cost -5`` skipped proportion 2 and 8**
+
+- **Issue**: Phase ``time_cost -5`` applied on the player and again from ``_phase_bonus_pool``, so a 12s footman became 2s; 300ms ticks skipped 2/5/8 on the bar.
+- **Change**: The pool keeps combat stats only; train duration is snapshotted and skipped ``completeness`` 0–10 values are filled.
+- **Scope**: Phase pool and ``ProductionOrder`` progress.
+
+**Fix: first achievement unlock also announced a repeat**
+
+- **Issue**: ``evaluate_new_unlocks`` wrote ``once_keys`` before ``evaluate_repeat_completions``, so a first unlock was also treated as a recompletion.
+- **Change**: Evaluate repeats first, then new unlocks. Private still has 0 loadout slots (lieutenant gets 1); that is by design.
+- **Scope**: ``process_game_end_achievements``.
+
+
 1.4.9.0
 ---------
 

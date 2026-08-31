@@ -69,6 +69,8 @@ class _CanAttackStub:
 
     # 绑定 mixin 方法
     _is_neutral_target = wad.CreatureAIDecision._is_neutral_target
+    _is_wildlife_animal = wad.CreatureAIDecision._is_wildlife_animal
+    _is_approach_only_target = wad.CreatureAIDecision._is_approach_only_target
     _player_ordered_attack_on = wad.CreatureAIDecision._player_ordered_attack_on
     can_attack = wad.CreatureAIDecision.can_attack
 
@@ -183,9 +185,14 @@ def test_decide_cache_skips_neutral_attack():
 
     class _DecideStub:
         _last_decide_time = 0
+        _next_decide_time = 0
         _decision_cache = {}
         _decision_cache_bucket = -1
         _cached_has_attack = True
+        _flee_on_hit_enabled = wad.CreatureAIDecision._flee_on_hit_enabled
+        _has_pursue_attacker = wad.CreatureAIDecision._has_pursue_attacker
+        _is_approach_only_target = wad.CreatureAIDecision._is_approach_only_target
+        _is_wildlife_animal = wad.CreatureAIDecision._is_wildlife_animal
 
         def __init__(self):
             self.ai_mode = "offensive"

@@ -1265,7 +1265,7 @@ def termite_gardien
 is_a unit
 title 77243
 move 77642 77643
-mdg	_hit 77959 77592
+mdg_hit 77959 77592
 keyboard soldier1
 
 def termite_conquerant

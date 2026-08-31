@@ -524,7 +524,10 @@ class WorldMapMixin:
             elif re.match("[0-9]+$", x):
                 multiplicator = int(x)
             else:
-                start.append((sq, rules.unit_class(x), multiplicator))
+                cls = rules.unit_class(x)
+                # Keep the token if the type is only a faction alias
+                # (StarCraft ``peasant`` → scv); parse_assets maps it later.
+                start.append((sq, cls if cls is not None else x, multiplicator))
                 multiplicator = 1
         
         # 添加neutral / population 信息到 start 数据中

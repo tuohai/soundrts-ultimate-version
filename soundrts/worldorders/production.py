@@ -93,6 +93,23 @@ def _production_order_title(status_msg, unit):
     return result
 
 
+def completeness_values_between(prev, c):
+    """Integers to emit to move from ``prev`` to ``c`` on a 0..10 progress bar.
+
+    Short durations (feudal ``time_cost -5`` → 7s or a double-applied 2s) can
+    jump over ticks when sampled every ``VIRTUAL_TIME_INTERVAL``. Fill those
+    gaps so proportion_0 .. proportion_10 all play.
+    """
+    c = max(0, min(10, int(c)))
+    if prev is None:
+        return [c]
+    prev = int(prev)
+    if c == prev:
+        return []
+    step = 1 if c > prev else -1
+    return list(range(prev + step, c + step, step))
+
+
 class ProductionOrder(ComplexOrder):
 
     is_imperative = True
@@ -105,22 +122,28 @@ class ProductionOrder(ComplexOrder):
             return
         self.player.pay(self.cost)
         self.time = self.time_cost
+        self._completeness_duration = self.time
 
     _previous_completeness = None
+    _completeness_duration = None
 
     def _notify_completeness(self):
-        if self.time_cost == 0:
+        duration = getattr(self, "_completeness_duration", None) or self.time_cost
+        if not duration:
             return
         if self.time < 0:
             t = 0
-        elif self.time > self.time_cost:  # can happen when training archers
-            t = self.time_cost
+        elif self.time > duration:  # can happen when training archers
+            t = duration
         else:
             t = self.time
-        c = int((self.time_cost - t) * 10 / self.time_cost)
-        if c != self._previous_completeness:
-            self.unit.notify("completeness,%s" % c)
-            self._previous_completeness = c
+        c = int((duration - t) * 10 / duration)
+        steps = completeness_values_between(self._previous_completeness, c)
+        if not steps:
+            return
+        for n in steps:
+            self.unit.notify("completeness,%s" % n)
+        self._previous_completeness = c
 
     _has_started = False
 
@@ -1070,6 +1093,7 @@ class TrainOrder(ProductionOrder):
         # 预扣除全部资源成本
         self.player.pay(self.total_cost)
         self.time = self.time_cost
+        self._completeness_duration = self.time
 
     def _start(self):
         # 覆盖父类方法，正确预扣除食物成本

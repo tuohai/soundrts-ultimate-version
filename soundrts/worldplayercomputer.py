@@ -345,6 +345,13 @@ class Computer(Player):
                         # warn — do not silently map base aliases via race table.
                         if rules.unit_class(w) is not None:
                             name = self.equivalent(w)
+                            # Already-owned tokens must complete, otherwise a
+                            # hall/worker opener (crazyMod ``get chatelet 10
+                            # serf``) never leaves the line while soldier-hold
+                            # defers the hall to bank for later barracks.
+                            if self.nb(name) >= n:
+                                n = 1
+                                continue
                             if self._defer_plan_get_token(
                                 name, saving_for_feudal=saving_for_feudal
                             ):
@@ -1607,8 +1614,22 @@ class Computer(Player):
             sw = cost[1] if len(cost) > 1 else 0
             sg = cost[0] if cost else 0
             if sw or sg:
+                # This hold is for soldiers. Buildings that upgrade from a
+                # summoned stump (vermine termitiere ← souche) must not be
+                # treated as an already-owned barracks army.
+                if getattr(uc, "is_a_building", False):
+                    return False
                 own_owned = False
                 for maker in rules.get_makers(type_name) or ():
+                    mc = rules.unit_class(maker)
+                    try:
+                        if mc is not None and issubclass(mc, Worker):
+                            # Workers can "make" halls; that is not an owned
+                            # barracks/range. Holding the hall itself freezes
+                            # crazyMod openers (chatelet / planque / couveuse).
+                            continue
+                    except TypeError:
+                        pass
                     fut = future_nb(maker) if callable(future_nb) else 0
                     if nb(maker) > 0 or fut > 0:
                         own_owned = True
@@ -4021,8 +4042,10 @@ class Computer(Player):
         """Reassign a few workers to gather specifically needed resources (e.g. farm food)."""
         if not resource_indices:
             return
+        indices = list(resource_indices)
         n_w = max(1, len(getattr(self, "_workers", ()) or ()))
-        for resource_index in resource_indices:
+        caps = {}
+        for resource_index in indices:
             cap = max_workers
             if cap is None:
                 if resource_index == 1:
@@ -4041,6 +4064,21 @@ class Computer(Player):
                     cap = max(2, n_w // 3)
                 else:
                     cap = 2
+            caps[resource_index] = cap
+
+        def _gather_resource_index(u):
+            if u.orders and u.orders[0].keyword == "gather":
+                return self._target_resource_index(u.orders[0].target)
+            return None
+
+        counts = {i: 0 for i in indices}
+        for u in getattr(self, "_workers", ()) or ():
+            idx = _gather_resource_index(u)
+            if idx in counts:
+                counts[idx] += 1
+
+        for resource_index in indices:
+            cap = caps[resource_index]
             sent = 0
             for u in self._workers:
                 if sent >= cap:
@@ -4056,24 +4094,34 @@ class Computer(Player):
                         continue
                 if u.orders and u.orders[0].keyword == "gather":
                     current = u.orders[0].target
-                    if self._target_resource_index(current) == resource_index:
+                    current_idx = self._target_resource_index(current)
+                    if current_idx == resource_index:
                         sent += 1
+                        continue
+                    # Feudal needs gold AND wood: sequential passes used to
+                    # stop miners then lumberjacks every AI turn, so trips
+                    # never finished (jl1 beginner idle).
+                    if (
+                        current_idx in caps
+                        and counts.get(current_idx, 0) <= caps[current_idx]
+                    ):
                         continue
                     # Keep lumberjacks on wood while a production building is unpaid.
                     if (
                         resource_index != 1
-                        and self._target_resource_index(current) == 1
+                        and current_idx == 1
                         and self._keep_lumberjacks()
                     ):
                         continue
                     # Keep miners on gold while a later expensive age still needs it.
                     if (
                         resource_index == 2
-                        and self._target_resource_index(current) == 0
+                        and current_idx == 0
                         and "resource1" in self._age_up_missing_resource_types()
                     ):
                         continue
                 # gold_mint coins etc. before mines when that resource is missing
+                old_idx = _gather_resource_index(u)
                 pickup = self._choose_pickup_target(
                     u, resource_indices=[resource_index]
                 )
@@ -4085,6 +4133,10 @@ class Computer(Player):
                     ):
                         u.take_order(["stop"])
                     u.take_order(["pickup", pickup.id])
+                    if old_idx in counts:
+                        counts[old_idx] = max(0, counts[old_idx] - 1)
+                    if resource_index in counts:
+                        counts[resource_index] += 1
                     sent += 1
                     continue
                 target = self._choose_gather_target(
@@ -4098,6 +4150,10 @@ class Computer(Player):
                         # auto_explore is not gathering; counting it filled the
                         # lumberjack cap and left miners on gold/stone.
                         if kw in ("gather", "go"):
+                            if old_idx in counts:
+                                counts[old_idx] = max(0, counts[old_idx] - 1)
+                            if resource_index in counts:
+                                counts[resource_index] += 1
                             sent += 1
                     continue
                 if u.orders and u.orders[0].keyword in (
@@ -4107,6 +4163,10 @@ class Computer(Player):
                 ):
                     u.take_order(["stop"])
                 if self._try_send_worker_to_gather_amphibious(u, target):
+                    if old_idx in counts:
+                        counts[old_idx] = max(0, counts[old_idx] - 1)
+                    if resource_index in counts:
+                        counts[resource_index] += 1
                     sent += 1
                     continue
                 u.take_order(["gather", target.id])
@@ -4114,6 +4174,10 @@ class Computer(Player):
                     self._gathered_deposits[target] += 1
                 except Exception:
                     self._gathered_deposits[target] = 1
+                if old_idx in counts:
+                    counts[old_idx] = max(0, counts[old_idx] - 1)
+                if resource_index in counts:
+                    counts[resource_index] += 1
                 sent += 1
 
     def _choose_water_gather_target(self, worker):
@@ -5446,6 +5510,40 @@ class Computer(Player):
         finally:
             getting.discard(type_name)
 
+    def _collapse_ai_get_types_for_log(self, types):
+        """Civ skins of one semantic type log as this player's equivalent.
+
+        ``get_makers(house)`` lists peasant plus every race villager. Dumping
+        that list looks like the AI wants Chinese/Mongol/Frank workers.
+        """
+        names = []
+        for t in types:
+            if t is None:
+                continue
+            if isinstance(t, str):
+                names.append(t)
+            else:
+                names.append(getattr(t, "__name__", None) or repr(t))
+        if len(names) <= 1:
+            return names
+        race_sources = getattr(rules, "_race_equivalent_sources", None)
+        votes = {}
+        for name in names:
+            sources = ()
+            if callable(race_sources):
+                sources = race_sources(name) or ()
+            for key in sources or (name,):
+                votes[key] = votes.get(key, 0) + 1
+        if len(votes) != 1:
+            return names
+        semantic = next(iter(votes))
+        eq = getattr(self, "equivalent", None)
+        if callable(eq):
+            mapped = eq(semantic)
+            if mapped:
+                return [mapped]
+        return [semantic]
+
     def _get(self, nb, types):
         if not hasattr(self, "_safe_cnt"):
             self._safe_cnt = 0
@@ -5459,7 +5557,11 @@ class Computer(Player):
             return False
         self._safe_cnt += 1
         if self._safe_cnt > 10:
-            info("AI has trouble getting: %s %s", nb, types)
+            info(
+                "AI has trouble getting: %s %s",
+                nb,
+                self._collapse_ai_get_types_for_log(types),
+            )
             return False
         for wanted in types:
             if isinstance(wanted, str):
@@ -5739,12 +5841,14 @@ class Computer(Player):
         if not self.gather(unit_type.cost, unit_type.population_cost):
             return False
         for u in self.units:
-            if not getattr(u, "morph_as_train", 0):
-                continue
-            if type_name in u.can_upgrade_to and UpgradeToOrder.is_allowed(u, type_name):
+            if type_name in (getattr(u, "can_upgrade_to", ()) or ()) and UpgradeToOrder.is_allowed(
+                u, type_name
+            ):
                 u.take_order(["upgrade_to", type_name])
                 self._invalidate_play_derived_counts()
                 return True
+            if not getattr(u, "morph_as_train", 0):
+                continue
             if type_name in u.can_change_to and ChangeToOrder.is_allowed(u, type_name):
                 u.take_order(["change_to", type_name])
                 return True

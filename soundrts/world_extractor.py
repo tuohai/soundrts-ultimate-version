@@ -5,10 +5,11 @@ Keywords (rules.txt):
   depleted_production_qty N  — per-trip yield after the reserve hits 0 (0 = stop)
   deposit_volume N           — default reserve on the deposit type (map qty ``1`` = use this)
 
-SC1 Brood War alignment: workers gather from the building (extraction_qty 8 /
-depleted 2); geyser reserve is on ``source_qty``. Prefer ``auto_production 0``
-so trips debit the reserve directly via Building.extract_resource.
-``gather_slots 3`` caps concurrent extractors (4th waits) like SC gas saturation.
+StarCraft gas extractors: workers gather from the building (qty from rules;
+SC2 uses extraction_qty 4 / depleted 2). Geyser reserve is on ``source_qty``.
+Prefer ``auto_production 0`` so trips debit the reserve directly via
+Building.extract_resource. ``gather_slots 3`` caps concurrent extractors
+(4th waits) like SC gas saturation.
 
 Related: requires_deposit, resource_type, extraction_qty, is_gather, gather_slots.
 """

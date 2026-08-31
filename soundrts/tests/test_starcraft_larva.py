@@ -46,7 +46,7 @@ def test_starcraft_larva_rules_loaded():
     assert "zergling" in larva.can_upgrade_to
     assert getattr(hatchery, "spawns_unit", None) == "larva"
     assert getattr(hatchery, "larva_cap", 0) == 3
-    assert getattr(hatchery, "larva_spawn_time", 0) == to_int("15")
+    assert getattr(hatchery, "larva_spawn_time", 0) == to_int("8")
     assert "spawning_pool" in zergling.requirements
 
 

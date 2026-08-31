@@ -44,6 +44,7 @@ def _full_square(width=12, square_id="full"):
         y=0,
         objects=objects,
         have_enough_square_space=have_enough,
+        checks_square_space=True,
     )
 
 
@@ -55,6 +56,7 @@ def _make_unit(*, target, place=None, space=1):
             is_ground=True,
             objects=[],
             have_enough_square_space=lambda u: True,
+            checks_square_space=True,
         )
     unit = types.SimpleNamespace(
         airground_type="ground",
@@ -132,6 +134,7 @@ def test_entry_block_ignores_unrelated_adjacent_full_square():
         is_ground=True,
         objects=[],
         have_enough_square_space=lambda u: True,
+        checks_square_space=True,
     )
     unit = _make_unit(target=dest)
     order = GoOrder(unit, [dest.id])

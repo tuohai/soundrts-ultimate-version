@@ -459,8 +459,10 @@ class Phase(Upgrade):
 
                 cls._apply_phase_bonus_to_player(player, bonus_args)
                 cls._apply_phase_bonus_to_existing_units(player, bonus_args, targets)
-                # 同时把 targets 一起存入，以便新加入的单位也能正确过滤
-                player._phase_bonus_pool.append((bonus_args, targets))
+                # Cost/time_cost already went to player-level. Storing them in
+                # the pool too makes merge_pool_time_for_type / merge_pool_cost
+                # apply the same -5 twice (feudal footman 12s → 2s, skip 2/8).
+                cls._store_non_cost_pool_entry(player, bonus_args, targets)
 
         if cls.type_name not in player.upgrades:
             player.upgrades.append(cls.type_name)
@@ -572,6 +574,18 @@ class Phase(Upgrade):
                 result.extend([stat, value])
             i += 2
         return result
+
+    @classmethod
+    def _store_non_cost_pool_entry(cls, player, bonus_args, targets):
+        """Keep combat stats for future units; cost stats stay player-level only."""
+        non_cost = cls._filter_out_cost_args(list(bonus_args or ()))
+        if not non_cost:
+            return
+        pool = getattr(player, "_phase_bonus_pool", None)
+        if pool is None:
+            player._phase_bonus_pool = []
+            pool = player._phase_bonus_pool
+        pool.append((non_cost, list(targets or ())))
 
     @staticmethod
     def _add_list_bonus_to_player(player, abs_attr, percent_attr, value, scale=1):

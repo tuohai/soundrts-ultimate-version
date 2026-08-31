@@ -4,6 +4,64 @@ Notas de la versión
 
 .. contents::
 
+1.4.9.1
+--------
+
+**Corrección: el PC de CrazyMod en pra1 se congelaba en el ayuntamiento**
+
+- **Problema**: ``get chatelet 10 serf`` no terminaba: el ayuntamiento propio se trataba como soldado reservado para el cuartel, y los trabajadores que lo construyen contaban como cuartel ya poseído; el PC solo imprimía ``vermine_nm_loop``.
+- **Cambio**: las líneas ``get`` de edificios propios se completan; un ayuntamiento de trabajador no es un cuartel. Las invocaciones por habilidad (``can_use_skill`` → ``termitiere``) cuentan como fabricantes.
+- **Alcance**: plan del PC y fabricantes; la IA zerg de CrazyMod quita ``get larve`` extra (el criadero genera larvas).
+
+**Corrección: habilidades sin objetivo (larva) no hacían nada**
+
+- **Problema**: ``effect_target`` vacío dejaba ``UseOrder`` sin objetivo (``a_larve`` de CrazyMod).
+- **Cambio**: sin objetivo / ``self`` se aplica al lanzador.
+- **Alcance**: ``worldorders/skills.py``.
+
+**Cambio: unidades a distancia de CrazyMod con velocidad de proyectil**
+
+- **Problema**: faltaba ``rdg_projectile_speed``; los disparos impactaban al instante.
+- **Cambio**: se añade ``rdg_projectile`` / ``rdg_projectile_speed`` según el alcance.
+- **Alcance**: ``mods/crazyMod9beta10/rules.txt``.
+
+**Cambio: la IA de StarCraft usa los nombres del mod**
+
+- **Problema**: ``ai.txt`` pedía ``peasant`` / ``footman`` / ``townhall`` del paquete base.
+- **Cambio**: scripts terran/protoss/zerg con SCV, sonda, zángano, marine, etc. ``addon_grants_train`` cuenta como fabricante (``get tank`` construye la fábrica).
+- **Alcance**: ``mods/starcraft/ai.txt`` y búsqueda de fabricantes.
+
+**Cambio: mapas StarCraft con minerales/vespeno; el peasant inicial aparece**
+
+- **Problema**: mapas con ``goldmines`` / ``woods``; ``peasant`` inicial no existe (``couldn't create an initial unit``).
+- **Cambio**: mapas multijugador con ``mineral_field`` / ``geyser``; la tabla de facción mapea ``peasant`` a SCV / sonda / zángano.
+- **Alcance**: mapas multi, ``equivalent_type``, parseo inicial.
+
+**Cambio: tiempos y recolección StarCraft alineados con SC2 Faster**
+
+- **Problema**: tiempos y recolección seguían más cerca de SC1.
+- **Cambio**: SC2 Faster (5 minerales, 4 gas / 2 agotado, géiser 2250); proyectiles a distancia.
+- **Alcance**: ``mods/starcraft/rules.txt``.
+
+**Corrección: el PC principiante en jl1 alternaba oro y madera**
+
+- **Problema**: el feudal pedía oro y madera; cada turno robaba a los mismos campesinos, los viajes no acababan.
+- **Cambio**: no se roba a un trabajador de otro recurso que aún falta y no supera su tope.
+- **Alcance**: ``_send_workers_toward_resources``.
+
+**Corrección: ``time_cost -5`` feudal saltaba 2 y 8 en la barra**
+
+- **Problema**: el bonus se aplicaba dos veces (jugador + ``_phase_bonus_pool``); el peón de 12s pasaba a 2s y la barra ``0 1 3 4 5 6 7 9 10``.
+- **Cambio**: el pozo solo guarda stats de combate; se rellenan los ``completeness`` 0–10 saltados.
+- **Alcance**: pozo de era y ``ProductionOrder``.
+
+**Corrección: el primer desbloqueo de logro anunciaba también repetición**
+
+- **Problema**: ``evaluate_new_unlocks`` escribía ``once_keys`` antes de ``evaluate_repeat_completions``.
+- **Cambio**: primero repeticiones, luego desbloqueos. El soldado raso sigue con 0 huecos de cartas (el teniente tiene 1).
+- **Alcance**: ``process_game_end_achievements``.
+
+
 1.4.9.0
 --------
 

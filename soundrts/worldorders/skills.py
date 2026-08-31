@@ -149,7 +149,8 @@ class UseOrder(ComplexOrder):
                     return
         elif self.type.effect_target == ["random"]:
             self.target = self.world.random.choice(self.player.world.squares)
-        elif self.type.effect_target == ["self"]:
+        else:
+            # No effect_target, empty, or self: untargeted skills (CrazyMod a_larve).
             self.target = self.unit
             
         # 检查资源消耗

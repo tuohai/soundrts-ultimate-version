@@ -133,6 +133,43 @@ def test_repeat_medal_zero_means_no_repeat_reward(isolated_achievements):
     assert ach.evaluate_repeat_completions(ctx, state) == []
 
 
+def test_process_game_end_first_unlock_does_not_announce_repeat(isolated_achievements):
+    ach.load_achievements("""
+        def grade_c
+        title 5303
+        condition grade C
+        once_per map
+        reward medal 8
+        repeat_medal 2
+    """)
+    player = SimpleNamespace(
+        has_victory=True,
+        is_spectator=False,
+        stats=SimpleNamespace(
+            score_breakdown=lambda: {
+                "total": 400,
+                "utilization_percent": 50,
+                "survival": 50,
+                "building_defense": 50,
+                "ai_defeat_entries": [],
+            },
+            score_grade_letter=lambda total=None: "C",
+        ),
+    )
+    game = SimpleNamespace(map=SimpleNamespace(name="jl1"))
+    msgs = ach.process_game_end_achievements(game, player)
+    assert any(mp.ACHIEVEMENT_UNLOCKED[0] in m for m in msgs)
+    assert not any(mp.REPEAT_ACHIEVEMENT[0] in m for m in msgs)
+    data = json.loads(isolated_achievements.read_text(encoding="utf-8"))
+    assert data["medals"] == 8
+
+    msgs2 = ach.process_game_end_achievements(game, player)
+    assert not any(mp.ACHIEVEMENT_UNLOCKED[0] in m for m in msgs2)
+    assert any(mp.REPEAT_ACHIEVEMENT[0] in m for m in msgs2)
+    data = json.loads(isolated_achievements.read_text(encoding="utf-8"))
+    assert data["medals"] == 10
+
+
 def test_frugal_victory_requires_low_utilization(isolated_achievements):
     _load_sample()
     ctx = ach.AchievementContext(

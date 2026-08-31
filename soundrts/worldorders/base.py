@@ -195,7 +195,7 @@ class Order:
         square = _order_target_square(target)
         if square is None or square is self.unit.place:
             return False
-        if not hasattr(square, "have_enough_square_space"):
+        if not getattr(square, "checks_square_space", False):
             return False
         if square.have_enough_square_space(self.unit):
             return False

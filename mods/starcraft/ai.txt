@@ -1,142 +1,274 @@
-; StarCraft mod — script AIs for terran / protoss / zerg factions.
+; StarCraft computer scripts. Names are the mod's own types (scv / marine,
+; probe / zealot, drone / zergling), not the base-pack peasant / footman / …
+; ``clear`` drops res/ai.txt so beginner/nightmare cannot fall back to Warcraft.
 
-; Generic names (peasant, footman, barracks) resolve via faction equivalents in rules.txt.
-
-; Invite "easy" or "aggressive" computers in multiplayer; faction picks the script below.
+clear
 
 
+; ===========================================================================
+; Terran
+; ===========================================================================
 
 def sc_terran_easy
-
+defeat_score 10
+counter_skill 25
 watchdog 900
-
-get 6 peasant
-
+workers 8
+label sc_terran_easy
+get 6 scv
 get 1 supply_depot
-
+get 1 barracks
+get 8 scv 6 marine
 get 1 refinery
-
-get 1 barracks 4 footman
-
-get 1 engineering_bay
-
-get 1 factory 1 tech_lab 1 tank
-
-get 12 footman 2 hellion
-
-goto -1
-
-
+get 10 scv 10 marine
+goto sc_terran_easy
 
 def sc_terran_aggressive
-
+defeat_score 20
+counter_skill 50
 watchdog 600
-
 constant_attacks 1
-
 research 1
-
-get 4 peasant
-
+workers 12
+attack_ratio 150
+label sc_terran_agg_loop
+get 6 scv
 get 1 supply_depot
-
+get 1 barracks 6 marine
 get 1 refinery
-
-get 1 barracks 6 footman
-
-get 1 engineering_bay
-
-get 1 factory 1 tech_lab 2 tank
-
-get 1 armory
-
-get 1 starport 1 tech_lab 1 medivac
-
-get 20 footman 4 hellion 4 tank
-
+get 8 scv 1 factory 2 hellion
 attack
+get 2 supply_depot 12 marine 2 hellion
+goto sc_terran_agg_loop
 
-goto -1
+def sc_terran_advanced
+defeat_score 40
+counter_skill 75
+watchdog 480
+constant_attacks 1
+research 1
+workers 16
+attack_ratio 120
+label sc_terran_adv_loop
+get 8 scv 1 supply_depot 1 barracks 8 marine
+get 1 refinery 1 factory 1 tech_lab 2 tank
+attack
+get 2 supply_depot 1 engineering_bay 14 marine 2 marauder 2 hellion 2 tank
+attack
+goto sc_terran_adv_loop
+
+def sc_terran_expert
+defeat_score 80
+counter_skill 90
+starting_resources 40 20
+watchdog 360
+constant_attacks 1
+research 1
+workers 18
+attack_ratio 100
+label sc_terran_exp_loop
+get 10 scv 2 supply_depot 1 barracks 10 marine
+get 1 refinery 1 factory 1 tech_lab 2 tank 2 hellion
+get 1 starport 1 medivac
+attack
+get 1 engineering_bay 1 armory 1 bunker 16 marine 4 marauder 3 tank 2 medivac
+attack
+goto sc_terran_exp_loop
+
+def sc_terran_nightmare
+defeat_score 200
+counter_skill 100
+starting_resources 80 40
+starting_population 20
+watchdog 240
+constant_attacks 1
+research 1
+workers 22
+attack_ratio 80
+label sc_terran_nm_loop
+get 12 scv 2 supply_depot 1 barracks 12 marine
+get 1 refinery 1 factory 1 tech_lab 3 tank
+get 1 starport 2 medivac 1 engineering_bay 1 armory
+attack
+get 3 supply_depot 20 marine 6 marauder 4 hellion 4 tank 2 medivac 2 bunker
+attack
+goto sc_terran_nm_loop
 
 
+; ===========================================================================
+; Protoss
+; ===========================================================================
 
 def sc_protoss_easy
-
+defeat_score 10
+counter_skill 25
 watchdog 900
-
-get 4 peasant
-
+workers 8
+label sc_protoss_easy
+get 5 probe
 get 1 pylon
-
-get 1 barracks 4 footman
-
-get 1 cybernetics_core 4 archer
-
-get 8 footman
-
-goto -1
-
-
+get 1 gateway
+get 6 probe 4 zealot
+get 2 pylon 8 probe 8 zealot
+goto sc_protoss_easy
 
 def sc_protoss_aggressive
-
+defeat_score 20
+counter_skill 50
 watchdog 600
-
 constant_attacks 1
-
-get 4 peasant
-
+research 1
+workers 12
+attack_ratio 150
+label sc_protoss_agg_loop
+get 5 probe
 get 1 pylon
-
-get 1 barracks 6 footman
-
+get 1 gateway 6 zealot
 get 1 assimilator
-
-get 1 cybernetics_core 8 archer
-
-get 1 forge
-
+get 1 cybernetics_core 4 dragoon
 attack
+get 2 pylon 8 zealot 6 dragoon
+goto sc_protoss_agg_loop
 
-goto -1
+def sc_protoss_advanced
+defeat_score 40
+counter_skill 75
+watchdog 480
+constant_attacks 1
+research 1
+workers 16
+attack_ratio 120
+label sc_protoss_adv_loop
+get 6 probe 1 pylon 1 gateway 8 zealot
+get 1 assimilator 1 cybernetics_core 6 dragoon
+get 1 forge
+attack
+get 3 pylon 10 zealot 8 dragoon 1 photon_cannon
+attack
+goto sc_protoss_adv_loop
+
+def sc_protoss_expert
+defeat_score 80
+counter_skill 90
+starting_resources 40 20
+watchdog 360
+constant_attacks 1
+research 1
+workers 18
+attack_ratio 100
+label sc_protoss_exp_loop
+get 8 probe 2 pylon 1 gateway 8 zealot
+get 1 assimilator 1 cybernetics_core 6 dragoon 1 forge
+get 1 stargate 1 observer 2 phoenix
+attack
+get 1 templar_archives 4 pylon 10 zealot 8 dragoon 2 dark_templar 2 phoenix
+attack
+goto sc_protoss_exp_loop
+
+def sc_protoss_nightmare
+defeat_score 200
+counter_skill 100
+starting_resources 80 40
+starting_population 20
+watchdog 240
+constant_attacks 1
+research 1
+workers 22
+attack_ratio 80
+label sc_protoss_nm_loop
+get 10 probe 2 pylon 1 gateway 10 zealot
+get 1 assimilator 1 cybernetics_core 8 dragoon
+get 1 stargate 1 fleet_beacon 1 observer 2 phoenix
+attack
+get 1 templar_archives 1 forge 4 pylon 12 zealot 10 dragoon 2 high_templar 2 dark_templar 2 carrier 2 photon_cannon
+attack
+goto sc_protoss_nm_loop
 
 
+; ===========================================================================
+; Zerg
+; ===========================================================================
 
 def sc_zerg_easy
-
+defeat_score 10
+counter_skill 25
 watchdog 900
-
-get 4 peasant
-
+workers 8
+label sc_zerg_easy
+get 6 drone
 get 1 overlord
-
-get 1 barracks 6 footman
-
-get 1 roach_warren 4 knight
-
-get 1 extractor 10 footman
-
-goto -1
-
-
+get 1 spawning_pool
+get 8 drone 8 zergling
+get 2 overlord 10 drone 12 zergling
+goto sc_zerg_easy
 
 def sc_zerg_aggressive
-
+defeat_score 20
+counter_skill 50
 watchdog 600
-
 constant_attacks 1
-
-get 4 peasant
-
+research 1
+workers 12
+attack_ratio 150
+label sc_zerg_agg_loop
+get 6 drone
 get 1 overlord
-
-get 1 barracks 8 footman
-
-get 1 hydralisk_den 6 archer
-
-get 1 extractor 16 footman
-
+get 1 spawning_pool 8 zergling
+get 1 extractor
+get 1 hydralisk_den 6 hydralisk
 attack
+get 2 overlord 12 zergling 8 hydralisk
+goto sc_zerg_agg_loop
 
-goto -1
+def sc_zerg_advanced
+defeat_score 40
+counter_skill 75
+watchdog 480
+constant_attacks 1
+research 1
+workers 16
+attack_ratio 120
+label sc_zerg_adv_loop
+get 8 drone 1 overlord 1 spawning_pool 10 zergling
+get 1 extractor 1 roach_warren 6 roach
+attack
+get 1 hydralisk_den 2 overlord 12 zergling 6 roach 6 hydralisk
+attack
+goto sc_zerg_adv_loop
 
+def sc_zerg_expert
+defeat_score 80
+counter_skill 90
+starting_resources 40 20
+watchdog 360
+constant_attacks 1
+research 1
+workers 18
+attack_ratio 100
+label sc_zerg_exp_loop
+get 10 drone 2 overlord 1 spawning_pool 12 zergling
+get 1 extractor 1 roach_warren 1 hydralisk_den 6 roach 6 hydralisk
+get 1 queen_nest 1 queen
+attack
+get 1 spire 3 overlord 16 zergling 8 roach 8 hydralisk 4 mutalisk
+attack
+goto sc_zerg_exp_loop
+
+def sc_zerg_nightmare
+defeat_score 200
+counter_skill 100
+starting_resources 80 40
+starting_population 20
+watchdog 240
+constant_attacks 1
+research 1
+workers 22
+attack_ratio 80
+label sc_zerg_nm_loop
+get 12 drone 2 overlord 1 spawning_pool 14 zergling
+get 1 extractor 1 roach_warren 1 hydralisk_den 8 roach 8 hydralisk
+get 1 queen_nest 1 queen 1 spire 4 mutalisk
+attack
+get 1 ultralisk_cavern 4 overlord 20 zergling 10 roach 10 hydralisk 6 mutalisk 2 ultralisk
+attack
+goto sc_zerg_nm_loop

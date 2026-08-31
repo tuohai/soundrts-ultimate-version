@@ -164,3 +164,28 @@ def test_portuguese_building_shells_fall_back_for_ai_get(aoe2_rules):
         for u in comp.units
         for o in (getattr(u, "orders", None) or ())
     )
+
+
+def test_trouble_getting_log_collapses_civ_villagers(aoe2_rules):
+    """House makers list every civ villager; log must name this AI's worker."""
+    from soundrts.worldplayerbase.base import Player
+
+    class _AI:
+        faction = "portuguese"
+
+        def equivalent(self, tn):
+            return Player.equivalent(self, tn)
+
+    types = [
+        "peasant",
+        "chinese_villager",
+        "mongol_herdsman",
+        "frank_villager",
+        "portuguese_villager",
+        "aztec_villager",
+    ]
+    assert Computer._collapse_ai_get_types_for_log(_AI(), types) == [
+        "portuguese_villager"
+    ]
+    mixed = ["house", "mill"]
+    assert Computer._collapse_ai_get_types_for_log(_AI(), mixed) == mixed

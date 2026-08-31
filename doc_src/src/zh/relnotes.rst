@@ -4,6 +4,64 @@
 .. contents::
 
 
+1.4.9.1
+---------
+
+**修复：疯狂模组 pra1 电脑大厅开局卡住**
+
+- **问题**：``get chatelet 10 serf`` 这类大厅开局一直占着当前行：已有大厅仍被当成「留给兵营的士兵」，工人造大厅也被当成已有兵营，电脑只打 ``vermine_nm_loop`` 之类标签、什么都不造。
+- **改进**：已有建筑的 ``get`` 行会走完；工人造的大厅不算兵营；兵营冻结不再套到建筑上。树桩召唤（``can_use_skill`` 招 ``termitiere``）算制造者。
+- **范围**：电脑计划解析、制造者查找；疯狂模组虫族 AI 去掉多余 ``get larve``（幼虫由孵化场刷）。
+
+**修复：无目标技能（幼虫）点了没效果**
+
+- **问题**：``effect_target`` 为空时 ``UseOrder`` 不设目标，疯狂模组 ``a_larve`` 等技能空转。
+- **改进**：无目标 / ``self`` 都作用在施法单位上。
+- **范围**：``worldorders/skills.py``。
+
+**改进：疯狂模组远程单位补弹道速度**
+
+- **问题**：远射程单位/建筑没有 ``rdg_projectile_speed``，弹立刻命中。
+- **改进**：按射程补 ``rdg_projectile`` / ``rdg_projectile_speed``。
+- **范围**：``mods/crazyMod9beta10/rules.txt``。
+
+**改进：星际争霸 AI 改用本模组单位名**
+
+- **问题**：``ai.txt`` 仍写基础包 ``peasant`` / ``footman`` / ``townhall``，电脑造不出来。
+- **改进**：人族/神族/异虫脚本改用 SCV、探针、工蜂、机枪兵等本模组名；附加建筑 ``addon_grants_train`` 算制造者，``get tank`` 会先造工厂。
+- **范围**：``mods/starcraft/ai.txt``、制造者查找。
+
+**改进：星际地图改为矿物/瓦斯，起始农民能建出来**
+
+- **问题**：地图仍写 ``goldmines`` / ``woods``；起始 ``peasant`` 在本模组没有定义，报 ``couldn't create an initial unit``。
+- **改进**：联机图改 ``mineral_field`` / ``geyser``；阵营表把地图上的 ``peasant`` 映射成 SCV / 探针 / 工蜂（即使当前规则里没有 peasant 类）。
+- **范围**：星际联机地图、``equivalent_type``、开局解析。
+
+**改进：星际训练/研究/采集对齐星际 2 快速**
+
+- **问题**：训练、升级、科技时间和采集量仍偏星际 1。
+- **改进**：时间与采集对齐 SC2 Faster（矿物 5、瓦斯 4/枯竭 2、气矿储量 2250）；远程单位补 ``rdg_projectile_speed``。
+- **范围**：``mods/starcraft/rules.txt``。
+
+**修复：基础包 jl1 初级电脑金木来回抽调**
+
+- **问题**：封建要金又要木时，每回合把同一批农民从金矿抽到木头再抽回来，采集走不完，初级电脑一直发呆。
+- **改进**：某资源还缺且未超上限时，不再把正在采它的农民抢走。
+- **范围**：电脑 ``_send_workers_toward_resources``。
+
+**修复：封建 ``time_cost -5`` 训练进度跳过 2、8**
+
+- **问题**：时代 ``time_cost -5`` 既写进玩家加成又进 ``_phase_bonus_pool``，步兵 12 秒被减两次变成 2 秒；300ms 心跳下进度条变成 ``0 1 3 4 5 6 7 9 10``。
+- **改进**：池子只留战斗属性；训练时长快照后补齐跳过的 ``completeness`` 0–10。
+- **范围**：时代池、``ProductionOrder`` 进度。
+
+**修复：首次解锁成就同时报「重复完成」**
+
+- **问题**：先 ``evaluate_new_unlocks`` 写入 ``once_keys``，紧接着 ``evaluate_repeat_completions`` 把刚解锁的当成重复。
+- **改进**：先结算重复，再结算新解锁。上等兵卡牌栏仍为 0（中尉才 1 格），这是设计不是这次的 bug。
+- **范围**：``process_game_end_achievements``。
+
+
 1.4.9.0
 ---------
 

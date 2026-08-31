@@ -219,8 +219,8 @@ def test_use_order_nb_args_depends_on_effect_target():
 def test_use_order_self_targets_caster():
     src = _source("soundrts", "worldorders", "skills.py")
     block = _section(src, "class UseOrder(ComplexOrder):", "class PickupOrder")
-    assert 'elif self.type.effect_target == ["self"]:' in block
     assert "self.target = self.unit" in block
+    assert 'elif self.type.effect_target == ["random"]:' in block
 
 
 def test_use_order_respects_effect_range_for_move_closer():

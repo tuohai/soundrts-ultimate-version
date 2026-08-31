@@ -1083,14 +1083,14 @@ def test_starcraft_mod_rules_parse():
     assert assimilator.auto_cultivate == 0
     assert assimilator.is_an_extractor == 1
     assert assimilator.depleted_production_qty == 2
-    assert assimilator.production_qty == 8
-    assert assimilator.extraction_qty == 8
+    assert assimilator.production_qty == 4
+    assert assimilator.extraction_qty == 4
     assert int(getattr(assimilator, "gather_slots", 0) or 0) == 3
     from soundrts.lib.nofloat import PRECISION
 
     assert int(assimilator.cost[0]) in (10, 10 * PRECISION)
     geyser = r.unit_class("geyser")
-    assert geyser.deposit_volume == 5000
+    assert geyser.deposit_volume == 2250
     # Assimilator must not require psi (SC1/SC2)
     rbf = getattr(assimilator, "requires_build_field", 0)
     assert rbf in (0, "0", None, "", ()) or rbf == 0

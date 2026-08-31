@@ -3,6 +3,8 @@
 
 ; ---------- economy (minerals + vespene) ----------
 
+clear
+
 def parameters
 nb_of_resource_types 2
 achievements_enabled 0
@@ -35,14 +37,22 @@ def mineral_field
 class deposit
 resource_type resource1
 extraction_time 2
-extraction_qty 8
+extraction_qty 5
 
 def geyser
 class deposit
 resource_type resource2
-deposit_volume 5000
+deposit_volume 2250
 
-; SC1 Brood War gas: build on geyser; workers trip-gather 8 (depleted 2).
+def meadow
+class building_land
+square_terrain meadows 40
+
+def build_site
+class building_land
+square_terrain build_sites 50
+
+; SC2 Faster gas: build on geyser; workers trip-gather 4 (depleted 2).
 ; No auto_production buffer — workers pull the geyser reserve directly.
 def sc_gas_building
 is_a sc_building
@@ -51,15 +61,15 @@ requires_deposit geyser
 is_an_extractor 1
 resource_type resource2
 extraction_time 2
-extraction_qty 8
+extraction_qty 4
 auto_production 0
 is_gather 1
 production_type resource2
-production_qty 8
+production_qty 4
 depleted_production_qty 2
-; SC1/SC2: 3 workers saturate a geyser; 4th waits for a free slot
+; SC2: 3 workers saturate a geyser; 4th waits for a free slot
 gather_slots 3
-resource_volume_max 5000
+resource_volume_max 2250
 resource_volume_start 0
 
 ; ---------- shared bases ----------
@@ -106,7 +116,7 @@ build_field_radius_m 18
 storable_resource_types resource1 resource2
 cost 40 0
 hp_max 1000
-time_cost 120
+time_cost 71
 population_provided 10
 can_train probe
 
@@ -121,35 +131,35 @@ population_provided 8
 self_constructs 1
 cost 10 0
 hp_max 200
-time_cost 30
+time_cost 18
 
 def gateway
 is_a protoss_building
 cost 15 0
 hp_max 400
-time_cost 45
+time_cost 46
 can_train zealot dragoon
 
 def forge
 is_a protoss_building
 cost 15 1
 hp_max 400
-time_cost 45
-can_research protoss_ground_weapons protoss_ground_weapons_2
+time_cost 32
+can_research protoss_ground_weapons protoss_ground_weapons_2 protoss_ground_weapons_3
 
 def cybernetics_core
 is_a protoss_building
 cost 15 2
 hp_max 400
-time_cost 50
-can_research protoss_plasma_shields protoss_plasma_shields_2 protoss_singularity_charge protoss_singularity_charge_2
+time_cost 36
+can_research protoss_plasma_shields protoss_plasma_shields_2 protoss_plasma_shields_3 protoss_singularity_charge protoss_singularity_charge_2
 
 def stargate
 is_a protoss_building
 requirements cybernetics_core
 cost 28 4
 hp_max 600
-time_cost 80
+time_cost 43
 can_train observer phoenix
 
 def assimilator
@@ -159,18 +169,20 @@ requires_build_field 0
 ; SC1 Assimilator 100 minerals → ×0.1 cost scale
 cost 10 0
 hp_max 500
-time_cost 40
+time_cost 21
 
 def photon_cannon
 is_a protoss_building
 ; SC: must warp in psi; unpowered cannons do not attack (loses_power_without_field)
 cost 15 0
 hp_max 200
-time_cost 35
+time_cost 29
 rdg 8
 rdg_range 6
 rdg_cd 1
 rdg_vs sc_massive -4
+rdg_projectile 1
+rdg_projectile_speed 6
 
 def probe
 class worker
@@ -182,6 +194,7 @@ can_gather mineral_field assimilator
 cost 5 0
 hp_max 4
 speed 1.5
+time_cost 12
 can_build pylon gateway forge cybernetics_core stargate assimilator photon_cannon nexus templar_archives fleet_beacon
 
 def zealot
@@ -189,14 +202,14 @@ class soldier
 is_a sc_light
 cost 10 0
 population_cost 2
-time_cost 20
+time_cost 27
 hp_max 80
 speed 1.4
 mdg 8
 mdg_range 1
 mdg_cd 0.9
 mdg_vs sc_massive -4
-can_use_tech protoss_ground_weapons protoss_ground_weapons_2 protoss_plasma_shields protoss_plasma_shields_2
+can_use_tech protoss_ground_weapons protoss_ground_weapons_2 protoss_plasma_shields protoss_plasma_shields_2 protoss_ground_weapons_3 protoss_plasma_shields_3
 
 def dragoon
 class soldier
@@ -204,23 +217,25 @@ is_a sc_armored
 requirements cybernetics_core
 cost 12 2
 population_cost 2
-time_cost 30
+time_cost 27
 hp_max 100
 speed 1.3
 rdg 10
 rdg_range 4
 rdg_cd 1.4
 rdg_vs sc_light -5 sc_massive -5
+rdg_projectile 1
+rdg_projectile_speed 6
 is_repairable 1
 is_healable 0
-can_use_tech protoss_ground_weapons protoss_ground_weapons_2 protoss_plasma_shields protoss_plasma_shields_2 protoss_singularity_charge protoss_singularity_charge_2
+can_use_tech protoss_ground_weapons protoss_ground_weapons_2 protoss_plasma_shields protoss_plasma_shields_2 protoss_singularity_charge protoss_singularity_charge_2 protoss_ground_weapons_3 protoss_plasma_shields_3
 
 def observer
 class soldier
 is_a sc_armored
 cost 15 2
 population_cost 1
-time_cost 25
+time_cost 18
 hp_max 40
 speed 2
 airground_type air
@@ -230,8 +245,8 @@ corpse 0
 
 def protoss_ground_weapons
 class upgrade
-cost 10 0
-time_cost 45
+cost 10 10
+time_cost 114
 effect bonus mdg 2
 effect_bonus_targets zealot
 effect bonus rdg 2
@@ -242,8 +257,20 @@ effect_bonus_targets dark_templar
 def protoss_ground_weapons_2
 class upgrade
 requirements protoss_ground_weapons
-cost 10 3
-time_cost 60
+cost 15 15
+time_cost 136
+effect bonus mdg 2
+effect_bonus_targets zealot
+effect bonus rdg 2
+effect_bonus_targets dragoon
+effect bonus mdg 2
+effect_bonus_targets dark_templar
+
+def protoss_ground_weapons_3
+class upgrade
+requirements protoss_ground_weapons_2
+cost 20 20
+time_cost 157
 effect bonus mdg 2
 effect_bonus_targets zealot
 effect bonus rdg 2
@@ -253,31 +280,39 @@ effect_bonus_targets dark_templar
 
 def protoss_plasma_shields
 class upgrade
-cost 10 0
-time_cost 45
+cost 15 15
+time_cost 114
 effect bonus mdf 1
 effect_bonus_targets zealot dragoon
 
 def protoss_plasma_shields_2
 class upgrade
 requirements protoss_plasma_shields
-cost 10 3
-time_cost 60
+cost 22 22
+time_cost 136
+effect bonus mdf 1
+effect_bonus_targets zealot dragoon dark_templar
+
+def protoss_plasma_shields_3
+class upgrade
+requirements protoss_plasma_shields_2
+cost 30 30
+time_cost 157
 effect bonus mdf 1
 effect_bonus_targets zealot dragoon dark_templar
 
 def protoss_singularity_charge
 class upgrade
-cost 10 1
-time_cost 45
+cost 10 10
+time_cost 64
 effect bonus rdg_range 1
 effect_bonus_targets dragoon
 
 def protoss_singularity_charge_2
 class upgrade
 requirements protoss_singularity_charge
-cost 10 2
-time_cost 60
+cost 15 15
+time_cost 100
 effect bonus rdg_range 1
 effect_bonus_targets dragoon
 
@@ -293,33 +328,33 @@ build_field_spreads 1
 storable_resource_types resource1 resource2
 cost 30 0
 hp_max 800
-time_cost 90
+time_cost 71
 population_provided 10
 spawns_unit larva
 larva_cap 3
-larva_spawn_time 15
+larva_spawn_time 8
 
 def spawning_pool
 is_a zerg_building
 cost 20 0
 hp_max 500
-time_cost 60
-can_research zerg_melee zerg_melee_2 zerg_carapace zerg_carapace_2 zerg_metabolic_boost u_burrow
+time_cost 46
+can_research zerg_melee zerg_melee_2 zerg_melee_3 zerg_carapace zerg_carapace_2 zerg_carapace_3 zerg_metabolic_boost u_burrow
 
 def roach_warren
 is_a zerg_building
 requirements spawning_pool
 cost 15 2
 hp_max 500
-time_cost 55
+time_cost 39
 
 def hydralisk_den
 is_a zerg_building
 requirements spawning_pool
 cost 15 3
 hp_max 500
-time_cost 60
-can_research zerg_missile zerg_missile_2
+time_cost 29
+can_research zerg_missile zerg_missile_2 zerg_missile_3
 
 def extractor
 is_a zerg_building sc_gas_building
@@ -329,7 +364,7 @@ requires_build_field 0
 ; SC1 Extractor 50 minerals → ×0.1 cost scale
 cost 5 0
 hp_max 500
-time_cost 40
+time_cost 21
 
 def drone
 class worker
@@ -341,6 +376,7 @@ can_gather mineral_field extractor
 cost 5 0
 hp_max 4
 speed 1.4
+time_cost 12
 can_build hatchery spawning_pool roach_warren hydralisk_den extractor spire ultralisk_cavern queen_nest
 
 def zergling
@@ -349,16 +385,16 @@ is_a sc_light
 requirements spawning_pool
 cost 5 0
 population_cost 1
-time_cost 12
+time_cost 17
 hp_max 25
 speed 2
 mdg 5
 mdg_range 0.8
 mdg_cd 0.6
 mdg_vs sc_massive -2
-can_use_tech zerg_melee zerg_melee_2 zerg_carapace zerg_carapace_2 zerg_metabolic_boost
+can_use_tech zerg_melee zerg_melee_2 zerg_carapace zerg_carapace_2 zerg_metabolic_boost zerg_melee_3 zerg_carapace_3
 can_change_to burrowed_zergling
-change_time 20
+change_time 2
 
 def roach
 class soldier
@@ -366,7 +402,7 @@ is_a sc_armored
 requirements roach_warren
 cost 10 1
 population_cost 2
-time_cost 22
+time_cost 19
 hp_max 80
 speed 1.5
 mdg 8
@@ -374,9 +410,9 @@ mdg_range 1
 mdg_cd 1.5
 mdf 1
 mdg_vs sc_massive -4
-can_use_tech zerg_melee zerg_melee_2 zerg_carapace zerg_carapace_2
+can_use_tech zerg_melee zerg_melee_2 zerg_carapace zerg_carapace_2 zerg_melee_3 zerg_carapace_3
 can_change_to burrowed_roach
-change_time 20
+change_time 2
 
 def hydralisk
 class soldier
@@ -384,16 +420,18 @@ is_a sc_light
 requirements hydralisk_den
 cost 10 2
 population_cost 2
-time_cost 25
+time_cost 24
 hp_max 50
 speed 1.4
 rdg 8
 rdg_range 5
 rdg_cd 1.1
 rdg_vs sc_light -4 sc_massive -4
-can_use_tech zerg_melee zerg_melee_2 zerg_carapace zerg_carapace_2 zerg_missile zerg_missile_2
+rdg_projectile 1
+rdg_projectile_speed 8
+can_use_tech zerg_melee zerg_melee_2 zerg_carapace zerg_carapace_2 zerg_missile zerg_missile_2 zerg_melee_3 zerg_carapace_3 zerg_missile_3
 can_change_to burrowed_hydralisk
-change_time 20
+change_time 2
 
 def overlord
 class soldier
@@ -420,53 +458,79 @@ can_upgrade_to drone overlord zergling roach hydralisk mutalisk ultralisk queen
 
 def zerg_melee
 class upgrade
-cost 10 0
-time_cost 45
+cost 10 10
+time_cost 114
 effect bonus mdg 1
 effect_bonus_targets zergling roach ultralisk
 
 def zerg_melee_2
 class upgrade
 requirements zerg_melee
-cost 10 2
-time_cost 60
+cost 15 15
+time_cost 136
+effect bonus mdg 1
+effect_bonus_targets zergling roach ultralisk
+
+def zerg_melee_3
+class upgrade
+requirements zerg_melee_2
+cost 20 20
+time_cost 157
 effect bonus mdg 1
 effect_bonus_targets zergling roach ultralisk
 
 def zerg_carapace
 class upgrade
-cost 10 0
-time_cost 45
+cost 10 10
+time_cost 114
 effect bonus mdf 1
 effect_bonus_targets zergling roach hydralisk ultralisk
 
 def zerg_carapace_2
 class upgrade
 requirements zerg_carapace
-cost 10 2
-time_cost 60
+cost 15 15
+time_cost 136
+effect bonus mdf 1
+effect_bonus_targets zergling roach hydralisk ultralisk
+
+def zerg_carapace_3
+class upgrade
+requirements zerg_carapace_2
+cost 20 20
+time_cost 157
 effect bonus mdf 1
 effect_bonus_targets zergling roach hydralisk ultralisk
 
 def zerg_metabolic_boost
 class upgrade
-cost 10 1
-time_cost 45
+cost 10 10
+time_cost 79
 effect bonus speed 0.5
 effect_bonus_targets zergling
 
 def zerg_missile
 class upgrade
-cost 10 0
-time_cost 45
+cost 10 10
+time_cost 114
 effect bonus rdg 1
 effect_bonus_targets hydralisk
 
 def zerg_missile_2
 class upgrade
 requirements zerg_missile
-cost 10 2
-time_cost 60
+cost 15 15
+time_cost 136
+effect bonus rdg 1
+effect_bonus_targets hydralisk
+
+; ---------- Terran (addons + lift-off recombine) ----------
+
+def zerg_missile_3
+class upgrade
+requirements zerg_missile_2
+cost 20 20
+time_cost 157
 effect bonus rdg 1
 effect_bonus_targets hydralisk
 
@@ -477,7 +541,7 @@ is_a terran_building
 storable_resource_types resource1 resource2
 cost 40 0
 hp_max 1200
-time_cost 120
+time_cost 71
 population_provided 10
 can_train scv
 
@@ -486,10 +550,10 @@ is_a terran_building
 requirements 
 cost 20 0
 hp_max 600
-time_cost 60
+time_cost 46
 can_have_addon tech_lab reactor
 can_change_to flying_barracks
-change_time 45
+change_time 2
 can_train marine
 can_research 
 
@@ -497,20 +561,20 @@ def factory
 is_a terran_building
 cost 25 0
 hp_max 700
-time_cost 70
+time_cost 43
 can_have_addon tech_lab reactor
 can_change_to flying_factory
-change_time 45
+change_time 2
 can_train hellion
 
 def starport
 is_a terran_building
 cost 25 0
 hp_max 600
-time_cost 70
+time_cost 36
 can_have_addon tech_lab reactor
 can_change_to flying_starport
-change_time 45
+change_time 2
 
 def refinery
 is_a terran_building sc_gas_building
@@ -518,28 +582,28 @@ is_buildable_anywhere 0
 ; SC1 Refinery 100 minerals → ×0.1 cost scale
 cost 10 0
 hp_max 500
-time_cost 40
+time_cost 21
 
 def engineering_bay
 is_a terran_building
 cost 15 0
 hp_max 500
-time_cost 45
-can_research infantry_weapons infantry_weapons_2 infantry_armor infantry_armor_2 u_stim
+time_cost 25
+can_research infantry_weapons infantry_weapons_2 infantry_weapons_3 infantry_armor infantry_armor_2 infantry_armor_3 u_stim
 
 def armory
 is_a terran_building
 requirements factory
 cost 25 0
 hp_max 600
-time_cost 55
-can_research vehicle_weapons vehicle_weapons_2 vehicle_armor vehicle_armor_2 ship_weapons ship_weapons_2 ship_armor ship_armor_2
+time_cost 46
+can_research vehicle_weapons vehicle_weapons_2 vehicle_weapons_3 vehicle_armor vehicle_armor_2 vehicle_armor_3 ship_weapons ship_weapons_2 ship_weapons_3 ship_armor ship_armor_2 ship_armor_3
 
 def bunker
 is_a terran_building
 cost 10 0
 hp_max 400
-time_cost 30
+time_cost 29
 transport_capacity 4
 provides_survival 0
 
@@ -548,27 +612,27 @@ is_a terran_building
 population_provided 8
 cost 10 0
 hp_max 200
-time_cost 30
+time_cost 21
 
 def flying_barracks
 is_a flying_terran_building
 ground_form barracks
 can_change_to barracks
-change_time 45
+change_time 2
 hp_max 600
 
 def flying_factory
 is_a flying_terran_building
 ground_form factory
 can_change_to factory
-change_time 45
+change_time 2
 hp_max 700
 
 def flying_starport
 is_a flying_terran_building
 ground_form starport
 can_change_to starport
-change_time 45
+change_time 2
 hp_max 600
 
 def tech_lab
@@ -578,7 +642,7 @@ addon_host_types barracks factory starport
 self_constructs 1
 cost 8 2
 hp_max 400
-time_cost 30
+time_cost 18
 addon_grants_train_barracks marauder
 addon_grants_train_factory tank thor
 addon_grants_train_starport medivac battlecruiser
@@ -590,80 +654,112 @@ addon_host_types barracks factory starport
 self_constructs 1
 cost 8 2
 hp_max 400
-time_cost 30
+time_cost 36
 addon_train_multiplier 2
 
 def infantry_weapons
 class upgrade
-cost 10 0
-time_cost 45
+cost 10 10
+time_cost 114
 effect bonus rdg 1
 effect_bonus_targets marine marauder
 
 def infantry_weapons_2
 class upgrade
-requirements infantry_weapons
-cost 10 1
-time_cost 60
+requirements infantry_weapons armory
+cost 15 15
+time_cost 136
+effect bonus rdg 1
+effect_bonus_targets marine marauder
+
+def infantry_weapons_3
+class upgrade
+requirements infantry_weapons_2 armory
+cost 20 20
+time_cost 157
 effect bonus rdg 1
 effect_bonus_targets marine marauder
 
 def infantry_armor
 class upgrade
-cost 10 0
-time_cost 45
+cost 10 10
+time_cost 114
 effect bonus mdf 1
 effect_bonus_targets marine marauder
 
 def infantry_armor_2
 class upgrade
-requirements infantry_armor
-cost 10 1
-time_cost 60
+requirements infantry_armor armory
+cost 15 15
+time_cost 136
+effect bonus mdf 1
+effect_bonus_targets marine marauder
+
+def infantry_armor_3
+class upgrade
+requirements infantry_armor_2 armory
+cost 20 20
+time_cost 157
 effect bonus mdf 1
 effect_bonus_targets marine marauder
 
 def vehicle_weapons
 class upgrade
-cost 10 1
-time_cost 50
+cost 10 10
+time_cost 114
 effect bonus rdg 2
 effect_bonus_targets hellion tank siege_tank
 
 def vehicle_weapons_2
 class upgrade
 requirements vehicle_weapons
-cost 10 3
-time_cost 70
+cost 15 15
+time_cost 136
+effect bonus rdg 2
+effect_bonus_targets hellion tank siege_tank
+
+def vehicle_weapons_3
+class upgrade
+requirements vehicle_weapons_2
+cost 20 20
+time_cost 157
 effect bonus rdg 2
 effect_bonus_targets hellion tank siege_tank
 
 def vehicle_armor
 class upgrade
-cost 10 1
-time_cost 50
+cost 10 10
+time_cost 114
 effect bonus mdf 1
 effect_bonus_targets hellion tank siege_tank
 
 def vehicle_armor_2
 class upgrade
 requirements vehicle_armor
-cost 10 3
-time_cost 70
+cost 15 15
+time_cost 136
+effect bonus mdf 1
+effect_bonus_targets hellion tank siege_tank
+
+def vehicle_armor_3
+class upgrade
+requirements vehicle_armor_2
+cost 20 20
+time_cost 157
 effect bonus mdf 1
 effect_bonus_targets hellion tank siege_tank
 
 def u_stim
 class upgrade
-cost 10 1
-time_cost 45
+cost 10 10
+time_cost 100
 
 ; ---------- skills and buffs ----------
 
 def sc_stim_buff
 class buff
 temporary 1
-duration 15
+duration 11
 stack 1
 stat speed rdg
 percentage 50
@@ -685,7 +781,7 @@ class skill
 requirements u_stim
 effect buffs sc_stim_buff sc_stim_wound
 effect_target self
-cooldown 20
+cooldown 0
 
 def sc_heal_hot
 class buff
@@ -711,7 +807,7 @@ is_a protoss_building
 requirements cybernetics_core
 cost 20 3
 hp_max 500
-time_cost 70
+time_cost 36
 can_train high_templar dark_templar
 can_research u_psi_storm
 
@@ -720,8 +816,8 @@ is_a protoss_building
 requirements stargate
 cost 20 4
 hp_max 500
-time_cost 75
-can_research protoss_air_weapons protoss_air_weapons_2 protoss_air_armor protoss_air_armor_2
+time_cost 43
+can_research protoss_air_weapons protoss_air_weapons_2 protoss_air_weapons_3 protoss_air_armor protoss_air_armor_2 protoss_air_armor_3
 can_train carrier
 
 def high_templar
@@ -730,7 +826,7 @@ is_a sc_light
 requirements templar_archives
 cost 15 3
 population_cost 2
-time_cost 35
+time_cost 39
 hp_max 40
 speed 1.2
 mana_max 200
@@ -743,7 +839,7 @@ is_a sc_light
 requirements templar_archives
 cost 15 2
 population_cost 2
-time_cost 30
+time_cost 39
 hp_max 60
 speed 1.6
 mdg 12
@@ -751,7 +847,7 @@ mdg_range 1
 mdg_cd 1.2
 mdg_vs sc_massive -6
 is_invisible 1
-can_use_tech protoss_ground_weapons protoss_ground_weapons_2 protoss_plasma_shields protoss_plasma_shields_2
+can_use_tech protoss_ground_weapons protoss_ground_weapons_2 protoss_plasma_shields protoss_plasma_shields_2 protoss_ground_weapons_3 protoss_plasma_shields_3
 
 def phoenix
 class soldier
@@ -759,7 +855,7 @@ is_a sc_light
 requirements stargate
 cost 12 2
 population_cost 2
-time_cost 28
+time_cost 25
 hp_max 50
 speed 2.2
 airground_type air
@@ -768,9 +864,11 @@ rdg_range 4
 rdg_cd 1.1
 rdg_targets air
 rdg_vs sc_massive -4
+rdg_projectile 1
+rdg_projectile_speed 8
 is_repairable 1
 is_healable 0
-can_use_tech protoss_air_weapons protoss_air_weapons_2 protoss_air_armor protoss_air_armor_2
+can_use_tech protoss_air_weapons protoss_air_weapons_2 protoss_air_armor protoss_air_armor_2 protoss_air_weapons_3 protoss_air_armor_3
 corpse 0
 
 def carrier
@@ -779,7 +877,7 @@ is_a sc_armored
 requirements fleet_beacon
 cost 25 6
 population_cost 6
-time_cost 90
+time_cost 64
 hp_max 300
 speed 1.2
 airground_type air
@@ -789,43 +887,61 @@ rdg_cd 2
 rdg_splash 4
 rdg_radius 1.5
 rdg_vs sc_massive -6
+rdg_projectile 1
+rdg_projectile_speed 5
 is_repairable 1
 is_healable 0
-can_use_tech protoss_air_weapons protoss_air_weapons_2 protoss_air_armor protoss_air_armor_2
+can_use_tech protoss_air_weapons protoss_air_weapons_2 protoss_air_armor protoss_air_armor_2 protoss_air_weapons_3 protoss_air_armor_3
 corpse 0
 
 def u_psi_storm
 class upgrade
-cost 15 3
-time_cost 60
+cost 10 10
+time_cost 79
 
 def protoss_air_weapons
 class upgrade
-cost 10 1
-time_cost 45
+cost 10 10
+time_cost 114
 effect bonus rdg 2
 effect_bonus_targets phoenix carrier
 
 def protoss_air_weapons_2
 class upgrade
 requirements protoss_air_weapons
-cost 10 3
-time_cost 60
+cost 15 15
+time_cost 136
+effect bonus rdg 2
+effect_bonus_targets phoenix carrier
+
+def protoss_air_weapons_3
+class upgrade
+requirements protoss_air_weapons_2
+cost 20 20
+time_cost 157
 effect bonus rdg 2
 effect_bonus_targets phoenix carrier
 
 def protoss_air_armor
 class upgrade
-cost 10 1
-time_cost 45
+cost 10 10
+time_cost 114
 effect bonus mdf 1
 effect_bonus_targets phoenix carrier
 
 def protoss_air_armor_2
 class upgrade
 requirements protoss_air_armor
-cost 10 3
-time_cost 60
+cost 15 15
+time_cost 136
+effect bonus mdf 1
+effect_bonus_targets phoenix carrier
+
+def protoss_air_armor_3
+class upgrade
+requirements protoss_air_armor_2
+cost 20 20
+time_cost 157
 effect bonus mdf 1
 effect_bonus_targets phoenix carrier
 
@@ -852,22 +968,22 @@ is_a zerg_building
 requirements spawning_pool
 cost 25 3
 hp_max 600
-time_cost 80
-can_research zerg_flyer_attacks zerg_flyer_attacks_2 zerg_flyer_carapace zerg_flyer_carapace_2
+time_cost 66
+can_research zerg_flyer_attacks zerg_flyer_attacks_2 zerg_flyer_attacks_3 zerg_flyer_carapace zerg_flyer_carapace_2 zerg_flyer_carapace_3
 
 def ultralisk_cavern
 is_a zerg_building
 requirements spire
 cost 20 4
 hp_max 500
-time_cost 70
+time_cost 46
 
 def queen_nest
 is_a zerg_building
 requirements spawning_pool
 cost 15 2
 hp_max 500
-time_cost 55
+time_cost 36
 
 def mutalisk
 class soldier
@@ -875,7 +991,7 @@ is_a sc_light
 requirements spire
 cost 12 2
 population_cost 2
-time_cost 25
+time_cost 24
 hp_max 45
 speed 2
 airground_type air
@@ -884,7 +1000,9 @@ rdg_range 4
 rdg_cd 0.9
 rdg_targets ground air
 rdg_vs sc_massive -3
-can_use_tech zerg_flyer_attacks zerg_flyer_attacks_2 zerg_flyer_carapace zerg_flyer_carapace_2
+rdg_projectile 1
+rdg_projectile_speed 6
+can_use_tech zerg_flyer_attacks zerg_flyer_attacks_2 zerg_flyer_carapace zerg_flyer_carapace_2 zerg_flyer_attacks_3 zerg_flyer_carapace_3
 corpse 0
 
 def ultralisk
@@ -893,7 +1011,7 @@ is_a sc_massive
 requirements ultralisk_cavern
 cost 20 4
 population_cost 6
-time_cost 45
+time_cost 39
 hp_max 200
 speed 1.2
 mdg 15
@@ -901,7 +1019,7 @@ mdg_range 1.2
 mdg_cd 1.2
 mdf 2
 mdg_vs sc_massive -7
-can_use_tech zerg_melee zerg_melee_2 zerg_carapace zerg_carapace_2
+can_use_tech zerg_melee zerg_melee_2 zerg_carapace zerg_carapace_2 zerg_melee_3 zerg_carapace_3
 
 def queen
 class soldier
@@ -909,7 +1027,7 @@ is_a sc_armored
 requirements queen_nest
 cost 10 2
 population_cost 2
-time_cost 30
+time_cost 36
 hp_max 80
 speed 1.3
 airground_type air
@@ -945,7 +1063,7 @@ mdg_cd 0.6
 mdg_vs sc_massive -2
 is_invisible 1
 can_change_to zergling
-change_time 20
+change_time 2
 corpse 0
 
 def burrowed_roach
@@ -962,7 +1080,7 @@ mdf 1
 mdg_vs sc_massive -4
 is_invisible 1
 can_change_to roach
-change_time 20
+change_time 2
 corpse 0
 
 def burrowed_hydralisk
@@ -976,66 +1094,85 @@ rdg 8
 rdg_range 5
 rdg_cd 1.1
 rdg_vs sc_light -4 sc_massive -4
+rdg_projectile 1
+rdg_projectile_speed 8
 is_invisible 1
 can_change_to hydralisk
-change_time 20
+change_time 2
 corpse 0
 
 def u_burrow
 class upgrade
-cost 10 1
-time_cost 45
+cost 10 10
+time_cost 71
 
 def zerg_flyer_attacks
 class upgrade
-cost 10 1
-time_cost 45
+cost 10 10
+time_cost 114
 effect bonus rdg 1
 effect_bonus_targets mutalisk
 
 def zerg_flyer_attacks_2
 class upgrade
 requirements zerg_flyer_attacks
-cost 10 3
-time_cost 60
+cost 15 15
+time_cost 136
+effect bonus rdg 1
+effect_bonus_targets mutalisk
+
+def zerg_flyer_attacks_3
+class upgrade
+requirements zerg_flyer_attacks_2
+cost 20 20
+time_cost 157
 effect bonus rdg 1
 effect_bonus_targets mutalisk
 
 def zerg_flyer_carapace
 class upgrade
-cost 10 1
-time_cost 45
+cost 10 10
+time_cost 114
 effect bonus mdf 1
 effect_bonus_targets mutalisk
 
 def zerg_flyer_carapace_2
 class upgrade
 requirements zerg_flyer_carapace
-cost 10 3
-time_cost 60
+cost 15 15
+time_cost 136
+effect bonus mdf 1
+effect_bonus_targets mutalisk
+
+def zerg_flyer_carapace_3
+class upgrade
+requirements zerg_flyer_carapace_2
+cost 20 20
+time_cost 157
 effect bonus mdf 1
 effect_bonus_targets mutalisk
 
 def sc_spawn_larva
 class skill
-effect summon 0 3 larva
+effect summon 29 3 larva
 effect_target ask
 effect_range 12
-time_cost 15
-cooldown 40
+time_cost 0
+cooldown 29
+mana_cost 25
 
 def sc_inject_larva
 class skill
 effect buffs sc_inject_buff
 effect_target ask
 effect_range 12
-time_cost 10
-cooldown 60
+time_cost 0
+cooldown 29
 
 def sc_inject_buff
 class buff
 temporary 1
-duration 30
+duration 29
 stack 1
 stat time_cost
 percentage -30
@@ -1047,8 +1184,8 @@ effect summon 0 creep_tumor
 effect_target ask
 effect_range 11
 summon_requires_build_field creep
-time_cost 20
-cooldown 15
+time_cost 0
+cooldown 0
 mana_cost 25
 
 def sc_extend_creep_tumor
@@ -1058,8 +1195,8 @@ effect_target ask
 effect_range 8
 summon_requires_build_field creep
 summon_requires_marked_field 1
-time_cost 12
-cooldown 8
+time_cost 11
+cooldown 11
 
 ; ---------- Terran late game ----------
 
@@ -1068,7 +1205,7 @@ is_a terran_building
 requirements barracks
 cost 20 2
 hp_max 500
-time_cost 55
+time_cost 29
 can_train ghost
 can_research u_cloak u_nuke
 
@@ -1078,17 +1215,19 @@ is_a sc_light
 requirements ghost_academy
 cost 10 2
 population_cost 2
-time_cost 25
+time_cost 29
 hp_max 35
 speed 1.4
 rdg 8
 rdg_range 6
 rdg_cd 1.5
 rdg_vs sc_massive -4
+rdg_projectile 1
+rdg_projectile_speed 8
 can_change_to cloaked_ghost
-change_time 15
+change_time 1
 can_use_skill sc_nuke
-can_use_tech infantry_weapons infantry_weapons_2 infantry_armor infantry_armor_2
+can_use_tech infantry_weapons infantry_weapons_2 infantry_armor infantry_armor_2 infantry_weapons_3 infantry_armor_3
 
 def cloaked_ghost
 class soldier
@@ -1101,9 +1240,11 @@ rdg 8
 rdg_range 6
 rdg_cd 1.5
 rdg_vs sc_massive -4
+rdg_projectile 1
+rdg_projectile_speed 8
 is_invisible 1
 can_change_to ghost
-change_time 15
+change_time 1
 can_use_skill sc_nuke
 corpse 0
 
@@ -1113,7 +1254,7 @@ is_a sc_massive
 requirements armory
 cost 25 5
 population_cost 6
-time_cost 60
+time_cost 43
 hp_max 400
 speed 0.8
 rdg 20
@@ -1122,9 +1263,11 @@ rdg_cd 1.3
 rdg_splash 5
 rdg_radius 1.5
 rdg_vs sc_light -10 sc_massive -10
+rdg_projectile 1
+rdg_projectile_speed 5
 is_repairable 1
 is_healable 0
-can_use_tech vehicle_weapons vehicle_weapons_2 vehicle_armor vehicle_armor_2 ship_weapons ship_weapons_2 ship_armor ship_armor_2
+can_use_tech vehicle_weapons vehicle_weapons_2 vehicle_armor vehicle_armor_2 ship_weapons ship_weapons_2 ship_armor ship_armor_2 vehicle_weapons_3 vehicle_armor_3 ship_weapons_3 ship_armor_3
 
 def battlecruiser
 class soldier
@@ -1132,7 +1275,7 @@ is_a sc_armored
 requirements armory
 cost 30 6
 population_cost 6
-time_cost 75
+time_cost 64
 hp_max 350
 speed 1
 airground_type air
@@ -1145,46 +1288,62 @@ rdg_vs sc_massive -7
 is_repairable 1
 is_healable 0
 can_use_skill sc_yamato
-can_use_tech ship_weapons ship_weapons_2 ship_armor ship_armor_2
+can_use_tech ship_weapons ship_weapons_2 ship_armor ship_armor_2 ship_weapons_3 ship_armor_3
 corpse 0
 
 def u_cloak
 class upgrade
-cost 10 1
-time_cost 45
+cost 15 15
+time_cost 86
 
 def u_nuke
 class upgrade
-cost 15 4
-time_cost 90
+cost 10 10
+time_cost 43
 
 def ship_weapons
 class upgrade
-cost 10 2
-time_cost 50
+cost 10 10
+time_cost 114
 effect bonus rdg 2
 effect_bonus_targets medivac battlecruiser
 
 def ship_weapons_2
 class upgrade
 requirements ship_weapons
-cost 10 4
-time_cost 70
+cost 15 15
+time_cost 136
+effect bonus rdg 2
+effect_bonus_targets medivac battlecruiser
+
+def ship_weapons_3
+class upgrade
+requirements ship_weapons_2
+cost 20 20
+time_cost 157
 effect bonus rdg 2
 effect_bonus_targets medivac battlecruiser
 
 def ship_armor
 class upgrade
-cost 10 2
-time_cost 50
+cost 10 10
+time_cost 114
 effect bonus mdf 1
 effect_bonus_targets medivac battlecruiser
 
 def ship_armor_2
 class upgrade
 requirements ship_armor
-cost 10 4
-time_cost 70
+cost 15 15
+time_cost 136
+effect bonus mdf 1
+effect_bonus_targets medivac battlecruiser
+
+def ship_armor_3
+class upgrade
+requirements ship_armor_2
+cost 20 20
+time_cost 157
 effect bonus mdf 1
 effect_bonus_targets medivac battlecruiser
 
@@ -1200,7 +1359,7 @@ requirements u_nuke
 effect deploy 5 sc_nuclear_blast
 effect_target ask
 effect_range 12
-time_cost 40
+time_cost 14
 cooldown 90
 
 def sc_yamato_fx
@@ -1214,7 +1373,7 @@ class skill
 effect deploy 2 sc_yamato_fx
 effect_target ask
 effect_range 10
-time_cost 30
+time_cost 3
 cooldown 45
 
 def scv
@@ -1225,6 +1384,7 @@ can_gather mineral_field refinery assimilator extractor
 cost 5 0
 hp_max 6
 speed 1.4
+time_cost 12
 can_build command_center barracks factory starport refinery engineering_bay armory bunker supply_depot tech_lab reactor ghost_academy
 
 def marine
@@ -1232,14 +1392,16 @@ class soldier
 is_a sc_light
 cost 5 0
 population_cost 1
-time_cost 15
+time_cost 18
 hp_max 30
 speed 1.5
 rdg 6
 rdg_range 5
 rdg_cd 0.9
 rdg_vs sc_massive -3
-can_use_tech infantry_weapons infantry_weapons_2 infantry_armor infantry_armor_2
+rdg_projectile 1
+rdg_projectile_speed 10
+can_use_tech infantry_weapons infantry_weapons_2 infantry_armor infantry_armor_2 infantry_weapons_3 infantry_armor_3
 can_use_skill sc_stim_pack
 
 def marauder
@@ -1247,14 +1409,16 @@ class soldier
 is_a sc_armored
 cost 8 2
 population_cost 2
-time_cost 22
+time_cost 21
 hp_max 45
 speed 1.4
 rdg 8
 rdg_range 5
 rdg_cd 1.1
 rdg_vs sc_armored -4 sc_massive -4 sc_structure -4
-can_use_tech infantry_weapons infantry_weapons_2 infantry_armor infantry_armor_2
+rdg_projectile 1
+rdg_projectile_speed 6
+can_use_tech infantry_weapons infantry_weapons_2 infantry_armor infantry_armor_2 infantry_weapons_3 infantry_armor_3
 can_use_skill sc_stim_pack
 
 def hellion
@@ -1262,7 +1426,7 @@ class soldier
 is_a sc_light
 cost 10 0
 population_cost 2
-time_cost 20
+time_cost 21
 hp_max 40
 speed 1.8
 rdg 9
@@ -1271,25 +1435,27 @@ rdg_cd 1.4
 rdg_vs sc_massive -4
 is_repairable 1
 is_healable 0
-can_use_tech vehicle_weapons vehicle_weapons_2 vehicle_armor vehicle_armor_2
+can_use_tech vehicle_weapons vehicle_weapons_2 vehicle_armor vehicle_armor_2 vehicle_weapons_3 vehicle_armor_3
 
 def tank
 class soldier
 is_a sc_armored
 cost 15 3
 population_cost 3
-time_cost 35
+time_cost 32
 hp_max 90
 speed 1
 rdg 15
 rdg_range 7
 rdg_cd 1.5
 rdg_vs sc_light -7 sc_massive -7
+rdg_projectile 1
+rdg_projectile_speed 5
 is_repairable 1
 is_healable 0
 can_change_to siege_tank
-change_time 30
-can_use_tech vehicle_weapons vehicle_weapons_2 vehicle_armor vehicle_armor_2
+change_time 3
+can_use_tech vehicle_weapons vehicle_weapons_2 vehicle_armor vehicle_armor_2 vehicle_weapons_3 vehicle_armor_3
 
 def siege_tank
 class soldier
@@ -1303,11 +1469,13 @@ rdg_cd 2.1
 rdg_splash 6
 rdg_radius 1.5
 rdg_vs sc_light -10 sc_massive -10
+rdg_projectile 1
+rdg_projectile_speed 3.5
 is_repairable 1
 is_healable 0
 can_change_to tank
-change_time 30
-can_use_tech vehicle_weapons vehicle_weapons_2 vehicle_armor vehicle_armor_2
+change_time 3
+can_use_tech vehicle_weapons vehicle_weapons_2 vehicle_armor vehicle_armor_2 vehicle_weapons_3 vehicle_armor_3
 corpse 0
 
 def medivac
@@ -1341,8 +1509,13 @@ archer marauder
 knight tank
 barracks barracks
 factory factory
+beginner sc_terran_easy
 easy sc_terran_easy
+intermediate sc_terran_aggressive
 aggressive sc_terran_aggressive
+advanced sc_terran_advanced
+expert sc_terran_expert
+nightmare sc_terran_nightmare
 starting_units command_center 2 scv
 starting_resources 50 0
 
@@ -1355,8 +1528,13 @@ footman zealot
 archer dragoon
 knight dragoon
 barracks gateway
+beginner sc_protoss_easy
 easy sc_protoss_easy
+intermediate sc_protoss_aggressive
 aggressive sc_protoss_aggressive
+advanced sc_protoss_advanced
+expert sc_protoss_expert
+nightmare sc_protoss_nightmare
 starting_units nexus 3 probe
 starting_resources 50 0
 
@@ -1369,11 +1547,226 @@ footman zergling
 archer hydralisk
 knight roach
 barracks spawning_pool
+beginner sc_zerg_easy
 easy sc_zerg_easy
+intermediate sc_zerg_aggressive
 aggressive sc_zerg_aggressive
+advanced sc_zerg_advanced
+expert sc_zerg_expert
+nightmare sc_zerg_nightmare
 starting_units hatchery 4 drone
 starting_resources 50 0
 
-; Hide base-game human_faction from the lobby picker (keep only terran/protoss/zerg).
-def human_faction
+def footman
+class soldier
+decay 1
+
+def archer
+class soldier
+decay 1
+
+def darkarcher
+class soldier
+decay 1
+
+def knight
+class soldier
+decay 1
+
+def dragon
+class soldier
+decay 1
+
+def catapult
+class soldier
+decay 1
+
+def mage
+class soldier
+decay 1
+
+def skeleton
+class soldier
+decay 1
+
+def zombie
+class soldier
+decay 1
+
+def townhall
 class building
+decay 1
+
+def house
+class building
+decay 1
+
+def peasant
+class worker
+decay 1
+
+def lumbermill
+class building
+decay 1
+
+def blacksmith
+class building
+decay 1
+
+def stables
+class building
+decay 1
+
+def farm
+class building
+decay 1
+
+def workshop
+class building
+decay 1
+
+def temple
+class building
+decay 1
+
+def dragonslair
+class building
+decay 1
+
+def magestower
+class building
+decay 1
+
+; terrains (class terrain)
+
+; low land
+
+def plain
+class terrain
+is_dynamic 1
+
+def rocky_plain
+class terrain
+is_dynamic 1
+
+; high land
+
+def plateau
+class terrain
+is_dynamic 0
+
+def hill
+class terrain
+is_high_ground 1
+is_dynamic 0
+height 1
+
+def high_rocky_plain
+class terrain
+is_high_ground 1
+is_dynamic 1
+
+def mountain_pass
+class terrain
+is_high_ground 1
+is_dynamic 0
+speed .5 1
+
+def basin
+class terrain
+is_dynamic 0
+height -1
+
+; water (terrain <name> sets is_water; ground units blocked unless is_ground 1)
+
+def lake
+class terrain
+is_water 1
+is_dynamic 0
+rmg_water 1
+
+def sea
+class terrain
+is_water 1
+is_dynamic 0
+speed 0 .25
+
+def ocean
+class terrain
+is_water 1
+is_dynamic 0
+speed 0 .25
+
+def river
+class terrain
+is_water 1
+is_dynamic 0
+
+def creek
+class terrain
+is_water 1
+is_dynamic 0
+
+def ford
+class terrain
+is_water 1
+is_ground 1
+is_dynamic 0
+speed .5 1
+rmg_ford 1
+
+def big_bridge
+class terrain
+is_water 1
+is_ground 1
+is_dynamic 0
+
+def bridge_deck
+class terrain
+is_water 1
+is_ground 1
+is_dynamic 0
+
+def marsh
+class terrain
+is_dynamic 0
+speed .5 1
+cover .5 0
+rmg_terrain 1
+
+; impassable
+
+def mountain
+class terrain
+is_high_ground 1
+is_ground 0
+is_air 0
+is_dynamic 0
+blocks_path 1
+rmg_terrain 1
+rmg_border 1
+
+; object-driven square terrain (usable on map too)
+
+def town
+class terrain
+is_dynamic 1
+
+def meadows
+class terrain
+is_dynamic 1
+rdg_vs archer 5
+
+def build_sites
+class terrain
+is_dynamic 0
+
+def forest
+class terrain
+cover .5 0
+
+def dense_forest
+class terrain
+is_dynamic 1
+blocks_path 1
+cover .5 0
