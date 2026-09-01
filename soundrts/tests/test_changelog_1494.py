@@ -19,8 +19,7 @@ def _section_1494(lang: str) -> str:
 
 
 def test_version_is_1494():
-    # 1.4.9.4 notes remain after later bumps; current VERSION is owned by 1.4.9.5+.
-    assert "1.4.9.4" in _source("doc_src", "src", "zh", "relnotes.rst")
+    assert 'VERSION = "1.4.9.4"' in _source("soundrts", "version.py")
 
 
 def test_all_relnotes_have_1494_heading():
@@ -44,6 +43,7 @@ def test_zh_relnotes_1494_session_topics():
     assert "default_game_speed_menu" in s
     assert "DISPLAY_TOGGLE" in s
     assert "speech_enabled" in s
+    assert "current_game_speed" in s
 
 
 def test_en_relnotes_1494_session_topics():
@@ -59,6 +59,7 @@ def test_en_relnotes_1494_session_topics():
     assert "default_game_speed_menu" in s
     assert "DISPLAY_TOGGLE" in s
     assert "speech_enabled" in s
+    assert "current_game_speed" in s
 
 
 def test_es_it_pt_relnotes_1494_session_topics():
@@ -75,3 +76,4 @@ def test_es_it_pt_relnotes_1494_session_topics():
         assert "default_game_speed_menu" in s, lang
         assert "DISPLAY_TOGGLE" in s, lang
         assert "speech_enabled" in s, lang
+        assert "current_game_speed" in s, lang

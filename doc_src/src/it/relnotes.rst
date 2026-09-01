@@ -3,7 +3,7 @@ Note di rilascio
 
 .. contents::
 
-1.4.9.5
+1.4.9.4
 ---------
 
 **Correzione: il cambio velocità in Opzioni non valeva fino al riavvio**
@@ -11,10 +11,6 @@ Note di rilascio
 - **Problema**: ``Game.run(speed=config.speed)`` congelava il valore all’import. Da personalizzato 6 a 1 in Opzioni scriveva ``SoundRTS.ini``, ma solo/campagna ``run()`` usava ancora il 6 dell’avvio.
 - **Cambio**: leggere ``current_game_speed()`` all’inizio della partita.
 - **Ambito**: ``game.py`` ``run``; ``game_interface_base.py`` ``GameInterface``.
-
-
-1.4.9.4
----------
 
 **Correzione: entrare dopo l’avvio dell’host produceva solo un beep**
 

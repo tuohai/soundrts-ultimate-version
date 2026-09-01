@@ -5,7 +5,7 @@ Release notes
 .. contents::
 
 
-1.4.9.5
+1.4.9.4
 ---------
 
 **Fix: Options speed change did not apply until restart**
@@ -13,10 +13,6 @@ Release notes
 - **Issue**: ``Game.run(speed=config.speed)`` froze the value at import. Changing Options from custom 6 to 1 wrote ``SoundRTS.ini``, but solo/campaign ``run()`` still used 6 from process start.
 - **Change**: Read ``current_game_speed()`` when the match starts.
 - **Scope**: ``game.py`` ``run``; ``game_interface_base.py`` ``GameInterface``.
-
-
-1.4.9.4
----------
 
 **Fix: joining after the host started only beeped**
 
