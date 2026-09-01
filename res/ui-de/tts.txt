@@ -1544,5 +1544,10 @@
 5831	Liste aktualisieren
 5832	waehlen
 5833	Raum voll
+5834	das Spiel hat bereits begonnen, Beitritt nicht möglich
+5835	Standard-Spielgeschwindigkeit
+5836	benutzerdefiniert
+5837	Spielgeschwindigkeit eingeben
+5838	Anzeige
 
 

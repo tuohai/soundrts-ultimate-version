@@ -1543,5 +1543,10 @@
 5831	aggiorna elenco
 5832	scegli
 5833	stanza piena
+5834	la partita è già iniziata, non si può entrare
+5835	velocità di gioco predefinita
+5836	personalizzato
+5837	inserisci la velocità di gioco
+5838	visualizzazione
 
 

@@ -3,6 +3,34 @@ Note di rilascio
 
 .. contents::
 
+1.4.9.4
+---------
+
+**Correzione: entrare dopo l’avvio dell’host produceva solo un beep**
+
+- **Problema**: aprendo il menu azioni di una stanza in attesa, aspettando che l’host avvii e poi scegliendo Entra, il client inviava ancora ``register`` dallo snapshot vecchio. Il server rispondeva ``register_error``; il client faceva solo beep.
+- **Cambio**: se la partita è già ``started``, il server invia ``game_already_started`` e il client annuncia che la partita è già iniziata. Osservare non cambia.
+- **Ambito**: ``serverclient.py`` ``cmd_register``; ``clientservermenu.py`` ``srv_game_already_started``; ``GAME_ALREADY_STARTED`` (5834).
+
+**Correzione: l’elenco stanze avvisava maps / invitations**
+
+- **Problema**: nell’elenco stanze (o nel sotto-menu), all’avvio dell’host arrivavano ancora ``maps``, ``invitations`` e ``update_menu`` della lobby. L’elenco non è ``ServerMenu``, quindi le prime due facevano WARNING; ``update_menu`` ridisegnava lo snapshot vecchio e offriva ancora Entra.
+- **Cambio**: i menu annidati ignorano ``maps`` / ``invitations``; l’elenco richiede ``list_rooms`` su ``update_menu``.
+- **Ambito**: ``clientservermenu.py`` ``_ServerMenu`` ``srv_maps`` / ``srv_invitations``; ``RoomListMenu.srv_update_menu``.
+
+**Cambio: velocità di gioco predefinita nelle Opzioni**
+
+- **Problema**: single e campagna usavano ``speed`` di ``SoundRTS.ini``, ma Opzioni non lo cambiava e restava 1.
+- **Cambio**: Opzioni → **Velocità di gioco predefinita**: 1, 1.5, 2, 2.5, 3, 3.5, 4, poi **Personalizzato** per digitare 0.1–10. Salvato come ``speed``. Il multiplayer sceglie ancora all’avvio della stanza.
+- **Ambito**: ``config.py`` ``game_speed_type``; ``clientmain.py`` ``default_game_speed_menu``; ``DEFAULT_GAME_SPEED`` (5835–5837).
+
+**Cambio: voce accessibilità e visualizzazione nelle Opzioni**
+
+- **Problema**: la voce accessibilità era solo nel menu di gioco / F4, la mappa solo con Ctrl+F2.
+- **Cambio**: Opzioni ha **Voce accessibilità** e **Visualizzazione**; Invio le commuta. Stessa config (``speech_enabled``, ``display_enabled``). Ctrl+F2 e F4 del menu restano.
+- **Ambito**: ``clientmain.py`` ``options_menu``; ``DISPLAY_TOGGLE`` (5838).
+
+
 1.4.9.3
 ---------
 

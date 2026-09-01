@@ -722,7 +722,13 @@ ALT MINUS: music_volume_down
         choice = self.choices[self.choice_index]
         msg = list(choice[0])
         if len(choice) > 2:
-            msg += mp.COMMA + choice[2]
+            from .lib.pygame_ui import resolve_choice_status
+
+            status = resolve_choice_status(choice)
+            if status:
+                if not isinstance(status, (list, tuple)):
+                    status = [status]
+                msg += mp.COMMA + list(status)
         voice.item(msg)
         self._draw_menu()
 
@@ -897,6 +903,7 @@ ALT MINUS: music_volume_down
             return self._confirm_choice()
         elif e.key == K_F2 and e.mod & KMOD_CTRL:
             toggle_fullscreen()
+            self._draw_menu()
         elif e.key == K_F1 and e.mod & KMOD_SHIFT or e.key == K_F2:
             voice.item(help_msg("menu", -1))
         elif e.key == K_F1:
@@ -919,6 +926,7 @@ ALT MINUS: music_volume_down
                 from .lib import voice_libs
 
                 voice_libs.toggle_speech_enabled(announce=True)
+                self._draw_menu()
             except Exception:
                 voice.item(mp.BEEP)
         elif e.key == K_F5:

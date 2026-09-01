@@ -1543,5 +1543,10 @@
 5831	odśwież listę
 5832	wybierz
 5833	pokój pełny
+5834	gra już się rozpoczęła, nie można dołączyć
+5835	domyślna prędkość gry
+5836	niestandardowa
+5837	wprowadź prędkość gry
+5838	wyświetlanie
 
 

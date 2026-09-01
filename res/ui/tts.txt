@@ -1673,5 +1673,10 @@
 5831	refresh list
 5832	choose
 5833	room full
+5834	the game has already started, you cannot join
+5835	default game speed
+5836	custom
+5837	enter game speed
+5838	display
 
 

@@ -4,6 +4,34 @@
 .. contents::
 
 
+1.4.9.4
+---------
+
+**修复：开局后再点加入只会蜂鸣**
+
+- **问题**：点进等待房间的动作菜单后不选，等到房主开局再点「加入」，客户端仍按进入时的快照发 ``register``。服务器因 ``can_register()`` 失败只回 ``register_error``，客户端只蜂鸣。
+- **改进**：该局已经 ``started`` 时，服务器改发 ``game_already_started``，客户端播报「游戏已开始，无法加入」。旁观不受影响。
+- **范围**：``serverclient.py`` ``cmd_register``；``clientservermenu.py`` ``srv_game_already_started``；``GAME_ALREADY_STARTED``（5834）。
+
+**修复：房间列表里大厅刷新会报警 maps / invitations**
+
+- **问题**：人在房间列表（或动作子菜单）时，房主开局仍按大厅协议发 ``maps``、``invitations``、``update_menu``。房间列表不是 ``ServerMenu``，前两条会 WARNING；``update_menu`` 还按旧快照重画，已开打的房间仍显示「加入」。
+- **改进**：嵌套菜单忽略 ``maps`` / ``invitations``；房间列表收到 ``update_menu`` 时重新 ``list_rooms``。
+- **范围**：``clientservermenu.py`` ``_ServerMenu`` ``srv_maps`` / ``srv_invitations``；``RoomListMenu.srv_update_menu``。
+
+**新增：选项菜单设置默认游戏速度**
+
+- **问题**：单人/战役开局用 ``SoundRTS.ini`` 的 ``speed``，但选项里改不了，只能保持 1。
+- **改进**：选项 → **默认游戏速度**：1、1.5、2、2.5、3、3.5、4，最下方「自定义」可输入 0.1–10。写入 ``speed``，单人/战役开局使用。联机建房仍在创建时选速度。
+- **范围**：``config.py`` ``game_speed_type``；``clientmain.py`` ``default_game_speed_menu``；``DEFAULT_GAME_SPEED``（5835–5837）。
+
+**新增：选项菜单开关无障碍语音与图像显示**
+
+- **问题**：无障碍语音只在游戏菜单 / 菜单 F4，图像显示只靠 Ctrl+F2，主菜单选项里没有。
+- **改进**：选项里增加「无障碍语音」「图像显示」，回车切换，状态与原来相同（``speech_enabled``、``display_enabled``）。Ctrl+F2 与菜单 F4 仍可用。
+- **范围**：``clientmain.py`` ``options_menu``；``DISPLAY_TOGGLE``（5838）。
+
+
 1.4.9.3
 ---------
 

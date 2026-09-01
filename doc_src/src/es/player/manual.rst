@@ -234,7 +234,7 @@ Para salir de un juego o acceder al menú del juego, presione F10. Alt F4 y Cont
 
 **Ctrl+F2: conmutar pantalla y calidad visual (modo visual)**
 
-Con la pantalla activada se muestra el mapa en planta con mejor calidad que la vista de depuración antigua: colores de terreno, terreno alto más claro, niebla con tono, mapa centrado; rejilla y muros/salidas; formas, colores de equipo, selección, barras de vida; coordenadas, nombres, panel izquierdo. En mapas grandes: scroll solo en el **borde del mapa**, zoom con la **rueda**; pasar por casillas no salta la cámara. Con la pantalla on puede usar el ratón:
+Con la pantalla activada se muestra el mapa en planta. También puede conmutarlo en menú principal → **Opciones** → **Visualización** (igual que Ctrl+F2; se guarda como ``display_enabled``). Calidad mejor que la vista de depuración antigua: colores de terreno, terreno alto más claro, niebla con tono, mapa centrado; rejilla y muros/salidas; formas, colores de equipo, selección, barras de vida; coordenadas, nombres, panel izquierdo. En mapas grandes: scroll solo en el **borde del mapa**, zoom con la **rueda**; pasar por casillas no salta la cámara. Con la pantalla on puede usar el ratón:
 
 - Clic izquierdo selecciona; doble clic selecciona todas las unidades visibles del mismo tipo; Shift+clic añade/quita; Shift+arrastra añade a la selección; clic en suelo vacío salta de casilla y limpia la selección.
 - Clic derecho: órdenes por defecto (colas Shift/Ctrl sin cambios).
@@ -260,7 +260,7 @@ El texto en píxeles suele no llegar a lectores/braille; el juego a ciegas sigue
 
 **F4 en menús: voz de accesibilidad**
 
-En cualquier menú (incluido el de pausa), F4 o el ítem del menú de juego conmuta todo el TTS. Apagado: siguen SFX y música. Por defecto activado. **F4 en partida sigue siendo Ayuda**; solo en menús. Véase `bibliotecas de voz <voice-libraries.htm>`_.
+En cualquier menú (incluido el de pausa), F4, o menú principal → **Opciones** → **Voz de accesibilidad**, o el ítem del menú de juego, conmuta todo el TTS. Apagado: siguen SFX y música. Por defecto activado. **F4 en partida sigue siendo Ayuda**; solo en menús. Véase `bibliotecas de voz <voice-libraries.htm>`_.
 
 Alt+Espacio o Control+Espacio: ingresa al modo RPG en primera persona. Escape: vuelve al modo mapa.
 
@@ -506,6 +506,11 @@ La preferencia se guarda en ``language.txt`` del usuario (``user/language.txt`` 
 ``cfg/language.txt`` de la carpeta de instalación sigue siendo un respaldo de solo lectura: solo se usa si el ``language.txt`` del usuario **no existe**. Tras cambiar el idioma desde opciones, manda el archivo de usuario. Un archivo de usuario vacío sigue el idioma del sistema.
 
 Consulte las carpetas ``ui`` / ``ui-*`` en ``res`` para ver los códigos disponibles.
+
+¿Cómo establecer la velocidad de juego predeterminada?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Menú principal → **Opciones** → **Velocidad de juego predeterminada**: 1, 1.5, 2, 2.5, 3, 3.5, 4, o **Personalizado** abajo para escribir un valor (0.1–10). Se guarda como ``speed`` en ``SoundRTS.ini``; solitario y campaña la usan. El multijugador sigue eligiendo al crear la sala.
 
 ¿El juego se actualiza solo?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^

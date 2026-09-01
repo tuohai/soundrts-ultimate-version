@@ -354,6 +354,9 @@ class ConnectionToClient(asynchat.async_chat):
             return
         offered = sanitize_room_password(args[1]) if len(args) >= 2 else ""
         game = self.server.get_game_by_id(args[0])
+        if game is not None and getattr(game, "started", False):
+            self.notify("game_already_started")
+            return
         if game is None or not game.can_register() or not self.is_compatible(game.admin):
             self.notify("register_error")
             return

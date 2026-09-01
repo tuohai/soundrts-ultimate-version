@@ -1543,5 +1543,10 @@
 5831	obnoviť zoznam
 5832	vybrať
 5833	miestnosť plná
+5834	hra už začala, nie je možné pripojiť sa
+5835	predvolená rýchlosť hry
+5836	vlastná
+5837	zadajte rýchlosť hry
+5838	zobrazenie
 
 

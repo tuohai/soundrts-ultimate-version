@@ -1543,5 +1543,10 @@
 5831	atualizar lista
 5832	escolher
 5833	sala cheia
+5834	a partida já começou, não é possível entrar
+5835	velocidade padrão do jogo
+5836	personalizado
+5837	digite a velocidade do jogo
+5838	exibição
 
 

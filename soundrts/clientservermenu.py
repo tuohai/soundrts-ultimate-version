@@ -141,6 +141,13 @@ class _ServerMenu(Menu):
     def srv_update_menu(self, unused_args):
         self.update_menu(self.make_menu())
 
+    def srv_maps(self, unused_args):
+        # Lobby-only payload (InTheLobby.send_menu). Nested menus just ignore it.
+        pass
+
+    def srv_invitations(self, unused_args):
+        pass
+
     def srv_quit(self, unused_args):
         voice.flush()
         # 重置战斗状态，停止服务器大厅音乐并播放主菜单音乐
@@ -189,6 +196,9 @@ class _ServerMenu(Menu):
 
     def srv_register_error(self, unused_args):
         voice.info(mp.BEEP)
+
+    def srv_game_already_started(self, unused_args):
+        voice.info(mp.GAME_ALREADY_STARTED)
 
     def srv_too_many_games(self, unused_args):
         voice.info(mp.TOO_MANY_GAMES)
@@ -896,6 +906,11 @@ class RoomListMenu(_ServerMenu):
     def __init__(self, server, auto=False, menu_type="main"):
         super().__init__(server, auto, menu_type)
         self.rooms = []
+
+    def srv_update_menu(self, unused_args):
+        # Host start / lobby refresh still sends maps + invitations + update_menu.
+        # Rebuilding from self.rooms would keep a stale Join button.
+        self.server.write_line("list_rooms")
 
     def _room_voice(self, room):
         title = normalize_map_title_for_voice(room["title"])

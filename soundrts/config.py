@@ -11,6 +11,7 @@ from .paths import CONFIG_FILE_PATH
 DEFAULT_LOGIN = "player"
 
 debug_mode: int
+speed: float
 mods: str
 soundpacks: str
 wait_delay_per_character: float
@@ -54,6 +55,25 @@ def volume_type(s):
     return max(0.0, min(1.0, float(s)))
 
 
+MIN_GAME_SPEED = 0.1
+MAX_GAME_SPEED = 10.0
+PRESET_GAME_SPEEDS = (1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0)
+
+
+def game_speed_type(s):
+    v = round(float(s), 2)
+    if v < MIN_GAME_SPEED or v > MAX_GAME_SPEED:
+        raise ValueError
+    return v
+
+
+def current_game_speed():
+    try:
+        return game_speed_type(getattr(_module, "speed", 1.0))
+    except (TypeError, ValueError):
+        return 1.0
+
+
 def game_voice_rate_type(s):
     v = int(s)
     if v < -10 or v > 10:
@@ -95,7 +115,7 @@ _options = [
     ("general", "mods", ""),
     ("general", "soundpacks", ""),
     ("general", "num_channels", 16),
-    ("general", "speed", 1),
+    ("general", "speed", 1.0, game_speed_type),
     (
         "general",
         "verbosity",

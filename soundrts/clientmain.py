@@ -48,7 +48,7 @@ from .clientversion import offer_pending_update, revision_checker
 from .definitions import ai_invite_label, get_menu_ai_difficulties, rules, style
 from .achievements_menu import achievements_menu
 from .game import ReplayGame, TrainingGame, pickle_recursion_limit_for_file_size
-from .lib.msgs import literal_text_msg, nb2msg
+from .lib.msgs import literal_text_msg, nb2msg, nb2msg_float
 from .lib.package import mod_menu_label
 from .lib.resource import best_language_match, res
 from .lib import sound
@@ -1175,6 +1175,66 @@ def voice_libs_menu():
     menu.loop()
 
 
+def _default_game_speed_status():
+    return nb2msg_float(config.current_game_speed())
+
+
+def _apply_default_game_speed(speed):
+    config.speed = config.game_speed_type(speed)
+    config.save()
+    voice.confirmation(nb2msg_float(config.speed))
+    return CLOSE_MENU
+
+
+def _custom_default_game_speed_text():
+    v = config.current_game_speed()
+    if v == int(v):
+        return str(int(v))
+    return ("%0.2f" % v).rstrip("0").rstrip(".")
+
+
+def _prompt_custom_default_game_speed():
+    raw = input_string(
+        mp.ENTER_GAME_SPEED,
+        pattern=r"^[0-9.]$",
+        default=_custom_default_game_speed_text(),
+        spell=True,
+        max_length=6,
+    )
+    if raw is None:
+        return
+    raw = raw.strip().replace(",", ".")
+    if not raw or raw == ".":
+        return
+    try:
+        return _apply_default_game_speed(raw)
+    except (TypeError, ValueError):
+        voice.info(mp.BEEP)
+
+
+def default_game_speed_menu():
+    current = config.current_game_speed()
+    choices = []
+    default_index = len(config.PRESET_GAME_SPEEDS)
+    for i, speed in enumerate(config.PRESET_GAME_SPEEDS):
+        label = nb2msg_float(speed)
+        if abs(current - speed) < 0.001:
+            label = label + mp.COMMA + mp.LANGUAGE_CURRENT
+            default_index = i
+        choices.append((label, (lambda s=speed: _apply_default_game_speed(s))))
+    custom_label = list(mp.CUSTOM_GAME_SPEED)
+    if default_index == len(config.PRESET_GAME_SPEEDS):
+        custom_label = custom_label + mp.COMMA + nb2msg_float(current)
+    choices.append((custom_label, _prompt_custom_default_game_speed))
+    choices.append((mp.BACK, CLOSE_MENU))
+    Menu(
+        mp.DEFAULT_GAME_SPEED,
+        choices,
+        default_choice_index=default_index,
+        menu_type="submenu",
+    ).loop()
+
+
 def options_menu():
     from .hotkey_remapping_menu import hotkey_mapping_menu
     from .clientversion import check_for_updates_now
@@ -1194,6 +1254,34 @@ def options_menu():
         voice.confirmation(_check_updates_status())
         _refresh_choices()
 
+    def _open_default_game_speed():
+        default_game_speed_menu()
+        _refresh_choices()
+
+    def _speech_status():
+        from .lib import voice_libs
+
+        if voice_libs.speech_is_enabled():
+            return mp.ACCESSIBILITY_VOICE_ON
+        return mp.ACCESSIBILITY_VOICE_OFF
+
+    def _toggle_speech():
+        from .lib import voice_libs
+
+        voice_libs.toggle_speech_enabled(announce=True)
+        _refresh_choices()
+
+    def _display_status():
+        from . import clientmedia
+
+        return mp.DISPLAY_ON if clientmedia.get_fullscreen() else mp.DISPLAY_OFF
+
+    def _toggle_display():
+        from . import clientmedia
+
+        clientmedia.toggle_fullscreen()
+        _refresh_choices()
+
     def _refresh_choices():
         menu.choices = [
             (mp.MODIFY_LOGIN, modify_login),
@@ -1204,9 +1292,24 @@ def options_menu():
             (mp.SOUNDPACKS, soundpacks_menu),
             (mp.VOICE_LIBS_MENU, voice_libs_menu),
             (
+                mp.DEFAULT_GAME_SPEED,
+                _open_default_game_speed,
+                _default_game_speed_status,
+            ),
+            (
+                mp.ACCESSIBILITY_VOICE,
+                _toggle_speech,
+                _speech_status,
+            ),
+            (
+                mp.DISPLAY_TOGGLE,
+                _toggle_display,
+                _display_status,
+            ),
+            (
                 mp.CHECK_UPDATES_ON_START,
                 _toggle_check_updates,
-                _check_updates_status(),
+                _check_updates_status,
             ),
             (mp.CHECK_FOR_UPDATES_NOW, check_for_updates_now),
             (mp.OPEN_USER_FOLDER, open_user_folder),

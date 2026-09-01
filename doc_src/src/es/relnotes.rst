@@ -4,6 +4,34 @@ Notas de la versión
 
 .. contents::
 
+1.4.9.4
+--------
+
+**Corrección: unirse después de que el anfitrión arrancara solo pitaba**
+
+- **Problema**: abrir el menú de acciones de una sala en espera, esperar a que el anfitrión arranque y entonces elegir Unirse seguía enviando ``register`` con la instantánea antigua. El servidor respondía ``register_error``; el cliente solo pitaba.
+- **Cambio**: si la partida ya está ``started``, el servidor envía ``game_already_started`` y el cliente anuncia que la partida ya ha empezado. Espectar no cambia.
+- **Alcance**: ``serverclient.py`` ``cmd_register``; ``clientservermenu.py`` ``srv_game_already_started``; ``GAME_ALREADY_STARTED`` (5834).
+
+**Corrección: la lista de salas avisaba maps / invitations**
+
+- **Problema**: en la lista de salas (o su submenú), al arrancar el anfitrión se seguían enviando ``maps``, ``invitations`` y ``update_menu`` de vestíbulo. La lista no es ``ServerMenu``, así que las dos primeras daban WARNING; ``update_menu`` redibujaba el instantáneo viejo y seguía ofreciendo Unirse.
+- **Cambio**: los menús anidados ignoran ``maps`` / ``invitations``; la lista pide ``list_rooms`` en ``update_menu``.
+- **Alcance**: ``clientservermenu.py`` ``_ServerMenu`` ``srv_maps`` / ``srv_invitations``; ``RoomListMenu.srv_update_menu``.
+
+**Cambio: velocidad de juego predeterminada en Opciones**
+
+- **Problema**: solitario y campaña usaban ``speed`` de ``SoundRTS.ini``, pero Opciones no lo cambiaba y se quedaba en 1.
+- **Cambio**: Opciones → **Velocidad de juego predeterminada**: 1, 1.5, 2, 2.5, 3, 3.5, 4, y **Personalizado** para escribir 0.1–10. Se guarda como ``speed``. El multijugador sigue eligiendo al crear la sala.
+- **Alcance**: ``config.py`` ``game_speed_type``; ``clientmain.py`` ``default_game_speed_menu``; ``DEFAULT_GAME_SPEED`` (5835–5837).
+
+**Cambio: voz de accesibilidad y visualización en Opciones**
+
+- **Problema**: la voz de accesibilidad solo estaba en el menú de partida / F4, y la vista de mapa solo con Ctrl+F2.
+- **Cambio**: Opciones tiene **Voz de accesibilidad** y **Visualización**; Intro las conmuta. Misma config (``speech_enabled``, ``display_enabled``). Ctrl+F2 y F4 del menú siguen.
+- **Alcance**: ``clientmain.py`` ``options_menu``; ``DISPLAY_TOGGLE`` (5838).
+
+
 1.4.9.3
 --------
 

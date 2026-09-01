@@ -1543,5 +1543,10 @@
 5831	actualizar lista
 5832	elegir
 5833	sala llena
+5834	la partida ya ha empezado, no se puede unir
+5835	velocidad de juego predeterminada
+5836	personalizado
+5837	introduzca la velocidad de juego
+5838	visualización
 
 

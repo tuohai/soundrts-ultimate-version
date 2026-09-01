@@ -234,7 +234,7 @@ To quit a game or access to the game menu, press F10. Alt F4 and Control C do th
 
 **Ctrl+F2: display toggle and visual quality (sighted mode)**
 
-When on, shows a top-down map. Compared with the old debug view, this build improves visual quality and readability: default terrain colors, brighter high ground, fog that keeps hue; grid and wall/exit cues; distinct unit/building/resource shapes, team colors, selection, HP bars, air markers; numeric coords, place names, resource amounts; left hover info panel. **Large maps** (e.g. cw1) are not shrunk to fit: cells stay near the size used on small maps and the rest extends off-screen (Age of Empires-style). To browse: move the pointer to the **main map edge** to scroll; use the **mouse wheel** to zoom; hovering squares does not jump the camera; minimap clicks and arrow-key jumps still center the view. Small maps still fit centered on screen. With the display on you can use the mouse:
+When on, shows a top-down map. You can also toggle it from main menu → **Options** → **Display** (same as Ctrl+F2; saved as ``display_enabled``). Compared with the old debug view, this build improves visual quality and readability: default terrain colors, brighter high ground, fog that keeps hue; grid and wall/exit cues; distinct unit/building/resource shapes, team colors, selection, HP bars, air markers; numeric coords, place names, resource amounts; left hover info panel. **Large maps** (e.g. cw1) are not shrunk to fit: cells stay near the size used on small maps and the rest extends off-screen (Age of Empires-style). To browse: move the pointer to the **main map edge** to scroll; use the **mouse wheel** to zoom; hovering squares does not jump the camera; minimap clicks and arrow-key jumps still center the view. Small maps still fit centered on screen. With the display on you can use the mouse:
 
 - Left-click select; double-click select all visible units of the same type; Shift+click add/remove; box-select prefers military (soldiers over villagers/buildings, as in Age of Empires II DE); Shift+box-select appends with the same filter; click empty ground to jump square and clear selection.
 - Right-click default orders (Shift/Ctrl queue and imperative unchanged).
@@ -267,7 +267,7 @@ Pixel text is usually invisible to screen readers / braille; blind play should k
 
 **F4 in menus: accessibility voice toggle**
 
-In any menu (including the in-game pause menu), press F4 or use “toggle accessibility voice” in the game menu to turn all TTS off/on. When off, SFX and music still work—handy with the display on. Default on; saved in config. **In-match F4 is still Help & Query** (layered hotkeys); this toggle is menu-only. See `voice libraries <voice-libraries.htm>`_.
+In any menu (including the in-game pause menu), press F4, or use main menu → **Options** → **Accessibility voice**, or “toggle accessibility voice” in the game menu to turn all TTS off/on. When off, SFX and music still work—handy with the display on. Default on; saved in config. **In-match F4 is still Help & Query** (layered hotkeys); this toggle is menu-only. See `voice libraries <voice-libraries.htm>`_.
 
 Alt+Space or Control+Space: enter first-person RPG mode. Escape: return to map mode.
 
@@ -514,6 +514,11 @@ The preference is stored in the user ``language.txt`` (portable ``user/language.
 Install-folder ``cfg/language.txt`` remains a read-only fallback: it is used only when the user ``language.txt`` does **not** exist. After you change language from the options menu, the user file wins. An empty user file means follow the system language.
 
 Check the ``ui`` / ``ui-*`` folders under ``res`` for available language codes.
+
+How to set the default game speed?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Main menu → **Options** → **Default game speed**: 1, 1.5, 2, 2.5, 3, 3.5, 4, or **Custom** at the bottom to type a value (0.1–10). Saved as ``speed`` in ``SoundRTS.ini``; solo and campaign starts use it. Multiplayer still picks speed when creating a room.
 
 Does the game update itself?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -1543,5 +1543,10 @@
 5831	actualiser la liste
 5832	choisir
 5833	salle pleine
+5834	la partie a déjà commencé, impossible de rejoindre
+5835	vitesse de jeu par défaut
+5836	personnalisé
+5837	entrez la vitesse de jeu
+5838	affichage
 
 

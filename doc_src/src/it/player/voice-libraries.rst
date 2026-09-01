@@ -42,7 +42,7 @@ Dove configurare
 1. Menu principale → **Opzioni** → **Impostazioni libreria vocale**
 2. Voci:
    - **Attiva o disattiva la voce secondaria** (oppure **F3** in qualsiasi menu; non in partita)
-   - **F4 nei menu**: attiva/disattiva voce di accessibilità (tutto il TTS; in partita F4 resta Aiuto)
+   - **F4 nei menu** (o **Opzioni** → **Voce di accessibilità**): attiva/disattiva voce di accessibilità (tutto il TTS; in partita F4 resta Aiuto)
    - Editor **primaria** / **secondaria**: volume, tono, velocità, voce, scheda audio
    - **Apri cartella voci**: apre ``user/voices``
 

@@ -44,7 +44,7 @@ Where to configure
 1. Main menu → **Options** → **Voice library settings**
 2. Choices:
    - **Enable or disable secondary voice** (or press **F3** in any menu; not available in-match)
-   - **F4 in menus**: toggle accessibility voice (all TTS; in-match F4 remains Help)
+   - **F4 in menus** (or **Options** → **Accessibility voice**): toggle accessibility voice (all TTS; in-match F4 remains Help)
    - **Primary** / **Secondary** library editors: volume, pitch, rate, voice, sound card
    - **Open voices folder**: opens ``user/voices`` for installing packs
 

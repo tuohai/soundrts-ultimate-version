@@ -5,6 +5,34 @@ Release notes
 .. contents::
 
 
+1.4.9.4
+---------
+
+**Fix: joining after the host started only beeped**
+
+- **Issue**: Opening a waiting room's action menu, waiting until the host started, then choosing Join still sent ``register`` from the stale snapshot. The server replied ``register_error``; the client only beeped.
+- **Change**: If the match has already ``started``, the server sends ``game_already_started`` and the client says the game has already started. Spectate is unchanged.
+- **Scope**: ``serverclient.py`` ``cmd_register``; ``clientservermenu.py`` ``srv_game_already_started``; ``GAME_ALREADY_STARTED`` (5834).
+
+**Fix: room list warned on lobby maps / invitations**
+
+- **Issue**: While in the room list (or its action submenu), host start still sent lobby ``maps``, ``invitations``, and ``update_menu``. The room list is not ``ServerMenu``, so the first two logged WARNING; ``update_menu`` rebuilt from the stale snapshot and still offered Join.
+- **Change**: Nested menus ignore ``maps`` / ``invitations``; the room list requests ``list_rooms`` on ``update_menu``.
+- **Scope**: ``clientservermenu.py`` ``_ServerMenu`` ``srv_maps`` / ``srv_invitations``; ``RoomListMenu.srv_update_menu``.
+
+**Change: set default game speed from Options**
+
+- **Issue**: Solo and campaign starts used ``SoundRTS.ini`` ``speed``, but Options could not change it, so it stayed at 1.
+- **Change**: Options → **Default game speed**: 1, 1.5, 2, 2.5, 3, 3.5, 4, then **Custom** to type 0.1–10. Saved as ``speed``; solo/campaign use it. Multiplayer still picks speed when creating a room.
+- **Scope**: ``config.py`` ``game_speed_type``; ``clientmain.py`` ``default_game_speed_menu``; ``DEFAULT_GAME_SPEED`` (5835–5837).
+
+**Change: accessibility voice and display toggles in Options**
+
+- **Issue**: Accessibility TTS was only in the game menu / menu F4, and the map display was only Ctrl+F2; Options had neither.
+- **Change**: Options now has **Accessibility voice** and **Display**; Enter toggles them. Same config (``speech_enabled``, ``display_enabled``). Ctrl+F2 and menu F4 still work.
+- **Scope**: ``clientmain.py`` ``options_menu``; ``DISPLAY_TOGGLE`` (5838).
+
+
 1.4.9.3
 ---------
 

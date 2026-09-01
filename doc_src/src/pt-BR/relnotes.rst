@@ -4,6 +4,34 @@ Notas de lançamento
 
 .. contents::
 
+1.4.9.4
+--------
+
+**Correção: entrar depois do anfitrião começar só emitia um bip**
+
+- **Problema**: abrir o menu de ações de uma sala à espera, esperar o anfitrião começar e depois escolher Entrar ainda enviava ``register`` do instantâneo antigo. O servidor respondia ``register_error``; o cliente só emitia um bip.
+- **Mudança**: se a partida já está ``started``, o servidor envia ``game_already_started`` e o cliente anuncia que a partida já começou. Observar não muda.
+- **Alcance**: ``serverclient.py`` ``cmd_register``; ``clientservermenu.py`` ``srv_game_already_started``; ``GAME_ALREADY_STARTED`` (5834).
+
+**Correção: a lista de salas avisava maps / invitations**
+
+- **Problema**: na lista de salas (ou no submenu), ao o anfitrião começar ainda chegavam ``maps``, ``invitations`` e ``update_menu`` do átrio. A lista não é ``ServerMenu``, por isso as duas primeiras davam WARNING; ``update_menu`` redesenhava o instantâneo antigo e ainda oferecia Entrar.
+- **Mudança**: menus aninhados ignoram ``maps`` / ``invitations``; a lista pede ``list_rooms`` em ``update_menu``.
+- **Alcance**: ``clientservermenu.py`` ``_ServerMenu`` ``srv_maps`` / ``srv_invitations``; ``RoomListMenu.srv_update_menu``.
+
+**Mudança: velocidade padrão do jogo em Opções**
+
+- **Problema**: solo e campanha usavam ``speed`` de ``SoundRTS.ini``, mas Opções não mudava e ficava em 1.
+- **Mudança**: Opções → **Velocidade padrão do jogo**: 1, 1.5, 2, 2.5, 3, 3.5, 4, e **Personalizado** para escrever 0.1–10. Gravado como ``speed``. O multiplayer ainda escolhe ao criar a sala.
+- **Alcance**: ``config.py`` ``game_speed_type``; ``clientmain.py`` ``default_game_speed_menu``; ``DEFAULT_GAME_SPEED`` (5835–5837).
+
+**Mudança: voz de acessibilidade e exibição em Opções**
+
+- **Problema**: a voz de acessibilidade estava só no menu de jogo / F4, e o mapa só com Ctrl+F2.
+- **Mudança**: Opções tem **Voz de acessibilidade** e **Exibição**; Enter alterna. Mesma config (``speech_enabled``, ``display_enabled``). Ctrl+F2 e F4 do menu continuam.
+- **Alcance**: ``clientmain.py`` ``options_menu``; ``DISPLAY_TOGGLE`` (5838).
+
+
 1.4.9.3
 --------
 

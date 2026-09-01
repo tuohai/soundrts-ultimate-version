@@ -45,6 +45,13 @@ class _FakeServer:
     def available_players(self, client=None):
         return []
 
+    def get_game_by_id(self, ident):
+        ident = int(ident)
+        for g in getattr(self, "games", []):
+            if g.id == ident:
+                return g
+        return None
+
 
 class _FakeClient:
     def __init__(self, login, version="1.4.9.3"):
@@ -181,6 +188,24 @@ def test_send_rooms_empty_sends_no_rooms():
     assert notes == [("no_rooms",)]
 
 
+def test_register_after_start_says_game_already_started():
+    server = _FakeServer()
+    game = _bare_game(started=True)
+    server.games = [game]
+    guest = ConnectionToClient.__new__(ConnectionToClient)
+    guest.login = "guest"
+    guest.version = "1.4.9.3"
+    guest.server = server
+    guest.is_disconnected = False
+    notes = []
+    guest.notify = lambda *args: notes.append(args)
+    guest.push = lambda *a: None
+    guest.is_compatible = lambda other: True
+    guest.cmd_register(["7"])
+    assert notes == [("game_already_started",)]
+    assert guest not in game.players
+
+
 def test_create_init_does_not_auto_invite():
     guest = _FakeClient("guest")
     server = _FakeServer()
@@ -205,9 +230,12 @@ def test_sanitize_and_lobby_wiring():
     reg = _source("soundrts", "serverclient.py").split("def cmd_register(self, args")[1].split("\n    def ")[0]
     assert "wrong_password" in reg
     assert "password_accepted" in reg
+    assert "game_already_started" in reg
     spec = _source("soundrts", "serverclient.py").split("def cmd_spectate(self, args")[1].split("\n    def ")[0]
     assert "wrong_password" in spec
     menu = _source("soundrts", "clientservermenu.py")
+    assert "srv_game_already_started" in menu
+    assert "mp.GAME_ALREADY_STARTED" in menu
     assert "class WaitingToSpectateMenu" in menu
     assert "srv_waiting_to_spectate" in menu
     waiting = menu.split("class WaitingToSpectateMenu")[1].split("class SpectateMenu")[0]
@@ -215,6 +243,12 @@ def test_sanitize_and_lobby_wiring():
     assert "quit_spectating" in waiting
     assert "mp.QUIT2" in waiting
     assert "waiting_to_spectate" in _source("soundrts", "serverroom.py")
+    base = menu.split("class _ServerMenu")[1].split("class ServerMenu")[0]
+    assert "def srv_maps" in base
+    assert "def srv_invitations" in base
+    room = menu.split("class RoomListMenu")[1].split("class WaitingToSpectateMenu")[0]
+    assert "def srv_update_menu" in room
+    assert "list_rooms" in room.split("def srv_update_menu")[1].split("def ")[0]
 
 
 def test_tts_room_list_ids():
@@ -222,6 +256,8 @@ def test_tts_room_list_ids():
     zh = _source("res", "ui-zh", "tts.txt")
     assert "5823" in zh and "房间列表" in zh
     assert "5827" in zh and "请输入房间密码" in zh
+    assert "GAME_ALREADY_STARTED = [5834]" in _source("soundrts", "msgparts.py")
+    assert "5834" in zh and "游戏已开始，无法加入" in zh
 
 
 def test_coop_password_join_replaces_ai_partner():

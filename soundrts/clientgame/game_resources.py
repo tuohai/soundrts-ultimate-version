@@ -246,7 +246,7 @@ def cmd_gamemenu(interface):
     menu.append(
         mp.ACCESSIBILITY_VOICE_TOGGLE,
         lambda: voice_libs.toggle_speech_enabled(announce=True),
-        _speech_status(),
+        _speech_status,
     )
     menu.append(mp.CONTINUE_GAME, None)
     set_game_mode(False)

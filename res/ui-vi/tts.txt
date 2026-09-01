@@ -1544,5 +1544,10 @@
 5831	làm mới danh sách
 5832	chọn
 5833	phòng đã đầy
+5834	trò chơi đã bắt đầu, không thể tham gia
+5835	tốc độ trò chơi mặc định
+5836	tùy chỉnh
+5837	nhập tốc độ trò chơi
+5838	hiển thị hình ảnh
 
 

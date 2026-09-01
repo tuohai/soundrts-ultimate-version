@@ -260,7 +260,7 @@ Texto em pixels em geral não chega a leitores/braille; jogo sem visão continua
 
 **F4 nos menus: voz de acessibilidade**
 
-Em qualquer menu (incluindo o de pausa), F4 ou o item do menu do jogo liga/desliga todo o TTS. Desligado: SFX e música continuam. Padrão ligado. **F4 na partida continua Ajuda**; só nos menus. Veja `bibliotecas de voz <voice-libraries.htm>`_.
+Em qualquer menu (incluindo o de pausa), F4, ou menu principal → **Opções** → **Voz de acessibilidade**, ou o item do menu do jogo, liga/desliga todo o TTS. Desligado: SFX e música continuam. Padrão ligado. **F4 na partida continua Ajuda**; só nos menus. Veja `bibliotecas de voz <voice-libraries.htm>`_.
 
 Alt+Espaço ou Control+Espaço: entrar no modo RPG em primeira pessoa. Escape: voltar ao modo mapa.
 
@@ -507,6 +507,11 @@ A preferência fica em ``language.txt`` do usuário (``user/language.txt`` ou ``
 ``cfg/language.txt`` na pasta de instalação continua como fallback somente leitura: só é usado se o ``language.txt`` do usuário **não existir**. Depois de mudar pelo menu de opções, vale o arquivo do usuário. Um arquivo do usuário vazio segue o idioma do sistema.
 
 Veja as pastas ``ui`` / ``ui-*`` em ``res`` para os códigos disponíveis.
+
+Como definir a velocidade padrão do jogo?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Menu principal → **Opções** → **Velocidade padrão do jogo**: 1, 1.5, 2, 2.5, 3, 3.5, 4, ou **Personalizado** no fim para escrever um valor (0.1–10). Gravado como ``speed`` em ``SoundRTS.ini``; solo e campanha usam-no. O multiplayer ainda escolhe ao criar a sala.
 
 O jogo se atualiza sozinho?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^

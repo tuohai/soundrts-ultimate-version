@@ -131,10 +131,24 @@ def _menu_labels_for(choices) -> list[str]:
     return labels
 
 
+def resolve_choice_status(choice):
+    """Third tuple item: frozen msgparts, or a callable for live status."""
+    if not choice or len(choice) < 3:
+        return None
+    status = choice[2]
+    if callable(status):
+        try:
+            status = status()
+        except Exception:
+            return None
+    return status
+
+
 def _menu_explanation_text(choice) -> str:
-    if not choice or len(choice) < 3 or not choice[2]:
+    status = resolve_choice_status(choice)
+    if not status:
         return ""
-    return msgparts_to_display_text(choice[2])
+    return msgparts_to_display_text(status)
 
 
 # (font_id, max_width, text) -> fitted text; avoids O(n) font.size on long help rows.
