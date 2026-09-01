@@ -119,7 +119,7 @@ def test_get_bindings_text_loads_unit_layer_from_resource_stack():
 
 def test_coop_campaign_skips_faction_equivalents():
     src = (ROOT / "soundrts" / "game.py").read_text(encoding="utf-8")
-    block = src.split("def run(self, speed=config.speed):")[1].split("\n    def ")[0]
+    block = src.split("def run(self, speed=None):")[1].split("\n    def ")[0]
     assert 'getattr(self, "is_coop_campaign", False)' in block
     assert "use_equivalents = False" in block
 

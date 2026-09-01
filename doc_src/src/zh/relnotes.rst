@@ -4,6 +4,16 @@
 .. contents::
 
 
+1.4.9.5
+---------
+
+**修复：选项里改默认速度，开局仍用启动时的旧值**
+
+- **问题**：``Game.run(speed=config.speed)`` 在导入时就把速度写死。选项里从自定义 6 改成 1 会写入 ``SoundRTS.ini``，单人/战役 ``run()`` 仍用进程启动时的 6。
+- **改进**：开局再读 ``current_game_speed()``。
+- **范围**：``game.py`` ``run``；``game_interface_base.py`` ``GameInterface``。
+
+
 1.4.9.4
 ---------
 

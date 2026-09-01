@@ -5,6 +5,16 @@ Release notes
 .. contents::
 
 
+1.4.9.5
+---------
+
+**Fix: Options speed change did not apply until restart**
+
+- **Issue**: ``Game.run(speed=config.speed)`` froze the value at import. Changing Options from custom 6 to 1 wrote ``SoundRTS.ini``, but solo/campaign ``run()`` still used 6 from process start.
+- **Change**: Read ``current_game_speed()`` when the match starts.
+- **Scope**: ``game.py`` ``run``; ``game_interface_base.py`` ``GameInterface``.
+
+
 1.4.9.4
 ---------
 

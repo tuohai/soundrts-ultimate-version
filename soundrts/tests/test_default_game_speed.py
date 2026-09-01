@@ -38,6 +38,18 @@ def test_config_speed_uses_float_converter():
     assert '("general", "speed", 1.0, game_speed_type)' in src
 
 
+def test_game_run_reads_live_config_speed():
+    """Options may change speed after import; run() must not freeze config.speed."""
+    src = _source("soundrts", "game.py")
+    assert "def run(self, speed=config.speed):" not in src
+    assert src.count("def run(self, speed=None):") >= 2
+    first = src.split("def run(self, speed=None):")[1].split("\n    def ")[0]
+    assert "current_game_speed" in first
+    iface = _source("soundrts", "clientgame", "game_interface_base.py")
+    assert "def __init__(self, server, speed=config.speed):" not in iface
+    assert "current_game_speed" in iface.split("def __init__(self, server, speed=None):")[1].split("\n    def ")[0]
+
+
 def test_options_menu_has_default_game_speed():
     options = _source("soundrts", "clientmain.py").split("def options_menu")[1].split("\ndef ")[0]
     assert "mp.DEFAULT_GAME_SPEED" in options

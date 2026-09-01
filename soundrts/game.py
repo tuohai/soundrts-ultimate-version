@@ -258,7 +258,11 @@ class _Game:
                 return []
         return self.default_triggers
 
-    def run(self, speed=config.speed):
+    def run(self, speed=None):
+        # Default must not capture config.speed at import time: Options can
+        # change it afterwards, and solo/campaign call run() with no speed.
+        if speed is None:
+            speed = config.current_game_speed()
         if self.record_replay:
             self.create_replay()
 
@@ -957,7 +961,9 @@ class SpectatorGame(_MultiplayerGame):
         local_client 不在 self.players 内，天然被排除。"""
         return [c for c in self.players if c.__class__ != DummyClient]
 
-    def run(self, speed=config.speed):
+    def run(self, speed=None):
+        if speed is None:
+            speed = config.current_game_speed()
         if self.record_replay:
             self.create_replay()
 

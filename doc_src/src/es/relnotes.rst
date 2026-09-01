@@ -4,6 +4,16 @@ Notas de la versión
 
 .. contents::
 
+1.4.9.5
+--------
+
+**Corrección: cambiar la velocidad en Opciones no se aplicaba hasta reiniciar**
+
+- **Problema**: ``Game.run(speed=config.speed)`` congelaba el valor al importar. Pasar de personalizado 6 a 1 en Opciones escribía ``SoundRTS.ini``, pero solo/campaña ``run()`` seguía usando el 6 del arranque.
+- **Cambio**: leer ``current_game_speed()`` al iniciar la partida.
+- **Alcance**: ``game.py`` ``run``; ``game_interface_base.py`` ``GameInterface``.
+
+
 1.4.9.4
 --------
 

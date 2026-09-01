@@ -42,8 +42,10 @@ class GameInterface(AttributesInterface):
     zoom_mode = False
     zoom = None
 
-    def __init__(self, server, speed=config.speed):
+    def __init__(self, server, speed=None):
         self.server = server
+        if speed is None:
+            speed = config.current_game_speed()
         self.speed = speed
         self.alert_squares = {}
         self.dobjets = {}
