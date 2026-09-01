@@ -64,20 +64,20 @@ def _coop_game():
     return game
 
 
-def test_coop_menu_offers_public_and_private_room():
+def test_coop_menu_offers_password_instead_of_public_private():
     src = _source("soundrts", "clientservermenu.py")
-    assert "_select_visibility" in src
-    assert "mp.COOP_PUBLIC_ROOM" in src
-    assert "mp.COOP_PRIVATE_ROOM" in src
-    assert '"public", "0", difficulty' in src
+    assert "_select_password" in src
+    assert "ask_room_password" in src
+    assert "mp.COOP_PUBLIC_ROOM" not in src.split("def _coop_campaign_menu")[1].split("def _room_list_menu")[0]
 
 
-def test_create_campaign_public_flag_wired():
+def test_create_campaign_password_wired():
     src = _source("soundrts", "serverclient.py")
     block = src.split("def cmd_create_campaign")[1].split("\n    def ")[0]
+    assert "extract_password_token" in block
     assert 'tokens[-1] == "public"' in block
     assert "_create_game(" in block
-    assert "is_public" in block.split("_create_game", 1)[1]
+    assert "password=password" in block.split("_create_game", 1)[1]
 
 
 def test_invite_clears_coop_ai_slot():

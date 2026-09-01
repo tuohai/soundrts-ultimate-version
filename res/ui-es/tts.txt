@@ -1531,3 +1531,17 @@
 5797	error al comprobar actualizaciones
 5798	abriendo la ventana de actualizacion; el juego se cerrara
 5799	capturado
+5822	unirse a la partida
+5823	lista de salas
+5824	no hay salas
+5825	esperando
+5826	protegida con contrasena
+5827	introduzca la contrasena
+5828	sin contrasena
+5829	establecer contrasena
+5830	contrasena incorrecta
+5831	actualizar lista
+5832	elegir
+5833	sala llena
+
+

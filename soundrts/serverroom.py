@@ -40,7 +40,7 @@ class Anonymous(_State):
 
 class InTheLobby(_State):
 
-    allowed_commands = ("create", "create_random", "create_campaign", "register", "quit", "say", "list_games", "spectate", "quit_game")
+    allowed_commands = ("create", "create_random", "create_campaign", "register", "quit", "say", "list_games", "list_rooms", "spectate", "quit_game")
 
     def send_menu(self, client):
         client.send_maps()
@@ -153,14 +153,17 @@ class Game:
     started = False
     speed = 1
 
-    def __init__(self, scenario: Map, speed, server, admin, is_public=False, treaty_minutes: int = 0) -> None:
+    def __init__(self, scenario: Map, speed, server, admin, is_public=False, treaty_minutes: int = 0, password: str = "") -> None:
+        from .room_password import sanitize_room_password
+
         self.id = server.get_next_id()
         self.scenario = scenario
         self.speed = speed
         self.real_speed = speed
         self.server = server
         self.admin = admin
-        self.is_public = is_public
+        self.password = sanitize_room_password(password)
+        self.is_public = not bool(self.password)
         self.treaty_minutes = int(treaty_minutes) if treaty_minutes else 0
         self.players: List[Union["ConnectionToClient", _Computer]] = []
         self.guests: List[Union["ConnectionToClient", _Computer]] = []
@@ -172,17 +175,93 @@ class Game:
         self._order_history: List[tuple] = []  # [(fpct, all_orders_string), ...]
         self._initial_players_pack = ""  # 开局原始玩家名册，旁观重建用
         self.register(admin)
-        if self.is_public:
-            self._process_public_game()
+        # All rooms appear in the lobby room list. A password, not public/private,
+        # controls who may join or spectate. Invited guests skip the password.
 
-    def _process_public_game(self):
-        for player in self.server.available_players():
-            if player.is_compatible(self.admin):
-                self.invite(player)
+    def notify_connection_of(self, unused_client):
+        # Login still calls this; the room list is refreshed via update_menus.
+        pass
 
-    def notify_connection_of(self, client):
-        if self.is_public and self.can_register() and client.is_compatible(self.admin):
-            self.invite(client)
+    def _open_room_title_parts(self):
+        from .lib.msgs import normalize_map_title_for_voice
+        from .randommap import map_voice_title
+
+        voice_title = map_voice_title(self.scenario)
+        if voice_title:
+            return list(voice_title)
+        title = getattr(self.scenario, "title", None)
+        if title:
+            if isinstance(title, str):
+                title = [title]
+            return list(normalize_map_title_for_voice(title, self.scenario.name))
+        return [self.scenario.name]
+
+    def open_room_pack(self):
+        return self.room_pack()
+
+    def room_pack(self):
+        """One notify token listing a room (password never included)."""
+        from urllib.parse import quote
+
+        players = "+".join(
+            p.login.replace("+", "_").replace(",", "_") for p in self.human_players
+        ) or self.admin.login.replace("+", "_").replace(",", "_")
+        started = 1 if self.started else 0
+        locked = 1 if getattr(self, "password", "") else 0
+        try:
+            minutes = self.nb_minutes if self.started else 0
+        except Exception:
+            minutes = 0
+        joinable = 1 if (not self.started and self.can_register()) else 0
+        spectatable = 1
+        parts = [
+            self.id,
+            self.admin.login.replace(",", "_"),
+            len(self.human_players),
+            self.scenario.nb_players_max,
+            players,
+            started,
+            locked,
+            minutes,
+            joinable,
+            spectatable,
+            *self._open_room_title_parts(),
+        ]
+        return quote(",".join(str(x) for x in parts), safe=",+")
+
+    def is_listed_room(self, client):
+        if not client.is_compatible(self.admin):
+            return False
+        if client in self.human_players or client in self.spectators:
+            return False
+        return True
+
+    def is_listed_open_room(self, client):
+        return self.is_listed_room(client) and (not self.started) and self.can_register()
+
+    def password_accepted(self, client, offered=""):
+        from .room_password import sanitize_room_password
+
+        secret = getattr(self, "password", "") or ""
+        if not secret:
+            return True
+        if client in self.guests:
+            return True
+        return sanitize_room_password(offered) == secret
+
+    def can_join_from_lobby(self, client, offered=""):
+        if not self.can_register():
+            return False
+        if not client.is_compatible(self.admin):
+            return False
+        return self.password_accepted(client, offered)
+
+    def can_spectate_from_lobby(self, client, offered=""):
+        if not client.is_compatible(self.admin):
+            return False
+        if client in self.human_players:
+            return False
+        return self.password_accepted(client, offered)
 
     @property
     def human_players(self) -> List["ConnectionToClient"]:
@@ -267,6 +346,8 @@ class Game:
                 getattr(self, "coop_chapter", ""),
             )
             client.state = Playing()
+        for spec in list(self.spectators):
+            self._send_start_spectating(spec)
         self.server.log_status()
         self._start_time = time.time()
 
@@ -475,6 +556,7 @@ class Game:
 
     def remove_spectator(self, client):
         """移除旁观者"""
+        waiting = not self.started
         if client in self.spectators:
             self.spectators.remove(client)
             client.game = None
@@ -484,43 +566,40 @@ class Game:
                 player.notify("spectator_left", client.login)
             for spectator in self.spectators:
                 spectator.notify("spectator_left", client.login)
+            if waiting:
+                client.notify("quit")
             info(f"旁观者 {client.login} 离开游戏 {self.id}")
 
-    def start_spectating(self, client):
-        """开始旁观游戏
+    def _send_start_spectating(self, client):
+        initial_players = getattr(self, "_initial_players_pack", None)
+        if not initial_players:
+            initial_players = ";".join(pack(p) for p in self.players)
+        client.notify(
+            "start_spectating",
+            initial_players,
+            self.scenario.name,
+            self.speed,
+            self.seed,
+            self.treaty_minutes,
+            getattr(self, "_coop_enemy_hp", 100),
+            getattr(self, "_coop_enemy_damage", 100),
+        )
+        for fpct, all_orders in getattr(self, "_order_history", []) or []:
+            client.notify("all_orders", fpct, all_orders)
 
-        关键点：服务器是纯转发器、不模拟世界。要让旁观者看到与对局完全一致的
-        画面，必须做到确定性重放：
-          1) 下发开局 seed 与 treaty 分钟数（影响世界生成与战斗/移动判定）；
-          2) 把开局至今的全部 all_orders 历史按顺序回放给旁观者，让其把世界
-             快进到当前回合；
-          3) 先把 client 加入 spectators（本函数是单线程、原子执行，期间不会有
-             新回合派发），随后的实时回合再通过 notify 正常推送，既无空档也无重复。
-        """
+    def start_spectating(self, client):
+        """旁观：已开打则立刻重放追帧；未开打则先进入等待，开局后再下发 start_spectating。"""
+        if client in self.human_players:
+            return False
         if self.started:
-            self.add_spectator(client)
-            # 发送游戏状态给旁观者（含确定性重放所需的 seed 与 treaty）。
-            # 使用开局原始名册，确保与历史 orders 引用的玩家集合一致。
-            initial_players = getattr(self, "_initial_players_pack", None)
-            if not initial_players:
-                initial_players = ";".join(pack(p) for p in self.players)
-            client.notify(
-                "start_spectating",
-                initial_players,
-                self.scenario.name,
-                self.speed,
-                self.seed,
-                self.treaty_minutes,
-                # 合作战役难度：旁观者必须用与对局相同的敌人强度百分比重建世界，
-                # 否则敌方 hp/伤害缩放不一致会导致重放历史 orders 时分叉。
-                getattr(self, "_coop_enemy_hp", 100),
-                getattr(self, "_coop_enemy_damage", 100),
-            )
-            # 重放历史 orders，让旁观者世界追上当前进度
-            for fpct, all_orders in self._order_history:
-                client.notify("all_orders", fpct, all_orders)
+            if client not in self.spectators:
+                self.add_spectator(client)
+            self._send_start_spectating(client)
             return True
-        return False
+        if client not in self.spectators:
+            self.add_spectator(client)
+        client.notify("waiting_to_spectate")
+        return True
 
     def move_to_alliance(self, player_index, alliance):
         player = self.players[int(player_index)]

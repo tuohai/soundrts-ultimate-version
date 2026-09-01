@@ -620,11 +620,13 @@ Durante una partita (non se le alleanze erano fissate prima dell’inizio):
 
 Modalità trattato: scegli la durata della pace (fino a 20 minuti) prima che inizi il combattimento.
 
-Modalità spettatore (dal 1.4.0.6)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Modalità spettatore (dal 1.4.0.6; stanze in attesa dal 1.4.9.3)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Dal menu del server, scegli "spectate" e seleziona una partita in corso. Usa Page Up / Page Down per
-raggiungere un’area visibile prima di usare i tasti freccia per spostare il focus della mappa.
+Nella lobby apri l’elenco stanze, scegli una stanza e poi osserva. Anche le stanze non ancora
+avviate si possono osservare: aspetti che l’host parta. Le partite già avviate recuperano subito.
+La telecamera si apre sullo spawn di un giocatore reale; Page Up / Page Down servono ancora
+per cambiare casella prima dei tasti freccia.
 
 Esplorazione automatica (dal 1.4.3.1)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -633,11 +633,13 @@ During a game (not if alliances were fixed before start):
 
 Treaty mode: choose peace duration (up to 20 minutes) before combat begins.
 
-Spectator mode (since 1.4.0.6)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Spectator mode (since 1.4.0.6; waiting rooms since 1.4.9.3)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-From the server menu, choose "spectate" and pick an ongoing game. Use Page Up / Page Down to
-reach a visible area before using arrow keys to move the map focus.
+From the server lobby, open the room list, pick a room, then choose spectate. Waiting rooms
+can be spectated too: you wait until the host starts (Quit / leave this game, or Esc). Started matches catch up immediately.
+The camera opens on a real player's spawn; Page Up / Page Down still cycle squares before
+using the arrow keys.
 
 Auto-explore (since 1.4.3.1)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

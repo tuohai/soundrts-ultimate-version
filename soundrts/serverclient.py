@@ -155,6 +155,20 @@ class ConnectionToClient(asynchat.async_chat):
             )
         )
 
+    def send_open_rooms(self):
+        self.send_rooms()
+
+    def send_rooms(self):
+        packed = [
+            g.room_pack()
+            for g in self.server.games
+            if g.is_listed_room(self)
+        ]
+        if packed:
+            self.notify("rooms", *packed)
+        else:
+            self.notify("no_rooms")
+
     def notify(self, *args):
         if not self.is_disconnected:
             self.push(" ".join(map(str, args)) + "\n")
@@ -242,25 +256,29 @@ class ConnectionToClient(asynchat.async_chat):
     # "in the lobby" commands
 
     def cmd_create(self, args: str) -> None:
-        map_index_or_name = args[0]
-        speed = float(args[1])
-        is_public = len(args) >= 3 and args[2] == "public"
-        # 可选：条约分钟数
+        from .room_password import extract_password_token
+
+        password, tokens = extract_password_token(args)
+        map_index_or_name = tokens[0]
+        speed = float(tokens[1])
+        rest = tokens[2:]
+        if rest and rest[0] == "public":
+            rest = rest[1:]
         try:
-            treaty_minutes = int(args[3]) if len(args) >= 4 else 0
+            treaty_minutes = int(rest[0]) if rest else 0
         except Exception:
             treaty_minutes = 0
         if self.server.can_create(self):
             map_ = _map(map_index_or_name)
             if map_:
-                self._create_game(map_, speed, is_public, treaty_minutes)
+                self._create_game(map_, speed, treaty_minutes, password=password)
         else:
             warning("game not created (max number reached)")
             self.notify("too_many_games")
 
     def cmd_create_random(self, args: str) -> None:
         """create_random <size> <nb_players> <monster> <layout> <template> <terrain>
-        <team> <water> <treasure> <victory_mode> <seed> <speed> [public] [treaty]"""
+        <team> <water> <treasure> <victory_mode> <seed> <speed> [treaty] [password=]"""
         from .randommap import make_map, parse_server_create_args
 
         if not self.server.can_create(self):
@@ -268,33 +286,41 @@ class ConnectionToClient(asynchat.async_chat):
             self.notify("too_many_games")
             return
         try:
-            cfg, speed, is_public, treaty_minutes = parse_server_create_args(args)
+            cfg, speed, password, treaty_minutes = parse_server_create_args(args)
             map_, seed = make_map(cfg)
         except Exception:
             warning("create_random: bad args")
             self.notify("too_many_games")
             return
-        self._create_game(map_, speed, is_public, treaty_minutes)
+        self._create_game(map_, speed, treaty_minutes, password=password)
         self.game.rmg_seed = seed
 
     def _create_game(
         self,
         map_,
         speed,
-        is_public,
         treaty_minutes=0,
         is_coop_campaign=False,
         coop_campaign_name=None,
         coop_chapter=None,
         coop_difficulty=None,
+        password="",
+        is_public=None,
     ):
+        from .room_password import sanitize_room_password
+
+        if is_public is False and not password:
+            # Older callers used is_public=False for invite-only; rooms are listed
+            # now, so "private" without a password is just an open room.
+            password = ""
+        password = sanitize_room_password(password)
         self.state = OrganizingAGame()
         if is_coop_campaign:
             self.push("game_admin_menu 1\n")
         else:
             self.push("game_admin_menu\n")
         self.push("map %s\n" % pack_buffer(map_.buffer, map_.buffer_name).decode())
-        game = Game(map_, speed, self.server, self, is_public, treaty_minutes)
+        game = Game(map_, speed, self.server, self, treaty_minutes=treaty_minutes, password=password)
         # 标记为合作战役（用于强制同盟等逻辑）
         try:
             game.is_coop_campaign = bool(is_coop_campaign)
@@ -321,30 +347,45 @@ class ConnectionToClient(asynchat.async_chat):
         self.server.update_menus()
 
     def cmd_register(self, args: str) -> None:
-        game = self.server.get_game_by_id(args[0])
-        if game is not None and game.can_register():
-            self.state = WaitingForTheGameToStart()
-            # Send guest menu and map before register(): register() broadcasts
-            # "registered" to all players, and the client needs self.map set first.
-            self.push("game_guest_menu\n")
-            self.push("map %s\n" % pack_buffer(game.scenario.buffer, game.scenario.buffer_name).decode())
-            if not game.register(self):
-                self.notify("register_error")
-                return
-            self.server.update_menus()
-        else:
+        from .room_password import sanitize_room_password
+
+        if not args:
             self.notify("register_error")
+            return
+        offered = sanitize_room_password(args[1]) if len(args) >= 2 else ""
+        game = self.server.get_game_by_id(args[0])
+        if game is None or not game.can_register() or not self.is_compatible(game.admin):
+            self.notify("register_error")
+            return
+        if not game.password_accepted(self, offered):
+            self.notify("wrong_password")
+            return
+        if getattr(game, "is_coop_campaign", False):
+            for slot in game._coop_partner_slots():
+                game.prepare_coop_slot_for_human(slot)
+        self.state = WaitingForTheGameToStart()
+        # Send guest menu and map before register(): register() broadcasts
+        # "registered" to all players, and the client needs self.map set first.
+        self.push("game_guest_menu\n")
+        self.push("map %s\n" % pack_buffer(game.scenario.buffer, game.scenario.buffer_name).decode())
+        if not game.register(self):
+            self.notify("register_error")
+            return
+        self.server.update_menus()
 
     def cmd_create_campaign(self, args: str) -> None:
-        """创建合作战役：create_campaign <campaign_name> <chapter_number> <speed> [public] [treaty_minutes]
+        """create_campaign <campaign_name> <chapter_number> <speed> [treaty] [password=] [difficulty=]
 
         说明：客户端直接指定战役名与章节号，服务器在本地资源中加载对应地图。
         """
-        # 宽松解析：支持战役名包含空格，忽略多余空格，识别 public 与可选条约分钟数
+        from .room_password import extract_password_token
+
         try:
             tokens = [t for t in args if t != ""]
             if len(tokens) < 3:
                 raise ValueError("too_few_args")
+
+            password, tokens = extract_password_token(tokens)
 
             # 先摘除带标记的难度 token（difficulty=<level>），避免与"战役名可含空格"
             # 的宽松解析冲突。缺省为标准难度。
@@ -364,10 +405,8 @@ class ConnectionToClient(asynchat.async_chat):
                 except Exception:
                     pass
 
-            # 解析可选 public 标记
-            is_public = False
+            # 旧客户端的 public 标记：房间一律进列表，忽略即可
             if tokens and tokens[-1] == "public":
-                is_public = True
                 tokens = tokens[:-1]
 
             # 解析速度和章节号
@@ -437,12 +476,12 @@ class ConnectionToClient(asynchat.async_chat):
         self._create_game(
             map_,
             speed,
-            is_public,
             treaty_minutes,
             is_coop_campaign=True,
             coop_campaign_name=campaign.name,
             coop_chapter=effective_chapter.number,
             coop_difficulty=coop_difficulty,
+            password=password,
         )
 
     def cmd_quit(self, unused_args):
@@ -454,36 +493,35 @@ class ConnectionToClient(asynchat.async_chat):
         # self.is_quitting = True
 
     def cmd_list_games(self, unused_args):
-        """发送正在进行的游戏列表给客户端"""
+        self.cmd_list_rooms(unused_args)
+
+    def cmd_list_rooms(self, unused_args):
         self.server._cleanup()
-        running_games = []
-        for game in self.server.games:
-            if game.started:
-                # 格式：游戏ID,地图名称,玩家列表,进行时间(分钟)
-                game_info = f"{game.id},{game.scenario.name},{','.join([p.login for p in game.human_players])},{game.nb_minutes}"
-                running_games.append(game_info)
-        
-        if running_games:
-            self.notify("running_games", *running_games)
-        else:
-            self.notify("no_running_games")
+        self.send_rooms()
 
     def cmd_spectate(self, args):
-        """开始旁观指定的游戏"""
+        """开始旁观指定的游戏：spectate <id> [password]"""
+        from .room_password import sanitize_room_password
+
         if not args:
             self.notify("spectate_error", "missing_game_id")
             return
-            
+
         try:
             game_id = int(args[0])
+            offered = sanitize_room_password(args[1]) if len(args) >= 2 else ""
             game = self.server.get_game_by_id(game_id)
-            if game and game.started:
-                if game.start_spectating(self):
-                    self.notify("spectate_success")
-                else:
-                    self.notify("spectate_error", "game_not_started")
-            else:
+            if game is None:
                 self.notify("spectate_error", "game_not_found")
+                return
+            if not game.password_accepted(self, offered):
+                self.notify("wrong_password")
+                return
+            if game.start_spectating(self):
+                if game.started:
+                    self.notify("spectate_success")
+            else:
+                self.notify("spectate_error", "cannot_spectate")
         except (ValueError, AssertionError):
             self.notify("spectate_error", "invalid_game_id")
 

@@ -1531,3 +1531,17 @@
 5797	update check failed
 5798	otváranie okna aktualizácie; hra bude ukončená
 5799	dobyté
+5822	pripojiť sa k hre
+5823	zoznam miestností
+5824	žiadne miestnosti
+5825	čaká na štart
+5826	chránené heslom
+5827	zadajte heslo
+5828	bez hesla
+5829	nastaviť heslo
+5830	nesprávne heslo
+5831	obnoviť zoznam
+5832	vybrať
+5833	miestnosť plná
+
+

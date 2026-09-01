@@ -1019,6 +1019,9 @@ class SpectatorGame(_MultiplayerGame):
           - 创建前把 neutral 置 True，避免占用 player number；
           - 配合 Player.update/slow_update 对 _is_pure_spectator 的特判
             （只跑感知、不跑 AI/触发器），保证模拟期间零随机消耗。
+        Player.__init__ 还会消耗 world.get_next_id()。那个序号必须还给后续
+        实体：人类指令用 entity id 选单位，active_objects 也按 id 排序。旁观
+        者若抢走下一个 id，重放 orders 就会打到错误目标，更新顺序也可能分叉。
         """
         # 选一个确定的阵营，避免 random_faction 触发的随机抽取
         try:
@@ -1029,23 +1032,24 @@ class SpectatorGame(_MultiplayerGame):
         self.spectator_client.neutral = True
 
         # 使用标准的 create_player 方法，让观战者成为世界中的玩家（能浏览地图）
+        saved_next_id = self.world._next_id
         self.spectator_client.create_player(self.world)
         
         # 设置观战者的特殊属性
         player = self.spectator_client.player
+        # 旁观者不是 world.objects 里的实体；把数字 id 还给后续单位，
+        # 改用不会与 get_next_id() 碰撞的稳定标记。
+        self.world._next_id = saved_next_id
+        player.id = "pure_spectator"
         player.is_spectator = True
         player.neutral = True
         player.cheatmode = True  # 观战者可以看到整个地图
         player._is_pure_spectator = True  # 确保观战者不会获得任何单位
         player.observer_if_defeated = True
-        
-        # 观战者是世界中的玩家（能浏览地图），但标记为观战者以排除在游戏逻辑外
-        warning(f"Created spectator player. Total world players: {len(self.world.players)}")
-        warning(f"Game players only: {len([p for p in self.world.players if not getattr(p, '_is_pure_spectator', False)])}")
 
     def pre_run(self):
-        voice.info(mp.YOU_ARE_SPECTATING)
-        voice.flush()
+        # 「您正在旁观」改在追上实时进度后播一次，避免开场与追帧静音恢复各播一遍。
+        pass
 
     def post_run(self):
         # 旁观结束，发送停止旁观命令

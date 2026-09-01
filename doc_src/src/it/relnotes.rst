@@ -3,6 +3,46 @@ Note di rilascio
 
 .. contents::
 
+1.4.9.3
+---------
+
+**Correzione: lo spettatore in multiplayer sottraeva gli id delle entità**
+
+- **Problema**: creare il giocatore spettatore consumava ``world.get_next_id()``, quindi le unità addestrate o costruite dopo avevano un id più alto che nella partita vera. Gli ordini umani selezionano per id, così la cronologia ``all_orders`` colpiva il bersaglio sbagliato; anche l’ordine di ``active_objects`` per id poteva divergere.
+- **Cambio**: dopo la creazione dello spettatore si ripristina la sequenza numerica degli id e lo si marca ``pure_spectator``. Non consuma ``world.random`` e non occupa uno slot giocatore.
+- **Ambito**: ``game.py`` ``_create_spectator_player``; test headless ``test_multiplayer_spectate.py``.
+
+**Correzione: lo spettatore ripetava «stai osservando» e poi restava muto**
+
+- **Problema**: il backlog di recupero oscillava soglia e riannunciava ``YOU_ARE_SPECTATING``. Riattivare l’audio solo a coda 1 lasciava lo spettatore live in silenzio (la coda resta spesso a 2–3); frecce/Tab/F10 sembravano morte fino al ritorno in lobby.
+- **Cambio**: si annuncia una sola volta e si ripristina l’audio entro la soglia di recupero; ``spectate_success`` in ritardo si ignora in silenzio. In partita ``spectator_joined`` / ``spectator_left`` vengono annunciati invece di un WARNING.
+- **Ambito**: ``game_interface_base.py``, ``worldclient.py``.
+
+**Correzione: all’ingresso nessuna casella e le frecce non funzionavano**
+
+- **Problema**: lo spettatore puro non ha unità, quindi ``interface.place`` restava vuoto fino a PageUp / PageDown.
+- **Cambio**: la telecamera si apre sulla casella di spawn di un giocatore reale.
+- **Ambito**: ``game_navigation._initial_observer_place``.
+
+**Cambio: un elenco stanze in lobby, password opzionale per entrare e osservare**
+
+- **Problema**: pubblica/privata era poco chiaro, e lo spettatore stava in un altro menu. «Pubblica» invitava tutti; le private solo su invito.
+- **Cambio**: in creazione non si sceglie più pubblica/privata: dopo mappa/velocità/tregua si imposta una password o si salta. La lobby ha un solo **elenco stanze**: quelle in attesa si possono joinare o osservare (lo spettatore aspetta che l’host avvii), quelle avviate si osservano. Le stanze con password restano in elenco; join e spectate richiedono la password. Gli invitati non la servono per entrare. L’host può ancora invitare.
+- **Ambito**: ``serverroom.py``, ``serverclient.py``, ``clientservermenu.py``, ``room_password.py``; test ``test_open_rooms_lobby.py``.
+
+**Correzione: in attesa da spettatore non c’era esci e Esc non faceva nulla**
+
+- **Problema**: il menu di attesa non applicava ``make_menu()``, quindi le scelte erano vuote. Esc conferma solo l’ultima voce.
+- **Cambio**: all’ingresso si applica «esci / lascia questa partita»; Esc la conferma come nel menu ospite.
+- **Ambito**: ``clientservermenu.py`` ``WaitingToSpectateMenu``.
+
+**Correzione: «stai osservando» veniva interrotto dall’annuncio della casella**
+
+- **Problema**: a fine recupero ``voice.info()`` metteva in coda ``YOU_ARE_SPECTATING`` e il successivo ``voice.item()`` lo preemptava.
+- **Cambio**: si usa ``voice.alert()`` così finisce prima degli item; resta un solo annuncio.
+- **Ambito**: ``game_interface_base.py`` ``_update_catch_up_audio``.
+
+
 1.4.9.2
 ---------
 

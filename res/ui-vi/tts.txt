@@ -1532,3 +1532,17 @@
 5797	update check failed
 5798	đang mở cửa sổ cập nhật; trò chơi sẽ đóng
 5799	đã chiếm
+5822	tham gia phòng
+5823	danh sách phòng
+5824	không có phòng
+5825	đang chờ bắt đầu
+5826	có mật khẩu
+5827	nhập mật khẩu phòng
+5828	không đặt mật khẩu
+5829	đặt mật khẩu
+5830	sai mật khẩu
+5831	làm mới danh sách
+5832	chọn
+5833	phòng đã đầy
+
+

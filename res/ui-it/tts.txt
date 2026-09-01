@@ -1531,3 +1531,17 @@
 5797	controllo aggiornamenti non riuscito
 5798	apertura della finestra di aggiornamento; il gioco si chiudera
 5799	catturato
+5822	unisciti alla partita
+5823	elenco stanze
+5824	nessuna stanza
+5825	in attesa
+5826	protetta da password
+5827	inserisci la password
+5828	nessuna password
+5829	imposta password
+5830	password errata
+5831	aggiorna elenco
+5832	scegli
+5833	stanza piena
+
+

@@ -4,6 +4,46 @@ Notas de la versión
 
 .. contents::
 
+1.4.9.3
+--------
+
+**Corrección: el espectador en multijugador robaba ids de entidad**
+
+- **Problema**: crear el jugador espectador consumía ``world.get_next_id()``, así que las unidades entrenadas o construidas después tenían un id más alto que en la partida real. Las órdenes humanas eligen por id, así que el historial ``all_orders`` golpeaba el objetivo equivocado; el orden de ``active_objects`` por id también podía divergir.
+- **Cambio**: tras crear el espectador se restaura la secuencia numérica de ids y se le marca ``pure_spectator``. Sigue sin consumir ``world.random`` ni ocupar un hueco de jugador.
+- **Alcance**: ``game.py`` ``_create_spectator_player``; prueba headless ``test_multiplayer_spectate.py``.
+
+**Corrección: el espectador repetía «está espectando» y luego se quedaba mudo**
+
+- **Problema**: el retraso de puesta al día oscilaba en el umbral y volvía a anunciar ``YOU_ARE_SPECTATING``. Restaurar el audio solo con cola 1 dejaba el espectador en vivo mudo (la cola suele quedar en 2–3); flechas/Tab/F10 parecían muertas hasta volver al vestíbulo.
+- **Cambio**: se anuncia una sola vez y se restaura el audio al estar dentro del umbral; ``spectate_success`` tardío se ignora en silencio. En partida, ``spectator_joined`` / ``spectator_left`` se anuncian en vez de un WARNING.
+- **Alcance**: ``game_interface_base.py``, ``worldclient.py``.
+
+**Corrección: al entrar no había casilla y las flechas no hacían nada**
+
+- **Problema**: el espectador puro no tiene unidades, así que ``interface.place`` quedaba vacío hasta PageUp / PageDown.
+- **Cambio**: la cámara abre en la casilla inicial de un jugador real.
+- **Alcance**: ``game_navigation._initial_observer_place``.
+
+**Cambio: una lista de salas en el vestíbulo, contraseña opcional para unirse y espectar**
+
+- **Problema**: pública/privada era confuso, y espectar vivía en otro menú. «Pública» invitaba a todos; las privadas solo por invitación.
+- **Cambio**: al crear ya no se elige pública/privada: después del mapa/velocidad/tregua se pone contraseña o se omite. El vestíbulo tiene una **lista de salas**: las que esperan se pueden unir o espectar (el espectador espera a que el anfitrión arranque), las empezadas se espectan. Las salas con contraseña siguen en la lista; unirse y espectar piden la clave. Los invitados no la necesitan al unirse. El anfitrión sigue pudiendo invitar.
+- **Alcance**: ``serverroom.py``, ``serverclient.py``, ``clientservermenu.py``, ``room_password.py``; prueba ``test_open_rooms_lobby.py``.
+
+**Corrección: la espera de espectador no tenía salir y Esc no hacía nada**
+
+- **Problema**: el menú de espera no aplicaba ``make_menu()``, así que no había opciones. Esc solo confirma el último ítem.
+- **Cambio**: al entrar se aplica «salir / dejar esta partida»; Esc lo confirma como en el menú de invitado.
+- **Alcance**: ``clientservermenu.py`` ``WaitingToSpectateMenu``.
+
+**Corrección: «está espectando» se cortaba con el anuncio de casilla**
+
+- **Problema**: al terminar el catch-up, ``voice.info()`` encolaba ``YOU_ARE_SPECTATING`` y el siguiente ``voice.item()`` lo interrumpía.
+- **Cambio**: se habla con ``voice.alert()`` para que termine antes de los ítems; sigue anunciándose una sola vez.
+- **Alcance**: ``game_interface_base.py`` ``_update_catch_up_audio``.
+
+
 1.4.9.2
 --------
 

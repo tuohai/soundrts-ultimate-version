@@ -1661,3 +1661,17 @@
 5819	claimable
 5820	can herd
 5821	stores resources
+5822	join game
+5823	room list
+5824	no rooms
+5825	waiting to start
+5826	password protected
+5827	enter room password
+5828	no password
+5829	set password
+5830	wrong password
+5831	refresh list
+5832	choose
+5833	room full
+
+

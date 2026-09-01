@@ -961,13 +961,33 @@ def _initial_observer_place(interface):
     Use spawn order (first controllable unit), not alphabetical order, so the
     camera opens on the main base rather than auxiliary units on other squares
     (e.g. peasant/footman at a wood square while townhall is at the base).
+
+    Pure spectators have no units, so fall back to a real player's spawn
+    (then any world square). Otherwise ``interface.place`` stays None and
+    arrow keys do nothing until PageUp/PageDown picks a square.
     """
     from .game_unit_control import units
 
     unit_list = units(interface)
-    if not unit_list:
+    if unit_list:
+        return unit_list[0].place
+    player = getattr(interface, "player", None)
+    if player is None or not getattr(player, "_is_pure_spectator", False):
         return None
-    return unit_list[0].place
+    world = getattr(interface, "world", None) or getattr(player, "world", None)
+    if world is None:
+        return None
+    true_players = getattr(world, "true_players", None)
+    players = true_players() if callable(true_players) else ()
+    for p in players:
+        for u in getattr(p, "units", ()) or ():
+            place = getattr(u, "place", None)
+            if place is not None:
+                return place
+    squares = getattr(world, "squares", None) or ()
+    if squares:
+        return squares[0]
+    return None
 
 
 def _opening_square_prefix(interface, first_place):

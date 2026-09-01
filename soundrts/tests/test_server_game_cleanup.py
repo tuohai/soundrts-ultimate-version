@@ -137,7 +137,7 @@ def test_lobby_command_from_playing_leaves_stale_room():
 
     assert game not in server.games
     assert isinstance(human.state, InTheLobby)
-    assert notes and notes[-1][0] == "no_running_games"
+    assert notes and notes[-1][0] == "no_rooms"
 
 
 def test_duplicate_quit_game_from_lobby_is_silent(caplog):

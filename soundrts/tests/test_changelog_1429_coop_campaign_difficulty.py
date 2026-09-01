@@ -80,21 +80,20 @@ def test_normalize_level_falls_back_to_standard():
 def test_menu_inserts_difficulty_step_and_sends_tagged_token():
     src = _source("soundrts", "clientservermenu.py")
     assert "_select_difficulty" in src
-    # 章节选择跳转到难度选择
-    assert "_select_difficulty(_c, _ch)" in src
+    assert "_on_coop_chapter_selected(_c, _ch)" in src
+    assert "_select_difficulty(campaign, chapter)" in src
     # 难度作为带标记 token 追加（避免与可含空格的战役名冲突）
     assert 'cmd += f" difficulty={normalize_level(difficulty)}"' in src
 
 
-def test_coop_campaign_has_no_treaty_step_and_offers_room_visibility():
-    """合作战役不应有条约；选完速度后选择私人/公开房间再 create_campaign（treaty 固定 0）。"""
+def test_coop_campaign_has_no_treaty_step_and_offers_room_password():
+    """合作战役不应有条约；选完速度后设置房间密码再 create_campaign（treaty 固定 0）。"""
     src = _source("soundrts", "clientservermenu.py")
     assert "_select_treaty" not in src
     assert "_send_with_treaty" not in src
-    assert "_select_visibility" in src
-    assert "mp.COOP_PUBLIC_ROOM" in src
+    assert "_select_password" in src
     compact = " ".join(src.split())
-    assert '"public", "0", difficulty' in compact
+    assert "password={password}" in compact or 'password={password}' in src
 
 
 def test_client_receives_coop_difficulty_before_start():

@@ -369,6 +369,13 @@ class Coordinator(_Client):  # client coordinator for multiplayer games
             elif args[0] == "all_orders":
                 self.all_orders.append(args[1:])
                 self.delay = time.time() - self.interface.next_update
+            elif args[0] == "spectate_success":
+                # 大厅在 start_spectating 之后才发这条；旁观主循环已经接管套接字，
+                # 菜单回调到不了。不是错误，静默丢掉即可。
+                pass
+            elif args[0] in ("spectator_joined", "spectator_left"):
+                if len(args) >= 2:
+                    self.push(args[0], args[1])
             elif args[0] == "synchronization_error":
                 if IS_DEV_VERSION:
                     # 在开发版本中，保存更详细的调试信息

@@ -255,6 +255,12 @@ class GameInterface(AttributesInterface):
         from ..clientmedia import sounds
         psounds.play_stereo(sounds.get_sound(s[0]))
 
+    def srv_spectator_joined(self, login, *unused):
+        voice.info([login] + mp.SPECTATOR_JOINED)
+
+    def srv_spectator_left(self, login, *unused):
+        voice.info([login] + mp.SPECTATOR_LEFT)
+
     def srv_voila(
         self,
         t,
@@ -319,26 +325,38 @@ class GameInterface(AttributesInterface):
         return time.time() >= self.next_update
 
     _catch_up_muted = False
+    _announced_spectating = False
 
     def _update_catch_up_audio(self):
         """旁观追帧期间静音，追上后恢复音频。"""
-        has_backlog = getattr(self.server, "has_catch_up_backlog", None)
-        if has_backlog is None:
+        if not getattr(self.server, "_is_spectator", False):
             return
-        catching_up = has_backlog()
-        if catching_up and not self._catch_up_muted:
+        pending = len(getattr(self.server, "all_orders", []) or [])
+        buffer = int(getattr(self.server, "catch_up_buffer", 3) or 3)
+        if pending > buffer and not self._catch_up_muted:
             from ..lib import sound
             self._saved_main_volume = sound.main_volume
             sound.main_volume = 0
             voice.muted = True
             self._catch_up_muted = True
-        elif not catching_up and self._catch_up_muted:
+        elif pending <= buffer and self._catch_up_muted:
             from ..lib import sound
             sound.main_volume = getattr(self, "_saved_main_volume", sound.main_volume)
             voice.muted = False
             voice.silent_flush()
             self._catch_up_muted = False
-            voice.info(mp.YOU_ARE_SPECTATING)
+        # 积压在阈值附近抖动时不要反复播报；整场旁观只说一次。
+        # 追上实时（pending <= buffer）就要开口：实况旁观队列经常停在 2–3 条，
+        # 若非等到 <=1 才恢复，语音和音量会整场关死（Tab/F10 听起来像没反应）。
+        if (
+            pending <= buffer
+            and not self._catch_up_muted
+            and not getattr(self, "_announced_spectating", False)
+        ):
+            self._announced_spectating = True
+            # alert (interruptible=False) finishes before later voice.item() square/ops.
+            # voice.info() would be preempted by the next item() via _go_to_next_unsaid.
+            voice.alert(mp.YOU_ARE_SPECTATING)
 
     # 时钟相关功能
     _bell_enabled = False

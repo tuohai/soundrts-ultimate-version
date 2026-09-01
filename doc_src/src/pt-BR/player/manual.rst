@@ -620,11 +620,13 @@ Durante uma partida (não se alianças foram fixadas antes do início):
 
 Modo tratado: escolha duração da paz (até 20 minutos) antes do combate começar.
 
-Modo espectador (desde 1.4.0.6)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Modo espectador (desde 1.4.0.6; salas à espera desde 1.4.9.3)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-No menu do servidor, escolha "spectate" e selecione uma partida em andamento. Use Page Up / Page Down para
-chegar a uma área visível antes de usar as setas para mover o foco do mapa.
+No átrio, abre a lista de salas, escolhe uma sala e depois observa. Salas ainda à espera
+também se podem observar: ficas à espera que o anfitrião comece. Partidas já começadas
+recuperam de imediato. A câmara abre no nascimento de um jogador real; Page Up / Page Down
+continuam a mudar de casa antes das setas.
 
 Auto-exploração (desde 1.4.3.1)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

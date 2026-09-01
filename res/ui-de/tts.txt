@@ -1532,3 +1532,17 @@
 88	Feind
 89	Freund
 99	kaserne
+5822	Spiel beitreten
+5823	Raumliste
+5824	keine Raeume
+5825	Warten auf Start
+5826	passwortgeschuetzt
+5827	Passwort eingeben
+5828	kein Passwort
+5829	Passwort festlegen
+5830	falsches Passwort
+5831	Liste aktualisieren
+5832	waehlen
+5833	Raum voll
+
+

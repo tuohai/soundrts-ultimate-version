@@ -619,11 +619,13 @@ Durante un juego (no si las alianzas se arreglaron antes del inicio):
 
 Modo tratado: elige la duración de la paz (hasta 20 minutos) antes de que comience el combate.
 
-Modo espectador (desde 1.4.0.6)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Modo espectador (desde 1.4.0.6; salas en espera desde 1.4.9.3)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-En el menú del servidor, elige "espectador" y elige un juego en curso. Utilice Re Pág/Av Pág para
-llegue a un área visible antes de usar las teclas de flecha para mover el foco del mapa.
+En el vestíbulo, abre la lista de salas, entra en una y elige espectar. Las salas que aún no
+han empezado también se pueden espectar: esperas a que el anfitrión arranque. Las partidas
+ya empezadas se ponen al día al instante. La cámara abre en el nacimiento de un jugador real;
+Re Pág / Av Pág siguen sirviendo para cambiar de casilla antes de las flechas.
 
 Exploración automática (desde 1.4.3.1)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

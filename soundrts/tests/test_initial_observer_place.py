@@ -28,6 +28,20 @@ def test_initial_observer_place_uses_spawn_order_not_sort():
     assert "flush_pending_square_announce" in src
 
 
+def test_spectator_starts_on_a_real_player_square(monkeypatch):
+    square = object()
+    real = SimpleNamespace(units=[SimpleNamespace(place=square)])
+    spec = SimpleNamespace(_is_pure_spectator=True, world=None)
+    world = SimpleNamespace(true_players=lambda: [real], squares=[square])
+    spec.world = world
+    iface = SimpleNamespace(player=spec, world=world)
+    monkeypatch.setattr(
+        "soundrts.clientgame.game_unit_control.units",
+        lambda interface, **kwargs: [],
+    )
+    assert nav._initial_observer_place(iface) is square
+
+
 def test_pending_opening_square_is_spoken_from_game_loop(monkeypatch):
     spoken = []
     place = object()

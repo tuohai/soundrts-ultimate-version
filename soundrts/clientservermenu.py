@@ -3,7 +3,7 @@ from typing import List
 
 from . import msgparts as mp
 from .clientmedia import play_sequence, voice
-from .clientmenu import Menu
+from .clientmenu import Menu, input_string
 from .definitions import ai_invite_label, ai_player_label, get_menu_ai_difficulties, rules, style
 from .game import MultiplayerGame
 from .lib.log import info, warning
@@ -40,6 +40,56 @@ def game_short_status(map_title, clients, minutes):
         + mp.MINUTES
     )
     return msg
+
+
+def parse_room_pack(packed):
+    from urllib.parse import unquote
+
+    parts = unquote(packed).split(",")
+    if len(parts) < 10:
+        return None
+    game_id, admin, cur, maxp, players, started, locked, minutes, joinable, spectatable = parts[:10]
+    title = parts[10:]
+    return {
+        "id": game_id,
+        "admin": admin,
+        "cur": cur,
+        "max": maxp,
+        "players": [p for p in players.split("+") if p],
+        "started": started == "1",
+        "locked": locked == "1",
+        "minutes": minutes,
+        "joinable": joinable == "1",
+        "spectatable": spectatable == "1",
+        "title": title,
+    }
+
+
+def ask_room_password(on_password, on_cancel=None):
+    def no_pw():
+        on_password("")
+
+    def with_pw():
+        pw = input_string(
+            mp.ENTER_ROOM_PASSWORD,
+            pattern=r"^[A-Za-z0-9]$",
+            max_length=20,
+        )
+        if pw is None:
+            if on_cancel:
+                on_cancel()
+            return
+        on_password(pw)
+
+    Menu(
+        mp.SET_ROOM_PASSWORD,
+        [
+            (mp.NO_ROOM_PASSWORD, no_pw),
+            (mp.SET_ROOM_PASSWORD, with_pw),
+            (mp.CANCEL, on_cancel),
+        ],
+        menu_type="submenu",
+    ).run()
 
 
 class _ServerMenu(Menu):
@@ -134,6 +184,9 @@ class _ServerMenu(Menu):
     def srv_invite_computer_error(self, unused_args):
         voice.info(mp.BEEP)
 
+    def srv_wrong_password(self, unused_args):
+        voice.info(mp.WRONG_ROOM_PASSWORD)
+
     def srv_register_error(self, unused_args):
         voice.info(mp.BEEP)
 
@@ -172,10 +225,33 @@ class _ServerMenu(Menu):
         faction_name = style.get(faction, "title")
         voice.info(name(player_login) + faction_name)
 
+    def srv_spectate_success(self, unused_args):
+        """成功开始旁观游戏。
+
+        实际顺序是 start_spectating 先到并阻塞进对局，这条往往到不了菜单。
+        旁观提示改由对局追上进度后播一次，这里不再开口。
+        """
+        pass
+
+    def srv_spectate_error(self, args):
+        """旁观游戏失败"""
+        voice.info(mp.BEEP)
+
+    def srv_spectator_joined(self, args):
+        """旁观者加入通知（房主等待菜单也要能听到）"""
+        login = args[0]
+        voice.info([login] + mp.SPECTATOR_JOINED)
+
+    def srv_spectator_left(self, args):
+        """旁观者离开通知"""
+        login = args[0]
+        voice.info([login] + mp.SPECTATOR_LEFT)
+
 
 class ServerMenu(_ServerMenu):
 
     invitations = ()
+    rooms = ()
 
     def loop(self):
         # 调用父类的loop方法
@@ -184,13 +260,13 @@ class ServerMenu(_ServerMenu):
         # 递归调用main_menu会导致栈溢出问题
 
     def _get_speed_submenu(self, args):
-        n, title, is_public = args
+        n, title = args
 
         def go_treaty_menu(speed):
-            return (self._get_treaty_submenu, (n, title, is_public, speed))
+            return (self._get_treaty_submenu, (n, title, speed))
 
         def go_random_map_menu(speed):
-            return (self._open_random_map_server_menu, (is_public, speed))
+            return (self._open_random_map_server_menu, speed)
 
         # 定义取消时的操作
         def cancel_and_play_lobby_music():
@@ -229,14 +305,19 @@ class ServerMenu(_ServerMenu):
         ).run()
 
     def _get_treaty_submenu(self, args):
-        n, title, is_public, speed = args
+        n, title, speed = args
 
         def create_with_treaty(treaty_min):
-            s = f"create {n} {speed} {is_public} {treaty_min}"
-            return (self.server.write_line, s)
+            def send(password):
+                s = f"create {n} {speed} {treaty_min}"
+                if password:
+                    s += f" password={password}"
+                self.server.write_line(s)
+
+            return (lambda: ask_room_password(send, lambda: self._get_treaty_submenu((n, title, speed))))
 
         def back_to_speed_menu():
-            return self._get_speed_submenu((n, title, is_public))
+            return self._get_speed_submenu((n, title))
 
         entries = [
             (mp.TREATY + [":"] + mp.NO_TREATY, create_with_treaty("0")),
@@ -249,8 +330,7 @@ class ServerMenu(_ServerMenu):
 
         Menu(title, entries, default_choice_index=0, menu_type="submenu").run()
 
-    def _open_random_map_server_menu(self, args):
-        is_public, speed = args
+    def _open_random_map_server_menu(self, speed):
         from .randommap_menu import RandomMapMenu
 
         RandomMapMenu(
@@ -258,16 +338,11 @@ class ServerMenu(_ServerMenu):
             server_mode={
                 "write_line": self.server.write_line,
                 "speed": speed,
-                "is_public": is_public,
             },
         ).run()
 
-    def _get_creation_submenu(self, is_public=""):
-        # 设置菜单标题
-        if is_public == "public":
-            title = mp.START_A_PUBLIC_GAME_ON
-        else:
-            title = mp.START_A_GAME_ON
+    def _get_creation_submenu(self):
+        title = mp.START_A_GAME_ON
             
         # 定义取消时的操作
         def cancel_and_play_lobby_music():
@@ -278,21 +353,21 @@ class ServerMenu(_ServerMenu):
             return None
             
         menu = Menu(title, remember="mapmenu", menu_type="submenu")
-        menu.append(mp.RMG_RANDOM_MAP, (self._get_speed_submenu, ("random", title + mp.RMG_RANDOM_MAP, is_public)))
+        menu.append(mp.RMG_RANDOM_MAP, (self._get_speed_submenu, ("random", title + mp.RMG_RANDOM_MAP)))
         for n, m in enumerate(self.maps):
-            menu.append(m, (self._get_speed_submenu, (n, title + m, is_public)))
+            menu.append(m, (self._get_speed_submenu, (n, title + m)))
         menu.append(mp.CANCEL, cancel_and_play_lobby_music)
         return menu
         
     # 添加新方法，在用户选择菜单项后才播放音乐
-    def _on_creation_menu_selected(self, is_public=""):
+    def _on_creation_menu_selected(self):
         # 重置战斗状态，并播放创建游戏菜单音乐
         from soundrts.lib import sound
         sound.in_battle = False
         sound.play_game_creation_music()
         
         # 获取并运行菜单
-        menu = self._get_creation_submenu(is_public)
+        menu = self._get_creation_submenu()
         return menu.run()
 
     def make_menu(self):
@@ -304,12 +379,10 @@ class ServerMenu(_ServerMenu):
                 mp.ACCEPT_INVITATION_FROM + [login] + title,
                 (self.server.write_line, "register %s" % g[0]),
             )
-        # 修改这里，使用_on_creation_menu_selected方法替代直接调用_get_creation_submenu
-        menu.append(mp.START_A_GAME_ON, (self._on_creation_menu_selected, ()))
-        menu.append(mp.START_A_PUBLIC_GAME_ON, (self._on_creation_menu_selected, "public"))
+        menu.append(mp.ROOM_LIST, self._room_list_menu)
+        menu.append(mp.START_A_GAME_ON, self._on_creation_menu_selected)
         # 新增：合作战役菜单（使用消息常量以支持多语言）
         menu.append(mp.COOP_CAMPAIGN, self._coop_campaign_menu)
-        menu.append(mp.SPECTATE_GAME, self._spectate_games_menu)  # 添加旁观游戏选项
         menu.append(mp.QUIT2, (self.server.write_line, "quit"))
         return menu
 
@@ -321,6 +394,20 @@ class ServerMenu(_ServerMenu):
 
     def srv_invitations(self, args):
         self.invitations = [x.split(",") for x in args]
+
+    def srv_open_rooms(self, args):
+        self.srv_rooms(args)
+
+    def srv_rooms(self, args):
+        rooms = []
+        for packed in args:
+            room = parse_room_pack(packed)
+            if room:
+                rooms.append(room)
+        self.rooms = rooms
+
+    def srv_no_rooms(self, unused_args):
+        self.rooms = []
 
     def srv_maps(self, args):
         self.maps = [x.split(",") for x in args]
@@ -421,67 +508,55 @@ class ServerMenu(_ServerMenu):
             campaign.set_coop_difficulty(difficulty)
             _select_speed(campaign, chapter, difficulty)
 
-        # 选择速度，然后选择私人/公开房间（公开房会出现在大厅邀请列表）
+        # 选择速度，然后可选设置房间密码
         def _select_speed(campaign, chapter, difficulty):
             title = mp.SPEED
 
-            def _go_visibility(speed):
-                return (lambda: _select_visibility(campaign, chapter, speed, difficulty))
+            def _go_password(speed):
+                return (lambda: _select_password(campaign, chapter, speed, difficulty))
 
             Menu(
                 title,
                 [
-                    (mp.SET_SPEED_TO_SLOW, _go_visibility("0.5")),
-                    (mp.SET_SPEED_TO_NORMAL, _go_visibility("1.0")),
-                    (mp.SET_SPEED_TO_FAST + nb2msg(2), _go_visibility("2.0")),
-                    (mp.SET_SPEED_TO_FAST + nb2msg(4), _go_visibility("4.0")),
+                    (mp.SET_SPEED_TO_SLOW, _go_password("0.5")),
+                    (mp.SET_SPEED_TO_NORMAL, _go_password("1.0")),
+                    (mp.SET_SPEED_TO_FAST + nb2msg(2), _go_password("2.0")),
+                    (mp.SET_SPEED_TO_FAST + nb2msg(4), _go_password("4.0")),
                     (mp.CANCEL, lambda: _select_difficulty(campaign, chapter)),
                 ],
                 default_choice_index=1,
                 menu_type="submenu",
             ).run()
 
-        def _select_visibility(campaign, chapter, speed, difficulty):
-            Menu(
-                mp.SELECT_COOP_ROOM,
-                [
-                    (
-                        mp.COOP_PRIVATE_ROOM,
-                        (lambda: _send_create_campaign(
-                            (campaign, chapter, speed, "", "0", difficulty)
-                        )),
-                    ),
-                    (
-                        mp.COOP_PUBLIC_ROOM,
-                        (lambda: _send_create_campaign(
-                            (campaign, chapter, speed, "public", "0", difficulty)
-                        )),
-                    ),
-                    (mp.CANCEL, lambda: _select_speed(campaign, chapter, difficulty)),
-                ],
-                menu_type="submenu",
-            ).run()
+        def _select_password(campaign, chapter, speed, difficulty):
+            def send(password):
+                _send_create_campaign(
+                    (campaign, chapter, speed, "0", difficulty, password)
+                )
 
-        # 发送命令
+            ask_room_password(
+                send,
+                lambda: _select_speed(campaign, chapter, difficulty),
+            )
+
         def _send_create_campaign(args):
             from .coop_difficulty import normalize_level
 
-            # 兼容不同签名
             difficulty = None
+            password = ""
             if len(args) == 4:
-                campaign, chapter, speed, is_public = args
-                treaty = "0"
+                campaign, chapter, speed, treaty = args
             elif len(args) == 5:
-                campaign, chapter, speed, is_public, treaty = args
+                campaign, chapter, speed, treaty, difficulty = args
             elif len(args) == 6:
-                campaign, chapter, speed, is_public, treaty, difficulty = args
+                campaign, chapter, speed, treaty, difficulty, password = args
             else:
                 return None
             name = campaign.name
             n = chapter.number
-            is_public = is_public or ""
-            cmd = f"create_campaign {name} {n} {speed} {is_public} {treaty}"
-            # 难度作为带标记的 token 追加，避免与"战役名可含空格"的宽松解析冲突
+            cmd = f"create_campaign {name} {n} {speed} {treaty}"
+            if password:
+                cmd += f" password={password}"
             if difficulty:
                 cmd += f" difficulty={normalize_level(difficulty)}"
             self.server.write_line(cmd)
@@ -489,18 +564,15 @@ class ServerMenu(_ServerMenu):
         _select_campaign()
         return None
 
-    def _spectate_games_menu(self):
-        """显示旁观游戏菜单"""
-        # 重置战斗状态，并播放服务器大厅音乐
+    def _room_list_menu(self):
         from soundrts.lib import sound
         sound.in_battle = False
         sound.play_server_lobby_music()
-        
-        # 请求服务器发送游戏列表
-        self.server.write_line("list_games")
-        
-        # 创建并显示旁观菜单
-        SpectateMenu(self.server, auto=self.auto, menu_type="submenu").loop()
+        self.server.write_line("list_rooms")
+        RoomListMenu(self.server, auto=self.auto, menu_type="submenu").loop()
+
+    def _spectate_games_menu(self):
+        self._room_list_menu()
 
     running_games = []
 
@@ -521,24 +593,6 @@ class ServerMenu(_ServerMenu):
         """接收服务器通知：没有正在进行的游戏"""
         self.running_games = []
         voice.info(mp.NO_GAMES_AVAILABLE)
-
-    def srv_spectate_success(self, unused_args):
-        """成功开始旁观游戏"""
-        voice.info(mp.YOU_ARE_SPECTATING)
-
-    def srv_spectate_error(self, args):
-        """旁观游戏失败"""
-        voice.info(mp.BEEP)
-
-    def srv_spectator_joined(self, args):
-        """旁观者加入通知"""
-        login = args[0]
-        voice.info([login] + mp.SPECTATOR_JOINED)
-
-    def srv_spectator_left(self, args):
-        """旁观者离开通知"""
-        login = args[0]
-        voice.info([login] + mp.SPECTATOR_LEFT)
 
 
 _AI_LOGIN_LABELS = {
@@ -836,60 +890,121 @@ class GameGuestMenu(_BeforeGameMenu):
         return menu
 
 
-class SpectateMenu(_ServerMenu):
-    """旁观游戏菜单"""
-    
+class RoomListMenu(_ServerMenu):
+    """Unified lobby room list: join or spectate waiting rooms, spectate started matches."""
+
     def __init__(self, server, auto=False, menu_type="main"):
         super().__init__(server, auto, menu_type)
-        self.running_games = []
-    
-    def make_menu(self):
-        menu = Menu(mp.SELECT_GAME_TO_SPECTATE, menu_type="submenu")
-        
-        # 添加正在进行的游戏到菜单
-        if self.running_games:
-            for game_id, map_name, players, minutes in self.running_games:
-                game_title = f"{map_name} - {players} - {minutes}分钟"
-                menu.append(
-                    [game_title], 
-                    (self.server.write_line, f"spectate {game_id}")
-                )
+        self.rooms = []
+
+    def _room_voice(self, room):
+        title = normalize_map_title_for_voice(room["title"])
+        msg = (
+            title
+            + mp.PERIOD
+            + [room["admin"]]
+            + mp.PERIOD
+            + self._players_names(room["players"])
+        )
+        if room["locked"]:
+            msg = msg + mp.PERIOD + mp.PASSWORD_PROTECTED
+        if room["started"]:
+            try:
+                minutes = int(room["minutes"])
+            except (TypeError, ValueError):
+                minutes = 0
+            msg = msg + mp.PERIOD + mp.GAME_IN_PROGRESS + mp.PERIOD + nb2msg(minutes) + mp.MINUTES
         else:
-            # 如果没有游戏，显示"没有可旁观的游戏"
-            menu.append(mp.NO_GAMES_AVAILABLE, None)
-        
-        # 添加刷新选项
-        menu.append(["刷新游戏列表"], (self.server.write_line, "list_games"))
-        
-        # 定义取消时的操作，用于正确退出旁观菜单
-        def cancel_spectate_menu():
+            msg = msg + mp.PERIOD + mp.ROOM_WAITING
+        return msg
+
+    def _prompt_password(self, locked):
+        if not locked:
+            return ""
+        pw = input_string(
+            mp.ENTER_ROOM_PASSWORD,
+            pattern=r"^[A-Za-z0-9]$",
+            max_length=20,
+        )
+        return pw
+
+    def _join_room(self, room):
+        pw = self._prompt_password(room["locked"])
+        if pw is None:
+            return
+        if pw:
+            self.server.write_line(f"register {room['id']} {pw}")
+        else:
+            self.server.write_line(f"register {room['id']}")
+
+    def _spectate_room(self, room):
+        pw = self._prompt_password(room["locked"])
+        if pw is None:
+            return
+        if pw:
+            self.server.write_line(f"spectate {room['id']} {pw}")
+        else:
+            self.server.write_line(f"spectate {room['id']}")
+
+    def _open_room_actions(self, room):
+        entries = []
+        if room["joinable"]:
+            entries.append((mp.JOIN_OPEN_GAME, lambda: self._join_room(room)))
+        if room["spectatable"]:
+            entries.append((mp.SPECTATE_GAME, lambda: self._spectate_room(room)))
+        if not entries:
+            voice.info(mp.ROOM_FULL)
+            return
+        entries.append((mp.CANCEL, None))
+        Menu(mp.SELECT_ROOM_ACTION, entries, menu_type="submenu").run()
+
+    def make_menu(self):
+        menu = Menu(mp.ROOM_LIST, menu_type="submenu")
+        if self.rooms:
+            for room in self.rooms:
+                menu.append(self._room_voice(room), (lambda r=room: self._open_room_actions(r)))
+        else:
+            menu.append(mp.NO_ROOMS, None)
+        menu.append(mp.REFRESH_ROOM_LIST, (self.server.write_line, "list_rooms"))
+
+        def cancel_room_list():
             self.end_loop = True
             return None
-            
-        menu.append(mp.CANCEL, cancel_spectate_menu)
+
+        menu.append(mp.CANCEL, cancel_room_list)
         return menu
 
-    def srv_running_games(self, args):
-        """接收服务器发送的正在进行的游戏列表"""
-        self.running_games = []
-        for game_info in args:
-            # 解析游戏信息：游戏ID,地图名称,玩家列表,进行时间(分钟)
-            parts = game_info.split(",")
-            if len(parts) >= 4:
-                game_id = parts[0]
-                map_name = parts[1]
-                players = parts[2] if parts[2] else "无玩家"
-                minutes = parts[3]
-                self.running_games.append((game_id, map_name, players, minutes))
-        # 收到游戏列表后更新菜单
+    def srv_rooms(self, args):
+        rooms = []
+        for packed in args:
+            room = parse_room_pack(packed)
+            if room:
+                rooms.append(room)
+        self.rooms = rooms
         self.update_menu(self.make_menu())
 
-    def srv_no_running_games(self, unused_args):
-        """接收服务器通知：没有正在进行的游戏"""
-        self.running_games = []
-        voice.info(mp.NO_GAMES_AVAILABLE)
-        # 更新菜单显示
+    def srv_no_rooms(self, unused_args):
+        self.rooms = []
+        voice.info(mp.NO_ROOMS)
         self.update_menu(self.make_menu())
+
+    def srv_game_guest_menu(self, unused_args):
+        GameGuestMenu(self.server, auto=self.auto, menu_type="submenu").loop()
+        self.end_loop = True
+
+    def srv_running_games(self, args):
+        self.srv_rooms(args)
+
+    def srv_no_running_games(self, unused_args):
+        self.srv_no_rooms(unused_args)
+
+    def srv_waiting_to_spectate(self, unused_args):
+        menu = WaitingToSpectateMenu(self.server, auto=self.auto, menu_type="submenu")
+        menu.loop()
+        if getattr(menu, "_did_enter_game", False):
+            self.end_loop = True
+        else:
+            self.server.write_line("list_rooms")
 
     def srv_start_spectating(self, args):
         """开始旁观游戏
@@ -903,7 +1018,6 @@ class SpectateMenu(_ServerMenu):
         enemy_hp = 100
         enemy_damage = 100
         if len(args) >= 7:
-            # 含合作战役难度的新格式
             speed = float(args[-5])
             seed = int(args[-4])
             treaty = int(args[-3])
@@ -921,13 +1035,45 @@ class SpectateMenu(_ServerMenu):
             treaty = 0
             map_name = " ".join(args[1:-1])
         players = [p.split(",") for p in players_str.split(";")]
-        
-        # 创建旁观游戏（seed/treaty 用于确定性重建并重放追帧）
+
         from .game import SpectatorGame
         game = SpectatorGame(map_name, players, self.server, speed, seed, treaty)
-        # 套用与对局一致的合作战役敌人强度，保证确定性
         game.enemy_hp_factor = enemy_hp
         game.enemy_damage_factor = enemy_damage
         game.auto = self.auto
         game.run()
         self.end_loop = True
+
+
+class WaitingToSpectateMenu(_ServerMenu):
+    """Unstarted room: wait until the host starts, then enter SpectatorGame."""
+
+    _did_enter_game = False
+
+    def loop(self):
+        # Spectating.send_menu is a no-op, so nobody sends update_menu.
+        # Apply the quit row now or the screen is empty and Esc does nothing.
+        self.update_menu(self.make_menu())
+        super().loop()
+
+    def make_menu(self):
+        menu = Menu(mp.THE_GAME_WILL_START_WHEN_ORGANIZER_IS_READY, menu_type="submenu")
+        menu.append(
+            mp.QUIT2 + mp.LEAVE_THIS_GAME,
+            (self.server.write_line, "quit_spectating"),
+        )
+        return menu
+
+    def srv_quit(self, unused_args):
+        # Host cancelled or this client left: return to the room list, not the main menu.
+        voice.flush()
+        self.end_loop = True
+
+    def srv_start_spectating(self, args):
+        self._did_enter_game = True
+        RoomListMenu.srv_start_spectating(self, args)
+
+
+class SpectateMenu(RoomListMenu):
+    """Kept so older tests/callers still find the spectate submenu class."""
+

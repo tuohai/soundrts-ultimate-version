@@ -5,6 +5,46 @@ Release notes
 .. contents::
 
 
+1.4.9.3
+---------
+
+**Fix: multiplayer spectating stole entity ids**
+
+- **Issue**: Creating the spectator player consumed ``world.get_next_id()``, so later trained or built units had ids one higher than the live match. Human orders select by id, so replayed ``all_orders`` hit the wrong targets; ``active_objects`` sort-by-id could also fork.
+- **Change**: After creating the spectator, restore the numeric id sequence and tag the spectator ``pure_spectator``. Still consumes no ``world.random`` and takes no player slot.
+- **Scope**: ``game.py`` ``_create_spectator_player``; headless ``test_multiplayer_spectate.py``.
+
+**Fix: spectating kept saying "you are spectating", then stayed silent**
+
+- **Issue**: Catch-up backlog oscillating around the threshold replayed ``YOU_ARE_SPECTATING``. Unmuting only at queue length 1 left live spectators muted (queue often sits at 2–3), so arrows/Tab/F10 seemed dead until leaving for the lobby.
+- **Change**: Announce once and restore audio when backlog is within the catch-up threshold; silently drop a late lobby ``spectate_success``. In-game ``spectator_joined`` / ``spectator_left`` are spoken instead of a WARNING.
+- **Scope**: ``game_interface_base.py``, ``worldclient.py``.
+
+**Fix: spectator started with no square, so arrow keys did nothing**
+
+- **Issue**: Pure spectators have no units, so ``interface.place`` stayed empty until PageUp / PageDown picked a square.
+- **Change**: Open the camera on a real player's spawn square.
+- **Scope**: ``game_navigation._initial_observer_place``.
+
+**Change: one lobby room list, optional password for join and spectate**
+
+- **Issue**: Public vs private was confusing, and spectating lived in a separate menu. "Public" used to mean auto-invite everyone; private rooms were invite-only.
+- **Change**: Creating a game no longer asks public/private — after map/speed/treaty you set a password or skip. The lobby has a single **room list**: waiting rooms can be joined or spectated (spectators still wait for the host to start), started matches can be spectated. Password rooms stay on the list (announced as protected); join and spectate both require the password. Invited players skip it when joining. Hosts can still invite someone from the room menu.
+- **Scope**: ``serverroom.py``, ``serverclient.py``, ``clientservermenu.py``, ``room_password.py``; headless ``test_open_rooms_lobby.py``.
+
+**Fix: waiting-to-spectate screen had no quit, Esc did nothing**
+
+- **Issue**: The wait-for-host spectator menu never applied ``make_menu()``, so choices were empty. Esc only confirms the last item, so there was no quit and Esc did nothing.
+- **Change**: Apply the "quit / leave this game" row when entering the wait screen; Esc confirms it the same way as the guest wait menu.
+- **Scope**: ``clientservermenu.py`` ``WaitingToSpectateMenu``.
+
+**Fix: "you are spectating" was cut off by square/ops speech**
+
+- **Issue**: Catch-up used ``voice.info()`` to queue ``YOU_ARE_SPECTATING``, then the next ``voice.item()`` (square or orders) preempted it.
+- **Change**: Speak it with ``voice.alert()`` so it finishes before later items; still announced only once.
+- **Scope**: ``game_interface_base.py`` ``_update_catch_up_audio``.
+
+
 1.4.9.2
 ---------
 

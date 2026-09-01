@@ -1531,3 +1531,17 @@
 5797	update check failed
 5798	otwieranie okna aktualizacji; gra zostanie zamknięta
 5799	zdobyto
+5822	dołącz do gry
+5823	lista pokoi
+5824	brak pokoi
+5825	oczekiwanie
+5826	chronione hasłem
+5827	wprowadź hasło
+5828	bez hasła
+5829	ustaw hasło
+5830	błędne hasło
+5831	odśwież listę
+5832	wybierz
+5833	pokój pełny
+
+

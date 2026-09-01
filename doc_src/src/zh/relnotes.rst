@@ -4,6 +4,46 @@
 .. contents::
 
 
+1.4.9.3
+---------
+
+**修复：联机旁观占用实体 id 导致指令打偏**
+
+- **问题**：创建旁观玩家时会消耗 ``world.get_next_id()``，之后训练/建造的单位在旁观世界里 id 比实况多 1。人类指令按 id 选单位，重放历史 ``all_orders`` 会点到错误目标；``active_objects`` 按 id 排序时也可能分叉。
+- **改进**：创建旁观者后把数字 id 还给后续实体，旁观者改用稳定标记 ``pure_spectator``。仍不消耗 ``world.random``、不占玩家槽。
+- **范围**：``game.py`` ``_create_spectator_player``；无头测试 ``test_multiplayer_spectate.py``。
+
+**修复：旁观反复播报「您正在旁观」，随后整场无语音**
+
+- **问题**：追帧积压在阈值附近抖动时会反复播 ``YOU_ARE_SPECTATING``；曾改成队列降到 1 才恢复音量，实况旁观队列常停在 2–3 条，语音和主音量整场关死（方向键/Tab/F10 听起来没反应，退回大厅才恢复）。
+- **改进**：追上实时进度（积压不超过追帧阈值）后只播一次并恢复音量；大厅迟到的 ``spectate_success`` 静默忽略。对局里的 ``spectator_joined`` / ``spectator_left`` 改为播报，不再打 WARNING。
+- **范围**：``game_interface_base.py``、``worldclient.py``。
+
+**修复：刚进旁观方向键动不了、镜头不在格子上**
+
+- **问题**：纯旁观者没有单位，开局 ``interface.place`` 一直是空的，方向键不生效，只能 PageUp / PageDown 才落到格子。
+- **改进**：旁观开局把镜头放到一名真实玩家的出生格。
+- **范围**：``game_navigation._initial_observer_place``。
+
+**改进：大厅「房间列表」+ 可选密码（加入和旁观都要）**
+
+- **问题**：公开/私人两套入口不好懂；旁观又是另一个菜单。所谓公开房曾经靠自动邀请，私人房只靠邀请。
+- **改进**：建房不再分公开/私人，建完可选「不设密码」或「设置密码」。大厅只保留「房间列表」：等待中的房间可加入或旁观（旁观也等房主开局），已开打的可旁观，点进去再选。设了密码的房间仍出现在列表里（播报「需要密码」），加入和旁观都要输入密码；房主邀请过的人加入时不用再输。邀请仍可用来拉指定玩家。
+- **范围**：``serverroom.py``、``serverclient.py``、``clientservermenu.py``、``room_password.py``；无头测试 ``test_open_rooms_lobby.py``。
+
+**修复：旁观等待开局没有退出项，Esc 无效**
+
+- **问题**：等待房主开局的旁观界面没有套上 ``make_menu()``，选项是空的；Esc 只确认最后一项，因此既没有退出，Esc 也不走。
+- **改进**：进入等待界面时立刻套上「退出 / 离开此游戏」，Esc 与客队等待菜单一样会选中并确认该项。
+- **范围**：``clientservermenu.py`` ``WaitingToSpectateMenu``。
+
+**修复：「您正在旁观」被格子播报打断**
+
+- **问题**：追上进度后用 ``voice.info()`` 排队播 ``YOU_ARE_SPECTATING``，下一句格子/操作 ``voice.item()`` 会立刻抢播，听不全「您正在旁观」。
+- **改进**：改用 ``voice.alert()``（播完才继续），整场仍只说一次。
+- **范围**：``game_interface_base.py`` ``_update_catch_up_audio``。
+
+
 1.4.9.2
 ---------
 

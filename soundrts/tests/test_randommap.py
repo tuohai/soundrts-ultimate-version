@@ -142,7 +142,8 @@ def test_teams_2v2_adds_alliance_triggers():
     assert "trigger player1 (timer 0) (alliance 1)" in text
     assert "trigger player3 (timer 0) (alliance 1)" in text
     assert "trigger player2 (timer 0) (alliance 2)" in text
-    assert 
+    assert "trigger player4 (timer 0) (alliance 2)" in text
+
 
 def test_ffa_assigns_unique_alliances():
     text, _ = generate_definition(
@@ -195,7 +196,11 @@ def test_normalized_rejects_invalid_team_mode_for_player_count():
         == "one_vs_many"
     )
 
-"trigger player4 (timer 0) (alliance 2)" in text
+
+def test_victory_mode_conquest_default_trigger():
+    text, _ = generate_definition(
+        RandomMapConfig(victory_mode="conquest", template="standard", seed=49)
+    )
     assert "trigger players (no_enemy_player_left) (victory)" in text
 
 
@@ -354,7 +359,7 @@ def test_server_create_command_all_victory_modes():
     for mode in ("conquest", "economic", "exploration", "survival"):
         cfg = RandomMapConfig(victory_mode=mode, size="small", nb_players=2, seed=99)
         cmd = server_create_command(cfg, "1.0", treaty_minutes=0)
-        parsed, speed, is_public, treaty = parse_server_create_args(cmd.split()[1:])
+        parsed, speed, password, treaty = parse_server_create_args(cmd.split()[1:])
         assert parsed.victory_mode == mode
         assert speed == 1.0
         assert treaty == 0
@@ -857,18 +862,18 @@ def test_server_create_command_roundtrip():
         treasure="high",
         seed=4242,
     )
-    cmd = server_create_command(cfg, "1.0", is_public=True, treaty_minutes=10)
-    assert cmd == "create_random large 4 strong clustered fast marsh teams_2v2 lake high conquest 4242 1.0 public 10"
-    parsed, speed, is_public, treaty = parse_server_create_args(cmd.split()[1:])
+    cmd = server_create_command(cfg, "1.0", password="s3cret", treaty_minutes=10)
+    assert cmd == "create_random large 4 strong clustered fast marsh teams_2v2 lake high conquest 4242 1.0 10 password=s3cret"
+    parsed, speed, password, treaty = parse_server_create_args(cmd.split()[1:])
     assert parsed.normalized() == cfg.normalized()
     assert speed == 1.0
-    assert is_public is True
+    assert password == "s3cret"
     assert treaty == 10
 
 
 def test_server_create_legacy_format_without_template():
     args = ["medium", "2", "medium", "balanced", "1.0", "0"]
-    parsed, speed, is_public, treaty = parse_server_create_args(args)
+    parsed, speed, password, treaty = parse_server_create_args(args)
     assert parsed.template == "standard"
     assert parsed.terrain == "random"
     assert parsed.team_mode == "ffa"

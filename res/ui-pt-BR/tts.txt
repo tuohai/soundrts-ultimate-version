@@ -1531,3 +1531,17 @@
 5797	falha ao verificar atualizacoes
 5798	abrindo a janela de atualizacao; o jogo sera fechado
 5799	capturado
+5822	entrar na partida
+5823	lista de salas
+5824	nenhuma sala
+5825	a espera de comecar
+5826	protegida por senha
+5827	digite a senha
+5828	sem senha
+5829	definir senha
+5830	senha incorreta
+5831	atualizar lista
+5832	escolher
+5833	sala cheia
+
+

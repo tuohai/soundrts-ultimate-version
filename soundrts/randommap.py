@@ -1814,8 +1814,11 @@ def server_create_command(
     speed: float | str,
     is_public: bool = False,
     treaty_minutes: int = 0,
+    password: str = "",
 ) -> str:
     """Build a ``create_random`` server command from RMG settings."""
+    from .room_password import password_arg
+
     cfg = config.normalized()
     seed_token = int(cfg.seed) if cfg.seed is not None and int(cfg.seed) > 0 else 0
     parts = [
@@ -1833,25 +1836,30 @@ def server_create_command(
         str(seed_token),
         str(speed),
     ]
-    if is_public:
-        parts.append("public")
     parts.append(str(int(treaty_minutes)))
+    token = password_arg(password)
+    if token:
+        parts.append(token)
     return " ".join(parts)
 
 
 def parse_server_create_args(
     args: Sequence[str],
-) -> Tuple[RandomMapConfig, float, bool, int]:
-    """Parse ``create_random`` tokens (without the command name)."""
-    tokens = list(args)
+) -> Tuple[RandomMapConfig, float, str, int]:
+    """Parse ``create_random`` tokens (without the command name).
+
+    Returns ``(config, speed, password, treaty_minutes)``.
+    The legacy ``public`` flag is ignored (rooms are always listed).
+    """
+    from .room_password import extract_password_token
+
+    password, tokens = extract_password_token(args)
     if len(tokens) < 5:
         raise ValueError("create_random requires at least 5 arguments")
     treaty_minutes = 0
     if tokens and tokens[-1].isdigit() and len(tokens) >= 6:
         treaty_minutes = int(tokens.pop())
-    is_public = False
     if tokens and tokens[-1] == "public":
-        is_public = True
         tokens.pop()
     speed = float(tokens.pop())
 
@@ -1912,7 +1920,7 @@ def parse_server_create_args(
             seed=seed,
         ),
         speed,
-        is_public,
+        password,
         treaty_minutes,
     )
 

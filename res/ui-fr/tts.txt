@@ -1531,3 +1531,17 @@
 5797	echec de la verification des mises a jour
 5798	ouverture de la fenetre de mise a jour; le jeu va quitter
 5799	capturé
+5822	rejoindre la partie
+5823	liste des salles
+5824	aucune salle
+5825	en attente
+5826	protege par mot de passe
+5827	entrez le mot de passe
+5828	pas de mot de passe
+5829	definir un mot de passe
+5830	mot de passe incorrect
+5831	actualiser la liste
+5832	choisir
+5833	salle pleine
+
+

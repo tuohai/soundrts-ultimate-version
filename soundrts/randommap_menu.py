@@ -29,7 +29,6 @@ class RandomMapMenu:
         self._server_mode = server_mode
         self._config = RandomMapConfig()
         self._speed = server_mode.get("speed", "1.0") if server_mode else "1.0"
-        self._is_public = server_mode.get("is_public", "") if server_mode else ""
 
     def run(self):
         self._open_template_menu()
@@ -227,19 +226,43 @@ class RandomMapMenu:
 
     def _open_treaty_menu(self):
         menu = Menu(menu_title_for_config(self._config) + mp.TREATY, menu_type="submenu")
-        menu.append(mp.TREATY + [":"] + mp.NO_TREATY, (self._finish, 0))
+        menu.append(mp.TREATY + [":"] + mp.NO_TREATY, (self._ask_password_then_finish, 0))
         for minutes in (5, 10, 15, 20):
-            menu.append(mp.TREATY + nb2msg(minutes) + mp.MINUTES, (self._finish, minutes))
+            menu.append(mp.TREATY + nb2msg(minutes) + mp.MINUTES, (self._ask_password_then_finish, minutes))
         menu.append(mp.CANCEL, CLOSE_MENU)
         menu.run()
 
-    def _finish(self, treaty_minutes):
+    def _ask_password_then_finish(self, treaty_minutes):
+        def no_pw():
+            self._finish(treaty_minutes, "")
+
+        def with_pw():
+            pw = input_string(
+                mp.ENTER_ROOM_PASSWORD,
+                pattern=r"^[A-Za-z0-9]$",
+                max_length=20,
+            )
+            if pw is None:
+                return
+            self._finish(treaty_minutes, pw)
+
+        Menu(
+            mp.SET_ROOM_PASSWORD,
+            [
+                (mp.NO_ROOM_PASSWORD, no_pw),
+                (mp.SET_ROOM_PASSWORD, with_pw),
+                (mp.CANCEL, CLOSE_MENU),
+            ],
+            menu_type="submenu",
+        ).run()
+
+    def _finish(self, treaty_minutes, password=""):
         if self._server_mode:
             cmd = server_create_command(
                 self._config,
                 self._speed,
-                is_public=bool(self._is_public),
                 treaty_minutes=treaty_minutes,
+                password=password,
             )
             self._server_mode["write_line"](cmd)
             return

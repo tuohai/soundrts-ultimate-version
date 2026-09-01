@@ -4,6 +4,46 @@ Notas de lançamento
 
 .. contents::
 
+1.4.9.3
+--------
+
+**Correção: o espectador em multiplayer roubava ids de entidade**
+
+- **Problema**: criar o jogador espectador consumia ``world.get_next_id()``, por isso unidades treinadas ou construídas depois tinham um id a mais do que na partida real. Ordens humanas escolhem por id, então o histórico ``all_orders`` acertava o alvo errado; a ordem de ``active_objects`` por id também podia divergir.
+- **Mudança**: depois de criar o espectador restaura-se a sequência numérica de ids e marca-se ``pure_spectator``. Continua sem gastar ``world.random`` e sem ocupar um lugar de jogador.
+- **Alcance**: ``game.py`` ``_create_spectator_player``; teste headless ``test_multiplayer_spectate.py``.
+
+**Correção: o espectador repetia «está a observar» e depois ficava mudo**
+
+- **Problema**: o atraso de catch-up oscilava no limiar e voltava a anunciar ``YOU_ARE_SPECTATING``. Restaurar o áudio só com fila 1 deixava o espectador ao vivo mudo (a fila fica muitas vezes em 2–3); setas/Tab/F10 pareciam mortas até voltar ao átrio.
+- **Mudança**: anuncia-se uma só vez e restaura-se o áudio dentro do limiar; ``spectate_success`` tardio ignora-se em silêncio. Em jogo, ``spectator_joined`` / ``spectator_left`` passam a ser falados em vez de um WARNING.
+- **Alcance**: ``game_interface_base.py``, ``worldclient.py``.
+
+**Correção: ao entrar não havia casa e as setas não faziam nada**
+
+- **Problema**: o espectador puro não tem unidades, por isso ``interface.place`` ficava vazio até PageUp / PageDown.
+- **Mudança**: a câmara abre na casa inicial de um jogador real.
+- **Alcance**: ``game_navigation._initial_observer_place``.
+
+**Mudança: uma lista de salas no átrio, senha opcional para entrar e observar**
+
+- **Problema**: pública/privada era confuso, e observar vivia noutro menu. «Pública» convidava toda a gente; privadas só por convite.
+- **Mudança**: ao criar já não se escolhe pública/privada — depois do mapa/velocidade/trégua define-se senha ou salta-se. O átrio tem uma **lista de salas**: as que esperam podem-se juntar ou observar (o espectador espera o anfitrião começar), as já começadas observam-se. Salas com senha continuam na lista; juntar e observar pedem a senha. Convidados não precisam dela ao entrar. O anfitrião ainda pode convidar.
+- **Alcance**: ``serverroom.py``, ``serverclient.py``, ``clientservermenu.py``, ``room_password.py``; teste ``test_open_rooms_lobby.py``.
+
+**Correção: a espera de espectador não tinha sair e Esc não fazia nada**
+
+- **Problema**: o menu de espera não aplicava ``make_menu()``, por isso as opções estavam vazias. Esc só confirma o último item.
+- **Mudança**: ao entrar aplica-se «sair / deixar este jogo»; Esc confirma como no menu de convidado.
+- **Alcance**: ``clientservermenu.py`` ``WaitingToSpectateMenu``.
+
+**Correção: «está a observar» era cortado pelo anúncio da casa**
+
+- **Problema**: no fim do catch-up, ``voice.info()`` punha ``YOU_ARE_SPECTATING`` na fila e o ``voice.item()`` seguinte interrompia.
+- **Mudança**: fala-se com ``voice.alert()`` para terminar antes dos itens; continua a anunciar-se uma só vez.
+- **Alcance**: ``game_interface_base.py`` ``_update_catch_up_audio``.
+
+
 1.4.9.2
 --------
 
