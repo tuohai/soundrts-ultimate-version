@@ -165,6 +165,51 @@ def test_mangonel_line_de_melee_and_splash_pool(aoe2_rules):
         assert int(cls.mdg_splash) == dmg * PRECISION, name
 
 
+def test_archery_line_upgrades_live_on_range_not_stable(aoe2_rules):
+    """Foot-archer / skirmisher / CA upgrades belong on the range, not the stable."""
+    archery_techs = {
+        "crossbowman",
+        "arbalester",
+        "elite_skirmisher",
+        "imperial_skirmisher",
+        "heavy_cavalry_archer",
+        "thumb_ring",
+        "parthian_tactics",
+    }
+    frank_archery = aoe2_rules.get("frank_archery", "can_research") or []
+    frank_stable = aoe2_rules.get("frank_stable", "can_research") or []
+    assert "crossbowman" in frank_archery
+    assert "arbalester" in frank_archery
+    assert "elite_skirmisher" in frank_archery
+    assert "thumb_ring" not in frank_archery
+    assert "heavy_cavalry_archer" not in frank_archery
+    assert not archery_techs.intersection(frank_stable)
+    assert "husbandry" in frank_stable
+    assert "frankish_cavalier" in frank_stable
+    assert "frankish_paladin" in frank_stable
+
+    briton_archery = aoe2_rules.get("briton_archery", "can_research") or []
+    briton_stable = aoe2_rules.get("briton_stable", "can_research") or []
+    assert "crossbowman" in briton_archery
+    assert "arbalester" in briton_archery
+    assert "elite_skirmisher" in briton_archery
+    assert "thumb_ring" not in briton_archery
+    assert "heavy_cavalry_archer" not in briton_archery
+    assert not archery_techs.intersection(briton_stable)
+    assert "husbandry" in briton_stable
+    assert "cavalier" in briton_stable
+    assert "paladin" in briton_stable
+
+    for name in aoe2_rules.classnames():
+        research = set(aoe2_rules.get(name, "can_research") or [])
+        if not research:
+            continue
+        is_a = aoe2_rules.get(name, "is_a") or []
+        if name == "stables" or "stables" in is_a or name.endswith("_stable"):
+            leaked = research & archery_techs
+            assert not leaked, f"{name} has archery techs {leaked}"
+
+
 def test_aoe2_blast_units_splash_pool_matches_attack(aoe2_rules):
     """Projectile blast / trample: splash pool equals main attack (not leftover flag 1)."""
     from soundrts.lib.nofloat import PRECISION

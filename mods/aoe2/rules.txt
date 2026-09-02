@@ -4716,13 +4716,14 @@ can_research squires arson gambesons man_at_arms long_swordsman two_handed_sword
 
 def briton_archery
 is_a archery_range
+; DE: no Thumb Ring / Heavy CA / Hand Cannoneer; foot archer line + skirmisher
 can_train aoe_archer skirmisher
-can_research
+can_research crossbowman arbalester elite_skirmisher
 
 def briton_stable
 is_a stables
 can_train scout_cavalry aoe_knight
-can_research husbandry crossbowman arbalester elite_skirmisher heavy_cavalry_archer light_cavalry hussar cavalier paladin
+can_research husbandry light_cavalry hussar cavalier paladin
 
 def briton_blacksmith
 is_a blacksmith
@@ -4756,12 +4757,12 @@ def frank_archery
 is_a archery_range
 ; DE: no Cavalry Archer / Thumb Ring; Hand Cannoneer yes
 can_train aoe_archer skirmisher hand_cannoneer
-can_research
+can_research crossbowman arbalester elite_skirmisher
 
 def frank_stable
 is_a stables
 can_train scout_cavalry aoe_knight
-can_research husbandry crossbowman arbalester elite_skirmisher heavy_cavalry_archer light_cavalry hussar frankish_cavalier frankish_paladin
+can_research husbandry light_cavalry hussar frankish_cavalier frankish_paladin
 
 def frank_blacksmith
 is_a blacksmith
