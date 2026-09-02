@@ -1,8 +1,10 @@
-"""Regression: AI build must displace imperative auto_explore.
+"""Regression: AI must still stop auto_explore/auto_attack before build.
 
-AutoExploreOrder is imperative, so a normal take_order(['build', ...]) only
-queues behind it and never runs. Counting those stuck builds in future_nb made
-the AI believe barracks were already in production — deadlock, no barracks.
+AutoExploreOrder used to be imperative, so a normal take_order(['build', ...])
+queued behind it and never ran. Explore is no longer imperative, but
+auto_attack still is, and requisition still stops both before assigning work.
+Counting builds stuck behind an explore head in future_nb also caused a
+deadlock (AI believed barracks were already in production).
 """
 from __future__ import annotations
 

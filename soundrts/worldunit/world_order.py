@@ -20,12 +20,19 @@ class CreatureOrders(Entity):
             self.orders
             and self.orders[0].is_imperative
         )
-        # 强制命令进行中时，普通命令自动排队，不得替换队首强制命令（stop 除外）
+        # 强制命令进行中时，普通命令自动排队，不得替换队首强制命令（stop 除外）。
+        # 再下一道 auto_explore 例外：回车 / Ctrl+回车可切换普通/强制探索。
+        replacing_explore = (
+            o[0] == "auto_explore"
+            and self.orders
+            and getattr(self.orders[0], "keyword", None) == "auto_explore"
+        )
         if (
             forget_previous
             and not imperative
             and imperative_head
             and o[0] != "stop"
+            and not replacing_explore
         ):
             forget_previous = False
         # an imperative "go" order on a unit is an "attack" order
@@ -46,7 +53,7 @@ class CreatureOrders(Entity):
             return
         if forget_previous and not cls.never_forget_previous:
             self.cancel_all_orders()
-        # After an imperative head (e.g. auto_explore), only one *normal* follow-up
+        # After an imperative head (e.g. auto_attack), only one *normal* follow-up
         # may sit in the queue; a newer normal order replaces the previous follow-up.
         # Production orders (train/research/…) use never_forget_previous and must be
         # allowed to stack (Alt+Z / repeated train), so they skip this limit.

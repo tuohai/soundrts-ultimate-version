@@ -5,6 +5,34 @@ Release notes
 .. contents::
 
 
+1.4.9.5
+---------
+
+**Change: auto-explore is no longer an imperative order**
+
+- **Issue**: Marking explore as an imperative queue head meant a normal move or attack often queued and never ran; that fought the “resume when idle” design.
+- **Change**: ``AutoExploreOrder`` is not imperative; other orders take over immediately. The ``auto_explore`` flag stays on; ``decide()`` issues explore again when idle. Computer AI still stops before requisition.
+- **Scope**: ``worldorders/computer.py``; queue comments.
+
+**Change: Enter for ordinary auto-explore, Ctrl+Enter for imperative**
+
+- **Issue**: After explore stopped being imperative, there was no way to keep a scout exploring until told otherwise.
+- **Change**: Enter on enable auto-explore starts ordinary explore (replaced at once; resume when idle). Ctrl+Enter starts imperative explore (normal orders queue behind until stop, disable, or another imperative order). Idle re-issue keeps that mode (``auto_explore_imperative``).
+- **Scope**: ``enable_auto_explore`` / ``disable_auto_explore``; ``decide()`` re-issue; order queue.
+
+**Fix: AoE2 Auto Scout on scout/eagle lines, not Mangudai**
+
+- **Issue**: The eagle scout line had no Auto Scout; Mangudai incorrectly had it.
+- **Change**: ``eagle_scout`` line (including the Aztec Dark Age eagle) ``can_auto_explore 1``; ``mangudai`` ``can_auto_explore 0``. Scout cavalry line unchanged. This mod has no Camel Scout unit; camel riders stay off.
+- **Scope**: ``mods/aoe2/rules.txt``.
+
+**Fix: AoE2 Franks/Britons had archery upgrades on the stable**
+
+- **Issue**: Crossbowman, arbalester, elite skirmisher (and stray heavy cavalry archer) appeared on stable ``can_research``; the archery range list was empty.
+- **Change**: Moved back to the range; stables keep husbandry and the cavalry line. Franks/Britons still have no Thumb Ring and no Heavy CA (DE).
+- **Scope**: ``mods/aoe2/rules.txt`` Frank and Briton range/stable.
+
+
 1.4.9.4
 ---------
 

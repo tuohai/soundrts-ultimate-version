@@ -1441,7 +1441,7 @@ Comportamiento inicial por unidad en ``rules.txt``:
 - ``auto_repair``: ``1`` o ``0``. Predeterminado ``1``. Sólo trabajadores.
 - ``auto_explore``: ``1`` o ``0``. Predeterminado ``0``. Unidades móviles (velocidad > 0).
 - ``can_auto_explore``: ``1`` o ``0``. Predeterminado ``0``. Agrega habilitar/deshabilitar la exploración automática a
-  menú de comando de la unidad.
+  menú de comando de la unidad. Intro habilita exploración normal; Ctrl+Intro, imperativa.
 - ``no_number`` (desde 1.4.3.2): ``1`` o ``0``. Predeterminado ``0`` (siempre diga números de serie,
   por ej. "campesino 1 en a1"). Cuando ``1``: omitir el número mientras solo una unidad de vivienda de esa
   el tipo existe ("Guan Yu en a1"); con dos o más, utilice números ("Guan Yu 1", "Guan Yu 2").

@@ -638,7 +638,9 @@ Esplorazione automatica (dal 1.4.3.1)
 
 Le unità con ``can_auto_explore 1`` in rules.txt mostrano "enable auto-explore" / "disable
 auto-explore" nel menu comandi. Quando è abilitata, le unità mobili inattive esplorano automaticamente
-le aree inesplorate; gli ordini del giocatore mettono in pausa l’esplorazione e riprende quando torna inattiva.
+le aree inesplorate. Invio su abilita auto-esplorazione avvia l’esplorazione normale (gli altri ordini la
+sostituiscono subito; riprende da fermo). Ctrl+Invio avvia l’esplorazione imperativa (gli ordini normali
+restano in coda finché stop, disattiva o un altro ordine imperativo).
 
 Note sulla campagna (dal 1.4.3.0)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -415,11 +415,14 @@ class CreatureAIDecision(Entity):
 
         # 默认/持续自动探索：若该单位（按 rules.txt 配置 auto_explore，或玩家
         # 手动开启）启用了自动探索，且当前空闲且可移动，则下达 auto_explore
-        # 标准命令。该命令会持续驱动探索；一旦发现敌人，下方战斗逻辑会在
-        # 后续帧自动接管（attack 命令 forget_previous 覆盖 auto_explore）。
+        # 标准命令。回车启用时不是强制的，其它命令立刻顶掉探索；Ctrl+回车启用
+        # 时带 imperative，普通命令排在后面。开关仍开着，空闲后本钩子再下一道。
         # auto_explore 默认 False（类属性），绝大多数单位此处只是一次假值判断。
         if self.auto_explore and self.speed > 0 and not self.orders:
-            self.take_order(["auto_explore"])
+            self.take_order(
+                ["auto_explore"],
+                imperative=bool(getattr(self, "auto_explore_imperative", False)),
+            )
             return
 
         # 决策缓存: bucket 与进攻间隔对齐 (150ms).

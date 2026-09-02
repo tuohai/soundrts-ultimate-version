@@ -21,7 +21,11 @@ class AutoAttackOrder(ComputerOnlyOrder):
 class AutoExploreOrder(ComputerOnlyOrder):
 
     keyword = "auto_explore"
-    is_imperative = True
+    # Default not imperative: a normal go/attack/build replaces explore.
+    # Ctrl+Enter on enable_auto_explore (or auto_explore) promotes the instance
+    # via take_order(..., imperative=True). The auto_explore flag stays on so
+    # decide() resumes when idle, using auto_explore_imperative.
+    is_imperative = False
 
     @classmethod
     def is_allowed(cls, unit, *unused_args):
@@ -36,6 +40,8 @@ class AutoExploreOrder(ComputerOnlyOrder):
 
     def on_queued(self):
         player = self.unit.player
+        if player is not None and getattr(player, "is_human", False):
+            self.unit.auto_explore_imperative = bool(self.is_imperative)
         world = player.world
         if getattr(player, "_places_to_explore", None) is None:
             player._places_to_explore = [

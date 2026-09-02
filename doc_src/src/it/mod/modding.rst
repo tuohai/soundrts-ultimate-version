@@ -1400,7 +1400,7 @@ Comportamento iniziale per unità in ``rules.txt``:
 - ``auto_repair``: ``1`` o ``0``. Predefinito ``1``. Solo lavoratori.
 - ``auto_explore``: ``1`` o ``0``. Predefinito ``0``. Unità mobili (speed > 0).
 - ``can_auto_explore``: ``1`` o ``0``. Predefinito ``0``. Aggiunge abilita/disabilita auto-esplorazione al
-  menu comandi dell’unità.
+  menu comandi dell’unità. Invio abilita l’esplorazione normale; Ctrl+Invio quella imperativa.
 - ``no_number`` (da 1.4.3.2): ``1`` o ``0``. Predefinito ``0`` (pronuncia sempre i numeri seriali,
   es. "peasant 1 at a1"). Quando ``1``: omette il numero mentre esiste una sola unità viva di quel
   tipo ("Guan Yu at a1"); con due o più, usa i numeri ("Guan Yu 1", "Guan Yu 2").

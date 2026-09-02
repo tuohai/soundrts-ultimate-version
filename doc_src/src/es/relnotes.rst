@@ -4,6 +4,34 @@ Notas de la versión
 
 .. contents::
 
+1.4.9.5
+--------
+
+**Cambio: la exploración automática ya no es una orden imperativa**
+
+- **Problema**: marcar la exploración como cabeza de cola imperativa hacía que un movimiento o ataque normal a menudo se encolara y nunca se ejecutara; eso chocaba con «reanudar al quedar inactivo».
+- **Cambio**: ``AutoExploreOrder`` deja de ser imperativa; las demás órdenes toman el relevo al instante. El indicador ``auto_explore`` sigue activo; ``decide()`` vuelve a emitir exploración al quedar inactivo. La IA sigue haciendo stop antes de requisar.
+- **Alcance**: ``worldorders/computer.py``; comentarios de la cola.
+
+**Cambio: Intro para exploración automática normal, Ctrl+Intro para imperativa**
+
+- **Problema**: al dejar de ser imperativa, ya no se podía hacer que un explorador siguiera explorando hasta nueva orden.
+- **Cambio**: Intro en habilitar exploración automática inicia exploración normal (se sustituye al instante; se reanuda al quedar inactivo). Ctrl+Intro inicia exploración imperativa (las órdenes normales se encolan detrás hasta detener, desactivar u otra orden imperativa). Al reemitir en idle se conserva el modo (``auto_explore_imperative``).
+- **Alcance**: ``enable_auto_explore`` / ``disable_auto_explore``; reemisión en ``decide()``; cola de órdenes.
+
+**Corrección: Auto Scout de aoe2 en las líneas de explorador/águila, no en Mangudai**
+
+- **Problema**: la línea de águila no tenía Auto Scout; Mangudai lo tenía por error.
+- **Cambio**: línea ``eagle_scout`` (incluido el águila azteca en Edad Oscura) ``can_auto_explore 1``; ``mangudai`` ``can_auto_explore 0``. La línea de caballería de exploración no cambia. Este mod no tiene Camel Scout; los camellos siguen sin él.
+- **Alcance**: ``mods/aoe2/rules.txt``.
+
+**Corrección: francos/británicos de aoe2 tenían mejoras de arquería en el establo**
+
+- **Problema**: ballestero, arbalestero, hostigador de élite (y un caballería arquera pesada suelta) aparecían en ``can_research`` del establo; la lista del campo de tiro estaba vacía.
+- **Cambio**: vueltos al campo de tiro; el establo conserva ganadería y la línea de caballería. Francos/británicos siguen sin anillo de pulgar ni CA pesada (DE). Identificadores: ``crossbowman`` ``arbalester``.
+- **Alcance**: ``mods/aoe2/rules.txt`` campo de tiro y establo francos y británicos.
+
+
 1.4.9.4
 --------
 

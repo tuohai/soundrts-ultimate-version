@@ -400,6 +400,8 @@ class EnableAutoExplore(ImmediateOrder):
 
     def immediate_action(self):
         self.unit.auto_explore = True
+        # 回车：普通探索；Ctrl+回车：强制探索（普通命令排在后面）。
+        self.unit.auto_explore_imperative = bool(self.is_imperative)
         self.unit.notify("order_ok")
 
 
@@ -420,6 +422,7 @@ class DisableAutoExplore(ImmediateOrder):
 
     def immediate_action(self):
         self.unit.auto_explore = False
+        self.unit.auto_explore_imperative = False
         # 立即停止正在进行的自动探索命令（其余命令保持不变）
         if self.unit.orders and getattr(self.unit.orders[0], "keyword", None) == "auto_explore":
             self.unit.cancel_all_orders()

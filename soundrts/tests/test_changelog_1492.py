@@ -19,7 +19,7 @@ def _section_1492(lang: str) -> str:
 
 
 def test_version_is_1492():
-    # 1.4.9.2 notes remain after later bumps; current VERSION is owned by 1.4.9.4+.
+    # 1.4.9.2 notes remain after later bumps; current VERSION is owned by 1.4.9.5+.
     assert "1.4.9.2" in _source("doc_src", "src", "zh", "relnotes.rst")
 
 

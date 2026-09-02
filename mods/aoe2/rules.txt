@@ -1932,6 +1932,8 @@ mdf 0
 rdf 2
 mdg_vs camel_rider 8
 mdg_vs siege_unit 3
+; DE Auto Scout (update 111772): eagle scout line
+can_auto_explore 1
 can_upgrade_to eagle_warrior
 can_use_tech forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor tracking squires arson conscription chieftains
 ; Meso Dark Age eagle (Aztecs/Maya/Inca): trainable without Feudal
@@ -3150,7 +3152,8 @@ rdg_cover 95
 rdg_range 4
 rdg_vs spearman 1
 rdg_vs siege_unit 3
-can_auto_explore 1
+; DE: Mangudai is not a scout unit — no Auto Scout
+can_auto_explore 0
 can_upgrade_to elite_mangudai
 can_use_tech fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor thumb_ring parthian_tactics ballistics chemistry bloodlines husbandry conscription
 def elite_mangudai

@@ -637,7 +637,9 @@ Exploración automática (desde 1.4.3.1)
 
 Las unidades con ``can_auto_explore 1`` en reglas.txt muestran "habilitar exploración automática" / "deshabilitar"
 exploración automática" en su menú de comandos. Cuando está habilitado, las unidades móviles inactivas exploran automáticamente
-áreas inexploradas; El jugador ordena pausar la exploración y se reanuda cuando está inactiva nuevamente.
+áreas inexploradas. Intro en habilitar exploración automática inicia la exploración normal (otras órdenes la sustituyen al instante;
+se reanuda al quedar inactiva). Ctrl+Intro inicia la exploración imperativa (las órdenes normales se encolan detrás
+hasta detener, desactivar u otra orden imperativa).
 
 Notas de campaña (desde 1.4.3.0)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

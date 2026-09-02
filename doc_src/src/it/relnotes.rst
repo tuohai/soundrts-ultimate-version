@@ -3,6 +3,34 @@ Note di rilascio
 
 .. contents::
 
+1.4.9.5
+---------
+
+**Cambio: l’esplorazione automatica non è più un ordine imperativo**
+
+- **Problema**: segnare l’esplorazione come testa di coda imperativa faceva sì che un movimento o un attacco normale restasse in coda e non partisse; andava contro «riprendi da fermo».
+- **Cambio**: ``AutoExploreOrder`` non è imperativo; gli altri ordini subentrano subito. Il flag ``auto_explore`` resta acceso; ``decide()`` riassegna l’esplorazione da fermo. L’IA continua a fare stop prima della requisizione.
+- **Ambito**: ``worldorders/computer.py``; commenti della coda.
+
+**Cambio: Invio per esplorazione automatica normale, Ctrl+Invio per imperativa**
+
+- **Problema**: dopo che l’esplorazione ha smesso di essere imperativa, non si poteva più far continuare un esploratore finché non arrivava un altro ordine.
+- **Cambio**: Invio su abilita auto-esplorazione avvia l’esplorazione normale (sostituita subito; riprende da fermo). Ctrl+Invio avvia l’esplorazione imperativa (gli ordini normali restano in coda finché stop, disattiva o un altro ordine imperativo). Il reinvio da fermo conserva la modalità (``auto_explore_imperative``).
+- **Ambito**: ``enable_auto_explore`` / ``disable_auto_explore``; reinvio in ``decide()``; coda ordini.
+
+**Correzione: Auto Scout aoe2 sulle linee esploratore/aquila, non sui Mangudai**
+
+- **Problema**: la linea aquila non aveva Auto Scout; i Mangudai lo avevano per errore.
+- **Cambio**: linea ``eagle_scout`` (compresa l’aquila azteca in età oscura) ``can_auto_explore 1``; ``mangudai`` ``can_auto_explore 0``. La linea cavalleria esploratrice è invariata. Questo mod non ha Camel Scout; i cammelli restano senza.
+- **Ambito**: ``mods/aoe2/rules.txt``.
+
+**Correzione: franchi/britanni aoe2 avevano i potenziamenti da arcieri nella stalla**
+
+- **Problema**: balestriere, arbalestere, schermagliatore d’élite (e un arciere a cavallo pesante di troppo) comparivano in ``can_research`` della stalla; l’elenco del campo di tiro era vuoto.
+- **Cambio**: riportati al campo di tiro; la stalla tiene allevamento e la linea di cavalleria. Franchi/britanni restano senza anello da pollice e senza CA pesante (DE). Identificatori: ``crossbowman`` ``arbalester``.
+- **Ambito**: ``mods/aoe2/rules.txt`` campo di tiro e stalla franchi e britanni.
+
+
 1.4.9.4
 ---------
 

@@ -4,6 +4,34 @@ Notas de lançamento
 
 .. contents::
 
+1.4.9.5
+--------
+
+**Mudança: a exploração automática deixa de ser uma ordem imperativa**
+
+- **Problema**: marcar a exploração como cabeça de fila imperativa fazia com que um movimento ou ataque normal ficasse na fila e nunca corresse; isso ia contra «retomar quando estiver ocioso».
+- **Mudança**: ``AutoExploreOrder`` deixa de ser imperativa; as outras ordens assumem de imediato. O indicador ``auto_explore`` permanece ligado; ``decide()`` volta a emitir exploração quando ocioso. A IA continua a fazer stop antes de requisitar.
+- **Alcance**: ``worldorders/computer.py``; comentários da fila.
+
+**Mudança: Enter para exploração automática normal, Ctrl+Enter para imperativa**
+
+- **Problema**: depois de a exploração deixar de ser imperativa, já não havia como manter um batedor a explorar até nova ordem.
+- **Mudança**: Enter em ativar auto-exploração inicia exploração normal (substituída de imediato; retoma quando ocioso). Ctrl+Enter inicia exploração imperativa (ordens normais ficam atrás até parar, desativar ou outra ordem imperativa). A reemissão em idle mantém o modo (``auto_explore_imperative``).
+- **Alcance**: ``enable_auto_explore`` / ``disable_auto_explore``; reemissão em ``decide()``; fila de ordens.
+
+**Correção: Auto Scout do aoe2 nas linhas de batedor/águia, não no Mangudai**
+
+- **Problema**: a linha da águia não tinha Auto Scout; o Mangudai tinha-o por engano.
+- **Mudança**: linha ``eagle_scout`` (incluindo a águia asteca na Idade das Trevas) ``can_auto_explore 1``; ``mangudai`` ``can_auto_explore 0``. A linha de cavalaria de reconhecimento não muda. Este mod não tem Camel Scout; os camelos continuam sem.
+- **Alcance**: ``mods/aoe2/rules.txt``.
+
+**Correção: francos/bretões do aoe2 tinham melhorias de arqueiro no estábulo**
+
+- **Problema**: besta, besta pesada, escaramuçador de elite (e um arqueiro a cavalo pesado a mais) apareciam no ``can_research`` do estábulo; a lista do campo de tiro estava vazia.
+- **Mudança**: voltaram para o campo de tiro; o estábulo fica com pecuária e a linha de cavalaria. Francos/bretões continuam sem anel de polegar e sem CA pesada (DE). Identificadores: ``crossbowman`` ``arbalester``.
+- **Alcance**: ``mods/aoe2/rules.txt`` campo de tiro e estábulo francos e bretões.
+
+
 1.4.9.4
 --------
 

@@ -651,7 +651,9 @@ Auto-explore (since 1.4.3.1)
 
 Units with ``can_auto_explore 1`` in rules.txt show "enable auto-explore" / "disable
 auto-explore" in their command menu. When enabled, idle mobile units automatically scout
-unexplored areas; player orders pause exploration and it resumes when idle again.
+unexplored areas. Enter on enable auto-explore starts ordinary explore (other orders
+replace it at once; exploration resumes when idle). Ctrl+Enter starts imperative explore
+(normal orders queue behind until stop, disable, or another imperative order).
 
 Campaign notes (since 1.4.3.0)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -1398,7 +1398,7 @@ Comportamento inicial por unidade em ``rules.txt``:
 - ``auto_repair``: ``1`` ou ``0``. Padrão ``1``. Apenas trabalhadores.
 - ``auto_explore``: ``1`` ou ``0``. Padrão ``0``. Unidades móveis (speed > 0).
 - ``can_auto_explore``: ``1`` ou ``0``. Padrão ``0``. Adiciona habilitar/desabilitar auto-exploração ao
-  menu de comandos da unidade.
+  menu de comandos da unidade. Enter ativa exploração normal; Ctrl+Enter, imperativa.
 - ``no_number`` (desde 1.4.3.2): ``1`` ou ``0``. Padrão ``0`` (sempre fala números de série,
   ex.: "peasant 1 at a1"). Quando ``1``: omite o número enquanto existir apenas uma unidade viva daquele
   tipo ("Guan Yu at a1"); com duas ou mais, usa números ("Guan Yu 1", "Guan Yu 2").

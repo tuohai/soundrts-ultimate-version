@@ -165,6 +165,24 @@ def test_mangonel_line_de_melee_and_splash_pool(aoe2_rules):
         assert int(cls.mdg_splash) == dmg * PRECISION, name
 
 
+def test_aoe2_auto_scout_on_scout_and_eagle_not_mangudai(aoe2_rules):
+    """DE update 111772: Auto Scout on scout/eagle lines, not Mangudai."""
+    for name in (
+        "scout_cavalry",
+        "light_cavalry",
+        "hussar",
+        "eagle_scout",
+        "aztec_eagle_scout",
+        "eagle_warrior",
+        "elite_eagle_warrior",
+    ):
+        cls = aoe2_rules.unit_class(name)
+        assert getattr(cls, "can_auto_explore", 0), name
+    for name in ("mangudai", "elite_mangudai", "camel_rider"):
+        cls = aoe2_rules.unit_class(name)
+        assert not getattr(cls, "can_auto_explore", 0), name
+
+
 def test_archery_line_upgrades_live_on_range_not_stable(aoe2_rules):
     """Foot-archer / skirmisher / CA upgrades belong on the range, not the stable."""
     archery_techs = {

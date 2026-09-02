@@ -3236,7 +3236,7 @@ class Computer(Player):
                 kw = getattr(o0, "keyword", None)
                 if kw == "go" and getattr(o0, "target", None) is dest:
                     continue
-                # auto_explore is imperative and would keep sheep wandering forever.
+                # Explore used to be imperative and would keep sheep wandering.
                 if kw == "auto_explore":
                     animal.take_order(["stop"])
             animal.take_order(["go", dest.id], forget_previous=True)
@@ -5081,9 +5081,8 @@ class Computer(Player):
         ]
 
         def _recall(u):
-            # auto_explore is imperative: plain take_order(["go", ...]) only queues
-            # behind it (1.4 take_order change). Must stop first, else explorers pile
-            # up and constant_attacks never gets idle fighters (jl1 vs 1.3.8.1).
+            # Explore is no longer imperative, but stop first anyway so recall
+            # is not left behind a leftover explore tick (jl1 vs 1.3.8.1).
             if u.orders and u.orders[0].keyword == "auto_explore":
                 u.take_order(["stop"])
             if self.units:
@@ -5398,8 +5397,8 @@ class Computer(Player):
             if requisition:
                 units.sort(key=self._worker_orders_priority)
             u = units.pop(0)
-            # auto_explore / auto_attack 是 imperative：普通 take_order 只能排队
-            # 到它们后面，建造永远不会开始。征用工人或升级时先停掉探索。
+            # auto_attack is still imperative; explore is not, but stop both
+            # before requisition/upgrade so the new order is queue head.
             if (
                 u.orders
                 and u.orders[0].keyword in ("auto_explore", "auto_attack")

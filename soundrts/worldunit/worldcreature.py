@@ -825,6 +825,9 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     # 开局是否自动探索；可由 rules.txt 配置（auto_explore 1/0），默认关闭。
     # 仅对可移动单位生效，行为由 decide() 发起 auto_explore 标准命令驱动。
     auto_explore = False
+    # 运行时：Ctrl+回车启用（或对 auto_explore 再按 Ctrl+回车）为 True。
+    # decide() 再下达时带 imperative=。不是 rules.txt 属性。
+    auto_explore_imperative = False
     # 该单位的命令菜单里是否提供"启用/禁用自动探索"选项；可由 rules.txt
     # 配置（can_auto_explore 1/0），默认关闭。作者可只给特定单位（如 knight）
     # 开放该选项，其它单位则看不到自动探索命令。

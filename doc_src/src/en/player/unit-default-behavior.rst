@@ -261,7 +261,7 @@ For any unit with speed > 0. Controlled by ``auto_explore`` (initial state) and 
 - ``can_auto_explore 1`` — command menu shows enable/disable auto-explore (only on units that have it).
 - ``auto_explore 1`` — starts exploring when idle; combat uses ``ai_mode`` when enemies appear.
 
-Runtime: other orders pause explore; resumes when idle again. Disable auto-explore always available while exploring. Enable only if ``can_auto_explore 1``. Computer AI exploration is separate.
+Runtime: Enter on enable auto-explore is ordinary (other orders replace it; resume when idle). Ctrl+Enter is imperative (normal orders queue behind until stop, disable, or another imperative order). Disable auto-explore always available while exploring. Enable only if ``can_auto_explore 1``. Computer AI exploration is separate.
 
 
 ----

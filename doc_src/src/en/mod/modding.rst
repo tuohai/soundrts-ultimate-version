@@ -1551,7 +1551,7 @@ Per-unit starting behavior in ``rules.txt``:
 - ``auto_repair``: ``1`` or ``0``. Default ``1``. Workers only.
 - ``auto_explore``: ``1`` or ``0``. Default ``0``. Mobile units (speed > 0).
 - ``can_auto_explore``: ``1`` or ``0``. Default ``0``. Adds enable/disable auto-explore to
-  the unit's command menu.
+  the unit's command menu. Enter enables ordinary explore; Ctrl+Enter enables imperative explore.
 - ``no_number`` (since 1.4.3.2): ``1`` or ``0``. Default ``0`` (always speak serial numbers,
   e.g. "peasant 1 at a1"). When ``1``: omit the number while only one living unit of that
   type exists ("Guan Yu at a1"); with two or more, use numbers ("Guan Yu 1", "Guan Yu 2").

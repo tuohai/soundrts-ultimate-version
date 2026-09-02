@@ -142,6 +142,7 @@ class _StubUnit:
     def __init__(self, is_human, auto_explore=False, speed=10, can_auto_explore=True):
         self.player = _StubPlayer(is_human)
         self.auto_explore = auto_explore
+        self.auto_explore_imperative = False
         self.can_auto_explore = can_auto_explore
         self.speed = speed
         self.orders = []
@@ -201,8 +202,10 @@ def test_disable_auto_explore_is_allowed_and_action():
     o = DisableAutoExplore.__new__(DisableAutoExplore)
     o.unit = on
     on.orders = [types.SimpleNamespace(keyword="auto_explore")]
+    on.auto_explore_imperative = True
     o.immediate_action()
     assert on.auto_explore is False
+    assert on.auto_explore_imperative is False
     assert on.orders == []
     assert "order_ok" in on.notified
 
@@ -213,7 +216,18 @@ def test_enable_auto_explore_action_sets_flag():
     o.unit = u
     o.immediate_action()
     assert u.auto_explore is True
+    assert u.auto_explore_imperative is False
     assert "order_ok" in u.notified
+
+
+def test_enable_auto_explore_ctrl_enter_sets_imperative_flag():
+    u = _StubUnit(True, auto_explore=False, speed=10)
+    o = EnableAutoExplore.__new__(EnableAutoExplore)
+    o.unit = u
+    o.is_imperative = True
+    o.immediate_action()
+    assert u.auto_explore is True
+    assert u.auto_explore_imperative is True
 
 
 # ---------------------------------------------------------------------------
@@ -239,7 +253,7 @@ class _DecideStub:
     _flee_on_hit_enabled = wad.CreatureAIDecision._flee_on_hit_enabled
     _has_pursue_attacker = wad.CreatureAIDecision._has_pursue_attacker
 
-    def __init__(self, auto_explore, speed, orders):
+    def __init__(self, auto_explore, speed, orders, auto_explore_imperative=False):
         self.world = types.SimpleNamespace(time=100000)
         self.ai_mode = "offensive"
         self.speed = speed
@@ -247,13 +261,16 @@ class _DecideStub:
         self.is_inside = False
         self.place = object()  # 非 None 即可
         self.auto_explore = auto_explore
+        self.auto_explore_imperative = auto_explore_imperative
         self.id = 1
         self.mdg = 0
         self.rdg = 0
         self.taken = []
+        self.taken_kw = []
 
     def take_order(self, o, *a, **kw):
         self.taken.append(o)
+        self.taken_kw.append(kw)
         # 模拟命令进入队列，避免后续逻辑重复下达
         self.orders = [types.SimpleNamespace(keyword=o[0])]
 
@@ -270,6 +287,16 @@ def test_decide_issues_auto_explore_when_idle():
     stub = _DecideStub(auto_explore=True, speed=10, orders=[])
     _decide(stub)
     assert stub.taken == [["auto_explore"]]
+    assert stub.taken_kw[0].get("imperative") is False
+
+
+def test_decide_issues_imperative_auto_explore():
+    stub = _DecideStub(
+        auto_explore=True, speed=10, orders=[], auto_explore_imperative=True
+    )
+    _decide(stub)
+    assert stub.taken == [["auto_explore"]]
+    assert stub.taken_kw[0].get("imperative") is True
 
 
 def test_decide_no_auto_explore_when_disabled():
@@ -289,3 +316,105 @@ def test_decide_no_auto_explore_when_busy():
     stub = _DecideStub(auto_explore=True, speed=10, orders=busy)
     _decide(stub)
     assert stub.taken == []
+
+
+def test_auto_explore_order_is_not_imperative():
+    assert AutoExploreOrder.is_imperative is False
+
+
+def test_normal_go_replaces_auto_explore_flag_stays_on(monkeypatch):
+    """A normal go must cancel exploring immediately; the flag stays on."""
+    from soundrts.worldorders.movement import GoOrder
+    from soundrts.worldunit.world_order import CreatureOrders
+
+    class _U:
+        is_inside = False
+        auto_explore = True
+        _next_decide_time = 1
+        basic_skills = ("go",)
+
+        def __init__(self):
+            self.orders = []
+            self.player = types.SimpleNamespace(
+                get_object_by_id=lambda _id: types.SimpleNamespace(id=_id)
+            )
+            self.world = types.SimpleNamespace(time=0)
+
+        def notify(self, *_a):
+            pass
+
+        def cancel_all_orders(self, unpay=True):
+            self.orders.clear()
+
+    unit = _U()
+    unit.orders = [AutoExploreOrder(unit, [])]
+    monkeypatch.setattr(GoOrder, "on_queued", lambda self: None)
+    CreatureOrders.take_order(unit, ["go", "t1"])
+    assert unit.auto_explore is True
+    assert unit.orders
+    assert unit.orders[0].keyword == "go"
+
+
+def _explore_unit():
+    class _U:
+        is_inside = False
+        auto_explore = True
+        auto_explore_imperative = False
+        _next_decide_time = 1
+        basic_skills = ("go",)
+
+        def __init__(self):
+            self.orders = []
+            self.player = types.SimpleNamespace(
+                is_human=True,
+                get_object_by_id=lambda _id: types.SimpleNamespace(id=_id),
+            )
+            self.world = types.SimpleNamespace(time=0)
+
+        def notify(self, *_a):
+            pass
+
+        def cancel_all_orders(self, unpay=True):
+            self.orders.clear()
+
+    return _U()
+
+
+def test_imperative_auto_explore_queues_normal_go(monkeypatch):
+    """Ctrl+Enter explore: a normal go must sit behind the imperative head."""
+    from soundrts.worldorders.movement import GoOrder
+    from soundrts.worldunit.world_order import CreatureOrders
+
+    unit = _explore_unit()
+    explore = AutoExploreOrder(unit, [])
+    explore.is_imperative = True
+    unit.orders = [explore]
+    monkeypatch.setattr(GoOrder, "on_queued", lambda self: None)
+    CreatureOrders.take_order(unit, ["go", "t1"])
+    assert unit.orders[0].keyword == "auto_explore"
+    assert unit.orders[0].is_imperative
+    assert len(unit.orders) >= 2
+    assert unit.orders[1].keyword == "go"
+
+
+def test_reissue_auto_explore_replaces_imperative_head(monkeypatch):
+    """Enter on auto_explore must switch an imperative explore back to ordinary."""
+    from soundrts.worldunit.world_order import CreatureOrders
+
+    unit = _explore_unit()
+    explore = AutoExploreOrder(unit, [])
+    explore.is_imperative = True
+    unit.orders = [explore]
+    unit.auto_explore_imperative = True
+
+    def _queued(self):
+        player = getattr(self.unit, "player", None)
+        if player is not None and getattr(player, "is_human", False):
+            self.unit.auto_explore_imperative = bool(self.is_imperative)
+
+    monkeypatch.setattr(AutoExploreOrder, "on_queued", _queued)
+    CreatureOrders.take_order(unit, ["auto_explore"])
+    assert len(unit.orders) == 1
+    assert unit.orders[0].keyword == "auto_explore"
+    assert unit.orders[0].is_imperative is False
+    assert unit.auto_explore_imperative is False
