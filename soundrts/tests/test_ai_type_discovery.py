@@ -43,6 +43,8 @@ def test_discovery_finds_human_faction_roles_from_attributes():
     assert "gate" in ai._gate_type_names()
     assert "shipyard" in ai._naval_yard_type_names()
     assert "boat" in ai._water_transport_type_names()
+    assert "new_flyingmachine" in ai._air_transport_type_names()
+    assert "flyingmachine" not in ai._air_transport_type_names()
     assert ai._water_warship_type_names()[0] == "destroyer"
     assert "farm" in ai._resource_building_types("resource3")
 

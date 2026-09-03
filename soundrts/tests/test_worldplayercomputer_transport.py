@@ -136,3 +136,120 @@ def test_send_ground_units_airborne_orders_load_and_unload(monkeypatch):
     assert ["load_all", load_land.id] in flyer.orders
     assert ["unload_all", unload_land.id] in flyer.orders
     assert footman.orders[-1] == ["go", dest.id]
+
+
+def _air_unit(**kwargs):
+    u = types.SimpleNamespace(
+        id=kwargs.get("id", 1),
+        speed=kwargs.get("speed", 1.5),
+        hp=kwargs.get("hp", 30),
+        airground_type="air",
+        transport_capacity=kwargs.get("transport_capacity", 0),
+        orders=list(kwargs.get("orders", ())),
+        is_inside=False,
+        inside=kwargs.get("inside", types.SimpleNamespace(objects=[])),
+    )
+    return u
+
+
+def test_explorer_prefers_combat_flyer_over_air_transport():
+    from soundrts.worldplayercomputer import value_as_an_explorer
+
+    combat = _air_unit(id=1, transport_capacity=0)
+    ferry = _air_unit(id=2, transport_capacity=8)
+    assert value_as_an_explorer(combat)[0] > value_as_an_explorer(ferry)[0]
+    ground = types.SimpleNamespace(
+        id=3, speed=1, hp=25, airground_type="ground", transport_capacity=0
+    )
+    assert value_as_an_explorer(ferry)[0] > value_as_an_explorer(ground)[0]
+
+
+def test_best_explorers_skips_air_transport_on_ferry_mission():
+    ferry = _air_unit(
+        id=1,
+        transport_capacity=8,
+        orders=[types.SimpleNamespace(keyword="load_all")],
+    )
+    peasant = types.SimpleNamespace(
+        id=2,
+        speed=1,
+        hp=25,
+        airground_type="ground",
+        transport_capacity=0,
+        orders=[],
+        is_huntable=0,
+        herdable=0,
+        claimable=0,
+    )
+    comp = Computer.__new__(Computer)
+    comp.units = [ferry, peasant]
+    ranked = comp.best_explorers()
+    assert ranked[0] is peasant
+    assert ferry not in ranked
+
+
+def test_best_explorers_still_uses_idle_air_transport():
+    ferry = _air_unit(id=1, transport_capacity=8, orders=[])
+    peasant = types.SimpleNamespace(
+        id=2,
+        speed=1,
+        hp=25,
+        airground_type="ground",
+        transport_capacity=0,
+        orders=[],
+        is_huntable=0,
+        herdable=0,
+        claimable=0,
+    )
+    comp = Computer.__new__(Computer)
+    comp.units = [ferry, peasant]
+    ranked = comp.best_explorers()
+    assert ranked[0] is ferry
+
+
+def test_available_air_transports_can_interrupt_explore():
+    exploring = _air_unit(
+        id=1,
+        transport_capacity=8,
+        orders=[types.SimpleNamespace(keyword="auto_explore")],
+    )
+    loading = _air_unit(
+        id=2,
+        transport_capacity=8,
+        orders=[types.SimpleNamespace(keyword="load_all")],
+    )
+    comp = Computer.__new__(Computer)
+    comp.units = [exploring, loading]
+    available = comp._available_air_transports()
+    assert exploring in available
+    assert loading not in available
+
+
+def test_maintain_air_transports_waits_for_workshop():
+    comp = Computer.__new__(Computer)
+    comp.AI_type = "intermediate"
+    comp._air_transport_type_names = lambda: ("new_flyingmachine",)
+    comp._has_air_transport_trainer = lambda: False
+    calls = []
+    comp.get = lambda n, t: calls.append((n, t))
+    comp._try_maintain_air_transports()
+    assert calls == []
+
+    comp._has_air_transport_trainer = lambda: True
+    comp.nb = lambda n: 0
+    comp.future_nb = lambda n: 0
+    comp._try_maintain_air_transports()
+    assert calls == [(1, "new_flyingmachine")]
+
+
+def test_maintain_air_transports_expert_wants_two():
+    comp = Computer.__new__(Computer)
+    comp.AI_type = "expert"
+    comp._air_transport_type_names = lambda: ("new_flyingmachine",)
+    comp._has_air_transport_trainer = lambda: True
+    comp.nb = lambda n: 0
+    comp.future_nb = lambda n: 0
+    calls = []
+    comp.get = lambda n, t: calls.append((n, t))
+    comp._try_maintain_air_transports()
+    assert calls == [(2, "new_flyingmachine")]

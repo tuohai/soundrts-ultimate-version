@@ -4,6 +4,57 @@ Notas de la versión
 
 .. contents::
 
+1.4.9.6
+--------
+
+**Cambio: los scripts de la IA pueden usar un cerebro adaptativo**
+
+- **Problema**: la IA solo ejecutaba las líneas ``get`` de arriba abajo; ver caballeros no hacía entrenar contras primero; los autores no podían ramificar el script según el reconocimiento.
+- **Cambio**: ``brain plan|adaptive``. ``adaptive`` sigue completando todos los tokens de la línea ``get`` actual, pero entrena primero las mejores contras ``mdg_vs`` / ``rdg_vs`` contra enemigos explorados. Nuevos saltos: ``if_enemy`` / ``if_not_enemy`` / ``if_attacked``. Experto y pesadilla vainilla usan ``brain adaptive``. Principiante a avanzado siguen en ``plan``.
+- **Alcance**: ``soundrts/ai_brain.py``; ``worldplayercomputer.py`` ``_follow_plan``; ``res/ai.txt``; ``mod/aimaking.rst``.
+
+**Cambio: el cerebro adaptativo inyecta un contra entrenable; experto activado por defecto**
+
+- **Problema**: ``adaptive`` solo reordenaba tipos ya escritos en la línea ``get``. El feudal experto de AoE2 es milicia + arqueros, ver caballería no añadía lanceros; la mayoría de mods no ponen ``brain adaptive`` en experto.
+- **Cambio**: En una línea ``get`` militar, añade como máximo un tipo extra de ``can_train`` de los entrenadores propios que contraataque a los luchadores explorados (no en aperturas solo de aldeanos). Experto y pesadilla pasan a ``adaptive`` en ``set_ai``; el script aún puede ``brain plan``. Experto/pesadilla vainilla de ``res/ai.txt`` saltan con ``if_attacked`` / ``if_enemy dragon|flyingmachine|knight`` tras la primera oleada.
+- **Alcance**: ``soundrts/ai_brain.py`` ``inject_counter_pairs``; ``worldplayercomputer.py`` ``set_ai`` / ``_follow_plan``; ``res/ai.txt``; ``mod/aimaking.rst``.
+
+**Cambio: el cerebro adaptativo elige la mano por utilidad**
+
+- **Problema**: Aun con ``adaptive``, cada turno seguía el script, empujaba ataques y pulsaba la edad a la vez; un raid en casa aún podía ``constant_attacks`` hacia fuera, y con pocos aldeanos se entrenaba ejército primero.
+- **Cambio**: ``adaptive`` / ``utility`` puntúa defender, edad, eco, producir y atacar cada turno y usa solo esa mano (la recolección no cambia). Raids o enemigos en la plaza del ayuntamiento defienden; ahorrar para la edad se queda en casa y pulsa la edad; pocos aldeanos priorizan eco. ``brain plan`` sigue usando todas las manos.
+- **Alcance**: ``soundrts/ai_brain.py`` ``choose_utility_goal``; ``worldplayercomputer.py`` ``_play_body``; ``mod/aimaking.rst``.
+
+**Cambio: el ordenador divide ataques solo si el segundo frente aún supera el ratio**
+
+- **Problema**: El ataque enviaba todo el grupo ocioso a la primera casilla ordenada y volvía, así que una segunda amenaza quedaba sin cubrir; partir a ciegas dejaba ambos frentes por debajo de ``attack_ratio``.
+- **Cambio**: ``assign_attack_groups`` abre un frente solo si su amenaza es estrictamente mayor que la enemiga × ``attack_ratio``. Lo que no cubre otro frente vuelve al primero. Como máximo dos frentes. Una unidad no va a dos sitios.
+- **Alcance**: ``soundrts/ai_brain.py`` ``assign_attack_groups``; ``worldplayercomputer.py`` ``_eventually_attack``; ``test_ai_attack_split.py``.
+
+**Cambio: el ordenador elige la mano del turno con un árbol selector**
+
+- **Problema**: las puntuaciones de utilidad eran cinco números y un máximo, así que la prioridad defender/eco inicial era difícil de leer y de extender con pasos ordenados.
+- **Cambio**: ``tick_behavior_tree`` es un selector fijo: raid o enemigo en la plaza del ayuntamiento → defender; menos de 6 aldeanos → eco; ahorrar para la edad → edad; por debajo del objetivo de aldeanos → eco; ``constant_attacks`` con enemigos conocidos → atacar; si no, producir. ``brain tree`` comparte el árbol con ``adaptive``. La recolección no cambia.
+- **Alcance**: ``soundrts/ai_brain.py`` ``BEHAVIOR_TREE``; ``worldplayercomputer.py`` ``brain``; ``mod/aimaking.rst``.
+
+**Cambio: los ataques dejan primero una guarnición en casa**
+
+- **Problema**: Tras elegir Atacar, los luchadores ociosos iban primero a la casilla enemiga con más amenaza. Una casa en calma (amenaza 0) quedaba última, el resto se iba al raid y la base se vaciaba. Defender solo saltaba cuando ya se percibía el raid.
+- **Cambio**: ``peel_home_guard`` deja un grupo en casa si hay ayuntamientos. La guardia debe superar la amenaza enemiga en casa × ``attack_ratio`` (en calma queda 1 unidad con amenaza > 0). Si el ejército no puede cubrir casa, todos se quedan y no hay raid. Con guardia, como máximo un frente de raid (casa + raid = dos destinos); el resto del raid vuelve al raid, no a la guardia.
+- **Alcance**: ``soundrts/ai_brain.py`` ``peel_home_guard`` / ``assign_attack_groups_with_home``; ``worldplayercomputer.py`` ``_home_base_places`` / ``_eventually_attack``; ``test_ai_attack_split.py``.
+
+**Cambio: el centinela de casa no lo sustituye un recluta al tick siguiente**
+
+- **Problema**: la guarnición volvía a partir a los ociosos por id cada tick. Un recluta nuevo con id menor pasaba a centinela y el que ya estaba en el ayuntamiento salía, dejando casa vacía hasta que el recluta volviera.
+- **Cambio**: ``_sticky_guard_order`` deja primero a quienes ya están en casa o van hacia ella, luego los ``_home_guard_ids`` del tick anterior, y después el resto. Los de más en casa pueden salir cuando casa ya está cubierta.
+- **Alcance**: ``soundrts/ai_brain.py`` ``_sticky_guard_order`` / ``peel_home_guard``; ``worldplayercomputer.py`` ``_home_guard_ids``; ``test_ai_attack_split.py``.
+
+**Cambio: el cerebro adaptativo explora antes de entrenar ejército**
+
+- **Problema**: el árbol podía ejecutar ``get`` militar antes de ver un luchador enemigo. Inyectar contras e ``if_enemy`` necesitan reconocimiento; los exploradores ya salían cada tick, pero la producción no esperaba.
+- **Cambio**: Tras 6 aldeanos, si no hay enemigo de combate conocido, el selector usa ``scout``: sigue el eco y envía al explorador, no ejecuta el ``get`` del script y no ataca. Tras avistar, o ``SCOUT_THEN_PRODUCE_MS`` (60 s), vuelve a eco / atacar / producir. Defender, eco inicial y edad siguen primero.
+- **Alcance**: ``soundrts/ai_brain.py`` ``_tree_scout`` / ``SCOUT_THEN_PRODUCE_MS``; ``worldplayercomputer.py`` ``_scout_sequence_started`` / ``_play_body``; ``mod/aimaking.rst``.
+
 1.4.9.5
 --------
 

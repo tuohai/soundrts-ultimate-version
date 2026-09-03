@@ -5,6 +5,57 @@ Release notes
 .. contents::
 
 
+1.4.9.6
+---------
+
+**Change: computer scripts can use an adaptive brain**
+
+- **Issue**: The computer only ran ``get`` lines top to bottom, so seeing knights did not make it train counters first; authors could not branch the script on scouting.
+- **Change**: ``brain plan|adaptive``. ``adaptive`` still completes every token on the current ``get`` line, but trains better ``mdg_vs`` / ``rdg_vs`` counters first against scouted enemies. New jumps: ``if_enemy`` / ``if_not_enemy`` / ``if_attacked``. Vanilla expert and nightmare default to ``brain adaptive``. Beginner through advanced stay on ``plan``.
+- **Scope**: ``soundrts/ai_brain.py``; ``worldplayercomputer.py`` ``_follow_plan``; ``res/ai.txt``; ``mod/aimaking.rst``.
+
+**Change: adaptive brain injects a trainable counter; expert defaults on**
+
+- **Issue**: ``adaptive`` could only reorder types already on the ``get`` line. AoE2 expert feudal is militia + archers, so seeing cavalry never added spearmen; most mod expert scripts never set ``brain adaptive``.
+- **Change**: On a military ``get`` line, add at most one extra type from owned trainers' ``can_train`` that counters scouted fighters (not villager-only openers). Expert and nightmare default to ``adaptive`` in ``set_ai``; scripts can still ``brain plan``. Vanilla ``res/ai.txt`` expert/nightmare jump with ``if_attacked`` / ``if_enemy dragon|flyingmachine|knight`` after the first wave.
+- **Scope**: ``soundrts/ai_brain.py`` ``inject_counter_pairs``; ``worldplayercomputer.py`` ``set_ai`` / ``_follow_plan``; ``res/ai.txt``; ``mod/aimaking.rst``.
+
+**Change: adaptive brain picks a hand by utility**
+
+- **Issue**: Even with ``adaptive``, each tick still followed the script, pushed attacks, and clicked age at once; a raid at home could still ``constant_attacks`` outward, and a short villager count still trained army first.
+- **Change**: ``adaptive`` / ``utility`` scores defend, age, eco, produce, and attack each tick and uses only that hand (gathering unchanged). Raids or enemies on the town hall square defend; banking for age turtles and clicks age; too few villagers boom first. ``brain plan`` still runs every hand.
+- **Scope**: ``soundrts/ai_brain.py`` ``choose_utility_goal``; ``worldplayercomputer.py`` ``_play_body``; ``mod/aimaking.rst``.
+
+**Change: the computer splits attacks only when the second front still beats ratio**
+
+- **Issue**: Attacks sent the whole idle blob to the first sorted square and returned, so a second threat was ignored; naively splitting could leave both fronts under ``attack_ratio``.
+- **Change**: ``assign_attack_groups`` opens a front only when its menace is strictly greater than enemy menace × ``attack_ratio``. Leftovers that cannot cover another front fold back into the first. At most two fronts. A unit is never sent to two places.
+- **Scope**: ``soundrts/ai_brain.py`` ``assign_attack_groups``; ``worldplayercomputer.py`` ``_eventually_attack``; ``test_ai_attack_split.py``.
+
+**Change: the computer picks this tick's hand with a selector tree**
+
+- **Issue**: Utility scores were five numbers with a max, so defend-vs-opening-eco priority was hard to read and harder to extend with ordered steps such as scout-then-train.
+- **Change**: ``tick_behavior_tree`` is a fixed selector: raid or enemy on the town-hall square → defend; fewer than 6 villagers → eco; banking for age → age; under worker target → eco; ``constant_attacks`` with known enemies → attack; else produce. ``brain tree`` shares this tree with ``adaptive``. Gathering is unchanged.
+- **Scope**: ``soundrts/ai_brain.py`` ``BEHAVIOR_TREE``; ``worldplayercomputer.py`` ``brain``; ``mod/aimaking.rst``.
+
+**Change: attacks peel a home garrison first**
+
+- **Issue**: After the tree picked Attack, idle fighters went to the highest-menace enemy square first. A quiet home (menace 0) ranked last, leftovers folded into the raid, and the base emptied. Defend only fired after a raid was already perceived.
+- **Change**: ``peel_home_guard`` peels a home group whenever town halls exist. The guard must beat home enemy menace × ``attack_ratio`` (a quiet home keeps one unit with menace > 0 as a token). If the army cannot hold home, everyone stays and there is no raid. With a guard, at most one raid front (home + raid = two destinations); raid leftovers fold into the raid, not the guard.
+- **Scope**: ``soundrts/ai_brain.py`` ``peel_home_guard`` / ``assign_attack_groups_with_home``; ``worldplayercomputer.py`` ``_home_base_places`` / ``_eventually_attack``; ``test_ai_attack_split.py``.
+
+**Change: the home sentry is not replaced by a new recruit next tick**
+
+- **Issue**: The garrison re-peeled idle fighters by id every tick. A newly trained lower-id unit became the sentry and the unit already on the town hall marched out, leaving home empty until the recruit walked back.
+- **Change**: ``_sticky_guard_order`` keeps units already on (or walking to) home first, then last tick's ``_home_guard_ids``, then other idle fighters. Extra stationed units can still sortie once home is covered.
+- **Scope**: ``soundrts/ai_brain.py`` ``_sticky_guard_order`` / ``peel_home_guard``; ``worldplayercomputer.py`` ``_home_guard_ids``; ``test_ai_attack_split.py``.
+
+**Change: the adaptive brain scouts before training army**
+
+- **Issue**: The tree could run military ``get`` before any enemy fighter was seen. Counter inject and ``if_enemy`` need a scout; explorers already went out each tick, but production did not wait.
+- **Change**: After 6 villagers, if no combat enemy is known, the selector uses ``scout``: keep booming and sending the explorer, skip the script ``get``, and do not raid. After a sighting, or ``SCOUT_THEN_PRODUCE_MS`` (60 s), it returns to boom / attack / produce. Defend, opening eco, and age still win first.
+- **Scope**: ``soundrts/ai_brain.py`` ``_tree_scout`` / ``SCOUT_THEN_PRODUCE_MS``; ``worldplayercomputer.py`` ``_scout_sequence_started`` / ``_play_body``; ``mod/aimaking.rst``.
+
 1.4.9.5
 ---------
 

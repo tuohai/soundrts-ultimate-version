@@ -4,6 +4,57 @@ Notas de lançamento
 
 .. contents::
 
+1.4.9.6
+--------
+
+**Mudança: scripts da IA podem usar um cérebro adaptativo**
+
+- **Problema**: o computador só executava linhas ``get`` de cima para baixo; ver cavaleiros não fazia treinar counters primeiro; autores não podiam ramificar o script conforme o reconhecimento.
+- **Mudança**: ``brain plan|adaptive``. ``adaptive`` ainda completa todos os tokens da linha ``get`` atual, mas treina primeiro os melhores counters ``mdg_vs`` / ``rdg_vs`` contra inimigos reconhecidos. Novos saltos: ``if_enemy`` / ``if_not_enemy`` / ``if_attacked``. Expert e nightmare vanilla usam ``brain adaptive``. Beginner até advanced continuam em ``plan``.
+- **Alcance**: ``soundrts/ai_brain.py``; ``worldplayercomputer.py`` ``_follow_plan``; ``res/ai.txt``; ``mod/aimaking.rst``.
+
+**Mudança: o cérebro adaptativo injeta um contra treinável; expert ligado por padrão**
+
+- **Problema**: ``adaptive`` só reordenava tipos já escritos na linha ``get``. O feudal expert de AoE2 é milícia + arqueiros, ver cavalaria não adicionava lanceiros; a maioria dos mods expert não define ``brain adaptive``.
+- **Mudança**: Numa linha ``get`` militar, adiciona no máximo um tipo extra de ``can_train`` dos treinadores próprios que contra-ataca lutadores reconhecidos (não em aberturas só de aldeões). Expert e nightmare passam a ``adaptive`` em ``set_ai``; o script ainda pode ``brain plan``. Expert/nightmare vanilla de ``res/ai.txt`` saltam com ``if_attacked`` / ``if_enemy dragon|flyingmachine|knight`` após a primeira onda.
+- **Alcance**: ``soundrts/ai_brain.py`` ``inject_counter_pairs``; ``worldplayercomputer.py`` ``set_ai`` / ``_follow_plan``; ``res/ai.txt``; ``mod/aimaking.rst``.
+
+**Mudança: o cérebro adaptativo escolhe a mão por utilidade**
+
+- **Problema**: Mesmo com ``adaptive``, cada tick ainda seguia o script, empurrava ataques e clicava a era ao mesmo tempo; um raid em casa ainda podia ``constant_attacks`` para fora, e com poucos aldeões treinava exército primeiro.
+- **Mudança**: ``adaptive`` / ``utility`` pontua defender, era, eco, produzir e atacar a cada tick e usa só essa mão (a coleta não muda). Raids ou inimigos na casa do centro da cidade defendem; poupar para a era fica em casa e clica a era; poucos aldeões priorizam eco. ``brain plan`` ainda usa todas as mãos.
+- **Alcance**: ``soundrts/ai_brain.py`` ``choose_utility_goal``; ``worldplayercomputer.py`` ``_play_body``; ``mod/aimaking.rst``.
+
+**Mudança: o computador só divide ataques se a segunda frente ainda superar o ratio**
+
+- **Problema**: O ataque mandava o grupo ocioso inteiro à primeira casa ordenada e voltava, então uma segunda ameaça ficava descoberta; dividir às cegas deixava as duas frentes abaixo de ``attack_ratio``.
+- **Mudança**: ``assign_attack_groups`` abre uma frente só se a ameaça for estritamente maior que a inimiga × ``attack_ratio``. O que não cobre outra frente volta à primeira. No máximo duas frentes. Uma unidade não vai a dois sítios.
+- **Alcance**: ``soundrts/ai_brain.py`` ``assign_attack_groups``; ``worldplayercomputer.py`` ``_eventually_attack``; ``test_ai_attack_split.py``.
+
+**Mudança: o computador escolhe a mão do tick com uma árvore seletora**
+
+- **Problema**: as pontuações de utilidade eram cinco números e um máximo, então a prioridade defender/eco inicial era difícil de ler e de estender com passos ordenados.
+- **Mudança**: ``tick_behavior_tree`` é um seletor fixo: raid ou inimigo na casa do centro → defender; menos de 6 aldeões → eco; poupar para a era → era; abaixo da meta de aldeões → eco; ``constant_attacks`` com inimigos conhecidos → atacar; senão produzir. ``brain tree`` partilha a árvore com ``adaptive``. A coleta não muda.
+- **Alcance**: ``soundrts/ai_brain.py`` ``BEHAVIOR_TREE``; ``worldplayercomputer.py`` ``brain``; ``mod/aimaking.rst``.
+
+**Mudança: ataques deixam primeiro uma guarnição em casa**
+
+- **Problema**: Depois de Atacar, os lutadores ociosos iam primeiro à casa inimiga com maior ameaça. Casa quieta (ameaça 0) ficava por último, o resto ia no raid e a base esvaziava. Defender só disparava depois de um raid já percebido.
+- **Mudança**: ``peel_home_guard`` deixa um grupo em casa se houver centros. A guarda deve superar a ameaça inimiga em casa × ``attack_ratio`` (em casa quieta fica 1 unidade com ameaça > 0). Se o exército não cobre casa, todos ficam e não há raid. Com guarda, no máximo uma frente de raid (casa + raid = dois destinos); o resto do raid volta ao raid, não à guarda.
+- **Alcance**: ``soundrts/ai_brain.py`` ``peel_home_guard`` / ``assign_attack_groups_with_home``; ``worldplayercomputer.py`` ``_home_base_places`` / ``_eventually_attack``; ``test_ai_attack_split.py``.
+
+**Mudança: a sentinela de casa não é trocada por um recruta no tick seguinte**
+
+- **Problema**: a guarnição voltava a partir os ociosos por id a cada tick. Um recruta novo com id menor virava sentinela e quem já estava no centro saía, deixando casa vazia até o recruta voltar.
+- **Mudança**: ``_sticky_guard_order`` mantém primeiro quem já está em casa ou a caminho, depois os ``_home_guard_ids`` do tick anterior, depois os outros. Os extra em casa ainda podem sair quando casa já está coberta.
+- **Alcance**: ``soundrts/ai_brain.py`` ``_sticky_guard_order`` / ``peel_home_guard``; ``worldplayercomputer.py`` ``_home_guard_ids``; ``test_ai_attack_split.py``.
+
+**Mudança: o cérebro adaptativo reconhece antes de treinar exército**
+
+- **Problema**: a árvore podia correr ``get`` militar antes de ver um lutador inimigo. Injetar counters e ``if_enemy`` precisam de scout; os exploradores já saíam a cada tick, mas a produção não esperava.
+- **Mudança**: Depois de 6 aldeões, se não há inimigo de combate conhecido, o seletor usa ``scout``: continua o eco e envia o explorador, não executa o ``get`` do script e não ataca. Depois de avistar, ou ``SCOUT_THEN_PRODUCE_MS`` (60 s), volta a eco / atacar / produzir. Defender, eco inicial e era continuam primeiro.
+- **Alcance**: ``soundrts/ai_brain.py`` ``_tree_scout`` / ``SCOUT_THEN_PRODUCE_MS``; ``worldplayercomputer.py`` ``_scout_sequence_started`` / ``_play_body``; ``mod/aimaking.rst``.
+
 1.4.9.5
 --------
 

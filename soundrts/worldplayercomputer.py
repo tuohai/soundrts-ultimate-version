@@ -3,6 +3,16 @@ import re
 from soundrts.lib.nofloat import square_of_distance, to_int
 from soundrts.worldorders import UseOrder, ORDERS_DICT
 
+from .ai_brain import (
+    assign_attack_groups_with_home,
+    choose_utility_goal,
+    combat_enemies,
+    inject_counter_pairs,
+    iter_known_enemies,
+    parse_get_pairs,
+    reorder_get_pairs,
+    sees_enemy_type,
+)
 from .definitions import filter_ai_executable_plan, get_ai, parse_ai_start_settings, rules
 from .lib.log import exception, info, warning
 from .world_build_rules import (
@@ -68,7 +78,9 @@ _PLAY_PROD_MEMO_PREFIXES = frozenset(
 
 def value_as_an_explorer(u):
     air = 1 if u.airground_type == "air" else 0
-    return ((air, u.speed, u.hp), u.id)
+    # Combat flyers beat air transports of the same speed; transports still beat ground.
+    not_air_ferry = 0 if air and getattr(u, "transport_capacity", 0) > 0 else 1
+    return ((air, not_air_ferry, u.speed, u.hp), u.id)
 
 
 def is_ground_worker(unit):
@@ -104,6 +116,12 @@ class Computer(Player):
     ai_gather_time_percent = 100
     ai_unit_hp_percent = 100
     _wait_deadline = None  # internal state for the "wait <seconds>" command
+    # "plan" = historic sequential script; "adaptive"/"utility"/"tree" =
+    # scout-aware get order plus per-tick hand picking via the selector tree.
+    _ai_brain = "plan"
+    _attacked_this_play = False
+    _utility_goal = None
+    _scout_sequence_started = None
 
     def __init__(self, world, client):
         self._attacked_places = []
@@ -247,6 +265,12 @@ class Computer(Player):
             self.ai_gather_time_percent = type(self).ai_gather_time_percent
             self.ai_unit_hp_percent = type(self).ai_unit_hp_percent
             self._wait_deadline = None
+            self._ai_brain = type(self)._ai_brain
+            if ai_type in ("expert", "nightmare"):
+                self._ai_brain = "adaptive"
+            self._attacked_this_play = False
+            self._utility_goal = None
+            self._scout_sequence_started = None
             self._update_effect_users_and_workers()  # required by some tests
 
     _previous_linechange = 0
@@ -280,15 +304,7 @@ class Computer(Player):
         cmd = line.split()
         if cmd:
             if cmd[0] == "goto":
-                if re.match("^[+-][0-9]+$", cmd[1]):
-                    self._line_nb += int(cmd[1])
-                elif "label " + cmd[1] in self._plan:
-                    self._line_nb = self._plan.index("label " + cmd[1])
-                elif re.match("^[0-9]+$", cmd[1]):
-                    self._line_nb = int(cmd[1])
-                else:
-                    warning("goto: wrong destination: %s", cmd[1])
-                    self._line_nb += 1
+                self._plan_goto(cmd[1] if len(cmd) > 1 else "")
             elif cmd[0] == "label":
                 self._line_nb += 1
                 info(cmd[1])
@@ -299,6 +315,20 @@ class Computer(Player):
                 else:
                     warning("goto_random: label not found: %s", dest)
                     self._line_nb += 1
+            elif cmd[0] == "if_enemy":
+                self._plan_if_enemy(cmd, negate=False)
+            elif cmd[0] == "if_not_enemy":
+                self._plan_if_enemy(cmd, negate=True)
+            elif cmd[0] == "if_attacked":
+                self._plan_if_attacked(cmd)
+            elif cmd[0] == "brain":
+                if len(cmd) > 1 and cmd[1] in ("plan", "adaptive", "utility", "tree"):
+                    self._ai_brain = cmd[1]
+                else:
+                    warning(
+                        "brain: expected 'plan', 'adaptive', 'utility' or 'tree' (in ai.txt)"
+                    )
+                self._line_nb += 1
             elif cmd[0] == "attack":
                 self.constant_attacks = 1
                 self._line_nb += 1
@@ -333,44 +363,193 @@ class Computer(Player):
                     self._wait_deadline = None
                     self._line_nb += 1
             elif cmd[0] == "get":
-                n = 1
                 done = True
                 saving_for_feudal = self._saving_food_for_age()
-                for w in cmd[1:]:
-                    if re.match("^[0-9]+$", w):
-                        n = int(w)
+                pairs = parse_get_pairs(cmd[1:])
+                if (
+                    self._uses_scout_brain()
+                    and self._counter_skill_level() > 0
+                ):
+                    enemies = iter_known_enemies(self)
+                    fighters = combat_enemies(enemies)
+                    if fighters:
+                        pairs = inject_counter_pairs(
+                            pairs,
+                            fighters,
+                            self._owned_trainable_type_names(),
+                            equivalent=self.equivalent,
+                            is_army=self._token_is_army_for_inject,
+                        )
+                        pairs = reorder_get_pairs(
+                            pairs, fighters, equivalent=self.equivalent
+                        )
+                for n, w in pairs:
+                    # After mod ``clear``, ai.txt must name types that exist
+                    # in the mod (militia / aoe_archer / …). Unknown names
+                    # warn — do not silently map base aliases via race table.
+                    if rules.unit_class(w) is not None:
+                        name = self.equivalent(w)
+                        # Already-owned tokens must complete, otherwise a
+                        # hall/worker opener (crazyMod ``get chatelet 10
+                        # serf``) never leaves the line while soldier-hold
+                        # defers the hall to bank for later barracks.
+                        if self.nb(name) >= n:
+                            continue
+                        if self._defer_plan_get_token(
+                            name, saving_for_feudal=saving_for_feudal
+                        ):
+                            if not saving_for_feudal:
+                                self._ensure_plan_production_building(name)
+                            done = False
+                            continue
+                        if not self.get(n, w):
+                            done = False
                     else:
-                        # After mod ``clear``, ai.txt must name types that exist
-                        # in the mod (militia / aoe_archer / …). Unknown names
-                        # warn — do not silently map base aliases via race table.
-                        if rules.unit_class(w) is not None:
-                            name = self.equivalent(w)
-                            # Already-owned tokens must complete, otherwise a
-                            # hall/worker opener (crazyMod ``get chatelet 10
-                            # serf``) never leaves the line while soldier-hold
-                            # defers the hall to bank for later barracks.
-                            if self.nb(name) >= n:
-                                n = 1
-                                continue
-                            if self._defer_plan_get_token(
-                                name, saving_for_feudal=saving_for_feudal
-                            ):
-                                if not saving_for_feudal:
-                                    self._ensure_plan_production_building(name)
-                                done = False
-                                n = 1
-                                continue
-                            if not self.get(n, w):
-                                done = False
-                            n = 1
-                        else:
-                            warning("get: unknown unit: '%s' (in ai.txt)", w)
-                            n = 1
+                        warning("get: unknown unit: '%s' (in ai.txt)", w)
                 if done:
                     self._line_nb += 1
             else:
                 warning("unknown command: '%s' (in ai.txt)", cmd[0])
                 self._line_nb += 1
+
+    def _plan_goto(self, dest):
+        """Jump like ``goto``; on a bad destination, advance one line."""
+        if not dest:
+            warning("goto: wrong destination: %s", dest)
+            self._line_nb += 1
+            return
+        if re.match("^[+-][0-9]+$", dest):
+            self._line_nb += int(dest)
+        elif "label " + dest in self._plan:
+            self._line_nb = self._plan.index("label " + dest)
+        elif re.match("^[0-9]+$", dest):
+            self._line_nb = int(dest)
+        else:
+            warning("goto: wrong destination: %s", dest)
+            self._line_nb += 1
+
+    def _plan_if_goto(self, cmd, matched):
+        """``if_* … goto <dest>``: jump when *matched*, else next line."""
+        if len(cmd) < 2:
+            warning("%s: missing destination (in ai.txt)", cmd[0])
+            self._line_nb += 1
+            return
+        # if_attacked goto L  |  if_enemy TYPE goto L
+        if cmd[0] == "if_attacked":
+            if len(cmd) < 3 or cmd[1] != "goto":
+                warning("if_attacked: expected 'goto <label>' (in ai.txt)")
+                self._line_nb += 1
+                return
+            dest = cmd[2]
+        else:
+            if len(cmd) < 4 or cmd[2] != "goto":
+                warning("%s: expected '<type> goto <label>' (in ai.txt)", cmd[0])
+                self._line_nb += 1
+                return
+            dest = cmd[3]
+        if matched:
+            self._plan_goto(dest)
+        else:
+            self._line_nb += 1
+
+    def _plan_if_enemy(self, cmd, negate=False):
+        type_name = cmd[1] if len(cmd) > 1 else ""
+        seen = bool(type_name) and sees_enemy_type(self, type_name)
+        self._plan_if_goto(cmd, (not seen) if negate else seen)
+
+    def _plan_if_attacked(self, cmd):
+        self._plan_if_goto(cmd, bool(getattr(self, "_attacked_this_play", False)))
+
+    def _uses_scout_brain(self):
+        return getattr(self, "_ai_brain", "plan") in ("adaptive", "utility", "tree")
+
+    def _home_base_places(self):
+        """Squares with a town hall (or equivalent), even if quiet."""
+        home = []
+        seen_home = set()
+        try:
+            names = self._main_base_type_names() or ()
+        except Exception:
+            return []
+        for name in names:
+            for u in getattr(self, "units", ()) or ():
+                if getattr(u, "type_name", None) != name:
+                    continue
+                place = getattr(u, "place", None)
+                if place is None:
+                    continue
+                pid = id(place)
+                if pid in seen_home:
+                    continue
+                seen_home.add(pid)
+                home.append(place)
+        home.sort(key=lambda p: getattr(p, "id", 0))
+        return home
+
+    def _home_threatened_places(self):
+        """Town-hall squares that currently have a known enemy."""
+        home = self._home_base_places()
+        if not home:
+            return []
+        home_set = set(home)
+        threatened = []
+        seen = set()
+        for enemy in iter_known_enemies(self):
+            place = getattr(enemy, "place", None)
+            if place is None or place not in home_set:
+                continue
+            pid = id(place)
+            if pid in seen:
+                continue
+            seen.add(pid)
+            threatened.append(place)
+        threatened.sort(key=lambda p: getattr(p, "id", 0))
+        return threatened
+
+    def _apply_utility_combat(self):
+        """Use the scored goal to pick attack / turtle this tick."""
+        goal = getattr(self, "_utility_goal", "produce")
+        if goal == "defend":
+            places = list(self._attacked_places or ())
+            if not places:
+                places = self._home_threatened_places()
+            if places:
+                self._eventually_attack(places)
+            else:
+                self._defensive_routine()
+            self._attacked_places = []
+            return
+        if goal == "age":
+            if self._attacked_places:
+                self._eventually_attack(self._attacked_places)
+                self._attacked_places = []
+            else:
+                self._defensive_routine()
+            return
+        if goal == "scout":
+            self._defensive_routine()
+            self._attacked_places = []
+            return
+        if self._attacked_places:
+            self._eventually_attack(self._attacked_places)
+            self._attacked_places = []
+        elif self.constant_attacks:
+            self._eventually_attack(self._enemy_presence)
+        else:
+            self._defensive_routine()
+
+    def _follow_plan_guarded(self):
+        try:
+            self._follow_plan()
+        except RuntimeError:
+            warning(
+                "recursion error with %s; current ai.txt line is: %s",
+                self.AI_type,
+                self._plan[self._line_nb],
+            )
+            if IS_DEV_VERSION:
+                exception("")
+            self._line_nb += 1
 
     # ------------------------------------------------------------------
     # Attribute-driven type discovery (no faction type-name literals).
@@ -569,6 +748,36 @@ class Computer(Player):
                     result.append(t)
         return result
 
+    def _token_is_army_for_inject(self, name):
+        if self._is_worker_type_name(name):
+            return False
+        uc = rules.unit_class(name)
+        if uc is None or getattr(uc, "is_a_building", False):
+            return False
+        if getattr(uc, "transport_capacity", 0):
+            return False
+        return True
+
+    def _owned_trainable_type_names(self):
+        """Trainable types from currently owned, operable buildings."""
+        seen = set()
+        names = []
+        units = getattr(self, "units", ()) or ()
+        for u in sorted(units, key=lambda x: getattr(x, "id", 0)):
+            if not getattr(u, "is_a_building", False):
+                continue
+            if getattr(u, "place", None) is None:
+                continue
+            if not building_can_operate(u):
+                continue
+            for t in effective_can_train(u) or ():
+                mapped = self.equivalent(t) if callable(getattr(self, "equivalent", None)) else t
+                if mapped in seen or not self._token_is_army_for_inject(mapped):
+                    continue
+                seen.add(mapped)
+                names.append(mapped)
+        return tuple(names)
+
     def _water_transport_type_names(self):
         def _compute():
             candidates = self._trainable_from_types(self._naval_yard_type_names())
@@ -593,6 +802,37 @@ class Computer(Player):
             return tuple(result)
 
         return self._discovery_cache_get("water_transports", _compute)
+
+    def _air_transport_type_names(self):
+        """Trainable air units with transport_capacity (new_flyingmachine, dropships)."""
+
+        def _compute():
+            candidates = self._trainable_from_types(self._worker_buildable_type_names())
+            if not candidates:
+                candidates = list(rules.classnames())
+            result = []
+            for name in candidates:
+                uc = rules.unit_class(name)
+                if uc is None:
+                    continue
+                if getattr(uc, "airground_type", None) != "air":
+                    continue
+                if getattr(uc, "transport_capacity", 0) <= 0:
+                    continue
+                result.append(name)
+            result.sort(
+                key=lambda n: sum(getattr(rules.unit_class(n), "cost", ()) or ())
+            )
+            return tuple(result)
+
+        return self._discovery_cache_get("air_transports", _compute)
+
+    def _has_air_transport_trainer(self):
+        for name in self._air_transport_type_names():
+            for maker in rules.get_makers(name) or ():
+                if self.nb(maker) or self.future_nb(maker):
+                    return True
+        return False
 
     def _water_warship_type_names(self):
         def _compute():
@@ -2037,8 +2277,89 @@ class Computer(Player):
         return wood < need
 
     def _keep_lumberjacks(self):
-        """True when lumberjacks must not be pulled onto farms or gold."""
-        return self._wood_below_pending_building() or self._need_wood_for_age_up_farms()
+        """True when lumberjacks must not be pulled onto farms or gold.
+
+        Dark age still banks feudal food, but ``gather(feudal)`` used to reassign
+        the two wood villagers onto berries every AI turn, so a 75-wood pile
+        next to the town center barely moved (jl3 barracks at 20:00).
+        """
+        if self._wood_below_pending_building() or self._need_wood_for_age_up_farms():
+            return True
+        reserve = self._plan_expensive_wood_reserve(ignore_age_defer=True)
+        if not reserve:
+            return False
+        res = getattr(self, "resources", None) or ()
+        wood = res[1] if len(res) > 1 else 0
+        return wood < reserve
+
+    def _wood_dropoff_place(self):
+        """Town-center / lumber-mill square; chop near here when barracks wood is short."""
+        origin = self._builders_place() or self._worker_origin_for_gather()
+        if origin is None:
+            return None
+        try:
+            wh = self.nearest_warehouse(origin, "resource2")
+        except Exception:
+            wh = None
+        place = getattr(wh, "place", None) if wh is not None else None
+        return place or origin
+
+    def _wood_almost_covers_plan_building(self):
+        """True when one more short trip would pay barracks/range."""
+        reserve = self._plan_expensive_wood_reserve(ignore_age_defer=True)
+        if not reserve:
+            return False
+        res = getattr(self, "resources", None) or ()
+        wood = res[1] if len(res) > 1 else 0
+        if wood >= reserve:
+            return False
+        return wood + to_int("25") >= reserve
+
+    def _worker_cargo_amount(self, worker, resource_type="resource2"):
+        cargo = getattr(worker, "cargo", None)
+        if not cargo or cargo[0] != resource_type:
+            return 0
+        try:
+            return int(cargo[1] or 0)
+        except (TypeError, ValueError):
+            return 0
+
+    def _force_wood_dropoff_if_plan_building_ready(self):
+        """Send lumberjacks home when carried wood would pay barracks/range.
+
+        jl3 empties a 75-wood pile and walks to a distant forest with the last
+        15–25 wood still in cargo, so the 20-minute army-building check misses
+        by a house.
+        """
+        reserve = self._plan_expensive_wood_reserve(ignore_age_defer=True)
+        if not reserve:
+            return
+        res = getattr(self, "resources", None) or ()
+        wood = res[1] if len(res) > 1 else 0
+        if wood >= reserve:
+            return
+        carried = 0
+        holders = []
+        for u in getattr(self, "_workers", ()) or ():
+            amt = self._worker_cargo_amount(u, "resource2")
+            if amt <= 0:
+                continue
+            carried += amt
+            holders.append(u)
+        if not holders or wood + carried < reserve:
+            return
+        for u in holders:
+            orders = getattr(u, "orders", None) or ()
+            if orders and getattr(orders[0], "keyword", None) == "gather":
+                mode = getattr(orders[0], "mode", None)
+                if mode in ("bring_back", "store"):
+                    continue
+                orders[0].mode = "bring_back"
+                orders[0].storage = None
+                continue
+            target = self._choose_gather_target(u, resource_indices=[1])
+            if target is not None:
+                u.take_order(["gather", target.id])
 
     def _should_keep_farms_producing(self):
         """True if idle mills should recultivate.
@@ -2276,7 +2597,7 @@ class Computer(Player):
         if self._before_first_expensive_food_age():
             return 2
         if self._plan_expensive_wood_reserve(ignore_age_defer=True):
-            return max(4, (n_w * 2) // 3)
+            return max(5, (n_w * 3) // 4)
         if self._need_wood_for_age_up_farms():
             return max(5, (n_w * 2) // 3)
         return max(3, n_w // 2)
@@ -3849,15 +4170,24 @@ class Computer(Player):
             def _gather_place(t):
                 return Worker.gather_stand_place(worker, t) or getattr(t, "place", None)
 
+            pick_from = origin
+            if (
+                self._keep_lumberjacks()
+                and preferred
+                and self._target_resource_index(preferred[0]) == 1
+            ):
+                home = self._wood_dropoff_place()
+                if home is not None:
+                    pick_from = home
             picked = self._pick_nearest_reachable(
-                origin, preferred, avoid=avoid, scan_rest=False, top_k=4,
+                pick_from, preferred, avoid=avoid, scan_rest=False, top_k=4,
                 place_of=_gather_place,
             )
             if picked is not None:
                 return picked
             if len(preferred) < len(candidates):
                 picked = self._pick_nearest_reachable(
-                    origin, candidates, avoid=avoid, scan_rest=False, top_k=4,
+                    pick_from, candidates, avoid=avoid, scan_rest=False, top_k=4,
                     place_of=_gather_place,
                 )
                 if picked is not None:
@@ -3947,7 +4277,16 @@ class Computer(Player):
             worker.take_order(["gather", same_square.id])
             return True
         if dest is None:
-            # Local piles are gone; scout instead of bouncing on one neighbor.
+            # Never seen a tree (jl3 off-spawn woods): walk into a neighbor so
+            # piles enter LOS. Empty remembered piles must still explore —
+            # bouncing on one neighbor never finds a new forest.
+            seen_wood = False
+            for o in self.perception.union(getattr(self, "memory", ()) or ()):
+                if isinstance(o, Deposit) and self._deposit_resource_index(o) == 1:
+                    seen_wood = True
+                    break
+            if not seen_wood and self._send_worker_to_adjacent_square(worker):
+                return True
             return self._send_worker_to_scout_for_wood(worker)
         orders = getattr(worker, "orders", None) or ()
         if orders and getattr(orders[0], "keyword", None) == "go":
@@ -4020,6 +4359,7 @@ class Computer(Player):
             for n in (getattr(origin, "neighbors", ()) or ())
             if n is not None and getattr(n, "id", None) is not None
         ]
+        neighbors.sort(key=lambda n: n.id)
         if not neighbors:
             return False
         orders = getattr(worker, "orders", None) or ()
@@ -4029,6 +4369,16 @@ class Computer(Player):
         if kw == "auto_explore" and not self._need_later_age_production_wood():
             return True
         dest = neighbors[0]
+        try:
+            safe = [
+                n
+                for n in neighbors
+                if not self.square_is_dangerous(n)
+            ]
+            if safe:
+                dest = safe[0]
+        except Exception:
+            pass
         if orders and getattr(orders[0], "keyword", None) in (
             "auto_explore",
             "auto_attack",
@@ -4096,6 +4446,38 @@ class Computer(Player):
                     current = u.orders[0].target
                     current_idx = self._target_resource_index(current)
                     if current_idx == resource_index:
+                        if (
+                            resource_index == 1
+                            and self._wood_almost_covers_plan_building()
+                        ):
+                            mode = getattr(u.orders[0], "mode", None)
+                            if mode not in ("bring_back", "store"):
+                                better = self._choose_gather_target(
+                                    u, resource_indices=[1]
+                                )
+                                home = self._wood_dropoff_place()
+                                cur_place = getattr(current, "place", None)
+                                bet_place = (
+                                    getattr(better, "place", None)
+                                    if better is not None
+                                    else None
+                                )
+                                if (
+                                    better is not None
+                                    and better is not current
+                                    and home is not None
+                                    and cur_place is not None
+                                    and bet_place is not None
+                                    and square_of_distance(
+                                        home.x, home.y, bet_place.x, bet_place.y
+                                    )
+                                    + 1
+                                    < square_of_distance(
+                                        home.x, home.y, cur_place.x, cur_place.y
+                                    )
+                                ):
+                                    u.take_order(["stop"])
+                                    u.take_order(["gather", better.id])
                         sent += 1
                         continue
                     # Feudal needs gold AND wood: sequential passes used to
@@ -4498,6 +4880,23 @@ class Computer(Player):
             if self.nb(destroyer) < dd_target and self.future_nb(destroyer) < dd_target:
                 self.get(dd_target, destroyer)
 
+    def _try_maintain_air_transports(self):
+        """Train a few air transports once their building exists.
+
+        They still scout when idle; ferrying recalls them from auto_explore.
+        """
+        if self.AI_type in ("beginner", "timers"):
+            return
+        names = self._air_transport_type_names()
+        if not names:
+            return
+        if not self._has_air_transport_trainer():
+            return
+        name = names[0]
+        want = 2 if self.AI_type in ("nightmare", "expert") else 1
+        if self.nb(name) < want and self.future_nb(name) < want:
+            self.get(want, name)
+
     def _is_idle_for_ai_orders(self, unit):
         """True when a unit has no active order (impossible orders are cleared)."""
         if not unit.orders:
@@ -4833,15 +5232,26 @@ class Computer(Player):
         self._idle_resource_buildings_produce()
         self._maintain_owned_livestock()
         self._idle_workers_gather()
+        self._force_wood_dropoff_if_plan_building_ready()
         self._maintain_resource_pickups()
         self._idle_water_workers_gather()
         self._sanitize_water_unit_orders()
         self._idle_water_workers()
         self._try_maintain_naval()
+        self._try_maintain_air_transports()
         self._try_amphibious_landings()
         self._idle_naval_patrol()
         self._send_explorer()
-        if self._attacked_places:
+        self._attacked_this_play = bool(self._attacked_places)
+        if self._uses_scout_brain():
+            self._utility_goal = choose_utility_goal(self)
+            if self._utility_goal == "scout":
+                if getattr(self, "_scout_sequence_started", None) is None:
+                    self._scout_sequence_started = int(
+                        getattr(self.world, "time", 0) or 0
+                    )
+            self._apply_utility_combat()
+        elif self._attacked_places:
             self._eventually_attack(self._attacked_places)
             self._attacked_places = []
         elif self.constant_attacks:
@@ -4872,36 +5282,24 @@ class Computer(Player):
         worker_type = self._primary_worker_type_name()
         n_workers = len(getattr(self, "_workers", ()) or ())
         hold_workers = self._should_hold_extra_workers(n_workers, worker_type)
+        goal = getattr(self, "_utility_goal", None)
+        if self._uses_scout_brain() and goal == "age" and n_workers >= 6:
+            hold_workers = True
+        eco_first = n_workers < 6 or (
+            self._uses_scout_brain() and goal == "eco"
+        )
 
         def _maybe_workers():
             if worker_type and not hold_workers:
                 self.get(self.nb_workers_to_get, worker_type)
 
-        if n_workers < 6:
+        if self._uses_scout_brain() and goal == "scout":
             _maybe_workers()
-            try:
-                self._follow_plan()
-            except RuntimeError:
-                warning(
-                    "recursion error with %s; current ai.txt line is: %s",
-                    self.AI_type,
-                    self._plan[self._line_nb],
-                )
-                if IS_DEV_VERSION:
-                    exception("")
-                self._line_nb += 1
+        elif eco_first:
+            _maybe_workers()
+            self._follow_plan_guarded()
         else:
-            try:
-                self._follow_plan()
-            except RuntimeError:
-                warning(
-                    "recursion error with %s; current ai.txt line is: %s",
-                    self.AI_type,
-                    self._plan[self._line_nb],
-                )
-                if IS_DEV_VERSION:
-                    exception("")
-                self._line_nb += 1
+            self._follow_plan_guarded()
             _maybe_workers()
         if hold_stash:
             self._build_a_warehouse_if_useful()
@@ -5048,6 +5446,23 @@ class Computer(Player):
     def unit_class(self, name):
         return rules.unit_class(name)
 
+    def _unit_is_on_transport_mission(self, unit):
+        """True when a transport is loading, unloading, or already carrying troops."""
+        if getattr(unit, "transport_capacity", 0) <= 0:
+            return False
+        inside = getattr(unit, "inside", None)
+        if inside and getattr(inside, "objects", None):
+            return True
+        for o in getattr(unit, "orders", None) or ():
+            if getattr(o, "keyword", None) in (
+                "load",
+                "load_all",
+                "unload",
+                "unload_all",
+            ):
+                return True
+        return False
+
     def best_explorers(self):
         return sorted(
             [
@@ -5057,6 +5472,7 @@ class Computer(Player):
                 and getattr(u, "airground_type", "ground") != "water"
                 and not (u.orders and u.orders[0].keyword == "upgrade_to")
                 and not self._is_livestock_unit(u)
+                and not self._unit_is_on_transport_mission(u)
             ],
             key=value_as_an_explorer,
             reverse=True,
@@ -5462,14 +5878,18 @@ class Computer(Player):
         cached = getattr(self, "_map_has_water_cached", None)
         if cached is not None:
             return cached
+        world = getattr(self, "world", None)
+        if world is None:
+            self._map_has_water_cached = False
+            return False
         # Prefer water_squares even when empty (land-only maps); avoid rescanning squares.
-        water_squares = getattr(self.world, "water_squares", None)
+        water_squares = getattr(world, "water_squares", None)
         if water_squares is not None:
             result = len(water_squares) > 0
         else:
             result = any(
                 getattr(sq, "is_water", False)
-                for sq in getattr(self.world, "squares", ())
+                for sq in getattr(world, "squares", ())
             )
         self._map_has_water_cached = result
         return result
@@ -6147,17 +6567,46 @@ class Computer(Player):
         return chosen
 
     def _eventually_attack(self, places):
-        units = self._idle_fighters
+        units = list(self._idle_fighters)
         if not units:
             return
         places = sorted(
             places, key=lambda p: self._attack_place_sort_key(p, units)
         )
-        for place in places:
-            to_send = self._counter_priority_units(units, place)
-            if self._units_should_attack(to_send, place):
-                self._send_units(to_send, place)
-                return
+        units.sort(key=lambda u: getattr(u, "id", 0))
+        if self.used_population < self.world.population_limit - 5:
+            ratio = self._attack_ratio
+        else:
+            ratio = min(100, self._attack_ratio)
+
+        def _menace_of(u):
+            if getattr(u, "speed", 0) > 0:
+                return int(getattr(u, "menace", 0) or 0)
+            return 0
+
+        homes = self._home_base_places()
+        home_ids = {id(p) for p in homes}
+        groups = assign_attack_groups_with_home(
+            places,
+            units,
+            _menace_of,
+            self.enemy_menace,
+            ratio,
+            homes,
+            prefer_ids=getattr(self, "_home_guard_ids", ()),
+        )
+        guard_ids = []
+        for place, group in groups:
+            if id(place) in home_ids:
+                guard_ids.extend(getattr(u, "id", id(u)) for u in group)
+        self._home_guard_ids = tuple(guard_ids)
+        sent = False
+        for place, group in groups:
+            if self._units_should_attack(group, place):
+                self._send_units(group, place)
+                sent = True
+        if sent:
+            return
         if places:
             place = places[0]
             temp_units = [u for u in units if u.time_limit and u.speed]
@@ -6190,6 +6639,10 @@ class Computer(Player):
             if isinstance(u, Soldier)
             and not getattr(u, "is_inside", False)
             and not self._is_livestock_unit(u)
+            and not (
+                getattr(u, "airground_type", None) == "air"
+                and getattr(u, "transport_capacity", 0) > 0
+            )
             and (
                 not u.orders
                 or len(u.orders) == 1
@@ -6357,7 +6810,8 @@ class Computer(Player):
                 keywords = {o.keyword for o in u.orders}
                 if keywords & {"load", "load_all", "unload", "unload_all"}:
                     continue
-                if u.orders[0].keyword not in ("go",):
+                # auto_explore is interruptible: ferry when troops cannot walk.
+                if u.orders[0].keyword not in ("go", "auto_explore"):
                     continue
             result.append(u)
         return result

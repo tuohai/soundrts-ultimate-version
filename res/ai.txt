@@ -29,6 +29,17 @@
 ;   expand <n>          total town halls (bases) to maintain; 2 = one expansion
 ;   attack_ratio <pct>  % of the enemy's strength needed before attacking
 ;                       (180 = cautious default, <100 = reckless/relentless)
+;   brain plan|adaptive|utility|tree   plan = sequential script (default);
+;                       adaptive = same get lines, but train better counters
+;                       first and, if the line already trains army, add one
+;                       extra counter from buildings you already own (not on
+;                       eco villager-only lines). Also runs a selector tree
+;                       each tick (defend / eco / age / attack / produce).
+;                       utility and tree are aliases of adaptive.
+;                       expert/nightmare default to adaptive even if omitted
+;   if_enemy <type> goto <label>     jump if a known enemy matches type/is_a
+;   if_not_enemy <type> goto <label>
+;   if_attacked goto <label>         jump if a unit was attacked this play()
 ;   counter_skill <0-100>  how well units pick mdg_vs/rdg_vs counter targets
 ;                       (0 = ignore counters, 100 = always pick best counter)
 ;   starting_resources <amounts...>  bonus resources added on top of the map
@@ -207,11 +218,32 @@ research 1
 workers 24
 expand 3
 attack_ratio 120
+brain adaptive          ; scout-aware: train counters on the current get line first
 
 label exp_rush
 get 3 peasant 2 footman
 attack
+if_attacked goto exp_hold
+if_enemy dragon goto exp_air
+if_enemy flyingmachine goto exp_air
+if_enemy knight goto exp_anti_cav
 get 5 peasant 6 footman 4 archer
+attack
+goto exp_push
+
+label exp_hold
+get 3 guardtower
+get 6 peasant 8 footman 8 archer
+attack
+goto exp_push
+
+label exp_air
+get 9 peasant 24 archer 2 new_flyingmachine 8 dragon
+attack
+goto exp_storm
+
+label exp_anti_cav
+get 9 peasant 16 footman 12 archer
 attack
 goto exp_push
 
@@ -247,11 +279,32 @@ research 1
 workers 36
 expand 4          ; sprawls across the map with multiple bases
 attack_ratio 90   ; attacks even when only roughly even: relentless pressure
+brain adaptive          ; scout-aware: train counters on the current get line first
 
 label nm_rush
 get 3 peasant 3 footman
 attack
+if_attacked goto nm_hold
+if_enemy dragon goto nm_air
+if_enemy flyingmachine goto nm_air
+if_enemy knight goto nm_anti_cav
 get 6 peasant 8 footman 6 archer 4 knight
+attack
+goto nm_assault
+
+label nm_hold
+get 4 guardtower
+get 8 peasant 12 footman 10 archer
+attack
+goto nm_assault
+
+label nm_air
+get 9 peasant 30 archer 2 new_flyingmachine 12 dragon
+attack
+goto nm_doom
+
+label nm_anti_cav
+get 9 peasant 20 footman 16 archer
 attack
 goto nm_assault
 

@@ -4,6 +4,57 @@
 .. contents::
 
 
+1.4.9.6
+---------
+
+**新增：电脑剧本可换自适应大脑**
+
+- **问题**：电脑只会按 ``ai.txt`` 从上到下念 ``get``，看见对方出骑士也不会先造克制兵；作者无法按侦察结果跳转剧本。
+- **改进**：``brain plan|adaptive``。``adaptive`` 仍完成当前 ``get`` 行的全部目标，但按侦察到的敌人把克制更好的兵种提前训练。新增 ``if_enemy`` / ``if_not_enemy`` / ``if_attacked`` 条件跳转。原版专家、噩梦默认 ``brain adaptive``。初级到高级仍是 ``plan``。
+- **范围**：``soundrts/ai_brain.py``；``worldplayercomputer.py`` ``_follow_plan``；``res/ai.txt``；``mod/aimaking.rst``。
+
+**新增：自适应大脑会补训克制兵；专家默认开启**
+
+- **问题**：``adaptive`` 只能重排剧本里已写的兵种。帝国时代专家封建行只有民兵和弓箭手，看见骑兵也不会补枪兵；多数模组的专家档没有写 ``brain adaptive``。
+- **改进**：当前 ``get`` 行已经在造兵时，从已有兵营/靶场的 ``can_train`` 里最多补 1 个克制兵种（纯农民开局行不补）。专家、噩梦在 ``set_ai`` 时默认 ``adaptive``，剧本仍可 ``brain plan`` 关掉。原版 ``res/ai.txt`` 专家/噩梦在第一波后用 ``if_attacked`` / ``if_enemy dragon|flyingmachine|knight`` 跳转。
+- **范围**：``soundrts/ai_brain.py`` ``inject_counter_pairs``；``worldplayercomputer.py`` ``set_ai`` / ``_follow_plan``；``res/ai.txt``；``mod/aimaking.rst``。
+
+**新增：自适应大脑按效用选用手**
+
+- **问题**：专家即使开了 ``adaptive``，每拍仍同时念剧本、推进攻、点时代；家里被打时仍可能按 ``constant_attacks`` 往外冲，缺农民时仍先造兵。
+- **改进**：``adaptive`` / ``utility`` 每拍给回防、进时代、补农、造兵、进攻打分，只动该用的那只手（采集逻辑不动）。被打或出生点有敌人则回防，存粮进时代则龟着点时代，农民太少则先补农。``brain plan`` 仍是旧的全开。
+- **范围**：``soundrts/ai_brain.py`` ``choose_utility_goal``；``worldplayercomputer.py`` ``_play_body``；``mod/aimaking.rst``。
+
+**新增：电脑只在第二路也够兵力时才分兵**
+
+- **问题**：进攻把全部空闲兵一次打向排序后的第一格就返回，第二处威胁没人理；若硬拆成两路又容易两边都不够 ``attack_ratio``。
+- **改进**：``assign_attack_groups``：每一路的威胁值必须严格大于敌方威胁 × ``attack_ratio`` 才开线；剩下来不够打第二路的兵并回第一路。最多两路。同一单位不会派去两处。
+- **范围**：``soundrts/ai_brain.py`` ``assign_attack_groups``；``worldplayercomputer.py`` ``_eventually_attack``；``test_ai_attack_split.py``。
+
+**新增：电脑用手选树决定这一拍干什么**
+
+- **问题**：效用分只是五个数字取最大，回防和开局补农的优先级不好读、也不好往下加「先侦察再出兵」这类顺序。
+- **改进**：``tick_behavior_tree`` 是固定选择器：被打或家门口有敌人 → 回防；农民不足 6 → 补农；存粮进时代 → 进时代；农民未达标 → 补农；``constant_attacks`` 且看见敌人 → 进攻；否则造兵。``brain tree`` 与 ``adaptive`` 共用这棵树。采集逻辑仍不动。
+- **范围**：``soundrts/ai_brain.py`` ``BEHAVIOR_TREE``；``worldplayercomputer.py`` ``brain``；``mod/aimaking.rst``。
+
+**新增：进攻时先留家里驻军**
+
+- **问题**：树选进攻后，空闲兵先打威胁最高的敌人格；家里威胁为 0 排到最后，剩兵并进出征，基地被掏空。回防要等家里已经挨打才触发。
+- **改进**：``peel_home_guard`` 在有主城时先剥一队守家，威胁值必须大于家里敌方威胁 × ``attack_ratio``（家里安静时留 1 个有威胁的兵当哨）。守不住则全员回家、不出征。有守军时最多再开 1 路出征（家里 + 出征 = 两路），出征剩兵并回出征队、不抽守军。
+- **范围**：``soundrts/ai_brain.py`` ``peel_home_guard`` / ``assign_attack_groups_with_home``；``worldplayercomputer.py`` ``_home_base_places`` / ``_eventually_attack``；``test_ai_attack_split.py``。
+
+**改进：守家哨兵下一拍不再被新兵顶进出征**
+
+- **问题**：驻军每拍按空闲兵 id 重剥。刚造出来、id 更小的兵会当新哨，已经站在主城的人被编进出征，家里空到新兵走回去。
+- **改进**：``_sticky_guard_order`` 先留已经在家或正在回家的人，再留上一拍 ``_home_guard_ids``，最后才轮到其余空闲兵。家里够守之后，多出来的驻军仍可出门。
+- **范围**：``soundrts/ai_brain.py`` ``_sticky_guard_order`` / ``peel_home_guard``；``worldplayercomputer.py`` ``_home_guard_ids``；``test_ai_attack_split.py``。
+
+**新增：自适应大脑先侦察再出兵**
+
+- **问题**：树会在没看见敌方战斗单位时就念军事 ``get``。克制补训和 ``if_enemy`` 要先侦察；斥候每拍都会派，但造兵不等它。
+- **改进**：农民满 6 之后，若还没见过敌方战斗单位，选择器走 ``scout``：继续补农和派斥候，不念剧本 ``get``、不往外打。看见敌人，或等满 ``SCOUT_THEN_PRODUCE_MS``（60 秒）后，再回到补农 / 进攻 / 造兵。回防、开局补农、进时代仍优先。
+- **范围**：``soundrts/ai_brain.py`` ``_tree_scout`` / ``SCOUT_THEN_PRODUCE_MS``；``worldplayercomputer.py`` ``_scout_sequence_started`` / ``_play_body``；``mod/aimaking.rst``。
+
 1.4.9.5
 ---------
 

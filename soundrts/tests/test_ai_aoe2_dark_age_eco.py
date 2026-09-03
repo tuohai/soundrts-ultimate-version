@@ -299,6 +299,55 @@ def test_jl1_intermediate_builds_mill_and_clicks_feudal(aoe2_loaded):
     assert feudal_at <= 12 * 60 * 1000, feudal_at
 
 
+def test_jl1_intermediate_builds_feudal_military_buildings(aoe2_loaded):
+    """Headless jl1: after feudal, barracks / range / stables actually start.
+
+    Spawn has no trees (woods sit on adjacent squares), same pinch as jl3.
+    """
+    from soundrts.lib.nofloat import PRECISION as P
+
+    if not JL1.is_file():
+        pytest.skip("aoe2 jl1 map not present")
+    text = JL1.read_text(encoding="utf-8")
+    world = World([], 42)
+    world._parse_map(text)
+    world.square_width = int(world.square_width * P)
+    world._build_map()
+    p1 = DummyClient("intermediate")
+    p1.faction = "britons"
+    p1.alliance = "1"
+    p2 = DummyClient("intermediate")
+    p2.faction = "franks"
+    p2.alliance = "2"
+    world.populate_map([p1, p2], random_starts=False, equivalents=True)
+
+    comps = [
+        p
+        for p in world.players
+        if isinstance(p, Computer) and getattr(p, "AI_type", None) == "intermediate"
+    ]
+    assert len(comps) == 2
+
+    mil_at = None
+    game_limit_ms = 20 * 60 * 1000
+    ticks = int(game_limit_ms / VIRTUAL_TIME_INTERVAL)
+    for _ in range(ticks):
+        world.update()
+        for c in comps:
+            names = _type_names(c)
+            if any(n in _MIL_BUILDINGS for n in names):
+                mil_at = world.time
+                break
+        if mil_at is not None:
+            break
+
+    assert mil_at is not None, (
+        "expected barracks/archery/stables by 20 minutes; "
+        f"types={[(_type_names(c), getattr(c, 'faction', None)) for c in comps]}"
+    )
+    assert mil_at <= 20 * 60 * 1000, mil_at
+
+
 def test_jl3_intermediate_builds_feudal_military_buildings(aoe2_loaded):
     """Headless jl3: after feudal, barracks / range / stables actually start."""
     from soundrts.lib.nofloat import PRECISION as P
@@ -1296,6 +1345,86 @@ def test_scouts_for_wood_when_farm_piles_are_gone(aoe2_loaded):
     assert not issued
 
 
+def test_walks_adjacent_square_when_spawn_has_no_trees(aoe2_loaded):
+    """jl3-style off-spawn woods: leave the TC square so trees enter LOS."""
+    ai = _bare_ai(
+        plan=["get 6 peasant 2 militia 6 aoe_archer"],
+        upgrades=["dark_age", "feudal_age"],
+    )
+    ai.nb = lambda n: 0
+    ai.future_nb = lambda n: 0
+    ai.resources = [0, to_int("40"), to_int("200"), 0]
+    ai.perception = set()
+    ai.memory = set()
+    neighbor = SimpleNamespace(id="a1", neighbors=())
+    home = SimpleNamespace(
+        id="a2",
+        neighbors=(neighbor,),
+        shortest_path_distance_to=lambda *a, **k: 0,
+    )
+    neighbor.neighbors = (home,)
+    neighbor.shortest_path_distance_to = lambda *a, **k: 0
+    issued = []
+    peasant = SimpleNamespace(
+        orders=[],
+        place=home,
+        take_order=lambda order, *a, **k: issued.append(list(order)),
+    )
+    ai._workers = [peasant]
+    assert Computer._send_worker_toward_known_wood(ai, peasant)
+    assert issued and issued[-1] == ["go", "a1"]
+
+
+def test_drops_carried_wood_when_it_would_pay_barracks(aoe2_loaded):
+    """Do not walk to a new forest with the last barracks wood still in cargo."""
+    ai = _bare_ai(
+        plan=["get 6 peasant 2 militia 6 aoe_archer"],
+        upgrades=["dark_age", "feudal_age"],
+    )
+    ai.nb = lambda n: 0
+    ai.future_nb = lambda n: 0
+    ai.resources = [0, to_int("160"), to_int("200"), 0]
+    order = SimpleNamespace(keyword="gather", mode="go_gather", storage="keep")
+    peasant = SimpleNamespace(
+        cargo=("resource2", to_int("20")),
+        orders=[order],
+        take_order=lambda *_a, **_k: None,
+    )
+    ai._workers = [peasant]
+    assert ai._plan_expensive_wood_reserve(ignore_age_defer=True) >= to_int("100")
+    Computer._force_wood_dropoff_if_plan_building_ready(ai)
+    assert order.mode == "bring_back"
+    assert order.storage is None
+
+
+def test_wood_almost_covers_plan_building_within_one_carry(aoe2_loaded):
+    ai = _bare_ai(
+        plan=["get 6 peasant 2 militia 6 aoe_archer"],
+        upgrades=["dark_age", "feudal_age"],
+    )
+    ai.nb = lambda n: 0
+    ai.future_nb = lambda n: 0
+    ai.resources = [0, to_int("160"), to_int("200"), 0]
+    assert ai._wood_almost_covers_plan_building()
+    ai.resources = [0, to_int("100"), to_int("200"), 0]
+    assert not ai._wood_almost_covers_plan_building()
+
+
+def test_dark_age_keeps_lumberjacks_while_feudal_food_missing(aoe2_loaded):
+    """gather(feudal) must not yank the barracks-wood pair onto berries."""
+    ai = _bare_ai(
+        plan=["get 4 militia 8 aoe_archer"],
+        upgrades=["dark_age"],
+    )
+    ai.nb = lambda n: 0
+    ai.future_nb = lambda n: 0
+    ai.resources = [0, to_int("40"), to_int("80"), 0]
+    assert ai._before_first_expensive_food_age()
+    assert ai._plan_expensive_wood_reserve(ignore_age_defer=True) >= to_int("100")
+    assert ai._keep_lumberjacks()
+    assert ai._wood_gather_worker_cap(8) == 2
+
+
 def test_wood_scout_cap_stays_two_before_first_age(aoe2_loaded):
     """Dark-age food save must not send the whole town exploring for trees."""
     ai = _bare_ai(plan=["get 6 peasant 2 militia 6 aoe_archer"])
@@ -1310,7 +1439,7 @@ def test_wood_scout_cap_stays_two_before_first_age(aoe2_loaded):
         SimpleNamespace(orders=[SimpleNamespace(keyword="auto_explore")]),
         peasant3,
     ]
-    assert not ai._keep_lumberjacks()
+    # Two scouts is the dark-age cap even if lumberjacks are protected.
     assert ai._wood_scout_worker_cap() == 2
     assert not Computer._send_worker_to_scout_for_wood(ai, peasant3)
 

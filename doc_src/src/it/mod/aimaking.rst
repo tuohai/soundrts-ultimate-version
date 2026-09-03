@@ -146,6 +146,19 @@ attaccare.
 
   Il ``res/ai.txt`` vanilla imposta: beginner ``25``, intermediate ``50``,
   advanced ``75``, expert ``90``, nightmare ``100``.
+- ``brain plan|adaptive|utility|tree`` -- come decide lo script. ``plan`` (predefinito)
+  esegue ``get`` nell’ordine scritto. ``adaptive`` completa comunque tutti i
+  token della riga ``get``, ma addestra prima i tipi con il miglior
+  ``mdg_vs`` / ``rdg_vs`` contro i nemici esplorati (lavoratori/edifici
+  tengono l’ordine relativo). Se quella riga già addestra esercito, aggiunge
+  al massimo un contro extra da ``can_train`` degli addestratori posseduti
+  (non sulle aperture solo contadini). Ogni tick un selettore fisso:
+  difesa → eco iniziale → età → esplorazione (niente combattente nemico,
+  timeout breve) → eco → attacco → produzione (la raccolta non
+  cambia). ``utility`` / ``tree`` sono alias di ``adaptive``. Expert e
+  nightmare diventano ``adaptive`` nel motore (i mod non devono scriverlo;
+  ``brain plan`` lo spegne). Expert/nightmare vanilla di ``res/ai.txt``
+  saltano dopo la prima ondata con ``if_attacked`` / ``if_enemy``.
 - ``starting_resources \<amounts...\>`` -- risorse bonus aggiunte sopra
   l’inizio della mappa (o della fazione). Stesso ordine e stesse unità di
   ``starting_resources`` di mappa (es. ``10 10`` = 10 oro e 10 legno;
@@ -245,6 +258,12 @@ l’esercito soddisfi ancora ``attack_ratio``.
   di riga relativo come ``goto -1`` (torna indietro di una riga).
 - ``goto_random \<name1\> \<name2\> ...`` -- salta a una delle etichette
   elencate, scelta a caso. Ottimo per rendere l’IA imprevedibile.
+- ``if_enemy \<type\> goto \<label\>`` -- salta se percezione o memoria ha un
+  nemico di quel tipo (incluso ``is_a``).
+- ``if_not_enemy \<type\> goto \<label\>`` -- salta se quel tipo non è ancora
+  stato esplorato.
+- ``if_attacked goto \<label\>`` -- salta se un’unità è stata attaccata in
+  questo ``play()`` (anche se l’IA ha già contraattaccato).
 
 7. Esempio di mod (tre livelli, script per fazione)
 ---------------------------------------------------

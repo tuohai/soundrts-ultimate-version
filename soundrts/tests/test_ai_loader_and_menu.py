@@ -455,11 +455,16 @@ def _make_computer(plan):
     c._previous_linechange = 0
     c._wait_deadline = None
     c._line_nb = 0
+    c._ai_brain = Computer._ai_brain
+    c._attacked_this_play = False
+    c._utility_goal = None
     # tunable defaults (mirrors set_ai)
     c.nb_workers_to_get = Computer.nb_workers_to_get
     c._target_townhalls = Computer._target_townhalls
     c._attack_ratio = Computer._attack_ratio
     c.counter_skill = Computer.counter_skill
+    c.constant_attacks = 0
+    c.research = 0
     return c
 
 
@@ -543,3 +548,219 @@ class TestFollowPlanTunables:
         assert c._previous_linechange == 5000
         assert c.constant_attacks == 0
         assert c._line_nb == 0
+
+    def test_brain_adaptive_is_applied(self):
+        c = _make_computer(["brain adaptive", "goto -1"])
+        c._follow_plan()
+        assert c._ai_brain == "adaptive"
+        assert c._line_nb == 1
+
+    def test_brain_utility_is_applied(self):
+        c = _make_computer(["brain utility", "goto -1"])
+        c._follow_plan()
+        assert c._ai_brain == "utility"
+        assert c._line_nb == 1
+
+    def test_brain_tree_is_applied(self):
+        c = _make_computer(["brain tree", "goto -1"])
+        c._follow_plan()
+        assert c._ai_brain == "tree"
+        assert c._line_nb == 1
+
+    def test_utility_defend_attacks_home_not_presence(self):
+        c = _make_computer(["goto -1"])
+        c._ai_brain = "adaptive"
+        c._utility_goal = "defend"
+        c._attacked_places = []
+        c.constant_attacks = 1
+        c._enemy_presence = ["enemy"]
+        c._home_threatened_places = lambda: ["home"]
+        seen = []
+        c._eventually_attack = lambda places: seen.append(list(places))
+        c._defensive_routine = lambda: seen.append("def")
+        c._apply_utility_combat()
+        assert seen == [["home"]]
+
+    def test_utility_age_turtles_when_not_attacked(self):
+        c = _make_computer(["goto -1"])
+        c._ai_brain = "adaptive"
+        c._utility_goal = "age"
+        c._attacked_places = []
+        c.constant_attacks = 1
+        c._enemy_presence = ["enemy"]
+        seen = []
+        c._eventually_attack = lambda places: seen.append(list(places))
+        c._defensive_routine = lambda: seen.append("def")
+        c._apply_utility_combat()
+        assert seen == ["def"]
+
+    def test_utility_scout_turtles_and_does_not_raid(self):
+        c = _make_computer(["goto -1"])
+        c._ai_brain = "adaptive"
+        c._utility_goal = "scout"
+        c._attacked_places = []
+        c.constant_attacks = 1
+        c._enemy_presence = ["enemy"]
+        seen = []
+        c._eventually_attack = lambda places: seen.append(list(places))
+        c._defensive_routine = lambda: seen.append("def")
+        c._apply_utility_combat()
+        assert seen == ["def"]
+
+    def test_brain_invalid_keeps_default(self):
+        c = _make_computer(["brain chaos", "goto -1"])
+        c._follow_plan()
+        assert c._ai_brain == "plan"
+        assert c._line_nb == 1
+
+    def test_if_enemy_jumps_when_type_is_known(self):
+        c = _make_computer(
+            [
+                "if_enemy knight goto spears",
+                "goto 0",
+                "label spears",
+                "attack",
+            ]
+        )
+        c.perception = [
+            type(
+                "E",
+                (),
+                {
+                    "id": 2,
+                    "place": object(),
+                    "type_name": "knight",
+                    "expanded_is_a": ("cavalry",),
+                    "player": object(),
+                },
+            )()
+        ]
+        c.memory = []
+        c.is_an_enemy = lambda _o: True
+        c.equivalent = lambda tn: tn
+        c._follow_plan()
+        assert c._plan[c._line_nb] == "label spears"
+
+    def test_if_enemy_advances_when_unseen(self):
+        c = _make_computer(
+            [
+                "if_enemy knight goto spears",
+                "attack",
+                "label spears",
+            ]
+        )
+        c.perception = []
+        c.memory = []
+        c.is_an_enemy = lambda _o: True
+        c._follow_plan()
+        assert c._line_nb == 1
+        assert c.constant_attacks == 0
+
+    def test_if_not_enemy_jumps_when_unseen(self):
+        c = _make_computer(
+            [
+                "if_not_enemy knight goto open",
+                "attack",
+                "label open",
+            ]
+        )
+        c.perception = []
+        c.memory = []
+        c.is_an_enemy = lambda _o: True
+        c._follow_plan()
+        assert c._plan[c._line_nb] == "label open"
+
+    def test_if_attacked_jumps_when_flag_set(self):
+        c = _make_computer(
+            [
+                "if_attacked goto defend",
+                "attack",
+                "label defend",
+            ]
+        )
+        c._attacked_this_play = True
+        c._follow_plan()
+        assert c._plan[c._line_nb] == "label defend"
+
+    def test_if_attacked_advances_when_safe(self):
+        c = _make_computer(
+            [
+                "if_attacked goto defend",
+                "attack",
+                "label defend",
+            ]
+        )
+        c._attacked_this_play = False
+        c._follow_plan()
+        assert c._line_nb == 1
+
+    def test_adaptive_get_injects_counter_from_owned_trainers(self, monkeypatch):
+        from types import SimpleNamespace
+
+        from soundrts.definitions import rules as defs_rules
+
+        def fake_inject(pairs, enemies, trainable, equivalent=None, is_army=None):
+            assert trainable == ("spearman",)
+            assert enemies
+            return list(pairs) + [(6, "spearman")]
+
+        monkeypatch.setattr(
+            "soundrts.worldplayercomputer.inject_counter_pairs", fake_inject
+        )
+        monkeypatch.setattr(
+            "soundrts.worldplayercomputer.reorder_get_pairs",
+            lambda p, e, equivalent=None: p,
+        )
+        class _FakeUnit:
+            pass
+
+        monkeypatch.setattr(defs_rules, "unit_class", lambda _n: _FakeUnit)
+        c = _make_computer(["get 4 footman 4 archer"])
+        c.AI_type = "expert"
+        c._ai_brain = "adaptive"
+        c.counter_skill = 90
+        c.equivalent = lambda tn: tn
+        c._watchdog_should_wait = lambda: False
+        c.perception = [
+            SimpleNamespace(
+                id=1,
+                place=object(),
+                type_name="knight",
+                expanded_is_a=("cavalry",),
+                is_a_building=False,
+            )
+        ]
+        c.memory = []
+        c.is_an_enemy = lambda _o: True
+        c._owned_trainable_type_names = lambda: ("spearman",)
+        c._saving_food_for_age = lambda: False
+        c._defer_plan_get_token = lambda *a, **k: False
+        c.nb = lambda _n: 0
+        got = []
+        c.get = lambda n, w: got.append((n, w)) or True
+        c._follow_plan()
+        assert (6, "spearman") in got
+        assert (4, "footman") in got
+
+    def test_set_ai_expert_and_nightmare_default_adaptive(self, monkeypatch):
+        from soundrts.worldplayercomputer import Computer
+
+        monkeypatch.setattr(
+            "soundrts.worldplayercomputer.get_ai",
+            lambda _name: ["get 1 peasant"],
+        )
+        monkeypatch.setattr(
+            "soundrts.worldplayercomputer.filter_ai_executable_plan",
+            lambda lines: lines,
+        )
+        monkeypatch.setattr(Computer, "faction_ai_type", lambda self, t: t)
+        c = Computer.__new__(Computer)
+        c._update_effect_users_and_workers = lambda: None
+        c.set_ai("intermediate")
+        assert c._ai_brain == "plan"
+        c.set_ai("expert")
+        assert c._ai_brain == "adaptive"
+        c.set_ai("nightmare")
+        assert c._ai_brain == "adaptive"
+        c.set_ai("advanced")
+        assert c._ai_brain == "plan"

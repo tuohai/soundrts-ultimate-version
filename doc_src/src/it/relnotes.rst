@@ -3,6 +3,57 @@ Note di rilascio
 
 .. contents::
 
+1.4.9.6
+---------
+
+**Cambio: gli script dell’IA possono usare un cervello adattivo**
+
+- **Problema**: il computer eseguiva solo le righe ``get`` dall’alto in basso; vedere i cavalieri non faceva addestrare prima i contro; gli autori non potevano ramificare lo script in base all’esplorazione.
+- **Cambio**: ``brain plan|adaptive``. ``adaptive`` completa comunque tutti i token della riga ``get`` corrente, ma addestra prima i contatori ``mdg_vs`` / ``rdg_vs`` migliori contro i nemici esplorati. Nuovi salti: ``if_enemy`` / ``if_not_enemy`` / ``if_attacked``. Expert e nightmare vanilla usano ``brain adaptive``. Da beginner ad advanced restano su ``plan``.
+- **Ambito**: ``soundrts/ai_brain.py``; ``worldplayercomputer.py`` ``_follow_plan``; ``res/ai.txt``; ``mod/aimaking.rst``.
+
+**Cambio: il cervello adattivo inserisce un contro addestrabile; expert attivo di default**
+
+- **Problema**: ``adaptive`` poteva solo riordinare i tipi già scritti sulla riga ``get``. Il feudale expert AoE2 è militia + arcieri, vedere cavalleria non aggiungeva lancieri; la maggior parte dei mod expert non imposta ``brain adaptive``.
+- **Cambio**: Su una riga ``get`` militare, aggiunge al massimo un tipo extra da ``can_train`` degli addestratori posseduti che contrasta i combattenti esplorati (non sulle aperture solo contadini). Expert e nightmare diventano ``adaptive`` in ``set_ai``; lo script può ancora ``brain plan``. Expert/nightmare vanilla di ``res/ai.txt`` saltano con ``if_attacked`` / ``if_enemy dragon|flyingmachine|knight`` dopo la prima ondata.
+- **Ambito**: ``soundrts/ai_brain.py`` ``inject_counter_pairs``; ``worldplayercomputer.py`` ``set_ai`` / ``_follow_plan``; ``res/ai.txt``; ``mod/aimaking.rst``.
+
+**Cambio: il cervello adattivo sceglie la mano in base all’utilità**
+
+- **Problema**: Anche con ``adaptive``, ogni tick seguiva lo script, spingeva gli attacchi e cliccava l’età insieme; un raid in casa poteva ancora ``constant_attacks`` verso l’esterno, e con pochi contadini si addestrava prima l’esercito.
+- **Cambio**: ``adaptive`` / ``utility`` assegna un punteggio a difesa, età, eco, produzione e attacco ogni tick e usa solo quella mano (la raccolta non cambia). Raid o nemici sulla casella del municipio difendono; mettere da parte per l’età resta in casa e clicca l’età; pochi contadini danno priorità all’eco. ``brain plan`` usa ancora tutte le mani.
+- **Ambito**: ``soundrts/ai_brain.py`` ``choose_utility_goal``; ``worldplayercomputer.py`` ``_play_body``; ``mod/aimaking.rst``.
+
+**Cambio: il computer divide gli attacchi solo se il secondo fronte batte ancora il ratio**
+
+- **Problema**: L’attacco mandava tutto il gruppo inattivo sulla prima casella ordinata e tornava, così una seconda minaccia restava scoperta; spezzare a caso lasciava entrambi i fronti sotto ``attack_ratio``.
+- **Cambio**: ``assign_attack_groups`` apre un fronte solo se la sua minaccia è strettamente maggiore di quella nemica × ``attack_ratio``. Ciò che non copre un altro fronte torna al primo. Al massimo due fronti. Un’unità non va in due posti.
+- **Ambito**: ``soundrts/ai_brain.py`` ``assign_attack_groups``; ``worldplayercomputer.py`` ``_eventually_attack``; ``test_ai_attack_split.py``.
+
+**Cambio: il computer sceglie la mano del tick con un albero selettore**
+
+- **Problema**: i punteggi di utilità erano cinque numeri e un massimo, così la priorità difesa/eco iniziale era difficile da leggere e da estendere con passi ordinati.
+- **Cambio**: ``tick_behavior_tree`` è un selettore fisso: raid o nemico sulla casella del municipio → difesa; meno di 6 contadini → eco; accantonare per l’età → età; sotto il target di contadini → eco; ``constant_attacks`` con nemici noti → attacco; altrimenti produzione. ``brain tree`` condivide l’albero con ``adaptive``. La raccolta non cambia.
+- **Ambito**: ``soundrts/ai_brain.py`` ``BEHAVIOR_TREE``; ``worldplayercomputer.py`` ``brain``; ``mod/aimaking.rst``.
+
+**Cambio: gli attacchi lasciano prima una guarnigione a casa**
+
+- **Problema**: Dopo Attacco, i combattenti inattivi andavano prima sulla casella nemica con più minaccia. Una casa quieta (minaccia 0) restava ultima, gli avanzi finivano nel raid e la base si svuotava. Difendi scattava solo dopo un raid già percepito.
+- **Cambio**: ``peel_home_guard`` stacca un gruppo a casa se ci sono municipi. La guardia deve superare la minaccia nemica in casa × ``attack_ratio`` (a casa quieta resta 1 unità con minaccia > 0). Se l’esercito non tiene casa, tutti restano e non c’è raid. Con guardia, al massimo un fronte di raid (casa + raid = due destinazioni); gli avanzi del raid tornano al raid, non alla guardia.
+- **Ambito**: ``soundrts/ai_brain.py`` ``peel_home_guard`` / ``assign_attack_groups_with_home``; ``worldplayercomputer.py`` ``_home_base_places`` / ``_eventually_attack``; ``test_ai_attack_split.py``.
+
+**Cambio: la sentinella di casa non viene sostituita da una recluta al tick dopo**
+
+- **Problema**: la guarnigione riassegnava gli inattivi per id ogni tick. Una recluta nuova con id più basso diventava sentinella e chi era già sul municipio usciva, lasciando casa vuota finché la recluta non tornava.
+- **Cambio**: ``_sticky_guard_order`` tiene prima chi è già in casa o ci sta andando, poi gli ``_home_guard_ids`` del tick precedente, poi gli altri. I di più in casa possono ancora uscire quando casa è coperta.
+- **Ambito**: ``soundrts/ai_brain.py`` ``_sticky_guard_order`` / ``peel_home_guard``; ``worldplayercomputer.py`` ``_home_guard_ids``; ``test_ai_attack_split.py``.
+
+**Cambio: il cervello adattivo esplora prima di addestrare l’esercito**
+
+- **Problema**: l’albero poteva eseguire ``get`` militare prima di vedere un combattente nemico. L’iniezione di contro e ``if_enemy`` servono lo scout; gli esploratori uscivano già ogni tick, ma la produzione non aspettava.
+- **Cambio**: Dopo 6 contadini, se non c’è un nemico da combattimento noto, il selettore usa ``scout``: continua l’eco e manda l’esploratore, non esegue il ``get`` dello script e non attacca. Dopo un avvistamento, o ``SCOUT_THEN_PRODUCE_MS`` (60 s), torna a eco / attacco / produzione. Difesa, eco iniziale ed età restano prima.
+- **Ambito**: ``soundrts/ai_brain.py`` ``_tree_scout`` / ``SCOUT_THEN_PRODUCE_MS``; ``worldplayercomputer.py`` ``_scout_sequence_started`` / ``_play_body``; ``mod/aimaking.rst``.
+
 1.4.9.5
 ---------
 

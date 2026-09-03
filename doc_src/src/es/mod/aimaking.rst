@@ -135,6 +135,20 @@ Investigación activada, más bases y más voluntad de atacar.
 
   Conjuntos vainilla ``res/ai.txt``: principiante ``25``, intermedio ``50``,
   avanzado ``75``, experto ``90``, pesadilla ``100``.
+- ``brain plan|adaptive|utility|tree`` -- cómo decide el script. ``plan`` (predeterminado)
+  ejecuta ``get`` en el orden escrito. ``adaptive`` sigue completando todos los
+  tokens de la línea ``get``, pero entrena primero los tipos con mejor
+  ``mdg_vs`` / ``rdg_vs`` contra enemigos explorados (aldeanos/edificios
+  conservan su orden relativo). Si esa línea ya entrena ejército, también
+  añade como máximo un contra extra de ``can_train`` de los entrenadores
+  propios (no en aperturas solo de aldeanos). Cada turno corre un selector
+  fijo: defender → eco inicial → edad → explorar (sin enemigo de combate,
+  con tope corto) → eco → atacar → producir (la
+  recolección no cambia). ``utility`` / ``tree`` son alias de ``adaptive``.
+  Experto y pesadilla pasan a ``adaptive`` en el motor (los mods no necesitan
+  escribirlo; ``brain plan`` lo apaga). Experto/pesadilla vainilla de
+  ``res/ai.txt`` saltan tras la primera oleada con ``if_attacked`` /
+  ``if_enemy``.
 - ``starting_resources \<amounts...\>`` -- recursos adicionales agregados además de
   comienza el mapa (o facción). Mismo orden y mismas unidades que el mapa.
   ``starting_resources`` (por ejemplo, ``10 10`` = 10 de oro y 10 de madera; internamente
@@ -227,6 +241,12 @@ cumple con ``attack_ratio``.
   desplazamiento como ``goto -1`` (retrocede una línea).
 - ``goto_random \<name1\> \<name2\> ...`` -- salta a una de las etiquetas enumeradas,
   elegido al azar. Genial para hacer que la IA sea impredecible.
+- ``if_enemy \<type\> goto \<label\>`` -- salta si la percepción o la memoria
+  tiene un enemigo de ese tipo (incluido ``is_a``).
+- ``if_not_enemy \<type\> goto \<label\>`` -- salta si ese tipo aún no se ha
+  explorado.
+- ``if_attacked goto \<label\>`` -- salta si una unidad fue atacada en este
+  ``play()`` (haya o no contraatacado ya la IA).
 
 7. Ejemplo de modificación (tres niveles, scripts por facción)
 --------------------------------------------------------------

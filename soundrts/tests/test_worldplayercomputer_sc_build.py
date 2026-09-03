@@ -558,7 +558,9 @@ def test_starcraft_factions_exclude_human_and_have_titles():
 
     assert set(rules.factions) == {"terran", "protoss", "zerg"}
     assert "human_faction" not in rules.factions
-    assert rules.get("human_faction", "class") == ["building"]
+    # starcraft/rules.txt starts with ``clear``, so the base-game faction is gone
+    # (the old workaround was ``class building`` to hide it from the menu).
+    assert rules.get("human_faction", "class") is None
     assert rules.get("protoss", "house") == ["pylon"]
     pylon = rules.unit_class("pylon")
     assert getattr(pylon, "population_provided", 0) == 8
