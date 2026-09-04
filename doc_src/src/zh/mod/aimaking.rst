@@ -130,7 +130,9 @@ AI 制作教程
   → 进时代 → 侦察（未见敌方战斗单位且未超时） → 补农 → 进攻 → 造兵（采集逻辑不动）。``utility`` / ``tree`` 与
   ``adaptive`` 相同。专家 / 噩梦在引擎里默认 ``adaptive`` （模组剧本不必写
   这一行；仍可 ``brain plan`` 关掉）。原版 ``res/ai.txt`` 专家 / 噩梦在第一波
-  后用 ``if_attacked`` / ``if_enemy`` 跳转。
+  后用 ``if_attacked`` / ``if_enemy`` 跳转。帝国2 ``mods/aoe2/ai.txt`` 专家 /
+  噩梦同样在第一波封建进攻后跳：``if_attacked``、``if_enemy cavalry``、
+  ``if_enemy archer_unit``。
 - ``starting_resources \<数量...\>`` —— 在地图（或阵营）开局资源之上额外增加
   的资源，顺序与地图 ``starting_resources`` 相同，数值含义也相同（如
   ``10 10`` = 10 金 10 木；内部与地图一样按 ``× 1000`` 存储）。不写则

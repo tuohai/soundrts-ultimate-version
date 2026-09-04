@@ -144,7 +144,9 @@ research turned on, more bases and more willingness to attack.
   aliases of ``adaptive``. Expert and nightmare default to ``adaptive`` in
   the engine (mod scripts need not set it; ``brain plan`` still turns it
   off). Vanilla ``res/ai.txt`` expert/nightmare jump after the first wave
-  with ``if_attacked`` / ``if_enemy``.
+  with ``if_attacked`` / ``if_enemy``. AoE2 ``mods/aoe2/ai.txt``
+  expert/nightmare jump the same way after the first feudal attack:
+  ``if_attacked``, ``if_enemy cavalry``, ``if_enemy archer_unit``.
 - ``starting_resources \<amounts...\>`` -- bonus resources added on top of
   the map (or faction) start. Same order and same units as map
   ``starting_resources`` (e.g. ``10 10`` = 10 gold and 10 wood; internally

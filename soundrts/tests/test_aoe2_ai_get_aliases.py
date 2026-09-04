@@ -204,3 +204,31 @@ def test_aoe2_ai_txt_expert_nightmare_extra_vils_are_small():
             assert extras and extras[0].split()[1] == "2", name
         elif name.endswith("_beginner"):
             assert not extras, name
+
+
+def test_aoe2_expert_nightmare_jump_after_feudal():
+    """Expert/nightmare branch on if_attacked / cavalry / archers; lower tiers do not."""
+    for name, lines in _ai_defs().items():
+        body = "\n".join(lines)
+        if name.endswith("_expert") or name.endswith("_nightmare"):
+            assert "if_attacked goto" in body, name
+            assert "if_enemy cavalry goto" in body, name
+            assert "if_enemy archer_unit goto" in body, name
+            labels = {
+                ln.split()[1]
+                for ln in lines
+                if ln.startswith("label ") and len(ln.split()) > 1
+            }
+            for ln in lines:
+                if not ln.startswith("if_") and not ln.startswith("goto "):
+                    continue
+                toks = ln.split()
+                if "goto" not in toks:
+                    continue
+                dest = toks[toks.index("goto") + 1]
+                if dest.lstrip("-").isdigit():
+                    continue
+                assert dest in labels, "%s goto %s" % (name, dest)
+        else:
+            assert "if_attacked" not in body, name
+            assert "if_enemy" not in body, name

@@ -159,6 +159,9 @@ attaccare.
   nightmare diventano ``adaptive`` nel motore (i mod non devono scriverlo;
   ``brain plan`` lo spegne). Expert/nightmare vanilla di ``res/ai.txt``
   saltano dopo la prima ondata con ``if_attacked`` / ``if_enemy``.
+  Expert/nightmare AoE2 di ``mods/aoe2/ai.txt`` saltano allo stesso modo
+  dopo il primo attacco feudale: ``if_attacked``, ``if_enemy cavalry``,
+  ``if_enemy archer_unit``.
 - ``starting_resources \<amounts...\>`` -- risorse bonus aggiunte sopra
   l’inizio della mappa (o della fazione). Stesso ordine e stesse unità di
   ``starting_resources`` di mappa (es. ``10 10`` = 10 oro e 10 legno;

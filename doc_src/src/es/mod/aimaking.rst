@@ -148,7 +148,9 @@ Investigación activada, más bases y más voluntad de atacar.
   Experto y pesadilla pasan a ``adaptive`` en el motor (los mods no necesitan
   escribirlo; ``brain plan`` lo apaga). Experto/pesadilla vainilla de
   ``res/ai.txt`` saltan tras la primera oleada con ``if_attacked`` /
-  ``if_enemy``.
+  ``if_enemy``. Experto/pesadilla de AoE2 ``mods/aoe2/ai.txt`` saltan igual
+  tras el primer ataque feudal: ``if_attacked``, ``if_enemy cavalry``,
+  ``if_enemy archer_unit``.
 - ``starting_resources \<amounts...\>`` -- recursos adicionales agregados además de
   comienza el mapa (o facción). Mismo orden y mismas unidades que el mapa.
   ``starting_resources`` (por ejemplo, ``10 10`` = 10 de oro y 10 de madera; internamente

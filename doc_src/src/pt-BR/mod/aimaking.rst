@@ -157,7 +157,9 @@ atacar.
   ``tree`` são aliases de ``adaptive``. Expert e nightmare passam a
   ``adaptive`` no motor (mods não precisam escrever; ``brain plan`` desliga).
   Expert/nightmare vanilla de ``res/ai.txt`` saltam após a primeira onda com
-  ``if_attacked`` / ``if_enemy``.
+  ``if_attacked`` / ``if_enemy``. Expert/nightmare AoE2 de ``mods/aoe2/ai.txt``
+  saltam do mesmo modo após o primeiro ataque feudal: ``if_attacked``,
+  ``if_enemy cavalry``, ``if_enemy archer_unit``.
 - ``starting_resources \<amounts...\>`` -- recursos bônus adicionados além do
   início do mapa (ou da facção). Mesma ordem e mesmas unidades que
   ``starting_resources`` do mapa (por exemplo ``10 10`` = 10 ouro e 10 madeira;

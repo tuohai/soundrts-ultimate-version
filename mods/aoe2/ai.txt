@@ -13,6 +13,9 @@
 ;   feudal = militia + feudal trainables (archers / scouts / spears)
 ;   castle = knights / unique units + battering rams
 ;   siege  = more rams / mangonels (building-breakers)
+; Expert/nightmare: after the first feudal attack, if_attacked /
+; if_enemy cavalry / archer_unit jump to towers+spears / spears /
+; skirmishers, then rejoin the castle wave. Beginner-advanced stay linear.
 ; Unit names are real aoe2 rules types, not footman/archer/knight aliases.
 ; ===========================================================================
 
@@ -92,11 +95,31 @@ label be1
 get 12 peasant
 get 4 militia 8 aoe_archer
 attack
+if_attacked goto be1_hold
+if_enemy cavalry goto be1_spears
+if_enemy archer_unit goto be1_skirm
+label be1_castle
 get 16 peasant 8 aoe_knight 8 longbowman 3 battering_ram
 attack
 get 4 battering_ram 2 mangonel
 attack
 goto be1
+
+label be1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto be1_castle
+
+label be1_spears
+get 8 peasant 10 spearman
+attack
+goto be1_castle
+
+label be1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto be1_castle
 
 def britons_nightmare
 defeat_score 200
@@ -118,11 +141,31 @@ label bn1
 get 12 peasant
 get 4 militia 8 aoe_archer
 attack
+if_attacked goto bn1_hold
+if_enemy cavalry goto bn1_spears
+if_enemy archer_unit goto bn1_skirm
+label bn1_castle
 get 18 peasant 8 aoe_knight 8 longbowman 3 battering_ram
 attack
 get 6 battering_ram 4 mangonel
 attack
 goto bn1
+
+label bn1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto bn1_castle
+
+label bn1_spears
+get 8 peasant 10 spearman
+attack
+goto bn1_castle
+
+label bn1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto bn1_castle
 
 
 ; ======================== FRANKS (knights / throwing_axeman) ========================
@@ -201,11 +244,31 @@ label fe1
 get 12 peasant
 get 6 militia 4 scout_cavalry
 attack
+if_attacked goto fe1_hold
+if_enemy cavalry goto fe1_spears
+if_enemy archer_unit goto fe1_skirm
+label fe1_castle
 get 16 peasant 12 aoe_knight 8 throwing_axeman 3 battering_ram
 attack
 get 4 battering_ram 2 mangonel
 attack
 goto fe1
+
+label fe1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto fe1_castle
+
+label fe1_spears
+get 8 peasant 10 spearman
+attack
+goto fe1_castle
+
+label fe1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto fe1_castle
 
 def franks_nightmare
 defeat_score 200
@@ -227,11 +290,31 @@ label fn1
 get 12 peasant
 get 6 militia 4 scout_cavalry
 attack
+if_attacked goto fn1_hold
+if_enemy cavalry goto fn1_spears
+if_enemy archer_unit goto fn1_skirm
+label fn1_castle
 get 18 peasant 12 aoe_knight 8 throwing_axeman 3 battering_ram
 attack
 get 6 battering_ram 4 mangonel
 attack
 goto fn1
+
+label fn1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto fn1_castle
+
+label fn1_spears
+get 8 peasant 10 spearman
+attack
+goto fn1_castle
+
+label fn1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto fn1_castle
 
 
 ; ======================== CHINESE (chu_ko_nu / economy) ========================
@@ -310,11 +393,31 @@ label ce1
 get 14 chinese_villager
 get 4 militia 8 aoe_archer
 attack
+if_attacked goto ce1_hold
+if_enemy cavalry goto ce1_spears
+if_enemy archer_unit goto ce1_skirm
+label ce1_castle
 get 18 chinese_villager 8 aoe_knight 8 chu_ko_nu 3 battering_ram
 attack
 get 4 battering_ram 2 mangonel
 attack
 goto ce1
+
+label ce1_hold
+get 3 scouttower
+get 8 chinese_villager 8 spearman 4 aoe_archer
+attack
+goto ce1_castle
+
+label ce1_spears
+get 8 chinese_villager 10 spearman
+attack
+goto ce1_castle
+
+label ce1_skirm
+get 8 chinese_villager 10 skirmisher
+attack
+goto ce1_castle
 
 def chinese_nightmare
 defeat_score 200
@@ -336,11 +439,31 @@ label cn1
 get 14 chinese_villager
 get 4 militia 8 aoe_archer
 attack
+if_attacked goto cn1_hold
+if_enemy cavalry goto cn1_spears
+if_enemy archer_unit goto cn1_skirm
+label cn1_castle
 get 20 chinese_villager 8 aoe_knight 8 chu_ko_nu 3 battering_ram
 attack
 get 6 battering_ram 4 mangonel
 attack
 goto cn1
+
+label cn1_hold
+get 3 scouttower
+get 8 chinese_villager 8 spearman 4 aoe_archer
+attack
+goto cn1_castle
+
+label cn1_spears
+get 8 chinese_villager 10 spearman
+attack
+goto cn1_castle
+
+label cn1_skirm
+get 8 chinese_villager 10 skirmisher
+attack
+goto cn1_castle
 
 
 ; ======================== MONGOLS (mangudai / cavalry archer) ========================
@@ -419,11 +542,31 @@ label me1
 get 12 mongol_herdsman
 get 4 militia 6 aoe_archer 3 scout_cavalry
 attack
+if_attacked goto me1_hold
+if_enemy cavalry goto me1_spears
+if_enemy archer_unit goto me1_skirm
+label me1_castle
 get 16 mongol_herdsman 8 cavalry_archer 8 aoe_knight 8 mangudai 3 battering_ram
 attack
 get 4 battering_ram 2 mangonel
 attack
 goto me1
+
+label me1_hold
+get 3 scouttower
+get 8 mongol_herdsman 8 spearman 4 aoe_archer
+attack
+goto me1_castle
+
+label me1_spears
+get 8 mongol_herdsman 10 spearman
+attack
+goto me1_castle
+
+label me1_skirm
+get 8 mongol_herdsman 10 skirmisher
+attack
+goto me1_castle
 
 def mongols_nightmare
 defeat_score 200
@@ -445,11 +588,31 @@ label mn1
 get 12 mongol_herdsman
 get 4 militia 6 aoe_archer 3 scout_cavalry
 attack
+if_attacked goto mn1_hold
+if_enemy cavalry goto mn1_spears
+if_enemy archer_unit goto mn1_skirm
+label mn1_castle
 get 18 mongol_herdsman 8 cavalry_archer 8 aoe_knight 8 mangudai 3 battering_ram
 attack
 get 6 battering_ram 4 mangonel
 attack
 goto mn1
+
+label mn1_hold
+get 3 scouttower
+get 8 mongol_herdsman 8 spearman 4 aoe_archer
+attack
+goto mn1_castle
+
+label mn1_spears
+get 8 mongol_herdsman 10 spearman
+attack
+goto mn1_castle
+
+label mn1_skirm
+get 8 mongol_herdsman 10 skirmisher
+attack
+goto mn1_castle
 
 
 ; ======================== BYZANTINES (defense / cataphract) ========================
@@ -528,11 +691,31 @@ label ye1
 get 12 peasant
 get 6 militia 6 aoe_archer
 attack
+if_attacked goto ye1_hold
+if_enemy cavalry goto ye1_spears
+if_enemy archer_unit goto ye1_skirm
+label ye1_castle
 get 4 scouttower 16 peasant 8 aoe_knight 6 cataphract 3 battering_ram
 attack
 get 4 battering_ram 2 mangonel
 attack
 goto ye1
+
+label ye1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto ye1_castle
+
+label ye1_spears
+get 8 peasant 10 spearman
+attack
+goto ye1_castle
+
+label ye1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto ye1_castle
 
 def byzantines_nightmare
 defeat_score 200
@@ -554,11 +737,31 @@ label yn1
 get 12 peasant
 get 6 militia 6 aoe_archer
 attack
+if_attacked goto yn1_hold
+if_enemy cavalry goto yn1_spears
+if_enemy archer_unit goto yn1_skirm
+label yn1_castle
 get 4 scouttower 18 peasant 8 aoe_knight 6 cataphract 3 battering_ram
 attack
 get 6 battering_ram 4 mangonel
 attack
 goto yn1
+
+label yn1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto yn1_castle
+
+label yn1_spears
+get 8 peasant 10 spearman
+attack
+goto yn1_castle
+
+label yn1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto yn1_castle
 
 
 ; ======================== JAPANESE (infantry / samurai) ========================
@@ -637,11 +840,31 @@ label je1
 get 12 peasant
 get 8 militia 4 spearman
 attack
+if_attacked goto je1_hold
+if_enemy cavalry goto je1_spears
+if_enemy archer_unit goto je1_skirm
+label je1_castle
 get 16 peasant 8 japanese_knight 10 samurai 3 battering_ram
 attack
 get 4 battering_ram 2 mangonel
 attack
 goto je1
+
+label je1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto je1_castle
+
+label je1_spears
+get 8 peasant 10 spearman
+attack
+goto je1_castle
+
+label je1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto je1_castle
 
 def japanese_nightmare
 defeat_score 200
@@ -663,11 +886,31 @@ label jn1
 get 12 peasant
 get 8 militia 4 spearman
 attack
+if_attacked goto jn1_hold
+if_enemy cavalry goto jn1_spears
+if_enemy archer_unit goto jn1_skirm
+label jn1_castle
 get 18 peasant 8 japanese_knight 10 samurai 3 battering_ram
 attack
 get 6 battering_ram 4 mangonel
 attack
 goto jn1
+
+label jn1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto jn1_castle
+
+label jn1_spears
+get 8 peasant 10 spearman
+attack
+goto jn1_castle
+
+label jn1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto jn1_castle
 
 
 ; ======================== TEUTONS (teutonic_knight / knights) ========================
@@ -746,11 +989,31 @@ label te1
 get 12 peasant
 get 6 militia 4 scout_cavalry
 attack
+if_attacked goto te1_hold
+if_enemy cavalry goto te1_spears
+if_enemy archer_unit goto te1_skirm
+label te1_castle
 get 16 peasant 12 aoe_knight 8 teutonic_knight 3 battering_ram
 attack
 get 4 battering_ram 2 mangonel
 attack
 goto te1
+
+label te1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto te1_castle
+
+label te1_spears
+get 8 peasant 10 spearman
+attack
+goto te1_castle
+
+label te1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto te1_castle
 
 def teutons_nightmare
 defeat_score 200
@@ -772,11 +1035,31 @@ label tn1
 get 12 peasant
 get 6 militia 4 scout_cavalry
 attack
+if_attacked goto tn1_hold
+if_enemy cavalry goto tn1_spears
+if_enemy archer_unit goto tn1_skirm
+label tn1_castle
 get 18 peasant 12 aoe_knight 8 teutonic_knight 3 battering_ram
 attack
 get 6 battering_ram 4 mangonel
 attack
 goto tn1
+
+label tn1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto tn1_castle
+
+label tn1_spears
+get 8 peasant 10 spearman
+attack
+goto tn1_castle
+
+label tn1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto tn1_castle
 
 
 ; ======================== VIKINGS (berserk / infantry) ========================
@@ -855,11 +1138,31 @@ label ve1
 get 12 peasant
 get 8 militia 4 spearman
 attack
+if_attacked goto ve1_hold
+if_enemy cavalry goto ve1_spears
+if_enemy archer_unit goto ve1_skirm
+label ve1_castle
 get 16 peasant 8 viking_knight 10 berserk 3 battering_ram
 attack
 get 4 battering_ram 2 mangonel
 attack
 goto ve1
+
+label ve1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto ve1_castle
+
+label ve1_spears
+get 8 peasant 10 spearman
+attack
+goto ve1_castle
+
+label ve1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto ve1_castle
 
 def vikings_nightmare
 defeat_score 200
@@ -881,11 +1184,31 @@ label vn1
 get 12 peasant
 get 8 militia 4 spearman
 attack
+if_attacked goto vn1_hold
+if_enemy cavalry goto vn1_spears
+if_enemy archer_unit goto vn1_skirm
+label vn1_castle
 get 18 peasant 8 viking_knight 10 berserk 3 battering_ram
 attack
 get 6 battering_ram 4 mangonel
 attack
 goto vn1
+
+label vn1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto vn1_castle
+
+label vn1_spears
+get 8 peasant 10 spearman
+attack
+goto vn1_castle
+
+label vn1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto vn1_castle
 
 
 ; ======================== VIETNAMESE (rattan_archer / archers) ========================
@@ -964,11 +1287,31 @@ label ne1
 get 12 peasant
 get 4 militia 8 aoe_archer
 attack
+if_attacked goto ne1_hold
+if_enemy cavalry goto ne1_spears
+if_enemy archer_unit goto ne1_skirm
+label ne1_castle
 get 16 peasant 8 vietnamese_knight 8 rattan_archer 3 battering_ram
 attack
 get 4 battering_ram 2 mangonel
 attack
 goto ne1
+
+label ne1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto ne1_castle
+
+label ne1_spears
+get 8 peasant 10 spearman
+attack
+goto ne1_castle
+
+label ne1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto ne1_castle
 
 def vietnamese_nightmare
 defeat_score 200
@@ -990,11 +1333,31 @@ label nn1
 get 12 peasant
 get 4 militia 8 aoe_archer
 attack
+if_attacked goto nn1_hold
+if_enemy cavalry goto nn1_spears
+if_enemy archer_unit goto nn1_skirm
+label nn1_castle
 get 18 peasant 8 vietnamese_knight 8 rattan_archer 3 battering_ram
 attack
 get 6 battering_ram 4 mangonel
 attack
 goto nn1
+
+label nn1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto nn1_castle
+
+label nn1_spears
+get 8 peasant 10 spearman
+attack
+goto nn1_castle
+
+label nn1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto nn1_castle
 
 
 ; ======================== PORTUGUESE (organ_gun / navy-ready) ========================
@@ -1073,11 +1436,31 @@ label pe1
 get 12 portuguese_villager
 get 4 militia 6 aoe_archer
 attack
+if_attacked goto pe1_hold
+if_enemy cavalry goto pe1_spears
+if_enemy archer_unit goto pe1_skirm
+label pe1_castle
 get 16 portuguese_villager 6 portuguese_knight 8 organ_gun 3 battering_ram
 attack
 get 4 battering_ram 2 mangonel
 attack
 goto pe1
+
+label pe1_hold
+get 3 scouttower
+get 8 portuguese_villager 8 spearman 4 aoe_archer
+attack
+goto pe1_castle
+
+label pe1_spears
+get 8 portuguese_villager 10 spearman
+attack
+goto pe1_castle
+
+label pe1_skirm
+get 8 portuguese_villager 10 skirmisher
+attack
+goto pe1_castle
 
 def portuguese_nightmare
 defeat_score 200
@@ -1099,11 +1482,31 @@ label pn1
 get 12 portuguese_villager
 get 4 militia 6 aoe_archer
 attack
+if_attacked goto pn1_hold
+if_enemy cavalry goto pn1_spears
+if_enemy archer_unit goto pn1_skirm
+label pn1_castle
 get 18 portuguese_villager 6 portuguese_knight 8 organ_gun 3 battering_ram
 attack
 get 6 battering_ram 4 mangonel
 attack
 goto pn1
+
+label pn1_hold
+get 3 scouttower
+get 8 portuguese_villager 8 spearman 4 aoe_archer
+attack
+goto pn1_castle
+
+label pn1_spears
+get 8 portuguese_villager 10 spearman
+attack
+goto pn1_castle
+
+label pn1_skirm
+get 8 portuguese_villager 10 skirmisher
+attack
+goto pn1_castle
 
 
 ; ======================== AZTECS (jaguar / eagles / monks) ========================
@@ -1182,11 +1585,31 @@ label ze1
 get 12 aztec_villager
 get 4 militia 4 aztec_eagle_scout 4 aoe_archer
 attack
+if_attacked goto ze1_hold
+if_enemy cavalry goto ze1_spears
+if_enemy archer_unit goto ze1_skirm
+label ze1_castle
 get 16 aztec_villager 10 eagle_warrior 8 jaguar_warrior 3 battering_ram
 attack
 get 4 battering_ram 2 mangonel
 attack
 goto ze1
+
+label ze1_hold
+get 3 scouttower
+get 8 aztec_villager 8 spearman 4 aoe_archer
+attack
+goto ze1_castle
+
+label ze1_spears
+get 8 aztec_villager 10 spearman
+attack
+goto ze1_castle
+
+label ze1_skirm
+get 8 aztec_villager 10 skirmisher
+attack
+goto ze1_castle
 
 def aztecs_nightmare
 defeat_score 200
@@ -1208,11 +1631,31 @@ label zn1
 get 12 aztec_villager
 get 4 militia 4 aztec_eagle_scout 4 aoe_archer
 attack
+if_attacked goto zn1_hold
+if_enemy cavalry goto zn1_spears
+if_enemy archer_unit goto zn1_skirm
+label zn1_castle
 get 18 aztec_villager 10 eagle_warrior 8 jaguar_warrior 3 battering_ram
 attack
 get 6 battering_ram 4 mangonel
 attack
 goto zn1
+
+label zn1_hold
+get 3 scouttower
+get 8 aztec_villager 8 spearman 4 aoe_archer
+attack
+goto zn1_castle
+
+label zn1_spears
+get 8 aztec_villager 10 spearman
+attack
+goto zn1_castle
+
+label zn1_skirm
+get 8 aztec_villager 10 skirmisher
+attack
+goto zn1_castle
 
 
 ; ======================== CELTS (woad_raider / infantry-siege) ========================
@@ -1291,11 +1734,31 @@ label ke1
 get 12 peasant
 get 8 militia 4 spearman
 attack
+if_attacked goto ke1_hold
+if_enemy cavalry goto ke1_spears
+if_enemy archer_unit goto ke1_skirm
+label ke1_castle
 get 16 peasant 8 celtic_knight 10 woad_raider 3 battering_ram
 attack
 get 4 battering_ram 2 mangonel
 attack
 goto ke1
+
+label ke1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto ke1_castle
+
+label ke1_spears
+get 8 peasant 10 spearman
+attack
+goto ke1_castle
+
+label ke1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto ke1_castle
 
 def celts_nightmare
 defeat_score 200
@@ -1317,11 +1780,31 @@ label kn1
 get 12 peasant
 get 8 militia 4 spearman
 attack
+if_attacked goto kn1_hold
+if_enemy cavalry goto kn1_spears
+if_enemy archer_unit goto kn1_skirm
+label kn1_castle
 get 18 peasant 8 celtic_knight 10 woad_raider 3 battering_ram
 attack
 get 6 battering_ram 4 mangonel
 attack
 goto kn1
+
+label kn1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto kn1_castle
+
+label kn1_spears
+get 8 peasant 10 spearman
+attack
+goto kn1_castle
+
+label kn1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto kn1_castle
 
 
 ; ======================== MALIANS (gbeto / infantry-cavalry) ========================
@@ -1400,11 +1883,31 @@ label me1
 get 12 peasant
 get 8 militia 4 spearman
 attack
+if_attacked goto me1_hold
+if_enemy cavalry goto me1_spears
+if_enemy archer_unit goto me1_skirm
+label me1_castle
 get 16 peasant 8 aoe_knight 6 camel_rider 10 gbeto 3 battering_ram
 attack
 get 4 battering_ram 2 mangonel
 attack
 goto me1
+
+label me1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto me1_castle
+
+label me1_spears
+get 8 peasant 10 spearman
+attack
+goto me1_castle
+
+label me1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto me1_castle
 
 def malians_nightmare
 defeat_score 200
@@ -1426,8 +1929,28 @@ label mn1
 get 12 peasant
 get 8 militia 4 spearman
 attack
+if_attacked goto mn1_hold
+if_enemy cavalry goto mn1_spears
+if_enemy archer_unit goto mn1_skirm
+label mn1_castle
 get 18 peasant 8 aoe_knight 8 camel_rider 10 gbeto 3 battering_ram
 attack
 get 6 battering_ram 4 mangonel
 attack
 goto mn1
+
+label mn1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto mn1_castle
+
+label mn1_spears
+get 8 peasant 10 spearman
+attack
+goto mn1_castle
+
+label mn1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto mn1_castle
