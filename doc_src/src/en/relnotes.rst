@@ -5,6 +5,40 @@ Release notes
 .. contents::
 
 
+1.4.9.7
+---------
+
+**Change: flying peasants still count as land-economy workers**
+
+- **Issue**: CrazyMod elemental ``fee`` units fly. The computer only listed ground peasants in ``_workers``, so it treated the first ground villager in the rules (``serf``) as the primary worker and ``get`` recursed through ``keep`` / ``castle``, logging ``AI has trouble getting: 1 ['castle']``.
+- **Change**: Land-economy workers include ground and flying peasants, still excluding boats. With no living peasants, prefer the worker type an owned hall can train.
+- **Scope**: ``worldplayercomputer.py`` ``is_land_economy_worker`` / ``_primary_worker_type_name``; ``test_crazymod_pra1_ai.py``.
+
+**Change: computers still train after the current production building is up**
+
+- **Issue**: After the earth tower finished, the computer held ``get elemental_de_terre`` forever for a later-line ``tour_du_feu``, leaving the tower idle while stock piled up.
+- **Change**: Blanket gold/wood holds apply only when the current ``get`` line still needs a production building (AoE2 same-line siege). Later-line buildings defer a train only if that one unit would spend the stash.
+- **Scope**: ``worldplayercomputer.py`` ``_current_get_line_has_unpaid_production_building`` / ``_defer_plan_get_token``; ``test_crazymod_pra1_ai.py``.
+
+**Change: wall-walk teleport no longer crashes on allies already at the destination**
+
+- **Issue**: Dark ``a_passe_muraille`` (``effect teleportation``) called ``move_to(dest, None, None)`` on nearby allies. Units already in that square hit ``None - int`` in the charge-distance check, so the whole skill failed.
+- **Change**: Skip the charge-distance math when the same-square move has ``None`` coords. Teleport skips units already at the destination.
+- **Scope**: ``worldunit/worldcreature.py`` ``move_to``; ``worldskill.py`` ``_execute_teleportation``; ``test_teleport_skill.py``.
+
+**Change: standalone defeat no longer logs a false admin warning**
+
+- **Issue**: After a solo defeat the local player is removed from ``world.players`` (or ``client.player`` is cleared). The next ``is_admin`` check then failed and logged ``couldn't be sure if this client is the admin of the game``.
+- **Change**: If the player is gone or the list is empty, treat the client as admin and do not warn.
+- **Scope**: ``clientgame/game_interface_base.py`` ``is_admin``; ``test_is_admin_after_defeat.py``.
+
+**Change: AoE2 monk conversion uses interval rolls (rules-driven)**
+
+- **Issue**: A finished conversion channel always succeeded, with no Definitive Edition-style warmup, per-interval miss, or guaranteed convert at max time.
+- **Change**: If a skill sets ``conversion_interval``, each interval rolls ``conversion_chance`` after ``conversion_min_intervals``. Misses continue the chant (``conversion_miss``). Success is guaranteed at ``conversion_max_intervals`` unless ``conversion_fail_at_max 1`` (then ``conversion_fail``). Targets may override intervals, chance, and resist; Faith and the Teuton team bonus add intervals. Skills without ``conversion_interval`` still succeed when the channel ends.
+- **Scope**: ``world_conversion.py`` ``conversion_roll_params`` / ``conversion_roll_after_interval``; ``worldorders/skills.py``; ``mods/aoe2/rules.txt``; ``test_conversion_interval_roll.py``.
+
+
 1.4.9.6
 ---------
 
@@ -55,6 +89,12 @@ Release notes
 - **Issue**: The tree could run military ``get`` before any enemy fighter was seen. Counter inject and ``if_enemy`` need a scout; explorers already went out each tick, but production did not wait.
 - **Change**: After 6 villagers, if no combat enemy is known, the selector uses ``scout``: keep booming and sending the explorer, skip the script ``get``, and do not raid. After a sighting, or ``SCOUT_THEN_PRODUCE_MS`` (60 s), it returns to boom / attack / produce. Defend, opening eco, and age still win first.
 - **Scope**: ``soundrts/ai_brain.py`` ``_tree_scout`` / ``SCOUT_THEN_PRODUCE_MS``; ``worldplayercomputer.py`` ``_scout_sequence_started`` / ``_play_body``; ``mod/aimaking.rst``.
+
+**Change: AoE2 expert/nightmare scripts jump on scouting**
+
+- **Issue**: The engine already had ``if_enemy`` / ``if_attacked``, and vanilla ``res/ai.txt`` expert/nightmare used them; ``mods/aoe2/ai.txt`` was still one age line, so seeing cavalry or archers did not change the feudal train.
+- **Change**: Every civ's expert and nightmare, after the first feudal ``attack``: ``if_attacked`` builds scout towers and spears; ``if_enemy cavalry`` trains spears; ``if_enemy archer_unit`` trains skirmishers. Then they rejoin the castle-age line. Beginner through advanced stay linear.
+- **Scope**: ``mods/aoe2/ai.txt``; ``mod/aimaking.rst``.
 
 1.4.9.5
 ---------

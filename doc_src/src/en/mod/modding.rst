@@ -958,6 +958,37 @@ Conversion techs (rules-driven; no upgrade type-name checks)
     def town_center
     conversion_immune 1
 
+Conversion misses (interval rolls, rules-driven)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Set ``conversion_interval`` on the skill for Definitive Edition-style rolls; omit it to keep “channel ends → always succeed”::
+
+    def a_conversion
+    class skill
+    time_cost 6
+    conversion_interval 1.25
+    conversion_min_intervals 5
+    conversion_max_intervals 9
+    conversion_chance 38
+    ; conversion_fail_at_max 1   ; optional: the last interval may abort
+
+    def building
+    conversion_min_intervals 15
+    conversion_max_intervals 25
+    conversion_chance 8
+
+    def scout_cavalry
+    conversion_min_intervals 8
+    conversion_max_intervals 10
+    conversion_resist 2          ; chance becomes chance / resist
+
+    def faith
+    class upgrade
+    conversion_min_intervals_bonus 4
+    conversion_max_intervals_bonus 4
+
+Warm-up intervals do not roll. After that each interval rolls ``conversion_chance`` (divided by ``conversion_resist``). A miss keeps channeling; the skill style may set ``conversion_miss``. Success is guaranteed at max unless ``conversion_fail_at_max 1`` (then rest and play ``conversion_fail``).
+
 Use ``effect info <tts_id>`` for attributes-UI blurbs. See ``world_conversion.py``.
 
 Phase system (since 1.4.2.4)

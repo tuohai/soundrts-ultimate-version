@@ -4,6 +4,40 @@ Notas de lançamento
 
 .. contents::
 
+1.4.9.7
+--------
+
+**Mudança: camponeses voadores ainda contam como trabalhadores terrestres**
+
+- **Problema**: as ``fee`` elementais do CrazyMod voam. O computador só punha camponeses terrestres em ``_workers``, tratava o primeiro aldeão terrestre das regras (``serf``) como trabalhador principal e o ``get`` recursava por ``keep`` / ``castle``, registando ``AI has trouble getting: 1 ['castle']``.
+- **Mudança**: os trabalhadores da economia terrestre incluem camponeses de terra e voadores; barcos continuam excluídos. Sem camponeses vivos, prefere-se o tipo que um centro da cidade próprio pode treinar.
+- **Alcance**: ``worldplayercomputer.py`` ``is_land_economy_worker`` / ``_primary_worker_type_name``; ``test_crazymod_pra1_ai.py``.
+
+**Mudança: o computador ainda treina depois do edifício de produção atual estar pronto**
+
+- **Problema**: com a torre de terra pronta, o computador travava ``get elemental_de_terre`` para sempre por um ``tour_du_feu`` numa linha posterior; a torre ficava ociosa e o stock acumulava.
+- **Mudança**: a reserva total de ouro/madeira só vale se a linha ``get`` atual ainda precisa de um edifício de produção (cerco AoE2 na mesma linha). Edifícios de linhas posteriores só adiam um treino se essa unidade gastaria o stock.
+- **Alcance**: ``worldplayercomputer.py`` ``_current_get_line_has_unpaid_production_building`` / ``_defer_plan_get_token``; ``test_crazymod_pra1_ai.py``.
+
+**Mudança: o teleporte já não rebenta se aliados já estão no destino**
+
+- **Problema**: ``a_passe_muraille`` (``effect teleportation``) chamava ``move_to(destino, None, None)`` nos aliados próximos. Quem já estava nessa casa fazia ``None - int`` no cálculo da carga e a habilidade inteira falhava.
+- **Mudança**: mesmo quadrado com coordenadas ``None``: não calcula a carga. O teleporte ignora unidades já no destino.
+- **Alcance**: ``worldunit/worldcreature.py`` ``move_to``; ``worldskill.py`` ``_execute_teleportation``; ``test_teleport_skill.py``.
+
+**Mudança: uma derrota em solo já não regista um aviso falso de admin**
+
+- **Problema**: após uma derrota a solo o jogador local sai de ``world.players`` (ou ``client.player`` é limpo). O ``is_admin`` seguinte falhava e registava ``couldn't be sure if this client is the admin of the game``.
+- **Mudança**: se o jogador já não está ou a lista está vazia, trata-se como admin e não se avisa.
+- **Alcance**: ``clientgame/game_interface_base.py`` ``is_admin``; ``test_is_admin_after_defeat.py``.
+
+**Mudança: conversão de monges AoE2 usa dados por intervalo (regras)**
+
+- **Problema**: no fim do canal a conversão acertava sempre; não havia aquecimento nem falhas por intervalo ao estilo Definitive Edition, nem sucesso garantido no máximo.
+- **Mudança**: se a habilidade tem ``conversion_interval``, cada intervalo lança ``conversion_chance`` após ``conversion_min_intervals``. Uma falha continua o canto (``conversion_miss``). Em ``conversion_max_intervals`` o sucesso é garantido salvo ``conversion_fail_at_max 1`` (então ``conversion_fail``). O alvo pode mudar intervalos, probabilidade e resistência; Fé e o bónus de equipa teutão somam intervalos. Sem ``conversion_interval`` ainda acerta no fim do canal.
+- **Alcance**: ``world_conversion.py`` ``conversion_roll_params`` / ``conversion_roll_after_interval``; ``worldorders/skills.py``; ``mods/aoe2/rules.txt``; ``test_conversion_interval_roll.py``.
+
+
 1.4.9.6
 --------
 
@@ -54,6 +88,12 @@ Notas de lançamento
 - **Problema**: a árvore podia correr ``get`` militar antes de ver um lutador inimigo. Injetar counters e ``if_enemy`` precisam de scout; os exploradores já saíam a cada tick, mas a produção não esperava.
 - **Mudança**: Depois de 6 aldeões, se não há inimigo de combate conhecido, o seletor usa ``scout``: continua o eco e envia o explorador, não executa o ``get`` do script e não ataca. Depois de avistar, ou ``SCOUT_THEN_PRODUCE_MS`` (60 s), volta a eco / atacar / produzir. Defender, eco inicial e era continuam primeiro.
 - **Alcance**: ``soundrts/ai_brain.py`` ``_tree_scout`` / ``SCOUT_THEN_PRODUCE_MS``; ``worldplayercomputer.py`` ``_scout_sequence_started`` / ``_play_body``; ``mod/aimaking.rst``.
+
+**Mudança: scripts expert/nightmare de AoE2 saltam conforme o reconhecimento**
+
+- **Problema**: o motor já tinha ``if_enemy`` / ``if_attacked`` e o expert/nightmare vanilla de ``res/ai.txt`` usava; ``mods/aoe2/ai.txt`` continuava uma linha por idade, ver cavalaria ou arqueiros não mudava o feudal.
+- **Mudança**: Em cada civ, expert e nightmare, após o primeiro ``attack`` feudal: ``if_attacked`` faz torres de vigia e lanceiros; ``if_enemy cavalry`` treina lanceiros; ``if_enemy archer_unit`` treina skirmishers. Depois voltam à linha de Castelo. Beginner até advanced continuam lineares.
+- **Alcance**: ``mods/aoe2/ai.txt``; ``mod/aimaking.rst``.
 
 1.4.9.5
 --------

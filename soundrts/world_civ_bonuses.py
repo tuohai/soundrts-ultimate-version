@@ -7,6 +7,8 @@ Race fields::
     team_farm_food_pct 10
     reveal_enemy_town_centers town_center
     team_conversion_channel_bonus_pct 50
+    team_conversion_min_intervals_bonus 3
+    team_conversion_max_intervals_bonus 1
     team_share_research <tech> [host types…]
     herdable_steal_ignore_guards 1
     herdable_steal_protected 1
@@ -411,6 +413,28 @@ def team_conversion_channel_bonus_pct(player):
             best, faction_int_attr(ally, "team_conversion_channel_bonus_pct", 0)
         )
     return best
+
+
+def _team_conversion_interval_bonus(player, self_attr, team_attr):
+    if player is None:
+        return 0
+    best = faction_int_attr(player, self_attr, 0)
+    allies = getattr(player, "allied_victory", None) or (player,)
+    for ally in allies:
+        best = max(best, faction_int_attr(ally, team_attr, 0))
+    return best
+
+
+def team_conversion_min_intervals_bonus(player):
+    return _team_conversion_interval_bonus(
+        player, "conversion_min_intervals_bonus", "team_conversion_min_intervals_bonus"
+    )
+
+
+def team_conversion_max_intervals_bonus(player):
+    return _team_conversion_interval_bonus(
+        player, "conversion_max_intervals_bonus", "team_conversion_max_intervals_bonus"
+    )
 
 
 def herdable_steal_ignore_guards(player):

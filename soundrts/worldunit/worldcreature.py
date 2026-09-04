@@ -268,11 +268,19 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
         old_place = self.place
         old_x = self.x
         old_y = self.y
-        if old_place is place:
+        if (
+            old_place is place
+            and x is not None
+            and y is not None
+            and (
+                getattr(self, "charge_mdg_dist", 0) > 0
+                or getattr(self, "charge_rdg_dist", 0) > 0
+            )
+        ):
             old_dist_sq = (x - old_x) ** 2 + (y - old_y) ** 2
             # 如果移动距离超过冲锋距离的平方，重置冲锋状态
-            charge_dist_threshold = max(self.charge_mdg_dist, self.charge_rdg_dist) if hasattr(self, 'charge_mdg_dist') else 0
-            if charge_dist_threshold > 0 and old_dist_sq > charge_dist_threshold**2:
+            charge_dist_threshold = max(self.charge_mdg_dist, self.charge_rdg_dist)
+            if old_dist_sq > charge_dist_threshold**2:
                 self.reset_charge_state(force=True)
 
         # 如果o为None，使用默认值90
@@ -950,6 +958,12 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     conversion_tech_gated = 0  # caster uses researched allow/rest upgrade attrs
     conversion_cleric = 0  # target needs conversion_allows_monk when caster is gated
     conversion_immune = 0  # never convertible even with conversion_allows_building
+    conversion_interval = 0
+    conversion_min_intervals = 0
+    conversion_max_intervals = 0
+    conversion_chance = 0
+    conversion_resist = 0
+    conversion_fail_at_max = 0
     mdg_targets = ["ground"]
     rdg_targets = ["ground"]
     mdg_bang_targets = ["ground"]

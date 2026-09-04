@@ -369,6 +369,10 @@ class armor
 def building
 class building
 menace 0
+; DE: first roll at CI 15, guaranteed at 25 (~8% per interval)
+conversion_min_intervals 15
+conversion_max_intervals 25
+conversion_chance 8
 
 
 ; ===========================================================================
@@ -842,10 +846,9 @@ class upgrade
 cost 750 0 550 0
 time_cost 60
 requirements monastery imperial_age
-; DE Faith: ~+67% duration plus flat 2s → scale 5/3 + 2s
-conversion_channel_scale_num 5
-conversion_channel_scale_den 3
-conversion_channel_bonus_time 2
+; DE: +4 min / +4 max conversion intervals (after Devotion)
+conversion_min_intervals_bonus 4
+conversion_max_intervals_bonus 4
 research_stack_hp 1
 effect info 8514
 
@@ -1656,6 +1659,10 @@ mdg_vs camel_rider 6
 can_auto_explore 1
 can_use_tech chivalry forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry conscription farimba
 can_upgrade_to light_cavalry
+; DE scout line: later first/last CI + resist
+conversion_min_intervals 8
+conversion_max_intervals 10
+conversion_resist 2
 def light_cavalry
 is_a scout_cavalry
 cost 50 0 150 0
@@ -1935,6 +1942,10 @@ mdg_vs siege_unit 3
 ; DE Auto Scout (update 111772): eagle scout line
 can_auto_explore 1
 can_upgrade_to eagle_warrior
+; DE eagle line: same conversion resist as scouts
+conversion_min_intervals 8
+conversion_max_intervals 10
+conversion_resist 2
 can_use_tech forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor tracking squires arson conscription chieftains
 ; Meso Dark Age eagle (Aztecs/Maya/Inca): trainable without Feudal
 def aztec_eagle_scout
@@ -4509,11 +4520,16 @@ can_research redemption atonement herbal_medicine heresy sanctity fervor faith i
 can_use_tech herbal_medicine masonry architecture town_watch town_patrol
 
 ; AoE2 conversion (mana ≈ DE faith bar)
-; time_cost = base unit channel (~6s); resist upgrades extend via conversion_channel_*
+; Interval rolls (DE): ~1.25s CI, first roll at 5, guaranteed at 9, 38%/CI
+; Resist upgrades add conversion_min/max_intervals_bonus
 def a_conversion
 class skill
 mana_cost 100
 time_cost 6
+conversion_interval 1.25
+conversion_min_intervals 5
+conversion_max_intervals 9
+conversion_chance 38
 effect conversion
 effect_target ask
 effect_range 9
@@ -5516,6 +5532,8 @@ on_phase dark_age heal_range 8 monk
 on_phase dark_age transport_capacity 5 scouttower
 grant_tech_on_phase castle_age murder_holes herbal_medicine
 team_conversion_channel_bonus_pct 50
+team_conversion_min_intervals_bonus 3
+team_conversion_max_intervals_bonus 1
 beginner teutons_beginner
 intermediate teutons_intermediate
 advanced teutons_advanced

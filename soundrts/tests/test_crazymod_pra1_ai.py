@@ -19,7 +19,7 @@ with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     from soundrts import config
     from soundrts.definitions import VIRTUAL_TIME_INTERVAL, rules
-    from soundrts.lib.nofloat import PRECISION
+    from soundrts.lib.nofloat import PRECISION, to_int
     from soundrts.lib.resource import res
     from soundrts.world import World
     from soundrts.worldclient import DirectClient, DummyClient
@@ -275,3 +275,141 @@ def test_vermine_computer_uses_insect_units(crazymod_loaded):
         "vermine AI never produced insect units; "
         f"units={_type_names(comp)} line={comp._plan[comp._line_nb] if comp._plan else ''}"
     )
+
+
+def test_elementale_fee_is_land_economy_worker(crazymod_loaded):
+    from soundrts.worldplayercomputer import is_ground_worker, is_land_economy_worker
+
+    fee_cls = rules.unit_class("fee")
+    assert fee_cls is not None
+    fairy = object.__new__(fee_cls)
+    fairy.airground_type = "air"
+    assert not is_ground_worker(fairy)
+    assert is_land_economy_worker(fairy)
+
+
+def test_elementale_primary_worker_is_fee_not_serf(crazymod_loaded):
+    """Flying fairies must count as the elemental AI's workers, not serf/keep/castle."""
+    fee_cls = rules.unit_class("fee")
+    fairy = object.__new__(fee_cls)
+    fairy.id = 1
+    fairy.type_name = "fee"
+    fairy.airground_type = "air"
+    fairy.orders = []
+    fairy.can_use = []
+    hall = type(
+        "H",
+        (),
+        {
+            "id": 2,
+            "type_name": "cercle_des_elements",
+            "is_a_building": True,
+            "place": object(),
+            "orders": [],
+            "can_use": [],
+        },
+    )()
+    ai = _bare_ai(faction="elementale")
+    ai.units = [hall, fairy]
+    ai._update_effect_users_and_workers()
+    assert any(getattr(u, "type_name", None) == "fee" for u in ai._workers)
+    assert ai._primary_worker_type_name() == "fee"
+    assert "cercle_des_elements" in ai._main_base_type_names()
+
+
+def test_elementale_hall_alone_still_picks_fee(crazymod_loaded):
+    """If every fairy died, still train fee from the circle — not serf via keep."""
+    hall = type("H", (), {"type_name": "cercle_des_elements", "is_a_building": True})()
+    ai = _bare_ai(faction="elementale")
+    ai.units = [hall]
+    ai._workers = []
+    assert ai._primary_worker_type_name() == "fee"
+
+
+def _elementale_after_earth_tower(plan, resources):
+    ai = _bare_ai(faction="elementale", plan=list(plan))
+
+    def _nb(n):
+        if n in ("tour_de_la_terre", "cercle_des_elements"):
+            return 1
+        return 0
+
+    ai.nb = _nb
+    ai.future_nb = lambda n: _nb(n)
+    ai.resources = list(resources)
+    return ai
+
+
+def test_elementale_trains_earth_units_after_tower(crazymod_loaded):
+    """Do not freeze earth soldiers for a later-line fire tower when stock covers both."""
+    ai = _elementale_after_earth_tower(
+        [
+            "get elemental_de_terre",
+            "get tour_du_feu",
+            "get 2 elemental_de_feu",
+        ],
+        [to_int("400"), to_int("400"), 0, 0],
+    )
+    assert not ai._current_get_line_has_unpaid_production_building()
+    assert not ai._defer_plan_get_token("elemental_de_terre", saving_for_feudal=False)
+
+
+def test_elementale_holds_earth_units_if_fire_tower_unaffordable(crazymod_loaded):
+    """Still bank wood for a later fire tower when one earth unit would spend it."""
+    ai = _elementale_after_earth_tower(
+        [
+            "get elemental_de_terre",
+            "get tour_du_feu",
+            "get 2 elemental_de_feu",
+        ],
+        [to_int("400"), to_int("50"), 0, 0],
+    )
+    assert ai._defer_plan_get_token("elemental_de_terre", saving_for_feudal=False)
+
+
+def test_elementale_intermediate_line_trains_after_tower(crazymod_loaded):
+    """Random later branches (air/fire) must not freeze ``get 4 elemental_de_terre``."""
+    ai = _elementale_after_earth_tower(
+        [
+            "get 4 elemental_de_terre",
+            "get 5 elemental_d_air",
+            "get 5 elemental_de_feu",
+        ],
+        [to_int("400"), to_int("400"), 0, 0],
+    )
+    assert not ai._defer_plan_get_token("elemental_de_terre", saving_for_feudal=False)
+
+
+def test_all_crazymod_factions_keep_own_peasant(crazymod_loaded):
+    """Living race peasants stay the primary worker; do not fall through to serf."""
+    for fac in rules.factions:
+        peasant = (rules.get(fac, "peasant") or [None])[0]
+        hall = (rules.get(fac, "townhall") or [None])[0]
+        assert peasant and hall, fac
+        pcls = rules.unit_class(peasant)
+        assert pcls is not None, peasant
+        w = object.__new__(pcls)
+        w.id = 1
+        w.type_name = peasant
+        w.airground_type = getattr(pcls, "airground_type", "ground")
+        w.orders = []
+        w.can_use = []
+        h = type(
+            "H",
+            (),
+            {
+                "id": 2,
+                "type_name": hall,
+                "is_a_building": True,
+                "place": object(),
+                "orders": [],
+                "can_use": [],
+            },
+        )()
+        ai = _bare_ai(faction=fac)
+        ai.units = [h, w]
+        ai._update_effect_users_and_workers()
+        assert peasant in [
+            getattr(u, "type_name", None) for u in ai._workers
+        ], fac
+        assert ai._primary_worker_type_name() == peasant, fac

@@ -42,6 +42,48 @@ class UseOrder(ComplexOrder):
             self.unit.notify("casting")
             self._previous_completeness = c
 
+    def _tick_conversion_roll(self):
+        """Advance DE-style conversion intervals. True = succeed now."""
+        from ..world_conversion import conversion_roll_after_interval
+
+        params = getattr(self, "_conversion_roll", None)
+        if params is None:
+            return False
+        interval = int(params.interval or 0)
+        if interval <= 0:
+            return False
+        self._conv_accum = int(getattr(self, "_conv_accum", 0) or 0) + VIRTUAL_TIME_INTERVAL
+        rng = getattr(self.world, "random", None)
+        skill_name = getattr(self.type, "type_name", "") or ""
+        while self._conv_accum >= interval:
+            self._conv_accum -= interval
+            self._conv_ci = int(getattr(self, "_conv_ci", 0) or 0) + 1
+            result = conversion_roll_after_interval(params, self._conv_ci, rng)
+            if result == "success":
+                return True
+            if result == "fail":
+                self._conversion_attempt_failed = True
+                return False
+            if result == "miss":
+                self.unit.notify("conversion_miss,%s" % skill_name)
+        return False
+
+    def _finish_failed_conversion(self):
+        """Whole conversion attempt failed at max interval (``conversion_fail_at_max``)."""
+        from ..worldskill import Skill as _Skill
+
+        if any(self.type.cost):
+            self.player.unpay(self.type.cost)
+        _Skill.apply_conversion_mana_costs(
+            self.unit, self.target, self.type.mana_cost
+        )
+        self.unit.add_cooldown(self.type)
+        self.unit.notify(
+            "conversion_fail,%s" % getattr(self.type, "type_name", ""),
+            universal=self.type.universal_notification,
+        )
+        self.mark_as_complete()
+
     def _ready_duration(self):
         ready = getattr(self.type, "ready", 0)
         if isinstance(ready, list):
@@ -206,6 +248,10 @@ class UseOrder(ComplexOrder):
                 self.is_casting = False
                 self.cast_time = 0
                 self._conversion_channel_started = False
+                self._conversion_roll = None
+                self._conv_ci = 0
+                self._conv_accum = 0
+                self._conversion_attempt_failed = False
                 self.move_to_or_fail(self.target)
                 return
             
@@ -213,8 +259,17 @@ class UseOrder(ComplexOrder):
         if self.is_casting:
             if self.cast_time > 0:
                 self.cast_time -= VIRTUAL_TIME_INTERVAL
-                self._notify_casting_progress()
-                return  # 继续施法
+                if is_conversion and self._tick_conversion_roll():
+                    self.cast_time = 0
+                    self.is_casting = False
+                elif getattr(self, "_conversion_attempt_failed", False):
+                    self.is_casting = False
+                    self.cast_time = 0
+                    self._finish_failed_conversion()
+                    return
+                else:
+                    self._notify_casting_progress()
+                    return  # 继续施法
             self.is_casting = False  # 施法完成
             
         # 使用技能类的is_cast_necessary方法检查是否需要释放
@@ -252,6 +307,14 @@ class UseOrder(ComplexOrder):
             self._cast_duration = self.cast_time
             self.is_casting = True
             self._conversion_channel_started = True
+            from ..world_conversion import conversion_roll_params
+
+            self._conversion_roll = conversion_roll_params(
+                self.unit, self.target, self.type
+            )
+            self._conv_ci = 0
+            self._conv_accum = 0
+            self._conversion_attempt_failed = False
             self.unit.notify("casting")
             return
         

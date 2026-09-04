@@ -943,6 +943,37 @@ Effects (class effect, since 1.4.1.7)
     def town_center
     conversion_immune 1       ; 即使有 allows_building 也不可转化
 
+转化失败（间隔掷骰，规则驱动）
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+技能写 ``conversion_interval`` 后按决定版间隔掷骰；不写则仍是读条结束必成::
+
+    def a_conversion
+    class skill
+    time_cost 6
+    conversion_interval 1.25
+    conversion_min_intervals 5
+    conversion_max_intervals 9
+    conversion_chance 38
+    ; conversion_fail_at_max 1   ; 可选：上限那拍也可整段失败
+
+    def building
+    conversion_min_intervals 15
+    conversion_max_intervals 25
+    conversion_chance 8
+
+    def scout_cavalry
+    conversion_min_intervals 8
+    conversion_max_intervals 10
+    conversion_resist 2          ; 概率变为 chance / resist
+
+    def faith
+    class upgrade
+    conversion_min_intervals_bonus 4
+    conversion_max_intervals_bonus 4
+
+热身间隔不掷骰；之后每拍按 ``conversion_chance``（再除以 ``conversion_resist``）。未到上限失败则继续念咒，并可在技能 ``style.txt`` 写 ``conversion_miss``。上限默认必成；``conversion_fail_at_max 1`` 时上限失败会休息并播 ``conversion_fail``。
+
 属性界面可读说明仍用 ``effect info <tts_id>``。实现见 ``world_conversion.py``。
 
 Phase system (since 1.4.2.4)

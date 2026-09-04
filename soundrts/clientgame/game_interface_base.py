@@ -409,9 +409,19 @@ class GameInterface(AttributesInterface):
         return self._get_tps() / normal_speed_tps
 
     def is_admin(self):
+        # After a standalone defeat the local player is removed from
+        # world.players (or client.player is cleared). That is expected;
+        # do not warn. Empty/missing list: treat as admin (same as before).
+        player = self.player
+        if player is None:
+            return True
+        world = getattr(player, "world", None)
+        players = getattr(world, "players", None)
+        if not players:
+            return True
         try:
-            return self.player.world.players[0] is self.player
-        except:
+            return players[0] is player
+        except Exception:
             warning("couldn't be sure if this client is the admin of the game")
             return True
 

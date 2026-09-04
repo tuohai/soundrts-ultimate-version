@@ -632,3 +632,23 @@ class EntityViewAudio:
             return
         s = random.choice(st)
         self.launch_alert(s)
+
+    def on_conversion_miss(self, skill=None):
+        st = None
+        if skill:
+            st = style.get(skill, "conversion_miss", warn_if_not_found=False)
+        if not st:
+            st = style.get(self.type_name, "conversion_miss", warn_if_not_found=False)
+        if not st:
+            return
+        self.launch_alert(random.choice(st))
+
+    def on_conversion_fail(self, skill=None):
+        st = None
+        if skill:
+            st = style.get(skill, "conversion_fail", warn_if_not_found=False)
+        if not st:
+            st = style.get(self.type_name, "conversion_fail", warn_if_not_found=False)
+        if not st:
+            return
+        self.launch_alert(random.choice(st))

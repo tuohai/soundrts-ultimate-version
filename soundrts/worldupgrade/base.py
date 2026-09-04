@@ -42,6 +42,9 @@ class Upgrade(CostEffectsMixin, AttributeEffectsMixin, ProductionEffectsMixin, G
     conversion_channel_scale_den = 0
     conversion_channel_bonus_pct = 0
     conversion_channel_bonus_time = 0
+    conversion_min_intervals_bonus = 0
+    conversion_max_intervals_bonus = 0
+    conversion_resist = 0
     
     # 定义必须使用整数的属性集合
     integer_stats = {'hp', 'hp_max', 'minimal_damage', 'population_cost', 'time_cost', 'resource_volume_max'}

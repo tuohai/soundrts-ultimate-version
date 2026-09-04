@@ -37,6 +37,12 @@ class Skill(CreatureAttributes):  # or UnitOption or UnitMenuItem or ActiveSkill
     rdg_trigger_rate = 0
     hp_threshold = 0
     trigger_condition = ""
+    conversion_interval = 0
+    conversion_min_intervals = 0
+    conversion_max_intervals = 0
+    conversion_chance = 0
+    conversion_resist = 0
+    conversion_fail_at_max = 0
 
     # 战斗属性默认值（与单位 rules 语法相同；非零值在释放时覆盖施法者）
     mdg = 0
@@ -557,18 +563,29 @@ class Skill(CreatureAttributes):  # or UnitOption or UnitMenuItem or ActiveSkill
     @classmethod
     def _execute_teleportation(cls, caster, target, world):
         """传送技能处理"""
-        # 获取传送范围内的单位
+        if target is None or world is None:
+            return False
+        if getattr(caster, "x", None) is None or getattr(caster, "y", None) is None:
+            return False
+        dest = target
+        if not hasattr(dest, "can_receive"):
+            dest = getattr(dest, "place", None)
+        if dest is None or not hasattr(dest, "can_receive"):
+            return False
         units = world.get_objects(
             caster.x, caster.y, cls.effect_radius,
-            filter=lambda x: x.player is caster.player and getattr(x, 'is_teleportable', True)
+            filter=lambda x: (
+                x.player is caster.player
+                and getattr(x, "is_teleportable", True)
+                and getattr(x, "x", None) is not None
+                and getattr(x, "y", None) is not None
+            ),
         )
-        
-        if not hasattr(target, "can_receive"):
-            target = target.place
-            
         for u in units:
-            if target.can_receive(u.airground_type, unit=u):
-                u.move_to(target, None, None)
+            if getattr(u, "place", None) is dest:
+                continue
+            if dest.can_receive(u.airground_type, unit=u):
+                u.move_to(dest, None, None)
         return True
 
     @classmethod
@@ -673,12 +690,21 @@ class Skill(CreatureAttributes):  # or UnitOption or UnitMenuItem or ActiveSkill
     def conversion_channel_time(cls, caster, target, skill_cls=None):
         """Conversion channel length (ms / PRECISION units).
 
-        Base unit ~6s; siege/buildings longer; researched resist attrs on the
-        target's owner lengthen the channel (``conversion_channel_*``).
+        Interval-roll skills last ``max_intervals * conversion_interval``
+        (may finish early on a successful roll). Otherwise: base unit
+        ``time_cost`` (~6s); siege/buildings longer; researched resist
+        attrs on the target's owner lengthen the channel.
         """
         from .lib.nofloat import PRECISION
-        from .world_conversion import apply_conversion_channel_resist
+        from .world_conversion import (
+            apply_conversion_channel_resist,
+            conversion_roll_params,
+        )
         from .worldunit.worldcreature import Building, BuildingSite
+
+        roll = conversion_roll_params(caster, target, skill_cls)
+        if roll is not None:
+            return max(int(roll.interval) * int(roll.max_ci), PRECISION)
 
         base = getattr(skill_cls, "time_cost", 0) if skill_cls is not None else 0
         if not base:

@@ -19,14 +19,14 @@ def _section_1496(lang: str) -> str:
 
 
 def test_version_is_1496():
-    assert 'VERSION = "1.4.9.6"' in _source("soundrts", "version.py")
+    # 1.4.9.6 notes remain after later bumps; current VERSION is owned by 1.4.9.7+.
+    assert "1.4.9.6" in _source("doc_src", "src", "zh", "relnotes.rst")
 
 
 def test_all_relnotes_have_1496_heading():
     for lang in ("zh", "en", "es", "it", "pt-BR"):
         src = _source("doc_src", "src", lang, "relnotes.rst")
         assert src.index("1.4.9.6") < src.index("1.4.9.5"), lang
-        assert "1.4.9.7" not in src.split("1.4.9.5")[0], lang
 
 
 def test_zh_relnotes_1496_session_topics():
@@ -57,6 +57,8 @@ def test_zh_relnotes_1496_session_topics():
     assert "_tree_scout" in s
     assert "SCOUT_THEN_PRODUCE_MS" in s
     assert "_scout_sequence_started" in s
+    assert "mods/aoe2/ai.txt" in s
+    assert "archer_unit" in s
 
 
 def test_en_es_it_pt_relnotes_1496_session_topics():
@@ -88,6 +90,8 @@ def test_en_es_it_pt_relnotes_1496_session_topics():
         assert "_tree_scout" in s, lang
         assert "SCOUT_THEN_PRODUCE_MS" in s, lang
         assert "_scout_sequence_started" in s, lang
+        assert "mods/aoe2/ai.txt" in s, lang
+        assert "archer_unit" in s, lang
 
 
 def test_vanilla_expert_nightmare_have_scout_jumps():
@@ -98,3 +102,13 @@ def test_vanilla_expert_nightmare_have_scout_jumps():
     assert "if_attacked goto nm_hold" in src
     assert "if_enemy dragon goto nm_air" in src
     assert "if_enemy knight goto nm_anti_cav" in src
+
+
+def test_aoe2_expert_nightmare_have_scout_jumps():
+    src = _source("mods", "aoe2", "ai.txt")
+    assert "if_attacked goto be1_hold" in src
+    assert "if_enemy cavalry goto be1_spears" in src
+    assert "if_enemy archer_unit goto be1_skirm" in src
+    assert "if_attacked goto bn1_hold" in src
+    assert "if_enemy cavalry goto zn1_spears" in src
+    assert "if_enemy archer_unit goto me1_skirm" in src

@@ -4,6 +4,40 @@
 .. contents::
 
 
+1.4.9.7
+---------
+
+**改进：飞行农民仍算电脑的陆地工人**
+
+- **问题**：疯狂模组元素阵营的 ``fee`` 是飞行农民。电脑只把地面农民算进 ``_workers``，结果把规则里第一个地面农民 ``serf`` 当成主工人，``get`` 递归追 ``keep`` / ``castle``，日志出现 ``AI has trouble getting: 1 ['castle']``。
+- **改进**：陆地经济工人包括地面和飞行农民，仍排除船。没有活着的农民时，优先选已有大厅能训练的那种工人。
+- **范围**：``worldplayercomputer.py`` ``is_land_economy_worker`` / ``_primary_worker_type_name``；``test_crazymod_pra1_ai.py``。
+
+**改进：电脑造好当前训练建筑后仍会出兵**
+
+- **问题**：土塔造好后，电脑为后面剧本里的 ``tour_du_feu`` 一直卡住 ``get elemental_de_terre``，塔空闲、资源堆着也不训练。
+- **改进**：只有当前 ``get`` 行还缺生产建筑时才一律存金木（帝国时代同行攻城器）。后面行的建筑只在这一训会把金木花到造不起时才暂缓。
+- **范围**：``worldplayercomputer.py`` ``_current_get_line_has_unpaid_production_building`` / ``_defer_plan_get_token``；``test_crazymod_pra1_ai.py``。
+
+**改进：穿墙传送不再因已在目标格的友军崩溃**
+
+- **问题**：暗黑 ``a_passe_muraille``（``effect teleportation``）会对范围内友军 ``move_to(目标格, None, None)``。已在目标格的单位走冲锋距离计算时变成 ``None - int``，整段技能失败。
+- **改进**：同格且坐标为 ``None`` 时跳过冲锋距离；传送跳过已经在目标格的单位。
+- **范围**：``worldunit/worldcreature.py`` ``move_to``；``worldskill.py`` ``_execute_teleportation``；``test_teleport_skill.py``。
+
+**改进：单机被击败后不再误报房主警告**
+
+- **问题**：单机被击败后本地玩家会从 ``world.players`` 里摘掉（或 ``client.player`` 被清空）。界面再查 ``is_admin`` 会踩空，打出 ``couldn't be sure if this client is the admin of the game``。
+- **改进**：玩家已不在列表或客户端已清空时按房主处理，不再警告。
+- **范围**：``clientgame/game_interface_base.py`` ``is_admin``；``test_is_admin_after_defeat.py``。
+
+**新增：帝国2僧侣转化按间隔掷骰（规则驱动）**
+
+- **问题**：转化读条结束必定成功，没有决定版那种热身后每拍可能失败、直到上限才保证转成。
+- **改进**：技能写 ``conversion_interval`` 后按间隔掷 ``conversion_chance``；未到 ``conversion_max_intervals`` 可失败并继续（``conversion_miss`` 音效）。上限默认必成；``conversion_fail_at_max 1`` 时上限也可整段失败（``conversion_fail``）。目标可覆盖间隔、概率、抗性；信念与条顿组队加间隔。未写 ``conversion_interval`` 的模组仍是读完必成。
+- **范围**：``world_conversion.py`` ``conversion_roll_params`` / ``conversion_roll_after_interval``；``worldorders/skills.py``；``mods/aoe2/rules.txt``；``test_conversion_interval_roll.py``。
+
+
 1.4.9.6
 ---------
 
@@ -54,6 +88,12 @@
 - **问题**：树会在没看见敌方战斗单位时就念军事 ``get``。克制补训和 ``if_enemy`` 要先侦察；斥候每拍都会派，但造兵不等它。
 - **改进**：农民满 6 之后，若还没见过敌方战斗单位，选择器走 ``scout``：继续补农和派斥候，不念剧本 ``get``、不往外打。看见敌人，或等满 ``SCOUT_THEN_PRODUCE_MS``（60 秒）后，再回到补农 / 进攻 / 造兵。回防、开局补农、进时代仍优先。
 - **范围**：``soundrts/ai_brain.py`` ``_tree_scout`` / ``SCOUT_THEN_PRODUCE_MS``；``worldplayercomputer.py`` ``_scout_sequence_started`` / ``_play_body``；``mod/aimaking.rst``。
+
+**新增：帝国2专家/噩梦剧本按侦察跳转**
+
+- **问题**：引擎已有 ``if_enemy`` / ``if_attacked``，原版 ``res/ai.txt`` 专家/噩梦会跳；``mods/aoe2/ai.txt`` 仍是一条时代线，看见骑兵或弓也不会改封建造兵。
+- **改进**：各文明专家、噩梦在第一波封建 ``attack`` 之后：``if_attacked`` 去造警戒塔和枪兵；``if_enemy cavalry`` 去造枪兵；``if_enemy archer_unit`` 去造矛兵。然后回到城堡时代那一行。初级到高级仍是直线剧本。
+- **范围**：``mods/aoe2/ai.txt``；``mod/aimaking.rst``。
 
 1.4.9.5
 ---------

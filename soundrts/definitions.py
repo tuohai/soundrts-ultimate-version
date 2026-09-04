@@ -893,6 +893,7 @@ _precision_properties = {
     "mana_start",
     "time_cost",
     "conversion_channel_bonus_time",  # upgrade: flat seconds added to conversion channel
+    "conversion_interval",  # skill: seconds per conversion interval (0 = off)
     "change_time",     # 单位变形所需时间
     "larva_spawn_time",  # 单位生成点：生成间隔（秒；配合 spawns_unit）
     "unpack_time",  # 架设时长（秒；PRECISION ms；packable 单位）
@@ -1357,6 +1358,15 @@ class Rules(_Definitions):
         "conversion_channel_scale_num",  # upgrade: channel *= num/den (e.g. Faith 5/3)
         "conversion_channel_scale_den",
         "conversion_channel_bonus_pct",  # upgrade: channel *= (100+pct)/100
+        "conversion_min_intervals",  # skill/target: first roll at this CI
+        "conversion_max_intervals",  # skill/target: guaranteed success (unless fail_at_max)
+        "conversion_chance",  # skill/target: percent per CI after min
+        "conversion_resist",  # target/upgrade: chance // resist
+        "conversion_min_intervals_bonus",  # upgrade/race: added to min CI
+        "conversion_max_intervals_bonus",
+        "conversion_fail_at_max",  # 1 = last CI can fail the whole attempt
+        "team_conversion_min_intervals_bonus",
+        "team_conversion_max_intervals_bonus",
 
         "is_repairable",
         "is_healable",
@@ -1376,6 +1386,8 @@ class Rules(_Definitions):
         "team_inventory_production_bonus_pct",  # race team bonus (self + allies)
         "team_farm_food_pct",  # race team: farms contain +N% food
         "team_conversion_channel_bonus_pct",  # race team: conversion resist
+        "team_conversion_min_intervals_bonus",
+        "team_conversion_max_intervals_bonus",
         "herdable_steal_ignore_guards",  # race: steal guarded enemy herdables
         "herdable_steal_protected",  # race: own herdables ignore steal-through-guards
         "research_stack_hp",  # upgrade: stacks race research_stack_hp_bonus on complete

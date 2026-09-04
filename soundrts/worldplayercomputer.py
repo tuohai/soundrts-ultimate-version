@@ -90,6 +90,19 @@ def is_ground_worker(unit):
     return getattr(unit, "airground_type", "ground") == "ground"
 
 
+def is_land_economy_worker(unit):
+    """Peasants that work the land economy (ground or flying), not boats.
+
+    CrazyMod elemental fairies (``fee``) fly but still mine, build, and are
+    the faction's only worker. Treating them as non-workers made the AI
+    ``get`` the first ground villager in the rules (``serf``) and then
+    recurse through ``keep`` / ``castle``.
+    """
+    if not isinstance(unit, Worker):
+        return False
+    return getattr(unit, "airground_type", "ground") != "water"
+
+
 def is_water_worker(unit):
     """Water gatherers (e.g. boat) — not used for land economy."""
     if not isinstance(unit, Worker):
@@ -577,6 +590,7 @@ class Computer(Player):
         return memo[key]
 
     def _iter_ground_worker_classes(self):
+        """Worker classes for the land economy (ground or flying; not boats)."""
         for name in rules.classnames():
             uc = rules.unit_class(name)
             if uc is None:
@@ -586,7 +600,7 @@ class Computer(Player):
                     continue
             except TypeError:
                 continue
-            if getattr(uc, "airground_type", "ground") != "ground":
+            if getattr(uc, "airground_type", "ground") == "water":
                 continue
             yield name, uc
 
@@ -625,6 +639,11 @@ class Computer(Player):
                     counts[tn] = counts.get(tn, 0) + 1
             if counts:
                 return max(counts, key=counts.get)
+            owned = set()
+            for u in getattr(self, "units", ()) or ():
+                tn = getattr(u, "type_name", None)
+                if tn:
+                    owned.add(tn)
             best = None
             best_score = -1
             for name, uc in self._iter_ground_worker_classes():
@@ -635,6 +654,9 @@ class Computer(Player):
                     uc, "can_gather_building", ()
                 ):
                     score += 1
+                makers = rules.get_makers(name) or ()
+                if owned.intersection(makers):
+                    score += 10
                 if score > best_score:
                     best_score = score
                     best = name
@@ -1779,6 +1801,45 @@ class Computer(Player):
             return gold, wood
         return 0, 0
 
+    def _current_get_line_has_unpaid_production_building(self):
+        """True if this get line still needs a production building placed.
+
+        Same-line AoE2 ``archers + mangonel`` must hold archers until the
+        workshop is started. Sequential CrazyMod ``earth unit`` then later
+        ``fire tower`` must not hold forever — the fire tower is not on this
+        line, so the plan can never start it while earth units are deferred.
+        """
+        nb = getattr(self, "nb", None)
+        future_nb = getattr(self, "future_nb", None)
+        if not callable(nb):
+            return False
+        if not callable(future_nb):
+            future_nb = lambda _n: 0
+        for name in self._iter_current_get_line_types():
+            if self._is_worker_type_name(name):
+                continue
+            uc = rules.unit_class(name)
+            if uc is not None and getattr(uc, "is_a_building", False):
+                if nb(name) == 0 and future_nb(name) == 0:
+                    return True
+            for maker in rules.get_makers(name) or ():
+                mc = rules.unit_class(maker)
+                if mc is None:
+                    continue
+                try:
+                    if issubclass(mc, Worker):
+                        continue
+                except TypeError:
+                    continue
+                if not getattr(mc, "is_a_building", False):
+                    continue
+                if nb(maker) > 0 or future_nb(maker) > 0:
+                    break
+                cost = getattr(mc, "cost", None) or ()
+                if any(c > 0 for c in cost):
+                    return True
+        return False
+
     def _defer_plan_get_token(self, type_name, saving_for_feudal=False):
         """Skip a get-line token this turn (unmet age on the unit, or save food)."""
         return self._play_memo_get(
@@ -1876,10 +1937,25 @@ class Computer(Player):
                         break
                 if own_owned:
                     pg, pw = self._first_startable_unpaid_maker_cost()
-                    if pw and sw:
-                        return True
-                    if pg and sg:
-                        return True
+                    if not pg and not pw:
+                        return False
+                    # Same-line siege (workshop): never dump archer wood until
+                    # it is placed. Later-line buildings (CrazyMod fire tower
+                    # after earth units): only hold when this train would leave
+                    # too little gold/wood to place them.
+                    if self._current_get_line_has_unpaid_production_building():
+                        if pw and sw:
+                            return True
+                        if pg and sg:
+                            return True
+                    else:
+                        res = getattr(self, "resources", None) or ()
+                        gold = res[0] if len(res) > 0 else 0
+                        wood = res[1] if len(res) > 1 else 0
+                        if pw and sw and wood - sw < pw:
+                            return True
+                        if pg and sg and gold - sg < pg:
+                            return True
         return False
 
     def _phase_advance_in_progress(self, phase_name):
@@ -5354,7 +5430,7 @@ class Computer(Player):
         # 按ID排序单位，确保处理顺序一致
         sorted_units = sorted(self.units, key=lambda u: u.id)
         for u in sorted_units:
-            if is_ground_worker(u):
+            if is_land_economy_worker(u):
                 self._workers.append(u)
                 if u.orders and u.orders[0].keyword == "gather":
                     try:
