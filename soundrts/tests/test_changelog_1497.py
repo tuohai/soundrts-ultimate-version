@@ -52,6 +52,10 @@ def test_zh_relnotes_1497_session_topics():
     assert "conversion_miss" in s
     assert "conversion_fail_at_max" in s
     assert "test_conversion_interval_roll.py" in s
+    assert "_worker_buildable_type_names" in s
+    assert "_faction_peasant_type_name" in s
+    assert "ouvriere_marcheuse" in s
+    assert "mairie" in s
 
 
 def test_en_es_it_pt_relnotes_1497_session_topics():
@@ -78,3 +82,7 @@ def test_en_es_it_pt_relnotes_1497_session_topics():
         assert "conversion_miss" in s, lang
         assert "conversion_fail_at_max" in s, lang
         assert "test_conversion_interval_roll.py" in s, lang
+        assert "_worker_buildable_type_names" in s, lang
+        assert "_faction_peasant_type_name" in s, lang
+        assert "ouvriere_marcheuse" in s, lang
+        assert "mairie" in s, lang

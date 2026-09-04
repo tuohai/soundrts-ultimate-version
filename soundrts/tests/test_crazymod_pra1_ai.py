@@ -326,6 +326,63 @@ def test_elementale_hall_alone_still_picks_fee(crazymod_loaded):
     assert ai._primary_worker_type_name() == "fee"
 
 
+def test_vermine_workers_do_not_unlock_technique_buildings(crazymod_loaded):
+    """Insect workers have no can_build; do not harvest travailleur / mairie."""
+    pcls = rules.unit_class("ouvriere_marcheuse")
+    w = object.__new__(pcls)
+    w.id = 1
+    w.type_name = "ouvriere_marcheuse"
+    w.airground_type = "ground"
+    w.orders = []
+    w.can_use = []
+    hall = type(
+        "H",
+        (),
+        {
+            "id": 2,
+            "type_name": "couveuse",
+            "is_a_building": True,
+            "place": object(),
+            "orders": [],
+            "can_use": [],
+        },
+    )()
+    ai = _bare_ai(faction="vermine")
+    ai.units = [hall, w]
+    ai._update_effect_users_and_workers()
+    assert ai._primary_worker_type_name() == "ouvriere_marcheuse"
+    buildable = ai._worker_buildable_type_names()
+    housing = ai._housing_type_names()
+    storage = ai._storage_building_type_names(0)
+    foreign = {
+        "mairie",
+        "elevage",
+        "travailleur",
+        "siege_du_gouverneur",
+        "palais_du_chancelier",
+        "point_de_depart",
+        "townhall",
+        "chatelet",
+        "keep",
+        "castle",
+    }
+    assert not (buildable & foreign)
+    assert not (set(housing) & foreign)
+    assert not (set(storage) & foreign)
+
+
+def test_vermine_hall_alone_still_picks_insect_worker(crazymod_loaded):
+    """Empty insect eco still trains ouvriere_marcheuse, not travailleur."""
+    hall = type("H", (), {"type_name": "couveuse", "is_a_building": True})()
+    ai = _bare_ai(faction="vermine")
+    ai.units = [hall]
+    ai._workers = []
+    assert ai._primary_worker_type_name() == "ouvriere_marcheuse"
+    buildable = ai._worker_buildable_type_names()
+    assert "mairie" not in buildable
+    assert "elevage" not in buildable
+
+
 def _elementale_after_earth_tower(plan, resources):
     ai = _bare_ai(faction="elementale", plan=list(plan))
 

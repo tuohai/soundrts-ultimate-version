@@ -36,6 +36,12 @@ Note di rilascio
 - **Cambio**: se l’abilità ha ``conversion_interval``, ogni intervallo tira ``conversion_chance`` dopo ``conversion_min_intervals``. Un fallimento continua il canto (``conversion_miss``). A ``conversion_max_intervals`` il successo è certo salvo ``conversion_fail_at_max 1`` (allora ``conversion_fail``). Il bersaglio può cambiare intervalli, probabilità e resistenza; Fede e il bonus di squadra teutonico aggiungono intervalli. Senza ``conversion_interval`` si ha ancora successo a fine canale.
 - **Ambito**: ``world_conversion.py`` ``conversion_roll_params`` / ``conversion_roll_after_interval``; ``worldorders/skills.py``; ``mods/aoe2/rules.txt``; ``test_conversion_interval_roll.py``.
 
+**Cambio: nei mod multi-razza il computer non insegue più il municipio di un’altra razza**
+
+- **Problema**: le operaie insetto di CrazyMod (``ouvriere_marcheuse``) non hanno ``can_build`` (gli edifici arrivano dalle abilità dell’incubatrice). Il computer univa le liste di tutti i villager, andava verso ``elevage`` / ``mairie`` tecnici e registrava ``AI has trouble getting: 1 ['point_de_depart', 'townhall', 'travailleur']``.
+- **Cambio**: con lavoratori vivi conta solo il loro ``can_build`` (anche se vuoto). Senza lavoratori, solo il ``peasant`` della tabella fazione; non si scandagliano tutte le razze.
+- **Ambito**: ``worldplayercomputer.py`` ``_worker_buildable_type_names`` / ``_faction_peasant_type_name``; ``test_crazymod_pra1_ai.py``.
+
 
 1.4.9.6
 ---------

@@ -37,6 +37,12 @@
 - **改进**：技能写 ``conversion_interval`` 后按间隔掷 ``conversion_chance``；未到 ``conversion_max_intervals`` 可失败并继续（``conversion_miss`` 音效）。上限默认必成；``conversion_fail_at_max 1`` 时上限也可整段失败（``conversion_fail``）。目标可覆盖间隔、概率、抗性；信念与条顿组队加间隔。未写 ``conversion_interval`` 的模组仍是读完必成。
 - **范围**：``world_conversion.py`` ``conversion_roll_params`` / ``conversion_roll_after_interval``；``worldorders/skills.py``；``mods/aoe2/rules.txt``；``test_conversion_interval_roll.py``。
 
+**改进：多阵营模组的电脑不再去造别族大厅**
+
+- **问题**：疯狂模组虫族工人 ``ouvriere_marcheuse`` 没有 ``can_build``（建筑靠孵化室技能）。电脑把全模组农民的建造列表拼在一起，去造技术族 ``elevage`` / ``mairie``，日志出现 ``AI has trouble getting: 1 ['point_de_depart', 'townhall', 'travailleur']``。
+- **改进**：场上有本族工人时只认他们的 ``can_build``（空也保持空）。工人死光时只认阵营表里的 ``peasant``，不再扫全种族。
+- **范围**：``worldplayercomputer.py`` ``_worker_buildable_type_names`` / ``_faction_peasant_type_name``；``test_crazymod_pra1_ai.py``。
+
 
 1.4.9.6
 ---------

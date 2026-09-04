@@ -604,6 +604,22 @@ class Computer(Player):
                 continue
             yield name, uc
 
+    def _faction_peasant_type_name(self):
+        """This race's villager from the faction table, or None."""
+        faction = getattr(self, "faction", None)
+        if not faction:
+            return None
+        eq = getattr(self, "equivalent", None)
+        if not callable(eq):
+            return None
+        try:
+            name = eq("peasant")
+        except Exception:
+            return None
+        if name and rules.unit_class(name) is not None:
+            return name
+        return None
+
     def _worker_buildable_type_names(self):
         def _compute():
             names = set()
@@ -617,8 +633,18 @@ class Computer(Player):
                 built = getattr(w, "can_build", ()) or ()
                 if built:
                     names.update(built)
-            if names:
+            # Living workers with empty can_build (CrazyMod ouvriere_marcheuse
+            # places buildings via hatchery skills) must not fall through to
+            # every race's villager. That made zerg AI get mairie / travailleur.
+            if seen_types:
                 return frozenset(names)
+            peasant = self._faction_peasant_type_name()
+            if peasant:
+                uc = rules.unit_class(peasant)
+                if uc is not None:
+                    names.update(rules.class_rules_attr(uc, "can_build", ()) or ())
+                return frozenset(names)
+            # No faction (vanilla): historic scan of every land villager.
             for _name, uc in self._iter_ground_worker_classes():
                 built = rules.class_rules_attr(uc, "can_build", ()) or ()
                 if built:
@@ -639,6 +665,9 @@ class Computer(Player):
                     counts[tn] = counts.get(tn, 0) + 1
             if counts:
                 return max(counts, key=counts.get)
+            peasant = self._faction_peasant_type_name()
+            if peasant:
+                return peasant
             owned = set()
             for u in getattr(self, "units", ()) or ():
                 tn = getattr(u, "type_name", None)

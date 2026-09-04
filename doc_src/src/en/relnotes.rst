@@ -38,6 +38,12 @@ Release notes
 - **Change**: If a skill sets ``conversion_interval``, each interval rolls ``conversion_chance`` after ``conversion_min_intervals``. Misses continue the chant (``conversion_miss``). Success is guaranteed at ``conversion_max_intervals`` unless ``conversion_fail_at_max 1`` (then ``conversion_fail``). Targets may override intervals, chance, and resist; Faith and the Teuton team bonus add intervals. Skills without ``conversion_interval`` still succeed when the channel ends.
 - **Scope**: ``world_conversion.py`` ``conversion_roll_params`` / ``conversion_roll_after_interval``; ``worldorders/skills.py``; ``mods/aoe2/rules.txt``; ``test_conversion_interval_roll.py``.
 
+**Change: multi-race computers no longer chase another race's town hall**
+
+- **Issue**: CrazyMod insect workers (``ouvriere_marcheuse``) have no ``can_build`` (buildings come from hatchery skills). The computer unioned every villager's build list, then tried technique ``elevage`` / ``mairie``, logging ``AI has trouble getting: 1 ['point_de_depart', 'townhall', 'travailleur']``.
+- **Change**: Living workers keep only their own ``can_build`` (even if empty). With no living workers, use the faction table ``peasant`` only — do not scan every race.
+- **Scope**: ``worldplayercomputer.py`` ``_worker_buildable_type_names`` / ``_faction_peasant_type_name``; ``test_crazymod_pra1_ai.py``.
+
 
 1.4.9.6
 ---------
