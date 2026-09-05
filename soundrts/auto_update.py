@@ -59,7 +59,7 @@ __all__ = [
 
 
 def parse_version(text: str) -> tuple[int, ...]:
-    """Parse ``1.4.6.3`` / ``v1.4.6.3`` into a comparable tuple."""
+    """Parse ``1.4.6.3`` / ``v1.4.6.3`` / ``1.5`` into a 4-part comparable tuple."""
     s = (text or "").strip()
     if s.lower().startswith("v") and len(s) > 1 and s[1].isdigit():
         s = s[1:]
@@ -67,7 +67,11 @@ def parse_version(text: str) -> tuple[int, ...]:
     for piece in s.split("."):
         m = re.match(r"(\d+)", piece)
         parts.append(int(m.group(1)) if m else 0)
-    return tuple(parts) if parts else (0,)
+    if not parts:
+        parts = [0]
+    while len(parts) < 4:
+        parts.append(0)
+    return tuple(parts)
 
 
 def is_newer(remote: str, local: str = VERSION) -> bool:
