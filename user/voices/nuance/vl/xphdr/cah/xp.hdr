@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<NUANCE>
+<VERSION>NUAN_1.0</VERSION>
+<HEADER>
+  <BROKERSTRING>pipeline/Hong Kong Cantonese/sin-ji/22/bet3/text/pcm</BROKERSTRING>
+  <PRIORITY>4101</PRIORITY>
+  <PARAMETERS>
+    <language>Hong Kong Cantonese</language>
+    <langcode>CAH</langcode>
+    <langid>30</langid>
+    <langversion>5.2.3.13303</langversion>
+    <nativetypeofchar>utf-16</nativetypeofchar>
+    <voice>Sin-Ji</voice>
+    <voiceversion>5.2.3.13289</voiceversion>
+    <gender>Female</gender>
+    <age>Adult</age>
+    <fecfg>cfg3</fecfg>
+    <voiceml>no</voiceml>
+    <fedataprefix></fedataprefix>
+    <feextcfgdataprefix></feextcfgdataprefix>
+    <fedatapackaging>clc</fedatapackaging>
+    <fevoice>Sin-Ji</fevoice>
+    <frequencyhz>22050</frequencyhz>
+    <voicemodel>bet3</voicemodel>
+    <reduction>bet3</reduction>
+    <coder></coder>
+    <bitrate></bitrate>
+    <overheadframes></overheadframes>
+    <audiooutputmimetype>audio/L16;rate=22050</audiooutputmimetype>
+    <audiooutputsamplebits>16</audiooutputsamplebits>
+    <nlucompatvc6be>yes</nlucompatvc6be>
+    <compatstrongbnd>no</compatstrongbnd>
+  </PARAMETERS>
+  <OBJECTS>
+    <AUDIOFETCHER>audiofetch</AUDIOFETCHER>
+    <DCTEG>dcteg</DCTEG>
+    <DOMAINMNGR>domain_mngr</DOMAINMNGR>
+    <FE_DCTLKP>fe/fe_dctlkp</FE_DCTLKP>
+    <FE_DEPES>fe/fe_depes</FE_DEPES>
+    <FE_UDWL>fe/fe_udwl</FE_UDWL>
+    <INET>inetspi</INET>
+    <PHONMAP>phonmap</PHONMAP>
+  </OBJECTS>
+  <COMPONENTS>
+    <COMPONENT>xcoder</COMPONENT>
+    <COMPONENT>ttt/re</COMPONENT>
+    <COMPONENT>pp/text_parser</COMPONENT>
+    <COMPONENT>pp/sent_parser</COMPONENT>
+    <COMPONENT>pp/word_parser</COMPONENT>
+    <COMPONENT>fe/fe_wordseg</COMPONENT>
+    <COMPONENT>fe/fe_initlingdb</COMPONENT>
+    <COMPONENT>fe/fe_promptorth</COMPONENT>
+    <COMPONENT>fe/tokentn</COMPONENT>
+    <COMPONENT>fe/fe_abbrtn</COMPONENT>
+    <COMPONENT>fe/fe_puncsptn</COMPONENT>
+    <COMPONENT>fe/fe_oneword</COMPONENT>
+    <COMPONENT>fe/fe_pos</COMPONENT>
+    <COMPONENT>fe/fe_hmogrph</COMPONENT>
+    <COMPONENT>fe/fe_phrasing</COMPONENT>
+    <COMPONENT>fe/fe_normout</COMPONENT>
+    <COMPONENT>fe/fe_prmfx</COMPONENT>
+    <COMPONENT>fe/fe_prompt</COMPONENT>
+    <COMPONENT>fe/fe_global</COMPONENT>
+    <COMPONENT>select/bet3</COMPONENT>
+    <COMPONENT>synth/bet3</COMPONENT>
+    <COMPONENT>audioinserter</COMPONENT>
+    <COMPONENT>phonmap/mrk</COMPONENT>
+    <COMPONENT>xcoder/mrksync</COMPONENT>
+  </COMPONENTS>
+  <RESOURCES>
+    <!-- The next entries specify default broker strings for the user dictionary resources, once language specific and once voice specific -->
+    <RESOURCE content-type="application/edct-bin-dictionary;loader=broker">
+      userdct/cah
+    </RESOURCE>
+    <RESOURCE content-type="application/edct-bin-dictionary;loader=broker">
+      userdct/cah/sin-ji
+    </RESOURCE>
+
+    <!-- The next entries specify default broker strings tuning resources if available -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  </RESOURCES>
+</HEADER>
+</NUANCE>
