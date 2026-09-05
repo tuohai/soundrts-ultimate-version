@@ -3,8 +3,8 @@ Note di rilascio
 
 .. contents::
 
-1.5.0.0
--------
+1.5
+---
 
 **Problema: l’avviso animale selvatico non era allineato a DE**
 

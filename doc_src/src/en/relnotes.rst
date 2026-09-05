@@ -5,8 +5,8 @@ Release notes
 .. contents::
 
 
-1.5.0.0
--------
+1.5
+---
 
 **Issue: wild-animal attack warning did not match DE**
 

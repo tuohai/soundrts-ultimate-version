@@ -4,8 +4,8 @@ Notas de lançamento
 
 .. contents::
 
-1.5.0.0
--------
+1.5
+---
 
 **Problema: o aviso de animal selvagem não seguia a DE**
 

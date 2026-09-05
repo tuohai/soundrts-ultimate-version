@@ -1,4 +1,4 @@
-"""审计：1.5.0.0 — 野兽警报、信号弹快捷键/语音/规则、无背包不报空。"""
+"""审计：1.5 — 野兽警报、信号弹快捷键/语音/规则、无背包不报空。"""
 from __future__ import annotations
 
 from pathlib import Path
@@ -12,20 +12,20 @@ def _source(*path_parts):
 
 def _section_15(lang: str) -> str:
     text = _source("doc_src", "src", lang, "relnotes.rst")
-    start = text.index("\n1.5.0.0\n")
+    start = text.index("\n1.5\n")
     rest = text[start:]
     next_idx = rest.find("\n1.4.9.9")
     return rest if next_idx == -1 else rest[:next_idx]
 
 
 def test_version_is_15():
-    assert 'VERSION = "1.5.0.0"' in _source("soundrts", "version.py")
+    assert 'VERSION = "1.5"' in _source("soundrts", "version.py")
 
 
 def test_all_relnotes_have_15_heading_before_1499():
     for lang in ("zh", "en", "es", "it", "pt-BR"):
         src = _source("doc_src", "src", lang, "relnotes.rst")
-        assert src.index("\n1.5.0.0\n") < src.index("\n1.4.9.9"), lang
+        assert src.index("\n1.5\n") < src.index("\n1.4.9.9"), lang
         top = _section_15(lang)
         for folded in ("1.4.9.10", "1.4.9.11", "1.4.9.12", "1.4.9.13", "1.4.9.14"):
             assert folded not in top, (lang, folded)

@@ -4,8 +4,8 @@ Notas de la versión
 
 .. contents::
 
-1.5.0.0
--------
+1.5
+---
 
 **Problema: el aviso de animal salvaje no coincidía con DE**
 

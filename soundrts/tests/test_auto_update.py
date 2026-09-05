@@ -19,9 +19,9 @@ def test_is_newer_compares_full_version():
     assert not auto_update.is_newer("1.4.6.2", "1.4.6.2")
     assert not auto_update.is_newer("1.4.6.1", "1.4.6.2")
     assert auto_update.is_newer("1.4.7.0", "1.4.6.9")
-    assert auto_update.is_newer("1.5.0.0", "1.4.9.7")
-    assert not auto_update.is_newer("1.5.0.0", "1.5")
-    assert not auto_update.is_newer("1.5", "1.5.0.0")
+    assert auto_update.is_newer("1.5", "1.4.9.7")
+    assert not auto_update.is_newer("1.5", "1.5")
+    assert not auto_update.is_newer("1.4.9.7", "1.5")
 
 
 def test_select_windows_asset_prefers_game_zip():
