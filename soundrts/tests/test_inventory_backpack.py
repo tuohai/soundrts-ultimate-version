@@ -69,6 +69,28 @@ def test_client_inventory_screen_wiring():
     assert "SHIFT V: toggle_gear_screen" in legacy
 
 
+def test_no_inventory_capacity_skips_empty_backpack_prompt():
+    from types import SimpleNamespace
+
+    from soundrts.attributes.inventory_screen import (
+        unit_has_inventory,
+        unit_inventory_capacity,
+    )
+
+    assert unit_inventory_capacity(None) == 0
+    assert unit_has_inventory(SimpleNamespace(inventory_capacity=0)) is False
+    assert unit_has_inventory(SimpleNamespace(inventory_capacity=1)) is True
+    assert unit_has_inventory(SimpleNamespace(inventory_capacity=["3"])) is True
+    view = SimpleNamespace(inventory_capacity=None, model=SimpleNamespace(inventory_capacity=2))
+    assert unit_has_inventory(view) is True
+    inv = _source("attributes", "inventory_screen.py")
+    eq = _source("attributes", "equipment_screen.py")
+    assert "if not unit_has_inventory(u):" in inv
+    assert "if not unit_has_inventory(u):" in eq
+    assert inv.index("unit_has_inventory") < inv.index("EMPTY_BACKPACK")
+    assert eq.index("unit_has_inventory") < eq.index("EMPTY_EQUIPMENT")
+
+
 def test_client_equipment_screen_wiring():
     src = _source("attributes", "equipment_screen.py")
     assert "cmd_unit_equipment_screen" in src

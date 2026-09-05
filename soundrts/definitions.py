@@ -907,6 +907,7 @@ _precision_properties = {
     "effect_range",
     "effect_radius",
     "sight_range",
+    "town_bell_range",  # Town Bell Euclidean range (meters → PRECISION mm; 0 = unlimited)
     "build_field_radius",
     "build_field_radius_m",
     "addon_offset_x",
@@ -1517,6 +1518,8 @@ class Rules(_Definitions):
         "rdg_bounce_decay",
         "consume_on_pickup",  # 拾取时是否消耗物品
         "units_auto_upgrade",  # phase（时代）研究完成后是否自动把所有单位形态升级到 can_upgrade_to 目标
+        "town_bell",  # 1=建筑可敲城镇钟（范围内工人进驻）
+        "signal_flare",  # parameters: 1=启用盟友格子标点（style: signal_flare 音效、signal_flare_title 名称）
         "hide_locked_commands",  # 未满足 requirements 时是否隐藏建造/训练/研究/升级命令
         "achievements_enabled",  # 1=启用成就/卡牌/军衔（默认）；0=模组关闭整套系统
         "achievements_per_faction",  # 1=按阵营独立存档/军衔/军械库（多分支模组如 CrazyMod）
@@ -1570,6 +1573,7 @@ class Rules(_Definitions):
         "charge_rdg_cd_on_terrain",
         "passenger_attack_types",  # 容器内可攻击的单位类型列表
         "transport_passenger_types",  # 可装载类型；-name 排除（如 infantry -cavalry）；空=不限
+        "town_bell_units",  # 城镇钟召集的单位类型（空=陆地 Worker，排除船）
         "can_gather",          # 已废弃，见 can_gather_deposit / can_gather_building
         "can_gather_deposit",  # 可开采的矿床（deposit）类型列表
         "can_gather_building", # 可开采的建筑类型列表（如 farm）

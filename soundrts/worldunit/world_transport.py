@@ -277,7 +277,11 @@ class CreatureTransport(Entity):
 
         return True
 
-    def unload_all(self, place=None):
+    def unload_matching(self, predicate, place=None):
+        """Unload passengers for which *predicate* is true (or all if None)."""
+        return self.unload_all(place, predicate=predicate)
+
+    def unload_all(self, place=None, predicate=None):
         if place is None:
             place = self.place
             x = self.x
@@ -290,8 +294,10 @@ class CreatureTransport(Entity):
         if inside is None or not inside.objects:
             return 0
 
-        # 移除容器自身的装载加成
-        if getattr(self, 'load_bonus', None) and getattr(self, '_bonus_stats', None):
+        unload_all = predicate is None
+        # Full unload: drop every stacked load_bonus. Partial: reverse one stack
+        # per passenger actually dropped (after the loop).
+        if unload_all and getattr(self, 'load_bonus', None) and getattr(self, '_bonus_stats', None):
             _remove_transport_bonus(self, self._bonus_stats)
 
         # 检查是否有需要草地的建筑
@@ -313,6 +319,8 @@ class CreatureTransport(Entity):
         unloaded = 0
         # 执行卸载
         for obj in inside.objects[:]:
+            if predicate is not None and not predicate(obj):
+                continue
             # 检查地形限制 - 地面单位不能卸载到水区域
             if (obj.airground_type == "ground" and getattr(place, 'is_water', False)):
                 continue
@@ -371,6 +379,19 @@ class CreatureTransport(Entity):
             # 移动对象到目标位置
             obj.move_to(place, obj_x, obj_y)
             obj.notify("exit")
+            if (
+                not unload_all
+                and getattr(self, "load_bonus", None)
+                and getattr(self, "_bonus_stats", None)
+            ):
+                reversed_stats = {}
+                neg = {
+                    stat: -value
+                    for stat, value in _normalize_bonus_dict(self.load_bonus).items()
+                }
+                _apply_transport_bonus(self, neg, reversed_stats)
+                for stat, amount in reversed_stats.items():
+                    self._bonus_stats[stat] = self._bonus_stats.get(stat, 0) + amount
             unloaded += 1
         return unloaded
 

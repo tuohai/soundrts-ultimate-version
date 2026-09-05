@@ -31,6 +31,8 @@ from .immediate import (
     ModeChase,
     ModeToggle,
     RallyingPointOrder,
+    TownBellOrder,
+    TownBellStopOrder,
     JoinGroupOrder,
     EquipWeaponOrder,
     UnequipWeaponOrder,

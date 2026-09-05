@@ -126,21 +126,28 @@ def _panel_title(mode):
         return "Backpack" if mode == "inventory" else "Equipment"
 
 
-def _unit_can_open_inventory(interface):
+def _selected_unit(interface):
     if len(getattr(interface, "group", None) or []) != 1:
-        return False
-    uid = interface.group[0]
-    u = interface.dobjets.get(uid)
-    if u is None:
+        return None
+    return interface.dobjets.get(interface.group[0])
+
+
+def _unit_can_open_inventory(interface):
+    from ..attributes.inventory_screen import unit_has_inventory
+
+    u = _selected_unit(interface)
+    if u is None or not unit_has_inventory(u):
         return False
     inv = getattr(u, "inventory", None) or []
     return bool(inv)
 
 
 def _unit_can_open_equipment(interface):
-    if len(getattr(interface, "group", None) or []) != 1:
+    from ..attributes.inventory_screen import unit_has_inventory
+
+    u = _selected_unit(interface)
+    if u is None or not unit_has_inventory(u):
         return False
-    # 试探能否拉到条目（不改状态）
     uid = interface.group[0]
     old = getattr(interface, "_equipment_screen_unit_id", None)
     interface._equipment_screen_unit_id = uid

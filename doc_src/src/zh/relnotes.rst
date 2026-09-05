@@ -4,6 +4,54 @@
 .. contents::
 
 
+1.5
+---
+
+**问题：野兽袭击警报与决定版不一致**
+
+- **问题**：``attack_warning_wild_animal`` 写在鹿 / 羊 / 野猪自己的 ``alert`` 上。引擎只在**你的单位**受伤时播受害者的 ``alert``，所以野猪咬村民时响的是 ``attack_warning_general``。
+- **改进**：受害者 style 写 ``alert_<攻击者类型>``，并沿攻击者 ``is_a`` 向上找（先具体后祖先）。帝国 2：``def animal``，野猪 / 鹿 / 羊 ``is_a animal``，农民 ``alert_animal attack_warning_wild_animal``；也可写 ``alert_boar`` / ``alert_wolf``。文明村民 ``is_a peasant`` 会继承。建筑仍用 ``alert``（``attack_warning_base``）。全图仍 10 秒冷却。
+- **范围**：``clientgameentity/combat.py``；``mods/aoe2/ui/style.txt``；``test_wild_attack_alert.py``。
+
+**改进：信号弹快捷键、语音与规则驱动名称/音效**
+
+- **问题**：帝国 2 覆盖热键后 ``CTRL+SHIFT+N`` 无效，方案里没有 ``flare``；只有 ``parameters.signal_flare`` 立体声，听不清格子；名称和音效写死，别的模组不能关或换。
+- **改进**：``rules.txt`` ``def parameters`` 写 ``signal_flare 1`` 才启用。style ``parameters.signal_flare`` 是音效，``signal_flare_title`` 是名称（缺省 TTS ``SIGNAL_FLARE`` / 5842）。盟友听到「信号弹 在 <格子>」（别人打的先报名）。帝国 2 分层 / 经典 / RPG 绑定 ``CTRL SHIFT n: flare``；地图浏览仍可用 ``N``。热键方案仅在启用时列出。
+- **范围**：``flare_announce.py``；``hotkey_editor.py``；``hotkey_catalogs.py``；``mods/aoe2/rules.txt``；``mods/aoe2/ui/style.txt``；``mods/aoe2/ui/*_bindings.txt``；``test_flare_announce.py``；``test_changelog_15.py``。
+
+**问题：没有背包的单位仍会报背包为空 / 装备栏为空**
+
+- **问题**：未写 ``inventory_capacity`` 的单位没有背包和装备栏。分层 ``F3`` 或经典 ``Shift+V`` 仍会播「背包为空」等提示。
+- **改进**：``inventory_capacity`` 为 0（默认、未写）时只短鸣，不打开界面、不报空背包/空装备栏。有容量但格子空时仍报 ``EMPTY_BACKPACK`` / 装备栏为空。
+- **范围**：``attributes/inventory_screen.py`` ``unit_has_inventory``；``equipment_screen.py``；``game_gear_hud.py``；``test_inventory_backpack.py``。
+
+
+1.4.9.9
+---------
+
+**问题：升级时代听不到 age_advance**
+
+- **问题**：帝国 2 把 ``age_advance.mp3`` 放在 ``ui/music/``。升级时代走 ``upgrade_complete`` 音效缓存，原先只收录 ``ui/`` 下的 ``.ogg``，并且不会从 ``ui/music/`` 取短音效，所以号角不响。
+- **改进**：音效缓存收录 ``.ogg`` / ``.wav``（同 stem 优先 ogg），仍跳过 ``ui/music/``（循环 BGM，可用 mp3）。短音效放 ``ui/sounds/``。已将 ``age_advance`` / ``wolf`` 转为 ``.ogg``。城镇中心 ``upgrade_complete age_advance`` 不变。
+- **范围**：``sound_cache.py``；``mods/aoe2/ui/sounds/age_advance.ogg``；``test_ui_sfx_stem.py``；``test_changelog_1499.py``。
+
+
+1.4.9.8
+---------
+
+**新增：规则驱动的城镇钟**
+
+- **问题**：帝国 2 城镇中心可以把周围村民赶进建筑、再放他们回去干活，引擎没有对应命令，``town_bell1`` / ``town_bell2`` 也没处可挂。
+- **改进**：建筑写 ``town_bell 1`` 后菜单出现敲钟 / 回去干活。范围是欧氏距离米（``town_bell_range``，内部 PRECISION 毫米；``0`` = 全图），不是格子 BFS。默认召集陆地工人（排除船），可用 ``town_bell_units`` 过滤类型。第一次把范围内工人赶进最近能装下的可驻扎建筑并记住先前命令；已经在建筑里的村民也会被标记。第二次放出这些村民并恢复采集 / 建造（手动进驻的士兵不动）。手动把村民装进城镇中心后仍可敲钟；再点回去干活会把他们放出来。帝国 2 城镇中心默认 ``24`` 米（约两格）。音效 ``town_bell1`` / ``town_bell2``。
+- **范围**：``world_town_bell.py``；``worldorders/immediate.py``；``definitions.py``；``worldunit/worldcreature.py``；``mods/aoe2/rules.txt``；``test_town_bell.py``。
+
+**新增：别人被淘汰、外交、目标、信号弹、集结、人口满音效**
+
+- **问题**：界面包里的 ``playerdefeated``、``diplomacy_change``、``objective_change``、``signal_flare``、``gather_point``、``population_limit`` 没有事件可挂；人口满一直走通用 ``error``。
+- **改进**：别人认输或被灭播 ``parameters.player_defeated``（自己仍用 ``victory`` / ``defeat``）。结盟成立或退盟播 ``diplomacy_change``。战役目标增加、完成或放弃播 ``objective_change``。当前格 ``CTRL+SHIFT+N``（地图浏览里 ``N``）给盟友打信号弹。设集结点播 ``rallying_point``（帝国 2 为 ``gather_point``）。人口满播 ``population_limit``。各模组在 ``style`` 的 ``parameters`` 里自己挂文件，不和 res 基础包冲突。
+- **范围**：``worldplayerbase``；``clientgame``；``mods/aoe2/ui/style.txt``；``test_changelog_1498.py``。
+
+
 1.4.9.7
 ---------
 

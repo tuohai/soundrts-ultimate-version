@@ -11,6 +11,26 @@ from ..clientmedia import voice
 from ..definitions import style, rules
 
 
+def unit_inventory_capacity(unit) -> int:
+    """Rules ``inventory_capacity``; 0 means no backpack / equipment bar."""
+    if unit is None:
+        return 0
+    cap = getattr(unit, "inventory_capacity", None)
+    if cap is None:
+        model = getattr(unit, "model", None)
+        cap = getattr(model, "inventory_capacity", 0) if model is not None else 0
+    if isinstance(cap, (list, tuple)):
+        cap = cap[0] if cap else 0
+    try:
+        return int(cap)
+    except (TypeError, ValueError):
+        return 0
+
+
+def unit_has_inventory(unit) -> bool:
+    return unit_inventory_capacity(unit) > 0
+
+
 class InventoryScreen:
     def __init__(self, parent):
         self.parent = parent
@@ -151,6 +171,9 @@ class InventoryScreen:
         u = interface.dobjets.get(unit_id)
         if u is None:
             voice.item(mp.NO_UNIT_CONTROLLED)
+            return
+        if not unit_has_inventory(u):
+            voice.item(mp.BEEP)
             return
         inventory = getattr(u, "inventory", None) or []
         if not inventory:

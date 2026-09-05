@@ -4,6 +4,51 @@ Notas de la versión
 
 .. contents::
 
+1.5
+---
+
+**Problema: el aviso de animal salvaje no coincidía con DE**
+
+- **Problema**: ``attack_warning_wild_animal`` estaba en el ``alert`` de ciervo / oveja / jabalí. El motor reproduce el ``alert`` de la **víctima** al herir a tu unidad, así que un jabalí mordiendo a un aldeano usaba ``attack_warning_general``.
+- **Cambio**: el style de la víctima puede poner ``alert_<tipo atacante>``, recorriendo el ``is_a`` del atacante (lo más concreto primero). AoE2: ``def animal``, jabalí / ciervo / oveja ``is_a animal``, aldeano ``alert_animal attack_warning_wild_animal``; también ``alert_boar`` / ``alert_wolf``. Los aldeanos de civ ``is_a peasant`` lo heredan. Los edificios siguen con ``alert`` (``attack_warning_base``). La espera de 10 s no cambia.
+- **Alcance**: ``clientgameentity/combat.py``; ``mods/aoe2/ui/style.txt``; ``test_wild_attack_alert.py``.
+
+**Cambio: bengala con tecla, voz y nombre / sonido por reglas**
+
+- **Problema**: tras el overlay AoE2, ``CTRL+SHIFT+N`` no hacía nada y los esquemas no tenían ``flare``. Solo ``parameters.signal_flare`` panorámico no decía la casilla. Nombre y sonido estaban fijos, así que otros mods no podían apagarlo ni cambiarlos.
+- **Cambio**: se activa con ``signal_flare 1`` en ``rules.txt`` ``def parameters``. En style, ``parameters.signal_flare`` es el efecto; ``signal_flare_title`` es el nombre (TTS ``SIGNAL_FLARE`` / 5842 por defecto). Los aliados oyen «bengala en <casilla>» (si la lanza otro, el nombre va primero). AoE2 por capas / clásico / RPG enlaza ``CTRL SHIFT n: flare``; en el mapa sigue ``N``. Los esquemas solo lo listan si está activo.
+- **Alcance**: ``flare_announce.py``; ``hotkey_editor.py``; ``hotkey_catalogs.py``; ``mods/aoe2/rules.txt``; ``mods/aoe2/ui/style.txt``; ``mods/aoe2/ui/*_bindings.txt``; ``test_flare_announce.py``; ``test_changelog_15.py``.
+
+**Problema: unidades sin mochila oían «mochila vacía» / «equipo vacío»**
+
+- **Problema**: sin ``inventory_capacity`` no hay mochila ni barra de equipo. ``F3`` por capas o ``Shift+V`` clásico igual decía «mochila vacía».
+- **Cambio**: si ``inventory_capacity`` es 0 (por defecto si no se escribe), solo pita; no abre pantallas ni dice ``EMPTY_BACKPACK`` / equipo vacío. Con capacidad y bolsa vacía sí se oyen esos avisos.
+- **Alcance**: ``attributes/inventory_screen.py`` ``unit_has_inventory``; ``equipment_screen.py``; ``game_gear_hud.py``; ``test_inventory_backpack.py``.
+
+1.4.9.9
+--------
+
+**Problema: al subir de edad no sonaba age_advance**
+
+- **Problema**: el paquete AoE2 tenía ``age_advance.mp3`` en ``ui/music/``. Subir de edad usa la caché SFX de ``upgrade_complete``, que antes solo indexaba ``.ogg`` bajo ``ui/`` y no trataba ``ui/music/`` como SFX cortos, así que el toque no sonaba.
+- **Cambio**: la caché SFX indexa ``.ogg`` / ``.wav`` (``.ogg`` gana si hay el mismo stem) y sigue omitiendo ``ui/music/`` (BGM en bucle, mp3 permitido). Los SFX cortos van en ``ui/sounds/``. ``age_advance`` y ``wolf`` están en ``.ogg``. ``upgrade_complete age_advance`` del centro urbano no cambia.
+- **Alcance**: ``sound_cache.py``; ``mods/aoe2/ui/sounds/age_advance.ogg``; ``test_ui_sfx_stem.py``; ``test_changelog_1499.py``.
+
+1.4.9.8
+--------
+
+**Cambio: campana del pueblo gobernada por reglas**
+
+- **Problema**: los centros urbanos de AoE2 pueden meter a los aldeanos cercanos en edificios y luego devolverlos al trabajo. El motor no tenía esa orden, así que ``town_bell1`` / ``town_bell2`` no tenían dónde sonar.
+- **Cambio**: los edificios con ``town_bell 1`` obtienen tocar / volver al trabajo. El alcance es en metros euclidianos (``town_bell_range``, mm PRECISION; ``0`` = todo el mapa), no BFS por casillas. Por defecto llama a trabajadores de tierra (no barcos); ``town_bell_units`` filtra tipos. El primer toque mete a los cercanos en el edificio guarnecible más cercano con sitio y guarda sus órdenes; los aldeanos que ya están dentro también se marcan. El segundo saca a esos aldeanos y restaura recolectar/construir (los soldados guarnecidos a mano se quedan). Tras meter aldeanos en el centro urbano aún puedes tocar; Volver al trabajo los saca. Los centros urbanos AoE2 usan ``24`` metros (unas dos casillas). SFX: ``town_bell1`` / ``town_bell2``.
+- **Alcance**: ``world_town_bell.py``; ``worldorders/immediate.py``; ``definitions.py``; ``worldunit/worldcreature.py``; ``mods/aoe2/rules.txt``; ``test_town_bell.py``.
+
+**Cambio: SFX de derrota ajena, diplomacia, objetivos, bengala, punto de reunión y población llena**
+
+- **Problema**: ``playerdefeated``, ``diplomacy_change``, ``objective_change``, ``signal_flare``, ``gather_point`` y ``population_limit`` no tenían eventos. La población llena seguía usando ``error``.
+- **Cambio**: si otro jugador se rinde o es eliminado, suena ``parameters.player_defeated`` (tu victoria/derrota sigue con ``victory`` / ``defeat``). Formar o romper una alianza suena ``diplomacy_change``. Añadir, completar o abandonar un objetivo suena ``objective_change``. ``CTRL+SHIFT+N`` en la casilla actual (``N`` al explorar el mapa) avisa a los aliados. Fijar el punto de reunión suena ``rallying_point`` (AoE2: ``gather_point``). Población llena suena ``population_limit``. Cada mod los mapea en ``parameters`` de ``style``; no chocan con el paquete res.
+- **Alcance**: ``worldplayerbase``; ``clientgame``; ``mods/aoe2/ui/style.txt``; ``test_changelog_1498.py``.
+
 1.4.9.7
 --------
 

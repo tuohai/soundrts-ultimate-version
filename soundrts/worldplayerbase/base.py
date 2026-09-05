@@ -184,6 +184,7 @@ class Player:
         self.objectives = {}
         self._required_objective_numbers = set()
         self._completed_objective_numbers = set()
+        self._town_bell_active = False
         self.units = []
         self.budget = []
         self.upgrades = []
@@ -742,6 +743,38 @@ class Player:
         if self.client:
             self.client.push(*args)
 
+    def play_parameter_sfx(self, key):
+        """Play a named SFX from style ``def parameters`` (client resolves the stem)."""
+        if key:
+            self.push("play_parameter_sfx", key)
+
+    def play_parameter_sfx_all(self, key):
+        world = getattr(self, "world", None)
+        players = getattr(world, "players", None) if world is not None else None
+        if not players:
+            self.play_parameter_sfx(key)
+            return
+        for player in players:
+            player.play_parameter_sfx(key)
+
+    def play_parameter_sfx_except_self(self, key):
+        world = getattr(self, "world", None)
+        players = getattr(world, "players", None) if world is not None else None
+        if not players:
+            return
+        for player in players:
+            if player is self:
+                continue
+            player.play_parameter_sfx(key)
+
+    def play_parameter_sfx_allied(self, key):
+        seen = set()
+        for player in getattr(self, "allied", None) or (self,):
+            if player in seen:
+                continue
+            seen.add(player)
+            player.play_parameter_sfx(key)
+
     def execute_command(self, data):
         args = data.split()
         cmd = "cmd_" + args[0].lower()
@@ -902,6 +935,9 @@ class Player:
                 # 双方本人（各自听到对方名字）
                 self.send_voice_important(mp.ALLIANCE_ACCEPTED_WITH + target.name)
                 target.send_voice_important(mp.ALLIANCE_ACCEPTED_WITH + self.name)
+                play = getattr(self, "play_parameter_sfx_all", None)
+                if callable(play):
+                    play("diplomacy_change")
                 # 其他人：单次播报包含双方名字，并把 target 也排除掉（避免
                 # target 二次听到关于自己的播报）。原来的"双 broadcast"会让
                 # self/target 都从对方的广播里听到自己的名字，confusing。
@@ -953,6 +989,9 @@ class Player:
                     # 本人与对方
                     self.send_voice_important(mp.UNALLIED_WITH + target.name)
                     target.send_voice_important(mp.UNALLIED_WITH + self.name)
+                    play = getattr(self, "play_parameter_sfx_all", None)
+                    if callable(play):
+                        play("diplomacy_change")
                     # 其他人（排除 target，避免 target 二次听到关于自己的播报）
                     self.broadcast_to_others_only(
                         mp.UNALLIED_WITH + target.name,

@@ -81,3 +81,24 @@ class CommandsMixin:
     def cmd_say(self, args):
         msg = self.name + mp.SAYS + [" ".join(args)]
         self.broadcast_to_others_only(msg)
+
+    def cmd_flare(self, args):
+        """Ally square ping when rules ``signal_flare 1``."""
+        from ..flare_announce import signal_flare_enabled
+
+        if not signal_flare_enabled():
+            return
+        if not args:
+            return
+        square = self.get_object_by_id(args[0])
+        if square is None:
+            return
+        square_id = getattr(square, "id", None)
+        if square_id is None:
+            square_id = args[0]
+        seen = set()
+        for player in getattr(self, "allied", None) or (self,):
+            if player in seen:
+                continue
+            seen.add(player)
+            player.push("flare", square_id, getattr(self, "number", None))

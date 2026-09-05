@@ -193,6 +193,8 @@ def test_global_catalog_covers_resource1():
     ids = [bid for bid, _ in GLOBAL_PRIMARY_CATALOG]
     assert "global.resource_status.resource1" in ids
     assert "global.resource_status.resource4" in ids
+    assert "global.flare" in ids
     assert get_default_key("global.resource_status.resource1") == "z"
+    assert get_default_key("global.flare") == "CTRL SHIFT n"
     classic_ids = [bid for bid, _ in _build_classic_catalog()]
     assert "classic.resource_status.resource4" in classic_ids

@@ -19,14 +19,14 @@ def _section_1497(lang: str) -> str:
 
 
 def test_version_is_1497():
-    assert 'VERSION = "1.4.9.7"' in _source("soundrts", "version.py")
+    # 1.4.9.7 notes remain after later bumps; current VERSION is owned by 1.4.9.8+.
+    assert "1.4.9.7" in _source("doc_src", "src", "zh", "relnotes.rst")
 
 
 def test_all_relnotes_have_1497_heading():
     for lang in ("zh", "en", "es", "it", "pt-BR"):
         src = _source("doc_src", "src", lang, "relnotes.rst")
         assert src.index("1.4.9.7") < src.index("1.4.9.6"), lang
-        assert "1.4.9.8" not in src.split("1.4.9.6")[0], lang
 
 
 def test_zh_relnotes_1497_session_topics():

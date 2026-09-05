@@ -1550,3 +1550,6 @@
 5838	visualizzazione
 
 
+5840	campana del villaggio
+5841	torna al lavoro
+5842	razzo di segnalazione

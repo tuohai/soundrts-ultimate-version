@@ -1550,3 +1550,6 @@
 5838	wyświetlanie
 
 
+5840	dzwon miejski
+5841	wróć do pracy
+5842	flara

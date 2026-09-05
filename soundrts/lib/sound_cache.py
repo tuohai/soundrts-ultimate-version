@@ -17,6 +17,33 @@ TXT_FILE = "ui/tts"
 SHORT_SILENCE = "9998"  # 0.01 s
 SILENCE = "9999"  # 0.2 s
 
+# Event SFX (complete, alerts, upgrade_complete). BGM in ui/music/ is skipped.
+# Game SFX are ogg/wav only; mp3 is for ui/music BGM.
+_SFX_SUFFIXES = (".ogg", ".wav")
+
+
+def ui_sfx_stem(relative_path: str):
+    """Return the SFX cache key for a file under ``ui/``, or None to skip.
+
+    ``ui/music/`` is looping BGM (``menu_music`` / ``game_music``); those files
+    are not registered as one-shot event sounds.
+    """
+    n = Path(str(relative_path).replace("\\", "/"))
+    if n.suffix.lower() not in _SFX_SUFFIXES:
+        return None
+    if any(part.lower() == "music" for part in n.parts[:-1]):
+        return None
+    return n.stem
+
+
+def _sfx_lookup_key(name) -> str:
+    key = "%s" % name
+    lower = key.lower()
+    for ext in _SFX_SUFFIXES:
+        if lower.endswith(ext):
+            return key[: -len(ext)]
+    return key
+
 
 class TextTable(dict):
     def __init__(self, res, path):
@@ -106,12 +133,20 @@ class Layer:
     def _load_sounds(self, res, root: Optional[Union[str, zipfile.ZipFile]]):
         self.sounds = {}
         for package, path in reversed(list(res.paths("ui", root, localize=True))):
+            found = []
             for name in package.relative_paths_of_files_in_subtree(path):
-                n = Path(name)
-                if n.suffix == ".ogg":
-                    key = n.stem
-                    file_ref = package, name
-                    self._load_sound(key, file_ref)
+                key = ui_sfx_stem(name)
+                if key:
+                    found.append((name, key))
+            # Same stem in this package: prefer .ogg over .wav (first insert wins).
+            found.sort(
+                key=lambda item: (
+                    item[1],
+                    0 if Path(item[0]).suffix.lower() == ".ogg" else 1,
+                )
+            )
+            for name, key in found:
+                self._load_sound(key, (package, name))
 
 
 def _volume(name, mod_name):
@@ -259,15 +294,7 @@ class SoundCache:
             allow_load: if False, never decode an unloaded OGG on this call;
                 queue it for the background loader instead (returns None)
         """
-        original_key = "%s" % name
-        
-        # 无论用户是否提供了.ogg后缀，都尝试查找
-        key = original_key
-        raw_key = original_key
-        
-        # 如果提供了.ogg后缀，移除后缀以匹配内部存储的键格式
-        if key.lower().endswith('.ogg'):
-            raw_key = key[:-4]  # 去掉.ogg后缀
+        raw_key = _sfx_lookup_key(name)
         
         # 尝试使用处理后的键查找
         for layer in reversed(self.layers):
@@ -302,12 +329,7 @@ class SoundCache:
     def has_sound(self, name):
         """return True if the cache have a sound with that name"""
         try:
-            key = "%s" % name
-            raw_key = key
-            
-            # 如果名称以.ogg结尾，移除后缀
-            if key.lower().endswith('.ogg'):
-                raw_key = key[:-4]
+            raw_key = _sfx_lookup_key(name)
             
             # 检查是否存在该音效
             for layer in reversed(self.layers):

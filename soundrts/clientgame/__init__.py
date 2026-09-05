@@ -149,6 +149,7 @@ GameInterface.cmd_fullscreen = game_display.cmd_fullscreen
 
 # 音频和语音方法
 GameInterface.cmd_say = game_audio.cmd_say
+GameInterface.cmd_flare = game_audio.cmd_flare
 GameInterface.cmd_say_players = game_audio.cmd_say_players
 GameInterface.cmd_say_time = game_audio.cmd_say_time
 GameInterface.cmd_toggle_music = game_audio.cmd_toggle_music
@@ -212,6 +213,7 @@ GameInterface.cmd_help = game_resources.cmd_help
 GameInterface.direction_to_msg = game_resources.direction_to_msg
 GameInterface.launch_alert = game_resources.launch_alert
 GameInterface.srv_alert = game_resources.srv_alert
+GameInterface.srv_flare = game_resources.srv_flare
 GameInterface.send_msg_if_playing = game_resources.send_msg_if_playing
 GameInterface._execute_command = game_resources._execute_command
 

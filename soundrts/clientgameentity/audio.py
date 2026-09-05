@@ -627,7 +627,11 @@ class EntityViewAudio:
         )
 
     def on_use_complete(self, skill):
-        st = style.get(skill, "alert")
+        st = None
+        if skill:
+            st = style.get(skill, "use_complete", warn_if_not_found=False)
+        if not st:
+            st = style.get(skill, "alert")
         if not st:
             return
         s = random.choice(st)

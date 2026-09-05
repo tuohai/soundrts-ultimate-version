@@ -86,6 +86,8 @@ SPACE: unit_status
 v: unit_hp_status
 ; 当前方格地形详情（可浏览：上下键切换，左右键浏览多项 *_vs，Esc 退出）
 CTRL SHIFT F7: say_square_info
+; 当前方格给盟友打信号弹（rules parameters.signal_flare 1；style signal_flare / signal_flare_title）
+CTRL SHIFT n: flare
 
 F9: objectives 1
 SHIFT F9: objectives -1

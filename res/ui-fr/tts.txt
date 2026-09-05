@@ -1550,3 +1550,6 @@
 5838	affichage
 
 
+5840	cloche du village
+5841	retourner au travail
+5842	fusée éclairante

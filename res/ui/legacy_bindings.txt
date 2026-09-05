@@ -31,6 +31,7 @@ RCTRL: examine
 SPACE: unit_status
 ; 当前方格地形详情（可浏览界面）
 CTRL SHIFT F7: say_square_info
+CTRL SHIFT n: flare
 
 
 ; explore the map

@@ -1550,3 +1550,6 @@
 5838	zobrazenie
 
 
+5840	mestský zvon
+5841	späť k práci
+5842	svetlica

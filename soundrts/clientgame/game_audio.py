@@ -20,6 +20,23 @@ def cmd_say(interface):
     interface.server.write_line("say " + msg)
 
 
+def cmd_flare(interface):
+    """Ping the current square for allies when rules ``signal_flare 1``."""
+    from ..flare_announce import signal_flare_enabled
+
+    if not signal_flare_enabled():
+        return
+    place = getattr(interface, "place", None)
+    if place is None:
+        return
+    square_id = getattr(place, "id", None)
+    if square_id is None:
+        square_id = getattr(place, "name", None)
+    if square_id is None:
+        return
+    interface.server.write_line("flare %s" % square_id)
+
+
 def cmd_say_players(interface):
     """播报当前游戏中的玩家"""
     from ..faction_announce import name_with_faction_msgs
@@ -841,7 +858,7 @@ def cmd_voice_lib_append_copy(interface, which=""):
 
 # 导出的函数供其他模块使用
 __all__ = [
-    'cmd_say', 'cmd_say_players', 'cmd_say_time', 'cmd_toggle_speech', 'cmd_toggle_music',
+    'cmd_say', 'cmd_flare', 'cmd_say_players', 'cmd_say_time', 'cmd_toggle_speech', 'cmd_toggle_music',
     'cmd_music_volume_up', 'cmd_music_volume_down', 'cmd_volume', 'cmd_sfx_volume',
     'cmd_history_previous', 'cmd_history_stop',
     'cmd_history_stop_primary', 'cmd_history_stop_secondary',

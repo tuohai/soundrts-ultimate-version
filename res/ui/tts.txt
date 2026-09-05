@@ -1680,3 +1680,6 @@
 5838	display
 
 
+5840	town bell
+5841	return to work
+5842	signal flare

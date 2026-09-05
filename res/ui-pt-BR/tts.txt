@@ -1550,3 +1550,6 @@
 5838	exibição
 
 
+5840	sino da cidade
+5841	voltar ao trabalho
+5842	sinalizador

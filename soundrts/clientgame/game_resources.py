@@ -634,6 +634,37 @@ def srv_alert(interface, s):
     launch_alert(interface, place, int(sound_id))
 
 
+def srv_flare(interface, square_id, sender_number=None, *unused):
+    """Ally square ping: style SFX plus spoken square (and sender if not you)."""
+    from ..definitions import style
+    from ..flare_announce import flare_voice_msg, player_by_number, signal_flare_enabled
+    from ..lib.msgs import localize_voice_msg
+
+    if not signal_flare_enabled():
+        return
+
+    place = None
+    player = getattr(interface, "player", None)
+    if player is not None:
+        place = player.get_object_by_id(square_id)
+    ids = style.get("parameters", "signal_flare", warn_if_not_found=False)
+    if ids and place is not None:
+        launch_alert(interface, place, ids[0])
+    elif ids:
+        psounds.play_stereo(sounds.get_sound(ids[0]))
+    sender = player_by_number(getattr(interface, "world", None), sender_number)
+    msg = localize_voice_msg(flare_voice_msg(place, sender, player))
+    if not msg:
+        return
+    if place is not None:
+        from .game_unit_control import _place_pan_fn, _place_voice_pan
+
+        lv, rv = _place_voice_pan(interface, place)
+        voice.info(msg, lv, rv, pan_fn=_place_pan_fn(interface, place))
+    else:
+        voice.info(msg)
+
+
 # 导出的函数供其他模块使用
 __all__ = [
     'resources', 'available_population', 'used_population',
@@ -643,7 +674,7 @@ __all__ = [
     'cmd_toggle_side_filter', 'cmd_toggle_type_filter', 'cmd_gamemenu',
     'cmd_toggle_cheatmode', 'cmd_cmd', 'cmd_console', 'cmd_reload_parameters',
     'cmd_change_player', 'cmd_objectives', 'cmd_help', 'direction_to_msg',
-    'launch_alert', 'srv_alert', 'send_msg_if_playing',
+    'launch_alert', 'srv_alert', 'srv_flare', 'send_msg_if_playing',
     'gm_quit', 'gm_slow_speed', 'gm_normal_speed', 'gm_fast_speed',
     'gm_very_fast_speed', 'gm_save', '_execute_command'
 ]

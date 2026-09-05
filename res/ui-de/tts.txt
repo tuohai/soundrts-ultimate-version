@@ -1551,3 +1551,6 @@
 5838	Anzeige
 
 
+5840	Stadtglocke
+5841	zurück an die Arbeit
+5842	Signalrakete

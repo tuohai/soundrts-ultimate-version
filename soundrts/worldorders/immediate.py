@@ -528,7 +528,53 @@ class RallyingPointOrder(ImmediateOrder):
 
     def immediate_action(self):
         self.unit.rallying_point = self.args[0]
-        self.unit.notify("order_ok")
+        self.unit.notify("rallying_point")
+
+
+class TownBellOrder(ImmediateOrder):
+    """First Town Bell ring: garrison nearby workers (player-wide toggle)."""
+
+    keyword = "town_bell"
+    nb_args = 0
+    population_cost = 0
+
+    @classmethod
+    def is_allowed(cls, unit, *unused_args):
+        if not int(getattr(unit, "town_bell", 0) or 0):
+            return False
+        return not getattr(unit.player, "_town_bell_active", False)
+
+    def immediate_action(self):
+        from ..world_town_bell import ring_town_bell
+
+        player = self.unit.player
+        if getattr(player, "_town_bell_active", False):
+            return
+        ring_town_bell(player)
+        self.unit.notify("town_bell")
+
+
+class TownBellStopOrder(ImmediateOrder):
+    """Second Town Bell ring: send bell-garrisoned workers back to work."""
+
+    keyword = "town_bell_stop"
+    nb_args = 0
+    population_cost = 0
+
+    @classmethod
+    def is_allowed(cls, unit, *unused_args):
+        if not int(getattr(unit, "town_bell", 0) or 0):
+            return False
+        return bool(getattr(unit.player, "_town_bell_active", False))
+
+    def immediate_action(self):
+        from ..world_town_bell import stop_town_bell
+
+        player = self.unit.player
+        if not getattr(player, "_town_bell_active", False):
+            return
+        stop_town_bell(player)
+        self.unit.notify("town_bell_stop")
 
 
 class JoinGroupOrder(ImmediateOrder):

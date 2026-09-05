@@ -87,6 +87,8 @@ SHIFT F9: objectives -1
 F10: gamemenu
 F11: say_players
 F7: say
+; 当前方格给盟友打信号弹
+CTRL SHIFT n: flare
 
 ; 音乐控制
 ALT m: toggle_music

@@ -1550,3 +1550,6 @@
 5838	zobrazení
 
 
+5840	městský zvon
+5841	zpět k práci
+5842	světlice

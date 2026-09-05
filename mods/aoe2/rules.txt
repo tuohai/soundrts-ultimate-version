@@ -165,6 +165,7 @@ cover .5 0
 def parameters
 nb_of_resource_types 4
 achievements_enabled 0
+signal_flare 1
 menace_armor_weight 1
 menace_dodge_weight 1
 menace_range_weight 0.15
@@ -3809,6 +3810,9 @@ transport_capacity 15
 transport_volume 99
 transport_passenger_types infantry archer_unit peasant monk -cavalry -siege_unit
 passenger_attack_types archer_unit peasant
+; Town Bell: Euclidean meters (1 square ≈ 12 m). 24 ≈ two squares around the TC.
+town_bell 1
+town_bell_range 24
 storable_resource_types resource1 resource2 resource3 resource4
 ; One villager slot; race ``peasant <type>`` remaps via effective_can_train.
 can_train peasant
@@ -3845,6 +3849,8 @@ transport_capacity 15
 transport_volume 99
 transport_passenger_types infantry archer_unit peasant monk -cavalry -siege_unit
 passenger_attack_types archer_unit peasant
+town_bell 1
+town_bell_range 24
 storable_resource_types resource1 resource2 resource3 resource4
 can_train peasant
 can_research loom wheelbarrow hand_cart town_watch town_patrol

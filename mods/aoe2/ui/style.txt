@@ -12,6 +12,24 @@ resource1_title 8102
 resource2_title 8101
 resource3_title 8100
 resource4_title 8103
+; UI SFX stems = mods/aoe2/ui/sounds/<name>.ogg or .wav (not ui/music/).
+; BGM only: town.mp3 / xtown.mp3 in mods/aoe2/ui/music/.
+; age_advance and wolf are short SFX — put .ogg/.wav in ui/sounds/, not music/.
+main_menu_select_sound menu_hover
+main_menu_confirm_sound menu_select
+submenu_select_sound select1
+submenu_confirm_sound select2
+victory_sound victory
+defeat_sound defeat
+player_defeated playerdefeated
+diplomacy_change diplomacy_change
+objective_change objective_change
+signal_flare signal_flare
+signal_flare_title 5842
+population_limit population_limit
+menu_music town
+game_music town
+battle_music xtown
 
 ; Resource names for menus (market_buy resource2, etc.) — do NOT reuse deposit type ``wood``
 def resource1
@@ -84,9 +102,36 @@ title 8503
 def unique_unit
 title 8504
 
+; ---------- 界面/ UI SFX (copy ogg into ui/sounds/) ----------
+def unit
+alert attack_warning_general
+order_impossible error
+blocked error
+enter garrison
+exit ungarrison
+
+def building
+alert attack_warning_base
+research_complete research
+rallying_point gather_point
+
+def walking_unit
+complete military_spawn
+
+def animal
+is_a walking_unit
+
+def a_conversion
+use_complete enemy_convert_success
+conversion_miss enemy_convert_warning
+conversion_fail enemy_convert_warning
+
 ; ---------- override base buildings / workers / ages to biligame names ----------
 def townhall
 title 8300
+complete town_center
+town_bell town_bell1
+town_bell_stop town_bell2
 def town_center
 is_a building
 title 8300
@@ -96,62 +141,89 @@ launch_rdg 1042
 rdg_hit 1043
 keyboard building building1
 shortcut h
+complete town_center
+upgrade_complete age_advance
+town_bell town_bell1
+town_bell_stop town_bell2
 
 def keep
 title 8300
+complete town_center
 def castle
 title 8113
+complete castle
 def barracks
 title 8301
+complete barracks
 def stables
 title 8302
+complete stable
 def blacksmith
 title 8303
+complete blacksmith
 def house
 title 8304
+complete house
 def farm
 title 8305
+complete farm
+exhausted farm_exhausted
 def pasture
 is_a building
 title 8331
+complete farm
 def lumbermill
 title 8306
+complete lumber_camp
 def workshop
 title 8307
+complete siege_workshop
 def shipyard
 title 8308
+complete dock
 def wall
 title 8309
+complete wall
 def gate
 title 8310
+complete gate
 def palisade_wall
 is_a building
 title 8325
 keyboard building
+complete wall
 def palisade_gate
 is_a building
 title 8326
 keyboard building
+complete gate
 def outpost
 is_a building
 title 8319
 keyboard building
+complete tower
 def scouttower
 title 8311
+complete tower
 def guardtower
 title 8312
+complete tower
 def keeptower
 is_a building
 title 8313
+complete tower
 def cannontower
 is_a building
 title 8327
+complete tower
 def fortified_wall
 is_a building
 title 8328
+complete wall
 def fortified_gate
 is_a building
 title 8329
+complete gate
 def peasant
 title 8159
 keyboard worker
@@ -162,24 +234,35 @@ store_resource1 1099
 store_resource2 1098
 store_resource3 76941
 store_resource4 76939
+complete villager_spawn
+alert_animal attack_warning_wild_animal
 
 def wonder
 title 8317
+complete wonder
+death wonder_destruction
+noise_when_building loop wonder_construction
 def mill
 is_a building
 title 8314
 keyboard building
 shortcut m
+complete mill
 def market
 is_a building
 title 8316
 keyboard building
 shortcut k
+complete market
+market_bought marketbuy
+market_sold marketsell
+tribute_sent tribute
 def mining_camp
 is_a building
 title 8315
 keyboard building
 shortcut i
+complete mining_camp
 def stone_mine
 is_a resource_deposit
 title 8318
@@ -226,64 +309,82 @@ qty_unit_title 5115
 color saddlebrown
 noise repeat 4 gather_food1 gather_food2
 ground grass
+claim_ok herdables_found
 
 def deer
-is_a walking_unit
+is_a animal
 title 8321
 color tan
 noise repeat 8 deer_hey
 death deer_death
+complete
 
 def sheep
-is_a walking_unit
+is_a animal
 title 8322
 color white
 noise repeat 10 sheep_hey
 death sheep_death
+claim_ok herdables_found
+complete
 
 def boar
-is_a walking_unit
+is_a animal
 title 8323
 color saddlebrown
 noise repeat 6 boar_hey boar_shout
 mdg_hit paw paw2
 death boar_death
+complete
 
 def dark_age
 title 8290
+complete age_advance
 def feudal_age
 title 8291
+complete age_advance
 def castle_age
 title 8292
+complete age_advance
 def imperial_age
 title 8293
+complete age_advance
 
 ; ---------- mod buildings ----------
 def archery_range
 is_a building
 title 8110
+complete archery_range
 def university
 is_a building
 title 8111
+complete university
 def monastery
 is_a building
 title 8112
+complete monastery
 def relic
 title 8640
+pickup relic
+captured_success relics_captured
+captured_lost relics_lost
 
 def monk
 is_a walking_unit
 title 8114
 keyboard soldier6
 short_cut m
+complete monk_spawn
 def missionary
 is_a walking_unit
 title 8115
 keyboard soldier6
 short_cut m
+complete monk_spawn
 def aoe_castle
 is_a building
 title 8113
+complete castle
 
 def byzantine_town_center
 is_a town_center
@@ -295,112 +396,112 @@ def teuton_town_center
 is_a town_center
 
 def briton_barracks
-is_a building
+is_a barracks
 title 8301
 def frank_barracks
-is_a building
+is_a barracks
 title 8301
 def chinese_barracks
-is_a building
+is_a barracks
 title 8301
 def mongol_barracks
-is_a building
+is_a barracks
 title 8301
 def byzantine_barracks
-is_a building
+is_a barracks
 title 8301
 
 def briton_archery
-is_a building
+is_a archery_range
 title 8110
 def frank_archery
-is_a building
+is_a archery_range
 title 8110
 def chinese_archery
-is_a building
+is_a archery_range
 title 8110
 def mongol_archery
-is_a building
+is_a archery_range
 title 8110
 def byzantine_archery
-is_a building
+is_a archery_range
 title 8110
 
 def briton_stable
-is_a building
+is_a stables
 title 8302
 def frank_stable
-is_a building
+is_a stables
 title 8302
 def chinese_stable
-is_a building
+is_a stables
 title 8302
 def mongol_stable
-is_a building
+is_a stables
 title 8302
 def byzantine_stable
-is_a building
+is_a stables
 title 8302
 
 def briton_blacksmith
-is_a building
+is_a blacksmith
 title 8303
 def frank_blacksmith
-is_a building
+is_a blacksmith
 title 8303
 def chinese_blacksmith
-is_a building
+is_a blacksmith
 title 8303
 def mongol_blacksmith
-is_a building
+is_a blacksmith
 title 8303
 def byzantine_blacksmith
-is_a building
+is_a blacksmith
 title 8303
 
 def briton_castle
-is_a building
+is_a aoe_castle
 title 8113
 def frank_castle
-is_a building
+is_a aoe_castle
 title 8113
 def chinese_castle
-is_a building
+is_a aoe_castle
 title 8113
 def mongol_castle
-is_a building
+is_a aoe_castle
 title 8113
 def byzantine_castle
-is_a building
+is_a aoe_castle
 title 8113
 
 def byzantine_house
-is_a building
+is_a house
 title 8304
 def byzantine_wall
-is_a building
+is_a wall
 title 8309
 def byzantine_scouttower
-is_a building
+is_a scouttower
 title 8311
 def byzantine_guardtower
-is_a building
+is_a guardtower
 title 8312
 
 def briton_university
-is_a building
+is_a university
 title 8111
 def frank_university
-is_a building
+is_a university
 title 8111
 def chinese_university
-is_a building
+is_a university
 title 8111
 def mongol_university
-is_a building
+is_a university
 title 8111
 def byzantine_university
-is_a building
+is_a university
 title 8111
 
 ; Later civ shells (style was only filled for britons–byzantines).
@@ -961,6 +1062,7 @@ shortcut f
 noise_when_exploiting_shore_fish repeat 5 fishing
 noise_when_exploiting_deep_fish repeat 5 fishing2
 store_resource3 76941
+complete ship_spawn
 
 def trade_cog
 is_a unit
@@ -968,10 +1070,12 @@ title 8420
 move 1088 1088
 death 76821
 keyboard soldier7
+complete ship_spawn
 
 def fish_trap
 is_a building
 title 8421
+complete fish_trap
 
 def gillnets
 title 8422
@@ -988,6 +1092,7 @@ move 1088 1088
 death 76821
 keyboard soldier7
 shortcut t
+complete ship_spawn
 
 ; 战舰线 — 复用基础 destroyer / battleship 音效 ID（soundpack / res/ui/effects）
 def galley
@@ -1000,6 +1105,7 @@ move 1088 1088
 death 76821
 keyboard soldier7
 shortcut g
+complete ship_spawn
 
 def war_galley
 is_a galley
@@ -1020,6 +1126,7 @@ move 1088 1088
 death 76821
 keyboard soldier7
 shortcut f
+complete ship_spawn
 
 def fire_ship
 is_a fire_galley
@@ -1039,6 +1146,7 @@ explode_effect 76934
 death 76821
 keyboard soldier7
 shortcut d
+complete ship_spawn
 
 def demolition_ship
 is_a demolition_raft
@@ -1059,6 +1167,7 @@ move 1088 1088
 death 76821
 keyboard soldier7
 shortcut c
+complete ship_spawn
 
 def elite_cannon_galleon
 is_a cannon_galleon
@@ -1074,6 +1183,7 @@ move 1088 1088
 death 76821
 keyboard soldier7
 shortcut u
+complete ship_spawn
 
 def elite_turtle_ship
 is_a turtle_ship
@@ -1330,9 +1440,11 @@ move 76720
 death 76704
 shortcut f
 keyboard soldier7
+complete military_spawn
 
 def feitoria
 title 8278
+complete trade_workshop
 
 def market_buy
 title 8279 $1

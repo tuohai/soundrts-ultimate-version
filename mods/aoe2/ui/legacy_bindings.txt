@@ -28,6 +28,8 @@ v: unit_hp_status
 
 LCTRL: examine
 RCTRL: examine
+; 当前方格给盟友打信号弹
+CTRL SHIFT n: flare
 
 SPACE: unit_status
 ; 当前方格地形详情（可浏览界面）

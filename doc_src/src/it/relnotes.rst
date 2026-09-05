@@ -3,6 +3,51 @@ Note di rilascio
 
 .. contents::
 
+1.5
+---
+
+**Problema: l’avviso animale selvatico non era allineato a DE**
+
+- **Problema**: ``attack_warning_wild_animal`` era sull’``alert`` di cervo / pecora / cinghiale. Il motore riproduce l’``alert`` della **vittima** quando la tua unità è ferita, quindi un cinghiale che morde un villager usava ``attack_warning_general``.
+- **Cambio**: lo style della vittima può impostare ``alert_<tipo attaccante>``, percorrendo l’``is_a`` dell’attaccante (dal più specifico). AoE2: ``def animal``, cinghiale / cervo / pecora ``is_a animal``, contadino ``alert_animal attack_warning_wild_animal``; valgono anche ``alert_boar`` / ``alert_wolf``. I villager delle civ ``is_a peasant`` lo ereditano. Gli edifici restano su ``alert`` (``attack_warning_base``). Il cooldown di 10 s non cambia.
+- **Ambito**: ``clientgameentity/combat.py``; ``mods/aoe2/ui/style.txt``; ``test_wild_attack_alert.py``.
+
+**Cambio: razzo di segnalazione con tasto, voce e nome / suono dalle regole**
+
+- **Problema**: dopo l’overlay AoE2, ``CTRL+SHIFT+N`` non faceva nulla e gli schemi non avevano ``flare``. Solo ``parameters.signal_flare`` panoramico non diceva la casella. Nome e suono erano fissi, così altri mod non potevano spegnerlo né cambiarli.
+- **Cambio**: si attiva con ``signal_flare 1`` in ``rules.txt`` ``def parameters``. Nello style, ``parameters.signal_flare`` è l’effetto; ``signal_flare_title`` è il nome (TTS ``SIGNAL_FLARE`` / 5842 di default). Gli alleati sentono «razzo di segnalazione a <casella>» (se lo lancia un altro, il nome viene prima). AoE2 a strati / classico / RPG lega ``CTRL SHIFT n: flare``; in mappa resta ``N``. Gli schemi lo elencano solo se è attivo.
+- **Ambito**: ``flare_announce.py``; ``hotkey_editor.py``; ``hotkey_catalogs.py``; ``mods/aoe2/rules.txt``; ``mods/aoe2/ui/style.txt``; ``mods/aoe2/ui/*_bindings.txt``; ``test_flare_announce.py``; ``test_changelog_15.py``.
+
+**Problema: unità senza zaino sentivano «zaino vuoto» / «equipaggiamento vuoto»**
+
+- **Problema**: senza ``inventory_capacity`` non c’è zaino né barra equipaggiamento. ``F3`` a strati o ``Shift+V`` classico diceva comunque «zaino vuoto».
+- **Cambio**: se ``inventory_capacity`` è 0 (predefinito se omesso), solo un beep; non apre le schermate né dice ``EMPTY_BACKPACK`` / equipaggiamento vuoto. Con capacità e borsa vuota quegli avvisi restano.
+- **Ambito**: ``attributes/inventory_screen.py`` ``unit_has_inventory``; ``equipment_screen.py``; ``game_gear_hud.py``; ``test_inventory_backpack.py``.
+
+1.4.9.9
+---------
+
+**Problema: avanzando era non si sentiva age_advance**
+
+- **Problema**: il pacchetto AoE2 teneva ``age_advance.mp3`` in ``ui/music/``. L’avanzamento era usa la cache SFX di ``upgrade_complete``, che prima indicizzava solo ``.ogg`` sotto ``ui/`` e non trattava ``ui/music/`` come SFX brevi, quindi la fanfara era muta.
+- **Cambio**: la cache SFX indicizza ``.ogg`` / ``.wav`` (``.ogg`` vince sullo stesso stem) e salta ancora ``ui/music/`` (BGM in loop, mp3 consentito). Gli SFX brevi stanno in ``ui/sounds/``. ``age_advance`` e ``wolf`` sono in ``.ogg``. ``upgrade_complete age_advance`` del centro città non cambia.
+- **Ambito**: ``sound_cache.py``; ``mods/aoe2/ui/sounds/age_advance.ogg``; ``test_ui_sfx_stem.py``; ``test_changelog_1499.py``.
+
+1.4.9.8
+---------
+
+**Cambio: campana del villaggio guidata dalle regole**
+
+- **Problema**: i centri città AoE2 possono far entrare i villager vicini negli edifici e poi rimandarli al lavoro. Il motore non aveva quell’ordine, quindi ``town_bell1`` / ``town_bell2`` non avevano dove suonare.
+- **Cambio**: gli edifici con ``town_bell 1`` ottengono suona / torna al lavoro. Il raggio è in metri euclidei (``town_bell_range``, mm PRECISION; ``0`` = tutta la mappa), non BFS per caselle. Di default chiama i lavoratori di terra (non le navi); ``town_bell_units`` filtra i tipi. Il primo suono manda i vicini nell’edificio presidiabile più vicino con spazio e salva gli ordini; anche i villager già dentro vengono marcati. Il secondo fa uscire quei villager e ripristina raccolta/costruzione (i soldati presidiati a mano restano). Dopo aver caricato i villager nel centro città puoi ancora suonare; Torna al lavoro li fa uscire. I centri città AoE2 usano ``24`` metri (circa due caselle). SFX: ``town_bell1`` / ``town_bell2``.
+- **Ambito**: ``world_town_bell.py``; ``worldorders/immediate.py``; ``definitions.py``; ``worldunit/worldcreature.py``; ``mods/aoe2/rules.txt``; ``test_town_bell.py``.
+
+**Cambio: SFX di sconfitta altrui, diplomazia, obiettivi, razzo, punto di raccolta e popolazione piena**
+
+- **Problema**: ``playerdefeated``, ``diplomacy_change``, ``objective_change``, ``signal_flare``, ``gather_point`` e ``population_limit`` non avevano eventi. La popolazione piena usava ancora ``error``.
+- **Cambio**: se un altro giocatore si ritira o viene eliminato, suona ``parameters.player_defeated`` (la tua vittoria/sconfitta resta ``victory`` / ``defeat``). Formare o rompere un’alleanza suona ``diplomacy_change``. Aggiungere, completare o abbandonare un obiettivo suona ``objective_change``. ``CTRL+SHIFT+N`` sulla casella attuale (``N`` in esplorazione mappa) avvisa gli alleati. Impostare il punto di raccolta suona ``rallying_point`` (AoE2: ``gather_point``). Popolazione piena suona ``population_limit``. Ogni mod li mappa in ``parameters`` di ``style``; non collidono con il pacchetto res.
+- **Ambito**: ``worldplayerbase``; ``clientgame``; ``mods/aoe2/ui/style.txt``; ``test_changelog_1498.py``.
+
 1.4.9.7
 ---------
 

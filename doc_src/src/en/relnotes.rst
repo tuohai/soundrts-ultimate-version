@@ -5,6 +5,54 @@ Release notes
 .. contents::
 
 
+1.5
+---
+
+**Issue: wild-animal attack warning did not match DE**
+
+- **Issue**: ``attack_warning_wild_animal`` was on deer / sheep / boar ``alert``. The engine plays the **victim's** ``alert`` when your unit is wounded, so a boar biting a villager used ``attack_warning_general``.
+- **Change**: The victim style may set ``alert_<attacker type>``, walking the attacker's ``is_a`` chain (specific first). AoE2: ``def animal``, boar / deer / sheep ``is_a animal``, peasant ``alert_animal attack_warning_wild_animal``; ``alert_boar`` / ``alert_wolf`` also work. Civ villagers ``is_a peasant`` inherit it. Buildings still use ``alert`` (``attack_warning_base``). The map-wide 10-second cooldown is unchanged.
+- **Scope**: ``clientgameentity/combat.py``; ``mods/aoe2/ui/style.txt``; ``test_wild_attack_alert.py``.
+
+**Change: signal flare hotkey, speech, and rules-driven name / SFX**
+
+- **Issue**: After the AoE2 overlay, ``CTRL+SHIFT+N`` did nothing and schemes had no ``flare``. SFX-only ``parameters.signal_flare`` did not speak the square. The name and sound were hardcoded, so other mods could not turn it off or replace them.
+- **Change**: Enable with ``signal_flare 1`` in ``rules.txt`` ``def parameters``. Style ``parameters.signal_flare`` is the SFX; ``signal_flare_title`` is the spoken name (default TTS ``SIGNAL_FLARE`` / 5842). Allies hear “signal flare at <square>” (another player's name is prefixed). AoE2 layered / classic / RPG bind ``CTRL SHIFT n: flare``; map browse still has ``N``. Hotkey schemes list it only when enabled.
+- **Scope**: ``flare_announce.py``; ``hotkey_editor.py``; ``hotkey_catalogs.py``; ``mods/aoe2/rules.txt``; ``mods/aoe2/ui/style.txt``; ``mods/aoe2/ui/*_bindings.txt``; ``test_flare_announce.py``; ``test_changelog_15.py``.
+
+**Issue: units without a backpack still heard empty-bag / empty-gear prompts**
+
+- **Issue**: A unit with no ``inventory_capacity`` has no backpack or equipment bar. Layered ``F3`` or classic ``Shift+V`` still spoke “empty backpack” and similar lines.
+- **Change**: When ``inventory_capacity`` is 0 (the default if omitted), the command only beeps; it does not open the screens or speak ``EMPTY_BACKPACK`` / empty equipment. A unit that has capacity but an empty bag still hears those empty prompts.
+- **Scope**: ``attributes/inventory_screen.py`` ``unit_has_inventory``; ``equipment_screen.py``; ``game_gear_hud.py``; ``test_inventory_backpack.py``.
+
+
+1.4.9.9
+---------
+
+**Issue: age-up did not play age_advance**
+
+- **Issue**: The AoE2 pack kept ``age_advance.mp3`` in ``ui/music/``. Age-up uses the ``upgrade_complete`` SFX cache, which previously indexed only ``.ogg`` under ``ui/`` and never treated ``ui/music/`` as short SFX, so the fanfare was silent.
+- **Change**: The SFX cache indexes ``.ogg`` / ``.wav`` (``.ogg`` wins on the same stem) and still skips ``ui/music/`` (looping BGM, mp3 allowed). Put short SFX in ``ui/sounds/``. ``age_advance`` and ``wolf`` are converted to ``.ogg``. Town Center ``upgrade_complete age_advance`` is unchanged.
+- **Scope**: ``sound_cache.py``; ``mods/aoe2/ui/sounds/age_advance.ogg``; ``test_ui_sfx_stem.py``; ``test_changelog_1499.py``.
+
+
+1.4.9.8
+---------
+
+**Change: rule-driven Town Bell**
+
+- **Issue**: AoE2 Town Centers can send nearby villagers into buildings and later send them back to work. The engine had no such order, so ``town_bell1`` / ``town_bell2`` had nothing to play on.
+- **Change**: Buildings with ``town_bell 1`` get ring / return-to-work commands. Range is Euclidean meters (``town_bell_range``, PRECISION mm internally; ``0`` = map-wide), not square BFS. By default it calls land workers (not boats); ``town_bell_units`` can filter types. The first ring sends nearby workers into the nearest garrisonable building with space and stores their previous orders; villagers already inside are tagged too. The second ring ungarrisons those villagers and restores gather/build (manually garrisoned soldiers stay). After you load villagers into a Town Center you can still ring; Return to Work then sends them out. AoE2 Town Centers default to ``24`` meters (about two squares). SFX: ``town_bell1`` / ``town_bell2``.
+- **Scope**: ``world_town_bell.py``; ``worldorders/immediate.py``; ``definitions.py``; ``worldunit/worldcreature.py``; ``mods/aoe2/rules.txt``; ``test_town_bell.py``.
+
+**Change: other-player defeat, diplomacy, objective, flare, rally, and pop-cap SFX**
+
+- **Issue**: Interface pack stems ``playerdefeated``, ``diplomacy_change``, ``objective_change``, ``signal_flare``, ``gather_point``, and ``population_limit`` had no events. A full population still used generic ``error``.
+- **Change**: When another player resigns or is eliminated, play ``parameters.player_defeated`` (your own win/loss still uses ``victory`` / ``defeat``). Forming or breaking an alliance plays ``diplomacy_change``. Adding, completing, or abandoning a campaign objective plays ``objective_change``. ``CTRL+SHIFT+N`` on the current square (``N`` in map browse) pings allies. Setting a rally point plays ``rallying_point`` (AoE2: ``gather_point``). A full population plays ``population_limit``. Each mod maps these in ``style`` ``parameters``; they do not clash with the res pack.
+- **Scope**: ``worldplayerbase``; ``clientgame``; ``mods/aoe2/ui/style.txt``; ``test_changelog_1498.py``.
+
+
 1.4.9.7
 ---------
 

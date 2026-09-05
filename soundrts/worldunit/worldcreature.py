@@ -880,6 +880,9 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     transport_volume = 1
     can_unload_over_walls = 0
     transport_passenger_types = ()
+    town_bell = 0  # 1 = 菜单可敲城镇钟
+    town_bell_range = 0  # PRECISION mm；0 = 全图
+    town_bell_units = ()  # 空 = 陆地 Worker
     requirements = ()
     is_a = ()
     # can_build / can_train：rules 写入 _rules_can_*；实例经 @property → effective_*
@@ -1897,6 +1900,10 @@ class BuildingSite(_Building):
     def _complete_construction(self):
         from ..world_build_rules import clear_scaffold_passage, finalize_new_building
 
+        # Last HP tick never reaches the client: this site is deleted in the same
+        # world update that would first make hp == hp_max, so render_hp never
+        # plays proportion_10. Emit it here (before delete) like train/research.
+        self.notify("completeness,10")
         player, place, x, y = self.player, self.place, self.x, self.y
         blocked_exit = self.blocked_exit
         building_land = self.building_land

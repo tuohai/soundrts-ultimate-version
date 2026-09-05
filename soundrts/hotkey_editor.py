@@ -191,6 +191,8 @@ GLOBAL_PRIMARY_CATALOG: List[Tuple[str, list]] = [
     ("global.examine", list(mp.HOTKEY_EXAMINE)),
     ("global.unit_status", list(mp.HOTKEY_UNIT_STATUS)),
     ("global.unit_hp_status", list(mp.HOTKEY_UNIT_HP_STATUS)),
+    ("global.say_square_info", list(mp.HOTKEY_SAY_SQUARE_INFO)),
+    ("global.flare", list(mp.HOTKEY_SIGNAL_FLARE)),
     ("global.objectives.1", list(mp.HOTKEY_OBJECTIVES_NEXT)),
     ("global.objectives.-1", list(mp.HOTKEY_OBJECTIVES_PREV)),
     ("global.say_players", list(mp.HOTKEY_SAY_PLAYERS)),

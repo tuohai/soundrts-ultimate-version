@@ -257,6 +257,14 @@ class GameInterface(AttributesInterface):
         from ..clientmedia import sounds
         psounds.play_stereo(sounds.get_sound(s[0]))
 
+    def srv_play_parameter_sfx(self, key, *unused):
+        from ..clientmedia import sounds
+        from ..definitions import style
+        ids = style.get("parameters", key, warn_if_not_found=False)
+        if not ids:
+            return
+        psounds.play_stereo(sounds.get_sound(ids[0]))
+
     def srv_spectator_joined(self, login, *unused):
         voice.info([login] + mp.SPECTATOR_JOINED)
 

@@ -238,7 +238,7 @@ class EntityViewEvents:
             self.interface, self.model if getattr(self, "model", None) is not None else self
         )
         if local:
-            self.unit_attacked_alert()
+            self.unit_attacked_alert(attacker_type, attacker_id)
         if not play:
             if local:
                 attacker = self.interface.dobjets.get(attacker_id)
@@ -372,10 +372,36 @@ class EntityViewEvents:
             return
         self.launch_event_style("order_ok", alert=True)
 
+    def on_rallying_point(self):
+        if self.player is not self.interface.player:
+            return
+        st = style.get(self.type_name, "rallying_point", warn_if_not_found=False)
+        if st:
+            sound = random.choice(st)
+            if not self.is_local:
+                self.launch_alert(sound)
+            else:
+                self.launch_event(sound)
+            return
+        self.launch_event_style("order_ok", alert=True)
+
     def on_order_impossible(self, reason=None, *extra):
         if self.player is not self.interface.player:
             return
-        self.launch_event_style("order_impossible", alert=True)
+        played_pop_cap = False
+        if reason == "not_enough_population":
+            st = style.get(self.type_name, "population_limit", warn_if_not_found=False)
+            if not st:
+                st = style.get("parameters", "population_limit", warn_if_not_found=False)
+            if st:
+                sound = random.choice(st)
+                if not self.is_local:
+                    self.launch_alert(sound)
+                else:
+                    self.launch_event(sound)
+                played_pop_cap = True
+        if not played_pop_cap:
+            self.launch_event_style("order_impossible", alert=True)
         if reason is not None:
             # 确保reason是字符串类型而不是列表
             if isinstance(reason, list):
@@ -517,7 +543,9 @@ class EntityViewEvents:
         self.interface.send_menu_alerts_if_needed()
 
     def on_completeness(self, s):  # building train or upgrade
-        self.launch_event_style("production")
+        # Construction uses the HP progress bar (proportion_*), not production ticks.
+        if self.type_name != "buildingsite":
+            self.launch_event_style("production")
         self.launch_event_style("proportion_%s" % s)
         
         # 为资源生产进度添加语音提示
@@ -583,10 +611,12 @@ class EntityViewEvents:
             pass
     
     def on_research_complete(self):
+        self.launch_event_style("research_complete", alert=True)
         voice.info(self.get_style("research_complete_msg"), **_PRIMARY)
         self.interface.send_menu_alerts_if_needed()
 
     def on_upgrade_complete(self):
+        self.launch_event_style("upgrade_complete", alert=True)
         voice.info(self.get_style("upgrade_complete_msg"), **_PRIMARY)
         self.interface.send_menu_alerts_if_needed()
 

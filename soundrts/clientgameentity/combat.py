@@ -22,6 +22,54 @@ from .battle_shout_audio import (
 )
 
 
+def _style_is_a_parents(type_name):
+    raw = style.get(type_name, "is_a", warn_if_not_found=False) or []
+    parents = []
+    for item in raw:
+        if isinstance(item, (list, tuple)):
+            item = item[0] if item else ""
+        token = str(item).split()[0] if item else ""
+        token = token.split("(")[0]
+        if token:
+            parents.append(token)
+    return parents
+
+
+def attacker_style_lineage(attacker_type):
+    """Attacker type then each style ``is_a`` ancestor (breadth-first)."""
+    names = []
+    seen = set()
+    queue = [attacker_type]
+    while queue:
+        name = queue.pop(0)
+        if not name or name in seen:
+            continue
+        seen.add(name)
+        names.append(name)
+        queue.extend(_style_is_a_parents(name))
+    return names
+
+
+def attacked_alert_style(victim_type_name, attacker_type=None, attacker_model=None):
+    """Victim style key: ``alert_<attacker>`` / ``alert_<ancestor>``, else ``alert``.
+
+    Example: peasant has ``alert_animal``; boar ``is_a animal`` → that sound.
+    More specific ``alert_boar`` / ``alert_wolf`` wins if present.
+    Buildings keep ``alert`` (AoE2 base warning).
+    """
+    if victim_type_name:
+        victim_cls = rules.unit_class(victim_type_name)
+        if victim_cls and getattr(victim_cls, "is_a_building", False):
+            return "alert"
+    if victim_type_name and attacker_type:
+        for name in attacker_style_lineage(attacker_type):
+            key = "alert_%s" % name
+            st = style.get(victim_type_name, key, warn_if_not_found=False)
+            if st:
+                return key
+    return "alert"
+
+
 class EntityViewCombat:
     """EntityView的战斗相关方法"""
 
@@ -210,14 +258,17 @@ class EntityViewCombat:
                 # 将检查委托给GameInterface._check_battle_status方法
                 self.interface._check_battle_status(force_check=True)
 
-    def unit_attacked_alert(self):
+    def unit_attacked_alert(self, attacker_type=None, attacker_id=None):
         self.interface.alert_squares[self.place] = time.time()
         self.interface.squares_alert_if_needed()
         if (
             self.interface.previous_unit_attacked_alert is None
             or time.time() > self.interface.previous_unit_attacked_alert + 10
         ):
-            self.launch_event_style("alert", alert=True)
+            attr = attacked_alert_style(
+                getattr(self, "type_name", None), attacker_type
+            )
+            self.launch_event_style(attr, alert=True)
             self.interface.previous_unit_attacked_alert = time.time()
 
     def _is_melee_attack(self, attacker_type, attacker_id=None):

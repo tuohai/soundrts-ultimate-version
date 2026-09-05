@@ -10,6 +10,7 @@ from ..lib.bindings import Bindings
 from ..lib.msgs import nb2msg
 from ..clientmedia import voice
 from ..definitions import style, rules
+from .inventory_screen import unit_has_inventory
 
 
 class EquipmentScreen:
@@ -265,6 +266,9 @@ class EquipmentScreen:
         u = interface.dobjets.get(unit_id)
         if u is None:
             voice.item(mp.NO_UNIT_CONTROLLED)
+            return
+        if not unit_has_inventory(u):
+            voice.item(mp.BEEP)
             return
         self.parent._equipment_screen_unit_id = unit_id
         entries = self._get_equipment_entries()

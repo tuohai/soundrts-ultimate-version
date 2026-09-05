@@ -1550,3 +1550,6 @@
 5838	visualización
 
 
+5840	campana del pueblo
+5841	volver al trabajo
+5842	bengala

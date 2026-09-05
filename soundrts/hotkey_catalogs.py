@@ -542,6 +542,7 @@ def _build_map_catalog() -> Catalog:
         ("map.select_passage.1", list(mp.HOTKEY_PASSAGE_NEXT)),
         ("map.select_passage.-1", list(mp.HOTKEY_PASSAGE_PREV)),
         ("map.say_square_info", list(mp.HOTKEY_SAY_SQUARE_INFO)),
+        ("map.flare", list(mp.HOTKEY_SIGNAL_FLARE)),
         ("map.toggle_zoom", list(mp.HOTKEY_TOGGLE_ZOOM)),
         ("map.exit_overlay_mode", list(mp.HOTKEY_EXIT_MAP)),
     ]
@@ -576,6 +577,7 @@ def _build_classic_catalog() -> Catalog:
         ("classic.unit_hp_status", list(mp.HOTKEY_UNIT_HP_STATUS)),
         ("classic.examine", list(mp.HOTKEY_EXAMINE)),
         ("classic.say_square_info", list(mp.HOTKEY_SAY_SQUARE_INFO)),
+        ("classic.flare", list(mp.HOTKEY_SIGNAL_FLARE)),
         ("classic.unit_status", list(mp.HOTKEY_UNIT_STATUS)),
         ("classic.select_square.0.1", list(mp.HOTKEY_MOVE_NORTH)),
         ("classic.select_square.0.-1", list(mp.HOTKEY_MOVE_SOUTH)),
@@ -684,17 +686,37 @@ _LAYER_BUILDERS = {
 }
 
 
+def _with_flare_catalog(items: Catalog) -> Catalog:
+    """Keep ``*.flare`` only when rules enable it; label from style title."""
+    from .flare_announce import flare_title_msgs, signal_flare_enabled
+
+    enabled = signal_flare_enabled()
+    title = flare_title_msgs()
+    out: Catalog = []
+    for bid, label in items:
+        if bid.endswith(".flare"):
+            if not enabled:
+                continue
+            out.append((bid, list(title)))
+        else:
+            out.append((bid, label))
+    return out
+
+
 def get_layer_catalog(layer: str) -> Catalog:
     if layer == "global":
         from .hotkey_editor import GLOBAL_PRIMARY_CATALOG
 
-        return list(GLOBAL_PRIMARY_CATALOG)
+        return _with_flare_catalog(list(GLOBAL_PRIMARY_CATALOG))
     if layer == "classic":
-        return _build_classic_catalog()
+        return _with_flare_catalog(_build_classic_catalog())
     builder = _LAYER_BUILDERS.get(layer)
     if builder is None:
         return []
-    return builder()
+    items = builder()
+    if layer == "map":
+        return _with_flare_catalog(items)
+    return items
 
 
 def mapping_layers_for_current_scheme():
@@ -862,6 +884,8 @@ def get_layer_variant_catalog(layer: str) -> Catalog:
     items: Catalog = []
     for entry in parse_bindings_text(text, layer):
         if entry.binding_id in primary_ids or entry.binding_id in seen:
+            continue
+        if entry.binding_id.endswith(".flare"):
             continue
         seen.add(entry.binding_id)
         items.append(

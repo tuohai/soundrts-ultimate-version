@@ -2452,6 +2452,9 @@ class TriggersMixin:
         # 地图脚本 NPC、战役电脑等不算对局参与者，被击败时不播报。
         if self in self.world.true_players() and self.broadcasts_defeat_and_quit:
             self.broadcast_to_others_only(self.name + mp.HAS_BEEN_DEFEATED)
+            play = getattr(self, "play_parameter_sfx_except_self", None)
+            if callable(play):
+                play("player_defeated")
         for u in self.units[:]:
             u.delete()
         
@@ -2603,6 +2606,9 @@ class TriggersMixin:
             )
             self.send_voice_important(announcement)
             self.push("resume_music", None)
+            play = getattr(self, "play_parameter_sfx_allied", None)
+            if callable(play):
+                play("objective_change")
 
             try:
                 for ally in getattr(self, 'allied', []) or []:
@@ -2695,6 +2701,9 @@ class TriggersMixin:
             self.send_voice_important(
                 mp.OBJECTIVE_COMPLETE + flatten_objective_description(description)
             )
+            play = getattr(self, "play_parameter_sfx_allied", None)
+            if callable(play):
+                play("objective_change")
 
         try:
             for ally in getattr(self, 'allied', []) or []:
@@ -2753,6 +2762,9 @@ class TriggersMixin:
             mp.OPTIONAL_OBJECTIVE_ABANDONED
             + flatten_objective_description(o.description)
         )
+        play = getattr(self, "play_parameter_sfx_allied", None)
+        if callable(play):
+            play("objective_change")
         del self.objectives[key]
 
         try:
