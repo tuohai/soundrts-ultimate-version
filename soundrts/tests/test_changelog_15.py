@@ -1,4 +1,4 @@
-"""审计：1.5 / 1.5.1.0 — 野兽警报、信号弹、无背包；触发器与默认经典热键。"""
+"""审计：1.5 / 1.5.0.1 — 野兽警报、信号弹、无背包；触发器与默认经典热键。"""
 from __future__ import annotations
 
 from pathlib import Path
@@ -18,30 +18,30 @@ def _section_between(lang: str, start_heading: str, end_heading: str) -> str:
     return rest if next_idx == -1 else rest[:next_idx]
 
 
-def _section_1510(lang: str) -> str:
-    return _section_between(lang, "1.5.1.0", "1.5")
+def _section_1501(lang: str) -> str:
+    return _section_between(lang, "1.5.0.1", "1.5")
 
 
 def _section_15(lang: str) -> str:
     return _section_between(lang, "1.5", "1.4.9.9")
 
 
-def test_version_is_1510():
-    assert 'VERSION = "1.5.1.0"' in _source("soundrts", "version.py")
+def test_version_is_1501():
+    assert 'VERSION = "1.5.0.1"' in _source("soundrts", "version.py")
 
 
-def test_all_relnotes_have_1510_then_15_before_1499():
+def test_all_relnotes_have_1501_then_15_before_1499():
     for lang in ("zh", "en", "es", "it", "pt-BR"):
         src = _source("doc_src", "src", lang, "relnotes.rst")
-        assert src.index("\n1.5.1.0\n") < src.index("\n1.5\n"), lang
+        assert src.index("\n1.5.0.1\n") < src.index("\n1.5\n"), lang
         assert src.index("\n1.5\n") < src.index("\n1.4.9.9"), lang
-        top = _section_1510(lang)
+        top = _section_1501(lang)
         for folded in ("1.4.9.10", "1.4.9.11", "1.4.9.12", "1.4.9.13", "1.4.9.14"):
             assert folded not in top, (lang, folded)
 
 
-def test_zh_relnotes_1510_session_topics():
-    s = _section_1510("zh")
+def test_zh_relnotes_1501_session_topics():
+    s = _section_1501("zh")
     assert "set_var" in s
     assert "trigger_loop_limit" in s
     assert "on_death_add_var" in s
@@ -51,9 +51,9 @@ def test_zh_relnotes_1510_session_topics():
     assert "经典" in s
 
 
-def test_en_es_it_pt_relnotes_1510_session_topics():
+def test_en_es_it_pt_relnotes_1501_session_topics():
     for lang in ("en", "es", "it", "pt-BR"):
-        s = _section_1510(lang)
+        s = _section_1501(lang)
         assert "set_var" in s, lang
         assert "trigger_loop_limit" in s, lang
         assert "on_death_add_var" in s, lang

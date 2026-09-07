@@ -4,7 +4,7 @@ Notas de la versión
 
 .. contents::
 
-1.5.1.0
+1.5.0.1
 -------
 
 **Cambio: variables de disparador, if/else, bucles y disparadores repetibles**

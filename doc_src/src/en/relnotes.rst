@@ -5,7 +5,7 @@ Release notes
 .. contents::
 
 
-1.5.1.0
+1.5.0.1
 -------
 
 **Change: trigger variables, if/else, loops, and repeatable triggers**

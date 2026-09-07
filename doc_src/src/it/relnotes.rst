@@ -3,7 +3,7 @@ Note di rilascio
 
 .. contents::
 
-1.5.1.0
+1.5.0.1
 -------
 
 **Cambio: variabili dei trigger, if/else, cicli e trigger ripetibili**

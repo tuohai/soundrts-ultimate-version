@@ -4,7 +4,7 @@ Notas de lançamento
 
 .. contents::
 
-1.5.1.0
+1.5.0.1
 -------
 
 **Mudança: variáveis de gatilho, if/else, loops e gatilhos repetíveis**
