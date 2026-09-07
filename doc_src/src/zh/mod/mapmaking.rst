@@ -610,6 +610,38 @@ and — 触发器条件：所有子条件均成立时返回真::
 错误写法 ``(not (find gold_coin b2))`` 会先在默认方格查类型，几乎恒为真；
 正确写法：``(not (find b2 gold_coin))``。丢弃开箱拾金币完整示例：The Legend of Raynor 第 22 章；背包使用见第 20 章。
 
+变量、分支、循环与可重复触发（自 1.5）
+""""""""""""""""""""""""""""""""""""""""""
+
+变量是整数，名字用字母/数字/下划线。玩家变量只属于该触发器所属方；世界变量所有玩家共用。
+
+::
+
+    trigger player1 (timer 0) (set_var tribute 0)
+    trigger player1 (has_brought_item c3 gold_coin)
+        (do (add_var tribute 1) (remove_item gold_coin c3)
+            (if (var tribute >= 3) (objective_complete 1) (cut_scene 7600)))
+
+- 条件：``(var name)`` 非零；``(var name >= 3)``；``(var a >= var b)``。世界变量把 ``var`` 换成 ``global``。
+- 动作：``(set_var name n)`` ``(add_var name n)``；以及 ``set_global`` / ``add_global``。
+- ``(or …)``、``(true)``、``(false)``。``(if 条件 则动作 [否则动作])`` 本来就有；多步仍用 ``do``。
+- ``(repeat N 动作…)`` 立刻做 N 次；``(while (条件) 动作…)`` 每圈检查。圈数上限 ``def parameters`` 的 ``trigger_loop_limit``（默认 32，最大 256）。
+- ``trigger player1 repeat (条件) (动作)``：条件从假变真时触发一次，变假后再变真才会再触发。
+- ``trigger computer1 repeat 30 (true) (add_units a1 3 footman)``：条件为真时每隔 30 秒触发（秒）。周期性开局仍可用 ``(timer 10 30)``。
+- 实战示例：The Legend of Raynor 第 18 章（``18.txt``）用 ``repeat`` + ``add_global`` / ``if (global …)`` 统计两次献祭魔法药剂。
+- 地图文件里整条 ``trigger`` 必须写在**同一物理行**（解析器按行切分）；文档里的缩进只是阅读用。
+
+规则关键字（单位死亡或技能改变量，不必再写一条触发器）::
+
+    def wolf
+    on_death_add_global wolves_killed 1
+
+    def skill_mark_kill
+    class skill
+    effect add_var hero_kills 1
+
+``on_death_set_var`` / ``on_death_add_var`` 记在击杀者玩家上（没有击杀者则记在死者所属方）；``on_death_*_global`` 记世界变量。``def parameters`` 可写 ``trigger_var name 0``、``trigger_global name 0`` 作为开局默认值。
+
 npc_has_item — 某个 NPC 收到了指定物品（库存或 ``received_items`` 记录）::
 
     trigger player1 (npc_has_item quest_npc health_potion) (objective_complete 1)

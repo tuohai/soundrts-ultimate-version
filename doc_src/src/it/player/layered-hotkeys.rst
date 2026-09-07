@@ -655,7 +655,7 @@ Quando è disabilitato:
 - I comandi di cambio modalità F1/F2/F3/F4/F12/ESC emettono un beep; ESC annulla ordini / esce dalle sotto-schermate / esce da immersione o zoom, e non entra in modalità navigazione mappa.
 - Inventario (``i``), equipaggiamento (``u``), attributi (Alt+V), ecc. seguono ``legacy_bindings.txt``.
 
-Per riabilitare la modalità a livelli: imposta ``layered_hotkeys = 1`` (o rimuovi la riga; il predefinito è 1) e riavvia.
+Per riabilitare la modalità a livelli: imposta ``layered_hotkeys = 1`` e riavvia (se rimuovi la riga, il predefinito è classico a file singolo, ``0``).
 
 
 ----

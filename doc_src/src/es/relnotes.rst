@@ -4,6 +4,21 @@ Notas de la versión
 
 .. contents::
 
+1.5.1.0
+-------
+
+**Cambio: variables de disparador, if/else, bucles y disparadores repetibles**
+
+- **Problema**: los disparadores de campaña solo disparaban una vez; ``if`` / ``do`` no bastaban para contadores y oleadas con ramas. Sin un segundo lenguaje, el autor tenía que partir muchas líneas ``trigger``.
+- **Cambio**: variables enteras ``set_var`` / ``add_var`` / ``var`` (jugador) y ``set_global`` / ``add_global`` / ``global`` (mundo). ``or``, ``true``, ``false``; ``repeat N``, ``while`` (``trigger_loop_limit``, por defecto 32). ``trigger … repeat`` dispara en flanco de subida; ``repeat 30`` es enfriamiento en segundos. Las palabras clave ``on_death_add_var`` y el skill ``effect add_var`` escriben las mismas variables.
+- **Alcance**: ``trigger_script.py``; ``worldplayerbase/triggers.py``; ``world/world_map.py``; ``worldskill.py``; ``definitions.py``; ``test_trigger_script.py``.
+
+**Cambio: el esquema de teclas clásico es el predeterminado**
+
+- **Problema**: Opciones → Esquema de teclas activaba por defecto el modo en capas; muchos jugadores prefieren el clásico de un solo archivo.
+- **Cambio**: ``layered_hotkeys`` pasa a ``0`` (clásico) por defecto; los mods sin override también. El modo en capas (``1``) sigue disponible en Opciones.
+- **Alcance**: ``config.py``; ``hotkey_editor.py``; ``user/SoundRTS.ini``.
+
 1.5
 ---
 

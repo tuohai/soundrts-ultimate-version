@@ -35,7 +35,7 @@ south_north_paths g1 g2 g3 g4 g5 g6
 
 nb_meadows_by_square 12
 
-mana_potion d1
+mana_potion 2 d1
 health_potion d4
 
 computer_only 0 0 neutral g7 2 shrine
@@ -52,12 +52,19 @@ trigger player1 (timer 0) (alliance 1)
 trigger player2 (timer 0) (alliance 1)
 trigger computers (timer 0) (alliance 2)
 
+trigger players (timer 0) (set_global ch18_mana_offerings 0)
+; Two required deliveries (no duplicate secondary — 5440 was the same as 7533).
 trigger players (timer 0) (add_objective 1 7532)
 trigger players (timer 0) (add_objective 2 7533)
-trigger players (timer 0) (add_secondary_objective 3 5440)
 
-trigger players (has_brought_item g7 mana_potion) (do (cut_scene 7560) (remove_item mana_potion g7) (objective_complete 1))
-trigger players (npc_has_item npc_village_healer health_potion a7) (do (cut_scene 7534) (set_campaign_flag ch18_healer_aid) (grant_resources 100 resource1 50 resource2) (objective_complete 2) (cut_scene 5441) (secondary_objective_complete 3))
+; Demo (1.5 trigger script): count two mana offerings with rising-edge
+; repeat + ch18_mana_offerings. Arrive at g7 carrying mana_potion
+; (no NPC give — shrine is a landmark, same as ch20). First delivery
+; plays 7765; second plays 7560. Map triggers must be one physical line.
+trigger players repeat (has_brought_item g7 mana_potion) (do (remove_item mana_potion g7) (add_global ch18_mana_offerings 1) (if (global ch18_mana_offerings >= 2) (cut_scene 7560) (cut_scene 7765)))
+trigger players (global ch18_mana_offerings >= 2) (objective_complete 1)
+; Healer delivery: main objective 2 + reward flavor (5441), not a secondary objective.
+trigger players (npc_has_item npc_village_healer health_potion a7) (do (cut_scene 7534) (set_campaign_flag ch18_healer_aid) (grant_resources 100 resource1 50 resource2) (objective_complete 2) (cut_scene 5441))
 
 trigger all (no_unit_left) (defeat)
 

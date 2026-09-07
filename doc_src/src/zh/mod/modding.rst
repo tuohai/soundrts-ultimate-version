@@ -540,6 +540,7 @@ Combat system (since 1.4)
 - ``mdg_crit`` / ``rdg_crit``、``mdg_crit_rate`` / ``rdg_crit_rate``、``crit_vs``
 - ``mdg_piercing`` / ``rdg_piercing``（无视护甲百分比；不是沿线穿透）、``piercing_vs``
 - ``mdg_explode`` / ``rdg_explode``、``exp_dgf``、``exp_hp_cost``、``mdg_explode_vs``
+- 触发器变量：``on_death_add_var`` / ``on_death_set_var`` / ``on_death_*_global``（单位死亡改计数）；技能 ``effect add_var`` / ``set_var`` / ``add_global`` / ``set_global``。地图 DSL 见地图手册「变量、分支、循环与可重复触发」
 - 单位**所在地形**上的修正（自 1.4.5.0，1.4.5.1 起百分比）：``mdg_on_terrain`` / ``rdg_on_terrain``、``mdg_cd_on_terrain`` / ``rdg_cd_on_terrain``、``charge_*_terrain`` 等使用小数百分比（``.33`` = ±33%%）；地形 ``class terrain`` 上可用 ``speed_vs`` / ``cover_vs`` / ``dodge_vs`` / ``mdg_vs`` 等按单位类型修正。详见 ``building-land-terrain.rst`` *单位在地形上的战斗修正*
 
 沿线穿透（规则驱动，对齐帝国 2 弩炮）

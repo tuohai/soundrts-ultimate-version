@@ -1,4 +1,4 @@
-"""审计：1.5 — 野兽警报、信号弹快捷键/语音/规则、无背包不报空。"""
+"""审计：1.5 / 1.5.1.0 — 野兽警报、信号弹、无背包；触发器与默认经典热键。"""
 from __future__ import annotations
 
 from pathlib import Path
@@ -10,25 +10,56 @@ def _source(*path_parts):
     )
 
 
-def _section_15(lang: str) -> str:
+def _section_between(lang: str, start_heading: str, end_heading: str) -> str:
     text = _source("doc_src", "src", lang, "relnotes.rst")
-    start = text.index("\n1.5\n")
+    start = text.index("\n" + start_heading + "\n")
     rest = text[start:]
-    next_idx = rest.find("\n1.4.9.9")
+    next_idx = rest.find("\n" + end_heading + "\n")
     return rest if next_idx == -1 else rest[:next_idx]
 
 
-def test_version_is_15():
-    assert 'VERSION = "1.5"' in _source("soundrts", "version.py")
+def _section_1510(lang: str) -> str:
+    return _section_between(lang, "1.5.1.0", "1.5")
 
 
-def test_all_relnotes_have_15_heading_before_1499():
+def _section_15(lang: str) -> str:
+    return _section_between(lang, "1.5", "1.4.9.9")
+
+
+def test_version_is_1510():
+    assert 'VERSION = "1.5.1.0"' in _source("soundrts", "version.py")
+
+
+def test_all_relnotes_have_1510_then_15_before_1499():
     for lang in ("zh", "en", "es", "it", "pt-BR"):
         src = _source("doc_src", "src", lang, "relnotes.rst")
+        assert src.index("\n1.5.1.0\n") < src.index("\n1.5\n"), lang
         assert src.index("\n1.5\n") < src.index("\n1.4.9.9"), lang
-        top = _section_15(lang)
+        top = _section_1510(lang)
         for folded in ("1.4.9.10", "1.4.9.11", "1.4.9.12", "1.4.9.13", "1.4.9.14"):
             assert folded not in top, (lang, folded)
+
+
+def test_zh_relnotes_1510_session_topics():
+    s = _section_1510("zh")
+    assert "set_var" in s
+    assert "trigger_loop_limit" in s
+    assert "on_death_add_var" in s
+    assert "trigger_script.py" in s
+    assert "test_trigger_script.py" in s
+    assert "layered_hotkeys" in s
+    assert "经典" in s
+
+
+def test_en_es_it_pt_relnotes_1510_session_topics():
+    for lang in ("en", "es", "it", "pt-BR"):
+        s = _section_1510(lang)
+        assert "set_var" in s, lang
+        assert "trigger_loop_limit" in s, lang
+        assert "on_death_add_var" in s, lang
+        assert "trigger_script.py" in s, lang
+        assert "test_trigger_script.py" in s, lang
+        assert "layered_hotkeys" in s, lang
 
 
 def test_zh_relnotes_15_session_topics():
@@ -48,6 +79,8 @@ def test_zh_relnotes_15_session_topics():
     assert "unit_has_inventory" in s
     assert "test_inventory_backpack.py" in s
     assert "test_changelog_15.py" in s
+    assert "set_var" not in s
+    assert "layered_hotkeys" not in s
 
 
 def test_en_es_it_pt_relnotes_15_session_topics():
@@ -68,6 +101,16 @@ def test_en_es_it_pt_relnotes_15_session_topics():
         assert "unit_has_inventory" in s, lang
         assert "test_inventory_backpack.py" in s, lang
         assert "test_changelog_15.py" in s, lang
+        assert "set_var" not in s, lang
+        assert "layered_hotkeys" not in s, lang
+
+
+def test_layered_hotkeys_defaults_to_classic():
+    assert '("general", "layered_hotkeys", 0, int)' in _source("soundrts", "config.py")
+    he = _source("soundrts", "hotkey_editor.py")
+    block = he.split("def get_layered_hotkeys_scheme")[1].split("\ndef ")[0]
+    assert 'getattr(config, "layered_hotkeys", 0)' in block
+    assert "return 0" in block
 
 
 def test_engine_wires_alert_animal_style():
@@ -143,3 +186,13 @@ def test_engine_gates_gear_screens_on_capacity():
     assert "if not unit_has_inventory(u):" in inv
     assert "if not unit_has_inventory(u):" in eq
     assert "unit_has_inventory" in hud
+
+
+def test_engine_wires_trigger_script():
+    script = _source("soundrts", "trigger_script.py")
+    triggers = _source("soundrts", "worldplayerbase", "triggers.py")
+    world_map = _source("soundrts", "world", "world_map.py")
+    assert "parse_trigger_tree" in script
+    assert "should_fire_repeat" in script
+    assert "lang_set_var" in triggers or "lang_set_global" in triggers
+    assert "parse_trigger_tree" in world_map

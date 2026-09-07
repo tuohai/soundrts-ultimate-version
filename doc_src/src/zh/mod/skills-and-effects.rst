@@ -1013,6 +1013,10 @@ buff / debuff 的 ``target_type`` 语法与 ``harm_target_type`` 一致，多条
 +-----------+----+
 | `effect harm_target` / `harm_area` | 直接伤害（不经过 effect 实体） |
 +-----------+----+
+| `effect set_var` / `add_var` | 改玩家触发器变量 |
++-----------+----+
+| `effect set_global` / `add_global` | 改世界触发器变量 |
++-----------+----+
 
 
 完整技能关键字见 ``GENERIC_SKILL_SYSTEM.md``（第一节）。

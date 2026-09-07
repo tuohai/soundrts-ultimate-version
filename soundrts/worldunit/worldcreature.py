@@ -375,6 +375,9 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
             return
         if self.place is None:
             return
+        from ..trigger_script import apply_on_death_script
+
+        apply_on_death_script(self, attacker)
         # 记录击杀者ID - 用于游戏失败条件判断
         if attacker is not None and attacker.player is not None and self.player is not None:
             # 记录单位被谁击杀

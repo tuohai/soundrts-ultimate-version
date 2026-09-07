@@ -122,7 +122,7 @@ _options = [
         "menu_changed,unit_added,unit_complete,scout_info,food,resources,resource_exhausted,enemy",
     ),
     ("general", "debug_mode", 0),
-    ("general", "layered_hotkeys", 1, int),
+    ("general", "layered_hotkeys", 0, int),  # 0=经典, 1=分层；默认经典
     # 1 = 启动时检查 GitHub 更新（默认开）; 0 = 关闭
     ("general", "check_updates_on_start", 1, int),
     # 1 = Ctrl+F2 画面开启（下次启动恢复）; 0 = 关闭

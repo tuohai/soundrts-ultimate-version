@@ -134,9 +134,9 @@
 
 ; === Chapter 18 - The Alchemist's Plea ===
 7529 The border village lies in ruins. Wounded soldiers are everywhere; the healer has run dry.
-7530 A wandering alchemist stops Raynor: "Take the mana potion to the eastern shrine, and a health potion to the healer — please, my lord."
-7531 War does not pause, yet Raynor stops. Pick up the potions and complete both deliveries.
-7532 Bring the mana potion to the Northern Shrine while carrying it.
+7530 A wandering alchemist stops Raynor: "The shrine needs two mana potions — take both from the spring — and a health potion to the healer, please, my lord."
+7531 War does not pause, yet Raynor stops. Pick up both mana potions and the health potion, then finish every delivery.
+7532 Bring two mana potions to the Northern Shrine while carrying them (offer them one at a time).
 7533 Deliver the health potion to the village healer.
 7534 The healer thanks him through tears. Raynor turns away — the capital's intrigues still churn in the distance.
 
@@ -169,6 +169,7 @@
 7558 allied blacksmith
 7559 shrine
 7560 The shrine keeper takes the mana potion and murmurs a prayer: "May light guard Lord Raynor's march."
+7765 The shrine keeper accepts the first mana offering: "One more, my lord — then the rite is complete."
 7561 opened treasure chest
 
 ; === Chapter 22 - Sealed Chest at the Altar ===

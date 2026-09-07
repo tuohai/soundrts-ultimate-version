@@ -107,9 +107,9 @@ def test_mods_use_separate_hotkey_schemes(tmp_path, monkeypatch):
         he, "current_hotkey_overrides_path", lambda: str(sc_path)
     )
 
-    assert he.get_layered_hotkeys_scheme() == 1
-    he.set_layered_hotkeys_scheme(0)
     assert he.get_layered_hotkeys_scheme() == 0
+    he.set_layered_hotkeys_scheme(1)
+    assert he.get_layered_hotkeys_scheme() == 1
 
     monkeypatch.setattr(he, "get_hotkey_overrides_path", lambda: str(base_path))
     assert he.get_layered_hotkeys_scheme() == 0
@@ -130,14 +130,14 @@ def test_base_mod_falls_back_to_ini_layered_hotkeys(tmp_path, monkeypatch):
         he, "current_hotkey_overrides_path", lambda: str(base_path)
     )
 
-    old = int(getattr(config, "layered_hotkeys", 1))
+    old = int(getattr(config, "layered_hotkeys", 0))
     try:
-        config.layered_hotkeys = 0
+        config.layered_hotkeys = 1
+        assert he.get_layered_hotkeys_scheme() == 1
+        he.set_layered_hotkeys_scheme(0)
         assert he.get_layered_hotkeys_scheme() == 0
-        he.set_layered_hotkeys_scheme(1)
-        assert he.get_layered_hotkeys_scheme() == 1
-        config.layered_hotkeys = 0
-        assert he.get_layered_hotkeys_scheme() == 1
+        config.layered_hotkeys = 1
+        assert he.get_layered_hotkeys_scheme() == 0
     finally:
         config.layered_hotkeys = old
 

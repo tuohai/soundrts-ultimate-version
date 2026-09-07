@@ -720,47 +720,49 @@ class WorldMapMixin:
         return cache[0]
 
     def _add_trigger(self, words):
-        owners, condition, action = self._list_to_tree(words)
+        from .world_core import map_warning
+        from ..trigger_script import copy_trigger_record, parse_trigger_tree
+
+        try:
+            owners, condition, action, meta = parse_trigger_tree(self._list_to_tree(words))
+        except ValueError as err:
+            map_warning("trigger " + " ".join(str(w) for w in words), str(err))
+            return
         if isinstance(owners, str):
             owners = [owners]
         for o in owners:
             if o == "computers":
                 for s in self.computers_starts:
-                    s[2].append([condition, action])
+                    s[2].append(copy_trigger_record(condition, action, meta))
             elif o == "players":
                 for s in self.players_starts:
-                    s[2].append([condition, action])
+                    s[2].append(copy_trigger_record(condition, action, meta))
             elif o == "all":
                 for s in self.computers_starts + self.players_starts:
-                    s[2].append([condition, action])
+                    s[2].append(copy_trigger_record(condition, action, meta))
             elif o.startswith("computer") and o != "computers":
                 match = re.match(r"^computer(\d+)$", o)
                 if match:
                     try:
                         self.computers_starts[int(match.group(1)) - 1][2].append(
-                            [condition, action]
+                            copy_trigger_record(condition, action, meta)
                         )
                     except IndexError:
-                        from .world_core import map_warning
                         map_warning("trigger " + " ".join(words), "%s is unknown" % o)
                 else:
-                    from .world_core import map_warning
                     map_warning("trigger " + " ".join(words), "%s is unknown" % o)
             elif o.startswith("player") and o != "players":
                 match = re.match(r"^player(\d+)$", o)
                 if match:
                     try:
                         self.players_starts[int(match.group(1)) - 1][2].append(
-                            [condition, action]
+                            copy_trigger_record(condition, action, meta)
                         )
                     except IndexError:
-                        from .world_core import map_warning
                         map_warning("trigger " + " ".join(words), "%s is unknown" % o)
                 else:
-                    from .world_core import map_warning
                     map_warning("trigger " + " ".join(words), "%s is unknown" % o)
             else:
-                from .world_core import map_warning
                 map_warning("trigger " + " ".join(words), "%s is unknown" % o)
 
     def random_choice_repl(self, matchobj):

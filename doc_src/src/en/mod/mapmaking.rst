@@ -585,6 +585,38 @@ For ``find``, always put the square before the type, including inside ``not``.
 Wrong: ``(not (find gold_coin b2))`` (checks the default square first, almost always true).
 Right: ``(not (find b2 gold_coin))``. Drop-to-open example: The Legend of Raynor chapter 22; inventory use: chapter 20.
 
+Variables, branches, loops, and repeatable triggers (since 1.5)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Variables are integers (letter/digit/underscore names). Player vars belong to the trigger owner; globals are shared.
+
+::
+
+    trigger player1 (timer 0) (set_var tribute 0)
+    trigger player1 (has_brought_item c3 gold_coin)
+        (do (add_var tribute 1) (remove_item gold_coin c3)
+            (if (var tribute >= 3) (objective_complete 1) (cut_scene 7600)))
+
+- Conditions: ``(var name)`` nonzero; ``(var name >= 3)``; ``(var a >= var b)``. Use ``global`` instead of ``var`` for world vars.
+- Actions: ``(set_var name n)`` ``(add_var name n)``; also ``set_global`` / ``add_global``.
+- ``(or …)``, ``(true)``, ``(false)``. ``(if cond then [else])`` already existed; use ``do`` for several actions.
+- ``(repeat N action…)`` runs immediately N times; ``(while (cond) action…)`` rechecks each pass. Cap: ``trigger_loop_limit`` on ``def parameters`` (default 32, max 256).
+- ``trigger player1 repeat (cond) (action)``: fires on a false→true edge; re-arms after the condition goes false.
+- ``trigger computer1 repeat 30 (true) (add_units a1 3 footman)``: while true, every 30 seconds. Periodic start-of-game waves can still use ``(timer 10 30)``.
+- Live example: The Legend of Raynor chapter 18 (``18.txt``) counts two mana offerings with ``repeat`` + ``add_global`` / ``if (global …)``.
+- In map files, keep each ``trigger`` on **one physical line** (the parser splits by line); indented examples in the docs are for reading only.
+
+Rules keywords (death or skills can change vars without a extra trigger line)::
+
+    def wolf
+    on_death_add_global wolves_killed 1
+
+    def skill_mark_kill
+    class skill
+    effect add_var hero_kills 1
+
+``on_death_set_var`` / ``on_death_add_var`` apply to the killer's player (or the victim's owner if there is no killer); ``on_death_*_global`` apply to world vars. ``def parameters`` may set ``trigger_var name 0`` and ``trigger_global name 0`` as defaults.
+
 npc_has_item — an NPC received a specific item (inventory or ``received_items`` record)::
 
     trigger player1 (npc_has_item quest_npc health_potion) (objective_complete 1)

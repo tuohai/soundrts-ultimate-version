@@ -528,6 +528,24 @@ class _Definitions:
                             else "on_phase_effects"
                         )
                         d[name].setdefault(store, []).append(processed)
+                    elif words[0] in (
+                        "on_death_add_var",
+                        "on_death_set_var",
+                        "on_death_add_global",
+                        "on_death_set_global",
+                    ):
+                        from .trigger_script import append_on_death_row
+
+                        append_on_death_row(d[name], words[0], words)
+                    elif words[0] in ("trigger_var", "trigger_global") and len(words) >= 3:
+                        from .trigger_script import is_var_name, parse_script_number
+
+                        bag = d[name].get(words[0])
+                        if not isinstance(bag, dict):
+                            bag = {}
+                            d[name][words[0]] = bag
+                        if is_var_name(str(words[1])):
+                            bag[str(words[1])] = parse_script_number(words[2])
                     elif words[0] == "grant_tech_on_phase" and len(words) >= 3:
                         d[name].setdefault("grant_tech_on_phase", []).append(
                             list(words[1:])
@@ -1520,6 +1538,7 @@ class Rules(_Definitions):
         "units_auto_upgrade",  # phase（时代）研究完成后是否自动把所有单位形态升级到 can_upgrade_to 目标
         "town_bell",  # 1=建筑可敲城镇钟（范围内工人进驻）
         "signal_flare",  # parameters: 1=启用盟友格子标点（style: signal_flare 音效、signal_flare_title 名称）
+        "trigger_loop_limit",  # parameters: while/repeat 每拍最多圈数（默认 32，上限 256）
         "hide_locked_commands",  # 未满足 requirements 时是否隐藏建造/训练/研究/升级命令
         "achievements_enabled",  # 1=启用成就/卡牌/军衔（默认）；0=模组关闭整套系统
         "achievements_per_faction",  # 1=按阵营独立存档/军衔/军械库（多分支模组如 CrazyMod）

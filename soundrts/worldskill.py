@@ -274,6 +274,33 @@ class Skill(CreatureAttributes):  # or UnitOption or UnitMenuItem or ActiveSkill
         return success
 
     @classmethod
+    def _execute_set_var(cls, caster, target, world):
+        return cls._execute_script_var(caster, world, "set_var")
+
+    @classmethod
+    def _execute_add_var(cls, caster, target, world):
+        return cls._execute_script_var(caster, world, "add_var")
+
+    @classmethod
+    def _execute_set_global(cls, caster, target, world):
+        return cls._execute_script_var(caster, world, "set_global")
+
+    @classmethod
+    def _execute_add_global(cls, caster, target, world):
+        return cls._execute_script_var(caster, world, "add_global")
+
+    @classmethod
+    def _execute_script_var(cls, caster, world, op):
+        from .trigger_script import apply_var_effect
+
+        parts = cls.effect if isinstance(cls.effect, (list, tuple)) else [cls.effect]
+        if len(parts) < 2:
+            return False
+        name = str(parts[1])
+        value = parts[2] if len(parts) > 2 else 1
+        return apply_var_effect(caster, world, op, name, value)
+
+    @classmethod
     def _execute_generic_effect(cls, caster, target, world):
         """
         通用效果处理

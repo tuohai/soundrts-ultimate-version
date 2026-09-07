@@ -4,6 +4,21 @@
 .. contents::
 
 
+1.5.1.0
+-------
+
+**改进：触发器变量、if/else、循环与可重复触发**
+
+- **问题**：战役触发器只能一次性开火；``if`` / ``do`` 不够写计数、分支波次。没有第二种语言时作者只能拆很多条 trigger。
+- **改进**：整数变量 ``set_var`` / ``add_var`` / ``var``（玩家）与 ``set_global`` / ``add_global`` / ``global``（世界）。``or``、``true``、``false``；``repeat N``、``while``（``trigger_loop_limit``，默认 32）。``trigger … repeat`` 上升沿可重复；``repeat 30`` 为冷却秒。规则关键字 ``on_death_add_var`` 等与技能 ``effect add_var`` 可改同一套变量。
+- **范围**：``trigger_script.py``；``worldplayerbase/triggers.py``；``world/world_map.py``；``worldskill.py``；``definitions.py``；``test_trigger_script.py``。
+
+**改进：默认热键方案改为经典**
+
+- **问题**：选项「切换热键方案」默认勾在分层热键，老玩家更习惯经典单文件。
+- **改进**：``layered_hotkeys`` 默认改为 ``0``（经典）；未单独配置的 mod 也默认经典。仍可在选项里切回分层（``1``）。
+- **范围**：``config.py``；``hotkey_editor.py``；``user/SoundRTS.ini``。
+
 1.5
 ---
 
@@ -24,7 +39,6 @@
 - **问题**：未写 ``inventory_capacity`` 的单位没有背包和装备栏。分层 ``F3`` 或经典 ``Shift+V`` 仍会播「背包为空」等提示。
 - **改进**：``inventory_capacity`` 为 0（默认、未写）时只短鸣，不打开界面、不报空背包/空装备栏。有容量但格子空时仍报 ``EMPTY_BACKPACK`` / 装备栏为空。
 - **范围**：``attributes/inventory_screen.py`` ``unit_has_inventory``；``equipment_screen.py``；``game_gear_hud.py``；``test_inventory_backpack.py``。
-
 
 1.4.9.9
 ---------

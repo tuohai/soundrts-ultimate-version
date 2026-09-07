@@ -270,7 +270,7 @@ def test_legacy_bindings_file_exists():
 
 def test_layered_hotkeys_config_option():
     src = (ROOT / "soundrts" / "config.py").read_text(encoding="utf-8")
-    assert '("general", "layered_hotkeys", 1, int)' in src
+    assert '("general", "layered_hotkeys", 0, int)' in src
     modes = (ROOT / "soundrts" / "clientgame" / "interface_modes.py").read_text(
         encoding="utf-8"
     )

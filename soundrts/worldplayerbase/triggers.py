@@ -19,6 +19,16 @@ from ..objective_announce import (
 )
 from .base import alliance_ids_equal, normalize_alliance_id
 from .allied_control import mark_allied_control_changed
+from ..trigger_script import (
+    add_global,
+    add_var,
+    eval_var_condition,
+    loop_limit,
+    set_global,
+    set_var,
+    should_fire_repeat,
+    unpack_trigger,
+)
 
 
 class TriggersManager:
@@ -28,17 +38,7 @@ class TriggersManager:
         self.player = player
 
     def run_triggers(self):
-        if not self.player.is_playing:
-            return
-        for t in self.player.triggers[:]:
-            condition, action = t
-            if self.player.my_eval(condition):
-                self.player.my_eval(action)
-                if not self.player.is_playing:  # after victory or defeat
-                    break
-                else:
-                    self.player.triggers.remove(t)
-                    self.player._eventually_reschedule(t)
+        self.player.run_triggers()
 
 
 class TriggersMixin:
@@ -154,9 +154,19 @@ class TriggersMixin:
     def run_triggers(self):
         if not self.is_playing:
             return
+        now_ms = getattr(getattr(self, "world", None), "time", 0) or 0
         for t in self.triggers[:]:
-            condition, action = t
-            if self.my_eval(condition):
+            condition, action, meta = unpack_trigger(t)
+            if condition is None:
+                continue
+            cond_now = bool(self.my_eval(condition))
+            if meta and meta.get("repeat"):
+                if should_fire_repeat(meta, cond_now, now_ms):
+                    self.my_eval(action)
+                    if not self.is_playing:
+                        break
+                continue
+            if cond_now:
                 self.my_eval(action)
                 if not self.is_playing:  # after victory or defeat
                     break
@@ -165,12 +175,19 @@ class TriggersMixin:
                     self._eventually_reschedule(t)
 
     def _eventually_reschedule(self, t):
-        condition, action = t
+        condition, action, meta = unpack_trigger(t)
+        if condition is None:
+            return
         if len(condition) == 3 and condition[0] == "timer":
             condition[1] = float(condition[1]) + float(condition[2])
-            self.triggers.append((condition, action))
+            if meta:
+                self.triggers.append([condition, action, dict(meta)])
+            else:
+                self.triggers.append((condition, action))
 
     def my_eval(self, l):
+        if not l or not isinstance(l, (list, tuple)):
+            return False
         if hasattr(self, "lang_" + l[0]):
             return getattr(self, "lang_" + l[0])(l[1:])
         return False
@@ -209,6 +226,89 @@ class TriggersMixin:
             if not self.my_eval(x):
                 return False
         return True
+
+    def lang_or(self, args):
+        """触发器条件：任一子条件成立即真。"""
+        for x in args:
+            if self.my_eval(x):
+                return True
+        return False
+
+    def lang_true(self, unused_args):
+        return True
+
+    def lang_false(self, unused_args):
+        return False
+
+    def lang_else(self, args):
+        """``(if cond then else)`` 的第三支；单独写没有意义。"""
+        for action in args:
+            self.my_eval(action)
+
+    def lang_var(self, args):
+        """条件：``(var name)`` 非零，或 ``(var name >= 3)`` / ``(var a >= var b)``。"""
+        return eval_var_condition(self, getattr(self, "world", None), args, is_global=False)
+
+    def lang_global(self, args):
+        """条件：世界变量，用法同 ``var``。"""
+        return eval_var_condition(self, getattr(self, "world", None), args, is_global=True)
+
+    def lang_set_var(self, args):
+        if len(args) < 2:
+            return
+        set_var(self, str(args[0]), args[1])
+
+    def lang_add_var(self, args):
+        if not args:
+            return
+        delta = args[1] if len(args) > 1 else 1
+        add_var(self, str(args[0]), delta)
+
+    def lang_set_global(self, args):
+        if len(args) < 2:
+            return
+        set_global(getattr(self, "world", None), str(args[0]), args[1])
+
+    def lang_add_global(self, args):
+        if not args:
+            return
+        delta = args[1] if len(args) > 1 else 1
+        add_global(getattr(self, "world", None), str(args[0]), delta)
+
+    def lang_repeat(self, args):
+        """动作：``(repeat N action…)`` 立刻执行 N 次（受 ``trigger_loop_limit`` 限制）。"""
+        if not args:
+            return
+        try:
+            count = int(float(args[0]))
+        except (TypeError, ValueError):
+            return
+        actions = args[1:]
+        limit = loop_limit(getattr(self, "world", None))
+        n = max(0, min(count, limit))
+        if count > limit:
+            warning("trigger repeat capped at %s (asked %s)", limit, count)
+        for _ in range(n):
+            for action in actions:
+                self.my_eval(action)
+            if not self.is_playing:
+                return
+
+    def lang_while(self, args):
+        """动作：``(while (cond) action…)``，每圈检查条件，有硬上限。"""
+        if not args:
+            return
+        cond = args[0]
+        actions = args[1:]
+        limit = loop_limit(getattr(self, "world", None))
+        for i in range(limit):
+            if not self.my_eval(cond):
+                return
+            for action in actions:
+                self.my_eval(action)
+            if not self.is_playing:
+                return
+        warning("trigger while hit loop limit %s", limit)
 
     def lang_find(self, args):
         default_square = self._default_square_key()

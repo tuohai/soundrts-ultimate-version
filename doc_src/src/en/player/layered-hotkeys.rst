@@ -656,7 +656,7 @@ When disabled:
 - F1/F2/F3/F4/F12/ESC mode-switch commands beep; ESC cancels orders / exits sub-screens / exits immersion or zoom, and does not enter map browse mode.
 - Inventory (``i``), equipment (``u``), attributes (Alt+V), etc. follow ``legacy_bindings.txt``.
 
-To re-enable layered mode: set ``layered_hotkeys = 1`` (or remove the line; default is 1) and restart.
+To re-enable layered mode: set ``layered_hotkeys = 1`` and restart (removing the line uses the default: classic single-file, ``0``).
 
 
 ----

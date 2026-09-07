@@ -5,6 +5,21 @@ Release notes
 .. contents::
 
 
+1.5.1.0
+-------
+
+**Change: trigger variables, if/else, loops, and repeatable triggers**
+
+- **Issue**: Campaign triggers fired once only; ``if`` / ``do`` were not enough for counters and branching waves. Without a second language, authors had to split many trigger lines.
+- **Change**: Integer variables ``set_var`` / ``add_var`` / ``var`` (player) and ``set_global`` / ``add_global`` / ``global`` (world). ``or``, ``true``, ``false``; ``repeat N``, ``while`` (``trigger_loop_limit``, default 32). ``trigger … repeat`` re-fires on a rising edge; ``repeat 30`` is a cooldown in seconds. Rules keywords ``on_death_add_var`` and skill ``effect add_var`` share the same variables.
+- **Scope**: ``trigger_script.py``; ``worldplayerbase/triggers.py``; ``world/world_map.py``; ``worldskill.py``; ``definitions.py``; ``test_trigger_script.py``.
+
+**Change: classic hotkeys are the default scheme**
+
+- **Issue**: Options → Hotkey scheme defaulted to layered; many players prefer the classic single-file layout.
+- **Change**: ``layered_hotkeys`` defaults to ``0`` (classic); mods without an override also default to classic. Layered (``1``) remains available in Options.
+- **Scope**: ``config.py``; ``hotkey_editor.py``; ``user/SoundRTS.ini``.
+
 1.5
 ---
 
@@ -25,7 +40,6 @@ Release notes
 - **Issue**: A unit with no ``inventory_capacity`` has no backpack or equipment bar. Layered ``F3`` or classic ``Shift+V`` still spoke “empty backpack” and similar lines.
 - **Change**: When ``inventory_capacity`` is 0 (the default if omitted), the command only beeps; it does not open the screens or speak ``EMPTY_BACKPACK`` / empty equipment. A unit that has capacity but an empty bag still hears those empty prompts.
 - **Scope**: ``attributes/inventory_screen.py`` ``unit_has_inventory``; ``equipment_screen.py``; ``game_gear_hud.py``; ``test_inventory_backpack.py``.
-
 
 1.4.9.9
 ---------

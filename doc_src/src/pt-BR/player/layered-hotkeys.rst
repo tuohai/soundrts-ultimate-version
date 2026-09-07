@@ -655,7 +655,7 @@ Quando desabilitado:
 - Comandos de troca de modo F1/F2/F3/F4/F12/ESC emitem beep; ESC cancela ordens / sai de sub-telas / sai de imersão ou zoom, e não entra em modo de navegação no mapa.
 - Inventário (``i``), equipamento (``u``), atributos (Alt+V), etc. seguem ``legacy_bindings.txt``.
 
-Para reativar modo em camadas: defina ``layered_hotkeys = 1`` (ou remova a linha; padrão é 1) e reinicie.
+Para reativar modo em camadas: defina ``layered_hotkeys = 1`` e reinicie (se remover a linha, o padrão é clássico em arquivo único, ``0``).
 
 
 ----

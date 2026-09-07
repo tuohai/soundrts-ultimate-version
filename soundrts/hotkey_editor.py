@@ -117,7 +117,7 @@ def hotkey_mod_label_msgs(mod_key: str) -> list:
 def get_layered_hotkeys_scheme() -> int:
     """当前 mod 的热键方案：1=分层，0=经典。
 
-    未单独配置时：无 mod（_base）回退 SoundRTS.ini；其它 mod 默认分层。
+    未单独配置时：无 mod（_base）回退 SoundRTS.ini；其它 mod 默认经典。
     """
     data = load_overrides_data()
     if "layered_hotkeys" in data:
@@ -129,10 +129,10 @@ def get_layered_hotkeys_scheme() -> int:
         from . import config
 
         try:
-            return 1 if int(getattr(config, "layered_hotkeys", 1)) != 0 else 0
+            return 1 if int(getattr(config, "layered_hotkeys", 0)) != 0 else 0
         except (TypeError, ValueError):
-            return 1
-    return 1
+            return 0
+    return 0
 
 
 def set_layered_hotkeys_scheme(value: int) -> None:

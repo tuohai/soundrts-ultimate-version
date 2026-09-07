@@ -654,7 +654,7 @@ Cuando está deshabilitado:
 - Los comandos de cambio de modo F1/F2/F3/F4/F12/ESC emiten un pitido; ESC cancela órdenes/sale de las subpantallas/sale de la inmersión o el zoom y no ingresa al modo de exploración de mapas.
 - Inventario (``i``), equipo (``u``), atributos (Alt+V), etc. siguen ``legacy_bindings.txt``.
 
-Para volver a habilitar el modo en capas: configure ``layered_hotkeys = 1`` (o elimine la línea; el valor predeterminado es 1) y reinicie.
+Para volver a habilitar el modo en capas: configure ``layered_hotkeys = 1`` y reinicie (si elimina la línea, el valor predeterminado es el clásico de un solo archivo, ``0``).
 
 
 ----

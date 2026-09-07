@@ -552,6 +552,7 @@ Main melee/ranged properties:
 - ``mdg_crit`` / ``rdg_crit``, ``mdg_crit_rate`` / ``rdg_crit_rate``, ``crit_vs``
 - ``mdg_piercing`` / ``rdg_piercing`` (percent armor ignored; not line pierce), ``piercing_vs``
 - ``mdg_explode`` / ``rdg_explode``, ``exp_dgf``, ``exp_hp_cost``, ``mdg_explode_vs``
+- Trigger variables: ``on_death_add_var`` / ``on_death_set_var`` / ``on_death_*_global``; skills ``effect add_var`` / ``set_var`` / ``add_global`` / ``set_global``. Map DSL: mapmaking “Variables, branches, loops, and repeatable triggers”
 - Per-**attacker terrain** modifiers (since 1.4.5.0): ``mdg_on_terrain`` / ``rdg_on_terrain``, ``mdg_cd_on_terrain`` / ``rdg_cd_on_terrain``, ``charge_mdg_terrain`` / ``charge_rdg_terrain``, ``charge_mdg_cd_on_terrain`` / ``charge_rdg_cd_on_terrain``; same syntax as ``speed_on_terrain`` — see ``building-land-terrain.rst`` *Unit combat modifiers on terrain*
 
 Line pierce (rules-driven, AoE2 scorpion-style)

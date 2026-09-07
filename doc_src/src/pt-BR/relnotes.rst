@@ -4,6 +4,21 @@ Notas de lançamento
 
 .. contents::
 
+1.5.1.0
+-------
+
+**Mudança: variáveis de gatilho, if/else, loops e gatilhos repetíveis**
+
+- **Problema**: gatilhos de campanha disparavam só uma vez; ``if`` / ``do`` não bastavam para contadores e ondas com ramos. Sem uma segunda linguagem, o autor tinha de partir muitas linhas ``trigger``.
+- **Mudança**: variáveis inteiras ``set_var`` / ``add_var`` / ``var`` (jogador) e ``set_global`` / ``add_global`` / ``global`` (mundo). ``or``, ``true``, ``false``; ``repeat N``, ``while`` (``trigger_loop_limit``, padrão 32). ``trigger … repeat`` dispara na borda de subida; ``repeat 30`` é o arrefecimento em segundos. As palavras-chave ``on_death_add_var`` e a skill ``effect add_var`` escrevem as mesmas variáveis.
+- **Alcance**: ``trigger_script.py``; ``worldplayerbase/triggers.py``; ``world/world_map.py``; ``worldskill.py``; ``definitions.py``; ``test_trigger_script.py``.
+
+**Mudança: o esquema de teclas clássico é o padrão**
+
+- **Problema**: Opções → Esquema de teclas ativava por omissão o modo em camadas; muitos jogadores preferem o clássico em arquivo único.
+- **Mudança**: ``layered_hotkeys`` passa a ``0`` (clássico) por omissão; mods sem override também. O modo em camadas (``1``) continua em Opções.
+- **Alcance**: ``config.py``; ``hotkey_editor.py``; ``user/SoundRTS.ini``.
+
 1.5
 ---
 

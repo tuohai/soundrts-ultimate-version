@@ -46,7 +46,7 @@ LEGACY_BINDINGS_FILE = "legacy_bindings.txt"
 
 
 def layered_hotkeys_enabled():
-    """是否启用分层界面热键（默认开启，按当前 mod 读取）。"""
+    """是否启用分层界面热键（默认关闭=经典方案，按当前 mod 读取）。"""
     from ..hotkey_editor import layered_hotkeys_enabled_for_current_mod
 
     return layered_hotkeys_enabled_for_current_mod()

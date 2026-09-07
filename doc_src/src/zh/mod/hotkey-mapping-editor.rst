@@ -167,7 +167,7 @@
 - 各 mod 完全独立：热键方案（``layered_hotkeys``：`1` 分层 / `0` 经典）与按键映射均存于同一 JSON
 - 进入「热键方案」「按键映射」均播报「当前模组热键配置，…」
 - 无 mod 且 JSON 未写 ``layered_hotkeys`` 时，回退 ``user/SoundRTS.ini`` 的 ```[general] layered_hotkeys```` （兼容旧配置）
-- 其它 mod 未写 ``layered_hotkeys`` 时默认分层（`1`）
+- 其它 mod 未写 ``layered_hotkeys`` 时默认经典（`0`）
 - 旧版 ``user/hotkey_overrides.json`` 首次打开无 mod 配置时迁入 ``\_base.json``
 
 4.3 主绑定目录（Catalog）

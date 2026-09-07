@@ -3,6 +3,21 @@ Note di rilascio
 
 .. contents::
 
+1.5.1.0
+-------
+
+**Cambio: variabili dei trigger, if/else, cicli e trigger ripetibili**
+
+- **Problema**: i trigger di campagna scattavano una sola volta; ``if`` / ``do`` non bastavano per contatori e ondate ramificate. Senza un secondo linguaggio, gli autori dovevano spezzare molte righe ``trigger``.
+- **Cambio**: variabili intere ``set_var`` / ``add_var`` / ``var`` (giocatore) e ``set_global`` / ``add_global`` / ``global`` (mondo). ``or``, ``true``, ``false``; ``repeat N``, ``while`` (``trigger_loop_limit``, default 32). ``trigger … repeat`` scatta sul fronte di salita; ``repeat 30`` è il cooldown in secondi. Le parole chiave ``on_death_add_var`` e lo skill ``effect add_var`` scrivono le stesse variabili.
+- **Ambito**: ``trigger_script.py``; ``worldplayerbase/triggers.py``; ``world/world_map.py``; ``worldskill.py``; ``definitions.py``; ``test_trigger_script.py``.
+
+**Cambio: lo schema tasti classico è il predefinito**
+
+- **Problema**: Opzioni → Schema tasti attivava di default la modalità a livelli; molti giocatori preferiscono il classico a file singolo.
+- **Cambio**: ``layered_hotkeys`` di default è ``0`` (classico); anche i mod senza override. La modalità a livelli (``1``) resta in Opzioni.
+- **Ambito**: ``config.py``; ``hotkey_editor.py``; ``user/SoundRTS.ini``.
+
 1.5
 ---
 

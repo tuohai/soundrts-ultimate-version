@@ -31,9 +31,9 @@
 7527	Gegenstand
 7528	Trank
 7529	Das Grenzdorf liegt in Trümmern. Überall liegen verwundete Soldaten; dem Heiler sind die Vorräte ausgegangen.
-7530	Ein umherziehender Alchemist hält Raynor auf: „Bringt den Manatrank zum östlichen Schrein und einen Heiltrank zum Heiler — bitte, mein Herr.“
-7531	Der Krieg macht keine Pause, doch Raynor hält inne. Nimm die Tränke auf und schließe beide Lieferungen ab.
-7532	Bringe den Manatrank zum Nördlichen Schrein.
+7530	Ein umherziehender Alchemist hält Raynor auf: „Der Schrein braucht zwei Manatränke — beide am Quell — und einen Heiltrank für den Heiler, bitte, mein Herr.“
+7531	Der Krieg macht keine Pause, doch Raynor hält inne. Nimm beide Manatränke und den Heiltrank auf und schließe alle Lieferungen ab.
+7532	Bringe zwei Manatränke zum Nördlichen Schrein (einzeln, nacheinander).
 7533	Bringe den Heiltrank zum Dorfheiler.
 7534	Der Heiler dankt ihm unter Tränen. Raynor wendet sich ab — die Intrigen der Hauptstadt brodeln noch in der Ferne.
 7535	Sir Garrek — der nördliche Ritter, dem Raynor zuvor half — wird mit ihm marschieren, doch seine Ausrüstung ist zerstört und seine Kraft erschöpft.
@@ -59,6 +59,7 @@
 7558	verbündeter Schmied
 7559	Schrein
 7560	Der Schreinhüter nimmt den Manatrank entgegen und murmelt ein Gebet: „Möge das Licht Lord Raynors Marsch beschützen.“
+7765	Der Schreinhüter nimmt das erste Manaopfer an: „Noch eines, mein Herr — dann ist das Ritual vollendet.“
 7561	geöffnete Schatztruhe
 7562	Ein weiteres Grab birgt eine versiegelte Truhe, gebunden durch Altarmagie. Raynor braucht dieses Gold.
 7563	Trage die Truhe zum Bindealtar und lege sie dort ab, um das Siegel zu brechen.

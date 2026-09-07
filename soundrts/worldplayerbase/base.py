@@ -22,6 +22,7 @@ from ..worldunit import BuildingSite
 from ..worldunit import Soldier
 from ..worldunit import Unit
 from ..objective_announce import collect_planned_objective_numbers
+from ..trigger_script import unpack_trigger
 
 A = 12 * PRECISION  # bucket side length
 VERY_SLOW = int(0.01 * PRECISION)
@@ -1832,7 +1833,9 @@ class Player:
         
         # 分别处理timer 0触发器：立即执行联盟和保护相关的，延迟执行添加单位的
         for t in self.triggers[:]:
-            condition, action = t
+            condition, action, _meta = unpack_trigger(t)
+            if condition is None:
+                continue
             if (len(condition) >= 2 and condition[0] == "timer" and 
                 float(condition[1]) == 0.0):
                 action_str = str(action)
