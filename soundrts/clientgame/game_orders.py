@@ -406,6 +406,55 @@ def cmd_rpg_auto_attack(interface):
         voice.item(mp.NO_ENEMY_IN_SIGHT if hasattr(mp, "NO_ENEMY_IN_SIGHT") else ["视野内没有敌人"])
 
 
+def cmd_cycle_formation(interface):
+    """Cycle the group's formation. Bindable hotkey; not listed in the spoken menu."""
+    from ..world_formation import (
+        cycle_next_formation,
+        formation_type_names,
+        formations_enabled,
+        unit_can_form,
+        unit_formation_name,
+    )
+    from .game_unit_control import send_order
+
+    if not formations_enabled() or len(formation_type_names()) < 2:
+        return
+    if not interface.group:
+        voice.item(mp.NO_UNIT_CONTROLLED)
+        return
+    formable = []
+    current = None
+    for uid in interface.group:
+        view = interface.dobjets.get(uid)
+        if view is None:
+            continue
+        menu = getattr(view, "menu", ()) or ()
+        model = getattr(view, "model", view)
+        if not (
+            any(str(o).startswith("set_formation") for o in menu)
+            or unit_can_form(model)
+        ):
+            continue
+        formable.append(uid)
+        if current is None:
+            current = unit_formation_name(model)
+    if not formable:
+        voice.item(mp.BEEP)
+        return
+    nxt = cycle_next_formation(current)
+    send_order(
+        interface,
+        "cycle_formation",
+        None,
+        [],
+        require_menu=False,
+        uids=formable,
+    )
+    title = style.get(nxt, "title", warn_if_not_found=False) if nxt else None
+    if title:
+        voice.item(list(title))
+
+
 # 导出的函数供其他模块使用
 __all__ = [
     'orders', 'an_order_not_requiring_a_target_is_selected', 
@@ -413,6 +462,7 @@ __all__ = [
     'cmd_select_order', 'cmd_select_order_index', 'cmd_order_shortcut',
     'cmd_do_again', 'cmd_skill',
     'ui_target', 'cmd_validate', '_say_default_confirmation', 'cmd_default',
+    'cmd_cycle_formation',
     'cmd_rpg_skill_1', 'cmd_rpg_skill_2', 'cmd_rpg_skill_3', 'cmd_rpg_skill_4',
     'cmd_rpg_skill_5', 'cmd_rpg_skill_6', 'cmd_rpg_skill_7', 'cmd_rpg_skill_8',
     'cmd_rpg_skill_9', 'cmd_rpg_skill_0', 'cmd_rpg_skill_10', 'cmd_rpg_skill_11',

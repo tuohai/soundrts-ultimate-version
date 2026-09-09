@@ -256,6 +256,9 @@ class StopOrder(ImmediateOrder):
 
         cancel_siege_transition(self.unit)
         self.unit.cancel_all_orders()
+        from ..world_formation import clear_formation_speed_cap
+
+        clear_formation_speed_cap(self.unit)
         self.unit.stop()
         
         # 停止后切换回默认武器
@@ -575,6 +578,89 @@ class TownBellStopOrder(ImmediateOrder):
             return
         stop_town_bell(player)
         self.unit.notify("town_bell_stop")
+
+
+class SetFormationOrder(ImmediateOrder):
+    """Immediate ``set_formation <type>``; types come from ``class formation``."""
+
+    keyword = "set_formation"
+    nb_args = 0
+    population_cost = 0
+
+    def __init__(self, unit, args):
+        ImmediateOrder.__init__(self, unit, args)
+        self.formation_name = args[0] if args else ""
+        try:
+            from ..definitions import rules
+
+            self.type = rules.unit_class(self.formation_name)
+        except Exception:
+            self.type = None
+
+    @classmethod
+    def is_allowed(cls, unit, *args):
+        from ..world_formation import formation_type_names, unit_can_form
+
+        if not unit_can_form(unit):
+            return False
+        if args:
+            return args[0] in formation_type_names()
+        return bool(formation_type_names())
+
+    @classmethod
+    def menu(cls, unit, strict=False):
+        from ..world_formation import formation_type_names, unit_can_form
+
+        if not unit_can_form(unit):
+            return []
+        return ["set_formation " + name for name in formation_type_names()]
+
+    def immediate_action(self):
+        from ..world_formation import play_formation_change_sfx, set_unit_formation
+
+        name = self.formation_name or (self.args[0] if self.args else "")
+        if not set_unit_formation(self.unit, name):
+            self.unit.notify("order_impossible")
+            return
+        play_formation_change_sfx(getattr(self.unit, "player", None))
+
+
+class CycleFormationOrder(ImmediateOrder):
+    """Cycle the group's formation through ``class formation`` types."""
+
+    keyword = "cycle_formation"
+    nb_args = 0
+    population_cost = 0
+
+    @classmethod
+    def is_allowed(cls, unit, *unused_args):
+        from ..world_formation import formation_type_names, unit_can_form
+
+        return unit_can_form(unit) and len(formation_type_names()) > 1
+
+    def immediate_action(self):
+        from ..world_formation import (
+            cycle_next_formation,
+            play_formation_change_sfx,
+            set_unit_formation,
+            unit_formation_name,
+        )
+
+        player = getattr(self.unit, "player", None)
+        world = getattr(self.unit, "world", None)
+        token = (id(getattr(player, "group", None)), getattr(world, "time", None))
+        if player is not None and getattr(player, "_formation_cycle_token", None) != token:
+            player._formation_cycle_token = token
+            player._formation_cycle_next = cycle_next_formation(
+                unit_formation_name(self.unit)
+            )
+        nxt = getattr(player, "_formation_cycle_next", None) if player else None
+        if not nxt:
+            nxt = cycle_next_formation(unit_formation_name(self.unit))
+        if not set_unit_formation(self.unit, nxt):
+            self.unit.notify("order_impossible")
+            return
+        play_formation_change_sfx(player)
 
 
 class JoinGroupOrder(ImmediateOrder):

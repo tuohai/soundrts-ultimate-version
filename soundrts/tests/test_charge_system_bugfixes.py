@@ -144,7 +144,7 @@ def test_receive_hit_accepts_is_melee_parameter():
     """``receive_hit`` 与 ``_send_hit_notification`` 必须接受 is_melee 形参，
     并在 None 时回落到旧推断（向后兼容）。"""
     src = _source("soundrts", "combat", "damage_effects.py")
-    assert "def receive_hit(self, damage, attacker, notify=True, is_crit=False, is_charge=False, is_melee=None)" in src
+    assert "def receive_hit(self, damage, attacker, notify=True, is_crit=False, is_charge=False, is_melee=None" in src
     assert "def _send_hit_notification(self, attacker, actual_damage, is_crit=False, is_charge=False, is_melee=None)" in src
     # 推断回落
     assert "if is_melee is None:" in src

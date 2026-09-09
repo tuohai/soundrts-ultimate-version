@@ -48,7 +48,7 @@ Il sottomenu procede così ( Esc torna indietro di un livello ):
 9. Tesoro: nessuno / basso / alto (richiede tipi ``class item`` raccoglibili nelle regole)
 10. Modalità di vittoria: conquista / economica / esplorazione / sopravvivenza
 11. Seed: casuale o numero personalizzato (0–99999)
-12. Tregua: 0 / 5 / 10 / 15 / 20 minuti
+12. Tregua: 0 / 5 / 10 / … / 60 / 90 minuti, oppure un valore personalizzato da 5 a 90
 
 Dopo la selezione del seed senti un'anteprima vocale delle impostazioni; dopo la conferma della tregua la mappa viene generata.
 

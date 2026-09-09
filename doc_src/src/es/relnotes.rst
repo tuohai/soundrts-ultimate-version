@@ -4,6 +4,57 @@ Notas de la versión
 
 .. contents::
 
+1.5.0.2
+-------
+
+**Cambio: la duración del tratado coincide con Age of Empires II DE, con opción personalizada**
+
+- **Problema**: el tratado previo solo ofrecía 0/5/10/15/20 minutos; 20 era corto para partidas lentas, y valores como 12 o 75 había que redondearlos al peldaño más cercano.
+- **Cambio**: las opciones coinciden con AoE2 DE: ``TREATY_MINUTE_CHOICES`` son pasos de 5 minutos hasta 60, más 90. Bajo las predefinidas, «tratado personalizado» acepta un entero de 5 a 90 (``parse_custom_treaty_minutes``); fuera de rango o no entero suena un aviso y vuelve al menú de tratado, y Esc cancela igual. El protocolo sigue pasando minutos a milisegundos; valores por encima de 90 se recortan a 90.
+- **Alcance**: ``treaty.py``; ``clientservermenu.py``; ``clientmain.py``; ``randommap_menu.py``; ``game.py``; ``serverroom.py``; ``msgparts.py`` ``ENTER_TREATY_MINUTES``; ``test_changelog_1422_treaty_coop.py``; ``test_changelog_15.py``.
+
+**Cambio: formaciones gobernadas por reglas (class formation genérico)**
+
+- **Problema**: un grupo militar seleccionado se movía como unidades sueltas. No había línea / caja / escalonada / flancos, ni filas de cuerpo a cuerpo, a distancia y asedio. Una geometría nueva clavada en el motor obligaría a parchearlo por cada tipo definido por el jugador.
+- **Cambio**: se activa con ``formations 1`` en ``def parameters``. El menú lista cada ``class formation`` de las reglas (``formation_line`` / ``formation_box`` / ``formation_staggered`` / ``formation_flank`` del mod AoE2 son ejemplos que un mod puede cambiar o ampliar). ``shape`` es cartesiano line / box / staggered / flank, o polar ``ring`` / ``arc`` (alias ``circle`` / ``round``, ``wedge`` / ``cone``). Un nombre desconocido con ``radius`` / ``arc_span`` / ``rings`` sigue usando empaquetado polar, sin parchear el motor. Distancias (``spacing``, ``rank_gap``, ``flank_gap``, ``radius``) en metros; ``arc_span`` en grados. ``ranks`` es el orden de filas. ``formation_units`` y ``formation_rank_melee`` / ``formation_rank_ranged`` / ``formation_rank_siege`` usan ``is_a``; una unidad también puede llevar ``use_formation 1`` o ``formation_rank``. El ``go`` de grupo escribe un ``ZoomTarget`` por unidad en la casilla de destino, mirando al movimiento; ``keep_pace`` iguala al más lento. El menú solo lista los tipos con nombre de ``set_formation`` (elegir el actual reordena en el sitio). ``cycle_formation`` no entra en el menú hablado y se puede asignar (por defecto ``CTRL SHIFT f``). El mod AoE2 usa línea por defecto.
+- **Alcance**: ``world_formation.py``; ``worldorders/immediate.py``; ``definitions.py``; ``mods/aoe2/rules.txt``; ``hotkey_catalogs.py``; ``test_world_formation.py``.
+
+**Cambio: mantener filas al estilo Age of Empires II al combatir**
+
+- **Problema**: las formaciones solo colocaban huecos en el ``go``. Las unidades ``offensive`` luego corrían cada una un ``AttackAction`` al objetivo, así que los arqueros de atrás entraban a cuerpo a cuerpo y una línea luchaba como un montón. ``keep_pace`` ponía ``_formation_speed_cap`` pero el andar usaba ``actual_speed`` sin tope, así que la caballería llegaba primero.
+- **Cambio**: un ``attack`` de grupo (o un movimiento sobre un enemigo) mira la amenaza con cuerpo a cuerpo delante y a distancia/asedio detrás (``apply_combat_formation``). Quien está a rango dispara en el sitio; quien no, anda a su hueco en vez de amontonarse en un objetivo. ``chase`` sigue cerrando. ``actual_speed`` / ``current_speed`` aplican el tope al leerse.
+- **Alcance**: ``world_formation.py``; ``worldunit/world_movement.py``; ``worldunit/world_attributes.py``; ``combat/attack_action.py``; ``worldorders/movement.py``; ``test_formation_combat.py``; ``test_world_formation.py``.
+
+**Cambio: formaciones más cerca del bloqueo, fuego concentrado y mantener posición de AoE2**
+
+- **Problema**: las filas no tenían muro de colisión, así que las unidades atravesaban la línea enemiga hasta la fila de atrás. Clicar un enemigo concreto mantenía huecos en vez de amontonarse. Con formaciones, ``guard`` ni disparaba a rango ni se quedaba plantado: la formación de combate seguía empujando.
+- **Cambio**: un enemigo formado en el segmento de marcha es la intercepción (``formation_blocker``). El ``go`` de grupo a una casilla conserva filas; ``go`` / ``attack`` sobre una unidad llama ``break_formation_hold`` y se concentra. El ``offensive`` ocioso al contactar sigue en filas. ``guard`` con ``formations 1`` es mantener posición: dispara si ``_near_enough_to_aim``, nunca anda.
+- **Alcance**: ``world_formation.py``; ``worldunit/world_movement.py``; ``worldunit/world_ai_decision.py``; ``worldorders/movement.py``; ``test_world_formation.py``; ``test_formation_combat.py``.
+
+**Cambio: cambiar de formación con todo el ejército seleccionado reordena en cada casilla**
+
+- **Problema**: tras Ctrl+S, elegir línea (u otro tipo) ejecutaba ``apply_idle_rearrange`` alrededor del centroide del ejército, así que unidades en casillas lejanas andaban a una sola casilla.
+- **Cambio**: al reordenar unidades ociosas se agrupa por la casilla en la que están (``_units_grouped_by_place``). Cada casilla se alinea en el sitio; las demás no se mueven. Las unidades ya en ``go`` se agrupan por destino, así que marchas a casillas distintas no se fusionan.
+- **Alcance**: ``world_formation.py``; ``test_world_formation.py``.
+
+**Cambio: class formation puede definir stats de combate y speed (absolutos o porcentajes)**
+
+- **Problema**: las formaciones solo colocaban huecos, sin canje de daño/armadura cuerpo a cuerpo o a distancia ni de velocidad. ``mdg 2`` / ``speed -1.5`` absolutos dan los mismos puntos a infantería y caballería.
+- **Cambio**: ``class formation`` puede definir ``mdg`` / ``rdg`` / ``mdf`` / ``rdf`` y ``mdg_vs`` / ``rdg_vs`` / ``mdf_vs`` / ``rdf_vs``, más ``speed`` (puede ser negativo). Valores absolutos como ``mdg 2`` y ``speed -1.5``, o porcentajes como ``mdg 20%`` y ``speed -30%`` de la stat de esa unidad. Solo al mantener huecos (``speed`` después del tope ``keep_pace``, en ``actual_speed``); se pierde con ``break_formation_hold`` / fuego concentrado. Por defecto 0.
+- **Alcance**: ``world_formation.py``; ``combat/damage_calculation.py``; ``worldunit/world_attributes.py``; ``test_world_formation.py``.
+
+**Cambio: Alt+V muestra tipos de formación y efectos**
+
+- **Problema**: la pantalla de propiedades no listaba la formación actual, los tipos disponibles ni la forma y los efectos de combate/velocidad de ``class formation``.
+- **Cambio**: las unidades que pueden formar muestran la formación actual, las formaciones disponibles (izquierda/derecha, Intro para detalles) y la fila de esa unidad. El detalle lista forma, separación, mantener el paso, y bonificaciones como ``mdg`` / ``speed`` (absolutas o porcentajes).
+- **Alcance**: ``formation_detail.py``; ``AVAILABLE_FORMATIONS``; ``class formation``; ``test_formation_attributes_ui.py``.
+
+**Cambio: las bonificaciones de HP por edad también suben la vida actual**
+
+- **Problema**: el ``on_phase feudal_age hp_max 20% cavalry`` franco solo subía el techo. Un explorador 45/45 pasaba a 45/54 al Feudal; la caballería nueva salía igual.
+- **Cambio**: las bonificaciones de HP de civ usan ``hp 20% cavalry`` (como Bloodlines ``effect bonus hp 20`` y Gran Muralla ``hp 30%``): máximo y actual crecen el mismo delta. Explorador lleno 45/45 → 54/54. Igual para exploradores mongoles, infantería vikinga, arqueros vietnamitas, barcos portugueses y barcos de pesca japoneses.
+- **Alcance**: ``mods/aoe2/rules.txt``; ``test_hp_max_bonus_current_hp.py``.
+
 1.5.0.1
 -------
 

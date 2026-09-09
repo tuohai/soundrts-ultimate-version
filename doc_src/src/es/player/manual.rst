@@ -536,7 +536,7 @@ Interfaz de propiedades
 Alt+V abre la pantalla de propiedades de la unidad o del edificio. Utilice las teclas de flecha para buscar atributos, o
 asigne teclas rápidas en ``attributes_bindings.txt``. Algunas entradas son interactivas: navegar
 ``can_train``, habilidades, investigación o ``can_build`` con izquierda/derecha y presione Enter para inspeccionar
-detalles.
+detalles. Con formaciones activas, navegue las formaciones disponibles igual (izquierda/derecha, Intro para forma y efectos).
 
 Inventario y equipo (desde 1.4.3.1)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -622,7 +622,7 @@ Durante un juego (no si las alianzas se arreglaron antes del inicio):
 - Ctrl+F4: aceptar solicitud
 - Shift+F4: cancelar solicitud, romper alianza o rechazar
 
-Modo tratado: elige la duración de la paz (hasta 20 minutos) antes de que comience el combate.
+Modo tratado: elige la duración de la paz (hasta 90 minutos; AoE2 DE: pasos de 5 minutos hasta 60, más 90) antes de que comience el combate. Bajo las opciones fijas puedes introducir un entero de 5 a 90.
 
 Modo espectador (desde 1.4.0.6; salas en espera desde 1.4.9.3)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

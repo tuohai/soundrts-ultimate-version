@@ -486,6 +486,16 @@ class KeyBindings:
             else:
                 voice.item(mp.BEEP)
                 return
+
+        if attr_name == mp.CURRENT_FORMATION:
+            from ..world_formation import unit_formation_name
+
+            selected = unit_formation_name(current_unit)
+            if not selected:
+                voice.item(mp.BEEP)
+                return
+            self.parent.formation_detail._show_formation_detail(selected)
+            return
             
         # 检查当前属性是否有子项
         if len(self.parent._current_attribute_sub_items) == 0:
@@ -725,6 +735,25 @@ class KeyBindings:
             
             # 显示武器详情
             self.parent.weapon_detail._show_weapon_detail(current_unit, selected_weapon_type)
+            return
+
+        elif item_type == "AVAILABLE_FORMATIONS_ITEMS":
+            from ..world_formation import formation_type_names
+
+            names = formation_type_names()
+            if not names:
+                voice.item(mp.BEEP)
+                return
+            form_items = attr_value[1]
+            if self.parent._current_sub_item_index >= len(form_items):
+                voice.item(mp.BEEP)
+                return
+            if self.parent._current_sub_item_index >= len(names):
+                voice.item(mp.BEEP)
+                return
+            self.parent.formation_detail._show_formation_detail(
+                names[self.parent._current_sub_item_index]
+            )
             return
         
         elif item_type == "INVENTORY_ITEMS":

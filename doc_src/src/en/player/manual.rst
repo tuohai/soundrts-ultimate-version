@@ -544,7 +544,8 @@ Properties interface
 Alt+V opens the unit or building properties screen (full list via speech). Use arrow keys to browse attributes, or
 assign quick keys in ``attributes_bindings.txt``. Some entries are interactive: browse
 ``can_train``, skills, research, or ``can_build`` with left/right and press Enter to inspect
-details. With Ctrl+F2 display on, a bottom-left panel also shows common combat stats while a unit is selected (HP, attack/defense, range, speed).
+details. When formations are on, browse available formations the same way (left/right, Enter for
+shape and effects). With Ctrl+F2 display on, a bottom-left panel also shows common combat stats while a unit is selected (HP, attack/defense, range, speed).
 
 Inventory and equipment (since 1.4.3.1)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -636,7 +637,7 @@ During a game (not if alliances were fixed before start):
 - Ctrl+F4: accept request
 - Shift+F4: cancel request, break alliance, or reject
 
-Treaty mode: choose peace duration (up to 20 minutes) before combat begins.
+Treaty mode: choose peace duration (up to 90 minutes; AoE2 DE: 5-minute steps through 60, plus 90) before combat begins. Under the presets you can type a custom integer from 5 to 90.
 
 Spectator mode (since 1.4.0.6; waiting rooms since 1.4.9.3)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

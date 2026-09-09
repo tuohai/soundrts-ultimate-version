@@ -66,14 +66,14 @@ Nb_players_min 和 nb_players_max
 "nb_players_min 2" 表示："需要 2 名玩家才能开始游戏。"
 "nb_players_max 4" 表示："这张地图最多 4 名玩家。"
 
-Global_food_limit
-'''''''''''''''''
+Global_population_limit
+'''''''''''''''''''''''
 
 beta 9e 版新增。
 
-beta 10 o 版更新：此食物上限不再在玩家之间均分。
+beta 10 o 版更新：此人口上限不再在玩家之间均分。
 
-"global_food_limit 200" 表示："每位玩家的食物不能超过 200，即使他建造更多农场也是如此。"
+"global_population_limit 200" 表示："每位玩家的人口不能超过 200，即使他建造更多农舍也是如此。"
 
 定义地形
 """"""""

@@ -67,6 +67,12 @@ class CommandsMixin:
                             u.take_order(args, forget_previous, imperative, order_id)
                     except:
                         exception("problem with order: %s" % args)
+            from ..world_formation import after_group_order
+
+            keyword = args[0] if args else ""
+            if keyword == "default":
+                keyword = "go"
+            after_group_order(self.group, keyword)
         except:
             exception("problem with order: %s" % args)
 

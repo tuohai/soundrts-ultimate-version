@@ -5,6 +5,7 @@ from .clientmenu import CLOSE_MENU, Menu, input_string
 from .clientmedia import voice
 from . import msgparts as mp
 from .lib.msgs import nb2msg
+from .treaty import TREATY_MINUTE_CHOICES, prompt_custom_treaty_minutes
 from .randommap import (
     RandomMapConfig,
     config_voice_summary,
@@ -224,11 +225,19 @@ class RandomMapMenu:
         seed_hint = self._config.seed if self._config.seed else None
         voice.info(mp.RMG_PREVIEW + config_voice_summary(self._config, seed_hint))
 
+    def _prompt_custom_treaty(self):
+        minutes = prompt_custom_treaty_minutes()
+        if minutes is None:
+            self._open_treaty_menu()
+            return
+        self._ask_password_then_finish(minutes)
+
     def _open_treaty_menu(self):
         menu = Menu(menu_title_for_config(self._config) + mp.TREATY, menu_type="submenu")
         menu.append(mp.TREATY + [":"] + mp.NO_TREATY, (self._ask_password_then_finish, 0))
-        for minutes in (5, 10, 15, 20):
+        for minutes in TREATY_MINUTE_CHOICES:
             menu.append(mp.TREATY + nb2msg(minutes) + mp.MINUTES, (self._ask_password_then_finish, minutes))
+        menu.append(mp.TREATY + mp.CUSTOM_GAME_SPEED, self._prompt_custom_treaty)
         menu.append(mp.CANCEL, CLOSE_MENU)
         menu.run()
 

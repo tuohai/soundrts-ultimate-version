@@ -1858,7 +1858,9 @@ def parse_server_create_args(
         raise ValueError("create_random requires at least 5 arguments")
     treaty_minutes = 0
     if tokens and tokens[-1].isdigit() and len(tokens) >= 6:
-        treaty_minutes = int(tokens.pop())
+        from .treaty import clamp_treaty_minutes
+
+        treaty_minutes = clamp_treaty_minutes(tokens.pop())
     if tokens and tokens[-1] == "public":
         tokens.pop()
     speed = float(tokens.pop())

@@ -538,7 +538,19 @@ class CreatureAIDecision(Entity):
 
         # 站岗模式处理：不主动攻击，但遭受攻击时反击
         # D-Phase 2: counterattack_enabled 现是 class default = False, 直接读取.
+        # formations 开启时对齐帝国 2 站岗：射程内开火，绝不走近。
         if self.ai_mode == "guard":
+            from ..world_formation import formations_enabled
+
+            if formations_enabled():
+                enemy = self._stand_ground_target()
+                if enemy is not None:
+                    decision_cache[cache_key] = {
+                        'action': 'attack',
+                        'target': enemy
+                    }
+                    self._attack(enemy)
+                return
             if (self.last_attacker is not None and self.last_attacker.place is not None and
                 self.counterattack_enabled):
                 # 站岗模式下，如果遭受攻击且反击开关开启，才进行反击
@@ -820,6 +832,57 @@ class CreatureAIDecision(Entity):
     # D-Phase 1 T3: 删除上面的 def can_attack(target) 死代码 — Python 后定义
     # 的同名方法覆盖前者, line 394-432 早就不会被调用 (game 一直在跑下面这个).
     # 只保留 line 434 这个 "without moving to another square" 版本.
+    def _stand_ground_target(self):
+        """Stand ground: first enemy already in true weapon range. Never walk."""
+        candidates = []
+        last = getattr(self, "last_attacker", None)
+        if last is not None:
+            candidates.append(last)
+        action = getattr(self, "action", None)
+        cur = getattr(action, "target", None) if action is not None else None
+        if cur is not None:
+            candidates.append(cur)
+        place = getattr(self, "place", None)
+        if place is not None:
+            known = ()
+            player = getattr(self, "player", None)
+            if player is not None and hasattr(player, "known_enemies"):
+                try:
+                    known = player.known_enemies(place) or ()
+                except Exception:
+                    known = ()
+            if known:
+                candidates.extend(known)
+            else:
+                candidates.extend(getattr(place, "objects", ()) or ())
+        seen = set()
+        for enemy in candidates:
+            if enemy is None:
+                continue
+            eid = id(enemy)
+            if eid in seen:
+                continue
+            seen.add(eid)
+            if enemy is self:
+                continue
+            if int(getattr(enemy, "hp", 0) or 0) <= 0:
+                continue
+            if getattr(enemy, "place", None) is None:
+                continue
+            try:
+                if not self.is_an_enemy(enemy):
+                    continue
+            except Exception:
+                continue
+            if self._is_approach_only_target(enemy) and not self._player_ordered_attack_on(
+                enemy
+            ):
+                continue
+            if not self._near_enough_to_aim(enemy):
+                continue
+            return enemy
+        return None
+
     def can_attack(self, other):  # without moving to another square
         if other is None or other.place is None or other.hp <= 0:
             return False

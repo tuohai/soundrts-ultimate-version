@@ -181,6 +181,35 @@ menace_range_weight 0.15
 menace_speed_weight 0.2
 menace_hp_ref 50
 
+; Spatial formations (off unless a mod sets formations 1)
+def formation_line
+class formation
+shape line
+spacing 1.5
+rank_gap 1.8
+ranks melee ranged siege
+
+def formation_box
+class formation
+shape box
+spacing 1.2
+ranks melee ranged siege
+
+def formation_staggered
+class formation
+shape staggered
+spacing 2.2
+rank_gap 1.2
+ranks melee ranged siege
+
+def formation_flank
+class formation
+shape flank
+spacing 1.5
+rank_gap 1.8
+flank_gap 6
+ranks melee ranged siege
+
 ; resource deposits
 
 def goldmine

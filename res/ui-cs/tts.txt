@@ -1553,3 +1553,29 @@
 5840	městský zvon
 5841	zpět k práci
 5842	světlice
+5843	zadejte dobu smlouvy
+5844	formace
+5845	liniová formace
+5846	boxová formace
+5847	staggerovaná formace
+5848	křídelní formace
+5849	přepnout formaci
+5850	dostupné formace
+5851	řada formace
+5852	tvar
+5853	rozestup
+5854	rozestup řad
+5855	rozestup křídel
+5856	poloměr
+5857	držet krok
+5858	prstence
+5859	rozestup prstenců
+5860	rozpětí oblouku
+5861	pořadí prstenců
+5862	vnitřní
+5863	vnější
+5864	řada na blízko
+5865	řada na dálku
+5866	obléhací řada
+5867	prstenec
+5868	oblouk

@@ -133,3 +133,6 @@ SHIFT 6: append_group 6
 SHIFT 7: append_group 7
 SHIFT 8: append_group 8
 SHIFT 9: append_group 9
+
+; 切换阵型（不进命令菜单；formations 1 时生效）
+CTRL SHIFT f: cycle_formation

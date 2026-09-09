@@ -100,6 +100,14 @@ class UnitDetail:
                         value = class_attr_for_detail(unit_class, attr)
                         if value:
                             setattr(self, attr, value)
+                    self.use_formation = class_attr_for_detail(unit_class, "use_formation") or 0
+                    rank = class_attr_for_detail(unit_class, "formation_rank") or ""
+                    if isinstance(rank, (list, tuple)):
+                        rank = rank[0] if rank else ""
+                    self.formation_rank = rank
+                    self.formation = ""
+                    exp = getattr(unit_class, "expanded_is_a", None)
+                    self.expanded_is_a = tuple(exp) if exp else (unit_type_name,)
                     
                 @property
                 def hp_status(self):

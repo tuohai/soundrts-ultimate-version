@@ -43,3 +43,24 @@ def test_aoe2_bloodlines_uses_hp_not_hp_max():
     block = text[text.find("def bloodlines") : text.find("def husbandry")]
     assert "effect bonus hp 20" in block
     assert "effect bonus hp_max 20" not in block
+
+
+def test_frank_style_hp_percent_fills_full_scout():
+    """Feudal +20% on a full Dark Age scout is 54/54, not 45/54."""
+    u = SimpleNamespace(hp=45 * PRECISION, hp_max=45 * PRECISION, type_name="scout_cavalry")
+    Upgrade.effect_bonus(u, 0, "hp", "20%")
+    assert u.hp_max == 54 * PRECISION
+    assert u.hp == 54 * PRECISION
+
+
+def test_aoe2_civ_on_phase_unit_hp_uses_hp_not_hp_max():
+    from pathlib import Path
+
+    text = Path("mods/aoe2/rules.txt").read_text(encoding="utf-8")
+    assert "on_phase feudal_age hp 20% cavalry" in text
+    assert "on_phase feudal_age hp_max 20% cavalry" not in text
+    assert "on_phase feudal_age hp 20% infantry" in text
+    assert "on_phase castle_age hp 20% scout_cavalry" in text
+    assert "on_phase dark_age hp 20% aoe_archer" in text
+    assert "on_phase dark_age hp 10% ship" in text
+    assert "on_phase dark_age hp 100% rdf 2 fishing_ship" in text

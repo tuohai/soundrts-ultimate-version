@@ -6,6 +6,7 @@ from .clientmedia import play_sequence, voice
 from .clientmenu import Menu, input_string
 from .definitions import ai_invite_label, ai_player_label, get_menu_ai_difficulties, rules, style
 from .game import MultiplayerGame
+from .treaty import TREATY_MINUTE_CHOICES, prompt_custom_treaty_minutes
 from .lib.log import info, warning
 from .lib.msgs import (
     coerce_voice_msg_parts,
@@ -329,14 +330,22 @@ class ServerMenu(_ServerMenu):
         def back_to_speed_menu():
             return self._get_speed_submenu((n, title))
 
+        def on_custom():
+            minutes = prompt_custom_treaty_minutes()
+            if minutes is None:
+                self._get_treaty_submenu((n, title, speed))
+                return
+            create_with_treaty(str(minutes))()
+
         entries = [
             (mp.TREATY + [":"] + mp.NO_TREATY, create_with_treaty("0")),
-            (mp.TREATY + nb2msg(5) + mp.MINUTES, create_with_treaty("5")),
-            (mp.TREATY + nb2msg(10) + mp.MINUTES, create_with_treaty("10")),
-            (mp.TREATY + nb2msg(15) + mp.MINUTES, create_with_treaty("15")),
-            (mp.TREATY + nb2msg(20) + mp.MINUTES, create_with_treaty("20")),
-            (mp.CANCEL, back_to_speed_menu),
         ]
+        for minutes in TREATY_MINUTE_CHOICES:
+            entries.append(
+                (mp.TREATY + nb2msg(minutes) + mp.MINUTES, create_with_treaty(str(minutes)))
+            )
+        entries.append((mp.TREATY + mp.CUSTOM_GAME_SPEED, on_custom))
+        entries.append((mp.CANCEL, back_to_speed_menu))
 
         Menu(title, entries, default_choice_index=0, menu_type="submenu").run()
 

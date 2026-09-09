@@ -33,6 +33,8 @@ from .immediate import (
     RallyingPointOrder,
     TownBellOrder,
     TownBellStopOrder,
+    SetFormationOrder,
+    CycleFormationOrder,
     JoinGroupOrder,
     EquipWeaponOrder,
     UnequipWeaponOrder,

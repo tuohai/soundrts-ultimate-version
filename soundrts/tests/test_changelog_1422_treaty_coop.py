@@ -2,8 +2,8 @@
 
 更新日志承诺：
 
-条约玩法（0-20 分钟和平期）：
-- 多人/合作战役菜单提供 0/5/10/15/20 五档条约时间。
+条约玩法（对齐帝国 2 决定版，最长 90 分钟）：
+- 多人菜单提供无条约 + ``TREATY_MINUTE_CHOICES``（5–60 每 5 分钟，另加 90）。
 - 条约期内不允许：
   1. 攻击命令对敌（``worldorders/movement.py:execute``）
   2. 实际伤害结算（``damage_effects.receive_hit``）
@@ -27,27 +27,58 @@ def _source(*path_parts):
 
 
 # ---------------------------------------------------------------------------
-# 条约：菜单 0–20 分钟可选
+# 条约：菜单对齐帝国 2 决定版
 # ---------------------------------------------------------------------------
 
 
-def test_treaty_menu_offers_0_5_10_15_20():
-    """``clientservermenu`` 必须为普通多人对局提供 0/5/10/15/20 分钟条约。
+def test_treaty_menu_offers_aoe2_de_choices():
+    """普通多人对局菜单必须提供无条约 + 帝国 2 决定版档位（最长 90）。
 
     注意：合作战役**不提供**条约（用户明确要求；合作语义下停战无意义），
     其菜单选完速度即创建、条约固定为 0。见
     ``test_coop_campaign_has_no_treaty_step_and_speed_sends_directly``。
     """
-    src = _source("soundrts", "clientservermenu.py")
-    # 普通多人对局
-    for token in (
-        'mp.TREATY + [":"] + mp.NO_TREATY, create_with_treaty("0")',
-        'create_with_treaty("5")',
-        'create_with_treaty("10")',
-        'create_with_treaty("15")',
-        'create_with_treaty("20")',
+    from soundrts.treaty import MAX_TREATY_MINUTES, TREATY_MINUTE_CHOICES
+
+    assert MAX_TREATY_MINUTES == 90
+    assert TREATY_MINUTE_CHOICES == (
+        5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 90,
+    )
+    for parts in (
+        ("soundrts", "clientservermenu.py"),
+        ("soundrts", "clientmain.py"),
+        ("soundrts", "randommap_menu.py"),
     ):
-        assert token in src, f"missing in multiplayer menu: {token}"
+        src = _source(*parts)
+        assert "TREATY_MINUTE_CHOICES" in src, parts
+        assert 'mp.TREATY + [":"] + mp.NO_TREATY' in src, parts
+        assert "prompt_custom_treaty_minutes" in src, parts
+        assert "mp.TREATY + mp.CUSTOM_GAME_SPEED" in src, parts
+
+
+def test_parse_custom_treaty_minutes_rejects_out_of_range():
+    """自定义输入必须是 5–90 的整数；4 和 91 不钳位，直接拒绝。"""
+    from soundrts.treaty import parse_custom_treaty_minutes
+
+    assert parse_custom_treaty_minutes(4) is None
+    assert parse_custom_treaty_minutes(5) == 5
+    assert parse_custom_treaty_minutes(12) == 12
+    assert parse_custom_treaty_minutes(" 75 ") == 75
+    assert parse_custom_treaty_minutes(90) == 90
+    assert parse_custom_treaty_minutes(91) is None
+    assert parse_custom_treaty_minutes("x") is None
+    assert parse_custom_treaty_minutes("") is None
+    assert parse_custom_treaty_minutes(None) is None
+
+
+def test_custom_treaty_prompt_and_tts():
+    treaty_src = _source("soundrts", "treaty.py")
+    assert "prompt_custom_treaty_minutes" in treaty_src
+    assert "ENTER_TREATY_MINUTES" in treaty_src
+    assert "mp.BEEP" in treaty_src
+    assert "ENTER_TREATY_MINUTES = [5843]" in _source("soundrts", "msgparts.py")
+    assert "5843\tenter treaty minutes" in _source("res", "ui", "tts.txt")
+    assert "5843\t请输入条约时长" in _source("res", "ui-zh", "tts.txt")
 
 
 def test_coop_campaign_menu_has_no_treaty():
@@ -57,19 +88,23 @@ def test_coop_campaign_menu_has_no_treaty():
     assert "_send_with_treaty" not in src
 
 
-def test_treaty_max_20_minutes_only():
-    """20 分钟是上限：不应存在 25/30 分钟选项。"""
-    src = _source("soundrts", "clientservermenu.py")
-    assert 'with_treaty("25")' not in src
-    assert 'with_treaty("30")' not in src
-    assert 'with_treaty("60")' not in src
+def test_treaty_max_90_minutes():
+    """90 分钟是上限：菜单不含 120，协议值会钳到 90。"""
+    from soundrts.treaty import MAX_TREATY_MINUTES, TREATY_MINUTE_CHOICES, clamp_treaty_minutes
+
+    assert MAX_TREATY_MINUTES == 90
+    assert 90 in TREATY_MINUTE_CHOICES
+    assert 120 not in TREATY_MINUTE_CHOICES
+    assert clamp_treaty_minutes(0) == 0
+    assert clamp_treaty_minutes(45) == 45
+    assert clamp_treaty_minutes(90) == 90
+    assert clamp_treaty_minutes(120) == 90
+    assert clamp_treaty_minutes("x") == 0
 
 
 def test_treaty_minutes_parsed_by_serverclient_for_create_and_campaign():
     src = _source("soundrts", "serverclient.py")
-    # 普通创建
-    assert "treaty_minutes = int(args[3]) if len(args) >= 4 else 0" in src
-    # 合作战役命令
+    assert "treaty_minutes = int(rest[0]) if rest else 0" in src
     assert "treaty_minutes = 0" in src
     assert "treaty_minutes = int(tokens[-1])" in src
 
@@ -81,10 +116,9 @@ def test_treaty_minutes_parsed_by_serverclient_for_create_and_campaign():
 
 def test_game_run_converts_minutes_to_milliseconds():
     src = _source("soundrts", "game.py")
-    s = src.index("treaty_minutes")
-    block = src[s:s + 1500]
-    assert "treaty_minutes * 60 * 1000" in block
-    assert "self.world.treaty_until_time = 0" in block
+    assert "clamp_treaty_minutes" in src
+    assert "treaty_minutes * 60 * 1000" in src
+    assert "self.world.treaty_until_time = 0" in src
 
 
 def test_game_run_schedules_treaty_end_and_countdown():

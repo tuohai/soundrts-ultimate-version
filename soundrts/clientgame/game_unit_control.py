@@ -677,6 +677,29 @@ def _group_has_single_title_type(interface, group_ids):
     return True
 
 
+def _group_formation_msg(interface, group_ids):
+    """Shared formation title when two or more selected units can form."""
+    from ..definitions import style
+    from ..world_formation import unit_can_form, unit_formation_name
+
+    names = []
+    for uid in group_ids:
+        view = interface.dobjets.get(uid)
+        if view is None:
+            continue
+        model = getattr(view, "model", view)
+        if not unit_can_form(model):
+            continue
+        names.append(unit_formation_name(model))
+    if len(names) < 2:
+        return []
+    unique = list(dict.fromkeys(names))
+    if len(unique) != 1:
+        return []
+    title = style.get(unique[0], "title", warn_if_not_found=False) or [unique[0]]
+    return list(mp.COMMA) + list(title)
+
+
 def say_group(interface, prefix=[]):
     update_group(interface)
     if len(interface.group) == 1:
@@ -690,6 +713,9 @@ def say_group(interface, prefix=[]):
         if prefix:
             msg += mp.COMMA
         msg += mp.YOU_CONTROL + titles_msg
+        formation_msg = _group_formation_msg(interface, group_ids)
+        if formation_msg:
+            msg += formation_msg
         if len(_remove_duplicates(orders)) == 1:
             if _orders_txt_has_content(orders[0]):
                 msg += mp.COMMA + orders[0]
@@ -1044,7 +1070,7 @@ def cmd_recall_group(interface, name, *args):
     say_group(interface)
 
 
-def send_order(interface, order, target, args):
+def send_order(interface, order, target, args, *, require_menu=True, uids=None):
     from ..lib import group as group_module
     queue_order = int("queue_order" in args)
     imperative = int("imperative" in args)
@@ -1052,10 +1078,11 @@ def send_order(interface, order, target, args):
     # (to avoid (precedently) unnecessary "order impossible" alerts
     #  or (now) a "wrong order" warning,
     #  and for the assertion in _group_has_enough_mana() in worldunit.py)
-    if order in ("default", "join_group"):
-        g = interface.group
+    members = list(uids) if uids is not None else list(interface.group)
+    if order in ("default", "join_group") or not require_menu:
+        g = members
     else:
-        g = [uid for uid in interface.group if order in interface.dobjets[uid].menu]
+        g = [uid for uid in members if order in interface.dobjets[uid].menu]
     if g != getattr(interface, 'previous_group', None):  # to save bandwidth
         interface.server.write_line("control " + group_module.encode(g))
         # make a copy to make sure that it is not modified later

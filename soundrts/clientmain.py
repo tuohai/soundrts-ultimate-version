@@ -31,6 +31,7 @@ import cloudpickle
 from . import discovery
 from . import msgparts as mp
 from . import stats
+from .treaty import TREATY_MINUTE_CHOICES, prompt_custom_treaty_minutes
 from .clientmedia import close_media, init_media, voice, app_title
 from .clientmenu import (
     CLOSE_MENU,
@@ -672,11 +673,19 @@ class TrainingMenu:
         # 条约选择后，进入邀请电脑界面
         self._open_players_menu()
 
+    def _prompt_custom_treaty(self):
+        minutes = prompt_custom_treaty_minutes()
+        if minutes is None:
+            self._open_treaty_menu()
+            return
+        self._set_treaty(minutes)
+
     def _open_treaty_menu(self):
         menu = Menu(mp.MAKE_A_SELECTION, menu_type="submenu")
         menu.append(mp.TREATY + [":"] + mp.NO_TREATY, (self._set_treaty, 0))
-        for m in (5, 10, 15, 20):
+        for m in TREATY_MINUTE_CHOICES:
             menu.append(mp.TREATY + nb2msg(m) + mp.MINUTES, (self._set_treaty, m))
+        menu.append(mp.TREATY + mp.CUSTOM_GAME_SPEED, self._prompt_custom_treaty)
         menu.append(mp.CANCEL, CLOSE_MENU)
         menu.run()
 

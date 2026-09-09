@@ -1553,3 +1553,29 @@
 5840	campana del pueblo
 5841	volver al trabajo
 5842	bengala
+5843	introduzca la duración del tratado
+5844	formación
+5845	formación en línea
+5846	formación en caja
+5847	formación escalonada
+5848	formación de flancos
+5849	cambiar formación
+5850	formaciones disponibles
+5851	fila de formación
+5852	forma
+5853	separación
+5854	separación entre filas
+5855	separación de flancos
+5856	radio
+5857	mantener el paso
+5858	anillos
+5859	separación entre anillos
+5860	amplitud del arco
+5861	orden de anillos
+5862	interior
+5863	exterior
+5864	fila cuerpo a cuerpo
+5865	fila a distancia
+5866	fila de asedio
+5867	anillo
+5868	arco

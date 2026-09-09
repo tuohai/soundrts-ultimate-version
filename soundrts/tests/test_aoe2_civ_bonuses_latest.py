@@ -96,19 +96,20 @@ def test_britons_exclude_skirmisher_range(aoe2_rules):
 
 def test_franks_cavalry_from_feudal(aoe2_rules):
     text = _flat(_effects(aoe2_rules, "franks"))
-    assert "feudal_age" in text and "hp_max" in text
-    assert "dark_age hp_max" not in " ".join(
-        " ".join(str(x) for x in e) for e in _effects(aoe2_rules, "franks")
-        if e and e[0] == "dark_age" and "hp_max" in e
-    )
+    assert "feudal_age" in text and "20%" in text and "cavalry" in text
+    assert "hp_max" not in text
+    feudal = [e for e in _effects(aoe2_rules, "franks") if e and e[0] == "feudal_age"]
+    assert any("hp" in e and "20%" in e and "cavalry" in e for e in feudal)
+    assert not any(e and e[0] == "dark_age" and "hp" in e for e in _effects(aoe2_rules, "franks"))
     assert _team(aoe2_rules, "franks")
 
 
 def test_vikings_flat_feudal_hp(aoe2_rules):
     entries = _effects(aoe2_rules, "vikings")
-    feudal = [e for e in entries if e and e[0] == "feudal_age" and "hp_max" in e]
+    feudal = [e for e in entries if e and e[0] == "feudal_age" and "hp" in e]
     assert feudal
-    assert not any(e and e[0] == "castle_age" and "hp_max" in e for e in entries)
+    assert any("20%" in e and "infantry" in e for e in feudal)
+    assert not any(e and e[0] == "castle_age" and "hp" in e for e in entries)
 
 
 def test_celts_speed_scales_from_dark(aoe2_rules):

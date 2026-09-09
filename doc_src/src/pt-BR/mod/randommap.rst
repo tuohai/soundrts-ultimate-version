@@ -58,7 +58,7 @@ O submenu percorre (Esc volta um nível):
 10. Modo de vitória: conquest / economic / exploration / survival (padrão
     conquest; veja seção 7)
 11. Semente: aleatória ou número personalizado (0–99999)
-12. Trégua: 0 / 5 / 10 / 15 / 20 minutos
+12. Trégua: 0 / 5 / 10 / … / 60 / 90 minutos, ou um valor personalizado de 5 a 90
 
 Após a seleção da semente você ouve uma prévia por voz das configurações; após
 confirmar a trégua o mapa é gerado.

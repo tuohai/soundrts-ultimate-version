@@ -190,6 +190,47 @@ trade_shrink 5
 trade_reward_cap 517
 ; Hold-all inventory victory (DE relic ≈ 200 years → 1000s at 5s/year). 0 = off.
 inventory_victory_time 1000
+formations 1
+default_formation formation_line
+formation_keep_pace 1
+formation_units infantry cavalry archer_unit siege_unit monk
+formation_rank_melee infantry cavalry
+formation_rank_ranged archer_unit
+formation_rank_siege siege_unit monk
+
+
+; AoE2 DE formations (line / box / staggered / flank). Spacing in meters.
+def formation_line
+class formation
+shape line
+spacing 1.5
+rank_gap 1.8
+ranks melee ranged siege
+keep_pace 1
+
+def formation_box
+class formation
+shape box
+spacing 1.2
+ranks melee ranged siege
+keep_pace 1
+
+def formation_staggered
+class formation
+shape staggered
+spacing 2.2
+rank_gap 1.2
+ranks melee ranged siege
+keep_pace 1
+
+def formation_flank
+class formation
+shape flank
+spacing 1.5
+rank_gap 1.8
+flank_gap 6
+ranks melee ranged siege
+keep_pace 1
 
 
 ; ---------- deposits: gold=1 wood=2 food=3 stone=4 ----------
@@ -5047,8 +5088,8 @@ workshop workshop
 mill frank_mill
 shipyard frank_shipyard
 townhall town_center
-; DE: cavalry HP +20% from Feudal (mounted units)
-on_phase feudal_age hp_max 20% cavalry
+; DE: cavalry HP +20% from Feudal (mounted units). ``hp`` raises max and current.
+on_phase feudal_age hp 20% cavalry
 ; DE: foragers +15% → orchard gather time × 1/1.15 ≈ -13%
 on_phase dark_age gather_time_orchard -13%
 ; DE: Castles 15%/25% cheaper Castle/Imperial Age (stone)
@@ -5115,9 +5156,9 @@ market mongol_market
 townhall town_center
 ; DE: hunters +40% → carcass gather time × 1/1.4 ≈ -29%
 on_phase dark_age gather_time_food_carcass -29%
-; DE: scout cavalry line +20%/+30% HP Castle/Imperial
-on_phase castle_age hp_max 20% scout_cavalry
-on_phase imperial_age hp_max 10% scout_cavalry
+; DE: scout cavalry line +20%/+30% HP Castle/Imperial. ``hp`` raises max and current.
+on_phase castle_age hp 20% scout_cavalry
+on_phase imperial_age hp 10% scout_cavalry
 ; Team: Scout Cavalry line +2 LOS
 team_on_phase dark_age sight_range 2 scout_cavalry
 ; AoE4-like: pasture instead of farm; no mill (herdsman cannot build mill)
@@ -5484,7 +5525,7 @@ shipyard japanese_shipyard
 townhall town_center
 on_phase feudal_age mdg_cd -25% infantry
 ; DE: fishing ships double HP, +2 pierce, work 5/10/15/20% faster by age
-on_phase dark_age hp_max 100% rdf 2 fishing_ship
+on_phase dark_age hp 100% rdf 2 fishing_ship
 on_phase dark_age gather_time_fish_trap -5%
 on_phase dark_age gather_time_shore_fish -5%
 on_phase dark_age gather_time_deep_fish -5%
@@ -5564,8 +5605,8 @@ aoe_castle viking_castle
 workshop viking_workshop
 shipyard viking_shipyard
 townhall town_center
-; DE: infantry +20% HP from Feudal Age
-on_phase feudal_age hp_max 20% infantry
+; DE: infantry +20% HP from Feudal Age. ``hp`` raises max and current.
+on_phase feudal_age hp 20% infantry
 grant_tech_on_phase feudal_age wheelbarrow
 grant_tech_on_phase castle_age hand_cart
 ; DE: warships -10/-15/-20% Feudal/Castle/Imperial
@@ -5598,8 +5639,8 @@ aoe_castle vietnamese_castle
 workshop vietnamese_workshop
 shipyard vietnamese_shipyard
 townhall town_center
-; DE: Archery Range units +20% HP
-on_phase dark_age hp_max 20% aoe_archer crossbowman arbalester skirmisher elite_skirmisher imperial_skirmisher cavalry_archer heavy_cavalry_archer rattan_archer elite_rattan_archer
+; DE: Archery Range units +20% HP. ``hp`` raises max and current.
+on_phase dark_age hp 20% aoe_archer crossbowman arbalester skirmisher elite_skirmisher imperial_skirmisher cavalry_archer heavy_cavalry_archer rattan_archer elite_rattan_archer
 reveal_enemy_town_centers town_center
 grant_tech_on_phase imperial_age conscription
 research_cost_zero_slot 1 wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining
@@ -5629,7 +5670,7 @@ aoe_castle portuguese_castle
 workshop portuguese_workshop
 shipyard portuguese_shipyard
 townhall town_center
-on_phase dark_age hp_max 10% ship
+on_phase dark_age hp 10% ship
 ; DE: all units -20% gold
 on_phase dark_age cost -20% 0 0 0 infantry archer_unit cavalry siege_unit ship peasant monk
 ; DE: foragers generate 0.33 wood per food

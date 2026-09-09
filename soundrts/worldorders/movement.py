@@ -27,10 +27,17 @@ class GoOrder(BasicOrder):
 
     def __eq__(self, other):
         # smart units with the same "go" order will behave as a group
-        # (cf move_to_or_fail)
+        # (cf move_to_or_fail). Formation slots share the original anchor id.
+        if self.__class__ != other.__class__:
+            return False
+        self_anchor = getattr(self, "_formation_anchor_id", None)
+        if self_anchor is None:
+            self_anchor = getattr(self.target, "id", None)
+        other_anchor = getattr(other, "_formation_anchor_id", None)
+        if other_anchor is None:
+            other_anchor = getattr(other.target, "id", None)
         return (
-            self.__class__ == other.__class__
-            and getattr(self.target, "id", None) == getattr(other.target, "id", None)
+            self_anchor == other_anchor
             and self._creation_time == other._creation_time
         )
 
@@ -40,6 +47,7 @@ class GoOrder(BasicOrder):
         if self.target is None:
             self.mark_as_impossible()
             return
+        self._formation_anchor_id = getattr(self.target, "id", None)
         # 点出口：允许先走到出口，满格检查推迟到真正跨格时（见 world_movement）
         via_exit = hasattr(self.target, "other_side")
         if via_exit:  # target is an exit
@@ -84,7 +92,34 @@ class GoOrder(BasicOrder):
             self._try_attach_herd_on_arrival()
             self.mark_as_complete()
         elif self.unit.is_idle:
+            from ..world_formation import formation_blocker, formation_stand_ground
+
+            living = (
+                int(getattr(self.target, "hp", 0) or 0) > 0
+                and getattr(self.target, "player", None) is not None
+            )
+            if living and formation_stand_ground(self.unit):
+                return
+            if living:
+                blocker = formation_blocker(self.unit, self.target)
+                if blocker is not None:
+                    attack = getattr(self.unit, "_attack", None)
+                    if callable(attack):
+                        attack(blocker)
+                        return
             self.move_to_or_fail(self.target)
+
+    def mark_as_complete(self):
+        from ..world_formation import clear_formation_speed_cap
+
+        clear_formation_speed_cap(self.unit)
+        super().mark_as_complete()
+
+    def mark_as_impossible(self, reason=None):
+        from ..world_formation import clear_formation_speed_cap
+
+        clear_formation_speed_cap(self.unit)
+        super().mark_as_impossible(reason)
 
 
 class HerdOrder(BasicOrder):
@@ -182,7 +217,23 @@ class AttackOrder(BasicOrder):
                 action.is_imperative = True
             self.unit.action = action
         elif self.unit.is_idle:
-            self.move_to_or_fail(self.target)
+            from ..world_formation import (
+                break_formation_hold,
+                formation_blocker,
+                formation_stand_ground,
+            )
+
+            if formation_stand_ground(self.unit):
+                return
+            break_formation_hold(self.unit)
+            blocker = formation_blocker(self.unit, self.target)
+            if blocker is not None:
+                action = AttackAction(self.unit, blocker)
+                if getattr(self, "is_imperative", False):
+                    action.is_imperative = True
+                self.unit.action = action
+            else:
+                self.move_to_or_fail(self.target)
 
 
 class CaptureOrder(AttackOrder):

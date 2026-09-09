@@ -66,6 +66,11 @@ class EquipmentAbilities:
                     # 保存为特殊格式，用 "AVAILABLE_WEAPONS_ITEMS" 标记这是可导航的项目列表
                     attrs.append(("", mp.AVAILABLE_WEAPONS, ("AVAILABLE_WEAPONS_ITEMS", weapon_items)))
     
+    def add_formation_attributes(self, u, attrs):
+        from .formation_detail import add_formation_attributes as _add
+
+        _add(u, attrs)
+
     def add_armor_attributes(self, u, attrs):
         """添加护甲相关属性"""
         # 护甲信息显示

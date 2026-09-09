@@ -1553,3 +1553,29 @@
 5840	campana del villaggio
 5841	torna al lavoro
 5842	razzo di segnalazione
+5843	inserisci la durata del trattato
+5844	formazione
+5845	formazione in linea
+5846	formazione a scatola
+5847	formazione intercalata
+5848	formazione sui fianchi
+5849	cambia formazione
+5850	formazioni disponibili
+5851	fila della formazione
+5852	forma
+5853	spaziatura
+5854	distanza tra le file
+5855	distanza tra i fianchi
+5856	raggio
+5857	tenere il passo
+5858	anelli
+5859	distanza tra anelli
+5860	ampiezza dell'arco
+5861	ordine degli anelli
+5862	interno
+5863	esterno
+5864	fila da mischia
+5865	fila a distanza
+5866	fila d'assedio
+5867	anello
+5868	arco

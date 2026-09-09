@@ -26,6 +26,7 @@ diplomacy_change diplomacy_change
 objective_change objective_change
 signal_flare signal_flare
 signal_flare_title 5842
+formation_change formation_change
 population_limit population_limit
 menu_music town
 game_music town

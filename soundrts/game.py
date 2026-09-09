@@ -10,6 +10,7 @@ from pygame.locals import KEYDOWN
 from . import clientgame, config, definitions
 from . import msgparts as mp
 from . import stats
+from .treaty import clamp_treaty_minutes
 from .clientgameorder import update_orders_list
 from .clientmedia import play_sequence, voice
 from .definitions import rules, style
@@ -286,7 +287,7 @@ class _Game:
         self.world.enemy_damage_factor = int(getattr(self, "enemy_damage_factor", 100) or 100)
         self.world.coop_difficulty = getattr(self, "coop_difficulty", "") or ""
         # 条约时间配置（分钟转毫秒），仅多人局使用
-        treaty_minutes = int(getattr(self, "treaty_minutes", 0) or 0)
+        treaty_minutes = clamp_treaty_minutes(getattr(self, "treaty_minutes", 0))
         if treaty_minutes > 0:
             # 记录条约结束时间（世界时间从0开始，单位毫秒）
             self.world.treaty_until_time = treaty_minutes * 60 * 1000
@@ -929,7 +930,7 @@ class SpectatorGame(_MultiplayerGame):
         # 必须使用与真实对局相同的种子，否则世界生成（随机阵营/起始位置/地形等）
         # 就会与对局分叉，导致看到的根本不是同一局游戏。
         self.seed = int(seed)
-        self.treaty_minutes = int(treaty_minutes) if treaty_minutes else 0
+        self.treaty_minutes = clamp_treaty_minutes(treaty_minutes)
         self.speed = speed
         self.main_server = main_server
         
@@ -972,7 +973,7 @@ class SpectatorGame(_MultiplayerGame):
         # 与真实对局保持一致的世界级设置，否则重放历史 orders 会分叉：
         # treaty_until_time 会门控条约期内的战斗/移动，alliances_locked 会
         # 门控结盟类指令的处理。两者都直接影响 world.random 的消耗路径。
-        treaty_minutes = int(getattr(self, "treaty_minutes", 0) or 0)
+        treaty_minutes = clamp_treaty_minutes(getattr(self, "treaty_minutes", 0))
         if treaty_minutes > 0:
             self.world.treaty_until_time = treaty_minutes * 60 * 1000
         else:

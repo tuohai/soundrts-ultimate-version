@@ -1554,3 +1554,29 @@
 5840	chuông thành
 5841	trở lại làm việc
 5842	pháo hiệu
+5843	nhập thời gian hiệp ước
+5844	đội hình
+5845	đội hình hàng ngang
+5846	đội hình hộp
+5847	đội hình xen kẽ
+5848	đội hình hai cánh
+5849	đổi đội hình
+5850	đội hình khả dụng
+5851	hàng đội hình
+5852	hình dạng
+5853	khoảng cách
+5854	khoảng cách hàng
+5855	khoảng cách sườn
+5856	bán kính
+5857	giữ nhịp
+5858	vòng
+5859	khoảng cách vòng
+5860	góc cung
+5861	thứ tự vòng
+5862	trong
+5863	ngoài
+5864	hàng cận chiến
+5865	hàng tầm xa
+5866	hàng công thành
+5867	vòng tròn
+5868	hình quạt

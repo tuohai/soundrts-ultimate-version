@@ -24,6 +24,7 @@ from ..worldroom import Square, Inside, ZoomTarget
 from ..worldentity import Entity
 
 DISTANCE_MARGIN = 175  # millimeters
+_SLOT_HOLD_MM = 250
 class CreatureMovement(Entity):
     def can_move_to(self, target_place) -> bool:
         """检查单位是否可以移动到目标区域。
@@ -99,6 +100,9 @@ class CreatureMovement(Entity):
         # 确保最小速度
         if self._actual_speed > 0:
             self._actual_speed = max(self._actual_speed, getattr(self, 'VERY_SLOW', 1))
+        cap = int(getattr(self, "_formation_speed_cap", 0) or 0)
+        if cap > 0 and self._actual_speed > cap:
+            self._actual_speed = max(cap, getattr(self, "VERY_SLOW", 1))
     # reach (avoiding collisions)
     def _already_walked(self, x, y):
         n = 0
@@ -468,14 +472,47 @@ class CreatureMovement(Entity):
             # 如果没有目标就直接返回，以免后面 target.x, target.y 报错
             return
 
-        # 原本逻辑：还没有到可以攻击/瞄准的距离，继续移动
-        if not self._near_enough_to_aim(target):
-            d = int_distance(self.x, self.y, target.x, target.y)
-            self.o = int_angle(self.x, self.y, target.x, target.y)  # turn toward the goal
-            self._reach(d - self._collision_range(target))
-        else:
+        from ..world_formation import (
+            formation_blocker,
+            formation_hold_xy,
+            formation_stand_ground,
+        )
+
+        if formation_stand_ground(self):
+            if self._near_enough_to_aim(target):
+                self.walked = []
+                self.aim(target)
+            else:
+                self.o = int_angle(self.x, self.y, target.x, target.y)
+            return
+
+        if self._near_enough_to_aim(target):
             self.walked = []
             self.aim(target)
+            return
+
+        slot = formation_hold_xy(self)
+        if slot is not None:
+            sx, sy = slot
+            arrive = max(_SLOT_HOLD_MM, int(getattr(self, "radius", 0) or 0) + 50)
+            if square_of_distance(self.x, self.y, sx, sy) > arrive * arrive:
+                self.go_to_xy(sx, sy)
+            else:
+                self.o = int_angle(self.x, self.y, target.x, target.y)
+            return
+
+        blocker = formation_blocker(self, target)
+        if blocker is not None:
+            target = blocker
+            if self._near_enough_to_aim(target):
+                self.walked = []
+                self.aim(target)
+                return
+
+        # 原本逻辑：还没有到可以攻击/瞄准的距离，继续移动
+        d = int_distance(self.x, self.y, target.x, target.y)
+        self.o = int_angle(self.x, self.y, target.x, target.y)  # turn toward the goal
+        self._reach(d - self._collision_range(target))
 
     def action_reach_and_capture(self, target):
         """移动到可被夺取建筑处后直接占领（不进行攻击）。

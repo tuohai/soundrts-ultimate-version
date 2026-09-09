@@ -3,6 +3,7 @@ import time
 from typing import TYPE_CHECKING, List, Union
 
 from . import config
+from .treaty import clamp_treaty_minutes
 from .definitions import VIRTUAL_TIME_INTERVAL
 from .lib.log import info, warning
 from .mapfile import Map
@@ -164,7 +165,7 @@ class Game:
         self.admin = admin
         self.password = sanitize_room_password(password)
         self.is_public = not bool(self.password)
-        self.treaty_minutes = int(treaty_minutes) if treaty_minutes else 0
+        self.treaty_minutes = clamp_treaty_minutes(treaty_minutes)
         self.players: List[Union["ConnectionToClient", _Computer]] = []
         self.guests: List[Union["ConnectionToClient", _Computer]] = []
         self.spectators: List["ConnectionToClient"] = []  # 旁观者列表

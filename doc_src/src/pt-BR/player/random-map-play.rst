@@ -48,7 +48,7 @@ O submenu percorre (Esc volta um nível):
 9. Tesouro: nenhum / baixo / alto (exige tipos ``class item`` coletáveis nas regras)
 10. Modo de vitória: conquista / econômico / exploração / sobrevivência
 11. Seed: aleatório ou número personalizado (0–99999)
-12. Tratado: 0 / 5 / 10 / 15 / 20 minutos
+12. Tratado: 0 / 5 / 10 / … / 60 / 90 minutos, ou um valor personalizado de 5 a 90
 
 Após selecionar a seed você ouve uma prévia por voz das configurações; após confirmar o tratado o mapa é gerado.
 

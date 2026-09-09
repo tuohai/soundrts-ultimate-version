@@ -1833,6 +1833,38 @@ Sons de status persistentes de buff/debuff devem ser escritos explicitamente com
 ``noise repeat \<intervalo\> \<som...\>``; ``noise \<som\>`` mantém seu comportamento de parsing existente
 e não é tratado como loop automaticamente.
 
+Formações (desde 1.5.0.2)
+>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Desligadas por omissão. Um mod com ``formations 1`` em ``def parameters`` coloca o grupo militar em slots no quadrado a partir de ``class formation`` (AoE2 DE: linha, caixa, escalonada, flancos).
+
+::
+
+    formations 1
+    default_formation formation_line
+    formation_keep_pace 1
+    formation_units infantry cavalry archer_unit siege_unit monk
+    formation_rank_melee infantry cavalry
+    formation_rank_ranged archer_unit
+    formation_rank_siege siege_unit monk
+
+    def formation_line
+    class formation
+    shape line
+    spacing 1.5
+    rank_gap 1.8
+    ranks melee ranged siege
+    keep_pace 1
+
+    def formation_circle
+    class formation
+    shape circle
+    spacing 1.5
+    mdg 20%
+    speed -30%
+
+``shape``: cartesianas ``line`` / ``box`` / ``staggered`` / ``flank``, ou polares ``ring`` / ``arc`` (aliases ``circle`` / ``round`` → anel, ``wedge`` / ``cone`` → arco). Um ``shape`` desconhecido com ``radius`` / ``arc_span`` / ``rings`` continua a usar empacotamento polar — sem alterar o motor. ``radius`` é metros (0 = a partir de ``spacing`` e da contagem). ``arc_span`` é graus (0 = 360 no anel, 180 no arco). ``arc_start`` por omissão é automático. ``rings`` / ``ring_gap`` são concêntricos; ``ring_rank out`` põe a primeira fila listada no exterior. Distâncias em metros (PRECISION mm). ``flank_gap`` só nos flancos. ``max_front`` limita a fila (0 = largura do quadrado). Uma unidade pode ter ``use_formation 1`` ou ``formation_rank melee``; senão valem as listas ``is_a``. O menu lista ``set_formation <tipo>`` para cada ``class formation`` (escolher o atual reorganiza no sítio em cada quadrado; selecionar todo o exército não junta quadrados distantes). ``cycle_formation`` fica fora do menu falado; tecla predefinida ``CTRL SHIFT f``, alterável no editor. Style: ``def set_formation`` e o ``title`` de cada formação; ``parameters.formation_change`` é o SFX. O ``go`` de grupo para um quadrado mantém as filas; ``go`` / ``attack`` numa unidade parte os slots e concentra. O ``offensive`` ocioso ao contactar mantém a formação. Um inimigo em formação no caminho intercepta (``formation_blocker``). Com formações, ``guard`` é manter posição: dispara ao alcance, não anda. ``chase`` continua a fechar. ``class formation`` pode acrescentar ``mdg`` / ``rdg`` / ``mdf`` / ``rdf`` e ``mdg_vs`` / ``rdg_vs`` / ``mdf_vs`` / ``rdf_vs`` só ao manter slots (perdem-se com ``break_formation_hold`` / fogo concentrado). ``speed`` (pode ser negativo, ex. ``speed -1.5`` ou ``speed -30%``) soma-se depois do teto ``keep_pace``. Valores absolutos ou percentagens da stat dessa unidade (``mdg 20%``). Por omissão 0; os quatro tipos AoE2 continuam só layout.
+
 Menu e música do jogo (desde 1.4.0.2)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

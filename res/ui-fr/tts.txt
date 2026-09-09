@@ -1553,3 +1553,29 @@
 5840	cloche du village
 5841	retourner au travail
 5842	fusée éclairante
+5843	entrez la durée du traité
+5844	formation
+5845	formation en ligne
+5846	formation en carré
+5847	formation en quinconce
+5848	formation de flancs
+5849	changer de formation
+5850	formations disponibles
+5851	rang de formation
+5852	forme
+5853	espacement
+5854	écart entre rangs
+5855	écart des flancs
+5856	rayon
+5857	garder le pas
+5858	anneaux
+5859	écart entre anneaux
+5860	amplitude de l'arc
+5861	ordre des anneaux
+5862	intérieur
+5863	extérieur
+5864	rang de mêlée
+5865	rang à distance
+5866	rang de siège
+5867	anneau
+5868	arc

@@ -21,6 +21,7 @@ from .resource_display import ResourceDisplay
 from .production_calc import ProductionCalculator
 from .weapon_detail import WeaponDetail
 from .armor_detail import ArmorDetail
+from .formation_detail import FormationDetail
 from .unit_detail import UnitDetail
 from .item_detail import ItemDetail
 from .effect_formatter import EffectFormatter
@@ -66,6 +67,7 @@ class AttributesInterface:
         self.production_calc = ProductionCalculator(self)
         self.weapon_detail = WeaponDetail(self)
         self.armor_detail = ArmorDetail(self)
+        self.formation_detail = FormationDetail(self)
         self.unit_detail = UnitDetail(self)
         self.item_detail = ItemDetail(self)
         self.effect_formatter = EffectFormatter(self)

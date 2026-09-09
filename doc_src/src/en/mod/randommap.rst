@@ -48,7 +48,7 @@ The submenu walks through ( Esc goes back one level ):
 9. Treasure: none / low / high (requires pickable ``class item`` types in rules)
 10. Victory mode: conquest / economic / exploration / survival (default conquest; see section 7)
 11. Seed: random or custom number (0–99999)
-12. Treaty: 0 / 5 / 10 / 15 / 20 minutes
+12. Treaty: 0 / 5 / 10 / … / 60 / 90 minutes, or a custom value from 5 to 90
 
 After seed selection you hear a voice preview of the settings; after treaty confirmation the map is generated.
 

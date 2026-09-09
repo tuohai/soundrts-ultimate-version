@@ -2174,6 +2174,38 @@ Combat sound system (since 1.3.8.2; 1.4.4.6 renamed matk/ratk to mdg/rdg)
 会额外播放一次。buff/debuff 的持续状态音效必须显式写成 ``noise loop \<sound\>`` 或
 ``noise repeat \<interval\> \<sound...\>``；只写 ``noise \<sound\>`` 不会自动当作循环音效。
 
+阵型（自 1.5.0.2 起）
+>>>>>>>>>>>>>>>>>>>>
+
+默认关闭。模组在 ``def parameters`` 中写 ``formations 1`` 后，多选可移动军事单位会按 ``class formation`` 排布格内落点（帝国 2 决定版：横排、方阵、交错、两翼）。
+
+::
+
+    formations 1
+    default_formation formation_line
+    formation_keep_pace 1
+    formation_units infantry cavalry archer_unit siege_unit monk
+    formation_rank_melee infantry cavalry
+    formation_rank_ranged archer_unit
+    formation_rank_siege siege_unit monk
+
+    def formation_line
+    class formation
+    shape line
+    spacing 1.5
+    rank_gap 1.8
+    ranks melee ranged siege
+    keep_pace 1
+
+    def formation_circle
+    class formation
+    shape circle
+    spacing 1.5
+    mdg 20%
+    speed -30%
+
+``shape``：直角坐标 ``line`` / ``box`` / ``staggered`` / ``flank``，或极坐标 ``ring`` / ``arc``（别名 ``circle`` / ``round`` → 圆环，``wedge`` / ``cone`` → 扇形）。未知 ``shape`` 若写了 ``radius`` / ``arc_span`` / ``rings`` 也走极坐标，不必改引擎。``radius`` 为米（0=按 ``spacing`` 与人数估算）。``arc_span`` 为度（0 时圆环 360、扇形 180）。``arc_start`` 缺省自动。``rings`` / ``ring_gap`` 为同心环；``ring_rank out`` 把 ``ranks`` 里第一个排到外圈。间距单位是米（内部 PRECISION 毫米）。``flank_gap`` 仅两翼阵型使用。``max_front`` 为每排人数上限（0=按格子宽度）。单位可写 ``use_formation 1`` 或 ``formation_rank melee``；未写则用上面的 ``is_a`` 表。命令菜单列出每个 ``class formation`` 的 ``set_formation <类型>``（再选当前阵型会按人所在格子就地重整，全选不会把全图收成一队）。``cycle_formation`` 不进语音菜单，默认热键 ``CTRL SHIFT f``，可在热键编辑器里改。style：``def set_formation`` 以及各阵型 ``title``；``def parameters`` 的 ``formation_change`` 为换阵音效。编队 ``go`` 到格子保持排面；点到敌人则散开集火。空闲 ``offensive`` 接敌仍保持阵型。有槽的敌人挡路时改打前排（``formation_blocker``）。``guard`` 在阵型开启时为站岗：射程内开火、不走近。``chase`` 仍贴脸。``class formation`` 可另写 ``mdg`` / ``rdg`` / ``mdf`` / ``rdf`` 与 ``mdg_vs`` / ``rdg_vs`` / ``mdf_vs`` / ``rdf_vs``，以及 ``speed``（可负）。绝对值如 ``mdg 2``、``speed -1.5``，或百分比如 ``mdg 20%``、``speed -30%``（按该单位自己的对应属性）。仅在保持槽位时加算（``speed`` 加在齐步 ``keep_pace`` 之后；``break_formation_hold`` 或集火后失效）；默认 0，帝国 2 四种阵型不加。
+
 Menu and game music (since 1.4.0.2)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

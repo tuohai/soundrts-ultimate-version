@@ -416,6 +416,7 @@ class DisplayInterface:
             self.combat_attributes.add_attack_defense_attributes,
             self.combat_attributes.add_charge_attributes,
             self.equipment_abilities.add_weapon_attributes,
+            self.equipment_abilities.add_formation_attributes,
             self.equipment_abilities.add_armor_attributes,
             self.equipment_abilities.add_inventory_attributes,
             self.equipment_abilities.add_status_attributes,

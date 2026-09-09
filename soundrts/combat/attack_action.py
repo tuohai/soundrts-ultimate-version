@@ -1282,6 +1282,10 @@ class AttackActionMixin:
             if not (getattr(self, 'mdg_explode', False) or getattr(self, 'rdg_explode', False)):
                 return
 
+        from ..world_formation import hold_combat_formation
+
+        hold_combat_formation(self, target)
+
         # don't notify or attack if already attacking the same target
         # (at the moment, this test is necessary if the target is not a menace, for example a farm)
         if not isinstance(self.action, AttackAction) or self.action.target != target:

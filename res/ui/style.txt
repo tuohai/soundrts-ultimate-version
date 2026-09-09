@@ -331,6 +331,27 @@ def town_bell_stop
 title 5841
 index 10.7
 
+; cycle_formation: no index — not in the unit command list.
+; Named set_formation entries are the switch; re-picking the current type reforms in place.
+def cycle_formation
+title 5849
+
+def set_formation
+title 5844 $1
+index 10.5
+
+def formation_line
+title 5845
+
+def formation_box
+title 5846
+
+def formation_staggered
+title 5847
+
+def formation_flank
+title 5848
+
 def stop
 title 106
 index 12

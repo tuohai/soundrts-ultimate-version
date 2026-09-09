@@ -1553,3 +1553,29 @@
 5840	sino da cidade
 5841	voltar ao trabalho
 5842	sinalizador
+5843	digite a duração do tratado
+5844	formação
+5845	formação em linha
+5846	formação em caixa
+5847	formação intercalada
+5848	formação de flancos
+5849	alternar formação
+5850	formações disponíveis
+5851	fileira da formação
+5852	forma
+5853	espaçamento
+5854	espaço entre fileiras
+5855	espaço entre flancos
+5856	raio
+5857	manter o passo
+5858	anéis
+5859	espaço entre anéis
+5860	amplitude do arco
+5861	ordem dos anéis
+5862	interior
+5863	exterior
+5864	fileira corpo a corpo
+5865	fileira à distância
+5866	fileira de cerco
+5867	anel
+5868	arco

@@ -46,3 +46,6 @@ EQUALS: select_order_index 30 inactive_included
 ALT x: do_again
 ALT z: do_again now
 SHIFT ALT g: do_again now queue_order
+
+; 切换阵型（不进命令菜单；formations 1 时生效）
+CTRL SHIFT f: cycle_formation

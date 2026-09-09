@@ -1554,3 +1554,29 @@
 5840	Stadtglocke
 5841	zurück an die Arbeit
 5842	Signalrakete
+5843	Vertragsdauer eingeben
+5844	Formation
+5845	Linienformation
+5846	Kastenformation
+5847	gestaffelte Formation
+5848	Flügelformation
+5849	Formation wechseln
+5850	verfügbare Formationen
+5851	Formationsreihe
+5852	Form
+5853	Abstand
+5854	Reihenabstand
+5855	Flankenabstand
+5856	Radius
+5857	Gleichschritt
+5858	Ringe
+5859	Ringabstand
+5860	Bogenwinkel
+5861	Ringreihenfolge
+5862	innen
+5863	außen
+5864	Nahkampfreihe
+5865	Fernkampfreihe
+5866	Belagerungsreihe
+5867	Ring
+5868	Bogen

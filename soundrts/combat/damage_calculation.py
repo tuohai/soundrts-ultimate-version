@@ -39,6 +39,15 @@ def _resolve_vs(vs_dict, type_name, expanded_is_a):
 _vs_lookup = _cf.resolve_vs_lookup if _cf is not None else _resolve_vs
 
 
+def _with_formation_combat(unit, flat_key, vs_key):
+    """Add ``class formation`` flats/vs only while a combat spec is bound."""
+    if not getattr(unit, "_formation_combat_spec", None):
+        return getattr(unit, flat_key, 0), getattr(unit, vs_key, None)
+    from ..world_formation import formation_combat_stats
+
+    return formation_combat_stats(unit, flat_key, vs_key)
+
+
 class DamageCalculationMixin:
     """
     处理基础伤害计算相关的功能
@@ -48,6 +57,7 @@ class DamageCalculationMixin:
     _attacker_terrain_x = None
     _attacker_terrain_y = None
     _attacker_terrain_type = None
+    place = None
     mdg_on_terrain = ()
     rdg_on_terrain = ()
 
@@ -102,10 +112,9 @@ class DamageCalculationMixin:
         D-Phase 2: armor / _armor_instance 已上提到 Entity class default = None,
         直接属性访问替代 getattr (12.88M calls / 5min).
         """
-        if _cf is not None:
-            damage = _cf.compute_damage_vs(self.mdg, self.mdg_vs, target)
-        else:
-            damage = self._py_get_melee_damage_vs(target)
+        damage = self._compute_damage_vs_with_formation(
+            "mdg", "mdg_vs", target, self._py_get_melee_damage_vs
+        )
         terrain_mod = 0
         on_terrain = self.mdg_on_terrain
         if on_terrain:
@@ -113,6 +122,22 @@ class DamageCalculationMixin:
         if _any_terrain_defines("mdg_vs"):
             terrain_mod += self._get_terrain_unit_modifier("mdg_vs", damage)
         return max(0, damage + terrain_mod)
+
+    def _compute_damage_vs_with_formation(self, flat_key, vs_key, target, py_method):
+        base, vs = _with_formation_combat(self, flat_key, vs_key)
+        if _cf is not None:
+            return _cf.compute_damage_vs(base, vs, target)
+        orig_base = getattr(self, flat_key)
+        orig_vs = getattr(self, vs_key)
+        if base == orig_base and vs is orig_vs:
+            return py_method(target)
+        setattr(self, flat_key, base)
+        setattr(self, vs_key, vs)
+        try:
+            return py_method(target)
+        finally:
+            setattr(self, flat_key, orig_base)
+            setattr(self, vs_key, orig_vs)
 
     def _py_get_melee_damage_vs(self, target) -> int:
         """Python fallback for _get_melee_damage_vs."""
@@ -141,10 +166,9 @@ class DamageCalculationMixin:
 
         D-Phase 2 §3.2: 整个函数走 ``combat_fast.compute_damage_vs`` (cpdef).
         """
-        if _cf is not None:
-            damage = _cf.compute_damage_vs(self.rdg, self.rdg_vs, target)
-        else:
-            damage = self._py_get_ranged_damage_vs(target)
+        damage = self._compute_damage_vs_with_formation(
+            "rdg", "rdg_vs", target, self._py_get_ranged_damage_vs
+        )
         terrain_mod = 0
         on_terrain = self.rdg_on_terrain
         if on_terrain:
@@ -178,7 +202,8 @@ class DamageCalculationMixin:
     def _get_vs_damage_bonus(self, target) -> int:
         """Return the best mdg_vs / rdg_vs bonus against target (expanded_is_a aware)."""
         bonus = 0
-        for vs_dict in (self.mdg_vs, self.rdg_vs):
+        for flat_key, vs_key in (("mdg", "mdg_vs"), ("rdg", "rdg_vs")):
+            _base, vs_dict = _with_formation_combat(self, flat_key, vs_key)
             v = _vs_lookup(vs_dict, target.type_name, target.expanded_is_a)
             if v is not None and v > bonus:
                 bonus = v
@@ -186,63 +211,85 @@ class DamageCalculationMixin:
 
     def _get_melee_defense_vs(self, attacker) -> int:
         """返回基于 mdf / mdf_vs 的近战防御值"""
-        d = self.mdf_vs
-        v = _vs_lookup(d, attacker.type_name, attacker.expanded_is_a)
-        if v is not None:
-            return self.mdf + v
+        mdf, d = _with_formation_combat(self, "mdf", "mdf_vs")
+        orig_mdf, orig_d = self.mdf, self.mdf_vs
+        swapped = mdf != orig_mdf or d is not orig_d
+        if swapped:
+            self.mdf = mdf
+            self.mdf_vs = d or {}
+        try:
+            d = self.mdf_vs
+            v = _vs_lookup(d, attacker.type_name, attacker.expanded_is_a)
+            if v is not None:
+                return self.mdf + v
 
-        # 检查对攻击者武器类型的vs
-        if hasattr(attacker, 'get_current_weapon_name'):
-            weapon_name = attacker.get_current_weapon_name()
-            if weapon_name and weapon_name in d:
-                return self.mdf + d[weapon_name]
+            # 检查对攻击者武器类型的vs
+            if hasattr(attacker, 'get_current_weapon_name'):
+                weapon_name = attacker.get_current_weapon_name()
+                if weapon_name and weapon_name in d:
+                    return self.mdf + d[weapon_name]
 
-        # 检查对攻击者武器继承类型的vs
-        if hasattr(attacker, '_weapon_instances') and hasattr(attacker, 'current_weapon'):
-            weapon_name = attacker.current_weapon
-            if weapon_name and weapon_name in attacker._weapon_instances:
-                weapon = attacker._weapon_instances[weapon_name]
-                if hasattr(weapon, 'expanded_is_a'):
-                    for weapon_type in weapon.expanded_is_a:
-                        if weapon_type in d:
-                            return self.mdf + d[weapon_type]
-                # 也检查武器的直接is_a
-                if hasattr(weapon, 'is_a'):
-                    for weapon_type in weapon.is_a:
-                        if weapon_type in d:
-                            return self.mdf + d[weapon_type]
+            # 检查对攻击者武器继承类型的vs
+            if hasattr(attacker, '_weapon_instances') and hasattr(attacker, 'current_weapon'):
+                weapon_name = attacker.current_weapon
+                if weapon_name and weapon_name in attacker._weapon_instances:
+                    weapon = attacker._weapon_instances[weapon_name]
+                    if hasattr(weapon, 'expanded_is_a'):
+                        for weapon_type in weapon.expanded_is_a:
+                            if weapon_type in d:
+                                return self.mdf + d[weapon_type]
+                    # 也检查武器的直接is_a
+                    if hasattr(weapon, 'is_a'):
+                        for weapon_type in weapon.is_a:
+                            if weapon_type in d:
+                                return self.mdf + d[weapon_type]
 
-        return self.mdf
+            return self.mdf
+        finally:
+            if swapped:
+                self.mdf = orig_mdf
+                self.mdf_vs = orig_d
 
     def _get_ranged_defense_vs(self, attacker) -> int:
         """返回基于 rdf / rdf_vs 的远程防御值"""
-        d = self.rdf_vs
-        v = _vs_lookup(d, attacker.type_name, attacker.expanded_is_a)
-        if v is not None:
-            return self.rdf + v
+        rdf, d = _with_formation_combat(self, "rdf", "rdf_vs")
+        orig_rdf, orig_d = self.rdf, self.rdf_vs
+        swapped = rdf != orig_rdf or d is not orig_d
+        if swapped:
+            self.rdf = rdf
+            self.rdf_vs = d or {}
+        try:
+            d = self.rdf_vs
+            v = _vs_lookup(d, attacker.type_name, attacker.expanded_is_a)
+            if v is not None:
+                return self.rdf + v
 
-        # 检查对攻击者武器类型的vs
-        if hasattr(attacker, 'get_current_weapon_name'):
-            weapon_name = attacker.get_current_weapon_name()
-            if weapon_name and weapon_name in d:
-                return self.rdf + d[weapon_name]
+            # 检查对攻击者武器类型的vs
+            if hasattr(attacker, 'get_current_weapon_name'):
+                weapon_name = attacker.get_current_weapon_name()
+                if weapon_name and weapon_name in d:
+                    return self.rdf + d[weapon_name]
 
-        # 检查对攻击者武器继承类型的vs
-        if hasattr(attacker, '_weapon_instances') and hasattr(attacker, 'current_weapon'):
-            weapon_name = attacker.current_weapon
-            if weapon_name and weapon_name in attacker._weapon_instances:
-                weapon = attacker._weapon_instances[weapon_name]
-                if hasattr(weapon, 'expanded_is_a'):
-                    for weapon_type in weapon.expanded_is_a:
-                        if weapon_type in d:
-                            return self.rdf + d[weapon_type]
-                # 也检查武器的直接is_a
-                if hasattr(weapon, 'is_a'):
-                    for weapon_type in weapon.is_a:
-                        if weapon_type in d:
-                            return self.rdf + d[weapon_type]
+            # 检查对攻击者武器继承类型的vs
+            if hasattr(attacker, '_weapon_instances') and hasattr(attacker, 'current_weapon'):
+                weapon_name = attacker.current_weapon
+                if weapon_name and weapon_name in attacker._weapon_instances:
+                    weapon = attacker._weapon_instances[weapon_name]
+                    if hasattr(weapon, 'expanded_is_a'):
+                        for weapon_type in weapon.expanded_is_a:
+                            if weapon_type in d:
+                                return self.rdf + d[weapon_type]
+                    # 也检查武器的直接is_a
+                    if hasattr(weapon, 'is_a'):
+                        for weapon_type in weapon.is_a:
+                            if weapon_type in d:
+                                return self.rdf + d[weapon_type]
 
-        return self.rdf
+            return self.rdf
+        finally:
+            if swapped:
+                self.rdf = orig_rdf
+                self.rdf_vs = orig_d
         
     def _get_total_melee_defense_vs(self, attacker) -> int:
         """获取总的近战防御值（考虑穿甲）"""

@@ -886,6 +886,9 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     town_bell = 0  # 1 = 菜单可敲城镇钟
     town_bell_range = 0  # PRECISION mm；0 = 全图
     town_bell_units = ()  # 空 = 陆地 Worker
+    use_formation = 0  # 1 = 参加阵型（或由 parameters.formation_units 匹配）
+    formation_rank = ""  # melee / ranged / siege；空则按 parameters 的 is_a 表
+    formation = ""  # 当前阵型 type_name；空则用 default_formation
     requirements = ()
     is_a = ()
     # can_build / can_train：rules 写入 _rules_can_*；实例经 @property → effective_*

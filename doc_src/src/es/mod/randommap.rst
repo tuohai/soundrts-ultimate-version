@@ -46,7 +46,7 @@ El submenú recorre (Esc retrocede un nivel):
 9. Tesoro: ninguno / bajo / alto (requiere reglas de tipos seleccionables ``class item``)
 10. Modo de victoria: conquista/económico/exploración/supervivencia (conquista por defecto; ver sección 7)
 11. Semilla: número aleatorio o personalizado (0–99999)
-12. Tratado: 0 / 5 / 10 / 15 / 20 minutos
+12. Tratado: 0 / 5 / 10 / … / 60 / 90 minutos, o un valor personalizado de 5 a 90
 
 Después de la selección de semillas, escuchará una vista previa de voz de la configuración; Después de la confirmación del tratado, se genera el mapa.
 

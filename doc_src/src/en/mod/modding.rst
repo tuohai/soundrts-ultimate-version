@@ -2111,6 +2111,38 @@ Persistent buff/debuff status sounds must be written explicitly as ``noise loop 
 ``noise repeat \<interval\> \<sound...\>``; ``noise \<sound\>`` keeps its existing parsing behavior
 and is not treated as a loop automatically.
 
+Formations (since 1.5.0.2)
+>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Off by default. A mod that sets ``formations 1`` under ``def parameters`` lays selected military units into intra-square slots from ``class formation`` (AoE2 DE: line, box, staggered, flank).
+
+::
+
+    formations 1
+    default_formation formation_line
+    formation_keep_pace 1
+    formation_units infantry cavalry archer_unit siege_unit monk
+    formation_rank_melee infantry cavalry
+    formation_rank_ranged archer_unit
+    formation_rank_siege siege_unit monk
+
+    def formation_line
+    class formation
+    shape line
+    spacing 1.5
+    rank_gap 1.8
+    ranks melee ranged siege
+    keep_pace 1
+
+    def formation_circle
+    class formation
+    shape circle
+    spacing 1.5
+    mdg 20%
+    speed -30%
+
+``shape``: cartesian ``line`` / ``box`` / ``staggered`` / ``flank``, or polar ``ring`` / ``arc`` (aliases ``circle`` / ``round`` → ring, ``wedge`` / ``cone`` → arc). An unknown ``shape`` with ``radius`` / ``arc_span`` / ``rings`` still uses polar packing — no engine patch. ``radius`` is meters (0 = from ``spacing`` and count). ``arc_span`` is degrees (0 means 360 for ring, 180 for arc). ``arc_start`` defaults to auto. ``rings`` / ``ring_gap`` are concentric; ``ring_rank out`` puts the first listed rank on the outside. Distances are meters (PRECISION mm internally). ``flank_gap`` is for flank only. ``max_front`` is the per-rank cap (0 = square width). Units may set ``use_formation 1`` or ``formation_rank melee``; otherwise the ``is_a`` lists above apply. The command menu lists ``set_formation <type>`` for each ``class formation`` (picking the current type reforms in place on each square; selecting the whole army does not pull distant squares together). ``cycle_formation`` stays out of the spoken menu; default hotkey ``CTRL SHIFT f``, changeable in the hotkey editor. Style: ``def set_formation`` plus each formation ``title``; ``parameters.formation_change`` is the change SFX. Group ``go`` to a square keeps ranks; ``go`` / ``attack`` on a unit breaks slots and piles in. Idle ``offensive`` auto-engage still holds formation. A formed enemy on the path intercepts (``formation_blocker``). With formations on, ``guard`` is stand ground: shoot in range, never walk. ``chase`` still closes in. Optional ``mdg`` / ``rdg`` / ``mdf`` / ``rdf`` and ``mdg_vs`` / ``rdg_vs`` / ``mdf_vs`` / ``rdf_vs`` on ``class formation`` add while ranks are held (lost on ``break_formation_hold`` / focus fire). ``speed`` (may be negative, e.g. ``speed -1.5`` or ``speed -30%``) is added after the ``keep_pace`` cap. Absolute values or percents of that unit's own stat (``mdg 20%``). Defaults are 0; the AoE2 four types stay layout-only.
+
 Menu and game music (since 1.4.0.2)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

@@ -28,6 +28,7 @@ def _get_base_classes():
     from .worldunit import Worker
     from .worlditem import Item
     from .worldterrain import TerrainRules
+    from .world_formation import FormationRules
 
     return {
         "worker": Worker,
@@ -45,6 +46,7 @@ def _get_base_classes():
         "armor": Armor,  # 添加护甲类
         "item": Item,  # 添加物品类
         "terrain": TerrainRules,
+        "formation": FormationRules,
     }
 
 
@@ -926,6 +928,11 @@ _precision_properties = {
     "effect_radius",
     "sight_range",
     "town_bell_range",  # Town Bell Euclidean range (meters → PRECISION mm; 0 = unlimited)
+    "spacing",  # formation: gap along the rank (meters → PRECISION mm)
+    "rank_gap",  # formation: gap between ranks (meters → PRECISION mm)
+    "flank_gap",  # formation: left/right split (meters → PRECISION mm)
+    "ring_gap",  # formation: gap between concentric rings (meters → PRECISION mm)
+    "radius",  # formation polar: ring/arc radius (meters → PRECISION mm; 0 = auto)
     "build_field_radius",
     "build_field_radius_m",
     "addon_offset_x",
@@ -992,6 +999,11 @@ class Rules(_Definitions):
         "summon_requires_build_field",  # 召唤技能：目标格需有指定建造场（如 creep）
         "bridge_terrain",  # 建成后将该格变为指定桥梁地形（如 big_bridge）
         "market_currency",  # resource token used as buy/sell currency (default resource1)
+        "shape",  # formation layout: line / box / staggered / flank / ring / arc (aliases: circle, wedge, …)
+        "ring_rank",  # formation polar: in = first rank inner; out = first rank outer
+        "formation_rank",  # unit rank bucket: melee / ranged / siege
+        "default_formation",  # parameters: class formation type name
+        "formation",  # runtime current formation type (also a rules default)
     }
 
     # vs属性集合
@@ -1538,6 +1550,14 @@ class Rules(_Definitions):
         "units_auto_upgrade",  # phase（时代）研究完成后是否自动把所有单位形态升级到 can_upgrade_to 目标
         "town_bell",  # 1=建筑可敲城镇钟（范围内工人进驻）
         "signal_flare",  # parameters: 1=启用盟友格子标点（style: signal_flare 音效、signal_flare_title 名称）
+        "formations",  # parameters: 1=启用规则驱动阵型（class formation）
+        "use_formation",  # 1=该单位参加阵型（也可由 formation_units 的 is_a 匹配）
+        "max_front",  # formation: 每排最多人数（0=按格子宽度）
+        "keep_pace",  # formation: 1=编队移速跟最慢的单位
+        "formation_keep_pace",  # parameters: 全局 keep_pace 默认
+        "rings",  # formation: concentric polar rings (0/1 = one ring)
+        "arc_span",  # formation: polar arc degrees (0 = 360 ring / 180 arc)
+        "arc_start",  # formation: polar start degrees (empty = auto)
         "trigger_loop_limit",  # parameters: while/repeat 每拍最多圈数（默认 32，上限 256）
         "hide_locked_commands",  # 未满足 requirements 时是否隐藏建造/训练/研究/升级命令
         "achievements_enabled",  # 1=启用成就/卡牌/军衔（默认）；0=模组关闭整套系统
@@ -1593,6 +1613,11 @@ class Rules(_Definitions):
         "passenger_attack_types",  # 容器内可攻击的单位类型列表
         "transport_passenger_types",  # 可装载类型；-name 排除（如 infantry -cavalry）；空=不限
         "town_bell_units",  # 城镇钟召集的单位类型（空=陆地 Worker，排除船）
+        "ranks",  # formation: 排面顺序 melee ranged siege
+        "formation_units",  # parameters: 参加阵型的单位类型（is_a）
+        "formation_rank_melee",  # parameters: 近战排 is_a
+        "formation_rank_ranged",  # parameters: 远程排 is_a
+        "formation_rank_siege",  # parameters: 攻城/后方排 is_a
         "can_gather",          # 已废弃，见 can_gather_deposit / can_gather_building
         "can_gather_deposit",  # 可开采的矿床（deposit）类型列表
         "can_gather_building", # 可开采的建筑类型列表（如 farm）

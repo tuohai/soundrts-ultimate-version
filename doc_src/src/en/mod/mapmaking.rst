@@ -66,14 +66,14 @@ Nb_players_min and nb_players_max
 "nb_players_min 2" means: "2 players are needed to start the game."
 "nb_players_max 4" means: "4 players in this map is a maximum."
 
-Global_food_limit
-'''''''''''''''''
+Global_population_limit
+'''''''''''''''''''''''
 
 New in version beta 9e.
 
-Update in version beta 10 o: this food limit is not divided among the players anymore.
+Update in version beta 10 o: this population limit is not divided among the players anymore.
 
-"global_food_limit 200" means: "Every player cannot have more than 200 food, even if he builds more farms."
+"global_population_limit 200" means: "Every player cannot have more than 200 population, even if he builds more houses."
 
 Defining the terrain
 """""""""""""""""""""

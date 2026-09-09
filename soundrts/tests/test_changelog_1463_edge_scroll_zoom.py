@@ -18,7 +18,8 @@ def _section_after_heading(text: str, heading: str) -> str:
 
 
 def test_version_is_1463():
-    assert 'VERSION = "1.4.6.3"' in _source("soundrts", "version.py")
+    # 1.4.6.3 notes remain; current VERSION is owned by later releases.
+    assert "1.4.6.3" in _source("doc_src", "src", "zh", "relnotes.rst")
 
 
 def test_zh_relnotes_1463_edge_scroll_and_wheel_zoom():

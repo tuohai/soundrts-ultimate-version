@@ -425,6 +425,7 @@ def _build_unit_catalog() -> Catalog:
         [
             ("unit.select_unit.1.local", _cycle_unit(list(mp.HOTKEY_LOCAL_UNIT))),
             ("unit.command_unit", list(mp.HOTKEY_COMMAND_UNIT)),
+            ("unit.cycle_formation", list(mp.HOTKEY_CYCLE_FORMATION)),
             ("unit.order_shortcut", list(mp.HOTKEY_ORDER_SHORTCUT)),
             ("unit.toggle_side_filter.1", list(mp.HOTKEY_TOGGLE_SIDE_FILTER)),
             ("unit.toggle_type_filter.1", list(mp.HOTKEY_TOGGLE_TYPE_FILTER)),
@@ -467,6 +468,7 @@ def _build_command_catalog() -> Catalog:
         ),
         ("command.do_again", list(mp.HOTKEY_DO_AGAIN)),
         ("command.do_again.now", list(mp.HOTKEY_DO_AGAIN_NOW)),
+        ("command.cycle_formation", list(mp.HOTKEY_CYCLE_FORMATION)),
     ]
     for i in range(1, 31):
         items.append(
@@ -578,6 +580,7 @@ def _build_classic_catalog() -> Catalog:
         ("classic.examine", list(mp.HOTKEY_EXAMINE)),
         ("classic.say_square_info", list(mp.HOTKEY_SAY_SQUARE_INFO)),
         ("classic.flare", list(mp.HOTKEY_SIGNAL_FLARE)),
+        ("classic.cycle_formation", list(mp.HOTKEY_CYCLE_FORMATION)),
         ("classic.unit_status", list(mp.HOTKEY_UNIT_STATUS)),
         ("classic.select_square.0.1", list(mp.HOTKEY_MOVE_NORTH)),
         ("classic.select_square.0.-1", list(mp.HOTKEY_MOVE_SOUTH)),
@@ -703,19 +706,40 @@ def _with_flare_catalog(items: Catalog) -> Catalog:
     return out
 
 
+def _with_cycle_formation_catalog(items: Catalog) -> Catalog:
+    """Keep ``*.cycle_formation`` only when rules enable formations."""
+    from .world_formation import formations_enabled
+
+    enabled = formations_enabled()
+    label = list(mp.HOTKEY_CYCLE_FORMATION)
+    out: Catalog = []
+    for bid, lab in items:
+        if bid.endswith(".cycle_formation"):
+            if not enabled:
+                continue
+            out.append((bid, label))
+        else:
+            out.append((bid, lab))
+    return out
+
+
 def get_layer_catalog(layer: str) -> Catalog:
     if layer == "global":
         from .hotkey_editor import GLOBAL_PRIMARY_CATALOG
 
         return _with_flare_catalog(list(GLOBAL_PRIMARY_CATALOG))
     if layer == "classic":
-        return _with_flare_catalog(_build_classic_catalog())
+        return _with_cycle_formation_catalog(
+            _with_flare_catalog(_build_classic_catalog())
+        )
     builder = _LAYER_BUILDERS.get(layer)
     if builder is None:
         return []
     items = builder()
     if layer == "map":
         return _with_flare_catalog(items)
+    if layer in ("unit", "command"):
+        return _with_cycle_formation_catalog(items)
     return items
 
 
@@ -886,6 +910,8 @@ def get_layer_variant_catalog(layer: str) -> Catalog:
         if entry.binding_id in primary_ids or entry.binding_id in seen:
             continue
         if entry.binding_id.endswith(".flare"):
+            continue
+        if entry.binding_id.endswith(".cycle_formation"):
             continue
         seen.add(entry.binding_id)
         items.append(

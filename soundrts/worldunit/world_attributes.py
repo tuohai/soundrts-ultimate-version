@@ -15,9 +15,35 @@ from ..definitions import MAX_NB_OF_RESOURCE_TYPES, VIRTUAL_TIME_INTERVAL, rules
 from ..worldentity import Entity
 class CreatureAttributes(Entity):
 
+    def _speed_with_formation_cap(self, speed):
+        """keep_pace writes ``_formation_speed_cap``; walking reads actual_speed.
+
+        ``class formation`` ``speed`` is added after the cap so a slow circle
+        stays together, just slower (or a fast wedge stays together, faster).
+        """
+        try:
+            speed = int(speed or 0)
+        except (TypeError, ValueError):
+            return speed
+        cap = int(getattr(self, "_formation_speed_cap", 0) or 0)
+        if cap > 0 and speed > cap:
+            speed = max(cap, int(getattr(self, "VERY_SLOW", 1) or 1))
+        spec = getattr(self, "_formation_combat_spec", None)
+        extra = spec.get("speed", 0) if spec else 0
+        if extra:
+            from ..world_formation import _bonus_delta, formation_hold_xy
+
+            if formation_hold_xy(self) is not None:
+                speed += _bonus_delta(speed, extra)
+                if speed > 0:
+                    speed = max(speed, int(getattr(self, "VERY_SLOW", 1) or 1))
+                else:
+                    speed = 0
+        return speed
+
     @property
     def actual_speed(self):
-        return self._actual_speed
+        return self._speed_with_formation_cap(self._actual_speed)
 
     @actual_speed.setter
     def actual_speed(self, val):
@@ -27,9 +53,8 @@ class CreatureAttributes(Entity):
     def current_speed(self) -> int:
         """只读，始终根据状态动态返回"当前真实移动速度"""
         if isinstance(self.action, AttackAction) and self.action.target:
-            return self._get_speed_vs(self.action.target)
-        else:
-            return self._actual_speed
+            return self._speed_with_formation_cap(self._get_speed_vs(self.action.target))
+        return self._speed_with_formation_cap(self._actual_speed)
 
     @property
     def is_melee(self) -> bool:
@@ -37,17 +62,6 @@ class CreatureAttributes(Entity):
         若我们认定 "近战" 表示: 具有mdg_range>0 并且没有rdg_range(或rdg_range=0)
         """
         return (self.mdg_range > 0) and (self.rdg_range <= 0)
-
-    @property
-    def actual_speed(self):
-        return self._actual_speed
-    @property
-    def current_speed(self) -> int:
-        """只读，始终根据状态动态返回"当前真实移动速度"""
-        if isinstance(self.action, AttackAction) and self.action.target:
-            return self._get_speed_vs(self.action.target)
-        else:
-            return self._actual_speed
 
     @property
     def upgrades(self):
@@ -957,6 +971,3 @@ class CreatureAttributes(Entity):
         # 升级单位装备的护甲
         if hasattr(self, 'update_armors'):
             self.update_armors()
-    @actual_speed.setter
-    def actual_speed(self, val):
-        self._actual_speed = val

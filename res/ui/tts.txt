@@ -1683,3 +1683,29 @@
 5840	town bell
 5841	return to work
 5842	signal flare
+5843	enter treaty minutes
+5844	formation
+5845	line formation
+5846	box formation
+5847	staggered formation
+5848	flank formation
+5849	cycle formation
+5850	available formations
+5851	formation rank
+5852	shape
+5853	spacing
+5854	rank gap
+5855	flank gap
+5856	radius
+5857	keep pace
+5858	rings
+5859	ring gap
+5860	arc span
+5861	ring rank
+5862	inner
+5863	outer
+5864	melee rank
+5865	ranged rank
+5866	siege rank
+5867	ring
+5868	arc

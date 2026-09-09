@@ -1553,3 +1553,29 @@
 5840	mestský zvon
 5841	späť k práci
 5842	svetlica
+5843	zadajte dĺžku zmluvy
+5844	formácia
+5845	líniová formácia
+5846	boxová formácia
+5847	striedavá formácia
+5848	krídlová formácia
+5849	prepnúť formáciu
+5850	dostupné formácie
+5851	rad formácie
+5852	tvar
+5853	rozostup
+5854	rozostup radov
+5855	rozostup krídel
+5856	polomer
+5857	držať krok
+5858	prstence
+5859	rozostup prstencov
+5860	rozpätie oblúka
+5861	poradie prstencov
+5862	vnútorný
+5863	vonkajší
+5864	rad na blízko
+5865	rad na diaľku
+5866	obliehacia rad
+5867	prstenec
+5868	oblúk

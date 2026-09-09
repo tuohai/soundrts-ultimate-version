@@ -4,6 +4,57 @@
 .. contents::
 
 
+1.5.0.2
+-------
+
+**改进：条约时长对齐帝国 2 决定版，并支持自定义**
+
+- **问题**：开战前条约只有 0/5/10/15/20 分钟，最长 20 分钟，慢热局不够用。预设档之外也无法输入 12、75 这类中间值。
+- **改进**：档位与帝国 2 决定版一致：``TREATY_MINUTE_CHOICES`` 为 5–60 每 5 分钟一档，另加 90。预设列表下方增加「条约 自定义」，回车后输入 5–90 的整数（``parse_custom_treaty_minutes``）；超出范围或非整数会提示音并回到条约菜单，Esc 取消同样回到条约菜单。协议仍按分钟转毫秒；超过 90 的值钳到 90。
+- **范围**：``treaty.py``；``clientservermenu.py``；``clientmain.py``；``randommap_menu.py``；``game.py``；``serverroom.py``；``msgparts.py`` ``ENTER_TREATY_MINUTES``；``test_changelog_1422_treaty_coop.py``；``test_changelog_15.py``。
+
+**改进：规则驱动阵型（class formation 通用）**
+
+- **问题**：多选军事单位移动时各走各的，没有横排 / 方阵 / 交错 / 两翼，也无法按近战、远程、攻城分排。新几何若写死在引擎里，玩家自定义阵型不方便。
+- **改进**：``def parameters`` 写 ``formations 1`` 开启。菜单列出规则里每一个 ``class formation``（帝国 2 模组的 ``formation_line`` / ``formation_box`` / ``formation_staggered`` / ``formation_flank`` 只是示例，玩家可改可增）。``shape`` 为直角坐标 line / box / staggered / flank，或极坐标 ``ring`` / ``arc``（别名 ``circle`` / ``round``、``wedge`` / ``cone``）。未知名若写了 ``radius`` / ``arc_span`` / ``rings`` 也按极坐标排，不必改引擎。``spacing`` / ``rank_gap`` / ``flank_gap`` / ``radius`` 为米；``arc_span`` 为度。``ranks`` 为排面顺序。``formation_units`` 与 ``formation_rank_melee`` / ``formation_rank_ranged`` / ``formation_rank_siege`` 用 ``is_a`` 决定谁入列、谁在前排；单位也可写 ``use_formation 1`` 或 ``formation_rank``。编队 ``go`` 按朝向把落点写进同一格的 ``ZoomTarget``；``keep_pace`` 跟最慢单位。菜单只列 ``set_formation`` 的具名阵型（再选当前阵型会就地重整）；``cycle_formation`` 不进语音菜单，默认可绑热键 ``CTRL SHIFT f``。站住改阵型会重整。帝国 2 模组默认横排队形。
+- **范围**：``world_formation.py``；``worldorders/immediate.py``；``definitions.py``；``mods/aoe2/rules.txt``；``hotkey_catalogs.py``；``test_world_formation.py``。
+
+**改进：交火时保持排面**
+
+- **问题**：阵型只在 ``go`` 时排槽。``offensive`` 一接敌就各自 ``AttackAction`` 贴脸，后排弓箭手走进近战，横排相对叠团几乎没有优势。``keep_pace`` 只写了 ``_formation_speed_cap``，走动读的 ``actual_speed`` 没套上限，快的骑兵仍会先到。
+- **改进**：编队 ``attack`` 或点到敌人时，按威胁朝向把近战排在前面、远程/攻城在后（``apply_combat_formation``）。够得着就地开火，不够走自己的槽，不再挤向同一个目标。追击模式（``chase``）仍贴脸。``actual_speed`` / ``current_speed`` 读取时套上齐步上限。
+- **范围**：``world_formation.py``；``worldunit/world_movement.py``；``worldunit/world_attributes.py``；``combat/attack_action.py``；``worldorders/movement.py``；``test_formation_combat.py``；``test_world_formation.py``。
+
+**改进：阵型挡路、点选集火与站岗**
+
+- **问题**：排面没有碰撞墙，单位会穿过敌方横排打后排。点到具体敌人仍保持槽位，不会像右键那样挤上去集火。``guard`` 在阵型开启时既不主动开火，接敌时还会被 ``apply_combat_formation`` 往前压。
+- **改进**：有阵型槽的敌人挡在走位线段上时，改打/走近挡路者（``formation_blocker``）。编队 ``go`` 到格子保持阵型；``go`` / ``attack`` 点到敌人则 ``break_formation_hold`` 集火。空闲 ``offensive`` 接敌仍保持排面。``guard`` 在 ``formations 1`` 时对齐站岗：射程内开火（``_near_enough_to_aim``）、绝不走近。
+- **范围**：``world_formation.py``；``worldunit/world_movement.py``；``worldunit/world_ai_decision.py``；``worldorders/movement.py``；``test_world_formation.py``；``test_formation_combat.py``。
+
+**改进：全选后切阵型按格就地列队**
+
+- **问题**：Ctrl+S 全选后再选横排等阵型，``apply_idle_rearrange`` 用整军坐标中心当锚点，把散在各格的人收到同一格。
+- **改进**：改阵型时按人所在格子分别排槽（``_units_grouped_by_place``）。一格里的人就地列队；别的格不受影响。正在 ``go`` 的单位按目的地分簇，不把去往不同格子的命令并成一队。
+- **范围**：``world_formation.py``；``test_world_formation.py``。
+
+**改进：class formation 可写攻防与移速（绝对值或百分比）**
+
+- **问题**：阵型只有落点，没有近战/远程攻防与移速取舍。``mdg 2`` / ``speed -1.5`` 是绝对值，步兵和骑兵加到同一点数。
+- **改进**：``class formation`` 可写 ``mdg`` / ``rdg`` / ``mdf`` / ``rdf`` 与 ``mdg_vs`` / ``rdg_vs`` / ``mdf_vs`` / ``rdf_vs``，以及 ``speed``（可负）。绝对值如 ``mdg 2``、``speed -1.5``，或百分比如 ``mdg 20%``、``speed -30%``（按该单位自己的对应属性）。仅在保持槽位时加算（``speed`` 加在齐步 ``keep_pace`` 之后，再进 ``actual_speed``）；``break_formation_hold`` 或集火后失效。默认 0。
+- **范围**：``world_formation.py``；``combat/damage_calculation.py``；``worldunit/world_attributes.py``；``test_world_formation.py``。
+
+**改进：属性界面可查看阵型与效果**
+
+- **问题**：Alt+V 属性界面看不到当前阵型、可用阵型，也看不到 ``class formation`` 的形状与攻防/移速效果。
+- **改进**：能列队的单位显示当前阵型、可左右浏览的可用阵型（回车进详情）以及该单位的阵型排面。详情列出形状、间距、齐步，以及 ``mdg`` / ``speed`` 等绝对值或百分比效果。
+- **范围**：``formation_detail.py``；``AVAILABLE_FORMATIONS``；``class formation``；``test_formation_attributes_ui.py``。
+
+**改进：文明时代生命加成同时提高当前生命**
+
+- **问题**：法兰克封建 ``on_phase feudal_age hp_max 20% cavalry`` 只抬上限。满血斥候 45/45 升封建后变成 45/54；新训的骑兵也是半格血。
+- **改进**：单位生命文明加成改用 ``hp 20% cavalry``（与血统 ``effect bonus hp 20``、长城 ``hp 30%`` 相同）：上限与当前生命加同一差值。满血斥候 45/45 → 54/54。同样修正蒙古斥候、维京步兵、越南弓兵、葡萄牙船只、日本渔船。
+- **范围**：``mods/aoe2/rules.txt``；``test_hp_max_bonus_current_hp.py``。
+
 1.5.0.1
 -------
 

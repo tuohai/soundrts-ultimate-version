@@ -1553,3 +1553,29 @@
 5840	dzwon miejski
 5841	wróć do pracy
 5842	flara
+5843	wprowadź czas trwania traktatu
+5844	formacja
+5845	formacja liniowa
+5846	formacja skrzynkowa
+5847	formacja przestawiona
+5848	formacja skrzydeł
+5849	zmień formację
+5850	dostępne formacje
+5851	rząd formacji
+5852	kształt
+5853	odstęp
+5854	odstęp rzędów
+5855	odstęp skrzydeł
+5856	promień
+5857	równy krok
+5858	pierścienie
+5859	odstęp pierścieni
+5860	rozpiętość łuku
+5861	kolejność pierścieni
+5862	wewnętrzny
+5863	zewnętrzny
+5864	rząd walki wręcz
+5865	rząd dystansowy
+5866	rząd oblężniczy
+5867	pierścień
+5868	łuk

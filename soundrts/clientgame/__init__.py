@@ -121,6 +121,7 @@ GameInterface.cmd_skill = game_orders.cmd_skill
 GameInterface.cmd_validate = game_orders.cmd_validate
 GameInterface._say_default_confirmation = game_orders._say_default_confirmation
 GameInterface.cmd_default = game_orders.cmd_default
+GameInterface.cmd_cycle_formation = game_orders.cmd_cycle_formation
 GameInterface.cmd_rpg_skill_1 = game_orders.cmd_rpg_skill_1
 GameInterface.cmd_rpg_skill_2 = game_orders.cmd_rpg_skill_2
 GameInterface.cmd_rpg_skill_3 = game_orders.cmd_rpg_skill_3

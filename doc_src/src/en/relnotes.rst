@@ -5,6 +5,57 @@ Release notes
 .. contents::
 
 
+1.5.0.2
+-------
+
+**Change: treaty length matches Age of Empires II DE, with a custom option**
+
+- **Issue**: Pre-game treaty only offered 0/5/10/15/20 minutes; 20 was too short for slow boom games, and values such as 12 or 75 had to be rounded to the nearest preset.
+- **Change**: Choices match AoE2 DE: ``TREATY_MINUTE_CHOICES`` is 5-minute steps through 60, plus 90. Under the presets, “treaty custom” accepts an integer from 5 to 90 (``parse_custom_treaty_minutes``); out-of-range or non-integer input beeps and returns to the treaty menu, and Esc cancels the same way. The protocol still converts minutes to milliseconds; values above 90 clamp to 90.
+- **Scope**: ``treaty.py``; ``clientservermenu.py``; ``clientmain.py``; ``randommap_menu.py``; ``game.py``; ``serverroom.py``; ``msgparts.py`` ``ENTER_TREATY_MINUTES``; ``test_changelog_1422_treaty_coop.py``; ``test_changelog_15.py``.
+
+**Change: rule-driven formations (generic class formation)**
+
+- **Issue**: A selected military group moved as a pile of independent units. There was no line / box / staggered / flank layout, and mixed melee, ranged, and siege units were not ranked. New geometry hardcoded in the engine would force an engine patch for every player-defined type.
+- **Change**: Enable with ``formations 1`` under ``def parameters``. The menu lists every ``class formation`` in the rules (the AoE2 mod's ``formation_line`` / ``formation_box`` / ``formation_staggered`` / ``formation_flank`` are examples a mod may change or extend). ``shape`` is cartesian line / box / staggered / flank, or polar ``ring`` / ``arc`` (aliases ``circle`` / ``round``, ``wedge`` / ``cone``). An unknown name with ``radius`` / ``arc_span`` / ``rings`` still uses polar packing — no engine patch. Distances (``spacing``, ``rank_gap``, ``flank_gap``, ``radius``) are meters; ``arc_span`` is degrees. ``ranks`` is rank order. ``formation_units`` and ``formation_rank_melee`` / ``formation_rank_ranged`` / ``formation_rank_siege`` use ``is_a``; a unit may also set ``use_formation 1`` or ``formation_rank``. Group ``go`` writes per-unit ``ZoomTarget`` slots in the destination square, facing the move; ``keep_pace`` matches the slowest unit. The menu lists named ``set_formation`` types only (picking the current type reforms in place). ``cycle_formation`` stays out of the spoken menu and is bindable (default ``CTRL SHIFT f``). The AoE2 mod defaults to line.
+- **Scope**: ``world_formation.py``; ``worldorders/immediate.py``; ``definitions.py``; ``mods/aoe2/rules.txt``; ``hotkey_catalogs.py``; ``test_world_formation.py``.
+
+**Change: keep Age of Empires II-style ranks while fighting**
+
+- **Issue**: Formations only laid slots on ``go``. ``offensive`` units then each ran ``AttackAction`` into the target, so back-rank archers walked into melee and a line fought like a blob. ``keep_pace`` set ``_formation_speed_cap`` but walking used uncapped ``actual_speed``, so cavalry still arrived first.
+- **Change**: A group ``attack`` (or a move onto an enemy) faces the threat with melee in front and ranged/siege behind (``apply_combat_formation``). Units that are in range fire in place; units that are not walk to their own slot instead of piling onto one target. ``chase`` still closes in. ``actual_speed`` / ``current_speed`` apply the keep-pace cap when read.
+- **Scope**: ``world_formation.py``; ``worldunit/world_movement.py``; ``worldunit/world_attributes.py``; ``combat/attack_action.py``; ``worldorders/movement.py``; ``test_formation_combat.py``; ``test_world_formation.py``.
+
+**Change: formations closer to AoE2 blocking, focus fire, and stand ground**
+
+- **Issue**: Ranks had no collision wall, so units walked through an enemy line to the back rank. Clicking a specific enemy kept slots instead of piling in. With formations on, ``guard`` neither shot in range nor stayed planted — combat formation still pressed forward.
+- **Change**: A formed enemy on the walk segment is the intercept (``formation_blocker``). Group ``go`` to a square keeps ranks; ``go`` / ``attack`` on a unit calls ``break_formation_hold`` and piles in. Idle ``offensive`` auto-engage still holds ranks. ``guard`` with ``formations 1`` is stand ground: shoot if ``_near_enough_to_aim``, never walk.
+- **Scope**: ``world_formation.py``; ``worldunit/world_movement.py``; ``worldunit/world_ai_decision.py``; ``worldorders/movement.py``; ``test_world_formation.py``; ``test_formation_combat.py``.
+
+**Change: changing formation with the whole army selected reforms in place per square**
+
+- **Issue**: After Ctrl+S, picking line (or another type) ran ``apply_idle_rearrange`` around the army centroid, so units on distant squares walked into one square.
+- **Change**: Reforming idle units groups by the square they stand on (``_units_grouped_by_place``). Each square lines up locally; other squares stay put. Units already on ``go`` are clustered by destination, so marches to different squares are not merged.
+- **Scope**: ``world_formation.py``; ``test_world_formation.py``.
+
+**Change: class formation combat stats and speed (absolute or percent)**
+
+- **Issue**: Formations were layout only, with no melee/ranged damage, armor, or speed tradeoff. Absolute ``mdg 2`` / ``speed -1.5`` gave infantry and cavalry the same points.
+- **Change**: ``class formation`` may set ``mdg`` / ``rdg`` / ``mdf`` / ``rdf`` and ``mdg_vs`` / ``rdg_vs`` / ``mdf_vs`` / ``rdf_vs``, plus ``speed`` (may be negative). Absolute values such as ``mdg 2`` and ``speed -1.5``, or percents such as ``mdg 20%`` and ``speed -30%`` of that unit's own stat. Applied only while holding slots (``speed`` after the ``keep_pace`` cap, on ``actual_speed``); lost on ``break_formation_hold`` / focus fire. Defaults are 0.
+- **Scope**: ``world_formation.py``; ``combat/damage_calculation.py``; ``worldunit/world_attributes.py``; ``test_world_formation.py``.
+
+**Change: Alt+V attributes show formation types and effects**
+
+- **Issue**: The unit properties screen did not list the current formation, available types, or ``class formation`` shape and combat/speed effects.
+- **Change**: Units that can form show the current formation, available formations (left/right, Enter for details), and the unit's formation rank. The detail screen lists shape, spacing, keep pace, and bonuses such as ``mdg`` / ``speed`` (absolute or percent).
+- **Scope**: ``formation_detail.py``; ``AVAILABLE_FORMATIONS``; ``class formation``; ``test_formation_attributes_ui.py``.
+
+**Change: civ age HP bonuses raise current HP with the max**
+
+- **Issue**: Frank ``on_phase feudal_age hp_max 20% cavalry`` only raised the ceiling. A full scout 45/45 became 45/54 after Feudal; newly trained cavalry spawned the same way.
+- **Change**: Unit HP civ bonuses use ``hp 20% cavalry`` (same as Bloodlines ``effect bonus hp 20`` and Great Wall ``hp 30%``): max and current grow by the same delta. A full scout 45/45 → 54/54. Same fix for Mongol scouts, Viking infantry, Vietnamese archers, Portuguese ships, and Japanese fishing ships.
+- **Scope**: ``mods/aoe2/rules.txt``; ``test_hp_max_bonus_current_hp.py``.
+
 1.5.0.1
 -------
 
