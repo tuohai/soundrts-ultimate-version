@@ -15,7 +15,7 @@ SoundRTS supporta la caccia in stile Age of Empires: i lavoratori attaccano la f
 1. Backspace / ordine predefinito o clic destro su un animale → ``go`` sulla fauna neutrale (avvicinarsi / reclamare); i lavoratori con ``can_herd`` usano ancora ``herd`` di default su ``herdable``. Per **attaccare** i neutrali serve l’imperativo (Ctrl+Backspace, oppure ``go`` + Ctrl+Enter)
 2. Alla morte → nasce il deposito indicato da ``food_deposit`` dell’animale (base: ``food_carcass``; pecore aoe2: ``food_livestock``); l’ordine di attacco si completa (**nessun** beep falso ``order_impossible``)
 3. Raccolta automatica → dopo l’uccisione il lavoratore può accodare la raccolta; con ``auto_gather`` raccoglie e riporta il cibo
-4. Fuga al colpo → cervi e pecore scappano; i cinghiali contrattaccano e inseguono tra le caselle (``pursue_attacker``, si possono attirare al centro cittadino; ``pursue_leash_range`` interrompe l’aggro se apri una grande distanza)
+4. Fuga al colpo → cervi e pecore scappano; i cinghiali hanno ``agro_on_sight 0`` (non attaccano senza essere colpiti), poi contrattaccano e inseguono tra le caselle (``pursue_attacker``, si possono attirare al centro cittadino; ``pursue_leash_range`` interrompe l’aggro se apri una grande distanza)
 5. Cattura (opzionale) → qualsiasi unità non neutrale vicino a un animale ``claimable`` neutro ne prende possesso (pecore stile AoE2); ``can_herd`` resta un inseguimento separato
 6. Pastorizia (opzionale) → i lavoratori con ``can_herd 1`` possono guidare animali ``herdable`` (es. pecore)
 7. Pascolo (opzionale) → un edificio con ``spawns_unit`` / ``spawn_player_cap`` (aoe2 ``pasture`` mongolo) genera bestiame posseduto
@@ -157,6 +157,8 @@ Proprietà degli animali
      - Significato
    * - ``is_huntable 1``
      - cacciabile; il clic destro predefinito è attacco
+   * - ``agro_on_sight``
+     - default ``1``. ``0``: non attacca finché non è colpito, niente aggro di branco (cinghiale AoE2 DE); predatori ``1``
    * - ``flee_on_hit 1``
      - scappa dall'attaccante
    * - ``pursue_attacker 1``

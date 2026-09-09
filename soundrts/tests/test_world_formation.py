@@ -17,8 +17,11 @@ from soundrts.world_formation import (
     compute_slot_offsets,
     cycle_next_formation,
     formation_blocker,
+    formation_counter_keys,
     formation_hold_xy,
+    formation_ranks_formed,
     formation_stand_ground,
+    unit_agro_on_sight,
     offsets_for_units,
     unit_can_form,
     unit_formation_rank,
@@ -370,6 +373,20 @@ def test_formation_stand_ground_only_when_enabled(monkeypatch):
     assert not formation_stand_ground(u)
 
 
+def test_formation_stand_ground_honors_agro_on_sight(monkeypatch):
+    u = _unit("m", "melee")
+    u.ai_mode = "guard"
+    monkeypatch.setattr("soundrts.world_formation.formations_enabled", lambda: True)
+    assert formation_stand_ground(u)
+    assert unit_agro_on_sight(u)
+    u.agro_on_sight = 0
+    assert not unit_agro_on_sight(u)
+    assert not formation_stand_ground(u)
+    u.agro_on_sight = 1
+    u.is_huntable = 1
+    assert formation_stand_ground(u)
+
+
 def test_point_blocks_segment_midpoint_not_endpoints():
     assert _point_blocks_segment(0, 0, 10000, 0, 5000, 0, 400)
     assert not _point_blocks_segment(0, 0, 10000, 0, 5000, 1000, 400)
@@ -674,6 +691,9 @@ def _combat_unit(**extra):
         expanded_is_a = ()
         hp = 10
         place = None
+        x = 0
+        y = 0
+        radius = 200
         _formation_focus_fire = 0
         _formation_combat_spec = None
         _formation_slot = None
@@ -725,7 +745,9 @@ def test_formation_combat_bonus_only_while_holding_ranks():
     attacker = SimpleNamespace(type_name="archer", expanded_is_a=("archer",))
     spec = _combat_spec(mdg=2 * P, rdf=-3 * P, mdg_vs={"cavalry": P})
     _bind_formation_slots([(u, place, 100, 200)], spec=spec)
+    u.x, u.y = 100, 200
     assert formation_hold_xy(u) == (100, 200)
+    assert formation_ranks_formed(u)
     assert u._get_melee_damage_vs(target) == 7 * P
     assert u._get_melee_damage_vs(cavalry) == 8 * P
     assert u._get_ranged_defense_vs(attacker) == 3 * P
@@ -740,6 +762,46 @@ def test_formation_combat_bonus_only_while_holding_ranks():
     assert getattr(u, "_formation_combat_spec", None) is None
     assert u._get_melee_damage_vs(target) == 5 * P
     assert u._get_ranged_defense_vs(attacker) == 6 * P
+
+
+def test_formation_combat_bonus_waits_until_on_slot():
+    from soundrts.lib.nofloat import PRECISION as P
+
+    place = SimpleNamespace()
+    u = _combat_unit(place=place)
+    target = SimpleNamespace(
+        type_name="t", expanded_is_a=(), armor=None, _armor_instance=None
+    )
+    spec = _combat_spec(mdg=2 * P)
+    _bind_formation_slots([(u, place, 0, 0)], spec=spec)
+    u.x, u.y = 4000, 0
+    assert formation_hold_xy(u) == (0, 0)
+    assert not formation_ranks_formed(u)
+    assert u._get_melee_damage_vs(target) == 5 * P
+    u.x, u.y = 0, 0
+    assert formation_ranks_formed(u)
+    assert u._get_melee_damage_vs(target) == 7 * P
+
+
+def test_keep_pace_while_walking_to_slot_without_speed_bonus():
+    from soundrts.lib.nofloat import PRECISION as P
+    from soundrts.worldunit.world_attributes import CreatureAttributes
+
+    place = SimpleNamespace()
+    u = _unit("s", "melee", speed=2 * P, x=0, y=0)
+    u.place = place
+    u.VERY_SLOW = 1
+    u.ai_mode = "offensive"
+    u._formation_focus_fire = 0
+    spec = _combat_spec(mdg=2 * P, speed=-100)
+    _bind_formation_slots([(u, place, 4000, 0)], spec=spec)
+    u._formation_speed_cap = 400
+    assert formation_hold_xy(u) == (4000, 0)
+    assert not formation_ranks_formed(u)
+    assert CreatureAttributes._speed_with_formation_cap(u, 2 * P) == 400
+    u.x, u.y = 4000, 0
+    assert formation_ranks_formed(u)
+    assert CreatureAttributes._speed_with_formation_cap(u, 2 * P) == 300
 
 
 def test_aoe2_line_spec_has_no_combat_bonus():
@@ -802,3 +864,105 @@ def test_formation_percent_scales_with_unit_stats():
     break_formation_hold(u)
     assert u._get_melee_damage_vs(target) == 5 * P
     assert CreatureAttributes._speed_with_formation_cap(u, 2 * P) == 2 * P
+
+
+def _hold_in(unit, place, spec, x=0, y=0):
+    _bind_formation_slots([(unit, place, x, y)], spec=spec)
+    unit.place = place
+    unit.x = x
+    unit.y = y
+
+
+def test_formation_counter_keys_name_then_aliases():
+    place = SimpleNamespace()
+    u = _combat_unit(place=place)
+    _hold_in(u, place, _combat_spec(name="formation_wedge", shape="cone"))
+    assert formation_counter_keys(u) == (
+        "formation_wedge",
+        "wedge",
+        "cone",
+        "arc",
+    )
+    u.ai_mode = "chase"
+    assert formation_counter_keys(u) == ()
+    u.ai_mode = "offensive"
+    u.x = 4000
+    assert formation_counter_keys(u) == ()
+
+
+def test_formation_mdg_vs_matches_enemy_formation_name_and_shape():
+    from soundrts.lib.nofloat import PRECISION as P
+
+    place = SimpleNamespace()
+    attacker = _combat_unit(place=place)
+    target = _combat_unit(
+        place=place, type_name="t", expanded_is_a=(), armor=None, _armor_instance=None
+    )
+    _hold_in(
+        attacker,
+        place,
+        _combat_spec(name="formation_line", shape="line", mdg_vs={"cone": 3 * P}),
+    )
+    _hold_in(
+        target,
+        place,
+        _combat_spec(name="formation_wedge", shape="cone"),
+    )
+    assert attacker._get_melee_damage_vs(target) == 8 * P
+    target.ai_mode = "chase"
+    assert attacker._get_melee_damage_vs(target) == 5 * P
+    target.ai_mode = "offensive"
+    break_formation_hold(target)
+    assert attacker._get_melee_damage_vs(target) == 5 * P
+
+
+def test_formation_name_vs_beats_shape_alias_and_stacks_with_unit_type():
+    from soundrts.lib.nofloat import PRECISION as P
+
+    place = SimpleNamespace()
+    attacker = _combat_unit(place=place)
+    cavalry = _combat_unit(
+        place=place,
+        type_name="cavalry",
+        expanded_is_a=("cavalry",),
+        armor=None,
+        _armor_instance=None,
+    )
+    _hold_in(
+        attacker,
+        place,
+        _combat_spec(
+            name="formation_line",
+            shape="line",
+            mdg_vs={"cavalry": P, "formation_wedge": 3 * P, "cone": 9 * P},
+        ),
+    )
+    _hold_in(
+        cavalry,
+        place,
+        _combat_spec(name="formation_wedge", shape="cone"),
+    )
+    assert attacker._get_melee_damage_vs(cavalry) == 9 * P
+
+
+def test_formation_rdf_vs_matches_attacker_formation():
+    from soundrts.lib.nofloat import PRECISION as P
+
+    place = SimpleNamespace()
+    defender = _combat_unit(place=place)
+    attacker = _combat_unit(
+        place=place, type_name="archer", expanded_is_a=("archer",)
+    )
+    _hold_in(
+        defender,
+        place,
+        _combat_spec(name="formation_wedge", shape="cone", rdf_vs={"formation_line": -2 * P}),
+    )
+    _hold_in(
+        attacker,
+        place,
+        _combat_spec(name="formation_line", shape="line"),
+    )
+    assert defender._get_ranged_defense_vs(attacker) == 4 * P
+    break_formation_hold(attacker)
+    assert defender._get_ranged_defense_vs(attacker) == 6 * P

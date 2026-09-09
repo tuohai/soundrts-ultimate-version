@@ -315,6 +315,7 @@ square_terrain build_sites 50
 def deer
 class soldier
 is_huntable 1
+agro_on_sight 0
 flee_on_hit 1
 wander_range 12000
 food_deposit food_carcass
@@ -336,6 +337,7 @@ space 0.1
 def sheep
 class soldier
 is_huntable 1
+agro_on_sight 0
 herdable 1
 claimable 1
 ; AoE2 DE Search Radius ≈ 4 tiles (not a full square / 12000).
@@ -363,6 +365,7 @@ space 0.1
 def boar
 class soldier
 is_huntable 1
+agro_on_sight 0
 flee_on_hit 0
 counterattack_enabled 1
 pursue_attacker 1

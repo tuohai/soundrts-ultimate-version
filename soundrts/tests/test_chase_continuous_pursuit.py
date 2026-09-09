@@ -382,6 +382,7 @@ def test_boar_rules_enable_pursue_attacker():
             continue
         block = path.read_text(encoding="utf-8").split("def boar", 1)[1].split("def ", 1)[0]
         assert "pursue_attacker 1" in block
+        assert "agro_on_sight 0" in block
         assert "pursue_leash_range 48000" in block
         assert "flee_on_hit 0" in block
 

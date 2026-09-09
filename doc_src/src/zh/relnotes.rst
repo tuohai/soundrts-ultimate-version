@@ -4,6 +4,27 @@
 .. contents::
 
 
+1.5.0.3
+-------
+
+**改进：阵型攻防与克制须走到槽位才生效**
+
+- **问题**：换阵立刻绑定 ``_formation_combat_spec``。人还在走去新落点，``mdg`` / ``speed`` 与阵型 ``mdg_vs`` 已经按新阵型算，等于无缝切加成。
+- **改进**：``formation_ranks_formed``：与战斗站住同一到达半径（``FORMATION_SLOT_ARRIVE_MM``，或 ``radius + 50`` 取大）。走到槽位后才加算阵型攻防、移速与阵型名克制；走位途中没有。齐步 ``keep_pace`` 仍在走位时生效。散开、追击、集火仍无加成。
+- **范围**：``world_formation.py``；``worldunit/world_attributes.py``；``worldunit/world_movement.py``；``test_world_formation.py``；``test_changelog_15.py``。
+
+**改进：野猪仇恨规则 ``agro_on_sight``（对齐决定版）**
+
+- **问题**：``formations 1`` 时 ``guard`` 走站岗，射程内见到敌人就开火。野猪因此会在同格未挨打就咬人；挨打后邻猪也会连坐。
+- **改进**：规则整数 ``agro_on_sight``（默认 ``1``）。``0`` 时不走 ``formation_stand_ground`` / ``unit_agro_on_sight``，只对 ``last_attacker`` 反击，且 ``_notify_units_in_place`` 不把仇恨传给该单位。鹿/羊/野猪写 ``agro_on_sight 0``；狼等掠食者写 ``1`` 或不写。被打后仍可用 ``pursue_attacker`` 诱到城镇中心。
+- **范围**：``definitions.py``；``world_formation.py``；``worldunit/world_ai_decision.py``；``worldunit/worldcreature.py``；``res/rules.txt``；``test_hunting.py``；``test_world_formation.py``；``test_changelog_15.py``。
+
+**改进：阵型 mdg_vs–rdf_vs 可克制对方阵型**
+
+- **问题**：阵型上的 ``mdg_vs`` / ``rdg_vs`` / ``mdf_vs`` / ``rdf_vs`` 只按单位类型查找，无法写横排克制锥形这类阵型相克。
+- **改进**：保持槽位时，也可匹配对方当前阵型的 ``class formation`` 名（如 ``formation_wedge``）与形状（``cone`` / ``wedge`` / ``arc`` 等）。单位类型克制与阵型克制叠加；多名形状键只取最具体的一条（先类型名，再别名，再规范 ``shape``）。规则写标识符，不写译文标题。对方散开、追击或集火则不计入。帝国 2 四种阵型仍无克制。
+- **范围**：``world_formation.py``；``damage_calculation.py``；``formation_detail.py``；``test_world_formation.py``；``test_changelog_15.py``。
+
 1.5.0.2
 -------
 

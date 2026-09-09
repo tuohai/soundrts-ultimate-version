@@ -1088,6 +1088,7 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     flee_on_hit = 0
     pursue_attacker = 0
     pursue_leash_range = 0
+    agro_on_sight = 1  # 0=未被打不主动攻击、不受友军连坐（规则：决定版野猪）
     herdable = 0
     herd_leash_range = 12000
     claimable = 0
@@ -1111,12 +1112,16 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     hp_soldier_max = 0  # 每名士兵的最大生命
     def _notify_units_in_place(self, place, attacker):
         """通知指定区域中的友军单位"""
+        from ..world_formation import unit_agro_on_sight
+
         for unit in place.objects:
             if (unit != self and
                     unit.player == self.player and
                     isinstance(unit, Creature) and
                     unit.ai_mode == "guard" and
                     getattr(unit, 'counterattack_enabled', False)):
+                if not unit_agro_on_sight(unit):
+                    continue
                 unit.last_attacker = attacker
     def add_cooldown(self, t):
         # 如果cooldown是列表，取第一个值

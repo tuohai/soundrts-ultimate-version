@@ -15,7 +15,7 @@ O SoundRTS oferece caça no estilo Age of Empires: trabalhadores atacam animais 
 1. Backspace / ordem padrão ou clique direito em um animal → ``go`` na fauna neutra (aproximar / reivindicar); trabalhadores com ``can_herd`` ainda usam ``herd`` por padrão em ``herdable``. Para **atacar** neutros use imperativo (Ctrl+Backspace, ou ``go`` + Ctrl+Enter)
 2. Ao matar → surge o depósito indicado por ``food_deposit`` do animal (base: ``food_carcass``; ovelhas aoe2: ``food_livestock``); a ordem de ataque completa (**sem** bip falso ``order_impossible``)
 3. Coleta automática → após matar, o trabalhador pode enfileirar coleta; com ``auto_gather`` também recolhe e entrega comida
-4. Fuga ao ser atingido → cervos e ovelhas fogem; javalis contra-atacam e perseguem entre casas (``pursue_attacker``, podem ser atraídos ao centro da cidade; ``pursue_leash_range`` solta a agressão se você abrir muita distância)
+4. Fuga ao ser atingido → cervos e ovelhas fogem; javalis usam ``agro_on_sight 0`` (não atacam sem serem atingidos), contra-atacam e perseguem entre casas (``pursue_attacker``, podem ser atraídos ao centro da cidade; ``pursue_leash_range`` solta a agressão se você abrir muita distância)
 5. Captura (opcional) → qualquer unidade não neutra perto de um animal ``claimable`` neutro toma posse (ovelhas estilo AoE2); ``can_herd`` continua sendo condução à parte
 6. Condução (opcional) → trabalhadores com ``can_herd 1`` podem conduzir animais ``herdable`` (ex.: ovelhas)
 7. Pasto (opcional) → um edifício com ``spawns_unit`` / ``spawn_player_cap`` (aoe2 ``pasture`` mongol) gera gado próprio
@@ -157,6 +157,8 @@ Propriedades dos animais
      - Significado
    * - ``is_huntable 1``
      - caçável; clique direito padrão é atacar
+   * - ``agro_on_sight``
+     - omissão ``1``. ``0``: não ataca até ser atingido, sem aggro de alcateia (javali AoE2 DE); predadores ``1``
    * - ``flee_on_hit 1``
      - foge do atacante
    * - ``pursue_attacker 1``

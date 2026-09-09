@@ -1649,13 +1649,14 @@ AI 模式（``ai_mode``\ ）
 
 - 对中立单位（含可狩猎动物）默认命令是 ``go``（靠近 / 归属）；要攻击须强制命令（Ctrl+退格，或选 ``go`` 后 Ctrl+回车）。已归属的 ``is_huntable`` 默认仍是 ``attack``。
 - 村民强制攻击 ``is_huntable`` 动物可造成伤害并生成 ``food_deposit``（如 ``food_carcass``，aoe2 畜牧可用 ``food_livestock``），攻击命令完成且不误播 ``order_impossible``。
-- 动物属性：``is_huntable``、``flee_on_hit``、``pursue_attacker``、``herdable``、``claimable``、``claim_range``、``food_deposit``、``food_deposit_qty``、``no_number``。
+- 动物属性：``is_huntable``、``flee_on_hit``、``agro_on_sight``、``pursue_attacker``、``herdable``、``claimable``、``claim_range``、``food_deposit``、``food_deposit_qty``、``no_number``。
 - 地图放置：``computer_only 0 0 neutral \<方格\> \<数量\> deer``；随机地图会自动生成野生动物。
 - 语音标识：配置了 ``is_huntable`` / ``herdable`` 的单位播报为「鹿 , 动物」，`` 不是`` 「中立 , NPC」。Ctrl+Shift+F4 切到仅含野生动物的玩家时播报「你是动物」。剧情 NPC（``quest_npc`` 等）仍播报「中立 , NPC」。
 - 外交隔离：仅含野生动物的 ``computer_only`` 槽位（如 ``deer`` / ``sheep`` / 自定义 ``tiger``）不进 ``ai`` 联盟，不与玩家、敌对 creep、其它动物群结盟；混编槽位除外。详见 ``../player/hunting.htm`` §3.1。
 - 科技 ``hunting_techniques``：提升尸体与浆果采集效率。
 - 牧羊 / 打猎分开加速：不同 ``food_deposit`` + ``gather_time_<矿床>``（aoe2：不列颠 ``food_livestock``，蒙古 ``food_carcass``）。规则驱动，不硬编码文明名。
 - ``pursue_attacker 1``：反击后跨格追击攻击者（帝国 2 式拖野猪到城镇中心）。鹿/羊用 ``flee_on_hit`` 逃跑。
+- ``agro_on_sight``：默认 ``1``。``0`` 时 ``guard`` 即使开了 ``formations 1`` 也不站岗开火，只对 ``last_attacker`` 反击，且不受友军连坐（帝国 2 决定版野猪）。掠食者写 ``1`` 或不写。
 - ``pursue_leash_range N``：与追击目标距离超过 N 毫米则脱仇（``0``=不限制）。野猪用 ``48000``（约 4 格），脱仇后忘仇并走回出生点。
 - ``claimable 1``：中立期间被任意非中立单位靠近即归属（帝国 2 领羊）；与 ``can_herd`` / ``herdable`` 驱赶独立。
 - 草场 / 刷单位建筑：``spawns_unit``、``larva_spawn_time``、``larva_cap``，可选 ``spawn_player_cap`` / ``spawn_immediate``（aoe2 蒙古 ``pasture``：无磨坊，需城镇中心，可存食物）。
@@ -1686,6 +1687,7 @@ AI 模式（``ai_mode``\ ）
     def deer
     class soldier
     is_huntable 1
+    agro_on_sight 0
     flee_on_hit 1
     food_deposit food_carcass
     food_deposit_qty 35
@@ -2204,7 +2206,7 @@ Combat sound system (since 1.3.8.2; 1.4.4.6 renamed matk/ratk to mdg/rdg)
     mdg 20%
     speed -30%
 
-``shape``：直角坐标 ``line`` / ``box`` / ``staggered`` / ``flank``，或极坐标 ``ring`` / ``arc``（别名 ``circle`` / ``round`` → 圆环，``wedge`` / ``cone`` → 扇形）。未知 ``shape`` 若写了 ``radius`` / ``arc_span`` / ``rings`` 也走极坐标，不必改引擎。``radius`` 为米（0=按 ``spacing`` 与人数估算）。``arc_span`` 为度（0 时圆环 360、扇形 180）。``arc_start`` 缺省自动。``rings`` / ``ring_gap`` 为同心环；``ring_rank out`` 把 ``ranks`` 里第一个排到外圈。间距单位是米（内部 PRECISION 毫米）。``flank_gap`` 仅两翼阵型使用。``max_front`` 为每排人数上限（0=按格子宽度）。单位可写 ``use_formation 1`` 或 ``formation_rank melee``；未写则用上面的 ``is_a`` 表。命令菜单列出每个 ``class formation`` 的 ``set_formation <类型>``（再选当前阵型会按人所在格子就地重整，全选不会把全图收成一队）。``cycle_formation`` 不进语音菜单，默认热键 ``CTRL SHIFT f``，可在热键编辑器里改。style：``def set_formation`` 以及各阵型 ``title``；``def parameters`` 的 ``formation_change`` 为换阵音效。编队 ``go`` 到格子保持排面；点到敌人则散开集火。空闲 ``offensive`` 接敌仍保持阵型。有槽的敌人挡路时改打前排（``formation_blocker``）。``guard`` 在阵型开启时为站岗：射程内开火、不走近。``chase`` 仍贴脸。``class formation`` 可另写 ``mdg`` / ``rdg`` / ``mdf`` / ``rdf`` 与 ``mdg_vs`` / ``rdg_vs`` / ``mdf_vs`` / ``rdf_vs``，以及 ``speed``（可负）。绝对值如 ``mdg 2``、``speed -1.5``，或百分比如 ``mdg 20%``、``speed -30%``（按该单位自己的对应属性）。仅在保持槽位时加算（``speed`` 加在齐步 ``keep_pace`` 之后；``break_formation_hold`` 或集火后失效）；默认 0，帝国 2 四种阵型不加。
+``shape``：直角坐标 ``line`` / ``box`` / ``staggered`` / ``flank``，或极坐标 ``ring`` / ``arc``（别名 ``circle`` / ``round`` → 圆环，``wedge`` / ``cone`` → 扇形）。未知 ``shape`` 若写了 ``radius`` / ``arc_span`` / ``rings`` 也走极坐标，不必改引擎。``radius`` 为米（0=按 ``spacing`` 与人数估算）。``arc_span`` 为度（0 时圆环 360、扇形 180）。``arc_start`` 缺省自动。``rings`` / ``ring_gap`` 为同心环；``ring_rank out`` 把 ``ranks`` 里第一个排到外圈。间距单位是米（内部 PRECISION 毫米）。``flank_gap`` 仅两翼阵型使用。``max_front`` 为每排人数上限（0=按格子宽度）。单位可写 ``use_formation 1`` 或 ``formation_rank melee``；未写则用上面的 ``is_a`` 表。命令菜单列出每个 ``class formation`` 的 ``set_formation <类型>``（再选当前阵型会按人所在格子就地重整，全选不会把全图收成一队）。``cycle_formation`` 不进语音菜单，默认热键 ``CTRL SHIFT f``，可在热键编辑器里改。style：``def set_formation`` 以及各阵型 ``title``；``def parameters`` 的 ``formation_change`` 为换阵音效。编队 ``go`` 到格子保持排面；点到敌人则散开集火。空闲 ``offensive`` 接敌仍保持阵型。有槽的敌人挡路时改打前排（``formation_blocker``）。``guard`` 在阵型开启时为站岗：射程内开火、不走近（``agro_on_sight 0`` 除外，对齐决定版野猪）。``chase`` 仍贴脸。``class formation`` 可另写 ``mdg`` / ``rdg`` / ``mdf`` / ``rdf`` 与 ``mdg_vs`` / ``rdg_vs`` / ``mdf_vs`` / ``rdf_vs``，以及 ``speed``（可负）。绝对值如 ``mdg 2``、``speed -1.5``，或百分比如 ``mdg 20%``、``speed -30%``（按该单位自己的对应属性）。走到槽位成型后加算（走位途中没有）（``speed`` 加在齐步 ``keep_pace`` 之后；``break_formation_hold`` 或集火后失效）；默认 0，帝国 2 四种阵型不加。``mdg_vs`` / ``rdg_vs`` / ``mdf_vs`` / ``rdf_vs`` 走到槽位成型后也可匹配对方当前阵型的 ``class formation`` 名（如 ``formation_wedge``）与形状（``cone`` / ``wedge`` / ``arc`` 等），与单位类型克制叠加；多名形状键只取最具体的一条。规则写标识符，不写「锥形阵」这类译文。对方散开、追击或尚未走到槽位（`formation_ranks_formed`）则不计入。齐步 `keep_pace` 在走位时仍生效。
 
 Menu and game music (since 1.4.0.2)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

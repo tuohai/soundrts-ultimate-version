@@ -20,6 +20,9 @@ from .lib.nofloat import (
 )
 from .worldroom import ZoomTarget, format_zoom_target_id
 
+# Same arrive radius as combat slot hold (world_movement).
+FORMATION_SLOT_ARRIVE_MM = 250
+
 
 def _parse_bonus(value):
     """Absolute PRECISION int, or ``('pct', n)`` for ±n percent of the unit stat."""
@@ -429,14 +432,82 @@ def _combat_from_spec(spec):
     return out
 
 
+def _formation_id_of(unit) -> str:
+    name = getattr(unit, "_formation_layout_name", None)
+    if isinstance(name, (list, tuple)):
+        name = name[0] if name else ""
+    name = str(name or "").strip()
+    if name:
+        return name
+    name = getattr(unit, "formation", None)
+    if isinstance(name, (list, tuple)):
+        name = name[0] if name else ""
+    return str(name or "").strip()
+
+
+def formation_counter_keys(unit):
+    """Names that ``mdg_vs`` / ``rdf_vs`` may match on a formed other unit.
+
+    Order is specific first: ``class formation`` type name, then shape aliases
+    (``cone`` / ``wedge``), then canonical ``shape`` (``arc``). Empty if the
+    other unit is not standing on its slot yet.
+    """
+    if unit is None or not formation_ranks_formed(unit):
+        return ()
+    name = _formation_id_of(unit)
+    kind = getattr(unit, "_formation_layout_kind", None)
+    if not kind and name:
+        layout = _spec(name)
+        kind = _layout_kind(layout) if layout else None
+    if kind:
+        kind = str(kind).strip().lower()
+    keys = []
+    seen = set()
+    for key in (name,):
+        if key and key not in seen:
+            seen.add(key)
+            keys.append(key)
+    if kind:
+        for alias, canon in _SHAPE_ALIASES.items():
+            if canon == kind and alias not in seen:
+                seen.add(alias)
+                keys.append(alias)
+        if kind not in seen:
+            seen.add(kind)
+            keys.append(kind)
+    return tuple(keys)
+
+
+def formation_counter_vs_bonus(vs_dict, other) -> int:
+    """First matching formation-name key in *vs_dict*, else 0. Does not stack aliases."""
+    if not vs_dict:
+        return 0
+    for key in formation_counter_keys(other):
+        if key not in vs_dict:
+            continue
+        try:
+            return int(vs_dict[key] or 0)
+        except (TypeError, ValueError):
+            parsed = _parse_bonus(vs_dict[key])
+            if not parsed:
+                return 0
+            if isinstance(parsed, tuple) and parsed[0] == "pct":
+                return 0
+            try:
+                return int(parsed)
+            except (TypeError, ValueError):
+                return 0
+    return 0
+
+
 def formation_combat_stats(unit, flat_key, vs_key):
-    """Unit flat + vs, plus ``class formation`` bonuses while holding ranks."""
+    """Unit flat + vs, plus ``class formation`` bonuses once standing on the slot."""
     base = getattr(unit, flat_key, 0)
     vs = getattr(unit, vs_key, None)
     spec = getattr(unit, "_formation_combat_spec", None)
     if not spec:
         return base, vs
-    if formation_hold_xy(unit) is None:
+    if not formation_ranks_formed(unit):
         return base, vs
     try:
         base_i = int(base or 0)
@@ -968,6 +1039,8 @@ def break_formation_hold(units):
         unit._formation_combat_token = None
         unit._formation_combat_time = None
         unit._formation_combat_spec = None
+        unit._formation_layout_name = None
+        unit._formation_layout_kind = None
         unit._formation_focus_fire = 1
         clear_formation_speed_cap(unit)
 
@@ -975,9 +1048,13 @@ def break_formation_hold(units):
 def _bind_formation_slots(slots, token=None, spec=None):
     now = None
     combat = _combat_from_spec(spec)
+    layout_name = spec.get("name") if isinstance(spec, dict) else None
+    layout_kind = _layout_kind(spec) if spec else None
     for unit, place, x, y in slots:
         unit._formation_slot = (place, int(x), int(y))
         unit._formation_combat_spec = combat
+        unit._formation_layout_name = layout_name
+        unit._formation_layout_kind = layout_kind
         if token is not None:
             unit._formation_combat_token = token
         if now is None:
@@ -1225,8 +1302,28 @@ def combat_peers(unit):
     return []
 
 
+def unit_agro_on_sight(unit) -> bool:
+    """Rules ``agro_on_sight``: 1 (default) = may fire without being hit.
+
+    ``0`` matches AoE2 DE huntables (boar): only the struck animal fights.
+    """
+    if unit is None:
+        return True
+    return _flag_on(getattr(unit, "agro_on_sight", 1))
+
+
 def formation_stand_ground(unit) -> bool:
-    return getattr(unit, "ai_mode", None) == "guard" and formations_enabled()
+    """AoE2 stand ground: fire in range, never walk.
+
+    Units with ``agro_on_sight 0`` keep classic guard (hit then counterattack).
+    """
+    if unit is None or getattr(unit, "ai_mode", None) != "guard":
+        return False
+    if not formations_enabled():
+        return False
+    if not unit_agro_on_sight(unit):
+        return False
+    return True
 
 
 def formation_hold_xy(unit):
@@ -1242,6 +1339,33 @@ def formation_hold_xy(unit):
     if place is not None and getattr(unit, "place", None) is not place:
         return None
     return int(x), int(y)
+
+
+def formation_slot_arrive_mm(unit) -> int:
+    """Distance in mm at which a unit counts as standing on its slot."""
+    try:
+        radius = int(getattr(unit, "radius", 0) or 0)
+    except (TypeError, ValueError):
+        radius = 0
+    return max(FORMATION_SLOT_ARRIVE_MM, radius + 50)
+
+
+def formation_ranks_formed(unit) -> bool:
+    """True when the unit is on its square and within arrive range of its slot.
+
+    Combat flats/vs and formation-name counters apply only then. Walking to a
+    new layout still uses ``formation_hold_xy`` (keep_pace, go-to-slot).
+    """
+    slot = formation_hold_xy(unit)
+    if slot is None:
+        return False
+    try:
+        x = int(getattr(unit, "x", 0) or 0)
+        y = int(getattr(unit, "y", 0) or 0)
+    except (TypeError, ValueError):
+        return False
+    arrive = formation_slot_arrive_mm(unit)
+    return square_of_distance(x, y, slot[0], slot[1]) <= arrive * arrive
 
 
 def _point_blocks_segment(x1, y1, x2, y2, px, py, radius):

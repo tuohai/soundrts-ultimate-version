@@ -3,6 +3,27 @@ Note di rilascio
 
 .. contents::
 
+1.5.0.3
+-------
+
+**Cambio: i bonus di formazione valgono solo arrivati allo slot**
+
+- **Problema**: il cambio di formazione associava subito ``_formation_combat_spec``. Chi camminava ancora verso i nuovi slot usava già i nuovi ``mdg`` / ``speed`` e ``mdg_vs`` di formazione, quindi il bonus cambiava senza tempo di riordino.
+- **Cambio**: ``formation_ranks_formed`` usa lo stesso raggio di arrivo del combattimento (``FORMATION_SLOT_ARRIVE_MM``, oppure ``radius + 50``, il maggiore). Flats, velocità e contrasti per nome di formazione solo sullo slot; non camminando. ``keep_pace`` resta durante il tragitto. Rompere i ranghi, inseguire e fuoco concentrato restano senza bonus.
+- **Ambito**: ``world_formation.py``; ``worldunit/world_attributes.py``; ``worldunit/world_movement.py``; ``test_world_formation.py``; ``test_changelog_15.py``.
+
+**Cambio: aggro del cinghiale ``agro_on_sight`` (AoE2 DE)**
+
+- **Problema**: con ``formations 1``, ``guard`` è stai fermo e spara ai nemici a tiro. I cinghiali mordevano nella stessa casella senza essere colpiti, e i cinghiali vicini si univano.
+- **Cambio**: intero di rules ``agro_on_sight`` (default ``1``). ``0`` salta ``formation_stand_ground`` / ``unit_agro_on_sight``, combatte solo ``last_attacker``, e ``_notify_units_in_place`` non condivide l’aggro con quell’unità. Cervo / pecora / cinghiale impostano ``agro_on_sight 0``; i predatori ``1`` o omettono. Dopo un colpo, ``pursue_attacker`` attira ancora al centro.
+- **Ambito**: ``definitions.py``; ``world_formation.py``; ``worldunit/world_ai_decision.py``; ``worldunit/worldcreature.py``; ``res/rules.txt``; ``test_hunting.py``; ``test_world_formation.py``; ``test_changelog_15.py``.
+
+**Cambio: mdg_vs–rdf_vs di formazione può contrastare un’altra formazione**
+
+- **Problema**: ``mdg_vs`` / ``rdg_vs`` / ``mdf_vs`` / ``rdf_vs`` su ``class formation`` cercavano solo tipi di unità, quindi una linea non poteva contrastare un cuneo per formazione.
+- **Cambio**: Con i ranghi tenuti, quelle chiavi vs coincidono anche con il nome ``class formation`` attuale dell’altro (es. ``formation_wedge``) e la forma (``cone`` / ``wedge`` / ``arc``, …). Il vs per tipo di unità e il vs di formazione si sommano; se coincidono più chiavi di forma, vale solo la più specifica (nome del tipo, poi alias, poi ``shape`` canonico). Si scrivono identificatori, non titoli tradotti. Nessun bonus se l’altro ha rotto i ranghi, insegue o fa fuoco concentrato. I quattro tipi AoE2 restano senza contrasti.
+- **Ambito**: ``world_formation.py``; ``damage_calculation.py``; ``formation_detail.py``; ``test_world_formation.py``; ``test_changelog_15.py``.
+
 1.5.0.2
 -------
 

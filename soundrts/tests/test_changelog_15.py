@@ -1,10 +1,9 @@
-"""审计：1.5 / 1.5.0.1 / 1.5.0.2 — 野兽警报、信号弹、触发器、条约、阵型。"""
+"""审计：1.5 / 1.5.0.1–1.5.0.3 — 野兽警报、信号弹、触发器、条约、阵型。"""
 from __future__ import annotations
 
 from pathlib import Path
 
 _FOLDED_VERSIONS = (
-    "1.5.0.3",
     "1.5.0.4",
     "1.5.0.5",
     "1.5.0.6",
@@ -34,6 +33,10 @@ def _section_between(lang: str, start_heading: str, end_heading: str) -> str:
     return rest if next_idx == -1 else rest[:next_idx]
 
 
+def _section_1503(lang: str) -> str:
+    return _section_between(lang, "1.5.0.3", "1.5.0.2")
+
+
 def _section_1502(lang: str) -> str:
     return _section_between(lang, "1.5.0.2", "1.5.0.1")
 
@@ -46,21 +49,109 @@ def _section_15(lang: str) -> str:
     return _section_between(lang, "1.5", "1.4.9.9")
 
 
-def test_version_is_1502():
-    assert 'VERSION = "1.5.0.2"' in _source("soundrts", "version.py")
+def test_version_is_1503():
+    assert 'VERSION = "1.5.0.3"' in _source("soundrts", "version.py")
 
 
-def test_all_relnotes_have_1502_then_1501_then_15_before_1499():
+def test_all_relnotes_have_1503_then_1502_then_1501_then_15_before_1499():
     for lang in ("zh", "en", "es", "it", "pt-BR"):
         src = _source("doc_src", "src", lang, "relnotes.rst")
+        assert src.index("\n1.5.0.3\n") < src.index("\n1.5.0.2\n"), lang
         assert src.index("\n1.5.0.2\n") < src.index("\n1.5.0.1\n"), lang
         assert src.index("\n1.5.0.1\n") < src.index("\n1.5\n"), lang
         assert src.index("\n1.5\n") < src.index("\n1.4.9.9"), lang
         for folded in _FOLDED_VERSIONS:
             assert f"\n{folded}\n" not in src, (lang, folded)
-        top = _section_1502(lang)
+        top = _section_1503(lang)
         for folded in _FOLDED_VERSIONS:
             assert folded not in top, (lang, folded)
+
+
+def test_zh_relnotes_1503_formation_formed_bonuses():
+    s = _section_1503("zh")
+    assert "formation_ranks_formed" in s
+    assert "FORMATION_SLOT_ARRIVE_MM" in s
+    assert "keep_pace" in s
+    assert "world_formation.py" in s
+    assert "world_attributes.py" in s
+    assert "world_movement.py" in s
+    assert "test_world_formation.py" in s
+    assert "test_changelog_15.py" in s
+
+
+def test_en_es_it_pt_relnotes_1503_formation_formed_bonuses():
+    for lang in ("en", "es", "it", "pt-BR"):
+        s = _section_1503(lang)
+        assert "formation_ranks_formed" in s, lang
+        assert "FORMATION_SLOT_ARRIVE_MM" in s, lang
+        assert "keep_pace" in s, lang
+        assert "world_formation.py" in s, lang
+        assert "world_attributes.py" in s, lang
+        assert "world_movement.py" in s, lang
+        assert "test_world_formation.py" in s, lang
+        assert "test_changelog_15.py" in s, lang
+
+
+def test_zh_relnotes_1503_agro_on_sight():
+    s = _section_1503("zh")
+    assert "agro_on_sight" in s
+    assert "formation_stand_ground" in s
+    assert "unit_agro_on_sight" in s
+    assert "_notify_units_in_place" in s
+    assert "last_attacker" in s
+    assert "pursue_attacker" in s
+    assert "test_hunting.py" in s
+    assert "definitions.py" in s
+
+
+def test_en_es_it_pt_relnotes_1503_agro_on_sight():
+    for lang in ("en", "es", "it", "pt-BR"):
+        s = _section_1503(lang)
+        assert "agro_on_sight" in s, lang
+        assert "formation_stand_ground" in s, lang
+        assert "unit_agro_on_sight" in s, lang
+        assert "_notify_units_in_place" in s, lang
+        assert "last_attacker" in s, lang
+        assert "pursue_attacker" in s, lang
+        assert "test_hunting.py" in s, lang
+        assert "definitions.py" in s, lang
+
+
+def test_hunting_and_modding_docs_mention_agro_on_sight():
+    for lang in ("zh", "en", "es", "it", "pt-BR"):
+        hunting = _source("doc_src", "src", lang, "player", "hunting.rst")
+        modding = _source("doc_src", "src", lang, "mod", "modding.rst")
+        assert "agro_on_sight" in hunting, lang
+        assert "agro_on_sight" in modding, lang
+
+
+def test_zh_relnotes_1503_formation_counters():
+    s = _section_1503("zh")
+    assert "mdg_vs" in s
+    assert "rdf_vs" in s
+    assert "formation_wedge" in s
+    assert "cone" in s
+    assert "class formation" in s
+    assert "world_formation.py" in s
+    assert "damage_calculation.py" in s
+    assert "formation_detail.py" in s
+    assert "test_world_formation.py" in s
+    assert "test_changelog_15.py" in s
+
+
+def test_en_es_it_pt_relnotes_1503_formation_counters():
+    for lang in ("en", "es", "it", "pt-BR"):
+        s = _section_1503(lang)
+        assert "mdg_vs" in s, lang
+        assert "rdf_vs" in s, lang
+        assert "formation_wedge" in s, lang
+        assert "cone" in s, lang
+        assert "class formation" in s, lang
+        assert "world_formation.py" in s, lang
+        assert "damage_calculation.py" in s, lang
+        assert "formation_detail.py" in s, lang
+        assert "test_world_formation.py" in s, lang
+        assert "test_changelog_15.py" in s, lang
 
 
 def test_zh_relnotes_1502_treaty_and_formations():

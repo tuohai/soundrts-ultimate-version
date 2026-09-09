@@ -48,6 +48,16 @@ def _with_formation_combat(unit, flat_key, vs_key):
     return formation_combat_stats(unit, flat_key, vs_key)
 
 
+def _plus_formation_counter(vs_dict, other, value) -> int:
+    from ..world_formation import formation_counter_vs_bonus
+
+    try:
+        base = int(value or 0)
+    except (TypeError, ValueError):
+        base = 0
+    return base + formation_counter_vs_bonus(vs_dict, other)
+
+
 class DamageCalculationMixin:
     """
     处理基础伤害计算相关的功能
@@ -126,18 +136,21 @@ class DamageCalculationMixin:
     def _compute_damage_vs_with_formation(self, flat_key, vs_key, target, py_method):
         base, vs = _with_formation_combat(self, flat_key, vs_key)
         if _cf is not None:
-            return _cf.compute_damage_vs(base, vs, target)
-        orig_base = getattr(self, flat_key)
-        orig_vs = getattr(self, vs_key)
-        if base == orig_base and vs is orig_vs:
-            return py_method(target)
-        setattr(self, flat_key, base)
-        setattr(self, vs_key, vs)
-        try:
-            return py_method(target)
-        finally:
-            setattr(self, flat_key, orig_base)
-            setattr(self, vs_key, orig_vs)
+            damage = _cf.compute_damage_vs(base, vs, target)
+        else:
+            orig_base = getattr(self, flat_key)
+            orig_vs = getattr(self, vs_key)
+            if base == orig_base and vs is orig_vs:
+                damage = py_method(target)
+            else:
+                setattr(self, flat_key, base)
+                setattr(self, vs_key, vs)
+                try:
+                    damage = py_method(target)
+                finally:
+                    setattr(self, flat_key, orig_base)
+                    setattr(self, vs_key, orig_vs)
+        return _plus_formation_counter(vs, target, damage)
 
     def _py_get_melee_damage_vs(self, target) -> int:
         """Python fallback for _get_melee_damage_vs."""
@@ -205,8 +218,9 @@ class DamageCalculationMixin:
         for flat_key, vs_key in (("mdg", "mdg_vs"), ("rdg", "rdg_vs")):
             _base, vs_dict = _with_formation_combat(self, flat_key, vs_key)
             v = _vs_lookup(vs_dict, target.type_name, target.expanded_is_a)
-            if v is not None and v > bonus:
-                bonus = v
+            total = (v or 0) + (_plus_formation_counter(vs_dict, target, 0))
+            if total > bonus:
+                bonus = total
         return bonus
 
     def _get_melee_defense_vs(self, attacker) -> int:
@@ -219,15 +233,19 @@ class DamageCalculationMixin:
             self.mdf_vs = d or {}
         try:
             d = self.mdf_vs
+
+            def _out(val):
+                return _plus_formation_counter(d, attacker, val)
+
             v = _vs_lookup(d, attacker.type_name, attacker.expanded_is_a)
             if v is not None:
-                return self.mdf + v
+                return _out(self.mdf + v)
 
             # 检查对攻击者武器类型的vs
             if hasattr(attacker, 'get_current_weapon_name'):
                 weapon_name = attacker.get_current_weapon_name()
                 if weapon_name and weapon_name in d:
-                    return self.mdf + d[weapon_name]
+                    return _out(self.mdf + d[weapon_name])
 
             # 检查对攻击者武器继承类型的vs
             if hasattr(attacker, '_weapon_instances') and hasattr(attacker, 'current_weapon'):
@@ -237,14 +255,14 @@ class DamageCalculationMixin:
                     if hasattr(weapon, 'expanded_is_a'):
                         for weapon_type in weapon.expanded_is_a:
                             if weapon_type in d:
-                                return self.mdf + d[weapon_type]
+                                return _out(self.mdf + d[weapon_type])
                     # 也检查武器的直接is_a
                     if hasattr(weapon, 'is_a'):
                         for weapon_type in weapon.is_a:
                             if weapon_type in d:
-                                return self.mdf + d[weapon_type]
+                                return _out(self.mdf + d[weapon_type])
 
-            return self.mdf
+            return _out(self.mdf)
         finally:
             if swapped:
                 self.mdf = orig_mdf
@@ -260,15 +278,19 @@ class DamageCalculationMixin:
             self.rdf_vs = d or {}
         try:
             d = self.rdf_vs
+
+            def _out(val):
+                return _plus_formation_counter(d, attacker, val)
+
             v = _vs_lookup(d, attacker.type_name, attacker.expanded_is_a)
             if v is not None:
-                return self.rdf + v
+                return _out(self.rdf + v)
 
             # 检查对攻击者武器类型的vs
             if hasattr(attacker, 'get_current_weapon_name'):
                 weapon_name = attacker.get_current_weapon_name()
                 if weapon_name and weapon_name in d:
-                    return self.rdf + d[weapon_name]
+                    return _out(self.rdf + d[weapon_name])
 
             # 检查对攻击者武器继承类型的vs
             if hasattr(attacker, '_weapon_instances') and hasattr(attacker, 'current_weapon'):
@@ -278,14 +300,14 @@ class DamageCalculationMixin:
                     if hasattr(weapon, 'expanded_is_a'):
                         for weapon_type in weapon.expanded_is_a:
                             if weapon_type in d:
-                                return self.rdf + d[weapon_type]
+                                return _out(self.rdf + d[weapon_type])
                     # 也检查武器的直接is_a
                     if hasattr(weapon, 'is_a'):
                         for weapon_type in weapon.is_a:
                             if weapon_type in d:
-                                return self.rdf + d[weapon_type]
+                                return _out(self.rdf + d[weapon_type])
 
-            return self.rdf
+            return _out(self.rdf)
         finally:
             if swapped:
                 self.rdf = orig_rdf

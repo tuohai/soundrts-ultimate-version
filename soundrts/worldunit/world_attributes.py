@@ -31,9 +31,9 @@ class CreatureAttributes(Entity):
         spec = getattr(self, "_formation_combat_spec", None)
         extra = spec.get("speed", 0) if spec else 0
         if extra:
-            from ..world_formation import _bonus_delta, formation_hold_xy
+            from ..world_formation import _bonus_delta, formation_ranks_formed
 
-            if formation_hold_xy(self) is not None:
+            if formation_ranks_formed(self):
                 speed += _bonus_delta(speed, extra)
                 if speed > 0:
                     speed = max(speed, int(getattr(self, "VERY_SLOW", 1) or 1))

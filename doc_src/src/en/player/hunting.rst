@@ -15,7 +15,7 @@ SoundRTS supports Age of Empires–style hunting: workers attack wildlife, hunte
 1. Backspace / default order or right-click an animal → ``go`` (approach / claim), including **owned** livestock; workers with ``can_herd`` still default to ``herd`` on ``herdable``. To **attack** (hunt / slaughter), use imperative (Ctrl+Backspace) or select ``go`` then Ctrl+Enter
 2. On kill → a deposit named by the animal's ``food_deposit`` spawns (base game: ``food_carcass``; aoe2 sheep: ``food_livestock``); the attack order completes (**no** false ``order_impossible`` beep)
 3. Auto-gather → workers may auto-queue gather on the carcass after the kill; with ``auto_gather`` they also collect and return food
-4. Flee on hit → deer and sheep run away; boars counterattack and pursue across squares (``pursue_attacker``, can be lured to the town center; ``pursue_leash_range`` drops aggro if you open a large gap)
+4. Flee on hit → deer and sheep run away; boars use ``agro_on_sight 0`` (no unprovoked attack), then counterattack and pursue across squares (``pursue_attacker``, can be lured to the town center; ``pursue_leash_range`` drops aggro if you open a large gap)
 5. Claim (optional) → any non-neutral unit near a neutral ``claimable`` animal (AoE2-style sheep) takes ownership, with a confirmation sound and a short “sheep , claimed” style tip; ``can_herd`` is separate and still only follows
 6. Herding (optional) → workers with ``can_herd 1`` can herd ``herdable`` animals (e.g. sheep)
 7. Pasture (optional) → a building with ``spawns_unit`` / ``spawn_player_cap`` (aoe2 Mongol ``pasture``) periodically spawns owned livestock; ``spawn_immediate 1`` means **one** sheep on complete, then top up toward ``larva_cap`` on the interval. Mongol herdsmen build no mill/farm; pasture only needs a town center and can store food
@@ -156,6 +156,8 @@ Animal properties
      - Meaning
    * - ``is_huntable 1``
      - huntable; right-click defaults to attack
+   * - ``agro_on_sight``
+     - default ``1``. ``0``: do not attack until hit, no ally pack-aggro (AoE2 DE boar); predators set ``1``
    * - ``flee_on_hit 1``
      - run away from attacker
    * - ``pursue_attacker 1``

@@ -1568,6 +1568,7 @@ class Rules(_Definitions):
         "flee_on_hit",  # 受击后逃跑（鹿、羊等）
         "pursue_attacker",  # 受击反击后跨格追击攻击者（野猪诱杀到 TC）
         "pursue_leash_range",  # 追击脱仇：与目标距离超过此毫米则忘仇（0=不限制）
+        "agro_on_sight",  # 1=站岗可主动开火/可被友军连坐；0=帝国2决定版野猪（被打才打）
         "herdable",  # 可被村民驱赶跟随（羊）
         "herd_leash_range",  # 驱赶跟随的最大距离（毫米）
         "claimable",  # 中立时可被非中立单位靠近自动归属（帝国 2 式领羊）

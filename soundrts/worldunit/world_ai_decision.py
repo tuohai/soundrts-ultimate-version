@@ -57,6 +57,7 @@ class CreatureAIDecision(Entity):
     flee_on_hit = 0
     pursue_attacker = 0
     pursue_leash_range = 0
+    agro_on_sight = 1
     last_attacker = None
 
     def _is_neutral_target(self, other):
@@ -196,7 +197,10 @@ class CreatureAIDecision(Entity):
 
     def _wildlife_wander(self):
         """野生动物在出生点附近随机徘徊（帝国时代式行为）。"""
-        if not CreatureAIDecision._is_wildlife_unit(type(self)):
+        if not CreatureAIDecision._is_wildlife_unit(self):
+            return False
+        # Fighting / chasing (boar lure) must not be interrupted by a wander go.
+        if getattr(self, "last_attacker", None) is not None:
             return False
         # Owned livestock (after claim) must not wander as Gaia wildlife.
         player = getattr(self, "player", None)
@@ -205,8 +209,6 @@ class CreatureAIDecision(Entity):
         if self.speed <= 0 or self.place is None or self.orders:
             return False
         if getattr(self, "_herd_leader", None) is not None:
-            return False
-        if self.last_attacker is not None:
             return False
 
         origin = getattr(self, "_wander_origin", None)
@@ -539,10 +541,11 @@ class CreatureAIDecision(Entity):
         # 站岗模式处理：不主动攻击，但遭受攻击时反击
         # D-Phase 2: counterattack_enabled 现是 class default = False, 直接读取.
         # formations 开启时对齐帝国 2 站岗：射程内开火，绝不走近。
+        # agro_on_sight 0（规则，如决定版野猪）仍走被打才反击。
         if self.ai_mode == "guard":
-            from ..world_formation import formations_enabled
+            from ..world_formation import formation_stand_ground
 
-            if formations_enabled():
+            if formation_stand_ground(self):
                 enemy = self._stand_ground_target()
                 if enemy is not None:
                     decision_cache[cache_key] = {

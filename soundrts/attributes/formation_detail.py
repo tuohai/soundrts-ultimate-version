@@ -9,6 +9,7 @@ from ..world_formation import (
     _bonus_set,
     _layout_kind,
     _parse_bonus,
+    _SHAPE_ALIASES,
     formation_spec,
     formation_type_names,
     formations_enabled,
@@ -82,6 +83,14 @@ def _shape_parts(shape):
     return list(_SHAPE_TTS.get(kind, [kind]))
 
 
+def _vs_target_parts(name):
+    raw = str(name or "").strip()
+    low = raw.lower()
+    if low in _SHAPE_TTS or low in _SHAPE_ALIASES:
+        return _shape_parts(_layout_kind({"shape": raw}))
+    return style_title_parts(raw)
+
+
 def formation_nav_items(names=None):
     names = list(names if names is not None else formation_type_names())
     return [style_title_parts(name) for name in names]
@@ -150,7 +159,7 @@ def build_formation_detail_attrs(type_name):
             spoken = format_formation_bonus(bonus)
             if not spoken:
                 continue
-            item = list(mp.VERSUS) + [" "] + style_title_parts(target) + [" "] + spoken
+            item = list(mp.VERSUS) + [" "] + _vs_target_parts(target) + [" "] + spoken
             items.append(item)
         if not items:
             continue

@@ -5,6 +5,27 @@ Release notes
 .. contents::
 
 
+1.5.0.3
+-------
+
+**Change: formation combat bonuses apply only after units reach their slots**
+
+- **Issue**: Switching formation bound ``_formation_combat_spec`` immediately. Units still walking to new slots already used the new ``mdg`` / ``speed`` and formation ``mdg_vs``, so the bonus swapped with no reform time.
+- **Change**: ``formation_ranks_formed`` uses the same arrive radius as combat stand (``FORMATION_SLOT_ARRIVE_MM``, or ``radius + 50``, whichever is larger). Flats, speed, and formation-name counters apply only on the slot; not while walking. ``keep_pace`` still applies during the walk. Breaking ranks, chase, and focus fire still grant no bonus.
+- **Scope**: ``world_formation.py``; ``worldunit/world_attributes.py``; ``worldunit/world_movement.py``; ``test_world_formation.py``; ``test_changelog_15.py``.
+
+**Change: boar aggro rule ``agro_on_sight`` (AoE2 DE)**
+
+- **Issue**: With ``formations 1``, ``guard`` is stand ground and fires at enemies in range. Boars then bit units on the same square without being hit, and nearby boars packed in.
+- **Change**: Integer rule ``agro_on_sight`` (default ``1``). ``0`` skips ``formation_stand_ground`` / ``unit_agro_on_sight``, fights only ``last_attacker``, and ``_notify_units_in_place`` does not share aggro to that unit. Deer / sheep / boar set ``agro_on_sight 0``; predators set ``1`` or omit it. After a hit, ``pursue_attacker`` still lures to the town center.
+- **Scope**: ``definitions.py``; ``world_formation.py``; ``worldunit/world_ai_decision.py``; ``worldunit/worldcreature.py``; ``res/rules.txt``; ``test_hunting.py``; ``test_world_formation.py``; ``test_changelog_15.py``.
+
+**Change: formation mdg_vs–rdf_vs can counter another formation**
+
+- **Issue**: ``mdg_vs`` / ``rdg_vs`` / ``mdf_vs`` / ``rdf_vs`` on ``class formation`` only looked up unit types, so a line could not counter a wedge by formation.
+- **Change**: While ranks are held, those vs keys also match the other unit's current ``class formation`` name (e.g. ``formation_wedge``) and shape (``cone`` / ``wedge`` / ``arc``, …). Unit-type vs and formation vs stack; if several shape keys match, only the most specific applies (type name, then alias, then canonical ``shape``). Write identifiers, not translated titles. No bonus if the other unit has broken ranks, is chasing, or is focus-firing. The AoE2 four types still have no counters.
+- **Scope**: ``world_formation.py``; ``damage_calculation.py``; ``formation_detail.py``; ``test_world_formation.py``; ``test_changelog_15.py``.
+
 1.5.0.2
 -------
 

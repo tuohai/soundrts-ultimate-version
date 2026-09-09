@@ -24,7 +24,6 @@ from ..worldroom import Square, Inside, ZoomTarget
 from ..worldentity import Entity
 
 DISTANCE_MARGIN = 175  # millimeters
-_SLOT_HOLD_MM = 250
 class CreatureMovement(Entity):
     def can_move_to(self, target_place) -> bool:
         """检查单位是否可以移动到目标区域。
@@ -475,6 +474,7 @@ class CreatureMovement(Entity):
         from ..world_formation import (
             formation_blocker,
             formation_hold_xy,
+            formation_slot_arrive_mm,
             formation_stand_ground,
         )
 
@@ -494,7 +494,7 @@ class CreatureMovement(Entity):
         slot = formation_hold_xy(self)
         if slot is not None:
             sx, sy = slot
-            arrive = max(_SLOT_HOLD_MM, int(getattr(self, "radius", 0) or 0) + 50)
+            arrive = formation_slot_arrive_mm(self)
             if square_of_distance(self.x, self.y, sx, sy) > arrive * arrive:
                 self.go_to_xy(sx, sy)
             else:

@@ -11,7 +11,7 @@ SoundRTS admite caza al estilo Age of Empires: los trabajadores atacan a la faun
 1. Retroceso / orden por defecto o clic derecho en un animal → ``go`` sobre fauna neutra (acercarse / reclamar); trabajadores con ``can_herd`` siguen usando ``herd`` por defecto en ``herdable``. Para **atacar** neutrales use imperativo (Ctrl+Retroceso, o ``go`` + Ctrl+Enter)
 2. Al matar → aparece el depósito indicado por ``food_deposit`` del animal (juego base: ``food_carcass``; ovejas aoe2: ``food_livestock``); la orden de ataque se completa (**sin** pitido falso ``order_impossible``)
 3. Recolección automática → tras matar, el trabajador puede encolar recolección; con ``auto_gather`` también recoge y lleva comida
-4. Huir al ser golpeado → ciervos y ovejas huyen; los jabalíes contraatacan y persiguen entre casillas (``pursue_attacker``, se pueden atraer al centro urbano; ``pursue_leash_range`` corta la agresión si abre una gran distancia)
+4. Huir al ser golpeado → ciervos y ovejas huyen; los jabalíes usan ``agro_on_sight 0`` (no atacan sin ser golpeados), contraatacan y persiguen entre casillas (``pursue_attacker``, se pueden atraer al centro urbano; ``pursue_leash_range`` corta la agresión si abre una gran distancia)
 5. Captura (opcional) → cualquier unidad no neutral cerca de un animal ``claimable`` neutro toma posesión (ovejas estilo AoE2); ``can_herd`` sigue siendo un pastoreo aparte
 6. Pastoreo (opcional) → los trabajadores con ``can_herd 1`` pueden pastorear animales ``herdable`` (p. ej. ovejas)
 7. Pastizal (opcional) → un edificio con ``spawns_unit`` / ``spawn_player_cap`` (aoe2 ``pasture`` mongol) genera ganado propio
@@ -129,6 +129,8 @@ Propiedades de animales
      - Significado
    * - ``is_huntable 1``
      - cazable; el clic derecho por defecto es atacar
+   * - ``agro_on_sight``
+     - por defecto ``1``. ``0``: no ataca hasta ser golpeado, sin aggro de manada (jabalí AoE2 DE); depredadores ``1``
    * - ``flee_on_hit 1``
      - huir del atacante
    * - ``pursue_attacker 1``
