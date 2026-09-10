@@ -126,13 +126,13 @@ class CreatureAttributes(Entity):
             damage = mdg
             cd = getattr(self, "mdg_cd", 0) or 0
             ready = getattr(self, "mdg_ready", 0) or 0
-            cover = getattr(self, "mdg_cover", 0) or 0
+            cover = getattr(self, "mdg_hit_rate", 0) or 0
             rng = getattr(self, "mdg_range", 0) or 0
         else:
             damage = rdg
             cd = getattr(self, "rdg_cd", 0) or 0
             ready = getattr(self, "rdg_ready", 0) or 0
-            cover = getattr(self, "rdg_cover", 0) or 0
+            cover = getattr(self, "rdg_hit_rate", 0) or 0
             rng = getattr(self, "rdg_range", 0) or 0
 
         # cover: 0 → 100% hit (same as hit_miss); else PRECISION-scaled percent
@@ -157,8 +157,8 @@ class CreatureAttributes(Entity):
 
         armor = max(getattr(self, "mdf", 0) or 0, getattr(self, "rdf", 0) or 0)
         dodge_raw = max(
-            getattr(self, "mdg_dodge", 0) or 0,
-            getattr(self, "rdg_dodge", 0) or 0,
+            getattr(self, "mdg_dodge_rate", 0) or 0,
+            getattr(self, "rdg_dodge_rate", 0) or 0,
         )
         dodge_pct = dodge_raw // PRECISION if dodge_raw else 0
         if dodge_pct < 0:
@@ -332,10 +332,10 @@ class CreatureAttributes(Entity):
             "mdg_minimal_range_vs",
             "rdg_minimal_range_vs",
             "speed_vs",
-            "mdg_cover_vs",
-            "rdg_cover_vs",
-            "mdg_dodge_vs",
-            "rdg_dodge_vs",
+            "mdg_hit_rate_vs",
+            "rdg_hit_rate_vs",
+            "mdg_dodge_rate_vs",
+            "rdg_dodge_rate_vs",
             "mdg_splash_vs",
             "rdg_splash_vs",
             "mdg_splash_decay_min_vs",

@@ -3,6 +3,27 @@ Note di rilascio
 
 .. contents::
 
+1.5.0.4
+-------
+
+**Cambio: i campi di precisione diventano mdg_hit_rate / rdg_hit_rate**
+
+- **Problema**: la precisione in rules era ``mdg_cover`` / ``rdg_cover`` (0 = 100%), facile da confondere con l’occultamento di terreno ``cover`` / ``cover_vs``.
+- **Cambio**: Rinominati in ``mdg_hit_rate`` / ``rdg_hit_rate``, più ``*_hit_rate_vs``, ``*_hit_rate_on_terrain``, ``*_hit_rate_bonus``. Nessun alias ``*_cover``. Il ``cover`` / ``cover_vs`` di terreno non cambia. Gli id TTS restano ``MDG_COVER``; il ``msgid`` gettext diventa ``mdg_hit_rate_vs`` / ``*_hit_rate_on_terrain``.
+- **Ambito**: ``combat/hit_miss.py``; ``definitions.py``; ``worldunit``; ``mods/aoe2/rules.txt``; ``i18n/tts.pot``; ``tts-*.po``; ``test_unit_vs_params_runtime.py``; ``test_changelog_15.py``; ``modding.rst`` in tutte e cinque le lingue.
+
+**Cambio: i campi di schivata diventano mdg_dodge_rate / rdg_dodge_rate**
+
+- **Problema**: la schivata in rules era ``mdg_dodge`` / ``rdg_dodge``, facile da confondere con i suoni di schivata in style ``mdg_dodge`` / ``rdg_dodge`` e il ``dodge_vs`` di terreno.
+- **Cambio**: Rinominati in ``mdg_dodge_rate`` / ``rdg_dodge_rate``, più ``*_dodge_rate_vs``, ``*_dodge_rate_on_terrain``, ``*_dodge_rate_bonus``. Nessun alias di attributo. Il ``dodge_vs`` di terreno e i suoni di schivata in style non cambiano. Gli id TTS restano ``MDG_DODGE``; il ``msgid`` gettext diventa ``mdg_dodge_rate_vs`` / ``*_dodge_rate_on_terrain``.
+- **Ambito**: ``combat/hit_miss.py``; ``definitions.py``; ``worldunit``; ``worldweapon.py``; ``i18n/tts.pot``; ``tts-*.po``; ``test_unit_vs_params_runtime.py``; ``test_changelog_15.py``; ``modding.rst`` in tutte e cinque le lingue.
+
+**Cambio: i ranghi di formazione sono interamente nelle rules**
+
+- **Problema**: i nomi dei ranghi erano fissi ``melee`` / ``ranged`` / ``siege``. La ricerca ``formation_rank_*``, il fallback per gittata, il fronte di combattimento e le etichette vocali non si potevano rinominare né aggiungere un quarto rango.
+- **Cambio**: ``def parameters`` elenca i ranghi in ``formation_ranks`` (se omesso, i nomi si inferiscono dalle chiavi ``formation_rank_<nome>``). Ogni nome ha una tabella ``is_a`` ``formation_rank_<nome>``. Opzionali ``formation_default_rank``, ``formation_range_rank`` (quando ``rdg_range`` è maggiore di ``mdg_range``) e ``formation_front_rank``. Il fronte di combattimento usa il primo rango di ``ranks`` della formazione attuale. Un ``class formation`` senza ``ranks`` usa ``formation_ranks``. I nomi personalizzati usano ``title`` di style; ``melee`` / ``ranged`` / ``siege`` restano con TTS interno. Il mod AoE2 scrive esplicitamente ``formation_ranks melee ranged siege``.
+- **Ambito**: ``world_formation.py``; ``definitions.py``; ``mods/aoe2/rules.txt``; ``test_world_formation.py``; ``test_changelog_15.py``; ``modding.rst`` in tutte e cinque le lingue.
+
 1.5.0.3
 -------
 

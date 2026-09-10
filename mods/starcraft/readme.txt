@@ -12,7 +12,7 @@ Multiplayer lobby factions
 
 --------------------------
 
-- Terran, Protoss, Zerg only (+ random). Base-game ``human_faction`` is hidden.
+- Terran, Protoss, Zerg only (+ random). ``clear`` removes base-game ``human_faction``.
 
 - Faction titles: style ``terran`` / ``protoss`` / ``zerg`` → TTS 7260–7262 (人族 / 神族 / 异虫).
 

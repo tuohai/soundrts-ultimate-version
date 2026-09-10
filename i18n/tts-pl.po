@@ -10192,49 +10192,49 @@ msgstr "bonus czasu odnowienia dystansowego"
 #. MDG_COVER_VS
 #: res/ui/tts.txt:4434
 msgctxt "4434"
-msgid "mdg_cover_vs"
+msgid "mdg_hit_rate_vs"
 msgstr "bonus trafienia wręcz"
 
 #. RDG_COVER_VS
 #: res/ui/tts.txt:4435
 msgctxt "4435"
-msgid "rdg_cover_vs"
+msgid "rdg_hit_rate_vs"
 msgstr "bonus trafienia dystansowego"
 
 #. MDG_DODGE_VS
 #: res/ui/tts.txt:4436
 msgctxt "4436"
-msgid "mdg_dodge_vs"
+msgid "mdg_dodge_rate_vs"
 msgstr "bonus uników wręcz"
 
 #. RDG_DODGE_VS
 #: res/ui/tts.txt:4437
 msgctxt "4437"
-msgid "rdg_dodge_vs"
+msgid "rdg_dodge_rate_vs"
 msgstr "bonus uników dystansowych"
 
 #. MDG_COVER_ON_TERRAIN
 #: res/ui/tts.txt:4438
 msgctxt "4438"
-msgid "mdg_cover_on_terrain"
+msgid "mdg_hit_rate_on_terrain"
 msgstr "bonus trafienia wręcz na terenie"
 
 #. RDG_COVER_ON_TERRAIN
 #: res/ui/tts.txt:4439
 msgctxt "4439"
-msgid "rdg_cover_on_terrain"
+msgid "rdg_hit_rate_on_terrain"
 msgstr "bonus trafienia dystansowego na terenie"
 
 #. MDG_DODGE_ON_TERRAIN
 #: res/ui/tts.txt:4440
 msgctxt "4440"
-msgid "mdg_dodge_on_terrain"
+msgid "mdg_dodge_rate_on_terrain"
 msgstr "bonus uników wręcz na terenie"
 
 #. RDG_DODGE_ON_TERRAIN
 #: res/ui/tts.txt:4441
 msgctxt "4441"
-msgid "rdg_dodge_on_terrain"
+msgid "rdg_dodge_rate_on_terrain"
 msgstr "bonus uników dystansowych na terenie"
 
 #. SPEED_VS

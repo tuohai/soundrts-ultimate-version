@@ -102,7 +102,7 @@ def test_headless_lurker_pierce_line_volley():
         marine_cls.collision = 0
         lurker = lurker_cls(zerg.player, sq, cx, cy)
         lurker.rdg_crit_rate = 0
-        lurker.rdg_cover = 100 * PRECISION
+        lurker.rdg_hit_rate = 100 * PRECISION
         # Line along +x; aim at the farthest so the segment covers the two in front.
         mid1 = marine_cls(terran.player, sq, cx + 800, cy)
         mid2 = marine_cls(terran.player, sq, cx + 1600, cy)

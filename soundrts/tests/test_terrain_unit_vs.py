@@ -107,13 +107,13 @@ class _Archer:
     rdg_cd = int(1.5 * PRECISION)
     rdg_vs = {}
     rdg_on_terrain = ()
-    rdg_cover = 100 * PRECISION
-    rdg_dodge = 0
-    mdg_dodge = 0
-    mdg_dodge_on_terrain = ()
-    rdg_dodge_on_terrain = ()
-    mdg_dodge_vs = {}
-    rdg_dodge_vs = {}
+    rdg_hit_rate = 100 * PRECISION
+    rdg_dodge_rate = 0
+    mdg_dodge_rate = 0
+    mdg_dodge_rate_on_terrain = ()
+    rdg_dodge_rate_on_terrain = ()
+    mdg_dodge_rate_vs = {}
+    rdg_dodge_rate_vs = {}
     place = None
     x = 0
     y = 0
@@ -186,8 +186,8 @@ def test_dodge_vs_adds_terrain_dodge():
     target.place = _MarshPlace()
     target.x = 0
     target.y = 0
-    target.mdg_dodge_on_terrain = ()
-    target.rdg_dodge_on_terrain = ()
+    target.mdg_dodge_rate_on_terrain = ()
+    target.rdg_dodge_rate_on_terrain = ()
     assert target._get_dodge_on_terrain(is_melee=False) == 10
 
 
@@ -199,9 +199,9 @@ def test_chance_to_hit_uses_cover_vs_for_archer():
         (HitMissMixin,),
         {
             "rdg_range": 5 * PRECISION,
-            "rdg_cover": 100 * PRECISION,
-            "rdg_cover_vs": {},
-            "rdg_cover_on_terrain": (),
+            "rdg_hit_rate": 100 * PRECISION,
+            "rdg_hit_rate_vs": {},
+            "rdg_hit_rate_on_terrain": (),
             "expanded_is_a": (),
             "type_name": "archer",
             "height": 0,

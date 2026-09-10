@@ -32,8 +32,8 @@ mdg_ready 1
 rdg_ready 2
 mdg_cd 1.5
 rdg_cd 1.5
-mdg_cover 80
-rdg_cover 90
+mdg_hit_rate 80
+rdg_hit_rate 90
 mdg_range 3
 rdg_range 5
 mdg_minimal_range 1
@@ -43,15 +43,15 @@ mdg_ready_vs building 0.5
 rdg_ready_vs building 0.6
 mdg_cd_vs building 0.7
 rdg_cd_vs building 0.8
-mdg_cover_vs building 10
-rdg_cover_vs building 20
+mdg_hit_rate_vs building 10
+rdg_hit_rate_vs building 20
 mdg_range_vs building 1
 rdg_range_vs building 1.5
 mdg_minimal_range_vs building 0.5
 rdg_minimal_range_vs building 0.6
 speed_vs building 1
-mdg_dodge_vs footman 15
-rdg_dodge_vs footman 25
+mdg_dodge_rate_vs footman 15
+rdg_dodge_rate_vs footman 25
 """
 
 
@@ -65,10 +65,10 @@ class _BuildingTarget:
     expanded_is_a = ("building",)
     _armor_instance = None
     armor = None
-    mdg_dodge = 0
-    rdg_dodge = 0
-    mdg_dodge_vs = {}
-    rdg_dodge_vs = {}
+    mdg_dodge_rate = 0
+    rdg_dodge_rate = 0
+    mdg_dodge_rate_vs = {}
+    rdg_dodge_rate_vs = {}
     place = None
     x = 0
     y = 0
@@ -95,8 +95,8 @@ class _Attacker(AttackActionMixin, HitMissMixin, TargetingMixin, DamageCalculati
         self.rdg_ready = to_int("2")
         self.mdg_cd = to_int("1.5")
         self.rdg_cd = to_int("1.5")
-        self.mdg_cover = to_int("80")
-        self.rdg_cover = to_int("90")
+        self.mdg_hit_rate = to_int("80")
+        self.rdg_hit_rate = to_int("90")
         self.mdg_range = to_int("3")
         self.rdg_range = to_int("5")
         self.mdg_minimal_range = to_int("1")
@@ -106,8 +106,8 @@ class _Attacker(AttackActionMixin, HitMissMixin, TargetingMixin, DamageCalculati
         self.rdg_ready_vs = {"building": to_int("0.6")}
         self.mdg_cd_vs = {"building": to_int("0.7")}
         self.rdg_cd_vs = {"building": to_int("0.8")}
-        self.mdg_cover_vs = {"building": to_int("10")}
-        self.rdg_cover_vs = {"building": to_int("20")}
+        self.mdg_hit_rate_vs = {"building": to_int("10")}
+        self.rdg_hit_rate_vs = {"building": to_int("20")}
         self.mdg_range_vs = {"building": to_int("1")}
         self.rdg_range_vs = {"building": to_int("1.5")}
         self.mdg_minimal_range_vs = {"building": to_int("0.5")}
@@ -115,8 +115,8 @@ class _Attacker(AttackActionMixin, HitMissMixin, TargetingMixin, DamageCalculati
         self.speed_vs = {"building": to_int("1")}
         self.mdg_cd_on_terrain = ()
         self.rdg_cd_on_terrain = ()
-        self.mdg_cover_on_terrain = ()
-        self.rdg_cover_on_terrain = ()
+        self.mdg_hit_rate_on_terrain = ()
+        self.rdg_hit_rate_on_terrain = ()
         self.speed_on_terrain = ()
         self.height = 0
         self.mdg_projectile = 0
@@ -147,15 +147,15 @@ def test_rules_txt_parses_all_unit_vs_params():
     assert cls.rdg_ready_vs["building"] == to_int("0.6")
     assert cls.mdg_cd_vs["building"] == to_int("0.7")
     assert cls.rdg_cd_vs["building"] == to_int("0.8")
-    assert cls.mdg_cover_vs["building"] == to_int("10")
-    assert cls.rdg_cover_vs["building"] == to_int("20")
+    assert cls.mdg_hit_rate_vs["building"] == to_int("10")
+    assert cls.rdg_hit_rate_vs["building"] == to_int("20")
     assert cls.mdg_range_vs["building"] == to_int("1")
     assert cls.rdg_range_vs["building"] == to_int("1.5")
     assert cls.mdg_minimal_range_vs["building"] == to_int("0.5")
     assert cls.rdg_minimal_range_vs["building"] == to_int("0.6")
     assert cls.speed_vs["building"] == to_int("1")
-    assert cls.mdg_dodge_vs["footman"] == to_int("15")
-    assert cls.rdg_dodge_vs["footman"] == to_int("25")
+    assert cls.mdg_dodge_rate_vs["footman"] == to_int("15")
+    assert cls.rdg_dodge_rate_vs["footman"] == to_int("25")
 
 
 def test_mdg_ready_vs_adds_to_base():
@@ -186,31 +186,31 @@ def test_rdg_cd_vs_adds_to_base():
     assert a._get_ranged_cd_vs(_FootmanTarget()) == a.rdg_cd
 
 
-def test_mdg_cover_vs_adds_hit_chance():
+def test_mdg_hit_rate_vs_adds_hit_chance():
     a = _Attacker()
     t = _BuildingTarget()
-    assert a._get_melee_cover_vs(t) == 80 + 10
-    assert a._get_melee_cover_vs(_FootmanTarget()) == 80
+    assert a._get_melee_hit_rate_vs(t) == 80 + 10
+    assert a._get_melee_hit_rate_vs(_FootmanTarget()) == 80
 
 
-def test_rdg_cover_vs_adds_hit_chance():
+def test_rdg_hit_rate_vs_adds_hit_chance():
     a = _Attacker()
     t = _BuildingTarget()
     # +20 vs building, clamped to 100
-    assert a._get_ranged_cover_vs(t) == 100
-    assert a._get_ranged_cover_vs(_FootmanTarget()) == 90
+    assert a._get_ranged_hit_rate_vs(t) == 100
+    assert a._get_ranged_hit_rate_vs(_FootmanTarget()) == 90
 
 
-def test_mdg_dodge_vs_on_defender():
+def test_mdg_dodge_rate_vs_on_defender():
     defender = type(
         "D",
         (HitMissMixin,),
         {
             "type_name": "test_striker",
             "expanded_is_a": (),
-            "mdg_dodge": 0,
-            "mdg_dodge_vs": {"footman": to_int("15")},
-            "rdg_dodge_vs": {},
+            "mdg_dodge_rate": 0,
+            "mdg_dodge_rate_vs": {"footman": to_int("15")},
+            "rdg_dodge_rate_vs": {},
         },
     )()
     attacker = type("A", (), {"type_name": "footman", "expanded_is_a": ("soldier",)})()
@@ -219,16 +219,16 @@ def test_mdg_dodge_vs_on_defender():
     assert defender._get_dodge_vs(other, is_melee=True) == 0
 
 
-def test_rdg_dodge_vs_on_defender():
+def test_rdg_dodge_rate_vs_on_defender():
     defender = type(
         "D",
         (HitMissMixin,),
         {
             "type_name": "test_striker",
             "expanded_is_a": (),
-            "rdg_dodge": 0,
-            "mdg_dodge_vs": {},
-            "rdg_dodge_vs": {"footman": to_int("25")},
+            "rdg_dodge_rate": 0,
+            "mdg_dodge_rate_vs": {},
+            "rdg_dodge_rate_vs": {"footman": to_int("25")},
         },
     )()
     attacker = type("A", (), {"type_name": "footman", "expanded_is_a": ("soldier",)})()
@@ -272,7 +272,7 @@ def test_speed_vs_adds_when_chasing_target_type():
 
 
 def test_hit_or_miss_uses_target_dodge_vs():
-    """Defender mdg_dodge_vs must reduce attacker hit chance in _hit_or_miss."""
+    """Defender mdg_dodge_rate_vs must reduce attacker hit chance in _hit_or_miss."""
     attacker = _Attacker()
     attacker.world = type(
         "W",
@@ -281,19 +281,19 @@ def test_hit_or_miss_uses_target_dodge_vs():
     )()
     attacker.type_name = "footman"
     attacker.expanded_is_a = ("soldier",)
-    attacker.mdg_cover = to_int("100")
-    attacker.mdg_cover_vs = {}
+    attacker.mdg_hit_rate = to_int("100")
+    attacker.mdg_hit_rate_vs = {}
 
     defender = type(
         "D",
         (HitMissMixin, _BuildingTarget),
         {
-            "mdg_dodge": 0,
-            "rdg_dodge": 0,
-            "mdg_dodge_vs": {"footman": 30},
-            "rdg_dodge_vs": {},
-            "mdg_dodge_on_terrain": (),
-            "rdg_dodge_on_terrain": (),
+            "mdg_dodge_rate": 0,
+            "rdg_dodge_rate": 0,
+            "mdg_dodge_rate_vs": {"footman": 30},
+            "rdg_dodge_rate_vs": {},
+            "mdg_dodge_rate_on_terrain": (),
+            "rdg_dodge_rate_on_terrain": (),
         },
     )()
     defender.notify = lambda *args, **kwargs: None
@@ -301,6 +301,6 @@ def test_hit_or_miss_uses_target_dodge_vs():
     # cover 100 - dodge_vs 30 => 70% hit; roll 50 => hit
     assert attacker._hit_or_miss(defender) is True
 
-    defender.mdg_dodge_vs = {"footman": 80}
+    defender.mdg_dodge_rate_vs = {"footman": 80}
     # cover 100 - dodge_vs 80 => 20% hit; roll 50 => miss
     assert attacker._hit_or_miss(defender) is False

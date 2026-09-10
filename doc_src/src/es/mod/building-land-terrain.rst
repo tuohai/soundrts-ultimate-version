@@ -165,7 +165,7 @@ Además de por cuadrado ``terrain_speed``, las definiciones de unidad pueden anu
    * - ``charge_mdg_cd_on_terrain`` / ``charge_rdg_cd_on_terrain``
      - Bonificación de tiempo de reutilización de carga (positivo = tiempo de reutilización de carga más largo)
 
-Golpea/esquiva en terreno **objetivo** (existente): ``mdg_cover_on_terrain``, ``rdg_cover_on_terrain``, ``mdg_dodge_on_terrain``, ``rdg_dodge_on_terrain``.
+Golpea/esquiva en terreno **objetivo** (existente): ``mdg_hit_rate_on_terrain``, ``rdg_hit_rate_on_terrain``, ``mdg_dodge_rate_on_terrain``, ``rdg_dodge_rate_on_terrain``.
 
 **Pantalla de atributos (Alt+V):** muestra las líneas ``*_on_terrain`` / carga de la unidad, y las lecturas en vivo de daño / enfriamiento / velocidad incluyen ``*_vs`` del terreno de la casilla actual más ``*_on_terrain`` (``*_vs`` de terreno = porcentaje decimal; ``speed_on_terrain`` sigue siendo absoluto).
 

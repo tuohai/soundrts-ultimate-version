@@ -536,7 +536,7 @@ Main melee/ranged properties:
       mdg_vs building 150
       mdg_vs siege_unit 40
 
-  Other ``*_vs`` pair attributes (e.g. ``rdg_vs``, ``mdg_cover_vs``, ``menace_vs``)
+  Other ``*_vs`` pair attributes (e.g. ``rdg_vs``, ``mdg_hit_rate_vs``, ``menace_vs``)
   also accept multiple pairs on one line and merge across lines.
 - ``mdf`` / ``rdf``: defense
 - ``mdg_range`` / ``rdg_range``, ``mdg_cd`` / ``rdg_cd``, ``mdg_ready`` / ``rdg_ready``
@@ -635,11 +635,14 @@ value, the engine builds a **multi-dimensional combat score** used for:
 
 **Dimensions** (primary weapon = higher of ``mdg`` / ``rdg``):
 
-- Damage, hit chance (``mdg_cover``/``rdg_cover``, 0 means 100%%), cooldown
+- Damage, hit chance (``mdg_hit_rate``/``rdg_hit_rate``, 0 means 100%%), cooldown
   (``*_cd``), wind-up (``mdg_ready``/``rdg_ready`` — not ballistic ``*_delay``)
 - HP (current ``hp``, else ``hp_max``), armor (``max(mdf, rdf)``), dodge
-  (``max(mdg_dodge, rdg_dodge)``)
+  (``max(mdg_dodge_rate, rdg_dodge_rate)``)
 - Attack range, move speed
+
+Old hit-chance keys ``mdg_cover`` / ``rdg_cover`` are not aliases (terrain ``cover`` is unchanged).
+Old dodge keys ``mdg_dodge`` / ``rdg_dodge`` are not aliases (terrain ``dodge_vs`` and style dodge sounds are unchanged).
 
 Roughly: effective DPS (damage × hit / (cd + ready)), then survivability and
 range/speed factors.
@@ -670,7 +673,7 @@ Example::
     menace_mult_vs mage 1.2
 
 **Tunable weights** in ``def parameters`` (armor/dodge/range/speed importance and
-HP normalization; damage+cd+ready+cover always feed the DPS core)::
+HP normalization; damage+cd+ready+hit_rate always feed the DPS core)::
 
     def parameters
     menace_armor_weight 1
@@ -2124,9 +2127,13 @@ Off by default. A mod that sets ``formations 1`` under ``def parameters`` lays s
     default_formation formation_line
     formation_keep_pace 1
     formation_units infantry cavalry archer_unit siege_unit monk
+    formation_ranks melee ranged siege
     formation_rank_melee infantry cavalry
     formation_rank_ranged archer_unit
     formation_rank_siege siege_unit monk
+    formation_front_rank melee
+    formation_default_rank melee
+    formation_range_rank ranged
 
     def formation_line
     class formation
@@ -2142,6 +2149,8 @@ Off by default. A mod that sets ``formations 1`` under ``def parameters`` lays s
     spacing 1.5
     mdg 20%
     speed -30%
+
+Rank names are fully rule-driven: ``formation_ranks`` lists them (rename or add ranks); each name has an ``is_a`` table ``formation_rank_<name>``. If ``formation_ranks`` is omitted, names are inferred from existing ``formation_rank_*`` keys. ``formation_default_rank`` is used when nothing matches; ``formation_range_rank`` applies when ``rdg_range`` is greater than ``mdg_range``; combat front is the first rank of the current formation's ``ranks`` (or ``formation_front_rank``). Custom ranks use a style ``title``; ``melee`` / ``ranged`` / ``siege`` still have built-in TTS.
 
 ``shape``: cartesian ``line`` / ``box`` / ``staggered`` / ``flank``, or polar ``ring`` / ``arc`` (aliases ``circle`` / ``round`` → ring, ``wedge`` / ``cone`` → arc). An unknown ``shape`` with ``radius`` / ``arc_span`` / ``rings`` still uses polar packing — no engine patch. ``radius`` is meters (0 = from ``spacing`` and count). ``arc_span`` is degrees (0 means 360 for ring, 180 for arc). ``arc_start`` defaults to auto. ``rings`` / ``ring_gap`` are concentric; ``ring_rank out`` puts the first listed rank on the outside. Distances are meters (PRECISION mm internally). ``flank_gap`` is for flank only. ``max_front`` is the per-rank cap (0 = square width). Units may set ``use_formation 1`` or ``formation_rank melee``; otherwise the ``is_a`` lists above apply. The command menu lists ``set_formation <type>`` for each ``class formation`` (picking the current type reforms in place on each square; selecting the whole army does not pull distant squares together). ``cycle_formation`` stays out of the spoken menu; default hotkey ``CTRL SHIFT f``, changeable in the hotkey editor. Style: ``def set_formation`` plus each formation ``title``; ``parameters.formation_change`` is the change SFX. Group ``go`` to a square keeps ranks; ``go`` / ``attack`` on a unit breaks slots and piles in. Idle ``offensive`` auto-engage still holds formation. A formed enemy on the path intercepts (``formation_blocker``). With formations on, ``guard`` is stand ground: shoot in range, never walk (except ``agro_on_sight 0``, matching AoE2 DE boars). ``chase`` still closes in. Optional ``mdg`` / ``rdg`` / ``mdf`` / ``rdf`` and ``mdg_vs`` / ``rdg_vs`` / ``mdf_vs`` / ``rdf_vs`` on ``class formation`` add while ranks are held (lost on ``break_formation_hold`` / focus fire). ``speed`` (may be negative, e.g. ``speed -1.5`` or ``speed -30%``) is added after the ``keep_pace`` cap. Absolute values or percents of that unit's own stat (``mdg 20%``). Defaults are 0; the AoE2 four types stay layout-only. While ranks are held, ``mdg_vs`` / ``rdg_vs`` / ``mdf_vs`` / ``rdf_vs`` also match the other unit's current ``class formation`` name (e.g. ``formation_wedge``) and shape (``cone`` / ``wedge`` / ``arc``, …), stacked with unit-type vs; if several shape keys match, only the most specific applies. Write identifiers, not translated titles. No bonus if the other unit has broken ranks, is chasing, or has not reached its slot yet (`formation_ranks_formed`). `keep_pace` still applies while walking.
 

@@ -24,6 +24,7 @@ doc_src/src/zh/
     advanced.rst          # Mod 进阶（技能、AI、元进度、导航）
     modding.rst           # 规则权威手册
     mapmaking.rst     # 地图语法权威手册
+    building-land-terrain.rst  # 方格地形与建造用地
     map-guide.rst     # 地图入门与进阶
     campaign-guide.rst # 战役入门与进阶（含 campaign/ 专题）
     campaign/         # 战役专题附录
@@ -36,3 +37,9 @@ doc_src/src/zh/
 |------|------|------|
 | 玩家 | `doc/zh/player/index.htm` | 入门 → 手册 → 专题 |
 | 模组作者 | `doc/zh/mod/index.htm` | `getting-started` → `advanced` → 各专题手册 |
+
+专题手册 ``building-land-terrain``（方格地形、建造用地、``square_terrain``）见 `doc/zh/mod/building-land-terrain.htm`。
+市场机制（买卖 / 进贡 / 路线贸易）见 `doc/zh/mod/market-system.htm`（英：`doc/en/mod/market-system.htm`）；玩家向：`doc/zh/player/market-and-trade.htm`。
+投射物飞行与预判（``rdg_projectile_speed`` / ``mdg_projectile_speed`` / ``projectile_lead``）见 `投射物预判projectile_lead说明.md`，权威手册：`doc_src/src/zh/mod/modding.rst`。
+
+玩家向 **wx 界面浏览 / NVDA 盲文** 说明见 `doc_src/src/zh/player/layered-hotkeys.rst` §5.6–5.8（构建后：`doc/zh/player/layered-hotkeys.htm`）。

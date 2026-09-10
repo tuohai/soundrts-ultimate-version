@@ -29,9 +29,13 @@ import javax.sound.sampled.SourceDataLine;
  * Commands:
  *   {"cmd":"init","vl":"E:/rj/yx/mw/vl"}
  *   {"cmd":"list"}
- *   {"cmd":"speak","voice":"Ting-Ting","text":"...","rate":80,"volume":80,"pitch":50}
+ *   {"cmd":"speak","voice":"Ting-Ting","text":"...","rate":80,"volume":80,"pitch":50,"lv":1,"rv":1}
+ *   {"cmd":"set_pan","lv":0.2,"rv":0.9}
  *   {"cmd":"stop"}
  *   {"cmd":"quit"}
+ *
+ * Optional ``lv`` / ``rv`` (0..1) pan the synthesized PCM left/right before playback.
+ * ``set_pan`` updates gains for the utterance currently playing (follows listener moves).
  */
 public final class Helper {
     private static final short VE_INSTALL_FMT = 1312;
@@ -58,8 +62,8 @@ public final class Helper {
     private String currentDevice = "default";
     private final AudioFormat pcmFmt =
             new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 22050f, 16, 2, 4, 22050f, false);
-    private float gainL = 1.0f;
-    private float gainR = 1.0f;
+    private volatile float gainL = 1.0f;
+    private volatile float gainR = 1.0f;
     private String vlPath;
     private boolean ready;
 
@@ -174,8 +178,13 @@ public final class Helper {
                             str(cmd, "text", ""),
                             intval(cmd, "rate", 80),
                             intval(cmd, "volume", 80),
-                            intval(cmd, "pitch", 50));
+                            intval(cmd, "pitch", 50),
+                            floatval(cmd, "lv", 1.0f),
+                            floatval(cmd, "rv", 1.0f));
                     emitOk("speak", null);
+                } else if ("set_pan".equals(name)) {
+                    // Live pan follow — no ACK (called every frame while speaking).
+                    helper.setPan(floatval(cmd, "lv", 1.0f), floatval(cmd, "rv", 1.0f));
                 } else if ("stop".equals(name)) {
                     helper.stop();
                     emitOk("stop", null);
@@ -348,7 +357,13 @@ public final class Helper {
     }
 
     private void startSpeak(
-            final String voice, final String text, final int rate, final int volume, final int pitch)
+            final String voice,
+            final String text,
+            final int rate,
+            final int volume,
+            final int pitch,
+            final float lv,
+            final float rv)
             throws Exception {
         ensureReady();
         if (text == null || text.isEmpty()) {
@@ -362,7 +377,7 @@ public final class Helper {
                             @Override
                             public void run() {
                                 try {
-                                    speakBlocking(voice, text, rate, volume, pitch);
+                                    speakBlocking(voice, text, rate, volume, pitch, lv, rv);
                                 } catch (Exception e) {
                                     emitErr(e.getMessage() == null ? e.toString() : e.getMessage());
                                 } finally {
@@ -377,7 +392,23 @@ public final class Helper {
         speakThread.start();
     }
 
-    private void speakBlocking(String voice, String text, int rate, int volume, int pitch)
+    private static float clamp01(float v) {
+        if (v < 0.0f) {
+            return 0.0f;
+        }
+        if (v > 1.0f) {
+            return 1.0f;
+        }
+        return v;
+    }
+
+    private void setPan(float lv, float rv) {
+        gainL = clamp01(lv);
+        gainR = clamp01(rv);
+    }
+
+    private void speakBlocking(
+            String voice, String text, int rate, int volume, int pitch, float lv, float rv)
             throws Exception {
         VeApi.Handle.ByVal speech;
         synchronized (speakLock) {
@@ -388,8 +419,8 @@ public final class Helper {
             }
             setNumericParams(speech, rate, volume, pitch);
             currentSpeech = speech;
-            gainL = 1.0f;
-            gainR = 1.0f;
+            gainL = clamp01(lv);
+            gainR = clamp01(rv);
             pauseGate = false;
             line.start();
         }
@@ -679,6 +710,14 @@ public final class Helper {
     private static int intval(Map<String, String> m, String k, int d) {
         try {
             return Integer.parseInt(str(m, k, Integer.toString(d)));
+        } catch (Exception e) {
+            return d;
+        }
+    }
+
+    private static float floatval(Map<String, String> m, String k, float d) {
+        try {
+            return Float.parseFloat(str(m, k, Float.toString(d)));
         } catch (Exception e) {
             return d;
         }

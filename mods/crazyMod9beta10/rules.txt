@@ -377,6 +377,7 @@ can_gather all
 
 def buildings
 class building
+menace 0
 
 ; branche traditionnelle
 
@@ -580,8 +581,8 @@ rdg_cd 1.5
 rdg_ready 0.5
 rdg_targets ground air
 rdg_range 5
-rdg_cover 85
-rdg_cover_vs buildings 100
+rdg_hit_rate 85
+rdg_hit_rate_vs buildings 100
 sight_range 10
 rdg 5
 rdg_projectile 1
@@ -947,8 +948,8 @@ sight_range 12
 rdg_ready 0.35
 rdg_cd 3.45
 rdg 7
-rdg_cover 65
-rdg_cover_vs buildings 100
+rdg_hit_rate 65
+rdg_hit_rate_vs buildings 100
 rdg_targets ground air
 mdf 0.5
 mdf_bonus 1
@@ -1787,8 +1788,8 @@ rdg_targets ground air
 rdg_range 4.5
 sight_range 6.5
 rdg 4.5
-rdg_cover 80
-rdg_cover_vs buildings 100
+rdg_hit_rate 80
+rdg_hit_rate_vs buildings 100
 rdg_projectile 1
 rdg_projectile_speed 7
 def arbre_des_tenebres
@@ -2939,7 +2940,7 @@ sight_range 10
 rdg_cd 4
 rdg_ready 2
 rdg 15
-rdg_cover 70
+rdg_hit_rate 70
 rdg_splash 15
 rdg_radius 1
 rdg_projectile 1
@@ -3703,7 +3704,7 @@ rdg_targets ground air
 rdg_range 4
 sight_range 6
 rdg 4
-rdg_cover 80
+rdg_hit_rate 80
 rdf 0.5
 rdg_projectile 1
 rdg_projectile_speed 7
@@ -4129,7 +4130,7 @@ requirements fertiliseur_transgenetique
 time_cost 225
 hp_max 120
 rdg 12
-rdg_cover 50
+rdg_hit_rate 50
 rdg_range 12
 rdg_projectile 1
 rdg_projectile_speed 4

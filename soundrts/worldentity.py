@@ -122,10 +122,10 @@ class Entity:
 
     speed = 0
     speed_on_terrain = ()
-    mdg_cover_on_terrain = ()  # 添加近战命中修正
-    rdg_cover_on_terrain = ()  # 添加远程命中修正
-    mdg_dodge_on_terrain = ()  # 添加近战闪避修正
-    rdg_dodge_on_terrain = ()  # 添加远程闪避修正
+    mdg_hit_rate_on_terrain = ()  # 添加近战命中修正
+    rdg_hit_rate_on_terrain = ()  # 添加远程命中修正
+    mdg_dodge_rate_on_terrain = ()  # 添加近战闪避修正
+    rdg_dodge_rate_on_terrain = ()  # 添加远程闪避修正
     mdg_on_terrain = ()  # 攻击者所在地形上的近战攻击力修正
     rdg_on_terrain = ()  # 攻击者所在地形上的远程攻击力修正
     mdg_cd_on_terrain = ()  # 攻击者所在地形上的近战攻击冷却修正

@@ -4,6 +4,27 @@
 .. contents::
 
 
+1.5.0.4
+-------
+
+**改进：命中率字段改名为 mdg_hit_rate / rdg_hit_rate**
+
+- **问题**：规则里的命中率写成 ``mdg_cover`` / ``rdg_cover``（0 为 100%），英文 cover 易与地形隐蔽 ``cover`` / ``cover_vs`` 混淆。
+- **改进**：改为 ``mdg_hit_rate`` / ``rdg_hit_rate``，以及 ``*_hit_rate_vs``、``*_hit_rate_on_terrain``、``*_hit_rate_bonus``。不保留 ``*_cover`` 别名。地形 ``cover`` / ``cover_vs`` 不变。语音编号仍是 ``MDG_COVER``；gettext ``msgid`` 改为 ``mdg_hit_rate_vs`` / ``*_hit_rate_on_terrain``。
+- **范围**：``combat/hit_miss.py``；``definitions.py``；``worldunit``；``mods/aoe2/rules.txt``；``i18n/tts.pot``；``tts-*.po``；``test_unit_vs_params_runtime.py``；``test_changelog_15.py``；五语 ``modding.rst``。
+
+**改进：闪避率字段改名为 mdg_dodge_rate / rdg_dodge_rate**
+
+- **问题**：规则里的闪避率写成 ``mdg_dodge`` / ``rdg_dodge``，英文 dodge 易与 style 闪避音效 ``mdg_dodge`` / ``rdg_dodge`` 及地形 ``dodge_vs`` 混淆。
+- **改进**：改为 ``mdg_dodge_rate`` / ``rdg_dodge_rate``，以及 ``*_dodge_rate_vs``、``*_dodge_rate_on_terrain``、``*_dodge_rate_bonus``。不保留属性别名。地形 ``dodge_vs`` 与 style 闪避音效不变。语音编号仍是 ``MDG_DODGE``；gettext ``msgid`` 改为 ``mdg_dodge_rate_vs`` / ``*_dodge_rate_on_terrain``。
+- **范围**：``combat/hit_miss.py``；``definitions.py``；``worldunit``；``worldweapon.py``；``i18n/tts.pot``；``tts-*.po``；``test_unit_vs_params_runtime.py``；``test_changelog_15.py``；五语 ``modding.rst``。
+
+**改进：阵型排面完全由规则定义**
+
+- **问题**：排面名写死为 ``melee`` / ``ranged`` / ``siege``。``formation_rank_*`` 查找、射程回退、接敌先锋和语音标签都不能换名或加第四排。
+- **改进**：``def parameters`` 写 ``formation_ranks`` 列出排面（省略时从已有 ``formation_rank_<名>`` 推断）。每个名字对应 ``formation_rank_<名>`` 的 ``is_a`` 表。可选 ``formation_default_rank``、``formation_range_rank``（``rdg_range`` 大于 ``mdg_range`` 时）、``formation_front_rank``。接敌先锋用当前阵型 ``ranks`` 的第一排。``class formation`` 未写 ``ranks`` 则用 ``formation_ranks``。自定义名用 style ``title``；``melee`` / ``ranged`` / ``siege`` 仍可用内置语音。帝国 2 模组显式写出 ``formation_ranks melee ranged siege``。
+- **范围**：``world_formation.py``；``definitions.py``；``mods/aoe2/rules.txt``；``test_world_formation.py``；``test_changelog_15.py``；五语 ``modding.rst``。
+
 1.5.0.3
 -------
 

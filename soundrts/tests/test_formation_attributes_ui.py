@@ -86,6 +86,37 @@ def test_add_formation_attributes_lists_types(monkeypatch):
     assert _value(attrs, mp.FORMATION_RANK) == list(mp.FORMATION_RANK_MELEE)
 
 
+def test_add_formation_attributes_custom_rank_uses_style(monkeypatch):
+    monkeypatch.setattr(
+        "soundrts.attributes.formation_detail.formations_enabled", lambda: True
+    )
+    monkeypatch.setattr(
+        "soundrts.attributes.formation_detail.unit_can_form", lambda _u: True
+    )
+    monkeypatch.setattr(
+        "soundrts.attributes.formation_detail.formation_type_names",
+        lambda: ["formation_line"],
+    )
+    monkeypatch.setattr(
+        "soundrts.attributes.formation_detail.unit_formation_name",
+        lambda _u: "formation_line",
+    )
+    monkeypatch.setattr(
+        "soundrts.attributes.formation_detail.unit_formation_rank",
+        lambda _u: "cavalry",
+    )
+    monkeypatch.setattr(
+        "soundrts.attributes.formation_detail.style.get",
+        lambda name, _key: {
+            "formation_line": "line formation",
+            "cavalry": "cavalry rank",
+        }.get(name),
+    )
+    attrs = []
+    add_formation_attributes(SimpleNamespace(), attrs)
+    assert _value(attrs, mp.FORMATION_RANK) == ["cavalry rank"]
+
+
 def test_add_formation_attributes_hidden_when_off(monkeypatch):
     monkeypatch.setattr(
         "soundrts.attributes.formation_detail.formations_enabled", lambda: False

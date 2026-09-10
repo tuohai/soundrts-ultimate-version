@@ -598,10 +598,10 @@
 4435 ranged hit chance bonus vs
 4436 melee dodge bonus vs
 4437 ranged dodge bonus vs
-4438 mdg_cover_on_terrain
-4439 rdg_cover_on_terrain
-4440 mdg_dodge_on_terrain
-4441 rdg_dodge_on_terrain
+4438 mdg_hit_rate_on_terrain
+4439 rdg_hit_rate_on_terrain
+4440 mdg_dodge_rate_on_terrain
+4441 rdg_dodge_rate_on_terrain
 4442 speed bonus vs
 4443 speed_on_terrain
 4444 mana

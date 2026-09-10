@@ -17,11 +17,24 @@ user/voices/nuance/jre/
 
 ## 重建助手 JAR
 
+运行时 JRE 是 ``user/voices/nuance/jre``（**Java 7 / 32 位**）。
+必须用 **JDK 8**（或能打出 1.7 字节码的 javac）编译；
+勿用 JDK 17+ 的 ``--release 8``，否则会出现
+``UnsupportedClassVersionError`` / ``Nuance write failed``。
+
 ```bat
-javac -encoding UTF-8 -source 1.7 -target 1.7 -cp lib\jna.jar -d out src\soundrts\nuance\*.java
+javac -encoding UTF-8 -source 1.7 -target 1.7 -bootclasspath <jdk8>\jre\lib\rt.jar -cp lib\jna.jar -d out src\soundrts\nuance\*.java
 jar cfm nuance_ve_helper.jar out\manifest.txt -C out soundrts
 copy /Y lib\jna.jar jna.jar
 ```
+
+用 JDK 8 时若仅有 ``-source 1.7 -target 1.7`` 警告、无 bootclasspath，
+只要 ``Helper.class`` 主版本号为 **51**（Java 7）即可。
+
+## 立体声方向（对局内位置播报）
+
+``speak`` 可带 ``lv`` / ``rv``（0..1）左右增益；播放过程中可用 ``set_pan`` 实时改增益，
+以便玩家换格时方向跟新。玩家向说明见 ``doc_src/src/zh/player/voice-libraries.rst``。
 
 ## 打包注意
 

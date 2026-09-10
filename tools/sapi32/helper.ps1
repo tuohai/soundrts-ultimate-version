@@ -98,6 +98,52 @@ while ($true) {
                 Write-Reply @{ ok = $false; cmd = 'speak'; error = $_.Exception.Message }
             }
         }
+        'speak_to_file' {
+            $text = [string]$msg.text
+            $voiceName = [string]$msg.voice
+            $path = [string]$msg.path
+            $rate = 0
+            $volume = 100
+            try { $rate = [int]$msg.rate } catch {}
+            try { $volume = [int]$msg.volume } catch {}
+            if ($volume -lt 0) { $volume = 0 }
+            if ($volume -gt 100) { $volume = 100 }
+            if ($rate -lt -10) { $rate = -10 }
+            if ($rate -gt 10) { $rate = 10 }
+            if (-not $path) {
+                Write-Reply @{ ok = $false; cmd = 'speak_to_file'; error = 'missing path' }
+                break
+            }
+            if ($voiceName) {
+                $tok = Find-VoiceToken $voiceName
+                if ($null -eq $tok) {
+                    Write-Reply @{ ok = $false; cmd = 'speak_to_file'; error = "voice not found: $voiceName" }
+                    break
+                }
+                $sp.Voice = $tok
+            }
+            $sp.Rate = $rate
+            $sp.Volume = $volume
+            $stream = $null
+            $prev = $null
+            try {
+                $stream = New-Object -ComObject SAPI.SpFileStream
+                # SSFMCreateForWrite = 3
+                $stream.Open($path, 3)
+                try { $prev = $sp.AudioOutputStream } catch { $prev = $null }
+                $sp.AudioOutputStream = $stream
+                # Synchronous speak into WAV
+                $sp.Speak($text, 0) | Out-Null
+                Write-Reply @{ ok = $true; cmd = 'speak_to_file'; path = $path }
+            } catch {
+                Write-Reply @{ ok = $false; cmd = 'speak_to_file'; error = $_.Exception.Message }
+            } finally {
+                try { $sp.AudioOutputStream = $prev } catch {}
+                if ($null -ne $stream) {
+                    try { $stream.Close() } catch {}
+                }
+            }
+        }
         'stop' {
             try {
                 $sp.Speak('', 3) | Out-Null  # purge + async empty

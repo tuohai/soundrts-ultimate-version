@@ -471,6 +471,8 @@ class AttributeEffectsMixin:
                     return True
                 if tok.startswith('transport_'):
                     return True
+                if tok.startswith('formation_rank_'):
+                    return True
                 if tok.endswith('_targets'):
                     return True
                 # 特殊键

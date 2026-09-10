@@ -1,6 +1,7 @@
-# SoundRTS 核心依赖
+# SoundRTS core dependencies
 upnpclient
-pygame
+pygame-ce
+wxPython
 accessible_output2
 chardet
 cloudpickle
@@ -11,6 +12,6 @@ Pygments
 cx_Freeze
 pytest
 
-# 现代网络系统依赖 (新增)
+# Network stack
 websockets>=15.0.0
 cryptography>=45.0.0

@@ -26,8 +26,8 @@ _SCALED_TRANSPORT_STATS = frozenset({
     'mdg_minimal_range_vs', 'rdg_minimal_range_vs',
     'mdg_splash', 'rdg_splash',
     'mdg_radius', 'rdg_radius',
-    'mdg_cover', 'rdg_cover', 'mdg_cover_vs', 'rdg_cover_vs',
-    'mdg_dodge', 'rdg_dodge', 'mdg_dodge_vs', 'rdg_dodge_vs',
+    'mdg_hit_rate', 'rdg_hit_rate', 'mdg_hit_rate_vs', 'rdg_hit_rate_vs',
+    'mdg_dodge_rate', 'rdg_dodge_rate', 'mdg_dodge_rate_vs', 'rdg_dodge_rate_vs',
 })
 
 

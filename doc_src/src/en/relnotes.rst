@@ -5,6 +5,27 @@ Release notes
 .. contents::
 
 
+1.5.0.4
+-------
+
+**Change: hit-chance fields renamed to mdg_hit_rate / rdg_hit_rate**
+
+- **Issue**: Hit chance in rules was ``mdg_cover`` / ``rdg_cover`` (0 means 100%), easy to confuse with terrain concealment ``cover`` / ``cover_vs``.
+- **Change**: Renamed to ``mdg_hit_rate`` / ``rdg_hit_rate``, plus ``*_hit_rate_vs``, ``*_hit_rate_on_terrain``, ``*_hit_rate_bonus``. No ``*_cover`` aliases. Terrain ``cover`` / ``cover_vs`` unchanged. TTS ids stay ``MDG_COVER``; gettext ``msgid`` is now ``mdg_hit_rate_vs`` / ``*_hit_rate_on_terrain``.
+- **Scope**: ``combat/hit_miss.py``; ``definitions.py``; ``worldunit``; ``mods/aoe2/rules.txt``; ``i18n/tts.pot``; ``tts-*.po``; ``test_unit_vs_params_runtime.py``; ``test_changelog_15.py``; ``modding.rst`` in all five languages.
+
+**Change: dodge-chance fields renamed to mdg_dodge_rate / rdg_dodge_rate**
+
+- **Issue**: Dodge chance in rules was ``mdg_dodge`` / ``rdg_dodge``, easy to confuse with style dodge sounds ``mdg_dodge`` / ``rdg_dodge`` and terrain ``dodge_vs``.
+- **Change**: Renamed to ``mdg_dodge_rate`` / ``rdg_dodge_rate``, plus ``*_dodge_rate_vs``, ``*_dodge_rate_on_terrain``, ``*_dodge_rate_bonus``. No attribute aliases. Terrain ``dodge_vs`` and style dodge sounds unchanged. TTS ids stay ``MDG_DODGE``; gettext ``msgid`` is now ``mdg_dodge_rate_vs`` / ``*_dodge_rate_on_terrain``.
+- **Scope**: ``combat/hit_miss.py``; ``definitions.py``; ``worldunit``; ``worldweapon.py``; ``i18n/tts.pot``; ``tts-*.po``; ``test_unit_vs_params_runtime.py``; ``test_changelog_15.py``; ``modding.rst`` in all five languages.
+
+**Change: formation ranks are fully rule-driven**
+
+- **Issue**: Rank names were hardcoded as ``melee`` / ``ranged`` / ``siege``. ``formation_rank_*`` lookup, the range fallback, combat front, and spoken labels could not be renamed or given a fourth rank.
+- **Change**: ``def parameters`` lists ranks in ``formation_ranks`` (if omitted, names are inferred from existing ``formation_rank_<name>`` keys). Each name has an ``is_a`` table ``formation_rank_<name>``. Optional ``formation_default_rank``, ``formation_range_rank`` (when ``rdg_range`` is greater than ``mdg_range``), and ``formation_front_rank``. Combat standoff uses the first rank of the current formation's ``ranks``. A ``class formation`` with no ``ranks`` uses ``formation_ranks``. Custom names use a style ``title``; ``melee`` / ``ranged`` / ``siege`` still have built-in TTS. The AoE2 mod writes ``formation_ranks melee ranged siege`` explicitly.
+- **Scope**: ``world_formation.py``; ``definitions.py``; ``mods/aoe2/rules.txt``; ``test_world_formation.py``; ``test_changelog_15.py``; ``modding.rst`` in all five languages.
+
 1.5.0.3
 -------
 

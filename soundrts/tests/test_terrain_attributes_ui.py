@@ -19,10 +19,10 @@ class _FakeMain:
 
 def _model(**kwargs):
     defaults = {
-        "mdg_cover_on_terrain": (),
-        "rdg_cover_on_terrain": (),
-        "mdg_dodge_on_terrain": (),
-        "rdg_dodge_on_terrain": (),
+        "mdg_hit_rate_on_terrain": (),
+        "rdg_hit_rate_on_terrain": (),
+        "mdg_dodge_rate_on_terrain": (),
+        "rdg_dodge_rate_on_terrain": (),
         "mdg_on_terrain": (),
         "rdg_on_terrain": (),
         "mdg_cd_on_terrain": (),
@@ -72,7 +72,7 @@ def test_cover_list_does_not_block_combat_terrain_attrs():
     """cover/dodge are string lists; must not crash before combat terrain rows."""
     u = types.SimpleNamespace(
         model=_model(
-            mdg_cover_on_terrain=("marsh", "60"),
+            mdg_hit_rate_on_terrain=("marsh", "60"),
             mdg_on_terrain=("marsh", "-.33"),
             charge_mdg_terrain=("marsh", ".2"),
         )

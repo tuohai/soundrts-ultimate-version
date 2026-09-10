@@ -190,8 +190,8 @@ de ``mdg`` / ``mdg_cd`` (decimais permitidos; armazenados ×1000 internamente).
    * - ``charge_mdg_cd_on_terrain`` / ``charge_rdg_cd_on_terrain``
      - Bônus de cooldown de investida (positivo = cooldown de investida maior)
 
-Acerto/esquiva no terreno do **alvo** (existente): ``mdg_cover_on_terrain``,
-``rdg_cover_on_terrain``, ``mdg_dodge_on_terrain``, ``rdg_dodge_on_terrain``.
+Acerto/esquiva no terreno do **alvo** (existente): ``mdg_hit_rate_on_terrain``,
+``rdg_hit_rate_on_terrain``, ``mdg_dodge_rate_on_terrain``, ``rdg_dodge_rate_on_terrain``.
 
 **Tela de atributos (Alt+V):** lista as linhas ``*_on_terrain`` / carga da unidade; as leituras ao vivo de dano / cooldown / velocidade incluem ``*_vs`` do terreno da casa atual mais ``*_on_terrain`` (``*_vs`` de terreno = percentual decimal; ``speed_on_terrain`` continua absoluto).
 

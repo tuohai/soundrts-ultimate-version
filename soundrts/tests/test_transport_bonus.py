@@ -71,10 +71,10 @@ def test_passenger_bonus_dotted_vs_updates_dict():
 
 
 def test_load_bonus_dotted_cover_vs_is_scaled():
-    unit = types.SimpleNamespace(mdg_cover_vs={"footman": 0})
+    unit = types.SimpleNamespace(mdg_hit_rate_vs={"footman": 0})
     stats = {}
-    _apply_transport_bonus(unit, {"mdg_cover_vs.footman": 10}, stats)
-    assert unit.mdg_cover_vs["footman"] == 10000
-    assert stats == {"mdg_cover_vs.footman": 10000}
+    _apply_transport_bonus(unit, {"mdg_hit_rate_vs.footman": 10}, stats)
+    assert unit.mdg_hit_rate_vs["footman"] == 10000
+    assert stats == {"mdg_hit_rate_vs.footman": 10000}
     _remove_transport_bonus(unit, stats)
-    assert unit.mdg_cover_vs["footman"] == 0
+    assert unit.mdg_hit_rate_vs["footman"] == 0

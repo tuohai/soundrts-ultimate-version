@@ -59,10 +59,10 @@ class Weapon(Entity):
     rdg_prep_end_time = 0
     mdg_ready = 0
     rdg_ready = 0
-    mdg_cover = 0
-    rdg_cover = 0
-    mdg_dodge = 0
-    rdg_dodge = 0
+    mdg_hit_rate = 0
+    rdg_hit_rate = 0
+    mdg_dodge_rate = 0
+    rdg_dodge_rate = 0
     mdg_status_duration = 0      # 近战伤害持续时间
     rdg_status_duration = 0      # 远程伤害持续时间
     damage_seq = None # 攻击序列
@@ -113,10 +113,10 @@ class Weapon(Entity):
     rdg_range_vs: dict = dict()
     mdg_minimal_range_vs: dict = dict()
     rdg_minimal_range_vs: dict = dict()
-    mdg_cover_vs: dict = dict()
-    rdg_cover_vs: dict = dict()
-    mdg_dodge_vs: dict = dict()
-    rdg_dodge_vs: dict = dict()
+    mdg_hit_rate_vs: dict = dict()
+    rdg_hit_rate_vs: dict = dict()
+    mdg_dodge_rate_vs: dict = dict()
+    rdg_dodge_rate_vs: dict = dict()
     mdg_splash_vs: dict = dict()
     rdg_splash_vs: dict = dict()
     mdg_splash_decay_min_vs: dict = dict()
@@ -192,10 +192,10 @@ class Weapon(Entity):
             ("rdg_cd", int),
             ("mdg_ready", int),
             ("rdg_ready", int),
-            ("mdg_cover", int),
-            ("rdg_cover", int),
-            ("mdg_dodge", int),
-            ("rdg_dodge", int),
+            ("mdg_hit_rate", int),
+            ("rdg_hit_rate", int),
+            ("mdg_dodge_rate", int),
+            ("rdg_dodge_rate", int),
             ("mdg_status_duration", int),
             ("rdg_status_duration", int),
             ("mdg_seq_times", int),
@@ -231,10 +231,10 @@ class Weapon(Entity):
             ("rdg_radius_bonus", float),
             ("mdg_ready_bonus", float),
             ("rdg_ready_bonus", float),
-            ("mdg_cover_bonus", float),
-            ("rdg_cover_bonus", float),
-            ("mdg_dodge_bonus", float),
-            ("rdg_dodge_bonus", float),
+            ("mdg_hit_rate_bonus", float),
+            ("rdg_hit_rate_bonus", float),
+            ("mdg_dodge_rate_bonus", float),
+            ("rdg_dodge_rate_bonus", float),
             ("exp_hp_cost_bonus", float),
             ("exp_dgf_bonus", float),
         ]:
@@ -298,8 +298,8 @@ class Weapon(Entity):
             "mdg_ready_vs", "rdg_ready_vs",
             "mdg_range_vs", "rdg_range_vs",
             "mdg_minimal_range_vs", "rdg_minimal_range_vs",
-            "mdg_cover_vs", "rdg_cover_vs",
-            "mdg_dodge_vs", "rdg_dodge_vs",
+            "mdg_hit_rate_vs", "rdg_hit_rate_vs",
+            "mdg_dodge_rate_vs", "rdg_dodge_rate_vs",
             "mdg_splash_vs", "rdg_splash_vs",
             "mdg_splash_decay_min_vs", "rdg_splash_decay_min_vs",
             "mdg_radius_vs", "rdg_radius_vs",
@@ -606,8 +606,8 @@ class Weapon(Entity):
             "mdg_delay", "rdg_delay", "mdg_projectile_speed", "rdg_projectile_speed",
             "projectile_speed", "mdg_radius", "rdg_radius",
             "mdg_splash", "rdg_splash", "mdg_splash_decay_min", "rdg_splash_decay_min",
-            "mdg_ready", "rdg_ready", "mdg_cover", "rdg_cover",
-            "mdg_dodge", "rdg_dodge", "mdg_status_duration", "rdg_status_duration",
+            "mdg_ready", "rdg_ready", "mdg_hit_rate", "rdg_hit_rate",
+            "mdg_dodge_rate", "rdg_dodge_rate", "mdg_status_duration", "rdg_status_duration",
             "mdg_seq_times", "rdg_seq_times", "mdg_seq_interval", "rdg_seq_interval",
             "mdg_seq_secondary", "rdg_seq_secondary",
             "mdg_seq_secondary_rdg", "rdg_seq_secondary_rdg",
@@ -622,7 +622,7 @@ class Weapon(Entity):
             "mdg_cd_bonus", "rdg_cd_bonus", "mdg_range_bonus", "rdg_range_bonus",
             "mdg_minimal_range_bonus", "rdg_minimal_range_bonus", "mdg_splash_bonus", "rdg_splash_bonus",
             "mdg_radius_bonus", "rdg_radius_bonus", "mdg_ready_bonus", "rdg_ready_bonus",
-            "mdg_cover_bonus", "rdg_cover_bonus", "mdg_dodge_bonus", "rdg_dodge_bonus",
+            "mdg_hit_rate_bonus", "rdg_hit_rate_bonus", "mdg_dodge_rate_bonus", "rdg_dodge_rate_bonus",
             "exp_hp_cost_bonus", "exp_dgf_bonus"
         ]
         
@@ -677,8 +677,8 @@ class Weapon(Entity):
             "mdg_ready_vs", "rdg_ready_vs",
             "mdg_range_vs", "rdg_range_vs",
             "mdg_minimal_range_vs", "rdg_minimal_range_vs",
-            "mdg_cover_vs", "rdg_cover_vs",
-            "mdg_dodge_vs", "rdg_dodge_vs",
+            "mdg_hit_rate_vs", "rdg_hit_rate_vs",
+            "mdg_dodge_rate_vs", "rdg_dodge_rate_vs",
             "mdg_splash_vs", "rdg_splash_vs",
             "mdg_splash_decay_min_vs", "rdg_splash_decay_min_vs",
             "mdg_radius_vs", "rdg_radius_vs",

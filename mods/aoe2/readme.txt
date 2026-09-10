@@ -40,7 +40,7 @@
 单位：民兵→剑士→…→冠军剑士；步弓手→弩手→劲弩手；长矛兵→长枪兵→长戟兵；
       轻型冲车、轻型/中型投石车、巨型投石机、游侠、甲胄骑兵 等。
 铁匠铺：锻造/铸铁/鼓风炉、步兵甲、骑兵甲、箭羽/锥子箭/护腕、射手甲。
-大学：弹道学用 ``projectile_lead``；飞行**速度**（格/秒，不是飞多久）用 ``rdg_projectile_speed`` / ``mdg_projectile_speed``（箭 7、投石车 3.5、投石机 1.6）。远程伤害前摇用 ``rdg_ready``（掷斧等近战投射物用 ``mdg_ready``），数值对齐 DE Attack Delay；``*_cd`` = RoF − 前摇。战船/塔/城防前摇为 0。命中率用 ``rdg_cover`` / ``mdg_cover``（0–100，省略=100%%），对齐 DE Accuracy；拇指环另加 ``rdg_cover`` 至满。
+大学：弹道学用 ``projectile_lead``；飞行**速度**（格/秒，不是飞多久）用 ``rdg_projectile_speed`` / ``mdg_projectile_speed``（箭 7、投石车 3.5、投石机 1.6）。远程伤害前摇用 ``rdg_ready``（掷斧等近战投射物用 ``mdg_ready``），数值对齐 DE Attack Delay；``*_cd`` = RoF − 前摇。战船/塔/城防前摇为 0。命中率用 ``rdg_hit_rate`` / ``mdg_hit_rate``（0–100，省略=100%%），对齐 DE Accuracy；拇指环另加 ``rdg_hit_rate`` 至满。
 已禁用原版 fantasy 科技。
 
 

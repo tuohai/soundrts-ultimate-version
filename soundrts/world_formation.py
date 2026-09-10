@@ -4,8 +4,10 @@ Enable with ``def parameters`` / ``formations 1``. Layout types are
 ``class formation`` definitions (shape, spacing, ranks). Cartesian shapes
 are line / box / staggered / flank; polar packing is ring / arc (aliases
 circle, wedge, …). An unknown shape with radius / arc_span / rings still
-uses polar packing. Military types are listed in ``formation_units``
-(``is_a`` match) or flagged with ``use_formation 1``.
+uses polar packing. Rank names come from ``formation_ranks`` and
+``formation_rank_<name>`` ``is_a`` tables (not hardcoded). Military types
+are listed in ``formation_units`` (``is_a`` match) or flagged with
+``use_formation 1``.
 """
 
 from .definitions import MAX_NB_OF_RESOURCE_TYPES
@@ -120,7 +122,9 @@ class FormationRules:
             d[attr] = parsed
 
 
-_DEFAULT_RANKS = ("melee", "ranged", "siege")
+# Last resort when parameters omit formation_ranks and have no formation_rank_* keys.
+_FALLBACK_RANKS = ("melee", "ranged", "siege")
+_RANK_LIST_PREFIX = "formation_rank_"
 _CARTESIAN_SHAPES = ("line", "box", "staggered", "flank")
 _POLAR_SHAPES = ("ring", "arc")
 _SHAPE_ALIASES = {
@@ -196,6 +200,77 @@ def _rules():
     from .definitions import rules
 
     return rules
+
+
+def _parameters_dict():
+    try:
+        params = _rules().get_dict("parameters")
+    except Exception:
+        return {}
+    return params if isinstance(params, dict) else {}
+
+
+def _param(attr, default=None):
+    try:
+        return _rules().get("parameters", attr, default)
+    except Exception:
+        return default
+
+
+def _inferred_rank_names():
+    names = []
+    prefix = _RANK_LIST_PREFIX
+    for key in _parameters_dict():
+        s = str(key)
+        if not s.startswith(prefix):
+            continue
+        name = s[len(prefix) :]
+        if name and name not in names:
+            names.append(name)
+    return tuple(names)
+
+
+def formation_rank_names():
+    """Rank vocabulary: parameters.formation_ranks, else formation_rank_* keys."""
+    listed = _as_name_list(_param("formation_ranks", ()))
+    inferred = _inferred_rank_names()
+    if listed:
+        extra = tuple(n for n in inferred if n not in listed)
+        return listed + extra
+    if inferred:
+        return inferred
+    return _FALLBACK_RANKS
+
+
+def formation_default_rank() -> str:
+    explicit = _one_name(_param("formation_default_rank", ""), "")
+    if explicit:
+        return explicit
+    names = formation_rank_names()
+    return names[0] if names else ""
+
+
+def formation_range_rank() -> str:
+    """Rank assigned when rdg_range > mdg_range and no is_a table matched."""
+    explicit = _one_name(_param("formation_range_rank", ""), "")
+    if explicit:
+        return explicit
+    names = formation_rank_names()
+    if "ranged" in names:
+        return "ranged"
+    return ""
+
+
+def formation_front_rank(spec=None) -> str:
+    """Combat standoff rank: first of the current formation's ranks, else parameter."""
+    ranks = (spec or {}).get("ranks") or ()
+    if ranks:
+        return ranks[0]
+    explicit = _one_name(_param("formation_front_rank", ""), "")
+    if explicit:
+        return explicit
+    names = formation_rank_names()
+    return names[0] if names else ""
 
 
 def formations_enabled() -> bool:
@@ -283,16 +358,20 @@ def unit_formation_rank(unit) -> str:
     try:
         rules = _rules()
     except Exception:
-        return "melee"
-    for rank in ("melee", "ranged", "siege"):
-        listed = rules.get("parameters", "formation_rank_%s" % rank, ())
+        rules = None
+    for rank in formation_rank_names():
+        listed = ()
+        if rules is not None:
+            listed = rules.get("parameters", "%s%s" % (_RANK_LIST_PREFIX, rank), ())
         if unit_matches_types(unit, listed):
             return rank
-    rdg_range = int(getattr(unit, "rdg_range", 0) or 0)
-    mdg_range = int(getattr(unit, "mdg_range", 0) or 0)
-    if rdg_range > mdg_range and rdg_range > PRECISION:
-        return "ranged"
-    return "melee"
+    range_rank = formation_range_rank()
+    if range_rank:
+        rdg_range = int(getattr(unit, "rdg_range", 0) or 0)
+        mdg_range = int(getattr(unit, "mdg_range", 0) or 0)
+        if rdg_range > mdg_range and rdg_range > PRECISION:
+            return range_rank
+    return formation_default_rank()
 
 
 def unit_formation_name(unit) -> str:
@@ -340,7 +419,7 @@ def _spec(name):
     shape = getattr(cls, "shape", "line") or "line"
     if isinstance(shape, (list, tuple)):
         shape = shape[0] if shape else "line"
-    ranks = _as_name_list(getattr(cls, "ranks", ()) or ()) or _DEFAULT_RANKS
+    ranks = _as_name_list(getattr(cls, "ranks", ()) or ()) or formation_rank_names()
     keep = getattr(cls, "keep_pace", 1)
     if keep in (-1, None):
         keep_pace = _param_keep_pace()
@@ -880,7 +959,7 @@ def _polar_rank_offsets(units, spec, right_x, right_y, kind):
 
 
 def offsets_for_units(units, spec, place=None, margin=500, right_x=1000, right_y=0):
-    """Assign (along, back) mm to each unit (AoE2 ranks: melee front, siege back)."""
+    """Assign (along, back) mm to each unit (spec ranks: first listed in front)."""
     if not units or spec is None:
         return []
     max_cols = _max_cols(spec, place, margin)
@@ -1194,9 +1273,17 @@ def apply_idle_rearrange(units):
             _rearrange_local_cluster(cluster, spec)
 
 
-def _front_standoff(units):
-    melee = [u for u in units if unit_formation_rank(u) == "melee"]
-    sample = melee or list(units)
+def _front_rank_units(units, spec=None):
+    name = formation_front_rank(spec)
+    if name:
+        front = [u for u in units if unit_formation_rank(u) == name]
+        if front:
+            return front
+    return list(units)
+
+
+def _front_standoff(units, spec=None):
+    sample = _front_rank_units(units, spec)
     ranges = []
     for unit in sample:
         r = int(getattr(unit, "mdg_range", 0) or 0)
@@ -1238,7 +1325,7 @@ def _threat_place_xy(units, threat):
     return place, ex, ey
 
 
-def _combat_anchor(units, threat):
+def _combat_anchor(units, threat, spec=None):
     tplace, ex, ey = _threat_place_xy(units, threat)
     if tplace is None:
         return None, None
@@ -1248,10 +1335,9 @@ def _combat_anchor(units, threat):
     fallback = int(getattr(units[0], "o", 90) or 90)
     facing = _facing_from_delta(ex - cx, ey - cy, fallback)
     fx, fy = _forward_axis(facing)
-    standoff = _front_standoff(units)
+    standoff = _front_standoff(units, spec)
     enemy_proj = (ex * fx + ey * fy) // 1000
-    melee = [u for u in units if unit_formation_rank(u) == "melee"]
-    sample = melee or list(units)
+    sample = _front_rank_units(units, spec)
     front_proj = max(
         (int(getattr(u, "x", 0) or 0) * fx + int(getattr(u, "y", 0) or 0) * fy) // 1000
         for u in sample
@@ -1427,7 +1513,7 @@ def formation_blocker(walker, target):
 
 
 def apply_combat_formation(units, threat=None, go_pairs=None):
-    """Face the threat and park melee in front, ranged/siege behind."""
+    """Face the threat and park the first listed rank in front, later ranks behind."""
     alive = [u for u in units if int(getattr(u, "hp", 0) or 0) > 0]
     if go_pairs is None:
         formable = [u for u in alive if unit_can_form(u)]
@@ -1443,7 +1529,7 @@ def apply_combat_formation(units, threat=None, go_pairs=None):
         spec = _spec(unit_formation_name(layer_units[0]))
         if spec is None:
             continue
-        dummy, facing = _combat_anchor(layer_units, threat)
+        dummy, facing = _combat_anchor(layer_units, threat, spec)
         if dummy is None:
             continue
         slots = assign_formation_slots(layer_units, dummy, spec, facing=facing)

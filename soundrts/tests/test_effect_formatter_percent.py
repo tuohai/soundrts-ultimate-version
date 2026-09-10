@@ -19,7 +19,7 @@ class _Parent:
 
 def test_zero_bonus_omitted_but_info_shown():
     fmt = EffectFormatter(_Parent())
-    assert fmt._format_bonus_effect_attribute_rows(["rdg_cover", 0]) == []
+    assert fmt._format_bonus_effect_attribute_rows(["rdg_hit_rate", 0]) == []
     rows = fmt._format_effect_attribute_rows(["info", "8510"])
     assert rows == [("", [8510], ())]
 

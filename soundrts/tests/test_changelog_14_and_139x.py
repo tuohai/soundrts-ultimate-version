@@ -11,7 +11,7 @@
            can_use_tech 单位无法显示菜单 bug。
 - 1.3.9.6：upgrade cost/time_cost/food_cost 支持百分比与固定值、can_use_tech / can_use_skill 拆分。
 - 1.3.9.5：m/n side / type 过滤、cfg/language.txt 多语言。
-- 1.3.9.3：mdg_cover/dodge_on_terrain、research 应用于未训练单位。
+- 1.3.9.3：mdg_hit_rate/dodge_on_terrain、research 应用于未训练单位。
 - 1.3.9.2：upgrade cost 影响训练 / 升级 / 技能成本、splash_hit 音效、属性界面浮点。
 - 1.3.9.1：splash_vs / decay_min_vs / radius_vs、death 着地延迟、投射物低击高限制。
 - 1.3.9.0：extraction_time/qty 恢复、Alt + V 属性界面、attribute_key 绑定。
@@ -303,18 +303,18 @@ def test_language_txt_loading_order():
 
 
 # =============================================================================
-# 1.3.9.3 — mdg_cover/dodge_on_terrain + research 应用于未训练单位
+# 1.3.9.3 — mdg_hit_rate/dodge_on_terrain + research 应用于未训练单位
 # =============================================================================
 
 
 def test_terrain_modifier_attributes_used_in_hit_miss():
     src = _source("soundrts", "combat", "hit_miss.py")
-    # 主路径：mdg_cover_on_terrain / rdg_cover_on_terrain
-    assert "self.mdg_cover_on_terrain" in src
-    assert "self.rdg_cover_on_terrain" in src
-    # 闪避修正
-    assert "self.mdg_dodge_on_terrain" in src
-    assert "self.rdg_dodge_on_terrain" in src
+    # 主路径：mdg_hit_rate_on_terrain / rdg_hit_rate_on_terrain
+    assert "self.mdg_hit_rate_on_terrain" in src
+    assert "self.rdg_hit_rate_on_terrain" in src
+    # 闪避修正（getattr 读取）
+    assert "mdg_dodge_rate_on_terrain" in src
+    assert "rdg_dodge_rate_on_terrain" in src
 
 
 def test_terrain_dodge_lookup_pattern():
@@ -325,10 +325,10 @@ def test_terrain_dodge_lookup_pattern():
 
 def test_entity_defaults_for_terrain_attrs():
     src = _source("soundrts", "worldentity.py")
-    assert "mdg_cover_on_terrain = ()" in src
-    assert "rdg_cover_on_terrain = ()" in src
-    assert "mdg_dodge_on_terrain = ()" in src
-    assert "rdg_dodge_on_terrain = ()" in src
+    assert "mdg_hit_rate_on_terrain = ()" in src
+    assert "rdg_hit_rate_on_terrain = ()" in src
+    assert "mdg_dodge_rate_on_terrain = ()" in src
+    assert "rdg_dodge_rate_on_terrain = ()" in src
 
 
 # =============================================================================

@@ -123,10 +123,10 @@ class CombatAttributes:
         self.main_interface._add_bonus_attribute(attrs, u, "rdg_range", "r", mp.RANGED_RANGE, True)
         
         # 命中率和闪避率
-        self.main_interface._add_bonus_attribute(attrs, u, "mdg_cover", "", mp.MDG_COVER, True)
-        self.main_interface._add_bonus_attribute(attrs, u, "rdg_cover", "", mp.RDG_COVER, True)
-        self.main_interface._add_bonus_attribute(attrs, u, "mdg_dodge", "", mp.MDG_DODGE, True)
-        self.main_interface._add_bonus_attribute(attrs, u, "rdg_dodge", "", mp.RDG_DODGE, True)
+        self.main_interface._add_bonus_attribute(attrs, u, "mdg_hit_rate", "", mp.MDG_COVER, True)
+        self.main_interface._add_bonus_attribute(attrs, u, "rdg_hit_rate", "", mp.RDG_COVER, True)
+        self.main_interface._add_bonus_attribute(attrs, u, "mdg_dodge_rate", "", mp.MDG_DODGE, True)
+        self.main_interface._add_bonus_attribute(attrs, u, "rdg_dodge_rate", "", mp.RDG_DODGE, True)
         
         # 溅射伤害
         self.main_interface._add_bonus_attribute(attrs, u, "mdg_splash", "", mp.MDG_SPLASH, True)
@@ -458,10 +458,10 @@ class CombatAttributes:
     def add_terrain_modifier_attributes(self, u, attrs):
         """添加地形修正相关属性（cover/dodge + 攻击/冷却/冲锋地形百分比）。"""
         cover_dodge_map = (
-            ("mdg_cover_on_terrain", mp.MDG_COVER_ON_TERRAIN),
-            ("rdg_cover_on_terrain", mp.RDG_COVER_ON_TERRAIN),
-            ("mdg_dodge_on_terrain", mp.MDG_DODGE_ON_TERRAIN),
-            ("rdg_dodge_on_terrain", mp.RDG_DODGE_ON_TERRAIN),
+            ("mdg_hit_rate_on_terrain", mp.MDG_COVER_ON_TERRAIN),
+            ("rdg_hit_rate_on_terrain", mp.RDG_COVER_ON_TERRAIN),
+            ("mdg_dodge_rate_on_terrain", mp.MDG_DODGE_ON_TERRAIN),
+            ("rdg_dodge_rate_on_terrain", mp.RDG_DODGE_ON_TERRAIN),
         )
         for attr_name, msg_key in cover_dodge_map:
             terrain_text = self._format_terrain_pair_list(

@@ -95,10 +95,10 @@ def _rules_stat_sets():
             "mdg_cd",
             "rdg_splash",
             "mdg_splash",
-            "mdg_cover",
-            "rdg_cover",
-            "mdg_dodge",
-            "rdg_dodge",
+            "mdg_hit_rate",
+            "rdg_hit_rate",
+            "mdg_dodge_rate",
+            "rdg_dodge_rate",
         }
     return precision, ints
 
@@ -187,7 +187,7 @@ def split_effect_bonus_args(args):
             target = args[i + 1]
             value = args[i + 2]
             # PRECISION-scale vs bonuses whose root is a precision property
-            # (mdg_vs, mdf_vs, mdg_cover_vs, …). Keep percents as strings.
+            # (mdg_vs, mdf_vs, mdg_hit_rate_vs, …). Keep percents as strings.
             root = st[:-3] if st.endswith("_vs") else ""
             if (
                 root

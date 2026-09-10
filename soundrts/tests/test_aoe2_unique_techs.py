@@ -53,7 +53,7 @@ def test_warwolf_trebuchet_blast(aoe2_rules):
     eff = str(_effect(aoe2_rules, "warwolf"))
     assert "rdg_splash" in eff and "rdg_radius" in eff and "trebuchet" in eff
     assert "200" in eff
-    assert "rdg_cover" in eff and "100" in eff
+    assert "rdg_hit_rate" in eff and "100" in eff
     assert "warwolf" in _techs(aoe2_rules, "trebuchet")
 
 

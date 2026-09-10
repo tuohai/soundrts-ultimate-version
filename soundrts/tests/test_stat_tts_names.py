@@ -37,9 +37,9 @@ def test_plain_mdg_vs_uses_translated_msg():
 def test_other_plain_vs_stats_use_translated_msg():
     assert get_stat_tts_name("mdf_vs") == list(mp.MDF_VS)
     assert get_stat_tts_name("rdf_vs") == list(mp.RDF_VS)
-    assert get_stat_tts_name("mdg_cover_vs") == list(mp.MDG_COVER_VS)
-    assert get_stat_tts_name("rdg_dodge_vs") == list(mp.RDG_DODGE_VS)
-    for raw in ("mdf_vs", "rdf_vs", "mdg_cover_vs", "rdg_dodge_vs"):
+    assert get_stat_tts_name("mdg_hit_rate_vs") == list(mp.MDG_COVER_VS)
+    assert get_stat_tts_name("rdg_dodge_rate_vs") == list(mp.RDG_DODGE_VS)
+    for raw in ("mdf_vs", "rdf_vs", "mdg_hit_rate_vs", "rdg_dodge_rate_vs"):
         assert raw not in get_stat_tts_name(raw)
 
 

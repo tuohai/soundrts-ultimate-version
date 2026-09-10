@@ -8,7 +8,7 @@ from soundrts.lib.nofloat import PRECISION, to_int
 
 ALLOWED_STATS = """
 hp hp_max hp_regen mana mana_max mana_regen
-speed mdg rdg mdg_ready rdg_ready mdg_cd rdg_cd mdg_cover rdg_cover mdg_dodge rdg_dodge mdf rdf mdg_range rdg_range mdg_minimal_range rdg_minimal_range mdg_splash rdg_splash mdg_splash_decay_min rdg_splash_decay_min
+speed mdg rdg mdg_ready rdg_ready mdg_cd rdg_cd mdg_hit_rate rdg_hit_rate mdg_dodge_rate rdg_dodge_rate mdf rdf mdg_range rdg_range mdg_minimal_range rdg_minimal_range mdg_splash rdg_splash mdg_splash_decay_min rdg_splash_decay_min
 mdg_radius rdg_radius minimal_mdg minimal_rdg harm_level harm_range harm_ready harm_cd harm_radius heal_level heal_cd heal_radius heal_range heal_ready buff_radius
 time_cost population_cost production_time production_qty
 """.split()

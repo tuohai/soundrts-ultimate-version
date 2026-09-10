@@ -872,10 +872,10 @@ _precision_properties = {
     "rdg_minimal_range",
     "mdg_status_duration",
     "rdg_status_duration",
-    "mdg_cover",
-    "rdg_cover",
-    "mdg_dodge",
-    "rdg_dodge",
+    "mdg_hit_rate",  # hit chance 0–100; 0 means 100%. Not terrain cover.
+    "rdg_hit_rate",
+    "mdg_dodge_rate",  # dodge chance. Not style dodge sounds or terrain dodge_vs.
+    "rdg_dodge_rate",
     "minimal_damage",
     "mdg_minimal_damage",
     "rdg_minimal_damage",
@@ -1001,8 +1001,11 @@ class Rules(_Definitions):
         "market_currency",  # resource token used as buy/sell currency (default resource1)
         "shape",  # formation layout: line / box / staggered / flank / ring / arc (aliases: circle, wedge, …)
         "ring_rank",  # formation polar: in = first rank inner; out = first rank outer
-        "formation_rank",  # unit rank bucket: melee / ranged / siege
+        "formation_rank",  # unit rank bucket; names come from parameters.formation_ranks
         "default_formation",  # parameters: class formation type name
+        "formation_front_rank",  # parameters: combat standoff rank if formation ranks omitted
+        "formation_default_rank",  # parameters: rank when no is_a / range match
+        "formation_range_rank",  # parameters: rank when rdg_range > mdg_range
         "formation",  # runtime current formation type (also a rules default)
     }
 
@@ -1016,10 +1019,10 @@ class Rules(_Definitions):
         "rdg_range",
         "mdg_cd",
         "rdg_cd",
-        "mdg_cover",
-        "rdg_cover",
-        "mdg_dodge",
-        "rdg_dodge",
+        "mdg_hit_rate",
+        "rdg_hit_rate",
+        "mdg_dodge_rate",
+        "rdg_dodge_rate",
     }
 
     def parse_unit_definition(self, type_name, attrs):
@@ -1270,8 +1273,8 @@ class Rules(_Definitions):
                 except (ValueError, TypeError, AttributeError):
                     warning(f"无法解析 {value} 为整数列表，使用空列表")
                     return []
-        # 处理字符串列表属性
-        elif key in self.string_list_properties:
+        # 处理字符串列表属性（含 formation_rank_<任意排面名>）
+        elif self.is_string_list_key(key):
             if isinstance(value, list):
                 return [str(x) for x in value]
             else:
@@ -1326,7 +1329,7 @@ class Rules(_Definitions):
                 
                 # 验证属性是否合法
                 if not (stat in self.precision_properties or 
-                       stat in self.string_list_properties or 
+                       self.is_string_list_key(stat) or 
                        stat in self.int_properties or
                        stat.startswith("transport_")):
                     raise ValueError(f"Unknown attribute: {stat}")
@@ -1599,10 +1602,10 @@ class Rules(_Definitions):
         "storable_resource_types",  # 添加这个新的属性集合
         "mdg_targets",
         "rdg_targets",
-        "mdg_cover_on_terrain",
-        "rdg_cover_on_terrain",
-        "mdg_dodge_on_terrain",
-        "rdg_dodge_on_terrain",
+        "mdg_hit_rate_on_terrain",
+        "rdg_hit_rate_on_terrain",
+        "mdg_dodge_rate_on_terrain",
+        "rdg_dodge_rate_on_terrain",
         "mdg_on_terrain",
         "rdg_on_terrain",
         "mdg_cd_on_terrain",
@@ -1614,9 +1617,10 @@ class Rules(_Definitions):
         "passenger_attack_types",  # 容器内可攻击的单位类型列表
         "transport_passenger_types",  # 可装载类型；-name 排除（如 infantry -cavalry）；空=不限
         "town_bell_units",  # 城镇钟召集的单位类型（空=陆地 Worker，排除船）
-        "ranks",  # formation: 排面顺序 melee ranged siege
+        "ranks",  # formation: 排面顺序（名字来自 parameters.formation_ranks）
         "formation_units",  # parameters: 参加阵型的单位类型（is_a）
-        "formation_rank_melee",  # parameters: 近战排 is_a
+        "formation_ranks",  # parameters: 排面名列表（可改名、可增减）
+        "formation_rank_melee",  # parameters: 近战排 is_a（示例名；任意 formation_rank_<名> 亦可）
         "formation_rank_ranged",  # parameters: 远程排 is_a
         "formation_rank_siege",  # parameters: 攻城/后方排 is_a
         "can_gather",          # 已废弃，见 can_gather_deposit / can_gather_building
@@ -1650,6 +1654,12 @@ class Rules(_Definitions):
         "menace_vs",
         "menace_mult_vs",
     }
+
+    @classmethod
+    def is_string_list_key(cls, key):
+        if key in cls.string_list_properties:
+            return True
+        return isinstance(key, str) and key.startswith("formation_rank_")
 
     def parse_resource_list(self, resource_list):
         """解析资源类型列表"""

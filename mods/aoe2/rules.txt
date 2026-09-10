@@ -194,9 +194,13 @@ formations 1
 default_formation formation_line
 formation_keep_pace 1
 formation_units infantry cavalry archer_unit siege_unit monk
+formation_ranks melee ranged siege
 formation_rank_melee infantry cavalry
 formation_rank_ranged archer_unit
 formation_rank_siege siege_unit monk
+formation_front_rank melee
+formation_default_rank melee
+formation_range_rank ranged
 
 
 ; AoE2 DE formations (line / box / staggered / flank). Spacing in meters.
@@ -648,7 +652,7 @@ requirements archery_range castle_age
 effect bonus rdg_cd -0.15
 effect_bonus_targets archer_unit -hand_cannoneer -cavalry
 ; DE Thumb Ring: accuracy to 100% (incl. CA); RoF only for foot archers above
-effect bonus rdg_cover 100
+effect bonus rdg_hit_rate 100
 effect_bonus_targets archer_unit -hand_cannoneer
 
 ; 帕提亚战术 Parthian Tactics
@@ -1054,7 +1058,7 @@ effect_bonus_targets archer_unit -cavalry
 effect bonus rdg 2
 effect_bonus_targets scouttower guardtower keeptower
 
-; 战狼号 Warwolf — DE: 0.5 blast + accuracy 100% (additive rdg_cover, clamped)
+; 战狼号 Warwolf — DE: 0.5 blast + accuracy 100% (additive rdg_hit_rate, clamped)
 ; splash pool matches trebuchet rdg (200); rdg_splash 1 was a leftover flag
 def warwolf
 class upgrade
@@ -1065,7 +1069,7 @@ effect bonus rdg_splash 200
 effect_bonus_targets trebuchet
 effect bonus rdg_radius 0.5
 effect_bonus_targets trebuchet
-effect bonus rdg_cover 100
+effect bonus rdg_hit_rate 100
 effect_bonus_targets trebuchet
 
 ; 骑士精神 Chivalry — stables work +40% → cavalry train time -40% (via can_use_tech + global time_cost)
@@ -1502,7 +1506,7 @@ rdf 0
 rdg 4
 rdg_cd 1.65
 rdg_ready 0.35
-rdg_cover 80
+rdg_hit_rate 80
 rdg_range 4
 rdg_vs spearman 3
 can_use_tech yeomen bogsveigar fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor thumb_ring ballistics chemistry conscription
@@ -1522,7 +1526,7 @@ mdf 0
 rdf 0
 rdg 5
 rdg_cd 1.65
-rdg_cover 85
+rdg_hit_rate 85
 rdg_range 5
 rdg_vs spearman 3
 can_upgrade_to arbalester
@@ -1541,7 +1545,7 @@ mdf 0
 rdf 0
 rdg 6
 rdg_cd 1.65
-rdg_cover 90
+rdg_hit_rate 90
 rdg_range 5
 rdg_vs spearman 3
 can_upgrade_to
@@ -1566,7 +1570,7 @@ rdf 3
 rdg 2
 rdg_cd 2.49
 rdg_ready 0.51
-rdg_cover 90
+rdg_hit_rate 90
 rdg_range 4
 rdg_minimal_range 1
 rdg_vs archer_unit 3
@@ -1639,7 +1643,7 @@ rdf 0
 rdg 6
 rdg_cd 1.09
 rdg_ready 0.91
-rdg_cover 50
+rdg_hit_rate 50
 rdg_range 4
 rdg_vs spearman 2
 can_upgrade_to heavy_cavalry_archer
@@ -1676,7 +1680,7 @@ rdf 0
 rdg 7
 rdg_cd 1.1
 rdg_ready 0.9
-rdg_cover 50
+rdg_hit_rate 50
 rdg_range 4
 rdg_vs spearman 4
 can_upgrade_to
@@ -1957,7 +1961,7 @@ rdf 0
 rdg 17
 rdg_cd 3.1
 rdg_ready 0.35
-rdg_cover 65
+rdg_hit_rate 65
 rdg_range 7
 rdg_vs infantry 10
 rdg_vs spearman 1
@@ -2465,7 +2469,7 @@ sight_range 14
 mdg 40
 mdg_cd 6.29
 mdg_ready 0.21
-mdg_cover 92
+mdg_hit_rate 92
 mdg_range 12
 mdg_minimal_range 5
 mdf 2
@@ -2568,8 +2572,8 @@ rdg 200
 rdg_cd 9.12
 rdg_ready 0.88
 ; DE Accuracy Percent 15% vs units; buildings hardcoded ~80% → +65 vs building
-rdg_cover 15
-rdg_cover_vs building 65
+rdg_hit_rate 15
+rdg_hit_rate_vs building 65
 rdg_range 16
 rdg_minimal_range 4
 rdg_vs building 250
@@ -2838,7 +2842,7 @@ speed 1.05
 sight_range 15
 mdg 50
 mdg_cd 10
-mdg_cover 50
+mdg_hit_rate 50
 mdg_range 13
 mdg_minimal_range 3
 mdf 0
@@ -2862,7 +2866,7 @@ speed 1.05
 sight_range 17
 mdg 60
 mdg_cd 10
-mdg_cover 50
+mdg_hit_rate 50
 mdg_range 15
 mdg_minimal_range 3
 mdf 0
@@ -3060,7 +3064,7 @@ rdf 0
 rdg 6
 rdg_cd 1.5
 rdg_ready 0.5
-rdg_cover 70
+rdg_hit_rate 70
 rdg_range 5
 rdg_vs spearman 2
 can_use_tech yeomen fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor ballistics chemistry conscription
@@ -3081,7 +3085,7 @@ mdf 0
 rdf 1
 rdg 7
 rdg_cd 1.5
-rdg_cover 80
+rdg_hit_rate 80
 rdg_range 6
 rdg_vs spearman 2
 can_upgrade_to
@@ -3152,7 +3156,7 @@ rdf 0
 rdg 8
 rdg_cd 2.77
 rdg_ready 0.23
-rdg_cover 85
+rdg_hit_rate 85
 rdg_range 4
 rdg_vs spearman 2
 ; DE Chu Ko Nu: 3 arrows; first = live pierce (+0 melee); extras = 3 pierce + 0 melee
@@ -3204,7 +3208,7 @@ rdf 0
 rdg 6
 rdg_cd 1.18
 rdg_ready 0.5
-rdg_cover 95
+rdg_hit_rate 95
 rdg_range 4
 rdg_vs spearman 1
 rdg_vs siege_unit 3
@@ -3507,7 +3511,7 @@ rdf 4
 rdg 6
 rdg_cd 1.31
 rdg_ready 0.69
-rdg_cover 80
+rdg_hit_rate 80
 rdg_range 4
 rdg_vs spearman 2
 can_upgrade_to elite_rattan_archer
@@ -3529,7 +3533,7 @@ rdf 6
 rdg 7
 rdg_cd 1.31
 rdg_ready 0.69
-rdg_cover 90
+rdg_hit_rate 90
 rdg_range 5
 rdg_vs spearman 2
 can_upgrade_to
@@ -3558,7 +3562,7 @@ rdf 4
 rdg 6
 rdg_cd 2.85
 rdg_ready 0.6
-rdg_cover 50
+rdg_hit_rate 50
 rdg_range 7
 rdg_minimal_range 1
 rdg_vs building 2
@@ -3583,7 +3587,7 @@ rdf 6
 rdg 8
 rdg_cd 2.85
 rdg_ready 0.6
-rdg_cover 50
+rdg_hit_rate 50
 rdg_range 7
 rdg_minimal_range 1
 rdg_vs building 2

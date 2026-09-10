@@ -160,7 +160,7 @@ Oltre a ``terrain_speed`` per casella, le def delle unità possono sovrascrivere
    * - ``charge_mdg_cd_on_terrain`` / ``charge_rdg_cd_on_terrain``
      - Bonus cooldown di carica (positivo = cooldown di carica più lungo)
 
-Colpo/schivata sul terreno del **bersaglio** (esistente): ``mdg_cover_on_terrain``, ``rdg_cover_on_terrain``, ``mdg_dodge_on_terrain``, ``rdg_dodge_on_terrain``.
+Colpo/schivata sul terreno del **bersaglio** (esistente): ``mdg_hit_rate_on_terrain``, ``rdg_hit_rate_on_terrain``, ``mdg_dodge_rate_on_terrain``, ``rdg_dodge_rate_on_terrain``.
 
 **Schermata attributi (Alt+V):** elenca le righe ``*_on_terrain`` / carica dell’unità; i valori live di danno / cooldown / velocità includono ``*_vs`` del terreno della casella corrente più ``*_on_terrain`` (``*_vs`` terreno = percentuale decimale; ``speed_on_terrain`` resta assoluto).
 

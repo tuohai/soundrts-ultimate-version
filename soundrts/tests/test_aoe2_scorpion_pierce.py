@@ -79,7 +79,7 @@ def test_headless_scorpion_pierce_line_volley():
         mil_cls.collision = 0
         scorp = scorp_cls(p1.player, sq, cx, cy)
         scorp.rdg_crit_rate = 0
-        scorp.rdg_cover = 100 * PRECISION
+        scorp.rdg_hit_rate = 100 * PRECISION
         # Min range is 2 tiles; aim at 3.5 so the bolt segment covers two in front.
         mid1 = mil_cls(p2.player, sq, cx + 1200, cy)
         mid2 = mil_cls(p2.player, sq, cx + 2200, cy)

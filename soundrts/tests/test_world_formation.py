@@ -18,8 +18,12 @@ from soundrts.world_formation import (
     cycle_next_formation,
     formation_blocker,
     formation_counter_keys,
+    formation_default_rank,
+    formation_front_rank,
     formation_hold_xy,
+    formation_rank_names,
     formation_ranks_formed,
+    formation_range_rank,
     formation_stand_ground,
     unit_agro_on_sight,
     offsets_for_units,
@@ -212,6 +216,127 @@ def test_unit_formation_rank_uses_explicit_then_range():
     assert unit_formation_rank(archer) == "ranged"
 
 
+class _FakeRankRules:
+    def __init__(self, params):
+        self._params = dict(params)
+
+    def get(self, obj, attr, default=None):
+        if obj != "parameters":
+            return default
+        if attr in self._params:
+            return self._params[attr]
+        return default
+
+    def get_dict(self, obj):
+        if obj != "parameters":
+            return {}
+        return self._params
+
+
+def _patch_rank_rules(monkeypatch, params):
+    fake = _FakeRankRules(params)
+    monkeypatch.setattr("soundrts.world_formation._rules", lambda: fake)
+    return fake
+
+
+def test_formation_rank_names_from_parameters(monkeypatch):
+    _patch_rank_rules(
+        monkeypatch,
+        {
+            "formation_ranks": ("cavalry", "infantry", "archer", "siege"),
+            "formation_rank_cavalry": ("scout",),
+            "formation_rank_monk": ("monk",),
+        },
+    )
+    assert formation_rank_names() == ("cavalry", "infantry", "archer", "siege", "monk")
+    assert formation_front_rank() == "cavalry"
+    assert formation_default_rank() == "cavalry"
+
+
+def test_unit_formation_rank_uses_named_is_a_tables(monkeypatch):
+    _patch_rank_rules(
+        monkeypatch,
+        {
+            "formation_ranks": ("infantry", "archer", "siege", "monk"),
+            "formation_rank_infantry": ("militia", "infantry"),
+            "formation_rank_archer": ("archer_unit",),
+            "formation_rank_siege": ("siege_unit",),
+            "formation_rank_monk": ("monk",),
+            "formation_default_rank": "infantry",
+            "formation_range_rank": "archer",
+        },
+    )
+    militia = _unit(
+        "m",
+        "",
+        formation_rank="",
+        type_name="militia",
+        expanded_is_a=("militia", "infantry"),
+    )
+    monk = _unit(
+        "k",
+        "",
+        formation_rank="",
+        type_name="monk",
+        expanded_is_a=("monk",),
+        rdg_range=0,
+        mdg_range=0,
+    )
+    ghost = _unit(
+        "g",
+        "",
+        formation_rank="",
+        type_name="ghost",
+        expanded_is_a=("ghost",),
+        rdg_range=4000,
+        mdg_range=0,
+    )
+    assert unit_formation_rank(militia) == "infantry"
+    assert unit_formation_rank(monk) == "monk"
+    assert unit_formation_rank(ghost) == "archer"
+
+
+def test_range_heuristic_off_when_ranged_not_in_ranks(monkeypatch):
+    _patch_rank_rules(
+        monkeypatch,
+        {
+            "formation_ranks": ("infantry", "archer"),
+            "formation_rank_infantry": ("militia",),
+            "formation_rank_archer": ("archer_unit",),
+            "formation_default_rank": "infantry",
+        },
+    )
+    assert formation_range_rank() == ""
+    ghost = _unit(
+        "g",
+        "",
+        formation_rank="",
+        type_name="ghost",
+        expanded_is_a=("ghost",),
+        rdg_range=4000,
+        mdg_range=0,
+    )
+    assert unit_formation_rank(ghost) == "infantry"
+
+
+def test_four_custom_ranks_pack_in_listed_order():
+    units = [
+        _unit("c1", "cavalry", x=0),
+        _unit("i1", "infantry", x=100),
+        _unit("a1", "archer", x=200),
+        _unit("s1", "siege", x=300),
+    ]
+    packed = offsets_for_units(
+        units,
+        _spec(ranks=("cavalry", "infantry", "archer", "siege"), max_front=8),
+    )
+    by_rank = {u.formation_rank: back for u, (_along, back) in packed}
+    assert by_rank["cavalry"] == 0
+    assert by_rank["infantry"] == 1800
+    assert by_rank["archer"] == 3600
+    assert by_rank["siege"] == 5400
+
+
 def test_unit_can_form_requires_flag(monkeypatch):
     monkeypatch.setattr("soundrts.world_formation.formations_enabled", lambda: False)
     assert not unit_can_form(_unit("m1", "melee"))
@@ -287,14 +412,48 @@ def test_combat_slots_put_melee_in_front_of_ranged():
         u.place = place
         u.player = "p1"
         u.is_an_enemy = lambda o, t=threat: o is t
-    dummy, facing = _combat_anchor(units, threat)
+    spec = _spec()
+    dummy, facing = _combat_anchor(units, threat, spec)
     assert dummy is not None
-    slots = assign_formation_slots(units, dummy, _spec(), facing=facing)
+    slots = assign_formation_slots(units, dummy, spec, facing=facing)
     by_id = {id(u): (x, y) for u, _p, x, y in slots}
     melee_x = sum(by_id[id(u)][0] for u in melee) / len(melee)
     ranged_x = by_id[id(ranged[0])][0]
     assert melee_x < ranged_x
     assert melee_x < 7000
+
+
+def test_combat_front_uses_first_spec_rank():
+    from soundrts.world_formation import assign_formation_slots, _combat_anchor
+
+    place = SimpleNamespace(
+        id="a1",
+        x=6000,
+        y=6000,
+        xmin=0,
+        xmax=12000,
+        ymin=0,
+        ymax=12000,
+        title=[],
+        objects=[],
+    )
+    threat = SimpleNamespace(id="e1", x=1500, y=6000, place=place, hp=40, player="p2")
+    cavalry = [_unit("c1", "cavalry", x=7000, y=5800), _unit("c2", "cavalry", x=7000, y=6200)]
+    archer = [_unit("a1", "archer", x=8500, y=6000, rdg_range=4000, mdg_range=0)]
+    units = cavalry + archer
+    for u in units:
+        u.place = place
+        u.player = "p1"
+        u.is_an_enemy = lambda o, t=threat: o is t
+    spec = _spec(ranks=("cavalry", "archer"))
+    dummy, facing = _combat_anchor(units, threat, spec)
+    assert dummy is not None
+    slots = assign_formation_slots(units, dummy, spec, facing=facing)
+    by_id = {id(u): (x, y) for u, _p, x, y in slots}
+    cav_x = sum(by_id[id(u)][0] for u in cavalry) / len(cavalry)
+    archer_x = by_id[id(archer[0])][0]
+    assert cav_x < archer_x
+    assert cav_x < 7000
 
 
 def test_go_to_enemy_breaks_formation():
@@ -539,7 +698,47 @@ def test_aoe2_rules_enable_and_name_the_four_shapes():
     assert getattr(line, "speed", 0) == 0
     assert not getattr(line, "mdg_vs", None)
     assert "infantry" in list(r.get("parameters", "formation_units"))
+    assert list(r.get("parameters", "formation_ranks")) == ["melee", "ranged", "siege"]
     assert "monk" in list(r.get("parameters", "formation_rank_siege"))
+    assert r.get("parameters", "formation_range_rank") == "ranged"
+    assert r.get("parameters", "formation_default_rank") == "melee"
+
+
+def test_rules_accept_custom_formation_rank_keys():
+    from soundrts.definitions import Rules
+
+    r = Rules()
+    r.load(
+        "\n".join(
+            [
+                "def parameters",
+                "formation_ranks cavalry infantry archer siege",
+                "formation_rank_cavalry scout knight",
+                "formation_rank_infantry militia",
+                "formation_default_rank cavalry",
+                "formation_range_rank archer",
+                "formation_front_rank cavalry",
+                "",
+                "def formation_line",
+                "class formation",
+                "shape line",
+                "ranks cavalry infantry archer siege",
+            ]
+        )
+    )
+    assert list(r.get("parameters", "formation_ranks")) == [
+        "cavalry",
+        "infantry",
+        "archer",
+        "siege",
+    ]
+    assert "knight" in list(r.get("parameters", "formation_rank_cavalry"))
+    assert r.get("parameters", "formation_default_rank") == "cavalry"
+    assert r.get("parameters", "formation_range_rank") == "archer"
+    assert Rules.is_string_list_key("formation_rank_cavalry")
+    assert Rules.is_string_list_key("formation_ranks")
+    line = r.unit_class("formation_line")
+    assert list(line.ranks) == ["cavalry", "infantry", "archer", "siege"]
 
 
 def test_style_and_tts_wire_formation_commands():

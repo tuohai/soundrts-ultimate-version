@@ -90,10 +90,10 @@ STAT_TTS_NAMES = {
     "damage_seq": mp.DAMAGE_SEQ_RDG,
     "mdg_seq_times": mp.DAMAGE_SEQ_MDG,
     "rdg_seq_times": mp.DAMAGE_SEQ_RDG,
-    "mdg_cover": mp.MDG_COVER,
-    "rdg_cover": mp.RDG_COVER,
-    "mdg_dodge": mp.MDG_DODGE,
-    "rdg_dodge": mp.RDG_DODGE,
+    "mdg_hit_rate": mp.MDG_COVER,
+    "rdg_hit_rate": mp.RDG_COVER,
+    "mdg_dodge_rate": mp.MDG_DODGE,
+    "rdg_dodge_rate": mp.RDG_DODGE,
     "mdg_minimal_range": mp.MDG_MINIMAL_RANGE,
     "rdg_minimal_range": mp.RDG_MINIMAL_RANGE,
     "mdg_splash": mp.MDG_SPLASH,
@@ -222,10 +222,10 @@ STAT_TTS_NAMES = {
     "rdg_ready_vs": mp.RDG_READY_VS,
     "mdg_cd_vs": mp.MDG_CD_VS,
     "rdg_cd_vs": mp.RDG_CD_VS,
-    "mdg_cover_vs": mp.MDG_COVER_VS,
-    "rdg_cover_vs": mp.RDG_COVER_VS,
-    "mdg_dodge_vs": mp.MDG_DODGE_VS,
-    "rdg_dodge_vs": mp.RDG_DODGE_VS,
+    "mdg_hit_rate_vs": mp.MDG_COVER_VS,
+    "rdg_hit_rate_vs": mp.RDG_COVER_VS,
+    "mdg_dodge_rate_vs": mp.MDG_DODGE_VS,
+    "rdg_dodge_rate_vs": mp.RDG_DODGE_VS,
     "speed_vs": mp.SPEED_VS,
     "mdg_crit_vs": mp.MDG_CRIT_VS,
     "rdg_crit_vs": mp.RDG_CRIT_VS,
@@ -359,8 +359,8 @@ class AttributeUtils:
             "minimal_damage",
             "mdg_crit", "rdg_crit",
             "mdg_piercing", "rdg_piercing",
-            "mdg_cover", "rdg_cover",
-            "mdg_dodge", "rdg_dodge",
+            "mdg_hit_rate", "rdg_hit_rate",
+            "mdg_dodge_rate", "rdg_dodge_rate",
         }
         if isinstance(stat, str):
             base = stat.split(".", 1)[0] if "." in stat else stat
@@ -496,8 +496,8 @@ _DETAIL_BONUS_SEED_STATS = (
     "rdg_range_vs",
     "mdg_cd_vs",
     "rdg_cd_vs",
-    "mdg_cover_vs",
-    "rdg_cover_vs",
+    "mdg_hit_rate_vs",
+    "rdg_hit_rate_vs",
 )
 
 

@@ -269,7 +269,7 @@
    * - ``charge_mdg_cd_on_terrain`` / ``charge_rdg_cd_on_terrain``
      - 冲锋冷却百分比修正
 
-另有命中/闪避地形修正（作用于目标所在地形，仍为列表加值）：``mdg_cover_on_terrain``、``rdg_cover_on_terrain``、``mdg_dodge_on_terrain``、``rdg_dodge_on_terrain``。
+另有命中/闪避地形修正（作用于目标所在地形，仍为列表加值）：``mdg_hit_rate_on_terrain``、``rdg_hit_rate_on_terrain``、``mdg_dodge_rate_on_terrain``、``rdg_dodge_rate_on_terrain``。
 
 
 **属性界面（Alt+V）**

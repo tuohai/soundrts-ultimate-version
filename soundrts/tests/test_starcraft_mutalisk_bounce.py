@@ -97,7 +97,7 @@ def test_headless_mutalisk_bounce_volley():
         marine_cls.collision = 0
         muta = muta_cls(zerg.player, sq, cx, cy)
         muta.rdg_crit_rate = 0
-        muta.rdg_cover = 100 * PRECISION
+        muta.rdg_hit_rate = 100 * PRECISION
         primary = marine_cls(terran.player, sq, cx + 400, cy)
         near = marine_cls(terran.player, sq, cx + 900, cy)
         far = marine_cls(terran.player, sq, cx + 1600, cy)

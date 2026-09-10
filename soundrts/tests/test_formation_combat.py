@@ -213,7 +213,7 @@ def _scorpion_pierce(aoe2_loaded, layout):
     mil_cls.collision = 0
     scorp = _spawn(scorp_cls, p1, sq, cx - 500, cy)
     scorp.rdg_crit_rate = 0
-    scorp.rdg_cover = 100 * PRECISION
+    scorp.rdg_hit_rate = 100 * PRECISION
     scorp.ai_mode = "guard"
     militia = [_spawn(mil_cls, p2, sq, cx + 1500, cy) for _ in range(6)]
     for m in militia:

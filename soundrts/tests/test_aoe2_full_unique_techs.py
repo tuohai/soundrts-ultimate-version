@@ -122,7 +122,7 @@ def test_rules_unique_techs_no_approximations():
     # Arquebus = ballistics + DE absolute projectile speed (+0.5 / +0.2)
     ab = text.split("def arquebus")[1].split("def ")[0]
     assert "projectile_lead 1" in ab
-    assert "rdg_cover 100" not in ab
+    assert "rdg_hit_rate 100" not in ab
     assert "rdg_projectile_speed 0.5" in ab
     assert "mdg_projectile_speed 0.2" in ab
     assert "rdg_projectile_speed 50%" not in ab

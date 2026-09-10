@@ -1,10 +1,9 @@
-"""审计：1.5 / 1.5.0.1–1.5.0.3 — 野兽警报、信号弹、触发器、条约、阵型。"""
+"""审计：1.5 / 1.5.0.1–1.5.0.4 — 野兽警报、信号弹、触发器、条约、阵型、命中率/闪避率改名。"""
 from __future__ import annotations
 
 from pathlib import Path
 
 _FOLDED_VERSIONS = (
-    "1.5.0.4",
     "1.5.0.5",
     "1.5.0.6",
     "1.5.0.7",
@@ -33,6 +32,10 @@ def _section_between(lang: str, start_heading: str, end_heading: str) -> str:
     return rest if next_idx == -1 else rest[:next_idx]
 
 
+def _section_1504(lang: str) -> str:
+    return _section_between(lang, "1.5.0.4", "1.5.0.3")
+
+
 def _section_1503(lang: str) -> str:
     return _section_between(lang, "1.5.0.3", "1.5.0.2")
 
@@ -49,22 +52,229 @@ def _section_15(lang: str) -> str:
     return _section_between(lang, "1.5", "1.4.9.9")
 
 
-def test_version_is_1503():
-    assert 'VERSION = "1.5.0.3"' in _source("soundrts", "version.py")
+def test_version_is_1504():
+    assert 'VERSION = "1.5.0.4"' in _source("soundrts", "version.py")
 
 
-def test_all_relnotes_have_1503_then_1502_then_1501_then_15_before_1499():
+def test_all_relnotes_have_1504_then_1503_then_1502_then_1501_then_15_before_1499():
     for lang in ("zh", "en", "es", "it", "pt-BR"):
         src = _source("doc_src", "src", lang, "relnotes.rst")
+        assert src.index("\n1.5.0.4\n") < src.index("\n1.5.0.3\n"), lang
         assert src.index("\n1.5.0.3\n") < src.index("\n1.5.0.2\n"), lang
         assert src.index("\n1.5.0.2\n") < src.index("\n1.5.0.1\n"), lang
         assert src.index("\n1.5.0.1\n") < src.index("\n1.5\n"), lang
         assert src.index("\n1.5\n") < src.index("\n1.4.9.9"), lang
         for folded in _FOLDED_VERSIONS:
             assert f"\n{folded}\n" not in src, (lang, folded)
-        top = _section_1503(lang)
+        top = _section_1504(lang)
         for folded in _FOLDED_VERSIONS:
             assert folded not in top, (lang, folded)
+
+
+def test_zh_relnotes_1504_formation_ranks_rule_driven():
+    s = _section_1504("zh")
+    assert "formation_ranks" in s
+    assert "formation_rank_" in s
+    assert "formation_default_rank" in s
+    assert "formation_range_rank" in s
+    assert "formation_front_rank" in s
+    assert "rdg_range" in s
+    assert "mdg_range" in s
+    assert "world_formation.py" in s
+    assert "definitions.py" in s
+    assert "mods/aoe2/rules.txt" in s
+    assert "test_world_formation.py" in s
+    assert "test_changelog_15.py" in s
+    assert "modding.rst" in s
+
+
+def test_en_es_it_pt_relnotes_1504_formation_ranks_rule_driven():
+    for lang in ("en", "es", "it", "pt-BR"):
+        s = _section_1504(lang)
+        assert "formation_ranks" in s, lang
+        assert "formation_rank_" in s, lang
+        assert "formation_default_rank" in s, lang
+        assert "formation_range_rank" in s, lang
+        assert "formation_front_rank" in s, lang
+        assert "rdg_range" in s, lang
+        assert "mdg_range" in s, lang
+        assert "world_formation.py" in s, lang
+        assert "definitions.py" in s, lang
+        assert "mods/aoe2/rules.txt" in s, lang
+        assert "test_world_formation.py" in s, lang
+        assert "test_changelog_15.py" in s, lang
+        assert "modding.rst" in s, lang
+
+
+def test_modding_docs_mention_formation_ranks():
+    for lang in ("zh", "en", "es", "it", "pt-BR"):
+        modding = _source("doc_src", "src", lang, "mod", "modding.rst")
+        assert "formation_ranks" in modding, lang
+        assert "formation_default_rank" in modding, lang
+        assert "formation_range_rank" in modding, lang
+        assert "formation_front_rank" in modding, lang
+        assert "formation_rank_" in modding, lang
+
+
+def test_zh_relnotes_1504_hit_rate_rename():
+    s = _section_1504("zh")
+    assert "mdg_hit_rate" in s
+    assert "rdg_hit_rate" in s
+    assert "mdg_cover" in s
+    assert "rdg_cover" in s
+    assert "cover_vs" in s
+    assert "hit_miss.py" in s
+    assert "definitions.py" in s
+    assert "mods/aoe2/rules.txt" in s
+    assert "i18n/tts.pot" in s
+    assert "tts-*.po" in s
+    assert "msgid" in s
+    assert "test_unit_vs_params_runtime.py" in s
+    assert "test_changelog_15.py" in s
+    assert "modding.rst" in s
+
+
+def test_en_es_it_pt_relnotes_1504_hit_rate_rename():
+    for lang in ("en", "es", "it", "pt-BR"):
+        s = _section_1504(lang)
+        assert "mdg_hit_rate" in s, lang
+        assert "rdg_hit_rate" in s, lang
+        assert "mdg_cover" in s, lang
+        assert "rdg_cover" in s, lang
+        assert "cover_vs" in s, lang
+        assert "hit_miss.py" in s, lang
+        assert "definitions.py" in s, lang
+        assert "mods/aoe2/rules.txt" in s, lang
+        assert "i18n/tts.pot" in s, lang
+        assert "tts-*.po" in s, lang
+        assert "msgid" in s, lang
+        assert "test_unit_vs_params_runtime.py" in s, lang
+        assert "test_changelog_15.py" in s, lang
+        assert "modding.rst" in s, lang
+
+
+def test_engine_uses_hit_rate_not_cover_alias():
+    defs = _source("soundrts", "definitions.py")
+    hit = _source("soundrts", "combat", "hit_miss.py")
+    aoe2 = _source("mods", "aoe2", "rules.txt")
+    assert '"mdg_hit_rate"' in defs
+    assert '"rdg_hit_rate"' in defs
+    assert "mdg_cover" not in defs
+    assert "rdg_cover" not in defs
+    assert "_get_melee_hit_rate_vs" in hit
+    assert "_get_ranged_hit_rate_vs" in hit
+    assert "_get_melee_cover_vs" not in hit
+    assert "mdg_cover" not in hit
+    assert "rdg_hit_rate" in aoe2
+    assert "rdg_cover" not in aoe2
+    pot = _source("i18n", "tts.pot")
+    assert 'msgid "mdg_hit_rate_vs"' in pot
+    assert 'msgid "rdg_hit_rate_vs"' in pot
+    assert 'msgid "mdg_hit_rate_on_terrain"' in pot
+    assert 'msgid "rdg_hit_rate_on_terrain"' in pot
+    assert 'msgid "mdg_cover_vs"' not in pot
+    assert 'msgid "rdg_cover_vs"' not in pot
+    assert 'msgid "mdg_cover_on_terrain"' not in pot
+    assert 'msgid "rdg_cover_on_terrain"' not in pot
+    tts = _source("res", "ui", "tts.txt")
+    assert "mdg_hit_rate_on_terrain" in tts
+    assert "rdg_hit_rate_on_terrain" in tts
+    assert "mdg_cover_on_terrain" not in tts
+    for name in (
+        "tts-zh.po", "tts-vi.po", "tts-sk.po", "tts-ru.po", "tts-pt-BR.po",
+        "tts-pl.po", "tts-it.po", "tts-fr.po", "tts-es.po", "tts-de.po",
+        "tts-cs.po", "tts-be.po",
+    ):
+        po = _source("i18n", name)
+        assert 'msgid "mdg_hit_rate_vs"' in po, name
+        assert 'msgid "mdg_cover_vs"' not in po, name
+        assert "#. MDG_COVER_VS" in po, name
+    for lang in ("zh", "en", "es", "it", "pt-BR"):
+        modding = _source("doc_src", "src", lang, "mod", "modding.rst")
+        assert "mdg_hit_rate" in modding, lang
+        assert "mdg_cover" in modding, lang
+
+
+def test_zh_relnotes_1504_dodge_rate_rename():
+    s = _section_1504("zh")
+    assert "mdg_dodge_rate" in s
+    assert "rdg_dodge_rate" in s
+    assert "mdg_dodge" in s
+    assert "rdg_dodge" in s
+    assert "dodge_vs" in s
+    assert "MDG_DODGE" in s
+    assert "hit_miss.py" in s
+    assert "definitions.py" in s
+    assert "worldweapon.py" in s
+    assert "i18n/tts.pot" in s
+    assert "tts-*.po" in s
+    assert "msgid" in s
+    assert "test_unit_vs_params_runtime.py" in s
+    assert "test_changelog_15.py" in s
+    assert "modding.rst" in s
+
+
+def test_en_es_it_pt_relnotes_1504_dodge_rate_rename():
+    for lang in ("en", "es", "it", "pt-BR"):
+        s = _section_1504(lang)
+        assert "mdg_dodge_rate" in s, lang
+        assert "rdg_dodge_rate" in s, lang
+        assert "mdg_dodge" in s, lang
+        assert "rdg_dodge" in s, lang
+        assert "dodge_vs" in s, lang
+        assert "MDG_DODGE" in s, lang
+        assert "hit_miss.py" in s, lang
+        assert "definitions.py" in s, lang
+        assert "worldweapon.py" in s, lang
+        assert "i18n/tts.pot" in s, lang
+        assert "tts-*.po" in s, lang
+        assert "msgid" in s, lang
+        assert "test_unit_vs_params_runtime.py" in s, lang
+        assert "test_changelog_15.py" in s, lang
+        assert "modding.rst" in s, lang
+
+
+def test_engine_uses_dodge_rate_not_dodge_alias():
+    defs = _source("soundrts", "definitions.py")
+    hit = _source("soundrts", "combat", "hit_miss.py")
+    assert '"mdg_dodge_rate"' in defs
+    assert '"rdg_dodge_rate"' in defs
+    assert '"mdg_dodge"' not in defs
+    assert '"rdg_dodge"' not in defs
+    assert "mdg_dodge_rate" in hit
+    assert "rdg_dodge_rate" in hit
+    assert "mdg_dodge_rate_vs" in hit
+    assert "rdg_dodge_rate_vs" in hit
+    assert "mdg_dodge_rate_on_terrain" in hit
+    assert "rdg_dodge_rate_on_terrain" in hit
+    pot = _source("i18n", "tts.pot")
+    assert 'msgid "mdg_dodge_rate_vs"' in pot
+    assert 'msgid "rdg_dodge_rate_vs"' in pot
+    assert 'msgid "mdg_dodge_rate_on_terrain"' in pot
+    assert 'msgid "rdg_dodge_rate_on_terrain"' in pot
+    assert 'msgid "mdg_dodge_vs"' not in pot
+    assert 'msgid "rdg_dodge_vs"' not in pot
+    assert 'msgid "mdg_dodge_on_terrain"' not in pot
+    assert 'msgid "rdg_dodge_on_terrain"' not in pot
+    tts = _source("res", "ui", "tts.txt")
+    assert "mdg_dodge_rate_on_terrain" in tts
+    assert "rdg_dodge_rate_on_terrain" in tts
+    assert "mdg_dodge_on_terrain" not in tts
+    style = _source("res", "ui", "style.txt")
+    assert "rdg_dodge 1040" in style
+    for name in (
+        "tts-zh.po", "tts-vi.po", "tts-sk.po", "tts-ru.po", "tts-pt-BR.po",
+        "tts-pl.po", "tts-it.po", "tts-fr.po", "tts-es.po", "tts-de.po",
+        "tts-cs.po", "tts-be.po",
+    ):
+        po = _source("i18n", name)
+        assert 'msgid "mdg_dodge_rate_vs"' in po, name
+        assert 'msgid "mdg_dodge_vs"' not in po, name
+        assert "#. MDG_DODGE_VS" in po, name
+    for lang in ("zh", "en", "es", "it", "pt-BR"):
+        modding = _source("doc_src", "src", lang, "mod", "modding.rst")
+        assert "mdg_dodge_rate" in modding, lang
+        assert "mdg_dodge" in modding, lang
 
 
 def test_zh_relnotes_1503_formation_formed_bonuses():

@@ -10192,49 +10192,49 @@ msgstr "бонус перезарядки дальнего боя"
 #. MDG_COVER_VS
 #: res/ui/tts.txt:4434
 msgctxt "4434"
-msgid "mdg_cover_vs"
+msgid "mdg_hit_rate_vs"
 msgstr "бонус попадания в ближнем бою"
 
 #. RDG_COVER_VS
 #: res/ui/tts.txt:4435
 msgctxt "4435"
-msgid "rdg_cover_vs"
+msgid "rdg_hit_rate_vs"
 msgstr "бонус попадания в дальнем бою"
 
 #. MDG_DODGE_VS
 #: res/ui/tts.txt:4436
 msgctxt "4436"
-msgid "mdg_dodge_vs"
+msgid "mdg_dodge_rate_vs"
 msgstr "бонус уклонения в ближнем бою"
 
 #. RDG_DODGE_VS
 #: res/ui/tts.txt:4437
 msgctxt "4437"
-msgid "rdg_dodge_vs"
+msgid "rdg_dodge_rate_vs"
 msgstr "бонус уклонения в дальнем бою"
 
 #. MDG_COVER_ON_TERRAIN
 #: res/ui/tts.txt:4438
 msgctxt "4438"
-msgid "mdg_cover_on_terrain"
+msgid "mdg_hit_rate_on_terrain"
 msgstr "бонус попадания ближнего боя по местности"
 
 #. RDG_COVER_ON_TERRAIN
 #: res/ui/tts.txt:4439
 msgctxt "4439"
-msgid "rdg_cover_on_terrain"
+msgid "rdg_hit_rate_on_terrain"
 msgstr "бонус попадания дальнего боя по местности"
 
 #. MDG_DODGE_ON_TERRAIN
 #: res/ui/tts.txt:4440
 msgctxt "4440"
-msgid "mdg_dodge_on_terrain"
+msgid "mdg_dodge_rate_on_terrain"
 msgstr "бонус уклонения ближнего боя по местности"
 
 #. RDG_DODGE_ON_TERRAIN
 #: res/ui/tts.txt:4441
 msgctxt "4441"
-msgid "rdg_dodge_on_terrain"
+msgid "rdg_dodge_rate_on_terrain"
 msgstr "бонус уклонения дальнего боя по местности"
 
 #. SPEED_VS

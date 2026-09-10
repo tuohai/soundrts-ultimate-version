@@ -136,10 +136,10 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     rdg_range_vs: dict = dict()
     mdg_minimal_range_vs: dict = dict()
     rdg_minimal_range_vs: dict = dict()
-    mdg_cover_vs: dict = dict()
-    rdg_cover_vs: dict = dict()
-    mdg_dodge_vs: dict = dict()
-    rdg_dodge_vs: dict = dict()
+    mdg_hit_rate_vs: dict = dict()
+    rdg_hit_rate_vs: dict = dict()
+    mdg_dodge_rate_vs: dict = dict()
+    rdg_dodge_rate_vs: dict = dict()
     speed_vs: dict = dict()
     mdg_splash_vs: dict = dict()
     rdg_splash_vs: dict = dict()
@@ -190,8 +190,8 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
             "mdg_ready_vs", "rdg_ready_vs",
             "mdg_range_vs", "rdg_range_vs",
             "mdg_minimal_range_vs", "rdg_minimal_range_vs",
-            "mdg_cover_vs", "rdg_cover_vs",
-            "mdg_dodge_vs", "rdg_dodge_vs",
+            "mdg_hit_rate_vs", "rdg_hit_rate_vs",
+            "mdg_dodge_rate_vs", "rdg_dodge_rate_vs",
             "mdg_splash_vs", "rdg_splash_vs",
             "mdg_splash_decay_min_vs", "rdg_splash_decay_min_vs",
             "mdg_radius_vs", "rdg_radius_vs",
@@ -887,7 +887,7 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     town_bell_range = 0  # PRECISION mm；0 = 全图
     town_bell_units = ()  # 空 = 陆地 Worker
     use_formation = 0  # 1 = 参加阵型（或由 parameters.formation_units 匹配）
-    formation_rank = ""  # melee / ranged / siege；空则按 parameters 的 is_a 表
+    formation_rank = ""  # 排面名（parameters.formation_ranks）；空则按 formation_rank_<名> 的 is_a 表
     formation = ""  # 当前阵型 type_name；空则用 default_formation
     requirements = ()
     is_a = ()
@@ -1030,10 +1030,10 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     rdg_prep_end_time = 0
     mdg_ready = 0
     rdg_ready = 0
-    mdg_cover = 0
-    rdg_cover = 0
-    mdg_dodge = 0
-    rdg_dodge = 0
+    mdg_hit_rate = 0
+    rdg_hit_rate = 0
+    mdg_dodge_rate = 0
+    rdg_dodge_rate = 0
     mdg_status_duration = 0  # 近战伤害持续时间
     rdg_status_duration = 0  # 远程伤害持续时间
     damage_seq = None  # 攻击序列
@@ -1398,10 +1398,10 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
         self.rdg_ready = type(self).rdg_ready
         self.mdg_status_duration = type(self).mdg_status_duration
         self.rdg_status_duration = type(self).rdg_status_duration
-        self.mdg_cover = type(self).mdg_cover
-        self.rdg_cover = type(self).rdg_cover
-        self.mdg_dodge = type(self).mdg_dodge
-        self.rdg_dodge = type(self).rdg_dodge
+        self.mdg_hit_rate = type(self).mdg_hit_rate
+        self.rdg_hit_rate = type(self).rdg_hit_rate
+        self.mdg_dodge_rate = type(self).mdg_dodge_rate
+        self.rdg_dodge_rate = type(self).rdg_dodge_rate
 
         # 复制vs属性
         self.mdg_vs = dict(type(self).mdg_vs)
@@ -1410,10 +1410,10 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
         self.menace_mult_vs = dict(type(self).menace_mult_vs)
         self.mdf_vs = dict(type(self).mdf_vs)
         self.rdf_vs = dict(type(self).rdf_vs)
-        self.mdg_cover_vs = dict(type(self).mdg_cover_vs)  # 确保复制vs属性
-        self.rdg_cover_vs = dict(type(self).rdg_cover_vs)  # 确保复制vs属性
-        self.mdg_dodge_vs = dict(type(self).mdg_dodge_vs)
-        self.rdg_dodge_vs = dict(type(self).rdg_dodge_vs)
+        self.mdg_hit_rate_vs = dict(type(self).mdg_hit_rate_vs)  # 确保复制vs属性
+        self.rdg_hit_rate_vs = dict(type(self).rdg_hit_rate_vs)  # 确保复制vs属性
+        self.mdg_dodge_rate_vs = dict(type(self).mdg_dodge_rate_vs)
+        self.rdg_dodge_rate_vs = dict(type(self).rdg_dodge_rate_vs)
         # 复制穿甲和暴击的vs属性
         self.mdg_crit_vs = dict(type(self).mdg_crit_vs)
         self.rdg_crit_vs = dict(type(self).rdg_crit_vs)

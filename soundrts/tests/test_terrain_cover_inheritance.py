@@ -20,10 +20,10 @@ class _ForestPlace:
 class _Target(HitMissMixin):
     type_name = "footman"
     expanded_is_a = ()
-    mdg_dodge = 0
-    rdg_dodge = 0
-    mdg_dodge_vs = {}
-    rdg_dodge_vs = {}
+    mdg_dodge_rate = 0
+    rdg_dodge_rate = 0
+    mdg_dodge_rate_vs = {}
+    rdg_dodge_rate_vs = {}
     airground_type = "ground"
     height = 0
     place = _ForestPlace()
@@ -40,14 +40,14 @@ class _Archer(HitMissMixin):
     mdg = 0
     rdg = 3 * PRECISION
     rdg_range = 5 * PRECISION
-    mdg_cover = 100 * PRECISION
-    rdg_cover = 100 * PRECISION
-    mdg_cover_vs = {}
-    rdg_cover_vs = {}
-    mdg_cover_on_terrain = ()
-    rdg_cover_on_terrain = ("forests", "60")
-    mdg_dodge_on_terrain = ()
-    rdg_dodge_on_terrain = ()
+    mdg_hit_rate = 100 * PRECISION
+    rdg_hit_rate = 100 * PRECISION
+    mdg_hit_rate_vs = {}
+    rdg_hit_rate_vs = {}
+    mdg_hit_rate_on_terrain = ()
+    rdg_hit_rate_on_terrain = ("forests", "60")
+    mdg_dodge_rate_on_terrain = ()
+    rdg_dodge_rate_on_terrain = ()
     place = _ForestPlace()
     x = 0
     y = 0
@@ -63,7 +63,7 @@ class _Archer(HitMissMixin):
         return False
 
 
-def test_rdg_cover_on_terrain_applies_to_child_terrain():
+def test_rdg_hit_rate_on_terrain_applies_to_child_terrain():
     rules.load(
         """
 def forests

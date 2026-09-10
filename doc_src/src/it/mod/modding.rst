@@ -540,7 +540,7 @@ Proprietà principali mischia/distanza:
       mdg_vs building 150
       mdg_vs siege_unit 40
 
-  Anche gli altri attributi ``*_vs`` a coppie (es. ``rdg_vs``, ``mdg_cover_vs``,
+  Anche gli altri attributi ``*_vs`` a coppie (es. ``rdg_vs``, ``mdg_hit_rate_vs``,
   ``menace_vs``) accettano più coppie su una riga e uniscono le righe ripetute.
 - ``mdf`` / ``rdf``: difesa
 - ``mdg_range`` / ``rdg_range``, ``mdg_cd`` / ``rdg_cd``, ``mdg_ready`` / ``rdg_ready``
@@ -627,11 +627,14 @@ assoluto, il motore usa un **punteggio di combattimento multidimensionale** per:
 
 **Dimensioni** (arma primaria = il maggiore tra ``mdg`` / ``rdg``):
 
-- Danno, precisione (``mdg_cover``/``rdg_cover``, 0 = 100%%), cooldown
+- Danno, precisione (``mdg_hit_rate``/``rdg_hit_rate``, 0 = 100%%), cooldown
   (``*_cd``), wind-up (``mdg_ready``/``rdg_ready`` — non il ``*_delay`` balistico)
 - HP (``hp`` corrente, altrimenti ``hp_max``), armatura (``max(mdf, rdf)``),
-  schivata (``max(mdg_dodge, rdg_dodge)``)
+  schivata (``max(mdg_dodge_rate, rdg_dodge_rate)``)
 - Portata d’attacco, velocità di movimento
+
+Le vecchie chiavi ``mdg_cover`` / ``rdg_cover`` non sono alias (il ``cover`` di terreno non cambia).
+Le vecchie chiavi ``mdg_dodge`` / ``rdg_dodge`` non sono alias (il ``dodge_vs`` di terreno e i suoni di schivata in style non cambiano).
 
 In sintesi: DPS effettivo (danno × hit / (cd + ready)), poi sopravvivenza e
 fattori di portata/velocità.
@@ -1849,9 +1852,13 @@ Disattivate di default. Un mod con ``formations 1`` in ``def parameters`` dispon
     default_formation formation_line
     formation_keep_pace 1
     formation_units infantry cavalry archer_unit siege_unit monk
+    formation_ranks melee ranged siege
     formation_rank_melee infantry cavalry
     formation_rank_ranged archer_unit
     formation_rank_siege siege_unit monk
+    formation_front_rank melee
+    formation_default_rank melee
+    formation_range_rank ranged
 
     def formation_line
     class formation
@@ -1867,6 +1874,8 @@ Disattivate di default. Un mod con ``formations 1`` in ``def parameters`` dispon
     spacing 1.5
     mdg 20%
     speed -30%
+
+I nomi dei ranghi sono nelle rules: ``formation_ranks`` li elenca (si possono rinominare o aggiungere); ogni nome ha una tabella ``is_a`` ``formation_rank_<nome>``. Se ``formation_ranks`` è omesso, i nomi si inferiscono dalle chiavi ``formation_rank_*``. ``formation_default_rank`` se nulla coincide; ``formation_range_rank`` quando ``rdg_range`` è maggiore di ``mdg_range``; il fronte di combattimento è il primo rango di ``ranks`` della formazione attuale (o ``formation_front_rank``). I ranghi personalizzati usano ``title`` di style; ``melee`` / ``ranged`` / ``siege`` restano con TTS interno.
 
 ``shape``: cartesiane ``line`` / ``box`` / ``staggered`` / ``flank``, o polari ``ring`` / ``arc`` (alias ``circle`` / ``round`` → anello, ``wedge`` / ``cone`` → arco). Uno ``shape`` sconosciuto con ``radius`` / ``arc_span`` / ``rings`` usa comunque il packing polare, senza patch al motore. ``radius`` è in metri (0 = da ``spacing`` e dal conteggio). ``arc_span`` è in gradi (0 = 360 per l’anello, 180 per l’arco). ``arc_start`` di default è automatico. ``rings`` / ``ring_gap`` sono concentrici; ``ring_rank out`` mette il primo rango elencato all’esterno. Distanze in metri (PRECISION mm). ``flank_gap`` solo per i fianchi. ``max_front`` è il tetto per fila (0 = larghezza del quadrato). Un’unità può avere ``use_formation 1`` o ``formation_rank melee``; altrimenti valgono le liste ``is_a``. Il menu elenca ``set_formation <tipo>`` per ogni ``class formation`` (scegliere quello attuale riordina sul posto in ogni quadrato; selezionare tutto l’esercito non unisce quadrati lontani). ``cycle_formation`` resta fuori dal menu parlato; tasto predefinito ``CTRL SHIFT f``, modificabile nell’editor. Style: ``def set_formation`` e il ``title`` di ogni formazione; ``parameters.formation_change`` è l’SFX. Il ``go`` di gruppo verso un quadrato tiene i ranghi; ``go`` / ``attack`` su un’unità rompe gli slot e si concentra. L’``offensive`` inattivo all’ingaggio resta in formazione. Un nemico in formazione sul percorso intercetta (``formation_blocker``). Con le formazioni, ``guard`` è stai fermo: spara a tiro, non cammina (eccetto ``agro_on_sight 0``, cinghiale AoE2 DE). ``chase`` continua ad avvicinarsi. ``class formation`` può aggiungere ``mdg`` / ``rdg`` / ``mdf`` / ``rdf`` e ``mdg_vs`` / ``rdg_vs`` / ``mdf_vs`` / ``rdf_vs`` solo tenendo gli slot (si perdono con ``break_formation_hold`` / fuoco concentrato). ``speed`` (può essere negativo, es. ``speed -1.5`` o ``speed -30%``) si aggiunge dopo il tetto ``keep_pace``. Valori assoluti o percentuali della stat di quell’unità (``mdg 20%``). Default 0; i quattro tipi AoE2 restano solo layout. Con i ranghi tenuti, ``mdg_vs`` / ``rdg_vs`` / ``mdf_vs`` / ``rdf_vs`` coincidono anche con il nome ``class formation`` attuale dell’altro (es. ``formation_wedge``) e la forma (``cone`` / ``wedge`` / ``arc``, …), sommati al vs per tipo di unità; se coincidono più chiavi di forma, vale solo la più specifica. Si scrivono identificatori, non titoli tradotti. Nessun bonus se l’altro ha rotto i ranghi, insegue o non e ancora sullo slot (`formation_ranks_formed`). `keep_pace` resta camminando.
 

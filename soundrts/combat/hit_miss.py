@@ -21,9 +21,9 @@ class HitMissMixin:
         from ..lib.square_terrain_rules import any_terrain_defines, terrain_unit_dodge_bonus
 
         if is_melee:
-            unit_list = getattr(self, "mdg_dodge_on_terrain", ()) or ()
+            unit_list = getattr(self, "mdg_dodge_rate_on_terrain", ()) or ()
         else:
-            unit_list = getattr(self, "rdg_dodge_on_terrain", ()) or ()
+            unit_list = getattr(self, "rdg_dodge_rate_on_terrain", ()) or ()
         need_unit = bool(unit_list)
         need_terrain = any_terrain_defines("dodge_vs")
         if not need_unit and not need_terrain:
@@ -45,43 +45,43 @@ class HitMissMixin:
         terrain_mod = terrain_unit_dodge_bonus(terrain_type, self) if need_terrain else 0
         return unit_mod + terrain_mod
 
-    def _get_melee_cover_vs(self, target) -> int:
+    def _get_melee_hit_rate_vs(self, target) -> int:
         """返回对目标的近战命中修正（0~100）"""
         # 获取基础命中率
-        base_cover = self.mdg_cover // 1000 if self.mdg_cover else 100  # 默认100%命中
+        base_cover = self.mdg_hit_rate // 1000 if self.mdg_hit_rate else 100  # 默认100%命中
 
         # 获取对特定目标的命中修正
         specific_cover = 0
 
         # 先检查直接对单位类型的vs
-        if target.type_name in self.mdg_cover_vs:
-            specific_cover = self.mdg_cover_vs[target.type_name] // 1000  # vs值需要除以1000还原为0~100
+        if target.type_name in self.mdg_hit_rate_vs:
+            specific_cover = self.mdg_hit_rate_vs[target.type_name] // 1000  # vs值需要除以1000还原为0~100
         # 检查对单位继承类型的vs
         elif hasattr(target, 'expanded_is_a'):
             for t in target.expanded_is_a:
-                if t in self.mdg_cover_vs:
-                    specific_cover = self.mdg_cover_vs[t] // 1000  # vs值需要除以1000还原为0~100
+                if t in self.mdg_hit_rate_vs:
+                    specific_cover = self.mdg_hit_rate_vs[t] // 1000  # vs值需要除以1000还原为0~100
                     break
         
         # 如果还没有找到，检查对目标护甲类型的vs
         if specific_cover == 0 and hasattr(target, 'get_current_armor_name'):
             armor_name = target.get_current_armor_name()
-            if armor_name and armor_name in self.mdg_cover_vs:
-                specific_cover = self.mdg_cover_vs[armor_name] // 1000
+            if armor_name and armor_name in self.mdg_hit_rate_vs:
+                specific_cover = self.mdg_hit_rate_vs[armor_name] // 1000
         
         # 检查对目标护甲继承类型的vs
         if specific_cover == 0 and hasattr(target, '_armor_instance') and target._armor_instance:
             armor = target._armor_instance
             if hasattr(armor, 'expanded_is_a'):
                 for armor_type in armor.expanded_is_a:
-                    if armor_type in self.mdg_cover_vs:
-                        specific_cover = self.mdg_cover_vs[armor_type] // 1000
+                    if armor_type in self.mdg_hit_rate_vs:
+                        specific_cover = self.mdg_hit_rate_vs[armor_type] // 1000
                         break
             # 也检查护甲的直接is_a
             if specific_cover == 0 and hasattr(armor, 'is_a'):
                 for armor_type in armor.is_a:
-                    if armor_type in self.mdg_cover_vs:
-                        specific_cover = self.mdg_cover_vs[armor_type] // 1000
+                    if armor_type in self.mdg_hit_rate_vs:
+                        specific_cover = self.mdg_hit_rate_vs[armor_type] // 1000
                         break
 
         # 返回基础命中率加上特定目标命中修正
@@ -90,43 +90,43 @@ class HitMissMixin:
         # 限制在0-100范围内
         return max(0, min(100, final_cover))
 
-    def _get_ranged_cover_vs(self, target) -> int:
+    def _get_ranged_hit_rate_vs(self, target) -> int:
         """返回对目标的远程命中修正（0~100）"""
         # 获取基础命中率
-        base_cover = self.rdg_cover // 1000 if self.rdg_cover else 100  # 默认100%命中
+        base_cover = self.rdg_hit_rate // 1000 if self.rdg_hit_rate else 100  # 默认100%命中
 
         # 获取对特定目标的命中修正
         specific_cover = 0
 
         # 先检查直接对单位类型的vs
-        if target.type_name in self.rdg_cover_vs:
-            specific_cover = self.rdg_cover_vs[target.type_name] // 1000  # vs值需要除以1000还原为0~100
+        if target.type_name in self.rdg_hit_rate_vs:
+            specific_cover = self.rdg_hit_rate_vs[target.type_name] // 1000  # vs值需要除以1000还原为0~100
         # 检查对单位继承类型的vs
         elif hasattr(target, 'expanded_is_a'):
             for t in target.expanded_is_a:
-                if t in self.rdg_cover_vs:
-                    specific_cover = self.rdg_cover_vs[t] // 1000  # vs值需要除以1000还原为0~100
+                if t in self.rdg_hit_rate_vs:
+                    specific_cover = self.rdg_hit_rate_vs[t] // 1000  # vs值需要除以1000还原为0~100
                     break
         
         # 如果还没有找到，检查对目标护甲类型的vs
         if specific_cover == 0 and hasattr(target, 'get_current_armor_name'):
             armor_name = target.get_current_armor_name()
-            if armor_name and armor_name in self.rdg_cover_vs:
-                specific_cover = self.rdg_cover_vs[armor_name] // 1000
+            if armor_name and armor_name in self.rdg_hit_rate_vs:
+                specific_cover = self.rdg_hit_rate_vs[armor_name] // 1000
         
         # 检查对目标护甲继承类型的vs
         if specific_cover == 0 and hasattr(target, '_armor_instance') and target._armor_instance:
             armor = target._armor_instance
             if hasattr(armor, 'expanded_is_a'):
                 for armor_type in armor.expanded_is_a:
-                    if armor_type in self.rdg_cover_vs:
-                        specific_cover = self.rdg_cover_vs[armor_type] // 1000
+                    if armor_type in self.rdg_hit_rate_vs:
+                        specific_cover = self.rdg_hit_rate_vs[armor_type] // 1000
                         break
             # 也检查护甲的直接is_a
             if specific_cover == 0 and hasattr(armor, 'is_a'):
                 for armor_type in armor.is_a:
-                    if armor_type in self.rdg_cover_vs:
-                        specific_cover = self.rdg_cover_vs[armor_type] // 1000
+                    if armor_type in self.rdg_hit_rate_vs:
+                        specific_cover = self.rdg_hit_rate_vs[armor_type] // 1000
                         break
 
         # 返回基础命中率加上特定目标命中修正
@@ -141,107 +141,107 @@ class HitMissMixin:
         """
         if is_melee:
             # 先检查直接对攻击者单位类型的vs
-            if hasattr(self, 'mdg_dodge_vs') and hasattr(attacker, 'type_name') and attacker.type_name in self.mdg_dodge_vs:
-                dodge_value = self.mdg_dodge_vs[attacker.type_name]
+            if hasattr(self, 'mdg_dodge_rate_vs') and hasattr(attacker, 'type_name') and attacker.type_name in self.mdg_dodge_rate_vs:
+                dodge_value = self.mdg_dodge_rate_vs[attacker.type_name]
                 # 如果值大于100，假定它是内部值(需要除以1000)
                 if dodge_value > 100:
                     dodge_value = dodge_value // 1000
                 return dodge_value
 
             # 检查对攻击者继承类型的vs
-            if hasattr(self, 'mdg_dodge_vs') and hasattr(attacker, 'expanded_is_a'):
+            if hasattr(self, 'mdg_dodge_rate_vs') and hasattr(attacker, 'expanded_is_a'):
                 for t in attacker.expanded_is_a:
-                    if t in self.mdg_dodge_vs:
-                        dodge_value = self.mdg_dodge_vs[t]
+                    if t in self.mdg_dodge_rate_vs:
+                        dodge_value = self.mdg_dodge_rate_vs[t]
                         # 如果值大于100，假定它是内部值(需要除以1000)
                         if dodge_value > 100:
                             dodge_value = dodge_value // 1000
                         return dodge_value
             
             # 检查对攻击者武器类型的vs
-            if hasattr(self, 'mdg_dodge_vs') and hasattr(attacker, 'get_current_weapon_name'):
+            if hasattr(self, 'mdg_dodge_rate_vs') and hasattr(attacker, 'get_current_weapon_name'):
                 weapon_name = attacker.get_current_weapon_name()
-                if weapon_name and weapon_name in self.mdg_dodge_vs:
-                    dodge_value = self.mdg_dodge_vs[weapon_name]
+                if weapon_name and weapon_name in self.mdg_dodge_rate_vs:
+                    dodge_value = self.mdg_dodge_rate_vs[weapon_name]
                     if dodge_value > 100:
                         dodge_value = dodge_value // 1000
                     return dodge_value
             
             # 检查对攻击者武器继承类型的vs
-            if hasattr(self, 'mdg_dodge_vs') and hasattr(attacker, '_weapon_instances') and hasattr(attacker, 'current_weapon'):
+            if hasattr(self, 'mdg_dodge_rate_vs') and hasattr(attacker, '_weapon_instances') and hasattr(attacker, 'current_weapon'):
                 weapon_name = attacker.current_weapon
                 if weapon_name and weapon_name in attacker._weapon_instances:
                     weapon = attacker._weapon_instances[weapon_name]
                     if hasattr(weapon, 'expanded_is_a'):
                         for weapon_type in weapon.expanded_is_a:
-                            if weapon_type in self.mdg_dodge_vs:
-                                dodge_value = self.mdg_dodge_vs[weapon_type]
+                            if weapon_type in self.mdg_dodge_rate_vs:
+                                dodge_value = self.mdg_dodge_rate_vs[weapon_type]
                                 if dodge_value > 100:
                                     dodge_value = dodge_value // 1000
                                 return dodge_value
                     # 也检查武器的直接is_a
                     if hasattr(weapon, 'is_a'):
                         for weapon_type in weapon.is_a:
-                            if weapon_type in self.mdg_dodge_vs:
-                                dodge_value = self.mdg_dodge_vs[weapon_type]
+                            if weapon_type in self.mdg_dodge_rate_vs:
+                                dodge_value = self.mdg_dodge_rate_vs[weapon_type]
                                 if dodge_value > 100:
                                     dodge_value = dodge_value // 1000
                                 return dodge_value
 
             # 默认值需要除以1000还原
-            base_dodge = self.mdg_dodge // 1000 if hasattr(self, 'mdg_dodge') and self.mdg_dodge else 0
+            base_dodge = self.mdg_dodge_rate // 1000 if hasattr(self, 'mdg_dodge_rate') and self.mdg_dodge_rate else 0
             return base_dodge
         else:
             # 先检查直接对攻击者单位类型的vs
-            if hasattr(self, 'rdg_dodge_vs') and hasattr(attacker, 'type_name') and attacker.type_name in self.rdg_dodge_vs:
-                dodge_value = self.rdg_dodge_vs[attacker.type_name]
+            if hasattr(self, 'rdg_dodge_rate_vs') and hasattr(attacker, 'type_name') and attacker.type_name in self.rdg_dodge_rate_vs:
+                dodge_value = self.rdg_dodge_rate_vs[attacker.type_name]
                 # 如果值大于100，假定它是内部值(需要除以1000)
                 if dodge_value > 100:
                     dodge_value = dodge_value // 1000
                 return dodge_value
 
             # 检查对攻击者继承类型的vs
-            if hasattr(self, 'rdg_dodge_vs') and hasattr(attacker, 'expanded_is_a'):
+            if hasattr(self, 'rdg_dodge_rate_vs') and hasattr(attacker, 'expanded_is_a'):
                 for t in attacker.expanded_is_a:
-                    if t in self.rdg_dodge_vs:
-                        dodge_value = self.rdg_dodge_vs[t]
+                    if t in self.rdg_dodge_rate_vs:
+                        dodge_value = self.rdg_dodge_rate_vs[t]
                         # 如果值大于100，假定它是内部值(需要除以1000)
                         if dodge_value > 100:
                             dodge_value = dodge_value // 1000
                         return dodge_value
             
             # 检查对攻击者武器类型的vs
-            if hasattr(self, 'rdg_dodge_vs') and hasattr(attacker, 'get_current_weapon_name'):
+            if hasattr(self, 'rdg_dodge_rate_vs') and hasattr(attacker, 'get_current_weapon_name'):
                 weapon_name = attacker.get_current_weapon_name()
-                if weapon_name and weapon_name in self.rdg_dodge_vs:
-                    dodge_value = self.rdg_dodge_vs[weapon_name]
+                if weapon_name and weapon_name in self.rdg_dodge_rate_vs:
+                    dodge_value = self.rdg_dodge_rate_vs[weapon_name]
                     if dodge_value > 100:
                         dodge_value = dodge_value // 1000
                     return dodge_value
             
             # 检查对攻击者武器继承类型的vs
-            if hasattr(self, 'rdg_dodge_vs') and hasattr(attacker, '_weapon_instances') and hasattr(attacker, 'current_weapon'):
+            if hasattr(self, 'rdg_dodge_rate_vs') and hasattr(attacker, '_weapon_instances') and hasattr(attacker, 'current_weapon'):
                 weapon_name = attacker.current_weapon
                 if weapon_name and weapon_name in attacker._weapon_instances:
                     weapon = attacker._weapon_instances[weapon_name]
                     if hasattr(weapon, 'expanded_is_a'):
                         for weapon_type in weapon.expanded_is_a:
-                            if weapon_type in self.rdg_dodge_vs:
-                                dodge_value = self.rdg_dodge_vs[weapon_type]
+                            if weapon_type in self.rdg_dodge_rate_vs:
+                                dodge_value = self.rdg_dodge_rate_vs[weapon_type]
                                 if dodge_value > 100:
                                     dodge_value = dodge_value // 1000
                                 return dodge_value
                     # 也检查武器的直接is_a
                     if hasattr(weapon, 'is_a'):
                         for weapon_type in weapon.is_a:
-                            if weapon_type in self.rdg_dodge_vs:
-                                dodge_value = self.rdg_dodge_vs[weapon_type]
+                            if weapon_type in self.rdg_dodge_rate_vs:
+                                dodge_value = self.rdg_dodge_rate_vs[weapon_type]
                                 if dodge_value > 100:
                                     dodge_value = dodge_value // 1000
                                 return dodge_value
 
             # 默认值需要除以1000还原
-            base_dodge = self.rdg_dodge // 1000 if hasattr(self, 'rdg_dodge') and self.rdg_dodge else 0
+            base_dodge = self.rdg_dodge_rate // 1000 if hasattr(self, 'rdg_dodge_rate') and self.rdg_dodge_rate else 0
             return base_dodge
 
     def _hit_or_miss(self, target):
@@ -254,7 +254,7 @@ class HitMissMixin:
         is_melee = not (hasattr(self, 'rdg_range') and self.rdg_range > 0 and self.in_ranged_range(target))
 
         # 获取攻击者的基础命中修正（现在已包含基础命中+特定命中）
-        cover = self._get_melee_cover_vs(target) if is_melee else self._get_ranged_cover_vs(target)
+        cover = self._get_melee_hit_rate_vs(target) if is_melee else self._get_ranged_hit_rate_vs(target)
 
         # 应用地形修正 - 修改为将地形修正加到命中值，而不是替换
         terrain_type = None
@@ -266,13 +266,13 @@ class HitMissMixin:
         if terrain_type:
             terrain_modifier = 0
 
-            if is_melee and hasattr(self, 'mdg_cover_on_terrain') and self.mdg_cover_on_terrain:
+            if is_melee and hasattr(self, 'mdg_hit_rate_on_terrain') and self.mdg_hit_rate_on_terrain:
                 terrain_modifier = _terrain_modifier_from_list(
-                    terrain_type, self.mdg_cover_on_terrain
+                    terrain_type, self.mdg_hit_rate_on_terrain
                 )
-            elif not is_melee and hasattr(self, 'rdg_cover_on_terrain') and self.rdg_cover_on_terrain:
+            elif not is_melee and hasattr(self, 'rdg_hit_rate_on_terrain') and self.rdg_hit_rate_on_terrain:
                 terrain_modifier = _terrain_modifier_from_list(
-                    terrain_type, self.rdg_cover_on_terrain
+                    terrain_type, self.rdg_hit_rate_on_terrain
                 )
 
             # 将地形修正直接加到命中率上，而不是做百分比调整
@@ -283,25 +283,25 @@ class HitMissMixin:
 
         # 获取目标对攻击者的特定闪避修正
         target_dodge_vs = 0
-        if is_melee and hasattr(target, 'mdg_dodge_vs'):
-            if self.type_name in target.mdg_dodge_vs:
-                target_dodge_vs = target.mdg_dodge_vs[self.type_name]
+        if is_melee and hasattr(target, 'mdg_dodge_rate_vs'):
+            if self.type_name in target.mdg_dodge_rate_vs:
+                target_dodge_vs = target.mdg_dodge_rate_vs[self.type_name]
             elif hasattr(self, 'expanded_is_a'):
                 for t in self.expanded_is_a:
-                    if t in target.mdg_dodge_vs:
-                        target_dodge_vs = target.mdg_dodge_vs[t]
+                    if t in target.mdg_dodge_rate_vs:
+                        target_dodge_vs = target.mdg_dodge_rate_vs[t]
                         break
 
             # 如果值大于100，假定它是内部值(需要除以1000)
             if target_dodge_vs > 100:
                 target_dodge_vs = target_dodge_vs // 1000
-        elif not is_melee and hasattr(target, 'rdg_dodge_vs'):
-            if self.type_name in target.rdg_dodge_vs:
-                target_dodge_vs = target.rdg_dodge_vs[self.type_name]
+        elif not is_melee and hasattr(target, 'rdg_dodge_rate_vs'):
+            if self.type_name in target.rdg_dodge_rate_vs:
+                target_dodge_vs = target.rdg_dodge_rate_vs[self.type_name]
             elif hasattr(self, 'expanded_is_a'):
                 for t in self.expanded_is_a:
-                    if t in target.rdg_dodge_vs:
-                        target_dodge_vs = target.rdg_dodge_vs[t]
+                    if t in target.rdg_dodge_rate_vs:
+                        target_dodge_vs = target.rdg_dodge_rate_vs[t]
                         break
 
             # 如果值大于100，假定它是内部值(需要除以1000)
@@ -309,7 +309,7 @@ class HitMissMixin:
                 target_dodge_vs = target_dodge_vs // 1000
 
         # 获取目标的基础闪避值
-        base_dodge = target.mdg_dodge // 1000 if is_melee else target.rdg_dodge // 1000
+        base_dodge = target.mdg_dodge_rate // 1000 if is_melee else target.rdg_dodge_rate // 1000
 
         # 修改：计算最终闪避值为基础闪避 + 特定闪避 + 地形闪避
         total_dodge = base_dodge + target_dodge_vs + target_dodge_on_terrain
@@ -340,9 +340,9 @@ class HitMissMixin:
 
         # 1. 获取基础命中率
         if is_melee:
-            base_chance = self._get_melee_cover_vs(target)
+            base_chance = self._get_melee_hit_rate_vs(target)
         else:
-            base_chance = self._get_ranged_cover_vs(target)
+            base_chance = self._get_ranged_hit_rate_vs(target)
 
         # 2. 应用地形修正
         terrain_type = None
@@ -352,15 +352,15 @@ class HitMissMixin:
             else:
                 terrain_type = target.place.type_name
         if terrain_type:
-            if is_melee and self.mdg_cover_on_terrain:
+            if is_melee and self.mdg_hit_rate_on_terrain:
                 terrain_modifier = _terrain_modifier_from_list(
-                    terrain_type, self.mdg_cover_on_terrain
+                    terrain_type, self.mdg_hit_rate_on_terrain
                 )
                 if terrain_modifier:
                     base_chance = base_chance * terrain_modifier // 100
-            elif not is_melee and self.rdg_cover_on_terrain:
+            elif not is_melee and self.rdg_hit_rate_on_terrain:
                 terrain_modifier = _terrain_modifier_from_list(
-                    terrain_type, self.rdg_cover_on_terrain
+                    terrain_type, self.rdg_hit_rate_on_terrain
                 )
                 if terrain_modifier:
                     base_chance = base_chance * terrain_modifier // 100

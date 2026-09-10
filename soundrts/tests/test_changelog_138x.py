@@ -6,7 +6,7 @@
   - 1.3.8.7：菜单音量设置；击杀奖励（演进为 `resource_rewards`，无须 `is_rewards` 总开关）；
             拆建筑返还消耗
   - 1.3.8.5：mod 专属 multi/ 文件夹覆盖；
-  - 1.3.8.4：mdg_dodge_vs / rdg_dodge_vs 绝对闪避 bug 修复；
+  - 1.3.8.4：mdg_dodge_rate_vs / rdg_dodge_rate_vs 绝对闪避 bug 修复；
             **is_production / production_type / production_cost / production_qty / can_start_produce**
             建筑物可生产资源（1.4.0.4 已重命名为 auto_production / manual_production）。
   - 1.3.8.3：is_a footman(hp_max mdg) / is_a footman(apart hp_max) / is_a footman(-hp_max) / 多继承；
@@ -228,23 +228,23 @@ def test_official_advanced_maps_present_under_res_multi():
 
 
 def test_dodge_vs_integrated_in_hit_miss():
-    """1.3.8.4：mdg_dodge_vs / rdg_dodge_vs 已修复，正式参与 _hit_or_miss 计算。"""
+    """1.3.8.4：mdg_dodge_rate_vs / rdg_dodge_rate_vs 已修复，正式参与 _hit_or_miss 计算。"""
     src = _source("soundrts", "combat", "hit_miss.py")
     block = _section(src, "def _hit_or_miss", "def _get_dodge_on_terrain")
-    # _hit_or_miss 内对 target.mdg_dodge_vs / target.rdg_dodge_vs 查询
-    assert "target.mdg_dodge_vs" in block or "target_dodge_vs" in block
+    # _hit_or_miss 内对 target.mdg_dodge_rate_vs / target.rdg_dodge_rate_vs 查询
+    assert "target.mdg_dodge_rate_vs" in block or "target_dodge_vs" in block
     # 必须从 type_name / expanded_is_a 两路查
-    assert "self.type_name in target.mdg_dodge_vs" in block
-    assert "self.type_name in target.rdg_dodge_vs" in block
+    assert "self.type_name in target.mdg_dodge_rate_vs" in block
+    assert "self.type_name in target.rdg_dodge_rate_vs" in block
 
 
 def test_dodge_vs_supports_inherited_type_lookup():
     """1.3.8.4：闪避对 attacker 继承链支持。"""
     src = _source("soundrts", "combat", "hit_miss.py")
-    # mdg_dodge_vs 对 attacker.expanded_is_a 也能匹配
+    # mdg_dodge_rate_vs 对 attacker.expanded_is_a 也能匹配
     assert "expanded_is_a" in src
-    assert "target.mdg_dodge_vs[t]" in src
-    assert "target.rdg_dodge_vs[t]" in src
+    assert "target.mdg_dodge_rate_vs[t]" in src
+    assert "target.rdg_dodge_rate_vs[t]" in src
 
 
 def test_dodge_vs_internal_unit_conversion():
@@ -439,21 +439,21 @@ def test_projectile_high_ground_extra_range_implementation():
 
 
 def test_cover_dodge_on_terrain_in_string_list_properties():
-    """1.3.8.2：mdg_cover_on_terrain / rdg_cover_on_terrain / mdg_dodge_on_terrain /
-    rdg_dodge_on_terrain。"""
+    """1.3.8.2：mdg_hit_rate_on_terrain / rdg_hit_rate_on_terrain / mdg_dodge_rate_on_terrain /
+    rdg_dodge_rate_on_terrain。"""
     src = _source("soundrts", "definitions.py")
-    for k in ("mdg_cover_on_terrain", "rdg_cover_on_terrain",
-              "mdg_dodge_on_terrain", "rdg_dodge_on_terrain"):
+    for k in ("mdg_hit_rate_on_terrain", "rdg_hit_rate_on_terrain",
+              "mdg_dodge_rate_on_terrain", "rdg_dodge_rate_on_terrain"):
         assert f'"{k}"' in src
 
 
 def test_cover_dodge_on_terrain_consumed_in_hit_miss():
     """1.3.8.2：地形 cover / dodge 列表（地形名 + 数值）被 hit_miss 消费。"""
     src = _source("soundrts", "combat", "hit_miss.py")
-    assert "mdg_cover_on_terrain" in src
-    assert "rdg_cover_on_terrain" in src
-    assert "mdg_dodge_on_terrain" in src
-    assert "rdg_dodge_on_terrain" in src
+    assert "mdg_hit_rate_on_terrain" in src
+    assert "rdg_hit_rate_on_terrain" in src
+    assert "mdg_dodge_rate_on_terrain" in src
+    assert "rdg_dodge_rate_on_terrain" in src
 
 
 def test_exit_blocked_checks_both_sides():

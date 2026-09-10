@@ -525,7 +525,7 @@ Combat system (since 1.4)
       mdg_vs building 150
       mdg_vs siege_unit 40
 
-  其它 ``*_vs`` 键值对属性（如 ``rdg_vs``、``mdg_cover_vs``、``menace_vs``）同样支持一行多对与多行合并。
+  其它 ``*_vs`` 键值对属性（如 ``rdg_vs``、``mdg_hit_rate_vs``、``menace_vs``）同样支持一行多对与多行合并。
 - ``mdf`` / ``rdf``：防御
 - ``mdg_range`` / ``rdg_range``、``mdg_cd`` / ``rdg_cd``、``mdg_ready`` / ``rdg_ready``
 - ``mdg_projectile`` / ``rdg_projectile``：投射物标志（高地射程加成、低击高规则）
@@ -621,9 +621,12 @@ Combat system (since 1.4)
 
 **自动评分纳入的维度**（取主武器：``mdg``/``rdg`` 中伤害较高的一路）：
 
-- 伤害、命中（``mdg_cover``/``rdg_cover``，0 视为 100%%）、冷却（``*_cd``）、前摇（``mdg_ready``/``rdg_ready``，不是弹道 ``*_delay``）
-- 生命（当前 ``hp``，否则 ``hp_max``）、防御（``max(mdf, rdf)``）、闪避（``max(mdg_dodge, rdg_dodge)``）
+- 伤害、命中（``mdg_hit_rate``/``rdg_hit_rate``，0 视为 100%%）、冷却（``*_cd``）、前摇（``mdg_ready``/``rdg_ready``，不是弹道 ``*_delay``）
+- 生命（当前 ``hp``，否则 ``hp_max``）、防御（``max(mdf, rdf)``）、闪避（``max(mdg_dodge_rate, rdg_dodge_rate)``）
 - 射程、移速
+
+命中字段旧名 ``mdg_cover`` / ``rdg_cover`` 不再作别名（地形 ``cover`` 不变）。
+闪避字段旧名 ``mdg_dodge`` / ``rdg_dodge`` 不再作别名（地形 ``dodge_vs`` 与 style 闪避音效不变）。
 
 大致：先算有效 DPS（伤害 × 命中 /（冷却+前摇）），再乘生存与射程/移速修正。
 
@@ -2187,9 +2190,13 @@ Combat sound system (since 1.3.8.2; 1.4.4.6 renamed matk/ratk to mdg/rdg)
     default_formation formation_line
     formation_keep_pace 1
     formation_units infantry cavalry archer_unit siege_unit monk
+    formation_ranks melee ranged siege
     formation_rank_melee infantry cavalry
     formation_rank_ranged archer_unit
     formation_rank_siege siege_unit monk
+    formation_front_rank melee
+    formation_default_rank melee
+    formation_range_rank ranged
 
     def formation_line
     class formation
@@ -2205,6 +2212,8 @@ Combat sound system (since 1.3.8.2; 1.4.4.6 renamed matk/ratk to mdg/rdg)
     spacing 1.5
     mdg 20%
     speed -30%
+
+排面名完全由规则决定：``formation_ranks`` 列出名字（可改名、可增减）；每个名字一张 ``formation_rank_<名>`` 的 ``is_a`` 表。省略 ``formation_ranks`` 时从已有 ``formation_rank_*`` 推断。``formation_default_rank`` 为未匹配时的排；``formation_range_rank`` 为 ``rdg_range`` 大于 ``mdg_range`` 时的排；接敌先锋默认是当前阵型 ``ranks`` 的第一排（也可用 ``formation_front_rank``）。自定义排在 style 里写 ``title``；``melee`` / ``ranged`` / ``siege`` 仍可用内置语音。
 
 ``shape``：直角坐标 ``line`` / ``box`` / ``staggered`` / ``flank``，或极坐标 ``ring`` / ``arc``（别名 ``circle`` / ``round`` → 圆环，``wedge`` / ``cone`` → 扇形）。未知 ``shape`` 若写了 ``radius`` / ``arc_span`` / ``rings`` 也走极坐标，不必改引擎。``radius`` 为米（0=按 ``spacing`` 与人数估算）。``arc_span`` 为度（0 时圆环 360、扇形 180）。``arc_start`` 缺省自动。``rings`` / ``ring_gap`` 为同心环；``ring_rank out`` 把 ``ranks`` 里第一个排到外圈。间距单位是米（内部 PRECISION 毫米）。``flank_gap`` 仅两翼阵型使用。``max_front`` 为每排人数上限（0=按格子宽度）。单位可写 ``use_formation 1`` 或 ``formation_rank melee``；未写则用上面的 ``is_a`` 表。命令菜单列出每个 ``class formation`` 的 ``set_formation <类型>``（再选当前阵型会按人所在格子就地重整，全选不会把全图收成一队）。``cycle_formation`` 不进语音菜单，默认热键 ``CTRL SHIFT f``，可在热键编辑器里改。style：``def set_formation`` 以及各阵型 ``title``；``def parameters`` 的 ``formation_change`` 为换阵音效。编队 ``go`` 到格子保持排面；点到敌人则散开集火。空闲 ``offensive`` 接敌仍保持阵型。有槽的敌人挡路时改打前排（``formation_blocker``）。``guard`` 在阵型开启时为站岗：射程内开火、不走近（``agro_on_sight 0`` 除外，对齐决定版野猪）。``chase`` 仍贴脸。``class formation`` 可另写 ``mdg`` / ``rdg`` / ``mdf`` / ``rdf`` 与 ``mdg_vs`` / ``rdg_vs`` / ``mdf_vs`` / ``rdf_vs``，以及 ``speed``（可负）。绝对值如 ``mdg 2``、``speed -1.5``，或百分比如 ``mdg 20%``、``speed -30%``（按该单位自己的对应属性）。走到槽位成型后加算（走位途中没有）（``speed`` 加在齐步 ``keep_pace`` 之后；``break_formation_hold`` 或集火后失效）；默认 0，帝国 2 四种阵型不加。``mdg_vs`` / ``rdg_vs`` / ``mdf_vs`` / ``rdf_vs`` 走到槽位成型后也可匹配对方当前阵型的 ``class formation`` 名（如 ``formation_wedge``）与形状（``cone`` / ``wedge`` / ``arc`` 等），与单位类型克制叠加；多名形状键只取最具体的一条。规则写标识符，不写「锥形阵」这类译文。对方散开、追击或尚未走到槽位（`formation_ranks_formed`）则不计入。齐步 `keep_pace` 在走位时仍生效。
 

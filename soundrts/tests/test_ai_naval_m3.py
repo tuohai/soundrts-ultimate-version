@@ -150,7 +150,7 @@ def test_maintain_naval_requests_destroyers_for_intermediate():
 
 
 def test_is_ground_worker_excludes_boat():
-    from soundrts.worldplayercomputer import is_ground_worker
+    from soundrts.worldplayercomputer import is_ground_worker, is_land_economy_worker
     from soundrts.worldunit import Worker
 
     class TestWorker(Worker):
@@ -161,8 +161,14 @@ def test_is_ground_worker_excludes_boat():
     p.airground_type = "ground"
     b = object.__new__(TestWorker)
     b.airground_type = "water"
+    a = object.__new__(TestWorker)
+    a.airground_type = "air"
     assert is_ground_worker(p)
     assert not is_ground_worker(b)
+    assert not is_ground_worker(a)
+    assert is_land_economy_worker(p)
+    assert is_land_economy_worker(a)
+    assert not is_land_economy_worker(b)
 
 
 def test_sanitize_cancels_gather_on_water_unit_to_land_deposit():

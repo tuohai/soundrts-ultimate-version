@@ -35,8 +35,18 @@ _LANG_DIR_RE = re.compile(r"^ui-(.+)$")
 
 def read_text(path: Path) -> str:
     """Read a tts.txt/po file, transparently stripping a leading UTF-8 BOM
-    if present (a few existing tts.txt files have one)."""
-    return path.read_text(encoding="utf-8-sig")
+    if present (a few existing tts.txt files have one).
+
+    Falls back to GBK / Latin-1 for a handful of legacy third-party mod
+    files that are not valid UTF-8, so catalog extraction is not blocked.
+    """
+    raw = path.read_bytes()
+    for enc in ("utf-8-sig", "utf-8", "gbk", "cp936", "latin-1"):
+        try:
+            return raw.decode(enc)
+        except UnicodeDecodeError:
+            continue
+    return raw.decode("utf-8", errors="replace")
 
 
 # ---------------------------------------------------------------------------

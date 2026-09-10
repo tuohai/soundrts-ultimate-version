@@ -49,7 +49,7 @@ def test_gambesons_and_supplies_on_militia(aoe2_rules):
 def test_ballistics_no_range_bonus(aoe2_rules):
     s = _flat(aoe2_rules.get("ballistics", "effect"))
     assert "rdg_range" not in s
-    assert "rdg_cover" not in s
+    assert "rdg_hit_rate" not in s
     assert "projectile_lead" in s
     assert "town_center" in s
     assert "info" in s
@@ -124,20 +124,20 @@ def test_trebuchet_de_accuracy_units_15_buildings_80(aoe2_rules):
     from soundrts.lib.nofloat import to_int
 
     cls = aoe2_rules.unit_class("trebuchet")
-    assert cls.rdg_cover == to_int("15")
-    assert cls.rdg_cover_vs.get("building") == to_int("65")
+    assert cls.rdg_hit_rate == to_int("15")
+    assert cls.rdg_hit_rate_vs.get("building") == to_int("65")
 
     class _Treb(HitMissMixin):
-        rdg_cover = cls.rdg_cover
-        rdg_cover_vs = dict(cls.rdg_cover_vs)
+        rdg_hit_rate = cls.rdg_hit_rate
+        rdg_hit_rate_vs = dict(cls.rdg_hit_rate_vs)
 
     treb = _Treb()
     building = types.SimpleNamespace(
         type_name="aoe_castle", expanded_is_a=("building",)
     )
     unit = types.SimpleNamespace(type_name="militia", expanded_is_a=("infantry",))
-    assert treb._get_ranged_cover_vs(building) == 80
-    assert treb._get_ranged_cover_vs(unit) == 15
+    assert treb._get_ranged_hit_rate_vs(building) == 80
+    assert treb._get_ranged_hit_rate_vs(unit) == 15
 
 
 def test_aoe2_towers_and_outpost_buildable_anywhere(aoe2_rules):
