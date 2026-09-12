@@ -336,7 +336,7 @@ mdg_range 0
 corpse 0
 no_number 1
 is_vulnerable 1
-space 0.1
+;space 0.1
 
 def sheep
 class soldier
@@ -364,7 +364,7 @@ mdg_range 0
 corpse 0
 no_number 1
 is_vulnerable 1
-space 0.1
+;space 0.1
 
 def boar
 class soldier
@@ -391,7 +391,7 @@ mdg_range 1
 corpse 0
 no_number 1
 is_vulnerable 1
-space 0.1
+;space 0.1
 
 
 ; ---------- armor tags ----------
@@ -1346,7 +1346,7 @@ is_a infantry
 cost 20 0 50 0
 population_cost 1
 time_cost 21
-space 0.25
+;space 0.25
 
 hp_max 40
 speed 0.9
@@ -1430,7 +1430,7 @@ is_a infantry
 cost 0 25 35 0
 population_cost 1
 time_cost 22
-space 0.25
+;space 0.25
 requirements feudal_age
 
 hp_max 45
@@ -1494,7 +1494,7 @@ time_cost 35
 rdg_projectile 1
 rdg_projectile_speed 7
 rdg_targets ground air
-space 0.25
+;space 0.25
 requirements feudal_age
 
 hp_max 30
@@ -1558,7 +1558,7 @@ time_cost 26
 rdg_projectile 1
 rdg_projectile_speed 7
 rdg_targets ground air
-space 0.25
+;space 0.25
 requirements feudal_age
 
 hp_max 30
@@ -1631,7 +1631,7 @@ time_cost 37
 rdg_projectile 1
 rdg_projectile_speed 7
 rdg_targets ground air
-space 0.4
+;space 0.4
 requirements castle_age
 
 hp_max 50
@@ -1693,7 +1693,7 @@ is_a cavalry
 cost 0 0 80 0
 population_cost 1
 time_cost 30
-space 0.4
+;space 0.4
 requirements feudal_age
 
 hp_max 45
@@ -1752,7 +1752,7 @@ is_a cavalry
 cost 75 0 60 0
 population_cost 2
 time_cost 30
-space 0.5
+;space 0.5
 requirements castle_age
 
 hp_max 100
@@ -1804,7 +1804,7 @@ is_a cavalry
 cost 60 0 55 0
 population_cost 2
 time_cost 22
-space 0.45
+;space 0.45
 requirements castle_age
 
 hp_max 100
@@ -1866,7 +1866,7 @@ is_a cavalry
 cost 70 0 100 0
 population_cost 3
 time_cost 24
-space 0.7
+;space 0.7
 requirements castle_age
 mdg_splash 12
 mdg_radius 0.4
@@ -1908,7 +1908,7 @@ is_a cavalry
 cost 40 0 70 0
 population_cost 2
 time_cost 24
-space 0.4
+;space 0.4
 requirements castle_age
 
 hp_max 60
@@ -1948,7 +1948,7 @@ time_cost 34
 rdg_projectile 1
 rdg_projectile_speed 5.5
 rdg_targets ground
-space 0.25
+;space 0.25
 requirements imperial_age chemistry
 no_auto_upgrade 1
 
@@ -1974,7 +1974,7 @@ is_a infantry
 cost 50 0 20 0
 population_cost 1
 time_cost 50
-space 0.25
+;space 0.25
 requirements feudal_age
 no_auto_upgrade 1
 
@@ -2049,7 +2049,7 @@ is_a unique_unit
 cost 60 0 30 0
 population_cost 1
 time_cost 20
-space 0.25
+;space 0.25
 requirements castle_age
 no_auto_upgrade 1
 line_upgrade 1
@@ -2091,7 +2091,7 @@ is_a unique_unit
 cost 35 0 50 0
 population_cost 1
 time_cost 18
-space 0.25
+;space 0.25
 requirements imperial_age
 no_auto_upgrade 1
 
@@ -2116,7 +2116,7 @@ population_cost 3
 time_cost 25
 mdg_splash 15
 mdg_radius 0.5
-space 0.8
+;space 0.8
 requirements castle_age
 no_auto_upgrade 1
 
@@ -2158,7 +2158,7 @@ cost 95 0 120 0
 population_cost 2
 time_cost 36
 is_repairable 1
-space 0.7
+;space 0.7
 requirements castle_age
 no_auto_upgrade 1
 
@@ -2205,7 +2205,7 @@ time_cost 32
 rdg_projectile 1
 rdg_projectile_speed 7
 rdg_targets ground air
-space 0.6
+;space 0.6
 requirements castle_age
 no_auto_upgrade 1
 
@@ -2249,7 +2249,7 @@ population_cost 2
 time_cost 36
 is_repairable 1
 is_healable 0
-space 0.8
+;space 0.8
 requirements castle_age
 ; AoE2 garrison: infantry only here (archers/villagers garrison in DE but give no bonus).
 ; Per infantry: +0.05 speed, +10 vs buildings. Capacity 6 (DE).
@@ -2327,7 +2327,7 @@ mdg_splash 40
 mdg_radius 1
 is_repairable 1
 is_healable 0
-space 0.8
+;space 0.8
 requirements castle_age
 
 hp_max 50
@@ -2403,7 +2403,7 @@ rdg_pierce_width 0.5
 rdg_pierce_decay 50
 is_repairable 1
 is_healable 0
-space 0.6
+;space 0.6
 requirements castle_age
 
 hp_max 40
@@ -2459,7 +2459,7 @@ mdg_splash 40
 mdg_radius 0.5
 is_repairable 1
 is_healable 0
-space 0.9
+;space 0.9
 requirements imperial_age
 no_auto_upgrade 1
 
@@ -2489,7 +2489,7 @@ mdg_explode 1
 exp_hp_cost 100
 mdg_splash 25
 mdg_radius 0.5
-space 0.25
+;space 0.25
 requirements castle_age
 no_auto_upgrade 1
 
@@ -2520,7 +2520,7 @@ population_cost 1
 time_cost 36
 is_repairable 1
 is_healable 0
-space 1.0
+;space 1.0
 requirements castle_age
 no_auto_upgrade 1
 transport_capacity 10
@@ -2550,7 +2550,7 @@ rdg_projectile_speed 1.6
 rdg_targets ground building
 is_repairable 1
 is_healable 0
-space 1.0
+;space 1.0
 requirements imperial_age
 packable 1
 spawn_packed 1
@@ -2589,7 +2589,7 @@ airground_type water
 is_repairable 1
 is_healable 0
 transport_volume 99
-space 0.8
+;space 0.8
 population_cost 1
 
 def fishing_ship
@@ -3052,7 +3052,7 @@ time_cost 18
 rdg_projectile 1
 rdg_projectile_speed 7
 rdg_targets ground air
-space 0.25
+;space 0.25
 requirements castle_age
 
 hp_max 35
@@ -3100,7 +3100,7 @@ time_cost 13
 mdg_projectile 1
 mdg_projectile_speed 5
 mdg_targets ground
-space 0.25
+;space 0.25
 requirements castle_age
 
 hp_max 60
@@ -3144,7 +3144,7 @@ time_cost 16
 rdg_projectile 1
 rdg_projectile_speed 7
 rdg_targets ground air
-space 0.3
+;space 0.3
 requirements castle_age
 
 hp_max 45
@@ -3196,7 +3196,7 @@ time_cost 26
 rdg_projectile 1
 rdg_projectile_speed 7
 rdg_targets ground air
-space 0.4
+;space 0.4
 requirements castle_age
 
 hp_max 60
@@ -3244,7 +3244,7 @@ is_a unique_unit
 cost 75 0 70 0
 population_cost 2
 time_cost 20
-space 0.5
+;space 0.5
 requirements castle_age
 
 hp_max 110
@@ -3287,7 +3287,7 @@ is_a unique_unit
 cost 30 0 45 0
 population_cost 1
 time_cost 9
-space 0.25
+;space 0.25
 requirements castle_age
 
 hp_max 70
@@ -3329,7 +3329,7 @@ is_a unique_unit
 cost 30 0 85 0
 population_cost 1
 time_cost 12
-space 0.25
+;space 0.25
 requirements castle_age
 
 hp_max 90
@@ -3369,7 +3369,7 @@ is_a unique_unit
 cost 20 0 65 0
 population_cost 1
 time_cost 14
-space 0.25
+;space 0.25
 requirements castle_age
 hp_regen 1
 hp_regen_cd 4
@@ -3413,7 +3413,7 @@ is_a unique_unit
 cost 25 0 70 0
 population_cost 1
 time_cost 10
-space 0.25
+;space 0.25
 requirements castle_age
 
 hp_max 70
@@ -3456,7 +3456,7 @@ time_cost 17
 mdg_projectile 1
 mdg_projectile_speed 5
 mdg_targets ground
-space 0.25
+;space 0.25
 requirements castle_age
 
 hp_max 40
@@ -3499,7 +3499,7 @@ time_cost 16
 rdg_projectile 1
 rdg_projectile_speed 7
 rdg_targets ground air
-space 0.25
+;space 0.25
 requirements castle_age
 
 hp_max 40
@@ -3548,7 +3548,7 @@ time_cost 25
 rdg_projectile 1
 rdg_projectile_speed 5.5
 rdg_targets ground
-space 0.5
+;space 0.5
 requirements castle_age
 is_repairable 1
 is_healable 0
@@ -4599,7 +4599,7 @@ mana_max 100
 ; DE: ~1.6 faith/s → empty→full ≈ 62.5s; Illumination ×1.875 ≈ 33.3s
 mana_regen 1.6
 mana_regen_cd 1
-space 0.25
+;space 0.25
 ; DE: ~150 HP/min ≈ 2.5 HP/s ≈ 1 HP / 0.4s (AoEZone)
 heal_level 1
 heal_cd 0.4
@@ -4640,7 +4640,7 @@ time_cost 51
 mana_max 100
 mana_regen 1.6
 mana_regen_cd 1
-space 0.25
+;space 0.25
 ; DE: half of monk heal rate ≈ 1 HP / 0.8s
 heal_level 1
 heal_cd 0.8
@@ -5048,6 +5048,7 @@ starting_units town_center 3 peasant scout_cavalry
 def britons
 class race
 is_a Civilization
+starting_units 20 longbowman 3 peasant town_center 8 house
 peasant peasant
 footman militia
 archer aoe_archer

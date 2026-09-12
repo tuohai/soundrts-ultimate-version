@@ -4,6 +4,36 @@ Notas de la versión
 
 .. contents::
 
+1.5.0.6
+-------
+
+**Cambio: el alcance del campana de pueblo es el edificio pulsado**
+
+- **Problema**: Tocar cualquier edificio ``town_bell`` unía el ``town_bell_range`` de todas las campanas. Tocar a1 metía en b3 a aldeanos que solo estaban en las dos casillas de b3.
+- **Cambio**: ``ring_town_bell`` mide ``town_bell_range`` solo desde el edificio pulsado (AoE2 sigue usando ``24`` metros como equivalente local de unas 25 casillas). Los trabajadores en ese radio entran en el edificio guarnecible más cercano con sitio. ``workers_to_garrison`` exige ese edificio.
+- **Alcance**: ``world_town_bell.py``; ``worldorders/immediate.py``; ``test_town_bell.py``; ``test_changelog_15.py``.
+
+1.5.0.5
+-------
+
+**Cambio: recorte del camino caliente sin ventana**
+
+- **Problema**: Con muchos IA, ``known_enemies`` recorría todas las unidades interiores y llamaba ``container_visible_from_place`` por casilla; el cebo de jabalí, agua/anfibio y ``can_reach`` se recalculaban cada turno; ``update`` reimportaba ``VIRTUAL_TIME_INTERVAL``.
+- **Cambio**: ``index_inside_units_visible_from_places`` indexa por casilla. ``known_enemies`` usa ``_enemy_inside_index``. El cebo, transportes de agua/aire y ``can_reach`` usan ``_play_memo_get``. Mapas terrestres omiten obreros de agua y desembarcos anfibios. ``menace_versus`` usa ``getattr``. ``VIRTUAL_TIME_INTERVAL`` se importa a nivel de módulo.
+- **Alcance**: ``open_container.py``; ``worldplayerbase/perception.py``; ``worldplayerbase/base.py``; ``save_pickle.py``; ``combat/targeting.py``; ``worldplayercomputer.py``; ``world/world_game.py``; ``worldunit/world_ai_decision.py``; ``test_attack_inside_chance.py``; ``test_ai_naval_skip.py``; ``test_changelog_15.py``.
+
+**Cambio: AoE2 y las reglas base comentan el space de las unidades**
+
+- **Problema**: El ``space`` de unidad ocupaba capacidad abstracta por alianza, y un ejército grande no cabía en una casilla.
+- **Cambio**: Las líneas ``space`` de ``mods/aoe2/rules.txt`` y ``res/rules.txt`` quedan como ``;space``. Si se omite, ``space`` sigue en ``0`` (sin ocupación abstracta). La colisión física y las ranuras de formación no cambian. Descomente para volver al límite de capacidad.
+- **Alcance**: ``mods/aoe2/rules.txt``; ``res/rules.txt``; ``test_changelog_15.py``.
+
+**Cambio: las invocaciones que caducan no cuentan como bajas**
+
+- **Problema**: Al vencer ``time_limit``, los efectos llamaban ``die()`` y sumaban ``lost``. Las invocaciones normales usaban ``on_disappear``, pero ``lang_add_units`` aún las metía en ``produced``, así que supervivencia y producción enemiga se torcían con tropas temporales.
+- **Cambio**: El caducar ``on_disappear`` no suma ``lost``; ``uncount_expired_unit_produced`` revierte ``produced``. El tiempo de los efectos también usa ``on_disappear``. Morir en combate sigue contando ``lost`` / ``killed``.
+- **Alcance**: ``worldplayerstats.py``; ``worldunit/world_status_update.py``; ``worldunit/worldeffect.py``; ``worldunit/world_attributes.py``; ``worldunit/worldcreature.py``; ``test_score_breakdown.py``; ``test_changelog_15.py``; ``score-grading-system.rst`` y ``score-and-grades.rst`` en las cinco lenguas.
+
 1.5.0.4
 -------
 

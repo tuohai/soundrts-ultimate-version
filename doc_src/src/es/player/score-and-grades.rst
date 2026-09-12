@@ -20,6 +20,7 @@ Fórmulas y código: `../mod/score-grading-system.htm <../mod/score-grading-syst
 
 - Siete dimensiones base (resultado, minería, eficiencia, supervivencia, defensa de edificios, combate, demolición) suman como máximo 800 en total.
 - Derrotar a una IA más fuerte añade puntos de bonificación por encima, no dentro del denominador del 800 %.
+- Las invocaciones que caducan no son bajas; morir en combate sí cuenta.
 
 Oyes cada parte, luego el total y la nota (S la mejor, E la más baja).
 

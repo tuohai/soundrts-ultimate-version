@@ -535,7 +535,7 @@ class RallyingPointOrder(ImmediateOrder):
 
 
 class TownBellOrder(ImmediateOrder):
-    """First Town Bell ring: garrison nearby workers (player-wide toggle)."""
+    """First Town Bell ring: garrison workers in this building's range."""
 
     keyword = "town_bell"
     nb_args = 0
@@ -553,7 +553,7 @@ class TownBellOrder(ImmediateOrder):
         player = self.unit.player
         if getattr(player, "_town_bell_active", False):
             return
-        ring_town_bell(player)
+        ring_town_bell(player, self.unit)
         self.unit.notify("town_bell")
 
 

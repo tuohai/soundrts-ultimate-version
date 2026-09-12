@@ -1,11 +1,9 @@
-"""审计：1.5 / 1.5.0.1–1.5.0.4 — 野兽警报、信号弹、触发器、条约、阵型、命中率/闪避率改名。"""
+"""审计：1.5 / 1.5.0.1–1.5.0.6 — 野兽警报、信号弹、触发器、条约、阵型、命中率/闪避率改名、热点路径、注释 space、城镇钟所点建筑范围。"""
 from __future__ import annotations
 
 from pathlib import Path
 
 _FOLDED_VERSIONS = (
-    "1.5.0.5",
-    "1.5.0.6",
     "1.5.0.7",
     "1.5.0.8",
     "1.5.0.9",
@@ -32,6 +30,14 @@ def _section_between(lang: str, start_heading: str, end_heading: str) -> str:
     return rest if next_idx == -1 else rest[:next_idx]
 
 
+def _section_1506(lang: str) -> str:
+    return _section_between(lang, "1.5.0.6", "1.5.0.5")
+
+
+def _section_1505(lang: str) -> str:
+    return _section_between(lang, "1.5.0.5", "1.5.0.4")
+
+
 def _section_1504(lang: str) -> str:
     return _section_between(lang, "1.5.0.4", "1.5.0.3")
 
@@ -52,13 +58,15 @@ def _section_15(lang: str) -> str:
     return _section_between(lang, "1.5", "1.4.9.9")
 
 
-def test_version_is_1504():
-    assert 'VERSION = "1.5.0.4"' in _source("soundrts", "version.py")
+def test_version_is_1506():
+    assert 'VERSION = "1.5.0.6"' in _source("soundrts", "version.py")
 
 
-def test_all_relnotes_have_1504_then_1503_then_1502_then_1501_then_15_before_1499():
+def test_all_relnotes_have_1506_then_1505_then_1504_then_1503_then_1502_then_1501_then_15_before_1499():
     for lang in ("zh", "en", "es", "it", "pt-BR"):
         src = _source("doc_src", "src", lang, "relnotes.rst")
+        assert src.index("\n1.5.0.6\n") < src.index("\n1.5.0.5\n"), lang
+        assert src.index("\n1.5.0.5\n") < src.index("\n1.5.0.4\n"), lang
         assert src.index("\n1.5.0.4\n") < src.index("\n1.5.0.3\n"), lang
         assert src.index("\n1.5.0.3\n") < src.index("\n1.5.0.2\n"), lang
         assert src.index("\n1.5.0.2\n") < src.index("\n1.5.0.1\n"), lang
@@ -66,9 +74,125 @@ def test_all_relnotes_have_1504_then_1503_then_1502_then_1501_then_15_before_149
         assert src.index("\n1.5\n") < src.index("\n1.4.9.9"), lang
         for folded in _FOLDED_VERSIONS:
             assert f"\n{folded}\n" not in src, (lang, folded)
-        top = _section_1504(lang)
+        top = _section_1506(lang)
         for folded in _FOLDED_VERSIONS:
             assert folded not in top, (lang, folded)
+
+
+def test_zh_relnotes_1505_summon_expire_not_lost():
+    s = _section_1505("zh")
+    assert "on_disappear" in s
+    assert "time_limit" in s
+    assert "produced" in s
+    assert "lost" in s
+    assert "lang_add_units" in s
+    assert "uncount_expired_unit_produced" in s
+    assert "worldplayerstats.py" in s
+    assert "worldunit/worldeffect.py" in s
+    assert "test_score_breakdown.py" in s
+    assert "test_changelog_15.py" in s
+    assert "score-grading-system.rst" in s
+    assert "score-and-grades.rst" in s
+
+
+def test_en_es_it_pt_relnotes_1505_summon_expire_not_lost():
+    for lang in ("en", "es", "it", "pt-BR"):
+        s = _section_1505(lang)
+        assert "on_disappear" in s, lang
+        assert "time_limit" in s, lang
+        assert "produced" in s, lang
+        assert "lost" in s, lang
+        assert "lang_add_units" in s, lang
+        assert "uncount_expired_unit_produced" in s, lang
+        assert "worldplayerstats.py" in s, lang
+        assert "worldunit/worldeffect.py" in s, lang
+        assert "test_score_breakdown.py" in s, lang
+        assert "test_changelog_15.py" in s, lang
+        assert "score-grading-system.rst" in s, lang
+        assert "score-and-grades.rst" in s, lang
+
+
+def test_zh_relnotes_1505_headless_hot_path():
+    s = _section_1505("zh")
+    assert "index_inside_units_visible_from_places" in s
+    assert "known_enemies" in s
+    assert "_enemy_inside_index" in s
+    assert "_play_memo_get" in s
+    assert "VIRTUAL_TIME_INTERVAL" in s
+    assert "open_container.py" in s
+    assert "worldplayercomputer.py" in s
+    assert "test_attack_inside_chance.py" in s
+    assert "test_ai_naval_skip.py" in s
+    assert "test_changelog_15.py" in s
+
+
+def test_en_es_it_pt_relnotes_1505_headless_hot_path():
+    for lang in ("en", "es", "it", "pt-BR"):
+        s = _section_1505(lang)
+        assert "index_inside_units_visible_from_places" in s, lang
+        assert "known_enemies" in s, lang
+        assert "_enemy_inside_index" in s, lang
+        assert "_play_memo_get" in s, lang
+        assert "VIRTUAL_TIME_INTERVAL" in s, lang
+        assert "open_container.py" in s, lang
+        assert "worldplayercomputer.py" in s, lang
+        assert "test_attack_inside_chance.py" in s, lang
+        assert "test_ai_naval_skip.py" in s, lang
+        assert "test_changelog_15.py" in s, lang
+
+
+def test_zh_relnotes_1506_town_bell_clicked_building():
+    s = _section_1506("zh")
+    assert "ring_town_bell" in s
+    assert "town_bell_range" in s
+    assert "workers_to_garrison" in s
+    assert "world_town_bell.py" in s
+    assert "worldorders/immediate.py" in s
+    assert "test_town_bell.py" in s
+    assert "test_changelog_15.py" in s
+
+
+def test_en_es_it_pt_relnotes_1506_town_bell_clicked_building():
+    for lang in ("en", "es", "it", "pt-BR"):
+        s = _section_1506(lang)
+        assert "ring_town_bell" in s, lang
+        assert "town_bell_range" in s, lang
+        assert "workers_to_garrison" in s, lang
+        assert "world_town_bell.py" in s, lang
+        assert "worldorders/immediate.py" in s, lang
+        assert "test_town_bell.py" in s, lang
+        assert "test_changelog_15.py" in s, lang
+
+
+def test_zh_relnotes_1505_comment_out_unit_space():
+    s = _section_1505("zh")
+    assert "space" in s
+    assert ";space" in s
+    assert "mods/aoe2/rules.txt" in s
+    assert "res/rules.txt" in s
+    assert "test_changelog_15.py" in s
+
+
+def test_en_es_it_pt_relnotes_1505_comment_out_unit_space():
+    for lang in ("en", "es", "it", "pt-BR"):
+        s = _section_1505(lang)
+        assert "space" in s, lang
+        assert ";space" in s, lang
+        assert "mods/aoe2/rules.txt" in s, lang
+        assert "res/rules.txt" in s, lang
+        assert "test_changelog_15.py" in s, lang
+
+
+def test_aoe2_and_res_rules_comment_out_unit_space():
+    for rel in (("mods", "aoe2", "rules.txt"), ("res", "rules.txt")):
+        text = _source(*rel)
+        active = [
+            ln
+            for ln in text.splitlines()
+            if ln.strip() == "space" or ln.strip().startswith("space ")
+        ]
+        assert active == [], (rel, active)
+        assert ";space " in text
 
 
 def test_zh_relnotes_1504_formation_ranks_rule_driven():

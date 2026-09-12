@@ -234,6 +234,7 @@ class Player:
         self._enemy_units_set = frozenset()
         self._enemy_units_set_time = -1
         self._enemy_inside_units = ()
+        self._enemy_inside_index = {}
         self._perception_set = frozenset()
         self._perception_set_time = -1
 

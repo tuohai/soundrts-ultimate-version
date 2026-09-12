@@ -348,6 +348,8 @@ On loss: ``grade_total = min(total, 479)`` (``DEFEAT_GRADE_MAX_TOTAL``). Letter 
      - ``unit`` / ``building``
      - enemy destroyed
 
+``time_limit`` expiry ``on_disappear`` (including ``lang_add_units`` summons) does not add ``lost``; ``uncount_expired_unit_produced`` reverses ``produced``. Combat deaths still count ``lost`` / ``killed``.
+
 
 
 ``consumed(i) = gathered(i) - player.resources[i]``.

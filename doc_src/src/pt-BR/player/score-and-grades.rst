@@ -27,6 +27,7 @@ Do que é feita a pontuação?
 
 - Sete dimensões base (resultado, mineração, eficiência, sobrevivência, defesa de edifícios, combate, demolição) somam no máximo 800.
 - Derrotar IA mais forte adiciona pontos bônus por cima, fora do denominador de 800 %.
+- Invocações que expiram não são baixas; morte em combate continua a contar.
 
 Você ouve cada parte, depois o total e a nota em letra (S melhor, E pior).
 

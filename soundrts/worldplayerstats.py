@@ -29,6 +29,26 @@ def _clamp_score(value, maximum=CATEGORY_MAX):
     return max(0, min(maximum, int(value)))
 
 
+def uncount_expired_unit_produced(unit) -> None:
+    """Decay / ``time_limit`` expiry: drop remaining ``produced``, never ``lost``."""
+    if unit is None or getattr(unit, "_stats_expire_uncounted", False):
+        return
+    unit._stats_expire_uncounted = True
+    if not getattr(unit, "_stats_counted_produced", False):
+        return
+    st = getattr(unit, "stat_type", None)
+    owner = getattr(unit, "player", None)
+    if not st or owner is None or not hasattr(owner, "stats"):
+        return
+    try:
+        current = int(owner.stats.get("produced", st) or 0)
+    except (TypeError, ValueError):
+        current = 0
+    if current <= 0:
+        return
+    owner.stats.add("produced", st, -1)
+
+
 class Stats:
     _game_duration = None
 

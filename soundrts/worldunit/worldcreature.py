@@ -475,8 +475,8 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
         if food_deposit_name and food_qty and self.place is not None:
             hunt_info = (food_deposit_name, food_qty, self.place, self.x, self.y)
 
-        # 只在被击杀时发送死亡通知和处理统计
-        if notify_death:
+        # 只在被击杀时发送死亡通知和处理统计（到期消失走 on_disappear，不记 lost）
+        if notify_death and not getattr(self, "_disappeared", False):
             self.notify("death")
             if hasattr(self.player, 'stats'):
                 self.player.stats.add("lost", self.stat_type)

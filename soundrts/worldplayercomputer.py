@@ -3886,24 +3886,30 @@ class Computer(Player):
         drop_place = self._hunt_lure_dropoff_place(worker)
         if origin is None or drop_place is None:
             return None
-        taken_ids = {
+        taken_ids = frozenset(
             id(getattr(u, "_lure_animal", None))
             for u in (getattr(self, "_workers", ()) or ())
             if getattr(u, "_lure_animal", None) is not None
-        }
-        animals = []
-        for o in self._known_huntable_animals():
-            if not self._is_lureable_huntable(o):
-                continue
-            if o.place is drop_place:
-                continue
-            if id(o) in taken_ids:
-                continue
-            animals.append(o)
-        if not animals:
-            return None
-        safe = [a for a in animals if not self.square_is_dangerous(a.place)]
-        return self._pick_nearest_reachable(origin, safe or animals)
+        )
+
+        def _compute():
+            animals = []
+            for o in self._known_huntable_animals():
+                if not self._is_lureable_huntable(o):
+                    continue
+                if o.place is drop_place:
+                    continue
+                if id(o) in taken_ids:
+                    continue
+                animals.append(o)
+            if not animals:
+                return None
+            safe = [a for a in animals if not self.square_is_dangerous(a.place)]
+            return self._pick_nearest_reachable(origin, safe or animals)
+
+        return self._play_memo_get(
+            ("boar_lure", id(origin), id(drop_place), taken_ids), _compute
+        )
 
     def _choose_lure_kill_target(self, worker):
         """Boar already at the town center / mill: all hunters may finish it."""
@@ -3986,6 +3992,8 @@ class Computer(Player):
             return
         if self._other_lure_workers(None):
             return
+        if not self._play_memo_get("any_lureable", self._any_lureable_huntable):
+            return
         idle = []
         steal = []
         for u in workers:
@@ -4000,6 +4008,12 @@ class Computer(Player):
         for worker in idle + steal:
             if self._try_start_boar_lure(worker):
                 return
+
+    def _any_lureable_huntable(self):
+        for o in self._known_huntable_animals():
+            if self._is_lureable_huntable(o):
+                return True
+        return False
 
     def _gatherable_building_targets(self, worker):
         from .world_extractor import (
@@ -4696,6 +4710,8 @@ class Computer(Player):
         return None
 
     def _idle_water_workers_gather(self):
+        if not self._map_has_water():
+            return
         for u in self.units:
             if not is_water_worker(u) or not Worker.has_gather_permissions(u):
                 continue
@@ -5081,6 +5097,8 @@ class Computer(Player):
 
     def _idle_water_workers(self):
         """Return idle water workers to the nearest reachable water square."""
+        if not self._map_has_water():
+            return
         for u in self.units:
             if getattr(u, "airground_type", None) != "water":
                 continue
@@ -5313,6 +5331,8 @@ class Computer(Player):
 
     def _try_amphibious_landings(self):
         """Backward-compatible entry point for boat/air assault scheduling."""
+        if not self._map_has_water() and not self._available_air_transports():
+            return
         self._try_unload_idle_loaded_transports()
         self._try_transport_assaults()
 
@@ -6807,9 +6827,20 @@ class Computer(Player):
         dest = self._world_place_for_pathfinding(dest)
         if dest is None:
             return False
-        move_target = movement_target_for_unit(unit, dest, self)
-        path = self._unit_path(unit, move_target, places=True, avoid=avoid)
-        return bool(path)
+        origin = self._world_place_for_unit(unit)
+        if origin is None:
+            return False
+        plane = path_plane(unit)
+        key = ("can_reach", id(origin), id(dest), plane, avoid)
+
+        def _compute():
+            move_target = movement_target_for_unit(unit, dest, self)
+            path = origin.shortest_path_to(
+                move_target, self, plane=plane, places=True, avoid=avoid
+            )
+            return bool(path)
+
+        return self._play_memo_get(key, _compute)
 
     def _amphibious_transport_cost(self, unit, dest_place):
         start = self._world_place_for_unit(unit)
@@ -6877,6 +6908,9 @@ class Computer(Player):
         return blocked
 
     def _available_water_transports(self):
+        return self._play_memo_get("water_transports", self._compute_water_transports)
+
+    def _compute_water_transports(self):
         result = []
         for u in self.units:
             if getattr(u, "transport_capacity", 0) <= 0:
@@ -6903,6 +6937,9 @@ class Computer(Player):
         return dist
 
     def _available_air_transports(self):
+        return self._play_memo_get("air_transports", self._compute_air_transports)
+
+    def _compute_air_transports(self):
         result = []
         for u in self.units:
             if getattr(u, "transport_capacity", 0) <= 0:

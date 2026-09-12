@@ -357,6 +357,8 @@
      - ``unit`` / ``building``
      - 击杀敌方单位/建筑
 
+``time_limit`` 到期 ``on_disappear``（含 ``lang_add_units`` 召唤）不记 ``lost``，并用 ``uncount_expired_unit_produced`` 扣回 ``produced``；被打死仍记 ``lost`` / ``killed``。
+
 
 
 ``consumed(i) = gathered(i) - player.resources[i]`` （当前库存差额视为已消耗）。

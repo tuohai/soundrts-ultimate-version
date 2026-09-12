@@ -144,9 +144,12 @@ class TargetingMixin:
 
             def _enemy_sort_key(enemy):
                 dist2 = square_of_distance(self.x, self.y, enemy.x, enemy.y)
-                threat = enemy.menace_versus(self) if hasattr(
-                    enemy, "menace_versus"
-                ) else enemy.menace
+                menace_versus = getattr(enemy, "menace_versus", None)
+                threat = (
+                    menace_versus(self)
+                    if menace_versus is not None
+                    else enemy.menace
+                )
                 if skill > 0:
                     score = (
                         self._get_vs_damage_bonus(enemy) * skill

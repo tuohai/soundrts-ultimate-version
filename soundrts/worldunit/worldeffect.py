@@ -103,9 +103,9 @@ class Effect(Unit):
                 self.apply_buffs_to_allies()
                 self.last_application_time = current_time
         
-        # 检查是否超时
+        # 检查是否超时：到期消失不算阵亡（与 CreatureStatusUpdate.on_disappear 一致）
         if self.time_limit > 0 and self.world.time >= self.time_limit:
-            self.die()
+            self.on_disappear()
             return
 
     def harm_nearby_units(self):

@@ -361,6 +361,8 @@ inflacionem ``total``.
      - ``unit`` / ``building``
      - inimigo destruído
 
+O expirar de ``time_limit`` com ``on_disappear`` (incluindo invocações de ``lang_add_units``) não soma ``lost``; ``uncount_expired_unit_produced`` reverte ``produced``. Morte em combate continua a contar ``lost`` / ``killed``.
+
 
 
 ``consumed(i) = gathered(i) - player.resources[i]``.

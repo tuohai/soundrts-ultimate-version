@@ -346,6 +346,8 @@ In sconfitta: ``grade_total = min(total, 479)`` (``DEFEAT_GRADE_MAX_TOTAL``). Il
      - ``unit`` / ``building``
      - nemico distrutto
 
+Lo scadere di ``time_limit`` con ``on_disappear`` (incluse le invocazioni di ``lang_add_units``) non aggiunge ``lost``; ``uncount_expired_unit_produced`` storna ``produced``. La morte in combattimento conta ancora ``lost`` / ``killed``.
+
 
 
 ``consumed(i) = gathered(i) - player.resources[i]``.

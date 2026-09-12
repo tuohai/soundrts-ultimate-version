@@ -292,6 +292,8 @@ En derrota: ``grade_total = min(total, 479)`` (``DEFEAT_GRADE_MAX_TOTAL``). La n
      - ``unit`` / ``building``
      - enemigo destruido
 
+El caducar de ``time_limit`` con ``on_disappear`` (incluidas invocaciones de ``lang_add_units``) no suma ``lost``; ``uncount_expired_unit_produced`` revierte ``produced``. Morir en combate sigue contando ``lost`` / ``killed``.
+
 ``consumed(i) = gathered(i) - player.resources[i]``.
 
 ``stats.freeze()`` al final de la partida fija ``game_duration`` para el anuncio de tiempo.

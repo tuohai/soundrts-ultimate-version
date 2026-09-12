@@ -10,6 +10,7 @@ from ..lib.nofloat import (
     to_int,
 )
 from ..worldentity import Entity
+from ..world_build_rules import building_can_operate
 
 # D-Phase 1: 内层 Cython 加速器 (失败时自动 fallback 到 Python).
 _fast = None
@@ -66,17 +67,15 @@ class CreatureAIDecision(Entity):
 
     def _is_wildlife_animal(self, other):
         """Living huntable/herdable/claimable unit (wild or owned livestock)."""
-        if other is None or other is self or getattr(other, "hp", 0) <= 0:
+        if other is None or other is self:
             return False
-        if getattr(other, "player", None) is None:
+        if getattr(other, "hp", 0) <= 0 or getattr(other, "player", None) is None:
             return False
-        for attr in ("is_huntable", "herdable", "claimable"):
-            raw = getattr(other, attr, None)
-            if raw is None:
-                raw = getattr(type(other), attr, 0)
-            if CreatureAIDecision._rules_flag_truthy(raw):
-                return True
-        return False
+        return bool(
+            getattr(other, "is_huntable", 0)
+            or getattr(other, "herdable", 0)
+            or getattr(other, "claimable", 0)
+        )
 
     def _is_approach_only_target(self, other):
         """Default/go should approach, not fight: neutrals and wildlife/livestock."""
@@ -893,8 +892,6 @@ class CreatureAIDecision(Entity):
         if getattr(self, "is_a_building", False) and getattr(
             self, "loses_power_without_field", 0
         ):
-            from ..world_build_rules import building_can_operate
-
             if not building_can_operate(self):
                 return False
         if not self.is_an_enemy(other):
@@ -903,15 +900,11 @@ class CreatureAIDecision(Entity):
         if self._is_approach_only_target(other):
             if not self._player_ordered_attack_on(other):
                 return False
-        # 条约期内禁止攻击敌对单位
-        try:
-            treaty_until = getattr(self.world, "treaty_until_time", 0)
-            if treaty_until > 0 and self.world.time < treaty_until:
-                op = other.player
-                if op is not None and self.player.player_is_an_enemy(op):
-                    return False
-        except Exception:
-            pass
+        treaty_until = getattr(self.world, "treaty_until_time", 0) or 0
+        if treaty_until > 0 and self.world.time < treaty_until:
+            op = other.player
+            if op is not None and self.player.player_is_an_enemy(op):
+                return False
         if not self.can_attack_if_in_range(other):
             return False
         # D-Phase 1 T3: damage 本地变量缓存. mdg_range / rdg_range 一般固定;

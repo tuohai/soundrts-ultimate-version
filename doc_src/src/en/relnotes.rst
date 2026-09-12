@@ -5,6 +5,36 @@ Release notes
 .. contents::
 
 
+1.5.0.6
+-------
+
+**Change: Town Bell range is the building you clicked**
+
+- **Issue**: Ringing any ``town_bell`` building unioned every bell's ``town_bell_range``. Ringing a1 pulled villagers who were only inside b3's two-square radius into b3.
+- **Change**: ``ring_town_bell`` measures ``town_bell_range`` from the clicked building only (AoE2 still uses ``24`` meters as the local stand-in for about 25 tiles). Workers in that radius still enter the nearest garrisonable building with space. ``workers_to_garrison`` requires that building.
+- **Scope**: ``world_town_bell.py``; ``worldorders/immediate.py``; ``test_town_bell.py``; ``test_changelog_15.py``.
+
+1.5.0.5
+-------
+
+**Change: headless hot-path speed**
+
+- **Issue**: With many AIs, ``known_enemies`` scanned every inside unit and called ``container_visible_from_place`` per square; boar lure, water/amphibious, and ``can_reach`` recomputed each play turn; ``update`` re-imported ``VIRTUAL_TIME_INTERVAL``.
+- **Change**: ``index_inside_units_visible_from_places`` indexes inside units per square. ``known_enemies`` uses ``_enemy_inside_index``. Boar lure, water/air transports, and ``can_reach`` use ``_play_memo_get``. Land maps skip water workers and amphibious landings. ``menace_versus`` uses ``getattr``. ``VIRTUAL_TIME_INTERVAL`` is imported at module level.
+- **Scope**: ``open_container.py``; ``worldplayerbase/perception.py``; ``worldplayerbase/base.py``; ``save_pickle.py``; ``combat/targeting.py``; ``worldplayercomputer.py``; ``world/world_game.py``; ``worldunit/world_ai_decision.py``; ``test_attack_inside_chance.py``; ``test_ai_naval_skip.py``; ``test_changelog_15.py``.
+
+**Change: AoE2 and stock rules comment out unit space**
+
+- **Issue**: Unit ``space`` used abstract square capacity per alliance, so large armies could not stack on one square.
+- **Change**: Unit ``space`` lines in ``mods/aoe2/rules.txt`` and ``res/rules.txt`` are commented as ``;space``. Omitted ``space`` still defaults to ``0`` (no abstract occupancy). Physical collision and formation slots are unchanged. Uncomment to restore capacity limits.
+- **Scope**: ``mods/aoe2/rules.txt``; ``res/rules.txt``; ``test_changelog_15.py``.
+
+**Change: timed summons that expire are not casualties**
+
+- **Issue**: When ``time_limit`` ran out, effect units called ``die()`` and counted as ``lost``. Ordinary summons used ``on_disappear``, but ``lang_add_units`` still added them to ``produced``, so survival and enemy production were skewed by temporary troops.
+- **Change**: Expiry ``on_disappear`` does not add ``lost``; ``uncount_expired_unit_produced`` reverses ``produced``. Effect timeout also uses ``on_disappear``. Combat deaths still count ``lost`` / ``killed``.
+- **Scope**: ``worldplayerstats.py``; ``worldunit/world_status_update.py``; ``worldunit/worldeffect.py``; ``worldunit/world_attributes.py``; ``worldunit/worldcreature.py``; ``test_score_breakdown.py``; ``test_changelog_15.py``; ``score-grading-system.rst`` and ``score-and-grades.rst`` in all five languages.
+
 1.5.0.4
 -------
 

@@ -8,6 +8,7 @@ from ..lib import chronometer as chrono
 from ..lib.log import exception
 from ..lib.nofloat import square_of_distance
 from ..worldplayerbase import A
+from ..definitions import VIRTUAL_TIME_INTERVAL
 
 # 世界级每 tick 全单位扫描的 Cython 加速器
 _wbf = None
@@ -265,10 +266,9 @@ class WorldGameMixin:
         n_players = len(players_snapshot)
         if n_players:
             # 在 player_cycle_ticks 个游戏 tick 内覆盖全部玩家
-            from ..definitions import VIRTUAL_TIME_INTERVAL as _VT
             player_cycle_ticks = 1
             quota = max(1, (n_players + player_cycle_ticks - 1) // player_cycle_ticks)
-            phase = ((self.time // _VT) % player_cycle_ticks) * quota
+            phase = ((self.time // VIRTUAL_TIME_INTERVAL) % player_cycle_ticks) * quota
             for k in range(min(quota, n_players)):
                 p = players_snapshot[(phase + k) % n_players]
                 if p in self.players:
@@ -281,10 +281,9 @@ class WorldGameMixin:
         objects_snapshot = self._active_objects_snapshot()
         n_objects = len(objects_snapshot)
         if n_objects:
-            from ..definitions import VIRTUAL_TIME_INTERVAL as _VT
             object_cycle_ticks = 1
             quota_o = max(1, (n_objects + object_cycle_ticks - 1) // object_cycle_ticks)
-            phase_o = ((self.time // _VT) % object_cycle_ticks) * quota_o
+            phase_o = ((self.time // VIRTUAL_TIME_INTERVAL) % object_cycle_ticks) * quota_o
             for k in range(min(quota_o, n_objects)):
                 o = objects_snapshot[(phase_o + k) % n_objects]
                 if o.place is not None:
@@ -346,7 +345,6 @@ class WorldGameMixin:
         self._record_sync_debug_info()
 
         # 指示此时间的更新已结束
-        from ..definitions import VIRTUAL_TIME_INTERVAL
         self.time += VIRTUAL_TIME_INTERVAL
         for p in self.players[:]:
             try:

@@ -12,6 +12,7 @@ from ..worldresource import Corpse, Deposit
 from ..open_container import (
     container_visible_from_place,
     exit_blocker_visible_from_observed_squares,
+    index_inside_units_visible_from_places,
     is_open_container,
 )
 from .base import A
@@ -221,7 +222,12 @@ class PerceptionMixin:
         # 每次对全体敌人扫 is_inside）
         if self._enemy_units_set_time == current_time:
             enemy_units_set = self._enemy_units_set
-            enemy_inside = self._enemy_inside_units
+            inside_index = getattr(self, "_enemy_inside_index", None)
+            if inside_index is None:
+                inside_index = index_inside_units_visible_from_places(
+                    getattr(self, "_enemy_inside_units", ())
+                )
+                self._enemy_inside_index = inside_index
         else:
             enemy_units_set = set(self._enemy_units_cache)
             if _HAS_FAST_FILTER_INSIDE:
@@ -232,8 +238,10 @@ class PerceptionMixin:
                     for u in enemy_units_set
                     if (u.place is not None and u.place.is_inside_place)
                 )
+            inside_index = index_inside_units_visible_from_places(enemy_inside)
             self._enemy_units_set = enemy_units_set
             self._enemy_inside_units = enemy_inside
+            self._enemy_inside_index = inside_index
             self._enemy_units_set_time = current_time
 
         if self._perception_set_time == current_time:
@@ -259,12 +267,10 @@ class PerceptionMixin:
                     op = obj.place
                     if op is None or not op.is_inside_place:
                         result.append(obj)
-        # Open-container passengers (Cython + Python paths).
-        for obj in enemy_inside:
+        # Open-container passengers: per-place index (built once per tick).
+        for obj in inside_index.get(id(place), ()):
             if obj.is_vulnerable and obj not in result:
-                container = getattr(getattr(obj, "place", None), "container", None)
-                if container_visible_from_place(container, place):
-                    result.append(obj)
+                result.append(obj)
         self._known_enemies[place] = result
         self._known_enemies_time[place] = current_time
         hit[0] = place

@@ -27,6 +27,7 @@ What makes up the score?
 
 - Seven base dimensions (outcome, mining, efficiency, survival, building defense, combat, demolition) cap at 800 total.
 - Defeating stronger AI adds bonus points on top, not inside the 800 % denominator.
+- Timed summons that expire are not casualties; combat deaths still count.
 
 You hear each part, then total and letter grade (S best, E lowest).
 

@@ -130,6 +130,23 @@ def test_open_container_visibility_from_neighbors():
     assert inside_unit_visible_from_place(archer, b1)
 
 
+def test_index_inside_units_visible_from_places_matches_visibility():
+    from soundrts.open_container import index_inside_units_visible_from_places
+
+    a1 = _square("a1")
+    b1 = _square("b1")
+    c1 = _square("c1")
+    a1.neighbors.append(b1)
+    b1.neighbors.append(a1)
+    archer = types.SimpleNamespace(is_inside=True, hp=100, is_vulnerable=True)
+    wall = _wall(place=a1, chance=40, passengers=[archer])
+    archer.place = wall.inside
+    index = index_inside_units_visible_from_places((archer,))
+    assert archer in index.get(id(a1), ())
+    assert archer in index.get(id(b1), ())
+    assert archer not in index.get(id(c1), ())
+
+
 def test_attack_inside_chance_not_leaked_from_wall_to_other_buildings():
     """rules.txt 中仅 wall 定义 attack_inside_chance 时，其他建筑不应继承该值。"""
     import warnings

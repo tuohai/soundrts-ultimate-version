@@ -4,6 +4,36 @@
 .. contents::
 
 
+1.5.0.6
+-------
+
+**改进：城镇钟只量所点建筑的范围**
+
+- **问题**：点任何一座 ``town_bell`` 建筑都会并上所有钟的 ``town_bell_range``。a1 敲钟会把只在 b3 两格内的村民召进 b3。
+- **改进**：``ring_town_bell`` 只按所点建筑量 ``town_bell_range``（帝国 2 模组仍为 ``24`` 米，对应原版约 25 格的本地换算）。范围内工人仍进最近能装下的可驻扎建筑。``workers_to_garrison`` 必须传入该建筑。
+- **范围**：``world_town_bell.py``；``worldorders/immediate.py``；``test_town_bell.py``；``test_changelog_15.py``。
+
+1.5.0.5
+-------
+
+**改进：无界面对局热点路径**
+
+- **问题**：多人 AI 时 ``known_enemies`` 每格扫描全部舱内部队并调用 ``container_visible_from_place``；野猪引诱、水路/两栖与 ``can_reach`` 每拍重复计算；``update`` 内反复导入 ``VIRTUAL_TIME_INTERVAL``。
+- **改进**：``index_inside_units_visible_from_places`` 按格索引舱内可见单位。``known_enemies`` 用 ``_enemy_inside_index``。野猪引诱与水路/空运/``can_reach`` 用 ``_play_memo_get``。陆图跳过水路工人与两栖登陆。``menace_versus`` 用 ``getattr``。``VIRTUAL_TIME_INTERVAL`` 提到模块顶层。
+- **范围**：``open_container.py``；``worldplayerbase/perception.py``；``worldplayerbase/base.py``；``save_pickle.py``；``combat/targeting.py``；``worldplayercomputer.py``；``world/world_game.py``；``worldunit/world_ai_decision.py``；``test_attack_inside_chance.py``；``test_ai_naval_skip.py``；``test_changelog_15.py``。
+
+**改进：帝国 2 与原版规则注释掉单位 space**
+
+- **问题**：单位 ``space`` 按同盟占用格子抽象容量，大军团同格会挤不下。
+- **改进**：``mods/aoe2/rules.txt`` 与 ``res/rules.txt`` 中单位的 ``space`` 均改为 ``;space`` 注释。未写时默认 ``space 0``（不占抽象容量）。物理碰撞与阵型槽位不变。需要容量限制时可取消注释。
+- **范围**：``mods/aoe2/rules.txt``；``res/rules.txt``；``test_changelog_15.py``。
+
+**改进：召唤物到期消失不计入阵亡**
+
+- **问题**：``time_limit`` 到期后，效果物走 ``die()`` 会记 ``lost``。普通召唤虽走 ``on_disappear``，``lang_add_units`` 仍把他们记进 ``produced``，存活率和敌方产量都被临时兵扭曲。
+- **改进**：到期 ``on_disappear``：不记 ``lost``，用 ``uncount_expired_unit_produced`` 扣回 ``produced``。效果物超时也走 ``on_disappear``。被打死仍记 ``lost`` / ``killed``。
+- **范围**：``worldplayerstats.py``；``worldunit/world_status_update.py``；``worldunit/worldeffect.py``；``worldunit/world_attributes.py``；``worldunit/worldcreature.py``；``test_score_breakdown.py``；``test_changelog_15.py``；五语 ``score-grading-system.rst``；五语 ``score-and-grades.rst``。
+
 1.5.0.4
 -------
 

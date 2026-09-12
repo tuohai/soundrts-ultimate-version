@@ -35,6 +35,51 @@ def container_visible_from_place(container, place):
     return False
 
 
+def index_inside_units_visible_from_places(inside_units):
+    """Map a queried square to inside units visible from that square.
+
+    Same rules as ``container_visible_from_place``, built once per player tick
+    so ``known_enemies`` does not scan every passenger for every square.
+    """
+    by_place = {}
+    if not inside_units:
+        return by_place
+
+    def _add(square, unit):
+        if square is None:
+            return
+        key = id(square)
+        bucket = by_place.get(key)
+        if bucket is None:
+            by_place[key] = [unit]
+        else:
+            bucket.append(unit)
+
+    for obj in inside_units:
+        place_in = getattr(obj, "place", None)
+        container = getattr(place_in, "container", None) if place_in is not None else None
+        if container is None:
+            continue
+        outside = getattr(container, "place", None)
+        _add(outside, obj)
+        other_place = None
+        blocked_exit = getattr(container, "blocked_exit", None)
+        if blocked_exit is not None:
+            other_place = getattr(getattr(blocked_exit, "other_side", None), "place", None)
+            _add(other_place, obj)
+        if is_open_container(container):
+            neighbors = getattr(outside, "neighbors", None)
+            if neighbors:
+                for nb in neighbors:
+                    _add(nb, obj)
+            if other_place is not None:
+                other_neighbors = getattr(other_place, "neighbors", None)
+                if other_neighbors:
+                    for nb in other_neighbors:
+                        _add(nb, obj)
+    return by_place
+
+
 def inside_unit_visible_from_place(unit, place):
     if not getattr(unit, "is_inside", False):
         return unit.place is place

@@ -27,6 +27,7 @@ Di cosa è composto il punteggio?
 
 - Sette dimensioni di base (esito, estrazione, efficienza, sopravvivenza, difesa degli edifici, combattimento, demolizione) arrivano al massimo a 800 in totale.
 - Sconfiggere un'IA più forte aggiunge punti bonus in più, non dentro il denominatore dell'800 %.
+- Le invocazioni scadute non sono caduti; la morte in combattimento conta ancora.
 
 Senti ogni parte, poi il totale e il voto letterale (S il migliore, E il più basso).
 

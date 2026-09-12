@@ -4,12 +4,12 @@
 ; can_train: units that the building can train
 ; can_use_tech : abilities that the unit can use and upgrades by which the unit is affected
 ; can_capture: 1 = default order on capture_hp_threshold 100 targets is occupy (capture), 0 = attack/move instead
-; space: occupancy on a square (same units as square_width; decimals ok).
-;   square_width 12 means each square (e.g. a1) is size 12; space 1 occupies 1 of that 12.
+; ;space: occupancy on a square (same units as square_width; decimals ok).
+;   square_width 12 means each square (e.g. a1) is size 12; ;space 1 occupies 1 of that 12.
 ;   0 = unlimited abstract capacity (legacy). Counted per alliance (enemies do not
 ;   share your budget): each side may use up to square_width on the same layer.
-;   e.g. square_width 12 + space 1 → at most 12 per side; space 0.5 → at most 24 per side.
-;   space > square_width cannot enter that square.
+;   e.g. square_width 12 + ;space 1 → at most 12 per side; ;space 0.5 → at most 24 per side.
+;   ;space > square_width cannot enter that square.
 ;   Abstract only: does not change physical collision size.
 ; requirements: objects (units, upgrades, phases) required to acquire/use the object
 ;   Plain names are AND: requirements stables workshop
@@ -271,7 +271,7 @@ mdg_range 0
 corpse 0
 no_number 1
 is_vulnerable 1
-space 0.1
+;space 0.1
 
 def sheep
 class soldier
@@ -299,7 +299,7 @@ mdg_range 0
 corpse 0
 no_number 1
 is_vulnerable 1
-space 0.1
+;space 0.1
 
 def boar
 class soldier
@@ -326,7 +326,7 @@ mdg_range 1
 corpse 0
 no_number 1
 is_vulnerable 1
-space 0.1
+;space 0.1
 
 ; items (random map treasure chests, etc.)
 
@@ -631,7 +631,7 @@ sight_range 6
 mdg_range 0.8
 mdg_cd 1
 mdg 1
-space 0.25
+;space 0.25
 
 def footman
 class soldier
@@ -646,7 +646,7 @@ mdg_cd 1.5
 mdg_bonus 2.5
 mdg_range 1
 can_use_tech melee_weapon melee_armor dsc
-space 0.25
+;space 0.25
 
 
 def knight
@@ -667,7 +667,7 @@ mdg_cd 1.5
 mdg 6
 mdg_bonus 6
 can_auto_explore 1
-space 0.5
+;space 0.5
 
 ; Hero Raynor (final stage; card loadout / skirmish)
 def raynor
@@ -758,7 +758,7 @@ mdg_bonus 2.5
 corpse 0
 is_healable 0
 is_undead 1
-space 0.25
+;space 0.25
 
 def archer
 class soldier
@@ -779,7 +779,7 @@ requirements feudal_age
 can_use_tech archer_weapon archer_armor archer_range dsc
 rdf 0
 can_upgrade_to darkarcher
-space 0.25
+;space 0.25
 
 def repeating_crossbowman
 class soldier
@@ -798,7 +798,7 @@ damage_seq rdg 3 (interval 0.25)
 requirements feudal_age
 can_use_tech archer_weapon archer_armor archer_range dsc
 rdf 0
-space 0.75
+;space 0.75
 
 def darkarcher
 class soldier
@@ -819,7 +819,7 @@ rdg_projectile_speed 7
 rdg 10
 rdg_projectile 1
 is_invisible 1
-space 0.25
+;space 0.25
 
 def skeleton
 class soldier
@@ -839,7 +839,7 @@ rdg_projectile 1
 corpse 0
 is_healable 0
 is_undead 1
-space 0.25
+;space 0.25
 
 def catapult
 class soldier
@@ -861,7 +861,7 @@ is_repairable 1
 is_healable 0
 transport_volume 4
 corpse 0
-space 1
+;space 1
 
 def dragon
 class soldier
@@ -883,7 +883,7 @@ rdg_splash 4
 rdg_projectile 1
 transport_volume 99
 corpse 0
-space 0.5
+;space 0.5
 
 def mage
 class soldier
@@ -903,7 +903,7 @@ rdg 8
 rdg_targets ground air
 rdg_projectile 1
 transport_volume 2
-space 0.25
+;space 0.25
 
 def necromancer
 class soldier
@@ -925,7 +925,7 @@ rdg 8
 rdg_targets ground air
 rdg_projectile 1
 transport_volume 2
-space 0.25
+;space 0.25
 
 def priest
 class soldier
@@ -950,7 +950,7 @@ mdg_radius 6
 can_use_skill superhealer a_holy_vision a_exorcism a_conversion a_resurrection
 heal_level 1
 transport_volume 2
-space 0.25
+;space 0.25
 
 def new_flyingmachine
 class soldier
@@ -969,7 +969,7 @@ transport_volume 99
 is_a_detector 1
 corpse 0
 passenger_attack_types archer
-space 0.35
+;space 0.35
 
 def flyingmachine
 class soldier
@@ -991,7 +991,7 @@ is_repairable 1
 is_healable 0
 transport_volume 99
 corpse 0
-space 0.35
+;space 0.35
 
 def boat
 class worker
@@ -1010,7 +1010,7 @@ is_healable 0
 transport_capacity 8
 transport_volume 99
 corpse 0
-space 0.5
+;space 0.5
 
 def destroyer
 class soldier
@@ -1035,7 +1035,7 @@ rdf 1
 can_use_tech archer_weapon archer_range
 transport_volume 99
 corpse 0
-space 0.5
+;space 0.5
 
 def battleship
 class soldier
@@ -1060,7 +1060,7 @@ is_healable 0
 airground_type water
 transport_volume 99
 corpse 0
-space 1
+;space 1
 
 def submarine
 class soldier
@@ -1086,7 +1086,7 @@ transport_volume 99
 corpse 0
 is_invisible 1
 is_a_detector 1
-space 0.5
+;space 0.5
 
 ; buildings
 
@@ -1318,6 +1318,7 @@ is_buildable_on_exits_only 1
 transport_capacity 4
 provides_survival 0
 passenger_attack_types archer catapult
+attack_inside_chance 40   # 外部单位攻击城墙上单位时有40%几率命中乘客
 capture_hp_threshold 30   # 30%血量时可被夺取
 can_upgrade_to massive_wall
 
@@ -1342,8 +1343,6 @@ is_buildable_on_exits_only 1
 is_a_gate 1
 provides_survival 0
 transport_capacity 4
-passenger_attack_types archer catapult
-attack_inside_chance 40   # 外部单位攻击城门上单位时有40%几率命中乘客
 capture_hp_threshold 30   # 30%血量时可被夺取
 can_upgrade_to massive_gate
 

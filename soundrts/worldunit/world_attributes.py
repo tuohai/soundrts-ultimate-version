@@ -639,6 +639,7 @@ class CreatureAttributes(Entity):
             self.player.remove(self)
         elif player:
             player.stats.add("produced", self.stat_type)
+            self._stats_counted_produced = True
         self.player = player
         if player:
             player.add(self)

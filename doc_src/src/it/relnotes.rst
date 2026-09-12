@@ -3,6 +3,36 @@ Note di rilascio
 
 .. contents::
 
+1.5.0.6
+-------
+
+**Cambio: il raggio della campana del villaggio è l’edificio cliccato**
+
+- **Problema**: Suonare qualsiasi edificio ``town_bell`` univa il ``town_bell_range`` di tutte le campane. Suonare a1 mandava in b3 i villager solo nel raggio di due caselle di b3.
+- **Cambio**: ``ring_town_bell`` misura ``town_bell_range`` solo dall’edificio cliccato (AoE2 usa ancora ``24`` metri come equivalente locale di circa 25 caselle). I lavoratori in quel raggio entrano nell’edificio presidiabile più vicino con spazio. ``workers_to_garrison`` richiede quell’edificio.
+- **Ambito**: ``world_town_bell.py``; ``worldorders/immediate.py``; ``test_town_bell.py``; ``test_changelog_15.py``.
+
+1.5.0.5
+-------
+
+**Cambio: percorso caldo senza finestra**
+
+- **Problema**: Con molte IA, ``known_enemies`` scansionava ogni unità interna e chiamava ``container_visible_from_place`` per casella; l’esca del cinghiale, acqua/anfibio e ``can_reach`` si ricalcolavano a ogni turno; ``update`` reimportava ``VIRTUAL_TIME_INTERVAL``.
+- **Cambio**: ``index_inside_units_visible_from_places`` indicizza per casella. ``known_enemies`` usa ``_enemy_inside_index``. Esca, trasporti acqua/aria e ``can_reach`` usano ``_play_memo_get``. Le mappe terrestri saltano operai d’acqua e sbarchi anfibi. ``menace_versus`` usa ``getattr``. ``VIRTUAL_TIME_INTERVAL`` è importato a livello di modulo.
+- **Ambito**: ``open_container.py``; ``worldplayerbase/perception.py``; ``worldplayerbase/base.py``; ``save_pickle.py``; ``combat/targeting.py``; ``worldplayercomputer.py``; ``world/world_game.py``; ``worldunit/world_ai_decision.py``; ``test_attack_inside_chance.py``; ``test_ai_naval_skip.py``; ``test_changelog_15.py``.
+
+**Cambio: AoE2 e le regole di base commentano lo space delle unità**
+
+- **Problema**: Lo ``space`` di unità occupava capacità astratta per alleanza, così un grande esercito non stava in una casella.
+- **Cambio**: Le righe ``space`` in ``mods/aoe2/rules.txt`` e ``res/rules.txt`` sono commentate come ``;space``. Se omesso, ``space`` resta ``0`` (nessuna occupazione astratta). Collisione fisica e slot di formazione restano invariati. Decommentare per ripristinare i limiti di capacità.
+- **Ambito**: ``mods/aoe2/rules.txt``; ``res/rules.txt``; ``test_changelog_15.py``.
+
+**Cambio: le invocazioni scadute non contano come caduti**
+
+- **Problema**: Allo scadere di ``time_limit``, gli effetti chiamavano ``die()`` e contavano ``lost``. Le invocazioni normali usavano ``on_disappear``, ma ``lang_add_units`` le metteva comunque in ``produced``, così sopravvivenza e produzione nemica erano distorte dalle truppe temporanee.
+- **Cambio**: Lo scadere ``on_disappear`` non aggiunge ``lost``; ``uncount_expired_unit_produced`` storna ``produced``. Anche il timeout degli effetti usa ``on_disappear``. La morte in combattimento conta ancora ``lost`` / ``killed``.
+- **Ambito**: ``worldplayerstats.py``; ``worldunit/world_status_update.py``; ``worldunit/worldeffect.py``; ``worldunit/world_attributes.py``; ``worldunit/worldcreature.py``; ``test_score_breakdown.py``; ``test_changelog_15.py``; ``score-grading-system.rst`` e ``score-and-grades.rst`` in tutte e cinque le lingue.
+
 1.5.0.4
 -------
 

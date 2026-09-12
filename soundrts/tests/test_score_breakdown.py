@@ -306,3 +306,38 @@ def test_unit_and_building_line_scores():
     breakdown = stats.score_breakdown()
     assert breakdown["unit_line"] == breakdown["survival"] + breakdown["combat"]
     assert breakdown["building_line"] == breakdown["building_defense"] + breakdown["demolition"]
+
+
+def test_uncount_expired_unit_produced_reverses_produced_not_lost():
+    from soundrts.worldplayerstats import uncount_expired_unit_produced
+
+    player = _Player()
+    stats = Stats(player)
+    player.stats = stats
+    stats.add("produced", "unit", 3)
+    unit = SimpleNamespace(
+        stat_type="unit",
+        player=player,
+        _stats_counted_produced=True,
+    )
+    uncount_expired_unit_produced(unit)
+    assert stats.get("produced", "unit") == 2
+    assert stats.get("lost", "unit") == 0
+    uncount_expired_unit_produced(unit)
+    assert stats.get("produced", "unit") == 2
+
+
+def test_uncount_expired_skips_when_produced_was_not_counted():
+    from soundrts.worldplayerstats import uncount_expired_unit_produced
+
+    player = _Player()
+    stats = Stats(player)
+    player.stats = stats
+    stats.add("produced", "unit", 2)
+    unit = SimpleNamespace(
+        stat_type="unit",
+        player=player,
+        _stats_counted_produced=False,
+    )
+    uncount_expired_unit_produced(unit)
+    assert stats.get("produced", "unit") == 2

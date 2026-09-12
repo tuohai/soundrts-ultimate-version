@@ -39,6 +39,7 @@ PLAYER_CACHE_KEYS = (
     "_enemy_units_set",
     "_enemy_units_set_time",
     "_enemy_inside_units",
+    "_enemy_inside_index",
     "_perception_set",
     "_perception_set_time",
     "_allied_exploration_cache",
@@ -217,6 +218,7 @@ def init_player_pickle_caches(player) -> None:
     player._enemy_units_set = frozenset()
     player._enemy_units_set_time = -1
     player._enemy_inside_units = ()
+    player._enemy_inside_index = {}
     player._perception_set = frozenset()
     player._perception_set_time = -1
     player._allied_exploration_cache = {}

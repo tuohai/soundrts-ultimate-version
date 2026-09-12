@@ -1,5 +1,8 @@
 """Rule-driven Town Bell: garrison nearby workers, then send them back to work.
 
+AoE2: range is measured from the Town Center you clicked, not the union of
+every bell. Workers in that radius go to the nearest garrisonable building.
+
 Range is Euclidean meters (PRECISION mm internally), not BFS squares.
 ``town_bell_range 0`` means unlimited (whole map).
 """
@@ -118,36 +121,39 @@ def nearest_shelter(player, worker):
     return best
 
 
-def workers_to_garrison(player):
-    bells = town_bell_buildings(player)
-    if not bells:
+def workers_to_garrison(player, bell):
+    """Workers within *bell*'s range (the building whose bell was clicked)."""
+    if bell is None:
         return []
-    seen_ids = set()
+    type_names = getattr(bell, "town_bell_units", None) or ()
     result = []
-    for bell in bells:
-        type_names = getattr(bell, "town_bell_units", None) or ()
-        for unit in getattr(player, "units", None) or ():
-            uid = getattr(unit, "id", id(unit))
-            if uid in seen_ids:
-                continue
-            if not is_town_bell_target(unit, type_names):
-                continue
-            if not worker_in_bell_range(unit, bell):
-                continue
-            seen_ids.add(uid)
-            result.append(unit)
+    for unit in getattr(player, "units", None) or ():
+        if unit is bell:
+            continue
+        if not is_town_bell_target(unit, type_names):
+            continue
+        if not worker_in_bell_range(unit, bell):
+            continue
+        result.append(unit)
     return result
 
 
-def workers_already_inside(player):
-    """Matching workers already garrisoned (any building). AoE2 Return to Work."""
-    type_names = _bell_type_names(player)
+def workers_already_inside(player, bell=None):
+    """Matching workers already garrisoned. If *bell* is set, only that radius."""
+    type_names = (
+        tuple(getattr(bell, "town_bell_units", None) or ())
+        if bell is not None
+        else _bell_type_names(player)
+    )
     result = []
     for unit in getattr(player, "units", None) or ():
         if not getattr(unit, "is_inside", False):
             continue
-        if is_town_bell_worker(unit, type_names):
-            result.append(unit)
+        if not is_town_bell_worker(unit, type_names):
+            continue
+        if bell is not None and not worker_in_bell_range(unit, bell):
+            continue
+        result.append(unit)
     return result
 
 
@@ -157,12 +163,17 @@ def _tag_worker_for_bell(worker, snapshot=True):
     worker._town_bell_garrisoned = True
 
 
-def ring_town_bell(player):
-    """First ring: nearby workers enter; already-garrisoned villagers are tagged."""
+def ring_town_bell(player, bell=None):
+    """First ring: workers in *bell*'s range enter the nearest shelter."""
+    if bell is None:
+        bells = town_bell_buildings(player)
+        bell = bells[0] if len(bells) == 1 else None
+    if bell is None:
+        return
     player._town_bell_active = True
-    for worker in workers_already_inside(player):
+    for worker in workers_already_inside(player, bell):
         _tag_worker_for_bell(worker, snapshot=False)
-    for worker in workers_to_garrison(player):
+    for worker in workers_to_garrison(player, bell):
         shelter = nearest_shelter(player, worker)
         if shelter is None:
             continue
@@ -178,16 +189,10 @@ def _container_of(unit):
 
 
 def stop_town_bell(player):
-    """Second ring: ungarrison matching villagers (tagged or already inside)."""
+    """Second ring: ungarrison villagers tagged by this alarm (AoE2 Return to Work)."""
     player._town_bell_active = False
     seen = set()
     release = []
-    for unit in workers_already_inside(player):
-        uid = getattr(unit, "id", id(unit))
-        if uid in seen:
-            continue
-        seen.add(uid)
-        release.append(unit)
     for unit in list(getattr(player, "units", None) or ()):
         if not getattr(unit, "_town_bell_garrisoned", False):
             continue

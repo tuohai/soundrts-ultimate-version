@@ -79,3 +79,13 @@ def test_get_boat_on_water_map_calls_internal_get():
     ai._get = fake_get
     assert ai.get(2, "boat") is False
     assert len(called) == 1
+
+
+def test_amphibious_landings_skipped_on_land_without_air():
+    ai = _make_computer()
+    ai._available_air_transports = lambda: []
+    called = []
+    ai._try_unload_idle_loaded_transports = lambda: called.append("unload")
+    ai._try_transport_assaults = lambda: called.append("assault")
+    ai._try_amphibious_landings()
+    assert called == []

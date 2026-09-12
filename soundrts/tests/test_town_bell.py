@@ -90,7 +90,7 @@ def test_workers_to_garrison_only_in_range():
         airground_type="ground",
     )
     player = SimpleNamespace(units=[bell, near, far])
-    got = workers_to_garrison(player)
+    got = workers_to_garrison(player, bell)
     assert near in got
     assert far not in got
 
@@ -153,7 +153,7 @@ def test_ring_and_stop_restore_orders():
         cancel_all_orders=Mock(),
     )
     player = SimpleNamespace(units=[shelter, worker], _town_bell_active=False)
-    ring_town_bell(player)
+    ring_town_bell(player, shelter)
     assert player._town_bell_active is True
     assert worker._town_bell_garrisoned is True
     assert worker._town_bell_resume == [["gather", "gold1"]]
@@ -210,10 +210,10 @@ def test_ring_tags_already_garrisoned_villagers_then_stop_unloads():
         take_order=Mock(),
     )
     player = SimpleNamespace(units=[shelter, vil, soldier], _town_bell_active=False)
-    assert vil in workers_already_inside(player)
-    assert soldier not in workers_already_inside(player)
+    assert vil in workers_already_inside(player, shelter)
+    assert soldier not in workers_already_inside(player, shelter)
 
-    ring_town_bell(player)
+    ring_town_bell(player, shelter)
     assert player._town_bell_active is True
     assert vil._town_bell_garrisoned is True
     vil.take_order.assert_not_called()
@@ -284,3 +284,58 @@ def test_aoe2_teuton_town_center_keeps_town_bell_range():
     for name in ("town_center", "townhall", "teuton_town_center"):
         assert r.get(name, "town_bell") == 1, name
         assert r.get(name, "town_bell_range") == 24 * P, name
+
+
+def _tc(xid, x, rng, **extra):
+    ns = dict(
+        town_bell=1,
+        town_bell_range=rng,
+        town_bell_units=("peasant",),
+        hp=2400,
+        x=x,
+        y=0,
+        id=xid,
+        transport_capacity=15,
+        have_enough_space=lambda _w: True,
+    )
+    ns.update(extra)
+    return SimpleNamespace(**ns)
+
+
+def _vil(xid, x):
+    return SimpleNamespace(
+        id=xid,
+        is_inside=False,
+        hp=25,
+        type_name="peasant",
+        expanded_is_a=("peasant",),
+        x=x,
+        y=0,
+        airground_type="ground",
+        orders=[],
+        take_order=Mock(),
+        cancel_all_orders=Mock(),
+    )
+
+
+def test_clicked_bell_does_not_use_other_bell_range():
+    """AoE2: a1 ring must not pull villagers who are only in b3's radius."""
+    a1 = _tc("a1", 0, 3 * PRECISION)
+    b3 = _tc("b3", 20 * PRECISION, 24 * PRECISION)
+    vil = _vil("v1", 20 * PRECISION)
+    player = SimpleNamespace(units=[a1, b3, vil], _town_bell_active=False)
+    assert vil not in workers_to_garrison(player, a1)
+    assert vil in workers_to_garrison(player, b3)
+    ring_town_bell(player, a1)
+    vil.take_order.assert_not_called()
+    assert not getattr(vil, "_town_bell_garrisoned", False)
+
+
+def test_in_range_of_clicked_bell_enters_nearest_shelter():
+    """AoE2: in the clicked TC's range, still garrison the nearest building."""
+    a1 = _tc("a1", 0, 24 * PRECISION)
+    b3 = _tc("b3", 20 * PRECISION, 24 * PRECISION)
+    vil = _vil("v1", 18 * PRECISION)
+    player = SimpleNamespace(units=[a1, b3, vil], _town_bell_active=False)
+    ring_town_bell(player, a1)
+    vil.take_order.assert_called_once_with(["enter", "b3"])

@@ -986,6 +986,12 @@ class CreatureStatusUpdate(Entity):
                     u.increase_xp(xp)
     def on_disappear(self):
         """当召唤单位时间到期消失时调用"""
+        if getattr(self, "_disappeared", False):
+            return
+        self._disappeared = True
+        from ..worldplayerstats import uncount_expired_unit_produced
+
+        uncount_expired_unit_produced(self)
         self.notify("disappear")  # 只发送消失通知
         self.delete()  # 直接删除，不调用 die()
 
