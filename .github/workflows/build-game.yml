@@ -60,10 +60,14 @@ jobs:
           echo "CC=$gcc_bin" >> "$GITHUB_ENV"
           echo "CXX=$gxx_bin" >> "$GITHUB_ENV"
 
+      - name: Prefer Linux wxPython wheels
+        if: runner.os == 'Linux'
+        run: echo "PIP_FIND_LINKS=https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-24.04" >> "$GITHUB_ENV"
+
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt -r requirements-build.txt
+          python -m pip install --only-binary=wxPython -r requirements.txt -r requirements-build.txt
 
       - name: Build game package
         run: python build_game.py --artifact-suffix "${{ matrix.artifact_suffix }}"
