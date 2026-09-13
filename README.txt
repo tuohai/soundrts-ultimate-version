@@ -1,4 +1,15 @@
-SoundRTS is a real-time strategy audio game.
+SoundRTS Ultimate Version
+=========================
+
+GitHub: https://github.com/tuohai/soundrts-ultimate-version
+Releases: https://github.com/tuohai/soundrts-ultimate-version/releases
+Forum: https://forum.audiogames.net/topic/55760/soundrts1382ultimate-version/
+
+SoundRTS Ultimate Version is an expanded continuation of SoundRTS,
+the real-time strategy audio game. Source is based on:
+https://github.com/soundmud/soundrts
+
+This repository contains the game source, mods, and documentation.
 
 Feel free to experiment on the code base, but don't feel obliged to contribute back.
 
