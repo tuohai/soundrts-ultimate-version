@@ -1,0 +1,30 @@
+{
+  "backend": "spritesheet",
+  "sheet": "sheet.png",
+  "frame_w": 32,
+  "frame_h": 32,
+  "fps": 8,
+  "dirs": 4,
+  "animations": {
+    "idle": {
+      "row": 0,
+      "frames": 4
+    },
+    "walk": {
+      "row": 4,
+      "frames": 6
+    },
+    "attack": {
+      "row": 8,
+      "frames": 4
+    },
+    "gather": {
+      "row": 12,
+      "frames": 4
+    },
+    "build": {
+      "row": 12,
+      "frames": 4
+    }
+  }
+}

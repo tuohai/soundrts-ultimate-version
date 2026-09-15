@@ -123,11 +123,66 @@ def test_spine_falls_back_to_spritesheet(monkeypatch):
     assert pack.backend == "spritesheet"
 
 
+def _activate_all_mods():
+    """Enable all non-soundpack mods so that mod-layer anims resolve during tests."""
+    try:
+        from soundrts.lib.resource import res
+        available = res.packages.mods()
+        non_soundpacks = [m.name for m in available if not m.is_a_soundpack()]
+        current = (res.mods or "").split(",")
+        missing = [m for m in non_soundpacks if m not in current]
+        if missing:
+            res.mods = ",".join(current + missing)
+            res._reload()
+    except Exception:
+        pass
+
+
+def _anim_exists(rel: str) -> bool:
+    """Match runtime lookup: try mod layers first, then res/."""
+    _activate_all_mods()
+    try:
+        from soundrts.lib.resource import res
+        for _root, _path in res.paths(rel, localize=False):
+            try:
+                if _root.isfile(_path):
+                    return True
+            except Exception:
+                pass
+    except Exception:
+        pass
+    return Path(os.path.join("res", rel.replace("/", os.sep))).is_file()
+
+
+def _read_meta_text(rel: str) -> str:
+    """Read a resource via runtime paths (cwd-independent)."""
+    _activate_all_mods()
+    try:
+        from soundrts.lib.resource import res
+        for _root, _path in res.paths(rel, localize=False):
+            try:
+                if not _root.isfile(_path):
+                    continue
+                with _root.open_binary(_path) as fh:
+                    return fh.read().decode("utf-8")
+            except Exception:
+                continue
+    except Exception:
+        pass
+    p = Path(os.path.join("res", rel.replace("/", os.sep)))
+    if p.is_file():
+        return p.read_text(encoding="utf-8")
+    return ""
+
+
 def test_starter_anim_packs_exist():
-    assert Path("res/ui/anims/peasant/meta.json").is_file()
-    assert Path("res/ui/anims/peasant/sheet.png").is_file()
-    assert Path("res/ui/anims/footman/sheet.png").is_file()
-    assert Path("mods/aoe2/ui/anims/militia/sheet.png").is_file()
-    meta = Path("res/ui/anims/peasant/meta.json").read_text(encoding="utf-8")
-    assert '"dirs": 4' in meta
+    # Match runtime resolution via the resource stack (all mods → res/).
+    assert _anim_exists("ui/anims/peasant/meta.json")
+    assert _anim_exists("ui/anims/peasant/sheet.png")
+    assert _anim_exists("ui/anims/footman/sheet.png")
+    assert _anim_exists("ui/anims/militia/sheet.png")
+    # Meta content: prefer mod layer, fall back to res/
+    meta_text = _read_meta_text("ui/anims/peasant/meta.json")
+    assert meta_text, "peasant meta.json must resolve via mods or res/"
+    assert '"dirs": 4' in meta_text
     assert Path("tools/gen_unit_anims.py").is_file()
