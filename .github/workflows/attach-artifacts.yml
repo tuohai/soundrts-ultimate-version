@@ -19,25 +19,23 @@ jobs:
   attach:
     runs-on: ubuntu-latest
     steps:
-      - name: Attach artifacts to release
+      - name: Download artifacts from another run
+        uses: actions/download-artifact@v4
+        with:
+          run-id: ${{ inputs.source_run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pattern: "SoundRTS-1.5.0.7-*"
+          merge-multiple: false
+
+      - name: Upload to release
         run: |
-          echo "Downloading artifact info..."
-          ARTIFACTS=$(gh api repos/${{ github.repository }}/actions/runs/${{ inputs.source_run_id }}/artifacts --jq '.artifacts[] | "\(.id)|\(.name)"')
-          for row in $ARTIFACTS; do
-            AID=$(echo "$row" | cut -d'|' -f1)
-            ANAME=$(echo "$row" | cut -d'|' -f2)
-            echo "Attaching: $ANAME (id=$AID)"
-            gh release view ${{ inputs.release_tag }} --json uploadUrl --jq '.uploadUrl' | \
-              xargs -I{} gh api \
-                --method POST \
-                -H "Content-Type: application/zip" \
-                -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                "repos/${{ github.repository }}/releases/assets/{assets_id}" \
-                --field name="$ANAME" \
-                --field label="$ANAME" \
-                -F "file=@/dev/stdin" \
-                --input - \
-                <<< "$(gh api https://api.github.com/repos/${{ github.repository }}/actions/artifacts/$AID/zip -H Authorization: Bearer\ ${{ secrets.GITHUB_TOKEN }} --output /dev/stdout --silent)"
+          echo "Uploading artifacts..."
+          FILES=$(find . -type f \( -name "SoundRTS-1.5.0.7-*.zip" -o -name "SoundRTS-1.5.0.7-*.tar.gz" \))
+          echo "Files found:"
+          echo "$FILES"
+          for f in $FILES; do
+            echo "Uploading: $f"
           done
+          gh release upload "${{ inputs.release_tag }}" $FILES --repo ${{ github.repository }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
