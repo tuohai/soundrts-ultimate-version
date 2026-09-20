@@ -1,0 +1,21 @@
+; misc parameters
+
+def parameters
+nb_of_resource_types 3 ; gold, wood and food
+
+
+; resource deposits
+
+def orchard
+class deposit
+resource_type resource3 ; stone
+extraction_time 10
+extraction_qty 1
+
+
+; buildings
+
+def townhall
+storable_resource_types resource1 resource2 resource3
+
+

@@ -3,6 +3,27 @@ Note di rilascio
 
 .. contents::
 
+1.5.0.7
+-------
+
+**Cambio: la fauna si può cacciare durante il trattato**
+
+- **Problema**: La modalità Treaty di AoE2 DE consente la caccia, ma i controlli di ``treaty_until_time`` nelle cinque porte bloccavano gli ordini d'attacco, l'applicazione del danno, il danno AOE, il danno a bersaglio singolo e la selezione del bersaglio dell'IA, quindi durante il trattato non si potevano colpire i cervi.
+- **Cambio**: Aggiunta un'esenzione di ``is_wildlife_unit`` a tutte e cinque le porte del trattato. In ``AttackOrder.execute``, ``receive_hit``, AOE, danno a bersaglio singolo e ``can_attack``, se l'attaccante o il bersaglio è fauna ``is_huntable`` / ``herdable``, l'azione è consentita. Gli attacchi veri giocatore-vs-giocatore restano bloccati.
+- **Ambito**: ``worldorders/movement.py``; ``combat/damage_effects.py``; ``worldunit/world_status_update.py``; ``worldunit/world_ai_decision.py``; ``test_changelog_1422_treaty_coop.py``.
+
+**Cambio: il pannello Ctrl+F2 mostra l'occupazione alleata**
+
+- **Problema**: Il pannello informazioni casella (Ctrl+F2) mostrava l'occupazione di square-space delle unità proprie su una casella, ma non quella delle unità alleate. I giocatori non potevano capire, senza tentativi, perché una casella rifiutava i loro ordini: erano loro ad averla riempita, o un alleato?
+- **Cambio**: Quando la casella consultata contiene unità alleate che consumano square-space, sotto la riga delle unità proprie viene aggiunta una riga extra ``Space (ally): X / Y``. La capacità (``Y``) è il ``square_space`` della casella; il conteggio (``X``) è la parte occupata dagli alleati (arrotondata per eccesso a unità intere). Le righe con occupazione alleata pari a zero vengono saltate per mantenere il pannello silenzioso nel caso comune. La riga è solo visiva: il TTS non la legge mai.
+- **Ambito**: ``soundrts/clientgamegridview.py``.
+
+**Cambio: il patrol annuncia "spazio insufficiente" quando le caselle di destinazione e d'uscita sono piene**
+
+- **Problema**: ``_on_square_space_blocked`` scattava solo quando l'unità raggiungeva la casella di *destinazione* e la trovava piena. Su un percorso di pattuglia (es. 1 → 2 → 3 → 1), se l'unità si trovava già sulla casella di destinazione e una casella *adiacente* del percorso diventava piena, l'ordine rimaneva silenziosamente bloccato senza alcun annuncio, lasciando il giocatore a chiedersi perché l'unità si era fermata.
+- **Cambio**: Aggiunto un secondo ramo a ``_on_square_space_blocked``: se l'unità è già sulla casella di destinazione e una qualsiasi ``new_place`` adiacente del percorso non ha abbastanza square-space, anche in questo caso l'ordine viene marcato come impossibile con ``not_enough_space`` e l'unità si ferma, con lo stesso limitatore di un solo annuncio (``_notified_square_space``). L'ordine continua a parlare una sola volta per ordine, indipendentemente da quante caselle sono bloccate.
+- **Ambito**: ``soundrts/worldunit/world_movement.py``; ``soundrts/tests/test_unit_square_space.py``.
+
 1.5.0.6
 -------
 

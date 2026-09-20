@@ -5048,7 +5048,6 @@ starting_units town_center 3 peasant scout_cavalry
 def britons
 class race
 is_a Civilization
-starting_units 20 longbowman 3 peasant town_center 8 house
 peasant peasant
 footman militia
 archer aoe_archer

@@ -1,0 +1,30 @@
+; messages
+
+def messages
+not_enough_resource3 135 137
+
+
+; miscellaneous parameters
+
+def parameters
+resource3_title 137
+
+;buildings
+
+; units
+
+def peasant
+noise_when_exploiting_orchard repeat 1.6 gather_food1 gather_food2
+noise_when_exploiting_farm repeat 1.6 gather_food1 gather_food2
+store_resource3 store_food
+
+
+
+; resources
+
+def orchard
+is_a resource_deposit
+title 4661
+exhausted 1047
+ground gravel
+

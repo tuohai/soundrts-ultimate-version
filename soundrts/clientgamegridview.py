@@ -1626,6 +1626,27 @@ class GridView:
         meters = _voice_to_text(mp.METERS) or "m"
         lines.append(("", "%s: %d%s" % (w_label, width_m, meters)))
 
+        # 抽象 space 占用（仅 Ctrl+F2 信息面板）：同盟已用 + 容量。
+        # 默认 ``space=0`` 的 mod / 玩家这里永远空，避免噪音。
+        # 仅在面板上 "看见" 那行——上层（用 / capacity）按 airground_type 分别列出。
+        capacity = getattr(place, "square_capacity", 0)
+        if capacity and any(
+            int(getattr(o, "space", 0) or 0) > 0
+            and getattr(o, "airground_type", None) == "ground"
+            for o in getattr(place, "objects", ())
+        ):
+            try:
+                player = getattr(self.interface, "player", None)
+                used = int(
+                    place.used_square_space("ground", for_player=player) or 0
+                )
+            except Exception:
+                used = 0
+            if used > 0:
+                cap_m = capacity // PRECISION
+                used_m = (used + PRECISION // 2) // PRECISION
+                lines.append(("", "Space (ally): %d / %d" % (used_m, cap_m)))
+
         if hasattr(place, "terrain_speed_at") and x is not None:
             speed = place.terrain_speed_at(x, y)
         else:

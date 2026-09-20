@@ -4,6 +4,27 @@
 .. contents::
 
 
+1.5.0.7
+-------
+
+**改进：条约期内可狩猎野生动物**
+
+- **问题**：帝国 2 决定版 Treaty 模式允许狩猎，但 ``treaty_until_time`` 检查在 5 个敌对拦截点都拦截了攻击命令、伤害结算、AOE、单体瞄准与 AI 攻击目标选择，导致条约期打不到鹿。
+- **改进**：5 个 treaty 拦截点都加 ``is_wildlife_unit`` 豁免。attack 命令、``receive_hit``、AOE、单体瞄准伤害、``can_attack`` 中，攻击方或被攻击方只要有一方是 ``is_huntable`` / ``herdable`` 野生动物，都按非敌对放行。真正的玩家对玩家敌对攻击仍被拦截。
+- **范围**：`worldorders/movement.py`；`combat/damage_effects.py`；`worldunit/world_status_update.py`；`worldunit/world_ai_decision.py`；`test_changelog_1422_treaty_coop.py`。
+
+**改进：Ctrl+F2 方格信息显示盟友占用**
+
+- **问题**：方格信息面板（Ctrl+F2）会显示玩家自己单位在该格的方格占用，但不会单独显示盟友的占用。玩家无法一眼判断"为什么这格拒收命令"——是自己塞满了，还是盟友塞满了？
+- **改进**：当所查格子上有盟友单位占用方格空间时，在原有"自己单位占用"行下方追加一行 ``Space (ally): X / Y``。分母 ``Y`` 是格子的 ``square_space`` 总容量；分子 ``X`` 是盟友占用的部分（向上取整到整数单位）。盟友占用为 0 的格子跳过此行，保持面板安静。该行仅视觉显示，TTS 不朗读。
+- **范围**：`soundrts/clientgamegridview.py`。
+
+**改进：巡逻路径上目的格与邻居格满员时播报"空间不足"**
+
+- **问题**：``_on_square_space_blocked`` 只在单位抵达"目的格"并发现该格满员时触发。在巡逻路径（如 1 → 2 → 3 → 1）中，如果单位已经站在目的格上、而路径上的"邻居格"满了，订单会静默卡住、毫无提示，玩家不知道为什么单位停了。
+- **改进**：在 ``_on_square_space_blocked`` 增加第二个分支：当单位已位于目的格，且路径上任意相邻 ``new_place`` 方格空间不足时，同样把订单标记为不可能并停止，标记为 ``not_enough_space``。沿用原有的单次播报节流（``_notified_square_space``），无论有几格被阻塞，每个订单仍只播报一次。
+- **范围**：`soundrts/worldunit/world_movement.py`；`soundrts/tests/test_unit_square_space.py`。
+
 1.5.0.6
 -------
 

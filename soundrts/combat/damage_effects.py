@@ -157,13 +157,19 @@ class DamageEffectsMixin(DamageCalculationMixin):
         """
         # 防御性检查
         # 条约期内：禁止来自敌对单位的直接伤害
+        # 对齐帝国时代 2 决定版 Treaty 模式（可以正常狩猎野生动物）。
         try:
             if attacker is not None and hasattr(self, 'world') and getattr(self.world, 'treaty_until_time', 0) > 0:
                 if self.world.time < self.world.treaty_until_time:
                     if hasattr(attacker, 'player') and hasattr(self, 'player') and attacker.player and self.player:
                         if self.player.player_is_an_enemy(attacker.player):
-                            # 仅拦截敌对攻击；不处理环境/中立
-                            return
+                            from ..worldplayerbase.base import is_wildlife_unit
+                            # 野生动物（含被攻击者）允许通过，不算违反条约
+                            if is_wildlife_unit(attacker) or is_wildlife_unit(self):
+                                pass
+                            else:
+                                # 仅拦截敌对攻击；不处理环境/中立
+                                return
         except Exception:
             pass
         if getattr(self, "_has_yielded", False):

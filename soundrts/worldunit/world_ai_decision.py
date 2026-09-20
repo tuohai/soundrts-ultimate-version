@@ -904,7 +904,10 @@ class CreatureAIDecision(Entity):
         if treaty_until > 0 and self.world.time < treaty_until:
             op = other.player
             if op is not None and self.player.player_is_an_enemy(op):
-                return False
+                # 对齐帝国时代 2 决定版 Treaty 模式：野生动物可正常攻击。
+                from ...worldplayerbase.base import is_wildlife_unit
+                if not (is_wildlife_unit(other) or is_wildlife_unit(self)):
+                    return False
         if not self.can_attack_if_in_range(other):
             return False
         # D-Phase 1 T3: damage 本地变量缓存. mdg_range / rdg_range 一般固定;

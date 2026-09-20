@@ -5,6 +5,27 @@ Release notes
 .. contents::
 
 
+1.5.0.7
+-------
+
+**Change: wildlife can be hunted during treaty**
+
+- **Issue**: AoE2 DE's Treaty mode allows hunting, but the ``treaty_until_time`` checks in the five treaty gates blocked attack orders, damage application, AOE damage, single-target damage, and AI target selection, so deer could not be hit during treaty.
+- **Change**: Added an ``is_wildlife_unit`` exemption to all five treaty gates. In ``AttackOrder.execute``, ``receive_hit``, AOE, single-target damage, and ``can_attack``, if either the attacker or the target is ``is_huntable`` / ``herdable`` wildlife, the action is allowed. True player-vs-player enemy attacks are still blocked.
+- **Scope**: ``worldorders/movement.py``; ``combat/damage_effects.py``; ``worldunit/world_status_update.py``; ``worldunit/world_ai_decision.py``; ``test_changelog_1422_treaty_coop.py``.
+
+**Change: Ctrl+F2 square info shows ally occupancy**
+
+- **Issue**: The square info panel (Ctrl+F2) showed a player's own units' square-space usage on a square, but did not surface ally usage. Players could not tell, without trial and error, why a square rejected their orders — was it them, or was it an ally who had crowded the square?
+- **Change**: When the looked-up square has ally units consuming square space, an extra ``Space (ally): X / Y`` line is appended below the existing own-units line. The capacity (``Y``) is the square's ``square_space``; the count (``X``) is the portion occupied by allies (rounded up to whole units). Lines with zero ally usage are skipped to keep the panel quiet in the common case. The line is visual only — it is never spoken by TTS.
+- **Scope**: ``soundrts/clientgamegridview.py``.
+
+**Change: patrol announces "no space" when destination and exit squares are full**
+
+- **Issue**: ``_on_square_space_blocked`` only fired when the unit reached the *destination* square and found it full. On a patrol path (e.g. 1 → 2 → 3 → 1), if the unit was already standing on the destination square and a *neighbour* square on the path became full, the order silently stalled with no announcement, leaving the player wondering why the unit stopped.
+- **Change**: Added a second branch to ``_on_square_space_blocked``: if the unit is already on the destination square and any adjacent ``new_place`` along the path has insufficient square space, the order is also marked impossible with ``not_enough_space`` and the unit stops, with the same single-announcement throttle (``_notified_square_space``). The order still speaks only once per order, regardless of how many squares are blocked.
+- **Scope**: ``soundrts/worldunit/world_movement.py``; ``soundrts/tests/test_unit_square_space.py``.
+
 1.5.0.6
 -------
 

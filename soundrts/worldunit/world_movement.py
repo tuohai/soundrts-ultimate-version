@@ -261,11 +261,25 @@ class CreatureMovement(Entity):
         if getattr(order, "_notified_square_space", False):
             return
         dest = self._order_destination_square(order)
-        if dest is not new_place:
+        if dest is new_place:
+            order._notified_square_space = True
+            order.mark_as_impossible("not_enough_space")
+            self.stop()
             return
-        order._notified_square_space = True
-        order.mark_as_impossible("not_enough_space")
-        self.stop()
+        # Even when this isn't the order's *destination* square, if the unit is
+        # already on the destination square and *new_place* is full, the order
+        # cannot complete from here. Mark impossible in that case too.
+        if (
+            dest is not None
+            and getattr(self, "place", None) is dest
+            and getattr(new_place, "checks_square_space", False)
+            and not getattr(new_place, "have_enough_square_space", lambda _u: True)(
+                self
+            )
+        ):
+            order._notified_square_space = True
+            order.mark_as_impossible("not_enough_space")
+            self.stop()
 
     def _try(self, rotation, target_d):
         x, y = self._future_coords(rotation, target_d)

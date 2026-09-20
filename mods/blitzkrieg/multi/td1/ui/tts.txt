@@ -1,0 +1,4 @@
+﻿; coding: utf-8
+7000 mud tower
+7001 slow
+5028	replay

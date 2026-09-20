@@ -180,15 +180,19 @@ class AttackOrder(BasicOrder):
         try:
             if getattr(self.world, "treaty_until_time", 0) > 0 and self.world.time < self.world.treaty_until_time:
                 # 如果目标有玩家且为敌对，则拦截
-                if getattr(self.target, "player", None) is not None:
-                    if self.player.player_is_an_enemy(self.target.player):
-                        self.mark_as_impossible("treaty")
-                        # 给本地人类提示
-                        for p in self.world.players:
-                            if p.is_local_human() and p is self.player:
-                                from soundrts import msgparts as mp
-                                p.push("msg", "***".join(map(str, mp.TREATY_ACTIVE)))
-                        return
+                # 对齐帝国时代 2 决定版 Treaty 模式（可以正常狩猎）。
+                target_obj = getattr(self, "target", None)
+                if getattr(target_obj, "player", None) is not None:
+                    from ..worldplayerbase.base import is_wildlife_unit
+                    if self.player.player_is_an_enemy(target_obj.player):
+                        if not is_wildlife_unit(target_obj):
+                            self.mark_as_impossible("treaty")
+                            # 给本地人类提示
+                            for p in self.world.players:
+                                if p.is_local_human() and p is self.player:
+                                    from soundrts import msgparts as mp
+                                    p.push("msg", "***".join(map(str, mp.TREATY_ACTIVE)))
+                            return
         except Exception:
             pass
         self.update_target()

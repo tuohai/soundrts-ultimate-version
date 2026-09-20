@@ -1249,11 +1249,17 @@ class CreatureStatusUpdate(Entity):
                 continue
 
             # 条约期内拦截敌对AOE伤害
+            # 对齐帝国时代 2 决定版 Treaty 模式（可以正常狩猎野生动物）。
             try:
                 if getattr(self.world, 'treaty_until_time', 0) > 0 and self.world.time < self.world.treaty_until_time:
                     if hasattr(self, 'player') and hasattr(u, 'player') and self.player and u.player:
                         if u.player.player_is_an_enemy(self.player):
-                            continue
+                            from ...worldplayerbase.base import is_wildlife_unit
+                            if is_wildlife_unit(u) or is_wildlife_unit(self):
+                                # 野生动物（含攻击者或目标）允许通过
+                                pass
+                            else:
+                                continue
             except Exception:
                 pass
 
@@ -1304,11 +1310,17 @@ class CreatureStatusUpdate(Entity):
                 return
 
             # 条约期内拦截敌对单体伤害
+            # 对齐帝国时代 2 决定版 Treaty 模式（可以正常狩猎野生动物）。
             try:
                 if getattr(self.world, 'treaty_until_time', 0) > 0 and self.world.time < self.world.treaty_until_time:
                     if hasattr(self, 'player') and hasattr(best_target, 'player') and self.player and best_target.player:
                         if best_target.player.player_is_an_enemy(self.player):
-                            return
+                            from ...worldplayerbase.base import is_wildlife_unit
+                            if is_wildlife_unit(best_target) or is_wildlife_unit(self):
+                                # 野生动物（含攻击者或目标）允许通过
+                                pass
+                            else:
+                                return
             except Exception:
                 pass
 

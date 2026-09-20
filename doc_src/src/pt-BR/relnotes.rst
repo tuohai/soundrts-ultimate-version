@@ -4,6 +4,27 @@ Notas de lançamento
 
 .. contents::
 
+1.5.0.7
+-------
+
+**Mudança: fauna pode ser caçada durante o tratado**
+
+- **Problema**: O modo Treaty de AoE2 DE permite caçar, mas as verificações de ``treaty_until_time`` nos cinco portões bloqueavam ordens de ataque, aplicação de dano, dano AOE, dano a alvo único e seleção de alvo da IA, então não era possível atingir cervos durante o tratado.
+- **Mudança**: Adicionada uma isenção de ``is_wildlife_unit`` aos cinco portões do tratado. Em ``AttackOrder.execute``, ``receive_hit``, AOE, dano a alvo único e ``can_attack``, se o atacante ou o alvo for fauna ``is_huntable`` / ``herdable``, a ação é permitida. Ataques reais jogador-contra-jogador continuam bloqueados.
+- **Alcance**: ``worldorders/movement.py``; ``combat/damage_effects.py``; ``worldunit/world_status_update.py``; ``worldunit/world_ai_decision.py``; ``test_changelog_1422_treaty_coop.py``.
+
+**Mudança: o painel Ctrl+F2 mostra a ocupação aliada**
+
+- **Problema**: O painel de informações da quadrícula (Ctrl+F2) mostrava o uso de square-space das unidades próprias numa quadrícula, mas não o das aliadas. Os jogadores não conseguiam saber, sem tentar, por que uma quadrícula rejeitava as suas ordens: eram eles ou um aliado que a tinha enchido?
+- **Mudança**: Quando a quadrícula consultada tem unidades aliadas a consumir square-space, é acrescentada uma linha extra ``Space (ally): X / Y`` abaixo da linha das unidades próprias. A capacidade (``Y``) é o ``square_space`` da quadrícula; a contagem (``X``) é a parte ocupada por aliados (arredondada por excesso para unidades inteiras). Linhas com ocupação aliada zero são omitidas para manter o painel silencioso no caso comum. A linha é apenas visual: o TTS nunca a lê.
+- **Alcance**: ``soundrts/clientgamegridview.py``.
+
+**Mudança: o patrol anuncia "sem espaço" quando as quadrículas de destino e de saída estão cheias**
+
+- **Problema**: ``_on_square_space_blocked`` só disparava quando a unidade chegava à quadrícula de *destino* e a encontrava cheia. Numa rota de patrulha (p. ex. 1 → 2 → 3 → 1), se a unidade já estava na quadrícula de destino e uma quadrícula *vizinha* da rota ficava cheia, a ordem silenciosamente encravava sem qualquer aviso, deixando o jogador sem saber por que a unidade tinha parado.
+- **Mudança**: Adicionado um segundo ramo a ``_on_square_space_blocked``: se a unidade já está na quadrícula de destino e qualquer ``new_place`` adjacente da rota não tem square-space suficiente, a ordem também é marcada como impossível com ``not_enough_space`` e a unidade para, com o mesmo limitador de anúncio único (``_notified_square_space``). A ordem continua a falar apenas uma vez por ordem, independentemente de quantas quadrículas estão bloqueadas.
+- **Alcance**: ``soundrts/worldunit/world_movement.py``; ``soundrts/tests/test_unit_square_space.py``.
+
 1.5.0.6
 -------
 

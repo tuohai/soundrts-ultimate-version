@@ -1,0 +1,45 @@
+title 5012 3005
+objective 145 88
+
+square_width 12
+nb_columns 12
+nb_lines 12
+
+nb_players_min 2
+nb_players_max 4
+starting_squares a1 a12 l1 l12
+starting_units townhall 5 house 5 peasant
+starting_resources 2000 1500 1000
+global_population_limit 10000
+
+goldmine 5000 b1 l2 a11 k12
+woods 5000 k1 a2 l11 b12
+orchard 5000 b2 k2 b11 k11
+goldmine 10000 g3 c6 j7 f10
+woods 10000 g3 c6 j7 f10
+orchard 10000 g3 c6 j7 f10
+goldmine 20000 f6 f7 g6 g7
+woods 20000 f6 f7 g6 g7
+orchard 20000 f6 f7 g6 g7
+
+nb_meadows_by_square 0
+additional_meadows a1 a1 a1 a1 a1 a1 a1 a1 a1 a1 a1 a1 a1 a1 a1 a1 a1 a1 a1 a1 l1 l1 l1 l1 l1 l1 l1 l1 l1 l1 l1 l1 l1 l1 l1 l1 l1 l1 l1 l1 a12 a12 a12 a12 a12 a12 a12 a12 a12 a12 a12 a12 a12 a12 a12 a12 a12 a12 a12 a12 l12 l12 l12 l12 l12 l12 l12 l12 l12 l12 l12 l12 l12 l12 l12 l12 l12 l12 l12 l12
+additional_meadows b1 b1 b1 b1 b1 b1 b1 b1 b1 b1 b1 b1 b1 b1 b1 k1 k1 k1 k1 k1 k1 k1 k1 k1 k1 k1 k1 k1 k1 k1 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 b2 b2 b2 b2 b2 b2 b2 b2 b2 b2 b2 b2 b2 b2 b2 k2 k2 k2 k2 k2 k2 k2 k2 k2 k2 k2 k2 k2 k2 k2 l2 l2 l2 l2 l2 l2 l2 l2 l2 l2 l2 l2 l2 l2 l2 
+additional_meadows b12 b12 b12 b12 b12 b12 b12 b12 b12 b12 b12 b12 b12 b12 b12 k12 k12 k12 k12 k12 k12 k12 k12 k12 k12 k12 k12 k12 k12 k12 a11 a11 a11 a11 a11 a11 a11 a11 a11 a11 a11 a11 a11 a11 a11 b11 b11 b11 b11 b11 b11 b11 b11 b11 b11 b11 b11 b11 b11 b11 k11 k11 k11 k11 k11 k11 k11 k11 k11 k11 k11 k11 k11 k11 k11 l11 l11 l11 l11 l11 l11 l11 l11 l11 l11 l11 l11 l11 l11 l11 
+additional_meadows c1 c1 c1 c1 c1 c1 c1 c1 c1 c1 j1 j1 j1 j1 j1 j1 j1 j1 j1 j1 c2 c2 c2 c2 c2 c2 c2 c2 c2 c2 j2 j2 j2 j2 j2 j2 j2 j2 j2 j2 c3 c3 c3 c3 c3 c3 c3 c3 c3 c3 j3 j3 j3 j3 j3 j3 j3 j3 j3 j3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 k3 k3 k3 k3 k3 k3 k3 k3 k3 k3 a3 a3 a3 a3 a3 a3 a3 a3 a3 a3 l3 l3 l3 l3 l3 l3 l3 l3 l3 l3
+additional_meadows c12 c12 c12 c12 c12 c12 c12 c12 c12 c12 j12 j12 j12 j12 j12 j12 j12 j12 j12 j12 c11 c11 c11 c11 c11 c11 c11 c11 c11 c11 j11 j11 j11 j11 j11 j11 j11 j11 j11 j11 c10 c10 c10 c10 c10 c10 c10 c10 c10 c10 j10 j10 j10 j10 j10 j10 j10 j10 j10 j10 b10 b10 b10 b10 b10 b10 b10 b10 b10 b10 k10 k10 k10 k10 k10 k10 k10 k10 k10 k10 a10 a10 a10 a10 a10 a10 a10 a10 a10 a10 l10 l10 l10 l10 l10 l10 l10 l10 l10 l10
+additional_meadows g3 g3 g3 g3 g3 c6 c6 c6 c6 c6 f6 f6 f6 f6 f6 f6 f6 f6 g6 g6 g6 g6 g6 g6 g6 g6 g6 g6 g6 g6 g6 g6 g6 g6 f7 f7 f7 f7 f7 f7 f7 f7 g7 g7 g7 g7 g7 g7 g7 g7 g7 g7 g7 g7 g7 g7 g7 g7 j7 j7 j7 j7 j7 f10 f10 f10 f10 f10
+
+terrain big_bridge c4 c5 d6 d10 e6 e10 f8 f9 g4 g5 h3 h7 i3 i7 j8 j9
+terrain ocean a4 a9 b4 b9 c9 d1 d2 d3 d11 d12 e7 f5 g8 h6 i1 i2 i10 i11 i12 j4 k4 k9 l4 l9
+terrain sea a5 a6 a7 a8 b5 b6 b7 b8 c7 c8 d4 d5 d7 d8 d9 e1 e2 e3 e4 e5 e8 e9 e11 e12 f1 f2 f3 f4 f11 f12 g1 g2 g9 g10 g11 g12 h1 h2 h4 h5 h8 h9 h10 h11 h12 i4 i5 i6 i8 i9 j5 j6 k5 k6 k7 k8 l5 l6 l7 l8
+high_grounds a1 l1 a12 l12
+water a4 a5 a6 a7 a8 a9 b4 b5 b6 b7 b8 b9 c4 c5 c7 c8 c9 d1 d2 d3 d4 d5 d6 d7 d8 d9 d10 d11 d12 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 f1 f2 f3 f4 f5 f8 f9 f11 f12 g1 g2 g4 g5 g8 g9 g10 g11 g12 h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 i1 i2 i3 i4 i5 i6 i7 i8 i9 i10 i11 i12 j4 j5 j6 j8 j9 k4 k5 k6 k7 k8 k9 l4 l5 l6 l7 l8 l9
+ground c4 c5 c6 d6 d10 e6 e10 f8 f9 f10 g3 g4 g5 h3 h7 i3 i7 j7 j8 j9
+no_air 
+;speed 0.0 0.25 a4 a5 a6 a7 a8 a9 b4 b5 b6 b7 b8 b9 c7 c8 c9 d1 d2 d3 d4 d5 d7 d8 d9 d11 d12 e1 e2 e3 e4 e5 e7 e8 e9 e11 e12 f1 f2 f3 f4 f5 f11 f12 g1 g2 g8 g9 g10 g11 g12 h1 h2 h4 h5 h6 h8 h9 h10 h11 h12 i1 i2 i4 i5 i6 i8 i9 i10 i11 i12 j4 j5 j6 k4 k5 k6 k7 k8 k9 l4 l5 l6 l7 l8 l9
+
+west_east path a1 a2 a3 a10 a11 a12 b1 b2 b3 b10 b11 b12 f6 f7 j1 j2 j3 j10 j11 j12 k1 k2 k3 k10 k11 k12
+south_north path a1 a2 a10 a11 b1 b2 b10 b11 c1 c2 c10 c11 f6 g6 j1 j2 j10 j11 k1 k2 k10 k11 l1 l2 l10 l11
+west_east bridge c6 c10 d6 d10 e6 e10 g3 g7 h3 h7 i3 i7 
+south_north bridge c3 c4 c5 f7 f8 f9 g3 g4 g5 j7 j8 j9 

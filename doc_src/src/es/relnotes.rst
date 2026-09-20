@@ -4,6 +4,27 @@ Notas de la versión
 
 .. contents::
 
+1.5.0.7
+-------
+
+**Cambio: se puede cazar fauna durante el tratado**
+
+- **Problema**: El modo Treaty de AoE2 DE permite cazar, pero las comprobaciones de ``treaty_until_time`` en las cinco puertas bloqueaban las órdenes de ataque, la aplicación de daño, el daño AOE, el daño a objetivo único y la selección de objetivo de la IA, así que no se podía golpear a los ciervos durante el tratado.
+- **Cambio**: Se añadió una exención de ``is_wildlife_unit`` a las cinco puertas del tratado. En ``AttackOrder.execute``, ``receive_hit``, AOE, daño a objetivo único y ``can_attack``, si el atacante o el objetivo es fauna ``is_huntable`` / ``herdable``, la acción se permite. Los ataques entre jugadores enemigos reales siguen bloqueados.
+- **Alcance**: ``worldorders/movement.py``; ``combat/damage_effects.py``; ``worldunit/world_status_update.py``; ``worldunit/world_ai_decision.py``; ``test_changelog_1422_treaty_coop.py``.
+
+**Cambio: el panel Ctrl+F2 muestra la ocupación aliada**
+
+- **Problema**: El panel de información de casilla (Ctrl+F2) mostraba el uso de espacio de cuadro de las unidades propias en una casilla, pero no el de las aliadas. Los jugadores no podían saber, sin probar, por qué una casilla rechazaba sus órdenes: ¿eran ellos o un aliado quien la había saturado?
+- **Cambio**: Cuando la casilla consultada tiene unidades aliadas consumiendo espacio de cuadro, se añade una línea extra ``Space (ally): X / Y`` debajo de la línea de unidades propias. La capacidad (``Y``) es el ``square_space`` de la casilla; el recuento (``X``) es la parte ocupada por aliados (redondeado al alza a unidades enteras). Se omiten las líneas con cero uso aliado para mantener el panel silencioso en el caso habitual. La línea es solo visual: el TTS nunca la lee.
+- **Alcance**: ``soundrts/clientgamegridview.py``.
+
+**Cambio: el patrol anuncia "sin espacio" cuando las casillas de destino y salida están llenas**
+
+- **Problema**: ``_on_square_space_blocked`` solo se disparaba cuando la unidad llegaba a la casilla de *destino* y la encontraba llena. En un camino de patrulla (p. ej. 1 → 2 → 3 → 1), si la unidad ya estaba en la casilla de destino y una casilla *vecina* del camino se llenaba, la orden se estancaba en silencio sin aviso, dejando al jugador sin saber por qué la unidad se detuvo.
+- **Cambio**: Se añadió una segunda rama a ``_on_square_space_blocked``: si la unidad ya está en la casilla de destino y cualquier ``new_place`` adyacente del camino no tiene espacio de cuadro suficiente, la orden también se marca como imposible con ``not_enough_space`` y la unidad se detiene, con el mismo limitador de un solo anuncio (``_notified_square_space``). La orden sigue hablando solo una vez por orden, sin importar cuántas casillas estén bloqueadas.
+- **Alcance**: ``soundrts/worldunit/world_movement.py``; ``soundrts/tests/test_unit_square_space.py``.
+
 1.5.0.6
 -------
 

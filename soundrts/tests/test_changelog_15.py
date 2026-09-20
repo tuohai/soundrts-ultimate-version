@@ -4,7 +4,6 @@ from __future__ import annotations
 from pathlib import Path
 
 _FOLDED_VERSIONS = (
-    "1.5.0.7",
     "1.5.0.8",
     "1.5.0.9",
     "1.5.0.10",
@@ -34,6 +33,10 @@ def _section_1506(lang: str) -> str:
     return _section_between(lang, "1.5.0.6", "1.5.0.5")
 
 
+def _section_1507(lang: str) -> str:
+    return _section_between(lang, "1.5.0.7", "1.5.0.6")
+
+
 def _section_1505(lang: str) -> str:
     return _section_between(lang, "1.5.0.5", "1.5.0.4")
 
@@ -58,13 +61,14 @@ def _section_15(lang: str) -> str:
     return _section_between(lang, "1.5", "1.4.9.9")
 
 
-def test_version_is_1506():
-    assert 'VERSION = "1.5.0.6"' in _source("soundrts", "version.py")
+def test_version_is_1507():
+    assert 'VERSION = "1.5.0.7"' in _source("soundrts", "version.py")
 
 
-def test_all_relnotes_have_1506_then_1505_then_1504_then_1503_then_1502_then_1501_then_15_before_1499():
+def test_all_relnotes_have_1507_then_1506_then_1505_then_1504_then_1503_then_1502_then_1501_then_15_before_1499():
     for lang in ("zh", "en", "es", "it", "pt-BR"):
         src = _source("doc_src", "src", lang, "relnotes.rst")
+        assert src.index("\n1.5.0.7\n") < src.index("\n1.5.0.6\n"), lang
         assert src.index("\n1.5.0.6\n") < src.index("\n1.5.0.5\n"), lang
         assert src.index("\n1.5.0.5\n") < src.index("\n1.5.0.4\n"), lang
         assert src.index("\n1.5.0.4\n") < src.index("\n1.5.0.3\n"), lang
@@ -74,7 +78,7 @@ def test_all_relnotes_have_1506_then_1505_then_1504_then_1503_then_1502_then_150
         assert src.index("\n1.5\n") < src.index("\n1.4.9.9"), lang
         for folded in _FOLDED_VERSIONS:
             assert f"\n{folded}\n" not in src, (lang, folded)
-        top = _section_1506(lang)
+        top = _section_1507(lang)
         for folded in _FOLDED_VERSIONS:
             assert folded not in top, (lang, folded)
 

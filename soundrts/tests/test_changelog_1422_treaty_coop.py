@@ -252,9 +252,146 @@ def test_clientserver_routes_treaty_to_game():
 
 def test_treaty_active_does_not_break_self_damage():
     """条约期不应该影响"无 attacker 来源的伤害"（例如自杀效果、地形伤害）。
-    
+
     ``receive_hit`` 必须先检查 ``attacker is not None``，否则陷阱/自爆等也被免疫。"""
     src = _source("soundrts", "combat", "damage_effects.py")
     s = src.index("def receive_hit(self, damage, attacker")
     block = src[s:s + 1000]
     assert "if attacker is not None" in block
+
+
+# ---------------------------------------------------------------------------
+# 条约：狩猎（帝国 2 决定版：野生动物不属于停战范围）
+# ---------------------------------------------------------------------------
+
+
+def test_treaty_allows_attacking_huntable_animals():
+    """帝国 2 决定版的 Treaty 模式允许狩猎：attack 命中 is_huntable 动物时，
+    五个 treaty 拦截点都必须放行，不能 mark_as_impossible 也不能吃掉伤害。"""
+
+    # worldorders/movement.py — AttackOrder.execute() 拦截野生动物
+    src = _source("soundrts", "worldorders", "movement.py")
+    s = src.index("class AttackOrder")
+    block = src[s:s + 2500]
+    assert "is_wildlife_unit" in block, "attack_order 必须放行 huntable/herdable"
+    assert 'self.mark_as_impossible("treaty")' in block
+
+    # combat/damage_effects.py — receive_hit 不拦截来自/命中野生动物的伤害
+    src = _source("soundrts", "combat", "damage_effects.py")
+    s = src.index("def receive_hit(self, damage, attacker")
+    block = src[s:s + 1500]
+    assert "is_wildlife_unit" in block, "receive_hit 必须放行 huntable/herdable"
+
+    # worldunit/world_status_update.py — AOE + 单体瞄准伤害
+    src = _source("soundrts", "worldunit", "world_status_update.py")
+    assert src.count("is_wildlife_unit") >= 2, (
+        "world_status_update 必须放行 huntable/herdable（AOE + 单体瞄准两个拦截点）"
+    )
+
+    # worldunit/world_ai_decision.py — can_attack
+    src = _source("soundrts", "worldunit", "world_ai_decision.py")
+    s = src.index("def can_attack(self, other):")
+    block = src[s:s + 3000]
+    assert "is_wildlife_unit" in block, "can_attack 必须放行 huntable/herdable"
+
+
+def test_attack_order_on_huntable_animal_during_treaty_completes():
+    """行为级：条约期内 attack 一只鹿（野生动物），命令应正常执行，不能被
+    mark_as_impossible，与现有狩猎回归 ``test_hunting.py`` 对齐。"""
+    from soundrts.worldorders.movement import AttackOrder
+
+    class _NeutralPlayer:
+        neutral = True
+
+        def player_is_an_enemy(self, _other):
+            return True  # 中立野生动物：非盟友
+
+    class _SelfPlayer:
+        def player_is_an_enemy(self, other):
+            return other is not None and other is not self
+
+        def updated_target(self, _t):
+            return None
+
+    target = type("T", (), {
+        "id": "deer1",
+        "hp": 1,
+        "is_vulnerable": True,
+        "is_huntable": 1,   # 关键：野生动物
+        "herdable": 0,
+        "player": _NeutralPlayer(),
+    })()
+
+    notifications = []
+
+    class _Unit:
+        is_idle = True
+        action = None
+        distance_to_goal = 0
+        player = _SelfPlayer()
+        orders = []
+
+        def notify(self, msg, *_a, **_k):
+            notifications.append(msg)
+
+    unit = _Unit()
+    order = AttackOrder(unit, ["deer1"])
+    order.target = target
+    unit.orders = [order]
+    # 模拟条约进行中（order.world 是 property，真正来自 unit.world）
+    unit.world = type("W", (), {"time": 0, "treaty_until_time": 300000})()
+
+    order.execute()
+
+    assert not getattr(order, "is_impossible", False), (
+        "treaty 不应拦截对野生动物（is_huntable=1）的 attack"
+    )
+    assert "order_impossible" not in notifications
+
+
+def test_treaty_still_blocks_attack_on_human_enemy():
+    """对照：条约期内对真实敌方玩家的 attack 应被拦截（防止互打）。"""
+    from soundrts.worldorders.movement import AttackOrder
+
+    class _EnemyPlayer:
+        neutral = False
+
+    class _SelfPlayer:
+        def player_is_an_enemy(self, other):
+            return other is not None and other is not self
+
+        def updated_target(self, _t):
+            return None
+
+    target = type("T", (), {
+        "id": "knight1",
+        "hp": 10,
+        "is_vulnerable": True,
+        "is_huntable": 0,   # 不是野生动物
+        "herdable": 0,
+        "player": _EnemyPlayer(),
+    })()
+
+    notifications = []
+
+    class _Unit:
+        is_idle = True
+        action = None
+        distance_to_goal = 0
+        player = _SelfPlayer()
+        orders = []
+
+        def notify(self, msg, *_a, **_k):
+            notifications.append(msg)
+
+    unit = _Unit()
+    order = AttackOrder(unit, ["knight1"])
+    order.target = target
+    unit.orders = [order]
+    unit.world = type("W", (), {"time": 0, "treaty_until_time": 300000})()
+
+    order.execute()
+
+    assert getattr(order, "is_impossible", False), (
+        "treaty 必须拦截对非野生动物的敌方 attack"
+    )
