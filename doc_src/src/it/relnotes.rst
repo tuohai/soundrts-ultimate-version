@@ -3,6 +3,21 @@ Note di rilascio
 
 .. contents::
 
+1.5.0.8
+-------
+
+**Cambio: nessun attacco automatico dell'IA durante il trattato in nessuna modalità**
+
+- **Problema**: ``AttackOrder.execute`` aveva già una porta per il trattato, ma le decisioni dell'IA (``_attack()``) e ``AttackAction.update()`` in corso potevano ancora emettere/continuare attacchi contro unità nemiche. Dopo aver corretto la modalità guardia, passando i contadini a inseguimento/difensiva/attacco, potevano ingaggiare e uccidere automaticamente i nemici durante il trattato.
+- **Cambio**: Aggiunto un controllo ``treaty_until_time`` all'inizio sia di ``AttackActionMixin._attack()`` che di ``AttackAction.update()``. Le unità nemiche dei giocatori sono bloccate (con esenzione per ``is_wildlife_unit``) e gli ``AttackAction`` in corso sui nemici vengono completati. Tutte le modalità IA (guardia/inseguimento/difensiva/attacco) non possono più attaccare automaticamente i nemici durante il trattato.
+- **Ambito**: ``soundrts/combat/attack_action.py``; ``soundrts/worldaction.py``.
+
+**Cambio: la modalità difensiva non si ritira durante il trattato**
+
+- **Problema**: La modalità difensiva fuggiva con un ordine ``go`` quando il bilancio era sfavorevole. Durante il trattato, l'avvicinarsi di un nemico non dovrebbe far ritirare automaticamente le nostre unità; ciò non corrisponde al design della modalità Treaty di AoE2 DE.
+- **Cambio**: Aggiunta un'esenzione per il trattato nella condizione di ritiro in modalità difensiva in ``decide()``. Nessuna unità IA può fuggire da una minaccia mentre ``treaty_until_time`` è attivo.
+- **Ambito**: ``soundrts/worldunit/world_ai_decision.py``.
+
 1.5.0.7
 -------
 

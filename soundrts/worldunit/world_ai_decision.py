@@ -505,7 +505,8 @@ class CreatureAIDecision(Entity):
                 and self.speed > 0  # 可以移动的单位
                 and not self._must_hold()  # 不是被命令固定位置
                 and self.player.enemy_menace(self.place) > 0  # cheap gate before balance
-                and self.player.balance(self.place, self._previous_square, mult=10) < 5):  # 战力不平衡
+                and self.player.balance(self.place, self._previous_square, mult=10) < 5  # 战力不平衡
+                and not (getattr(self.world, "treaty_until_time", 0) > 0 and self.world.time < self.world.treaty_until_time)):  # 条约期不逃跑
 
             # 计算逃跑
             possible_squares = [s for s in self.place.exits if s.other_side]
@@ -539,20 +540,8 @@ class CreatureAIDecision(Entity):
 
         # 站岗模式处理：不主动攻击，但遭受攻击时反击
         # D-Phase 2: counterattack_enabled 现是 class default = False, 直接读取.
-        # formations 开启时对齐帝国 2 站岗：射程内开火，绝不走近。
-        # agro_on_sight 0（规则，如决定版野猪）仍走被打才反击。
+        # 站岗模式不主动攻击敌人，只在遭受攻击后反击
         if self.ai_mode == "guard":
-            from ..world_formation import formation_stand_ground
-
-            if formation_stand_ground(self):
-                enemy = self._stand_ground_target()
-                if enemy is not None:
-                    decision_cache[cache_key] = {
-                        'action': 'attack',
-                        'target': enemy
-                    }
-                    self._attack(enemy)
-                return
             if (self.last_attacker is not None and self.last_attacker.place is not None and
                 self.counterattack_enabled):
                 # 站岗模式下，如果遭受攻击且反击开关开启，才进行反击
@@ -905,7 +894,7 @@ class CreatureAIDecision(Entity):
             op = other.player
             if op is not None and self.player.player_is_an_enemy(op):
                 # 对齐帝国时代 2 决定版 Treaty 模式：野生动物可正常攻击。
-                from ...worldplayerbase.base import is_wildlife_unit
+                from ..worldplayerbase.base import is_wildlife_unit
                 if not (is_wildlife_unit(other) or is_wildlife_unit(self)):
                     return False
         if not self.can_attack_if_in_range(other):

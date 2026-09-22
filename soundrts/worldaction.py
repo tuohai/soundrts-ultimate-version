@@ -185,6 +185,12 @@ class AttackAction(Action):
         ):
             self.complete()
             return
+        # 条约期拦截：停止对敌对单位的攻击
+        from .worldplayerbase.base import is_wildlife_unit
+        if getattr(unit.world, "treaty_until_time", 0) > 0 and unit.world.time < unit.world.treaty_until_time:
+            if target is not None and unit.player.player_is_an_enemy(target) and not is_wildlife_unit(target):
+                self.complete()
+                return
         # 夺取阈值为 100 的敌方建筑“接触即占领”：直接占领而非攻击。
         # 单位移动到目标处后直接转变其阵营，全程不造成伤害、不播放攻击动作/音效。
         if should_capture_on_contact(unit, target):

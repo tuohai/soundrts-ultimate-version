@@ -4,6 +4,21 @@ Notas de la versión
 
 .. contents::
 
+1.5.0.8
+-------
+
+**Cambio: ningún ataque automático de la IA durante el tratado en ningún modo**
+
+- **Problema**: ``AttackOrder.execute`` ya tenía una puerta de tratado, pero las decisiones de la IA (``_attack()``) y ``AttackAction.update()`` en curso aún podían emitir/continuar ataques contra unidades enemigas. Una vez arreglado el modo guardia, al cambiar aldeanos a modo persecución/defensivo/ataque podían auto-atacar y matar enemigos durante el tratado.
+- **Cambio**: Se añadió una comprobación de ``treaty_until_time`` al inicio tanto de ``AttackActionMixin._attack()`` como de ``AttackAction.update()``. Las unidades enemigas de jugadores se bloquean (con exención para ``is_wildlife_unit``) y los ``AttackAction`` en curso contra enemigos se completan. Todos los modos de IA (guardia/persecución/defensivo/ataque) ya no pueden atacar automáticamente a enemigos durante el tratado.
+- **Alcance**: ``soundrts/combat/attack_action.py``; ``soundrts/worldaction.py``.
+
+**Cambio: el modo defensivo no se retira durante el tratado**
+
+- **Problema**: El modo defensivo huía con una orden ``go`` cuando el balance era malo. Durante el tratado, que un enemigo se acerque no debería hacer que nuestras unidades se retiren automáticamente; eso no encaja con el diseño del modo Treaty de AoE2 DE.
+- **Cambio**: Se añadió una exención de tratado a la condición de retirada en modo defensivo en ``decide()``. Ninguna unidad de la IA puede huir de una amenaza mientras ``treaty_until_time`` esté vigente.
+- **Alcance**: ``soundrts/worldunit/world_ai_decision.py``.
+
 1.5.0.7
 -------
 

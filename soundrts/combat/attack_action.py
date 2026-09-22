@@ -1247,6 +1247,12 @@ class AttackActionMixin:
     def _attack(self, target):
         if getattr(self, "_has_yielded", False):
             return
+        # 条约期拦截：禁止对敌对单位执行自动攻击（野生动物除外）
+        if getattr(self.world, "treaty_until_time", 0) > 0 and self.world.time < self.world.treaty_until_time:
+            if target is not None:
+                from ..worldplayerbase.base import is_wildlife_unit
+                if self.player.player_is_an_enemy(target) and not is_wildlife_unit(target):
+                    return
         # 夺取阈值为 100 的敌方建筑“接触即占领”：AI 直接占领而非攻击。
         # 只创建一个 AttackAction（其 update 会路由到直接占领逻辑），并刷新占领声明，
         # 使本单位在占领途中持续持有声明，其他单位据此避免重复下达占领命令。

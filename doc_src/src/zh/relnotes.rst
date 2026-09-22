@@ -4,6 +4,21 @@
 .. contents::
 
 
+1.5.0.8
+-------
+
+**改进：条约期所有 AI 模式均禁止主动攻击**
+
+- **问题**：之前 ``AttackOrder.execute`` 加过条约拦截，但 AI 决策 (``_attack()``) 与正在进行的 ``AttackAction.update()`` 仍可下达/维持对敌对单位的攻击。结果站岗模式修好后，农民一旦切到追击/防御/攻击模式又会被自动打中并击杀敌人。
+- **改进**：在 ``AttackActionMixin._attack()`` 入口与 ``AttackAction.update()`` 顶部都加 ``treaty_until_time`` 检查，遇敌方玩家单位（野生动物豁免）直接拦截/停止 ``AttackAction``。所有 AI 模式（站岗/追击/防御/攻击）现在条约期都不能主动攻击任何敌人。
+- **范围**：`soundrts/combat/attack_action.py`；`soundrts/worldaction.py`。
+
+**改进：条约期防御模式不撤退**
+
+- **问题**：防御模式下战力不平衡时会下 ``go`` 逃跑命令。条约期本应是全面和平，敌人靠近时己方单位自动逃走不符合帝国 2 决定版 Treaty 模式的设计。
+- **改进**：``decide()`` 的防御模式撤退条件里追加条约豁免，``treaty_until_time`` 内禁止任何 AI 单位因威胁逃跑。
+- **范围**：`soundrts/worldunit/world_ai_decision.py`。
+
 1.5.0.7
 -------
 

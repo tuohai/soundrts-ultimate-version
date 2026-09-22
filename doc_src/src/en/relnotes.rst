@@ -5,6 +5,21 @@ Release notes
 .. contents::
 
 
+1.5.0.8
+-------
+
+**Change: no AI auto-attack during treaty in any mode**
+
+- **Issue**: ``AttackOrder.execute`` already had a treaty gate, but AI decisions (``_attack()``) and ongoing ``AttackAction.update()`` could still issue/continue attacks on enemy units. Once the guard mode was fixed, switching farmers to chase/defensive/attack mode would let them auto-engage and kill enemies during treaty.
+- **Change**: Added a ``treaty_until_time`` check at the top of both ``AttackActionMixin._attack()`` and ``AttackAction.update()``. Player enemies are blocked (``is_wildlife_unit`` is exempt), and ongoing ``AttackAction`` on enemies is completed. Every AI mode (guard/chase/defensive/attack) can no longer auto-attack enemies during treaty.
+- **Scope**: ``soundrts/combat/attack_action.py``; ``soundrts/worldaction.py``.
+
+**Change: defensive mode does not retreat during treaty**
+
+- **Issue**: Defensive mode fled via a ``go`` order whenever the balance was poor. During treaty, an enemy approaching shouldn't make our units retreat automatically — that doesn't match AoE2 DE's Treaty mode design.
+- **Change**: Added a treaty exemption to the defensive-mode retreat condition in ``decide()``. No AI unit may flee from a threat while ``treaty_until_time`` is in effect.
+- **Scope**: ``soundrts/worldunit/world_ai_decision.py``.
+
 1.5.0.7
 -------
 
