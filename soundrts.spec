@@ -5,7 +5,12 @@ a = Analysis(
     ['soundrts.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[
+        ('cfg', 'cfg'),
+        ('res', 'res'),
+        ('mods', 'mods'),
+        ('doc', 'doc'),
+    ],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
