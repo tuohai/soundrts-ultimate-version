@@ -4,6 +4,15 @@ Notas de lançamento
 
 .. contents::
 
+1.5.0.9
+-------
+
+**Mudança: Tab prioriza carcaças de animais na casa**
+
+- **Problema**: Após matar um animal, o ``food_carcass`` / ``food_livestock`` que cai é um depósito de comida de uso único, mas ``_priority`` ordenava por ``resource_id`` (ouro → pedra → comida). Quando a carcaça caía perto de uma mina de ouro ou pedra, Tab pulava a carcaça no primeiro ciclo e ficava difícil de localizar.
+- **Mudança**: Adicionado um ramo de carcaça em ``_priority`` entre pickup (0.25) / inimigo (0.5) e os demais depósitos (≥1.0) com prioridade fixa ``p = 0.75``. Tab agora pousa na carcaça de comida independentemente de quais outros depósitos compartilhem a casa.
+- **Escopo**: `soundrts/clientgame/game_unit_control.py`; `soundrts/tests/test_tab_target_carcass_priority.py`.
+
 1.5.0.8
 -------
 

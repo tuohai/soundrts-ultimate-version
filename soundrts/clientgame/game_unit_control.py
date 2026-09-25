@@ -82,9 +82,13 @@ def _priority(interface, o, prioritize_items=False):
             p = 0.25
         elif interface.player.is_an_enemy(o):
             p = 0.5
+        # 击杀动物留下的有肉尸体（food_carcass / food_livestock）：一次性的食物矿床，
+        # 落地后会在 Tab 候选里被同格其他矿床压后，难以定位。提到所有其他矿床之前。
+        elif getattr(o, "type_name", None) in ("food_carcass", "food_livestock"):
+            p = 0.75
         # 检查是否是可开采的资源点或可开采的建筑物
-        elif (o.qty > 0) or (hasattr(o, "is_a_building") and o.is_a_building and 
-                            hasattr(o, "resource_type") and o.resource_type and 
+        elif (o.qty > 0) or (hasattr(o, "is_a_building") and o.is_a_building and
+                            hasattr(o, "resource_type") and o.resource_type and
                             hasattr(o, "resource_qty") and o.resource_qty > 0):
             # 将字符串资源类型转换为数字
             if hasattr(o, "resource_type"):

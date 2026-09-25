@@ -2467,7 +2467,8 @@ hp_max 12
 mana_max 200
 mana_regen 1
 speed 1.5
-can_use_tech a_boule_d_energie a_meteors puissance_magique
+can_use_skill a_boule_d_energie a_meteors
+can_use_tech puissance_magique
 transport_volume 2
 rdg_range 8
 sight_range 14

@@ -4,6 +4,15 @@ Notas de la versión
 
 .. contents::
 
+1.5.0.9
+-------
+
+**Cambio: Tab prioriza los cadáveres de animales en la casilla**
+
+- **Problema**: Tras matar a un animal, el ``food_carcass`` / ``food_livestock`` que cae es un depósito de alimento de un solo uso, pero ``_priority`` ordenaba por ``resource_id`` (oro → piedra → comida). Cuando la caída aterrizaba junto a una mina de oro o piedra, Tab se saltaba el cadáver en el primer ciclo y resultaba incómodo de localizar.
+- **Cambio**: Se añadió una rama de cadáver en ``_priority`` entre pickup (0.25) / enemigo (0.5) y los demás depósitos (≥1.0) con prioridad fija ``p = 0.75``. Tab ahora aterriza en el cadáver de comida sin importar qué otros depósitos compartan la casilla.
+- **Alcance**: `soundrts/clientgame/game_unit_control.py`; `soundrts/tests/test_tab_target_carcass_priority.py`.
+
 1.5.0.8
 -------
 

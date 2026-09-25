@@ -5,6 +5,15 @@ Release notes
 .. contents::
 
 
+1.5.0.9
+-------
+
+**Change: Tab prioritizes animal carcasses on a square**
+
+- **Issue**: After killing an animal, the dropped ``food_carcass`` / ``food_livestock`` is a one-shot food deposit, but ``_priority`` sorted by ``resource_id`` (gold → stone → food). When the drop landed near a gold or stone mine, Tab skipped the carcass on the first cycle and it was awkward to locate.
+- **Change**: Added a carcass branch in ``_priority`` between pickup (0.25) / enemy (0.5) and other deposits (≥1.0) at fixed priority ``p = 0.75``. Tab now lands on the food carcass regardless of what other deposits share the square.
+- **Scope**: `soundrts/clientgame/game_unit_control.py`; `soundrts/tests/test_tab_target_carcass_priority.py`.
+
 1.5.0.8
 -------
 

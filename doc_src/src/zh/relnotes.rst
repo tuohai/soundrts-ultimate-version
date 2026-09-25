@@ -4,6 +4,15 @@
 .. contents::
 
 
+1.5.0.9
+-------
+
+**改进：Tab 优先定位动物尸体**
+
+- **问题**：击杀动物后落下的 ``food_carcass`` / ``food_livestock`` 是一次性的食物矿床，但 ``_priority`` 按 ``resource_id`` 排序（gold→stone→food），导致尸体落点在金矿/石矿附近时，Tab 一次定位不到尸体，找起来别扭。
+- **改进**：在 ``_priority`` 的拾取（0.25）/ 敌方（0.5）之后、其他矿床（≥1.0）之前插入尸体分支，固定优先级 ``p = 0.75``。Tab 现在可直接落到食物尸体上，无论同格还有什么矿床。
+- **范围**：`soundrts/clientgame/game_unit_control.py`；`soundrts/tests/test_tab_target_carcass_priority.py`。
+
 1.5.0.8
 -------
 

@@ -3,6 +3,15 @@ Note di rilascio
 
 .. contents::
 
+1.5.0.9
+-------
+
+**Cambio: Tab dà priorità alle carcasse degli animali nella casella**
+
+- **Problema**: Dopo aver ucciso un animale, il ``food_carcass`` / ``food_livestock`` lasciato a terra è un deposito di cibo usa-e-getta, ma ``_priority`` ordinava per ``resource_id`` (oro → pietra → cibo). Quando la carcassa cadeva vicino a una miniera d'oro o di pietra, Tab la saltava al primo ciclo ed era scomodo da individuare.
+- **Cambio**: Aggiunto un ramo per le carcasse in ``_priority`` tra pickup (0.25) / nemico (0.5) e gli altri depositi (≥1.0) con priorità fissa ``p = 0.75``. Tab ora atterra sulla carcassa di cibo indipendentemente da quali altri depositi condividono la casella.
+- **Ambito**: `soundrts/clientgame/game_unit_control.py`; `soundrts/tests/test_tab_target_carcass_priority.py`.
+
 1.5.0.8
 -------
 
