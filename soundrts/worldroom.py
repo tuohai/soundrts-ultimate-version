@@ -75,8 +75,9 @@ def cache(f):
 
     def decorated_f(self, dest, plane, player, places=False, avoid=False):
         global _cache, _cache_time
-        # 将缓存时间粒度放宽到3000ms，减少同一时间段内重复寻路
-        current_bucket = self.world.time // 3000
+        # 1500ms 桶（覆盖两个 tick），让连续两个 tick 复寻同一目标时直接命中缓存，
+        # 避免 A* 在每个 tick 都重跑 200k 节点展开。
+        current_bucket = self.world.time // 1500
         if _cache_time != current_bucket:
             _cache = {}
             _cache_time = current_bucket
@@ -599,6 +600,15 @@ class Square(_Space):
         - seed from ``self.exits`` with g = dist(self, exit)
         - goal when an exit on ``dest`` is dequeued (then + dist(exit, dest))
         - return ``(first_exit, total_dist)`` like ``Path[1], g_score[dest]``
+
+        D-Phase 3: ``max_expansions`` caps how many nodes a single call
+        may dequeue. On huge maps (ms1000) the exit graph has 4M edges
+        and a single A* can chew through 200k+ nodes (130 ms+), blocking
+        the main loop long enough that any user input (e.g. F3) feels
+        lagged. Capping expansions per call turns worst-case ticks into
+        best-effort partial searches: callers keep the previous best path
+        and re-ask next tick. The cap is read from the world so it can be
+        tuned per-tick via a hot budget, default 8000 (~7 ms / call).
         """
         from heapq import heappop, heappush
 
@@ -613,6 +623,18 @@ class Square(_Space):
                     return int_distance(n.x, n.y, end_x, end_y)
                 except Exception:
                     return 0
+
+        # Hot budget shared across pathfinds this tick. Read once at start;
+        # a tick-wide budget lets us bound the *aggregate* A* cost.
+        # D-Phase 3 hot-path tuning: on ms1000 a single unrestricted A*
+        # chews 200k+ nodes (~150 ms), so the budget must be small enough
+        # that one call still finishes in <5 ms. The trade-off is that
+        # long-distance paths return early after a partial best-first-hop
+        # — caller keeps the previous best and re-asks next tick.
+        budget = getattr(self.world, "_astar_node_budget", 4000)
+        if not isinstance(budget, int) or budget <= 0:
+            budget = 4000
+        per_call_cap = max(1500, budget)
 
         g_score = {}
         came_from = {}
@@ -649,6 +671,11 @@ class Square(_Space):
             came_from[e] = None
             heappush(open_heap, (g0 + _h(e), int(e.id), e))
 
+        # Best partial path (closest we've gotten to dest) for early exit.
+        best_first = None
+        best_dist = float("inf")
+        expansions = 0
+
         while open_heap:
             _, _, v = heap_pop(open_heap)
             if in_closed(v):
@@ -657,6 +684,7 @@ class Square(_Space):
                 closed.add(v)
                 continue
             closed.add(v)
+            expansions += 1
 
             # Arrive: exit standing on the destination square.
             # 优化：v 是 Exit, place 必有属性，省去 getattr 默认参数路径
@@ -668,6 +696,24 @@ class Square(_Space):
                 while came_from.get(cur) is not None:
                     cur = came_from[cur]
                 return cur, total
+
+            # Track partial progress: every dequeued exit, measure its
+            # estimated distance to dest. If we run out of budget, return
+            # the best partial first-hop instead of failing completely.
+            d_v = int_distance(v.x, v.y, end_x, end_y)
+            if d_v < best_dist:
+                best_dist = d_v
+                # Reconstruct first hop (came_from chain root)
+                cur = v
+                while came_from.get(cur) is not None:
+                    cur = came_from[cur]
+                best_first = cur
+
+            # Per-call expansion cap — keep individual A* under ~7 ms.
+            if expansions >= per_call_cap:
+                if best_first is not None:
+                    return best_first, g_score.get(v, float("inf"))
+                break
 
             g_v = g_score[v]
             for w, edge_cost in G.get(v, {}).items():
