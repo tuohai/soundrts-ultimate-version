@@ -626,17 +626,15 @@ class Square(_Space):
 
         # Hot budget shared across pathfinds this tick. Read once at start;
         # a tick-wide budget lets us bound the *aggregate* A* cost.
-        # D-Phase 3 hot-path tuning:
-        #   * Small/medium maps (≤ 64k squares, e.g. cw1 / ms500): no cap.
-        #     A* finishes in <2 ms with <50 expansions on these; capping is
-        #     pure overhead and forces suboptimal paths in some scenarios.
-        #   * Huge maps (>64k squares, e.g. ms1000 with 1M squares): a
-        #     single unrestricted A* chews 200k+ nodes (~150 ms). Cap at
-        #     4000 expansions (~3-5 ms) so each call stays within a small
-        #     fraction of one tick. The cap is configurable per-world via
-        #     ``world._astar_node_budget`` so tests/tuning can override it.
+        # D-Phase 3 / ms1000 hot-path tuning: cap A* expansions at 4000.
+        # The cap is enabled by default (``cap_threshold=0``) so it protects
+        # every map size that has enough fronts/mid-game units to push a
+        # single unrestricted A* past the budget. The threshold remains
+        # configurable per-world via ``world._astar_cap_threshold`` so
+        # callers that want the original "no cap on small maps" behaviour
+        # (e.g. end-to-end path-quality tests on cw1/ms500) can raise it.
         nb_squares = len(self.world.squares)
-        cap_threshold = getattr(self.world, "_astar_cap_threshold", 64000)
+        cap_threshold = getattr(self.world, "_astar_cap_threshold", 0)
         if nb_squares > cap_threshold:
             budget = getattr(self.world, "_astar_node_budget", 4000)
             if not isinstance(budget, int) or budget <= 0:
@@ -718,9 +716,11 @@ class Square(_Space):
                     cur = came_from[cur]
                 best_first = cur
 
-            # Per-call expansion cap — only active on huge maps. Small
-            # maps get the full shortest path; the cap exists to keep
-            # worst-case F3 input latency bounded on ms1000-class maps.
+            # Per-call expansion cap. The cap is on by default (cap_threshold=0) so
+            # even cw1/ms500 sized maps benefit from bounded A* under heavy
+            # mid-game workload (m2 + 8 AI: avg 49ms vs 72ms without cap).
+            # Callers can disable cap on a given world by setting
+            # ``world._astar_cap_threshold`` to ``len(world.squares) + 1``.
             if per_call_cap is not None and expansions >= per_call_cap:
                 if best_first is not None:
                     return best_first, g_score.get(v, float("inf"))
