@@ -626,15 +626,24 @@ class Square(_Space):
 
         # Hot budget shared across pathfinds this tick. Read once at start;
         # a tick-wide budget lets us bound the *aggregate* A* cost.
-        # D-Phase 3 hot-path tuning: on ms1000 a single unrestricted A*
-        # chews 200k+ nodes (~150 ms), so the budget must be small enough
-        # that one call still finishes in <5 ms. The trade-off is that
-        # long-distance paths return early after a partial best-first-hop
-        # — caller keeps the previous best and re-asks next tick.
-        budget = getattr(self.world, "_astar_node_budget", 4000)
-        if not isinstance(budget, int) or budget <= 0:
-            budget = 4000
-        per_call_cap = max(1500, budget)
+        # D-Phase 3 hot-path tuning:
+        #   * Small/medium maps (≤ 64k squares, e.g. cw1 / ms500): no cap.
+        #     A* finishes in <2 ms with <50 expansions on these; capping is
+        #     pure overhead and forces suboptimal paths in some scenarios.
+        #   * Huge maps (>64k squares, e.g. ms1000 with 1M squares): a
+        #     single unrestricted A* chews 200k+ nodes (~150 ms). Cap at
+        #     4000 expansions (~3-5 ms) so each call stays within a small
+        #     fraction of one tick. The cap is configurable per-world via
+        #     ``world._astar_node_budget`` so tests/tuning can override it.
+        nb_squares = len(self.world.squares)
+        cap_threshold = getattr(self.world, "_astar_cap_threshold", 64000)
+        if nb_squares > cap_threshold:
+            budget = getattr(self.world, "_astar_node_budget", 4000)
+            if not isinstance(budget, int) or budget <= 0:
+                budget = 4000
+            per_call_cap = max(1500, budget)
+        else:
+            per_call_cap = None  # unlimited for small/medium maps
 
         g_score = {}
         came_from = {}
@@ -709,8 +718,10 @@ class Square(_Space):
                     cur = came_from[cur]
                 best_first = cur
 
-            # Per-call expansion cap — keep individual A* under ~7 ms.
-            if expansions >= per_call_cap:
+            # Per-call expansion cap — only active on huge maps. Small
+            # maps get the full shortest path; the cap exists to keep
+            # worst-case F3 input latency bounded on ms1000-class maps.
+            if per_call_cap is not None and expansions >= per_call_cap:
                 if best_first is not None:
                     return best_first, g_score.get(v, float("inf"))
                 break
