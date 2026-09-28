@@ -5,6 +5,28 @@ Release notes
 .. contents::
 
 
+1.5.1.0
+-------
+
+**Change: Save now works on huge maps without exhausting the C stack**
+
+- **Issue**: Game saves used ``cloudpickle`` to serialize the entire ``World`` object graph. On very large maps (e.g. 500x500, 1000x1000), the ``World.g`` path graph, ``Square.neighbors`` neighbor caches, battle ``last_attacker`` reference chains, and ECS buckets formed tens of thousands of levels of object recursion. Cloudpickle's depth-first traversal exhausted the C call stack, causing saves to fail or the program to crash.
+- **Change**: Added ``soundrts/save_pickle.py``. The module strips rebuildable indices and transient references (``World.g``, ``Square.neighbors``, ``last_attacker``, ECS buckets, etc.) from ``__getstate__`` before serialization, preserving only essential game state. ``__setstate__`` reconstructs everything on load. 500x500 and 1000x1000 maps now save and load correctly.
+- **Scope**: ``soundrts/save_pickle.py``; ``soundrts/worldroom.py``; ``soundrts/world/world_core.py``; ``soundrts/worldaction.py``; ``soundrts/worldplayerbase/base.py``; ``soundrts/tests/test_save_resume_pickle.py``.
+
+**Change: huge maps no longer wrap around the edges as shortcuts**
+
+- **Issue**: The procedurally-generated `ms200`, `ms500`, and `ms1000` maps included 1-based `(N, row)` / `(col, N)` boundary entries in their `west_east_paths` / `south_north_paths` lines. After the engine's `_normalize_square_token` rewrites them to 0-based coordinates, these entries become `(N-1, row)` and trip the `cx+1 == nb_columns` portal branch in `_create_we_passage`, which silently wraps them back to `(0, row)`. The result was a hidden toroidal ring around the border: a player could reach the opposing corner in 1-2 steps by walking along the edge, bypassing every choke point in the centre of the map.
+- **Change**: Removed all `(N, row)` / `(col, N)` / `(0, row)` / `(col, 0)` boundary entries from the three maps. `tools/gen_ms500.py` now uses `range(1, n)` for main corridors (instead of `range(1, n+1)`) and drops secondary branches whose random anchor lands on the 0 / N boundary, so a re-run with the same seed cannot reintroduce wrap. Shortest paths between starting corners are now "through the map" (adjacent corners ~160 / 400 / 800 steps, diagonals ~320 / 800 / 1600), with no border shortcut.
+- **Scope**: `res/multi/ms200.txt`; `res/multi/ms500.txt`; `res/multi/ms1000.txt`; `tools/gen_ms500.py`; `soundrts/tests/test_ms_maps_no_wrap.py`.
+
+**Change: Performance of perception hot path**
+
+- **Issue**: ``_update_perception_and_memory`` unconditionally rebuilt the full ``current_unit_positions`` dict and overwrote ``_last_unit_positions`` every tick, even when no unit had moved. On huge maps such as ``ms500`` the function is called tens of thousands of times per second, and the repeated dict allocation and copy wasted the main-thread budget.
+- **Change**: Compute an aggregate fold (sum of unit position ``pos_hash``) first; only allocate and populate ``current_unit_positions`` when the aggregate differs from the previous tick. The overwrite ``self._last_unit_positions = current_unit_positions`` is gated on ``position_changed``; unchanged ticks skip the assignment entirely. Wall-clock cost of ``_update_perception_and_memory`` drops sharply on ms500 and similar huge maps.
+- **Scope**: ``soundrts/worldplayerbase/perception.py`` (``_update_perception_and_memory``, ``_last_unit_positions``, ``current_unit_positions``, ``position_changed``).
+
+
 1.5.0.9
 -------
 

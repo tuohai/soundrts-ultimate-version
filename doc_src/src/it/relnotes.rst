@@ -3,6 +3,28 @@ Note di rilascio
 
 .. contents::
 
+1.5.1.0
+-------
+
+**Cambio: I salvataggi su mappe enormi ora funzionano senza esaurire lo stack C**
+
+- **Problema**: Il salvataggio usava ``cloudpickle`` per serializzare l'intero grafo di oggetti ``World``. Su mappe molto grandi (es. 500x500, 1000x1000), il grafo dei percorsi ``World.g``, le cache dei vicini ``Square.neighbors``, le catene di riferimento di combattimento ``last_attacker`` e i bucket ECS formavano decine di migliaia di livelli di ricorsione degli oggetti. La traversal depth-first di cloudpickle esauriva lo stack delle chiamate C, causando fallimenti del salvataggio o crash del programma.
+- **Cambio**: Aggiunto ``soundrts/save_pickle.py``. Il modulo rimuove dall'``__getstate__`` gli indici ricostruibili e i riferimenti transitori (``World.g``, ``Square.neighbors``, ``last_attacker``, bucket ECS, ecc.), conservando solo i dati di stato essenziali del gioco. ``__setstate__`` ricostruisce tutto al caricamento. Ora le mappe 500x500 e 1000x1000 si salvano e caricano correttamente.
+- **Ambito**: ``soundrts/save_pickle.py``; ``soundrts/worldroom.py``; ``soundrts/world/world_core.py``; ``soundrts/worldaction.py``; ``soundrts/worldplayerbase/base.py``; ``soundrts/tests/test_save_resume_pickle.py``.
+
+**Cambio: le mappe enormi non collegano più inizio e fine come scorciatoia perimetrale**
+
+- **Problema**: le mappe generate `ms200`, `ms500` e `ms1000` includevano voci di confine 1-based `(N, riga)` / `(col, N)` nelle loro righe `west_east_paths` / `south_north_paths`. Dopo la riscrittura 1-based a 0-based di `_normalize_square_token`, queste voci diventano `(N-1, riga)` e fanno scattare il ramo portal `cx+1 == nb_columns` in `_create_we_passage`, che le avvolge silenziosamente tornando a `(0, riga)`. Il risultato era un anello toroidale nascosto sul bordo: un giocatore poteva raggiungere l'angolo avversario in 1-2 passi camminando lungo il bordo, evitando ogni strozzatura al centro della mappa.
+- **Cambio**: rimosse tutte le voci di confine `(N, riga)` / `(col, N)` / `(0, riga)` / `(col, 0)` dalle tre mappe. `tools/gen_ms500.py` ora usa `range(1, n)` per i corridoi principali (invece di `range(1, n+1)`) e scarta i rami secondari la cui ancora casuale cada sul confine 0 / N, così una nuova esecuzione con lo stesso seed non reintroduce il wrap. Le distanze minime tra gli angoli di partenza tornano ad essere "attraverso la mappa" (angoli adiacenti ~160 / 400 / 800 passi, diagonali ~320 / 800 / 1600), senza scorciatoia perimetrale.
+- **Ambito**: `res/multi/ms200.txt`; `res/multi/ms500.txt`; `res/multi/ms1000.txt`; `tools/gen_ms500.py`; `soundrts/tests/test_ms_maps_no_wrap.py`.
+
+**Cambio: Prestazioni del percorso caldo di percezione**
+
+- **Problema**: ``_update_perception_and_memory`` ricostruiva incondizionatamente l'intero dizionario ``current_unit_positions`` e sovrascriveva ``_last_unit_positions`` ogni tick, anche quando nessuna unità si era mossa. Su mappe enormi come ``ms500`` la funzione viene chiamata decine di migliaia di volte al secondo, e l'allocazione e copia del dizionario sprecavano il budget del thread principale.
+- **Cambio**: si calcola prima un fold aggregato (somma di ``pos_hash`` delle posizioni delle unità); il dizionario ``current_unit_positions`` viene allocato e popolato solo quando l'aggregato cambia rispetto al tick precedente. L'assegnazione ``self._last_unit_positions = current_unit_positions`` è protetta da ``position_changed``; i tick senza modifiche saltano del tutto l'assegnazione. Il tempo di wall-clock di ``_update_perception_and_memory`` cala nettamente su ms500 e mappe enormi simili.
+- **Ambito**: ``soundrts/worldplayerbase/perception.py`` (``_update_perception_and_memory``, ``_last_unit_positions``, ``current_unit_positions``, ``position_changed``).
+
+
 1.5.0.9
 -------
 

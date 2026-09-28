@@ -1577,7 +1577,8 @@ class PerceptionMixin:
 
         # 执行完整的感知更新
         self._force_full_update = False
-        self._last_unit_positions = current_unit_positions
+        if position_changed:
+            self._last_unit_positions = current_unit_positions
         
         # 先保存当前的感知状态（new_enemy + memory 共用这一份，不再内层二次 copy）
         previous_perception = self.perception.copy()

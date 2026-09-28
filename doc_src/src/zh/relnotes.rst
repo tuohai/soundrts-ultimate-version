@@ -4,6 +4,28 @@
 .. contents::
 
 
+1.5.1.0
+-------
+
+**改进：极大地图保存不再耗尽 C 栈**
+
+- **问题**：保存游戏使用 ``cloudpickle`` 序列化整个 ``World`` 对象图。在极大地图（如 500×500、1000×1000）上，``World.g`` 路径图、``Square.neighbors`` 邻居缓存、战斗 ``last_attacker`` 引用链等形成数万层深的对象递归，cloudpickle 深度优先遍历耗尽 C 栈导致保存失败或程序崩溃。
+- **改进**：新增 ``soundrts/save_pickle.py`` 模块，在 ``__getstate__`` 中主动剥离可重建的索引与瞬态引用（``World.g``、``Square.neighbors``、``last_attacker``、ECS buckets 等），仅保存必要的游戏状态数据，读档后通过 ``__setstate__`` 统一重建。现在 500×500 及 1000×1000 地图均可正常保存与加载。
+- **范围**：``soundrts/save_pickle.py``；``soundrts/worldroom.py``；``soundrts/world/world_core.py``；``soundrts/worldaction.py``；``soundrts/worldplayerbase/base.py``；``soundrts/tests/test_save_resume_pickle.py``。
+
+**改进：极大地图不再首尾相连形成绕边捷径**
+
+- **问题**：`ms200`、`ms500`、`ms1000` 三个程序生成地图的 `west_east_paths` / `south_north_paths` 包含 1-based 的 `(N, row)` / `(col, N)` 边界项。引擎 ``_normalize_square_token`` 把 1-based 转成 0-based 后，这些项变成 0-based 的 ``(N-1, row)``，正好命中 ``_create_we_passage`` 中 ``cx+1 == nb_columns`` 的 portal 分支，被当成 portal 自动 wrap 回 ``(0, row)``。结果左边界与右边界、上边界与下边界直接打通，玩家可以沿地图边沿以 1~2 步到达对家，绕过中部地形，原本被阻隔的基地之间出现了绕地图捷径。
+- **改进**：从三张地图的所有 `west_east_paths` / `south_north_paths` 行中删除 ``(N, row)`` / ``(col, N)`` / ``(0, row)`` / ``(col, 0)`` 这类边界项（这些是 engine wrap 唯一能触发的坐标）。``tools/gen_ms500.py`` 主走廊改用 ``range(1, n)`` 而非 ``range(1, n+1)``，并过滤次级路径中落在 0 / N 边界上的随机点，防止重新生成时复发。地图加载后玩家起点之间的最短路径变回"穿越地图"（邻角约 160 / 400 / 800 步，对角约 320 / 800 / 1600 步），不再有边沿环线捷径。
+- **范围**：`res/multi/ms200.txt`；`res/multi/ms500.txt`；`res/multi/ms1000.txt`；`tools/gen_ms500.py`；`soundrts/tests/test_ms_maps_no_wrap.py`。
+
+**改进：感知热路径性能（perception hot-path performance）**
+
+- **问题**：``_update_perception_and_memory`` 每 tick 都无条件重建完整的 ``current_unit_positions`` 字典并覆盖 ``_last_unit_positions``，即使所有单位位置都没变。在 ``ms500`` 这类极大地图上每秒调用数万次，字典分配和拷贝白白吃掉主线程预算。
+- **改进**：先做一次聚合 fold 扫描（单位位置 ``pos_hash`` 之和），与上一次的值比较后才真正填充 ``current_unit_positions`` 字典；只有当聚合 fold 真的变化时才把新字典赋给 ``self._last_unit_positions = current_unit_positions``。``position_changed`` 守卫保证未变化时跳过整个赋值。这一改写使 ``_update_perception_and_memory`` 在 ms500 等大地图上的耗时显著下降。
+- **范围**：``soundrts/worldplayerbase/perception.py``（``_update_perception_and_memory``、``_last_unit_positions``、``current_unit_positions``、``position_changed``）。
+
+
 1.5.0.9
 -------
 
