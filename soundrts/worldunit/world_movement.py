@@ -137,6 +137,10 @@ class CreatureMovement(Entity):
         if self.airground_type != "ground":
             return True
 
+        # 防御：地图外坐标 (get_place_from_xy 返回 None) 视为不可走
+        if new_place is None:
+            return False
+
         # 如果是当前位置
         if new_place is self.place:
             return True
