@@ -172,29 +172,56 @@ class CombatMixin:
     def is_very_dangerous(self, square_or_exit: Union[Square, Exit]) -> bool:
         if square_or_exit is None:
             return False
+        # D-Phase 2 hot path: avoid repeating the same isinstance / dict-in
+        # lookups millions of times per tick on huge maps (ms1000 reached
+        # ~3M is_very_dangerous calls inside a single A* search).
+        # _enemy_presence only updates every 500ms (see _update_enemy_menace),
+        # so a 250ms-bucket id-based cache is safe.
+        # Use getattr so stubs/tests without ``self.world`` still work.
+        world = getattr(self, "world", None)
+        if world is not None:
+            cache_tick = world.time // 250
+            cached = getattr(self, "_is_very_dangerous_cache", None)
+            if cached is not None and cached[0] == cache_tick:
+                result_dict = cached[1]
+                key = id(square_or_exit)
+                v = result_dict.get(key, None)
+                if v is not None:
+                    return v
+            else:
+                result_dict = {}
+                self._is_very_dangerous_cache = (cache_tick, result_dict)
+        else:
+            result_dict = None
         # Units leaving a transport/building remember Inside as _previous_square.
         if getattr(square_or_exit, "is_inside_place", False):
             square_or_exit = getattr(square_or_exit, "outside", None)
             if square_or_exit is None:
+                if result_dict is not None:
+                    result_dict[id(square_or_exit)] = False
                 return False
+        result = False
         if isinstance(square_or_exit, Square):
-            return (
+            result = (
                 self.square_is_dangerous(square_or_exit)
                 and square_or_exit in self._enemy_presence
             )
-        other = getattr(square_or_exit, "other_side", None)
-        if other is not None:
-            return (
-                self.exit_is_dangerous(square_or_exit)
-                and other.place in self._enemy_presence
-            )
-        # Unknown place-like object with exits: treat like a square.
-        if hasattr(square_or_exit, "exits"):
-            return (
-                self.square_is_dangerous(square_or_exit)
-                and square_or_exit in self._enemy_presence
-            )
-        return False
+        else:
+            other = getattr(square_or_exit, "other_side", None)
+            if other is not None:
+                result = (
+                    self.exit_is_dangerous(square_or_exit)
+                    and other.place in self._enemy_presence
+                )
+            elif hasattr(square_or_exit, "exits"):
+                # Unknown place-like object with exits: treat like a square.
+                result = (
+                    self.square_is_dangerous(square_or_exit)
+                    and square_or_exit in self._enemy_presence
+                )
+        if result_dict is not None:
+            result_dict[id(square_or_exit)] = result
+        return result
 
     def square_is_dangerous(self, s: Square) -> bool:
         if s is None:

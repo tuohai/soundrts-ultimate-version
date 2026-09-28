@@ -228,19 +228,34 @@ class WorldGameMixin:
                 if not getattr(s, "fixed_terrain", False):
                     s.update_terrain()
             dirty.clear()
-        # 每2秒全量校验一次，防止遗漏。
-        # ms500 热路径优化：仅当本周期内存在 dirty 事件（_terrain_dirty_in_cycle）
-        # 或自上次全量后从未做过全量时才执行全量扫描。 ms500 上静态方格占 ~99%，
-        # 该 flag 由 Square.add/remove 在影响地形时置位。
-        if not hasattr(self, '_last_full_terrain_update'):
-            self._last_full_terrain_update = 0
-        if self.time - self._last_full_terrain_update >= 2000:
-            if getattr(self, '_terrain_dirty_in_cycle', False):
-                for s in self.squares:
-                    if not getattr(s, "fixed_terrain", False):
-                        s.update_terrain()
-            self._last_full_terrain_update = self.time
-            self._terrain_dirty_in_cycle = False
+        # ms1000 fix (D-Phase 2): the periodic 2 s full-map sweep used to be
+        # cheap on small maps, but on ms1000 (1M squares) a single tick of
+        # the sweep already takes >1 s, and persistent AI add/remove traffic
+        # keeps the dirty flag True so the sweep runs continuously, producing
+        # the sustained ~200 ms/tick hitch the user reported as F3 / hotkey
+        # lag. The dirty guard at the top of this method already covers
+        # every square that actually changes — and its strict neighbours —
+        # in real time (Square.add/remove adds both to the dirty set). So the
+        # periodic full sweep is dropped entirely for huge maps; smaller maps
+        # still fall through to the legacy behaviour for safety.
+        nb_squares = len(self.squares)
+        # ms1000 has 1M squares; ms500 has 250k. Anything above ~64k is huge
+        # for our 2 s full-sweep budget — only run the sweep on small maps.
+        if nb_squares <= 64000:
+            if not hasattr(self, '_last_full_terrain_update'):
+                self._last_full_terrain_update = 0
+            if self.time - self._last_full_terrain_update >= 2000:
+                if getattr(self, '_terrain_dirty_in_cycle', False) or self._last_full_terrain_update == 0:
+                    for s in self.squares:
+                        if not getattr(s, "fixed_terrain", False):
+                            s.update_terrain()
+                self._last_full_terrain_update = self.time
+                self._terrain_dirty_in_cycle = False
+        else:
+            # Huge map: trust the dirty guard. Make sure the timestamp is
+            # initialised so existing periodic callers don't crash.
+            if not hasattr(self, '_last_full_terrain_update'):
+                self._last_full_terrain_update = self.time
 
     _previous_slow_update = 0
 

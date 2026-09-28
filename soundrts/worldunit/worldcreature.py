@@ -1647,6 +1647,47 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
             return 0
         return max(0, int(self.hp)) // troop_sz
 
+    def _pick_unknown_squares(self, max_n: int = 10):
+        """Pick up to ``max_n`` unknown squares for AI exploration.
+
+        Bypasses the shuffled UI list (``player.unknown_squares`` is a
+        property that re-runs ``random.sample(world.squares, ...)`` over
+        millions of squares on huge maps — ~3 random.sample calls per tick
+        alone burned ~6s on ms1000). AI explore only needs *some* unexplored
+        target, not a deterministic shuffled order.
+        """
+        player = self.player
+        observed = getattr(player, "strictly_observed_squares", None)
+        if observed is None:
+            # Fallback: just walk world.squares (deterministic order is fine
+            # for AI; we are not trying to mirror the UI shuffled order).
+            result = []
+            for s in player.world.squares:
+                result.append(s)
+                if len(result) >= max_n:
+                    break
+            return result
+        seen_cache = getattr(player, "_unknown_iter_cache", None)
+        cache_tick = player.world.time // 250
+        if seen_cache is None or seen_cache[0] != cache_tick:
+            observed_ids = {id(s) for s in observed}
+            seen_cache = (cache_tick, observed_ids, 0)
+            player._unknown_iter_cache = seen_cache
+        tick, observed_ids, cursor_start = seen_cache
+        result = []
+        for idx, s in enumerate(player.world.squares):
+            if idx < cursor_start:
+                continue
+            if id(s) in observed_ids:
+                continue
+            result.append(s)
+            if len(result) >= max_n:
+                player._unknown_iter_cache = (tick, observed_ids, idx + 1)
+                return result
+        # Wrapped without finding enough: clear cursor and start over.
+        player._unknown_iter_cache = (tick, observed_ids, 0)
+        return result
+
     def do_auto_explore(self) -> None:
         # 执行一次"自动探索"步进（持续探索由 AutoExploreOrder 每帧调用驱动）。
         # 注意：方法名不能再叫 auto_explore，否则会与布尔属性 auto_explore
@@ -1662,7 +1703,12 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
                 if self.action_target is not None:
                     self._destination = place
                     return
-            for place in self.player.unknown_squares[:10]:
+            # D-Phase 2 ms1000 hot path: avoid self.player.unknown_squares
+            # which is a property that re-runs random.sample(world.squares, ...)
+            # (1M shuffle) every access. AI only needs *some* unknown square,
+            # not the deterministic shuffled list used by the UI browser.
+            unknown_nearby = self._pick_unknown_squares(max_n=10)
+            for place in unknown_nearby:
                 self.action_target = self.next_stage(place, avoid=True)
                 if self.action_target is not None:
                     self._destination = place
