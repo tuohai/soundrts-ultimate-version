@@ -370,6 +370,8 @@ class GridView:
         self._unit_crowd = {}
         self._minimap_terrain = None
         self._minimap_terrain_key = None
+        self._minimap_fog = None
+        self._minimap_fog_key = None
         self._arch_by_player = {}
         self._team_color_by_pid = {}
 
@@ -504,8 +506,10 @@ class GridView:
         screen = get_screen()
         cols = self.interface.xcmax + 1
         rows = self.interface.ycmax + 1
-        map_w = self.square_view_width * cols
-        map_h = self.square_view_height * rows
+        cell_w = self.square_view_width
+        cell_h = self.square_view_height
+        map_w = cell_w * cols
+        map_h = cell_h * rows
 
         # 未探索底色
         draw_rect((18, 18, 22), (self._map_origin[0], self._map_origin[1], map_w, map_h))
@@ -513,12 +517,25 @@ class GridView:
         # backgrounds
         squares_to_view = []
         player = self.interface.player
-        for xc in range(0, cols):
-            for yc in range(0, rows):
-                sq = player.world.grid[(xc, yc)]
-                if sq in player.observed_squares or sq in player.observed_before_squares:
+        # Viewport-bounded iteration (Ctrl+F2 on huge maps like ms1000
+        # would otherwise iterate 1,000,000 cells per frame).  Compute
+        # the xc/yc window that intersects the camera; iterate only that.
+        ox, oy = self._map_origin
+        x_start = max(0, (self._view_rect[0] - ox) // cell_w) if cell_w else 0
+        x_end = min(cols, ((self._view_rect[0] + self._view_rect[2] - ox) // cell_w) + 1) if cell_w else 0
+        y_start = max(0, (self._view_rect[1] + self._view_rect[3] - oy - cell_h) // cell_h) if cell_h else 0
+        y_end = min(rows, ((self._view_rect[1] + self._view_rect[3] - oy) // cell_h) + 1) if cell_h else 0
+        if x_start >= x_end or y_start >= y_end:
+            x_start, x_end, y_start, y_end = 0, cols, 0, rows
+        grid = player.world.grid
+        observed = player.observed_squares
+        observed_before = player.observed_before_squares
+        for xc in range(x_start, x_end):
+            for yc in range(y_start, y_end):
+                sq = grid[(xc, yc)]
+                if sq in observed or sq in observed_before:
                     color = square_color(sq)
-                    if sq not in player.observed_squares:
+                    if sq not in observed:
                         from .clientgame.game_visual_fx import fog_edge_strength, soft_fog_color
 
                         color = soft_fog_color(color, fog_edge_strength(sq, player))
@@ -532,24 +549,19 @@ class GridView:
         # 细格线（可读分区，不抢出口）
         if self.square_view_width >= 8:
             grid_c = (0, 0, 0)
-            for xc in range(cols + 1):
-                x = self._map_origin[0] + xc * self.square_view_width
-                pygame.draw.line(
-                    screen,
-                    grid_c,
-                    (x, self._map_origin[1]),
-                    (x, self._map_origin[1] + map_h),
-                    1,
-                )
-            for yc in range(rows + 1):
-                y = self._map_origin[1] + yc * self.square_view_height
-                pygame.draw.line(
-                    screen,
-                    grid_c,
-                    (self._map_origin[0], y),
-                    (self._map_origin[0] + map_w, y),
-                    1,
-                )
+            # Bound grid lines to the visible viewport (ms1000 would
+            # otherwise draw ~2000 lines/frame, most clipped off-screen).
+            vx0, vy0, vw, vh = self._view_rect
+            xc_lo = max(0, (vx0 - ox) // cell_w) if cell_w else 0
+            xc_hi = min(cols, ((vx0 + vw - ox) // cell_w) + 1) if cell_w else 0
+            yc_lo = max(0, (vy0 - oy) // cell_h) if cell_h else 0
+            yc_hi = min(rows, ((vy0 + vh - oy) // cell_h) + 1) if cell_h else 0
+            for xc in range(xc_lo, xc_hi + 1):
+                x = ox + xc * cell_w
+                pygame.draw.line(screen, grid_c, (x, vy0), (x, vy0 + vh), 1)
+            for yc in range(yc_lo, yc_hi + 1):
+                y = oy + yc * cell_h
+                pygame.draw.line(screen, grid_c, (vx0, y), (vx0 + vw, y), 1)
 
         # 墙 = 无出口边；通路边略提亮缺口感
         for sq, rect in squares_to_view:
@@ -1883,12 +1895,21 @@ class GridView:
         player = self.interface.player
         obs = player.observed_squares
         before = player.observed_before_squares
-        terrain_key = (cols, rows, cell, len(obs), len(before), id(obs), id(before))
-        if self._minimap_terrain is None or self._minimap_terrain_key != terrain_key:
+        # Two-stage display (Ctrl+F2): cache the static terrain base
+        # (square_color depends only on type_name + high_ground — both
+        # constant after map load).  Previously the cache key also
+        # included len(obs)/len(before), which change every tick on big
+        # maps like ms1000 and forced a full 1,000,000-cell rebuild.
+        base_key = (cols, rows, cell)
+        if (
+            self._minimap_terrain is None
+            or self._minimap_terrain_key != base_key
+        ):
             surf = pygame.Surface((w + 4, h + 4), pygame.SRCALPHA)
             surf.fill((8, 10, 16, 210))
             pygame.draw.rect(surf, (160, 170, 190), (0, 0, w + 4, h + 4), 1)
             grid = player.world.grid
+            square_color_local = square_color
             for xc in range(cols):
                 for yc in range(rows):
                     sq = grid.get((xc, yc))
@@ -1896,16 +1917,94 @@ class GridView:
                         continue
                     px = 2 + xc * cell
                     py = 2 + (rows - 1 - yc) * cell
-                    if sq in obs:
-                        col = square_color(sq)
-                    elif sq in before:
-                        col = soft_fog_color(square_color(sq), 0.35)
-                    else:
-                        col = (22, 24, 28)
-                    pygame.draw.rect(surf, col, (px, py, cell, cell))
+                    pygame.draw.rect(surf, square_color_local(sq), (px, py, cell, cell))
             self._minimap_terrain = surf
-            self._minimap_terrain_key = terrain_key
+            self._minimap_terrain_key = base_key
+            self._minimap_fog = None  # invalidate fog overlay cache
         screen.blit(self._minimap_terrain, (left - 2, top - 2))
+
+        # Fog-of-war overlay: avoid iterating 1M cells per tick on big
+        # maps.  Perception rebuilds observed_squares ~every few ticks;
+        # in between only a handful of cells flip state.  We track
+        # (prev_id, prev_len) of the fog sets; if both still match, the
+        # overlay is guaranteed up to date and we blit it as-is.
+        prev_obs_id = getattr(self, "_minimap_prev_obs_id", None)
+        prev_obs_len = getattr(self, "_minimap_prev_obs_len", None)
+        prev_bef_id = getattr(self, "_minimap_prev_bef_id", None)
+        prev_bef_len = getattr(self, "_minimap_prev_bef_len", None)
+        cur_obs_id = id(obs)
+        cur_obs_len = len(obs)
+        cur_bef_id = id(before)
+        cur_bef_len = len(before)
+        if (
+            self._minimap_fog is not None
+            and prev_obs_id == cur_obs_id
+            and prev_bef_id == cur_bef_id
+            and prev_obs_len == cur_obs_len
+            and prev_bef_len == cur_bef_len
+        ):
+            # Cache hit: nothing changed since last paint.
+            screen.blit(self._minimap_fog, (left - 2, top - 2))
+            return
+        if self._minimap_fog is None:
+            # Full rebuild (only on first paint or screen resize).
+            fog = pygame.Surface((w + 4, h + 4), pygame.SRCALPHA)
+            grid = player.world.grid
+            for xc in range(cols):
+                for yc in range(rows):
+                    sq = grid.get((xc, yc))
+                    if sq is None:
+                        continue
+                    if sq in obs:
+                        continue
+                    px = 2 + xc * cell
+                    py = 2 + (rows - 1 - yc) * cell
+                    if sq in before:
+                        pygame.draw.rect(fog, (0, 0, 0, 130), (px, py, cell, cell))
+                    else:
+                        pygame.draw.rect(fog, (0, 0, 0, 215), (px, py, cell, cell))
+            self._minimap_fog = fog
+        else:
+            # Incremental patch: clear the few cells whose state flipped
+            # and repaint them.  This avoids iterating all 1M cells
+            # when perception replaces the set with a near-identical one.
+            prev_obs = getattr(self, "_minimap_prev_obs", None)
+            prev_bef = getattr(self, "_minimap_prev_bef", None)
+            if prev_obs is None or prev_bef is None:
+                # Lost reference; fall back to full rebuild next call.
+                self._minimap_fog = None
+                screen.blit(self._minimap_fog if self._minimap_fog else pygame.Surface((0, 0)), (left - 2, top - 2))
+                return
+            # Reset cells that changed (cleared = transparent in fog surface).
+            # Newly observed cells need terrain to show through (no fog); we
+            # restore them by blitting the cached terrain tile.
+            changed = (prev_obs ^ obs) | (prev_bef ^ before)
+            if changed:
+                grid = player.world.grid
+                terrain = self._minimap_terrain
+                for sq in changed:
+                    xc, yc = sq.col, sq.row
+                    px = 2 + xc * cell
+                    py = 2 + (rows - 1 - yc) * cell
+                    rect = (px, py, cell, cell)
+                    # Clear old fog: blit terrain back into fog surface.
+                    self._minimap_fog.blit(terrain, rect, rect)
+                    # Re-apply fog if cell still not observed.
+                    if sq not in obs:
+                        if sq in before:
+                            pygame.draw.rect(self._minimap_fog, (0, 0, 0, 130), rect)
+                        else:
+                            pygame.draw.rect(self._minimap_fog, (0, 0, 0, 215), rect)
+        screen.blit(self._minimap_fog, (left - 2, top - 2))
+        self._minimap_prev_obs_id = cur_obs_id
+        self._minimap_prev_obs_len = cur_obs_len
+        self._minimap_prev_bef_id = cur_bef_id
+        self._minimap_prev_bef_len = cur_bef_len
+        # Keep references so we can compute the delta next tick.  We
+        # intentionally do NOT store these in self permanently (avoid
+        # blocking GC of large sets); just for the next call.
+        self._minimap_prev_obs = obs
+        self._minimap_prev_bef = before
 
         r = max(1, cell // 4)
         kind_of = _kind_from_model

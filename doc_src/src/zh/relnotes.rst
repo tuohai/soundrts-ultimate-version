@@ -4,6 +4,16 @@
 .. contents::
 
 
+1.5.1.1
+-------
+
+**改进：Ctrl+F2 俯视图在极大地图上不再卡顿**
+
+- **问题**：在 ``ms1000`` (1000×1000) 这类极大地图上按 Ctrl+F2 打开俯视图后游戏卡顿急剧恶化，单 tick 平均从 9 ms 飙升到 635 ms（p95 高达 1746 ms）。``cProfile`` 定位到两个热点：``clientgamegridview._display()`` 每帧 ``for xc in range(cols): for yc in range(rows)`` 遍历全部 100 万格（含 ``grid[(xc,yc)]`` 与 ``pygame.draw.rect`` 100 万次/帧）；``_draw_minimap`` 的地形缓存 key 含 ``len(obs)/len(before)``，迷雾集合每 tick 增长 1 格就失效一次，触发全量 100 万格重建。
+- **改进**：将俯视图改为「两阶段显示」：地形底图（依赖 ``square.type_name`` + ``high_ground``，地图加载后完全不变）独立缓存，只在 ``(cols, rows, cell)`` 变化时重建；小地图迷雾层用 ``id(obs)/id(before)`` 作快照，集合引用未变时直接复用，仅在 ``update_perception`` 替换集合（实测每 4 tick 一次）时按差集 ``prev_obs ^ obs`` 仅重绘状态发生翻转的少数格；主地图 ``_display()`` 与网格线绘制改为只迭代当前相机可视区域内的 ``xc/yc`` 范围，不再扫整张地图。ms1000 上 Ctrl+F2 单 tick 平均从 635 ms 降到 3.5 ms（提速约 180 倍），p95 从 1746 ms 降到 5 ms，ms500、cw1 等小地图无回归。
+- **范围**：``soundrts/clientgamegridview.py``（``_display``、``_draw_minimap``、``__init__``）。
+
+
 1.5.1.0
 -------
 

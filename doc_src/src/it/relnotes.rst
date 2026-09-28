@@ -3,6 +3,16 @@ Note di rilascio
 
 .. contents::
 
+1.5.1.1
+-------
+
+**Cambio: il minimappa Ctrl+F2 non scatta più sulle mappe enormi**
+
+- **Problema**: su mappe enormi come ``ms1000`` (1000×1000), aprire il minimappa con Ctrl+F2 faceva salire la media per tick da 9 ms a 635 ms (p95 fino a 1746 ms). ``cProfile`` ha individuato due punti caldi: ``clientgamegridview._display()`` iterava ``for xc in range(cols): for yc in range(rows)`` sull'intero milione di caselle a ogni frame (incluso ``grid[(xc,yc)]`` e un milione di chiamate a ``pygame.draw.rect`` per frame); e la chiave di cache del terreno in ``_draw_minimap`` conteneva ``len(obs)/len(before)``, per cui bastava che l'insieme della nebbia crescesse di una sola casella per tick per invalidare la cache e forzare la ricostruzione completa del milione di caselle.
+- **Cambio**: il minimappa viene ora disegnato in due fasi. Lo strato base del terreno (che dipende solo da ``square.type_name`` + ``high_ground`` e non cambia mai dopo il caricamento della mappa) viene messo in cache in modo indipendente e ricostruito solo quando ``(cols, rows, cell)`` cambiano davvero. Lo strato della nebbia usa ``id(obs)/id(before)`` come chiave di snapshot: se il riferimento all'insieme non cambia, la superficie precedente viene riutilizzata, e solo quando ``update_perception`` sostituisce l'insieme (in pratica, ogni ~4 tick) il diff ``prev_obs ^ obs`` ridipinge solo le caselle il cui stato è effettivamente cambiato. Il ``_display()`` della mappa principale e il passaggio della griglia ora iterano solo l'intervallo ``xc/yc`` visibile nella camera corrente, invece di scansionare l'intera mappa. Su ``ms1000`` la media per tick di Ctrl+F2 scende da 635 ms a 3,5 ms (speedup ~180x); il p95 scende da 1746 ms a 5 ms. Nessuna regressione su ``ms500`` o ``cw1``.
+- **Ambito**: ``soundrts/clientgamegridview.py`` (``_display``, ``_draw_minimap``, ``__init__``).
+
+
 1.5.1.0
 -------
 

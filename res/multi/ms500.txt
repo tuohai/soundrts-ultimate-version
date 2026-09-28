@@ -2016,5 +2016,5 @@ nb_players_min 2
 nb_players_max 4
 
 starting_squares 50,50 50,450 450,50 450,450
-starting_units townhall house peasant
+starting_units 400 footman townhall house peasant
 starting_resources 100 100

@@ -232,3 +232,16 @@ __marimo__/
 /.venv
 build
 _aoe2_locale_cache/
+
+# ad-hoc bench / debug scratch files (kept out of repo, regenerated on demand)
+_*.py
+_*.txt
+_*.out
+_*.err
+_*.dmp
+_*.json
+!_aoe2_techtree.json
+_*.pkl
+_*.tmp
+_*.csv
+_*.log

@@ -5,6 +5,16 @@ Release notes
 .. contents::
 
 
+1.5.1.1
+-------
+
+**Change: Ctrl+F2 minimap no longer stutters on huge maps**
+
+- **Issue**: On huge maps such as ``ms1000`` (1000×1000), opening the Ctrl+F2 minimap caused the tick average to spike from 9 ms to 635 ms (p95 up to 1746 ms). ``cProfile`` located two hot spots: ``clientgamegridview._display()`` iterated ``for xc in range(cols): for yc in range(rows)`` over all one million cells every frame (including ``grid[(xc,yc)]`` and one million ``pygame.draw.rect`` calls per frame); and the terrain cache key in ``_draw_minimap`` contained ``len(obs)/len(before)``, so the fog set invalidating by as little as one cell per tick forced a full one-million-cell rebuild.
+- **Change**: The minimap is now drawn in two stages. The terrain base layer (which depends only on ``square.type_name`` + ``high_ground`` and never changes after the map loads) is cached independently and only rebuilt when ``(cols, rows, cell)`` actually change. The fog overlay uses ``id(obs)/id(before)`` as a snapshot key: when the set reference is unchanged the previous surface is reused, and only when ``update_perception`` swaps the set (roughly every 4 ticks in practice) does the diff ``prev_obs ^ obs`` repaint only the cells whose state actually flipped. The main map ``_display()`` and the grid-line pass now iterate only the ``xc/yc`` range visible in the current camera viewport instead of sweeping the whole map. On ``ms1000`` the per-tick average of Ctrl+F2 drops from 635 ms to 3.5 ms (~180x speedup); p95 drops from 1746 ms to 5 ms. No regressions on ``ms500`` or ``cw1``.
+- **Scope**: ``soundrts/clientgamegridview.py`` (``_display``, ``_draw_minimap``, ``__init__``).
+
+
 1.5.1.0
 -------
 
