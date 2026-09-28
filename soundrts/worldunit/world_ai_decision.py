@@ -102,10 +102,15 @@ class CreatureAIDecision(Entity):
             return default
 
     def _has_pursue_attacker(self):
+        cached = self.__dict__.get("_cached_has_pursue_attacker")
+        if cached is not None:
+            return cached
         raw = getattr(self, "pursue_attacker", None)
         if raw is None:
             raw = getattr(type(self), "pursue_attacker", 0)
-        return CreatureAIDecision._rules_flag_truthy(raw)
+        result = CreatureAIDecision._rules_flag_truthy(raw)
+        self._cached_has_pursue_attacker = result
+        return result
 
     def _pursue_target_too_far(self, target=None):
         """True when target is beyond ``pursue_leash_range`` (mm). 0 = unlimited."""
@@ -138,10 +143,15 @@ class CreatureAIDecision(Entity):
         return False
 
     def _flee_on_hit_enabled(self):
+        cached = self.__dict__.get("_cached_flee_on_hit_enabled")
+        if cached is not None:
+            return cached
         flee_raw = getattr(self, "flee_on_hit", None)
         if flee_raw is None:
             flee_raw = getattr(type(self), "flee_on_hit", 0)
-        return CreatureAIDecision._rules_flag_truthy(flee_raw)
+        result = CreatureAIDecision._rules_flag_truthy(flee_raw)
+        self._cached_flee_on_hit_enabled = result
+        return result
 
     def _attacker_is_owner_or_ally(self, attacker=None):
         """True when the hit comes from this unit's owner/allies (e.g. slaughtering sheep)."""

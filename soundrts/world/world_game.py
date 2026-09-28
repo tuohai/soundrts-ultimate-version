@@ -228,14 +228,19 @@ class WorldGameMixin:
                 if not getattr(s, "fixed_terrain", False):
                     s.update_terrain()
             dirty.clear()
-        # 每2秒全量校验一次，防止遗漏
+        # 每2秒全量校验一次，防止遗漏。
+        # ms500 热路径优化：仅当本周期内存在 dirty 事件（_terrain_dirty_in_cycle）
+        # 或自上次全量后从未做过全量时才执行全量扫描。 ms500 上静态方格占 ~99%，
+        # 该 flag 由 Square.add/remove 在影响地形时置位。
         if not hasattr(self, '_last_full_terrain_update'):
             self._last_full_terrain_update = 0
         if self.time - self._last_full_terrain_update >= 2000:
-            for s in self.squares:
-                if not getattr(s, "fixed_terrain", False):
-                    s.update_terrain()
+            if getattr(self, '_terrain_dirty_in_cycle', False):
+                for s in self.squares:
+                    if not getattr(s, "fixed_terrain", False):
+                        s.update_terrain()
             self._last_full_terrain_update = self.time
+            self._terrain_dirty_in_cycle = False
 
     _previous_slow_update = 0
 

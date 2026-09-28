@@ -2,6 +2,896 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 
+#: mods/aoe2/ui/tts.txt:8000
+msgctxt "8000@mods/aoe2/ui"
+msgid "Age of Empires 2 Definitive Edition style"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8001
+msgctxt "8001@mods/aoe2/ui"
+msgid "Britons"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8002
+msgctxt "8002@mods/aoe2/ui"
+msgid "Franks"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8003
+msgctxt "8003@mods/aoe2/ui"
+msgid "Chinese"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8004
+msgctxt "8004@mods/aoe2/ui"
+msgid "Mongols"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8005
+msgctxt "8005@mods/aoe2/ui"
+msgid "Byzantines"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8010
+msgctxt "8010@mods/aoe2/ui"
+msgid "longbowman"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8015
+msgctxt "8015@mods/aoe2/ui"
+msgid "elite longbowman"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8020
+msgctxt "8020@mods/aoe2/ui"
+msgid "throwing axeman"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8025
+msgctxt "8025@mods/aoe2/ui"
+msgid "elite throwing axeman"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8030
+msgctxt "8030@mods/aoe2/ui"
+msgid "chu ko nu"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8031
+msgctxt "8031@mods/aoe2/ui"
+msgid "villager"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8035
+msgctxt "8035@mods/aoe2/ui"
+msgid "elite chu ko nu"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8040
+msgctxt "8040@mods/aoe2/ui"
+msgid "mangudai"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8041
+msgctxt "8041@mods/aoe2/ui"
+msgid "villager"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8045
+msgctxt "8045@mods/aoe2/ui"
+msgid "elite mangudai"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8050
+msgctxt "8050@mods/aoe2/ui"
+msgid "cataphract"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8055
+msgctxt "8055@mods/aoe2/ui"
+msgid "elite cataphract"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8060
+msgctxt "8060@mods/aoe2/ui"
+msgid "Yeomen"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8061
+msgctxt "8061@mods/aoe2/ui"
+msgid "Bearded Axe"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8062
+msgctxt "8062@mods/aoe2/ui"
+msgid "Chivalry"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8063
+msgctxt "8063@mods/aoe2/ui"
+msgid "Rocketry"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8064
+msgctxt "8064@mods/aoe2/ui"
+msgid "Drill"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8065
+msgctxt "8065@mods/aoe2/ui"
+msgid "Logistica"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8066
+msgctxt "8066@mods/aoe2/ui"
+msgid "Warwolf"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8067
+msgctxt "8067@mods/aoe2/ui"
+msgid "Great Wall"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8068
+msgctxt "8068@mods/aoe2/ui"
+msgid "Nomads"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8069
+msgctxt "8069@mods/aoe2/ui"
+msgid "Greek Fire"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8100
+msgctxt "8100@mods/aoe2/ui"
+msgid "food"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8101
+msgctxt "8101@mods/aoe2/ui"
+msgid "wood"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8102
+msgctxt "8102@mods/aoe2/ui"
+msgid "gold"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8103
+msgctxt "8103@mods/aoe2/ui"
+msgid "stone"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8110
+msgctxt "8110@mods/aoe2/ui"
+msgid "archery range"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8111
+msgctxt "8111@mods/aoe2/ui"
+msgid "university"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8112
+msgctxt "8112@mods/aoe2/ui"
+msgid "monastery"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8113
+msgctxt "8113@mods/aoe2/ui"
+msgid "castle"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8114
+msgctxt "8114@mods/aoe2/ui"
+msgid "monk"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8120
+msgctxt "8120@mods/aoe2/ui"
+msgid "militia"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8121
+msgctxt "8121@mods/aoe2/ui"
+msgid "man-at-arms"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8122
+msgctxt "8122@mods/aoe2/ui"
+msgid "long swordsman"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8123
+msgctxt "8123@mods/aoe2/ui"
+msgid "two-handed swordsman"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8124
+msgctxt "8124@mods/aoe2/ui"
+msgid "champion"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8125
+msgctxt "8125@mods/aoe2/ui"
+msgid "spearman"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8126
+msgctxt "8126@mods/aoe2/ui"
+msgid "pikeman"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8127
+msgctxt "8127@mods/aoe2/ui"
+msgid "halberdier"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8130
+msgctxt "8130@mods/aoe2/ui"
+msgid "archer"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8131
+msgctxt "8131@mods/aoe2/ui"
+msgid "crossbowman"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8132
+msgctxt "8132@mods/aoe2/ui"
+msgid "arbalester"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8133
+msgctxt "8133@mods/aoe2/ui"
+msgid "skirmisher"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8134
+msgctxt "8134@mods/aoe2/ui"
+msgid "elite skirmisher"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8135
+msgctxt "8135@mods/aoe2/ui"
+msgid "cavalry archer"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8136
+msgctxt "8136@mods/aoe2/ui"
+msgid "heavy cavalry archer"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8137
+msgctxt "8137@mods/aoe2/ui"
+msgid "imperial skirmisher"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8140
+msgctxt "8140@mods/aoe2/ui"
+msgid "scout cavalry"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8141
+msgctxt "8141@mods/aoe2/ui"
+msgid "light cavalry"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8142
+msgctxt "8142@mods/aoe2/ui"
+msgid "hussar"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8143
+msgctxt "8143@mods/aoe2/ui"
+msgid "knight"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8144
+msgctxt "8144@mods/aoe2/ui"
+msgid "cavalier"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8145
+msgctxt "8145@mods/aoe2/ui"
+msgid "paladin"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8146
+msgctxt "8146@mods/aoe2/ui"
+msgid "camel rider"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8147
+msgctxt "8147@mods/aoe2/ui"
+msgid "heavy camel rider"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8148
+msgctxt "8148@mods/aoe2/ui"
+msgid "imperial camel rider"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8150
+msgctxt "8150@mods/aoe2/ui"
+msgid "battering ram"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8151
+msgctxt "8151@mods/aoe2/ui"
+msgid "mangonel"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8152
+msgctxt "8152@mods/aoe2/ui"
+msgid "onager"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8153
+msgctxt "8153@mods/aoe2/ui"
+msgid "scorpion"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8154
+msgctxt "8154@mods/aoe2/ui"
+msgid "trebuchet"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8155
+msgctxt "8155@mods/aoe2/ui"
+msgid "capped ram"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8156
+msgctxt "8156@mods/aoe2/ui"
+msgid "siege ram"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8157
+msgctxt "8157@mods/aoe2/ui"
+msgid "siege onager"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8158
+msgctxt "8158@mods/aoe2/ui"
+msgid "heavy scorpion"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8159
+msgctxt "8159@mods/aoe2/ui"
+msgid "villager"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8160
+msgctxt "8160@mods/aoe2/ui"
+msgid "battle elephant"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8161
+msgctxt "8161@mods/aoe2/ui"
+msgid "elite battle elephant"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8162
+msgctxt "8162@mods/aoe2/ui"
+msgid "steppe lancer"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8163
+msgctxt "8163@mods/aoe2/ui"
+msgid "elite steppe lancer"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8170
+msgctxt "8170@mods/aoe2/ui"
+msgid "bombard cannon"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8171
+msgctxt "8171@mods/aoe2/ui"
+msgid "petard"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8172
+msgctxt "8172@mods/aoe2/ui"
+msgid "siege tower"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8173
+msgctxt "8173@mods/aoe2/ui"
+msgid "hand cannoneer"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8174
+msgctxt "8174@mods/aoe2/ui"
+msgid "eagle scout"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8175
+msgctxt "8175@mods/aoe2/ui"
+msgid "eagle warrior"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8176
+msgctxt "8176@mods/aoe2/ui"
+msgid "elite eagle warrior"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8177
+msgctxt "8177@mods/aoe2/ui"
+msgid "war elephant"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8178
+msgctxt "8178@mods/aoe2/ui"
+msgid "elite war elephant"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8179
+msgctxt "8179@mods/aoe2/ui"
+msgid "armored elephant"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8180
+msgctxt "8180@mods/aoe2/ui"
+msgid "elite armored elephant"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8181
+msgctxt "8181@mods/aoe2/ui"
+msgid "elephant archer"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8182
+msgctxt "8182@mods/aoe2/ui"
+msgid "elite elephant archer"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8183
+msgctxt "8183@mods/aoe2/ui"
+msgid "condottiero"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8200
+msgctxt "8200@mods/aoe2/ui"
+msgid "Forging"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8201
+msgctxt "8201@mods/aoe2/ui"
+msgid "Iron Casting"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8202
+msgctxt "8202@mods/aoe2/ui"
+msgid "Blast Furnace"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8203
+msgctxt "8203@mods/aoe2/ui"
+msgid "Scale Mail Armor"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8204
+msgctxt "8204@mods/aoe2/ui"
+msgid "Chain Mail Armor"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8205
+msgctxt "8205@mods/aoe2/ui"
+msgid "Plate Mail Armor"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8206
+msgctxt "8206@mods/aoe2/ui"
+msgid "Scale Barding Armor"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8207
+msgctxt "8207@mods/aoe2/ui"
+msgid "Chain Barding Armor"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8208
+msgctxt "8208@mods/aoe2/ui"
+msgid "Plate Barding Armor"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8209
+msgctxt "8209@mods/aoe2/ui"
+msgid "Fletching"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8210
+msgctxt "8210@mods/aoe2/ui"
+msgid "Bodkin Arrow"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8211
+msgctxt "8211@mods/aoe2/ui"
+msgid "Bracer"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8212
+msgctxt "8212@mods/aoe2/ui"
+msgid "Padded Archer Armor"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8213
+msgctxt "8213@mods/aoe2/ui"
+msgid "Leather Archer Armor"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8214
+msgctxt "8214@mods/aoe2/ui"
+msgid "Ring Archer Armor"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8220
+msgctxt "8220@mods/aoe2/ui"
+msgid "Bloodlines"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8221
+msgctxt "8221@mods/aoe2/ui"
+msgid "Husbandry"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8222
+msgctxt "8222@mods/aoe2/ui"
+msgid "Tracking"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8223
+msgctxt "8223@mods/aoe2/ui"
+msgid "Squires"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8224
+msgctxt "8224@mods/aoe2/ui"
+msgid "Thumb Ring"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8225
+msgctxt "8225@mods/aoe2/ui"
+msgid "Ballistics"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8226
+msgctxt "8226@mods/aoe2/ui"
+msgid "Chemistry"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8227
+msgctxt "8227@mods/aoe2/ui"
+msgid "Loom"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8228
+msgctxt "8228@mods/aoe2/ui"
+msgid "Wheelbarrow"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8229
+msgctxt "8229@mods/aoe2/ui"
+msgid "Hand Cart"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8230
+msgctxt "8230@mods/aoe2/ui"
+msgid "Double-Bit Axe"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8231
+msgctxt "8231@mods/aoe2/ui"
+msgid "Bow Saw"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8232
+msgctxt "8232@mods/aoe2/ui"
+msgid "Two-Man Saw"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8233
+msgctxt "8233@mods/aoe2/ui"
+msgid "Gold Mining"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8234
+msgctxt "8234@mods/aoe2/ui"
+msgid "Gold Shaft Mining"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8235
+msgctxt "8235@mods/aoe2/ui"
+msgid "Arson"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8236
+msgctxt "8236@mods/aoe2/ui"
+msgid "Gambesons"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8237
+msgctxt "8237@mods/aoe2/ui"
+msgid "Parthian Tactics"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8238
+msgctxt "8238@mods/aoe2/ui"
+msgid "Siege Engineers"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8239
+msgctxt "8239@mods/aoe2/ui"
+msgid "Conscription"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8240
+msgctxt "8240@mods/aoe2/ui"
+msgid "Town Watch"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8241
+msgctxt "8241@mods/aoe2/ui"
+msgid "Town Patrol"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8242
+msgctxt "8242@mods/aoe2/ui"
+msgid "Supplies"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8243
+msgctxt "8243@mods/aoe2/ui"
+msgid "Stone Mining"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8244
+msgctxt "8244@mods/aoe2/ui"
+msgid "Stone Shaft Mining"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8250
+msgctxt "8250@mods/aoe2/ui"
+msgid "Dark Age"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8251
+msgctxt "8251@mods/aoe2/ui"
+msgid "Feudal Age"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8252
+msgctxt "8252@mods/aoe2/ui"
+msgid "Castle Age"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8253
+msgctxt "8253@mods/aoe2/ui"
+msgid "Imperial Age"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8300
+msgctxt "8300@mods/aoe2/ui"
+msgid "town center"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8301
+msgctxt "8301@mods/aoe2/ui"
+msgid "barracks"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8302
+msgctxt "8302@mods/aoe2/ui"
+msgid "stable"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8303
+msgctxt "8303@mods/aoe2/ui"
+msgid "blacksmith"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8304
+msgctxt "8304@mods/aoe2/ui"
+msgid "house"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8305
+msgctxt "8305@mods/aoe2/ui"
+msgid "farm"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8306
+msgctxt "8306@mods/aoe2/ui"
+msgid "lumber camp"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8307
+msgctxt "8307@mods/aoe2/ui"
+msgid "siege workshop"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8308
+msgctxt "8308@mods/aoe2/ui"
+msgid "dock"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8309
+msgctxt "8309@mods/aoe2/ui"
+msgid "wall"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8310
+msgctxt "8310@mods/aoe2/ui"
+msgid "gate"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8311
+msgctxt "8311@mods/aoe2/ui"
+msgid "watch tower"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8312
+msgctxt "8312@mods/aoe2/ui"
+msgid "guard tower"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8313
+msgctxt "8313@mods/aoe2/ui"
+msgid "keep"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8314
+msgctxt "8314@mods/aoe2/ui"
+msgid "mill"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8315
+msgctxt "8315@mods/aoe2/ui"
+msgid "mining camp"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8316
+msgctxt "8316@mods/aoe2/ui"
+msgid "market"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8317
+msgctxt "8317@mods/aoe2/ui"
+msgid "wonder"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8318
+msgctxt "8318@mods/aoe2/ui"
+msgid "stone mine"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8320
+msgctxt "8320@mods/aoe2/ui"
+msgid "berry bush"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8321
+msgctxt "8321@mods/aoe2/ui"
+msgid "deer"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8322
+msgctxt "8322@mods/aoe2/ui"
+msgid "sheep"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8323
+msgctxt "8323@mods/aoe2/ui"
+msgid "boar"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8324
+msgctxt "8324@mods/aoe2/ui"
+msgid "carcass"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8400
+msgctxt "8400@mods/aoe2/ui"
+msgid "fishing ship"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8401
+msgctxt "8401@mods/aoe2/ui"
+msgid "transport ship"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8402
+msgctxt "8402@mods/aoe2/ui"
+msgid "galley"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8403
+msgctxt "8403@mods/aoe2/ui"
+msgid "war galley"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8404
+msgctxt "8404@mods/aoe2/ui"
+msgid "galleon"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8405
+msgctxt "8405@mods/aoe2/ui"
+msgid "fire galley"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8406
+msgctxt "8406@mods/aoe2/ui"
+msgid "fire ship"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8407
+msgctxt "8407@mods/aoe2/ui"
+msgid "fast fire ship"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8408
+msgctxt "8408@mods/aoe2/ui"
+msgid "demolition raft"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8409
+msgctxt "8409@mods/aoe2/ui"
+msgid "demolition ship"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8410
+msgctxt "8410@mods/aoe2/ui"
+msgid "heavy demolition ship"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8411
+msgctxt "8411@mods/aoe2/ui"
+msgid "cannon galleon"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8412
+msgctxt "8412@mods/aoe2/ui"
+msgid "elite cannon galleon"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8413
+msgctxt "8413@mods/aoe2/ui"
+msgid "turtle ship"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8414
+msgctxt "8414@mods/aoe2/ui"
+msgid "elite turtle ship"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8415
+msgctxt "8415@mods/aoe2/ui"
+msgid "longboat"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8416
+msgctxt "8416@mods/aoe2/ui"
+msgid "elite longboat"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8417
+msgctxt "8417@mods/aoe2/ui"
+msgid "caravel"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8418
+msgctxt "8418@mods/aoe2/ui"
+msgid "elite caravel"
+msgstr ""
+
+#: mods/aoe2/ui/tts.txt:8419
+msgctxt "8419@mods/aoe2/ui"
+msgid "dromon"
+msgstr ""
+
 #: mods/crazyMod9beta10/single/crazyMod_traditional/ui/tts.txt:76000
 msgctxt "76000@mods/crazyMod9beta10/single/crazyMod_traditional/ui"
 msgid "Prologue."
@@ -4286,25 +5176,25 @@ msgstr ""
 #. only defined in a translation layer under mods/tang/single/tang campaign/ui, no matching key in that tree's own ui/tts.txt
 #: mods/tang/single/tang campaign/ui/tts.txt:8505
 msgctxt "8505@mods/tang/single/tang campaign/ui"
-msgid "击退突厥先头部队"
+msgid "Die türkische Vorhut zurückschlagen."
 msgstr ""
 
 #. only defined in a translation layer under mods/tang/single/tang campaign/ui, no matching key in that tree's own ui/tts.txt
 #: mods/tang/single/tang campaign/ui/tts.txt:8506
 msgctxt "8506@mods/tang/single/tang campaign/ui"
-msgid "看到了吗？b4的地势较高，如果将弓箭手安放在此的话，择箭可以射的更远，敌人弱不付出一定的代价休想攻上来，尽力守住这块儿高地吧，同时这里也是城池的出入口，只要守住这里敌人就无法攻入。"
+msgid "Seht ihr das? Das Gelände bei b4 liegt höher; stellt man dort Bogenschützen auf, können ihre Pfeile weiter fliegen, und der Feind wird ohne beträchtliche Verluste nicht hinaufkommen. Haltet diese Anhöhe um jeden Preis, denn sie ist zugleich der Zugang zur Stadt — solange wir sie halten, kann der Feind nicht eindringen."
 msgstr ""
 
 #. only defined in a translation layer under mods/tang/single/tang campaign/ui, no matching key in that tree's own ui/tts.txt
 #: mods/tang/single/tang campaign/ui/tts.txt:8507
 msgctxt "8507@mods/tang/single/tang campaign/ui"
-msgid "这些长矛兵是敌人的试探，长矛兵克制骑兵，因此如果数量相同，万不可用骑兵对抗长矛兵，应当用陌刀手或者便宜的弓箭手。"
+msgid "Diese Speerkämpfer sind ein Vorstoß des Feindes zum Austesten. Speerkämpfer sind der Kavallerie überlegen; bei gleicher Anzahl darf man daher keinesfalls Kavallerie gegen Speerkämpfer einsetzen, sondern sollte Modao-Schwertkämpfer oder billige Bogenschützen verwenden."
 msgstr ""
 
 #. only defined in a translation layer under mods/tang/single/tang campaign/ui, no matching key in that tree's own ui/tts.txt
 #: mods/tang/single/tang campaign/ui/tts.txt:8508
 msgctxt "8508@mods/tang/single/tang campaign/ui"
-msgid "在对付骑兵方面，咱们大唐陌刀手说第二没人敢说第一。"
+msgid "Wenn es darum geht, Kavallerie zu bekämpfen, wagt niemand zu behaupten, besser zu sein als unsere Tang-Modao-Schwertkämpfer."
 msgstr ""
 
 #: mods/tang/single/tang campaign/ui/tts.txt:8509
@@ -4575,7 +5465,7 @@ msgstr ""
 #. only defined in a translation layer under mods/tang/ui, no matching key in that tree's own ui/tts.txt
 #: mods/tang/ui/tts.txt:12825
 msgctxt "12825@mods/tang/ui"
-msgid "县衙"
+msgid "Kreisamt"
 msgstr ""
 
 #: mods/tang/ui/tts.txt:12826
@@ -4601,7 +5491,7 @@ msgstr ""
 #. only defined in a translation layer under mods/tang/ui, no matching key in that tree's own ui/tts.txt
 #: mods/tang/ui/tts.txt:12830
 msgctxt "12830@mods/tang/ui"
-msgid "唐帝国"
+msgid "Tang-Reich"
 msgstr ""
 
 #: mods/tang/ui/tts.txt:12831
@@ -4717,7 +5607,7 @@ msgstr ""
 #. only defined in a translation layer under mods/tang/ui, no matching key in that tree's own ui/tts.txt
 #: mods/tang/ui/tts.txt:12853
 msgctxt "12853@mods/tang/ui"
-msgid "大唐行军车"
+msgid "Tang-Marschwagen"
 msgstr ""
 
 #: mods/tang/ui/tts.txt:12854
@@ -4728,7 +5618,7 @@ msgstr ""
 #. only defined in a translation layer under mods/tang/ui, no matching key in that tree's own ui/tts.txt
 #: mods/tang/ui/tts.txt:12855
 msgctxt "12855@mods/tang/ui"
-msgid "短刃"
+msgid "Kurzklinge"
 msgstr ""
 
 #: mods/tang/ui/tts.txt:12856
@@ -4989,13 +5879,13 @@ msgstr ""
 #. only defined in a translation layer under mods/tang/ui, no matching key in that tree's own ui/tts.txt
 #: mods/tang/ui/tts.txt:12907
 msgctxt "12907@mods/tang/ui"
-msgid "小船坞"
+msgid "Kleine Werft"
 msgstr ""
 
 #. only defined in a translation layer under mods/tang/ui, no matching key in that tree's own ui/tts.txt
 #: mods/tang/ui/tts.txt:12908
 msgctxt "12908@mods/tang/ui"
-msgid "船曹"
+msgid "Schiffsamt"
 msgstr ""
 
 #: mods/tang/ui/tts.txt:12909
@@ -5046,19 +5936,19 @@ msgstr ""
 #. only defined in a translation layer under mods/tang/ui, no matching key in that tree's own ui/tts.txt
 #: mods/tang/ui/tts.txt:12918
 msgctxt "12918@mods/tang/ui"
-msgid "匀速加防"
+msgid "Kontinuierlicher Verteidigungsanstieg"
 msgstr ""
 
 #. only defined in a translation layer under mods/tang/ui, no matching key in that tree's own ui/tts.txt
 #: mods/tang/ui/tts.txt:12919
 msgctxt "12919@mods/tang/ui"
-msgid "增加盔甲防御"
+msgid "Rüstungsverteidigung erhöhen"
 msgstr ""
 
 #. only defined in a translation layer under mods/tang/ui, no matching key in that tree's own ui/tts.txt
 #: mods/tang/ui/tts.txt:12920
 msgctxt "12920@mods/tang/ui"
-msgid "改善饮食"
+msgid "Ernährung verbessern"
 msgstr ""
 
 #: mods/tang/ui/tts.txt:12921
@@ -5119,7 +6009,7 @@ msgstr ""
 #. only defined in a translation layer under mods/tang/ui, no matching key in that tree's own ui/tts.txt
 #: mods/tang/ui/tts.txt:12932
 msgctxt "12932@mods/tang/ui"
-msgid "船坞"
+msgid "Werft"
 msgstr ""
 
 #: mods/tang/ui/tts.txt:12933
@@ -5135,7 +6025,7 @@ msgstr ""
 #. only defined in a translation layer under mods/tang/ui, no matching key in that tree's own ui/tts.txt
 #: mods/tang/ui/tts.txt:12935
 msgctxt "12935@mods/tang/ui"
-msgid "重盾"
+msgid "Schwerer Schild"
 msgstr ""
 
 #: mods/tang/ui/tts.txt:12936
@@ -5146,7 +6036,7 @@ msgstr ""
 #. only defined in a translation layer under mods/tang/ui, no matching key in that tree's own ui/tts.txt
 #: mods/tang/ui/tts.txt:12937
 msgctxt "12937@mods/tang/ui"
-msgid "鳞甲"
+msgid "Schuppenpanzer"
 msgstr ""
 
 #: mods/tang/ui/tts.txt:12938
@@ -5607,6 +6497,2422 @@ msgstr ""
 #: mods/teleportation/ui/tts.txt:7756
 msgctxt "7756@mods/teleportation/ui"
 msgid "Teleport Demo"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4365
+msgctxt "4365@mods/帝国时代模拟/ui"
+msgid "Armor weight reduction reduces defense"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4367
+msgctxt "4367@mods/帝国时代模拟/ui"
+msgid "Bright Light Armor"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4368
+msgctxt "4368@mods/帝国时代模拟/ui"
+msgid "black_armor"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4369
+msgctxt "4369@mods/帝国时代模拟/ui"
+msgid "black_rmored_cavalry"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4370
+msgctxt "4370@mods/帝国时代模拟/ui"
+msgid "Ballista"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4371
+msgctxt "4371@mods/帝国时代模拟/ui"
+msgid "protector"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4372
+msgctxt "4372@mods/帝国时代模拟/ui"
+msgid "summon_thunder"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4373
+msgctxt "4373@mods/帝国时代模拟/ui"
+msgid "longknife_heavy_infantry"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4374
+msgctxt "4374@mods/帝国时代模拟/ui"
+msgid "long_knife"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4375
+msgctxt "4375@mods/帝国时代模拟/ui"
+msgid "saber"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4376
+msgctxt "4376@mods/帝国时代模拟/ui"
+msgid "footman armor"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4377
+msgctxt "4377@mods/帝国时代模拟/ui"
+msgid "Eyesight"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4378
+msgctxt "4378@mods/帝国时代模拟/ui"
+msgid "lobby"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4379
+msgctxt "4379@mods/帝国时代模拟/ui"
+msgid "thunder_induction"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4380
+msgctxt "4380@mods/帝国时代模拟/ui"
+msgid "dragon_god's_approval"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4381
+msgctxt "4381@mods/帝国时代模拟/ui"
+msgid "summon_the_dragon"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4382
+msgctxt "4382@mods/帝国时代模拟/ui"
+msgid "golden_dragon"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4383
+msgctxt "4383@mods/帝国时代模拟/ui"
+msgid "rejuvenation"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4384
+msgctxt "4384@mods/帝国时代模拟/ui"
+msgid "tang_crossbowman"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4385
+msgctxt "4385@mods/帝国时代模拟/ui"
+msgid "resurrection"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4386
+msgctxt "4386@mods/帝国时代模拟/ui"
+msgid "Taoist_temple"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4387
+msgctxt "4387@mods/帝国时代模拟/ui"
+msgid "village"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4388
+msgctxt "4388@mods/帝国时代模拟/ui"
+msgid "Arms Research Institute"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4389
+msgctxt "4389@mods/帝国时代模拟/ui"
+msgid "taoist_medicine"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4390
+msgctxt "4390@mods/帝国时代模拟/ui"
+msgid "woodbird"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4392
+msgctxt "4392@mods/帝国时代模拟/ui"
+msgid "county_government"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4393
+msgctxt "4393@mods/帝国时代模拟/ui"
+msgid "government_office"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4394
+msgctxt "4394@mods/帝国时代模拟/ui"
+msgid "governor's_palace"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4395
+msgctxt "4395@mods/帝国时代模拟/ui"
+msgid "occult"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4397
+msgctxt "4397@mods/帝国时代模拟/ui"
+msgid "therapy"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4398
+msgctxt "4398@mods/帝国时代模拟/ui"
+msgid "tang_empire"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4399
+msgctxt "4399@mods/帝国时代模拟/ui"
+msgid "villagers"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4400
+msgctxt "4400@mods/帝国时代模拟/ui"
+msgid "school_ground"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4401
+msgctxt "4401@mods/帝国时代模拟/ui"
+msgid "tang_saber_cavalry"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4402
+msgctxt "4402@mods/帝国时代模拟/ui"
+msgid "horse_lance"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4403
+msgctxt "4403@mods/帝国时代模拟/ui"
+msgid "crossbow"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4404
+msgctxt "4404@mods/帝国时代模拟/ui"
+msgid "tang_light_nfantry"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4405
+msgctxt "4405@mods/帝国时代模拟/ui"
+msgid "horizontal_knife"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4406
+msgctxt "4406@mods/帝国时代模拟/ui"
+msgid "tang_cavalry_archer"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4407
+msgctxt "4407@mods/帝国时代模拟/ui"
+msgid "cavalry_bow"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4408
+msgctxt "4408@mods/帝国时代模拟/ui"
+msgid "cavalry_bow_range"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4409
+msgctxt "4409@mods/帝国时代模拟/ui"
+msgid "sea_eagle"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4410
+msgctxt "4410@mods/帝国时代模拟/ui"
+msgid "fight_ship"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4411
+msgctxt "4411@mods/帝国时代模拟/ui"
+msgid "scout_ship"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4412
+msgctxt "4412@mods/帝国时代模拟/ui"
+msgid "large_turreted_ship"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4413
+msgctxt "4413@mods/帝国时代模拟/ui"
+msgid "assault_hip"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4414
+msgctxt "4414@mods/帝国时代模拟/ui"
+msgid "stone"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4415
+msgctxt "4415@mods/帝国时代模拟/ui"
+msgid "throw_stones"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4416
+msgctxt "4416@mods/帝国时代模拟/ui"
+msgid "figh_ship_Melee_Form"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4417
+msgctxt "4417@mods/帝国时代模拟/ui"
+msgid "shoot_arrows"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4418
+msgctxt "4418@mods/帝国时代模拟/ui"
+msgid "arrow"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4420
+msgctxt "4420@mods/帝国时代模拟/ui"
+msgid "whistling_arrow"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4422
+msgctxt "4422@mods/帝国时代模拟/ui"
+msgid "tang_marching_vehicle"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4423
+msgctxt "4423@mods/帝国时代模拟/ui"
+msgid "spear"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4424
+msgctxt "4424@mods/帝国时代模拟/ui"
+msgid "shot_blade"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4425
+msgctxt "4425@mods/帝国时代模拟/ui"
+msgid "shot_sword"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4426
+msgctxt "4426@mods/帝国时代模拟/ui"
+msgid "trip_lock"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4427
+msgctxt "4427@mods/帝国时代模拟/ui"
+msgid "b_a_Crossbow_cavalry"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4428
+msgctxt "4428@mods/帝国时代模拟/ui"
+msgid "foundry_bureau"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4429
+msgctxt "4429@mods/帝国时代模拟/ui"
+msgid "Eight_Bull_Crossbow"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4430
+msgctxt "4430@mods/帝国时代模拟/ui"
+msgid "watchtower"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4431
+msgctxt "4431@mods/帝国时代模拟/ui"
+msgid "turk_khanate"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4432
+msgctxt "4432@mods/帝国时代模拟/ui"
+msgid "archie_wood_amp"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4433
+msgctxt "4433@mods/帝国时代模拟/ui"
+msgid "hackwood_camp"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4434
+msgctxt "4434@mods/帝国时代模拟/ui"
+msgid "pasha's_camp"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4435
+msgctxt "4435@mods/帝国时代模拟/ui"
+msgid "turk_ranch"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4436
+msgctxt "4436@mods/帝国时代模拟/ui"
+msgid "Leather workshop"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4437
+msgctxt "4437@mods/帝国时代模拟/ui"
+msgid "shaman_hall"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4438
+msgctxt "4438@mods/帝国时代模拟/ui"
+msgid "Aviary"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4439
+msgctxt "4439@mods/帝国时代模拟/ui"
+msgid "turk_herders"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4440
+msgctxt "4440@mods/帝国时代模拟/ui"
+msgid "turk_spearmen"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4441
+msgctxt "4441@mods/帝国时代模拟/ui"
+msgid "turk_sniper"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4442
+msgctxt "4442@mods/帝国时代模拟/ui"
+msgid "turk_cavalry_archer"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4443
+msgctxt "4443@mods/帝国时代模拟/ui"
+msgid "turk_short_Sword_cavalry"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4444
+msgctxt "4444@mods/帝国时代模拟/ui"
+msgid "turk_sabre_cavalry"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4445
+msgctxt "4445@mods/帝国时代模拟/ui"
+msgid "turk_blade_cavalry"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4446
+msgctxt "4446@mods/帝国时代模拟/ui"
+msgid "turk_heavy_cavalry"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4447
+msgctxt "4447@mods/帝国时代模拟/ui"
+msgid "turk_snipe_cavalry"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4448
+msgctxt "4448@mods/帝国时代模拟/ui"
+msgid "turk_bird"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4449
+msgctxt "4449@mods/帝国时代模拟/ui"
+msgid "golden_wolf"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4450
+msgctxt "4450@mods/帝国时代模拟/ui"
+msgid "turk_shaman"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4451
+msgctxt "4451@mods/帝国时代模拟/ui"
+msgid "wolf_god's_approval"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4452
+msgctxt "4452@mods/帝国时代模拟/ui"
+msgid "summon_golden_wolf"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4453
+msgctxt "4453@mods/帝国时代模拟/ui"
+msgid "begging_for_rain"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4454
+msgctxt "4454@mods/帝国时代模拟/ui"
+msgid "divination"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4455
+msgctxt "4455@mods/帝国时代模拟/ui"
+msgid "Bewitched"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4456
+msgctxt "4456@mods/帝国时代模拟/ui"
+msgid "curse"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4457
+msgctxt "4457@mods/帝国时代模拟/ui"
+msgid "tang_engineering_vehicle"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4458
+msgctxt "4458@mods/帝国时代模拟/ui"
+msgid "turk_trebuchet"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4459
+msgctxt "4459@mods/帝国时代模拟/ui"
+msgid "tang_archer"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4460
+msgctxt "4460@mods/帝国时代模拟/ui"
+msgid "turk_archer"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4461
+msgctxt "4461@mods/帝国时代模拟/ui"
+msgid "carriage_shop"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4462
+msgctxt "4462@mods/帝国时代模拟/ui"
+msgid "rain"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4463
+msgctxt "4463@mods/帝国时代模拟/ui"
+msgid "the_power_of__the_curse"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4464
+msgctxt "4464@mods/帝国时代模拟/ui"
+msgid "trigrams"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4465
+msgctxt "4465@mods/帝国时代模拟/ui"
+msgid "are_workshops"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4466
+msgctxt "4466@mods/帝国时代模拟/ui"
+msgid "leather_armor"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4467
+msgctxt "4467@mods/帝国时代模拟/ui"
+msgid "ring_armor"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4468
+msgctxt "4468@mods/帝国时代模拟/ui"
+msgid "mobile_tent"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4469
+msgctxt "4469@mods/帝国时代模拟/ui"
+msgid "truk_barracks"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4470
+msgctxt "4470@mods/帝国时代模拟/ui"
+msgid "blacksmith_shop"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4471
+msgctxt "4471@mods/帝国时代模拟/ui"
+msgid "turk_sawmill"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4472
+msgctxt "4472@mods/帝国时代模拟/ui"
+msgid "tang_sawmill"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4475
+msgctxt "4475@mods/帝国时代模拟/ui"
+msgid "tang_stables"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4476
+msgctxt "4476@mods/帝国时代模拟/ui"
+msgid "turk_stables"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4477
+msgctxt "4477@mods/帝国时代模拟/ui"
+msgid "summon_turk_bird"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4478
+msgctxt "4478@mods/帝国时代模拟/ui"
+msgid "small_bock"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4479
+msgctxt "4479@mods/帝国时代模拟/ui"
+msgid "tang_shipyard"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4480
+msgctxt "4480@mods/帝国时代模拟/ui"
+msgid "set_up__trip lock"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4481
+msgctxt "4481@mods/帝国时代模拟/ui"
+msgid "raft"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4482
+msgctxt "4482@mods/帝国时代模拟/ui"
+msgid "fishing_ship"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4483
+msgctxt "4483@mods/帝国时代模拟/ui"
+msgid "riprap_ship"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4487
+msgctxt "4487@mods/帝国时代模拟/ui"
+msgid "leather shop"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4488
+msgctxt "4488@mods/帝国时代模拟/ui"
+msgid "add_speed"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4489
+msgctxt "4489@mods/帝国时代模拟/ui"
+msgid "minus_speed"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4490
+msgctxt "4490@mods/帝国时代模拟/ui"
+msgid "increase_armor_defense(footman_armor)"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4491
+msgctxt "4491@mods/帝国时代模拟/ui"
+msgid "improve_diet"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4492
+msgctxt "4492@mods/帝国时代模拟/ui"
+msgid "errand"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4493
+msgctxt "4493@mods/帝国时代模拟/ui"
+msgid "summon_errand"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4494
+msgctxt "4494@mods/帝国时代模拟/ui"
+msgid "towncenter"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4495
+msgctxt "4495@mods/帝国时代模拟/ui"
+msgid "governor's_palace"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4496
+msgctxt "4496@mods/帝国时代模拟/ui"
+msgid "constantinople"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4497
+msgctxt "4497@mods/帝国时代模拟/ui"
+msgid "fruit_estate"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4498
+msgctxt "4498@mods/帝国时代模拟/ui"
+msgid "b_barracks"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4500
+msgctxt "4500@mods/帝国时代模拟/ui"
+msgid "mine"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4501
+msgctxt "4501@mods/帝国时代模拟/ui"
+msgid "church"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4503
+msgctxt "4503@mods/帝国时代模拟/ui"
+msgid "armament_institute"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4505
+msgctxt "4505@mods/帝国时代模拟/ui"
+msgid "dock"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4506
+msgctxt "4506@mods/帝国时代模拟/ui"
+msgid "guard_tower"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4507
+msgctxt "4507@mods/帝国时代模拟/ui"
+msgid "light_shield"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4508
+msgctxt "4508@mods/帝国时代模拟/ui"
+msgid "heavy_shield"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4509
+msgctxt "4509@mods/帝国时代模拟/ui"
+msgid "buckler"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4510
+msgctxt "4510@mods/帝国时代模拟/ui"
+msgid "scale_armor"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4511
+msgctxt "4511@mods/帝国时代模拟/ui"
+msgid "chain_mail"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4512
+msgctxt "4512@mods/帝国时代模拟/ui"
+msgid "pike"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4513
+msgctxt "4513@mods/帝国时代模拟/ui"
+msgid "heavy_sword"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4514
+msgctxt "4514@mods/帝国时代模拟/ui"
+msgid "traction_power"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4515
+msgctxt "4515@mods/帝国时代模拟/ui"
+msgid "serf"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4516
+msgctxt "4516@mods/帝国时代模拟/ui"
+msgid "b_pikemen"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4517
+msgctxt "4517@mods/帝国时代模拟/ui"
+msgid "b_sword_shieldmen"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4518
+msgctxt "4518@mods/帝国时代模拟/ui"
+msgid "b_pike_cavalry"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4519
+msgctxt "4519@mods/帝国时代模拟/ui"
+msgid "b_cavalry_archer"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4520
+msgctxt "4520@mods/帝国时代模拟/ui"
+msgid "iron_paladin"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4521
+msgctxt "4521@mods/帝国时代模拟/ui"
+msgid "double_headed_eagle"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4522
+msgctxt "4522@mods/帝国时代模拟/ui"
+msgid "summon_double_headed_eagle"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4523
+msgctxt "4523@mods/帝国时代模拟/ui"
+msgid "javelin"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4524
+msgctxt "4524@mods/帝国时代模拟/ui"
+msgid "throwing_javelin"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4525
+msgctxt "4525@mods/帝国时代模拟/ui"
+msgid "light_dromon"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4526
+msgctxt "4526@mods/帝国时代模拟/ui"
+msgid "heavy_dromon"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4527
+msgctxt "4527@mods/帝国时代模拟/ui"
+msgid "royal_dromon"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4528
+msgctxt "4528@mods/帝国时代模拟/ui"
+msgid "greek_fire"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4529
+msgctxt "4529@mods/帝国时代模拟/ui"
+msgid "fire_greek_fire"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4530
+msgctxt "4530@mods/帝国时代模拟/ui"
+msgid "axemen"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4531
+msgctxt "4531@mods/帝国时代模拟/ui"
+msgid "axe"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4532
+msgctxt "4532@mods/帝国时代模拟/ui"
+msgid "fortress"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4533
+msgctxt "4533@mods/帝国时代模拟/ui"
+msgid "catapulttower"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4534
+msgctxt "4534@mods/帝国时代模拟/ui"
+msgid "byzantine_empire"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4535
+msgctxt "4535@mods/帝国时代模拟/ui"
+msgid "heavy_dromon_melee_mode"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4536
+msgctxt "4536@mods/帝国时代模拟/ui"
+msgid "royal_dromon_remote_mode"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4537
+msgctxt "4537@mods/帝国时代模拟/ui"
+msgid "b_archer"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4538
+msgctxt "4538@mods/帝国时代模拟/ui"
+msgid "new_javelin"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4539
+msgctxt "4539@mods/帝国时代模拟/ui"
+msgid "god's_test"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4540
+msgctxt "4540@mods/帝国时代模拟/ui"
+msgid "god's_blessing"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4541
+msgctxt "4541@mods/帝国时代模拟/ui"
+msgid "god's_mercy"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4542
+msgctxt "4542@mods/帝国时代模拟/ui"
+msgid "b_catapult"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4543
+msgctxt "4543@mods/帝国时代模拟/ui"
+msgid "order_mercenaries_to_fight"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4544
+msgctxt "4544@mods/帝国时代模拟/ui"
+msgid "native_hussars"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4545
+msgctxt "4545@mods/帝国时代模拟/ui"
+msgid "turkic_mercenary_mounted_archer"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4546
+msgctxt "4546@mods/帝国时代模拟/ui"
+msgid "turkic_cavalry_melee_mode"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4547
+msgctxt "4547@mods/帝国时代模拟/ui"
+msgid "Varangian Guard"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4548
+msgctxt "4548@mods/帝国时代模拟/ui"
+msgid "Attack speed increases"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4549
+msgctxt "4549@mods/帝国时代模拟/ui"
+msgid "Attack speed decreased"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4550
+msgctxt "4550@mods/帝国时代模拟/ui"
+msgid "hussar_lv1_sight_range"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4551
+msgctxt "4551@mods/帝国时代模拟/ui"
+msgid "hussar_lv2_sight_range"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4552
+msgctxt "4552@mods/帝国时代模拟/ui"
+msgid "hussar_lv3_sight_range"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4553
+msgctxt "4553@mods/帝国时代模拟/ui"
+msgid "archer_lv1_attackspeed"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4554
+msgctxt "4554@mods/帝国时代模拟/ui"
+msgid "archer_lv2_attackspeed"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4555
+msgctxt "4555@mods/帝国时代模拟/ui"
+msgid "archer_lv3_attack_speed"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4556
+msgctxt "4556@mods/帝国时代模拟/ui"
+msgid "tang_stables"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4557
+msgctxt "4557@mods/帝国时代模拟/ui"
+msgid "turk_stables"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4558
+msgctxt "4558@mods/帝国时代模拟/ui"
+msgid "b_stables"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4559
+msgctxt "4559@mods/帝国时代模拟/ui"
+msgid "turk_blacksmith"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4560
+msgctxt "4560@mods/帝国时代模拟/ui"
+msgid "b_blacksmith"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4561
+msgctxt "4561@mods/帝国时代模拟/ui"
+msgid "sword_shieldmen_acceleration mode"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4562
+msgctxt "4562@mods/帝国时代模拟/ui"
+msgid "command_the_servants_to_fight"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4563
+msgctxt "4563@mods/帝国时代模拟/ui"
+msgid "nanshao_heavy_footman"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4564
+msgctxt "4564@mods/帝国时代模拟/ui"
+msgid "wangman_spearmen"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4565
+msgctxt "4565@mods/帝国时代模拟/ui"
+msgid "shatuo_light_cavalry"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4566
+msgctxt "4566@mods/帝国时代模拟/ui"
+msgid "shatuo_cavalry_archer"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4567
+msgctxt "4567@mods/帝国时代模拟/ui"
+msgid "nanzhao_heavy_cavalry"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4568
+msgctxt "4568@mods/帝国时代模拟/ui"
+msgid "aboriginal_archer"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4569
+msgctxt "4569@mods/帝国时代模拟/ui"
+msgid "city_wall"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4570
+msgctxt "4570@mods/帝国时代模拟/ui"
+msgid "giant_city_wall"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4571
+msgctxt "4571@mods/帝国时代模拟/ui"
+msgid "city_gate"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4572
+msgctxt "4572@mods/帝国时代模拟/ui"
+msgid "giant_city_gate"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4573
+msgctxt "4573@mods/帝国时代模拟/ui"
+msgid "heavy_pike_cavalry"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4574
+msgctxt "4574@mods/帝国时代模拟/ui"
+msgid "rainstorm"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4575
+msgctxt "4575@mods/帝国时代模拟/ui"
+msgid "bewitched"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4576
+msgctxt "4576@mods/帝国时代模拟/ui"
+msgid "tang_arbalester"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4577
+msgctxt "4577@mods/帝国时代模拟/ui"
+msgid "b_crossbowman"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4579
+msgctxt "4579@mods/帝国时代模拟/ui"
+msgid "medium_trebuchet"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4580
+msgctxt "4580@mods/帝国时代模拟/ui"
+msgid "medium_catapult"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4581
+msgctxt "4581@mods/帝国时代模拟/ui"
+msgid "heavy_catapult"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4582
+msgctxt "4582@mods/帝国时代模拟/ui"
+msgid "siege_ram"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4583
+msgctxt "4583@mods/帝国时代模拟/ui"
+msgid "tang_skirmisher"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4584
+msgctxt "4584@mods/帝国时代模拟/ui"
+msgid "tang_elite_skirmisher"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4585
+msgctxt "4585@mods/帝国时代模拟/ui"
+msgid "tang_imperial_skirmisher"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4586
+msgctxt "4586@mods/帝国时代模拟/ui"
+msgid "turk_skirmisher"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4587
+msgctxt "4587@mods/帝国时代模拟/ui"
+msgid "turk_elite_skirmisher"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4588
+msgctxt "4588@mods/帝国时代模拟/ui"
+msgid "b_skirmisher"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4589
+msgctxt "4589@mods/帝国时代模拟/ui"
+msgid "b_elite_skirmisher"
+msgstr ""
+
+#: mods/帝国时代模拟/ui/tts.txt:4590
+msgctxt "4590@mods/帝国时代模拟/ui"
+msgid "b_imperial_skirmisher"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82000
+msgctxt "82000@mods/帝国时代模拟/ui"
+msgid "中国"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82001
+msgctxt "82001@mods/帝国时代模拟/ui"
+msgid "蒙古"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82002
+msgctxt "82002@mods/帝国时代模拟/ui"
+msgid "拜占庭"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82101
+msgctxt "82101@mods/帝国时代模拟/ui"
+msgid "1级"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82102
+msgctxt "82102@mods/帝国时代模拟/ui"
+msgid "2级"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82103
+msgctxt "82103@mods/帝国时代模拟/ui"
+msgid "3级"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82104
+msgctxt "82104@mods/帝国时代模拟/ui"
+msgid "4级"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82105
+msgctxt "82105@mods/帝国时代模拟/ui"
+msgid "城镇中心"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82106
+msgctxt "82106@mods/帝国时代模拟/ui"
+msgid "营帐"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82107
+msgctxt "82107@mods/帝国时代模拟/ui"
+msgid "房屋"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82108
+msgctxt "82108@mods/帝国时代模拟/ui"
+msgid "小牧场"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82109
+msgctxt "82109@mods/帝国时代模拟/ui"
+msgid "小果园"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82110
+msgctxt "82110@mods/帝国时代模拟/ui"
+msgid "伐木场"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82111
+msgctxt "82111@mods/帝国时代模拟/ui"
+msgid "矿场"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82112
+msgctxt "82112@mods/帝国时代模拟/ui"
+msgid "步兵营"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82113
+msgctxt "82113@mods/帝国时代模拟/ui"
+msgid "射手营"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82114
+msgctxt "82114@mods/帝国时代模拟/ui"
+msgid "马厩"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82115
+msgctxt "82115@mods/帝国时代模拟/ui"
+msgid "铁匠铺"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82116
+msgctxt "82116@mods/帝国时代模拟/ui"
+msgid "磨坊"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82117
+msgctxt "82117@mods/帝国时代模拟/ui"
+msgid "大学"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82118
+msgctxt "82118@mods/帝国时代模拟/ui"
+msgid "城堡"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82119
+msgctxt "82119@mods/帝国时代模拟/ui"
+msgid "攻城武器场"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82120
+msgctxt "82120@mods/帝国时代模拟/ui"
+msgid "修道院"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82121
+msgctxt "82121@mods/帝国时代模拟/ui"
+msgid "瞭望箭塔"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82122
+msgctxt "82122@mods/帝国时代模拟/ui"
+msgid "警戒箭塔"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82123
+msgctxt "82123@mods/帝国时代模拟/ui"
+msgid "大型箭塔"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82124
+msgctxt "82124@mods/帝国时代模拟/ui"
+msgid "炮塔"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82125
+msgctxt "82125@mods/帝国时代模拟/ui"
+msgid "木栅栏"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82126
+msgctxt "82126@mods/帝国时代模拟/ui"
+msgid "石墙"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82127
+msgctxt "82127@mods/帝国时代模拟/ui"
+msgid "垛墙"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82128
+msgctxt "82128@mods/帝国时代模拟/ui"
+msgid "木城门"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82129
+msgctxt "82129@mods/帝国时代模拟/ui"
+msgid "城门"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82130
+msgctxt "82130@mods/帝国时代模拟/ui"
+msgid "船坞"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82131
+msgctxt "82131@mods/帝国时代模拟/ui"
+msgid "民兵"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82132
+msgctxt "82132@mods/帝国时代模拟/ui"
+msgid "卫士"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82133
+msgctxt "82133@mods/帝国时代模拟/ui"
+msgid "银甲卫士"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82134
+msgctxt "82134@mods/帝国时代模拟/ui"
+msgid "金甲卫士"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82135
+msgctxt "82135@mods/帝国时代模拟/ui"
+msgid "宫廷卫士"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82136
+msgctxt "82136@mods/帝国时代模拟/ui"
+msgid "意大利佣兵"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82137
+msgctxt "82137@mods/帝国时代模拟/ui"
+msgid "武士"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82138
+msgctxt "82138@mods/帝国时代模拟/ui"
+msgid "勇士"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82139
+msgctxt "82139@mods/帝国时代模拟/ui"
+msgid "猛士"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82140
+msgctxt "82140@mods/帝国时代模拟/ui"
+msgid "可汗清兵"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82141
+msgctxt "82141@mods/帝国时代模拟/ui"
+msgid "剑士"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82142
+msgctxt "82142@mods/帝国时代模拟/ui"
+msgid "银牌剑士"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82143
+msgctxt "82143@mods/帝国时代模拟/ui"
+msgid "金牌剑士"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82144
+msgctxt "82144@mods/帝国时代模拟/ui"
+msgid "王牌剑士"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82145
+msgctxt "82145@mods/帝国时代模拟/ui"
+msgid "步弓手"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82146
+msgctxt "82146@mods/帝国时代模拟/ui"
+msgid "弩手"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82147
+msgctxt "82147@mods/帝国时代模拟/ui"
+msgid "劲弩手"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82148
+msgctxt "82148@mods/帝国时代模拟/ui"
+msgid "掷矛手"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82149
+msgctxt "82149@mods/帝国时代模拟/ui"
+msgid "精锐掷矛手"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82150
+msgctxt "82150@mods/帝国时代模拟/ui"
+msgid "帝王掷矛手"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82151
+msgctxt "82151@mods/帝国时代模拟/ui"
+msgid "骑射手"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82152
+msgctxt "82152@mods/帝国时代模拟/ui"
+msgid "重装骑射手"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82153
+msgctxt "82153@mods/帝国时代模拟/ui"
+msgid "标枪骑兵"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82154
+msgctxt "82154@mods/帝国时代模拟/ui"
+msgid "投石手"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82155
+msgctxt "82155@mods/帝国时代模拟/ui"
+msgid "象兵射手"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82156
+msgctxt "82156@mods/帝国时代模拟/ui"
+msgid "斥候奇兵"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82157
+msgctxt "82157@mods/帝国时代模拟/ui"
+msgid "轻骑兵"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82158
+msgctxt "82158@mods/帝国时代模拟/ui"
+msgid "翼骑兵"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82159
+msgctxt "82159@mods/帝国时代模拟/ui"
+msgid "中骑兵"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82160
+msgctxt "82160@mods/帝国时代模拟/ui"
+msgid "重骑兵"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82161
+msgctxt "82161@mods/帝国时代模拟/ui"
+msgid "铁骑兵"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82162
+msgctxt "82162@mods/帝国时代模拟/ui"
+msgid "骑士"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82163
+msgctxt "82163@mods/帝国时代模拟/ui"
+msgid "重装骑士"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82164
+msgctxt "82164@mods/帝国时代模拟/ui"
+msgid "圣殿骑士"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82165
+msgctxt "82165@mods/帝国时代模拟/ui"
+msgid "骆驼兵"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82166
+msgctxt "82166@mods/帝国时代模拟/ui"
+msgid "重装骆驼兵"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82167
+msgctxt "82167@mods/帝国时代模拟/ui"
+msgid "帝王骆驼兵"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82168
+msgctxt "82168@mods/帝国时代模拟/ui"
+msgid "象兵"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82169
+msgctxt "82169@mods/帝国时代模拟/ui"
+msgid "精锐象兵"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82170
+msgctxt "82170@mods/帝国时代模拟/ui"
+msgid "草原突骑"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82171
+msgctxt "82171@mods/帝国时代模拟/ui"
+msgid "精锐草原突骑"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82172
+msgctxt "82172@mods/帝国时代模拟/ui"
+msgid "血统"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82173
+msgctxt "82173@mods/帝国时代模拟/ui"
+msgid "畜牧"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82174
+msgctxt "82174@mods/帝国时代模拟/ui"
+msgid "供给"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82175
+msgctxt "82175@mods/帝国时代模拟/ui"
+msgid "护卫"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82176
+msgctxt "82176@mods/帝国时代模拟/ui"
+msgid "扳指"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82177
+msgctxt "82177@mods/帝国时代模拟/ui"
+msgid "帕提亚战术"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82178
+msgctxt "82178@mods/帝国时代模拟/ui"
+msgid "锻造"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82179
+msgctxt "82179@mods/帝国时代模拟/ui"
+msgid "铸铁"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82180
+msgctxt "82180@mods/帝国时代模拟/ui"
+msgid "鼓风炉"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82181
+msgctxt "82181@mods/帝国时代模拟/ui"
+msgid "箭羽"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82182
+msgctxt "82182@mods/帝国时代模拟/ui"
+msgid "锥子箭"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82183
+msgctxt "82183@mods/帝国时代模拟/ui"
+msgid "护腕"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82184
+msgctxt "82184@mods/帝国时代模拟/ui"
+msgid "射手软甲"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82185
+msgctxt "82185@mods/帝国时代模拟/ui"
+msgid "射手皮甲"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82186
+msgctxt "82186@mods/帝国时代模拟/ui"
+msgid "射手锁甲"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82187
+msgctxt "82187@mods/帝国时代模拟/ui"
+msgid "射程"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82188
+msgctxt "82188@mods/帝国时代模拟/ui"
+msgid "视野"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82189
+msgctxt "82189@mods/帝国时代模拟/ui"
+msgid "步兵鳞甲"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82190
+msgctxt "82190@mods/帝国时代模拟/ui"
+msgid "步兵锁甲"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82191
+msgctxt "82191@mods/帝国时代模拟/ui"
+msgid "步兵钢甲"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82192
+msgctxt "82192@mods/帝国时代模拟/ui"
+msgid "骑兵鳞甲"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82193
+msgctxt "82193@mods/帝国时代模拟/ui"
+msgid "骑兵锁甲"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82194
+msgctxt "82194@mods/帝国时代模拟/ui"
+msgid "骑兵钢甲"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82195
+msgctxt "82195@mods/帝国时代模拟/ui"
+msgid "轻型投石车"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82196
+msgctxt "82196@mods/帝国时代模拟/ui"
+msgid "中型投石车"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82197
+msgctxt "82197@mods/帝国时代模拟/ui"
+msgid "重型投石车"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82198
+msgctxt "82198@mods/帝国时代模拟/ui"
+msgid "轻型冲车"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82199
+msgctxt "82199@mods/帝国时代模拟/ui"
+msgid "中型冲车"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82200
+msgctxt "82200@mods/帝国时代模拟/ui"
+msgid "重型冲车"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82201
+msgctxt "82201@mods/帝国时代模拟/ui"
+msgid "弩炮"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82202
+msgctxt "82202@mods/帝国时代模拟/ui"
+msgid "重型弩炮"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82203
+msgctxt "82203@mods/帝国时代模拟/ui"
+msgid "攻城塔"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82204
+msgctxt "82204@mods/帝国时代模拟/ui"
+msgid "手推炮"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82205
+msgctxt "82205@mods/帝国时代模拟/ui"
+msgid "修道者"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82208
+msgctxt "82208@mods/帝国时代模拟/ui"
+msgid "诸葛弩"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82209
+msgctxt "82209@mods/帝国时代模拟/ui"
+msgid "精锐诸葛弩"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82210
+msgctxt "82210@mods/帝国时代模拟/ui"
+msgid "蒙古突骑"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82211
+msgctxt "82211@mods/帝国时代模拟/ui"
+msgid "精锐蒙古突骑"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82212
+msgctxt "82212@mods/帝国时代模拟/ui"
+msgid "甲胄骑兵"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82213
+msgctxt "82213@mods/帝国时代模拟/ui"
+msgid "精锐甲胄骑兵"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82214
+msgctxt "82214@mods/帝国时代模拟/ui"
+msgid "精锐"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82215
+msgctxt "82215@mods/帝国时代模拟/ui"
+msgid "帝王"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82216
+msgctxt "82216@mods/帝国时代模拟/ui"
+msgid "小型战舰"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82217
+msgctxt "82217@mods/帝国时代模拟/ui"
+msgid "中型战舰"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82218
+msgctxt "82218@mods/帝国时代模拟/ui"
+msgid "大型战舰"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82219
+msgctxt "82219@mods/帝国时代模拟/ui"
+msgid "火艨艟"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82220
+msgctxt "82220@mods/帝国时代模拟/ui"
+msgid "喷火船"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82221
+msgctxt "82221@mods/帝国时代模拟/ui"
+msgid "快速喷火船"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82222
+msgctxt "82222@mods/帝国时代模拟/ui"
+msgid "爆破阀"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82223
+msgctxt "82223@mods/帝国时代模拟/ui"
+msgid "爆破船"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82224
+msgctxt "82224@mods/帝国时代模拟/ui"
+msgid "重型爆破船"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82225
+msgctxt "82225@mods/帝国时代模拟/ui"
+msgid "运输船"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82226
+msgctxt "82226@mods/帝国时代模拟/ui"
+msgid "炮舰"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82227
+msgctxt "82227@mods/帝国时代模拟/ui"
+msgid "船只加固"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82228
+msgctxt "82228@mods/帝国时代模拟/ui"
+msgid "提升运载量1"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82229
+msgctxt "82229@mods/帝国时代模拟/ui"
+msgid "提升船速"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82230
+msgctxt "82230@mods/帝国时代模拟/ui"
+msgid "提升运载量2"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82231
+msgctxt "82231@mods/帝国时代模拟/ui"
+msgid "炮舰科技"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82232
+msgctxt "82232@mods/帝国时代模拟/ui"
+msgid "精锐炮舰科技"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82233
+msgctxt "82233@mods/帝国时代模拟/ui"
+msgid "造船匠"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82235
+msgctxt "82235@mods/帝国时代模拟/ui"
+msgid "爆破兵"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82236
+msgctxt "82236@mods/帝国时代模拟/ui"
+msgid "巨型投石机（未组装）"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82237
+msgctxt "82237@mods/帝国时代模拟/ui"
+msgid "征召"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82238
+msgctxt "82238@mods/帝国时代模拟/ui"
+msgid "围墙"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82239
+msgctxt "82239@mods/帝国时代模拟/ui"
+msgid "石匠1"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82240
+msgctxt "82240@mods/帝国时代模拟/ui"
+msgid "石匠2"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82241
+msgctxt "82241@mods/帝国时代模拟/ui"
+msgid "建筑学1"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82242
+msgctxt "82242@mods/帝国时代模拟/ui"
+msgid "建筑学2"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82243
+msgctxt "82243@mods/帝国时代模拟/ui"
+msgid "近射孔"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82244
+msgctxt "82244@mods/帝国时代模拟/ui"
+msgid "化学"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82245
+msgctxt "82245@mods/帝国时代模拟/ui"
+msgid "射箭槽"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82246
+msgctxt "82246@mods/帝国时代模拟/ui"
+msgid "工程技师"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82247
+msgctxt "82247@mods/帝国时代模拟/ui"
+msgid "脚踏起重机"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82248
+msgctxt "82248@mods/帝国时代模拟/ui"
+msgid "村民"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82249
+msgctxt "82249@mods/帝国时代模拟/ui"
+msgid "牧民"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82250
+msgctxt "82250@mods/帝国时代模拟/ui"
+msgid "农奴"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82251
+msgctxt "82251@mods/帝国时代模拟/ui"
+msgid "独轮手推车"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82252
+msgctxt "82252@mods/帝国时代模拟/ui"
+msgid "手推车"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82253
+msgctxt "82253@mods/帝国时代模拟/ui"
+msgid "织布机1"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82254
+msgctxt "82254@mods/帝国时代模拟/ui"
+msgid "织布机2"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82255
+msgctxt "82255@mods/帝国时代模拟/ui"
+msgid "城镇瞭望"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82256
+msgctxt "82256@mods/帝国时代模拟/ui"
+msgid "城镇巡逻"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82257
+msgctxt "82257@mods/帝国时代模拟/ui"
+msgid "马轭"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82258
+msgctxt "82258@mods/帝国时代模拟/ui"
+msgid "重犁"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82259
+msgctxt "82259@mods/帝国时代模拟/ui"
+msgid "轮作"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82260
+msgctxt "82260@mods/帝国时代模拟/ui"
+msgid "爆破"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82261
+msgctxt "82261@mods/帝国时代模拟/ui"
+msgid "长城"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82262
+msgctxt "82262@mods/帝国时代模拟/ui"
+msgid "游牧"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82263
+msgctxt "82263@mods/帝国时代模拟/ui"
+msgid "希腊之火"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82264
+msgctxt "82264@mods/帝国时代模拟/ui"
+msgid "游说"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82265
+msgctxt "82265@mods/帝国时代模拟/ui"
+msgid "招降"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82266
+msgctxt "82266@mods/帝国时代模拟/ui"
+msgid "转化"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82667
+msgctxt "82667@mods/帝国时代模拟/ui"
+msgid "射手射程1"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82668
+msgctxt "82668@mods/帝国时代模拟/ui"
+msgid "射手射程2"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82669
+msgctxt "82669@mods/帝国时代模拟/ui"
+msgid "射手射程3"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82670
+msgctxt "82670@mods/帝国时代模拟/ui"
+msgid "射手视野1"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82671
+msgctxt "82671@mods/帝国时代模拟/ui"
+msgid "射手视野2"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82673
+msgctxt "82673@mods/帝国时代模拟/ui"
+msgid "射手视野3"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82674
+msgctxt "82674@mods/帝国时代模拟/ui"
+msgid "火箭术"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82675
+msgctxt "82675@mods/帝国时代模拟/ui"
+msgid "骑兵视野1"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82676
+msgctxt "82676@mods/帝国时代模拟/ui"
+msgid "骑兵视野2"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82677
+msgctxt "82677@mods/帝国时代模拟/ui"
+msgid "骑兵视野3"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82678
+msgctxt "82678@mods/帝国时代模拟/ui"
+msgid "移动型营帐"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82679
+msgctxt "82679@mods/帝国时代模拟/ui"
+msgid "火枪手"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82680
+msgctxt "82680@mods/帝国时代模拟/ui"
+msgid "领取福利"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82681
+msgctxt "82681@mods/帝国时代模拟/ui"
+msgid "精锐炮舰"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82682
+msgctxt "82682@mods/帝国时代模拟/ui"
+msgid "巨型投石机（组装）"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82683
+msgctxt "82683@mods/帝国时代模拟/ui"
+msgid "长矛兵"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82684
+msgctxt "82684@mods/帝国时代模拟/ui"
+msgid "长枪兵"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82685
+msgctxt "82685@mods/帝国时代模拟/ui"
+msgid "长戟兵"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82686
+msgctxt "82686@mods/帝国时代模拟/ui"
+msgid "精锐"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82689
+msgctxt "82689@mods/帝国时代模拟/ui"
+msgid "封建时代"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82690
+msgctxt "82690@mods/帝国时代模拟/ui"
+msgid "城堡时代"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82691
+msgctxt "82691@mods/帝国时代模拟/ui"
+msgid "帝王时代"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82692
+msgctxt "82692@mods/帝国时代模拟/ui"
+msgid "黑暗时代"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82693
+msgctxt "82693@mods/帝国时代模拟/ui"
+msgid "石料"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82694
+msgctxt "82694@mods/帝国时代模拟/ui"
+msgid "中型村庄"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82695
+msgctxt "82695@mods/帝国时代模拟/ui"
+msgid "大村庄"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82696
+msgctxt "82696@mods/帝国时代模拟/ui"
+msgid "公社"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82697
+msgctxt "82697@mods/帝国时代模拟/ui"
+msgid "中型牧场"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82698
+msgctxt "82698@mods/帝国时代模拟/ui"
+msgid "大牧场"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82699
+msgctxt "82699@mods/帝国时代模拟/ui"
+msgid "集体牧场"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82700
+msgctxt "82700@mods/帝国时代模拟/ui"
+msgid "中型果园"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82701
+msgctxt "82701@mods/帝国时代模拟/ui"
+msgid "大果园"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82702
+msgctxt "82702@mods/帝国时代模拟/ui"
+msgid "集体果园"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82703
+msgctxt "82703@mods/帝国时代模拟/ui"
+msgid "操练"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82704
+msgctxt "82704@mods/帝国时代模拟/ui"
+msgid "人口不足"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82705
+msgctxt "82705@mods/帝国时代模拟/ui"
+msgid "人口"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82706
+msgctxt "82706@mods/帝国时代模拟/ui"
+msgid "食物"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82707
+msgctxt "82707@mods/帝国时代模拟/ui"
+msgid "1级农田"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82708
+msgctxt "82708@mods/帝国时代模拟/ui"
+msgid "2级农田"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82709
+msgctxt "82709@mods/帝国时代模拟/ui"
+msgid "3级农田"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82710
+msgctxt "82710@mods/帝国时代模拟/ui"
+msgid "4级农田"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82711
+msgctxt "82711@mods/帝国时代模拟/ui"
+msgid "粮仓"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82712
+msgctxt "82712@mods/帝国时代模拟/ui"
+msgid "2级步兵营"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82713
+msgctxt "82713@mods/帝国时代模拟/ui"
+msgid "采金法"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82714
+msgctxt "82714@mods/帝国时代模拟/ui"
+msgid "钻井采金法"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82715
+msgctxt "82715@mods/帝国时代模拟/ui"
+msgid "采石法"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82716
+msgctxt "82716@mods/帝国时代模拟/ui"
+msgid "钻井采石法"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82717
+msgctxt "82717@mods/帝国时代模拟/ui"
+msgid "双刃斧"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82718
+msgctxt "82718@mods/帝国时代模拟/ui"
+msgid "弓锯"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82719
+msgctxt "82719@mods/帝国时代模拟/ui"
+msgid "双人锯"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82720
+msgctxt "82720@mods/帝国时代模拟/ui"
+msgid "1级采石场"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82721
+msgctxt "82721@mods/帝国时代模拟/ui"
+msgid "2级采石场"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82722
+msgctxt "82722@mods/帝国时代模拟/ui"
+msgid "3级采石场"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82723
+msgctxt "82723@mods/帝国时代模拟/ui"
+msgid "船厂"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82724
+msgctxt "82724@mods/帝国时代模拟/ui"
+msgid "后勤学"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82725
+msgctxt "82725@mods/帝国时代模拟/ui"
+msgid "b级"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82726
+msgctxt "82726@mods/帝国时代模拟/ui"
+msgid "c级"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82727
+msgctxt "82727@mods/帝国时代模拟/ui"
+msgid "d级"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82728
+msgctxt "82728@mods/帝国时代模拟/ui"
+msgid "b"
+msgstr ""
+
+#. only defined in a translation layer under mods/帝国时代模拟/ui, no matching key in that tree's own ui/tts.txt
+#: mods/帝国时代模拟/ui/tts.txt:82729
+msgctxt "82729@mods/帝国时代模拟/ui"
+msgid "c"
 msgstr ""
 
 #: res/multi/td1/ui/tts.txt:5028
@@ -14040,6 +17346,36 @@ msgstr "generale"
 msgctxt "5411"
 msgid "marshal"
 msgstr "maresciallo"
+
+#. GATHER_RATE_NAME: 采集速率
+#: res/ui/tts.txt:5412
+msgctxt "5412"
+msgid "gather rate"
+msgstr "tasso di raccolta"
+
+#. GATHER_RATE: 采集速率（动态：采集速率_金矿）
+#: res/ui/tts.txt:5413
+msgctxt "5413"
+msgid "gather rate"
+msgstr "tasso di raccolta"
+
+#. PER_SECOND: 每秒（速率单位后缀）
+#: res/ui/tts.txt:5414
+msgctxt "5414"
+msgid "per second"
+msgstr "al secondo"
+
+#. CARRY_CAPACITY_NAME: 运载上限
+#: res/ui/tts.txt:5415
+msgctxt "5415"
+msgid "carry capacity"
+msgstr "capacità di carico"
+
+#. CARRY_CAPACITY: 运载上限（动态：运载上限_猎物尸体）
+#: res/ui/tts.txt:5416
+msgctxt "5416"
+msgid "carry capacity"
+msgstr "capacità di carico"
 
 #: res/ui/tts.txt:5420
 msgctxt "5420"

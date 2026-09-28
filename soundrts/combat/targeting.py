@@ -136,14 +136,18 @@ class TargetingMixin:
         reachable_enemies = [x for x in known if self.can_attack(x)]
         if reachable_enemies:
             player = self.player
-            smart = getattr(player, "smart_units", False)
+            # Player 类默认声明 smart_units=False (base.py:147); 直读避开 getattr。
+            smart = player.smart_units
             if smart:
                 skill = max(0, min(100, getattr(player, "counter_skill", 100)))
             else:
                 skill = 0
+            # Creature 类默认 can_capture=1 (worldcreature.py:1085); 缓存到循环外。
+            _can_capture = bool(getattr(self, "can_capture", 1))
 
             def _enemy_sort_key(enemy):
                 dist2 = square_of_distance(self.x, self.y, enemy.x, enemy.y)
+                # enemy.menace_versus 是 Creature 子类的可选方法；保留 getattr 兜底。
                 menace_versus = getattr(enemy, "menace_versus", None)
                 threat = (
                     menace_versus(self)
@@ -162,7 +166,7 @@ class TargetingMixin:
             # 按优先级遍历：对“接触即占领”的敌方建筑，若已有其他单位在占领中
             # 则跳过（避免无效命令），改打下一个目标；否则声明占领并直接占领。
             for enemy in reachable_enemies:
-                if _is_capture_on_contact(enemy) and bool(getattr(self, "can_capture", 1)):
+                if _is_capture_on_contact(enemy) and _can_capture:
                     if self._capture_claimed_by_other(enemy):
                         continue
                     self._claim_capture(enemy)

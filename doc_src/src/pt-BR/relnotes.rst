@@ -4,21 +4,6 @@ Notas de lançamento
 
 .. contents::
 
-1.5.1.0
--------
-
-**Mudança: Saves agora funcionam em mapas enormes sem esgotar o stack C**
-
-- **Problema**: O salvamento usava ``cloudpickle`` para serializar todo o grafo de objetos ``World``. Em mapas muito grandes (ex. 500×500, 1000×1000), o grafo de caminhos ``World.g``, os caches de vizinhos ``Square.neighbors``, as cadeias de referências de combate ``last_attacker`` e os buckets ECS formavam dezenas de milhares de níveis de recursão de objetos. A travessia depth-first do cloudpickle esgotava o stack de chamadas C, causando falhas no salvamento ou travamento do programa.
-- **Mudança**: Adicionado ``soundrts/save_pickle.py``. O módulo remove do ``__getstate__`` os índices reconstruíveis e as referências transitórias (``World.g``, ``Square.neighbors``, ``last_attacker``, buckets ECS, etc.), conservando apenas os dados de estado essenciais do jogo. ``__setstate__`` reconstrói tudo ao carregar. Agora os mapas 500×500 e 1000×1000 salvam e carregam corretamente.
-- **Escopo**: ``soundrts/save_pickle.py``; ``soundrts/worldroom.py``; ``soundrts/world/world_core.py``; ``soundrts/worldaction.py``; ``soundrts/worldplayerbase/base.py``; ``soundrts/tests/test_save_resume_pickle.py``.
-
-**Mudança: mapas enormes não conectam mais início e fim como atalho perimetral**
-
-- **Problema**: os mapas gerados `ms200`, `ms500` e `ms1000` incluíam entradas de borda 1-based `(N, linha)` / `(col, N)` em suas linhas `west_east_paths` / `south_north_paths`. Após a reescrita 1-based → 0-based de `_normalize_square_token`, essas entradas viram `(N-1, linha)` e disparam o ramo de portal `cx+1 == nb_columns` em `_create_we_passage`, que as envelopa silenciosamente de volta a `(0, linha)`. O resultado era um anel toroidal oculto na borda: um jogador podia alcançar o canto adversário em 1–2 passos caminhando pela borda, contornando todos os gargalos do centro.
-- **Mudança**: removidas todas as entradas de borda `(N, linha)` / `(col, N)` / `(0, linha)` / `(col, 0)` dos três mapas. `tools/gen_ms500.py` agora usa `range(1, n)` para os corredores principais (em vez de `range(1, n+1)`) e descarta ramos secundários cuja âncora aleatória caia na borda 0 / N, de modo que uma nova execução com a mesma seed não reintroduza o wrap. As distâncias mínimas entre cantos iniciais voltam a ser "atravessando o mapa" (cantos adjacentes ~160 / 400 / 800 passos, diagonais ~320 / 800 / 1600), sem atalho perimetral.
-- **Escopo**: `res/multi/ms200.txt`; `res/multi/ms500.txt`; `res/multi/ms1000.txt`; `tools/gen_ms500.py`; `soundrts/tests/test_ms_maps_no_wrap.py`.
-
 1.5.0.9
 -------
 

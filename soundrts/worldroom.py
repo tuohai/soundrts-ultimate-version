@@ -24,6 +24,18 @@ from .lib.square_terrain_rules import (
     terrain_blocks_path,
 )
 
+# terrain_blocks_path 是按 type_name 查表的纯函数，结果稳定。
+# 在 _update_terrain 的热循环里调用次数 ~1325万/tick 段（profile 显示 update_terrain
+# 占 update 总耗时 ~67%），加一层 dict 缓存避免重复字典/集合查找。
+_TERRAIN_BLOCKS_PATH_CACHE = {}
+
+def _terrain_blocks_path_cached(type_name):
+    v = _TERRAIN_BLOCKS_PATH_CACHE.get(type_name)
+    if v is None:
+        v = terrain_blocks_path(type_name)
+        _TERRAIN_BLOCKS_PATH_CACHE[type_name] = v
+    return v
+
 # A* 内层 Cython 加速器；不可用时回退到 Python 实现
 _rf = None
 if os.environ.get("SOUNDRTS_NO_CYTHON", "").strip() not in ("1", "true", "True"):
@@ -891,6 +903,9 @@ class Square(_Space):
                 self.world._dirty_terrain_squares.add(self)
                 for s in self.strict_neighbors:
                     self.world._dirty_terrain_squares.add(s)
+                # ms500 热路径：本周期内存在影响地形的对象增删，下次 2s 全量
+                # 才需要执行；否则全量扫描可跳过（_update_terrain 检查此 flag）。
+                self.world._terrain_dirty_in_cycle = True
         except Exception:
             pass
 
@@ -903,6 +918,7 @@ class Square(_Space):
                 self.world._dirty_terrain_squares.add(self)
                 for s in self.strict_neighbors:
                     self.world._dirty_terrain_squares.add(s)
+                self.world._terrain_dirty_in_cycle = True
         except Exception:
             pass
 
@@ -1012,9 +1028,9 @@ class Square(_Space):
         if getattr(self, "fixed_terrain", False):
             return
         self.type_name = resolve_square_type_name(self)
-        if terrain_blocks_path(self.type_name):
+        if _terrain_blocks_path_cached(self.type_name):
             for s in self.strict_neighbors:
-                if terrain_blocks_path(s.type_name):
+                if _terrain_blocks_path_cached(s.type_name):
                     self.ensure_blocked_path(s)
                 else:
                     self.ensure_free_path(s)
