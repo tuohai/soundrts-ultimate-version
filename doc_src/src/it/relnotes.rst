@@ -3,6 +3,16 @@ Note di rilascio
 
 .. contents::
 
+1.5.1.2
+-------
+
+**Cambio: Python aggiornato a 3.12.8 con un piccolo guadagno di prestazioni**
+
+- **Problema**: la release era prima distribuita su Python 3.11.8. CPython 3.12 ha introdottenuto un interprete adattivo con specializzazione che riscalda i call site inline più caldi, il che si sposa bene con i loop per-tick più stretti di SoundRTS (perception, decisione IA, targeting). Restare sull'interprete 3.11 lasciava sul tavolo qualche punto percentuale, soprattutto sulle lunghe partite cw1 con ~1500 unità, dove p95 per tick e TPS con eserciti grandi erano già il collo di bottiglia.
+- **Cambio**: il runtime Python supportato sale a 3.12.8. I build Windows e la CI puntano già a 3.12 (``.github/workflows/build-game.yml``); ``README.txt``, ``soundrts.bat`` e gli script MSVC sono allineati a 3.12. Il pacchetto cx_Freeze viene ricostruito su 3.12.8, così l'utente finale riceve il nuovo interprete senza un passaggio di installazione aggiuntivo. Sulla corsa headless cw1 di 20 minuti, la mediana per tick scende da ~44 ms (3.11.8) a ~41 ms (3.12.8) — circa il 7 % di miglioramento — e il p95 scende da ~135 ms a ~95 ms (~30 % di miglioramento). Il TPS con grandi eserciti a fine partita cresce di circa il 30 %. Nessuna modifica al codice; il guadagno viene dall'interprete stesso.
+- **Ambito**: ``README.txt``, ``soundrts.bat``, ``build_msvc.cmd``, ``.github/workflows/build-game.yml`` e il pacchetto cx_Freeze di 1.5.1.2.
+
+
 1.5.1.1
 -------
 

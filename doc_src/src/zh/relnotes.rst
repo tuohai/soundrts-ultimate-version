@@ -4,6 +4,16 @@
 .. contents::
 
 
+1.5.1.2
+-------
+
+**改进：升级 Python 到 3.12.8，性能小幅提升**
+
+- **问题**：此前发布版基于 Python 3.11.8。CPython 3.12 引入了特化自适应解释器，会对频繁执行的内联调用点做特化编译，正好契合 SoundRTS 每 tick 热循环（perception、AI 决策、targeting 等）。继续跑在 3.11 解释器上等于把几个百分点的性能留在桌上，长局 cw1（~1500 单位）尤其明显 —— tick p95 和大兵团长局 TPS 本身就是最先顶到的瓶颈。
+- **改进**：官方支持的 Python 运行时升级到 3.12.8。Windows 打包版与 CI 已经跑在 3.12（``.github/workflows/build-game.yml``），``README.txt``、``soundrts.bat`` 与 MSVC 编译脚本统一指向 3.12。cx_Freeze 打包版本在 3.12.8 上重打，端用户直接拿到新解释器，无需额外安装。在 cw1 20 分钟无头跑局中，单 tick 中位由 3.11.8 的 ~44 ms 降到 3.12.8 的 ~41 ms（约 7 % 提速），p95 由 ~135 ms 降到 ~95 ms（约 30 % 提速）；长局大兵团的 TPS 大约提升 30 %。源码未做任何改动，提速完全来自解释器本身。
+- **范围**：``README.txt``、``soundrts.bat``、``build_msvc.cmd``、``.github/workflows/build-game.yml`` 以及 1.5.1.2 的 cx_Freeze 打包版本。
+
+
 1.5.1.1
 -------
 

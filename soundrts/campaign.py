@@ -349,7 +349,7 @@ class Campaign:
         return self.chapter(chapter.number + 1)
 
     def _get_bookmark(self):
-        c = configparser.SafeConfigParser()
+        c = configparser.ConfigParser()
         if os.path.isfile(CAMPAIGNS_CONFIG_PATH):
             c.read_file(open(CAMPAIGNS_CONFIG_PATH))
         return c.getint(self._id(), "chapter", fallback=0)
@@ -399,7 +399,7 @@ class Campaign:
         return bool(self.coop_campaign)
 
     def _set_bookmark(self, number):
-        c = configparser.SafeConfigParser()
+        c = configparser.ConfigParser()
         if os.path.isfile(CAMPAIGNS_CONFIG_PATH):
             c.read_file(open(CAMPAIGNS_CONFIG_PATH))
         if self._id() not in c.sections():
@@ -408,7 +408,7 @@ class Campaign:
         c.write(open(CAMPAIGNS_CONFIG_PATH, "w"))
 
     def _read_config(self):
-        c = configparser.SafeConfigParser()
+        c = configparser.ConfigParser()
         if os.path.isfile(CAMPAIGNS_CONFIG_PATH):
             c.read_file(open(CAMPAIGNS_CONFIG_PATH))
         if self._id() not in c.sections():
