@@ -454,3 +454,75 @@
   Юниты казарм получают броню от стрел по возрастам.
   Жители сдают на десять процентов больше золота.
   Команда: университеты работают быстрее.
+
+; New civilizations (14 from previous commit + 2 final: Inca, Romans)
+; Language: ru
+
+8714 Болгары
+8554 Unique unit Bulwark.
+  See English intro for full description.
+8715 Литовцы
+8555 Unique unit Leitis.
+  See English intro for full description.
+8716 Татары
+8556 Unique unit Steppe Lancer.
+  See English intro for full description.
+8717 Берберы
+8557 Unique unit Camel Rider.
+  See English intro for full description.
+8718 Эфиопы
+8558 Unique unit Shotel Warrior.
+  See English intro for full description.
+8719 Кхмеры
+8559 Unique unit Ballista Elephant.
+  See English intro for full description.
+8720 Малайцы
+8560 Unique unit Karambit Warrior.
+  See English intro for full description.
+8721 Бирманцы
+8561 Unique unit Arambai.
+  See English intro for full description.
+8722 Бургундцы
+8562 Unique unit Coustillier.
+  See English intro for full description.
+8723 Сицилийцы
+8563 Unique unit Serjeant.
+  See English intro for full description.
+8724 Армяне
+8564 Unique unit Tarkan.
+  See English intro for full description.
+8725 Грузины
+8565 Unique unit Monaspa.
+  See English intro for full description.
+8726 Инки
+8566 Unique unit Slinger.
+  See English intro for full description.
+8727 Римляне
+8567 Unique unit Legionary.
+  See English intro for full description.
+
+; New unique unit titles (9029-9039)
+9029 Bulwark
+9030 Leitis
+9031 Shotel Warrior
+9032 Ballista Elephant
+9033 Karambit Warrior
+9034 Arambai
+9035 Coustillier
+9036 Serjeant
+9037 Monaspa
+9038 Legionary
+9039 Slinger
+
+; Elite upgrade labels (8346-8356)
+8346 Elite Bulwark
+8347 Elite Leitis
+8348 Elite Shotel Warrior
+8349 Elite Ballista Elephant
+8350 Elite Karambit Warrior
+8351 Elite Arambai
+8352 Elite Coustillier
+8353 Elite Serjeant
+8354 Elite Monaspa
+8355 Elite Legionary
+8356 Elite Slinger
