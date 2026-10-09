@@ -10050,3 +10050,275 @@ mdf 1
 rdf 1
 mdg_vs cavalry 7
 can_upgrade_to
+
+
+; ===========================================================================
+; Inca, Romans — final 2 of AoE2 DE's 42-civ roster
+; ===========================================================================
+
+; ---------- 印加 Inca ----------
+; no Knights, no Camels, no Siege Ram, no BBC;
+; no Arbalester, no Bracer, no Thumb Ring, no Siege Engineers;
+; no Plate Barding, no Heavy CA, no Husbandry, no Bloodlines;
+; no monks (no monastery);
+; no Halberdier (Champion), no Hand Cannoneer, no Elite Cannon Galleon,
+; no Shipwright, no Dry Dock, no Elite Turtle Ship;
+; Infantry + Eagle line; Slinger (no-arrows ranged infantry);
+; Kamayuk (anti-cavalry infantry); UT: Andean Coinage (food/w/g income)
+def incan_barracks
+is_a barracks
+can_train militia spearman eagle_warrior elite_eagle_warrior
+can_research tracking squires supplies arson gambesons man_at_arms long_swordsman pikeman
+
+def incan_archery
+is_a archery_range
+can_train aoe_archer skirmisher elite_skirmisher
+can_research crossbowman
+
+def incan_stable
+is_a stables
+can_train scout_cavalry aoe_knight
+can_research light_cavalry cavalier paladin
+
+def incan_blacksmith
+is_a blacksmith
+can_research forging iron_casting blast_furnace scale_mail_armor chain_mail_armor scale_barding_armor chain_barding_armor fletching bodkin_arrow padded_archer_armor leather_archer_armor thumb_ring ring_archer_armor
+
+def incan_university
+is_a university
+can_research ballistics chemistry guardtower murder_holes masonry treadmill_crane sappers town_watch town_patrol
+
+def incan_workshop
+is_a workshop
+can_train battering_ram capped_ram mangonel scorpion onager
+can_research siege_onager heavy_scorpion
+
+def incan_shipyard
+is_a shipyard
+can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_galley fast_fire_ship demolition_raft demolition_ship cannon_galleon
+can_research gillnets careening
+
+def incan_castle
+is_a aoe_castle
+can_train trebuchet
+can_research conscription hoardings sappers spies
+
+def incan_villager
+is_a peasant
+can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university aoe_castle wall gate fortified_wall palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
+can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
+
+def incas
+class race
+is_a Civilization
+peasant incan_villager
+footman militia
+archer aoe_archer
+knight eagle_warrior
+catapult mangonel
+barracks incan_barracks
+archery_range incan_archery
+stables incan_stable
+blacksmith incan_blacksmith
+university incan_university
+aoe_castle incan_castle
+workshop incan_workshop
+shipyard incan_shipyard
+townhall town_center
+; DE: villagers +30% carry capacity
+on_phase dark_age carry_capacity 30% peasant
+; DE: infantry (incl. eagles) +20% HP
+on_phase dark_age hp 20% infantry spearman pikeman eagle_warrior elite_eagle_warrior
+; DE: buildings -25% cost (wood & stone)
+on_phase dark_age cost 0 -25% 0 -25% house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university aoe_castle wall gate fortified_wall palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
+; DE: start with llama (food_livestock bonus)
+on_phase dark_age gather_qty 50% food_livestock
+; Team: Farms +1 carry (via food_deposit_qty on team)
+beginner incas_beginner
+intermediate incas_intermediate
+advanced incas_advanced
+expert incas_expert
+nightmare incas_nightmare
+
+
+; ---------- 罗马 Romans ----------
+; no Crossbow, no Thumb Ring, no Heavy CA, no Bracer, no Arbalester;
+; no Plate Barding, no Husbandry, no Bloodlines;
+; no monks, no Heavy Demolition Ship, no Shipwright, no Dry Dock, no Cannon Galleon;
+; no Siege Engineers, no architecture, no Bombard Tower;
+; Swordsman line (no Champion) + Centurion + Mangonel-line;
+; Legionary (infantry, anti-building); UT: Ballista (camel bonus damage)
+def roman_barracks
+is_a barracks
+can_train militia spearman
+can_research tracking squires supplies arson gambesons man_at_arms long_swordsman two_handed_swordsman pikeman
+
+def roman_archery
+is_a archery_range
+can_train aoe_archer skirmisher elite_skirmisher cavalry_archer
+can_research
+
+def roman_stable
+is_a stables
+can_train scout_cavalry aoe_knight
+can_research light_cavalry cavalier paladin
+
+def roman_blacksmith
+is_a blacksmith
+can_research forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor fletching bodkin_arrow padded_archer_armor leather_archer_armor ring_archer_armor
+
+def roman_university
+is_a university
+can_research ballistics chemistry guardtower murder_holes masonry treadmill_crane sappers town_watch town_patrol
+
+def roman_workshop
+is_a workshop
+can_train battering_ram capped_ram mangonel scorpion
+can_research siege_ram onager heavy_scorpion
+
+def roman_shipyard
+is_a shipyard
+can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_galley fast_fire_ship demolition_raft demolition_ship
+
+def roman_castle
+is_a aoe_castle
+can_train trebuchet
+can_research conscription hoardings sappers spies
+
+def roman_villager
+is_a peasant
+can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university aoe_castle wall gate fortified_wall palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
+can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
+
+def romans
+class race
+is_a Civilization
+peasant roman_villager
+footman militia
+archer aoe_archer
+knight aoe_knight
+catapult mangonel
+barracks roman_barracks
+archery_range roman_archery
+stables roman_stable
+blacksmith roman_blacksmith
+university roman_university
+aoe_castle roman_castle
+workshop roman_workshop
+shipyard roman_shipyard
+townhall town_center
+; DE: all buildings cost -15% wood
+on_phase dark_age cost 0 -15% 0 0 house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university aoe_castle wall gate fortified_wall palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
+; DE: stone mining 2x faster
+on_phase dark_age gather_time -50% stone
+; DE: swordsman (militia) line +2 melee attack in Imperial
+on_phase imperial_age mdg 2 militia man_at_arms long_swordsman two_handed_swordsman
+; Team: Centurion available at Barracks (defined as UU below)
+beginner romans_beginner
+intermediate romans_intermediate
+advanced romans_advanced
+expert romans_expert
+nightmare romans_nightmare
+
+
+; ---------- 罗马 Legionary (UU) ----------
+; DE: HP40/50 Atk9/12 Arm1+3 vs pierce; anti-building sword infantry
+def legionary
+class soldier
+is_a infantry
+is_a unique_unit
+cost 60 0 30 0
+population_cost 1
+time_cost 13
+space 0.25
+requirements castle_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 40
+speed 0.9
+sight_range 4
+mdg 9
+mdg_cd 2
+mdg_range 1
+mdf 1
+rdf 3
+mdg_vs building 8
+can_upgrade_to elite_legionary
+can_use_tech forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor squires arson gambesons conscription
+
+def elite_legionary
+is_a legionary
+cost 800 0 500 0
+time_cost 50
+requirements imperial_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 50
+speed 0.9
+sight_range 5
+mdg 12
+mdg_cd 2
+mdg_range 1
+mdf 1
+rdf 4
+mdg_vs building 12
+can_upgrade_to
+
+; ---------- 印加 Slinger (UU) ----------
+; DE: HP30/40 Atk1/1 Rng5/6 Speed0.9; ranged infantry, no melee attack
+def slinger
+class soldier
+is_a infantry
+is_a archer_unit
+is_a unique_unit
+cost 30 0 30 0
+population_cost 1
+time_cost 8
+rdg_projectile 1
+rdg_projectile_speed 7
+rdg_targets ground
+space 0.25
+requirements castle_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 30
+speed 0.9
+sight_range 6
+mdg 0
+mdf 0
+rdf 0
+rdg 1
+rdg_cd 1.5
+rdg_ready 0.5
+rdg_hit_rate 100
+rdg_range 5
+rdg_vs infantry 6
+rdg_vs building 2
+can_upgrade_to elite_slinger
+can_use_tech chemistry thumb_ring ring_archer_armor padded_archer_armor leather_archer_armor conscription
+
+def elite_slinger
+is_a slinger
+cost 500 0 500 0
+time_cost 40
+requirements imperial_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 40
+speed 0.9
+sight_range 7
+mdg 0
+mdf 0
+rdf 0
+rdg 1
+rdg_cd 1.5
+rdg_ready 0.5
+rdg_hit_rate 100
+rdg_range 6
+rdg_vs infantry 8
+rdg_vs building 3
+can_upgrade_to

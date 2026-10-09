@@ -554,3 +554,101 @@
 9054 Maya Architecture
 9055 Grand Trunk Road
 9056 Shatagni
+
+; Late-added civ titles (14 from previous commit + 2 final: Inca, Romans)
+; Used by style.txt civ defs (title 8714-8727, intro 8554-8567)
+8714 Bulgarians
+8554 Unique unit Bulwark. Stone miners work faster. Mill upgrades cost less.
+  Team bonus: stone miners work even faster.
+
+8715 Lithuanians
+8555 Unique unit Leitis. Spearman line has bonus pierce armor. Relics boost
+  Town Center line of sight. Starts with extra food and gold.
+  Team bonus: Town Centers have wider vision.
+
+8716 Tatars
+8556 Unique unit Steppe Lancer. Sheep last longer. Cavalry Archers have more
+  HP in Castle/Imperial. Improved hill bonus.
+  Team bonus: Steppe Lancers have +2 line of sight.
+
+8717 Berbers
+8557 Unique unit Camel Rider. Villagers move faster in Castle Age. Stable
+  units and ships cost less. Genitours unlocked at Archery Range.
+  Team bonus: Genitours have bonus attack.
+
+8718 Ethiopians
+8558 Unique unit Shotel Warrior. Archers fire faster. Gold mining is faster
+  in Castle Age. Towers gain attack as you age up.
+  Team bonus: Archers have wider vision.
+
+8719 Khmer
+8559 Unique unit Ballista Elephant. Battle Elephants move faster. No house
+  requirement (Town Center covers all population). Farms last longer.
+  Team bonus: Scorpions and Ballista Elephants have bonus attack.
+
+8720 Malays
+8560 Unique unit Karambit Warrior. Fish Traps cost less. Battle Elephants
+  cost less food. Docks have more HP and wider line of sight.
+  Team bonus: Docks are more durable.
+
+8721 Burmese
+8561 Unique unit Arambai. Battle Elephants hit harder. Infantry gets bonus
+  attack in Castle Age. Relics are visible from the start.
+  Team bonus: Relics are visible on the map.
+
+8722 Burgundians
+8562 Unique unit Coustillier. Farms produce more food. Knight line is
+  cheaper. Cavalry attacks faster in Castle Age. Hand Cannoneers hit harder.
+  Team bonus: Gunpowder units have bonus attack.
+
+8723 Sicilians
+8563 Unique unit Serjeant. Buildings have bonus HP. Town Centers are
+  doubly durable. Military units take less bonus damage. Farmers work faster.
+  Team bonus: First Crusade (Imperial) gives military +100% HP briefly.
+
+8724 Armenians
+8564 Unique unit Composite Bowman. Militia upgrades cost less. Infantry
+  gains attack and armor in Castle Age. Walls and gates have more HP.
+  Team bonus: Cavalry has wider line of sight.
+
+8725 Georgians
+8565 Unique unit Monaspa. Buildings have bonus HP. Cavalry has bonus attack
+  vs buildings. Militia upgrades cost less. Villagers gain HP per age.
+  Team bonus: Cavalry has bonus attack vs archers.
+
+8726 Incas
+8566 Unique unit Slinger. Villagers carry more. Infantry (incl. eagles) has
+  bonus HP. All buildings cost less wood and stone. Starts with a llama.
+  Team bonus: Farms are more productive.
+
+8727 Romans
+8567 Unique unit Legionary. All buildings cost less wood. Stone mining is
+  faster. Swordsman line gets bonus attack in Imperial. Centurions unlocked
+  at Barracks (Castle). Team bonus: Centurions are durable.
+
+; Late-added civ unique unit labels (title 9029-9039)
+; Per-civ elite upgrade labels removed for design consistency; rules.txt
+; can_upgrade_to chain uses shared "elite + unit" labels via the elite_*_x defs.
+9029 Bulwark
+9030 Leitis
+9031 Shotel Warrior
+9032 Ballista Elephant
+9033 Karambit Warrior
+9034 Arambai
+9035 Coustillier
+9036 Serjeant
+9037 Monaspa
+9038 Legionary
+9039 Slinger
+; Elite upgrade labels for new UUs (8346-8356)
+8346 Elite Bulwark
+8347 Elite Leitis
+8348 Elite Shotel Warrior
+8349 Elite Ballista Elephant
+8350 Elite Karambit Warrior
+8351 Elite Arambai
+8352 Elite Coustillier
+8353 Elite Serjeant
+8354 Elite Monaspa
+8355 Elite Legionary
+8356 Elite Slinger

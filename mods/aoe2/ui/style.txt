@@ -2150,3 +2150,262 @@ def aztec_eagle_scout
 is_a eagle_scout
 title 8174
 
+
+
+; ===========================================================================
+; 16 NEW CIVILIZATIONS (14 from last commit + 2 final: Inca, Romans)
+; ===========================================================================
+
+; Bulgarians
+def bulgarians
+title 8714
+intro 8554
+def bulgarian_villager
+is_a peasant
+title 8159
+keyboard worker
+shortcut p
+
+; Lithuanians
+def lithuanians
+title 8715
+intro 8555
+def lithuanian_villager
+is_a peasant
+title 8159
+keyboard worker
+shortcut p
+
+; Tatars
+def tatars
+title 8716
+intro 8556
+def tartar_villager
+is_a peasant
+title 8159
+keyboard worker
+shortcut p
+
+; Berbers
+def berbers
+title 8717
+intro 8557
+def berber_villager
+is_a peasant
+title 8159
+keyboard worker
+shortcut p
+
+; Ethiopians
+def ethiopians
+title 8718
+intro 8558
+def ethiopian_villager
+is_a peasant
+title 8159
+keyboard worker
+shortcut p
+
+; Khmer
+def khmer
+title 8719
+intro 8559
+def khmer_villager
+is_a peasant
+title 8159
+keyboard worker
+shortcut p
+
+; Malays
+def malays
+title 8720
+intro 8560
+def malay_villager
+is_a peasant
+title 8159
+keyboard worker
+shortcut p
+
+; Burmese
+def burmese
+title 8721
+intro 8561
+def burmese_villager
+is_a peasant
+title 8159
+keyboard worker
+shortcut p
+
+; Burgundians
+def burgundians
+title 8722
+intro 8562
+def burgundian_villager
+is_a peasant
+title 8159
+keyboard worker
+shortcut p
+
+; Sicilians
+def sicilians
+title 8723
+intro 8563
+def sicilian_villager
+is_a peasant
+title 8159
+keyboard worker
+shortcut p
+
+; Armenians
+def armenians
+title 8724
+intro 8564
+def armenian_villager
+is_a peasant
+title 8159
+keyboard worker
+shortcut p
+
+; Georgians
+def georgians
+title 8725
+intro 8565
+def georgian_villager
+is_a peasant
+title 8159
+keyboard worker
+shortcut p
+
+; Incas
+def incas
+title 8726
+intro 8566
+def incan_villager
+is_a peasant
+title 8159
+keyboard worker
+shortcut p
+
+; Romans
+def romans
+title 8727
+intro 8567
+def roman_villager
+is_a peasant
+title 8159
+keyboard worker
+shortcut p
+
+; ===========================================================================
+; NEW UNIQUE UNITS — 11 new UUs from last commit + 2 new (Legionary, Slinger)
+; ===========================================================================
+
+; Bulwark (Bulgarian UU: melee cavalry with high pierce armor)
+def bulwark
+is_a cavalry
+title 9029
+keyboard soldier3
+shortcut k
+def elite_bulwark
+is_a bulwark
+title 8346
+
+; Leitis (Lithuanian UU: cavalry that ignores target armor)
+def leitis
+is_a cavalry
+title 9030
+keyboard soldier3
+shortcut k
+def elite_leitis
+is_a leitis
+title 8347
+
+; Shotel Warrior (Ethiopian UU: fast infantry)
+def shotel_warrior
+is_a infantry
+title 9031
+keyboard soldier1
+shortcut s
+def elite_shotel_warrior
+is_a shotel_warrior
+title 8348
+
+; Ballista Elephant (Khmer UU: siege elephant with archer attack)
+def ballista_elephant
+is_a siege_unit
+title 9032
+keyboard soldier4
+shortcut b
+def elite_ballista_elephant
+is_a ballista_elephant
+title 8349
+
+; Karambit Warrior (Malay UU: cheap fast melee infantry)
+def karambit_warrior
+is_a infantry
+title 9033
+keyboard soldier1
+shortcut m
+def elite_karambit_warrior
+is_a karambit_warrior
+title 8350
+
+; Arambai (Burmese UU: cavalry archer with strong vs buildings)
+def arambai
+is_a cavalry
+title 9034
+keyboard soldier3
+shortcut a
+def elite_arambai
+is_a arambai
+title 8351
+
+; Coustillier (Burgundian UU: cavalry with splash damage)
+def coutillier
+is_a cavalry
+title 9035
+keyboard soldier3
+shortcut t
+def elite_coutillier
+is_a coutillier
+title 8352
+
+; Serjeant (Sicilian UU: infantry with high pierce armor)
+def serjeant
+is_a infantry
+title 9036
+keyboard soldier1
+shortcut j
+def elite_serjeant
+is_a serjeant
+title 8353
+
+; Monaspa (Georgian UU: infantry anti-cavalry)
+def monaspa
+is_a infantry
+title 9037
+keyboard soldier1
+shortcut n
+def elite_monaspa
+is_a monaspa
+title 8354
+
+; Legionary (Roman UU: anti-building infantry)
+def legionary
+is_a infantry
+title 9038
+keyboard soldier1
+shortcut l
+def elite_legionary
+is_a legionary
+title 8355
+
+; Slinger (Inca UU: ranged infantry with bonus vs infantry)
+def slinger
+is_a aoe_archer
+title 9039
+keyboard soldier2
+shortcut g
+def elite_slinger
+is_a slinger
+title 8356
