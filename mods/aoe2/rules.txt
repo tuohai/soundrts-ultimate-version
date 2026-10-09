@@ -685,7 +685,7 @@ effect_bonus_targets archer_unit -hand_cannoneer galley scouttower aoe_castle
 effect bonus rdg 1
 effect_bonus_targets cannontower
 
-; 鏀诲煄鎶€甯?Siege Engineers
+; 攻城技师 — Siege Engineers
 def siege_engineers
 class upgrade
 cost 0 600 500 0
@@ -963,7 +963,7 @@ effect_bonus_targets peasant
 effect bonus carry_capacity 7
 effect_bonus_targets peasant
 
-; 鍩庨晣鐬湜 / 鍩庨晣宸￠€?鈥?all buildings +4 / +4 LOS
+; 城镇守护 / 城镇巡逻 — all buildings +4 / +4 LOS
 def town_watch
 class upgrade
 cost 0 0 75 0
@@ -1184,7 +1184,7 @@ requirements aoe_castle castle_age
 effect bonus mdf 4
 effect_bonus_targets siege_unit
 
-; 寮€鍨涘彛 Crenellations 鈥?castles +3 range; garrisoned infantry fire arrows
+; 埠口 Crenellations — castles +3 range; garrisoned infantry fire arrows
 def crenellations
 class upgrade
 cost 0 0 600 400
@@ -2690,7 +2690,7 @@ rdg_cd 3
 rdg_range 7
 rdg_vs building 6
 can_upgrade_to
-; 鐏冀鍒?鈫?鐏垬鑸?鈫?蹇€熺伀鎴樿埞 (melee short-range)
+; 火长船 → 火船 → 快速火船 (melee short-range)
 def fire_galley
 class soldier
 is_a ship
@@ -2959,7 +2959,8 @@ rdg_cd 3
 rdg_range 7
 can_use_tech shipwright careening dry_dock circumnavigation
 can_upgrade_to
-; 钁¤悇鐗欏崱鎷夌淮灏斿竼鑸?def caravel
+; 葡萄牙卡拉维尔帆船
+def caravel
 class soldier
 is_a ship
 is_a unique_unit
@@ -3692,7 +3693,7 @@ mdg_vs building 15
 mdg_vs siege_unit 5
 can_upgrade_to
 
-; 鍦熻€冲叾 Janissary 鈥?Turks unique (DE: 60G+55F, 17s; HP50/60 Atk17/20 Rng7/8 vs
+; 奥斯曼 Janissary — Turks unique (DE: 60G+55F, 17s; HP50/60 Atk17/20 Rng7/8 vs
 ; hand-cannoneer alt. Hand-cannoneer subtype with longer range, cheaper gold.
 def janissary
 class soldier
@@ -4482,7 +4483,7 @@ requirements aoe_castle imperial_age
 effect bonus rdg_range 1
 effect_bonus_targets hand_cannoneer
 
-; 鐜涢泤 / 鍗板姞 / 闊╁浗 / 鍗板害 / 搴撴浖 / 鍖堝ゴ / 鏂媺澶?/ 鍝ョ壒 / 娉㈡柉 / 鍦熻€冲叾 / 瑗跨彮鐗?/ 椹墡灏?/ 娉㈠叞 / 鎰忓ぇ鍒?/ 娉㈣タ绫充簹
+; 不列顿 / 法兰克 / 中国 / 蒙古 / 拜叔庭 / 日本 / 条顿 / 维京 / 越南 / 董茶牙 / 阿兹特克 / 凯尔特 / 马里 / 萨拉森
 ; (technology stubs ready; race defs below reference these via can_research.)
 
 ; 瑗跨彮鐗?Supremacy 鈥?Conquistador +20 attack vs buildings and ships
@@ -4559,7 +4560,7 @@ effect_bonus_targets hussite_wagon elite_hussite_wagon
 effect bonus mdg 1
 effect_bonus_targets hussite_wagon elite_hussite_wagon
 
-; 鍦熻€冲叾 Sipahi 鈥?Cavalry archer line +40 HP (DE: +40 HP for cav archers)
+; 奥斯曼 Sipahi — Cavalry archer line +40 HP (DE: +40 HP for cav archers)
 def sipahi
 class upgrade
 cost 0 0 350 200
@@ -4568,7 +4569,7 @@ requirements aoe_castle castle_age
 effect bonus hp 40
 effect_bonus_targets cavalry_archer heavy_cavalry_archer
 
-; 鍦熻€冲叾 Artillery 鈥?Bombard Cannon / Cannon Galleon line +2 range
+; 奥斯曼 Artillery — Bombard Cannon / Cannon Galleon line +2 range
 ; (DE: gunpowder units +2 range)
 def artillery
 class upgrade
@@ -5419,8 +5420,8 @@ requirements town_center
 is_buildable_anywhere 1
 can_use_tech masonry architecture great_wall town_watch town_patrol
 
-; Watch Tower 鈫?Guard Tower 鈫?Keep (澶у鐮旂┒ line_upgrade)锛涚偖濉斿崟鐙В閿?; 寤洪€犺垂璧扮嚎鏍?train_cost锛沜ost/time_cost = 鐮旂┒浠?def scouttower
-class building
+; Watch Tower > Guard Tower > Keep (line_upgrade chain) — mod own scouttower def
+def scouttower
 is_a building
 ; DE: any land tile (no meadow slot), same as base-pack scouttower
 is_buildable_anywhere 1
@@ -6057,7 +6058,8 @@ advanced britons_advanced
 expert britons_expert
 nightmare britons_nightmare
 
-; 娉曞叞鍏? 楠戝叺鐢熷懡+20%锛坒rankish_* HP锛? 鍩庡牎-25%璐圭敤; 鍐滅敯鍏嶈垂鍗囩骇鈮堢暐杩? 鏃犳壋鎸?鎶よ厱/灏勬墜閿佺敳/琛€缁?def franks
+; Franks: knight HP+20% (frankish_* HP); farm -25% food; free farm upgrades, small archery, heavy archer, water gate
+def franks
 class race
 is_a Civilization
 peasant frank_villager
@@ -6090,7 +6092,7 @@ advanced franks_advanced
 expert franks_expert
 nightmare franks_nightmare
 
-; 涓浗: 寮€灞€ 6 鏉戞皯锛?3锛夆垝50鏈?鈭?00椋熺墿; 绉戞妧 5/10/15%; TC 15浜哄彛/+7瑙嗛噹; 鐏垬鑸圭Щ閫? 缁勯槦鍐滅敯+10%
+; Chinese: house 6 villager (+3), castle 50 villager / 100 food; tech 5/10/15%; TC 15 pop / +7 LOS; gunpowder tech +10%
 ; DE (post-87863 / 99311 / 141935)
 def chinese
 class race
@@ -6127,7 +6129,7 @@ advanced chinese_advanced
 expert chinese_expert
 nightmare chinese_nightmare
 
-; 钂欏彜: 楠戝皠鏀婚€?25%锛坢angudai/CA rdg_cd锛? 鐚庝汉鏁堢巼锛坒ood_carcass锛夛紱鏂ュ€欑郴HP; 鏃犳澘鐢查┈閾?灏勬墜閿佺敳
+; Mongols: cavalry attack +25% (mangudai/CA rdg_cd); hunting efficiency (food_carcass), water accelerated HP; small archery, heavy archer, heavy archer
 def mongols
 class race
 is_a Civilization
@@ -6164,7 +6166,7 @@ advanced mongols_advanced
 expert mongols_expert
 nightmare mongols_nightmare
 
-; 鎷滃崰搴? 寤虹瓚楂楬P/浣庝环; 鏋叺/鐭涘叺/楠嗛┘渚垮疁; 鏃犻紦椋庣倝/琛€缁? 鐢茶儎楠戝叺
+; Byzantines: building HP+/cost-; cavalry re-armor; archer trading; knight trade knight
 ; biligame: 甯濈帇鏃朵唬璐圭敤 -33%锛坅dvance_cost_discount锛屾寜琚喘涔版椂浠ｆ煡琛級
 ; DE buildings +10%/20%/30%/40% HP by age 鈫?+10% on_phase each age (stacks with shared age tables)
 def byzantines
@@ -6497,7 +6499,7 @@ rdf 2
 can_upgrade_to cavalier_end
 
 ; ---------- race defs ----------
-; 鏃ユ湰: 姝ュ叺鏀婚€?33%锛坢dg_cd -25%锛夎嚜灏佸缓
+; Japan: attack +33% (rdg_cd -25%) self-build speed
 def japanese
 class race
 is_a Civilization
@@ -6547,7 +6549,8 @@ advanced japanese_advanced
 expert japanese_expert
 nightmare japanese_nightmare
 
-; 鏉￠】: 姝ュ叺鐢?Castle/Imp +1; 鍐滅敯-40%; 鍏嶈垂杩戝皠瀛斺増澶у浠嶅彲鐮?def teutons
+; 鏉￠】: 姝ュ叺鐢?Castle/Imp +1; 鍐滅敯-40%; 鍏嶈垂杩戝皠瀛斺増澶у浠嶅彲鐮?
+def teutons
 class race
 is_a Civilization
 peasant teuton_villager
@@ -6627,7 +6630,8 @@ advanced vikings_advanced
 expert vikings_expert
 nightmare vikings_nightmare
 
-; 瓒婂崡: 寮撳叺绯?闈炵煕鎵? HP+20%; 璞″叺; 甯濈帇鎺风煕鎵?def vietnamese
+; 瓒婂崡: 寮撳叺绯?闈炵煕鎵? HP+20%; 璞″叺; 甯濈帇鎺风煕鎵?
+def vietnamese
 class race
 is_a Civilization
 peasant vietnamese_villager
@@ -6662,7 +6666,8 @@ advanced vietnamese_advanced
 expert vietnamese_expert
 nightmare vietnamese_nightmare
 
-; 钁¤悇鐗? 鑸瑰彧 HP+10%; 澶у晢绔? 椋庣惔鐐?def portuguese
+; 钁¤悇鐗? 鑸瑰彧 HP+10%; 澶у晢绔? 椋庣惔鐐?
+def portuguese
 class race
 is_a Civilization
 peasant portuguese_villager
@@ -6745,7 +6750,7 @@ is_a monastery
 can_train monk
 can_research redemption atonement herbal_medicine heresy sanctity fervor faith illumination block_printing theocracy
 
-; 闃垮吂鐗瑰厠: +50閲? 鏉戞皯璐熼噸+3; 鍐涗簨璁粌鏇村揩; 鍦ｇ墿鍥㈤槦+33%閲? 鍍т荆姣忛」淇亾闄㈢鎶€+5HP
+; Aztecs: +50 gold; villager carry +3; barracks training fast; monk double +33%; tech per speed +5HP
 def aztecs
 class race
 is_a Civilization
@@ -6835,7 +6840,7 @@ mdf 2
 rdf 2
 can_upgrade_to cavalier_end
 
-; 鍑皵鐗? 姝ュ叺绉婚€?15%锛堝皝寤鸿捣锛夛紱浼愭湪+15%锛涙敾鍩庡皠閫?25%锛涙敾鍩庡巶鍥㈤槦+20%
+; Celts: attack +15% (in melee); free lumberjack trading; free lumberjack factory +20%
 def celts
 class race
 is_a Civilization
@@ -7124,7 +7129,7 @@ mdf 2
 rdf 2
 can_upgrade_to cavalier_end
 
-; 娉㈡柉: 寮€灞€+50F+50W; TC鏀婚€?灏佸缓璧?
+; Persians: house start +50F+50W; TC attack speed
 def persians
 class race
 is_a Civilization
@@ -7225,7 +7230,8 @@ mdf 2
 rdf 2
 can_upgrade_to cavalier_end
 
-; 鏂媺澶? 鍏佃惀/闈跺満-10%/+0/+0/+0 灏佸缓璧? 鍐滄皯HP+10/+15/+20/+25 鏆?灏?鍩?甯?def slavs
+; 鏂媺澶? 鍏佃惀/闈跺満-10%/+0/+0/+0 灏佸缓璧? 鍐滄皯HP+10/+15/+20/+25 鏆?灏?鍩?甯?
+def slavs
 class race
 is_a Civilization
 peasant slav_villager
@@ -7320,7 +7326,7 @@ mdf 2
 rdf 2
 can_upgrade_to cavalier_end
 
-; 搴撴浖: 鐜╁姣忛€犱竴涓啗浜嬪缓绛戝洟闃?1姝ュ紦(宸插悎骞惰def); 姝ュ紦/楠戝皠+1/-1 cost(DE)
+; Cumans: player per produce 1 barrack building team defense 1 attack (merged see def); attack / cavalry +1/-1 cost (DE)
 def cumans
 class race
 is_a Civilization
@@ -7785,7 +7791,7 @@ mdf 2
 rdf 2
 can_upgrade_to cavalier_end
 
-; 瑗跨彮鐗? 寤洪€犲揩30%; 鍏佃惀/寮?椹帺/宸ョ▼鍘?TC涓嶉渶鏉戞皯鏁?鍙崟鍏垫帓闃?; 鐭垮伐25%閲戝瓙
+; Spanish: build +30%; market and water factory fast; TC no need villager can single queue; discover +25% gold
 ; Modelled as builder bonus and gather bonus
 def spanish
 class race
@@ -8065,7 +8071,8 @@ mdf 2
 rdf 2
 can_upgrade_to cavalier_end
 
-; 鎰忓ぇ鍒? 娓旇埞澶氳浇-1/+5 wood; 鐮佸ご+10%HP; 寮?寮?鏍?1 LOS; 甯濆晢鎴樹究瀹?def italians
+; 鎰忓ぇ鍒? 娓旇埞澶氳浇-1/+5 wood; 鐮佸ご+10%HP; 寮?寮?鏍?1 LOS; 甯濆晢鎴樹究瀹?
+def italians
 class race
 is_a Civilization
 peasant italian_villager
@@ -8195,7 +8202,7 @@ expert bohemians_expert
 nightmare bohemians_nightmare
 
 
-; ---------- 鍦熻€冲叾 Turks ----------
+; ---------- Ottoman Turks ----------
 ; no Hand Cannoneer, no Bombard Tower, no Heavy CA, no Paladin, no Plate Barding,
 ; no Bombard Cannon, no Cannon Galleon, no Heated Shot, no Elite Cannon Galleon,
 ; no Architecture, no Two-Handed Swordsman, no Champion, no Cavalier;
@@ -8258,7 +8265,7 @@ mdf 2
 rdf 2
 can_upgrade_to cavalier_end
 
-; 鍦熻€冲叾: 鐭垮伐+25%閲?灏?; 鐏嵂-25% time; 鐭?0/-0/-0/-0 wood
+; Turks: cannon +25% attack; gunpowder -25% time; tech 0/0/0/0 wood
 def turks
 class race
 is_a Civilization
@@ -8543,7 +8550,7 @@ class upgrade
 cost 0 0 800 400
 time_cost 60
 requirements aoe_castle imperial_age
-effect bonus return_resource_percent 33
+effect bonus mana_regen 33%
 effect_bonus_targets monk
 
 ; ---------- Saracen Castle (Castle unique unit + unique techs) ----------
@@ -8642,7 +8649,7 @@ can_research redemption herbal_medicine heresy sanctity fervor faith illuminatio
 
 def bulgarian_castle
 is_a aoe_castle
-can_train trebuchet
+can_train konnik trebuchet
 can_research conscription hoardings sappers spies
 
 def bulgarian_villager
@@ -8723,7 +8730,7 @@ can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_g
 
 def lithuanian_castle
 is_a aoe_castle
-can_train trebuchet
+can_train leitis trebuchet
 can_research conscription hoardings sappers spies
 
 def lithuanian_villager
@@ -8804,7 +8811,7 @@ can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_g
 
 def tartar_castle
 is_a aoe_castle
-can_train trebuchet
+can_train tarkan trebuchet
 can_research conscription hoardings sappers spies
 
 def tartar_villager
@@ -8889,7 +8896,7 @@ can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_g
 
 def berber_castle
 is_a aoe_castle
-can_train trebuchet
+can_train genitour trebuchet
 can_research conscription hoardings sappers spies
 
 def berber_villager
@@ -8974,7 +8981,7 @@ can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_g
 
 def ethiopian_castle
 is_a aoe_castle
-can_train trebuchet
+can_train shotel_warrior trebuchet
 can_research conscription hoardings sappers spies
 
 def ethiopian_villager
@@ -9056,7 +9063,7 @@ can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_g
 
 def khmer_castle
 is_a aoe_castle
-can_train trebuchet
+can_train ballista_elephant trebuchet
 can_research conscription hoardings sappers spies
 
 def khmer_villager
@@ -9142,7 +9149,7 @@ can_research gillnets careening dry_dock
 
 def malay_castle
 is_a aoe_castle
-can_train trebuchet
+can_train karambit_warrior trebuchet
 can_research conscription hoardings sappers spies
 
 def malay_villager
@@ -9229,7 +9236,7 @@ can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_g
 
 def burmese_castle
 is_a aoe_castle
-can_train trebuchet
+can_train arambai trebuchet
 can_research conscription hoardings sappers spies
 
 def burmese_villager
@@ -9314,7 +9321,7 @@ can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_g
 
 def burgundian_castle
 is_a aoe_castle
-can_train trebuchet
+can_train coutillier trebuchet
 can_research conscription hoardings sappers spies
 
 def burgundian_villager
@@ -9400,7 +9407,7 @@ can_research gillnets careening
 
 def sicilian_castle
 is_a aoe_castle
-can_train trebuchet
+can_train serjeant trebuchet
 can_research conscription hoardings sappers spies
 
 def sicilian_villager
@@ -9484,7 +9491,7 @@ can_research gillnets careening
 
 def armenian_castle
 is_a aoe_castle
-can_train trebuchet
+can_train composite_bowman trebuchet
 can_research conscription hoardings sappers spies
 
 def armenian_villager
@@ -9567,7 +9574,7 @@ can_research gillnets careening
 
 def georgian_castle
 is_a aoe_castle
-can_train trebuchet
+can_train monaspa trebuchet
 can_research conscription hoardings sappers spies
 
 def georgian_villager
@@ -10100,7 +10107,7 @@ can_research gillnets careening
 
 def incan_castle
 is_a aoe_castle
-can_train trebuchet
+can_train slinger trebuchet
 can_research conscription hoardings sappers spies
 
 def incan_villager
@@ -10182,7 +10189,7 @@ can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_g
 
 def roman_castle
 is_a aoe_castle
-can_train trebuchet
+can_train legionary trebuchet
 can_research conscription hoardings sappers spies
 
 def roman_villager
@@ -10322,3 +10329,136 @@ rdg_range 6
 rdg_vs infantry 8
 rdg_vs building 3
 can_upgrade_to
+
+
+; Bulgarian UU: Konnik (mounted archer, AoE2 DE)
+def konnik
+class soldier
+is_a cavalry
+is_a archer_unit
+is_a unique_unit
+cost 60 60 0 0
+population_cost 2
+time_cost 20
+rdg_projectile 1
+rdg_projectile_speed 7
+rdg_targets ground air
+space 0.4
+requirements castle_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 100
+speed 1.4
+sight_range 5
+mdg 10
+mdf 0
+rdf 5
+rdg 2
+rdg_cd 2
+rdg_ready 0.6
+rdg_range 4
+rdg_hit_rate 100
+can_upgrade_to elite_konnik
+can_use_tech forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry conscription thumb_ring
+
+def elite_konnik
+class soldier
+is_a konnik
+cost 60 60 0 0
+population_cost 2
+time_cost 20
+line_upgrade 0
+
+hp_max 120
+mdg 13
+rdg 3
+
+
+; Berber UU: Genitour (mounted skirmisher, AoE2 DE)
+def genitour
+class soldier
+is_a cavalry
+is_a archer_unit
+is_a unique_unit
+cost 0 35 35 0
+population_cost 2
+time_cost 20
+rdg_projectile 1
+rdg_projectile_speed 7
+rdg_targets ground air
+space 0.4
+requirements castle_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 50
+speed 1.35
+sight_range 6
+mdg 0
+mdf 0
+rdf 0
+rdg 3
+rdg_cd 2
+rdg_ready 0.6
+rdg_range 4
+rdg_vs cavalry 3
+rdg_vs camel 3
+rdg_hit_rate 100
+can_upgrade_to elite_genitour
+can_use_tech forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry conscription
+
+def elite_genitour
+class soldier
+is_a genitour
+cost 0 35 35 0
+population_cost 2
+time_cost 20
+line_upgrade 0
+
+hp_max 60
+rdg 4
+
+
+; Armenian UU: Composite Bowman (AoE2 DE)
+def composite_bowman
+class soldier
+is_a archer_unit
+is_a unique_unit
+cost 35 45 0 0
+population_cost 1
+time_cost 18
+rdg_projectile 1
+rdg_projectile_speed 7
+rdg_targets ground air
+space 0.4
+requirements castle_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 40
+speed 0.96
+sight_range 6
+mdg 0
+mdf 0
+rdf 0
+rdg 4
+rdg_cd 2
+rdg_ready 0.6
+rdg_range 4
+rdg_vs spearman 2
+rdg_hit_rate 100
+can_upgrade_to elite_composite_bowman
+can_use_tech forging iron_casting blast_furnace padded_archer_armor leather_archer_armor ring_archer_armor thumb_ring
+
+def elite_composite_bowman
+class soldier
+is_a composite_bowman
+cost 35 45 0 0
+population_cost 1
+time_cost 16
+line_upgrade 0
+
+hp_max 50
+rdg 5
+

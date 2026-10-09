@@ -90,6 +90,9 @@ intro 8531
 def malians
 title 8014
 intro 8532
+def saracens
+title 8016
+intro 8533
 
 ; Late-added civilizations (DE 8 + DE Lords/Return of Rome 6). style.txt was only
 ; filled for britons..malians; rules.txt and ai.txt cover all 27 civs.

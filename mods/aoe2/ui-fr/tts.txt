@@ -18,9 +18,21 @@
 8013 Celtes
 
 8014 Maliens
+8016 Sarrasins
 
 8700 Goths
+8540 Unique unit Huskarl.
+  Unique techs Anarchy and Perfusion.
+  Infantry costs less.
+  Huskarls and Eagle Warriors are cheaper and tougher.
+  Infantry return some food when killing units.
+  Team bonus: Huskarls have more line of sight.
 8701 Perses
+8541 Unique unit War Elephant.
+  Unique techs Kamandaran and Silos.
+  Start with fifty extra food and wood.
+  Town Centers work faster.
+  Team bonus: trade gains more gold.
 8702 Slaves
 8703 Coumans
 8704 Huns
@@ -458,6 +470,87 @@
 ; New civilizations (14 from previous commit + 2 final: Inca, Romans)
 ; Language: fr
 
+8533 Unité unique : Mamelouk.
+  Technologies uniques : Madrasa et Zèle.
+  Les écuries coûtent moins cinquante/soixante d'or aux ères des ténèbres/des châteaux.
+  Les navires de transport ont le double de points de vie et transportent plus deux.
+  Les navires infligent plus six/plus sept dégâts aux bâtiments aux ères des châteaux/impériale.
+  Bonus d'équipe : les archers à pied gagnent plus un d'attaque contre les bâtiments dès l'ère des châteaux.
+8542 Unique unit Boyar.
+  Unique techs Druzhina and Orthodoxy.
+  Barracks and Archery Range units cost less.
+  Villagers have more hit points.
+  Team bonus: Militia line moves faster.
+8543 Unique unit Kipchak.
+  Unique techs Cuman Mercenaries and Steppe Husbandry.
+  Can build a second Town Center in Feudal Age.
+  Steppe Lancers cost less.
+  Cavalry archers train faster.
+  Team bonus: Barracks and Archery Range units train faster.
+8544 Unique unit Tarkan.
+  Unique techs Atheism and Marauders.
+  Start with one extra Scout Cavalry, no houses required.
+  Cavalry archers train faster.
+  Earn gold for killing villagers and monks.
+  Team bonus: Tarkans do bonus damage to buildings.
+8545 Unique unit War Wagon.
+  Unique techs Panokseon and Shinkichon.
+  Towers and Castles gain line of sight each age.
+  Woodcutters work faster.
+  Mangonels and Trebuchets are more accurate.
+  Ships and Cannon Galleons are tougher.
+  Team bonus: Siege Workshops can build War Wagons.
+8546 Unique unit Plumed Archer.
+  Unique techs El Dorado and Maya Architecture.
+  Start with one extra villager.
+  Resources last longer on the map.
+  Eagle line is tougher and stronger against archers.
+  Walls cost less.
+  Team bonus: walls cost less.
+8547 Unique unit Armored Elephant.
+  Unique techs Grand Trunk Road and Shatagni.
+  Buildings except farms cost less wood.
+  Camels and Heavy Camels cost less.
+  Town Centers and Outposts have more range and line of sight.
+  Team bonus: Hand Cannoneers have extra range.
+8548 Unique unit Conquistador.
+  Unique techs Supremacy and Inquisition.
+  Builders work faster.
+  Hand Cannoneers are more powerful.
+  Gunpowder units fire faster.
+  Trade generates more gold.
+  Team bonus: Hand Cannoneers are more accurate.
+8549 Unique unit Magyar Huszar.
+  Unique techs Mercenaries and Magyar Huszardom.
+  Scout line gains line of sight each age.
+  Trade Carts carry more.
+  Hussars train faster.
+  Team bonus: trade gains more gold.
+8550 Unique unit Winged Hussar.
+  Unique techs Stone Mining bonus.
+  Knights attack harder.
+  Stone mines have more resources.
+  Team bonus: Scout line gains line of sight.
+8551 Unique unit Genoese Crossbowman.
+  Unique techs Pavise and Silk Road.
+  Gunpowder units cost less gold.
+  Dock buildings are tougher.
+  Trade generates more gold.
+  Technologies cost less.
+  Team bonus: trade gains more gold.
+8552 Unique unit Hussite Wagon.
+  Unique techs Sappers.
+  Universities cost less.
+  Mines yield more stone.
+  Wagons and Siege Workshop units cost less.
+  Team bonus: mines yield extra stone.
+8553 Unique unit Janissary.
+  Unique techs Sipahi and Artillery.
+  Mines yield more gold.
+  Gunpowder units train faster.
+  Hand Cannoneers are more accurate.
+  Monks heal faster.
+  Team bonus: Chemistry is free.
 8714 Bulgares
 8554 Unique unit Bulwark.
   See English intro for full description.

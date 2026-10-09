@@ -15,6 +15,7 @@
 8012 Aztecs
 8013 Celts
 8014 Malians
+8016 Saracens
 
 8070 samurai
 8071 elite samurai
@@ -418,6 +419,12 @@
   Team bonus: Universities work faster.
 
 ; Late-added civilizations (DE 8 + DE Lords/Return of Rome 6 = 14)
+8533 Unique unit Mameluke.
+  Unique techs Madrasah and Zealotry.
+  Stables cost -50 gold in Dark Age, -60 in Castle Age.
+  Transport ships have double hit points and carry plus two.
+  Ships deal plus six plus seven attack vs buildings in Castle Imperial Age.
+  Team bonus: Foot archers plus one attack vs buildings from Castle Age.
 8700 Goths
 8540 Unique unit Huskarl.
   Unique techs Anarchy and Perfusion.
