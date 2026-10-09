@@ -18,6 +18,54 @@
 8013 Kelten
 
 8014 Malier
+
+8700 Goten
+8701 Perser
+8702 Slawen
+8703 Kumanen
+8704 Hunnen
+8705 Koreaner
+8706 Maya
+8707 Inder
+8708 Spanier
+8709 Magyaren
+8710 Polen
+8711 Italiener
+8712 Böhmen
+8713 Türken
+
+; (9000-9013: per-civ villager labels removed for design consistency with the original 13 civs,
+;  which shared a single villager label. Civ-specific info lives in mods/aoe2/rules.txt and
+;  mods/aoe2/ui-zh/tts.txt under the "新增文明介绍" section near the top of this file.)
+9014 Huskarl
+9016 Bojar
+9017 Kipchak
+9018 Tarkan
+9019 Streitwagen
+9020 Federbogenschütze
+9022 Konquistador
+9023 Magyarhuszar
+9024 Flügelhuszar
+9025 Genuesischer Armbrustschütze
+9026 Hussitenwagen
+9027 Janitschar
+; (9028-9041: per-civ elite upgrade labels removed for design consistency
+;  with the original 13 civs, which use shared 'elite + unit' labels in 8000+ range.)
+9042 Anarchie
+9043 Perfusion
+9044 Kamandaran
+9045 Druzhina
+9046 Orthodoxie
+9047 Steppenviehzucht
+9048 Kumanische Söldner
+9049 Marodeure
+9050 Atheismus
+9051 Panokseon
+9052 Shinkichon
+9053 El Dorado
+9054 Maya-Architektur
+9055 Grand Trunk Road
+9056 Shatagni
 8070 Samurai
 8071 Elite-Samurai
 8072 Deutsch-ritter
@@ -123,6 +171,18 @@
 8330 Viehskadaver
 8332 Küstenfisch
 8333 Hochseefisch
+8334 Elite-Huskarl
+8335 Elite-Bojar
+8336 Elite-Kipchak
+8337 Elite-Tarkan
+8338 Elite-Kriegswagen
+8339 Elite-Federbogenschütze
+8340 Elite-Konquistador
+8341 Elite-Magyarhusar
+8342 Elite-Flügelhusar
+8343 Elite-Genuese-armbrustschütze
+8344 Elite-Hussitenwagen
+8345 Elite-Janitschar
 
 8120 Milizsoldat
 8121 Schwertkämpfer

@@ -353,7 +353,36 @@ class AttributeEffectsMixin:
                 cls._handle_resource_volume_max_bonus(unit, value)
                 i += 2
                 continue
-                
+
+            # D-Phase 2: trade_reward_bonus_pct — scales gold earned per market
+            # round-trip for trade carts. Stored per-player so market logic can
+            # look it up regardless of which cart is delivering.
+            if stat == "trade_reward_bonus_pct":
+                try:
+                    pct = float(value)
+                except (TypeError, ValueError):
+                    from ..lib.log import warning
+                    warning(
+                        "Cannot parse trade_reward_bonus_pct value %r", value
+                    )
+                    i += 2
+                    continue
+                player = getattr(unit, "player", None)
+                if player is not None:
+                    cur = getattr(player, "trade_reward_bonus_pct", 0) or 0
+                    if isinstance(cur, (list, tuple)):
+                        cur = list(cur)
+                    else:
+                        cur = [cur]
+                    cur.append(pct)
+                    player.trade_reward_bonus_pct = cur
+                else:
+                    setattr(unit, "trade_reward_bonus_pct",
+                            (getattr(unit, "trade_reward_bonus_pct", 0) or 0)
+                            + pct)
+                i += 2
+                continue
+
             # 处理普通数值属性
             cls._handle_general_attribute_bonus(unit, stat, value)
             i += 2

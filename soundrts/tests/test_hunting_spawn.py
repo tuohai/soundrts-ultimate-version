@@ -6,6 +6,8 @@ import types
 
 sys.argv = ["pytest"]
 
+import pytest  # noqa: E402
+
 import soundrts.worldunit  # noqa: F401
 
 from soundrts.definitions import rules
@@ -85,6 +87,8 @@ def test_die_spawns_deposit_after_unit_removed():
             self.player = types.SimpleNamespace(
                 stats=types.SimpleNamespace(add=lambda *a: None),
                 on_unit_attacked=lambda *a: None,
+                observed_objects={},
+                perception=set(),
             )
             self._buffs = []
             self.inside = None
@@ -100,6 +104,8 @@ def test_die_spawns_deposit_after_unit_removed():
             player_is_an_enemy=lambda _p: False,
             stats=types.SimpleNamespace(add=lambda *a: None),
             record_unit_killed=lambda *a: None,
+            observed_objects={},
+            perception=set(),
         ),
         can_gather_deposit=["food_carcass"],
         orders=[],

@@ -26,6 +26,11 @@ class Unit(Creature):
     is_cloakable = True
     is_a_gate = True
     is_a_unit = True
+    # D-Phase 2: rules-driven team-free marker (AoE2 Condottiero: when an
+    # ally's race lists this unit type via ``race_grants_team_free_unit``,
+    # the cost becomes 0). Defined on the base Unit so the rules parser
+    # accepts the field on every descendant (soldier, building, …).
+    team_free_unit = 0
 
     @classmethod
     def interpret(cls, d):

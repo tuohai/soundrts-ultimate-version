@@ -1954,3 +1954,2089 @@ label mn1_skirm
 get 8 peasant 10 skirmisher
 attack
 goto mn1_castle
+
+
+; ======================== GOTHS (huskarl / infantry flood) ========================
+
+def goths_beginner
+defeat_score 10
+counter_skill 25
+workers 12
+constant_attacks 0
+research 1
+get 8 peasant
+get 4 militia 8 aoe_archer
+get 12 peasant 8 aoe_knight 8 huskarl 2 battering_ram
+goto -1
+
+def goths_intermediate
+defeat_score 20
+counter_skill 50
+starting_resources 100 200 0 200
+watchdog 720
+constant_attacks 1
+research 1
+workers 16
+attack_ratio 120
+label gi1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 aoe_knight 10 huskarl 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto gi1
+
+def goths_advanced
+defeat_score 40
+counter_skill 75
+starting_resources 150 250 0 200
+train_time 50
+research_time 80
+build_time 50
+gather_time 50
+watchdog 600
+constant_attacks 1
+research 1
+workers 22
+expand 2
+attack_ratio 110
+label ga1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 aoe_knight 10 huskarl 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto ga1
+
+def goths_expert
+defeat_score 80
+counter_skill 90
+starting_resources 200 300 0 250
+starting_units 1 peasant
+train_time 50
+research_time 70
+build_time 50
+gather_time 50
+unit_hp 120
+watchdog 600
+constant_attacks 1
+research 1
+workers 28
+expand 2
+attack_ratio 100
+label ge1
+get 12 peasant
+get 4 militia 8 aoe_archer
+attack
+if_attacked goto ge1_hold
+if_enemy cavalry goto ge1_spears
+if_enemy archer_unit goto ge1_skirm
+label ge1_castle
+get 16 peasant 8 aoe_knight 12 huskarl 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto ge1
+
+label ge1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto ge1_castle
+
+label ge1_spears
+get 8 peasant 10 spearman
+attack
+goto ge1_castle
+
+label ge1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto ge1_castle
+
+def goths_nightmare
+defeat_score 200
+counter_skill 100
+starting_resources 300 400 0 300
+starting_units 2 peasant
+train_time 40
+research_time 60
+build_time 40
+gather_time 40
+unit_hp 140
+watchdog 540
+constant_attacks 1
+research 1
+workers 36
+expand 2
+attack_ratio 80
+label gn1
+get 12 peasant
+get 8 militia 4 spearman
+attack
+if_attacked goto gn1_hold
+if_enemy cavalry goto gn1_spears
+if_enemy archer_unit goto gn1_skirm
+label gn1_castle
+get 18 peasant 8 aoe_knight 16 huskarl 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto gn1
+
+label gn1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto gn1_castle
+
+label gn1_spears
+get 8 peasant 10 spearman
+attack
+goto gn1_castle
+
+label gn1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto gn1_castle
+
+
+; ======================== PERSIANS (war_elephant / knight) ========================
+
+def persians_beginner
+defeat_score 10
+counter_skill 25
+workers 12
+constant_attacks 0
+research 1
+get 8 peasant
+get 4 militia 8 aoe_archer
+get 12 peasant 8 aoe_knight 4 war_elephant 2 battering_ram
+goto -1
+
+def persians_intermediate
+defeat_score 20
+counter_skill 50
+starting_resources 100 250 0 200
+watchdog 720
+constant_attacks 1
+research 1
+workers 16
+attack_ratio 120
+label pi1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 aoe_knight 6 war_elephant 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto pi1
+
+def persians_advanced
+defeat_score 40
+counter_skill 75
+starting_resources 150 300 0 200
+train_time 50
+research_time 80
+build_time 50
+gather_time 50
+watchdog 600
+constant_attacks 1
+research 1
+workers 22
+expand 2
+attack_ratio 110
+label pa1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 aoe_knight 6 war_elephant 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto pa1
+
+def persians_expert
+defeat_score 80
+counter_skill 90
+starting_resources 200 350 0 250
+starting_units 1 peasant
+train_time 50
+research_time 70
+build_time 50
+gather_time 50
+unit_hp 120
+watchdog 600
+constant_attacks 1
+research 1
+workers 28
+expand 2
+attack_ratio 100
+label pe1
+get 12 peasant
+get 4 militia 8 aoe_archer
+attack
+if_attacked goto pe1_hold
+if_enemy cavalry goto pe1_spears
+if_enemy archer_unit goto pe1_skirm
+label pe1_castle
+get 16 peasant 8 aoe_knight 8 war_elephant 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto pe1
+
+label pe1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto pe1_castle
+
+label pe1_spears
+get 8 peasant 10 spearman
+attack
+goto pe1_castle
+
+label pe1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto pe1_castle
+
+def persians_nightmare
+defeat_score 200
+counter_skill 100
+starting_resources 300 450 0 300
+starting_units 2 peasant
+train_time 40
+research_time 60
+build_time 40
+gather_time 40
+unit_hp 140
+watchdog 540
+constant_attacks 1
+research 1
+workers 36
+expand 2
+attack_ratio 80
+label pn1
+get 12 peasant
+get 8 militia 4 spearman
+attack
+if_attacked goto pn1_hold
+if_enemy cavalry goto pn1_spears
+if_enemy archer_unit goto pn1_skirm
+label pn1_castle
+get 18 peasant 8 aoe_knight 10 war_elephant 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto pn1
+
+label pn1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto pn1_castle
+
+label pn1_spears
+get 8 peasant 10 spearman
+attack
+goto pn1_castle
+
+label pn1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto pn1_castle
+
+
+; ======================== SLAVS (boyar / infantry-cav) ========================
+
+def slavs_beginner
+defeat_score 10
+counter_skill 25
+workers 12
+constant_attacks 0
+research 1
+get 8 peasant
+get 4 militia 8 aoe_archer
+get 12 peasant 8 aoe_knight 6 boyar 2 battering_ram
+goto -1
+
+def slavs_intermediate
+defeat_score 20
+counter_skill 50
+starting_resources 100 200 0 200
+watchdog 720
+constant_attacks 1
+research 1
+workers 16
+attack_ratio 120
+label si1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 aoe_knight 8 boyar 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto si1
+
+def slavs_advanced
+defeat_score 40
+counter_skill 75
+starting_resources 150 250 0 200
+train_time 50
+research_time 80
+build_time 50
+gather_time 50
+watchdog 600
+constant_attacks 1
+research 1
+workers 22
+expand 2
+attack_ratio 110
+label sa1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 aoe_knight 8 boyar 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto sa1
+
+def slavs_expert
+defeat_score 80
+counter_skill 90
+starting_resources 200 300 0 250
+starting_units 1 peasant
+train_time 50
+research_time 70
+build_time 50
+gather_time 50
+unit_hp 120
+watchdog 600
+constant_attacks 1
+research 1
+workers 28
+expand 2
+attack_ratio 100
+label se1
+get 12 peasant
+get 4 militia 8 aoe_archer
+attack
+if_attacked goto se1_hold
+if_enemy cavalry goto se1_spears
+if_enemy archer_unit goto se1_skirm
+label se1_castle
+get 16 peasant 8 aoe_knight 10 boyar 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto se1
+
+label se1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto se1_castle
+
+label se1_spears
+get 8 peasant 10 spearman
+attack
+goto se1_castle
+
+label se1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto se1_castle
+
+def slavs_nightmare
+defeat_score 200
+counter_skill 100
+starting_resources 300 400 0 300
+starting_units 2 peasant
+train_time 40
+research_time 60
+build_time 40
+gather_time 40
+unit_hp 140
+watchdog 540
+constant_attacks 1
+research 1
+workers 36
+expand 2
+attack_ratio 80
+label sn1
+get 12 peasant
+get 8 militia 4 spearman
+attack
+if_attacked goto sn1_hold
+if_enemy cavalry goto sn1_spears
+if_enemy archer_unit goto sn1_skirm
+label sn1_castle
+get 18 peasant 8 aoe_knight 12 boyar 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto sn1
+
+label sn1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto sn1_castle
+
+label sn1_spears
+get 8 peasant 10 spearman
+attack
+goto sn1_castle
+
+label sn1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto sn1_castle
+
+
+; ======================== CUMANS (kipchak / steppe lancer) ========================
+
+def cumans_beginner
+defeat_score 10
+counter_skill 25
+workers 12
+constant_attacks 0
+research 1
+get 8 peasant
+get 4 militia 8 aoe_archer
+get 12 peasant 8 steppe_lancer 8 kipchak 2 battering_ram
+goto -1
+
+def cumans_intermediate
+defeat_score 20
+counter_skill 50
+starting_resources 100 200 0 200
+watchdog 720
+constant_attacks 1
+research 1
+workers 16
+attack_ratio 120
+label ci1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 steppe_lancer 10 kipchak 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto ci1
+
+def cumans_advanced
+defeat_score 40
+counter_skill 75
+starting_resources 150 250 0 200
+train_time 50
+research_time 80
+build_time 50
+gather_time 50
+watchdog 600
+constant_attacks 1
+research 1
+workers 22
+expand 2
+attack_ratio 110
+label ca1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 steppe_lancer 10 kipchak 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto ca1
+
+def cumans_expert
+defeat_score 80
+counter_skill 90
+starting_resources 200 300 0 250
+starting_units 1 peasant
+train_time 50
+research_time 70
+build_time 50
+gather_time 50
+unit_hp 120
+watchdog 600
+constant_attacks 1
+research 1
+workers 28
+expand 2
+attack_ratio 100
+label ce1
+get 12 peasant
+get 4 militia 8 aoe_archer
+attack
+if_attacked goto ce1_hold
+if_enemy cavalry goto ce1_spears
+if_enemy archer_unit goto ce1_skirm
+label ce1_castle
+get 16 peasant 8 steppe_lancer 14 kipchak 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto ce1
+
+label ce1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto ce1_castle
+
+label ce1_spears
+get 8 peasant 10 spearman
+attack
+goto ce1_castle
+
+label ce1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto ce1_castle
+
+def cumans_nightmare
+defeat_score 200
+counter_skill 100
+starting_resources 300 400 0 300
+starting_units 2 peasant
+train_time 40
+research_time 60
+build_time 40
+gather_time 40
+unit_hp 140
+watchdog 540
+constant_attacks 1
+research 1
+workers 36
+expand 2
+attack_ratio 80
+label cn1
+get 12 peasant
+get 8 militia 4 spearman
+attack
+if_attacked goto cn1_hold
+if_enemy cavalry goto cn1_spears
+if_enemy archer_unit goto cn1_skirm
+label cn1_castle
+get 18 peasant 8 steppe_lancer 16 kipchak 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto cn1
+
+label cn1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto cn1_castle
+
+label cn1_spears
+get 8 peasant 10 spearman
+attack
+goto cn1_castle
+
+label cn1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto cn1_castle
+
+
+; ======================== HUNS (tarkan / cavalry) ========================
+
+def huns_beginner
+defeat_score 10
+counter_skill 25
+workers 12
+constant_attacks 0
+research 1
+get 8 peasant
+get 4 militia 8 aoe_archer
+get 12 peasant 8 scout_cavalry 6 tarkan 2 battering_ram
+goto -1
+
+def huns_intermediate
+defeat_score 20
+counter_skill 50
+starting_resources 100 200 0 200
+watchdog 720
+constant_attacks 1
+research 1
+workers 16
+attack_ratio 120
+label hi1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 scout_cavalry 8 tarkan 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto hi1
+
+def huns_advanced
+defeat_score 40
+counter_skill 75
+starting_resources 150 250 0 200
+train_time 50
+research_time 80
+build_time 50
+gather_time 50
+watchdog 600
+constant_attacks 1
+research 1
+workers 22
+expand 2
+attack_ratio 110
+label ha1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 scout_cavalry 8 tarkan 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto ha1
+
+def huns_expert
+defeat_score 80
+counter_skill 90
+starting_resources 200 300 0 250
+starting_units 1 peasant
+train_time 50
+research_time 70
+build_time 50
+gather_time 50
+unit_hp 120
+watchdog 600
+constant_attacks 1
+research 1
+workers 28
+expand 2
+attack_ratio 100
+label he1
+get 12 peasant
+get 4 militia 8 aoe_archer
+attack
+if_attacked goto he1_hold
+if_enemy cavalry goto he1_spears
+if_enemy archer_unit goto he1_skirm
+label he1_castle
+get 16 peasant 8 scout_cavalry 12 tarkan 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto he1
+
+label he1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto he1_castle
+
+label he1_spears
+get 8 peasant 10 spearman
+attack
+goto he1_castle
+
+label he1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto he1_castle
+
+def huns_nightmare
+defeat_score 200
+counter_skill 100
+starting_resources 300 400 0 300
+starting_units 2 peasant
+train_time 40
+research_time 60
+build_time 40
+gather_time 40
+unit_hp 140
+watchdog 540
+constant_attacks 1
+research 1
+workers 36
+expand 2
+attack_ratio 80
+label hn1
+get 12 peasant
+get 8 militia 4 spearman
+attack
+if_attacked goto hn1_hold
+if_enemy cavalry goto hn1_spears
+if_enemy archer_unit goto hn1_skirm
+label hn1_castle
+get 18 peasant 8 scout_cavalry 16 tarkan 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto hn1
+
+label hn1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto hn1_castle
+
+label hn1_spears
+get 8 peasant 10 spearman
+attack
+goto hn1_castle
+
+label hn1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto hn1_castle
+
+
+; ======================== KOREANS (war_wagon / tower) ========================
+
+def koreans_beginner
+defeat_score 10
+counter_skill 25
+workers 12
+constant_attacks 0
+research 1
+get 8 peasant
+get 4 militia 8 aoe_archer
+get 12 peasant 8 aoe_knight 6 war_wagon 2 battering_ram
+goto -1
+
+def koreans_intermediate
+defeat_score 20
+counter_skill 50
+starting_resources 100 200 0 200
+watchdog 720
+constant_attacks 1
+research 1
+workers 16
+attack_ratio 120
+label ki1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 aoe_knight 8 war_wagon 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto ki1
+
+def koreans_advanced
+defeat_score 40
+counter_skill 75
+starting_resources 150 250 0 200
+train_time 50
+research_time 80
+build_time 50
+gather_time 50
+watchdog 600
+constant_attacks 1
+research 1
+workers 22
+expand 2
+attack_ratio 110
+label ka1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 aoe_knight 8 war_wagon 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto ka1
+
+def koreans_expert
+defeat_score 80
+counter_skill 90
+starting_resources 200 300 0 250
+starting_units 1 peasant
+train_time 50
+research_time 70
+build_time 50
+gather_time 50
+unit_hp 120
+watchdog 600
+constant_attacks 1
+research 1
+workers 28
+expand 2
+attack_ratio 100
+label ke1
+get 12 peasant
+get 4 militia 8 aoe_archer
+attack
+if_attacked goto ke1_hold
+if_enemy cavalry goto ke1_spears
+if_enemy archer_unit goto ke1_skirm
+label ke1_castle
+get 16 peasant 8 aoe_knight 10 war_wagon 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto ke1
+
+label ke1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto ke1_castle
+
+label ke1_spears
+get 8 peasant 10 spearman
+attack
+goto ke1_castle
+
+label ke1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto ke1_castle
+
+def koreans_nightmare
+defeat_score 200
+counter_skill 100
+starting_resources 300 400 0 300
+starting_units 2 peasant
+train_time 40
+research_time 60
+build_time 40
+gather_time 40
+unit_hp 140
+watchdog 540
+constant_attacks 1
+research 1
+workers 36
+expand 2
+attack_ratio 80
+label kn1
+get 12 peasant
+get 8 militia 4 spearman
+attack
+if_attacked goto kn1_hold
+if_enemy cavalry goto kn1_spears
+if_enemy archer_unit goto kn1_skirm
+label kn1_castle
+get 18 peasant 8 aoe_knight 12 war_wagon 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto kn1
+
+label kn1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto kn1_castle
+
+label kn1_spears
+get 8 peasant 10 spearman
+attack
+goto kn1_castle
+
+label kn1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto kn1_castle
+
+
+; ======================== MAYANS (plumed_archer / eagle) ========================
+
+def mayans_beginner
+defeat_score 10
+counter_skill 25
+workers 12
+constant_attacks 0
+research 1
+get 8 peasant
+get 4 militia 8 aoe_archer
+get 12 peasant 8 aoe_knight 8 plumed_archer 2 battering_ram
+goto -1
+
+def mayans_intermediate
+defeat_score 20
+counter_skill 50
+starting_resources 100 200 0 200
+watchdog 720
+constant_attacks 1
+research 1
+workers 16
+attack_ratio 120
+label mi1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 aoe_knight 10 plumed_archer 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto mi1
+
+def mayans_advanced
+defeat_score 40
+counter_skill 75
+starting_resources 150 250 0 200
+train_time 50
+research_time 80
+build_time 50
+gather_time 50
+watchdog 600
+constant_attacks 1
+research 1
+workers 22
+expand 2
+attack_ratio 110
+label ma1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 aoe_knight 10 plumed_archer 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto ma1
+
+def mayans_expert
+defeat_score 80
+counter_skill 90
+starting_resources 200 300 0 250
+starting_units 1 peasant
+train_time 50
+research_time 70
+build_time 50
+gather_time 50
+unit_hp 120
+watchdog 600
+constant_attacks 1
+research 1
+workers 28
+expand 2
+attack_ratio 100
+label me1
+get 12 peasant
+get 4 militia 8 aoe_archer
+attack
+if_attacked goto me1_hold
+if_enemy cavalry goto me1_spears
+if_enemy archer_unit goto me1_skirm
+label me1_castle
+get 16 peasant 8 aoe_knight 14 plumed_archer 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto me1
+
+label me1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto me1_castle
+
+label me1_spears
+get 8 peasant 10 spearman
+attack
+goto me1_castle
+
+label me1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto me1_castle
+
+def mayans_nightmare
+defeat_score 200
+counter_skill 100
+starting_resources 300 400 0 300
+starting_units 2 peasant
+train_time 40
+research_time 60
+build_time 40
+gather_time 40
+unit_hp 140
+watchdog 540
+constant_attacks 1
+research 1
+workers 36
+expand 2
+attack_ratio 80
+label mn1
+get 12 peasant
+get 8 militia 4 spearman
+attack
+if_attacked goto mn1_hold
+if_enemy cavalry goto mn1_spears
+if_enemy archer_unit goto mn1_skirm
+label mn1_castle
+get 18 peasant 8 aoe_knight 16 plumed_archer 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto mn1
+
+label mn1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto mn1_castle
+
+label mn1_spears
+get 8 peasant 10 spearman
+attack
+goto mn1_castle
+
+label mn1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto mn1_castle
+
+
+; ======================== HINDUSTANIS (armored_elephant / camel) ========================
+
+def hindustanis_beginner
+defeat_score 10
+counter_skill 25
+workers 12
+constant_attacks 0
+research 1
+get 8 peasant
+get 4 militia 8 aoe_archer
+get 12 peasant 8 aoe_knight 6 camel_rider 4 armored_elephant 2 battering_ram
+goto -1
+
+def hindustanis_intermediate
+defeat_score 20
+counter_skill 50
+starting_resources 100 200 0 200
+watchdog 720
+constant_attacks 1
+research 1
+workers 16
+attack_ratio 120
+label hi1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 aoe_knight 8 camel_rider 6 armored_elephant 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto hi1
+
+def hindustanis_advanced
+defeat_score 40
+counter_skill 75
+starting_resources 150 250 0 200
+train_time 50
+research_time 80
+build_time 50
+gather_time 50
+watchdog 600
+constant_attacks 1
+research 1
+workers 22
+expand 2
+attack_ratio 110
+label ha1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 aoe_knight 8 camel_rider 6 armored_elephant 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto ha1
+
+def hindustanis_expert
+defeat_score 80
+counter_skill 90
+starting_resources 200 300 0 250
+starting_units 1 peasant
+train_time 50
+research_time 70
+build_time 50
+gather_time 50
+unit_hp 120
+watchdog 600
+constant_attacks 1
+research 1
+workers 28
+expand 2
+attack_ratio 100
+label he1
+get 12 peasant
+get 4 militia 8 aoe_archer
+attack
+if_attacked goto he1_hold
+if_enemy cavalry goto he1_spears
+if_enemy archer_unit goto he1_skirm
+label he1_castle
+get 16 peasant 8 aoe_knight 10 camel_rider 8 armored_elephant 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto he1
+
+label he1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto he1_castle
+
+label he1_spears
+get 8 peasant 10 spearman
+attack
+goto he1_castle
+
+label he1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto he1_castle
+
+def hindustanis_nightmare
+defeat_score 200
+counter_skill 100
+starting_resources 300 400 0 300
+starting_units 2 peasant
+train_time 40
+research_time 60
+build_time 40
+gather_time 40
+unit_hp 140
+watchdog 540
+constant_attacks 1
+research 1
+workers 36
+expand 2
+attack_ratio 80
+label hn1
+get 12 peasant
+get 8 militia 4 spearman
+attack
+if_attacked goto hn1_hold
+if_enemy cavalry goto hn1_spears
+if_enemy archer_unit goto hn1_skirm
+label hn1_castle
+get 18 peasant 8 aoe_knight 12 camel_rider 10 armored_elephant 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto hn1
+
+label hn1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto hn1_castle
+
+label hn1_spears
+get 8 peasant 10 spearman
+attack
+goto hn1_castle
+
+label hn1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto hn1_castle
+
+
+; ======================== SPANISH (conquistador / hand-cannoneer) ========================
+
+def spanish_beginner
+defeat_score 10
+counter_skill 25
+workers 12
+constant_attacks 0
+research 1
+get 8 peasant
+get 4 militia 8 aoe_archer
+get 12 peasant 8 aoe_knight 6 conquistador 2 battering_ram
+goto -1
+
+def spanish_intermediate
+defeat_score 20
+counter_skill 50
+starting_resources 100 200 0 200
+watchdog 720
+constant_attacks 1
+research 1
+workers 16
+attack_ratio 120
+label si1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 aoe_knight 8 conquistador 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto si1
+
+def spanish_advanced
+defeat_score 40
+counter_skill 75
+starting_resources 150 250 0 200
+train_time 50
+research_time 80
+build_time 50
+gather_time 50
+watchdog 600
+constant_attacks 1
+research 1
+workers 22
+expand 2
+attack_ratio 110
+label sa1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 aoe_knight 8 conquistador 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto sa1
+
+def spanish_expert
+defeat_score 80
+counter_skill 90
+starting_resources 200 300 0 250
+starting_units 1 peasant
+train_time 50
+research_time 70
+build_time 50
+gather_time 50
+unit_hp 120
+watchdog 600
+constant_attacks 1
+research 1
+workers 28
+expand 2
+attack_ratio 100
+label se1
+get 12 peasant
+get 4 militia 8 aoe_archer
+attack
+if_attacked goto se1_hold
+if_enemy cavalry goto se1_spears
+if_enemy archer_unit goto se1_skirm
+label se1_castle
+get 16 peasant 8 aoe_knight 10 conquistador 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto se1
+
+label se1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto se1_castle
+
+label se1_spears
+get 8 peasant 10 spearman
+attack
+goto se1_castle
+
+label se1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto se1_castle
+
+def spanish_nightmare
+defeat_score 200
+counter_skill 100
+starting_resources 300 400 0 300
+starting_units 2 peasant
+train_time 40
+research_time 60
+build_time 40
+gather_time 40
+unit_hp 140
+watchdog 540
+constant_attacks 1
+research 1
+workers 36
+expand 2
+attack_ratio 80
+label sn1
+get 12 peasant
+get 8 militia 4 spearman
+attack
+if_attacked goto sn1_hold
+if_enemy cavalry goto sn1_spears
+if_enemy archer_unit goto sn1_skirm
+label sn1_castle
+get 18 peasant 8 aoe_knight 12 conquistador 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto sn1
+
+label sn1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto sn1_castle
+
+label sn1_spears
+get 8 peasant 10 spearman
+attack
+goto sn1_castle
+
+label sn1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto sn1_castle
+
+
+; ======================== MAGYARS (magyar_huszar / scout) ========================
+
+def magyars_beginner
+defeat_score 10
+counter_skill 25
+workers 12
+constant_attacks 0
+research 1
+get 8 peasant
+get 4 militia 8 aoe_archer
+get 12 peasant 8 scout_cavalry 6 magyar_huszar 2 battering_ram
+goto -1
+
+def magyars_intermediate
+defeat_score 20
+counter_skill 50
+starting_resources 100 200 0 200
+watchdog 720
+constant_attacks 1
+research 1
+workers 16
+attack_ratio 120
+label mi1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 scout_cavalry 8 magyar_huszar 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto mi1
+
+def magyars_advanced
+defeat_score 40
+counter_skill 75
+starting_resources 150 250 0 200
+train_time 50
+research_time 80
+build_time 50
+gather_time 50
+watchdog 600
+constant_attacks 1
+research 1
+workers 22
+expand 2
+attack_ratio 110
+label ma1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 scout_cavalry 8 magyar_huszar 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto ma1
+
+def magyars_expert
+defeat_score 80
+counter_skill 90
+starting_resources 200 300 0 250
+starting_units 1 peasant
+train_time 50
+research_time 70
+build_time 50
+gather_time 50
+unit_hp 120
+watchdog 600
+constant_attacks 1
+research 1
+workers 28
+expand 2
+attack_ratio 100
+label me1
+get 12 peasant
+get 4 militia 8 aoe_archer
+attack
+if_attacked goto me1_hold
+if_enemy cavalry goto me1_spears
+if_enemy archer_unit goto me1_skirm
+label me1_castle
+get 16 peasant 8 scout_cavalry 12 magyar_huszar 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto me1
+
+label me1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto me1_castle
+
+label me1_spears
+get 8 peasant 10 spearman
+attack
+goto me1_castle
+
+label me1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto me1_castle
+
+def magyars_nightmare
+defeat_score 200
+counter_skill 100
+starting_resources 300 400 0 300
+starting_units 2 peasant
+train_time 40
+research_time 60
+build_time 40
+gather_time 40
+unit_hp 140
+watchdog 540
+constant_attacks 1
+research 1
+workers 36
+expand 2
+attack_ratio 80
+label mn1
+get 12 peasant
+get 8 militia 4 spearman
+attack
+if_attacked goto mn1_hold
+if_enemy cavalry goto mn1_spears
+if_enemy archer_unit goto mn1_skirm
+label mn1_castle
+get 18 peasant 8 scout_cavalry 16 magyar_huszar 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto mn1
+
+label mn1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto mn1_castle
+
+label mn1_spears
+get 8 peasant 10 spearman
+attack
+goto mn1_castle
+
+label mn1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto mn1_castle
+
+
+; ======================== POLES (winged_hussar / knight) ========================
+
+def poles_beginner
+defeat_score 10
+counter_skill 25
+workers 12
+constant_attacks 0
+research 1
+get 8 peasant
+get 4 militia 8 aoe_archer
+get 12 peasant 8 aoe_knight 6 winged_hussar 2 battering_ram
+goto -1
+
+def poles_intermediate
+defeat_score 20
+counter_skill 50
+starting_resources 100 200 0 200
+watchdog 720
+constant_attacks 1
+research 1
+workers 16
+attack_ratio 120
+label pi1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 aoe_knight 8 winged_hussar 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto pi1
+
+def poles_advanced
+defeat_score 40
+counter_skill 75
+starting_resources 150 250 0 200
+train_time 50
+research_time 80
+build_time 50
+gather_time 50
+watchdog 600
+constant_attacks 1
+research 1
+workers 22
+expand 2
+attack_ratio 110
+label pa1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 aoe_knight 8 winged_hussar 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto pa1
+
+def poles_expert
+defeat_score 80
+counter_skill 90
+starting_resources 200 300 0 250
+starting_units 1 peasant
+train_time 50
+research_time 70
+build_time 50
+gather_time 50
+unit_hp 120
+watchdog 600
+constant_attacks 1
+research 1
+workers 28
+expand 2
+attack_ratio 100
+label pe1
+get 12 peasant
+get 4 militia 8 aoe_archer
+attack
+if_attacked goto pe1_hold
+if_enemy cavalry goto pe1_spears
+if_enemy archer_unit goto pe1_skirm
+label pe1_castle
+get 16 peasant 8 aoe_knight 10 winged_hussar 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto pe1
+
+label pe1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto pe1_castle
+
+label pe1_spears
+get 8 peasant 10 spearman
+attack
+goto pe1_castle
+
+label pe1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto pe1_castle
+
+def poles_nightmare
+defeat_score 200
+counter_skill 100
+starting_resources 300 400 0 300
+starting_units 2 peasant
+train_time 40
+research_time 60
+build_time 40
+gather_time 40
+unit_hp 140
+watchdog 540
+constant_attacks 1
+research 1
+workers 36
+expand 2
+attack_ratio 80
+label pn1
+get 12 peasant
+get 8 militia 4 spearman
+attack
+if_attacked goto pn1_hold
+if_enemy cavalry goto pn1_spears
+if_enemy archer_unit goto pn1_skirm
+label pn1_castle
+get 18 peasant 8 aoe_knight 12 winged_hussar 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto pn1
+
+label pn1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto pn1_castle
+
+label pn1_spears
+get 8 peasant 10 spearman
+attack
+goto pn1_castle
+
+label pn1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto pn1_castle
+
+
+; ======================== ITALIANS (genoese_crossbowman / dock) ========================
+
+def italians_beginner
+defeat_score 10
+counter_skill 25
+workers 12
+constant_attacks 0
+research 1
+get 8 peasant
+get 4 militia 8 aoe_archer
+get 12 peasant 8 aoe_knight 6 genoese_crossbowman 2 battering_ram
+goto -1
+
+def italians_intermediate
+defeat_score 20
+counter_skill 50
+starting_resources 100 200 0 200
+watchdog 720
+constant_attacks 1
+research 1
+workers 16
+attack_ratio 120
+label ii1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 aoe_knight 8 genoese_crossbowman 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto ii1
+
+def italians_advanced
+defeat_score 40
+counter_skill 75
+starting_resources 150 250 0 200
+train_time 50
+research_time 80
+build_time 50
+gather_time 50
+watchdog 600
+constant_attacks 1
+research 1
+workers 22
+expand 2
+attack_ratio 110
+label ia1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 aoe_knight 8 genoese_crossbowman 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto ia1
+
+def italians_expert
+defeat_score 80
+counter_skill 90
+starting_resources 200 300 0 250
+starting_units 1 peasant
+train_time 50
+research_time 70
+build_time 50
+gather_time 50
+unit_hp 120
+watchdog 600
+constant_attacks 1
+research 1
+workers 28
+expand 2
+attack_ratio 100
+label ie1
+get 12 peasant
+get 4 militia 8 aoe_archer
+attack
+if_attacked goto ie1_hold
+if_enemy cavalry goto ie1_spears
+if_enemy archer_unit goto ie1_skirm
+label ie1_castle
+get 16 peasant 8 aoe_knight 10 genoese_crossbowman 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto ie1
+
+label ie1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto ie1_castle
+
+label ie1_spears
+get 8 peasant 10 spearman
+attack
+goto ie1_castle
+
+label ie1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto ie1_castle
+
+def italians_nightmare
+defeat_score 200
+counter_skill 100
+starting_resources 300 400 0 300
+starting_units 2 peasant
+train_time 40
+research_time 60
+build_time 40
+gather_time 40
+unit_hp 140
+watchdog 540
+constant_attacks 1
+research 1
+workers 36
+expand 2
+attack_ratio 80
+label in1
+get 12 peasant
+get 8 militia 4 spearman
+attack
+if_attacked goto in1_hold
+if_enemy cavalry goto in1_spears
+if_enemy archer_unit goto in1_skirm
+label in1_castle
+get 18 peasant 8 aoe_knight 12 genoese_crossbowman 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto in1
+
+label in1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto in1_castle
+
+label in1_spears
+get 8 peasant 10 spearman
+attack
+goto in1_castle
+
+label in1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto in1_castle
+
+
+; ======================== BOHEMIANS (hussite_wagon / monk) ========================
+
+def bohemians_beginner
+defeat_score 10
+counter_skill 25
+workers 12
+constant_attacks 0
+research 1
+get 8 peasant
+get 4 militia 8 aoe_archer
+get 12 peasant 8 aoe_knight 6 hussite_wagon 2 battering_ram
+goto -1
+
+def bohemians_intermediate
+defeat_score 20
+counter_skill 50
+starting_resources 100 200 0 200
+watchdog 720
+constant_attacks 1
+research 1
+workers 16
+attack_ratio 120
+label bi1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 aoe_knight 8 hussite_wagon 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto bi1
+
+def bohemians_advanced
+defeat_score 40
+counter_skill 75
+starting_resources 150 250 0 200
+train_time 50
+research_time 80
+build_time 50
+gather_time 50
+watchdog 600
+constant_attacks 1
+research 1
+workers 22
+expand 2
+attack_ratio 110
+label ba1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 aoe_knight 8 hussite_wagon 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto ba1
+
+def bohemians_expert
+defeat_score 80
+counter_skill 90
+starting_resources 200 300 0 250
+starting_units 1 peasant
+train_time 50
+research_time 70
+build_time 50
+gather_time 50
+unit_hp 120
+watchdog 600
+constant_attacks 1
+research 1
+workers 28
+expand 2
+attack_ratio 100
+label be1
+get 12 peasant
+get 4 militia 8 aoe_archer
+attack
+if_attacked goto be1_hold
+if_enemy cavalry goto be1_spears
+if_enemy archer_unit goto be1_skirm
+label be1_castle
+get 16 peasant 8 aoe_knight 10 hussite_wagon 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto be1
+
+label be1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto be1_castle
+
+label be1_spears
+get 8 peasant 10 spearman
+attack
+goto be1_castle
+
+label be1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto be1_castle
+
+def bohemians_nightmare
+defeat_score 200
+counter_skill 100
+starting_resources 300 400 0 300
+starting_units 2 peasant
+train_time 40
+research_time 60
+build_time 40
+gather_time 40
+unit_hp 140
+watchdog 540
+constant_attacks 1
+research 1
+workers 36
+expand 2
+attack_ratio 80
+label bn1
+get 12 peasant
+get 8 militia 4 spearman
+attack
+if_attacked goto bn1_hold
+if_enemy cavalry goto bn1_spears
+if_enemy archer_unit goto bn1_skirm
+label bn1_castle
+get 18 peasant 8 aoe_knight 12 hussite_wagon 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto bn1
+
+label bn1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto bn1_castle
+
+label bn1_spears
+get 8 peasant 10 spearman
+attack
+goto bn1_castle
+
+label bn1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto bn1_castle
+
+
+; ======================== TURKS (janissary / gunpowder) ========================
+
+def turks_beginner
+defeat_score 10
+counter_skill 25
+workers 12
+constant_attacks 0
+research 1
+get 8 peasant
+get 4 militia 8 aoe_archer
+get 12 peasant 8 aoe_knight 6 janissary 2 battering_ram
+goto -1
+
+def turks_intermediate
+defeat_score 20
+counter_skill 50
+starting_resources 100 200 0 200
+watchdog 720
+constant_attacks 1
+research 1
+workers 16
+attack_ratio 120
+label ti1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 aoe_knight 8 janissary 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto ti1
+
+def turks_advanced
+defeat_score 40
+counter_skill 75
+starting_resources 150 250 0 200
+train_time 50
+research_time 80
+build_time 50
+gather_time 50
+watchdog 600
+constant_attacks 1
+research 1
+workers 22
+expand 2
+attack_ratio 110
+label ta1
+get 8 peasant
+get 4 militia 8 aoe_archer
+attack
+get 14 peasant 8 aoe_knight 8 janissary 3 battering_ram
+attack
+get 4 battering_ram 2 mangonel
+attack
+goto ta1
+
+def turks_expert
+defeat_score 80
+counter_skill 90
+starting_resources 200 300 0 250
+starting_units 1 peasant
+train_time 50
+research_time 70
+build_time 50
+gather_time 50
+unit_hp 120
+watchdog 600
+constant_attacks 1
+research 1
+workers 28
+expand 2
+attack_ratio 100
+label te1
+get 12 peasant
+get 4 militia 8 aoe_archer
+attack
+if_attacked goto te1_hold
+if_enemy cavalry goto te1_spears
+if_enemy archer_unit goto te1_skirm
+label te1_castle
+get 16 peasant 8 aoe_knight 10 janissary 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto te1
+
+label te1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto te1_castle
+
+label te1_spears
+get 8 peasant 10 spearman
+attack
+goto te1_castle
+
+label te1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto te1_castle
+
+def turks_nightmare
+defeat_score 200
+counter_skill 100
+starting_resources 300 400 0 300
+starting_units 2 peasant
+train_time 40
+research_time 60
+build_time 40
+gather_time 40
+unit_hp 140
+watchdog 540
+constant_attacks 1
+research 1
+workers 36
+expand 2
+attack_ratio 80
+label tn1
+get 12 peasant
+get 8 militia 4 spearman
+attack
+if_attacked goto tn1_hold
+if_enemy cavalry goto tn1_spears
+if_enemy archer_unit goto tn1_skirm
+label tn1_castle
+get 18 peasant 8 aoe_knight 12 janissary 4 battering_ram
+attack
+get 6 battering_ram 4 mangonel
+attack
+goto tn1
+
+label tn1_hold
+get 3 scouttower
+get 8 peasant 8 spearman 4 aoe_archer
+attack
+goto tn1_castle
+
+label tn1_spears
+get 8 peasant 10 spearman
+attack
+goto tn1_castle
+
+label tn1_skirm
+get 8 peasant 10 skirmisher
+attack
+goto tn1_castle

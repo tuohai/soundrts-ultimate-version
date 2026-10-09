@@ -558,8 +558,35 @@ class _Definitions:
                         d[name].setdefault("team_share_research", []).append(
                             list(words[1:])
                         )
+                    elif words[0] == "race_grants_team_free_unit" and len(words) >= 2:
+                        # D-Phase 2: AoE2 Italian Condottiero team bonus.
+                        # Stash unit type-names on the race/faction dict so
+                        # world_civ_bonuses.team_free_unit_cost_for_type can
+                        # detect them. Absorbed here (not setattr'd) because
+                        # the race class has no Python base for validation,
+                        # and the field is intentionally NOT in
+                        # int_properties / string_list_properties (those
+                        # branches would try to coerce names to int).
+                        d[name].setdefault(
+                            "race_grants_team_free_unit", []
+                        ).append(list(words[1:]))
                     elif words[0] == "can_train":
                         d[name][words[0]] = parse_can_train_words(words)
+                    elif words[0] == "kill_resource_bonus_pct" and len(words) >= 2:
+                        # D-Phase 2: race-level "kill resource bonus %" stored
+                        # as a structured dict: ``kill_resource_bonus_pct N
+                        # [target]`` (AoE2 Goths: +30% to attacker for kills
+                        # against ``infantry``). The trailing target is the
+                        # unit class filter; if missing, applies to all kills.
+                        try:
+                            pct = int(float(words[1]))
+                        except (TypeError, ValueError):
+                            pct = 0
+                        target = words[2] if len(words) >= 3 else None
+                        existing = d[name].setdefault(
+                            "kill_resource_bonus_pct", []
+                        )
+                        existing.append({"pct": pct, "target": target})
                     elif (
                         getattr(self, "key_value_properties", None)
                         and words[0] in self.key_value_properties
@@ -1427,6 +1454,46 @@ class Rules(_Definitions):
         "research_stack_hp",  # upgrade: stacks race research_stack_hp_bonus on complete
         "is_invisible",
         "is_cloakable",
+        # D-Phase 2: rules-driven "fire on the move" toggle for ranged units
+        # (AoE2 Kipchak/Conquistador: 1 = keep advancing while firing, don't stop to aim).
+        "can_fire_on_move",
+        # D-Phase 2: rules-driven extra Town Center build slot after research
+        # (AoE2 Cuman Mercenaries). Read by world_build_rules.can_build + tc cap.
+        "allow_extra_town_center",
+        # D-Phase 2: rules-driven relic protection
+        # (AoE2 Huns Atheism: 1 = relics never lost when monastery destroyed).
+        "relic_loss_immunity",
+        # D-Phase 2: rules-driven kill-resource bonus.
+        # Rules form: ``kill_resource_bonus_pct 30 infantry spearman`` (AoE2
+        # Goths Huskarl: +30% resource reward per kill against listed targets).
+        # Engine stores per-unit, applied at kill time by world_combat.
+        "kill_resource_bonus_pct",
+        # D-Phase 2: rules-driven build-speed modifier (AoE2 Spanish: villagers
+        # build 30% faster). Engine applies as a negative percent on construction
+        # time for the player's peasant line in world_build_rules.
+        "build_speed_pct",
+        # D-Phase 2: rules-driven team bonus — supplies (AoE2 Slavs: +10% to
+        # all allies' barracks production). Best among allies is applied in
+        # world_civ_bonuses.team_supplies_pct(player).
+        "team_supplies_pct",
+        # D-Phase 2: rules-driven team bonus — steppe lancer share
+        # (AoE2 Cumans: each Castle owned by any ally grants the player
+        # +1 steppe_lancer training slot). Engine reads
+        # world_civ_bonuses.team_share_steppe_lancer(player).
+        "team_share_steppe_lancer",
+        # D-Phase 2: rules-driven team bonus — trade capacity (AoE2 Magyars:
+        # +50% trade cart gold capacity for the player and all allies).
+        "team_trade_capacity_pct",
+        # D-Phase 2: rules-driven team free unit (AoE2 Condottiero: allies'
+        # mercenaries are free). ``team_free_unit`` on the unit: if any allied
+        # player (allied_victory) has that unit's race, cost = 0.
+        "team_free_unit",
+        # D-Phase 2: rules-driven free-for-allies flag on the race
+        # (AoE2 Italian Condottiero team bonus: all allies train mercenaries
+        # for free). ``race_grants_team_free_unit`` on the race def: comma-
+        # separated list of unit type-names that become team-free.
+        # NOTE: removed from int_properties (it's a list of unit type-names,
+        # absorbed in read()'s elif chain).
         "is_a_detector",
         "is_a_cloaker",
         "universal_notification",
@@ -1582,7 +1649,12 @@ class Rules(_Definitions):
         "rmg_water",  # 随机地图：1=放在水域内部（深海鱼）
     
     }
-    precision_properties = _precision_properties_extended
+    precision_properties = _precision_properties_extended.union(
+        # D-Phase 2: bonus stats not in the precision set but legal in
+        # ``effect bonus`` / ``on_phase`` chains. Engine implements the
+        # handling in attribute_effects.AttributeEffectsMixin.effect_bonus.
+        frozenset({"trade_reward_bonus_pct"})
+    )
     int_list_properties = {
         "resource_rewards",  # 物品/单位击杀奖励，[资源1数量, 资源2数量]
         "xp_thresholds",
@@ -1644,6 +1716,8 @@ class Rules(_Definitions):
         "trade_rewards",       # resource indices a trade unit may earn on routes
         "tribute_resources",   # parameters: resources that can be tributed
         "reveal_enemy_town_centers",  # race: fog-memory these hostile types at start
+        # NOTE: race_grants_team_free_unit is intentionally NOT in this set;
+        # it's absorbed in read()'s elif chain to store a list-of-lists.
         "speed_vs",
         "cover_vs",
         "dodge_vs",

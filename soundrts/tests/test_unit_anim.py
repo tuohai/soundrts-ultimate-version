@@ -1,5 +1,6 @@
 """Optional unit anim packs: Spine (if available) → spritesheet → icons → shapes."""
 
+import os
 from pathlib import Path
 
 import pygame

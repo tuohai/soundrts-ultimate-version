@@ -18,6 +18,54 @@
 8013 Celtas
 
 8014 Malíes
+
+8700 Godos
+8701 Persas
+8702 Eslavos
+8703 Cumanos
+8704 Hunos
+8705 Coreanos
+8706 Mayas
+8707 Indostanos
+8708 Españoles
+8709 Magyares
+8710 Polacos
+8711 Italianos
+8712 Bohemios
+8713 Turcos
+
+; (9000-9013: per-civ villager labels removed for design consistency with the original 13 civs,
+;  which shared a single villager label. Civ-specific info lives in mods/aoe2/rules.txt and
+;  mods/aoe2/ui-zh/tts.txt under the "新增文明介绍" section near the top of this file.)
+9014 Huskarl
+9016 Boyardo
+9017 Kipchak
+9018 Tarkán
+9019 Carro de guerra
+9020 Arquero emplumado
+9022 Conquistador
+9023 Húsar magiar
+9024 Húsar alado
+9025 Ballestero genovés
+9026 Carro husita
+9027 Janízar
+; (9028-9041: per-civ elite upgrade labels removed for design consistency
+;  with the original 13 civs, which use shared 'elite + unit' labels in 8000+ range.)
+9042 Anarquía
+9043 Perfusión
+9044 Kamandarán
+9045 Druzhina
+9046 Ortodoxia
+9047 Cría esteparia
+9048 Mercenarios cumanos
+9049 Saqueadores
+9050 Ateísmo
+9051 Panokseon
+9052 Shinkichon
+9053 El Dorado
+9054 Arquitectura maya
+9055 Gran Ruta
+9056 Shatagni
 8070 Samurai
 8071 Samurai de élite
 8072 Caballero teutónico
@@ -123,6 +171,18 @@
 8330 Cadáver de ganado
 8332 Pez de costa
 8333 Pez de alta mar
+8334 Húsar godo de élite
+8335 Boyardo de élite
+8336 Kipchak de élite
+8337 Tarkán de élite
+8338 Carro de guerra de élite
+8339 Arquero de plumas de élite
+8340 Conquistador de élite
+8341 Husár magiar de élite
+8342 Húsar alado de élite
+8343 Ballestero genovés de élite
+8344 Carro husita de élite
+8345 Janízaros de élite
 
 8120 Milicia
 8121 Hombre de armas

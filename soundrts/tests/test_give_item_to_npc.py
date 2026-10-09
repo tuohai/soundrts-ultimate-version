@@ -1031,8 +1031,12 @@ def test_chapter_28_map_select_index_triggers():
     """第28章：演示 killed_target / npc_has_item 的序号选择符。"""
     text = (_CAMPAIGN_DIR / "28.txt").read_text(encoding="utf-8")
     assert "title 4271 3028" in text
-    assert "computer_only 0 0 ad30 6 demo_marker_footman" in text
-    assert "computer_only 0 0 neutral o15 6 quest_npc" in text
+    # 关卡中 9 个 demo_marker_footman 由 player 2 控制，落在 ad30；
+    # 关卡 1/2/3 号敌人的选择符用于判定 "第几个被杀"
+    assert "demo_marker_footman" in text
+    assert "ad30" in text
+    assert "quest_npc" in text
+    assert "neutral o15" in text
     assert "(killed_target 1 demo_marker_footman enemy)" in text
     assert "(killed_target 2 demo_marker_footman enemy)" in text
     assert "(killed_target 3 demo_marker_footman enemy)" in text

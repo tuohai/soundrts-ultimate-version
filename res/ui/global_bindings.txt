@@ -7,6 +7,7 @@
 z: resource_status resource1
 x: resource_status resource2
 SHIFT Z: resource_status resource3
+SHIFT X: resource_status resource4
 c: population_status
 ; 已确定的阵营/文明（随机开局后可再听）
 ALT C: faction_status

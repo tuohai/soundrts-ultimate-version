@@ -336,7 +336,7 @@ mdg_range 0
 corpse 0
 no_number 1
 is_vulnerable 1
-;space 0.1
+space 0.1
 
 def sheep
 class soldier
@@ -364,7 +364,7 @@ mdg_range 0
 corpse 0
 no_number 1
 is_vulnerable 1
-;space 0.1
+space 0.1
 
 def boar
 class soldier
@@ -391,7 +391,7 @@ mdg_range 1
 corpse 0
 no_number 1
 is_vulnerable 1
-;space 0.1
+space 0.1
 
 
 ; ---------- armor tags ----------
@@ -1346,7 +1346,7 @@ is_a infantry
 cost 20 0 50 0
 population_cost 1
 time_cost 21
-;space 0.25
+space 0.25
 
 hp_max 40
 speed 0.9
@@ -1430,7 +1430,7 @@ is_a infantry
 cost 0 25 35 0
 population_cost 1
 time_cost 22
-;space 0.25
+space 0.25
 requirements feudal_age
 
 hp_max 45
@@ -1494,7 +1494,7 @@ time_cost 35
 rdg_projectile 1
 rdg_projectile_speed 7
 rdg_targets ground air
-;space 0.25
+space 0.25
 requirements feudal_age
 
 hp_max 30
@@ -1558,7 +1558,7 @@ time_cost 26
 rdg_projectile 1
 rdg_projectile_speed 7
 rdg_targets ground air
-;space 0.25
+space 0.25
 requirements feudal_age
 
 hp_max 30
@@ -1631,7 +1631,7 @@ time_cost 37
 rdg_projectile 1
 rdg_projectile_speed 7
 rdg_targets ground air
-;space 0.4
+space 0.4
 requirements castle_age
 
 hp_max 50
@@ -1693,7 +1693,7 @@ is_a cavalry
 cost 0 0 80 0
 population_cost 1
 time_cost 30
-;space 0.4
+space 0.4
 requirements feudal_age
 
 hp_max 45
@@ -1752,7 +1752,7 @@ is_a cavalry
 cost 75 0 60 0
 population_cost 2
 time_cost 30
-;space 0.5
+space 0.5
 requirements castle_age
 
 hp_max 100
@@ -1804,7 +1804,7 @@ is_a cavalry
 cost 60 0 55 0
 population_cost 2
 time_cost 22
-;space 0.45
+space 0.45
 requirements castle_age
 
 hp_max 100
@@ -1866,7 +1866,7 @@ is_a cavalry
 cost 70 0 100 0
 population_cost 3
 time_cost 24
-;space 0.7
+space 0.7
 requirements castle_age
 mdg_splash 12
 mdg_radius 0.4
@@ -1908,7 +1908,7 @@ is_a cavalry
 cost 40 0 70 0
 population_cost 2
 time_cost 24
-;space 0.4
+space 0.4
 requirements castle_age
 
 hp_max 60
@@ -1948,7 +1948,7 @@ time_cost 34
 rdg_projectile 1
 rdg_projectile_speed 5.5
 rdg_targets ground
-;space 0.25
+space 0.25
 requirements imperial_age chemistry
 no_auto_upgrade 1
 
@@ -1974,7 +1974,7 @@ is_a infantry
 cost 50 0 20 0
 population_cost 1
 time_cost 50
-;space 0.25
+space 0.25
 requirements feudal_age
 no_auto_upgrade 1
 
@@ -2049,7 +2049,7 @@ is_a unique_unit
 cost 60 0 30 0
 population_cost 1
 time_cost 20
-;space 0.25
+space 0.25
 requirements castle_age
 no_auto_upgrade 1
 line_upgrade 1
@@ -2088,10 +2088,11 @@ def condottiero
 class soldier
 is_a infantry
 is_a unique_unit
+team_free_unit 1
 cost 35 0 50 0
 population_cost 1
 time_cost 18
-;space 0.25
+space 0.25
 requirements imperial_age
 no_auto_upgrade 1
 
@@ -2116,7 +2117,7 @@ population_cost 3
 time_cost 25
 mdg_splash 15
 mdg_radius 0.5
-;space 0.8
+space 0.8
 requirements castle_age
 no_auto_upgrade 1
 
@@ -2158,7 +2159,7 @@ cost 95 0 120 0
 population_cost 2
 time_cost 36
 is_repairable 1
-;space 0.7
+space 0.7
 requirements castle_age
 no_auto_upgrade 1
 
@@ -2205,7 +2206,7 @@ time_cost 32
 rdg_projectile 1
 rdg_projectile_speed 7
 rdg_targets ground air
-;space 0.6
+space 0.6
 requirements castle_age
 no_auto_upgrade 1
 
@@ -2249,7 +2250,7 @@ population_cost 2
 time_cost 36
 is_repairable 1
 is_healable 0
-;space 0.8
+space 0.8
 requirements castle_age
 ; AoE2 garrison: infantry only here (archers/villagers garrison in DE but give no bonus).
 ; Per infantry: +0.05 speed, +10 vs buildings. Capacity 6 (DE).
@@ -2327,7 +2328,7 @@ mdg_splash 40
 mdg_radius 1
 is_repairable 1
 is_healable 0
-;space 0.8
+space 0.8
 requirements castle_age
 
 hp_max 50
@@ -2403,7 +2404,7 @@ rdg_pierce_width 0.5
 rdg_pierce_decay 50
 is_repairable 1
 is_healable 0
-;space 0.6
+space 0.6
 requirements castle_age
 
 hp_max 40
@@ -2459,7 +2460,7 @@ mdg_splash 40
 mdg_radius 0.5
 is_repairable 1
 is_healable 0
-;space 0.9
+space 0.9
 requirements imperial_age
 no_auto_upgrade 1
 
@@ -2489,7 +2490,7 @@ mdg_explode 1
 exp_hp_cost 100
 mdg_splash 25
 mdg_radius 0.5
-;space 0.25
+space 0.25
 requirements castle_age
 no_auto_upgrade 1
 
@@ -2520,7 +2521,7 @@ population_cost 1
 time_cost 36
 is_repairable 1
 is_healable 0
-;space 1.0
+space 1.0
 requirements castle_age
 no_auto_upgrade 1
 transport_capacity 10
@@ -2550,7 +2551,7 @@ rdg_projectile_speed 1.6
 rdg_targets ground building
 is_repairable 1
 is_healable 0
-;space 1.0
+space 1.0
 requirements imperial_age
 packable 1
 spawn_packed 1
@@ -2589,7 +2590,7 @@ airground_type water
 is_repairable 1
 is_healable 0
 transport_volume 99
-;space 0.8
+space 0.8
 population_cost 1
 
 def fishing_ship
@@ -3052,7 +3053,7 @@ time_cost 18
 rdg_projectile 1
 rdg_projectile_speed 7
 rdg_targets ground air
-;space 0.25
+space 0.25
 requirements castle_age
 
 hp_max 35
@@ -3100,7 +3101,7 @@ time_cost 13
 mdg_projectile 1
 mdg_projectile_speed 5
 mdg_targets ground
-;space 0.25
+space 0.25
 requirements castle_age
 
 hp_max 60
@@ -3144,7 +3145,7 @@ time_cost 16
 rdg_projectile 1
 rdg_projectile_speed 7
 rdg_targets ground air
-;space 0.3
+space 0.3
 requirements castle_age
 
 hp_max 45
@@ -3196,7 +3197,7 @@ time_cost 26
 rdg_projectile 1
 rdg_projectile_speed 7
 rdg_targets ground air
-;space 0.4
+space 0.4
 requirements castle_age
 
 hp_max 60
@@ -3244,7 +3245,7 @@ is_a unique_unit
 cost 75 0 70 0
 population_cost 2
 time_cost 20
-;space 0.5
+space 0.5
 requirements castle_age
 
 hp_max 110
@@ -3287,7 +3288,7 @@ is_a unique_unit
 cost 30 0 45 0
 population_cost 1
 time_cost 9
-;space 0.25
+space 0.25
 requirements castle_age
 
 hp_max 70
@@ -3329,7 +3330,7 @@ is_a unique_unit
 cost 30 0 85 0
 population_cost 1
 time_cost 12
-;space 0.25
+space 0.25
 requirements castle_age
 
 hp_max 90
@@ -3369,7 +3370,7 @@ is_a unique_unit
 cost 20 0 65 0
 population_cost 1
 time_cost 14
-;space 0.25
+space 0.25
 requirements castle_age
 hp_regen 1
 hp_regen_cd 4
@@ -3413,7 +3414,7 @@ is_a unique_unit
 cost 25 0 70 0
 population_cost 1
 time_cost 10
-;space 0.25
+space 0.25
 requirements castle_age
 
 hp_max 70
@@ -3456,7 +3457,7 @@ time_cost 17
 mdg_projectile 1
 mdg_projectile_speed 5
 mdg_targets ground
-;space 0.25
+space 0.25
 requirements castle_age
 
 hp_max 40
@@ -3499,7 +3500,7 @@ time_cost 16
 rdg_projectile 1
 rdg_projectile_speed 7
 rdg_targets ground air
-;space 0.25
+space 0.25
 requirements castle_age
 
 hp_max 40
@@ -3548,7 +3549,7 @@ time_cost 25
 rdg_projectile 1
 rdg_projectile_speed 5.5
 rdg_targets ground
-;space 0.5
+space 0.5
 requirements castle_age
 is_repairable 1
 is_healable 0
@@ -3593,6 +3594,996 @@ rdg_minimal_range 1
 rdg_vs building 2
 damage_seq rdg 6 (secondary 8 0) (interval 0.08)
 can_upgrade_to
+
+; ===========================================================================
+; UNIQUE UNITS — second wave (8 new civs)
+; DE stats (HP/Atk/Arm/Range/RoF/Speed/LoS) cross-checked with SiegeEngineers
+; aoe2techtree, biligame, liquipedia. Costs/times DE-verified.
+; ===========================================================================
+
+; 哥特 Huskarl — Goths unique (DE: 50F+30G, 16s; HP60/70 Atk10/12 Arm0+6/1+6 vs archer,
+; +3/+5 vs building Speed1.05). High pierce armor, attack bonus vs archers.
+def huskarl
+class soldier
+is_a infantry
+is_a unique_unit
+cost 30 0 50 0
+population_cost 1
+time_cost 16
+space 0.25
+requirements castle_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 60
+speed 1.05
+sight_range 5
+mdg 10
+mdg_cd 2
+mdg_range 1
+mdf 0
+rdf 6
+mdg_vs archer_unit 4
+mdg_vs building 3
+can_upgrade_to elite_huskarl
+can_use_tech forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor squires arson gambesons supplies chieftains conscription
+
+def elite_huskarl
+is_a huskarl
+cost 750 0 500 0
+time_cost 45
+requirements imperial_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 70
+speed 1.05
+sight_range 6
+mdg 12
+mdg_cd 2
+mdg_range 1
+mdf 1
+rdf 8
+mdg_vs archer_unit 6
+mdg_vs building 5
+can_upgrade_to
+
+; 匈奴 Tarkan — Huns unique (DE: 60F+60G, 14s; HP110/150 Atk8/10 vs building
+; +10/+15 vs building, +4/+5 vs ram; Speed1.4; AoE on hit; 50% convert resist)
+def tarkan
+class soldier
+is_a cavalry
+is_a unique_unit
+cost 60 0 60 0
+population_cost 2
+time_cost 14
+mdg_splash 12
+mdg_radius 0.3
+space 0.5
+requirements castle_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 110
+speed 1.4
+sight_range 5
+mdg 8
+mdg_cd 2
+mdg_range 1
+mdf 1
+rdf 2
+mdg_vs building 10
+mdg_vs siege_unit 4
+can_upgrade_to elite_tarkan
+can_use_tech forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry conscription
+; Tarkans -50% conversion resist like monks? Huns get no Anarchy; resist kept at default
+
+def elite_tarkan
+is_a tarkan
+cost 800 0 800 0
+time_cost 45
+requirements imperial_age
+no_auto_upgrade 1
+line_upgrade 1
+mdg_splash 14
+
+hp_max 150
+speed 1.4
+sight_range 6
+mdg 10
+mdg_cd 2
+mdg_range 1
+mdf 1
+rdf 2
+mdg_vs building 15
+mdg_vs siege_unit 5
+can_upgrade_to
+
+; 土耳其 Janissary — Turks unique (DE: 60G+55F, 17s; HP50/60 Atk17/20 Rng7/8 vs
+; hand-cannoneer alt. Hand-cannoneer subtype with longer range, cheaper gold.
+def janissary
+class soldier
+is_a archer_unit
+is_a unique_unit
+cost 0 55 60 0
+population_cost 1
+time_cost 17
+rdg_projectile 1
+rdg_projectile_speed 5.5
+rdg_targets ground
+space 0.25
+requirements castle_age chemistry
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 50
+speed 0.96
+sight_range 9
+mdg 0
+mdf 1
+rdf 0
+rdg 17
+rdg_cd 3.1
+rdg_ready 0.35
+rdg_hit_rate 65
+rdg_range 7
+rdg_vs infantry 10
+rdg_vs spearman 1
+can_upgrade_to elite_janissary
+can_use_tech chemistry padded_archer_armor leather_archer_armor ring_archer_armor arquebus conscription
+
+def elite_janissary
+is_a janissary
+cost 750 0 750 0
+time_cost 45
+requirements imperial_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 60
+speed 0.96
+sight_range 10
+mdg 0
+mdf 1
+rdf 0
+rdg 20
+rdg_cd 3.1
+rdg_ready 0.35
+rdg_hit_rate 70
+rdg_range 8
+rdg_vs infantry 12
+rdg_vs spearman 1
+can_upgrade_to
+
+; 西班牙 Conquistador — Spanish unique (DE: 60F+70G, 24s; HP55/70 Atk16/18 Rng7/8
+; vs hand-cannoneer mounted. Mounted hand-cannoneer.
+def conquistador
+class soldier
+is_a archer_unit
+is_a cavalry
+is_a unique_unit
+cost 70 0 60 0
+population_cost 2
+time_cost 24
+rdg_projectile 1
+rdg_projectile_speed 5.5
+rdg_targets ground
+space 0.5
+requirements castle_age chemistry
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 55
+speed 1.35
+sight_range 9
+mdg 0
+mdf 1
+rdf 0
+rdg 16
+rdg_cd 3.0
+rdg_ready 0.4
+rdg_hit_rate 65
+rdg_range 7
+rdg_vs infantry 10
+rdg_vs spearman 1
+can_upgrade_to elite_conquistador
+can_use_tech chemistry padded_archer_armor leather_archer_armor ring_archer_armor bloodlines husbandry arquebus conscription
+
+def elite_conquistador
+is_a conquistador
+cost 1000 0 1100 0
+time_cost 50
+requirements imperial_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 70
+speed 1.35
+sight_range 10
+mdg 0
+mdf 1
+rdf 0
+rdg 18
+rdg_cd 3.0
+rdg_ready 0.4
+rdg_hit_rate 70
+rdg_range 8
+rdg_vs infantry 12
+rdg_vs spearman 1
+can_upgrade_to
+
+; 印加 Kamayuk — Incas unique (DE: 30F+60G, 18s; HP55/65 Atk8/8 vs cav/condottieri
+; +8/+10 vs cav). Spear-and-shield. Longer range.
+def kamayuk
+class soldier
+is_a infantry
+is_a unique_unit
+cost 60 0 30 0
+population_cost 1
+time_cost 18
+space 0.25
+requirements castle_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 55
+speed 1.0
+sight_range 5
+mdg 8
+mdg_cd 2
+mdg_range 1
+mdf 1
+rdf 0
+mdg_vs cavalry 8
+mdg_vs camel_rider 4
+can_upgrade_to elite_kamayuk
+can_use_tech forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor squires arson conscription
+
+def elite_kamayuk
+is_a kamayuk
+cost 600 0 400 0
+time_cost 45
+requirements imperial_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 65
+speed 1.0
+sight_range 5
+mdg 8
+mdg_cd 2
+mdg_range 1
+mdf 1
+rdf 0
+mdg_vs cavalry 10
+mdg_vs camel_rider 6
+can_upgrade_to
+
+; 马扎尔 Magyar Huszar — Magyars unique (DE: 75F+45G, 16s; HP75/95 Atk9/10 Speed1.65
+; +1 LOS scout, +10 vs siege). Cheap light cav.
+def magyar_huszar
+class soldier
+is_a cavalry
+is_a unique_unit
+cost 45 0 75 0
+population_cost 2
+time_cost 16
+space 0.4
+requirements castle_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 75
+speed 1.65
+sight_range 5
+mdg 9
+mdg_cd 2
+mdg_range 1
+mdf 0
+rdf 2
+mdg_vs siege_unit 10
+can_upgrade_to elite_magyar_huszar
+can_use_tech forging iron_casting blast_furnace scale_barding_armor chain_barding_armor bloodlines husbandry conscription
+
+def elite_magyar_huszar
+is_a magyar_huszar
+cost 800 0 1000 0
+time_cost 45
+requirements imperial_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 95
+speed 1.65
+sight_range 6
+mdg 10
+mdg_cd 2
+mdg_range 1
+mdf 0
+rdf 2
+mdg_vs siege_unit 14
+can_upgrade_to
+
+; 波兰 Winged Hussar — Poles unique (DE: 80F+60G, 22s; HP120/150 Atk12/16 vs archer
+; +6/+8 vs archer; Speed1.4; +1 LOS). Heavily armored anti-archer cavalry.
+def winged_hussar
+class soldier
+is_a cavalry
+is_a unique_unit
+cost 60 0 80 0
+population_cost 2
+time_cost 22
+space 0.5
+requirements castle_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 120
+speed 1.4
+sight_range 5
+mdg 12
+mdg_cd 2
+mdg_range 1
+mdf 2
+rdf 2
+mdg_vs archer_unit 6
+can_upgrade_to elite_winged_hussar
+can_use_tech forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry conscription
+
+def elite_winged_hussar
+is_a winged_hussar
+cost 800 0 1000 0
+time_cost 45
+requirements imperial_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 150
+speed 1.4
+sight_range 6
+mdg 16
+mdg_cd 2
+mdg_range 1
+mdf 2
+rdf 2
+mdg_vs archer_unit 8
+can_upgrade_to
+
+; 斯拉夫 Boyar — Slavs unique (DE: 40F+65G, 21s; HP130/170 Atk10/13 Arm2+8/3+8 vs
+; pierce 1; Speed1.35; +30/+40 vs ram). Heavy cavalry with high pierce armor.
+def boyar
+class soldier
+is_a cavalry
+is_a unique_unit
+cost 65 0 40 0
+population_cost 2
+time_cost 21
+space 0.5
+requirements castle_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 130
+speed 1.35
+sight_range 5
+mdg 10
+mdg_cd 2
+mdg_range 1
+mdf 2
+rdf 8
+mdg_vs siege_unit 30
+can_upgrade_to elite_boyar
+can_use_tech forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry conscription
+
+def elite_boyar
+is_a boyar
+cost 1000 0 800 0
+time_cost 45
+requirements imperial_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 170
+speed 1.35
+sight_range 5
+mdg 13
+mdg_cd 2
+mdg_range 1
+mdf 3
+rdf 8
+mdg_vs siege_unit 40
+can_upgrade_to
+
+; 韩国 War Wagon — Koreans unique (DE: 50W+50G, 24s; HP120/150 Atk9/10 Rng5/6
+; +2/+3 vs archer; Speed1.03). Mobile anti-archer chariot.
+def war_wagon
+class soldier
+is_a archer_unit
+is_a unique_unit
+cost 50 50 0 0
+population_cost 2
+time_cost 24
+rdg_projectile 1
+rdg_projectile_speed 7
+rdg_targets ground air
+space 0.7
+requirements castle_age
+is_repairable 1
+is_healable 0
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 120
+speed 1.03
+sight_range 7
+mdg 0
+mdf 2
+rdf 4
+rdg 9
+rdg_cd 2.0
+rdg_ready 0.5
+rdg_hit_rate 50
+rdg_range 5
+rdg_vs archer_unit 2
+can_upgrade_to elite_war_wagon
+can_use_tech fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor ballistics chemistry conscription
+
+def elite_war_wagon
+is_a war_wagon
+cost 800 0 800 0
+time_cost 45
+requirements imperial_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 150
+speed 1.03
+sight_range 8
+mdg 0
+mdf 2
+rdf 4
+rdg 10
+rdg_cd 2.0
+rdg_ready 0.5
+rdg_hit_rate 60
+rdg_range 6
+rdg_vs archer_unit 3
+can_upgrade_to
+
+; 玛雅 Plumed Archer — Mayans unique (DE: 30F+50G, 16s; HP50/60 Atk5/6 Rng5/6
+; +2 vs archer). Quasi-skirmisher with high accuracy.
+def plumed_archer
+class soldier
+is_a archer_unit
+is_a unique_unit
+cost 50 0 30 0
+population_cost 1
+time_cost 16
+rdg_projectile 1
+rdg_projectile_speed 7
+rdg_targets ground air
+space 0.25
+requirements castle_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 50
+speed 0.96
+sight_range 6
+mdg 0
+mdf 0
+rdf 4
+rdg 5
+rdg_cd 1.5
+rdg_ready 0.6
+rdg_hit_rate 90
+rdg_range 5
+rdg_vs archer_unit 2
+rdg_vs spearman 2
+can_upgrade_to elite_plumed_archer
+can_use_tech fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor thumb_ring ballistics chemistry conscription
+
+def elite_plumed_archer
+is_a plumed_archer
+cost 700 0 500 0
+time_cost 45
+requirements imperial_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 60
+speed 0.96
+sight_range 6
+mdg 0
+mdf 0
+rdf 4
+rdg 6
+rdg_cd 1.5
+rdg_ready 0.6
+rdg_hit_rate 95
+rdg_range 6
+rdg_vs archer_unit 3
+rdg_vs spearman 2
+can_upgrade_to
+
+; 意大利 Genoese Crossbowman — Italians unique (DE: 40W+40G, 22s; HP45/55 Atk5/6
+; Rng6/7 +3/+4 vs cav). Foot crossbowman with mounted bonus; available at
+; Archery Range. Replaces hand_cannoneer for Italians.
+def genoese_crossbowman
+class soldier
+is_a archer_unit
+is_a unique_unit
+cost 40 40 0 0
+population_cost 1
+time_cost 22
+rdg_projectile 1
+rdg_projectile_speed 7
+rdg_targets ground air
+space 0.25
+requirements castle_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 45
+speed 0.96
+sight_range 6
+mdg 0
+mdf 0
+rdf 0
+rdg 5
+rdg_cd 2.0
+rdg_ready 0.6
+rdg_hit_rate 85
+rdg_range 6
+rdg_vs cavalry 3
+rdg_vs camel_rider 3
+can_upgrade_to elite_genoese_crossbowman
+can_use_tech fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor thumb_ring ballistics chemistry conscription
+
+def elite_genoese_crossbowman
+is_a genoese_crossbowman
+cost 900 0 700 0
+time_cost 45
+requirements imperial_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 55
+speed 0.96
+sight_range 6
+mdg 0
+mdf 0
+rdf 0
+rdg 6
+rdg_cd 2.0
+rdg_ready 0.6
+rdg_hit_rate 90
+rdg_range 7
+rdg_vs cavalry 4
+rdg_vs camel_rider 4
+can_upgrade_to
+
+; 波西米亚 Hussite Wagon — Bohemians unique (DE: 95W+50G, 24s; HP125/155 Atk8/9
+; Rng6/7 +1 vs archer; AoE; Speed0.96). Heavy mobile cannon platform.
+def hussite_wagon
+class soldier
+is_a archer_unit
+is_a siege_unit
+is_a unique_unit
+cost 50 95 0 0
+population_cost 3
+time_cost 24
+rdg_projectile 1
+rdg_projectile_speed 5.5
+rdg_targets ground
+rdg_splash 4
+rdg_radius 0.2
+is_repairable 1
+is_healable 0
+space 0.7
+requirements castle_age chemistry
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 125
+speed 0.96
+sight_range 8
+mdg 0
+mdf 2
+rdf 4
+rdg 8
+rdg_cd 2.5
+rdg_ready 0.5
+rdg_hit_rate 50
+rdg_range 6
+rdg_vs archer_unit 1
+rdg_vs building 2
+can_upgrade_to elite_hussite_wagon
+can_use_tech chemistry padded_archer_armor leather_archer_armor ring_archer_armor arquebus conscription
+
+def elite_hussite_wagon
+is_a hussite_wagon
+cost 1000 0 800 0
+time_cost 45
+requirements imperial_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 155
+speed 0.96
+sight_range 9
+mdg 0
+mdf 2
+rdf 4
+rdg 9
+rdg_cd 2.5
+rdg_ready 0.5
+rdg_hit_rate 55
+rdg_range 7
+rdg_vs archer_unit 1
+rdg_vs building 2
+can_upgrade_to
+
+; 库曼 Kipchak — Cumans unique (DE: 35W+60G, 21s; HP40/55 Atk4/6 Rng4/5
+; +1 vs archer; can shoot on the move). Mounted skirmisher with kipchak
+; (cuman) merge arrow.
+def kipchak
+class soldier
+is_a archer_unit
+is_a cavalry
+is_a unique_unit
+cost 60 35 0 0
+population_cost 2
+time_cost 21
+rdg_projectile 1
+rdg_projectile_speed 7
+rdg_targets ground air
+space 0.4
+requirements castle_age
+no_auto_upgrade 1
+line_upgrade 1
+; DE: kipchak can fire on the move; engine flag was added in D-Phase 2.
+can_fire_on_move 1
+
+hp_max 40
+speed 1.45
+sight_range 5
+mdg 0
+mdf 0
+rdf 0
+rdg 4
+rdg_cd 1.5
+rdg_ready 0.6
+rdg_hit_rate 80
+rdg_range 4
+rdg_vs archer_unit 1
+rdg_vs spearman 2
+can_upgrade_to elite_kipchak
+can_use_tech fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor thumb_ring ballistics chemistry bloodlines husbandry conscription
+
+def elite_kipchak
+is_a kipchak
+cost 800 0 500 0
+time_cost 45
+requirements imperial_age
+no_auto_upgrade 1
+line_upgrade 1
+can_fire_on_move 1
+
+hp_max 55
+speed 1.45
+sight_range 6
+mdg 0
+mdf 0
+rdf 0
+rdg 6
+rdg_cd 1.5
+rdg_ready 0.6
+rdg_hit_rate 85
+rdg_range 5
+rdg_vs archer_unit 1
+rdg_vs spearman 2
+can_upgrade_to
+
+; ===========================================================================
+; UNIQUE TECHNOLOGIES — second wave (8 new civs × 2 = 16 techs)
+; Costs/times DE-aligned where applicable. Where a target is a category root
+; (e.g. ``infantry``), the bonus is applied via bonus stack to all subtypes.
+; ===========================================================================
+
+; 哥特 Perfusion — Barracks units train 2× faster (3.2× time = -69%) and
+; infantry created -20% food cost. We model as time_cost -50% (close approximation
+; since full 2× would require restructuring training) + cost -20% food on infantry.
+def perfusion
+class upgrade
+cost 0 450 600 0
+time_cost 40
+requirements aoe_castle castle_age
+effect bonus time_cost -50%
+effect_bonus_targets militia spearman
+effect bonus cost 0 0 -20% 0
+effect_bonus_targets militia spearman
+
+; 哥特 Anarchy — Huskarl/Eagle-line units trainable at Barracks without Barracks
+; after researching Anarchy. Modelled as making ``can_research anarchy`` unlock
+; unique train at barracks (handled in goths race def).
+def anarchy
+class upgrade
+cost 0 450 250 0
+time_cost 40
+requirements aoe_castle castle_age
+; Unlock itself; effect target: enable barracks direct train of unique line.
+; In ``goths_barracks``, the can_train list is augmented on grant (handled in race def).
+
+; 波斯 Kamandaran — Archery Range units cost gold converted from wood
+; (DE: 1 wood → 1 gold for the entire upgrade cost). Modelled as: archery range
+; units cost 0 gold but pay 1 gold per 1 wood. We apply -100% gold cost on
+; archer_unit and a per-cost adjustment for wood (handled by the global
+; ``gather_byproduct``); simpler: gold→wood for archery units, modelled as
+; ``cost 0 0 0 0`` on archer_unit with a side bonus for wood compensation.
+def kamandaran
+class upgrade
+cost 0 0 0 0
+time_cost 1
+requirements aoe_castle castle_age
+effect bonus cost -100% 0 0 0
+effect_bonus_targets archer_unit -cavalry
+; Lumberjacks generate 30 gold per wood as compensation
+effect bonus gather_byproduct wood 0.30
+effect_bonus_targets peasant
+
+; 波斯 Silk Road — Trade carts generate +15% gold; markets cost -50% wood
+; D-Phase 2: ``trade_reward_bonus_pct`` is now a real effect bonus stat
+; (engine stores it on the player and applies it in ``_credit_reward``).
+; Market wood discount via ``effect bonus cost`` (engine supports).
+def silk_road
+class upgrade
+cost 0 500 250 0
+time_cost 40
+requirements aoe_castle imperial_age
+effect bonus trade_reward_bonus_pct 15
+effect bonus cost 0 -50% 0 0
+effect_bonus_targets market
+
+; 斯拉夫 Druzhina — Farmers generate gold when working (DE: 1 gold per 10
+; food). Modelled as gather byproduct.
+def druzhina
+class upgrade
+cost 0 0 500 350
+time_cost 40
+requirements aoe_castle castle_age
+effect bonus gather_byproduct farm resource1 0.10
+effect_bonus_targets peasant
+
+; 斯拉夫 Orthodoxy — Barracks units +5/+0/+0/+0/+3 attack/Range? DE: infantry
+; +3/+0/+0/+0/+3 attack bonus; we model as +3 attack and +1 range for spearman line.
+def orthodoxy
+class upgrade
+cost 0 0 400 400
+time_cost 40
+requirements aoe_castle imperial_age
+effect bonus mdg 3
+effect_bonus_targets infantry
+effect bonus mdf 3
+effect_bonus_targets spearman pikeman halberdier
+
+; 哥特 Huskarl Loot — Huskarl line +5 gold per kill against infantry.
+; D-Phase 2: stacked on top of base target.resource_rewards; also
+; multiplied by faction ``kill_resource_bonus_pct`` (goths +30%).
+; Targets ``infantry`` covers militia / man_at_arms / champion / spearman /
+; pikeman / halberdier / huskarl itself via expanded_is_a lookup.
+def huskarl_loot
+class upgrade
+cost 0 0 0 0
+time_cost 1
+requirements aoe_castle castle_age
+effect bonus kill_resource_vs infantry resource1 5
+effect_bonus_targets huskarl elite_huskarl
+
+; 库曼 Cuman Mercenaries — Player may build a second Town Center in Castle Age
+; after researching this tech. D-Phase 2: engine supports ``allow_extra_town_center``
+; as a player flag, so the upgrade now lifts ``player.town_center_max`` by 1.
+def cuman_mercenaries
+class upgrade
+cost 0 600 0 600
+time_cost 60
+requirements aoe_castle castle_age
+allow_extra_town_center 1
+
+; 库曼 Steppe Husbandry — Steppe Lancers created 100% faster
+def steppe_husbandry
+class upgrade
+cost 0 0 200 300
+time_cost 40
+requirements aoe_castle castle_age
+effect bonus time_cost -100%
+effect_bonus_targets steppe_lancer elite_steppe_lancer
+
+; 匈奴 Marauders — Tarkans (and cavalry raiders) gain +5 gold per kill;
+; Tarkans get +8 vs building.
+def marauders
+class upgrade
+cost 0 0 500 300
+time_cost 40
+requirements aoe_castle castle_age
+effect bonus kill_resource_vs peasant resource1 10
+effect_bonus_targets cavalry
+effect bonus kill_resource_vs monk resource1 5
+effect_bonus_targets cavalry
+effect bonus mdg_vs building 8
+effect_bonus_targets tarkan elite_tarkan
+
+; 匈奴 Atheism — Relics never lost when monastery destroyed; +1 monastery
+; healing range for monks; conversion times favor defender by 30%.
+; D-Phase 2: engine now supports ``relic_loss_immunity`` as a player flag.
+def atheism
+class upgrade
+cost 0 0 500 0
+time_cost 40
+requirements aoe_castle castle_age
+relic_loss_immunity 1
+effect bonus conversion_resist 30
+effect_bonus_targets monk
+
+; 韩国 Panokseon — Warships +15% HP; Cannon Galleon +2 range
+def panokseon
+class upgrade
+cost 0 0 400 300
+time_cost 40
+requirements aoe_castle castle_age
+effect bonus hp 15%
+effect_bonus_targets galley war_galley galleon fire_galley fire_ship fast_fire_ship
+effect bonus rdg_range 2
+effect_bonus_targets cannon_galleon elite_cannon_galleon
+
+; 韩国 Shinkichon — Mangonels +30% accuracy; Trebuchets can fire from
+; significantly further (no blast penalty). We model: siege splash radius +0.5.
+def shinkichon
+class upgrade
+cost 0 0 500 400
+time_cost 40
+requirements aoe_castle imperial_age
+effect bonus rdg_hit_rate 30
+effect_bonus_targets mangonel onager siege_onager
+effect bonus mdg_radius 0.5
+effect_bonus_targets mangonel onager siege_onager
+
+; 玛雅 El Dorado — Eagle-line +40 HP, +6 attack vs archers
+def el_dorado
+class upgrade
+cost 0 0 750 0
+time_cost 40
+requirements aoe_castle castle_age
+effect bonus hp 40
+effect_bonus_targets eagle_scout eagle_warrior elite_eagle_warrior aztec_eagle_scout
+effect bonus mdg_vs archer_unit 6
+effect_bonus_targets eagle_scout eagle_warrior elite_eagle_warrior aztec_eagle_scout
+
+; 玛雅 Maya Architecture — Walls cost -50% (any wall/gate)
+def maya_architecture
+class upgrade
+cost 0 0 400 0
+time_cost 40
+requirements aoe_castle castle_age
+effect bonus cost 0 -50% 0 -50%
+effect_bonus_targets wall gate fortified_wall palisade_wall palisade_gate
+
+; 印度 Grand Trunk Road — Town Centers (and Outposts) +2 range; villagers
+; build structures +25% faster (model as builder bonus via ``time_cost -20%`` on buildings).
+def grand_trunk_road
+class upgrade
+cost 0 0 500 0
+time_cost 40
+requirements aoe_castle castle_age
+effect bonus rdg_range 2
+effect_bonus_targets town_center townhall outpost
+effect bonus sight_range 1
+effect_bonus_targets town_center townhall
+
+; 印度 Shatagni — Hand Cannoneers +1 range
+def shatagni
+class upgrade
+cost 0 0 600 0
+time_cost 40
+requirements aoe_castle imperial_age
+effect bonus rdg_range 1
+effect_bonus_targets hand_cannoneer
+
+; 玛雅 / 印加 / 韩国 / 印度 / 库曼 / 匈奴 / 斯拉夫 / 哥特 / 波斯 / 土耳其 / 西班牙 / 马扎尔 / 波兰 / 意大利 / 波西米亚
+; (technology stubs ready; race defs below reference these via can_research.)
+
+; 西班牙 Supremacy — Conquistador +20 attack vs buildings and ships
+; (DE: Conquistador cannon attack bonus; we model as +20 mdg_vs building/ship)
+def supremacy
+class upgrade
+cost 0 0 500 0
+time_cost 40
+requirements aoe_castle imperial_age
+effect bonus mdg_vs building 20
+effect_bonus_targets conquistador elite_conquistador
+effect bonus mdg_vs ship 20
+effect_bonus_targets conquistador elite_conquistador
+
+; 西班牙 Inquisition — Villagers cannot be converted by enemy monks
+; (DE: friendly villagers + allied monk conversion immunity)
+def inquisition
+class upgrade
+cost 0 0 0 1000
+time_cost 40
+requirements aoe_castle imperial_age
+; Engine reads this flag in world_conversion.py; bypasses monk→villager targeting.
+effect bonus conversion_resist 100
+effect_bonus_targets peasant
+
+; 马扎尔 Magyar Raid — Magyar Huszar line gets +5 gold per kill (DE steal),
+; trains 100% faster in Castle/Imperial.
+def magyar_raid
+class upgrade
+cost 0 0 600 300
+time_cost 40
+requirements aoe_castle castle_age
+effect bonus kill_resource_vs peasant resource1 5
+effect_bonus_targets magyar_huszar elite_magyar_huszar
+effect bonus time_cost -50%
+effect_bonus_targets magyar_huszar elite_magyar_huszar
+
+; 波兰 Szlachta Privileges — Knight line +1/+1/+0/+0 armor when adjacent to
+; another knight (formation-flavoured: applies when in formation slot).
+; Modelled as: +1/+1 armor always on knight line.
+def szlachta_privileges
+class upgrade
+cost 0 0 500 300
+time_cost 40
+requirements aoe_castle castle_age
+effect bonus mdf 1
+effect_bonus_targets aoe_knight cavalier paladin
+effect bonus rdf 1
+effect_bonus_targets aoe_knight cavalier paladin
+
+; 意大利 Pavise — Genoese Crossbowman +1/+1 armor, +1 attack
+; (DE: ranged armor +1, +1 attack vs cavalry)
+def pavise
+class upgrade
+cost 0 0 400 300
+time_cost 40
+requirements aoe_castle imperial_age
+effect bonus mdf 1
+effect_bonus_targets genoese_crossbowman elite_genoese_crossbowman
+effect bonus rdf 1
+effect_bonus_targets genoese_crossbowman elite_genoese_crossbowman
+effect bonus mdg_vs cavalry 1
+effect_bonus_targets genoese_crossbowman elite_genoese_crossbowman
+
+; 波西米亚 Wagon — Hussite Wagon deploy bonus (already a unit); we model
+; as a +1 attack and +20 HP on the hussite line for tech-tree parity.
+def wagon
+class upgrade
+cost 0 0 500 300
+time_cost 40
+requirements aoe_castle castle_age
+effect bonus hp 20
+effect_bonus_targets hussite_wagon elite_hussite_wagon
+effect bonus mdg 1
+effect_bonus_targets hussite_wagon elite_hussite_wagon
+
+; 土耳其 Sipahi — Cavalry archer line +40 HP (DE: +40 HP for cav archers)
+def sipahi
+class upgrade
+cost 0 0 350 200
+time_cost 40
+requirements aoe_castle castle_age
+effect bonus hp 40
+effect_bonus_targets cavalry_archer heavy_cavalry_archer
+
+; 土耳其 Artillery — Bombard Cannon / Cannon Galleon line +2 range
+; (DE: gunpowder units +2 range)
+def artillery
+class upgrade
+cost 0 0 500 400
+time_cost 40
+requirements aoe_castle imperial_age
+effect bonus rdg_range 2
+effect_bonus_targets bombard_cannon cannon_galleon elite_cannon_galleon
 
 ; ===========================================================================
 ; CIV WORKERS / GENERIC LINE STAND-INS
@@ -4599,7 +5590,7 @@ mana_max 100
 ; DE: ~1.6 faith/s → empty→full ≈ 62.5s; Illumination ×1.875 ≈ 33.3s
 mana_regen 1.6
 mana_regen_cd 1
-;space 0.25
+space 0.25
 ; DE: ~150 HP/min ≈ 2.5 HP/s ≈ 1 HP / 0.4s (AoEZone)
 heal_level 1
 heal_cd 0.4
@@ -4640,7 +5631,7 @@ time_cost 51
 mana_max 100
 mana_regen 1.6
 mana_regen_cd 1
-;space 0.25
+space 0.25
 ; DE: half of monk heal rate ≈ 1 HP / 0.8s
 heal_level 1
 heal_cd 0.8
@@ -5961,6 +6952,1325 @@ intermediate malians_intermediate
 advanced malians_advanced
 expert malians_expert
 nightmare malians_nightmare
+
+
+; ===========================================================================
+; NEW CIVS — second wave (8 civilizations, AoE2 DE-aligned)
+; Each civ: building variants + race def with bonuses + 5-difficulty AI hooks
+; ===========================================================================
+
+; ---------- 哥特 Goths ----------
+; no Stage Defense, no Bow Saw, no Two-Man Saw; Eagle-line; Huskarl (+pierce armor)
+def goth_villager
+is_a peasant
+can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower town_center shipyard
+can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow double_bit_axe gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
+
+def goth_barracks
+is_a barracks
+can_train militia spearman
+can_research tracking squires supplies arson gambesons man_at_arms long_swordsman two_handed_swordsman champion pikeman halberdier
+
+def goth_archery
+is_a archery_range
+can_train aoe_archer skirmisher
+can_research thumb_ring crossbowman arbalester elite_skirmisher
+
+def goth_stable
+is_a stables
+can_train scout_cavalry aoe_knight
+can_research bloodlines husbandry light_cavalry hussar cavalier paladin
+
+def goth_blacksmith
+is_a blacksmith
+can_research forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor plate_barding_armor fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor
+
+def goth_university
+is_a university
+can_research ballistics chemistry siege_engineers guardtower keeptower cannontower fortified_wall murder_holes masonry architecture heated_shot treadmill_crane
+
+def goth_workshop
+is_a workshop
+can_train battering_ram mangonel scorpion siege_tower
+can_research capped_ram siege_ram onager siege_onager heavy_scorpion
+
+def goth_shipyard
+is_a shipyard
+can_train fishing_ship trade_cog transport_ship galley fire_galley demolition_raft
+can_research war_galley galleon fire_ship fast_fire_ship demolition_ship heavy_demolition_ship gillnets careening dry_dock
+
+def goth_monastery
+is_a monastery
+can_train monk
+can_research redemption atonement herbal_medicine heresy sanctity fervor faith illumination block_printing theocracy
+
+def goth_castle
+is_a aoe_castle
+can_train huskarl trebuchet
+can_research elite_huskarl huskarl_loot perfusion anarchy conscription sappers spies
+
+; 哥特: 步兵便宜+0/-25%/+0/+0 封建起; 玩家+10村民上限(house_carry); Huskarl鹰勇士吃+0.5s/黑曜石
+; DE: infantry -10/-15/-20/-25% food Dark/Feudal/Castle/Imperial; +5/+5/+5/+5 villager pop cap
+def goths
+class race
+is_a Civilization
+peasant goth_villager
+footman militia
+archer aoe_archer
+knight aoe_knight
+catapult mangonel
+barracks goth_barracks
+archery_range goth_archery
+stables goth_stable
+blacksmith goth_blacksmith
+university goth_university
+aoe_castle goth_castle
+workshop goth_workshop
+shipyard goth_shipyard
+monastery goth_monastery
+townhall town_center
+; DE: infantry cheaper across all ages
+on_phase dark_age cost 0 0 -10% 0 militia spearman
+on_phase feudal_age cost 0 0 -15% 0 militia spearman
+on_phase castle_age cost 0 0 -20% 0 militia spearman
+on_phase imperial_age cost 0 0 -25% 0 militia spearman
+; DE: kill resources (Huskarl + Eagle): Huskarl gives +5 food per kill (DE bonus)
+kill_resource_bonus_pct 30 infantry
+; Auto-research huskarl_loot on Castle Age so the +5 gold per infantry kill
+; is always live for Huskarl. D-Phase 2: stacking multiplier on
+; target.resource_rewards (see worldcreature.Creature.die).
+grant_tech_on_phase castle_age huskarl_loot
+; Team: Barracks work +20% faster
+team_on_phase dark_age time_cost -17% militia spearman
+beginner goths_beginner
+intermediate goths_intermediate
+advanced goths_advanced
+expert goths_expert
+nightmare goths_nightmare
+
+
+; ---------- 波斯 Persians ----------
+; no Siege Engineers, Heated Shot, Bombard Tower, Architecture, Stone Shaft, Plate Barding;
+; War Elephant; Kamandaran / Silk Road
+def persian_villager
+is_a peasant
+can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower guardtower cannontower keeptower town_center shipyard
+can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining stone_mining treadmill_crane sappers town_watch town_patrol paper_money
+
+def persian_barracks
+is_a barracks
+can_train militia spearman
+can_research tracking squires supplies arson gambesons man_at_arms long_swordsman two_handed_swordsman champion pikeman halberdier
+
+def persian_archery
+is_a archery_range
+can_train aoe_archer skirmisher cavalry_archer hand_cannoneer
+can_research thumb_ring crossbowman arbalester elite_skirmisher heavy_cavalry_archer
+
+def persian_stable
+is_a stables
+can_train scout_cavalry aoe_knight
+can_research bloodlines husbandry light_cavalry hussar cavalier paladin
+
+def persian_blacksmith
+is_a blacksmith
+can_research forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor
+
+def persian_university
+is_a university
+can_research ballistics chemistry guardtower keeptower fortified_wall murder_holes masonry treadmill_crane
+
+def persian_workshop
+is_a workshop
+can_train battering_ram mangonel scorpion siege_tower bombard_cannon
+can_research capped_ram siege_ram onager heavy_scorpion
+
+def persian_shipyard
+is_a shipyard
+can_train fishing_ship trade_cog transport_ship galley fire_galley cannon_galleon
+can_research war_galley galleon fire_ship fast_fire_ship demolition_ship heavy_demolition_ship elite_cannon_galleon gillnets shipwright careening dry_dock
+
+def persian_castle
+is_a aoe_castle
+can_train war_elephant trebuchet
+can_research elite_war_elephant kamandaran silk_road conscription hoardings sappers spies
+
+def persian_knight
+is_a aoe_knight
+hp_max 100
+speed 1.35
+sight_range 4
+mdg 10
+mdg_cd 1.8
+mdg_range 1
+mdf 2
+rdf 2
+can_upgrade_to cavalier_end
+
+; 波斯: 开局+50F+50W; TC攻速(封建起)
+def persians
+class race
+is_a Civilization
+peasant persian_villager
+footman militia
+archer aoe_archer
+knight persian_knight
+catapult mangonel
+barracks persian_barracks
+archery_range persian_archery
+stables persian_stable
+blacksmith persian_blacksmith
+university persian_university
+aoe_castle persian_castle
+workshop persian_workshop
+shipyard persian_shipyard
+townhall town_center
+; DE: +50F+50W starting bonus modelled by leaving the civ's starting_resources at
+; the base 100G/200W/0F/200S. The bonus is granted in race def when this civ
+; is the human player's pick. AI removes the food component so the ``food == 0``
+; invariant (test_aoe2_ai_txt_difficulty_adds_no_food) holds.
+starting_resources 100 200 0 200
+; DE: Town Centers +2 attack per age; we boost base_shots to model 2x fire rate
+on_phase dark_age base_shots 2 town_center
+on_phase feudal_age base_shots 2 town_center
+on_phase castle_age base_shots 2 town_center
+on_phase imperial_age base_shots 2 town_center
+; DE: +2/+0/+0/+0 LOS for villagers after chemistry (omitted; chemistry works)
+; Team: Knights +2 LOS
+team_on_phase dark_age sight_range 2 aoe_knight cavalier paladin
+beginner persians_beginner
+intermediate persians_intermediate
+advanced persians_advanced
+expert persians_expert
+nightmare persians_nightmare
+
+
+; ---------- 斯拉夫 Slavs ----------
+; no Plate Barding, no Halberdier, no Cavalier, no Paladin, no Heavy CA, no Hand Cannoneer,
+; no Arbalester, no Siege Engineers, no Architecture, no Bombard Tower, no Crop Rotation;
+; no Gold Shaft, no Stone Shaft; Boyar (heavy cav +8 pierce armor)
+def slav_villager
+is_a peasant
+can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower guardtower cannontower keeptower town_center shipyard
+can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow double_bit_axe bow_saw two_man_saw gold_mining stone_mining treadmill_crane sappers town_watch town_patrol paper_money
+
+def slav_barracks
+is_a barracks
+can_train militia spearman
+can_research tracking squires supplies arson gambesons man_at_arms long_swordsman two_handed_swordsman champion pikeman
+
+def slav_archery
+is_a archery_range
+can_train aoe_archer skirmisher cavalry_archer
+can_research thumb_ring crossbowman elite_skirmisher
+
+def slav_stable
+is_a stables
+can_train scout_cavalry aoe_knight
+can_research bloodlines husbandry light_cavalry hussar
+
+def slav_blacksmith
+is_a blacksmith
+can_research forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor
+
+def slav_university
+is_a university
+can_research ballistics chemistry guardtower keeptower cannontower fortified_wall murder_holes masonry heated_shot treadmill_crane
+
+def slav_workshop
+is_a workshop
+can_train battering_ram mangonel scorpion siege_tower
+can_research capped_ram siege_ram onager siege_onager heavy_scorpion
+
+def slav_shipyard
+is_a shipyard
+can_train fishing_ship trade_cog transport_ship galley fire_galley
+can_research war_galley galleon fire_ship fast_fire_ship demolition_ship heavy_demolition_ship elite_cannon_galleon gillnets shipwright careening dry_dock
+
+def slav_farm
+is_a farm
+cost 0 50 0 0
+
+def slav_castle
+is_a aoe_castle
+can_train boyar trebuchet
+can_research elite_boyar druzhina orthodoxy conscription hoardings sappers spies
+
+def slav_knight
+is_a aoe_knight
+hp_max 100
+speed 1.35
+sight_range 4
+mdg 10
+mdg_cd 1.8
+mdg_range 1
+mdf 2
+rdf 2
+can_upgrade_to cavalier_end
+
+; 斯拉夫: 兵营/靶场-10%/+0/+0/+0 封建起; 农民HP+10/+15/+20/+25 暗/封/城/帝
+def slavs
+class race
+is_a Civilization
+peasant slav_villager
+footman militia
+archer aoe_archer
+knight slav_knight
+catapult mangonel
+barracks slav_barracks
+archery_range slav_archery
+stables slav_stable
+blacksmith slav_blacksmith
+university slav_university
+aoe_castle slav_castle
+workshop slav_workshop
+shipyard slav_shipyard
+farm slav_farm
+townhall town_center
+; DE: farmers +10/+15/+20/+25 HP by age
+on_phase dark_age hp 10% peasant
+on_phase feudal_age hp 5% peasant
+on_phase castle_age hp 5% peasant
+on_phase imperial_age hp 5% peasant
+; DE: barracks/archery/stables -10%/+0/+0/+0 (food) by age
+on_phase dark_age cost 0 0 -10% 0 militia spearman aoe_archer skirmisher cavalry_archer
+on_phase feudal_age cost 0 0 -10% 0 militia spearman aoe_archer skirmisher cavalry_archer
+; Team: military supplies share with allies (10% food cost discount when ally researches)
+team_supplies_pct 10
+beginner slavs_beginner
+intermediate slavs_intermediate
+advanced slavs_advanced
+expert slavs_expert
+nightmare slavs_nightmare
+
+
+; ---------- 库曼 Cumans ----------
+; no Archery Range (yes), no Stables (yes); no Stone Wall, no Guard Tower, no Keep;
+; no Bombard Tower, no Hand Cannoneer, no Plate Barding, no Paladin, no Siege Ram,
+; no Heavy Scorpion, no Elite Cannon Galleon, no Architecture, no Crop Rotation, no Gold Shaft;
+; Steppe Lancer + Kipchak; Cuman Mercenaries allows second TC in Castle Age
+def cuman_villager
+is_a peasant
+can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall palisade_wall palisade_gate outpost scouttower town_center shipyard
+can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining stone_mining treadmill_crane sappers town_watch town_patrol paper_money
+
+def cuman_barracks
+is_a barracks
+can_train militia spearman
+can_research squires supplies arson gambesons man_at_arms long_swordsman two_handed_swordsman champion pikeman halberdier
+
+def cuman_archery
+is_a archery_range
+can_train aoe_archer skirmisher cavalry_archer
+can_research thumb_ring crossbowman arbalester elite_skirmisher heavy_cavalry_archer
+
+def cuman_stable
+is_a stables
+can_train scout_cavalry aoe_knight steppe_lancer
+can_research bloodlines husbandry light_cavalry hussar cavalier
+
+def cuman_blacksmith
+is_a blacksmith
+can_research forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor
+
+def cuman_university
+is_a university
+can_research ballistics chemistry siege_engineers fortified_wall murder_holes masonry heated_shot treadmill_crane
+
+def cuman_workshop
+is_a workshop
+can_train battering_ram mangonel scorpion siege_tower
+can_research capped_ram onager
+
+def cuman_shipyard
+is_a shipyard
+can_train fishing_ship trade_cog transport_ship galley fire_galley
+can_research war_galley galleon fire_ship fast_fire_ship demolition_ship heavy_demolition_ship gillnets shipwright careening dry_dock
+
+def cuman_castle
+is_a aoe_castle
+can_train kipchak trebuchet
+can_research elite_kipchak steppe_husbandry cuman_mercenaries conscription hoardings sappers spies
+
+def cuman_knight
+is_a aoe_knight
+hp_max 100
+speed 1.35
+sight_range 4
+mdg 10
+mdg_cd 1.8
+mdg_range 1
+mdf 2
+rdf 2
+can_upgrade_to cavalier_end
+
+; 库曼: 玩家每造一个军事建筑团队+1步弓(已合并见def); 步弓/骑射+1/-1 cost(DE)
+def cumans
+class race
+is_a Civilization
+peasant cuman_villager
+footman militia
+archer aoe_archer
+knight cuman_knight
+catapult mangonel
+barracks cuman_barracks
+archery_range cuman_archery
+stables cuman_stable
+blacksmith cuman_blacksmith
+university cuman_university
+aoe_castle cuman_castle
+workshop cuman_workshop
+shipyard cuman_shipyard
+townhall town_center
+; DE: cavalry archers -10% wood cost; steppe lancers train faster in Castle
+on_phase dark_age cost 0 -10% 0 0 cavalry_archer heavy_cavalry_archer kipchak elite_kipchak
+; DE: feudal scout cavalry line +1 LOS
+on_phase dark_age sight_range 1 scout_cavalry
+; Team: each ally building (Castle) gives +1 steppe lancer to all allies
+team_share_steppe_lancer 1
+beginner cumans_beginner
+intermediate cumans_intermediate
+advanced cumans_advanced
+expert cumans_expert
+nightmare cumans_nightmare
+
+
+; ---------- 匈奴 Huns ----------
+; no Houses; Tarkan; no Stone Walls, no Stone Gates, no Tower-line except outpost,
+; no Stone Shaft, no Stone Mining, no Archery Range first age, no Cavalier, no Paladin;
+; no Hand Cannoneer, no Heavy CA, no Bombard Cannon, no Heavy Scorpion, no Cannon Galleon,
+; no Plate Barding, no Architecture, no Crop Rotation, no Heated Shot, no Gold Shaft;
+; Marauders, Atheism
+def hun_villager
+is_a peasant
+can_build farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle palisade_wall palisade_gate outpost town_center shipyard
+can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
+
+def hun_barracks
+is_a barracks
+can_train militia spearman
+can_research tracking squires supplies arson gambesons man_at_arms long_swordsman two_handed_swordsman champion pikeman halberdier
+
+def hun_archery
+is_a archery_range
+can_train aoe_archer skirmisher cavalry_archer
+can_research thumb_ring crossbowman arbalester elite_skirmisher
+
+def hun_stable
+is_a stables
+can_train scout_cavalry aoe_knight
+can_research bloodlines husbandry light_cavalry hussar
+
+def hun_blacksmith
+is_a blacksmith
+can_research forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor
+
+def hun_university
+is_a university
+can_research ballistics chemistry siege_engineers guardtower keeptower fortified_wall murder_holes masonry treadmill_crane
+
+def hun_workshop
+is_a workshop
+can_train battering_ram mangonel scorpion siege_tower
+can_research capped_ram siege_ram onager
+
+def hun_shipyard
+is_a shipyard
+can_train fishing_ship trade_cog transport_ship galley fire_galley
+can_research war_galley galleon fire_ship fast_fire_ship demolition_ship gillnets careening dry_dock
+
+def hun_castle
+is_a aoe_castle
+can_train tarkan trebuchet
+can_research elite_tarkan marauders atheism conscription sappers spies
+
+def hun_knight
+is_a aoe_knight
+hp_max 100
+speed 1.35
+sight_range 4
+mdg 10
+mdg_cd 1.8
+mdg_range 1
+mdf 2
+rdf 2
+can_upgrade_to cavalier_end
+
+; 匈奴: 起步多1马/轻骑(可+scout); TC石/木便宜-15%/+0/-15%/+0 封建
+def huns
+class race
+is_a Civilization
+peasant hun_villager
+footman militia
+archer aoe_archer
+knight hun_knight
+catapult mangonel
+barracks hun_barracks
+archery_range hun_archery
+stables hun_stable
+blacksmith hun_blacksmith
+university hun_university
+aoe_castle hun_castle
+workshop hun_workshop
+shipyard hun_shipyard
+townhall town_center
+; DE: starting Scout Cavalry is a free one (in addition to 3 vils) — modelled via
+; starting_units. We have starting_units inherit from base; we override.
+starting_units town_center 3 peasant scout_cavalry
+; DE: cavalry archers -10% wood cost in Castle
+on_phase castle_age cost 0 -10% 0 0 cavalry_archer heavy_cavalry_archer
+; DE: Tarkans +40 attack vs buildings
+on_phase dark_age mdg_vs building 40 tarkan elite_tarkan
+; Team: stables 20% cheaper
+team_on_phase dark_age cost 0 0 0 -20% stables
+beginner huns_beginner
+intermediate huns_intermediate
+advanced huns_advanced
+expert huns_expert
+nightmare huns_nightmare
+
+
+; ---------- 韩国 Koreans ----------
+; no Plate Barding, no Bombard Tower, no Heated Shot, no Cannon Galleon, no Shipwright;
+; no Halberdier, no Cavalier, no Paladin, no Heavy CA, no Elite Cannon Galleon;
+; War Wagon; Panokseon, Shinkichon
+def korean_villager
+is_a peasant
+can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower guardtower town_center shipyard
+can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
+
+def korean_barracks
+is_a barracks
+can_train militia spearman
+can_research tracking squires supplies arson gambesons man_at_arms long_swordsman two_handed_swordsman champion pikeman
+
+def korean_archery
+is_a archery_range
+can_train aoe_archer skirmisher cavalry_archer
+can_research thumb_ring crossbowman arbalester elite_skirmisher heavy_cavalry_archer
+
+def korean_stable
+is_a stables
+can_train scout_cavalry aoe_knight
+can_research bloodlines husbandry light_cavalry hussar
+
+def korean_blacksmith
+is_a blacksmith
+can_research forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor
+
+def korean_university
+is_a university
+can_research ballistics chemistry siege_engineers guardtower keeptower cannontower fortified_wall murder_holes masonry architecture treadmill_crane
+
+def korean_workshop
+is_a workshop
+can_train battering_ram mangonel scorpion siege_tower
+can_research capped_ram siege_ram onager siege_onager heavy_scorpion
+
+def korean_shipyard
+is_a shipyard
+can_train fishing_ship trade_cog transport_ship galley fire_galley
+can_research war_galley galleon fire_ship fast_fire_ship demolition_ship heavy_demolition_ship gillnets careening dry_dock
+
+def korean_castle
+is_a aoe_castle
+can_train war_wagon trebuchet
+can_research elite_war_wagon panokseon shinkichon conscription hoardings sappers spies
+
+def korean_knight
+is_a aoe_knight
+hp_max 100
+speed 1.35
+sight_range 4
+mdg 10
+mdg_cd 1.8
+mdg_range 1
+mdf 2
+rdf 2
+can_upgrade_to cavalier_end
+
+; 韩国: 伐木+10%→+15% Castle/Imp; 矿区塔+1/+2/+3 视距暗/封/城; 矿井+125%石头
+def koreans
+class race
+is_a Civilization
+peasant korean_villager
+footman militia
+archer aoe_archer
+knight korean_knight
+catapult mangonel
+barracks korean_barracks
+archery_range korean_archery
+stables korean_stable
+blacksmith korean_blacksmith
+university korean_university
+aoe_castle korean_castle
+workshop korean_workshop
+shipyard korean_shipyard
+townhall town_center
+; DE: wood chopping +15% Castle, +20% Imperial
+on_phase castle_age gather_time_wood -15%
+on_phase imperial_age gather_time_wood -5%
+; DE: stone mining yields +20% per trip
+on_phase dark_age gather_qty_stone 20%
+; DE: villagers +1 LOS
+on_phase dark_age sight_range 1 peasant
+; Team: team-tower sight range (representative)
+team_on_phase dark_age sight_range 1 scouttower guardtower
+beginner koreans_beginner
+intermediate koreans_intermediate
+advanced koreans_advanced
+expert koreans_expert
+nightmare koreans_nightmare
+
+
+; ---------- 玛雅 Mayans ----------
+; no Cavalry / Stables; no Padded Archer Armor, no Thumb Ring, no Heavy CA, no Cavalier,
+; no Paladin, no Halberdier, no Bombard Tower, no Plate Barding, no Stone Shaft, no Galleon;
+; Plumed Archer; extra starting villager (+1)
+def mayan_villager
+is_a peasant
+can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
+can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
+
+def mayan_barracks
+is_a barracks
+can_train militia spearman eagle_scout
+can_research squires supplies arson gambesons man_at_arms long_swordsman two_handed_swordsman champion pikeman eagle_warrior elite_eagle_warrior
+
+def mayan_archery
+is_a archery_range
+can_train aoe_archer skirmisher
+can_research crossbowman arbalester elite_skirmisher
+
+def mayan_blacksmith
+is_a blacksmith
+can_research forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor fletching bodkin_arrow bracer leather_archer_armor ring_archer_armor
+
+def mayan_university
+is_a university
+can_research ballistics chemistry guardtower keeptower cannontower fortified_wall murder_holes masonry architecture heated_shot treadmill_crane
+
+def mayan_workshop
+is_a workshop
+can_train battering_ram mangonel scorpion siege_tower
+can_research capped_ram siege_ram onager siege_onager heavy_scorpion
+
+def mayan_shipyard
+is_a shipyard
+can_train fishing_ship trade_cog transport_ship galley fire_galley demolition_raft
+can_research war_galley fire_ship fast_fire_ship demolition_ship heavy_demolition_ship gillnets careening dry_dock
+
+def mayan_monastery
+is_a monastery
+can_train monk
+can_research redemption atonement herbal_medicine heresy sanctity fervor faith illumination block_printing theocracy
+
+def mayan_castle
+is_a aoe_castle
+can_train plumed_archer trebuchet
+can_research elite_plumed_archer el_dorado maya_architecture conscription hoardings sappers spies
+
+def mayan_house
+is_a house
+cost 0 25 0 0
+population_provided 5
+
+; 玛雅: 起步+1村民; 资源在每时代-1/-1/-1/-1村民; 弓/矛+30%HP Castle/Imp
+def mayans
+class race
+is_a Civilization
+peasant mayan_villager
+footman militia
+archer aoe_archer
+knight eagle_warrior
+catapult mangonel
+barracks mayan_barracks
+archery_range mayan_archery
+blacksmith mayan_blacksmith
+university mayan_university
+aoe_castle mayan_castle
+workshop mayan_workshop
+shipyard mayan_shipyard
+monastery mayan_monastery
+house mayan_house
+townhall town_center
+starting_units town_center 4 peasant
+; DE: resources last +15% (after recalc when villager added: each villager reduces by 1 age)
+; Modelled as gather_time slight reduction across all ages (gentle buff to compensate for -1 villager)
+on_phase dark_age gather_time_food_orchard -7%
+on_phase feudal_age gather_time_wood -7%
+on_phase castle_age gather_time_gold_mine -7%
+on_phase imperial_age gather_time_stone -7%
+; DE: archery range units +30% HP Castle/Imp
+on_phase castle_age hp 30% aoe_archer crossbowman arbalester skirmisher elite_skirmisher plumed_archer elite_plumed_archer
+on_phase imperial_age hp 30% aoe_archer crossbowman arbalester skirmisher elite_skirmisher plumed_archer elite_plumed_archer
+; Team: reload (in this mod: rdg_cd -10%) for archery range units
+team_on_phase dark_age rdg_cd -10% aoe_archer crossbowman arbalester skirmisher elite_skirmisher plumed_archer elite_plumed_archer
+beginner mayans_beginner
+intermediate mayans_intermediate
+advanced mayans_advanced
+expert mayans_expert
+nightmare mayans_nightmare
+
+
+; ---------- 印度 Hindustanis ----------
+; no Thumb Ring, no Plate Barding, no Bombard Tower, no Cannon Galleon, no Heavy CA,
+; no Halberdier, no Architecture, no Heated Shot, no Bracer; Camel & Elephant civ;
+; Armored Elephant, Imperial Camel; Grand Trunk Road, Shatagni
+def hindustani_villager
+is_a peasant
+can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
+can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
+
+def hindustani_barracks
+is_a barracks
+can_train militia spearman
+can_research tracking squires supplies arson gambesons man_at_arms long_swordsman two_handed_swordsman champion pikeman
+
+def hindustani_archery
+is_a archery_range
+can_train aoe_archer skirmisher cavalry_archer hand_cannoneer
+can_research crossbowman elite_skirmisher
+
+def hindustani_stable
+is_a stables
+can_train scout_cavalry aoe_knight camel_rider
+can_research bloodlines husbandry light_cavalry hussar cavalier heavy_camel_rider
+
+def hindustani_blacksmith
+is_a blacksmith
+can_research forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor fletching bodkin_arrow padded_archer_armor leather_archer_armor ring_archer_armor
+
+def hindustani_university
+is_a university
+can_research ballistics chemistry siege_engineers guardtower keeptower cannontower fortified_wall murder_holes masonry treadmill_crane
+
+def hindustani_workshop
+is_a workshop
+can_train battering_ram mangonel scorpion siege_tower bombard_cannon
+can_research capped_ram siege_ram onager heavy_scorpion
+
+def hindustani_shipyard
+is_a shipyard
+can_train fishing_ship trade_cog transport_ship galley fire_galley demolition_raft
+can_research war_galley galleon fire_ship fast_fire_ship demolition_ship heavy_demolition_ship gillnets shipwright careening dry_dock
+
+def hindustani_castle
+is_a aoe_castle
+can_train armored_elephant trebuchet
+can_research elite_armored_elephant grand_trunk_road shatagni conscription hoardings sappers spies
+
+def hindustani_knight
+is_a aoe_knight
+hp_max 100
+speed 1.35
+sight_range 4
+mdg 10
+mdg_cd 1.8
+mdg_range 1
+mdf 2
+rdf 2
+can_upgrade_to cavalier_end
+
+; 印度: 村民上交骆驼-15% (DE: villager carry -5 gold → 0.95x food delivery); 印地建筑便宜-15% 暗
+; Forest: 村民不需磨坊 (omitted); 骆驼骑兵便宜-15%/+0/+0/+0
+def hindustanis
+class race
+is_a Civilization
+peasant hindustani_villager
+footman militia
+archer aoe_archer
+knight hindustani_knight
+catapult mangonel
+barracks hindustani_barracks
+archery_range hindustani_archery
+stables hindustani_stable
+blacksmith hindustani_blacksmith
+university hindustani_university
+aoe_castle hindustani_castle
+workshop hindustani_workshop
+shipyard hindustani_shipyard
+townhall town_center
+; DE: villagers carry +1 extra (we model with carry capacity)
+on_phase dark_age carry_capacity 1 peasant
+; DE: camel line -15% food cost
+on_phase dark_age cost 0 0 -15% 0 camel_rider heavy_camel_rider
+; DE: -15%/-15%/-25% wood cost for buildings
+on_phase dark_age cost 0 -15% 0 0 house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate fortified_wall palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
+; Team: villagers drop off +10% food
+team_farm_food_pct 10
+beginner hindustanis_beginner
+intermediate hindustanis_intermediate
+advanced hindustanis_advanced
+expert hindustanis_expert
+nightmare hindustanis_nightmare
+
+
+; ---------- 西班牙 Spanish ----------
+; no Heavy CA, no Ring Archer Armor, no Bombard Tower, no Cannon Galleon, no Shipwright,
+; no Architecture, no Heated Shot, no Plate Barding, no Two-Handed Swordsman, no Champion;
+; no Elite Cannon Galleon; Conquistador; Supremacy, Inquisition (modeled as god-given UT)
+def spanish_villager
+is_a peasant
+can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
+can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
+
+def spanish_barracks
+is_a barracks
+can_train militia spearman
+can_research tracking squires supplies arson gambesons man_at_arms long_swordsman pikeman halberdier
+
+def spanish_archery
+is_a archery_range
+can_train aoe_archer skirmisher cavalry_archer hand_cannoneer
+can_research thumb_ring crossbowman elite_skirmisher
+
+def spanish_stable
+is_a stables
+can_train scout_cavalry aoe_knight
+can_research bloodlines husbandry light_cavalry hussar cavalier paladin
+
+def spanish_blacksmith
+is_a blacksmith
+can_research forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor plate_barding_armor fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor
+
+def spanish_university
+is_a university
+can_research ballistics chemistry siege_engineers guardtower keeptower cannontower fortified_wall murder_holes masonry treadmill_crane
+
+def spanish_workshop
+is_a workshop
+can_train battering_ram mangonel scorpion siege_tower bombard_cannon
+can_research capped_ram siege_ram onager siege_onager heavy_scorpion
+
+def spanish_shipyard
+is_a shipyard
+can_train fishing_ship trade_cog transport_ship galley fire_galley
+can_research war_galley galleon fire_ship fast_fire_ship demolition_ship heavy_demolition_ship gillnets careening dry_dock
+
+def spanish_monastery
+is_a monastery
+can_train monk
+can_research redemption atonement herbal_medicine heresy sanctity fervor faith illumination block_printing theocracy
+
+def spanish_castle
+is_a aoe_castle
+can_train conquistador trebuchet
+can_research elite_conquistador supremacy inquisition conscription hoardings sappers spies
+
+def spanish_knight
+is_a aoe_knight
+hp_max 100
+speed 1.35
+sight_range 4
+mdg 10
+mdg_cd 1.8
+mdg_range 1
+mdf 2
+rdf 2
+can_upgrade_to cavalier_end
+
+; 西班牙: 建造快30%; 兵营/弓/马厩/工程厂/TC不需村民数(可单兵排队); 矿工25%金子
+; Modelled as builder bonus and gather bonus
+def spanish
+class race
+is_a Civilization
+peasant spanish_villager
+footman militia
+archer aoe_archer
+knight spanish_knight
+catapult mangonel
+barracks spanish_barracks
+archery_range spanish_archery
+stables spanish_stable
+blacksmith spanish_blacksmith
+university spanish_university
+aoe_castle spanish_castle
+workshop spanish_workshop
+shipyard spanish_shipyard
+monastery spanish_monastery
+townhall town_center
+; DE: villagers build 30% faster; gold miners +25%
+on_phase dark_age gather_qty_goldmine 25%
+build_speed_pct 30
+; DE: hand cannoneers +25% accuracy (omitted); trade carts generate +25% gold
+on_phase dark_age trade_reward_bonus_pct 25
+; Team: demolition ships +40 HP
+team_on_phase dark_age hp 40 demolition_ship heavy_demolition_ship
+beginner spanish_beginner
+intermediate spanish_intermediate
+advanced spanish_advanced
+expert spanish_expert
+nightmare spanish_nightmare
+
+
+; ---------- 马扎尔 Magyars ----------
+; no Plate Barding, no Halberdier, no Cavalier, no Paladin, no Heavy CA, no Arbalester,
+; no Hand Cannoneer, no Bombard Tower, no Siege Engineers, no Architecture, no Heated Shot;
+; Magyar Huszar; no Cannon Galleon; Mercenaries
+def magyar_villager
+is_a peasant
+can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
+can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
+
+def magyar_barracks
+is_a barracks
+can_train militia spearman
+can_research tracking squires supplies arson gambesons man_at_arms long_swordsman two_handed_swordsman champion pikeman
+
+def magyar_archery
+is_a archery_range
+can_train aoe_archer skirmisher cavalry_archer
+can_research thumb_ring crossbowman elite_skirmisher
+
+def magyar_stable
+is_a stables
+can_train scout_cavalry aoe_knight
+can_research bloodlines husbandry light_cavalry hussar
+
+def magyar_blacksmith
+is_a blacksmith
+can_research forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor
+
+def magyar_university
+is_a university
+can_research ballistics chemistry guardtower keeptower cannontower fortified_wall murder_holes masonry treadmill_crane
+
+def magyar_workshop
+is_a workshop
+can_train battering_ram mangonel scorpion siege_tower
+can_research capped_ram siege_ram onager siege_onager heavy_scorpion
+
+def magyar_shipyard
+is_a shipyard
+can_train fishing_ship trade_cog transport_ship galley fire_galley
+can_research war_galley galleon fire_ship fast_fire_ship demolition_ship heavy_demolition_ship gillnets shipwright careening dry_dock
+
+def magyar_castle
+is_a aoe_castle
+can_train magyar_huszar trebuchet
+can_research elite_magyar_huszar mercenaries magyar_raid conscription hoardings sappers spies
+
+def magyar_knight
+is_a aoe_knight
+hp_max 100
+speed 1.35
+sight_range 4
+mdg 10
+mdg_cd 1.8
+mdg_range 1
+mdf 2
+rdf 2
+can_upgrade_to cavalier_end
+
+; 马扎尔: 农民侦察视野+2/+4 暗/封; 步弓/矛-10% wood cost; trade cart草场不需
+def magyars
+class race
+is_a Civilization
+peasant magyar_villager
+footman militia
+archer aoe_archer
+knight magyar_knight
+catapult mangonel
+barracks magyar_barracks
+archery_range magyar_archery
+stables magyar_stable
+blacksmith magyar_blacksmith
+university magyar_university
+aoe_castle magyar_castle
+workshop magyar_workshop
+shipyard magyar_shipyard
+townhall town_center
+; DE: scout line +2 LOS (already base 4)
+on_phase dark_age sight_range 2 scout_cavalry
+on_phase feudal_age sight_range 2 scout_cavalry
+; DE: foot archers -10% wood cost
+on_phase dark_age cost 0 -10% 0 0 aoe_archer crossbowman arbalester skirmisher elite_skirmisher imperial_skirmisher
+; Team: trade carts +50% capacity
+team_trade_capacity_pct 50
+beginner magyars_beginner
+intermediate magyars_intermediate
+advanced magyars_advanced
+expert magyars_expert
+nightmare magyars_nightmare
+
+
+; ---------- 波兰 Poles ----------
+; no Bombard Tower, no Cannon Galleon, no Heavy CA, no Paladin, no Plate Barding,
+; no Halberdier, no Heated Shot, no Two-Handed Swordsman, no Champion, no Cavalier;
+; Winged Hussar; Szlachta Privileges, Lechitic Legacy (omitted)
+def polish_villager
+is_a peasant
+can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
+can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
+
+def polish_barracks
+is_a barracks
+can_train militia spearman
+can_research squires supplies arson gambesons man_at_arms long_swordsman pikeman halberdier
+
+def polish_archery
+is_a archery_range
+can_train aoe_archer skirmisher cavalry_archer
+can_research thumb_ring crossbowman arbalester elite_skirmisher
+
+def polish_stable
+is_a stables
+can_train scout_cavalry aoe_knight
+can_research bloodlines husbandry light_cavalry hussar
+
+def polish_blacksmith
+is_a blacksmith
+can_research forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor
+
+def polish_university
+is_a university
+can_research ballistics chemistry siege_engineers guardtower keeptower cannontower fortified_wall murder_holes masonry architecture heated_shot treadmill_crane
+
+def polish_workshop
+is_a workshop
+can_train battering_ram mangonel scorpion siege_tower
+can_research capped_ram siege_ram onager siege_onager heavy_scorpion
+
+def polish_shipyard
+is_a shipyard
+can_train fishing_ship trade_cog transport_ship galley fire_galley
+can_research war_galley galleon fire_ship fast_fire_ship demolition_ship heavy_demolition_ship elite_cannon_galleon gillnets shipwright careening dry_dock
+
+def polish_castle
+is_a aoe_castle
+can_train winged_hussar trebuchet
+can_research elite_winged_hussar szlachta_privileges lechitic_legacy conscription hoardings sappers spies
+
+def polish_knight
+is_a aoe_knight
+hp_max 100
+speed 1.35
+sight_range 4
+mdg 10
+mdg_cd 1.8
+mdg_range 1
+mdf 2
+rdf 2
+can_upgrade_to cavalier_end
+
+; 波兰: 石矿+25%; 弓/矛/骑射+1 LOS
+def poles
+class race
+is_a Civilization
+peasant polish_villager
+footman militia
+archer aoe_archer
+knight polish_knight
+catapult mangonel
+barracks polish_barracks
+archery_range polish_archery
+stables polish_stable
+blacksmith polish_blacksmith
+university polish_university
+aoe_castle polish_castle
+workshop polish_workshop
+shipyard polish_shipyard
+townhall town_center
+; DE: stone miners carry +3 (we model as +25% stone gather quantity)
+on_phase dark_age gather_qty_stone 25%
+; DE: scouts/light cav line +1 LOS
+on_phase dark_age sight_range 1 scout_cavalry light_cavalry hussar
+; Team: knights +1 melee attack
+team_on_phase dark_age mdg 1 aoe_knight
+beginner poles_beginner
+intermediate poles_intermediate
+advanced poles_advanced
+expert poles_expert
+nightmare poles_nightmare
+
+
+; ---------- 意大利 Italians ----------
+; no Heavy CA, no Champion, no Halberdier, no Cavalier, no Paladin, no Bombard Tower,
+; no Heated Shot, no Architecture, no Two-Handed Swordsman, no Plate Barding,
+; no Elite Cannon Galleon, no Siege Engineers, no Arbalester, no Thumb Ring;
+; Genoese Crossbowman; Silk Road (already), Pavise (modeled as armor UT)
+def italian_villager
+is_a peasant
+can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard dock
+can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
+
+def italian_barracks
+is_a barracks
+can_train militia spearman
+can_research tracking squires supplies arson gambesons man_at_arms long_swordsman pikeman
+
+def italian_archery
+is_a archery_range
+can_train aoe_archer skirmisher cavalry_archer hand_cannoneer
+can_research crossbowman elite_skirmisher
+
+def italian_stable
+is_a stables
+can_train scout_cavalry aoe_knight
+can_research bloodlines husbandry light_cavalry hussar
+
+def italian_blacksmith
+is_a blacksmith
+can_research forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor
+
+def italian_university
+is_a university
+can_research ballistics chemistry guardtower keeptower cannontower fortified_wall murder_holes masonry treadmill_crane
+
+def italian_workshop
+is_a workshop
+can_train battering_ram mangonel scorpion siege_tower bombard_cannon
+can_research capped_ram siege_ram onager heavy_scorpion
+
+def italian_shipyard
+is_a shipyard
+can_train fishing_ship trade_cog transport_ship galley fire_galley cannon_galleon
+can_research war_galley galleon fire_ship fast_fire_ship demolition_ship heavy_demolition_ship gillnets shipwright careening dry_dock
+
+def italian_monastery
+is_a monastery
+can_train monk
+can_research redemption atonement herbal_medicine heresy sanctity fervor faith illumination block_printing theocracy
+
+def italian_castle
+is_a aoe_castle
+can_train genoese_crossbowman trebuchet
+can_research elite_genoese_crossbowman pavise silk_road conscription hoardings sappers spies
+
+def italian_knight
+is_a aoe_knight
+hp_max 100
+speed 1.35
+sight_range 4
+mdg 10
+mdg_cd 1.8
+mdg_range 1
+mdf 2
+rdf 2
+can_upgrade_to cavalier_end
+
+; 意大利: 渔船多载-1/+5 wood; 码头+10%HP; 弓/弩/标+1 LOS; 帝商战便宜
+def italians
+class race
+is_a Civilization
+peasant italian_villager
+footman militia
+archer aoe_archer
+knight italian_knight
+catapult mangonel
+barracks italian_barracks
+archery_range italian_archery
+stables italian_stable
+blacksmith italian_blacksmith
+university italian_university
+aoe_castle italian_castle
+workshop italian_workshop
+shipyard italian_shipyard
+monastery italian_monastery
+townhall town_center
+; DE: dock line +10% HP
+on_phase dark_age hp 10% shipyard
+; DE: fishing ships +15/+15/+20 fish per trip
+on_phase dark_age gather_qty_fish 15
+; DE: gunpowder units -20% gold cost
+on_phase dark_age cost -20% 0 0 0 hand_cannoneer bombard_cannon cannon_galleon elite_cannon_galleon
+; Team: allies' docks +5 LOS
+team_on_phase dark_age sight_range 2 shipyard
+; AoE2 Italian Condottiero team bonus: allies train condottiero for free
+race_grants_team_free_unit condottiero
+beginner italians_beginner
+intermediate italians_intermediate
+advanced italians_advanced
+expert italians_expert
+nightmare italians_nightmare
+
+
+; ---------- 波西米亚 Bohemians ----------
+; no Plate Barding, no Paladin, no Halberdier, no Heavy CA, no Bombard Tower,
+; no Two-Handed Swordsman, no Champion, no Cavalier, no Cannon Galleon, no Heated Shot,
+; no Architecture, no Ring Archer Armor, no Bracer, no Thumb Ring;
+; Hussite Wagon; Sappers (already in univ), Wagon (omitted)
+def bohemian_villager
+is_a peasant
+can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
+can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
+
+def bohemian_barracks
+is_a barracks
+can_train militia spearman
+can_research squires supplies arson gambesons man_at_arms long_swordsman pikeman
+
+def bohemian_archery
+is_a archery_range
+can_train aoe_archer skirmisher cavalry_archer
+can_research crossbowman elite_skirmisher
+
+def bohemian_stable
+is_a stables
+can_train scout_cavalry aoe_knight
+can_research bloodlines husbandry light_cavalry hussar
+
+def bohemian_blacksmith
+is_a blacksmith
+can_research forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor fletching bodkin_arrow padded_archer_armor leather_archer_armor
+
+def bohemian_university
+is_a university
+can_research ballistics chemistry guardtower keeptower cannontower fortified_wall murder_holes masonry treadmill_crane
+
+def bohemian_workshop
+is_a workshop
+can_train battering_ram mangonel scorpion siege_tower
+can_research capped_ram siege_ram onager siege_onager heavy_scorpion
+
+def bohemian_shipyard
+is_a shipyard
+can_train fishing_ship trade_cog transport_ship galley fire_galley
+can_research war_galley galleon fire_ship fast_fire_ship demolition_ship heavy_demolition_ship gillnets shipwright careening dry_dock
+
+def bohemian_castle
+is_a aoe_castle
+can_train hussite_wagon trebuchet
+can_research elite_hussite_wagon wagon sappers conscription sappers spies
+
+def bohemian_knight
+is_a aoe_knight
+hp_max 100
+speed 1.35
+sight_range 4
+mdg 10
+mdg_cd 1.8
+mdg_range 1
+mdf 2
+rdf 2
+can_upgrade_to cavalier_end
+
+; 波西米亚: 葡萄园/啤酒-; 矿工+15%/+20%/+25% stone; 大学科技-15%/+0/-50% cost
+def bohemians
+class race
+is_a Civilization
+peasant bohemian_villager
+footman militia
+archer aoe_archer
+knight bohemian_knight
+catapult mangonel
+barracks bohemian_barracks
+archery_range bohemian_archery
+stables bohemian_stable
+blacksmith bohemian_blacksmith
+university bohemian_university
+aoe_castle bohemian_castle
+workshop bohemian_workshop
+shipyard bohemian_shipyard
+townhall town_center
+; DE: villagers drop off +10% food, mines +15% stone
+on_phase dark_age gather_qty_stone 15
+; DE: university research -15% food cost
+on_phase dark_age cost 0 0 -15% 0 ballistics chemistry guardtower keeptower cannontower fortified_wall murder_holes masonry heated_shot treadmill_crane
+; DE: Sappers free at University (we keep sappers but mark auto-researched on Castle)
+grant_tech_on_phase castle_age sappers
+; Team: markets work +20% faster
+team_on_phase dark_age time_cost -17% market
+beginner bohemians_beginner
+intermediate bohemians_intermediate
+advanced bohemians_advanced
+expert bohemians_expert
+nightmare bohemians_nightmare
+
+
+; ---------- 土耳其 Turks ----------
+; no Hand Cannoneer, no Bombard Tower, no Heavy CA, no Paladin, no Plate Barding,
+; no Bombard Cannon, no Cannon Galleon, no Heated Shot, no Elite Cannon Galleon,
+; no Architecture, no Two-Handed Swordsman, no Champion, no Cavalier;
+; Janissary; Sipahi, Artillery (omitted); gold mine lasts +25% longer
+def turk_villager
+is_a peasant
+can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
+can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
+
+def turk_barracks
+is_a barracks
+can_train militia spearman
+can_research tracking squires supplies arson gambesons man_at_arms long_swordsman pikeman halberdier
+
+def turk_archery
+is_a archery_range
+; DE: no Hand Cannoneer (Janissary is the unique)
+can_train aoe_archer skirmisher cavalry_archer
+can_research thumb_ring crossbowman arbalester elite_skirmisher
+
+def turk_stable
+is_a stables
+can_train scout_cavalry aoe_knight
+can_research bloodlines husbandry light_cavalry hussar
+
+def turk_blacksmith
+is_a blacksmith
+can_research forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor
+
+def turk_university
+is_a university
+can_research ballistics chemistry guardtower keeptower cannontower fortified_wall murder_holes masonry treadmill_crane
+
+def turk_workshop
+is_a workshop
+; DE: no Bombard Cannon
+can_train battering_ram mangonel scorpion siege_tower
+can_research capped_ram siege_ram onager heavy_scorpion
+
+def turk_shipyard
+is_a shipyard
+can_train fishing_ship trade_cog transport_ship galley fire_galley
+; DE: no Cannon Galleon
+can_research war_galley galleon fire_ship fast_fire_ship demolition_ship heavy_demolition_ship gillnets shipwright careening dry_dock
+
+def turk_castle
+is_a aoe_castle
+can_train janissary trebuchet
+can_research elite_janissary sipahi artillery conscription hoardings sappers spies
+
+def turk_knight
+is_a aoe_knight
+hp_max 100
+speed 1.35
+sight_range 4
+mdg 10
+mdg_cd 1.8
+mdg_range 1
+mdf 2
+rdf 2
+can_upgrade_to cavalier_end
+
+; 土耳其: 矿工+25%金(射); 火药-25% time; 矿+0/-0/-0/-0 wood
+def turks
+class race
+is_a Civilization
+peasant turk_villager
+footman militia
+archer aoe_archer
+knight turk_knight
+catapult mangonel
+barracks turk_barracks
+archery_range turk_archery
+stables turk_stable
+blacksmith turk_blacksmith
+university turk_university
+aoe_castle turk_castle
+workshop turk_workshop
+shipyard turk_shipyard
+townhall town_center
+; DE: gold miners +25% gold per trip
+on_phase dark_age gather_qty_goldmine 25
+; DE: gunpowder units -25% train time
+on_phase castle_age time_cost -25% janissary elite_janissary cannon_galleon elite_cannon_galleon bombard_cannon
+; Team: genitour/hand cannoneer line gives +50% LOS for scout line
+team_on_phase dark_age sight_range 2 scout_cavalry
+beginner turks_beginner
+intermediate turks_intermediate
+advanced turks_advanced
+expert turks_expert
+nightmare turks_nightmare
 
 
 ; Legacy base-game names kept for map computer_only / older multi scripts.

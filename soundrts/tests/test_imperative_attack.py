@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import types
 
+import pytest
+
 import soundrts.worldunit  # noqa: F401
 
 from soundrts.worldunit.world_ai_decision import CreatureAIDecision
@@ -409,6 +411,11 @@ def test_stop_can_interrupt_imperative_attack():
             self.place = _Sq()
             self.is_idle = True
             self.world = types.SimpleNamespace(time=0)
+            # Siege-pack rules: defaults match Creature (unpackable), so
+            # cancel_siege_transition's is_packable() early-returns False.
+            self.unpack_time = 0
+            self.pack_time = 0
+            self.packable = 0
 
         def notify(self, msg, *_args, **_kwargs):
             self.notifications.append(msg)

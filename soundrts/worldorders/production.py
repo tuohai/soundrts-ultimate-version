@@ -1068,7 +1068,23 @@ class TrainOrder(ProductionOrder):
             merge_pool_cost_for_type(self.unit.player, self.type, modified_cost)
         except Exception:
             pass
-        
+
+        # D-Phase: AoE2 Condottiero team bonus — allies' mercenaries are free.
+        # Rules: condottiero has "team_free_unit 1"; Italians race has
+        # "race_grants_team_free_unit condottiero". If any allied player
+        # (allied_victory) has that unit in their grants list, cost = 0.
+        try:
+            from ..world_civ_bonuses import team_free_unit_cost_for_type
+            from ..definitions import MAX_NB_OF_RESOURCE_TYPES
+
+            free_cost = team_free_unit_cost_for_type(self.unit.player, self.type)
+            if free_cost is not None:
+                # Extend to the actual cost length of this order, then zero
+                actual_len = len(modified_cost)
+                modified_cost = list(free_cost[:actual_len])
+        except Exception:
+            pass
+
         # 确保所有成本不为负
         for i in range(len(modified_cost)):
             modified_cost[i] = max(0, modified_cost[i])

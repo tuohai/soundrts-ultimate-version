@@ -18,6 +18,54 @@
 8013 Celtowie
 
 8014 Malijczycy
+
+8700 Goci
+8701 Persowie
+8702 Słowianie
+8703 Kumani
+8704 Hunowie
+8705 Koreańczycy
+8706 Majowie
+8707 Hindusi
+8708 Hiszpanie
+8709 Węgrzy
+8710 Polacy
+8711 Włosi
+8712 Czesi
+8713 Turcy
+
+; (9000-9013: per-civ villager labels removed for design consistency with the original 13 civs,
+;  which shared a single villager label. Civ-specific info lives in mods/aoe2/rules.txt and
+;  mods/aoe2/ui-zh/tts.txt under the "新增文明介绍" section near the top of this file.)
+9014 Huskarl
+9016 Bojar
+9017 Kipczak
+9018 Tarkan
+9019 Wóz bojowy
+9020 Łucznik z piórami
+9022 Konkwistador
+9023 Huzar węgierski
+9024 Huzar skrzydlaty
+9025 Kusznik genueński
+9026 Wóz husycki
+9027 Janczar
+; (9028-9041: per-civ elite upgrade labels removed for design consistency
+;  with the original 13 civs, which use shared 'elite + unit' labels in 8000+ range.)
+9042 Anarchia
+9043 Perfuzja
+9044 Kamandaran
+9045 Druzhina
+9046 Ortodoksja
+9047 Hodowla stepowa
+9048 Najemnicy kumańscy
+9049 Maruderzy
+9050 Ateizm
+9051 Panokseon
+9052 Shinkichon
+9053 El Dorado
+9054 Architektura Majów
+9055 Wielki Trakt
+9056 Shatagni
 8070 Samuraj
 8071 Elitarny samuraj
 8072 Teutoński rycerz
@@ -123,6 +171,18 @@
 8330 Padlina bydła
 8332 Ryba przybrzeżna
 8333 Ryba głębinowa
+8334 Huskarl elitarny
+8335 Bojar elitarny
+8336 Kipczak elitarny
+8337 Tarkan elitarny
+8338 Wóz bojowy elitarny
+8339 Łucznik pierzasty elitarny
+8340 Konkwistador elitarny
+8341 Madziarski husarz elitarny
+8342 Husarz skrzydlaty elitarny
+8343 Genueński kusznik elitarny
+8344 Wóz husycki elitarny
+8345 Janczar elitarny
 
 8120 Straż obywatelska
 8121 Piechur z mieczem

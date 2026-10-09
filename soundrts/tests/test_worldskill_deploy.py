@@ -122,13 +122,13 @@ effect_radius 6
             moved.append((place, x, y))
 
     unit = _Unit()
-    caster_place = types.SimpleNamespace(is_water=False, can_receive=lambda t: True)
+    caster_place = types.SimpleNamespace(is_water=False, can_receive=lambda t, unit=None: True)
     caster = types.SimpleNamespace(
         player=types.SimpleNamespace(id="p1"),
         place=caster_place,
         x=0,
         y=0,
-        nearest_water=lambda: None,
+        nearest_water=lambda unit=None: None,
     )
     unit.player = caster.player
     target = types.SimpleNamespace(x=10, y=10)

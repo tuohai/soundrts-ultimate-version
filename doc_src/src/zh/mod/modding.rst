@@ -2240,3 +2240,90 @@ Menu and game music (since 1.4.0.2)
 
 地图覆盖：``map_music``、``map_battle_music``、``map_victory_sound``、``map_defeat_sound``。
 音乐文件：``ui/music/\<id\>.mp3`` 或 ``mods/\<mod\>/ui/music/\<id\>.mp3``。
+
+1.5.1.3 新增规则字段
+======================
+
+以下 4 个字段是 1.5.1.3 新增（``agro_on_sight`` 在 1.5.0.x 已存在，详见上文「狩猎系统」段）。所有字段均为可选，默认 0；写在 ``def <unit>`` 或 ``def <upgrade>`` 内、``is_a`` 之后即可生效。
+
+``can_fire_on_move``（单位属性，``int`` 0/1，默认 0）
+    远程单位在 ``MoveAction`` 行进过程中遇到 ``rdg_range`` 内的敌人时**不**停下来瞄准，继续朝目标推进的同时自动朝最近的敌对目标 ``aim()``。由 ``world_movement.py`` 走路冲突分支 + ``worldaction.py`` 的 ``_fire_on_move_if_applicable`` 协同实现。AoE2 Kipchak（库曼）/ Conquistador（西班牙）等「移动中持续射击」兵种使用此字段。例::
+
+        def kipchak
+        is_a cavalry_archer
+        rdg 4
+        rdg_range 6
+        can_fire_on_move 1
+
+``allow_extra_town_center``（科技属性，``int`` 0/N，默认 0，写在 ``def <upgrade>``）
+    研究完成后把 ``player.town_center_max`` 加上 N（默认 1）。未来城镇中心建造门槛读 ``player.town_center_max``，默认 1（不变）。AoE2 Cuman Mercenaries（库曼佣兵）使用此字段。例::
+
+        def cuman_mercenaries
+        is_a unique_tech
+        cost 0 600 300 0
+        allow_extra_town_center 1
+
+``relic_loss_immunity``（科技属性，``int`` 0/1，默认 0，写在 ``def <upgrade>``）
+    研究完成后把 ``player.relic_loss_immunity = 1``，未来 ``world_relic.py`` 寺院被毁逻辑读此标志，命中则保留圣物（默认仍丢失）。AoE2 Huns Atheism（匈奴无神论）使用此字段。例::
+
+        def atheism
+        is_a unique_tech
+        cost 0 500 0 0
+        relic_loss_immunity 1
+
+``trade_reward_bonus_pct``（科技/阶段属性，``float``，百分比，写在 ``def <upgrade>`` 或 ``on_phase`` 链）
+    ``attribute_effects.AttributeEffectsMixin`` 在 ``effect bonus`` 链中解析为 ``player.trade_reward_bonus_pct`` 列表（per-player 累加），市场 / 贸易车结算时读取应用。AoE2 Italians Silk Road（意大利丝路）以及类似的贸易加成文明效果使用此字段。例::
+
+        def silk_road
+        is_a unique_tech
+        cost 0 400 0 0
+        trade_reward_bonus_pct 10
+
+        on_phase imperial_age trade_reward_bonus_pct 20
+
+``build_speed_pct``（种族属性，``int``，百分比，写在 ``def <race>`` 内）
+    玩家（self）所有建造进度加快 N%。``worldcreature.BuildingSite.time_cost`` 在 ``ai_build_time_percent`` 之上叠加 ``build_speed_pct``，让 ``on_phase`` 修正在不重新加载规则时即可生效。AoE2 Spanish（西班牙）的村民 30% 建造加速使用此字段。例::
+
+        def spanish
+        class race
+        is_a Civilization
+        build_speed_pct 30
+
+``kill_resource_bonus_pct``（种族属性，``int`` N + 可选 ``target`` 类名，写在 ``def <race>`` 内）
+    击杀单位时给 attacker 玩家 ``N%`` 资源奖励。``definitions.py`` 把 ``kill_resource_bonus_pct 30 infantry`` 解析为 ``[{"pct": 30, "target": "infantry"}]``；``target`` 可以是单位 ``type_name``（如 ``infantry``、``cavalry``、``cavalry_archer``），不写则对所有击杀生效。``worldcreature.Creature.die`` 读取 attacker 玩家的 ``faction.kill_resource_bonus_pct`` 列表，匹配 ``target``（含 ``expanded_is_a``）后累加 ``pct`` 乘以基础奖励（resource1=gold）。AoE2 Goths（哥特）的 Huskarl +30% 击杀奖励使用此字段。例::
+
+        def goths
+        class race
+        is_a Civilization
+        kill_resource_bonus_pct 30 infantry
+
+1.5.1.3 团队 / 阵营加成（写在 ``def <race>`` 内的 ``team_*`` 系列）
+================================================================
+
+以下字段由 ``world_civ_bonuses`` 提供 ``team_*_pct(player)`` 查询函数，按 ``allied_victory`` 取盟友最大值；与 ``on_phase`` 不同，这些字段在引擎内独立注册，不在 ``effect bonus`` 链中处理。
+
+``team_supplies_pct``（int 百分比，写在 ``def <race>`` 内）
+    盟友阵营兵营 production_qty +N%。``world_build_rules._set_bonus_production_qty`` 在 ``apply_farm_food_team_pct`` 之后叠加 ``apply_supplies_team_pct``。AoE2 Slavs（斯拉夫）团队供给 +10% 使用此字段。例::
+
+        def slavs
+        class race
+        is_a Civilization
+        team_supplies_pct 10
+
+``team_share_steppe_lancer``（int，写在 ``def <race>`` 内）
+    盟友 ``team_share_steppe_lancer`` > 0 时，训练 ``steppe_lancer`` / ``elite_steppe_lancer`` 的 ``population_cost`` 强制为 0（盟友的城堡数代为支付人口槽）。``clientgameorder.ComplexOrder._resolve_costs`` 在 ``ComplexOrder._merge_phase_scalar_cost`` 之后判定。AoE2 Cumans（库曼）团队分享草原突骑使用此字段。例::
+
+        def cumans
+        class race
+        is_a Civilization
+        team_share_steppe_lancer 1
+
+``team_trade_capacity_pct``（int 百分比，写在 ``def <race>`` 内）
+    盟友中最大值叠加在 trade cart 单次结算金上。``worldorders.market._credit_reward`` 在 ``trade_reward_bonus_pct`` 之后应用。AoE2 Magyars（马扎尔）团队贸易 +50% 使用此字段。例::
+
+        def magyars
+        class race
+        is_a Civilization
+        team_trade_capacity_pct 50
+
+

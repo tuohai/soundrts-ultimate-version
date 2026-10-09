@@ -509,6 +509,28 @@ class CreatureMovement(Entity):
             self.aim(target)
             return
 
+        # D-Phase 2: "fire on the move" — units with ``can_fire_on_move 1`` keep
+        # advancing toward the target while firing, instead of stopping to aim
+        # at melee/close-aim range. They only fire if the target is already in
+        # ``rdg_range``; otherwise they still close the gap.
+        if (
+            int(getattr(self, "can_fire_on_move", 0) or 0)
+            and int(getattr(self, "rdg", 0) or 0) > 0
+            and int(getattr(self, "rdg_range", 0) or 0) > 0
+        ):
+            d2 = square_of_distance(self.x, self.y, target.x, target.y)
+            rdg_r = int(getattr(self, "rdg_range", 0) or 0)
+            collision = self._collision_range(target)
+            # Aim is permitted if target is in rdg_range + collision; this lets
+            # the ranged attack land even while we keep closing the gap.
+            if d2 <= (rdg_r + collision) * (rdg_r + collision):
+                self.aim(target)
+                # Continue moving toward the target this tick.
+                d = int_distance(self.x, self.y, target.x, target.y)
+                self.o = int_angle(self.x, self.y, target.x, target.y)
+                self._reach(d - self._collision_range(target))
+                return
+
         slot = formation_hold_xy(self)
         if slot is not None:
             sx, sy = slot

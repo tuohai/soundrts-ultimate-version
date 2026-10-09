@@ -382,7 +382,98 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
         if attacker is not None and attacker.player is not None and self.player is not None:
             # 记录单位被谁击杀
             self.killer_id = attacker.player.id
-        
+
+        # D-Phase 2: kill resource rewards (AoE2 Marauders, Goths Huskarl,
+        # etc.). Two mechanisms stack:
+        #   1. attacker.kill_resource_vs[<target_type>][<resource>] = N
+        #      set by ``effect bonus kill_resource_vs <target> <resource> N``
+        #      (per-attacker; Huskarl via Marauders-style upgrade).
+        #   2. attacker.player.faction.kill_resource_bonus_pct = [{pct,target}]
+        #      (per-faction; AoE2 Goths: +30% on infantry kills).
+        # Base is target.resource_rewards (4-slot [gold, wood, food, stone]).
+        try:
+            if attacker is not None and attacker.player is not None:
+                target_type = getattr(self, "type", None)
+                target_name = getattr(target_type, "type_name", "") or ""
+                target_is_a = set(getattr(target_type, "expanded_is_a", ()) or ())
+                target_is_a.add(target_name)
+
+                # ---- base from target.resource_rewards ----
+                base_rewards = [0, 0, 0, 0]
+                raw_rewards = getattr(self, "resource_rewards", None)
+                if raw_rewards is not None:
+                    try:
+                        for i, v in enumerate(list(raw_rewards)[:4]):
+                            try:
+                                base_rewards[i] = int(v or 0)
+                            except (TypeError, ValueError):
+                                pass
+                    except Exception:
+                        pass
+
+                # ---- per-attacker absolute bonuses (Marauders / Huskarl) ----
+                # attacker.kill_resource_vs[target_type][resource] = N
+                attacker_bonus = [0, 0, 0, 0]
+                kv = getattr(attacker, "kill_resource_vs", None)
+                if isinstance(kv, dict):
+                    for k, v in kv.items():
+                        if isinstance(k, str) and (
+                            k == target_name or k in target_is_a
+                        ):
+                            if isinstance(v, dict):
+                                for rkey, amount in v.items():
+                                    try:
+                                        amt = int(amount or 0)
+                                    except (TypeError, ValueError):
+                                        continue
+                                    slot = None
+                                    if rkey in ("0", "resource1", "gold"):
+                                        slot = 0
+                                    elif rkey in ("1", "resource2", "wood"):
+                                        slot = 1
+                                    elif rkey in ("2", "resource3", "food"):
+                                        slot = 2
+                                    elif rkey in ("3", "resource4", "stone"):
+                                        slot = 3
+                                    if slot is not None and amt > 0:
+                                        attacker_bonus[slot] += amt
+
+                # ---- per-faction pct bonus (Goths +30%) ----
+                pct_bonus = 0
+                attacker_faction = getattr(attacker.player, "faction", None)
+                bonuses = (
+                    (attacker_faction or {}).get("kill_resource_bonus_pct")
+                    if isinstance(attacker_faction, dict)
+                    else None
+                )
+                if isinstance(bonuses, list) and bonuses:
+                    for entry in bonuses:
+                        try:
+                            pct = int(entry.get("pct", 0) or 0)
+                        except (TypeError, ValueError):
+                            continue
+                        tgt = entry.get("target")
+                        if tgt is None or tgt == target_name or tgt in target_is_a:
+                            pct_bonus += pct
+
+                # ---- combine: (base + attacker_bonus) × (1 + pct / 100) ----
+                if any(b > 0 for b in base_rewards) or any(
+                    b > 0 for b in attacker_bonus
+                ):
+                    for slot in range(4):
+                        gross = base_rewards[slot] + attacker_bonus[slot]
+                        if gross <= 0:
+                            continue
+                        if pct_bonus > 0:
+                            gross = gross + int(gross * pct_bonus / 100)
+                        try:
+                            cur = int(attacker.player.resources[slot] or 0)
+                            attacker.player.resources[slot] = cur + gross
+                        except Exception:
+                            pass
+        except Exception:
+            pass
+
         # 重置冲锋状态
         self.reset_charge_state(force=True)
         
@@ -1882,6 +1973,16 @@ class BuildingSite(_Building):
         base = self.type.time_cost
         player = getattr(self, "player", None)
         pct = getattr(player, "ai_build_time_percent", 100) if player else 100
+        # D-Phase 2: ``build_speed_pct`` from race def (AoE2 Spanish: villagers
+        # build 30% faster). Positive N reduces the base by N%; -100 caps at 0.
+        bs = getattr(player, "build_speed_pct", 0) if player else 0
+        try:
+            bs = int(bs or 0)
+        except (TypeError, ValueError):
+            bs = 0
+        if bs != 0:
+            # apply on top of the ai_build_time_percent so AI difficulty is preserved
+            pct = max(0, int(pct) - bs)
         if pct == 100:
             return base
         if pct <= 0:

@@ -244,11 +244,61 @@ class TradeOrder(BasicOrder):
         amount = trade_reward_for_trip(self._trip_distance, edge)
         if amount <= 0:
             return
-        self.player.resources[idx] += amount * PRECISION
+        # D-Phase 2: apply per-player trade_reward_bonus_pct stack (Italians Silk Road).
+        bonus = self._trade_reward_bonus_pct_total()
+        if bonus:
+            amount = int(amount * (1.0 + bonus / 100.0))
+        # D-Phase 2: team_trade_capacity_pct (AoE2 Magyars: +50% trade cart
+        # gold capacity for the player and all allies).
+        try:
+            from ..world_civ_bonuses import team_trade_capacity_pct
+
+            team_bonus = team_trade_capacity_pct(self.player) if self.player is not None else 0
+        except Exception:
+            team_bonus = 0
+        if team_bonus:
+            amount = int(amount * (1.0 + team_bonus / 100.0))
+        if amount > 0:
+            self.player.resources[idx] += amount * PRECISION
         label = _title_for_resource(idx)
         self.unit.notify(f"trade_reward,{label},{amount}")
         # legacy event name (AoE2 TTS / listeners)
         self.unit.notify(f"trade_gold,{amount}")
+
+    def _trade_reward_bonus_pct_total(self) -> float:
+        """Sum all stacked trade_reward_bonus_pct bonuses for the player.
+
+        Sources: ``on_phase``/``team_on_phase`` (stored on player) and any
+        unit-level value (e.g. tech applied with ``effect_bonus_targets``).
+        """
+        total = 0.0
+        pl = getattr(self, "player", None)
+        if pl is not None:
+            raw = getattr(pl, "trade_reward_bonus_pct", 0) or 0
+            if isinstance(raw, (list, tuple)):
+                for v in raw:
+                    try:
+                        total += float(v)
+                    except (TypeError, ValueError):
+                        continue
+            else:
+                try:
+                    total += float(raw)
+                except (TypeError, ValueError):
+                    pass
+        unit_raw = getattr(self.unit, "trade_reward_bonus_pct", 0) or 0
+        if isinstance(unit_raw, (list, tuple)):
+            for v in unit_raw:
+                try:
+                    total += float(v)
+                except (TypeError, ValueError):
+                    continue
+        else:
+            try:
+                total += float(unit_raw)
+            except (TypeError, ValueError):
+                pass
+        return total
 
     def _arrived_at(self, hub) -> bool:
         if hub is None:

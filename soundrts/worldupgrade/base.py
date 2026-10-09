@@ -32,6 +32,14 @@ class Upgrade(CostEffectsMixin, AttributeEffectsMixin, ProductionEffectsMixin, G
     tribute_fee_permille = -1  # AoE2 Coinage/Banking: set player tribute fee (200=20%, 0=free)
     # 1 = each research stacks race ``research_stack_hp_bonus`` (Aztec monks etc.)
     research_stack_hp = 0
+    # D-Phase 2: AoE2 Cuman Mercenaries — extra Town Center build slot
+    # after research. Engine reads this in ``Upgrade.upgrade_player`` to bump
+    # ``player.town_center_max`` (default 1).
+    allow_extra_town_center = 0
+    # D-Phase 2: AoE2 Huns Atheism — relics never lost on monastery destruction.
+    # Engine reads this in ``Upgrade.upgrade_player`` to set
+    # ``player.relic_loss_immunity = 1``; future relic-loss code consults it.
+    relic_loss_immunity = 0
     # Conversion (rules-driven; see world_conversion.py)
     conversion_allows_monk = 0
     conversion_allows_siege = 0
@@ -314,6 +322,21 @@ class Upgrade(CostEffectsMixin, AttributeEffectsMixin, ProductionEffectsMixin, G
         fee_pm = int(getattr(cls, "tribute_fee_permille", -1))
         if fee_pm >= 0:
             player.tribute_fee = float(fee_pm) / 1000.0
+
+        # D-Phase 2: allow_extra_town_center — AoE2 Cuman Mercenaries. Bumps
+        # the player's town_center build cap by N (default 1). Future build
+        # gating should read player.town_center_max; default 1 (unchanged).
+        extra_tc = int(getattr(cls, "allow_extra_town_center", 0) or 0)
+        if extra_tc:
+            cur = int(getattr(player, "town_center_max", 1) or 1)
+            if extra_tc > 0:
+                player.town_center_max = cur + extra_tc
+
+        # D-Phase 2: relic_loss_immunity — AoE2 Huns Atheism. Marks the
+        # player so the monastery-loss code in world_relic.py keeps relics
+        # instead of dropping them on monastery destruction.
+        if int(getattr(cls, "relic_loss_immunity", 0) or 0):
+            player.relic_loss_immunity = 1
 
         try:
             from ..world_research_stack import apply_research_stack_hp_on_complete

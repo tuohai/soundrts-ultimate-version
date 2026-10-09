@@ -38,6 +38,9 @@ def test_attack_action_chase_moves_toward_exit_without_completing():
         action = None
         walked = []
         orders = []
+        # AttackAction.update reads unit.world.treaty_until_time to honor
+        # multiplayer treaties; provide a default empty world.
+        world = types.SimpleNamespace(treaty_until_time=0, time=0)
 
         def can_attack(self, _t):
             return False
@@ -92,6 +95,7 @@ def test_attack_action_non_chase_completes_when_target_leaves_square():
         action = None
         walked = []
         orders = []
+        world = types.SimpleNamespace(treaty_until_time=0, time=0)
 
         def can_attack(self, _t):
             return False
@@ -148,6 +152,7 @@ def test_attack_action_chase_clears_hold_before_cross_square():
         walked = []
         orders = []
         position_to_hold = _HoldSquare()
+        world = types.SimpleNamespace(treaty_until_time=0, time=0)
 
         def can_attack(self, _t):
             return False
@@ -244,6 +249,9 @@ def test_pick_chase_enemy_ignores_can_attack_same_square_gate():
         speed = 10
         _is_chaseable_enemy = wad.CreatureAIDecision._is_chaseable_enemy
         _pick_chase_enemy = wad.CreatureAIDecision._pick_chase_enemy
+        # _is_chaseable_enemy references this helper internally; tests opt
+        # out of the approach-only gate by returning False.
+        _is_approach_only_target = lambda self, _o: False
 
         def is_an_enemy(self, _o):
             return True
@@ -296,6 +304,7 @@ def test_pursue_attacker_crosses_square_without_chase_mode():
         walked = []
         orders = []
         position_to_hold = None
+        world = types.SimpleNamespace(treaty_until_time=0, time=0)
 
         def can_attack(self, _t):
             return False
@@ -350,6 +359,7 @@ def test_guard_without_pursue_attacker_stops_when_target_leaves():
         action = None
         walked = []
         orders = []
+        world = types.SimpleNamespace(treaty_until_time=0, time=0)
 
         def can_attack(self, _t):
             return False
@@ -459,6 +469,7 @@ def test_attack_action_stops_when_pursue_leash_exceeded():
         walked = []
         orders = []
         last_attacker = enemy
+        world = types.SimpleNamespace(treaty_until_time=0, time=0)
 
         def can_attack(self, _t):
             return False

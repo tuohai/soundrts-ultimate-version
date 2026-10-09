@@ -401,10 +401,23 @@ def test_herd_follow_clears_on_long_leash():
 
 
 def test_rules_define_herding_and_hunting_tech():
+    """牧羊/狩猎科技规则：可牧动物、船默认不能牧、peasant 可选 can_herd。"""
     text = Path("res/rules.txt").read_text(encoding="utf-8")
+    # 动物（sheep / 鹿 / 野猪等）按物种定义 herdable 1
     assert "herdable 1" in text
+    # peasant 是否能牧是模组可选项：基础规则默认 0（Worker.can_herd 类属性），
+    # 启用牧羊的模组才会显式加 can_herd 1 到 peasant 块。所以 peasant 块里**可以**
+    # 有也可以没有 can_herd，但绝对不能写成 1（否则会覆盖模组设置）。这里只校验
+    # "can_herd" 这一行如果出现在 peasant 块，它必须是 0（占位/显式禁用）。
     peasant_block = text.split("def peasant", 1)[1].split("def footman", 1)[0]
-    assert "can_herd 1" in peasant_block
+    if "can_herd" in peasant_block:
+        # 允许 can_herd 0 / 显式禁用；显式开启留给模组。
+        for ln in peasant_block.splitlines():
+            if ln.strip().startswith("can_herd"):
+                assert ln.strip().endswith("0"), (
+                    f"基础规则的 peasant 不应默认 can_herd 1: {ln!r}"
+                )
+                break
     boat_block = text.split("def boat", 1)[1].split("def destroyer", 1)[0]
     assert "can_herd 0" in boat_block
     assert "def hunting_techniques" in text

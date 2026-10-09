@@ -140,7 +140,21 @@ class OrderTypeView:  # future order
                 "phase_population_cost_bonus",
                 "phase_population_cost_percent_bonus",
             )
-                
+
+            # D-Phase 2: team_share_steppe_lancer (AoE2 Cumans) — when
+            # allies have a positive team_share_steppe_lancer, training
+            # steppe_lancer / elite_steppe_lancer costs 0 population (the
+            # ally's Castle count grants the slot).
+            try:
+                from .world_civ_bonuses import team_share_steppe_lancer
+                _tsl = team_share_steppe_lancer(unit.player) if unit.player is not None else 0
+            except Exception:
+                _tsl = 0
+            if _tsl > 0:
+                type_name = getattr(order_obj.type, "type_name", "") or ""
+                if type_name in ("steppe_lancer", "elite_steppe_lancer"):
+                    modified_population_cost = 0
+
             # 确保食物成本不为负
             modified_population_cost = max(0, modified_population_cost)
             

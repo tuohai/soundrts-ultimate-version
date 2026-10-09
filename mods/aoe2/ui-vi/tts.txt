@@ -18,6 +18,54 @@
 8013 Celtic
 
 8014 Mali
+
+8700 Goth
+8701 Ba Tư
+8702 Slav
+8703 Cuman
+8704 Hung
+8705 Triều Tiên
+8706 Maya
+8707 Hindustan
+8708 Tây Ban Nha
+8709 Magyar
+8710 Ba Lan
+8711 Ý
+8712 Bohemia
+8713 Thổ Nhĩ Kỳ
+
+; (9000-9013: per-civ villager labels removed for design consistency with the original 13 civs,
+;  which shared a single villager label. Civ-specific info lives in mods/aoe2/rules.txt and
+;  mods/aoe2/ui-zh/tts.txt under the "新增文明介绍" section near the top of this file.)
+9014 Huskarl
+9016 Boyer
+9017 Kipchak
+9018 Tarkan
+9019 Xe chiến
+9020 Cung thủ lông chim
+9022 Chinh phục
+9023 Kỵ binh Magyar
+9024 Hussar cánh
+9025 Xạ thủ Genoa
+9026 Xe Hussite
+9027 Lính Janissary
+; (9028-9041: per-civ elite upgrade labels removed for design consistency
+;  with the original 13 civs, which use shared 'elite + unit' labels in 8000+ range.)
+9042 Vô chính phủ
+9043 Truyền máu
+9044 Kamandaran
+9045 Druzhina
+9046 Chính thống giáo
+9047 Chăn nuôi thảo nguyên
+9048 Lính đánh thuê Cuman
+9049 Cướp bóc
+9050 Vô thần
+9051 Panokseon
+9052 Shinkichon
+9053 El Dorado
+9054 Kiến trúc Maya
+9055 Đại lộ
+9056 Shatagni
 8070 Samurai
 8071 Samurai siêu cấp
 8072 Hiệp sĩ Teuton
@@ -123,6 +171,18 @@
 8330 Xác gia súc
 8332 Cá ven bờ
 8333 Cá biển sâu
+8334 Huskarl ưu tú
+8335 Bôi-ê-rơ ưu tú
+8336 Kipchak ưu tú
+8337 Tarkhan ưu tú
+8338 Xe chiến ưu tú
+8339 Cung thủ lông vũ ưu tú
+8340 Chinh phục ưu tú
+8341 Kỵ binh Magyar ưu tú
+8342 Kỵ binh có cánh ưu tú
+8343 Cung thủ Genoa ưu tú
+8344 Xe Hussite ưu tú
+8345 Lính cận vệ ưu tú
 
 8120 Dân binh
 8121 Quân binh

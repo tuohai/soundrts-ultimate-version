@@ -338,21 +338,19 @@ class _Game:
                 self.world.alliances_locked = bool(non_null and (len(set(non_null)) < len(non_null)))
             except Exception:
                 self.world.alliances_locked = False
-            # 在进入界面前给出条约提示
+            # 开局条约播报（"条约 5 分钟 / 条约进行中，禁止攻击"）由
+            # GameInterface._run_game_body_with_narratives 在 objective / 阵营
+            # 之后同步 voice.info + flush 排空队列，保证条约排在开局播报末尾
+            # 并播完才进入游戏。
             try:
-                if getattr(self.world, "treaty_until_time", 0) > 0:
-                    minutes = self.world.treaty_until_time // 60000
-                    for p in self.world.players:
-                        if p.is_local_human():
-                            # 使用消息常量 + 数字编码 + MINUTES，避免读出tts里其它词条
-                            p.push("msg", encode_msg(mp.TREATY + nb2msg(minutes) + mp.MINUTES + mp.TREATY_ACTIVE))
-                    # 安排条约结束提示
+                treaty_until = getattr(self.world, "treaty_until_time", 0) or 0
+                if treaty_until > 0:
                     def _treaty_end_announce():
                         from . import msgparts as mp
                         for p in self.world.players:
                             if p.is_local_human():
                                 p.push("msg", encode_msg(mp.TREATY_END))
-                    self.world.schedule_after(self.world.treaty_until_time, _treaty_end_announce)
+                    self.world.schedule_after(treaty_until, _treaty_end_announce)
 
                     # 安排条约剩余时间提示（30s/20s/10s），以及最后5秒倒计时
                     def _announce_remaining(seconds):

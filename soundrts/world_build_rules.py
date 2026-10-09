@@ -1951,6 +1951,16 @@ def _apply_farm_food_tech_bonuses(building):
             building.production_qty = apply_farm_food_team_pct(building, pq2)
     except Exception:
         pass
+    # D-Phase 2: team_supplies_pct (AoE2 Slavs: +10% to allies' barracks
+    # production). Apply on top of farm_food / own production_qty.
+    try:
+        from .world_civ_bonuses import apply_supplies_team_pct
+
+        pq3 = getattr(building, "production_qty", 0) or 0
+        if pq3:
+            building.production_qty = apply_supplies_team_pct(building, pq3)
+    except Exception:
+        pass
     if hasattr(building, "resource_qty"):
         building.resource_qty = int(building.resource_volume_max)
         building._resource_qty_frac = 0

@@ -151,6 +151,14 @@ def _classic_supplement_catalog() -> Catalog:
         ("classic.reload_parameters", list(mp.HOTKEY_RELOAD_PARAMETERS)),
         ("classic.music_volume_up", list(mp.HOTKEY_MUSIC_VOLUME_UP)),
         ("classic.music_volume_down", list(mp.HOTKEY_MUSIC_VOLUME_DOWN)),
+        (
+            "classic.voice_lib_copy.secondary",
+            list(mp.VOICE_LIB_SECONDARY),
+        ),
+        (
+            "classic.voice_lib_append_copy.secondary",
+            list(mp.VOICE_LIB_SECONDARY),
+        ),
         ("classic.get_zoom_precision", list(mp.HOTKEY_QUERY_ZOOM_PRECISION)),
         (
             "classic.change_zoom_precision.-1",
@@ -663,8 +671,8 @@ def _build_classic_catalog() -> Catalog:
                 list(mp.HOTKEY_ALLIANCE_DECLINE),
             ),
             ("classic.history_previous", list(mp.HOTKEY_HISTORY_PREV)),
-            ("classic.volume", list(mp.HOTKEY_VOLUME_UP)),
-            ("classic.volume.-1", list(mp.HOTKEY_VOLUME_DOWN)),
+            ("classic.sfx_volume", list(mp.HOTKEY_VOLUME_UP)),
+            ("classic.sfx_volume.-1", list(mp.HOTKEY_VOLUME_DOWN)),
             ("classic.immersion", _visual_immersion()),
             ("classic.console", list(mp.HOTKEY_CONSOLE)),
             ("classic.toggle_music", list(mp.HOTKEY_TOGGLE_MUSIC)),

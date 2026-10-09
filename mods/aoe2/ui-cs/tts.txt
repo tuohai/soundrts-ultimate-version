@@ -18,6 +18,54 @@
 8013 Keltové
 
 8014 Malijczycy
+
+8700 Gótové
+8701 Peršané
+8702 Slované
+8703 Kumáni
+8704 Hunové
+8705 Korejci
+8706 Mayové
+8707 Indové
+8708 Španělé
+8709 Maďaři
+8710 Poláci
+8711 Italové
+8712 Čechové
+8713 Turci
+
+; (9000-9013: per-civ villager labels removed for design consistency with the original 13 civs,
+;  which shared a single villager label. Civ-specific info lives in mods/aoe2/rules.txt and
+;  mods/aoe2/ui-zh/tts.txt under the "新增文明介绍" section near the top of this file.)
+9014 Huskarl
+9016 Bojar
+9017 Kipčak
+9018 Tarkan
+9019 Válečný vůz
+9020 Lukostřelec s péry
+9022 Dobyvatel
+9023 Maďarský husar
+9024 Okřídlený husar
+9025 Janovský kušník
+9026 Husitský vůz
+9027 Janičář
+; (9028-9041: per-civ elite upgrade labels removed for design consistency
+;  with the original 13 civs, which use shared 'elite + unit' labels in 8000+ range.)
+9042 Anarchie
+9043 Perfúze
+9044 Kamandaran
+9045 Družina
+9046 Ortodoxie
+9047 Stepní chov
+9048 Kumánští žoldnéři
+9049 Marodéři
+9050 Ateismus
+9051 Panokseon
+9052 Shinkichon
+9053 El Dorado
+9054 Mayská architektura
+9055 Velká cesta
+9056 Shatagni
 8070 Samuraj
 8071 Elitarny samuraj
 8072 Teutoński rycerz
@@ -123,6 +171,18 @@
 8330 Mršina dobytka
 8332 Pobřežní ryba
 8333 Hlubinná ryba
+8334 Elite huskarl
+8335 Elite bojar
+8336 Elite kipčak
+8337 Elite tarkan
+8338 Elite válečný vůz
+8339 Elite opeřený lučištník
+8340 Elite konkistador
+8341 Elite maďarský husar
+8342 Elite křídlatý husar
+8343 Elite janovský kušostřelec
+8344 Elite husitský vůz
+8345 Elite janičář
 
 8120 Straż obywatelska
 8121 Piechur z mieczem

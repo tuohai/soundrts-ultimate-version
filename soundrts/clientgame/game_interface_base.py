@@ -233,7 +233,9 @@ class GameInterface(AttributesInterface):
                 flush_pending_capture_tts(self)
 
     def srv_quit(self):
-        voice.silent_flush()
+        # Drain any queued speech so defeat / victory alerts finish before the
+        # audio device is torn down. silent_flush() would drop them.
+        voice.flush()
         from ..lib import sound
         sound.stop()
         self.end_loop = True
@@ -562,6 +564,26 @@ class GameInterface(AttributesInterface):
                 announce_resolved_faction(self.player)
             except Exception:
                 pass
+
+            # 条约开局的"条约 X 分钟 / 条约进行中，禁止攻击"必须在 objective /
+            # 阵营播报后、world.loop 启动前同步入队并 flush，否则会被中断或
+            # 听不到就被吞掉。多人模式只在本机玩家播报。
+            try:
+                treaty_until = getattr(game.world, "treaty_until_time", 0) or 0
+                if treaty_until > 0 and self.player is not None:
+                    from ..lib.msgs import nb2msg
+                    minutes = treaty_until // 60000
+                    treaty_msg = (
+                        mp.TREATY
+                        + nb2msg(minutes)
+                        + mp.MINUTES
+                        + mp.TREATY_ACTIVE
+                    )
+                    voice.info(treaty_msg)
+                    # 同步等条约播完；用户可按任意键跳过
+                    voice.flush(interruptible=True)
+            except Exception:
+                pass
         else:
             # 对于加载的存档游戏，也需要重新播放游戏音乐
             from ..lib import sound
@@ -681,6 +703,9 @@ class GameInterface(AttributesInterface):
             self._catch_up_muted = False
         
         game._record_stats(game.world)
+        # Drain any pending speech (last alerts, cut-scene tail) before the
+        # world tears down and post_run() finalises the match state.
+        voice.flush()
         game.post_run()
         game.world.stop()
         

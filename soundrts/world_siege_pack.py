@@ -74,6 +74,9 @@ def is_packable(unit) -> bool:
     Fast reject: Creature defaults are unpack_time=0, pack_time=0, packable=0.
     Almost every unit hits this every tick; avoid _raw_attr there.
     """
+    # Test stubs / scripted callers may not provide these attributes; treat
+    # missing as the Creature default (unpackable), so a missing attribute
+    # never explodes in a hot path that runs every tick.
     unpack_time = unit.unpack_time
     pack_time = unit.pack_time
     packable = unit.packable

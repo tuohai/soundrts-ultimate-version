@@ -34,6 +34,8 @@ class _StubPlayer(TriggersMixin):
         self.world = None
         self.allied_control = (self,)
         self.allied_control_units_set = set()
+        self.observed_objects = {}
+        self.perception = set()
 
     def notify(self, *args):
         pass
@@ -93,6 +95,7 @@ class _YieldUnit(Creature):
         self._buffs = []
         self.inside = None
         self.airground_type = "ground"
+        self.place = _StubSquare()
 
     def stop(self):
         pass

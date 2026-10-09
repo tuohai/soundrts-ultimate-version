@@ -159,6 +159,94 @@ def team_farm_food_pct(player):
     return best
 
 
+def team_supplies_pct(player):
+    """Best allied ``team_supplies_pct`` (AoE2 Slavs: +10% to allies' barracks).
+
+    Generic: stored on the race def via ``team_supplies_pct N``. Engine reads
+    it in production rate math (production_qty / production_time path).
+    """
+    best = 0
+    allies = getattr(player, "allied_victory", None) or (player,)
+    for ally in allies:
+        best = max(best, faction_int_attr(ally, "team_supplies_pct", 0))
+    return best
+
+
+def team_trade_capacity_pct(player):
+    """Best allied ``team_trade_capacity_pct`` (AoE2 Magyars: +50% trade cart
+    gold capacity for the player and all allies).
+
+    Generic: stored on the race def via ``team_trade_capacity_pct N``.
+    Engine reads it in market settlement (mirrors trade_reward_bonus_pct).
+    """
+    best = 0
+    allies = getattr(player, "allied_victory", None) or (player,)
+    for ally in allies:
+        best = max(best, faction_int_attr(ally, "team_trade_capacity_pct", 0))
+    return best
+
+
+def team_share_steppe_lancer(player):
+    """Best allied ``team_share_steppe_lancer`` (AoE2 Cumans: each Castle
+    owned by any ally grants +N steppe_lancer training slot).
+
+    Generic: stored on the race def via ``team_share_steppe_lancer N``.
+    Engine reads it in steppe_lancer / elite_steppe_lancer train-time
+    allow checks (positive N → allow even if the player's own Castle
+    count is below the unit's normal cap).
+    """
+    best = 0
+    allies = getattr(player, "allied_victory", None) or (player,)
+    for ally in allies:
+        best = max(best, faction_int_attr(ally, "team_share_steppe_lancer", 0))
+    return best
+
+
+def team_free_unit_cost_for_type(player, type_cls):
+    """Check if any allied player grants ``team_free_unit`` for ``type_cls``.
+
+    AoE2 Italian Condottiero team bonus: any ally whose race def contains
+    ``race_grants_team_free_unit condottiero`` makes condottiero cost 0 for
+    all allied players (including self).
+
+    Returns the modified cost tuple (zeroed) if the unit is team-free, else
+    the input cost unchanged.
+    """
+    if player is None or type_cls is None:
+        return None
+    # Accept either a class with .type_name or a raw type-name string.
+    if isinstance(type_cls, str):
+        type_name = type_cls
+    else:
+        type_name = getattr(type_cls, "type_name", None) or getattr(
+            type_cls, "__name__", None
+        )
+    if not type_name:
+        return None
+    # Only applies when the unit declares itself team-free
+    if not rules.get(type_name, "team_free_unit"):
+        return None
+    allies = getattr(player, "allied_victory", None) or (player,)
+    for ally in allies:
+        faction = getattr(ally, "faction", None)
+        if not faction:
+            continue
+        raw = _entries(faction, "race_grants_team_free_unit")
+        if not raw:
+            continue
+        # raw is a list of lists of unit type-name strings
+        for entry in raw:
+            if not entry:
+                continue
+            # entry is e.g. ['condottiero']; flatten in case of nested lists
+            names = entry
+            if entry and isinstance(entry[0], list):
+                names = [n for sub in entry for n in (sub or [])]
+            if str(type_name) in {str(n) for n in names}:
+                return (0,) * 16  # zero all resource slots
+    return None
+
+
 def apply_farm_food_team_pct(building, food_amount):
     """Multiply farm food by allied team_farm_food_pct. Returns int amount."""
     player = getattr(building, "player", None)
@@ -166,6 +254,20 @@ def apply_farm_food_team_pct(building, food_amount):
     if pct <= 0:
         return int(food_amount)
     return int(int(food_amount) * (100 + pct) / 100)
+
+
+def apply_supplies_team_pct(building, amount):
+    """Apply allied ``team_supplies_pct`` (AoE2 Slavs: +10% to allies' barracks
+    production) to a production_qty / production_time value.
+
+    Generic: stacked on top of the unit's own production math; if no allies
+    have the bonus, returns the input amount unchanged.
+    """
+    player = getattr(building, "player", None)
+    pct = team_supplies_pct(player) if player is not None else 0
+    if pct <= 0:
+        return int(amount)
+    return int(int(amount) * (100 + pct) / 100)
 
 
 def reveal_enemy_type_names(player):

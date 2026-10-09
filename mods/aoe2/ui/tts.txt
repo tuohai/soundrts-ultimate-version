@@ -120,6 +120,30 @@
 8331 pasture
 8332 shore fish
 8333 deep sea fish
+8334 elite huskarl
+8335 elite boyar
+8336 elite kipchak
+8337 elite tarkan
+8338 elite war wagon
+8339 elite plumed archer
+8340 elite conquistador
+8341 elite magyar huszar
+8342 elite winged hussar
+8343 elite genoese crossbowman
+8344 elite hussite wagon
+8345 elite janissary
+8334 elite huskarl
+8335 elite boyar
+8336 elite kipchak
+8337 elite tarkan
+8338 elite war wagon
+8339 elite plumed archer
+8340 elite conquistador
+8341 elite magyar huszar
+8342 elite winged hussar
+8343 elite genoese crossbowman
+8344 elite hussite wagon
+8345 elite janissary
 
 8120 militia
 8121 man-at-arms
@@ -392,3 +416,141 @@
   Barracks units gain pierce armor by age.
   Villagers drop off ten percent more gold.
   Team bonus: Universities work faster.
+
+; Late-added civilizations (DE 8 + DE Lords/Return of Rome 6 = 14)
+8700 Goths
+8540 Unique unit Huskarl.
+  Unique techs Anarchy and Perfusion.
+  Infantry costs less.
+  Huskarls and Eagle Warriors are cheaper and tougher.
+  Infantry return some food when killing units.
+  Team bonus: Huskarls have more line of sight.
+8701 Persians
+8541 Unique unit War Elephant.
+  Unique techs Kamandaran and Silos.
+  Start with fifty extra food and wood.
+  Town Centers work faster.
+  Team bonus: trade gains more gold.
+8702 Slavs
+8542 Unique unit Boyar.
+  Unique techs Druzhina and Orthodoxy.
+  Barracks and Archery Range units cost less.
+  Villagers have more hit points.
+  Team bonus: Militia line moves faster.
+8703 Cumans
+8543 Unique unit Kipchak.
+  Unique techs Cuman Mercenaries and Steppe Husbandry.
+  Can build a second Town Center in Feudal Age.
+  Steppe Lancers cost less.
+  Cavalry archers train faster.
+  Team bonus: Barracks and Archery Range units train faster.
+8704 Huns
+8544 Unique unit Tarkan.
+  Unique techs Atheism and Marauders.
+  Start with one extra Scout Cavalry, no houses required.
+  Cavalry archers train faster.
+  Earn gold for killing villagers and monks.
+  Team bonus: Tarkans do bonus damage to buildings.
+8705 Koreans
+8545 Unique unit War Wagon.
+  Unique techs Panokseon and Shinkichon.
+  Towers and Castles gain line of sight each age.
+  Woodcutters work faster.
+  Mangonels and Trebuchets are more accurate.
+  Ships and Cannon Galleons are tougher.
+  Team bonus: Siege Workshops can build War Wagons.
+8706 Mayans
+8546 Unique unit Plumed Archer.
+  Unique techs El Dorado and Maya Architecture.
+  Start with one extra villager.
+  Resources last longer on the map.
+  Eagle line is tougher and stronger against archers.
+  Walls cost less.
+  Team bonus: walls cost less.
+8707 Hindustanis
+8547 Unique unit Armored Elephant.
+  Unique techs Grand Trunk Road and Shatagni.
+  Buildings except farms cost less wood.
+  Camels and Heavy Camels cost less.
+  Town Centers and Outposts have more range and line of sight.
+  Team bonus: Hand Cannoneers have extra range.
+8708 Spanish
+8548 Unique unit Conquistador.
+  Unique techs Supremacy and Inquisition.
+  Builders work faster.
+  Hand Cannoneers are more powerful.
+  Gunpowder units fire faster.
+  Trade generates more gold.
+  Team bonus: Hand Cannoneers are more accurate.
+8709 Magyars
+8549 Unique unit Magyar Huszar.
+  Unique techs Mercenaries and Magyar Huszardom.
+  Scout line gains line of sight each age.
+  Trade Carts carry more.
+  Hussars train faster.
+  Team bonus: trade gains more gold.
+8710 Poles
+8550 Unique unit Winged Hussar.
+  Unique techs Stone Mining bonus.
+  Knights attack harder.
+  Stone mines have more resources.
+  Team bonus: Scout line gains line of sight.
+8711 Italians
+8551 Unique unit Genoese Crossbowman.
+  Unique techs Pavise and Silk Road.
+  Gunpowder units cost less gold.
+  Dock buildings are tougher.
+  Trade generates more gold.
+  Technologies cost less.
+  Team bonus: trade gains more gold.
+8712 Bohemians
+8552 Unique unit Hussite Wagon.
+  Unique techs Sappers.
+  Universities cost less.
+  Mines yield more stone.
+  Wagons and Siege Workshop units cost less.
+  Team bonus: mines yield extra stone.
+8713 Turks
+8553 Unique unit Janissary.
+  Unique techs Sipahi and Artillery.
+  Mines yield more gold.
+  Gunpowder units train faster.
+  Hand Cannoneers are more accurate.
+  Monks heal faster.
+  Team bonus: Chemistry is free.
+
+; Late-added civ villagers / unique units / elite upgrades / unique techs
+; (9000-9013: per-civ villager labels removed for design consistency with the original 13 civs,
+;  which shared a single villager label. Civ-specific info lives in mods/aoe2/rules.txt and
+;  mods/aoe2/ui-zh/tts.txt under the "新增文明介绍" section near the top of this file.)
+9014 Huskarl
+9016 Boyar
+9017 Kipchak
+9018 Tarkan
+9019 War Wagon
+9020 Plumed Archer
+9022 Conquistador
+9023 Magyar Huszar
+9024 Winged Hussar
+9025 Genoese Crossbowman
+9026 Hussite Wagon
+9027 Janissary
+; (9028-9041: per-civ elite upgrade labels removed for design consistency
+;  with the original 13 civs, which use shared 'elite + unit' labels in 8000+ range.
+;  Elite upgrade is handled by rules.txt can_upgrade_to; tts.txt uses shared labels
+;  in the 8334-8345 block. No per-civ elite label is needed.)
+9042 Anarchy
+9043 Perfusion
+9044 Kamandaran
+9045 Druzhina
+9046 Orthodoxy
+9047 Steppe Husbandry
+9048 Cuman Mercenaries
+9049 Marauders
+9050 Atheism
+9051 Panokseon
+9052 Shinkichon
+9053 El Dorado
+9054 Maya Architecture
+9055 Grand Trunk Road
+9056 Shatagni

@@ -1,5 +1,7 @@
 """技能战斗属性：合并施法者与 skill 定义上的战斗参数，供 harm/burst 走完整战斗管线。"""
 
+from .combat.damage_calculation import DamageCalculationMixin
+
 
 # 技能 rules 可声明、并在释放时与施法者合并的战斗属性（与单位战斗系统对齐）
 SKILL_COMBAT_ATTRS = (
@@ -89,7 +91,7 @@ def resolve_combat_attacker(attacker):
     return attacker
 
 
-class SkillCombatProxy:
+class SkillCombatProxy(DamageCalculationMixin):
     """单次技能释放用的虚拟攻击者：属性=skill 覆盖 caster，行为委托给 combat mixin。"""
     _is_skill_combat_proxy = True
 
@@ -143,8 +145,6 @@ class SkillCombatProxy:
             notify(*args, **kwargs)
 
     def _get_attack_damage_vs(self, target, attack_type):
-        from .combat.damage_calculation import DamageCalculationMixin
-
         is_melee = attack_type == "mdg"
         if is_melee:
             return DamageCalculationMixin._get_melee_damage_vs(self, target), True

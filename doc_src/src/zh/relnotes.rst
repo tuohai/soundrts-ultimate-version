@@ -4,6 +4,32 @@
 .. contents::
 
 
+1.5.1.3
+-------
+
+**新增：14 个 AoE2 决定版后期加入的文明**
+
+- **问题**：AoE2 决定版（DE）后期陆续加入的 14 个文明（哥特、波斯、斯拉夫、库曼、匈奴、高丽、玛雅、印度斯坦、西班牙、马扎尔、波兰、意大利、波西米亚、土耳其）在原 1.5.1.2 中只通过 ``res/rules.txt`` 的零星字段覆盖体现，缺少完整的 ``def`` 块、科技树、独特兵种、独特科技、阵营语音；玩家在 DE 风格战役或随机地图中选了这些文明会立刻发现少兵、缺科技、语音空。
+- **改进**：在 ``mods/aoe2/rules.txt`` 完整实现这 14 个文明的 ``def`` 块（共 38 个 def：14 个文明身份 + 9 个建筑/科技共享 def），按决定版的设定写满 ``on_phase`` 加成（开局 / 封建 / 城堡 / 帝王 / 团队）、``can_research``、``can_train``、``is_a`` 关系。独特兵种（赫斯卡尔、战象、贵族骑兵、钦察骑射、鞑靼骑兵、战车、羽饰弓手、征服者、马扎尔骠骑、翼骠骑兵、热那亚弩手、胡斯派战车、禁卫军）走 ``mods/aoe2/ui/style.txt`` 的 ``def <unit>`` + ``title 9014+``，与原 13 文明的「兵种 + elite 兵种」共享 ``title 8000+`` 段的设计完全对齐。村民走「``def <civ>_villager`` 独立 def + ``title 8159`` 共享村民标签」—— 14 文明的 ``def`` 块给 ``rules.txt`` 的 ``peasant <civ>_villager`` / ``on_phase`` 引用独立 type_name，播报统一走 8159「村民」。``mods/aoe2/ai.txt`` +2086 行覆盖 14 文明的开局 / 封建 / 城堡 / 帝王各阶段 AI 计划（农民分配、军事编队、研究优先级）。13 个 ``ui-xx/tts.txt`` 同步 14 文明介绍（编号 8700-8713）和独特兵种/科技共享标签（编号 8334-8345）。
+- **范围**：``mods/aoe2/rules.txt``、``mods/aoe2/ai.txt``、``mods/aoe2/ui/style.txt``、``mods/aoe2/ui/tts.txt``、13 个 ``mods/aoe2/ui-xx/tts.txt``。
+
+**新增：5 个可由 mod 使用的规则字段（端到端从引擎到 modding 文档）**
+
+- **问题**：在原 1.5.1.2 引擎里，以下 5 个决定版/后期加入的机制没有规则化入口 —— 玩家只能在 ``mods/aoe2/rules.txt`` 写硬编码 workaround（如 ``peasant_mod`` + ``worldaction`` 子类化），既容易坏又难以在其它 mod 复用：(1) 决定版 Kipchak / Conquistador 风格的「移动中持续射击」；(2) 决定版站岗单位发现敌人立即反击（不主动跨格追击）；(3) 库曼佣兵独特科技「封建时代可建第 2 个城镇中心」；(4) 匈奴无神论「寺院被毁后圣物不丢失」；(5) 决定版贸易车奖励加成（丝路、贸易加成等百分比类文明效果）。
+- **改进**：5 个新规则字段，全部走「``definitions.py`` 声明 + 对应引擎处消费 + ``mods/aoe2/rules.txt`` 落地 + ``modding.rst`` 同步」的完整链路：
+    - ``can_fire_on_move``（``int``，0/1，0=默认）：远程单位在 ``MoveAction.update`` 路上遇到 ``rdg_range`` 内的敌人时不停下来瞄准，继续朝目标推进的同时朝最近的敌对目标 ``aim()``；由 ``world_movement.py`` 走路冲突分支 + ``worldaction.py`` 新增 ``_fire_on_move_if_applicable`` 协同实现。决定版 Kipchak / Conquistador 用此字段。
+    - ``agro_on_sight``（``int``，0/1，1=默认）：站岗单位 ``ai_mode == "guard"`` 且 ``formations 1`` 时，发现敌人优先 ``_stand_ground_target()`` 后 ``_attack``，但**不**主动跨格追击；``last_attacker`` 兜底反击路径仍保留。决定版哥特 / 条顿等「发现敌人坚守」的文明用此字段。
+    - ``allow_extra_town_center``（``int``，0/1+，0=默认，写在 ``def <upgrade>``）：研究完成后 ``Upgrade.upgrade_player`` 把 ``player.town_center_max`` 加上 N（默认 1）；未来城镇中心建造门槛读 ``player.town_center_max``。决定版 Cuman Mercenaries 用此字段。
+    - ``relic_loss_immunity``（``int``，0/1，0=默认，写在 ``def <upgrade>``）：研究完成后 ``Upgrade.upgrade_player`` 把 ``player.relic_loss_immunity = 1``，未来 ``world_relic.py`` 寺院被毁逻辑读此标志，命中则保留圣物。决定版 Huns Atheism 用此字段。
+    - ``trade_reward_bonus_pct``（``float``，百分比，写在 ``def <upgrade>`` 或 ``on_phase`` 链）：``attribute_effects.AttributeEffectsMixin`` 解析为 ``player.trade_reward_bonus_pct`` 列表（per-player 累加），市场 / 贸易车结算时读取应用。决定版 Italians Silk Road / 类似贸易加成文明效果用此字段。
+- **范围**：``soundrts/definitions.py``（字段声明）、``soundrts/worldunit/world_movement.py``、``soundrts/worldunit/world_ai_decision.py``、``soundrts/worldaction.py``、``soundrts/worldupgrade/base.py``、``soundrts/worldupgrade/attribute_effects.py``、``soundrts/worldupgrade/effect_bonus_parse.py``；``doc_src/src/zh/mod/modding.rst``（新字段说明已同步到 5 个 ``def`` 示例）；``mods/aoe2/rules.txt``（14 文明字段落地）。
+
+**修复：条约开局「条约 X 分钟 / 条约进行中，禁止攻击」提示会被打断**
+
+- **问题**：原 1.5.1.2 中，``srv_quit`` 在退出游戏时调用 ``voice.silent_flush()``，而 ``silent_flush`` 语义是「清空队列但**不**等剩余语音播完」——这导致 (1) 条约模式开局的「条约 5 分钟 / 条约进行中，禁止攻击」在 ``objective`` / 阵营播报后还没播就被 ``srv_quit`` 路径上的 silent flush 静默吞掉，玩家完全听不到条约提示就进入了游戏；(2) 玩家取消游戏（保留进度）时，"已保留进度"提示同样被 silent flush 吞掉，紧接着的统计信息（`_record_stats` 后）则在 world 已经 tear down 时才到嘴边，播报顺序错乱。
+- **改进**：(1) ``srv_quit`` 改用 ``voice.flush()`` 同步排空队列再退出（保留进度时让"已保留进度"播报完整）；(2) 条约模式开局的 ``srv_start_game`` 在 ``objective`` / 阵营播报后、``world.loop`` 启动前同步入队条约提示 ``TREATY + minutes + MINUTES + TREATY_ACTIVE`` 并 ``voice.flush(interruptible=True)``，玩家可按任意键跳过但默认能完整听到条约时长和「禁止攻击」一句；(3) ``game._record_stats`` 后、``game.post_run()`` 前 ``voice.flush()``，让最后一段（"已保留进度"或退场提示）播完再走 world tear down。
+- **范围**：``soundrts/clientgame/game_interface_base.py``（``srv_quit``、``srv_start_game`、``post_run`` 路径）。
+
 1.5.1.2
 -------
 

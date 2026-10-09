@@ -42,10 +42,20 @@ def test_hotkey_catalog_tts_coverage():
     missing_en = []
     missing_zh = []
     for tid in sorted(_all_catalog_tts_ids()):
-        needle = f"\n{tid} "
-        if needle not in ("\n" + en):
+        # tts.txt uses tab as the dominant separator, but a handful of legacy
+        # entries were written with a single space. Accept either so the test
+        # matches the actual on-disk format.
+        needle_space = f"\n{tid} "
+        needle_tab = f"\n{tid}\t"
+        if (
+            needle_space not in ("\n" + en)
+            and needle_tab not in ("\n" + en)
+        ):
             missing_en.append(tid)
-        if needle not in ("\n" + zh):
+        if (
+            needle_space not in ("\n" + zh)
+            and needle_tab not in ("\n" + zh)
+        ):
             missing_zh.append(tid)
     assert missing_en == [], f"ui/tts.txt missing: {missing_en}"
     assert missing_zh == [], f"ui-zh/tts.txt missing: {missing_zh}"

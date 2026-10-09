@@ -552,6 +552,21 @@ class CreatureAIDecision(Entity):
         # D-Phase 2: counterattack_enabled 现是 class default = False, 直接读取.
         # 站岗模式不主动攻击敌人，只在遭受攻击后反击
         if self.ai_mode == "guard":
+            # ``agro_on_sight`` + 阵型：发现敌人时优先就位（stand_ground），
+            # 不主动跨格追击；保留反击路径给 last_attacker 兜底。
+            from ..world_formation import formations_enabled
+            if (
+                int(getattr(self, "agro_on_sight", 0) or 0) == 1
+                and formations_enabled()
+            ):
+                target = self._stand_ground_target()
+                if target is not None:
+                    decision_cache[cache_key] = {
+                        "action": "attack",
+                        "target": target,
+                    }
+                    self._attack(target)
+                    return
             if (self.last_attacker is not None and self.last_attacker.place is not None and
                 self.counterattack_enabled):
                 # 站岗模式下，如果遭受攻击且反击开关开启，才进行反击

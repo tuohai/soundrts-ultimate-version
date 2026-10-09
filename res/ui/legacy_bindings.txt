@@ -19,6 +19,7 @@
 z: resource_status resource1
 x: resource_status resource2
 SHIFT Z: resource_status resource3
+SHIFT X: resource_status resource4
 c: population_status
 ALT V: unit_attributes_screen
 SHIFT V: toggle_gear_screen
@@ -31,10 +32,7 @@ RCTRL: examine
 SPACE: unit_status
 ; 当前方格地形详情（可浏览界面）
 CTRL SHIFT F7: say_square_info
-CTRL SHIFT n: flare
-; 切换阵型（不进命令菜单；formations 1 时生效）
-CTRL SHIFT f: cycle_formation
-
+; flare / cycle_formation 由 AOE2 mod 的 legacy_bindings.txt 提供（需 rules 启用）
 
 ; explore the map
 
@@ -257,6 +255,7 @@ CTRL SHIFT F4: change_player
 F5: history_previous
 F6: history_next
 SHIFT F5: history_next
+SHIFT F6: history_stop
 
 ; wx 盲文/读屏摸读：最新播报 ↔ 消息日志 ↔ 游戏输入
 

@@ -1029,7 +1029,7 @@
 5066 free for all
 5067 two teams
 5338	not enough space
-5750 one versus many
+5750	one versus many
 5068 water
 5069 no water
 5070 lake
@@ -1558,12 +1558,12 @@
 5697 creek
 5698 high ground
 5699 hill
-5700 air is impassable
-5701 cannot pass
-5702 threat
-5703 threat multiplier
-5704 threat versus
-5705 threat multiplier versus
+5700	air is impassable
+5701	cannot pass
+5702	threat
+5703	threat multiplier
+5704	threat versus
+5705	threat multiplier versus
 4371	occupied
 4511	slow
 4638	manual production

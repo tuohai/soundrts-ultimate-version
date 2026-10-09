@@ -199,8 +199,8 @@ GLOBAL_PRIMARY_CATALOG: List[Tuple[str, list]] = [
     ("global.history_previous", list(mp.HOTKEY_HISTORY_PREV)),
     ("global.history_next", list(mp.HOTKEY_HISTORY_NEXT)),
     ("global.gamemenu", list(mp.HOTKEY_GAME_MENU)),
-    ("global.volume", list(mp.HOTKEY_VOLUME_UP)),
-    ("global.volume.-1", list(mp.HOTKEY_VOLUME_DOWN)),
+    ("global.sfx_volume", list(mp.HOTKEY_VOLUME_UP)),
+    ("global.sfx_volume.-1", list(mp.HOTKEY_VOLUME_DOWN)),
     (
         "global.immersion",
         list(mp.HOTKEY_VISUAL_IMMERSION),

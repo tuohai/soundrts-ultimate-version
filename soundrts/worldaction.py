@@ -139,6 +139,11 @@ class MoveAction(Action):
                     target.other_side.place.x, target.other_side.place.y
                 )
         elif getattr(target, "place", None) is self.unit.place:
+            # D-Phase 2: ranged units with ``can_fire_on_move`` opportunistically
+            # fire at any in-range enemy they pass, even on a plain ``go`` order.
+            # Without this, kipchak-style units would march past enemies in
+            # silence; with it, they keep advancing while auto-attacking.
+            self._fire_on_move_if_applicable()
             self.unit.action_reach_and_stop()
         elif self.unit.airground_type in ["air", "water"]:
             # 检查目标对象是否有x和y属性，如果没有则计算中心点
@@ -153,10 +158,62 @@ class MoveAction(Action):
                 # 无法确定目标位置，完成动作
                 self.complete()
                 return
-                
+
+            self._fire_on_move_if_applicable()
             self.unit.go_to_xy(target_x, target_y)
         else:
             self.complete()
+
+    def _fire_on_move_if_applicable(self):
+        """A ranged unit with ``can_fire_on_move`` opportunistically auto-attacks
+        any in-range enemy while marching. Only fires at the closest hostile
+        in rdg_range so we don't attack-move into everything in sight.
+        """
+        unit = self.unit
+        if not int(getattr(unit, "can_fire_on_move", 0) or 0):
+            return
+        if int(getattr(unit, "rdg", 0) or 0) <= 0:
+            return
+        if int(getattr(unit, "rdg_range", 0) or 0) <= 0:
+            return
+        if not getattr(unit, "is_an_enemy", None):
+            return
+        place = getattr(unit, "place", None)
+        if place is None:
+            return
+        from ..worldunit.world_ai_decision import (  # local import; avoid cycles
+            int_distance as _ai_int_distance,
+        )
+        # Optional formation override: do not override player-suppressed stand-ground.
+        from ..world_formation import formation_stand_ground
+        if formation_stand_ground(unit):
+            return
+        rdg_r = int(getattr(unit, "rdg_range", 0) or 0)
+        best = None
+        best_d2 = None
+        for obj in getattr(place, "objects", ()) or ():
+            if obj is unit:
+                continue
+            if not getattr(obj, "is_an_enemy", None):
+                continue
+            if not unit.is_an_enemy(obj):
+                continue
+            if getattr(obj, "hp", 0) <= 0:
+                continue
+            try:
+                d2 = _ai_int_distance(unit.x, unit.y, obj.x, obj.y)
+            except Exception:
+                continue
+            if d2 > rdg_r:
+                continue
+            if best_d2 is None or d2 < best_d2:
+                best = obj
+                best_d2 = d2
+        if best is not None:
+            try:
+                unit.aim(best)
+            except Exception:
+                pass
 
 
 class MoveXYAction(Action):

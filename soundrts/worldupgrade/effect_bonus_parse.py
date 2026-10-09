@@ -57,6 +57,8 @@ _EXTRA_EFFECT_STATS = frozenset(
         "gather_byproduct",
         "research_time",
         "research_time_percent",
+        # D-Phase 2: trade-cart reward scaling (AoE2 Italians Silk Road etc.)
+        "trade_reward_bonus_pct",
     }
 )
 
