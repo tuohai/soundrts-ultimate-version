@@ -933,7 +933,7 @@ Sistema delle fasi (da 1.4.2.4)
 ``phase_targets`` opzionale limita quali unità ricevono le voci non-costo di ``phase bonus`` (i bonus di tipo costo si applicano sempre a livello giocatore). Lascia vuoto per tutte le unità. Usa nomi di categoria (``soldier``, ``worker``, ``building``, ``unit``, ecc.), nomi di unità specifici (``footman knight``), o qualsiasi nome nella catena ``is_a``; qualsiasi corrispondenza positiva conta. Un ``-`` iniziale esclude una corrispondenza — es. ``phase_targets -building`` significa ogni unità tranne gli edifici; puoi mescolare inclusioni ed esclusioni, es. ``phase_targets soldier -footman``.
 
 
-Faction age rewards (since 1.4.6.9): ``on_phase``, ``research_cost_discount``, ``advance_cost_discount`` — no civ names hardcoded. Also ``phase bonus clear``, ``no_auto_upgrade 1``.
+Faction age rewards (since 1.4.6.9): ``on_phase``, ``research_cost_discount``, ``advance_cost_discount`` — no civ names hardcoded. Also ``phase bonus clear``, ``no_auto_upgrade 1``. Per-tech + per-slot research discount (since 1.5.1.4): ``research_cost_tech_discount <slot> <pct> <flat> <tech>…`` (slot 0=cibo, 1=legno, 2=oro, 3=pietra; pct accetta ``-50%``; flat lasciare 0; elencare 1+ tech type-name in coda). Aditivo con ``research_cost_zero_slot``; convive con ``research_cost_discount`` per-età. Esempio Bulgari Mulino: ``on_phase dark_age research_cost_tech_discount 0 -50% 0 horse_collar heavy_plow crop_rotation``.
 
 Su un edificio::
 

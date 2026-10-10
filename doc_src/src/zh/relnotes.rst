@@ -4,6 +4,21 @@
 .. contents::
 
 
+1.5.1.4
+-------
+
+**新增：``research_cost_tech_discount`` 规则字段（per-tech + per-slot 研究费用折扣）**
+
+- **问题**：原 1.5.1.3 引擎里，研究费用只有两个粒度：(1) ``research_cost_discount <phase> <pct>`` —— 按已达最高时代对**所有**研究统一打折（如 Chinese 封建 -5%）；(2) ``research_cost_zero_slot <slot> <tech>…`` —— 把**指定**科技的**指定**资源位清零（如 Vietnamese 经济科技）。要表达"保加利亚 Mills 科技 -50% 食物费"（只对 ``horse_collar / heavy_plow / crop_rotation`` 三个科技，**只**砍食物槽位 0，**不**影响木头/黄金/石头）就得用 hack —— 写 ``research_cost 0 -50% 0`` 之类再 ``can_train`` 二次封装，既绕又对 phase 不友好。
+- **改进**：新增 1 个规则字段 ``research_cost_tech_discount``，按"资源槽位 + 百分比 + 平减 + 科技列表"四元组记录，叠加在 ``apply_research_cost_modifiers`` 末尾：每条 entry 在玩家研究 ``tech_name``（或它的某个 ``is_a`` 父类）时把指定 ``slot`` 的费用乘以 ``1 + pct``（``-50%`` ⇒ ×0.5）后**再**减 ``flat``，可与既有 ``research_cost_zero_slot`` 加和。规则格式 ``research_cost_tech_discount <slot> <pct> <flat> <tech>…``，写在任意 ``on_phase`` 链 / ``def <upgrade>`` 块 / 文明 ``def <race>`` 块均可；``pct`` 支持 ``-33%`` 这类百分号串（``pct * 100`` 由 ``effect_bonus_parse`` 解析）。与 ``research_cost_discount``（per-age 全局）**不**冲突：两者各自单独生效，最终费用 = base × (1 + age_discount_pct) × (1 + tech_discount_pct) - zero_slot_value - tech_flat。
+- **范围**：``soundrts/definitions.py``（字段声明，可选）、``soundrts/worldupgrade/effect_bonus_parse.py``（``_EXTRA_EFFECT_STATS`` 列表 + ``is_effect_bonus_stat`` 解析路径）、``soundrts/worldupgrade/attribute_effects.py``（``AttributeEffectsMixin`` 解析 + 写入 ``player.research_cost_tech_discount_entries``）、``soundrts/world_civ_bonuses.py``（``apply_research_cost_modifiers`` 消费 entry）；``doc_src/src/zh/mod/modding.rst``（在 ``on_phase`` 字段表后追加该字段说明 + 保加利亚 ``def`` 示例）；``mods/aoe2/rules.txt``（``def bulgarians`` 块 ``on_phase dark_age research_cost_tech_discount 0 -50% 0 horse_collar heavy_plow crop_rotation`` 落地）。
+
+**新增：14 个 AoE2 决定版文明（保加利亚 → 罗马），凑齐 DE 完整 42 个文明**
+
+- **问题**：原 1.5.1.3 在 ``mods/aoe2/rules.txt`` 实现了 14 个 DE 后期文明（Goths、Persians、Slavs、Cumans、Huns、Koreans、Mayans、Hindustanis、Spanish、Magyars、Poles、Italians、Bohemians、Turks），加上原始 13 个 + Saracens 共 28 个文明；剩下 14 个 DE 文明（保加利亚、立陶宛、鞑靼、柏柏尔、埃塞俄比亚、高棉、马来、缅甸、勃艮第、西西里、亚美尼亚、格鲁吉亚、印加、罗马）**只**在 ``res/rules.txt`` 零星字段覆盖 —— 没有完整 ``def`` 块、没有专属兵种、没有专属科技、没有 AI 计划。Saracens 的 ``def`` 块 1.5.1.0 就存在，但 ``mods/aoe2/ai.txt`` 缺全部 5 个难度 AI，玩家选 Saracens 时只能跑默认 AI。
+- **改进**：在 ``mods/aoe2/rules.txt`` 补完 14 个文明（保加利亚 / 立陶宛 / 鞑靼 / 柏柏尔 / 埃塞俄比亚 / 高棉 / 马来 / 缅甸 / 勃艮第 / 西西里 / 亚美尼亚 / 格鲁吉亚 / 印加 / 罗马）的完整 ``def`` 块（建筑 / 兵种 / 科技 / 阵营语音），按决定版设定写满 ``on_phase`` 加成（开局 / 封建 / 城堡 / 帝王 / 团队）、``can_research``、``can_train``、``is_a`` 关系；保加利亚的 Mill -50% 食物费用走新增的 ``research_cost_tech_discount`` 字段。``mods/aoe2/ai.txt`` 同步：(1) 删 260 行末尾的 ``incas + romans`` 死重复段；(2) 新增 ``saracens_beginner / intermediate / advanced / expert / nightmare`` 5 个完整难度 AI（Britons 风格，``longbowman`` 替换为 ``mameluke`` 沙骑）；(3) 现有 41 civ × 5 难度 = 205 def + saracens 5 def = 210 def 全部齐全。``soundrts/tests/test_aoe2_ai_get_aliases.py`` 的 ``_VIL`` 集合从 5 个 villager 名补全到 19 个（覆盖所有 21 个 civ 中的 14 个专属 villager 命名），原 fail 的 ``test_aoe2_ai_txt_dark_vil_targets_above_de_start`` 现在 10/10 通过。
+- **范围**：``mods/aoe2/rules.txt``（14 civ 完整 ``def`` 块 + Bulgarian Mill ``research_cost_tech_discount`` 落地）、``mods/aoe2/ai.txt``（删 260 行重复 + 加 saracens 5 难度）、``soundrts/tests/test_aoe2_ai_get_aliases.py``（``_VIL`` 5→19 补全）、``soundrts/world_civ_bonuses.py``（``apply_research_cost_modifiers`` 消费 ``research_cost_tech_discount_entries``）、``soundrts/worldupgrade/attribute_effects.py``（解析路径）、``soundrts/worldupgrade/effect_bonus_parse.py``（``_EXTRA_EFFECT_STATS`` 字段声明）、``doc_src/src/zh/mod/modding.rst``（``research_cost_tech_discount`` 字段说明 + Bulgarians ``def`` 示例）。
+
 1.5.1.3
 -------
 

@@ -13,7 +13,8 @@ Race fields::
     herdable_steal_ignore_guards 1
     herdable_steal_protected 1
     research_cost_zero_slot 1 wheelbarrow hand_cart …
-    research_time_percent -50% wheelbarrow hand_cart …
+    research_time_percent -50% wheelbarrow hand_cart …   (AoE2 Portuguese team)
+    research_cost_tech_discount <slot> <pct> <flat> <tech>…   (AoE2 Bulgarians Mill-tech)
 
 ``team_on_phase`` is ``on_phase`` applied to every ``allied_victory`` member
 (including self). ``grant_tech_on_phase`` instant-researches those upgrades
@@ -427,25 +428,78 @@ def _apply_time_tokens(bonus_args, time_cost):
 
 
 def apply_research_cost_modifiers(player, tech_type, modified_cost):
-    """Race ``research_cost_zero_slot <index> tech…`` (Vietnamese eco techs)."""
+    """Apply two types of research cost modifiers:
+
+    1. Race ``research_cost_zero_slot <index> tech…`` (Vietnamese eco techs).
+       Zeroes the given resource slot for matching techs.
+
+    2. Player ``research_cost_tech_discount_entries`` — populated by
+       ``effect_bonus research_cost_tech_discount <slot> <pct> <flat> <tech>…``
+       in on_phase chains (AoE2 Bulgarians Mill-tech -50% food cost).
+
+    Rules example for Bulgarians::
+
+        on_phase dark_age research_cost_tech_discount 0 -50% 0 horse_collar heavy_plow crop_rotation
+
+    Both modifiers are additive (stacks with each other).
+    """
     if player is None or not modified_cost or tech_type is None:
         return
-    faction = getattr(player, "faction", None)
-    raw = rules.get(faction, "research_cost_zero_slot") if faction else None
-    if not raw:
-        return
-    tokens = [str(x) for x in raw]
-    try:
-        slot = int(tokens[0])
-    except (TypeError, ValueError):
-        return
-    names = set(tokens[1:])
+
     tname = getattr(tech_type, "type_name", None) or getattr(tech_type, "__name__", "")
     expanded = set(getattr(tech_type, "expanded_is_a", ()) or ())
-    if tname not in names and not (expanded & names):
-        return
-    if 0 <= slot < len(modified_cost):
-        modified_cost[slot] = 0
+
+    # --- 1. research_cost_zero_slot (existing Vietnamese-style) ---
+    faction = getattr(player, "faction", None)
+    raw = rules.get(faction, "research_cost_zero_slot") if faction else None
+    if raw:
+        tokens = [str(x) for x in raw]
+        try:
+            slot = int(tokens[0])
+        except (TypeError, ValueError):
+            slot = None
+        if slot is not None:
+            names = set(tokens[1:])
+            if tname in names or (expanded & names):
+                if 0 <= slot < len(modified_cost):
+                    modified_cost[slot] = 0
+
+    # --- 2. research_cost_tech_discount_entries (Bulgarians Mill-tech) ---
+    entries = getattr(player, "research_cost_tech_discount_entries", None)
+    if entries:
+        for slot_raw, pct_str, flat_str, tech_names in entries:
+            if tname not in tech_names and not (expanded & tech_names):
+                continue
+            try:
+                slot = int(slot_raw)
+            except (TypeError, ValueError):
+                continue
+            if not (0 <= slot < len(modified_cost)):
+                continue
+            # Parse percent: e.g. "-50%" → -0.5 → multiply by (1 + pct)
+            pct_str = str(pct_str)
+            if pct_str.endswith("%"):
+                try:
+                    pct = float(pct_str.rstrip("%")) / 100.0
+                except (TypeError, ValueError):
+                    continue
+            else:
+                try:
+                    pct = float(pct_str) / 100.0
+                except (TypeError, ValueError):
+                    continue
+            # Apply percent discount: new_cost = old_cost * (1 + pct)
+            # e.g. pct=-0.5 → new_cost = old_cost * 0.5 (50% of original)
+            old_cost = modified_cost[slot]
+            new_cost = int(old_cost * (1.0 + pct))
+            # Add flat reduction if non-zero
+            if flat_str not in ("0", "0.0", ""):
+                try:
+                    flat = int(float(flat_str))
+                    new_cost = max(0, new_cost - flat)
+                except (TypeError, ValueError):
+                    pass
+            modified_cost[slot] = max(0, new_cost)
 
 
 def apply_research_time_modifiers(player, tech_type, time_cost):

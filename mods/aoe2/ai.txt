@@ -6128,20 +6128,20 @@ attack
 goto ron1_castle
 
 
-; ======================== INCAS (slinger / eagle) ========================
+; ======================== SARACENS (mameluke / camel_rider) ========================
 
-def incas_beginner
+def saracens_beginner
 defeat_score 10
 counter_skill 25
 workers 12
 constant_attacks 0
 research 1
-get 8 incan_villager
-get 4 militia 4 eagle_scout 4 aoe_archer
-get 12 incan_villager 10 eagle_warrior 8 slinger 2 battering_ram
+get 8 peasant
+get 4 militia 8 aoe_archer
+get 12 peasant 8 aoe_knight 8 mameluke 2 battering_ram
 goto -1
 
-def incas_intermediate
+def saracens_intermediate
 defeat_score 20
 counter_skill 50
 starting_resources 100 200 0 200
@@ -6150,17 +6150,17 @@ constant_attacks 1
 research 1
 workers 16
 attack_ratio 120
-label ii1
-get 8 incan_villager
-get 4 militia 4 eagle_scout 4 aoe_archer
+label si1
+get 8 peasant
+get 4 militia 8 aoe_archer
 attack
-get 14 incan_villager 10 eagle_warrior 8 slinger 3 battering_ram
+get 14 peasant 8 aoe_knight 8 mameluke 3 battering_ram
 attack
 get 4 battering_ram 2 mangonel
 attack
-goto ii1
+goto si1
 
-def incas_advanced
+def saracens_advanced
 defeat_score 40
 counter_skill 75
 starting_resources 150 250 0 200
@@ -6174,21 +6174,21 @@ research 1
 workers 22
 expand 2
 attack_ratio 110
-label ia1
-get 8 incan_villager
-get 4 militia 4 eagle_scout 4 aoe_archer
+label sa1
+get 8 peasant
+get 4 militia 8 aoe_archer
 attack
-get 14 incan_villager 10 eagle_warrior 10 slinger 3 battering_ram
+get 14 peasant 8 aoe_knight 8 mameluke 3 battering_ram
 attack
 get 4 battering_ram 2 mangonel
 attack
-goto ia1
+goto sa1
 
-def incas_expert
+def saracens_expert
 defeat_score 80
 counter_skill 90
 starting_resources 200 300 0 250
-starting_units 1 incan_villager
+starting_units 1 peasant
 train_time 50
 research_time 70
 build_time 50
@@ -6200,41 +6200,41 @@ research 1
 workers 28
 expand 2
 attack_ratio 100
-label ie1
-get 12 incan_villager
-get 4 militia 4 eagle_scout 4 aoe_archer
+label se1
+get 12 peasant
+get 4 militia 8 aoe_archer
 attack
-if_attacked goto ie1_hold
-if_enemy cavalry goto ie1_spears
-if_enemy archer_unit goto ie1_skirm
-label ie1_castle
-get 16 incan_villager 10 eagle_warrior 14 slinger 4 battering_ram
+if_attacked goto se1_hold
+if_enemy cavalry goto se1_spears
+if_enemy archer_unit goto se1_skirm
+label se1_castle
+get 16 peasant 8 aoe_knight 8 mameluke 3 battering_ram
 attack
-get 6 battering_ram 4 mangonel
+get 4 battering_ram 2 mangonel
 attack
-goto ie1
+goto se1
 
-label ie1_hold
+label se1_hold
 get 3 scouttower
-get 8 incan_villager 8 spearman 4 aoe_archer
+get 8 peasant 8 spearman 4 aoe_archer
 attack
-goto ie1_castle
+goto se1_castle
 
-label ie1_spears
-get 8 incan_villager 10 spearman
+label se1_spears
+get 8 peasant 10 spearman
 attack
-goto ie1_castle
+goto se1_castle
 
-label ie1_skirm
-get 8 incan_villager 10 skirmisher
+label se1_skirm
+get 8 peasant 10 skirmisher
 attack
-goto ie1_castle
+goto se1_castle
 
-def incas_nightmare
+def saracens_nightmare
 defeat_score 200
 counter_skill 100
 starting_resources 300 400 0 300
-starting_units 2 incan_villager
+starting_units 2 peasant
 train_time 40
 research_time 60
 build_time 40
@@ -6246,181 +6246,32 @@ research 1
 workers 36
 expand 2
 attack_ratio 80
-label in1
-get 12 incan_villager
-get 4 militia 4 eagle_scout 4 aoe_archer
+label sn1
+get 12 peasant
+get 4 militia 8 aoe_archer
 attack
-if_attacked goto in1_hold
-if_enemy cavalry goto in1_spears
-if_enemy archer_unit goto in1_skirm
-label in1_castle
-get 18 incan_villager 12 eagle_warrior 16 slinger 4 battering_ram
-attack
-get 6 battering_ram 4 mangonel
-attack
-goto in1
-
-label in1_hold
-get 3 scouttower
-get 8 incan_villager 8 spearman 4 aoe_archer
-attack
-goto in1_castle
-
-label in1_spears
-get 8 incan_villager 10 spearman
-attack
-goto in1_castle
-
-label in1_skirm
-get 8 incan_villager 10 skirmisher
-attack
-goto in1_castle
-
-
-; ======================== ROMANS (legionary / swordsman) ========================
-
-def romans_beginner
-defeat_score 10
-counter_skill 25
-workers 12
-constant_attacks 0
-research 1
-get 8 roman_villager
-get 6 militia 4 spearman
-get 12 roman_villager 8 aoe_knight 6 legionary 2 battering_ram
-goto -1
-
-def romans_intermediate
-defeat_score 20
-counter_skill 50
-starting_resources 100 200 0 200
-watchdog 720
-constant_attacks 1
-research 1
-workers 16
-attack_ratio 120
-label ri1
-get 8 roman_villager
-get 6 militia 4 spearman
-attack
-get 14 roman_villager 8 aoe_knight 8 legionary 3 battering_ram
-attack
-get 4 battering_ram 2 mangonel
-attack
-goto ri1
-
-def romans_advanced
-defeat_score 40
-counter_skill 75
-starting_resources 150 250 0 200
-train_time 50
-research_time 80
-build_time 50
-gather_time 50
-watchdog 600
-constant_attacks 1
-research 1
-workers 22
-expand 2
-attack_ratio 110
-label ra1
-get 8 roman_villager
-get 6 militia 4 spearman
-attack
-get 14 roman_villager 8 aoe_knight 10 legionary 3 battering_ram
-attack
-get 4 battering_ram 2 mangonel
-attack
-goto ra1
-
-def romans_expert
-defeat_score 80
-counter_skill 90
-starting_resources 200 300 0 250
-starting_units 1 roman_villager
-train_time 50
-research_time 70
-build_time 50
-gather_time 50
-unit_hp 120
-watchdog 600
-constant_attacks 1
-research 1
-workers 28
-expand 2
-attack_ratio 100
-label re1
-get 12 roman_villager
-get 6 militia 4 spearman
-attack
-if_attacked goto re1_hold
-if_enemy cavalry goto re1_spears
-if_enemy archer_unit goto re1_skirm
-label re1_castle
-get 16 roman_villager 8 aoe_knight 12 legionary 4 battering_ram
+if_attacked goto sn1_hold
+if_enemy cavalry goto sn1_spears
+if_enemy archer_unit goto sn1_skirm
+label sn1_castle
+get 18 peasant 8 aoe_knight 8 mameluke 3 battering_ram
 attack
 get 6 battering_ram 4 mangonel
 attack
-goto re1
+goto sn1
 
-label re1_hold
+label sn1_hold
 get 3 scouttower
-get 8 roman_villager 8 spearman 4 aoe_archer
+get 8 peasant 8 spearman 4 aoe_archer
 attack
-goto re1_castle
+goto sn1_castle
 
-label re1_spears
-get 8 roman_villager 10 spearman
+label sn1_spears
+get 8 peasant 10 spearman
 attack
-goto re1_castle
+goto sn1_castle
 
-label re1_skirm
-get 8 roman_villager 10 skirmisher
+label sn1_skirm
+get 8 peasant 10 skirmisher
 attack
-goto re1_castle
-
-def romans_nightmare
-defeat_score 200
-counter_skill 100
-starting_resources 300 400 0 300
-starting_units 2 roman_villager
-train_time 40
-research_time 60
-build_time 40
-gather_time 40
-unit_hp 140
-watchdog 540
-constant_attacks 1
-research 1
-workers 36
-expand 2
-attack_ratio 80
-label rn1
-get 12 roman_villager
-get 6 militia 4 spearman
-attack
-if_attacked goto rn1_hold
-if_enemy cavalry goto rn1_spears
-if_enemy archer_unit goto rn1_skirm
-label rn1_castle
-get 18 roman_villager 8 aoe_knight 16 legionary 4 battering_ram
-attack
-get 6 battering_ram 4 mangonel
-attack
-goto rn1
-
-label rn1_hold
-get 3 scouttower
-get 8 roman_villager 8 spearman 4 aoe_archer
-attack
-goto rn1_castle
-
-label rn1_spears
-get 8 roman_villager 10 spearman
-attack
-goto rn1_castle
-
-label rn1_skirm
-get 8 roman_villager 10 skirmisher
-attack
-goto rn1_castle
+goto sn1_castle

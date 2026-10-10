@@ -57,6 +57,16 @@ _EXTRA_EFFECT_STATS = frozenset(
         "gather_byproduct",
         "research_time",
         "research_time_percent",
+        # D-Phase 3: AoE2 Bulgarians Mill-tech discount; other civs may follow.
+        # Stored per-player; consumed by apply_research_cost_modifiers.
+        # Rules: ``research_cost_tech_discount <slot> <pct> <flat> <tech_name>…``
+        #   slot  = resource index (0=food,1=wood,2=gold,3=stone)
+        #   pct   = percent discount, e.g. -50%  (negative = reduce cost)
+        #   flat  = flat reduction per slot, e.g. 0  (not currently used)
+        #   techs = one or more tech type-names this applies to
+        # NB: do NOT name this ``research_cost_discount`` — that field already
+        # means "per-age global research discount" (e.g. Chinese -5% feudal).
+        "research_cost_tech_discount",
         # D-Phase 2: trade-cart reward scaling (AoE2 Italians Silk Road etc.)
         "trade_reward_bonus_pct",
     }
@@ -157,6 +167,12 @@ def split_effect_bonus_args(args):
                 return bonus, [str(x) for x in args[i:]]
             bonus.extend([stat, args[i + 1], args[i + 2], args[i + 3]])
             i += 4
+            continue
+        if st == "research_cost_tech_discount":
+            # Greedily consume: stat slot pct flat [tech_name…]
+            # Tech names are not stat names so consume them all here.
+            bonus.extend([str(a) for a in args[i:]])
+            i = len(args)
             continue
         if st == "gather_byproduct":
             # 4-token: source product rate  |  3-token: source rate (product=resource1)

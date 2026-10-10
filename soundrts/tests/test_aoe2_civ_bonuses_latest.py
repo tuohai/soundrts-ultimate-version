@@ -299,3 +299,72 @@ def test_malians_wood_rdf_gold_and_university_team(aoe2_rules):
     assert "architecture" not in uni and "siege_engineers" not in uni
     castle = aoe2_rules.get("malian_castle", "can_research") or []
     assert "tigui" in castle and "farimba" in castle
+
+
+def test_bulgarians_mill_tech_food_discount(aoe2_rules):
+    """Bulgarians: Mill techs (horse_collar/heavy_plow/crop_rotation) cost -50% food.
+
+    Verifies the ``research_cost_tech_discount`` field is parsed and stored correctly.
+    The actual cost-modification is tested via apply_research_cost_modifiers in
+    test_bulgarians_research_cost_tech_discount_entry_applies.
+    """
+    entries = _effects(aoe2_rules, "bulgarians")
+    dark_cost = [e for e in entries if e and e[0] == "dark_age"]
+    assert any(
+        e and "research_cost_tech_discount" in e
+        and "0" in e
+        and "-50%" in e
+        and "horse_collar" in e
+        and "heavy_plow" in e
+        and "crop_rotation" in e
+        for e in dark_cost
+    ), "bulgarians should have dark_age research_cost_tech_discount for mill techs"
+
+
+def test_bulgarians_research_cost_tech_discount_entry_applies():
+    """apply_research_cost_modifiers reduces horse_collar food cost by -50%."""
+    from soundrts.world_civ_bonuses import apply_research_cost_modifiers
+    from soundrts.worldupgrade.attribute_effects import AttributeEffectsMixin
+
+    class FakePlayer:
+        def __init__(self):
+            self.research_cost_tech_discount_entries = []
+            self.research_cost_percent_bonus = [0.0] * 4
+            self.research_cost_bonus = [0] * 4
+
+    class FakeUnit:
+        def __init__(self, player):
+            self.player = player
+
+    class FakeTech:
+        def __init__(self, name):
+            self.type_name = name
+            self.expanded_is_a = []
+
+    player = FakePlayer()
+    unit = FakeUnit(player)
+
+    # Simulate: on_phase dark_age research_cost_tech_discount 0 -50% 0 horse_collar heavy_plow crop_rotation
+    from soundrts.worldupgrade.effect_bonus_parse import split_effect_bonus_args
+
+    bonus, stray = split_effect_bonus_args(
+        ["research_cost_tech_discount", "0", "-50%", "0", "horse_collar", "heavy_plow", "crop_rotation"]
+    )
+    assert stray == [], f"expected no stray, got {stray}"
+    AttributeEffectsMixin.effect_bonus(unit, 0, *bonus)
+
+    assert len(player.research_cost_tech_discount_entries) == 1
+    slot, pct, flat, techs = player.research_cost_tech_discount_entries[0]
+    assert slot == "0"
+    assert pct == "-50%"
+    assert "horse_collar" in techs
+
+    # horse_collar base cost = 300 food
+    cost = [300, 0, 0, 0]
+    apply_research_cost_modifiers(player, FakeTech("horse_collar"), cost)
+    assert cost == [150, 0, 0, 0], f"expected [150,0,0,0], got {cost}"
+
+    # non-matching tech should be unchanged
+    cost2 = [300, 0, 0, 0]
+    apply_research_cost_modifiers(player, FakeTech("loom"), cost2)
+    assert cost2 == [300, 0, 0, 0]

@@ -133,10 +133,29 @@ def test_aoe2_ai_txt_asks_for_rams_after_feudal():
 
 _VIL = {
     "peasant",
+    # dedicated villager units (one per civ); see mods/aoe2/rules.txt
+    # NB: this list must grow as new civs are added. The 9 civs (britons,
+    # byzantines, japanese, teutons, vikings, vietnamese, celts, malians,
+    # saracens) all share the base `peasant` (aoe2-b style) and so are
+    # covered by the "peasant" entry above.
+    "armenian_villager",
+    "aztec_villager",
+    "berber_villager",
+    "bulgarian_villager",
+    "burgundian_villager",
+    "burmese_villager",
     "chinese_villager",
+    "ethiopian_villager",
+    "georgian_villager",
+    "incan_villager",
+    "khmer_villager",
+    "lithuanian_villager",
+    "malay_villager",
     "mongol_herdsman",
     "portuguese_villager",
-    "aztec_villager",
+    "roman_villager",
+    "sicilian_villager",
+    "tartar_villager",
 }
 
 

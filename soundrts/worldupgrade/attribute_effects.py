@@ -383,6 +383,32 @@ class AttributeEffectsMixin:
                 i += 2
                 continue
 
+            # D-Phase 3: AoE2 Bulgarians Mill-tech discount.
+            # Format: research_cost_tech_discount <slot> <pct> <flat> <tech>…
+            #   slot   = resource index (0=food,1=wood,2=gold,3=stone)
+            #   pct    = percent discount, e.g. -50%
+            #   flat   = flat reduction, e.g. 0
+            #   tech…  = one or more tech type-names this applies to
+            # We consume the remaining args (from i+2 onward) directly so
+            # split_effect_bonus_args doesn't try to parse them as stats.
+            # NB: do NOT name this ``research_cost_discount`` — that field
+            # means "per-age global research discount" (e.g. Chinese -5%
+            # feudal). This new field is per-tech and per-resource-slot.
+            if stat == "research_cost_tech_discount":
+                slot_str = str(bonus_args[i + 1])
+                pct_str = str(bonus_args[i + 2])
+                flat_str = str(bonus_args[i + 3]) if i + 3 < len(bonus_args) else "0"
+                tech_names = [str(t) for t in bonus_args[i + 4:]]
+                entry = (slot_str, pct_str, flat_str, frozenset(tech_names))
+                player = getattr(unit, "player", None)
+                if player is not None:
+                    if not hasattr(player, "research_cost_tech_discount_entries"):
+                        player.research_cost_tech_discount_entries = []
+                    player.research_cost_tech_discount_entries.append(entry)
+                # Consume all remaining args
+                i = len(bonus_args)
+                continue
+
             # 处理普通数值属性
             cls._handle_general_attribute_bonus(unit, stat, value)
             i += 2

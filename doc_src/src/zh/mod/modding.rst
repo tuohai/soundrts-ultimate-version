@@ -1031,6 +1031,7 @@ Phase system (since 1.4.2.4)
 
 - ``on_phase``：某个 ``class phase`` 进入 upgrades 时，给列出单位加属性（类似 effect bonus）。
 - ``research_cost_discount``：按已达最高时代替换科技费%；只影响研究与 upgrade_to。
+- ``research_cost_tech_discount``（自 1.5.1.4）：按"资源槽位 + 百分比 + 平减 + 科技列表"四元组给**指定**科技打折，与上一条 per-age 全局折扣**同时**生效。格式 ``research_cost_tech_discount <slot> <pct> <flat> <tech>…``，其中 ``slot`` = 0 食物 / 1 木头 / 2 黄金 / 3 石头；``pct`` 支持 ``-50%`` 这类百分号串（``pct * 100`` 由 ``effect_bonus_parse`` 解析）；``flat`` 留 0 即可（当前未启用）；末尾空格分隔列出 1 个或多个受影响的科技 type-name。叠加在 ``apply_research_cost_modifiers`` 末尾，与既有 ``research_cost_zero_slot`` 加和。可写在 ``on_phase`` 链 / ``def <upgrade>`` 块 / 文明 ``def <race>`` 块任意位置。例：保加利亚 Mill 三科技食物费 -50%： ``on_phase dark_age research_cost_tech_discount 0 -50% 0 horse_collar heavy_plow crop_rotation``。
 - ``advance_cost_discount``：按购买的时代查表，只影响 AdvanceOrder。
 - ``no_auto_upgrade 1``：跳过 units_auto_upgrade 自动变形；训练解析也要求该形态已在 ``player.upgrades``。
 - ``line_upgrade 1``（自 1.4.6.9）：可研究的单位线形态。写入建筑 ``can_research``；研究后解锁训练并变形场上上一阶。时代 ``units_auto_upgrade`` **不会**自动升到该形态。训练菜单走 ``effective_can_train`` / ``resolve_trainable_unit_type``（``can_train`` 写线根即可）；费用默认按线根 ``cost``/``time_cost``（可用 ``train_cost``/``train_time`` 覆盖）。也可在科技上写 ``effect unit_line_upgrade <形态>``。引擎不硬编码单位名。详见 `单位线升级与最高阶训练 <unit-line-upgrade.htm>`_。
