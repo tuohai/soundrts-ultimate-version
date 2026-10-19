@@ -117,6 +117,38 @@ You only need to give the west-most square of the path.
 "south_north_paths a1 a3 a4 a6" means:  "add a path from a1 to a2, from a3 to a4, from a4 to a5, and from a6 to a7".
 You only need to give the south-most square of the path.
 
+.. warning:: **Implicit toroidal (wrap) behaviour**
+
+   When a path source is on the **right edge** (1-based ``x == nb_columns``, e.g. ``l1`` in a
+   12-column map) or the **bottom edge** (1-based ``y == nb_lines``, e.g. ``a8`` in an 8-line
+   map), the engine does **not** refuse the entry. It silently **wraps** the path to the
+   **opposite** edge (left or top), turning the map into a **torus**. Concretely,
+   ``west_east_paths l1`` will connect ``l1`` to ``a1`` rather than isolating ``l1`` against a
+   wall.
+
+   This is an **intentional** engine feature, but it is **easy to miss**:
+
+   - Authors who want a closed (non-toroidal) map often accidentally add boundary entries on
+     the right / bottom edge.
+   - Authors who **do** want a toroidal map (e.g. ``res/multi/pra6.txt``, ``pra8.txt``) must
+     deliberately place entries on the boundary.
+
+   **Audit / detection**: the repository ships
+   ``soundrts/tests/test_no_implicit_wrap_audit.py``, which scans every ``.txt`` map under
+   ``mods/`` and ``res/`` and fails on boundary entries that are **not** on the explicit
+   allow-list (``_WRAP_ALLOWLIST``, currently including ``pra6.txt`` and ``pra8.txt``). Run
+   this test after editing a map; new boundary entries will surface immediately.
+
+   Full definition of the wrap condition (0-based vs 1-based):
+
+   - 0-based grid: ``cx + 1 == nb_columns`` (west-east) or ``cy + 1 == nb_lines``
+     (south-north) triggers the wrap.
+   - 1-based file format: ``x == nb_columns`` (rightmost column) or ``y == nb_lines``
+     (bottom row) triggers the wrap.
+   - 1-based ``x == 0`` (column ``a``) and ``y == 0`` (row 1) do **not** trigger a wrap —
+     the engine resolves them to a non-existent neighbour and emits a runtime ``map_warning``,
+     not a torus.
+
 West_east_bridges and south_north_bridges
 '''''''''''''''''''''''''''''''''''''''''
 
@@ -485,6 +517,8 @@ Additional trigger conditions::
     trigger all (units_lost 3 knight) (defeat)
     trigger all (building_lost townhall) (defeat)
     trigger all (buildings_lost 1 townhall 2 barracks) (defeat)
+    trigger player1 (enemy_building_destroyed townhall) (objective_complete 1)
+    trigger player1 (enemy_building_destroyed c3 enemy_castle) (objective_complete 2)
     trigger players (killed_target dragon) (victory)
     trigger players (killed_target dragon enemy) (victory)
     trigger player1 (has_killed 5 footman enemy) (objective_complete 1)
@@ -507,6 +541,40 @@ that type spawned at the square (stable after movement)::
 Not the same as ``has_killed 3 footman`` (total count). Each objective's ``cut_scene`` should
 describe that objective only. See ``campaign/unit-index.htm``; examples
 ``res/single/The Legend of Raynor/28.txt``, ``1.txt``.
+
+Enemy-side building triggers (since 1.5.1.5)
+...........................................
+
+``enemy_building_destroyed`` — a building owned by an enemy of the current player has
+been destroyed. Scans every non-allied, non-neutral player's buildings (neutral creep
+/ wildlife players are not counted as "enemy" — they are neither ally nor enemy).
+Pairs naturally with ``building_lost`` for symmetric "self vs enemy" condition
+checks inside an ``(and ...)``::
+
+    trigger player1 (enemy_building_destroyed enemy_castle) (objective_complete 1)
+    trigger player1 (enemy_building_destroyed c3 enemy_castle) (objective_complete 2)
+    trigger player1 (and (building_lost townhall) (enemy_building_destroyed enemy_castle))
+        (objective_complete 3)
+
+Five syntax forms (same selector style as ``building_lost``):
+
+1. ``(enemy_building_destroyed \<type\>)`` — all buildings of that type belonging to
+   any enemy player have been destroyed.
+2. ``(enemy_building_destroyed \<building_id\>)`` — the building with that numeric
+   ID (e.g. ``(enemy_building_destroyed 12)``) is gone. ID vs type-name disambiguation
+   follows the same rule as ``building_lost``: a pure-digit token, or a token whose
+   first character is a digit, is an ID; everything else is a type name.
+3. ``(enemy_building_destroyed \<square\> \<type\>)`` — no enemy building of that
+   type is alive at that square ("natural count" semantics: at least one such
+   building has died, regardless of how many were originally there).
+4. ``(enemy_building_destroyed \<square\> \<index\> \<type\>)`` — the Nth enemy
+   building of that type spawned at that square has been destroyed.
+5. ``(enemy_building_destroyed \<index\> \<type\>)`` — the Nth enemy building of
+   that type in the world (counted in iteration order over enemy players) is gone.
+
+``enemy_building_destroyed`` and ``building_lost`` scan disjoint sets, so they do
+not interfere — use both in the same ``(and ...)`` to track "my losses" and
+"enemy losses" independently.
 
 Item quest triggers (since 1.4.3.1)
 .....................................
@@ -605,6 +673,34 @@ Variables are integers (letter/digit/underscore names). Player vars belong to th
 - ``trigger computer1 repeat 30 (true) (add_units a1 3 footman)``: while true, every 30 seconds. Periodic start-of-game waves can still use ``(timer 10 30)``.
 - Live example: The Legend of Raynor chapter 18 (``18.txt``) counts two mana offerings with ``repeat`` + ``add_global`` / ``if (global …)``.
 - In map files, keep each ``trigger`` on **one physical line** (the parser splits by line); indented examples in the docs are for reading only.
+
+Comparison / negation / count operators (since 1.5.1.5)
+""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+6 new trigger operators; the key one is **`count`** which returns the actual integer (not the >=1 boolean of ``has``), so it can be combined with ``lt`` / ``gt`` / ``le`` / ``ge`` for exact-count conditions:
+
+- ``(not <cond>)`` -- negate; supports nested sub-conditions (``has`` / ``find`` / ``count`` / ``var`` / etc.)
+- ``(count <type>)`` -- return the player's **actual count** of that unit type (an integer); can also serve as the left-hand operand in numeric comparisons
+- ``(lt <left> <right>)`` -- left < right
+- ``(gt <left> <right>)`` -- left > right
+- ``(le <left> <right>)`` -- left <= right
+- ``(ge <left> <right>)`` -- left >= right
+
+The left / right operand can be any expression; the engine resolves it recursively before comparing. Examples::
+
+    trigger player1 (lt (count trade_cart) 6) (cut_scene 8850)         ; Joan has fewer than 6 trade carts
+    trigger player1 (not (find b2 gold_coin)) (objective_complete 3)    ; chest opened, gold already picked up
+    trigger player1 (ge (count villager) 20) (add_objective 2 8860)     ; new objective once we have >=20 villagers
+    trigger player1 (gt (var tribute) (var spies)) (cut_scene 7600)     ; two variables compared (note: ``gt`` takes two args, unlike ``var``'s infix)
+
+Notes:
+
+- ``count`` returns an **integer**; it can itself be an operand inside ``lt`` / ``gt`` / ``le`` / ``ge``. ``has`` only returns a boolean.
+- ``(not <cond>)``'s ``<cond>`` can be any sub-condition expression -- including ``and`` / ``or``, ``(count ...)``, ``(var ...)`` and so on.
+- Numbers and variables are mixable in a comparison: ``(lt (count footman) (var enemy_killed))`` means "our footman count is less than the kill count".
+- Unlike ``var``'s infix ``(var a >= b)`` form, the new ``(lt/gt/le/ge)`` operators strictly take two independent operands and do **not** accept nested comparison operators (e.g. ``(lt a >= b)`` is not valid).
+- Bad examples: ``(lt (count footman) 6 3)`` has an extra operand (silently ignored); ``(lt (count footman))`` is missing an operand and always returns false.
+
 
 Rules keywords (death or skills can change vars without a extra trigger line)::
 

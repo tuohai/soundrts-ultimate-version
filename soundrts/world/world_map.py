@@ -400,8 +400,24 @@ class WorldMapMixin:
             z.arrange_resources_symmetrically(xc, yc)
 
     def _create_we_passage(self, i, exit_type):
+        # *** IMPLICIT BEHAVIOUR — READ BEFORE EDITING ANY .txt MAP ***
+        # When a 1-based coordinate on the **right** edge of the map
+        # (i.e. x == nb_columns in 1-based file format, e.g. ``l1`` in a
+        # 12-column map) is passed to west_east_paths, the engine here
+        # silently wraps the passage around to the **left** edge (x=0
+        # in 0-based terms, ``a1`` in 1-based file terms). The same
+        # applies to south_north on the **bottom** edge (y == nb_lines,
+        # e.g. ``h8`` in a 16x16 map).
+        #
+        # This means that putting boundary entries in west_east_paths /
+        # south_north_paths is a *toroidal* wrap, not a wall. Maps that
+        # do not intend to be toroidal MUST avoid boundary entries; the
+        # audit test ``soundrts/tests/test_joan_no_wrap.py`` enforces
+        # this for the Joan campaign, and
+        # ``soundrts/tests/test_map_no_implicit_wrap.py`` enforces it
+        # for every .txt map in the repository.
         is_a_portal = False
-        # i 和 j 都是 "x,y" 字符串
+        # i and j are both "x,y" strings
         cx, cy = [int(x) for x in i.split(',')]
         col = cx + 1
         if col == self.nb_columns:
@@ -418,6 +434,8 @@ class WorldMapMixin:
             )
 
     def _create_sn_passage(self, i, exit_type):
+        # See _create_we_passage above for the same toroidal-wrap warning
+        # applied to the south-north axis.
         is_a_portal = False
         cx, cy = [int(x) for x in i.split(',')]
         line = cy + 1

@@ -116,6 +116,39 @@ Você só precisa informar o quadrado mais a oeste do caminho.
 "south_north_paths a1 a3 a4 a6" significa: "adiciona um caminho de a1 a a2, de a3 a a4, de a4 a a5 e de a6 a a7".
 Você só precisa informar o quadrado mais ao sul do caminho.
 
+.. warning:: **Comportamento toroidal (wrap) implícito** *(tradução automática — pendente de revisão por falante nativo)*
+
+   Quando a origem de um caminho está na **borda direita** (``x == nb_columns`` em 1-base,
+   p. ex. ``l1`` num mapa de 12 colunas) ou na **borda inferior** (``y == nb_lines`` em
+   1-base, p. ex. ``a8`` num mapa de 8 linhas), o motor **não** recusa a entrada. Em
+   vez disso, **envolve** silenciosamente o caminho para a **borda oposta** (esquerda
+   ou superior), transformando o mapa num **toróide**. Concretamente, ``west_east_paths l1``
+   conectará ``l1`` a ``a1`` em vez de isolar ``l1`` contra uma parede.
+
+   Este é um comportamento do motor **intencional**, mas **fácil de passar despercebido**:
+
+   - Autores que querem um mapa fechado (não toroidal) frequentemente adicionam, sem
+   querer, entradas na borda direita / inferior.
+   - Autores que **de fato** querem um mapa toroidal (p. ex. ``res/multi/pra6.txt``,
+   ``pra8.txt``) devem posicionar as entradas na borda de propósito.
+
+   **Auditoria / detecção**: o repositório inclui
+   ``soundrts/tests/test_no_implicit_wrap_audit.py``, que examina cada ``.txt`` de mapa
+   em ``mods/`` e ``res/`` e falha em entradas na borda que **não** estejam na lista
+   de permitidos (``_WRAP_ALLOWLIST``, atualmente inclui ``pra6.txt`` e ``pra8.txt``).
+   Execute este teste após editar um mapa; novas entradas na borda aparecerão
+   imediatamente.
+
+   Definição completa da condição de wrap (0-base vs 1-base):
+
+   - Grelha 0-base: ``cx + 1 == nb_columns`` (oeste-leste) ou ``cy + 1 == nb_lines``
+   (sul-norte) aciona o wrap.
+   - Formato de ficheiro 1-base: ``x == nb_columns`` (coluna mais à direita) ou
+   ``y == nb_lines`` (linha mais abaixo) aciona o wrap.
+   - 1-base ``x == 0`` (coluna ``a``) e ``y == 0`` (linha 1) **não** acionam um wrap —
+   o motor resolve-os como vizinho inexistente e emite uma ``map_warning`` em tempo
+   de execução, não um toróide.
+
 West_east_bridges e south_north_bridges
 '''''''''''''''''''''''''''''''''''''''
 
@@ -480,6 +513,8 @@ Condições adicionais de gatilho::
     trigger all (units_lost 3 knight) (defeat)
     trigger all (building_lost townhall) (defeat)
     trigger all (buildings_lost 1 townhall 2 barracks) (defeat)
+    trigger player1 (enemy_building_destroyed townhall) (objective_complete 1)
+    trigger player1 (enemy_building_destroyed c3 enemy_castle) (objective_complete 2)
     trigger players (killed_target dragon) (victory)
     trigger players (killed_target dragon enemy) (victory)
     trigger player1 (has_killed 5 footman enemy) (objective_complete 1)
@@ -502,6 +537,41 @@ tipo gerada no quadrado (estável após movimento)::
 Não é o mesmo que ``has_killed 3 footman`` (contagem total). O ``cut_scene`` de cada objetivo deve
 descrever apenas aquele objetivo. Veja ``campaign/unit-index.htm``; exemplos
 ``res/single/The Legend of Raynor/28.txt``, ``1.txt``.
+
+Gatilhos de edifícios do lado inimigo (a partir de 1.5.1.5)
+..........................................................
+
+``enemy_building_destroyed`` — um edifício pertencente a um inimigo do jogador atual foi
+destruído. Examina os edifícios de todos os jogadores não aliados e não neutros (jogadores
+neutros / fauna **não** contam como "inimigos" — não são aliados nem inimigos). Combina
+naturalmente com ``building_lost`` para verificações simétricas "eu vs inimigo" dentro
+de um ``(and ...)``::
+
+    trigger player1 (enemy_building_destroyed enemy_castle) (objective_complete 1)
+    trigger player1 (enemy_building_destroyed c3 enemy_castle) (objective_complete 2)
+    trigger player1 (and (building_lost townhall) (enemy_building_destroyed enemy_castle))
+        (objective_complete 3)
+
+Cinco formas sintáticas (mesmo estilo de seletor que ``building_lost``):
+
+1. ``(enemy_building_destroyed \<type\>)`` — todos os edifícios daquele tipo pertencentes
+   a qualquer jogador inimigo foram destruídos.
+2. ``(enemy_building_destroyed \<building_id\>)`` — o edifício com aquele ID numérico
+   (ex. ``(enemy_building_destroyed 12)``) não existe mais. A desambiguação ID vs nome
+   de tipo segue a mesma regra de ``building_lost``: um token puramente numérico, ou
+   cujo primeiro caractere é um dígito, é um ID; todo o resto é um nome de tipo.
+3. ``(enemy_building_destroyed \<square\> \<type\>)`` — não resta nenhum edifício
+   inimigo daquele tipo naquela quadra (semântica de "contagem natural": ao menos
+   um edifício assim morreu, independentemente de quantos houvesse originalmente).
+4. ``(enemy_building_destroyed \<square\> \<index\> \<type\>)`` — o N-ésimo edifício
+   inimigo daquele tipo gerado naquela quadra foi destruído.
+5. ``(enemy_building_destroyed \<index\> \<type\>)`` — o N-ésimo edifício inimigo
+   daquele tipo no mundo (contado na ordem de iteração sobre os jogadores inimigos)
+   desapareceu.
+
+``enemy_building_destroyed`` e ``building_lost`` varrem conjuntos disjuntos, portanto
+não interferem — use ambos no mesmo ``(and ...)`` para rastrear de forma independente
+"minhas perdas" e "perdas inimigas".
 
 Gatilhos de missão de item (a partir de 1.4.3.1)
 ...............................................

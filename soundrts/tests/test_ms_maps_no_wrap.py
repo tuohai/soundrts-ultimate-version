@@ -65,15 +65,15 @@ def test_boundary_entries_dropped_to_prevent_toroidal_wrap(name):
     assert path.exists(), f"{path} must exist"
     n, we, sn = _parse_n_and_paths(path)
     assert n > 0, f"{name} did not declare nb_columns"
-    bad_we = [(x, y) for x, y in we if x == n or x == 0]
-    bad_sn = [(x, y) for x, y in sn if y == n or y == 0]
+    bad_we = [(x, y) for x, y in we if x == n]
+    bad_sn = [(x, y) for x, y in sn if y == n]
     assert not bad_we, (
-        f"{name}: west_east entries on boundary would wrap "
-        f"(1-based x == n or x == 0): {bad_we[:10]}"
+        f"{name}: west_east entries on right boundary would wrap "
+        f"(1-based x == n): {bad_we[:10]}"
     )
     assert not bad_sn, (
-        f"{name}: south_north entries on boundary would wrap "
-        f"(1-based y == n or y == 0): {bad_sn[:10]}"
+        f"{name}: south_north entries on bottom boundary would wrap "
+        f"(1-based y == n): {bad_sn[:10]}"
     )
 
 

@@ -114,6 +114,30 @@ West_east_paths 和 south_north_paths
 "south_north_paths a1 a3 a4 a6" 表示："添加从 a1 到 a2、从 a3 到 a4、从 a4 到 a5、从 a6 到 a7 的通路"。
 你只需给出通路最南端的格子。
 
+.. warning:: **隐式环形（toroidal）行为**
+
+   当一个通路起点位于地图**右边缘**（1 基坐标 ``x == nb_columns``，例如 12 列图里的 ``l1``）
+   或**下边缘**（1 基坐标 ``y == nb_lines``，例如 8 行图里的 ``a8``）时，引擎**不会**报错，
+   而是把通路**绕回**地图**左/上**边缘——把地图变成一个**环面（torus）**。
+   换句话说，``west_east_paths l1`` 会让 ``l1`` 和 ``a1`` 互相连通，而不是把 ``l1`` 孤立到墙外。
+
+   这是一个**有意的**引擎行为，但**容易被忽略**：
+
+   - 想要封闭地图（非环形）的人，常常在右/下边缘误填边界项；
+   - 想要**真的**做环形地图（如 ``res/multi/pra6.txt``、``pra8.txt``）的人，需要故意在边界处填。
+
+   **审计与检测**：仓库里有 ``soundrts/tests/test_no_implicit_wrap_audit.py``，
+   会扫描所有 ``mods/`` 和 ``res/`` 下的 ``.txt`` 地图，对**没有**显式列入允许列表
+   （``_WRAP_ALLOWLIST``，含 ``pra6.txt`` / ``pra8.txt``）的边界项**报错**。
+   改地图时跑一下这个测试，新写的边界项会被立刻发现。
+
+   边界项的**完整定义**（0 基与 1 基对照）：
+
+   - 0 基网格：``cx + 1 == nb_columns``（东西向）或 ``cy + 1 == nb_lines``（南北向）触发 wrap。
+   - 1 基文件格式：``x == nb_columns``（最右列）或 ``y == nb_lines``（最下行）触发 wrap。
+   - 1 基的 ``x == 0``（即 ``a`` 列）和 ``y == 0``（即第 1 行）**不会**触发 wrap——引擎
+     会把它解析为不存在的邻居并发出 ``map_warning``（运行时警告），不是环形。
+
 West_east_bridges 和 south_north_bridges
 '''''''''''''''''''''''''''''''''''''''''
 
@@ -488,6 +512,8 @@ computer_only 0 0 a3 dragon b1 dragon
     trigger all (units_lost 3 knight) (defeat)
     trigger all (building_lost townhall) (defeat)
     trigger all (buildings_lost 1 townhall 2 barracks) (defeat)
+    trigger player1 (enemy_building_destroyed townhall) (objective_complete 1)
+    trigger player1 (enemy_building_destroyed c3 enemy_castle) (objective_complete 2)
     trigger players (killed_target dragon) (victory)
     trigger players (killed_target dragon enemy) (victory)
     trigger player1 (has_killed 5 footman enemy) (objective_complete 1)
@@ -508,6 +534,26 @@ computer_only 0 0 a3 dragon b1 dragon
 ``unit_lost`` / ``building_lost`` / ``key_unit_killed`` 序号：`` (\<方格\> \<序号\> \<类型\>)`` — 仅当该刷出序号单位/建筑丢失时成立（如保护初始 townhall、指定步兵）。
 与 ``has_killed 3 footman`` （合计数量）不同。多目标可任意顺序完成；各 ``cut_scene`` 只描述该目标。
 详见 ``campaign/unit-index.htm``；示例 ``res/single/The Legend of Raynor/28.txt``、``1.txt`` （初始基地）。
+
+敌方一侧的建筑触发器（自 1.5.1.5 起）
+......................................
+
+``enemy_building_destroyed`` —— 当前玩家视角下**敌方**建筑被摧毁。扫描所有非盟友、且非中立玩家的建筑（中立 creep / 野生动物玩家不算"敌方"——他们既非盟友也非敌对）。与 ``building_lost`` 天然配对，可在同一 ``(and ...)`` 复合条件中分别追踪"我方 vs 敌方"两侧的战况::
+
+    trigger player1 (enemy_building_destroyed enemy_castle) (objective_complete 1)
+    trigger player1 (enemy_building_destroyed c3 enemy_castle) (objective_complete 2)
+    trigger player1 (and (building_lost townhall) (enemy_building_destroyed enemy_castle))
+        (objective_complete 3)
+
+支持 5 种语法（与 ``building_lost`` 的 selector 风格一致）：
+
+1. ``(enemy_building_destroyed \<类型\>)`` —— 任意敌方玩家名下的该类型建筑**全部**被摧毁。
+2. ``(enemy_building_destroyed \<建筑ID\>)`` —— 该 ID 的建筑已不存在。ID 与类型名判定规则与 ``building_lost`` 一致：纯数字、或首字符为数字的 token 走 ID 路径；其他走类型名路径。
+3. ``(enemy_building_destroyed \<方格\> \<类型\>)`` —— 该方格上不再有同类型敌方建筑（"自然计数"语义：只要同类敌方建筑死过一座即成立，不论原总数）。
+4. ``(enemy_building_destroyed \<方格\> \<序号\> \<类型\>)`` —— 该方格上刷出的第 N 座同类型敌方建筑已被摧毁。
+5. ``(enemy_building_destroyed \<序号\> \<类型\>)`` —— 全局第 N 座同类型敌方建筑（按敌方玩家遍历顺序计数）已被摧毁。
+
+``enemy_building_destroyed`` 与 ``building_lost`` 扫描范围互不干扰——一个看 self 的建筑，另一个看 self 视角下所有敌对玩家的建筑。同一 ``(and ...)`` 中组合使用即可同时跟踪"我的损失"和"敌方的损失"。
 
 物品任务触发器（自 1.4.3.1 起）
 ................................
@@ -630,6 +676,36 @@ and — 触发器条件：所有子条件均成立时返回真::
 - ``trigger computer1 repeat 30 (true) (add_units a1 3 footman)``：条件为真时每隔 30 秒触发（秒）。周期性开局仍可用 ``(timer 10 30)``。
 - 实战示例：The Legend of Raynor 第 18 章（``18.txt``）用 ``repeat`` + ``add_global`` / ``if (global …)`` 统计两次献祭魔法药剂。
 - 地图文件里整条 ``trigger`` 必须写在**同一物理行**（解析器按行切分）；文档里的缩进只是阅读用。
+
+比较 / 取反 / 数量操作符（自 1.5.1.5）
+""""""""""""""""""""""""""""""""""""""
+
+6 个新增的触发器操作符，重点是 **`count`** 返回实际整数（不是 ``has`` 的 ≥1 布尔判断），可与 ``lt`` / ``gt`` / ``le`` / ``ge`` 组合写出精确数量判断：
+
+- ``(not <条件>)`` —— 取反；支持嵌套子条件（含 ``has`` / ``find`` / ``count`` / ``var`` 等）
+- ``(count <type>)`` —— 返回玩家拥有该类型单位的**实际数量**（整数）；也可作为左操作数参与比较
+- ``(lt <左> <右>)`` —— 左 < 右
+- ``(gt <左> <右>)`` —— 左 > 右
+- ``(le <左> <右>)`` —— 左 ≤ 右
+- ``(ge <左> <右>)`` —— 左 ≥ 右
+
+左 / 右操作数可以是任意表达式，引擎递归求值后再比较。下面是几个实例：
+
+::
+
+    trigger player1 (lt (count trade_cart) 6) (cut_scene 8850)         ; 贞德不够 6 辆马车
+    trigger player1 (not (find b2 gold_coin)) (objective_complete 3)    ; 开箱后金币已被拾走
+    trigger player1 (ge (count villager) 20) (add_objective 2 8860)     ; 达到20 个农民后加新目标
+    trigger player1 (gt (var tribute) (var spies)) (cut_scene 7600)     ; 两个变量比较（与 ``var`` 不同，``gt`` 要写两个参数）
+
+要点：
+
+- ``count`` 返回的是**整数**，可以作为参数再参与 ``lt`` / ``gt`` / ``le`` / ``ge``；``has`` 只返回布尔。
+- ``(not <cond>)`` 里的 ``<cond>`` 可以是任何子条件表达式——包括 ``and`` / ``or`` 、 ``(count ...)`` 、``(var ...)`` 等。
+- 数字与变量在比较中可混用：``(lt (count footman) (var enemy_killed))`` 表示 “我方步兵数 < 杀敌总数”。
+- 与 ``var`` 的 ``(var a >= b)`` 语法不同，新增的 ``(lt/gt/le/ge)`` 严格接两个独立参数，不支持嵌套比较符（如 ``(lt a >= b)``）。
+- 错误示例：``(lt (count footman) 6 3)`` 多了一个参数会被引擎忽略；``(lt (count footman))`` 少了一个参数总是假。
+
 
 规则关键字（单位死亡或技能改变量，不必再写一条触发器）::
 
