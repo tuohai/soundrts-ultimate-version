@@ -2714,7 +2714,7 @@ class TriggersMixin:
         self.has_victory = True
         if hasattr(self, "stats"):
             self.stats.freeze()
-        # 押入 pending 标记：贞德被俘黑屏后，战役菜单读到该标记即解锁 4.5 cutscene
+        # 押入 pending 标记：贞德被俘黑屏结束后，战役菜单可据此解锁贞德被俘专属的失败提示
         self.world.campaign_defeat_pending = True
         # 结束对局
         self.push("quit")

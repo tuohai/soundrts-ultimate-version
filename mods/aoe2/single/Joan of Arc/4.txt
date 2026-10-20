@@ -141,7 +141,7 @@ trigger player1 (npc_has_item npc_reims_cathedral joan_relic c5) (do (objective_
 trigger player1 (has_entered c5 npc_dauphin) (objective_complete 2)
 
 trigger player1 (no_unit_left) (defeat)
-trigger player1 (key_unit_killed npc_joan) (campaign_defeat 8845)
-trigger player1 (key_unit_killed npc_dauphin) (campaign_defeat 8845)
+trigger player1 (key_unit_killed npc_joan) (campaign_defeat)
+trigger player1 (key_unit_killed npc_dauphin) (campaign_defeat)
 trigger player1 (key_unit_killed npc_reims_cathedral) (defeat)
 trigger player1 (building_lost town_center) (defeat)

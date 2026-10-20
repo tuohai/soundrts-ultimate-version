@@ -1,3 +1,0 @@
-cut_scene_chapter
-title 8845
-sequence 8846

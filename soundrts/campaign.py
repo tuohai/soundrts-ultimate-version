@@ -304,19 +304,7 @@ class Campaign:
     def _set_chapters(self):
         self.chapters = []
 
-        # Two-phase scan:
-        # Phase 1: integer chapters 0, 1, 2 … until neither .txt nor .zip exists.
-        # Phase 2: decimal chapters 0.5, 1.5, 2.5 … (cutscenes inserted between
-        #   adjacent integer chapters so chapter N.5 sits between N and N+1).
-        #   4.5 = JoA "The Rising" (ch4) → "A Perfect Martyr" (ch5) cutscene.
-        #   Each decimal file is named "<int>.<digit>.txt", e.g. "4.5.txt".
-        #
-        # Ordering invariant: every cutscene must appear after its preceding
-        # mission chapter and before the next.  Decimal scan iterates ints
-        # in order so cutscenes land in the right slot naturally.
-        #
-        # Both phases stop at the first gap so a campaign without chapter 3
-        # does not try to read "3.txt" or "2.5.txt" for any later decimal.
+        # Scan integer chapters 0, 1, 2 … until neither .txt nor .zip exists.
         number = 0
         while True:
             filename = f"{number}.txt"
@@ -339,19 +327,6 @@ class Campaign:
                 map_.name = self.name + "/" + str(number)
                 c = MissionChapter(self, number, map_)
             self.chapters.append(c)
-
-            # Phase 2: decimal cutscene between this chapter and the next integer
-            for digit in range(5, 10):  # 0.5 … 0.9
-                dec_filename = f"{number}.{digit}.txt"
-                if self.resources.isfile(dec_filename):
-                    if self._is_a_cutscene(dec_filename):
-                        d = float(f"{number}.{digit}")
-                        c2 = CutSceneChapter(self, d, dec_filename)
-                        self.chapters.append(c2)
-                    # stop at first gap (e.g. campaign has no 3.5 → stop at digit 5)
-                    # Note: a campaign can use only 0.5, 4.5 etc. selectively;
-                    # we still scan 0.5…0.9 per integer to find any that exist.
-                # else: file doesn't exist → try next digit
             number += 1
 
     def _is_a_cutscene(self, path):
@@ -373,11 +348,6 @@ class Campaign:
             return None
 
     def next(self, chapter):
-        # Look up by array index (not chapter.number + 1) so decimal
-        # cutscene chapters inserted between integer chapters work correctly:
-        #   chapters = [ch0, ch1, ch2, ch3, ch4, ch4.5, ch5, ch6]
-        #   next(ch4)   -> chapters[5] = ch4.5 ✓
-        #   next(ch4.5) -> chapters[6] = ch5    ✓
         try:
             idx = self.chapters.index(chapter)
             return self.chapters[idx + 1] if idx + 1 < len(self.chapters) else None
@@ -391,10 +361,6 @@ class Campaign:
         return c.getint(self._id(), "chapter", fallback=0)
 
     def _available_chapters(self):
-        # bookmark is an integer array index (not a chapter number), so
-        # `chapters[: bookmark + 1]` correctly includes every chapter up to
-        # and including the bookmarked index -- including decimal cutscene
-        # chapters (e.g. ch4.5 at index 5 is included when bookmark = 5).
         return self.chapters[: self._get_bookmark() + 1]
 
     def _get_coop_bookmark(self):
@@ -573,13 +539,11 @@ class Campaign:
             mp.DIFFICULTY + _difficulty_label(self.get_difficulty()),
             (self._difficulty_menu, None),
         )
+        bookmark = self._get_bookmark()
         available = self._available_chapters()
         if len(available) > 1:
             # "Continue" shows the first non-CutSceneChapter at or after the
-            # bookmark.  When the bookmark lands on a completed mission chapter
-            # (e.g. ch5 at index 6), that chapter is already done so we still
-            # offer to Continue it (for replay).  range(bookmark, ...) is correct.
-            bookmark = self._get_bookmark()
+            # bookmark.  Intro cutscene (0.txt) is at index 0 so we skip it.
             continue_target = None
             for i in range(bookmark, len(self.chapters)):
                 if not isinstance(self.chapters[i], CutSceneChapter):
@@ -587,12 +551,10 @@ class Campaign:
                     break
             if continue_target is not None:
                 menu.append(mp.CONTINUE + continue_target.title, continue_target)
-        bookmark = self._get_bookmark()
         for chapter in self.chapters:
-            # Cutscene chapters (intro cutscenes and transition cutscenes like
-            # the JoA ch4 -> ch4.5 capture cutscene) are NOT shown in the
-            # chapter list.  They play automatically when their predecessor
-            # chapter ends (CutSceneChapter.run() chains to self._next().run()).
+            # CutSceneChapter entries (e.g. the intro cutscene 0.txt) are NOT
+            # shown in the chapter list.  They play before the first mission or
+            # chain automatically after the previous chapter ends.
             if isinstance(chapter, CutSceneChapter):
                 continue
             ch_idx = self.chapters.index(chapter)
