@@ -673,6 +673,62 @@ Le variabili sono interi (lettere/cifre/underscore). Quelle del giocatore appart
 - Esempio in campagna: The Legend of Raynor capitolo 18 (``18.txt``) conta due offerte di mana con ``repeat`` + ``add_global`` / ``if (global …)``.
 - Nel file mappa ogni ``trigger`` deve stare su **una sola riga fisica** (il parser spezza per riga); l'indentazione nei docs è solo per la lettura.
 
+Sconfitta narrativa e capitoli cutscene decimali (dal 1.5.1.5)
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Queste due funzionalità si combinano per esprimere il flusso standard di una
+campagna DE: "l'eroe viene catturato -> cutscene a schermo nero -> capitolo successivo".
+
+``campaign_defeat`` — azione di trigger: sconfitta scripted (non una sconfitta reale)::
+
+    trigger player1 (key_unit_killed npc_joan) (campaign_defeat 8846)
+
+Sintassi: ``(campaign_defeat [id_tts_del_cutscene])``
+
+- Senza argomento: termina immediatamente il capitolo, senza cutscene.
+- Con argomento (es. ``8846``): invia prima quella sequenza tts, riproducendo la
+  cutscene a schermo nero della cattura di Giovanna prima di terminare.
+
+Differenza da ``(defeat)``: ``(defeat)`` significa "il giocatore ha perso, riprova",
+il che cancella i progressi salvati e torna al menu principale. ``(campaign_defeat)``
+significa "questa è una fine di capitolo scripted": imposta ``has_victory = True``
+sul giocatore (mostrando quindi il menu di **sconfitta** invece di quello di vittoria),
+imposta ``campaign_defeat_pending`` sul mondo così che il menu della campagna
+possa sbloccare la cutscene del capitolo successivo, segna i nemici come sconfitti
+come di consueto, e termina la partita normalmente.
+
+Uso tipico (Joan of Arc, capitolo 4)::
+
+    trigger player1 (key_unit_killed npc_joan)       (campaign_defeat 8846)
+    trigger player1 (key_unit_killed npc_dauphin)    (campaign_defeat 8846)
+
+Capitoli cutscene decimali — un ``4.5.txt`` nella cartella della campagna viene
+rilevato automaticamente come cutscene tra il capitolo 4 e il capitolo 5::
+
+    cut_scene_chapter
+    title 8845
+    sequence 8846
+
+Oltre ai capitoli interi ``0.txt`` / ``1.txt`` / ``2.txt`` ... , il caricatore dei
+capitoli scansiona ora ``<N>.5.txt`` fino a ``<N>.9.txt`` dopo ogni capitolo intero.
+I file trovati (prima riga ``cut_scene_chapter``) vengono caricati come
+``CutSceneChapter`` con ``number = N.5`` e inseriti tra il capitolo N e il N+1.
+
+L'ordine dei capitoli di Joan of Arc risultante è::
+
+    [0, 1, 2, 3, 4, 4.5, 5, 6]
+                ^    ^
+               ch4  cutscene cattura ch4 -> ch5
+
+L'avanzamento al "capitolo successivo" (``Campaign.next``) usa l'indice dell'array
+invece di ``chapter.number + 1``, così ``next(ch4)`` restituisce correttamente ``4.5``
+e ``next(ch4.5)`` restituisce correttamente ``5``. I decimali mancanti non sono
+un errore: senza ``3.5.txt`` la scansione 3.5 viene saltata e il caricamento di
+``4.5`` non ne risente.
+
+Convenzione di denominazione: ``<intero>.<1-9>.txt``; ``.0`` non è ammesso
+(colliderebbe con il capitolo intero).
+
 Parole chiave in rules (morte o abilità possono cambiare le variabili)::
 
     def wolf

@@ -707,6 +707,54 @@ and — 触发器条件：所有子条件均成立时返回真::
 - 错误示例：``(lt (count footman) 6 3)`` 多了一个参数会被引擎忽略；``(lt (count footman))`` 少了一个参数总是假。
 
 
+战役剧情失败与小数过场章节（自 1.5.1.5）
+""""""""""""""""""""""""""""""""""""""""
+
+这两项配合使用，可以表达“英雄被俘 → 黑屏过场 → 下一章”这类 DE 战役标准流程。
+
+``campaign_defeat`` — 触发器动作：剧情失败（不是真的战败）::
+
+    trigger player1 (key_unit_killed npc_joan) (campaign_defeat 8846)
+
+用法：``(campaign_defeat [过场tts_id])``
+
+- 不带参数：直接结束本关，不播过场。
+- 带参数（如 ``8846``）：结束前先推送该 tts 序列，播放贞德被俘的黑屏过场。
+
+与 ``(defeat)`` 的区别：``(defeat)`` 是“玩家输了，去重来”，会清空存档进度并退回主菜单；
+``(campaign_defeat)`` 是“这是剧本安排的一章结局”，对玩家设 ``has_victory = True``
+（走**失败**菜单而非胜利菜单），同时在世界上打 ``campaign_defeat_pending`` 标记，
+让战役菜单据此解锁下一章的过场章节。敌人也照样标记为已击败，对局正常结束。
+
+典型用法（Joan of Arc 第 4 章）::
+
+    trigger player1 (key_unit_killed npc_joan)       (campaign_defeat 8846)
+    trigger player1 (key_unit_killed npc_dauphin)    (campaign_defeat 8846)
+
+小数过场章节 — 战役目录里的 ``4.5.txt`` 会被自动识别为第 4 章与第 5 章之间的过场章::
+
+    cut_scene_chapter
+    title 8845
+    sequence 8846
+
+战役章节加载器现在除了扫描 ``0.txt`` / ``1.txt`` / ``2.txt`` … 这类整数章节外，
+还会在每个整数章节之后扫描 ``<N>.5.txt`` 到 ``<N>.9.txt``。命中的过场文件
+（首行为 ``cut_scene_chapter``）被载入为 ``number = N.5`` 的 ``CutSceneChapter``，
+并插入到第 N 章和第 N+1 章之间。
+
+因此 Joan of Arc 的章节顺序是::
+
+    [0, 1, 2, 3, 4, 4.5, 5, 6]
+                ↑    ↑
+               ch4  ch4 被俘黑屏过场 → ch5
+
+章节“下一章”的推进（``Campaign.next``）按数组下标走而不是 ``章节号 + 1``，
+所以 ``next(ch4)`` 正确返回 ``4.5``、``next(ch4.5)`` 正确返回 ``5``。
+小数缺位不会报错：没有 ``3.5.txt`` 就跳过 3 的小数扫描，不影响 4.5 的载入。
+
+命名约定：``<整数>.<1-9>.txt``，``.0`` 不允许（会与整数章节冲突）。
+
+
 规则关键字（单位死亡或技能改变量，不必再写一条触发器）::
 
     def wolf

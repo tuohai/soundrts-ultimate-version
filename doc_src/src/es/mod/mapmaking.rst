@@ -668,6 +668,64 @@ Las variables son enteros (nombres con letra/dígito/_). Las de jugador son del 
 - Ejemplo en campaña: The Legend of Raynor capítulo 18 (``18.txt``) cuenta dos ofrendas de maná con ``repeat`` + ``add_global`` / ``if (global …)``.
 - En el archivo de mapa, cada ``trigger`` debe ir en **una sola línea física** (el parser corta por líneas); la indentación de la documentación es solo lectura.
 
+Derrota de historia y capítulos de cinemateca decimales (desde 1.5.1.5)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Estas dos características se combinan para expresar el flujo estándar de
+una campaña DE: "el héroe es capturado -> cinemateca a pantalla negra ->
+capítulo siguiente".
+
+``campaign_defeat`` — acción de trigger: derrota guionizada (no una derrota real)::
+
+    trigger player1 (key_unit_killed npc_joan) (campaign_defeat 8846)
+
+Sintaxis: ``(campaign_defeat [id_tts_de_la_cinemateca])``
+
+- Sin argumento: termina el capítulo de inmediato, sin cinemateca.
+- Con argumento (p. ej. ``8846``): envía esa secuencia tts primero, reproducciendo
+  la cinemateca a pantalla negra de la captura de Juana antes de terminar.
+
+Diferencia con ``(defeat)``: ``(defeat)`` significa "el jugador perdió, reintenta",
+lo que borra el progreso guardado y vuelve al menú principal. ``(campaign_defeat)``
+significa "este es un final de capítulo guionizado": establece ``has_victory = True``
+en el jugador (por lo que se muestra el menú de **derrota** en lugar del de victoria),
+marca ``campaign_defeat_pending`` en el mundo para que el menú de campaña pueda
+desbloquear la cinemateca del capítulo siguiente, marca a los enemigos como
+derrotados como de costumbre, y termina la partida normalmente.
+
+Uso típico (Joan of Arc, capítulo 4)::
+
+    trigger player1 (key_unit_killed npc_joan)       (campaign_defeat 8846)
+    trigger player1 (key_unit_killed npc_dauphin)    (campaign_defeat 8846)
+
+Capítulos de cinemateca decimales — un ``4.5.txt`` en la carpeta de la campaña
+se detecta automáticamente como la cinemateca entre el capítulo 4 y el capítulo 5::
+
+    cut_scene_chapter
+    title 8845
+    sequence 8846
+
+Además de los capítulos enteros ``0.txt`` / ``1.txt`` / ``2.txt`` ... , el cargador
+de capítulos ahora busca ``<N>.5.txt`` hasta ``<N>.9.txt`` después de cada
+capítulo entero. Los archivos encontrados (primera línea ``cut_scene_chapter``)
+se cargan como un ``CutSceneChapter`` con ``number = N.5`` y se insertan entre
+el capítulo N y el capítulo N+1.
+
+El orden de capítulos resultante de Joan of Arc es::
+
+    [0, 1, 2, 3, 4, 4.5, 5, 6]
+                ^    ^
+               ch4  cinemateca de captura de ch4 -> ch5
+
+Avanzar al "capítulo siguiente" (``Campaign.next``) usa el índice del array en
+lugar de ``chapter.number + 1``, así que ``next(ch4)`` devuelve correctamente
+``4.5`` y ``next(ch4.5)`` devuelve correctamente ``5``. Los decimales ausentes
+no son un error: sin ``3.5.txt`` se omite el escaneo 3.5 y la carga de ``4.5``
+no se ve afectada.
+
+Convención de nombres: ``<entero>.<1-9>.txt``; ``.0`` no se permite (colisionaría
+con el capítulo entero).
+
 Palabras clave en rules (muerte o habilidades cambian vars)::
 
     def wolf

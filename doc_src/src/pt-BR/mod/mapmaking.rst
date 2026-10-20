@@ -671,6 +671,61 @@ Variáveis são inteiros (letras/dígitos/sublinhado). As do jogador pertencem a
 - Exemplo na campanha: The Legend of Raynor capítulo 18 (``18.txt``) conta duas oferendas de mana com ``repeat`` + ``add_global`` / ``if (global …)``.
 - No arquivo do mapa, cada ``trigger`` deve ficar em **uma linha física** (o parser corta por linha); a indentação na documentação é só para leitura.
 
+Derrota de história e capítulos de cutscene decimais (desde 1.5.1.5)
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Estas duas características se combinam para expressar o fluxo padrão de uma
+campanha DE: "a heroína é capturada -> cutscene de tela preta -> próximo capítulo".
+
+``campaign_defeat`` — ação de trigger: derrota roteirizada (não uma derrota real)::
+
+    trigger player1 (key_unit_killed npc_joan) (campaign_defeat 8846)
+
+Sintaxe: ``(campaign_defeat [id_tts_do_cutscene])``
+
+- Sem argumento: encerra o capítulo imediatamente, sem cutscene.
+- Com argumento (ex. ``8846``): envia aquela sequência tts primeiro, reproduzindo
+  o cutscene de tela preta da captura de Joana antes de encerrar.
+
+Diferença de ``(defeat)``: ``(defeat)`` significa "o jogador perdeu, tente de novo",
+o que apaga o progresso salvo e volta ao menu principal. ``(campaign_defeat)``
+significa "este é um final de capítulo roteirizado": define ``has_victory = True``
+no jogador (mostrando o menu de **derrota** em vez do de vitória), marca
+``campaign_defeat_pending`` no mundo para que o menu de campanha possa desbloquear
+o cutscene do próximo capítulo, marca os inimigos como derrotados como de costume,
+e encerra a partida normalmente.
+
+Uso típico (Joan of Arc, capítulo 4)::
+
+    trigger player1 (key_unit_killed npc_joan)       (campaign_defeat 8846)
+    trigger player1 (key_unit_killed npc_dauphin)    (campaign_defeat 8846)
+
+Capítulos de cutscene decimais — um ``4.5.txt`` na pasta da campanha é detectado
+automaticamente como o cutscene entre o capítulo 4 e o capítulo 5::
+
+    cut_scene_chapter
+    title 8845
+    sequence 8846
+
+Além dos capítulos inteiros ``0.txt`` / ``1.txt`` / ``2.txt`` ... , o carregador de
+capítulos agora varre ``<N>.5.txt`` até ``<N>.9.txt`` após cada capítulo inteiro.
+Os arquivos encontrados (primeira linha ``cut_scene_chapter``) são carregados como
+um ``CutSceneChapter`` com ``number = N.5`` e inseridos entre o capítulo N e o N+1.
+
+A ordem de capítulos resultante de Joan of Arc é::
+
+    [0, 1, 2, 3, 4, 4.5, 5, 6]
+                ^    ^
+               ch4  cutscene de captura ch4 -> ch5
+
+Avançar para o "próximo capítulo" (``Campaign.next``) usa o índice do array em vez
+de ``chapter.number + 1``, então ``next(ch4)`` retorna corretamente ``4.5`` e
+``next(ch4.5)`` retorna corretamente ``5``. Decimais ausentes não são erro: sem
+``3.5.txt`` a varredura 3.5 é pulada e o carregamento de ``4.5`` não é afetado.
+
+Convenção de nomes: ``<inteiro>.<1-9>.txt``; ``.0`` não é permitido (colidiria com
+o capítulo inteiro).
+
 Palavras-chave em rules (morte ou habilidades podem mudar variáveis)::
 
     def wolf
