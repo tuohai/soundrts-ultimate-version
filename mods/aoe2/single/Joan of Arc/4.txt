@@ -19,6 +19,9 @@
 ;     to construct the rams and trebuchets needed against the
 ;     English burghers at Meaux
 ;
+; Ch. 4 uses DE intro 8813 (The Rising: escort Dauphin + three relics to Reims).
+intro 8813
+
 ; Map grid (7x5):
 ;   [a5] [b5] [c5] [d5] [e5] [f5] [g5]   <- Reims cathedral at c5
 ;   [a4] [b4] [c4] [d4] [e4] [f4] [g4]   <- English burghers at f4
@@ -31,8 +34,12 @@
 ;         -> c5/Reims cathedral (relic 3 is OUTSIDE, picked up at
 ;         b3/Burgundy garrisoned monastery on the way)
 
-title 8805
-intro 8813
+; Ch. 4 has no dedicated mission title in the DE text tables.
+; The chapter is known as "The Rising" in the community; it follows
+; ch. 3 "The Cleansing of the Loire" and precedes ch. 5 "The Maid
+; Falls" (8805) -- both of which already have tts titles (8804/8805).
+; Dropping title so the game falls back to the chapter number display.
+title
 
 square_width 12
 nb_columns 7
@@ -85,25 +92,23 @@ computer_only 0 0 0 0 non_neutral faction burgundians e2 aoe_castle scouttower 6
 ; English burghers at Meaux (f4) -- the last gate before Reims
 computer_only 0 0 0 0 non_neutral faction britons f4 town_center 2 aoe_castle scouttower 6 militia 4 man_at_arms 2 aoe_archer 2 knight
 
-; Burgundian monastery at b3 (holds relic 1)
-; computer_only line lists a "monastery" building on which npc has placed
-; one joan_relic (added at chapter start by the (timer 0) trigger below).
-; Joan's player units can pick up the relic by walking a monk into b3 and
-; using the "give" order on the relic itself (DE: relics are "monk picks
-; up item on ground" + "give to cathedral" -- same receive_items /
-; accepted_items mechanic).
-computer_only 0 0 0 0 faction burgundians b3 monastery 1 joan_relic
+; Burgundian monastery at b3 (one relic inside; a monk can pick it up with "give")
+computer_only 0 0 0 0 faction burgundians b3 monastery
 
-; Burgundian monastery at d3 (holds relic 2)
-computer_only 0 0 0 0 faction burgundians d3 monastery 1 joan_relic
+; Burgundian monastery at d3 (one relic inside)
+computer_only 0 0 0 0 faction burgundians d3 monastery
 
-; Burgundian monastery at e4 (holds relic 3)
-computer_only 0 0 0 0 faction burgundians e4 monastery 1 joan_relic
+; Burgundian monastery at e4 (one relic inside)
+computer_only 0 0 0 0 faction burgundians e4 monastery
 
-; Reims cathedral at c5 -- the receiver NPC.  Lives in npc_reims_cathedral
-; (Joan of Arc/rules.txt), which has receive_items 1 + accepted_items
-; joan_relic + accept_from self/ally/neutral.  Joan hands each relic to
-; the cathedral via the give order and the npc_has_item trigger fires.
+; Joan's monks pick up the relics from the ground using the "give" order.
+; Each relic is placed on the ground in the same square as the
+; corresponding monastery so the player knows where to find it.
+1 joan_relic b3
+1 joan_relic d3
+1 joan_relic e4
+
+; Reims cathedral at c5 -- the receiver NPC.
 computer_only 0 0 0 0 neutral faction franks c5 npc_reims_cathedral
 
 timer_coefficient 40

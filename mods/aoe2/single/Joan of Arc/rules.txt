@@ -93,7 +93,6 @@ transport_volume 1
 ; stronger and explicitly named so the player recognises it as Joan,
 ; not a generic monk. All Joan chapters use npc_joan as the key unit
 ; (the mission-defining unit: if Joan dies, the chapter fails).
-;
 ; Design intent: Joan is a non-combat hero NPC that the player MUST protect,
 ; exactly like npc_dauphin and npc_baudricourt in this same file. She keeps
 ; the monk's ranged conversion/heal (rdg_cd 1.6 / rdg_range 9 inherited from
@@ -123,6 +122,7 @@ speed 1.0
 ; and stops the AI from treating Joan as a ranged unit.
 rdg_cd 0
 rdg_range 0
+
 ; npc_d_alencon -- Duke d'Alen?on, Joan's military escort in ch. 2.
 ; A combat-capable hero unit that fights alongside Joan, mirroring
 ; the DE ch. 2 starting force (Joan + Duke d'Alen?on + escort).
