@@ -303,6 +303,20 @@ class Campaign:
 
     def _set_chapters(self):
         self.chapters = []
+
+        # Two-phase scan:
+        # Phase 1: integer chapters 0, 1, 2 … until neither .txt nor .zip exists.
+        # Phase 2: decimal chapters 0.5, 1.5, 2.5 … (cutscenes inserted between
+        #   adjacent integer chapters so chapter N.5 sits between N and N+1).
+        #   4.5 = JoA "The Rising" (ch4) → "A Perfect Martyr" (ch5) cutscene.
+        #   Each decimal file is named "<int>.<digit>.txt", e.g. "4.5.txt".
+        #
+        # Ordering invariant: every cutscene must appear after its preceding
+        # mission chapter and before the next.  Decimal scan iterates ints
+        # in order so cutscenes land in the right slot naturally.
+        #
+        # Both phases stop at the first gap so a campaign without chapter 3
+        # does not try to read "3.txt" or "2.5.txt" for any later decimal.
         number = 0
         while True:
             filename = f"{number}.txt"
@@ -325,6 +339,19 @@ class Campaign:
                 map_.name = self.name + "/" + str(number)
                 c = MissionChapter(self, number, map_)
             self.chapters.append(c)
+
+            # Phase 2: decimal cutscene between this chapter and the next integer
+            for digit in range(5, 10):  # 0.5 … 0.9
+                dec_filename = f"{number}.{digit}.txt"
+                if self.resources.isfile(dec_filename):
+                    if self._is_a_cutscene(dec_filename):
+                        d = float(f"{number}.{digit}")
+                        c2 = CutSceneChapter(self, d, dec_filename)
+                        self.chapters.append(c2)
+                    # stop at first gap (e.g. campaign has no 3.5 → stop at digit 5)
+                    # Note: a campaign can use only 0.5, 4.5 etc. selectively;
+                    # we still scan 0.5…0.9 per integer to find any that exist.
+                # else: file doesn't exist → try next digit
             number += 1
 
     def _is_a_cutscene(self, path):
@@ -346,7 +373,16 @@ class Campaign:
             return None
 
     def next(self, chapter):
-        return self.chapter(chapter.number + 1)
+        # Look up by array index (not chapter.number + 1) so decimal
+        # cutscene chapters inserted between integer chapters work correctly:
+        #   chapters = [ch0, ch1, ch2, ch3, ch4, ch4.5, ch5, ch6]
+        #   next(ch4)   -> chapters[5] = ch4.5 ✓
+        #   next(ch4.5) -> chapters[6] = ch5    ✓
+        try:
+            idx = self.chapters.index(chapter)
+            return self.chapters[idx + 1] if idx + 1 < len(self.chapters) else None
+        except ValueError:
+            return None
 
     def _get_bookmark(self):
         c = configparser.ConfigParser()
