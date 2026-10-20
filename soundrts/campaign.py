@@ -391,6 +391,10 @@ class Campaign:
         return c.getint(self._id(), "chapter", fallback=0)
 
     def _available_chapters(self):
+        # bookmark is an integer array index (not a chapter number), so
+        # `chapters[: bookmark + 1]` correctly includes every chapter up to
+        # and including the bookmarked index -- including decimal cutscene
+        # chapters (e.g. ch4.5 at index 5 is included when bookmark = 5).
         return self.chapters[: self._get_bookmark() + 1]
 
     def _get_coop_bookmark(self):
@@ -506,10 +510,14 @@ class Campaign:
         return factors(self.get_difficulty(), 1)
 
     def unlock_next(self, chapter):
-        if self._get_bookmark() == chapter.number:
-            next_chapter = self.next(chapter)
-            if next_chapter:
-                self._set_bookmark(next_chapter.number)
+        # Store the array INDEX of the CURRENT (just-completed) chapter, so
+        # that ch_idx < bookmark correctly marks completed chapters.
+        # (Storing the NEXT chapter's index would make the just-finished
+        # chapter show as "当前" instead of "已完成".)
+        try:
+            self._set_bookmark(self.chapters.index(chapter))
+        except ValueError:
+            pass
 
     def get_coop_difficulty(self):
         """返回合作战役当前难度（与单人 ``difficulty`` 独立；缺省为中等）。"""
@@ -528,10 +536,11 @@ class Campaign:
         self._write_config(c)
 
     def unlock_next_coop(self, chapter):
-        if self._get_coop_bookmark() == chapter.number:
-            next_chapter = self.next(chapter)
-            if next_chapter:
-                self._set_coop_bookmark(next_chapter.number)
+        # Mirror unlock_next: store the index of the completed chapter.
+        try:
+            self._set_coop_bookmark(self.chapters.index(chapter))
+        except ValueError:
+            pass
 
     def run(self):
         if self.mods is not None:
@@ -566,15 +575,32 @@ class Campaign:
         )
         available = self._available_chapters()
         if len(available) > 1:
-            chapter = available[-1]
-            menu.append(mp.CONTINUE + chapter.title, chapter)
+            # "Continue" shows the first non-CutSceneChapter at or after the
+            # bookmark.  When the bookmark lands on a completed mission chapter
+            # (e.g. ch5 at index 6), that chapter is already done so we still
+            # offer to Continue it (for replay).  range(bookmark, ...) is correct.
+            bookmark = self._get_bookmark()
+            continue_target = None
+            for i in range(bookmark, len(self.chapters)):
+                if not isinstance(self.chapters[i], CutSceneChapter):
+                    continue_target = self.chapters[i]
+                    break
+            if continue_target is not None:
+                menu.append(mp.CONTINUE + continue_target.title, continue_target)
         bookmark = self._get_bookmark()
         for chapter in self.chapters:
+            # Cutscene chapters (intro cutscenes and transition cutscenes like
+            # the JoA ch4 -> ch4.5 capture cutscene) are NOT shown in the
+            # chapter list.  They play automatically when their predecessor
+            # chapter ends (CutSceneChapter.run() chains to self._next().run()).
+            if isinstance(chapter, CutSceneChapter):
+                continue
+            ch_idx = self.chapters.index(chapter)
             prefix = nb2msg(chapter.number) if chapter.number > 0 else []
-            if chapter.number < bookmark:
+            if ch_idx <= bookmark:
                 # 已通关：标注"已完成"，仍可重玩
                 menu.append(prefix + chapter.title + mp.MISSION_COMPLETED, chapter)
-            elif chapter.number == bookmark:
+            elif ch_idx == bookmark:
                 # 当前可玩章节
                 menu.append(prefix + chapter.title, chapter)
             else:
