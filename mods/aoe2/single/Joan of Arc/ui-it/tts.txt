@@ -1,0 +1,83 @@
+; coding: utf-8
+; Joan of Arc — prima campagna narrativa AoE2 DE (italiano)
+
+8800 Giovanna d'Arco
+8801 Francia, 1429. Segui Giovanna d'Arco mentre toglie l'assedio di Orléans, marcia su Reims per l'incoronazione e scaccia gli inglesi dalla Loira. Cinque brevi capitoli.
+
+8802 Alleati incerti
+8803 Un uomo di Orléans
+8804 Liberazione di Orléans
+8805 La caduta della Pulzella
+8806 La pulizia della Loira
+
+8810 Porta Giovanna a est da Vaucouleurs (a1), oltre le pattuglie inglesi, fino a Robert de Baudricourt a b4, che le concederà una sacra lettera e una piccola scorta. Poi porta la lettera alla corte del Delfino a Chinon (f4). Giovanna deve sopravvivere.
+8811 Orléans è assediata da un anello inglese di torri di guardia e una piccola fortezza. Addestra milizie per radunare i borghesi, poi rompi l'assedio e distruggi ogni torre inglese.
+8812 Dopo Orléans, Giovanna guida l'armata oltre la Loira. Dalla base francese (d4) spingi a est, prendi Saint-Loup (a1) sulla riva sud e Les Tourelles (f5) sulla riva nord per spezzare l'assedio inglese.
+8813 Scorta il Delfino attraverso la Borgogna fino a Reims (c5) per l'incoronazione. Porta tre reliquie alla cattedrale. I borgognoni e gli inglesi cercheranno di fermarti.
+8814 Porta Giovanna risalendo la Loira e distruggi ogni avamposto inglese. Una volta cadute tutte le torri e i castelli, Giovanna lo porta a casa.
+8815 Tieni Compiègne (b4) contro l'assalto combinato inglese e borgognone finché Carlo VII non sarà incoronato a Reims. Poi scorta Giovanna oltre il ponte in salvo.
+
+8820 Raggiungere la guarnigione di Robert a Vaucouleurs
+8821 Consegnare la sacra lettera al Delfino a Chinon
+8822 Addestrare 8 milizie per radunare Orléans
+8823 Rompere l'assedio — distruggere ogni unità inglese
+8824 Prendere Saint-Loup
+8825 Prendere Les Tourelles
+8826 Baudricourt osserva la fanciulla davanti a sé, poi le porge una lettera sigillata e fa un cenno alla guarnigione: Portate questa lettera al Delfino a Chinon. Questi uomini cavalcheranno con voi. Che Dio guidi i vostri passi, Giovanna d'Arco.
+8827 Consegnare tre reliquie alla cattedrale di Reims
+8828 Sconfiggere l'imboscata borgognona e inglese
+8829 Distruggere l'avamposto inglese sulla bassa Loira
+8830 Il Delfino legge la lettera e cade in ginocchio. La Francia risorgerà. La guerra per il regno è davvero iniziata, e Giovanna cavalca alla sua testa.
+8831 Distruggere ogni torre e castello inglese
+8832 Tenere Compiègne fino all'incoronazione di Carlo VII
+8833 Scortare Giovanna in salvo oltre il ponte
+8834 La Hire, capitano della guarnigione di Orléans, valuta la Pulzella e annuisce: «Lasciatela passare. Prendete questi uomini — e che Dio vi conceda la velocità che il vostro coraggio merita.»
+
+8835 Giovanna arriva a Blois e incontra l'esercito francese. Il duca d'Alençon parla: 'L'esercito di Francia è tuo da comandare, Pulzella. Guidaci alla vittoria.'
+8836 I carri di rifornimento hanno attraversato la Loira. La città di Orléans apre le sue porte: 'I rifornimenti sono arrivati — la città di Orléans è tua. Ora preparati per l'assedio.'
+8837 I cittadini di Orléans devono raggiungere l'Età dei Castelli. Fai progredire la tua città attraverso le epoche per forgiare un esercito francese più forte.
+8838 Il castello inglese crolla. L'assedio di Orléans è spezzato. La Francia si rialzerà. La guerra per il regno è davvero iniziata.
+8840 Vaucouleurs
+8841 Chinon
+8842 Orléans
+8843 Meung-sur-Loire
+8844 Beaugency
+8845 Fortezza inglese
+8846 Reims
+8847 Borgogna
+8848 Bassa Loira
+8849 Alta Loira
+8850 Chiave di Parigi
+8851 Compiègne
+8852 Campo d'assedio inglese
+
+8870 Vaucouleurs
+8871 Base francese
+8872 Chinon
+8873 Blois
+8874 Forte di San Loup
+8875 Les Tourelles
+8876 Anello d'assedio inglese
+8877 Compiègne sud
+8878 Cittadella di Compiègne
+8879 Imboscata borgognona
+8880 Avamposto francese
+8881 Beaugency
+8882 Jallains
+8883 Bassa Loira
+8884 Meung-sur-Loire
+8885 Orléans
+8886 Fortezza inglese
+8887 Cattedrale di Reims
+8888 Parigi
+8889 Chinon
+8890 Cittadella di Compiègne
+
+8860 sacra lettera
+8861 chiave di Parigi
+8862 Giovanna d'Arco
+8863 Robert de Baudricourt
+8864 Carlo, Delfino di Francia
+8865 Figlia di Domrémy, una contadina che ode i santi. Nel 1429 cavalca fino a Chinon per togliere l'assedio di Orléans e porre il Delfino Carlo sul trono di Francia.
+8866 Capitano della guarnigione di Vaucouleurs. Scettico, brusco e pratico, mette alla prova la risolutezza della Pulzella prima di concederle una piccola scorta e una lettera di passaggio verso il Delfino.
+8867 Erede spodestato del trono di Francia, che tiene corte a Chinon. La guerra volge al male; la sua legittimità — e la Francia stessa — dipendono dall'incoronazione a Reims.

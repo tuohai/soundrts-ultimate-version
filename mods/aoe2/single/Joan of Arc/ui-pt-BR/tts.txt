@@ -1,0 +1,83 @@
+; coding: utf-8
+; Joan of Arc — primeira campanha narrativa AoE2 DE (português BR)
+
+8800 Joana d'Arc
+8801 França, 1429. Siga Joana d'Arc enquanto ela levanta o cerco de Orleans, marcha até Reims para a coroação e expulsa os ingleses do Loire. Cinco breves capítulos.
+
+8802 Aliados incertos
+8803 Um homem de Orleans
+8804 Libertação de Orléans
+8805 A queda da Donzela
+8806 A limpeza do Loire
+
+8810 Conduza Joana para o leste a partir de Vaucouleurs (a1), passando pelas patrulhas inglesas, até Robert de Baudricourt em b4, que lhe concederá uma santa carta e uma pequena escolta. Então leve a carta à corte do Delfim em Chinon (f4). Joana deve sobreviver.
+8811 Orleans está sitiada por um anel inglês de torres de vigia e uma pequena fortaleza. Treine milícias para reunir os cidadãos, então rompa o cerco e destrua cada torre inglesa.
+8812 Após Orleans, Joana lidera o exército cruzando o Loire. Da base francesa (d4) avance para leste, tome Saint-Loup (a1) na margem sul e Les Tourelles (f5) na margem norte para romper o cerco inglês.
+8813 Escolte o Delfim pela Borgonha até Reims (c5) para a coroação. Leve três relíquias à catedral. Os borgonheses e os ingleses tentarão impedi-lo.
+8814 Conduza Joana rio acima pelo Loire e destrua cada posto avançado inglês. Quando cada torre e cada castelo caírem, Joana o traz para casa.
+8815 Mantenha Compiègne (b4) contra o assalto combinado inglês e borgonhês até que Carlos VII seja coroado em Reims. Então escolte Joana através da ponte em segurança.
+
+8820 Chegar à guarnição de Robert em Vaucouleurs
+8821 Entregar a santa carta ao Delfim em Chinon
+8822 Treinar 8 milícias para reunir Orleans
+8823 Romper o cerco — destruir cada unidade inglesa
+8824 Tomar Saint-Loup
+8825 Tomar Les Tourelles
+8826 Baudricourt examina a jovem diante dele, então lhe entrega uma carta selada e faz um sinal à guarnição: Levem esta carta ao Delfim em Chinon. Estes homens cavalgarão com vocês. Que Deus guie seus passos, Joana d'Arc.
+8827 Entregar três relíquias à catedral de Reims
+8828 Derrotar a emboscada borgonhesa e inglesa
+8829 Destruir o posto avançado inglês no baixo Loire
+8830 O Delfim lê a carta e cai de joelhos. A França ressurgirá. A guerra pelo reino verdadeiramente começou, e Joana cavalga à sua frente.
+8831 Destruir cada torre e castelo inglês
+8832 Manter Compiègne até a coroação de Carlos VII
+8833 Escoltar Joana em segurança através da ponte
+8834 La Hire, capitão da guarnição de Orleans, avalia a Donzela e assente: «Deixem-na passar. Pegue estes homens — e que Deus lhe conceda a velocidade que sua coragem merece.»
+
+8835 Joana chega a Blois e encontra o exército francês. O duque d'Alençon fala: 'O exército da França é teu para comandar, Donzela. Leve-nos à vitória.'
+8836 As carroças de suprimentos atravessaram o Loire. A cidade de Orléans abre seus portões: 'Os suprimentos chegaram — a cidade de Orléans é tua. Agora prepare-se para o cerco.'
+8837 Os cidadãos de Orleans devem alcançar a Idade dos Castelos. Avance sua cidade pelas eras para forjar um exército francês mais forte.
+8838 O castelo inglês desmorona. O cerco de Orléans está quebrado. A França se levantará novamente. A guerra pelo reino verdadeiramente começou.
+8840 Vaucouleurs
+8841 Chinon
+8842 Orleans
+8843 Meung-sur-Loire
+8844 Beaugency
+8845 Fortaleza inglesa
+8846 Reims
+8847 Borgonha
+8848 Baixo Loire
+8849 Alto Loire
+8850 Chave de Paris
+8851 Compiègne
+8852 Acampamento de cerco inglês
+
+8870 Vaucouleurs
+8871 Base francesa
+8872 Chinon
+8873 Blois
+8874 Forte St. Loup
+8875 Les Tourelles
+8876 Anel de cerco inglês
+8877 Compiègne sul
+8878 Cidadela de Compiègne
+8879 Emboscada borgonhesa
+8880 Posto avançado francês
+8881 Beaugency
+8882 Jallains
+8883 Baixo Loire
+8884 Meung-sur-Loire
+8885 Orléans
+8886 Fortaleza inglesa
+8887 Catedral de Reims
+8888 Paris
+8889 Chinon
+8890 Cidadela de Compiègne
+
+8860 santa carta
+8861 chave de Paris
+8862 Joana d'Arc
+8863 Robert de Baudricourt
+8864 Carlos, Delfim da França
+8865 Filha de Domrémy, uma camponesa que ouve os santos. Em 1429, cavalga até Chinon para levantar o cerco de Orleans e colocar o Delfim Carlos no trono da França.
+8866 Capitão da guarnição de Vaucouleurs. Cético, direto e prático, ele testa a resolução da Donzela antes de conceder-lhe uma pequena escolta e uma carta de passagem para o Delfim.
+8867 Herdeiro deserdado do trono francês, mantendo corte em Chinon. A guerra vai mal; sua legitimidade — e a própria França — dependem da coroação em Reims.

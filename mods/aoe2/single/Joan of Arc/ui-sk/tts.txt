@@ -1,0 +1,83 @@
+; coding: utf-8
+; Joan of Arc — prvá príbehová kampaň AoE2 DE (slovenčina)
+
+8800 Janka z Arku
+8801 Francúzsko, 1429. Sleduj Janku z Arku, ako zdvíha obliehanie Orléansu, pochoduje do Remeša na korunováciu a vyháňa Angličanov z Loiry. Päť krátkych kapitol.
+
+8802 Neistí spojenci
+8803 Muž z Orléansu
+8804 Oslobodenie Orléansu
+8805 Pád Panny
+8806 Očista Loiry
+
+8810 Veď Janku na východ z Vaucouleurs (a1) okolo anglických hliadok k Robertovi de Baudricourtovi v b4, ktorý jej udelí svätý list a malý sprievod. Potom odniesť list ku dvoru dauphina v Chinone (f4). Janka musí prežiť.
+8811 Orléans oblieha anglický kruh strážnych veží a malá pevnosť. Vycvič milíciu, aby sa pridali mešťania, potom prelom obliehanie a znič každú anglickú vežu.
+8812 Po Orléans vedie Janka armádu cez Loiru. Z francúzskej základne (d4) tlač na východ, vezmi Saint-Loup (a1) na južnom brehu a Les Tourelles (f5) na severnom brehu, aby si prelomil anglické obliehanie.
+8813 Eskortuj dauphina Burgundskom do Remeša (c5) na korunováciu. Prines tri relikvie do katedrály. Burgundi a Angličania sa ťa pokúsia zastaviť.
+8814 Veď Janku proti prúdu Loiry a nič každú anglickú základňu. Keď každá veža a každý hrad padne, Janka to prinesie domov.
+8815 Drž Compiègne (b4) proti spojenému anglicko-burgundskému útoku, kým nebude Karol VII. korunovaný v Remeši. Potom eskortuj Janku cez most do bezpečia.
+
+8820 Dostať sa k Robertovej posádke vo Vaucouleurs
+8821 Doručiť svätý list dauphinovi do Chinonu
+8822 Vycvičiť 8 milicionárov, aby sa pridal Orléans
+8823 Prelomiť obliehanie — zničiť každú anglickú jednotku
+8824 Dobyť Saint-Loup
+8825 Dobyť Les Tourelles
+8826 Baudricourt si prehliadne dievča pred sebou, potom jej podá zapečatený list a pokynе posádke: Odneste tento list dauphinovi do Chinonu. Títo muži pôjdu s vami. Nech Boh vedie vaše kroky, Janka z Arku.
+8827 Doručiť tri relikvie do katedrály v Remeši
+8828 Poraziť burgundsko-anglickú pascu
+8829 Zničiť anglickú základňu na dolnej Loіre
+8830 Dauphin číta list a padne na kolená. Francúzsko znovu povstane. Vojna o kráľovstvo skutočne začala a Janka ide na jej čele.
+8831 Zničiť každú anglickú vežu a hrad
+8832 Držať Compiègne, kým nebude Karol VII. korunovaný
+8833 Eskortovať Janku do bezpečia cez most
+8834 La Hire, kapitán orleánskej posádky, si prezrie Pannu a prikývne: «Nechajte ju prejsť. Vezmite si tých mužov — a nech vám Boh dopraje rýchlosť, akú si vaša odvaha zaslúži.»
+
+8835 Jana prichádza do Blois a stretáva sa s francúzskou armádou. Vojvoda d'Alençon hovorí: 'Armáda Francúzska je vaša na velenie, Panna. Vedte nás k víťazstvu.'
+8836 Zásobovacie vozne prešli cez Loiru. Mesto Orléans otvára brány: 'Zásoby dorazili — mesto Orléans je vaše. Teraz sa pripravte na obliehanie.'
+8837 Občania Orléans musia dosiahnuť Vek hradov. Preveďte svoje mesto cez veky a vytvorte silnejšiu francúzsku armádu.
+8838 Anglický hrad sa zrúti. Obliehanie Orléans je prelomené. Francúzsko povstane. Vojna o kráľovstvo skutočne začala.
+8840 Vaucouleurs
+8841 Chinon
+8842 Orléans
+8843 Meung-sur-Loire
+8844 Beaugency
+8845 Anglická pevnosť
+8846 Remeš
+8847 Burgundsko
+8848 Dolná Loira
+8849 Horná Loira
+8850 Parížsky kľúč
+8851 Compiègne
+8852 Anglický obliehacie tábor
+
+8870 Vaucouleurs
+8871 Francúzska základňa
+8872 Chinon
+8873 Blois
+8874 Fort St. Loup
+8875 Les Tourelles
+8876 Anglický obliehaci kruh
+8877 Compiègne juh
+8878 Citadela Compiègne
+8879 Burgundská pasca
+8880 Francúzsky predný tábor
+8881 Beaugency
+8882 Jallains
+8883 Dolná Loira
+8884 Meung-sur-Loire
+8885 Orleán
+8886 Anglická pevnosť
+8887 Katedrála v Remeši
+8888 Paríž
+8889 Chinon
+8890 Citadela Compiègne
+
+8860 svätý list
+8861 parížsky kľúč
+8862 Janka z Arku
+8863 Robert de Baudricourt
+8864 Karol, dauphin Francúzska
+8865 Dcéra z Domrémy, sedliačcka dievčina, ktorá počuje svätých. V roku 1429 ide do Chinonu, aby zdvihla obliehanie Orléansu a dosadila dauphina Karola na francúzsky trón.
+8866 Kapitán posádky vo Vaucouleurs. Skeptický, priamy a praktický, skúša odhodlanie Panny, kým jej udelí malý sprievod a list o prechode k dauphinovi.
+8867 Pripravený o dedičstvo následník francúzskeho trónu, držiaci dvor v Chinone. Vojna ide zle; jeho legitimita — i celé Francúzsko — závisia od korunovácie v Remeši.

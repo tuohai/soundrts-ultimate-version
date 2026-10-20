@@ -1,0 +1,83 @@
+; coding: utf-8
+; Joan of Arc — primera campaña argumental AoE2 DE (español)
+
+8800 Juana de Arco
+8801 Francia, 1429. Acompaña a Juana de Arco mientras levanta el sitio de Orleans, marcha a Reims para la coronación y expulsa a los ingleses del Loira. Cinco breves capítulos.
+
+8802 Aliados inciertos
+8803 Un hombre de Orleans
+8804 Liberación de Orléans
+8805 La caída de la Doncella
+8806 La limpieza del Loira
+
+8810 Lleva a Juana al este desde Vaucouleurs (a1), cruzando las patrullas inglesas, hasta Robert de Baudricourt en b4, quien le concederá una santa carta y una pequeña escolta. Luego lleva la carta a la corte del Delfín en Chinon (f4). Juana debe sobrevivir.
+8811 Orleans está sitiada por un anillo inglés de torres de vigilancia y una pequeña fortaleza. Entrena milicias para reunir a los burgueses, luego rompe el sitio y destruye cada torre inglesa.
+8812 Tras Orleans, Juana lidera al ejército cruzando el Loira. Avanza al este desde la base francesa (d4), toma San Loup (a1) en la orilla sur y Las Torrelas (f5) en la orilla norte para romper el asedio inglés.
+8813 Escorata al Delfín a través de Borgoña hasta Reims (c5) para la coronación. Lleva tres reliquias a la catedral. Los borgoñones y los ingleses intentarán detenerte.
+8814 Lleva a Juana río arriba por el Loira y destruye cada puesto avanzado inglés. Una vez que caigan todas las torres y castillos, Juana lo trae a casa.
+8815 Mantén Compiègne (b4) frente al asalto combinado inglés y borgoñón hasta que Carlos VII sea coronado en Reims. Luego escolta a Juana a través del puente a lugar seguro.
+
+8820 Llegar a la guarnición de Robert en Vaucouleurs
+8821 Entregar la santa carta al Delfín en Chinon
+8822 Entrenar 8 milicias para reunir Orleans
+8823 Romper el sitio — destruir cada unidad inglesa
+8824 Tomar San Loup
+8825 Tomar Las Torrelas
+8826 Baudricourt examina a la joven ante él, luego le entrega una carta sellada y hace una señal a la guarnición: Llevad esta carta al Delfín en Chinon. Estos hombres cabalgarán con vosotros. Que Dios guíe vuestros pasos, Juana de Arco.
+8827 Entregar tres reliquias a la catedral de Reims
+8828 Derrotar la emboscada borgoñona e inglesa
+8829 Destruir el puesto avanzado inglés en el bajo Loira
+8830 El Delfín lee la carta y cae de rodillas. Francia resurgirá. La guerra por el reino ha comenzado de verdad, y Juana cabalga a su cabeza.
+8831 Destruir cada torre y castillo inglés
+8832 Mantener Compiègne hasta la coronación de Carlos VII
+8833 Escoltar a Juana a salvo a través del puente
+8834 La Hire, capitán de la guarnición de Orleans, evalúa a la Doncella y asiente: «Que pase. Toma a estos hombres — y que Dios te conceda la velocidad que tu coraje merece.»
+
+8835 Juana llega a Blois y se reúne con el ejército francés. El duque d'Alençon habla: 'El ejército de Francia es tuyo para mandarlo, Doncella. Llévanos a la victoria.'
+8836 Los carros de suministros han cruzado el Loira. La ciudad de Orleans abre sus puertas: 'Los suministros han llegado — la ciudad de Orleans es tuya. Ahora prepárate para el asedio.'
+8837 Los ciudadanos de Orleans deben alcanzar la Edad de los Castillos. Avanza tu ciudad a través de las edades para forjar un ejército francés más fuerte.
+8838 El castillo inglés se derrumba. El asedio de Orleans está roto. Francia volverá a levantarse. La guerra por el reino ha comenzado verdaderamente.
+8840 Vaucouleurs
+8841 Chinon
+8842 Orleans
+8843 Meung-sur-Loire
+8844 Beaugency
+8845 Fortaleza inglesa
+8846 Reims
+8847 Borgoña
+8848 Bajo Loira
+8849 Alto Loira
+8850 Llave de París
+8851 Compiègne
+8852 Campamento de asedio inglés
+
+8870 Vaucouleurs
+8871 Base francesa
+8872 Chinon
+8873 Blois
+8874 Fuerte de San Loup
+8875 Les Tourelles
+8876 Anillo de asedio inglés
+8877 Compiègne sur
+8878 Ciudadela de Compiègne
+8879 Emboscada borgoñona
+8880 Puesto avanzado francés
+8881 Beaugency
+8882 Jallains
+8883 Bajo Loira
+8884 Meung-sur-Loire
+8885 Orleans
+8886 Fortaleza inglesa
+8887 Catedral de Reims
+8888 París
+8889 Chinon
+8890 Ciudadela de Compiègne
+
+8860 santa carta
+8861 llave de París
+8862 Juana de Arco
+8863 Robert de Baudricourt
+8864 Carlos, Delfín de Francia
+8865 Hija de Domrémy, una campesina que oye a los santos. En 1429 cabalga hasta Chinon para levantar el sitio de Orleans y colocar al Delfín Carlos en el trono de Francia.
+8866 Capitán de la guarnición de Vaucouleurs. Escéptico, brusco y práctico, pone a prueba la resolución de la Doncella antes de concederle una pequeña escolta y una carta de paso hacia el Delfín.
+8867 Heredero desposeído del trono francés, que tiene su corte en Chinon. La guerra va mal; su legitimidad — y la propia Francia — dependen de la coronación en Reims.

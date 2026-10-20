@@ -1,0 +1,223 @@
+; 2 — The Maid of Orleans (AoE2 DE Joan of Arc, ch. 2)
+;
+; Faithful rewrite of AoE2 DE ch. 2 "The Maid of Orleans".  Source
+; walkthroughs (ageofempires.fandom.com/wiki/The_Maid_of_Orleans,
+; standardof.net, aok.heavengames.com) describe this chapter as a
+; long, two-phase mission: first a small escort reaches Blois to
+; pick up the French army + 6 Trade Carts, then Joan + the carts
+; are ferried across the Loire by 2 Transport Ships to the city of
+; Orleans, where Orleans hands over its town + villagers to the
+; player.  After that the player builds up to Castle Age (population
+; cap 125, Imperial forbidden) and must destroy 1 of the 2 English
+; Castles.  Joan and the cathedral in Orleans must survive.
+;
+; Map grid (12x8):
+;   [a1..a8] is the south-west corner (Chinon, starting position);
+;   column e is the Blois camp (large neutral French army, trade carts);
+;   column f is the south English keep (just across the river from Blois);
+;   row 4 is the Loire (terrain river; the bridge is at f4, with a
+;   Burgundian guard tower on the south side at f3);
+;   column h is Orleans (town_center, cathedral, several allied French
+;   militia/archer defenders) — handed to the player on completion of
+;   objective 3;
+;   column k is the north English keep (the Castle the player must
+;   destroy to complete objective 4);
+;   column l is the outer English fortification (the other Castle, kept
+;   to make the map feel like a siege ring).
+
+title 8803
+intro 8811
+
+square_width 12
+nb_columns 12
+nb_lines 8
+
+nb_players_min 1
+nb_players_max 1
+random_starts 0
+
+; Place names for minimap / intro
+square_name 8871 1,1                       ; Chinon (player start, Joan)
+square_name 8873 5,2 5,3                   ; Blois (French army camp, e2+e3)
+square_name 8885 8,6 8,7                   ; Orleans (citadel, h6+h7)
+square_name 8886 11,5 12,5 12,6 11,6       ; North English keep (k5 + l5 + l6 + k6)
+
+; Land-grid paths.  The Loire is row 4 (a4..l4); bridges and
+; land-adjacent squares are NOT in west_east_paths along the river.
+; River row is excluded from west_east_paths; only the bridge square
+; (f4) and Blois/Orleans squares link north<->south.
+west_east_paths a1 a2 a3 a5 a6 a7 a8 b1 b2 b3 b5 b6 b7 b8 c1 c2 c3 c5 c6 c7 c8 d1 d2 d3 d5 d6 d7 d8 e1 e2 e3 e5 e6 e7 e8 f1 f2 f3 f5 f6 f7 f8 g1 g2 g3 g5 g6 g7 g8 h1 h2 h3 h5 h6 h7 h8 i1 i2 i3 i5 i6 i7 i8 j1 j2 j3 j5 j6 j7 j8 k1 k2 k3 k5 k6 k7 k8
+south_north_paths a1 a2 a3 a5 a6 a7 b1 b2 b3 b5 b6 b7 c1 c2 c3 c5 c6 c7 d1 d2 d3 d5 d6 d7 e1 e2 e3 e5 e6 e7 f1 f2 f3 f4 f5 f6 f7 g1 g2 g3 g5 g6 g7 h1 h2 h3 h5 h6 h7
+
+; Loire row: a4..l4 = water.  f4 is the bridge — big_bridge so it's
+; both water (river continuity) and ground (player walks across).  Same
+; approach as multi/m5.txt:49 and Joan Ch.3.
+terrain river a4 b4 c4 d4 e4 g4 h4 i4 j4 k4 l4
+terrain big_bridge f4
+
+goldmines 200 a1
+woods 350 a1 b1
+orchard 200 a1
+stone_mines 200 a1
+; Orleans (h6) is handed to the player on objective 2 — the player
+; gets 4 peasants but NO surrounding resources.  In AoE2 DE ch. 2 the
+; city of Orleans itself has its own gold, wood and stone patches
+; right next to the TC so the peasants can mine/chop locally.  Without
+; this the player must walk peasants ~14 squares from a1 to find
+; anything, which makes the Castle Age timer (objective 3) impossible
+; in any reasonable time.  Add the Orleans resources to mirror the
+; DE original layout.
+goldmines 250 h6
+woods 300 h7
+stone_mines 150 h5
+; Meadows: nb_meadows_by_square 0 + explicit additional_meadows on
+; all land squares (NOT the river row) — same jl7-style pattern.
+nb_meadows_by_square 0
+additional_meadows a1 b1 c1 d1 e1 f1 g1 h1 i1 j1 k1 l1 a2 b2 c2 d2 e2 f2 g2 h2 i2 j2 k2 l2 a3 b3 c3 d3 e3 f3 g3 h3 i3 j3 k3 l3 a5 b5 c5 d5 e5 f5 g5 h5 i5 j5 k5 l5 a6 b6 c6 d6 e6 f6 g6 h6 i6 j6 k6 l6 a7 b7 c7 d7 e7 f7 g7 h7 i7 j7 k7 l7 a8 b8 c8 d8 e8 f8 g8 h8 i8 j8 k8 l8
+additional_meadows a1 b1 c1 d1 e1 f1 g1 h1 i1 j1 k1 l1 a2 b2 c2 d2 e2 f2 g2 h2 i2 j2 k2 l2 a3 b3 c3 d3 e3 f3 g3 h3 i3 j3 k3 l3 a5 b5 c5 d5 e5 f5 g5 h5 i5 j5 k5 l5 a6 b6 c6 d6 e6 f6 g6 h6 i6 j6 k6 l6 a7 b7 c7 d7 e7 f7 g7 h7 i7 j7 k7 l7 a8 b8 c8 d8 e8 f8 g8 h8 i8 j8 k8 l8
+additional_meadows a1 b1 c1 d1 e1 f1 g1 h1 i1 j1 k1 l1 a2 b2 c2 d2 e2 f2 g2 h2 i2 j2 k2 l2 a3 b3 c3 d3 e3 f3 g3 h3 i3 j3 k3 l3 a5 b5 c5 d5 e5 f5 g5 h5 i5 j5 k5 l5 a6 b6 c6 d6 e6 f6 g6 h6 i6 j6 k6 l6 a7 b7 c7 d7 e7 f7 g7 h7 i7 j7 k7 l7 a8 b8 c8 d8 e8 f8 g8 h8 i8 j8 k8 l8
+additional_meadows a1 b1 c1 d1 e1 f1 g1 h1 i1 j1 k1 l1 a2 b2 c2 d2 e2 f2 g2 h2 i2 j2 k2 l2 a3 b3 c3 d3 e3 f3 g3 h3 i3 j3 k3 l3 a5 b5 c5 d5 e5 f5 g5 h5 i5 j5 k5 l5 a6 b6 c6 d6 e6 f6 g6 h6 i6 j6 k6 l6 a7 b7 c7 d7 e7 f7 g7 h7 i7 j7 k7 l7 a8 b8 c8 d8 e8 f8 g8 h8 i8 j8 k8 l8
+
+; --- Vaucouleurs / Chinon (player start, a1) -----------------------------
+; Faithful to AoE2 DE ch. 2 starting force:
+;   - 1 Joan of Arc (npc_joan, hero unit, MUST survive)
+;   - 1 Duke d'Alençon (npc_d_alencon, second hero, can fight)
+;   - 1 Scout Cavalry (aoe_scout / scout_cavalry)
+;   - 2 Two-Handed Swordsmen (man_at_arms upgrade of militia)
+;   - 4 Knights (aoe_knight)
+;   - 6 Trade Carts (trade_cart) -- the supply train to Orleans
+;   - 50F 200W to bootstrap, but most resources come from Blois+Orleans
+; npc_joan is the key_unit (her death = defeat).  npc_d_alencon is a
+; combat hero who can fight but is not a key unit.
+; player 50 200 0 0 a1 npc_joan npc_d_alencon 1 scout_cavalry 2 man_at_arms 4 aoe_knight 6 trade_cart -imperial_age
+;
+; The trailing "-imperial_age" forbids the Imperial Age research
+; for the entire chapter (soundrts parse_assets treats any
+; type_name starting with "-" as a forbidden_tech, see
+; soundrts/world/world_objects.py:419).  The chapter is capped at
+; Castle Age, matching the AoE2 DE ch. 2 population 125 cap.
+player 50 200 0 0 a1 npc_joan npc_d_alencon 1 scout_cavalry 2 man_at_arms 4 aoe_knight 6 trade_cart -imperial_age
+
+; --- Blois (e2+e3) --------------------------------------------------------
+; The French army + trade carts await Joan here.  When Joan reaches Blois
+; the (add_units) trigger below moves the army to the player.  The camp
+; itself stays as Gaia decoration so the minimap shows a French base.
+; IMPORTANT: do NOT pack all of these into a single 8x8 cell.
+; soundrts' square_capacity is the map's ``square_width`` (12) expressed in
+; PRECISION, so 24+ units in e2 saturate the cell and the engine's
+; have_enough_square_space check then blocks the army from walking to
+; the exits (see CHANGELOG_AUDIT / soundrts/worldroom.py).  Split the
+; camp across e2+e3 (the decoration), and the (add_units) trigger
+; below spawns the reinforcements into e1+d2 (sibling cells with room
+; to maneuver out of Blois toward d3 / d4 / c2).
+computer_only 0 0 0 0 neutral faction franks e2 town_center 1 house
+computer_only 0 0 0 0 neutral faction franks e3 4 trade_cart 8 aoe_knight 12 aoe_archer
+computer_only 0 0 0 0 neutral faction franks e3 monastery 2 monk
+
+; --- South English keep (just across the river from Blois, f3) -----------
+; Burgundian guard tower on the bridge approach.  Tiny garrison so the
+; player can use the bridge if they want, but the heavy attack comes
+; from the north English castles.
+computer_only 0 0 0 0 faction burgundians f3 scouttower 2 militia 1 aoe_knight
+
+; --- Orleans (h6+h7) ------------------------------------------------------
+; The city of Orleans with its cathedral (tts 8860 "holy letter"
+; reused) and a small French garrison.  When Joan + 6 trade_carts reach
+; the Orleans town_center, the (transfer_units) trigger below hands the
+; whole camp over to the player so they can build up to Castle Age.
+computer_only 0 0 0 0 neutral faction franks h6 town_center 3 house 4 militia 2 aoe_archer 4 peasant 1 npc_cathedral
+computer_only 0 0 0 0 neutral faction franks h7 scouttower 1 militia
+
+; --- North English keep (k5+k6) ------------------------------------------
+; The Castle the player MUST destroy to complete the chapter.
+computer_only 0 0 0 0 faction britons k5 aoe_castle 2 scouttower 4 militia 2 man_at_arms 4 aoe_archer
+computer_only 0 0 0 0 faction britons k6 scouttower 2 militia 1 man_at_arms
+
+; --- Outer English fortification (l5+l6) ----------------------------------
+; The OTHER English Castle, kept to make the map feel like a siege ring.
+; The player does NOT have to destroy this one — only 1 of the 2 English
+; Castles needs to fall.  Matches AoE2 DE "destroy 1 of their Castles".
+computer_only 0 0 0 0 faction britons l5 aoe_castle 2 scouttower 3 militia 1 man_at_arms 2 aoe_archer
+computer_only 0 0 0 0 faction britons l6 scouttower 1 militia 1 aoe_archer
+
+timer_coefficient 40
+
+; --- Alliances ------------------------------------------------------------
+trigger player1 (timer 0) (alliance 1)
+trigger computer1 (timer 0) (alliance 1)   ; Blois (e2) — French ally
+trigger computer2 (timer 0) (alliance 1)   ; Blois (e3) — French ally
+trigger computer3 (timer 0) (alliance 2)   ; Burgundy (f3) — enemy
+trigger computer4 (timer 0) (alliance 1)   ; Orleans (h6) — French ally, then handed to player
+trigger computer5 (timer 0) (alliance 1)   ; Orleans (h7) — French ally
+trigger computer6 (timer 0) (alliance 2)   ; North English (k5) — enemy
+trigger computer7 (timer 0) (alliance 2)   ; North English (k6) — enemy
+trigger computer8 (timer 0) (alliance 2)   ; Outer English (l5) — enemy
+trigger computer9 (timer 0) (alliance 2)   ; Outer English (l6) — enemy
+
+; --- Objectives (tts ids) -------------------------------------------------
+; 8822 = "Train 8 militia to rally Orleans" (legacy ch2 — REPLACED with DE)
+; 8823 = "Break the siege — destroy every English unit" (legacy ch2)
+; 8834 = "La Hire's camp at b2" (legacy ch2 cutscene — UNUSED in DE ch2)
+; For DE ch2 we use 4 new objectives.  Reuse the 8840-8859 range (place
+; names) or 8860+ (item names) — too crowded.  Cut_scene uses 8835-8838;
+; add_objective uses 8839/8853-8855 (distinct IDs so objectives show the
+; short mission text, not the cut_scene dialogue).
+trigger player1 (timer 0) (register_objective 1 4)
+trigger player1 (timer 0) (add_objective 1 8839)   ; Get Joan to Blois
+trigger player1 (timer 0) (add_objective 2 8853)   ; Ferry 6 trade_carts to Orleans TC
+trigger player1 (timer 0) (add_objective 3 8854)   ; Reach Castle Age in Orleans
+trigger player1 (timer 0) (add_objective 4 8855)   ; Destroy 1 English Castle
+
+; --- Objective 1: Joan reaches Blois (e2/e3) ------------------------------
+; When Joan reaches the Blois camp, Blois hands over its full French
+; army to the player.  Cut scene plays the DE dialogue ("the French
+; army is yours to command").  Mirrors ch. 1 Baudricourt escort trigger
+; pattern.  npc_d_alencon is a combat hero who can fight.
+; Faithful to AoE2 DE ch. 2 starting force: when Joan reaches e2/e3
+; the reinforcements spawn across e2 + e1 + d2 (24 units in one
+; 8x8 cell would saturate the cell and the engine's
+; have_enough_square_space check would block the army from walking
+; to the exits — see CHANGELOG_AUDIT / soundrts/worldroom.py
+; square_capacity).  Splitting into 3 neighbouring cells gives the
+; units room to maneuver out of Blois.
+trigger player1 (or (has_entered e2 npc_joan) (has_entered e3 npc_joan)) (do (cut_scene 8835) (add_units e2 4 aoe_knight 6 aoe_archer 2 trade_cart e1 2 aoe_knight 3 aoe_archer 1 trade_cart d2 2 aoe_knight 3 aoe_archer 1 trade_cart))
+trigger player1 (has_entered e2 npc_joan) (objective_complete 1)
+trigger player1 (has_entered e3 npc_joan) (objective_complete 1)
+
+; --- Objective 2: 6 trade_carts reach Orleans TC (h6) ---------------------
+; Hand over the Orleans camp to the player when Joan + 6 trade_carts
+; arrive.  Cut scene plays the DE dialogue ("the supplies are here; the
+; city of Orleans is yours").  transfer_units moves the Orleans
+; militia/archer/etc onto the player so they can defend the city.
+trigger player1 (and (has_entered h6 npc_joan) (has 6 trade_cart) (has_entered h6 trade_cart)) (do (cut_scene 8836) (transfer_units computer4 player1) (transfer_units computer5 player1) (objective_complete 2))
+
+; --- Objective 3: Reach Castle Age ----------------------------------------
+; Once the player has dark_age + feudal_age + castle_age in upgrades,
+; objective 3 is complete.  Imperial Age is FORBIDDEN via the "-imperial_age"
+; entry on the player line above (so the chapter is capped at Castle Age,
+; population 125, matching AoE2 DE ch. 2).
+trigger player1 (and (has castle_age) (not (has imperial_age))) (objective_complete 3)
+
+; --- Objective 4: Destroy 1 English Castle -------------------------------
+; AoE2 DE ch. 2: "Convince the British to withdraw by destroying 1 of
+; their Castles."  Use enemy_building_destroyed on k5 OR l5 (any of the
+; two English Castles counts).  When either is gone, the chapter's main
+; victory condition is met -- play the victory cut_scene.
+trigger player1 (or (enemy_building_destroyed k5 aoe_castle) (enemy_building_destroyed l5 aoe_castle)) (do (cut_scene 8838) (objective_complete 4))
+
+; --- Defeat conditions ----------------------------------------------------
+; Joan must survive (key unit).  The cathedral in Orleans (npc_cathedral)
+; must survive (DE ch. 2 explicit victory condition).  All 6 trade_carts
+; must survive (DE ch. 2 explicit; trade_cart death is a soft fail).
+trigger player1 (key_unit_killed npc_joan) (defeat)
+trigger player1 (key_unit_killed npc_cathedral) (defeat)
+trigger player1 (no_unit_left) (defeat)
+
+; Auto-defeat computers whose last unit dies (so the campaign map's
+; "Joan victorious" hero portrait doesn't get stuck on Blois/Orleans).
+trigger all (no_unit_left) (defeat)
+
+; Trade-cart protection: by timer 600 the player MUST still have 6
+; trade_carts alive.  If even one is lost, the supply run to Orleans
+; has failed — match the DE ch. 2 hard fail "deliver 6 trade carts".
+trigger player1 (and (timer 600) (lt (count trade_cart) 6)) (defeat)

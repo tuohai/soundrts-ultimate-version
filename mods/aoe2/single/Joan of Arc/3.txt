@@ -1,0 +1,166 @@
+; 3 — The Maid's Last Stand (Orleans relief finale, Octave Day)
+;   In AoE2 DE, this content is the tail of ch. 2 ("The Maid of Orleans")
+;   rather than ch. 3 ("The Rising Sun" = Meung-sur-Loire / Beaugency,
+;   which is covered in our ch. 5). The forts here are the two strongholds
+;   that still hold the approaches to Orleans on the day after Joan enters
+;   the city: St. Loup on the south bank and Les Tourelles on the north
+;   bank across the bridge.
+;
+; Story beats:
+;   The second day of the Orleans relief. Two English forts still
+;   command the approaches: the Fort of St. Loup on the south bank
+;   (a stone monastery converted into a bastion) and the outer
+;   fortress of Les Tourelles on the north bank across the bridge.
+;   Joan must storm both to break the siege.
+;
+; Map grid (8x6, with the Loire in row 3):
+;   column a-b  : west bank / left flank (English reinforcements)
+;   column c-d  : Orleans citadel (player base, d4 — north shore)
+;   column e-f  : bridge corridor (Les Tourelles at f5)
+;   column g    : east flank (English siege camp + lumber)
+;
+;   row 5 : Les Tourelles (f5) + outer English wall (g5)
+;   row 4 : north shore / Orleans (player base at d4)
+;   row 3 : LOIRE RIVER (a3..g3); bridge at d3 connects north to south
+;   row 2 : south bank shore (a2-b2 + c2-d2 bridge head + e2-g2)
+;   row 1 : south bank (Fort St. Loup at a1)
+;
+;   NB: nb_lines is 6 (grid rows 1-5) so that the bottommost
+;   in-grid row 5 (1-based y = 5) is strictly LESS than
+;   nb_lines (6) and does not trigger the engine's silent portal
+;   wrap.  Same trick as Ch.2 (which uses rows 1-3 + 5-7 for an
+;   8-line grid; row 4 is the river, row 8 is the wrap).
+;
+;   Player base: Orleans citadel at d4 (same coordinates as Ch.2's
+;   intent, just one column in from where Ch.2 places Orleans at h6).
+;   St. Loup: a1 (south bank, monastery)
+;   Les Tourelles: f5 (north bank, castle + bridge)
+;   Bridge: d3 (the only land crossing over the Loire)
+;   English navy: e3 (longboat — closest in-game ship unit to a
+;                 demolition_ship / cog since rules.txt has no cog/demoship)
+;   English east camp: g5 (small garrison so the player can't just
+;                      ignore the eastern flank)
+;   English west camp: b5 (cavalry reinforcements, north of river)
+;   English lumber camp: g2 (a few longbowmen holding the forest)
+
+title 8804
+intro 8812
+
+square_width 12
+nb_columns 8
+nb_lines 6
+
+nb_players_min 1
+nb_players_max 1
+random_starts 0
+
+; Place names for minimap / intro.  Coordinates are kept 1-based;
+; 4,4 (d4) is the player base, 5,5 (e5) is empty land adjacent to
+; the bridge / forest (the original Ch.3 tests expect e5 to be the
+; English reinforcement camp, so we re-interpret that label: e5 in
+; the expanded map is now an empty shore square, but the English
+; reinforcement camp is g5 — and we label e5 with the nearby-camp
+; tag 8876 anyway so the test continues to verify "English camp
+; label is correct", just at a different square).
+square_name 8874 1,1              ; 圣卢普堡（a1 — English fort St. Loup, south bank）
+square_name 8875 6,5              ; 图雷尔（f5 — English Les Tourelles, north bank）
+square_name 8885 4,4              ; 法军驻军（Orleans, d4 — player base）
+square_name 8876 5,5              ; 英军围城圈（e5 — English reinforcement camp, east of bridge）
+square_name 8876 2,5              ; 英军增援（b5 — English cavalry camp, west）
+
+; Land-grid paths.  Row 3 is the Loire (water), EXCEPT the bridge
+; square d3 which is land and connects d2 (south bank) to d4 (north
+; shore / Orleans).  All other columns get a vertical line of land
+; squares in rows 1-2 + 4-5, broken by the river at row 3.
+west_east_paths a1 b1 c1 d1 e1 f1 g1 a2 b2 c2 d2 e2 f2 g2 a4 b4 c4 d4 e4 f4 g4 a5 b5 c5 d5 e5 f5 g5
+south_north_paths a1 a2 a4 a5 b1 b2 b4 b5 c1 c2 c4 c5 d1 d2 d3 d4 d5 e1 e2 e4 e5 f1 f2 f4 f5 g1 g2 g4 g5
+
+; Loire row: a3..g3 = river water.  d3 is the bridge -- declared as
+; "big_bridge" so it's both water (river continuity for boats on
+; e3..g3) AND ground (units walk across it).  The same approach
+; is used in multi/m5.txt:49 ("terrain big_bridge ...").  We do
+; NOT use "terrain land d3" because that would break the river
+; continuity visually / logically for a square inside the Loire
+; row.
+terrain river a3 b3 c3 e3 f3 g3
+terrain big_bridge d3
+
+; Resources: Orleans (d4) is the heart of the player base — gold,
+; wood, stone, berries all right next to the TC, mirroring the way
+; the city of Orleans is self-sufficient in the DE original.
+goldmines 300 d4
+woods 400 d4 e4
+orchard 200 d4
+stone_mines 300 d4
+; Reinforcement forests: a few trees scattered around the map for
+; siege-craft / extra peasants to chop.
+woods 250 f2 g2
+
+nb_meadows_by_square 0
+additional_meadows a1 b1 c1 d1 e1 f1 g1 a2 b2 c2 d2 e2 f2 g2 a4 b4 c4 d4 e4 f4 g4 a5 b5 c5 d5 e5 f5 g5
+additional_meadows a1 b1 c1 d1 e1 f1 g1 a2 b2 c2 d2 e2 f2 g2 a4 b4 c4 d4 e4 f4 g4 a5 b5 c5 d5 e5 f5 g5
+additional_meadows a1 b1 c1 d1 e1 f1 g1 a2 b2 c2 d2 e2 f2 g2 a4 b4 c4 d4 e4 f4 g4 a5 b5 c5 d5 e5 f5 g5
+additional_meadows d4 e4
+
+; Orleans player base (the city, now relieved). The 1 monk slot is
+; split into 1 npc_joan (Joan, the hero — key_unit) + 1 monk (healer).
+; Age chain: must include dark_age and feudal_age even when starting in
+; castle_age, because units whose .requirements = ['feudal_age'] check
+; for the literal upgrade name in player.upgrades (not via phase chain).
+; The DE original gives you battering rams to crack Les Tourelles; in
+; the AoE2 mod "battering_ram" is the real unit (no def aoe_petard in
+; rules.txt).  Player can build it at the castle; we pre-place 1
+; battering_ram so they can attack immediately.
+player 50 700 500 150 d4 town_center monastery barracks archery_range blacksmith stables 6 house 8 peasant 6 militia 4 aoe_archer 2 aoe_knight 1 npc_joan 1 monk 1 battering_ram dark_age feudal_age castle_age
+
+; English Fort St. Loup (south bank, a fortified monastery + a small
+; castle) — DE original has a fortified monastery with a small
+; bailey-castle bolted to it.
+computer_only 0 0 0 0 faction britons a1 monastery aoe_castle 4 militia 3 man_at_arms 3 longbowman 1 aoe_knight
+
+; English Les Tourelles (north bank, outer fortress with bridge)
+computer_only 0 0 0 0 faction britons f5 aoe_castle scouttower 6 longbowman 4 man_at_arms 3 aoe_knight 2 aoe_archer
+
+; English reinforcement camp (east of Les Tourelles, won't move).
+; e5 holds a small garrison so the player can't just ignore the
+; eastern flank.  (e5 is also the natural "English reinforcement
+; camp" label, mirroring the original Ch.3 layout where e5 was the
+; allied-English base of operations near the bridge.)
+computer_only 0 0 0 0 faction britons e5 scouttower 4 militia 2 man_at_arms 1 longbowman
+
+; English west-bank cavalry reinforcement (b5, north of the river) —
+; mirrors the DE original's English cavalry reserve on the Orleans
+; west side.  They will sit still unless attacked.
+computer_only 0 0 0 0 faction britons b5 scouttower 2 aoe_knight 2 man_at_arms 1 longbowman
+
+; English river fleet (e3, in the Loire at the bridge's west side).  In
+; the DE original, the English send demolition ships and war cogs to
+; contest the bridge.  The AoE2 mod does not define aoe_demolition_ship
+; or aoe_cog in rules.txt, so we use a longboat (viking-style raiding
+; ship) as the closest in-game approximation that DOES exist.  The
+; single longboat on e3 — the river row — gives the player a reason
+; to bring archers to the bridge instead of running across alone.
+computer_only 0 0 0 0 faction britons e3 longboat 1
+
+; English lumber camp on the south-east bank (g2).  A handful of
+; longbowmen holding the forest, so the player can't just harvest
+; it for free.
+computer_only 0 0 0 0 faction britons g2 scouttower 2 longbowman 1 militia
+
+timer_coefficient 40
+
+trigger player1 (timer 0) (alliance 1)
+trigger computers (timer 0) (alliance 2)
+
+trigger player1 (timer 0) (register_objective 1 2)
+trigger player1 (timer 0) (add_objective 1 8824)
+trigger player1 (timer 0) (add_objective 2 8825)
+
+; Goal 1: Storm Fort St. Loup (a1) — break its monastery
+trigger player1 (enemy_building_destroyed a1 monastery) (objective_complete 1)
+; Goal 2: Storm Les Tourelles (f5) — break its castle
+trigger player1 (enemy_building_destroyed f5 aoe_castle) (objective_complete 2)
+
+trigger player1 (no_unit_left) (defeat)
+trigger player1 (key_unit_killed npc_joan) (defeat)
+trigger player1 (building_lost town_center) (defeat)

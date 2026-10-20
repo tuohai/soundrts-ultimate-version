@@ -1,0 +1,83 @@
+; coding: utf-8
+; Joan of Arc — première campagne scénarisée AoE2 DE (français)
+
+8800 Jeanne d'Arc
+8801 France, 1429. Suis Jeanne d'Arc tandis qu'elle lève le siège d'Orléans, marche sur Reims pour le sacre et chasse les Anglais de la Loire. Cinq courts chapitres.
+
+8802 Alliés incertains
+8803 Un homme d'Orléans
+8804 Soulagement d'Orléans
+8805 La chute de la Pucelle
+8806 Le nettoyage de la Loire
+
+8810 Mène Jeanne vers l'est depuis Vaucouleurs (a1), à travers les patrouilles anglaises, jusqu'à Robert de Baudricourt à b4, qui lui accordera une sainte lettre et une petite escorte. Porte ensuite la lettre à la cour du Dauphin à Chinon (f4). Jeanne doit survivre.
+8811 Orléans est assiégée par un anneau anglais de tours de guet et une petite forteresse. Entraîne des miliciens pour rassembler les bourgeois, puis brise le siège et détruis chaque tour anglaise.
+8812 Après Orléans, Jeanne mène l'armée à travers la Loire. Depuis la base française (d4), pousse vers l'est, prends Saint-Loup (a1) sur la rive sud et Les Tourelles (f5) sur la rive nord pour briser le siège anglais.
+8813 Escorter le Dauphin à travers la Bourgogne jusqu'à Reims (c5) pour le sacre. Porte trois reliques à la cathédrale. Les Bourguignons et les Anglais tenteront de t'arrêter.
+8814 Mène Jeanne en amont de la Loire et détruis chaque avant-poste anglais. Une fois chaque tour et chaque château tombés, Jeanne le rapporte à la maison.
+8815 Tiens Compiègne (b4) face à l'assaut combiné anglais et bourguignon jusqu'à ce que Charles VII soit sacré à Reims. Puis escorte Jeanne à travers le pont en sécurité.
+
+8820 Atteindre la garnison de Robert à Vaucouleurs
+8821 Porter la sainte lettre au Dauphin à Chinon
+8822 Entraîner 8 miliciens pour rassembler Orléans
+8823 Briser le siège — détruire chaque unité anglaise
+8824 Prendre Saint-Loup
+8825 Prendre Les Tourelles
+8826 Baudricourt examine la jeune fille devant lui, puis lui tend une lettre scellée et fait signe à la garnison : Portez cette lettre au Dauphin à Chinon. Ces hommes chevaucheront avec vous. Que Dieu guide vos pas, Jeanne d'Arc.
+8827 Porter trois reliques à la cathédrale de Reims
+8828 Vaincre l'embuscade bourguignonne et anglaise
+8829 Détruire l'avant-poste anglais sur la basse Loire
+8830 Le Dauphin lit la lettre et tombe à genoux. La France ressuscitera. La guerre pour le royaume a vraiment commencé, et Jeanne chevauche à sa tête.
+8831 Détruire chaque tour et château anglais
+8832 Tenir Compiègne jusqu'au sacre de Charles VII
+8833 Escorter Jeanne en sécurité à travers le pont
+8834 La Hire, capitaine de la garnison d'Orléans, examine la Pucelle et hoche la tête : « Laissez-la passer. Prenez ces hommes — et que Dieu vous accorde la vitesse que votre courage mérite. »
+
+8835 Jeanne arrive à Blois et rencontre l'armée française. Le duc d'Alençon parle : 'L'armée de France est vôtre à commander, Pucelle. Menez-nous à la victoire.'
+8836 Les chariots de ravitaillement ont traversé la Loire. La ville d'Orléans ouvre ses portes : 'Les approvisionnements sont arrivés — la ville d'Orléans est vôtre. Préparez-vous maintenant pour le siège.'
+8837 Les citoyens d'Orléans doivent atteindre l'Âge des Châteaux. Faites progresser votre ville à travers les âges pour forger une armée française plus forte.
+8838 Le château anglais s'effondre. Le siège d'Orléans est brisé. La France se relèvera. La guerre pour le royaume a vraiment commencé.
+8840 Vaucouleurs
+8841 Chinon
+8842 Orléans
+8843 Meung-sur-Loire
+8844 Beaugency
+8845 Forteresse anglaise
+8846 Reims
+8847 Bourgogne
+8848 Basse Loire
+8849 Haute Loire
+8850 Clé de Paris
+8851 Compiègne
+8852 Camp de siège anglais
+
+8870 Vaucouleurs
+8871 Base française
+8872 Chinon
+8873 Blois
+8874 Fort Saint-Loup
+8875 Les Tourelles
+8876 Anneau de siège anglais
+8877 Compiègne sud
+8878 Citadelle de Compiègne
+8879 Embuscade bourguignonne
+8880 Avant-poste français
+8881 Beaugency
+8882 Jallains
+8883 Basse Loire
+8884 Meung-sur-Loire
+8885 Orléans
+8886 Forteresse anglaise
+8887 Cathédrale de Reims
+8888 Paris
+8889 Chinon
+8890 Citadelle de Compiègne
+
+8860 sainte lettre
+8861 clé de Paris
+8862 Jeanne d'Arc
+8863 Robert de Baudricourt
+8864 Charles, Dauphin de France
+8865 Fille de Domrémy, une paysanne qui entend les saints. En 1429, elle chevauche jusqu'à Chinon pour lever le siège d'Orléans et placer le Dauphin Charles sur le trône de France.
+8866 Capitaine de garnison de Vaucouleurs. Sceptique, brusque et pratique, il éprouve la résolution de la Pucelle avant de lui accorder une petite escorte et une lettre de passage vers le Dauphin.
+8867 Héritier dépossédé du trône de France, tenant sa cour à Chinon. La guerre va mal ; sa légitimité — et la France elle-même — dépendent du sacre à Reims.

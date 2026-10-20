@@ -1,0 +1,83 @@
+; coding: utf-8
+; Joan of Arc — první příběhová kampaň AoE2 DE (čeština)
+
+8800 Johanka z Arku
+8801 Francie, 1429. Sleduj Johanku z Arku, jak zvedá obléhání Orléansu, pochoduje do Remeše ke korunovaci a vyhání Angličany z Loiry. Pět krátkých kapitol.
+
+8802 Nejistí spojenci
+8803 Muž z Orléansu
+8804 Osvobození Orléansu
+8805 Pád Panny
+8806 Očista Loiry
+
+8810 Veď Johanku na východ z Vaucouleurs (a1) kolem anglických hlídek k Robertovi de Baudricourtovi v b4, který jí udělí svatý dopis a malý doprovod. Pak dones dopis ke dvoru dauphina v Chinonu (f4). Johanka musí přežít.
+8811 Orléans obléhá anglický kruh strážních věží a malá pevnost. Vycvič milice, aby se přidali měšťané, pak prolom obléhání a znič každou anglickou věž.
+8812 Po Orléansu vede Johanka armádu přes Loiру. Z francouzské základny (d4) se vydej na východ, vezmi Saint-Loup (a1) na jižním břehu a Les Tourelles (f5) na severním břehu, abys prolomil anglické obléhání.
+8813 Eskoruj dauphina Burgundskem do Remeše (c5) ke korunovaci. Přines tři relikvie do katedrály. Burgundi a Angličané se tě pokusí zastavit.
+8814 Veď Johanku proti proudu Loiry a nič každou anglickou základnu. Až každá věž a každý hrad padne, Johanka to přinese domů.
+8815 Drž Compiègne (b4) proti spojenému anglicko-burgundskému útoku, dokud nebude Karel VII. korunován v Remeši. Pak eskortuj Johanku přes most do bezpečí.
+
+8820 Dostat se k Robertově posádce ve Vaucouleurs
+8821 Doručit svatý dopis dauphinovi do Chinonu
+8822 Vycvičit 8 milicionářů, aby se přidal Orléans
+8823 Prolomit obléhání — zničit každou anglickou jednotku
+8824 Dobýt Saint-Loup
+8825 Dobýt Les Tourelles
+8826 Baudricourt si prohlédne dívku před sebou, pak jí podá zapečetěný dopis a pokynе posádce: Odneste tento dopis dauphinovi do Chinonu. Tito muži pojedou s vámi. Kéž Bůh vede vaše kroky, Johanko z Arku.
+8827 Doručit tři relikvie do katedrály v Remeši
+8828 Porazit burgundsko-anglickou léčku
+8829 Zničit anglickou základnu na dolní Loіře
+8830 Dauphin čte dopis a padne na kolena. Francie znovu povstane. Válka o království skutečně začala a Johanka jede v jejím čele.
+8831 Zničit každou anglickou věž a hrad
+8832 Držet Compiègne, dokud nebude Karel VII. korunován
+8833 Eskortovat Johanku do bezpečí přes most
+8834 La Hire, kapitán orleánské posádky, si prohlédne Pannu a přikývne: «Nechte ji projít. Vezměte si ty muže — a ať vám Bůh dopřeje rychlost, jakou si vaše odvaha zaslouží.»
+
+8835 Jana přijíždí do Blois a setkává se s francouzskou armádou. Vévoda d'Alençon říká: 'Armáda Francie je vaše k velení, Panno. Vedete nás k vítězství.'
+8836 Zásobovací vozy přejely přes Loiru. Město Orléans otevírá brány: 'Zásoby dorazily — město Orléans je vaše. Nyní se připravte na obléhání.'
+8837 Občané Orléans musí dosáhnout Věku hradů. Proveďte své město věky a vytvořte silnější francouzskou armádu.
+8838 Anglický hrad se zhroutí. Obléhání Orléans je prolomeno. Francie povstane. Válka o království skutečně začala.
+8840 Vaucouleurs
+8841 Chinon
+8842 Orléans
+8843 Meung-sur-Loire
+8844 Beaugency
+8845 Anglická pevnost
+8846 Remeš
+8847 Burgundsko
+8848 Dolní Loira
+8849 Horní Loira
+8850 Pařížský klíč
+8851 Compiègne
+8852 Anglický obléhací tábor
+
+8870 Vaucouleurs
+8871 Francouzská základna
+8872 Chinon
+8873 Blois
+8874 Fort St. Loup
+8875 Les Tourelles
+8876 Anglický obléhací kruh
+8877 Compiègne jih
+8878 Cidadela Compiègne
+8879 Burgundská léčka
+8880 Francouzská přední základna
+8881 Beaugency
+8882 Jallains
+8883 Dolní Loira
+8884 Meung-sur-Loire
+8885 Orleáns
+8886 Anglická pevnost
+8887 Katedrála v Remeši
+8888 Paříž
+8889 Chinon
+8890 Cidadela Compiègne
+
+8860 svatý dopis
+8861 pařížský klíč
+8862 Johanka z Arku
+8863 Robert de Baudricourt
+8864 Karel, dauphin Francie
+8865 Dcera z Domrémy, selská dívka, která slyší svaté. V roce 1429 jede do Chinonu, aby zvedla obléhání Orléansu a dosadila dauphina Karla na francouzský trůn.
+8866 Kapitán posádky ve Vaucouleurs. Skeptický, přímý a praktický, zkouší odhodlání Panny, než jí udělí malý doprovod a dopis o průchodu k dauphinovi.
+8867 Připravený o dědictví následník francouzského trůnu, držící dvůr v Chinonu. Válka jde špatně; jeho legitimita — i celá Francie — závisí na korunovaci v Remeši.

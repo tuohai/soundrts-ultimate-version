@@ -1,0 +1,99 @@
+; 1 -- Uneasy Allies (AoE2 DE Joan of Arc, ch. 1)
+;
+; Story beats (DE Joan of Arc ch. 1):
+;   Joan arrives at Vaucouleurs (west) and convinces Robert de
+;   Baudricourt to grant her a small escort and a holy letter.
+;   She then travels across English-held country to the Dauphin's
+;   court at Chinon (east). Joan must survive the journey -- if
+;   she dies, the war is lost.
+;
+; Map grid (7x4 -- a..g columns, 4 rows):
+;       a       b       c       d       e       f       g   (g is buffer)
+;    4 [a4] [b4=Baud.] [c4] [d4] [e4] [f4=Dau.] [g4]
+;    3 [a3] [b3]   [c3] [d3=E] [e3=E] [f3]   [g3]
+;    2 [a2] [b2]   [c2=E] [d2] [e2] [f2]   [g2]
+;    1 [a1=Joan] [b1] [c1] [d1] [e1] [f1]   [g1]
+;
+; Wrap-safety analysis:
+;   * _create_we_passage wraps when cx+1 == nb_columns (cx = 0-based
+;     nb_columns-1). To keep column f (0-based 5) safe we set
+;     nb_columns = 7 so that f -> g is a real neighbour, not a wrap.
+;   * Column g (0-based 6) WOULD wrap (cx+1 == 7), so g is left
+;     empty -- no we/sn entries reference g.
+;   * _create_sn_passage wraps when cy+1 == nb_lines (cy = 0-based
+;     nb_lines-1). To keep 1-based y=4 (0-based y=3) safe, we put
+;     b4 / f4 in west_east_paths (y=4) and NEVER in south_north_paths.
+;     south_north_paths only covers 1-based y=1..3.
+
+title 8802
+intro 8810
+
+square_width 12
+nb_columns 7
+nb_lines 4
+
+nb_players_min 1
+nb_players_max 1
+random_starts 0
+
+square_name 8871 1,1        ; Vaucouleurs
+square_name 8889 6,4        ; Chinon (Dauphin's court) at f4
+
+west_east_paths a1 b1 c1 d1 e1 f1                ; safe: x 1..6, y=1
+west_east_paths a2 b2 c2 d2 e2 f2                ; safe: x 1..6, y=2
+west_east_paths a3 b3 c3 d3 e3 f3                ; safe: x 1..6, y=3
+west_east_paths a4 b4 c4 d4 e4 f4                ; safe: x 1..6, y=4 (Baudricourt b4, Dauphin f4)
+; No y=4 in south_north_paths -- b4 and f4 must be reached via the
+; west_east row above.
+south_north_paths a1 a2 a3 b1 b2 b3 c1 c2 c3 d1 d2 d3 e1 e2 e3 f1 f2 f3
+
+goldmines 100 a1
+woods 200 a1 b1
+orchard 150 a1
+nb_meadows_by_square 2
+additional_meadows a1
+
+; Start: Vaucouleurs (tiny French town) + Joan (npc_joan -- hero unit)
+; No letter on the ground -- Joan must seek it at Baudricourt
+player 0 0 0 0 a1 town_center 2 peasant 1 house 1 npc_joan
+
+; English outposts along the Loire
+computer_only 0 0 0 0 faction britons c2 scouttower 2 militia
+computer_only 0 0 0 0 faction britons d3 2 militia 1 aoe_archer
+computer_only 0 0 0 0 faction britons e3 scouttower 2 militia 1 aoe_archer
+
+; Baudricourt at b4 (real NPC npc_baudricourt -- dialogue + grants letter + escort)
+computer_only 0 0 0 0 neutral faction franks b4 1 npc_baudricourt
+
+; Dauphin's court at Chinon f4 (neutral -- receives holy_letter, allied after delivery)
+; No town_center: town_center is class building with rdg 5 (would
+; fire on any passing Joan unit, which looks like an unprovoked
+; attack). Use just the npc_dauphin (the quest NPC) -- that's the
+; unit that receives holy_letter via the receive_items mechanic.
+computer_only 0 0 0 0 neutral faction franks f4 1 npc_dauphin
+
+timer_coefficient 40
+
+trigger player1 (timer 0) (alliance 1)
+trigger computer4 (timer 0) (alliance 1)
+trigger computer1 (timer 0) (alliance 2)
+trigger computer2 (timer 0) (alliance 2)
+trigger computer3 (timer 0) (alliance 2)
+
+trigger player1 (timer 0) (register_objective 1)
+trigger player1 (timer 0) (add_objective 1 8820)
+
+; Step 1: Joan (npc_joan) reaches Baudricourt at b4
+; -> cut_scene "Baudricourt grants holy letter + escort"
+; -> Joan receives holy_letter in inventory
+; -> 4 militia + 2 aoe_knight spawn at b4 and join player1
+trigger player1 (has_entered b4 npc_joan) (do (cut_scene 8826) (add_inventory_item holy_letter 1 npc_joan) (add_units b4 4 militia 2 aoe_knight))
+
+; Step 2: Joan carries holy_letter and GIVEs it to Dauphin at f4
+; npc_has_item triggers when Dauphin receives the letter in inventory
+trigger player1 (npc_has_item npc_dauphin holy_letter f4) (do (cut_scene 8830) (objective_complete 1))
+
+; Defeat conditions
+trigger player1 (key_unit_killed npc_joan) (defeat)
+trigger player1 (no_unit_left) (defeat)
+trigger player1 (building_lost town_center) (defeat)

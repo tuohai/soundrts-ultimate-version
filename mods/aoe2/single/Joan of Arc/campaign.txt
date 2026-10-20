@@ -1,0 +1,3 @@
+title 8800
+synopsis 8801
+default_faction franks

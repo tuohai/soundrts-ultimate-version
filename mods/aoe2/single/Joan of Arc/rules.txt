@@ -1,0 +1,199 @@
+; coding: utf-8
+; Campaign-local rules for Joan of Arc.
+; Defines quest items used by chapters in this campaign.
+
+; npc_dauphin -- Dauphin of Chinon (f4); receives holy_letter from Joan.
+; Inherits class soldier, whose default ai_mode is "guard" + mdg 0.
+; That would make the Dauphin act as a huntable creature that "chases"
+; any player unit that walks past him (an attack command with no
+; actual damage). For a story NPC we want the Dauphin to stand still
+; and not attack anyone, so we explicitly:
+;   * drop the explicit ``ai_mode`` line entirely (NONE / empty is
+;     not a valid ai_mode value -- the parser would log
+;     "error in line: ai_mode" -- and the default "offensive"
+;     fallback in _resolve_default_ai_mode is harmless because
+;     mdg 0 / mdf 0 / rdf 0 / rdg 0 mean no damage is dealt)
+;   * zero out all damage stats (mdg, mdf, rdf, rdg) to belt-and-braces
+;   * set agro_on_sight 0 (no aggro from passing units)
+;   * set counterattack_enabled 0 (no retaliation even if hit)
+;   * keep receive_items + accepted_items so the holy_letter handover
+;     still works (npc_has_item trigger on f4).
+def npc_dauphin
+class soldier
+hp_max 50
+mdg 0
+mdf 0
+rdf 0
+rdg 0
+agro_on_sight 0
+counterattack_enabled 0
+receive_items 1
+accepted_items holy_letter
+; accept_from self/ally/neutral. We deliberately do NOT require
+; "ally" alone because right after populate_map() the
+; `alliance 1` triggers have not yet fired -- npc_dauphin and
+; player1 are in different default alliances ("ai" vs None),
+; and accepts_item() would return False until the trigger runs.
+; Including "neutral" lets the Dauphin receive the holy letter
+; the moment Joan stands next to him, before any alliance is
+; resolved; "enemy" is still rejected so a hostile AI cannot
+; trigger the victory cutscene.
+accept_from self
+accept_from ally
+accept_from neutral
+
+; npc_baudricourt -- Robert de Baudricourt at Vaucouleurs (b4); dialogue trigger only.
+; Inherits monk so it renders with the monk sprite in the AoE2 mod
+; (res-base 'soldier' has no sprite in the AoE2 mod -- unit would be invisible).
+; Inherits class soldier via monk; because monk is declared as
+; ``def monk class soldier`` (NOT ``is_a soldier``), it bypasses the
+; huntable class soldier block at AoE2 rules:318 (which sets
+; agro_on_sight 0) and inherits Soldier.agro_on_sight = 1 from the
+; Creature base. Without the explicit overrides below, Baudricourt
+; would chase Joan on sight and issue an attack command that deals no
+; damage (mdg/mdf/rdf/rdg are all 0 on monk) -- the visible bug.
+; Fix: explicitly set agro_on_sight 0 and counterattack_enabled 0 so
+; the NPC stands still and never initiates or returns fire. We also
+; drop the explicit ``ai_mode`` line because (a) the bare word
+; triggers a "error in line: ai_mode" parser warning, and (b) the
+; default "offensive" fallback in _resolve_default_ai_mode is
+; harmless given agro_on_sight 0 + counterattack_enabled 0 + mdg 0.
+def npc_baudricourt
+is_a monk
+hp_max 50
+agro_on_sight 0
+counterattack_enabled 0
+receive_items 0
+; rdg_cd 0 / rdg_range 0 -- Baudricourt is a story NPC, not a ranged
+; attacker. The rdg_cd / rdg_range 9 inherited from monk is misleading
+; (it shows up as "ranged cooldown 1.6 / ranged range 9" in the
+; unit-attribute screen for a unit that has no ranged weapon). Suppress
+; it here, same as npc_joan. (monk's own rdg_cd / rdg_range has been
+; zeroed in mods/aoe2/rules.txt, so this also future-proofs if
+; someone later restores those values on monk.)
+rdg_cd 0
+rdg_range 0
+
+; 圣女致信（交给希农王太子；title 8860）
+def holy_letter
+class item
+transport_volume 1
+
+; 圣物（决定版风格章节借用——第 4、6 章用）
+def joan_relic
+   class item
+transport_volume 1
+
+; 巴黎城钥（第 5 章；title 8861）
+def paris_key
+   class item
+transport_volume 1
+
+; npc_joan -- Joan of Arc, the hero unit. Inherits monk (sprite) but is
+; stronger and explicitly named so the player recognises it as Joan,
+; not a generic monk. All Joan chapters use npc_joan as the key unit
+; (the mission-defining unit: if Joan dies, the chapter fails).
+;
+; Design intent: Joan is a non-combat hero NPC that the player MUST protect,
+; exactly like npc_dauphin and npc_baudricourt in this same file. She keeps
+; the monk's ranged conversion/heal (rdg_cd 1.6 / rdg_range 9 inherited from
+; monk), gets buffed HP/sight/speed for survivability, but MUST NOT have any
+; melee attack -- otherwise she becomes a 12-damage melee murder machine
+; (3x militia, 6.7x monk HP) which contradicts the "key unit, do not let her
+; die" design and breaks the ch2 "rally the militia -> b2" objective that
+; asks the PLAYER's militia to do the fighting.
+;
+; Do NOT add mdg / mdg_range here. Inherits "class soldier -> monk ->
+; npc_joan" gives mdg 0 / mdg_range 0 (zero melee, see mods/aoe2/rules.txt
+; line 318-333), matching the npc_dauphin / npc_baudricourt pattern.
+def npc_joan
+is_a monk
+hp_max 200
+sight_range 6
+speed 1.0
+; rdg 0 / rdg_cd 0 / rdg_range 0 -- Joan is a hero/story NPC, not a
+; ranged attacker. Monk's default rdg_cd 1.6 / rdg_range 9 is the
+; conversion/heal cooldown+radius scaffolding that the AoE2 monk uses
+; for its ranged skill kit; Joan has no ranged attack of her own
+; (rdg 0 inherited), and her a_conversion skill / heal_* use their
+; own cooldowns (time_cost 6, heal_cd 0.4) and ranges (effect_range
+; 9, heal_range 8). Suppressing rdg_cd / rdg_range here keeps the
+; unit-attribute screen from displaying misleading "ranged cooldown
+; 1.6 / ranged range 9" lines for a unit that has no ranged weapon,
+; and stops the AI from treating Joan as a ranged unit.
+rdg_cd 0
+rdg_range 0
+; npc_d_alencon -- Duke d'Alen?on, Joan's military escort in ch. 2.
+; A combat-capable hero unit that fights alongside Joan, mirroring
+; the DE ch. 2 starting force (Joan + Duke d'Alen?on + escort).
+; Inherits knight so it renders with the knight sprite in the AoE2
+; mod and gets a usable melee attack (unlike npc_joan which is a
+; non-combat story NPC).  agro_on_sight 0 + counterattack_enabled 0
+; so the Duke doesn't aggro on passing units << the player must
+; manually move him into combat, matching the DE behaviour where
+; the Duke is a controllable hero.
+def npc_d_alencon
+is_a knight
+hp_max 600
+sight_range 8
+speed 1.2
+mdg 12
+mdf 0
+rdf 6
+rdg 0
+agro_on_sight 0
+counterattack_enabled 0
+
+; npc_cathedral -- the cathedral in Orleans, named so the ch. 2
+; "cathedral must survive" defeat trigger can reference it as a
+; key_unit.  Renders as a building (monastery-class) so it shows
+; up on the minimap as a unique structure.  hp_max 4000 + 4800
+; mdf 8 matches the DE cathedral's high HP + Castle-Age armour.
+def npc_cathedral
+class building
+is_a building
+hp_max 4000
+cost 0 0 0 0
+time_cost 0
+mdf 8
+rdf 8
+agro_on_sight 0
+counterattack_enabled 0
+population_provided 0
+is_repairable 0
+
+; npc_reims_cathedral -- the cathedral of Reims, ch. 4 "The Rising".
+; Receives the three joan_relic holy relics from Joan; on the 3rd
+; delivery the coronation cut_scene fires and the chapter completes.
+; Renders as a building (monastery-class) so it shows on the minimap
+; as a unique structure, the same pattern as npc_cathedral in ch. 2.
+; HP / armour match the DE Reims cathedral (Castle Age stone church:
+; hp_max 4000 + mdf 8 -- identical to npc_cathedral so both
+; cathedrals behave consistently across the campaign).
+def npc_reims_cathedral
+class building
+is_a building
+hp_max 4000
+cost 0 0 0 0
+time_cost 0
+mdf 8
+rdf 8
+agro_on_sight 0
+counterattack_enabled 0
+population_provided 0
+is_repairable 0
+; Quest-receiver (mirrors npc_dauphin's receiver pattern, but for
+; relics instead of holy_letter).  The Dauphin situation needs a
+; 3-way accept_from (self/ally/neutral) because right after
+; populate_map() the (alliance 1) triggers have not yet fired --
+; npc_reims_cathedral and player1 are in different default alliances
+; ("ai" vs None) and accepts_item() would return False until the
+; trigger runs.  Including "neutral" lets Joan hand the relics to
+; the cathedral the moment she stands next to it, before any
+; alliance is resolved; "enemy" is still rejected so a hostile AI
+; cannot trigger the coronation.
+receive_items 1
+accepted_items joan_relic
+accept_from self
+accept_from ally
+accept_from neutral

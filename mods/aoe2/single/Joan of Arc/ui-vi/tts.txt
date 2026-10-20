@@ -1,0 +1,83 @@
+; coding: utf-8
+; Joan of Arc — chiến dịch cốt truyện đầu tiên của AoE2 DE (tiếng Việt)
+
+8800 Jeanne d'Arc
+8801 Pháp, 1429. Theo dõi Jeanne d'Arc khi cô dỡ bỏ bao vây Orleans, hành quân đến Reims để đăng quang và đuổi quân Anh khỏi Loire. Năm chương ngắn.
+
+8802 Đồng minh bất định
+8803 Một người Orleans
+8804 Giải phóng Orléans
+8805 Con gái ngã xuống
+8806 Dọn sạch Loire
+
+8810 Dẫn Jeanne về phía đông từ Vaucouleurs (a1), qua các tuần tra Anh, đến Robert de Baudricourt ở b4, người sẽ ban cho cô một lá thư thánh và một đoàn hộ tống nhỏ. Sau đó mang thư đến triều đình Thái tử ở Chinon (f4). Jeanne phải sống sót.
+8811 Orleans bị bao vây bởi một vòng tháp canh Anh và một pháo đài nhỏ. Huấn luyện dân binh để tập hợp dân thành thị, rồi phá vỡ cuộc bao vây và phá hủy mọi tháp Anh.
+8812 Sau Orleans, Jeanne dẫn đoàn quân vượt Loire. Từ căn cứ Pháp (d4), đẩy về phía đông, chiếm Saint-Loup (a1) bên bờ nam và Les Tourelles (f5) bên bờ bắc để phá vòng vây Anh.
+8813 Hộ tống Thái tử qua Burgundy đến Reims (c5) để đăng quang. Mang ba thánh vật đến nhà thờ chính tòa. Người Burgundy và Anh sẽ tìm cách ngăn bạn.
+8814 Dẫn Jeanne ngược dòng Loire và phá hủy mọi tiền đồn Anh. Khi mọi tháp và lâu đài đổ xuống, Jeanne sẽ mang nó về nhà.
+8815 Giữ Compiègne (b4) chống lại cuộc tấn công kết hợp của Anh và Burgundy cho đến khi Charles VII đăng quang tại Reims. Sau đó hộ tống Jeanne qua cầu đến nơi an toàn.
+
+8820 Đến đồn trú của Robert ở Vaucouleurs
+8821 Chuyển thư thánh cho Thái tử ở Chinon
+8822 Huấn luyện 8 dân binh để tập hợp Orleans
+8823 Phá vỡ bao vây — phá hủy mọi đơn vị Anh
+8824 Chiếm Saint-Loup
+8825 Chiếm Les Tourelles
+8826 Baudricourt nhìn ngắm cô gái trước mặt, rồi đưa cho cô một lá thư có niêm phong và ra hiệu cho đồn trú: Mang lá thư này đến Thái tử ở Chinon. Những người đàn ông này sẽ đi cùng các ngươi. Nguyện Chúa hướng dẫn bước chân ngươi, Jeanne d'Arc.
+8827 Chuyển ba thánh vật đến nhà thờ chính tòa Reims
+8828 Đánh bại cuộc phục kích của Burgundy và Anh
+8829 Phá hủy tiền đồn Anh ở hạ Loire
+8830 Thái tử đọc thư và quỳ xuống. Nước Pháp sẽ hồi sinh. Cuộc chiến vì vương quốc thực sự bắt đầu, và Jeanne cưỡi ngựa ở đầu.
+8831 Phá hủy mọi tháp và lâu đài Anh
+8832 Giữ Compiègne cho đến khi Charles VII đăng quang
+8833 Hộ tống Jeanne an toàn qua cầu
+8834 La Hire, đội trưởng đồn trú Orleans, đánh giá Trinh Nữ rồi gật đầu: «Cho nàng qua. Mang theo những người này — và nguyện Chúa ban cho nàng tốc độ xứng đáng với lòng dũng cảm.»
+
+8835 Jeanne đến Blois và gặp gỡ đội quân Pháp. Công tước d'Alençon nói: 'Đội quân nước Pháp dưới quyền chỉ huy của Trinh Nữ. Hãy dẫn dắt chúng tôi đến chiến thắng.'
+8836 Xe tiếp tế đã vượt sông Loire. Thành phố Orléans mở cổng: 'Hàng tiếp tế đã đến — thành phố Orléans thuộc về ngài. Hãy chuẩn bị cho cuộc bao vây.'
+8837 Công dân Orléans phải đạt đến Thời đại Lâu đài. Đưa thành phố của bạn tiến qua các thời đại để tạo nên một đội quân Pháp hùng mạnh hơn.
+8838 Lâu đài Anh sụp đổ. Cuộc bao vây Orléans bị phá vỡ. nước Pháp sẽ vùng lên. Cuộc chiến vì vương quốc thực sự bắt đầu.
+8840 Vaucouleurs
+8841 Chinon
+8842 Orleans
+8843 Meung-sur-Loire
+8844 Beaugency
+8845 Pháo đài Anh
+8846 Reims
+8847 Burgundy
+8848 Hạ Loire
+8849 Thượng Loire
+8850 Chìa khóa Paris
+8851 Compiègne
+8852 Trại bao vây Anh
+
+8870 Vaucouleurs
+8871 Căn cứ Pháp
+8872 Chinon
+8873 Blois
+8874 Pháo đài St. Loup
+8875 Les Tourelles
+8876 Vòng bao vây Anh
+8877 Compiègne phía nam
+8878 Thành trì Compiègne
+8879 Phục kích Burgundy
+8880 Tiền đồn Pháp
+8881 Beaugency
+8882 Jallains
+8883 Hạ Loire
+8884 Meung-sur-Loire
+8885 Orléans
+8886 Pháo đài Anh
+8887 Nhà thờ chính tòa Reims
+8888 Paris
+8889 Chinon
+8890 Thành trì Compiègne
+
+8860 thư thánh
+8861 chìa khóa Paris
+8862 Jeanne d'Arc
+8863 Robert de Baudricourt
+8864 Charles, Thái tử Pháp
+8865 Con gái của Domrémy, một cô gái nhà quê nghe thấy các thánh. Năm 1429, cô cưỡi ngựa đến Chinon để dỡ bỏ bao vây Orleans và đưa Thái tử Charles lên ngai vàng nước Pháp.
+8866 Đội trưởng đồn trú Vaucouleurs. Hoài nghi, thẳng thắn và thực tế, ông thử thách quyết tâm của Trinh nữ trước khi cho cô một đoàn hộ tống nhỏ và một lá thư thông hành đến Thái tử.
+8867 Người thừa kế bị tước đoạt của ngai vàng Pháp, đang giữ triều đình ở Chinon. Cuộc chiến đang diễn biến xấu; tính chính danh của ông — và cả nước Pháp — phụ thuộc vào lễ đăng quang tại Reims.

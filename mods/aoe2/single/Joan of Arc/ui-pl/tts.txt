@@ -1,0 +1,83 @@
+; coding: utf-8
+; Joan of Arc — pierwsza kampania fabularna AoE2 DE (polski)
+
+8800 Joanna d'Arc
+8801 Francja, 1429. Podążaj za Joanną d'Arc, gdy zdejmuje oblężenie Orleanu, maszeruje do Reims na koronację i wypędza Anglików z Loary. Pięć krótkich rozdziałów.
+
+8802 Niepewni sprzymierzeńcy
+8803 Człowiek z Orleanu
+8804 Wyzwolenie Orleanu
+8805 Upadek Dziewicy
+8806 Oczyszczenie Loary
+
+8810 Prowadź Joannę na wschód z Vaucouleurs (a1) obok angielskich patroli do Roberta de Baudricourt w b4, który da jej święty list i mały orszak. Potem zanieś list na dwór delfina w Chinon (f4). Joanna musi przeżyć.
+8811 Orlean jest oblegany przez angielski pierścień wież strażniczych i małą twierdzę. Wyszkol milicję, by zebrać mieszczan, potem przełam oblężenie i zniszcz każdą angielską wieżę.
+8812 Po Orleanie Joanna prowadzi armię przez Loirę. Z bazy francuskiej (d4) ruszaj na wschód, zdobądź Saint-Loup (a1) na południowym brzegu i Les Tourelles (f5) na północnym, by przerwać angielskie oblężenie.
+8813 Eskortuj delfina przez Burgundię do Reims (c5) na koronację. Zanieś trzy relikwie do katedry. Burgundczycy i Anglicy spróbują cię powstrzymać.
+8814 Prowadź Joannę w górę Loary i niszcz każdy angielski posterunek. Gdy każda wieża i każdy zamek padnie, Joanna przyniesie to do domu.
+8815 Trzymaj Compiègne (b4) przeciw połączonemu angielsko-burgundzkiemu atakowi, aż Karol VII zostanie koronowany w Reims. Potem eskortuj Joannę przez most w bezpieczne miejsce.
+
+8820 Dotrzeć do garnizonu Roberta w Vaucouleurs
+8821 Doręczyć święty list delfinowi w Chinon
+8822 Wyszkolić 8 milicjantów, by zebrać Orlean
+8823 Przełamać oblężenie — zniszczyć każdą angielską jednostkę
+8824 Zdobyć Saint-Loup
+8825 Zdobyć Les Tourelles
+8826 Baudricourt przygląda się stojącej przed nim dziewczynie, po czym podaje jej zapieczętowany list i daje znak garnizonowi: Zanieście ten list delfinowi do Chinon. Ci ludzie pojadą z wami. Niech Bóg kieruje waszymi krokami, Joanno d'Arc.
+8827 Doręczyć trzy relikwie do katedry w Reims
+8828 Pokonać burgundzko-angielską zasadzkę
+8829 Zniszczyć angielski posterunek na dolnej Loarze
+8830 Delfin czyta list i pada na kolana. Francja odrodzi się. Wojna o królestwo naprawdę się rozpoczęła, a Joanna jedzie na jej czele.
+8831 Zniszczyć każdą angielską wieżę i zamek
+8832 Trzymać Compiègne do koronacji Karola VII
+8833 Eskortować Joannę w bezpieczeństwo przez most
+8834 La Hire, kapitan garnizonu w Orleanie, przygląda się Dziewicy i kiwa głową: «Przepuśćcie ją. Weź tych ludzi — i niech Bóg da ci prędkość, na jaką zasługuje twoja odwaga.»
+
+8835 Joanna przybywa do Blois i spotyka armię francuską.książę d'Alençon mówi: 'Armia Francji jest pod twoją komendą, Dziewico. Poprowadź nas do zwycięstwa.'
+8836 Wozy zaopatrzenia przeprawiły się przez Loarę. Miasto Orlean otwiera bramy: 'Zaopatrzenie dotarło — miasto Orlean jest twoje. Teraz przygotuj się do oblężenia.'
+8837 Mieszkańcy Orlean muszą osiągnąć Wieki Zamków. Przeprowadź swoje miasto przez epoki, aby stworzyć silniejszą armię francuską.
+8838 Angielski zamek рушиться. Oblężenie Orlean jest złamane. Francja powstanie ponownie. Wojna o królestwo naprawdę się rozpoczęła.
+8840 Vaucouleurs
+8841 Chinon
+8842 Orlean
+8843 Meung-sur-Loire
+8844 Beaugency
+8845 Angielska twierdza
+8846 Reims
+8847 Burgundia
+8848 Dolna Loara
+8849 Górna Loara
+8850 Klucz do Paryża
+8851 Compiègne
+8852 Angielski obóz oblężniczy
+
+8870 Vaucouleurs
+8871 Francuska baza
+8872 Chinon
+8873 Blois
+8874 Fort St. Loup
+8875 Les Tourelles
+8876 Angielski pierścień oblężniczy
+8877 Compiègne południe
+8878 Cytadela Compiègne
+8879 Burgundzka zasadzka
+8880 Francuski posterunek
+8881 Beaugency
+8882 Jallains
+8883 Dolna Loara
+8884 Meung-sur-Loire
+8885 Orlean
+8886 Angielska twierdza
+8887 Katedra w Reims
+8888 Paryż
+8889 Chinon
+8890 Cytadela Compiègne
+
+8860 święty list
+8861 klucz do Paryża
+8862 Joanna d'Arc
+8863 Robert de Baudricourt
+8864 Karol, delfin Francji
+8865 Córka z Domrémy, wiejska dziewczyna, która słyszy świętych. W 1429 roku jedzie do Chinon, by zdjąć oblężenie Orleanu i posadzić delfina Karola na tronie Francji.
+8866 Kapitan garnizonu w Vaucouleurs. Sceptyczny, prosty i praktyczny, sprawdza determinację Dziewicy, zanim da jej mały orszak i list przejazdowy do delfina.
+8867 Pozbawiony dziedzictwa spadkobierca francuskiego tronu, dworujący w Chinon. Wojna idzie źle; jego legitymność — i sama Francja — zależą od koronacji w Reims.

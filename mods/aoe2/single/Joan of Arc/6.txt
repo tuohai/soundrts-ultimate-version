@@ -1,0 +1,92 @@
+; 6 — A Perfect Stratagem (AoE2 DE Joan of Arc, ch. 6)
+;
+; Story beats (DE Joan of Arc ch. 6 — original, attacker POV):
+;   Joan's stand at the Compiègne bridge in ch. 4 has given the
+;   Burgundians/English a strategic opening. They lay siege to
+;   the citadel of Compiègne, where the French garrison still
+;   holds under Dunois. The perfect stratagem is the encirclement
+;   that ends Joan's campaign. The player commands the besieging
+;   Burgundian army.
+;
+; Map grid (6×5, with the Oise river along row 1):
+;   [a5] [b5] [c5] [d5] [e5] [f5]   ← Burgundian forward camp at f5
+;   [a4] [b4] [c4] [d4] [e4] [f4]
+;   [a3] [b3] [c3] [d3] [e3] [f3]
+;   [a2] [b2] [c2] [d2] [e2] [f2]
+;   [a1] [b1] [c1] [d1] [e1] [f1]   ← Oise river row, bridge at a1
+;
+;   Player base: Burgundian siege camp at f5 (player1, alliance 1)
+;   Compiègne citadel: d4 — French garrison (alliance 2, enemy)
+;   Oise bridge: a1 — French holdout, must be cut off
+
+title 8807
+intro 8815
+
+square_width 12
+nb_columns 6
+nb_lines 5
+
+nb_players_min 1
+nb_players_max 1
+random_starts 0
+
+square_name 8890 4,4             ; 贡比涅要塞（computer2, d4 — French citadel, besieging target）
+square_name 8876 5,5             ; 英军围城圈（computer1, e5 — English reinforcement camp, allied）
+
+west_east_paths a1 b1 c1 d1 e1
+west_east_paths a3 b3 c3 d3 e3
+west_east_paths a4 b4 c4 d4 e4
+west_east_paths a5 b5 c5 d5 e5
+south_north_paths a1 a2 a3 a4 b1 b2 b3 b4 c1 c2 c3 c4 d1 d2 d3 d4 e1 e2 e3 e4 f1 f2 f3 f4
+
+terrain river a1 b1 c1 d1 e1 f1
+water a2 b2 c2 d2 e2 f2
+
+goldmines 300 f5
+woods 400 f5 e5
+orchard 200 f5
+stone_mines 300 f5
+nb_meadows_by_square 0
+additional_meadows a3 b3 c3 d3 e3 f3 a4 b4 c4 d4 e4 f4 a5 b5 c5 d5 e5 f5
+additional_meadows a3 b3 c3 d3 e3 f3 a4 b4 c4 d4 e4 f4 a5 b5 c5 d5 e5 f5
+additional_meadows a3 b3 c3 d3 e3 f3 a4 b4 c4 d4 e4 f4 a5 b5 c5 d5 e5 f5
+additional_meadows f5 e5
+
+; Burgundian siege camp (player1 — attacker faction)
+; Age chain: must include dark_age and feudal_age even when starting in
+; castle_age, because units whose .requirements = ['feudal_age'] check
+; for the literal upgrade name in player.upgrades (not via phase chain).
+player 0 100 0 0 f5 town_center monastery barracks archery_range blacksmith stables aoe_castle 6 house 8 peasant 6 militia 4 aoe_archer 3 aoe_knight 3 monk dark_age feudal_age castle_age
+
+; English reinforcements (allied Burgundian — alliance 1)
+computer_only 0 0 0 0 non_neutral faction britons e5 town_center scouttower 6 militia 4 man_at_arms 3 longbowman 2 aoe_knight
+
+; Compiègne citadel (French garrison, enemy — alliance 2)
+computer_only 0 0 0 0 non_neutral faction franks d4 town_center aoe_castle scouttower 8 militia 6 man_at_arms 4 aoe_archer 2 aoe_knight 2 monk
+
+; French forward outpost (enemy — alliance 2)
+computer_only 0 0 0 0 non_neutral faction franks a1 scouttower 2 militia 1 aoe_archer
+
+; French river patrol (enemy — alliance 2)
+computer_only 0 0 0 0 non_neutral faction franks c3 town_center scouttower 4 militia 2 man_at_arms 2 aoe_archer
+
+timer_coefficient 60
+
+trigger player1 (timer 0) (faction burgundians)
+trigger player1 (timer 0) (alliance 1)
+trigger computer1 (timer 0) (alliance 1)
+trigger computer2 (timer 0) (alliance 2)
+trigger computer3 (timer 0) (alliance 2)
+trigger computer4 (timer 0) (alliance 2)
+
+trigger player1 (timer 0) (register_objective 1 2)
+trigger player1 (timer 0) (add_objective 1 8832)
+trigger player1 (timer 0) (add_objective 2 8833)
+
+; Goal 1: Cut off the Oise bridge (a1) by destroying its scouttower
+trigger player1 (enemy_building_destroyed a1 scouttower) (objective_complete 1)
+; Goal 2: Storm the citadel — destroy Compiègne's castle (d4)
+trigger player1 (enemy_building_destroyed d4 aoe_castle) (objective_complete 2)
+
+trigger player1 (building_lost town_center) (defeat)
+trigger player1 (no_unit_left) (defeat)

@@ -1,0 +1,90 @@
+; coding: utf-8
+; Joan of Arc — AoE2 DE first story campaign
+
+8800 Joan of Arc
+8801 France, 1429. Follow Joan of Arc as she lifts the siege of Orleans, marches on Reims for the coronation, and drives the English from the Loire. Five short chapters.
+
+; Mission titles
+8802 Uneasy Allies
+8803 A Man of Orleans
+8804 Relief of Orleans
+8805 The Maid Falls
+8806 The Cleansing of the Loire
+
+; Intros
+8810 March Joan east from Vaucouleurs (a1) past the English patrols to Robert de Baudricourt at b4, who will grant her a holy letter and a small escort. Then carry the letter to the Dauphin's court at Chinon (f4). Joan must survive.
+8811 Orleans is besieged by an English ring of watch towers and a small fort. Train militia to rally the townsfolk, then break the siege and destroy every English tower.
+8812 After Orleans, Joan leads the army across the Loire. Push east from the French base (d4), capture St. Loup (a1) on the south bank and Les Tourelles (f5) on the north bank to break the English siege.
+8813 Escort the Dauphin through Burgundy to Reims (c5) for the coronation. Carry three relics to the cathedral. The Burgundians and English will try to stop you.
+8814 Drive Joan up the Loire and destroy every English outpost. Once every tower and castle is gone, Joan carries it home.
+8815 Hold Compiègne (b4) against the combined English and Burgundian assault until Charles VII is crowned at Reims. Then escort Joan across the bridge to safety.
+
+; Objectives
+8820 Reach Robert's garrison at Vaucouleurs
+8821 Deliver the holy letter to the Dauphin at Chinon
+8822 Train 8 militia to rally Orleans
+8823 Break the siege — destroy every English unit
+8824 Capture St. Loup
+8825 Capture Les Tourelles
+8826 Baudricourt studies the girl before him, then hands her a sealed letter and motions to the garrison: Take this letter to the Dauphin at Chinon. These men will ride with you. May God guide your steps, Joan of Arc.
+8827 Deliver three relics to Reims cathedral
+8828 Defeat the Burgundian and English ambush
+8829 Destroy the English outpost on the lower Loire
+8830 The Dauphin reads the letter and falls to his knees. France shall rise again. The war for the realm has truly begun, and Joan rides at its head.
+8831 Destroy every English tower and castle
+8832 Hold Compiègne until Charles VII is crowned
+8833 Escort Joan to safety across the bridge
+8834 La Hire, captain of the Orleans garrison, sizes up the Maid and nods: 'Let her pass. Take these men — and may God grant you the speed your courage deserves.'
+
+; Place names
+8835 Joan arrives at Blois and meets the French army. Duke d'Alençon speaks: 'The army of France is yours to command, Maid. Lead us to victory.'
+8836 The supply wagons have crossed the Loire. The city of Orleans opens its gates: 'The supplies have arrived — the city of Orleans is yours. Now prepare for the siege.'
+8837 The citizens of Orleans must reach the Castle Age. Advance your town through the ages to forge a stronger French army.
+8838 The English castle crumbles. The siege of Orleans is broken. France shall rise again. The war for the realm has truly begun.
+8840 Vaucouleurs
+8841 Chinon
+8842 Orleans
+8843 Meung-sur-Loire
+8844 Beaugency
+8845 English keep
+8846 Reims
+8847 Burgundy
+8848 Lower Loire
+8849 Upper Loire
+8850 Paris key
+8851 Compiègne
+8852 English siege camp
+
+; Place names (new — used as map square_name labels)
+8870 Vaucouleurs
+8871 French base
+8872 Chinon
+8873 Blois
+8874 Fort St. Loup
+8875 Les Tourelles
+8876 English siege ring
+8877 Compeigne south
+8878 Compeigne citadel
+8879 Burgundian ambush
+8880 French forward outpost
+8881 Beaugency
+8882 Jallains
+8883 Lower Loire
+8884 Meung-sur-Loire
+8885 Orleans
+8886 English keep
+8887 Reims cathedral
+8888 Paris
+8889 Chinon
+8890 Compiegne citadel
+
+; Items & heroes — wired up in Joan of Arc/ui/style.txt
+8860 holy letter
+8861 Paris key
+8862 Joan of Arc
+8863 Robert de Baudricourt
+8864 Charles, Dauphin of France
+; Hero bio intros (shown in the unit panel, like the Raynor/SC2 hero bios)
+8865 Daughter of Domremy, a peasant girl who hears saints. In 1429 she rides to Chinon to lift the siege of Orleans and place the Dauphin Charles on the throne of France.
+8866 Garrison captain of Vaucouleurs. Skeptical, blunt, and practical, he tests the Maid's resolve before granting her a small escort and a letter of passage to the Dauphin.
+8867 Disinherited heir to the French throne, holding court at Chinon. The war is going badly; his legitimacy -- and France itself -- depend on the coronation at Reims.

@@ -1,0 +1,90 @@
+; 5 — The Cleansing of the Loire (AoE2 DE Joan of Arc, ch. 5)
+;
+; Story beats (DE Joan of Arc ch. 5):
+;   After Compiègne, Joan leads the French army down the Loire
+;   valley to clean out the last English bridge-towns. Three
+;   garrisoned towns hold the river crossings:
+;     - Meung-sur-Loire on the west (a1)
+;     - Beaugency in the middle (d3)
+;     - Jallains (Gien) to the east (f5)
+;   Destroy all three town centers to break English control of
+;   the Loire.
+;
+; Map grid (6×5, with the Loire river along row 3):
+;   [a5] [b5] [c5] [d5] [e5] [f5]   ← Jallains (Gien) at f5
+;   [a4] [b4] [c4] [d4] [e4] [f4]
+;   [a3] [b3] [c3] [d3] [e3] [f3]   ← Loire river row
+;   [a2] [b2] [c2] [d2] [e2] [f2]
+;   [a1] [b1] [c1] [d1] [e1] [f1]   ← Meung-sur-Loire at a1
+;
+;   Player base: c4 (north bank, central)
+;   Beaugency: d3 (a fortified bridge town on the river)
+;   Jallains: f5 (north-east corner)
+
+title 8806
+intro 8814
+
+square_width 12
+nb_columns 6
+nb_lines 5
+
+nb_players_min 1
+nb_players_max 1
+random_starts 0
+
+square_name 8884 1,1             ; 默恩（a1 — English Meung-sur-Loire, west）
+square_name 8882 6,5             ; 雅兰（f5 — English Jallains/Gien, north-east）
+square_name 8881 4,3             ; 博让西（d3 — English Beaugency, central）
+
+west_east_paths a1 a2 a3 a4 a5 b1 b2 b3 b4 b5 c1 c2 c3 c4 c5 d1 d2 d3 d4 d5 e1 e2 e3 e4 e5
+south_north_paths a1 b1 c1 d1 e1 f1 a2 b2 c2 d2 e2 f2 a3 b3 c3 d3 e3 f3 a4 b4 c4 d4 e4 f4
+
+terrain river a3 b3 c3 d3 e3 f3
+water a2 b2 c2 d2 e2 f2
+
+goldmines 300 c4
+woods 400 c4 d4
+orchard 200 c4
+stone_mines 300 c4
+nb_meadows_by_square 0
+additional_meadows a1 b1 c1 d1 e1 f1 a4 b4 c4 d4 e4 f4 a5 b5 c5 d5 e5 f5
+additional_meadows a1 b1 c1 d1 e1 f1 a4 b4 c4 d4 e4 f4 a5 b5 c5 d5 e5 f5
+additional_meadows a1 b1 c1 d1 e1 f1 a4 b4 c4 d4 e4 f4 a5 b5 c5 d5 e5 f5
+additional_meadows c4 d4
+
+; French army base (Joan + escort, central north bank).
+; The 2 monk slots are split: 1 npc_joan (hero, key_unit) + 1 monk (healer).
+; Age chain: starting in feudal_age requires dark_age as a literal upgrade
+; in player.upgrades (units whose .requirements = ['feudal_age'] check
+; the upgrade list, not the phase chain).
+player 50 700 500 150 c4 town_center monastery barracks archery_range blacksmith stables 6 house 8 peasant 6 militia 4 aoe_archer 2 aoe_knight 1 npc_joan 1 monk dark_age feudal_age
+
+; Meung-sur-Loire (west, fortified bridge town)
+computer_only 0 0 0 0 faction britons a1 town_center aoe_castle scouttower 6 militia 4 man_at_arms 3 longbowman 1 aoe_knight
+
+; Beaugency (middle, fortified bridge town)
+computer_only 0 0 0 0 faction britons d3 town_center aoe_castle scouttower 6 militia 4 man_at_arms 3 longbowman 1 aoe_knight
+
+; Jallains / Gien (east, supply depot)
+computer_only 0 0 0 0 faction britons f5 town_center aoe_castle scouttower 6 militia 4 man_at_arms 3 longbowman 2 aoe_knight
+
+timer_coefficient 40
+
+trigger player1 (timer 0) (alliance 1)
+trigger computers (timer 0) (alliance 2)
+
+trigger player1 (timer 0) (register_objective 1 2 3)
+trigger player1 (timer 0) (add_objective 1 8829)
+trigger player1 (timer 0) (add_objective 2 8830)
+trigger player1 (timer 0) (add_objective 3 8831)
+
+; Goal 1: Take Meung-sur-Loire (a1)
+trigger player1 (enemy_building_destroyed a1 town_center) (objective_complete 1)
+; Goal 2: Take Beaugency (d3)
+trigger player1 (enemy_building_destroyed d3 town_center) (objective_complete 2)
+; Goal 3: Take Jallains (f5)
+trigger player1 (enemy_building_destroyed f5 town_center) (objective_complete 3)
+
+trigger player1 (no_unit_left) (defeat)
+trigger player1 (key_unit_killed npc_joan) (defeat)
+trigger player1 (building_lost town_center) (defeat)

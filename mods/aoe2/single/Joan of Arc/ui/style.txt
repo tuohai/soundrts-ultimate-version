@@ -1,0 +1,40 @@
+; coding: utf-8
+; Joan of Arc campaign — local style.txt
+;
+; Per-campaign style overrides and additions loaded on top of the
+; mod-wide mods/aoe2/ui/style.txt (the engine stacks campaign layers
+; via res._add_layers when a campaign is active, so this file is
+; reachable at runtime).
+;
+; We use 8860-8867 for items and hero titles/intros — the same IDs
+; defined in the campaign ui/tts.txt.
+
+; Items — used in 1.txt (Baudricourt grants holy_letter to Joan)
+; 8860 / 8861 are defined in the campaign ui/tts.txt; we re-declare
+; the defs here so that the inventory screen can call
+; style.get(type_name, "title") and find a proper title — otherwise
+; it falls back to the raw type_name "holy_letter" / "paris_key"
+; and reads the English identifier aloud.
+def holy_letter
+title 8860
+
+def paris_key
+title 8861
+
+; npc_joan -- Joan of Arc, the heroine
+def npc_joan
+is_a monk
+title 8862
+intro 8865
+
+; npc_baudricourt -- Robert de Baudricourt (Vaucouleurs garrison)
+def npc_baudricourt
+is_a npc_joan
+title 8863
+intro 8866
+
+; npc_dauphin -- Charles, Dauphin of France (Chinon)
+def npc_dauphin
+is_a npc_joan
+title 8864
+intro 8867

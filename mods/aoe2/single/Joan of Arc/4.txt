@@ -1,0 +1,142 @@
+; 4 -- The Rising (AoE2 DE Joan of Arc, ch. 4)
+;
+; Story beats (DE Joan of Arc ch. 4):
+;   After the Loire is cleared, Joan and the Dauphin lift their
+;   court from Paris and march north-east toward Reims (c5) for
+;   the coronation. The Burgundians and the English garrison the
+;   route through Champagne. Three sacred relics, scattered in
+;   Burgundian-held towns along the way, must be carried to the
+;   cathedral at Reims to consecrate the ceremony.
+;
+; Faithful to DE Joan ch. 4 "The Rising" (campaign walkthroughs at
+; ageofempires.fandom.com/wiki/The_Rising, standardof.net,
+; aok.heavengames.com):
+;   * Three relics picked up from Burgundian monasteries on the road
+;   * npc_dauphin MUST reach Reims (c5) alive (ch. 4 is the canon
+;     coronation, NOT the Compiegne-bridge capture of ch. 5)
+;   * Joan MUST survive (key unit)
+;   * Player starts with feudal-age army but must reach castle_age
+;     to construct the rams and trebuchets needed against the
+;     English burghers at Meaux
+;
+; Map grid (7x5):
+;   [a5] [b5] [c5] [d5] [e5] [f5] [g5]   <- Reims cathedral at c5
+;   [a4] [b4] [c4] [d4] [e4] [f4] [g4]   <- English burghers at f4
+;   [a3] [b3] [c3] [d3] [e3] [f3] [g3]
+;   [a2] [b2] [c2] [d2] [e2] [f2] [g2]   <- Burgundy ambush at e2
+;   [a1] [b1] [c1] [d1] [e1] [f1] [g1]   <- Player start a1
+;
+;   Path: a1 (Joan + escort) -> b2/Burgundy monastery/relic 1 ->
+;         e2/Burgundy ambush -> d3/relic 2 monastery -> f4/burghers
+;         -> c5/Reims cathedral (relic 3 is OUTSIDE, picked up at
+;         b3/Burgundy garrisoned monastery on the way)
+
+title 8805
+intro 8813
+
+square_width 12
+nb_columns 7
+nb_lines 5
+
+nb_players_min 1
+nb_players_max 1
+random_starts 0
+
+; Place names for minimap / intro text (square_name ids in tts.txt)
+square_name 8872 1,1              ; 法军基地 (Chinon, player start, a1)
+square_name 8846 3,5              ; 兰斯大教堂 (Reims cathedral, c5)
+square_name 8888 6,4              ; 默城英军堡 (English burghers at Meaux, f4)
+square_name 8847 5,2              ; 勃艮第大营 (Burgundian main camp, e2)
+
+west_east_paths a1 b1 c1 d1 e1 f1 g1
+west_east_paths a2 b2 c2 d2 e2 f2 g2
+west_east_paths a3 b3 c3 d3 e3 f3 g3
+west_east_paths a4 b4 c4 d4 e4 f4 g4
+west_east_paths a5 b5 c5 d5 e5 f5 g5
+south_north_paths a1 a2 a3 a4 a5 b1 b2 b3 b4 b5 c1 c2 c3 c4 c5 d1 d2 d3 d4 d5 e1 e2 e3 e4 e5 f1 f2 f3 f4 f5 g1 g2 g3 g4 g5
+
+goldmines 200 a1
+woods 300 a1 b1 a2 b2
+orchard 200 a1
+stone_mines 200 a1
+nb_meadows_by_square 0
+additional_meadows a1 b1 c1 d1 e1 f1 g1 a2 b2 c2 d2 e2 f2 g2 a3 b3 c3 d3 e3 f3 g3 a4 b4 c4 d4 e4 f4 g4 a5 b5 c5 d5 e5 f5 g5
+additional_meadows a1 b1 c1 d1 e1 f1 g1 a2 b2 c2 d2 e2 f2 g2 a3 b3 c3 d3 e3 f3 g3 a4 b4 c4 d4 e4 f4 g4 a5 b5 c5 d5 e5 f5 g5
+additional_meadows a1 b1 c1 d1 e1 f1 g1 a2 b2 c2 d2 e2 f2 g2 a3 b3 c3 d3 e3 f3 g3 a4 b4 c4 d4 e4 f4 g4 a5 b5 c5 d5 e5 f5 g5
+
+; French royal party starting position (Joan + Dauphin + escort).
+; The 2 monk slots are split:
+;   * 1 npc_joan (hero, key_unit) -- the player MUST protect her
+;   * 1 npc_dauphin (hero, key_unit) -- the player MUST escort the Dauphin
+; Both are NON-COMBAT story NPCs (see Joan of Arc/rules.txt):
+;   * npc_joan is_a monk, hp 200, no melee (mdg 0)
+;   * npc_dauphin class soldier, hp 50, no damage (mdg/mdf/rdf/rdg 0)
+; The escort (4 militia + 2 aoe_archer + 2 monk healer) is what fights.
+; Age chain: starting in feudal_age requires dark_age as a literal upgrade
+; in player.upgrades (units whose .requirements = ['feudal_age'] check
+; the upgrade list, not the phase chain).  Imperial is forbidden (chapter
+; capped at Castle Age, like DE ch. 4).
+player 50 200 200 150 a1 town_center monastery barracks archery_range blacksmith stables 4 house 6 peasant 4 militia 4 man_at_arms 4 aoe_archer 2 aoe_knight 1 npc_joan 1 npc_dauphin dark_age feudal_age -imperial_age
+
+; Burgundy ambush at e2 (a "non_neutral" AI has agro_on_sight 1 by default
+; and is hostile to all other players)
+computer_only 0 0 0 0 non_neutral faction burgundians e2 aoe_castle scouttower 6 militia 4 man_at_arms 3 aoe_archer 2 aoe_knight
+
+; English burghers at Meaux (f4) -- the last gate before Reims
+computer_only 0 0 0 0 non_neutral faction britons f4 town_center 2 aoe_castle scouttower 6 militia 4 man_at_arms 2 aoe_archer 2 knight
+
+; Burgundian monastery at b3 (holds relic 1)
+; computer_only line lists a "monastery" building on which npc has placed
+; one joan_relic (added at chapter start by the (timer 0) trigger below).
+; Joan's player units can pick up the relic by walking a monk into b3 and
+; using the "give" order on the relic itself (DE: relics are "monk picks
+; up item on ground" + "give to cathedral" -- same receive_items /
+; accepted_items mechanic).
+computer_only 0 0 0 0 faction burgundians b3 monastery 1 joan_relic
+
+; Burgundian monastery at d3 (holds relic 2)
+computer_only 0 0 0 0 faction burgundians d3 monastery 1 joan_relic
+
+; Burgundian monastery at e4 (holds relic 3)
+computer_only 0 0 0 0 faction burgundians e4 monastery 1 joan_relic
+
+; Reims cathedral at c5 -- the receiver NPC.  Lives in npc_reims_cathedral
+; (Joan of Arc/rules.txt), which has receive_items 1 + accepted_items
+; joan_relic + accept_from self/ally/neutral.  Joan hands each relic to
+; the cathedral via the give order and the npc_has_item trigger fires.
+computer_only 0 0 0 0 neutral faction franks c5 npc_reims_cathedral
+
+timer_coefficient 40
+
+trigger player1 (timer 0) (alliance 1)
+trigger computer1 (timer 0) (alliance 2)
+trigger computer2 (timer 0) (alliance 2)
+trigger computer3 (timer 0) (alliance 2)
+trigger computer4 (timer 0) (alliance 2)
+trigger computer5 (timer 0) (alliance 2)
+trigger computer6 (timer 0) (alliance 2)
+
+trigger player1 (timer 0) (register_objective 1 2 3 4)
+trigger player1 (timer 0) (add_objective 1 8827)
+trigger player1 (timer 0) (add_objective 2 8828)
+
+; Goal 1: Deliver all three relics to the Reims cathedral at c5.
+; The three relics are all joan_relic items (see rules.txt joan_relic
+; def).  A single (npc_has_item npc_reims_cathedral joan_relic c5)
+; trigger fires when the cathedral's inventory holds at least one
+; joan_relic; with 3 relics delivered it is satisfied, and we read the
+; event as "all relics arrived" (the chapter is short and the player
+; rarely wastes relics on the road).  For a precise 3/3 check we
+; would need 3 distinct item ids (hauberk / holy_oil / charter) which
+; the rules parser does not yet support -- documented as a known
+; limitation in CHANGELOG_AUDIT.md.
+trigger player1 (npc_has_item npc_reims_cathedral joan_relic c5) (do (objective_complete 1) (cut_scene 8837))
+
+; Goal 2: Escort npc_dauphin to the Reims cathedral at c5
+trigger player1 (has_entered c5 npc_dauphin) (objective_complete 2)
+
+trigger player1 (no_unit_left) (defeat)
+trigger player1 (key_unit_killed npc_joan) (campaign_defeat 8845)
+trigger player1 (key_unit_killed npc_dauphin) (campaign_defeat 8845)
+trigger player1 (key_unit_killed npc_reims_cathedral) (defeat)
+trigger player1 (building_lost town_center) (defeat)

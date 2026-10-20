@@ -1,0 +1,83 @@
+; coding: utf-8
+; Joan of Arc — AoE2 DE erste Story-Kampagne (Deutsch)
+
+8800 Jeanne d'Arc
+8801 Frankreich, 1429. Folge Jeanne d'Arc, wie sie die Belagerung von Orléans beendet, nach Reims zur Krönung marschiert und die Engländer aus dem Loiretal vertreibt. Fünf kurze Kapitel.
+
+8802 Unsichere Verbündete
+8803 Ein Mann aus Orléans
+8804 Befreiung von Orléans
+8805 Der Fall der Maid
+8806 Die Säuberung der Loire
+
+8810 Führe Jeanne östlich von Vaucouleurs (a1) an den englischen Patrouillen vorbei zu Robert de Baudricourt bei b4, der ihr einen heiligen Brief und eine kleine Eskorte gewährt. Trage den Brief dann zum Dauphin an dessen Hof in Chinon (f4). Jeanne muss überleben.
+8811 Orléans ist von einem englischen Ring aus Wachtürmen und einer kleinen Festung belagert. Bilde Milizen aus, um die Bürger zu sammeln, dann brich die Belagerung und zerstöre jeden englischen Turm.
+8812 Nach Orléans führt Jeanne die Armee über die Loire. Stoße vom französischen Stützpunkt (d4) ostwärts vor, nimm Saint-Loup (a1) am Südufer und Les Tourelles (f5) am Nordufer, um die englische Belagerung zu brechen.
+8813 Eskortiere den Dauphin durch Burgund nach Reims (c5) zur Krönung. Trage drei Reliquien zur Kathedrale. Die Burgunder und Engländer werden versuchen, dich aufzuhalten.
+8814 Führe Jeanne die Loire hinauf und zerstöre jeden englischen Vorposten. Wenn jeder Turm und jede Burg gefallen ist, bringt Jeanne es heim.
+8815 Halte Compiègne (b4) gegen den vereinten englisch-burgundischen Angriff, bis Karl VII. in Reims gekrönt ist. Eskortiere Jeanne dann über die Brücke in Sicherheit.
+
+8820 Erreiche Roberts Garnison in Vaucouleurs
+8821 Überbringe den heiligen Brief dem Dauphin in Chinon
+8822 Bilde 8 Milizen aus, um Orléans zu sammeln
+8823 Brich die Belagerung — zerstöre jede englische Einheit
+8824 Nimm Saint-Loup
+8825 Nimm Les Tourelles
+8826 Baudricourt mustert das Mädchen vor sich, dann reicht er ihr einen versiegelten Brief und winkt der Garnison: Bringt diesen Brief zum Dauphin in Chinon. Diese Männer werden mit euch reiten. Möge Gott eure Schritte lenken, Jeanne d'Arc.
+8827 Überbringe drei Reliquien zur Kathedrale von Reims
+8828 Besiege den burgundisch-englischen Hinterhalt
+8829 Zerstöre den englischen Vorposten an der unteren Loire
+8830 Der Dauphin liest den Brief und fällt auf die Knie. Frankreich wird wiederauferstehen. Der Krieg um das Reich hat wirklich begonnen, und Jeanne reitet an seiner Spitze.
+8831 Zerstöre jeden englischen Turm und jede Burg
+8832 Halte Compiègne, bis Karl VII. gekrönt ist
+8833 Eskortiere Jeanne sicher über die Brücke
+8834 La Hire, Hauptmann der Orleans-Besatzung, mustert die Jungfrau und nickt: «Lasst sie passieren. Nehmt diese Männer mit — und möge Gott euch die Schnelligkeit verleihen, die euer Mut verdient.»
+
+8835 Johanna kommt in Blois an und trifft die französische Armee. Herzog d'Alençon spricht: 'Die Armee Frankreichs steht unter deinem Befehl, Jungfrau. Führe uns zum Sieg.'
+8836 Die Versorgungswagen haben die Loire überquert. Die Stadt Orléans öffnet ihre Tore: 'Die Versorgung ist eingetroffen — die Stadt Orléans gehört dir. Bereite dich nun auf die Belagerung vor.'
+8837 Die Bürger von Orléans müssen die Burgzeit erreichen. Führe deine Stadt durch die Zeitalter, um eine stärkere französische Armee zu schmieden.
+8838 Die englische Burg stürzt ein. Die Belagerung von Orléans ist gebrochen. Frankreich wird wieder aufstehen. Der Krieg um das Reich hat wahrhaft begonnen.
+8840 Vaucouleurs
+8841 Chinon
+8842 Orléans
+8843 Meung-sur-Loire
+8844 Beaugency
+8845 Englische Festung
+8846 Reims
+8847 Burgund
+8848 Untere Loire
+8849 Obere Loire
+8850 Pariser Schlüssel
+8851 Compiègne
+8852 Englisches Belagerungslager
+
+8870 Vaucouleurs
+8871 Französischer Stützpunkt
+8872 Chinon
+8873 Blois
+8874 Fort St. Loup
+8875 Les Tourelles
+8876 Englischer Belagerungsring
+8877 Compiègne Süd
+8878 Compiègne-Zitadelle
+8879 Burgundischer Hinterhalt
+8880 Französischer Vorposten
+8881 Beaugency
+8882 Jallains
+8883 Untere Loire
+8884 Meung-sur-Loire
+8885 Orléans
+8886 Englische Festung
+8887 Kathedrale von Reims
+8888 Paris
+8889 Chinon
+8890 Compiègne-Zitadelle
+
+8860 heiliger Brief
+8861 Pariser Schlüssel
+8862 Jeanne d'Arc
+8863 Robert de Baudricourt
+8864 Karl, Dauphin von Frankreich
+8865 Tochter von Domrémy, ein Bauernmädchen, das Heilige hört. 1429 reitet sie nach Chinon, um die Belagerung von Orléans zu beenden und den Dauphin Karl auf den Thron Frankreichs zu setzen.
+8866 Garnisonshauptmann von Vaucouleurs. Skeptisch, direkt und praktisch, prüft er die Entschlossenheit der Maid, bevor er ihr eine kleine Eskorte und einen Passierschein zum Dauphin gewährt.
+8867 Enteigneter Erbe des französischen Throns, der in Chinon Hof hält. Der Krieg verläuft schlecht; seine Legitimität — und Frankreich selbst — hängen von der Krönung in Reims ab.
