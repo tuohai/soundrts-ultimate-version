@@ -233,6 +233,13 @@ class Campaign:
         self.resources = resource_layer(package, self.name)
         self._set_title_and_mods()
         self._set_mods_from_mods_txt()
+        # Load campaign-local rules (e.g. joan_relic / npc_reims_cathedral)
+        # so they are available when the map text parser checks rules.get(...).
+        from ..definitions import rules
+
+        if self.resources.isfile("rules.txt"):
+            with self.resources.open_text("rules.txt") as f:
+                rules.read(f.read())
         self._set_chapters()
 
     def _set_title_and_mods(self):
