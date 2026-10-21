@@ -310,8 +310,6 @@ class Campaign:
 
     def _set_chapters(self):
         self.chapters = []
-
-        # Scan integer chapters 0, 1, 2 … until neither .txt nor .zip exists.
         number = 0
         while True:
             filename = f"{number}.txt"
@@ -355,11 +353,7 @@ class Campaign:
             return None
 
     def next(self, chapter):
-        try:
-            idx = self.chapters.index(chapter)
-            return self.chapters[idx + 1] if idx + 1 < len(self.chapters) else None
-        except ValueError:
-            return None
+        return self.chapter(chapter.number + 1)
 
     def _get_bookmark(self):
         c = configparser.ConfigParser()
