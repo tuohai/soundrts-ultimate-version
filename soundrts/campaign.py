@@ -235,7 +235,7 @@ class Campaign:
         self._set_mods_from_mods_txt()
         # Load campaign-local rules (e.g. joan_relic / npc_reims_cathedral)
         # so they are available when the map text parser checks rules.get(...).
-        from ..definitions import rules
+        from .definitions import rules
 
         if self.resources.isfile("rules.txt"):
             with self.resources.open_text("rules.txt") as f:
