@@ -61,7 +61,17 @@ def player_is_wildlife_only(player):
 
 
 def computer_start_is_wildlife_only(start):
-    """``computer_only`` 槽位是否只会生成狩猎/畜牧动物。"""
+    """``computer_only`` 槽位是否只会生成狩猎/畜牧动物。
+
+    若 start 还没有被 ``unit_class()`` 解析（即 start[1] 仍含字符串
+    token，如战役的 npc_dauphin / npc_baudricourt），这里的 unit_classes
+    收集会跳过字符串并留下空 list。``all([])`` 在 Python 里恒为 True，
+    会让任何带字符串单位的槽位被错判为 wildlife-only，进而让该电脑
+    跳过 init_alliance（alliance 保持 None），``relation_to`` 永远返回
+    "neutral" 或 "enemy"——也就吃不到 ``accept_from ally``。
+    把 ``unit_classes is empty`` 显式判为 False（即非 wildlife-only），
+    让 populate_map 走正常 ``alliance="ai"`` 路径。
+    """
     if len(start) < 2:
         return False
     unit_classes = []
@@ -73,6 +83,7 @@ def computer_start_is_wildlife_only(start):
             continue
         unit_classes.append(unit_cls)
     if not unit_classes:
+        # No resolvable class yet -- not yet a confirmed wildlife slot.
         return False
     return all(
         getattr(unit_cls, "is_huntable", 0) or getattr(unit_cls, "herdable", 0)
