@@ -8,6 +8,15 @@ from ..definitions import rules
 from ..lib.log import exception, warning
 from ..lib.nofloat import to_int
 from ..lib.msgs import nb2msg
+# Square key patterns. ``_SQUARE_LETTER_RE`` matches legacy "a1"/"f4"-style
+# tokens (one or more letters followed by one or more digits); ``_SQUARE_XY_RE``
+# matches "x,y" coordinate pairs. ``_SQUARE_INTEGER_RE`` matches bare
+# integer tokens like "1" / "5" -- those are NOT valid squares (they are
+# global map-select indices), so triggers that need a square argument
+# must use ``_SQUARE_LETTER_RE`` / ``_SQUARE_XY_RE`` to disambiguate.
+_SQUARE_LETTER_RE = re.compile(r"^[a-zA-Z]+[0-9]+$")
+_SQUARE_XY_RE = re.compile(r"^[0-9]+,[0-9]+$")
+
 from ..worldentity import NotEnoughSpaceError
 from ..worldupgrade import is_an_upgrade
 from ..worldskill import Skill
@@ -215,7 +224,95 @@ class TriggersMixin:
             self.my_eval(action)
 
     def lang_not(self, args):
-        return not self.my_eval(args[0])
+        """触发器条件：子条件不成立（即取反）。"""
+        if not args:
+            return False
+        arg = args[0]
+        # String "true"/"false" must be resolved before calling my_eval,
+        # because my_eval("true") -> lang_true(["true"]) -> True,
+        # making the negation wrong.
+        if isinstance(arg, str):
+            if arg.lower() in ("true", "1"):
+                return False
+            if arg.lower() in ("false", "0"):
+                return True
+        result = self.my_eval(arg)
+        return not result
+
+    def _resolve_comparison_operand(self, arg):
+        """将触发器参数 arg 解析为数值。
+
+        支持：
+          - 纯数字字符串  → int(float(...))
+          - (count <type>) → 递归调用 lang_count
+          - (has <type> [N]) → 递归调用 lang_has
+          - 其他 token → 0（忽略）
+        """
+        if isinstance(arg, (int, float)):
+            return int(arg)
+        s = str(arg)
+        # Pure number
+        try:
+            return int(float(s))
+        except (TypeError, ValueError):
+            pass
+        # (count <type>)
+        if isinstance(arg, (list, tuple)) and len(arg) >= 2 and str(arg[0]) == "count":
+            return self.lang_count(list(arg[1:]))
+        # (has <type> [N])
+        if isinstance(arg, (list, tuple)) and len(arg) >= 2 and str(arg[0]) == "has":
+            return self.lang_has(list(arg[1:]))
+        # Numeric variable (var name)
+        if hasattr(self, str(s)):
+            v = getattr(self, str(s), 0)
+            if isinstance(v, (int, float)):
+                return int(v)
+        return 0
+
+    def lang_count(self, args):
+        """触发器条件 / 数值：返回玩家拥有指定类型单位的实际数量。
+
+        用法：``(count <type>)``  → 条件为 True 当且仅当数量 ≥ 1；
+                也可作为左操作数参与数值比较（lt / gt / le / ge）。
+        数值比较链：``(lt (count trade_cart) 6)`` →  trade_cart 数量 < 6 时成立。
+        """
+        if not args:
+            return 0
+        type_name = str(args[0])
+        count = sum(1 for u in self.units if self.check_type(u, type_name))
+        return count
+
+    def lang_lt(self, args):
+        """触发器条件：左操作数 < 右操作数。"""
+        if len(args) < 2:
+            return False
+        left = self._resolve_comparison_operand(args[0])
+        right = self._resolve_comparison_operand(args[1])
+        return left < right
+
+    def lang_gt(self, args):
+        """触发器条件：左操作数 > 右操作数。"""
+        if len(args) < 2:
+            return False
+        left = self._resolve_comparison_operand(args[0])
+        right = self._resolve_comparison_operand(args[1])
+        return left > right
+
+    def lang_le(self, args):
+        """触发器条件：左操作数 ≤ 右操作数。"""
+        if len(args) < 2:
+            return False
+        left = self._resolve_comparison_operand(args[0])
+        right = self._resolve_comparison_operand(args[1])
+        return left <= right
+
+    def lang_ge(self, args):
+        """触发器条件：左操作数 ≥ 右操作数。"""
+        if len(args) < 2:
+            return False
+        left = self._resolve_comparison_operand(args[0])
+        right = self._resolve_comparison_operand(args[1])
+        return left >= right
 
     def lang_and(self, args):
         """触发器条件：所有子条件均成立时返回真。
@@ -3040,6 +3137,188 @@ class TriggersMixin:
                            building_identifier in getattr(u, 'expanded_is_a', [])) and
                            getattr(u, 'provides_survival', False)
                            for u in self.units)
+    def _is_hostile_to_self(self, other_player):
+        """other_player 对 self 而言是否敌对（self 视角）。
+
+        与 :py:meth:`player_is_a_hostile_enemy` 一致：非盟友、非中立才计敌对。
+        用于在遍历敌方建筑时排除中立 creep / 野生动物玩家，避免
+        ``enemy_building_destroyed`` 把中立单位的死亡也算成"敌方建筑
+        被摧毁"——中立 creep 从剧情上不属于"敌方"。
+
+        详见 ``soundrts/worldplayerbase/combat.py`` 中
+        ``player_is_a_hostile_enemy`` 的语义说明。
+        """
+        if other_player is None or other_player is self:
+            return False
+        if not getattr(self, "player_is_a_hostile_enemy", None):
+            return False
+        try:
+            return bool(self.player_is_a_hostile_enemy(other_player))
+        except Exception:
+            return False
+
+    def _iter_enemy_buildings(self, type_name=None):
+        """遍历 self 视角下所有敌方（敌对且非中立）玩家名下的建筑。
+
+        ``type_name`` 为 None 时返回所有敌方建筑；否则只保留该 type_name
+        或其 ``expanded_is_a`` 父类链命中的建筑（与 ``_unit_matches_map_select_type``
+        判定一致）。
+
+        与 ``building_lost`` 的差别：``building_lost`` 只扫 ``self.units``，
+        本辅助方法扫 self 视角下**所有敌方玩家**的单位清单。返回的是
+        ``(player, building)`` 元组，方便触发器同时校验"被摧毁的是
+        哪个敌对玩家"（多 AI 合作时区别"我打掉的 vs 友军打掉的"）。
+        """
+        players = list(getattr(self.world, "players", []))
+        players += list(getattr(self.world, "ex_players", []))
+        for p in players:
+            if not self._is_hostile_to_self(p):
+                continue
+            for b in list(getattr(p, "units", [])):
+                if not getattr(b, "provides_survival", False):
+                    continue
+                if b is self:
+                    continue
+                if type_name is not None and not self._unit_matches_map_select_type(
+                    b, type_name
+                ):
+                    continue
+                yield p, b
+
+    def lang_enemy_building_destroyed(self, args):
+        """检查**敌方**建筑是否已被摧毁（与 ``building_lost`` 互不干扰）。
+
+        与 :py:meth:`lang_building_lost` 的区别：``building_lost`` 只看
+        self 自己的建筑；本触发器扫 self 视角下所有**敌对且非中立**玩家
+        名下的建筑（中立 creep / 野生动物玩家不算"敌方"），方便战役
+        任务"摧毁敌人所有箭塔 / 摧毁指定方格上敌方城堡"之类的条件。
+
+        支持 5 种语法（与 ``building_lost`` 的 selector 风格保持一致）：
+
+        1. ``(enemy_building_destroyed <方格> <类型>)`` — 该方格上没有
+           任何同类型敌方建筑（"自然计数"语义：只要该方格同类敌方建筑
+           全死就算 1 座也已死）。
+        2. ``(enemy_building_destroyed <方格> <序号> <类型>)`` — 该方格
+           同类型敌方建筑**第 N 座**已被摧毁。
+        3. ``(enemy_building_destroyed <序号> <类型>)`` — 全局**第 N 座**
+           同类型敌方建筑已被摧毁（按 self 视角下敌方玩家遍历顺序计数）。
+        4. ``(enemy_building_destroyed <类型>)`` — 所有该类型敌方建筑
+           都已被摧毁（一个不留）。
+        5. ``(enemy_building_destroyed <建筑ID>)`` — 该 ID 敌方建筑已被
+           摧毁。ID 判定与 ``building_lost`` 保持一致：纯数字或首字符
+           为数字的 token 走 ID 路径；其余 token 走类型名路径。
+
+        与 ``building_lost`` 互不干扰——两个触发器扫描范围不同
+        （``building_lost`` 只看 ``self.units``；本触发器看所有
+        "对 self 敌对"玩家的单位），可在同一 ``(and ...)`` 复合条件
+        中组合使用，分别表示"我方 vs 敌方"两侧的战况。
+        """
+        if not args:
+            return False
+
+        # Syntax 1: <方格> <类型>  (2 args, where args[0] is a square)
+        # Detect this BEFORE _parse_global_map_unit_selector runs, because
+        # _parse_global would treat "1" / "5,3" as a numeric index and
+        # Syntax 3. The natural-count fallback: any living enemy building
+        # on that square of that type -> not destroyed.
+        #
+        # We require args[0] to be a "square-like" token: either already
+        # in self.world.grid, or a letter+digit string like "a1"/"f4",
+        # or a "x,y" pair. A bare integer like "1" is NOT a square and
+        # should fall through to Syntax 3.
+        if len(args) == 2:
+            sq_key_try = self._map_square_key(args[0])
+            looks_like_square = (
+                sq_key_try is not None
+                and (
+                    args[0] in getattr(self.world, "grid", {})
+                    or ("," in args[0]
+                        and len(args[0].split(",")) == 2)
+                    or _SQUARE_LETTER_RE.match(args[0])
+                )
+            )
+            if looks_like_square:
+                sq_key, type_name = sq_key_try, args[1]
+                return not any(
+                    b.map_select_square is not None
+                    and self._map_square_key(b.map_select_square) == sq_key
+                    and self._unit_matches_map_select_type(b, type_name)
+                    for _p, b in self._iter_enemy_buildings(type_name=type_name)
+                )
+
+        # Syntax 1+2: <方格> [<序号>] <类型>
+        parsed = self._parse_map_unit_selector(args)
+        if parsed is not None:
+            sq_key, index, type_name = parsed
+            return not self._find_enemy_building_by_map_select(
+                sq_key, index, type_name
+            )
+
+        # Syntax 3: <序号> <类型>
+        global_parsed = self._parse_global_map_unit_selector(args)
+        if global_parsed is not None:
+            index, type_name = global_parsed
+            return not self._find_enemy_building_by_global_map_select(
+                index, type_name
+            )
+
+        building_identifier = args[0]
+
+        # Syntax 5: <建筑ID>
+        if (
+            building_identifier.isdigit()
+            or (building_identifier and building_identifier[0].isdigit())
+        ):
+            return not any(
+                b.id == building_identifier
+                for _p, b in self._iter_enemy_buildings()
+            )
+
+        # Syntax 4: <类型> — 全部该类型敌方建筑已死
+        return not any(
+            True for _p, _b in self._iter_enemy_buildings(type_name=building_identifier)
+        )
+
+    def _find_enemy_building_by_map_select(self, sq_key, index, type_name):
+        """方格 + 局部序号 + 类型 命中的第一个敌方建筑（仍存活则 True）。
+
+        内部按现有 ``_iter_world_units`` + ``_find_unit_by_map_select``
+        风格查找，但额外过滤"对 self 是敌对且非中立"——复用一个一次
+        性的 ``owner_player=None`` 调用，再用 ``_is_hostile_to_self``
+        二次过滤。与逐玩家遍历不同：这里假定每个单位的
+        ``map_select_index`` 在刷出时已稳定分配（同建筑物刷出时
+        按出现顺序标 1..N），因此直接定位。
+        """
+        for unit in self._iter_world_units():
+            unit_sq = getattr(unit, "map_select_square", None)
+            if unit_sq is not None:
+                unit_sq = self._map_square_key(unit_sq)
+            if unit_sq != sq_key:
+                continue
+            if getattr(unit, "map_select_type", None) != type_name:
+                continue
+            if getattr(unit, "map_select_index", None) != index:
+                continue
+            if not getattr(unit, "provides_survival", False):
+                continue
+            if not self._is_hostile_to_self(getattr(unit, "player", None)):
+                continue
+            return True  # found a living enemy match -> not destroyed
+        return False
+
+    def _find_enemy_building_by_global_map_select(self, index, type_name):
+        """全局序号 + 类型 命中的第一个敌方建筑（仍存活则 True）。"""
+        for unit in self._iter_world_units():
+            if getattr(unit, "map_select_global_index", None) != index:
+                continue
+            if getattr(unit, "map_select_type", None) != type_name:
+                continue
+            if not getattr(unit, "provides_survival", False):
+                continue
+            if not self._is_hostile_to_self(getattr(unit, "player", None)):
+                continue
+            return True
+        return False
     
     def lang_buildings_lost(self, args):
         """检查是否失去了指定数量和类型的建筑

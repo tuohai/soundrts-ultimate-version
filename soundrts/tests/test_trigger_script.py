@@ -31,10 +31,22 @@ class _Player(TriggersMixin):
         self.triggers = []
         self.world = _World()
         self.actions = []
+        # lang_count / lang_has need the player's unit and upgrade lists.
+        self.units = []
+        self.upgrades = []
 
     @property
     def is_playing(self):
         return not (self.has_victory or self.has_been_defeated)
+
+    def check_type(self, o, t):
+        """Stub of Player.check_type: match on type_name.
+
+        The real implementation (soundrts/worldplayerbase/base.py) also
+        matches line-upgraded units through ``expanded_is_a``; the stub
+        units below only carry a plain ``type_name``.
+        """
+        return getattr(o, "type_name", None) == t
 
     def lang_mark(self, args):
         self.actions.append(tuple(args))
@@ -155,3 +167,96 @@ def test_on_death_add_global_and_skill_effect():
     assert get_var(killer, "casts") == 2
     assert apply_var_effect(attacker, world, "set_global", "wave", 9) is True
     assert get_global(world, "wave") == 9
+
+
+# ---------------------------------------------------------------------------
+# Comparison / count operators: count / lt / gt / le / ge / not
+#
+# These power map triggers such as the Joan of Arc chapter 2 supply-limit
+# check:  trigger player1 (and (timer 600) (lt (count trade_cart) 6)) (defeat)
+# ---------------------------------------------------------------------------
+
+
+class _MockUnit:
+    """Minimal stub unit for lang_count / lang_has tests."""
+
+    def __init__(self, type_name):
+        self.type_name = type_name
+
+
+def test_lang_count_empty():
+    p = _Player()
+    p.units = []
+    assert p.lang_count(["trade_cart"]) == 0
+    assert p.lang_count(["militia"]) == 0
+
+
+def test_lang_count_with_units():
+    p = _Player()
+    p.units = [
+        _MockUnit("trade_cart"),
+        _MockUnit("trade_cart"),
+        _MockUnit("militia"),
+    ]
+    assert p.lang_count(["trade_cart"]) == 2
+    assert p.lang_count(["militia"]) == 1
+    assert p.lang_count(["aoe_knight"]) == 0
+
+
+def test_lang_lt_with_numeric_operands():
+    p = _Player()
+    assert p.lang_lt([3, 5]) is True
+    assert p.lang_lt([5, 3]) is False
+    assert p.lang_lt([5, 5]) is False
+
+
+def test_lang_lt_with_count_operands():
+    p = _Player()
+    p.units = [_MockUnit("trade_cart") for _ in range(5)]
+    assert p.lang_lt([["count", "trade_cart"], 6]) is True   # 5 < 6
+    assert p.lang_lt([["count", "trade_cart"], 5]) is False  # 5 < 5
+    assert p.lang_lt([["count", "aoe_knight"], 10]) is True  # 0 < 10
+
+
+def test_lang_gt():
+    p = _Player()
+    p.units = [_MockUnit("militia") for _ in range(7)]
+    assert p.lang_gt([["count", "militia"], 5]) is True    # 7 > 5
+    assert p.lang_gt([["count", "militia"], 7]) is False   # 7 > 7
+
+
+def test_lang_le():
+    p = _Player()
+    p.units = [_MockUnit("aoe_archer") for _ in range(4)]
+    assert p.lang_le([["count", "aoe_archer"], 4]) is True   # 4 <= 4
+    assert p.lang_le([["count", "aoe_archer"], 5]) is True   # 4 <= 5
+    assert p.lang_le([["count", "aoe_archer"], 3]) is False  # 4 <= 3
+
+
+def test_lang_ge():
+    p = _Player()
+    p.units = [_MockUnit("man_at_arms") for _ in range(8)]
+    assert p.lang_ge([["count", "man_at_arms"], 8]) is True   # 8 >= 8
+    assert p.lang_ge([["count", "man_at_arms"], 7]) is True   # 8 >= 7
+    assert p.lang_ge([["count", "man_at_arms"], 9]) is False  # 8 >= 9
+
+
+def test_lang_not():
+    p = _Player()
+    assert p.lang_not(["true"]) is False
+    assert p.lang_not(["false"]) is True
+    assert p.lang_not([["count", "nonexistent"]]) is True  # 0 is falsy
+
+
+def test_lang_or_multi():
+    p = _Player()
+    assert p.lang_or([["false"], ["true"]]) is True
+    assert p.lang_or([["false"], ["false"]]) is False
+
+
+def test_comparison_chain_lt_and_or():
+    """(lt (count trade_cart) 6) OR <other condition> -- the Joan ch2 shape."""
+    p = _Player()
+    p.units = [_MockUnit("trade_cart") for _ in range(5)]
+    # 5 < 6 -> True, so the whole (or ...) -> True
+    assert p.lang_or([["lt", ["count", "trade_cart"], 6], ["false"]]) is True
