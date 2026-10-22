@@ -113,9 +113,17 @@ computer_only 0 0 0 0 faction burgundians e4 monastery
 ; Joan's monks pick up the relics from the ground using the "give" order.
 ; Each relic is placed on the ground in the same square as the
 ; corresponding monastery so the player knows where to find it.
-joan_relic b3
-joan_relic d3
-joan_relic e4
+;
+; Use the AoE2 mod's own ``relic`` item (mods/aoe2/rules.txt), NOT a
+; campaign-local one.  ``relic`` has a matching style entry
+; (mods/aoe2/ui/style.txt: title 8640) and artwork
+; (mods/aoe2/ui/map/relic.png) plus pickup / captured sounds.  A
+; campaign-local item with no style entry still spawns on the map but
+; renders nothing, so the player cannot see or find it.  Same item
+; William Wallace ch. 6 uses (``relic a1 a4 e4``).
+relic b3
+relic d3
+relic e4
 
 ; Reims cathedral at c5 -- the receiver NPC.
 computer_only 0 0 0 0 neutral faction franks c5 npc_reims_cathedral
@@ -135,16 +143,16 @@ trigger player1 (timer 0) (add_objective 1 8827)
 trigger player1 (timer 0) (add_objective 2 8828)
 
 ; Goal 1: Deliver all three relics to the Reims cathedral at c5.
-; The three relics are all joan_relic items (see rules.txt joan_relic
-; def).  A single (npc_has_item npc_reims_cathedral joan_relic c5)
-; trigger fires when the cathedral's inventory holds at least one
-; joan_relic; with 3 relics delivered it is satisfied, and we read the
+; The three relics use the AoE2 mod's ``relic`` item id (see the
+; placement lines above).  A single (npc_has_item npc_reims_cathedral
+; relic c5) trigger fires when the cathedral's inventory holds at least
+; one relic; with 3 relics delivered it is satisfied, and we read the
 ; event as "all relics arrived" (the chapter is short and the player
 ; rarely wastes relics on the road).  For a precise 3/3 check we
 ; would need 3 distinct item ids (hauberk / holy_oil / charter) which
 ; the rules parser does not yet support -- documented as a known
 ; limitation in CHANGELOG_AUDIT.md.
-trigger player1 (npc_has_item npc_reims_cathedral joan_relic c5) (do (objective_complete 1) (cut_scene 8837))
+trigger player1 (npc_has_item npc_reims_cathedral relic c5) (do (objective_complete 1) (cut_scene 8837))
 
 ; Goal 2: Escort npc_dauphin to the Reims cathedral at c5
 trigger player1 (has_entered c5 npc_dauphin) (objective_complete 2)

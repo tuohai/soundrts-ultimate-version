@@ -79,10 +79,10 @@ def holy_letter
 class item
 transport_volume 1
 
-; 圣物（决定版风格章节借用——第 4、6 章用）
-def joan_relic
-   class item
-transport_volume 1
+; 圣物不再在此定义——第 4 章直接用 AoE2 模组自带的 ``relic``
+; (mods/aoe2/rules.txt)。它带 style title 8640 与 ui/map/relic.png
+; 美术资源，而战役本地新建的物品没有 style 条目，实体虽会生成却
+; 画不出图，玩家在地图上找不到。
 
 ; 巴黎城钥（第 5 章；title 8861）
 def paris_key
@@ -163,7 +163,7 @@ population_provided 0
 is_repairable 0
 
 ; npc_reims_cathedral -- the cathedral of Reims, ch. 4 "The Rising".
-; Receives the three joan_relic holy relics from Joan; on the 3rd
+; Receives the three holy relics from Joan; on the 3rd
 ; delivery the coronation cut_scene fires and the chapter completes.
 ; Renders as a building (monastery-class) so it shows on the minimap
 ; as a unique structure, the same pattern as npc_cathedral in ch. 2.
@@ -192,8 +192,11 @@ is_repairable 0
 ; the cathedral the moment she stands next to it, before any
 ; alliance is resolved; "enemy" is still rejected so a hostile AI
 ; cannot trigger the coronation.
+; ``relic`` is the AoE2 mod's item (mods/aoe2/rules.txt), the same one
+; placed by 4.txt -- it carries the sprite (ui/map/relic.png) and the
+; pickup/captured sounds, which a campaign-local item would lack.
 receive_items 1
-accepted_items joan_relic
+accepted_items relic
 accept_from self
 accept_from ally
 accept_from neutral
