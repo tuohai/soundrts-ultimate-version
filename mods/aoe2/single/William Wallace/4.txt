@@ -20,7 +20,7 @@ orchard 200 a1
 nb_meadows_by_square 3
 
 ; Dark Age start with enough food for Feudal (500) + Man-at-Arms research
-player 100 300 700 0 a1 town_center barracks 4 house 6 peasant 4 militia
+player 250 200 450 200 a1 town_center barracks 4 house 6 peasant 4 militia
 
 ; Light English raid (optional pressure)
 computer_only 0 0 0 0 faction britons c3 3 militia

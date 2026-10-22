@@ -24,7 +24,7 @@ stone_mines 800 a1
 nb_meadows_by_square 3
 
 ; Castle Age base with stone for a castle (650)
-player 300 400 500 700 a1 town_center barracks archery_range blacksmith stables workshop 6 house 8 peasant 6 militia 4 aoe_archer 2 aoe_knight castle_age
+player 200 200 800 200 a1 town_center barracks archery_range blacksmith stables workshop 6 house 8 peasant 6 militia 4 aoe_archer 2 aoe_knight castle_age
 
 ; English fortified base with castle
 computer_only 0 0 0 0 faction britons f5 aoe_castle scouttower 8 longbowman 6 man_at_arms 4 aoe_knight e5 6 militia 2 scouttower
@@ -38,8 +38,8 @@ trigger player1 (timer 0) (register_objective 1 2)
 trigger player1 (timer 0) (add_objective 1 8626)
 trigger player1 (timer 0) (add_objective 2 8627)
 
-trigger player1 (has aoe_castle) (objective_complete 1)
+trigger player1 (has aoe_castle) (do (objective_complete 1) (victory))
 trigger computer1 (building_lost aoe_castle) (defeat)
-trigger player1 (no_enemy_left) (objective_complete 2)
+trigger player1 (no_enemy_left) (do (objective_complete 2) (victory))
 
 trigger player1 (building_lost town_center) (defeat)

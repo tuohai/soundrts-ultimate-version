@@ -26,7 +26,7 @@ nb_meadows_by_square 2
 relic 1 a1 a4 e4
 
 ; Castle Age Scots with monastery + monk; bring relics to a1 monastery
-player 200 300 400 200 a1 town_center monastery 3 monk 4 house barracks 4 peasant 6 militia castle_age
+player 500 500 500 500 a1 town_center monastery 3 monk 4 house barracks 4 peasant 6 militia castle_age
 
 ; Scottish ally (computer1)
 computer_only 0 0 0 0 faction celts a4 6 militia 2 aoe_archer monastery
