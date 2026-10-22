@@ -53,12 +53,23 @@ square_name 8846 3,5              ; 兰斯大教堂 (Reims cathedral, c5)
 square_name 8888 6,4              ; 默城英军堡 (English burghers at Meaux, f4)
 square_name 8847 5,2              ; 勃艮第大营 (Burgundian main camp, e2)
 
-west_east_paths a1 b1 c1 d1 e1 f1 g1
-west_east_paths a2 b2 c2 d2 e2 f2 g2
-west_east_paths a3 b3 c3 d3 e3 f3 g3
-west_east_paths a4 b4 c4 d4 e4 f4 g4
-west_east_paths a5 b5 c5 d5 e5 f5 g5
-south_north_paths a1 a2 a3 a4 a5 b1 b2 b3 b4 b5 c1 c2 c3 c4 c5 d1 d2 d3 d4 d5 e1 e2 e3 e4 e5 f1 f2 f3 f4 f5 g1 g2 g3 g4 g5
+; Passages MUST NOT list the last column (g) or the last row (5).
+; The engine (soundrts/world/world_map.py:_create_we_passage /
+; _create_sn_passage) silently wraps a boundary entry around to the
+; opposite edge instead of creating a wall -- a toroidal passage, not
+; a blocked side. 4.txt is a 7x5 grid, so:
+;   * west_east_paths must stay within columns a..f (x 1..6)
+;   * south_north_paths must stay within rows 1..4 (y 1..4)
+; Listing g1..g5 / a5..g5 opened a wrap: g5 reached a5 and a5 reached
+; a1, teleporting units across the map. Chapter 1 (also 7 columns)
+; follows the same rule. Enforced by
+; soundrts/tests/test_joan_no_wrap.py.
+west_east_paths a1 b1 c1 d1 e1 f1
+west_east_paths a2 b2 c2 d2 e2 f2
+west_east_paths a3 b3 c3 d3 e3 f3
+west_east_paths a4 b4 c4 d4 e4 f4
+west_east_paths a5 b5 c5 d5 e5 f5
+south_north_paths a1 a2 a3 a4 b1 b2 b3 b4 c1 c2 c3 c4 d1 d2 d3 d4 e1 e2 e3 e4 f1 f2 f3 f4 g1 g2 g3 g4
 
 goldmines 200 a1
 woods 300 a1 b1 a2 b2
