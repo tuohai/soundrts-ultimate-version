@@ -4,11 +4,12 @@
 8800 Johanka z Arku
 8801 Francie, 1429. Sleduj Johanku z Arku, jak zvedá obléhání Orléansu, pochoduje do Remeše ke korunovaci a vyhání Angličany z Loiry. Pět krátkých kapitol.
 
-8802 Nejistí spojenci
-8803 Muž z Orléansu
-8804 Osvobození Orléansu
-8805 Pád Panny
-8806 Očista Loiry
+8802 Nepravděpodný Mesiáš
+8803 Panna z Orléans
+8804 Očištění Loiry
+8805 Povstání
+8806 Obléhání Paříže
+8807 Dokonalá mučednice
 
 8810 Veď Johanku na východ z Vaucouleurs (a1) kolem anglických hlídek k Robertovi de Baudricourtovi v b4, který jí udělí svatý dopis a malý doprovod. Pak dones dopis ke dvoru dauphina v Chinonu (f4). Johanka musí přežít.
 8811 Orléans obléhá anglický kruh strážních věží a malá pevnost. Vycvič milice, aby se přidali měšťané, pak prolom obléhání a znič každou anglickou věž.

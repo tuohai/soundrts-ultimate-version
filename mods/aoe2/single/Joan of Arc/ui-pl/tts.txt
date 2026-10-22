@@ -4,11 +4,12 @@
 8800 Joanna d'Arc
 8801 Francja, 1429. Podążaj za Joanną d'Arc, gdy zdejmuje oblężenie Orleanu, maszeruje do Reims na koronację i wypędza Anglików z Loary. Pięć krótkich rozdziałów.
 
-8802 Niepewni sprzymierzeńcy
-8803 Człowiek z Orleanu
-8804 Wyzwolenie Orleanu
-8805 Upadek Dziewicy
-8806 Oczyszczenie Loary
+8802 Nieprawdopodobny Mesjasz
+8803 Dziewica z Orleanu
+8804 Oczyszczenie Loary
+8805 Powstanie
+8806 Oblężenie Paryża
+8807 Doskonała męczennica
 
 8810 Prowadź Joannę na wschód z Vaucouleurs (a1) obok angielskich patroli do Roberta de Baudricourt w b4, który da jej święty list i mały orszak. Potem zanieś list na dwór delfina w Chinon (f4). Joanna musi przeżyć.
 8811 Orlean jest oblegany przez angielski pierścień wież strażniczych i małą twierdzę. Wyszkol milicję, by zebrać mieszczan, potem przełam oblężenie i zniszcz każdą angielską wieżę.

@@ -4,11 +4,12 @@
 8800 Jeanne d'Arc
 8801 France, 1429. Suis Jeanne d'Arc tandis qu'elle lève le siège d'Orléans, marche sur Reims pour le sacre et chasse les Anglais de la Loire. Cinq courts chapitres.
 
-8802 Alliés incertains
-8803 Un homme d'Orléans
-8804 Soulagement d'Orléans
-8805 La chute de la Pucelle
-8806 Le nettoyage de la Loire
+8802 Une Mésie peu probable
+8803 La Pucelle d'Orléans
+8804 Le Nettoyage de la Loire
+8805 L'Essor
+8806 Le Siège de Paris
+8807 Une Parfaite Martyre
 
 8810 Mène Jeanne vers l'est depuis Vaucouleurs (a1), à travers les patrouilles anglaises, jusqu'à Robert de Baudricourt à b4, qui lui accordera une sainte lettre et une petite escorte. Porte ensuite la lettre à la cour du Dauphin à Chinon (f4). Jeanne doit survivre.
 8811 Orléans est assiégée par un anneau anglais de tours de guet et une petite forteresse. Entraîne des miliciens pour rassembler les bourgeois, puis brise le siège et détruis chaque tour anglaise.

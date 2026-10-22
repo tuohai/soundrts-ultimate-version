@@ -4,11 +4,12 @@
 8800 Joana d'Arc
 8801 França, 1429. Siga Joana d'Arc enquanto ela levanta o cerco de Orleans, marcha até Reims para a coroação e expulsa os ingleses do Loire. Cinco breves capítulos.
 
-8802 Aliados incertos
-8803 Um homem de Orleans
-8804 Libertação de Orléans
-8805 A queda da Donzela
-8806 A limpeza do Loire
+8802 Uma Messiá improvável
+8803 A Donzela de Orleans
+8804 A limpeza do Loire
+8805 A revolta
+8806 O cerco de Paris
+8807 Uma perfeita mártir
 
 8810 Conduza Joana para o leste a partir de Vaucouleurs (a1), passando pelas patrulhas inglesas, até Robert de Baudricourt em b4, que lhe concederá uma santa carta e uma pequena escolta. Então leve a carta à corte do Delfim em Chinon (f4). Joana deve sobreviver.
 8811 Orleans está sitiada por um anel inglês de torres de vigia e uma pequena fortaleza. Treine milícias para reunir os cidadãos, então rompa o cerco e destrua cada torre inglesa.

@@ -4,11 +4,12 @@
 8800 Juana de Arco
 8801 Francia, 1429. Acompaña a Juana de Arco mientras levanta el sitio de Orleans, marcha a Reims para la coronación y expulsa a los ingleses del Loira. Cinco breves capítulos.
 
-8802 Aliados inciertos
-8803 Un hombre de Orleans
-8804 Liberación de Orléans
-8805 La caída de la Doncella
-8806 La limpieza del Loira
+8802 Un mesías improbable
+8803 La Doncella de Orleans
+8804 La limpieza del Loira
+8805 El levantamiento
+8806 El sitio de París
+8807 Una perfecta mártir
 
 8810 Lleva a Juana al este desde Vaucouleurs (a1), cruzando las patrullas inglesas, hasta Robert de Baudricourt en b4, quien le concederá una santa carta y una pequeña escolta. Luego lleva la carta a la corte del Delfín en Chinon (f4). Juana debe sobrevivir.
 8811 Orleans está sitiada por un anillo inglés de torres de vigilancia y una pequeña fortaleza. Entrena milicias para reunir a los burgueses, luego rompe el sitio y destruye cada torre inglesa.

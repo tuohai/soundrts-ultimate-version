@@ -4,11 +4,12 @@
 8800 Jeanne d'Arc
 8801 Frankreich, 1429. Folge Jeanne d'Arc, wie sie die Belagerung von Orléans beendet, nach Reims zur Krönung marschiert und die Engländer aus dem Loiretal vertreibt. Fünf kurze Kapitel.
 
-8802 Unsichere Verbündete
-8803 Ein Mann aus Orléans
-8804 Befreiung von Orléans
-8805 Der Fall der Maid
-8806 Die Säuberung der Loire
+8802 Ein unwahrscheinlicher Messias
+8803 Das Mädchen von Orléans
+8804 Die Säuberung der Loire
+8805 Der Aufstand
+8806 Die Belagerung von Paris
+8807 Ein perfektes Martyrium
 
 8810 Führe Jeanne östlich von Vaucouleurs (a1) an den englischen Patrouillen vorbei zu Robert de Baudricourt bei b4, der ihr einen heiligen Brief und eine kleine Eskorte gewährt. Trage den Brief dann zum Dauphin an dessen Hof in Chinon (f4). Jeanne muss überleben.
 8811 Orléans ist von einem englischen Ring aus Wachtürmen und einer kleinen Festung belagert. Bilde Milizen aus, um die Bürger zu sammeln, dann brich die Belagerung und zerstöre jeden englischen Turm.

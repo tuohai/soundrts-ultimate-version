@@ -659,3 +659,7 @@
 8354 Elite Monaspa
 8355 Elite Legionary
 8356 Elite Slinger
+
+; Note: Joan of Arc campaign items (8860-8861) and hero titles/intro
+; (8862-8867) are defined in mods/aoe2/single/Joan of Arc/ui/tts.txt
+; so the strings stay co-located with the campaign maps.

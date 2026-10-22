@@ -2412,3 +2412,8 @@ shortcut g
 def elite_slinger
 is_a slinger
 title 8356
+
+; Note: Joan of Arc campaign NPCs (npc_joan, npc_baudricourt, npc_dauphin)
+; are defined in mods/aoe2/single/Joan of Arc/ui/style.txt so the style
+; stays co-located with the campaign maps and can be edited without
+; touching the mod-wide style.txt.

@@ -4,11 +4,12 @@
 8800 Jeanne d'Arc
 8801 Pháp, 1429. Theo dõi Jeanne d'Arc khi cô dỡ bỏ bao vây Orleans, hành quân đến Reims để đăng quang và đuổi quân Anh khỏi Loire. Năm chương ngắn.
 
-8802 Đồng minh bất định
-8803 Một người Orleans
-8804 Giải phóng Orléans
-8805 Con gái ngã xuống
-8806 Dọn sạch Loire
+8802 Một Đấng Cứu Độn Bất Ngờ
+8803 Thiếu nữ Orleans
+8804 Dọn sạch Loire
+8805 Cuộc nổi dậy
+8806 Vây hám Paris
+8807 Một ngường tử đạo hoàn hảo
 
 8810 Dẫn Jeanne về phía đông từ Vaucouleurs (a1), qua các tuần tra Anh, đến Robert de Baudricourt ở b4, người sẽ ban cho cô một lá thư thánh và một đoàn hộ tống nhỏ. Sau đó mang thư đến triều đình Thái tử ở Chinon (f4). Jeanne phải sống sót.
 8811 Orleans bị bao vây bởi một vòng tháp canh Anh và một pháo đài nhỏ. Huấn luyện dân binh để tập hợp dân thành thị, rồi phá vỡ cuộc bao vây và phá hủy mọi tháp Anh.

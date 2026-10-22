@@ -4,11 +4,12 @@
 8800 Janka z Arku
 8801 Francúzsko, 1429. Sleduj Janku z Arku, ako zdvíha obliehanie Orléansu, pochoduje do Remeša na korunováciu a vyháňa Angličanov z Loiry. Päť krátkych kapitol.
 
-8802 Neistí spojenci
-8803 Muž z Orléansu
-8804 Oslobodenie Orléansu
-8805 Pád Panny
-8806 Očista Loiry
+8802 Nepravdepodobný Mesiáš
+8803 Panna z Orléans
+8804 Očištenie Loiry
+8805 Povstanie
+8806 Obliehanie Paríža
+8807 Dokonalá mučeníčka
 
 8810 Veď Janku na východ z Vaucouleurs (a1) okolo anglických hliadok k Robertovi de Baudricourtovi v b4, ktorý jej udelí svätý list a malý sprievod. Potom odniesť list ku dvoru dauphina v Chinone (f4). Janka musí prežiť.
 8811 Orléans oblieha anglický kruh strážnych veží a malá pevnosť. Vycvič milíciu, aby sa pridali mešťania, potom prelom obliehanie a znič každú anglickú vežu.

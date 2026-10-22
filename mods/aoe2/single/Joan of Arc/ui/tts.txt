@@ -5,11 +5,12 @@
 8801 France, 1429. Follow Joan of Arc as she lifts the siege of Orleans, marches on Reims for the coronation, and drives the English from the Loire. Five short chapters.
 
 ; Mission titles
-8802 Uneasy Allies
-8803 A Man of Orleans
-8804 Relief of Orleans
-8805 The Maid Falls
-8806 The Cleansing of the Loire
+8802 An Unlikely Messiah
+8803 The Maid of Orleans
+8804 The Cleansing of the Loire
+8805 The Rising
+8806 The Siege of Paris
+8807 A Perfect Martyr
 
 ; Intros
 8810 March Joan east from Vaucouleurs (a1) past the English patrols to Robert de Baudricourt at b4, who will grant her a holy letter and a small escort. Then carry the letter to the Dauphin's court at Chinon (f4). Joan must survive.

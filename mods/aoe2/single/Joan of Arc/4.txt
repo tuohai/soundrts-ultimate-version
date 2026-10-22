@@ -34,12 +34,10 @@ intro 8813
 ;         -> c5/Reims cathedral (relic 3 is OUTSIDE, picked up at
 ;         b3/Burgundy garrisoned monastery on the way)
 
-; Ch. 4 has no dedicated mission title in the DE text tables.
-; The chapter is known as "The Rising" in the community; it follows
-; ch. 3 "The Cleansing of the Loire" and precedes ch. 5 "The Maid
-; Falls" (8805) -- both of which already have tts titles (8804/8805).
-; Dropping title so the game falls back to the chapter number display.
-title
+; Ch. 4 title is 8805 ("The Rising" / 起义) -- the official AoE2 DE
+; mission name.  It sits between ch. 3 "The Cleansing of the Loire"
+; (8804) and ch. 5 "The Siege of Paris" (8806).
+title 8805
 
 square_width 12
 nb_columns 7
@@ -104,9 +102,9 @@ computer_only 0 0 0 0 faction burgundians e4 monastery
 ; Joan's monks pick up the relics from the ground using the "give" order.
 ; Each relic is placed on the ground in the same square as the
 ; corresponding monastery so the player knows where to find it.
-1 joan_relic b3
-1 joan_relic d3
-1 joan_relic e4
+joan_relic b3
+joan_relic d3
+joan_relic e4
 
 ; Reims cathedral at c5 -- the receiver NPC.
 computer_only 0 0 0 0 neutral faction franks c5 npc_reims_cathedral
