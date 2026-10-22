@@ -133,8 +133,10 @@ class MoveAction(Action):
             return
         if getattr(target, "other_side", None) is not None:
             if self.unit.place is not target.place:
+                # Unit is elsewhere — walk to the exit first
                 self.unit.action_reach_and_stop()
             else:
+                # Unit is standing on the exit — use it to cross to the other side
                 self.unit.go_to_xy(
                     target.other_side.place.x, target.other_side.place.y
                 )

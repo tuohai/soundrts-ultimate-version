@@ -1824,9 +1824,12 @@ class PerceptionMixin:
         # 敌方单位威胁：必须每桶全量按 place 重算（勿做“只算增量差”）。
         # 旧增量逻辑曾导致交战中 menace 被清空 → AI「刚打过又停手」。
         # Walk enemy units ∩ perception, not the grass-heavy perception set.
+        # 防御：极少数路径上 enemy_players 可能混入尚未完全 init_position 的
+        # Player（p.units 缺失）；用 getattr 兜底为 ()，与 worldplayercomputer.py
+        # 既有写法一致。
         live_candidates = []
         for p in enemy_players:
-            for o in p.units:
+            for o in getattr(p, "units", None) or ():
                 if o in perceived:
                     live_candidates.append(o)
         if _HAS_FAST_MENACE:
