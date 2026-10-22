@@ -128,6 +128,98 @@ def _make_parse_stub():
 
 
 # ---------------------------------------------------------------------------
+# 数量在前的物品放置行：``4 joan_relic a1 b1 d2``
+# ---------------------------------------------------------------------------
+
+
+def _load_item_rules():
+    """载入带 ``class item`` 定义的 rules（res/rules.txt 自带 treasure_chest）。"""
+    from pathlib import Path
+
+    from soundrts.definitions import _get_base_classes, rules
+
+    rules.load(
+        Path("res/rules.txt").read_text(encoding="utf-8"),
+        base_classes=_get_base_classes(),
+    )
+    return rules
+
+
+def test_expand_item_qty_first_rewrites_leading_quantity():
+    """``4 treasure_chest a1 b1 d2`` 应改写成引擎原生的 ``treasure_chest 4 a1 b1 d2``。"""
+    _load_item_rules()
+    from soundrts.lib.map_tokens import expand_item_qty_first
+
+    out = expand_item_qty_first("4 treasure_chest a1 b1 d2")
+    assert out.strip() == "treasure_chest 4 a1 b1 d2"
+
+
+def test_expand_item_qty_first_leaves_native_order_untouched():
+    """原生顺序已是 ``treasure_chest 4 a1``，不应被二次改写。"""
+    _load_item_rules()
+    from soundrts.lib.map_tokens import expand_item_qty_first
+
+    for line in (
+        "treasure_chest 4 a1 b1 d2",
+        "treasure_chest a1 b1",
+    ):
+        assert expand_item_qty_first(line).strip() == line
+
+
+@pytest.mark.skipif(_WM is None, reason="world_map could not be imported")
+def test_qty_first_item_places_quantity_on_each_square():
+    """``4 treasure_chest a1 b1 d2`` → a1/b1/d2 各放 4 个。"""
+    _load_item_rules()
+    m = _make_parse_stub()
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        m._parse_map("""
+nb_players_min 1
+nb_players_max 1
+starting_squares a1
+4 treasure_chest a1 b1 d2
+""")
+    placed = {sq: qty for sq, cls, qty in m.map_objects if cls == "treasure_chest"}
+    assert placed == {"0,0": 4, "1,0": 4, "3,1": 4}
+
+
+@pytest.mark.skipif(_WM is None, reason="world_map could not be imported")
+def test_qty_first_item_matches_native_order():
+    """数量在前与原生顺序产生完全相同的 map_objects。"""
+    _load_item_rules()
+    results = []
+    for line in ("4 treasure_chest a1 b1 d2", "treasure_chest 4 a1 b1 d2"):
+        m = _make_parse_stub()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            m._parse_map(
+                "nb_players_min 1\nnb_players_max 1\nstarting_squares a1\n"
+                + line
+                + "\n"
+            )
+        results.append(sorted(m.map_objects))
+    assert results[0]
+    assert results[0] == results[1]
+
+
+@pytest.mark.skipif(_WM is None, reason="world_map could not be imported")
+def test_item_without_quantity_places_one_per_square():
+    """``treasure_chest a1 b1`` 仍是每格 1 个（数量可省略的旧行为不变）。"""
+    _load_item_rules()
+    m = _make_parse_stub()
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        m._parse_map("""
+nb_players_min 1
+nb_players_max 1
+starting_squares a1
+treasure_chest a1 b1
+""")
+    placed = {sq: qty for sq, cls, qty in m.map_objects if cls == "treasure_chest"}
+    assert placed == {"0,0": 1, "1,0": 1}
+
+
+# ---------------------------------------------------------------------------
 # 解析：player_start_overrides 写入正确
 # ---------------------------------------------------------------------------
 

@@ -15,7 +15,7 @@ from ..worldplayerbase import Player
 from ..worldresource import create_building_land
 from ..worldroom import Square
 from ..lib import collision
-from ..lib.map_tokens import expand_deposit_plurals
+from ..lib.map_tokens import expand_deposit_plurals, expand_item_qty_first
 from ..lib.subcell_terrain import (
     DEFAULT_SUBCELL_PRECISION,
     MAX_SUBCELL_PRECISION,
@@ -813,6 +813,9 @@ class WorldMapMixin:
             s,
         )
         s = expand_deposit_plurals(s)
+        # 数量在前的物品行改写为引擎原生顺序：`4 joan_relic a1 b1 d2`
+        # -> `joan_relic 4 a1 b1 d2`（每个坐标各放 4 个）。
+        s = expand_item_qty_first(s)
         s = re.sub(r"(south_north|west_east)_paths", r"\1 path", s)
         s = re.sub(r"(south_north|west_east)_bridges", r"\1 bridge", s)
         
