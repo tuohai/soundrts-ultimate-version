@@ -5825,8 +5825,16 @@ mdg 0
 mdf 0
 rdf 0
 rdg 0
-rdg_cd 1.6
-rdg_range 9
+; rdg_cd 0 / rdg_range 0 -- monk has rdg 0 (no ranged attack); the
+; "ranged" operations monks perform (a_conversion skill / heal_*) are
+; driven by their own cooldowns (a_conversion time_cost 6, heal_cd 0.4)
+; and ranges (effect_range 9 / heal_range 8) -- NOT by the rdg_cd /
+; rdg_range pair. Setting rdg_cd 0 / rdg_range 0 here keeps the
+; unit-attribute screen from showing misleading "ranged cooldown 1.6 /
+; ranged range 9" lines on a unit that has no ranged weapon, and stops
+; the AI from treating monks as ranged units.
+rdg_cd 0
+rdg_range 0
 can_use_skill a_conversion
 can_use_tech sanctity fervor illumination block_printing redemption atonement
 
@@ -5859,8 +5867,14 @@ mdg 0
 mdf 0
 rdf 0
 rdg 0
-rdg_cd 1.6
-rdg_range 7
+; rdg_cd 0 / rdg_range 0 -- missionary (Spanish mounted monk) inherits
+; is_a monk, so it already picks up the rdg_cd 0 / rdg_range 0 from
+; monk. The previous rdg_cd 1.6 / rdg_range 7 was overriding that
+; with no purpose: missionary has rdg 0 (no ranged attack) and its
+; "ranged" operations (a_conversion / heal_*) use their own cooldowns
+; and ranges, exactly like monk. See the comment on def monk.
+rdg_cd 0
+rdg_range 0
 can_use_skill a_conversion
 can_use_tech sanctity fervor illumination block_printing redemption atonement
 
