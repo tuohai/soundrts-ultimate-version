@@ -4,6 +4,51 @@
 .. contents::
 
 
+1.5.1.5
+-------
+
+**新增：地图中物品数量前置写法（``<数量> <物品> <坐标…>``）**
+
+- **问题**：地图解析器原本只认 ``<物品> [数量] <坐标…>``，数量必须夹在物品类型和坐标之间。同一种物品要撒到多个格子时读起来别扭，而制图者最自然写出的"数量在前"形式根本不被识别：``4 joan_relic a1 b1 d2`` 会被当成一条名为 ``4`` 的指令，报 ``unknown command: 4``，地图上一个东西都不会放。
+- **改进**：在 ``soundrts/lib/map_tokens.py`` 里新增 ``expand_item_qty_first()``，与既有的 ``expand_deposit_plurals()``（把 ``goldmines`` 改写成 ``goldmine`` 的同类改写）放在一起。它在解析前把任何 ``<数字> <物品类型> <其余…>`` 的行改写成引擎原生的 ``<物品类型> <数字> <其余…>``，于是 item 分支一行都不用改就照常处理。每个列出的坐标各得到该数量，所以 ``4 joan_relic a1 b1 d2`` 会在 a1、b1、d2 各放 4 个圣物。物品类型名是运行时从 ``rules`` 读的（``item_names()``，与 ``deposit_plural_names()`` 同一做法）而非写死，因为它随 mod 和战役而不同 —— Joan of Arc 战役定义的是 ``joan_relic``，``mods/aoe2/rules.txt`` 定义的是 ``relic``，``res/rules.txt`` 定义的是 ``treasure_chest`` / ``gold_pile`` / ``gold_coin``。两种顺序都仍然有效、也可以在同一张图里混用；数量依旧可以整个省略（每格 1 个）。只有"以数字开头且紧跟一个已知物品名"的行会被改写，所以现有地图不可能被误伤（扫过 ``mods/`` 未发现此类冲突）。
+- **范围**：``soundrts/lib/map_tokens.py`` （新增 ``item_names()`` + ``expand_item_qty_first()``）、``soundrts/world/world_map.py`` （``_parse_map`` 在 ``expand_deposit_plurals`` 之后调用该改写）、``soundrts/tests/test_player_start.py`` （5 个回归测试：改写正确、原生顺序不被二次改写、每格数量正确、数量在前与原生顺序结果一致、省略数量时每格仍为 1 个）。
+
+**修复：帝国 2 单位 ``space`` 容量限制（补完 1.5.0.5 的改动）**
+
+- **问题**：1.5.0.5 曾宣布要把 ``mods/aoe2/rules.txt`` 与 ``res/rules.txt`` 里单位的 ``space`` 全部注释掉，好让大军团能堆在同一格。原版 ``res/rules.txt`` 确实按承诺改了，但 ``mods/aoe2/rules.txt`` 漏掉了 —— 那里 73 行 ``space`` 全部仍在生效。由于单位 ``space`` 是**按同盟**的抽象格子容量（预算是 ``square_width``），庞大的帝国 2 军队会被拒绝进入本可以站下的格子，训练的 ``_max_train_count_for_square_space`` 也会悄悄限制建筑能造出多少单位。
+- **改进**：按 1.5.0.5 的原定方案，把 ``mods/aoe2/rules.txt`` 里全部 73 行 ``space`` 注释成 ``;space``。不写 ``space`` 依旧默认 ``0``（不占抽象容量），因此帝国 2 mod 的这项约束被关闭，而其它 mod 仍可使用 —— 取消某一行的注释即可为该单位恢复限制。**物理碰撞与阵型槽位不变**，本次只关掉按同盟的抽象格子容量。审计测试 ``test_changelog_15.py::test_aoe2_and_res_rules_comment_out_unit_space`` 现在对两个规则文件都是绿的。
+- **范围**：``mods/aoe2/rules.txt`` （73 行 ``space`` → ``;space``）、``soundrts/tests/test_changelog_15.py`` （既有审计测试转绿）。
+
+**修复：``monk`` / ``missionary`` 报错了一个并不存在的远程攻击**
+
+- **问题**：这两个单位都是 ``rdg 0``（没有远程武器），规则里却仍写着 ``rdg_cd 1.6`` / ``rdg_range 9``（missionary 是 ``rdg_range 7``）。于是单位属性界面会给一个根本不能射击的单位显示"远程冷却 1.6 / 射程 9"这类误导信息，AI 也会把僧侣当作远程单位。missionary 的这些数值还覆盖了它通过 ``is_a monk`` 继承来的值，毫无意义。
+- **改进**：把 ``monk`` 和 ``missionary`` 的 ``rdg_cd`` / ``rdg_range`` 设为 ``0``。它们的"远程"操作由各自独立的冷却与射程驱动（``a_conversion`` 的 ``time_cost 6``；``heal_*`` 的 ``heal_cd 0.4`` 与 ``effect_range 9`` / ``heal_range 8``），不受影响。
+- **范围**：``mods/aoe2/rules.txt``（``def monk`` 与 ``def missionary``）。
+
+**修复：非运输建筑显示了运输相关属性**
+
+- **问题**：``passenger_attack_types`` 被赋给了共享基类 ``Building`` 而不是各个类本身，因此没有定义它的建筑 —— ``mining_camp``、``lumbermill``、``mill``、``market``、``house`` —— 会通过 MRO 继承到最后被处理的那个建筑（通常是 ``aoe_castle``）的值。采矿场的属性界面于是会列出城镇中心的"容器内可攻击单位：archer_unit、peasant"。
+- **改进**：分两层修。根因在 ``CreatureAttributes.interpret``：显式定义的 ``passenger_attack_types`` 现在写回该类自己的 ``d`` 字典，而不是写到 ``cls = Building`` 上，于是每个类由 ``type(name, (base,), v)`` 复制出的副本各自持有。作为双保险，显示层（``DisplayInterface._add_transport_container_attributes``）现在会提前返回，除非单位确实有 ``transport_capacity > 0``。真正的运输容器（城镇中心、城堡、箭塔）属性照常显示。
+- **范围**：``soundrts/worldunit/world_attributes.py`` （根因）、``soundrts/attributes/display_interface.py`` （显示守卫）、``soundrts/tests/test_transport_attributes_screen.py`` （2 个回归测试：非运输建筑不显示任何运输属性，真正的运输容器照常显示）。
+
+**修复：单位尚未解析的电脑槽位被误判成野生动物槽位**
+
+- **问题**：``computer_start_is_wildlife_only()`` 会收集 ``computer_only`` 槽位里能解析出的单位类，然后返回 ``all(...)``。当槽位的单位类还是未解析的字符串 token（战役里的 ``npc_dauphin`` / ``npc_baudricourt`` 就是如此）时，收集到的列表是空的 —— 而 Python 里 ``all([])`` 等于 ``True``。于是该槽位被误判成 wildlife-only，跳过 ``init_alliance``，联盟始终为 ``None``，``relation_to`` 一直返回 "neutral" 或 "enemy" —— 该槽位永远拿不到 ``accept_from ally``。
+- **改进**：空的 ``unit_classes`` 现在被显式判为"尚未确认为野生动物槽位"并返回 ``False``，让 ``populate_map`` 走正常的 ``alliance = "ai"`` 路径。
+- **范围**：``soundrts/worldplayerbase/base.py``。
+
+**修复：敌方威胁（menace）计算可能因未初始化的玩家而报错**
+
+- **问题**：menace 计算会遍历每个敌方玩家的 ``p.units``。在少数路径上敌方 ``Player`` 尚未初始化单位列表，该属性缺失，于是循环抛错。
+- **改进**：改用 ``getattr(p, "units", None) or ()`` —— 与 ``worldplayercomputer.py`` 中既有的防御写法一致。
+- **范围**：``soundrts/worldplayerbase/perception.py``。
+
+**调整：帝国 2 战役对标 DE 任务重做平衡与标题**
+
+- **圣女贞德**：8802–8807 的章节标题改用帝国 2 DE 官方任务名（An Unlikely Messiah、The Maid of Orleans、The Cleansing of the Loire、The Rising、The Siege of Paris、A Perfect Martyr），13 种界面语言同步更新；第 4 章补上了缺失的任务标题 ``8805``（The Rising），不再回退显示章节编号。三行 ``joan_relic`` 放置改为引擎原生的 ``<物品> <数量> <坐标…>`` 顺序。
+- **威廉·华莱士**：逐章重调初始资源（3: 100/200/500/0，4: 250/200/450/200，5: 500/400/500/400，6: 500/500/500/500，7: 200/200/800/200），使每课都能玩通，城堡时代那章也真能攒出城堡。第 5 章现在摧毁英格兰箭塔也能获胜，第 5、7 章在完成目标的同时显式宣告胜利。
+- **范围**：``mods/aoe2/single/Joan of Arc/4.txt``；``mods/aoe2/single/Joan of Arc/ui*/tts.txt``（13 种语言）；``mods/aoe2/single/William Wallace/{3,4,5,6,7}.txt``。
+
 1.5.1.4
 -------
 

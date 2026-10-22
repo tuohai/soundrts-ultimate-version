@@ -5,6 +5,51 @@ Release notes
 .. contents::
 
 
+1.5.1.5
+-------
+
+**Added: quantity-first item placement in maps (``<qty> <item> <squares…>``)**
+
+- **Problem**: The map parser only understood ``<item> [<qty>] <squares…>`` — the quantity had to sit *between* the item type and the coordinates. Placing one item type across several squares therefore read awkwardly, and the quantity-first form that map makers naturally reach for was not recognized at all: a line like ``4 joan_relic a1 b1 d2`` was taken as a command named ``4``, logged ``unknown command: 4``, and placed nothing on the map.
+- **Fix**: Add ``expand_item_qty_first()`` in ``soundrts/lib/map_tokens.py``, next to the existing ``expand_deposit_plurals()`` (which does the same kind of rewrite for ``goldmines`` → ``goldmine``). It rewrites any line of the form ``<number> <item_type> <rest…>`` into the engine's native ``<item_type> <number> <rest…>`` before parsing, so the existing item branch handles it unchanged. Each listed coordinate receives that quantity, so ``4 joan_relic a1 b1 d2`` places 4 relics on a1, 4 on b1 and 4 on d2. The item type names are read from ``rules`` at runtime (``item_names()``, same approach as ``deposit_plural_names()``) rather than hardcoded, because they differ per mod and campaign — the Joan of Arc campaign defines ``joan_relic``, ``mods/aoe2/rules.txt`` defines ``relic``, and ``res/rules.txt`` defines ``treasure_chest`` / ``gold_pile`` / ``gold_coin``. Both orderings stay valid and may be mixed in the same map; the quantity may still be omitted entirely (one item per square). Only lines that begin with a number immediately followed by a known item name are rewritten, so no existing map line can be captured (a scan of ``mods/`` found no such collisions).
+- **Scope**: ``soundrts/lib/map_tokens.py`` (new ``item_names()`` + ``expand_item_qty_first()``), ``soundrts/world/world_map.py`` (``_parse_map`` calls the rewrite right after ``expand_deposit_plurals``), ``soundrts/tests/test_player_start.py`` (5 regression tests: rewrite correctness, native order left untouched, per-square quantity, quantity-first ≡ native order, omitted quantity still yields one per square).
+
+**Fixed: AoE2 unit ``space`` capacity limit (completes the 1.5.0.5 change)**
+
+- **Problem**: Version 1.5.0.5 announced that unit ``space`` lines would be commented out in both ``mods/aoe2/rules.txt`` and ``res/rules.txt``, so that large armies could stack on one square. The stock ``res/rules.txt`` was updated as promised, but ``mods/aoe2/rules.txt`` was not — all 73 ``space`` lines there were still active. Because unit ``space`` is an *abstract* per-alliance square capacity (``square_width`` is the budget), a large AoE2 army could be refused entry to a square it should occupy, and the training cap ``_max_train_count_for_square_space`` could silently limit how many units a building could produce.
+- **Fix**: Comment out all 73 ``space`` lines in ``mods/aoe2/rules.txt`` as ``;space``, exactly as 1.5.0.5 specified. An omitted ``space`` still defaults to ``0`` (no abstract occupancy), so the constraint is disabled for the AoE2 mod while remaining available for any mod that wants it — uncomment a line to restore the limit for that unit. **Physical collision and formation slots are unchanged**; this only turns off the abstract per-alliance square capacity. The audit test ``test_changelog_15.py::test_aoe2_and_res_rules_comment_out_unit_space`` now passes for both rule files.
+- **Scope**: ``mods/aoe2/rules.txt`` (73 ``space`` lines → ``;space``), ``soundrts/tests/test_changelog_15.py`` (existing audit test now green).
+
+**Fixed: ``monk`` / ``missionary`` reported a bogus ranged attack**
+
+- **Problem**: Both units had ``rdg 0`` (no ranged weapon), yet the rules still set ``rdg_cd 1.6`` / ``rdg_range 9`` (and ``rdg_range 7`` for the missionary). The unit attribute screen therefore showed misleading "ranged cooldown 1.6 / ranged range 9" lines for a unit that cannot shoot, and the AI treated monks as ranged units. The missionary's values also overrode the ones it inherited from ``is_a monk``, for no benefit.
+- **Fix**: Set ``rdg_cd 0`` / ``rdg_range 0`` on ``monk`` and ``missionary``. Their "ranged" operations are driven by their own cooldowns and ranges (``a_conversion`` with ``time_cost 6``; ``heal_*`` with ``heal_cd 0.4`` and ``effect_range 9`` / ``heal_range 8``), which are unaffected.
+- **Scope**: ``mods/aoe2/rules.txt`` (``def monk`` and ``def missionary``).
+
+**Fixed: non-transport buildings showed transport attributes**
+
+- **Problem**: ``passenger_attack_types`` was assigned to the shared base class ``Building`` rather than to the individual class, so buildings that do not define it — ``mining_camp``, ``lumbermill``, ``mill``, ``market``, ``house`` — inherited it through the MRO from whichever building was processed last (usually ``aoe_castle``). The attribute screen of a mining camp consequently listed the Town Center's "container attackable units: archer_unit, peasant".
+- **Fix**: Two layers. The root cause is in ``CreatureAttributes.interpret``: an explicitly defined ``passenger_attack_types`` is now written back into the class's own ``d`` dict instead of onto ``cls = Building``, so the per-class ``type(name, (base,), v)`` copy owns it. As a belt-and-braces guard, the display layer (``DisplayInterface._add_transport_container_attributes``) now returns early unless the unit actually has ``transport_capacity > 0``. Genuine transport containers (town center, castle, watch tower) still show the attributes.
+- **Scope**: ``soundrts/worldunit/world_attributes.py`` (root cause), ``soundrts/attributes/display_interface.py`` (display guard), ``soundrts/tests/test_transport_attributes_screen.py`` (2 regression tests: non-transport buildings show nothing, real transports still show everything).
+
+**Fixed: a computer slot with a not-yet-resolved unit was treated as a wildlife slot**
+
+- **Problem**: ``computer_start_is_wildlife_only()`` collected the resolvable unit classes of a ``computer_only`` slot and returned ``all(...)``. When the slot's unit class was still an unresolved string token (as in the campaign's ``npc_dauphin`` / ``npc_baudricourt`` starts), the collected list was empty — and ``all([])`` is ``True`` in Python. The slot was therefore misclassified as wildlife-only, so it skipped ``init_alliance``, its alliance stayed ``None``, and ``relation_to`` kept returning "neutral" or "enemy" — the slot could never receive ``accept_from ally``.
+- **Fix**: An empty ``unit_classes`` list is now explicitly treated as "not a confirmed wildlife slot" and returns ``False``, so ``populate_map`` takes the normal ``alliance = "ai"`` path.
+- **Scope**: ``soundrts/worldplayerbase/base.py``.
+
+**Fixed: enemy-threat (menace) calculation could raise on a not-yet-initialized player**
+
+- **Problem**: The menace computation walked ``p.units`` for every enemy player. On a few code paths an enemy ``Player`` had not had its units initialized yet, so the attribute was missing and the loop raised.
+- **Fix**: Use ``getattr(p, "units", None) or ()`` — the same defensive form already used in ``worldplayercomputer.py``.
+- **Scope**: ``soundrts/worldplayerbase/perception.py``.
+
+**Changed: AoE2 campaigns rebalanced and retitled to match the DE missions**
+
+- **Joan of Arc**: chapter titles 8802–8807 now use the official AoE2 DE mission names (An Unlikely Messiah, The Maid of Orleans, The Cleansing of the Loire, The Rising, The Siege of Paris, A Perfect Martyr) in all 13 interface languages; chapter 4 gained the missing mission title ``8805`` (The Rising) instead of falling back to the chapter number. The three ``joan_relic`` placement lines now use the engine's native ``<item> <qty> <squares…>`` order.
+- **William Wallace**: starting resources retuned per chapter (3: 100/200/500/0, 4: 250/200/450/200, 5: 500/400/500/400, 6: 500/500/500/500, 7: 200/200/800/200) so each lesson is playable and the Castle Age chapter can actually afford its castle. Chapter 5 now also wins when the English watch tower is destroyed, and chapters 5 and 7 declare their victory explicitly alongside the completed objective.
+- **Scope**: ``mods/aoe2/single/Joan of Arc/4.txt``; ``mods/aoe2/single/Joan of Arc/ui*/tts.txt`` (13 languages); ``mods/aoe2/single/William Wallace/{3,4,5,6,7}.txt``.
+
 1.5.1.4
 -------
 

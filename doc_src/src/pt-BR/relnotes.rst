@@ -4,6 +4,51 @@ Notas de lançamento
 
 .. contents::
 
+1.5.1.5
+-------
+
+**Adicionado: colocação de itens com quantidade à frente nos mapas (``<quantidade> <item> <células…>``)**
+
+- **Problema**: o analisador de mapas só entendia ``<item> [quantidade] <células…>``: a quantidade tinha de ficar *entre* o tipo de item e as coordenadas. Espalhar o mesmo tipo de item por várias células ficava desconfortável de ler, e a forma com a quantidade à frente que um cartógrafo escreveria de forma natural não era reconhecida de todo: uma linha como ``4 joan_relic a1 b1 d2`` era tomada como um comando chamado ``4``, registava ``unknown command: 4`` e não colocava nada no mapa.
+- **Melhoria**: acrescentar ``expand_item_qty_first()`` em ``soundrts/lib/map_tokens.py``, junto do já existente ``expand_deposit_plurals()`` (que faz o mesmo género de reescrita para ``goldmines`` → ``goldmine``). Reescreve qualquer linha da forma ``<número> <tipo_de_item> <resto…>`` para a forma nativa do motor ``<tipo_de_item> <número> <resto…>`` antes da análise, pelo que o ramo de itens existente passa a tratá-la sem alterações. Cada célula indicada recebe essa quantidade, assim ``4 joan_relic a1 b1 d2`` coloca 4 relíquias em a1, 4 em b1 e 4 em d2. Os nomes dos tipos de item são lidos de ``rules`` em tempo de execução (``item_names()``, a mesma abordagem que ``deposit_plural_names()``) em vez de estarem codificados, porque variam consoante o mod e a campanha: a campanha Joan of Arc define ``joan_relic``, ``mods/aoe2/rules.txt`` define ``relic`` e ``res/rules.txt`` define ``treasure_chest`` / ``gold_pile`` / ``gold_coin``. Ambas as ordens continuam válidas e podem ser misturadas no mesmo mapa; a quantidade ainda pode ser omitida por completo (um item por célula). Só são reescritas as linhas que começam por um número imediatamente seguido de um nome de item conhecido, pelo que nenhuma linha de um mapa existente pode ser capturada (uma verificação de ``mods/`` não encontrou colisões deste tipo).
+- **Escopo**: ``soundrts/lib/map_tokens.py`` (novos ``item_names()`` + ``expand_item_qty_first()``), ``soundrts/world/world_map.py`` (``_parse_map`` chama a reescrita logo a seguir a ``expand_deposit_plurals``), ``soundrts/tests/test_player_start.py`` (5 testes de regressão: correcção da reescrita, ordem nativa não reescrita duas vezes, quantidade por célula, quantidade-à-frente ≡ ordem nativa, e quantidade omitida continua a dar um por célula).
+
+**Corrigido: limite de capacidade ``space`` das unidades de AoE2 (completa a alteração de 1.5.0.5)**
+
+- **Problema**: a versão 1.5.0.5 anunciou que as linhas ``space`` das unidades seriam comentadas tanto em ``mods/aoe2/rules.txt`` como em ``res/rules.txt``, para que os exércitos grandes pudessem empilhar-se numa só célula. O ``res/rules.txt`` original foi de facto atualizado como prometido, mas ``mods/aoe2/rules.txt`` não foi: aí as 73 linhas ``space`` continuavam ativas. Como o ``space`` de uma unidade é uma capacidade *abstrata* por aliança (o orçamento é o ``square_width``), um grande exército de AoE2 podia ver a entrada recusada numa célula que deveria ocupar, e o limite de treino ``_max_train_count_for_square_space`` podia silenciosamente limitar quantas unidades um edifício podia produzir.
+- **Melhoria**: comentar as 73 linhas ``space`` de ``mods/aoe2/rules.txt`` como ``;space``, exatamente como especificado em 1.5.0.5. Um ``space`` omitido continua a valer ``0`` (sem ocupação abstrata), pelo que a restrição fica desactivada para o mod de AoE2 mas continua disponível para qualquer mod que a queira — descomentar uma linha repõe o limite para essa unidade. **A colisão física e as posições de formação não mudam**; isto desactiva apenas a capacidade abstrata por aliança. O teste de auditoria ``test_changelog_15.py::test_aoe2_and_res_rules_comment_out_unit_space`` passa agora para ambos os ficheiros de regras.
+- **Escopo**: ``mods/aoe2/rules.txt`` (73 linhas ``space`` → ``;space``), ``soundrts/tests/test_changelog_15.py`` (o teste de auditoria existente passa).
+
+**Corrigido: ``monk`` / ``missionary`` declaravam um ataque à distância inexistente**
+
+- **Problema**: ambas as unidades têm ``rdg 0`` (sem arma à distância), mas as regras definiam na mesma ``rdg_cd 1.6`` / ``rdg_range 9`` (e ``rdg_range 7`` para o missionary). O ecrã de atributos mostrava por isso linhas enganadoras de "cooldown de distância 1.6 / alcance 9" numa unidade que não dispara, e a IA tratava os monges como unidades à distância. Os valores do missionary anulavam ainda os herdados de ``is_a monk``, sem qualquer propósito.
+- **Melhoria**: definir ``rdg_cd 0`` / ``rdg_range 0`` em ``monk`` e ``missionary``. As suas operações "à distância" são regidas pelos seus próprios cooldowns e alcances (``a_conversion`` com ``time_cost 6``; ``heal_*`` com ``heal_cd 0.4`` e ``effect_range 9`` / ``heal_range 8``), que não são afectados.
+- **Escopo**: ``mods/aoe2/rules.txt`` (``def monk`` e ``def missionary``).
+
+**Corrigido: edifícios não transportadores mostravam atributos de transporte**
+
+- **Problema**: ``passenger_attack_types`` era atribuído à classe base partilhada ``Building`` em vez de a cada classe, pelo que os edifícios que não o definem — ``mining_camp``, ``lumbermill``, ``mill``, ``market``, ``house`` — herdavam-no por MRO do último edifício processado (normalmente ``aoe_castle``). O ecrã de atributos de uma mina mostrava por isso as "unidades atacáveis do contentor: archer_unit, peasant" do centro da cidade.
+- **Melhoria**: duas camadas. A causa raiz está em ``CreatureAttributes.interpret``: um ``passenger_attack_types`` definido explicitamente passa agora a ser escrito no dicionário ``d`` da própria classe em vez de em ``cls = Building``, de modo que a cópia por classe via ``type(name, (base,), v)`` passa a ser sua proprietária. Como reforço, a camada de apresentação (``DisplayInterface._add_transport_container_attributes``) retorna já de imediato, a menos que a unidade tenha realmente ``transport_capacity > 0``. Os verdadeiros contentores de transporte (centro da cidade, castelo, torre de vigia) continuam a mostrar os atributos.
+- **Escopo**: ``soundrts/worldunit/world_attributes.py`` (causa raiz), ``soundrts/attributes/display_interface.py`` (guarda de apresentação), ``soundrts/tests/test_transport_attributes_screen.py`` (2 testes de regressão: edifícios não transportadores não mostram nada, transportes reais mostram tudo).
+
+**Corrigido: uma ranhura de computador com uma unidade por resolver era tratada como ranhura de fauna**
+
+- **Problema**: ``computer_start_is_wildlife_only()`` recolhia as classes de unidade resolúveis de uma ranhura ``computer_only`` e devolvia ``all(...)``. Quando a classe de unidade da ranhura ainda era um token de texto por resolver (como ``npc_dauphin`` / ``npc_baudricourt`` na campanha), a lista recolhida ficava vazia — e ``all([])`` é ``True`` em Python. A ranhura era por isso classificada como fauna, saltava ``init_alliance``, a sua aliança mantinha-se ``None`` e ``relation_to`` continuava a devolver "neutral" ou "enemy" — a ranhura nunca podia receber ``accept_from ally``.
+- **Melhoria**: uma lista ``unit_classes`` vazia é agora tratada explicitamente como "não é uma ranhura de fauna confirmada" e devolve ``False``, pelo que ``populate_map`` segue o caminho normal ``alliance = "ai"``.
+- **Escopo**: ``soundrts/worldplayerbase/base.py``.
+
+**Corrigido: o cálculo da ameaça inimiga (menace) podia falhar com um jogador não inicializado**
+
+- **Problema**: o cálculo de menace percorria ``p.units`` de cada jogador inimigo. Em alguns percursos um ``Player`` inimigo ainda não tinha as unidades inicializadas, pelo que o atributo faltava e o ciclo levantava uma excepção.
+- **Melhoria**: usar ``getattr(p, "units", None) or ()`` — a mesma forma defensiva já usada em ``worldplayercomputer.py``.
+- **Escopo**: ``soundrts/worldplayerbase/perception.py``.
+
+**Alterado: campanhas de AoE2 reequilibradas e retítuladas segundo as missões de DE**
+
+- **Joan of Arc**: os títulos dos capítulos 8802–8807 usam agora os nomes oficiais das missões de AoE2 DE (An Unlikely Messiah, The Maid of Orleans, The Cleansing of the Loire, The Rising, The Siege of Paris, A Perfect Martyr) nos 13 idiomas da interface; o capítulo 4 recuperou o título de missão que lhe faltava, ``8805`` (The Rising), em vez de recorrer ao número do capítulo. As três linhas de colocação de ``joan_relic`` usam agora a ordem nativa do motor ``<item> <quantidade> <células…>``.
+- **William Wallace**: recursos iniciais reajustados capítulo a capítulo (3: 100/200/500/0, 4: 250/200/450/200, 5: 500/400/500/400, 6: 500/500/500/500, 7: 200/200/800/200) para que cada lição seja jogável e o capítulo da Idade do Castelo possa mesmo pagar o seu castelo. O capítulo 5 passa agora a ser vencido também quando a torre de vigia inglesa é destruída, e os capítulos 5 e 7 declaram explicitamente a vitória juntamente com o objectivo concluído.
+- **Escopo**: ``mods/aoe2/single/Joan of Arc/4.txt``; ``mods/aoe2/single/Joan of Arc/ui*/tts.txt`` (13 idiomas); ``mods/aoe2/single/William Wallace/{3,4,5,6,7}.txt``.
+
 1.5.1.4
 -------
 
