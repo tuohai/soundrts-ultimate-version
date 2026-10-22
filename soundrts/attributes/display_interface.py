@@ -277,8 +277,17 @@ class DisplayInterface:
         return attack_text
 
     def _add_transport_container_attributes(self, u, attrs):
-        """运输容器：容器内可攻击单位、装载加成、乘客加成。"""
+        """运输容器：容器内可攻击单位、装载加成、乘客加成。
+
+        仅对 transport_capacity > 0 的单位（真正的运输容器）显示这些属性。
+        非运输建筑不应显示，即使其 class 在属性解析中错误地继承了
+        passenger_attack_types（见 Building 的 class-attribute 污染问题）。
+        """
         model = u.model
+
+        transport_capacity = getattr(model, "transport_capacity", 0) or 0
+        if transport_capacity <= 0:
+            return
 
         passenger_attack_types = getattr(model, "passenger_attack_types", None)
         if passenger_attack_types:

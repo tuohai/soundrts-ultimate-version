@@ -431,11 +431,16 @@ class CreatureAttributes(Entity):
 
         if "passenger_attack_types" in d:
             if "all" in d["passenger_attack_types"]:
-                cls.passenger_attack_types = ["all"]
-            else:
-                cls.passenger_attack_types = d["passenger_attack_types"]
-        else:
-            cls.passenger_attack_types = []
+                d["passenger_attack_types"] = ["all"]
+            # 显式定义的 pass —— 写回 d（而非 cls=Building），避免污染共享基类 Building.
+            # 否则中间夹杂的 house / mill / lumbermill / mining_camp 等无
+            # passenger_attack_types 的建筑会通过 MRO 继承到最后一次处理
+            # 的建筑（通常 aoe_castle）的值，mining_camp 错误地显示
+            # town_center 的 ['archer_unit', 'peasant'].
+        # 默认值留给 type(name, (base,), v) 处理：d 中没有该键，
+        # 新类也就没有该属性（与 d["..."] = [] 不一样 —— 后者会经
+        # Definitions.interpret 过滤对 Skill 这类不带此字段的基类
+        # 触发"doesn't have any attribute"警告）。
 
         for bonus_key, attr_name in (
             ("load_bonus", "load_bonus"),
