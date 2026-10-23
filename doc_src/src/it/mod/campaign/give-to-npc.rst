@@ -37,6 +37,9 @@ Permette ai giocatori di consegnare oggetti trasportati a un'altra unità (PNG n
    * - Condizione
      - ``npc_has_item``
      - il bersaglio ha ricevuto / possiede l'oggetto
+   * - Condizione
+     - ``npc_has_items``
+     - il bersaglio ha ricevuto / possiede una *quantità* di oggetti (obiettivi di raccolta)
 
 
 
@@ -98,6 +101,41 @@ Vero se ``received_items`` contiene il tipo o l'inventario lo detiene ancora.
 
 Confronta con `find-item-objective <find-item-objective.htm>`_. Per arrivare e far sparire senza PNG, usa `brought-item-delivery <brought-item-delivery.htm>`_.
 
+
+----
+
+4b. ``npc_has_items`` (variante con contatore)
+-------------------------------------------------
+
+.. code-block:: text
+
+   (npc_has_items <NPC_selector> <item_type> <count> [square])
+   (npc_has_items <index> <unit_type> <item_type> <count>)
+   (npc_has_items <square> <index> <unit_type> <item_type> <count>)
+
+
+Gli stessi selettori di ``npc_has_item``, più un ``<count>`` obbligatorio: la
+condizione è vera solo quando l'unità possiede **almeno quel numero** di
+oggetti di quel tipo.
+
+``npc_has_item`` chiede soltanto se l'unità ha il *tipo* di oggetto
+(``received_items`` è un insieme), quindi basta consegnare un oggetto per
+soddisfarla. Usa ``npc_has_items`` per obiettivi di raccolta che richiedono più
+copie — ad es. il capitolo 4 di Joan of Arc richiede tutte e tre le reliquie
+nella cattedrale di Reims:
+
+.. code-block:: text
+
+   trigger player1 (npc_has_items npc_reims_cathedral relic 3 c5) (do (objective_complete 1) (cut_scene 8837))
+
+
+Il conteggio è il maggiore tra (a) quanti oggetti sono stati consegnati con
+``give`` e (b) quanti si trovano ora nell'inventario dell'unità — così sopravvive
+all'uscita dell'oggetto dall'inventario e conta anche gli oggetti con cui il PNG
+inizia. Lo stesso oggetto non viene mai contato due volte.
+
+``<count>`` deve essere un intero positivo; ``0``, un numero negativo o un token
+non numerico rendono la condizione falsa.
 
 ----
 

@@ -32,6 +32,9 @@ Permite a los jugadores entregar objetos transportados a otra unidad (PNJ neutra
    * - Condición
      - ``npc_has_item``
      - el objetivo recibió / tiene el objeto
+   * - Condición
+     - ``npc_has_items``
+     - el objetivo recibió / tiene una *cantidad* de objetos (objetivos de colección)
 
 Al éxito: el objeto pasa al inventario del objetivo; ``received_items`` registra el tipo; retroalimentación de audio/IU.
 
@@ -78,6 +81,41 @@ Dar con clic derecho solo cuando llevas + el objetivo no es enemigo ni edificio.
 Verdadero si ``received_items`` contiene el tipo o el inventario aún lo tiene.
 
 Compara con `find-item.htm <find-item.htm>`_. Para llegar-y-desaparecer sin PNJ, usa `brought-items.htm <../player/brought-items.htm>`_.
+
+----
+
+4b. ``npc_has_items`` (variante con contador)
+-----------------------------------------------
+
+.. code-block:: text
+
+   (npc_has_items <NPC_selector> <item_type> <count> [square])
+   (npc_has_items <index> <unit_type> <item_type> <count>)
+   (npc_has_items <square> <index> <unit_type> <item_type> <count>)
+
+
+Los mismos selectores que ``npc_has_item``, más un ``<count>`` obligatorio: la
+condición sólo es verdadera cuando la unidad tiene **al menos esa cantidad** de
+objetos de ese tipo.
+
+``npc_has_item`` sólo pregunta si la unidad tiene el *tipo* de objeto
+(``received_items`` es un conjunto), por lo que entregar un solo objeto ya la
+cumple. Usa ``npc_has_items`` para objetivos de colección que exigen varias
+copias — p. ej. el capítulo 4 de Joan of Arc requiere las tres reliquias en la
+catedral de Reims:
+
+.. code-block:: text
+
+   trigger player1 (npc_has_items npc_reims_cathedral relic 3 c5) (do (objective_complete 1) (cut_scene 8837))
+
+
+La cuenta es el mayor entre (a) cuántos objetos se entregaron con ``give`` y
+(b) cuántos hay ahora en el inventario de la unidad — así sobrevive a que el
+objeto vuelva a salir del inventario, y también cuenta los objetos con los que
+el PNJ empieza. El mismo objeto nunca se cuenta dos veces.
+
+``<count>`` debe ser un entero positivo; ``0``, un número negativo o un token no
+numérico hacen que la condición sea falsa.
 
 ----
 

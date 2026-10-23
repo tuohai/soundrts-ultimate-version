@@ -114,6 +114,18 @@ class _Definitions:
     int_list_properties: Set[str] = set()
     precision_list_properties: Set[str] = set()
     string_properties: Set[str] = set()
+    string_list_properties: Set[str] = set()
+
+    @classmethod
+    def is_string_list_key(cls, key):
+        """该属性是否为"字符串列表"（可跨多行追加）。
+
+        子类（Rules）覆盖 ``string_list_properties``；``Style`` 没有该集合，
+        因此这里用 getattr 取默认值，避免基类 ``read()`` 报 AttributeError。
+        """
+        if key in getattr(cls, "string_list_properties", ()):
+            return True
+        return isinstance(key, str) and key.startswith("formation_rank_")
 
     def __init__(self):
         self._dict = {}
@@ -666,6 +678,28 @@ class _Definitions:
                                 cur.extend(vals)
                             else:
                                 d[name][key] = list(vals)
+                        elif self.is_string_list_key(key) and vals:
+                            # String-list properties merge across repeated
+                            # lines instead of overwriting:
+                            #   accept_from self
+                            #   accept_from ally
+                            #   accept_from neutral
+                            # -> ["self", "ally", "neutral"]
+                            # Previously the last line silently replaced the
+                            # earlier ones, so a 3-way whitelist collapsed to
+                            # its final entry.
+                            #
+                            # Duplicates are dropped: a repeated value (e.g.
+                            # ``rdg_targets ground air`` twice) must not
+                            # grow the list, and the whitelist semantics
+                            # ("any match wins") are unaffected.
+                            cur = d[name].get(key)
+                            if isinstance(cur, list):
+                                for v in vals:
+                                    if v not in cur:
+                                        cur.append(v)
+                            else:
+                                d[name][key] = list(dict.fromkeys(vals))
                         else:
                             d[name][key] = vals
             except:
@@ -1731,9 +1765,9 @@ class Rules(_Definitions):
 
     @classmethod
     def is_string_list_key(cls, key):
-        if key in cls.string_list_properties:
-            return True
-        return isinstance(key, str) and key.startswith("formation_rank_")
+        # 基类 _Definitions 已提供同名实现；这里保留覆盖以便 Rules 单独
+        # 使用（Rules.string_list_properties 才是真正的白名单）。
+        return super().is_string_list_key(key)
 
     def parse_resource_list(self, resource_list):
         """解析资源类型列表"""

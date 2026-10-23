@@ -37,6 +37,9 @@ Let players hand carried items to another unit (neutral NPC, ally, enemy) and te
    * - Condition
      - ``npc_has_item``
      - target received / holds item
+   * - Condition
+     - ``npc_has_items``
+     - target received / holds a given *number* of items (collection goals)
 
 
 
@@ -98,6 +101,41 @@ True if ``received_items`` contains the type or inventory still holds it.
 
 Compare with `find-item-objective <find-item-objective.htm>`_. For arrive-and-vanish without NPC, use `brought-item-delivery <brought-item-delivery.htm>`_.
 
+
+----
+
+
+4b. ``npc_has_items`` (counting variant)
+-----------------------------------------
+
+
+.. code-block:: text
+
+   (npc_has_items <NPC_selector> <item_type> <count> [square])
+   (npc_has_items <index> <unit_type> <item_type> <count>)
+   (npc_has_items <square> <index> <unit_type> <item_type> <count>)
+
+
+Same selectors as ``npc_has_item``, plus a required ``<count>``: the condition
+is true only when the unit holds **at least that many** items of that type.
+
+``npc_has_item`` only asks whether the unit holds the item *type* at all
+(``received_items`` is a set), so delivering a single item completes it. Use
+``npc_has_items`` for collection goals that need several copies — e.g. Joan of
+Arc ch. 4 requires all three relics at the Reims cathedral:
+
+.. code-block:: text
+
+   trigger player1 (npc_has_items npc_reims_cathedral relic 3 c5) (do (objective_complete 1) (cut_scene 8837))
+
+
+The count is the larger of (a) how many were delivered via ``give`` and (b)
+how many are currently in the unit's inventory — so it survives the item
+leaving the inventory again, and it also counts items an NPC started with.
+The same item is never counted twice.
+
+``<count>`` must be a positive integer; ``0``, a negative number or a
+non-numeric token makes the condition false.
 
 ----
 

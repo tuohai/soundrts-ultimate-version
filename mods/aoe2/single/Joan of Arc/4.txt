@@ -144,15 +144,19 @@ trigger player1 (timer 0) (add_objective 2 8828)
 
 ; Goal 1: Deliver all three relics to the Reims cathedral at c5.
 ; The three relics use the AoE2 mod's ``relic`` item id (see the
-; placement lines above).  A single (npc_has_item npc_reims_cathedral
-; relic c5) trigger fires when the cathedral's inventory holds at least
-; one relic; with 3 relics delivered it is satisfied, and we read the
-; event as "all relics arrived" (the chapter is short and the player
-; rarely wastes relics on the road).  For a precise 3/3 check we
-; would need 3 distinct item ids (hauberk / holy_oil / charter) which
-; the rules parser does not yet support -- documented as a known
-; limitation in CHANGELOG_AUDIT.md.
-trigger player1 (npc_has_item npc_reims_cathedral relic c5) (do (objective_complete 1) (cut_scene 8837))
+; placement lines above).  ``(npc_has_items ...)`` is the *counting*
+; variant of ``(npc_has_item ...)``: the latter asks "does this unit
+; hold this item TYPE at all" (received_items is a set, so one relic
+; was enough and the goal completed on the first delivery).
+;
+; ``(npc_has_items npc_reims_cathedral relic 3 c5)`` requires the
+; cathedral to have received THREE relics: the count comes from
+; ``received_item_counts`` (incremented by the ``give`` action) and
+; from the cathedral's current inventory, whichever is larger.  So the
+; goal only completes once all three are actually delivered -- the
+; player may deliver them one at a time or all at once, but two relics
+; are not enough.
+trigger player1 (npc_has_items npc_reims_cathedral relic 3 c5) (do (objective_complete 1) (cut_scene 8837))
 
 ; Goal 2: Escort npc_dauphin to the Reims cathedral at c5
 trigger player1 (has_entered c5 npc_dauphin) (objective_complete 2)

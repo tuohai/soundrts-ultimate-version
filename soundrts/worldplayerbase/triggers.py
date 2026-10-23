@@ -1525,6 +1525,98 @@ class TriggersMixin:
                 return True
         return False
 
+    def _unit_item_count(self, unit, item_type):
+        """单位已获得的该类物品 *件数*。
+
+        计数口径 = max(累计交付件数, 当前库存中该类型的数量)：
+
+        - ``received_item_counts`` 由 ``give`` 动作累加，记录"一共交过几件"，
+          即使目标无法持有物品（物品掉在地上）也不丢计数；
+        - 库存数量覆盖"从未经过 give 就已持有该物品"的情况
+          （例如 NPC 开局就带着 2 件 relic，或玩家让 NPC 拿着 relic）。
+
+        取两者较大值而非相加，是因为 ``give`` 既记一次交付、又把物品放进
+        目标库存，相加会把同一件物品数两次。
+        """
+        counts = getattr(unit, "received_item_counts", None) or {}
+        delivered = counts.get(item_type, 0)
+        in_inventory = 0
+        for it in getattr(unit, "inventory", ()) or ():
+            if getattr(it, "type_name", None) == item_type:
+                in_inventory += 1
+        return max(delivered, in_inventory)
+
+    def lang_npc_has_items(self, args):
+        """触发器条件：某个单位累计已获得指定数量的某类物品。
+
+        与 ``(npc_has_item ...)`` 的区别：后者只判断"是否持有过该类型"
+        （``received_items`` 是集合，不计件数），交 1 件即成立；本条件
+        要求 *至少 N 件*，用于"送齐三件圣物"这类收集型目标。
+
+        用法：
+            (npc_has_items <NPC选择符> <物品type_name> <数量>)
+            (npc_has_items <NPC选择符> <物品type_name> <数量> [所在方格])
+            (npc_has_items <序号> <单位类型> <物品type_name> <数量>)
+            (npc_has_items <方格> <序号> <单位类型> <物品type_name> <数量>)
+
+        - <NPC选择符>：单位的 type_name（如 oldman）或单位 id。
+        - <物品type_name>：物品类型（如 relic）。
+        - <数量>：需要的件数（正整数）。
+        - [所在方格]：可选，限定 NPC 所在方格（区分同名 NPC）。
+        - 序号写法与 ``npc_has_item`` 完全一致。
+
+        例：``(npc_has_items npc_reims_cathedral relic 3 c5)``
+        表示兰斯大教堂已收到 3 件 relic 时成立。
+        """
+        if len(args) < 3:
+            return False
+        # 方格序号写法：<方格> <序号> <类型> <物品> <数量>
+        parsed = self._parse_map_unit_selector(args)
+        if parsed is not None and len(args) >= 5:
+            sq_key, index, type_name = parsed
+            try:
+                need = int(args[4])
+            except (TypeError, ValueError):
+                return False
+            if need <= 0:
+                return False
+            unit = self._find_unit_by_map_select(sq_key, index, type_name)
+            return unit is not None and self._unit_item_count(unit, args[3]) >= need
+        # 全局序号写法：<序号> <类型> <物品> <数量>
+        if len(args) == 4 and re.match("^[0-9]+$", args[0]):
+            try:
+                index = int(args[0])
+                need = int(args[3])
+            except (TypeError, ValueError):
+                return False
+            if index <= 0 or need <= 0:
+                return False
+            unit = self._find_unit_by_global_map_select(index, args[1])
+            return unit is not None and self._unit_item_count(unit, args[2]) >= need
+        # 经典写法：<NPC> <物品> <数量> [方格]
+        try:
+            need = int(args[2])
+        except (TypeError, ValueError):
+            return False
+        if need <= 0:
+            return False
+        npc_selector = args[0]
+        item_type = args[1]
+        square_key = None
+        if len(args) >= 4 and args[3]:
+            square_key = self._normalize_square_token(args[3])
+        for unit in self._iter_world_units():
+            if not self._npc_matches_selector(unit, npc_selector):
+                continue
+            if square_key is not None:
+                place = getattr(unit, "place", None)
+                place_name = getattr(place, "name", place)
+                if place_name != square_key and place != square_key:
+                    continue
+            if self._unit_item_count(unit, item_type) >= need:
+                return True
+        return False
+
     def lang_has_item(self, args):
         """触发器条件：玩家是否已"找到"（拾取到）指定物品。
 

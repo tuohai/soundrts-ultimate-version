@@ -39,6 +39,9 @@ aliado, inimigo) e testem a entrega com :strong:```npc_has_item``.
    * - Condição
      - ``npc_has_item``
      - alvo recebeu / possui item
+   * - Condição
+     - ``npc_has_items``
+     - alvo recebeu / possui uma *quantidade* de itens (objetivos de coleção)
 
 
 
@@ -109,6 +112,42 @@ Verdadeiro se ``received_items`` contém o tipo ou o inventário ainda o possui.
 Compare com `find-item-objective <find-item-objective.htm>`_. Para chegar e
 sumir sem NPC, use `brought-item-delivery <brought-item-delivery.htm>`_.
 
+
+----
+
+
+4b. ``npc_has_items`` (variante com contador)
+-----------------------------------------------
+
+.. code-block:: text
+
+   (npc_has_items <NPC_selector> <item_type> <count> [square])
+   (npc_has_items <index> <unit_type> <item_type> <count>)
+   (npc_has_items <square> <index> <unit_type> <item_type> <count>)
+
+
+Os mesmos seletores de ``npc_has_item``, mais um ``<count>`` obrigatório: a
+condição só é verdadeira quando a unidade tem **pelo menos essa quantidade**
+de itens desse tipo.
+
+``npc_has_item`` pergunta apenas se a unidade tem o *tipo* de item
+(``received_items`` é um conjunto), então entregar um único item já a satisfaz.
+Use ``npc_has_items`` para objetivos de coleta que exigem várias cópias — por
+exemplo o capítulo 4 de Joan of Arc exige as três relíquias na catedral de
+Reims:
+
+.. code-block:: text
+
+   trigger player1 (npc_has_items npc_reims_cathedral relic 3 c5) (do (objective_complete 1) (cut_scene 8837))
+
+
+A contagem é o maior entre (a) quantos itens foram entregues via ``give`` e
+(b) quantos estão agora no inventário da unidade — assim sobrevive ao item
+sair do inventário de novo, e também conta os itens com que o NPC começa. O
+mesmo item nunca é contado duas vezes.
+
+``<count>`` deve ser um inteiro positivo; ``0``, um número negativo ou um token
+não numérico tornam a condição falsa.
 
 ----
 

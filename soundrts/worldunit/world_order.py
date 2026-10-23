@@ -388,6 +388,19 @@ class CreatureOrders(Entity):
         if received is not None:
             received.add(item.type_name)
 
+        # 记录交付 *件数*，供 (npc_has_items <NPC> <物品> <数量>) 计数判定。
+        # ``received_items`` 是集合（只记类型），无法区分"交过 1 件"与
+        # "交过 3 件"；这里用 {type_name: 累计件数} 记录每次 give 的增量。
+        counts = getattr(target, "received_item_counts", None)
+        if counts is None:
+            counts = {}
+            try:
+                target.received_item_counts = counts
+            except AttributeError:
+                counts = None
+        if counts is not None:
+            counts[item.type_name] = counts.get(item.type_name, 0) + 1
+
         # 把物品放入目标库存
         if hasattr(target, "inventory") and isinstance(target.inventory, list):
             item.move_to(None, 0, 0)
