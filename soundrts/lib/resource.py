@@ -493,7 +493,14 @@ def official_multiplayer_maps():
     official = res.packages[0].subpackage("multi")
     # 加载文件类型地图
     for n in official.filenames():
-        m = Map.load(official.open_binary(n), n)
+        # open_binary 返回的是真正的文件句柄（FolderPackage 用 open()），
+        # Map.load 读完并不会关闭它，这里必须显式关闭，否则每次调用都会
+        # 泄漏一个句柄（Windows 上很快就会耗尽）。
+        f = official.open_binary(n)
+        try:
+            m = Map.load(f, n)
+        finally:
+            f.close()
         m.official = True
         maps.append(m)
     
@@ -523,7 +530,11 @@ def _load_mod_multi_into(maps, active_mod):
             continue
         for n in list(mod_multi.filenames()):
             try:
-                m = Map.load(mod_multi.open_binary(n), n)
+                f = mod_multi.open_binary(n)
+                try:
+                    m = Map.load(f, n)
+                finally:
+                    f.close()
                 m.title.insert(0, 1097)  # heal sound to alert player
                 m.mod_specific = True
                 m.mod_name = active_mod
@@ -565,7 +576,11 @@ def _add_custom_multi(maps):
             # 处理文件类型地图
             for n in map_files:
                 try:
-                    m = Map.load(multi.open_binary(n), n)
+                    f = multi.open_binary(n)
+                    try:
+                        m = Map.load(f, n)
+                    finally:
+                        f.close()
                     m.title.insert(0, 1097)  # heal sound to alert player
                     maps.append(m)
                 except Exception as e:
