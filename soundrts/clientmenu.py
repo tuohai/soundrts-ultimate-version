@@ -25,6 +25,7 @@ from pygame.locals import (
     K_F11,
     K_F12,
     K_HOME,
+    K_a,
     K_b,
     K_c,
     K_g,
