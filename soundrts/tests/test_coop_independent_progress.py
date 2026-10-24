@@ -136,6 +136,60 @@ def test_coop_cutscene_unlocks_coop_bookmark_only(campaigns_ini):
     assert campaign._get_coop_bookmark() == 1
 
 
+def test_coop_intro_cutscene_unlocks_the_first_mission(campaigns_ini):
+    """回归：播完合作战役序章后，第一个合作关卡必须变成可玩。
+
+    合作战役菜单按 chapter.number 和书签比较：
+        ch.number <  bookmark -> 已完成
+        ch.number == bookmark -> 当前可玩
+        ch.number >  bookmark -> 未解锁
+
+    之前 ``unlock_next_coop`` 存的是刚完成章节的*列表下标*，所以播完
+    序章（number 0）后书签仍是 0，第一个关卡永远显示"未解锁"，玩家
+    无法开始合作战役。
+    """
+    from soundrts.campaign import CutSceneChapter
+
+    class FakeCut(CutSceneChapter):
+        def __init__(self, campaign, number):
+            self.campaign = campaign
+            self.number = number
+            self.title = [4272]
+            self.sequence = [7500]
+            self.path = f"{number}.txt"
+
+    campaign = _make_campaign("Raynor")
+    campaign.coop_campaign = True
+    campaign.coop_intro = [0]
+    campaign.coop_missions = [1, 2]
+    campaign.chapters = [
+        FakeCut(campaign, 0),
+        campaign.chapters[1],
+        campaign.chapters[2],
+    ]
+    for i, ch in enumerate(campaign.chapters):
+        ch.number = i
+
+    def menu_state(ch):
+        bookmark = campaign._get_coop_bookmark()
+        if ch.number < bookmark:
+            return "completed"
+        if ch.number == bookmark:
+            return "playable"
+        return "locked"
+
+    assert menu_state(campaign.chapters[0]) == "playable"
+    assert menu_state(campaign.chapters[1]) == "locked"
+
+    campaign.unlock_next_coop(campaign.chapters[0])
+
+    assert menu_state(campaign.chapters[0]) == "completed"
+    assert menu_state(campaign.chapters[1]) == "playable", (
+        "the first co-op mission must unlock after the intro cutscene"
+    )
+    assert menu_state(campaign.chapters[2]) == "locked"
+
+
 def test_coop_progress_persisted_in_campaigns_ini(campaigns_ini):
     campaign = _make_campaign("Raynor")
     campaign._set_coop_bookmark(1)

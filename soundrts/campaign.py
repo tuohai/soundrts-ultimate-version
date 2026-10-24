@@ -375,7 +375,9 @@ class Campaign:
         self._write_config(c)
 
     def _available_coop_chapters(self):
-        return self.chapters[: self._get_coop_bookmark() + 1]
+        """合作战役中已解锁的章节（书签指向"下一个可玩章节"）。"""
+        bookmark = self._get_coop_bookmark()
+        return [ch for ch in self.chapters if ch.number <= bookmark]
 
     def coop_mission_chapters(self):
         """Mission chapters playable in co-op (listed in ``coop_missions``)."""
@@ -503,11 +505,26 @@ class Campaign:
         self._write_config(c)
 
     def unlock_next_coop(self, chapter):
-        # Mirror unlock_next: store the index of the completed chapter.
+        # 合作战役进度：记录"下一个可玩章节"的编号（章节号，不是列表下标）。
+        #
+        # 合作战役菜单按 chapter.number 比较书签：
+        #     ch.number <  bookmark -> 已完成
+        #     ch.number == bookmark -> 当前可玩
+        #     ch.number >  bookmark -> 未解锁
+        # 所以书签必须指向"下一个该打的章节"。之前这里存的是刚完成章节的
+        # 列表下标，于是播完序章（number 0）后书签仍是 0，第一个合作关卡
+        # 永远显示为"未解锁"，玩家无法开始。
         try:
-            self._set_coop_bookmark(self.chapters.index(chapter))
+            index = self.chapters.index(chapter)
         except ValueError:
-            pass
+            return
+        for next_chapter in self.chapters[index + 1:]:
+            if isinstance(next_chapter, CutSceneChapter):
+                continue
+            self._set_coop_bookmark(next_chapter.number)
+            return
+        # 没有后续关卡了：保持最后一个已完成章节的编号。
+        self._set_coop_bookmark(chapter.number)
 
     def run(self):
         if self.mods is not None:
