@@ -4,8 +4,6 @@ from __future__ import annotations
 from pathlib import Path
 
 _FOLDED_VERSIONS = (
-    "1.5.0.8",
-    "1.5.0.9",
     "1.5.0.10",
     "1.4.9.10",
     "1.4.9.11",
@@ -62,12 +60,27 @@ def _section_15(lang: str) -> str:
 
 
 def test_version_is_1507():
-    assert 'VERSION = "1.5.0.7"' in _source("soundrts", "version.py")
+    """The current VERSION must be at least 1.5.0.7 (the 1.5 line shipped).
+
+    Pinning the *exact* version made this test fail on every subsequent
+    release.  Assert the "at least" property instead -- same pattern as
+    test_changelog_1510.py.
+    """
+    import re
+
+    src = _source("soundrts", "version.py")
+    m = re.search(r'VERSION = "([^"]+)"', src)
+    assert m, "VERSION literal not found in soundrts/version.py"
+    assert tuple(int(x) for x in m.group(1).split(".")) >= (1, 5, 0, 7)
 
 
 def test_all_relnotes_have_1507_then_1506_then_1505_then_1504_then_1503_then_1502_then_1501_then_15_before_1499():
     for lang in ("zh", "en", "es", "it", "pt-BR"):
         src = _source("doc_src", "src", lang, "relnotes.rst")
+        # 1.5.0.8 and 1.5.0.9 have their own sections (added by their
+        # respective releases) and must sit above 1.5.0.7.
+        assert src.index("\n1.5.0.9\n") < src.index("\n1.5.0.8\n"), lang
+        assert src.index("\n1.5.0.8\n") < src.index("\n1.5.0.7\n"), lang
         assert src.index("\n1.5.0.7\n") < src.index("\n1.5.0.6\n"), lang
         assert src.index("\n1.5.0.6\n") < src.index("\n1.5.0.5\n"), lang
         assert src.index("\n1.5.0.5\n") < src.index("\n1.5.0.4\n"), lang
