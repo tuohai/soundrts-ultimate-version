@@ -28,13 +28,14 @@ def _source(*path_parts):
 
 
 def test_can_repair_ships_is_int_property():
+    # 用 rules 的实际成员关系来断言，而不是在 definitions.py 源码里找
+    # 一段固定长度的邻近文本 —— 那些集合后来被拆成模块级常量再合并进
+    # int_properties，源码窗口因此失效，属性本身却一直好好地在那儿。
+    from soundrts.definitions import rules
+
     src = _source("soundrts", "definitions.py")
     assert '"can_repair_ships"' in src
-    # 与 hide_locked_commands 等并列在 int_properties 列表里
-    s = src.index('"can_repair_ships"')
-    # 该项必须在某个 int_properties 列表中（截断前后 200 字寻找 int_properties 关键字）
-    block = src[max(0, s - 1500):s + 200]
-    assert "int_properties" in block
+    assert "can_repair_ships" in rules.int_properties
 
 
 def test_can_repair_ships_default_zero_on_worker_and_building():

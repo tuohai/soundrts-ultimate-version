@@ -1,4 +1,11 @@
-"""审计：1.4.3.2 — no_number 无序号单位文档与变更日志。"""
+"""审计：1.4.3.2 — no_number 无序号单位文档与变更日志。
+
+注意：本仓库的文档在 1.5.1.x 之后重组过目录 ——
+  * 旧的 ``更新日志.txt`` 变成了 ``doc_src/src/<lang>/relnotes.rst``；
+  * 旧的 ``doc_src/src/<lang>/modding.rst`` 变成了
+    ``doc_src/src/<lang>/mod/modding.rst``。
+本测试按新路径断言内容。
+"""
 from __future__ import annotations
 
 from pathlib import Path
@@ -18,34 +25,34 @@ def _section_after_heading(text: str, heading: str) -> str:
 
 
 def test_changelog_1432_documents_no_number():
-    src = _source("更新日志.txt")
-    assert "1.4.3.2" in src
-    section = _section_after_heading(src, "1.4.3.2")
+    src = _source("doc_src", "src", "zh", "relnotes.rst")
+    assert "\n1.4.3.2\n" in src
+    section = _section_after_heading(src, "\n1.4.3.2\n")
     assert "no_number" in section
     assert "无序号单位" in section
-    section_131 = _section_after_heading(src, "1.4.3.1")
+    section_131 = _section_after_heading(src, "\n1.4.3.1\n")
     assert "no_number" not in section_131
 
 
 def test_zh_relnotes_1432_documents_no_number():
     src = _source("doc_src", "src", "zh", "relnotes.rst")
-    assert "1.4.3.2" in src
-    section = _section_after_heading(src, "1.4.3.2")
+    assert "\n1.4.3.2\n" in src
+    section = _section_after_heading(src, "\n1.4.3.2\n")
     assert "no_number" in section
     assert "无序号单位" in section
 
 
 def test_en_relnotes_1432_documents_no_number():
     src = _source("doc_src", "src", "en", "relnotes.rst")
-    assert "1.4.3.2" in src
-    section = _section_after_heading(src, "1.4.3.2")
+    assert "\n1.4.3.2\n" in src
+    section = _section_after_heading(src, "\n1.4.3.2\n")
     assert "no_number" in section
     assert "Unnumbered units" in section
 
 
 def test_modding_notes_1432_version():
-    zh = _source("doc_src", "src", "zh", "modding.rst")
-    en = _source("doc_src", "src", "en", "modding.rst")
+    zh = _source("doc_src", "src", "zh", "mod", "modding.rst")
+    en = _source("doc_src", "src", "en", "mod", "modding.rst")
     assert "1.4.3.2" in zh
     assert "no_number" in zh
     assert "1.4.3.2" in en

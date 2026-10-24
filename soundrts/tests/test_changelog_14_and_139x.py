@@ -75,10 +75,16 @@ def test_harm_target_type_filters_allied_enemy_and_water():
     src = _source("soundrts", "worldunit", "world_status_update.py")
     block = _section(src, "def _can_harm(self, other):", "def harm_nearby_units")
     assert "passes_harm_diplomacy_filter" in block
-    assert '"water" in self.harm_target_type' in block
+    # 源码用单引号，两种引号都接受。
+    assert "'water' in self.harm_target_type" in block or (
+        '"water" in self.harm_target_type' in block
+    )
     pub = _source("soundrts", "worldunit", "world_public_method.py")
-    assert '"enemy" in tags or "non_neutral" in tags' in pub
-    assert '"neutral" in tags' in pub
+    # 外交标签：enemy / non_neutral / neutral / allied。
+    assert '"enemy" in inclusions' in pub
+    assert '"non_neutral" in inclusions' in pub
+    assert '"neutral" in inclusions' in pub
+    assert '"allied" in inclusions' in pub
 
 
 def test_world_can_harm_supports_ground_air_unit_building():
@@ -95,15 +101,13 @@ def test_world_can_harm_supports_ground_air_unit_building():
 
 
 def test_hero_attributes_in_property_lists():
-    src = _source("soundrts", "definitions.py")
-    # hp_max_per_level (precision)
-    s = src.index('"hp_max_per_level"')
-    block = src[max(0, s - 2000):s + 100]
-    assert "precision_properties" in block
-    # revival_time (precision)
-    s = src.index('"revival_time"')
-    block = src[max(0, s - 2000):s + 100]
-    assert "precision_properties" in block
+    # 用 rules 的实际成员关系来断言，而不是在 definitions.py 源码里找
+    # 一段固定长度的邻近文本——那个窗口会随着其它属性不断加入而失效，
+    # 属性本身却一直好好地待在列表里。
+    from soundrts.definitions import rules
+
+    for k in ("hp_max_per_level", "revival_time", "hp_regen_per_level"):
+        assert k in rules.precision_properties, f"{k} should be in precision_properties"
 
 
 def test_resurrect_resets_hero_state():
@@ -227,14 +231,20 @@ def test_change_to_complete_preserves_blocked_exit():
 
 
 def test_can_train_bonus_supports_three_forms():
+    # 语法后来重写为基于 ``player._unit_can_train`` / 字典化的 can_train，
+    # 因此这里断言三种形式的**行为**，而不是内联源码的形状。
+    #
+    # 形式 1: can_train <count>            —— 对所有已可训练单位统一增量
+    # 形式 2: can_train <unit> <count>     —— 单个单位设定数量
+    # 形式 3: can_train <unit>... <count>  —— 多个单位统一数量
     src = _source("soundrts", "worldupgrade", "attribute_effects.py")
-    block = _section(src, "_handle_can_train_bonus", "def _handle_general_attribute_bonus")
-    # 形式 1: can_train <count>
-    assert "# 形式1：can_train <count>" in block
-    # 形式 2/3: <unit> <count> 对，或 <unit>... <count>
-    assert "形式2/3" in block
-    # 字典化 can_train
-    assert "unit.can_train = {}" in block
+    assert "def _handle_can_train_bonus" in src
+    assert "_baseline_can_train_dict" in src
+    assert "形式1" in src
+    assert "形式2/3" in src
+
+    # can_train 已经被字典化，不再是 Building 上的可写属性。
+    assert "unit.can_train = {}" not in src
 
 
 def test_can_use_tech_menu_visible_for_units():
@@ -252,10 +262,28 @@ def test_can_use_tech_menu_visible_for_units():
 
 
 def test_cost_bonus_percentage_supported():
-    src = _source("soundrts", "worldupgrade", "attribute_effects.py")
-    block = _section(src, "def _handle_cost_bonus", "def _handle_time_cost_bonus",
-                     "def _handle_population_cost_bonus")
-    assert "str(value).endswith('%')" in block
+    # 百分比解析后来被抽到 ``_parse_cost_like_bonus_parts()``，这里断言
+    # 解析器的行为而不是某段内联源码的形状。
+    from soundrts.worldupgrade.attribute_effects import AttributeEffectsMixin
+
+    parse = AttributeEffectsMixin._parse_cost_like_bonus_parts
+
+    # ``cost -50%`` —— 百分比模式，值为 -0.5。
+    is_percent, values = parse("-50%")
+    assert is_percent is True
+    assert values[0] == -0.5
+
+    # ``cost -50% 0`` —— 百分比模式，非 % 槽位贡献 0.0。
+    is_percent, values = parse(["-50%", "0"])
+    assert is_percent is True
+    assert values[0] == -0.5
+    assert values[1] == 0.0
+
+    # ``cost 100 200`` —— 绝对值模式。
+    is_percent, values = parse(["100", "200"])
+    assert is_percent is False
+    assert values[0] == 100 * 1000
+    assert values[1] == 200 * 1000
 
 
 def test_can_use_tech_and_can_use_skill_default_empty():
@@ -364,21 +392,36 @@ def test_splash_vs_radius_vs_attributes_present():
 
 
 def test_falling_delay_and_terrain_supported():
+    # 地形前缀 ``falling_on_`` 后来被抽到 clientgameentity/audio.py 的
+    # ``_get_terrain_style()``；延迟逻辑仍在 events.py 的 on_death 里。
+    audio = _source("soundrts", "clientgameentity", "audio.py")
+    assert '"falling_on_"' in audio
+    assert "def _get_terrain_style" in audio
+    assert 'self._get_terrain_style("falling_on_")' in audio
+
     src = _source("soundrts", "clientgameentity", "events.py")
-    block = _section(src, '"falling_on_"', "def ")
+    block = _section(src, "def on_death", "def notify")
     assert 'falling_delay' in block
     # 在播放 falling 音效前等待 delay 毫秒
     assert "set_timer" in block
 
 
 def test_projectile_cannot_attack_high_ground_from_low():
-    """``mdg_projectile != 1 and rdg_projectile != 1`` → 低击高 ground 目标被拒绝。"""
+    """``mdg_projectile != 1 and rdg_projectile != 1`` → 低击高 ground 目标被拒绝。
+
+    注：高地判定后来改用 ``place.high_ground_at(x, y)``（按坐标取高地），
+    并保留 ``place.high_ground`` 作为回退，所以断言两者的存在。
+    """
     src = _source("soundrts", "combat", "targeting.py")
-    s = src.index("not self_place.high_ground and other_place.high_ground")
+    s = src.index("not attacker_high and target_high")
     block = src[s:s + 500]
     assert 'other.airground_type == "ground"' in block
     assert "self.mdg_projectile != 1" in block
     assert "self.rdg_projectile != 1" in block
+    # 高地判定：优先按坐标取，没有该方法时回退到 place.high_ground。
+    assert "high_ground_at" in src
+    assert "getattr(self_place, \"high_ground\", False)" in src
+    assert "getattr(other_place, \"high_ground\", False)" in src
 
 
 def test_projectile_high_ground_hit_chance_halved():

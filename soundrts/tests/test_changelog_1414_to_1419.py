@@ -120,20 +120,24 @@ def test_room_strict_neighbors_only_4_orthogonal():
 
 
 def test_observed_squares_uses_neighbors_not_strict():
-    """``get_observed_squares`` 必须用 ``self.place.neighbors`` 才能看到对角。"""
+    """``get_observed_squares`` 必须用 ``place.neighbors`` 才能看到对角。"""
     src = _source("soundrts", "worldunit", "world_transport.py")
     block = _section(src, "def get_observed_squares(self, strict=False):",
                      "def get_observed_squares_optimized")
-    assert "for sq in self.place.neighbors:" in block
+    # place 被缓存到局部变量，所以循环是 ``place.neighbors`` 而不是
+    # ``self.place.neighbors`` —— 关键是不许用 strict_neighbors。
+    assert "place.neighbors" in block
+    assert "strict_neighbors" not in block
 
 
 def test_potential_neighbors_iterates_3x3_grid():
     src = _source("soundrts", "worldplayerbase", "perception.py")
     block = _section(src, "def _potential_neighbors(self, x, y, skip_cache=False):",
                      "def _clear_neighbors_cache")
-    # 9 格（3*3）扫描，含 (1,1)/(-1,-1) 等
-    assert "for dx in [0, 1, -1]:" in block
-    assert "for dy in [0, 1, -1]:" in block
+    # 9 格（3*3）扫描，含 (1,1)/(-1,-1) 等。
+    # 偏移量后来从列表改成了元组，所以两种都接受。
+    assert "for dx in [0, 1, -1]:" in block or "for dx in (0, 1, -1):" in block
+    assert "for dy in [0, 1, -1]:" in block or "for dy in (0, 1, -1):" in block
 
 
 # =============================================================================
@@ -347,7 +351,10 @@ def test_can_harm_treats_water_separately():
     """``_can_harm``: ``water`` 不被 world.can_harm 处理，独立返回 True。"""
     src = _source("soundrts", "worldunit", "world_status_update.py")
     block = _section(src, "def _can_harm(self, other):", "def harm_nearby_units")
-    assert '"water" in self.harm_target_type' in block
+    # 源码用单引号，两种引号都接受。
+    assert "'water' in self.harm_target_type" in block or (
+        '"water" in self.harm_target_type' in block
+    )
     assert "target_airground_type == 'water'" in block
     assert "passes_harm_diplomacy_filter" in block
 

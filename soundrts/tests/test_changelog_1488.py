@@ -12,21 +12,26 @@ def _source(*path_parts):
 
 def _section_1488(lang: str) -> str:
     text = _source("doc_src", "src", lang, "relnotes.rst")
-    start = text.index("1.4.8.8")
+    # Anchor on the *heading* line, not a bare substring: the body of
+    # later sections mentions "1.4.8.7" / "1.4.8.8" in prose, so a bare
+    # index() can land in the middle of a paragraph.
+    start = text.index("\n1.4.8.8\n")
     rest = text[start:]
-    next_idx = rest.find("\n1.4.8.7")
+    next_idx = rest.find("\n1.4.8.7\n")
     return rest if next_idx == -1 else rest[:next_idx]
 
 
 def test_version_is_1488():
     # 1.4.8.8 notes remain after later bumps; current VERSION is owned by 1489+.
-    assert "1.4.8.8" in _source("doc_src", "src", "zh", "relnotes.rst")
+    assert "\n1.4.8.8\n" in _source("doc_src", "src", "zh", "relnotes.rst")
 
 
 def test_all_relnotes_have_1488_heading():
     for lang in ("zh", "en", "es", "it", "pt-BR"):
         src = _source("doc_src", "src", lang, "relnotes.rst")
-        assert src.index("1.4.8.8") < src.index("1.4.8.7"), lang
+        # Anchor on headings so that prose mentions of the version numbers
+        # in neighbouring sections do not confuse the ordering check.
+        assert src.index("\n1.4.8.8\n") < src.index("\n1.4.8.7\n"), lang
 
 
 def test_zh_relnotes_1488_session_topics():

@@ -193,11 +193,16 @@ def test_item_equip_adds_skills_and_buffs_to_host():
 
 def test_item_unequip_removes_skills_and_cancels_buffs():
     src = _source("soundrts", "worlditem.py")
-    block = _section(src, "def unequip(self, host):", "\n\n\n")
+    # unequip 后来加了关键字参数 strip_skills（消耗技能书时保留永久学会的技能），
+    # 所以这里匹配函数头而不是整个精确签名。
+    s = src.index("def unequip(self, host")
+    block = src[s:s + 2000]
     assert "host.can_use_skill = [x for x in host.can_use_skill if x != a]" in block
     # cancel buff
     assert "if hasattr(b, 'cancel'):" in block
     assert "b.cancel()" in block
+    # buff 列表被清空
+    assert "self._buffs = []" in block
 
 
 # ---------------------------------------------------------------------------

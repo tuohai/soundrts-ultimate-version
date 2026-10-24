@@ -624,13 +624,24 @@ def test_passenger_bonus_applies_to_loaded_unit():
 
 def test_upgrade_effect_bonus_multi_attr_pairs():
     """1.3.8.2：effect bonus mdg 1 mdf 2 同时改两个属性。
-    或者写成 effect bonus mdg 1 + 单独一行 effect bonus mdf 2。"""
-    src = _source("soundrts", "definitions.py")
-    block = _section(src, '(words[0] == "effect" and words[1] == "bonus")',
-                     'elif words[0] == "effect" and words[1] == "no_random"',
-                     "else:")
-    # 从第三个词开始按 (stat, value) 对处理
-    assert "for i in range(2, len(words), 2):" in block
+    或者写成 effect bonus mdg 1 + 单独一行 effect bonus mdf 2。
+
+    注：解析逻辑后来被抽到 ``worldupgrade/effect_bonus_parse.py`` 的
+    ``split_effect_bonus_args()``，因此这里断言解析器本身的行为，而不是
+    ``definitions.py`` 里某段内联源码的形状。
+    """
+    from soundrts.worldupgrade.effect_bonus_parse import split_effect_bonus_args
+
+    # 两个 (stat, value) 对必须都被识别为 bonus（而不是被当成 unit 过滤）。
+    bonus, stray = split_effect_bonus_args(["mdg", "1", "mdf", "2"])
+    assert stray == [], stray
+    assert [str(x) for x in bonus[::2]] == ["mdg", "mdf"], bonus
+    assert len(bonus) == 4, bonus
+
+    # 单独一行也必须只解析出一个属性对。
+    bonus, stray = split_effect_bonus_args(["mdg", "1"])
+    assert stray == [], stray
+    assert [str(x) for x in bonus[::2]] == ["mdg"], bonus
 
 
 def test_upgrade_effect_apply_bonus_supported():
@@ -749,7 +760,8 @@ def test_disappear_event_distinct_from_death():
     """1.3.8.2：disappear 用于召唤物时间到期消失，与 death 区分。"""
     src = _source("soundrts", "worldunit", "world_status_update.py")
     block = _section(src, "def on_disappear", "def ")
-    assert 'self.notify("disappear")' in block
+    # 源码用单引号，这里两种引号都接受，避免因引号风格变化而误报。
+    assert "self.notify('disappear')" in block or 'self.notify("disappear")' in block
 
 
 def test_missed_event_split_to_mdg_rdg():
@@ -769,11 +781,24 @@ def test_missed_event_split_to_mdg_rdg():
 
 
 def test_meadow_created_when_building_loaded():
-    """1.3.8.2 修复：把建筑装载到运输单位时，在原位置创建 Meadow（草地）。"""
+    """1.3.8.2 修复：把建筑装载到运输单位时，在原位置创建 Meadow（草地）。
+
+    注：草地创建后来被抽到 ``soundrts/lib/building_land.py`` 的
+    ``recreate_building_land()``（按被吃掉的地块类型重建），transport
+    模块只负责调用它 —— 这里同时断言调用点与实现。
+    """
     src = _source("soundrts", "worldunit", "world_transport.py")
     # load 路径下创建草地
     block = _section(src, "# 在原位置生成草地", "def load_all")
-    assert "Meadow(original_place, original_x, original_y)" in block
+    assert "recreate_building_land(" in block
+    assert "original_place" in block
+    assert "original_x" in block
+    assert "original_y" in block
+
+    # 重建函数本身确实在原坐标上建出一块 building_land（草地）。
+    impl = _source("soundrts", "lib", "building_land.py")
+    assert "def recreate_building_land(place, x, y, consumed=None):" in impl
+    assert "create_building_land(place, x, y, type_name=type_name)" in impl
 
 
 def test_meadow_removed_when_building_unloaded():
