@@ -23,7 +23,7 @@ orchard 150 a1
 nb_meadows_by_square 2
 
 ; Relics: home, ally town, English camp
-relic 1 a1 a4 e4
+relic a1 a4 e4
 
 ; Castle Age Scots with monastery + monk; bring relics to a1 monastery
 player 500 500 500 500 a1 town_center monastery 3 monk 4 house barracks 4 peasant 6 militia castle_age
