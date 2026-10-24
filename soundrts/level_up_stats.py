@@ -32,8 +32,6 @@ _LEVEL_UP_COMBAT_STATS = (
     "mdf",
     "rdf",
     "minimal_damage",
-    "minimal_mdg",
-    "minimal_rdg",
     "mdg_minimal_damage",
     "rdg_minimal_damage",
     "mdg_crit",

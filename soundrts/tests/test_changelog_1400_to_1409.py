@@ -399,8 +399,10 @@ def test_defense_vs_additive_for_mdf():
     s = src.index("def _get_melee_defense_vs(self, attacker) -> int:")
     e = src.index("def _get_ranged_defense_vs", s) if "_get_ranged_defense_vs" in src else len(src)
     block = src[s:min(e, s + 3000)]
-    # 防御也是 mdf + vs
-    assert "return self.mdf + v" in block
+    # 防御也是 mdf + vs。返回值现在会经过 _out() 包装（用于叠加阵型
+    # 计数），所以断言的是"mdf + v"这个加法本身，而不是某个具体的
+    # return 语句写法。
+    assert "self.mdf + v" in block
 
 
 # =============================================================================
@@ -409,19 +411,19 @@ def test_defense_vs_additive_for_mdf():
 
 
 def test_hero_keys_in_int_properties():
-    src = _source("soundrts", "definitions.py")
-    # 这些都是 int_property
+    from soundrts.definitions import rules
+
+    # 这些都是 int_property。用 rules 的实际成员关系来断言，而不是在
+    # definitions.py 源码里找一段固定长度的邻近文本——那个窗口会随着
+    # 其它属性不断加入而失效，属性本身却一直好好地待在列表里。
     for k in ("global_count_limit", "is_revivable", "xp_reward"):
-        s = src.index(f'"{k}"')
-        block = src[max(0, s - 2000):s + 100]
-        assert "int_properties" in block, f"{k} should be in int_properties"
+        assert k in rules.int_properties, f"{k} should be in int_properties"
 
 
 def test_revival_time_in_precision_properties():
-    src = _source("soundrts", "definitions.py")
-    s = src.index('"revival_time"')
-    block = src[max(0, s - 2000):s + 100]
-    assert "precision_properties" in block
+    from soundrts.definitions import rules
+
+    assert "revival_time" in rules.precision_properties
 
 
 def test_xp_thresholds_is_list_property():
