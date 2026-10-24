@@ -82,3 +82,5 @@
 8865 Figlia di Domrémy, una contadina che ode i santi. Nel 1429 cavalca fino a Chinon per togliere l'assedio di Orléans e porre il Delfino Carlo sul trono di Francia.
 8866 Capitano della guarnigione di Vaucouleurs. Scettico, brusco e pratico, mette alla prova la risolutezza della Pulzella prima di concederle una piccola scorta e una lettera di passaggio verso il Delfino.
 8867 Erede spodestato del trono di Francia, che tiene corte a Chinon. La guerra volge al male; la sua legittimità — e la Francia stessa — dipendono dall'incoronazione a Reims.
+8891 Cattedrale di Orléans
+8892 duca d'Alençon

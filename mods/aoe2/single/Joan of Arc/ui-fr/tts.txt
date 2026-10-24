@@ -82,3 +82,5 @@
 8865 Fille de Domrémy, une paysanne qui entend les saints. En 1429, elle chevauche jusqu'à Chinon pour lever le siège d'Orléans et placer le Dauphin Charles sur le trône de France.
 8866 Capitaine de garnison de Vaucouleurs. Sceptique, brusque et pratique, il éprouve la résolution de la Pucelle avant de lui accorder une petite escorte et une lettre de passage vers le Dauphin.
 8867 Héritier dépossédé du trône de France, tenant sa cour à Chinon. La guerre va mal ; sa légitimité — et la France elle-même — dépendent du sacre à Reims.
+8891 Cathédrale d'Orléans
+8892 duc d'Alençon

@@ -82,3 +82,5 @@
 8865 Córka z Domrémy, wiejska dziewczyna, która słyszy świętych. W 1429 roku jedzie do Chinon, by zdjąć oblężenie Orleanu i posadzić delfina Karola na tronie Francji.
 8866 Kapitan garnizonu w Vaucouleurs. Sceptyczny, prosty i praktyczny, sprawdza determinację Dziewicy, zanim da jej mały orszak i list przejazdowy do delfina.
 8867 Pozbawiony dziedzictwa spadkobierca francuskiego tronu, dworujący w Chinon. Wojna idzie źle; jego legitymność — i sama Francja — zależą od koronacji w Reims.
+8891 Katedra w Orléans
+8892 książę d'Alençon

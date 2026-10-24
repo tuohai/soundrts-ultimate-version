@@ -38,3 +38,45 @@ def npc_dauphin
 is_a npc_joan
 title 8864
 intro 8867
+
+; npc_reims_cathedral -- the cathedral of Reims (ch. 4, "The Rising").
+; This is the relic receiver: Joan hands the three relics to it here.
+;
+; The ``title`` is NOT cosmetic.  ``EntityView.short_title`` is built from
+; ``style.get(type_name, "title")`` and ``is_visible()``
+; (soundrts/clientgame/game_unit_control.py) rejects any object whose
+; ``short_title`` is empty.  Without a title the cathedral was neither
+; Tab-selectable nor click-targetable, so the ``give`` order could never
+; reach it and the chapter objective was unreachable.
+;
+; ``is_a monastery`` gives it the monastery class: correct building
+; behaviour (``shape square``, building sounds) and — with the engine's
+; ``is_a`` sprite fallback in ``get_map_sprite`` — the monastery
+; artwork, since the cathedral has no dedicated ui/map PNG.
+;
+; 8887 = "Reims cathedral" / "兰斯大教堂", already defined in all 13
+; campaign languages (ui/tts.txt).
+def npc_reims_cathedral
+is_a monastery
+title 8887
+
+; npc_cathedral -- the cathedral of Orleans (ch. 2).
+; Same situation as the Reims cathedral: no title meant it was not
+; selectable and therefore could not be referenced by the "cathedral
+; must survive" defeat trigger as a usable key unit.
+;
+; 8887 is the Reims cathedral's ID; Orleans gets its own — 8891 is
+; free in the 8800-8899 campaign block (see campaign ui/tts.txt).
+def npc_cathedral
+is_a monastery
+title 8891
+
+; npc_d_alencon -- Duke d'Alençon, Joan's military escort (ch. 2).
+; He is a real combat unit (rules: is_a knight), so the knight class
+; gives him the right sound set; the title makes him selectable and
+; announces his name instead of the raw "npc_d_alencon" identifier.
+;
+; 8892 = "Duke d'Alençon", free in the 8800-8899 campaign block.
+def npc_d_alencon
+is_a aoe_knight
+title 8892

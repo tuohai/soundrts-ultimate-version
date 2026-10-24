@@ -89,3 +89,5 @@
 8865 Daughter of Domremy, a peasant girl who hears saints. In 1429 she rides to Chinon to lift the siege of Orleans and place the Dauphin Charles on the throne of France.
 8866 Garrison captain of Vaucouleurs. Skeptical, blunt, and practical, he tests the Maid's resolve before granting her a small escort and a letter of passage to the Dauphin.
 8867 Disinherited heir to the French throne, holding court at Chinon. The war is going badly; his legitimacy -- and France itself -- depend on the coronation at Reims.
+8891 Orleans cathedral
+8892 Duke d'Alencon

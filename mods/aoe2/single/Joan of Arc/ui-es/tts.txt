@@ -82,3 +82,5 @@
 8865 Hija de Domrémy, una campesina que oye a los santos. En 1429 cabalga hasta Chinon para levantar el sitio de Orleans y colocar al Delfín Carlos en el trono de Francia.
 8866 Capitán de la guarnición de Vaucouleurs. Escéptico, brusco y práctico, pone a prueba la resolución de la Doncella antes de concederle una pequeña escolta y una carta de paso hacia el Delfín.
 8867 Heredero desposeído del trono francés, que tiene su corte en Chinon. La guerra va mal; su legitimidad — y la propia Francia — dependen de la coronación en Reims.
+8891 Catedral de Orléans
+8892 duque d'Alençon

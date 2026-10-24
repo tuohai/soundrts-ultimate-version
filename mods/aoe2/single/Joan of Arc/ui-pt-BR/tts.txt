@@ -82,3 +82,5 @@
 8865 Filha de Domrémy, uma camponesa que ouve os santos. Em 1429, cavalga até Chinon para levantar o cerco de Orleans e colocar o Delfim Carlos no trono da França.
 8866 Capitão da guarnição de Vaucouleurs. Cético, direto e prático, ele testa a resolução da Donzela antes de conceder-lhe uma pequena escolta e uma carta de passagem para o Delfim.
 8867 Herdeiro deserdado do trono francês, mantendo corte em Chinon. A guerra vai mal; sua legitimidade — e a própria França — dependem da coroação em Reims.
+8891 Catedral de Orléans
+8892 duque d'Alençon

@@ -82,3 +82,5 @@
 8865 Tochter von Domrémy, ein Bauernmädchen, das Heilige hört. 1429 reitet sie nach Chinon, um die Belagerung von Orléans zu beenden und den Dauphin Karl auf den Thron Frankreichs zu setzen.
 8866 Garnisonshauptmann von Vaucouleurs. Skeptisch, direkt und praktisch, prüft er die Entschlossenheit der Maid, bevor er ihr eine kleine Eskorte und einen Passierschein zum Dauphin gewährt.
 8867 Enteigneter Erbe des französischen Throns, der in Chinon Hof hält. Der Krieg verläuft schlecht; seine Legitimität — und Frankreich selbst — hängen von der Krönung in Reims ab.
+8891 Kathedrale von Orléans
+8892 Herzog d'Alençon

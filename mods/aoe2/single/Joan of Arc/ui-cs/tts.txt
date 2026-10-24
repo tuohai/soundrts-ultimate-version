@@ -82,3 +82,5 @@
 8865 Dcera z Domrémy, selská dívka, která slyší svaté. V roce 1429 jede do Chinonu, aby zvedla obléhání Orléansu a dosadila dauphina Karla na francouzský trůn.
 8866 Kapitán posádky ve Vaucouleurs. Skeptický, přímý a praktický, zkouší odhodlání Panny, než jí udělí malý doprovod a dopis o průchodu k dauphinovi.
 8867 Připravený o dědictví následník francouzského trůnu, držící dvůr v Chinonu. Válka jde špatně; jeho legitimita — i celá Francie — závisí na korunovaci v Remeši.
+8891 Katedrála v Orléansu
+8892 vévoda d'Alençon
