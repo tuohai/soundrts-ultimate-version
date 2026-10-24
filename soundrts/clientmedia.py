@@ -15,7 +15,13 @@ from .version import VERSION
 
 if platform.system() == "Windows":
     # problem with F10 and DirectX, so use windib
-    os.environ["SDL_VIDEODRIVER"] = "windib"
+    #
+    # BUT only if the caller has not already chosen a driver.  The test
+    # suite sets SDL_VIDEODRIVER=dummy in conftest.py precisely so that
+    # no real window is created; the unconditional assignment below used
+    # to override it, which made the suite pop up a "SoundRTS 1.5.1.5"
+    # window (unresponsive while the long tests ran).
+    os.environ.setdefault("SDL_VIDEODRIVER", "windib")
 
 fullscreen = False
 
