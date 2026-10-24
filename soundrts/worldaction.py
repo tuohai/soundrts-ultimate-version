@@ -246,7 +246,10 @@ class AttackAction(Action):
             return
         # 条约期拦截：停止对敌对单位的攻击
         from .worldplayerbase.base import is_wildlife_unit
-        if getattr(unit.world, "treaty_until_time", 0) > 0 and unit.world.time < unit.world.treaty_until_time:
+        # 单位可能还没有 world（例如刚构造、尚未入格的实体），用 getattr
+        # 兜底而不是直接访问 unit.world，否则会抛 AttributeError。
+        world = getattr(unit, "world", None)
+        if world is not None and getattr(world, "treaty_until_time", 0) > 0 and world.time < world.treaty_until_time:
             if target is not None and unit.player.player_is_an_enemy(target) and not is_wildlife_unit(target):
                 self.complete()
                 return
