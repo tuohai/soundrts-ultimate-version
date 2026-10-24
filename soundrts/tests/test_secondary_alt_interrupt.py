@@ -15,11 +15,26 @@ sys.argv = [sys.argv[0]]
 try:
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
+        import soundrts.config as config
         import soundrts.lib.game_tts as game_tts
         import soundrts.lib.voice as voice_mod
         from soundrts.lib.message import Message
 finally:
     sys.argv = _saved_argv
+
+
+def _secondary_enabled():
+    """Force ``secondary_voice_enabled`` on for the duration of a test.
+
+    These cases describe the *dual voice* behaviour (in-match ops speak on
+    primary alongside secondary).  The user config may have the secondary
+    library turned off (``user/SoundRTS.ini`` -> ``secondary_voice_enabled
+    = 0``), which would silently change the code path under test, so the
+    flag is pinned here and restored afterwards.
+    """
+    old = getattr(config, "secondary_voice_enabled", 1)
+    config.secondary_voice_enabled = 1
+    return old
 
 
 def test_bindings_split_alt_history_stop():
@@ -32,6 +47,9 @@ def test_bindings_split_alt_history_stop():
 
 
 def test_item_parallel_does_not_stop_secondary():
+    import soundrts.config as config
+
+    old = _secondary_enabled()
     v = voice_mod._Voice()
     v.lock = mock.MagicMock()
     v.lock.__enter__ = mock.MagicMock(return_value=None)
@@ -74,6 +92,7 @@ def test_item_parallel_does_not_stop_secondary():
         v.item(["peasant"])
     finally:
         game_tts.set_in_match(False)
+        config.secondary_voice_enabled = old
 
     assert alert.said is False  # secondary not abandoned
     assert v.active is True
@@ -97,6 +116,9 @@ def test_say_now_secondary_uses_right_alt():
 
 
 def test_say_next_right_alt_skips_secondary_queue_line():
+    import soundrts.config as config
+
+    old = _secondary_enabled()
     v = voice_mod._Voice()
     stop_calls = []
 
@@ -128,12 +150,16 @@ def test_say_next_right_alt_skips_secondary_queue_line():
         v.say_next(tts_channel=game_tts.SECONDARY)
     finally:
         game_tts.set_in_match(False)
+        config.secondary_voice_enabled = old
 
     assert alert.said is True
     assert game_tts.SECONDARY in stop_calls
 
 
 def test_say_next_left_alt_does_not_skip_secondary_queue_line():
+    import soundrts.config as config
+
+    old = _secondary_enabled()
     v = voice_mod._Voice()
     stop_calls = []
 
@@ -164,6 +190,7 @@ def test_say_next_left_alt_does_not_skip_secondary_queue_line():
         v.say_next(tts_channel=game_tts.PRIMARY)
     finally:
         game_tts.set_in_match(False)
+        config.secondary_voice_enabled = old
 
     assert alert.said is False
     assert v.current == 0
