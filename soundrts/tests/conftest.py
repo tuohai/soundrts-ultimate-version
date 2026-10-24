@@ -30,6 +30,36 @@ finally:
 
 import pytest
 
+from .stub_client_modules import STUBBED_MODULE_NAMES
+
+
+@pytest.fixture(autouse=True)
+def _purge_injected_module_stubs():
+    """Remove stub modules that a test injected into ``sys.modules``.
+
+    A few tests stub out the pygame-facing client modules so that importing
+    ``clientgameentity.properties`` does not drag in the whole UI stack.
+    Those stubs were installed with a plain ``sys.modules[name] = ...`` and
+    never removed, so they stayed visible to every test that ran afterwards.
+    A later ``from soundrts.clientmenu import CLOSE_MENU`` then hit the
+    empty stub and failed with "cannot import name 'CLOSE_MENU' (unknown
+    location)" -- a failure that had nothing to do with the test that
+    reported it.
+
+    Here we snapshot the stub names before the test and drop any that were
+    added during it, so the stub never leaks past the test that needed it.
+
+    This is a safety net for stubs injected *during* a test.  Stubs injected
+    at module import time (as ``test_neutral_passive_creep.py`` does) are
+    handled by ``stub_client_modules.restore_client_modules`` at their
+    source instead.
+    """
+    before = {name for name in STUBBED_MODULE_NAMES if name in sys.modules}
+    yield
+    for name in STUBBED_MODULE_NAMES:
+        if name not in before and name in sys.modules:
+            del sys.modules[name]
+
 
 @pytest.fixture(autouse=True)
 def _isolate_resource_mods():

@@ -145,45 +145,30 @@ import sys
 import types
 from soundrts import msgparts as mp
 
+from .stub_client_modules import restore_client_modules, stub_client_modules
+
 
 def _stub_client_modules():
     """预填 sys.modules 桩，避免 import properties 时拉起 pygame/locale 链。"""
-    if "soundrts.clientmedia" not in sys.modules:
-        stub = types.ModuleType("soundrts.clientmedia")
-        stub.sounds = None
-        stub.voice = None
-        sys.modules["soundrts.clientmedia"] = stub
-    if "soundrts.clientmenu" not in sys.modules:
-        sys.modules["soundrts.clientmenu"] = types.ModuleType("soundrts.clientmenu")
-    if "soundrts.animation" not in sys.modules:
-        ani = types.ModuleType("soundrts.animation")
-        ani.noise = lambda *a, **kw: None
-        sys.modules["soundrts.animation"] = ani
-    if "soundrts.clientgamenews" not in sys.modules:
-        news = types.ModuleType("soundrts.clientgamenews")
-        news.must_be_said = lambda *a, **kw: False
-        sys.modules["soundrts.clientgamenews"] = news
-    if "soundrts.clientgameorder" not in sys.modules:
-        co = types.ModuleType("soundrts.clientgameorder")
-        co.get_orders_list = lambda: []
-        co.substitute_args = lambda *a, **kw: None
-        sys.modules["soundrts.clientgameorder"] = co
-    if "soundrts.lib.sound" not in sys.modules:
-        s = types.ModuleType("soundrts.lib.sound")
-        s.distance = lambda *a, **kw: 0
-        s.psounds = None
-        s.angle = lambda *a, **kw: 0
-        sys.modules["soundrts.lib.sound"] = s
+    return stub_client_modules()
 
 
 def _import_entity_view_properties():
-    """安全加载 EntityViewProperties，跳过桩掉的依赖。"""
-    _stub_client_modules()
+    """安全加载 EntityViewProperties，跳过桩掉的依赖。
+
+    桩只在 import 期间有效；import 结束后立刻把 ``sys.modules`` 恢复原状。
+    否则这些空桩会留给后面所有测试，之后任何
+    ``from soundrts.clientmenu import ...`` 都会撞上空桩并报
+    "cannot import name ... (unknown location)"。
+    """
+    saved = _stub_client_modules()
     try:
         from soundrts.clientgameentity.properties import EntityViewProperties
         return EntityViewProperties
     except Exception:
         return None
+    finally:
+        restore_client_modules(saved)
 
 
 _EVP = _import_entity_view_properties()
@@ -357,18 +342,36 @@ def _source(path_parts):
             .joinpath(*path_parts).read_text(encoding="utf-8"))
 
 
+def _contains_call(src, *parts):
+    """Whitespace-insensitive check for a nested call expression.
+
+    The source-contract tests below assert on the *shape* of a
+    ``getattr(getattr(x, "player", None), "neutral", False)`` guard.  Pinning
+    the exact line breaks made them fail whenever the surrounding code was
+    merely re-indented, even though the guard was still present and still
+    correct.  Collapse all whitespace before searching so the assertion
+    tracks the code, not its formatting.
+    """
+    flat = "".join(src.split())
+    return "".join("".join(p.split()) for p in parts) in flat
+
+
 def test_game_navigation_filters_neutral_for_new_enemy():
     src = _source(["soundrts", "clientgame", "game_navigation.py"])
     # 在 update_fog_of_war 的 perception 循环中应有 neutral 过滤
     assert "is_an_enemy(m)" in src
-    assert 'getattr(\n                getattr(m, "player", None), "neutral", False\n            )' in src \
-        or 'getattr(getattr(m, "player", None), "neutral", False)' in src
+    assert _contains_call(
+        src,
+        'getattr(getattr(m, "player", None), "neutral", False)',
+    )
 
 
 def test_perception_filters_neutral_for_new_enemy():
     src = _source(["soundrts", "worldplayerbase", "perception.py"])
-    assert 'getattr(\n                    getattr(o, "player", None), "neutral", False\n                )' in src \
-        or 'getattr(getattr(o, "player", None), "neutral", False)' in src
+    assert _contains_call(
+        src,
+        'getattr(getattr(o, "player", None), "neutral", False)',
+    )
 
 
 def test_combat_check_battle_status_filters_neutral():

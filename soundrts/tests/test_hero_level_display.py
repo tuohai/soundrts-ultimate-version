@@ -13,45 +13,32 @@ from soundrts.definitions import Rules
 from soundrts.level_up_stats import apply_level_up_to
 from soundrts.lib.msgs import nb2msg
 
+from .stub_client_modules import restore_client_modules, stub_client_modules
+
 
 def _stub_client_modules():
-    if "soundrts.clientmedia" not in sys.modules:
-        stub = types.ModuleType("soundrts.clientmedia")
-        stub.sounds = None
-        stub.voice = None
-        sys.modules["soundrts.clientmedia"] = stub
-    if "soundrts.clientmenu" not in sys.modules:
-        sys.modules["soundrts.clientmenu"] = types.ModuleType("soundrts.clientmenu")
-    if "soundrts.animation" not in sys.modules:
-        ani = types.ModuleType("soundrts.animation")
-        ani.noise = lambda *a, **kw: None
-        sys.modules["soundrts.animation"] = ani
-    if "soundrts.clientgamenews" not in sys.modules:
-        news = types.ModuleType("soundrts.clientgamenews")
-        news.must_be_said = lambda *a, **kw: False
-        sys.modules["soundrts.clientgamenews"] = news
-    if "soundrts.clientgameorder" not in sys.modules:
-        co = types.ModuleType("soundrts.clientgameorder")
-        co.get_orders_list = lambda: []
-        co.substitute_args = lambda *a, **kw: None
-        sys.modules["soundrts.clientgameorder"] = co
-    if "soundrts.lib.sound" not in sys.modules:
-        s = types.ModuleType("soundrts.lib.sound")
-        s.distance = lambda *a, **kw: 0
-        s.psounds = None
-        s.angle = lambda *a, **kw: 0
-        s.MUSIC_FORMATS = [".mp3", ".ogg", ".wav"]
-        sys.modules["soundrts.lib.sound"] = s
+    return stub_client_modules()
 
 
 def _import_entity_view_properties():
-    _stub_client_modules()
+    """Load ``EntityViewProperties`` without leaving stubs behind.
+
+    The stub modules are only needed while ``clientgameentity.properties``
+    is being imported.  Leaving them in ``sys.modules`` would make every
+    later ``from soundrts.clientmenu import ...`` fail against the empty
+    stub, so the original ``sys.modules`` state is restored here.  The
+    imported ``properties`` module itself stays cached, so subsequent calls
+    reuse it and do not need the stubs again.
+    """
+    saved = _stub_client_modules()
     try:
         from soundrts.clientgameentity.properties import EntityViewProperties
 
         return EntityViewProperties
     except Exception:
         return None
+    finally:
+        restore_client_modules(saved)
 
 
 def _make_hero_view(*, level=1, xp_thresholds=None, xp=0, hp=100, hp_max=100):
