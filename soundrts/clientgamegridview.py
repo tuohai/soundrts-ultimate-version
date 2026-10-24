@@ -860,6 +860,13 @@ class GridView:
                 allied = getattr(me, "allied", None)
                 if allied is not None and p in allied:
                     c = (70, 140, 255)
+                elif getattr(p, "neutral", False):
+                    # 中立玩家（``computer_only ... neutral``）：不是敌人。
+                    # ``player_is_an_enemy`` 只看 alliance，对 neutral 也返回
+                    # True，所以必须在这里先判 neutral——否则中立建筑
+                    # （战役的兰斯大教堂、城镇等）会被涂成敌方红色，
+                    # 看起来像敌人的据点。
+                    c = (180, 180, 80)
                 elif p.player_is_an_enemy(me):
                     c = (230, 70, 60)
                 else:
