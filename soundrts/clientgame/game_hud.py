@@ -229,7 +229,12 @@ def _load_png_icon(key, size, style=None):
 
 
 def get_map_sprite(type_name, size, style=None):
-    """俯视图静态图：``ui/map/<style>/<type>.png`` 然后 ``ui/map/<type>.png``。"""
+    """俯视图静态图：``ui/map/<style>/<type>.png`` 然后 ``ui/map/<type>.png``。
+
+    若自身没有贴图，沿 style.txt 的 ``is_a`` 继承链向上找（战役 NPC
+    往往没有专属贴图，但它的父类有——例如 ``npc_reims_cathedral``
+    继承 ``monastery``）。找不到才返回 None，由调用方画几何占位图。
+    """
     if not type_name:
         return None
     key = (type_name, size, style)
@@ -237,8 +242,46 @@ def get_map_sprite(type_name, size, style=None):
     if hit is not _MAP_SPRITE_NONE:
         return hit
     surf = _load_png_asset("map", str(type_name).strip(), size, style=style)
+    if surf is None:
+        surf = _load_map_sprite_from_ancestors(str(type_name).strip(), size, style)
     _map_sprite_memo[key] = surf
     return surf
+
+
+def _load_map_sprite_from_ancestors(type_name, size, style):
+    """沿 style.txt 的 ``is_a`` 链找第一个有贴图的祖先。
+
+    贴图名按 type_name 逐级向上试：``npc_reims_cathedral`` ->
+    ``monastery`` -> ``building``。``building`` 之类没有专属贴图，
+    链条自然走完并返回 None。
+    """
+    try:
+        from ..definitions import style as style_defs
+    except Exception:
+        return None
+
+    seen = set()
+    queue = [type_name]
+    while queue:
+        current = queue.pop(0)
+        if not current or current in seen:
+            continue
+        seen.add(current)
+        parents = style_defs.get(current, "is_a", warn_if_not_found=False) or []
+        for parent in parents:
+            if isinstance(parent, (list, tuple)):
+                parent = parent[0] if parent else ""
+            # ``is_a`` 的取值可能带括号属性限定（如 ``monk(mdg)``），
+            # 只取第一个空白前的类型名。
+            token = str(parent).split()[0] if parent else ""
+            token = token.split("(")[0]
+            if not token or token in seen:
+                continue
+            surf = _load_png_asset("map", token, size, style=style)
+            if surf is not None:
+                return surf
+            queue.append(token)
+    return None
 
 
 # 兼容旧名
