@@ -90,6 +90,32 @@ def _iter_victory_item_holders(world):
             yield obj, None
 
 
+def _holder_can_win(holder, world):
+    """该持有者能否作为"持有全部胜利物品"的胜利方。
+
+    中立玩家（``computer_only ... neutral`` 的 creep）与战役脚本 NPC 不算：
+
+    圣女贞德第四章把三件圣物交给兰斯大教堂（``npc_reims_cathedral``，
+    一个中立 NPC）后，三件 relic 全落进这个中立电脑的口袋，引擎于是把
+    "中立 1" 当成胜利方，播报"中立 1 的胜利倒计时已开始，还剩 16 分 40 秒"。
+    中立 creep / 战役触发器电脑不是对局参与者，更不会因为捡到 relic 而
+    通关，所以这里一律排除。
+
+    注意：普通对战地图上的电脑对手同样由 ``computer_only`` 建立，但其
+    ``AI_type`` 不是 ``timers``、也不是战役 NPC，因此不受影响——圣物
+    胜利（AoE2 relic victory）在非战役地图上照常工作。
+    """
+    if holder is None:
+        return False
+    if getattr(holder, "neutral", False):
+        return False
+    if getattr(holder, "is_campaign_npc", False):
+        return False
+    if getattr(world, "is_campaign", False) and not getattr(holder, "is_human", False):
+        return False
+    return True
+
+
 def controlling_team(world):
     """Return (team_key, representative_player) if one camp holds all victory items."""
     held = list(_iter_victory_item_holders(world))
@@ -99,6 +125,10 @@ def controlling_team(world):
     representative = None
     for _item, holder in held:
         if holder is None:
+            return None, None
+        if not _holder_can_win(holder, world):
+            # 中立 creep / 战役 NPC 持有的胜利物品不参与判定——否则会给
+            # "中立 1" 播报胜利倒计时（圣女贞德第四章的圣物 bug）。
             return None, None
         key = _team_key(holder)
         if team is None:

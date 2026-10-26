@@ -24,6 +24,7 @@ from ..worlditem import Item
 from ..objective_announce import (
     flatten_objective_description,
     objective_prefix_msg,
+    objective_progress_parts,
     should_announce_objective_number,
 )
 from .base import alliance_ids_equal, normalize_alliance_id
@@ -1617,6 +1618,148 @@ class TriggersMixin:
                 return True
         return False
 
+    # ------------------------------------------------------------------
+    # 目标动态进度（F9 / HUD 显示 "0/3" → "1/3"）
+    # ------------------------------------------------------------------
+
+    def _objective_number_in_action(self, action, number, optional=False):
+        """动作树里是否包含"完成目标 N"。"""
+        if not isinstance(action, (list, tuple)):
+            return False
+        target = (
+            "secondary_objective_complete" if optional else "objective_complete"
+        )
+        if len(action) >= 2 and action[0] == target:
+            return str(action[1]) == str(number)
+        for sub in action[1:]:
+            if isinstance(sub, (list, tuple)) and self._objective_number_in_action(
+                sub, number, optional
+            ):
+                return True
+        return False
+
+    def _counting_progress(self, condition):
+        """由计数型条件算出 (当前件数, 总件数)。
+
+        支持 ``(npc_has_items ...)`` 与 ``(has_item <物品> [数量])``，
+        语法与 ``lang_npc_has_items`` / ``lang_has_item`` 一致。
+        """
+        name = condition[0]
+        args = list(condition[1:])
+        if name == "has_brought_item":
+            # (has_brought_item <方格> <物品> [数量])
+            if len(args) < 2:
+                return 0, 0
+            square_key = self._normalize_square_token(args[0])
+            item_type = args[1]
+            total = 1
+            if len(args) > 2:
+                try:
+                    total = int(args[2])
+                except (TypeError, ValueError):
+                    total = 1
+            if square_key is None or square_key not in getattr(self.world, "grid", {}):
+                return 0, total
+            current = 0
+            square = self.world.grid[square_key]
+            for unit in getattr(square, "objects", None) or ():
+                if unit not in (getattr(self, "units", None) or ()):
+                    continue
+                if not getattr(unit, "presence", True):
+                    continue
+                for it in getattr(unit, "inventory", None) or ():
+                    if getattr(it, "type_name", None) == item_type:
+                        current += 1
+            return current, total
+        if name == "has_item":
+            if not args:
+                return 0, 0
+            item_type = args[0]
+            total = 1
+            if len(args) > 1:
+                try:
+                    total = int(args[1])
+                except (TypeError, ValueError):
+                    total = 1
+            current = 0
+            for unit in getattr(self, "units", None) or ():
+                for it in getattr(unit, "inventory", None) or ():
+                    if getattr(it, "type_name", None) == item_type:
+                        current += 1
+            return current, total
+        # npc_has_items
+        parsed = self._parse_map_unit_selector(args)
+        if parsed is not None and len(args) >= 5:
+            sq_key, index, type_name = parsed
+            try:
+                total = int(args[4])
+            except (TypeError, ValueError):
+                return 0, 0
+            unit = self._find_unit_by_map_select(sq_key, index, type_name)
+            current = 0 if unit is None else self._unit_item_count(unit, args[3])
+            return current, total
+        if len(args) == 4 and re.match("^[0-9]+$", args[0]):
+            try:
+                index = int(args[0])
+                total = int(args[3])
+            except (TypeError, ValueError):
+                return 0, 0
+            unit = self._find_unit_by_global_map_select(index, args[1])
+            current = 0 if unit is None else self._unit_item_count(unit, args[2])
+            return current, total
+        # 经典写法：<NPC> <物品> <数量> [方格]
+        if len(args) < 3:
+            return 0, 0
+        try:
+            total = int(args[2])
+        except (TypeError, ValueError):
+            return 0, 0
+        npc_selector = args[0]
+        item_type = args[1]
+        square_key = None
+        if len(args) >= 4 and args[3]:
+            square_key = self._normalize_square_token(args[3])
+        current = 0
+        for unit in self._iter_world_units():
+            if not self._npc_matches_selector(unit, npc_selector):
+                continue
+            if square_key is not None:
+                place = getattr(unit, "place", None)
+                place_name = getattr(place, "name", place)
+                if place_name != square_key and place != square_key:
+                    continue
+            current = max(current, self._unit_item_count(unit, item_type))
+        return current, total
+
+    def objective_progress(self, number, optional=False):
+        """返回该目标的动态进度 ``(当前, 总数)``；没有计数条件时返回 None。
+
+        圣女贞德第四章目标 1 "将三件圣物送至兰斯大教堂" 的完成条件是
+        ``(npc_has_items npc_reims_cathedral relic 3 c5)``，因此 F9 / HUD
+        可以显示 ``(0/3)`` → ``(1/3)`` → ``(3/3)``。
+        """
+        for record in getattr(self, "triggers", None) or ():
+            condition, action, _meta = unpack_trigger(record)
+            if not condition or not action:
+                continue
+            if not isinstance(condition, (list, tuple)):
+                continue
+            if condition[0] not in (
+                "npc_has_items",
+                "has_item",
+                "has_brought_item",
+            ):
+                continue
+            if not self._objective_number_in_action(action, number, optional):
+                continue
+            try:
+                current, total = self._counting_progress(condition)
+            except Exception:
+                continue
+            if total > 0:
+                return (min(current, total), total)
+        return None
+
     def lang_has_item(self, args):
         """触发器条件：玩家是否已"找到"（拾取到）指定物品。
 
@@ -2892,6 +3035,7 @@ class TriggersMixin:
             announcement = (
                 objective_prefix_msg(prefix, n, show_number)
                 + flatten_objective_description(o.description)
+                + objective_progress_parts(self, o)
             )
             self.send_voice_important(announcement)
             self.push("resume_music", None)
@@ -2919,6 +3063,7 @@ class TriggersMixin:
                                     prefix, n, ally_show_number
                                 )
                                 + flatten_objective_description(ally_obj.description)
+                                + objective_progress_parts(ally, ally_obj)
                             )
                             ally.send_voice_important(ally_announcement)
                         except Exception:

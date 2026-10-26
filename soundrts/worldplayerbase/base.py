@@ -96,6 +96,11 @@ class Objective:
         self.number = number
         self.description = description
         self.optional = optional
+        # 可选的动态进度：(当前件数, 总件数)。非 None 时，F9 / HUD 会在
+        # 目标文字后面追加 "(当前/总数)"，例如 "0/3" → "1/3"。
+        # 由 ``(add_objective_progress <编号> <NPC> <物品> <总数>)`` 之类的
+        # 触发器设置；None 表示该目标没有计数进度。
+        self.progress = None
 
     @staticmethod
     def storage_key(number, optional=False):

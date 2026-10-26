@@ -145,3 +145,82 @@ def test_item_flag_helper():
     assert not item_counts_for_inventory_victory(
         types.SimpleNamespace(inventory_victory=0)
     )
+
+
+def test_neutral_holder_does_not_start_victory_countdown():
+    """中立 NPC 拿到全部圣物时不得触发胜利倒计时。
+
+    圣女贞德德战役第四章把三件圣物交给兰斯大教堂
+    （``npc_reims_cathedral``，中立电脑），旧逻辑会把"中立 1"当成胜利方，
+    播报"中立 1 的胜利倒计时已开始，还剩 16 分 40 秒"。
+    """
+    monkeyholder = types.SimpleNamespace(
+        id="neutral-1",
+        name=["中立 1"],
+        neutral=True,
+        is_campaign_npc=True,
+        is_human=False,
+        units=[],
+        voice=[],
+    )
+    monkeyholder.allied_victory = [monkeyholder]
+
+    class _Item:
+        def __init__(self, iid):
+            self.id = iid
+            self.inventory_victory = 1
+            self.place = None
+
+    relic = _Item(1)
+    cathedral = types.SimpleNamespace(inventory=[relic], player=monkeyholder)
+    monkeyholder.units = [cathedral]
+
+    world = types.SimpleNamespace(
+        time=0,
+        timer_coefficient=1,
+        is_campaign=True,
+        players=[monkeyholder],
+        objects={1: relic},
+        inventory_victory_state=None,
+    )
+
+    team, holder = controlling_team(world)
+    assert team is None
+    assert holder is None
+
+
+def test_campaign_human_holder_still_can_win():
+    """战役里人类玩家持有全部圣物时，胜利倒计时照常工作。"""
+    holder = types.SimpleNamespace(
+        id="h1",
+        name=["Player 1"],
+        neutral=False,
+        is_campaign_npc=False,
+        is_human=True,
+        units=[],
+        voice=[],
+    )
+    holder.allied_victory = [holder]
+
+    class _Item:
+        def __init__(self, iid):
+            self.id = iid
+            self.inventory_victory = 1
+            self.place = None
+
+    relic = _Item(1)
+    monk = types.SimpleNamespace(inventory=[relic], player=holder)
+    holder.units = [monk]
+
+    world = types.SimpleNamespace(
+        time=0,
+        timer_coefficient=1,
+        is_campaign=True,
+        players=[holder],
+        objects={1: relic},
+        inventory_victory_state=None,
+    )
+
+    team, winner = controlling_team(world)
+    assert team is not None
+    assert winner is holder

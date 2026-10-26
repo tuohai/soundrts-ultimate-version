@@ -1,6 +1,6 @@
 """任务目标语音前缀（F9 与 add_objective 共用）。"""
 from . import msgparts as mp
-from .lib.msgs import nb2msg
+from .lib.msgs import LITERAL_TEXT_PREFIX, nb2msg
 
 
 def _part_sound_id(part):
@@ -150,6 +150,40 @@ def flatten_objective_description(items):
     return localize_objective_phrases(result)
 
 
+def objective_progress_parts(player, objective):
+    """返回目标的动态进度消息片段（如 ``["文本: (0/3)"]``）；没有进度则 ``[]``。
+
+    进度来源：
+
+    1. ``Objective.progress`` 显式设置的值（``(当前, 总数)``）；
+    2. 玩家触发器里的计数型完成条件——例如圣女贞德第四章目标 1 的
+       ``(npc_has_items npc_reims_cathedral relic 3 c5)``，此时 F9 / HUD
+       会显示 ``(0/3)`` → ``(1/3)`` → ``(3/3)``。
+    """
+    progress = getattr(objective, "progress", None)
+    if progress is None:
+        resolver = getattr(player, "objective_progress", None)
+        if callable(resolver):
+            try:
+                progress = resolver(
+                    getattr(objective, "number", ""),
+                    optional=getattr(objective, "optional", False),
+                )
+            except Exception:
+                progress = None
+    if not progress:
+        return []
+    try:
+        current, total = progress
+        current = int(current)
+        total = int(total)
+    except (TypeError, ValueError):
+        return []
+    if total <= 0:
+        return []
+    return [LITERAL_TEXT_PREFIX + "%d/%d" % (current, total)]
+
+
 def collect_objective_entries(world, player):
     """收集 F9 可逐条浏览的全部任务目标（地图目标 + 玩家目标）。"""
     entries = []
@@ -170,6 +204,7 @@ def collect_objective_entries(world, player):
             entries.append(
                 objective_prefix_msg(prefix, o.number, show_number)
                 + flatten_objective_description(o.description)
+                + objective_progress_parts(player, o)
             )
     return entries
 
