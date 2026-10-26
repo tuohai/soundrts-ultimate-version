@@ -86,7 +86,8 @@ def test_aoe2_ages_without_res_combat_bonus():
 
     assert _stat("mill", "hp_max") == 600 * PRECISION
     assert _stat("house", "hp_max") == 550 * PRECISION
-    assert _stat("house", "mdf") == -2 * PRECISION
+    # AoE2 DE: house has no armor.
+    assert _stat("house", "mdf") == 0
     assert _stat("barracks", "hp_max") == 1200 * PRECISION
     assert _stat("town_center", "mdf") == 3 * PRECISION
     byz = rules._dict["byzantines"].get("on_phase_effects") or []

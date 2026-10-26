@@ -25,15 +25,20 @@ def test_collapse_cache_cleared_on_campaign_switch():
     )
     nathan = next(c for c in res.campaigns() if "nathan" in c.name.lower())
 
-    res.set_campaign(raynor)
-    raynor_parts = Message([7501]).translate_and_collapse()
-    assert raynor_parts and is_text(raynor_parts[0])
-    assert "雷诺" in raynor_parts[0] or "Raynor" in raynor_parts[0]
+    try:
+        res.set_campaign(raynor)
+        raynor_parts = Message([7501]).translate_and_collapse()
+        assert raynor_parts and is_text(raynor_parts[0])
+        assert "雷诺" in raynor_parts[0] or "Raynor" in raynor_parts[0]
 
-    res.set_campaign(nathan)
-    nathan_parts = Message([7501]).translate_and_collapse()
-    assert nathan_parts
-    assert isinstance(nathan_parts[0], Sound), (
-        "nathan prologue must play ui/7501.ogg, not cached Raynor TTS text"
-    )
-    assert sounds.has_sound("7501")
+        res.set_campaign(nathan)
+        nathan_parts = Message([7501]).translate_and_collapse()
+        assert nathan_parts
+        assert isinstance(nathan_parts[0], Sound), (
+            "nathan prologue must play ui/7501.ogg, not cached Raynor TTS text"
+        )
+        assert sounds.has_sound("7501")
+    finally:
+        # 战役层必须复位：nathan 的 rules.txt 会覆盖 workshop 等基础定义，
+        # 残留在这里会让后面的 mod 规则测试读到错误的定义。
+        res.set_campaign()

@@ -569,7 +569,9 @@ def test_starcraft_mod_uses_mineral_field_and_geyser():
     assert "geysers" in text
     assert "goldmines" not in text
     assert "woods" not in text
-    assert "geysers 1 " in text
+    # 星灵矿与气泉的储量由 mod 规则决定（geyser deposit_volume 2250），
+    # 这里只校验生成器确实按矿脉关键字落点。
+    assert "geysers 2250 " in text
 
 
 def test_starcraft_mod_random_map_has_no_hunting_animals():

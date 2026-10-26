@@ -1122,16 +1122,46 @@ def test_has_killed_does_not_count_non_allied_kills():
     assert t.lang_has_killed(["3", "traitor_guard", "enemy"]) is False
 
 
+def _traitor_guard_spawn_counts(text):
+    """Return {square: count} for every ``computer_only`` traitor_guard slot.
+
+    ``computer_only`` lines mix an optional mode token (``neutral`` /
+    ``non_neutral``) with ``<square> <count> <unit>`` groups, so the square
+    is any non-numeric token and the count always precedes its unit.
+    """
+    counts = {}
+    for line in text.splitlines():
+        line = line.strip()
+        if not line.startswith("computer_only"):
+            continue
+        words = line.split()[3:]
+        square = None
+        index = 0
+        while index < len(words):
+            token = words[index]
+            if token.isdigit():
+                count = int(token)
+                unit = words[index + 1] if index + 1 < len(words) else ""
+                if unit == "traitor_guard" and square:
+                    counts[square] = counts.get(square, 0) + count
+                index += 2
+                continue
+            if token in ("neutral", "non_neutral"):
+                index += 1
+                continue
+            square = token
+            index += 1
+    return counts
+
+
 def test_chapters_traitor_guard_spawn_line_matches_has_killed():
-    """24–27 关均刷 12 个 traitor_guard，与 has_killed 6 一致（需清剿半数刺客）。"""
+    """24–27 关每关共刷 18 个 traitor_guard，与 has_killed 6 一致（需清剿 1/3）。"""
     for chapter in ("24", "25", "26", "27"):
         text = (_CAMPAIGN_DIR / f"{chapter}.txt").read_text(encoding="utf-8")
         assert "(has_killed 6 traitor_guard enemy)" in text
-        if chapter == "24":
-            assert "h15 4 traitor_guard 4 traitor_guard" in text
-            assert "o15 4 traitor_guard" in text
-        else:
-            assert "h15 6 traitor_guard o15 6 traitor_guard" in text
+        counts = _traitor_guard_spawn_counts(text)
+        assert sum(counts.values()) == 18, (chapter, counts)
+        assert "h15" in counts and "o15" in counts, (chapter, counts)
 
 
 def test_chapter_27_carryover_slots_separate_from_traitors():

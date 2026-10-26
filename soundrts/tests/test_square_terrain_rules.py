@@ -124,7 +124,8 @@ def test_mountain_terrain_applies_ground_air_and_blocks_path():
     )
     flags = terrain_map_square_flags("mountain")
     assert flags == {
-        "high_ground": False,
+        # 山地自 1.4.x 起是高地（is_high_ground 1），只播「高地」语音。
+        "high_ground": True,
         "is_water": False,
         "is_ground": False,
         "is_air": False,
@@ -136,7 +137,7 @@ def test_mountain_terrain_applies_ground_air_and_blocks_path():
     square.is_ground = True
     square.is_air = True
     apply_terrain_map_flags(square, "mountain")
-    assert square.high_ground is False
+    assert square.high_ground is True
     assert square.is_water is False
     assert square.is_ground is False
     assert square.is_air is False

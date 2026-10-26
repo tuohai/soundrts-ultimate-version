@@ -193,6 +193,17 @@ def test_base_style_townhall_has_dual_building_keyboard():
     assert "keyboard building building4" not in text
 
 
+def _is_layered_overlay(path: Path) -> bool:
+    """地图 / 战役目录下的 style.txt 只是局部覆盖层。
+
+    这些文件由 res 的分层加载机制叠加在 mod 主 ``style.txt`` 之上，
+    只声明少量差异项；热键槽位（worker/soldier/building）由主文件提供。
+    """
+    mods = ROOT / "mods"
+    parts = path.relative_to(mods).parts
+    return "multi" in parts[:-1] or "single" in parts[:-1]
+
+
 def test_mod_style_files_have_layered_keyboard_slots():
     """Each mod style.txt should declare worker/soldier/building keyboard slots."""
     mods = ROOT / "mods"
@@ -209,6 +220,10 @@ def test_mod_style_files_have_layered_keyboard_slots():
             continue
         if "pirate_fol" in rel:
             assert "keyboard soldier6" in text, rel
+            continue
+        if _is_layered_overlay(path):
+            # 地图/战役本地的 style.txt 只是覆盖层，热键槽位继承自 mod 主
+            # style.txt（res 层叠加载），不需要重复声明。
             continue
         assert "keyboard worker" in text or "keyboard soldier" in text or "keyboard building" in text, rel
         if "orc/ui/style.txt" in rel:

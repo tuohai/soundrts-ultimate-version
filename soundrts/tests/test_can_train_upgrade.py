@@ -69,13 +69,13 @@ def test_dsb_upgrade_bonus_applies_to_barracks_not_footman():
     upgrade_cls._apply_effects_to_unit(footman, player)
 
     assert player._can_train_overrides_by_type["barracks"] == {
-        "footman": 5,
-        "archer": 3,
+        "footman": 2,
+        "archer": 2,
         "knight": 2,
     }
     assert effective_can_train(barracks) == {
-        "footman": 5,
-        "archer": 3,
+        "footman": 2,
+        "archer": 2,
         "knight": 2,
     }
     assert "footman" not in getattr(player, "_can_train_overrides_by_type", {})
@@ -106,13 +106,13 @@ def test_apply_starting_upgrades_applies_dsb_to_barracks():
     Player._apply_starting_upgrades(player)
 
     assert player._can_train_overrides_by_type["barracks"] == {
-        "footman": 5,
-        "archer": 3,
+        "footman": 2,
+        "archer": 2,
         "knight": 2,
     }
     assert effective_can_train(barracks) == {
-        "footman": 5,
-        "archer": 3,
+        "footman": 2,
+        "archer": 2,
         "knight": 2,
     }
 

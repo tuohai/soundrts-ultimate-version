@@ -770,18 +770,40 @@ def test_cycle_formation_hotkey_is_bindable():
     assert "classic.cycle_formation" in classic_ids
     assert mp.HOTKEY_CYCLE_FORMATION == [5849]
     assert get_default_key("unit.cycle_formation", "unit") == "CTRL SHIFT f"
-    assert get_default_key("classic.cycle_formation", "classic") == "CTRL SHIFT f"
     orders = (ROOT / "soundrts" / "clientgame" / "game_orders.py").read_text(encoding="utf-8")
     assert "def cmd_cycle_formation" in orders
     assert "require_menu=False" in orders
     for rel in (
         ("res", "ui", "unit_bindings.txt"),
         ("res", "ui", "command_bindings.txt"),
-        ("res", "ui", "legacy_bindings.txt"),
         ("mods", "aoe2", "ui", "legacy_bindings.txt"),
     ):
         text = ROOT.joinpath(*rel).read_text(encoding="utf-8")
         assert "CTRL SHIFT f: cycle_formation" in text
+
+
+def test_cycle_formation_classic_binding_comes_from_the_active_mod():
+    """The classic (single-file) hotkey layer is mod-supplied.
+
+    Since 1.5.1.3 the AoE2 mod owns ``legacy_bindings.txt``; the base
+    ``res/`` copy deliberately omits ``flare`` / ``cycle_formation`` so a
+    non-AoE2 mod does not inherit AoE2-only orders.  The binding must
+    therefore resolve through the resource stack (mod layer included).
+    """
+    from soundrts.lib.resource import res
+
+    old = getattr(res, "mods", "")
+    try:
+        res.set_mods("aoe2")
+        res.load_rules_and_ai()
+        from soundrts.hotkey_editor import get_default_key
+
+        assert get_default_key("classic.cycle_formation", "classic") == "CTRL SHIFT f"
+        assert get_default_key("classic.flare", "classic") == "CTRL SHIFT n"
+    finally:
+        res.set_mods(old or "")
+        if old:
+            res.load_rules_and_ai()
 
 
 def test_formation_class_parses_combat_stats():

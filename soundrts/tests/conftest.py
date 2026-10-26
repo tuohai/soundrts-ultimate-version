@@ -61,6 +61,37 @@ def _purge_injected_module_stubs():
             del sys.modules[name]
 
 
+@pytest.fixture(scope="module", autouse=True)
+def _isolate_module_rules():
+    """Restore the global ``rules`` singleton after each test module.
+
+    Many test modules call ``rules.load(...)`` on the process-wide singleton
+    (e.g. to load the AoE2 mod rules).  ``rules.load`` replaces
+    ``rules._dict`` wholesale, so those rules stay visible to every module
+    that runs afterwards.  AoE2 sets ``achievements_enabled 0``, which made
+    ``test_card_loadout`` see an empty loadout even though it passed in
+    isolation.
+
+    This fixture is module-scoped and autouse, so it is set up before the
+    module's own fixtures (which do the ``rules.load``) and torn down after
+    them, restoring the base rules the suite started with.
+    """
+    from soundrts.definitions import rules
+
+    saved = (
+        rules._dict,
+        getattr(rules, "classes", None),
+        getattr(rules, "_factions_cache", None),
+        getattr(rules, "_race_equiv_index", None),
+    )
+    yield
+    rules._dict = saved[0]
+    if saved[1] is not None:
+        rules.classes = saved[1]
+    rules._factions_cache = saved[2]
+    rules._race_equiv_index = saved[3]
+
+
 @pytest.fixture(autouse=True)
 def _isolate_resource_mods():
     """Restore res.mods after tests that switch mods (e.g. crazyMod9beta10).

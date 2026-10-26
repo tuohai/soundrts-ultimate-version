@@ -10,15 +10,15 @@ os.environ.setdefault("SOUNDRTS_UI_BACKEND", "pygame")
 os.environ.setdefault("PYGAME_HIDE_SUPPORT_PROMPT", "1")
 
 
-def test_needs_sapi32_false_for_nuance_without_helper():
+def test_needs_sapi32_false_for_nuance_without_helper(monkeypatch):
     from soundrts.lib import game_tts, sapi32_tts
 
     calls = []
-    sapi32_tts.list_voices = lambda: calls.append("list_voices") or []  # type: ignore
-    sapi32_tts.list_wow6432_token_names = (  # type: ignore
-        lambda: calls.append("wow") or []
+    monkeypatch.setattr(sapi32_tts, "list_voices", lambda: calls.append("list_voices") or [])
+    monkeypatch.setattr(
+        sapi32_tts, "list_wow6432_token_names", lambda: calls.append("wow") or []
     )
-    sapi32_tts.available = lambda: calls.append("available") or True  # type: ignore
+    monkeypatch.setattr(sapi32_tts, "available", lambda: calls.append("available") or True)
 
     game_tts._needs_sapi32_cache.clear()
     assert game_tts.needs_sapi32("nuance:Ting-Ting") is False

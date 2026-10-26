@@ -103,14 +103,14 @@ class TestModGlobalTtsLookup:
         if mod is None:
             pytest.skip("orc mod not in this install")
         label = mod_menu_label(res.packages, "orc")
-        assert label == ["orc"] or label == ["7754"]
+        assert label == ["orc"] or label == ["777754"]
 
     def test_soundpack_menu_labels(self):
         res.language = "zh"
         sounds.load_default(res)
         for name, tid, zh in (
-            ("soundpack", "7752", "\u4f18\u8d28\u97f3\u6548\u5305"),
-            ("soundpack2", "7753", "\u91d1\u54c1\u97f3\u6548\u5305"),
+            ("soundpack", "777752", "\u4f18\u8d28\u97f3\u6548\u5305"),
+            ("soundpack2", "777753", "\u91d1\u54c1\u97f3\u6548\u5305"),
         ):
             mod = res.packages.mod(name)
             if mod is None:

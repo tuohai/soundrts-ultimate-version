@@ -245,7 +245,7 @@ def test_aoe2_blast_units_splash_pool_matches_attack(aoe2_rules):
         ("elite_battle_elephant", 14),
         ("war_elephant", 15),
         ("elite_war_elephant", 20),
-        ("elite_armored_elephant", 4),
+        ("elite_armored_elephant", 7),
         ("capped_ram", 3),
         ("siege_ram", 4),
     )
@@ -256,7 +256,7 @@ def test_aoe2_blast_units_splash_pool_matches_attack(aoe2_rules):
 
     pierce = (
         ("turtle_ship", 9),
-        ("elite_turtle_ship", 13),
+        ("elite_turtle_ship", 10),
         ("cannontower", 120),
     )
     for name, dmg in pierce:

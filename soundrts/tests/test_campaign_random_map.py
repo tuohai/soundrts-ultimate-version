@@ -177,7 +177,16 @@ def test_campaign_random_map_always_keeps_player1_triggers():
         world.load_and_build_map(m)
         client = DirectClient("p1", None)
         world.populate_map([client])
-        assert len(world.players[0].triggers) == 1
+        # 随机地图还会生成遗迹/胜负触发器，这里只要求战役叠加的
+        # player1 触发器始终存在。
+        triggers = [
+            list(t) if isinstance(t, list) else t
+            for t in world.players[0].triggers
+        ]
+        assert any(
+            t and t[0] == ["timer", "0"] and t[1] == ["add_objective", "1", "1"]
+            for t in triggers
+        ), triggers
 
 
 def test_parse_rejects_non_marker():
