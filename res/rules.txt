@@ -1169,7 +1169,7 @@ cost 42 61 ; this is the total cost
 time_cost 675 ; this is the total cost
 hp_max 1600
 heal_level 4
-requirements barracks lumbermill blacksmith stables
+requirements any_buildings 2 castle_age_buildings
 ;can_upgrade_to
 is_a keep
 

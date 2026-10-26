@@ -2173,7 +2173,7 @@ cost 0 0 850 0
 time_cost 60
 requirements imperial_age
 no_auto_upgrade 1
-mdg_splash 4
+mdg_splash 7
 mdg_radius 1.5
 
 ; 波兰 Obuch - heavy two-handed mace infantry UU, AoE2 DE stat clone
@@ -6084,7 +6084,8 @@ is_a town_center
 population_provided 15
 sight_range 15
 
-; 中国: Thumb Ring + Bloodlines; no Parthian; no Siege Engineers; no Gambesons; 诸葛弩 def chinese_barracks
+; 中国: Thumb Ring + Bloodlines; no Parthian; no Siege Engineers; no Gambesons; 诸葛弩
+def chinese_barracks
 is_a barracks
 can_train militia spearman
 can_research squires arson man_at_arms long_swordsman two_handed_swordsman champion pikeman halberdier
