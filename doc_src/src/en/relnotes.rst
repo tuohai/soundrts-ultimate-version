@@ -81,6 +81,12 @@ Release notes
 - **Fix**: The declaration is now `register_objective 1 2` , matching the two objectives that actually exist in this chapter; a `square_name` reference in the same map that pointed at a non-existent text ID was corrected as well.
 - **Scope**: `mods/aoe2/single/Joan of Arc/4.txt` .
 
+**Changed: the AoE2 architecture sets finally have their own colours**
+
+- **Problem**: the 1.4.9.7 high-res art pass installed the *same* trial sprite into every ``mods/aoe2/ui/map/<set>/`` and ``mods/aoe2/ui/icons/<set>/`` directory, so all eight DE architecture sets (western European, central European, east Asian, Mediterranean, central Asian, south-east Asian, Mesoamerican, African) rendered identically and the ``mods/aoe2/ui/architecture.txt`` palettes had no visible effect at all. Every player saw one blue-and-grey art set no matter which architecture set the map asked for.
+- **Fix**: the installed art is now re-graded per set. A new tool, ``tools/tint_aoe2_arch_sets.py``, rotates the hue of the opaque pixels toward the set's accent colour and nudges the saturation, so each architecture set reads as its own colour scheme while keeping the real AoE2 artwork's shading and detail. The eight sets' target hues are spread around the colour wheel, and the result is reproducible: re-running the tool on the pre-re-grade art yields exactly the committed art again.
+- **Scope**: ``tools/tint_aoe2_arch_sets.py`` (new tool), ``mods/aoe2/ui/icons/<set>/*.png`` and ``mods/aoe2/ui/map/<set>/*.png`` (4496 files re-graded across the eight sets), ``soundrts/tests/test_aoe2_arch_set_art.py`` (new regression tests: the eight sets are no longer pixel-identical, and each one has its own dominant colour).
+
 
 1.5.1.4
 -------

@@ -73,6 +73,12 @@ Notas de la versión
 - **Mejora**: la declaración pasa a ser `register_objective 1 2` , coincidiendo con los dos objetivos que realmente existen en el capítulo; también se corrigió en el mismo mapa una referencia `square_name` que apuntaba a un identificador de texto inexistente.
 - **Alcance**: `mods/aoe2/single/Joan of Arc/4.txt` .
 
+**Cambiado: los conjuntos de arquitectura de AoE2 por fin tienen sus propios colores**
+
+- **Problema**: la pasada de arte en alta resolución de 1.4.9.7 instaló el *mismo* sprite de prueba en cada directorio ``mods/aoe2/ui/map/<set>/`` y ``mods/aoe2/ui/icons/<set>/``, así que los ocho conjuntos de arquitectura DE (europeo occidental, europeo central, asiático oriental, mediterráneo, asiático central, sudeste asiático, mesoamericano, africano) se dibujaban de forma idéntica y las paletas de ``mods/aoe2/ui/architecture.txt`` no tenían ningún efecto visible. Cada jugador veía un único arte azul y gris, sin importar el conjunto que el mapa pidiera.
+- **Mejora**: el arte instalado ahora se regradea por conjunto. Una nueva herramienta, ``tools/tint_aoe2_arch_sets.py``, gira el tono de los píxeles opacos hacia el color de acento del conjunto y ajusta ligeramente la saturación, de modo que cada conjunto de arquitectura se lee como su propio esquema de color, conservando el sombreado y el detalle del arte real de AoE2. Los tonos objetivo de los ocho conjuntos se reparten por la rueda de color, y el resultado es reproducible: al volver a ejecutar la herramienta sobre el arte previo al regrado se obtiene exactamente el arte comprometido.
+- **Alcance**: ``tools/tint_aoe2_arch_sets.py`` (herramienta nueva), ``mods/aoe2/ui/icons/<set>/*.png`` y ``mods/aoe2/ui/map/<set>/*.png`` (4496 archivos regradeados en los ocho conjuntos), ``soundrts/tests/test_aoe2_arch_set_art.py`` (nuevos tests de regresión: los ocho conjuntos ya no son idénticos píxel a píxel, y cada uno tiene su propio color dominante).
+
 
 1.5.1.4
 -------
