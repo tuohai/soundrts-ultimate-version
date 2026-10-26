@@ -48,6 +48,31 @@ Note di rilascio
 - **William Wallace**: risorse iniziali riequilibrate capitolo per capitolo (3: 100/200/500/0, 4: 250/200/450/200, 5: 500/400/500/400, 6: 500/500/500/500, 7: 200/200/800/200) così ogni lezione è giocabile e il capitolo dell'Età del Castello può davvero permettersi il castello. Il capitolo 5 ora si vince anche distruggendo la torre di guardia inglese, e i capitoli 5 e 7 dichiarano esplicitamente la vittoria insieme all'obiettivo completato.
 - **Ambito**: ``mods/aoe2/single/Joan of Arc/4.txt``; ``mods/aoe2/single/Joan of Arc/ui*/tts.txt`` (13 lingue); ``mods/aoe2/single/William Wallace/{3,4,5,6,7}.txt``.
 
+**Corretto: l'obiettivo primario 2 del capitolo 5 di Giovanna d'Arco era una battuta di cut_scene, non una missione**
+
+- **Problema**: ``mods/aoe2/single/Joan of Arc/5.txt`` dichiarava ``(add_objective 2 8830)``, ma l'identificativo di testo ``8830`` è la riga di **cut_scene del capitolo 1** («Il Delfino legge la lettera e cade in ginocchio. La Francia risorgerà. La guerra per il regno è davvero iniziata, e Giovanna cavalca alla sua testa.»). L'elenco degli obiettivi su F9 mostrava quindi un frammento di narrazione invece di un obiettivo completabile. La causa radice era una collisione di identificativi: ``8830`` conteneva in origine il testo dell'obiettivo del capitolo 5 e in seguito fu riassegnato a una riga di cut_scene da ``_tools/update_ch1_tts.py``, mentre ``5.txt`` continuava a farvi riferimento.
+- **Miglioramento**: le descrizioni degli obiettivi hanno ora identificativi propri e non sono mai condivise con i dialoghi di cut_scene. I tre obiettivi del capitolo 5 usano ``8856``-``8858`` («Prendi Meung-sur-Loire» / «Prendi Beaugency» / «Prendi Jallains»), corrispondenti alle tre città-ponte inglesi che il capitolo chiede di prendere; i vecchi obiettivi 1 e 3 usavano ``8829`` / ``8831``, che descrivono un altro insieme di traguardi («Distruggere l'avamposto inglese sulla bassa Loira» / «Distruggere ogni torre e castello inglese») e non corrispondevano al gioco reale. Gli identificativi degli obiettivi del capitolo 2 (``8839`` / ``8853``-``8855``) sono stati inoltre aggiunti a **tutte le 13 lingue dell'interfaccia**: prima esistevano solo in ``ui-zh/tts.txt``, così i giocatori di tutte le altre lingue leggevano gli obiettivi del capitolo 2 nel testo di riserva inglese.
+- **Ambito**: ``mods/aoe2/single/Joan of Arc/5.txt`` (identificativi degli obiettivi cambiati in 8856-8858), ``mods/aoe2/single/Joan of Arc/ui*/tts.txt`` (testo degli obiettivi aggiunto per 13 lingue), ``soundrts/tests/test_joan_objective_tts_ids.py`` (nuovi test di regressione).
+
+**Corretto: un detentore neutrale non avvia più il conto alla rovescia della vittoria**
+
+- **Problema**: dopo che le tre reliquie erano state consegnate alla cattedrale di Reims, il giocatore computer neutrale (`Neutrale 1`) finiva con tutti gli oggetti di vittoria, così il motore lo trattava come schieramento vincente e annunciava "è iniziato il conto alla rovescia della vittoria di Neutrale 1, restano 16 minuti e 40 secondi". I neutrali della mappa e i computer di trigger delle campagne non sono partecipanti allo scontro e non devono vincere raccogliendo oggetti di vittoria.
+- **Mejora**: `soundrts/world_inventory_victory.py` introduce `_holder_can_win` , che ora `controlling_team` consulta per ogni detentore prima di dichiarare un vincitore: i giocatori neutrali (`neutral`), gli NPC di campagna (`is_campaign_npc`) e i giocatori non umani sulle mappe di campagna vengono esclusi. I rivali computerizzati nelle mappe normali non ne risentono, così la vittoria per reliquie di AoE2 continua a funzionare lì.
+- **Ambito**: `soundrts/world_inventory_victory.py` (nuova `_holder_can_win` , `controlling_team` corretto), `soundrts/tests/test_inventory_victory.py` (nuovi test di regressione).
+
+**Aggiunto: progresso dinamico negli obiettivi di missione (`0/3` → `1/3` → `3/3`)**
+
+- **Problema**: gli obiettivi erano una sola descrizione statica, senza modo di mostrare che una parte era già stata completata. L'obiettivo 1 del capitolo 4 di Giovanna d'Arco è "Consegna le tre reliquie alla cattedrale di Reims"; premendo F9 si vedeva solo la frase, senza sapere quante reliquie erano già state consegnate.
+- **Mejora**: il motore cerca ora il trigger di completamento dietro a un obiettivo, riconosce le condizioni **di conteggio** e le valuta in tempo reale, aggiungendo il progresso come frammento di testo letterale dopo la descrizione dell'obiettivo. Le tre condizioni di conteggio riconosciute sono `npc_has_items` , `has_item` e `has_brought_item` ; un obiettivo ottiene il display del progresso appena l'azione di una condizione di conteggio contiene `objective_complete` . La lettura vocale di F9 e il testo narrativo dell'HUD si aggiornano insieme, e il progresso non richiede modifiche ad alcuna tabella di localizzazione statica. `Objective.progress` conserva inoltre un punto d'ingresso per impostare il progresso in modo esplicito.
+- **Ambito**: `soundrts/worldplayerbase/triggers.py` (nuovi `objective_progress` e `_counting_progress` ), `soundrts/objective_announce.py` (nuovo `objective_progress_parts` ), `soundrts/worldplayerbase/base.py` (il campo `Objective.progress` ), `soundrts/tests/test_objective_progress.py` (nuovi test di regressione).
+
+**Corretto: il capitolo 4 di Giovanna d'Arco registrava due obiettivi inesistenti**
+
+- **Problema**: `mods/aoe2/single/Joan of Arc/4.txt` dichiarava `register_objective 1 2 3 4` , ma il capitolo ha solo due obiettivi principali, quindi il 3 e il 4 in eccesso lasciavano voci vuote nell'elenco degli obiettivi.
+- **Mejora**: la dichiarazione diventa `register_objective 1 2` , in linea con i due obiettivi che esistono davvero nel capitolo; nella stessa mappa è stata corretta anche un riferimento `square_name` che puntava a un identificativo di testo inesistente.
+- **Ambito**: `mods/aoe2/single/Joan of Arc/4.txt` .
+
+
 1.5.1.4
 -------
 

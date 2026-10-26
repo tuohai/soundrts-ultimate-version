@@ -978,6 +978,45 @@ The default AI for computer_only is a trigger-only, do-nothing AI. To switch to 
     trigger computer1 (timer 0) (ai easy)
 
 
+Defence mission: making the attackers actually attack
+....................................................
+
+A defence map only works if the besiegers really come. Two things are required, and both are
+easy to forget:
+
+1. **The computer slots need a real AI.** A ``computer_only`` slot gets a trigger-only,
+   do-nothing AI by default (see "Switch to another AI" above). Give every attacker its own
+   AI script::
+
+       trigger computer1 (timer 0) (ai intermediate)
+
+2. **The computer slots need their own economy.** The starting resources of a
+   ``computer_only`` line are the *four* numbers right after the keyword (``gold wood food
+   stone``); all four must be non-zero, or the AI cannot train a single unit and its
+   ``get`` lines never complete — it attacks once and then stands still. On top of that it
+   needs the buildings its get-lines train from (``farm``, ``barracks``, ``archery_range``,
+   ``stables``, ``workshop`` for siege units) and its own mines nearby, otherwise it burns
+   through its starting food and then stalls on the get-line forever.
+
+Also remember that ``starting_squares`` must list **every** spawn slot (the player slot and
+each ``computer_only`` slot), otherwise ``auto_explore`` has no target square and the AI
+never even looks for the player's base.
+
+Example (Joan of Arc, German campaign, chapter 6 — hold the citadel of Compiegne against the
+English and Burgundian besiegers)::
+
+    starting_squares e6 c2 h1 a1
+
+    computer_only 400 400 700 200 non_neutral faction britons c2 town_center 2 house farm 2 \
+        barracks archery_range stables workshop aoe_castle scouttower 5 militia 3 man_at_arms 2 \
+        aoe_archer 2 aoe_knight 1 longbowman 2 peasant 10 dark_age feudal_age castle_age
+    computer_only 400 400 700 200 non_neutral faction burgundians h1 town_center 2 house farm 2 \
+        barracks archery_range stables workshop aoe_castle scouttower 4 militia 3 man_at_arms 3 \
+        aoe_knight 1 aoe_archer 2 peasant 8 dark_age feudal_age castle_age
+
+    trigger computer1 (timer 0) (ai intermediate)
+
+
 Add units
 .........
 
@@ -1137,6 +1176,45 @@ single primary objective the number is omitted. See ``soundrts/objective_announc
 
 Examples: ``mods/starcraft/single/sc_build_tests/1.txt`` (2 goals); ``sc_late_game/1.txt`` (6
 chained goals). Guide: ``campaign/progressive-objectives.htm``.
+
+Dynamic objective progress (since 1.5.1.5)
+..........................................
+
+Besides its static description, an objective can show a **live progress** counter (such as
+``0/3`` → ``1/3`` → ``3/3``). No extra scripting is needed: the engine looks up the trigger
+that completes that objective and evaluates a **counting** condition in real time.
+
+The recognised counting conditions (three):
+
+- ``(npc_has_items <NPC selector> <item type_name> <count> [square])`` — an NPC has received
+  *N* items of a given type in total. See ``campaign/give-to-npc.htm``.
+- ``(has_item <item type_name> [count])`` — how many items of a type the player's units carry.
+- ``(has_brought_item <square> <item type_name> [count])`` — how many items of a type the player
+  brought to a given square.
+
+An objective gains a progress display as soon as a counting condition's action contains
+``objective_complete N`` (or ``secondary_objective_complete N`` for an optional objective).
+The progress is emitted as a literal text fragment, so **no static localization string table
+has to be changed** and the TTS reading and the HUD narrative display stay in sync. Objectives
+without a counting condition still show their description only.
+
+Example (Joan of Arc, German campaign, chapter 4 — objective 1, "Deliver three relics to Reims
+cathedral")::
+
+    trigger player1 (timer 0) (add_objective 1 8827)
+    trigger player1 (npc_has_items npc_reims_cathedral relic 3 c5)
+        (do (objective_complete 1) (cut_scene 8837))
+
+F9 now reads "Primary objective 1: Deliver three relics to Reims cathedral (0/3)", and each
+relic handed over advances it to ``(1/3)``, ``(2/3)`` and finally ``(3/3)`` (the entry leaves
+the F9 list once the objective is completed).
+
+The counting rule matches the ``npc_has_items`` check: the larger of "items delivered in total
+via ``give``" and "items of that type currently in the unit's inventory" is used, so the count
+survives the item being taken away again and the same item is never counted twice.
+
+Implementation: ``objective_progress`` in ``soundrts/worldplayerbase/triggers.py`` and
+``objective_progress_parts`` in ``soundrts/objective_announce.py``.
 
 Objective_complete (action in a trigger)
 ........................................

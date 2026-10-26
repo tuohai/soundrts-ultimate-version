@@ -1086,6 +1086,48 @@ F9 e ``add_objective`` anunciam "Objetivo primário N:" antes da descrição; co
 Exemplos: ``mods/starcraft/single/sc_build_tests/1.txt`` (2 objetivos); ``sc_late_game/1.txt`` (6
 objetivos encadeados). Guia: ``campaign/progressive-objectives.htm``.
 
+Progresso dinâmico dos objectivos (desde 1.5.1.5)
+..................................................
+
+Além da descrição estática, um objectivo pode mostrar um **progresso em tempo real** (como
+``0/3`` → ``1/3`` → ``3/3``). Não é preciso qualquer script adicional: o motor localiza o
+gatilho que completa esse objectivo e avalia em tempo real uma condição de **contagem**.
+
+As condições de contagem reconhecidas (três):
+
+- ``(npc_has_items <selector de NPC> <tipo de item> <quantidade> [célula])`` — um NPC recebeu no
+  total *N* itens de um dado tipo. Ver ``campaign/give-to-npc.htm``.
+- ``(has_item <tipo de item> [quantidade])`` — quantos itens de um tipo as unidades do jogador
+  transportam.
+- ``(has_brought_item <célula> <tipo de item> [quantidade])`` — quantos itens de um tipo o jogador
+  trouxe até uma determinada célula.
+
+Um objectivo passa a mostrar o progresso assim que a acção de uma condição de contagem contenha
+``objective_complete N`` (ou ``secondary_objective_complete N`` para um objectivo opcional). O
+progresso é emitido como fragmento de texto literal, pelo que **não é preciso alterar nenhuma
+tabela de cadeias de localização estática** e a leitura por TTS e a apresentação narrativa no HUD
+mantêm-se sincronizadas. Os objectivos sem condição de contagem continuam a mostrar apenas a
+descrição.
+
+Exemplo (Joana d'Arc, campanha alemã, capítulo 4 — objectivo 1, «Entregar três relíquias à
+catedral de Reims»)::
+
+    trigger player1 (timer 0) (add_objective 1 8827)
+    trigger player1 (npc_has_items npc_reims_cathedral relic 3 c5)
+        (do (objective_complete 1) (cut_scene 8837))
+
+O F9 passa a ler «Objectivo primário 1: Entregar três relíquias à catedral de Reims (0/3)», e cada
+relíquia entregue faz o progresso avançar para ``(1/3)``, ``(2/3)`` e por fim ``(3/3)`` (a entrada
+sai da lista do F9 quando o objectivo é concluído).
+
+A regra de contagem coincide com a verificação de ``npc_has_items``: toma-se o maior entre «itens
+entregues no total através de ``give``» e «itens desse tipo actualmente no inventário da unidade»,
+pelo que a contagem mantém-se válida se o item voltar a ser retirado e o mesmo item nunca é
+contado duas vezes.
+
+Implementação: ``objective_progress`` em ``soundrts/worldplayerbase/triggers.py`` e
+``objective_progress_parts`` em ``soundrts/objective_announce.py``.
+
 Objective_complete (ação em um gatilho)
 .......................................
 

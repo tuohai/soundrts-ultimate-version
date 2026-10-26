@@ -1013,6 +1013,39 @@ computer_only 的默认 AI 是一个仅靠触发器、什么都不做的 AI。�
     trigger computer1 (timer 0) (ai easy)
 
 
+防守关卡：让进攻方真的来打
+..........................
+
+防守地图只有在围城方真的打过来时才算成立。有两件事必须做到，而且都很容易漏掉：
+
+1. **电脑席位需要真正的 AI。** ``computer_only`` 席位默认使用仅靠触发器、什么都不做的 AI
+   （见上文「切换到另一个 AI」）。必须给每一个进攻方挂上自己的 AI 脚本::
+
+       trigger computer1 (timer 0) (ai intermediate)
+
+2. **电脑席位需要自己的经济。** ``computer_only`` 行里紧跟关键字之后的**四个**数字是初始资源
+   （``金 木 粮 石``），四个都必须非零，否则 AI 连一个单位都造不出来，它的 ``get`` 队列永远
+   完不成——打一波之后就原地站着不动。除此之外，它还需要自己的生产建筑（``farm``、``barracks``、
+   ``archery_range``、``stables``，攻城武器还需要 ``workshop``）以及附近自己的矿，否则它会把
+   初始粮食耗光，然后永远卡在 ``get`` 队列上。
+
+另外别忘了 ``starting_squares`` 必须列出**每一个**出生点（玩家席位和每个 ``computer_only``
+席位），否则 ``auto_explore`` 没有目标方格，AI 连玩家的基地都不会去找。
+
+示例（圣女贞德德战役第六章——守住贡比涅要塞，抵挡英军与勃艮第的围城）::
+
+    starting_squares e6 c2 h1 a1
+
+    computer_only 400 400 700 200 non_neutral faction britons c2 town_center 2 house farm 2 \
+        barracks archery_range stables workshop aoe_castle scouttower 5 militia 3 man_at_arms 2 \
+        aoe_archer 2 aoe_knight 1 longbowman 2 peasant 10 dark_age feudal_age castle_age
+    computer_only 400 400 700 200 non_neutral faction burgundians h1 town_center 2 house farm 2 \
+        barracks archery_range stables workshop aoe_castle scouttower 4 militia 3 man_at_arms 3 \
+        aoe_knight 1 aoe_archer 2 peasant 8 dark_age feudal_age castle_age
+
+    trigger computer1 (timer 0) (ai intermediate)
+
+
 添加单位
 ..........
 
@@ -1158,6 +1191,37 @@ Register_objective（触发器中的动作）
 F9 / 语音序号： 存在多个主要目标（已登记或已显示）时，F9 与 ``add_objective`` 会播报「主要目标 N：」再读描述；仅一个主要目标时不读序号。实现见 ``soundrts/objective_announce.py``。
 
 示例：``mods/starcraft/single/sc_build_tests/1.txt`` （2 个目标）；``sc_late_game/1.txt`` （6 个链式目标）。说明见 ``campaign/progressive-objectives.htm``。
+
+目标动态进度（自 1.5.1.5 起）
+.............................
+
+目标除了静态描述文字，还可以显示一个 **实时进度** （如 ``0/3`` → ``1/3`` → ``3/3``）。
+进度不需要额外的脚本：引擎会自动反查该目标对应的完成触发器，识别**计数型**条件并实时求值。
+
+可识别的计数型条件（三种）：
+
+- ``(npc_has_items <NPC选择符> <物品type_name> <数量> [所在方格])`` —— 某个 NPC 已累计收到 N 件某类物品。详见 ``campaign/give-to-npc.htm``。
+- ``(has_item <物品type_name> [数量])`` —— 玩家单位库存里某类物品的件数。
+- ``(has_brought_item <方格> <物品type_name> [数量])`` —— 玩家带指定物品到达某方格的件数。
+
+只要某个计数型条件的动作里出现了 ``objective_complete N``（或可选目标的 ``secondary_objective_complete N``），
+该目标就会获得进度显示。进度以字面文本片段呈现，**不需要修改任何静态本地化字符串表**，
+TTS 朗读与 HUD 叙事显示同步生效。没有计数型条件的目标照旧只显示描述文字。
+
+示例（圣女贞德德战役第四章，目标 1「将三件圣物送至兰斯大教堂」）::
+
+    trigger player1 (timer 0) (add_objective 1 8827)
+    trigger player1 (npc_has_items npc_reims_cathedral relic 3 c5)
+        (do (objective_complete 1) (cut_scene 8837))
+
+此时 F9 会念出「主要目标 1：将三件圣物送至兰斯大教堂 (0/3)」，每交一件圣物变成 ``(1/3)`` 、
+``(2/3)`` ，交齐后为 ``(3/3)`` （目标完成后该条目即从 F9 列表移除）。
+
+计数口径与 ``npc_has_items`` 判定一致：取"通过 ``give`` 累计交付的件数"与"该单位当前库存中该类型的件数"两者的较大值，
+所以物品被再次取走后计数依然有效，同一件物品也不会被数两次。
+
+实现见 ``soundrts/worldplayerbase/triggers.py``（``objective_progress``）与
+``soundrts/objective_announce.py``（``objective_progress_parts``）。
 
 Objective_complete（触发器中的动作）
 ....................................

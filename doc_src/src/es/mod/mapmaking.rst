@@ -1074,6 +1074,48 @@ objetivo principal único, se omite el número. Consulte ``soundrts/objective_an
 Ejemplos: ``mods/starcraft/single/sc_build_tests/1.txt`` (2 goles); ``sc_late_game/1.txt`` (6
 goles encadenados). Guía: ``campaign/progressive-objectives.htm``.
 
+Progreso dinámico de objetivos (desde 1.5.1.5)
+...............................................
+
+Además de su descripción estática, un objetivo puede mostrar un **progreso en vivo** (como
+``0/3`` → ``1/3`` → ``3/3``). No hace falta ningún guion adicional: el motor busca el
+disparador que completa ese objetivo y evalúa en tiempo real una condición de **conteo**.
+
+Las condiciones de conteo reconocidas (tres):
+
+- ``(npc_has_items <selector de NPC> <tipo de objeto> <cantidad> [casilla])`` — un NPC ha recibido
+  *N* objetos de un tipo dado en total. Véase ``campaign/give-to-npc.htm``.
+- ``(has_item <tipo de objeto> [cantidad])`` — cuántos objetos de un tipo llevan las unidades
+  del jugador.
+- ``(has_brought_item <casilla> <tipo de objeto> [cantidad])`` — cuántos objetos de un tipo lleva
+  el jugador hasta una casilla.
+
+Un objetivo obtiene su visualización de progreso en cuanto la acción de una condición de conteo
+contiene ``objective_complete N`` (o ``secondary_objective_complete N`` para un objetivo
+opcional). El progreso se emite como fragmento de texto literal, así que **no hay que modificar
+ninguna tabla de cadenas de localización estática** y la lectura por TTS y la visualización
+narrativa en el HUD permanecen sincronizadas. Los objetivos sin condición de conteo siguen
+mostrando solo su descripción.
+
+Ejemplo (Juana de Arco, campaña alemana, capítulo 4 — objetivo 1, «Entregar tres reliquias a la
+catedral de Reims»)::
+
+    trigger player1 (timer 0) (add_objective 1 8827)
+    trigger player1 (npc_has_items npc_reims_cathedral relic 3 c5)
+        (do (objective_complete 1) (cut_scene 8837))
+
+F9 lee ahora «Objetivo principal 1: Entregar tres reliquias a la catedral de Reims (0/3)», y cada
+reliquia entregada lo hace avanzar a ``(1/3)``, ``(2/3)`` y por fin ``(3/3)`` (la entrada sale de
+la lista de F9 al completarse el objetivo).
+
+La regla de conteo coincide con la comprobación de ``npc_has_items``: se toma el mayor entre
+«objetos entregados en total mediante ``give``» y «objetos de ese tipo actualmente en el
+inventario de la unidad», de modo que el conteo sigue siendo válido si se vuelve a retirar el
+objeto y el mismo objeto nunca se cuenta dos veces.
+
+Implementación: ``objective_progress`` en ``soundrts/worldplayerbase/triggers.py`` y
+``objective_progress_parts`` en ``soundrts/objective_announce.py``.
+
 Objective_complete (acción en un disparador)
 ........................................
 

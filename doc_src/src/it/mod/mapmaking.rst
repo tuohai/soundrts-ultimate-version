@@ -1102,6 +1102,48 @@ singolo obiettivo primario il numero viene omesso. Vedere ``soundrts/objective_a
 Esempi: ``mods/starcraft/single/sc_build_tests/1.txt`` (2 obiettivi); ``sc_late_game/1.txt`` (6
 obiettivi concatenati). Guida: ``campaign/progressive-objectives.htm``.
 
+Progressione dinamica degli obiettivi (dal 1.5.1.5)
+...................................................
+
+Oltre alla descrizione statica, un obiettivo può mostrare una **progressione in tempo reale**
+(come ``0/3`` → ``1/3`` → ``3/3``). Non serve alcuno script aggiuntivo: il motore individua il
+trigger che completa quell'obiettivo e valuta in tempo reale una condizione di **conteggio**.
+
+Le condizioni di conteggio riconosciute (tre):
+
+- ``(npc_has_items <selettore NPC> <tipo oggetto> <quantità> [cella])`` — un NPC ha ricevuto in
+  totale *N* oggetti di un dato tipo. Vedi ``campaign/give-to-npc.htm``.
+- ``(has_item <tipo oggetto> [quantità])`` — quanti oggetti di un tipo le unità del giocatore
+  portano con sé.
+- ``(has_brought_item <cella> <tipo oggetto> [quantità])`` — quanti oggetti di un tipo il giocatore
+  ha portato in una data cella.
+
+Un obiettivo ottiene la visualizzazione della progressione non appena l'azione di una condizione
+di conteggio contiene ``objective_complete N`` (o ``secondary_objective_complete N`` per un
+obiettivo opzionale). La progressione viene emessa come frammento di testo letterale, quindi
+**non serve modificare alcuna tabella di stringhe di localizzazione statica** e la lettura TTS e
+la visualizzazione narrativa su HUD restano sincronizzate. Gli obiettivi senza condizioni di
+conteggio continuano a mostrare solo la descrizione.
+
+Esempio (Giovanna d'Arco, campagna tedesca, capitolo 4 — obiettivo 1, «Consegnare tre reliquie
+alla cattedrale di Reims»)::
+
+    trigger player1 (timer 0) (add_objective 1 8827)
+    trigger player1 (npc_has_items npc_reims_cathedral relic 3 c5)
+        (do (objective_complete 1) (cut_scene 8837))
+
+F9 legge ora «Obiettivo principale 1: Consegnare tre reliquie alla cattedrale di Reims (0/3)», e
+ogni reliquia consegnata lo fa avanzare a ``(1/3)``, ``(2/3)`` e infine ``(3/3)`` (la voce esce
+dall'elenco F9 al completamento dell'obiettivo).
+
+La regola di conteggio coincide con il controllo di ``npc_has_items``: si prende il maggiore fra
+«oggetti consegnati in totale tramite ``give``» e «oggetti di quel tipo attualmente
+nell'inventario dell'unità», così il conteo resta valido anche se l'oggetto viene ripreso e lo
+stesso oggetto non viene mai contato due volte.
+
+Implementazione: ``objective_progress`` in ``soundrts/worldplayerbase/triggers.py`` e
+``objective_progress_parts`` in ``soundrts/objective_announce.py``.
+
 Objective_complete (azione in un trigger)
 .........................................
 

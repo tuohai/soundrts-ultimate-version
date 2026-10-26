@@ -49,6 +49,38 @@
 - **威廉·华莱士**：逐章重调初始资源（3: 100/200/500/0，4: 250/200/450/200，5: 500/400/500/400，6: 500/500/500/500，7: 200/200/800/200），使每课都能玩通，城堡时代那章也真能攒出城堡。第 5 章现在摧毁英格兰箭塔也能获胜，第 5、7 章在完成目标的同时显式宣告胜利。
 - **范围**：``mods/aoe2/single/Joan of Arc/4.txt``；``mods/aoe2/single/Joan of Arc/ui*/tts.txt``（13 种语言）；``mods/aoe2/single/William Wallace/{3,4,5,6,7}.txt``。
 
+**修复：圣女贞德德战役第六章（A Perfect Martyr）整章重做**
+
+- **问题**：这一章原本自相矛盾到无法通关。目标写的是「守住康比涅，直到查理七世完成加冕」，可地图上：(1) 英军围城圈被声明成 ``alliance 1``（**盟友**）而不是敌人，玩家守着一群友军；(2) 地图只有 6x5，玩家据点与英军只隔一格，根本没有回旋余地；(3) 开局没有 ``npc_joan`` 与 ``npc_dauphin``，两个故事主角都不在场上；(4) 没有任何进攻触发器，敌人从不主动进攻，「守住」沦为一句空话；(5) 「等查理七世完成加冕」没有任何机制，只是目标文字。
+- **改进**：把这一章重写成一场 **10x8 的康比涅防守战**。玩家是法军守将，据点改为 **e6 的康比涅要塞**（新增城堡、箭塔、10 民兵、6 弓箭手），瓦兹河横贯第 4 行，只有 **e4 一座桥**可以南北通行 —— 英军围城圈（c2）、勃艮第营地（h1）、英军前哨（a1）都在河南岸，必须挤过桥才能打到玩家。开局的 ``npc_joan`` 与 ``npc_dauphin`` 归位，两者都是关键单位，任一被击杀即判负。加冕是一个**具体机制**：``(timer 12)``（``timer_coefficient 30``，即 6 分钟）的倒计时，到点后置 ``crowned`` 标志并完成目标 1；随后目标 2 需要把贞德送上 e4 桥头才触发胜利。为了让等待过程可见可感，途中另有 3 条播报（``8897``/`8898``/`8899``）提示「围城战已过半」「钟声很快就要响了」「钟声马上就要响了」。
+- **敌人真的会进攻**：``computer_only`` 槽位默认拿到的是**只触发、不行动**的 AI（见 ``doc_src/src/en/mod/mapmaking.rst`` 的 "Switch to another AI"），所以围城方必须显式写 ``(ai intermediate)`` 才会换成 ``mods/aoe2/ai.txt`` 里带 ``attack`` 行与 ``attack_ratio 120`` 的真实进攻脚本。仅仅这样还不够：围城方还需要**自己的经济** —— 农场（否则打光初始食物后 AI 卡在 get 行上，一波之后再也不动）、兵营/箭塔/马厩/工坊，以及**自己的金矿**（地图上唯一的金矿原本在玩家的 e6，围城方金子永远不涨，练不出骑士）。
+- **范围**：``mods/aoe2/single/Joan of Arc/6.txt`` （整章重写）、``mods/aoe2/single/Joan of Arc/ui*/tts.txt`` （13 种语言补齐 8893-8899）、``soundrts/tests/test_joan_ch2_full_flow.py`` （第六章回归测试重写）、``soundrts/tests/test_joan_no_wrap.py`` （配合地图边界路径修正转绿）。
+
+**修复：圣女贞德德战役第五章的主要目标 2 是剧情台词，不是任务目标**
+
+- **问题**：`mods/aoe2/single/Joan of Arc/5.txt` 里写的是 `(add_objective 2 8830)`，而文本 ID `8830` 其实是**第一章的 cut_scene 台词**（「王太子读完信后跪倒在地：『法兰西必将复兴。』这场为国的圣战真正开始，而贞德将身先士卒，冲在最前。」）。于是按 F9 看到的主要目标 2 是一段剧情旁白，而不是一个可以完成的任务目标。根因是文本 ID 冲突：`8830` 原本装的是第五章的目标文字，后来被 `_tools/update_ch1_tts.py` 改写成了第一章的 cut_scene 台词，而 `5.txt` 仍然引用着它。
+- **改进**：给任务目标单独分配文本 ID，不再与 cut_scene 台词共用。第五章的三个目标改用 `8856`-`8858`（「攻下默恩」「攻下博让西」「攻下雅兰」），正好对应这一章真正要打的三座英军桥头堡 —— 原来目标 1 / 3 用的 `8829` / `8831` 描述的是另一套目标（「摧毁卢瓦尔下游英军前哨」「摧毁全部英军箭塔与城堡」），与本章的实际玩法对不上。顺带把第二章的四个目标 ID（`8839` / `8853`-`8855`）补进了**全部 13 种界面语言** —— 它们此前只存在于 `ui-zh/tts.txt`，其他语言的玩家读到的第二章目标一直是英文回退文本。
+- **范围**：`mods/aoe2/single/Joan of Arc/5.txt` （目标 ID 改为 8856-8858）、``mods/aoe2/single/Joan of Arc/ui*/tts.txt`` （13 种语言补齐目标文本）、`soundrts/tests/test_joan_objective_tts_ids.py` （新增回归测试）。
+
+**修复：中立持有者不再触发胜利倒计时**
+
+- **问题**：把三件圣物交给兰斯大教堂后，中立的电脑玩家（`中立 1`）会拿到全部胜利物品，引擎于是把它当成胜利方，播报「中立 1 的胜利倒计时已开始，还剩 16 分 40 秒」。中立 creep 与战役触发器电脑都不是对局参与者，不该因为捡到胜利物品而通关。
+- **改进**：`soundrts/world_inventory_victory.py` 新增 `_holder_can_win` ，由 `controlling_team` 在判定胜利方前逐个检查持有者：中立玩家（`neutral`）、战役 NPC （`is_campaign_npc`）以及战役地图上的非人类玩家一律排除；普通对战地图上的电脑对手不受影响，帝国 2 圣物胜利照常工作。
+- **范围**：`soundrts/world_inventory_victory.py` （新增 `_holder_can_win` ，修正 `controlling_team` ）、`soundrts/tests/test_inventory_victory.py` （新增回归测试）。
+
+**新增：任务目标动态进度（`0/3` → `1/3` → `3/3`）**
+
+- **问题**：任务目标只有一段静态描述文字，无法体现「已经完成了一部分」。圣女贞德德战役第四章的目标 1 是「将三件圣物送至兰斯大教堂」，玩家按 F9 只看到一句话，看不出已经送了几件。
+- **改进**：引擎会自动反查该目标对应的完成触发器，识别**计数型**条件并实时求值，把进度以字面文本片段追加到目标文字后面。三种可识别的计数型条件是 `npc_has_items` 、`has_item` 与 `has_brought_item` ；只要计数型条件的动作里出现了 `objective_complete` ，该目标就获得进度显示。F9 语音朗读与 HUD 叙事显示同步生效；进度不需要修改任何静态本地化字符串表。同时在 `Objective.progress` 上保留了显式设置进度的入口。
+- **范围**：`soundrts/worldplayerbase/triggers.py` （新增 `objective_progress` 与 `_counting_progress` ）、`soundrts/objective_announce.py` （新增 `objective_progress_parts` ）、`soundrts/worldplayerbase/base.py` （`Objective.progress` 字段）、`soundrts/tests/test_objective_progress.py` （新增回归测试）。
+
+**修复：圣女贞德德战役第四章登记了两个不存在的目标**
+
+- **问题**：`mods/aoe2/single/Joan of Arc/4.txt` 里写的是 `register_objective 1 2 3 4` ，但这一章只有两个主要目标，多登记的 3 与 4 会在目标列表里留下空条目。
+- **改进**：把登记语句改成 `register_objective 1 2` ，与这一章实际存在的两个目标一致；同时修正了同一张地图上一个指向不存在文本 ID 的 `square_name` 引用。
+- **范围**：`mods/aoe2/single/Joan of Arc/4.txt` 。
+
+
 1.5.1.4
 -------
 
