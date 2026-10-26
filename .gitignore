@@ -245,3 +245,11 @@ _*.pkl
 _*.tmp
 _*.csv
 _*.log
+# Release tooling is part of the repo (RULE 10 in AGENTS.md).
+!_package_release.py
+!_package_release.cmd
+!_build_cxfreeze.cmd
+
+# Release zips are NOT built here: the release zip lives in %TEMP%
+# (see RULE 10 in AGENTS.md / _package_release.cmd).
+/artifacts/

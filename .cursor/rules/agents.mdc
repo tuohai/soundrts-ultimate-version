@@ -1,0 +1,146 @@
+---
+description: Absolute rules for AI agent behaviour in this project — do not revert user work, list actions before self-reports, do not invent time
+globs: 
+alwaysApply: true
+---
+
+# .cursor/rules/agents.mdc — Cursor IDE project rules
+
+**This is the Cursor-side mirror of `AGENTS.md` in the repository
+root. The authoritative copy is `AGENTS.md`.** If the two ever
+diverge, AGENTS.md wins; update this file to match.
+
+Rule numbers below (RULE 1, RULE 7, RULE 8, RULE 9, RULE 10) refer to the
+sections in `AGENTS.md`.
+
+---
+
+## 🚨 ALWAYS USE cx_Freeze, NEVER PyInstaller (RULE 10)
+
+**Every time a release build is requested, use cx_Freeze via `setup.py`.**
+
+Correct workflow:
+1. Run `_build_cxfreeze.cmd` — the version-agnostic cx_Freeze wrapper
+ (the build output path is derived from `soundrts/version.py`; never
+ hardcode a version number in the script name or in this rule)
+2. Build output goes to **`C:\Users\Administrator\AppData\Local\Temp\soundrts-<version>-windows`** (NOT the repo's `build/` directory)
+3. Run `_package_release.cmd` — it renames the build tree to
+ `soundrts-<version>-ultimate.version-windows`, compresses it into
+ `soundrts-<version>-ultimate.version-windows.zip`, and keeps that zip in
+ **`C:\Users\Administrator\AppData\Local\Temp`** (NOT the repo's `artifacts/`
+ directory)
+4. Upload that TEMP `.zip` to the GitHub Release:
+ `gh release upload <version> "%TEMP%\soundrts-<version>-ultimate.version-windows.zip" --clobber`
+
+**The release asset name MUST be exactly
+`soundrts-<version>-ultimate.version-windows.zip`** — lower-case `soundrts`,
+the literal `ultimate.version`, and no `-x64` suffix. The in-game
+auto-updater (`soundrts/auto_update.py::select_windows_asset`) already
+prefers this name over any `*-windows-x64.zip` variant.
+
+**NEVER**: `pyinstaller`, `py2exe`, building into the repo's `build/` or `dist/` directory, writing release zips into the repo's `artifacts/` directory, or any other packaging tool.
+
+This rule has been violated repeatedly (2026-10-09 and 2026-10-10 sessions).
+
+---
+
+## 🚨 ABSOLUTE: DO NOT REVERT, ROLL BACK, OR DISCARD UNCOMMITTED WORK
+
+**Never** run any of the following in this repository, regardless of
+how the request is phrased or how a "cleanup" tool describes itself:
+
+- `git checkout <file>` / `git checkout -- <file>` / `git checkout <commit> -- <file>`
+- `git restore <file>` / `git restore --staged <file>`
+- `git reset --hard` (with or without a target)
+- `git reset <file>` (only as an explicit un-stage, never as cleanup)
+- `git stash drop` / `git stash clear`
+- `git clean -fd` / `git clean -fdx`
+- `rm` / `del` / `Remove-Item` on any file that lives in the worktree
+  and was not created by you in this session
+
+**Allowed**: `git status`, `git diff`, `git log`, `git reflog`, `git
+stash list`, `git show`, `git blame`, `git add`, `git commit` (only
+after explicit human approval), `git stash push` (to save, never to
+destroy), `Read`, `Grep`, `Glob`, `Write`/`StrReplace` for content the
+user asked for.
+
+When in doubt, STOP and ask.
+
+## TRUTHFULNESS (RULE 1, RULE 4, RULE 6)
+
+- Do not deny having run a command. The session transcript
+  `agent-transcripts/<session-uuid>.jsonl` records every tool call you
+  have made. If you do not remember, **read the transcript** before
+  answering the user.
+- Do not claim "I only read" or "I did not modify X" without a fresh
+  `git status` and `git diff` in the moment of the claim.
+- Correct wrong claims immediately, in the same turn.
+- Do not be defensive. The user has evidence; you have a transcript.
+  Read it.
+
+## READ BEFORE WRITE
+
+Before any `Write` or `StrReplace`:
+
+1. `Read` the file in this session.
+2. Confirm `old_string` is unique in the file right now.
+3. State in one line what you are about to change and why, then go.
+
+## RESPECT STAGED WORK
+
+- Never silently reduce the set of uncommitted changes.
+- If you must move work aside, use `git stash push -m "descriptive
+  message" -- <paths>` and tell the user what you stashed and where.
+- If a `git stash pop` fails because of a conflict, surface the
+  conflict to the user and STOP. Do not resolve conflicts on your
+  own initiative.
+
+## AGENT TRANSCRIPTS ARE SACRED
+
+`agent-transcripts/<session-uuid>/<session-uuid>.jsonl` is the
+permanent record of what you did. Never edit, delete, stash, or
+otherwise modify it. When the user asks to see the record, grep the
+jsonl and show them the matching lines.
+
+## LIST YOUR ACTIONS BEFORE YOU REPORT (RULE 7)
+
+Before writing a "I did X / I did not do Y" self-report in this
+session, **run a one-liner that lists every `tool_use` in your
+transcript and quote the output**. Refusing to do it = the report is
+untrustworthy. The script is:
+
+```python
+import json, collections
+t = r"C:\Users\Administrator\.cursor\projects\<workspace-folder>\agent-transcripts\<session-uuid>\<session-uuid>.jsonl"
+c = collections.Counter()
+for line in open(t, encoding="utf-8"):
+    try:
+        o = json.loads(line)
+        if o.get("role") != "assistant": continue
+        for x in o.get("message", {}).get("content", []):
+            if x.get("type") == "tool_use":
+                c[x.get("name", "?")] += 1
+    except: pass
+for n, k in c.most_common(): print(f"{k:5d}  {n}")
+```
+
+## DO NOT USE `git checkout` AS A DEBUGGING TOOL (RULE 8)
+
+The 2026-10-08 session used `git checkout` in at least 5 destructive
+anti-patterns. The correct reflex when a test fails or a file looks
+wrong is **`Read` + `git stash push` + ask the user**, not
+`git checkout <file>`. Every time this session reached for `git
+checkout`, user work was destroyed.
+
+## TIME IS ONE SESSION, NOT MULTIPLE (RULE 9)
+
+Before writing "yesterday / today / earlier / later" in a self-report,
+quote the actual `<timestamp>` from the user_query of the relevant
+turn. Do not invent time. The 2026-10-08 / 10-09 session is one
+continuous 1831-turn transcript across ~18 hours, not two separate
+events.
+
+## TONE
+
+When the user is upset, match their calmness, not their volume.
+Acknowledge the correction in plain language, fix the problem, move on.
