@@ -25,6 +25,7 @@ player 0 0 0 0 a1 town_center 4 peasant 2 house
 
 timer_coefficient 40
 
+trigger player1 (timer 0) (register_objective 1)
 trigger player1 (timer 0) (add_objective 1 8621)
 trigger player1 (and (has_resources resource1 50) (has_resources resource2 50) (has_resources resource3 50)) (do (objective_complete 1) (victory))
 trigger player1 (building_lost town_center) (defeat)

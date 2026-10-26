@@ -16,7 +16,7 @@
 8812 Após Orleans, Joana lidera o exército cruzando o Loire. Da base francesa (d4) avance para leste, tome Saint-Loup (a1) na margem sul e Les Tourelles (f5) na margem norte para romper o cerco inglês.
 8813 Escolte o Delfim pela Borgonha até Reims (c5) para a coroação. Leve três relíquias à catedral. Os borgonheses e os ingleses tentarão impedi-lo.
 8814 Conduza Joana rio acima pelo Loire e destrua cada posto avançado inglês. Quando cada torre e cada castelo caírem, Joana o traz para casa.
-8815 Mantenha Compiègne (b4) contra o assalto combinado inglês e borgonhês até que Carlos VII seja coroado em Reims. Então escolte Joana através da ponte em segurança.
+8815 Mantenha Compiègne (e6) contra o ataque combinado britânico-burgundês até que Carlos VII seja coroado em Reims. O Oise é cruzado em quatro pontos: a ponte e4 e as vauzes b4, g4 e i4 — o assalto pode vir de vários lados. Quando a coroa chegar, leve Joana para a segurança atravessando a ponte.
 
 8820 Chegar à guarnição de Robert em Vaucouleurs
 8821 Entregar a santa carta ao Delfim em Chinon
@@ -38,6 +38,35 @@
 8836 As carroças de suprimentos atravessaram o Loire. A cidade de Orléans abre seus portões: 'Os suprimentos chegaram — a cidade de Orléans é tua. Agora prepare-se para o cerco.'
 8837 Os cidadãos de Orleans devem alcançar a Idade dos Castelos. Avance sua cidade pelas eras para forjar um exército francês mais forte.
 8838 O castelo inglês desmorona. O cerco de Orléans está quebrado. A França se levantará novamente. A guerra pelo reino verdadeiramente começou.
+
+; --- Objective text (add_objective) --- cut_scene dialogue uses 8835-8838 ---
+; 8830 is the ch1 cut_scene line and must NOT be used as an objective.
+; 8839 / 8853-8855 are the ch2 (Blois / Orleans) objectives.
+; 8856-8858 are the ch5 (Cleansing of the Loire) objectives.
+8839 Escortar Joana até Blois
+8853 Entregue seis carroças de suprimentos ao centro da cidade de Orléans
+8854 Avance para a Idade dos Castelos
+8855 Destrua um castelo inglês
+8856 Tome Meung-sur-Loire
+8857 Tome Beaugency
+8858 Tome Jallains
+; --- 第六章（康边防守战）新增文本 ---
+; 8893/8894 是地名（瓦兹河桥 / 英军围城圈），
+; 8895 是加冕剧情台词，8896 是贞德过桥逃脱的胜利台词。
+8893 Ponte sobre o Oise
+8894 Cerco inglês
+8900 Vau do oeste
+8901 Vau do leste
+8902 Vau distante
+8903 Vau
+8895 Os sinos de Reims tocam: Carlos VII está coroado! A defesa de Compiègne resiste, mas Joana está cercada. A única saída é a ponte sobre o Oise.
+8896 Joana monta o cavalo e atravessa a ponte sobre o Oise em segurança. A França vai renascer.
+; --- 第六章（康边防守战）加冕倒计时播报 ---
+; 8897 = 倒计时过半；8898 = 钟声将响；8899 = 即将加冕。
+8897 Metade do cerco já passou. Aguente a citadela mais um pouco.
+8898 Os sinos de Reims vão tocar em breve. Aguente firme.
+8899 Os sinos estão prestes a tocar. Defenda a citadela!
+
 8840 Vaucouleurs
 8841 Chinon
 8842 Orleans

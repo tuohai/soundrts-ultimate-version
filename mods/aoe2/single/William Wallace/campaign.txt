@@ -1,3 +1,4 @@
 title 8600
 synopsis 8601
 default_faction celts
+intro 8602 8710 8711

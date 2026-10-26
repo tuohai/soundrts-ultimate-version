@@ -16,7 +16,7 @@
 8812 Po Orléans vedie Janka armádu cez Loiru. Z francúzskej základne (d4) tlač na východ, vezmi Saint-Loup (a1) na južnom brehu a Les Tourelles (f5) na severnom brehu, aby si prelomil anglické obliehanie.
 8813 Eskortuj dauphina Burgundskom do Remeša (c5) na korunováciu. Prines tri relikvie do katedrály. Burgundi a Angličania sa ťa pokúsia zastaviť.
 8814 Veď Janku proti prúdu Loiry a nič každú anglickú základňu. Keď každá veža a každý hrad padne, Janka to prinesie domov.
-8815 Drž Compiègne (b4) proti spojenému anglicko-burgundskému útoku, kým nebude Karol VII. korunovaný v Remeši. Potom eskortuj Janku cez most do bezpečia.
+8815 Drž Compiègne (e6) proti spoločenému anglicko-burgundskému útoku, kým nebude Karol VII. korunovaný v Remeši. Oise sa prechádza v štyroch miestach: na moste e4 a na brodoch b4, g4 a i4 — taký útok môže prísť z viacerých strán. Keď padne koruna, preveď Janu na druhú stranu mosta.
 
 8820 Dostať sa k Robertovej posádke vo Vaucouleurs
 8821 Doručiť svätý list dauphinovi do Chinonu
@@ -38,6 +38,35 @@
 8836 Zásobovacie vozne prešli cez Loiru. Mesto Orléans otvára brány: 'Zásoby dorazili — mesto Orléans je vaše. Teraz sa pripravte na obliehanie.'
 8837 Občania Orléans musia dosiahnuť Vek hradov. Preveďte svoje mesto cez veky a vytvorte silnejšiu francúzsku armádu.
 8838 Anglický hrad sa zrúti. Obliehanie Orléans je prelomené. Francúzsko povstane. Vojna o kráľovstvo skutočne začala.
+
+; --- Objective text (add_objective) --- cut_scene dialogue uses 8835-8838 ---
+; 8830 is the ch1 cut_scene line and must NOT be used as an objective.
+; 8839 / 8853-8855 are the ch2 (Blois / Orleans) objectives.
+; 8856-8858 are the ch5 (Cleansing of the Loire) objectives.
+8839 Eskortovať Janku do Blois
+8853 Doručiť šesť zásobovacích vozíkov do mestského centra Orléansu
+8854 Prejdi do Veku hradov
+8855 Znič jeden anglický hrad
+8856 Dobyť Meung-sur-Loire
+8857 Dobyť Beaugency
+8858 Dobyť Jallains
+; --- 第六章（康边防守战）新增文本 ---
+; 8893/8894 是地名（瓦兹河桥 / 英军围城圈），
+; 8895 是加冕剧情台词，8896 是贞德过桥逃脱的胜利台词。
+8893 Most cez Oise
+8894 Anglické obkläčenie
+8900 Západný brod
+8901 Východný brod
+8902 Vzdialený brod
+8903 Brod
+8895 Zvoní zvony v Remeši: Karol VII. je korunovaný! Obrana Compiègne vydrží, ale Jana je obklopená. Jediná cesta von je most cez Oise.
+8896 Jana nasadne na koňa a prejde cez most na Oise v bezpečí. Francía vstane.
+; --- 第六章（康边防守战）加冕倒计时播报 ---
+; 8897 = 倒计时过半；8898 = 钟声将响；8899 = 即将加冕。
+8897 Polovica obliehania je za nami. Ešte chvíľu vydržte pevnosť.
+8898 Zvoní v Remeši zaznajú čoskoro. Odolajte.
+8899 Zvoní už zaznajú. Držte pevnosť!
+
 8840 Vaucouleurs
 8841 Chinon
 8842 Orléans

@@ -74,9 +74,12 @@ trigger player1 (timer 0) (alliance 1)
 trigger computers (timer 0) (alliance 2)
 
 trigger player1 (timer 0) (register_objective 1 2 3)
-trigger player1 (timer 0) (add_objective 1 8829)
-trigger player1 (timer 0) (add_objective 2 8830)
-trigger player1 (timer 0) (add_objective 3 8831)
+; Objective text lives in ui*/tts.txt under 8856-8858.  These must NOT
+; be cut_scene ids: 8830 is the ch1 cut_scene line ("The Dauphin reads
+; the letter..."), 8829 / 8831 describe a different set of goals.
+trigger player1 (timer 0) (add_objective 1 8856)
+trigger player1 (timer 0) (add_objective 2 8857)
+trigger player1 (timer 0) (add_objective 3 8858)
 
 ; Goal 1: Take Meung-sur-Loire (a1)
 trigger player1 (enemy_building_destroyed a1 town_center) (objective_complete 1)

@@ -16,7 +16,7 @@
 8812 Après Orléans, Jeanne mène l'armée à travers la Loire. Depuis la base française (d4), pousse vers l'est, prends Saint-Loup (a1) sur la rive sud et Les Tourelles (f5) sur la rive nord pour briser le siège anglais.
 8813 Escorter le Dauphin à travers la Bourgogne jusqu'à Reims (c5) pour le sacre. Porte trois reliques à la cathédrale. Les Bourguignons et les Anglais tenteront de t'arrêter.
 8814 Mène Jeanne en amont de la Loire et détruis chaque avant-poste anglais. Une fois chaque tour et chaque château tombés, Jeanne le rapporte à la maison.
-8815 Tiens Compiègne (b4) face à l'assaut combiné anglais et bourguignon jusqu'à ce que Charles VII soit sacré à Reims. Puis escorte Jeanne à travers le pont en sécurité.
+8815 Tiens Compiègne (e6) face à l'assaut combiné anglo-bourguignon jusqu'au sacre de Charles VII à Reims. L'Oise se traverse en quatre points : le pont e4 et les gués b4, g4 et i4 — l'assaut peut donc venir de plusieurs côtés. Quand la couronne tombe, fais passer Jeanne de l'autre côté par le pont.
 
 8820 Atteindre la garnison de Robert à Vaucouleurs
 8821 Porter la sainte lettre au Dauphin à Chinon
@@ -38,6 +38,35 @@
 8836 Les chariots de ravitaillement ont traversé la Loire. La ville d'Orléans ouvre ses portes : 'Les approvisionnements sont arrivés — la ville d'Orléans est vôtre. Préparez-vous maintenant pour le siège.'
 8837 Les citoyens d'Orléans doivent atteindre l'Âge des Châteaux. Faites progresser votre ville à travers les âges pour forger une armée française plus forte.
 8838 Le château anglais s'effondre. Le siège d'Orléans est brisé. La France se relèvera. La guerre pour le royaume a vraiment commencé.
+
+; --- Objective text (add_objective) --- cut_scene dialogue uses 8835-8838 ---
+; 8830 is the ch1 cut_scene line and must NOT be used as an objective.
+; 8839 / 8853-8855 are the ch2 (Blois / Orleans) objectives.
+; 8856-8858 are the ch5 (Cleansing of the Loire) objectives.
+8839 Escorter Jeanne jusqu'à Blois
+8853 Livrez six charrettes de ravitaillement au centre-ville d'Orléans
+8854 Progressez à l'Âge des Châteaux
+8855 Détruisez un château anglais
+8856 Prenez Meung-sur-Loire
+8857 Prenez Beaugency
+8858 Prenez Jallains
+; --- 第六章（康边防守战）新增文本 ---
+; 8893/8894 是地名（瓦兹河桥 / 英军围城圈），
+; 8895 是加冕剧情台词，8896 是贞德过桥逃脱的胜利台词。
+8893 Pont sur l'Oise
+8894 Cercle d'assaut anglais
+8900 Gué occidental
+8901 Gué oriental
+8902 Gué lointain
+8903 Gué
+8895 Les cloches de Reims résonnent : Charles VII est couronné ! La défense de Compiègne tient, mais Jeanne est cernée. La seule sortie est le pont sur l'Oise.
+8896 Jeanne enfourche son cheval et franchit le pont sur l'Oise en sécurité. La France ressuscitera.
+; --- 第六章（康边防守战）加冕倒计时播报 ---
+; 8897 = 倒计时过半；8898 = 钟声将响；8899 = 即将加冕。
+8897 La moitié du siège est surmontée. Tenez encore un peu la citadelle.
+8898 Les cloches de Reims vont sonner bientôt. Tenez bon.
+8899 Les cloches vont sonner. Tenez la citadelle !
+
 8840 Vaucouleurs
 8841 Chinon
 8842 Orléans

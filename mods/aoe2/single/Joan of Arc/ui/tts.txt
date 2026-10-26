@@ -18,7 +18,7 @@
 8812 After Orleans, Joan leads the army across the Loire. Push east from the French base (d4), capture St. Loup (a1) on the south bank and Les Tourelles (f5) on the north bank to break the English siege.
 8813 Escort the Dauphin through Burgundy to Reims (c5) for the coronation. Carry three relics to the cathedral. The Burgundians and English will try to stop you.
 8814 Drive Joan up the Loire and destroy every English outpost. Once every tower and castle is gone, Joan carries it home.
-8815 Hold Compiègne (b4) against the combined English and Burgundian assault until Charles VII is crowned at Reims. Then escort Joan across the bridge to safety.
+8815 Hold Compiègne (e6) against the English and Burgundian assault until Charles VII is crowned at Reims. The Oise is crossed at four points — the bridge at e4 and the fords at b4, g4 and i4 — so the assault can come from several sides. When the crown lands, escort Joan over the bridge to safety.
 
 ; Objectives
 8820 Reach Robert's garrison at Vaucouleurs
@@ -42,6 +42,35 @@
 8836 The supply wagons have crossed the Loire. The city of Orleans opens its gates: 'The supplies have arrived — the city of Orleans is yours. Now prepare for the siege.'
 8837 The citizens of Orleans must reach the Castle Age. Advance your town through the ages to forge a stronger French army.
 8838 The English castle crumbles. The siege of Orleans is broken. France shall rise again. The war for the realm has truly begun.
+
+; --- Objective text (add_objective) --- cut_scene dialogue uses 8835-8838 ---
+; 8830 is the ch1 cut_scene line and must NOT be used as an objective.
+; 8839 / 8853-8855 are the ch2 (Blois / Orleans) objectives.
+; 8856-8858 are the ch5 (Cleansing of the Loire) objectives.
+8839 Escort Joan to Blois
+8853 Deliver six supply carts to the Orleans town center
+8854 Advance to the Castle Age
+8855 Destroy one English castle
+8856 Capture Meung-sur-Loire
+8857 Capture Beaugency
+8858 Capture Jallains
+; --- 第六章（康边防守战）新增文本 ---
+; 8893/8894 是地名（瓦兹河桥 / 英军围城圈），
+; 8895 是加冕剧情台词，8896 是贞德过桥逃脱的胜利台词。
+8893 Oise bridge
+8894 English siege ring
+8900 Western ford
+8901 Eastern ford
+8902 Far ford
+8903 Ford
+8895 The bells of Reims ring out: Charles VII is crowned! The siege of Compiègne holds, but Joan is surrounded. The only way out is across the Oise bridge.
+8896 Joan mounts her horse and slips across the Oise bridge, safe at last. France shall rise again.
+; --- 第六章（康边防守战）加冕倒计时播报 ---
+; 8897 = 倒计时过半；8898 = 钟声将响；8899 = 即将加冕。
+8897 Half the siege is over. Hold the citadel a while longer.
+8898 The bells of Reims will ring soon. Hold fast.
+8899 The bells are about to ring. Hold the citadel!
+
 8840 Vaucouleurs
 8841 Chinon
 8842 Orleans

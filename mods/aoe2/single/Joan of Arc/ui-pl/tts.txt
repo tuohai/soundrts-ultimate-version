@@ -16,7 +16,7 @@
 8812 Po Orleanie Joanna prowadzi armię przez Loirę. Z bazy francuskiej (d4) ruszaj na wschód, zdobądź Saint-Loup (a1) na południowym brzegu i Les Tourelles (f5) na północnym, by przerwać angielskie oblężenie.
 8813 Eskortuj delfina przez Burgundię do Reims (c5) na koronację. Zanieś trzy relikwie do katedry. Burgundczycy i Anglicy spróbują cię powstrzymać.
 8814 Prowadź Joannę w górę Loary i niszcz każdy angielski posterunek. Gdy każda wieża i każdy zamek padnie, Joanna przyniesie to do domu.
-8815 Trzymaj Compiègne (b4) przeciw połączonemu angielsko-burgundzkiemu atakowi, aż Karol VII zostanie koronowany w Reims. Potem eskortuj Joannę przez most w bezpieczne miejsce.
+8815 Trzymaj Compiègne (e6) przeciw połączonemu atakowi angielsko-burgundzkiemu, aż Karol VII zostanie koronowany w Reims. Oise przecina się w czterech miejscach: na moście e4 oraz na brodach b4, g4 i i4 — szturm może więc nadciągać z kilku stron. Gdy padnie korona, przeprowadź Joannę na drugą stronę mostu.
 
 8820 Dotrzeć do garnizonu Roberta w Vaucouleurs
 8821 Doręczyć święty list delfinowi w Chinon
@@ -38,6 +38,35 @@
 8836 Wozy zaopatrzenia przeprawiły się przez Loarę. Miasto Orlean otwiera bramy: 'Zaopatrzenie dotarło — miasto Orlean jest twoje. Teraz przygotuj się do oblężenia.'
 8837 Mieszkańcy Orlean muszą osiągnąć Wieki Zamków. Przeprowadź swoje miasto przez epoki, aby stworzyć silniejszą armię francuską.
 8838 Angielski zamek рушиться. Oblężenie Orlean jest złamane. Francja powstanie ponownie. Wojna o królestwo naprawdę się rozpoczęła.
+
+; --- Objective text (add_objective) --- cut_scene dialogue uses 8835-8838 ---
+; 8830 is the ch1 cut_scene line and must NOT be used as an objective.
+; 8839 / 8853-8855 are the ch2 (Blois / Orleans) objectives.
+; 8856-8858 are the ch5 (Cleansing of the Loire) objectives.
+8839 Eskortować Joannę do Blois
+8853 Dostarcz sześć wozów zapasów do centrum miasta Orleanu
+8854 Przejdź do Wieków Zamków
+8855 Zniszcz angielski zamek
+8856 Zdobądź Meung-sur-Loire
+8857 Zdobądź Beaugency
+8858 Zdobądź Jallains
+; --- 第六章（康边防守战）新增文本 ---
+; 8893/8894 是地名（瓦兹河桥 / 英军围城圈），
+; 8895 是加冕剧情台词，8896 是贞德过桥逃脱的胜利台词。
+8893 Most na Oise
+8894 Angielska oblega
+8900 Zachodni brod
+8901 Wschodni brod
+8902 Odległy brod
+8903 Brod
+8895 Dzwoni w Reims biją: Karol VII został koronowany! Obrona Compiègne się trzyma, ale Joanna jest otoczona. Jedyną drogą ucieczki jest most na Oise.
+8896 Joanna dosiada konia i przeprawia się przez most na Oise w bezpieczeństwo. Francja odżyje.
+; --- 第六章（康边防守战）加冕倒计时播报 ---
+; 8897 = 倒计时过半；8898 = 钟声将响；8899 = 即将加冕。
+8897 Połowa oblęgi już za tobą. Trzymaj fortecę jeszcze chwilę.
+8898 Dzwony w Reims zabrzmią wkrótce. Trzymaj się.
+8899 Dzwony zaraz zadzwonią. Trzymaj fortecę!
+
 8840 Vaucouleurs
 8841 Chinon
 8842 Orlean

@@ -50,7 +50,7 @@ random_starts 0
 ; Place names for minimap / intro text (square_name ids in tts.txt)
 square_name 8872 1,1              ; 法军基地 (Chinon, player start, a1)
 square_name 8846 3,5              ; 兰斯大教堂 (Reims cathedral, c5)
-square_name 8888 6,4              ; 默城英军堡 (English burghers at Meaux, f4)
+square_name 8886 6,4              ; 默城英军堡 (English burghers at Meaux, f4)
 square_name 8847 5,2              ; 勃艮第大营 (Burgundian main camp, e2)
 
 ; Passages MUST NOT list the last column (g) or the last row (5).
@@ -138,7 +138,7 @@ trigger computer4 (timer 0) (alliance 2)
 trigger computer5 (timer 0) (alliance 2)
 trigger computer6 (timer 0) (alliance 2)
 
-trigger player1 (timer 0) (register_objective 1 2 3 4)
+trigger player1 (timer 0) (register_objective 1 2)
 trigger player1 (timer 0) (add_objective 1 8827)
 trigger player1 (timer 0) (add_objective 2 8828)
 

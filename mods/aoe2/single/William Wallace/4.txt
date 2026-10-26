@@ -30,6 +30,7 @@ timer_coefficient 40
 trigger player1 (timer 0) (alliance 1)
 trigger computers (timer 0) (alliance 2)
 
+trigger player1 (timer 0) (register_objective 1)
 trigger player1 (timer 0) (add_objective 1 8623)
 trigger player1 (has man_at_arms) (do (objective_complete 1) (victory))
 trigger player1 (building_lost town_center) (defeat)

@@ -40,6 +40,7 @@ trigger player1 (timer 0) (alliance 1)
 trigger computer1 (timer 0) (alliance 1)
 trigger computer2 (timer 0) (alliance 2)
 
+trigger player1 (timer 0) (register_objective 1)
 trigger player1 (timer 0) (add_objective 1 8625)
 ; Three relics carried into the monastery square (a1)
 trigger player1 (has_brought_item a1 relic 3) (do (objective_complete 1) (victory))

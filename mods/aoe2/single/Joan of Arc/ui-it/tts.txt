@@ -16,7 +16,7 @@
 8812 Dopo Orléans, Giovanna guida l'armata oltre la Loira. Dalla base francese (d4) spingi a est, prendi Saint-Loup (a1) sulla riva sud e Les Tourelles (f5) sulla riva nord per spezzare l'assedio inglese.
 8813 Scorta il Delfino attraverso la Borgogna fino a Reims (c5) per l'incoronazione. Porta tre reliquie alla cattedrale. I borgognoni e gli inglesi cercheranno di fermarti.
 8814 Porta Giovanna risalendo la Loira e distruggi ogni avamposto inglese. Una volta cadute tutte le torri e i castelli, Giovanna lo porta a casa.
-8815 Tieni Compiègne (b4) contro l'assalto combinato inglese e borgognone finché Carlo VII non sarà incoronato a Reims. Poi scorta Giovanna oltre il ponte in salvo.
+8815 Tieni Compiègne (e6) contro l'attacco combinato inglese-borgognone finché Carlo VII non viene incoronato a Reims. L'Oise si attraversa in quattro punti: il ponte e4 e i guadi b4, g4 e i4 — l'assalto può quindi arrivare da più fronti. Quando arriva la corona, porta Giovanna al sicuro dall'altra parte del ponte.
 
 8820 Raggiungere la guarnigione di Robert a Vaucouleurs
 8821 Consegnare la sacra lettera al Delfino a Chinon
@@ -38,6 +38,35 @@
 8836 I carri di rifornimento hanno attraversato la Loira. La città di Orléans apre le sue porte: 'I rifornimenti sono arrivati — la città di Orléans è tua. Ora preparati per l'assedio.'
 8837 I cittadini di Orléans devono raggiungere l'Età dei Castelli. Fai progredire la tua città attraverso le epoche per forgiare un esercito francese più forte.
 8838 Il castello inglese crolla. L'assedio di Orléans è spezzato. La Francia si rialzerà. La guerra per il regno è davvero iniziata.
+
+; --- Objective text (add_objective) --- cut_scene dialogue uses 8835-8838 ---
+; 8830 is the ch1 cut_scene line and must NOT be used as an objective.
+; 8839 / 8853-8855 are the ch2 (Blois / Orleans) objectives.
+; 8856-8858 are the ch5 (Cleansing of the Loire) objectives.
+8839 Scortare Giovanna a Blois
+8853 Porta sei carri di rifornimento al centro città di Orléans
+8854 Avanza all'Età dei Castelli
+8855 Distruggi un castello inglese
+8856 Prendi Meung-sur-Loire
+8857 Prendi Beaugency
+8858 Prendi Jallains
+; --- 第六章（康边防守战）新增文本 ---
+; 8893/8894 是地名（瓦兹河桥 / 英军围城圈），
+; 8895 是加冕剧情台词，8896 是贞德过桥逃脱的胜利台词。
+8893 Ponte sull'Oise
+8894 Assedio inglese
+8900 Guado occidentale
+8901 Guado orientale
+8902 Guado lontano
+8903 Guado
+8895 Le campane di Reims suonano: Carlo VII è incoronato! La difesa di Compiègne regge, ma Giovanna è circondata. L'unica via d'uscita è il ponte sull'Oise.
+8896 Giovanna sale a cavallo e attraversa il ponte sull'Oise in salvo. La Francia risorgerà.
+; --- 第六章（康边防守战）加冕倒计时播报 ---
+; 8897 = 倒计时过半；8898 = 钟声将响；8899 = 即将加冕。
+8897 Hai superato metà dell'assedio. Resisti ancora un po' alla cittadella.
+8898 Le campane di Reims suoneranno presto. Resistite.
+8899 Le campane stanno per suonare. Tenete la cittadella!
+
 8840 Vaucouleurs
 8841 Chinon
 8842 Orléans

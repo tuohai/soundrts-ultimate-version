@@ -33,6 +33,7 @@ timer_coefficient 40
 trigger player1 (timer 0) (alliance 1)
 trigger computers (timer 0) (alliance 2)
 
+trigger player1 (timer 0) (register_objective 1)
 trigger player1 (timer 0) (add_objective 1 8624)
 trigger computers (no_unit_left) (defeat)
 trigger player1 (or (no_enemy_left) (enemy_building_destroyed e4 scouttower)) (do (objective_complete 1) (victory))

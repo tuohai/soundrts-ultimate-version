@@ -24,6 +24,7 @@ player 100 200 500 0 a1 town_center barracks 4 house 4 peasant
 
 timer_coefficient 40
 
+trigger player1 (timer 0) (register_objective 1)
 trigger player1 (timer 0) (add_objective 1 8622)
 trigger player1 (has 4 militia) (do (objective_complete 1) (victory))
 trigger player1 (building_lost town_center) (defeat)

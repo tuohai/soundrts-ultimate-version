@@ -16,7 +16,7 @@
 8812 Nach Orléans führt Jeanne die Armee über die Loire. Stoße vom französischen Stützpunkt (d4) ostwärts vor, nimm Saint-Loup (a1) am Südufer und Les Tourelles (f5) am Nordufer, um die englische Belagerung zu brechen.
 8813 Eskortiere den Dauphin durch Burgund nach Reims (c5) zur Krönung. Trage drei Reliquien zur Kathedrale. Die Burgunder und Engländer werden versuchen, dich aufzuhalten.
 8814 Führe Jeanne die Loire hinauf und zerstöre jeden englischen Vorposten. Wenn jeder Turm und jede Burg gefallen ist, bringt Jeanne es heim.
-8815 Halte Compiègne (b4) gegen den vereinten englisch-burgundischen Angriff, bis Karl VII. in Reims gekrönt ist. Eskortiere Jeanne dann über die Brücke in Sicherheit.
+8815 Halte Compiègne (e6) gegen den vereinten englisch-burgundischen Angriff, bis Karl VII. in Reims gekrönt ist. Die Oise wird an vier Stellen überquert: an der Brücke e4 und an den Furten b4, g4 und i4 — der Angriff kann also von mehreren Seiten kommen. Wenn die Krone fällt, bringe Johanna sicher über die Brücke.
 
 8820 Erreiche Roberts Garnison in Vaucouleurs
 8821 Überbringe den heiligen Brief dem Dauphin in Chinon
@@ -38,6 +38,35 @@
 8836 Die Versorgungswagen haben die Loire überquert. Die Stadt Orléans öffnet ihre Tore: 'Die Versorgung ist eingetroffen — die Stadt Orléans gehört dir. Bereite dich nun auf die Belagerung vor.'
 8837 Die Bürger von Orléans müssen die Burgzeit erreichen. Führe deine Stadt durch die Zeitalter, um eine stärkere französische Armee zu schmieden.
 8838 Die englische Burg stürzt ein. Die Belagerung von Orléans ist gebrochen. Frankreich wird wieder aufstehen. Der Krieg um das Reich hat wahrhaft begonnen.
+
+; --- Objective text (add_objective) --- cut_scene dialogue uses 8835-8838 ---
+; 8830 is the ch1 cut_scene line and must NOT be used as an objective.
+; 8839 / 8853-8855 are the ch2 (Blois / Orleans) objectives.
+; 8856-8858 are the ch5 (Cleansing of the Loire) objectives.
+8839 Begleite Jeanne nach Blois
+8853 Bringe sechs Versorgungswagen zum Stadtkern von Orléans
+8854 Advancesiere in die Burgzeit
+8855 Zerstöre eine englische Burg
+8856 Nimm Meung-sur-Loire
+8857 Nimm Beaugency
+8858 Nimm Jallains
+; --- 第六章（康边防守战）新增文本 ---
+; 8893/8894 是地名（瓦兹河桥 / 英军围城圈），
+; 8895 是加冕剧情台词，8896 是贞德过桥逃脱的胜利台词。
+8893 Brücke über der Oise
+8894 Englischer Belagerungsring
+8900 Westliche Furt
+8901 Östliche Furt
+8902 Ferne Furt
+8903 Furt
+8895 Die Glocken von Reims erklingen: Karl VII. ist gekrönt! Die Belagerung von Compiègne hält, doch Johanna ist umzingelt. Der einzige Weg führt über die Oise-Brücke.
+8896 Johanna schwingt sich aufs Pferd und entkommt über die Oise-Brücke in Sicherheit. Frankreich wird erstehen.
+; --- 第六章（康边防守战）加冕倒计时播报 ---
+; 8897 = 倒计时过半；8898 = 钟声将响；8899 = 即将加冕。
+8897 Die Hälfte der Belagerung ist geschafft. Haltet die Zitadelle noch etwas länger.
+8898 Die Glocken von Reims werden bald läuten. Haltet stand.
+8899 Die Glocken werden gleich läuten. Haltet die Zitadelle!
+
 8840 Vaucouleurs
 8841 Chinon
 8842 Orléans

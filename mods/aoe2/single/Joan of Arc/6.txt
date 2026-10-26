@@ -1,92 +1,348 @@
-; 6 — A Perfect Stratagem (AoE2 DE Joan of Arc, ch. 6)
+; 6 — A Perfect Martyr (AoE2 DE Joan of Arc, ch. 6)
 ;
-; Story beats (DE Joan of Arc ch. 6 — original, attacker POV):
-;   Joan's stand at the Compiègne bridge in ch. 4 has given the
-;   Burgundians/English a strategic opening. They lay siege to
-;   the citadel of Compiègne, where the French garrison still
-;   holds under Dunois. The perfect stratagem is the encirclement
-;   that ends Joan's campaign. The player commands the besieging
-;   Burgundian army.
+; Story beats (DE Joan of Arc ch. 6 — defender POV):
+;   Joan's stand at the Compiegne bridge in ch. 4 has given the
+;   Burgundians/English a strategic opening.  They lay siege to
+;   the citadel of Compiegne, where the French garrison still
+;   holds under Dunois.  The perfect stratagem is the encirclement
+;   that ends Joan's campaign.  Here the PLAYER defends: hold
+;   Compiegne until Charles VII is crowned at Reims, then escort
+;   Joan across the Oise bridge to safety.
 ;
-; Map grid (6×5, with the Oise river along row 1):
-;   [a5] [b5] [c5] [d5] [e5] [f5]   ← Burgundian forward camp at f5
-;   [a4] [b4] [c4] [d4] [e4] [f4]
-;   [a3] [b3] [c3] [d3] [e3] [f3]
-;   [a2] [b2] [c2] [d2] [e2] [f2]
-;   [a1] [b1] [c1] [d1] [e1] [f1]   ← Oise river row, bridge at a1
+; Ch. 6 is a pure DEFENCE mission:
+;   * The player is the FRENCH garrison (faction franks) at the
+;     Compiegne citadel (e6) -- NOT the Burgundian besieger.  The
+;     previous version of this file put the player in the Burgundian
+;     besieger's shoes while the objective text said "hold
+;     Compiegne" -- the two could never agree.
+;   * Charles VII's coronation is a COUNTDOWN: it happens 12 timer
+;     ticks into the battle (6 real minutes at
+;     timer_coefficient 30), and the player wins by still holding the
+;     citadel when the crown lands.
+;   * The English and Burgundian besiegers DO attack.  A
+;     ``computer_only`` slot defaults to a trigger-only do-nothing AI
+;     (see doc_src/src/en/mod/mapmaking.rst "Switch to another AI"),
+;     so every attacker here is explicitly given ``(ai
+;     intermediate)``.
 ;
-;   Player base: Burgundian siege camp at f5 (player1, alliance 1)
-;   Compiègne citadel: d4 — French garrison (alliance 2, enemy)
-;   Oise bridge: a1 — French holdout, must be cut off
+; Map grid (10x8, the Oise river along row 4):
+;   [a8] [b8] [c8] [d8] [e8] [f8] [g8] [h8] [i8] [j8]   <- north bank, French side
+;   [a7] ...                                      [j7]
+;   [a6] ...                                      [j6]   <- Compiegne citadel at e6
+;   [a5] ...                                      [j5]
+;   [a4] ...                                      [j4]   <- Oise river row
+;   [a3] ...                                      [j3]   <- south bank, besiegers
+;   [a2] ...                                      [j2]
+;   [a1] ...                                      [j1]
+;
+;   Player base:   Compiegne citadel (e6) -- French, with the citadel
+;                  castle, Joan and the Dauphin.
+;
+;   FOUR CROSSINGS -- this is the whole point of the chapter.  The Oise
+;   is crossed at b4 (ford), e4 (stone bridge), g4 (ford) and i4
+;   (ford).  Besiegers on the south bank therefore have to SPLIT their
+;   army: they can no longer all funnel onto one bridge.
+;
+;   Why this matters (the bug this fixes):  with a single crossing the
+;   only land route into the citadel was e5 -> e6, so one stack parked
+;   on e5 sealed the map and the defence was trivially easy -- the
+;   besiegers reached e5 and never touched e6.  Measured with
+;   _tools/probe_ch6_routes.py before the change:
+;       crossings(row4) = ['e4']   near citadel = ['e5']
+;   With the fords the attacker has to commit to a crossing and then
+;   cross open ground, so the garrison can be split between the bridge
+;   and the fords instead of all sitting on one tile.
+;
+;   The fords are deliberately SLOW (``ford`` terrain is ``speed .5 1``:
+;   half speed for ground units), so they are chokepoints the player's
+;   archers can shoot into, not free highways.  The stone bridge at e4
+;   stays the fast route and the only one Joan escapes over in the
+;   epilogue.
+;
+;   Besiegers:     English siege ring on the south bank (c2) plus
+;                  a Burgundian camp (h1) and a British outpost
+;                  covering the western approach (a1).
 
 title 8807
 intro 8815
 
 square_width 12
-nb_columns 6
-nb_lines 5
+nb_columns 10
+nb_lines 8
 
 nb_players_min 1
 nb_players_max 1
 random_starts 0
 
-square_name 8890 4,4             ; 贡比涅要塞（computer2, d4 — French citadel, besieging target）
-square_name 8876 5,5             ; 英军围城圈（computer1, e5 — English reinforcement camp, allied）
+; starting_squares MUST list every spawn slot.  Without it the list is
+; empty, and the AI's auto_explore has no target square at all: the
+; besiegers would never look for the citadel and the defence would be
+; a joke again.  The player slot is e6 (Compiègne citadel); the three
+; computer_only slots are the besiegers' bases.
+starting_squares e6 c2 h1 a1
 
-west_east_paths a1 b1 c1 d1 e1
-west_east_paths a3 b3 c3 d3 e3
-west_east_paths a4 b4 c4 d4 e4
-west_east_paths a5 b5 c5 d5 e5
-south_north_paths a1 a2 a3 a4 b1 b2 b3 b4 c1 c2 c3 c4 d1 d2 d3 d4 e1 e2 e3 e4 f1 f2 f3 f4
+; Place names (square_name ids in tts.txt).
+;   8890 = Compiegne citadel   (the citadel the player defends)
+;   8893 = Oise bridge        (new id -- the escape route)
+;   8894 = English siege ring  (the besiegers' ring on the south bank)
+;   8900 = Western ford       (b4 -- the western crossing of the Oise)
+;   8901 = Eastern ford       (g4 -- the eastern crossing)
+;   8902 = Far ford           (i4 -- the far eastern crossing)
+;   8903 = Ford               (the generic "ford" word for hover text)
+square_name 8890 5,6             ; 贡比涅要塞（player1, e6 — French citadel, defended）
+square_name 8893 5,4             ; 瓦兹河桥（e4 — the stone bridge, escape route）
+square_name 8894 3,2             ; 英军围城圈（computer1, c2 — besieger ring）
+square_name 8900 2,4             ; 西侧浅滩（b4 — western ford crossing）
+square_name 8901 7,4             ; 东侧浅滩（g4 — eastern ford crossing）
+square_name 8902 9,4             ; 远处浅滩（i4 — far eastern ford crossing）
 
-terrain river a1 b1 c1 d1 e1 f1
-water a2 b2 c2 d2 e2 f2
+; Land grid paths.  The Oise is row 4 (a4..j4); the bridge square e4
+; is land (terrain big_bridge) and is connected north-south, so it is
+; NOT listed in west_east_paths along the river row.
+; west_east_paths / south_north_paths must stay strictly INSIDE the
+; grid: x <= nb_columns-1 (i.e. no column j) and y <= nb_lines-1 (i.e.
+; no row 8).  A boundary entry makes the engine silently wrap the
+; passage around to the opposite edge (soundrts/world/world_map.py:
+; _create_we_passage / _create_sn_passage) -- a toroidal map, not a
+; wall.  See soundrts/tests/test_joan_no_wrap.py.
+west_east_paths a1 b1 c1 d1 e1 f1 g1 h1 i1
+west_east_paths a2 b2 c2 d2 e2 f2 g2 h2 i2
+west_east_paths a3 b3 c3 d3 e3 f3 g3 h3 i3
+west_east_paths a5 b5 c5 d5 e5 f5 g5 h5 i5
+west_east_paths a6 b6 c6 d6 e6 f6 g6 h6 i6
+west_east_paths a7 b7 c7 d7 e7 f7 g7 h7 i7
+west_east_paths a8 b8 c8 d8 e8 f8 g8 h8 i8
+; The Oise is row 4.  south_north_paths must SKIP row 4 for every
+; column except the bridge column e -- otherwise the water squares
+; become vertical passages and the besiegers can walk across the
+; river anywhere.  (ch2 uses the same rule for the Loire: only f4
+; appears in a south_north line.)
+;
+; EXCEPTION -- the FORD columns b, g and i.  Those river squares are
+; ``terrain ford``: water for the river's continuity, but also
+; walkable ground (is_water 1 + is_ground 1), exactly like the
+; big_bridge at e4.  So the ford columns DO appear in a
+; south_north line, and each one becomes a second/third/fourth
+; crossing of the Oise.  Without them the river has a single
+; crossing (e4) and the whole siege funnels through e5 into e6:
+; one stack parked on e5 seals the map and the defence is trivial.
+south_north_paths a1 a2 a3 a5 a6 a7
+south_north_paths b1 b2 b3 b4 b5 b6 b7
+south_north_paths c1 c2 c3 c5 c6 c7
+south_north_paths d1 d2 d3 d5 d6 d7
+south_north_paths e1 e2 e3 e4 e5 e6 e7
+south_north_paths f1 f2 f3 f5 f6 f7
+south_north_paths g1 g2 g3 g4 g5 g6 g7
+south_north_paths h1 h2 h3 h5 h6 h7
+south_north_paths i1 i2 i3 i4 i5 i6 i7
+south_north_paths j1 j2 j3 j5 j6 j7
 
-goldmines 300 f5
-woods 400 f5 e5
-orchard 200 f5
-stone_mines 300 f5
+; The Oise river: row 4.  e4 is the stone bridge -- it is water for
+; the river's continuity AND ground the player can walk on, exactly the
+; pattern ch2 uses for the Loire at f4.
+;
+; b4 / g4 / i4 are the shallow FORDS.  The ``ford`` terrain in
+; mods/aoe2/rules.txt is ``is_water 1`` + ``is_ground 1`` + ``speed .5 1``:
+; ground units may cross it, but at HALF speed, so every ford is a
+; chokepoint the player's archers can shoot into rather than a
+; free highway.  Four crossings (b4 ford, e4 bridge, g4 ford, i4 ford)
+; is what forces the besiegers to split their army into several
+; attacks instead of queueing on one bridge.
+terrain river a4 c4 d4 f4 h4 j4
+terrain ford b4 g4 i4
+terrain big_bridge e4
+
+goldmines 300 e6
+woods 400 e7 d5 c6
+orchard 200 e6
+stone_mines 300 e6
+
+; The besiegers need their OWN gold / stone income.  The only mine the
+; player owns is at e6; without a mine next to their bases the AI
+; peasants gather wood and food only, its gold stays at its starting
+; amount and it can never train the knights / men-at-arms its get
+; lines ask for -- the siege then peters out after one wave.
+goldmines 400 b2
+stone_mines 300 d2
+goldmines 300 g1
+stone_mines 200 i1
+goldmines 200 a1
+
+; Meadows (build land).  jl7-style: nb_meadows_by_square 0 plus an
+; explicit list, so no build site ever lands on the river row.
 nb_meadows_by_square 0
-additional_meadows a3 b3 c3 d3 e3 f3 a4 b4 c4 d4 e4 f4 a5 b5 c5 d5 e5 f5
-additional_meadows a3 b3 c3 d3 e3 f3 a4 b4 c4 d4 e4 f4 a5 b5 c5 d5 e5 f5
-additional_meadows a3 b3 c3 d3 e3 f3 a4 b4 c4 d4 e4 f4 a5 b5 c5 d5 e5 f5
-additional_meadows f5 e5
+additional_meadows a6 b6 c6 d6 e6 f6 g6 h6 i6 j6
+additional_meadows a7 b7 c7 d7 e7 f7 g7 h7 i7 j7
+additional_meadows a8 b8 c8 d8 e8 f8 g8 h8 i8 j8
+additional_meadows a5 b5 c5 d5 e5 f5 g5 h5 i5 j5
+additional_meadows a3 b3 c3 d3 e3 f3 g3 h3 i3 j3
+additional_meadows a2 b2 c2 d2 e2 f2 g2 h2 i2 j2
+additional_meadows a1 b1 c1 d1 e1 f1 g1 h1 i1 j1
 
-; Burgundian siege camp (player1 — attacker faction)
-; Age chain: must include dark_age and feudal_age even when starting in
-; castle_age, because units whose .requirements = ['feudal_age'] check
-; for the literal upgrade name in player.upgrades (not via phase chain).
-player 0 100 0 0 f5 town_center monastery barracks archery_range blacksmith stables aoe_castle 6 house 8 peasant 6 militia 4 aoe_archer 3 aoe_knight 3 monk dark_age feudal_age castle_age
+; ---------------------------------------------------------------------------
+; The French garrison (PLAYER) -- defender at the Compiegne citadel.
+;
+; Age chain: must include dark_age and feudal_age even though the
+; chapter starts in castle_age, because units whose .requirements =
+; ['feudal_age'] check for the literal upgrade name in
+; player.upgrades (not via the phase chain).
+;
+; The player starts with Joan (npc_joan) and the Dauphin
+; (npc_dauphin): both are key units, so losing either one loses the
+; chapter.  npc_dauphin is the man who becomes Charles VII -- while
+; he lives, the coronation can still happen.
+;
+; Balance: the citadel MUST be a real fortress, otherwise the besiegers
+; (who run a ``constant_attacks 1`` AI) simply walk over the garrison
+; and the chapter is unwinnable before the coronation countdown ends.
+; The ``aoe_castle`` (4800 HP, garrisoned arrows) is the fortress
+; anchor; the towers and the 10 militia / 8 archers hold the walls.
+; ---------------------------------------------------------------------------
+player 50 900 700 300 e6 town_center monastery barracks archery_range blacksmith stables aoe_castle 2 scouttower 8 house 12 peasant 14 militia 10 aoe_archer 6 aoe_knight 2 man_at_arms 2 npc_joan 1 npc_dauphin dark_age feudal_age castle_age
 
-; English reinforcements (allied Burgundian — alliance 1)
-computer_only 0 0 0 0 non_neutral faction britons e5 town_center scouttower 6 militia 4 man_at_arms 3 longbowman 2 aoe_knight
+; English siege ring on the south bank (computer1) -- the main
+; besieger.  It gets a real AI so it actually attacks the citadel.
+;
+; The four leading numbers of a ``computer_only`` line are the
+; starting resources (gold, wood, food, stone).  They MUST be
+; non-zero: an AI with zero resources cannot train a single unit, so
+; its ``get`` lines never complete and it sits still -- the AI would
+; never attack.
+;
+; The trailing ``dark_age feudal_age castle_age`` are the starting
+; age chain: without them the AI stays in the dark age and cannot
+; build the feudal/castle units the attack waves are made of.
+;
+; The besiegers also need a FARM and production buildings:
+; ``britons_intermediate`` in mods/aoe2/ai.txt has the get-lines
+;
+;     get 4 militia 8 aoe_archer
+;     get 14 peasant 8 aoe_knight 8 longbowman 3 battering_ram
+;
+; and the second one needs FOOD.  Without a farm the besiegers burn
+; through their starting food during the first wave, hit food = 0
+; and then stall on the get-line forever -- they attack once and
+; then sit there, which makes the defence trivial again.
+;
+; ``barracks`` / ``archery_range`` / ``stables`` give the AI the
+; buildings its get-lines train from; ``farm`` keeps the food coming.
+; ``battering_ram`` and ``mangonel`` need a ``workshop``, so the
+; siege train needs one too (without it the AI cannot build the
+; rams its plan asks for and stalls again).
+computer_only 400 400 700 200 non_neutral faction britons c2 town_center 2 house farm 2 barracks archery_range stables workshop aoe_castle scouttower 5 militia 3 man_at_arms 2 aoe_archer 2 aoe_knight 1 longbowman 2 peasant 10 dark_age feudal_age castle_age
 
-; Compiègne citadel (French garrison, enemy — alliance 2)
-computer_only 0 0 0 0 non_neutral faction franks d4 town_center aoe_castle scouttower 8 militia 6 man_at_arms 4 aoe_archer 2 aoe_knight 2 monk
+; Burgundian camp on the south-east (computer2) -- the second wave.
+computer_only 400 400 700 200 non_neutral faction burgundians h1 town_center 2 house farm 2 barracks archery_range stables aoe_castle scouttower 4 militia 3 man_at_arms 3 aoe_knight 1 aoe_archer 2 peasant 8 dark_age feudal_age castle_age
 
-; French forward outpost (enemy — alliance 2)
-computer_only 0 0 0 0 non_neutral faction franks a1 scouttower 2 militia 1 aoe_archer
+; English outpost covering the WESTERN FORD (computer3) -- the third
+; attacking front.
+;
+; It used to be a passive forward position on the default timer AI,
+; but that left the new b4 ford with no pressure on it: the western
+; crossing was only ever used by units that happened to wander past.
+; Giving it a real economy and a real AI turns a1 into an attacker
+; that funnels over the b4 ford and comes at the citadel from the
+; west (d5 / c5 / c6), so the assault now arrives on three fronts
+; instead of one.
+;
+; Measured with _tools/probe_ch6_balance.py: with computer3 passive the
+; front pressure on d5 was 1107; with computer3 attacking it is 3547,
+; and the player's garrison takes real losses (63 -> 61 units).
+computer_only 400 400 600 200 non_neutral faction britons a1 town_center 2 house farm barracks archery_range stables 4 militia 4 aoe_archer 2 aoe_knight 1 peasant 10 dark_age feudal_age castle_age
 
-; French river patrol (enemy — alliance 2)
-computer_only 0 0 0 0 non_neutral faction franks c3 town_center scouttower 4 militia 2 man_at_arms 2 aoe_archer
+timer_coefficient 30
 
-timer_coefficient 60
-
-trigger player1 (timer 0) (faction burgundians)
+trigger player1 (timer 0) (faction franks)
 trigger player1 (timer 0) (alliance 1)
-trigger computer1 (timer 0) (alliance 1)
+trigger computer1 (timer 0) (alliance 2)
 trigger computer2 (timer 0) (alliance 2)
 trigger computer3 (timer 0) (alliance 2)
-trigger computer4 (timer 0) (alliance 2)
 
+; ---------------------------------------------------------------------------
+; MAKE THE BESIEGERS ACTUALLY ATTACK.
+;
+; A ``computer_only`` slot gets a trigger-only, do-nothing AI by default
+; (doc_src/src/en/mod/mapmaking.rst "Switch to another AI"), so without
+; this the besiegers would sit still and the defence would be a joke --
+; exactly the bug reported for this chapter.
+;
+; ``(ai intermediate)`` swaps in mods/aoe2/ai.txt's
+; ``britons_intermediate`` / ``burgundians_intermediate`` scripts, which
+; contain real ``attack`` lines and ``attack_ratio 120`` -- they build
+; an army and go at the citadel.
+;
+; NOTE the numbering: the ``computer_only`` lines above are computers
+; 1, 2 and 3 (NOT 2, 3, 4) -- the first ``computer_only`` line becomes
+; computer1.  computer1 is the English ring, computer2 the Burgundian
+; camp, computer3 the western outpost beside the b4 ford.  ALL THREE
+; get a real AI, so the siege comes at the citadel from the west
+; (over b4), the centre (over the e4 bridge) and the east (over g4)
+; at the same time.  A passive outpost would leave one crossing
+; unpressured and the siege would still funnel through e5.
+; ---------------------------------------------------------------------------
+trigger computer1 (timer 0) (ai intermediate)
+trigger computer2 (timer 0) (ai intermediate)
+trigger computer3 (timer 0) (ai intermediate)
+
+; ---------------------------------------------------------------------------
+; OBJECTIVES
+;
+;   1 = Hold Compiegne until Charles VII is crowned  (tts 8832)
+;   2 = Escort Joan to safety across the bridge   (tts 8833)
+;
+; Objective 1 completes when the coronation lands.  The coronation is
+; a pure countdown: it happens 12 timer ticks (6 real minutes at
+; timer_coefficient 30) into the battle.
+; ---------------------------------------------------------------------------
 trigger player1 (timer 0) (register_objective 1 2)
 trigger player1 (timer 0) (add_objective 1 8832)
 trigger player1 (timer 0) (add_objective 2 8833)
 
-; Goal 1: Cut off the Oise bridge (a1) by destroying its scouttower
-trigger player1 (enemy_building_destroyed a1 scouttower) (objective_complete 1)
-; Goal 2: Storm the citadel — destroy Compiègne's castle (d4)
-trigger player1 (enemy_building_destroyed d4 aoe_castle) (objective_complete 2)
+; ---------------------------------------------------------------------------
+; THE CORONATION COUNTDOWN
+;
+; (timer 12) is a ONE-SHOT trigger: the engine removes a trigger once
+; its condition has fired.  So this is a single event, not a
+; repeating one.
+;
+; The coronation sets the ``crowned`` flag and completes objective 1.
+; It does NOT end the chapter: the epilogue (escorting Joan over the
+; bridge) is the actual ending.
+;
+; The citadel must still stand for the coronation to mean anything;
+; if it fell earlier, the ``building_lost`` trigger already fired
+; defeat and the game is over before this trigger ever runs.
+;
+; The intermediate announcements (timer 6 / 9 / 11) make the wait
+; legible: without them the player has no idea how long the siege
+; has to last.  Each one is a separate one-shot trigger, so they
+; fire once each and are then removed by the engine.
+; ---------------------------------------------------------------------------
+trigger player1 (timer 6) (cut_scene 8897)
+trigger player1 (timer 9) (cut_scene 8898)
+trigger player1 (timer 11) (cut_scene 8899)
+trigger player1 (timer 12) (do (set_var crowned 1) (objective_complete 1) (cut_scene 8895))
 
+; ---------------------------------------------------------------------------
+; THE EPILOGUE: JOAN ESCAPES OVER THE BRIDGE
+;
+; Objective 2 requires BOTH the coronation to have happened AND Joan
+; to be standing on the bridge square e4.  It is a repeating trigger
+; (the ``repeat`` modifier keeps it alive instead of removing it
+; after the first fire), so the player can reach the bridge at any
+; point after the coronation.
+;
+; If the player dawdles and the Dauphin dies, the key_unit_killed
+; trigger ends the chapter in defeat -- that is the intended tension.
+; ---------------------------------------------------------------------------
+trigger player1 repeat (and (var crowned) (has_entered e4 npc_joan)) (do (objective_complete 2) (cut_scene 8896) (victory))
+
+; ---------------------------------------------------------------------------
+; VICTORY / DEFEAT
+;
+; Defeat: the citadel falls, or either hero is killed.
+; ---------------------------------------------------------------------------
 trigger player1 (building_lost town_center) (defeat)
+trigger player1 (key_unit_killed npc_joan) (defeat)
+trigger player1 (key_unit_killed npc_dauphin) (defeat)
 trigger player1 (no_unit_left) (defeat)

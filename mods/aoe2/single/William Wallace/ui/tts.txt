@@ -13,6 +13,10 @@
 8607 Forge an Alliance
 8608 The Battle of Falkirk
 
+; Cutscene narration
+8710 Before Scotland could stand against England, it had to learn to stand. William Wallace rallied the people of Lanark and prepared for war.
+8711 The stage is set. Train your troops, gather your resources, and prepare for the battles to come.
+
 ; Intros
 8610 Move your militia east to the Scottish village. Select units, then order them to the flagged square.
 8611 Gather food, wood, and gold. Build farms if you need more food. Reach 50 of each.
