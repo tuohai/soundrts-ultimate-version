@@ -22,7 +22,9 @@ def _load_world_buckets_fast():
     pyd_glob = list((root / "soundrts" / "world").glob("world_buckets_fast*.pyd"))
     pyd_glob += list((root / "soundrts" / "world").glob("world_buckets_fast*.so"))
     if not pyd_glob:
-        pytest.skip("world_buckets_fast 未编译，跳过并行测试")
+        pytest.skip(
+            "world_buckets_fast 未编译，跳过并行测试", allow_module_level=True
+        )
     spec = importlib.util.spec_from_file_location("world_buckets_fast", pyd_glob[0])
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
