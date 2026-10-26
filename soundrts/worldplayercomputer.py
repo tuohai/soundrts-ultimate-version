@@ -52,6 +52,31 @@ from .worldunit import Worker
 _PROD_ORDER_KEYWORDS = frozenset(
     ("build", "train", "upgrade_to", "research", "advance")
 )
+
+
+def _order_keyword(order):
+    """Return the keyword of an order, tolerating raw command lists.
+
+    Orders are normally :class:`Order` objects exposing ``keyword``, but the
+    engine (and some tests) keep the raw command list ``["go", "x"]`` around.
+    """
+    kw = getattr(order, "keyword", None)
+    if kw:
+        return kw
+    if isinstance(order, (list, tuple)) and order:
+        first = order[0]
+        if isinstance(first, str):
+            return first
+    return None
+
+
+def _order_keywords(orders):
+    """Return the set of keywords for a list of orders (raw lists allowed)."""
+    return {
+        kw
+        for kw in (_order_keyword(o) for o in orders or ())
+        if kw is not None
+    }
 _PLAY_PROD_MEMO_PREFIXES = frozenset(
     (
         "nbprod",
@@ -633,6 +658,17 @@ class Computer(Player):
                 built = getattr(w, "can_build", ()) or ()
                 if built:
                     names.update(built)
+                    continue
+                # A live worker whose instance exposes no can_build (stubs,
+                # or a Creature whose property resolves to nothing) still has
+                # its rules-level build list.  Fall back to the rules class so
+                # the AI knows what its villagers can erect.
+                if tn:
+                    uc = rules.unit_class(tn)
+                    if uc is not None:
+                        built = rules.class_rules_attr(uc, "can_build", ()) or ()
+                        if built:
+                            names.update(built)
             # Living workers with empty can_build (CrazyMod ouvriere_marcheuse
             # places buildings via hatchery skills) must not fall through to
             # every race's villager. That made zerg AI get mairie / travailleur.
@@ -5241,7 +5277,7 @@ class Computer(Player):
             ):
                 continue
             if transport.orders:
-                keywords = {o.keyword for o in transport.orders}
+                keywords = _order_keywords(transport.orders)
                 if keywords & {"load", "load_all", "unload", "unload_all"}:
                     continue
                 if not self._is_idle_for_ai_orders(transport):
@@ -6920,10 +6956,10 @@ class Computer(Player):
             if u.speed <= 0 or getattr(u, "is_inside", False):
                 continue
             if u.orders:
-                keywords = {o.keyword for o in u.orders}
+                keywords = _order_keywords(u.orders)
                 if keywords & {"load", "load_all", "unload", "unload_all"}:
                     continue
-                if u.orders[0].keyword not in ("go",):
+                if _order_keyword(u.orders[0]) not in ("go",):
                     continue
             result.append(u)
         return result
@@ -6949,11 +6985,11 @@ class Computer(Player):
             if u.speed <= 0 or getattr(u, "is_inside", False):
                 continue
             if u.orders:
-                keywords = {o.keyword for o in u.orders}
+                keywords = _order_keywords(u.orders)
                 if keywords & {"load", "load_all", "unload", "unload_all"}:
                     continue
                 # auto_explore is interruptible: ferry when troops cannot walk.
-                if u.orders[0].keyword not in ("go", "auto_explore"):
+                if _order_keyword(u.orders[0]) not in ("go", "auto_explore"):
                     continue
             result.append(u)
         return result
