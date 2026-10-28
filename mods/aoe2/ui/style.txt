@@ -787,6 +787,24 @@ is_a mill
 def teuton_farm
 is_a farm
 
+; Civ-specific economy shells (market / lumbermill / mining camp / farm).
+; Same story as the late-added civ buildings below: rules.txt gives these
+; their own type_name, so they need a style def to inherit title+keyboard.
+def mongol_market
+is_a market
+def byzantine_market
+is_a market
+def byzantine_lumbermill
+is_a lumbermill
+def japanese_lumbermill
+is_a lumbermill
+def byzantine_mining_camp
+is_a mining_camp
+def japanese_mining_camp
+is_a mining_camp
+def slav_farm
+is_a farm
+
 def japanese_barracks
 is_a barracks
 def teuton_barracks
@@ -1210,6 +1228,326 @@ def turk_workshop
 is_a workshop
 def turk_shipyard
 is_a shipyard
+
+; ---------- late-added civ building shells ----------
+; rules.txt defines a civ-specific shell for every building slot
+; (e.g. `barracks roman_barracks`), but style.txt only had entries for
+; britons..turks. A shell with no style def inherits nothing, so it had
+; no spoken `title` and no `keyboard` slot: the building could not be
+; named and the W / building hotkeys never reached it.
+; `is_a <semantic base>` restores both (title + keyboard) from the base,
+; exactly like the briton/turk entries above.
+;
+; NOTE: the shell's own `title` stays the generic building name
+; (兵营 / 8301 for barracks), matching the design used for every other civ.
+
+; Saracens
+def saracen_castle
+is_a aoe_castle
+
+; Bulgarians
+def bulgarian_archery
+is_a archery_range
+def bulgarian_barracks
+is_a barracks
+def bulgarian_blacksmith
+is_a blacksmith
+def bulgarian_castle
+is_a aoe_castle
+def bulgarian_monastery
+is_a monastery
+def bulgarian_shipyard
+is_a shipyard
+def bulgarian_stable
+is_a stables
+def bulgarian_university
+is_a university
+def bulgarian_workshop
+is_a workshop
+
+; Lithuanians
+def lithuanian_archery
+is_a archery_range
+def lithuanian_barracks
+is_a barracks
+def lithuanian_blacksmith
+is_a blacksmith
+def lithuanian_castle
+is_a aoe_castle
+def lithuanian_shipyard
+is_a shipyard
+def lithuanian_stable
+is_a stables
+def lithuanian_university
+is_a university
+def lithuanian_workshop
+is_a workshop
+
+; Tatars
+def tartar_archery
+is_a archery_range
+def tartar_barracks
+is_a barracks
+def tartar_blacksmith
+is_a blacksmith
+def tartar_castle
+is_a aoe_castle
+def tartar_monastery
+is_a monastery
+def tartar_shipyard
+is_a shipyard
+def tartar_stable
+is_a stables
+def tartar_university
+is_a university
+def tartar_workshop
+is_a workshop
+
+; Berbers
+def berber_archery
+is_a archery_range
+def berber_barracks
+is_a barracks
+def berber_blacksmith
+is_a blacksmith
+def berber_castle
+is_a aoe_castle
+def berber_monastery
+is_a monastery
+def berber_shipyard
+is_a shipyard
+def berber_stable
+is_a stables
+def berber_university
+is_a university
+def berber_workshop
+is_a workshop
+
+; Ethiopians
+def ethiopian_archery
+is_a archery_range
+def ethiopian_barracks
+is_a barracks
+def ethiopian_blacksmith
+is_a blacksmith
+def ethiopian_castle
+is_a aoe_castle
+def ethiopian_shipyard
+is_a shipyard
+def ethiopian_stable
+is_a stables
+def ethiopian_university
+is_a university
+def ethiopian_workshop
+is_a workshop
+
+; Khmer
+def khmer_archery
+is_a archery_range
+def khmer_barracks
+is_a barracks
+def khmer_blacksmith
+is_a blacksmith
+def khmer_castle
+is_a aoe_castle
+def khmer_monastery
+is_a monastery
+def khmer_shipyard
+is_a shipyard
+def khmer_stable
+is_a stables
+def khmer_university
+is_a university
+def khmer_workshop
+is_a workshop
+
+; Malays
+def malay_archery
+is_a archery_range
+def malay_barracks
+is_a barracks
+def malay_blacksmith
+is_a blacksmith
+def malay_castle
+is_a aoe_castle
+def malay_monastery
+is_a monastery
+def malay_shipyard
+is_a shipyard
+def malay_stable
+is_a stables
+def malay_university
+is_a university
+def malay_workshop
+is_a workshop
+
+; Burmese
+def burmese_archery
+is_a archery_range
+def burmese_barracks
+is_a barracks
+def burmese_blacksmith
+is_a blacksmith
+def burmese_castle
+is_a aoe_castle
+def burmese_monastery
+is_a monastery
+def burmese_shipyard
+is_a shipyard
+def burmese_stable
+is_a stables
+def burmese_university
+is_a university
+def burmese_workshop
+is_a workshop
+
+; Burgundians
+def burgundian_archery
+is_a archery_range
+def burgundian_barracks
+is_a barracks
+def burgundian_blacksmith
+is_a blacksmith
+def burgundian_castle
+is_a aoe_castle
+def burgundian_shipyard
+is_a shipyard
+def burgundian_stable
+is_a stables
+def burgundian_university
+is_a university
+def burgundian_workshop
+is_a workshop
+
+; Sicilians
+def sicilian_archery
+is_a archery_range
+def sicilian_barracks
+is_a barracks
+def sicilian_blacksmith
+is_a blacksmith
+def sicilian_castle
+is_a aoe_castle
+def sicilian_shipyard
+is_a shipyard
+def sicilian_stable
+is_a stables
+def sicilian_university
+is_a university
+def sicilian_workshop
+is_a workshop
+
+; Armenians
+def armenian_archery
+is_a archery_range
+def armenian_barracks
+is_a barracks
+def armenian_blacksmith
+is_a blacksmith
+def armenian_castle
+is_a aoe_castle
+def armenian_shipyard
+is_a shipyard
+def armenian_stable
+is_a stables
+def armenian_university
+is_a university
+def armenian_workshop
+is_a workshop
+
+; Georgians
+def georgian_archery
+is_a archery_range
+def georgian_barracks
+is_a barracks
+def georgian_blacksmith
+is_a blacksmith
+def georgian_castle
+is_a aoe_castle
+def georgian_shipyard
+is_a shipyard
+def georgian_stable
+is_a stables
+def georgian_university
+is_a university
+def georgian_workshop
+is_a workshop
+
+; Incas
+def incan_archery
+is_a archery_range
+def incan_barracks
+is_a barracks
+def incan_blacksmith
+is_a blacksmith
+def incan_castle
+is_a aoe_castle
+def incan_shipyard
+is_a shipyard
+def incan_stable
+is_a stables
+def incan_university
+is_a university
+def incan_workshop
+is_a workshop
+
+; Romans (骡马 / 罗马)
+def roman_archery
+is_a archery_range
+def roman_barracks
+is_a barracks
+def roman_blacksmith
+is_a blacksmith
+def roman_castle
+is_a aoe_castle
+def roman_shipyard
+is_a shipyard
+def roman_stable
+is_a stables
+def roman_university
+is_a university
+def roman_workshop
+is_a workshop
+
+; ---------- per-civ knight shells ----------
+; rules.txt gives these civs their own knight skin
+; (`knight japanese_knight` in the race table, `is_a aoe_knight` in the
+; unit rules). Like the building shells above, a skin with no style def
+; inherits nothing, so it has no spoken `title` and no `keyboard` slot:
+; the unit could not be named and the soldier hotkeys never reached it.
+; `is_a aoe_knight` restores the generic 骑士 title and the soldier3 slot.
+def bohemian_knight
+is_a aoe_knight
+def cuman_knight
+is_a aoe_knight
+def hindustani_knight
+is_a aoe_knight
+def hun_knight
+is_a aoe_knight
+def italian_knight
+is_a aoe_knight
+def japanese_knight
+is_a aoe_knight
+def korean_knight
+is_a aoe_knight
+def magyar_knight
+is_a aoe_knight
+def persian_knight
+is_a aoe_knight
+def polish_knight
+is_a aoe_knight
+def portuguese_knight
+is_a aoe_knight
+def slav_knight
+is_a aoe_knight
+def spanish_knight
+is_a aoe_knight
+def turk_knight
+is_a aoe_knight
+def vietnamese_knight
+is_a aoe_knight
+def viking_knight
+is_a aoe_knight
 
 ; ---------- units ----------
 def militia
