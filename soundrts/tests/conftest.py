@@ -94,14 +94,34 @@ def _isolate_module_rules():
 
 @pytest.fixture(autouse=True)
 def _isolate_resource_mods():
-    """Restore res.mods after tests that switch mods (e.g. crazyMod9beta10).
+    """Restore the global mod / map / campaign state after each test.
 
     Per-faction mod titles leave get_current_rank() without faction as None;
     leaking mods breaks tests expecting base res/titles.txt ranks.
+
+    ``config.mods`` is restored as well: a few test modules set it to a mod
+    name without restoring it, and the leak then reached every later module
+    (e.g. an AoE2 test left ``config.mods == "aoe2"``, and a later fixture
+    that used it as its restore baseline kept the AoE2 rules loaded for the
+    rest of the session).
+
+    The map and campaign layers are restored too: a test that loads the
+    starcraft mod together with its map otherwise leaves both active, so
+    every later module reads the wrong rules/style/text tables.
     """
+    from soundrts import config
     from soundrts.lib.resource import res
 
     saved_mods = res.mods
+    saved_config_mods = getattr(config, "mods", "")
+    saved_map = res._map
+    saved_campaign = res._campaign
     yield
+    if getattr(config, "mods", "") != saved_config_mods:
+        config.mods = saved_config_mods
+    if res._map != saved_map:
+        res.set_map(saved_map)
+    if res._campaign != saved_campaign:
+        res.set_campaign(saved_campaign)
     if res.mods != saved_mods:
         res.set_mods(saved_mods)

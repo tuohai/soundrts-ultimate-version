@@ -50,12 +50,26 @@ def test_aoe2_ages_without_res_combat_bonus():
         from soundrts import config
         from soundrts.lib.resource import res
 
+        old_mods = getattr(config, "mods", "")
+        old_res_mods = res.mods
         config.mods = "aoe2"
         res.set_mods("aoe2")
         res.load_rules_and_ai()
         from soundrts.definitions import rules
 
     sys.argv = saved
+    try:
+        _assert_aoe2_age_tables(rules)
+    finally:
+        # Restore both mod settings: leaving config.mods = "aoe2" behind made
+        # every later test module believe AoE2 was the active mod.
+        config.mods = old_mods
+        res.set_mods(old_res_mods)
+        if old_res_mods:
+            res.load_rules_and_ai()
+
+
+def _assert_aoe2_age_tables(rules):
     # AoE2 uses researched line_upgrade, not age-tied units_auto_upgrade
     assert _units_auto_upgrade(rules._dict["dark_age"]) == 0
     for age in ("feudal_age", "castle_age", "imperial_age"):

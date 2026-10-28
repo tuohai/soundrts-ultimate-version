@@ -1596,26 +1596,37 @@ def test_gateway_building_site_self_constructs():
             from soundrts.worldunit.worldcreature import BuildingSite
 
             config.debug_mode = 0
+            old_mods = getattr(config, "mods", "")
+            old_res_mods = res.mods
             config.mods = "starcraft"
             res.set_mods("starcraft")
             path = Path("mods/starcraft/multi/protoss_psi_test.txt")
             m = Map.loads(path.read_text(encoding="utf-8").encode("utf-8"), path.name)
             res.set_map(m)
             res.load_rules_and_ai()
-            world = World(seed=1)
-            world.load_and_build_map(m)
-            client = DirectClient("p1", None)
-            world.populate_map([client])
-            player = world.players[0]
-            b1 = next(s for s in world.squares if s.name == "1,0")
-            gw_cls = rules.unit_class("gateway")
-            assert gw_cls.self_constructs == 1
+            try:
+                world = World(seed=1)
+                world.load_and_build_map(m)
+                client = DirectClient("p1", None)
+                world.populate_map([client])
+                player = world.players[0]
+                b1 = next(s for s in world.squares if s.name == "1,0")
+                gw_cls = rules.unit_class("gateway")
+                assert gw_cls.self_constructs == 1
 
-            site = BuildingSite(player, b1, b1.x, b1.y, gw_cls)
-            assert site._self_construct
-            timer_before = site.timer
-            site.slow_update()
-            assert site.timer < timer_before
+                site = BuildingSite(player, b1, b1.x, b1.y, gw_cls)
+                assert site._self_construct
+                timer_before = site.timer
+                site.slow_update()
+                assert site.timer < timer_before
+            finally:
+                # Restore the mod/map: leaving the starcraft mod (and its map)
+                # active leaked into every later test module.
+                config.mods = old_mods
+                res.set_map()
+                res.set_mods(old_res_mods)
+                if old_res_mods:
+                    res.load_rules_and_ai()
     finally:
         sys.argv = saved_argv
 
@@ -1648,45 +1659,56 @@ def test_change_to_factory_reattaches_orphan_tech_lab():
             from soundrts.worldorders.production import ChangeToOrder
 
             config.debug_mode = 0
+            old_mods = getattr(config, "mods", "")
+            old_res_mods = res.mods
             config.mods = "starcraft"
             res.set_mods("starcraft")
             path = Path("mods/starcraft/multi/terran_recombine_test.txt")
             m = Map.loads(path.read_text(encoding="utf-8").encode("utf-8"), path.name)
             res.set_map(m)
             res.load_rules_and_ai()
-            world = World(seed=42)
-            world.load_and_build_map(m)
-            world.populate_map([DirectClient("p1", None)])
-            player = world.players[0]
+            try:
+                world = World(seed=42)
+                world.load_and_build_map(m)
+                world.populate_map([DirectClient("p1", None)])
+                player = world.players[0]
 
-            barracks = next(u for u in player.units if u.type_name == "barracks")
-            factory = next(u for u in player.units if u.type_name == "factory")
-            tech_cls = rules.unit_class("tech_lab")
-            tech = tech_cls(player, barracks.place, barracks.x, barracks.y)
-            attach_addon(barracks, tech)
-            assert not hasattr(tech, "type")
+                barracks = next(u for u in player.units if u.type_name == "barracks")
+                factory = next(u for u in player.units if u.type_name == "factory")
+                tech_cls = rules.unit_class("tech_lab")
+                tech = tech_cls(player, barracks.place, barracks.x, barracks.y)
+                attach_addon(barracks, tech)
+                assert not hasattr(tech, "type")
 
-            ChangeToOrder(barracks, ["flying_barracks"]).complete()
-            factory = next(u for u in player.units if u.type_name == "factory")
-            ChangeToOrder(factory, ["flying_factory"]).complete()
-            ff = next(u for u in player.units if u.type_name == "flying_factory")
-            from soundrts.world_build_rules import go_target_for_flying_building_addon
+                ChangeToOrder(barracks, ["flying_barracks"]).complete()
+                factory = next(u for u in player.units if u.type_name == "factory")
+                ChangeToOrder(factory, ["flying_factory"]).complete()
+                ff = next(u for u in player.units if u.type_name == "flying_factory")
+                from soundrts.world_build_rules import go_target_for_flying_building_addon
 
-            slot = go_target_for_flying_building_addon(ff, tech)
-            ff.move_to(slot.place, slot.x, slot.y)
-            # change_to 读取当前坐标；测试里 move_to 不会同步到位，需落到插槽坐标
-            ff.x, ff.y = slot.x, slot.y
+                slot = go_target_for_flying_building_addon(ff, tech)
+                ff.move_to(slot.place, slot.x, slot.y)
+                # change_to 读取当前坐标；测试里 move_to 不会同步到位，需落到插槽坐标
+                ff.x, ff.y = slot.x, slot.y
 
-            ChangeToOrder(ff, ["factory"]).complete()
-            landed = next(u for u in player.units if u.type_name == "factory")
-            assert tech.attached_host is landed
-            assert "tank" in effective_can_train(landed)
-            # 训练菜单走 unit.can_train；不能被 rules dict 遮蔽 @property
-            assert "tank" in landed.can_train
-            factory_cls = rules.unit_class("factory")
-            assert not hasattr(factory_cls, "can_train") or not isinstance(
-                getattr(factory_cls, "can_train", None), dict
-            )
+                ChangeToOrder(ff, ["factory"]).complete()
+                landed = next(u for u in player.units if u.type_name == "factory")
+                assert tech.attached_host is landed
+                assert "tank" in effective_can_train(landed)
+                # 训练菜单走 unit.can_train；不能被 rules dict 遮蔽 @property
+                assert "tank" in landed.can_train
+                factory_cls = rules.unit_class("factory")
+                assert not hasattr(factory_cls, "can_train") or not isinstance(
+                    getattr(factory_cls, "can_train", None), dict
+                )
+            finally:
+                # Restore the mod/map: leaving the starcraft mod (and its map)
+                # active leaked into every later test module.
+                config.mods = old_mods
+                res.set_map()
+                res.set_mods(old_res_mods)
+                if old_res_mods:
+                    res.load_rules_and_ai()
     finally:
         sys.argv = saved_argv
 
@@ -1719,38 +1741,49 @@ def test_change_to_factory_on_own_meadow_does_not_reattach():
             from soundrts.worldorders.production import ChangeToOrder
 
             config.debug_mode = 0
+            old_mods = getattr(config, "mods", "")
+            old_res_mods = res.mods
             config.mods = "starcraft"
             res.set_mods("starcraft")
             path = Path("mods/starcraft/multi/terran_recombine_test.txt")
             m = Map.loads(path.read_text(encoding="utf-8").encode("utf-8"), path.name)
             res.set_map(m)
             res.load_rules_and_ai()
-            world = World(seed=42)
-            world.load_and_build_map(m)
-            world.populate_map([DirectClient("p1", None)])
-            player = world.players[0]
+            try:
+                world = World(seed=42)
+                world.load_and_build_map(m)
+                world.populate_map([DirectClient("p1", None)])
+                player = world.players[0]
 
-            barracks = next(u for u in player.units if u.type_name == "barracks")
-            factory = next(u for u in player.units if u.type_name == "factory")
-            tech_cls = rules.unit_class("tech_lab")
-            tech = tech_cls(player, barracks.place, barracks.x, barracks.y)
-            attach_addon(barracks, tech)
+                barracks = next(u for u in player.units if u.type_name == "barracks")
+                factory = next(u for u in player.units if u.type_name == "factory")
+                tech_cls = rules.unit_class("tech_lab")
+                tech = tech_cls(player, barracks.place, barracks.x, barracks.y)
+                attach_addon(barracks, tech)
 
-            ChangeToOrder(barracks, ["flying_barracks"]).complete()
-            factory = next(u for u in player.units if u.type_name == "factory")
-            factory_x, factory_y = factory.x, factory.y
-            place = factory.place
-            ChangeToOrder(factory, ["flying_factory"]).complete()
-            ff = next(u for u in player.units if u.type_name == "flying_factory")
+                ChangeToOrder(barracks, ["flying_barracks"]).complete()
+                factory = next(u for u in player.units if u.type_name == "factory")
+                factory_x, factory_y = factory.x, factory.y
+                place = factory.place
+                ChangeToOrder(factory, ["flying_factory"]).complete()
+                ff = next(u for u in player.units if u.type_name == "flying_factory")
 
-            factory_meadow = place.find_meadow_near_xy(factory_x, factory_y)
-            assert factory_meadow is not None
-            ff.move_to(place, factory_meadow.x, factory_meadow.y)
+                factory_meadow = place.find_meadow_near_xy(factory_x, factory_y)
+                assert factory_meadow is not None
+                ff.move_to(place, factory_meadow.x, factory_meadow.y)
 
-            ChangeToOrder(ff, ["factory"]).complete()
-            landed = next(u for u in player.units if u.type_name == "factory")
-            assert tech.attached_host is None
-            assert "tank" not in effective_can_train(landed)
+                ChangeToOrder(ff, ["factory"]).complete()
+                landed = next(u for u in player.units if u.type_name == "factory")
+                assert tech.attached_host is None
+                assert "tank" not in effective_can_train(landed)
+            finally:
+                # Restore the mod/map: leaving the starcraft mod (and its map)
+                # active leaked into every later test module.
+                config.mods = old_mods
+                res.set_map()
+                res.set_mods(old_res_mods)
+                if old_res_mods:
+                    res.load_rules_and_ai()
     finally:
         sys.argv = saved_argv
 

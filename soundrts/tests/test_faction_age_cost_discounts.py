@@ -116,14 +116,24 @@ def test_aoe2_chinese_and_byzantine_tables():
         from soundrts import config
         from soundrts.lib.resource import res
 
+        old_mods = getattr(config, "mods", "")
+        old_res_mods = res.mods
         config.mods = "aoe2"
         res.set_mods("aoe2")
         res.load_rules_and_ai()
         from soundrts.definitions import rules
 
     sys.argv = saved
-    cn = rules.get("chinese", "research_cost_discount")
-    assert cn and "feudal_age" in cn and "-5%" in cn
-    assert "imperial_age" in cn and "-15%" in cn
-    byz = rules.get("byzantines", "advance_cost_discount")
-    assert byz and "imperial_age" in byz and "-33%" in byz
+    try:
+        cn = rules.get("chinese", "research_cost_discount")
+        assert cn and "feudal_age" in cn and "-5%" in cn
+        assert "imperial_age" in cn and "-15%" in cn
+        byz = rules.get("byzantines", "advance_cost_discount")
+        assert byz and "imperial_age" in byz and "-33%" in byz
+    finally:
+        # Restore both mod settings: leaving config.mods = "aoe2" behind made
+        # every later test module believe AoE2 was the active mod.
+        config.mods = old_mods
+        res.set_mods(old_res_mods)
+        if old_res_mods:
+            res.load_rules_and_ai()
