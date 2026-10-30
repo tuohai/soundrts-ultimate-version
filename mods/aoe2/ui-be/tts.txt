@@ -619,9 +619,14 @@
 8354 Elite Monaspa
 8355 Elite Legionary
 8356 Elite Slinger
+
 ; Roman unique units / technologies (Romans)
 9057 Цэнтурыён
 9058 Элітны цэнтурыён
 9059 Балеты
 9060 Камітатэнсы
+
+; Hindustani unique unit (Dynasties of India)
+9061 Ghulam
+9062 Элітны Ghulam
 

@@ -2766,6 +2766,16 @@ def elite_slinger
 is_a slinger
 title 8356
 
+; Ghulam (Hindustani UU: anti-archer spear infantry)
+def ghulam
+is_a walking_unit
+title 9061
+keyboard soldier1
+shortcut o
+def elite_ghulam
+is_a ghulam
+title 9062
+
 ; Note: Joan of Arc campaign NPCs (npc_joan, npc_baudricourt, npc_dauphin)
 ; are defined in mods/aoe2/single/Joan of Arc/ui/style.txt so the style
 ; stays co-located with the campaign maps and can be edited without

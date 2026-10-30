@@ -656,3 +656,7 @@
 9059 弹射弩
 9060 野战军
 
+; Hindustani unique unit (Dynasties of India)
+9061 古拉姆
+9062 精锐古拉姆
+

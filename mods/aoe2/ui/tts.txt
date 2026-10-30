@@ -670,3 +670,7 @@
 9059 Ballistas
 9060 Comitatenses
 
+; Hindustani unique unit (Dynasties of India)
+9061 Ghulam
+9062 Elite Ghulam
+

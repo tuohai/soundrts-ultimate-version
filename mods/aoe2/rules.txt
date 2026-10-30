@@ -2176,6 +2176,56 @@ no_auto_upgrade 1
 mdg_splash 7
 mdg_radius 1.5
 
+; 印度 Ghulam — Hindustanis unique (Dynasties of India).
+; DE: 45 gold 30 food, 12s, trained at the Castle.  HP 60/70, Atk 9/11,
+; Melee arm 0, Pierce arm 3/6, speed 1.15/1.2, LoS 6.
+; Anti-archer spear infantry: +5/+6 vs archers, +2 vs standard buildings.
+def ghulam
+class soldier
+is_a infantry
+is_a unique_unit
+cost 45 0 30 0
+population_cost 1
+time_cost 12
+;space 0.25
+requirements castle_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 60
+speed 1.15
+sight_range 6
+mdg 9
+mdg_cd 2
+mdg_range 1
+mdf 0
+rdf 3
+mdg_vs archer_unit 5
+mdg_vs building 2
+can_upgrade_to elite_ghulam
+can_use_tech forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor squires arson conscription
+
+; Elite Ghulam -- DE: 575 gold 950 food, 45s research at the Castle.
+def elite_ghulam
+is_a ghulam
+cost 575 0 950 0
+time_cost 45
+requirements imperial_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 70
+speed 1.2
+sight_range 6
+mdg 11
+mdg_cd 2
+mdg_range 1
+mdf 0
+rdf 6
+mdg_vs archer_unit 6
+mdg_vs building 2
+can_upgrade_to
+
 ; 波兰 Obuch - heavy two-handed mace infantry UU, AoE2 DE stat clone
 def obuch
 class soldier
@@ -3935,29 +3985,9 @@ mdg_cd 2
 mdg_range 1
 mdf 1
 rdf 0
-mdg_vs cavalry 8
-mdg_vs camel_rider 5
-can_upgrade_to elite_kamayuk
-can_use_tech forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor squires arson conscription
-
-def elite_kamayuk
-is_a kamayuk
-cost 600 0 400 0
-time_cost 45
-requirements imperial_age
-no_auto_upgrade 1
-line_upgrade 1
-
-hp_max 65
-speed 1.0
-sight_range 5
-mdg 8
-mdg_cd 2
-mdg_range 1
-mdf 1
-rdf 0
-mdg_vs cavalry 10
-mdg_vs camel_rider 7
+mdg_vs cavalry 12
+mdg_vs camel_rider 10
+mdg_vs battle_elephant 20
 can_upgrade_to
 
 ; 马扎尔 Magyar Huszar — Magyars unique (DE: 75F+45G, 16s; HP75/95 Atk9/10 Speed1.65
@@ -7878,7 +7908,10 @@ nightmare mayans_nightmare
 ; ---------- 印度斯坦 Hindustanis ----------
 ; no Thumb Ring, no Plate Barding, no Bombard Tower, no Cannon Galleon, no Heavy CA,
 ; no Halberdier, no Architecture, no Heated Shot, no Bracer; Camel & Elephant civ;
-; Armored Elephant, Imperial Camel; Grand Trunk Road, Shatagni
+; Armored Elephant, Imperial Camel Rider; Ghulam; Grand Trunk Road, Shatagni
+; NOTE: DE (Dynasties of India) removed the (Elite) Elephant Archer from the
+; Hindustanis -- they are a regional unit for the Bengalis / Dravidians /
+; Gurjaras only -- so the Elephant Archer line is no longer offered here.
 def hindustani_villager
 is_a peasant
 can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
@@ -7896,8 +7929,8 @@ can_research crossbowman elite_skirmisher
 
 def hindustani_stable
 is_a stables
-can_train scout_cavalry aoe_knight camel_rider elephant_archer
-can_research bloodlines husbandry light_cavalry hussar cavalier heavy_camel_rider elite_elephant_archer
+can_train scout_cavalry aoe_knight camel_rider
+can_research bloodlines husbandry light_cavalry hussar cavalier heavy_camel_rider imperial_camel_rider
 
 def hindustani_blacksmith
 is_a blacksmith
@@ -7919,8 +7952,8 @@ can_research war_galley galleon fire_ship fast_fire_ship demolition_ship heavy_d
 
 def hindustani_castle
 is_a aoe_castle
-can_train armored_elephant trebuchet
-can_research elite_armored_elephant grand_trunk_road shatagni conscription hoardings sappers spies frontier_defense
+can_train ghulam armored_elephant trebuchet
+can_research elite_ghulam elite_armored_elephant grand_trunk_road shatagni conscription hoardings sappers spies frontier_defense
 
 def hindustani_knight
 is_a aoe_knight
