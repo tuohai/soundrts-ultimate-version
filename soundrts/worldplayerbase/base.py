@@ -111,6 +111,28 @@ class Objective:
 from .allied_control import allied_control_controller_for, mark_allied_control_changed
 
 
+def _race_build_speed_pct(faction):
+    """Read the race's ``build_speed_pct N`` (AoE2 DE Roman +5%, Spanish +30%).
+
+    Returns 0 when the race has no such field.  Positive N means the villagers
+    build N% faster (the engine subtracts it from the build-time percentage).
+    """
+    if not faction:
+        return 0
+    try:
+        raw = rules.get(faction, "build_speed_pct")
+    except Exception:
+        return 0
+    if raw is None:
+        return 0
+    if isinstance(raw, (list, tuple)):
+        raw = raw[0] if raw else 0
+    try:
+        return int(raw)
+    except (TypeError, ValueError):
+        return 0
+
+
 class Player:
     """游戏玩家类 - 基础功能和初始化"""
     
@@ -180,6 +202,10 @@ class Player:
             self.number = world.get_next_player_number()
         else:
             self.number = None
+        # Race-level build-speed bonus (AoE2 DE: Romans +5%, Spanish +30%).
+        # ``Building.time_cost`` reads ``player.build_speed_pct``; without this
+        # the race field was never applied and the bonus had no effect.
+        self.build_speed_pct = _race_build_speed_pct(self.faction)
         # Round 5: duck-type Player as its own owner so `o.player` works
         # uniformly for both Entity (where player = owner) and Player
         # (where player = self). is_an_enemy(o) at combat.py:308 does a
