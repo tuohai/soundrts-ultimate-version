@@ -650,3 +650,31 @@ def team_share_research_names(player):
         seen.add(tech)
         names.append(tech)
     return names
+
+
+def team_share_train_entries(player):
+    """``[(unit_type, host_types_tuple), ...]`` from self + ``allied_victory``.
+
+    AoE2 Italian team bonus: every player allied with an Italian can train
+    the Condottiero at its Barracks.  The race def carries the rows as
+    ``team_share_train condottiero barracks``.
+    """
+    rows = []
+    seen = set()
+    allies = getattr(player, "allied_victory", None) or (player,)
+    for ally in allies:
+        faction = getattr(ally, "faction", None)
+        if not faction:
+            continue
+        raw = rules.get(faction, "team_share_train") or []
+        if not raw:
+            raw = (rules._dict.get(faction, {}) or {}).get("team_share_train") or []
+        for row in _share_research_rows(raw):
+            unit_type = row[0]
+            hosts = tuple(row[1:])
+            key = (unit_type, hosts)
+            if key in seen:
+                continue
+            seen.add(key)
+            rows.append((unit_type, hosts))
+    return rows

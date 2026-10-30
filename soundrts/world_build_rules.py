@@ -1227,6 +1227,41 @@ def _merge_player_can_train_override(host, result):
     return tuple(merged.keys()) if isinstance(result, tuple) else merged
 
 
+def _team_shared_train_names(host, already):
+    """Unit types an ally's team bonus lets this building train.
+
+    AoE2: the Italian team bonus shares the Condottiero with every ally.
+    The race def carries ``team_share_train <unit> [host types…]``; when the
+    host types are omitted the unit is offered by any building of the same
+    name as the civ's own (the Barracks for the Condottiero).
+    """
+    player = getattr(host, "player", None)
+    if player is None:
+        return ()
+    try:
+        from .world_civ_bonuses import team_share_train_entries
+    except Exception:
+        return ()
+    host_name = _type_name(host)
+    # The host *type* comes from the rules class (``briton_barracks`` is_a
+    # ``barracks``), so the host filter has to look at the class, not at the
+    # unit instance.
+    cls = _unit_type(host)
+    expanded = set(getattr(cls, "expanded_is_a", ()) or ())
+    expanded.update(getattr(cls, "is_a", ()) or ())
+    out = []
+    for unit_type, hosts in team_share_train_entries(player):
+        if unit_type in already or unit_type in out:
+            continue
+        if hosts:
+            if not any(
+                str(h) == host_name or str(h) in expanded for h in hosts
+            ):
+                continue
+        out.append(unit_type)
+    return out
+
+
 def effective_can_train(host):
     """合并宿主基础训练列表与附件加成（科技实验室解锁、反应堆双产）。
 
@@ -1237,6 +1272,10 @@ def effective_can_train(host):
         return ()
     base = _normalize_train_list(_base_can_train(host))
     train_names = list(base)
+    # AoE2 Italian team bonus: allies of an Italian player can train the
+    # Condottiero at their Barracks (``team_share_train condottiero
+    # barracks`` on the Italian race def).
+    train_names.extend(_team_shared_train_names(host, train_names))
     multipliers = {}
     for addon in host_attached_addons(host):
         for name in _addon_train_grants_for_host(addon, host):

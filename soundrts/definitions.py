@@ -570,6 +570,19 @@ class _Definitions:
                         d[name].setdefault("team_share_research", []).append(
                             list(words[1:])
                         )
+                    elif words[0] == "team_share_train" and len(words) >= 2:
+                        # One row per line: unit-type [host types…]
+                        #   team_share_train condottiero barracks
+                        # AoE2 Italian team bonus: every player allied with an
+                        # Italian can train the Condottiero at its Barracks.
+                        # Stored on the race/faction dict so
+                        # world_civ_bonuses.team_share_train_entries can find
+                        # it; absorbed here for the same reason as
+                        # ``team_share_research`` (no Python base to validate
+                        # the field against).
+                        d[name].setdefault("team_share_train", []).append(
+                            list(words[1:])
+                        )
                     elif words[0] == "race_grants_team_free_unit" and len(words) >= 2:
                         # D-Phase 2: AoE2 Italian Condottiero team bonus.
                         # Stash unit type-names on the race/faction dict so
