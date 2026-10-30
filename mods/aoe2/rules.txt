@@ -3963,21 +3963,45 @@ rdg_vs infantry 12
 rdg_vs spearman 1
 can_upgrade_to
 
-; 印加 Kamayuk — Incas unique (DE: 30F+60G, 18s; HP55/65 Atk8/8 vs cav/condottieri
-; +8/+10 vs cav). Spear-and-shield. Longer range.
+; 印加 Kamayuk — Incas unique (DE: 30G+70F, 10s; HP70/80 Atk7/8 Arm1/1
+; +8/+12 vs cavalry, +6/+10 vs camel, +20 vs war elephant).
+; Spear-and-shield infantry with increased attack range.
 def kamayuk
 class soldier
 is_a infantry
 is_a unique_unit
-cost 60 0 30 0
+cost 30 0 70 0
 population_cost 1
-time_cost 18
+time_cost 10
 ;space 0.25
 requirements castle_age
 no_auto_upgrade 1
 line_upgrade 1
 
-hp_max 55
+hp_max 70
+speed 1.0
+sight_range 4
+mdg 7
+mdg_cd 2
+mdg_range 1
+mdf 1
+rdf 0
+mdg_vs cavalry 8
+mdg_vs camel_rider 6
+mdg_vs battle_elephant 20
+can_upgrade_to elite_kamayuk
+can_use_tech forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor squires arson conscription
+
+; Elite Kamayuk -- DE: 500 gold 900 food, 45s research at the Castle.
+def elite_kamayuk
+is_a kamayuk
+cost 500 0 900 0
+time_cost 45
+requirements imperial_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 80
 speed 1.0
 sight_range 5
 mdg 8
@@ -10327,7 +10351,7 @@ can_research tracking squires supplies arson gambesons man_at_arms long_swordsma
 
 def incan_archery
 is_a archery_range
-can_train aoe_archer skirmisher elite_skirmisher
+can_train aoe_archer skirmisher elite_skirmisher slinger
 can_research crossbowman
 
 def incan_stable
@@ -10355,8 +10379,8 @@ can_research gillnets careening
 
 def incan_castle
 is_a aoe_castle
-can_train slinger trebuchet
-can_research conscription hoardings sappers spies
+can_train kamayuk trebuchet
+can_research elite_kamayuk conscription hoardings sappers spies
 
 def incan_villager
 is_a peasant
@@ -10579,11 +10603,48 @@ can_upgrade_to
 ; like the Champion does via ``is_a two_handed_swordsman``.
 def legionary
 class soldier
-is_a infantry
+is_a long_swordsman
 is_a unique_unit
-cost 60 0 30 0
+cost 400 0 800 0
+train_cost 20 0 50 0
 population_cost 1
-time_cost 13
+time_cost 100
+;space 0.25
+requirements imperial_age
+no_auto_upgrade 1
+line_upgrade 1
+
+hp_max 75
+speed 0.96
+sight_range 5
+mdg 12
+mdg_cd 2
+mdg_range 1
+mdf 2
+rdf 2
+mdg_vs infantry 4
+mdg_vs building 4
+can_upgrade_to
+can_use_tech forging iron_casting blast_furnace scale_mail_armor chain_mail_armor squires conscription comitatenses
+
+; ---------- 印加 Slinger (UU) ----------
+; DE (Forgotten): trained at the Archery Range, Castle Age.
+; 25 wood 50 food, 25s.  HP 35/40, Atk 4/5, Arm 0/0, speed 0.96, LoS 7,
+; range 5, reload 2s, accuracy 90%.  Anti-infantry skirmisher: it cannot
+; attack at close range (min range 2).
+; +4/+5 vs infantry, +1 vs spearman, +4 vs monk, +3 vs siege.
+def slinger
+class soldier
+is_a infantry
+is_a archer_unit
+is_a unique_unit
+cost 0 25 50 0
+population_cost 1
+time_cost 25
+rdg_projectile 1
+rdg_projectile_speed 7
+rdg_targets ground
+rdg_minimal_range 2
 ;space 0.25
 requirements castle_age
 no_auto_upgrade 1
@@ -10595,13 +10656,15 @@ sight_range 7
 mdg 0
 mdf 0
 rdf 0
-rdg 1
-rdg_cd 1.5
-rdg_ready 0.5
-rdg_hit_rate 100
+rdg 4
+rdg_cd 2
+rdg_ready 0.8
+rdg_hit_rate 90
 rdg_range 5
-rdg_vs infantry 6
-rdg_vs building 2
+rdg_vs infantry 4
+rdg_vs spearman 1
+rdg_vs monk 4
+rdg_vs siege_unit 3
 can_upgrade_to elite_slinger
 can_use_tech chemistry thumb_ring ring_archer_armor padded_archer_armor leather_archer_armor conscription
 
@@ -10614,18 +10677,20 @@ no_auto_upgrade 1
 line_upgrade 1
 
 hp_max 40
-speed 0.9
+speed 0.96
 sight_range 7
 mdg 0
 mdf 0
 rdf 0
-rdg 1
-rdg_cd 1.5
-rdg_ready 0.5
-rdg_hit_rate 100
-rdg_range 6
-rdg_vs infantry 8
-rdg_vs building 3
+rdg 5
+rdg_cd 2
+rdg_ready 0.8
+rdg_hit_rate 90
+rdg_range 5
+rdg_vs infantry 5
+rdg_vs spearman 1
+rdg_vs monk 4
+rdg_vs siege_unit 3
 can_upgrade_to
 
 

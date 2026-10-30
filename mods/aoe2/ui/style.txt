@@ -2776,6 +2776,16 @@ def elite_ghulam
 is_a ghulam
 title 9062
 
+; Kamayuk (Inca UU: anti-cavalry infantry with extra range)
+def kamayuk
+is_a walking_unit
+title 9040
+keyboard soldier1
+shortcut p
+def elite_kamayuk
+is_a kamayuk
+title 8357
+
 ; Note: Joan of Arc campaign NPCs (npc_joan, npc_baudricourt, npc_dauphin)
 ; are defined in mods/aoe2/single/Joan of Arc/ui/style.txt so the style
 ; stays co-located with the campaign maps and can be edited without

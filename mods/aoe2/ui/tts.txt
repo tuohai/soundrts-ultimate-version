@@ -674,3 +674,6 @@
 9061 Ghulam
 9062 Elite Ghulam
 
+; Inca unique unit (Kamayuk)
+9040 Kamayuk
+8357 Elite Kamayuk

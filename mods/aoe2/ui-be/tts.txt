@@ -630,3 +630,6 @@
 9061 Ghulam
 9062 Элітны Ghulam
 
+; Inca unique unit (Kamayuk)
+9040 Kamayuk
+8357 Элітны Kamayuk
