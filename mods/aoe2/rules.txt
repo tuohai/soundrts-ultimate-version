@@ -3171,7 +3171,11 @@ rdg_range 7
 rdg_vs building 11
 can_use_tech shipwright careening dry_dock circumnavigation
 can_upgrade_to
-; 拜占庭火船 Dromon
+; Dromon — Return of Rome regional siege ship.
+; DE: 175 wood 150 gold, 65s, Imperial Age, trained at the Dock.
+; HP 125, Atk 8, Melee arm 1, Pierce arm 6, Range 12, speed 1.15, LoS 14.
+; Long-range anti-building blast ship that CANNOT attack at close range
+; (min range 3).  Available to Armenians, Byzantines, Goths, Huns, Romans.
 def dromon
 class soldier
 is_a ship
@@ -3186,16 +3190,22 @@ mdg_radius 0.8
 requirements imperial_age
 no_auto_upgrade 1
 
-hp_max 120
+hp_max 125
 speed 1.15
 sight_range 14
 mdg 8
-mdg_cd 10
+mdg_cd 8
 mdg_range 12
 mdg_minimal_range 3
 mdf 1
 rdf 6
 mdg_vs building 34
+mdg_vs siege_unit 2
+mdg_vs wall 15
+mdg_vs fortified_wall 15
+mdg_vs gate 15
+mdg_vs fortified_gate 15
+mdg_vs aoe_castle 9
 can_use_tech shipwright greek_fire careening dry_dock circumnavigation
 can_upgrade_to
 ; ===========================================================================
@@ -6056,8 +6066,8 @@ can_research capped_ram siege_ram onager
 def byzantine_shipyard
 is_a shipyard
 cost 0 128 0 0
-; DE: no Cannon Galleon (Dromon elsewhere); full galley/fire/demo
-can_train fishing_ship trade_cog transport_ship galley fire_galley demolition_raft
+; DE: no Cannon Galleon (Dromon instead); full galley/fire/demo
+can_train fishing_ship trade_cog transport_ship galley fire_galley demolition_raft dromon
 can_research war_galley galleon fire_ship fast_fire_ship demolition_ship heavy_demolition_ship gillnets shipwright careening dry_dock
 
 def byzantine_castle
@@ -7323,7 +7333,7 @@ can_research capped_ram siege_ram onager siege_onager heavy_scorpion
 
 def goth_shipyard
 is_a shipyard
-can_train fishing_ship trade_cog transport_ship galley fire_galley demolition_raft
+can_train fishing_ship trade_cog transport_ship galley fire_galley demolition_raft dromon
 can_research war_galley galleon fire_ship fast_fire_ship demolition_ship heavy_demolition_ship gillnets careening dry_dock
 
 def goth_monastery
@@ -7702,7 +7712,7 @@ can_research capped_ram siege_ram onager
 
 def hun_shipyard
 is_a shipyard
-can_train fishing_ship trade_cog transport_ship galley fire_galley
+can_train fishing_ship trade_cog transport_ship galley fire_galley dromon
 can_research war_galley galleon fire_ship fast_fire_ship demolition_ship gillnets careening dry_dock
 
 def hun_castle
@@ -9774,7 +9784,7 @@ can_research capped_ram siege_ram onager heavy_scorpion
 
 def armenian_shipyard
 is_a shipyard
-can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_galley fast_fire_ship demolition_raft demolition_ship cannon_galleon
+can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_galley fast_fire_ship demolition_raft demolition_ship cannon_galleon dromon
 can_research gillnets careening
 
 def armenian_castle
@@ -10508,7 +10518,7 @@ can_research siege_ram heavy_scorpion
 
 def roman_shipyard
 is_a shipyard
-can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_galley fast_fire_ship demolition_raft demolition_ship
+can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_galley fast_fire_ship demolition_raft demolition_ship dromon
 
 def roman_castle
 is_a aoe_castle
