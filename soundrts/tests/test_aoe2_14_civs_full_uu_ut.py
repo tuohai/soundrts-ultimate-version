@@ -35,7 +35,11 @@ REFERENCE = {
     'huns':        ('hun',     ['tarkan'],                    ['marauders', 'atikulu']),
     'koreans':     ('korean',  ['war_wagon', 'turtle_ship'],  ['eupseong', 'shinkichon']),
     'mayans':      ('mayan',   ['plumed_archer'],             ['obsidian_arrows', 'el_dorado']),
-    'hindustanis': ('hindustani', ['armored_elephant', 'elephant_archer'], ['shatagni', 'frontier_defense']),
+    # DE (Dynasties of India) removed the (Elite) Elephant Archer from the
+    # Hindustanis -- it is a regional unit for the Bengalis / Dravidians /
+    # Gurjaras only.  Their unique units are now the Ghulam and the Imperial
+    # Camel Rider.
+    'hindustanis': ('hindustani', ['armored_elephant', 'ghulam'], ['shatagni', 'frontier_defense']),
     'spanish':     ('spanish', ['conquistador', 'misionero'], ['inquisition', 'supremacy']),
     'magyars':     ('magyar',  ['magyar_huszar'],             ['fogarasi_mercenaries', 'corvinian_army']),
     'poles':       ('polish',  ['obuch', 'winged_hussar'],    ['szlachta_privileges', 'lechitic_legacy']),
