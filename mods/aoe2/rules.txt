@@ -2076,6 +2076,10 @@ rdf 0
 mdg_vs infantry 12
 can_upgrade_to
 ; 意大利佣兵 Condottiero — Italians shared UU (barracks, Imperial); no elite
+; DE: 35 gold 50 food, 18s.  HP 80, Atk 10, Melee arm 1, Pierce arm 0,
+; speed 1.2, LoS 6.  +10 vs gunpowder units, +2 vs standard buildings.
+; ``team_free_unit 1`` + the Italians' ``race_grants_team_free_unit`` make
+; it free for every ally of an Italian player.
 def condottiero
 class soldier
 is_a infantry
@@ -2091,12 +2095,18 @@ no_auto_upgrade 1
 hp_max 80
 speed 1.2
 sight_range 6
-mdg 12
+mdg 10
 mdg_cd 1.9
 mdg_range 1
 mdf 1
 rdf 0
-mdg_vs hand_cannoneer 12
+mdg_vs hand_cannoneer 10
+mdg_vs bombard_cannon 10
+mdg_vs cannon_galleon 10
+mdg_vs elite_cannon_galleon 10
+mdg_vs organ_gun 10
+mdg_vs elite_organ_gun 10
+mdg_vs building 2
 can_upgrade_to
 can_use_tech forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor squires arson conscription
 ; 波斯战象 War Elephant (+ Elite)
@@ -8315,7 +8325,7 @@ can_use_tech loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation do
 
 def italian_barracks
 is_a barracks
-can_train militia spearman
+can_train militia spearman condottiero
 can_research tracking squires supplies arson gambesons man_at_arms long_swordsman pikeman
 
 def italian_archery
@@ -8397,6 +8407,11 @@ on_phase dark_age cost -20% 0 0 0 hand_cannoneer bombard_cannon cannon_galleon e
 team_on_phase dark_age sight_range 2 shipyard
 ; AoE2 Italian Condottiero team bonus: allies train condottiero for free
 race_grants_team_free_unit condottiero
+; AoE2 Italian Condottiero team bonus: allies can also TRAIN it at their
+; Barracks (Imperial Age).  ``team_share_train`` rows are read by
+; world_civ_bonuses.team_share_train_entries and offered by
+; world_build_rules.effective_can_train.
+team_share_train condottiero barracks
 beginner italians_beginner
 intermediate italians_intermediate
 advanced italians_advanced
