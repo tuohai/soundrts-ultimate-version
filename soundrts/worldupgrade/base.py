@@ -446,8 +446,14 @@ class Upgrade(CostEffectsMixin, AttributeEffectsMixin, ProductionEffectsMixin, G
 
             current_level = player.level(cls.type_name)
 
-            def _apply_once(level, effect_def_list):
-                applied_key = f"{cls.type_name}:{level}"
+            def _apply_once(level, effect_def_list, row_index=0):
+                # The dedup key must include the row index: a tech may declare
+                # several ``effect`` rows (e.g. ``magyar_raid`` has a
+                # ``kill_resource_vs`` row *and* a ``time_cost`` row).  Using
+                # only "<tech>:<level>" made the first row mark the key and
+                # every later row was skipped, so multi-row effects silently
+                # lost all but their first row.
+                applied_key = f"{cls.type_name}:{level}:{row_index}"
                 if applied_key in unit._applied_upgrade_effects:
                     return
                 effect_type = "effect_" + effect_def_list[0]
@@ -462,8 +468,8 @@ class Upgrade(CostEffectsMixin, AttributeEffectsMixin, ProductionEffectsMixin, G
             # 按等级逐级、且带去重地应用效果
             if isinstance(cls.effect[0], list):
                 for lvl in range(current_level):
-                    for effect_def in cls.effect:
-                        _apply_once(lvl, effect_def)
+                    for row_index, effect_def in enumerate(cls.effect):
+                        _apply_once(lvl, effect_def, row_index)
             else:
                 for lvl in range(current_level):
                     _apply_once(lvl, cls.effect, 0)
@@ -589,35 +595,41 @@ class Upgrade(CostEffectsMixin, AttributeEffectsMixin, ProductionEffectsMixin, G
             current_level = unit.player.level(cls.type_name)
             for level in range(current_level):
                 if cls.effect:
-                    applied_key = f"{cls.type_name}:{level}"
-                    if applied_key in unit._applied_upgrade_effects:
-                        continue
                     # 处理多个effects的情况
                     if isinstance(cls.effect[0], list):
                         # 处理多个effect定义的情况
-                        for effect_def in cls.effect:
+                        for row_index, effect_def in enumerate(cls.effect):
+                            # The dedup key must include the row index, else the
+                            # first row marks the key and every later row of a
+                            # multi-row effect is silently skipped.
+                            applied_key = f"{cls.type_name}:{level}:{row_index}"
+                            if applied_key in unit._applied_upgrade_effects:
+                                continue
                             effect_type = "effect_" + effect_def[0]
                             if hasattr(cls, effect_type):
                                 try:
                                     getattr(cls, effect_type)(
                                         unit, level, *effect_def[1:]
                                     )
+                                    unit._applied_upgrade_effects.add(applied_key)
                                 except Exception as e:
                                     from ..lib.log import warning
                                     warning(f"Error applying effect {effect_type} to {unit}: {str(e)}")
                     else:
                         # 处理单个effect定义的情况
+                        applied_key = f"{cls.type_name}:{level}:0"
+                        if applied_key in unit._applied_upgrade_effects:
+                            continue
                         effect_type = "effect_" + cls.effect[0]
                         if hasattr(cls, effect_type):
                             try:
                                 getattr(cls, effect_type)(
                                     unit, level, *cls.effect[1:]
                                 )
+                                unit._applied_upgrade_effects.add(applied_key)
                             except Exception as e:
                                 from ..lib.log import warning
                                 warning(f"Error applying effect {effect_type} to {unit}: {str(e)}")
-                    # 标记该等级效果已应用
-                    unit._applied_upgrade_effects.add(applied_key)
 
     # 这些方法的具体实现将在相应的子模块中定义
     @classmethod
