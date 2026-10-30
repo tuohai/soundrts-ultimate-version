@@ -619,3 +619,10 @@
 8354 Elite Monaspa
 8355 Elite Legionary
 8356 Elite Slinger
+
+; Roman unique units / technologies (Romans)
+9057 Trung úy
+9058 Trung úy tinh hoa
+9059 Ballista
+9060 Comitatenses
+

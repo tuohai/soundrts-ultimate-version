@@ -619,3 +619,9 @@
 8354 Elite Monaspa
 8355 Elite Legionary
 8356 Elite Slinger
+; Roman unique units / technologies (Romans)
+9057 Центурион
+9058 Элитный центурион
+9059 Баллисты
+9060 Комитатенсы
+

@@ -649,3 +649,10 @@
 
 ; 注：圣女贞德战役物品 (8860-8861) 与英雄标题/简介 (8862-8867) 已放在
 ; mods/aoe2/single/Joan of Arc/ui/tts.txt 中，与战役地图同目录便于维护。
+
+; Roman unique units / technologies (Romans)
+9057 百夫长
+9058 精锐百夫长
+9059 弹射弩
+9060 野战军
+

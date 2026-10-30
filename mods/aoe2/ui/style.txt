@@ -2298,6 +2298,11 @@ def sappers
 title 8271
 def spies
 title 8272
+; Roman unique technologies
+def ballistas
+title 9059
+def comitatenses
+title 9060
 def caravan
 title 8273
 def guilds
@@ -2731,15 +2736,25 @@ def elite_monaspa
 is_a monaspa
 title 8354
 
-; Legionary (Roman UU: anti-building infantry)
+; Legionary (Roman UU: anti-building infantry).  DE has no Elite Legionary --
+; the Legionary itself is the Imperial Age tier that replaces Two-Handed
+; Swordsman / Champion.
 def legionary
 is_a infantry
 title 9038
 keyboard soldier1
 shortcut l
-def elite_legionary
-is_a legionary
-title 8355
+
+; Centurion (Roman UU: castle-age heavy cavalry)
+def centurion
+is_a unit
+title 9057
+keyboard soldier3
+shortcut c
+
+def elite_centurion
+is_a centurion
+title 9058
 
 ; Slinger (Inca UU: ranged infantry with bonus vs infantry)
 def slinger

@@ -1349,7 +1349,7 @@ mdg_range 1
 mdf 0
 rdf 1
 can_upgrade_to man_at_arms
-can_use_tech forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor tracking squires arson gambesons supplies conscription supplies chieftains
+can_use_tech forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor tracking squires arson gambesons supplies conscription supplies chieftains comitatenses
 def man_at_arms
 is_a militia
 cost 40 0 100 0
@@ -1382,7 +1382,7 @@ mdg_cd 2
 mdg_range 1
 mdf 1
 rdf 1
-can_upgrade_to two_handed_swordsman
+can_upgrade_to two_handed_swordsman legionary
 def two_handed_swordsman
 is_a long_swordsman
 cost 100 0 200 0
@@ -1755,7 +1755,7 @@ mdg_cd 1.8
 mdg_range 1
 mdf 2
 rdf 2
-can_use_tech chivalry forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry conscription farimba
+can_use_tech chivalry forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry conscription farimba comitatenses
 can_upgrade_to cavalier
 def cavalier
 is_a aoe_knight
@@ -2522,7 +2522,7 @@ rdg_vs building 3
 rdg_vs infantry 1
 rdg_vs siege_unit 1
 can_upgrade_to heavy_scorpion
-can_use_tech rocketry drill ironclad siege_engineers furor_celtica
+can_use_tech rocketry drill ironclad siege_engineers furor_celtica ballistas
 ; 重型弩炮 — DE Imperial at Siege Workshop
 def heavy_scorpion
 is_a scorpion
@@ -2755,7 +2755,7 @@ rdg 7
 rdg_cd 3
 rdg_range 6
 rdg_vs building 6
-can_use_tech shipwright fletching bodkin_arrow bracer ballistics chemistry careening dry_dock circumnavigation
+can_use_tech shipwright fletching bodkin_arrow bracer ballistics chemistry careening dry_dock circumnavigation ballistas
 can_upgrade_to war_galley
 ; 大战船 War Galley
 def war_galley
@@ -10365,39 +10365,75 @@ nightmare incas_nightmare
 
 
 ; ---------- 罗马 Romans ----------
-; no Crossbow, no Thumb Ring, no Heavy CA, no Bracer, no Arbalester;
-; no Plate Barding, no Husbandry, no Bloodlines;
-; no monks, no Heavy Demolition Ship, no Shipwright, no Dry Dock, no Cannon Galleon;
-; no Siege Engineers, no architecture, no Bombard Tower;
-; Swordsman line (no Champion) + Centurion + Mangonel-line;
-; Legionary (infantry, anti-building); UT: Ballista (camel bonus damage)
+; 弹射弩 Ballistas — Castle Age UT: Scorpions attack 33% faster, Galley-line +2
+;   attack.
+def ballistas
+class upgrade
+cost 300 400 0 0
+time_cost 45
+requirements aoe_castle castle_age
+effect bonus rdg_cd -33%
+effect_bonus_targets scorpion
+effect bonus rdg 2
+effect_bonus_targets galley war_galley galleon
+
+; 野战军 Comitatenses — Imperial Age UT: Militia-line, Knight-line and Centurions
+;   train 50% faster and receive a +5 charge attack.  The charge attack is not
+;   modelled; the training speed is.
+def comitatenses
+class upgrade
+cost 800 0 700 0
+time_cost 60
+requirements aoe_castle imperial_age
+effect bonus time_cost -50%
+effect_bonus_targets militia man_at_arms long_swordsman legionary aoe_knight cavalier centurion elite_centurion
+
+; DE (Return of Rome) tech tree, verified against the DE data + the official
+; patch notes (Update 83607 / "Romans: Lose access to Arson").
+; Barracks: Militia -> Man-at-Arms -> Long Swordsman -> Legionary.  The Legionary
+;   is an Imperial Age *barracks* unit that replaces Two-Handed Swordsman AND
+;   Champion, so the Romans have neither.  They DO have Pikeman + Halberdier.
+;   No Arson (lost in a balance update), no Gambesons, no Supplies.
+; Archery: Archer -> Crossbowman (no Arbalester); Skirmisher + Elite Skirmisher;
+;   Cavalry Archer + Heavy Cavalry Archer; no Hand Cannoneer, no Thumb Ring,
+;   no Parthian Tactics.
+; Stable: Scout -> Light Cavalry -> Knight -> Cavalier.  No Hussar, no Paladin.
+; Blacksmith: no Bracer, no Plate Mail Armor (and no Plate Barding Armor).
+; Siege: no Siege Onager, no Bombard Cannon.
+; Monastery: no Theocracy, no Heresy, no Sanctity.
+; Castle: Centurion (Castle) + Elite Centurion (Imperial), Petard, Trebuchet,
+;   Conscription, Sappers, Spies.  No Hoardings.
+; University: no Bombard Tower, no Heated Shot, no Dry Dock, no Siphons,
+;   no Incendiaries, no Treadmill Crane.
+; Economy: no Two-Man Saw, no Stone Shaft Mining.
+; UT: Ballistas (castle), Comitatenses (castle).
 def roman_barracks
 is_a barracks
 can_train militia spearman
-can_research tracking squires supplies arson gambesons man_at_arms long_swordsman two_handed_swordsman pikeman
+can_research tracking squires man_at_arms long_swordsman pikeman halberdier legionary
 
 def roman_archery
 is_a archery_range
-can_train aoe_archer skirmisher elite_skirmisher cavalry_archer
-can_research
+can_train aoe_archer skirmisher cavalry_archer
+can_research crossbowman elite_skirmisher heavy_cavalry_archer
 
 def roman_stable
 is_a stables
 can_train scout_cavalry aoe_knight
-can_research light_cavalry cavalier paladin
+can_research light_cavalry cavalier
 
 def roman_blacksmith
 is_a blacksmith
-can_research forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor fletching bodkin_arrow padded_archer_armor leather_archer_armor ring_archer_armor
+can_research forging iron_casting blast_furnace scale_mail_armor chain_mail_armor scale_barding_armor chain_barding_armor fletching bodkin_arrow padded_archer_armor leather_archer_armor ring_archer_armor
 
 def roman_university
 is_a university
-can_research ballistics chemistry guardtower murder_holes masonry treadmill_crane sappers town_watch town_patrol
+can_research chemistry ballistics guardtower murder_holes masonry sappers town_watch town_patrol
 
 def roman_workshop
 is_a workshop
 can_train battering_ram capped_ram mangonel scorpion
-can_research siege_ram onager heavy_scorpion
+can_research siege_ram heavy_scorpion
 
 def roman_shipyard
 is_a shipyard
@@ -10405,8 +10441,8 @@ can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_g
 
 def roman_castle
 is_a aoe_castle
-can_train legionary trebuchet
-can_research conscription hoardings sappers spies
+can_train centurion trebuchet
+can_research elite_centurion conscription sappers spies ballistas comitatenses
 
 def roman_villager
 is_a peasant
@@ -10430,13 +10466,20 @@ aoe_castle roman_castle
 workshop roman_workshop
 shipyard roman_shipyard
 townhall town_center
-; DE: all buildings cost -15% wood
-on_phase dark_age cost 0 -15% 0 0 house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university aoe_castle wall gate fortified_wall palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
-; DE: stone mining 2x faster
-on_phase dark_age gather_time -50% stone
-; DE: swordsman (militia) line +2 melee attack in Imperial
-on_phase imperial_age mdg 2 militia man_at_arms long_swordsman two_handed_swordsman
-; Team: Centurion available at Barracks (defined as UU below)
+; DE: villagers gather, build and repair 5% faster
+build_speed_pct 5
+on_phase dark_age gather_time -5% food wood gold stone
+; DE: infantry receives double effect from Blacksmith armor upgrades.
+; Modelled as +1/+1 armor per armor upgrade on the infantry line.
+on_phase dark_age mdf 1 infantry
+on_phase dark_age rdf 1 infantry
+; DE: Scorpions cost -50% gold (slot 0 = gold)
+on_phase dark_age cost -50% 0 0 0 scorpion
+; DE: Galley-line +1 melee / +1 pierce armor
+on_phase dark_age mdf 1 galley war_galley galleon
+on_phase dark_age rdf 1 galley war_galley galleon
+; Team: Scorpion-line minimum range reduced to 1
+team_on_phase dark_age rdg_minimal_range -1 scorpion
 beginner romans_beginner
 intermediate romans_intermediate
 advanced romans_advanced
@@ -10444,8 +10487,64 @@ expert romans_expert
 nightmare romans_nightmare
 
 
+; ---------- 罗马 Centurion (UU) ----------
+; DE (Return of Rome): Castle Age heavy-cavalry UU, trained at the Castle.
+; Cost 85 gold 75 food, HP 110, Atk 13, Arm 2/3, speed 1.35, LoS 4, train 24s.
+; Elite Centurion is the Imperial Age form, *researched* at the Castle
+; (same pattern as Cataphract / Elite Cataphract).
+; Aura: +10% movement / +25% attack speed to nearby Militia-line units
+; (15% / 33% for Elite Centurion).  The aura is not modelled here -- see the
+; note in the Comitatenses definition.
+def centurion
+class soldier
+is_a cavalry
+is_a unique_unit
+cost 85 0 75 0
+population_cost 2
+time_cost 24
+;space 0.5
+requirements castle_age
+
+hp_max 110
+speed 1.35
+sight_range 4
+mdg 13
+mdg_cd 1.9
+mdg_range 1
+mdf 2
+rdf 3
+can_upgrade_to elite_centurion
+can_use_tech forging iron_casting blast_furnace scale_barding_armor chain_barding_armor bloodlines husbandry conscription comitatenses
+
+def elite_centurion
+class soldier
+is_a centurion
+cost 900 0 1100 0
+population_cost 2
+time_cost 60
+line_upgrade 1
+no_auto_upgrade 1
+requirements imperial_age
+
+hp_max 155
+sight_range 5
+mdg 15
+mdg_cd 1.9
+mdg_range 1
+mdf 3
+rdf 3
+can_upgrade_to
+
 ; ---------- 罗马 Legionary (UU) ----------
-; DE: HP40/50 Atk9/12 Arm1+3 vs pierce; anti-building sword infantry
+; DE (post-Chronicles patch 141935): HP 75, Atk 12, Arm 2/2, speed 0.96,
+; LoS 5, train 21s.  Imperial Age *barracks* line-upgrade that replaces
+; Two-Handed Swordsman / Champion, so there is no Elite version.
+; Researched at the Roman Barracks: 400 gold / 800 food, 100s.
+; Trained at the sword-line price (20 gold / 50 food, 21s) like every tier.
+; +4 vs infantry, +4 vs standard buildings.
+; ``is_a long_swordsman`` puts the Legionary in the sword line so the engine
+; resolves its train cost / train time from the line root (militia), exactly
+; like the Champion does via ``is_a two_handed_swordsman``.
 def legionary
 class soldier
 is_a infantry
@@ -10458,58 +10557,9 @@ requirements castle_age
 no_auto_upgrade 1
 line_upgrade 1
 
-hp_max 40
-speed 0.9
-sight_range 4
-mdg 9
-mdg_cd 2
-mdg_range 1
-mdf 1
-rdf 3
-mdg_vs building 8
-can_upgrade_to elite_legionary
-can_use_tech forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor squires arson gambesons conscription
-
-def elite_legionary
-is_a legionary
-cost 800 0 500 0
-time_cost 50
-requirements imperial_age
-no_auto_upgrade 1
-line_upgrade 1
-
-hp_max 50
-speed 0.9
-sight_range 5
-mdg 12
-mdg_cd 2
-mdg_range 1
-mdf 1
-rdf 4
-mdg_vs building 12
-can_upgrade_to
-
-; ---------- 印加 Slinger (UU) ----------
-; DE: HP30/40 Atk1/1 Rng5/6 Speed0.9; ranged infantry, no melee attack
-def slinger
-class soldier
-is_a infantry
-is_a archer_unit
-is_a unique_unit
-cost 30 0 30 0
-population_cost 1
-time_cost 8
-rdg_projectile 1
-rdg_projectile_speed 7
-rdg_targets ground
-;space 0.25
-requirements castle_age
-no_auto_upgrade 1
-line_upgrade 1
-
-hp_max 30
-speed 0.9
-sight_range 6
+hp_max 35
+speed 0.96
+sight_range 7
 mdg 0
 mdf 0
 rdf 0
