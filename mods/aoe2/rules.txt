@@ -8864,15 +8864,17 @@ footman militia
 archer aoe_archer
 knight aoe_knight
 catapult mangonel
-barracks aoe_barracks
-archery_range aoe_archery
-stables aoe_stables
-blacksmith aoe_blacksmith
-university aoe_university
+; The aoe_* building shells do not exist in rules.txt; point the slots at the
+; real base classes (as every other civ does).
+barracks barracks
+archery_range archery_range
+stables stables
+blacksmith blacksmith
+university university
 aoe_castle saracen_castle
-workshop aoe_workshop
-shipyard aoe_dock
-monastery aoe_monastery
+workshop workshop
+shipyard shipyard
+monastery monastery
 townhall town_center
 ; DE: market trade gold +25% (already implemented in market logic; explicit
 ; race flag for documentation; engine reads it via trade_reward_bonus_pct).
