@@ -177,20 +177,34 @@ class Upgrade(CostEffectsMixin, AttributeEffectsMixin, ProductionEffectsMixin, G
                 effects_to_process = cls.effect
             else:
                 effects_to_process = [cls.effect]
-        
+
         # 检查每个效果，提取成本相关效果
+        # 每个效果行可能带自己的 ``effect_bonus_targets`` 过滤器；带过滤器的
+        # 成本效果必须按单位类型逐次匹配，不能写成玩家级加成。
+        filtered_cost_effects = []
         for current_effect in effects_to_process:
             effect_parts = current_effect.split() if isinstance(current_effect, str) else list(current_effect)
-            
+
             # 处理 apply_bonus 效果
             if len(effect_parts) >= 2 and effect_parts[0] == "apply_bonus":
                 # apply_bonus效果直接应用到玩家，不需要累积到变量中
                 cls._handle_apply_bonus_effects(player, effect_parts)
                 continue
-            
+
             # 处理其他成本相关效果
             cost_effect_results = cls._process_cost_effects(effect_parts)
             if cost_effect_results:
+                # 拆出该行的目标过滤器（effect_bonus_targets）
+                row_targets = ()
+                try:
+                    from .effect_bonus_parse import split_effect_bonus_args
+
+                    _bonus_tokens, row_targets = split_effect_bonus_args(
+                        effect_parts[1:]
+                    )
+                except Exception:
+                    row_targets = ()
+
                 # 累积成本效果变量（而不是直接赋值）
                 (new_has_cost_effect, new_cost_bonus_values, new_has_cost_percent_effect, new_cost_percent_bonus_values,
                  new_has_population_cost_effect, new_population_cost_bonus_value, new_has_population_cost_percent_effect,
@@ -200,12 +214,33 @@ class Upgrade(CostEffectsMixin, AttributeEffectsMixin, ProductionEffectsMixin, G
                  new_has_production_time_effect, new_production_time_bonus_value, new_has_production_time_percent_effect,
                  new_production_time_percent_bonus_value, new_has_production_qty_effect, new_production_qty_bonus_value,
                  new_has_production_qty_percent_effect, new_production_qty_percent_bonus_value) = cost_effect_results
-                
+
+                # 带过滤器的成本效果：单独按行保存，稍后由订单层按单位类型匹配
+                if row_targets:
+                    filtered_cost_effects.append(
+                        (
+                            new_has_cost_effect, list(new_cost_bonus_values),
+                            new_has_cost_percent_effect, list(new_cost_percent_bonus_values),
+                            new_has_population_cost_effect, new_population_cost_bonus_value,
+                            new_has_population_cost_percent_effect, new_population_cost_percent_bonus_value,
+                            new_has_time_cost_effect, new_time_cost_bonus_value,
+                            new_has_time_cost_percent_effect, new_time_cost_percent_bonus_value,
+                            new_has_production_cost_effect, list(new_production_cost_bonus_values),
+                            new_has_production_cost_percent_effect, list(new_production_cost_percent_bonus_values),
+                            new_has_production_time_effect, new_production_time_bonus_value,
+                            new_has_production_time_percent_effect, new_production_time_percent_bonus_value,
+                            new_has_production_qty_effect, new_production_qty_bonus_value,
+                            new_has_production_qty_percent_effect, new_production_qty_percent_bonus_value,
+                            tuple(row_targets),
+                        )
+                    )
+                    continue
+
                 # 累积到现有变量中
                 if new_has_cost_effect:
                     has_cost_effect = True
                     cost_bonus_values.extend(new_cost_bonus_values)
-                
+
                 if new_has_cost_percent_effect:
                     has_cost_percent_effect = True
                     cost_percent_bonus_values.extend(new_cost_percent_bonus_values)
@@ -261,22 +296,41 @@ class Upgrade(CostEffectsMixin, AttributeEffectsMixin, ProductionEffectsMixin, G
             production_time_percent_bonus_value, has_production_qty_effect, production_qty_bonus_value,
             has_production_qty_percent_effect, production_qty_percent_bonus_value, current_level
         )
-        
+
         # 检查是否已存在相同等级的效果
         existing_effect_idx = -1
         for i, effect_data in enumerate(cls._global_cost_effects[cls.type_name]):
-            if effect_data['level'] == current_level:
+            if effect_data['level'] == current_level and not effect_data.get(
+                'effect_targets'
+            ):
                 existing_effect_idx = i
                 break
-                
+
         if existing_effect_idx >= 0:
             # 更新现有效果
             cls._global_cost_effects[cls.type_name][existing_effect_idx] = cost_effects
         else:
             # 添加新效果
             cls._global_cost_effects[cls.type_name].append(cost_effects)
-            
+
+        # 带过滤器的成本效果单独存储：它们只对匹配的单位类型生效，
+        # 不能写成玩家级加成（否则会泄漏到所有单位）。
+        for row in filtered_cost_effects:
+            row_dict = cls._create_cost_effects_dict(
+                row[0], row[1], row[2], row[3],
+                row[4], row[5], row[6], row[7],
+                row[8], row[9], row[10], row[11],
+                row[12], row[13], row[14], row[15],
+                row[16], row[17], row[18], row[19],
+                row[20], row[21], row[22], row[23],
+                current_level,
+                effect_targets=row[24],
+            )
+            cls._global_cost_effects[cls.type_name].append(row_dict)
+
         # 直接应用成本修正到玩家对象上
+        # 注意：只有**无过滤器**的成本效果才能写玩家级；带过滤器的效果已由
+        # filtered_cost_effects 单独保存，避免泄漏到不匹配的单位。
         cls._apply_cost_effects_to_player(
             player, has_cost_effect, cost_bonus_values, has_cost_percent_effect, cost_percent_bonus_values,
             has_population_cost_effect, population_cost_bonus_value, has_population_cost_percent_effect,
@@ -412,7 +466,7 @@ class Upgrade(CostEffectsMixin, AttributeEffectsMixin, ProductionEffectsMixin, G
                         _apply_once(lvl, effect_def)
             else:
                 for lvl in range(current_level):
-                    _apply_once(lvl, cls.effect)
+                    _apply_once(lvl, cls.effect, 0)
 
     @classmethod
     def _handle_apply_bonus_effects(cls, player, effect_parts):

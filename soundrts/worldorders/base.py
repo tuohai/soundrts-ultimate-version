@@ -404,6 +404,65 @@ class ComplexOrder(Order):
                     modified_cost[i] += int(modified_cost[i] * percent_bonus)
 
     @staticmethod
+    def _merge_filtered_cost_for_type(player, type_cls, modified_cost):
+        """Apply tech cost effects that carry an ``effect_bonus_targets`` filter.
+
+        A cost effect with a unit filter (e.g. AoE2 ``perfusion``: militia and
+        spearman only) must only apply to matching unit types.  The engine
+        stores those effects separately from the player-wide cost bonuses
+        (see ``Upgrade.upgrade_player``) precisely so they do not leak.
+
+        Only techs the player actually researched are considered, and only the
+        rows whose filter matches ``type_cls``.
+        """
+        if player is None or type_cls is None or not modified_cost:
+            return
+        upgrades = getattr(player, "upgrades", ()) or ()
+        if not upgrades:
+            return
+        try:
+            from ..worldphase import Phase
+            from ..world_civ_bonuses import _type_proxy
+
+            proxy = _type_proxy(type_cls)
+            if proxy is None:
+                return
+        except Exception:
+            return
+
+        for tech_name in upgrades:
+            if not isinstance(tech_name, str):
+                continue
+            for effect_data in Upgrade._global_cost_effects.get(tech_name, ()):
+                targets = effect_data.get("effect_targets") or ()
+                if not targets:
+                    # Unfiltered effect: already applied player-wide.
+                    continue
+                try:
+                    if player.level(tech_name) < effect_data.get("level", 0):
+                        continue
+                except Exception:
+                    continue
+                try:
+                    if not Phase._unit_matches_targets(proxy, targets):
+                        continue
+                except Exception:
+                    continue
+
+                if effect_data.get("has_cost_effect"):
+                    for i, bonus in enumerate(
+                        effect_data.get("cost_bonus_values", ()) or ()
+                    ):
+                        if i < len(modified_cost):
+                            modified_cost[i] += bonus
+                if effect_data.get("has_cost_percent_effect"):
+                    for i, p in enumerate(
+                        effect_data.get("cost_percent_bonus_values", ()) or ()
+                    ):
+                        if i < len(modified_cost) and p != 0:
+                            modified_cost[i] += int(modified_cost[i] * p)
+
+    @staticmethod
     def _merge_research_resource_cost(player, modified_cost):
         """合并阵营 ``research_cost_discount``（仅科技/单位升级订单调用）。"""
         if player is None or not modified_cost:
@@ -520,6 +579,12 @@ class ComplexOrder(Order):
             if hasattr(self.unit, "player") and self.unit.player:
                 self._merge_phase_resource_cost(self.unit.player, modified_cost)
                 try:
+                    self._merge_filtered_cost_for_type(
+                        self.unit.player, self.type, modified_cost
+                    )
+                except Exception:
+                    pass
+                try:
                     from ..world_civ_bonuses import merge_pool_cost_for_type
 
                     merge_pool_cost_for_type(
@@ -589,6 +654,10 @@ class ComplexOrder(Order):
                     local_pop_percent = 0.0
                     for tech_name in applicable_techs:
                         for effect_data in Upgrade._global_cost_effects.get(tech_name, []):
+                            # Filtered rows are applied separately below (they must
+                            # only affect matching unit types).
+                            if effect_data.get('effect_targets'):
+                                continue
                             if self.unit.player.level(tech_name) < effect_data.get('level', 0):
                                 continue
                             if effect_data.get('has_population_cost_effect'):
@@ -606,6 +675,45 @@ class ComplexOrder(Order):
                     "phase_population_cost_bonus",
                     "phase_population_cost_percent_bonus",
                 )
+
+                # Filtered population-cost effects (effect_bonus_targets).
+                try:
+                    from ..worldupgrade import Upgrade as _Upg
+
+                    for tech_name in getattr(self.unit.player, "upgrades", ()) or ():
+                        if not isinstance(tech_name, str):
+                            continue
+                        for effect_data in _Upg._global_cost_effects.get(tech_name, ()):
+                            targets = effect_data.get("effect_targets") or ()
+                            if not targets:
+                                continue
+                            try:
+                                if self.unit.player.level(tech_name) < effect_data.get("level", 0):
+                                    continue
+                                from ..worldphase import Phase
+                                from ..world_civ_bonuses import _type_proxy
+
+                                proxy = _type_proxy(self.type)
+                                if proxy is None:
+                                    continue
+                                if not Phase._unit_matches_targets(proxy, targets):
+                                    continue
+                            except Exception:
+                                continue
+                            if effect_data.get("has_population_cost_effect"):
+                                modified_population_cost += effect_data.get(
+                                    "population_cost_bonus_value", 0
+                                )
+                            if effect_data.get("has_population_cost_percent_effect"):
+                                pct = effect_data.get(
+                                    "population_cost_percent_bonus_value", 0.0
+                                )
+                                if pct != 0:
+                                    modified_population_cost += int(
+                                        modified_population_cost * pct
+                                    )
+                except Exception:
+                    pass
 
             return max(0, modified_population_cost)
 
@@ -650,6 +758,10 @@ class ComplexOrder(Order):
                     local_time_percent = 0.0
                     for tech_name in applicable_techs:
                         for effect_data in Upgrade._global_cost_effects.get(tech_name, []):
+                            # Filtered rows are applied separately below (they must
+                            # only affect matching unit types).
+                            if effect_data.get('effect_targets'):
+                                continue
                             if self.unit.player.level(tech_name) < effect_data.get('level', 0):
                                 continue
                             if effect_data.get('has_time_cost_effect'):
@@ -667,6 +779,47 @@ class ComplexOrder(Order):
                     "phase_time_cost_bonus",
                     "phase_time_cost_percent_bonus",
                 )
+
+                # Filtered train/build time effects (effect_bonus_targets).
+                # AoE2 ``comitatenses``: militia / knight lines and centurions
+                # train 50% faster — and nothing else does.
+                try:
+                    from ..worldupgrade import Upgrade as _Upg
+
+                    for tech_name in getattr(self.unit.player, "upgrades", ()) or ():
+                        if not isinstance(tech_name, str):
+                            continue
+                        for effect_data in _Upg._global_cost_effects.get(tech_name, ()):
+                            targets = effect_data.get("effect_targets") or ()
+                            if not targets:
+                                continue
+                            try:
+                                if self.unit.player.level(tech_name) < effect_data.get("level", 0):
+                                    continue
+                                from ..worldphase import Phase
+                                from ..world_civ_bonuses import _type_proxy
+
+                                proxy = _type_proxy(self.type)
+                                if proxy is None:
+                                    continue
+                                if not Phase._unit_matches_targets(proxy, targets):
+                                    continue
+                            except Exception:
+                                continue
+                            if effect_data.get("has_time_cost_effect"):
+                                modified_time_cost += effect_data.get(
+                                    "time_cost_bonus_value", 0
+                                )
+                            if effect_data.get("has_time_cost_percent_effect"):
+                                pct = effect_data.get(
+                                    "time_cost_percent_bonus_value", 0.0
+                                )
+                                if pct != 0:
+                                    modified_time_cost += int(
+                                        modified_time_cost * pct
+                                    )
+                except Exception:
+                    pass
 
             buff_pct = getattr(self.unit, "_buff_time_cost_percent", 0)
             if buff_pct:

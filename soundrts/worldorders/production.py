@@ -1063,6 +1063,12 @@ class TrainOrder(ProductionOrder):
 
         self._merge_phase_resource_cost(self.unit.player, modified_cost)
         try:
+            self._merge_filtered_cost_for_type(
+                self.unit.player, self.type, modified_cost
+            )
+        except Exception:
+            pass
+        try:
             from ..world_civ_bonuses import merge_pool_cost_for_type
 
             merge_pool_cost_for_type(self.unit.player, self.type, modified_cost)

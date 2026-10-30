@@ -206,8 +206,14 @@ class CostEffectsMixin:
                                  production_cost_bonus_values, has_production_cost_percent_effect, production_cost_percent_bonus_values,
                                  has_production_time_effect, production_time_bonus_value, has_production_time_percent_effect,
                                  production_time_percent_bonus_value, has_production_qty_effect, production_qty_bonus_value,
-                                 has_production_qty_percent_effect, production_qty_percent_bonus_value, current_level):
-        """创建成本效果字典"""
+                                 has_production_qty_percent_effect, production_qty_percent_bonus_value, current_level,
+                                 effect_targets=None):
+        """创建成本效果字典
+
+        ``effect_targets`` 保存该效果行的 ``effect_bonus_targets`` 过滤器。
+        有过滤器的成本效果**不能**写成玩家级加成（否则会泄漏到所有单位），
+        必须由订单层按被训练/建造的单位类型逐次匹配后应用。
+        """
         return {
             'has_cost_effect': has_cost_effect,
             'cost_bonus_values': cost_bonus_values,
@@ -233,7 +239,9 @@ class CostEffectsMixin:
             'production_qty_bonus_value': production_qty_bonus_value,
             'has_production_qty_percent_effect': has_production_qty_percent_effect,
             'production_qty_percent_bonus_value': production_qty_percent_bonus_value,
-            'level': current_level
+            'level': current_level,
+            # Empty tuple = no filter (applies to everything).
+            'effect_targets': tuple(effect_targets or ()),
         }
 
     @classmethod
