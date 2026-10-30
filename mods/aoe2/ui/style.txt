@@ -2646,14 +2646,14 @@ shortcut p
 ; NEW UNIQUE UNITS — 11 new UUs from last commit + 2 new (Legionary, Slinger)
 ; ===========================================================================
 
-; Bulwark (Bulgarian UU: melee cavalry with high pierce armor)
-def bulwark
+; Konnik (Bulgarian UU: heavy cavalry that fights on as infantry when felled)
+def konnik
 is_a cavalry
 title 9029
 keyboard soldier3
 shortcut k
-def elite_bulwark
-is_a bulwark
+def elite_konnik
+is_a konnik
 title 8346
 
 ; Leitis (Lithuanian UU: cavalry that ignores target armor)

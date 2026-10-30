@@ -4042,7 +4042,7 @@ attack
 goto tn1_castle
 
 
-; ======================== BULGARIANS (bulwark/aoe_knight) ========================
+; ======================== BULGARIANS (konnik/aoe_knight) ========================
 
 def bulgarians_beginner
 defeat_score 10
@@ -4052,7 +4052,7 @@ constant_attacks 0
 research 1
 get 8 bulgarian_villager
 get 4 militia 8 aoe_archer
-get 12 bulgarian_villager 8 aoe_knight 8 bulwark 2 battering_ram
+get 12 bulgarian_villager 8 aoe_knight 8 konnik 2 battering_ram
 goto -1
 
 def bulgarians_intermediate
@@ -4068,7 +4068,7 @@ label bui1
 get 8 bulgarian_villager
 get 4 militia 8 aoe_archer
 attack
-get 14 bulgarian_villager 8 aoe_knight 8 bulwark 3 battering_ram
+get 14 bulgarian_villager 8 aoe_knight 8 konnik 3 battering_ram
 attack
 get 4 battering_ram 2 mangonel
 attack
@@ -4092,7 +4092,7 @@ label bua1
 get 8 bulgarian_villager
 get 4 militia 8 aoe_archer
 attack
-get 14 bulgarian_villager 8 aoe_knight 8 bulwark 3 battering_ram
+get 14 bulgarian_villager 8 aoe_knight 8 konnik 3 battering_ram
 attack
 get 4 battering_ram 2 mangonel
 attack
@@ -4122,7 +4122,7 @@ if_attacked goto bue1_hold
 if_enemy cavalry goto bue1_spears
 if_enemy archer_unit goto bue1_skirm
 label bue1_castle
-get 16 bulgarian_villager 8 aoe_knight 10 bulwark 4 battering_ram
+get 16 bulgarian_villager 8 aoe_knight 10 konnik 4 battering_ram
 attack
 get 6 battering_ram 4 mangonel
 attack
@@ -4168,7 +4168,7 @@ if_attacked goto bun1_hold
 if_enemy cavalry goto bun1_spears
 if_enemy archer_unit goto bun1_skirm
 label bun1_castle
-get 18 bulgarian_villager 8 aoe_knight 12 bulwark 4 battering_ram
+get 18 bulgarian_villager 8 aoe_knight 12 konnik 4 battering_ram
 attack
 get 6 battering_ram 4 mangonel
 attack

@@ -565,7 +565,7 @@
 ; Late-added civ titles (14 from previous commit + 2 final: Inca, Romans)
 ; Used by style.txt civ defs (title 8714-8727, intro 8554-8567)
 8714 Bulgarians
-8554 Unique unit Bulwark. Stone miners work faster. Mill upgrades cost less.
+8554 Unique unit Konnik. Stone miners work faster. Mill upgrades cost less.
   Team bonus: stone miners work even faster.
 
 8715 Lithuanians
@@ -636,7 +636,7 @@
 ; Late-added civ unique unit labels (title 9029-9039)
 ; Per-civ elite upgrade labels removed for design consistency; rules.txt
 ; can_upgrade_to chain uses shared "elite + unit" labels via the elite_*_x defs.
-9029 Bulwark
+9029 Konnik
 9030 Leitis
 9031 Shotel Warrior
 9032 Ballista Elephant
@@ -648,7 +648,7 @@
 9038 Legionary
 9039 Slinger
 ; Elite upgrade labels for new UUs (8346-8356)
-8346 Elite Bulwark
+8346 Elite Konnik
 8347 Elite Leitis
 8348 Elite Shotel Warrior
 8349 Elite Ballista Elephant

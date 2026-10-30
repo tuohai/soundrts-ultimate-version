@@ -8818,7 +8818,7 @@ nightmare saracens_nightmare
 ; no Heavy Demolition Ship, no Shipwright, no Careening, no Dry Dock;
 ; no Architecture, no heated shot;
 ; no Eagles; yes Arson;
-; UU: Bulwark (melee cavalry with high pierce armor); Siege Warlord UT (Scorpion/Onager line)
+; UU: Konnik (heavy cavalry that fights on as infantry when felled); Siege Warlord UT (Scorpion/Onager line)
 def bulgarian_barracks
 is_a barracks
 can_train militia spearman
@@ -8863,7 +8863,7 @@ can_research redemption herbal_medicine heresy sanctity fervor faith illuminatio
 def bulgarian_castle
 is_a aoe_castle
 can_train konnik trebuchet
-can_research conscription hoardings sappers spies
+can_research elite_konnik conscription hoardings sappers spies
 
 def bulgarian_villager
 is_a peasant
@@ -9838,13 +9838,19 @@ nightmare georgians_nightmare
 ; NEW UNIQUE UNITS for the 14 new civilizations
 ; ===========================================================================
 
-; ---------- 保加利亚 Bulwark ----------
-; DE: HP80/100 Atk12/14 Arm0/1 pierce 5; melee cavalry with high pierce armor
-def bulwark
+; ---------- 保加利亚 Konnik ----------
+; DE (The Last Khans): heavy cavalry UU trained at the Castle / Krepost.
+; Cost 70 gold 60 food, 16s.  HP 100/120, Atk 12/14, Arm 2/2, speed 1.35.
+; The Konnik fights on as infantry when felled (Dismounted Konnik) -- the
+; dismounted form is not modelled here.
+; NOTE: the mod previously defined a *mounted archer* named ``konnik`` and a
+; non-existent unit named ``bulwark``.  Both were replaced by the real DE
+; Konnik below; ``bulwark`` / ``elite_bulwark`` no longer exist.
+def konnik
 class soldier
 is_a cavalry
 is_a unique_unit
-cost 55 0 80 0
+cost 70 0 60 0
 population_cost 2
 time_cost 16
 ;space 0.5
@@ -9852,35 +9858,28 @@ requirements castle_age
 no_auto_upgrade 1
 line_upgrade 1
 
-hp_max 80
-speed 1.1
+hp_max 100
+speed 1.35
 sight_range 5
 mdg 12
 mdg_cd 2
 mdg_range 1
-mdf 0
-rdf 5
-mdg_vs building 4
-can_upgrade_to elite_bulwark
+mdf 2
+rdf 2
+can_upgrade_to elite_konnik
 can_use_tech forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry conscription
 
-def elite_bulwark
-is_a bulwark
-cost 800 0 1000 0
-time_cost 45
+; Elite Konnik -- DE: 750 gold 1000 food, 70s research at the Castle.
+def elite_konnik
+is_a konnik
+cost 750 0 1000 0
+time_cost 70
 requirements imperial_age
 no_auto_upgrade 1
 line_upgrade 1
 
-hp_max 100
-speed 1.1
-sight_range 6
+hp_max 120
 mdg 14
-mdg_cd 2
-mdg_range 1
-mdf 1
-rdf 6
-mdg_vs building 5
 can_upgrade_to
 
 ; ---------- 立陶宛 Leitis ----------
@@ -10595,50 +10594,6 @@ rdg_range 6
 rdg_vs infantry 8
 rdg_vs building 3
 can_upgrade_to
-
-
-; Bulgarian UU: Konnik (mounted archer, AoE2 DE)
-def konnik
-class soldier
-is_a cavalry
-is_a archer_unit
-is_a unique_unit
-cost 60 60 0 0
-population_cost 2
-time_cost 20
-rdg_projectile 1
-rdg_projectile_speed 7
-rdg_targets ground air
-;space 0.4
-requirements castle_age
-no_auto_upgrade 1
-line_upgrade 1
-
-hp_max 100
-speed 1.4
-sight_range 5
-mdg 10
-mdf 0
-rdf 5
-rdg 2
-rdg_cd 2
-rdg_ready 0.6
-rdg_range 4
-rdg_hit_rate 100
-can_upgrade_to elite_konnik
-can_use_tech forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry conscription thumb_ring
-
-def elite_konnik
-class soldier
-is_a konnik
-cost 60 60 0 0
-population_cost 2
-time_cost 20
-line_upgrade 0
-
-hp_max 120
-mdg 13
-rdg 3
 
 
 ; Berber UU: Genitour (mounted skirmisher, AoE2 DE)

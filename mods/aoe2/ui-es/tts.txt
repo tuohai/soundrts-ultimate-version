@@ -552,7 +552,7 @@
   Monks heal faster.
   Team bonus: Chemistry is free.
 8714 Búlgaros
-8554 Unique unit Bulwark.
+8554 Unique unit Konnik.
   See English intro for full description.
 8715 Lituanos
 8555 Unique unit Leitis.
@@ -595,7 +595,7 @@
   See English intro for full description.
 
 ; New unique unit titles (9029-9039)
-9029 Bulwark
+9029 Konnik
 9030 Leitis
 9031 Shotel Warrior
 9032 Ballista Elephant
@@ -608,7 +608,7 @@
 9039 Slinger
 
 ; Elite upgrade labels (8346-8356)
-8346 Elite Bulwark
+8346 Elite Konnik
 8347 Elite Leitis
 8348 Elite Shotel Warrior
 8349 Elite Ballista Elephant
