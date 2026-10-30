@@ -5,6 +5,94 @@ Release notes
 .. contents::
 
 
+1.5.1.6
+-------
+
+**Fixed: the late-added AoE2 civ buildings had no title and no hotkey**
+
+- **Problem**: ``rules.txt`` gives every civ its own building shell (``barracks roman_barracks``) and unit skin (``knight japanese_knight``), but ``mods/aoe2/ui/style.txt`` only had style definitions for ``britons``..``turks``. A shell with no style def inherits nothing, so it had no spoken title (the building was silent) and no keyboard slot (the W / soldier hotkeys never reached it) -- the reported bug was the Romans (骡马) barracks not being announced when pressing W.
+- **Fix**: Add ``def <shell>`` + ``is_a <semantic base>`` for all 142 missing civ shells, so the generic building name and the hotkey slot are inherited from the base.
+- **Scope**: ``mods/aoe2/ui/style.txt`` (142 new style definitions), ``soundrts/tests/test_aoe2_civ_building_shell_titles.py`` (8 regression tests auditing every civ shell in the race table).
+
+**Fixed: test modules leaked the mod / map / campaign state into each other**
+
+- **Problem**: Several test modules switched the global resource manager to another mod and never restored it: ``test_aoe2_age_rewards.py`` and ``test_faction_age_cost_discounts.py`` set ``config.mods = "aoe2"`` and left it there, while ``test_build_rules.py`` loaded the StarCraft mod together with its map (three tests) and left both active. A later fixture that used ``config.mods`` as its restore baseline then kept the AoE2 rules loaded for the rest of the session, so every later module read the wrong rules -- 28 tests failed in ``test_bridge_terrain.py`` and friends.
+- **Fix**: Each leaking test now restores what it changed (``try/finally``), and ``conftest``'s ``_isolate_resource_mods`` fixture additionally restores ``config.mods``, the map layer and the campaign layer as a safety net for the remaining modules that switch mods.
+- **Scope**: ``soundrts/tests/conftest.py``, ``soundrts/tests/test_aoe2_age_rewards.py``, ``soundrts/tests/test_build_rules.py``, ``soundrts/tests/test_faction_age_cost_discounts.py``.
+
+**Fixed: unit-filtered cost / time effects leaked onto every unit**
+
+- **Problem**: A cost effect carrying an ``effect_bonus_targets`` filter was folded into the player-level bonuses, so a discount or a training-time change meant for one named unit type (for example ``scorpion``) also applied to every unit the player owned.
+- **Fix**: Filtered cost effects are now stored separately together with their own target list, and the order layer matches them against the unit type before they take effect. Effects without a filter keep working as player-wide bonuses.
+- **Scope**: ``soundrts/worldupgrade/base.py``, ``soundrts/worldupgrade/cost_effects.py``, ``soundrts/worldorders/base.py``, ``soundrts/worldorders/production.py``.
+
+**Fixed: only the first row of a multi-row tech effect was applied**
+
+- **Problem**: The de-duplication key was just ``"<tech>:<level>"``. A tech may declare several ``effect`` rows (for example ``magyar_raid`` has a ``kill_resource_vs`` row *and* a ``time_cost`` row), so the first row marked the key and every later row was silently skipped -- multi-row effects kept only their first row.
+- **Fix**: The key is now ``"<tech>:<level>:<row index>"``, so every row applies exactly once.
+- **Scope**: ``soundrts/worldupgrade/base.py``.
+
+**Added: allies of an Italian can train the Condottiero**
+
+- **Problem**: The Italians only had ``race_grants_team_free_unit``, which made the Condottiero free for every ally -- but an ally's own Barracks never offered the unit in the first place, so the team bonus amounted to nothing.
+- **Fix**: A new rule field ``team_share_train <unit> <building…>`` (one row per line) is read by ``world_civ_bonuses.team_share_train_entries`` and offered by ``world_build_rules.effective_can_train``: a player allied with an Italian can train the Condottiero at their own Barracks (Imperial Age), and it is free for them as well.
+- **Scope**: ``soundrts/definitions.py``, ``soundrts/world_civ_bonuses.py``, ``soundrts/world_build_rules.py``.
+
+**Fixed: the race build-speed bonus was never applied**
+
+- **Problem**: The race field ``build_speed_pct N`` (AoE2 DE: Romans +5%, Spanish +30%) was never read by the engine. ``Building.time_cost`` reads ``player.build_speed_pct``, but nothing ever set that attribute, so the whole race bonus was a no-op.
+- **Fix**: The player now reads the ``build_speed_pct`` of their race at creation time and stores it in ``player.build_speed_pct``; races without the field keep the neutral value 0.
+- **Scope**: ``soundrts/worldplayerbase/base.py``.
+
+**Changed: the Romans are aligned with AoE2 DE (Return of Rome)**
+
+- **Problem**: The Roman tech tree, unit stats and civ bonuses did not match DE: the Barracks had no late unit, the buildings offered several techs DE does not give the Romans, the Archery Range had no Crossbowman, the Castle had no Centurion, and the civ bonuses were an outdated "all buildings -15% wood" variant.
+- **Fix**: The whole Roman tree is rebuilt from the DE data. Barracks: ``militia -> man_at_arms -> long_swordsman -> legionary`` -- the Legionary is an Imperial Age *barracks* unit that replaces Two-Handed Swordsman and Champion, so the Romans have neither -- plus ``pikeman`` and ``halberdier``. Archery Range: ``aoe_archer -> crossbowman``, ``skirmisher -> elite_skirmisher``, ``cavalry_archer -> heavy_cavalry_archer``. Stable: ``scout_cavalry -> light_cavalry -> aoe_knight -> cavalier``. Castle: ``centurion`` (Castle Age) and ``elite_centurion`` (Imperial Age, researched), ``trebuchet``, ``conscription``, ``sappers``, ``spies``. Two unique techs: ``ballistas`` (Castle Age: Scorpions attack 33% faster, Galley line +2 attack) and ``comitatenses`` (Imperial Age: Militia line, Knight line and Centurions train 50% faster). Added ``centurion`` (85 gold 75 food, 24s) and ``elite_centurion`` (900 gold 1100 food, 60s research); ``legionary`` now inherits from ``long_swordsman`` so the line's train cost and time apply to it. The civ bonuses were rewritten to DE as well: 5% faster gathering and building, double effect of the Blacksmith armour upgrades on infantry, -50% gold for Scorpions, +1/+1 armour for the Galley line, and a team bonus that reduces the Scorpion's minimum range by 1.
+- **Scope**: ``mods/aoe2/rules.txt`` (Roman tech tree, ``centurion`` / ``elite_centurion`` / ``legionary``, ``ballistas`` / ``comitatenses``, civ and team bonuses), ``mods/aoe2/ui/style.txt``, ``mods/aoe2/ui*/tts.txt`` (13 languages).
+
+**Changed: the DE Konnik replaces the non-existent "Bulwark"**
+
+- **Problem**: The mod defined a ``bulwark`` unit that does not exist in AoE2, while the real DE ``konnik`` was defined as a mounted archer -- neither matched the original.
+- **Fix**: ``bulwark`` / ``elite_bulwark`` are removed and replaced by the DE heavy-cavalry Konnik: 70 gold 60 food, 16s, HP 100, Atk 12, Arm 2, speed 1.35; the Elite Konnik is researched at the Castle (750 gold 1000 food, 70s). The Konnik fighting on as infantry when felled is not modelled. The Bulgarian Castle now trains and researches the Konnik.
+- **Scope**: ``mods/aoe2/rules.txt``, ``mods/aoe2/ai.txt``, ``mods/aoe2/ui/style.txt``, ``mods/aoe2/ui*/tts.txt`` (13 languages).
+
+**Added: the Hindustanis get the Ghulam**
+
+- **Problem**: The Hindustanis had no unique unit of their own.
+- **Fix**: Added ``ghulam`` (anti-archer spear infantry: 45 gold 30 food, 12s, trained at the Castle, +5 vs archers, +2 vs standard buildings) and ``elite_ghulam`` (Imperial Age Castle research: 575 gold 950 food, 45s, +6 vs archers). Per DE (Dynasties of India) the Elephant Archer line was removed from the Hindustanis -- it is a regional unit for the Bengalis / Dravidians / Gurjaras only -- and the Stable now offers ``imperial_camel_rider`` instead.
+- **Scope**: ``mods/aoe2/rules.txt``, ``mods/aoe2/ui/style.txt``, ``mods/aoe2/ui*/tts.txt`` (13 languages).
+
+**Changed: the Inca Kamayuk and Slinger are aligned with DE**
+
+- **Problem**: The Kamayuk and the Slinger had the wrong stats, cost and unlock location: the Kamayuk was a Castle Age unit that sat in the Archery Range, and the Slinger was a Castle Age archer that sat in the Castle.
+- **Fix**: The Kamayuk now has the DE values (30 gold 70 food, 10s, HP 70, Atk 7, +8 vs cavalry, +6 vs camels, +20 vs war elephants), is trained at the Castle and researches ``elite_kamayuk`` in the Imperial Age (500 gold 900 food, 45s). The Slinger (``slinger``) became the Archery Range unique (25 wood 50 food, 25s, +4 vs infantry, +1 vs spearmen, +4 vs monks, +3 vs siege) and keeps its "cannot attack at close range" minimum range of 2.
+- **Scope**: ``mods/aoe2/rules.txt``, ``mods/aoe2/ui/style.txt``, ``mods/aoe2/ui*/tts.txt`` (13 languages).
+
+**Fixed: the Italian Condottiero had the wrong stats**
+
+- **Problem**: The Condottiero (``condottiero``)'s attack was 12 instead of DE's 10, and it only had bonus damage against hand cannoneers -- nothing against cannons, organ guns or buildings.
+- **Fix**: The DE values are used now: 35 gold 50 food, 18s, HP 80, Atk 10, Melee armour 1; +10 vs hand cannoneers, bombard cannons, cannon galleons and organ guns, and +2 vs standard buildings. The Condottiero has no elite version. The Italian Barracks can train it.
+- **Scope**: ``mods/aoe2/rules.txt``.
+
+**Added: the Dromon is offered by the Return of Rome shipyards**
+
+- **Problem**: The ``dromon`` was defined but no civ could train it from a shipyard, and its stats were off.
+- **Fix**: The Dromon was rebuilt from the DE data (150 gold 175 wood, 65s, Imperial Age, HP 125, Atk 8, Melee armour 1, Pierce armour 6, range 12, minimum range 3 -- a long-range anti-building blast ship that cannot attack at close range) and its bonus damage against siege units, walls, gates and castles was filled in. The Armenian, Byzantine, Gothic, Hunnic and Roman shipyards now train it.
+- **Scope**: ``mods/aoe2/rules.txt``.
+
+**Fixed: the Saracen building slots pointed at base classes that do not exist**
+
+- **Problem**: The Saracen race defined its Barracks, Archery Range, Stable, Blacksmith, University, Workshop, Shipyard and Monastery slots as ``aoe_barracks`` / ``aoe_archery`` / ``aoe_stables`` / ``aoe_blacksmith`` / ``aoe_university`` / ``aoe_workshop`` / ``aoe_dock`` / ``aoe_monastery``, but none of those classes exist in ``rules.txt``. The inheritance chain was broken, so those buildings got none of the base class attributes.
+- **Fix**: All of them now point at the real base classes (``barracks`` / ``archery_range`` / ``stables`` / ``blacksmith`` / ``university`` / ``workshop`` / ``shipyard`` / ``monastery``), like every other civ.
+- **Scope**: ``mods/aoe2/rules.txt``.
+
+**Added: regression tests for the new civ units, the Roman tree and the tech-effect engine**
+
+- **Problem**: The newly added unique units and techs (Konnik, Condottiero, Kamayuk, Slinger, Ghulam, Dromon, the whole Roman tree, the two Roman unique techs, filtered cost effects and multi-row tech effects) had no regression coverage.
+- **Fix**: Four new test modules -- ``test_aoe2_civ_unique_units_alignment.py`` (36 tests), ``test_aoe2_romans_alignment.py`` (47 tests), ``test_aoe2_tech_effect_engine.py`` (15 tests) and ``test_aoe2_civ_building_shell_titles.py`` (8 tests).
+- **Scope**: ``soundrts/tests/test_aoe2_civ_unique_units_alignment.py``, ``soundrts/tests/test_aoe2_romans_alignment.py``, ``soundrts/tests/test_aoe2_tech_effect_engine.py``, ``soundrts/tests/test_aoe2_civ_building_shell_titles.py``.
+
+
 1.5.1.5
 -------
 

@@ -4,6 +4,94 @@
 .. contents::
 
 
+1.5.1.6
+-------
+
+**修复：后加入的帝国 2 文明建筑没有名字，也没有快捷键**
+
+- **问题**：`rules.txt` 给每个文明都起了自己的建筑外壳（`barracks roman_barracks`）和单位皮肤（`knight japanese_knight`），但 `mods/aoe2/ui/style.txt` 只有 `britons`..`turks` 的样式定义。没有样式定义的外壳什么都继承不到：既没有语音播报（建筑是哑的），也没有键盘位（W 键、士兵热键根本选不中它）—— 报上来的 bug 正是罗马（骡马）兵营按 W 不播报。
+- **改进**：为全部 142 个缺失的文明外壳补上 `def <外壳>` + `is_a <语义基类>`，让通用建筑名和热键位从基类继承。
+- **范围**：`mods/aoe2/ui/style.txt` （新增 142 个样式定义）、`soundrts/tests/test_aoe2_civ_building_shell_titles.py` （8 个回归测试，逐一审计种族表里的每个文明外壳）。
+
+**修复：测试模块之间泄漏 mod / 地图 / 战役状态**
+
+- **问题**：有测试模块把全局资源管理器切到别的 mod 却不还原：`test_aoe2_age_rewards.py` 与 `test_faction_age_cost_discounts.py` 把 `config.mods` 设成 `"aoe2"` 之后就没管了；`test_build_rules.py` 还同时加载了星际争霸的 mod 和它的地图（3 个测试），并把两者留在活动状态。后来一个拿 `config.mods` 当还原基准的 fixture 于是让帝国 2 的规则一直挂着，整个会话后面的模块都读错了规则 —— `test_bridge_terrain.py` 等 28 个测试因此失败。
+- **改进**：每个泄漏的测试都改成自己还原自己动过的东西（`try/finally`）；`conftest.py` 的 `_isolate_resource_mods` fixture 另外把 `config.mods`、地图层和战役层一并还原，作为其余会切 mod 的模块的安全网。
+- **范围**：`soundrts/tests/conftest.py`、`soundrts/tests/test_aoe2_age_rewards.py`、`soundrts/tests/test_build_rules.py`、`soundrts/tests/test_faction_age_cost_discounts.py`。
+
+**修复：带单位过滤器的成本 / 时间效果泄漏到了所有单位身上**
+
+- **问题**：一条带 `effect_bonus_targets` 过滤器的成本效果被折进了玩家级加成，于是本该只作用于被点名单位（例如 `scorpion`）的折扣或训练时间变化，也作用到了玩家拥有的每一个单位上。
+- **改进**：带过滤器的成本效果现在单独存放，并记下它自己的目标列表，由订单层按单位类型逐次匹配之后才生效；不带过滤器的效果仍然照旧作为玩家级加成。
+- **范围**：`soundrts/worldupgrade/base.py`、`soundrts/worldupgrade/cost_effects.py`、`soundrts/worldorders/base.py`、`soundrts/worldorders/production.py`。
+
+**修复：一项科技的多行效果只生效了第一行**
+
+- **问题**：去重键只用了 `"<科技>:<等级>"`。一项科技可以声明多行 `effect` （例如 `magyar_raid` 同时有 `kill_resource_vs` 行和 `time_cost` 行），第一行打上标记之后，后面的行全被静默跳过 —— 多行效果因此只剩第一行。
+- **改进**：去重键改为 `"<科技>:<等级>:<行号>"`，于是每一行都恰好生效一次。
+- **范围**：`soundrts/worldupgrade/base.py`。
+
+**新增：意大利的盟友也能训练佣兵**
+
+- **问题**：意大利原本只有 `race_grants_team_free_unit`，让盟友免费得到佣兵；但盟友自己的兵营根本不提供这个单位，于是这条团队奖励等于没有。
+- **改进**：新增规则字段 `team_share_train <单位> <建筑…>` （一行一条），由 `world_civ_bonuses.team_share_train_entries` 读取、由 `world_build_rules.effective_can_train` 提供：与意大利结盟的玩家可以在自己的兵营（帝国时代）训练佣兵，且对盟友同样免费。
+- **范围**：`soundrts/definitions.py`、`soundrts/world_civ_bonuses.py`、`soundrts/world_build_rules.py`。
+
+**修复：种族的建造速度加成从未生效**
+
+- **问题**：种族字段 `build_speed_pct N` （帝国 2 DE：罗马 +5%、西班牙 +30%）引擎根本没读。`Building.time_cost` 读的是 `player.build_speed_pct`，而这个属性从来没人赋值，于是整条种族加成是空转的。
+- **改进**：玩家创建时读取自己种族的 `build_speed_pct`，存入 `player.build_speed_pct`；没有该字段的种族保持中性值 0。
+- **范围**：`soundrts/worldplayerbase/base.py`。
+
+**调整：罗马对标帝国 2 DE《Return of Rome》**
+
+- **问题**：罗马的科技树、单位数值和文明奖励此前与 DE 不符 —— 兵营没有后期兵种，好几个建筑给了 DE 里罗马没有的科技，弓箭手场地没有弩手，城堡没有百夫长，文明奖励还是"所有建筑 -15% 木头"这类错版。
+- **改进**：整棵罗马科技树按 DE 数据重做。兵营：`militia → man_at_arms → long_swordsman → legionary` —— 传奇兵在帝国时代从兵营训练，并取代双手剑与冠军剑士，故罗马两者皆无 —— 外加 `pikeman` 与 `halberdier`。弓箭手场地：`aoe_archer → crossbowman`、`skirmisher → elite_skirmisher`、`cavalry_archer → heavy_cavalry_archer`。马厩：`scout_cavalry → light_cavalry → aoe_knight → cavalier`。城堡：`centurion` （城堡时代）与 `elite_centurion` （帝国时代 researched）、`trebuchet`、`conscription`、`sappers`、`spies`。两个独有科技：`ballistas` （城堡时代：弩炮攻击快 33%、战船系 +2 攻击）与 `comitatenses` （帝国时代：剑士系、骑士系与百夫长训练快 50%）。新增 `centurion` （85 金 75 粮、24 秒）与 `elite_centurion` （900 金 1100 粮、60 秒研究）；`legionary` 改为继承 `long_swordsman`，以便沿用剑士线的训练花费与训练时间。文明奖励也按 DE 改写：采集与建造快 5%、铁匠铺护甲对步兵效果翻倍、弩炮 -50% 金币、战船系 +1/+1 护甲，团队奖励为弩炮最小射程 -1。
+- **范围**：`mods/aoe2/rules.txt` （罗马科技树、`centurion` / `elite_centurion` / `legionary`、`ballistas` / `comitatenses`、文明与团队奖励）、`mods/aoe2/ui/style.txt`、`mods/aoe2/ui*/tts.txt` （13 种语言）。
+
+**调整：用帝国 2 DE 的科尼克替换了并不存在的"壁垒"**
+
+- **问题**：模组里定义了一个 AoE2 中并不存在的 `bulwark` 兵种，而真正的 DE `konnik` 却被定义成了骑射单位 —— 两边都跟原作对不上。
+- **改进**：`bulwark` / `elite_bulwark` 全部删除，改为 DE 的重骑兵科尼克：70 金 60 粮、16 秒、HP 100、攻击 12、护甲 2、速度 1.35；精英科尼克在城堡研究（750 金 1000 粮、70 秒）。科尼克阵亡后转为步兵继续作战的"落马科尼克"未建模。保加利亚城堡改为训练与研究科尼克。
+- **范围**：`mods/aoe2/rules.txt`、`mods/aoe2/ai.txt`、`mods/aoe2/ui/style.txt`、`mods/aoe2/ui*/tts.txt` （13 种语言）。
+
+**新增：印度斯坦获得古拉姆**
+
+- **问题**：印度斯坦没有属于自己的独有单位。
+- **改进**：新增 `ghulam` （反弓手长矛步兵：45 金 30 粮、12 秒、城堡训练，+5 对弓手、+2 对标准建筑）与 `elite_ghulam` （帝国时代城堡研究：575 金 950 粮、45 秒，+6 对弓手）。同时按 DE《Dynasties of India》移除印度斯坦的象弓手线 —— 那是孟加拉 / 陀罗毗荼 / 古吉拉特的地区单位 —— 马厩改为提供 `imperial_camel_rider`。
+- **范围**：`mods/aoe2/rules.txt`、`mods/aoe2/ui/style.txt`、`mods/aoe2/ui*/tts.txt` （13 种语言）。
+
+**调整：印加卡玛尤克与投石手对标 DE**
+
+- **问题**：卡玛尤克（`kamayuk`）与投石手（`slinger`）的数值、成本和解锁位置都与 DE 不符 —— 卡玛尤克是城堡时代单位却挂在弓箭手场地，投石手是城堡时代弓兵却挂在城堡。
+- **改进**：卡玛尤克改为 DE 数值（30 金 70 粮、10 秒、HP 70、攻击 7、+8 对骑兵、+6 对骆驼、+20 对战象），在城堡训练，帝国时代研究 `elite_kamayuk` （500 金 900 粮、45 秒）。投石手（`slinger`）改为弓箭手场地的独有单位（25 木 50 粮、25 秒、+4 对步兵、+1 对长矛兵、+4 对僧侣、+3 对攻城单位），并保留"不能近距离攻击"的最小射程 2。
+- **范围**：`mods/aoe2/rules.txt`、`mods/aoe2/ui/style.txt`、`mods/aoe2/ui*/tts.txt` （13 种语言）。
+
+**修复：意大利佣兵数值错误**
+
+- **问题**：佣兵（`condottiero`）的攻击被写成 12（DE 为 10），而且只对火枪手有加成，对火炮、机关枪与建筑都没有对应数值。
+- **改进**：改用 DE 数值 —— 35 金 50 粮、18 秒、HP 80、攻击 10、近战护甲 1；对火枪手、轰炸炮、战船炮、风琴炮一律 +10，对标准建筑 +2。佣兵没有精英版本。意大利兵营改为可以训练佣兵。
+- **范围**：`mods/aoe2/rules.txt`。
+
+**新增：德龙出现在《Return of Rome》的船坞里**
+
+- **问题**：`dromon` 定义了却没有任何文明能从船坞训练它，而且数值也偏了。
+- **改进**：德龙按 DE 数据重做（150 金 175 木、65 秒、帝国时代、HP 125、攻击 8、近战护甲 1、穿透护甲 6、射程 12、最小射程 3 —— 一款只能远距离攻城、无法近身作战的爆破船），并补齐对攻城单位、城墙、城门与城堡的加成伤害。亚美尼亚、拜占庭、哥特、匈奴与罗马的船坞现在都能训练它。
+- **范围**：`mods/aoe2/rules.txt`。
+
+**修复：萨拉森的建筑槽位指向了并不存在的基类**
+
+- **问题**：萨拉森的种族定义把兵营、弓箭手场地、马厩、铁匠铺、大学、攻城厂、船厂与修道院指向了 `aoe_barracks` / `aoe_archery` / `aoe_stables` / `aoe_blacksmith` / `aoe_university` / `aoe_workshop` / `aoe_dock` / `aoe_monastery`，而这些类在 `rules.txt` 里根本不存在。继承链断掉，这些建筑拿不到基类的任何属性。
+- **改进**：全部改指真实基类（`barracks` / `archery_range` / `stables` / `blacksmith` / `university` / `workshop` / `shipyard` / `monastery`），与其它文明保持一致。
+- **范围**：`mods/aoe2/rules.txt`。
+
+**新增：帝国 2 文明独有单位、罗马科技树与科技效果引擎的回归测试**
+
+- **问题**：新加入的独有单位与技术（科尼克、佣兵、卡玛尤克、投石手、古拉姆、德龙、整棵罗马科技树、两个罗马独有科技、带过滤器的成本效果、多行科技效果）此前都没有回归测试保护。
+- **改进**：新增四个测试模块 —— `test_aoe2_civ_unique_units_alignment.py` （36 个测试）、`test_aoe2_romans_alignment.py` （47 个测试）、`test_aoe2_tech_effect_engine.py` （15 个测试）、`test_aoe2_civ_building_shell_titles.py` （8 个测试）。
+- **范围**：`soundrts/tests/test_aoe2_civ_unique_units_alignment.py`、`soundrts/tests/test_aoe2_romans_alignment.py`、`soundrts/tests/test_aoe2_tech_effect_engine.py`、`soundrts/tests/test_aoe2_civ_building_shell_titles.py`。
+
+
 1.5.1.5
 -------
 

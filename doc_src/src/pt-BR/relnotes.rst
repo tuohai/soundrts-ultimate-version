@@ -4,6 +4,94 @@ Notas de lançamento
 
 .. contents::
 
+1.5.1.6
+-------
+
+**Corrigido: os edifícios das civs de AoE2 adicionados mais tarde não tinham título nem atalho de teclado**
+
+- **Problema**: o ``rules.txt`` dá a cada civ o seu próprio edifício invólucro (``barracks roman_barracks``) e a sua própria pele de unidade (``knight japanese_knight``), mas o ``mods/aoe2/ui/style.txt`` só tinha definições de estilo para ``britons``..``turks``. Um invólucro sem definição de estilo não herda nada, portanto não tinha título falado (o edifício era mudo) nem slot de teclado (os atalhos W / de soldado nunca chegavam a ele): o bug relatado era que o quartel dos Romanos (骡马) não era anunciado ao apertar W.
+- **Melhoria**: acrescentar ``def <invólucro>`` + ``is_a <base semântica>`` para todos os 142 invólucros de civ que faltavam, de modo que o nome genérico do edifício e o slot do atalho sejam herdados da base.
+- **Escopo**: ``mods/aoe2/ui/style.txt`` (142 definições de estilo novas), ``soundrts/tests/test_aoe2_civ_building_shell_titles.py`` (8 testes de regressão que auditam cada invólucro de civ da tabela de raças).
+
+**Corrigido: os módulos de teste vazavam entre si o estado de mod / mapa / campanha**
+
+- **Problema**: vários módulos de teste mudavam o gestor global de recursos para outro mod e não o restauravam: ``test_aoe2_age_rewards.py`` e ``test_faction_age_cost_discounts.py`` deixavam ``config.mods = "aoe2"`` colocado, enquanto ``test_build_rules.py`` carregava também o mod de StarCraft com o seu mapa (três testes) e deixava ambos activos. Mais tarde, uma fixture que usava ``config.mods`` como base de restauração deixou as regras de AoE2 carregadas durante o resto da sessão, pelo que todos os módulos seguintes leram as regras erradas: falharam 28 testes em ``test_bridge_terrain.py`` e afins.
+- **Melhoria**: cada teste que vazava estado restaura agora o que mudou (``try/finally``), e a fixture ``_isolate_resource_mods`` do ``conftest`` restaura adicionalmente ``config.mods``, a camada de mapa e a de campanha como rede de segurança para os restantes módulos que mudam de mod.
+- **Escopo**: ``soundrts/tests/conftest.py``, ``soundrts/tests/test_aoe2_age_rewards.py``, ``soundrts/tests/test_build_rules.py``, ``soundrts/tests/test_faction_age_cost_discounts.py``.
+
+**Corrigido: os efeitos de custo / tempo com filtro de unidade vazavam para todas as unidades**
+
+- **Problema**: um efeito de custo com um filtro ``effect_bonus_targets`` era fundido nos bónus de nível de jogador, pelo que um desconto ou uma redução do tempo de treino用意ado para um único tipo de unidade (por exemplo ``scorpion``) aplicava-se também a todas as unidades do jogador.
+- **Melhoria**: os efeitos de custo com filtro são agora guardados à parte com a sua própria lista de alvos, e a camada de ordens compara-os com o tipo de unidade antes de surtirem efeito. Os efeitos sem filtro continuam a funcionar como bónus para todo o jogador.
+- **Escopo**: ``soundrts/worldupgrade/base.py``, ``soundrts/worldupgrade/cost_effects.py``, ``soundrts/worldorders/base.py``, ``soundrts/worldorders/production.py``.
+
+**Corrigido: de um efeito de tecnologia com várias linhas só era aplicada a primeira**
+
+- **Problema**: a chave de desduplicação era apenas ``"<tecnologia>:<nível>"``. Uma tecnologia pode declarar várias linhas ``effect`` (por exemplo ``magyar_raid`` tem uma linha ``kill_resource_vs`` *e* uma linha ``time_cost``), pelo que a primeira linha marcava a chave e todas as seguintes eram ignoradas em silêncio: os efeitos de várias linhas perdiam todas menos a primeira.
+- **Melhoria**: a chave é agora ``"<tecnologia>:<nível>:<índice da linha>"``, de modo que cada linha é aplicada exactamente uma vez.
+- **Escopo**: ``soundrts/worldupgrade/base.py``.
+
+**Adicionado: os aliados de um italiano podem treinar o Condottiero**
+
+- **Problema**: os italianos só tinham ``race_grants_team_free_unit``, que tornava o Condottiero gratuito para qualquer aliado, mas o Quartel de um aliado não oferecia a unidade de todo, pelo que o bónus de equipa não valia nada.
+- **Melhoria**: um novo campo de regra ``team_share_train <unidade> <edifício…>`` (uma linha por linha) é lido por ``world_civ_bonuses.team_share_train_entries`` e oferecido por ``world_build_rules.effective_can_train``: um jogador aliado de um italiano pode treinar o Condottiero no seu próprio Quartel (Era Imperial), e de borla ele também é gratuito.
+- **Escopo**: ``soundrts/definitions.py``, ``soundrts/world_civ_bonuses.py``, ``soundrts/world_build_rules.py``.
+
+**Corrigido: o bónus de velocidade de construção da raça nunca era aplicado**
+
+- **Problema**: o campo de raça ``build_speed_pct N`` (AoE2 DE: Romanos +5%, Espanhóis +30%) nunca era lido pelo motor. O ``Building.time_cost`` lê ``player.build_speed_pct``, mas ninguém atribuía esse atributo, portanto todo o bónus de raça era um no-op.
+- **Melhoria**: o jogador passa agora a ler o ``build_speed_pct`` da sua raça ao ser criado e guarda-o em ``player.build_speed_pct``; as raças sem esse campo mantêm o valor neutro 0.
+- **Escopo**: ``soundrts/worldplayerbase/base.py``.
+
+**Alterado: os Romanos ficam alinhados com AoE2 DE (Return of Rome)**
+
+- **Problema**: a árvore tecnológica romana, as estatísticas das unidades e os bónus de civ não coincidiam com DE: o Quartel não tinha a unidade avançada, vários edifícios ofereciam tecnologias que DE não dá aos Romanos, o Campo de Arqueiros não tinha Besteiro, o Castelo não tinha Centurião, e os bónus de civ eram uma variante desactualizada de "todos os edifícios -15% de madeira".
+- **Melhoria**: toda a árvore romana é refeita com os dados da DE. Quartel: ``militia -> man_at_arms -> long_swordsman -> legionary`` -- o Legionário é uma unidade de Quartel da Era Imperial que substitui Espadão e Campeão, pelo que os Romanos não têm nenhum dos dois -- mais ``pikeman`` e ``halberdier``. Campo de Arqueiros: ``aoe_archer -> crossbowman``, ``skirmisher -> elite_skirmisher``, ``cavalry_archer -> heavy_cavalry_archer``. Estábulo: ``scout_cavalry -> light_cavalry -> aoe_knight -> cavalier``. Castelo: ``centurion`` (Era do Castelo) e ``elite_centurion`` (Era Imperial, pesquisado), ``trebuchet``, ``conscription``, ``sappers``, ``spies``. Duas tecnologias únicas: ``ballistas`` (Era do Castelo: os Escorpiões atacam 33% mais depressa, linha de galeões +2 de ataque) e ``comitatenses`` (Era Imperial: a linha da Milícia, a da Cavalaria e os Centuriões treinam 50% mais depressa). Foram adicionados ``centurion`` (85 de ouro, 75 de comida, 24s) e ``elite_centurion`` (900 de ouro, 1100 de comida, 60s de pesquisa); ``legionary`` passa a herdar de ``long_swordsman``, para que o custo e o tempo de treino da linha se lhe apliquem. Os bónus de civ também foram reescritos segundo a DE: recolha e construção 5% mais rápidas, dobro efeito das melhorias de armadura do Ferreiro sobre a infantaria, -50% de ouro para os Escorpiões, +1/+1 de armadura para a linha de galeões, e um bónus de equipa que reduz em 1 o alcance mínimo do Escorpião.
+- **Escopo**: ``mods/aoe2/rules.txt`` (árvore romana, ``centurion`` / ``elite_centurion`` / ``legionary``, ``ballistas`` / ``comitatenses``, bónus de civ e de equipa), ``mods/aoe2/ui/style.txt``, ``mods/aoe2/ui*/tts.txt`` (13 idiomas).
+
+**Alterado: o Konnik da DE substitui o inexistente "Baluarte"**
+
+- **Problema**: o mod definia uma unidade ``bulwark`` que não existe em AoE2, enquanto o verdadeiro ``konnik`` da DE estava definido como arqueiro montado: nenhum dos dois coincidia com o original.
+- **Melhoria**: ``bulwark`` / ``elite_bulwark`` são removidos e substituídos pelo Konnik de cavalaria pesada da DE: 70 de ouro, 60 de comida, 16s, 100 de vida, 12 de ataque, 2 de armadura, velocidade 1.35; o Konnik Superior é pesquisado no Castelo (750 de ouro, 1000 de comida, 70s). O Konnik continua a lutar como infantaria quando cai e não está modelado. O Castelo búlgaro passou a treinar e a pesquisar o Konnik.
+- **Escopo**: ``mods/aoe2/rules.txt``, ``mods/aoe2/ai.txt``, ``mods/aoe2/ui/style.txt``, ``mods/aoe2/ui*/tts.txt`` (13 idiomas).
+
+**Adicionado: osÍndostanos recebem o Ghulam**
+
+- **Problema**: os Índostanos não tinham nenhuma unidade única própria.
+- **Melhoria**: acrescentados ``ghulam`` (infantaria de lança anti-arqueiro: 45 de ouro, 30 de comida, 12s, treinado no Castelo, +5 contra arqueiros, +2 contra edifícios padrão) e ``elite_ghulam`` (pesquisa no Castelo na Era Imperial: 575 de ouro, 950 de comida, 45s, +6 contra arqueiros). Conforme a DE (Dynasties of India) a linha do Arqueiro de Elefante foi removida dos Índostanos -- é uma unidade regional apenas dos Bengalis, Dravidas e Gurjaras -- e o Estábulo passa a oferecer ``imperial_camel_rider``.
+- **Escopo**: ``mods/aoe2/rules.txt``, ``mods/aoe2/ui/style.txt``, ``mods/aoe2/ui*/tts.txt`` (13 idiomas).
+
+**Alterado: o Kamayuk e o Fundilheiro incas ficam alinhados com a DE**
+
+- **Problema**: o Kamayuk e o Fundilheiro tinham estatísticas, custo e localização de desbloqueio errados: o Kamayuk era uma unidade da Era do Castelo no Campo de Arqueiros, e o Fundilheiro era um arqueiro da Era do Castelo no Castelo.
+- **Melhoria**: o Kamayuk tem agora os valores da DE (30 de ouro, 70 de comida, 10s, 70 de vida, 7 de ataque, +8 contra cavalaria, +6 contra camelos, +20 contra elefantes de guerra), é treinado no Castelo e pesquisa ``elite_kamayuk`` na Era Imperial (500 de ouro, 900 de comida, 45s). O Fundilheiro (``slinger``) passou a ser a unidade única do Campo de Arqueiros (25 de madeira, 50 de comida, 25s, +4 contra infantaria, +1 contra lanceiros, +4 contra monges, +3 contra cerco) e mantém o seu alcance mínimo de 2, que impede o ataque corpo a corpo.
+- **Escopo**: ``mods/aoe2/rules.txt``, ``mods/aoe2/ui/style.txt``, ``mods/aoe2/ui*/tts.txt`` (13 idiomas).
+
+**Corrigido: o Condottiero italiano tinha estatísticas erradas**
+
+- **Problema**: o ataque do Condottiero (``condottiero``) era 12 em vez dos 10 da DE, e só tinha dano extra contra mosqueteiros: nada contra canhões, órgãos nem edifícios.
+- **Melhoria**: passam a usar-se os valores da DE: 35 de ouro, 50 de comida, 18s, 80 de vida, 10 de ataque, 1 de armadura corpo a corpo; +10 contra mosqueteiros, canhões de bombardeio, galeões com canhão e órgãos, e +2 contra edifícios padrão. O Condottiero não tem versão superior. O Quartel italiano pode treiná-lo.
+- **Escopo**: ``mods/aoe2/rules.txt``.
+
+**Adicionado: o Dromon é oferecido pelos estaleiros de Return of Rome**
+
+- **Problema**: o ``dromon`` estava definido mas nenhuma civ o podia treinar num estaleiro, e as suas estatísticas não batiam certo.
+- **Melhoria**: o Dromon foi refeito com os dados da DE (150 de ouro, 175 de madeira, 65s, Era Imperial, 125 de vida, 8 de ataque, 1 de armadura corpo a corpo, 6 perfurante, alcance 12, alcance mínimo 3: um navio de demolição de longo alcance contra edifícios que não pode atacar de perto) e foi preenchido o seu dano extra contra unidades de cerco, muralhas, portões e castelos. Os estaleiros arménio, bizantino, gótico, huno e romano já o treinam.
+- **Escopo**: ``mods/aoe2/rules.txt``.
+
+**Corrigido: as ranhuras de edifício dos sarracenos apontavam para classes base inexistentes**
+
+- **Problema**: a raça sarracena definia as suas ranhuras de Quartel, Campo de Arqueiros, Estábulo, Ferreiro, Universidade, Oficina, Estaleiro e Mosteiro como ``aoe_barracks`` / ``aoe_archery`` / ``aoe_stables`` / ``aoe_blacksmith`` / ``aoe_university`` / ``aoe_workshop`` / ``aoe_dock`` / ``aoe_monastery``, mas nenhuma dessas classes existe no ``rules.txt``. A cadeia de herança estava partida, pelo que esses edifícios não herdavam nenhum atributo da classe base.
+- **Melhoria**: passam agora a apontar para as verdadeiras classes base (``barracks`` / ``archery_range`` / ``stables`` / ``blacksmith`` / ``university`` / ``workshop`` / ``shipyard`` / ``monastery``), tal como todas as outras civs.
+- **Escopo**: ``mods/aoe2/rules.txt``.
+
+**Adicionado: testes de regressão para as novas unidades de civ, a árvore romana e o motor de efeitos de tecnologia**
+
+- **Problema**: as unidades únicas e tecnologias recém-adicionadas (Konnik, Condottiero, Kamayuk, Fundilheiro, Ghulam, Dromon, toda a árvore romana, as duas tecnologias únicas romanas, os efeitos de custo com filtro e os efeitos de tecnologia com várias linhas) não tinham qualquer cobertura de regressão.
+- **Melhoria**: quatro novos módulos de teste -- ``test_aoe2_civ_unique_units_alignment.py`` (36 testes), ``test_aoe2_romans_alignment.py`` (47 testes), ``test_aoe2_tech_effect_engine.py`` (15 testes) e ``test_aoe2_civ_building_shell_titles.py`` (8 testes).
+- **Escopo**: ``soundrts/tests/test_aoe2_civ_unique_units_alignment.py``, ``soundrts/tests/test_aoe2_romans_alignment.py``, ``soundrts/tests/test_aoe2_tech_effect_engine.py``, ``soundrts/tests/test_aoe2_civ_building_shell_titles.py``.
+
+
 1.5.1.5
 -------
 
