@@ -20,8 +20,8 @@ Bug 2 — ``effect_bonus_targets`` was ignored for cost effects
 Bug 3 — multi-row effects lost every row but the first
     ``Upgrade._apply_effects_to_unit`` de-duplicated with the key
     ``"<tech>:<level>"``, so the first ``effect`` row marked the key and every
-    later row was skipped.  A tech like ``magyar_raid`` (a ``kill_resource_vs``
-    row *and* a ``time_cost`` row) therefore only ever applied its first row.
+    later row was skipped.  A tech like ``perfusion`` (a ``time_cost`` row
+    *and* a ``cost`` row) therefore only ever applied its first row.
     Fixed in ``soundrts/worldupgrade/base.py``.
 """
 from __future__ import annotations
@@ -391,13 +391,31 @@ def test_filtered_cost_effect_matches_aoe2_semantics(installed):
 
 
 def test_multi_row_effect_applies_every_row(installed):
-    """``magyar_raid`` has two effect rows; both must be applied."""
-    unit, _player = _research(installed, "magyar_raid", "magyar_huszar")
+    """``perfusion`` has two effect rows; both must be applied.
 
-    # Row 1: kill_resource_vs peasant resource1 5
-    assert unit.kill_resource_vs.get("peasant", {}).get("resource1") == 5
-    # Row 2: time_cost -50%
+    (This test used to use the custom ``magyar_raid`` tech, which was dropped
+    when the Magyar tree was aligned with the canonical AoE2 DE set — the
+    Magyars' DE unique technologies are Recurve Bow and Corvinian Army.)
+    """
+    unit, _player = _research(installed, "perfusion", "militia")
+
+    # Row 1: time_cost -50%
     assert unit.time_cost_percent_bonus == -0.5
+    # Row 2: cost 0 0 -20% 0  (food)
+    assert unit.cost_percent_bonus[2] == pytest.approx(-0.2)
+
+
+def test_multi_row_effect_applies_every_kill_resource_row(installed):
+    """``chieftains`` has four ``kill_resource_vs`` rows plus two ``mdg_vs``
+    rows — every one of them must reach the unit."""
+    unit, _player = _research(installed, "chieftains", "militia")
+
+    assert unit.kill_resource_vs.get("peasant", {}).get("resource1") == 5
+    assert unit.kill_resource_vs.get("trade_cart", {}).get("resource1") == 5
+    assert unit.kill_resource_vs.get("trade_cog", {}).get("resource1") == 5
+    assert unit.kill_resource_vs.get("monk", {}).get("resource1") == 5
+    assert unit.mdg_vs.get("cavalry") == 5000
+    assert unit.mdg_vs.get("camel_rider") == 4000
 
 
 def test_multi_row_effect_applies_every_row_on_new_units(installed):
@@ -406,14 +424,14 @@ def test_multi_row_effect_applies_every_row_on_new_units(installed):
 
     Upgrade.reset()
     player = _FakePlayer()
-    unit = _FakeUnit("magyar_huszar", installed, player=player)
-    unit.can_use_tech = tuple(unit.can_use_tech) + ("magyar_raid",)
-    player.upgrades.append("magyar_raid")
+    unit = _FakeUnit("militia", installed, player=player)
+    unit.can_use_tech = tuple(unit.can_use_tech) + ("perfusion",)
+    player.upgrades.append("perfusion")
 
-    installed.unit_class("magyar_raid").upgrade_unit_to_player_level(unit)
+    installed.unit_class("perfusion").upgrade_unit_to_player_level(unit)
 
-    assert unit.kill_resource_vs.get("peasant", {}).get("resource1") == 5
     assert unit.time_cost_percent_bonus == -0.5
+    assert unit.cost_percent_bonus[2] == pytest.approx(-0.2)
 
 
 def test_multi_row_effect_does_not_double_apply(installed):
@@ -422,11 +440,11 @@ def test_multi_row_effect_does_not_double_apply(installed):
 
     Upgrade.reset()
     player = _FakePlayer()
-    unit = _FakeUnit("magyar_huszar", installed, player=player)
-    unit.can_use_tech = tuple(unit.can_use_tech) + ("magyar_raid",)
-    player.upgrades.append("magyar_raid")
+    unit = _FakeUnit("militia", installed, player=player)
+    unit.can_use_tech = tuple(unit.can_use_tech) + ("perfusion",)
+    player.upgrades.append("perfusion")
 
-    tech = installed.unit_class("magyar_raid")
+    tech = installed.unit_class("perfusion")
     tech.upgrade_unit_to_player_level(unit)
     first = unit.time_cost_percent_bonus
     tech.upgrade_unit_to_player_level(unit)

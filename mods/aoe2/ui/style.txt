@@ -339,8 +339,6 @@ def kamandaran
 title 9044
 def druzhina
 title 9045
-def orthodoxy
-title 9046
 def steppe_husbandry
 title 9047
 def cuman_mercenaries
@@ -349,14 +347,8 @@ def marauders
 title 9049
 def atheism
 title 9050
-def panokseon
-title 9051
 def shinkichon
 title 9052
-def el_dorado
-title 9053
-def maya_architecture
-title 9054
 def grand_trunk_road
 title 9055
 def shatagni
@@ -2707,13 +2699,13 @@ is_a arambai
 title 8351
 
 ; Coustillier (Burgundian UU: cavalry with splash damage)
-def coutillier
+def coustillier
 is_a cavalry
 title 9035
 keyboard soldier3
 shortcut t
-def elite_coutillier
-is_a coutillier
+def elite_coustillier
+is_a coustillier
 title 8352
 
 ; Serjeant (Sicilian UU: infantry with high pierce armor)
@@ -2786,7 +2778,186 @@ def elite_kamayuk
 is_a kamayuk
 title 8357
 
+; ===========================================================================
+; AoE2 DE unique units that still lacked a style block.
+; Every trainable / selectable unit needs a ``title`` (TTS id), a
+; ``keyboard`` group (hotkey page) and a ``shortcut`` (hotkey letter).
+; Free TTS title ids: 8358-8374 (base) and 9108-9119 (elite).
+; ===========================================================================
+
+; Mameluke (Saracens UU: ranged-melee camel cavalry)
+def mameluke
+is_a camel_rider
+title 9108
+keyboard soldier3
+shortcut m
+def elite_mameluke
+is_a mameluke
+title 8358
+
+; Keshik (Tatars UU: heavy cavalry that generates gold when killing)
+def keshik
+is_a unit
+title 9109
+keyboard soldier3
+shortcut k
+def elite_keshik
+is_a keshik
+title 8359
+
+; Camel Archer (Berbers UU: mounted archer, bonus vs cavalry archers)
+def camel_archer
+is_a cavalry_archer
+title 9110
+keyboard soldier3
+shortcut c
+def elite_camel_archer
+is_a camel_archer
+title 8360
+
+; Obuch (Poles UU: infantry that ignores enemy melee armour)
+def obuch
+is_a footman
+title 9111
+keyboard soldier1
+shortcut u
+def elite_obuch
+is_a obuch
+title 8361
+
+; Composite Bowman (Armenians UU: foot archer, bonus vs spearmen)
+def composite_bowman
+is_a archer_unit
+title 9112
+keyboard soldier2
+shortcut b
+def elite_composite_bowman
+is_a composite_bowman
+title 8362
+
+; Genitour (Berbers shared UU: mounted skirmisher from the Archery Range)
+def genitour
+is_a cavalry_archer
+title 9113
+keyboard soldier3
+shortcut g
+def elite_genitour
+is_a genitour
+title 8363
+
+; Misionero (Spanish UU: mounted monk, no Elite version in AoE2 DE)
+def misionero
+is_a missionary
+title 9114
+keyboard soldier6
+shortcut i
+
+; Houfnice (Bohemians UU: Bombard Cannon upgrade, long-range siege gun)
+def houfnice
+is_a bombard_cannon
+title 9115
+keyboard soldier4
+shortcut h
+
 ; Note: Joan of Arc campaign NPCs (npc_joan, npc_baudricourt, npc_dauphin)
 ; are defined in mods/aoe2/single/Joan of Arc/ui/style.txt so the style
 ; stays co-located with the campaign maps and can be edited without
 ; touching the mod-wide style.txt.
+
+; ===========================================================================
+; AoE2 DE unique technologies — canonical DE set for all 42 civilizations
+; (titles 9063-9107).  The invented AoE1 techs (madrasah, zealotry,
+;  el_dorado, maya_architecture, obsidian_arrows, panokseon, orthodoxy,
+;  magyar_raid, fogarasi_mercenaries, huskarl_loot, frontier_defense,
+;  boiling_oil, mahouts, atikulu, wagon) were removed.
+; ===========================================================================
+def counterweights
+title 9063
+def bimaristan
+title 9064
+def citadels
+title 9065
+def detinets
+title 9066
+def eupseong
+title 9067
+def holcans
+title 9068
+def hulche_javelineers
+title 9069
+def supremacy
+title 9070
+def inquisition
+title 9071
+def recurve_bow
+title 9072
+def corvinian_army
+title 9073
+def lechitic_legacy
+title 9074
+def szlachta_privileges
+title 9075
+def silk_road
+title 9076
+def pavise
+title 9077
+def hussite_reforms
+title 9078
+def wagenburg_tactics
+title 9079
+def artillery
+title 9080
+def sipahi
+title 9081
+def bagains
+title 9082
+def stirrups
+title 9083
+def tower_shields
+title 9084
+def hill_forts
+title 9085
+def timurid_siegecraft
+title 9086
+def silk_armor
+title 9087
+def maghrebi_camels
+title 9088
+def kasbah
+title 9089
+def royal_heirs
+title 9090
+def torsion_engines
+title 9091
+def double_crossbow
+title 9092
+def tusk_swords
+title 9093
+def forced_levy
+title 9094
+def thalassocracy
+title 9095
+def manipur_cavalry
+title 9096
+def howdah
+title 9097
+def flemish_revolution
+title 9098
+def burgundian_vineyards
+title 9099
+def hauberk
+title 9100
+def first_crusade
+title 9101
+def fereters
+title 9102
+def cilician_fleet
+title 9103
+def aznauri_cavalry
+title 9104
+def svan_towers
+title 9105
+def fabric_shields
+title 9106
+def andean_sling
+title 9107

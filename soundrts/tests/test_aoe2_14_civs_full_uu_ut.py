@@ -27,24 +27,29 @@ def _gather_civ_buildings(text, prefix):
 
 
 # AoE2 DE reference: civ -> (building_prefix, expected_UU, expected_UT)
+# Source of truth: _ut_canonical.json (AoE2 DB + aoe2.is).
+# NOTE: the pre-1.5.1.7 entries below listed AoE1 / fan-invented techs
+# (boiling_oil, mahouts, atikulu, obsidian_arrows, el_dorado,
+# frontier_defense, fogarasi_mercenaries).  AoE2 DE has no such techs; the
+# canonical pair is used instead.
 REFERENCE = {
     'goths':       ('goth',    ['huskarl'],                   ['anarchy', 'perfusion']),
-    'persians':    ('persian', ['war_elephant'],              ['boiling_oil', 'mahouts']),
+    'persians':    ('persian', ['war_elephant'],              ['citadels', 'kamandaran']),
     'slavs':       ('slav',    ['boyar'],                     ['detinets', 'druzhina']),
     'cumans':      ('cuman',   ['kipchak'],                   ['steppe_husbandry', 'cuman_mercenaries']),
-    'huns':        ('hun',     ['tarkan'],                    ['marauders', 'atikulu']),
+    'huns':        ('hun',     ['tarkan'],                    ['marauders', 'atheism']),
     'koreans':     ('korean',  ['war_wagon', 'turtle_ship'],  ['eupseong', 'shinkichon']),
-    'mayans':      ('mayan',   ['plumed_archer'],             ['obsidian_arrows', 'el_dorado']),
+    'mayans':      ('mayan',   ['plumed_archer'],             ['hulche_javelineers', 'holcans']),
     # DE (Dynasties of India) removed the (Elite) Elephant Archer from the
     # Hindustanis -- it is a regional unit for the Bengalis / Dravidians /
     # Gurjaras only.  Their unique units are now the Ghulam and the Imperial
     # Camel Rider.
-    'hindustanis': ('hindustani', ['armored_elephant', 'ghulam'], ['shatagni', 'frontier_defense']),
+    'hindustanis': ('hindustani', ['ghulam'],                 ['shatagni', 'grand_trunk_road']),
     'spanish':     ('spanish', ['conquistador', 'misionero'], ['inquisition', 'supremacy']),
-    'magyars':     ('magyar',  ['magyar_huszar'],             ['fogarasi_mercenaries', 'corvinian_army']),
+    'magyars':     ('magyar',  ['magyar_huszar'],             ['corvinian_army', 'recurve_bow']),
     'poles':       ('polish',  ['obuch', 'winged_hussar'],    ['szlachta_privileges', 'lechitic_legacy']),
     'italians':    ('italian', ['genoese_crossbowman'],       ['pavise', 'silk_road']),
-    'bohemians':   ('bohemian', ['hussite_wagon', 'coustillier'], ['wagenburg_tactics', 'hussite_reforms']),
+    'bohemians':   ('bohemian', ['hussite_wagon'],            ['wagenburg_tactics', 'hussite_reforms']),
     'turks':       ('turk',    ['janissary', 'cannon_galleon'], ['sipahi', 'artillery']),
 }
 

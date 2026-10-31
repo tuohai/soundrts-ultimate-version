@@ -1718,6 +1718,12 @@ class Rules(_Definitions):
     
     # 字符串列表属性
     string_list_properties = {
+        # ``can_use_tech`` may be declared on several lines of the same
+        # unit; the lines are additive (civ-specific techs on one line,
+        # the generic upgrade line on another).  Treating a repeated line
+        # as a plain overwrite silently dropped the earlier line, so e.g.
+        # ``militia`` lost ``bagains`` / ``forced_levy`` / ``first_crusade``.
+        "can_use_tech",
         "storable_resource_types",  # 添加这个新的属性集合
         "mdg_targets",
         "rdg_targets",
