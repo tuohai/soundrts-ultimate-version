@@ -1,0 +1,2074 @@
+{
+ "britons": [
+  {
+   "name": "Yeomen",
+   "age": "castle_age",
+   "time": 60,
+   "gold": 450,
+   "wood": 750,
+   "food": 0,
+   "stone": 0,
+   "desc": "Research Yeomen (Foot Archers and Skirmisher-line +1 range; Watch Tower-line +2 attack)",
+   "bonuses": [
+    "Shepherds work +25% faster",
+    "Town Centers cost -50% wood starting in Castle Age",
+    "Foot Archers +1/+2 range in Castle/Imperial Age"
+   ],
+   "team": [
+    "Archery Ranges work +10% faster"
+   ],
+   "units": [
+    "Longbowman",
+    "Elite Longbowman"
+   ]
+  },
+  {
+   "name": "Warwolf",
+   "age": "imperial_age",
+   "time": 40,
+   "gold": 400,
+   "wood": 800,
+   "food": 0,
+   "stone": 0,
+   "desc": "Research Warwolf (Trebuchets deal blast damage and are more accurate)",
+   "bonuses": [
+    "Shepherds work +25% faster",
+    "Town Centers cost -50% wood starting in Castle Age",
+    "Foot Archers +1/+2 range in Castle/Imperial Age"
+   ],
+   "team": [
+    "Archery Ranges work +10% faster"
+   ],
+   "units": [
+    "Longbowman",
+    "Elite Longbowman"
+   ]
+  }
+ ],
+ "franks": [
+  {
+   "name": "Chivalry",
+   "age": "imperial_age",
+   "time": 40,
+   "gold": 500,
+   "wood": 600,
+   "food": 0,
+   "stone": 0,
+   "desc": "Research Chivalry (Stables work +40% faster)",
+   "bonuses": [
+    "Foragers work +15% faster",
+    "Mill technologies free",
+    "Mounted Units +20% HP starting in Feudal Age",
+    "Castles cost -15/25% in Castle/Imperial Age"
+   ],
+   "team": [
+    "Knight-line +2 line of sight"
+   ],
+   "units": [
+    "Throwing Axeman",
+    "Elite Throwing Axeman"
+   ]
+  },
+  {
+   "name": "Bearded Axe",
+   "age": "castle_age",
+   "time": 60,
+   "gold": 300,
+   "wood": 0,
+   "food": 300,
+   "stone": 0,
+   "desc": "Research Bearded Axe (Throwing Axemen +2 range)",
+   "bonuses": [
+    "Foragers work +15% faster",
+    "Mill technologies free",
+    "Mounted Units +20% HP starting in Feudal Age",
+    "Castles cost -15/25% in Castle/Imperial Age"
+   ],
+   "team": [
+    "Knight-line +2 line of sight"
+   ],
+   "units": [
+    "Throwing Axeman",
+    "Elite Throwing Axeman"
+   ]
+  }
+ ],
+ "chinese": [
+  {
+   "name": "Rocketry",
+   "age": "imperial_age",
+   "time": 60,
+   "gold": 900,
+   "wood": 0,
+   "food": 1100,
+   "stone": 0,
+   "desc": "Research Rocketry (Scorpions, Rocket Carts and Lou Chuans +25% attack; Lou Chuans fire rockets)",
+   "bonuses": [
+    "Start with +3 Villagers, but -50 wood and -200 food",
+    "Technologies cost -5/10/15% in Feudal/Castle/Imperial Age",
+    "Town Centers +7 line of sight and provide +15 population space",
+    "Fire Lancers and Fire Ships move +5/10% faster in Castle/Imperial Age"
+   ],
+   "team": [
+    "Farms +10% food"
+   ],
+   "units": [
+    "Chu Ko Nu",
+    "Elite Chu Ko Nu"
+   ]
+  },
+  {
+   "name": "Great Wall",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 0,
+   "wood": 400,
+   "food": 0,
+   "stone": 200,
+   "desc": "Research Great Wall (Walls, Watch Tower-line and Bombard Towers +30% HP)",
+   "bonuses": [
+    "Start with +3 Villagers, but -50 wood and -200 food",
+    "Technologies cost -5/10/15% in Feudal/Castle/Imperial Age",
+    "Town Centers +7 line of sight and provide +15 population space",
+    "Fire Lancers and Fire Ships move +5/10% faster in Castle/Imperial Age"
+   ],
+   "team": [
+    "Farms +10% food"
+   ],
+   "units": [
+    "Chu Ko Nu",
+    "Elite Chu Ko Nu"
+   ]
+  }
+ ],
+ "mongols": [
+  {
+   "name": "Drill",
+   "age": "imperial_age",
+   "time": 60,
+   "gold": 450,
+   "wood": 500,
+   "food": 0,
+   "stone": 0,
+   "desc": "Research Drill (Siege Workshop Units move +50% faster)",
+   "bonuses": [
+    "Hunters work +40% faster",
+    "Cavalry Archers attack +25% faster",
+    "Scout Cavalry-line and Steppe Lancers +20/30% HP in Castle/Imperial Age"
+   ],
+   "team": [
+    "Scout Cavalry-line +2 line of sight"
+   ],
+   "units": [
+    "Mangudai",
+    "Elite Mangudai"
+   ]
+  },
+  {
+   "name": "Nomads",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 150,
+   "wood": 300,
+   "food": 0,
+   "stone": 0,
+   "desc": "Research Nomads (Lost Houses do not decrease population space)",
+   "bonuses": [
+    "Hunters work +40% faster",
+    "Cavalry Archers attack +25% faster",
+    "Scout Cavalry-line and Steppe Lancers +20/30% HP in Castle/Imperial Age"
+   ],
+   "team": [
+    "Scout Cavalry-line +2 line of sight"
+   ],
+   "units": [
+    "Mangudai",
+    "Elite Mangudai"
+   ]
+  }
+ ],
+ "byzantines": [
+  {
+   "name": "Logistica",
+   "age": "imperial_age",
+   "time": 50,
+   "gold": 600,
+   "wood": 0,
+   "food": 800,
+   "stone": 0,
+   "desc": "Research Logistica (Cataphracts deal trample damage, +6 attack vs. Infantry)",
+   "bonuses": [
+    "Buildings +10/20/30/40% HP in Dark/Feudal/Castle/Imperial Age",
+    "Camel Riders, Skirmishers and Spearman-line cost -25%",
+    "Town Watch, Town Patrol free",
+    "Advancing to Imperial Age costs -33%",
+    "Fire Ships and Dromons attack +25% faster"
+   ],
+   "team": [
+    "Monks heal +100% faster"
+   ],
+   "units": [
+    "Cataphract",
+    "Elite Cataphract"
+   ]
+  },
+  {
+   "name": "Greek Fire",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 300,
+   "wood": 0,
+   "food": 250,
+   "stone": 0,
+   "desc": "Research Greek Fire (Fire Ships +1 range; Dromons and Bombard Towers increased blast radius)",
+   "bonuses": [
+    "Buildings +10/20/30/40% HP in Dark/Feudal/Castle/Imperial Age",
+    "Camel Riders, Skirmishers and Spearman-line cost -25%",
+    "Town Watch, Town Patrol free",
+    "Advancing to Imperial Age costs -33%",
+    "Fire Ships and Dromons attack +25% faster"
+   ],
+   "team": [
+    "Monks heal +100% faster"
+   ],
+   "units": [
+    "Cataphract",
+    "Elite Cataphract"
+   ]
+  }
+ ],
+ "japanese": [
+  {
+   "name": "Kataparuto",
+   "age": "imperial_age",
+   "time": 60,
+   "gold": 300,
+   "wood": 550,
+   "food": 0,
+   "stone": 0,
+   "desc": "Research Kataparuto (Trebuchets attack and pack/unpack faster)",
+   "bonuses": [
+    "Mills, Lumber- and Mining Camps cost -50%",
+    "Infantry attacks +33% faster starting in Feudal Age",
+    "Cavalry Archers +2 attack vs. Ranged Soldiers (except Skirmishers)",
+    "Fishing Ships work +5/10/15/20% faster in Dark/Feudal/Castle/Imperial Age; +100% HP"
+   ],
+   "team": [
+    "Galley-line +4 line of sight"
+   ],
+   "units": [
+    "Samurai",
+    "Elite Samurai"
+   ]
+  },
+  {
+   "name": "Yasama",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 0,
+   "wood": 300,
+   "food": 300,
+   "stone": 0,
+   "desc": "Research Yasama (Watch Tower-line fires additional arrows)",
+   "bonuses": [
+    "Mills, Lumber- and Mining Camps cost -50%",
+    "Infantry attacks +33% faster starting in Feudal Age",
+    "Cavalry Archers +2 attack vs. Ranged Soldiers (except Skirmishers)",
+    "Fishing Ships work +5/10/15/20% faster in Dark/Feudal/Castle/Imperial Age; +100% HP"
+   ],
+   "team": [
+    "Galley-line +4 line of sight"
+   ],
+   "units": [
+    "Samurai",
+    "Elite Samurai"
+   ]
+  }
+ ],
+ "teutons": [
+  {
+   "name": "Crenellations",
+   "age": "imperial_age",
+   "time": 60,
+   "gold": 0,
+   "wood": 0,
+   "food": 600,
+   "stone": 400,
+   "desc": "Research Crenellations (Castles +3 range, garrisoned Infantry fires arrows)",
+   "bonuses": [
+    "Farms cost -40%",
+    "Town Centers +10 garrison capacity; Towers +5 garrison capacity",
+    "Barracks and Stable Units +1/+2 melee armor in Castle/Imperial Age",
+    "Monks +100% healing range",
+    "Murder Holes, Herbal Medicine free"
+   ],
+   "team": [
+    "Units more resistant to conversion"
+   ],
+   "units": [
+    "Teutonic Knight",
+    "Elite Teutonic Knight"
+   ]
+  },
+  {
+   "name": "Ironclad",
+   "age": "castle_age",
+   "time": 60,
+   "gold": 350,
+   "wood": 400,
+   "food": 0,
+   "stone": 0,
+   "desc": "Research Ironclad (Siege Weapons +4 melee armor)",
+   "bonuses": [
+    "Farms cost -40%",
+    "Town Centers +10 garrison capacity; Towers +5 garrison capacity",
+    "Barracks and Stable Units +1/+2 melee armor in Castle/Imperial Age",
+    "Monks +100% healing range",
+    "Murder Holes, Herbal Medicine free"
+   ],
+   "team": [
+    "Units more resistant to conversion"
+   ],
+   "units": [
+    "Teutonic Knight",
+    "Elite Teutonic Knight"
+   ]
+  }
+ ],
+ "vikings": [
+  {
+   "name": "Bogsveigar",
+   "age": "imperial_age",
+   "time": 40,
+   "gold": 500,
+   "wood": 0,
+   "food": 650,
+   "stone": 0,
+   "desc": "Research Bogsveigar (Archer-line and Longboats +1 attack)",
+   "bonuses": [
+    "Wheelbarrow, Hand Cart free",
+    "Infantry +20% HP starting in Feudal Age",
+    "Warships cost -10/15/20% in Feudal/Castle/Imperial Age",
+    "Chieftains (Infantry +5 attack vs. Cavalry, +4 vs. Camel Units; generate +5 gold when defeating Villagers, Trade Units and Monks)",
+    "Bogsveigar (Archer-line and Longboats +1 attack)"
+   ],
+   "team": [
+    "Docks cost -15%"
+   ],
+   "units": [
+    "Berserk",
+    "Elite Berserk"
+   ]
+  },
+  {
+   "name": "Chieftains",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 450,
+   "wood": 0,
+   "food": 600,
+   "stone": 0,
+   "desc": "Research Chieftains (Infantry +5 attack vs. Cavalry, +4 vs. Camel Units; generate +5 gold when defeating Villagers, Trade Units and Monks)",
+   "bonuses": [
+    "Wheelbarrow, Hand Cart free",
+    "Infantry +20% HP starting in Feudal Age",
+    "Warships cost -10/15/20% in Feudal/Castle/Imperial Age",
+    "Chieftains (Infantry +5 attack vs. Cavalry, +4 vs. Camel Units; generate +5 gold when defeating Villagers, Trade Units and Monks)",
+    "Bogsveigar (Archer-line and Longboats +1 attack)"
+   ],
+   "team": [
+    "Docks cost -15%"
+   ],
+   "units": [
+    "Berserk",
+    "Elite Berserk"
+   ]
+  }
+ ],
+ "vietnamese": [
+  {
+   "name": "Paper Money",
+   "age": "imperial_age",
+   "time": 60,
+   "gold": 0,
+   "wood": 200,
+   "food": 550,
+   "stone": 0,
+   "desc": "Research Paper Money (Lumberjacks slowly generate gold in addition to wood)",
+   "bonuses": [
+    "Enemy Town Centers are revealed at the start of the game",
+    "Economic upgrades cost no wood and research +100% faster",
+    "Archery Range units and Fire Lancers +20% HP",
+    "Conscription free",
+    "Chatras (Battle Elephants +100 HP)",
+    "Paper Money (Lumberjacks slowly generate gold in addition to wood)"
+   ],
+   "team": [
+    "Imperial Skirmisher upgrade available in Imperial Age"
+   ],
+   "units": [
+    "Rattan Archer",
+    "Elite Rattan Archer"
+   ]
+  },
+  {
+   "name": "Chatras",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 250,
+   "wood": 0,
+   "food": 250,
+   "stone": 0,
+   "desc": "Research Chatras (Battle Elephants +100 HP)",
+   "bonuses": [
+    "Enemy Town Centers are revealed at the start of the game",
+    "Economic upgrades cost no wood and research +100% faster",
+    "Archery Range units and Fire Lancers +20% HP",
+    "Conscription free",
+    "Chatras (Battle Elephants +100 HP)",
+    "Paper Money (Lumberjacks slowly generate gold in addition to wood)"
+   ],
+   "team": [
+    "Imperial Skirmisher upgrade available in Imperial Age"
+   ],
+   "units": [
+    "Rattan Archer",
+    "Elite Rattan Archer"
+   ]
+  }
+ ],
+ "portuguese": [
+  {
+   "name": "Arquebus",
+   "age": "imperial_age",
+   "time": 40,
+   "gold": 400,
+   "wood": 0,
+   "food": 700,
+   "stone": 0,
+   "desc": "Research Arquebus (Gunpowder Units fire more accurately at moving targets)",
+   "bonuses": [
+    "Foragers generate wood in addition to food",
+    "All units cost -20% gold",
+    "Can build Feitoria in Imperial Age",
+    "Ships +10/15/20% HP in Feudal/Castle/Imperial Age",
+    "Circumnavigation (Sets the entire map to explored; Ships train +33% faster)",
+    "Arquebus (Gunpowder Units fire more accurately at moving targets)"
+   ],
+   "team": [
+    "Technologies research +25% faster"
+   ],
+   "units": [
+    "Organ Gun",
+    "Elite Organ Gun"
+   ]
+  },
+  {
+   "name": "Circumnavigation",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 0,
+   "wood": 150,
+   "food": 250,
+   "stone": 0,
+   "desc": "Research Circumnavigation (Sets the entire map to explored; Ships train +33% faster)",
+   "bonuses": [
+    "Foragers generate wood in addition to food",
+    "All units cost -20% gold",
+    "Can build Feitoria in Imperial Age",
+    "Ships +10/15/20% HP in Feudal/Castle/Imperial Age",
+    "Circumnavigation (Sets the entire map to explored; Ships train +33% faster)",
+    "Arquebus (Gunpowder Units fire more accurately at moving targets)"
+   ],
+   "team": [
+    "Technologies research +25% faster"
+   ],
+   "units": [
+    "Organ Gun",
+    "Elite Organ Gun"
+   ]
+  }
+ ],
+ "aztecs": [
+  {
+   "name": "Garland Wars",
+   "age": "imperial_age",
+   "time": 60,
+   "gold": 750,
+   "wood": 0,
+   "food": 450,
+   "stone": 0,
+   "desc": "Research Garland Wars (Infantry +4 attack)",
+   "bonuses": [
+    "Start with +50 gold",
+    "Villagers carry +3",
+    "Military Units train +15% faster",
+    "Monks gain +5 HP for each researched Monastery technology"
+   ],
+   "team": [
+    "Relics generate +33% gold"
+   ],
+   "units": [
+    "Jaguar Warrior",
+    "Elite Jaguar Warrior"
+   ]
+  },
+  {
+   "name": "Atlatl",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 350,
+   "wood": 0,
+   "food": 400,
+   "stone": 0,
+   "desc": "Research Atlatl (Skirmishers +1 attack, +1 range)",
+   "bonuses": [
+    "Start with +50 gold",
+    "Villagers carry +3",
+    "Military Units train +15% faster",
+    "Monks gain +5 HP for each researched Monastery technology"
+   ],
+   "team": [
+    "Relics generate +33% gold"
+   ],
+   "units": [
+    "Jaguar Warrior",
+    "Elite Jaguar Warrior"
+   ]
+  }
+ ],
+ "celts": [
+  {
+   "name": "Furor Celtica",
+   "age": "imperial_age",
+   "time": 50,
+   "gold": 450,
+   "wood": 0,
+   "food": 750,
+   "stone": 0,
+   "desc": "Research Furor Celtica (Siege Weapons +40% HP)",
+   "bonuses": [
+    "Lumberjacks work +15% faster",
+    "Livestock animals within Celt unit line of sight cannot be stolen",
+    "Infantry moves +5/10/15/20% faster in Dark/Feudal/",
+    "Siege Weapons attack +25% faster"
+   ],
+   "team": [
+    "Siege Workshops work +20% faster"
+   ],
+   "units": [
+    "Woad Raider",
+    "Elite Woad Raider"
+   ]
+  },
+  {
+   "name": "Stronghold",
+   "age": "castle_age",
+   "time": 30,
+   "gold": 200,
+   "wood": 0,
+   "food": 250,
+   "stone": 0,
+   "desc": "Research Stronghold (Castles and Watch Tower-line attack +33% faster; Castles heal allied Infantry in a 7 tile radius)",
+   "bonuses": [
+    "Lumberjacks work +15% faster",
+    "Livestock animals within Celt unit line of sight cannot be stolen",
+    "Infantry moves +5/10/15/20% faster in Dark/Feudal/",
+    "Siege Weapons attack +25% faster"
+   ],
+   "team": [
+    "Siege Workshops work +20% faster"
+   ],
+   "units": [
+    "Woad Raider",
+    "Elite Woad Raider"
+   ]
+  }
+ ],
+ "malians": [
+  {
+   "name": "Farimba",
+   "age": "imperial_age",
+   "time": 40,
+   "gold": 400,
+   "wood": 0,
+   "food": 650,
+   "stone": 0,
+   "desc": "Research Farimba (Cavalry +5 attack)",
+   "bonuses": [
+    "Buildings cost -15% wood",
+    "Villagers drop off +10% more gold",
+    "Barracks Units +1/+2/+3 pierce armor in Feudal/"
+   ],
+   "team": [
+    "Universities work +80% faster"
+   ],
+   "units": [
+    "Gbeto",
+    "Elite Gbeto"
+   ]
+  },
+  {
+   "name": "Tigui",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 0,
+   "wood": 300,
+   "food": 200,
+   "stone": 0,
+   "desc": "Research Tigui (Town Centers fire arrows without garrison)",
+   "bonuses": [
+    "Buildings cost -15% wood",
+    "Villagers drop off +10% more gold",
+    "Barracks Units +1/+2/+3 pierce armor in Feudal/"
+   ],
+   "team": [
+    "Universities work +80% faster"
+   ],
+   "units": [
+    "Gbeto",
+    "Elite Gbeto"
+   ]
+  }
+ ],
+ "saracens": [
+  {
+   "name": "Counterweights",
+   "age": "imperial_age",
+   "time": 50,
+   "gold": 500,
+   "wood": 0,
+   "food": 650,
+   "stone": 0,
+   "desc": "Research Counterweights (Trebuchets and Mangonel-line +15% attack)",
+   "bonuses": [
+    "Market trading fee only 5%; Markets cost -100 wood",
+    "Camel Units +25% HP",
+    "Galley-line attacks +25% faster",
+    "Transport Ships +100% HP, +20 carry capacity"
+   ],
+   "team": [
+    "Foot Archers and Skirmishers +2 attack vs. buildings"
+   ],
+   "units": [
+    "Mameluke",
+    "Elite Mameluke"
+   ]
+  },
+  {
+   "name": "Bimaristan",
+   "age": "castle_age",
+   "time": 50,
+   "gold": 200,
+   "wood": 300,
+   "food": 0,
+   "stone": 0,
+   "desc": "Research Bimaristan (Monks passively heal multiple nearby units)",
+   "bonuses": [
+    "Market trading fee only 5%; Markets cost -100 wood",
+    "Camel Units +25% HP",
+    "Galley-line attacks +25% faster",
+    "Transport Ships +100% HP, +20 carry capacity"
+   ],
+   "team": [
+    "Foot Archers and Skirmishers +2 attack vs. buildings"
+   ],
+   "units": [
+    "Mameluke",
+    "Elite Mameluke"
+   ]
+  }
+ ],
+ "goths": [
+  {
+   "name": "Perfusion",
+   "age": "imperial_age",
+   "time": 40,
+   "gold": 600,
+   "wood": 400,
+   "food": 0,
+   "stone": 0,
+   "desc": "Research Perfusion (Barracks work +100% faster)",
+   "bonuses": [
+    "Loom is researched instantly",
+    "Hunters carry +15; hunted animals last +20% longer",
+    "Infantry costs -15/20/25/30% in Dark/Feudal/Castle/",
+    "Infantry +1/+2/+3 attack vs. buildings in Feudal/",
+    "+10 population space in Imperial Age"
+   ],
+   "team": [
+    "Barracks work +20% faster"
+   ],
+   "units": [
+    "Huskarl",
+    "Elite Huskarl"
+   ]
+  },
+  {
+   "name": "Anarchy",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 250,
+   "wood": 0,
+   "food": 450,
+   "stone": 0,
+   "desc": "Research Anarchy (Huskarls can be trained at Barracks)",
+   "bonuses": [
+    "Loom is researched instantly",
+    "Hunters carry +15; hunted animals last +20% longer",
+    "Infantry costs -15/20/25/30% in Dark/Feudal/Castle/",
+    "Infantry +1/+2/+3 attack vs. buildings in Feudal/",
+    "+10 population space in Imperial Age"
+   ],
+   "team": [
+    "Barracks work +20% faster"
+   ],
+   "units": [
+    "Huskarl",
+    "Elite Huskarl"
+   ]
+  }
+ ],
+ "persians": [
+  {
+   "name": "Citadels",
+   "age": "imperial_age",
+   "time": 50,
+   "gold": 300,
+   "wood": 600,
+   "food": 0,
+   "stone": 0,
+   "desc": "Research Citadels (Castles +4 attack, +3 vs. Rams, +3 vs. Infantry and receive -25% bonus damage)",
+   "bonuses": [
+    "Start with +50 wood and +50 food",
+    "Town Centers and Docks +100% HP and work +5/10/15/20% faster in Dark/Feudal/Castle/Imperial Age",
+    "Parthian Tactics available in Castle Age",
+    "Can build Caravanserai in Imperial Age",
+    "Kamandaran (Archer-line gold cost replaced by additional wood cost)",
+    "Citadels (Castles +4 attack, +3 vs. Rams, +3 vs. Infantry and receive -25% bonus damage)"
+   ],
+   "team": [
+    "Knight-line +2 attack vs. Ranged Soldiers"
+   ],
+   "units": [
+    "War Elephant",
+    "Elite War Elephant"
+   ]
+  },
+  {
+   "name": "Kamandaran",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 300,
+   "wood": 0,
+   "food": 400,
+   "stone": 0,
+   "desc": "Research Kamandaran (Archer-line gold cost replaced by additional wood cost)",
+   "bonuses": [
+    "Start with +50 wood and +50 food",
+    "Town Centers and Docks +100% HP and work +5/10/15/20% faster in Dark/Feudal/Castle/Imperial Age",
+    "Parthian Tactics available in Castle Age",
+    "Can build Caravanserai in Imperial Age",
+    "Kamandaran (Archer-line gold cost replaced by additional wood cost)",
+    "Citadels (Castles +4 attack, +3 vs. Rams, +3 vs. Infantry and receive -25% bonus damage)"
+   ],
+   "team": [
+    "Knight-line +2 attack vs. Ranged Soldiers"
+   ],
+   "units": [
+    "War Elephant",
+    "Elite War Elephant"
+   ]
+  }
+ ],
+ "slavs": [
+  {
+   "name": "Druzhina",
+   "age": "imperial_age",
+   "time": 40,
+   "gold": 500,
+   "wood": 0,
+   "food": 900,
+   "stone": 0,
+   "desc": "Research Druzhina (Infantry deals trample damage)",
+   "bonuses": [
+    "Farmers work +15% faster",
+    "Arson, Gambesons free",
+    "Siege Workshop Units cost -15%",
+    "Monks move +20% faster"
+   ],
+   "team": [
+    "Military buildings (except Castles) provide +5 population space"
+   ],
+   "units": [
+    "Boyar",
+    "Elite Boyar"
+   ]
+  },
+  {
+   "name": "Detinets",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 200,
+   "wood": 400,
+   "food": 0,
+   "stone": 0,
+   "desc": "Research Detinets (Replaces 40% of Castle and Watch Tower-line stone cost with additional wood cost)",
+   "bonuses": [
+    "Farmers work +15% faster",
+    "Arson, Gambesons free",
+    "Siege Workshop Units cost -15%",
+    "Monks move +20% faster"
+   ],
+   "team": [
+    "Military buildings (except Castles) provide +5 population space"
+   ],
+   "units": [
+    "Boyar",
+    "Elite Boyar"
+   ]
+  }
+ ],
+ "cumans": [
+  {
+   "name": "Cuman Mercenaries",
+   "age": "imperial_age",
+   "time": 40,
+   "gold": 400,
+   "wood": 0,
+   "food": 650,
+   "stone": 0,
+   "desc": "Research Cuman Mercenaries (All team members can train 5 free Elite Kipchaks per Castle)",
+   "bonuses": [
+    "One additional Town Center can be built in Feudal Age",
+    "Mounted Units move +5/10/15% faster in Feudal/",
+    "Archery Ranges and Stables cost -75 wood",
+    "Siege Workshop and Battering Ram available in Feudal Age; Capped Ram available in Castle Age"
+   ],
+   "team": [
+    "Palisade Walls +33% HP"
+   ],
+   "units": [
+    "Kipchak",
+    "Elite Kipchak"
+   ]
+  },
+  {
+   "name": "Steppe Husbandry",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 0,
+   "wood": 300,
+   "food": 200,
+   "stone": 0,
+   "desc": "Research Steppe Husbandry (Scout Cavalry-line, Steppe Lancers and Cavalry Archers train +100% faster)",
+   "bonuses": [
+    "One additional Town Center can be built in Feudal Age",
+    "Mounted Units move +5/10/15% faster in Feudal/",
+    "Archery Ranges and Stables cost -75 wood",
+    "Siege Workshop and Battering Ram available in Feudal Age; Capped Ram available in Castle Age"
+   ],
+   "team": [
+    "Palisade Walls +33% HP"
+   ],
+   "units": [
+    "Kipchak",
+    "Elite Kipchak"
+   ]
+  }
+ ],
+ "huns": [
+  {
+   "name": "Atheism",
+   "age": "imperial_age",
+   "time": 60,
+   "gold": 0,
+   "wood": 300,
+   "food": 500,
+   "stone": 0,
+   "desc": "Research Atheism (Enemy Relics generate -50% resources; Wonder and Relic victory takes +100 years)",
+   "bonuses": [
+    "Do not need houses, but start with -100 wood",
+    "Cavalry Archers cost -10/20% in Castle/Imperial Age",
+    "Trebuchets fire more accurately at units and small targets",
+    "On Nomadic maps, the first Town Center spawns a scouting Horse"
+   ],
+   "team": [
+    "Stables work +20% faster"
+   ],
+   "units": [
+    "Tarkan",
+    "Elite Tarkan"
+   ]
+  },
+  {
+   "name": "Marauders",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 200,
+   "wood": 300,
+   "food": 0,
+   "stone": 0,
+   "desc": "Research Marauders (Tarkans can be trained at Stables)",
+   "bonuses": [
+    "Do not need houses, but start with -100 wood",
+    "Cavalry Archers cost -10/20% in Castle/Imperial Age",
+    "Trebuchets fire more accurately at units and small targets",
+    "On Nomadic maps, the first Town Center spawns a scouting Horse"
+   ],
+   "team": [
+    "Stables work +20% faster"
+   ],
+   "units": [
+    "Tarkan",
+    "Elite Tarkan"
+   ]
+  }
+ ],
+ "koreans": [
+  {
+   "name": "Shinkichon",
+   "age": "imperial_age",
+   "time": 60,
+   "gold": 800,
+   "wood": 0,
+   "food": 1100,
+   "stone": 0,
+   "desc": "Research Shinkichon (Rocket Carts and Turtle Ships +1 range, fire additional projectiles)",
+   "bonuses": [
+    "Stone miners work +20% faster",
+    "Ranged Soldiers and Infantry cost -50% wood",
+    "Archer armor and tower upgrades free (Bombard Tower requires Chemistry)",
+    "Warships cost -20% wood",
+    "Eupseong (Watch Tower-line +2 range)",
+    "Shinkichon (Rocket Carts and Turtle Ships +1 range, fire additional projectiles)"
+   ],
+   "team": [
+    "Villagers +3 line of sight"
+   ],
+   "units": [
+    "War Wagon",
+    "Elite War Wagon"
+   ]
+  },
+  {
+   "name": "Eupseong",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 0,
+   "wood": 300,
+   "food": 300,
+   "stone": 0,
+   "desc": "Research Eupseong (Watch Tower-line +2 range)",
+   "bonuses": [
+    "Stone miners work +20% faster",
+    "Ranged Soldiers and Infantry cost -50% wood",
+    "Archer armor and tower upgrades free (Bombard Tower requires Chemistry)",
+    "Warships cost -20% wood",
+    "Eupseong (Watch Tower-line +2 range)",
+    "Shinkichon (Rocket Carts and Turtle Ships +1 range, fire additional projectiles)"
+   ],
+   "team": [
+    "Villagers +3 line of sight"
+   ],
+   "units": [
+    "War Wagon",
+    "Elite War Wagon"
+   ]
+  }
+ ],
+ "mayans": [
+  {
+   "name": "Holcans",
+   "age": "imperial_age",
+   "time": 70,
+   "gold": 450,
+   "wood": 0,
+   "food": 750,
+   "stone": 0,
+   "desc": "Research Holcans (Eagle Warriors +40 HP)",
+   "bonuses": [
+    "Start with +1 Villager, but -50 food",
+    "Resources last +15% longer",
+    "Foot Archers cost -10/20/30% in Feudal/Castle/Imperial Age"
+   ],
+   "team": [
+    "Walls cost -50%"
+   ],
+   "units": [
+    "Plumed Archer",
+    "Elite Plumed Archer"
+   ]
+  },
+  {
+   "name": "Hul'che Javelineers",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 300,
+   "wood": 0,
+   "food": 300,
+   "stone": 0,
+   "desc": "Research Hul'che Javelineers (Skirmishers fire an additional projectile)",
+   "bonuses": [
+    "Start with +1 Villager, but -50 food",
+    "Resources last +15% longer",
+    "Foot Archers cost -10/20/30% in Feudal/Castle/Imperial Age"
+   ],
+   "team": [
+    "Walls cost -50%"
+   ],
+   "units": [
+    "Plumed Archer",
+    "Elite Plumed Archer"
+   ]
+  }
+ ],
+ "hindustanis": [
+  {
+   "name": "Shatagni",
+   "age": "imperial_age",
+   "time": 40,
+   "gold": 650,
+   "wood": 0,
+   "food": 500,
+   "stone": 0,
+   "desc": "Research Shatagni (Hand Cannoneers +2 range)",
+   "bonuses": [
+    "Villagers cost -8/13/18/23% in Dark/Feudal/Castle/",
+    "Camel Riders attack +20% faster",
+    "Gunpowder Units +1 melee/+1 pierce armor",
+    "Can build Caravanserai in Imperial Age",
+    "Grand Trunk Road (All gold income +10% faster; Market trading fee reduced to 10%)",
+    "Shatagni (Hand Cannoneers +2 range)"
+   ],
+   "team": [
+    "Scout Cavalry-line and Camel Units +2 attack vs. buildings"
+   ],
+   "units": [
+    "Ghulam",
+    "Elite Ghulam"
+   ]
+  },
+  {
+   "name": "Grand Trunk Road",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 0,
+   "wood": 200,
+   "food": 250,
+   "stone": 0,
+   "desc": "Research Grand Trunk Road (All gold income +10% faster; Market trading fee reduced to 10%)",
+   "bonuses": [
+    "Villagers cost -8/13/18/23% in Dark/Feudal/Castle/",
+    "Camel Riders attack +20% faster",
+    "Gunpowder Units +1 melee/+1 pierce armor",
+    "Can build Caravanserai in Imperial Age",
+    "Grand Trunk Road (All gold income +10% faster; Market trading fee reduced to 10%)",
+    "Shatagni (Hand Cannoneers +2 range)"
+   ],
+   "team": [
+    "Scout Cavalry-line and Camel Units +2 attack vs. buildings"
+   ],
+   "units": [
+    "Ghulam",
+    "Elite Ghulam"
+   ]
+  }
+ ],
+ "spanish": [
+  {
+   "name": "Supremacy",
+   "age": "imperial_age",
+   "time": 60,
+   "gold": 250,
+   "wood": 0,
+   "food": 400,
+   "stone": 0,
+   "desc": "Research Supremacy (Villagers +40 HP, +6 attack, +2 melee/+2 pierce armor)",
+   "bonuses": [
+    "Builders work +30% faster",
+    "Receive +20 gold for each technology researched",
+    "Blacksmith upgrades cost no gold",
+    "Gunpowder Units attack +18% faster",
+    "Cannon Galleons fire more accurately at moving targets",
+    "Inquisition (Monks and Missionaries convert faster; Missionaries +1 range)",
+    "Supremacy (Villagers +40 HP, +6 attack, +2 melee/+2 pierce armor)"
+   ],
+   "team": [
+    "Trade Units generate +25% gold"
+   ],
+   "units": [
+    "Conquistador",
+    "Elite Conquistador"
+   ]
+  },
+  {
+   "name": "Inquisition",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 300,
+   "wood": 0,
+   "food": 100,
+   "stone": 0,
+   "desc": "Research Inquisition (Monks and Missionaries convert faster; Missionaries +1 range)",
+   "bonuses": [
+    "Builders work +30% faster",
+    "Receive +20 gold for each technology researched",
+    "Blacksmith upgrades cost no gold",
+    "Gunpowder Units attack +18% faster",
+    "Cannon Galleons fire more accurately at moving targets",
+    "Inquisition (Monks and Missionaries convert faster; Missionaries +1 range)",
+    "Supremacy (Villagers +40 HP, +6 attack, +2 melee/+2 pierce armor)"
+   ],
+   "team": [
+    "Trade Units generate +25% gold"
+   ],
+   "units": [
+    "Conquistador",
+    "Elite Conquistador"
+   ]
+  }
+ ],
+ "magyars": [
+  {
+   "name": "Recurve Bow",
+   "age": "imperial_age",
+   "time": 40,
+   "gold": 400,
+   "wood": 600,
+   "food": 0,
+   "stone": 0,
+   "desc": "Research Recurve Bow (Mounted Archers +1 attack, +1 range)",
+   "bonuses": [
+    "Villagers defeat wolves with one strike",
+    "Scout Cavalry-line costs -15%",
+    "Melee attack upgrades free"
+   ],
+   "team": [
+    "Mounted Archers train +25% faster"
+   ],
+   "units": [
+    "Magyar Huszar",
+    "Elite Magyar Huszar"
+   ]
+  },
+  {
+   "name": "Corvinian Army",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 300,
+   "wood": 0,
+   "food": 200,
+   "stone": 0,
+   "desc": "Research Corvinian Army (Magyar Huszar gold cost is replaced by additional food cost)",
+   "bonuses": [
+    "Villagers defeat wolves with one strike",
+    "Scout Cavalry-line costs -15%",
+    "Melee attack upgrades free"
+   ],
+   "team": [
+    "Mounted Archers train +25% faster"
+   ],
+   "units": [
+    "Magyar Huszar",
+    "Elite Magyar Huszar"
+   ]
+  }
+ ],
+ "poles": [
+  {
+   "name": "Lechitic Legacy",
+   "age": "imperial_age",
+   "time": 60,
+   "gold": 550,
+   "wood": 0,
+   "food": 750,
+   "stone": 0,
+   "desc": "Research Lechitic Legacy (Scout Cavalry-line deals trample damage)",
+   "bonuses": [
+    "Folwark replaces Mill",
+    "Villagers regenerate 10/15/20 HP in Feudal/Castle/Imperial Age",
+    "Stone Miners generate gold in addition to stone",
+    "Bloodlines and Scout Cavalry-line upgrades cost -50% food",
+    "Szlachta Privileges (Knight-line costs -60% gold)",
+    "Lechitic Legacy (Scout Cavalry-line deals trample damage)"
+   ],
+   "team": [
+    "Scout Cavalry-line +1 attack vs. Ranged Soldiers"
+   ],
+   "units": [
+    "Obuch",
+    "Elite Obuch"
+   ]
+  },
+  {
+   "name": "Szlachta Privileges",
+   "age": "castle_age",
+   "time": 45,
+   "gold": 300,
+   "wood": 0,
+   "food": 500,
+   "stone": 0,
+   "desc": "Research Szlachta Privileges (Knight-line costs -60% gold)",
+   "bonuses": [
+    "Folwark replaces Mill",
+    "Villagers regenerate 10/15/20 HP in Feudal/Castle/Imperial Age",
+    "Stone Miners generate gold in addition to stone",
+    "Bloodlines and Scout Cavalry-line upgrades cost -50% food",
+    "Szlachta Privileges (Knight-line costs -60% gold)",
+    "Lechitic Legacy (Scout Cavalry-line deals trample damage)"
+   ],
+   "team": [
+    "Scout Cavalry-line +1 attack vs. Ranged Soldiers"
+   ],
+   "units": [
+    "Obuch",
+    "Elite Obuch"
+   ]
+  }
+ ],
+ "italians": [
+  {
+   "name": "Silk Road",
+   "age": "castle_age",
+   "time": 60,
+   "gold": 250,
+   "wood": 0,
+   "food": 250,
+   "stone": 0,
+   "desc": "Research Silk Road (Trade Units cost -50%)",
+   "bonuses": [
+    "Advancing to the next Age costs -15%",
+    "Foot Archers and Condottieri +1 melee/+1 pierce armor",
+    "Dock and University technologies cost -25%",
+    "Gunpowder Units cost -20%",
+    "Fishing Ships cost -15%",
+    "Silk Road (Trade Units cost -50%)",
+    "Pirotechnia (Hand Cannoneers deal +15% pass through damage and are more accurate)"
+   ],
+   "team": [
+    "Condottiero available at the Barracks in Imperial Age"
+   ],
+   "units": [
+    "Genoese Crossbowman",
+    "Elite Genoese Crossbowman"
+   ]
+  },
+  {
+   "name": "Pavise",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 150,
+   "wood": 200,
+   "food": 0,
+   "stone": 0,
+   "desc": "Research Pavise (Foot Archers and Condottieri +1 melee/+1 pierce armor)",
+   "bonuses": [
+    "Advancing to the next Age costs -15%",
+    "Foot Archers and Condottieri +1 melee/+1 pierce armor",
+    "Dock and University technologies cost -25%",
+    "Gunpowder Units cost -20%",
+    "Fishing Ships cost -15%",
+    "Silk Road (Trade Units cost -50%)",
+    "Pirotechnia (Hand Cannoneers deal +15% pass through damage and are more accurate)"
+   ],
+   "team": [
+    "Condottiero available at the Barracks in Imperial Age"
+   ],
+   "units": [
+    "Genoese Crossbowman",
+    "Elite Genoese Crossbowman"
+   ]
+  }
+ ],
+ "bohemians": [
+  {
+   "name": "Hussite Reforms",
+   "age": "imperial_age",
+   "time": 45,
+   "gold": 450,
+   "wood": 0,
+   "food": 500,
+   "stone": 0,
+   "desc": "Research Hussite Reforms (Monks and Monastery technologies gold cost is replaced by food cost)",
+   "bonuses": [
+    "Mining Camp technologies free",
+    "Blacksmiths and Universities cost -100 wood",
+    "Spearman-line deals +25% bonus damage",
+    "Fervor and Sanctity affect Villagers",
+    "Chemistry and Hand Cannoneer available in Castle Age",
+    "Wagenburg Tactics (Gunpowder Units move +15% faster)",
+    "Hussite Reforms (Monks and Monastery technologies gold cost is replaced by food cost)"
+   ],
+   "team": [
+    "Markets work +80% faster"
+   ],
+   "units": [
+    "Hussite Wagon",
+    "Elite Hussite Wagon"
+   ]
+  },
+  {
+   "name": "Wagenburg Tactics",
+   "age": "castle_age",
+   "time": 45,
+   "gold": 300,
+   "wood": 0,
+   "food": 300,
+   "stone": 0,
+   "desc": "Research Wagenburg Tactics (Gunpowder Units move +15% faster)",
+   "bonuses": [
+    "Mining Camp technologies free",
+    "Blacksmiths and Universities cost -100 wood",
+    "Spearman-line deals +25% bonus damage",
+    "Fervor and Sanctity affect Villagers",
+    "Chemistry and Hand Cannoneer available in Castle Age",
+    "Wagenburg Tactics (Gunpowder Units move +15% faster)",
+    "Hussite Reforms (Monks and Monastery technologies gold cost is replaced by food cost)"
+   ],
+   "team": [
+    "Markets work +80% faster"
+   ],
+   "units": [
+    "Hussite Wagon",
+    "Elite Hussite Wagon"
+   ]
+  }
+ ],
+ "turks": [
+  {
+   "name": "Artillery",
+   "age": "imperial_age",
+   "time": 40,
+   "gold": 650,
+   "wood": 0,
+   "food": 600,
+   "stone": 0,
+   "desc": "Research Artillery (Bombard Towers, Bombard Cannons, Cannon Galleons +2 range)",
+   "bonuses": [
+    "Gold miners work +25% faster",
+    "Scout Cavalry-line +1 pierce armor and upgrades free",
+    "Chemistry free; Gunpowder technologies costs -50%",
+    "Gunpowder Units +25% HP"
+   ],
+   "team": [
+    "Gunpowder Units train +25% faster"
+   ],
+   "units": [
+    "Janissary",
+    "Elite Janissary"
+   ]
+  },
+  {
+   "name": "Sipahi",
+   "age": "castle_age",
+   "time": 60,
+   "gold": 150,
+   "wood": 0,
+   "food": 350,
+   "stone": 0,
+   "desc": "Research Sipahi (Mounted Archers +20 HP)",
+   "bonuses": [
+    "Gold miners work +25% faster",
+    "Scout Cavalry-line +1 pierce armor and upgrades free",
+    "Chemistry free; Gunpowder technologies costs -50%",
+    "Gunpowder Units +25% HP"
+   ],
+   "team": [
+    "Gunpowder Units train +25% faster"
+   ],
+   "units": [
+    "Janissary",
+    "Elite Janissary"
+   ]
+  }
+ ],
+ "bulgarians": [
+  {
+   "name": "Bagains",
+   "age": "imperial_age",
+   "time": 40,
+   "gold": 450,
+   "wood": 0,
+   "food": 900,
+   "stone": 0,
+   "desc": "Research Bagains (Militia-line +5 melee armor)",
+   "bonuses": [
+    "Militia-line upgrades free",
+    "Blacksmith and Siege Workshop technologies cost -50% food",
+    "Town Centers cost -50% stone",
+    "Can build Krepost in Castle Age"
+   ],
+   "team": [
+    "Blacksmiths work +80% faster"
+   ],
+   "units": [
+    "Konnik"
+   ]
+  },
+  {
+   "name": "Stirrups",
+   "age": "castle_age",
+   "time": 35,
+   "gold": 200,
+   "wood": 0,
+   "food": 400,
+   "stone": 0,
+   "desc": "Research Stirrups (Cavalry attacks +33% faster)",
+   "bonuses": [
+    "Militia-line upgrades free",
+    "Blacksmith and Siege Workshop technologies cost -50% food",
+    "Town Centers cost -50% stone",
+    "Can build Krepost in Castle Age"
+   ],
+   "team": [
+    "Blacksmiths work +80% faster"
+   ],
+   "units": [
+    "Konnik"
+   ]
+  }
+ ],
+ "lithuanians": [
+  {
+   "name": "Tower Shields",
+   "age": "imperial_age",
+   "time": 40,
+   "gold": 200,
+   "wood": 0,
+   "food": 500,
+   "stone": 0,
+   "desc": "Research Tower Shields (Spearman-line and Skirmishers +2 pierce armor)",
+   "bonuses": [
+    "Each Town Center provides +100 food",
+    "Spearman-line and Skirmisher-line move +10% faster",
+    "Each garrisoned Relic provides +1 attack to Knight-line and Leitis (maximum +4)",
+    "Hill Forts (Town Centers +3 range)",
+    "Tower Shields (Spearman-line and Skirmishers +2 pierce armor)"
+   ],
+   "team": [
+    "Monasteries work +20% faster"
+   ],
+   "units": [
+    "Leitis",
+    "Elite Leitis"
+   ]
+  },
+  {
+   "name": "Hill Forts",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 250,
+   "wood": 0,
+   "food": 250,
+   "stone": 0,
+   "desc": "Research Hill Forts (Town Centers +3 range)",
+   "bonuses": [
+    "Each Town Center provides +100 food",
+    "Spearman-line and Skirmisher-line move +10% faster",
+    "Each garrisoned Relic provides +1 attack to Knight-line and Leitis (maximum +4)",
+    "Hill Forts (Town Centers +3 range)",
+    "Tower Shields (Spearman-line and Skirmishers +2 pierce armor)"
+   ],
+   "team": [
+    "Monasteries work +20% faster"
+   ],
+   "units": [
+    "Leitis",
+    "Elite Leitis"
+   ]
+  }
+ ],
+ "tatars": [
+  {
+   "name": "Timurid Siegecraft",
+   "age": "imperial_age",
+   "time": 50,
+   "gold": 400,
+   "wood": 500,
+   "food": 0,
+   "stone": 0,
+   "desc": "Research Timurid Siegecraft (Trebuchets +2 range)",
+   "bonuses": [
+    "Livestock animals last +50% longer",
+    "Units deal +25% damage when fighting from higher elevation",
+    "New Town Centers spawn 2 Sheep starting in Castle Age",
+    "Thumb Ring, Parthian Tactics free",
+    "Silk Armor (Scout Cavalry-line, Steppe Lancers and Cavalry Archers +1 melee/+1 pierce armor)",
+    "Timurid Siegecraft (Trebuchets +2 range)"
+   ],
+   "team": [
+    "Mounted Archers +2 line of sight"
+   ],
+   "units": [
+    "Keshik",
+    "Elite Keshik"
+   ]
+  },
+  {
+   "name": "Silk Armor",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 300,
+   "wood": 400,
+   "food": 0,
+   "stone": 0,
+   "desc": "Research Silk Armor (Scout Cavalry-line, Steppe Lancers and Cavalry Archers +1 melee/+1 pierce armor)",
+   "bonuses": [
+    "Livestock animals last +50% longer",
+    "Units deal +25% damage when fighting from higher elevation",
+    "New Town Centers spawn 2 Sheep starting in Castle Age",
+    "Thumb Ring, Parthian Tactics free",
+    "Silk Armor (Scout Cavalry-line, Steppe Lancers and Cavalry Archers +1 melee/+1 pierce armor)",
+    "Timurid Siegecraft (Trebuchets +2 range)"
+   ],
+   "team": [
+    "Mounted Archers +2 line of sight"
+   ],
+   "units": [
+    "Keshik",
+    "Elite Keshik"
+   ]
+  }
+ ],
+ "berbers": [
+  {
+   "name": "Maghrebi Camels",
+   "age": "imperial_age",
+   "time": 40,
+   "gold": 300,
+   "wood": 0,
+   "food": 700,
+   "stone": 0,
+   "desc": "Research Maghrebi Camels (Camel Units regenerate 15 HP per minute)",
+   "bonuses": [
+    "Villagers move +5% faster in Dark Age, +10% faster starting in Feudal Age",
+    "Stable Units cost -15/20% in Castle/Imperial Age",
+    "Ships move +10% faster",
+    "Kasbah (Team Castles work +25% faster)",
+    "Maghrebi Camels (Camel Units regenerate 15 HP per minute)"
+   ],
+   "team": [
+    "Genitour available at the Archery Range starting in Castle Age"
+   ],
+   "units": [
+    "Camel Archer",
+    "Elite Genitour"
+   ]
+  },
+  {
+   "name": "Kasbah",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 250,
+   "wood": 0,
+   "food": 250,
+   "stone": 0,
+   "desc": "Research Kasbah (Team Castles work +25% faster)",
+   "bonuses": [
+    "Villagers move +5% faster in Dark Age, +10% faster starting in Feudal Age",
+    "Stable Units cost -15/20% in Castle/Imperial Age",
+    "Ships move +10% faster",
+    "Kasbah (Team Castles work +25% faster)",
+    "Maghrebi Camels (Camel Units regenerate 15 HP per minute)"
+   ],
+   "team": [
+    "Genitour available at the Archery Range starting in Castle Age"
+   ],
+   "units": [
+    "Camel Archer",
+    "Elite Genitour"
+   ]
+  }
+ ],
+ "ethiopians": [
+  {
+   "name": "Royal Heirs",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 300,
+   "wood": 0,
+   "food": 300,
+   "stone": 0,
+   "desc": "Research Royal Heirs (Shotel Warriors and Camel Riders receive -3 damage from Mounted Units)",
+   "bonuses": [
+    "Receive +100 gold and +100 food when advancing to the next Age",
+    "Foot Archers attack +18% faster",
+    "Pikeman upgrade free"
+   ],
+   "team": [
+    "Outposts +3 line of sight and cost no stone"
+   ],
+   "units": [
+    "Shotel Warrior",
+    "Elite Shotel Warrior"
+   ]
+  },
+  {
+   "name": "Torsion Engines",
+   "age": "imperial_age",
+   "time": 40,
+   "gold": 600,
+   "wood": 0,
+   "food": 1000,
+   "stone": 0,
+   "desc": "Research Torsion Engines (Siege Workshop Units' blast radius increased)",
+   "bonuses": [
+    "Receive +100 gold and +100 food when advancing to the next Age",
+    "Foot Archers attack +18% faster",
+    "Pikeman upgrade free"
+   ],
+   "team": [
+    "Outposts +3 line of sight and cost no stone"
+   ],
+   "units": [
+    "Shotel Warrior",
+    "Elite Shotel Warrior"
+   ]
+  }
+ ],
+ "khmer": [
+  {
+   "name": "Double Crossbow",
+   "age": "imperial_age",
+   "time": 40,
+   "gold": 400,
+   "wood": 0,
+   "food": 700,
+   "stone": 0,
+   "desc": "Research Double Crossbows (Ballista Elephants and Scorpions fire an additional projectile)",
+   "bonuses": [
+    "No buildings required to advance to the next Age or to unlock other buildings",
+    "Farmers don't require Mills or Town Centers to drop off food",
+    "Villagers can garrison in Houses",
+    "Battle Elephants move +10% faster"
+   ],
+   "team": [
+    "Scorpions +1 range"
+   ],
+   "units": [
+    "Ballista Elephant",
+    "Elite Ballista Elephant"
+   ]
+  },
+  {
+   "name": "Tusk Swords",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 450,
+   "wood": 300,
+   "food": 0,
+   "stone": 0,
+   "desc": "Research Tusk Swords (Battle Elephants +3 attack)",
+   "bonuses": [
+    "No buildings required to advance to the next Age or to unlock other buildings",
+    "Farmers don't require Mills or Town Centers to drop off food",
+    "Villagers can garrison in Houses",
+    "Battle Elephants move +10% faster"
+   ],
+   "team": [
+    "Scorpions +1 range"
+   ],
+   "units": [
+    "Ballista Elephant",
+    "Elite Ballista Elephant"
+   ]
+  }
+ ],
+ "malay": [
+  {
+   "name": "Forced Levy",
+   "age": "imperial_age",
+   "time": 40,
+   "gold": 500,
+   "wood": 0,
+   "food": 850,
+   "stone": 0,
+   "desc": "Research Forced Levy (Militia-line gold cost is replaced by additional food cost)",
+   "bonuses": [
+    "Advancing to the next Age is +66% faster",
+    "Infantry armor upgrades free",
+    "Battle Elephants cost -25/35% in Castle/Imperial Age",
+    "Fish Traps cost -33% and provide +200% food"
+   ],
+   "team": [
+    "Docks +6 line of sight"
+   ],
+   "units": [
+    "Karambit Warrior",
+    "Elite Karambit Warrior"
+   ]
+  },
+  {
+   "name": "Thalassocracy",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 300,
+   "wood": 0,
+   "food": 300,
+   "stone": 0,
+   "desc": "Research Thalassocracy (Docks are upgraded to Harbors)",
+   "bonuses": [
+    "Advancing to the next Age is +66% faster",
+    "Infantry armor upgrades free",
+    "Battle Elephants cost -25/35% in Castle/Imperial Age",
+    "Fish Traps cost -33% and provide +200% food"
+   ],
+   "team": [
+    "Docks +6 line of sight"
+   ],
+   "units": [
+    "Karambit Warrior",
+    "Elite Karambit Warrior"
+   ]
+  }
+ ],
+ "burmese": [
+  {
+   "name": "Manipur Cavalry",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 300,
+   "wood": 0,
+   "food": 300,
+   "stone": 0,
+   "desc": "Research Manipur Cavalry (Cavalry +4 attack vs. Ranged Soldiers)",
+   "bonuses": [
+    "Lumber Camp technologies free",
+    "Infantry +1/+2/+3 attack in Feudal/Castle/Imperial Age",
+    "Battle Elephants +1 melee/+1 pierce armor",
+    "Monastery technologies cost -50%"
+   ],
+   "team": [
+    "Relics visible on the map at the start of the game"
+   ],
+   "units": [
+    "Arambai",
+    "Elite Arambai"
+   ]
+  },
+  {
+   "name": "Howdah",
+   "age": "imperial_age",
+   "time": 40,
+   "gold": 0,
+   "wood": 300,
+   "food": 400,
+   "stone": 0,
+   "desc": "Research Howdah (Battle Elephants +1 melee/+1 pierce armor)",
+   "bonuses": [
+    "Lumber Camp technologies free",
+    "Infantry +1/+2/+3 attack in Feudal/Castle/Imperial Age",
+    "Battle Elephants +1 melee/+1 pierce armor",
+    "Monastery technologies cost -50%"
+   ],
+   "team": [
+    "Relics visible on the map at the start of the game"
+   ],
+   "units": [
+    "Arambai",
+    "Elite Arambai"
+   ]
+  }
+ ],
+ "burgundians": [
+  {
+   "name": "Flemish Revolution",
+   "age": "imperial_age",
+   "time": 10,
+   "gold": 150,
+   "wood": 0,
+   "food": 200,
+   "stone": 0,
+   "desc": "Research Flemish Revolution (All existing Villagers are transformed to Flemish Militia)",
+   "bonuses": [
+    "Economic upgrades available one age earlier and cost -40% food",
+    "Stable technologies cost -50%",
+    "Cavalier upgrade available in Castle Age",
+    "Gunpowder Units +25% attack",
+    "Burgundian Vineyards (Farmers slowly generate gold in addition to food)",
+    "Flemish Revolution (All existing Villagers are transformed to Flemish Militia)"
+   ],
+   "team": [
+    "Relics generate food in addition to gold"
+   ],
+   "units": [
+    "Coustillier",
+    "Elite Coustillier"
+   ]
+  },
+  {
+   "name": "Burgundian Vineyards",
+   "age": "castle_age",
+   "time": 45,
+   "gold": 300,
+   "wood": 0,
+   "food": 400,
+   "stone": 0,
+   "desc": "Research Burgundian Vineyards (Farmers slowly generate gold in addition to food)",
+   "bonuses": [
+    "Economic upgrades available one age earlier and cost -40% food",
+    "Stable technologies cost -50%",
+    "Cavalier upgrade available in Castle Age",
+    "Gunpowder Units +25% attack",
+    "Burgundian Vineyards (Farmers slowly generate gold in addition to food)",
+    "Flemish Revolution (All existing Villagers are transformed to Flemish Militia)"
+   ],
+   "team": [
+    "Relics generate food in addition to gold"
+   ],
+   "units": [
+    "Coustillier",
+    "Elite Coustillier"
+   ]
+  }
+ ],
+ "sicilians": [
+  {
+   "name": "Hauberk",
+   "age": "imperial_age",
+   "time": 45,
+   "gold": 600,
+   "wood": 0,
+   "food": 700,
+   "stone": 0,
+   "desc": "Research Hauberk (Knight-line +1 melee/+2 pierce armor)",
+   "bonuses": [
+    "Start with +100 stone",
+    "Farm upgrades provide +125% additional food",
+    "Soldiers receive -40% bonus damage",
+    "Can build Donjon in Dark Age, replaces Watch Tower-line",
+    "Fortifications built +50% faster; Town Centers built +100% faster"
+   ],
+   "team": [
+    "Transport Ships +5 line of sight and cost -50%"
+   ],
+   "units": [
+    "Serjeant",
+    "Elite Serjeant"
+   ]
+  },
+  {
+   "name": "First Crusade",
+   "age": "castle_age",
+   "time": 60,
+   "gold": 300,
+   "wood": 0,
+   "food": 400,
+   "stone": 0,
+   "desc": "Research First Crusade (Up to 5 Town Centers spawn 5 Serjeants each; units more resistant to conversion)",
+   "bonuses": [
+    "Start with +100 stone",
+    "Farm upgrades provide +125% additional food",
+    "Soldiers receive -40% bonus damage",
+    "Can build Donjon in Dark Age, replaces Watch Tower-line",
+    "Fortifications built +50% faster; Town Centers built +100% faster"
+   ],
+   "team": [
+    "Transport Ships +5 line of sight and cost -50%"
+   ],
+   "units": [
+    "Serjeant",
+    "Elite Serjeant"
+   ]
+  }
+ ],
+ "armenians": [
+  {
+   "name": "Fereters",
+   "age": "imperial_age",
+   "time": 45,
+   "gold": 400,
+   "wood": 0,
+   "food": 550,
+   "stone": 0,
+   "desc": "Research Fereters (Infantry (except Spearman-line) +30 HP; Warrior Priests heal +100% faster)",
+   "bonuses": [
+    "Mule Carts cost -25%",
+    "Mule Cart technology effects +40%",
+    "Spearman- and Militia-line upgrades (except Man-at-Arms) available one age earlier",
+    "First Fortified Church receives a free Relic",
+    "Galley-line and Dromons fire an additional projectile"
+   ],
+   "team": [
+    "Infantry +2 line of sight"
+   ],
+   "units": [
+    "Composite Bowman",
+    "Elite Composite Bowman"
+   ]
+  },
+  {
+   "name": "Cilician Fleet",
+   "age": "castle_age",
+   "time": 45,
+   "gold": 300,
+   "wood": 350,
+   "food": 0,
+   "stone": 0,
+   "desc": "Research Cilician Fleet (Demolition Ships +20% blast radius; Galley-line and Dromons +1 range)",
+   "bonuses": [
+    "Mule Carts cost -25%",
+    "Mule Cart technology effects +40%",
+    "Spearman- and Militia-line upgrades (except Man-at-Arms) available one age earlier",
+    "First Fortified Church receives a free Relic",
+    "Galley-line and Dromons fire an additional projectile"
+   ],
+   "team": [
+    "Infantry +2 line of sight"
+   ],
+   "units": [
+    "Composite Bowman",
+    "Elite Composite Bowman"
+   ]
+  }
+ ],
+ "georgians": [
+  {
+   "name": "Aznauri Cavalry",
+   "age": "imperial_age",
+   "time": 45,
+   "gold": 250,
+   "wood": 0,
+   "food": 550,
+   "stone": 0,
+   "desc": "Research Aznauri Cavalry (Mounted Units take -20% population space)",
+   "bonuses": [
+    "Start with a Mule Cart",
+    "Units and buildings receive -15% damage when located on higher elevation",
+    "Mounted Units regenerate 2/8/14 HP per minute in Feudal/Castle/Imperial Age",
+    "Fortified Churches provide Villagers in a 9 tiles radius with +10% work rate"
+   ],
+   "team": [
+    "Building repairs cost -25%"
+   ],
+   "units": [
+    "Monaspa",
+    "Elite Monaspa"
+   ]
+  },
+  {
+   "name": "Svan Towers",
+   "age": "castle_age",
+   "time": 45,
+   "gold": 200,
+   "wood": 0,
+   "food": 300,
+   "stone": 0,
+   "desc": "Research Svan Towers (Fortifications +2 attack; Watch Tower-line deals pass through damage)",
+   "bonuses": [
+    "Start with a Mule Cart",
+    "Units and buildings receive -15% damage when located on higher elevation",
+    "Mounted Units regenerate 2/8/14 HP per minute in Feudal/Castle/Imperial Age",
+    "Fortified Churches provide Villagers in a 9 tiles radius with +10% work rate"
+   ],
+   "team": [
+    "Building repairs cost -25%"
+   ],
+   "units": [
+    "Monaspa",
+    "Elite Monaspa"
+   ]
+  }
+ ],
+ "inca": [
+  {
+   "name": "Fabric Shields",
+   "age": "imperial_age",
+   "time": 40,
+   "gold": 600,
+   "wood": 0,
+   "food": 600,
+   "stone": 0,
+   "desc": "Research Fabric Shields (Kamayuks, Slingers and Champi Warriors +1 melee/+1 pierce armor)",
+   "bonuses": [
+    "Houses and Settlements provide +5 population space",
+    "Buildings cost -15% stone",
+    "Military Units cost -15/20/25/30% food in Dark/Feudal/Castle/Imperial Age",
+    "Villagers affected by Infantry Blacksmith upgrades starting in Castle Age",
+    "Andean Sling (Skirmishers and Slingers no minimum range; Slingers +1 attack)",
+    "Fabric Shields (Kamayuks, Slingers and Champi Warriors +1 melee/+1 pierce armor)"
+   ],
+   "team": [
+    "Start with a free Llama"
+   ],
+   "units": [
+    "Kamayuk",
+    "Elite Kamayuk"
+   ]
+  },
+  {
+   "name": "Andean Sling",
+   "age": "castle_age",
+   "time": 40,
+   "gold": 300,
+   "wood": 0,
+   "food": 200,
+   "stone": 0,
+   "desc": "Research Andean Sling (Skirmishers and Slingers no minimum range; Slingers +1 attack)",
+   "bonuses": [
+    "Houses and Settlements provide +5 population space",
+    "Buildings cost -15% stone",
+    "Military Units cost -15/20/25/30% food in Dark/Feudal/Castle/Imperial Age",
+    "Villagers affected by Infantry Blacksmith upgrades starting in Castle Age",
+    "Andean Sling (Skirmishers and Slingers no minimum range; Slingers +1 attack)",
+    "Fabric Shields (Kamayuks, Slingers and Champi Warriors +1 melee/+1 pierce armor)"
+   ],
+   "team": [
+    "Start with a free Llama"
+   ],
+   "units": [
+    "Kamayuk",
+    "Elite Kamayuk"
+   ]
+  }
+ ],
+ "romans": [
+  {
+   "name": "Comitatenses",
+   "age": "imperial_age",
+   "time": 60,
+   "gold": 800,
+   "wood": 0,
+   "food": 700,
+   "stone": 0,
+   "desc": "Research Comitatenses (Militia-line, Knight-line, and Centurions train +50% faster and receive a charge attack)",
+   "bonuses": [
+    "Villagers gather, build, and repair +5% faster",
+    "Infantry armor upgrade effects are doubled",
+    "Scorpions cost -50% gold",
+    "Galley-line and Dromons +1 melee/+1 pierce armor"
+   ],
+   "team": [
+    "Scorpions minimum range reduced"
+   ],
+   "units": [
+    "Centurion",
+    "Elite Centurion"
+   ]
+  },
+  {
+   "name": "Ballistas",
+   "age": "castle_age",
+   "time": 45,
+   "gold": 300,
+   "wood": 400,
+   "food": 0,
+   "stone": 0,
+   "desc": "Research Ballistas (Scorpions attack +33% faster; Galley-line +2 attack)",
+   "bonuses": [
+    "Villagers gather, build, and repair +5% faster",
+    "Infantry armor upgrade effects are doubled",
+    "Scorpions cost -50% gold",
+    "Galley-line and Dromons +1 melee/+1 pierce armor"
+   ],
+   "team": [
+    "Scorpions minimum range reduced"
+   ],
+   "units": [
+    "Centurion",
+    "Elite Centurion"
+   ]
+  }
+ ]
+}

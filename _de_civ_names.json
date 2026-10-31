@@ -1,0 +1,5150 @@
+{
+ "ui": {
+  "armenians": {
+   "uu": {
+    "Composite Bowman": "Composite Bowman",
+    "Warrior Priest": "Warrior Priest"
+   },
+   "techs": {
+    "Cilician Fleet": "Cilician Fleet",
+    "Fereters": "Fereters"
+   }
+  },
+  "aztecs": {
+   "uu": {
+    "Jaguar Warrior": "Jaguar Warrior"
+   },
+   "techs": {
+    "Atlatl": "Atlatl",
+    "Garland Wars": "Garland Wars"
+   }
+  },
+  "berbers": {
+   "uu": {
+    "Genitour": "Genitour",
+    "Camel Archer": "Camel Archer"
+   },
+   "techs": {
+    "Kasbah": "Kasbah",
+    "Maghrebi Camels": "Maghrebi Camels"
+   }
+  },
+  "bohemians": {
+   "uu": {
+    "Houfnice": "Houfnice",
+    "Hussite Wagon": "Hussite Wagon"
+   },
+   "techs": {
+    "Wagenburg Tactics": "Wagenburg Tactics",
+    "Hussite Reforms": "Hussite Reforms"
+   }
+  },
+  "britons": {
+   "uu": {
+    "Longbowman": "Longbowman"
+   },
+   "techs": {
+    "Yeomen": "Yeomen",
+    "Warwolf": "Warwolf"
+   }
+  },
+  "bulgarians": {
+   "uu": {
+    "Konnik": "Konnik"
+   },
+   "techs": {
+    "Stirrups": "Stirrups",
+    "Bagains": "Bagains"
+   }
+  },
+  "burgundians": {
+   "uu": {
+    "Flemish Militia": "Flemish Militia",
+    "Coustillier": "Coustillier"
+   },
+   "techs": {
+    "Burgundian Vineyards": "Burgundian Vineyards",
+    "Flemish Revolution": "Flemish Revolution"
+   }
+  },
+  "burmese": {
+   "uu": {
+    "Arambai": "Arambai"
+   },
+   "techs": {
+    "Manipur Cavalry": "Manipur Cavalry",
+    "Howdah": "Howdah"
+   }
+  },
+  "byzantines": {
+   "uu": {
+    "Cataphract": "Cataphract"
+   },
+   "techs": {
+    "Greek Fire": "Greek Fire",
+    "Logistica": "Logistica"
+   }
+  },
+  "celts": {
+   "uu": {
+    "Woad Raider": "Woad Raider"
+   },
+   "techs": {
+    "Stronghold": "Stronghold",
+    "Furor Celtica": "Furor Celtica"
+   }
+  },
+  "chinese": {
+   "uu": {
+    "Dragon Ship": "Dragon Ship",
+    "Chu Ko Nu": "Chu Ko Nu"
+   },
+   "techs": {
+    "Great Wall": "Great Wall",
+    "Rocketry": "Rocketry"
+   }
+  },
+  "cumans": {
+   "uu": {
+    "Kipchak": "Kipchak"
+   },
+   "techs": {
+    "Steppe Husbandry": "Steppe Husbandry",
+    "Cuman Mercenaries": "Cuman Mercenaries"
+   }
+  },
+  "ethiopians": {
+   "uu": {
+    "Shotel Warrior": "Shotel Warrior"
+   },
+   "techs": {
+    "Royal Heirs": "Royal Heirs",
+    "Torsion Engines": "Torsion Engines"
+   }
+  },
+  "franks": {
+   "uu": {
+    "Throwing Axeman": "Throwing Axeman"
+   },
+   "techs": {
+    "Ordonnance Companies": "Ordonnance Companies",
+    "Chivalry": "Chivalry"
+   }
+  },
+  "georgians": {
+   "uu": {
+    "Monaspa": "Monaspa"
+   },
+   "techs": {
+    "Svan Towers": "Svan Towers",
+    "Aznauri Cavalry": "Aznauri Cavalry"
+   }
+  },
+  "goths": {
+   "uu": {
+    "Huskarl": "Huskarl"
+   },
+   "techs": {
+    "Anarchy": "Anarchy",
+    "Perfusion": "Perfusion"
+   }
+  },
+  "hindustanis": {
+   "uu": {
+    "Imperial Camel Rider": "Imperial Camel Rider",
+    "Ghulam": "Ghulam"
+   },
+   "techs": {
+    "Grand Trunk Road": "Grand Trunk Road",
+    "Shatagni": "Shatagni"
+   }
+  },
+  "huns": {
+   "uu": {
+    "Tarkan": "Tarkan"
+   },
+   "techs": {
+    "Marauders": "Marauders",
+    "Atheism": "Atheism"
+   }
+  },
+  "inca": {
+   "uu": {
+    "Kamayuk": "Kamayuk"
+   },
+   "techs": {
+    "Andean Sling": "Andean Sling",
+    "Fabric Shields": "Fabric Shields"
+   }
+  },
+  "italians": {
+   "uu": {
+    "Condottiero": "Condottiero",
+    "Genoese Crossbowman": "Genoese Crossbowman"
+   },
+   "techs": {
+    "Silk Road": "Silk Road",
+    "Pirotechnia": "Pirotechnia"
+   }
+  },
+  "japanese": {
+   "uu": {
+    "Samurai": "Samurai"
+   },
+   "techs": {
+    "Yasama": "Yasama",
+    "Kataparuto": "Kataparuto"
+   }
+  },
+  "khmer": {
+   "uu": {
+    "Ballista Elephant": "Ballista Elephant"
+   },
+   "techs": {
+    "Tusk Swords": "Tusk Swords",
+    "Double Crossbow": "Double Crossbow"
+   }
+  },
+  "koreans": {
+   "uu": {
+    "Turtle Ship": "Turtle Ship",
+    "War Wagon": "War Wagon"
+   },
+   "techs": {
+    "Eupseong": "Eupseong",
+    "Shinkichon": "Shinkichon"
+   }
+  },
+  "lithuanians": {
+   "uu": {
+    "Winged Hussar": "Winged Hussar",
+    "Leitis": "Leitis"
+   },
+   "techs": {
+    "Hill Forts": "Hill Forts",
+    "Tower Shields": "Tower Shields"
+   }
+  },
+  "magyars": {
+   "uu": {
+    "Magyar Huszar": "Magyar Huszar"
+   },
+   "techs": {
+    "Corvinian Army": "Corvinian Army",
+    "Recurve Bow": "Recurve Bow"
+   }
+  },
+  "malay": {
+   "uu": {
+    "Karambit Warrior": "Karambit Warrior"
+   },
+   "techs": {
+    "Thalassocracy": "Thalassocracy",
+    "Forced Levy": "Forced Levy"
+   }
+  },
+  "malians": {
+   "uu": {
+    "Gbeto": "Gbeto"
+   },
+   "techs": {
+    "Tigui": "Tigui",
+    "Farimba": "Farimba"
+   }
+  },
+  "maya": {
+   "uu": {
+    "Plumed Archer": "Plumed Archer"
+   },
+   "techs": {
+    "Hul'che Javelineers": "Hul'che Javelineers",
+    "Holcans": "Holcans"
+   }
+  },
+  "mongols": {
+   "uu": {
+    "Mangudai": "Mangudai"
+   },
+   "techs": {
+    "Nomads": "Nomads",
+    "Drill": "Drill"
+   }
+  },
+  "persians": {
+   "uu": {
+    "Savar": "Savar",
+    "War Elephant": "War Elephant"
+   },
+   "techs": {
+    "Kamandaran": "Kamandaran",
+    "Citadels": "Citadels"
+   }
+  },
+  "poles": {
+   "uu": {
+    "Winged Hussar": "Winged Hussar",
+    "Obuch": "Obuch"
+   },
+   "techs": {
+    "Szlachta Privileges": "Szlachta Privileges",
+    "Lechitic Legacy": "Lechitic Legacy"
+   }
+  },
+  "portuguese": {
+   "uu": {
+    "Caravel": "Caravel",
+    "Organ Gun": "Organ Gun"
+   },
+   "techs": {
+    "Circumnavigation": "Circum-navigation",
+    "Arquebus": "Arquebus"
+   }
+  },
+  "romans": {
+   "uu": {
+    "Legionary": "Legionary",
+    "Centurion": "Centurion"
+   },
+   "techs": {
+    "Ballistas": "Ballistas",
+    "Comitatenses": "Comitatenses"
+   }
+  },
+  "saracens": {
+   "uu": {
+    "Mameluke": "Mameluke"
+   },
+   "techs": {
+    "Bimaristan": "Bimaristan",
+    "Counterweights": "Counter- weights"
+   }
+  },
+  "sicilians": {
+   "uu": {
+    "Serjeant": "Serjeant"
+   },
+   "techs": {
+    "First Crusade": "First Crusade",
+    "Hauberk": "Hauberk"
+   }
+  },
+  "slavs": {
+   "uu": {
+    "Boyar": "Boyar"
+   },
+   "techs": {
+    "Detinets": "Detinets",
+    "Druzhina": "Druzhina"
+   }
+  },
+  "spanish": {
+   "uu": {
+    "Conquistador": "Conquistador",
+    "Missionary": "Missionary"
+   },
+   "techs": {
+    "Inquisition": "Inquisition",
+    "Supremacy": "Supremacy"
+   }
+  },
+  "tatars": {
+   "uu": {
+    "Flaming Camel": "Flaming Camel",
+    "Keshik": "Keshik"
+   },
+   "techs": {
+    "Silk Armor": "Silk Armor",
+    "Timurid Siegecraft": "Timurid Siegecraft"
+   }
+  },
+  "teutons": {
+   "uu": {
+    "Teutonic Knight": "Teutonic Knight"
+   },
+   "techs": {
+    "Ironclad": "Ironclad",
+    "Crenellations": "Crenellations"
+   }
+  },
+  "turks": {
+   "uu": {
+    "Janissary": "Janissary"
+   },
+   "techs": {
+    "Sipahi": "Sipahi",
+    "Artillery": "Artillery"
+   }
+  },
+  "vietnamese": {
+   "uu": {
+    "Imperial Skirmisher": "Imperial Skirmisher",
+    "Rattan Archer": "Rattan Archer"
+   },
+   "techs": {
+    "Chatras": "Chatras",
+    "Paper Money": "Paper Money"
+   }
+  },
+  "vikings": {
+   "uu": {
+    "Berserk": "Berserk"
+   },
+   "techs": {
+    "Chieftains": "Chieftains",
+    "Bogsveigar": "Bogsveigar"
+   }
+  }
+ },
+ "ui-zh": {
+  "armenians": {
+   "uu": {
+    "Composite Bowman": "复合 弓箭手",
+    "Warrior Priest": "牧师 战士"
+   },
+   "techs": {
+    "Cilician Fleet": "奇里乞亚 舰队",
+    "Fereters": "费雷特斯"
+   }
+  },
+  "aztecs": {
+   "uu": {
+    "Jaguar Warrior": "豹勇士"
+   },
+   "techs": {
+    "Atlatl": "掷矛器",
+    "Garland Wars": "荣冠 战争"
+   }
+  },
+  "berbers": {
+   "uu": {
+    "Genitour": "标枪骑兵",
+    "Camel Archer": "骆驼射手"
+   },
+   "techs": {
+    "Kasbah": "土堡",
+    "Maghrebi Camels": "马格里布骆驼"
+   }
+  },
+  "bohemians": {
+   "uu": {
+    "Houfnice": "榴弹炮",
+    "Hussite Wagon": "胡斯派战车"
+   },
+   "techs": {
+    "Wagenburg Tactics": "大车阵 战术",
+    "Hussite Reforms": "胡斯 革新"
+   }
+  },
+  "britons": {
+   "uu": {
+    "Longbowman": "长弓兵"
+   },
+   "techs": {
+    "Yeomen": "英皇侍卫",
+    "Warwolf": "战狼号"
+   }
+  },
+  "bulgarians": {
+   "uu": {
+    "Konnik": "保加利亚骑兵"
+   },
+   "techs": {
+    "Stirrups": "马镫",
+    "Bagains": "协议"
+   }
+  },
+  "burgundians": {
+   "uu": {
+    "Flemish Militia": "弗拉芒 民兵",
+    "Coustillier": "马上轻装兵"
+   },
+   "techs": {
+    "Burgundian Vineyards": "勃艮第 葡萄园",
+    "Flemish Revolution": "弗拉芒 革命"
+   }
+  },
+  "burmese": {
+   "uu": {
+    "Arambai": "飞镖骑兵"
+   },
+   "techs": {
+    "Manipur Cavalry": "曼尼普尔 马",
+    "Howdah": "象轿"
+   }
+  },
+  "byzantines": {
+   "uu": {
+    "Cataphract": "甲胄骑兵"
+   },
+   "techs": {
+    "Greek Fire": "希腊之火",
+    "Logistica": "后勤学"
+   }
+  },
+  "celts": {
+   "uu": {
+    "Woad Raider": "靛蓝突袭者"
+   },
+   "techs": {
+    "Stronghold": "堡垒",
+    "Furor Celtica": "凯尔特 狂暴"
+   }
+  },
+  "chinese": {
+   "uu": {
+    "Dragon Ship": "龙舟",
+    "Chu Ko Nu": "诸葛弩"
+   },
+   "techs": {
+    "Great Wall": "长城",
+    "Rocketry": "火箭术"
+   }
+  },
+  "cumans": {
+   "uu": {
+    "Kipchak": "钦察"
+   },
+   "techs": {
+    "Steppe Husbandry": "大草原 畜牧",
+    "Cuman Mercenaries": "库曼 雇佣兵"
+   }
+  },
+  "ethiopians": {
+   "uu": {
+    "Shotel Warrior": "弯刀勇士"
+   },
+   "techs": {
+    "Royal Heirs": "龙脉",
+    "Torsion Engines": "扭绞机"
+   }
+  },
+  "franks": {
+   "uu": {
+    "Throwing Axeman": "掷斧兵"
+   },
+   "techs": {
+    "Ordonnance Companies": "王家敕令 骑兵",
+    "Chivalry": "骑士精神"
+   }
+  },
+  "georgians": {
+   "uu": {
+    "Monaspa": "莫纳斯帕"
+   },
+   "techs": {
+    "Svan Towers": "斯万箭塔",
+    "Aznauri Cavalry": "阿兹瑙里 骑兵"
+   }
+  },
+  "goths": {
+   "uu": {
+    "Huskarl": "近卫军"
+   },
+   "techs": {
+    "Anarchy": "无政府",
+    "Perfusion": "井喷"
+   }
+  },
+  "hindustanis": {
+   "uu": {
+    "Imperial Camel Rider": "帝王 骆驼兵",
+    "Ghulam": "古拉姆"
+   },
+   "techs": {
+    "Grand Trunk Road": "大 干道",
+    "Shatagni": "印度火铳"
+   }
+  },
+  "huns": {
+   "uu": {
+    "Tarkan": "答刺罕骑兵"
+   },
+   "techs": {
+    "Marauders": "掠夺者",
+    "Atheism": "无神论"
+   }
+  },
+  "inca": {
+   "uu": {
+    "Kamayuk": "印加枪兵长"
+   },
+   "techs": {
+    "Andean Sling": "安第斯弹弓",
+    "Fabric Shields": "织物 盾"
+   }
+  },
+  "italians": {
+   "uu": {
+    "Condottiero": "意大利佣兵",
+    "Genoese Crossbowman": "热那亚 弩手"
+   },
+   "techs": {
+    "Silk Road": "丝绸之路",
+    "Pirotechnia": "烟火之术"
+   }
+  },
+  "japanese": {
+   "uu": {
+    "Samurai": "日本武士"
+   },
+   "techs": {
+    "Yasama": "射箭孔",
+    "Kataparuto": "弹射器"
+   }
+  },
+  "khmer": {
+   "uu": {
+    "Ballista Elephant": "重弩 战象"
+   },
+   "techs": {
+    "Tusk Swords": "獠牙剑",
+    "Double Crossbow": "双箭弩"
+   }
+  },
+  "koreans": {
+   "uu": {
+    "Turtle Ship": "龟甲船",
+    "War Wagon": "高丽战车"
+   },
+   "techs": {
+    "Eupseong": "邑城",
+    "Shinkichon": "神机箭"
+   }
+  },
+  "lithuanians": {
+   "uu": {
+    "Winged Hussar": "波兰 翼骑兵",
+    "Leitis": "烈堤司"
+   },
+   "techs": {
+    "Hill Forts": "山城堡",
+    "Tower Shields": "塔 盾"
+   }
+  },
+  "magyars": {
+   "uu": {
+    "Magyar Huszar": "马扎尔 骠骑"
+   },
+   "techs": {
+    "Corvinian Army": "科维尼安 军队",
+    "Recurve Bow": "反曲弓"
+   }
+  },
+  "malay": {
+   "uu": {
+    "Karambit Warrior": "爪刀 勇士"
+   },
+   "techs": {
+    "Thalassocracy": "海上霸主",
+    "Forced Levy": "强征兵役"
+   }
+  },
+  "malians": {
+   "uu": {
+    "Gbeto": "飞刀女兵"
+   },
+   "techs": {
+    "Tigui": "蛮王",
+    "Farimba": "死士"
+   }
+  },
+  "maya": {
+   "uu": {
+    "Plumed Archer": "羽箭手"
+   },
+   "techs": {
+    "Hul'che Javelineers": "胡尔切掷矛兵",
+    "Holcans": "霍尔坎"
+   }
+  },
+  "mongols": {
+   "uu": {
+    "Mangudai": "蒙古突骑"
+   },
+   "techs": {
+    "Nomads": "游牧",
+    "Drill": "操练"
+   }
+  },
+  "persians": {
+   "uu": {
+    "Savar": "萨瓦尔",
+    "War Elephant": "战象"
+   },
+   "techs": {
+    "Kamandaran": "波斯步弓手",
+    "Citadels": "堡垒"
+   }
+  },
+  "poles": {
+   "uu": {
+    "Winged Hussar": "波兰 翼骑兵",
+    "Obuch": "奥布奇战锤兵"
+   },
+   "techs": {
+    "Szlachta Privileges": "贵族 特权",
+    "Lechitic Legacy": "列克提克 遗产"
+   }
+  },
+  "portuguese": {
+   "uu": {
+    "Caravel": "卡拉维尔战舰",
+    "Organ Gun": "风琴炮"
+   },
+   "techs": {
+    "Circumnavigation": "环游 世界",
+    "Arquebus": "火绳枪"
+   }
+  },
+  "romans": {
+   "uu": {
+    "Legionary": "罗马军",
+    "Centurion": "百夫长"
+   },
+   "techs": {
+    "Ballistas": "弩炮",
+    "Comitatenses": "野战军"
+   }
+  },
+  "saracens": {
+   "uu": {
+    "Mameluke": "马穆鲁克"
+   },
+   "techs": {
+    "Bimaristan": "穆斯林诊所",
+    "Counterweights": "配重块"
+   }
+  },
+  "sicilians": {
+   "uu": {
+    "Serjeant": "萨金特卫兵"
+   },
+   "techs": {
+    "First Crusade": "第一次 十字军东征",
+    "Hauberk": "锁子甲"
+   }
+  },
+  "slavs": {
+   "uu": {
+    "Boyar": "贵族铁骑"
+   },
+   "techs": {
+    "Detinets": "罗斯堡垒",
+    "Druzhina": "皇家卫队"
+   }
+  },
+  "spanish": {
+   "uu": {
+    "Conquistador": "西班牙征服者",
+    "Missionary": "传教士"
+   },
+   "techs": {
+    "Inquisition": "宗教法庭",
+    "Supremacy": "霸权"
+   }
+  },
+  "tatars": {
+   "uu": {
+    "Flaming Camel": "火焰 骆驼",
+    "Keshik": "怯薛骑兵"
+   },
+   "techs": {
+    "Silk Armor": "丝护甲",
+    "Timurid Siegecraft": "帖木儿 攻城术"
+   }
+  },
+  "teutons": {
+   "uu": {
+    "Teutonic Knight": "条顿 骑士"
+   },
+   "techs": {
+    "Ironclad": "重装甲",
+    "Crenellations": "开垛口"
+   }
+  },
+  "turks": {
+   "uu": {
+    "Janissary": "苏丹亲兵"
+   },
+   "techs": {
+    "Sipahi": "西帕希骑兵",
+    "Artillery": "火炮术"
+   }
+  },
+  "vietnamese": {
+   "uu": {
+    "Imperial Skirmisher": "帝王 掷矛手",
+    "Rattan Archer": "藤弓兵"
+   },
+   "techs": {
+    "Chatras": "宝伞",
+    "Paper Money": "纸币"
+   }
+  },
+  "vikings": {
+   "uu": {
+    "Berserk": "狂战士"
+   },
+   "techs": {
+    "Chieftains": "酋长",
+    "Bogsveigar": "博格斯维加尔"
+   }
+  }
+ },
+ "ui-be": {
+  "armenians": {
+   "uu": {
+    "Composite Bowman": "Стрелок с составным луком",
+    "Warrior Priest": "Воин-жрец"
+   },
+   "techs": {
+    "Cilician Fleet": "Киликийский флот",
+    "Fereters": "Раки с мощами"
+   }
+  },
+  "aztecs": {
+   "uu": {
+    "Jaguar Warrior": "Воин-ягуар"
+   },
+   "techs": {
+    "Atlatl": "Атлатль",
+    "Garland Wars": "Захватнические войны"
+   }
+  },
+  "berbers": {
+   "uu": {
+    "Genitour": "Генитур",
+    "Camel Archer": "Лучник на верблюде"
+   },
+   "techs": {
+    "Kasbah": "Касба",
+    "Maghrebi Camels": "Магрибские верблюды"
+   }
+  },
+  "bohemians": {
+   "uu": {
+    "Houfnice": "Гауфница",
+    "Hussite Wagon": "Гуситская повозка"
+   },
+   "techs": {
+    "Wagenburg Tactics": "Тактика вагенбургов",
+    "Hussite Reforms": "Гуситские реформы"
+   }
+  },
+  "britons": {
+   "uu": {
+    "Longbowman": "Английский лучник"
+   },
+   "techs": {
+    "Yeomen": "Йомены",
+    "Warwolf": "Осадный требушет"
+   }
+  },
+  "bulgarians": {
+   "uu": {
+    "Konnik": "Конник"
+   },
+   "techs": {
+    "Stirrups": "Стремена",
+    "Bagains": "Багаины"
+   }
+  },
+  "burgundians": {
+   "uu": {
+    "Flemish Militia": "Фламандский ополченец",
+    "Coustillier": "Кутилье"
+   },
+   "techs": {
+    "Burgundian Vineyards": "Бургундские виноградники",
+    "Flemish Revolution": "Фламандская революция"
+   }
+  },
+  "burmese": {
+   "uu": {
+    "Arambai": "Арамбай"
+   },
+   "techs": {
+    "Manipur Cavalry": "Манипурская конница",
+    "Howdah": "Башни на слонах"
+   }
+  },
+  "byzantines": {
+   "uu": {
+    "Cataphract": "Катафракт"
+   },
+   "techs": {
+    "Greek Fire": "Греческий огонь",
+    "Logistica": "Логистика"
+   }
+  },
+  "celts": {
+   "uu": {
+    "Woad Raider": "Раскрашенный разбойник"
+   },
+   "techs": {
+    "Stronghold": "Цитадель",
+    "Furor Celtica": "Ярость кельтов"
+   }
+  },
+  "chinese": {
+   "uu": {
+    "Dragon Ship": "Dragon Ship",
+    "Chu Ko Nu": "Стрелок с чо-ко-ну"
+   },
+   "techs": {
+    "Great Wall": "Великая Китайская стена",
+    "Rocketry": "Ракеты"
+   }
+  },
+  "cumans": {
+   "uu": {
+    "Kipchak": "Кипчак"
+   },
+   "techs": {
+    "Steppe Husbandry": "Степное коневодство",
+    "Cuman Mercenaries": "Половецкие наемники"
+   }
+  },
+  "ethiopians": {
+   "uu": {
+    "Shotel Warrior": "Амхарский воин"
+   },
+   "techs": {
+    "Royal Heirs": "Королевские наследники",
+    "Torsion Engines": "Торсионные механизмы"
+   }
+  },
+  "franks": {
+   "uu": {
+    "Throwing Axeman": "Метатель топоров"
+   },
+   "techs": {
+    "Ordonnance Companies": "Ордонансовые роты",
+    "Chivalry": "Рыцарство"
+   }
+  },
+  "georgians": {
+   "uu": {
+    "Monaspa": "Монаспа"
+   },
+   "techs": {
+    "Svan Towers": "Сванские башни",
+    "Aznauri Cavalry": "Всадники азнаури"
+   }
+  },
+  "goths": {
+   "uu": {
+    "Huskarl": "Хускарл"
+   },
+   "techs": {
+    "Anarchy": "Анархия",
+    "Perfusion": "Мобилизация"
+   }
+  },
+  "hindustanis": {
+   "uu": {
+    "Imperial Camel Rider": "Имперский мехарист",
+    "Ghulam": "Гулам"
+   },
+   "techs": {
+    "Grand Trunk Road": "Великий колесный путь",
+    "Shatagni": "Шатагни"
+   }
+  },
+  "huns": {
+   "uu": {
+    "Tarkan": "Таркан"
+   },
+   "techs": {
+    "Marauders": "Мародеры",
+    "Atheism": "Атеизм"
+   }
+  },
+  "inca": {
+   "uu": {
+    "Kamayuk": "Камаюк"
+   },
+   "techs": {
+    "Andean Sling": "Уарака",
+    "Fabric Shields": "Матерчатые щиты"
+   }
+  },
+  "italians": {
+   "uu": {
+    "Condottiero": "Кондотьер",
+    "Genoese Crossbowman": "Генуэзский арбалетчик"
+   },
+   "techs": {
+    "Silk Road": "Великий шелковый путь",
+    "Pirotechnia": "Пиротехника"
+   }
+  },
+  "japanese": {
+   "uu": {
+    "Samurai": "Самурай"
+   },
+   "techs": {
+    "Yasama": "Ясама",
+    "Kataparuto": "Катапаруто"
+   }
+  },
+  "khmer": {
+   "uu": {
+    "Ballista Elephant": "Слон с баллистой"
+   },
+   "techs": {
+    "Tusk Swords": "Клинки для бивней",
+    "Double Crossbow": "Спаренный самострел"
+   }
+  },
+  "koreans": {
+   "uu": {
+    "Turtle Ship": "Корабль-черепаха",
+    "War Wagon": "Боевая телега"
+   },
+   "techs": {
+    "Eupseong": "Ыпсон",
+    "Shinkichon": "Зажигательные снаряды"
+   }
+  },
+  "lithuanians": {
+   "uu": {
+    "Winged Hussar": "Крылатый гусар",
+    "Leitis": "Лейти"
+   },
+   "techs": {
+    "Hill Forts": "Крепости в холмах",
+    "Tower Shields": "Ростовые щиты"
+   }
+  },
+  "magyars": {
+   "uu": {
+    "Magyar Huszar": "Мадьярский гусар"
+   },
+   "techs": {
+    "Corvinian Army": "Армия Корвина",
+    "Recurve Bow": "Лук двойной кривизны"
+   }
+  },
+  "malay": {
+   "uu": {
+    "Karambit Warrior": "Пендекар"
+   },
+   "techs": {
+    "Thalassocracy": "Талассократия",
+    "Forced Levy": "Принудительная мобилизация"
+   }
+  },
+  "malians": {
+   "uu": {
+    "Gbeto": "Гбето"
+   },
+   "techs": {
+    "Tigui": "Тигуи",
+    "Farimba": "Фаримба"
+   }
+  },
+  "maya": {
+   "uu": {
+    "Plumed Archer": "Лучник-холькан"
+   },
+   "techs": {
+    "Hul'che Javelineers": "Копьеносцы с хульче",
+    "Holcans": "Хольканы"
+   }
+  },
+  "mongols": {
+   "uu": {
+    "Mangudai": "Мангут"
+   },
+   "techs": {
+    "Nomads": "Кочевники",
+    "Drill": "Сверло"
+   }
+  },
+  "persians": {
+   "uu": {
+    "Savar": "Савар",
+    "War Elephant": "Боевой слон"
+   },
+   "techs": {
+    "Kamandaran": "Камандаран",
+    "Citadels": "Цитадели"
+   }
+  },
+  "poles": {
+   "uu": {
+    "Winged Hussar": "Крылатый гусар",
+    "Obuch": "Воин с чеканом"
+   },
+   "techs": {
+    "Szlachta Privileges": "Привилегии шляхты",
+    "Lechitic Legacy": "Лехитское наследие"
+   }
+  },
+  "portuguese": {
+   "uu": {
+    "Caravel": "Каравелла",
+    "Organ Gun": "Рибадекин"
+   },
+   "techs": {
+    "Circumnavigation": "Кругосветное путешествие",
+    "Arquebus": "Аркебуза"
+   }
+  },
+  "romans": {
+   "uu": {
+    "Legionary": "Легионер",
+    "Centurion": "Центурион"
+   },
+   "techs": {
+    "Ballistas": "Баллисты",
+    "Comitatenses": "Комитаты"
+   }
+  },
+  "saracens": {
+   "uu": {
+    "Mameluke": "Мамлюк"
+   },
+   "techs": {
+    "Bimaristan": "Бимаристан",
+    "Counterweights": "Противовесы"
+   }
+  },
+  "sicilians": {
+   "uu": {
+    "Serjeant": "Сержант"
+   },
+   "techs": {
+    "First Crusade": "Первый крестовый поход",
+    "Hauberk": "Хауберк"
+   }
+  },
+  "slavs": {
+   "uu": {
+    "Boyar": "Боярин"
+   },
+   "techs": {
+    "Detinets": "Детинец",
+    "Druzhina": "Дружина"
+   }
+  },
+  "spanish": {
+   "uu": {
+    "Conquistador": "Конкистадор",
+    "Missionary": "Миссионер"
+   },
+   "techs": {
+    "Inquisition": "Инквизиция",
+    "Supremacy": "Превосходство"
+   }
+  },
+  "tatars": {
+   "uu": {
+    "Flaming Camel": "Совар",
+    "Keshik": "Кэшик"
+   },
+   "techs": {
+    "Silk Armor": "Церемониальные доспехи",
+    "Timurid Siegecraft": "Осадное искусство чингизидов"
+   }
+  },
+  "teutons": {
+   "uu": {
+    "Teutonic Knight": "Тевтонский рыцарь"
+   },
+   "techs": {
+    "Ironclad": "Железная обшивка",
+    "Crenellations": "Зубчатые стены"
+   }
+  },
+  "turks": {
+   "uu": {
+    "Janissary": "Янычар"
+   },
+   "techs": {
+    "Sipahi": "Сипахи",
+    "Artillery": "Артиллерия"
+   }
+  },
+  "vietnamese": {
+   "uu": {
+    "Imperial Skirmisher": "Застрельщик-гвардеец",
+    "Rattan Archer": "Лучник с ротангом"
+   },
+   "techs": {
+    "Chatras": "Шатри",
+    "Paper Money": "Бумажные деньги"
+   }
+  },
+  "vikings": {
+   "uu": {
+    "Berserk": "Берсерк"
+   },
+   "techs": {
+    "Chieftains": "Ярлы",
+    "Bogsveigar": "Богсвейгар"
+   }
+  }
+ },
+ "ui-cs": {
+  "armenians": {
+   "uu": {
+    "Composite Bowman": "Composite Bowman",
+    "Warrior Priest": "Warrior Priest"
+   },
+   "techs": {
+    "Cilician Fleet": "Cilician Fleet",
+    "Fereters": "Fereters"
+   }
+  },
+  "aztecs": {
+   "uu": {
+    "Jaguar Warrior": "Jaguar Warrior"
+   },
+   "techs": {
+    "Atlatl": "Atlatl",
+    "Garland Wars": "Garland Wars"
+   }
+  },
+  "berbers": {
+   "uu": {
+    "Genitour": "Genitour",
+    "Camel Archer": "Camel Archer"
+   },
+   "techs": {
+    "Kasbah": "Kasbah",
+    "Maghrebi Camels": "Maghrebi Camels"
+   }
+  },
+  "bohemians": {
+   "uu": {
+    "Houfnice": "Houfnice",
+    "Hussite Wagon": "Hussite Wagon"
+   },
+   "techs": {
+    "Wagenburg Tactics": "Wagenburg Tactics",
+    "Hussite Reforms": "Hussite Reforms"
+   }
+  },
+  "britons": {
+   "uu": {
+    "Longbowman": "Longbowman"
+   },
+   "techs": {
+    "Yeomen": "Yeomen",
+    "Warwolf": "Warwolf"
+   }
+  },
+  "bulgarians": {
+   "uu": {
+    "Konnik": "Konnik"
+   },
+   "techs": {
+    "Stirrups": "Stirrups",
+    "Bagains": "Bagains"
+   }
+  },
+  "burgundians": {
+   "uu": {
+    "Flemish Militia": "Flemish Militia",
+    "Coustillier": "Coustillier"
+   },
+   "techs": {
+    "Burgundian Vineyards": "Burgundian Vineyards",
+    "Flemish Revolution": "Flemish Revolution"
+   }
+  },
+  "burmese": {
+   "uu": {
+    "Arambai": "Arambai"
+   },
+   "techs": {
+    "Manipur Cavalry": "Manipur Cavalry",
+    "Howdah": "Howdah"
+   }
+  },
+  "byzantines": {
+   "uu": {
+    "Cataphract": "Cataphract"
+   },
+   "techs": {
+    "Greek Fire": "Greek Fire",
+    "Logistica": "Logistica"
+   }
+  },
+  "celts": {
+   "uu": {
+    "Woad Raider": "Woad Raider"
+   },
+   "techs": {
+    "Stronghold": "Stronghold",
+    "Furor Celtica": "Furor Celtica"
+   }
+  },
+  "chinese": {
+   "uu": {
+    "Dragon Ship": "Dragon Ship",
+    "Chu Ko Nu": "Chu Ko Nu"
+   },
+   "techs": {
+    "Great Wall": "Great Wall",
+    "Rocketry": "Rocketry"
+   }
+  },
+  "cumans": {
+   "uu": {
+    "Kipchak": "Kipchak"
+   },
+   "techs": {
+    "Steppe Husbandry": "Steppe Husbandry",
+    "Cuman Mercenaries": "Cuman Mercenaries"
+   }
+  },
+  "ethiopians": {
+   "uu": {
+    "Shotel Warrior": "Shotel Warrior"
+   },
+   "techs": {
+    "Royal Heirs": "Royal Heirs",
+    "Torsion Engines": "Torsion Engines"
+   }
+  },
+  "franks": {
+   "uu": {
+    "Throwing Axeman": "Throwing Axeman"
+   },
+   "techs": {
+    "Ordonnance Companies": "Ordonnance Companies",
+    "Chivalry": "Chivalry"
+   }
+  },
+  "georgians": {
+   "uu": {
+    "Monaspa": "Monaspa"
+   },
+   "techs": {
+    "Svan Towers": "Svan Towers",
+    "Aznauri Cavalry": "Aznauri Cavalry"
+   }
+  },
+  "goths": {
+   "uu": {
+    "Huskarl": "Huskarl"
+   },
+   "techs": {
+    "Anarchy": "Anarchy",
+    "Perfusion": "Perfusion"
+   }
+  },
+  "hindustanis": {
+   "uu": {
+    "Imperial Camel Rider": "Imperial Camel Rider",
+    "Ghulam": "Ghulam"
+   },
+   "techs": {
+    "Grand Trunk Road": "Grand Trunk Road",
+    "Shatagni": "Shatagni"
+   }
+  },
+  "huns": {
+   "uu": {
+    "Tarkan": "Tarkan"
+   },
+   "techs": {
+    "Marauders": "Marauders",
+    "Atheism": "Atheism"
+   }
+  },
+  "inca": {
+   "uu": {
+    "Kamayuk": "Kamayuk"
+   },
+   "techs": {
+    "Andean Sling": "Andean Sling",
+    "Fabric Shields": "Fabric Shields"
+   }
+  },
+  "italians": {
+   "uu": {
+    "Condottiero": "Condottiero",
+    "Genoese Crossbowman": "Genoese Crossbowman"
+   },
+   "techs": {
+    "Silk Road": "Silk Road",
+    "Pirotechnia": "Pirotechnia"
+   }
+  },
+  "japanese": {
+   "uu": {
+    "Samurai": "Samurai"
+   },
+   "techs": {
+    "Yasama": "Yasama",
+    "Kataparuto": "Kataparuto"
+   }
+  },
+  "khmer": {
+   "uu": {
+    "Ballista Elephant": "Ballista Elephant"
+   },
+   "techs": {
+    "Tusk Swords": "Tusk Swords",
+    "Double Crossbow": "Double Crossbow"
+   }
+  },
+  "koreans": {
+   "uu": {
+    "Turtle Ship": "Turtle Ship",
+    "War Wagon": "War Wagon"
+   },
+   "techs": {
+    "Eupseong": "Eupseong",
+    "Shinkichon": "Shinkichon"
+   }
+  },
+  "lithuanians": {
+   "uu": {
+    "Winged Hussar": "Winged Hussar",
+    "Leitis": "Leitis"
+   },
+   "techs": {
+    "Hill Forts": "Hill Forts",
+    "Tower Shields": "Tower Shields"
+   }
+  },
+  "magyars": {
+   "uu": {
+    "Magyar Huszar": "Magyar Huszar"
+   },
+   "techs": {
+    "Corvinian Army": "Corvinian Army",
+    "Recurve Bow": "Recurve Bow"
+   }
+  },
+  "malay": {
+   "uu": {
+    "Karambit Warrior": "Karambit Warrior"
+   },
+   "techs": {
+    "Thalassocracy": "Thalassocracy",
+    "Forced Levy": "Forced Levy"
+   }
+  },
+  "malians": {
+   "uu": {
+    "Gbeto": "Gbeto"
+   },
+   "techs": {
+    "Tigui": "Tigui",
+    "Farimba": "Farimba"
+   }
+  },
+  "maya": {
+   "uu": {
+    "Plumed Archer": "Plumed Archer"
+   },
+   "techs": {
+    "Hul'che Javelineers": "Hul'che Javelineers",
+    "Holcans": "Holcans"
+   }
+  },
+  "mongols": {
+   "uu": {
+    "Mangudai": "Mangudai"
+   },
+   "techs": {
+    "Nomads": "Nomads",
+    "Drill": "Drill"
+   }
+  },
+  "persians": {
+   "uu": {
+    "Savar": "Savar",
+    "War Elephant": "War Elephant"
+   },
+   "techs": {
+    "Kamandaran": "Kamandaran",
+    "Citadels": "Citadels"
+   }
+  },
+  "poles": {
+   "uu": {
+    "Winged Hussar": "Winged Hussar",
+    "Obuch": "Obuch"
+   },
+   "techs": {
+    "Szlachta Privileges": "Szlachta Privileges",
+    "Lechitic Legacy": "Lechitic Legacy"
+   }
+  },
+  "portuguese": {
+   "uu": {
+    "Caravel": "Caravel",
+    "Organ Gun": "Organ Gun"
+   },
+   "techs": {
+    "Circumnavigation": "Circum-navigation",
+    "Arquebus": "Arquebus"
+   }
+  },
+  "romans": {
+   "uu": {
+    "Legionary": "Legionary",
+    "Centurion": "Centurion"
+   },
+   "techs": {
+    "Ballistas": "Ballistas",
+    "Comitatenses": "Comitatenses"
+   }
+  },
+  "saracens": {
+   "uu": {
+    "Mameluke": "Mameluke"
+   },
+   "techs": {
+    "Bimaristan": "Bimaristan",
+    "Counterweights": "Counter- weights"
+   }
+  },
+  "sicilians": {
+   "uu": {
+    "Serjeant": "Serjeant"
+   },
+   "techs": {
+    "First Crusade": "First Crusade",
+    "Hauberk": "Hauberk"
+   }
+  },
+  "slavs": {
+   "uu": {
+    "Boyar": "Boyar"
+   },
+   "techs": {
+    "Detinets": "Detinets",
+    "Druzhina": "Druzhina"
+   }
+  },
+  "spanish": {
+   "uu": {
+    "Conquistador": "Conquistador",
+    "Missionary": "Missionary"
+   },
+   "techs": {
+    "Inquisition": "Inquisition",
+    "Supremacy": "Supremacy"
+   }
+  },
+  "tatars": {
+   "uu": {
+    "Flaming Camel": "Flaming Camel",
+    "Keshik": "Keshik"
+   },
+   "techs": {
+    "Silk Armor": "Silk Armor",
+    "Timurid Siegecraft": "Timurid Siegecraft"
+   }
+  },
+  "teutons": {
+   "uu": {
+    "Teutonic Knight": "Teutonic Knight"
+   },
+   "techs": {
+    "Ironclad": "Ironclad",
+    "Crenellations": "Crenellations"
+   }
+  },
+  "turks": {
+   "uu": {
+    "Janissary": "Janissary"
+   },
+   "techs": {
+    "Sipahi": "Sipahi",
+    "Artillery": "Artillery"
+   }
+  },
+  "vietnamese": {
+   "uu": {
+    "Imperial Skirmisher": "Imperial Skirmisher",
+    "Rattan Archer": "Rattan Archer"
+   },
+   "techs": {
+    "Chatras": "Chatras",
+    "Paper Money": "Paper Money"
+   }
+  },
+  "vikings": {
+   "uu": {
+    "Berserk": "Berserk"
+   },
+   "techs": {
+    "Chieftains": "Chieftains",
+    "Bogsveigar": "Bogsveigar"
+   }
+  }
+ },
+ "ui-de": {
+  "armenians": {
+   "uu": {
+    "Composite Bowman": "Komposit-bogenschützen",
+    "Warrior Priest": "Krieger-priester"
+   },
+   "techs": {
+    "Cilician Fleet": "Kleinarmenische Flotte",
+    "Fereters": "Fereter"
+   }
+  },
+  "aztecs": {
+   "uu": {
+    "Jaguar Warrior": "Jaguarkrieger"
+   },
+   "techs": {
+    "Atlatl": "Speer-schleuder",
+    "Garland Wars": "Blumen-kriege"
+   }
+  },
+  "berbers": {
+   "uu": {
+    "Genitour": "Ginete",
+    "Camel Archer": "Kamel-bogenschutze"
+   },
+   "techs": {
+    "Kasbah": "Kasbah",
+    "Maghrebi Camels": "Maghreb-Kamele"
+   }
+  },
+  "bohemians": {
+   "uu": {
+    "Houfnice": "Haufnitze",
+    "Hussite Wagon": "Hussitenwagen"
+   },
+   "techs": {
+    "Wagenburg Tactics": "Wagenburg",
+    "Hussite Reforms": "Hussiten-reformen"
+   }
+  },
+  "britons": {
+   "uu": {
+    "Longbowman": "Langbogen-schütze"
+   },
+   "techs": {
+    "Yeomen": "Freisassen",
+    "Warwolf": "Warwolf"
+   }
+  },
+  "bulgarians": {
+   "uu": {
+    "Konnik": "Konnik"
+   },
+   "techs": {
+    "Stirrups": "Steigbügel",
+    "Bagains": "Bagaine"
+   }
+  },
+  "burgundians": {
+   "uu": {
+    "Flemish Militia": "Flämischer Milizsoldat",
+    "Coustillier": "Coutilier"
+   },
+   "techs": {
+    "Burgundian Vineyards": "Burgundische Weinberge",
+    "Flemish Revolution": "Flämische Revolution"
+   }
+  },
+  "burmese": {
+   "uu": {
+    "Arambai": "Arambai"
+   },
+   "techs": {
+    "Manipur Cavalry": "Manipur-Kavallerie",
+    "Howdah": "Howdah"
+   }
+  },
+  "byzantines": {
+   "uu": {
+    "Cataphract": "Kataphrakt"
+   },
+   "techs": {
+    "Greek Fire": "Griechisches Feuer",
+    "Logistica": "Logistik"
+   }
+  },
+  "celts": {
+   "uu": {
+    "Woad Raider": "Freischärler"
+   },
+   "techs": {
+    "Stronghold": "Festung",
+    "Furor Celtica": "Keltischer Zorn"
+   }
+  },
+  "chinese": {
+   "uu": {
+    "Dragon Ship": "Drachenboot",
+    "Chu Ko Nu": "Chu Ko Nu"
+   },
+   "techs": {
+    "Great Wall": "Große Mauer",
+    "Rocketry": "Raketentechnik"
+   }
+  },
+  "cumans": {
+   "uu": {
+    "Kipchak": "Kiptschak"
+   },
+   "techs": {
+    "Steppe Husbandry": "Steppen-tierhaltung",
+    "Cuman Mercenaries": "Kumanische Söldner"
+   }
+  },
+  "ethiopians": {
+   "uu": {
+    "Shotel Warrior": "Shotelkrieger"
+   },
+   "techs": {
+    "Royal Heirs": "Königliche Erben",
+    "Torsion Engines": "Torsions-geschütze"
+   }
+  },
+  "franks": {
+   "uu": {
+    "Throwing Axeman": "Axtwerfer"
+   },
+   "techs": {
+    "Ordonnance Companies": "Ordonnanz kompanien",
+    "Chivalry": "Rittertum"
+   }
+  },
+  "georgians": {
+   "uu": {
+    "Monaspa": "Monaspa"
+   },
+   "techs": {
+    "Svan Towers": "Swanetische Türme",
+    "Aznauri Cavalry": "Aznaui-Kavallerie"
+   }
+  },
+  "goths": {
+   "uu": {
+    "Huskarl": "Huskarl"
+   },
+   "techs": {
+    "Anarchy": "Anarchie",
+    "Perfusion": "Mobilität"
+   }
+  },
+  "hindustanis": {
+   "uu": {
+    "Imperial Camel Rider": "Imperialer Kamelreiter",
+    "Ghulam": "Ghulam"
+   },
+   "techs": {
+    "Grand Trunk Road": "Große Fernstraße",
+    "Shatagni": "Shatagni"
+   }
+  },
+  "huns": {
+   "uu": {
+    "Tarkan": "Tarkan"
+   },
+   "techs": {
+    "Marauders": "Marodeure",
+    "Atheism": "Atheismus"
+   }
+  },
+  "inca": {
+   "uu": {
+    "Kamayuk": "Kamayuk"
+   },
+   "techs": {
+    "Andean Sling": "Anden-schleuder",
+    "Fabric Shields": "Stoff-schilde"
+   }
+  },
+  "italians": {
+   "uu": {
+    "Condottiero": "Condottiere",
+    "Genoese Crossbowman": "Genueser Armbrustschütze"
+   },
+   "techs": {
+    "Silk Road": "Seidenstraße",
+    "Pirotechnia": "Pirotechnologien"
+   }
+  },
+  "japanese": {
+   "uu": {
+    "Samurai": "Samurai"
+   },
+   "techs": {
+    "Yasama": "Yasama",
+    "Kataparuto": "Kataparuto"
+   }
+  },
+  "khmer": {
+   "uu": {
+    "Ballista Elephant": "Ballistenelefant"
+   },
+   "techs": {
+    "Tusk Swords": "Stoßzahn-schwerter",
+    "Double Crossbow": "Doppel-armbrust"
+   }
+  },
+  "koreans": {
+   "uu": {
+    "Turtle Ship": "Schildkröten-schiff",
+    "War Wagon": "Kriegswagen"
+   },
+   "techs": {
+    "Eupseong": "Eupseong",
+    "Shinkichon": "Shinkichon"
+   }
+  },
+  "lithuanians": {
+   "uu": {
+    "Winged Hussar": "Flügel-husar",
+    "Leitis": "Leitis"
+   },
+   "techs": {
+    "Hill Forts": "Hügelfestungen",
+    "Tower Shields": "Turm-schilde"
+   }
+  },
+  "magyars": {
+   "uu": {
+    "Magyar Huszar": "Ungarischer Husar"
+   },
+   "techs": {
+    "Corvinian Army": "Heeres reform",
+    "Recurve Bow": "Reflexbogen"
+   }
+  },
+  "malay": {
+   "uu": {
+    "Karambit Warrior": "Karambit-kämpfer"
+   },
+   "techs": {
+    "Thalassocracy": "Thalassokratie",
+    "Forced Levy": "Zwangs-rekrutierung"
+   }
+  },
+  "malians": {
+   "uu": {
+    "Gbeto": "Gbeto"
+   },
+   "techs": {
+    "Tigui": "Tigui",
+    "Farimba": "Farimba"
+   }
+  },
+  "maya": {
+   "uu": {
+    "Plumed Archer": "Federpfeilschütze"
+   },
+   "techs": {
+    "Hul'che Javelineers": "Hul’che-Speerschleuderer",
+    "Holcans": "Holcans"
+   }
+  },
+  "mongols": {
+   "uu": {
+    "Mangudai": "Mangudai"
+   },
+   "techs": {
+    "Nomads": "Nomaden",
+    "Drill": "Drill"
+   }
+  },
+  "persians": {
+   "uu": {
+    "Savar": "Savar",
+    "War Elephant": "Kriegselefant"
+   },
+   "techs": {
+    "Kamandaran": "Kamandaran",
+    "Citadels": "Zitadellen"
+   }
+  },
+  "poles": {
+   "uu": {
+    "Winged Hussar": "Flügel-husar",
+    "Obuch": "Obuch"
+   },
+   "techs": {
+    "Szlachta Privileges": "Szlachta-Privilegien",
+    "Lechitic Legacy": "Lechisches Vermächtnis"
+   }
+  },
+  "portuguese": {
+   "uu": {
+    "Caravel": "Karavelle",
+    "Organ Gun": "Orgelkanone"
+   },
+   "techs": {
+    "Circumnavigation": "Um-segelung",
+    "Arquebus": "Arkebuse"
+   }
+  },
+  "romans": {
+   "uu": {
+    "Legionary": "Legionär",
+    "Centurion": "Zenturio"
+   },
+   "techs": {
+    "Ballistas": "Ballisten",
+    "Comitatenses": "Comitatenses"
+   }
+  },
+  "saracens": {
+   "uu": {
+    "Mameluke": "Mameluck"
+   },
+   "techs": {
+    "Bimaristan": "Bimaristan",
+    "Counterweights": "Gegengewichte"
+   }
+  },
+  "sicilians": {
+   "uu": {
+    "Serjeant": "Serjeant"
+   },
+   "techs": {
+    "First Crusade": "Erster Kreuzzug",
+    "Hauberk": "Panzerhemd"
+   }
+  },
+  "slavs": {
+   "uu": {
+    "Boyar": "Bojar"
+   },
+   "techs": {
+    "Detinets": "Detinets",
+    "Druzhina": "Druschina"
+   }
+  },
+  "spanish": {
+   "uu": {
+    "Conquistador": "Konquistador",
+    "Missionary": "Missionar"
+   },
+   "techs": {
+    "Inquisition": "Inquisition",
+    "Supremacy": "Überlegenheit"
+   }
+  },
+  "tatars": {
+   "uu": {
+    "Flaming Camel": "Brand-kamel",
+    "Keshik": "Keshig"
+   },
+   "techs": {
+    "Silk Armor": "Seidenrüstung",
+    "Timurid Siegecraft": "Belagerungskunst der Timuriden"
+   }
+  },
+  "teutons": {
+   "uu": {
+    "Teutonic Knight": "Deutsch-ritter"
+   },
+   "techs": {
+    "Ironclad": "Panzerung",
+    "Crenellations": "Zinnen"
+   }
+  },
+  "turks": {
+   "uu": {
+    "Janissary": "Janitschar"
+   },
+   "techs": {
+    "Sipahi": "Sipahi",
+    "Artillery": "Artillerie"
+   }
+  },
+  "vietnamese": {
+   "uu": {
+    "Imperial Skirmisher": "Imperialer Plänkler",
+    "Rattan Archer": "Rattanschütze"
+   },
+   "techs": {
+    "Chatras": "Chatras",
+    "Paper Money": "Papiergeld"
+   }
+  },
+  "vikings": {
+   "uu": {
+    "Berserk": "Berserker"
+   },
+   "techs": {
+    "Chieftains": "Stammesführer",
+    "Bogsveigar": "Bogsveigar"
+   }
+  }
+ },
+ "ui-es": {
+  "armenians": {
+   "uu": {
+    "Composite Bowman": "Arquero arco compuesto",
+    "Warrior Priest": "Sacerdote guerrero"
+   },
+   "techs": {
+    "Cilician Fleet": "Flota cilicia",
+    "Fereters": "Relicario"
+   }
+  },
+  "aztecs": {
+   "uu": {
+    "Jaguar Warrior": "Guerrero jaguar"
+   },
+   "techs": {
+    "Atlatl": "Átlatl",
+    "Garland Wars": "Guerras Floridas"
+   }
+  },
+  "berbers": {
+   "uu": {
+    "Genitour": "Escaramuzador zenete",
+    "Camel Archer": "Arquero en camello"
+   },
+   "techs": {
+    "Kasbah": "Alcazabas",
+    "Maghrebi Camels": "Camellos magrebíes"
+   }
+  },
+  "bohemians": {
+   "uu": {
+    "Houfnice": "Obús",
+    "Hussite Wagon": "Carro de guerra husita"
+   },
+   "techs": {
+    "Wagenburg Tactics": "Tácticas de fuerte de carretas",
+    "Hussite Reforms": "Reformas husitas"
+   }
+  },
+  "britons": {
+   "uu": {
+    "Longbowman": "Arquero con arco largo"
+   },
+   "techs": {
+    "Yeomen": "Yeomen",
+    "Warwolf": "Warwolf"
+   }
+  },
+  "bulgarians": {
+   "uu": {
+    "Konnik": "Konnik"
+   },
+   "techs": {
+    "Stirrups": "Estribos",
+    "Bagains": "Bagains"
+   }
+  },
+  "burgundians": {
+   "uu": {
+    "Flemish Militia": "Milicia flamenca",
+    "Coustillier": "Costiller"
+   },
+   "techs": {
+    "Burgundian Vineyards": "Viñedos de Borgoña",
+    "Flemish Revolution": "Revolución flamenca"
+   }
+  },
+  "burmese": {
+   "uu": {
+    "Arambai": "Arambai"
+   },
+   "techs": {
+    "Manipur Cavalry": "Caballería manipur",
+    "Howdah": "Howdah"
+   }
+  },
+  "byzantines": {
+   "uu": {
+    "Cataphract": "Catafracta"
+   },
+   "techs": {
+    "Greek Fire": "Fuego griego",
+    "Logistica": "Logística"
+   }
+  },
+  "celts": {
+   "uu": {
+    "Woad Raider": "Incursor azul"
+   },
+   "techs": {
+    "Stronghold": "Bastión",
+    "Furor Celtica": "Furor celta"
+   }
+  },
+  "chinese": {
+   "uu": {
+    "Dragon Ship": "Bote dragón",
+    "Chu Ko Nu": "Chu ko nu"
+   },
+   "techs": {
+    "Great Wall": "Gran Muralla",
+    "Rocketry": "Cohetería"
+   }
+  },
+  "cumans": {
+   "uu": {
+    "Kipchak": "Kipchak"
+   },
+   "techs": {
+    "Steppe Husbandry": "Ganadería de la estepa",
+    "Cuman Mercenaries": "Mercenarios cumanos"
+   }
+  },
+  "ethiopians": {
+   "uu": {
+    "Shotel Warrior": "Shotelai"
+   },
+   "techs": {
+    "Royal Heirs": "Centralización",
+    "Torsion Engines": "Mecanismos de torsión"
+   }
+  },
+  "franks": {
+   "uu": {
+    "Throwing Axeman": "Lanzador de hachas"
+   },
+   "techs": {
+    "Ordonnance Companies": "Compagnies d'ordonnance",
+    "Chivalry": "Código caballeresco"
+   }
+  },
+  "georgians": {
+   "uu": {
+    "Monaspa": "Monaspa"
+   },
+   "techs": {
+    "Svan Towers": "Torres esvanas",
+    "Aznauri Cavalry": "Caballería aznauri"
+   }
+  },
+  "goths": {
+   "uu": {
+    "Huskarl": "Huscarle"
+   },
+   "techs": {
+    "Anarchy": "Anarquía",
+    "Perfusion": "Movilización"
+   }
+  },
+  "hindustanis": {
+   "uu": {
+    "Imperial Camel Rider": "Jinete de camello imperial",
+    "Ghulam": "Ghulam"
+   },
+   "techs": {
+    "Grand Trunk Road": "Camino del Gran Tronco",
+    "Shatagni": "Shatagni"
+   }
+  },
+  "huns": {
+   "uu": {
+    "Tarkan": "Tarcano"
+   },
+   "techs": {
+    "Marauders": "Razias",
+    "Atheism": "Ateísmo"
+   }
+  },
+  "inca": {
+   "uu": {
+    "Kamayuk": "Kamayuk"
+   },
+   "techs": {
+    "Andean Sling": "Hondero andino",
+    "Fabric Shields": "Escudos de tela"
+   }
+  },
+  "italians": {
+   "uu": {
+    "Condottiero": "Condotiero",
+    "Genoese Crossbowman": "Genovés ballestero"
+   },
+   "techs": {
+    "Silk Road": "Ruta de la Seda",
+    "Pirotechnia": "Pirotecnia"
+   }
+  },
+  "japanese": {
+   "uu": {
+    "Samurai": "Samurai"
+   },
+   "techs": {
+    "Yasama": "Yasama",
+    "Kataparuto": "Kataparuto"
+   }
+  },
+  "khmer": {
+   "uu": {
+    "Ballista Elephant": "Elefante con balista"
+   },
+   "techs": {
+    "Tusk Swords": "Colmillos de acero",
+    "Double Crossbow": "Ballesta doble"
+   }
+  },
+  "koreans": {
+   "uu": {
+    "Turtle Ship": "Barco tortuga",
+    "War Wagon": "Carreta de guerra"
+   },
+   "techs": {
+    "Eupseong": "Eupseong",
+    "Shinkichon": "Shinkichon"
+   }
+  },
+  "lithuanians": {
+   "uu": {
+    "Winged Hussar": "Húsar alado",
+    "Leitis": "Leitis"
+   },
+   "techs": {
+    "Hill Forts": "Fuertes en las colinas",
+    "Tower Shields": "Escudos rectangulares"
+   }
+  },
+  "magyars": {
+   "uu": {
+    "Magyar Huszar": "Huszár magiar"
+   },
+   "techs": {
+    "Corvinian Army": "Ejército corviniano",
+    "Recurve Bow": "Arco recurvo"
+   }
+  },
+  "malay": {
+   "uu": {
+    "Karambit Warrior": "Recluta con karambit"
+   },
+   "techs": {
+    "Thalassocracy": "Talasocracia",
+    "Forced Levy": "Leva en masa"
+   }
+  },
+  "malians": {
+   "uu": {
+    "Gbeto": "Guardiana gbeto"
+   },
+   "techs": {
+    "Tigui": "Gran asamblea",
+    "Farimba": "Farimba"
+   }
+  },
+  "maya": {
+   "uu": {
+    "Plumed Archer": "Arquero emplumado"
+   },
+   "techs": {
+    "Hul'che Javelineers": "Lanzadores de hul'che",
+    "Holcans": "Holcanes"
+   }
+  },
+  "mongols": {
+   "uu": {
+    "Mangudai": "Mangudai"
+   },
+   "techs": {
+    "Nomads": "Nómadas",
+    "Drill": "Instrucción militar"
+   }
+  },
+  "persians": {
+   "uu": {
+    "Savar": "Savar",
+    "War Elephant": "Elefante de guerra"
+   },
+   "techs": {
+    "Kamandaran": "Kamandaran",
+    "Citadels": "Ciudadelas"
+   }
+  },
+  "poles": {
+   "uu": {
+    "Winged Hussar": "Húsar alado",
+    "Obuch": "Martillo de guerra"
+   },
+   "techs": {
+    "Szlachta Privileges": "Privilegios de Szlachta",
+    "Lechitic Legacy": "Legado lequítico"
+   }
+  },
+  "portuguese": {
+   "uu": {
+    "Caravel": "Carabela",
+    "Organ Gun": "Cañón de salvas"
+   },
+   "techs": {
+    "Circumnavigation": "Circun navegación",
+    "Arquebus": "Arcabuz"
+   }
+  },
+  "romans": {
+   "uu": {
+    "Legionary": "Legionario",
+    "Centurion": "Centurión"
+   },
+   "techs": {
+    "Ballistas": "Balistas",
+    "Comitatenses": "Comitatenses"
+   }
+  },
+  "saracens": {
+   "uu": {
+    "Mameluke": "Mameluco"
+   },
+   "techs": {
+    "Bimaristan": "Bimaristán",
+    "Counterweights": "Contrapesos"
+   }
+  },
+  "sicilians": {
+   "uu": {
+    "Serjeant": "Serjeant"
+   },
+   "techs": {
+    "First Crusade": "Primera cruzada",
+    "Hauberk": "Cota de malla"
+   }
+  },
+  "slavs": {
+   "uu": {
+    "Boyar": "Boyardo"
+   },
+   "techs": {
+    "Detinets": "Detinets",
+    "Druzhina": "Druzhina"
+   }
+  },
+  "spanish": {
+   "uu": {
+    "Conquistador": "Conquistador",
+    "Missionary": "Misionero"
+   },
+   "techs": {
+    "Inquisition": "Inquisición",
+    "Supremacy": "Supremacía"
+   }
+  },
+  "tatars": {
+   "uu": {
+    "Flaming Camel": "Camello llameante",
+    "Keshik": "Keshik"
+   },
+   "techs": {
+    "Silk Armor": "Armadura de seda",
+    "Timurid Siegecraft": "Tácticas de asedio timúridas"
+   }
+  },
+  "teutons": {
+   "uu": {
+    "Teutonic Knight": "Caballero teutónico"
+   },
+   "techs": {
+    "Ironclad": "Blindaje",
+    "Crenellations": "Almenas"
+   }
+  },
+  "turks": {
+   "uu": {
+    "Janissary": "Jenízaro"
+   },
+   "techs": {
+    "Sipahi": "Sipahi",
+    "Artillery": "Artillería"
+   }
+  },
+  "vietnamese": {
+   "uu": {
+    "Imperial Skirmisher": "Hostigador imperial",
+    "Rattan Archer": "Arquero de ratán"
+   },
+   "techs": {
+    "Chatras": "Chatras",
+    "Paper Money": "Papel moneda"
+   }
+  },
+  "vikings": {
+   "uu": {
+    "Berserk": "Berserker"
+   },
+   "techs": {
+    "Chieftains": "Hérsires",
+    "Bogsveigar": "Bogsveigar"
+   }
+  }
+ },
+ "ui-fr": {
+  "armenians": {
+   "uu": {
+    "Composite Bowman": "Archer composite",
+    "Warrior Priest": "Prêtre guerrier"
+   },
+   "techs": {
+    "Cilician Fleet": "Flotte cilicienne",
+    "Fereters": "Reliquaires"
+   }
+  },
+  "aztecs": {
+   "uu": {
+    "Jaguar Warrior": "Guerrier jaguar"
+   },
+   "techs": {
+    "Atlatl": "Propulseur",
+    "Garland Wars": "Guerres glorieuses"
+   }
+  },
+  "berbers": {
+   "uu": {
+    "Genitour": "Jinete",
+    "Camel Archer": "Archer de chamellerie"
+   },
+   "techs": {
+    "Kasbah": "Kasbah",
+    "Maghrebi Camels": "Chameaux du Maghreb"
+   }
+  },
+  "bohemians": {
+   "uu": {
+    "Houfnice": "Houfnice",
+    "Hussite Wagon": "Chariot hussite"
+   },
+   "techs": {
+    "Wagenburg Tactics": "Tactique de Wagenburg",
+    "Hussite Reforms": "Réformes hussites"
+   }
+  },
+  "britons": {
+   "uu": {
+    "Longbowman": "Fantassin à arc long"
+   },
+   "techs": {
+    "Yeomen": "Yeomen",
+    "Warwolf": "Loup de guerre"
+   }
+  },
+  "bulgarians": {
+   "uu": {
+    "Konnik": "Konnik"
+   },
+   "techs": {
+    "Stirrups": "Étriers",
+    "Bagains": "Bagains"
+   }
+  },
+  "burgundians": {
+   "uu": {
+    "Flemish Militia": "Milicien flamand",
+    "Coustillier": "Coutilier"
+   },
+   "techs": {
+    "Burgundian Vineyards": "Vignobles bourguignons",
+    "Flemish Revolution": "Révolution flamande"
+   }
+  },
+  "burmese": {
+   "uu": {
+    "Arambai": "Arambai"
+   },
+   "techs": {
+    "Manipur Cavalry": "Cavalerie du Manipur",
+    "Howdah": "Howdah"
+   }
+  },
+  "byzantines": {
+   "uu": {
+    "Cataphract": "Cataphractaire"
+   },
+   "techs": {
+    "Greek Fire": "Feu grégeois",
+    "Logistica": "Logistique"
+   }
+  },
+  "celts": {
+   "uu": {
+    "Woad Raider": "Guerrier de guède"
+   },
+   "techs": {
+    "Stronghold": "Citadelle",
+    "Furor Celtica": "Fureur celte"
+   }
+  },
+  "chinese": {
+   "uu": {
+    "Dragon Ship": "Navire Dragon",
+    "Chu Ko Nu": "Chu Ko Nu"
+   },
+   "techs": {
+    "Great Wall": "Grande muraille",
+    "Rocketry": "Propulsion"
+   }
+  },
+  "cumans": {
+   "uu": {
+    "Kipchak": "Kipchak"
+   },
+   "techs": {
+    "Steppe Husbandry": "Élevage des steppes",
+    "Cuman Mercenaries": "Mercenaires coumans"
+   }
+  },
+  "ethiopians": {
+   "uu": {
+    "Shotel Warrior": "Guerrier à shotel"
+   },
+   "techs": {
+    "Royal Heirs": "Héritiers royaux",
+    "Torsion Engines": "Mécanismes à torsion"
+   }
+  },
+  "franks": {
+   "uu": {
+    "Throwing Axeman": "Lanceur de hache"
+   },
+   "techs": {
+    "Ordonnance Companies": "Compagnies d'ordonnance",
+    "Chivalry": "Chevalerie"
+   }
+  },
+  "georgians": {
+   "uu": {
+    "Monaspa": "Monaspa"
+   },
+   "techs": {
+    "Svan Towers": "Tours svanes",
+    "Aznauri Cavalry": "Cavalerie aznaurie"
+   }
+  },
+  "goths": {
+   "uu": {
+    "Huskarl": "Huskarl"
+   },
+   "techs": {
+    "Anarchy": "Anarchie",
+    "Perfusion": "Mobilisation rapide"
+   }
+  },
+  "hindustanis": {
+   "uu": {
+    "Imperial Camel Rider": "Chamelier impérial",
+    "Ghulam": "Ghulam"
+   },
+   "techs": {
+    "Grand Trunk Road": "Grand Trunk Road",
+    "Shatagni": "Shatagni"
+   }
+  },
+  "huns": {
+   "uu": {
+    "Tarkan": "Tarkan"
+   },
+   "techs": {
+    "Marauders": "Maraudeurs",
+    "Atheism": "Athéisme"
+   }
+  },
+  "inca": {
+   "uu": {
+    "Kamayuk": "Kamayuk"
+   },
+   "techs": {
+    "Andean Sling": "Fronde des Andes",
+    "Fabric Shields": "Boucliers en tissu"
+   }
+  },
+  "italians": {
+   "uu": {
+    "Condottiero": "Condottière",
+    "Genoese Crossbowman": "Arbalétrier génois"
+   },
+   "techs": {
+    "Silk Road": "Route de la soie",
+    "Pirotechnia": "Pirotechnia"
+   }
+  },
+  "japanese": {
+   "uu": {
+    "Samurai": "Samouraï"
+   },
+   "techs": {
+    "Yasama": "Yasama",
+    "Kataparuto": "Kataparuto"
+   }
+  },
+  "khmer": {
+   "uu": {
+    "Ballista Elephant": "Éléphant à baliste"
+   },
+   "techs": {
+    "Tusk Swords": "Épées de défenses",
+    "Double Crossbow": "Double arbalète"
+   }
+  },
+  "koreans": {
+   "uu": {
+    "Turtle Ship": "Navire tortue",
+    "War Wagon": "Chariot de guerre"
+   },
+   "techs": {
+    "Eupseong": "Eupseong",
+    "Shinkichon": "Shinkichon"
+   }
+  },
+  "lithuanians": {
+   "uu": {
+    "Winged Hussar": "Hussard ailé",
+    "Leitis": "Leitis"
+   },
+   "techs": {
+    "Hill Forts": "Collines fortifiées",
+    "Tower Shields": "Boucliers rectangulaires"
+   }
+  },
+  "magyars": {
+   "uu": {
+    "Magyar Huszar": "Hussard hongrois"
+   },
+   "techs": {
+    "Corvinian Army": "Armée corvinienne",
+    "Recurve Bow": "Arc recourbé"
+   }
+  },
+  "malay": {
+   "uu": {
+    "Karambit Warrior": "Guerrier à karambit"
+   },
+   "techs": {
+    "Thalassocracy": "Thalassocratie",
+    "Forced Levy": "Enrôlement de force"
+   }
+  },
+  "malians": {
+   "uu": {
+    "Gbeto": "Gbeto"
+   },
+   "techs": {
+    "Tigui": "Tigui",
+    "Farimba": "Farimba"
+   }
+  },
+  "maya": {
+   "uu": {
+    "Plumed Archer": "Archer à plumes"
+   },
+   "techs": {
+    "Hul'che Javelineers": "Javeliniers à hul'che",
+    "Holcans": "Holcans"
+   }
+  },
+  "mongols": {
+   "uu": {
+    "Mangudai": "Mangudaï"
+   },
+   "techs": {
+    "Nomads": "Nomades",
+    "Drill": "Manœuvres"
+   }
+  },
+  "persians": {
+   "uu": {
+    "Savar": "Savaran",
+    "War Elephant": "Éléphant de guerre"
+   },
+   "techs": {
+    "Kamandaran": "Kamandaran",
+    "Citadels": "Citadelles"
+   }
+  },
+  "poles": {
+   "uu": {
+    "Winged Hussar": "Hussard ailé",
+    "Obuch": "Obuch"
+   },
+   "techs": {
+    "Szlachta Privileges": "Privilèges szlachta",
+    "Lechitic Legacy": "Héritage léchitique"
+   }
+  },
+  "portuguese": {
+   "uu": {
+    "Caravel": "Caravelle",
+    "Organ Gun": "Ribaudequin"
+   },
+   "techs": {
+    "Circumnavigation": "Circum-navigation",
+    "Arquebus": "Arquebuse"
+   }
+  },
+  "romans": {
+   "uu": {
+    "Legionary": "Légionnaire",
+    "Centurion": "Centurion"
+   },
+   "techs": {
+    "Ballistas": "Balistes",
+    "Comitatenses": "Comitatenses"
+   }
+  },
+  "saracens": {
+   "uu": {
+    "Mameluke": "Mamelouk"
+   },
+   "techs": {
+    "Bimaristan": "Bimaristan",
+    "Counterweights": "Contrepoids"
+   }
+  },
+  "sicilians": {
+   "uu": {
+    "Serjeant": "Sergent"
+   },
+   "techs": {
+    "First Crusade": "Première croisade",
+    "Hauberk": "Haubert"
+   }
+  },
+  "slavs": {
+   "uu": {
+    "Boyar": "Boyard"
+   },
+   "techs": {
+    "Detinets": "Detinets",
+    "Druzhina": "Druzhina"
+   }
+  },
+  "spanish": {
+   "uu": {
+    "Conquistador": "Conquistador",
+    "Missionary": "Missionnaire"
+   },
+   "techs": {
+    "Inquisition": "Inquisition",
+    "Supremacy": "Suprématie"
+   }
+  },
+  "tatars": {
+   "uu": {
+    "Flaming Camel": "Chamelier incendiaire",
+    "Keshik": "Keshik"
+   },
+   "techs": {
+    "Silk Armor": "Armure de soie",
+    "Timurid Siegecraft": "Arme de siège timuride"
+   }
+  },
+  "teutons": {
+   "uu": {
+    "Teutonic Knight": "Chevalier teutonique"
+   },
+   "techs": {
+    "Ironclad": "Cuirasses",
+    "Crenellations": "Crénelures"
+   }
+  },
+  "turks": {
+   "uu": {
+    "Janissary": "Janissaire"
+   },
+   "techs": {
+    "Sipahi": "Sipahi",
+    "Artillery": "Artillerie"
+   }
+  },
+  "vietnamese": {
+   "uu": {
+    "Imperial Skirmisher": "Tirailleur impérial",
+    "Rattan Archer": "Fantassin à arc en rotin"
+   },
+   "techs": {
+    "Chatras": "Chatras",
+    "Paper Money": "Monnaie papier"
+   }
+  },
+  "vikings": {
+   "uu": {
+    "Berserk": "Berserker"
+   },
+   "techs": {
+    "Chieftains": "Chefs de tribu",
+    "Bogsveigar": "Bogsveigar"
+   }
+  }
+ },
+ "ui-it": {
+  "armenians": {
+   "uu": {
+    "Composite Bowman": "Arciere con arco composito",
+    "Warrior Priest": "Sacerdote guerriero"
+   },
+   "techs": {
+    "Cilician Fleet": "Flotta cilicia",
+    "Fereters": "Portatori di fercoli"
+   }
+  },
+  "aztecs": {
+   "uu": {
+    "Jaguar Warrior": "Guerriero giaguaro"
+   },
+   "techs": {
+    "Atlatl": "Atlatl",
+    "Garland Wars": "Guerre delle ghirlande"
+   }
+  },
+  "berbers": {
+   "uu": {
+    "Genitour": "Genitour",
+    "Camel Archer": "Arciere a cammello"
+   },
+   "techs": {
+    "Kasbah": "Kasbah",
+    "Maghrebi Camels": "Cammelli magrebini"
+   }
+  },
+  "bohemians": {
+   "uu": {
+    "Houfnice": "Obice",
+    "Hussite Wagon": "Carro ussita"
+   },
+   "techs": {
+    "Wagenburg Tactics": "Tattiche fortezza di carri",
+    "Hussite Reforms": "Riforme ussite"
+   }
+  },
+  "britons": {
+   "uu": {
+    "Longbowman": "Arciere arco lungo"
+   },
+   "techs": {
+    "Yeomen": "Yeoman",
+    "Warwolf": "Warwolf"
+   }
+  },
+  "bulgarians": {
+   "uu": {
+    "Konnik": "Konnik"
+   },
+   "techs": {
+    "Stirrups": "Staffe",
+    "Bagains": "Bagains"
+   }
+  },
+  "burgundians": {
+   "uu": {
+    "Flemish Militia": "Milizia fiamminga",
+    "Coustillier": "Coustillier"
+   },
+   "techs": {
+    "Burgundian Vineyards": "Vigneti borgognoni",
+    "Flemish Revolution": "Rivoluzione fiamminga"
+   }
+  },
+  "burmese": {
+   "uu": {
+    "Arambai": "Arambai"
+   },
+   "techs": {
+    "Manipur Cavalry": "Calleria manipur",
+    "Howdah": "Howdah"
+   }
+  },
+  "byzantines": {
+   "uu": {
+    "Cataphract": "Catafratto"
+   },
+   "techs": {
+    "Greek Fire": "Fuoco Greco",
+    "Logistica": "Logistica"
+   }
+  },
+  "celts": {
+   "uu": {
+    "Woad Raider": "Predone del guado"
+   },
+   "techs": {
+    "Stronghold": "Fortezza",
+    "Furor Celtica": "Furore celtico"
+   }
+  },
+  "chinese": {
+   "uu": {
+    "Dragon Ship": "Nave drago",
+    "Chu Ko Nu": "Chu Ko Nu"
+   },
+   "techs": {
+    "Great Wall": "Grande Muraglia",
+    "Rocketry": "Missilistica"
+   }
+  },
+  "cumans": {
+   "uu": {
+    "Kipchak": "Kipchaki"
+   },
+   "techs": {
+    "Steppe Husbandry": "Allevamento nella steppa",
+    "Cuman Mercenaries": "Mercenari cumani"
+   }
+  },
+  "ethiopians": {
+   "uu": {
+    "Shotel Warrior": "Guerriero con Shotel"
+   },
+   "techs": {
+    "Royal Heirs": "Eredi Reali",
+    "Torsion Engines": "Motori di torsione"
+   }
+  },
+  "franks": {
+   "uu": {
+    "Throwing Axeman": "Lanciatore di ascia"
+   },
+   "techs": {
+    "Ordonnance Companies": "Compagnie d'ordonnance",
+    "Chivalry": "Cavalleria"
+   }
+  },
+  "georgians": {
+   "uu": {
+    "Monaspa": "Monaspa"
+   },
+   "techs": {
+    "Svan Towers": "Torri svan",
+    "Aznauri Cavalry": "Cavalleria aznauri"
+   }
+  },
+  "goths": {
+   "uu": {
+    "Huskarl": "Huskarl"
+   },
+   "techs": {
+    "Anarchy": "Anarchia",
+    "Perfusion": "Mobilitazione"
+   }
+  },
+  "hindustanis": {
+   "uu": {
+    "Imperial Camel Rider": "Cammelliere imperiale",
+    "Ghulam": "Ghulam"
+   },
+   "techs": {
+    "Grand Trunk Road": "Grand Trunk Road",
+    "Shatagni": "Shatagni"
+   }
+  },
+  "huns": {
+   "uu": {
+    "Tarkan": "Tarkan"
+   },
+   "techs": {
+    "Marauders": "Predoni",
+    "Atheism": "Ateismo"
+   }
+  },
+  "inca": {
+   "uu": {
+    "Kamayuk": "Kamayuk"
+   },
+   "techs": {
+    "Andean Sling": "Fionda andina",
+    "Fabric Shields": "Scudi di tessuto"
+   }
+  },
+  "italians": {
+   "uu": {
+    "Condottiero": "Condottiero",
+    "Genoese Crossbowman": "Balestriere Genovese"
+   },
+   "techs": {
+    "Silk Road": "Via della Seta",
+    "Pirotechnia": "Pirotecnia"
+   }
+  },
+  "japanese": {
+   "uu": {
+    "Samurai": "Samurai"
+   },
+   "techs": {
+    "Yasama": "Yasama",
+    "Kataparuto": "Kataparuto"
+   }
+  },
+  "khmer": {
+   "uu": {
+    "Ballista Elephant": "Elefante con balista"
+   },
+   "techs": {
+    "Tusk Swords": "Zanne armate",
+    "Double Crossbow": "Balestra doppia"
+   }
+  },
+  "koreans": {
+   "uu": {
+    "Turtle Ship": "Nave testuggine",
+    "War Wagon": "Carro da guerra"
+   },
+   "techs": {
+    "Eupseong": "Eupseong",
+    "Shinkichon": "Shinkichon"
+   }
+  },
+  "lithuanians": {
+   "uu": {
+    "Winged Hussar": "Ussaro alato",
+    "Leitis": "Leitis"
+   },
+   "techs": {
+    "Hill Forts": "Forti di collina",
+    "Tower Shields": "Scudi a torre"
+   }
+  },
+  "magyars": {
+   "uu": {
+    "Magyar Huszar": "Ussaro Magiaro"
+   },
+   "techs": {
+    "Corvinian Army": "Esercito corviniano",
+    "Recurve Bow": "Arco Ricurvo"
+   }
+  },
+  "malay": {
+   "uu": {
+    "Karambit Warrior": "Guerriero con karambit"
+   },
+   "techs": {
+    "Thalassocracy": "Talassocrazia",
+    "Forced Levy": "Leva obbligatoria"
+   }
+  },
+  "malians": {
+   "uu": {
+    "Gbeto": "Gbeto"
+   },
+   "techs": {
+    "Tigui": "Tigui",
+    "Farimba": "Farimba"
+   }
+  },
+  "maya": {
+   "uu": {
+    "Plumed Archer": "Arciere piumato"
+   },
+   "techs": {
+    "Hul'che Javelineers": "Soldati con giavellotto Hul'che",
+    "Holcans": "Holcan"
+   }
+  },
+  "mongols": {
+   "uu": {
+    "Mangudai": "Mangudai"
+   },
+   "techs": {
+    "Nomads": "Nomadi",
+    "Drill": "Esercitazioni"
+   }
+  },
+  "persians": {
+   "uu": {
+    "Savar": "Savaran",
+    "War Elephant": "Elefante da guerra"
+   },
+   "techs": {
+    "Kamandaran": "Kamandaran",
+    "Citadels": "Cittadelle"
+   }
+  },
+  "poles": {
+   "uu": {
+    "Winged Hussar": "Ussaro alato",
+    "Obuch": "Obuch"
+   },
+   "techs": {
+    "Szlachta Privileges": "Privilegi di szlachta",
+    "Lechitic Legacy": "Eredità lechitica"
+   }
+  },
+  "portuguese": {
+   "uu": {
+    "Caravel": "Caravella",
+    "Organ Gun": "Organo"
+   },
+   "techs": {
+    "Circumnavigation": "Circum-navigazione",
+    "Arquebus": "Arcibugio"
+   }
+  },
+  "romans": {
+   "uu": {
+    "Legionary": "Legionario",
+    "Centurion": "Centurione"
+   },
+   "techs": {
+    "Ballistas": "Baliste",
+    "Comitatenses": "Comitatensi"
+   }
+  },
+  "saracens": {
+   "uu": {
+    "Mameluke": "Mamelucco"
+   },
+   "techs": {
+    "Bimaristan": "Bimaristan",
+    "Counterweights": "Contrappesi"
+   }
+  },
+  "sicilians": {
+   "uu": {
+    "Serjeant": "Serjeant"
+   },
+   "techs": {
+    "First Crusade": "Prima crociata",
+    "Hauberk": "Usbergo"
+   }
+  },
+  "slavs": {
+   "uu": {
+    "Boyar": "Boiardo"
+   },
+   "techs": {
+    "Detinets": "Detinets",
+    "Druzhina": "Druzina"
+   }
+  },
+  "spanish": {
+   "uu": {
+    "Conquistador": "Conquistador",
+    "Missionary": "Missionario"
+   },
+   "techs": {
+    "Inquisition": "Inquisizione",
+    "Supremacy": "Supremazia"
+   }
+  },
+  "tatars": {
+   "uu": {
+    "Flaming Camel": "Cammello in fiamme",
+    "Keshik": "Keshik"
+   },
+   "techs": {
+    "Silk Armor": "Corazza di seta",
+    "Timurid Siegecraft": "Tattiche d'assedio timuridi"
+   }
+  },
+  "teutons": {
+   "uu": {
+    "Teutonic Knight": "Cavaliere teutonico"
+   },
+   "techs": {
+    "Ironclad": "Rivestimento di ferro",
+    "Crenellations": "Merli"
+   }
+  },
+  "turks": {
+   "uu": {
+    "Janissary": "Giannizzero"
+   },
+   "techs": {
+    "Sipahi": "Sipahi",
+    "Artillery": "Artiglieria"
+   }
+  },
+  "vietnamese": {
+   "uu": {
+    "Imperial Skirmisher": "Fanteria leggera imperiale",
+    "Rattan Archer": "Arciere con rattan"
+   },
+   "techs": {
+    "Chatras": "Chatras",
+    "Paper Money": "Banconota"
+   }
+  },
+  "vikings": {
+   "uu": {
+    "Berserk": "Berserker"
+   },
+   "techs": {
+    "Chieftains": "Capitani",
+    "Bogsveigar": "Bogsveigar"
+   }
+  }
+ },
+ "ui-pl": {
+  "armenians": {
+   "uu": {
+    "Composite Bowman": "Łucznik kompozytowy",
+    "Warrior Priest": "Wojowniczy kapłan"
+   },
+   "techs": {
+    "Cilician Fleet": "Cylicyjska flota",
+    "Fereters": "Relikwiarze"
+   }
+  },
+  "aztecs": {
+   "uu": {
+    "Jaguar Warrior": "Wojownik jaguarów"
+   },
+   "techs": {
+    "Atlatl": "Atlatl",
+    "Garland Wars": "Wojny kwiatów"
+   }
+  },
+  "berbers": {
+   "uu": {
+    "Genitour": "Jinete",
+    "Camel Archer": "Łucznik na wielbłądzie"
+   },
+   "techs": {
+    "Kasbah": "Kasba",
+    "Maghrebi Camels": "Maghrebskie wielbłądy"
+   }
+  },
+  "bohemians": {
+   "uu": {
+    "Houfnice": "Hufnica",
+    "Hussite Wagon": "Husycki wóz bojowy"
+   },
+   "techs": {
+    "Wagenburg Tactics": "Szyk taborowy",
+    "Hussite Reforms": "Reformy husyckie"
+   }
+  },
+  "britons": {
+   "uu": {
+    "Longbowman": "Wojownik z długim łukiem"
+   },
+   "techs": {
+    "Yeomen": "Yeoman",
+    "Warwolf": "Warwolf"
+   }
+  },
+  "bulgarians": {
+   "uu": {
+    "Konnik": "Konnik"
+   },
+   "techs": {
+    "Stirrups": "Strzemiona",
+    "Bagains": "Bagainowie"
+   }
+  },
+  "burgundians": {
+   "uu": {
+    "Flemish Militia": "Flamandzka straż obywatelska",
+    "Coustillier": "Coustillier"
+   },
+   "techs": {
+    "Burgundian Vineyards": "Winnice burgundzkie",
+    "Flemish Revolution": "Rewolucja flamandzka"
+   }
+  },
+  "burmese": {
+   "uu": {
+    "Arambai": "Arambai"
+   },
+   "techs": {
+    "Manipur Cavalry": "Kawaleria manipurska",
+    "Howdah": "Howdah"
+   }
+  },
+  "byzantines": {
+   "uu": {
+    "Cataphract": "Katafrakt"
+   },
+   "techs": {
+    "Greek Fire": "Grecki ogień",
+    "Logistica": "Logistike"
+   }
+  },
+  "celts": {
+   "uu": {
+    "Woad Raider": "Celtycki najeźdźca"
+   },
+   "techs": {
+    "Stronghold": "Forteca",
+    "Furor Celtica": "Celtycka furia"
+   }
+  },
+  "chinese": {
+   "uu": {
+    "Dragon Ship": "Smoczy okręt",
+    "Chu Ko Nu": "Chu-ko-nu"
+   },
+   "techs": {
+    "Great Wall": "Wielki Mur",
+    "Rocketry": "Rakiety"
+   }
+  },
+  "cumans": {
+   "uu": {
+    "Kipchak": "Kipczak"
+   },
+   "techs": {
+    "Steppe Husbandry": "Hodowla stepowa",
+    "Cuman Mercenaries": "Kumańscy najemnicy"
+   }
+  },
+  "ethiopians": {
+   "uu": {
+    "Shotel Warrior": "Wojownik z szotelem"
+   },
+   "techs": {
+    "Royal Heirs": "Następcy tronu",
+    "Torsion Engines": "Machiny miotające"
+   }
+  },
+  "franks": {
+   "uu": {
+    "Throwing Axeman": "Wojownik z toporami"
+   },
+   "techs": {
+    "Ordonnance Companies": "Kompanie stanowione",
+    "Chivalry": "Rycerskość"
+   }
+  },
+  "georgians": {
+   "uu": {
+    "Monaspa": "Monaspa"
+   },
+   "techs": {
+    "Svan Towers": "Wieże Swanetii",
+    "Aznauri Cavalry": "Kawaleria Aznauri"
+   }
+  },
+  "goths": {
+   "uu": {
+    "Huskarl": "Huskarl"
+   },
+   "techs": {
+    "Anarchy": "Anarchia",
+    "Perfusion": "Perfuzja"
+   }
+  },
+  "hindustanis": {
+   "uu": {
+    "Imperial Camel Rider": "Imperialny jeździec na wielbłądzie",
+    "Ghulam": "Ghulam"
+   },
+   "techs": {
+    "Grand Trunk Road": "Droga Wielkiego Pnia",
+    "Shatagni": "Shatagni"
+   }
+  },
+  "huns": {
+   "uu": {
+    "Tarkan": "Tarkan"
+   },
+   "techs": {
+    "Marauders": "Maruderzy",
+    "Atheism": "Ateizm"
+   }
+  },
+  "inca": {
+   "uu": {
+    "Kamayuk": "Kamayuk"
+   },
+   "techs": {
+    "Andean Sling": "Proca andyjska",
+    "Fabric Shields": "Tarcze tekstylne"
+   }
+  },
+  "italians": {
+   "uu": {
+    "Condottiero": "Kondotier",
+    "Genoese Crossbowman": "Kusznik genueński"
+   },
+   "techs": {
+    "Silk Road": "Jedwabny szlak",
+    "Pirotechnia": "Pirotechnika"
+   }
+  },
+  "japanese": {
+   "uu": {
+    "Samurai": "Samuraj"
+   },
+   "techs": {
+    "Yasama": "Yasama",
+    "Kataparuto": "Kataparuto"
+   }
+  },
+  "khmer": {
+   "uu": {
+    "Ballista Elephant": "Słoń z balistą"
+   },
+   "techs": {
+    "Tusk Swords": "Miecze na kły słonia",
+    "Double Crossbow": "Kusza dwustrzałowa"
+   }
+  },
+  "koreans": {
+   "uu": {
+    "Turtle Ship": "Okręt-żółw",
+    "War Wagon": "Furgon bitewny"
+   },
+   "techs": {
+    "Eupseong": "Eupseong",
+    "Shinkichon": "Singijeon"
+   }
+  },
+  "lithuanians": {
+   "uu": {
+    "Winged Hussar": "Huzar ze skrzydłami",
+    "Leitis": "Leitis"
+   },
+   "techs": {
+    "Hill Forts": "Grodziska",
+    "Tower Shields": "Wysokie tarcze"
+   }
+  },
+  "magyars": {
+   "uu": {
+    "Magyar Huszar": "Węgierski huzar"
+   },
+   "techs": {
+    "Corvinian Army": "Czarna Armia",
+    "Recurve Bow": "Łuk refleksyjny"
+   }
+  },
+  "malay": {
+   "uu": {
+    "Karambit Warrior": "Wojownik z karambitem"
+   },
+   "techs": {
+    "Thalassocracy": "Talassokracja",
+    "Forced Levy": "Wymuszony zaciąg"
+   }
+  },
+  "malians": {
+   "uu": {
+    "Gbeto": "Gbeto"
+   },
+   "techs": {
+    "Tigui": "Tigui",
+    "Farimba": "Farimba"
+   }
+  },
+  "maya": {
+   "uu": {
+    "Plumed Archer": "Łucznik w pióropuszu"
+   },
+   "techs": {
+    "Hul'che Javelineers": "Oszczepnicy z hul’che",
+    "Holcans": "Holcani"
+   }
+  },
+  "mongols": {
+   "uu": {
+    "Mangudai": "Mangudai"
+   },
+   "techs": {
+    "Nomads": "Koczownicy",
+    "Drill": "Musztra"
+   }
+  },
+  "persians": {
+   "uu": {
+    "Savar": "Aswaran",
+    "War Elephant": "Słoń bojowy"
+   },
+   "techs": {
+    "Kamandaran": "Kamandaran",
+    "Citadels": "Cytadele"
+   }
+  },
+  "poles": {
+   "uu": {
+    "Winged Hussar": "Huzar ze skrzydłami",
+    "Obuch": "Wojownik z obuchem"
+   },
+   "techs": {
+    "Szlachta Privileges": "Przywileje szlachty",
+    "Lechitic Legacy": "Spuścizna Lechitów"
+   }
+  },
+  "portuguese": {
+   "uu": {
+    "Caravel": "Karawela",
+    "Organ Gun": "Organki"
+   },
+   "techs": {
+    "Circumnavigation": "Rejs wokółziemski",
+    "Arquebus": "Arkebuz"
+   }
+  },
+  "romans": {
+   "uu": {
+    "Legionary": "Legionista",
+    "Centurion": "Centurion"
+   },
+   "techs": {
+    "Ballistas": "Balisty",
+    "Comitatenses": "Comitatenses"
+   }
+  },
+  "saracens": {
+   "uu": {
+    "Mameluke": "Mameluk"
+   },
+   "techs": {
+    "Bimaristan": "Bimaristan",
+    "Counterweights": "Przeciwwagi"
+   }
+  },
+  "sicilians": {
+   "uu": {
+    "Serjeant": "Serjeant"
+   },
+   "techs": {
+    "First Crusade": "Pierwsza krucjata",
+    "Hauberk": "Kolczuga"
+   }
+  },
+  "slavs": {
+   "uu": {
+    "Boyar": "Bojar"
+   },
+   "techs": {
+    "Detinets": "Dziedziniec",
+    "Druzhina": "Drużyna książęca"
+   }
+  },
+  "spanish": {
+   "uu": {
+    "Conquistador": "Konkwistador",
+    "Missionary": "Misjonarz"
+   },
+   "techs": {
+    "Inquisition": "Inkwizycja",
+    "Supremacy": "Supremacja"
+   }
+  },
+  "tatars": {
+   "uu": {
+    "Flaming Camel": "Płonący wielbłąd",
+    "Keshik": "Keszik"
+   },
+   "techs": {
+    "Silk Armor": "Jedwabny pancerz",
+    "Timurid Siegecraft": "Timurydzka budowa machin wojennych"
+   }
+  },
+  "teutons": {
+   "uu": {
+    "Teutonic Knight": "Teutoński rycerz"
+   },
+   "techs": {
+    "Ironclad": "Opancerzenie",
+    "Crenellations": "Blanki"
+   }
+  },
+  "turks": {
+   "uu": {
+    "Janissary": "Janczar"
+   },
+   "techs": {
+    "Sipahi": "Spahisi",
+    "Artillery": "Artyleria"
+   }
+  },
+  "vietnamese": {
+   "uu": {
+    "Imperial Skirmisher": "Imperialny oszczepnik",
+    "Rattan Archer": "Łucznik rattanowy"
+   },
+   "techs": {
+    "Chatras": "Chatra",
+    "Paper Money": "Pieniądze papierowe"
+   }
+  },
+  "vikings": {
+   "uu": {
+    "Berserk": "Berserker"
+   },
+   "techs": {
+    "Chieftains": "Wodzowie",
+    "Bogsveigar": "Bogsveigar"
+   }
+  }
+ },
+ "ui-pt-BR": {
+  "armenians": {
+   "uu": {
+    "Composite Bowman": "Arqueiro de Arco Composto",
+    "Warrior Priest": "Sacerdote Guerreiro"
+   },
+   "techs": {
+    "Cilician Fleet": "Frota ciliciana",
+    "Fereters": "Relicários"
+   }
+  },
+  "aztecs": {
+   "uu": {
+    "Jaguar Warrior": "Guerreiro Jaguar"
+   },
+   "techs": {
+    "Atlatl": "Atlatl",
+    "Garland Wars": "Guerras Florais"
+   }
+  },
+  "berbers": {
+   "uu": {
+    "Genitour": "Genitour",
+    "Camel Archer": "Arqueiro a Camelo"
+   },
+   "techs": {
+    "Kasbah": "Casbá",
+    "Maghrebi Camels": "Camelos do Magrebe"
+   }
+  },
+  "bohemians": {
+   "uu": {
+    "Houfnice": "Obuseiro",
+    "Hussite Wagon": "Carroça Hussita"
+   },
+   "techs": {
+    "Wagenburg Tactics": "Táticas de Forte de Carros",
+    "Hussite Reforms": "Reformas Hussitas"
+   }
+  },
+  "britons": {
+   "uu": {
+    "Longbowman": "Arqueiro de Arco Longo"
+   },
+   "techs": {
+    "Yeomen": "Yeomen",
+    "Warwolf": "Licantropo"
+   }
+  },
+  "bulgarians": {
+   "uu": {
+    "Konnik": "Konnik"
+   },
+   "techs": {
+    "Stirrups": "Estribos",
+    "Bagains": "Bagains"
+   }
+  },
+  "burgundians": {
+   "uu": {
+    "Flemish Militia": "Milícia Flamenga",
+    "Coustillier": "Coustillier"
+   },
+   "techs": {
+    "Burgundian Vineyards": "Vinhedos Borgonheses",
+    "Flemish Revolution": "Revolução de Flandres"
+   }
+  },
+  "burmese": {
+   "uu": {
+    "Arambai": "Arambai"
+   },
+   "techs": {
+    "Manipur Cavalry": "Cavalaria de Manipur",
+    "Howdah": "Howdah"
+   }
+  },
+  "byzantines": {
+   "uu": {
+    "Cataphract": "Catafractário"
+   },
+   "techs": {
+    "Greek Fire": "Fogo Grego",
+    "Logistica": "Sobrepujamento"
+   }
+  },
+  "celts": {
+   "uu": {
+    "Woad Raider": "Saqueador Azul"
+   },
+   "techs": {
+    "Stronghold": "Fortaleza",
+    "Furor Celtica": "Furor Céltico"
+   }
+  },
+  "chinese": {
+   "uu": {
+    "Dragon Ship": "Barco Dragão",
+    "Chu Ko Nu": "Chu Ko Nu"
+   },
+   "techs": {
+    "Great Wall": "Grande Muralha",
+    "Rocketry": "Pirotecnia"
+   }
+  },
+  "cumans": {
+   "uu": {
+    "Kipchak": "Quipchaco"
+   },
+   "techs": {
+    "Steppe Husbandry": "Pecuária das Estepes",
+    "Cuman Mercenaries": "Mercenários Cumanos"
+   }
+  },
+  "ethiopians": {
+   "uu": {
+    "Shotel Warrior": "Guerreiro de Shotel"
+   },
+   "techs": {
+    "Royal Heirs": "Herdeiros Reais",
+    "Torsion Engines": "Mecanismos de Torção"
+   }
+  },
+  "franks": {
+   "uu": {
+    "Throwing Axeman": "Lançador de Machado"
+   },
+   "techs": {
+    "Ordonnance Companies": "Companhias de Ordenança",
+    "Chivalry": "Ordens de Cavalaria"
+   }
+  },
+  "georgians": {
+   "uu": {
+    "Monaspa": "Monaspa"
+   },
+   "techs": {
+    "Svan Towers": "Torres Svan",
+    "Aznauri Cavalry": "Cavalaria Aznauri"
+   }
+  },
+  "goths": {
+   "uu": {
+    "Huskarl": "Huscarl"
+   },
+   "techs": {
+    "Anarchy": "Anarquia",
+    "Perfusion": "Perfusão"
+   }
+  },
+  "hindustanis": {
+   "uu": {
+    "Imperial Camel Rider": "Cameleiro Imperial",
+    "Ghulam": "Ghulam"
+   },
+   "techs": {
+    "Grand Trunk Road": "Estrada do Grande Tronco",
+    "Shatagni": "Shatagni"
+   }
+  },
+  "huns": {
+   "uu": {
+    "Tarkan": "Tarkan"
+   },
+   "techs": {
+    "Marauders": "Saqueadores",
+    "Atheism": "Ateísmo"
+   }
+  },
+  "inca": {
+   "uu": {
+    "Kamayuk": "Kamayuk"
+   },
+   "techs": {
+    "Andean Sling": "Funda Andina",
+    "Fabric Shields": "Escudos de Tecido"
+   }
+  },
+  "italians": {
+   "uu": {
+    "Condottiero": "Condotiero",
+    "Genoese Crossbowman": "Besteiro Genovês"
+   },
+   "techs": {
+    "Silk Road": "Rota da Seda",
+    "Pirotechnia": "Pirotecnia"
+   }
+  },
+  "japanese": {
+   "uu": {
+    "Samurai": "Samurai"
+   },
+   "techs": {
+    "Yasama": "Yasama",
+    "Kataparuto": "Kataparuto"
+   }
+  },
+  "khmer": {
+   "uu": {
+    "Ballista Elephant": "Elefante Balista"
+   },
+   "techs": {
+    "Tusk Swords": "Espadas de Presa",
+    "Double Crossbow": "Besta Dupla"
+   }
+  },
+  "koreans": {
+   "uu": {
+    "Turtle Ship": "Navio Tartaruga",
+    "War Wagon": "Carroça de Guerra"
+   },
+   "techs": {
+    "Eupseong": "Eupseong",
+    "Shinkichon": "Shinkichon"
+   }
+  },
+  "lithuanians": {
+   "uu": {
+    "Winged Hussar": "Hussardo Alado",
+    "Leitis": "Leitis"
+   },
+   "techs": {
+    "Hill Forts": "Fortes de Colina",
+    "Tower Shields": "Escudos-Torre"
+   }
+  },
+  "magyars": {
+   "uu": {
+    "Magyar Huszar": "Hussardo Magiar"
+   },
+   "techs": {
+    "Corvinian Army": "Exército Corvínio",
+    "Recurve Bow": "Arco Recurvo"
+   }
+  },
+  "malay": {
+   "uu": {
+    "Karambit Warrior": "Guerreiro de Karambit"
+   },
+   "techs": {
+    "Thalassocracy": "Talassocracia",
+    "Forced Levy": "Recrutamento Forçado"
+   }
+  },
+  "malians": {
+   "uu": {
+    "Gbeto": "Gbeto"
+   },
+   "techs": {
+    "Tigui": "Tigui",
+    "Farimba": "Farimba"
+   }
+  },
+  "maya": {
+   "uu": {
+    "Plumed Archer": "Arqueiro Plumado"
+   },
+   "techs": {
+    "Hul'che Javelineers": "Lançadores de Dardos com Hul'che",
+    "Holcans": "Holcans"
+   }
+  },
+  "mongols": {
+   "uu": {
+    "Mangudai": "Mangudai"
+   },
+   "techs": {
+    "Nomads": "Nômades",
+    "Drill": "Treino"
+   }
+  },
+  "persians": {
+   "uu": {
+    "Savar": "Savar",
+    "War Elephant": "Elefante de Guerra"
+   },
+   "techs": {
+    "Kamandaran": "Kamandaran",
+    "Citadels": "Cidadelas"
+   }
+  },
+  "poles": {
+   "uu": {
+    "Winged Hussar": "Hussardo Alado",
+    "Obuch": "Obuch"
+   },
+   "techs": {
+    "Szlachta Privileges": "Privilégios de Szlachta",
+    "Lechitic Legacy": "Legado Lequítico"
+   }
+  },
+  "portuguese": {
+   "uu": {
+    "Caravel": "Caravela",
+    "Organ Gun": "Rabadoquim"
+   },
+   "techs": {
+    "Circumnavigation": "Circunavegação",
+    "Arquebus": "Arcabuz"
+   }
+  },
+  "romans": {
+   "uu": {
+    "Legionary": "Legionário",
+    "Centurion": "Centurião"
+   },
+   "techs": {
+    "Ballistas": "Balistas",
+    "Comitatenses": "Comitatenses"
+   }
+  },
+  "saracens": {
+   "uu": {
+    "Mameluke": "Mameluco"
+   },
+   "techs": {
+    "Bimaristan": "Bimaristão",
+    "Counterweights": "Contrapesos"
+   }
+  },
+  "sicilians": {
+   "uu": {
+    "Serjeant": "Sargento"
+   },
+   "techs": {
+    "First Crusade": "Primeira Cruzada",
+    "Hauberk": "Hauberk"
+   }
+  },
+  "slavs": {
+   "uu": {
+    "Boyar": "Boiardo"
+   },
+   "techs": {
+    "Detinets": "Detinets",
+    "Druzhina": "Druzhina"
+   }
+  },
+  "spanish": {
+   "uu": {
+    "Conquistador": "Conquistador",
+    "Missionary": "Missionário"
+   },
+   "techs": {
+    "Inquisition": "Inquisição",
+    "Supremacy": "Supremacia"
+   }
+  },
+  "tatars": {
+   "uu": {
+    "Flaming Camel": "Camelo Flamejante",
+    "Keshik": "Keshik"
+   },
+   "techs": {
+    "Silk Armor": "Armadura de Seda",
+    "Timurid Siegecraft": "Táticas Timúridas"
+   }
+  },
+  "teutons": {
+   "uu": {
+    "Teutonic Knight": "Cavaleiro Teutão"
+   },
+   "techs": {
+    "Ironclad": "Revestimento de Ferro",
+    "Crenellations": "Ameias"
+   }
+  },
+  "turks": {
+   "uu": {
+    "Janissary": "Janízaro"
+   },
+   "techs": {
+    "Sipahi": "Sipahi",
+    "Artillery": "Artilharia"
+   }
+  },
+  "vietnamese": {
+   "uu": {
+    "Imperial Skirmisher": "Escaramuçador Imperial",
+    "Rattan Archer": "Arqueiro de Rattan"
+   },
+   "techs": {
+    "Chatras": "Chatras",
+    "Paper Money": "Papel-Moeda"
+   }
+  },
+  "vikings": {
+   "uu": {
+    "Berserk": "Berserker"
+   },
+   "techs": {
+    "Chieftains": "Chefes de Tribo",
+    "Bogsveigar": "Bogsveigar"
+   }
+  }
+ },
+ "ui-ru": {
+  "armenians": {
+   "uu": {
+    "Composite Bowman": "Стрелок с составным луком",
+    "Warrior Priest": "Воин-жрец"
+   },
+   "techs": {
+    "Cilician Fleet": "Киликийский флот",
+    "Fereters": "Раки с мощами"
+   }
+  },
+  "aztecs": {
+   "uu": {
+    "Jaguar Warrior": "Воин-ягуар"
+   },
+   "techs": {
+    "Atlatl": "Атлатль",
+    "Garland Wars": "Захватнические войны"
+   }
+  },
+  "berbers": {
+   "uu": {
+    "Genitour": "Генитур",
+    "Camel Archer": "Лучник на верблюде"
+   },
+   "techs": {
+    "Kasbah": "Касба",
+    "Maghrebi Camels": "Магрибские верблюды"
+   }
+  },
+  "bohemians": {
+   "uu": {
+    "Houfnice": "Гауфница",
+    "Hussite Wagon": "Гуситская повозка"
+   },
+   "techs": {
+    "Wagenburg Tactics": "Тактика вагенбургов",
+    "Hussite Reforms": "Гуситские реформы"
+   }
+  },
+  "britons": {
+   "uu": {
+    "Longbowman": "Английский лучник"
+   },
+   "techs": {
+    "Yeomen": "Йомены",
+    "Warwolf": "Осадный требушет"
+   }
+  },
+  "bulgarians": {
+   "uu": {
+    "Konnik": "Конник"
+   },
+   "techs": {
+    "Stirrups": "Стремена",
+    "Bagains": "Багаины"
+   }
+  },
+  "burgundians": {
+   "uu": {
+    "Flemish Militia": "Фламандский ополченец",
+    "Coustillier": "Кутилье"
+   },
+   "techs": {
+    "Burgundian Vineyards": "Бургундские виноградники",
+    "Flemish Revolution": "Фламандская революция"
+   }
+  },
+  "burmese": {
+   "uu": {
+    "Arambai": "Арамбай"
+   },
+   "techs": {
+    "Manipur Cavalry": "Манипурская конница",
+    "Howdah": "Башни на слонах"
+   }
+  },
+  "byzantines": {
+   "uu": {
+    "Cataphract": "Катафракт"
+   },
+   "techs": {
+    "Greek Fire": "Греческий огонь",
+    "Logistica": "Логистика"
+   }
+  },
+  "celts": {
+   "uu": {
+    "Woad Raider": "Раскрашенный разбойник"
+   },
+   "techs": {
+    "Stronghold": "Цитадель",
+    "Furor Celtica": "Ярость кельтов"
+   }
+  },
+  "chinese": {
+   "uu": {
+    "Dragon Ship": "Dragon Ship",
+    "Chu Ko Nu": "Стрелок с чо-ко-ну"
+   },
+   "techs": {
+    "Great Wall": "Великая Китайская стена",
+    "Rocketry": "Ракеты"
+   }
+  },
+  "cumans": {
+   "uu": {
+    "Kipchak": "Кипчак"
+   },
+   "techs": {
+    "Steppe Husbandry": "Степное коневодство",
+    "Cuman Mercenaries": "Половецкие наемники"
+   }
+  },
+  "ethiopians": {
+   "uu": {
+    "Shotel Warrior": "Амхарский воин"
+   },
+   "techs": {
+    "Royal Heirs": "Королевские наследники",
+    "Torsion Engines": "Торсионные механизмы"
+   }
+  },
+  "franks": {
+   "uu": {
+    "Throwing Axeman": "Метатель топоров"
+   },
+   "techs": {
+    "Ordonnance Companies": "Ордонансовые роты",
+    "Chivalry": "Рыцарство"
+   }
+  },
+  "georgians": {
+   "uu": {
+    "Monaspa": "Монаспа"
+   },
+   "techs": {
+    "Svan Towers": "Сванские башни",
+    "Aznauri Cavalry": "Всадники азнаури"
+   }
+  },
+  "goths": {
+   "uu": {
+    "Huskarl": "Хускарл"
+   },
+   "techs": {
+    "Anarchy": "Анархия",
+    "Perfusion": "Мобилизация"
+   }
+  },
+  "hindustanis": {
+   "uu": {
+    "Imperial Camel Rider": "Имперский мехарист",
+    "Ghulam": "Гулам"
+   },
+   "techs": {
+    "Grand Trunk Road": "Великий колесный путь",
+    "Shatagni": "Шатагни"
+   }
+  },
+  "huns": {
+   "uu": {
+    "Tarkan": "Таркан"
+   },
+   "techs": {
+    "Marauders": "Мародеры",
+    "Atheism": "Атеизм"
+   }
+  },
+  "inca": {
+   "uu": {
+    "Kamayuk": "Камаюк"
+   },
+   "techs": {
+    "Andean Sling": "Уарака",
+    "Fabric Shields": "Матерчатые щиты"
+   }
+  },
+  "italians": {
+   "uu": {
+    "Condottiero": "Кондотьер",
+    "Genoese Crossbowman": "Генуэзский арбалетчик"
+   },
+   "techs": {
+    "Silk Road": "Великий шелковый путь",
+    "Pirotechnia": "Пиротехника"
+   }
+  },
+  "japanese": {
+   "uu": {
+    "Samurai": "Самурай"
+   },
+   "techs": {
+    "Yasama": "Ясама",
+    "Kataparuto": "Катапаруто"
+   }
+  },
+  "khmer": {
+   "uu": {
+    "Ballista Elephant": "Слон с баллистой"
+   },
+   "techs": {
+    "Tusk Swords": "Клинки для бивней",
+    "Double Crossbow": "Спаренный самострел"
+   }
+  },
+  "koreans": {
+   "uu": {
+    "Turtle Ship": "Корабль-черепаха",
+    "War Wagon": "Боевая телега"
+   },
+   "techs": {
+    "Eupseong": "Ыпсон",
+    "Shinkichon": "Зажигательные снаряды"
+   }
+  },
+  "lithuanians": {
+   "uu": {
+    "Winged Hussar": "Крылатый гусар",
+    "Leitis": "Лейти"
+   },
+   "techs": {
+    "Hill Forts": "Крепости в холмах",
+    "Tower Shields": "Ростовые щиты"
+   }
+  },
+  "magyars": {
+   "uu": {
+    "Magyar Huszar": "Мадьярский гусар"
+   },
+   "techs": {
+    "Corvinian Army": "Армия Корвина",
+    "Recurve Bow": "Лук двойной кривизны"
+   }
+  },
+  "malay": {
+   "uu": {
+    "Karambit Warrior": "Пендекар"
+   },
+   "techs": {
+    "Thalassocracy": "Талассократия",
+    "Forced Levy": "Принудительная мобилизация"
+   }
+  },
+  "malians": {
+   "uu": {
+    "Gbeto": "Гбето"
+   },
+   "techs": {
+    "Tigui": "Тигуи",
+    "Farimba": "Фаримба"
+   }
+  },
+  "maya": {
+   "uu": {
+    "Plumed Archer": "Лучник-холькан"
+   },
+   "techs": {
+    "Hul'che Javelineers": "Копьеносцы с хульче",
+    "Holcans": "Хольканы"
+   }
+  },
+  "mongols": {
+   "uu": {
+    "Mangudai": "Мангут"
+   },
+   "techs": {
+    "Nomads": "Кочевники",
+    "Drill": "Сверло"
+   }
+  },
+  "persians": {
+   "uu": {
+    "Savar": "Савар",
+    "War Elephant": "Боевой слон"
+   },
+   "techs": {
+    "Kamandaran": "Камандаран",
+    "Citadels": "Цитадели"
+   }
+  },
+  "poles": {
+   "uu": {
+    "Winged Hussar": "Крылатый гусар",
+    "Obuch": "Воин с чеканом"
+   },
+   "techs": {
+    "Szlachta Privileges": "Привилегии шляхты",
+    "Lechitic Legacy": "Лехитское наследие"
+   }
+  },
+  "portuguese": {
+   "uu": {
+    "Caravel": "Каравелла",
+    "Organ Gun": "Рибадекин"
+   },
+   "techs": {
+    "Circumnavigation": "Кругосветное путешествие",
+    "Arquebus": "Аркебуза"
+   }
+  },
+  "romans": {
+   "uu": {
+    "Legionary": "Легионер",
+    "Centurion": "Центурион"
+   },
+   "techs": {
+    "Ballistas": "Баллисты",
+    "Comitatenses": "Комитаты"
+   }
+  },
+  "saracens": {
+   "uu": {
+    "Mameluke": "Мамлюк"
+   },
+   "techs": {
+    "Bimaristan": "Бимаристан",
+    "Counterweights": "Противовесы"
+   }
+  },
+  "sicilians": {
+   "uu": {
+    "Serjeant": "Сержант"
+   },
+   "techs": {
+    "First Crusade": "Первый крестовый поход",
+    "Hauberk": "Хауберк"
+   }
+  },
+  "slavs": {
+   "uu": {
+    "Boyar": "Боярин"
+   },
+   "techs": {
+    "Detinets": "Детинец",
+    "Druzhina": "Дружина"
+   }
+  },
+  "spanish": {
+   "uu": {
+    "Conquistador": "Конкистадор",
+    "Missionary": "Миссионер"
+   },
+   "techs": {
+    "Inquisition": "Инквизиция",
+    "Supremacy": "Превосходство"
+   }
+  },
+  "tatars": {
+   "uu": {
+    "Flaming Camel": "Совар",
+    "Keshik": "Кэшик"
+   },
+   "techs": {
+    "Silk Armor": "Церемониальные доспехи",
+    "Timurid Siegecraft": "Осадное искусство чингизидов"
+   }
+  },
+  "teutons": {
+   "uu": {
+    "Teutonic Knight": "Тевтонский рыцарь"
+   },
+   "techs": {
+    "Ironclad": "Железная обшивка",
+    "Crenellations": "Зубчатые стены"
+   }
+  },
+  "turks": {
+   "uu": {
+    "Janissary": "Янычар"
+   },
+   "techs": {
+    "Sipahi": "Сипахи",
+    "Artillery": "Артиллерия"
+   }
+  },
+  "vietnamese": {
+   "uu": {
+    "Imperial Skirmisher": "Застрельщик-гвардеец",
+    "Rattan Archer": "Лучник с ротангом"
+   },
+   "techs": {
+    "Chatras": "Шатри",
+    "Paper Money": "Бумажные деньги"
+   }
+  },
+  "vikings": {
+   "uu": {
+    "Berserk": "Берсерк"
+   },
+   "techs": {
+    "Chieftains": "Ярлы",
+    "Bogsveigar": "Богсвейгар"
+   }
+  }
+ },
+ "ui-sk": {
+  "armenians": {
+   "uu": {
+    "Composite Bowman": "Composite Bowman",
+    "Warrior Priest": "Warrior Priest"
+   },
+   "techs": {
+    "Cilician Fleet": "Cilician Fleet",
+    "Fereters": "Fereters"
+   }
+  },
+  "aztecs": {
+   "uu": {
+    "Jaguar Warrior": "Jaguar Warrior"
+   },
+   "techs": {
+    "Atlatl": "Atlatl",
+    "Garland Wars": "Garland Wars"
+   }
+  },
+  "berbers": {
+   "uu": {
+    "Genitour": "Genitour",
+    "Camel Archer": "Camel Archer"
+   },
+   "techs": {
+    "Kasbah": "Kasbah",
+    "Maghrebi Camels": "Maghrebi Camels"
+   }
+  },
+  "bohemians": {
+   "uu": {
+    "Houfnice": "Houfnice",
+    "Hussite Wagon": "Hussite Wagon"
+   },
+   "techs": {
+    "Wagenburg Tactics": "Wagenburg Tactics",
+    "Hussite Reforms": "Hussite Reforms"
+   }
+  },
+  "britons": {
+   "uu": {
+    "Longbowman": "Longbowman"
+   },
+   "techs": {
+    "Yeomen": "Yeomen",
+    "Warwolf": "Warwolf"
+   }
+  },
+  "bulgarians": {
+   "uu": {
+    "Konnik": "Konnik"
+   },
+   "techs": {
+    "Stirrups": "Stirrups",
+    "Bagains": "Bagains"
+   }
+  },
+  "burgundians": {
+   "uu": {
+    "Flemish Militia": "Flemish Militia",
+    "Coustillier": "Coustillier"
+   },
+   "techs": {
+    "Burgundian Vineyards": "Burgundian Vineyards",
+    "Flemish Revolution": "Flemish Revolution"
+   }
+  },
+  "burmese": {
+   "uu": {
+    "Arambai": "Arambai"
+   },
+   "techs": {
+    "Manipur Cavalry": "Manipur Cavalry",
+    "Howdah": "Howdah"
+   }
+  },
+  "byzantines": {
+   "uu": {
+    "Cataphract": "Cataphract"
+   },
+   "techs": {
+    "Greek Fire": "Greek Fire",
+    "Logistica": "Logistica"
+   }
+  },
+  "celts": {
+   "uu": {
+    "Woad Raider": "Woad Raider"
+   },
+   "techs": {
+    "Stronghold": "Stronghold",
+    "Furor Celtica": "Furor Celtica"
+   }
+  },
+  "chinese": {
+   "uu": {
+    "Dragon Ship": "Dragon Ship",
+    "Chu Ko Nu": "Chu Ko Nu"
+   },
+   "techs": {
+    "Great Wall": "Great Wall",
+    "Rocketry": "Rocketry"
+   }
+  },
+  "cumans": {
+   "uu": {
+    "Kipchak": "Kipchak"
+   },
+   "techs": {
+    "Steppe Husbandry": "Steppe Husbandry",
+    "Cuman Mercenaries": "Cuman Mercenaries"
+   }
+  },
+  "ethiopians": {
+   "uu": {
+    "Shotel Warrior": "Shotel Warrior"
+   },
+   "techs": {
+    "Royal Heirs": "Royal Heirs",
+    "Torsion Engines": "Torsion Engines"
+   }
+  },
+  "franks": {
+   "uu": {
+    "Throwing Axeman": "Throwing Axeman"
+   },
+   "techs": {
+    "Ordonnance Companies": "Ordonnance Companies",
+    "Chivalry": "Chivalry"
+   }
+  },
+  "georgians": {
+   "uu": {
+    "Monaspa": "Monaspa"
+   },
+   "techs": {
+    "Svan Towers": "Svan Towers",
+    "Aznauri Cavalry": "Aznauri Cavalry"
+   }
+  },
+  "goths": {
+   "uu": {
+    "Huskarl": "Huskarl"
+   },
+   "techs": {
+    "Anarchy": "Anarchy",
+    "Perfusion": "Perfusion"
+   }
+  },
+  "hindustanis": {
+   "uu": {
+    "Imperial Camel Rider": "Imperial Camel Rider",
+    "Ghulam": "Ghulam"
+   },
+   "techs": {
+    "Grand Trunk Road": "Grand Trunk Road",
+    "Shatagni": "Shatagni"
+   }
+  },
+  "huns": {
+   "uu": {
+    "Tarkan": "Tarkan"
+   },
+   "techs": {
+    "Marauders": "Marauders",
+    "Atheism": "Atheism"
+   }
+  },
+  "inca": {
+   "uu": {
+    "Kamayuk": "Kamayuk"
+   },
+   "techs": {
+    "Andean Sling": "Andean Sling",
+    "Fabric Shields": "Fabric Shields"
+   }
+  },
+  "italians": {
+   "uu": {
+    "Condottiero": "Condottiero",
+    "Genoese Crossbowman": "Genoese Crossbowman"
+   },
+   "techs": {
+    "Silk Road": "Silk Road",
+    "Pirotechnia": "Pirotechnia"
+   }
+  },
+  "japanese": {
+   "uu": {
+    "Samurai": "Samurai"
+   },
+   "techs": {
+    "Yasama": "Yasama",
+    "Kataparuto": "Kataparuto"
+   }
+  },
+  "khmer": {
+   "uu": {
+    "Ballista Elephant": "Ballista Elephant"
+   },
+   "techs": {
+    "Tusk Swords": "Tusk Swords",
+    "Double Crossbow": "Double Crossbow"
+   }
+  },
+  "koreans": {
+   "uu": {
+    "Turtle Ship": "Turtle Ship",
+    "War Wagon": "War Wagon"
+   },
+   "techs": {
+    "Eupseong": "Eupseong",
+    "Shinkichon": "Shinkichon"
+   }
+  },
+  "lithuanians": {
+   "uu": {
+    "Winged Hussar": "Winged Hussar",
+    "Leitis": "Leitis"
+   },
+   "techs": {
+    "Hill Forts": "Hill Forts",
+    "Tower Shields": "Tower Shields"
+   }
+  },
+  "magyars": {
+   "uu": {
+    "Magyar Huszar": "Magyar Huszar"
+   },
+   "techs": {
+    "Corvinian Army": "Corvinian Army",
+    "Recurve Bow": "Recurve Bow"
+   }
+  },
+  "malay": {
+   "uu": {
+    "Karambit Warrior": "Karambit Warrior"
+   },
+   "techs": {
+    "Thalassocracy": "Thalassocracy",
+    "Forced Levy": "Forced Levy"
+   }
+  },
+  "malians": {
+   "uu": {
+    "Gbeto": "Gbeto"
+   },
+   "techs": {
+    "Tigui": "Tigui",
+    "Farimba": "Farimba"
+   }
+  },
+  "maya": {
+   "uu": {
+    "Plumed Archer": "Plumed Archer"
+   },
+   "techs": {
+    "Hul'che Javelineers": "Hul'che Javelineers",
+    "Holcans": "Holcans"
+   }
+  },
+  "mongols": {
+   "uu": {
+    "Mangudai": "Mangudai"
+   },
+   "techs": {
+    "Nomads": "Nomads",
+    "Drill": "Drill"
+   }
+  },
+  "persians": {
+   "uu": {
+    "Savar": "Savar",
+    "War Elephant": "War Elephant"
+   },
+   "techs": {
+    "Kamandaran": "Kamandaran",
+    "Citadels": "Citadels"
+   }
+  },
+  "poles": {
+   "uu": {
+    "Winged Hussar": "Winged Hussar",
+    "Obuch": "Obuch"
+   },
+   "techs": {
+    "Szlachta Privileges": "Szlachta Privileges",
+    "Lechitic Legacy": "Lechitic Legacy"
+   }
+  },
+  "portuguese": {
+   "uu": {
+    "Caravel": "Caravel",
+    "Organ Gun": "Organ Gun"
+   },
+   "techs": {
+    "Circumnavigation": "Circum-navigation",
+    "Arquebus": "Arquebus"
+   }
+  },
+  "romans": {
+   "uu": {
+    "Legionary": "Legionary",
+    "Centurion": "Centurion"
+   },
+   "techs": {
+    "Ballistas": "Ballistas",
+    "Comitatenses": "Comitatenses"
+   }
+  },
+  "saracens": {
+   "uu": {
+    "Mameluke": "Mameluke"
+   },
+   "techs": {
+    "Bimaristan": "Bimaristan",
+    "Counterweights": "Counter- weights"
+   }
+  },
+  "sicilians": {
+   "uu": {
+    "Serjeant": "Serjeant"
+   },
+   "techs": {
+    "First Crusade": "First Crusade",
+    "Hauberk": "Hauberk"
+   }
+  },
+  "slavs": {
+   "uu": {
+    "Boyar": "Boyar"
+   },
+   "techs": {
+    "Detinets": "Detinets",
+    "Druzhina": "Druzhina"
+   }
+  },
+  "spanish": {
+   "uu": {
+    "Conquistador": "Conquistador",
+    "Missionary": "Missionary"
+   },
+   "techs": {
+    "Inquisition": "Inquisition",
+    "Supremacy": "Supremacy"
+   }
+  },
+  "tatars": {
+   "uu": {
+    "Flaming Camel": "Flaming Camel",
+    "Keshik": "Keshik"
+   },
+   "techs": {
+    "Silk Armor": "Silk Armor",
+    "Timurid Siegecraft": "Timurid Siegecraft"
+   }
+  },
+  "teutons": {
+   "uu": {
+    "Teutonic Knight": "Teutonic Knight"
+   },
+   "techs": {
+    "Ironclad": "Ironclad",
+    "Crenellations": "Crenellations"
+   }
+  },
+  "turks": {
+   "uu": {
+    "Janissary": "Janissary"
+   },
+   "techs": {
+    "Sipahi": "Sipahi",
+    "Artillery": "Artillery"
+   }
+  },
+  "vietnamese": {
+   "uu": {
+    "Imperial Skirmisher": "Imperial Skirmisher",
+    "Rattan Archer": "Rattan Archer"
+   },
+   "techs": {
+    "Chatras": "Chatras",
+    "Paper Money": "Paper Money"
+   }
+  },
+  "vikings": {
+   "uu": {
+    "Berserk": "Berserk"
+   },
+   "techs": {
+    "Chieftains": "Chieftains",
+    "Bogsveigar": "Bogsveigar"
+   }
+  }
+ },
+ "ui-vi": {
+  "armenians": {
+   "uu": {
+    "Composite Bowman": "Cung thủ cung liên hợp",
+    "Warrior Priest": "Linh mục chiến binh"
+   },
+   "techs": {
+    "Cilician Fleet": "Hạm đội Cilicia",
+    "Fereters": "Hòm thánh cốt"
+   }
+  },
+  "aztecs": {
+   "uu": {
+    "Jaguar Warrior": "Chiến binh báo đốm"
+   },
+   "techs": {
+    "Atlatl": "Tên ném",
+    "Garland Wars": "Chiến tranh vòng hoa"
+   }
+  },
+  "berbers": {
+   "uu": {
+    "Genitour": "Kỵ binh phóng lao",
+    "Camel Archer": "Cung thủ lạc đà"
+   },
+   "techs": {
+    "Kasbah": "Thành lũy",
+    "Maghrebi Camels": "Lạc đà Maghreb"
+   }
+  },
+  "bohemians": {
+   "uu": {
+    "Houfnice": "Lựu pháo",
+    "Hussite Wagon": "Xe Hussite"
+   },
+   "techs": {
+    "Wagenburg Tactics": "Chiến thuật thành lũy xe",
+    "Hussite Reforms": "Cải cách Hussite"
+   }
+  },
+  "britons": {
+   "uu": {
+    "Longbowman": "Trường cung binh"
+   },
+   "techs": {
+    "Yeomen": "Nghĩa dũng binh",
+    "Warwolf": "Sói chiến"
+   }
+  },
+  "bulgarians": {
+   "uu": {
+    "Konnik": "Konnik"
+   },
+   "techs": {
+    "Stirrups": "Bàn đạp ngựa",
+    "Bagains": "Bagains"
+   }
+  },
+  "burgundians": {
+   "uu": {
+    "Flemish Militia": "Dân binh Flemish",
+    "Coustillier": "Kỵ binh phóng lao"
+   },
+   "techs": {
+    "Burgundian Vineyards": "Vườn nho Burgundy",
+    "Flemish Revolution": "Cách mạng Flemish"
+   }
+  },
+  "burmese": {
+   "uu": {
+    "Arambai": "Kỵ binh phi tiêu"
+   },
+   "techs": {
+    "Manipur Cavalry": "Kỵ binh Manipur",
+    "Howdah": "Kiệu voi"
+   }
+  },
+  "byzantines": {
+   "uu": {
+    "Cataphract": "Thiết kỵ"
+   },
+   "techs": {
+    "Greek Fire": "Lửa Hy Lạp",
+    "Logistica": "Hậu cần học"
+   }
+  },
+  "celts": {
+   "uu": {
+    "Woad Raider": "Lính đột kích xanh"
+   },
+   "techs": {
+    "Stronghold": "Thành trì",
+    "Furor Celtica": "Bạo binh Celt"
+   }
+  },
+  "chinese": {
+   "uu": {
+    "Dragon Ship": "Tàu rồng",
+    "Chu Ko Nu": "Nỏ liên châu"
+   },
+   "techs": {
+    "Great Wall": "Vạn Lý Trường Thành",
+    "Rocketry": "Thuật hỏa tiễn"
+   }
+  },
+  "cumans": {
+   "uu": {
+    "Kipchak": "Kipchak"
+   },
+   "techs": {
+    "Steppe Husbandry": "Chăn nuôi trên đồng cỏ",
+    "Cuman Mercenaries": "Lính đánh thuê Cuman"
+   }
+  },
+  "ethiopians": {
+   "uu": {
+    "Shotel Warrior": "Lính kiếm cong"
+   },
+   "techs": {
+    "Royal Heirs": "Người kế vị",
+    "Torsion Engines": "Cơ chế xoắn"
+   }
+  },
+  "franks": {
+   "uu": {
+    "Throwing Axeman": "Lính ném rìu"
+   },
+   "techs": {
+    "Ordonnance Companies": "Đại đội Ordonnance",
+    "Chivalry": "Tinh thần hiệp sĩ"
+   }
+  },
+  "georgians": {
+   "uu": {
+    "Monaspa": "Monaspa"
+   },
+   "techs": {
+    "Svan Towers": "Tháp svan",
+    "Aznauri Cavalry": "Kỵ binh Aznauri"
+   }
+  },
+  "goths": {
+   "uu": {
+    "Huskarl": "Huskarl"
+   },
+   "techs": {
+    "Anarchy": "Vô chính phủ",
+    "Perfusion": "Kỹ thuật vảy"
+   }
+  },
+  "hindustanis": {
+   "uu": {
+    "Imperial Camel Rider": "Kỵ sĩ lạc đà đế quốc",
+    "Ghulam": "Ghulam"
+   },
+   "techs": {
+    "Grand Trunk Road": "Đường Grand Trunk",
+    "Shatagni": "Súng Shatagni"
+   }
+  },
+  "huns": {
+   "uu": {
+    "Tarkan": "Tarkan"
+   },
+   "techs": {
+    "Marauders": "Đạo tặc",
+    "Atheism": "Vô thần"
+   }
+  },
+  "inca": {
+   "uu": {
+    "Kamayuk": "Kamayuk"
+   },
+   "techs": {
+    "Andean Sling": "Dây ném Andes",
+    "Fabric Shields": "Khiên vải"
+   }
+  },
+  "italians": {
+   "uu": {
+    "Condottiero": "Tư lệnh",
+    "Genoese Crossbowman": "Nỏ binh Genova"
+   },
+   "techs": {
+    "Silk Road": "Con đường tơ lụa",
+    "Pirotechnia": "Hỏa thương"
+   }
+  },
+  "japanese": {
+   "uu": {
+    "Samurai": "Samurai"
+   },
+   "techs": {
+    "Yasama": "Khe bắn tên",
+    "Kataparuto": "Máy bắn đá"
+   }
+  },
+  "khmer": {
+   "uu": {
+    "Ballista Elephant": "Voi bắn tên"
+   },
+   "techs": {
+    "Tusk Swords": "Kiếm ngà",
+    "Double Crossbow": "Nỏ đôi"
+   }
+  },
+  "koreans": {
+   "uu": {
+    "Turtle Ship": "Tàu rùa",
+    "War Wagon": "Chiến xa Triều Tiên"
+   },
+   "techs": {
+    "Eupseong": "Eupseong",
+    "Shinkichon": "Thần cơ tiễn"
+   }
+  },
+  "lithuanians": {
+   "uu": {
+    "Winged Hussar": "Kỵ binh có cánh",
+    "Leitis": "Leitis"
+   },
+   "techs": {
+    "Hill Forts": "Hào lũy trên đồi",
+    "Tower Shields": "Khiên tháp"
+   }
+  },
+  "magyars": {
+   "uu": {
+    "Magyar Huszar": "Kỵ binh Magyar"
+   },
+   "techs": {
+    "Corvinian Army": "Quân đội Corvinian",
+    "Recurve Bow": "Cung cong ngược"
+   }
+  },
+  "malay": {
+   "uu": {
+    "Karambit Warrior": "Lính dao cong"
+   },
+   "techs": {
+    "Thalassocracy": "Đế chế trên biển",
+    "Forced Levy": "Dân quân bắt buộc"
+   }
+  },
+  "malians": {
+   "uu": {
+    "Gbeto": "Lính phi dao"
+   },
+   "techs": {
+    "Tigui": "Tigui",
+    "Farimba": "Farimba"
+   }
+  },
+  "maya": {
+   "uu": {
+    "Plumed Archer": "Cung thủ lông vũ"
+   },
+   "techs": {
+    "Hul'che Javelineers": "Lính ném lao Hul'che",
+    "Holcans": "Holcan"
+   }
+  },
+  "mongols": {
+   "uu": {
+    "Mangudai": "Kỵ xạ Mông Cổ"
+   },
+   "techs": {
+    "Nomads": "Du mục",
+    "Drill": "Thao luyện"
+   }
+  },
+  "persians": {
+   "uu": {
+    "Savar": "Savar",
+    "War Elephant": "Voi chiến"
+   },
+   "techs": {
+    "Kamandaran": "Kamandaran",
+    "Citadels": "Thành trì"
+   }
+  },
+  "poles": {
+   "uu": {
+    "Winged Hussar": "Kỵ binh có cánh",
+    "Obuch": "Obuch"
+   },
+   "techs": {
+    "Szlachta Privileges": "Đặc quyền của quý tộc",
+    "Lechitic Legacy": "Di sản Lechites"
+   }
+  },
+  "portuguese": {
+   "uu": {
+    "Caravel": "Tàu Caravel",
+    "Organ Gun": "Súng đa nòng"
+   },
+   "techs": {
+    "Circumnavigation": "Hành trình vòng quanh",
+    "Arquebus": "Súng hỏa mai"
+   }
+  },
+  "romans": {
+   "uu": {
+    "Legionary": "Lính lê dương",
+    "Centurion": "Centurion"
+   },
+   "techs": {
+    "Ballistas": "Pháo nỏ",
+    "Comitatenses": "Quân trợ chiến"
+   }
+  },
+  "saracens": {
+   "uu": {
+    "Mameluke": "Lính nô lệ"
+   },
+   "techs": {
+    "Bimaristan": "Bệnh xá",
+    "Counterweights": "Đối trọng"
+   }
+  },
+  "sicilians": {
+   "uu": {
+    "Serjeant": "Thị vệ"
+   },
+   "techs": {
+    "First Crusade": "Cuộc thập tự chinh đầutiên",
+    "Hauberk": "Áo giáp dài"
+   }
+  },
+  "slavs": {
+   "uu": {
+    "Boyar": "Quý tộc thiết kỵ"
+   },
+   "techs": {
+    "Detinets": "Detinet",
+    "Druzhina": "Thân binh"
+   }
+  },
+  "spanish": {
+   "uu": {
+    "Conquistador": "Tướng chinh phục",
+    "Missionary": "Truyền đạo sư"
+   },
+   "techs": {
+    "Inquisition": "Tòa án dị giáo",
+    "Supremacy": "Quyền tối thượng"
+   }
+  },
+  "tatars": {
+   "uu": {
+    "Flaming Camel": "Lạc đà lửa",
+    "Keshik": "Keshik"
+   },
+   "techs": {
+    "Silk Armor": "Giáp lụa",
+    "Timurid Siegecraft": "Thuật công thành Timurid"
+   }
+  },
+  "teutons": {
+   "uu": {
+    "Teutonic Knight": "Hiệp sĩ Teuton"
+   },
+   "techs": {
+    "Ironclad": "Bọc sắt",
+    "Crenellations": "Tường răng cưa"
+   }
+  },
+  "turks": {
+   "uu": {
+    "Janissary": "Vệ binh Đột Quyết"
+   },
+   "techs": {
+    "Sipahi": "Kỵ binh Sipahi",
+    "Artillery": "Pháo binh"
+   }
+  },
+  "vietnamese": {
+   "uu": {
+    "Imperial Skirmisher": "Lính giao tranh đế quốc",
+    "Rattan Archer": "Cung thủ giáp mây"
+   },
+   "techs": {
+    "Chatras": "Dù che",
+    "Paper Money": "Tiền giấy"
+   }
+  },
+  "vikings": {
+   "uu": {
+    "Berserk": "Cuồng binh"
+   },
+   "techs": {
+    "Chieftains": "Thủ lĩnh",
+    "Bogsveigar": "Bogsveigar"
+   }
+  }
+ }
+}
