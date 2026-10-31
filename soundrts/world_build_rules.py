@@ -141,7 +141,10 @@ def unit_train_time(unit_cls_or_name):
     if cls is None:
         return 0
     explicit = getattr(cls, "train_time", None)
-    if explicit is not None:
+    if explicit:
+        # A declared ``train_time`` overrides the line-root duration.
+        # 0 means "not declared" (the class default), so it falls through to
+        # the line-root walk below.
         try:
             return int(explicit)
         except (TypeError, ValueError):

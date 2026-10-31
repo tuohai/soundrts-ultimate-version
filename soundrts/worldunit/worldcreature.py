@@ -905,6 +905,13 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     cost = (0,) * MAX_NB_OF_RESOURCE_TYPES
     # AoE2 line_upgrade forms: research uses ``cost``; build/train menu uses ``train_cost``
     train_cost = (0,) * MAX_NB_OF_RESOURCE_TYPES
+    # Explicit train duration in seconds (PRECISION ms).  Read by
+    # ``world_build_rules.unit_train_time`` *before* the line-root walk, so a
+    # unit whose train time differs from its line root can declare it here
+    # (AoE2 DE: the Bohemian Houfnice trains in 56s while the Bombard Cannon
+    # line root is also 56s, but other UU lines differ).
+    # ``time_cost`` stays the *research* duration of a line_upgrade form.
+    train_time = 0
     time_cost = 0
     change_time = 0
     morph_as_train = 0  # can_upgrade_to / can_change_to 均按目标单位训练成本/时间计费

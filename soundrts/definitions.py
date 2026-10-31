@@ -986,6 +986,11 @@ _precision_properties = {
     "mana_max",
     "mana_start",
     "time_cost",
+    # Explicit train duration (seconds) of a unit/building.  Overrides the
+    # line-root ``time_cost`` when computing the train order duration
+    # (world_build_rules.unit_train_time).  Distinct from ``time_cost``,
+    # which is the *research* duration of a ``line_upgrade`` form.
+    "train_time",
     "conversion_channel_bonus_time",  # upgrade: flat seconds added to conversion channel
     "conversion_interval",  # skill: seconds per conversion interval (0 = off)
     "change_time",     # 单位变形所需时间

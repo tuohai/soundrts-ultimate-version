@@ -11045,11 +11045,23 @@ cost 300 600 0 0
 time_cost 50
 requirements aoe_castle imperial_age
 ; 波斯 Citadels — DE: Castles +4 attack, +3 vs. Rams, +3 vs. Infantry
-effect bonus mdg 4
+; and receive -25% bonus damage.
+; NB: the castle attacks RANGED (rdg), so the attack bonuses must be
+; ``rdg`` / ``rdg_vs`` — a ``mdg`` / ``mdg_vs`` row would never fire.
+; ``effect bonus <stat> <target> <value>`` takes exactly ONE target per
+; row; the ram line is covered by ``battering_ram`` because the vs-lookup
+; walks ``expanded_is_a`` (``capped_ram`` / ``siege_ram`` inherit it).
+effect bonus rdg 4
 effect_bonus_targets aoe_castle
-effect bonus mdg_vs infantry 3
+effect bonus rdg_vs infantry 3
 effect_bonus_targets aoe_castle
-effect bonus mdg_vs siege_ram capped_ram battering_ram 3
+effect bonus rdg_vs battering_ram 3
+effect_bonus_targets aoe_castle
+; DE: "receive -25% bonus damage" -> +25% armor (both melee and ranged),
+; same convention the Sicilian "receive -40% bonus damage" bonus uses.
+effect bonus mdf 25%
+effect_bonus_targets aoe_castle
+effect bonus rdf 25%
 effect_bonus_targets aoe_castle
 
 def holcans
