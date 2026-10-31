@@ -21,18 +21,26 @@
 8016 Sarracenos
 
 8700 Godos
-8540 Unique unit Huskarl.
-  Unique techs Anarchy and Perfusion.
-  Infantry costs less.
-  Huskarls and Eagle Warriors are cheaper and tougher.
-  Infantry return some food when killing units.
-  Team bonus: Huskarls have more line of sight.
+8540 Unidad única: Huscarle.
+  Tecnologías únicas: Anarquía y Movilización.
+  Telar puede investigarse al instante
+  Los cazadores cargan +15; los animales que caces duran un 20 % más
+  La infantería cuesta un 15/20/25/30 % menos en la Edad Oscura, la Edad Feudal, la Edad de los Castillos y la Edad Imperial, respectivamente
+  La infantería obtiene +1/+2/+3 de ataque contra edificios en la Edad Feudal, la Edad de los Castillos y la Edad Imperial, respectivamente
+  Ganas +10 de población en la Edad Imperial
+  los huscarles pueden entrenarse en los cuarteles
+  los cuarteles funcionan un 100 % más rápido
+  Bonificación de equipo: Los cuarteles funcionan un 20 % más rápido.
 8701 Persas
-8541 Unique unit War Elephant.
-  Unique techs Kamandaran and Silos.
-  Start with fifty extra food and wood.
-  Town Centers work faster.
-  Team bonus: trade gains more gold.
+8541 Unidad única: Elefante de guerra, savar.
+  Tecnologías únicas: Kamandaran y Ciudadelas.
+  Empieza con +50 de madera y comida
+  Los centros urbanos y los muelles ganan un 100 % más de PR y trabajan un 5/10/15/20 % más rápido en la Edad Oscura, la Edad Feudal, la Edad de los Castillos, y la Edad Imperial, respectivamente
+  Tácticas de los partias disponibles en la Edad de los Castillos
+  Puedes construir caravasares en la Edad Imperial
+  el coste de oro de los arqueros se reemplaza por un coste adicional de madera
+  los castillos infligen +4 de ataque, +3 contra arietes, +3 contra infantería y reciben un 25 % menos de daño adicional
+  Bonificación de equipo: Los caballeros ganan +2 de ataque contra los soldados a distancia.
 8702 Eslavos
 8703 Cumanos
 8704 Hunos
@@ -67,15 +75,11 @@
 9043 Perfusión
 9044 Kamandarán
 9045 Druzhina
-9046 Ortodoxia
 9047 Cría esteparia
 9048 Mercenarios cumanos
 9049 Saqueadores
 9050 Ateísmo
-9051 Panokseon
 9052 Shinkichon
-9053 El Dorado
-9054 Arquitectura maya
 9055 Gran Ruta
 9056 Shatagni
 8070 Samurai
@@ -375,224 +379,382 @@
 8514 Las conversiones enemigas contra ti tardan mucho más
 8515 Si varios monjes convierten juntos, solo descansa el que tiene éxito
 ; Bonos de civilización (se leen en el selector de facción con G; líneas sangradas continúan)
-8520 Unidad única: arquero de arco largo.
-  Tecnologías únicas: Yeomen y Warwolf.
-  Arqueros a pie más uno de alcance en Edad de los Castillos y más uno en Edad Imperial, excepto honderos.
-  Los pastores trabajan más rápido.
-  Los centros urbanos cuestan la mitad de madera desde la Edad de los Castillos.
-  Bono de equipo: los campos de tiro trabajan más rápido.
-  Sin Linaje ni Anillo de pulgar.
-8521 Unidad única: lanzador de hachas.
-  Tecnologías únicas: hacha barbada y caballería.
-  Caballería más veinte por ciento de puntos de resistencia desde la Edad Feudal.
-  Los recolectores trabajan más rápido.
-  Las mejoras de granja son gratis.
-  Los castillos cuestan menos piedra.
-  Bono de equipo: caballeros más dos de visión.
-  Sin Anillo de pulgar, Brazal, Cota de malla de arquero ni Linaje.
-8522 Unidad única: Chu Ko Nu.
-  Tecnologías únicas: cohetería y Gran Muralla.
-  Empiezan con tres aldeanos extra, menos cincuenta de madera y doscientos de comida.
-  Las tecnologías cuestan cinco, diez y quince por ciento menos en Feudal, Castillos e Imperial.
-  Los centros urbanos dan quince de población y más siete de visión.
-  Los barcos de fuego se mueven más rápido en Castillos e Imperial.
-  Bono de equipo: las granjas contienen diez por ciento más de comida.
+8520 Unidad única: Arquero con arco largo.
+  Tecnologías únicas: Hidalgo y Lobo de guerra.
+  Los pastores trabajan un +25 % más rápido
+  Los centros urbanos cuestan un 50 % menos de madera a partir de la Edad de los Castillos
+  Los arqueros a pie ganan +1/+2 de alcance en la Edad de los Castillos y la Edad Imperial
+  los arqueros a pie y los guerrilleros ganan +1 de alcance, las atalayas obtienen +2 de ataque
+  los trebuchets infligen daño explosivo y son más precisos
+  Bonificación de equipo: Las galerías de tiro con arco funcionan un +10 % más rápido.
+8521 Unidad única: Lanzador de hachas.
+  Tecnologías únicas: Compagnies d'ordonnance y Caballería.
+  Los recolectores trabajan un +15 % más rápido
+  Tecnologías de molino gratuitas
+  Las unidades montadas ganan un +20 % más de PR a partir de la Edad Feudal
+  Los castillos cuestan un 15/25 % menos en la Edad de los Castillos y la Edad Imperial, respectivamente
+  los ballesteros a caballo cuestan un 40 % menos de oro
+  los establos funcionan un +40 % más rápido
+  Bonificación de equipo: La línea de caballeros gana +2 de campo de visión.
+8522 Unidad única: Chu Ko Nu, barco dragón.
+  Tecnologías únicas: La Gran Muralla y Cohetería.
+  Comienza con +3 aldeanos, -50 de madera, -200 de comida
+  Las tecnologías cuestan un 5/10/15 % menos en la Edad Feudal, la Edad de los Castillos y la Edad Imperial, respectivamente
+  Los centros urbanos ganan +7 de campo de visión y habilitan +15 de espacio de población
+  Los lanceros de fuego y los brulotes se mueven un +5/10 % más rápido en la Edad de los Castillos y la Edad Imperial
+  las murallas, las líneas de atalayas y las torres de bombarda ganan un +30 % más de PR
+  los escorpiones, los carros de cohetes y los Lou Chuan ganan un +25 % de ataque; los Lou Chuan disparan cohetes
+  Bonificación de equipo: Las granjas ganan un +10 % más de comida.
 8523 Unidad única: Mangudai.
-  Tecnologías únicas: Drill y Nómadas.
-  Los cazadores trabajan más rápido.
-  Línea de exploradores más veinte y luego treinta por ciento de puntos de resistencia en Castillos e Imperial.
-  Los arqueros a caballo disparan más rápido.
-  Pastos en lugar de granjas; sin molino.
-  Bono de equipo: línea de exploradores más dos de visión.
-8524 Unidad única: catafracto.
-  Tecnologías únicas: Logística y Fuego griego.
-  Los edificios ganan puntos de resistencia extra en cada edad.
-  La Edad Imperial cuesta un treinta y tres por ciento menos.
-  Camellos, honderos y lanceros cuestan menos.
-  Los barcos de fuego atacan más rápido.
-  Vigilancia urbana y Patrulla urbana son gratis.
-  Bono de equipo: los monjes curan más rápido.
-8525 Unidad única: samurái.
+  Tecnologías únicas: Nómadas y Instrucción militar.
+  Los cazadores trabajan un 40 % más rápido
+  Los arqueros a caballo atacan un 25 % más rápido
+  La línea de caballería de exploración y los lanceros esteparios cuentan con un 20/30 % de PR más en la Edad de los Castillos y la Edad Imperial
+  las casas perdidas no disminuyen el espacio de población
+  las unidades del taller de maquinaria de asedio se mueven un 50 % más rápido
+  Bonificación de equipo: La línea de caballería de exploración recibe +2 de campo de visión.
+8524 Unidad única: Catafracta.
+  Tecnologías únicas: Fuego griego y Logística.
+  Los edificios ganan un 10/20/30/40 % más de PR en la Edad Oscura, la Edad Feudal, la Edad de los Castillos y la Edad Imperial, respectivamente
+  Los jinetes de camello, los guerrilleros y los lanceros cuestan un 25 % menos
+  Torres de vigilancia y guardia de la ciudad gratis
+  Avanzar a la Edad Imperial cuesta un 33 % menos
+  Los barcos incendiarios y los dromones atacan un 25 % más rápido
+  los barcos incendiarios ganan +1 de alcance y las torres de bombardeo y los dromones ganan radio de explosión
+  las catafractas y guardia varega infligen daño de aplastamiento
+  Bonificación de equipo: Los monjes sanan unidades un 100 % más rápido.
+8525 Unidad única: Samurái.
   Tecnologías únicas: Yasama y Kataparuto.
-  La infantería ataca más rápido desde la Edad Feudal.
-  Los barcos de pesca tienen más puntos de resistencia y trabajan más rápido.
-  Molinos y campamentos cuestan menos.
-  Bono de equipo: galeras más cuatro de visión.
-8526 Unidad única: caballero teutónico.
-  Tecnologías únicas: Blindaje y Almenas.
-  Unidades de cuartel y establo más armadura cuerpo a cuerpo en Castillos e Imperial.
-  Las granjas cuestan menos madera.
-  Saeteras y Medicina herbal son gratis.
-  Bono de equipo: resisten la conversión.
-8527 Unidad única: berserker.
-  Tecnologías únicas: Jefes tribales y Bogsveigar.
-  Infantería más veinte por ciento de puntos de resistencia desde la Edad Feudal.
-  Carretilla y Carro de mano son gratis.
-  Los barcos de guerra cuestan menos.
-  Los muelles pueden formar drakkars.
-  Bono de equipo: los muelles cuestan menos.
-8528 Unidad única: arquero de ratán.
+  Los molinos y los campamentos mineros/madereros cuestan un 50 % menos
+  La infantería ataca un +33 % más rápido a partir de la Edad Feudal
+  Los arqueros a caballo ganan +2 de ataque contra los soldados a distancia (salvo los hostigadores)
+  Los buques de pesca trabajan un 5/10/15/20 % más rápido en la Edad Oscura, la Edad Feudal, la Edad de los Castillos y la Edad Imperial, respectivamente, y ganan un 100 % más de PR
+  las torres disparan flechas adicionales
+  los trebuchets atacan y se arman y desarman más rápido
+  Bonificación de equipo: Las galeras tienen +4 de campo de visión.
+8526 Unidad única: Caballero de la Orden Teutónica.
+  Tecnologías únicas: Acorazado primitivo y Almenas.
+  Las granjas cuestan un 40 % menos
+  Los centros urbanos tienen +10 de capacidad de guarnición, y las torres, +5
+  Las unidades de infantería y a caballo ganan +1/+2 de armadura cuerpo a cuerpo en la Edad de los Castillos y la Edad Imperial, respectivamente
+  Los monjes ganan un 100 % de alcance de curación
+  Matacanes, Hierba medicinal gratuitas
+  las armas de asedio ganan +4 de armadura cuerpo a cuerpo
+  los castillos ganan +3 de alcance y la infantería guarecida dispara flechas
+  Bonificación de equipo: Las unidades se vuelven más resistentes a la conversión.
+8527 Unidad única: Berserker.
+  Tecnologías únicas: Jefes y Bogsveigar.
+  La carretilla y el carro de mano son gratis
+  La infantería gana un 20 % más de PR a partir de la Edad Feudal
+  Los barcos de guerra cuestan un 10/15/20 % menos en la Edad Feudal, la Edad de los Castillos y la Edad Imperial, respectivamente
+  la infantería gana +5 de ataque contra la caballería y +4 contra las unidades a camello
+  los arqueros y los drakkar ganan +1 de ataque
+  Bonificación de equipo: Los muelles cuestan un 15 % menos.
+8528 Unidad única: Arquero de ratán, guerrillero imperial.
   Tecnologías únicas: Chatras y Papel moneda.
-  Unidades del campo de tiro más veinte por ciento de puntos de resistencia.
-  Revelan los centros urbanos enemigos al inicio.
-  Conscripción es gratis.
-  Las tecnologías económicas no cuestan madera y se investigan más rápido.
-  Bono de equipo: el hondero imperial está disponible.
-8529 Unidad única: organillo.
+  Revela los centros urbanos enemigos al inicio de la partida
+  Las mejoras económicas no cuestan madera y se investigarán un +100 % más rápido
+  Los arqueros a pie y guerrilleros ganan +20 % PR
+  Leva gratis
+  elefantes de combate: +100 PR
+  además de madera, los leñadores generan oro gradualmente
+  Bonificación de equipo: Mejora de guerrillero imperial disponible en la Edad Imperial.
+8529 Unidad única: Cañón de salvas, carabela.
   Tecnologías únicas: Circunnavegación y Arcabuz.
-  Barcos más diez por ciento de puntos de resistencia.
-  Todas las unidades cuestan veinte por ciento menos de oro.
-  Los recolectores también recogen madera.
-  Pueden construir una Feitoria.
-  Bono de equipo: las tecnologías se investigan más rápido.
-8530 Unidad única: guerrero jaguar.
-  Tecnologías únicas: Atlatl y Guerra florida.
-  Empiezan con cincuenta de oro extra.
-  Los aldeanos cargan tres más.
-  El ejército se entrena más rápido.
-  Los monjes ganan cinco puntos de resistencia por tecnología del monasterio.
-  Bono de equipo: las reliquias generan oro extra.
-  Sin establos ni caballería.
-8531 Unidad única: asaltante woad.
-  Tecnologías únicas: Fortaleza y Furor celta.
-  Infantería más cinco por ciento de velocidad en cada edad desde la Edad Oscura.
-  Los leñadores trabajan más rápido.
-  Las armas de asedio disparan más rápido.
-  Pueden robar rebaños enemigos aunque haya una unidad al lado.
-  Bono de equipo: los talleres de asedio trabajan más rápido.
-8532 Unidad única: guardiana gbeto.
+  Los recolectores generan madera además de comida
+  Todas las unidades cuestan un 20 % menos de oro
+  Pueden construir factorías en la Edad Imperial
+  Los barcos tienen un 10 %/15 %/20 % más de PR en la Edad Imperial, la Edad de los Castillos y la Edad Feudal, respectivamente
+  muestra el mapa como si estuviese explorado; los barcos entrenan un 33 % más rápido
+  las unidades de pólvora son más precisas contra objetivos en movimiento
+  Bonificación de equipo: Las tecnologías se desarrollan un 25 % más rápido.
+8530 Unidad única: Guerrero jaguar.
+  Tecnologías únicas: Atlatl y Guerras florales.
+  Comienzas con +50 de oro
+  Los aldeanos cargan +3
+  Las unidades militares se entrenan un 15 % más rápido
+  Los monjes obtienen +5 PR por cada tecnología de monasterio investigada
+  +1 ataque, +1 alcance para guerrilleros
+  +4 ataque para infantería
+  Bonificación de equipo: Las reliquias generan un 33 % más de oro.
+8531 Unidad única: jinete celta.
+  Tecnologías únicas: Bastión y Furor celta.
+  Los leñadores trabajan un 15 % más rápido
+  El ganado dentro del campo de visión de una unidad celta no se puede robar
+  La infantería se mueve un 5/10/15/20 % más rápido en la Edad Oscura, la Edad Feudal, la Edad de los Castillos y la Edad Imperial, ,respectivamente
+  Las armas de asedio atacan un 25 % más rápido
+  los castillos y la línea de atalayas atacan un 33 % más rápido; los castillos curan a la infantería aliada en un radio de 7 casillas
+  las armas de asedio obtienen un 40 % más de PR
+  Bonificación de equipo: Los talleres de maquinaria de asedio funcionan un 20 % más rápido.
+8532 Unidad única: Guardiana gbeto.
   Tecnologías únicas: Gran asamblea y Farimba.
-  Los edificios cuestan un quince por ciento menos de madera, excepto granjas.
-  Las unidades de cuarteles ganan armadura antiperforación por edad.
-  Los aldeanos depositan un diez por ciento más de oro.
-  Equipo: las universidades funcionan más rápido.
+  Los edificios cuestan un 15 % menos de madera
+  Los aldeanos depositan un 10 % más de oro
+  Las unidades de los cuarteles obtienen +1 de armadura antiperforación en la Edad Feudal, +2 en la Edad de los Castillos y +3 en la Edad Imperial
+  los centros urbanos disparan flechas sin unidades guarnecidas
+  +5 de ataque para la caballería
+  Bonificación de equipo: Las universidades funcionan un 80 % más rápido.
 
 ; New civilizations (14 from previous commit + 2 final: Inca, Romans)
 ; Language: es
 
-8533 Unidad única: mameluco.
-  Tecnologías únicas: Madraza y Celo.
-  Los establos cuestan menos cincuenta/sesenta oro en eras oscura/de castillos.
-  Los navíos de transporte tienen el doble de vida y cargan más dos.
-  Los barcos hacen más seis/más siete de daño a edificios en eras de castillos/imperial.
-  Bonificación de equipo: los arqueros a pie reciben más uno de ataque contra edificios desde la era de castillos.
-8542 Unique unit Boyar.
-  Unique techs Druzhina and Orthodoxy.
-  Barracks and Archery Range units cost less.
-  Villagers have more hit points.
-  Team bonus: Militia line moves faster.
-8543 Unique unit Kipchak.
-  Unique techs Cuman Mercenaries and Steppe Husbandry.
-  Can build a second Town Center in Feudal Age.
-  Steppe Lancers cost less.
-  Cavalry archers train faster.
-  Team bonus: Barracks and Archery Range units train faster.
-8544 Unique unit Tarkan.
-  Unique techs Atheism and Marauders.
-  Start with one extra Scout Cavalry, no houses required.
-  Cavalry archers train faster.
-  Earn gold for killing villagers and monks.
-  Team bonus: Tarkans do bonus damage to buildings.
-8545 Unique unit War Wagon.
-  Unique techs Panokseon and Shinkichon.
-  Towers and Castles gain line of sight each age.
-  Woodcutters work faster.
-  Mangonels and Trebuchets are more accurate.
-  Ships and Cannon Galleons are tougher.
-  Team bonus: Siege Workshops can build War Wagons.
-8546 Unique unit Plumed Archer.
-  Unique techs El Dorado and Maya Architecture.
-  Start with one extra villager.
-  Resources last longer on the map.
-  Eagle line is tougher and stronger against archers.
-  Walls cost less.
-  Team bonus: walls cost less.
-8547 Unique unit Armored Elephant.
-  Unique techs Grand Trunk Road and Shatagni.
-  Buildings except farms cost less wood.
-  Camels and Heavy Camels cost less.
-  Town Centers and Outposts have more range and line of sight.
-  Team bonus: Hand Cannoneers have extra range.
-8548 Unique unit Conquistador.
-  Unique techs Supremacy and Inquisition.
-  Builders work faster.
-  Hand Cannoneers are more powerful.
-  Gunpowder units fire faster.
-  Trade generates more gold.
-  Team bonus: Hand Cannoneers are more accurate.
-8549 Unique unit Magyar Huszar.
-  Unique techs Mercenaries and Magyar Huszardom.
-  Scout line gains line of sight each age.
-  Trade Carts carry more.
-  Hussars train faster.
-  Team bonus: trade gains more gold.
-8550 Unique unit Winged Hussar.
-  Unique techs Stone Mining bonus.
-  Knights attack harder.
-  Stone mines have more resources.
-  Team bonus: Scout line gains line of sight.
-8551 Unique unit Genoese Crossbowman.
-  Unique techs Pavise and Silk Road.
-  Gunpowder units cost less gold.
-  Dock buildings are tougher.
-  Trade generates more gold.
-  Technologies cost less.
-  Team bonus: trade gains more gold.
-8552 Unique unit Hussite Wagon.
-  Unique techs Sappers.
-  Universities cost less.
-  Mines yield more stone.
-  Wagons and Siege Workshop units cost less.
-  Team bonus: mines yield extra stone.
-8553 Unique unit Janissary.
-  Unique techs Sipahi and Artillery.
-  Mines yield more gold.
-  Gunpowder units train faster.
-  Hand Cannoneers are more accurate.
-  Monks heal faster.
-  Team bonus: Chemistry is free.
+8533 Unidad única: Mameluco.
+  Tecnologías únicas: Bimaristán y Contrapesos.
+  La tarifa de mercado cuesta solo un 5 %; los mercados cuestan 100 menos de madera
+  Las unidades a camello ganan un 25 % más de PR
+  La línea de galeras ataca un 25 % más rápido
+  Los barcos de transporte ganan un 100 % más de PR y 20 más de capacidad
+  los monjes curan a varias unidades cercanas de forma automática
+  los trebuchets y los mangoneles ganan un 15 % más de ataque
+  Bonificación de equipo: Los arqueros a pie y los guerrilleros ganan +2 de ataque contra los edificios.
+8542 Unidad única: Boyardo.
+  Tecnologías únicas: Detinets y Druzhina.
+  Los agricultores trabajan un +15 % más rápido
+  Incendiarismo y gambesones gratis
+  Las unidades del taller de maquinaria de asedio son un 15 % más baratas
+  Los monjes se mueven un +20 % más rápido
+  sustituye por madera el 40 % del coste de piedra de castillos y torres
+  la infantería inflige daño de arrollamiento
+  Bonificación de equipo: Cada edificio militar (excepto los castillos) proporciona +5 de espacio de población.
+8543 Unidad única: Kipchak.
+  Tecnologías únicas: Ganadería de la estepa y Mercenarios cumanos.
+  Se puede construir un centro urbano adicional en la Edad Feudal
+  Las unidades montadas se mueven un 5/10/15 % más rápido en la Edad Feudal/ Edad de los Castillos/Edad Imperial
+  Las galerías de tiro y los establos cuestan 75 menos de madera
+  Talleres de maquinaria de asedio y ariete disponibles en la Edad Feudal; arietes cubiertos disponibles en la Edad de los Castillos
+  la línea de caballería de exploración, los lanceros esteparios y los arqueros a caballo entrenan un 100 % más rápido
+  todos los integrantes del equipo pueden generar 5 guerreros kipchak de élite gratis por castillo
+  Bonificación de equipo: Las empalizadas tienen un 33 % más de PR.
+8544 Unidad única: Tarcano.
+  Tecnologías únicas: Razias y Ateísmo.
+  No necesitan casas, pero comienzan con 100 menos de madera
+  Los arqueros a caballo cuestan un 10 % menos en la Edad de los Castillos y un 20 % menos en la Edad Imperial
+  Los trebuchets son más precisos contra unidades y objetivos pequeños
+  En los mapas nómadas, el primer centro urbano genera un caballo explorador
+  crear tarcanos en establos
+  las reliquias enemigas generan un 50 % menos de recursos; las victorias por maravillas y reliquias tardan 100 años más
+  Bonificación de equipo: Los establos funcionan un 20 % más rápido.
+8545 Unidad única: Carromato de guerra, barco tortuga.
+  Tecnologías únicas: Eupseong y Shinkichon.
+  Los canteros trabajan un +20 % más rápido
+  Los soldados a distancia y la infantería cuestan un 50 % menos de madera
+  Mejoras de armadura para arquero y torres gratis (la torre de bombarda requiere Química)
+  Los barcos de guerra cuestan un 20 % menos de madera
+  línea de atalayas: +2 de alcance
+  mangoneles: +1 de alcance
+  Bonificación de equipo: Mangoneles: se reduce su alcance mínimo.
+8546 Unidad única: Arquero emplumado.
+  Tecnologías únicas: Lanzadores de hul'che y Holcanes.
+  Comienzan con 1 aldeano más, pero con 50 menos de comida
+  Los recursos duran un 15 % más
+  El coste de los arqueros a pie se reduce un 10 %/20 %/30 % en la Edad Feudal, la Edad de los Castillos y la Edad Imperial, respectivamente
+  los guerrilleros disparan un proyectil adicional
+  +40 PR para los guerreros águila
+  Bonificación de equipo: Los muros cuestan un 50 % menos.
+8547 Unidad única: Ghulam, jinete de camello imperial.
+  Tecnologías únicas: Camino del Gran Tronco y Shatagni.
+  Los aldeanos cuestan un 8/13/18/23% menos en la Edad Oscura/Edad Feudal/Edad de los Castillos/ Edad Imperial
+  Los jinetes de camello atacan un 20 % más rápido
+  Las unidades de pólvora obtienen +1 de armadura/+1 de armadura antiperforación
+  Pueden construir caravasar en la Edad Imperial
+  todos los ingresos de oro son un 10 % más rápidos; la tarifa de mercado se reduce al 10 %
+  los artilleros manuales obtienen +2 de alcance
+  Bonificación de equipo: Las líneas de caballería de exploración infligen +2 de ataque contra edificios.
+8548 Unidad única: Conquistador, misionero.
+  Tecnologías únicas: Inquisición y Supremacía.
+  Los constructores trabajan un +30 % más rápido
+  Recibes +20 de oro por cada tecnología investigada
+  Las mejoras del herrero no cuestan oro
+  Las unidades de pólvora atacan un +18 % más rápido
+  Los galeones artillados disparan con mayor precisión a los objetivos en movimiento
+  los monjes y los misioneros convierten más rápido; los misioneros ganan +1 de alcance
+  aldeanos +40 PR, + +6 de ataque, + +2 de armadura cuerpo a cuerpo/+ 2 de armadura antiperforación
+  Bonificación de equipo: Las unidades de comercio generan un +25 % más de oro.
+8549 Unidad única: Huszár magiar.
+  Tecnologías únicas: Ejército corviniano y Arco recurvo.
+  Los aldeanos eliminan a los lobos de un golpe
+  La línea de caballería de exploración cuesta un 15 % menos
+  Mejoras de ataque cuerpo a cuerpo gratis
+  los huszár magiares dejan de costar oro y pasan a costar comida adicional
+  +1 ataque y +1 alcance para arqueros a caballo
+  Bonificación de equipo: Los arqueros a caballo se crean un 25 % más rápido.
+8550 Unidad única: Martillos de guerra y húsares alados.
+  Tecnologías únicas: Privilegios de Szlachta y Legado lequítico.
+  El folwark sustituye al molino
+  Los aldeanos regeneran 10/15/20 PR en las edades Feudal/de los Castillos/Imperial
+  Los canteros generan oro además de piedra
+  Las mejoras Pureza de sangre y la línea de caballería de exploración cuestan un 50 % menos de comida
+  la línea de caballeros cuesta un 60 % menos de oro
+  la línea de caballería de exploración arrasa a su paso
+  Bonificación de equipo: La línea de caballería de exploración recibe +1 de ataque contra los soldados a distancia.
+8551 Unidad única: Ballestero genovés, condotiero.
+  Tecnologías únicas: Ruta de la seda y Pirotecnia.
+  Avanzar a la siguiente edad cuesta un 15 % menos
+  Los arqueros a pie y los condotieri obtienen +1 de armadura cuerpo a cuerpo y +1 de armadura antiperforación
+  Las tecnologías de los muelles y de la universidad cuestan un 25 % menos
+  Las unidades de pólvora cuestan un 20 % menos
+  Los buques de pesca cuestan un 15 % menos
+  las unidades mercantes cuestan un 50 % menos
+  los artilleros manuales infligen un 15 % más de daño perforante y son más precisos
+  Bonificación de equipo: Condotiero disponible en los cuarteles en la Edad Imperial.
+8552 Unidad única: carreta de guerra husita, obús.
+  Tecnologías únicas: Tácticas de fuerte de carretas y Reformas husitas.
+  Las tecnologías de los campamentos mineros son gratuitas
+  Las herrerías y las universidades cuestan 100 menos de madera
+  La línea de lanceros inflige un 25 % más de daño
+  Fervor y Santidad afectan a los aldeanos
+  Química y Artillero manual disponibles en la Edad de los Castillos
+  las unidades de pólvora se mueven un 10 % más rápido
+  el coste de oro de los monjes y de las tecnologías del monasterio se reemplaza por comida
+  Bonificación de equipo: los mercados funcionan un 80 % más rápido.
+8553 Unidad única: Jenízaro.
+  Tecnologías únicas: Sipahi y Artillería.
+  Los mineros de oro trabajan un 25 % más rápido
+  La caballería de exploración obtiene 1 de armadura antiperforación y mejoras gratis
+  Química gratis; las tecnologías de la pólvora cuestan un 50 % menos
+  Las unidades de pólvora obtienen un 25 % más de PR
+  los arqueros montados obtienen 20 de PR
+  las torres de bombarda, los cañones de asedio y los galeones artillados obtienen 2 de alcance
+  Bonificación de equipo: Las unidades de pólvora se entrenan un 25 % más rápido.
 8714 Búlgaros
-8554 Unique unit Konnik.
-  See English intro for full description.
+8554 Unidad única: Konnik.
+  Tecnologías únicas: Estribos y Bagains.
+  Mejoras gratis para la línea de milicia
+  Tecnologías del herrero y del taller de maquinaria de asedio cuestan un 50 % menos de comida
+  Los centros urbanos cuestan un 50 % menos de piedra
+  Se puede construir el krepost en la Edad de los Castillos
+  la caballería ataca un 33 % más rápido
+  la línea de milicia gana +5 de armadura
+  Bonificación de equipo: Los herreros trabajan un 80 % más rápido.
 8715 Lituanos
-8555 Unique unit Leitis.
-  See English intro for full description.
+8555 Unidad única: Leitis, húsares alados.
+  Tecnologías únicas: Fuertes en las colinas y Escudo rectangular.
+  Cada centro urbano proporciona +100 de comida
+  Los lanceros y guerrilleros se mueven un 10 % más rápido
+  Cada reliquia guarnecida otorga +1 de ataque a la línea de caballeros y leitis (máximo +4)
+  centros urbanos: +3 de alcance
+  lanceros y guerrilleros: +2 de armadura
+  Bonificación de equipo: Los monasterios funcionan un 20 % más rápido.
 8716 Tártaros
-8556 Unique unit Steppe Lancer.
-  See English intro for full description.
+8556 Unidad única: Keshik, camello llameante.
+  Tecnologías únicas: Armadura de seda y Tácticas de asedio timúridas.
+  El ganado dura un 50 % más
+  Las unidades infligen un 25 % más de daño cuando luchan desde una posición elevada
+  Los nuevos centros urbanos generan 2 ovejas a partir de la Edad de los Castillos
+  Tácticas de los partias y dactileras gratis
+  la línea de caballería de exploración, los lanceros esteparios y los arqueros a caballo reciben +1 de armadura cuerpo a cuerpo/+1 de armadura antiperforación
+  los trebuchets obtienen +2 de alcance
+  Bonificación de equipo: Los arqueros a caballo obtienen +2 de campo de visión.
 8717 Beréberes
-8557 Unique unit Camel Rider.
-  See English intro for full description.
+8557 Unidad única: Arquero en camello, Escaramuzador zenete.
+  Tecnologías únicas: Alcazabas y Camellos magrebíes.
+  Los aldeanos se mueven un 5 % más rápido en la Edad Oscura y un 10 % más rápido a partir de la Edad Feudal
+  Las unidades de los establos cuestan un 15 % menos en la Edad de los Castillos y un 20 % menos en la Edad Imperial
+  Los barcos se mueven un 10 % más rápido
+  los castillos de todo el equipo funcionan un 25 % más rápido
+  las unidades a camello regeneran 15 PR por minuto
+  Bonificación de equipo: El escaramuzador zenete está disponible en la galería de tiro con arco a partir de la Edad de los Castillos.
 8718 Etíopes
-8558 Unique unit Shotel Warrior.
-  See English intro for full description.
+8558 Unidad única: Shotelai.
+  Tecnologías únicas: Herederos regios y Mecanismos de torsión.
+  Reciben +100 de oro y +100 de comida al avanzar a la siguiente edad
+  Los arqueros atacan un 18 % más rápido
+  Mejoras de piquero gratis
+  los shotelai y las unidades a camello reciben -3 de daño de unidades montadas
+  mayor área de daño para unidades del taller de maquinaria de asedio
+  Bonificación de equipo: Los puestos de avanzada tienen +3 de CDV y no cuestan piedra.
 8719 Jemeres
-8559 Unique unit Ballista Elephant.
-  See English intro for full description.
+8559 Unidad única: Elefante con balista.
+  Tecnologías únicas: Colmillos de acero y Ballesta doble.
+  No se necesitan edificios para avanzar a la siguiente edad o para desbloquear otros edificios
+  Los granjeros no necesitan molinos o centros urbanos para depositar comida
+  Los aldeanos pueden guarnecerse en casas
+  Los elefantes de combate se mueven un +10 % más rápido
+  +3 de ataque en elefantes de combate
+  los elefantes con balistas y los escorpiones disparan un proyectil adicional
+  Bonificación de equipo: +1 de alcance para escorpiones.
 8720 Malayos
-8560 Unique unit Karambit Warrior.
-  See English intro for full description.
+8560 Unidad única: Recluta con karambit.
+  Tecnologías únicas: Talasocracia y Leva en masa.
+  Avanzas a la siguiente edad un 66 % más rápido
+  Mejoras de armadura de infantería gratuitas
+  Los elefantes de combate cuestan un 25/35 % menos en la Edad de los Castillos y en la Edad Imperial
+  Las trampas para peces cuestan un 33 % menos y proporcionan un 200 % más de comida
+  mejora los muelles a puertos
+  la milicia y subsiguientes dejan de costar oro y cuestan comida adicional
+  Bonificación de equipo: Los muelles obtienen +6 de campo de visión.
 8721 Birmanos
-8561 Unique unit Arambai.
-  See English intro for full description.
+8561 Unidad única: Arambai.
+  Tecnologías únicas: Caballería manipur y Howdah.
+  Tecnologías de campamento maderero gratis
+  La infantería obtiene +1/2/3 de ataque en las edades Feudal/de los Castillos/Imperial
+  Elefantes de combate: +1 de armadura cuerpo a cuerpo/+1 de armadura antiperforación
+  Las tecnologías del monasterio cuestan un 50 % menos
+  la caballería cuenta con +4 de ataque contra soldados a distancia
+  los elefantes de combate ganan +1 de armadura cuerpo a cuerpo/+1 de armadura antiperforación
+  Bonificación de equipo: Reliquias visibles en el mapa desde el inicio del juego.
 8722 Borgoñones
-8562 Unique unit Coustillier.
-  See English intro for full description.
+8562 Unidad única: Costiller y milicia flamenca.
+  Tecnologías únicas: Viñedos de Borgoña y Revolución flamenca.
+  Las mejoras económicas están disponibles una edad antes y cuestan un 40% menos de comida
+  Las tecnologías de los establos cuestan un 50 % menos
+  Mejora a caballeros disponible en la Edad de los Castillos
+  Unidades de pólvora: +25 % más de ataque
+  los agricultores generan oro gradualmente además de comida
+  todos los aldeanos existentes se transforman en milicia flamenca
+  Bonificación de equipo: Las reliquias generan comida además de oro.
 8723 Sicilianos
-8563 Unique unit Serjeant.
-  See English intro for full description.
+8563 Unidad única: Serjeant.
+  Tecnologías únicas: Primera cruzada y Cota de malla.
+  Se empieza con +100 de piedra
+  Las mejoras de las granjas proporcionan un 125 % de comida adicional
+  Los soldados reciben un 40 % menos de daño
+  La torre del homenaje se puede construir en la Edad Oscura y reemplaza la línea de atalayas
+  Las fortificaciones se construyen un 50 % más rápido y los centros urbanos un 100 % más rápido
+  hasta 5 centros urbanos generan un grupo de 5 serjeants, unidades más resistentes a la conversión
+  la línea de caballeros obtiene +1 de armadura cuerpo a cuerpo y +2 de armadura antiperforación
+  Bonificación de equipo: Los barcos de transporte ganan +5 de campo de visión y cuestan un 50 % menos.
 8724 Armenios
-8564 Unique unit Tarkan.
-  See English intro for full description.
+8564 Unidad única: Arquero con arco compuesto, sacerdote guerrero.
+  Tecnologías únicas: Flota de Cilicia y Relicarios.
+  Los carros de mulas cuestan un 25 % menos
+  Las tecnologías del carro de mulas son un 40 % más efectivas
+  Las mejoras de la línea de lanceros y milicia están disponibles una edad antes (excepto hombres de armas)
+  La primera iglesia fortificada recibe una reliquia gratuita
+  Las galeras y los dromones disparan un proyectil adicional
+  aumenta el radio de explosión de los barcos de demolición un 20 %; las galeras y dromones tienen +1 de alcance
+  la infantería, a excepción de los lanceros, obtiene +30 PR; los sacerdotes guerreros curan un 100 % más rápido
+  Bonificación de equipo: La infantería gana +2 de campo de visión.
 8725 Georgianos
-8565 Unique unit Monaspa.
-  See English intro for full description.
+8565 Unidad única: Monaspa.
+  Tecnologías únicas: Torres esvanas y Caballería aznauri.
+  Comienza con un carro de mulas
+  Las unidades y los edificios reciben un 15 % menos de daño al luchar desde una elevación superior
+  La caballería regenera 2/8/14 PR por minuto en la Edad Feudal/Edad de los Castillos/Edad Imperial
+  Las iglesias fortificadas proporcionan un 10 % más de velocidad de trabajo a los aldeanos en un radio de 9 casillas
+  las fortificaciones ganan 2 de ataque; la línea de torres inflige daño cuando se atraviesan
+  las unidades de caballería ocupan un 20 % menos de espacio de población
+  Bonificación de equipo: Reparar edificios cuesta un 25 % menos.
 8726 Incas
-8566 Unique unit Slinger.
-  See English intro for full description.
+8566 Unidad única: Kamayuk.
+  Tecnologías únicas: Honda andina y Escudos de tela.
+  Las casas y los asentamientos proporcionan +5 de espacio de población
+  El coste de piedra de los edificios se reduce un 15 %
+  El coste de comida de las unidades militares se reduce un 15 %/20 %/25 % y 30 % en la Edad Oscura, la Edad Feudal, la Edad de los Castillos y la Edad Imperial, respectivamente
+  Los aldeanos afectados por las mejoras de infantería de la herrería comienzan en la Edad de los Castillos
+  los guerrilleros y los soldados con honda no tienen alcance mínimo; los soldados con honda ganan +1 de ataque
+  los kamayuks, los soldados con honda y los guerreros champi ganan +1 de armadura y +1 de armadura perforante
+  Bonificación de equipo: Comienzas con una llama gratis.
 8727 Romanos
-8567 Unique unit Legionary.
-  See English intro for full description.
+8567 Unidad única: Centurión, legionario.
+  Tecnologías únicas: Balistas y Comitatenses.
+  Los aldeanos recolectan, construyen y reparan un 5 % más rápido
+  Los efectos de mejora de armadura de infantería se duplican
+  Los escorpiones cuestan un 50 % menos de oro
+  La línea de galeras y dromones obtiene +1 de armadura cuerpo a cuerpo y +1 de armadura antiperforación
+  los escorpiones atacan un 33 % más rápido; la línea de galeras obtiene +2 de ataque
+  las líneas de milicia y caballeros y los centuriones entrenan un 50 % más rápido y reciben un ataque de carga
+  Bonificación de equipo: Alcance mínimo de los escorpiones reducido.
 
 ; New unique unit titles (9029-9039)
 9029 Konnik
@@ -620,6 +782,23 @@
 8355 Elite Legionary
 8356 Elite Slinger
 
+; AoE2 DE unique units without a spoken name until now
+
+8358 Mameluco élite
+8359 Keshik élite
+8360 Arquero de camello élite
+8361 Obuch élite
+8362 Arquero compuesto élite
+8363 Genitour élite
+9108 Mameluco
+9109 Keshik
+9110 Arquero de camello
+9111 Obuch
+9112 Arquero compuesto
+9113 Genitour
+9114 Misionero
+9115 Houfnice
+
 ; Roman unique units / technologies (Romans)
 9057 Centurión
 9058 Centurión élite
@@ -633,3 +812,50 @@
 ; Inca unique unit (Kamayuk)
 9040 Kamayuk
 8357 Kamayuk élite
+
+; AoE2 DE unique technologies (canonical DE set)
+9063 Contrapesos
+9064 Bimaristan
+9065 Ciudadelas
+9066 Detinets
+9067 Eupseong
+9068 Holcanes
+9069 Lanceros hul'che
+9070 Supremacía
+9071 Inquisición
+9072 Arco recurvo
+9073 Ejército corviniano
+9074 Legado lejítico
+9075 Privilegios de la szlachta
+9076 Ruta de la Seda
+9077 Pavisa
+9078 Reformas husitas
+9079 Táctica del Wagenburg
+9080 Artillería
+9081 Sipahi
+9082 Bagains
+9083 Estribos
+9084 Escudos torre
+9085 Fortificaciones de colina
+9086 Arte del asedio timurida
+9087 Armadura de seda
+9088 Camellos magrebíes
+9089 Kasbah
+9090 Herederos reales
+9091 Máquinas de torsión
+9092 Ballesta doble
+9093 Espadas de colmillo
+9094 Leva forzada
+9095 Talasocracia
+9096 Caballería de Manipur
+9097 Howdah
+9098 Revolución flamenca
+9099 Viñedos borgoñones
+9100 Hauberk
+9101 Primera cruzada
+9102 Fereters
+9103 Flota cilicia
+9104 Caballería aznaui
+9105 Torres svan
+9106 Escudos de tela
+9107 Honda andina

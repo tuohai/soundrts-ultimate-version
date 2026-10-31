@@ -21,18 +21,26 @@
 8016 Sarazenen
 
 8700 Goten
-8540 Unique unit Huskarl.
-  Unique techs Anarchy and Perfusion.
-  Infantry costs less.
-  Huskarls and Eagle Warriors are cheaper and tougher.
-  Infantry return some food when killing units.
-  Team bonus: Huskarls have more line of sight.
+8540 Einheit: Huskarl.
+  Unique Techs: Anarchie und Mobilität.
+  Möglichkeit zur sofortigen Entwicklung des Webstuhls
+  Tragfähigkeit von +15 für Jäger, erlegte Tiere um 20 % ergiebiger
+  Infanterieeinheiten kosten 15/20/25/30 % weniger in der Dunklen/Feudal-/Ritter-/ Imperialzeit
+  +1/+2/+3 Angriffsstärke von Infanterieeinheiten beim Kampf gegen Gebäude in der Feudal-/ Ritter-/Imperialzeit
+  +10 Platz in der Bevölkerung in der Imperialzeit
+  Huskarls können in Kasernen ausgebildet werden
+  Kasernen arbeiten um 100 % schneller
+  Team: Kasernen arbeiten um +20 % schneller.
 8701 Perser
-8541 Unique unit War Elephant.
-  Unique techs Kamandaran and Silos.
-  Start with fifty extra food and wood.
-  Town Centers work faster.
-  Team bonus: trade gains more gold.
+8541 Einheit: Kriegselefant, Savar.
+  Unique Techs: Kamandaran und Zitadellen.
+  Beginnen Sie mit +50 Einheiten Holz und +50 Einheiten Nahrung
+  Dorfzentren und Häfen mit +100 % LP und um +5/10/15/20 % schneller in der Dunklen/Feudal-/Ritter-/Imperialzeit
+  Parthische Taktik in der Ritterzeit verfügbar
+  Kann Karawanserei in der Imperialzeit errichten
+  Goldkosten für Bogenschützen werden durch zusätzliche Holzkosten ersetzt
+  Burgen +4 Angriffsstärke, +3 gegen Rammböcke, +3 gegen Infanterieeinheiten und -25 % Bonusschaden
+  Team: Ritter +2 Angriffsstärke gegen Fernkampfsoldaten.
 8702 Slawen
 8703 Kumanen
 8704 Hunnen
@@ -67,15 +75,11 @@
 9043 Perfusion
 9044 Kamandaran
 9045 Druzhina
-9046 Orthodoxie
 9047 Steppenviehzucht
 9048 Kumanische Söldner
 9049 Marodeure
 9050 Atheismus
-9051 Panokseon
 9052 Shinkichon
-9053 El Dorado
-9054 Maya-Architektur
 9055 Grand Trunk Road
 9056 Shatagni
 8070 Samurai
@@ -376,223 +380,381 @@
 8515 Wenn mehrere Mönche gemeinsam bekehren, ruht nur der Erfolgreiche
 ; Civilization bonuses (spoken in the faction picker via G; indented lines continue)
 8520 Einheit: Langbogenschütze.
-  Unique Techs: Yeomen und Warwolf.
-  Fußschützen plus eine Reichweite in der Ritterzeit und plus eine in der Imperialzeit, außer Speerwerfer.
-  Hirten arbeiten schneller.
-  Gemeindezentren kosten ab der Ritterzeit die Hälfte Holz.
-  Team: Schießanlagen arbeiten schneller.
-  Keine Blutlinien, kein Daumenring.
+  Unique Techs: Freisassen und Warwulf.
+  Schäfer arbeiten um 25 % schneller
+  Dorfzentren kosten ab der Ritterzeit 50 % Holz weniger
+  +1/+2 Reichweite in der Ritter-/Imperialzeit für einfache Bogenschützen
+  +1 Angriffsstärke für einfache Bogenschützen und Plänkler; +2 Angriffsstärke für Turm
+  Triboke verursachen Sprengschaden und sind treffsicherer
+  Team: Schießstände arbeiten um 10 % schneller.
 8521 Einheit: Axtwerfer.
-  Unique Techs: Bartaxt und Rittertum.
-  Kavallerie plus zwanzig Prozent Trefferpunkte ab der Feudalzeit.
-  Sammler arbeiten schneller.
-  Bauernhof-Upgrades sind kostenlos.
-  Burgen kosten weniger Stein.
-  Team: Ritter plus zwei Sichtweite.
-  Kein Daumenring, Armschutz, Bogenschützen-Kettenrüstung oder Blutlinien.
-8522 Einheit: Chu Ko Nu.
-  Unique Techs: Raketentechnik und Große Mauer.
-  Start mit drei extra Dorfbewohnern, minus fünfzig Holz und zweihundert Nahrung.
-  Technologien kosten fünf, zehn und fünfzehn Prozent weniger in Feudal-, Ritter- und Imperialzeit.
-  Gemeindezentren unterstützen fünfzehn Bevölkerung und plus sieben Sichtweite.
-  Feuerschiffe bewegen sich in Ritter- und Imperialzeit schneller.
-  Team: Bauernhöfe enthalten zehn Prozent mehr Nahrung.
+  Unique Techs: Ordonnanz kompanien und Rittertum.
+  Sammler arbeiten um 15 % schneller
+  Mühlentechnologien sind kostenlos
+  Berittene Einheiten bringen ab der Feudalzeit +20 % LP
+  Burgen kosten in der Ritter-/Imperialzeit -15/25 %
+  In Ordonnanzkompanien kosten berittene Armbrustschützen -40 % Gold
+  Im Rittertum arbeiten Ställe um 40 % schneller
+  Team: Ritterlinie erhält +2 Sichtweite.
+8522 Einheit: Chu Ko Nu, Drachenboot.
+  Unique Techs: Große Mauer und Raketen.
+  Sie starten mit +3 Dorfbewohnern, aber –50 Holz und –200 Nahrung
+  Technologien kosten in der Feudal-/Ritter-/Imperialzeit 5/10/15 % weniger
+  +7 Punkte Sichtweite für Dorfzentren, dazu +15 Punkte Platz für Bevölkerungseinheiten
+  Feuer-Lanzenreiter und Feuerschiffe bewegen sich im Ritter/Imperialzeitalter um 5/10 % schneller
+  +30 % LP für Mauern, Türme und Kanonentürme
+  +25 % Angriffsstärke für Skorpione, Raketenkarren und Lou Chuans; Lou Chuans feuern Raketen ab
+  Team: Felder werfen +10 % Nahrung ab.
 8523 Einheit: Mangudai.
-  Unique Techs: Drill und Nomaden.
-  Jäger arbeiten schneller.
-  Kundschafterlinie plus zwanzig dann dreißig Prozent Trefferpunkte in Ritter- und Imperialzeit.
-  Berittene Bogenschützen schießen schneller.
-  Weiden statt Bauernhöfe; keine Mühle.
-  Team: Kundschafterlinie plus zwei Sichtweite.
-8524 Einheit: Kataphrakt.
-  Unique Techs: Logistik und Griechisches Feuer.
-  Gebäude erhalten extra Trefferpunkte je Zeitalter.
-  Die Imperialzeit kostet dreiunddreißig Prozent weniger.
-  Kamele, Speerwerfer und Speerkämpfer sind billiger.
-  Feuerschiffe greifen schneller an.
-  Stadtwache und Stadtpatrouille sind kostenlos.
-  Team: Mönche heilen schneller.
+  Unique Techs: Nomaden und Drill.
+  Jäger arbeiten um +40 % schneller
+  Berittene Bogenschützen greifen um +25 % schneller an
+  Berittener-Späher-Linie und Steppenlanzenreiter +20/30 % LP in der Ritter-/Imperialzeit
+  Zerstörte Häuser verringern Platz in der Bevölkerung nicht
+  Belagerungseinheiten bewegen sich um +50 % schneller
+  Team: Berittener-Späher-Linie +2 Sichtweite.
+8524 Einheit: Gepanzerter Reiter.
+  Unique Techs: Griechisches Feuer und Logistik.
+  Gebäude haben +10/20/30/40 % LP in der Dunklen/Feudal-/ Ritter-/Imperialzeit
+  Kamelreiter, Plänkler und Speerkämpferlinie kosten -25 %
+  Stadtwache und Nachtwache sind kostenlos
+  Voranschreiten zur Imperialzeit kostet -33 %
+  Feuerschiffe und Dromonen greifen um 25 % schneller an
+  Feuerschiffe verfügen über +1 Reichweite; Explosionsradius von Dromonen und Kanonentürmen ist erhöht
+  Gepanzerte Reiter und Warägergarde verursachen Trampelschaden
+  Team: Mönche heilen um 100 % schneller.
 8525 Einheit: Samurai.
   Unique Techs: Yasama und Kataparuto.
-  Infanterie greift ab der Feudalzeit schneller an.
-  Fischerboote haben mehr Trefferpunkte und arbeiten schneller.
-  Mühlen und Lager kosten weniger.
-  Team: Galeeren plus vier Sichtweite.
+  Mühlen, Holzfäller- und Bergarbeiterlager kosten -50 %
+  Infanterieeinheiten greifen ab der Feudalzeit um +33 % schneller an
+  +2 Angriffsstärke der berittenen Bogenschützen gegen Fernkampfsoldaten (außer Plänkler)
+  Fischkutter arbeiten in der Dunklen/Feudal-/Ritter-/Imperialzeit um +5/10/15/20 % schneller; +100 % LP
+  Turm verschießt zusätzliche Pfeile
+  Triboke greifen schneller an und laden/entladen schneller
+  Team: Galeeren-Linie +4 Sichtweite.
 8526 Einheit: Deutschritter.
   Unique Techs: Panzerung und Zinnen.
-  Kasernen- und Stall-Einheiten plus Nahkampfrüstung in Ritter- und Imperialzeit.
-  Bauernhöfe kosten weniger Holz.
-  Mordlöcher und Kräutermedizin sind kostenlos.
-  Team: widerstehen Bekehrung.
+  Felder kosten -40 %
+  Dorfzentren haben +10 Quartierkapazität; Türme haben +5 Quartierkapazität
+  Infanterie- und berittene Einheiten verfügen in der Ritter-/Imperialzeit über +1/+2 Nahkampfrüstung
+  Mönche besitzen +100 % Heilungsreichweite
+  Maschikulis und Kräutermedizin sind kostenlos
+  Belagerungswaffen +4 Nahkampfrüstung
+  Burgen haben +3 Reichweite, stationierte Infanterieeinheiten feuern Pfeile
+  Team: Einheiten sind widerstandsfähiger gegen Bekehrung.
 8527 Einheit: Berserker.
   Unique Techs: Stammesführer und Bogsveigar.
-  Infanterie plus zwanzig Prozent Trefferpunkte ab der Feudalzeit.
-  Schubkarre und Handkarren sind kostenlos.
-  Kriegsschiffe kosten weniger.
-  Docks können Langboote ausbilden.
-  Team: Docks kosten weniger.
-8528 Einheit: Rattanschütze.
+  Schubkarre und Handkarren sind kostenlos
+  Infanterie verfügt ab Feudalzeit über +20 % LP
+  Kriegsschiffe kosten in der Feudal-/Ritter-/Imperialzeit -10/15/20 %
+  Infanterie verfügt über +5 Angriffsstärke gegen Kavallerie, +4 gegen Kameleinheiten
+  Bogenschützenlinie und Langschiffe verfügen über +1 Angriffsstärke
+  Team: Häfen kosten 15 % weniger.
+8528 Einheit: Rattanschütze, imperialer Plänkler.
   Unique Techs: Chatras und Papiergeld.
-  Schießanlagen-Einheiten plus zwanzig Prozent Trefferpunkte.
-  Feindliche Gemeindezentren werden zu Beginn aufgedeckt.
-  Aushebung ist kostenlos.
-  Wirtschaftstechnologien kosten kein Holz und werden schneller erforscht.
-  Team: Imperialer Speerwerfer ist erforschbar.
-8529 Einheit: Orgelkanone.
+  Gegnerische Dorfzentren werden zu Spielbeginn aufgedeckt
+  Wirtschaftsaufwertungen kosten kein Holz und werden um 100 % schneller entwickelt
+  Fußbogenschützen und Plänkler haben +20 % LP
+  Wehrpflicht ist kostenlos
+  Elefantenreiter +100 LP
+  Holzfäller erzeugen zusätzlich zu Holz auch langsam Gold
+  Team: Für imperialen Plänkler ist in der Imperialzeit eine Aufwertung verfügbar.
+8529 Einheit: Orgelkanone, Karavelle.
   Unique Techs: Weltumsegelung und Arkebuse.
-  Schiffe plus zehn Prozent Trefferpunkte.
-  Alle Einheiten kosten zwanzig Prozent weniger Gold.
-  Sammler sammeln auch Holz.
-  Können eine Feitoria bauen.
-  Team: Technologien werden schneller erforscht.
+  Sammler generieren neben Nahrung auch Holz
+  Alle Einheiten kosten -20 % Gold
+  Kann Feitoria in der Imperialzeit bauen
+  Schiffe +10/15/20 % LP in der Feudal-/Ritter-/Imperialzeit
+  setzt die gesamte Karte auf „Erkundet“; Schiffe bilden +33 % schneller aus
+  Schießpulvereinheiten feuern treffsicherer auf bewegliche Ziele
+  Team: Technologien werden +25 % schneller entwickelt.
 8530 Einheit: Jaguarkrieger.
-  Unique Techs: Atlatl und Blumenkrieg.
-  Start mit fünfzig extra Gold.
-  Dorfbewohner tragen drei mehr.
-  Militär wird schneller ausgebildet.
-  Mönche erhalten fünf Trefferpunkte je Klostertechnologie.
-  Team: Reliquien erzeugen extra Gold.
-  Keine Ställe und keine Kavallerie.
-8531 Einheit: Waidläufer.
-  Unique Techs: Festung und Keltische Wut.
-  Infanterie plus fünf Prozent Geschwindigkeit je Zeitalter ab der Dunklen Zeit.
-  Holzfäller arbeiten schneller.
-  Belagerungswaffen feuern schneller.
-  Können feindliche Herden stehlen, auch wenn eine Einheit daneben steht.
-  Team: Belagerungswerkstätten arbeiten schneller.
+  Unique Techs: Speerschleuder und Blumenkriege.
+  Start mit + 50 Gold
+  Dorfbewohner tragen +3
+  Militäreinheiten bilden 15 % schneller aus
+  Mönche erhalten +5 LP für jede entwickelte Kloster-Technologie
+  Plänkler +1 Angriffsstärke, +1 Reichweite
+  Infanterie +4 Angriffsstärke
+  Team: Reliquien erzeugen +33 % Gold.
+8531 Einheit: Freischärler.
+  Unique Techs: Festung und Keltischer Zorn.
+  Holzfäller arbeiten um +15 % schneller
+  Nutztiere in der Sichtweite keltischer Einheiten können nicht gestohlen werden
+  Infanterie bewegt sich um +5/10/15/20 % schneller in der Dunklen/Feudal-/ Ritter-/Imperialzeit
+  +25 % schnellere Angriffe mit Belagerungswaffen
+  Burgen- und Turmangriffe laufen um 33 % schneller ab, Burgen heilen verbündete Infanterie in einem Radius von 7 Feldern
+  +40 % LP für Belagerungswaffen
+  Team: Belagerungswerkstätten arbeiten um 20 % schneller.
 8532 Einheit: Gbeto.
   Unique Techs: Tigui und Farimba.
-  Gebäude kosten fünfzehn Prozent weniger Holz, außer Farmen.
-  Kasernen-Einheiten erhalten Durchschlagrüstung je Zeitalter.
-  Dorfbewohner liefern zehn Prozent mehr Gold ab.
-  Team: Universitäten arbeiten schneller.
+  Gebäude kosten -15 % weniger Holz
+  Dorfbewohner liefern +10 % mehr Gold
+  Kasernen-Einheiten haben +1/+2/+3 Durchschlagspanzerung in der Feudal-/ Ritter-/Imperialzeit
+  Dorfzentren schießen auch, wenn die Einheiten nicht in Garnison liegen
+  +5 Angriffsstärke für Kavallerie
+  Team: Universitäten arbeiten um +80 % schneller.
 
 ; New civilizations (14 from previous commit + 2 final: Inca, Romans)
 ; Language: de
 
-8533 Einheit: Mamluken.
-  Unique Techs: Madrasa und Zelealismus.
-  Ställe kosten fünfzig/sechzig Gold weniger in Dunkelzeit/Burgzeit.
-  Transportschiffe haben doppelte Trefferpunkte und zwei zusätzliche Plätze.
-  Schiffe verursachen plus sechs/plus sieben Schaden an Gebäuden in Burgzeit/Imperialzeit.
-  Team-Bonus: Fußbogenschützen erhalten ab Burgzeit plus eins Angriff gegen Gebäude.
-8542 Unique unit Boyar.
-  Unique techs Druzhina and Orthodoxy.
-  Barracks and Archery Range units cost less.
-  Villagers have more hit points.
-  Team bonus: Militia line moves faster.
-8543 Unique unit Kipchak.
-  Unique techs Cuman Mercenaries and Steppe Husbandry.
-  Can build a second Town Center in Feudal Age.
-  Steppe Lancers cost less.
-  Cavalry archers train faster.
-  Team bonus: Barracks and Archery Range units train faster.
-8544 Unique unit Tarkan.
-  Unique techs Atheism and Marauders.
-  Start with one extra Scout Cavalry, no houses required.
-  Cavalry archers train faster.
-  Earn gold for killing villagers and monks.
-  Team bonus: Tarkans do bonus damage to buildings.
-8545 Unique unit War Wagon.
-  Unique techs Panokseon and Shinkichon.
-  Towers and Castles gain line of sight each age.
-  Woodcutters work faster.
-  Mangonels and Trebuchets are more accurate.
-  Ships and Cannon Galleons are tougher.
-  Team bonus: Siege Workshops can build War Wagons.
-8546 Unique unit Plumed Archer.
-  Unique techs El Dorado and Maya Architecture.
-  Start with one extra villager.
-  Resources last longer on the map.
-  Eagle line is tougher and stronger against archers.
-  Walls cost less.
-  Team bonus: walls cost less.
-8547 Unique unit Armored Elephant.
-  Unique techs Grand Trunk Road and Shatagni.
-  Buildings except farms cost less wood.
-  Camels and Heavy Camels cost less.
-  Town Centers and Outposts have more range and line of sight.
-  Team bonus: Hand Cannoneers have extra range.
-8548 Unique unit Conquistador.
-  Unique techs Supremacy and Inquisition.
-  Builders work faster.
-  Hand Cannoneers are more powerful.
-  Gunpowder units fire faster.
-  Trade generates more gold.
-  Team bonus: Hand Cannoneers are more accurate.
-8549 Unique unit Magyar Huszar.
-  Unique techs Mercenaries and Magyar Huszardom.
-  Scout line gains line of sight each age.
-  Trade Carts carry more.
-  Hussars train faster.
-  Team bonus: trade gains more gold.
-8550 Unique unit Winged Hussar.
-  Unique techs Stone Mining bonus.
-  Knights attack harder.
-  Stone mines have more resources.
-  Team bonus: Scout line gains line of sight.
-8551 Unique unit Genoese Crossbowman.
-  Unique techs Pavise and Silk Road.
-  Gunpowder units cost less gold.
-  Dock buildings are tougher.
-  Trade generates more gold.
-  Technologies cost less.
-  Team bonus: trade gains more gold.
-8552 Unique unit Hussite Wagon.
-  Unique techs Sappers.
-  Universities cost less.
-  Mines yield more stone.
-  Wagons and Siege Workshop units cost less.
-  Team bonus: mines yield extra stone.
-8553 Unique unit Janissary.
-  Unique techs Sipahi and Artillery.
-  Mines yield more gold.
-  Gunpowder units train faster.
-  Hand Cannoneers are more accurate.
-  Monks heal faster.
-  Team bonus: Chemistry is free.
+8533 Einheit: Mameluck.
+  Unique Techs: Bimaristan und Gegengewichte.
+  Handelskosten für Marktplatz nur 5 %, Marktplätze kosten -100 Holz
+  Kameleinheiten +25 % LP
+  Galeeren-Einheiten greifen +25 % schneller an
+  Transportschiffe +100 % LP, +20 Tragfähigkeit
+  Mönche heilen passiv mehrere Einheiten in der Nähe
+  Triboke und Mangonel +15 % Angriffsstärke
+  Team: Einfache Bogenschützen und Plänkler erhalten +2 Angriffsstärke gegen Gebäude.
+8542 Einheit: Bojar.
+  Unique Techs: Detinets und Druschina.
+  Bauern arbeiten +15 % schneller
+  Brandstiftung, Gambesons kostenlos
+  Belagerungswerkstatt-Einheiten kosten 15 % weniger
+  Mönche bewegen sich +20 % schneller
+  ersetzt 40 % der Steinkosten für Burgen und Beobachtungstürme durch zusätzliche Holzkosten
+  Infanterie verursacht Trampelschaden
+  Team: Militärgebäude (außer Burgen) liefern +5 Platz für Bevölkerung.
+8543 Einheit: Kiptschak.
+  Unique Techs: Steppentierhaltung und Kumanische Söldner.
+  Möglichkeit zum Bau eines zusätzlichen Dorfzentrums in der Feudalzeit
+  Berittene Einheiten bewegen sich in der Feudal-/ Ritter-/Imperialzeit um +5/10/15 % schneller
+  Schießstände und Ställe kosten -75 Holz
+  Belagerungswerkstatt und Rammbock in der Feudalzeit verfügbar; Sturmbock in der Ritterzeit verfügbar
+  Berittener-Späher-Linie, Steppenlanzenreiter, berittene Bogenschützen werden um +100 % schneller ausgebildet
+  alle Teammitglieder können 5 kostenlose Elite-Kiptschaks pro Burg ausbilden
+  Team: Palisadenwälle +33 % LP.
+8544 Einheit: Tarkan.
+  Unique Techs: Marodeure und Atheismus.
+  Brauchen keine Häuser, aber Start mit -100 Holz
+  Berittene Bogenschützen kosten -10/20 % in der Burg-/Imperialzeit
+  Triböcke feuern bei Einheiten und kleinen Zielen genauer ab
+  Auf nomadischen Karten bringt das erste Dorfzentrum ein Spähpferd hervor
+  Tarkane können in Ställen ausgebildet werden
+  feindliche Reliquien erzeugen 50 % weniger Rohstoffe, Weltwunder und Reliquiensieg dauern 100 Jahre länger
+  Team: Ställe arbeiten 20 % schneller.
+8545 Einheit: Kriegswagen, Schildkrötenschiff.
+  Unique Techs: Eupseong und Shinkichon.
+  Steinhauer arbeiten um 20 % schneller
+  Fernkampfsoldaten und Infanterie kosten 50 % weniger Holz
+  Weiterentwicklungen für Bogenschützen-Rüstung und Türme gratis (Kanonenturm benötigt Chemie)
+  Kriegsschiffe kosten 20 % weniger Holz
+  +2 Sichtweite für Türme
+  +1 Reichweite für Raketenkarren und Schildkrötenschiff, Abfeuern zusätzlicher Geschosse
+  Team: +3 Sichtweite für Dorfbewohner.
+8546 Einheit: Federpfeilschütze.
+  Unique Techs: Hul 'che-Speerschleuderer und Holcans.
+  Beginn mit +1 Dorfbewohner, aber -50 Nahrung
+  Rohstoffe halten +15 % länger
+  Einfache Bogenschützen kosten -10/20/30 % in der Feudal-/Ritter-/Imperialzeit
+  Plänkler feuern ein zusätzliches Projektil ab
+  Adlerkrieger +40 LP
+  Team: Mauern kosten -50 %.
+8547 Einheit: Ghulam, Imperialer Kamelreiter.
+  Unique Techs: Große Fernstraße und Shatagni.
+  Dorfbewohner kosten -8/13/18/23 % in der Dunklen/Feudal-/Ritter-/ Imperialzeit
+  Kamelreiter greifen um +20 % schneller an
+  +1 Nahkampf/+1 Durchschlagspanzerung für Schießpulvereinheiten
+  Bau von Karawanserei in der Imperialzeit möglich
+  gesamtes Goldeinkommen um +10 % schneller; Markthandelsgebühr auf 10 % reduziert
+  +2 Reichweite für Handrohrschützen
+  Team: Berittener-Späher-Linie und Kameleinheiten +2 Angriffsstärke gegen Gebäude.
+8548 Einheit: Konquistador, Missionar.
+  Unique Techs: Inquisition und Überlegenheit.
+  Bauarbeiter arbeiten +30 % schneller.
+  +20 Gold für jede erforschte Technologie
+  Weiterentwicklungen von Schmieden kosten kein Gold.
+  Schießpulvereinheiten greifen +18 % schneller an.
+  Kanonenschiffe feuern präziser bei beweglichen Zielen.
+  Mönche und Missionare bekehren schneller; Missionare erhalten +1 Reichweite
+  Dorfbewohner erhalten +40 LP, +6 Angriffsstärke, +2 Nahkampf-/+2 Durchschlagspanzerung
+  Team: Handelseinheiten generieren +25 % Gold.
+8549 Einheit: Ungarische Husar.
+  Unique Techs: Corvinianische Armee und Recurvebogen.
+  Dorfbewohner besiegen Wölfe mit einem einzigen Schlag
+  Berittene Späher kostet -15 % weniger
+  Weiterentwicklungen für Nahkampfangriffe gratis
+  Goldpreis für ungarische Husaren durch zusätzliche Nahrungskosten ersetzt
+  +1 Angriffsstärke und +1 Reichweite für berittene Bogenschützen
+  Team: Berittene Bogenschützen werden um +25 % schneller ausgebildet.
+8550 Einheit: Obuch, geflügelter Husar.
+  Unique Techs: Szlachta-Privilegien und Lechisches Vermächtnis.
+  Gutshof ersetzt Mühlen
+  Dorfbewohner regenerieren 10/15/20 LP in der Feudal-/Ritter-/Imperialzeit
+  Steinhauer generieren neben Stein auch Gold
+  Weiterentwicklungen für Zuchtauswahl und berittene Späher kosten -50 % Nahrung
+  Ritter kosten -60 % Gold
+  berittene Späher verursachen Trampelschaden
+  Team: Späherkavallerie +1 Angriffsstärke gegen Fernkampfsoldaten.
+8551 Einheit: Genuesischer Armbrustschütze, Condottiere.
+  Unique Techs: Seidenstraße und Piritechnoloia.
+  Voranschreiten in das nächste Zeitalter kostet -15 %
+  Einfache Bogenschützen und Condottieri erhalten +1 Nahkampf-/+1 Durchschlagspanzerung
+  Hafen- und Universitäts-Technologien kosten -25 %
+  Schießpulvereinheiten kosten -20 %
+  Fischkutter kosten -15 %
+  Handelseinheiten kosten -50 %
+  Handkanoniere verursachen +15 % Durchschlagsschaden und sind treffsicherer
+  Team: Condottiere ist in der Imperialzeit in der Kaserne verfügbar.
+8552 Einheit: Hussitenwagen, Haufnitze.
+  Unique Techs: Wagenburg-Taktik und Hussitenreformen.
+  Bergarbeiterlager-Technologien gratis
+  Schmieden und Universitäten kosten -100 Holz
+  Speerkämpfer verursachen +25 % Bonusschaden
+  Eifer und Heiligkeit beeinflussen Dorfbewohner
+  Chemie und Handrohrschütze verfügbar in der Ritterzeit
+  Schießpulvereinheiten bewegen sich +10 % schneller
+  Mönche und Kloster-Technologien kosten Nahrung statt Gold
+  Team: Märkte arbeiten +80 % schneller.
+8553 Einheit: Janitschar.
+  Unique Techs: Sipahi und Artillerie.
+  Goldgräber arbeiten um 25 % schneller.
+  +1 Durchschlagspanzerung für berittene Späher und Weiterentwicklungen gratis
+  Chemie gratis, Schießpulver-Technologien kosten -50 %
+  +25 % LP für Schießpulvereinheiten
+  +20 LP für berittene Bogenschützen
+  +2 Reichweite für Kanonentürme, Belagerungskanonen, und Kanonenschiffe
+  Team: Schießpulvereinheiten werden um 25 % schneller ausgebildet.
 8714 Bulgaren
-8554 Unique unit Konnik.
-  See English intro for full description.
+8554 Einheit: Konnik.
+  Unique Techs: Steigbügel und Bagaine.
+  Weiterentwicklungen für Milizsoldatenzweig gratis
+  Schmiede- und Belagerungswerkstattentechnologien kosten -50 % Nahrung
+  Dorfzentren kosten -50 % Steine
+  Kann Kreposte in Ritterzeit bauen
+  +33 % Angriffsgeschwindigkeit für Kavallerie
+  Milizsoldatenzweig +5 Nahkampfrüstung
+  Team: Schmieden arbeiten 80 % schneller.
 8715 Litauer
-8555 Unique unit Leitis.
-  See English intro for full description.
+8555 Einheit: Leitis, Flügelhusar.
+  Unique Techs: Hügelfestungen und Turmschilde.
+  Jedes Dorfzentrum stellt +100 Nahrung bereit
+  Speerkämpfer und Plänkler bewegen sich +10 % schneller
+  Jede einquartierte Reliquie gewährt Rittern und Leitis +1 Angriffsstärke (max. +4)
+  +3 Reichweite für Dorfzentren
+  Speerkämpfer und Plänkler +2 Durchschlagspanzerung
+  Team: Klöster arbeiten +20 % schneller.
 8716 Tataren
-8556 Unique unit Steppe Lancer.
-  See English intro for full description.
+8556 Einheit: Keshik, Brandkamel.
+  Unique Techs: Seidenrüstung und Belagerungskunst der Timuriden.
+  Nutztiere leben um +50 % länger
+  Einheiten verursachen um +25 % Schaden, wenn sie von höherer Ebene aus kämpfen
+  Neue Dorfzentren erzeugen 2 Schafe ab der Ritterzeit
+  Daumenring, Parthisches Manöver kostenlos
+  Berittener-Späher-Linie,Steppenlanzenreiter und berittene Bogenschützen erhalten +1 Nahkampf/+1 Durchschlagspanzerung
+  Triboke +2 Reichweite
+  Team: Berittene Bogenschützen +2 Sichtweite.
 8717 Berber
-8557 Unique unit Camel Rider.
-  See English intro for full description.
+8557 Einheit: Kamelbogenschützen, Ginete.
+  Unique Techs: Kasbah und Maghreb-Kamele.
+  Dorfbewohner bewegen sich in der Dunklen Zeit 5 % schneller, in der Feudalzeit 10 % schneller
+  Stalleinheiten kosten 15/20 % weniger in der Burg-/Imperialzeit
+  Schiffe bewegen sich 10 % schneller
+  Team-Burgen arbeiten 25 % schneller
+  Kameleinheiten regenerieren 15 LP pro Minute
+  Team: Ginete im Schießstand ab der Ritterzeit verfügbar.
 8718 Äthiopier
-8558 Unique unit Shotel Warrior.
-  See English intro for full description.
+8558 Einheit: Shotelkrieger.
+  Unique Techs: Königliche Erben und Torsionsgeschütze.
+  +100 Gold, +100 Nahrung bei Voranschreiten ins nächste Zeitalter
+  Einfache Bogenschützen greifen 18 % schneller an
+  Pikenier-Entwicklung gratis
+  Shotelkrieger und Kamelreiter erleiden -3 Schaden von berittenen Einheiten
+  erhöht Explosionsradius von Belagerungseinheiten
+  Team: Außenposten +3 Sichtweite und ohne Kosten für Stein.
 8719 Khmer
-8559 Unique unit Ballista Elephant.
-  See English intro for full description.
+8559 Einheit: Ballistenelefant.
+  Unique Techs: Stoßzahnschwerter und Doppelarmbrust.
+  Keine Gebäude benötigt, um in das nächste Zeitalter voranzuschreiten oder andere Gebäude freizuschalten
+  Bauern benötigen keine Mühlen oder Dorfzentren, um Nahrung abzuliefern
+  Dorfbewohner können in Häuser einquartiert werden
+  Elefantenreiter +10 % schneller
+  Elefantenreiter +3 Angriffsstärke
+  Ballistenelefanten und Skorpione schießen ein zusätzliches Projektil
+  Team: Skorpione +1 Reichweite.
 8720  Malaien
-8560 Unique unit Karambit Warrior.
-  See English intro for full description.
+8560 Einheit: Karambitkämpfer.
+  Unique Techs: Thalassokratie und Zwangsrekrutierung.
+  Voranschreiten in das nächste Zeitalter +66 % schneller
+  Kostenlose Weiterentwicklung für Infanterierüstung
+  Elefantenreiter kosten 25/35 % in Ritter-/Imperialzeit
+  35 % Reusen kosten -33 % und bieten +200 % mehr Nahrung
+  Entwickelt Häfen zu Kriegshäfen
+  Einheiten der Milizsoldat-Reihe kosten zusätzliche Nahrung statt Gold
+  Team: Häfen +6 % Sichtweite.
 8721 Birmanen
-8561 Unique unit Arambai.
-  See English intro for full description.
+8561 Einheit: Arambai.
+  Unique Techs: Manipur-Kavallerie und Howdah.
+  Technologien im Holzfällerlager gratis
+  Infanterie +1/+2/+3 Angriffsstärke in Feudal-/Ritter-/Imperialzeit
+  Elefantenreiter +1 Nahkampf /+1 Durchschlagspanzerung
+  Klostertechnologien 50 % günstiger
+  Kavallerie +4 Angriffsstärke gg. Fernkampfsoldat
+  Elefantenreiter +1 Nahkampf/+1 Durchschlagspanzerung
+  Team: Reliquien zu Spielbeginn auf der Karte sichtbar.
 8722 Burgunder
-8562 Unique unit Coustillier.
-  See English intro for full description.
+8562 Einheit: Coustillier, flämischer Milizsoldat.
+  Unique Techs: Burgundische Weinberge und Flämische Revolution.
+  Wirtschaftsentwicklungen kosten 40 % weniger Nahrung und sind ein Zeitalter früher verfügbar
+  Stalltechnologien kosten 50 % weniger
+  Kavalier-Weiterentwicklung in der Ritterzeit verfügbar
+  +25 % Angriffsstärke für Schießpulvereinheiten
+  Bauern erzeugen neben Nahrung auch Gold
+  entwickelt alle Dorfbewohner zu flämischen Milizsoldaten weiter
+  Team: Reliquien erzeugen neben dem Gold auch Nahrung.
 8723 Sizilianer
-8563 Unique unit Serjeant.
-  See English intro for full description.
+8563 Einheit: Serjeant.
+  Unique Techs: Erster Kreuzzug und Panzerhemd.
+  Start mit +100 Stein
+  Felder-Weiterentwicklungen bieten +125 % zusätzliche Nahrung
+  Soldaten erhalten -40 % Bonusschaden
+  Kann Donjon in der Dunklen Zeit errichten, ersetzt Türme
+  Befestigungsanlagen werden um 50 % schneller gebaut; Dorfzentren werden um 100 % schneller gebaut
+  bis zu 5 Dorfzentren produzieren jeweils 5 Serjeants, Einheiten sind widerstandsfähiger gegen Bekehrung
+  Rittereinheit +1 Nahkampf-/+2 Durchschlagspanzerung
+  Team: Transportschiffe +5 Sichtweite und -50 % Kosten.
 8724 Armenier
-8564 Unique unit Tarkan.
-  See English intro for full description.
+8564 Einheit: Kompositbogenschütze, Kriegerpriester.
+  Unique Techs: Kilikische Flotte und Fereter.
+  Maultierkarren kosten -25 %
+  Maultierkarren-Technologieeffekte steigen um +40 %
+  Die erste Wehrkirche erhält eine kostenlose Reliquie
+  Normale Kaserneneinheiten (außer Waffenknechte) sind ein Zeitalter früher verfügbar
+  Einheiten der Galeerenlinie und Dromone feuern ein zusätzliches Geschoss ab
+  Brander +20 % Explosionsradius; Galeerenlinie und Dromonen +1 Reichweite
+  Infanterieeinheit außer Speerkämpferlinie +30 LP, Kriegerpriester +100 % Heilungsgeschwindigkeit
+  Team: Infanterieeinheit +2 Sichtweite.
 8725 Georgier
-8565 Unique unit Monaspa.
-  See English intro for full description.
+8565 Einheit: Monaspa.
+  Unique Techs: Swanetische Türme und Aznauri-Kavallerie.
+  Maultierkarren beim Start
+  Einheiten und Gebäude erleiden -15 % Schaden, wenn sie sich an einem erhöhten Punkt befinden.
+  Berittene Einheiten regenerieren in der Feudal-/Ritter-/Imperialzeit 2/8/14 LP pro Minute.
+  Befestigte Kirchen verleihen Dorfbewohnern in einem Radius von 9 Feldern +10 % Arbeitsrate.
+  +2 Angriffsstärke für Befestigungen, Turm verursacht Durchschlagsschaden
+  Berittene Einheiten benötigen -20 % Platz in der Bevölkerung.
+  Team: Reparatur von Gebäuden kostet -25 %.
 8726 Inka
-8566 Unique unit Slinger.
-  See English intro for full description.
+8566 Einheit: Kamayuk.
+  Unique Techs: Andenschleuder und Stoffschilde.
+  Häuser und Siedlungen liefern +5 Platz in der Bevölkerung
+  Gebäude kosten 15 % weniger Steine
+  Militäreinheiten kosten in der Dunklen/Feudal-/Ritter-/Imperialzeit 15/20/25/30 % weniger Nahrung
+  Dorfbewohner sind ab der Ritterzeit von Infanterie-Schmiede-Weiterentwicklungen betroffen
+  keine Mindestreichweite für Plänkler und Schleuderer; Schleuderer +1 Angriffsstärke
+  Kamayuks, Schleuderer und Champi-Krieger +1 Nahkampf/+1 Durchschlagspanzerung
+  Team: Beginnt mit einem kostenlosen Lama.
 8727 Römer
-8567 Unique unit Legionary.
-  See English intro for full description.
+8567 Einheit: Zenturio, Legionär.
+  Unique Techs: Ballisten und Comitatenses.
+  Dorfbewohner sammeln, bauen und reparieren Objekte um +5 % schneller
+  Weiterentwicklungseffekte für die Rüstung von Infanterieeinheiten verdoppeln sich
+  Skorpione kosten 50 % weniger Gold
+  +1 Nahkampf/+1 Durchschlagspanzerung für Galeeren und Dromonen
+  Skorpione greifen um +33 % schneller an, +2 Angriffsstärke für Galeeren
+  Milizsoldaten-Linie, Ritter-Linie und Zenturionen werden um +50 % schnellere ausgebildet und erhalten zusätzliche Sturmangriff
+  Team: Mindestreichweite der Skorpione reduziert.
 
 ; New unique unit titles (9029-9039)
 9029 Konnik
@@ -620,6 +782,23 @@
 8355 Elite Legionary
 8356 Elite Slinger
 
+; AoE2 DE unique units without a spoken name until now
+
+8358 Elitärer Mameluke
+8359 Elitärer Keschik
+8360 Elitärer Kamelbogenschütze
+8361 Elitärer Obuch
+8362 Elitärer Kompositbogen-Schütze
+8363 Elitärer Genitour
+9108 Mameluke
+9109 Keschik
+9110 Kamelbogenschütze
+9111 Obuch
+9112 Kompositbogen-Schütze
+9113 Genitour
+9114 Missionar
+9115 Houfnitze
+
 ; Roman unique units / technologies (Romans)
 9057 Zenturio
 9058 Elitärer Zenturio
@@ -633,3 +812,50 @@
 ; Inca unique unit (Kamayuk)
 9040 Kamayuk
 8357 Elitärer Kamayuk
+
+; AoE2 DE unique technologies (canonical DE set)
+9063 Gegengewichte
+9064 Bimaristan
+9065 Zitadellen
+9066 Detinets
+9067 Eupseong
+9068 Holcán
+9069 Hul'che-Speerwerfer
+9070 Vormacht
+9071 Inquisition
+9072 Recurve-Bogen
+9073 Corvinianische Armee
+9074 Lechitisches Erbe
+9075 Szlachta-Privilegien
+9076 Seidenstraße
+9077 Pavise
+9078 Hussitische Reformen
+9079 Wagenburg-Taktik
+9080 Artillerie
+9081 Sipahi
+9082 Bagains
+9083 Steigbügel
+9084 Turmschilde
+9085 Hügelfesten
+9086 Timuridische Belagerungskunst
+9087 Seidenrüstung
+9088 Maghrebi-Kamel
+9089 Kasbah
+9090 Königliche Erben
+9091 Torsionsmaschinen
+9092 Doppelkreuzzbogen
+9093 Stoßzahnschwerter
+9094 Zwangsrekrutierung
+9095 Thalassokratie
+9096 Manipur-Kavallerie
+9097 Howdah
+9098 Flämische Revolution
+9099 Burgundische Weingärten
+9100 Hauberk
+9101 Erster Kreuzzug
+9102 Fereter
+9103 Kilikische Flotte
+9104 Asnaurische Kavallerie
+9105 Swen-Türme
+9106 Stoffschild
+9107 Anden-Schlinge

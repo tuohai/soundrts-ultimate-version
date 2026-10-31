@@ -21,18 +21,26 @@
 8016 Người Saracen
 
 8700 Goth
-8540 Unique unit Huskarl.
-  Unique techs Anarchy and Perfusion.
-  Infantry costs less.
-  Huskarls and Eagle Warriors are cheaper and tougher.
-  Infantry return some food when killing units.
-  Team bonus: Huskarls have more line of sight.
+8540 Đơn vị độc quyền: Huskarl.
+  Công nghệ độc quyền: Vô chính phủ và Kỹ thuật vảy.
+  Công nghệ Dệt may được nghiên cứu ngay lập tức
+  Thợ săn mang thêm +15 tài nguyên; động vật săn được cho lương thực lâu hơn +20%
+  Chi phí bộ binh giảm -15/20/25/30% trong Thời Tăm tối/Thời Phong kiến/Thời Lâu đài/ Thời đại Đế quốc
+  Bộ binh được +1/+2/+3 điểm tấn công khi đối đầu công trình trong Thời Phong kiến/ Thời Lâu đài/Thời đại Đế quốc
+  +10 suất dân số trong Thời đại Đế quốc
+  Huskarl có thể được huấn luyện tại Nhà lính
+  Nhà lính làm việc nhanh hơn +100%
+  Thưởng đội: Nhà lính hoạt động nhanh hơn +20%.
 8701 Ba Tư
-8541 Unique unit War Elephant.
-  Unique techs Kamandaran and Silos.
-  Start with fifty extra food and wood.
-  Town Centers work faster.
-  Team bonus: trade gains more gold.
+8541 Đơn vị độc quyền: Voi chiến, Savar.
+  Công nghệ độc quyền: Kamandaran và Thành cổ.
+  Bắt đầu với +50 gỗ và +50 lương thực
+  Nhà chính và Bến tàu +100% Máu và làm việc nhanh hơn +5/10/15/20% trong Thời kỳ Tăm tối / Thời Phong kiến / Thời Lâu đài / Thời đại Đế quốc
+  Chiến thuật Parthia có sẵn trong Thời Lâu đài
+  Có thể xây dựng Caravanserai trong Thời đại Đế quốc
+  chi phí vàng của dòng Cung thủ được thay thế bằng chi phí gỗ bổ sung
+  Lâu đài +4 điểm tấn công, +3 khi đối đầu với Trục phá, +3 khi đối đầu với Bộ binh và giảm -25% sát thương thưởng phải chịu
+  Thưởng đội: Đơn vị dòng Hiệp sĩ +2 điểm tấn công khi đối đầu với lính đánh xa.
 8702 Slav
 8703 Cuman
 8704 Hung
@@ -67,15 +75,11 @@
 9043 Truyền máu
 9044 Kamandaran
 9045 Druzhina
-9046 Chính thống giáo
 9047 Chăn nuôi thảo nguyên
 9048 Lính đánh thuê Cuman
 9049 Cướp bóc
 9050 Vô thần
-9051 Panokseon
 9052 Shinkichon
-9053 El Dorado
-9054 Kiến trúc Maya
 9055 Đại lộ
 9056 Shatagni
 8070 Samurai
@@ -375,224 +379,382 @@
 8514 Cải đạo của địch nhắm vào bạn mất nhiều thời gian hơn
 8515 Khi nhiều tu sĩ cùng cải đạo, chỉ người thành công phải nghỉ
 ; Đặc trưng civilization (đọc khi chọn phe bằng G; dòng thụt là câu tiếp)
-8520 Đơn vị độc quyền: trường cung binh.
-  Công nghệ độc quyền: Yeomen và Warwolf.
-  Cung thủ bộ cộng một tầm ở thời kỳ thành trì và cộng thêm một ở thời kỳ đế quốc, trừ lính phóng lao.
-  Người chăn cừu làm việc nhanh hơn.
-  Trung tâm thành phố tốn một nửa gỗ từ thời kỳ thành trì.
-  Đồng đội: trường bắn làm việc nhanh hơn.
-  Không Huyết thống, không Nhẫn ngón cái.
-8521 Đơn vị độc quyền: lính ném rìu.
-  Công nghệ độc quyền: rìu răng cưa và hiệp sĩ.
-  Kỵ binh cộng hai mươi phần trăm máu từ thời kỳ phong kiến.
-  Người hái lượm làm việc nhanh hơn.
-  Nâng cấp nông trại miễn phí.
-  Lâu đài tốn ít đá hơn.
-  Đồng đội: hiệp sĩ cộng hai tầm nhìn.
-  Không Nhẫn ngón cái, Bao tay, Giáp xích cung thủ hay Huyết thống.
-8522 Đơn vị độc quyền: nỏ liên châu.
-  Công nghệ độc quyền: hỏa tiễn và Vạn Lý Trường Thành.
-  Bắt đầu thêm ba dân, ít hơn năm mươi gỗ và hai trăm thức ăn.
-  Công nghệ rẻ hơn năm, mười và mười lăm phần trăm ở phong kiến, thành trì và đế quốc.
-  Trung tâm thành phố cho mười lăm dân số và cộng bảy tầm nhìn.
-  Thuyền lửa đi nhanh hơn ở thành trì và đế quốc.
-  Đồng đội: nông trại chứa thêm mười phần trăm thức ăn.
-8523 Đơn vị độc quyền: kỵ xạ Mông Cổ.
-  Công nghệ độc quyền: Drill và Du mục.
-  Thợ săn làm việc nhanh hơn.
-  Dây trinh sát cộng hai mươi rồi ba mươi phần trăm máu ở thành trì và đế quốc.
-  Cung kỵ bắn nhanh hơn.
-  Bãi chăn thay nông trại; không có cối xay.
-  Đồng đội: dây trinh sát cộng hai tầm nhìn.
-8524 Đơn vị độc quyền: thiết kỵ.
-  Công nghệ độc quyền: Hậu cần và Lửa Hy Lạp.
-  Công trình tăng máu theo từng thời kỳ.
-  Thời kỳ đế quốc rẻ hơn ba mươi ba phần trăm.
-  Lạc đà, lính phóng lao và lính giáo rẻ hơn.
-  Thuyền lửa tấn công nhanh hơn.
-  Tuần tra thành và Cảnh giới thành miễn phí.
-  Đồng đội: tu sĩ chữa nhanh hơn.
-8525 Đơn vị độc quyền: samurai.
-  Công nghệ độc quyền: Yasama và Kataparuto.
-  Bộ binh tấn công nhanh hơn từ thời kỳ phong kiến.
-  Thuyền đánh cá có nhiều máu hơn và làm việc nhanh hơn.
-  Cối xay và trại rẻ hơn.
-  Đồng đội: thuyền galley cộng bốn tầm nhìn.
-8526 Đơn vị độc quyền: hiệp sĩ Teuton.
-  Công nghệ độc quyền: Giáp trụ và Chóp tường.
-  Đơn vị doanh trại và chuồng ngựa cộng giáp cận chiến ở thành trì và đế quốc.
-  Nông trại tốn ít gỗ hơn.
-  Lỗ bắn và Thuốc thảo mộc miễn phí.
-  Đồng đội: kháng cải đạo.
-8527 Đơn vị độc quyền: cuồng binh.
+8520 Đơn vị độc quyền: Trường cung binh.
+  Công nghệ độc quyền: Nghĩa dũng binh và Sói chiến.
+  Người chăn cừu làm việc nhanh hơn +25%
+  Nhà chính giảm -50% chi phí gỗ bắt đầu từ Thời Lâu đài
+  Cung thủ đi bộ được +1/+2 tầm bắn trong Thời Lâu đài/Thời đại Đế quốc
+  Cung thủ đi bộ và dòng Lính giao tranh được +1 tầm bắn; dòng Tháp quan sát được +2 điểm tấn công
+  Máy lăng đá gây sát thương nổ và bắn chính xác hơn
+  Thưởng đội: Trường bắn hoạt động nhanh hơn +10%.
+8521 Đơn vị độc quyền: Lính ném rìu.
+  Công nghệ độc quyền: Đại đội Ordonnance và Tinh thần hiệp sĩ.
+  Thợ cắt cỏ làm việc nhanh hơn +15%
+  Công nghệ Nhà xay lương nghiên cứu miễn phí
+  Đơn vị cưỡi thú được +20% Máu bắt đầu từ Thời Phong kiến
+  Lâu đài giảm -15/25% chi phí trong Thời Lâu đài/Thời đại Đế quốc
+  Nỏ kỵ binh giảm -40 chi phí Vàng
+  Chuồng ngựa hoạt động nhanh hơn +40%
+  Thưởng đội: Dòng Hiệp sĩ +2 tầm nhìn.
+8522 Đơn vị độc quyền: Nỏ liên châu, Tàu Rồng.
+  Công nghệ độc quyền: Vạn Lý Trường Thành và Thuật hỏa tiễn.
+  Bắt đầu với +3 Dân làng, nhưng -50 Gỗ và -200 Lương thực
+  Công nghệ được giảm -5/10/15% chi phí trong Thời Phong kiến/Thời lâu đài/Thời đại Đế quốc
+  Nhà chính được +7 tầm nhìn và cung cấp +15 suất dân số
+  Kỵ binh giáo lửa và Tàu phun lửa di chuyển nhanh hơn +5/10% trong Thời Lâu đài/Thời đại Đế quốc
+  Tường, dòng Tháp quan sát và Tháp pháo được +30% Máu
+  Nỏ máy, Xe hỏa tiễn và Lâu Thuyền được +25% điểm tấn công; Lâu Thuyền bắn ra hỏa tiễn
+  Thưởng đội: Nông trại được +10% Lương thực.
+8523 Đơn vị độc quyền: Kỵ xạ Mông Cổ.
+  Công nghệ độc quyền: Nomad và Thao luyện.
+  Thợ săn làm việc nhanh hơn +40%
+  Cung kỵ binh tấn công nhanh hơn +25%
+  Đơn vị dòng Kỵ binh do thám và Kỵ binh giáo thảo nguyên tăng +20/30% máu trong Thời lâu đài/Thời đại đế quốc
+  Nhà ở bị mất không làm giảm suất dân số
+  Các đơn vị từ Xưởng vũ khí công thành di chuyển nhanh hơn +50%
+  Thưởng đội: Đơn vị dòng Kỵ binh do thám tăng +2 tầm nhìn.
+8524 Đơn vị độc quyền: Thiết kỵ.
+  Công nghệ độc quyền: Lửa Hy Lạp và Hậu cần học.
+  Công trình +10/20/30/40% Máu trong Thời kỳ Tăm tối / Thời Phong kiến / Thời Lâu đài / Thời đại Đế quốc
+  Dòng Kỵ sĩ Lạc đà, Lính giao tranh và Lính giáo giảm -25% chi phí
+  Gác thành, Tuần tra thành nghiên cứu miễn phí
+  Tiến lên Thời đại Đế quốc giảm -33% chi phí
+  Tàu phun lửa và Tàu Dromon tấn công nhanh hơn +25%
+  Tàu phun lửa +1 tầm bắn; Tàu Dromon và Tháp pháo tăng bán kính nổ
+  Thiết kỵ và Vệ binh Varangian gây sát thương giẫm đạp
+  Thưởng đội: Thầy tu hồi máu nhanh hơn +100%.
+8525 Đơn vị độc quyền: Samurai.
+  Công nghệ độc quyền: Khe bắn tên và Máy bắn đá.
+  Nhà xay lương, Trại đốn gỗ và Trại khai thác giảm -50% chi phí
+  Bộ binh tấn công nhanh hơn +33% bắt đầu từ Thời Phong kiến
+  Cung kỵ binh được +2 điểm tấn công khi đối đầu Lính đánh xa (trừ Lính giao tranh)
+  Tàu đánh cá hoạt động nhanh hơn +5/10/15/20% trong Thời kỳ Tăm tối/Thời Phong kiến/Thời Lâu đài/Thời đại Đế quốc; được +100% Máu
+  Dòng Tháp quan sát bắn thêm tên
+  Máy lăng đá tấn công và xếp gọn/mở ra nhanh hơn
+  Thưởng đội: Dòng Thuyền ga-lê tăng +4 tầm nhìn.
+8526 Đơn vị độc quyền: Hiệp sĩ Teuton.
+  Công nghệ độc quyền: Bọc sắt và Tường răng cưa.
+  Chi phí Nông trại giảm -40%
+  Nhà chính +10 suất đồn trú; Tháp +5 suất đồn trú
+  Bộ binh và Đơn vị Cưỡi thú được +1/+2 giáp cận chiến trong Thời Lâu đài/Thời đại Đế quốc
+  Thầy tu +100% phạm vi hồi máu
+  Lỗ sát nhân, Thảo dược được nghiên cứu miễn phí
+  Vũ khí công thành được +4 giáp cận chiến
+  Lâu đài được +3 tầm bắn, bộ binh đồn trú bắn tên
+  Thưởng đội: Đơn vị có khả năng kháng chuyển đổi mạnh hơn.
+8527 Đơn vị độc quyền: Cuồng binh.
   Công nghệ độc quyền: Thủ lĩnh và Bogsveigar.
-  Bộ binh cộng hai mươi phần trăm máu từ thời kỳ phong kiến.
-  Xe cút kít và Xe đẩy tay miễn phí.
-  Tàu chiến rẻ hơn.
-  Bến tàu có thể huấn luyện thuyền dài.
-  Đồng đội: bến tàu rẻ hơn.
-8528 Đơn vị độc quyền: cung thủ giáp mây.
-  Công nghệ độc quyền: Chatras và Tiền giấy.
-  Đơn vị trường bắn cộng hai mươi phần trăm máu.
-  Hiện trung tâm thành phố địch lúc bắt đầu.
-  Trưng binh miễn phí.
-  Công nghệ kinh tế không tốn gỗ và nghiên cứu nhanh hơn.
-  Đồng đội: có thể nghiên cứu lính phóng lao đế quốc.
-8529 Đơn vị độc quyền: súng đa nòng.
+  Xe đẩy tay, Xe kéo tay miễn phí
+  Bộ binh được +20% Máu bắt đầu từ Thời phong kiến
+  Thuyền chiến giảm -10/15/20% chi phí trong Thời phong kiến/Thời lâu đài/Thời đại đế quốc
+  Bộ binh được +5 điểm tấn công khi đối đầu với Kỵ binh, +4 khi đối đầu với đơn vị cưỡi Lạc đà
+  Dòng Cung thủ và Thuyền dài được +1 điểm tấn công
+  Thưởng đội: Chi phí Bến tàu giảm -15%.
+8528 Đơn vị độc quyền: Cung thủ giáp mây, Lính giao tranh đế quốc.
+  Công nghệ độc quyền: Chatra và Tiền giấy.
+  Vị trí Nhà chính của địch xuất hiện khi bắt đầu ván chơi
+  Nâng cấp kinh tế không tốn gỗ và nghiên cứu nhanh hơn +100%
+  Các đơn vị Cung thủ đi bộ và Lính giao tranh được +20% máu
+  Cưỡng chế tòng quân nghiên cứu miễn phí
+  Voi chiến +100 Máu
+  Ngoài Gỗ, Thợ đốn gỗ từ từ tạo ra Vàng
+  Thưởng đội: Có thể nâng cấp Lính giao tranh đế quốc ở Thời đại Đế quốc.
+8529 Đơn vị độc quyền: Súng đa nòng, Tàu Caravel.
   Công nghệ độc quyền: Vòng quanh thế giới và Súng hỏa mai.
-  Tàu cộng mười phần trăm máu.
-  Mọi đơn vị tốn ít hơn hai mươi phần trăm vàng.
-  Người hái lượm cũng lấy gỗ.
-  Có thể xây Feitoria.
-  Đồng đội: công nghệ nghiên cứu nhanh hơn.
-8530 Đơn vị độc quyền: chiến binh báo đốm.
-  Công nghệ độc quyền: Atlatl và Chiến tranh hoa.
-  Bắt đầu thêm năm mươi vàng.
-  Dân mang thêm ba.
-  Quân sự huấn luyện nhanh hơn.
-  Tu sĩ cộng năm máu mỗi công nghệ tu viện.
-  Đồng đội: thánh tích sinh thêm vàng.
-  Không chuồng ngựa và kỵ binh.
-8531 Đơn vị độc quyền: lính đột kích sơn xanh.
-  Công nghệ độc quyền: Pháo đài và Cuồng nộ Celtic.
-  Bộ binh cộng năm phần trăm tốc độ mỗi thời kỳ từ thời kỳ đen tối.
-  Thợ đốn gỗ làm việc nhanh hơn.
-  Vũ khí công thành bắn nhanh hơn.
-  Có thể cướp đàn gia súc địch dù bên cạnh có đơn vị.
-  Đồng đội: xưởng công thành làm việc nhanh hơn.
-8532 Đơn vị độc quyền: lính phi dao.
+  Thợ cắt cỏ tạo ra gỗ bên cạnh lương thực
+  Tất cả các đơn vị giảm -20% chi phí vàng
+  Có thể xây dựng Trạm mậu dịch trong Thời đại Đế quốc
+  Tàu +10/15/20% Máu trong Thời Phong kiến/Thời Lâu đài/Thời đại Đế quốc.
+  Đặt toàn bộ bản đồ thành chế độ khám phá; đóng tàu nhanh hơn +33%
+  Đơn vị thuốc súng bắn chính xác hơn vào các mục tiêu đang di chuyển
+  Thưởng đội: Công nghệ nghiên cứu nhanh hơn +25%.
+8530 Đơn vị độc quyền: Chiến binh báo đốm.
+  Công nghệ độc quyền: Tên ném và Chiến tranh vòng hoa.
+  Bắt đầu với +50 vàng
+  Dân làng mang +3 tài nguyên
+  Đơn vị quân đội đào tạo nhanh hơn +15%
+  Thầy tu tăng +5 Máu sau khi mỗi công nghệ tại Tu viện được nghiên cứu
+  Lính giao tranh +1 điểm tấn công, +1 phạm vi
+  Bộ binh +4 điểm tấn công
+  Thưởng đội: Thánh tích tạo ra thêm +33% vàng.
+8531 Đơn vị độc quyền: Lính đột kích xanh.
+  Công nghệ độc quyền: Thành trì và Bạo binh Celt.
+  Thợ đốn gỗ làm việc nhanh hơn +15%
+  Gia súc trong tầm nhìn của đơn vị quân Celt không thể bị đánh cắp
+  Bộ binh di chuyển nhanh hơn +5/10/15/20% trong Thời Tăm tối/Thời Phong kiến/ Thời Lâu đài/Thời đại Đế quốc
+  Vũ khí công thành tấn công nhanh hơn +25%
+  Lâu đài và dòng Tháp quan sát tấn công nhanh hơn +33%; Lâu đài hồi máu cho Bộ binh đồng minh trong bán kính 7 ô
+  Vũ khí công thành được +40% Máu
+  Thưởng đội: Xưởng vũ khí công thành hoạt động nhanh hơn +20%.
+8532 Đơn vị độc quyền: Lính phi dao.
   Công nghệ độc quyền: Tigui và Farimba.
-  Công trình rẻ hơn mười lăm phần trăm gỗ, trừ nông trại.
-  Đơn vị nhà lính được giáp xuyên theo thời đại.
-  Dân làng nộp thêm mười phần trăm vàng.
-  Đồng đội: đại học làm việc nhanh hơn.
+  Công trình giảm -15% chi phí gỗ
+  Dân làng thả thêm +10% vàng
+  Đơn vị từ Nhà lính +1/+2/+3 giáp xuyên thấu trong Thời Phong kiến / Thời Lâu đài / Thời đại Đế quốc
+  Nhà chính bắn tên mà không cần đồn trú
+  Kỵ binh +5 điểm tấn công
+  Thưởng đội: Đại học làm việc nhanh hơn +80%.
 
 ; New civilizations (14 from previous commit + 2 final: Inca, Romans)
 ; Language: vi
 
-8533 Đơn vị độc quyền: lính Mamluk.
-  Công nghệ độc quyền: Madrasa và Cuồng tín.
-  Chuồng ngựa tốn ít hơn năm mươi/sáu mươi vàng ở thời đại bóng tối/lâu đài.
-  Tàu vận tải có gấp đôi máu và chở thêm hai người.
-  Tàu gây thêm sáu/thêm bảy sát thương lên công trình ở thời đại lâu đài/đế quốc.
-  Thưởng đội: cung thủ bộ cộng thêm một tấn công lên công trình từ thời đại lâu đài.
-8542 Unique unit Boyar.
-  Unique techs Druzhina and Orthodoxy.
-  Barracks and Archery Range units cost less.
-  Villagers have more hit points.
-  Team bonus: Militia line moves faster.
-8543 Unique unit Kipchak.
-  Unique techs Cuman Mercenaries and Steppe Husbandry.
-  Can build a second Town Center in Feudal Age.
-  Steppe Lancers cost less.
-  Cavalry archers train faster.
-  Team bonus: Barracks and Archery Range units train faster.
-8544 Unique unit Tarkan.
-  Unique techs Atheism and Marauders.
-  Start with one extra Scout Cavalry, no houses required.
-  Cavalry archers train faster.
-  Earn gold for killing villagers and monks.
-  Team bonus: Tarkans do bonus damage to buildings.
-8545 Unique unit War Wagon.
-  Unique techs Panokseon and Shinkichon.
-  Towers and Castles gain line of sight each age.
-  Woodcutters work faster.
-  Mangonels and Trebuchets are more accurate.
-  Ships and Cannon Galleons are tougher.
-  Team bonus: Siege Workshops can build War Wagons.
-8546 Unique unit Plumed Archer.
-  Unique techs El Dorado and Maya Architecture.
-  Start with one extra villager.
-  Resources last longer on the map.
-  Eagle line is tougher and stronger against archers.
-  Walls cost less.
-  Team bonus: walls cost less.
-8547 Unique unit Armored Elephant.
-  Unique techs Grand Trunk Road and Shatagni.
-  Buildings except farms cost less wood.
-  Camels and Heavy Camels cost less.
-  Town Centers and Outposts have more range and line of sight.
-  Team bonus: Hand Cannoneers have extra range.
-8548 Unique unit Conquistador.
-  Unique techs Supremacy and Inquisition.
-  Builders work faster.
-  Hand Cannoneers are more powerful.
-  Gunpowder units fire faster.
-  Trade generates more gold.
-  Team bonus: Hand Cannoneers are more accurate.
-8549 Unique unit Magyar Huszar.
-  Unique techs Mercenaries and Magyar Huszardom.
-  Scout line gains line of sight each age.
-  Trade Carts carry more.
-  Hussars train faster.
-  Team bonus: trade gains more gold.
-8550 Unique unit Winged Hussar.
-  Unique techs Stone Mining bonus.
-  Knights attack harder.
-  Stone mines have more resources.
-  Team bonus: Scout line gains line of sight.
-8551 Unique unit Genoese Crossbowman.
-  Unique techs Pavise and Silk Road.
-  Gunpowder units cost less gold.
-  Dock buildings are tougher.
-  Trade generates more gold.
-  Technologies cost less.
-  Team bonus: trade gains more gold.
-8552 Unique unit Hussite Wagon.
-  Unique techs Sappers.
-  Universities cost less.
-  Mines yield more stone.
-  Wagons and Siege Workshop units cost less.
-  Team bonus: mines yield extra stone.
-8553 Unique unit Janissary.
-  Unique techs Sipahi and Artillery.
-  Mines yield more gold.
-  Gunpowder units train faster.
-  Hand Cannoneers are more accurate.
-  Monks heal faster.
-  Team bonus: Chemistry is free.
+8533 Đơn vị độc quyền: Lính nô lệ.
+  Công nghệ độc quyền: Bệnh viện Hồi giáo và Đối trọng.
+  Phí giao dịch ở Chợ chỉ còn 5%; Chợ giảm -100 chi phí gỗ
+  Đơn vị cưỡi lạc đà +25% Máu
+  Đơn vị dòng Thuyền ga-lê tấn công nhanh hơn +25%
+  Tàu vận tải +100% Máu, +20 tải trọng
+  Thầy tu hồi máu thụ động cho nhiều đơn vị lân cận
+  Máy lăng đá và đơn vị dòng Máy bắn đá +15% điểm tấn công
+  Thưởng đội: Cung thủ đi bộ và Lính giao tranh +2 điểm tấn công khi đối đầu với công trình.
+8542 Đơn vị độc quyền: Quý tộc thiết kỵ.
+  Công nghệ độc quyền: Pháo đài Detinet và Thân binh.
+  Nông dân làm việc nhanh hơn +15%
+  Phóng hỏa, Gambeson miễn phí
+  Chi phí đơn vị Xưởng vũ khí công thành giảm -15%
+  Thầy tu di chuyển nhanh hơn +20%
+  Thay thế 40% chi phí Đá cho Lâu đài và dòng công trình Tháp quan sát bằng chi phí Gỗ bổ sung
+  Bộ binh gây sát thương giẫm đạp
+  Thưởng đội: Các công trình quân sự (trừ Lâu đài) cung cấp +5 suất dân số.
+8543 Đơn vị độc quyền: Kipchak.
+  Công nghệ độc quyền: Chăn nuôi trên đồng cỏ và Lính đánh thuê Cuman.
+  Có thể xây thêm một Nhà chính trong Thời phong kiến
+  Các đơn vị cưỡi thú di chuyển nhanh hơn +5/10/15% trong Thời phong kiến / Thời lâu đài / Thời đại đế quốc
+  Trường bắn và Chuồng ngựa giảm -75 chi phí gỗ
+  Xưởng vũ khí công thành và Trục phá có sẵn trong Thời phong kiến; Trục phá có mái che có sẵn trong Thời lâu đài
+  Dòng Kỵ binh do thám, Kỵ binh giáo thảo nguyên và Cung kỵ binh huấn luyện nhanh hơn +100%
+  Tất cả thành viên trong đội có thể huấn luyện 5 Kipchak Tinh nhuệ miễn phí ở mỗi Lâu đài
+  Thưởng đội: Tường rào tăng +33% máu.
+8544 Đơn vị độc quyền: Tarkan.
+  Công nghệ độc quyền: Đạo tặc và Vô thần.
+  Không cần nhà ở, nhưng bắt đầu với -100 gỗ
+  Cung kỵ binh giảm -10 / 20% chi phí trong Thời Lâu đài / Thời đại Đế quốc
+  Máy lăng đá bắn chính xác hơn vào các đơn vị và mục tiêu nhỏ
+  Trên bản đồ du mục, Nhà chính đầu tiên sinh ra một ngựa do thám
+  Tarkan có thể được huấn luyện tại Chuồng ngựa
+  Giảm -50% tài nguyên do Thánh tích của kẻ địch tạo ra; chiến thắng nhờ Kỳ quan và Thánh tích cần thêm +100 năm
+  Thưởng đội: Chuồng ngựa hoạt động nhanh hơn +20%.
+8545 Đơn vị độc quyền: Chiến xa, Tàu rùa.
+  Công nghệ độc quyền: Eupseong và Thần cơ tiễn.
+  Thợ đào đá làm việc nhanh hơn +20%
+  Lính tầm xa và bộ binh giảm -50% chi phí gỗ
+  Nâng cấp giáp cung thủ và tháp miễn phí (Tháp pháo yêu cầu nghiên cứu Hóa học)
+  Thuyền chiến giảm -20% chi phí gỗ
+  Dòng công trình Tháp quan sát +2 phạm vi
+  Xe hỏa tiễn và Tàu rùa +1 phạm vi, bắn thêm đạn
+  Thưởng đội: Dân làng +3 tầm nhìn.
+8546 Đơn vị độc quyền: Cung thủ lông vũ.
+  Công nghệ độc quyền: Lính phóng lao Hul'che và Holcan.
+  Bắt đầu với +1 Dân làng, nhưng -50 Lương thực
+  Tài nguyên kéo dài lâu hơn +15%
+  Cung thủ đi bộ giảm -10/20/30% chi phí trong Thời phong kiến/Thời lâu đài/Thời đại đế quốc
+  Lính giao tranh bắn thêm một đạn
+  Chiến binh đại bàng +40 máu
+  Thưởng đội: Chi phí Tường giảm -50%.
+8547 Đơn vị độc quyền: Ghulam, Kỵ sĩ lạc đà Hoàng gia.
+  Công nghệ độc quyền: Đường Grand Trunk và Súng Shatagni.
+  Dân làng giảm -8/13/18/23% chi phí trong Thời đại tăm tối/Thời phong kiến/Thời lâu đài/ Thời đại đế quốc
+  Kỵ sĩ lạc đà tấn công nhanh hơn +20%
+  Đơn vị dùng thuốc súng +1 giáp cận chiến / +1 giáp xuyên thấu
+  Có thể xây dựng Caravanserai trong Thời đại đế quốc
+  Tất cả thu nhập vàng nhanh hơn +10%; Phí giao dịch ở Chợ giảm xuống còn 10%
+  Pháo thủ +2 phạm vi
+  Thưởng đội: Đơn vị dòng Kỵ binh do thám và Đơn vị cưỡi lạc đà tăng +2 điểm tấn công khi đánh công trình.
+8548 Đơn vị độc quyền: Tướng chinh phục, Truyền đạo sư.
+  Công nghệ độc quyền: Tòa án dị giáo và Quyền tối thượng.
+  Thợ xây làm việc nhanh hơn +30%
+  Nhận +20 vàng cho mỗi công nghệ được nghiên cứu
+  Nâng cấp Lò rèn không tốn vàng
+  Đơn vị dùng thuốc súng tấn công nhanh hơn +18%
+  Pháo hạm bắn chính xác hơn vào các mục tiêu di động
+  Tu sĩ và Truyền đạo sư chuyển đổi nhanh hơn; Truyền đạo sư +1 phạm vi
+  Dân làng +40 Máu, +6 điểm tấn công, +2 giáp cận chiến/+2 giáp chống xuyên
+  Thưởng đội: Đơn vị Giao thương tạo ra thêm +25% vàng.
+8549 Đơn vị độc quyền: Kỵ binh Magyar.
+  Công nghệ độc quyền: Quân đội Corvinia và Cung cong.
+  Dân làng đánh bại sói bằng một đòn
+  Chi phí dòng kỵ binh do thám giảm -15%
+  Nâng cấp tấn công cận chiến miễn phí
+  chi phí vàng cho Kỵ binh Magyar được thay thế bằng chi phí lương thực bổ sung
+  Cung thủ cưỡi thú +1 điểm tấn công, +1 phạm vi
+  Thưởng đội: Cung thủ cưỡi thú huấn luyện nhanh hơn +25%.
+8550 Đơn vị độc quyền: Obuch, Kỵ binh cánh.
+  Công nghệ độc quyền: Đặc quyền Szlachta và Di sản Lechite.
+  Trang trại thay thế Nhà xay lương
+  Dân làng hồi 10/15/20 Máu trong Thời Phong kiến / Thời Lâu đài / Thời đại Đế quốc
+  Thợ đào đá tạo ra vàng và đá
+  Nâng cấp Huyết mạch và dòng Kỵ binh do thám giảm -50% chi phí lương thực
+  Dòng Hiệp sĩ giảm -60% chi phí vàng
+  Dòng Kỵ binh do thám gây sát thương giẫm đạp
+  Thưởng đội: Kỵ binh do thám +1 điểm tấn công khi đối đầu binh lính tầm xa.
+8551 Đơn vị độc quyền: Nỏ binh Genova, Tư lệnh.
+  Công nghệ độc quyền: Con đường tơ lụa và Hỏa thương.
+  Nâng cấp lên thời đại tiếp theo giảm -15% chi phí
+  Cung thủ đi bộ và Tư lệnh +1 giáp cận chiến/+1 giáp chống xuyên
+  Chi phí công nghệ tại Bến tàu và Đại học giảm -25%
+  Đơn vị thuốc súng giảm -20% chi phí
+  Tàu đánh cá giảm -15% chi phí
+  Đơn vị giao thương giảm -50% chi phí
+  Pháo thủ gây thêm +15% sát thương xuyên qua và chính xác hơn
+  Thưởng đội: Tư lệnh có thể huấn luyện tại Nhà lính trong Thời đại đế quốc.
+8552 Đơn vị độc quyền: Chiến xa Hussite, Lựu pháo.
+  Công nghệ độc quyền: Chiến thuật Wagenburg và Cải cách Hussite.
+  Công nghệ tại Trại khai thác miễn phí
+  Lò rèn và Đại học giảm -100 gỗ
+  Dòng Lính giáo gây thêm +25% sát thương bổ sung
+  Nhiệt huyết và Sự thiêng liêng ảnh hưởng đến Dân làng
+  Hóa học và Pháo thủ có sẵn trong Thời Lâu đài
+  Đơn vị quân dùng thuốc súng di chuyển nhanh hơn +10%
+  Thầy tu và công nghệ Tu viện thay chi phí vàng bằng chi phí lương thực
+  Thưởng đội: Chợ hoạt động nhanh hơn +80%.
+8553 Đơn vị độc quyền: Janissary.
+  Công nghệ độc quyền: Sipahi và Pháo binh.
+  Thợ đào vàng làm việc nhanh hơn +25%
+  Dòng Kỵ binh do thám được +1 giáp xuyên thấu và nâng cấp miễn phí
+  Hóa học được nghiên cứu miễn phí; Chi phí nghiên cứu công nghệ thuốc súng giảm -50%
+  Đơn vị quân dùng thuốc súng +25% Máu
+  Cung thủ cưỡi thú được +20 Máu
+  Tháp pháo, Đại bác oanh tạc, Pháo hạm được +2 tầm bắn
+  Thưởng đội: Đơn vị quân dùng thuốc súng huấn luyện nhanh hơn +25%.
 8714 Bulgarians
-8554 Unique unit Konnik.
-  See English intro for full description.
+8554 Đơn vị độc quyền: Konnik.
+  Công nghệ độc quyền: Bàn đạp ngựa và Thương lượng.
+  Nâng cấp dòng Dân binh miễn phí
+  Công nghệ Lò rèn và Xưởng vũ khí công thành -50% chi phí lương thực
+  Nhà chính giảm -50% chi phí đá
+  Có thể xây dựng Đồn lũy ở Thời Lâu đài
+  Kỵ binh tấn công nhanh hơn +33%
+  Dòng Dân binh nhận +5 giáp
+  Thưởng đội: Lò rèn làm việc nhanh hơn +80%.
 8715 Lithuanians
-8555 Unique unit Leitis.
-  See English intro for full description.
+8555 Đơn vị độc quyền: Leitis, Kỵ binh cánh.
+  Công nghệ độc quyền: Hào lũy trên đồi và Khiên tháp.
+  Mỗi Nhà chính cung cấp +100 lương thực
+  Dòng Lính giáo và Lính giao tranh di chuyển nhanh hơn +10%
+  Mỗi Thánh tích đồn trú cung cấp +1 điểm tấn công cho dòng Hiệp sĩ và Leitis (tối đa +4 điểm)
+  Nhà chính +3 phạm vi
+  Dòng Lính giáo và Lính giao tranh +2 giáp chống xuyên
+  Thưởng đội: Tu viện làm việc nhanh hơn +20%.
 8716 Tatars
-8556 Unique unit Steppe Lancer.
-  See English intro for full description.
+8556 Đơn vị độc quyền: Khiếp bệ, Lạc đà lửa.
+  Công nghệ độc quyền: Giáp lụa và Thuật công thành Timurid.
+  Gia súc tồn tại lâu hơn +50%
+  Đơn vị gây thêm +25% sát thương khi chiến đấu từ địa hình cao hơn
+  Nhà chính mới tạo ra 2 con cừu bắt đầu từ Thời lâu đài
+  Vòng ngón tay cái, Chiến thuật Parthia nghiên cứu miễn phí
+  Dòng Kỵ binh do thám, Kỵ binh giáo thảo nguyên và Cung kỵ binh +1 giáp cận chiến/+1 giáp chống xuyên
+  Máy lăng đá +2 phạm vi
+  Thưởng đội: Cung thủ cưỡi thú tăng +2 tầm nhìn.
 8717 Berbers
-8557 Unique unit Camel Rider.
-  See English intro for full description.
+8557 Đơn vị độc quyền: Cung thủ lạc đà, Kỵ binh phóng lao.
+  Công nghệ độc quyền: Thành lũy và Lạc đà Maghrebi.
+  Dân làng di chuyển nhanh hơn +5% trong Thời kỳ Tăm tối, nhanh hơn +10% bắt đầu từ Thời Phong kiến
+  Đơn vị từ Chuồng ngựa giảm -15 / 20% chi phí trong Thời Lâu đài / Thời đại Đế quốc
+  Tàu di chuyển nhanh hơn +10%
+  Lâu đài của đội hoạt động nhanh hơn +25%
+  Đơn vị lạc đà hồi 15 Máu mỗi phút
+  Thưởng đội: Kỵ binh phóng lao có thể huấn luyện tại Trường bắn bắt đầu từ Thời Lâu đài.
 8718 Ethiopians
-8558 Unique unit Shotel Warrior.
-  See English intro for full description.
+8558 Đơn vị độc quyền: Lính kiếm cong.
+  Công nghệ độc quyền: Người kế vị và Cơ chế xoắn.
+  Nhận +100 vàng, +100 lương thực khi phát triển lên đời tiếp theo
+  Cung thủ đi bộ tấn công nhanh hơn +18%
+  Nâng cấp miễn phí Lính mác
+  các đơn vị Lính kiếm cong và Lạc đà giảm -3 sát thương phải chịu từ các đơn vị cưỡi thú của địch
+  tăng phạm vi công phá của các đơn vị từ Xưởng vũ khí công thành
+  Thưởng đội: Tiền đồn +3 tầm nhìn và không tốn đá.
 8719 Khmer
-8559 Unique unit Ballista Elephant.
-  See English intro for full description.
+8559 Đơn vị độc quyền: Voi bắn tên.
+  Công nghệ độc quyền: Kiếm ngà và Nỏ đôi.
+  Không cần công trình để phát triển lên thời tiếp theo hoặc để mở khóa các công trình khác
+  Nông dân không cần Nhà xay lương hay Nhà chính để cất chứa lương thực
+  Dân làng có thể đồn trú trong Nhà ở
+  Voi chiến di chuyển nhanh hơn +10%
+  Voi chiến +3 điểm tấn công
+  Voi bắn tên và Nỏ máy bắn thêm một đạn
+  Thưởng đội: Nỏ máy +1 phạm vi.
 8720 Malays
-8560 Unique unit Karambit Warrior.
-  See English intro for full description.
+8560 Đơn vị độc quyền: Lính dao cong.
+  Công nghệ độc quyền: Đế chế trên biển và Trưng binh bắt buộc.
+  Tiến lên Thời đại tiếp theo nhanh hơn +66%
+  Nâng cấp giáp bộ binh miễn phí
+  Voi chiến giảm -25/35% chi phí trong Thời Lâu đài / Thời đại Đế quốc
+  Bẫy cá giảm -33% chi phí và cung cấp +200% lương thực
+  Bến tàu được nâng cấp lên Cảng
+  Chi phí vàng cho dòng Dân binh được thay thế bằng chi phí lương thực bổ sung
+  Thưởng đội: Bến tàu +6 tầm nhìn.
 8721 Burmese
-8561 Unique unit Arambai.
-  See English intro for full description.
+8561 Đơn vị độc quyền: Kỵ binh phi tiêu.
+  Công nghệ độc quyền: Kỵ binh Manipur và Kiệu voi.
+  Công nghệ ở Trại đốn gỗ nghiên cứu miễn phí
+  Bộ binh +1/+2/+3 điểm tấn công trong Thời Phong kiến/Thời Lâu đài/Thời đại Đế quốc
+  Voi chiến +1 giáp cận chiến/+1 giáp chống xuyên
+  Công nghệ ở Tu viện giảm -50% chi phí
+  Kỵ binh +4 điểm tấn công khi đối đầu Lính tầm xa
+  Voi chiến +1 giáp cận chiến/+1 giáp chống xuyên
+  Thưởng đội: Thánh tích hiển thị trên bản đồ khi bắt đầu trò chơi.
 8722 Burgundians
-8562 Unique unit Coustillier.
-  See English intro for full description.
+8562 Đơn vị độc quyền: Kỵ binh phóng lao, Dân binh Flemish.
+  Công nghệ độc quyền: Vườn nho Burgundy và Cách mạng Flemish.
+  Nâng cấp kinh tế có trước một thời và giảm -40% chi phí lương thực
+  Công nghệ Chuồng ngựa giảm -50% chi phí
+  Có thể nâng cấp Kỵ sĩ ở Thời Lâu đài
+  Đơn vị quân dùng thuốc súng +25% điểm tấn công
+  Nông dân từ từ tạo thêm vàng ngoài lương thực
+  Chuyển đổi tất cả Dân làng hiện có thành Dân binh Flemish
+  Thưởng đội: Thánh tích tạo ra cả vàng và lương thực.
 8723 Sicilians
-8563 Unique unit Serjeant.
-  See English intro for full description.
+8563 Đơn vị độc quyền: Serjeant.
+  Công nghệ độc quyền: Cuộc Thập tự chinh đầu tiên và Áo giáp dài.
+  Bắt đầu với +100 đá
+  Nâng cấp Nông trại cung cấp +125% lương thực bổ sung
+  Giảm -40% sát thương thưởng mà binh lính phải chịu
+  Có thể xây dựng Donjon trong Thời Tăm tối, thay thế dòng Tháp quan sát
+  Tường gia cố được xây dựng nhanh hơn +50%; Nhà chính được xây dựng nhanh hơn +100%
+  Mỗi Nhà chính sinh ra 5 Serjeant tại tối đa 5 Nhà chính; các đơn vị kháng chuyển đổi tốt hơn
+  Hiệp sĩ +1 giáp cận chiến/+2 giáp chống xuyên
+  Thưởng đội: Tàu vận tải +5 tầm nhìn và chi phí giảm -50%.
 8724 Armenians
-8564 Unique unit Tarkan.
-  See English intro for full description.
+8564 Đơn vị độc quyền: Cung thủ Hỗn hợp, Linh mục chiến binh.
+  Công nghệ độc quyền: Hạm đội Cilician và Hòm thánh cốt.
+  Xe la giảm -25% chi phí
+  Công nghệ Xe la có hiệu quả tăng +40%
+  Nâng cấp đơn vị dòng Lính giáo và Dân binh (trừ Quân binh) có sẵn trước một thời đại
+  Nhà thờ gia cố đầu tiên nhận một Thánh tích miễn phí
+  Dòng Thuyền ga-lê và tàu Dromon bắn thêm một đạn
+  Tàu phá hủy +20% bán kính vụ nổ; dòng Thuyền ga-lê và Tàu Dromon +1 phạm vi
+  Bộ binh (trừ dòng Lính giáo) +30 Máu, Linh mục chiến binh +100% tốc độ hồi máu
+  Thưởng đội: Bộ binh +2 tầm nhìn.
 8725 Georgians
-8565 Unique unit Monaspa.
-  See English intro for full description.
+8565 Đơn vị độc quyền: Monaspa.
+  Công nghệ độc quyền: Tháp Svan và Kỵ binh Aznauri.
+  Bắt đầu với một Xe la
+  Các đơn vị và công trình giảm -15% sát thương phải chịu khi nằm ở địa hình cao hơn
+  Các đơn vị cưỡi thú hồi 2/8/14 Máu mỗi phút trong Thời phong kiến/Thời lâu đài/Thời đại đế quốc
+  Nhà thờ kiên cố cung cấp +10% tốc độ làm việc cho Dân làng trong bán kính 9 ô
+  Tường gia cố +2 tấn công; dòng Tháp quan sát gây sát thương xuyên qua
+  Đơn vị cưỡi thú giảm -20% suất dân số chiếm dụng
+  Thưởng đội: Chi phí sửa chữa công trình giảm -25%.
 8726 Incas
-8566 Unique unit Slinger.
-  See English intro for full description.
+8566 Đơn vị độc quyền: Kamayuk.
+  Công nghệ độc quyền: Dây ném Andes và Khiên vải.
+  Nhà ở và Khu định cư cung cấp +5 suất dân số
+  Chi phí công trình giảm -15% đá
+  Đơn vị quân đội giảm -15/20/25/30% chi phí lương thực trong Thời kỳ Tăm tối/Thời Phong kiến/Thời Lâu đài/Thời đại Đế quốc
+  Dân làng chịu ảnh hưởng khi nâng cấp Lò rèn Bộ binh bắt đầu từ Thời Lâu đài
+  Lính giao tranh và Lính ném đá không có phạm vi tối thiểu; Lính ném đá +1 điểm tấn công
+  Kamayuk, Lính ném đá và Chiến binh Champi +1 giáp cận chiến/+1 giáp chống xuyên
+  Thưởng đội: Bắt đầu với 1 Lạc đà không bướu miễn phí.
 8727 Romans
-8567 Unique unit Legionary.
-  See English intro for full description.
+8567 Đơn vị độc quyền: Centurion, Lính lê dương.
+  Công nghệ độc quyền: Máy Bắn Tên và Quân Comitatenses.
+  Dân làng thu thập, xây dựng và sửa chữa nhanh hơn +5%
+  Hiệu ứng nâng cấp giáp bộ binh được nhân đôi
+  Nỏ máy giảm -50% chi phí vàng
+  Dòng Thuyền ga-lê và Tàu Dromon +1 giáp cận chiến/+1 giáp chống xuyên
+  Nỏ máy tấn công nhanh hơn +33%; dòng Thuyền ga-lê +2 điểm tấn công
+  Dòng Dân binh, Hiệp sĩ và Centurion huấn luyện nhanh hơn +50% và nhận được một tấn công xung kích
+  Thưởng đội: Giảm phạm vi tối thiểu của Nỏ máy.
 
 ; New unique unit titles (9029-9039)
 9029 Konnik
@@ -620,6 +782,23 @@
 8355 Elite Legionary
 8356 Elite Slinger
 
+; AoE2 DE unique units without a spoken name until now
+
+8358 Mameluk tinh hoa
+8359 Keshik tinh hoa
+8360 Cung thủ lạc đà tinh hoa
+8361 Obuch tinh hoa
+8362 Cung thủ hợp thành tinh hoa
+8363 Genitour tinh hoa
+9108 Mameluk
+9109 Keshik
+9110 Cung thủ lạc đà
+9111 Obuch
+9112 Cung thủ hợp thành
+9113 Genitour
+9114 Nhà truyền giáo
+9115 Houfnice
+
 ; Roman unique units / technologies (Romans)
 9057 Trung úy
 9058 Trung úy tinh hoa
@@ -633,3 +812,50 @@
 ; Inca unique unit (Kamayuk)
 9040 Kamayuk
 8357 Kamayuk tinh hoa
+
+; AoE2 DE unique technologies (canonical DE set)
+9063 Đối trọng
+9064 Bimaristan
+9065 Thành trì
+9066 Detinets
+9067 Eupseong
+9068 Holcan
+9069 Kích thủ Hul'che
+9070 Tối cao
+9071 Tôn giáo điều tra
+9072 Cung thuận
+9073 Đội quân Corvinia
+9074 Di sản Lech
+9075 Đặc quyền giới quý tộc
+9076 Con đường tơ lụa
+9077 Pa-vi-ze
+9078 Cải cách Hussite
+9079 Chiến thuật Wagenburg
+9080 Pháo binh
+9081 Sipahi
+9082 Bagains
+9083 Yên cương
+9084 Khiên tháp
+9085 Pháo đài đồi
+9086 Nghệ thuật vây hãm Timurid
+9087 Giáp lụa
+9088 Lạc đà Maghreb
+9089 Kasbah
+9090 Người thừa kế vương triều
+9091 Máy xoắn ốc
+9092 Náo cung kép
+9093 Kiếm ngà voi
+9094 Tuyển quân cưỡng chế
+9095 Thủy triều
+9096 Kỵ binh Manipur
+9097 Howdah
+9098 Cách mạng Vlaem
+9099 Vườn nho Burgundia
+9100 Hauberk
+9101 Thập giáo lần thứ nhất
+9102 Fereter
+9103 Hạm đội Cilicia
+9104 Kỵ binh Aznauri
+9105 Tháp Svan
+9106 Khiên vải
+9107 Náo Andes

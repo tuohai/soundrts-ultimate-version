@@ -21,18 +21,26 @@
 8016 Sarrasins
 
 8700 Goths
-8540 Unique unit Huskarl.
-  Unique techs Anarchy and Perfusion.
-  Infantry costs less.
-  Huskarls and Eagle Warriors are cheaper and tougher.
-  Infantry return some food when killing units.
-  Team bonus: Huskarls have more line of sight.
+8540 Unité unique : Huskarl.
+  Techs uniques : Anarchie et Mobilisation rapide.
+  Technologie Métier à tisser développée instantanément
+  Chasseurs +15 de capacité de transport ; les animaux chassés durent 20 % plus longtemps
+  Coût de l'infanterie -15/20/25/30 % à l'âge sombre/féodal/des châteaux/ impérial
+  Infanterie +1/+2/+3 d'attaque contre les bâtiments à l'âge féodal/ des châteaux/impérial
+  +10 d'espace de population à l'âge impérial
+  les huskarls peuvent être formés à la caserne
+  cadence de travail de la caserne +100 %
+  Bonus d'équipe : Cadence de travail de la caserne +20 %.
 8701 Perses
-8541 Unique unit War Elephant.
-  Unique techs Kamandaran and Silos.
-  Start with fifty extra food and wood.
-  Town Centers work faster.
-  Team bonus: trade gains more gold.
+8541 Unité unique : Éléphant de guerre, savaran.
+  Techs uniques : Kamandaran et Citadelles.
+  Commencez avec +50 de bois et +50 de nourriture
+  Forums et ports +100 % de PV et cadence de travail +5/10/15/20 % plus rapide à l'âge sombre/féodal/des châteaux/impérial
+  Tactiques parthes disponible à l'âge des châteaux
+  Peut construire des caravansérails à l'âge impérial
+  coût en or des archers remplacé par un coût en bois supplémentaire
+  châteaux +4 d'attaque, +3 contre les béliers, +3 contre l'infanterie et subissent 25 % de dégâts en moins
+  Bonus d'équipe : Chevaliers +2 d'attaque contre les soldats à distance.
 8702 Slaves
 8703 Coumans
 8704 Huns
@@ -67,15 +75,11 @@
 9043 Perfusion
 9044 Kamandaran
 9045 Druzhina
-9046 Orthodoxie
 9047 Élevage steppique
 9048 Mercenaires coumans
 9049 Maraudeurs
 9050 Athéisme
-9051 Panokseon
 9052 Shinkichon
-9053 El Dorado
-9054 Architecture maya
 9055 Grand Trunk Road
 9056 Shatagni
 8070 Samouraï
@@ -375,224 +379,382 @@
 8514 Les conversions ennemies contre vous prennent beaucoup plus de temps
 8515 Quand plusieurs moines convertissent ensemble, seul celui qui réussit se repose
 ; Bonus de civilisation (lu dans le sélecteur de faction via G ; lignes indentées = suite)
-8520 Unité unique : fantassin à arc long.
-  Techs uniques : Yeomen et Warwolf.
-  Archers à pied plus une portée à l'âge des châteaux et plus une à l'âge impérial, sauf javeliniers.
-  Les bergers travaillent plus vite.
-  Les forums coûtent moitié moins de bois dès l'âge des châteaux.
-  Bonus d'équipe : les camps de tir travaillent plus vite.
-  Pas de Lignées, pas d'Anneau de pouce.
-8521 Unité unique : lanceur de hache.
-  Techs uniques : hache barbue et chevalerie.
-  Cavalerie plus vingt pour cent de points de vie dès l'âge féodal.
-  Les cueilleurs travaillent plus vite.
-  Les améliorations de ferme sont gratuites.
-  Les châteaux coûtent moins de pierre.
-  Bonus d'équipe : chevaliers plus deux de vision.
-  Pas d'Anneau de pouce, Brassard, Cotte de mailles d'archer ni Lignées.
-8522 Unité unique : Chu Ko Nu.
-  Techs uniques : fusées et Grande Muraille.
-  Départ avec trois villageois en plus, moins cinquante bois et deux cents nourriture.
-  Technologies moins chères de cinq, dix et quinze pour cent aux âges féodal, des châteaux et impérial.
-  Les forums abritent quinze de population et plus sept de vision.
-  Les navires de feu vont plus vite aux âges des châteaux et impérial.
-  Bonus d'équipe : les fermes contiennent dix pour cent de nourriture en plus.
+8520 Unité unique : Fantassin à arc long.
+  Techs uniques : Paysan et Loup de guerre.
+  Les bergers travaillent 25 % plus vite
+  Les forums coûtent -50 % de bois à partir de l'âge des châteaux
+  Archers à pied +1/+2 de portée à l'âge des châteaux/impérial
+  archers à pied et escarmoucheurs +1 de portée ; tours de guet +2 d'attaque
+  les trébuchets infligent des dégâts de zone et sont plus précis
+  Bonus d'équipe : Les camps de tir à l'arc travaillent 10 % plus vite.
+8521 Unité unique : Lanceur de hache.
+  Techs uniques : Compagnies d'ordonnance et Chevalerie.
+  Les cueilleurs travaillent 15 % plus vite
+  Technologies du moulin gratuites
+  Unités montées +20 % de PV à partir de l'Âge féodal
+  Les châteaux coûtent -15/25 % à l'Âge des châteaux/impérial
+  les arbalétriers montés coûtent 40 % d'or en moins
+  les écuries travaillent 40 % plus vite
+  Bonus d'équipe : Chevaliers +2 de ligne de mire.
+8522 Unité unique : Chu ko nu, navire Dragon.
+  Techs uniques : Grande Muraille et Propulsion.
+  Commencez avec +3 villageois, mais -50 de bois et -200 de nourriture
+  Les technologies coûtent -5/10/15 % à l'âge féodal/des châteaux/impérial
+  Les forums ont +7 de ligne de mire et fournissent +15 d'espace de population
+  Les lanciers de feu et les navires incendiaires se déplacent 5/10 % plus rapidement à l'âge des châteaux/impérial
+  murs, tours de guet et tours de bombarde +30 % de PV
+  scorpions, chariots-fusées et lou chuans +25 % d'attaque ; les lou chuans tirent des fusées
+  Bonus d'équipe : Fermes +10 % de nourriture.
 8523 Unité unique : Mangudaï.
-  Techs uniques : Drill et Nomades.
-  Les chasseurs travaillent plus vite.
-  Ligne d'éclaireurs plus vingt puis trente pour cent de points de vie aux âges des châteaux et impérial.
-  Les archers montés tirent plus vite.
-  Pâturages au lieu de fermes ; pas de moulin.
-  Bonus d'équipe : ligne d'éclaireurs plus deux de vision.
-8524 Unité unique : cataphractaire.
-  Techs uniques : Logistique et Feu grégeois.
-  Les bâtiments gagnent des points de vie à chaque âge.
-  L'âge impérial coûte trente-trois pour cent de moins.
-  Chameaux, javeliniers et lanciers coûtent moins.
-  Les navires de feu attaquent plus vite.
-  Guet et Patrouille urbaine sont gratuits.
-  Bonus d'équipe : les moines soignent plus vite.
-8525 Unité unique : samouraï.
+  Techs uniques : Nomades et Manœuvres.
+  Les chasseurs travaillent 40 % plus vite
+  Les archers de cavalerie attaquent 25 % plus vite
+  Les cavaliers d'éclairage et les lanciers des steppes bénéficient de 20/30 % de PV en plus à l'Âge des châteaux/impérial
+  les habitations perdues ne réduisent pas l'espace de population
+  les unités de l'atelier de siège se déplacent 50 % plus vite
+  Bonus d'équipe : Les cavaliers d'éclairage bénéficient de +2 de ligne de mire.
+8524 Unité unique : Cataphractaire.
+  Techs uniques : Feu grégeois et Logistique.
+  Bâtiments +10/20/30/40 % de PV à l'Âge sombre/féodal/des châteaux/impérial
+  Les chameliers, tirailleurs et lanciers coûtent -25 %
+  Technologies Patrouille de ville et Tour de guet gratuites
+  Avancer à l'Âge impérial coûte -33 %
+  Les navires incendiaires et les dromons attaquent 25 % plus rapidement
+  navires incendiaires +1 de portée ; rayon d'impact des dromons et des tours de bombarde augmenté
+  les cataphractaires et les gardes varègues infligent des dégâts de piétinement
+  Bonus d'équipe : Les moines soignent 100 % plus vite.
+8525 Unité unique : Samouraï.
   Techs uniques : Yasama et Kataparuto.
-  L'infanterie attaque plus vite dès l'âge féodal.
-  Les bateaux de pêche ont plus de points de vie et travaillent plus vite.
-  Moulins et camps coûtent moins.
-  Bonus d'équipe : galères plus quatre de vision.
-8526 Unité unique : chevalier teutonique.
-  Techs uniques : Blindage et Créneaux.
-  Unités de caserne et d'écurie plus armure de mêlée aux âges des châteaux et impérial.
-  Les fermes coûtent moins de bois.
-  Meurtrières et Herbes médicinales sont gratuits.
-  Bonus d'équipe : résistent à la conversion.
-8527 Unité unique : fou de guerre.
-  Techs uniques : Chefs de clan et Bogsveigar.
-  Infanterie plus vingt pour cent de points de vie dès l'âge féodal.
-  Brouette et Chariot à bras sont gratuits.
-  Les navires de guerre coûtent moins.
-  Les docks peuvent former des drakkars.
-  Bonus d'équipe : les docks coûtent moins.
-8528 Unité unique : fantassin à arc en rotin.
-  Techs uniques : Chatras et Papier-monnaie.
-  Unités du camp de tir plus vingt pour cent de points de vie.
-  Révèle les forums ennemis au départ.
-  Conscription est gratuite.
-  Les technologies économiques ne coûtent pas de bois et se recherchent plus vite.
-  Bonus d'équipe : le javelineur impérial est disponible.
-8529 Unité unique : ribaudequin.
+  Les moulins, les camps de bûcherons et les camps de mineurs coûtent -50 %
+  L'infanterie attaque 33 % plus rapidement à partir de l'Âge féodal
+  Archers de cavalerie +2 d'attaque contre les soldats à distance (sauf les tirailleurs)
+  Les navires de pêche travaillent +5/10/15/20 % plus vite à l'Âge sombre/féodal/des châteaux/impérial ; +100 % de PV
+  les tours de guet tirent des flèches supplémentaires
+  les trébuchets attaquent et sont montés/démontés plus vite
+  Bonus d'équipe : Galères +4 de ligne de mire.
+8526 Unité unique : Chevalier teutonique.
+  Techs uniques : Cuirasses et Crénelures.
+  Coût des fermes -40 %
+  Forums +10 de capacité de garnison ; tours +5 de capacité de garnison
+  Infanterie et unités montées +1/+2 d'armure de corps-à-corps à l'Âge des châteaux/impérial
+  Moines +100 % de portée de soins
+  Technologies Mâchicoulis et Plantes médicinales gratuites
+  armes de siège +4 d'armure de corps-à-corps
+  châteaux +3 de portée ; l'infanterie en garnison tire des flèches
+  Bonus d'équipe : Unités plus résistantes à la conversion.
+8527 Unité unique : Berserker.
+  Techs uniques : Chefs de tribu et Bogsveigar.
+  Technologies Brouette, Charrette à bras gratuites
+  Infanterie +20 % de PV à partir de l'Âge féodal
+  Les navires de guerre coûtent -10/15/20 % à l'Âge féodal/des châteaux/impérial
+  infanterie +5 d'attaque contre la cavalerie, +4 contre les unités à chameau
+  archers et drakkars +1 d'attaque
+  Bonus d'équipe : Coût des ports -15 %.
+8528 Unité unique : Fantassin à arc en rotin, Tirailleur impérial.
+  Techs uniques : Chatras et Monnaie de papier.
+  Révèle les forums ennemis au début de la partie
+  Les améliorations économiques ne consomment pas de bois et le développement est accéléré de +100 %
+  PV des archers à pied et des tirailleurs +20 %
+  Conscription gratuite
+  PV des éléphants de combat +100
+  les bûcherons génèrent lentement de l'or en plus du bois
+  Bonus d'équipe : Amélioration Tirailleur impérial disponible à l'Âge impérial.
+8529 Unité unique : Ribaudequin, caravelle.
   Techs uniques : Circumnavigation et Arquebuse.
-  Navires plus dix pour cent de points de vie.
-  Toutes les unités coûtent vingt pour cent d'or en moins.
-  Les cueilleurs récoltent aussi du bois.
-  Peuvent construire une Feitoria.
-  Bonus d'équipe : les technologies se recherchent plus vite.
-8530 Unité unique : guerrier jaguar.
-  Techs uniques : Atlatl et Guerre des fleurs.
-  Départ avec cinquante or en plus.
-  Les villageois portent trois de plus.
-  L'armée s'entraîne plus vite.
-  Les moines gagnent cinq points de vie par technologie du monastère.
-  Bonus d'équipe : les reliques produisent plus d'or.
-  Pas d'écuries ni de cavalerie.
-8531 Unité unique : guerrier à la peinture de guerre.
-  Techs uniques : Fortin et Furie celtique.
-  Infanterie plus cinq pour cent de vitesse à chaque âge dès l'âge sombre.
-  Les bûcherons travaillent plus vite.
-  Les armes de siège tirent plus vite.
-  Peuvent voler les troupeaux ennemis même si une unité est à côté.
-  Bonus d'équipe : les ateliers de siège travaillent plus vite.
+  Les cueilleurs génèrent du bois en plus de la nourriture
+  Toutes les unités coûtent -20 % d’or
+  Peut construire une feitoria à l’âge impérial
+  Navires +10/15/20 % de PV à l’âge féodal/des châteaux/impérial
+  Explore entièrement la carte ; les navires sont formés 33 % plus vite
+  les unités de poudre à canon tirent avec plus de précision sur les cibles en mouvement
+  Bonus d'équipe : Développement de technologies accéléré de +25 %.
+8530 Unité unique : Guerrier jaguar.
+  Techs uniques : Propulseur et Guerres glorieuses.
+  Commence avec +50 d'or
+  Les villageois bénéficient de +3 de capacité de transport
+  Les unités militaires se forment 15 % plus vite
+  Les moines gagnent +5 PV pour chaque technologie de monastère développée
+  les tirailleurs bénéficient de +1 d'attaque et de portée
+  l'infanterie bénéficie de +4 d'attaque
+  Bonus d'équipe : Les reliques génèrent +33 % d'or.
+8531 Unité unique : Guerrier de guède.
+  Techs uniques : Citadelle et Fureur celte.
+  Les bûcherons travaillent 15 % plus vite
+  Les animaux de bétail ciblés par l'unité celte ne peuvent pas être volés
+  L'infanterie se déplace 5/10/15/20 % plus vite à l'âge sombre/féodal/ des châteaux/impérial
+  Les armes de siège attaquent 25 % plus vite
+  les châteaux et tours de guet attaquent 33 % plus vite ; les châteaux soignent l'infanterie alliée dans un rayon de 7 parcelles
+  les armes de siège bénéficient de +40 % de PV
+  Bonus d'équipe : Les ateliers de siège travaillent 20 % plus vite.
 8532 Unité unique : Gbeto.
-  Technologies uniques : Tigui et Farimba.
-  Les bâtiments coûtent quinze pour cent moins de bois, sauf les fermes.
-  Les unités de caserne gagnent de l'armure de perçage par âge.
-  Les villageois déposent dix pour cent plus d'or.
-  Équipe : les universités travaillent plus vite.
+  Techs uniques : Tigui et Farimba.
+  Les bâtiments coûtent -15 % de bois
+  Les villageois déposent 10 % plus d'or
+  Les unités de caserne bénéficient de +1/+2/+3 d'armure de perçage à l'âge féodal/ des châteaux/impérial
+  les forums tirent des flèches sans garnison
+  cavalerie +5 d'attaque
+  Bonus d'équipe : Les universités travaillent 80 % plus vite.
 
 ; New civilizations (14 from previous commit + 2 final: Inca, Romans)
 ; Language: fr
 
 8533 Unité unique : Mamelouk.
-  Technologies uniques : Madrasa et Zèle.
-  Les écuries coûtent moins cinquante/soixante d'or aux ères des ténèbres/des châteaux.
-  Les navires de transport ont le double de points de vie et transportent plus deux.
-  Les navires infligent plus six/plus sept dégâts aux bâtiments aux ères des châteaux/impériale.
-  Bonus d'équipe : les archers à pied gagnent plus un d'attaque contre les bâtiments dès l'ère des châteaux.
-8542 Unique unit Boyar.
-  Unique techs Druzhina and Orthodoxy.
-  Barracks and Archery Range units cost less.
-  Villagers have more hit points.
-  Team bonus: Militia line moves faster.
-8543 Unique unit Kipchak.
-  Unique techs Cuman Mercenaries and Steppe Husbandry.
-  Can build a second Town Center in Feudal Age.
-  Steppe Lancers cost less.
-  Cavalry archers train faster.
-  Team bonus: Barracks and Archery Range units train faster.
-8544 Unique unit Tarkan.
-  Unique techs Atheism and Marauders.
-  Start with one extra Scout Cavalry, no houses required.
-  Cavalry archers train faster.
-  Earn gold for killing villagers and monks.
-  Team bonus: Tarkans do bonus damage to buildings.
-8545 Unique unit War Wagon.
-  Unique techs Panokseon and Shinkichon.
-  Towers and Castles gain line of sight each age.
-  Woodcutters work faster.
-  Mangonels and Trebuchets are more accurate.
-  Ships and Cannon Galleons are tougher.
-  Team bonus: Siege Workshops can build War Wagons.
-8546 Unique unit Plumed Archer.
-  Unique techs El Dorado and Maya Architecture.
-  Start with one extra villager.
-  Resources last longer on the map.
-  Eagle line is tougher and stronger against archers.
-  Walls cost less.
-  Team bonus: walls cost less.
-8547 Unique unit Armored Elephant.
-  Unique techs Grand Trunk Road and Shatagni.
-  Buildings except farms cost less wood.
-  Camels and Heavy Camels cost less.
-  Town Centers and Outposts have more range and line of sight.
-  Team bonus: Hand Cannoneers have extra range.
-8548 Unique unit Conquistador.
-  Unique techs Supremacy and Inquisition.
-  Builders work faster.
-  Hand Cannoneers are more powerful.
-  Gunpowder units fire faster.
-  Trade generates more gold.
-  Team bonus: Hand Cannoneers are more accurate.
-8549 Unique unit Magyar Huszar.
-  Unique techs Mercenaries and Magyar Huszardom.
-  Scout line gains line of sight each age.
-  Trade Carts carry more.
-  Hussars train faster.
-  Team bonus: trade gains more gold.
-8550 Unique unit Winged Hussar.
-  Unique techs Stone Mining bonus.
-  Knights attack harder.
-  Stone mines have more resources.
-  Team bonus: Scout line gains line of sight.
-8551 Unique unit Genoese Crossbowman.
-  Unique techs Pavise and Silk Road.
-  Gunpowder units cost less gold.
-  Dock buildings are tougher.
-  Trade generates more gold.
-  Technologies cost less.
-  Team bonus: trade gains more gold.
-8552 Unique unit Hussite Wagon.
-  Unique techs Sappers.
-  Universities cost less.
-  Mines yield more stone.
-  Wagons and Siege Workshop units cost less.
-  Team bonus: mines yield extra stone.
-8553 Unique unit Janissary.
-  Unique techs Sipahi and Artillery.
-  Mines yield more gold.
-  Gunpowder units train faster.
-  Hand Cannoneers are more accurate.
-  Monks heal faster.
-  Team bonus: Chemistry is free.
+  Techs uniques : Bimaristan et Contrepoids.
+  Taxe d’échange du marché de seulement 5 % ; coût des marchés -100 unités de bois
+  Unités à chameau +25 % de PV
+  Galères +25 % de vitesse d’attaque
+  Navires de transport +100 % de PV, +20 de capacité de transport
+  les moines soignent passivement plusieurs unités proches
+  trébuchets et mangonneaux +15 % d’attaque
+  Bonus d'équipe : Archers à pied et escarmoucheurs +2 d’attaque contre les bâtiments.
+8542 Unité unique : Boyard.
+  Techs uniques : Detinets et Druzhina.
+  Les fermiers travaillent 15 % plus vite
+  Brasier, Jaques gratuits
+  Coût des unités de l’atelier de siège -15 %
+  Les moines se déplacent 20 % plus vite
+  remplace le coût en pierre de 40 % du château et de la tour de guet par un coût en bois supplémentaire
+  l’infanterie inflige des dégâts de piétinement
+  Bonus d'équipe : Les bâtiments militaires (sauf les châteaux) offrent +5 d’espace de population.
+8543 Unité unique : Kipchak.
+  Techs uniques : Élevage des steppes et Mercenaires Coumans.
+  Un forum supplémentaire peut être construit à l'Âge féodal
+  Vitesse de déplacement de la cavalerie + 5/10/15 % à l'Âge féodal/ des châteaux/impérial
+  Les camps de tir à l'arc et les écuries coûtent 75 unités de bois de moins
+  Atelier de siège et bélier disponibles à l'Âge féodal ; bélier renforcé disponible à partir de l'Âge des châteaux
+  vitesse de formation des cavaliers d'éclairage, des lanciers des steppes et des archers de cavalerie +100 %
+  tous les membres de l'équipe peuvent former 5 Kipchaks d'élite gratuits par château
+  Bonus d'équipe : Palissades +33 % de PV.
+8544 Unité unique : Tarkan.
+  Techs uniques : Maraudeurs et Athéisme.
+  Ne nécessite pas d'habitations, mais commence avec -100 de bois
+  Les archers de cavalerie coûtent -10/20 % à l'âge des châteaux/impérial
+  Les trébuchets tirent avec plus de précision sur les unités et les petites cibles
+  Sur les cartes nomades, le premier forum fait apparaître un cheval de reconnaissance
+  les tarkans peuvent être formés dans les écuries
+  les reliques ennemies génèrent -50 % de ressources ; les victoires par merveille et par relique prennent plus de 100 ans
+  Bonus d'équipe : Les écuries travaillent 20 % plus vite.
+8545 Unité unique : Chariot de guerre, navire tortue.
+  Techs uniques : Eupseong et Singijeon.
+  Cadence de travail +20 % pour les mineurs de pierre
+  Les soldats à distance et l'infanterie coûtent -50 % de bois
+  Armure des archers et améliorations des tours gratuites (Chimie nécessaire pour les tours de bombarde)
+  Les navires de guerre coûtent -20 % de bois
+  portée de la ligne des tours de guet +2
+  portée des chariots-fusées et des navires tortues +1, tirent des projectiles supplémentaires
+  Bonus d'équipe : +3 de ligne de mire pour les villageois.
+8546 Unité unique : Archer à plumes.
+  Techs uniques : Javeliniers à hul'che et Holcans.
+  Commence avec +1 villageois, mais -50 unités de nourriture
+  Les ressources durent +15 % plus longtemps
+  Les archers à pied coûtent 10/20/30 % de moins à l'Âge féodal/des châteaux/impérial
+  les tirailleurs tirent un projectile supplémentaire
+  +40 PV pour les guerriers aigles
+  Bonus d'équipe : Les murs coûtent -50 %.
+8547 Unité unique : Ghulam, chamelier impérial.
+  Techs uniques : Route du Grand Tronc et Shatagni.
+  Les villageois coûtent -8/13/18/23 % à l'Âge sombre/féodal/des châteaux/ impérial
+  Les chameliers attaquent 20 % plus vite
+  Les unités de poudre à canon bénéficient de +1 d'armure de corps-à-corps et d'armure de perçage
+  Peut construire des caravansérails à l'Âge impérial
+  production d'or accélérée de +10 % ; taxe d'échange du marché réduite à 10 %
+  canonniers à main +2 de portée
+  Bonus d'équipe : Cavaliers d'éclairage et unités à chameau +2 d'attaque contre les bâtiments.
+8548 Unité unique : Conquistador, missionnaire.
+  Techs uniques : Inquisition et Suprématie.
+  Les constructeurs travaillent +30 % plus vite
+  Vous recevez +20 pièces d'or pour chaque technologie développée
+  Les améliorations de la forge ne coûtent pas d'or
+  Les unités de poudre à canon attaquent +18 % plus vite
+  Les galions à canon tirent plus précisément sur les cibles mobiles
+  les moines et les missionnaires convertissent plus vite ; les missionnaires ont +1 de portée
+  les villageois bénéficient de +40 PV, de +6 d'attaque, de +2 d'armure de corps à corps et de +2 d'armure de perçage
+  Bonus d'équipe : Les unités marchandes génèrent +25 % d'or.
+8549 Unité unique : Hussard hongrois.
+  Techs uniques : Armée corvinienne et Arc recourbé.
+  Les villageois battent les loups d'un seul coup
+  La ligne des cavaliers éclaireurs coûte -15 %
+  Améliorations d'attaque au corps à corps gratuites
+  le coût en or du hussard hongrois est remplacé par un coût en nourriture supplémentaire
+  archers montés +1 d'attaque, +1 de portée
+  Bonus d'équipe : Les archers montés se forment 25 % plus vite.
+8550 Unité unique : Obuch, Hussards ailés.
+  Techs uniques : Privilèges szlachta et Héritage léchitique.
+  Les folwarki remplacent les moulins
+  Les villageois regagnent 10/15/20 PV par minute à l'âge féodal/des châteaux/impérial
+  Les mineurs de pierre génèrent également de l'or
+  Les améliorations Lignes de sang et Cavaliers éclaireurs coûtent 50 % de nourriture en moins.
+  les unités de type chevalier coûtent 60 % d'or en moins
+  les unités de type cavalier éclaireur infligent des dégâts de piétinement
+  Bonus d'équipe : Unités de type cavalier éclaireur, cavalerie légère, hussard +1 attaque contre les soldats à distance.
+8551 Unité unique : Arbalétrier génois, Condottière.
+  Techs uniques : Route de la soie et Pyrotechnie.
+  Avancer vers l'Âge suivant coûte -15 %
+  Les archers à pied et les condottières bénéficient de +1 d'armure de corps-à-corps et d'armure de perçage
+  Coût des technologies du port et de l'université -25 %
+  Coût des unités de poudre à canon -20 %
+  Coût des navires de pêche -15 %
+  coût des unités marchandes -50 %
+  les canonniers à main infligent +15 % de dégâts perforants et sont plus précis
+  Bonus d'équipe : Condottière disponible à la caserne à l'Âge impérial.
+8552 Unité unique : Chariot de guerre hussite, Houfnice.
+  Techs uniques : Tactiques de Wagenburg et Réformes hussites.
+  Les technologies du Camp de mineurs sont gratuites
+  Les Forges et les Universités coûtent 100 de bois en moins
+  Les lanciers infligent 25 % de dégâts supplémentaires
+  Ferveur et Sainteté affectent les villageois
+  Chimie et Canonnier à main disponibles à l'âge des châteaux
+  les unités de poudre à canon se déplacent 10 % plus rapidement
+  le coût en or des technologies des moines et du Monastère est remplacé par un coût en nourriture
+  Bonus d'équipe : Les marchés fonctionnent 80 % plus vite.
+8553 Unité unique : Janissaire.
+  Techs uniques : Sipahi et Artillerie.
+  Les mineurs d'or travaillent +25 % plus vite
+  Cavaliers d'éclairage +1 d'armure de perçage et améliorations gratuites
+  Chimie gratuite ; les technologies de poudre à canon coûtent -50 %
+  Unités de poudre à canon +25 % de PV
+  archers montés +20 PV
+  tours de bombarde, canons à bombarde, galions à canon +2 de portée
+  Bonus d'équipe : Les unités de poudre à canon se forment +25 % plus vite.
 8714 Bulgares
-8554 Unique unit Konnik.
-  See English intro for full description.
+8554 Unité unique : Cavalier bulgare.
+  Techs uniques : Étriers et Bagains.
+  Améliorations des unités de type milicien gratuites
+  Coût en nourriture des technologies associées aux forges et aux ateliers de siège -50 %
+  Coût en pierre des forums -50 %
+  Peut construire des kreposts à l'âge des châteaux
+  vitesse d'attaque de la cavalerie +33 %
+  +5 d'armure au corps à corps pour les unités de type milicien
+  Bonus d'équipe : Les forges fonctionnent 80 % plus vite.
 8715 Lituaniens
-8555 Unique unit Leitis.
-  See English intro for full description.
+8555 Unité unique : Leitis, Hussard ailé.
+  Techs uniques : Collines fortifiées et Boucliers rectangulaires.
+  Chaque forum fournit +100 de nourriture
+  Vitesse des unités de type lancier et tirailleur +10 %
+  Attaque des unités de type chevalier et des leitis +1 pour chaque relique en garnison (+4 maximum)
+  portée des forums +3
+  +2 armure de perçage pour les unités de type lancier et les tirailleurs
+  Bonus d'équipe : Les monastères fonctionnent 20 % plus vite.
 8716 Tatars
-8556 Unique unit Steppe Lancer.
-  See English intro for full description.
+8556 Unité unique : Kheshig, chamelier incendiaire.
+  Techs uniques : Armure de soie et Arme de siège timuride.
+  Les animaux de bétail durent 50 % plus longtemps
+  Les unités infligent 25 % de dégâts en plus quand elles se battent d'une hauteur supérieure
+  2 moutons apparaissent près des nouveaux forums à partir de l'Âge des châteaux
+  Technologies Bague de pouce et Tactiques parthes gratuites
+  +1 d'armure au corps-à-corps et d'armure de perçage pour les cavaliers d'éclairage, les lanciers des steppes et les archers de cavalerie
+  +2 de portée pour les trébuchets
+  Bonus d'équipe : +2 de ligne de mire pour les archers montés.
 8717 Berbères
-8557 Unique unit Camel Rider.
-  See English intro for full description.
+8557 Unité unique : Archer de chamellerie, jinete.
+  Techs uniques : Kasbah et Chameaux du Maghreb.
+  Les villageois se déplacent 5 % plus vite à l'âge sombre, 10 % plus vite à partir de l'âge féodal
+  Les unités des écuries coûtent -15/20 % à l'âge des châteaux/impérial
+  Les navires se déplacent 10 % plus vite
+  les châteaux d'équipe travaillent 25 % plus vite
+  les unités à chameau régénèrent 15 PV par minute
+  Bonus d'équipe : Jinete disponible au camp de tir à l'arc à partir de l'âge des châteaux.
 8718 Éthiopiens
-8558 Unique unit Shotel Warrior.
-  See English intro for full description.
+8558 Unité unique : Shotelai.
+  Techs uniques : Héritiers royaux et Mécanismes à torsion.
+  Or et nourriture +100 en progressant vers l'âge suivant
+  Les archers à pied attaquent 18 % plus vite
+  Amélioration des piquiers gratuite
+  les shotelai et les chameliers reçoivent -3 points de dégâts de la part des unités montées
+  rayon d'impact des unités de l'atelier de siège augmenté
+  Bonus d'équipe : Ligne de mire des postes avancés +3 sans coût de pierre.
 8719 Khmers
-8559 Unique unit Ballista Elephant.
-  See English intro for full description.
+8559 Unité unique : Éléphant à baliste.
+  Techs uniques : Épées de défenses et Double arbalète.
+  Aucun bâtiment n'est nécessaire pour progresser vers l'âge suivant ou pour déverrouiller d'autres bâtiments
+  Les fermiers n'ont pas besoin de moulins ou forums pour déposer de la nourriture
+  Les villageois peuvent être placés en garnison dans les habitations.
+  Vitesse de déplacement des éléphants de combat + 10 %
+  attaque des éléphants de combats +3
+  les éléphants à baliste et les scorpions tirent un projectile supplémentaire
+  Bonus d'équipe : Portée des scorpions + 1.
 8720 Malais
-8560 Unique unit Karambit Warrior.
-  See English intro for full description.
+8560 Unité unique : Guerrier à karambit.
+  Techs uniques : Thalassocratie et Enrôlement de force.
+  Le passage à l'âge suivant est 66 % plus rapide
+  Amélioration gratuite de l'armure de l'infanterie
+  Les éléphants de combat coûtent 25/35 % de moins à l'âge des châteaux/impérial
+  Les pièges à poissons coûtent 33 % de moins et fournissent 200 % de nourriture en plus
+  améliore les ports en capitaineries
+  le coût en or de la milice est remplacé par un coût supplémentaire en nourriture
+  Bonus d'équipe : Les ports ont + 6 de ligne de mire.
 8721 Birmans
-8561 Unique unit Arambai.
-  See English intro for full description.
+8561 Unité unique : Arambai.
+  Techs uniques : Cavalerie du Manipur et Howdah.
+  Technologies du camp de bûcherons gratuites
+  Attaque + 1/2/3 à l'âge féodal/des châteaux/impérial
+  + 1 d'armure au corps à corps et d'armure de perçage pour les éléphants de combat
+  Coût des technologies associées aux monastères -50 %
+  attaque de la cavalerie + 4 contre les soldats à distance
+  +1 d'armure au corps à corps et d'armure de perçage pour les éléphants de combat
+  Bonus d'équipe : Reliques visibles sur la carte au début de la partie.
 8722 Bourguignons
-8562 Unique unit Coustillier.
-  See English intro for full description.
+8562 Unité unique : Coutilier, milice flamande.
+  Techs uniques : Vignobles bourguignons et Révolution flamande.
+  Les améliorations économiques sont disponibles un âge plus tôt et coûtent -40 % de nourriture
+  Coût des technologies de l'écurie -50 %
+  Amélioration du cavalier disponible à l'âge des châteaux
+  Attaque des unités à poudre à canon +25 %
+  les fermiers produisent lentement de l'or en plus de la nourriture
+  tous les villageois existants sont transformés en milice flamande
+  Bonus d'équipe : Les reliques génèrent de la nourriture en plus de l'or.
 8723 Siciliens
-8563 Unique unit Serjeant.
-  See English intro for full description.
+8563 Unité unique : Sergent.
+  Techs uniques : Première croisade et Haubert.
+  Commence avec +100 pierres
+  Les améliorations de ferme confèrent 125 % de nourriture supplémentaire
+  Les soldats subissent 40 % de dégâts en moins
+  Les donjons peuvent être construits à l'âge sombre et remplacent les tours de guet
+  La vitesse de construction des murailles fortifiées est augmentée de 125 %, celle des forums de +100 %
+  un maximum de 5 forums produisent un groupe de 5 sergents ; les unités sont plus résistantes à la conversion
+  +1 d'armure au corps à corps et +2 d'armure de perçage pour les unités de type chevalier
+  Bonus d'équipe : Les navires de transport gagnent +5 points de ligne de mire et coûtent 50 % de moins.
 8724 Arméniens
-8564 Unique unit Tarkan.
-  See English intro for full description.
+8564 Unité unique : Archer composite, prêtre guerrier.
+  Techs uniques : Flotte de Cilicie et Reliquaire.
+  Les charrettes à mule coûtent -25 %
+  Les effets des technologies de la charrette à mule augmentent de 40 %
+  Les améliorations liées aux lanciers et à la milice sont disponibles un âge plus tôt
+  La première église fortifiée reçoit une relique gratuite
+  Les galères et les dromons tirent un projectile supplémentaire
+  navires de démolition +20 % de rayon d'impact, galères et dromons +1 de portée
+  infanterie (sauf unités lancières) +30 de PV ; les prêtres guerriers soignent 100 % plus vite
+  Bonus d'équipe : Infanterie +2 de ligne de mire.
 8725 Géorgiens
-8565 Unique unit Monaspa.
-  See English intro for full description.
+8565 Unité unique : Monaspa.
+  Techs uniques : Tours svanes et Cavalerie aznaurie.
+  Commencez avec une charrette à mule
+  Les unités et les bâtiments subissent -15 % de dégâts lorsqu'ils sont situés à une altitude plus élevée
+  Les unités montées régénèrent 2/8/14 PV par minute à l'Âge féodal/des châteaux/impérial
+  Les églises fortifiées fournissent aux villageois dans un rayon de 9 parcelles +10 % de vitesse de production
+  murailles fortifiées +2 d'attaque ; les tours de guet infligent des dégâts perforants
+  les unités montées occupent -20 % d'espace de population
+  Bonus d'équipe : Coût de réparation des bâtiments -25 %.
 8726 Incas
-8566 Unique unit Slinger.
-  See English intro for full description.
+8566 Unité unique : Kamayuk.
+  Techs uniques : Fronde des Andes et Boucliers en tissu.
+  Les habitations et les colonies offrent +5 d'espace de population
+  Les bâtiments coûtent -15 % de pierre
+  Les unités militaires coûtent -15/20/25/30 % de nourriture à l'âge sombre/féodal/des châteaux/impérial
+  Villageois affectés par les améliorations de forge d'infanterie à partir de l'âge des châteaux
+  tirailleurs et frondeurs sans portée minimale ; frondeurs +1 d'attaque
+  kamayuks, frondeurs et guerriers Champi +1 d'armure de corps-à-corps et d'armure de perçage
+  Bonus d'équipe : Commencez avec un lama gratuit.
 8727 Romains
-8567 Unique unit Legionary.
-  See English intro for full description.
+8567 Unité unique : Centurion, légionnaire.
+  Techs uniques : Balistes et Comitatenses.
+  Les villageois récoltent, construisent et réparent 5 % plus vite
+  Les effets d'amélioration de l'armure de l'infanterie sont doublés
+  Les scorpions coûtent -50 % d'or
+  Galères et dromons +1 d'armure de corps-à-corps/+1 d'armure de perçage
+  scorpions +33 % de vitesse d'attaque ; galères +2 d'attaque
+  la milice, les chevaliers et les ceinturions se forment 50 % plus vite et bénéficient d'une attaque de charge
+  Bonus d'équipe : Portée minimum des scorpions réduite.
 
 ; New unique unit titles (9029-9039)
 9029 Konnik
@@ -620,6 +782,23 @@
 8355 Elite Legionary
 8356 Elite Slinger
 
+; AoE2 DE unique units without a spoken name until now
+
+8358 Mamelouk élite
+8359 Keskik élite
+8360 Archer de chameau élite
+8361 Obuch élite
+8362 Archer composite élite
+8363 Genitour élite
+9108 Mamelouk
+9109 Keskik
+9110 Archer de chameau
+9111 Obuch
+9112 Archer composite
+9113 Genitour
+9114 Missionnaire
+9115 Houfnice
+
 ; Roman unique units / technologies (Romans)
 9057 Centurion
 9058 Centurion élite
@@ -633,3 +812,50 @@
 ; Inca unique unit (Kamayuk)
 9040 Kamayuk
 8357 Kamayuk élite
+
+; AoE2 DE unique technologies (canonical DE set)
+9063 Contrepoids
+9064 Bimaristan
+9065 Citadelles
+9066 Detinets
+9067 Eupseong
+9068 Holcán
+9069 Lancers hul'che
+9070 Prédominance
+9071 Inquisition
+9072 Arc recourbé
+9073 Armée corvinienne
+9074 Héritage lechitique
+9075 Privilèges szlachta
+9076 Route de la soie
+9077 Pavois
+9078 Réformes hussites
+9079 Tactique du Wagenburg
+9080 Artillerie
+9081 Sipahi
+9082 Bagains
+9083 Étriers
+9084 Écoutes
+9085 Fortifications de colline
+9086 Art du siège timuride
+9087 Armure de soie
+9088 Chameaux maghrébins
+9089 Kasbah
+9090 Héritiers royaux
+9091 Machines de torsion
+9092 Arbalète double
+9093 Épées de defense
+9094 Levée forcée
+9095 Thalassocratie
+9096 Cavalerie de Manipur
+9097 Houdah
+9098 Révolution flamande
+9099 Vignobles bourguignons
+9100 Haubergeon
+9101 Première croisade
+9102 Féreter
+9103 Flotte cilicienne
+9104 Cavalerie aznaurie
+9105 Tours svans
+9106 Écus de tissu
+9107 Fronde des Andes

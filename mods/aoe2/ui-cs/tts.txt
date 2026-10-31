@@ -21,18 +21,26 @@
 8016 Saracéni
 
 8700 Gótové
-8540 Unique unit Huskarl.
-  Unique techs Anarchy and Perfusion.
-  Infantry costs less.
-  Huskarls and Eagle Warriors are cheaper and tougher.
-  Infantry return some food when killing units.
-  Team bonus: Huskarls have more line of sight.
+8540 Unikátní jednotka: Huskarl.
+  Unikátní technologie: Anarchy a Perfusion.
+  Loom is researched instantly
+  Hunters carry +15; hunted animals last +20% longer
+  Infantry costs -15/20/25/30% in Dark/Feudal/Castle/ Imperial Age
+  Infantry +1/+2/+3 attack vs. buildings in Feudal/ Castle/Imperial Age
+  +10 population space in Imperial Age
+  Huskarls can be trained at Barracks
+  Barracks work +100% faster
+  Bonus týmu: Barracks work +20% faster.
 8701 Peršané
-8541 Unique unit War Elephant.
-  Unique techs Kamandaran and Silos.
-  Start with fifty extra food and wood.
-  Town Centers work faster.
-  Team bonus: trade gains more gold.
+8541 Unikátní jednotka: War Elephant, Savar.
+  Unikátní technologie: Kamandaran a Citadels.
+  Start with +50 wood and +50 food
+  Town Centers and Docks +100% HP and work +5/10/15/20% faster in Dark/Feudal/Castle/Imperial Age
+  Parthian Tactics available in Castle Age
+  Can build Caravanserai in Imperial Age
+  Archer-line gold cost replaced by additional wood cost
+  Castles +4 attack, +3 vs. Rams, +3 vs. Infantry and receive -25% bonus damage
+  Bonus týmu: Knight-line +2 attack vs. Ranged Soldiers.
 8702 Slované
 8703 Kumáni
 8704 Hunové
@@ -67,15 +75,11 @@
 9043 Perfúze
 9044 Kamandaran
 9045 Družina
-9046 Ortodoxie
 9047 Stepní chov
 9048 Kumánští žoldnéři
 9049 Marodéři
 9050 Ateismus
-9051 Panokseon
 9052 Shinkichon
-9053 El Dorado
-9054 Mayská architektura
 9055 Velká cesta
 9056 Shatagni
 8070 Samuraj
@@ -375,224 +379,382 @@
 8514 Nepřátelské konverze proti vám trvají mnohem déle
 8515 Když více mnichů konvertuje najednou, odpočívá jen úspěšný
 ; Bonusy civilizací (čtení ve výběru frakce klávesou G; odsazení pokračuje)
-8520 Unikátní jednotka: dlouhý lukostřelec.
+8520 Unikátní jednotka: Longbowman.
   Unikátní technologie: Yeomen a Warwolf.
-  Pěší lučištníci plus jeden dostřel v hradním a plus jeden v císařském věku, kromě prakovníků.
-  Pastýři pracují rychleji.
-  Radnice stojí od hradního věku polovinu dřeva.
-  Týmový bonus: střelnice pracují rychleji.
-  Bez Krve a Palcového prstenu.
-8521 Unikátní jednotka: vrhač seker.
-  Unikátní technologie: vousatá sekera a rytířství.
-  Jízda plus dvacet procent životů od feudálního věku.
-  Sběrači pracují rychleji.
-  Vylepšení farem jsou zdarma.
-  Hrady stojí méně kamene.
-  Týmový bonus: rytíři plus dvě viditelnosti.
-  Bez Palcového prstenu, Náramku, Kroužkové zbroje lučištníka a Krve.
-8522 Unikátní jednotka: Chu Ko Nu.
-  Unikátní technologie: rakety a Velká zeď.
-  Start se třemi extra vesničany, minus padesát dřeva a dvě stě jídla.
-  Technologie jsou o pět, deset a patnáct procent levnější ve feudálním, hradním a císařském věku.
-  Radnice dávají patnáct populace a plus sedm viditelnosti.
-  Ohnivé lodě se v hradním a císařském věku pohybují rychleji.
-  Týmový bonus: farmy obsahují o deset procent více jídla.
-8523 Unikátní jednotka: Mangudaj.
-  Unikátní technologie: Drill a Nomádi.
-  Lovci pracují rychleji.
-  Linie zvědů plus dvacet, pak třicet procent životů v hradním a císařském věku.
-  Jezdečtí lučištníci střílejí rychleji.
-  Pastviny místo farem; žádný mlýn.
-  Týmový bonus: linie zvědů plus dvě viditelnosti.
-8524 Unikátní jednotka: katafrakt.
-  Unikátní technologie: Logistika a Řecký oheň.
-  Budovy získávají extra životy v každém věku.
-  Císařský věk stojí o třicet tři procent méně.
-  Velbloudi, prakovníci a kopiníci jsou levnější.
-  Ohnivé lodě útočí rychleji.
-  Městská hlídka a Městská hlídka jsou zdarma.
-  Týmový bonus: mniši léčí rychleji.
-8525 Unikátní jednotka: samuraj.
+  Shepherds work +25% faster
+  Town Centers cost -50% wood starting in Castle Age
+  Foot Archers +1/+2 range in Castle/Imperial Age
+  Foot Archers and Skirmisher-line +1 range; Watch Tower-line +2 attack
+  Trebuchets deal blast damage and are more accurate
+  Bonus týmu: Archery Ranges work +10% faster.
+8521 Unikátní jednotka: Throwing Axeman.
+  Unikátní technologie: Ordonnance Companies a Chivalry.
+  Foragers work +15% faster
+  Mill technologies free
+  Mounted Units +20% HP starting in Feudal Age
+  Castles cost -15/25% in Castle/Imperial Age
+  Mounted Crossbowmen cost -40% gold
+  Stables work +40% faster
+  Bonus týmu: Knight-line +2 line of sight.
+8522 Unikátní jednotka: Chu Ko Nu, Dragon Ship.
+  Unikátní technologie: Great Wall a Rocketry.
+  Start with +3 Villagers, but -50 wood and -200 food
+  Technologies cost -5/10/15% in Feudal/Castle/Imperial Age
+  Town Centers +7 line of sight and provide +15 population space
+  Fire Lancers and Fire Ships move +5/10% faster in Castle/Imperial Age
+  Walls, Watch Tower-line and Bombard Towers +30% HP
+  Scorpions, Rocket Carts and Lou Chuans +25% attack; Lou Chuans fire rockets
+  Bonus týmu: Farms +10% food.
+8523 Unikátní jednotka: Mangudai.
+  Unikátní technologie: Nomads a Drill.
+  Hunters work +40% faster
+  Cavalry Archers attack +25% faster
+  Scout Cavalry-line and Steppe Lancers +20/30% HP in Castle/Imperial Age
+  Lost Houses do not decrease population space
+  Siege Workshop Units move +50% faster
+  Bonus týmu: Scout Cavalry-line +2 line of sight.
+8524 Unikátní jednotka: Cataphract.
+  Unikátní technologie: Greek Fire a Logistica.
+  Buildings +10/20/30/40% HP in Dark/Feudal/ Castle/Imperial Age
+  Camel Riders, Skirmishers and Spearman-line cost -25%
+  Town Watch, Town Patrol free
+  Advancing to Imperial Age costs -33%
+  Fire Ships and Dromons attack +25% faster
+  Fire Ships +1 range; Dromons and Bombard Towers increased blast radius
+  Cataphracts and Varangian Guards deal trample damage
+  Bonus týmu: Monks heal +100% faster.
+8525 Unikátní jednotka: Samurai.
   Unikátní technologie: Yasama a Kataparuto.
-  Pěchota útočí rychleji od feudálního věku.
-  Rybářské lodě mají více životů a pracují rychleji.
-  Mlýny a tábory jsou levnější.
-  Týmový bonus: galéry plus čtyři viditelnosti.
-8526 Unikátní jednotka: teutonský rytíř.
-  Unikátní technologie: Pancíř a Cimbuří.
-  Jednotky kasáren a stájí plus zbroj na blízko v hradním a císařském věku.
-  Farmy stojí méně dřeva.
-  Střílny a Bylinkářství jsou zdarma.
-  Týmový bonus: odolnost vůči obrácení.
-8527 Unikátní jednotka: berserk.
-  Unikátní technologie: Náčelníci a Bogsveigar.
-  Pěchota plus dvacet procent životů od feudálního věku.
-  Trakař a Ruční vozík jsou zdarma.
-  Válečné lodě jsou levnější.
-  Doky mohou cvičit drakkary.
-  Týmový bonus: doky jsou levnější.
-8528 Unikátní jednotka: ratanový lučištník.
-  Unikátní technologie: Chatras a Papírové peníze.
-  Jednotky střelnice plus dvacet procent životů.
-  Odhalí nepřátelské radnice na začátku.
-  Odvedení je zdarma.
-  Ekonomické technologie nestojí dřevo a zkoumají se rychleji.
-  Týmový bonus: císařský prakovník je dostupný.
-8529 Unikátní jednotka: varhany.
-  Unikátní technologie: Obeplutí světa a Arkebuza.
-  Lodě plus deset procent životů.
-  Všechny jednotky stojí o dvacet procent méně zlata.
-  Sběrači sbírají i dřevo.
-  Mohou stavět Feitorii.
-  Týmový bonus: technologie se zkoumají rychleji.
-8530 Unikátní jednotka: jaguáří válečník.
-  Unikátní technologie: Atlatl a Květinová válka.
-  Start s padesáti zlaty navíc.
-  Vesničané nesou o tři více.
-  Vojsko se cvičí rychleji.
-  Mniši získávají pět životů za každou technologii kláštera.
-  Týmový bonus: relikvie dávají extra zlato.
-  Žádné stáje ani jízda.
-8531 Unikátní jednotka: woadský nájezdník.
-  Unikátní technologie: Pevnost a Keltská zuřivost.
-  Pěchota plus pět procent rychlosti v každém věku od temného věku.
-  Dřevorubci pracují rychleji.
-  Obléhací zbraně střílejí rychleji.
-  Mohou krást nepřátelská stáda, i když vedle stojí jednotka.
-  Týmový bonus: obléhací dílny pracují rychleji.
+  Mills, Lumber- and Mining Camps cost -50%
+  Infantry attacks +33% faster starting in Feudal Age
+  Cavalry Archers +2 attack vs. Ranged Soldiers (except Skirmishers)
+  Fishing Ships work +5/10/15/20% faster in Dark/Feudal/Castle/Imperial Age; +100% HP
+  Watch Tower-line fires additional arrows
+  Trebuchets attack and pack/unpack faster
+  Bonus týmu: Galley-line +4 line of sight.
+8526 Unikátní jednotka: Teutonic Knight.
+  Unikátní technologie: Ironclad a Crenellations.
+  Farms cost -40%
+  Town Centers +10 garrison capacity; Towers +5 garrison capacity
+  Infantry and Mounted Units +1/+2 melee armor in Castle/Imperial Age
+  Monks +100% healing range
+  Murder Holes, Herbal Medicine free
+  Siege Weapons +4 melee armor
+  Castles +3 range, garrisoned Infantry fires arrows
+  Bonus týmu: Units more resistant to conversion.
+8527 Unikátní jednotka: Berserk.
+  Unikátní technologie: Chieftains a Bogsveigar.
+  Wheelbarrow, Hand Cart free
+  Infantry +20% HP starting in Feudal Age
+  Warships cost -10/15/20% in Feudal/Castle/Imperial Age
+  Infantry +5 attack vs. Cavalry, +4 vs. Camel Units
+  Archer-line and Longships +1 attack
+  Bonus týmu: Docks cost -15%.
+8528 Unikátní jednotka: Rattan Archer, Imperial Skirmisher.
+  Unikátní technologie: Chatras a Paper Money.
+  Enemy Town Centers are revealed at the start of the game
+  Economic upgrades cost no wood and research +100% faster
+  Foot Archers and Skirmishers +20% HP
+  Conscription free
+  Battle Elephants +100 HP
+  Lumberjacks slowly generate gold in addition to wood
+  Bonus týmu: Imperial Skirmisher upgrade available in Imperial Age.
+8529 Unikátní jednotka: Organ Gun, Caravel.
+  Unikátní technologie: Circumnavigation a Arquebus.
+  Foragers generate wood in addition to food
+  All units cost -20% gold
+  Can build Feitoria in Imperial Age
+  Ships +10/15/20% HP in Feudal/Castle/Imperial Age
+  Sets the entire map to explored; Ships train +33% faster
+  Gunpowder Units fire more accurately at moving targets
+  Bonus týmu: Technologies research +25% faster.
+8530 Unikátní jednotka: Jaguar Warrior.
+  Unikátní technologie: Atlatl a Garland Wars.
+  Start with +50 gold
+  Villagers carry +3
+  Military Units train +15% faster
+  Monks gain +5 HP for each researched Monastery technology
+  Skirmishers +1 attack, +1 range
+  Infantry +4 attack
+  Bonus týmu: Relics generate +33% gold.
+8531 Unikátní jednotka: Woad Raider.
+  Unikátní technologie: Stronghold a Furor Celtica.
+  Lumberjacks work +15% faster
+  Livestock animals within Celt unit line of sight cannot be stolen
+  Infantry moves +5/10/15/20% faster in Dark/Feudal/ Castle/Imperial Age
+  Siege Weapons attack +25% faster
+  Castles and Watch Tower-line attack +33% faster; Castles heal allied Infantry in a 7 tile radius
+  Siege Weapons +40% HP
+  Bonus týmu: Siege Workshops work +20% faster.
 8532 Unikátní jednotka: Gbeto.
   Unikátní technologie: Tigui a Farimba.
-  Budovy stojí o patnáct procent méně dřeva, kromě farem.
-  Jednotky kasáren získávají průbojnou zbroj podle věku.
-  Vesničané odevzdávají o deset procent více zlata.
-  Tým: univerzity pracují rychleji.
+  Buildings cost -15% wood
+  Villagers drop off +10% more gold
+  Barracks Units +1/+2/+3 pierce armor in Feudal/ Castle/Imperial Age
+  Town Centers fire arrows without garrison
+  Cavalry +5 attack
+  Bonus týmu: Universities work +80% faster.
 
 ; New civilizations (14 from previous commit + 2 final: Inca, Romans)
 ; Language: cs
 
-8533 Unikátní jednotka: Mamlúk.
-  Unikátní technologie: Madrasa a Fanatismus.
-  Stáje stojí o padesát/šedesát zlata méně v érách temnoty/hradu.
-  Transportní lodě mají dvojnásobné životy a plus dvě místa.
-  Lodě způsobují plus šest/plus sedm poškození budovám v érách hradu/impéria.
-  Týmový bonus: pěší lučištníci mají plus jeden útok na budovy od éry hradu.
-8542 Unique unit Boyar.
-  Unique techs Druzhina and Orthodoxy.
-  Barracks and Archery Range units cost less.
-  Villagers have more hit points.
-  Team bonus: Militia line moves faster.
-8543 Unique unit Kipchak.
-  Unique techs Cuman Mercenaries and Steppe Husbandry.
-  Can build a second Town Center in Feudal Age.
-  Steppe Lancers cost less.
-  Cavalry archers train faster.
-  Team bonus: Barracks and Archery Range units train faster.
-8544 Unique unit Tarkan.
-  Unique techs Atheism and Marauders.
-  Start with one extra Scout Cavalry, no houses required.
-  Cavalry archers train faster.
-  Earn gold for killing villagers and monks.
-  Team bonus: Tarkans do bonus damage to buildings.
-8545 Unique unit War Wagon.
-  Unique techs Panokseon and Shinkichon.
-  Towers and Castles gain line of sight each age.
-  Woodcutters work faster.
-  Mangonels and Trebuchets are more accurate.
-  Ships and Cannon Galleons are tougher.
-  Team bonus: Siege Workshops can build War Wagons.
-8546 Unique unit Plumed Archer.
-  Unique techs El Dorado and Maya Architecture.
-  Start with one extra villager.
-  Resources last longer on the map.
-  Eagle line is tougher and stronger against archers.
-  Walls cost less.
-  Team bonus: walls cost less.
-8547 Unique unit Armored Elephant.
-  Unique techs Grand Trunk Road and Shatagni.
-  Buildings except farms cost less wood.
-  Camels and Heavy Camels cost less.
-  Town Centers and Outposts have more range and line of sight.
-  Team bonus: Hand Cannoneers have extra range.
-8548 Unique unit Conquistador.
-  Unique techs Supremacy and Inquisition.
-  Builders work faster.
-  Hand Cannoneers are more powerful.
-  Gunpowder units fire faster.
-  Trade generates more gold.
-  Team bonus: Hand Cannoneers are more accurate.
-8549 Unique unit Magyar Huszar.
-  Unique techs Mercenaries and Magyar Huszardom.
-  Scout line gains line of sight each age.
-  Trade Carts carry more.
-  Hussars train faster.
-  Team bonus: trade gains more gold.
-8550 Unique unit Winged Hussar.
-  Unique techs Stone Mining bonus.
-  Knights attack harder.
-  Stone mines have more resources.
-  Team bonus: Scout line gains line of sight.
-8551 Unique unit Genoese Crossbowman.
-  Unique techs Pavise and Silk Road.
-  Gunpowder units cost less gold.
-  Dock buildings are tougher.
-  Trade generates more gold.
-  Technologies cost less.
-  Team bonus: trade gains more gold.
-8552 Unique unit Hussite Wagon.
-  Unique techs Sappers.
-  Universities cost less.
-  Mines yield more stone.
-  Wagons and Siege Workshop units cost less.
-  Team bonus: mines yield extra stone.
-8553 Unique unit Janissary.
-  Unique techs Sipahi and Artillery.
-  Mines yield more gold.
-  Gunpowder units train faster.
-  Hand Cannoneers are more accurate.
-  Monks heal faster.
-  Team bonus: Chemistry is free.
+8533 Unikátní jednotka: Mameluke.
+  Unikátní technologie: Bimaristan a Counterweights.
+  Market trading fee only 5%; Markets cost -100 wood
+  Camel Units +25% HP
+  Galley-line attacks +25% faster
+  Transport Ships +100% HP, +20 carry capacity
+  Monks passively heal multiple nearby units
+  Trebuchets and Mangonel-line +15% attack
+  Bonus týmu: Foot Archers and Skirmishers +2 attack vs. buildings.
+8542 Unikátní jednotka: Boyar.
+  Unikátní technologie: Detinets a Druzhina.
+  Farmers work +15% faster
+  Arson, Gambesons free
+  Siege Workshop Units cost -15%
+  Monks move +20% faster
+  Replaces 40% of Castle and Watch Tower-line stone cost with additional wood cost
+  Infantry deals trample damage
+  Bonus týmu: Military buildings (except Castles) provide +5 population space.
+8543 Unikátní jednotka: Kipchak.
+  Unikátní technologie: Steppe Husbandry a Cuman Mercenaries.
+  One additional Town Center can be built in Feudal Age
+  Mounted Units move +5/10/15% faster in Feudal/ Castle/Imperial Age
+  Archery Ranges and Stables cost -75 wood
+  Siege Workshop and Battering Ram available in Feudal Age; Capped Ram available in Castle Age
+  Scout Cavalry-line, Steppe Lancers and Cavalry Archers train +100% faster
+  All team members can train 5 free Elite Kipchaks per Castle
+  Bonus týmu: Palisade Walls +33% HP.
+8544 Unikátní jednotka: Tarkan.
+  Unikátní technologie: Marauders a Atheism.
+  Do not need houses, but start with -100 wood
+  Cavalry Archers cost -10/20% in Castle/Imperial Age
+  Trebuchets fire more accurately at units and small targets
+  On Nomadic maps, the first Town Center spawns a scouting Horse
+  Tarkans can be trained at Stables
+  Enemy Relics generate -50% resources; Wonder and Relic victory takes +100 years
+  Bonus týmu: Stables work +20% faster.
+8545 Unikátní jednotka: War Wagon, Turtle Ship.
+  Unikátní technologie: Eupseong a Shinkichon.
+  Stone miners work +20% faster
+  Ranged Soldiers and Infantry cost -50% wood
+  Archer armor and tower upgrades free (Bombard Tower requires Chemistry)
+  Warships cost -20% wood
+  Watch Tower-line +2 range
+  Rocket Carts and Turtle Ships +1 range, fire additional projectiles
+  Bonus týmu: Villagers +3 line of sight.
+8546 Unikátní jednotka: Plumed Archer.
+  Unikátní technologie: Hul'che Javelineers a Holcans.
+  Start with +1 Villager, but -50 food
+  Resources last +15% longer
+  Foot Archers cost -10/20/30% in Feudal/Castle/Imperial Age
+  Skirmishers fire an additional projectile
+  Eagle Warriors +40 HP
+  Bonus týmu: Walls cost -50%.
+8547 Unikátní jednotka: Ghulam, Imperial Camel Rider.
+  Unikátní technologie: Grand Trunk Road a Shatagni.
+  Villagers cost -8/13/18/23% in Dark/Feudal/Castle/ Imperial Age
+  Camel Riders attack +20% faster
+  Gunpowder Units +1 melee/+1 pierce armor
+  Can build Caravanserai in Imperial Age
+  All gold income +10% faster; Market trading fee reduced to 10%
+  Hand Cannoneers +2 range
+  Bonus týmu: Scout Cavalry-line and Camel Units +2 attack vs. buildings.
+8548 Unikátní jednotka: Conquistador, Missionary.
+  Unikátní technologie: Inquisition a Supremacy.
+  Builders work +30% faster
+  Receive +20 gold for each technology researched
+  Blacksmith upgrades cost no gold
+  Gunpowder Units attack +18% faster
+  Cannon Galleons fire more accurately at moving targets
+  Monks and Missionaries convert faster; Missionaries +1 range
+  Villagers +40 HP, +6 attack, +2 melee/+2 pierce armor
+  Bonus týmu: Trade Units generate +25% gold.
+8549 Unikátní jednotka: Magyar Huszar.
+  Unikátní technologie: Corvinian Army a Recurve Bow.
+  Villagers defeat wolves with one strike
+  Scout Cavalry-line costs -15%
+  Melee attack upgrades free
+  Magyar Huszar gold cost is replaced by additional food cost
+  Mounted Archers +1 attack, +1 range
+  Bonus týmu: Mounted Archers train +25% faster.
+8550 Unikátní jednotka: Obuch, Winged Hussar.
+  Unikátní technologie: Szlachta Privileges a Lechitic Legacy.
+  Folwark replaces Mill
+  Villagers regenerate 10/15/20 HP in Feudal/Castle/Imperial Age
+  Stone Miners generate gold in addition to stone
+  Bloodlines and Scout Cavalry-line upgrades cost -50% food
+  Knight-line costs -60% gold
+  Scout Cavalry-line deals trample damage
+  Bonus týmu: Scout Cavalry-line +1 attack vs. Ranged Soldiers.
+8551 Unikátní jednotka: Genoese Crossbowman, Condottiero.
+  Unikátní technologie: Silk Road a Pirotechnia.
+  Advancing to the next Age costs -15%
+  Foot Archers and Condottieri +1 melee/+1 pierce armor
+  Dock and University technologies cost -25%
+  Gunpowder Units cost -20%
+  Fishing Ships cost -15%
+  Trade Units cost -50%
+  Hand Cannoneers deal +15% pass through damage and are more accurate
+  Bonus týmu: Condottiero available at the Barracks in Imperial Age.
+8552 Unikátní jednotka: Hussite Wagon, Houfnice.
+  Unikátní technologie: Wagenburg Tactics a Hussite Reforms.
+  Mining Camp technologies free
+  Blacksmiths and Universities cost -100 wood
+  Spearman-line deals +25% bonus damage
+  Fervor and Sanctity affect Villagers
+  Chemistry and Hand Cannoneer available in Castle Age
+  Gunpowder Units move +10% faster
+  Monks and Monastery technologies gold cost is replaced by food cost
+  Bonus týmu: Markets work +80% faster.
+8553 Unikátní jednotka: Janissary.
+  Unikátní technologie: Sipahi a Artillery.
+  Gold miners work +25% faster
+  Scout Cavalry-line +1 pierce armor and upgrades free
+  Chemistry free; Gunpowder technologies costs -50%
+  Gunpowder Units +25% HP
+  Mounted Archers +20 HP
+  Bombard Towers, Bombard Cannons, Cannon Galleons +2 range
+  Bonus týmu: Gunpowder Units train +25% faster.
 8714 Bulhaři
-8554 Unique unit Konnik.
-  See English intro for full description.
+8554 Unikátní jednotka: Konnik.
+  Unikátní technologie: Stirrups a Bagains.
+  Militia-line upgrades free
+  Blacksmith and Siege Workshop technologies cost -50% food
+  Town Centers cost -50% stone
+  Can build Krepost in Castle Age
+  Cavalry attacks +33% faster
+  Militia-line +5 melee armor
+  Bonus týmu: Blacksmiths work +80% faster.
 8715 Litevci
-8555 Unique unit Leitis.
-  See English intro for full description.
+8555 Unikátní jednotka: Leitis, Winged Hussar.
+  Unikátní technologie: Hill Forts a Tower Shields.
+  Each Town Center provides +100 food
+  Spearman-line and Skirmisher-line move +10% faster
+  Each garrisoned Relic provides +1 attack to Knight-line and Leitis (maximum +4)
+  Town Centers +3 range
+  Spearman-line and Skirmishers +2 pierce armor
+  Bonus týmu: Monasteries work +20% faster.
 8716 Tataři
-8556 Unique unit Steppe Lancer.
-  See English intro for full description.
+8556 Unikátní jednotka: Keshik, Flaming Camel.
+  Unikátní technologie: Silk Armor a Timurid Siegecraft.
+  Livestock animals last +50% longer
+  Units deal +25% damage when fighting from higher elevation
+  New Town Centers spawn 2 Sheep starting in Castle Age
+  Thumb Ring, Parthian Tactics free
+  Scout Cavalry-line, Steppe Lancers and Cavalry Archers +1 melee/+1 pierce armor
+  Trebuchets +2 range
+  Bonus týmu: Mounted Archers +2 line of sight.
 8717 Berbeři
-8557 Unique unit Camel Rider.
-  See English intro for full description.
+8557 Unikátní jednotka: Camel Archer, Genitour.
+  Unikátní technologie: Kasbah a Maghrebi Camels.
+  Villagers move +5% faster in Dark Age, +10% faster starting in Feudal Age
+  Stable Units cost -15/20% in Castle/Imperial Age
+  Ships move +10% faster
+  Team Castles work +25% faster
+  Camel Units regenerate 15 HP per minute
+  Bonus týmu: Genitour available at the Archery Range starting in Castle Age.
 8718 Etiopané
-8558 Unique unit Shotel Warrior.
-  See English intro for full description.
+8558 Unikátní jednotka: Shotel Warrior.
+  Unikátní technologie: Royal Heirs a Torsion Engines.
+  Receive +100 gold and +100 food when advancing to the next Age
+  Foot Archers attack +18% faster
+  Pikeman upgrade free
+  Shotel Warriors and Camel Riders receive -3 damage from Mounted Units
+  Siege Workshop Units' blast radius increased
+  Bonus týmu: Outposts +3 line of sight and cost no stone.
 8719 Khmeři
-8559 Unique unit Ballista Elephant.
-  See English intro for full description.
+8559 Unikátní jednotka: Ballista Elephant.
+  Unikátní technologie: Tusk Swords a Double Crossbow.
+  No buildings required to advance to the next Age or to unlock other buildings
+  Farmers don't require Mills or Town Centers to drop off food
+  Villagers can garrison in Houses
+  Battle Elephants move +10% faster
+  Battle Elephants +3 attack
+  Ballista Elephants and Scorpions fire an additional projectile
+  Bonus týmu: Scorpions +1 range.
 8720 Malajci
-8560 Unique unit Karambit Warrior.
-  See English intro for full description.
+8560 Unikátní jednotka: Karambit Warrior.
+  Unikátní technologie: Thalassocracy a Forced Levy.
+  Advancing to the next Age is +66% faster
+  Infantry armor upgrades free
+  Battle Elephants cost -25/35% in Castle/Imperial Age
+  Fish Traps cost -33% and provide +200% food
+  Docks are upgraded to Harbors
+  Militia-line gold cost is replaced by additional food cost
+  Bonus týmu: Docks +6 line of sight.
 8721 Barmánci
-8561 Unique unit Arambai.
-  See English intro for full description.
+8561 Unikátní jednotka: Arambai.
+  Unikátní technologie: Manipur Cavalry a Howdah.
+  Lumber Camp technologies free
+  Infantry +1/+2/+3 attack in Feudal/Castle/Imperial Age
+  Battle Elephants +1 melee/+1 pierce armor
+  Monastery technologies cost -50%
+  Cavalry +4 attack vs. Ranged Soldiers
+  Battle Elephants +1 melee/+1 pierce armor
+  Bonus týmu: Relics visible on the map at the start of the game.
 8722 Burgundané
-8562 Unique unit Coustillier.
-  See English intro for full description.
+8562 Unikátní jednotka: Coustillier, Flemish Militia.
+  Unikátní technologie: Burgundian Vineyards a Flemish Revolution.
+  Economic upgrades available one age earlier and cost -40% food
+  Stable technologies cost -50%
+  Cavalier upgrade available in Castle Age
+  Gunpowder Units +25% attack
+  Farmers slowly generate gold in addition to food
+  All existing Villagers are transformed to Flemish Militia
+  Bonus týmu: Relics generate food in addition to gold.
 8723 Sicilané
-8563 Unique unit Serjeant.
-  See English intro for full description.
+8563 Unikátní jednotka: Serjeant.
+  Unikátní technologie: First Crusade a Hauberk.
+  Start with +100 stone
+  Farm upgrades provide +125% additional food
+  Soldiers receive -40% bonus damage
+  Can build Donjon in Dark Age, replaces Watch Tower-line
+  Fortifications built +50% faster; Town Centers built +100% faster
+  Up to 5 Town Centers spawn 5 Serjeants each; units more resistant to conversion
+  Knight-line +1 melee/+2 pierce armor
+  Bonus týmu: Transport Ships +5 line of sight and cost -50%.
 8724 Arméni
-8564 Unique unit Tarkan.
-  See English intro for full description.
+8564 Unikátní jednotka: Composite Bowman, Warrior Priest.
+  Unikátní technologie: Cilician Fleet a Fereters.
+  Mule Carts cost -25%
+  Mule Cart technology effects +40%
+  Spearman- and Militia-line upgrades (except Man-at-Arms) available one age earlier
+  First Fortified Church receives a free Relic
+  Galley-line and Dromons fire an additional projectile
+  Demolition Ships +20% blast radius; Galley-line and Dromons +1 range
+  Infantry (except Spearman-line) +30 HP; Warrior Priests heal +100% faster
+  Bonus týmu: Infantry +2 line of sight.
 8725 Gruzínci
-8565 Unique unit Monaspa.
-  See English intro for full description.
+8565 Unikátní jednotka: Monaspa.
+  Unikátní technologie: Svan Towers a Aznauri Cavalry.
+  Start with a Mule Cart
+  Units and buildings receive -15% damage when located on higher elevation
+  Mounted Units regenerate 2/8/14 HP per minute in Feudal/Castle/Imperial Age
+  Fortified Churches provide Villagers in a 9 tiles radius with +10% work rate
+  Fortifications +2 attack; Watch Tower-line deals pass through damage
+  Mounted Units take -20% population space
+  Bonus týmu: Building repairs cost -25%.
 8726 Inkové
-8566 Unique unit Slinger.
-  See English intro for full description.
+8566 Unikátní jednotka: Kamayuk.
+  Unikátní technologie: Andean Sling a Fabric Shields.
+  Houses and Settlements provide +5 population space
+  Buildings cost -15% stone
+  Military Units cost -15/20/25/30% food in Dark/Feudal/Castle/Imperial Age
+  Villagers affected by Infantry Blacksmith upgrades starting in Castle Age
+  Skirmishers and Slingers no minimum range; Slingers +1 attack
+  Kamayuks, Slingers and Champi Warriors +1 melee/+1 pierce armor
+  Bonus týmu: Start with a free Llama.
 8727 Římané
-8567 Unique unit Legionary.
-  See English intro for full description.
+8567 Unikátní jednotka: Centurion, Legionary.
+  Unikátní technologie: Ballistas a Comitatenses.
+  Villagers gather, build, and repair +5% faster
+  Infantry armor upgrade effects are doubled
+  Scorpions cost -50% gold
+  Galley-line and Dromons +1 melee/+1 pierce armor
+  Scorpions attack +33% faster; Galley-line +2 attack
+  Militia-line, Knight-line, and Centurions train +50% faster and receive a charge attack
+  Bonus týmu: Scorpions minimum range reduced.
 
 ; New unique unit titles (9029-9039)
 9029 Konnik
@@ -620,6 +782,23 @@
 8355 Elite Legionary
 8356 Elite Slinger
 
+; AoE2 DE unique units without a spoken name until now
+
+8358 Elitní mameluk
+8359 Elitní keskik
+8360 Elitní střelec na velbloudovi
+8361 Elitní obuch
+8362 Elitní kompozitní střelec
+8363 Elitní ženetaur
+9108 Mameluk
+9109 Keskik
+9110 Střelec na velbloudovi
+9111 Obuch
+9112 Kompozitní střelec
+9113 Ženetaur
+9114 Missionář
+9115 Houfnice
+
 ; Roman unique units / technologies (Romans)
 9057 Centurion
 9058 Elitní Centurion
@@ -633,3 +812,50 @@
 ; Inca unique unit (Kamayuk)
 9040 Kamayuk
 8357 Elitní Kamayuk
+
+; AoE2 DE unique technologies (canonical DE set)
+9063 Závaží
+9064 Bimaristan
+9065 Tvrz(e)
+9066 Detinets
+9067 Eupseong
+9068 Holcáni
+9069 Hul'che kopíčníci
+9070 Převaha
+9071 Inkvizice
+9072 Ohýbaný luk
+9073 Korvínská armáda
+9074 Lechitské dědictví
+9075 Výsady šlechty
+9076 Hedvábná cesta
+9077 Pavéza
+9078 Husitské reformy
+9079 Taktika Wagenburga
+9080 Dělostřelectvo
+9081 Sipahové
+9082 Bagainové
+9083 Ostruhy
+9084 Věžové štíty
+9085 Hradby na kopci
+9086 Tímuridská obléhací technika
+9087 Hedvábné brnění
+9088 Maghrébští velbloudi
+9089 Kasbah
+9090 Královští dědici
+9091 Torzní stroje
+9092 Dvojitá kuše
+9093 Meče z klů
+9094 Nucená rekrutace
+9095 Talosokracie
+9096 Manípurská kavalerie
+9097 Howdah
+9098 Flámská revoluce
+9099 Burgundské vinohrady
+9100 Hauberk
+9101 První křížová výprava
+9102 Fereteři
+9103 Kilikijská flota
+9104 Aznaurská kavalerie
+9105 Svan věže
+9106 Látkové štíty
+9107 Andský prak

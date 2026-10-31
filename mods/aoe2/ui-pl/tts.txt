@@ -21,18 +21,26 @@
 8016 Saraceni
 
 8700 Goci
-8540 Unique unit Huskarl.
-  Unique techs Anarchy and Perfusion.
-  Infantry costs less.
-  Huskarls and Eagle Warriors are cheaper and tougher.
-  Infantry return some food when killing units.
-  Team bonus: Huskarls have more line of sight.
+8540 Unikalna jednostka: Huskarl.
+  Unikalne technologie: Anarchia i Perfuzja.
+  Krosno jest opracowywane natychmiast
+  Udźwig myśliwych zwiększony o 15; upolowane zwierzęta wystarczają na 20% dłużej
+  Koszt piechoty −15/20/25/30% w Erze Mroku/Feudalnej/Zamków/ Imperiów
+  Piechota +1/+2/+3 pkt. ataku przeciwko budynkom w Erze Feudalnej/ Zamków/Imperiów
+  +10 miejsca w populacji w Erze Imperiów
+  huskarlowie mogą być szkoleni w koszarach
+  koszary pracują o 100% szybciej
+  Bonus drużyny: Koszary pracują o 20% szybciej.
 8701 Persowie
-8541 Unique unit War Elephant.
-  Unique techs Kamandaran and Silos.
-  Start with fifty extra food and wood.
-  Town Centers work faster.
-  Team bonus: trade gains more gold.
+8541 Unikalna jednostka: Słoń bojowy, aswaran.
+  Unikalne technologie: Kamandaran i Cytadele.
+  Zaczynasz z +50 szt. drewna i +50 szt. żywności
+  Centra miast i porty +100% PW i pracują o 5/10/15/20% szybciej w Erze Mroku/Feudalnej/Zamków/Imperiów
+  Partyjski strzał jest dostępny w Erze Zamków
+  Można zbudować karawanseraj w Erze Imperiów
+  koszt w złocie jednostek pochodnych od łuczników zostaje zastąpiony dodatkowym kosztem w drewnie
+  zamki +4 pkt. do ataku, +3 pkt. przeciwko taranom, +3 pkt. przeciwko piechocie; otrzymują –25% dodatkowych obrażeń
+  Bonus drużyny: Jednostki pochodne od rycerzy +2 pkt. do ataku przeciwko żołnierzom dystansowym.
 8702 Słowianie
 8703 Kumani
 8704 Hunowie
@@ -67,15 +75,11 @@
 9043 Perfuzja
 9044 Kamandaran
 9045 Druzhina
-9046 Ortodoksja
 9047 Hodowla stepowa
 9048 Najemnicy kumańscy
 9049 Maruderzy
 9050 Ateizm
-9051 Panokseon
 9052 Shinkichon
-9053 El Dorado
-9054 Architektura Majów
 9055 Wielki Trakt
 9056 Shatagni
 8070 Samuraj
@@ -375,224 +379,382 @@
 8514 Wrogie nawracanie przeciwko tobie trwa znacznie dłużej
 8515 Gdy kilku mnichów nawraca razem, odpoczywa tylko ten, któremu się udało
 ; Bonusy cywilizacji (czytane w wyborze frakcji klawiszem G; wcięcia kontynuują)
-8520 Unikalna jednostka: łucznik długi.
-  Unikalne technologie: Yeomen i Warwolf.
-  Łucznicy piesi plus jeden zasięg w epoce zamków i plus jeden w imperialnej, oprócz oszczepników.
-  Pasterze pracują szybciej.
-  Ratusze kosztują o połowę mniej drewna od epoki zamków.
-  Bonus drużynowy: strzelnice pracują szybciej.
-  Brak Krwi i Pierścienia na kciuk.
-8521 Unikalna jednostka: miotacz toporów.
-  Unikalne technologie: topór brodaty i rycerstwo.
-  Kawaleria plus dwadzieścia procent punktów życia od epoki feudalnej.
-  Zbieracze pracują szybciej.
-  Ulepszenia farm są darmowe.
-  Zamki kosztują mniej kamienia.
-  Bonus drużynowy: rycerze plus dwa pola widzenia.
-  Brak Pierścienia, Naramiennika, Kolczugi łucznika i Krwi.
-8522 Unikalna jednostka: Chu Ko Nu.
-  Unikalne technologie: rakiety i Wielki Mur.
-  Start z trzema dodatkowymi wieśniakami, minus pięćdziesiąt drewna i dwieście żywności.
-  Technologie tańsze o pięć, dziesięć i piętnaście procent w epoce feudalnej, zamków i imperialnej.
-  Ratusze dają piętnaście populacji i plus siedem widzenia.
-  Okręty ogniowe poruszają się szybciej w epoce zamków i imperialnej.
-  Bonus drużynowy: farmy zawierają o dziesięć procent więcej żywności.
-8523 Unikalna jednostka: Mangudaj.
-  Unikalne technologie: Drill i Nomadzi.
-  Myśliwi pracują szybciej.
-  Linia zwiadowców plus dwadzieścia, potem trzydzieści procent życia w epoce zamków i imperialnej.
-  Łucznicy konni strzelają szybciej.
-  Pastwiska zamiast farm; brak młyna.
-  Bonus drużynowy: linia zwiadowców plus dwa widzenia.
-8524 Unikalna jednostka: katafrakt.
-  Unikalne technologie: Logistyka i Ogień grecki.
-  Budynki zyskują dodatkowe życie z każdą epoką.
-  Epoka imperialna kosztuje o trzydzieści trzy procent mniej.
-  Wielbłądy, oszczepnicy i włócznicy są tańsi.
-  Okręty ogniowe atakują szybciej.
-  Straż miejska i Patrol miejski są darmowe.
-  Bonus drużynowy: mnisi leczą szybciej.
-8525 Unikalna jednostka: samuraj.
+8520 Unikalna jednostka: Wojownik z długim łukiem.
+  Unikalne technologie: Yeoman i Warwolf.
+  Pasterze pracują o 25% szybciej
+  Centra miast kosztują o 50% mniej drewna począwszy od Ery Zamków
+  Piesi łucznicy +1/+2 pkt. zasięgu w Erze Zamków/Imperiów
+  piesi łucznicy i jednostki pochodne od oszczepników +1 pkt zasięgu; budynki pochodne od wieży obserwacyjnej + 2 pkt. ataku
+  trebusze zadają obrażenia obszarowe i są celniejsze
+  Bonus drużyny: Strzelnice pracują o 10% szybciej.
+8521 Unikalna jednostka: Wojownik z siekierą.
+  Unikalne technologie: Kompanie stanowione i Rycerskość.
+  Zbieracze pracują o 15% szybciej
+  Technologie w młynie są darmowe
+  Jednostki jazdy mają +20% PW od Ery Feudalnej
+  Zamki kosztują o 15/25% mniej w Erze Zamków/Imperiów
+  kusznicy na koniach kosztują o 40% mniej złota
+  stajnie pracują o 40% szybciej
+  Bonus drużyny: Jednostki pochodne od rycerzy mają +2 pkt. do pola widzenia.
+8522 Unikalna jednostka: Chu-ko-nu, smoczy okręt.
+  Unikalne technologie: Wielki Mur i Rakiety.
+  Zaczynasz z +3 mieszkańcami, ale masz o 50 szt. drewna i o 200 szt. żywności mniej
+  Technologie są o 5/10/15% tańsze w Erze Feudalnej/Zamków/Imperiów
+  Centra miast +7 pkt. do pola widzenia i zapewniają +15 miejsc w populacji
+  Lansjerzy ogniści i brandery poruszają się o 5/10% szybciej w Erze Zamków/Imperiów
+  mury, budynki pochodne od wieży obserwacyjnej i wieże z bombardą +30% PW
+  skorpiony, wozy rakietowe i Lou Chuany +25% do ataku; Lou Chuany miotają rakietami
+  Bonus drużyny: Farmy dają +10% żywności.
+8523 Unikalna jednostka: Mangudai.
+  Unikalne technologie: Koczownicy i Musztra.
+  Łowcy pracują o 40% szybciej
+  Kawaleria z łukami atakuje o 25% szybciej
+  Jednostki pochodne od kawalerii zwiadowczej oraz ułani mają o 20% PW więcej w Erze Zamków i o 30% więcej w Erze Imperiów
+  utracone domy nie obniżają limitu populacji
+  jednostki z zakładów artyleryjskich poruszają się o 50% szybciej
+  Bonus drużyny: +2 pkt. do pola widzenia jednostek pochodnych od kawalerii zwiadowczej.
+8524 Unikalna jednostka: Katafrakt.
+  Unikalne technologie: Grecki ogień i Logistike.
+  Budynki mają +10/20/30/40% PW w Erze Mroku/Feudalnej/ Zamków/Imperiów
+  Jeźdźcy na wielbłądach, oszczepnicy i jednostki pochodne od włóczników są o 25% tańsze
+  Straż miejska i Patrol miejski są darmowe
+  Przejście do Ery Imperiów jest o 33% tańsze
+  Brandery i dromony atakują o 25% szybciej
+  brandery mają +1 pkt zasięgu; dromony i wieże z bombardami mają większy promień wybuchu
+  katafrakci i gwardia wareska zadają obrażenia od stratowania
+  Bonus drużyny: Mnisi leczą o 100% szybciej.
+8525 Unikalna jednostka: Samuraj.
   Unikalne technologie: Yasama i Kataparuto.
-  Piechota atakuje szybciej od epoki feudalnej.
-  Łodzie rybackie mają więcej życia i pracują szybciej.
-  Młyny i obozy są tańsze.
-  Bonus drużynowy: galeony plus cztery widzenia.
-8526 Unikalna jednostka: rycerz teutoński.
-  Unikalne technologie: Pancerz i Blanki.
-  Jednostki koszar i stajni plus pancerz wręcz w epoce zamków i imperialnej.
-  Farmy kosztują mniej drewna.
-  Otwory strzelnicze i Ziołolecznictwo są darmowe.
-  Bonus drużynowy: opór wobec nawracania.
-8527 Unikalna jednostka: berserk.
+  Młyny, składy drewna i kopalnie są o 50% tańsze
+  Piechota atakuje o 33% szybciej od Ery Feudalnej
+  Kawaleria z łukiem otrzymuje +2 pkt. ataku przeciwko żołnierzom dystansowym (z wyjątkiem lekkiej piechoty)
+  Statki rybackie pracują o 5/10/15/20% szybciej w Erze Mroku/Feudalnej/Zamków/Imperiów; otrzymują +100% PW
+  budynki pochodne od wieży obserwacyjnej miotają dodatkowymi strzałami
+  Trebusze szybciej atakują i składają/rozkładają się
+  Bonus drużyny: Jednostki pochodne od Galery +4 pkt. do pola widzenia.
+8526 Unikalna jednostka: Teutoński rycerz.
+  Unikalne technologie: Opancerzenie i Blanki.
+  Farmy są o 40% tańsze
+  Centra miast mają +10 pkt. do pojemności garnizonu; wieże +5 pkt. do pojemności garnizonu
+  Piechota i jednostki konne +1/+2 pkt. pancerza do walki wręcz w Erze Zamków/Imperiów
+  Mnisi +100% do zasięgu leczenia
+  Mordownie i Ziołolecznictwo są darmowe
+  machiny wojenne mają +4 pkt. pancerza do walki wręcz
+  zamki mają +3 pkt. zasięgu; obsadzona piechota miota strzałami
+  Bonus drużyny: Jednostki są odporniejsze na nawrócenie.
+8527 Unikalna jednostka: Berserker.
   Unikalne technologie: Wodzowie i Bogsveigar.
-  Piechota plus dwadzieścia procent życia od epoki feudalnej.
-  Taczka i Wózek ręczny są darmowe.
-  Okręty wojenne są tańsze.
-  Doki mogą szkolić drakkary.
-  Bonus drużynowy: doki są tańsze.
-8528 Unikalna jednostka: łucznik rattanowy.
-  Unikalne technologie: Chatras i Papierowy pieniądz.
-  Jednostki strzelnicy plus dwadzieścia procent życia.
-  Ujawniają wrogie ratusze na starcie.
-  Pobór jest darmowy.
-  Technologie ekonomiczne nie kosztują drewna i badają się szybciej.
-  Bonus drużynowy: imperialny oszczepnik jest dostępny.
-8529 Unikalna jednostka: organ.
-  Unikalne technologie: Okrążenie świata i Arkebuz.
-  Statki plus dziesięć procent życia.
-  Wszystkie jednostki kosztują o dwadzieścia procent mniej złota.
-  Zbieracze zbierają też drewno.
-  Mogą budować Feitorię.
-  Bonus drużynowy: technologie badają się szybciej.
-8530 Unikalna jednostka: wojownik jaguar.
-  Unikalne technologie: Atlatl i Wojna kwiatów.
-  Start z pięćdziesięcioma złota extra.
-  Wieśniacy noszą o trzy więcej.
-  Wojsko szkoli się szybciej.
-  Mnisi zyskują pięć życia za każdą technologię klasztoru.
-  Bonus drużynowy: relikwie dają extra złoto.
-  Brak stajni i kawalerii.
-8531 Unikalna jednostka: wojownik woad.
-  Unikalne technologie: Twierdza i Celtycki szał.
-  Piechota plus pięć procent szybkości w każdej epoce od epoki ciemnej.
-  Drwale pracują szybciej.
-  Machiny oblężnicze strzelają szybciej.
-  Mogą kraść wrogie stada nawet gdy obok stoi jednostka.
-  Bonus drużynowy: warsztaty oblężnicze pracują szybciej.
+  Taczka i Wóz ręczny są darmowe
+  Piechota ma +20% PW od Ery Feudalnej
+  Okręty są o 10/15/20% tańsze w Erze Feudalnej/Zamków/Imperiów
+  piechota ma +5 pkt. do ataku przeciwko kawalerii, +4 pkt. przeciwko jednostkom na wielbłądach
+  jednostki pochodne od łuczników i langskipy mają +1 pkt. do ataku
+  Bonus drużyny: Porty są o 15% tańsze.
+8528 Unikalna jednostka: Łucznik rattanowy, imperialny oszczepnik.
+  Unikalne technologie: Chatra i Papierowe pieniądze.
+  Wrogie centra miast są odkrywane na początku gry
+  Ulepszenia gospodarcze nie mają kosztu w drewnie i są badane o 100% szybciej
+  Łucznicy piechotni i oszczepnicy mają +20% PW
+  Pobór powszechny jest darmowy
+  słonie bojowe mają +100 PW
+  drwale powoli generują nie tylko drewno, ale i złoto
+  Bonus drużyny: W Erze Imperiów dostępne jest ulepszenie do imperialnego oszczepnika.
+8529 Unikalna jednostka: Organki, karawela.
+  Unikalne technologie: Rejs dookoła świata i Arkebuz.
+  Zbieracze oprócz żywności generują też drewno
+  Wszystkie jednostki mają obniżony koszt w złocie o 20%
+  Możliwe zbudowanie faktorii w Erze Imperiów
+  Statki zyskują +10% PW w Erze Feudalnej, +15% PW w Erze Zamków i +20% PW w Erze Imperiów
+  oznacza całą mapę jako zbadaną; budowa statków jest o 33% szybsza
+  jednostki korzystające z prochu strzelają celniej do ruchomych celów
+  Bonus drużyny: Badanie technologii przebiega o +25% szybciej.
+8530 Unikalna jednostka: Wojownik jaguarów.
+  Unikalne technologie: Atlatl i Wojny kwiatów.
+  Zaczynasz z +50 szt. złota
+  Mieszkańcy zyskują +3 pkt. do udźwigu
+  Jednostki wojskowe szkolą się o 15% szybciej
+  Mnisi zyskują 5 PW za każdą technologię zbadaną w klasztorze
+  oszczepnicy +1 pkt. ataku i +1 pkt. zasięgu
+  piechota +4 pkt. ataku
+  Bonus drużyny: Relikwie generują o 33% więcej złota.
+8531 Unikalna jednostka: Celtycki najeźdźca.
+  Unikalne technologie: Forteca i Celtycka furia.
+  Drwale pracują o 15% szybciej
+  Nie można kraść zwierząt gospodarskich w polu widzenia jednostek celtyckich
+  Piechota porusza się o 5/10/15/20% szybciej w Erze Mroku/Feudalnej/ Zamków/Imperiów
+  Machiny wojenne atakują o 25% szybciej
+  zamki i budynki pochodne od wież obserwacyjnych strzelają o 33% szybciej; zamki leczą sprzymierzoną piechotę w zasięgu 7 pól
+  machiny wojenne +40% PW
+  Bonus drużyny: Zakłady artyleryjskie działają o 20% szybciej.
 8532 Unikalna jednostka: Gbeto.
   Unikalne technologie: Tigui i Farimba.
-  Budynki kosztują piętnaście procent mniej drewna, oprócz farm.
-  Jednostki koszar zyskują pancerz dystansowy z epoką.
-  Mieszkańcy oddają dziesięć procent więcej złota.
-  Drużyna: uniwersytety pracują szybciej.
+  Budynki kosztują o 15% mniej drewna
+  Mieszkańcy zostawiają o 10% więcej złota
+  Jednostki szkolone w koszarach zyskują +1/+2/+3 pkt. pancerza dystansowego w Erze Feudalnej/ Zamków/Imperiów
+  centra miast miotają strzałami nawet wtedy, gdy nie są obsadzone
+  kawaleria +5 pkt. ataku
+  Bonus drużyny: Uniwersytety pracują o 80% szybciej.
 
 ; New civilizations (14 from previous commit + 2 final: Inca, Romans)
 ; Language: pl
 
 8533 Unikalna jednostka: Mameluk.
-  Unikalne technologie: Madrasa i Zelotryzm.
-  Stajnie kosztują o pięćdziesiąt/sześćdziesiąt złota mniej w epokach ciemności/zamku.
-  Statki transportowe mają podwójne punkty życia i przewożą plus dwóch.
-  Statki zadają plus sześć/plus siedem obrażeń budynkom w epokach zamku/imperialnej.
-  Bonus drużynowy: piesi łucznicy zyskują plus jeden ataku przeciw budynkom od epoki zamku.
-8542 Unique unit Boyar.
-  Unique techs Druzhina and Orthodoxy.
-  Barracks and Archery Range units cost less.
-  Villagers have more hit points.
-  Team bonus: Militia line moves faster.
-8543 Unique unit Kipchak.
-  Unique techs Cuman Mercenaries and Steppe Husbandry.
-  Can build a second Town Center in Feudal Age.
-  Steppe Lancers cost less.
-  Cavalry archers train faster.
-  Team bonus: Barracks and Archery Range units train faster.
-8544 Unique unit Tarkan.
-  Unique techs Atheism and Marauders.
-  Start with one extra Scout Cavalry, no houses required.
-  Cavalry archers train faster.
-  Earn gold for killing villagers and monks.
-  Team bonus: Tarkans do bonus damage to buildings.
-8545 Unique unit War Wagon.
-  Unique techs Panokseon and Shinkichon.
-  Towers and Castles gain line of sight each age.
-  Woodcutters work faster.
-  Mangonels and Trebuchets are more accurate.
-  Ships and Cannon Galleons are tougher.
-  Team bonus: Siege Workshops can build War Wagons.
-8546 Unique unit Plumed Archer.
-  Unique techs El Dorado and Maya Architecture.
-  Start with one extra villager.
-  Resources last longer on the map.
-  Eagle line is tougher and stronger against archers.
-  Walls cost less.
-  Team bonus: walls cost less.
-8547 Unique unit Armored Elephant.
-  Unique techs Grand Trunk Road and Shatagni.
-  Buildings except farms cost less wood.
-  Camels and Heavy Camels cost less.
-  Town Centers and Outposts have more range and line of sight.
-  Team bonus: Hand Cannoneers have extra range.
-8548 Unique unit Conquistador.
-  Unique techs Supremacy and Inquisition.
-  Builders work faster.
-  Hand Cannoneers are more powerful.
-  Gunpowder units fire faster.
-  Trade generates more gold.
-  Team bonus: Hand Cannoneers are more accurate.
-8549 Unique unit Magyar Huszar.
-  Unique techs Mercenaries and Magyar Huszardom.
-  Scout line gains line of sight each age.
-  Trade Carts carry more.
-  Hussars train faster.
-  Team bonus: trade gains more gold.
-8550 Unique unit Winged Hussar.
-  Unique techs Stone Mining bonus.
-  Knights attack harder.
-  Stone mines have more resources.
-  Team bonus: Scout line gains line of sight.
-8551 Unique unit Genoese Crossbowman.
-  Unique techs Pavise and Silk Road.
-  Gunpowder units cost less gold.
-  Dock buildings are tougher.
-  Trade generates more gold.
-  Technologies cost less.
-  Team bonus: trade gains more gold.
-8552 Unique unit Hussite Wagon.
-  Unique techs Sappers.
-  Universities cost less.
-  Mines yield more stone.
-  Wagons and Siege Workshop units cost less.
-  Team bonus: mines yield extra stone.
-8553 Unique unit Janissary.
-  Unique techs Sipahi and Artillery.
-  Mines yield more gold.
-  Gunpowder units train faster.
-  Hand Cannoneers are more accurate.
-  Monks heal faster.
-  Team bonus: Chemistry is free.
+  Unikalne technologie: Bimaristan i Przeciwwagi.
+  Opłata handlowa wynosi tylko 5%; rynki kosztują o 100 szt. drewna mniej
+  Jednostki na wielbłądach mają +25% PW
+  Jednostki pochodne od galer atakują o +25% szybciej
+  Statki transportowe mają +100% PW, +20 pkt. do udźwigu
+  mnisi pasywnie leczą wiele pobliskich jednostek
+  trebusze i jednostki pochodne od mangoneli mają +15% do ataku
+  Bonus drużyny: Piesi łucznicy i oszczepnicy zyskują +2 pkt. do ataku przeciwko budynkom.
+8542 Unikalna jednostka: Bojar.
+  Unikalne technologie: Dziedziniec i Drużyna książęca.
+  Rolnicy pracują o +15% szybciej
+  Podpalenie i Przeszywanice są darmowe
+  Jednostki z zakładów artyleryjskich są o 15% tańsze
+  Mnisi poruszają się o +20% szybciej
+  zastępuje 40% kosztu kamienia zamków i budynków pochodnych od wież obserwacyjnych drewnem
+  piechota zadaje obrażenia od stratowania
+  Bonus drużyny: Budynki wojskowe (z wyjątkiem zamków) zwiększają miejsce w populacji o +5.
+8543 Unikalna jednostka: Kipczak.
+  Unikalne technologie: Hodowla stepowa i Kumańscy najemnicy.
+  W Erze Feudalnej można zbudować jedno dodatkowe centrum miasta
+  Jednostki kawalerii poruszają się o 5/10/15% szybciej w Erze Feudalnej/ Zamków/Imperiów
+  Strzelnice i stajnie kosztują o 75 szt. drewna mniej
+  Zakład artyleryjski i taran są dostępne w Erze Feudalnej; umocniony taran jest dostępny w Erze Zamków
+  jednostki pochodne od kawalerii zwiadowczej, ułani i kawaleria z łukiem szkoli się o 100% szybciej
+  wszyscy członkowie drużyny mogą wyszkolić 5 darmowych elitarnych kipczaków na każdy zamek
+  Bonus drużyny: Palisady +33% PW.
+8544 Unikalna jednostka: Tarkan.
+  Unikalne technologie: Maruderzy i Ateizm.
+  Nie potrzebujesz domów, ale na początku rozgrywki masz o 100 szt. drewna mniej
+  Kawaleria z łukami jest tańsza o 10% w Erze Zamków i o 20% w Erze Imperiów
+  Trebusze celniej strzelają do jednostek i małych celów
+  Na mapach koczowniczych w pierwszym centrum miasta pojawia się koń zwiadowczy
+  możliwość tworzenia tarkanów w stajni
+  relikwie w rękach wroga generują -50% surowców; wygrane w wyniku posiadania relikwii lub cudu trwają o 100 lat więcej
+  Bonus drużyny: Stajnie pracują o 20% szybciej.
+8545 Unikalna jednostka: Furgon bitewny, okręt-żółw.
+  Unikalne technologie: Eupseong i Singijeon.
+  Kamieniarze pracują o 20% szybciej
+  Żołnierze dystansowi i piechota kosztują o 50% mniej drewna
+  Ulepszenia pancerza łuczników i wież są darmowe (wieża z bombardą wymaga Chemii)
+  Okręty wojenne kosztują o 20% mniej drewna
+  budynki pochodne od wież obserwacyjnych zyskują 2 pkt. zasięgu
+  wozy z rakietami i okręty-żółwie zyskują 1 pkt. zasięgu, wystrzeliwują dodatkowe pociski
+  Bonus drużyny: Mieszkańcy zyskują 3 pkt. pola widzenia.
+8546 Unikalna jednostka: Łucznik w pióropuszu.
+  Unikalne technologie: Oszczepnicy z hul'che i Holcani.
+  Rozpoczynasz grę z dodatkowym mieszkańcem, ale masz o 50 szt. żywności mniej
+  Surowce wystarczają na 15% dłużej
+  Łucznicy piesi są tańsi o 10% w Erze Feudalnej, o 20% w Erze Zamków i o 30% w Erze Imperiów
+  lekka piechota rzuca dodatkowym oszczepem
+  wojownicy orłów mają +40 PW
+  Bonus drużyny: Mury są tańsze o 50%.
+8547 Unikalna jednostka: Ghulam, imperialny jeździec na wielbłądzie.
+  Unikalne technologie: Droga Wielkiego Pnia i Shatagni.
+  Mieszkańcy są tańsi o 8% w Erze Mroku, o 13% w Erze Feudalnej, o 18% w Erze Zamków i o 23% w Erze Imperiów
+  Jeźdźcy na wielbłądach atakują o +20% szybciej
+  Jednostki używające prochu mają +1 pkt. pancerza do walki w zwarciu / +1 pkt. pancerza dystansowego
+  Karawanseraj dostępny jest w Erze Imperiów
+  szybkość pozyskiwania złota ze wszystkich źródeł wzrasta o +10%, opłata handlowa jest zmniejszona do 10%
+  kanonierzy +2 pkt. zasięgu
+  Bonus drużyny: Jednostki pochodne od kawalerii zwiadowczej i jednostki na wielbłądach zyskują +2 pkt. ataku przeciwko budynkom.
+8548 Unikalna jednostka: Konkwistador, misjonarz.
+  Unikalne technologie: Inkwizycja i Supremacja.
+  Budowniczowie pracują o 30% szybciej
+  Otrzymujesz +20 szt. złota za każdą zbadaną technologię
+  Ulepszenia w kuźni są darmowe
+  Jednostki używające prochu atakują o 18% szybciej
+  Galeony z armatą celniej strzelają do ruchomych celów
+  mnisi i misjonarze szybciej nawracają jednostki i budynki; misjonarze zyskują +1 pkt. zasięgu
+  mieszkańcy mają +40 PW, +6 pkt. ataku, +2 pkt. pancerza do walki wręcz / +2 pkt. pancerza dystansowego
+  Bonus drużyny: Jednostki handlowe generują o 25% złota więcej.
+8549 Unikalna jednostka: Węgierski huzar.
+  Unikalne technologie: Czarna Armia i Łuk refleksyjny.
+  Mieszkańcy zabijają wilki jednym ciosem
+  Jednostki pochodne od kawalerii zwiadowczej są tańsze o 15%
+  Darmowe ulepszenia do ataku w zwarciu
+  koszt w złocie węgierskich huzarów jest zastąpiony dodatkowym kosztem w żywności
+  jeźdźcy z łukami zyskują 1 pkt. ataku i 1 pkt. zasięgu
+  Bonus drużyny: Jeźdźcy z łukiem są szkoleni o 25% szybciej.
+8550 Unikalna jednostka: Wojownik z obuchem, huzar ze skrzydłami.
+  Unikalne technologie: Przywileje szlachty i Spuścizna Lechitów.
+  Folwark zastępuje młyn
+  Mieszkańcy odzyskują 10/15/20 PW w Erze Feudalnej/Zamków/Imperiów
+  Kamieniarze oprócz kamienia generują złoto
+  Ulepszenia rodowodów i jednostek pochodnych od kawalerii zwiadowczej kosztują -50% żywności
+  jednostki pochodne od rycerzy kosztują o 60% mniej złota
+  jednostki pochodne od kawalerii zwiadowczej zadają obrażenia od stratowania
+  Bonus drużyny: Jednostki pochodne od kawalerii zwiadowczej mają +1 pkt. ataku przeciwko żołnierzom dystansowym.
+8551 Unikalna jednostka: Kusznik genueński, kondotier.
+  Unikalne technologie: Jedwabny szlak i Pirotechnika.
+  Wkroczenie do kolejnej ery jest tańsze o 15%
+  Piesi łucznicy i kondotierzy otrzymują +1 pkt do pancerza do walki w zwarciu / +1 pkt do pancerza dystansowego
+  Technologie w porcie i na uniwersytecie są tańsze o 25%
+  Jednostki korzystające z prochu są tańsze o 20%
+  Statki rybackie są tańsze o 15%
+  jednostki handlowe są tańsze o 50%
+  kanonierzy zadają +15% obrażeń przelotowych i są bardziej celni
+  Bonus drużyny: Kondotier jest dostępny w koszarach w Erze Imperiów.
+8552 Unikalna jednostka: Husycki wóz bojowy, hufnica.
+  Unikalne technologie: Szyk taborowy i Reformy husyckie.
+  Technologie kopalni są darmowe
+  Kuźnie i uniwersytety kosztują o 100 szt. drewna mniej
+  Jednostki pochodne od włóczników zadają o +25% większe obrażenia
+  Zapał i Świętość wpływają na mieszkańców
+  Chemia i kanonierzy są dostępni w Erze Zamków
+  jednostki korzystające z prochu poruszają się o +10% szybciej
+  za technologie mnichów i klasztorów płaci się żywnością, a nie złotem
+  Bonus drużyny: Rynki działają o +80% szybciej.
+8553 Unikalna jednostka: Janczar.
+  Unikalne technologie: Spahisi i Artyleria.
+  Górnicy wydobywający złoto pracują o +25% szybciej
+  Jednostki pochodne od kawalerii zwiadowczej mają +1 pkt. pancerza dystansowego i darmowe ulepszenia
+  Chemia jest darmowa; technologie prochowe kosztują o 50% mniej
+  Jednostki korzystające z prochu mają +25% PW
+  kawaleria z łukami +20 PW
+  wieże z bombardą, bombardy, galeony z armatą +2 pkt. zasięgu
+  Bonus drużyny: Jednostki korzystające z prochu szkolą się o +25% szybciej.
 8714 Bułgarzy
-8554 Unique unit Konnik.
-  See English intro for full description.
+8554 Unikalna jednostka: Konnik.
+  Unikalne technologie: Strzemiona i Bagainowie.
+  Ulepszenia jednostek pochodnych od straży obywatelskiej są darmowe.
+  Technologie dostępne w kuźni i zakładzie artyleryjskim kosztują o 50% mniej żywności.
+  Centra miast kosztują o 50% mniej kamieni.
+  Można budować twierdzę w Erze Zamków.
+  kawaleria atakuje o 33% szybciej
+  jednostki pochodne od straży obywatelskiej +5 pkt. pancerza do walki w zwarciu
+  Bonus drużyny: Kuźnie pracują o 80% szybciej.
 8715 Litwini
-8555 Unique unit Leitis.
-  See English intro for full description.
+8555 Unikalna jednostka: Leitis, huzar ze skrzydłami.
+  Unikalne technologie: Grodziska i Wysokie tarcze.
+  Każde centrum miasta zapewnia +100 szt. żywności
+  Jednostki pochodne od włóczników i oszczepników są o 10% szybsze
+  Każda obsadzona relikwia zapewnia +1 pkt. ataku jednostkom pochodnym od rycerzy i leitisom (maks. +4)
+  centra miast +3 pkt. zasięgu
+  jednostki pochodne od włóczników i oszczepnicy +2 pkt. pancerza dystansowego
+  Bonus drużyny: Klasztory pracują o 20% szybciej.
 8716 Tatarzy
-8556 Unique unit Steppe Lancer.
-  See English intro for full description.
+8556 Unikalna jednostka: Keszik, płonący wielbłąd.
+  Unikalne technologie: Jedwabny pancerz i Timurydzka budowa machin wojennych.
+  Zwierzęta hodowlane wystarczają na 50% dłużej
+  Jednostki zadają +25% obrażeń, gdy znajdują się wyżej od wrogów
+  Od Ery Zamków nowe centra miast produkują 2 owce
+  Technologie Zekier i Partyjski strzał są bezpłatne
+  jednostki pochodne od kawalerii zwiadowczej, ułani i kawaleria z łukiem otrzymują +1 pkt pancerza do walki wręcz / +1 pkt pancerza dystansowego
+  trebusze +2 pkt. zasięgu
+  Bonus drużyny: Łucznicy na koniach +2 pkt. pola widzenia.
 8717 Berberzy
-8557 Unique unit Camel Rider.
-  See English intro for full description.
+8557 Unikalna jednostka: Łucznik na wielbłądzie, jinete.
+  Unikalne technologie: Kasba i Maghrebskie wielbłądy.
+  Mieszkańcy poruszają się o 5% szybciej w Erze Mroku i o 10% szybciej począwszy od Ery Feudalnej
+  Jednostki ze stajni są tańsze o 15% w Erze Zamków i 20% w Erze Imperiów
+  Statki poruszają się o 10% szybciej
+  zamki drużyny pracują o 25% szybciej
+  jednostki na wielbłądach regenerują 15 PW co minutę
+  Bonus drużyny: Od Ery Zamków jinete są dostępne w strzelnicy.
 8718 Etiopczycy
-8558 Unique unit Shotel Warrior.
-  See English intro for full description.
+8558 Unikalna jednostka: Wojownik z szotelem.
+  Unikalne technologie: Następcy tronu i Machiny miotające.
+  Otrzymujesz +100 szt. złota i +100 szt. żywności po przejściu do kolejnej ery
+  Piesi łucznicy strzelają o 18% szybciej
+  Ulepszenie pikinierów jest darmowe
+  wojownicy z szotelem i jeźdźcy na wielbłądach otrzymują o 3 pkt. mniej obrażeń od jednostek jazdy
+  zwiększa promień rażenia jednostek z zakładu artyleryjskiego
+  Bonus drużyny: Strażnice zyskują +3 pkt. pola widzenia i nie kosztują kamieni.
 8719 Khmerzy
-8559 Unique unit Ballista Elephant.
-  See English intro for full description.
+8559 Unikalna jednostka: Słoń z balistą.
+  Unikalne technologie: Miecze na kły słonia i Kusza dwustrzałowa.
+  Odblokowywanie innych budynków i wkraczanie w kolejne ery nie wymaga stawiania żadnych budynków.
+  Rolnicy nie potrzebują młynów / centrów miast, aby składować żywność
+  Mieszkańcy mogą wchodzić do domów
+  Słonie bojowe poruszają się o 10% szybciej
+  słonie bojowe zyskują +3 pkt. ataku
+  słonie z balistą i skorpiony wypuszczają dodatkowy pocisk
+  Bonus drużyny: Skorpiony +1 pkt. zasięgu.
 8720 Malajczycy
-8560 Unique unit Karambit Warrior.
-  See English intro for full description.
+8560 Unikalna jednostka: Wojownik z karambitem.
+  Unikalne technologie: Talassokracja i Wymuszony zaciąg.
+  Przejście do następnej ery jest o 66% szybsze
+  Ulepszenia pancerza piechoty są darmowe
+  Słonie bojowe kosztują o 25/35% mniej w Erze Zamków/Imperiów
+  Pułapki na ryby kosztują o 33% mniej i zapewniają o 200% więcej żywności
+  porty są ulepszane do przystani
+  koszt w złocie jednostek pochodnych od straży obywatelskiej jest zastępowany dodatkowym kosztem w żywności
+  Bonus drużyny: Porty +6 pkt. pola widzenia.
 8721 Birmańczycy
-8561 Unique unit Arambai.
-  See English intro for full description.
+8561 Unikalna jednostka: Arambai.
+  Unikalne technologie: Kawaleria manipurska i Howdah.
+  Technologie w składach drewna są darmowe
+  Piechota zyskuje 1/2/3 pkt. ataku w Erze Feudalnej/Zamków/Imperiów
+  Słonie bojowe +1 pkt pancerza do walki wręcz / +1 pkt pancerza dystansowego
+  Technologie w klasztorach są o 50% tańsze
+  kawaleria +4 pkt. ataku przeciwko żołnierzom dystansowym
+  słonie bojowe +1 pkt pancerza do walki wręcz / +1 pkt pancerza dystansowego
+  Bonus drużyny: Relikwie są widoczne na mapie od początku gry.
 8722 Burgundczycy
-8562 Unique unit Coustillier.
-  See English intro for full description.
+8562 Unikalna jednostka: Coustillier, flamandzka straż obywatelska.
+  Unikalne technologie: Winnice burgundzkie i Flamandzka rewolucja.
+  Ulepszenia gospodarcze są dostępne o jedną erę wcześniej i kosztują o 40% żywności mniej
+  Technologie w stajni są o 50% tańsze
+  Ulepszenie kawalerzysty dostępne w Erze Zamków
+  Jednostki używające prochu +25% ataku
+  rolnicy powoli generują złoto, oprócz żywności
+  wszyscy istniejący mieszkańcy zostają przekształceni we flamandzką straż obywatelską
+  Bonus drużyny: Relikwie poza złotem generują również żywność.
 8723 Sycylijczycy
-8563 Unique unit Serjeant.
-  See English intro for full description.
+8563 Unikalna jednostka: Serjeant.
+  Unikalne technologie: Pierwsza krucjata i Kolczuga.
+  Rozpoczynasz z +100 kamienia
+  Ulepszenia farm zapewniają +125% dodatkowej żywności
+  Żołnierze otrzymują −40% dodatkowych obrażeń
+  W Erze Mroku można budować donżony, które zastępują budynki pochodne od wieży obserwacyjnej
+  Fortyfikacje budowane są o 50% szybciej; centra miast budowane są o 100% szybciej
+  każde centrum miasta – maksymalnie 5 – tworzy po 5 serjeantów; jednostki są bardziej odporne na nawrócenie
+  jednostki pochodne od rycerzy +1 pkt pancerza do walki wręcz / +2 pkt. pancerza dystansowego
+  Bonus drużyny: Statki transportowe mają o 5 pkt. większe pole widzenia i są o 50% tańsze.
 8724 Ormianie
-8564 Unique unit Tarkan.
-  See English intro for full description.
+8564 Unikalna jednostka: Łucznik kompozytowy, wojowniczy kapłan.
+  Unikalne technologie: Cylicyjska flota i Relikwiarze.
+  Wozy ciągnięte przez muły są o 25% tańsze
+  Technologie wozów ciągniętych przez muły są o 40% efektywniejsze
+  Ulepszenia jednostek pochodnych od włóczników i pochodnych od straży obywatelskiej (z wyjątkiem zbrojnych) są dostępne o jedną erę wcześniej
+  Pierwszy umocniony kościół otrzymuje darmową relikwię
+  Okręty pochodne od galer i dromony strzelają dodatkowym pociskiem
+  wybuchowe statki zyskują 20% pola rażenia; okręty pochodne od galer i dromony mają +1 pkt. zasięgu
+  piechota – z wyjątkiem jednostek pochodnych od włóczników – mają +30 PW, wojowniczy kapłani mają +100% do szybkości leczenia
+  Bonus drużyny: Piechota ma +2 pkt. do pola widzenia.
 8725 Gruzińczycy
-8565 Unique unit Monaspa.
-  See English intro for full description.
+8565 Unikalna jednostka: Monaspa.
+  Unikalne technologie: Wieże Swanetii i Kawaleria Aznauri.
+  Zaczynasz z wozem ciągniętym przez muły
+  Jednostki i budynki otrzymują o 15% mniej obrażeń, gdy znajdują się na wyższym terenie
+  Jednostki kawalerii regenerują 2/8/14 PW na minutę w Erze Feudalnej/Zamków/Imperiów
+  Umocnione kościoły przyspieszają o 10% pracę mieszkańców w promieniu 9 pól
+  fortyfikacje +2 pkt. do ataku, budynki pochodne od wież obserwacyjnych zadają obrażenia przelotowe
+  jednostki kawalerii zajmują o 20% mniej miejsca w populacji
+  Bonus drużyny: Naprawa budynków jest o 25% tańsza.
 8726 Inkowie
-8566 Unique unit Slinger.
-  See English intro for full description.
+8566 Unikalna jednostka: Kamayuk.
+  Unikalne technologie: Proca andyjska i Tarcze tekstylne.
+  Domy i osady zapewniają +5 miejsc w populacji
+  Budynki kosztują o 15% mniej kamienia
+  Jednostki wojskowe kosztują o 15/20/25/30% mniej żywności w erze Mroku/Feudalnej/Zamków/Imperiów
+  Od Ery Zamków ulepszenia piechoty opracowywane w kuźni wpływają też na mieszkańców
+  oszczepnicy i procarze nie mają minimalnego zasięgu; procarze +1 pkt. ataku
+  kamayukowie, procarze i wojownicy Champi zyskują +1 pkt. pancerza do walki wręcz / +1 pkt. pancerza dystansowego
+  Bonus drużyny: Zaczynasz z darmową lamą.
 8727 Rzymianie
-8567 Unique unit Legionary.
-  See English intro for full description.
+8567 Unikalna jednostka: Centurion, legionista.
+  Unikalne technologie: Balisty i Comitatenses.
+  Mieszkańcy zbierają, budują i naprawiają o 5% szybciej
+  Efekty ulepszenia pancerza piechoty są podwojone
+  Skorpiony kosztują o 50% mniej złota
+  Statki pochodne od galer i dromony otrzymują +1 pkt. pancerza do walki w zwarciu / +1 pkt. pancerza dystansowego
+  skorpiony atakują o 33% szybciej, statki pochodne od galer otrzymują +2 pkt. ataku
+  jednostki pochodne od straży obywatelskiej i od rycerzy oraz centurioni szkolą się o 50% szybciej i otrzymują atak szarżą
+  Bonus drużyny: Zmniejszony minimalny zasięg skorpionów.
 
 ; New unique unit titles (9029-9039)
 9029 Konnik
@@ -620,6 +782,23 @@
 8355 Elite Legionary
 8356 Elite Slinger
 
+; AoE2 DE unique units without a spoken name until now
+
+8358 Elitarny mameluk
+8359 Elitarny keshik
+8360 Elitarny łucznik na wielbłądzie
+8361 Elitarny obuch
+8362 Elitarny łucznik złożony
+8363 Elitarny genitour
+9108 Mameluk
+9109 Keshik
+9110 Łucznik na wielbłądzie
+9111 Obuch
+9112 Łucznik złożony
+9113 Genitour
+9114 Misjonarz
+9115 Houfnica
+
 ; Roman unique units / technologies (Romans)
 9057 Centurion
 9058 Elitarny Centurion
@@ -633,3 +812,50 @@
 ; Inca unique unit (Kamayuk)
 9040 Kamayuk
 8357 Elitarny Kamayuk
+
+; AoE2 DE unique technologies (canonical DE set)
+9063 Odważniki
+9064 Bimaristan
+9065 Cytadele
+9066 Detinets
+9067 Eupseong
+9068 Holcanie
+9069 Włócznicy hul'che
+9070 Przewaga
+9071 Inkwizycja
+9072 Łuk zagięty
+9073 Armia korywiniańska
+9074 Dziedzictwo lechickie
+9075 Przywileje szlachty
+9076 Droga Jedwabna
+9077 Pawęża
+9078 Reformy husyckie
+9079 Taktyka Wagenburga
+9080 Artyleria
+9081 Sipahi
+9082 Bagajowie
+9083 Strzemiona
+9084 Tarcze wieżowe
+9085 Twierdze wzgórz
+9086 Sztuka oblężnicza Timurydów
+9087 Zbroja jedwabna
+9088 Wielbłądy maghrebskie
+9089 Kasbah
+9090 Królewscy spadkobiercy
+9091 Maszyny torsyjne
+9092 Kusze podwójne
+9093 Miecze z kłów
+9094 Przymusowa rekrutacja
+9095 Talassokracja
+9096 Kawaleria Manipuru
+9097 Howdah
+9098 Rewolucja flamandzka
+9099 Winnice burgundzkie
+9100 Hauberk
+9101 Pierwsza krucja
+9102 Fereterowie
+9103 Flota cylicyjska
+9104 Kawaleria aznau
+9105 Wieże swanów
+9106 Tarcze tkaninowe
+9107 Proca andyjska

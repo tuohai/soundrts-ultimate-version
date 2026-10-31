@@ -328,203 +328,272 @@
 ; Civilization bonuses (spoken in the faction picker via G; indented lines continue)
 8520 Unique unit Longbowman.
   Unique techs Yeomen and Warwolf.
-  Foot archers plus one range in Castle Age and plus one more in Imperial Age, except skirmishers.
-  Shepherds work faster.
-  Town Centers cost half wood from Castle Age.
-  Team bonus: Archery Ranges work faster.
-  No Bloodlines, no Thumb Ring.
+  Shepherds work twenty-five percent faster.
+  Town Centers cost fifty percent less wood starting in Castle Age.
+  Foot Archers plus one/two range in Castle/Imperial Age.
+  Foot Archers and Skirmisher-line plus one range; Watch Tower-line plus two attack.
+  Trebuchets deal blast damage and are more accurate.
+  Team bonus: Archery Ranges work ten percent faster.
 8521 Unique unit Throwing Axeman.
-  Unique techs Bearded Axe and Chivalry.
-  Cavalry plus twenty percent hit points from Feudal Age.
-  Foragers work faster.
-  Farm upgrades are free.
-  Castles cost less stone.
-  Team bonus: Knights plus two line of sight.
-  No Thumb Ring, Bracer, Ring Archer Armor, or Bloodlines.
-8522 Unique unit Chu Ko Nu.
-  Unique techs Rocketry and Great Wall.
-  Start with three extra villagers, minus fifty wood and two hundred food.
-  Technologies cost five, ten, and fifteen percent less in Feudal, Castle, and Imperial Age.
-  Town Centers support fifteen population and plus seven line of sight.
-  Fire ships move faster in Castle and Imperial Age.
-  Team bonus: Farms contain ten percent more food.
+  Unique techs Ordonnance Companies and Chivalry.
+  Foragers work fifteen percent faster.
+  Mill technologies free.
+  Mounted Units twenty percent HP starting in Feudal Age.
+  Castles cost fifteen/twenty-five percent less in Castle/Imperial Age.
+  Mounted Crossbowmen cost forty percent less gold.
+  Stables work forty percent faster.
+  Team bonus: Knight-line plus two line of sight.
+8522 Unique unit Chu Ko Nu, Dragon Ship.
+  Unique techs Great Wall and Rocketry.
+  Start with plus three Villagers, but minus fifty wood and minus two hundred food.
+  Technologies cost five/ten/fifteen percent less in Feudal/Castle/Imperial Age.
+  Town Centers plus seven line of sight and provide plus fifteen population space.
+  Fire Lancers and Fire Ships move five/ten percent faster in Castle/Imperial Age.
+  Walls, Watch Tower-line and Bombard Towers thirty percent HP.
+  Scorpions, Rocket Carts and Lou Chuans twenty-five percent attack; Lou Chuans fire rockets.
+  Team bonus: Farms ten percent food.
 8523 Unique unit Mangudai.
-  Unique techs Drill and Nomads.
-  Hunters work faster.
-  Scout cavalry line plus twenty then thirty percent hit points in Castle and Imperial Age.
-  Cavalry archers fire faster.
-  Build pastures instead of farms; no mill.
-  Team bonus: Scout cavalry line plus two line of sight.
+  Unique techs Nomads and Drill.
+  Hunters work forty percent faster.
+  Cavalry Archers attack twenty-five percent faster.
+  Scout Cavalry-line and Steppe Lancers twenty/thirty percent HP in Castle/Imperial Age.
+  Lost Houses do not decrease population space.
+  Siege Workshop Units move fifty percent faster.
+  Team bonus: Scout Cavalry-line plus two line of sight.
 8524 Unique unit Cataphract.
-  Unique techs Logistica and Greek Fire.
-  Buildings gain extra hit points each age.
-  Imperial Age costs thirty-three percent less.
-  Camels, skirmishers, and spearmen cost less.
-  Fire ships attack faster.
-  Town Watch and Town Patrol are free.
-  Team bonus: Monks heal faster.
+  Unique techs Greek Fire and Logistica.
+  Buildings ten/twenty/thirty/forty percent HP in Dark/Feudal/ Castle/Imperial Age.
+  Camel Riders, Skirmishers and Spearman-line cost twenty-five percent less.
+  Town Watch, Town Patrol free.
+  Advancing to Imperial Age costs thirty-three percent less.
+  Fire Ships and Dromons attack twenty-five percent faster.
+  Fire Ships plus one range; Dromons and Bombard Towers increased blast radius.
+  Cataphracts and Varangian Guards deal trample damage.
+  Team bonus: Monks heal one hundred percent faster.
 8525 Unique unit Samurai.
   Unique techs Yasama and Kataparuto.
-  Infantry attack faster from the Feudal Age.
-  Fishing ships have more hit points and work faster.
-  Mills and camps cost less.
-  Team bonus: Galleys plus four line of sight.
+  Mills, Lumber- and Mining Camps cost fifty percent less.
+  Infantry attacks thirty-three percent faster starting in Feudal Age.
+  Cavalry Archers plus two attack vs. Ranged Soldiers (except Skirmishers).
+  Fishing Ships work five/ten/fifteen/twenty percent faster in Dark/Feudal/Castle/Imperial Age; one hundred percent HP.
+  Watch Tower-line fires additional arrows.
+  Trebuchets attack and pack/unpack faster.
+  Team bonus: Galley-line plus four line of sight.
 8526 Unique unit Teutonic Knight.
   Unique techs Ironclad and Crenellations.
-  Barracks and stable units plus melee armor in Castle and Imperial Age.
-  Farms cost less wood.
-  Murder Holes and Herbal Medicine are free.
-  Team bonus: resist conversion.
+  Farms cost forty percent less.
+  Town Centers plus ten garrison capacity; Towers plus five garrison capacity.
+  Infantry and Mounted Units plus one/two melee armor in Castle/Imperial Age.
+  Monks one hundred percent healing range.
+  Murder Holes, Herbal Medicine free.
+  Siege Weapons plus four melee armor.
+  Castles plus three range, garrisoned Infantry fires arrows.
+  Team bonus: Units more resistant to conversion.
 8527 Unique unit Berserk.
   Unique techs Chieftains and Bogsveigar.
-  Infantry hit points plus twenty percent from Feudal Age.
-  Wheelbarrow and Hand Cart are free.
-  Warships cost less.
-  Docks can train Longboats.
-  Team bonus: Docks cost less.
-8528 Unique unit Rattan Archer.
+  Wheelbarrow, Hand Cart free.
+  Infantry twenty percent HP starting in Feudal Age.
+  Warships cost ten/fifteen/twenty percent less in Feudal/Castle/Imperial Age.
+  Infantry plus five attack vs. Cavalry, plus four vs. Camel Units.
+  Archer-line and Longships plus one attack.
+  Team bonus: Docks cost fifteen percent less.
+8528 Unique unit Rattan Archer, Imperial Skirmisher.
   Unique techs Chatras and Paper Money.
-  Archery Range units plus twenty percent hit points.
-  Reveal enemy Town Centers at the start.
-  Conscription is free.
-  Economic technologies cost no wood and research faster.
-  Team bonus: Imperial Skirmisher upgrade is available.
-8529 Unique unit Organ Gun.
+  Enemy Town Centers are revealed at the start of the game.
+  Economic upgrades cost no wood and research one hundred percent faster.
+  Foot Archers and Skirmishers twenty percent HP.
+  Conscription free.
+  Battle Elephants plus one hundred HP.
+  Lumberjacks slowly generate gold in addition to wood.
+  Team bonus: Imperial Skirmisher upgrade available in Imperial Age.
+8529 Unique unit Organ Gun, Caravel.
   Unique techs Circumnavigation and Arquebus.
-  Ships plus ten percent hit points.
+  Foragers generate wood in addition to food.
   All units cost twenty percent less gold.
-  Foragers also gather wood.
-  Can build a Feitoria.
-  Team bonus: technologies research faster.
+  Can build Feitoria in Imperial Age.
+  Ships ten/fifteen/twenty percent HP in Feudal/Castle/Imperial Age.
+  Sets the entire map to explored; Ships train thirty-three percent faster.
+  Gunpowder Units fire more accurately at moving targets.
+  Team bonus: Technologies research twenty-five percent faster.
 8530 Unique unit Jaguar Warrior.
   Unique techs Atlatl and Garland Wars.
-  Start with fifty extra gold.
-  Villagers carry three more.
-  Military trains faster.
-  Monks gain five hit points per monastery technology.
-  Team bonus: relics generate extra gold.
-  No stables or cavalry.
+  Start with plus fifty gold.
+  Villagers carry plus three.
+  Military Units train fifteen percent faster.
+  Monks gain plus five HP for each researched Monastery technology.
+  Skirmishers plus one attack, plus one range.
+  Infantry plus four attack.
+  Team bonus: Relics generate thirty-three percent gold.
 8531 Unique unit Woad Raider.
   Unique techs Stronghold and Furor Celtica.
-  Infantry speed plus five percent each age from Dark Age.
-  Lumberjacks work faster.
-  Siege weapons fire faster.
-  Can steal enemy flock even if a unit stands next to it.
-  Team bonus: Siege Workshops work faster.
+  Lumberjacks work fifteen percent faster.
+  Livestock animals within Celt unit line of sight cannot be stolen.
+  Infantry moves five/ten/fifteen/twenty percent faster in Dark/Feudal/ Castle/Imperial Age.
+  Siege Weapons attack twenty-five percent faster.
+  Castles and Watch Tower-line attack thirty-three percent faster; Castles heal allied Infantry in a seven tile radius.
+  Siege Weapons forty percent HP.
+  Team bonus: Siege Workshops work twenty percent faster.
 8532 Unique unit Gbeto.
   Unique techs Tigui and Farimba.
-  Buildings cost fifteen percent less wood except farms.
-  Barracks units gain pierce armor by age.
+  Buildings cost fifteen percent less wood.
   Villagers drop off ten percent more gold.
-  Team bonus: Universities work faster.
+  Barracks Units plus one/two/three pierce armor in Feudal/ Castle/Imperial Age.
+  Town Centers fire arrows without garrison.
+  Cavalry plus five attack.
+  Team bonus: Universities work eighty percent faster.
 
 ; Late-added civilizations (DE 8 + DE Lords/Return of Rome 6 = 14)
 8533 Unique unit Mameluke.
-  Unique techs Madrasah and Zealotry.
-  Stables cost -50 gold in Dark Age, -60 in Castle Age.
-  Transport ships have double hit points and carry plus two.
-  Ships deal plus six plus seven attack vs buildings in Castle Imperial Age.
-  Team bonus: Foot archers plus one attack vs buildings from Castle Age.
+  Unique techs Bimaristan and Counterweights.
+  Market trading fee only five percent; Markets cost minus one hundred wood.
+  Camel Units twenty-five percent HP.
+  Galley-line attacks twenty-five percent faster.
+  Transport Ships one hundred percent HP, plus twenty carry capacity.
+  Monks passively heal multiple nearby units.
+  Trebuchets and Mangonel-line fifteen percent attack.
+  Team bonus: Foot Archers and Skirmishers plus two attack vs. buildings.
 8700 Goths
 8540 Unique unit Huskarl.
   Unique techs Anarchy and Perfusion.
-  Infantry costs less.
-  Huskarls and Eagle Warriors are cheaper and tougher.
-  Infantry return some food when killing units.
-  Team bonus: Huskarls have more line of sight.
+  Loom is researched instantly.
+  Hunters carry plus fifteen; hunted animals last twenty percent longer.
+  Infantry costs fifteen/twenty/twenty-five/thirty percent less in Dark/Feudal/Castle/ Imperial Age.
+  Infantry plus one/two/three attack vs. buildings in Feudal/ Castle/Imperial Age.
+  Ten population space in Imperial Age.
+  Huskarls can be trained at Barracks.
+  Barracks work one hundred percent faster.
+  Team bonus: Barracks work twenty percent faster.
 8701 Persians
-8541 Unique unit War Elephant.
-  Unique techs Kamandaran and Silos.
-  Start with fifty extra food and wood.
-  Town Centers work faster.
-  Team bonus: trade gains more gold.
+8541 Unique unit War Elephant, Savar.
+  Unique techs Kamandaran and Citadels.
+  Start with plus fifty wood and plus fifty food.
+  Town Centers and Docks one hundred percent HP and work five/ten/fifteen/twenty percent faster in Dark/Feudal/Castle/Imperial Age.
+  Parthian Tactics available in Castle Age.
+  Can build Caravanserai in Imperial Age.
+  Archer-line gold cost replaced by additional wood cost.
+  Castles plus four attack, plus three vs. Rams, plus three vs. Infantry and receive twenty-five percent less bonus damage.
+  Team bonus: Knight-line plus two attack vs. Ranged Soldiers.
 8702 Slavs
 8542 Unique unit Boyar.
-  Unique techs Druzhina and Orthodoxy.
-  Barracks and Archery Range units cost less.
-  Villagers have more hit points.
-  Team bonus: Militia line moves faster.
+  Unique techs Detinets and Druzhina.
+  Farmers work fifteen percent faster.
+  Arson, Gambesons free.
+  Siege Workshop Units cost fifteen percent less.
+  Monks move twenty percent faster.
+  Replaces forty percent of Castle and Watch Tower-line stone cost with additional wood cost.
+  Infantry deals trample damage.
+  Team bonus: Military buildings (except Castles) provide plus five population space.
 8703 Cumans
 8543 Unique unit Kipchak.
-  Unique techs Cuman Mercenaries and Steppe Husbandry.
-  Can build a second Town Center in Feudal Age.
-  Steppe Lancers cost less.
-  Cavalry archers train faster.
-  Team bonus: Barracks and Archery Range units train faster.
+  Unique techs Steppe Husbandry and Cuman Mercenaries.
+  One additional Town Center can be built in Feudal Age.
+  Mounted Units move five/ten/fifteen percent faster in Feudal/ Castle/Imperial Age.
+  Archery Ranges and Stables cost minus seventy-five wood.
+  Siege Workshop and Battering Ram available in Feudal Age; Capped Ram available in Castle Age.
+  Scout Cavalry-line, Steppe Lancers and Cavalry Archers train one hundred percent faster.
+  All team members can train five free Elite Kipchaks per Castle.
+  Team bonus: Palisade Walls thirty-three percent HP.
 8704 Huns
 8544 Unique unit Tarkan.
-  Unique techs Atheism and Marauders.
-  Start with one extra Scout Cavalry, no houses required.
-  Cavalry archers train faster.
-  Earn gold for killing villagers and monks.
-  Team bonus: Tarkans do bonus damage to buildings.
+  Unique techs Marauders and Atheism.
+  Do not need houses, but start with minus one hundred wood.
+  Cavalry Archers cost ten/twenty percent less in Castle/Imperial Age.
+  Trebuchets fire more accurately at units and small targets.
+  On Nomadic maps, the first Town Center spawns a scouting Horse.
+  Tarkans can be trained at Stables.
+  Enemy Relics generate fifty percent less resources; Wonder and Relic victory takes plus one hundred years.
+  Team bonus: Stables work twenty percent faster.
 8705 Koreans
-8545 Unique unit War Wagon.
-  Unique techs Panokseon and Shinkichon.
-  Towers and Castles gain line of sight each age.
-  Woodcutters work faster.
-  Mangonels and Trebuchets are more accurate.
-  Ships and Cannon Galleons are tougher.
-  Team bonus: Siege Workshops can build War Wagons.
+8545 Unique unit War Wagon, Turtle Ship.
+  Unique techs Eupseong and Shinkichon.
+  Stone miners work twenty percent faster.
+  Ranged Soldiers and Infantry cost fifty percent less wood.
+  Archer armor and tower upgrades free (Bombard Tower requires Chemistry).
+  Warships cost twenty percent less wood.
+  Watch Tower-line plus two range.
+  Rocket Carts and Turtle Ships plus one range, fire additional projectiles.
+  Team bonus: Villagers plus three line of sight.
 8706 Mayans
 8546 Unique unit Plumed Archer.
-  Unique techs El Dorado and Maya Architecture.
-  Start with one extra villager.
-  Resources last longer on the map.
-  Eagle line is tougher and stronger against archers.
-  Walls cost less.
-  Team bonus: walls cost less.
+  Unique techs Hul'che Javelineers and Holcans.
+  Start with plus one Villager, but minus fifty food.
+  Resources last fifteen percent longer.
+  Foot Archers cost ten/twenty/thirty percent less in Feudal/Castle/Imperial Age.
+  Skirmishers fire an additional projectile.
+  Eagle Warriors plus forty HP.
+  Team bonus: Walls cost fifty percent less.
 8707 Hindustanis
-8547 Unique unit Armored Elephant.
+8547 Unique unit Ghulam, Imperial Camel Rider.
   Unique techs Grand Trunk Road and Shatagni.
-  Buildings except farms cost less wood.
-  Camels and Heavy Camels cost less.
-  Town Centers and Outposts have more range and line of sight.
-  Team bonus: Hand Cannoneers have extra range.
+  Villagers cost eight/thirteen/eighteen/twenty-three percent less in Dark/Feudal/Castle/ Imperial Age.
+  Camel Riders attack twenty percent faster.
+  Gunpowder Units plus one melee/plus one pierce armor.
+  Can build Caravanserai in Imperial Age.
+  All gold income ten percent faster; Market trading fee reduced to ten percent.
+  Hand Cannoneers plus two range.
+  Team bonus: Scout Cavalry-line and Camel Units plus two attack vs. buildings.
 8708 Spanish
-8548 Unique unit Conquistador.
-  Unique techs Supremacy and Inquisition.
-  Builders work faster.
-  Hand Cannoneers are more powerful.
-  Gunpowder units fire faster.
-  Trade generates more gold.
-  Team bonus: Hand Cannoneers are more accurate.
+8548 Unique unit Conquistador, Missionary.
+  Unique techs Inquisition and Supremacy.
+  Builders work thirty percent faster.
+  Receive plus twenty gold for each technology researched.
+  Blacksmith upgrades cost no gold.
+  Gunpowder Units attack eighteen percent faster.
+  Cannon Galleons fire more accurately at moving targets.
+  Monks and Missionaries convert faster; Missionaries plus one range.
+  Villagers plus forty HP, plus six attack, plus two melee/plus two pierce armor.
+  Team bonus: Trade Units generate twenty-five percent gold.
 8709 Magyars
 8549 Unique unit Magyar Huszar.
-  Unique techs Mercenaries and Magyar Huszardom.
-  Scout line gains line of sight each age.
-  Trade Carts carry more.
-  Hussars train faster.
-  Team bonus: trade gains more gold.
+  Unique techs Corvinian Army and Recurve Bow.
+  Villagers defeat wolves with one strike.
+  Scout Cavalry-line costs fifteen percent less.
+  Melee attack upgrades free.
+  Magyar Huszar gold cost is replaced by additional food cost.
+  Mounted Archers plus one attack, plus one range.
+  Team bonus: Mounted Archers train twenty-five percent faster.
 8710 Poles
-8550 Unique unit Winged Hussar.
-  Unique techs Stone Mining bonus.
-  Knights attack harder.
-  Stone mines have more resources.
-  Team bonus: Scout line gains line of sight.
+8550 Unique unit Obuch, Winged Hussar.
+  Unique techs Szlachta Privileges and Lechitic Legacy.
+  Folwark replaces Mill.
+  Villagers regenerate ten/fifteen/twenty HP in Feudal/Castle/Imperial Age.
+  Stone Miners generate gold in addition to stone.
+  Bloodlines and Scout Cavalry-line upgrades cost fifty percent less food.
+  Knight-line costs sixty percent less gold.
+  Scout Cavalry-line deals trample damage.
+  Team bonus: Scout Cavalry-line plus one attack vs. Ranged Soldiers.
 8711 Italians
-8551 Unique unit Genoese Crossbowman.
-  Unique techs Pavise and Silk Road.
-  Gunpowder units cost less gold.
-  Dock buildings are tougher.
-  Trade generates more gold.
-  Technologies cost less.
-  Team bonus: trade gains more gold.
+8551 Unique unit Genoese Crossbowman, Condottiero.
+  Unique techs Silk Road and Pirotechnia.
+  Advancing to the next Age costs fifteen percent less.
+  Foot Archers and Condottieri plus one melee/plus one pierce armor.
+  Dock and University technologies cost twenty-five percent less.
+  Gunpowder Units cost twenty percent less.
+  Fishing Ships cost fifteen percent less.
+  Trade Units cost fifty percent less.
+  Hand Cannoneers deal fifteen percent pass through damage and are more accurate.
+  Team bonus: Condottiero available at the Barracks in Imperial Age.
 8712 Bohemians
-8552 Unique unit Hussite Wagon.
-  Unique techs Sappers.
-  Universities cost less.
-  Mines yield more stone.
-  Wagons and Siege Workshop units cost less.
-  Team bonus: mines yield extra stone.
+8552 Unique unit Hussite Wagon, Houfnice.
+  Unique techs Wagenburg Tactics and Hussite Reforms.
+  Mining Camp technologies free.
+  Blacksmiths and Universities cost minus one hundred wood.
+  Spearman-line deals twenty-five percent bonus damage.
+  Fervor and Sanctity affect Villagers.
+  Chemistry and Hand Cannoneer available in Castle Age.
+  Gunpowder Units move ten percent faster.
+  Monks and Monastery technologies gold cost is replaced by food cost.
+  Team bonus: Markets work eighty percent faster.
 8713 Turks
 8553 Unique unit Janissary.
   Unique techs Sipahi and Artillery.
-  Mines yield more gold.
-  Gunpowder units train faster.
-  Hand Cannoneers are more accurate.
-  Monks heal faster.
-  Team bonus: Chemistry is free.
+  Gold miners work twenty-five percent faster.
+  Scout Cavalry-line plus one pierce armor and upgrades free.
+  Chemistry free; Gunpowder technologies costs fifty percent less.
+  Gunpowder Units twenty-five percent HP.
+  Mounted Archers plus twenty HP.
+  Bombard Towers, Bombard Cannons, Cannon Galleons plus two range.
+  Team bonus: Gunpowder Units train twenty-five percent faster.
 
 ; Late-added civ villagers / unique units / elite upgrades / unique techs
 ; (9000-9013: per-civ villager labels removed for design consistency with the original 13 civs,
@@ -550,88 +619,168 @@
 9043 Perfusion
 9044 Kamandaran
 9045 Druzhina
-9046 Orthodoxy
 9047 Steppe Husbandry
 9048 Cuman Mercenaries
 9049 Marauders
 9050 Atheism
-9051 Panokseon
 9052 Shinkichon
-9053 El Dorado
-9054 Maya Architecture
 9055 Grand Trunk Road
 9056 Shatagni
 
 ; Late-added civ titles (14 from previous commit + 2 final: Inca, Romans)
 ; Used by style.txt civ defs (title 8714-8727, intro 8554-8567)
 8714 Bulgarians
-8554 Unique unit Konnik. Stone miners work faster. Mill upgrades cost less.
-  Team bonus: stone miners work even faster.
+8554 Unique unit Konnik.
+  Unique techs Stirrups and Bagains.
+  Militia-line upgrades free.
+  Blacksmith and Siege Workshop technologies cost fifty percent less food.
+  Town Centers cost fifty percent less stone.
+  Can build Krepost in Castle Age.
+  Cavalry attacks thirty-three percent faster.
+  Militia-line plus five melee armor.
+  Team bonus: Blacksmiths work eighty percent faster.
 
 8715 Lithuanians
-8555 Unique unit Leitis. Spearman line has bonus pierce armor. Relics boost
-  Town Center line of sight. Starts with extra food and gold.
-  Team bonus: Town Centers have wider vision.
+8555 Unique unit Leitis, Winged Hussar.
+  Unique techs Hill Forts and Tower Shields.
+  Each Town Center provides plus one hundred food.
+  Spearman-line and Skirmisher-line move ten percent faster.
+  Each garrisoned Relic provides plus one attack to Knight-line and Leitis (maximum plus four).
+  Town Centers plus three range.
+  Spearman-line and Skirmishers plus two pierce armor.
+  Team bonus: Monasteries work twenty percent faster.
 
 8716 Tatars
-8556 Unique unit Steppe Lancer. Sheep last longer. Cavalry Archers have more
-  HP in Castle/Imperial. Improved hill bonus.
-  Team bonus: Steppe Lancers have +2 line of sight.
+8556 Unique unit Keshik, Flaming Camel.
+  Unique techs Silk Armor and Timurid Siegecraft.
+  Livestock animals last fifty percent longer.
+  Units deal twenty-five percent damage when fighting from higher elevation.
+  New Town Centers spawn two Sheep starting in Castle Age.
+  Thumb Ring, Parthian Tactics free.
+  Scout Cavalry-line, Steppe Lancers and Cavalry Archers plus one melee/plus one pierce armor.
+  Trebuchets plus two range.
+  Team bonus: Mounted Archers plus two line of sight.
 
 8717 Berbers
-8557 Unique unit Camel Rider. Villagers move faster in Castle Age. Stable
-  units and ships cost less. Genitours unlocked at Archery Range.
-  Team bonus: Genitours have bonus attack.
+8557 Unique unit Camel Archer, Genitour.
+  Unique techs Kasbah and Maghrebi Camels.
+  Villagers move five percent faster in Dark Age, ten percent faster starting in Feudal Age.
+  Stable Units cost fifteen/twenty percent less in Castle/Imperial Age.
+  Ships move ten percent faster.
+  Team Castles work twenty-five percent faster.
+  Camel Units regenerate fifteen HP per minute.
+  Team bonus: Genitour available at the Archery Range starting in Castle Age.
 
 8718 Ethiopians
-8558 Unique unit Shotel Warrior. Archers fire faster. Gold mining is faster
-  in Castle Age. Towers gain attack as you age up.
-  Team bonus: Archers have wider vision.
+8558 Unique unit Shotel Warrior.
+  Unique techs Royal Heirs and Torsion Engines.
+  Receive plus one hundred gold and plus one hundred food when advancing to the next Age.
+  Foot Archers attack eighteen percent faster.
+  Pikeman upgrade free.
+  Shotel Warriors and Camel Riders receive minus three damage from Mounted Units.
+  Siege Workshop Units' blast radius increased.
+  Team bonus: Outposts plus three line of sight and cost no stone.
 
 8719 Khmer
-8559 Unique unit Ballista Elephant. Battle Elephants move faster. No house
-  requirement (Town Center covers all population). Farms last longer.
-  Team bonus: Scorpions and Ballista Elephants have bonus attack.
+8559 Unique unit Ballista Elephant.
+  Unique techs Tusk Swords and Double Crossbow.
+  No buildings required to advance to the next Age or to unlock other buildings.
+  Farmers don't require Mills or Town Centers to drop off food.
+  Villagers can garrison in Houses.
+  Battle Elephants move ten percent faster.
+  Battle Elephants plus three attack.
+  Ballista Elephants and Scorpions fire an additional projectile.
+  Team bonus: Scorpions plus one range.
 
 8720 Malays
-8560 Unique unit Karambit Warrior. Fish Traps cost less. Battle Elephants
-  cost less food. Docks have more HP and wider line of sight.
-  Team bonus: Docks are more durable.
+8560 Unique unit Karambit Warrior.
+  Unique techs Thalassocracy and Forced Levy.
+  Advancing to the next Age is sixty-six percent faster.
+  Infantry armor upgrades free.
+  Battle Elephants cost twenty-five/thirty-five percent less in Castle/Imperial Age.
+  Fish Traps cost thirty-three percent less and provide two hundred percent food.
+  Docks are upgraded to Harbors.
+  Militia-line gold cost is replaced by additional food cost.
+  Team bonus: Docks plus six line of sight.
 
 8721 Burmese
-8561 Unique unit Arambai. Battle Elephants hit harder. Infantry gets bonus
-  attack in Castle Age. Relics are visible from the start.
-  Team bonus: Relics are visible on the map.
+8561 Unique unit Arambai.
+  Unique techs Manipur Cavalry and Howdah.
+  Lumber Camp technologies free.
+  Infantry plus one/two/three attack in Feudal/Castle/Imperial Age.
+  Battle Elephants plus one melee/plus one pierce armor.
+  Monastery technologies cost fifty percent less.
+  Cavalry plus four attack vs. Ranged Soldiers.
+  Battle Elephants plus one melee/plus one pierce armor.
+  Team bonus: Relics visible on the map at the start of the game.
 
 8722 Burgundians
-8562 Unique unit Coustillier. Farms produce more food. Knight line is
-  cheaper. Cavalry attacks faster in Castle Age. Hand Cannoneers hit harder.
-  Team bonus: Gunpowder units have bonus attack.
+8562 Unique unit Coustillier, Flemish Militia.
+  Unique techs Burgundian Vineyards and Flemish Revolution.
+  Economic upgrades available one age earlier and cost forty percent less food.
+  Stable technologies cost fifty percent less.
+  Cavalier upgrade available in Castle Age.
+  Gunpowder Units twenty-five percent attack.
+  Farmers slowly generate gold in addition to food.
+  All existing Villagers are transformed to Flemish Militia.
+  Team bonus: Relics generate food in addition to gold.
 
 8723 Sicilians
-8563 Unique unit Serjeant. Buildings have bonus HP. Town Centers are
-  doubly durable. Military units take less bonus damage. Farmers work faster.
-  Team bonus: First Crusade (Imperial) gives military +100% HP briefly.
+8563 Unique unit Serjeant.
+  Unique techs First Crusade and Hauberk.
+  Start with plus one hundred stone.
+  Farm upgrades provide one hundred twenty-five percent additional food.
+  Soldiers receive forty percent less bonus damage.
+  Can build Donjon in Dark Age, replaces Watch Tower-line.
+  Fortifications built fifty percent faster; Town Centers built one hundred percent faster.
+  Up to five Town Centers spawn five Serjeants each; units more resistant to conversion.
+  Knight-line plus one melee/plus two pierce armor.
+  Team bonus: Transport Ships plus five line of sight and cost fifty percent less.
 
 8724 Armenians
-8564 Unique unit Composite Bowman. Militia upgrades cost less. Infantry
-  gains attack and armor in Castle Age. Walls and gates have more HP.
-  Team bonus: Cavalry has wider line of sight.
+8564 Unique unit Composite Bowman, Warrior Priest.
+  Unique techs Cilician Fleet and Fereters.
+  Mule Carts cost twenty-five percent less.
+  Mule Cart technology effects forty percent.
+  Spearman- and Militia-line upgrades (except Man-at-Arms) available one age earlier.
+  First Fortified Church receives a free Relic.
+  Galley-line and Dromons fire an additional projectile.
+  Demolition Ships twenty percent blast radius; Galley-line and Dromons plus one range.
+  Infantry (except Spearman-line) plus thirty HP; Warrior Priests heal one hundred percent faster.
+  Team bonus: Infantry plus two line of sight.
 
 8725 Georgians
-8565 Unique unit Monaspa. Buildings have bonus HP. Cavalry has bonus attack
-  vs buildings. Militia upgrades cost less. Villagers gain HP per age.
-  Team bonus: Cavalry has bonus attack vs archers.
+8565 Unique unit Monaspa.
+  Unique techs Svan Towers and Aznauri Cavalry.
+  Start with a Mule Cart.
+  Units and buildings receive fifteen percent less damage when located on higher elevation.
+  Mounted Units regenerate two/eight/fourteen HP per minute in Feudal/Castle/Imperial Age.
+  Fortified Churches provide Villagers in a nine tiles radius with ten percent work rate.
+  Fortifications plus two attack; Watch Tower-line deals pass through damage.
+  Mounted Units take twenty percent less population space.
+  Team bonus: Building repairs cost twenty-five percent less.
 
 8726 Incas
-8566 Unique unit Slinger. Villagers carry more. Infantry (incl. eagles) has
-  bonus HP. All buildings cost less wood and stone. Starts with a llama.
-  Team bonus: Farms are more productive.
+8566 Unique unit Kamayuk.
+  Unique techs Andean Sling and Fabric Shields.
+  Houses and Settlements provide plus five population space.
+  Buildings cost fifteen percent less stone.
+  Military Units cost fifteen/twenty/twenty-five/thirty percent less food in Dark/Feudal/Castle/Imperial Age.
+  Villagers affected by Infantry Blacksmith upgrades starting in Castle Age.
+  Skirmishers and Slingers no minimum range; Slingers plus one attack.
+  Kamayuks, Slingers and Champi Warriors plus one melee/plus one pierce armor.
+  Team bonus: Start with a free Llama.
 
 8727 Romans
-8567 Unique unit Legionary. All buildings cost less wood. Stone mining is
-  faster. Swordsman line gets bonus attack in Imperial. Centurions unlocked
-  at Barracks (Castle). Team bonus: Centurions are durable.
+8567 Unique unit Centurion, Legionary.
+  Unique techs Ballistas and Comitatenses.
+  Villagers gather, build, and repair five percent faster.
+  Infantry armor upgrade effects are doubled.
+  Scorpions cost fifty percent less gold.
+  Galley-line and Dromons plus one melee/plus one pierce armor.
+  Scorpions attack thirty-three percent faster; Galley-line plus two attack.
+  Militia-line, Knight-line, and Centurions train fifty percent faster and receive a charge attack.
+  Team bonus: Scorpions minimum range reduced.
 
 ; Late-added civ unique unit labels (title 9029-9039)
 ; Per-civ elite upgrade labels removed for design consistency; rules.txt
@@ -660,6 +809,23 @@
 8355 Elite Legionary
 8356 Elite Slinger
 
+; AoE2 DE unique units without a spoken name until now
+
+8358 Elite Mameluke
+8359 Elite Keshik
+8360 Elite Camel Archer
+8361 Elite Obuch
+8362 Elite Composite Bowman
+8363 Elite Genitour
+9108 Mameluke
+9109 Keshik
+9110 Camel Archer
+9111 Obuch
+9112 Composite Bowman
+9113 Genitour
+9114 Missionary
+9115 Houfnice
+
 ; Note: Joan of Arc campaign items (8860-8861) and hero titles/intro
 ; (8862-8867) are defined in mods/aoe2/single/Joan of Arc/ui/tts.txt
 ; so the strings stay co-located with the campaign maps.
@@ -677,3 +843,97 @@
 ; Inca unique unit (Kamayuk)
 9040 Kamayuk
 8357 Elite Kamayuk
+
+; AoE2 DE unique technologies (canonical DE set)
+9063 Counterweights
+9064 Bimaristan
+9065 Citadels
+9066 Detinets
+9067 Eupseong
+9068 Holcans
+9069 Hul'che Javelineers
+9070 Supremacy
+9071 Inquisition
+9072 Recurve Bow
+9073 Corvinian Army
+9074 Lechitic Legacy
+9075 Szlachta Privileges
+9076 Silk Road
+9077 Pavise
+9078 Hussite Reforms
+9079 Wagenburg Tactics
+9080 Artillery
+9081 Sipahi
+9082 Bagains
+9083 Stirrups
+9084 Tower Shields
+9085 Hill Forts
+9086 Timurid Siegecraft
+9087 Silk Armor
+9088 Maghrebi Camels
+9089 Kasbah
+9090 Royal Heirs
+9091 Torsion Engines
+9092 Double Crossbow
+9093 Tusk Swords
+9094 Forced Levy
+9095 Thalassocracy
+9096 Manipur Cavalry
+9097 Howdah
+9098 Flemish Revolution
+9099 Burgundian Vineyards
+9100 Hauberk
+9101 First Crusade
+9102 Fereters
+9103 Cilician Fleet
+9104 Aznauri Cavalry
+9105 Svan Towers
+9106 Fabric Shields
+9107 Andean Sling
+
+; AoE2 DE unique technologies (canonical DE set)
+9063 Counterweights
+9064 Bimaristan
+9065 Citadels
+9066 Detinets
+9067 Eupseong
+9068 Holcans
+9069 Hul'che Javelineers
+9070 Supremacy
+9071 Inquisition
+9072 Recurve Bow
+9073 Corvinian Army
+9074 Lechitic Legacy
+9075 Szlachta Privileges
+9076 Silk Road
+9077 Pavise
+9078 Hussite Reforms
+9079 Wagenburg Tactics
+9080 Artillery
+9081 Sipahi
+9082 Bagains
+9083 Stirrups
+9084 Tower Shields
+9085 Hill Forts
+9086 Timurid Siegecraft
+9087 Silk Armor
+9088 Maghrebi Camels
+9089 Kasbah
+9090 Royal Heirs
+9091 Torsion Engines
+9092 Double Crossbow
+9093 Tusk Swords
+9094 Forced Levy
+9095 Thalassocracy
+9096 Manipur Cavalry
+9097 Howdah
+9098 Flemish Revolution
+9099 Burgundian Vineyards
+9100 Hauberk
+9101 First Crusade
+9102 Fereters
+9103 Cilician Fleet
+9104 Aznauri Cavalry
+9105 Svan Towers
+9106 Fabric Shields
+9107 Andean Sling
