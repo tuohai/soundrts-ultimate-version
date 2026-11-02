@@ -1602,7 +1602,7 @@ rdg_minimal_range 1
 rdg_vs archer_unit 4
 rdg_vs spearman 4
 rdg_vs cavalry_archer 2
-can_upgrade_to
+can_upgrade_to imperial_skirmisher
 ; 帝王射手 — DE Vietnamese shared UU; defined for later civs, not on generic skirm line
 def imperial_skirmisher
 is_a elite_skirmisher
@@ -1739,7 +1739,10 @@ mdg_range 1
 mdf 0
 rdf 2
 mdg_vs camel_rider 10
-can_upgrade_to hussar
+; DE: the Polish/Lithuanian Winged Hussar replaces the Light Cavalry in
+; Imperial Age (researched at their Stable).  Only the Polish and Lithuanian
+; Stables offer it, so every other civ keeps the plain Hussar line.
+can_upgrade_to hussar winged_hussar
 def hussar
 is_a light_cavalry
 cost 600 0 500 0
@@ -1794,7 +1797,10 @@ mdg_cd 1.8
 mdg_range 1
 mdf 2
 rdf 2
-can_upgrade_to paladin
+; DE: the Persian Savar replaces the Cavalier in Imperial Age (researched at
+; the Persian Stable).  Only the Persian Stable offers it, so every other
+; civ keeps the plain Paladin line.
+can_upgrade_to paladin savar
 def paladin
 is_a cavalier
 cost 750 0 1300 0
@@ -1853,7 +1859,7 @@ mdg_range 1
 mdf 0
 rdf 0
 mdg_vs cavalry 18
-can_upgrade_to
+can_upgrade_to imperial_camel_rider
 ; 帝王骆驼兵 — DE Hindustanis unique upgrade; defined for later civs, not on generic camel line
 def imperial_camel_rider
 is_a heavy_camel_rider
@@ -2171,7 +2177,7 @@ mdg_range 1
 mdf 1
 rdf 2
 mdg_vs building 40
-can_upgrade_to
+can_upgrade_to elite_war_elephant
 can_use_tech forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry conscription
 def elite_war_elephant
 is_a war_elephant
@@ -2359,56 +2365,6 @@ mdg_vs guardtower 50
 can_upgrade_to
 can_use_tech siege_engineers
 
-; 西班牙 Misionero (Missionary) — AoE2 DE unique unit.
-; DE (The Conquerors/DE): a *mounted* monk trained at the Monastery in Castle
-; Age for 100 gold, 51s.  There is NO Elite Missionary in AoE2 DE — unlike
-; every other UU line, the Missionary does not upgrade (see the AoE2 wiki:
-; "Unlike most unique units, Missionaries do not have an Elite version").
-; DE stats: HP 30, Attack 0, Armor 0/0, Range 7 (conversion) / 4 (healing),
-; Speed 1.1, LoS 9, Accuracy 38%, Train 51s, Cost 100 gold.
-; It cannot pick up Relics (no inventory_capacity / receive_items).
-def misionero
-class soldier
-is_a monk
-is_a unique_unit
-cost 0 100 0 0
-population_cost 1
-time_cost 51
-;space 0.25
-requirements castle_age
-no_auto_upgrade 1
-; The Missionary cannot collect Relics -> no inventory capacity.
-inventory_capacity 0
-receive_items 0
-; Mounted monk: 1.1 speed, 9 LoS, 7 conversion range, 4 healing range.
-speed 1.1
-sight_range 9
-hp_max 30
-mdf 0
-rdf 0
-mdg 0
-rdg 0
-rdg_cd 0
-rdg_range 0
-heal_level 1
-heal_cd 0.4
-heal_range 4
-; No Elite version in AoE2 DE.
-can_use_tech redemption atonement herbal_medicine heresy sanctity fervor faith illumination block_printing theocracy inquisition
-can_use_tech bimaristan fereters
-
-def elite_misionero
-is_a misionero
-cost 0 0 500 0
-time_cost 35
-requirements imperial_age
-no_auto_upgrade 1
-hp_max 90
-mdg 18
-mdf 5
-heal_level 3
-heal_cd 0.4
-can_upgrade_to
 ; 战象射手 Elephant Archer (+ Elite)
 def elephant_archer
 class soldier
@@ -2966,7 +2922,10 @@ mdf 2
 rdf 4
 mdg_vs building 2
 can_use_tech shipwright greek_fire careening dry_dock circumnavigation
-can_upgrade_to fast_fire_ship
+; DE: the Chinese Dragon Ship is the Imperial Age upgrade of the Fire Ship
+; (researched at the Dock).  Only the Chinese Dock lists it in can_research,
+; so the other civs keep the plain Fast Fire Ship line.
+can_upgrade_to fast_fire_ship dragon_ship
 def fast_fire_ship
 is_a fire_ship
 cost 315 400 0 0
@@ -3135,7 +3094,7 @@ rdg_cd 2
 rdg_range 6
 rdg_vs building 7
 can_use_tech shipwright careening dry_dock circumnavigation
-can_upgrade_to
+can_upgrade_to elite_turtle_ship
 def elite_turtle_ship
 is_a turtle_ship
 cost 500 0 650 0
@@ -4190,8 +4149,12 @@ rdf 2
 mdg_vs siege_unit 14
 can_upgrade_to
 
-; 波兰 Winged Hussar — Poles unique (DE: 80F+60G, 22s; HP120/150 Atk12/16 vs archer
-; +6/+8 vs archer; Speed1.4; +1 LOS). Heavily armored anti-archer cavalry.
+; 波兰/立陶宛 Winged Hussar — Poles + Lithuanians unique (DE: 80F+60G, 22s;
+; HP120/150 Atk12/16 vs archer +6/+8; Speed1.4; +1 LOS).  Heavily armored
+; anti-archer cavalry.
+; DE hosts it in the **Stable** (not the Castle): it is the Imperial Age form
+; of the Light Cavalry, so researching it at the Stable replaces the Light
+; Cavalry on the training slot.  See ``light_cavalry.can_upgrade_to``.
 def winged_hussar
 class soldier
 is_a cavalry
@@ -4214,27 +4177,6 @@ mdg_range 1
 mdf 2
 rdf 2
 mdg_vs archer_unit 6
-can_upgrade_to elite_winged_hussar
-can_use_tech forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry conscription
-
-def elite_winged_hussar
-is_a winged_hussar
-cost 800 0 1000 0
-time_cost 45
-requirements imperial_age
-no_auto_upgrade 1
-line_upgrade 1
-can_use_tech stirrups silk_armor manipur_cavalry first_crusade aznauri_cavalry forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry conscription
-
-hp_max 150
-speed 1.4
-sight_range 6
-mdg 16
-mdg_cd 2
-mdg_range 1
-mdf 2
-rdf 2
-mdg_vs archer_unit 8
 can_upgrade_to
 
 ; 斯拉夫 Boyar — Slavs unique (DE: 40F+65G, 21s; HP130/170 Atk10/13 Arm2+8/3+8 vs
@@ -4604,16 +4546,18 @@ effect_bonus_targets militia spearman
 effect bonus cost 0 0 -20% 0
 effect_bonus_targets militia spearman
 
-; 哥特 Anarchy — Huskarl/Eagle-line units trainable at Barracks without Barracks
-; after researching Anarchy. Modelled as making ``can_research anarchy`` unlock
-; unique train at barracks (handled in goths race def).
+; 哥特 Anarchy — DE: "Huskarls can be trained at Barracks."
+; Once researched, the Barracks (goth_barracks) gains the Huskarl in its
+; trainable list.  The effect is scoped to the two barracks via
+; ``effect_bonus_targets``; the barracks themselves must list ``anarchy`` in
+; ``can_use_tech`` for the effect to reach them.
 def anarchy
 class upgrade
 cost 250 0 450 0
 time_cost 40
 requirements aoe_castle castle_age
-; Unlock itself; effect target: enable barracks direct train of unique line.
-; In ``goths_barracks``, the can_train list is augmented on grant (handled in race def).
+effect bonus can_train huskarl 1
+effect_bonus_targets goth_barracks barracks
 
 ; 波斯 Kamandaran — Archery Range units cost gold converted from wood
 ; (DE: 1 wood -> 1 gold for the entire upgrade cost). Modelled as: archery range
@@ -5959,7 +5903,13 @@ transport_volume 1
 inventory_production_rates 0.5 0 0 0
 inventory_victory 1
 
-; 传教士 Missionary — Spanish unique (mounted monk); not trained until Spanish is wired
+; 传教士 Missionary — Spanish unique unit (AoE2 DE / The Conquerors).
+; A *mounted* monk trained at the Monastery in Castle Age for 100 gold, 51s.
+; There is NO Elite Missionary in AoE2 DE — unlike every other UU line, the
+; Missionary does not upgrade (AoE2 wiki: "Unlike most unique units,
+; Missionaries do not have an Elite version").
+; DE stats: HP 30, Attack 0, Armor 0/0, Heal 1 HP / 0.8s (half the monk rate),
+; Speed 1.1, LoS 9, Train 51s, Cost 100 gold.  It cannot pick up Relics.
 def missionary
 class soldier
 is_a monk
@@ -5972,6 +5922,10 @@ mana_regen 1.6
 mana_regen_cd 1
 ;space 0.25
 ; DE: half of monk heal rate ~ 1 HP / 0.8s
+no_auto_upgrade 1
+; The Missionary cannot collect Relics -> no inventory capacity.
+inventory_capacity 0
+receive_items 0
 heal_level 1
 heal_cd 0.8
 hp_max 30
@@ -5996,6 +5950,10 @@ def aoe_castle
 class building
 is_a building
 cost 0 0 0 650
+can_use_tech herbal_medicine heresy theocracy inquisition
+; AoE2 DE: the Missionary converts like a monk and benefits from the
+; Spanish Inquisition (Monks and Missionaries convert faster).
+can_upgrade_to
 population_provided 2
 hp_max 4800
 mdf 8
@@ -6185,7 +6143,7 @@ def frank_castle
 hp_max 4800
 is_a aoe_castle
 can_train throwing_axeman trebuchet
-can_research chivalry bearded_axe elite_throwing_axeman conscription hoardings sappers spies
+can_research chivalry bearded_axe elite_throwing_axeman ordonnance_companies conscription hoardings sappers spies
 
 def frank_shipyard
 is_a shipyard
@@ -6231,7 +6189,9 @@ def chinese_shipyard
 is_a shipyard
 ; DE: no Fast Fire Ship, no Cannon Galleon
 can_train fishing_ship trade_cog transport_ship galley fire_galley demolition_raft
-can_research war_galley galleon fire_ship demolition_ship heavy_demolition_ship gillnets shipwright careening dry_dock
+; DE: the Dragon Ship is researched at the Dock in Imperial Age and replaces
+; the Fire Ship (see ``can_upgrade_to dragon_ship`` on ``fire_ship``).
+can_research war_galley galleon fire_ship demolition_ship heavy_demolition_ship gillnets shipwright careening dry_dock dragon_ship
 
 ; 蒙古: no Plate Barding, no Ring Archer Armor; Parthian+Thumb Ring; Hussar; no Halberdier/Champion in DE
 def mongol_barracks
@@ -6557,7 +6517,9 @@ on_phase feudal_age hp 10% house barracks mill lumbermill mining_camp market tow
 on_phase castle_age hp 10% house barracks mill lumbermill mining_camp market town_center townhall wall fortified_wall palisade_wall palisade_gate scouttower outpost guardtower archery_range stables blacksmith shipyard university monastery workshop aoe_castle farm
 on_phase imperial_age hp 10% house barracks mill lumbermill mining_camp market town_center townhall wall fortified_wall palisade_wall palisade_gate scouttower outpost guardtower archery_range stables blacksmith shipyard university monastery workshop aoe_castle farm
 ; DE: camel / skirmisher / spearman lines 25% cheaper
-on_phase dark_age cost -25% spearman pikeman halberdier skirmisher elite_skirmisher imperial_skirmisher camel_rider heavy_camel_rider
+; NB: all four resource slots must be listed — a single ``cost -25%`` only
+; discounts slot 0 (gold), so wood/food-only units would get nothing.
+on_phase dark_age cost -25% -25% -25% -25% spearman pikeman halberdier skirmisher elite_skirmisher imperial_skirmisher camel_rider heavy_camel_rider
 ; DE: fire ships fire 25% faster -> reload x1/1.25 = -20%
 on_phase dark_age mdg_cd -20% fire_galley fire_ship fast_fire_ship
 grant_tech_on_phase feudal_age town_watch
@@ -7455,8 +7417,9 @@ can_research thumb_ring crossbowman arbalester elite_skirmisher heavy_cavalry_ar
 
 def persian_stable
 is_a stables
-can_train scout_cavalry aoe_knight
-can_research bloodlines husbandry light_cavalry hussar cavalier paladin
+can_train scout_cavalry aoe_knight camel_rider
+; DE: the Savar is the Imperial Age upgrade of the Cavalier, researched here.
+can_research bloodlines husbandry light_cavalry hussar cavalier paladin heavy_camel_rider savar
 
 def persian_blacksmith
 is_a blacksmith
@@ -8144,7 +8107,7 @@ can_research war_galley galleon fire_ship fast_fire_ship demolition_ship heavy_d
 
 def spanish_monastery
 is_a monastery
-can_train monk misionero
+can_train monk missionary
 ; AoE2 DE has NO Elite Missionary — the Spanish unique unit does not upgrade.
 can_research redemption atonement herbal_medicine heresy sanctity fervor faith illumination block_printing theocracy
 
@@ -8314,7 +8277,9 @@ can_research thumb_ring crossbowman arbalester elite_skirmisher
 def polish_stable
 is_a stables
 can_train scout_cavalry aoe_knight
-can_research bloodlines husbandry light_cavalry hussar
+; DE: the Poles have no plain Hussar -- the Winged Hussar is the Imperial Age
+; form of the Light Cavalry (researched here).  Cavalier / Paladin are normal.
+can_research bloodlines husbandry light_cavalry winged_hussar cavalier paladin
 
 def polish_blacksmith
 is_a blacksmith
@@ -8336,8 +8301,8 @@ can_research war_galley galleon fire_ship fast_fire_ship demolition_ship heavy_d
 
 def polish_castle
 is_a aoe_castle
-can_train winged_hussar trebuchet obuch
-can_research szlachta_privileges lechitic_legacy elite_obuch elite_winged_hussar conscription hoardings sappers spies
+can_train obuch trebuchet
+can_research szlachta_privileges lechitic_legacy elite_obuch conscription hoardings sappers spies
 
 def polish_knight
 is_a aoe_knight
@@ -8434,7 +8399,7 @@ can_research redemption atonement herbal_medicine heresy sanctity fervor faith i
 def italian_castle
 is_a aoe_castle
 can_train genoese_crossbowman trebuchet
-can_research pavise silk_road elite_genoese_crossbowman conscription hoardings sappers spies
+can_research pavise silk_road elite_genoese_crossbowman pirotechnia conscription hoardings sappers spies
 
 def italian_knight
 is_a aoe_knight
@@ -8987,7 +8952,7 @@ can_research horse_collar heavy_plow
 
 def bulgarian_monastery
 is_a monastery
-can_train monk missionary
+can_train monk
 can_research redemption herbal_medicine heresy sanctity fervor faith illumination theocracy
 
 def bulgarian_castle
@@ -9057,7 +9022,10 @@ can_research crossbowman elite_skirmisher
 def lithuanian_stable
 is_a stables
 can_train scout_cavalry aoe_knight
-can_research bloodlines light_cavalry cavalier paladin
+; DE: the Lithuanians have no plain Hussar -- the Winged Hussar is the
+; Imperial Age form of the Light Cavalry (researched here).  Cavalier /
+; Paladin are normal.
+can_research bloodlines light_cavalry winged_hussar cavalier paladin
 
 def lithuanian_blacksmith
 is_a blacksmith
@@ -9148,7 +9116,8 @@ can_research ballistics chemistry guardtower murder_holes masonry treadmill_cran
 
 def tartar_workshop
 is_a workshop
-can_train battering_ram capped_ram mangonel scorpion siege_onager bombard_cannon
+; DE: the Flaming Camel is the Tatar demolition Siege Cavalry, trained here.
+can_train battering_ram capped_ram mangonel scorpion siege_onager bombard_cannon flaming_camel
 can_research siege_ram onager heavy_scorpion
 
 def tartar_shipyard
@@ -9167,7 +9136,7 @@ can_use_tech burgundian_vineyards flemish_revolution first_crusade loom wheelbar
 
 def tartar_monastery
 is_a monastery
-can_train monk missionary
+can_train monk
 can_research redemption atonement herbal_medicine heresy sanctity fervor faith illumination block_printing theocracy
 
 def tatars
@@ -9257,8 +9226,10 @@ can_research tracking squires supplies arson gambesons man_at_arms long_swordsma
 
 def berber_archery
 is_a archery_range
-can_train aoe_archer skirmisher elite_skirmisher hand_cannoneer cavalry_archer
-can_research crossbowman
+; DE: the Genitour is trained at the Archery Range in Castle Age; the Elite
+; Genitour is researched there in Imperial Age.
+can_train aoe_archer skirmisher elite_skirmisher hand_cannoneer cavalry_archer genitour
+can_research crossbowman elite_genitour
 
 def berber_stable
 is_a stables
@@ -9294,7 +9265,7 @@ can_use_tech burgundian_vineyards flemish_revolution first_crusade loom wheelbar
 
 def berber_monastery
 is_a monastery
-can_train monk missionary
+can_train monk
 can_research redemption atonement herbal_medicine heresy sanctity fervor faith illumination block_printing theocracy
 
 def berbers
@@ -9515,7 +9486,7 @@ can_use_tech burgundian_vineyards flemish_revolution first_crusade loom wheelbar
 
 def khmer_monastery
 is_a monastery
-can_train monk missionary
+can_train monk
 can_research redemption atonement herbal_medicine heresy sanctity fervor faith illumination block_printing theocracy
 
 def khmer
@@ -9603,7 +9574,7 @@ can_use_tech burgundian_vineyards flemish_revolution first_crusade loom wheelbar
 
 def malay_monastery
 is_a monastery
-can_train monk missionary
+can_train monk
 can_research redemption atonement herbal_medicine heresy sanctity fervor faith illumination block_printing theocracy
 
 def malays
@@ -9690,7 +9661,7 @@ can_use_tech burgundian_vineyards flemish_revolution first_crusade loom wheelbar
 
 def burmese_monastery
 is_a monastery
-can_train monk missionary
+can_train monk
 can_research redemption atonement herbal_medicine heresy sanctity fervor faith illumination block_printing theocracy
 
 def burmese
@@ -9733,7 +9704,7 @@ nightmare burmese_nightmare
 ; Cavalry line (no CA); Coustillier (mounted knight with splash); UT: Burgundian Vineyards (farm food +250)
 def burgundian_barracks
 is_a barracks
-can_train militia spearman
+can_train militia spearman flemish_militia
 can_research tracking squires supplies arson gambesons man_at_arms long_swordsman pikeman halberdier
 
 def burgundian_archery
@@ -9957,6 +9928,13 @@ knight aoe_knight
 catapult mangonel
 barracks armenian_barracks
 archery_range armenian_archery
+; DE: the Armenian Fortified Church (their Monastery) hosts the Warrior Priest,
+; the second Armenian unique unit.
+def armenian_monastery
+is_a monastery
+can_train monk warrior_priest
+can_research redemption atonement herbal_medicine heresy sanctity fervor faith illumination block_printing theocracy
+
 stables armenian_stable
 blacksmith armenian_blacksmith
 university armenian_university
@@ -10548,7 +10526,13 @@ can_upgrade_to
 ; ---------- 亚美尼亚/格鲁吉亚 Tarkan (already defined; Armenians/Georgians use it at Stable) ----------
 
 ; ---------- 格鲁吉亚 Monaspa ----------
-; DE: HP60/75 Atk9/12 Speed1.1; melee infantry, cost-effective
+; DE: HP 70, Attack 12, Armor 3/2, Speed 1.4, Reload 1.8, LOS 4,
+; Cost 45 gold / 60 food, train time 14 s.
+; DE class: Cavalry -- "Monaspa (Cavalry)", "Georgian unique Heavy
+; Cavalry".  It therefore takes the Georgians' mounted bonuses:
+; the 2/8/14 HP-per-minute regeneration and the Aznauri Cavalry
+; -20% population space.  It also gets the cavalry tech line
+; (stirrups / barding / bloodlines / husbandry) like the Knight line.
 def monaspa
 class soldier
 is_a infantry
@@ -10583,11 +10567,12 @@ no_auto_upgrade 1
 line_upgrade 1
 can_use_tech forced_levy first_crusade fereters forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor squires arson gambesons conscription
 
-hp_max 75
-speed 1.1
-sight_range 6
-mdg 12
-mdg_cd 1.9
+; DE Elite Monaspa: HP 80, Attack 14, MeleeArmor 5, PierceArmor 2.
+hp_max 80
+speed 1.4
+sight_range 4
+mdg 14
+mdg_cd 1.8
 mdg_range 1
 mdf 1
 rdf 1
@@ -11002,10 +10987,13 @@ can_use_tech forging iron_casting blast_furnace scale_barding_armor chain_bardin
 def elite_genitour
 class soldier
 is_a genitour
-cost 0 35 35 0
+; DE: the Elite Genitour is researched at the Archery Range in Imperial Age
+; and replaces the Genitour on the training slot.
+cost 0 35 40 0
 population_cost 2
-time_cost 20
-line_upgrade 0
+time_cost 23
+line_upgrade 1
+no_auto_upgrade 1
 can_use_tech stirrups silk_armor maghrebi_camels manipur_cavalry first_crusade aznauri_cavalry forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry conscription
 
 hp_max 60
@@ -11028,6 +11016,9 @@ requirements castle_age
 no_auto_upgrade 1
 line_upgrade 1
 can_use_tech first_crusade
+rdg_cd 3
+rdg_hit_rate 90
+can_upgrade_to
 
 hp_max 40
 speed 0.96
@@ -11049,12 +11040,15 @@ class soldier
 is_a composite_bowman
 cost 35 45 0 0
 population_cost 1
-time_cost 16
-line_upgrade 0
+time_cost 10
+line_upgrade 1
+no_auto_upgrade 1
 can_use_tech first_crusade forging iron_casting blast_furnace padded_archer_armor leather_archer_armor ring_archer_armor thumb_ring
 
 hp_max 50
-rdg 5
+rdg 4
+mdf 2
+can_upgrade_to
 
 
 ; ==========================================================================
@@ -11077,9 +11071,9 @@ time_cost 50
 requirements aoe_castle castle_age
 ; 萨拉森 Bimaristan — DE: Monks passively heal multiple nearby units
 effect bonus heal_level 1
-effect_bonus_targets monk missionary misionero
+effect_bonus_targets monk missionary
 effect bonus heal_radius 3
-effect_bonus_targets monk missionary misionero
+effect_bonus_targets monk missionary
 
 def citadels
 class upgrade
@@ -11359,7 +11353,7 @@ requirements aoe_castle imperial_age
 effect bonus hp 30
 effect_bonus_targets infantry -spearman
 effect bonus heal_cd -50%
-effect_bonus_targets monk missionary misionero
+effect_bonus_targets monk missionary
 
 def svan_towers
 class upgrade
@@ -11402,3 +11396,156 @@ effect bonus mdf 1
 effect_bonus_targets kamayuk elite_kamayuk slinger elite_slinger
 effect bonus rdf 1
 effect_bonus_targets kamayuk elite_kamayuk slinger elite_slinger
+
+; ===========================================================================
+; DE uniques that were still missing from the mod (2026-11-01 DE audit).
+; Stats come from the official DE unit records in
+; ``_aoe2techtree_data.json`` (node ids quoted per unit).
+; ===========================================================================
+
+; ---------- 亚美尼亚 战士祭司 Warrior Priest (DE node 1811) ----------
+; DE: HP80 Atk11 Arm1/1 Speed0.85 LoS3 Reload2s Train30s Cost 40F+50G.
+; Trained at the Fortified Church (the Armenian Monastery); a warrior-monk
+; that heals and carries relics.
+def warrior_priest
+class soldier
+is_a monk
+is_a unique_unit
+cost 40 50 0 0
+population_cost 1
+time_cost 30
+;space 0.25
+requirements castle_age
+no_auto_upgrade 1
+; Warrior Priests do pick relics up (they are warriors, not plain monks).
+inventory_capacity 1
+receive_items 1
+speed 0.85
+sight_range 3
+hp_max 80
+mdf 1
+rdf 1
+mdg 11
+mdg_cd 2
+mdg_range 1
+rdg 0
+rdg_cd 0
+rdg_range 0
+heal_level 1
+heal_cd 0.4
+heal_range 4
+; No Elite version in AoE2 DE.
+can_use_tech redemption atonement herbal_medicine heresy sanctity fervor faith illumination block_printing theocracy bimaristan first_crusade fereters
+
+; ---------- 中国 龙战船 Dragon Ship (DE node 1302) ----------
+; DE: HP135 Atk5 Arm3/7 Range3 Speed1.56 LoS6 Train27s Cost 75W+45G.
+; The DE Dragon Ship is an *upgrade* of the Fire Ship researched at the Dock
+; in Imperial Age (``can_upgrade_to`` on ``fire_ship``).
+def dragon_ship
+class soldier
+is_a fire_ship
+is_a unique_unit
+cost 75 45 0 0
+time_cost 27
+line_upgrade 1
+requirements imperial_age
+no_auto_upgrade 1
+
+hp_max 135
+speed 1.56
+sight_range 6
+mdg 5
+mdg_cd 0.25
+mdg_range 3
+mdf 3
+rdf 7
+mdg_vs building 3
+can_upgrade_to
+can_use_tech shipwright greek_fire careening dry_dock circumnavigation
+
+; ---------- 波斯 萨瓦尔 Savar (DE node 1813) ----------
+; DE: HP145 Atk14 (+2 vs archers) Arm3/4 Speed1.35 LoS5 Reload1.8s
+; Train30s Cost 60F+75G.  Upgraded from the Cavalier at the Stable in
+; Imperial Age.
+def savar
+class soldier
+is_a cavalier
+is_a unique_unit
+cost 60 75 0 0
+population_cost 2
+time_cost 30
+line_upgrade 1
+requirements imperial_age
+no_auto_upgrade 1
+
+hp_max 145
+speed 1.35
+sight_range 5
+mdg 14
+mdg_cd 1.8
+mdg_range 1
+mdf 3
+rdf 4
+mdg_vs archer_unit 2
+can_upgrade_to
+can_use_tech stirrups silk_armor manipur_cavalry first_crusade hauberk aznauri_cavalry chivalry forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor bloodlines husbandry conscription farimba
+
+; ---------- 鞑靼 燃烧骆驼 Flaming Camel (DE node 1263) ----------
+; DE: HP55 Atk20 Arm0/0 Speed1.3 LoS4 Train30s Cost 75F+30G.
+; Demolition siege cavalry; +200 vs buildings, +50 vs cavalry/camels,
+; +130 vs war elephants, +25 vs siege.
+def flaming_camel
+class soldier
+is_a siege_unit
+is_a unique_unit
+cost 75 30 0 0
+population_cost 2
+time_cost 30
+;space 0.5
+requirements imperial_age
+no_auto_upgrade 1
+mdg_splash 20
+mdg_radius 2
+
+hp_max 55
+speed 1.3
+sight_range 4
+mdg 20
+mdg_cd 2
+mdg_range 1
+mdf 0
+rdf 0
+mdg_vs building 200
+mdg_vs cavalry 50
+mdg_vs camel_rider 50
+mdg_vs war_elephant 130
+mdg_vs siege_unit 25
+can_upgrade_to
+can_use_tech timurid_siegecraft silk_armor first_crusade
+
+; ---------- 法兰克 军械公司 Ordonnance Companies (DE tech 1496) ----------
+; DE: 400F+250G, 40s, researched at the Castle in Castle Age.
+; Mounted Crossbowmen cost -40% gold.
+def ordonnance_companies
+class upgrade
+cost 400 250 0 0
+time_cost 40
+requirements aoe_castle castle_age
+; 法兰克 Ordonnance Companies — DE: Mounted Crossbowmen cost -40% gold
+effect bonus cost 0 -40% 0 0
+effect_bonus_targets mounted_crossbowman elite_mounted_crossbowman
+
+; ---------- 意大利 火炮术 Pirotechnia (DE tech 902) ----------
+; DE: 650F+500G, 50s, researched at the Castle in Imperial Age.
+; Hand Cannoneers deal +15% pierce (pass-through) damage and are more
+; accurate against moving targets.
+def pirotechnia
+class upgrade
+cost 650 500 0 0
+time_cost 50
+requirements aoe_castle imperial_age
+; 意大利 Pirotechnia — DE: Hand Cannoneers +15% pierce damage, more accurate
+effect bonus rdg 15%
+effect_bonus_targets hand_cannoneer
+effect bonus rdg_hit_rate 15%
+effect_bonus_targets hand_cannoneer
