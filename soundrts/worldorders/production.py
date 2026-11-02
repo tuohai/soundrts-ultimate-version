@@ -870,7 +870,22 @@ class TrainOrder(ProductionOrder):
         return unit_train_cost(self.type)
 
     def _train_type_time(self):
-        return unit_train_time(self.type)
+        base = unit_train_time(self.type)
+        # AoE2 DE team bonuses that speed up training of specific units
+        # (Magyars: Mounted Archers +25%; Turks: Gunpowder Units +25%).
+        # The bonus is granted by *any* allied player, so it is read from
+        # the owner of the building that hosts the training.
+        try:
+            from ..world_civ_bonuses import team_train_speed_pct
+
+            pct = team_train_speed_pct(
+                getattr(self.unit, "player", None), self.type
+            )
+        except Exception:
+            pct = 0
+        if pct and base:
+            base = max(1, base * 100 // (100 + int(pct)))
+        return base
 
     def _order_base_cost(self):
         return self._train_type_cost()
