@@ -279,6 +279,19 @@ class CreatureAttributes(Entity):
 
     @property
     def repair_cost(self):  # per turn
+        # AoE2 DE Georgians team bonus: "Building repairs cost -25%".
+        # The bonus is a team-wide percentage; it applies to every allied
+        # player's buildings, so it is read from the owner of the unit.
+        pct = 0
+        try:
+            from ..world_civ_bonuses import team_repair_cost_pct
+
+            pct = team_repair_cost_pct(getattr(self, "player", None))
+        except Exception:
+            pct = 0
+        if pct:
+            factor = max(0.0, 1.0 + float(pct) / 100.0)
+            return (int(self._delta(c, 30) * factor) for c in self.cost)
         return (self._delta(c, 30) for c in self.cost)
     @property
     def is_fully_repaired(self):
