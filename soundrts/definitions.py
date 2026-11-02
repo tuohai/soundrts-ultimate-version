@@ -583,6 +583,45 @@ class _Definitions:
                         d[name].setdefault("team_share_train", []).append(
                             list(words[1:])
                         )
+                    elif words[0] == "team_military_building_pop" and len(words) >= 2:
+                        # AoE2 DE Slavs team bonus: "Military buildings (except
+                        # Castles) provide +5 population space".
+                        # Row form:
+                        #   team_military_building_pop 5 barracks archery_range …
+                        # The first number is the bonus headroom, the rest are
+                        # the building type-names it applies to.  Parsed by its
+                        # own branch (list-of-lists) because the field mixes an
+                        # int with type-names.
+                        try:
+                            bonus = int(float(words[1]))
+                        except (TypeError, ValueError):
+                            bonus = 0
+                        d[name].setdefault("team_military_building_pop", []).append(
+                            [str(bonus)] + [str(x) for x in words[2:]]
+                        )
+                    elif words[0] == "team_free_stone_buildings" and len(words) >= 2:
+                        # AoE2 DE Ethiopians team bonus: "Outposts cost no stone".
+                        # Row: ``team_free_stone_buildings outpost``.
+                        # Stored on the race/faction dict so
+                        # world_civ_bonuses.team_free_stone_buildings can find
+                        # it; absorbed here for the same reason as
+                        # ``team_share_train`` (the race class has no Python
+                        # base to validate the field against, and it is a
+                        # list of type-names, not an int).
+                        d[name].setdefault("team_free_stone_buildings", []).append(
+                            list(words[1:])
+                        )
+                    elif words[0] == "team_train_speed_pct" and len(words) >= 3:
+                        # AoE2 DE Magyars / Turks team bonus: "Mounted Archers /
+                        # Gunpowder Units train +25% faster".
+                        # Row: ``team_train_speed_pct 25 cavalry_archer …``.
+                        try:
+                            pct = int(float(words[1]))
+                        except (TypeError, ValueError):
+                            pct = 0
+                        d[name].setdefault("team_train_speed_pct", []).append(
+                            [str(pct)] + [str(x) for x in words[2:]]
+                        )
                     elif words[0] == "race_grants_team_free_unit" and len(words) >= 2:
                         # D-Phase 2: AoE2 Italian Condottiero team bonus.
                         # Stash unit type-names on the race/faction dict so
@@ -1540,6 +1579,22 @@ class Rules(_Definitions):
         # mercenaries are free). ``team_free_unit`` on the unit: if any allied
         # player (allied_victory) has that unit's race, cost = 0.
         "team_free_unit",
+        # --- AoE2 DE team bonuses that need dedicated engine support ---
+        # Georgians: "Building repairs cost -25%". Read by
+        # world_civ_bonuses.team_repair_cost_pct(player) and applied to the
+        # per-turn repair cost of buildings.
+        "team_repair_cost_pct",
+        # NOTE: ``team_military_building_pop`` is NOT an int property — its
+        # row mixes the bonus headroom with building type-names, so it is
+        # parsed by its own branch in read() (list-of-lists).
+        # Ethiopians: "Outposts cost no stone".  NOT an int property — it is a
+        # list of building type-names, parsed by its own branch in read().
+        # Incas: "Start with a free Llama".
+        "team_start_free_llama",
+        # Burgundians: "Relics generate food in addition to gold".
+        "team_relic_food",
+        # Burmese: "Relics visible on the map at the start of the game".
+        "team_relic_visible",
         # D-Phase 2: rules-driven free-for-allies flag on the race
         # (AoE2 Italian Condottiero team bonus: all allies train mercenaries
         # for free). ``race_grants_team_free_unit`` on the race def: comma-
@@ -1782,8 +1837,18 @@ class Rules(_Definitions):
         "mdg_vs",
         "rdg_vs",
         "mdg_cd_vs",
+        # AoE2 DE team bonus — Ethiopians: "Outposts cost no stone".
+        # NOTE: parsed by its own branch in read() (it stores a list-of-lists,
+        # one row per line), so it is NOT handled by the generic
+        # string-list merge here.
+        "team_free_stone_buildings",
         "rdg_cd_vs",
         "menace_vs",
+        # AoE2 DE team bonus — Magyars / Turks: "Mounted Archers / Gunpowder
+        # Units train +25% faster".  Row form:
+        #   team_train_speed_pct 25 <unit> [<unit>…]
+        # Parsed by its own branch in read() (list-of-lists).
+        "team_train_speed_pct",
         "menace_mult_vs",
     }
 
