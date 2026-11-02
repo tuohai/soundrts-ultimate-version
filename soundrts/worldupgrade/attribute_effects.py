@@ -404,7 +404,14 @@ class AttributeEffectsMixin:
                 if player is not None:
                     if not hasattr(player, "research_cost_tech_discount_entries"):
                         player.research_cost_tech_discount_entries = []
-                    player.research_cost_tech_discount_entries.append(entry)
+                    entries = player.research_cost_tech_discount_entries
+                    # The bonus is delivered once per matching unit of the
+                    # player, so the very same entry would be appended many
+                    # times.  Duplicates compound multiplicatively in
+                    # apply_research_cost_modifiers (75 food -> ~4), so keep
+                    # only one copy of each distinct entry.
+                    if entry not in entries:
+                        entries.append(entry)
                 # Consume all remaining args
                 i = len(bonus_args)
                 continue
@@ -586,9 +593,17 @@ class AttributeEffectsMixin:
             if player:
                 type_name = getattr(unit, "type_name", None)
                 if type_name:
-                    by_type = player.__dict__.setdefault(
-                        "_can_train_overrides_by_type", {}
-                    )
+                    # ``setdefault`` returns the *existing* value, so an
+                    # attribute that is present but ``None`` would be handed
+                    # back as ``None`` and the assignment below would raise
+                    # ``TypeError: 'NoneType' object does not support item
+                    # assignment``.  Players are created with the attribute
+                    # set to ``None``, so the ``None`` case must be handled
+                    # explicitly.
+                    by_type = player.__dict__.get("_can_train_overrides_by_type")
+                    if not isinstance(by_type, dict):
+                        by_type = {}
+                        player.__dict__["_can_train_overrides_by_type"] = by_type
                     by_type[type_name] = copy.deepcopy(can_train_dict)
 
             return pos
