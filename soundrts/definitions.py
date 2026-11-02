@@ -1579,10 +1579,6 @@ class Rules(_Definitions):
         # D-Phase 2: rules-driven team bonus — trade capacity (AoE2 Magyars:
         # +50% trade cart gold capacity for the player and all allies).
         "team_trade_capacity_pct",
-        # D-Phase 2: rules-driven team free unit (AoE2 Condottiero: allies'
-        # mercenaries are free). ``team_free_unit`` on the unit: if any allied
-        # player (allied_victory) has that unit's race, cost = 0.
-        "team_free_unit",
         # --- AoE2 DE team bonuses that need dedicated engine support ---
         # Georgians: "Building repairs cost -25%". Read by
         # world_civ_bonuses.team_repair_cost_pct(player) and applied to the
@@ -1599,6 +1595,10 @@ class Rules(_Definitions):
         "team_relic_food",
         # Burmese: "Relics visible on the map at the start of the game".
         "team_relic_visible",
+        # D-Phase 2: rules-driven team free unit (AoE2 Condottiero: allies'
+        # mercenaries are free). ``team_free_unit`` on the unit: if any allied
+        # player (allied_victory) has that unit's race, cost = 0.
+        "team_free_unit",
         # D-Phase 2: rules-driven free-for-allies flag on the race
         # (AoE2 Italian Condottiero team bonus: all allies train mercenaries
         # for free). ``race_grants_team_free_unit`` on the race def: comma-
@@ -1837,26 +1837,26 @@ class Rules(_Definitions):
         "trade_rewards",       # resource indices a trade unit may earn on routes
         "tribute_resources",   # parameters: resources that can be tributed
         "reveal_enemy_town_centers",  # race: fog-memory these hostile types at start
+        # AoE2 DE team bonus — Ethiopians: "Outposts cost no stone".
+        # NOTE: parsed by its own branch in read() (it stores a list-of-lists,
+        # one row per line), so it is NOT handled by the generic
+        # string-list merge here.
+        "team_free_stone_buildings",
         # NOTE: race_grants_team_free_unit is intentionally NOT in this set;
         # it's absorbed in read()'s elif chain to store a list-of-lists.
+        # AoE2 DE team bonus — Magyars / Turks: "Mounted Archers / Gunpowder
+        # Units train +25% faster".  Row form:
+        #   team_train_speed_pct 25 <unit> [<unit>…]
+        # Parsed by its own branch in read() (list-of-lists).
+        "team_train_speed_pct",
         "speed_vs",
         "cover_vs",
         "dodge_vs",
         "mdg_vs",
         "rdg_vs",
         "mdg_cd_vs",
-        # AoE2 DE team bonus — Ethiopians: "Outposts cost no stone".
-        # NOTE: parsed by its own branch in read() (it stores a list-of-lists,
-        # one row per line), so it is NOT handled by the generic
-        # string-list merge here.
-        "team_free_stone_buildings",
         "rdg_cd_vs",
         "menace_vs",
-        # AoE2 DE team bonus — Magyars / Turks: "Mounted Archers / Gunpowder
-        # Units train +25% faster".  Row form:
-        #   team_train_speed_pct 25 <unit> [<unit>…]
-        # Parsed by its own branch in read() (list-of-lists).
-        "team_train_speed_pct",
         "menace_mult_vs",
     }
 
