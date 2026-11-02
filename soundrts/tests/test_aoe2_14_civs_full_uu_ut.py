@@ -45,7 +45,7 @@ REFERENCE = {
     # Gurjaras only.  Their unique units are now the Ghulam and the Imperial
     # Camel Rider.
     'hindustanis': ('hindustani', ['ghulam'],                 ['shatagni', 'grand_trunk_road']),
-    'spanish':     ('spanish', ['conquistador', 'misionero'], ['inquisition', 'supremacy']),
+    'spanish':     ('spanish', ['conquistador', 'missionary'], ['inquisition', 'supremacy']),
     'magyars':     ('magyar',  ['magyar_huszar'],             ['corvinian_army', 'recurve_bow']),
     'poles':       ('polish',  ['obuch', 'winged_hussar'],    ['szlachta_privileges', 'lechitic_legacy']),
     'italians':    ('italian', ['genoese_crossbowman'],       ['pavise', 'silk_road']),
@@ -54,13 +54,29 @@ REFERENCE = {
 }
 
 
+# Unique units that are line upgrades but have NO Elite version in AoE2 DE.
+NO_ELITE_UU = {'winged_hussar'}
+
+
 def test_14_new_civs_have_full_uu_ut():
     text = _read_rules()
     missing = []
     for civ, (prefix, uus, uts) in REFERENCE.items():
         buildings = _gather_civ_buildings(text, prefix)
         for u in uus:
-            if not re.search(r'can_train[^\n]*\b' + re.escape(u) + r'\b', buildings):
+            # A unique unit may be a plain trainable unit (can_train) or a
+            # line upgrade researched in the same building (can_research),
+            # e.g. the Polish/Lithuanian Winged Hussar (Imperial Age Stable
+            # research that morphs the Light Cavalry).
+            m = re.search(r'def ' + re.escape(u) + r'\n([\s\S]+?)(?=\n\n|\ndef )', text)
+            is_line_upgrade = bool(m and 'line_upgrade 1' in m.group(1))
+            found = bool(re.search(r'can_train[^\n]*\b' + re.escape(u) + r'\b', buildings))
+            if is_line_upgrade and not found:
+                # Line-upgrade UUs (e.g. the Polish/Lithuanian Winged
+                # Hussar) are researched in the same building and morph
+                # the base unit, so they show up under can_research.
+                found = bool(re.search(r'can_research[^\n]*\b' + re.escape(u) + r'\b', buildings))
+            if not found:
                 missing.append((civ, 'UU', u))
         for t in uts:
             if not re.search(r'can_research[^\n]*\b' + re.escape(t) + r'\b', buildings):
@@ -79,7 +95,9 @@ def test_all_uu_def_blocks_exist():
         if not re.search(r'def ' + re.escape(u) + r'\n', text):
             missing.append(u)
         m = re.search(r'def ' + re.escape(u) + r'\n([\s\S]+?)(?=\n\n|\ndef )', text)
-        if m and 'line_upgrade 1' in m.group(1):
+        # The Winged Hussar is the Imperial Age upgrade of the Light
+        # Cavalry in AoE2 DE and has no Elite version.
+        if m and 'line_upgrade 1' in m.group(1) and u not in NO_ELITE_UU:
             elite = 'elite_' + u
             if not re.search(r'def ' + re.escape(elite) + r'\n', text):
                 missing.append(elite)
