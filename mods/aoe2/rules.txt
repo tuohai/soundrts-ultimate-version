@@ -6404,8 +6404,8 @@ on_phase imperial_age rdg_range 1 aoe_archer crossbowman arbalester longbowman e
 on_phase dark_age gather_time_food_livestock -20%
 ; DE: Town Centers -50% wood from Castle Age
 on_phase castle_age cost 0 -50% 0 0 town_center
-; Team: Archery Ranges work 10% faster -> train time x1/1.1 ~ -9%
-team_on_phase dark_age time_cost -9% aoe_archer crossbowman arbalester skirmisher elite_skirmisher imperial_skirmisher cavalry_archer heavy_cavalry_archer longbowman elite_longbowman
+; DE Team bonus: Archery Ranges work +10% faster
+team_on_phase dark_age time_cost -9% aoe_archer crossbowman arbalester longbowman elite_longbowman skirmisher elite_skirmisher imperial_skirmisher cavalry_archer heavy_cavalry_archer mangudai elite_mangudai
 beginner britons_beginner
 intermediate britons_intermediate
 advanced britons_advanced
@@ -6438,9 +6438,11 @@ on_phase dark_age gather_time_orchard -13%
 ; DE: Castles 15%/25% cheaper Castle/Imperial Age (stone)
 on_phase castle_age cost 0 0 0 -15% aoe_castle
 on_phase imperial_age cost 0 0 0 -25% aoe_castle
-; Team: Knights +2 LOS
+; DE Team bonus: Knight-line +2 line of sight
 team_on_phase dark_age sight_range 2 aoe_knight cavalier paladin frankish_cavalier frankish_paladin
 beginner franks_beginner
+; DE Team bonus: Farms +10% food
+team_farm_food_pct 10
 intermediate franks_intermediate
 advanced franks_advanced
 expert franks_expert
@@ -6469,7 +6471,6 @@ starting_units town_center 6 peasant scout_cavalry
 townhall chinese_town_center
 town_center chinese_town_center
 research_cost_discount feudal_age -5% castle_age -10% imperial_age -15%
-team_farm_food_pct 10
 ; DE: Town Centers +7 LOS / pop 10/15/20/25 (Dark/Feudal/Castle/Imperial) -> base pop 5 + age bonus
 on_phase dark_age population_provided 5 town_center townhall
 on_phase feudal_age population_provided 5 town_center townhall
@@ -6477,6 +6478,8 @@ on_phase castle_age population_provided 10 town_center townhall
 on_phase imperial_age population_provided 10 town_center townhall
 ; DE: fire ships +10% speed Imperial Age
 on_phase imperial_age speed 10% fire_galley fire_ship fast_fire_ship
+; DE Team bonus: Scout Cavalry-line +2 line of sight
+team_on_phase dark_age sight_range 2 scout_cavalry light_cavalry hussar
 beginner chinese_beginner
 intermediate chinese_intermediate
 advanced chinese_advanced
@@ -6510,8 +6513,6 @@ on_phase castle_age hp 20% scout_cavalry
 on_phase imperial_age hp 30% scout_cavalry
 ; DE civ bonus: Cavalry Archers +25% attack speed (Mangudai + CA line)
 on_phase dark_age rdg_cd -25% cavalry_archer heavy_cavalry_archer mangudai elite_mangudai
-; Team: Scout Cavalry line +2 LOS
-team_on_phase dark_age sight_range 2 scout_cavalry
 ; AoE4-like: pasture instead of farm; no mill (herdsman cannot build mill)
 farm pasture
 beginner mongols_beginner
@@ -6561,7 +6562,7 @@ on_phase dark_age cost -25% spearman pikeman halberdier skirmisher elite_skirmis
 on_phase dark_age mdg_cd -20% fire_galley fire_ship fast_fire_ship
 grant_tech_on_phase feudal_age town_watch
 grant_tech_on_phase castle_age town_patrol
-; Team: monks heal 100% faster -> heal_cd -50%
+; DE Team bonus: Monks heal +100% faster
 team_on_phase dark_age heal_cd -50% monk
 beginner byzantines_beginner
 intermediate byzantines_intermediate
@@ -6899,14 +6900,15 @@ on_phase imperial_age gather_time_deep_fish -5%
 on_phase dark_age rdg_vs aoe_archer 2 cavalry_archer heavy_cavalry_archer
 on_phase dark_age rdg_vs crossbowman 2 cavalry_archer heavy_cavalry_archer
 on_phase dark_age rdg_vs arbalester 2 cavalry_archer heavy_cavalry_archer
-; Team: Galleys +4 LOS
-team_on_phase dark_age sight_range 4 galley
+; DE Team bonus: Galley-line +4 line of sight
+team_on_phase dark_age sight_range 4 galley war_galley galleon
 beginner japanese_beginner
 intermediate japanese_intermediate
 advanced japanese_advanced
 expert japanese_expert
 nightmare japanese_nightmare
 
+; DE Team bonus: Units more resistant to conversion
 ; 条顿: 步兵甲 Castle/Imp +1; 农田-40%; 免费近射孔≈大学仍可研
 def teutons
 class race
@@ -6977,13 +6979,15 @@ on_phase feudal_age hp 20% infantry
 grant_tech_on_phase feudal_age wheelbarrow
 grant_tech_on_phase castle_age hand_cart
 ; DE: warships -10/-15/-20% Feudal/Castle/Imperial
-on_phase feudal_age cost -10% galley fire_galley demolition_raft longboat
-on_phase castle_age cost -15% galley fire_galley demolition_raft longboat
-on_phase imperial_age cost -20% galley fire_galley demolition_raft longboat
-; Team: Docks 15% cheaper
-team_on_phase dark_age cost -15% shipyard
+; NB: warships pay gold+wood, so both slot 0 and slot 1 must be discounted.
+on_phase feudal_age cost -10% -10% 0 0 galley fire_galley demolition_raft longboat
+on_phase castle_age cost -15% -15% 0 0 galley fire_galley demolition_raft longboat
+on_phase imperial_age cost -20% -20% 0 0 galley fire_galley demolition_raft longboat
+; DE Team bonus: Docks cost -15%
+team_on_phase dark_age cost 0 -15% 0 0 shipyard
 beginner vikings_beginner
 intermediate vikings_intermediate
+; DE Team bonus: Imperial Skirmisher upgrade available in Imperial Age
 advanced vikings_advanced
 expert vikings_expert
 nightmare vikings_nightmare
@@ -7047,7 +7051,7 @@ on_phase dark_age hp 10% ship
 on_phase dark_age cost -20% 0 0 0 infantry archer_unit cavalry siege_unit ship peasant monk
 ; DE: foragers generate 0.33 wood per food
 on_phase dark_age gather_byproduct orchard resource2 0.33 per_food peasant
-; Team: all technologies (not age-ups) researched 25% faster -> time x1/1.25 = -20%
+; DE Team bonus: Technologies research +25% faster
 team_on_phase dark_age research_time -20%
 beginner portuguese_beginner
 intermediate portuguese_intermediate
@@ -7098,6 +7102,8 @@ can_train fishing_ship trade_cog transport_ship galley fire_galley demolition_ra
 ; DE: War Galley yes; no Galleon / Cannon Galleon / Shipwright
 can_research war_galley fire_ship fast_fire_ship demolition_ship heavy_demolition_ship gillnets careening dry_dock
 
+; DE Team bonus: Relics generate +33% gold
+team_inventory_production_bonus_pct 33
 def aztec_castle
 is_a aoe_castle
 can_train jaguar_warrior petard trebuchet
@@ -7128,7 +7134,6 @@ monastery aztec_monastery
 townhall town_center
 starting_resources 150 200 200 200
 starting_units town_center 3 peasant aztec_eagle_scout
-team_inventory_production_bonus_pct 33
 research_stack_hp_bonus 5 monk
 ; DE: military created 15% faster -> time x1/1.15 ~ -13%
 on_phase dark_age time_cost -13% infantry archer_unit siege_unit monk jaguar_warrior elite_jaguar_warrior eagle_scout eagle_warrior elite_eagle_warrior aztec_eagle_scout petard
@@ -7235,8 +7240,8 @@ herdable_steal_protected 1
 ; DE siege fire 25% faster -> reload x1/1.25 = -20%
 on_phase castle_age mdg_cd -20% siege_unit
 on_phase castle_age rdg_cd -20% siege_unit
-; Team: Siege Workshops work 20% faster -> train time x1/1.2 ~ -17%
-team_on_phase castle_age time_cost -17% battering_ram mangonel scorpion siege_tower
+; DE Team bonus: Siege Workshops work +20% faster
+team_on_phase dark_age time_cost -17% battering_ram mangonel scorpion siege_tower
 beginner celts_beginner
 intermediate celts_intermediate
 advanced celts_advanced
@@ -7327,8 +7332,8 @@ on_phase castle_age rdf 1 militia spearman
 on_phase imperial_age rdf 1 militia spearman
 ; DE update 87863: villagers drop off +10% gold
 on_phase dark_age gather_qty_goldmine 10%
-; Team: Universities work 80% faster -> research time x1/1.8 ~ -44%
-team_on_phase dark_age time_cost -44% ballistics chemistry siege_engineers guardtower keeptower cannontower fortified_wall murder_holes masonry architecture heated_shot treadmill_crane
+; DE Team bonus: Universities work +80% faster
+team_on_phase dark_age time_cost -44% ballistics chemistry guardtower keeptower cannontower fortified_wall murder_holes masonry architecture heated_shot treadmill_crane
 beginner malians_beginner
 intermediate malians_intermediate
 advanced malians_advanced
@@ -7421,8 +7426,8 @@ kill_resource_bonus_pct 30 infantry
 ; is always live for Huskarl. D-Phase 2: stacking multiplier on
 ; target.resource_rewards (see worldcreature.Creature.die).
 grant_tech_on_phase castle_age huskarl_loot
-; Team: Barracks work +20% faster
-team_on_phase dark_age time_cost -17% militia spearman
+; DE Team bonus: Barracks work +20% faster
+team_on_phase dark_age time_cost -17% militia man_at_arms long_swordsman two_handed_swordsman spearman pikeman halberdier huskarl elite_huskarl serjeant elite_serjeant condottiero obuch elite_obuch warrior_priest jaguar_warrior elite_jaguar_warrior
 beginner goths_beginner
 intermediate goths_intermediate
 advanced goths_advanced
@@ -7517,9 +7522,8 @@ on_phase dark_age base_shots 2 town_center
 on_phase feudal_age base_shots 2 town_center
 on_phase castle_age base_shots 2 town_center
 on_phase imperial_age base_shots 2 town_center
-; DE: +2/+0/+0/+0 LOS for villagers after chemistry (omitted; chemistry works)
-; Team: Knights +2 LOS
-team_on_phase dark_age sight_range 2 aoe_knight cavalier paladin
+; DE Team bonus: Knight-line +2 attack vs. Ranged Soldiers
+team_on_phase dark_age mdg_vs archer_unit 2 aoe_knight cavalier paladin frankish_cavalier frankish_paladin savar elite_savar teutonic_knight elite_teutonic_knight
 beginner persians_beginner
 intermediate persians_intermediate
 advanced persians_advanced
@@ -7618,8 +7622,9 @@ on_phase imperial_age hp 15% peasant
 ; DE: barracks/archery/stables -10%/+0/+0/+0 (food) by age
 on_phase dark_age cost 0 0 -10% 0 militia spearman aoe_archer skirmisher cavalry_archer
 on_phase feudal_age cost 0 0 -10% 0 militia spearman aoe_archer skirmisher cavalry_archer
-; Team: military supplies share with allies (10% food cost discount when ally researches)
-team_supplies_pct 10
+; DE Team bonus: Military buildings (except Castles) provide +5 population space
+; (the building list is explicit so the engine never has to guess)
+team_military_building_pop 5 barracks archery_range stables blacksmith workshop university monastery scouttower guardtower keeptower cannontower siege_workshop
 beginner slavs_beginner
 intermediate slavs_intermediate
 advanced slavs_advanced
@@ -7710,8 +7715,8 @@ townhall town_center
 on_phase dark_age cost 0 -10% 0 0 cavalry_archer heavy_cavalry_archer kipchak elite_kipchak
 ; DE: feudal scout cavalry line +1 LOS
 on_phase dark_age sight_range 1 scout_cavalry
-; Team: each ally building (Castle) gives +1 steppe lancer to all allies
-team_share_steppe_lancer 1
+; DE Team bonus: Palisade Walls +33% HP
+team_on_phase dark_age hp 33% palisade_wall palisade_gate
 beginner cumans_beginner
 intermediate cumans_intermediate
 advanced cumans_advanced
@@ -7806,8 +7811,8 @@ starting_units town_center 3 peasant scout_cavalry
 on_phase castle_age cost 0 -10% 0 0 cavalry_archer heavy_cavalry_archer
 ; DE: Tarkans +40 attack vs buildings
 on_phase dark_age mdg_vs building 40 tarkan elite_tarkan
-; Team: stables 20% cheaper
-team_on_phase dark_age cost 0 0 0 -20% stables
+; DE Team bonus: Stables work +20% faster
+team_on_phase dark_age time_cost -17% scout_cavalry light_cavalry hussar aoe_knight cavalier paladin camel_rider heavy_camel_rider
 beginner huns_beginner
 intermediate huns_intermediate
 advanced huns_advanced
@@ -7900,8 +7905,8 @@ on_phase imperial_age gather_time_wood -20%
 on_phase dark_age gather_qty_stone 20%
 ; DE: villagers +1 LOS
 on_phase dark_age sight_range 1 peasant
-; Team: team-tower sight range (representative)
-team_on_phase dark_age sight_range 1 scouttower guardtower
+; DE Team bonus: Villagers +3 line of sight
+team_on_phase dark_age sight_range 3 peasant
 beginner koreans_beginner
 intermediate koreans_intermediate
 advanced koreans_advanced
@@ -7990,8 +7995,8 @@ on_phase imperial_age gather_time_stone -7%
 ; DE: archery range units +30% HP Castle, +40% Imperial (cumulative)
 on_phase castle_age hp 30% aoe_archer crossbowman arbalester skirmisher elite_skirmisher plumed_archer elite_plumed_archer
 on_phase imperial_age hp 10% aoe_archer crossbowman arbalester skirmisher elite_skirmisher plumed_archer elite_plumed_archer
-; Team: reload (in this mod: rdg_cd -10%) for archery range units
-team_on_phase dark_age rdg_cd -10% aoe_archer crossbowman arbalester skirmisher elite_skirmisher plumed_archer elite_plumed_archer
+; DE Team bonus: Walls cost -50%
+team_on_phase dark_age cost 0 0 0 -50% wall gate palisade_wall palisade_gate fortified_wall fortified_gate
 beginner mayans_beginner
 intermediate mayans_intermediate
 advanced mayans_advanced
@@ -8086,8 +8091,8 @@ on_phase dark_age carry_capacity 1 peasant
 on_phase dark_age cost 0 0 -15% 0 camel_rider heavy_camel_rider
 ; DE: -15%/-15%/-25% wood cost for buildings
 on_phase dark_age cost 0 -15% 0 0 house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate fortified_wall palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
-; Team: villagers drop off +10% food
-team_farm_food_pct 10
+; DE Team bonus: Scout Cavalry-line and Camel Units +2 attack vs. buildings
+team_on_phase dark_age mdg_vs building 2 scout_cavalry light_cavalry hussar camel_rider heavy_camel_rider mameluke elite_mameluke
 beginner hindustanis_beginner
 intermediate hindustanis_intermediate
 advanced hindustanis_advanced
@@ -8186,8 +8191,8 @@ on_phase dark_age gather_qty_goldmine 25%
 build_speed_pct 30
 ; DE: hand cannoneers +25% accuracy (omitted); trade carts generate +25% gold
 on_phase dark_age trade_reward_bonus_pct 25
-; Team: demolition ships +40 HP
-team_on_phase dark_age hp 40 demolition_ship heavy_demolition_ship
+; DE Team bonus: Trade Units generate +25% gold
+team_on_phase dark_age trade_reward_bonus_pct 25
 beginner spanish_beginner
 intermediate spanish_intermediate
 advanced spanish_advanced
@@ -8278,8 +8283,8 @@ on_phase dark_age sight_range 2 scout_cavalry
 on_phase feudal_age sight_range 4 scout_cavalry
 ; DE: foot archers -10% wood cost
 on_phase dark_age cost 0 -10% 0 0 aoe_archer crossbowman arbalester skirmisher elite_skirmisher imperial_skirmisher
-; Team: trade carts +50% capacity
-team_trade_capacity_pct 50
+; DE Team bonus: Mounted Archers train +25% faster
+team_train_speed_pct 25 cavalry_archer heavy_cavalry_archer mangudai elite_mangudai
 beginner magyars_beginner
 intermediate magyars_intermediate
 advanced magyars_advanced
@@ -8369,8 +8374,8 @@ townhall town_center
 on_phase dark_age gather_qty_stone 25%
 ; DE: scouts/light cav line +1 LOS
 on_phase dark_age sight_range 1 scout_cavalry light_cavalry hussar
-; Team: knights +1 melee attack
-team_on_phase dark_age mdg 1 aoe_knight
+; DE Team bonus: Scout Cavalry-line +1 attack vs. Ranged Soldiers
+team_on_phase dark_age mdg_vs archer_unit 1 scout_cavalry light_cavalry hussar
 beginner poles_beginner
 intermediate poles_intermediate
 advanced poles_advanced
@@ -8469,14 +8474,9 @@ on_phase dark_age hp 10% shipyard
 on_phase dark_age gather_qty_fish 15
 ; DE: gunpowder units -20% gold cost
 on_phase dark_age cost -20% 0 0 0 hand_cannoneer bombard_cannon cannon_galleon elite_cannon_galleon
-; Team: allies' docks +5 LOS
-team_on_phase dark_age sight_range 2 shipyard
 ; AoE2 Italian Condottiero team bonus: allies train condottiero for free
 race_grants_team_free_unit condottiero
-; AoE2 Italian Condottiero team bonus: allies can also TRAIN it at their
-; Barracks (Imperial Age).  ``team_share_train`` rows are read by
-; world_civ_bonuses.team_share_train_entries and offered by
-; world_build_rules.effective_can_train.
+; DE Team bonus: Condottiero available at the Barracks in Imperial Age
 team_share_train condottiero barracks
 beginner italians_beginner
 intermediate italians_intermediate
@@ -8572,8 +8572,8 @@ on_phase imperial_age gather_qty_stone 10
 on_phase dark_age cost 0 0 -15% 0 ballistics chemistry guardtower keeptower cannontower fortified_wall murder_holes masonry heated_shot treadmill_crane
 ; DE: Sappers free at University (we keep sappers but mark auto-researched on Castle)
 grant_tech_on_phase castle_age sappers
-; Team: markets work +20% faster
-team_on_phase dark_age time_cost -17% market
+; DE Team bonus: Markets work +80% faster
+team_on_phase dark_age time_cost -44% trade_cart
 beginner bohemians_beginner
 intermediate bohemians_intermediate
 advanced bohemians_advanced
@@ -8667,8 +8667,8 @@ townhall town_center
 on_phase dark_age gather_qty_goldmine 25
 ; DE: gunpowder units -25% train time
 on_phase castle_age time_cost -25% janissary elite_janissary cannon_galleon elite_cannon_galleon bombard_cannon
-; Team: genitour/hand cannoneer line gives +50% LOS for scout line
-team_on_phase dark_age sight_range 2 scout_cavalry
+; DE Team bonus: Gunpowder Units train +25% faster
+team_train_speed_pct 25 hand_cannoneer janissary elite_janissary bombard_cannon cannon_galleon elite_cannon_galleon
 beginner turks_beginner
 intermediate turks_intermediate
 advanced turks_advanced
@@ -8928,8 +8928,8 @@ trade_reward_bonus_pct 25
 ; DE: transport ships +2 cargo, fire +2 arrows, +50% HP from Feudal Age
 on_phase feudal_age hp 50% transport_ship
 on_phase feudal_age transport_capacity 2 transport_ship
-; Team: Foot archers +1 attack vs buildings
-team_on_phase dark_age mdg_vs_building 1 aoe_archer skirmisher cavalry_archer
+; DE Team bonus: Foot Archers and Skirmishers +2 attack vs. buildings
+team_on_phase dark_age mdg_vs building 2 aoe_archer crossbowman arbalester longbowman elite_longbowman skirmisher elite_skirmisher imperial_skirmisher
 beginner saracens_beginner
 intermediate saracens_intermediate
 advanced saracens_advanced
@@ -9009,6 +9009,8 @@ archer aoe_archer
 knight aoe_knight
 catapult mangonel
 barracks bulgarian_barracks
+; DE Team bonus: Blacksmiths work +80% faster
+team_on_phase dark_age time_cost -44% forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor plate_barding_armor fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor
 archery_range bulgarian_archery
 stables bulgarian_stable
 blacksmith bulgarian_blacksmith
@@ -9106,10 +9108,8 @@ starting_resources 250 250 200 200
 ; DE: Spearman line +1/+2 pierce armor (Tower Shields UT)
 on_phase dark_age rdf 1 spearman pikeman halberdier
 on_phase imperial_age rdf 1 spearman pikeman halberdier
-; DE: TC +5 LOS per relic garrisoned — model via team_sight_range on TC
-team_on_phase dark_age sight_range 1 town_center
-team_on_phase castle_age sight_range 2 town_center
-team_on_phase imperial_age sight_range 3 town_center
+; DE Team bonus: Monasteries work +20% faster
+team_on_phase dark_age time_cost -17% monk
 beginner lithuanians_beginner
 intermediate lithuanians_intermediate
 advanced lithuanians_advanced
@@ -9193,8 +9193,8 @@ on_phase dark_age gather_qty 50% food_livestock
 ; DE: CA line +10% HP (Silk Armor UT via on_phase — Castle/Imperial only)
 on_phase castle_age hp 10% cavalry_archer heavy_cavalry_archer
 on_phase imperial_age hp 10% cavalry_archer heavy_cavalry_archer
-; DE: team: Steppe Lancer +2 LOS
-team_on_phase dark_age sight_range 2 steppe_lancer elite_steppe_lancer
+; DE Team bonus: Mounted Archers +2 line of sight
+team_on_phase dark_age sight_range 2 cavalry_archer heavy_cavalry_archer mangudai elite_mangudai
 beginner tatars_beginner
 intermediate tatars_intermediate
 advanced tatars_advanced
@@ -9321,7 +9321,7 @@ on_phase castle_age speed 10% peasant
 on_phase dark_age cost 0 0 -15% 0 scout_cavalry aoe_knight camel_rider light_cavalry cavalier paladin heavy_camel_rider
 ; DE: ships -20% wood cost
 on_phase dark_age cost -20% 0 0 0 transport_ship galley war_galley galleon fire_galley fast_fire_ship demolition_raft demolition_ship cannon_galleon fishing_ship trade_cog shipyard
-; Team: Genitours are available at the Archery Range starting in the Castle Age.
+; DE Team bonus: Genitour available at the Archery Range starting in Castle Age
 team_share_train genitour archery_range
 beginner berbers_beginner
 intermediate berbers_intermediate
@@ -9455,8 +9455,9 @@ on_phase castle_age gather_time -50% gold
 on_phase feudal_age mdg 1 scouttower guardtower keeptower
 on_phase castle_age mdg 1 scouttower guardtower keeptower
 on_phase imperial_age mdg 1 scouttower guardtower keeptower
-; Team: Archers +3 LOS
-team_on_phase dark_age sight_range 3 archer_unit hand_cannoneer cavalry_archer
+; DE Team bonus: Outposts +3 line of sight and cost no stone
+team_on_phase dark_age sight_range 3 outpost
+team_free_stone_buildings outpost
 beginner ethiopians_beginner
 intermediate ethiopians_intermediate
 advanced ethiopians_advanced
@@ -9527,6 +9528,8 @@ knight aoe_knight
 catapult mangonel
 barracks khmer_barracks
 archery_range khmer_archery
+; DE Team bonus: Scorpions +1 range
+team_on_phase dark_age rdg_range 1 scorpion
 stables khmer_stable
 blacksmith khmer_blacksmith
 university khmer_university
@@ -9627,8 +9630,8 @@ on_phase dark_age cost 0 -33% 0 0 fish_trap
 on_phase dark_age cost 0 0 -33% 0 battle_elephant elite_battle_elephant
 ; DE: docks +100% HP
 on_phase dark_age hp 100% shipyard
-; Team: Docks +3 LOS (Thalassocracy UT)
-team_on_phase dark_age sight_range 3 shipyard
+; DE Team bonus: Docks +6 line of sight
+team_on_phase dark_age sight_range 6 shipyard
 beginner malays_beginner
 intermediate malays_intermediate
 advanced malays_advanced
@@ -9712,8 +9715,8 @@ townhall town_center
 on_phase dark_age mdg 25% battle_elephant elite_battle_elephant
 ; DE: infantry +3 attack from Castle Age
 on_phase castle_age rdg 3 infantry spearman pikeman halberdier
-; Team: Relics visible on map from start
-team_on_phase dark_age sight_range 99 relic
+; DE Team bonus: Relics visible on the map at the start of the game
+team_relic_visible 1
 beginner burmese_beginner
 intermediate burmese_intermediate
 advanced burmese_advanced
@@ -9796,8 +9799,8 @@ on_phase castle_age rdg_cd -20% aoe_knight light_cavalry cavalier paladin
 on_phase castle_age mdg_cd -20% aoe_knight light_cavalry cavalier paladin
 ; DE: Gunpowder units +25% attack
 on_phase dark_age rdg 25% hand_cannoneer
-; Team: gunpowder units +15% attack
-team_on_phase dark_age rdg 15% hand_cannoneer
+; DE Team bonus: Relics generate food in addition to gold
+team_relic_food 1
 beginner burgundians_beginner
 intermediate burgundians_intermediate
 advanced burgundians_advanced
@@ -9869,6 +9872,10 @@ archery_range sicilian_archery
 stables sicilian_stable
 blacksmith sicilian_blacksmith
 university sicilian_university
+; DE Team bonus: Transport Ships +5 line of sight and cost -50%
+; (transport_ship costs 0 125 0 0 -> the discount belongs in slot 1 = wood)
+team_on_phase dark_age sight_range 5 transport_ship
+team_on_phase dark_age cost 0 -50% 0 0 transport_ship
 aoe_castle sicilian_castle
 workshop sicilian_workshop
 shipyard sicilian_shipyard
@@ -9957,14 +9964,37 @@ aoe_castle armenian_castle
 workshop armenian_workshop
 shipyard armenian_shipyard
 townhall town_center
-; DE: Militia-line upgrades -50% cost
-on_phase dark_age research_cost 0 -50% 0 militia man_at_arms long_swordsman spearman pikeman
-; DE: Infantry +1 attack, +1 pierce armor from Castle Age
-on_phase castle_age rdg 1 infantry spearman pikeman halberdier
-; DE: walls +30% HP (gate and wall HP bonus)
-on_phase dark_age hp 30% wall gate fortified_wall fortified_gate
-; Team: Cavalry +2 LOS
-team_on_phase dark_age sight_range 2 cavalry scout_cavalry light_cavalry hussar aoe_knight cavalier paladin
+; DE: Galley-line and Dromons fire an additional projectile.
+;
+; Engine semantics (verified in soundrts/combat/damage_effects.py
+; ::_schedule_ballistic_hit and soundrts/combat/attack_action.py
+; ::_get_volley_attack_cooldown):
+;   * A bare ``*_seq_times`` is a NO-OP.  The engine only runs a multi-shot
+;     sequence when either an explicit damage split is configured
+;     (``*_seq_damages``) or the *secondary* mode is on
+;     (``*_seq_secondary``).  Without it the shot count is forced back to 1.
+;   * The Galley-line fires with its ranged attack, so it needs the ``rdg``
+;     sequence; the Dromon has no ranged attack at all (it is a
+;     ``mdg_projectile`` melee unit), so it needs the ``mdg`` sequence.
+;   * ``*_seq_secondary_live`` makes every extra shot reuse the unit's live
+;     attack value, so the bonus doubles the damage like the DE extra
+;     projectile instead of using a stale snapshot.
+on_phase dark_age rdg_seq_times 2 galley war_galley galleon
+on_phase dark_age rdg_seq_secondary 1 galley war_galley galleon
+on_phase dark_age rdg_seq_secondary_live 1 galley war_galley galleon
+on_phase dark_age mdg_seq_times 2 dromon
+on_phase dark_age mdg_seq_secondary 1 dromon
+on_phase dark_age mdg_seq_secondary_live 1 dromon
+; DE bonus not expressible in this mod's rule language:
+;   * "Mule Carts cost -25%" / "Mule Cart technology effects +40%" --
+;     the mod has no Mule Cart building (it uses the generic Trade Cart).
+;   * "Spearman- and Militia-line upgrades (except Man-at-Arms) available
+;     one age earlier" -- needs a per-civ age override on the unit
+;     classes; the mod has no such override primitive.
+;   * "First Fortified Church receives a free Relic" -- the engine has
+;     no "grant a relic to the first building" primitive.
+; DE Team bonus: Infantry +2 line of sight
+team_on_phase dark_age sight_range 2 militia man_at_arms long_swordsman two_handed_swordsman spearman pikeman halberdier huskarl elite_huskarl serjeant elite_serjeant condottiero obuch elite_obuch warrior_priest jaguar_warrior elite_jaguar_warrior
 beginner armenians_beginner
 intermediate armenians_intermediate
 advanced armenians_advanced
@@ -10040,18 +10070,28 @@ aoe_castle georgian_castle
 workshop georgian_workshop
 shipyard georgian_shipyard
 townhall town_center
-; DE: buildings +15% HP (masonry/architecture +15% additional)
-on_phase dark_age hp 15% building
-; DE: cavalry +15% attack vs buildings (rdg_vs building +15%)
-on_phase dark_age rdg_vs_building 15% scout_cavalry aoe_knight light_cavalry cavalier paladin
-; DE: militia line -30% upgrade cost
-on_phase dark_age research_cost 0 -30% 0 militia man_at_arms long_swordsman
-; DE: villagers +5 HP per age
-on_phase feudal_age hp 5% peasant
-on_phase castle_age hp 5% peasant
-on_phase imperial_age hp 5% peasant
-; Team: Cavalry +2 attack vs archers
-team_on_phase dark_age rdg_vs_archer_unit 2 scout_cavalry aoe_knight light_cavalry cavalier paladin
+; DE: Mounted Units regenerate 2/8/14 HP per minute in Feudal/Castle/Imperial Age.
+;
+; Engine semantics (verified in soundrts/worldunit/world_status_update.py
+; ::regenerate and soundrts/worldupgrade/attribute_effects.py):
+;   * hp_regen is PRECISION-scaled (x1000) and holds the HP healed per
+;     tick; hp_regen_cd is the tick interval in ms.  Both are scaled by
+;     1000 at rules-load time, so "60" means 60 000 ms = 60 s.
+;   * on_phase rows are CUMULATIVE: each age's row is pushed onto the
+;     player's _phase_bonus_pool and the whole pool is re-applied to
+;     every unit on every age-up.  Every row must therefore state the
+;     DELTA that the age adds, not the DE total.
+;   * hp_regen_cd is additive too, so it is stated ONCE (Feudal row)
+;     -- repeating it would multiply the regeneration interval.
+;
+; DE totals per minute: Feudal 2, Castle 8, Imperial 14
+;   -> deltas           : Feudal +2, Castle +6, Imperial +6
+;   -> per 60 s tick    : hp_regen 2 / 8 / 14, hp_regen_cd 60
+on_phase feudal_age hp_regen 2 hp_regen_cd 60 cavalry
+on_phase castle_age hp_regen 6 cavalry
+on_phase imperial_age hp_regen 6 cavalry
+; DE Team bonus: Building repairs cost -25%
+team_repair_cost_pct -25
 beginner georgians_beginner
 intermediate georgians_intermediate
 advanced georgians_advanced
@@ -10640,6 +10680,8 @@ on_phase dark_age gather_qty 50% food_livestock
 beginner incas_beginner
 intermediate incas_intermediate
 advanced incas_advanced
+; DE Team bonus: Start with a free Llama
+team_start_free_llama 1
 expert incas_expert
 nightmare incas_nightmare
 
@@ -10758,7 +10800,7 @@ on_phase dark_age cost -50% 0 0 0 scorpion
 ; DE: Galley-line +1 melee / +1 pierce armor
 on_phase dark_age mdf 1 galley war_galley galleon
 on_phase dark_age rdf 1 galley war_galley galleon
-; Team: Scorpion-line minimum range reduced to 1
+; DE Team bonus: Scorpions minimum range reduced
 team_on_phase dark_age rdg_minimal_range -1 scorpion
 beginner romans_beginner
 intermediate romans_intermediate
