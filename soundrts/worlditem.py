@@ -70,6 +70,11 @@ def apply_inventory_production_rates(owner):
     if not resources:
         return
     pct = player_inventory_production_bonus_pct(player)
+    # AoE2 DE Burgundians team bonus: "Relics generate food in addition to
+    # gold".  A relic's ``inventory_production_rates`` is
+    # ``<gold> 0 0 0``; the team bonus adds a matching food rate (resource
+    # index 2) so the relic pays out food as well.
+    relic_food_rates = _team_relic_food_rates(player)
     for item in inventory:
         rates = getattr(item, "inventory_production_rates", None) or ()
         for i, qty in enumerate(rates):
@@ -83,6 +88,50 @@ def apply_inventory_production_rates(owner):
                 q = q * (100 + pct) // 100
             if q:
                 resources[i] += q
+        if relic_food_rates:
+            tname = getattr(item, "type_name", None) or ""
+            if tname in relic_food_rates:
+                for i, q in relic_food_rates[tname].items():
+                    if i < len(resources) and q:
+                        resources[i] += q
+
+
+def _team_relic_food_rates(player):
+    """Food rates granted by the Burgundians team bonus, keyed by item type.
+
+    Returns ``{"relic": {2: <food per second>}}`` when the player (or an
+    ally) has the ``team_relic_food`` bonus, otherwise an empty dict.
+    The food rate matches the relic's own gold rate so the relic pays out
+    the same amount of food as it does of gold.
+    """
+    if player is None:
+        return {}
+    try:
+        from .world_civ_bonuses import team_relic_food
+
+        enabled = team_relic_food(player)
+    except Exception:
+        enabled = 0
+    if not enabled:
+        return {}
+    try:
+        from .definitions import rules
+
+        cls = rules.unit_class("relic")
+    except Exception:
+        cls = None
+    if cls is None:
+        return {}
+    gold = 0
+    try:
+        for i, qty in enumerate(getattr(cls, "inventory_production_rates", ()) or ()):
+            if i == 0:
+                gold = int(qty)
+    except (TypeError, ValueError):
+        gold = 0
+    if not gold:
+        return {}
+    return {"relic": {2: gold}}
 
 
 class Item(Entity):
