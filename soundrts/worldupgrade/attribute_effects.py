@@ -385,7 +385,7 @@ class AttributeEffectsMixin:
 
             # D-Phase 3: AoE2 Bulgarians Mill-tech discount.
             # Format: research_cost_tech_discount <slot> <pct> <flat> <tech>…
-            #   slot   = resource index (0=food,1=wood,2=gold,3=stone)
+            #   slot   = resource index (0=gold,1=wood,2=food,3=stone)
             #   pct    = percent discount, e.g. -50%
             #   flat   = flat reduction, e.g. 0
             #   tech…  = one or more tech type-names this applies to
