@@ -302,9 +302,6 @@ is_a hussar
 title 9024
 keyboard soldier3
 shortcut k
-def elite_winged_hussar
-is_a winged_hussar
-title 8342
 def genoese_crossbowman
 is_a crossbowman
 title 9025
@@ -641,7 +638,7 @@ short_cut m
 complete monk_spawn
 def missionary
 is_a walking_unit
-title 8115
+title 9114
 keyboard soldier6
 short_cut m
 complete monk_spawn
@@ -1446,6 +1443,9 @@ def armenian_university
 is_a university
 def armenian_workshop
 is_a workshop
+; DE: the Armenian Fortified Church (their Monastery) — trains the Warrior Priest
+def armenian_monastery
+is_a monastery
 
 ; Georgians
 def georgian_archery
@@ -2718,9 +2718,9 @@ def elite_serjeant
 is_a serjeant
 title 8353
 
-; Monaspa (Georgian UU: infantry anti-cavalry)
+; Monaspa (Georgian UU: heavy cavalry)
 def monaspa
-is_a infantry
+is_a cavalry
 title 9037
 keyboard soldier1
 shortcut n
@@ -2844,13 +2844,6 @@ shortcut g
 def elite_genitour
 is_a genitour
 title 8363
-
-; Misionero (Spanish UU: mounted monk, no Elite version in AoE2 DE)
-def misionero
-is_a missionary
-title 9114
-keyboard soldier6
-shortcut i
 
 ; Houfnice (Bohemians UU: Bombard Cannon upgrade, long-range siege gun)
 def houfnice
