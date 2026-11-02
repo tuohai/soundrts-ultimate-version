@@ -4542,9 +4542,7 @@ cost 600 400 0 0
 time_cost 40
 requirements aoe_castle imperial_age
 effect bonus time_cost -50%
-effect_bonus_targets militia spearman
-effect bonus cost 0 0 -20% 0
-effect_bonus_targets militia spearman
+effect_bonus_targets militia spearman huskarl
 
 ; 哥特 Anarchy — DE: "Huskarls can be trained at Barracks."
 ; Once researched, the Barracks (goth_barracks) gains the Huskarl in its
@@ -6438,8 +6436,8 @@ on_phase castle_age population_provided 10 town_center townhall
 on_phase imperial_age population_provided 10 town_center townhall
 ; DE: fire ships +10% speed Imperial Age
 on_phase imperial_age speed 10% fire_galley fire_ship fast_fire_ship
-; DE Team bonus: Scout Cavalry-line +2 line of sight
-team_on_phase dark_age sight_range 2 scout_cavalry light_cavalry hussar
+; DE Team bonus: Farms +10% food
+team_farm_food_pct 10
 beginner chinese_beginner
 intermediate chinese_intermediate
 advanced chinese_advanced
@@ -6480,6 +6478,8 @@ intermediate mongols_intermediate
 advanced mongols_advanced
 expert mongols_expert
 nightmare mongols_nightmare
+; DE Team bonus: Scout Cavalry-line +2 line of sight
+team_on_phase dark_age sight_range 2 scout_cavalry light_cavalry hussar
 
 ; Byzantines: building HP+/cost-; cavalry re-armor; archer trading; knight trade knight
 ; biligame: 帝王时代费用 -33%（advance_cost_discount，按被购买时世代查）
@@ -8974,8 +8974,6 @@ archer aoe_archer
 knight aoe_knight
 catapult mangonel
 barracks bulgarian_barracks
-; DE Team bonus: Blacksmiths work +80% faster
-team_on_phase dark_age time_cost -44% forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor plate_barding_armor fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor
 archery_range bulgarian_archery
 stables bulgarian_stable
 blacksmith bulgarian_blacksmith
@@ -8991,10 +8989,15 @@ on_phase feudal_age cost 0 0 0 -15% town_center
 on_phase castle_age cost 0 0 0 -15% town_center
 on_phase imperial_age cost 0 0 0 -10% town_center
 ; DE: mill technologies -50% food cost (horse_collar/heavy_plow/crop_rotation)
-; Implementation: research_cost_tech_discount 0 -50% 0 <tech> — slot 0 = food, pct = -50%
+; Implementation: research_cost_tech_discount <slot> <pct> <flat> <tech>…
+;   slot 2 = food in the AoE2 slot order (0=gold, 1=wood, 2=food, 3=stone).
 ; NB: research_cost_discount is reserved for the existing per-age global discount
 ;     (e.g. Chinese -5% feudal). Bulgarians need per-tech + per-slot semantics.
-on_phase dark_age research_cost_tech_discount 0 -50% 0 horse_collar heavy_plow crop_rotation
+on_phase dark_age research_cost_tech_discount 2 -50% 0 horse_collar heavy_plow crop_rotation
+; DE: Blacksmith and Siege Workshop technologies cost 50% less food
+; (forging/iron_casting/blast_furnace + all armor upgrades; siege: ironclad,
+;  counterweights, torsion_engines, siege_engineers)
+on_phase dark_age research_cost_tech_discount 2 -50% 0 forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor plate_barding_armor fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor thumb_ring ironclad counterweights torsion_engines siege_engineers
 ; Team: Mill techs affect farms in feudal+ (already per-farm through mill is_a chain)
 beginner bulgarians_beginner
 intermediate bulgarians_intermediate
@@ -9006,6 +9009,8 @@ nightmare bulgarians_nightmare
 ; ---------- 立陶宛 Lithuanians ----------
 ; no Camel, no BBC, no Arbalester, no Bracer, no Siege Engineers;
 ; no Thumb Ring, no Plate Barding, no Husbandry;
+; DE Team bonus: Blacksmiths work +80% faster
+team_on_phase dark_age time_cost -44% forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor plate_barding_armor fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor
 ; no monks (no monastery), no Heavy Demolition Ship, no Shipwright;
 ; no Architecture, no heated shot, no Bombard Tower;
 ; Eagles from Castle Age; Leitis (cavalry with ignore armor); UT1: Tower Shields (+1/+2 pierce armor to spearman line)
@@ -9499,8 +9504,6 @@ knight aoe_knight
 catapult mangonel
 barracks khmer_barracks
 archery_range khmer_archery
-; DE Team bonus: Scorpions +1 range
-team_on_phase dark_age rdg_range 1 scorpion
 stables khmer_stable
 blacksmith khmer_blacksmith
 university khmer_university
@@ -9525,6 +9528,8 @@ nightmare khmer_nightmare
 ; ---------- 马来人 Malay ----------
 ; no Champions, no 2HS, no Elite Eagle Warrior;
 ; no Arbalester, no Bracer, no Siege Engineers, no Thumb Ring;
+; DE Team bonus: Scorpions +1 range
+team_on_phase dark_age rdg_range 1 scorpion
 ; no Plate Barding, no Husbandry, no Bloodlines;
 ; no monks, no Elite Cannon Galleon, no Shipwright, no Dry Dock;
 ; no Architecture, no heated shot;
@@ -9843,10 +9848,6 @@ archery_range sicilian_archery
 stables sicilian_stable
 blacksmith sicilian_blacksmith
 university sicilian_university
-; DE Team bonus: Transport Ships +5 line of sight and cost -50%
-; (transport_ship costs 0 125 0 0 -> the discount belongs in slot 1 = wood)
-team_on_phase dark_age sight_range 5 transport_ship
-team_on_phase dark_age cost 0 -50% 0 0 transport_ship
 aoe_castle sicilian_castle
 workshop sicilian_workshop
 shipyard sicilian_shipyard
@@ -9871,6 +9872,10 @@ nightmare sicilians_nightmare
 ; ---------- 亚美尼亚人 Armenians ----------
 ; no Champions, no Elite Eagle Warrior, no Arbalester, no Bracer, no Siege Engineers;
 ; no Thumb Ring, no Plate Barding, no Husbandry, no Bloodlines;
+; DE Team bonus: Transport Ships +5 line of sight and cost -50%
+; (transport_ship costs 0 125 0 0 -> the discount belongs in slot 1 = wood)
+team_on_phase dark_age sight_range 5 transport_ship
+team_on_phase dark_age cost 0 -50% 0 0 transport_ship
 ; no monks (no monastery), no Elite Cannon Galleon, no Shipwright, no Dry Dock;
 ; no Architecture, no heated shot, no Bombard Tower;
 ; no Camels, no Heavy CA, no Siege Ram;
