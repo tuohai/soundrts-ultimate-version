@@ -11,8 +11,8 @@ Bug 1 — ``build_speed_pct`` never reached the player
     Fixed in ``soundrts/worldplayerbase/base.py``.
 
 Bug 2 — ``effect_bonus_targets`` was ignored for cost effects
-    A cost effect carrying a unit filter (e.g. AoE2 ``perfusion``: militia and
-    spearman only) was written to the player-wide cost bonus pool, so it
+    A cost effect carrying a unit filter (e.g. AoE2 ``shipwright``: the ship
+    line only) was written to the player-wide cost bonus pool, so it
     leaked to *every* unit the player trained.  Filtered effects are now kept
     out of the player-wide pool and applied per unit type by the order layer.
     Fixed in ``soundrts/worldupgrade/base.py`` + ``soundrts/worldorders/``.
@@ -20,7 +20,7 @@ Bug 2 — ``effect_bonus_targets`` was ignored for cost effects
 Bug 3 — multi-row effects lost every row but the first
     ``Upgrade._apply_effects_to_unit`` de-duplicated with the key
     ``"<tech>:<level>"``, so the first ``effect`` row marked the key and every
-    later row was skipped.  A tech like ``perfusion`` (a ``time_cost`` row
+    later row was skipped.  A tech like ``shipwright`` (a ``time_cost`` row
     *and* a ``cost`` row) therefore only ever applied its first row.
     Fixed in ``soundrts/worldupgrade/base.py``.
 """
@@ -196,12 +196,19 @@ def test_player_stores_build_speed_pct(installed):
 
 
 def test_filtered_cost_effect_does_not_leak_player_wide(installed):
-    """AoE2 ``perfusion`` (militia/spearman only) must not become a
-    player-wide -20% food cost bonus."""
+    """AoE2 ``shipwright`` (ships only) must not become a player-wide
+    -20% wood cost bonus.
+
+    (This test used ``perfusion``.  The Goths' Perfusion is "Barracks work
+    +100% faster" in AoE2 DE - a *time* bonus with no resource discount -
+    so it can no longer serve as the fixture for a filtered *cost* effect.
+    ``shipwright`` is the canonical AoE2 tech that carries both a filtered
+    ``cost`` row and a filtered ``time_cost`` row.)
+    """
     from soundrts.worldupgrade import Upgrade
 
     Upgrade.reset()
-    _unit, player = _research(installed, "perfusion", "militia")
+    _unit, player = _research(installed, "shipwright", "galley")
 
     assert list(getattr(player, "cost_percent_bonus", []) or []) == [
         0.0
@@ -216,14 +223,13 @@ def test_filtered_cost_effect_is_stored_with_its_targets(installed):
     from soundrts.worldupgrade import Upgrade
 
     Upgrade.reset()
-    _research(installed, "perfusion", "militia")
+    _research(installed, "shipwright", "galley")
 
-    rows = Upgrade._global_cost_effects.get("perfusion", ())
+    rows = Upgrade._global_cost_effects.get("shipwright", ())
     filtered = [r for r in rows if r.get("effect_targets")]
-    assert filtered, "perfusion's filtered cost effect was dropped"
+    assert filtered, "shipwright's filtered cost effect was dropped"
     targets = filtered[0]["effect_targets"]
-    assert "militia" in targets
-    assert "spearman" in targets
+    assert "ship" in targets
     # The filtered row must not be marked as a player-wide effect.
     assert not filtered[0].get("has_cost_percent_effect") or (
         filtered[0].get("cost_percent_bonus_values") is not None
@@ -237,16 +243,16 @@ def test_filtered_cost_effect_applies_only_to_matching_units(installed):
     from soundrts.worldupgrade import Upgrade
 
     Upgrade.reset()
-    _research(installed, "perfusion", "militia")
+    _research(installed, "shipwright", "galley")
 
-    rows = Upgrade._global_cost_effects.get("perfusion", ())
+    rows = Upgrade._global_cost_effects.get("shipwright", ())
     filtered = [r for r in rows if r.get("effect_targets")]
     assert filtered
     targets = filtered[0]["effect_targets"]
 
-    militia_proxy = _type_proxy(installed.unit_class("militia"))
+    galley_proxy = _type_proxy(installed.unit_class("galley"))
     archer_proxy = _type_proxy(installed.unit_class("aoe_archer"))
-    assert Phase._unit_matches_targets(militia_proxy, targets)
+    assert Phase._unit_matches_targets(galley_proxy, targets)
     assert not Phase._unit_matches_targets(archer_proxy, targets)
 
 
@@ -375,13 +381,13 @@ def test_filtered_cost_effect_matches_aoe2_semantics(installed):
         ComplexOrder._merge_filtered_cost_for_type(player, cls, cost)
         return cost
 
-    base = list(installed.unit_class("militia").cost)
-    # Perfusion: -20% food cost for militia / spearman only.
-    militia_cost = sim("perfusion", "militia")
-    assert militia_cost[2] == int(base[2] * 0.8)
-    assert militia_cost[0] == base[0]
+    base = list(installed.unit_class("galley").cost)
+    # Shipwright: -20% wood cost for the ship line only.
+    galley_cost = sim("shipwright", "galley")
+    assert galley_cost[1] == int(base[1] * 0.8)
+    assert galley_cost[0] == base[0]
 
-    archer_cost = sim("perfusion", "aoe_archer")
+    archer_cost = sim("shipwright", "aoe_archer")
     assert archer_cost == list(installed.unit_class("aoe_archer").cost)
 
 
@@ -391,18 +397,22 @@ def test_filtered_cost_effect_matches_aoe2_semantics(installed):
 
 
 def test_multi_row_effect_applies_every_row(installed):
-    """``perfusion`` has two effect rows; both must be applied.
+    """``shipwright`` has two effect rows; both must be applied.
 
     (This test used to use the custom ``magyar_raid`` tech, which was dropped
     when the Magyar tree was aligned with the canonical AoE2 DE set — the
-    Magyars' DE unique technologies are Recurve Bow and Corvinian Army.)
+    Magyars' DE unique technologies are Recurve Bow and Corvinian Army.
+    It then used ``perfusion``, which was re-aligned to AoE2 DE: Perfusion is
+    "Barracks work +100% faster" and grants *no* resource discount, so it
+    only has one effect row left.  ``shipwright`` is the canonical AoE2 tech
+    that carries a filtered ``cost`` row *and* a filtered ``time_cost`` row.)
     """
-    unit, _player = _research(installed, "perfusion", "militia")
+    unit, _player = _research(installed, "shipwright", "galley")
 
-    # Row 1: time_cost -50%
-    assert unit.time_cost_percent_bonus == -0.5
-    # Row 2: cost 0 0 -20% 0  (food)
-    assert unit.cost_percent_bonus[2] == pytest.approx(-0.2)
+    # Row 1: time_cost -35%
+    assert unit.time_cost_percent_bonus == -0.35
+    # Row 2: cost 0 -20% 0 0  (wood)
+    assert unit.cost_percent_bonus[1] == pytest.approx(-0.2)
 
 
 def test_multi_row_effect_applies_every_kill_resource_row(installed):
@@ -424,14 +434,14 @@ def test_multi_row_effect_applies_every_row_on_new_units(installed):
 
     Upgrade.reset()
     player = _FakePlayer()
-    unit = _FakeUnit("militia", installed, player=player)
-    unit.can_use_tech = tuple(unit.can_use_tech) + ("perfusion",)
-    player.upgrades.append("perfusion")
+    unit = _FakeUnit("galley", installed, player=player)
+    unit.can_use_tech = tuple(unit.can_use_tech) + ("shipwright",)
+    player.upgrades.append("shipwright")
 
-    installed.unit_class("perfusion").upgrade_unit_to_player_level(unit)
+    installed.unit_class("shipwright").upgrade_unit_to_player_level(unit)
 
-    assert unit.time_cost_percent_bonus == -0.5
-    assert unit.cost_percent_bonus[2] == pytest.approx(-0.2)
+    assert unit.time_cost_percent_bonus == -0.35
+    assert unit.cost_percent_bonus[1] == pytest.approx(-0.2)
 
 
 def test_multi_row_effect_does_not_double_apply(installed):
@@ -440,13 +450,13 @@ def test_multi_row_effect_does_not_double_apply(installed):
 
     Upgrade.reset()
     player = _FakePlayer()
-    unit = _FakeUnit("militia", installed, player=player)
-    unit.can_use_tech = tuple(unit.can_use_tech) + ("perfusion",)
-    player.upgrades.append("perfusion")
+    unit = _FakeUnit("galley", installed, player=player)
+    unit.can_use_tech = tuple(unit.can_use_tech) + ("shipwright",)
+    player.upgrades.append("shipwright")
 
-    tech = installed.unit_class("perfusion")
+    tech = installed.unit_class("shipwright")
     tech.upgrade_unit_to_player_level(unit)
     first = unit.time_cost_percent_bonus
     tech.upgrade_unit_to_player_level(unit)
 
-    assert unit.time_cost_percent_bonus == first == -0.5
+    assert unit.time_cost_percent_bonus == first == -0.35
