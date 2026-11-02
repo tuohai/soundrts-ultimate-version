@@ -478,6 +478,18 @@ class Player:
         unit.number = unit.next_free_number()
         self.units.append(unit)
         self.population += unit.population_provided
+        # AoE2 DE Slavs team bonus: "Military buildings (except Castles)
+        # provide +5 population space".  The extra headroom is granted per
+        # military building, so it must be given back in ``remove``.
+        try:
+            from ..world_civ_bonuses import team_military_building_pop_for_unit
+
+            extra_pop = team_military_building_pop_for_unit(self, unit)
+        except Exception:
+            extra_pop = 0
+        if extra_pop:
+            unit._team_military_building_pop = extra_pop
+            self.population += extra_pop
         # 优先使用单位记录的实际人口消耗（若存在）
         try:
             eff = getattr(unit, 'effective_population_cost', None)
@@ -525,6 +537,10 @@ class Player:
         )
         if not retain_house_pop:
             self.population -= unit.population_provided
+        # Give back the Slavs team bonus headroom granted in ``add``.
+        extra_pop = getattr(unit, "_team_military_building_pop", 0) or 0
+        if extra_pop:
+            self.population -= extra_pop
         # 返还与创建时一致的人口消耗
         try:
             eff = getattr(unit, 'effective_population_cost', None)
@@ -1929,10 +1945,45 @@ class Player:
                 for _ in range(n):
                     self.add_unit(type_, actual_place)
 
+            self._spawn_team_free_starting_units(default_place)
+
         if population_bonus:
             self.population += population_bonus
 
         self._apply_starting_upgrades()
+
+    def _spawn_team_free_starting_units(self, default_place):
+        """AoE2 DE Incas team bonus — "Start with a free Llama".
+
+        The bonus is granted to the player *and all of their allies*, so the
+        llama must be spawned for every player whose alliance includes an
+        Inca.  The llama is spawned next to the player's town center when
+        one exists, otherwise at the default start square.
+        """
+        try:
+            from ..world_civ_bonuses import team_start_free_llama
+
+            if not team_start_free_llama(self):
+                return
+        except Exception:
+            return
+        llama_cls = rules.unit_class("llama")
+        if llama_cls is None:
+            return
+        place = default_place
+        try:
+            for unit in list(getattr(self, "units", ()) or ()):
+                if self.check_type(unit, "town_center"):
+                    place = getattr(unit, "place", None) or place
+                    break
+        except Exception:
+            pass
+        if place is None:
+            return
+        try:
+            self.add_unit(llama_cls, place)
+        except Exception as e:
+            warning("could not spawn team free llama: %s", str(e))
 
     def _apply_starting_upgrades(self):
         """Apply ``starting_units`` / rules upgrades after initial units exist."""
