@@ -401,6 +401,13 @@ class WorldObjectsMixin:
                 reveal_enemy_town_centers(player)
         except Exception:
             pass
+        try:
+            from ..world_civ_bonuses import reveal_team_relics
+
+            for player in self.players:
+                reveal_team_relics(player)
+        except Exception:
+            pass
 
     def parse_start(self, start, faction, must_apply_equivalent_type):
         from .world_core import start_population_bonus
