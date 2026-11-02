@@ -60,7 +60,7 @@ _EXTRA_EFFECT_STATS = frozenset(
         # D-Phase 3: AoE2 Bulgarians Mill-tech discount; other civs may follow.
         # Stored per-player; consumed by apply_research_cost_modifiers.
         # Rules: ``research_cost_tech_discount <slot> <pct> <flat> <tech_name>…``
-        #   slot  = resource index (0=food,1=wood,2=gold,3=stone)
+        #   slot  = resource index (0=gold,1=wood,2=food,3=stone)
         #   pct   = percent discount, e.g. -50%  (negative = reduce cost)
         #   flat  = flat reduction per slot, e.g. 0  (not currently used)
         #   techs = one or more tech type-names this applies to
