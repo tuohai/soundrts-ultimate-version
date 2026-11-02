@@ -1,26 +1,33 @@
-"""Rules-driven civilization / team bonuses (no civ type-name hardcoding).
+"""Rules-driven AoE2 DE team bonuses: engine-side helpers.
 
-Race fields::
+The AoE2 DE "team bonus" of a civilisation applies to *the player and all of
+their allies*.  The rules file stores each bonus on the civilisation's race
+definition (``mods/aoe2/rules.txt``); the engine reads it here.
 
-    team_on_phase <phase> <effect bonus args> [unit types…]
-    grant_tech_on_phase <phase> <tech> [tech…]
-    team_farm_food_pct 10
-    reveal_enemy_town_centers town_center
-    team_conversion_channel_bonus_pct 50
-    team_conversion_min_intervals_bonus 3
-    team_conversion_max_intervals_bonus 1
-    team_share_research <tech> [host types…]
-    herdable_steal_ignore_guards 1
-    herdable_steal_protected 1
-    research_cost_zero_slot 1 wheelbarrow hand_cart …
-    research_time_percent -50% wheelbarrow hand_cart …   (AoE2 Portuguese team)
-    research_cost_tech_discount <slot> <pct> <flat> <tech>…   (AoE2 Bulgarians Mill-tech)
+Two families live here:
 
-``team_on_phase`` is ``on_phase`` applied to every ``allied_victory`` member
-(including self). ``grant_tech_on_phase`` instant-researches those upgrades
-when the phase is reached. ``team_share_research`` unlocks listed techs on
-allied buildings (optional host types). Steal flags are race integers via
-``faction_int_attr`` — no civilization type-name checks.
+1. **Declarative** bonuses that are already expressible with the generic
+   ``team_on_phase <phase> <stat> <value> [targets…]`` row are handled by
+   :func:`soundrts.worldphase.apply_parsed_on_phase_bonus` — nothing to do
+   here.
+
+2. **Special** bonuses that need dedicated engine support because they cannot
+   be expressed as a plain attribute delta on the affected units:
+
+   ==========================================  ================================
+   AoE2 DE team bonus                           engine support
+   ==========================================  ================================
+   Building repairs cost -25% (Georgians)       ``team_repair_cost_pct``
+   Military buildings provide +5 population      ``team_military_building_pop``
+   Outposts cost no stone (Ethiopians)          ``team_free_stone_buildings``
+   Start with a free Llama (Incas)              ``team_start_free_llama``
+   Relics generate food too (Burgundians)       ``team_relic_food``
+   Relics visible at game start (Burmese)       ``team_relic_visible``
+   Units train faster (Magyars / Turks)         ``team_train_speed_pct``
+   ==========================================  ================================
+
+Every helper reads the *best* value among ``player.allied_victory`` so that a
+player with several allies picks up the strongest version of each bonus.
 """
 
 from __future__ import annotations
@@ -337,8 +344,44 @@ def reveal_enemy_town_centers(player):
         warning("reveal_enemy_town_centers failed: %s", e)
 
 
+def reveal_team_relics(player, relic_types=("relic",)):
+    """AoE2 DE Burmese team bonus — "Relics visible on the map at the start".
+
+    The bonus applies to the player *and all of their allies*.  Every relic
+    lying on the map is fog-memorised for the affected players so it is
+    visible from the start.
+    """
+    if player is None:
+        return
+    if not team_relic_visible(player):
+        return
+    world = getattr(player, "world", None)
+    if world is None:
+        return
+    types = set(relic_types or ())
+    squares = []
+    statics = []
+    for square in getattr(world, "squares", ()) or ():
+        for obj in getattr(square, "objects", ()) or ():
+            name = getattr(obj, "type_name", None)
+            if name not in types:
+                continue
+            squares.append(square)
+            statics.append(obj)
+    if not squares:
+        return
+    try:
+        player.observed_before_squares.update(squares)
+        player.strictly_observed_before_squares.update(squares)
+        if statics and hasattr(player, "_ensure_static_fog_memory"):
+            player._ensure_static_fog_memory(statics)
+        elif statics and hasattr(player, "_bulk_memorize"):
+            player._bulk_memorize(statics)
+    except Exception as e:
+        warning("reveal_team_relics failed: %s", e)
+
+
 def merge_pool_cost_for_type(player, type_cls, modified_cost):
-    """Apply pooled on_phase ``cost`` bonuses matching ``type_cls``."""
     if player is None or not modified_cost or type_cls is None:
         return
     pool = getattr(player, "_phase_bonus_pool", None) or []
@@ -678,3 +721,252 @@ def team_share_train_entries(player):
             seen.add(key)
             rows.append((unit_type, hosts))
     return rows
+
+
+# ---------------------------------------------------------------------------
+# AoE2 DE team bonuses that need dedicated engine support
+# ---------------------------------------------------------------------------
+
+
+def _best_allied_int_attr(player, attr):
+    """Highest integer value of ``attr`` among the player and its allies.
+
+    Negative values (discounts, e.g. the Georgians' ``team_repair_cost_pct
+    -25``) are supported: the *most negative* value wins, because a larger
+    discount is the stronger bonus.  A plain ``max`` against 0 would silently
+    drop every discount.
+    """
+    if player is None:
+        return 0
+    allies = getattr(player, "allied_victory", None) or (player,)
+    best = 0
+    seen = False
+    for ally in allies:
+        value = faction_int_attr(ally, attr, 0)
+        if not value:
+            continue
+        if not seen:
+            best = value
+            seen = True
+        elif value < 0 and best < 0:
+            best = min(best, value)
+        elif value < 0:
+            best = value
+        else:
+            best = max(best, value)
+    return best
+
+
+def team_repair_cost_pct(player):
+    """AoE2 DE Georgians — "Building repairs cost -25%".
+
+    Rules: ``team_repair_cost_pct -25`` on the Georgians race def.  The value
+    is a percent (negative = cheaper).  Engine reads it in the repair cost
+    path (``worldunit/world_attributes.py::repair_cost``).
+    """
+    return _best_allied_int_attr(player, "team_repair_cost_pct")
+
+
+def team_military_building_pop(player):
+    """AoE2 DE Slavs — "Military buildings (except Castles) provide +5 population space".
+
+    Rules: ``team_military_building_pop 5 barracks archery_range …``.  The
+    first token is the bonus headroom, the rest are the building type-names
+    it applies to.  Castles are *not* in that list (the DE wording excludes
+    them explicitly).
+    """
+    if player is None:
+        return 0
+    best = 0
+    allies = getattr(player, "allied_victory", None) or (player,)
+    for ally in allies:
+        faction = getattr(ally, "faction", None)
+        if not faction:
+            continue
+        raw = rules.get(faction, "team_military_building_pop") or []
+        if not raw:
+            raw = (
+                (rules._dict.get(faction, {}) or {}).get("team_military_building_pop")
+                or []
+            )
+        for entry in raw:
+            tokens = [
+                str(x)
+                for x in (entry if isinstance(entry, (list, tuple)) else (entry,))
+            ]
+            if not tokens:
+                continue
+            try:
+                best = max(best, int(float(tokens[0])))
+            except (TypeError, ValueError):
+                continue
+    return best
+
+
+def team_military_building_names(player):
+    """Building type-names the Slavs team bonus applies to (union over allies)."""
+    if player is None:
+        return ()
+    allies = getattr(player, "allied_victory", None) or (player,)
+    names = []
+    for ally in allies:
+        faction = getattr(ally, "faction", None)
+        if not faction:
+            continue
+        raw = rules.get(faction, "team_military_building_pop") or []
+        if not raw:
+            raw = (
+                (rules._dict.get(faction, {}) or {}).get("team_military_building_pop")
+                or []
+            )
+        for entry in raw:
+            tokens = [
+                str(x)
+                for x in (entry if isinstance(entry, (list, tuple)) else (entry,))
+            ]
+            for tok in tokens[1:]:
+                s = tok.strip()
+                if s and s not in names:
+                    names.append(s)
+    return tuple(names)
+
+
+def is_military_building(unit_or_type, names=None):
+    """True if the building is one of the Slavs team-bonus military buildings.
+
+    The list is rules-driven (``team_military_building_pop 5 <building>…``);
+    when ``names`` is not given the rules of the player's own faction are
+    consulted.  Castles are excluded by the DE wording.
+    """
+    if unit_or_type is None:
+        return False
+    tname = (
+        getattr(unit_or_type, "type_name", None)
+        or getattr(unit_or_type, "__name__", None)
+        or ""
+    )
+    if not tname:
+        return False
+    if tname in ("aoe_castle", "castle"):
+        return False
+    if names is None:
+        names = team_military_building_names(None)
+    if not names:
+        return False
+    names = set(names)
+    if tname in names:
+        return True
+    expanded = set(getattr(unit_or_type, "expanded_is_a", ()) or ())
+    if expanded & names:
+        return True
+    try:
+        from .definitions import rules as _rules
+
+        cls = _rules.unit_class(tname)
+        if cls is not None:
+            return bool(set(getattr(cls, "expanded_is_a", ()) or ()) & names)
+    except Exception:
+        pass
+    return False
+
+
+def team_military_building_pop_for_unit(player, unit):
+    """Extra population space the Slavs team bonus grants for ``unit``."""
+    if player is None or unit is None:
+        return 0
+    bonus = team_military_building_pop(player)
+    if not bonus:
+        return 0
+    if not is_military_building(unit, team_military_building_names(player)):
+        return 0
+    return bonus
+
+
+def team_free_stone_buildings(player):
+    """AoE2 DE Ethiopians — "Outposts cost no stone".
+
+    Rules: ``team_free_stone_buildings outpost``.  Returns the tuple of
+    building type-names whose stone cost is zeroed.
+    """
+    if player is None:
+        return ()
+    allies = getattr(player, "allied_victory", None) or (player,)
+    names = []
+    for ally in allies:
+        faction = getattr(ally, "faction", None)
+        if not faction:
+            continue
+        raw = rules.get(faction, "team_free_stone_buildings") or []
+        if not raw:
+            raw = (rules._dict.get(faction, {}) or {}).get(
+                "team_free_stone_buildings"
+            ) or []
+        for entry in raw:
+            tokens = entry if isinstance(entry, (list, tuple)) else (entry,)
+            for tok in tokens:
+                s = str(tok).strip()
+                if s and s not in names:
+                    names.append(s)
+    return tuple(names)
+
+
+def team_relic_food(player):
+    """AoE2 DE Burgundians — "Relics generate food in addition to gold".
+
+    Rules: ``team_relic_food 1``.  The engine adds a food production rate to
+    every relic carried in an inventory.
+    """
+    return _best_allied_int_attr(player, "team_relic_food")
+
+
+def team_relic_visible(player):
+    """AoE2 DE Burmese — "Relics visible on the map at the start of the game".
+
+    Rules: ``team_relic_visible 1``.
+    """
+    return _best_allied_int_attr(player, "team_relic_visible")
+
+
+def team_start_free_llama(player):
+    """AoE2 DE Incas — "Start with a free Llama".
+
+    Rules: ``team_start_free_llama 1``.  The engine spawns one extra
+    ``llama`` next to the player's starting town center.
+    """
+    return _best_allied_int_attr(player, "team_start_free_llama")
+
+
+def team_train_speed_pct(player, type_cls):
+    """AoE2 DE Magyars / Turks — "Mounted Archers / Gunpowder Units train +25% faster".
+
+    Rules: ``team_train_speed_pct 25 cavalry_archer heavy_cavalry_archer …``.
+    Returns the percent (positive = faster) that applies to ``type_cls``,
+    or 0 when the unit is not covered.
+    """
+    if player is None or type_cls is None:
+        return 0
+    tname = getattr(type_cls, "type_name", None) or getattr(type_cls, "__name__", "")
+    expanded = set(getattr(type_cls, "expanded_is_a", ()) or ())
+    allies = getattr(player, "allied_victory", None) or (player,)
+    best = 0
+    for ally in allies:
+        faction = getattr(ally, "faction", None)
+        if not faction:
+            continue
+        raw = rules.get(faction, "team_train_speed_pct") or []
+        if not raw:
+            raw = (rules._dict.get(faction, {}) or {}).get("team_train_speed_pct") or []
+        for entry in raw:
+            tokens = [str(x) for x in (entry if isinstance(entry, (list, tuple)) else (entry,))]
+            if not tokens:
+                continue
+            try:
+                pct = int(float(tokens[0]))
+            except (TypeError, ValueError):
+                continue
+            names = set(tokens[1:])
+            if not names:
+                continue
+            if tname in names or (expanded & names):
+                best = max(best, pct)
+    return best
