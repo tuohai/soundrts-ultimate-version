@@ -407,8 +407,8 @@ class ComplexOrder(Order):
     def _merge_filtered_cost_for_type(player, type_cls, modified_cost):
         """Apply tech cost effects that carry an ``effect_bonus_targets`` filter.
 
-        A cost effect with a unit filter (e.g. AoE2 ``perfusion``: militia and
-        spearman only) must only apply to matching unit types.  The engine
+        A cost effect with a unit filter (e.g. AoE2 ``shipwright``: the ship
+        line only) must only apply to matching unit types.  The engine
         stores those effects separately from the player-wide cost bonuses
         (see ``Upgrade.upgrade_player``) precisely so they do not leak.
 
