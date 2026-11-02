@@ -368,3 +368,244 @@ def test_bulgarians_research_cost_tech_discount_entry_applies():
     cost2 = [300, 0, 0, 0]
     apply_research_cost_modifiers(player, FakeTech("loom"), cost2)
     assert cost2 == [300, 0, 0, 0]
+
+
+# ---------------------------------------------------------------------------
+# Georgian mounted HP regeneration (DE: 2 / 8 / 14 HP per minute)
+# ---------------------------------------------------------------------------
+
+
+def test_georgian_mounted_hp_regen_deltas(aoe2_rules):
+    """DE Georgians: Mounted Units regenerate 2/8/14 HP per minute in
+    Feudal/Castle/Imperial Age.
+
+    ``on_phase`` rows are cumulative and ``hp_regen_cd`` is additive, so the
+    rows must carry the per-age *delta* and state the cooldown exactly once.
+
+    ``hp_regen`` and ``hp_regen_cd`` are PRECISION-scaled (x1000) at rules-load
+    time: ``hp_regen 2`` is stored as 2000 (2 HP per tick) and
+    ``hp_regen_cd 60`` as 60000 (60 s between ticks).
+    """
+    P = 1000
+    entries = _effects(aoe2_rules, "georgians")
+
+    regen = [e for e in entries if e and "hp_regen" in e]
+    assert regen, "georgians should have hp_regen on_phase rows"
+
+    by_age = {}
+    for e in regen:
+        by_age.setdefault(e[0], []).append([str(x) for x in e])
+
+    # Feudal: the delta is +2 HP and this is the only row that sets the cooldown.
+    feudal = by_age["feudal_age"]
+    assert len(feudal) == 1
+    flat = feudal[0]
+    assert "hp_regen" in flat
+    assert flat.count("hp_regen_cd") == 1, (
+        "hp_regen_cd is additive across on_phase rows; it must be stated once"
+    )
+
+    # Castle / Imperial: only the delta, no repeated cooldown.
+    assert "hp_regen" in by_age["castle_age"][0]
+    assert "hp_regen_cd" not in by_age["castle_age"][0]
+    assert "hp_regen" in by_age["imperial_age"][0]
+    assert "hp_regen_cd" not in by_age["imperial_age"][0]
+
+    # The deltas must accumulate to the DE totals 2 / 8 / 14 HP per tick.
+    def delta(age):
+        flat = by_age[age][0]
+        i = flat.index("hp_regen")
+        return int(flat[i + 1]) // P
+
+    assert delta("feudal_age") == 2
+    assert delta("feudal_age") + delta("castle_age") == 8
+    assert (
+        delta("feudal_age") + delta("castle_age") + delta("imperial_age") == 14
+    )
+
+    # The bonus must be restricted to cavalry.
+    for age_rows in by_age.values():
+        for flat in age_rows:
+            assert "cavalry" in flat
+
+
+def test_georgian_mounted_hp_regen_applies_to_cavalry(aoe2_rules):
+    """The Georgian regen must reach mounted units and not foot units.
+
+    The three ``on_phase`` rows accumulate (Feudal +2, Castle +6,
+    Imperial +6), so a unit that has been through every age regenerates
+    14 HP per tick with a 60 s interval.
+    """
+    from soundrts.worldupgrade.effect_bonus_parse import split_effect_bonus_args
+
+    P = 1000
+    entries = _effects(aoe2_rules, "georgians")
+    regen = [e for e in entries if e and "hp_regen" in e]
+    assert regen
+
+    class FakeUnit:
+        def __init__(self, type_name, chain):
+            self.type_name = type_name
+            self.expanded_is_a = tuple(chain)
+            self.hp_regen = 0
+            self.hp_regen_cd = 0
+
+    def apply(unit, rows):
+        """Apply the rows through the real engine path (target filter included)."""
+        from soundrts.worldupgrade import Upgrade
+        from soundrts.worldphase import Phase
+
+        for entry in rows:
+            bonus, targets = split_effect_bonus_args(list(entry[1:]))
+            if targets and not Phase._unit_matches_targets(unit, targets):
+                continue
+            # ``AttributeEffectsMixin`` is mixed into ``Upgrade``; the general
+            # attribute path reads ``integer_stats`` from that class.
+            Upgrade.effect_bonus(unit, 0, *bonus)
+        return unit
+
+    def rows_for(*ages):
+        return [e for e in regen if e[0] in ages]
+
+    # Feudal only: 2 HP per 60 s tick.
+    feudal = apply(FakeUnit("aoe_knight", ("aoe_knight", "cavalry")),
+                    rows_for("feudal_age"))
+    assert feudal.hp_regen == 2 * P
+    assert feudal.hp_regen_cd == 60 * P  # 60 s between ticks
+
+    # Feudal + Castle: 8 HP per tick (DE Castle total).
+    castle = apply(FakeUnit("aoe_knight", ("aoe_knight", "cavalry")),
+                   rows_for("feudal_age", "castle_age"))
+    assert castle.hp_regen == 8 * P
+
+    # Feudal + Castle + Imperial: 14 HP per tick (DE Imperial total).
+    imperial = apply(FakeUnit("aoe_knight", ("aoe_knight", "cavalry")),
+                     rows_for("feudal_age", "castle_age", "imperial_age"))
+    assert imperial.hp_regen == 14 * P
+
+    # Foot units never receive the bonus (the rows target ``cavalry``).
+    footman = apply(FakeUnit("militia", ("militia", "infantry")), regen)
+    assert footman.hp_regen == 0
+    assert footman.hp_regen_cd == 0
+
+
+# ---------------------------------------------------------------------------
+# Armenian extra projectile (DE: Galley-line and Dromons fire one more)
+# ---------------------------------------------------------------------------
+
+
+def _engine_shot_count(times, damages, secondary):
+    """Mirror the engine's shot-count decision.
+
+    ``soundrts/combat/damage_effects.py::_schedule_ballistic_hit`` only runs a
+    multi-shot sequence when an explicit damage split is configured *or* the
+    secondary mode is on.  A bare ``*_seq_times`` is silently a no-op.
+    """
+    if secondary:
+        return max(1, min(times, 6))
+    if not damages:
+        return 1
+    return times
+
+
+def test_armenian_extra_projectile_is_not_a_noop(aoe2_rules):
+    """DE Armenians: Galley-line and Dromons fire an additional projectile.
+
+    Regression test: the row used to be a bare ``rdg_seq_times 2``, which the
+    engine discards (no damage split, no secondary mode), and it also applied
+    the *ranged* sequence to the Dromon even though the Dromon has no ranged
+    attack at all.
+    """
+    from soundrts.worldupgrade.effect_bonus_parse import split_effect_bonus_args
+
+    entries = _effects(aoe2_rules, "armenians")
+    seq_rows = [e for e in entries if e and any(
+        "_seq_" in str(x) for x in e
+    )]
+    assert seq_rows, "armenians should have projectile-sequence rows"
+
+    class FakeUnit:
+        def __init__(self, type_name, chain):
+            self.type_name = type_name
+            self.expanded_is_a = tuple(chain)
+            self.rdg_seq_times = 1
+            self.rdg_seq_damages = []
+            self.rdg_seq_secondary = 0
+            self.rdg_seq_secondary_live = 0
+            self.mdg_seq_times = 1
+            self.mdg_seq_damages = []
+            self.mdg_seq_secondary = 0
+            self.mdg_seq_secondary_live = 0
+
+    def apply(unit):
+        from soundrts.worldupgrade import Upgrade
+        from soundrts.worldphase import Phase
+
+        for entry in seq_rows:
+            bonus, targets = split_effect_bonus_args(list(entry[1:]))
+            if targets and not Phase._unit_matches_targets(unit, targets):
+                continue
+            Upgrade.effect_bonus(unit, 0, *bonus)
+        return unit
+
+    # The Galley-line fires with its ranged attack -> 2 ranged shots.
+    for name, chain in (
+        ("galley", ("galley", "ship")),
+        ("war_galley", ("war_galley", "galley", "ship")),
+        ("galleon", ("galleon", "war_galley", "galley", "ship")),
+    ):
+        u = apply(FakeUnit(name, chain))
+        assert u.rdg_seq_times == 2, name
+        assert u.rdg_seq_secondary == 1, name
+        assert u.rdg_seq_secondary_live == 1, name
+        assert _engine_shot_count(
+            u.rdg_seq_times, u.rdg_seq_damages, u.rdg_seq_secondary
+        ) == 2, name
+
+    # The Dromon is a mdg_projectile melee unit -> 2 melee shots.
+    dromon = apply(FakeUnit("dromon", ("dromon", "ship")))
+    assert dromon.mdg_seq_times == 2
+    assert dromon.mdg_seq_secondary == 1
+    assert dromon.mdg_seq_secondary_live == 1
+    assert _engine_shot_count(
+        dromon.mdg_seq_times, dromon.mdg_seq_damages, dromon.mdg_seq_secondary
+    ) == 2
+
+    # A unit outside the bonus must be untouched.
+    other = apply(FakeUnit("militia", ("militia", "infantry")))
+    assert other.rdg_seq_times == 1
+    assert other.mdg_seq_times == 1
+
+
+def test_no_civ_on_phase_row_is_a_bare_seq_times(aoe2_rules):
+    """Guard every civ: a bare ``*_seq_times`` row is always a no-op.
+
+    The engine needs either an explicit damage split or the secondary mode to
+    run more than one shot, so a civ bonus that only sets ``*_seq_times``
+    silently does nothing.
+
+    The stats are collected per civ (not per row), because the rules may split
+    a single bonus across several rows -- e.g. the Armenians use one row for
+    ``rdg_seq_times``, one for ``rdg_seq_secondary`` and one for
+    ``rdg_seq_secondary_live``.
+    """
+    from soundrts.worldupgrade.effect_bonus_parse import split_effect_bonus_args
+
+    for civ, data in aoe2_rules._dict.items():
+        for kind in ("on_phase_effects", "team_on_phase_effects"):
+            rows = data.get(kind) or ()
+            if not rows:
+                continue
+            stats = set()
+            for entry in rows:
+                bonus, _targets = split_effect_bonus_args(list(entry[1:]))
+                stats.update(str(bonus[i]) for i in range(0, len(bonus), 2))
+            for stat in stats:
+                if not stat.endswith("_seq_times"):
+                    continue
+                companion = stat.replace("_seq_times", "_seq_secondary")
+                if companion not in stats:
+                    pytest.fail(
+                        f"{civ} {kind}: {stat} without {companion} "
+                        f"is a no-op in the engine"
+                    )
