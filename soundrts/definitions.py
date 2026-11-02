@@ -1487,6 +1487,10 @@ class Rules(_Definitions):
 
     int_properties = {
         "nb_of_resource_types",  # only in parameters
+        # Raw percentage (25 == +25%) — NOT PRECISION-scaled.  The market
+        # settlement math (``amount * (1 + bonus / 100)``) treats it as a
+        # plain percent, so it must not be multiplied by PRECISION.
+        "trade_reward_bonus_pct",
         "collision",
         "corpse",
         "population_cost",
@@ -1756,12 +1760,16 @@ class Rules(_Definitions):
         "rmg_water",  # 随机地图：1=放在水域内部（深海鱼）
     
     }
-    precision_properties = _precision_properties_extended.union(
-        # D-Phase 2: bonus stats not in the precision set but legal in
-        # ``effect bonus`` / ``on_phase`` chains. Engine implements the
-        # handling in attribute_effects.AttributeEffectsMixin.effect_bonus.
-        frozenset({"trade_reward_bonus_pct"})
-    )
+    # ``trade_reward_bonus_pct`` is a RAW percentage (25 == +25%), NOT a
+    # PRECISION-scaled property: the market math in
+    # ``soundrts.worldorders.market._credit_reward`` computes
+    # ``amount * (1 + bonus / 100)``.  It used to live in
+    # ``precision_properties`` (scaled x1000 at load time), which turned a
+    # rules value of 25 into 25000 and inflated trade rewards 250x.
+    # It now lives in ``int_properties`` instead, and remains a legal
+    # ``effect bonus`` / ``on_phase`` stat via
+    # ``worldupgrade.effect_bonus_parse._EXTRA_EFFECT_STATS``.
+    precision_properties = _precision_properties_extended
     int_list_properties = {
         "resource_rewards",  # 物品/单位击杀奖励，[资源1数量, 资源2数量]
         "xp_thresholds",
