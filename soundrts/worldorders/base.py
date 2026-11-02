@@ -463,6 +463,40 @@ class ComplexOrder(Order):
                             modified_cost[i] += int(modified_cost[i] * p)
 
     @staticmethod
+    def _merge_team_free_stone_cost(player, type_cls, modified_cost):
+        """AoE2 DE Ethiopians team bonus — "Outposts cost no stone".
+
+        The bonus is granted to the player *and all of their allies*, so the
+        check must look at the whole alliance, not just the owner.
+
+        Resource slot 3 is stone (resource4 in the AoE2 resource order
+        gold / wood / food / stone).
+        """
+        if player is None or type_cls is None or not modified_cost:
+            return
+        try:
+            from ..world_civ_bonuses import team_free_stone_buildings
+
+            names = team_free_stone_buildings(player)
+        except Exception:
+            return
+        if not names:
+            return
+        tname = (
+            getattr(type_cls, "type_name", None)
+            or getattr(type_cls, "__name__", None)
+            or ""
+        )
+        if not tname:
+            return
+        expanded = set(getattr(type_cls, "expanded_is_a", ()) or ())
+        if tname not in names and not (expanded & set(names)):
+            return
+        stone_slot = 3
+        if stone_slot < len(modified_cost):
+            modified_cost[stone_slot] = 0
+
+    @staticmethod
     def _merge_research_resource_cost(player, modified_cost):
         """合并阵营 ``research_cost_discount``（仅科技/单位升级订单调用）。"""
         if player is None or not modified_cost:
@@ -601,6 +635,12 @@ class ComplexOrder(Order):
                         )
                     except Exception:
                         pass
+                try:
+                    self._merge_team_free_stone_cost(
+                        self.unit.player, self.type, modified_cost
+                    )
+                except Exception:
+                    pass
 
             # 确保所有成本不为负
             for i in range(len(modified_cost)):
