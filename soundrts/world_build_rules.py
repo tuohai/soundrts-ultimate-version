@@ -1222,6 +1222,12 @@ def _merge_player_can_train_override(host, result):
         return result
     train_names = set(_normalize_train_list(_base_can_train(host)))
     train_names.update(merged.keys())
+    # A researched tech may unlock a unit the building could not train before
+    # (AoE2 Goths: Anarchy -> Huskarl at the Barracks; Sicilians: First
+    # Crusade -> Serjeant at the Town Center).  Those names only exist in the
+    # override, so they must be merged in as well — filtering them out against
+    # the building's *base* list silently dropped the unlock.
+    train_names.update(override.keys())
     for name in train_names:
         if name in override:
             merged[name] = max(1, int(override[name]))
