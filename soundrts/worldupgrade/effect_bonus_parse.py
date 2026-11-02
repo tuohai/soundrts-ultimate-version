@@ -140,6 +140,57 @@ def _looks_numeric(tok) -> bool:
         return False
 
 
+def _split_can_train_args(args):
+    """Split a ``can_train`` row into ``(bonus_tokens, target_names)``.
+
+    ``args`` starts with the literal ``can_train``.  The accepted shapes are
+
+    * ``can_train <count>`` — a uniform increment for every unit the host
+      already trains;
+    * ``can_train <unit> <count> [<unit> <count> …]`` — explicit pairs;
+    * ``can_train <unit>… <count>`` — one count for the listed units.
+
+    The trailing ``effect_bonus_targets`` (stored after the bonus tokens at
+    load time) must be peeled off, otherwise the target names are mistaken
+    for further trainable units.  That leak had a real effect: the AoE2
+    Goths' *Anarchy* (``effect bonus can_train huskarl 1`` with
+    ``effect_bonus_targets goth_barracks barracks``) offered "goth_barracks"
+    and "barracks" as trainable units at every building that listed the
+    technology.
+
+    The split is done by *shape*, not by looking the names up in the rule
+    set: a group of unit names is always followed by its count, so any
+    trailing names that are not followed by a count are the target list.
+    That keeps the parse independent of which rule set happens to be
+    installed.
+    """
+    args = list(args)
+    if not args or str(args[0]) != "can_train":
+        return list(args), []
+
+    body = args[1:]
+    pending = []
+    pos = 0
+    while pos < len(body):
+        tok = body[pos]
+        if _looks_numeric(tok):
+            if pending:
+                # ``pending`` names + this count form one bonus group.
+                pos += 1
+                pending = []
+                continue
+            # A bare count: a uniform increment for every trainable unit.
+            pos += 1
+            continue
+        pending.append(tok)
+        pos += 1
+
+    # Whatever is still pending has no count behind it: those are the
+    # ``effect_bonus_targets`` names.
+    boundary = len(body) - len(pending)
+    return ["can_train"] + list(body[:boundary]), [str(t) for t in body[boundary:]]
+
+
 def split_effect_bonus_args(args):
     """Return ``(bonus_tokens, target_names)``.
 
@@ -155,8 +206,19 @@ def split_effect_bonus_args(args):
         stat = args[i]
         st = str(stat)
         if st == "can_train":
-            bonus.extend(args[i:])
-            return bonus, []
+            # ``can_train`` has a variable shape:
+            #   can_train <count>
+            #   can_train <unit> <count> [<unit> <count> …]
+            #   can_train <unit>… <count>
+            # It must be parsed here rather than by the generic pair loop,
+            # because the unit names are not stats.  The trailing
+            # ``effect_bonus_targets`` (stored after the bonus tokens) has to
+            # be peeled off here, otherwise the target names are treated as
+            # further trainable units and the effect leaks to every building
+            # that lists the technology in ``can_use_tech``.
+            bonus_tokens, targets = _split_can_train_args(args[i:])
+            bonus.extend(bonus_tokens)
+            return bonus, targets
         if i + 1 >= len(args):
             return bonus, [str(x) for x in args[i:]]
         if not is_effect_bonus_stat(stat):
