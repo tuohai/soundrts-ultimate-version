@@ -1339,7 +1339,7 @@ cost 20 0 50 0
 population_cost 1
 time_cost 21
 ;space 0.25
-can_use_tech bagains forced_levy first_crusade fereters
+can_use_tech bagains forced_levy first_crusade fereters perfusion
 
 hp_max 40
 speed 0.9
@@ -1357,7 +1357,7 @@ cost 40 0 100 0
 time_cost 40
 line_upgrade 1
 requirements feudal_age
-can_use_tech bagains forced_levy first_crusade fereters forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor tracking squires arson gambesons supplies conscription chieftains comitatenses
+can_use_tech bagains forced_levy first_crusade fereters perfusion forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor tracking squires arson gambesons supplies conscription chieftains comitatenses
 
 hp_max 45
 speed 0.96
@@ -1375,7 +1375,7 @@ cost 65 0 150 0
 time_cost 40
 line_upgrade 1
 requirements castle_age
-can_use_tech bagains forced_levy first_crusade fereters forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor tracking squires arson gambesons supplies conscription chieftains comitatenses
+can_use_tech bagains forced_levy first_crusade fereters perfusion forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor tracking squires arson gambesons supplies conscription chieftains comitatenses
 
 hp_max 60
 speed 0.96
@@ -1392,7 +1392,7 @@ cost 100 0 200 0
 time_cost 45
 line_upgrade 1
 requirements imperial_age
-can_use_tech bagains forced_levy first_crusade fereters forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor tracking squires arson gambesons supplies conscription chieftains comitatenses
+can_use_tech bagains forced_levy first_crusade fereters perfusion forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor tracking squires arson gambesons supplies conscription chieftains comitatenses
 
 hp_max 65
 speed 0.96
@@ -1410,7 +1410,7 @@ time_cost 70
 line_upgrade 1
 requirements imperial_age
 no_auto_upgrade 1
-can_use_tech bagains forced_levy first_crusade fereters forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor tracking squires arson gambesons supplies conscription chieftains comitatenses
+can_use_tech bagains forced_levy first_crusade fereters perfusion forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor tracking squires arson gambesons supplies conscription chieftains comitatenses
 
 hp_max 80
 speed 0.96
@@ -1429,7 +1429,7 @@ population_cost 1
 time_cost 22
 ;space 0.25
 requirements feudal_age
-can_use_tech tower_shields forced_levy first_crusade fereters
+can_use_tech tower_shields forced_levy first_crusade fereters perfusion
 
 hp_max 45
 speed 1
@@ -1449,7 +1449,7 @@ cost 90 0 160 0
 time_cost 35
 line_upgrade 1
 requirements castle_age
-can_use_tech tower_shields forced_levy first_crusade fereters forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor tracking squires arson conscription chieftains
+can_use_tech tower_shields forced_levy first_crusade fereters perfusion forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor tracking squires arson conscription chieftains
 
 hp_max 55
 speed 1
@@ -1467,7 +1467,7 @@ cost 600 0 300 0
 time_cost 50
 line_upgrade 1
 requirements imperial_age
-can_use_tech tower_shields forced_levy first_crusade fereters forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor tracking squires arson conscription chieftains
+can_use_tech tower_shields forced_levy first_crusade fereters perfusion forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor tracking squires arson conscription chieftains
 
 
 
@@ -3843,7 +3843,7 @@ time_cost 16
 requirements castle_age
 no_auto_upgrade 1
 line_upgrade 1
-can_use_tech forced_levy first_crusade fereters
+can_use_tech forced_levy first_crusade fereters perfusion
 
 hp_max 60
 speed 1.05
@@ -3865,7 +3865,7 @@ time_cost 45
 requirements imperial_age
 no_auto_upgrade 1
 line_upgrade 1
-can_use_tech forced_levy first_crusade fereters forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor squires arson gambesons supplies chieftains conscription
+can_use_tech forced_levy first_crusade fereters perfusion forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor squires arson gambesons supplies chieftains conscription
 
 hp_max 70
 speed 1.05
@@ -4163,7 +4163,7 @@ cost 60 0 80 0
 population_cost 2
 time_cost 22
 ;space 0.5
-requirements castle_age
+requirements imperial_age
 no_auto_upgrade 1
 line_upgrade 1
 can_use_tech stirrups silk_armor manipur_cavalry first_crusade aznauri_cavalry
@@ -4178,6 +4178,7 @@ mdf 2
 rdf 2
 mdg_vs archer_unit 6
 can_upgrade_to
+can_use_tech forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry conscription
 
 ; 斯拉夫 Boyar — Slavs unique (DE: 40F+65G, 21s; HP130/170 Atk10/13 Arm2+8/3+8 vs
 ; pierce 1; Speed1.35; +30/+40 vs ram). Heavy cavalry with high pierce armor.
@@ -4533,9 +4534,14 @@ can_upgrade_to
 ; (e.g. ``infantry``), the bonus is applied via bonus stack to all subtypes.
 ; ===========================================================================
 
-; 哥特 Perfusion — Barracks units train 2× faster (3.2× time = -69%) and
-; infantry created -20% food cost. We model as time_cost -50% (close approximation
-; since full 2× would require restructuring training) + cost -20% food on infantry.
+; 哥特 Perfusion — DE: "Barracks work +100% faster", researched at the Castle in
+; the Imperial Age for 400 wood + 600 gold (40s).
+; "Work +100% faster" means the Barracks produces its units twice as fast, i.e.
+; the train time is halved (time_cost -50%).  The filter covers every unit the
+; Barracks can produce: the militia line, the spearman line and - once Anarchy
+; has unlocked it - the Huskarl line.
+; DE Perfusion grants NO resource discount; the earlier "infantry -20% food"
+; row was not in the original game and has been removed.
 def perfusion
 class upgrade
 cost 600 400 0 0
@@ -5911,19 +5917,20 @@ inventory_victory 1
 def missionary
 class soldier
 is_a monk
+is_a unique_unit
 requirements monastery castle_age
 cost 100 0 0 0
 population_cost 1
 time_cost 51
+no_auto_upgrade 1
+; The Missionary cannot collect Relics -> no inventory capacity.
+inventory_capacity 0
+receive_items 0
 mana_max 100
 mana_regen 1.6
 mana_regen_cd 1
 ;space 0.25
 ; DE: half of monk heal rate ~ 1 HP / 0.8s
-no_auto_upgrade 1
-; The Missionary cannot collect Relics -> no inventory capacity.
-inventory_capacity 0
-receive_items 0
 heal_level 1
 heal_cd 0.8
 hp_max 30
@@ -5943,15 +5950,15 @@ rdg_cd 0
 rdg_range 0
 can_use_skill a_conversion
 can_use_tech bimaristan first_crusade fereters sanctity fervor illumination block_printing redemption atonement
+can_use_tech herbal_medicine heresy theocracy inquisition
+; AoE2 DE: the Missionary converts like a monk and benefits from the
+; Spanish Inquisition (Monks and Missionaries convert faster).
+can_upgrade_to
 
 def aoe_castle
 class building
 is_a building
 cost 0 0 0 650
-can_use_tech herbal_medicine heresy theocracy inquisition
-; AoE2 DE: the Missionary converts like a monk and benefits from the
-; Spanish Inquisition (Monks and Missionaries convert faster).
-can_upgrade_to
 population_provided 2
 hp_max 4800
 mdf 8
@@ -6399,8 +6406,6 @@ on_phase imperial_age cost 0 0 0 -25% aoe_castle
 ; DE Team bonus: Knight-line +2 line of sight
 team_on_phase dark_age sight_range 2 aoe_knight cavalier paladin frankish_cavalier frankish_paladin
 beginner franks_beginner
-; DE Team bonus: Farms +10% food
-team_farm_food_pct 10
 intermediate franks_intermediate
 advanced franks_advanced
 expert franks_expert
@@ -6473,13 +6478,13 @@ on_phase imperial_age hp 30% scout_cavalry
 on_phase dark_age rdg_cd -25% cavalry_archer heavy_cavalry_archer mangudai elite_mangudai
 ; AoE4-like: pasture instead of farm; no mill (herdsman cannot build mill)
 farm pasture
+; DE Team bonus: Scout Cavalry-line +2 line of sight
+team_on_phase dark_age sight_range 2 scout_cavalry light_cavalry hussar
 beginner mongols_beginner
 intermediate mongols_intermediate
 advanced mongols_advanced
 expert mongols_expert
 nightmare mongols_nightmare
-; DE Team bonus: Scout Cavalry-line +2 line of sight
-team_on_phase dark_age sight_range 2 scout_cavalry light_cavalry hussar
 
 ; Byzantines: building HP+/cost-; cavalry re-armor; archer trading; knight trade knight
 ; biligame: 帝王时代费用 -33%（advance_cost_discount，按被购买时世代查）
@@ -6870,7 +6875,6 @@ advanced japanese_advanced
 expert japanese_expert
 nightmare japanese_nightmare
 
-; DE Team bonus: Units more resistant to conversion
 ; 条顿: 步兵甲 Castle/Imp +1; 农田-40%; 免费近射孔≈大学仍可研
 def teutons
 class race
@@ -6904,6 +6908,7 @@ on_phase dark_age heal_range 8 monk
 ; DE: towers garrison twice as many (5 -> 10)
 on_phase dark_age transport_capacity 5 scouttower
 grant_tech_on_phase castle_age murder_holes herbal_medicine
+; DE Team bonus: Units more resistant to conversion
 team_conversion_channel_bonus_pct 50
 team_conversion_min_intervals_bonus 3
 team_conversion_max_intervals_bonus 1
@@ -6949,7 +6954,6 @@ on_phase imperial_age cost -20% -20% 0 0 galley fire_galley demolition_raft long
 team_on_phase dark_age cost 0 -15% 0 0 shipyard
 beginner vikings_beginner
 intermediate vikings_intermediate
-; DE Team bonus: Imperial Skirmisher upgrade available in Imperial Age
 advanced vikings_advanced
 expert vikings_expert
 nightmare vikings_nightmare
@@ -6983,6 +6987,7 @@ reveal_enemy_town_centers town_center
 grant_tech_on_phase imperial_age conscription
 research_cost_zero_slot 1 wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining
 research_time_percent -50% loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining
+; DE Team bonus: Imperial Skirmisher upgrade available in Imperial Age
 team_share_research imperial_skirmisher archery_range
 beginner vietnamese_beginner
 intermediate vietnamese_intermediate
@@ -7064,8 +7069,6 @@ can_train fishing_ship trade_cog transport_ship galley fire_galley demolition_ra
 ; DE: War Galley yes; no Galleon / Cannon Galleon / Shipwright
 can_research war_galley fire_ship fast_fire_ship demolition_ship heavy_demolition_ship gillnets careening dry_dock
 
-; DE Team bonus: Relics generate +33% gold
-team_inventory_production_bonus_pct 33
 def aztec_castle
 is_a aoe_castle
 can_train jaguar_warrior petard trebuchet
@@ -7099,6 +7102,8 @@ starting_units town_center 3 peasant aztec_eagle_scout
 research_stack_hp_bonus 5 monk
 ; DE: military created 15% faster -> time x1/1.15 ~ -13%
 on_phase dark_age time_cost -13% infantry archer_unit siege_unit monk jaguar_warrior elite_jaguar_warrior eagle_scout eagle_warrior elite_eagle_warrior aztec_eagle_scout petard
+; DE Team bonus: Relics generate +33% gold
+team_inventory_production_bonus_pct 33
 beginner aztecs_beginner
 intermediate aztecs_intermediate
 advanced aztecs_advanced
@@ -7319,6 +7324,11 @@ def goth_barracks
 is_a barracks
 can_train militia spearman
 can_research tracking squires supplies arson gambesons man_at_arms long_swordsman two_handed_swordsman champion pikeman halberdier
+; NB: declaring ``can_use_tech`` blocks attribute inheritance from ``barracks``
+; (the generic Barracks techs would otherwise be dropped).  They are therefore
+; repeated here explicitly, exactly as the generic ``barracks`` class lists them.
+can_use_tech masonry architecture town_watch town_patrol
+can_use_tech anarchy
 
 def goth_archery
 is_a archery_range
@@ -8999,6 +9009,8 @@ on_phase dark_age research_cost_tech_discount 2 -50% 0 horse_collar heavy_plow c
 ;  counterweights, torsion_engines, siege_engineers)
 on_phase dark_age research_cost_tech_discount 2 -50% 0 forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor plate_barding_armor fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor thumb_ring ironclad counterweights torsion_engines siege_engineers
 ; Team: Mill techs affect farms in feudal+ (already per-farm through mill is_a chain)
+; DE Team bonus: Blacksmiths work +80% faster
+team_on_phase dark_age time_cost -44% forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor plate_barding_armor fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor
 beginner bulgarians_beginner
 intermediate bulgarians_intermediate
 advanced bulgarians_advanced
@@ -9009,8 +9021,6 @@ nightmare bulgarians_nightmare
 ; ---------- 立陶宛 Lithuanians ----------
 ; no Camel, no BBC, no Arbalester, no Bracer, no Siege Engineers;
 ; no Thumb Ring, no Plate Barding, no Husbandry;
-; DE Team bonus: Blacksmiths work +80% faster
-team_on_phase dark_age time_cost -44% forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor scale_barding_armor chain_barding_armor plate_barding_armor fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor
 ; no monks (no monastery), no Heavy Demolition Ship, no Shipwright;
 ; no Architecture, no heated shot, no Bombard Tower;
 ; Eagles from Castle Age; Leitis (cavalry with ignore armor); UT1: Tower Shields (+1/+2 pierce armor to spearman line)
@@ -9518,6 +9528,8 @@ on_phase dark_age speed 10% battle_elephant elite_battle_elephant armored_elepha
 ; DE: farms +12% food (carry capacity +12% for food)
 on_phase dark_age carry_capacity 12% peasant
 ; Team: Ballista Elephant available at Siege Workshop (siege elephant unit — defined later in UU section)
+; DE Team bonus: Scorpions +1 range
+team_on_phase dark_age rdg_range 1 scorpion
 beginner khmer_beginner
 intermediate khmer_intermediate
 advanced khmer_advanced
@@ -9528,8 +9540,6 @@ nightmare khmer_nightmare
 ; ---------- 马来人 Malay ----------
 ; no Champions, no 2HS, no Elite Eagle Warrior;
 ; no Arbalester, no Bracer, no Siege Engineers, no Thumb Ring;
-; DE Team bonus: Scorpions +1 range
-team_on_phase dark_age rdg_range 1 scorpion
 ; no Plate Barding, no Husbandry, no Bloodlines;
 ; no monks, no Elite Cannon Galleon, no Shipwright, no Dry Dock;
 ; no Architecture, no heated shot;
@@ -9862,6 +9872,10 @@ on_phase dark_age rdf 25% infantry cavalry archer_unit siege_unit
 ; DE: farmers +30% faster (gather_time -23%)
 on_phase dark_age gather_time -23% food
 ; Team: Serjeant available at Barracks (defined as UU in castle section)
+; DE Team bonus: Transport Ships +5 line of sight and cost -50%
+; (transport_ship costs 0 125 0 0 -> the discount belongs in slot 1 = wood)
+team_on_phase dark_age sight_range 5 transport_ship
+team_on_phase dark_age cost 0 -50% 0 0 transport_ship
 beginner sicilians_beginner
 intermediate sicilians_intermediate
 advanced sicilians_advanced
@@ -9872,10 +9886,6 @@ nightmare sicilians_nightmare
 ; ---------- 亚美尼亚人 Armenians ----------
 ; no Champions, no Elite Eagle Warrior, no Arbalester, no Bracer, no Siege Engineers;
 ; no Thumb Ring, no Plate Barding, no Husbandry, no Bloodlines;
-; DE Team bonus: Transport Ships +5 line of sight and cost -50%
-; (transport_ship costs 0 125 0 0 -> the discount belongs in slot 1 = wood)
-team_on_phase dark_age sight_range 5 transport_ship
-team_on_phase dark_age cost 0 -50% 0 0 transport_ship
 ; no monks (no monastery), no Elite Cannon Galleon, no Shipwright, no Dry Dock;
 ; no Architecture, no heated shot, no Bombard Tower;
 ; no Camels, no Heavy CA, no Siege Ram;
@@ -9918,9 +9928,16 @@ is_a aoe_castle
 can_train composite_bowman trebuchet
 can_research cilician_fleet fereters elite_composite_bowman conscription hoardings sappers spies
 
+; DE: the Armenian Fortified Church (their Monastery) hosts the Warrior Priest,
+; the second Armenian unique unit.
+def armenian_monastery
+is_a monastery
+can_train monk warrior_priest
+can_research redemption atonement herbal_medicine heresy sanctity fervor faith illumination block_printing theocracy
+
 def armenian_villager
 is_a peasant
-can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university aoe_castle wall gate fortified_wall palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
+can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university aoe_castle wall gate fortified_wall palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard monastery
 can_use_tech burgundian_vineyards flemish_revolution first_crusade loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
 
 def armenians
@@ -9933,19 +9950,13 @@ knight aoe_knight
 catapult mangonel
 barracks armenian_barracks
 archery_range armenian_archery
-; DE: the Armenian Fortified Church (their Monastery) hosts the Warrior Priest,
-; the second Armenian unique unit.
-def armenian_monastery
-is_a monastery
-can_train monk warrior_priest
-can_research redemption atonement herbal_medicine heresy sanctity fervor faith illumination block_printing theocracy
-
 stables armenian_stable
 blacksmith armenian_blacksmith
 university armenian_university
 aoe_castle armenian_castle
 workshop armenian_workshop
 shipyard armenian_shipyard
+monastery armenian_monastery
 townhall town_center
 ; DE: Galley-line and Dromons fire an additional projectile.
 ;
@@ -10540,28 +10551,29 @@ can_upgrade_to
 ; (stirrups / barding / bloodlines / husbandry) like the Knight line.
 def monaspa
 class soldier
-is_a infantry
+is_a cavalry
 is_a unique_unit
-cost 50 0 50 0
-population_cost 1
+cost 0 45 60 0
+population_cost 2
 time_cost 14
-;space 0.25
+;space 0.5
 requirements castle_age
 no_auto_upgrade 1
 line_upgrade 1
-can_use_tech forced_levy first_crusade fereters
+can_use_tech forced_levy first_crusade fereters stirrups silk_armor manipur_cavalry aznauri_cavalry
 
-hp_max 60
-speed 1.1
-sight_range 5
-mdg 9
-mdg_cd 1.9
+hp_max 70
+speed 1.4
+sight_range 4
+mdg 12
+mdg_cd 1.8
 mdg_range 1
-mdf 1
-rdf 1
+mdf 3
+rdf 2
 mdg_vs cavalry 5
+mdg_vs infantry 5
 can_upgrade_to elite_monaspa
-can_use_tech forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor squires arson gambesons conscription
+can_use_tech forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor squires arson gambesons conscription scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry
 
 def elite_monaspa
 is_a monaspa
@@ -10579,9 +10591,10 @@ sight_range 4
 mdg 14
 mdg_cd 1.8
 mdg_range 1
-mdf 1
-rdf 1
+mdf 5
+rdf 2
 mdg_vs cavalry 7
+mdg_vs infantry 7
 can_upgrade_to
 
 
@@ -10667,11 +10680,11 @@ on_phase dark_age cost 0 -25% 0 -25% house farm mill lumbermill mining_camp mark
 ; DE: start with llama (food_livestock bonus)
 on_phase dark_age gather_qty 50% food_livestock
 ; Team: Farms +1 carry (via food_deposit_qty on team)
+; DE Team bonus: Start with a free Llama
+team_start_free_llama 1
 beginner incas_beginner
 intermediate incas_intermediate
 advanced incas_advanced
-; DE Team bonus: Start with a free Llama
-team_start_free_llama 1
 expert incas_expert
 nightmare incas_nightmare
 
@@ -11001,8 +11014,11 @@ line_upgrade 1
 no_auto_upgrade 1
 can_use_tech stirrups silk_armor maghrebi_camels manipur_cavalry first_crusade aznauri_cavalry forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry conscription
 
-hp_max 60
+hp_max 55
 rdg 4
+rdg_cd 3
+rdg_hit_rate 90
+can_upgrade_to
 
 
 ; Armenian UU: Composite Bowman (AoE2 DE)
@@ -11021,9 +11037,6 @@ requirements castle_age
 no_auto_upgrade 1
 line_upgrade 1
 can_use_tech first_crusade
-rdg_cd 3
-rdg_hit_rate 90
-can_upgrade_to
 
 hp_max 40
 speed 0.96
@@ -11043,6 +11056,8 @@ can_use_tech forging iron_casting blast_furnace padded_archer_armor leather_arch
 def elite_composite_bowman
 class soldier
 is_a composite_bowman
+; DE: the Elite Composite Bowman is researched at the Castle in Imperial Age
+; and replaces the Composite Bowman on the training slot.
 cost 35 45 0 0
 population_cost 1
 time_cost 10
