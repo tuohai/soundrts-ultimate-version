@@ -171,11 +171,30 @@ def effective_resource_volume_max(building):
 
 
 def base_production_qty_for(building):
-    """Class production_qty, or depleted rate when the source is empty."""
+    """Class production_qty, or depleted rate when the source is empty.
+
+    Farms carry an extra per-instance food bonus from the researched mill
+    techs (AoE2 Horse Collar / Heavy Plow / Crop Rotation).  The class value
+    does not know about that bonus, so it is added here.  The bonus is read
+    from a dedicated attribute rather than from ``production_qty`` itself,
+    because the latter also carries the player's global production bonuses,
+    which are applied separately by the caller (adding them twice would
+    double-count them).
+    """
     unit_class = type(building)
     if is_extractor_source_depleted(building):
         return depleted_production_qty_of(building)
-    return int(getattr(unit_class, "production_qty", 0) or 0)
+    farm_bonus = int(getattr(building, "_farm_food_bonus_granted", 0) or 0)
+    base = int(getattr(building, "_farm_base_production_qty", 0) or 0)
+    if base <= 0:
+        base = int(getattr(unit_class, "production_qty", 0) or 0)
+    if base <= 0:
+        # No class value: fall back to the instance value (minus the farm
+        # bonus, which is added back below).
+        base = max(
+            0, int(getattr(building, "production_qty", 0) or 0) - farm_bonus
+        )
+    return base + farm_bonus
 
 
 def apply_extractor_production(building, requested_qty):

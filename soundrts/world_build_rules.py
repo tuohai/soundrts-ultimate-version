@@ -1944,33 +1944,13 @@ def finalize_new_building(building, site=None):
         init_spawn_host_on_ready(building, notify=False)
 
 
-def _apply_farm_food_tech_bonuses(building):
-    """AoE2 mill techs: Horse Collar / Heavy Plow / Crop Rotation on *new* farms only.
+def _farm_food_tech_bonus_for(player):
+    """Sum ``farm_food_bonus`` of every farm tech the player has researched.
 
-    Sums ``farm_food_bonus`` from researched upgrades and adds to
-    ``resource_volume_max`` / ``resource_qty`` / ``production_qty`` (reseed fill).
+    AoE2 DE mill techs (马轭 / 重犁 / 轮作) each grant a flat food bonus to
+    farms.  The bonus applies to *new* farms at full value and to *existing*
+    farms at a proportionally reduced value (see ``_apply_farm_food_tech_bonuses``).
     """
-    if building is None:
-        return
-    if not (
-        int(getattr(building, "auto_cultivate", 0) or 0)
-        or int(getattr(building, "is_gather", 0) or 0)
-    ):
-        return
-    if int(getattr(building, "resource_volume_max", 0) or 0) <= 0:
-        return
-    # Prefer explicit farm line (is_a / type_name), skip other gather buildings.
-    try:
-        from .worldphase import Phase
-
-        if not Phase._unit_matches_single_target(building, "farm"):
-            return
-    except Exception:
-        if getattr(building, "type_name", None) != "farm":
-            return
-    player = getattr(building, "player", None)
-    if player is None:
-        return
     bonus = 0
     for tech_name in getattr(player, "upgrades", ()) or ():
         try:
@@ -1983,11 +1963,138 @@ def _apply_farm_food_tech_bonuses(building):
             bonus += int(getattr(tech, "farm_food_bonus", 0) or 0)
         except (TypeError, ValueError):
             continue
-    if bonus:
-        building.resource_volume_max = int(building.resource_volume_max) + bonus
-        pq = getattr(building, "production_qty", 0) or 0
-        if pq:
-            building.production_qty = int(pq) + bonus
+    return bonus
+
+
+def is_farm_building(building):
+    """True when *building* is a farm (the AoE2 food building)."""
+    if building is None:
+        return False
+    # Prefer explicit farm line (is_a / type_name), skip other gather buildings.
+    try:
+        from .worldphase import Phase
+
+        return Phase._unit_matches_single_target(building, "farm")
+    except Exception:
+        return getattr(building, "type_name", None) == "farm"
+
+
+def _farm_food_tech_bonus_applied(building):
+    """The flat tech bonus already folded into this farm's capacity."""
+    return int(getattr(building, "_farm_food_bonus_applied", 0) or 0)
+
+
+def _apply_farm_food_tech_bonuses(building):
+    """AoE2 mill techs: Horse Collar / Heavy Plow / Crop Rotation on farms.
+
+    Adds the researched ``farm_food_bonus`` to the farm's
+    ``resource_volume_max`` / ``resource_qty`` / ``production_qty``.
+
+    AoE2 DE ("New Farms provide +75 food.  Existing Farms provide a smaller
+    food amount.") applies the bonus to farms that already stand as well, but
+    proportionally reduced by the square of how much food is still in the farm::
+
+        added = bonus * (remaining_food / capacity) ** 2
+
+    A farm that was already full therefore gains the full bonus; an almost
+    empty farm gains almost nothing.  A farm built *after* the research gets
+    the full bonus (DE: "If the research is completed while a Farm is being
+    built, the full food bonus applies to that Farm").
+
+    The function is *idempotent*: the bonus already folded into the farm is
+    tracked on the instance, so calling it again after another tech completes
+    only adds the difference and never double-counts.
+    """
+    if building is None:
+        return
+    if not (
+        int(getattr(building, "auto_cultivate", 0) or 0)
+        or int(getattr(building, "is_gather", 0) or 0)
+    ):
+        return
+    if int(getattr(building, "resource_volume_max", 0) or 0) <= 0:
+        return
+    if not is_farm_building(building):
+        return
+    player = getattr(building, "player", None)
+    if player is None:
+        return
+
+    bonus = _farm_food_tech_bonus_for(player)
+    # ``_farm_food_bonus_applied``  = the flat tech bonus that was *available*
+    #                                when the farm was last updated.
+    # ``_farm_food_bonus_granted`` = the bonus actually folded into the farm
+    #                                (may be less, for a partly-empty farm).
+    applied = _farm_food_tech_bonus_applied(building)
+    granted_so_far = int(getattr(building, "_farm_food_bonus_granted", 0) or 0)
+    new_bonus = bonus - applied
+    if new_bonus <= 0:
+        # Nothing new to apply; still refresh the bookkeeping.
+        building._farm_food_bonus_applied = bonus
+        return
+
+    # Capacity *before* the granted bonus was folded in.  The farm may already
+    # carry a previously granted bonus, so subtract it to recover the base.
+    capacity = int(getattr(building, "resource_volume_max", 0) or 0)
+    base_capacity = capacity - granted_so_far
+    if base_capacity <= 0:
+        base_capacity = capacity
+
+    # A farm that is still being constructed has not had its initial fill
+    # yet (``finalize_new_building`` runs before ``Building.__init__`` sets
+    # ``resource_qty``).  DE: "If the research is completed while a Farm is
+    # being built, the full food bonus applies to that Farm."  A freshly
+    # built farm therefore gets the whole bonus, not a reduced one.
+    # ``resource_qty`` is a *class* attribute (default 0), so the reliable
+    # test is whether the instance carries its own value yet.
+    if "resource_qty" not in getattr(building, "__dict__", {}):
+        granted = new_bonus
+        current = 0
+    else:
+        # How much food is still in the farm right now (capped at the base
+        # capacity, so a farm that was filled to a previously raised cap still
+        # counts as "full").
+        current = int(getattr(building, "resource_qty", 0) or 0)
+        if current < 0:
+            current = 0
+        if current > base_capacity:
+            current = base_capacity
+
+        if base_capacity > 0:
+            fill = current / float(base_capacity)
+        else:
+            fill = 1.0
+        # DE: the granted amount scales with the *square* of the fill ratio.
+        granted = int(new_bonus * fill * fill)
+
+    building._farm_food_bonus_applied = bonus
+    if granted <= 0:
+        # The farm is empty: DE grants nothing for this farm right now — but
+        # the farm's capacity still grows by the full bonus, because the next
+        # reseed uses the upgraded capacity.
+        building.resource_volume_max = capacity + new_bonus
+        building._farm_food_bonus_granted = granted_so_far + new_bonus
+        return
+
+    building.resource_volume_max = capacity + granted
+    building._farm_food_bonus_granted = granted_so_far + granted
+
+    # The farm's yield per reseed grows by the same amount.  It is recomputed
+    # from the class value so that repeated calls never double-count.
+    base_production = int(getattr(type(building), "production_qty", 0) or 0)
+    if base_production <= 0:
+        # No class value: derive the base from the current instance value.
+        base_production = (
+            int(getattr(building, "production_qty", 0) or 0) - granted_so_far
+        )
+    if base_production > 0:
+        # Remember the pristine base so that the production cycle (which
+        # resets ``production_qty`` from the class) can restore the bonus.
+        building._farm_base_production_qty = base_production
+        building.production_qty = base_production + granted_so_far + granted
+
+    # Team bonus (AoE2 Chinese: +10% food to farms for the player and all
+    # allies).  Applied to the new capacity, matching the construction path.
     try:
         from .world_civ_bonuses import apply_farm_food_team_pct
 
@@ -2009,13 +2116,63 @@ def _apply_farm_food_tech_bonuses(building):
             building.production_qty = apply_supplies_team_pct(building, pq3)
     except Exception:
         pass
+
+    # A farm starts out full, so its initial fill must grow together with the
+    # capacity (a farm built after Horse Collar holds 250, not 175).
+    # ``resource_volume_start`` is only consulted at construction time, so it
+    # only needs to track the *full* bonus a fresh farm receives.
+    if "resource_qty" not in getattr(building, "__dict__", {}):
+        base_start = int(getattr(building, "_farm_base_volume_start", 0) or 0)
+        if base_start <= 0:
+            base_start = int(
+                getattr(type(building), "resource_volume_start", 0) or 0
+            )
+            if base_start <= 0:
+                base_start = int(getattr(building, "resource_volume_start", 0) or 0)
+        if base_start > 0:
+            building._farm_base_volume_start = base_start
+            building.resource_volume_start = base_start + bonus
+
+    # The extra capacity is available to the farmer right away, so the stored
+    # food grows by the same amount (never above the new capacity).
     if hasattr(building, "resource_qty"):
-        building.resource_qty = int(building.resource_volume_max)
+        new_qty = current + granted
+        if new_qty > building.resource_volume_max:
+            new_qty = building.resource_volume_max
+        building.resource_qty = new_qty
         building._resource_qty_frac = 0
         try:
             building.notify(f"qty_update,{building.resource_qty}")
         except Exception:
             pass
+
+
+def refresh_player_farms_food_bonus(player):
+    """Re-apply the farm food tech bonuses to every farm the player owns.
+
+    Called when a farm tech (马轭 / 重犁 / 轮作) completes so that farms that
+    were built *before* the research gain the bonus as well.
+    """
+    if player is None:
+        return
+    for building in list(getattr(player, "units", ()) or ()):
+        try:
+            if not is_farm_building(building):
+                continue
+            if not (
+                int(getattr(building, "auto_cultivate", 0) or 0)
+                or int(getattr(building, "is_gather", 0) or 0)
+            ):
+                continue
+            _apply_farm_food_tech_bonuses(building)
+        except Exception as e:
+            from .lib.log import warning
+
+            warning(
+                "refresh_player_farms_food_bonus failed for %s: %s",
+                getattr(building, "type_name", building),
+                str(e),
+            )
 
 
 def _auto_start_gas_production(building):

@@ -346,6 +346,23 @@ class Upgrade(CostEffectsMixin, AttributeEffectsMixin, ProductionEffectsMixin, G
         if cls.type_name not in player.upgrades:
             player.upgrades.append(cls.type_name)
 
+        # AoE2 农田科技（马轭 / 重犁 / 轮作）：研究完成后，已经建好的农田
+        # 也要按 DE 规则获得加成（"Existing Farms provide a smaller food
+        # amount."），而不只是之后新建的农田。
+        if int(getattr(cls, "farm_food_bonus", 0) or 0):
+            try:
+                from ..world_build_rules import refresh_player_farms_food_bonus
+
+                refresh_player_farms_food_bonus(player)
+            except Exception as e:
+                from ..lib.log import warning
+
+                warning(
+                    "farm food bonus refresh failed for %s: %s",
+                    cls.type_name,
+                    str(e),
+                )
+
         # AoE2 Spies etc.: permanent hostile reveal for perception
         if int(getattr(cls, "reveal_enemies", 0) or 0):
             player.reveal_enemies = True
