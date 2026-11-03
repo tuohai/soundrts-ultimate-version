@@ -473,6 +473,11 @@ def keeptower
 is_a building
 title 8313
 complete tower
+def donjon
+is_a building
+title 5544
+keyboard building
+complete tower
 def cannontower
 is_a building
 title 8327

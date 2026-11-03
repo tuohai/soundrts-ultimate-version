@@ -173,6 +173,7 @@
 8328 Befestigter Wall
 8329 Befestigtes Tor
 8319 Außenposten
+5544 Donjon
 8314 Mühle
 8315 Bergarbeiter-lager
 8316 Marktplatz

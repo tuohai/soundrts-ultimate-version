@@ -173,6 +173,7 @@
 8328 Tường gia cố
 8329 Cổng thành gia cố
 8319 Tiền đồn
+5544 Tháp canh
 8314 Nhà xay lương
 8315 Bãi khai thác
 8316 Chợ

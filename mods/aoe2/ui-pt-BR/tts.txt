@@ -173,6 +173,7 @@
 8328 Muralha Fortificada
 8329 Portão fortificado
 8319 Posto Avançado
+5544 Donjon
 8314 Moinho
 8315 Campo de Mineração
 8316 Mercado

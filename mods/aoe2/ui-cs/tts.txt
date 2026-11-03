@@ -173,6 +173,7 @@
 8328 Umocniony mur
 8329 Opevněná brána
 8319 Strażnica
+5544 Donjon
 8314 Młyn
 8315 Kopalnia
 8316 Rynek

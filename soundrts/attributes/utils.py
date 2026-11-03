@@ -560,9 +560,10 @@ def apply_player_phase_bonuses_for_detail(temp_unit, unit_class, player):
         setattr(temp_unit, stat, copied)
 
     try:
+        # ``apply_pool_to_unit`` 已经把"没有武器/护甲实例"的单位（建筑，
+        # 以及这里的详情代理 TempUnit）的武器/护甲时代加成一并补齐，
+        # 所以这里**不能**再单独调用两个 subset 函数，否则会重复叠加。
         Phase.apply_pool_to_unit(temp_unit)
-        Phase.apply_pool_weapon_subset_to_unit(temp_unit)
-        Phase.apply_pool_armor_subset_to_unit(temp_unit)
     except Exception:
         return
 

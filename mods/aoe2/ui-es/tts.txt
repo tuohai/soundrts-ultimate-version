@@ -173,6 +173,7 @@
 8328 Muralla fortificada
 8329 Puerta fortificada
 8319 Puesto de avanzada
+5544 Torre del homenaje
 8314 Molino
 8315 Campamento minero
 8316 Mercado

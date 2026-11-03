@@ -173,6 +173,7 @@
 8328 Mura fortificate
 8329 Porta fortificata
 8319 Avamposto
+5544 Torrione
 8314 Mulino
 8315 Area mineraria
 8316 Mercato

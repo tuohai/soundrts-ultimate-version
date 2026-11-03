@@ -777,6 +777,9 @@ time_cost 75
 requirements aoe_castle imperial_age
 effect bonus hp 1000
 effect_bonus_targets aoe_castle
+; DE: Hoardings also gives +1000 HP to the Sicilian Donjon.
+effect bonus hp 1000
+effect_bonus_targets donjon
 
 ; 工兵 Sappers — villagers +15 vs buildings, +15 vs stone buildings
 def sappers
@@ -5778,6 +5781,54 @@ transport_capacity 5
 can_use_tech yeomen yasama crenellations great_wall herbal_medicine ballistics chemistry fletching bodkin_arrow bracer murder_holes heated_shot masonry architecture town_watch town_patrol stronghold svan_towers
 can_upgrade_to
 
+; 城楼 Donjon (Sicilian unique fortification, DE Lords of the West)
+; DE: 50 wood / 175 stone, buildable from the Dark Age, 2x2 footprint.
+; It *replaces* the Watch Tower line for the Sicilians and is the building that
+; unlocks the Archery Range and the Stable.
+; HP by age: 625 (Dark) / 1250 (Feudal) / 1500 (Castle) / 2250 (Imperial).
+; Attack by age: none (Dark) / 1 arrow (Feudal) / 2 arrows (Castle) / 3 arrows
+; (Imperial).  Garrison: 10 units, heals them.
+; Trains the Serjeant (Unique Unit) and the Spearman line.
+def donjon
+class building
+is_a building
+; DE: the Donjon is a 2x2 building, so it may not be placed on the 1x1 meadow
+; slot the towers use.
+is_buildable_anywhere 1
+cost 0 50 0 175
+train_cost 0 50 0 175
+time_cost 125
+hp_max 625
+mdf 0
+rdf 6
+sight_range 10
+; DE attack (Feudal Age onwards): 5 pierce, range 8, min range 1, reload 2s,
+; projectile speed 7.  The Dark Age Donjon has no attack at all; the arrows
+; and the age scaling come from the ``rdg_seq`` rows the Sicilian race grants
+; per age (see the ``def sicilians`` block below).
+; NOTE: the base ``rdg`` must NOT be set here — in DE the Dark Age Donjon is
+; completely unarmed, and the attack only starts in the Feudal Age.  Setting
+; ``rdg 5`` on the definition would make the Dark Age Donjon shoot.
+rdg_cd 2
+rdg_range 8
+rdg_minimal_range 1
+rdg_projectile 1
+rdg_projectile_speed 7
+requirements town_center
+; AoE2 DE garrison heal: 0.1 HP/s (same as the Town Center)
+heal_level 1
+heal_cd 10
+heal_garrisoned 1
+; DE Donjon garrison: 10 units (foot units / peasant / archer)
+transport_capacity 10
+transport_volume 99
+transport_passenger_types infantry archer_unit peasant monk -cavalry -siege_unit
+passenger_attack_types archer_unit peasant
+; DE: the Donjon unlocks the Archery Range and the Stable.
+can_train serjeant spearman pikeman halberdier
+can_research first_crusade hauberk elite_serjeant hoardings
+can_use_tech yeomen yasama crenellations great_wall herbal_medicine ballistics chemistry fletching bodkin_arrow bracer murder_holes heated_shot masonry architecture town_watch town_patrol stronghold svan_towers
+
 ; Bombard Tower (火炮塔): Imperial + Chemistry; does not morph Keeps; no garrison in AoE2
 def cannontower
 class building
@@ -9809,11 +9860,15 @@ can_research tracking squires supplies arson gambesons man_at_arms long_swordsma
 
 def sicilian_archery
 is_a archery_range
+; DE: the Donjon is the prerequisite for the Archery Range (and the Stable).
+requirements donjon
 can_train aoe_archer skirmisher elite_skirmisher hand_cannoneer
 can_research crossbowman
 
 def sicilian_stable
 is_a stables
+; DE: the Donjon is the prerequisite for the Stable.
+requirements donjon
 can_train scout_cavalry aoe_knight
 can_research light_cavalry cavalier paladin
 
@@ -9842,7 +9897,9 @@ can_research first_crusade hauberk elite_serjeant conscription hoardings sappers
 
 def sicilian_villager
 is_a peasant
-can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university aoe_castle wall gate fortified_wall palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
+; DE: the Donjon replaces the Watch Tower line (scouttower / guardtower /
+; keeptower) for the Sicilians; it is buildable from the Dark Age.
+can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university aoe_castle wall gate fortified_wall palisade_wall palisade_gate outpost donjon cannontower town_center shipyard
 can_use_tech burgundian_vineyards flemish_revolution first_crusade loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
 
 def sicilians
@@ -9862,16 +9919,72 @@ aoe_castle sicilian_castle
 workshop sicilian_workshop
 shipyard sicilian_shipyard
 townhall town_center
-; DE: buildings +10% HP (masonry/architecture +10% additional)
-on_phase dark_age hp 10% building
-; DE: Town Centers +100% HP from Dark Age
-on_phase dark_age hp 100% town_center
-; DE: military units take -25% bonus damage (mdf +25%)
+; DE Sicilians (Lords of the West) — the official DE civilization bonus list is:
+;   * Start with +100 stone
+;   * Farm upgrades provide +125% additional food
+;   * Soldiers receive -40% bonus damage  (mdf +25% / rdf +25%)
+;   * Can build Donjon in Dark Age, replaces Watch Tower line
+;   * Fortifications built 50% faster; Town Centers built 100% faster
+; Team bonus: Transport Ships +5 line of sight and cost -50%
+;
+; NOTE: the Sicilians have **no** building-HP bonus and **no** Town Center HP
+; bonus in DE (those belong to the Byzantines' "buildings +10/20/30/40% HP").
+; The Donjon's own age scaling is listed further below.
+; DE: military units take -40% bonus damage (mdf +25% / rdf +25%)
 on_phase dark_age mdf 25% infantry cavalry archer_unit siege_unit
 on_phase dark_age rdf 25% infantry cavalry archer_unit siege_unit
 ; DE: farmers +30% faster (gather_time -23%)
 on_phase dark_age gather_time -23% food
-; Team: Serjeant available at Barracks (defined as UU in castle section)
+; DE: start with +100 stone (200 -> 300 stone, 4th resource slot).
+starting_resources 100 200 200 300
+; DE 城楼 Donjon: replaces the Watch Tower line, buildable from the Dark Age.
+; DE HP by age: 625 (Dark) / 1250 (Feudal) / 1500 (Castle) / 2250 (Imperial).
+; The Donjon also gains +1 melee / +1 pierce armor per age (DE).
+;
+; NOTE: the age rows use *flat* HP deltas, not percentages.  A percentage
+; row (``hp 100%``) is relative to the unit's *current* HP, so it compounds
+; across ages (625 -> 1250 -> 2500 ...) and the Dark Age row would give the
+; Dark Age Donjon 1250 HP.  DE's numbers are exact totals, so the flat
+; deltas below reproduce them exactly:
+;   Dark 625 (base) | Feudal +625 -> 1250 | Castle +250 -> 1500
+;   | Imperial +750 -> 2250
+on_phase feudal_age hp 625 donjon
+on_phase castle_age hp 250 donjon
+on_phase imperial_age hp 750 donjon
+on_phase feudal_age mdf 1 rdf 1 donjon
+on_phase castle_age mdf 1 rdf 1 donjon
+on_phase imperial_age mdf 1 rdf 1 donjon
+; DE 城楼 Donjon attack by age: none (Dark) / 1 arrow (Feudal) / 2 arrows
+; (Castle) / 3 arrows (Imperial).  Each age adds one extra projectile.
+; A bare ``rdg_seq_times`` is a no-op in this engine: the sequence only runs
+; when the secondary mode is on (``rdg_seq_secondary``) and the extra shots
+; carry the live main damage (``rdg_seq_secondary_live``).
+; The base ``rdg``/``rdg_range`` live on the ``def donjon`` block (5 pierce,
+; range 8); only the Dark Age Donjon is unarmed, which is modelled by the
+; lack of any attack row in the dark_age phase.
+on_phase feudal_age rdg 5 donjon
+on_phase feudal_age rdg_seq_times 1 donjon
+on_phase feudal_age rdg_seq_secondary 1 donjon
+on_phase feudal_age rdg_seq_secondary_live 1 donjon
+on_phase castle_age rdg_seq_times 2 donjon
+on_phase castle_age rdg_seq_secondary 1 donjon
+on_phase castle_age rdg_seq_secondary_live 1 donjon
+on_phase imperial_age rdg_seq_times 3 donjon
+on_phase imperial_age rdg_seq_secondary 1 donjon
+on_phase imperial_age rdg_seq_secondary_live 1 donjon
+; DE: Fortifications built 50% faster; Town Centers built 100% faster.
+; DE expresses these as a *time reduction*: the Donjon takes 125 s base and
+; 83 s with the bonus (125 / 1.5), and a Town Center takes 100 s base and
+; 50 s with the bonus (100 / 2).  This repo models "N% faster" as a time
+; *discount* (see the Hindustani Grand Trunk Road "+25% faster" -> -20%
+; row), so +50% faster -> -33% and +100% faster -> -50%.
+; NOTE: ``time_cost`` in an ``on_phase`` row is a player-level bonus and is
+; NOT filtered by the row's unit targets (the engine warns about this), so
+; the per-building-type build speed is expressed through the phase pool's
+; targeted ``merge_pool_time_for_type`` path instead — see the
+; ``phase_time_cost`` handling in world_civ_bonuses.
+on_phase dark_age time_cost -33% donjon wall fortified_wall palisade_wall palisade_gate outpost aoe_castle cannontower
+on_phase dark_age time_cost -50% town_center
 ; DE Team bonus: Transport Ships +5 line of sight and cost -50%
 ; (transport_ship costs 0 125 0 0 -> the discount belongs in slot 1 = wood)
 team_on_phase dark_age sight_range 5 transport_ship
@@ -10493,51 +10606,73 @@ can_upgrade_to
 can_use_tech forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor squires arson gambesons conscription
 
 ; ---------- 西西里 Serjeant ----------
-; DE: HP70/85 Atk12/14 Arm0+4/1+5 vs pierce Speed1.0; infantry with high pierce armor
+; DE (Lords of the West / The Three Kingdoms): the Serjeant is trained at the
+; Donjon from the **Feudal Age** on, and at the Castle from the Castle Age on.
+; DE stats: HP 50, attack 5, armor 2 melee / 1 pierce, speed 0.95, LOS 3,
+; cost 55 food / 25 gold, train time 16 s (at the Donjon).
+; The repo's older numbers (HP 70/85, attack 12/14, 50 wood / 60 food) were
+; never aligned with DE.
 def serjeant
 class soldier
 is_a infantry
 is_a unique_unit
-cost 50 0 60 0
+; DE: 25 gold (slot 1) + 55 food (slot 3)
+cost 25 0 55 0
 population_cost 1
-time_cost 13
+; DE: 16 s train time at the Donjon.
+time_cost 16
+train_time 16
 ;space 0.25
-requirements castle_age
+; DE: the Serjeant is available from the Feudal Age (trained at the Donjon).
+; The Castle also trains it from the Castle Age on.
+requirements feudal_age
 no_auto_upgrade 1
 line_upgrade 1
 can_use_tech forced_levy first_crusade fereters
 
-hp_max 70
-speed 1.0
-sight_range 4
-mdg 12
+hp_max 50
+speed 0.95
+sight_range 3
+mdg 5
 mdg_cd 2
 mdg_range 1
-mdf 0
-rdf 4
+mdf 2
+rdf 1
 mdg_vs building 3
 can_upgrade_to elite_serjeant
+; DE Sicilian civ bonus: Serjeants can build and repair Donjons.
+can_build donjon
 can_use_tech forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor squires arson gambesons conscription
 
 def elite_serjeant
 is_a serjeant
-cost 750 0 700 0
-time_cost 50
+; DE: the Elite Serjeant *upgrade* (researched at the Castle) costs
+; 800 food / 675 gold in 45 s.  Following the repo's elite-form convention
+; (see ``elite_konnik``), ``cost``/``time_cost`` of a ``line_upgrade`` form
+; are the **research** cost/time; the per-unit train cost and duration come
+; from the line root / ``train_time`` below.
+cost 675 0 800 0
+time_cost 45
+; DE: the Elite Serjeant trains in 12 s (vs. 16 s for the Feudal Age Serjeant).
+train_time 12
 requirements imperial_age
 no_auto_upgrade 1
 line_upgrade 1
 can_use_tech forced_levy first_crusade fereters forging iron_casting blast_furnace scale_mail_armor chain_mail_armor plate_mail_armor squires arson gambesons conscription
 
+; DE: HP 85, attack 11, armor 6 melee / 3 pierce, speed 0.95, LOS 5.
 hp_max 85
-speed 1.0
+speed 0.95
 sight_range 5
-mdg 14
+mdg 11
 mdg_cd 2
 mdg_range 1
-mdf 1
-rdf 5
-mdg_vs building 4
+mdf 6
+rdf 3
+mdg_vs building 3
 can_upgrade_to
+; DE Sicilian civ bonus: Elite Serjeants can build and repair Donjons too.
+can_build donjon
 
 ; ---------- 亚美尼亚/格鲁吉亚 Tarkan (already defined; Armenians/Georgians use it at Stable) ----------
 

@@ -689,6 +689,14 @@ class Phase(Upgrade):
         :meth:`apply_pool_armor_subset_to_unit`）在装备/刷新时叠加，
         以避免后续每次刷新装备就把 phase 加成无声丢掉，也避免新单位双重加成。
 
+        例外：**没有武器/护甲实例的单位**（典型是建筑）永远不会走到
+        ``update_weapons`` / ``update_armors`` 的重叠加成分支——它们的
+        ``_weapon_instances`` 为空且 ``_armor_instance`` 为 None，于是
+        ``mdg``/``rdg``/``mdf``/``rdf`` 这类时代加成会被静默丢弃。
+        （例如西西里的 Donjon 在封建时代建造时拿不到 +1/+1 护甲和
+        5 点远程攻击。）对这类单位，本方法直接补齐武器/护甲子集，
+        使其与"在时代之前就已存在"的建筑保持一致。
+
         每个 pool 条目是 (bonus_args, targets) 元组；若 targets 非空，仅当单位
         匹配时才应用。也兼容老格式（裸列表表示无 targets）。
         """
@@ -709,6 +717,23 @@ class Phase(Upgrade):
             except Exception as e:
                 warning("Error applying pooled phase bonus to %s: %s",
                         getattr(unit, "type_name", unit), str(e))
+
+        # 没有武器/护甲实例的单位（建筑）拿不到重叠加成分支，这里补齐，
+        # 否则时代攻防/护甲加成会在"时代之后才建成的建筑"上永久丢失。
+        if cls._has_no_gear_instances(unit):
+            cls.apply_pool_weapon_subset_to_unit(unit)
+            cls.apply_pool_armor_subset_to_unit(unit)
+
+    @staticmethod
+    def _has_no_gear_instances(unit):
+        """True 当单位既没有武器实例也没有护甲实例（典型是建筑）。
+
+        这类单位的 ``update_weapons`` / ``update_armors`` 会直接 return，
+        因此 phase 的武器/护甲加成必须由 :meth:`apply_pool_to_unit` 补齐。
+        """
+        weapons = getattr(unit, "_weapon_instances", None)
+        armor = getattr(unit, "_armor_instance", None)
+        return not weapons and not armor
 
     @classmethod
     def apply_pool_weapon_subset_to_unit(cls, unit):
