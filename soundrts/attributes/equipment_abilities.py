@@ -405,12 +405,14 @@ class EquipmentAbilities:
     def add_tech_skill_attributes(self, u, attrs):
         """添加科技和技能相关属性"""
         # 可使用的技术：只列出本文明能研究的（含同盟 team_share / 已研究）
-        if hasattr(u, "can_use_tech") and u.can_use_tech:
-            from .utils import filter_can_use_tech_names
+        # 含“自授权”科技（其 effect_bonus_targets 即授权，无需列在
+        # can_use_tech 里）。
+        from .utils import can_use_tech_display_names, filter_can_use_tech_names
 
-            tech_types = filter_can_use_tech_names(
-                u.can_use_tech, getattr(u, "player", None)
-            )
+        tech_types = filter_can_use_tech_names(
+            can_use_tech_display_names(u), getattr(u, "player", None)
+        )
+        if tech_types:
             tech_items = []
             for tech_type in tech_types:
                 tech_title = style.get(tech_type, "title")
@@ -421,7 +423,7 @@ class EquipmentAbilities:
                         tech_items.append([str(tech_title)])
                 else:
                     tech_items.append([tech_type])
-            
+
             if tech_items:
                 attrs.append(("", mp.CAN_USE_TECH, ("CAN_USE_TECH_ITEMS", tech_items)))
         

@@ -982,6 +982,24 @@ class CreatureAttributes(Entity):
                     tech_class = rules.unit_class(tech_name)
                     if tech_class:
                         tech_class.upgrade_unit_to_player_level(self)
+
+        # 目标即授权的科技：其 ``effect_bonus_targets`` 列表本身定义了
+        # 过滤行的作用范围，因此单位不必在 ``can_use_tech`` 里重复列出该科技。
+        # 这里补上“玩家已研究、且该单位匹配其目标”的科技，否则新建的单位
+        # 会漏掉这部分加成（``upgrade_unit_to_player_level`` 只按单位的
+        # ``can_use*`` 列表逐个调用）。
+        from ..worldupgrade.effect_bonus_parse import (
+            unit_matches_tech_targets,
+        )
+
+        for tech_name in self.player.upgrades:
+            tech_class = rules.unit_class(tech_name)
+            if tech_class is None:
+                continue
+            if not unit_matches_tech_targets(self, tech_class):
+                continue
+            # 已由 can_use* 路径处理过的科技会自行去重，这里只补漏。
+            tech_class.upgrade_unit_to_player_level(self)
         
         # 升级单位装备的武器
         if hasattr(self, 'update_weapons'):

@@ -197,7 +197,8 @@ def test_archery_line_upgrades_live_on_range_not_stable(aoe2_rules):
     frank_archery = aoe2_rules.get("frank_archery", "can_research") or []
     frank_stable = aoe2_rules.get("frank_stable", "can_research") or []
     assert "crossbowman" in frank_archery
-    assert "arbalester" in frank_archery
+    # DE bld87: Arbalester is NotAvailable for the Franks.
+    assert "arbalester" not in frank_archery
     assert "elite_skirmisher" in frank_archery
     assert "thumb_ring" not in frank_archery
     assert "heavy_cavalry_archer" not in frank_archery

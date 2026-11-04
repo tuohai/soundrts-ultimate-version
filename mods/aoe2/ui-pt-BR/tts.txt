@@ -860,3 +860,9 @@
 9105 Torres svan
 9106 Escudos de tecido
 9107 Fundição andina
+9116 Krepost
+9117 Caravansarái
+9118 Folwark
+9119 Carro de mula
+9120 Igreja fortificada
+9121 Assentamento

@@ -94,6 +94,11 @@ class ResourcesMixin:
                     )
                 if base_speed:
                     u.actual_speed = max(u.actual_speed, VERY_SLOW)  # never stuck
+                # AoE2 DE 建筑光环（商队驿站 Caravanserai）：光环范围内的贸易车
+                # 移动速度 +N%（数据来自 rules.txt 的 aura_* 行）。
+                from ..world_aura import apply_speed_aura
+
+                apply_speed_aura(u)
             except Exception:
                 u.actual_speed = getattr(u, "speed", 0)
 

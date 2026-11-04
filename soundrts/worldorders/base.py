@@ -18,6 +18,51 @@ from ..worldupgrade.base import Upgrade
 ORDERS_QUEUE_LIMIT = 10
 
 
+def _applicable_techs_for_type(player, type_cls):
+    """The researched techs whose effects may apply to *type_cls*.
+
+    A tech applies to a type when the type lists it in ``can_use`` /
+    ``can_use_tech`` / ``can_use_skill`` — or when the type matches one of
+    the tech's *filtered* effect rows, whose ``effect_bonus_targets`` list is
+    the sole definition of reach for that row (exactly as the filtered cost
+    rows below already behave).
+    """
+    if player is None or type_cls is None:
+        return []
+    upgrades = getattr(player, "upgrades", ()) or ()
+    result = []
+    for tech_name in upgrades:
+        if not tech_name or not isinstance(tech_name, str):
+            continue
+        if (
+            (hasattr(type_cls, "can_use") and tech_name in type_cls.can_use)
+            or (
+                hasattr(type_cls, "can_use_tech")
+                and tech_name in type_cls.can_use_tech
+            )
+            or (
+                hasattr(type_cls, "can_use_skill")
+                and tech_name in type_cls.can_use_skill
+            )
+        ):
+            result.append(tech_name)
+            continue
+        try:
+            from ..worldupgrade.effect_bonus_parse import (
+                type_matches_tech_targets,
+            )
+
+            tech_cls = rules.unit_class(tech_name)
+            if (
+                tech_cls is not None
+                and type_matches_tech_targets(type_cls, tech_cls)
+            ):
+                result.append(tech_name)
+        except Exception:
+            continue
+    return result
+
+
 def _order_target_square(target):
     from ..worldroom import Square, ZoomTarget
 
@@ -557,33 +602,12 @@ class ComplexOrder(Order):
             
             # 检查当前单位是否可以使用已研究的科技（精确作用域：仅应用这些科技的效果）
             applicable_techs = []
-            
+
             if hasattr(self.unit, 'player') and self.unit.player:
-                # 只针对具有can_use或can_use_tech的单位应用科技效果
-                for tech_name in self.unit.player.upgrades:
-                    # 跳过无效的tech_name
-                    if not tech_name or not isinstance(tech_name, str):
-                        continue
-                        
-                    # 检查单位是否可以使用该科技
-                    can_use = False
-                    
-                    # 检查can_use
-                    if hasattr(self.type, 'can_use') and tech_name in self.type.can_use:
-                        can_use = True
-                        
-                    # 检查can_use_tech
-                    if not can_use and hasattr(self.type, 'can_use_tech') and tech_name in self.type.can_use_tech:
-                        can_use = True
-                        
-                    # 检查can_use_skill
-                    if not can_use and hasattr(self.type, 'can_use_skill') and tech_name in self.type.can_use_skill:
-                        can_use = True
-                    
-                    # 如果可以使用该科技，加入适用科技列表
-                    if can_use:
-                        applicable_techs.append(tech_name)
-                        
+                applicable_techs = _applicable_techs_for_type(
+                    self.unit.player, self.type
+                )
+
                 # 仅聚合 applicable_techs 对应的效果值
                 if applicable_techs:
                     local_cost_bonus = [0] * len(modified_cost)
@@ -664,30 +688,9 @@ class ComplexOrder(Order):
 
             if hasattr(self.unit, 'player') and self.unit.player:
                 # 检查当前单位是否可以使用已研究的科技
-                applicable_techs = []
-
-                for tech_name in self.unit.player.upgrades:
-                    # 跳过无效的tech_name
-                    if not tech_name or not isinstance(tech_name, str):
-                        continue
-
-                    # 检查单位是否可以使用该科技
-                    can_use = False
-
-                    # 检查can_use
-                    if hasattr(self.type, 'can_use') and tech_name in self.type.can_use:
-                        can_use = True
-
-                    # 检查can_use_tech
-                    if not can_use and hasattr(self.type, 'can_use_tech') and tech_name in self.type.can_use_tech:
-                        can_use = True
-
-                    # 检查can_use_skill
-                    if not can_use and hasattr(self.type, 'can_use_skill') and tech_name in self.type.can_use_skill:
-                        can_use = True
-
-                    if can_use:
-                        applicable_techs.append(tech_name)
+                applicable_techs = _applicable_techs_for_type(
+                    self.unit.player, self.type
+                )
 
                 if applicable_techs:
                     local_pop_bonus = 0
@@ -773,25 +776,9 @@ class ComplexOrder(Order):
             modified_time_cost = base_time_cost
 
             if hasattr(self.unit, 'player') and self.unit.player:
-                applicable_techs = []
-
-                for tech_name in self.unit.player.upgrades:
-                    if not tech_name or not isinstance(tech_name, str):
-                        continue
-
-                    can_use = False
-
-                    if hasattr(self.type, 'can_use') and tech_name in self.type.can_use:
-                        can_use = True
-
-                    if not can_use and hasattr(self.type, 'can_use_tech') and tech_name in self.type.can_use_tech:
-                        can_use = True
-
-                    if not can_use and hasattr(self.type, 'can_use_skill') and tech_name in self.type.can_use_skill:
-                        can_use = True
-
-                    if can_use:
-                        applicable_techs.append(tech_name)
+                applicable_techs = _applicable_techs_for_type(
+                    self.unit.player, self.type
+                )
 
                 if applicable_techs:
                     local_time_bonus = 0
@@ -936,33 +923,12 @@ class ComplexOrder(Order):
             
             # 检查当前单位是否可以使用已研究的科技
             applicable_techs = []
-            
+
             if hasattr(self.unit, 'player') and self.unit.player:
-                # 只针对具有can_use或can_use_tech的单位应用科技效果
-                for tech_name in self.unit.player.upgrades:
-                    # 跳过无效的tech_name
-                    if not tech_name or not isinstance(tech_name, str):
-                        continue
-                        
-                    # 检查单位是否可以使用该科技
-                    can_use = False
-                    
-                    # 检查can_use
-                    if hasattr(self.type, 'can_use') and tech_name in self.type.can_use:
-                        can_use = True
-                        
-                    # 检查can_use_tech
-                    if not can_use and hasattr(self.type, 'can_use_tech') and tech_name in self.type.can_use_tech:
-                        can_use = True
-                        
-                    # 检查can_use_skill
-                    if not can_use and hasattr(self.type, 'can_use_skill') and tech_name in self.type.can_use_skill:
-                        can_use = True
-                    
-                    # 如果可以使用该科技，加入适用科技列表
-                    if can_use:
-                        applicable_techs.append(tech_name)
-                
+                applicable_techs = _applicable_techs_for_type(
+                    self.unit.player, self.type
+                )
+
                 # 对所有适用的科技应用效果
                 if applicable_techs:
                     # 应用玩家全局产量修正

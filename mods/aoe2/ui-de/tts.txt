@@ -860,3 +860,9 @@
 9105 Swen-Türme
 9106 Stoffschild
 9107 Anden-Schlinge
+9116 Krepost
+9117 Karawanserei
+9118 Folwark
+9119 Mulkarrren
+9120 Befestigte Kirche
+9121 Siedlung

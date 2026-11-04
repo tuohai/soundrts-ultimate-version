@@ -467,6 +467,66 @@ def filter_can_use_tech_names(tech_names, player):
     ]
 
 
+def self_authorizing_tech_names(unit_class):
+    """The techs that reach *unit_class* through their own target list.
+
+    A filtered ``effect bonus`` row names the unit types it applies to in
+    ``effect_bonus_targets``; that list is the sole definition of the row's
+    reach, so the targeted unit types need not repeat the tech in their
+    ``can_use_tech``.  Such a tech is still a tech the unit enjoys, so the
+    attribute panel must show it ("可使用的科技") even though it is not
+    listed in ``can_use_tech``.
+
+    Only techs whose target list actually matches the unit are returned, so
+    a tech targeting ``farm`` is not shown on a villager.
+    """
+    if unit_class is None:
+        return []
+    try:
+        from ..worldupgrade.effect_bonus_parse import (
+            type_matches_tech_targets,
+        )
+        from ..definitions import rules as _rules
+    except Exception:
+        return []
+
+    result = []
+    for tech_name in _rules.classnames():
+        tech_cls = _rules.unit_class(tech_name)
+        if tech_cls is None:
+            continue
+        if not type_matches_tech_targets(unit_class, tech_cls):
+            continue
+        result.append(tech_name)
+    return result
+
+
+def can_use_tech_display_names(unit):
+    """The tech names the attribute panel lists for *unit*.
+
+    This is ``unit.can_use_tech`` plus the techs that reach the unit through
+    their own ``effect_bonus_targets`` list — the farm no longer repeats
+    马轭/重犁/轮作 in its ``can_use_tech``, but the panel must still show
+    them as techs the farm enjoys.
+
+    The display side and the keyboard-navigation side both call this, so
+    their indices stay aligned.
+    """
+    names = list(getattr(unit, "can_use_tech", ()) or ())
+    unit_class = getattr(unit, "model", None) or getattr(unit, "cls", None)
+    if unit_class is None:
+        type_name = getattr(unit, "type_name", None)
+        if type_name:
+            try:
+                unit_class = rules.unit_class(type_name)
+            except Exception:
+                unit_class = None
+    for extra in self_authorizing_tech_names(unit_class):
+        if extra not in names:
+            names.append(extra)
+    return names
+
+
 def class_attr_for_detail(unit_class, attr):
     """从 rules 类读取详情界面需要的能力属性（避开 Building 上的 @property）。"""
     if attr == "can_train":

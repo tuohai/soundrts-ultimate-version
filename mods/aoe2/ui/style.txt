@@ -629,6 +629,68 @@ def monastery
 is_a building
 title 8112
 complete monastery
+; ---------------------------------------------------------------------------
+; DE unique / regional buildings
+; ---------------------------------------------------------------------------
+def krepost
+is_a building
+title 9116
+keyboard building
+complete castle
+def caravanserai
+is_a building
+title 9117
+keyboard building
+complete trade_workshop
+def folwark
+is_a building
+title 9118
+keyboard building
+complete mill
+def mule_cart
+is_a building
+title 9119
+keyboard building
+complete mining_camp
+def fortified_church
+is_a building
+title 9120
+keyboard building
+complete monastery
+def settlement
+is_a building
+title 9121
+keyboard building
+complete mill
+
+; ---------------------------------------------------------------------------
+; DE unique / regional buildings — per-civ shells.
+; Each civ race block maps a semantic slot to its own shell, e.g.
+;   Poles:      ``mill polish_folwark``
+;   Armenians:  ``lumbermill armenian_mule_cart`` / ``monastery armenian_fortified_church``
+;   Incas:      ``mill incan_settlement``
+;   Persians:   ``caravanserai persian_caravanserai``
+; A shell without a style def inherits nothing, so it would have no spoken
+; ``title`` and no ``keyboard`` slot (the building could not be named and the
+; hotkeys never reached it).  ``is_a <base>`` restores both from the base
+; DE building defined above.
+; ---------------------------------------------------------------------------
+def polish_folwark
+is_a folwark
+def armenian_mule_cart
+is_a mule_cart
+def georgian_mule_cart
+is_a mule_cart
+def armenian_fortified_church
+is_a fortified_church
+def georgian_fortified_church
+is_a fortified_church
+def incan_settlement
+is_a settlement
+def persian_caravanserai
+is_a caravanserai
+def hindustani_caravanserai
+is_a caravanserai
 def relic
 title 8640
 pickup relic

@@ -24,7 +24,6 @@ class Upgrade(CostEffectsMixin, AttributeEffectsMixin, ProductionEffectsMixin, G
     can_use = ()  # 添加can_use支持，表示科技可以使用的其他科技
     can_use_tech = ()  # 添加can_use_tech支持，表示单位可以使用的升级技术
     can_use_skill = ()  # 添加can_use_skill支持，表示单位可以使用的技能
-    farm_food_bonus = 0  # AoE2: added to NEW farm resource_volume_max (Horse Collar etc.)
     reveal_enemies = 0  # AoE2 Spies: see all hostile units/buildings
     reveal_map = 0  # AoE2 Circumnavigation: explore entire map
     cost_per_enemy_worker = 0  # AoE2 Spies: gold per enemy villager (rules int × PRECISION)
@@ -153,15 +152,9 @@ class Upgrade(CostEffectsMixin, AttributeEffectsMixin, ProductionEffectsMixin, G
         # 处理已有的单位
         # 直接遍历所有单位并应用非成本相关效果
         for unit in player.units:
-            # 检查单位是否可以使用这个科技
-            if cls.type_name in getattr(unit, 'can_use', ()):
-                cls._apply_effects_to_unit(unit, player)
-            
-            # 也检查can_use_tech和can_use_skill
-            if cls.type_name in getattr(unit, 'can_use_tech', ()):
-                cls._apply_effects_to_unit(unit, player)
-            
-            if cls.type_name in getattr(unit, 'can_use_skill', ()):
+            # 检查单位是否可以使用这个科技（_unit_authorised 同时接受
+            # can_use* 显式列表与 effect_bonus_targets 目标匹配）
+            if cls._unit_authorised(unit):
                 cls._apply_effects_to_unit(unit, player)
         
         # 升级所有单位的武器（在应用科技效果后）
@@ -346,23 +339,6 @@ class Upgrade(CostEffectsMixin, AttributeEffectsMixin, ProductionEffectsMixin, G
         if cls.type_name not in player.upgrades:
             player.upgrades.append(cls.type_name)
 
-        # AoE2 农田科技（马轭 / 重犁 / 轮作）：研究完成后，已经建好的农田
-        # 也要按 DE 规则获得加成（"Existing Farms provide a smaller food
-        # amount."），而不只是之后新建的农田。
-        if int(getattr(cls, "farm_food_bonus", 0) or 0):
-            try:
-                from ..world_build_rules import refresh_player_farms_food_bonus
-
-                refresh_player_farms_food_bonus(player)
-            except Exception as e:
-                from ..lib.log import warning
-
-                warning(
-                    "farm food bonus refresh failed for %s: %s",
-                    cls.type_name,
-                    str(e),
-                )
-
         # AoE2 Spies etc.: permanent hostile reveal for perception
         if int(getattr(cls, "reveal_enemies", 0) or 0):
             player.reveal_enemies = True
@@ -421,14 +397,33 @@ class Upgrade(CostEffectsMixin, AttributeEffectsMixin, ProductionEffectsMixin, G
         # 新增：科技加入后再次为现有单位应用效果（带去重，确保仅应用新等级且仅限有权限单位）
         for unit in player.units:
             try:
-                if (
-                    cls.type_name in getattr(unit, 'can_use', ()) or
-                    cls.type_name in getattr(unit, 'can_use_tech', ()) or
-                    cls.type_name in getattr(unit, 'can_use_skill', ())
-                ):
+                if cls._unit_authorised(unit):
                     cls._apply_effects_to_unit(unit, player)
             except Exception:
                 pass
+
+        # AoE2 农田科技（马轭 / 重犁 / 轮作）：研究完成后，已经建好的农田
+        # 也要按 DE 规则获得加成（"Existing Farms provide a smaller food
+        # amount."），而不只是之后新建的农田。
+        #
+        # 科技本身是用标准效果行声明的（``effect bonus resource_volume_max 75``
+        # + ``effect_bonus_targets farm``），所以这里不再看自定义字段，而是
+        # 读规则里声明的加成。刷新必须放在上面那次“重新对现有单位应用效果”
+        # 之后：农田的**上限**（resource_volume_max）由通用引擎加上完整的
+        # 加成，而农田的**存量食物**按 DE 的比例规则单独补充。
+        if cls._declares_farm_food_bonus():
+            try:
+                from ..world_build_rules import refresh_player_farms_food_bonus
+
+                refresh_player_farms_food_bonus(player)
+            except Exception as e:
+                from ..lib.log import warning
+
+                warning(
+                    "farm food bonus refresh failed for %s: %s",
+                    cls.type_name,
+                    str(e),
+                )
 
         # 修复：科技研究完成后，更新所有现有单位的武器和护甲属性
         # 确保现有单位也能获得新科技的加成
@@ -447,14 +442,63 @@ class Upgrade(CostEffectsMixin, AttributeEffectsMixin, ProductionEffectsMixin, G
                 warning(f"Error updating unit {unit.type_name} weapons/armors after tech {cls.type_name}: {e}")
 
     @classmethod
+    def _declares_farm_food_bonus(cls):
+        """True when this tech declares a farm food-capacity bonus.
+
+        AoE2 mill techs (马轭 / 重犁 / 轮作) declare it as a plain effect row::
+
+            effect bonus resource_volume_max 75
+            effect_bonus_targets farm
+
+        so the bonus is *data*, not a hardcoded engine field.  The engine
+        reads the row back (see ``world_build_rules._tech_farm_food_bonus``)
+        and applies the AoE2 DE retroactive rule to the farms that already
+        stand.
+        """
+        try:
+            from ..world_build_rules import _tech_farm_food_bonus
+
+            return _tech_farm_food_bonus(cls) > 0
+        except Exception:
+            return False
+
+    @classmethod
+    def _unit_authorised(cls, unit):
+        """True if *unit* may enjoy this tech's effects.
+
+        Two independent ways to authorise a unit:
+
+        * the unit lists the tech in ``can_use`` / ``can_use_tech`` /
+          ``can_use_skill`` (the classic path), or
+        * the unit matches one of the tech's *filtered* effect rows — i.e. it
+          is named by that row's ``effect_bonus_targets`` list.  The target
+          list is the sole definition of reach for a filtered row, so a unit
+          that matches it enjoys the tech without repeating it in
+          ``can_use_tech``.
+
+        There is no opt-in flag: a filtered row's target list *is* its
+        authorisation, exactly as it already is for the cost/time rows
+        (see ``soundrts/worldorders/base.py``).  Naming a base class in the
+        target list therefore drags in its descendants — which is why the
+        target lists must name the derived type alone (e.g. the Goths'
+        *Anarchy* names ``goth_barracks``, never ``barracks``).
+        """
+        tech_name = getattr(cls, "type_name", None)
+        if tech_name and (
+            tech_name in getattr(unit, 'can_use', ()) or
+            tech_name in getattr(unit, 'can_use_tech', ()) or
+            tech_name in getattr(unit, 'can_use_skill', ())
+        ):
+            return True
+        from .effect_bonus_parse import unit_matches_tech_targets
+
+        return unit_matches_tech_targets(unit, cls)
+
+    @classmethod
     def _apply_effects_to_unit(cls, unit, player):
         """为单位应用科技效果（仅限有权限的单位）"""
         # 仅对具备该科技权限的单位应用
-        if not (
-            cls.type_name in getattr(unit, 'can_use', ()) or
-            cls.type_name in getattr(unit, 'can_use_tech', ()) or
-            cls.type_name in getattr(unit, 'can_use_skill', ())
-        ):
+        if not cls._unit_authorised(unit):
             return
         if cls.effect:
             # 初始化单位去重集合
@@ -604,9 +648,7 @@ class Upgrade(CostEffectsMixin, AttributeEffectsMixin, ProductionEffectsMixin, G
             unit._applied_upgrade_effects = set()
         
         # 检查单位是否可以使用这个科技
-        if cls.type_name in getattr(unit, 'can_use', ()) or \
-           cls.type_name in getattr(unit, 'can_use_tech', ()) or \
-           cls.type_name in getattr(unit, 'can_use_skill', ()):
+        if cls._unit_authorised(unit):
             
             # 获取玩家当前等级
             current_level = unit.player.level(cls.type_name)

@@ -761,13 +761,30 @@ effect bonus time_cost -20%
 effect_bonus_targets peasant
 
 ; 征召 Conscription -> barracks/archery/stable/castle work +33% (train time -33%)
+; DE (aoe2db): "Military buildings (except Siege Workshops) work +33% faster."
+; Scope = units trained at Barracks / Archery Range / Stable / Castle /
+; Krepost / Donjon.  Excluded: Dock (ships), Siege Workshop, Monastery /
+; Fortified Church.
+;
+; The positive list names the four unit roots those buildings produce
+; (infantry, archer_unit, cavalry) plus every civ-exclusive unique unit
+; (unique_unit).  The explicit names add the Castle-trained siege units
+; (Trebuchet, Petard), which are plain ``siege_unit`` and carry no
+; unique-unit marker.
+;
+; The exclusions remove the categories DE never speeds up:
+;   -ship             Dock units (Caravel, Turtle Ship, Dragon Ship, ...)
+;   -monk             Monastery / Fortified Church units (Missionary, Warrior Priest)
+;   -armored_elephant the Hindustani siege elephant (DE: Siege Workshop, not Castle)
+;   -houfnice         Bohemian Bombard Cannon upgrade (DE: Siege Workshop)
+;   -flaming_camel    Tatar siege unit (DE: Siege Workshop)
 def conscription
 class upgrade
 cost 150 0 150 0
 time_cost 60
 requirements aoe_castle imperial_age
 effect bonus time_cost -33%
-effect_bonus_targets infantry archer_unit cavalry unique_unit
+effect_bonus_targets infantry archer_unit cavalry unique_unit trebuchet petard -ship -monk -armored_elephant -houfnice -flaming_camel
 
 ; 围城木栅 Hoardings — castle +1000 HP (DE castle tech; not 加厚墙 fortified_wall)
 def hoardings
@@ -780,6 +797,9 @@ effect_bonus_targets aoe_castle
 ; DE: Hoardings also gives +1000 HP to the Sicilian Donjon.
 effect bonus hp 1000
 effect_bonus_targets donjon
+; DE: Hoardings also gives +1000 HP to the Bulgarian Krepost.
+effect bonus hp 1000
+effect_bonus_targets krepost
 
 ; 工兵 Sappers — villagers +15 vs buildings, +15 vs stone buildings
 def sappers
@@ -1609,6 +1629,7 @@ can_upgrade_to imperial_skirmisher
 ; 帝王射手 — DE Vietnamese shared UU; defined for later civs, not on generic skirm line
 def imperial_skirmisher
 is_a elite_skirmisher
+is_a unique_unit
 cost 300 300 0 0
 time_cost 50
 line_upgrade 1
@@ -1695,6 +1716,73 @@ rdg_ready 0.9
 rdg_hit_rate 50
 rdg_range 4
 rdg_vs spearman 4
+can_upgrade_to
+
+; ===========================================================================
+; Mounted Crossbowman line (AoE2 DE "The Viking Sagas" regional unit)
+; ===========================================================================
+; DE: a mounted archer that *replaces* the Cavalry Archer for twelve
+; European civs (Bohemians, Britons, Burgundians, Celts, Franks, Italians,
+; Poles, Portuguese, Sicilians, Spanish, Teutons, Vikings).  It is trained at
+; the Archery Range in Castle Age and upgrades to the Heavy Mounted
+; Crossbowman in Imperial Age.
+;
+; DE stats (unit 2700): 65 gold / 40 wood, 40s, HP 45, pierce 7 (+1 vs
+; Spearmen), range 4, reload 2.5s (rdg_cd), attack delay 0.91s (rdg_ready),
+; 80% accuracy, melee armour 2, pierce armour 0, speed 1.25, LoS 6.
+; Heavy (unit 2701): 650 gold / 1000 food, 50s, HP 55, pierce 8, same
+; range / reload, attack delay 0.996667s -> 1.0 (rdg_ready).
+;
+; The civ-specific stat variants (Frank 39 gold / 54 HP, Portuguese 52 gold
+; / 65 HP / 2.25s reload, Teuton & Viking 1.25 speed, …) are applied by the
+; owning civ's own definition further down in this file.
+def mounted_crossbowman
+class soldier
+is_a archer_unit
+is_a cavalry
+cost 65 40 0 0
+population_cost 2
+time_cost 40
+rdg_projectile 1
+rdg_projectile_speed 7
+rdg_targets ground
+requirements castle_age
+can_use_tech fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor thumb_ring ballistics chemistry bloodlines husbandry cranequins conscription
+
+hp_max 45
+speed 1.25
+sight_range 6
+mdg 0
+mdf 2
+rdf 0
+rdg 7
+rdg_cd 2.5
+rdg_ready 0.91
+rdg_hit_rate 80
+rdg_range 4
+rdg_vs spearman 1
+can_upgrade_to heavy_mounted_crossbowman
+def heavy_mounted_crossbowman
+is_a mounted_crossbowman
+; DE upgrade (unit_upgrades 1451): 650 gold / 1000 food, 50s.
+cost 650 0 1000 0
+time_cost 50
+line_upgrade 1
+requirements imperial_age
+can_use_tech fletching bodkin_arrow bracer padded_archer_armor leather_archer_armor ring_archer_armor thumb_ring ballistics chemistry bloodlines husbandry cranequins conscription
+
+hp_max 55
+speed 1.25
+sight_range 6
+mdg 0
+mdf 2
+rdf 0
+rdg 8
+rdg_cd 2.5
+rdg_ready 1.0
+rdg_hit_rate 80
+rdg_range 4
+rdg_vs spearman 1
 can_upgrade_to
 ; ===========================================================================
 ; UNIT LINES -> Stable
@@ -1866,6 +1954,7 @@ can_upgrade_to imperial_camel_rider
 ; 帝王骆驼兵 — DE Hindustanis unique upgrade; defined for later civs, not on generic camel line
 def imperial_camel_rider
 is_a heavy_camel_rider
+is_a unique_unit
 cost 500 0 1000 0
 time_cost 125
 line_upgrade 1
@@ -2212,7 +2301,6 @@ time_cost 36
 is_repairable 1
 ;space 0.7
 requirements castle_age
-no_auto_upgrade 1
 can_use_tech stirrups silk_armor manipur_cavalry first_crusade aznauri_cavalry
 
 hp_max 200
@@ -2225,13 +2313,18 @@ mdf -2
 rdf 150
 mdg_vs building 100
 mdg_vs siege_unit 25
-can_upgrade_to
+; DE: the Armored Elephant upgrades to the Elite Armored Elephant (Siege
+; Elephant) at the Siege Workshop.  The link must live on the BASE unit, and
+; the Elite form carries ``line_upgrade 1`` so that researching it unlocks
+; the slot, morphs the living elephants and remaps the queued trains.
+can_upgrade_to elite_armored_elephant
 can_use_tech bloodlines husbandry conscription
 def elite_armored_elephant
 is_a armored_elephant
 cost 0 0 850 0
 time_cost 60
 requirements imperial_age
+line_upgrade 1
 no_auto_upgrade 1
 mdg_splash 7
 mdg_radius 1.5
@@ -3071,7 +3164,12 @@ mdg_vs building 275
 mdg_vs siege_unit 25
 can_use_tech shipwright careening dry_dock circumnavigation arquebus
 can_upgrade_to
-; 快速喷火船
+; 快速喷火船 Turtle Ship — DE: the Koreans' unique warship.
+; DE (node_type=UniqueUnit, armour class 19) gives the Turtle Ship to the
+; Koreans ONLY.  It must therefore be tagged ``unique_unit`` *and* be
+; wired into the Korean shipyard only -- otherwise the leak-detection
+; exemption for civ-exclusive units would be wrong (a unit six civs can
+; train can show up in six armies, not one).
 def turtle_ship
 class soldier
 is_a ship
@@ -3123,7 +3221,6 @@ can_upgrade_to
 def longboat
 class soldier
 is_a ship
-is_a unique_unit
 cost 50 100 0 0
 time_cost 25
 rdg_projectile 1
@@ -3215,7 +3312,6 @@ can_upgrade_to
 def dromon
 class soldier
 is_a ship
-is_a unique_unit
 cost 150 175 0 0
 time_cost 65
 mdg_projectile 1
@@ -4555,16 +4651,22 @@ effect_bonus_targets militia spearman huskarl
 
 ; 哥特 Anarchy — DE: "Huskarls can be trained at Barracks."
 ; Once researched, the Barracks (goth_barracks) gains the Huskarl in its
-; trainable list.  The effect is scoped to the two barracks via
-; ``effect_bonus_targets``; the barracks themselves must list ``anarchy`` in
+; trainable list.  The effect is scoped to the Goth Barracks via
+; ``effect_bonus_targets``; the barracks themselves list ``anarchy`` in
 ; ``can_use_tech`` for the effect to reach them.
+;
+; NOTE: only ``goth_barracks`` is listed.  Adding the generic ``barracks``
+; would be redundant *and* wrong: every civ's Barracks inherits from it
+; (``is_a barracks``), so the target would match all 41 civ Barracks —
+; the very units the effect must NOT reach.  The target matcher resolves
+; the ``is_a`` chain, so naming the derived type is enough.
 def anarchy
 class upgrade
 cost 250 0 450 0
 time_cost 40
 requirements aoe_castle castle_age
 effect bonus can_train huskarl 1
-effect_bonus_targets goth_barracks barracks
+effect_bonus_targets goth_barracks
 
 ; 波斯 Kamandaran — Archery Range units cost gold converted from wood
 ; (DE: 1 wood -> 1 gold for the entire upgrade cost). Modelled as: archery range
@@ -4784,14 +4886,20 @@ effect_bonus_targets aoe_castle
 
 ; 匈人 Atikulu - cavalry archers +2 attack, -2 attack taken
 
-; 朝鲜 Eupseong - towers +3 range
+; 朝鲜 Eupseong — DE: "Watch Tower-line +2 range".
+; The tower line is the scouttower → guardtower → keeptower chain; the
+; Bombard/Cannon tower is a separate line in DE and is *not* included.
+; Naming the base ``scouttower`` alone already reaches its two descendants
+; (the target match follows the ``is_a`` chain) — naming the descendants
+; next to their base would be redundant.
+; Towers shoot with ``rdg`` (ranged), so the bonus is on ``rdg_range``.
 def eupseong
 class upgrade
 cost 0 300 300 0
 time_cost 40
 requirements aoe_castle castle_age
-effect bonus mdg_range 3
-effect_bonus_targets guard_tower watch_tower bombard_tower
+effect bonus rdg_range 2
+effect_bonus_targets scouttower
 
 ; 玛雅 Obsidian Arrows - archers +6 attack (huge vs buildings)
 
@@ -5220,13 +5328,17 @@ production_type resource3
 extraction_time 0
 extraction_qty 0
 ; gather_rate farm 0.32 on villager (AoE2 DE)
-; DE farm food 175; mill techs add via farm_food_bonus on *new* farms only
+; DE farm food 175; the mill techs (马轭 / 重犁 / 轮作) raise the farm's
+; food capacity via ``effect bonus resource_volume_max`` (see below).
 auto_cultivate 1
 is_gather 1
 production_cost 0 60 0 0
 production_qty 175
 resource_volume_max 175
 resource_volume_start 175
+; The mill techs (马轭 / 重犁 / 轮作) reach the farm through the farm's own
+; ``effect_bonus_targets farm`` rows: the target list of a filtered row *is*
+; its authorisation, so the farm does not have to repeat them here.
 can_use_tech masonry architecture town_watch town_patrol
 
 ; AoE4-style pasture: Mongol herdsman builds this instead of farm (no mill)
@@ -5250,19 +5362,39 @@ spawn_immediate 1
 can_use_tech masonry architecture town_watch town_patrol
 
 ; Mill farm upgrades (重犁 / 连枷 / 轮作)
+; DE: "New Farms provide +75 food.  Existing Farms provide a smaller food
+; amount."  The bonus is written as a normal ``effect bonus`` row on the
+; farm's food capacity (``resource_volume_max`` is the engine's stat for a
+; gather building's buffer cap) instead of the old bespoke
+; ``farm_food_bonus`` field.  ``effect_bonus_targets farm`` restricts the
+; row to farms, so the tech does not affect other gather buildings.
+; The retroactive "existing farms get a smaller amount" part (DE scales it
+; with the square of the remaining-food fraction) is handled by
+; ``soundrts.world_build_rules._apply_farm_food_tech_bonuses``.
+;
+; The ``effect_bonus_targets`` list of a filtered row *is* its authorisation:
+; the farm therefore does not have to repeat 马轭/重犁/轮作 in its
+; ``can_use_tech`` — the target list alone already says "farms enjoy this".
+; That is why the target list must never name a base class next to one of
+; its descendants: e.g. the Goths' ``anarchy`` targets ``goth_barracks``,
+; whose base ``barracks`` is the ancestor of *every* civ's Barracks, so
+; naming the base there would reach all 41 of them (see
+; ``soundrts/worldupgrade/effect_bonus_parse.py``).
 def horse_collar
 class upgrade
 cost 0 75 75 0
 time_cost 20
 requirements mill feudal_age
-farm_food_bonus 75
+effect bonus resource_volume_max 75
+effect_bonus_targets farm
 
 def heavy_plow
 class upgrade
 cost 0 125 125 0
 time_cost 40
 requirements mill castle_age horse_collar
-farm_food_bonus 125
+effect bonus resource_volume_max 125
+effect_bonus_targets farm
 ; DE: farmers carry +1 food
 effect bonus carry_capacity 1
 effect_bonus_targets peasant
@@ -5272,7 +5404,8 @@ class upgrade
 cost 0 250 250 0
 time_cost 70
 requirements mill imperial_age heavy_plow
-farm_food_bonus 175
+effect bonus resource_volume_max 175
+effect_bonus_targets farm
 
 ; Franks: free farm upgrades (0-cost aliases)
 def frank_horse_collar
@@ -5893,6 +6026,217 @@ can_train monk
 can_research redemption atonement herbal_medicine heresy sanctity fervor faith illumination block_printing theocracy
 can_use_tech herbal_medicine masonry architecture town_watch town_patrol
 
+; ===========================================================================
+; DE UNIQUE BUILDINGS (缺失的 9 个独有建筑)
+; ===========================================================================
+; DE 的 6 种独有 / 区域建筑，覆盖 9 个文明槽位：
+;   Krepost         保加利亚 (Castle Age)
+;   Caravanserai    波斯 + 印度 (Imperial Age)
+;   Folwark         波兰 (Dark Age，替换 Mill)
+;   Mule Cart       亚美尼亚 + 格鲁吉亚 (Dark Age，替换 Lumber/Mining Camp)
+;   Fortified Church 亚美尼亚 + 格鲁吉亚 (Castle Age，替换 Monastery)
+;   Settlement      印加 (Dark Age，替换 Mill/Lumber/Mining Camp)
+;
+; 所有数值取自 DE 官方数据（_aoe2techtree_data.json 的 Building 表 +
+; _de_trees/*.json 的科技树节点）。
+
+; ---------------------------------------------------------------------------
+; 城堡 Krepost — 保加利亚独有要塞 (DE id 1251)
+; ---------------------------------------------------------------------------
+; DE: HP 2600 / Melee 8 / Pierce 11 / Atk 10 / Range 7 / LOS 10 /
+;     Garrison 20 / 350 stone / 150s / Castle Age / 提供 20 人口
+; DE 科技树 (bulgarians.json): Konnik + Elite Konnik + Petard
+; DE 官方说明: "Unique fortification of the Bulgarians used to train your
+; Unique Unit. Units can garrison inside for protection. Ranged Soldiers
+; and Villagers shoot additional projectiles. Provides 20 population.
+; Cannot be converted by enemy Monks."
+def krepost
+class building
+is_a building
+cost 0 0 0 350
+time_cost 150
+requirements castle_age
+hp_max 2600
+mdf 8
+rdf 11
+sight_range 10
+population_provided 20
+conversion_immune 1
+; DE: the Krepost shoots arrows like the Castle (10 pierce, range 7).
+rdg 10
+rdg_cd 2
+rdg_range 7
+rdg_minimal_range 1
+rdg_projectile 1
+rdg_projectile_speed 7
+; DE: garrison 20 (foot units + villagers + monks + cavalry).
+transport_capacity 20
+transport_volume 99
+transport_passenger_types infantry archer_unit peasant monk cavalry
+passenger_attack_types archer_unit peasant
+; DE: the Krepost trains the Bulgarian unique unit and the Petard.
+can_train konnik elite_konnik petard
+; DE: Stirrups and Bagains are researched at the CASTLE in DE, not at the
+; Krepost (see _de_trees/bulgarians.json: Tech_685_82 / Tech_686_82 hang
+; off building 82 = Castle).
+can_use_tech herbal_medicine ballistics chemistry fletching bodkin_arrow bracer murder_holes heated_shot masonry architecture hoardings crenellations town_watch town_patrol
+
+; ---------------------------------------------------------------------------
+; 商队驿站 Caravanserai — 波斯 + 印度 (DE id 1754)
+; ---------------------------------------------------------------------------
+; DE: HP 2700 / Melee 3 / Pierce 10 / LOS 6 / 175 wood + 50 stone / 60s /
+;     Imperial Age
+; DE 官方说明: "Unique economic building of the Hindustanis and the Persians.
+; Heals and increases speed of Trade Carts in an 8 tile radius."
+def caravanserai
+class building
+is_a building
+cost 0 175 0 50
+time_cost 60
+requirements imperial_age
+hp_max 2700
+mdf 3
+rdf 10
+sight_range 6
+; DE: heals and speeds up the Trade Carts in an 8-tile radius.
+; The engine applies the aura through ``aura_*`` rows read by
+; world_build_rules.apply_caravanserai_aura (see soundrts/world_civ_bonuses.py).
+aura_heal_level 1
+aura_heal_cd 5
+aura_radius 8
+aura_speed_bonus_pct 20
+aura_target_types trade_cart
+can_use_tech masonry architecture town_watch town_patrol
+
+; ---------------------------------------------------------------------------
+; 磨坊 Folwark — 波兰独有磨坊 (DE id 1734)
+; ---------------------------------------------------------------------------
+; DE: HP 1000 / Melee 0 / Pierce 7 / LOS 6 / 100 wood / 40s / Dark Age /
+;     提供 5 人口
+; DE 官方说明: "Unique building of the Poles. Used to deposit food and
+; research farming technologies. Immediately collects 10% of food from
+; nearby newly constructed farms. Provides 5 population."
+; DE 科技树 (poles.json): Horse Collar + Heavy Plow + Crop Rotation
+; DE: replaces the Mill — the Poles have no separate Mill.
+; The ``is_a mill`` link is what makes every "requires mill" rule (the Farm,
+; the Market, …) resolve for the Poles: ``Player.has`` walks the
+; ``expanded_is_a`` chain, so a Folwark satisfies a ``mill`` requirement.
+def folwark
+class building
+is_a building
+is_a mill
+cost 0 100 0 0
+time_cost 40
+requirements town_center
+hp_max 1000
+mdf 0
+rdf 7
+sight_range 6
+population_provided 5
+; DE: the Folwark is the Mill replacement — it stores food and researches
+; the farming technologies.
+storable_resource_types resource3
+can_research horse_collar heavy_plow crop_rotation
+can_use_tech masonry architecture town_watch town_patrol
+
+; ---------------------------------------------------------------------------
+; 骡车 Mule Cart — 亚美尼亚 + 格鲁吉亚 (DE id 1808)
+; ---------------------------------------------------------------------------
+; DE: HP 300 / Melee 1 / Pierce 2 / LOS 4 / 80 wood + 20 food / 25s /
+;     Dark Age
+; DE 官方说明: "Unique mobile dropsite of the Armenians and the Georgians.
+; Used to deposit wood, stone, gold, and hunted food. Can be tasked to a
+; resource to remain close to it as it depletes."
+; DE 科技树 (armenians.json / georgians.json): the 7 wood / gold / stone
+; mining technologies — the Mule Cart replaces the Lumber Camp and the
+; Mining Camp, so it hosts their technologies.
+; The ``is_a lumbermill`` / ``is_a mining_camp`` links make every
+; "requires lumbermill" / "requires mining_camp" rule resolve for the
+; Armenians and the Georgians (``Player.has`` walks ``expanded_is_a``).
+def mule_cart
+class building
+is_a building
+is_a lumbermill
+is_a mining_camp
+cost 0 80 20 0
+time_cost 25
+requirements town_center
+hp_max 300
+mdf 1
+rdf 2
+sight_range 4
+; DE: a Mule Cart stores every resource (wood, stone, gold, hunted food).
+storable_resource_types resource1 resource2 resource3 resource4
+can_research double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining
+can_use_tech masonry architecture town_watch town_patrol
+
+; ---------------------------------------------------------------------------
+;  fortified church — 亚美尼亚 + 格鲁吉亚 (DE id 1806)
+; ---------------------------------------------------------------------------
+; DE: HP 2400 / Melee 4 / Pierce 10 / Atk 5 / Range 4 / LOS 10 /
+;     Garrison 10 / 200 wood / 50s / Castle Age
+; DE 官方说明: "Unique Monastery of the Armenians and the Georgians. Used
+; to train and upgrade Monks. Garrison relics to generate gold. Villagers
+; and Monastery Units can garrison inside for protection. Villagers and
+; Relics provide additional projectiles. Cannot be converted by enemy Monks."
+; DE 科技树: Monk + (Warrior Priest for the Armenians) + all Monastery techs
+def fortified_church
+class building
+is_a monastery
+cost 0 200 0 0
+time_cost 50
+hp_max 2400
+mdf 4
+rdf 10
+sight_range 10
+; DE: the Fortified Church shoots arrows (5 pierce, range 4).
+rdg 5
+rdg_cd 2
+rdg_range 4
+rdg_minimal_range 1
+rdg_projectile 1
+rdg_projectile_speed 7
+; DE: garrison 10 (foot units + villagers + monks).
+transport_capacity 10
+transport_volume 99
+transport_passenger_types infantry archer_unit peasant monk
+passenger_attack_types archer_unit peasant
+; DE: trains the Monk and researches every Monastery technology.
+can_train monk
+can_research redemption atonement herbal_medicine heresy sanctity fervor faith illumination block_printing theocracy
+
+; ---------------------------------------------------------------------------
+; 定居点 Settlement — 印加 (DE id 2556)
+; ---------------------------------------------------------------------------
+; DE: HP 1000 / Melee 0 / Pierce 7 / LOS 6 / 125 wood / 40s / Dark Age /
+;     提供 5 人口
+; DE 官方说明: "Used to deposit all resources and research economic
+; technologies. Provides 5 population. Build near resources to gather
+; faster. Required for Farm, Market."
+; DE 科技树 (inca.json): the farming technologies + the 7 wood / gold / stone
+; mining technologies — the Settlement replaces the Mill, the Lumber Camp and
+; the Mining Camp, and it is the prerequisite for the Farm and the Market.
+; The three ``is_a`` links make every "requires mill" / "requires lumbermill"
+; / "requires mining_camp" rule resolve for the Incas.
+def settlement
+class building
+is_a building
+is_a mill
+is_a lumbermill
+is_a mining_camp
+cost 0 125 0 0
+time_cost 40
+requirements town_center
+hp_max 1000
+mdf 0
+rdf 7
+sight_range 6
+population_provided 5
+; DE: the Settlement stores every resource (it replaces all three camps).
+storable_resource_types resource1 resource2 resource3 resource4
+can_research horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining
+can_use_tech masonry architecture town_watch town_patrol
+
 ; AoE2 conversion (mana ~ DE faith bar)
 ; Interval rolls (DE): ~1.25s CI, first roll at 5, guaranteed at 9, 38%/CI
 ; Resist upgrades add conversion_min/max_intervals_bonus
@@ -6139,9 +6483,11 @@ can_research squires arson gambesons man_at_arms long_swordsman two_handed_sword
 
 def briton_archery
 is_a archery_range
-; DE: no Thumb Ring / Heavy CA / Hand Cannoneer; foot archer line + skirmisher
-can_train aoe_archer skirmisher
-can_research crossbowman arbalester elite_skirmisher
+; DE bld87: no Cavalry Archer / Thumb Ring / Hand Cannoneer; foot archer line +
+; skirmisher, plus the Mounted Crossbowman line (DE: Mounted Crossbowman in
+; Castle Age, Heavy Mounted Crossbowman + Cranequins in Imperial Age).
+can_train aoe_archer skirmisher mounted_crossbowman
+can_research crossbowman arbalester elite_skirmisher heavy_mounted_crossbowman cranequins
 
 def briton_stable
 is_a stables
@@ -6178,9 +6524,11 @@ can_research squires arson gambesons man_at_arms long_swordsman two_handed_sword
 
 def frank_archery
 is_a archery_range
-; DE: no Cavalry Archer / Thumb Ring; Hand Cannoneer yes
-can_train aoe_archer skirmisher hand_cannoneer
-can_research crossbowman arbalester elite_skirmisher
+; DE bld87: no Cavalry Archer / Thumb Ring / Arbalester; Hand Cannoneer yes;
+; Mounted Crossbowman (Castle Age) + Heavy Mounted Crossbowman & Cranequins
+; (Imperial Age).
+can_train aoe_archer skirmisher hand_cannoneer mounted_crossbowman
+can_research crossbowman elite_skirmisher heavy_mounted_crossbowman cranequins
 
 def frank_stable
 is_a stables
@@ -6674,9 +7022,10 @@ can_research squires arson gambesons man_at_arms long_swordsman two_handed_sword
 
 def teuton_archery
 is_a archery_range
-; DE: no Thumb Ring / Heavy CA / Arbalester; Hand Cannoneer yes
-can_train aoe_archer skirmisher cavalry_archer hand_cannoneer
-can_research crossbowman elite_skirmisher
+; DE bld87: no Cavalry Archer / Thumb Ring / Arbalester / Cranequins;
+; Hand Cannoneer yes; Mounted Crossbowman (Castle) + Heavy MCB (Imperial).
+can_train aoe_archer skirmisher mounted_crossbowman hand_cannoneer
+can_research crossbowman elite_skirmisher heavy_mounted_crossbowman
 
 def teuton_stable
 is_a stables
@@ -6715,7 +7064,9 @@ can_research squires arson gambesons man_at_arms long_swordsman two_handed_sword
 
 def viking_archery
 is_a archery_range
-can_train aoe_archer skirmisher
+; DE bld87: no Cavalry Archer / Thumb Ring / Hand Cannoneer / Cranequins /
+; Heavy Mounted Crossbowman; Mounted Crossbowman (Castle Age) yes.
+can_train aoe_archer skirmisher mounted_crossbowman
 can_research crossbowman arbalester elite_skirmisher
 
 def viking_stable
@@ -6828,8 +7179,9 @@ can_research arson gambesons man_at_arms long_swordsman two_handed_swordsman cha
 
 def portuguese_archery
 is_a archery_range
-; DE: no Heavy CA; Hand Cannoneer yes
-can_train aoe_archer skirmisher cavalry_archer hand_cannoneer
+; DE bld87: no Cavalry Archer / Heavy CA / Heavy Mounted Crossbowman /
+; Cranequins; Thumb Ring and Hand Cannoneer yes.
+can_train aoe_archer skirmisher mounted_crossbowman hand_cannoneer
 can_research thumb_ring crossbowman arbalester elite_skirmisher
 
 def portuguese_stable
@@ -7177,8 +7529,10 @@ can_research squires arson gambesons man_at_arms long_swordsman pikeman halberdi
 
 def celtic_archery
 is_a archery_range
-can_train aoe_archer skirmisher
-can_research crossbowman elite_skirmisher
+; DE bld87: no Cavalry Archer / Thumb Ring / Arbalester / Hand Cannoneer /
+; Cranequins; Mounted Crossbowman (Castle) + Heavy MCB (Imperial).
+can_train aoe_archer skirmisher mounted_crossbowman
+can_research crossbowman elite_skirmisher heavy_mounted_crossbowman
 
 def celtic_stable
 is_a stables
@@ -7463,7 +7817,7 @@ nightmare goths_nightmare
 ; War Elephant; Kamandaran / Silk Road
 def persian_villager
 is_a peasant
-can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower guardtower cannontower keeptower town_center shipyard
+can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower guardtower cannontower keeptower town_center shipyard caravanserai
 can_use_tech burgundian_vineyards flemish_revolution first_crusade loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
 
 def persian_barracks
@@ -7518,6 +7872,11 @@ rdf 2
 can_upgrade_to cavalier_end
 can_use_tech stirrups silk_armor manipur_cavalry first_crusade hauberk aznauri_cavalry chivalry forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry conscription farimba comitatenses
 
+; DE: the Caravanserai (商队驿站) — the Persians' unique Imperial building:
+; it heals and speeds up the Trade Carts in an 8-tile radius.
+def persian_caravanserai
+is_a caravanserai
+
 ; Persians: house start +50F+50W; TC attack speed
 def persians
 class race
@@ -7535,6 +7894,8 @@ university persian_university
 aoe_castle persian_castle
 workshop persian_workshop
 shipyard persian_shipyard
+; DE: the Caravanserai is an additional Imperial building for the Persians.
+caravanserai persian_caravanserai
 townhall town_center
 ; DE: +50F+50W starting bonus modelled by leaving the civ's starting_resources at
 ; the base 100G/200W/0F/200S. The bonus is granted in race def when this civ
@@ -8037,7 +8398,7 @@ nightmare mayans_nightmare
 ; Gurjaras only -- so the Elephant Archer line is no longer offered here.
 def hindustani_villager
 is_a peasant
-can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
+can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard caravanserai
 can_use_tech burgundian_vineyards flemish_revolution first_crusade loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
 
 def hindustani_barracks
@@ -8065,8 +8426,12 @@ can_research ballistics chemistry siege_engineers guardtower keeptower cannontow
 
 def hindustani_workshop
 is_a workshop
-can_train battering_ram mangonel scorpion siege_tower bombard_cannon
-can_research capped_ram siege_ram onager heavy_scorpion
+; DE: the Armored Elephant (and its Elite upgrade, "Siege Elephant") is a
+; Siege Workshop unit for the Hindustanis, NOT a Castle unit.  The DE tech
+; tree lists "Armored Elephant" / "Siege Elephant" under the Siege Workshop
+; (building_id 49) and the Castle hosts only Ghulam / Trebuchet / Petard.
+can_train battering_ram mangonel scorpion siege_tower bombard_cannon armored_elephant
+can_research capped_ram siege_ram onager siege_onager heavy_scorpion elite_armored_elephant
 
 def hindustani_shipyard
 is_a shipyard
@@ -8075,8 +8440,8 @@ can_research war_galley galleon fire_ship fast_fire_ship demolition_ship heavy_d
 
 def hindustani_castle
 is_a aoe_castle
-can_train ghulam armored_elephant trebuchet
-can_research elite_armored_elephant grand_trunk_road shatagni elite_ghulam conscription hoardings sappers spies
+can_train ghulam trebuchet
+can_research grand_trunk_road shatagni elite_ghulam conscription hoardings sappers spies
 
 def hindustani_knight
 is_a aoe_knight
@@ -8090,6 +8455,11 @@ mdf 2
 rdf 2
 can_upgrade_to cavalier_end
 can_use_tech stirrups silk_armor manipur_cavalry first_crusade hauberk aznauri_cavalry chivalry forging iron_casting blast_furnace scale_barding_armor chain_barding_armor plate_barding_armor bloodlines husbandry conscription farimba comitatenses
+
+; DE: the Caravanserai (商队驿站) — the Hindustanis' unique Imperial building:
+; it heals and speeds up the Trade Carts in an 8-tile radius.
+def hindustani_caravanserai
+is_a caravanserai
 
 ; 印度: 村民上交骆驼-15% (DE: villager carry -5 gold → 0.95x food delivery); 印度建筑造价-15% 价; Forest: 村民不需开林 (omitted); 骆驼骑兵造价-15%/+0/+0/+0
 def hindustanis
@@ -8108,6 +8478,8 @@ university hindustani_university
 aoe_castle hindustani_castle
 workshop hindustani_workshop
 shipyard hindustani_shipyard
+; DE: the Caravanserai is an additional Imperial building for the Hindustanis.
+caravanserai hindustani_caravanserai
 townhall town_center
 ; DE: villagers carry +1 extra (we model with carry capacity)
 on_phase dark_age carry_capacity 1 peasant
@@ -8140,8 +8512,10 @@ can_research tracking squires supplies arson gambesons man_at_arms long_swordsma
 
 def spanish_archery
 is_a archery_range
-can_train aoe_archer skirmisher cavalry_archer hand_cannoneer
-can_research thumb_ring crossbowman elite_skirmisher
+; DE bld87: no Cavalry Archer / Crossbowman / Arbalester / Cranequins;
+; Thumb Ring and Hand Cannoneer yes; Mounted Crossbowman (Castle) + Heavy MCB.
+can_train aoe_archer skirmisher mounted_crossbowman hand_cannoneer
+can_research thumb_ring elite_skirmisher heavy_mounted_crossbowman
 
 def spanish_stable
 is_a stables
@@ -8322,7 +8696,7 @@ nightmare magyars_nightmare
 ; Winged Hussar; Szlachta Privileges, Lechitic Legacy (omitted)
 def polish_villager
 is_a peasant
-can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
+can_build house farm lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard polish_folwark
 can_use_tech burgundian_vineyards flemish_revolution first_crusade loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
 
 def polish_barracks
@@ -8332,8 +8706,10 @@ can_research squires supplies arson gambesons man_at_arms long_swordsman pikeman
 
 def polish_archery
 is_a archery_range
-can_train aoe_archer skirmisher cavalry_archer
-can_research thumb_ring crossbowman arbalester elite_skirmisher
+; DE bld87: no Cavalry Archer / Hand Cannoneer / Cranequins; Thumb Ring yes;
+; Mounted Crossbowman (Castle) + Heavy MCB (Imperial).
+can_train aoe_archer skirmisher mounted_crossbowman
+can_research thumb_ring crossbowman arbalester elite_skirmisher heavy_mounted_crossbowman
 
 def polish_stable
 is_a stables
@@ -8365,6 +8741,10 @@ is_a aoe_castle
 can_train obuch trebuchet
 can_research szlachta_privileges lechitic_legacy elite_obuch conscription hoardings sappers spies
 
+; DE: the Folwark (磨坊) is the Poles' unique Mill replacement.
+def polish_folwark
+is_a folwark
+
 def polish_knight
 is_a aoe_knight
 hp_max 100
@@ -8395,6 +8775,8 @@ university polish_university
 aoe_castle polish_castle
 workshop polish_workshop
 shipyard polish_shipyard
+; DE: the Poles have no Mill — the Folwark replaces it.
+mill polish_folwark
 townhall town_center
 ; DE: stone miners carry +3 (we model as +25% stone gather quantity)
 on_phase dark_age gather_qty_stone 25%
@@ -8426,8 +8808,10 @@ can_research tracking squires supplies arson gambesons man_at_arms long_swordsma
 
 def italian_archery
 is_a archery_range
-can_train aoe_archer skirmisher cavalry_archer hand_cannoneer
-can_research crossbowman elite_skirmisher
+; DE bld87: no Cavalry Archer / Heavy Mounted Crossbowman / Cranequins;
+; Thumb Ring and Hand Cannoneer yes.
+can_train aoe_archer skirmisher mounted_crossbowman hand_cannoneer
+can_research thumb_ring crossbowman arbalester elite_skirmisher
 
 def italian_stable
 is_a stables
@@ -8528,8 +8912,10 @@ can_research squires supplies arson gambesons man_at_arms long_swordsman pikeman
 
 def bohemian_archery
 is_a archery_range
-can_train aoe_archer skirmisher cavalry_archer
-can_research crossbowman elite_skirmisher
+; DE bld87: no Cavalry Archer / Thumb Ring / Cranequins / Heavy Mounted
+; Crossbowman; Hand Cannoneer yes (DE Chemistry in Castle Age).
+can_train aoe_archer skirmisher mounted_crossbowman hand_cannoneer
+can_research crossbowman arbalester elite_skirmisher
 
 def bohemian_stable
 is_a stables
@@ -9005,7 +9391,7 @@ can_research siege_ram onager heavy_scorpion
 
 def bulgarian_shipyard
 is_a shipyard
-can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_galley fast_fire_ship demolition_raft demolition_ship cannon_galleon turtle_ship elite_turtle_ship
+can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_galley fast_fire_ship demolition_raft demolition_ship cannon_galleon
 
 def bulgarian_mill
 is_a mill
@@ -9023,7 +9409,7 @@ can_research stirrups bagains elite_konnik conscription hoardings sappers spies
 
 def bulgarian_villager
 is_a peasant
-can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate fortified_wall palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
+can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate fortified_wall palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard krepost
 can_use_tech burgundian_vineyards flemish_revolution first_crusade loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
 
 def bulgarians
@@ -9455,7 +9841,7 @@ can_research onager heavy_scorpion
 
 def ethiopian_shipyard
 is_a shipyard
-can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_galley fast_fire_ship demolition_raft demolition_ship cannon_galleon turtle_ship elite_turtle_ship gillnets careening dry_dock
+can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_galley fast_fire_ship demolition_raft demolition_ship cannon_galleon gillnets careening dry_dock
 
 def ethiopian_castle
 is_a aoe_castle
@@ -9775,8 +10161,11 @@ can_research tracking squires supplies arson gambesons man_at_arms long_swordsma
 
 def burgundian_archery
 is_a archery_range
-can_train aoe_archer skirmisher elite_skirmisher hand_cannoneer
-can_research crossbowman
+; DE bld87: no Cavalry Archer / Arbalester / Thumb Ring / Cranequins / Heavy
+; Mounted Crossbowman; Hand Cannoneer yes; Mounted Crossbowman (Castle Age).
+; The Elite Skirmisher is a *research* (DE "UnitUpgrade"), not a trained unit.
+can_train aoe_archer skirmisher hand_cannoneer mounted_crossbowman
+can_research crossbowman elite_skirmisher
 
 def burgundian_stable
 is_a stables
@@ -9798,7 +10187,7 @@ can_research onager heavy_scorpion
 
 def burgundian_shipyard
 is_a shipyard
-can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_galley fast_fire_ship demolition_raft demolition_ship cannon_galleon turtle_ship gillnets careening
+can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_galley fast_fire_ship demolition_raft demolition_ship cannon_galleon gillnets careening
 
 def burgundian_castle
 is_a aoe_castle
@@ -9862,8 +10251,11 @@ def sicilian_archery
 is_a archery_range
 ; DE: the Donjon is the prerequisite for the Archery Range (and the Stable).
 requirements donjon
-can_train aoe_archer skirmisher elite_skirmisher hand_cannoneer
-can_research crossbowman
+; DE bld87: no Cavalry Archer / Thumb Ring / Hand Cannoneer (the Serjeant line
+; replaces the Hand Cannoneer); Cranequins and Heavy Mounted Crossbowman yes.
+; The Elite Skirmisher is a *research* (DE "UnitUpgrade"), not a trained unit.
+can_train aoe_archer skirmisher mounted_crossbowman
+can_research crossbowman arbalester elite_skirmisher heavy_mounted_crossbowman cranequins
 
 def sicilian_stable
 is_a stables
@@ -9887,7 +10279,7 @@ can_research capped_ram siege_ram onager heavy_scorpion
 
 def sicilian_shipyard
 is_a shipyard
-can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_galley fast_fire_ship demolition_raft demolition_ship cannon_galleon turtle_ship
+can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_galley fast_fire_ship demolition_raft demolition_ship cannon_galleon
 can_research gillnets careening
 
 def sicilian_castle
@@ -10048,9 +10440,21 @@ is_a monastery
 can_train monk warrior_priest
 can_research redemption atonement herbal_medicine heresy sanctity fervor faith illumination block_printing theocracy
 
+; DE: the Mule Cart (骡车) replaces the Lumber Camp and the Mining Camp for
+; the Armenians and the Georgians.
+def armenian_mule_cart
+is_a mule_cart
+
+; DE: the Fortified Church (加固教堂) replaces the Monastery for the
+; Armenians and the Georgians.
+def armenian_fortified_church
+is_a fortified_church
+can_train monk warrior_priest
+can_research redemption atonement herbal_medicine heresy sanctity fervor faith illumination block_printing theocracy
+
 def armenian_villager
 is_a peasant
-can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university aoe_castle wall gate fortified_wall palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard monastery
+can_build house farm mill market barracks archery_range blacksmith stables workshop university aoe_castle wall gate fortified_wall palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard armenian_mule_cart armenian_fortified_church
 can_use_tech burgundian_vineyards flemish_revolution first_crusade loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
 
 def armenians
@@ -10069,7 +10473,10 @@ university armenian_university
 aoe_castle armenian_castle
 workshop armenian_workshop
 shipyard armenian_shipyard
-monastery armenian_monastery
+monastery armenian_fortified_church
+; DE: the Mule Cart replaces the Lumber Camp and the Mining Camp.
+lumbermill armenian_mule_cart
+mining_camp armenian_mule_cart
 townhall town_center
 ; DE: Galley-line and Dromons fire an additional projectile.
 ;
@@ -10147,7 +10554,7 @@ can_research capped_ram siege_ram onager heavy_scorpion
 
 def georgian_shipyard
 is_a shipyard
-can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_galley fast_fire_ship demolition_raft demolition_ship cannon_galleon turtle_ship
+can_train fishing_ship trade_cog transport_ship galley war_galley galleon fire_galley fast_fire_ship demolition_raft demolition_ship cannon_galleon
 can_research gillnets careening
 
 def georgian_castle
@@ -10155,9 +10562,21 @@ is_a aoe_castle
 can_train monaspa trebuchet
 can_research svan_towers aznauri_cavalry elite_monaspa conscription hoardings sappers spies
 
+; DE: the Mule Cart (骡车) replaces the Lumber Camp and the Mining Camp for
+; the Armenians and the Georgians.
+def georgian_mule_cart
+is_a mule_cart
+
+; DE: the Fortified Church (加固教堂) replaces the Monastery for the
+; Armenians and the Georgians.
+def georgian_fortified_church
+is_a fortified_church
+can_train monk
+can_research redemption atonement herbal_medicine heresy sanctity fervor faith illumination block_printing theocracy
+
 def georgian_villager
 is_a peasant
-can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university aoe_castle wall gate fortified_wall palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
+can_build house farm mill market barracks archery_range blacksmith stables workshop university aoe_castle wall gate fortified_wall palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard georgian_mule_cart georgian_fortified_church
 can_use_tech burgundian_vineyards flemish_revolution first_crusade loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
 
 def georgians
@@ -10176,6 +10595,10 @@ university georgian_university
 aoe_castle georgian_castle
 workshop georgian_workshop
 shipyard georgian_shipyard
+monastery georgian_fortified_church
+; DE: the Mule Cart replaces the Lumber Camp and the Mining Camp.
+lumbermill georgian_mule_cart
+mining_camp georgian_mule_cart
 townhall town_center
 ; DE: Mounted Units regenerate 2/8/14 HP per minute in Feudal/Castle/Imperial Age.
 ;
@@ -10569,14 +10992,17 @@ can_upgrade_to
 ; ---------- 勃艮第 Flemish Militia (BVU) ----------
 ; DE (Lords of the West): the Flemish Militia is the infantry form granted by
 ; the Flemish Revolution technology, which upgrades all existing Villagers.
-; It is NOT the Burgundian unique unit (that is the Coustillier), so it must
-; not be tagged ``unique_unit`` — otherwise the reachability invariant breaks.
+; DE nevertheless classifies it as a *UniqueUnit* node (node_type=UniqueUnit,
+; armour class 19 -- DE's own "unique unit" damage class), so it carries the
+; ``unique_unit`` marker here too.  The reachability invariant still holds:
+; the unit is trainable at the Burgundian Barracks.
 ; DE: HP40, Atk5, Armor1/1, Speed0.94, Reload2s, LoS5, Train 14s,
 ;     Cost 30 food 25 gold.  +6 vs Cavalry & Elephant Units, +4 vs Ships &
 ;     Camel Units, +2 vs Shock Infantry.
 def flemish_militia
 class soldier
 is_a infantry
+is_a unique_unit
 cost 30 0 25 0
 population_cost 1
 time_cost 14
@@ -10784,9 +11210,14 @@ is_a aoe_castle
 can_train kamayuk trebuchet
 can_research andean_sling fabric_shields elite_kamayuk conscription hoardings sappers spies
 
+; DE: the Settlement (定居点) replaces the Mill, the Lumber Camp and the
+; Mining Camp for the Incas.
+def incan_settlement
+is_a settlement
+
 def incan_villager
 is_a peasant
-can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university aoe_castle wall gate fortified_wall palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
+can_build house farm market barracks archery_range blacksmith stables workshop university monastery aoe_castle wall gate fortified_wall palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard incan_settlement
 can_use_tech burgundian_vineyards flemish_revolution first_crusade loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
 
 def incas
@@ -10805,6 +11236,10 @@ university incan_university
 aoe_castle incan_castle
 workshop incan_workshop
 shipyard incan_shipyard
+; DE: the Settlement replaces the Mill, the Lumber Camp and the Mining Camp.
+mill incan_settlement
+lumbermill incan_settlement
+mining_camp incan_settlement
 townhall town_center
 ; DE: villagers +30% carry capacity
 on_phase dark_age carry_capacity 30% peasant
@@ -11044,7 +11479,6 @@ def slinger
 class soldier
 is_a infantry
 is_a archer_unit
-is_a unique_unit
 cost 0 25 50 0
 population_cost 1
 time_cost 25
@@ -11679,16 +12113,34 @@ can_upgrade_to
 can_use_tech timurid_siegecraft silk_armor first_crusade
 
 ; ---------- 法兰克 军械公司 Ordonnance Companies (DE tech 1496) ----------
-; DE: 400F+250G, 40s, researched at the Castle in Castle Age.
+; DE: 250 gold + 400 food, 40 s, researched at the Castle in the Castle Age.
 ; Mounted Crossbowmen cost -40% gold.
 def ordonnance_companies
 class upgrade
-cost 400 250 0 0
+cost 250 0 400 0
 time_cost 40
 requirements aoe_castle castle_age
-; 法兰克 Ordonnance Companies — DE: Mounted Crossbowmen cost -40% gold
+; 法兰克 Ordonnance Companies — DE: Mounted Crossbowmen cost -40% gold.
+; The Heavy Mounted Crossbowman is ``is_a mounted_crossbowman``, so naming
+; the base type alone already reaches it.
 effect bonus cost 0 -40% 0 0
-effect_bonus_targets mounted_crossbowman elite_mounted_crossbowman
+effect_bonus_targets mounted_crossbowman
+
+; ---------- 弩机 Cranequins (DE tech 1452) ----------
+; DE: "Mounted Crossbowmen +1 range; +2 attack vs. Infantry."
+; The regional technology that replaces Parthian Tactics on the Mounted
+; Crossbowman line (Britons / Franks / Sicilians).  DE: researched at the
+; Archery Range in Imperial Age, 200 gold + 300 food, 70s.
+def cranequins
+class upgrade
+cost 200 0 300 0
+time_cost 70
+requirements archery_range imperial_age
+; 弩机 Cranequins — DE: Mounted Crossbowmen +1 range; +2 attack vs. Infantry
+effect bonus rdg_range 1
+effect_bonus_targets mounted_crossbowman
+effect bonus rdg_vs infantry 2
+effect_bonus_targets mounted_crossbowman
 
 ; ---------- 意大利 火炮术 Pirotechnia (DE tech 902) ----------
 ; DE: 650F+500G, 50s, researched at the Castle in Imperial Age.

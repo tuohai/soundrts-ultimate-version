@@ -2140,6 +2140,15 @@ class Building(_Building):
     victory_time = 0  # >0：建成后倒计时 N 秒，到期且建筑仍在则胜利
     # AoE2 Feitoria: per-second income [gold, wood, food, stone] (PRECISION units after load)
     production_rates = ()
+    # --- AoE2 DE unique-building auras (the Caravanserai) ---
+    # Data-driven: a building opts in by declaring the ``aura_*`` rows in
+    # rules.txt.  The engine never hardcodes a building name — see
+    # ``soundrts/world_aura.py``.
+    aura_radius = 0  # radius, in TILES (0 = no aura)
+    aura_heal_level = 0  # HP healed per pulse (integer HP)
+    aura_heal_cd = 0  # SECONDS between heal pulses
+    aura_speed_bonus_pct = 0  # % speed bonus applied to the aura targets
+    aura_target_types = ()  # type names affected by the aura
 
     @property
     def can_train(self):

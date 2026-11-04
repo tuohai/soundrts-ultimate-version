@@ -71,6 +71,14 @@ class CreatureStatusUpdate(Entity):
 
     def slow_update(self):
         self.regenerate()
+        # AoE2 DE 建筑光环（商队驿站 Caravanserai）：周期性治疗光环范围内的贸易车。
+        # 数据来自 rules.txt 的 aura_* 行，引擎不硬编码建筑名。
+        try:
+            from ..world_aura import apply_building_aura
+
+            apply_building_aura(self)
+        except Exception:
+            pass
         if hasattr(self, 'resource_type') and self.resource_type and hasattr(self, 'resource_regen') and self.resource_regen and hasattr(self, 'resource_qty') and hasattr(self, 'resource_volume_max'):
             if getattr(self, 'is_a_building', False) and self.resource_volume_max > 0 and (self.resource_qty < self.resource_volume_max):
                 self.resource_qty = min(self.resource_qty + self.resource_regen, self.resource_volume_max)

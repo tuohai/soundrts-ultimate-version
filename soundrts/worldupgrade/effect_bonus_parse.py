@@ -17,6 +17,8 @@ work when parsing rules.
 
 from __future__ import annotations
 
+from types import SimpleNamespace
+
 from ..lib.nofloat import to_int
 
 # Stats that are not in Rules.precision/int but still valid effect bonus keys.
@@ -321,3 +323,103 @@ def unit_matches_effect_types(unit, type_names) -> bool:
     from ..worldphase import Phase
 
     return Phase._unit_matches_targets(unit, type_names)
+
+
+# ---------------------------------------------------------------------------
+# Gate 1 (authorisation) vs Gate 2 (row filter)
+# ---------------------------------------------------------------------------
+#
+# A filtered ``effect bonus`` row reaches a unit through two independent ways:
+#
+#   Gate 1 — authorisation: the tech is listed in the unit's ``can_use`` /
+#            ``can_use_tech`` / ``can_use_skill``.  This is also what the UI
+#            shows as "可使用的科技" and what the order layer aggregates when
+#            it collects the techs that may lower a unit's build/train cost.
+#
+#   Gate 2 — row filter: ``effect_bonus_targets`` restricts the row to
+#            matching unit types (exact name, ``is_a`` chain, base class, or
+#            ``-type`` exclusions).
+#
+# For a *filtered* row the target list is the **sole definition of reach**:
+# a unit that matches the row's target list enjoys the row whether or not
+# it repeats the tech in ``can_use_tech``.  That is not a special case — it
+# is exactly how the cost/time rows already work in
+# ``soundrts/worldorders/base.py``, where a filtered cost effect is matched
+# by target alone (``Phase._unit_matches_targets``).
+#
+# The target list belongs to the *row*, not to the tech: one tech may carry
+# several rows with different targets (AoE2 Heavy Plow: +125 farm capacity
+# *and* +1 villager carry capacity).
+#
+# Because the target list now grants reach on its own, it must never name a
+# base class next to one of its descendants: the base drags in *every*
+# descendant.  The canonical example is the Goths' *Anarchy*, whose filter
+# must name ``goth_barracks`` alone — ``barracks`` is the ancestor of all 41
+# civ Barracks.  See ``soundrts/tests/test_effect_bonus_target_redundancy.py``.
+
+
+def tech_target_rows(tech_cls):
+    """Yield ``(bonus_tokens, targets)`` for the tech's filtered effect rows.
+
+    Only rows that actually carry a target list are returned; rows without
+    one are unfiltered and are governed by Gate 1 alone.
+    """
+    effect = getattr(tech_cls, "effect", None)
+    if not effect:
+        return
+    if isinstance(effect, list) and effect and isinstance(effect[0], list):
+        rows = effect
+    elif isinstance(effect, list) and effect and effect[0] == "bonus":
+        rows = [effect]
+    else:
+        return
+    for row in rows:
+        if not row or row[0] != "bonus":
+            continue
+        bonus, targets = split_effect_bonus_args(list(row[1:]))
+        if not targets:
+            continue
+        yield bonus, targets
+
+
+def unit_matches_tech_targets(unit, tech_cls) -> bool:
+    """True if *unit* matches any of *tech_cls*'s filtered effect rows.
+
+    The target list of a filtered row is the sole definition of its reach:
+    a matching unit enjoys that row whether or not it lists the tech in
+    ``can_use_tech``.
+    """
+    for _bonus, targets in tech_target_rows(tech_cls):
+        if unit_matches_effect_types(unit, targets):
+            return True
+    return False
+
+
+def type_proxy(type_cls):
+    """Minimal proxy for matching a *type* against ``effect_bonus_targets``.
+
+    The order layer works on classes (``order.type``) rather than on unit
+    instances, but ``Phase._unit_matches_targets`` only needs the type name,
+    the ``is_a`` chain and the base class.
+    """
+    if type_cls is None:
+        return None
+    name = getattr(type_cls, "type_name", None) or getattr(type_cls, "__name__", "")
+    expanded = getattr(type_cls, "expanded_is_a", None) or ()
+    return SimpleNamespace(
+        type_name=name,
+        expanded_is_a=set(expanded) if not isinstance(expanded, set) else expanded,
+        cls=type_cls,
+    )
+
+
+def type_matches_tech_targets(type_cls, tech_cls) -> bool:
+    """True if the *type* matches any of *tech_cls*'s filtered effect rows.
+
+    The class-level counterpart of :func:`unit_matches_tech_targets`, used by
+    the order layer (cost / population / time aggregation).
+    """
+    proxy = type_proxy(type_cls)
+    if proxy is None:
+        return False
+    return unit_matches_tech_targets(proxy, tech_cls)

@@ -14,10 +14,14 @@ Bug 1 — ``anarchy`` had no effect at all
     The fix gives the technology a real effect::
 
         effect bonus can_train huskarl 1
-        effect_bonus_targets goth_barracks barracks
+        effect_bonus_targets goth_barracks
 
     and lists ``anarchy`` in the Barracks' ``can_use_tech`` so the filtered
     effect actually reaches the building.
+
+    Only ``goth_barracks`` is named: the generic ``barracks`` class is the
+    ancestor of *every* civ's Barracks, so listing it would make the row
+    match all 41 of them.
 
 Bug 2 — the Chinese menu labels drifted away from the civ description
     The mod shipped two parallel Chinese label sets: the civilization
@@ -236,9 +240,9 @@ def test_goth_barracks_trains_huskarl_after_anarchy(installed):
 def test_anarchy_does_not_offer_the_filter_targets_as_units(installed):
     """The effect's filter names must not become trainable units.
 
-    ``effect_bonus_targets goth_barracks barracks`` is a *filter*, not a
-    list of units; before the parser fix they showed up in the production
-    menu as "goth_barracks" and "barracks".
+    ``effect_bonus_targets goth_barracks`` is a *filter*, not a list of
+    units; before the parser fix it showed up in the production menu as
+    "goth_barracks".
     """
     from soundrts.definitions import rules as global_rules
     from soundrts.world_build_rules import effective_can_train

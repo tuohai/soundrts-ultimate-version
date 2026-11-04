@@ -860,3 +860,9 @@
 9105 Torri svan
 9106 Scudi di tessuto
 9107 Fionda andina
+9116 Krepost
+9117 Caravanserraglio
+9118 Folwark
+9119 Carro di mulo
+9120 Chiesa fortificata
+9121 Insediamento

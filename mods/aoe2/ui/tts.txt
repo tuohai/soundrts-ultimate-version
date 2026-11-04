@@ -938,3 +938,9 @@
 9105 Svan Towers
 9106 Fabric Shields
 9107 Andean Sling
+9116 Krepost
+9117 Caravanserai
+9118 Folwark
+9119 Mule Cart
+9120 Fortified Church
+9121 Settlement

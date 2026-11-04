@@ -1547,6 +1547,16 @@ class Rules(_Definitions):
         "herdable_steal_ignore_guards",  # race: steal guarded enemy herdables
         "herdable_steal_protected",  # race: own herdables ignore steal-through-guards
         "research_stack_hp",  # upgrade: stacks race research_stack_hp_bonus on complete
+        # --- AoE2 DE unique-building auras ---
+        # The Caravanserai (Persians / Hindustanis) heals and speeds up the
+        # Trade Carts in an 8-tile radius.  The engine applies the aura in
+        # ``soundrts/world_aura.py`` (``apply_building_aura`` from
+        # ``CreatureStatusUpdate.slow_update`` and ``apply_speed_aura`` from
+        # the movement code); these are the rules knobs.
+        "aura_radius",  # aura: radius in tiles (0 = no aura)
+        "aura_heal_level",  # aura: HP healed per pulse (integer HP)
+        "aura_heal_cd",  # aura: SECONDS between heal pulses
+        "aura_speed_bonus_pct",  # aura: % speed bonus applied to the targets
         "is_invisible",
         "is_cloakable",
         # D-Phase 2: rules-driven "fire on the move" toggle for ranged units
@@ -1625,7 +1635,6 @@ class Rules(_Definitions):
         "morph_as_train",  # can_upgrade_to / can_change_to 均按目标单位训练成本/时间计费
         "no_auto_upgrade",  # 1 = units_auto_upgrade 跳过该形态（精锐特色/圣骑士等）
         "line_upgrade",  # 1 = 在建筑 can_research 中研究后解锁训练并升级场上同线单位
-        "farm_food_bonus",  # 升级：新建农田 resource_volume_max 加成（马轭/重犁/轮作）
         "reveal_enemies",  # 升级：感知全部敌方单位/建筑（间谍）
         "reveal_map",  # 升级：探索全部格子（环球航行 Circumnavigation）
         "cost_per_enemy_worker",  # 升级：研究费用 += 该值×敌方工人数（间谍金；原始数×PRECISION）
@@ -1858,6 +1867,9 @@ class Rules(_Definitions):
         "rdg_cd_vs",
         "menace_vs",
         "menace_mult_vs",
+        # AoE2 DE Caravanserai aura: the type names of the units affected
+        # (resolved through the ``is_a`` chain at runtime).
+        "aura_target_types",
     }
 
     @classmethod

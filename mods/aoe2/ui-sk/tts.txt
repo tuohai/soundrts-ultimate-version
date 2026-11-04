@@ -860,3 +860,9 @@
 9105 Svan veže
 9106 Látkové štíty
 9107 Andská prašňa
+9116 Krepost
+9117 Karavánsaraj
+9118 Folwark
+9119 Mulský vozík
+9120 Opevnený kostol
+9121 Osada

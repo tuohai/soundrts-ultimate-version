@@ -75,19 +75,40 @@ def test_ground_charge_splash_skips_air_units():
 
 def test_upgrade_unit_to_player_level_filters_by_can_use():
     """``upgrade_unit_to_player_level`` 必须先验证 tech 在单位的 can_use / can_use_tech /
-    can_use_skill 之一，否则不应用 effect。"""
+    can_use_skill 之一，否则不应用 effect。
+
+    该检查现由 :meth:`Upgrade._unit_authorised` 统一承担（``upgrade_unit_to_player_level``
+    只调用它），所以守卫改为断言该辅助方法存在且三种 can_use 都在其中，
+    并且 ``upgrade_unit_to_player_level`` 确实调用了它。
+    """
     src = _source("soundrts", "worldupgrade", "base.py")
+    # 1) 统一授权判定：三种 can_use 都要检查。
+    s = src.index("def _unit_authorised(cls, unit):")
+    block = src[s:s + 2000]
+    assert "tech_name in getattr(unit, 'can_use', ())" in block
+    assert "tech_name in getattr(unit, 'can_use_tech', ())" in block
+    assert "tech_name in getattr(unit, 'can_use_skill', ())" in block
+    assert 'getattr(cls, "type_name", None)' in block
+    # 2) 应用效果的入口必须走该判定。
     s = src.index("def upgrade_unit_to_player_level(cls, unit):")
     block = src[s:s + 2000]
-    assert "cls.type_name in getattr(unit, 'can_use', ())" in block
-    assert "cls.type_name in getattr(unit, 'can_use_tech', ())" in block
-    assert "cls.type_name in getattr(unit, 'can_use_skill', ())" in block
+    assert "cls._unit_authorised(unit)" in block
 
 
 def test_production_cost_only_applies_tech_in_can_use():
     """``ProductionOrder.cost`` / ``population_cost`` / ``time_cost`` 必须按
-    ``applicable_techs``（单位 can_use 列表）过滤后再聚合，避免无关单位享受 discount。"""
+    ``applicable_techs``（单位 can_use 列表）过滤后再聚合，避免无关单位享受 discount。
+
+    该过滤现由 :func:`_applicable_techs_for_type` 统一承担（三种 can_use 都在其中），
+    三个属性都改为调用它，所以守卫相应更新。
+    """
     src = _source("soundrts", "worldorders", "base.py")
+    # 三种 can_use 的过滤集中在辅助函数里。
+    s = src.index("def _applicable_techs_for_type(player, type_cls):")
+    block = src[s:s + 4000]
+    assert "type_cls.can_use" in block
+    assert "type_cls.can_use_tech" in block
+    assert "type_cls.can_use_skill" in block
     # 三个属性都做 applicable_techs 过滤
     for kw in (
         "def cost(self):",
@@ -97,10 +118,7 @@ def test_production_cost_only_applies_tech_in_can_use():
         s = src.index(kw)
         block = src[s:s + 4000]
         assert "applicable_techs" in block, f"{kw}: 未做 can_use 过滤"
-        # 三种 can_use 都检查
-        assert "self.type.can_use" in block
-        assert "self.type.can_use_tech" in block
-        assert "self.type.can_use_skill" in block
+        assert "_applicable_techs_for_type" in block, f"{kw}: 未调用统一过滤"
 
 
 # ---------------------------------------------------------------------------

@@ -860,3 +860,9 @@
 9105 Tháp Svan
 9106 Khiên vải
 9107 Náo Andes
+9116 Krepost
+9117 Caravanserai
+9118 Folwark
+9119 Xe trâu
+9120 Nhà thờ phòng thủ
+9121 Khu định cư

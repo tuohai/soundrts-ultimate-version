@@ -860,3 +860,9 @@
 9105 Wieże swanów
 9106 Tarcze tkaninowe
 9107 Proca andyjska
+9116 Krepost
+9117 Karawanseraj
+9118 Folwark
+9119 Wóz muli
+9120 Kościół obwarowany
+9121 Osada

@@ -904,18 +904,10 @@ class TrainOrder(ProductionOrder):
     def _train_should_apply_bonuses(self):
         try:
             if hasattr(self.unit, "player") and self.unit.player:
-                for tech_name in self.unit.player.upgrades:
-                    if not tech_name or not isinstance(tech_name, str):
-                        continue
-                    can_use = False
-                    if hasattr(self.type, "can_use") and tech_name in self.type.can_use:
-                        can_use = True
-                    if not can_use and hasattr(self.type, "can_use_tech") and tech_name in self.type.can_use_tech:
-                        can_use = True
-                    if not can_use and hasattr(self.type, "can_use_skill") and tech_name in self.type.can_use_skill:
-                        can_use = True
-                    if can_use:
-                        return True
+                from .base import _applicable_techs_for_type
+
+                if _applicable_techs_for_type(self.unit.player, self.type):
+                    return True
         except Exception:
             pass
         return False

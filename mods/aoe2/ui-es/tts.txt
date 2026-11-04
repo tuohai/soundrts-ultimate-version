@@ -860,3 +860,9 @@
 9105 Torres svan
 9106 Escudos de tela
 9107 Honda andina
+9116 Krepost
+9117 Caravasaray
+9118 Folwark
+9119 Carro de mulas
+9120 Iglesia fortificada
+9121 Asentamiento

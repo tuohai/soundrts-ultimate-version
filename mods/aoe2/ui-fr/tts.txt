@@ -860,3 +860,9 @@
 9105 Tours svans
 9106 Écus de tissu
 9107 Fronde des Andes
+9116 Krepost
+9117 Caravansérail
+9118 Folwark
+9119 Charrette de mulet
+9120 Église fortifiée
+9121 Établissement

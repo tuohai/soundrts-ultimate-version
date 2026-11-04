@@ -102,6 +102,15 @@ class CreatureMovement(Entity):
         cap = int(getattr(self, "_formation_speed_cap", 0) or 0)
         if cap > 0 and self._actual_speed > cap:
             self._actual_speed = max(cap, getattr(self, "VERY_SLOW", 1))
+
+        # AoE2 DE 建筑光环（商队驿站 Caravanserai）：光环范围内的贸易车
+        # 移动速度 +N%。规则数据来自 rules.txt 的 aura_* 行，引擎不硬编码建筑名。
+        try:
+            from ..world_aura import apply_speed_aura
+
+            apply_speed_aura(self)
+        except Exception:
+            pass
     # reach (avoiding collisions)
     def _already_walked(self, x, y):
         n = 0

@@ -653,7 +653,10 @@ class KeyBindings:
             selected_unit_type = advance_types[self.parent._current_sub_item_index]
 
         elif item_type == "CAN_USE_TECH_ITEMS":
-            if not hasattr(current_unit, "can_use_tech") or not current_unit.can_use_tech:
+            from .utils import can_use_tech_display_names
+
+            display_names = can_use_tech_display_names(current_unit)
+            if not display_names:
                 voice.item(mp.BEEP)
                 return
 
@@ -666,7 +669,7 @@ class KeyBindings:
             from .utils import filter_can_use_tech_names
 
             tech_types = filter_can_use_tech_names(
-                current_unit.can_use_tech, getattr(current_unit, "player", None)
+                display_names, getattr(current_unit, "player", None)
             )
             if self.parent._current_sub_item_index >= len(tech_types):
                 voice.item(mp.BEEP)
