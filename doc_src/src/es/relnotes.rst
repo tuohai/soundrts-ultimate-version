@@ -4,6 +4,104 @@ Notas de la versión
 
 .. contents::
 
+1.5.1.7
+-------
+
+**Cambio: las descripciones de las 42 civilizaciones usan ahora el texto oficial de AoE2 DE**
+
+- **Problema**: las descripciones de civilización en ``mods/aoe2/ui*/tts.txt`` (unidad única, tecnologías únicas, bonuses de civilización, bonus de equipo) eran copias escritas a mano que se habían separado de DE: a algunas civilizaciones les faltaban sus tecnologías únicas, otras listaban unidades de la era AoE1, y las cifras y la redacción no coincidían con el texto oficial.
+- **Mejora**: una nueva canalización de datos de referencia oficiales de DE (``_build_de_civ_data.py`` y ``_build_de_civ_names.py``) extrae las descripciones directamente de las tablas de cadenas oficiales de DE (``_de_strings/``) y de los árboles tecnológicos oficiales de cada civilización (``_de_trees/``), y las trece variantes de idioma que se distribuyen (``ui.txt`` más ``ui-be/cs/de/es/fr/it/pl/pt-BR/ru/sk/vi/zh.txt``) se reescriben con el texto de DE. ``_gen_civ_intros.py`` las regenera y ``_verify_de_civs.py`` las comprueba una a una (0 problemas en los 13 idiomas). Las tablas de cadenas y los árboles provienen del conjunto de datos SiegeEngineers/aoe2techtree y se incluyen en el repositorio, de modo que la canalización es reproducible desde una clonación limpia.
+- **Alcance**: ``mods/aoe2/ui*/tts.txt``, ``_build_de_civ_data.py``, ``_build_de_civ_names.py``, ``_gen_civ_intros.py``, ``_verify_de_civs.py``, ``_de_strings/``, ``_de_trees/``, ``_de_civ_data.json``, ``_de_civ_names.json``, ``_ut_canonical.json``, ``soundrts/tests/test_aoe2_civ_intro_de_alignment.py``, ``soundrts/tests/test_aoe2_civ_intro_i18n.py``.
+
+**Añadido: las unidades y tecnologías únicas de DE que las descripciones prometían y que no existían**
+
+- **Problema**: las descripciones de civilización anunciaban un conjunto de unidades y tecnologías que el archivo de reglas no definía en absoluto: la Houfnice bohemia (``houfnice`` -- en DE es una mejora del cañón de bombardeo en el taller de asedio, no una unidad aparte), el Misionero español (``missionary`` -- un monje montado sin versión de élite y sin inventario), los Fereters armenios (``fereters``), los colmillos de colmillo jemer, las balistas rumanas, la thalassocracy y elforced levy malayos, el Guerrero Karambit malayo y muchos más. La tabla de referencia además contenía tecnologías de AoE1 e inventadas (``boiling_oil``, ``mahouts``, ``atikulu``, ``obsidian_arrows``, ``el_dorado``, ``frontier_defense``, ``fogarasi_mercenaries``) mientras faltaban las reales de DE (``citadels``, ``kamandaran``, ``atheism``, ``hulche_javelineers``, ``holcans``, ``grand_trunk_road``, ``recurve_bow``).
+- **Mejora**: se definen todas las unidades y tecnologías únicas de DE que faltaban con sus datos de DE, y se añade para cada una la definición de estilo correspondiente en ``mods/aoe2/ui/style.txt`` (sin definición de estilo no hay título ni atajo). Se eliminan las entradas inventadas y se añaden las reales de DE.
+- **Alcance**: ``mods/aoe2/rules.txt``, ``mods/aoe2/ui/style.txt``, ``soundrts/tests/test_aoe2_14_civs_full_uu_ut.py``, ``soundrts/tests/test_aoe2_tech_effect_engine.py``.
+
+**Corregido: ``can_use_tech`` declarado en varias líneas era sobrescrito por la última**
+
+- **Problema**: ``can_use_tech`` era una propiedad de lista de cadenas simple, así que varias declaraciones sobre la misma unidad se sobrescribían en vez de acumularse: con las tecnologías propias de la civilización en una línea y la línea de mejoras genérica en otra, la primera línea se perdía en silencio, y el miliciaba perdía ``bagains``, ``forced_levy`` y ``first_crusade``.
+- **Mejora**: ``can_use_tech`` pasa a ser una propiedad de lista de cadenas aditiva, de modo que varias líneas de declaración se combinan.
+- **Alcance**: ``soundrts/definitions.py``.
+
+**Corregido: las filas de efecto de Citadels se descartaban en silencio y el tiempo de entrenamiento de la Houfnice nunca se leía**
+
+- **Problema**: ambos eran pérdida silenciosa de datos: el cargador de reglas avisaba y luego descartaba los datos problemáticos. La fila de Citadels ``effect bonus mdg_vs siege_ram capped_ram battering_ram 3`` nombraba tres objetivos en una sola fila, pero ``effect bonus <stat> <target> <value>`` admite exactamente un objetivo por fila, así que el analizador no podía saber dónde terminaba la bonificación y descartaba la fila entera; además el castillo ataca a distancia (``rdg 11``, ``mdg 0``), así que una fila ``mdg`` nunca habría surtido efecto aunque se hubiera analizado. El ``train_time`` de la Houfnice nunca se registró como propiedad de reglas, así que también se descartó y la unidad se entrenaba en sus 140 s de *investigación* en lugar de los 56 s de DE.
+- **Mejora**: las filas de Citadels son ahora ``rdg`` / ``rdg_vs`` con un objetivo cada una (una sola clave ``battering_ram`` cubre toda la línea de arietes, porque la búsqueda recorre la cadena ``expanded_is_a``), y el "recibe -25% de daño adicional" de DE se modela como armadura (mdf + rdf), la misma convención que ya usaba el bonus siciliano. ``train_time`` se declara ahora en la clase base ``Creature`` y se registra como propiedad de precisión, así que la Houfnice se entrena en los 56 s de DE mientras las demás unidades siguen recurriendo a la duración de su línea.
+- **Alcance**: ``mods/aoe2/rules.txt``, ``soundrts/definitions.py``, ``soundrts/worldunit/worldcreature.py``, ``soundrts/world_build_rules.py``, ``soundrts/tests/test_aoe2_rules_load_warnings.py``.
+
+**Añadido: los bonus de equipo de AoE2 DE ahora se aplican de verdad**
+
+- **Problema**: un bonus de equipo de DE se aplica al jugador *y a todos sus aliados*, pero en el motor estos bonuses faltaban o eran incorrectos.
+- **Mejora**: siete campos de reglas nuevos con el soporte de motor correspondiente: las reparaciones de edificios cuestan -25% (georgianos, ``team_repair_cost_pct``), los edificios militares salvo los castillos dan +5 de población (eslavos, ``team_military_building_pop``), los puestos avanzados no cuestan piedra (etíopes, ``team_free_stone_buildings``), se empieza con una llama gratis (incas, ``team_start_free_llama``), las reliquias también generan comida (burgundios, ``team_relic_food``), las reliquias son visibles al inicio (birmanos, ``team_relic_visible``), los arqueros montados y las unidades de pólvora se entrenan un 25% más rápido (magiares y turcos, ``team_train_speed_pct``). Cada helper toma el valor *más fuerte* entre el jugador y sus aliados (un descuento negativo cuenta como el más negativo), de modo que ningún descuento se pierde al tener varios aliados.
+- **Alcance**: ``mods/aoe2/rules.txt``, ``soundrts/definitions.py``, ``soundrts/world_civ_bonuses.py``, ``soundrts/worldplayerbase/base.py``, ``soundrts/worlditem.py``, ``soundrts/worldorders/base.py``, ``soundrts/worldorders/production.py``, ``soundrts/worldunit/world_attributes.py``, ``soundrts/tests/test_aoe2_team_bonuses_alignment.py``.
+
+**Corregido: los efectos ``can_train`` filtraban sus nombres de objetivo como unidades entrenables**
+
+- **Problema**: los objetivos de filtro de una fila ``effect bonus can_train ...`` aparecían en el menú de producción como si fueran unidades entrenables; al mismo tiempo, cada unidad coincidente añadía otra copia de la misma entrada ``research_cost_tech_discount``, y los duplicados se multiplicaban al calcular el coste de investigación (75 de comida se convertían en unas 4x). El almacenamiento de la sobrescritura de ``can_train`` además tenía un fallo con ``None``.
+- **Mejora**: los nombres de objetivo ya no se filtran al menú de producción, solo se conserva una copia de cada entrada de coste de investigación y el almacenamiento de la sobrescritura trata explícitamente el caso ``None``.
+- **Alcance**: ``soundrts/worldupgrade/effect_bonus_parse.py``, ``soundrts/worldupgrade/attribute_effects.py``, ``soundrts/world_build_rules.py``.
+
+**Corregido: las unidades desbloqueadas por una investigación no se integraban en el edificio anfitrión**
+
+- **Problema**: una unidad desbloqueada por una investigación solo existía en la sobrescritura, y la fusión la filtraba contra la lista base de entrenamiento del edificio, de modo que el desbloqueo se descartaba en silencio: el Huskarl de la Anarquía de los godos y el Sargento de la Primera Cruzada de los sicilianos no se podían entrenar en absoluto.
+- **Mejora**: la fusión ahora incorpora también las claves propias de la sobrescritura a la lista de entrenamiento.
+- **Alcance**: ``soundrts/world_build_rules.py``.
+
+**Corregido: el porcentaje de recompensa de comercio se inflaba 250x**
+
+- **Problema**: ``trade_reward_bonus_pct`` era una propiedad de precisión, así que se multiplicaba por 1000 al cargarse: el valor 25 de las reglas se convertía en 25000, y la liquidación del mercado (``amount * (1 + bonus / 100)``) pagaba 250x de más.
+- **Mejora**: el campo vuelve a ser un porcentaje en bruto (25 significa +25%), pasa a las propiedades enteras y sigue siendo una estadística válida de ``effect bonus`` / ``on_phase``.
+- **Alcance**: ``soundrts/definitions.py``, ``mods/aoe2/rules.txt``.
+
+**Cambio: los nombres de las tecnologías en chino se alinean con la tabla de cadenas de DE**
+
+- **Problema**: los nombres de las tecnologías en chino estaban copiados a mano y no coincidían con la tabla de cadenas oficial de DE, de modo que quien siguiera una guía oficial no encontraba la tecnología.
+- **Mejora**: los nombres chinos se corrigen uno a uno contra la tabla de cadenas oficial de DE.
+- **Alcance**: ``mods/aoe2/ui-zh/tts.txt``.
+
+**Corregido: los iconos de las unidades únicas y la clase de unidad del Monaspa eran incorrectos**
+
+- **Problema**: varias unidades únicas apuntaban al icono equivocado, y el Monaspa estaba declarado como una clase de unidad equivocada.
+- **Mejora**: los iconos y la clase de unidad se corrigen según los datos de DE.
+- **Alcance**: ``mods/aoe2/ui/style.txt``, ``mods/aoe2/rules.txt``.
+
+**Corregido: las tecnologías del molino solo alcanzaban a las granjas construidas después**
+
+- **Problema**: el Collar de Caballo, el Arado Pesado y la Rotación de Cultivos solo aumentaban la capacidad de comida de las granjas construidas *después* de la investigación, mientras que AoE2:DE otorga a las granjas ya existentes una cantidad de comida menor y proporcional.
+- **Mejora**: al completar la tecnología ahora se refrescan las granjas que el jugador ya posee: una granja llena obtiene la bonificación completa, una parcialmente vacía obtiene la bonificación reducida que prescribe DE, y la capacidad de la granja (``resource_volume_max``) y el rendimiento de la resiembra se mantienen sincronizados.
+- **Alcance**: ``soundrts/worldupgrade/base.py``, ``soundrts/world_build_rules.py``, ``soundrts/world_extractor.py``, ``soundrts/tests/test_aoe2_farm_food_retroactive.py``.
+
+**Añadido: el Donjon siciliano**
+
+- **Problema**: la descripción siciliana prometía un Donjon construible en la Edad Oscura que sustituía la línea de torres de vigilancia, pero el juego ofrecía la línea de torres.
+- **Mejora**: un nuevo ``donjon`` (2x2, construible desde la Edad Oscura, 625 PV, 175 piedra, entrena Sargento / Lancero / Piquero / Alabardero, investiga Primera Cruzada / Cota de malla / Sargento de élite / Fortificaciones); los aldeanos sicilianos construyen el Donjon y ya no construyen la línea de torres. El PV y la armadura por edad del Donjon usan deltas *fijos* (625 / 1250 / 1500 / 2250), porque una fila de porcentaje se multiplica entre edades. Además, las bonificaciones por edad ahora llegan también a los edificios (un edificio no tiene instancias de arma ni armadura, así que su ``update_weapons()`` / ``update_armors()`` retornaba antes y la bonificación se perdía).
+- **Alcance**: ``mods/aoe2/rules.txt``, ``mods/aoe2/ui/style.txt``, ``mods/aoe2/ui*/tts.txt``, ``soundrts/worldphase.py``, ``soundrts/attributes/utils.py``, ``soundrts/tests/test_aoe2_sicilians_donjon.py``.
+
+**Añadido: los nueve edificios únicos / regionales de DE que faltaban y un aura de edificio dirigido por datos**
+
+- **Problema**: nueve edificios únicos / regionales de DE faltaban por completo: el ``krepost`` búlgaro, el ``caravanserai`` persa y el hindustani, el ``folwark`` polaco, el ``mule_cart`` armenio y georgiano, la ``fortified_church`` armenia y georgiana, y el ``settlement`` inca. Sin ellos esas civilizaciones no tenían ni su edificio económico propio ni las relaciones de sustitución de DE.
+- **Mejora**: se implementan los nueve con los datos de DE: el Krepost es una fortificación similar al castillo con guarnición de 20 unidades que entrena al Konnik y la Pólvora de Schnecke; el Folwark hereda el Molino (``is_a mill``), el Carro de Mula hereda el Campamento de leñadores y la Mina, la Iglesia Fortificada hereda el Monasterio, y el Asentamiento hereda el Molino, el Campamento de leñadores y la Mina: la herencia múltiple mantiene funcionando requisitos como "necesita molino" (la Granja, el Mercado, las tecnologías agrícolas) a lo largo de la cadena ``expanded_is_a``. El aura del Caravasarai es **dirigido por datos**: el nuevo ``soundrts/world_aura.py`` lee los cinco campos de reglas ``aura_radius``, ``aura_heal_level``, ``aura_heal_cd``, ``aura_speed_bonus_pct`` y ``aura_target_types``, y se engancha en las rutas de movimiento, de recursos y de actualización de estado, de modo que el texto oficial de DE "cura y aumenta la velocidad de los carros mercantes en un radio de 8 casillas" son datos de reglas y no lógica codificada en el motor.
+- **Alcance**: ``mods/aoe2/rules.txt``, ``mods/aoe2/ui/style.txt``, ``mods/aoe2/ui*/tts.txt``, ``soundrts/world_aura.py``, ``soundrts/definitions.py``, ``soundrts/worldunit/worldcreature.py``, ``soundrts/worldunit/world_movement.py``, ``soundrts/worldplayerbase/resources.py``, ``soundrts/worldunit/world_status_update.py``, ``soundrts/tests/test_aoe2_unique_buildings_alignment.py``.
+
+**Corregido: la línea de mejora del Elefante Acorazado no estaba conectada**
+
+- **Problema**: el Elefante Acorazado hindustani declaraba ``can_upgrade_to elite_armored_elephant``, pero la forma de élite no llevaba ni ``line_upgrade 1`` ni ``no_auto_upgrade 1``, así que investigarla no desbloqueaba ninguna casilla de entrenamiento, no transformaba los elefantes en el campo ni reasignaba las órdenes de producción en cola.
+- **Mejora**: la forma de élite lleva ahora ``line_upgrade 1`` y ``no_auto_upgrade 1``; al completarse la investigación, ``apply_unit_line_upgrade`` desbloquea la casilla, transforma las unidades vivas de esa línea y reescribe las órdenes de producción en cola. Siguiendo el árbol tecnológico de DE, el Elefante Acorazado es una unidad del taller de asedio y no del castillo: el castillo conserva solo el Ghulam, el Trebuchet y la Pólvora de Schnecke.
+- **Alcance**: ``mods/aoe2/rules.txt``, ``soundrts/world_build_rules.py``, ``soundrts/worldorders/production.py``, ``soundrts/worldplayerbase/resources.py``.
+
+**Cambio: la lista de objetivos de una fila de efecto filtrada es ahora su única autorización**
+
+- **Problema**: una fila con ``effect_bonus_targets`` tenía dos nociones independientes de "alcance": la unidad enumeraba la tecnología en ``can_use_tech`` o coincidía con la lista de objetivos de la fila. Ambas debían mantenerse en sincronía a mano, y en cuanto se desincronizaban el efecto o no se aplicaba o se filtraba a otras unidades: la Anarquía de los godos nombraba la clase base ``barracks`` en su lista de objetivos (el ancestro de los 41 cuarteles de las civilizaciones), así que una bonificación pensada para el cuartel godo alcanzaba a todos.
+- **Mejora**: la lista de objetivos de una fila filtrada es ahora la única definición de su alcance: una unidad que coincide con ella disfruta del efecto sin tener que repetir la tecnología en ``can_use_tech``. Es exactamente el comportamiento que ya tenían las filas de coste filtradas. La capa de mejoras, la agregación de coste / población / tiempo de la capa de órdenes, el panel de atributos y la navegación por teclado comparten ahora los mismos helpers de autorización, así que la lista de tecnologías del panel y la lista alcanzable por teclado siguen alineadas.
+- **Alcance**: ``soundrts/worldupgrade/effect_bonus_parse.py``, ``soundrts/worldupgrade/base.py``, ``soundrts/worldorders/base.py``, ``soundrts/attributes/utils.py``, ``soundrts/attributes/equipment_abilities.py``, ``soundrts/attributes/key_bindings.py``, ``soundrts/worldunit/world_attributes.py``, ``soundrts/tests/test_effect_bonus_self_authorize.py``, ``soundrts/tests/test_effect_bonus_target_redundancy.py``.
+
+**Añadido: tests de regresión de esta versión**
+
+- **Alcance**: ``soundrts/tests/test_aoe2_civ_intro_de_alignment.py``, ``soundrts/tests/test_aoe2_civ_intro_i18n.py``, ``soundrts/tests/test_aoe2_rules_de_alignment.py``, ``soundrts/tests/test_aoe2_rules_load_warnings.py``, ``soundrts/tests/test_aoe2_team_bonuses_alignment.py``, ``soundrts/tests/test_aoe2_sicilians_donjon.py``, ``soundrts/tests/test_aoe2_unique_buildings_alignment.py``, ``soundrts/tests/test_aoe2_unique_unit_marker_alignment.py``, ``soundrts/tests/test_aoe2_conscription_target_alignment.py``, ``soundrts/tests/test_aoe2_mounted_crossbowman.py``, ``soundrts/tests/test_aoe2_goth_anarchy_huskarl.py``, ``soundrts/tests/test_aoe2_farm_food_retroactive.py``, ``soundrts/tests/test_effect_bonus_self_authorize.py``, ``soundrts/tests/test_effect_bonus_target_redundancy.py``.
+
+
 1.5.1.6
 -------
 

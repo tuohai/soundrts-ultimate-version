@@ -4,6 +4,104 @@
 .. contents::
 
 
+1.5.1.7
+-------
+
+**调整：42 个文明的简介改用帝国 2 DE 官方原文**
+
+- **问题**：`mods/aoe2/ui*/tts.txt` 里的文明简介（独特单位、独特科技、文明奖励、队伍奖励）是手工维护的抄本，与 DE 官方文本越差越远：有的文明漏掉了独特科技，有的把 AoE1 时代的东西写了进去，数字与措辞也和官方对不上。
+- **改进**：新增官方 DE 参考数据流水线 `_build_de_civ_data.py` 与 `_build_de_civ_names.py`，直接从 DE 官方字符串表（`_de_strings/`）和 42 个文明的官方科技树（`_de_trees/`）解析文明简介，13 个语言包（`ui.txt` 与 `ui-be/cs/de/es/fr/it/pl/pt-BR/ru/sk/vi/zh.txt`）的简介全部按 DE 原文重写。`_gen_civ_intros.py` 用于重新生成，`_verify_de_civs.py` 用于逐条校验（13 种语言 0 问题）。官方字符串表与科技树来自 SiegeEngineers/aoe2techtree 数据集，已随仓库一起提交，因此在全新克隆的仓库里也能复现。
+- **范围**：`mods/aoe2/ui*/tts.txt`、`_build_de_civ_data.py`、`_build_de_civ_names.py`、`_gen_civ_intros.py`、`_verify_de_civs.py`、`_de_strings/`、`_de_trees/`、`_de_civ_data.json`、`_de_civ_names.json`、`_ut_canonical.json`、`soundrts/tests/test_aoe2_civ_intro_de_alignment.py`、`soundrts/tests/test_aoe2_civ_intro_i18n.py`。
+
+**新增：补齐了简介里承诺、却根本没有定义的 DE 独有单位与独有科技**
+
+- **问题**：文明简介宣传了一批单位与科技，规则文件里却查无此物 —— 波希米亚的攻城榴弹炮 `houfnice`（DE 里是攻城武器厂研究的独有升级，不是独立兵种）、西班牙的传教士 `missionary`（骑乘的僧侣，没有精锐形态、不能捡遗物）、亚美尼亚的费雷特斯 `fereters`、高棉的象牙刀、罗马尼亚的弩炮、马来的制海权 `thalassocracy` 与强制征召 `forced_levy`、马来的 Karambit 战士等等。参考表里还混进了 AoE1 与杜撰的科技（`boiling_oil`、`mahouts`、`atikulu`、`obsidian_arrows`、`el_dorado`、`frontier_defense`、`fogarasi_mercenaries`），同时又漏掉了 DE 真实存在的 `citadels`、`kamandaran`、`atheism`、`hulche_javelineers`、`holcans`、`grand_trunk_road`、`recurve_bow`。
+- **改进**：按 DE 数据补齐全部缺失的独有单位与独有科技，并为它们补上 `mods/aoe2/ui/style.txt` 的样式定义（没有样式定义就没有名字、没有热键）。参考表里的杜撰项一并删除，真实项补齐。
+- **范围**：`mods/aoe2/rules.txt`、`mods/aoe2/ui/style.txt`、`soundrts/tests/test_aoe2_14_civs_full_uu_ut.py`、`soundrts/tests/test_aoe2_tech_effect_engine.py`。
+
+**修复：`can_use_tech` 写在多行时，后一行会覆盖前一行**
+
+- **问题**：`can_use_tech` 之前是普通的字符串列表属性，同一个单位分多行声明时会被当成覆盖而不是追加 —— 文明专属科技写在一行、通用升级线写在另一行时，前一行被静默丢弃，民兵因此失去了 `bagains`、`forced_levy`、`first_crusade`。
+- **改进**：`can_use_tech` 改为可累加的字符串列表属性，多行声明会合并。
+- **范围**：`soundrts/definitions.py`。
+
+**修复：Citadels 的效果行被静默丢弃，攻城象的训练时间也读不到**
+
+- **问题**：两处都是"警告之后照常丢弃"的静默数据丢失。Citadels 的 `effect bonus mdg_vs siege_ram capped_ram battering_ram 3` 一行写了三个目标，而 `effect bonus <stat> <target> <value>` 每行只能有一个目标，解析器无法判断加成的结尾，于是整行被丢下；而且城堡本来是远程攻击（`rdg 11`、`mdg 0`），就算解析成功这条 `mdg` 也永远不会触发。攻城象的 `train_time` 则从来没有注册成规则属性，解析器警告之后把它丢掉了，于是攻城象按 140 秒的**研究**时间训练，而不是 DE 的 56 秒训练时间。
+- **改进**：Citadels 的效果行改成每行一个目标的 `rdg` / `rdg_vs`（一个 `battering_ram` 键即可覆盖整条攻城车系，因为查询会走 `expanded_is_a` 继承链）；DE 的"受到 -25% 额外伤害"改用与西西里同款的护甲约定（`mdf` + `rdf`）建模。`train_time` 现在声明在 `Creature` 基类上并注册为精度属性，攻城象按 DE 的 56 秒训练，其余单位仍回退到所属兵种线的训练时间。
+- **范围**：`mods/aoe2/rules.txt`、`soundrts/definitions.py`、`soundrts/worldunit/worldcreature.py`、`soundrts/world_build_rules.py`、`soundrts/tests/test_aoe2_rules_load_warnings.py`。
+
+**新增：帝国 2 DE 的队伍奖励真正生效**
+
+- **问题**：DE 的队伍奖励作用于玩家**和他的所有盟友**，但引擎里这些奖励要么没有实现，要么实现得不对。
+- **改进**：新增七个规则字段并配套引擎支持 —— 建筑维修费用 -25%（格鲁吉亚，`team_repair_cost_pct`）、军事建筑（城堡除外）提供 +5 人口（斯拉夫人，`team_military_building_pop`）、哨站不消耗石头（埃塞俄比亚人，`team_free_stone_buildings`）、开局赠送一只羊驼（印加人，`team_start_free_llama`）、遗物额外产出食物（勃艮第人，`team_relic_food`）、开局即可看见遗物（缅甸人，`team_relic_visible`）、骑射手与火枪部队训练快 25%（马扎尔人与土耳其人，`team_train_speed_pct`）。所有辅助函数都取玩家与盟友中**最强**的那一份（负数折扣按最负计算），因此与多个盟友结盟时不会丢失折扣。
+- **范围**：`mods/aoe2/rules.txt`、`soundrts/definitions.py`、`soundrts/world_civ_bonuses.py`、`soundrts/worldplayerbase/base.py`、`soundrts/worlditem.py`、`soundrts/worldorders/base.py`、`soundrts/worldorders/production.py`、`soundrts/worldunit/world_attributes.py`、`soundrts/tests/test_aoe2_team_bonuses_alignment.py`。
+
+**修复：`can_train` 效果把目标名当成了可训练单位泄漏出去**
+
+- **问题**：`effect bonus can_train …` 一行的过滤目标名会出现在生产菜单里，仿佛它是一个可以训练的兵种；同时每个匹配的单位都会往 `research_cost_tech_discount_entries` 里再塞一份同样的条目，重复条目在计算研究费用时会被乘法叠加（75 粮变成大约 4 倍）。`can_train` 覆盖表的存储还有一个 `None` 崩溃点。
+- **改进**：过滤目标名不再泄漏进生产菜单；重复的研究费用条目只保留一份；覆盖表的存储改为显式处理 `None`。
+- **范围**：`soundrts/worldupgrade/effect_bonus_parse.py`、`soundrts/worldupgrade/attribute_effects.py`、`soundrts/world_build_rules.py`。
+
+**修复：研究解锁的可训练单位没有并入宿主建筑**
+
+- **问题**：某项研究解锁的兵种只存在于覆盖表里，而覆盖表在合并时会拿建筑的**基础**训练列表去过滤，于是这个解锁被静默丢掉 —— 哥特人的"混沌"研究出来的胡斯卡尔、西西里的"第一次十字军"研究出来的军士都因此训练不出来。
+- **改进**：合并时把覆盖表自身的键也一并纳入训练列表。
+- **范围**：`soundrts/world_build_rules.py`。
+
+**修复：贸易奖励的百分比被放大了 250 倍**
+
+- **问题**：`trade_reward_bonus_pct` 之前属于精度属性，加载时会被乘以 1000，于是规则里的 25 变成了 25000，市场结算按 `amount * (1 + bonus / 100)` 计算时把贸易奖励放大了 250 倍。
+- **改进**：该字段改为原始百分比（25 就是 +25%），移到整数属性里，同时仍然是合法的 `effect bonus` / `on_phase` 统计项。
+- **范围**：`soundrts/definitions.py`、`mods/aoe2/rules.txt`。
+
+**调整：中文科技名对齐 DE 字符串表**
+
+- **问题**：中文语言包里的科技名是手工抄写的，与 DE 官方字符串表不一致，玩家按官方攻略找科技时对不上。
+- **改进**：中文科技名按 DE 官方字符串表逐条校正。
+- **范围**：`mods/aoe2/ui-zh/tts.txt`。
+
+**修复：独有单位图标与 Monaspa 的单位类别不对**
+
+- **问题**：一批独有单位的图标指向了错误的资源，Monaspa 也被定义成了错误的单位类别。
+- **改进**：按 DE 数据修正图标与单位类别。
+- **范围**：`mods/aoe2/ui/style.txt`、`mods/aoe2/rules.txt`。
+
+**修复：磨坊科技只对之后新建的农田生效**
+
+- **问题**：马轭、重犁、轮作只提高了**研究之后**新建农田的食物容量，而 DE 规定已建好的农田也要获得按比例缩小的食物加成。
+- **改进**：研究完成时刷新玩家已有的农田：满仓的农田拿到完整加成，未满的农田按 DE 的比例规则拿到缩小后的加成，农田上限（`resource_volume_max`）与补种产量保持同步。
+- **范围**：`soundrts/worldupgrade/base.py`、`soundrts/world_build_rules.py`、`soundrts/world_extractor.py`、`soundrts/tests/test_aoe2_farm_food_retroactive.py`。
+
+**新增：西西里的 Donjon**
+
+- **问题**：西西里的简介承诺可以在黑暗时代建造 Donjon 并取代箭塔系，但游戏里给的是箭塔系。
+- **改进**：新增 `donjon`（2×2，黑暗时代可建，625 HP，175 石，训练军士 / 长矛兵 / 矛兵 / 戟兵，研究第一次十字军 / 锁子甲 / 精锐军士 / 城垛），西西里的村民改为建造 Donjon 而不再建造箭塔系。Donjon 的分时代血量与护甲改成**固定增量**（625 / 1250 / 1500 / 2250），百分比写法会在跨时代时连乘。同时修复了按时代生效的加成对建筑（没有武器与护甲实例）不生效的问题。
+- **范围**：`mods/aoe2/rules.txt`、`mods/aoe2/ui/style.txt`、`mods/aoe2/ui*/tts.txt`、`soundrts/worldphase.py`、`soundrts/attributes/utils.py`、`soundrts/tests/test_aoe2_sicilians_donjon.py`。
+
+**新增：9 个缺失的 DE 独有 / 地区建筑，以及数据驱动的建筑光环**
+
+- **问题**：九个 DE 独有 / 地区建筑完全没有实现 —— 保加利亚的 `krepost`、波斯与印度的 `caravanserai`（商队驿站）、波兰的 `folwark`、亚美尼亚与格鲁吉亚的 `mule_cart`（骡车）与 `fortified_church`（加固教堂）、印加的 `settlement`（定居点）。缺少它们，这些文明既没有自己的经济建筑，也没有 DE 里的替代关系。
+- **改进**：按 DE 数据补齐全部九个：`krepost` 是带 20 人驻军的堡垒式建筑并训练科尼克与火药筒，`folwark` 继承磨坊（`is_a mill`），`mule_cart` 继承伐木场与采矿场，`fortified_church` 继承修道院，`settlement` 同时继承磨坊 / 伐木场 / 采矿场 —— 多重继承让"需要磨坊"之类的前置条件（农田、市场、磨坊科技）在 `expanded_is_a` 继承链上照样成立。商队驿站的光环是**数据驱动**的：新增 `soundrts/world_aura.py`，读取 `aura_radius`、`aura_heal_level`、`aura_heal_cd`、`aura_speed_bonus_pct`、`aura_target_types` 五个规则字段，在移动、资源与状态更新三处挂接，因此"8 格半径内治疗并加速商队"这条 DE 官方说明是规则数据而不是硬编码。
+- **范围**：`mods/aoe2/rules.txt`、`mods/aoe2/ui/style.txt`、`mods/aoe2/ui*/tts.txt`、`soundrts/world_aura.py`、`soundrts/definitions.py`、`soundrts/worldunit/worldcreature.py`、`soundrts/worldunit/world_movement.py`、`soundrts/worldplayerbase/resources.py`、`soundrts/worldunit/world_status_update.py`、`soundrts/tests/test_aoe2_unique_buildings_alignment.py`。
+
+**修复：装甲象的升级线没有接线**
+
+- **问题**：印度斯坦的装甲象虽然写着 `can_upgrade_to elite_armored_elephant`，但精锐形态既没有 `line_upgrade 1` 也没有 `no_auto_upgrade 1`，研究之后既不会解锁训练位，也不会把场上的装甲象变形，队列里的生产单也不会被改写。
+- **改进**：精锐形态补上 `line_upgrade 1` 与 `no_auto_upgrade 1`；研究完成时 `apply_unit_line_upgrade` 会解锁训练位、变形场上同线单位并改写队列中的生产单。另外按 DE 科技树，装甲象属于攻城武器厂而不是城堡，城堡只保留古拉姆 / 投石车 / 火药筒。
+- **范围**：`mods/aoe2/rules.txt`、`soundrts/world_build_rules.py`、`soundrts/worldorders/production.py`、`soundrts/worldplayerbase/resources.py`。
+
+**调整：过滤效果行的目标列表成为它唯一的授权依据**
+
+- **问题**：带 `effect_bonus_targets` 的效果行有两套彼此独立的"生效范围"判定：单位要么在 `can_use_tech` 里列出这项科技，要么匹配该行的目标列表。两套判定必须手工保持一致，一旦漂移，效果要么不生效、要么泄漏到别的单位身上 —— 哥特人的"混沌"就是因为目标列表里写了基类 `barracks`（它是全部 41 个文明兵营的祖先），结果本该只给哥特兵营的加成都撒到了所有人身上。
+- **改进**：过滤行的目标列表成为它唯一的授权依据：匹配目标列表的单位即可享受该效果，不必在 `can_use_tech` 里重复列出。这与带过滤的成本效果行原本的判定方式完全一致。科技应用层、订单层的费用 / 人口 / 时间聚合、属性面板与键盘导航现在共用同一套判定辅助函数，面板显示的科技列表与键盘可选的列表也保持一致。
+- **范围**：`soundrts/worldupgrade/effect_bonus_parse.py`、`soundrts/worldupgrade/base.py`、`soundrts/worldorders/base.py`、`soundrts/attributes/utils.py`、`soundrts/attributes/equipment_abilities.py`、`soundrts/attributes/key_bindings.py`、`soundrts/worldunit/world_attributes.py`、`soundrts/tests/test_effect_bonus_self_authorize.py`、`soundrts/tests/test_effect_bonus_target_redundancy.py`。
+
+**新增：本次发布的回归测试**
+
+- **范围**：`soundrts/tests/test_aoe2_civ_intro_de_alignment.py`、`soundrts/tests/test_aoe2_civ_intro_i18n.py`、`soundrts/tests/test_aoe2_rules_de_alignment.py`、`soundrts/tests/test_aoe2_rules_load_warnings.py`、`soundrts/tests/test_aoe2_team_bonuses_alignment.py`、`soundrts/tests/test_aoe2_sicilians_donjon.py`、`soundrts/tests/test_aoe2_unique_buildings_alignment.py`、`soundrts/tests/test_aoe2_unique_unit_marker_alignment.py`、`soundrts/tests/test_aoe2_conscription_target_alignment.py`、`soundrts/tests/test_aoe2_mounted_crossbowman.py`、`soundrts/tests/test_aoe2_goth_anarchy_huskarl.py`、`soundrts/tests/test_aoe2_farm_food_retroactive.py`、`soundrts/tests/test_effect_bonus_self_authorize.py`、`soundrts/tests/test_effect_bonus_target_redundancy.py`。
+
+
 1.5.1.6
 -------
 

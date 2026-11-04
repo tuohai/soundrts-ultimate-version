@@ -5,6 +5,104 @@ Release notes
 .. contents::
 
 
+1.5.1.7
+-------
+
+**Changed: the 42 civilization blurbs now use the official AoE2 DE wording**
+
+- **Problem**: The civilization blurbs in ``mods/aoe2/ui*/tts.txt`` (unique unit, unique technologies, civ bonuses, team bonus) were hand-maintained copies that had drifted away from DE: some civs were missing their unique technologies, some listed AoE1-era units, and the numbers and wording did not match the official text.
+- **Fix**: A new official-DE reference-data pipeline (``_build_de_civ_data.py`` and ``_build_de_civ_names.py``) parses the civilization blurbs straight out of the official DE string tables (``_de_strings/``) and the official per-civ tech trees (``_de_trees/``), and every one of the 13 shipped locales (``ui.txt`` plus ``ui-be/cs/de/es/fr/it/pl/pt-BR/ru/sk/vi/zh.txt``) is rewritten with the DE wording. ``_gen_civ_intros.py`` regenerates them and ``_verify_de_civs.py`` checks them entry by entry (0 problems across the 13 locales). The string tables and tech trees come from the SiegeEngineers/aoe2techtree dataset and are vendored with the repository, so the pipeline is reproducible from a fresh clone.
+- **Scope**: ``mods/aoe2/ui*/tts.txt``, ``_build_de_civ_data.py``, ``_build_de_civ_names.py``, ``_gen_civ_intros.py``, ``_verify_de_civs.py``, ``_de_strings/``, ``_de_trees/``, ``_de_civ_data.json``, ``_de_civ_names.json``, ``_ut_canonical.json``, ``soundrts/tests/test_aoe2_civ_intro_de_alignment.py``, ``soundrts/tests/test_aoe2_civ_intro_i18n.py``.
+
+**Added: the DE unique units and unique technologies the blurbs promised but that did not exist**
+
+- **Problem**: The civilization blurbs advertised a set of units and technologies that the rules file did not define at all: the Bohemian Houfnice (``houfnice`` -- in DE it is a Siege Workshop upgrade of the Bombard Cannon, not a separate unit), the Spanish Missionary (``missionary`` -- a mounted monk with no Elite version and no inventory), the Armenian Fereters (``fereters``), the Khmer tusk swords, the Romanian ballistas, the Malay thalassocracy and forced levy, the Malay Karambit Warrior and so on. The reference table also carried AoE1 and fan-invented technologies (``boiling_oil``, ``mahouts``, ``atikulu``, ``obsidian_arrows``, ``el_dorado``, ``frontier_defense``, ``fogarasi_mercenaries``) while missing the real DE ones (``citadels``, ``kamandaran``, ``atheism``, ``hulche_javelineers``, ``holcans``, ``grand_trunk_road``, ``recurve_bow``).
+- **Fix**: Define every missing DE unique unit and unique technology with its DE data, and give each of them the matching style definition in ``mods/aoe2/ui/style.txt`` (without a style definition a unit has neither a title nor a hotkey). The fan-invented entries are dropped and the real DE entries are added.
+- **Scope**: ``mods/aoe2/rules.txt``, ``mods/aoe2/ui/style.txt``, ``soundrts/tests/test_aoe2_14_civs_full_uu_ut.py``, ``soundrts/tests/test_aoe2_tech_effect_engine.py``.
+
+**Fixed: ``can_use_tech`` declared on several lines was overwritten by the last one**
+
+- **Problem**: ``can_use_tech`` used to be a plain string-list property, so several declarations on the same unit overwrote each other instead of adding up: with the civ-specific techs on one line and the generic upgrade line on another, the first line was silently dropped, and the militia lost ``bagains``, ``forced_levy`` and ``first_crusade``.
+- **Fix**: ``can_use_tech`` is now an additive string-list property, so several declaration lines are merged.
+- **Scope**: ``soundrts/definitions.py``.
+
+**Fixed: the Citadels effect rows were silently dropped and the Houfnice train time was never read**
+
+- **Problem**: Both were silent data loss -- the rules loader warned and then dropped the offending data. The Citadels row ``effect bonus mdg_vs siege_ram capped_ram battering_ram 3`` named three targets on one row, but ``effect bonus <stat> <target> <value>`` takes exactly one target per row, so the parser could not tell where the bonus ended and dropped the whole row; and the castle attacks *ranged* (``rdg 11``, ``mdg 0``), so an ``mdg`` row would never have fired even if it had parsed. The Houfnice's ``train_time`` was never registered as a rules property, so it was dropped too and the unit trained in its 140 s *research* time instead of the DE 56 s.
+- **Fix**: The Citadels rows are now ``rdg`` / ``rdg_vs`` with one target each (a single ``battering_ram`` key covers the whole ram line, because the lookup walks the ``expanded_is_a`` chain), and DE's "receive -25% bonus damage" is modelled as armor (mdf + rdf), the same convention the Sicilian bonus already uses. ``train_time`` is now declared on the ``Creature`` base class and registered as a precision property, so the Houfnice trains in the DE 56 s while every other unit still falls back to its line-root duration.
+- **Scope**: ``mods/aoe2/rules.txt``, ``soundrts/definitions.py``, ``soundrts/worldunit/worldcreature.py``, ``soundrts/world_build_rules.py``, ``soundrts/tests/test_aoe2_rules_load_warnings.py``.
+
+**Added: the AoE2 DE team bonuses are really applied now**
+
+- **Problem**: A DE team bonus applies to the player *and all of their allies*, but in the engine these bonuses were either missing or wrong.
+- **Fix**: Seven new rule fields plus the matching engine support: building repairs cost -25% (Georgians, ``team_repair_cost_pct``), military buildings except castles provide +5 population (Slavs, ``team_military_building_pop``), outposts cost no stone (Ethiopians, ``team_free_stone_buildings``), start with a free llama (Incas, ``team_start_free_llama``), relics also generate food (Burgundians, ``team_relic_food``), relics are visible at the start (Burmese, ``team_relic_visible``), mounted archers and gunpowder units train 25% faster (Magyars and Turks, ``team_train_speed_pct``). Every helper takes the *strongest* value among the player and their allies (a negative discount counts as the most negative one), so no discount is lost when the player has several allies.
+- **Scope**: ``mods/aoe2/rules.txt``, ``soundrts/definitions.py``, ``soundrts/world_civ_bonuses.py``, ``soundrts/worldplayerbase/base.py``, ``soundrts/worlditem.py``, ``soundrts/worldorders/base.py``, ``soundrts/worldorders/production.py``, ``soundrts/worldunit/world_attributes.py``, ``soundrts/tests/test_aoe2_team_bonuses_alignment.py``.
+
+**Fixed: ``can_train`` effects leaked their target names as trainable units**
+
+- **Problem**: The filter targets of an ``effect bonus can_train ...`` row showed up in the production menu as if they were units that could be trained; at the same time every matching unit appended another copy of the same ``research_cost_tech_discount`` entry, and the duplicates compounded multiplicatively when the research cost was computed (75 food became roughly 4x). The storage of the ``can_train`` override also had a ``None`` crash.
+- **Fix**: Filter target names no longer leak into the production menu, only one copy of each research-cost entry is kept, and the override storage handles the ``None`` case explicitly.
+- **Scope**: ``soundrts/worldupgrade/effect_bonus_parse.py``, ``soundrts/worldupgrade/attribute_effects.py``, ``soundrts/world_build_rules.py``.
+
+**Fixed: units unlocked by a research were not merged into the host building**
+
+- **Problem**: A unit unlocked by a research only existed in the override, and the merge filtered it against the building's *base* train list, so the unlock was silently dropped -- the Goths' Anarchy Huskarl and the Sicilians' First Crusade Serjeant could not be trained at all.
+- **Fix**: The merge now takes the override's own keys into the train list as well.
+- **Scope**: ``soundrts/world_build_rules.py``.
+
+**Fixed: the trade reward percentage was inflated 250x**
+
+- **Problem**: ``trade_reward_bonus_pct`` used to be a precision property, so it was multiplied by 1000 at load time: the rules value 25 became 25000, and the market settlement (``amount * (1 + bonus / 100)``) paid out 250x too much.
+- **Fix**: The field is a raw percent again (25 means +25%), it moved to the integer properties, and it stays a legal ``effect bonus`` / ``on_phase`` stat.
+- **Scope**: ``soundrts/definitions.py``, ``mods/aoe2/rules.txt``.
+
+**Changed: the Chinese tech names are aligned with the DE string table**
+
+- **Problem**: The Chinese tech names were hand-copied and did not match the official DE string table, so players following an official guide could not find the tech.
+- **Fix**: The Chinese tech names are corrected entry by entry against the official DE string table.
+- **Scope**: ``mods/aoe2/ui-zh/tts.txt``.
+
+**Fixed: the unique-unit icons and the Monaspa unit class were wrong**
+
+- **Problem**: A number of unique units pointed at the wrong icon, and the Monaspa was declared as the wrong unit class.
+- **Fix**: The icons and the unit class are corrected according to the DE data.
+- **Scope**: ``mods/aoe2/ui/style.txt``, ``mods/aoe2/rules.txt``.
+
+**Fixed: the mill techs only reached farms built afterwards**
+
+- **Problem**: Horse Collar, Heavy Plow and Crop Rotation only raised the food capacity of farms built *after* the research, while AoE2:DE grants the farms that already stand a proportionally smaller food amount.
+- **Fix**: Completing the tech now refreshes the farms the player already owns: a full farm gets the full bonus, a partly empty one gets the reduced bonus DE prescribes, and the farm capacity (``resource_volume_max``) and the reseed yield stay in sync.
+- **Scope**: ``soundrts/worldupgrade/base.py``, ``soundrts/world_build_rules.py``, ``soundrts/world_extractor.py``, ``soundrts/tests/test_aoe2_farm_food_retroactive.py``.
+
+**Added: the Sicilian Donjon**
+
+- **Problem**: The Sicilian blurb promised a Donjon that can be built in the Dark Age and replaces the watch tower line, but the game offered the watch tower line instead.
+- **Fix**: A new ``donjon`` (2x2, buildable from the Dark Age, 625 HP, 175 stone, trains Serjeant / Spearman / Pikeman / Halberdier, researches First Crusade / Hauberk / Elite Serjeant / Hoardings); the Sicilian villagers build the Donjon and no longer build the watch tower line. The Donjon's per-age HP and armor use *flat* deltas (625 / 1250 / 1500 / 2250), because a percentage row compounds across the ages. The per-age bonuses now reach buildings as well (a building has no weapon / armor instances, so its ``update_weapons()`` / ``update_armors()`` returned early and the bonus was dropped).
+- **Scope**: ``mods/aoe2/rules.txt``, ``mods/aoe2/ui/style.txt``, ``mods/aoe2/ui*/tts.txt``, ``soundrts/worldphase.py``, ``soundrts/attributes/utils.py``, ``soundrts/tests/test_aoe2_sicilians_donjon.py``.
+
+**Added: the nine missing DE unique / regional buildings and a data-driven building aura**
+
+- **Problem**: Nine DE unique / regional buildings were missing entirely: the Bulgarian ``krepost``, the Persian and Hindustani ``caravanserai``, the Polish ``folwark``, the Armenian and Georgian ``mule_cart`` and ``fortified_church``, and the Inca ``settlement``. Without them these civs had neither their own economic building nor DE's replacement relationships.
+- **Fix**: All nine are implemented with the DE data: the Krepost is a castle-like fortification with a 20-unit garrison that trains the Konnik and the Petard, the Folwark inherits the Mill (``is_a mill``), the Mule Cart inherits the Lumber Camp and the Mining Camp, the Fortified Church inherits the Monastery, and the Settlement inherits the Mill, the Lumber Camp and the Mining Camp -- the multi-inheritance keeps requirements such as "needs a mill" (the Farm, the Market, the farming techs) working along the ``expanded_is_a`` chain. The Caravanserai's aura is **data-driven**: the new ``soundrts/world_aura.py`` reads the five rule fields ``aura_radius``, ``aura_heal_level``, ``aura_heal_cd``, ``aura_speed_bonus_pct`` and ``aura_target_types``, and is hooked into the movement, the resource and the status-update paths, so the official DE wording "heals and increases the speed of trade carts in an 8 tile radius" is rules data instead of hard-coded engine logic.
+- **Scope**: ``mods/aoe2/rules.txt``, ``mods/aoe2/ui/style.txt``, ``mods/aoe2/ui*/tts.txt``, ``soundrts/world_aura.py``, ``soundrts/definitions.py``, ``soundrts/worldunit/worldcreature.py``, ``soundrts/worldunit/world_movement.py``, ``soundrts/worldplayerbase/resources.py``, ``soundrts/worldunit/world_status_update.py``, ``soundrts/tests/test_aoe2_unique_buildings_alignment.py``.
+
+**Fixed: the armored elephant line upgrade was not wired**
+
+- **Problem**: The Hindustani Armored Elephant declared ``can_upgrade_to elite_armored_elephant``, but the Elite form carried neither ``line_upgrade 1`` nor ``no_auto_upgrade 1``, so researching it unlocked no train slot, did not morph the elephants on the field and did not remap the queued train orders.
+- **Fix**: The Elite form now carries ``line_upgrade 1`` and ``no_auto_upgrade 1``; when the research completes, ``apply_unit_line_upgrade`` unlocks the train slot, morphs the living units of that line and rewrites the queued production orders. Following the DE tech tree, the Armored Elephant is a Siege Workshop unit rather than a Castle unit -- the Castle keeps only the Ghulam, the Trebuchet and the Petard.
+- **Scope**: ``mods/aoe2/rules.txt``, ``soundrts/world_build_rules.py``, ``soundrts/worldorders/production.py``, ``soundrts/worldplayerbase/resources.py``.
+
+**Changed: the target list of a filtered effect row is now its only authorisation**
+
+- **Problem**: A row carrying ``effect_bonus_targets`` had two independent notions of "reach": the unit either listed the tech in ``can_use_tech`` or it matched the row's target list. The two had to be kept in sync by hand, and once they drifted the effect either did not apply or leaked onto other units -- the Goths' Anarchy named the base class ``barracks`` in its target list (the ancestor of all 41 civ Barracks), so a bonus meant for the Goth Barracks reached everybody.
+- **Fix**: The target list of a filtered row is now the sole definition of its reach: a unit that matches the target list enjoys the effect without repeating the tech in ``can_use_tech``. This is exactly how the filtered cost rows already behaved. The upgrade layer, the order layer's cost / population / time aggregation, the attribute panel and the keyboard navigation now share the same authorisation helpers, so the tech list shown in the panel and the list reachable by keyboard stay aligned.
+- **Scope**: ``soundrts/worldupgrade/effect_bonus_parse.py``, ``soundrts/worldupgrade/base.py``, ``soundrts/worldorders/base.py``, ``soundrts/attributes/utils.py``, ``soundrts/attributes/equipment_abilities.py``, ``soundrts/attributes/key_bindings.py``, ``soundrts/worldunit/world_attributes.py``, ``soundrts/tests/test_effect_bonus_self_authorize.py``, ``soundrts/tests/test_effect_bonus_target_redundancy.py``.
+
+**Added: regression tests for this release**
+
+- **Scope**: ``soundrts/tests/test_aoe2_civ_intro_de_alignment.py``, ``soundrts/tests/test_aoe2_civ_intro_i18n.py``, ``soundrts/tests/test_aoe2_rules_de_alignment.py``, ``soundrts/tests/test_aoe2_rules_load_warnings.py``, ``soundrts/tests/test_aoe2_team_bonuses_alignment.py``, ``soundrts/tests/test_aoe2_sicilians_donjon.py``, ``soundrts/tests/test_aoe2_unique_buildings_alignment.py``, ``soundrts/tests/test_aoe2_unique_unit_marker_alignment.py``, ``soundrts/tests/test_aoe2_conscription_target_alignment.py``, ``soundrts/tests/test_aoe2_mounted_crossbowman.py``, ``soundrts/tests/test_aoe2_goth_anarchy_huskarl.py``, ``soundrts/tests/test_aoe2_farm_food_retroactive.py``, ``soundrts/tests/test_effect_bonus_self_authorize.py``, ``soundrts/tests/test_effect_bonus_target_redundancy.py``.
+
+
 1.5.1.6
 -------
 
