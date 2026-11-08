@@ -18,6 +18,83 @@ from ..worldroom import Square
 from ..lib import collision
 
 
+class _PerceptionCaches:
+    """Per-world storage for the player perception caches.
+
+    These used to be class attributes on ``Player`` (and on
+    ``PerceptionMixin``), keyed by player id / alliance key.  Because a live
+    match and a spectator rebuild live in the same process and reuse the
+    very same player ids, the caches bled across the two worlds and the
+    spectator simulation forked away from the live one.
+
+    Owning them per world removes the sharing completely.
+    """
+
+    __slots__ = (
+        # {player_id -> {cache_key -> bool}}
+        "global_vision_cache",
+        # {player_id -> {unit_cache_key -> (strict, all)}}
+        "observed_squares_cache",
+        "observed_squares_cache_timestamp",
+        # {alliance_key -> {...}}
+        "allied_vision_cache",
+        "allied_vision_timestamp",
+        # {player_id -> set(place)}
+        "observed_union_cache",
+        "observed_union_bucket",
+        # {place -> [units]}
+        "place_covering_units_cache",
+        "place_covering_units_bucket",
+        # {player_id -> {place -> bool}}
+        "place_visible_cache",
+        "place_visible_bucket",
+        # {(player_id, place_id) -> (bucket, sig, visible)}
+        "place_visible_history",
+        # {relation_key -> {...}}
+        "relation_cache",
+        # invisible/cloaked visibility cache
+        "invis_visibility_cache",
+        "invis_visibility_bucket",
+        # neighbour merge cache
+        "global_neighbors_cache",
+        "global_neighbors_timestamp",
+        "last_cleanup_time",
+        # counters
+        "vision_cache_hits",
+        "vision_cache_misses",
+        # per-world perception frame phase
+        "global_update_cycle",
+        "last_global_update_time",
+        # last allied-vision cache cleanup
+        "last_vision_cache_cleanup",
+    )
+
+    def __init__(self):
+        self.global_vision_cache = {}
+        self.observed_squares_cache = {}
+        self.observed_squares_cache_timestamp = {}
+        self.allied_vision_cache = {}
+        self.allied_vision_timestamp = {}
+        self.observed_union_cache = {}
+        self.observed_union_bucket = -1
+        self.place_covering_units_cache = {}
+        self.place_covering_units_bucket = -1
+        self.place_visible_cache = {}
+        self.place_visible_bucket = -1
+        self.place_visible_history = {}
+        self.relation_cache = {}
+        self.invis_visibility_cache = {}
+        self.invis_visibility_bucket = -1
+        self.global_neighbors_cache = {}
+        self.global_neighbors_timestamp = {}
+        self.last_cleanup_time = 0
+        self.vision_cache_hits = 0
+        self.vision_cache_misses = 0
+        self.global_update_cycle = 0
+        self.last_global_update_time = 0
+        self.last_vision_cache_cleanup = 0
+
+
 class World:
     """游戏世界核心类"""
 
@@ -36,6 +113,34 @@ class World:
         self.default_triggers = default_triggers
         self.seed = seed
         self.id = self.get_next_id()
+        # Unique per-world scope for the class-level perception caches
+        # (see ``World.get_next_id`` / ``_vision_cache_scope_counter``).
+        cls = type(self)
+        cls._vision_cache_scope_counter += 1
+        self._vision_cache_scope = cls._vision_cache_scope_counter
+        # Per-world storage for the caches that used to live on the Player
+        # *class* and were therefore shared by every world in the process.
+        #
+        # A live match and a spectator rebuild run side by side in the same
+        # process and hand out the same player ids ("86", "87", ...).  Any
+        # class-level cache keyed by player id (or by alliance key) therefore
+        # bled across the two worlds: the spectator world read the live
+        # world's observed squares / enemy lists, so its perception diverged
+        # from the live match and the two simulations forked.
+        #
+        # Keeping the caches on the world instance removes the sharing
+        # entirely — no key scoping needed, and the hot path is unchanged.
+        self._perception_caches = _PerceptionCaches()
+        # Per-world AI decision cache (see CreatureAIDecision.decide).
+        #
+        # It used to live on the unit *class*, so a live match and a
+        # spectator rebuild running side by side in the same process shared
+        # it.  Both worlds hand out the same unit ids ("90", ...), so the
+        # spectator world read the live world's cached attack target and
+        # returned early instead of re-running _choose_enemy -> the two
+        # simulations forked.
+        self._decision_cache = {}
+        self._decision_cache_bucket = -1
         self.random = random.Random()
         self.random.seed(int(seed))
         self.time = 0
@@ -216,6 +321,20 @@ class World:
         return self.time // VIRTUAL_TIME_INTERVAL
 
     _next_id = 0  # reset ID for each world to avoid big numbers
+    # Per-world scope id for the class-level perception caches.
+    #
+    # ``Player._observed_squares_cache`` / ``_allied_vision_cache`` are
+    # class attributes keyed by player id / alliance key.  Those keys are
+    # only unique *inside one world*: a spectator rebuild creates a second
+    # world in the same process whose players get the very same ids ("86",
+    # "87", ...) and the very same alliance keys, so the caches bled
+    # across the two worlds and the spectator's perception diverged from
+    # the live match (the AI then saw the enemy at a different time).
+    #
+    # Every world therefore gets its own integer scope, and the cache keys
+    # are prefixed with it.  The scope is NOT part of the world RNG and
+    # does not consume any entity id.
+    _vision_cache_scope_counter = 0
 
     def get_next_id(self, increment=True):
         if increment:

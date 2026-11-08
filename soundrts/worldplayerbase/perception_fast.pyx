@@ -382,6 +382,10 @@ cpdef tuple bulk_visibility_check(self, objects):
     cdef object current_time = self.world.time
     cdef long long time_bucket = current_time // 250
     cdef object cls = self.__class__
+    # 感知缓存挂在 world 实例上（见 World._perception_caches）：同进程内的
+    # 实战 world 与观战 world 玩家 id 相同，类级缓存会让两个 world 串味，
+    # 观战端的感知因此与实战端发散。
+    cdef object caches = self._pcaches
     cdef object player_cache
     cdef dict objects_by_place = {}
     cdef object obj, place
@@ -400,9 +404,10 @@ cpdef tuple bulk_visibility_check(self, objects):
     cdef bint is_visible
     cdef object observed_key
 
-    if self.id not in cls._global_vision_cache:
-        cls._global_vision_cache[self.id] = {}
-    player_cache = cls._global_vision_cache[self.id]
+    player_cache = caches.global_vision_cache.get(self.id)
+    if player_cache is None:
+        player_cache = {}
+        caches.global_vision_cache[self.id] = player_cache
 
     for obj in objects:
         place = obj.place
@@ -410,10 +415,10 @@ cpdef tuple bulk_visibility_check(self, objects):
             objects_by_place[place] = []
         objects_by_place[place].append(obj)
 
-    if cls._observed_union_bucket != time_bucket:
-        cls._observed_union_cache = {}
-        cls._observed_union_bucket = time_bucket
-    union_cache = cls._observed_union_cache
+    if caches.observed_union_bucket != time_bucket:
+        caches.observed_union_cache = {}
+        caches.observed_union_bucket = time_bucket
+    union_cache = caches.observed_union_cache
     if self.id not in union_cache:
         observed_places_union = set()
         for avp in self.allied_vision:
@@ -423,14 +428,14 @@ cpdef tuple bulk_visibility_check(self, objects):
         observed_places_union = union_cache[self.id]
     observed_places = observed_places_union
 
-    if cls._place_covering_units_bucket != time_bucket:
-        cls._place_covering_units_cache = {}
-        cls._place_covering_units_bucket = time_bucket
+    if caches.place_covering_units_bucket != time_bucket:
+        caches.place_covering_units_cache = {}
+        caches.place_covering_units_bucket = time_bucket
 
-    if cls._place_visible_bucket != time_bucket:
-        cls._place_visible_cache = {}
-        cls._place_visible_bucket = time_bucket
-    pvc_root = cls._place_visible_cache
+    if caches.place_visible_bucket != time_bucket:
+        caches.place_visible_cache = {}
+        caches.place_visible_bucket = time_bucket
+    pvc_root = caches.place_visible_cache
     if self.id not in pvc_root:
         pvc_root[self.id] = {}
     place_visible_cache = pvc_root[self.id]
@@ -456,7 +461,7 @@ cpdef tuple bulk_visibility_check(self, objects):
                 all_nearby_units.update(nearby_units)
             self._nearby_units_cache[cache_key_nearby] = all_nearby_units
 
-        covering_units = cls._place_covering_units_cache.get(place)
+        covering_units = caches.place_covering_units_cache.get(place)
         if covering_units is None:
             covering_units = []
             for unit in all_nearby_units:
@@ -469,7 +474,7 @@ cpdef tuple bulk_visibility_check(self, objects):
                     covering_units.append(unit)
                     if len(covering_units) >= 3:
                         break
-            cls._place_covering_units_cache[place] = covering_units
+            caches.place_covering_units_cache[place] = covering_units
 
         place_visible_for_any = len(covering_units) > 0
 
@@ -478,7 +483,7 @@ cpdef tuple bulk_visibility_check(self, objects):
             cov_ids = tuple(sorted([u.id for u in covering_units])[:3])
         else:
             cov_ids = ()
-        prev = cls._place_visible_history.get(history_key)
+        prev = caches.place_visible_history.get(history_key)
         if not place_visible_for_any and prev:
             prev_bucket, prev_sig, prev_visible = prev
             if prev_visible and (time_bucket - prev_bucket) <= 3 and prev_sig == cov_ids:
@@ -495,26 +500,23 @@ cpdef tuple bulk_visibility_check(self, objects):
                 else:
                     remaining_to_check.append(obj)
             place_objects = remaining_to_check
-        cls._place_visible_history[history_key] = (time_bucket, cov_ids, place_visible_for_any)
+        caches.place_visible_history[history_key] = (time_bucket, cov_ids, place_visible_for_any)
 
         for obj in place_objects:
             cache_key = (obj.id, time_bucket)
 
             if cache_key in player_cache:
-                cls._vision_cache_hits += 1
+                caches.vision_cache_hits += 1
                 if player_cache[cache_key]:
                     visible_objects.add(obj)
                 else:
                     invisible_objects.add(obj)
                 continue
 
-            cls._vision_cache_misses += 1
+            caches.vision_cache_misses += 1
 
             if (getattr(obj, 'is_invisible', False) or getattr(obj, 'is_cloaked', False)) and obj not in self.detected_units:
-                if not hasattr(cls, '_invis_visibility_cache'):
-                    cls._invis_visibility_cache = {}
-                    cls._invis_visibility_bucket = time_bucket
-                ivc = cls._invis_visibility_cache
+                ivc = caches.invis_visibility_cache
                 ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))
                 ivc_entry = ivc.get(ivc_key)
                 if ivc_entry:
@@ -573,10 +575,7 @@ cpdef tuple bulk_visibility_check(self, objects):
 
             player_cache[cache_key] = is_visible
             if getattr(obj, 'is_invisible', False) or getattr(obj, 'is_cloaked', False):
-                if not hasattr(cls, '_invis_visibility_cache'):
-                    cls._invis_visibility_cache = {}
-                    cls._invis_visibility_bucket = time_bucket
-                ivc = cls._invis_visibility_cache
+                ivc = caches.invis_visibility_cache
                 ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))
                 ivc[ivc_key] = (time_bucket, is_visible)
             if is_visible:

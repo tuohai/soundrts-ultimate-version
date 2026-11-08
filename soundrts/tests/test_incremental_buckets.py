@@ -74,16 +74,21 @@ def test_neighbor_invalidate_keeps_other_players_cache():
     class P(PerceptionMixin):
         pass
 
-    P._global_neighbors_cache = {}
-    P._global_neighbors_timestamp = {}
-
     a = P()
     b = P()
     key_a = (id(a), 1, 1)
     key_b = (id(b), 1, 1)
-    P._global_neighbors_cache[key_a] = ["A"]
-    P._global_neighbors_cache[key_b] = ["B"]
+
+    # The neighbor-merge cache lives on the *world* (one container per world),
+    # not on the class: a live match and a spectator rebuild share player ids
+    # in the same process, so a class-level dict let them clobber each other.
+    cache = a._pcaches.global_neighbors_cache
+    ts = a._pcaches.global_neighbors_timestamp
+    cache[key_a] = ["A"]
+    cache[key_b] = ["B"]
+    ts[key_a] = 0
+    ts[key_b] = 0
 
     a._invalidate_neighbors_near({(1, 1)})
-    assert key_a not in P._global_neighbors_cache
-    assert P._global_neighbors_cache.get(key_b) == ["B"]
+    assert key_a not in cache
+    assert cache.get(key_b) == ["B"]

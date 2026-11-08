@@ -23,6 +23,7 @@ from ..worldunit import Soldier
 from ..worldunit import Unit
 from ..objective_announce import collect_planned_objective_numbers
 from ..trigger_script import unpack_trigger
+from .perception_caches import PerceptionCachesMixin
 
 A = 12 * PRECISION  # bucket side length
 VERY_SLOW = int(0.01 * PRECISION)
@@ -133,7 +134,17 @@ def _race_build_speed_pct(faction):
         return 0
 
 
-class Player:
+_SHARED_PERCEPTION_CACHES = None
+
+
+def _shared_perception_caches():
+    """Process-wide fallback cache container (used by world-less stubs)."""
+    from .perception_caches import shared_perception_caches
+
+    return shared_perception_caches()
+
+
+class Player(PerceptionCachesMixin):
     """游戏玩家类 - 基础功能和初始化"""
     
     resources: List[int]
@@ -149,33 +160,19 @@ class Player:
     faction = "human_faction"
     memory_duration = 3 * 60 * 1000  # 3 minutes of world time
 
-    # === Round 3: 类级 (跨所有玩家共享) 视野缓存 ===
-    # 改为 {player_id -> {cache_key -> data}} 二级结构,
-    # 让 _clear_vision_cache 的清理从 O(N_total_keys) 退化为 O(1).
-    # 在类体声明保证总是存在, 省掉 hasattr/_global_vision_cache 防御性检查.
-    _global_vision_cache: Dict[int, Dict[tuple, bool]] = {}
-    _observed_squares_cache: Dict[int, Dict[tuple, tuple]] = {}
-    _observed_squares_cache_timestamp: Dict[int, Dict[tuple, int]] = {}
+    # === 感知缓存 ===
+    # 这些缓存以前是类属性（跨所有 world 共享），按 player id / alliance key
+    # 做键。同进程内并存的实战 world 与观战重建 world 玩家 id 相同，类级
+    # 缓存会让两个 world 互相读到对方的视野/敌人列表，观战端因此与实战端
+    # 发散。现在它们挂在 *world* 实例上（见 ``World._perception_caches``）。
+    #
+    # 下面这些类属性仅保留为兼容默认值；实际读写都走 world 实例。
     _last_vision_cleanup = 0
     _vision_cache_hits = 0
     _vision_cache_misses = 0
-
-    # === Round 4: _update_perception 类级 cache ===
     _global_update_cycle = 0
     _last_global_update_time = 0
-    _allied_vision_cache: Dict[tuple, dict] = {}
-    _allied_vision_timestamp: Dict[tuple, int] = {}
-
-    # === Round 4: _bulk_visibility_check 类级 cache ===
-    # 每帧每单位调一次, 原版 5+ 个 hasattr per call.
     _vision_cache_last_cleanup = 0
-    _observed_union_cache: Dict[int, set] = {}
-    _observed_union_bucket = -1
-    _place_covering_units_cache: Dict = {}
-    _place_covering_units_bucket = -1
-    _place_visible_cache: Dict[int, Dict] = {}
-    _place_visible_bucket = -1
-    _place_visible_history: Dict[tuple, tuple] = {}
 
     group = ()
     group_had_enough_mana = False  # used to warn if not enough mana
@@ -294,6 +291,12 @@ class Player:
             self._player_group_mod9 = (int(self.id) if self.id else 0) % 9
         except (TypeError, ValueError):
             self._player_group_mod9 = abs(hash(self.id)) % 9
+
+        # Scope of the shared perception caches (see the notes above).
+        # Two worlds living in the same process (live match + spectator
+        # rebuild) hand out the *same* player ids, so an unscoped cache key
+        # let one world read the other's observed squares.
+        self._vision_cache_scope = getattr(world, "_vision_cache_scope", 0)
 
         # Perception 热路径缓存
         self._allied_exploration_cache = {}
@@ -553,6 +556,25 @@ class Player:
     @property
     def allied_victory(self):
         return self.allied
+
+    def _vision_cache_pid(self):
+        """Cache key of this player, scoped to the world it belongs to.
+
+        The perception caches are keyed by *player id* and *alliance key*,
+        which are only unique inside one world: a spectator rebuild creates
+        a second world in the same process whose players get the *same* ids
+        ("86", "87", ...) and the same alliance keys.
+
+        The caches now live on the world instance (see
+        ``World._perception_caches``), so no key scoping is needed any more;
+        this helper is kept for the few call sites that still build a
+        composite key and for backwards compatibility.
+        """
+        return (getattr(self, "_vision_cache_scope", 0), self.id)
+
+    def _vision_cache_alliance_key(self, alliance_key):
+        """Scope an alliance key to this player's world."""
+        return (getattr(self, "_vision_cache_scope", 0),) + tuple(alliance_key)
 
     @property
     def allied_vision(self):
@@ -1177,9 +1199,12 @@ class Player:
                 self._enemy_player_cache = {}
                 self._enemy_player_timestamp = 0
             # 立刻使关系快照失效
+            # 关系缓存挂在 world 实例上（见 World._perception_caches）。
             try:
-                if hasattr(self.__class__, '_relation_cache') and self.id in self.__class__._relation_cache:
-                    del self.__class__._relation_cache[self.id]
+                caches = self._pcaches
+                rel_key = self.id
+                if rel_key in caches.relation_cache:
+                    del caches.relation_cache[rel_key]
             except Exception:
                 pass
             # 强制下一次立刻重建联盟ID缓存

@@ -16,6 +16,7 @@ from ..open_container import (
     is_open_container,
 )
 from .base import A
+from .perception_caches import PerceptionCachesMixin
 
 # D-Phase 1 T2: known_enemies 内层 Cython 化 (失败 fallback 到 Python).
 _fast = None
@@ -127,10 +128,13 @@ except ImportError:
 # 算法优化模式：专注于减少计算量而非加速单次计算
 
 
-class PerceptionMixin:
+class PerceptionMixin(PerceptionCachesMixin):
     """视野、感知和记忆相关的方法混入类"""
 
-    _relation_cache = {}
+    # The relation cache used to live here as a class attribute; it now lives
+    # on the world instance (see ``World._perception_caches``) because it
+    # stores *Player objects* of that world and two worlds in the same
+    # process (live match + spectator rebuild) would otherwise share them.
 
     def _open_container_passenger_visible(self, unit):
         if not unit.is_inside:
@@ -324,58 +328,55 @@ class PerceptionMixin:
             return _merge()
 
         # 缓存键必须包含玩家 id：每条 computer_only 行是独立 Computer 玩家，
-        # 同 Player 子类共享类级缓存；若只用格子坐标，先查询的空电脑会
-        # 把「无单位」写入缓存，后查询的有单位电脑会误命中空列表（流星等
-        # harm 范围技能因此打不到地图 computer 单位）。
+        # 若只用格子坐标，先查询的空电脑会把「无单位」写入缓存，后查询的有
+        # 单位电脑会误命中空列表（流星等 harm 范围技能因此打不到地图
+        # computer 单位）。
+        # 缓存挂在 world 上（见 World._perception_caches）：同进程内的实战
+        # world 与观战 world 玩家 id 会重复，类级缓存会让两个 world 串味。
         cache_key = (id(self), grid_x, grid_y)
-        cls = self.__class__
-        cache = getattr(cls, "_global_neighbors_cache", None)
-        if cache is None:
-            cache = {}
-            cls._global_neighbors_cache = cache
-            cls._global_neighbors_timestamp = {}
-            cls._last_cleanup_time = self.world.time
+        caches = self._pcaches
+        cache = caches.global_neighbors_cache
 
         current_time = self.world.time
-        if current_time - cls._last_cleanup_time > 30000:
+        if current_time - caches.last_cleanup_time > 30000:
             if len(cache) > 1000:
                 recent_keys = sorted(
-                    cls._global_neighbors_timestamp.keys(),
-                    key=lambda k: cls._global_neighbors_timestamp[k],
+                    caches.global_neighbors_timestamp.keys(),
+                    key=lambda k: caches.global_neighbors_timestamp[k],
                     reverse=True,
                 )[:1000]
                 new_cache = {}
                 new_timestamps = {}
                 for k in recent_keys:
                     new_cache[k] = cache[k]
-                    new_timestamps[k] = cls._global_neighbors_timestamp[k]
+                    new_timestamps[k] = caches.global_neighbors_timestamp[k]
                 cache = new_cache
-                cls._global_neighbors_cache = new_cache
-                cls._global_neighbors_timestamp = new_timestamps
-            cls._last_cleanup_time = current_time
+                caches.global_neighbors_cache = new_cache
+                caches.global_neighbors_timestamp = new_timestamps
+            caches.last_cleanup_time = current_time
 
         hit = cache.get(cache_key)
         if hit is not None:
-            cls._global_neighbors_timestamp[cache_key] = current_time
+            caches.global_neighbors_timestamp[cache_key] = current_time
             return hit
 
         result = _merge()
         cache[cache_key] = result
-        cls._global_neighbors_timestamp[cache_key] = current_time
+        caches.global_neighbors_timestamp[cache_key] = current_time
         return result
 
     def _clear_neighbors_cache(self):
         """Invalidate neighbor merge cache entries for *this* player only.
 
         Cache keys are ``(id(player), grid_x, grid_y)``; do not wipe other
-        players that share the class-level dict.
+        players that share the same per-world dict.
         """
-        cls = self.__class__
-        cache = getattr(cls, "_global_neighbors_cache", None)
+        caches = self._pcaches
+        cache = caches.global_neighbors_cache
         if not cache:
             return
         token = id(self)
-        ts = getattr(cls, "_global_neighbors_timestamp", None)
+        ts = caches.global_neighbors_timestamp
         for key in [k for k in cache if k[0] == token]:
             del cache[key]
             if ts is not None:
@@ -393,8 +394,8 @@ class PerceptionMixin:
         """
         if not dirty_cells:
             return
-        cls = self.__class__
-        cache = getattr(cls, "_global_neighbors_cache", None)
+        caches = self._pcaches
+        cache = caches.global_neighbors_cache
         if not cache:
             return
         # Heuristic: many dirty cells → O(cache) selective scan loses to clear.
@@ -403,7 +404,7 @@ class PerceptionMixin:
             return
 
         token = id(self) if player_token is None else player_token
-        ts = getattr(cls, "_global_neighbors_timestamp", None)
+        ts = caches.global_neighbors_timestamp
         dirty = dirty_cells if isinstance(dirty_cells, set) else set(dirty_cells)
         # Queries reading a dirty bucket cell: all (gx,gy) within Chebyshev 1.
         affected = set()
@@ -494,19 +495,21 @@ class PerceptionMixin:
         改为 ``{player_id -> {key -> data}}`` 二级 dict, 当前玩家清理只需
         ``pop(self.id, None)``, 从原本 O(N_total_keys) 退化为 O(1).
 
-        类级 dict 已在 Player 类体声明, 永远存在, 无需 hasattr 检查.
+        这些缓存现在挂在 *world* 实例上 (``World._perception_caches``)，
+        不再是类属性：同进程内并存的实战 world 与观战重建 world 玩家
+        id 相同，类级缓存会让两个 world 互相读到对方的视野。
         """
-        cls = self.__class__
+        caches = self._pcaches
         pid = self.id
 
         # 该玩家的视野/观察缓存——O(1) 一次性弹出
-        cls._global_vision_cache.pop(pid, None)
-        cls._observed_squares_cache.pop(pid, None)
-        cls._observed_squares_cache_timestamp.pop(pid, None)
+        caches.global_vision_cache.pop(pid, None)
+        caches.observed_squares_cache.pop(pid, None)
+        caches.observed_squares_cache_timestamp.pop(pid, None)
 
         # 重置缓存命中率计数器
-        cls._vision_cache_hits = 0
-        cls._vision_cache_misses = 0
+        caches.vision_cache_hits = 0
+        caches.vision_cache_misses = 0
 
         # 清除单位上的观察区域缓存
         # 注: Round 4 把 _cached_observed_squares / _cached_observed_time 升级
@@ -524,20 +527,18 @@ class PerceptionMixin:
 
     def _clear_allied_vision_cache(self):
         """清除与该玩家相关的联盟视野缓存"""
-        if hasattr(self.__class__, '_allied_vision_cache'):
-            # 找出包含此玩家的所有联盟
-            player_alliances = []
-            for alliance_key in list(self.__class__._allied_vision_cache.keys()):
-                if self.id in alliance_key:
-                    player_alliances.append(alliance_key)
-            
-            # 批量删除这些联盟的缓存
-            for alliance_key in player_alliances:
-                if alliance_key in self.__class__._allied_vision_cache:
-                    del self.__class__._allied_vision_cache[alliance_key]
-                if alliance_key in self.__class__._allied_vision_timestamp:
-                    del self.__class__._allied_vision_timestamp[alliance_key]
-        
+        caches = self._pcaches
+        # 找出包含此玩家的所有联盟
+        player_alliances = []
+        for alliance_key in list(caches.allied_vision_cache.keys()):
+            if self.id in alliance_key:
+                player_alliances.append(alliance_key)
+
+        # 批量删除这些联盟的缓存
+        for alliance_key in player_alliances:
+            caches.allied_vision_cache.pop(alliance_key, None)
+            caches.allied_vision_timestamp.pop(alliance_key, None)
+
         # 清除本地的联盟视野探索缓存
         if hasattr(self, '_allied_exploration_cache'):
             self._allied_exploration_cache.clear()
@@ -551,24 +552,34 @@ class PerceptionMixin:
     def _update_perception(self):
         """更新玩家的感知.
 
-        Round 4: 所有 class-level cache (_global_update_cycle, _last_global_update_time,
-        _allied_vision_cache, _allied_vision_timestamp) 已在 Player 类体声明;
-        instance _last_perception_update / _last_unit_positions 在 __init__ 预初始化.
+        共享缓存 (_global_update_cycle, _allied_vision_cache, ...) 现在挂在
+        world 实例上（见 ``World._perception_caches``）；instance 级
+        _last_perception_update / _last_unit_positions 仍在 __init__ 预初始化.
         """
         # 算法优化：分帧更新策略 - 减少高频无用计算
-        cls = self.__class__
+        caches = self._pcaches
         current_time = self.world.time
 
+        # 该玩家的视野缓存分片键（缓存现在按 world 隔离，用裸 player id）
+        pid = self.id
+
         # 每180ms切换一个玩家组进行视野更新（9 组 → 单玩家约 1.6s 一轮）
-        if current_time - cls._last_global_update_time > 180:
-            cls._global_update_cycle = (cls._global_update_cycle + 1) % 9
-            cls._last_global_update_time = current_time
+        #
+        # 分组轮次按 world 隔离：类级计数器会被同进程内的另一个
+        # world（观战重建）一起推进，导致两个 world 的玩家分组相位不一致，
+        # 观战端因此比实战端更早/更晚看到敌人 → RNG 状态发散。
+        cycle = caches.global_update_cycle
+        last_update = caches.last_global_update_time
+        if current_time - last_update > 180:
+            cycle = (cycle + 1) % 9
+            caches.global_update_cycle = cycle
+            caches.last_global_update_time = current_time
 
         # 根据玩家ID分组，不同组在不同时间更新
         # (修复: world.get_next_id() 返回 str, 原 `(self.id or 0) % 9` 触发
         #  字符串格式化 TypeError 每帧抛+捕获. _player_group_mod9 已在
         #  Player.__init__ 预算)
-        should_update_this_frame = (cls._global_update_cycle == self._player_group_mod9)
+        should_update_this_frame = (cycle == self._player_group_mod9)
 
         # 策略2：移动单位优先更新，静止单位降低更新频率
         if not should_update_this_frame:
@@ -630,9 +641,9 @@ class PerceptionMixin:
             self._cached_allied_time = current_time // 1000
 
         alliance_key = self._cached_allied_ids
-        if alliance_key in self.__class__._allied_vision_cache and self.__class__._allied_vision_timestamp.get(alliance_key) == vision_cache_key:
+        if alliance_key in caches.allied_vision_cache and caches.allied_vision_timestamp.get(alliance_key) == vision_cache_key:
             # 命中缓存：直接引用，本路径不再 mutate 这两个 set
-            cached_vision = self.__class__._allied_vision_cache[alliance_key]
+            cached_vision = caches.allied_vision_cache[alliance_key]
             self.observed_squares = cached_vision['observed_squares']
             partially_observed_squares = cached_vision['partially_observed_squares']
             # 覆盖计数：优先复用缓存中的真实计数；旧缓存条目退回全 1。
@@ -676,8 +687,8 @@ class PerceptionMixin:
                 unit_cache_key = (sample_unit.sight_range, sample_unit.id, vision_cache_key)
 
                 # Round 3: 二级 dict {player_id -> {unit_cache_key -> ...}}
-                # 类级 dict 已在 Player 类体声明, 总是存在.
-                player_obs_cache = self.__class__._observed_squares_cache.get(self.id)
+                # 缓存按 world 隔离（见 World._perception_caches）。
+                player_obs_cache = caches.observed_squares_cache.get(pid)
                 cached_entry = player_obs_cache.get(unit_cache_key) if player_obs_cache is not None else None
 
                 # 检查缓存
@@ -705,47 +716,46 @@ class PerceptionMixin:
                 # 存储到缓存 (按玩家分片)
                 if player_obs_cache is None:
                     player_obs_cache = {}
-                    self.__class__._observed_squares_cache[self.id] = player_obs_cache
-                    self.__class__._observed_squares_cache_timestamp[self.id] = {}
+                    caches.observed_squares_cache[pid] = player_obs_cache
+                    caches.observed_squares_cache_timestamp[pid] = {}
                 player_obs_cache[unit_cache_key] = (strict_squares, all_squares)
-                self.__class__._observed_squares_cache_timestamp[self.id][unit_cache_key] = current_time
+                caches.observed_squares_cache_timestamp[pid][unit_cache_key] = current_time
                 
             # 从部分可见方格中移除完全可见的方格
             partially_observed_squares -= self.observed_squares
             
             # 保存联盟视野缓存（含 cover_counts，命中时免重建）
-            self.__class__._allied_vision_cache[alliance_key] = {
+            caches.allied_vision_cache[alliance_key] = {
                 'observed_squares': self.observed_squares.copy(),
                 'partially_observed_squares': partially_observed_squares.copy(),
                 'cover_counts': dict(self._vision_cover_counts),
             }
-            self.__class__._allied_vision_timestamp[alliance_key] = vision_cache_key
-                    
+            caches.allied_vision_timestamp[alliance_key] = vision_cache_key
+
             # 定期清理缓存 - 每60秒游戏时间或缓存大小超过20个联盟
             if (
-                len(self.__class__._allied_vision_cache) > 20 or 
-                not hasattr(self.__class__, '_last_vision_cache_cleanup') or 
-                current_time - getattr(self.__class__, '_last_vision_cache_cleanup', 0) > 60000
+                len(caches.allied_vision_cache) > 20 or
+                current_time - caches.last_vision_cache_cleanup > 60000
             ):
-                self.__class__._last_vision_cache_cleanup = current_time
+                caches.last_vision_cache_cleanup = current_time
                 # 保留最近的10个记录
-                if len(self.__class__._allied_vision_cache) > 10:
+                if len(caches.allied_vision_cache) > 10:
                     recent_alliances = sorted(
-                        self.__class__._allied_vision_timestamp.items(), 
-                        key=lambda x: x[1], 
+                        caches.allied_vision_timestamp.items(),
+                        key=lambda x: x[1],
                         reverse=True
                     )[:10]
-                    
+
                     # 创建新缓存
                     new_cache = {}
                     new_timestamps = {}
                     for alliance, timestamp in recent_alliances:
-                        new_cache[alliance] = self.__class__._allied_vision_cache[alliance]
+                        new_cache[alliance] = caches.allied_vision_cache[alliance]
                         new_timestamps[alliance] = timestamp
-                        
+
                     # 替换旧缓存
-                    self.__class__._allied_vision_cache = new_cache
-                    self.__class__._allied_vision_timestamp = new_timestamps
+                    caches.allied_vision_cache = new_cache
+                    caches.allied_vision_timestamp = new_timestamps
         
         # 更新历史观察记录
         self.partially_observed_squares = partially_observed_squares
@@ -806,7 +816,7 @@ class PerceptionMixin:
             self._prev_partial_squares = set(partially_observed_squares)
 
         # 处理联盟观察到的对象 - 使用联盟视野缓存
-        av_cache = self.__class__._allied_vision_cache.get(alliance_key)
+        av_cache = caches.allied_vision_cache.get(alliance_key)
         if av_cache is not None and "observed_objects" in av_cache:
             # place 在写入时已过滤；只剔除本桶内被删的对象
             cached_observed = av_cache["observed_objects"]
@@ -968,13 +978,15 @@ class PerceptionMixin:
         time_bucket = current_time // 250  # 与_is_seeing函数保持一致
         
         # 确保有缓存结构
-        # Round 4: 所有类级 cache 已在 Player 类体声明, 删除冗余 hasattr.
+        # 缓存按 world 隔离（见 World._perception_caches）。
+        caches = self._pcaches
         cls = self.__class__
 
         # 获取或创建玩家缓存
-        if self.id not in cls._global_vision_cache:
-            cls._global_vision_cache[self.id] = {}
-        player_cache = cls._global_vision_cache[self.id]
+        player_cache = caches.global_vision_cache.get(self.id)
+        if player_cache is None:
+            player_cache = {}
+            caches.global_vision_cache[self.id] = player_cache
 
         # 按位置分组 - 相同位置的对象可以一次性检查
         objects_by_place = {}
@@ -986,10 +998,10 @@ class PerceptionMixin:
 
         # 批量预检查 - 快速排除不在任何盟友观察区域内的位置
         # 玩家+时间桶级缓存：避免同一桶内重复合并
-        if cls._observed_union_bucket != time_bucket:
-            cls._observed_union_cache = {}
-            cls._observed_union_bucket = time_bucket
-        union_cache = cls._observed_union_cache
+        if caches.observed_union_bucket != time_bucket:
+            caches.observed_union_cache = {}
+            caches.observed_union_bucket = time_bucket
+        union_cache = caches.observed_union_cache
         if self.id not in union_cache:
             observed_places_union = set()
             for avp in self.allied_vision:
@@ -1000,15 +1012,15 @@ class PerceptionMixin:
         observed_places = observed_places_union
 
         # 初始化位置→覆盖该位置的观察者缓存（时间桶级）
-        if cls._place_covering_units_bucket != time_bucket:
-            cls._place_covering_units_cache = {}
-            cls._place_covering_units_bucket = time_bucket
+        if caches.place_covering_units_bucket != time_bucket:
+            caches.place_covering_units_cache = {}
+            caches.place_covering_units_bucket = time_bucket
 
         # 本时间桶方格可见性布尔缓存 (循环外 init 一次, 不在每个 place 重复 init)
-        if cls._place_visible_bucket != time_bucket:
-            cls._place_visible_cache = {}
-            cls._place_visible_bucket = time_bucket
-        pvc_root = cls._place_visible_cache
+        if caches.place_visible_bucket != time_bucket:
+            caches.place_visible_cache = {}
+            caches.place_visible_bucket = time_bucket
+        pvc_root = caches.place_visible_cache
         if self.id not in pvc_root:
             pvc_root[self.id] = {}
         place_visible_cache = pvc_root[self.id]
@@ -1057,7 +1069,7 @@ class PerceptionMixin:
                         # 只保留少量观察者用于早退，加速同一位置的多对象检查
                         if len(covering_units) >= 3:
                             break
-                cls._place_covering_units_cache[place] = covering_units
+                caches.place_covering_units_cache[place] = covering_units
 
             place_visible_for_any = len(covering_units) > 0
 
@@ -1069,7 +1081,7 @@ class PerceptionMixin:
                 cov_ids = tuple(sorted(u.id for u in covering_units)[:3])
             else:
                 cov_ids = ()
-            prev = cls._place_visible_history.get(history_key)
+            prev = caches.place_visible_history.get(history_key)
             if not place_visible_for_any and prev:
                 prev_bucket, prev_sig, prev_visible = prev
                 # 放宽为近3个桶内、覆盖者签名一致且上一判定为可见
@@ -1092,7 +1104,7 @@ class PerceptionMixin:
                 # 后续仅对隐身/隐形对象做细查
                 place_objects = remaining_to_check
             # 写入可见性历史
-            cls._place_visible_history[history_key] = (time_bucket, cov_ids, place_visible_for_any)
+            caches.place_visible_history[history_key] = (time_bucket, cov_ids, place_visible_for_any)
 
             # 对每个位置上的剩余对象进行检查
             for obj in place_objects:
@@ -1100,14 +1112,14 @@ class PerceptionMixin:
                 
                 # 检查缓存
                 if cache_key in player_cache:
-                    self.__class__._vision_cache_hits += 1
+                    caches.vision_cache_hits += 1
                     if player_cache[cache_key]:
                         visible_objects.add(obj)
                     else:
                         invisible_objects.add(obj)
                     continue
-                    
-                self.__class__._vision_cache_misses += 1
+
+                caches.vision_cache_misses += 1
                 
                 # 对象本身隐身/隐形且未被探测（附加：细查结果缓存）
                 if (getattr(obj, 'is_invisible', False) or getattr(obj, 'is_cloaked', False)) and obj not in self.detected_units:
@@ -1116,7 +1128,7 @@ class PerceptionMixin:
                     if not hasattr(self.__class__, '_invis_visibility_cache'):
                         self.__class__._invis_visibility_cache = {}
                         self.__class__._invis_visibility_bucket = time_bucket
-                    ivc = self.__class__._invis_visibility_cache
+                    ivc = caches.invis_visibility_cache
                     ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))
                     ivc_entry = ivc.get(ivc_key)
                     if ivc_entry:
@@ -1195,7 +1207,7 @@ class PerceptionMixin:
                     if not hasattr(self.__class__, '_invis_visibility_cache'):
                         self.__class__._invis_visibility_cache = {}
                         self.__class__._invis_visibility_bucket = time_bucket
-                    ivc = self.__class__._invis_visibility_cache
+                    ivc = caches.invis_visibility_cache
                     ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))
                     ivc[ivc_key] = (time_bucket, is_visible)
                 if is_visible:
@@ -1815,13 +1827,39 @@ class PerceptionMixin:
         if self._combat_snapshot_bucket == time_bucket:
             return
 
+        # A pure spectator has no units and never fights, but it *does* see the
+        # whole map (cheatmode).  Building its combat snapshot would read
+        # ``unit.menace`` for every visible enemy unit — and ``menace`` is
+        # cached on the unit for 5 seconds.  The live match and a spectator
+        # rebuild therefore first read a given unit's menace at different
+        # moments, so they ended up with different cached values (96 vs 72),
+        # which changed ``balance()`` and forked the two simulations.
+        #
+        # The spectator's menace data is never used for any decision, so skip
+        # the whole snapshot instead of perturbing the shared unit caches.
+        if getattr(self, "_is_pure_spectator", False):
+            self._combat_snapshot_bucket = time_bucket
+            self._combat_snapshot = {
+                "place_enemy_menace": {},
+                "enemy_presence_places": [],
+                "corpse_places": set(),
+                "friend_places": set(),
+                "bucket": time_bucket,
+                "timestamp": current_time,
+            }
+            return
+
         # 准备集合引用，减少属性访问
         perceived = self.perception
         mem_set = self.memory
 
         # 预先构建敌我玩家ID集合，加速归类判断（按玩家+节流缓存）
+        # 缓存值里存的是 *Player 对象*（enemy_players），所以缓存必须按 world
+        # 隔离；否则同进程的另一个 world（观战重建）会读到本 world 的敌人
+        # 列表（反之亦然），导致两边的感知发散。
+        caches = self._pcaches
         rel_key = self.id
-        rel_entry = self._relation_cache.get(rel_key)
+        rel_entry = caches.relation_cache.get(rel_key)
         if not rel_entry or current_time - rel_entry['ts'] > 1000:
             try:
                 enemy_players = [
@@ -1833,7 +1871,7 @@ class PerceptionMixin:
                 enemy_players = []
                 enemy_ids = set()
                 allied_ids = set()
-            self._relation_cache[rel_key] = {
+            caches.relation_cache[rel_key] = {
                 'ts': current_time,
                 'enemy': enemy_ids,
                 'allied': allied_ids,

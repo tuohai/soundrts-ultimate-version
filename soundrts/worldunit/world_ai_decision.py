@@ -438,11 +438,22 @@ class CreatureAIDecision(Entity):
 
         # 决策缓存: bucket 与进攻间隔对齐 (150ms).
         decision_bucket = current_time // 150
-        cls = self.__class__
-        if cls._decision_cache_bucket != decision_bucket:
-            cls._decision_cache = {}
-            cls._decision_cache_bucket = decision_bucket
-        decision_cache = cls._decision_cache
+        # The cache lives on the world, not on the class: a live match and a
+        # spectator rebuild share unit ids, so a class-level cache made the
+        # spectator reuse the live world's attack target (and diverge).
+        world = getattr(self, "world", None)
+        world_cache = getattr(world, "_decision_cache", None) if world is not None else None
+        if world_cache is None:
+            decision_cache = self.__class__._decision_cache
+            if self.__class__._decision_cache_bucket != decision_bucket:
+                self.__class__._decision_cache = {}
+                self.__class__._decision_cache_bucket = decision_bucket
+                decision_cache = self.__class__._decision_cache
+        else:
+            if world._decision_cache_bucket != decision_bucket:
+                world._decision_cache = {}
+                world._decision_cache_bucket = decision_bucket
+            decision_cache = world._decision_cache
         cache_key = (self.id, decision_bucket)
         if cache_key in decision_cache:
             # 恢复上一次的决策
