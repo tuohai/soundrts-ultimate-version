@@ -436,8 +436,14 @@ class Computer(Player):
                         if self._defer_plan_get_token(
                             name, saving_for_feudal=saving_for_feudal
                         ):
-                            if not saving_for_feudal:
-                                self._ensure_plan_production_building(name)
+                            # The maker building still has to go up: the AoE2
+                            # barracks is a *dark-age* building (175 wood, only
+                            # needs the town center), and the militia it
+                            # trains is exactly what the feudal wave wants.
+                            # Skipping it while saving for the age-up meant
+                            # the AI never got a barracks and never trained
+                            # a soldier (jl3: no barracks by 20 minutes).
+                            self._ensure_plan_production_building(name)
                             done = False
                             continue
                         if not self.get(n, w):
@@ -1048,11 +1054,107 @@ class Computer(Player):
             return False
         return True
 
-    def _warehouse_spend_blocked_by_wood_reserve(self, warehouse_cost, stores=None):
+    def _is_owned_farm(self, building):
+        """True if this building is a food *producer* the AI owns.
+
+        The predicate is data-driven so it must not confuse a food *store*
+        (the AoE2 mill / town center, the Mongol pasture) with a food
+        *producer* (the farm):
+
+        * a producer has ``auto_cultivate`` — it makes its own food and has
+          to be replanted;
+        * a store has ``storable_resource_types`` — villagers deposit food
+          there, it never grows anything.
+
+        A building that satisfies *both* would be ambiguous, so the store
+        wins: the drop-off must never be mistaken for a food source.
+        """
+        if building is None:
+            return False
+        if not getattr(building, "is_a_building", False):
+            return False
+        owner = getattr(building, "player", None)
+        player = getattr(self, "player", None)
+        if owner is not None and player is not None and owner is not player:
+            return False
+        stores = tuple(getattr(building, "storable_resource_types", ()) or ())
+        if "resource3" in stores:
+            # A drop-off, not a producer.
+            return False
+        if getattr(building, "auto_cultivate", 0):
+            return True
+        return getattr(building, "production_type", None) == "resource3"
+
+    def _is_food_provider_building(self, building_type):
+        """True for the buildings that make the AI's renewable food source.
+
+        AoE2: the *mill* (100 wood) is the prerequisite of the *farm* (60
+        wood).  The mill is not a food producer itself (its production_type is
+        resource1/wood) but it is what unlocks the farm, so it must be treated
+        as part of the food plan.
+        """
+        if building_type is None:
+            return False
+        name = getattr(building_type, "type_name", None) or getattr(
+            building_type, "__name__", None
+        )
+        if name == "farm":
+            return True
+        if name == "mill":
+            return True
+        parents = set(getattr(building_type, "expanded_is_a", ()) or ())
+        parents.update(getattr(building_type, "is_a", ()) or ())
+        if "mill" in parents:
+            return True
+        if getattr(building_type, "auto_cultivate", 0):
+            return True
+        return getattr(building_type, "production_type", None) == "resource3"
+
+    def _food_provider_chain_wood(self):
+        """Wood needed to get the food engine running from scratch.
+
+        AoE2 farm = 60 wood, but the farm requires a mill (100 wood) that the
+        AI must build first.  Without counting the mill the AI reserved only
+        60 wood, spent it on something else, and never got a farm at all
+        (jl3: every AI ended the game with 0 farms).
+        """
+        need = 0
+        has_mill = False
+        for u in getattr(self, "units", ()) or ():
+            name = getattr(u, "type_name", None)
+            if name == "mill" or name == "frank_mill" or name == "briton_mill":
+                has_mill = True
+                break
+        if not has_mill:
+            for mill_name in self._worker_buildable_type_names():
+                mill = rules.unit_class(mill_name)
+                if mill is None:
+                    continue
+                parents = set(getattr(mill, "expanded_is_a", ()) or ())
+                parents.update(getattr(mill, "is_a", ()) or ())
+                if mill_name != "mill" and "mill" not in parents:
+                    continue
+                cost = getattr(mill, "cost", None) or ()
+                wood = cost[1] if len(cost) > 1 else 0
+                if wood > need:
+                    need = wood
+                break
+        return need
+
+    def _warehouse_spend_blocked_by_wood_reserve(
+        self, warehouse_cost, stores=None, building_type=None
+    ):
         """True if this drop-off would steal wood needed for a get-line building."""
         cost = warehouse_cost or ()
         wood_cost = cost[1] if len(cost) > 1 else 0
         if wood_cost <= 0:
+            return False
+        # The mill is the prerequisite of the farm.  Blocking it because the
+        # wood reserve exists to *protect the food plan* is a deadlock: the
+        # AI banks wood for a farm it can never build because the building
+        # that enables the farm is refused first (jl3: 0 farms for every AI,
+        # food stalled at ~335 and the 500-food feudal click never came).
+        if self._is_food_provider_building(building_type):
             return False
         stores = tuple(stores or ())
         later = self._later_age_startable_production_wood()
@@ -1636,7 +1738,27 @@ class Computer(Player):
         )
 
     def _saving_food_for_age_compute(self):
-        phases = self._plan_unmet_phase_names()
+        # A single lookup: the lookahead set *contains* the current get line's
+        # types (see ``_lookahead_get_line_types``), so one call answers both
+        # "does the current line need an age?" and "does a later wave need
+        # one?".
+        #
+        # The AoE2 ``franks_intermediate`` plan asks for ``get 6 militia``
+        # (militia is a dark-age unit) *before* the ``get 4 scout_cavalry``
+        # wave that needs feudal_age.  With the current-line-only lookup the
+        # AI saw no unmet phase, decided it was not saving for an age, and
+        # spent every harvested food on militia (50 food each).  The food bank
+        # therefore never reached the 500 food the feudal click costs, so the
+        # AI never advanced past the dark age and never attacked (jl3: the
+        # feudal click slipped past 24 minutes).
+        #
+        # So the lookahead waves decide whether the food bank is being saved
+        # for an age-up -- but only while the AI has not researched *any*
+        # expensive-food age yet.  A later castle wave must not freeze the
+        # barracks forever, and the phase loop below already handles that:
+        # an expensive-food phase that is *already researched* makes the
+        # answer False.
+        phases = self._plan_unmet_phase_names(lookahead=True)
         if not phases or not self._phase_saves_food(phases[0]):
             return False
         current = phases[0]
@@ -1798,6 +1920,20 @@ class Computer(Player):
             return False
 
         return self._discovery_cache_get("expensive_food_age", _compute)
+
+    def _no_expensive_food_age_owned(self):
+        """True while the AI has not researched any expensive-food age yet.
+
+        This is the dark-age predicate: the first expensive-food age (AoE2
+        feudal, 500 food) is still ahead, so the food bank is being saved
+        for it.
+        """
+        if not self._ruleset_has_expensive_food_age():
+            return True
+        return not any(
+            self._phase_saves_food(name)
+            for name in (getattr(self, "upgrades", None) or ())
+        )
 
     def _first_startable_unpaid_maker_cost(self):
         """Gold, wood of the first unpaid get-line production building current ages allow.
@@ -2072,11 +2208,19 @@ class Computer(Player):
         return tuple(self._iter_lookahead_get_line_types(extra_gets=2))
 
     def _iter_startable_later_get_line_types(self):
-        """Later get-line units unlocked by a completed post-feudal expensive age.
+        """Later get-line units whose maker building can already be placed.
 
-        Stables are placeable after feudal and must not freeze castle farms.
-        Workshop requires castle, so after castle it must still bank wood even
-        on a watchdog line while imperial food is unpaid.
+        Two kinds of later-line units matter here:
+
+        * units whose maker is unlocked by a *completed* post-feudal expensive
+          age (stables after feudal, workshop after castle).  Their wood must
+          be banked even on a watchdog line while imperial food is unpaid.
+        * units whose maker has **no** age requirement at all (AoE2
+          ``barracks`` only needs ``town_center``).  Those are placeable in
+          dark age, so the AI must bank their 175 wood while it is still on
+          the ``get 8 peasant`` line — otherwise wood stays at 35 and the
+          barracks is never paid (jl3: the first AI sat on line 7 until
+          9 minutes with ``wood_reserve=0``).
         """
         from .worldrequirements import parse_requirement_clauses, requirements_satisfied
 
@@ -2119,6 +2263,7 @@ class Computer(Player):
                 ):
                     continue
                 unlocked_by_later_age = False
+                phase_requirements = []
                 for clause in parse_requirement_clauses(
                     getattr(mc, "requirements", ()) or ()
                 ):
@@ -2127,6 +2272,7 @@ class Computer(Player):
                     phase = clause[1]
                     if rules.get(phase, "class") != ["phase"]:
                         continue
+                    phase_requirements.append(phase)
                     if (
                         self._phase_saves_food(phase)
                         and phase != first_expensive
@@ -2135,6 +2281,11 @@ class Computer(Player):
                         unlocked_by_later_age = True
                         break
                 if unlocked_by_later_age:
+                    yield name
+                    break
+                # No age requirement at all (AoE2 barracks): placeable now, so
+                # its wood must be banked during the dark age.
+                if not phase_requirements:
                     yield name
                     break
 
@@ -2336,6 +2487,27 @@ class Computer(Player):
         unlock_w = self._next_plan_phase_building_wood_need()
         if unlock_w > cost:
             cost = unlock_w
+        # Only the *production building* belongs in this reserve.
+        #
+        # The farm (60 wood) and the mill (100 wood) that unlocks it used to
+        # be added here as well.  That was wrong in a very damaging way: the
+        # dark-age reserve became 175 (barracks) + 60 (farm) + 100 (mill) +
+        # 60 (replant) = 395 wood, so ``wood < reserve`` stayed true forever,
+        # ``_keep_lumberjacks()`` was permanently true and every lumberjack
+        # was pinned to the trees (jl3: 5-8 villagers on wood, 1-3 on food).
+        # The food engine then produced ~20 food/min, the 500-food feudal
+        # click never happened and the AI never attacked.
+        #
+        # Farm and mill wood are *demands*, not a reserve: they are paid out
+        # of the wood stock as the food engine needs them (see
+        # ``Computer.gather``), while the reserve only protects the wood of
+        # the building the next get line is waiting for.
+        #
+        # The threshold used to be 100, which silently dropped the 60-wood
+        # farm reserve: the reserve returned 0, the dark-age wood cap stayed
+        # at 2 lumberjacks and the AI never built a farm (jl3 britons AI).
+        # Any *positive* reserve must count — the reserve is a sum of
+        # independent wood commitments, not a single big one.
         if cost >= to_int("100"):
             return cost
         return 0
@@ -2417,21 +2589,121 @@ class Computer(Player):
         wood = res[1] if len(res) > 1 else 0
         return wood < need
 
+    def _resource_is_reserved(self, resource_index):
+        """True if this resource's workers must not be pulled onto another one.
+
+        Not every resource is equally precious:
+
+        * **food** (index 2) is reserved while the plan is banking an
+          expensive age-up or a trainer needs it.  The 500-food feudal click
+          is what gates the first military wave, so a farmer is never worth
+          more as a lumberjack.
+        * **wood** (index 1) is reserved while a production building is
+          unpaid, but *only* up to the wood crew cap -- see
+          ``_send_workers_toward_resources``.
+        * **gold** (index 0) is never reserved here: gold is only needed for
+          the get line's soldiers and for the age-up click, and a miner
+          standing on an idle mine is pure waste.  jl1: the beginner AI had
+          500 gold and 80 wood but its gold miner was never moved to the
+          farm, so the food engine never started.
+        """
+        if resource_index == 2:
+            return bool(
+                self._age_up_needs_food() or self._saving_food_for_age()
+            )
+        if resource_index == 1:
+            return bool(self._keep_lumberjacks())
+        return False
+
+    def _gold_is_needed(self):
+        """True if the AI still has to earn gold.
+
+        Gold is needed for the get line's soldiers (AoE2 militia 20,
+        aoe_archer 45) and for the age-up click.  When the AI already has
+        more gold than the plan can spend, a miner standing on an idle mine
+        is pure waste and may be moved onto a farm (jl1: the beginner AI had
+        500 gold, 80 wood and no food, and the gold miner was never moved).
+
+        Without this test the gold pass and the wood pass would steal each
+        other's workers every turn, so nothing was ever gathered.
+        """
+        gold_need = self._plan_unit_gold_need()
+        if gold_need:
+            res = getattr(self, "resources", None) or ()
+            gold = res[0] if len(res) > 0 else 0
+            if gold < gold_need:
+                return True
+        if "resource1" in self._age_up_missing_resource_types():
+            return True
+        return False
+
     def _keep_lumberjacks(self):
         """True when lumberjacks must not be pulled onto farms or gold.
 
         Dark age still banks feudal food, but ``gather(feudal)`` used to reassign
         the two wood villagers onto berries every AI turn, so a 75-wood pile
         next to the town center barely moved (jl3 barracks at 20:00).
+
+        The *farm replant* wood counts as a wood commitment just like the
+        production building: an empty farm yields nothing, so the AI needs a
+        chopper until the 60 wood are there (jl3: the barracks was paid at
+        4 minutes, ``_keep_lumberjacks()`` went False, every chopper was
+        pulled onto the farms, the farm never got its 60 wood back and the
+        food engine stayed dead -- the 500-food feudal click never came).
         """
         if self._wood_below_pending_building() or self._need_wood_for_age_up_farms():
             return True
+        replant = self._cultivate_missing_wood()
+        if replant:
+            res = getattr(self, "resources", None) or ()
+            wood = res[1] if len(res) > 1 else 0
+            if wood < replant:
+                return True
         reserve = self._plan_expensive_wood_reserve(ignore_age_defer=True)
         if not reserve:
             return False
         res = getattr(self, "resources", None) or ()
         wood = res[1] if len(res) > 1 else 0
         return wood < reserve
+
+    def _wood_crew_is_needed(self):
+        """True while a lumberjack is actually needed for the current wood debt.
+
+        ``_keep_lumberjacks()`` answers "is a *pending building* still
+        short of wood?".  That is the right question for the *gather
+        planner* (it decides whether an idle villager should chop), but it
+        is the wrong question for the *worker-protection* rule in
+        ``_send_workers_toward_resources``: there the question is "does this
+        lumberjack still have a job?".
+
+        The two differ on the res ruleset: there is no farm and no mill, so
+        the only wood commitment is the barracks (9 wood).  With the wood
+        cap at 3 the choppers sat at exactly 3 forever, the barracks' 9
+        wood were paid after a couple of minutes, and yet every chopper
+        stayed "reserved" -- so the gold pass could never move a single one
+        of them onto the gold mine.  Gold stayed at 2 for nine and a half
+        minutes, the barracks was never paid and the AI never attacked.
+
+        So: a lumberjack is needed while the wood stockpile is still short
+        of *any* pending wood commitment (building, replant, age-up farms).
+        Once the wood is banked, the chopper is free to mine gold.
+        """
+        res = getattr(self, "resources", None) or ()
+        wood = res[1] if len(res) > 1 else 0
+        if self._wood_below_pending_building():
+            return True
+        if self._need_wood_for_age_up_farms():
+            return True
+        replant = self._cultivate_missing_wood()
+        if replant and wood < replant:
+            return True
+        reserve = self._plan_expensive_wood_reserve(ignore_age_defer=True)
+        if reserve and wood < reserve:
+            return True
+        trainer_w = self._owned_trainer_wood_need()
+        if trainer_w and wood < trainer_w:
+            return True
+        return False
 
     def _wood_dropoff_place(self):
         """Town-center / lumber-mill square; chop near here when barracks wood is short."""
@@ -2464,6 +2736,32 @@ class Computer(Player):
             return int(cargo[1] or 0)
         except (TypeError, ValueError):
             return 0
+
+    def _worker_is_carrying(self, worker):
+        """True if the worker holds cargo that would be lost by re-tasking it.
+
+        Cancelling the order of a worker that already carries food/gold/wood
+        throws that cargo away: the walk home restarts from zero.  On jl3 the
+        AI issued 20 ``stop`` orders per minute per AI, most of them on
+        ``bring_back`` workers (cargo 4479 / 9496 food), so the food income
+        collapsed to ~20-40/min and the 500-food feudal click never came.
+        """
+        cargo = getattr(worker, "cargo", None)
+        if not cargo:
+            return False
+        try:
+            return int(cargo[1] or 0) > 0
+        except (TypeError, ValueError):
+            return False
+
+    def _worker_is_returning_home(self, worker):
+        """True if the worker's gather order is already walking cargo home."""
+        # Look through the whole queue: an imperative head (boar lure
+        # "attack") hides the live gather order behind it.
+        o = self._worker_gather_order(worker)
+        if o is None:
+            return False
+        return getattr(o, "mode", None) in ("bring_back", "store")
 
     def _force_wood_dropoff_if_plan_building_ready(self):
         """Send lumberjacks home when carried wood would pay barracks/range.
@@ -2733,9 +3031,62 @@ class Computer(Player):
         return self._would_spend_past_plan_building(wcost)
 
     def _wood_gather_worker_cap(self, n_workers):
-        """How many workers to put on wood. Cap of 2 is only while saving food."""
+        """How many workers to put on wood.
+
+        The dark age used to be hard-capped at 2 lumberjacks "while saving
+        food", but the AI also needs wood for the farms (60 wood per replant)
+        and for the next wave's barracks (175 wood).  With 2 lumberjacks the
+        whole wood income was smaller than a single farm replant, so on jl3 no
+        villager ever held an axe and the food engine died after the first
+        harvest.
+        """
         n_w = max(1, int(n_workers or 0))
+        # The farm replant (AoE2 farm: 60 wood) is a *hard* requirement of the
+        # food engine: an empty farm yields nothing, so every villager on it
+        # harvests zero food.  jl3: the farms sat at 0 food with ``mode=auto``
+        # for the whole game because the wood crew (capped at 2) could never
+        # save up 60 wood -- and with the food engine dead the 500-food
+        # feudal click never came and the AI never attacked.
+        #
+        # So the replant is paid *before* the next production building: the
+        # barracks can wait a couple of minutes, a dead farm cannot.
+        #
+        # This is a *dark age* rule only.  Once a later wave is running (the
+        # AoE2 castle wave needs 800 food and the archery/barracks wood is
+        # paid), a tight wood crew starves the farms again -- and the wood
+        # cap must grow so the replant and the next building both get paid
+        # (test_harvest_grown_farms_before_more_wood expects >= 5 choppers
+        # with 10 villagers while an empty farm waits to be replanted).
         if self._before_first_expensive_food_age():
+            replant = self._cultivate_missing_wood()
+            if replant:
+                res = getattr(self, "resources", None) or ()
+                wood = res[1] if len(res) > 1 else 0
+                if wood < replant:
+                    # Not enough wood yet: keep enough choppers to get there.
+                    #
+                    # Two choppers gather 60 wood in ~2.5 minutes (0.39 wood/s
+                    # each).  The old cap was ``(n_w * 3) // 5``, which put 4 of
+                    # 8 villagers on wood for a 60-wood replant and starved the
+                    # farms -- and the farms are what feed the 500-food feudal
+                    # click (jl1: 4 choppers vs 3 farmers; jl3: 7 choppers vs 5
+                    # farmers).
+                    return 2
+        if self._before_first_expensive_food_age():
+            reserve = self._plan_expensive_wood_reserve(ignore_age_defer=True)
+            if reserve:
+                # The dark-age reserve is the *barracks* (175 wood) alone now
+                # (the farm / mill wood is a demand, not a reserve), so it
+                # stays unmet for a long time.
+                #
+                # Food is what gates the first military wave, so the wood cap
+                # must stay small (2 villagers) until the food engine is
+                # actually producing.  Once farms yield regularly the cap can
+                # grow, because the wood reserve is then paid by 2 choppers
+                # at 0.39 food/s -> ~23 wood/min each.
+                if self._food_engine_running():
+                    return max(2, (n_w * 2) // 5)
+                return 2
             return 2
         if self._plan_expensive_wood_reserve(ignore_age_defer=True):
             return max(5, (n_w * 3) // 4)
@@ -2762,6 +3113,55 @@ class Computer(Player):
 
     def _owned_trainer_wood_need_compute(self):
         return self._owned_trainer_resource_need_compute(1)
+
+    def _plan_unit_gold_need(self):
+        """Gold still missing to train the current get line's soldiers.
+
+        AoE2 soldiers cost gold (militia 20, aoe_archer 45).  Without this the
+        gather planner only ever saw *buildings* as gold sinks (barracks costs
+        0 gold), so the gold ratio stayed at ``have/40`` and no villager ever
+        walked to a gold mine -- the get line could never complete because
+        4 militia + 8 aoe_archer need 440 gold.
+        """
+        return self._play_memo_get(
+            ("unit_gold_need", getattr(self, "_line_nb", 0)),
+            self._plan_unit_gold_need_compute,
+        )
+
+    def _plan_unit_gold_need_compute(self):
+        nb = getattr(self, "nb", None)
+        if not callable(nb):
+            return 0
+        try:
+            line = self._plan[self._line_nb]
+        except Exception:
+            return 0
+        if not isinstance(line, str) or not line.startswith("get "):
+            return 0
+        need = 0
+        n = 1
+        for token in str(line).split()[1:]:
+            if re.match("^[0-9]+$", token):
+                n = int(token)
+                continue
+            wanted = self.equivalent(token)
+            if self._is_worker_type_name(wanted):
+                n = 1
+                continue
+            uc = rules.unit_class(wanted)
+            cost = getattr(uc, "cost", None) or ()
+            gold = cost[0] if cost else 0
+            if gold <= 0:
+                continue
+            try:
+                have = nb(wanted)
+            except Exception:
+                have = 0
+            missing = max(0, n - have)
+            if missing:
+                need += missing * gold
+            n = 1
+        return need
 
     def _owned_trainer_resource_need_compute(self, res_index):
         """Cost of one still-wanted get-line soldier from an owned building."""
@@ -3044,6 +3444,13 @@ class Computer(Player):
                 return -3.0
         if resource_index == 0 and pg and have < pg:
             return -2.5
+        # Gold for the get line's soldiers (militia/aoe_archer).  Buildings
+        # cost no gold, so without this the ratio stayed at have/40 and no
+        # villager ever mined: 4 militia + 8 aoe_archer need 440 gold.
+        if resource_index == 0:
+            gold_need = self._plan_unit_gold_need()
+            if gold_need and have < gold_need:
+                return -2.0
         age_missing = self._age_up_missing_resource_types()
         if resource_index == 0 and "resource1" in age_missing:
             return -2.0
@@ -3384,6 +3791,13 @@ class Computer(Player):
             # still dies if recultivate wood is spent elsewhere.
             if self._age_up_needs_food() and not self._wood_below_pending_building():
                 n = max(n, max(6, workers // 2))
+            # While the plan is *blocked* on the food-costing age the AI must
+            # bank 500 food, and the only renewable source is the farm.
+            # Two farms are not enough: a farm that empties costs 60 wood to
+            # replant, and the replant only pays off after the next harvest.
+            # jl3: the britons AI had 0 farms and the food stalled at 335.
+            if self._saving_food_for_age():
+                n = max(n, max(4, workers // 2))
             return n
         if resource_index == 0:
             return max(1, workers // 8)
@@ -3432,8 +3846,52 @@ class Computer(Player):
                     continue
                 if i == 2 and self._should_defer_food_building_expansion(t.cost):
                     continue
+                # AoE2 farm requires a mill (``requirements mill``), and the
+                # mill is *not* a food producer itself (its production_type is
+                # resource1/wood), so ``_resource_building_types("resource3")``
+                # never returns it.  Without this the AI kept trying to build
+                # a farm it could never place: on jl3 every AI ended up with
+                # 0 farms and starved before the 500-food feudal click.
+                if not self._ensure_farm_provider_building(t):
+                    continue
                 self.build_or_train_or_upgradeto_or_summon(t)
                 return
+
+    def _ensure_farm_provider_building(self, building_type):
+        """Make sure the requirement chain of a food building is in place.
+
+        Returns True when the AI may go ahead and build *building_type*.
+        For an AoE2 farm that means a mill must exist (or be on its way);
+        otherwise the build order is dropped and the AI keeps no food source
+        at all.
+        """
+        from .worldrequirements import requirements_satisfied
+
+        if getattr(building_type, "type_name", None) != "farm":
+            return True
+        if requirements_satisfied(self, getattr(building_type, "requirements", ()) or ()):
+            return True
+        # The farm needs a mill: build one (100 wood) before the farm.
+        for mill_name in self._worker_buildable_type_names():
+            mill = rules.unit_class(mill_name)
+            if mill is None:
+                continue
+            # The provider is the semantic ``mill`` itself or a civ shell that
+            # expands to it (``frank_mill``).  The base ``mill`` does *not*
+            # list itself in ``expanded_is_a``, so the name has to be checked
+            # separately — otherwise no provider is ever found and the farm
+            # build order is silently dropped (jl3: 0 farms for every AI).
+            parents = set(getattr(mill, "expanded_is_a", ()) or ())
+            parents.update(getattr(mill, "is_a", ()) or ())
+            if mill_name != "mill" and "mill" not in parents:
+                continue
+            if self.nb(mill_name) > 0 or self.future_nb([mill_name]) > 0:
+                return True
+            if self.missing_resources(getattr(mill, "cost", None) or ()):
+                return False
+            self.build_or_train_or_upgradeto_or_summon(mill)
+            return False
+        return True
 
     def _idle_resource_buildings_produce(self):
         keep_farms = self._should_keep_farms_producing()
@@ -3444,18 +3902,54 @@ class Computer(Player):
                 prod = getattr(u, "production_cost", None)
                 if prod is None:
                     prod = getattr(getattr(u, "type", None), "production_cost", None)
-                steal_wood = self._would_spend_past_plan_building(
-                    prod, ignore_age_defer=True
-                )
+                # A farm that still holds food needs no wood at all.  Only a
+                # farm that has to be *replanted* can spend wood, and that
+                # wood only comes due when the farm is actually empty.
+                #
+                # Evaluating the recultivation cost for a full farm made the
+                # 60-wood replant look like it was stealing from the 175-wood
+                # barracks reserve, so the farm's mode was cleared to None and
+                # the farm died for good (jl3: every farm ended up
+                # ``mode=None`` with 0 food, and the AI never clicked feudal).
+                needs_replant = self._farm_needs_recultivate(u)
+                steal_wood = False
+                if needs_replant:
+                    steal_wood = self._would_spend_past_plan_building(
+                        prod, ignore_age_defer=True
+                    )
                 if not keep_farms or steal_wood:
                     # The engine restarts depleted farms between AI turns while
                     # current_production_mode is still "auto"; that 60 wood
                     # never lets archery reach 175.
+                    #
+                    # But flipping the mode to None is a one-way door: the farm
+                    # can never recultivate again, so a single turn with short
+                    # wood kills that farm forever.  On jl3 the 175-wood
+                    # barracks reserve was unreachable (2 lumberjacks), so
+                    # ``steal_wood`` was permanently true and *every* farm died
+                    # (farm decisions: 14596 steal_wood skips, 0 starts).
+                    # The food collapse then blocked the 500-food feudal click
+                    # and the AI never attacked.
+                    #
+                    # So the mode is only cleared while the farm still has
+                    # food to give, and it is restored as soon as the wood is
+                    # back: a farm that ran dry must be able to replant.
                     if getattr(u, "current_production_mode", None) == "auto":
                         u.current_production_mode = None
                     continue
                 if getattr(u, "is_producing", False) or u.orders:
                     continue
+                # A farm whose mode was cleared earlier (short wood at that
+                # moment) must be able to recultivate again.  This has to
+                # happen *before* the qty check: the farm may already hold
+                # food again (a villander brought some in), but without the
+                # "auto" mode the engine never restarts its production cycle,
+                # so it would sit full and idle for the rest of the game.
+                if (
+                    getattr(u, "current_production_mode", None) is None
+                    and not getattr(u, "_user_manually_stopped", False)
+                ):
+                    u.current_production_mode = "auto"
                 if getattr(u, "resource_qty", 0) > 0:
                     continue
                 if not self._can_afford_production_cost(u):
@@ -3468,15 +3962,47 @@ class Computer(Player):
                     continue
                 u.take_order(["auto_produce"])
 
-    def _cultivate_missing_wood(self):
-        """Wood still needed to restart idle auto-cultivate buildings (farms)."""
+    def _farm_needs_recultivate(self, u):
+        """True if this auto-cultivate building will have to be replanted.
+
+        The engine only restarts a depleted ``gather`` building when its
+        buffer is **empty** (``resource_qty == 0`` — see
+        ``worldunit/world_status_update.py``: ``resource_depleted = vol_max > 0
+        and self.resource_qty == 0``).  A farm that still holds food needs no
+        wood at all.
+
+        An earlier version used ``qty < capacity``, i.e. "any farm that is not
+        full".  That was wrong in the most damaging way: a farm holding 115 of
+        its 175 food was judged as needing a 60-wood replant, so
+        ``_idle_resource_buildings_produce`` computed ``steal_wood`` against
+        the next-wave wood reserve, cleared the farm's ``auto`` mode, and the
+        farm died for good (jl3: farms dropped from 175 food to 0 with
+        ``mode=None`` and the AI's food income collapsed).
+
+        So the condition has to match the engine exactly: empty means replant.
+        """
+        if getattr(u, "is_producing", False) or u.orders:
+            return False
+        qty = getattr(u, "resource_qty", 0)
+        try:
+            qty = int(qty or 0)
+        except (TypeError, ValueError):
+            return False
+        return qty <= 0
+
+    def _farm_recultivate_wood(self):
+        """Wood one idle farm needs to be replanted (AoE2 farm: 60 wood).
+
+        A farm is a ``gather`` building: it starts full (175 food), the
+        villagers eat that, and then it sits empty until it is replanted.
+        Replanting costs wood, so an AI that never banks that wood loses its
+        whole food engine after the first harvest.
+        """
         need = 0
         for u in getattr(self, "units", ()) or ():
             if not getattr(u, "auto_cultivate", 0):
                 continue
-            if getattr(u, "is_producing", False) or u.orders:
-                continue
-            if getattr(u, "resource_qty", 0) > 0:
+            if not self._farm_needs_recultivate(u):
                 continue
             prod = getattr(u, "production_cost", None)
             if prod is None:
@@ -3486,6 +4012,55 @@ class Computer(Player):
             if wood > need:
                 need = wood
         return need
+
+    def _cultivate_missing_wood(self):
+        """Wood still needed to restart idle auto-cultivate buildings (farms)."""
+        return self._farm_recultivate_wood()
+
+    def _plan_needs_food(self):
+        """True when the current plan line is waiting on food (any reason).
+
+        Two different situations both mean "the AI is hungry":
+        ``_age_up_needs_food()`` (the age click itself is missing food) and
+        ``_saving_food_for_age()`` (the get line is blocked on an age that
+        costs food).  Both need a *renewable* food source, so both must
+        count when deciding whether the AI needs a farm.
+        """
+        if self._saving_food_for_age():
+            return True
+        return self._age_up_needs_food()
+
+    def _food_building_wood_need(self):
+        """Wood needed to build the next missing farm (AoE2 farm: 60 wood).
+
+        ``_farm_recultivate_wood()`` only covers farms that *already exist*
+        and are empty.  On jl3 the britons AI had **no farm at all**: the
+        farm costs 60 wood, but wood was only ever requested for the plan's
+        production building (barracks, already paid) or for re-cultivating
+        an existing farm — a chicken-and-egg deadlock.  The AI therefore
+        never got a renewable food source and its food stalled at ~335.
+
+        This helper reports the wood needed to *build* the first missing
+        farm, so ``Computer.gather`` can ask for wood and break the loop.
+        """
+        if not self._plan_needs_food():
+            return 0
+        target = self._target_resource_building_count(2)
+        have = 0
+        for u in getattr(self, "units", ()) or ():
+            if getattr(u, "auto_cultivate", 0):
+                have += 1
+        if have >= max(1, target):
+            return 0
+        for type_name in self._resource_building_types("resource3"):
+            t = rules.unit_class(type_name)
+            if t is None:
+                continue
+            cost = getattr(t, "cost", None) or ()
+            wood = cost[1] if len(cost) > 1 else 0
+            if wood:
+                return wood
+        return 0
 
     def _should_defer_food_building_expansion(self, spend_cost=None):
         """True if a new mill/farm would steal recultivate wood from an age-up.
@@ -3522,6 +4097,41 @@ class Computer(Player):
                 continue
             if getattr(u, "resource_qty", 0) > 0:
                 return True
+        return False
+
+    def _food_engine_running(self):
+        """True if the farm network is actually producing food.
+
+        The dark-age wood cap must stay small while the AI has no food
+        income at all: with 2/3 of the villagers chopping wood the farms
+        starved (jl3).  Once at least one farm is *being harvested* the
+        wood reserve can be paid without touching the food engine.
+
+        ``_has_harvestable_food_buildings()`` only asks "is there food in a
+        farm"; it is true from the moment the farm is finished, even if no
+        villager ever walks to it.  This helper also requires a villager to
+        be on the farm, so the cap only relaxes when food really flows.
+        """
+        has_farm = False
+        for u in getattr(self, "units", ()) or ():
+            if not getattr(u, "auto_cultivate", 0):
+                continue
+            has_farm = True
+            if getattr(u, "resource_qty", 0) <= 0:
+                continue
+            for w in getattr(self, "_workers", ()) or ():
+                orders = getattr(w, "orders", None) or ()
+                if not orders:
+                    continue
+                o = orders[0]
+                if getattr(o, "keyword", None) != "gather":
+                    continue
+                if getattr(o, "target", None) is u:
+                    return True
+        if has_farm:
+            return False
+        # No farm at all: the AI is still building one, so food must come
+        # from the wild.  Do not relax the cap either.
         return False
 
     def _deposit_has_resources(self, target):
@@ -3879,6 +4489,42 @@ class Computer(Player):
                 dropoff = alt()
         return getattr(dropoff, "place", None) if dropoff is not None else None
 
+    def _worker_gather_order(self, worker):
+        """The gather order this worker is really running, or None.
+
+        ``worker.orders[0]`` is not always the meaningful order: an
+        *imperative* order (e.g. the boar lure's ``attack``) keeps the head of
+        the queue, and the ordinary gather order is pushed behind it.  Every
+        "is this worker already gathering?" check used to read only
+        ``orders[0]``, so such a worker looked idle and got a *new* gather
+        order every single AI turn.  The fresh order can never cancel the
+        imperative head (``CreatureOrders.take_order`` keeps ``forget_previous``
+        False while an imperative head is queued), so it only lands behind it
+        and the next turn sees the same ``attack`` again -- an endless loop.
+
+        Measured on jl3: one villager received 11 gather orders inside a
+        single AI turn, alternating farm <-> wood, and never gathered a thing.
+        The AI0 food engine measured ~10 food/min because of it.
+
+        This helper looks at the *whole* queue, so a worker that already has a
+        live gather order is recognised whatever sits in front of it.
+        """
+        for o in getattr(worker, "orders", None) or ():
+            if getattr(o, "keyword", None) == "gather":
+                return o
+        return None
+
+    def _worker_gather_resource_index(self, worker):
+        """Resource index of the worker's live gather order, or None."""
+        o = self._worker_gather_order(worker)
+        if o is None:
+            return None
+        return self._target_resource_index(getattr(o, "target", None))
+
+    def _worker_is_gathering(self, worker):
+        """True if the worker has a live gather order (queued behind anything)."""
+        return self._worker_gather_order(worker) is not None
+
     def _worker_order_matches(self, worker, keyword, target=None, target_id=None):
         orders = getattr(worker, "orders", None) or ()
         if not orders:
@@ -3966,6 +4612,58 @@ class Computer(Player):
             return ready[0]
         return self._pick_nearest_reachable(origin, ready) or ready[0]
 
+    def _boar_lure_is_safe(self, worker, animal):
+        """True if a villager can lure this animal without dying.
+
+        The AoE2 boar is *faster* than a villager (boar speed 1.5 vs
+        villager 0.8) and it pursues whoever hit it (``pursue_attacker 1``).
+        A villager that hits the boar and then runs home therefore cannot
+        escape: the boar catches it and beats it to death (25 hp vs 2
+        damage every 1.5 s).  That is what killed the jl3 AIs: 4 and 5
+        villagers died to boars, which kept the food engine from growing
+        and the AI never reached its first military wave.
+
+        So only lure an animal that the villager can actually survive:
+        it must not be faster than the villager (otherwise the chase is a
+        death sentence) and the villager must win the hit trade.
+
+        Data that is missing is treated as "cannot judge" and does not block
+        the lure, so the check never disables hunting on its own.
+        """
+        if animal is None:
+            return False
+        try:
+            animal_speed = int(getattr(animal, "speed", 0) or 0)
+            worker_speed = int(getattr(worker, "speed", 0) or 0)
+        except (TypeError, ValueError):
+            return True
+        # A faster pursuer always catches the villager: do not even try.
+        if animal_speed > 0 and worker_speed > 0 and animal_speed > worker_speed:
+            return False
+        try:
+            animal_dmg = int(getattr(animal, "mdg", 0) or 0)
+            animal_cd = int(getattr(animal, "mdg_cd", 1) or 1)
+            worker_dmg = int(getattr(worker, "mdg", 0) or 0)
+            worker_cd = int(getattr(worker, "mdg_cd", 1) or 1)
+            animal_hp = int(getattr(animal, "hp", 0) or 0)
+            worker_hp = int(getattr(worker, "hp", 0) or 0)
+        except (TypeError, ValueError):
+            return True
+        if animal_dmg <= 0 or worker_dmg <= 0:
+            return True
+        if not animal_hp or not worker_hp:
+            return True
+        if animal_cd <= 0:
+            animal_cd = 1
+        if worker_cd <= 0:
+            worker_cd = 1
+        # How many hits does the villager need to kill the animal, and how
+        # many hits does it take before the animal kills the villager?
+        hits_to_kill = max(1, -(-animal_hp // worker_dmg))
+        hits_to_die = max(1, -(-worker_hp // animal_dmg))
+        # The villager wins the trade only if it needs strictly fewer hits.
+        return hits_to_kill < hits_to_die
+
     def _try_start_boar_lure(self, worker):
         if getattr(worker, "_lure_animal", None) is not None:
             return False
@@ -3975,6 +4673,8 @@ class Computer(Player):
             return False
         animal = self._choose_boar_lure_target(worker)
         if animal is None:
+            return False
+        if not self._boar_lure_is_safe(worker, animal):
             return False
         worker._lure_animal = animal
         worker._lure_run_home = False
@@ -4305,9 +5005,28 @@ class Computer(Player):
             candidates.append(u)
 
         if candidates:
+            # AoE2 food comes from two very different places: the AI's own
+            # *farm* (renewable — replanted for 60 wood, yields 175 food over
+            # and over) and a wild *orchard* / deer / sheep (finite, it runs
+            # out).  Sorting purely by need ratio and then by distance sent
+            # every villager to the closest wild orchard, so the farm stood
+            # untouched at 175 food while the AI starved at ~300 food and
+            # never reached the 500-food feudal click (jl3).
+            #
+            # So a renewable food building wins the tie against a wild
+            # deposit of the same resource.
+            def _renewable_rank(t):
+                idx = self._target_resource_index(t)
+                if idx != 2:
+                    return 1
+                if getattr(t, "auto_cultivate", 0) and getattr(t, "resource_qty", 0) > 0:
+                    return 0
+                return 1
+
             candidates.sort(
                 key=lambda t: (
                     self._resource_need_ratio(self._target_resource_index(t)),
+                    _renewable_rank(t),
                     square_of_distance(origin.x, origin.y, t.place.x, t.place.y),
                 )
             )
@@ -4320,6 +5039,20 @@ class Computer(Player):
                 if self._resource_need_ratio(self._target_resource_index(t))
                 <= best_ratio + 1e-9
             ]
+            # The renewable preference has to be applied at the *selection*
+            # level, not merely in the sort order: ``_pick_nearest_reachable``
+            # re-sorts by distance, so a farm that is farther than the wild
+            # orchard was always skipped and the farm stood at 0 food
+            # forever (jl3: 4 farms built, all with resource_qty 0, while the
+            # AI starved below the 500-food feudal click).
+            #
+            # So when food is the resource we want and at least one renewable
+            # food building is available, restrict the candidate set to the
+            # renewable ones.
+            if self._target_resource_index(candidates[0]) == 2:
+                renewable = [t for t in preferred if _renewable_rank(t) == 0]
+                if renewable:
+                    preferred = renewable
             avoid = True
 
             def _gather_place(t):
@@ -4543,52 +5276,160 @@ class Computer(Player):
         worker.take_order(["go", dest.id])
         return True
 
+    def _is_dedicated_scout(self, u):
+        """True if *u* is the unit currently doing map exploration.
+
+        The scout is the only unit the AI keeps on ``auto_explore``, and the
+        economy must not steal it.  On res jl1 the single starting peasant
+        was exploring the map (destination square 6 = the human base) when
+        the wood/gather pass took it back to chop trees: the AI then had no
+        scout at all for two and a half minutes, and the first sighting of
+        the enemy base happened at 3m32s (3m24s on some seeds) instead of the
+        ~30s the walk itself takes.  Because the scout was only re-tasked on
+        some seeds, the discovery time jittered by 8.4s.
+        """
+        return bool(getattr(u, "_is_scout", False))
+
     def _send_workers_toward_resources(self, resource_indices, max_workers=None):
         """Reassign a few workers to gather specifically needed resources (e.g. farm food)."""
         if not resource_indices:
             return
         indices = list(resource_indices)
         n_w = max(1, len(getattr(self, "_workers", ()) or ()))
+
+        def _cap_for(resource_index):
+            if resource_index == 1:
+                return self._wood_gather_worker_cap(n_w)
+            if resource_index == 2:
+                # Food for the age-up is the whole point of the dark age: the
+                # 500-food feudal click gates the first military wave.  The
+                # cap used to be tied to ``_keep_lumberjacks()``, so as soon as
+                # the AI reserved wood for the barracks (175) the food cap
+                # collapsed to 2 villagers and the feudal click slipped past
+                # 20 minutes (jl3).  Lumberjacks are protected by the
+                # ``_keep_lumberjacks()`` guard in the loop below, so the food
+                # cap can be generous without stealing them.
+                if self._age_up_needs_food():
+                    return max(3, n_w // 2)
+                # Blocked on the food-costing age: the 500-food bank needs
+                # every villager the farm can feed, and the wild orchard is
+                # finite (it runs out after the first harvests).
+                if self._saving_food_for_age():
+                    return max(4, (n_w * 2) // 3)
+                return 2
+            if resource_index == 0:
+                # Gold for the get line's soldiers (militia 20, aoe_archer 45).
+                # 4 militia + 8 aoe_archer = 440 gold; with the default cap of
+                # 2 miners the wave could never be paid for.
+                gold_need = self._plan_unit_gold_need()
+                res = getattr(self, "resources", None) or ()
+                gold = res[0] if len(res) > 0 else 0
+                if gold_need and gold < gold_need:
+                    return max(2, n_w // 4)
+                if (
+                    "resource1" in self._age_up_missing_resource_types()
+                    and not self._keep_lumberjacks()
+                ):
+                    return max(2, n_w // 3)
+            return 2
+
         caps = {}
         for resource_index in indices:
             cap = max_workers
             if cap is None:
-                if resource_index == 1:
-                    cap = self._wood_gather_worker_cap(n_w)
-                elif (
-                    resource_index == 2
-                    and self._age_up_needs_food()
-                    and not self._keep_lumberjacks()
-                ):
-                    cap = max(2, n_w // 2)
-                elif (
-                    resource_index == 0
-                    and "resource1" in self._age_up_missing_resource_types()
-                    and not self._keep_lumberjacks()
-                ):
-                    cap = max(2, n_w // 3)
-                else:
-                    cap = 2
+                cap = _cap_for(resource_index)
             caps[resource_index] = cap
 
-        def _gather_resource_index(u):
-            if u.orders and u.orders[0].keyword == "gather":
-                return self._target_resource_index(u.orders[0].target)
-            return None
+        # The cap table must cover *every* resource, not only the ones this
+        # pass asks for.        #
+        # The dark-age get line asks for food (500) and wood (175) in the
+        # *same* turn, and ``Computer.gather()`` sends one request per
+        # missing resource.  The two passes ran back to back over the same
+        # worker list: the wood pass put two villagers on the trees, and the
+        # food pass -- whose ``caps`` only knew about food -- saw them on
+        # wood, found "wood is under its cap" nowhere and took them back
+        # onto the farms.  The next turn repeated the whole dance.
+        #
+        # Every re-issue re-created the ``GatherOrder``, which resets the
+        # continuous-gather accumulator (``_cont_accum`` / ``_cont_last_t``)
+        # and throws away the cargo in transit, so neither wood nor food ever
+        # accumulated: the 500-food feudal click slipped past 24 minutes and
+        # the AI never attacked (jl3: 3 intermediate AIs silent for 30+ min).
+        all_caps = dict(caps)
+        for resource_index in (0, 1, 2):
+            if resource_index not in all_caps:
+                all_caps[resource_index] = _cap_for(resource_index)
 
-        counts = {i: 0 for i in indices}
+        def _gather_resource_index(u):
+            # Look at the WHOLE order queue, not just orders[0]: an imperative
+            # order (boar lure's "attack") keeps the head of the queue and
+            # hides the live gather order behind it.  Reading only orders[0]
+            # made such workers look idle, so the AI re-issued a gather order
+            # every turn (11 times in one turn on jl3) and the worker never
+            # gathered anything.
+            return self._worker_gather_resource_index(u)
+
+        def _is_already_gathering(u, target):
+            """True if *u* already has a live gather order for *target*.
+
+            Re-issuing a gather order for the *same* target is pure waste: it
+            cancels the running ``GatherOrder`` and installs a fresh one, which
+            resets the continuous-gather accumulator (``_cont_accum`` /
+            ``_cont_last_t``) and throws the cargo in transit away.
+            """
+            orders = getattr(u, "orders", None) or ()
+            for o in orders:
+                if getattr(o, "keyword", None) != "gather":
+                    continue
+                if getattr(o, "target", None) is target:
+                    return True
+            return False
+
+        # The counts must cover every resource too: the guard below compares
+        # the *current* worker count of a resource against that resource's
+        # cap, so a resource that is not in this pass would look like "no
+        # workers at all" and its workers would be stolen.
+        #
+        # Counting the same workers twice would double every count, so a
+        # resource that was already at its cap would look like it had twice
+        # as many workers as it did -- and the guard would then let the food
+        # pass steal the lumberjacks (and vice versa).
+        counts = {i: 0 for i in all_caps}
         for u in getattr(self, "_workers", ()) or ():
             idx = _gather_resource_index(u)
-            if idx in counts:
+            if idx is not None and idx in counts:
                 counts[idx] += 1
 
         for resource_index in indices:
             cap = caps[resource_index]
+            # A crew that is already at (or above) its cap needs nobody.
+            #
+            # This check used to depend on the ORDER in which the workers
+            # happen to sit in ``self._workers``: the pass walked the list
+            # and, as soon as it met a worker of *another* resource, stole
+            # it -- even when this resource's own crew was already full
+            # (that crew was only counted further down the list).  The food
+            # pass and the wood pass then stole from each other on every
+            # single AI tick: 4-6 ``stop``+``gather`` pairs per turn, each
+            # pair cancelling the running GatherOrder, which resets the
+            # continuous-gather accumulator and throws the cargo in transit
+            # away.  The food engine then produced ~40 food/min instead of
+            # ~100, and the 500-food feudal click slipped past 17 minutes
+            # (jl3).
+            #
+            # So the crew size is checked up-front, against the *global*
+            # counts, and the pass is skipped when the crew is full.
+            if counts.get(resource_index, 0) >= cap:
+                continue
             sent = 0
             for u in self._workers:
                 if sent >= cap:
                     break
                 if getattr(u, "is_inside", False):
+                    continue
+                # The dedicated scout is on the map looking for the enemy:
+                # pulling it onto a farm or a tree hides the AI for minutes.
+                if self._is_dedicated_scout(u):
                     continue
                 if u.orders and u.orders[0].keyword in ("build", "repair"):
                     continue
@@ -4597,15 +5438,18 @@ class Computer(Player):
                     if resource_index in self._item_resource_indices(current):
                         sent += 1
                         continue
-                if u.orders and u.orders[0].keyword == "gather":
-                    current = u.orders[0].target
+                # The live gather order may sit BEHIND an imperative head
+                # (boar lure "attack"), so look through the whole queue.
+                gather_order = self._worker_gather_order(u)
+                if gather_order is not None:
+                    current = getattr(gather_order, "target", None)
                     current_idx = self._target_resource_index(current)
                     if current_idx == resource_index:
                         if (
                             resource_index == 1
                             and self._wood_almost_covers_plan_building()
                         ):
-                            mode = getattr(u.orders[0], "mode", None)
+                            mode = getattr(gather_order, "mode", None)
                             if mode not in ("bring_back", "store"):
                                 better = self._choose_gather_target(
                                     u, resource_indices=[1]
@@ -4638,18 +5482,96 @@ class Computer(Player):
                     # Feudal needs gold AND wood: sequential passes used to
                     # stop miners then lumberjacks every AI turn, so trips
                     # never finished (jl1 beginner idle).
-                    if (
-                        current_idx in caps
-                        and counts.get(current_idx, 0) <= caps[current_idx]
-                    ):
-                        continue
-                    # Keep lumberjacks on wood while a production building is unpaid.
-                    if (
-                        resource_index != 1
-                        and current_idx == 1
-                        and self._keep_lumberjacks()
-                    ):
-                        continue
+                    #
+                    # The cap table must cover *every* resource, not only the
+                    # ones this pass asks for, otherwise the wood pass and
+                    # the food pass steal each other's workers every turn
+                    # (jl3: the 500-food feudal click slipped past 24 min).
+                    #
+                    # A worker whose resource is *reserved* (food while an
+                    # age-up is banked, wood while a building is unpaid) is
+                    # never re-tasked, whatever the cap says.  A worker whose
+                    # resource is merely *under its cap* may be re-tasked when
+                    # that resource is not reserved: gold is only needed for
+                    # the get line's soldiers, so a miner standing on an idle
+                    # mine is pure waste (jl1: the beginner AI had 500 gold,
+                    # 80 wood and no food, and the gold miner was never moved
+                    # onto the farm).
+                    if current_idx != resource_index:
+                        # Cap-based protection: a worker whose resource crew is
+                        # at (or below) its cap is doing its job and must not
+                        # be re-tasked.  Re-tasking resets the continuous
+                        # gather accumulator and throws the cargo away, so the
+                        # income collapses.
+                        #
+                        # This used to be exactly what the code did.  It was
+                        # replaced by a pure "is this resource reserved?"
+                        # test, which dropped the cap protection: on res jl1
+                        # the gold pass and the wood pass stole each other's
+                        # workers every single turn (727 AI orders in 60
+                        # seconds), nothing was ever gathered, and the
+                        # beginner AI stayed at 0 food and never clicked
+                        # feudal.
+                        at_cap = (
+                            counts.get(current_idx, 0)
+                            <= all_caps.get(current_idx, 0)
+                        )
+                        if current_idx == 0:
+                            # Gold is only needed for the get-line soldiers
+                            # and for the age-up click.  A miner standing on
+                            # an idle mine is pure waste, so this is the one
+                            # worker that may be moved onto a farm (jl1: the
+                            # beginner AI had 500 gold, 80 wood and no food,
+                            # and the gold miner was never moved).
+                            reserved = at_cap and self._gold_is_needed()
+                        elif current_idx == 1:
+                            # Wood: keep the crew up to its cap.  Above the
+                            # cap the surplus chopper goes back to food --
+                            # the dark-age barracks reserve (175 wood) used
+                            # to pin 5-8 villagers to the trees for the whole
+                            # game and the food engine produced ~20/min on
+                            # jl3.
+                            #
+                            # The cap alone must NOT protect the chopper
+                            # against the *gold* pass: a crew that sits
+                            # exactly at its cap while the wood stockpile
+                            # already covers every pending wood commitment
+                            # is pure waste, and the gold pass could not
+                            # free it.  On res jl1 the choppers stood at
+                            # exactly 3 (= the cap) for nine and a half
+                            # minutes: every one of them was "reserved", so
+                            # the gold pass skipped all of them and *no*
+                            # villager ever mined gold -- the barracks was
+                            # never paid and the AI never attacked.
+                            #
+                            # The food pass keeps the old, strict rule: food
+                            # gates the 500-food feudal click, so a
+                            # lumberjack must never be pulled onto a farm
+                            # while the wood is still short (jl3 ping-pong
+                            # regression).
+                            if resource_index == 0:
+                                reserved = at_cap and self._wood_crew_is_needed()
+                            else:
+                                reserved = at_cap
+                        else:
+                            # Food gates the 500-food feudal click, so a
+                            # farmer is never worth more as a lumberjack --
+                            # but only up to the food cap.  Beyond the cap
+                            # the surplus farmers are idle anyway: the single
+                            # farm holds 175 food and the whole crew cannot
+                            # eat it, so they are the natural source of the
+                            # wood the farm needs to be replanted.
+                            #
+                            # Protecting *every* farmer unconditionally was
+                            # the jl3 deadlock: 6-7 farmers stood on one farm
+                            # that was already empty, no lumberjack was ever
+                            # sent to the trees, the 60-wood replant never
+                            # came and the food bank stayed at ~400.
+                            reserved = at_cap and self._resource_is_reserved(
+                                current_idx
+                            )
+                        if reserved:
+                            continue
                     # Keep miners on gold while a later expensive age still needs it.
                     if (
                         resource_index == 2
@@ -4659,6 +5581,21 @@ class Computer(Player):
                         continue
                 # gold_mint coins etc. before mines when that resource is missing
                 old_idx = _gather_resource_index(u)
+                # A worker that already carries cargo must finish its trip:
+                # stopping it throws the load away and the income collapses.
+                if self._worker_is_carrying(u) or self._worker_is_returning_home(u):
+                    # A worker that already carries cargo must finish its trip:
+                    # stopping it throws the load away and the income collapses.
+                    #
+                    # It must also NOT be counted as a worker of the resource
+                    # this pass asks for.  It is still gathering its *old*
+                    # resource, so it neither frees a slot in its own crew
+                    # nor fills a slot in the requested one.  Counting it in
+                    # the requested crew exhausted that crew's quota without
+                    # assigning anybody (the food pass "used up" the wood
+                    # quota with a wood-carrying farmer, so nobody was ever
+                    # sent to the farm).
+                    continue
                 pickup = self._choose_pickup_target(
                     u, resource_indices=[resource_index]
                 )
@@ -4692,6 +5629,15 @@ class Computer(Player):
                             if resource_index in counts:
                                 counts[resource_index] += 1
                             sent += 1
+                    continue
+                if _is_already_gathering(u, target):
+                    # Same target: keep the running gather order (and the
+                    # cargo in transit) instead of resetting it.
+                    if old_idx in counts:
+                        counts[old_idx] = max(0, counts[old_idx] - 1)
+                    if resource_index in counts:
+                        counts[resource_index] += 1
+                    sent += 1
                     continue
                 if u.orders and u.orders[0].keyword in (
                     "auto_explore",
@@ -4764,15 +5710,21 @@ class Computer(Player):
     def _count_gatherers_for_resource(self, resource_index):
         n = 0
         for u in getattr(self, "_workers", ()) or ():
+            # Count the live gather order even when it sits behind an
+            # imperative head (boar lure "attack").
+            gather_order = self._worker_gather_order(u)
+            if gather_order is not None:
+                if self._target_resource_index(
+                    getattr(gather_order, "target", None)
+                ) == resource_index:
+                    n += 1
+                continue
             orders = getattr(u, "orders", None) or ()
             if not orders:
                 continue
             kw = getattr(orders[0], "keyword", None)
             tgt = getattr(orders[0], "target", None)
-            if kw == "gather":
-                if self._target_resource_index(tgt) == resource_index:
-                    n += 1
-            elif kw == "pickup":
+            if kw == "pickup":
                 indices = self._item_resource_indices(tgt) or ()
                 if resource_index in indices:
                     n += 1
@@ -4786,11 +5738,19 @@ class Computer(Player):
             if getattr(u, "_lure_animal", None) is not None:
                 self._maintain_boar_lure(u)
                 continue
+            # The dedicated scout stays on the map: converting it into a
+            # lumberjack left the AI blind for minutes (res jl1).
+            if self._is_dedicated_scout(u):
+                continue
             if u.orders:
                 if (
                     self._keep_lumberjacks()
                     and getattr(u.orders[0], "keyword", None) == "auto_explore"
                 ):
+                    # An explorer that already carries food must finish the
+                    # trip: re-tasking it throws the cargo away.
+                    if self._worker_is_carrying(u):
+                        continue
                     wood_t = self._choose_gather_target(u, resource_indices=[1])
                     if wood_t is not None:
                         u.take_order(["stop"])
@@ -5639,6 +6599,15 @@ class Computer(Player):
             reverse=True,
         )
 
+    def _enemy_is_known(self):
+        """True once the AI has spotted (or remembers) the enemy.
+
+        ``_enemy_presence`` is refreshed every 500 ms from the perception /
+        memory snapshot, so it is the cheapest reliable "have I seen the
+        enemy yet?" flag the AI has.
+        """
+        return bool(getattr(self, "_enemy_presence", None))
+
     def _send_explorer(self):
         candidates = self.best_explorers()
         if not candidates:
@@ -5665,6 +6634,42 @@ class Computer(Player):
             if self.units:
                 u.take_order(["go", self.units[0].place.id])
 
+        def _mark_scout(u):
+            # Flag the unit that is actually exploring so the economy passes
+            # leave it alone (see ``_is_dedicated_scout``).
+            for other in self.units:
+                if getattr(other, "_is_scout", False) and other is not u:
+                    try:
+                        other._is_scout = False
+                    except Exception:
+                        pass
+            try:
+                u._is_scout = True
+            except Exception:
+                pass
+
+        # The scout has done its job as soon as the enemy is known.  Keeping
+        # it on ``auto_explore`` then means it walks *into* the enemy base
+        # and stands there until it is killed.
+        #
+        # On res jl1 the map has a single starting peasant, so the scout IS
+        # the whole economy: it died at 38 s at the human base and the AI
+        # had no villager at all until 138 s (the town hall finally trained
+        # replacements).  Those 100 idle seconds are a large part of why the
+        # attack slipped past 20 minutes.
+        #
+        # So: once the enemy is known, the scout walks home and rejoins the
+        # economy.  It stays the "dedicated scout" only while the enemy is
+        # still unknown.
+        if self._enemy_is_known():
+            for u in explorers:
+                _recall(u)
+                try:
+                    u._is_scout = False
+                except Exception:
+                    pass
+            return
+
         if (
             best_explorer.orders
             and best_explorer.orders[0].keyword == "auto_explore"
@@ -5672,6 +6677,7 @@ class Computer(Player):
             for u in explorers:
                 if u is not best_explorer:
                     _recall(u)
+            _mark_scout(best_explorer)
             return
 
         current = explorers[0] if explorers else None
@@ -5682,10 +6688,12 @@ class Computer(Player):
             ):
                 for u in explorers[1:]:
                     _recall(u)
+                _mark_scout(current)
                 return
             for u in explorers:
                 _recall(u)
         best_explorer.take_order(["auto_explore"])
+        _mark_scout(best_explorer)
 
     def _remove_far_candidates(self, candidates, start, limit):
         ids = {o.id: o for o in candidates}
@@ -6325,7 +7333,26 @@ class Computer(Player):
                     or (farm_w and self.resources[1] - cost[1] < farm_w)
                 )
             ):
-                continue
+                # A house that unblocks *population* must never be blocked by
+                # the wood reserve for a future production building.
+                #
+                # This was a hard deadlock on jl3: the dark-age reserve was
+                # 175 (barracks) + 60 (farm) + 100 (mill chain) = 335 wood
+                # while the AI only had 300, so ``_ensure_housing`` refused
+                # to build the 25-wood house.  With the population cap reached
+                # (``head=0 avail=5 used=5``) ``Computer.gather`` returned
+                # None, no 5th villager could ever be trained, the get line
+                # stayed on ``get 8 peasant`` forever, and the AI never
+                # attacked.
+                #
+                # The reserve exists to protect the *barracks / workshop* money
+                # from being spent on something else; the workers that will
+                # earn that wood back are exactly what the house unlocks.
+                # So the reserve is skipped whenever the population is
+                # actually blocked.
+                pop_blocked = self._population_headroom() <= 0
+                if not pop_blocked:
+                    continue
             self.build_or_train_or_upgradeto_or_summon(house)
             return True
         return False
@@ -6340,6 +7367,17 @@ class Computer(Player):
             if 2 in missing:
                 need_w = self._cultivate_missing_wood()
                 if need_w and self.resources[1] < need_w:
+                    self._send_workers_toward_resources([1])
+            # Wood for the *next production building* (AoE2 barracks 175) and
+            # for replanting the farms is never part of ``missing`` -- the get
+            # line only asks for food (500 for the feudal click).  Without this
+            # branch no villager ever picked up an axe on jl3, the farms died
+            # for good, food stalled around 300 and the AI never attacked.
+            if 1 not in missing:
+                need_wood = self._plan_wood_building_cost(ignore_age_defer=True)
+                need_wood += self._farm_recultivate_wood()
+                need_wood += self._food_building_wood_need()
+                if need_wood and self.resources[1] < need_wood:
                     self._send_workers_toward_resources([1])
             return
         if population != 0 and population > self._population_headroom():
@@ -6412,6 +7450,39 @@ class Computer(Player):
         if starts:
             return sorted(starts.items(), key=lambda x: (x[1], x[0].id))[-1][0]
 
+    def _build_anchor_place(self, building_type):
+        """Where to anchor a new building so its workers do not walk forever.
+
+        ``_builders_place()`` returns the square where the *most* villagers
+        currently stand.  In the dark age that is usually the forest the
+        lumberjacks are working, so a farm placed relative to it ended up
+        24 squares away from the town center: every 10-food trip cost 48
+        squares of walking, which cut the harvest efficiency to ~30% and
+        starved the AI (jl3: the AIs never reached ``get 8 peasant``).
+
+        The food chain (mill -> farm) must be anchored on the drop-off
+        building instead: the mill if it exists, otherwise the town center.
+        Then farm <-> mill/TC is a couple of squares and the gather cycle is
+        dominated by actual harvesting.
+        """
+        name = getattr(building_type, "type_name", None) or getattr(
+            building_type, "__name__", None
+        )
+        if name in ("farm", "mill", "frank_mill", "briton_mill"):
+            # Prefer an existing mill: the farm drops its food there.
+            for u in getattr(self, "units", ()) or ():
+                uname = getattr(u, "type_name", None)
+                if uname in ("mill", "frank_mill", "briton_mill"):
+                    place = getattr(u, "place", None)
+                    if place is not None:
+                        return place
+            from .worldplayercomputer_sc_build import townhall_place
+
+            tc = townhall_place(self)
+            if tc is not None:
+                return tc
+        return self._builders_place()
+
     def _try_morph_from_larva(self, type_name):
         from .worldorders.production import ChangeToOrder, UpgradeToOrder
 
@@ -6477,7 +7548,9 @@ class Computer(Player):
                     return
                 stores = tuple(getattr(t, "storable_resource_types", ()) or ())
                 if stores and self._warehouse_spend_blocked_by_wood_reserve(
-                    getattr(t, "cost", None) or (), stores=stores
+                    getattr(t, "cost", None) or (),
+                    stores=stores,
+                    building_type=t,
                 ):
                     return
                 if ensure_field_provider_before_build(self, t):
@@ -6485,7 +7558,7 @@ class Computer(Player):
                 resource_type = (
                     t.storable_resource_types[0] if t.storable_resource_types else None
                 )
-                starting = self._builders_place()
+                starting = self._build_anchor_place(t)
                 if getattr(t, "is_buildable_near_water_only", False):
                     target = choose_near_water_build_target(
                         self, t, starting_place=starting
