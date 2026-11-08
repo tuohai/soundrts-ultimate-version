@@ -43,7 +43,9 @@ workers 16
 attack_ratio 120
 label bi1
 get 8 peasant
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 peasant 8 aoe_knight 8 longbowman 3 battering_ram
 attack
@@ -192,7 +194,9 @@ workers 16
 attack_ratio 120
 label fi1
 get 8 peasant
-get 6 militia 4 scout_cavalry
+get 6 militia
+attack
+get 4 scout_cavalry
 attack
 get 14 peasant 12 aoe_knight 8 throwing_axeman 3 battering_ram
 attack
@@ -341,7 +345,9 @@ workers 16
 attack_ratio 120
 label ci1
 get 12 chinese_villager
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 16 chinese_villager 8 aoe_knight 8 chu_ko_nu 3 battering_ram
 attack
@@ -490,7 +496,9 @@ workers 16
 attack_ratio 120
 label mi1
 get 8 mongol_herdsman
-get 4 militia 6 aoe_archer 3 scout_cavalry
+get 4 militia
+attack
+get 6 aoe_archer 3 scout_cavalry
 attack
 get 14 mongol_herdsman 8 cavalry_archer 8 aoe_knight 8 mangudai 3 battering_ram
 attack
@@ -639,7 +647,9 @@ workers 16
 attack_ratio 120
 label yi1
 get 8 peasant
-get 6 militia 6 aoe_archer
+get 6 militia
+attack
+get 6 aoe_archer
 attack
 get 4 scouttower 14 peasant 8 aoe_knight 6 cataphract 3 battering_ram
 attack
@@ -788,7 +798,9 @@ workers 16
 attack_ratio 120
 label ji1
 get 8 peasant
-get 8 militia 4 spearman
+get 8 militia
+attack
+get 4 spearman
 attack
 get 14 peasant 8 japanese_knight 10 samurai 3 battering_ram
 attack
@@ -937,7 +949,9 @@ workers 16
 attack_ratio 120
 label ti1
 get 8 peasant
-get 6 militia 4 scout_cavalry
+get 6 militia
+attack
+get 4 scout_cavalry
 attack
 get 14 peasant 12 aoe_knight 8 teutonic_knight 3 battering_ram
 attack
@@ -1086,7 +1100,9 @@ workers 16
 attack_ratio 120
 label vi1
 get 8 peasant
-get 8 militia 4 spearman
+get 8 militia
+attack
+get 4 spearman
 attack
 get 14 peasant 8 viking_knight 10 berserk 3 battering_ram
 attack
@@ -1235,7 +1251,9 @@ workers 16
 attack_ratio 120
 label ni1
 get 8 peasant
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 peasant 8 vietnamese_knight 8 rattan_archer 3 battering_ram
 attack
@@ -1384,7 +1402,9 @@ workers 16
 attack_ratio 120
 label pi1
 get 8 portuguese_villager
-get 4 militia 6 aoe_archer
+get 4 militia
+attack
+get 6 aoe_archer
 attack
 get 14 portuguese_villager 6 portuguese_knight 8 organ_gun 3 battering_ram
 attack
@@ -1533,7 +1553,9 @@ workers 16
 attack_ratio 120
 label zi1
 get 8 aztec_villager
-get 4 militia 4 aztec_eagle_scout 4 aoe_archer
+get 4 militia
+attack
+get 4 aztec_eagle_scout 4 aoe_archer
 attack
 get 14 aztec_villager 10 eagle_warrior 8 jaguar_warrior 3 battering_ram
 attack
@@ -1682,7 +1704,9 @@ workers 16
 attack_ratio 120
 label ki1
 get 8 peasant
-get 8 militia 4 spearman
+get 8 militia
+attack
+get 4 spearman
 attack
 get 14 peasant 8 celtic_knight 10 woad_raider 3 battering_ram
 attack
@@ -1831,7 +1855,9 @@ workers 16
 attack_ratio 120
 label mi1
 get 8 peasant
-get 8 militia 4 spearman
+get 8 militia
+attack
+get 4 spearman
 attack
 get 14 peasant 8 aoe_knight 10 gbeto 3 battering_ram
 attack
@@ -1980,7 +2006,9 @@ workers 16
 attack_ratio 120
 label gi1
 get 8 peasant
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 peasant 8 aoe_knight 10 huskarl 3 battering_ram
 attack
@@ -2129,7 +2157,9 @@ workers 16
 attack_ratio 120
 label pi1
 get 8 peasant
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 peasant 8 aoe_knight 6 war_elephant 3 battering_ram
 attack
@@ -2278,7 +2308,9 @@ workers 16
 attack_ratio 120
 label si1
 get 8 peasant
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 peasant 8 aoe_knight 8 boyar 3 battering_ram
 attack
@@ -2427,7 +2459,9 @@ workers 16
 attack_ratio 120
 label ci1
 get 8 peasant
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 peasant 8 steppe_lancer 10 kipchak 3 battering_ram
 attack
@@ -2576,7 +2610,9 @@ workers 16
 attack_ratio 120
 label hi1
 get 8 peasant
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 peasant 8 scout_cavalry 8 tarkan 3 battering_ram
 attack
@@ -2725,7 +2761,9 @@ workers 16
 attack_ratio 120
 label ki1
 get 8 peasant
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 peasant 8 aoe_knight 8 war_wagon 3 battering_ram
 attack
@@ -2874,7 +2912,9 @@ workers 16
 attack_ratio 120
 label mi1
 get 8 peasant
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 peasant 8 aoe_knight 10 plumed_archer 3 battering_ram
 attack
@@ -3023,7 +3063,9 @@ workers 16
 attack_ratio 120
 label hi1
 get 8 peasant
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 peasant 8 aoe_knight 8 camel_rider 6 armored_elephant 3 battering_ram
 attack
@@ -3172,7 +3214,9 @@ workers 16
 attack_ratio 120
 label si1
 get 8 peasant
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 peasant 8 aoe_knight 8 conquistador 3 battering_ram
 attack
@@ -3321,7 +3365,9 @@ workers 16
 attack_ratio 120
 label mi1
 get 8 peasant
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 peasant 8 scout_cavalry 8 magyar_huszar 3 battering_ram
 attack
@@ -3470,7 +3516,9 @@ workers 16
 attack_ratio 120
 label pi1
 get 8 peasant
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 peasant 8 aoe_knight 8 winged_hussar 3 battering_ram
 attack
@@ -3619,7 +3667,9 @@ workers 16
 attack_ratio 120
 label ii1
 get 8 peasant
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 peasant 8 aoe_knight 8 genoese_crossbowman 3 battering_ram
 attack
@@ -3768,7 +3818,9 @@ workers 16
 attack_ratio 120
 label bi1
 get 8 peasant
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 peasant 8 aoe_knight 8 hussite_wagon 3 battering_ram
 attack
@@ -3917,7 +3969,9 @@ workers 16
 attack_ratio 120
 label ti1
 get 8 peasant
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 peasant 8 aoe_knight 8 janissary 3 battering_ram
 attack
@@ -4066,7 +4120,9 @@ workers 16
 attack_ratio 120
 label bui1
 get 8 bulgarian_villager
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 bulgarian_villager 8 aoe_knight 8 konnik 3 battering_ram
 attack
@@ -4215,7 +4271,9 @@ workers 16
 attack_ratio 120
 label lii1
 get 8 lithuanian_villager
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 lithuanian_villager 8 aoe_knight 8 leitis 3 battering_ram
 attack
@@ -4364,7 +4422,9 @@ workers 16
 attack_ratio 120
 label tai1
 get 8 tartar_villager
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 tartar_villager 8 aoe_knight 8 steppe_lancer 3 battering_ram
 attack
@@ -4513,7 +4573,9 @@ workers 16
 attack_ratio 120
 label bei1
 get 8 berber_villager
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 berber_villager 8 aoe_knight 8 camel_rider 3 battering_ram
 attack
@@ -4662,7 +4724,9 @@ workers 16
 attack_ratio 120
 label eti1
 get 8 ethiopian_villager
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 ethiopian_villager 8 aoe_knight 8 shotel_warrior 3 battering_ram
 attack
@@ -4811,7 +4875,9 @@ workers 16
 attack_ratio 120
 label khi1
 get 8 khmer_villager
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 khmer_villager 8 aoe_knight 8 ballista_elephant 3 battering_ram
 attack
@@ -4960,7 +5026,9 @@ workers 16
 attack_ratio 120
 label mai1
 get 8 malay_villager
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 malay_villager 8 aoe_knight 8 karambit_warrior 3 battering_ram
 attack
@@ -5109,7 +5177,9 @@ workers 16
 attack_ratio 120
 label bui1
 get 8 burmese_villager
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 burmese_villager 8 aoe_knight 8 arambai 3 battering_ram
 attack
@@ -5258,7 +5328,9 @@ workers 16
 attack_ratio 120
 label bui1
 get 8 burgundian_villager
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 burgundian_villager 8 aoe_knight 8 coutillier 3 battering_ram
 attack
@@ -5407,7 +5479,9 @@ workers 16
 attack_ratio 120
 label sii1
 get 8 sicilian_villager
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 sicilian_villager 8 aoe_knight 8 serjeant 3 battering_ram
 attack
@@ -5556,7 +5630,9 @@ workers 16
 attack_ratio 120
 label ari1
 get 8 armenian_villager
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 armenian_villager 8 aoe_knight 8 tarkan 3 battering_ram
 attack
@@ -5705,7 +5781,9 @@ workers 16
 attack_ratio 120
 label gei1
 get 8 georgian_villager
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 georgian_villager 8 aoe_knight 8 monaspa 3 battering_ram
 attack
@@ -5854,7 +5932,9 @@ workers 16
 attack_ratio 120
 label ini1
 get 8 incan_villager
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 incan_villager 8 aoe_knight 8 slinger 3 battering_ram
 attack
@@ -6003,7 +6083,9 @@ workers 16
 attack_ratio 120
 label roi1
 get 8 roman_villager
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 roman_villager 8 aoe_knight 8 legionary 3 battering_ram
 attack
@@ -6152,7 +6234,9 @@ workers 16
 attack_ratio 120
 label si1
 get 8 peasant
-get 4 militia 8 aoe_archer
+get 4 militia
+attack
+get 8 aoe_archer
 attack
 get 14 peasant 8 aoe_knight 8 mameluke 3 battering_ram
 attack

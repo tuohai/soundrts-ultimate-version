@@ -916,7 +916,7 @@ def _chinese_watchdog_after_castle_ai(wood="167"):
     line_nb = next(
         i
         for i, line in enumerate(plan)
-        if line.startswith("get ") and "militia" in line and "aoe_archer" in line
+        if line.startswith("get ") and "militia" in line
     )
     ai = _bare_ai(
         faction="chinese",

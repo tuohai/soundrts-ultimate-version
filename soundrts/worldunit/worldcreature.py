@@ -42,6 +42,11 @@ from ..worldroom import Square, Inside, ZoomTarget
 # 与 world_ai_decision.immediate_order_toggle_ai_mode 的循环列表保持一致。
 VALID_AI_MODES = ("offensive", "defensive", "guard", "chase")
 
+# 地图格子总数低于该阈值时, AI 探索目标用 1.3.8.1 的 random.sample 全量洗牌
+# (与 player.unknown_squares 一致); 超过该阈值(例如 ms1000 的 100 万格地图)
+# 则改用游标扫描, 避免每 tick 洗牌百万格造成 ~6s 卡顿。
+_UNKNOWN_SAMPLE_MAX_SQUARES = 20000
+
 _allied_control_controller_for_fn = None
 
 
@@ -1753,9 +1758,33 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
         millions of squares on huge maps — ~3 random.sample calls per tick
         alone burned ~6s on ms1000). AI explore only needs *some* unexplored
         target, not a deterministic shuffled order.
+
+        IMPORTANT: the "unknown" test must use ``strictly_observed_before_squares``
+        (the *cumulative* set of squares ever seen), NOT ``strictly_observed_squares``
+        (the squares strictly seen *this frame*).
+
+        With the per-frame set, an explorer standing on the border between two
+        squares flips its own ``place`` every tick. The other square is then
+        only *partially* observed, so it is not in the strict per-frame set,
+        it becomes the next destination, and the explorer oscillates between
+        the two squares forever without ever advancing. On jl1 that jitter
+        kept the AI scout pinned around squares 2/3 for 5+ minutes, and the
+        enemy base was found only 8-17 minutes into the game (versus 31s in
+        1.3.8.1). The cumulative set is monotonic, so a square that has been
+        seen once is never a target again.
+
+        On regular maps this reproduces the 1.3.8.1 behaviour exactly
+        (``player.unknown_squares`` = ``random.sample`` over the not-yet-seen
+        squares, take the first ``max_n``), including the RNG consumption, so
+        the AI opening on jl1 discovers the enemy base at ~3m30s and attacks
+        around ~10 minutes instead of drifting to 16-20 minutes.
+
+        Huge maps (ms1000: 1M squares) cannot afford a full ``random.sample``
+        per explorer per tick (~6s lag spikes), so they keep the O(1)
+        cursor/probe path below.
         """
         player = self.player
-        observed = getattr(player, "strictly_observed_squares", None)
+        observed = getattr(player, "strictly_observed_before_squares", None)
         if observed is None:
             # Fallback: just walk world.squares (deterministic order is fine
             # for AI; we are not trying to mirror the UI shuffled order).
@@ -1765,6 +1794,16 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
                 if len(result) >= max_n:
                     break
             return result
+        squares = player.world.squares
+        total = len(squares)
+        if total <= _UNKNOWN_SAMPLE_MAX_SQUARES:
+            # Regular map: exact 1.3.8.1 semantics (random shuffle of the
+            # unseen squares, then take the head of the list).
+            unknown = [s for s in squares if s not in observed]
+            if not unknown:
+                return []
+            return player.world.random.sample(unknown, len(unknown))[:max_n]
+        # Huge map: bounded cursor scan, O(max_n) amortised, no full shuffle.
         seen_cache = getattr(player, "_unknown_iter_cache", None)
         cache_tick = player.world.time // 250
         if seen_cache is None or seen_cache[0] != cache_tick:

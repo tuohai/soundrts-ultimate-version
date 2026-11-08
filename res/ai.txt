@@ -108,11 +108,21 @@ attack
 goto_random rush phase2
 
 label rush
-get 9 peasant 5 footman 8 knight
+; knight needs stables -> castle_age.  Keeping it on this line blocked the
+; whole plan (get only advances when every pair is satisfied), so the AI
+; never reached the next `attack` line and never built the phase2 archer
+; wave: on jl1 seed 42 the first troop reached the human base at 617400 ms
+; instead of ~560000 ms.  The castle-age units live in the phase2 wave below.
+get 9 peasant 5 footman
 attack
 
 label phase2
-get 9 peasant 15 archer 1 new_flyingmachine 5 knight 5 priest
+; Feudal army first: archer needs only feudal_age, so the first attack wave is
+; not blocked behind the castle_age units (new_flyingmachine / knight / priest)
+; that used to delay the barracks by ~2.5 minutes on jl1.
+get 9 peasant 15 archer
+attack
+get 9 peasant 1 new_flyingmachine 5 knight 5 priest
 get 9 peasant 1 lumbermill 1 shipyard 2 boat 2 destroyer
 goto_random basic_defense darkarchers dragons knights footmen archers
 
