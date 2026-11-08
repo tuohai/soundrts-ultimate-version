@@ -65,11 +65,60 @@ class CreatureAttributes(Entity):
 
     @property
     def upgrades(self):
-        result = [u for u in self.can_use if u in self.player.upgrades]
+        """The techs this unit enjoys and the player has researched.
+
+        Two sources:
+
+        * the classic one — the tech is listed in the unit's ``can_use`` /
+          ``can_use_tech``;
+        * the *target-as-authorisation* one — the tech carries a filtered
+          ``effect bonus`` row whose ``effect_bonus_targets`` list names
+          this unit's type (e.g. the AoE2 马轭 / 重犁 / 轮作 name ``farm``).
+          Such a row's target list is the sole definition of its reach, so
+          the tech applies to the unit even though the unit does not repeat
+          it in ``can_use_tech``.  Those techs must be listed too, otherwise
+          the status readout (the ``v`` key) would not mention them.
+        """
+        player = getattr(self, "player", None)
+        can_use = self.can_use
+        can_use_tech = self.can_use_tech if hasattr(self, "can_use_tech") else ()
+        if player is None:
+            # Historical contract: the old code read ``self.player.upgrades``,
+            # which raises AttributeError for an ownerless unit — so
+            # ``hasattr(u, "upgrades")`` was False for it.  The read only
+            # happened once there was something to compare against, so an
+            # ownerless unit with no ``can_use`` / ``can_use_tech`` simply
+            # returned an empty list.
+            if can_use or can_use_tech:
+                raise AttributeError("upgrades")
+            return []
+        researched = player.upgrades
+        result = [u for u in can_use if u in researched]
         # 添加can_use_tech中的科技
-        if hasattr(self, 'can_use_tech'):
-            result.extend([u for u in self.can_use_tech if u in self.player.upgrades])
+        result.extend([u for u in can_use_tech if u in researched])
+        # effect_bonus_targets 指向本单位类型的科技（研究后即对本单位生效）
+        for u in self._target_authorized_upgrades(researched):
+            if u not in result:
+                result.append(u)
         return result
+
+    def _target_authorized_upgrades(self, researched):
+        """The researched techs whose ``effect_bonus_targets`` name this unit.
+
+        Returns an empty list when the rules cannot be consulted; the
+        classic ``can_use`` / ``can_use_tech`` path stays authoritative.
+        """
+        if not researched:
+            return []
+        try:
+            from ..worldupgrade.effect_bonus_parse import researched_techs_for_unit
+        except Exception:
+            return []
+        try:
+            return researched_techs_for_unit(self, researched)
+        except Exception:
+            return []
+
     @property
     def height(self):
         # D-Phase 2: place / bonus_height / place.height 都是 Entity / _Space

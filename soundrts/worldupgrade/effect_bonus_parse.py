@@ -382,6 +382,29 @@ def tech_target_rows(tech_cls):
         yield bonus, targets
 
 
+def _cached_tech_target_rows(tech_cls):
+    """The filtered rows of *tech_cls*, parsed once and cached on the class.
+
+    Parsing an effect row splits its tokens apart, which is not free; the
+    result never changes for a given rules class, so it is memoised on the
+    class itself (a rules reload creates fresh classes, so the cache is
+    invalidated automatically).
+    """
+    effect = getattr(tech_cls, "effect", None)
+    cache = getattr(tech_cls, "_effect_target_rows_cache", None)
+    if cache is not None and cache[0] is effect:
+        return cache[1]
+    rows = tuple(
+        (tuple(bonus), tuple(targets))
+        for bonus, targets in tech_target_rows(tech_cls)
+    )
+    try:
+        tech_cls._effect_target_rows_cache = (effect, rows)
+    except Exception:
+        pass
+    return rows
+
+
 def unit_matches_tech_targets(unit, tech_cls) -> bool:
     """True if *unit* matches any of *tech_cls*'s filtered effect rows.
 
@@ -389,7 +412,7 @@ def unit_matches_tech_targets(unit, tech_cls) -> bool:
     a matching unit enjoys that row whether or not it lists the tech in
     ``can_use_tech``.
     """
-    for _bonus, targets in tech_target_rows(tech_cls):
+    for _bonus, targets in _cached_tech_target_rows(tech_cls):
         if unit_matches_effect_types(unit, targets):
             return True
     return False
@@ -423,3 +446,46 @@ def type_matches_tech_targets(type_cls, tech_cls) -> bool:
     if proxy is None:
         return False
     return unit_matches_tech_targets(proxy, tech_cls)
+
+
+def researched_techs_for_unit(unit, researched):
+    """The researched techs whose filtered effect rows target *unit*.
+
+    A filtered ``effect bonus`` row's ``effect_bonus_targets`` list is the
+    sole definition of its reach (see the module docstring in
+    ``soundrts/worldupgrade/base.py``): a unit that matches the list enjoys
+    the row even though the unit does not repeat the tech in
+    ``can_use_tech``.
+
+    This helper is the *display* counterpart of that rule: it answers
+    "which of the techs this player has researched actually apply to this
+    unit?", so the status readout (the ``v`` key) and the attribute panel
+    can list them (e.g. the AoE2 farm listing 马轭 / 重犁 / 轮作 after they
+    were researched in the mill).
+
+    *researched* is the list of tech names the player has (usually
+    ``player.upgrades``).  The result preserves that order and never repeats
+    a name.
+    """
+    if not researched:
+        return []
+    try:
+        from ..definitions import rules as _rules
+    except Exception:
+        return []
+
+    result = []
+    seen = set()
+    for tech_name in researched:
+        if not tech_name or tech_name in seen:
+            continue
+        seen.add(tech_name)
+        tech_cls = _rules.unit_class(tech_name)
+        if tech_cls is None:
+            continue
+        try:
+            if unit_matches_tech_targets(unit, tech_cls):
+                result.append(tech_name)
+        except Exception:
+            continue
+    return result
