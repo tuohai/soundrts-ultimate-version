@@ -436,10 +436,25 @@ class PerceptionMixin(PerceptionCachesMixin):
             return bool(_fast.is_seeing(self, u))
         return self._py_is_seeing(u)
 
+    def _is_detected_or_revealed(self, u):
+        """该单位是否"已被侦测到过"。
+
+        暴雪星际争霸等价机制：隐形/隐身单位一旦被探测器扫到，就会在玩家的
+        "已知单位"表（``Player::units_in_memory``）里留下一条残影记录，
+        **在它死亡之前不会消失**。本仓库用 ``revealed_units`` 承担同一职责。
+
+        ``detected_units`` 只反映"这一 tick 有没有探测器在旁边"；
+        ``revealed_units`` 是持久的"曾经侦测到过"。
+        """
+        if u in self.detected_units:
+            return True
+        revealed = getattr(self, "revealed_units", None)
+        return bool(revealed) and u in revealed
+
     def _py_is_seeing(self, u):
         """Python fallback — byte-equivalent to ``perception_fast.is_seeing``."""
         # 如果单位是隐形或隐身的，并且没有被探测，则不可见
-        if (u.is_invisible or u.is_cloaked) and u not in self.detected_units:
+        if (u.is_invisible or u.is_cloaked) and not self._is_detected_or_revealed(u):
             return False
 
         place = u.place
@@ -920,7 +935,7 @@ class PerceptionMixin(PerceptionCachesMixin):
                                 enemy_units.add(u)
 
         self.perception.update(enemy_units)
-        
+
         # Round 4: Entity.place 默认 None, _Space.is_inside_place 默认 False.
         # Skip player-less statics (grass); own units stay in perception.
         self_units = set(self.units)
@@ -1122,7 +1137,7 @@ class PerceptionMixin(PerceptionCachesMixin):
                 caches.vision_cache_misses += 1
                 
                 # 对象本身隐身/隐形且未被探测（附加：细查结果缓存）
-                if (getattr(obj, 'is_invisible', False) or getattr(obj, 'is_cloaked', False)) and obj not in self.detected_units:
+                if (getattr(obj, 'is_invisible', False) or getattr(obj, 'is_cloaked', False)) and not self._is_detected_or_revealed(obj):
                     # 隐形细查结果缓存（按玩家+方格+对象+时间桶）
                     # 允许跨2个桶的稳定复用
                     if not hasattr(self.__class__, '_invis_visibility_cache'):
@@ -1314,7 +1329,11 @@ class PerceptionMixin(PerceptionCachesMixin):
         for obj in objects:
             if getattr(obj, "_is_skill_combat_proxy", False):
                 continue
-            if obj.is_invisible or obj.is_cloaked:
+            # 隐形/隐身单位：只有"已被侦测到过"的才允许进入雾战记忆。
+            # 这对应暴雪星际争霸 ``Player::units_in_memory`` —— 隐形建筑
+            # 被探测器扫过一次后，玩家会一直记得它在那儿（UI 上是残影），
+            # 而不是像隐形状态一结束就从知识里彻底蒸发。
+            if (obj.is_invisible or obj.is_cloaked) and not self._is_detected_or_revealed(obj):
                 continue
             if obj in self._memory_index:
                 remembrance = self._memory_index[obj]
@@ -2118,7 +2137,7 @@ class PerceptionMixin(PerceptionCachesMixin):
                         continue
                     if o.is_inside:
                         continue
-                    if (o.is_invisible or o.is_cloaked) and o not in getattr(self, 'detected_units', set()):
+                    if (o.is_invisible or o.is_cloaked) and not self._is_detected_or_revealed(o):
                         continue
                     if self.is_an_enemy(o):
                         if self._is_seeing(o):

@@ -269,12 +269,19 @@ cpdef bulk_memorize(self, objects):
     cdef object _copy = _copy_mod.copy
     cdef object obj, remembrance, existing
     cdef object add_place
+    cdef object revealed
     add_place = self._memory_place_index_add
+    revealed = getattr(self, "revealed_units", None)
     for obj in objects:
         if obj._is_skill_combat_proxy:
             continue
+        # 隐形/隐身单位：只有"已被侦测到过"的才允许进入雾战记忆。
+        # 对应暴雪星际争霸 ``Player::units_in_memory`` —— 隐形建筑被探测器
+        # 扫过一次后，玩家会一直记得它在那儿（UI 上是残影）。
         if obj.is_invisible or obj.is_cloaked:
-            continue
+            if obj not in self.detected_units:
+                if revealed is None or obj not in revealed:
+                    continue
         existing = memory_index.get(obj)
         if existing is not None:
             existing.time_stamp = current_time
@@ -323,6 +330,22 @@ cpdef list merge_buckets_3x3(dict buckets, long long grid_x, long long grid_y):
     return result
 
 
+cdef inline bint _is_detected_or_revealed(object player, object u):
+    """该单位是否"已被侦测到过"。
+
+    暴雪星际争霸等价机制：隐形/隐身单位一旦被探测器扫到，就会在玩家的
+    "已知单位"表（``Player::units_in_memory``）里留下一条残影记录，
+    **在它死亡之前不会消失**。本仓库用 ``revealed_units`` 承担同一职责。
+
+    ``detected_units`` 只反映"这一 tick 有没有探测器在旁边"；
+    ``revealed_units`` 是持久的"曾经侦测到过"。
+    """
+    if u in player.detected_units:
+        return True
+    revealed = getattr(player, "revealed_units", None)
+    return revealed is not None and u in revealed
+
+
 cpdef bint is_seeing(self, u) except -1:
     """Cython 化 ``PerceptionMixin._is_seeing``（1.3.8.1 欧氏视野）。
 
@@ -337,7 +360,8 @@ cpdef bint is_seeing(self, u) except -1:
     cdef object place, avp, avu, sr
 
     if (u.is_invisible or u.is_cloaked) and u not in self.detected_units:
-        return False
+        if not _is_detected_or_revealed(self, u):
+            return False
 
     place = u.place
     if place is None:
@@ -516,21 +540,22 @@ cpdef tuple bulk_visibility_check(self, objects):
             caches.vision_cache_misses += 1
 
             if (getattr(obj, 'is_invisible', False) or getattr(obj, 'is_cloaked', False)) and obj not in self.detected_units:
-                ivc = caches.invis_visibility_cache
-                ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))
-                ivc_entry = ivc.get(ivc_key)
-                if ivc_entry:
-                    last_bucket, last_visible = ivc_entry
-                    if time_bucket - last_bucket <= 2:
-                        player_cache[cache_key] = last_visible
-                        if last_visible:
-                            visible_objects.add(obj)
-                        else:
-                            invisible_objects.add(obj)
-                        continue
-                player_cache[cache_key] = False
-                invisible_objects.add(obj)
-                continue
+                if not _is_detected_or_revealed(self, obj):
+                    ivc = caches.invis_visibility_cache
+                    ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))
+                    ivc_entry = ivc.get(ivc_key)
+                    if ivc_entry:
+                        last_bucket, last_visible = ivc_entry
+                        if time_bucket - last_bucket <= 2:
+                            player_cache[cache_key] = last_visible
+                            if last_visible:
+                                visible_objects.add(obj)
+                            else:
+                                invisible_objects.add(obj)
+                            continue
+                    player_cache[cache_key] = False
+                    invisible_objects.add(obj)
+                    continue
 
             if self.is_an_enemy(obj) and place not in self.observed_squares:
                 player_cache[cache_key] = False

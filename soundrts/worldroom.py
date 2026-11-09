@@ -1127,7 +1127,24 @@ class Square(_Space):
                     return 0
 
             openq = []
-            heappush(openq, (h(start_region), 0, id(start_region), start_region, None))
+            # The heap tie-breaker must be **stable across processes**.
+            # ``id(region)`` is the object's memory address, which ASLR
+            # randomises: two runs of the same seed then explored different
+            # (but equally short) paths, every unit moved a tick earlier or
+            # later, and the whole battle played out differently -- the same
+            # seed could end 600 s apart.  The region centre is a stable
+            # coordinate, so it is used instead.
+            def _region_key(r):
+                try:
+                    return (
+                        int(getattr(r, 'center_x', 0)),
+                        int(getattr(r, 'center_y', 0)),
+                    )
+                except Exception:
+                    return (0, 0)
+
+            heappush(openq, (h(start_region), 0, _region_key(start_region),
+                             start_region, None))
             came = {}
             cost = {start_region: 0}
             visited_ids = set()
@@ -1178,7 +1195,7 @@ class Square(_Space):
                     ng = g + max(1, edge_w)
                     if nb not in cost or ng < cost[nb]:
                         cost[nb] = ng
-                        heappush(openq, (ng + h(nb), ng, id(nb), nb, cur))
+                        heappush(openq, (ng + h(nb), ng, _region_key(nb), nb, cur))
 
             if dest_region not in came:
                 return None

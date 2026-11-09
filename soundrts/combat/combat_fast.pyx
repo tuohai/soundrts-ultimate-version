@@ -245,9 +245,14 @@ cpdef object can_attack_if_in_range(self, other):
     if other.place is None or other.hp < 0:
         cache_dict[other_id] = False
         return False
+    # 暴雪星际争霸等价机制: 攻击指令绑定到**单位句柄**后, 不再重新校验
+    # "目标现在还在不在视野里"。``forced`` = 队首命令是对该目标的明确
+    # 攻击指令; 这时目标可能"已被侦测到过、但当前不可见"(隐形单位 +
+    # 探测器走开了), 例如 crazyMod 的隐形孵化场。
     if other not in self.player.perception:
-        cache_dict[other_id] = False
-        return False
+        if not self._player_ordered_attack_on(other):
+            cache_dict[other_id] = False
+            return False
 
     # 对目标的伤害值
     cdef long long melee_damage = self._get_melee_damage_vs(other)

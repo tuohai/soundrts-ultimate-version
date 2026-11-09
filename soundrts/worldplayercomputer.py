@@ -146,6 +146,18 @@ class Computer(Player):
     # Tunable parameters, overridable per AI from ai.txt (see _follow_plan).
     _target_townhalls = 0  # extra bases to maintain (ai.txt: "expand <n>")
     _attack_ratio = 180  # % of enemy menace needed to attack ("attack_ratio")
+    # % of the enemy menace on the route that a hidden-base strike group must
+    # match before it is committed.  Blizzard never sends a single unit at a
+    # hidden base: the strike group (``TaskForce``) is massed first, so the
+    # group's combat strength has to be able to take the route.  100 means
+    # "at least as strong as the biggest enemy group on the way".
+    _hidden_strike_force_ratio = 100
+    # Minimum number of combat units the AI must field before it may spend
+    # gold on pure-defense buildings (laser towers).  Blizzard's AI builds
+    # its army first and only then adds static defense; crazyMod's robot
+    # script asked for 35 laser towers first and ended the match with no
+    # army at all.
+    _hidden_strike_force_min_units = 8
     counter_skill = 100  # 0-100: how well units use mdg_vs/rdg_vs ("counter_skill")
     # One-shot ai.txt multipliers (100 = normal). See parse_ai_start_settings.
     ai_train_time_percent = 100
@@ -433,6 +445,15 @@ class Computer(Player):
                         # defers the hall to bank for later barracks.
                         if self.nb(name) >= n:
                             continue
+                        # 资源不足以训练部队时，不要把钱花在纯防御塔上
+                        # （crazyMod z5：机器人把 56 万金币花在 35 座
+                        # tour_laser 上，结果一个兵都没有，隐形基地永远
+                        # 打不掉）。这里**跳过**该 token（不阻塞这一行），
+                        # 让 AI 计划继续往下走到真正需要造兵的那一行 ——
+                        # 如果像普通 defer 那样 ``done = False``，整个
+                        # get 行会被卡死，AI 再也不造任何兵（seed=7 回归）。
+                        if self._defense_building_deferred_for_need(name):
+                            continue
                         if self._defer_plan_get_token(
                             name, saving_for_feudal=saving_for_feudal
                         ):
@@ -553,6 +574,22 @@ class Computer(Player):
     def _apply_utility_combat(self):
         """Use the scored goal to pick attack / turtle this tick."""
         goal = getattr(self, "_utility_goal", "produce")
+        # A revealed invisible enemy building is a concrete target: the
+        # regular attack machinery can send the army there and finish it.
+        # It takes priority over the generic goals, otherwise the hidden
+        # base is never destroyed and the match deadlocks.
+        hidden_places = self._hidden_enemy_attack_places()
+        if hidden_places:
+            # 暴雪等价机制：按寻路平面分别判定谁可以推进（见
+            # ``_hidden_enemy_committed_strike_units``）。
+            _strike_units = self._hidden_enemy_committed_strike_units()
+            if _strike_units:
+                self._eventually_attack(hidden_places, units=_strike_units)
+            self._attacked_places = []
+            # 绑定单位句柄的攻击指令（暴雪星际争霸等价机制）——见
+            # ``_order_attack_hidden_buildings``。
+            self._order_attack_hidden_buildings(_strike_units)
+            return
         if goal == "defend":
             places = list(self._attacked_places or ())
             if not places:
@@ -1697,6 +1734,32 @@ class Computer(Player):
                 return True
         return False
 
+    def _pending_age_up_food_cost(self):
+        """Total food the next plan age-up costs (0 when there is none).
+
+        Used by the stalled-plan fallback production: extra soldiers must
+        not eat the food bank that is being saved for the age-up click
+        (AoE2 jl3: the feudal click costs 500 food, one militia costs 50).
+
+        The value is the **total** cost, not the missing part: the check
+        that uses it compares ``food - unit_food_cost >= total``.  Using
+        the missing part would let the AI spend the last 50 food of a
+        500-food bank on a militia and then never reach the age-up at all.
+        """
+        if not self._should_click_plan_phase():
+            return 0
+        try:
+            phases = self._plan_unmet_phase_names(lookahead=True)
+        except Exception:
+            return 0
+        if not phases:
+            return 0
+        pc = rules.unit_class(phases[0])
+        cost = getattr(pc, "cost", None) or ()
+        if len(cost) <= 2:
+            return 0
+        return cost[2]
+
     def _is_worker_type_name(self, name):
         if not isinstance(name, str):
             uc = name
@@ -2040,6 +2103,93 @@ class Computer(Player):
                 if any(c > 0 for c in cost):
                     return True
         return False
+
+    def _is_pure_defense_building_type(self, type_name):
+        """True when the type is a **pure** defensive building.
+
+        A pure defensive building is a building that
+
+        * trains no unit (``can_train`` empty),
+        * researches no technology (``can_research`` empty),
+        * upgrades into nothing (``can_upgrade_to`` empty), and
+        * has no worker-side production role.
+
+        crazyMod's robot build script asks for ``get 35 tour_laser`` and
+        ``get 38 tour_laser`` — laser towers that cost 16 gold each and
+        do nothing but shoot.  On map ``z5`` the AI spent 560 000 gold on
+        35 of them while the map ran out of gold at t=1560 s with **zero**
+        combat units.  That is the "resources not enough to train troops"
+        failure: the money went into towers instead of an army.
+
+        Detect this by *shape*, not by a hard-coded name list, so it works
+        for any mod (AoE2's ``castle``/``tower`` are pure defense too,
+        while ``barracks``/``stable`` are not).
+        """
+        uc = rules.unit_class(type_name)
+        if uc is None:
+            return False
+        if not rules.class_rules_attr(uc, "is_a_building", False):
+            return False
+        for attr in ("can_train", "can_research", "can_upgrade_to"):
+            value = rules.class_rules_attr(uc, attr, ()) or ()
+            if value:
+                return False
+        # A building that provides a resource or storage is economic, not
+        # pure defense.
+        for attr in (
+            "resource_volume_max",
+            "storage_bonus",
+            "is_an_extractor",
+            "auto_production",
+            "manual_production",
+            "auto_cultivate",
+        ):
+            try:
+                if rules.class_rules_attr(uc, attr, 0):
+                    return False
+            except Exception:
+                continue
+        return True
+
+    def _defense_building_deferred_for_need(self, type_name):
+        """True when a pure-defense building must wait for the army money.
+
+        The AI's ``get`` line in crazyMod asks for laser towers *before*
+        it has an army.  When the AI cannot field a meaningful strike
+        force, the gold must go into soldiers instead: every gold spent
+        on a tower is a soldier that does not exist, and a soldier that
+        does not exist cannot kill the invisible base.
+
+        So a pure-defense building is deferred while the AI has fewer
+        combat units than the strike force it needs.  The building is
+        still built later, once the army is there.
+        """
+        if not self._is_pure_defense_building_type(type_name):
+            return False
+        needed = self._hidden_strike_force_min_units
+        if needed <= 0:
+            return False
+        # Count the combat units the AI could actually commit to a strike.
+        have = 0
+        for u in getattr(self, "units", ()) or ():
+            if getattr(u, "is_a_building", False):
+                continue
+            if not isinstance(u, Soldier):
+                continue
+            if getattr(u, "is_inside", False):
+                continue
+            if getattr(u, "speed", 0) <= 0:
+                continue
+            if not (getattr(u, "mdg", 0) or getattr(u, "rdg", 0)):
+                continue
+            have += 1
+        if have >= needed:
+            return False
+        # Only defer when there is something better to spend the gold on:
+        # the AI must own a producer that can field units.
+        if not self._owned_trainable_type_names():
+            return False
+        return True
 
     def _defer_plan_get_token(self, type_name, saving_for_feudal=False):
         """Skip a get-line token this turn (unmet age on the unit, or save food)."""
@@ -3502,15 +3652,18 @@ class Computer(Player):
                 euclid = square_of_distance(ox, oy, place.x, place.y)
             except Exception:
                 euclid = 0
-            # id(o) 作最终 tie-break：两矿同距且 o.id 同为 None 时，
-            # 不能让 sort 落到比较 goldmine 实例本身。
+            # 稳定的 tie-break：两矿同距时按 o.id、再按方格坐标排。
+            # 旧代码用 ``id(o)``（内存地址）作第三排序键 —— 跨进程
+            # ASLR 会让地址不同，于是同距离的矿点顺序随机、工人分配
+            # 随机、战斗随机：同一个 seed 在不同进程里能差出 600 秒。
             oid = o.id
             if oid is None:
                 oid = 0
-            scored.append((euclid, oid, id(o), o, place))
+            tie = (getattr(place, "x", 0), getattr(place, "y", 0))
+            scored.append((euclid, oid, tie, o, place))
         if not scored:
             return None
-        scored.sort()
+        scored.sort(key=lambda t: (t[0], t[1], t[2]))
         # Same square is always reachable; _shortest_path_to(self, self) is 0
         # but skipping the call avoids cache/decorator overhead in the gather loop.
         for _, _, _, o, place in scored:
@@ -3581,8 +3734,11 @@ class Computer(Player):
             oid = o.id
             if oid is None:
                 oid = 0
-            candidates.append((euclid, oid, id(o), o, place))
-        candidates.sort()
+            # 稳定的 tie-break（见 ``_pick_nearest_reachable``）：不用
+            # ``id(o)``（内存地址），跨进程会变，导致同距离矿点顺序随机。
+            tie = (getattr(place, "x", 0), getattr(place, "y", 0))
+            candidates.append((euclid, oid, tie, o, place))
+        candidates.sort(key=lambda t: (t[0], t[1], t[2]))
         found = []
         for _, _, _, o, place in candidates:
             if place is from_place:
@@ -4175,6 +4331,25 @@ class Computer(Player):
         for o in self.perception.union(self.memory):
             if isinstance(o, Deposit) and self._gather_target_ok(o):
                 result.append(o)
+        # 确定性：``perception`` / ``memory`` 是 set，``union`` 的迭代顺序由
+        # 对象的 ``id()``（内存地址）决定 —— 跨进程 ASLR 会变。下游
+        # ``_choose_gather_target_compute`` 的排序键是
+        # (需求比例, 可再生, 距离)，三项都相等时保留输入顺序，于是同一
+        # seed 在不同进程里会选到不同的矿点/果园，战斗节奏随之漂移
+        # （实测 crazyMod z5 seed 42 跨进程出现 1209.0s / 1045.5s 两种
+        # 击杀时间）。
+        #
+        # 所以这里按稳定的几何 + 名字键排序，让"等距"的矿点有确定次序。
+        def _key(o):
+            place = getattr(o, "place", None)
+            return (
+                getattr(place, "x", 0),
+                getattr(place, "y", 0),
+                getattr(o, "type_name", "") or "",
+                getattr(o, "id", 0) or 0,
+            )
+
+        result.sort(key=_key)
         return result
 
     def _huntable_food_deposit_types(self):
@@ -6362,9 +6537,28 @@ class Computer(Player):
         self._try_maintain_air_transports()
         self._try_amphibious_landings()
         self._idle_naval_patrol()
+        # 反隐形：敌人还活着但 AI 什么都看不见时（隐身的孵化场等），
+        # 派出探测器扫荡。必须在 _send_explorer 之前，让探测器不被召回。
+        self._maintain_hidden_enemy_sweep()
         self._send_explorer()
         self._attacked_this_play = bool(self._attacked_places)
-        if self._uses_scout_brain():
+        # A revealed invisible enemy building is a concrete target: send the
+        # army there and finish it (otherwise the hidden base survives and
+        # the match deadlocks).
+        _hidden_places = self._hidden_enemy_attack_places()
+        if _hidden_places:
+            # 暴雪等价机制：只有**路线威胁已经能压制**的那些平面的
+            # TaskForce 才推进。地面路线穿过 sq 1,2 的中立大军，
+            # 战斗力不够时地面军队必须留在基地集结，不能送死。
+            _strike_units = self._hidden_enemy_committed_strike_units()
+            if _strike_units:
+                self._eventually_attack(_hidden_places, units=_strike_units)
+            self._attacked_places = []
+            # 暴雪星际争霸等价机制：除了"移动到目标格"，还要下**绑定单位
+            # 句柄**的攻击指令。否则目标选择依赖每 tick 的 perception，
+            # 感知一闪烁单位就停手，隐形基地永远打不掉。
+            self._order_attack_hidden_buildings(_strike_units)
+        elif self._uses_scout_brain():
             self._utility_goal = choose_utility_goal(self)
             if self._utility_goal == "scout":
                 if getattr(self, "_scout_sequence_started", None) is None:
@@ -6422,6 +6616,14 @@ class Computer(Player):
         else:
             self._follow_plan_guarded()
             _maybe_workers()
+        # 计划行卡死时用已有的生产建筑继续造兵（暴雪 AI 的 extra production）。
+        # crazyMod z5：``get 28 canon_plasma`` 的需求链要升级 215 秒，
+        # 期间 30 个工人全闲、200 万金币躺着 —— AI 一个兵都不造。
+        self._fallback_train_army_when_plan_stalled()
+        # 主动补齐当前计划行缺失的**需求建筑**，不要等到计划走到那个
+        # token 才发现造不出来（crazyMod z5 的 accelerateur_de_particules
+        # 链会让整行卡 1300 秒）。
+        self._ensure_missing_requirement_buildings()
         if hold_stash:
             self._build_a_warehouse_if_useful()
             self._ensure_housing(min_headroom=0)
@@ -6471,6 +6673,9 @@ class Computer(Player):
         self._cataclysm_users = []
         self._detector_users = []
         self._summon_users = []
+        # Native detector units (is_a_detector): used to sweep for hidden
+        # enemies (invisible / cloaked buildings) the AI cannot otherwise see.
+        self._detector_units = []
 
         # 按ID排序单位，确保处理顺序一致
         sorted_units = sorted(self.units, key=lambda u: u.id)
@@ -6484,6 +6689,10 @@ class Computer(Player):
                         self._gathered_deposits[u.orders[0].target] = 1
             elif isinstance(u, BuildingSite):
                 self._building_sites.append(u)
+
+            # 记录原生探测器单位（is_a_detector），用于反隐形的搜索。
+            if getattr(u, "is_a_detector", False):
+                self._detector_units.append(u)
             
             # 检查 can_use - 按字母顺序排序确保顺序一致
             sorted_can_use = sorted(u.can_use)
@@ -6606,7 +6815,1872 @@ class Computer(Player):
         memory snapshot, so it is the cheapest reliable "have I seen the
         enemy yet?" flag the AI has.
         """
-        return bool(getattr(self, "_enemy_presence", None))
+        known = bool(getattr(self, "_enemy_presence", None))
+        if known:
+            # Remember that the enemy exists, even after it goes invisible.
+            # The hidden-enemy sweep uses this to tell "the enemy is hiding"
+            # from "the enemy has not been found yet".
+            self._ever_saw_enemy = True
+        elif not getattr(self, "_ever_saw_enemy", False):
+            # Enemy buildings count as "seen" too: a base of invisible
+            # buildings is only visible to the AI once a detector reveals
+            # it, but the surrounding visible buildings mark the spot.
+            if self._perceived_enemy_buildings():
+                self._ever_saw_enemy = True
+        return known
+
+    # ------------------------------------------------------------------
+    # Hidden-enemy sweep (反隐形)
+    # ------------------------------------------------------------------
+    #
+    # Some mods give buildings ``is_invisible 1`` (crazyMod's Zerg hatchery
+    # ``couveuse``, necromancer towers, …).  Those buildings never show up in
+    # ``perception``, so the AI sees no enemy buildings at all — but the
+    # enemy player is still alive and keeps producing units, so the match
+    # deadlocks forever (the AI never finds the last building to destroy).
+    #
+    # The signature of that situation:
+    #   * a hostile player is still alive (has units), and
+    #   * the AI perceives **no enemy building** (they were all destroyed,
+    #     or they are invisible), while it may still see enemy *units*.
+    #
+    # The fix: in that situation, dispatch the detector units
+    # (``is_a_detector``) to sweep the map.  Detectors reveal invisible
+    # enemies within ``detection_range`` (see ``World._update_detection``),
+    # which puts the hidden building back into ``perception`` and re-enables
+    # the normal attack logic.
+
+    def _perceived_enemy_buildings(self):
+        """Enemy buildings the AI currently perceives (visible ones).
+
+        Invisible / cloaked buildings are deliberately excluded: they only
+        appear in the perception while a detector happens to reveal them
+        (see ``World._update_detection``, which rebuilds ``detected_units``
+        every tick).  Counting them here would make the sweep start and stop
+        every single tick — the detector would see the hatchery, the sweep
+        would stop, the detector would walk away, the hatchery would vanish
+        again, and the sweep would restart.  The hidden buildings are tracked
+        separately, in ``_remember_detected_hidden_buildings``.
+        """
+        result = []
+        for o in getattr(self, "perception", ()) or ():
+            if not getattr(o, "is_a_building", False):
+                continue
+            if getattr(o, "is_invisible", False) or getattr(o, "is_cloaked", False):
+                continue
+            try:
+                if not self.is_an_enemy(o):
+                    continue
+            except Exception:
+                continue
+            result.append(o)
+        return result
+
+    def _detected_enemy_buildings(self):
+        """Invisible enemy buildings the AI's detectors have revealed.
+
+        ``World._update_detection`` rebuilds ``detected_units`` from scratch on
+        every tick, so a detector that walks past the hidden hatchery reveals
+        it for a single tick only.  The AI must not lose the target again
+        right away: it needs the building's square to send the army to.
+
+        This is the AI-side counterpart of the fog-of-war memory (which
+        deliberately skips invisible objects — see ``_py_bulk_memorize``).
+        Here we keep a *short-lived* private note of the squares where a
+        detector revealed an invisible enemy building.
+        """
+        result = []
+        try:
+            detected = getattr(self, "detected_units", None)
+        except Exception:
+            detected = None
+        if not detected:
+            return result
+        for o in detected:
+            if not getattr(o, "is_a_building", False):
+                continue
+            try:
+                if not self.is_an_enemy(o):
+                    continue
+            except Exception:
+                continue
+            result.append(o)
+        return result
+
+    def _remember_detected_hidden_buildings(self):
+        """Note the squares where a detector revealed an invisible building.
+
+        The note is what makes the follow-up attack possible: the detection
+        itself lasts one tick, but the AI has to walk its army over there.
+        """
+        revealed = self._detected_enemy_buildings()
+        if not revealed:
+            return
+        notes = getattr(self, "_hidden_building_notes", None)
+        if notes is None:
+            notes = {}
+            self._hidden_building_notes = notes
+        now = getattr(self.world, "time", 0) or 0
+        for b in revealed:
+            place = getattr(b, "place", None)
+            if place is None:
+                continue
+            type_name = getattr(b, "type_name", "")
+            # 暴雪等价机制：记忆的是**单位句柄**，不是格子。一格之上可能有
+            # 多个隐形建筑（couveuse / termitiere / laboratoire_larvaire），
+            # 如果只用 ``id(place)`` 做键，后一个会覆盖前一个，导致只有
+            # 最后被侦测到的那个进入攻击名单 —— 其余隐形建筑永远打不掉。
+            notes[(id(place), type_name, getattr(b, "id", None))] = (
+                place,
+                now,
+                type_name,
+                getattr(b, "id", None),
+            )
+            # 暴雪等价机制：AI 有一张 **"敌方基地可疑位置"** 表。
+            # 一旦某个格子被探测器扫到过有隐形建筑，这个格子就**永久**
+            # 留在 AI 的怀疑名单里 —— 即使那一栋楼被拆掉了，敌人随时
+            # 可能在原地重建（crazyMod 的 Zerg 就是在同一格重建 couveuse
+            # / pouponniere / laboratoire_larvaire）。如果 AI 把这条记录
+            # 一起忘掉，重建后的隐形基地就再也找不回来了。
+            suspects = getattr(self, "_hidden_base_suspects", None)
+            if suspects is None:
+                suspects = {}
+                self._hidden_base_suspects = suspects
+            suspects[id(place)] = (place, now, type_name)
+
+    def _hidden_base_suspect_places(self):
+        """Squares where an invisible enemy building was EVER detected.
+
+        暴雪等价机制：AI 的 "suspicious base locations" 列表是**永久**的。
+        敌方基地被摧毁后，AI 依然会派探测器回到那个位置，因为敌人可能
+        在那里重建 —— 这正是暴雪 AI 不会"漏掉重建的隐形基地"的原因。
+
+        这里返回所有曾经侦测到过隐形建筑的格子（同一格可能先后放过
+        多个不同类型的隐形建筑，键是格子的 ``id``）。
+        """
+        suspects = getattr(self, "_hidden_base_suspects", None)
+        if not suspects:
+            return []
+        result = []
+        for key, entry in suspects.items():
+            place = entry[0]
+            if place is None:
+                continue
+            result.append(place)
+        result.sort(key=lambda p: getattr(p, "id", 0))
+        return result
+
+    def _hidden_building_notes_alive(self):
+        """Hidden buildings the AI still has a valid note about.
+
+        A note is dropped only when the building is gone (destroyed).  It is
+        *not* dropped after a timeout: a detector that walked past the
+        hatchery revealed it for good — the AI now knows where it stands,
+        and it must keep sending the army there until the hatchery is dead.
+        Timing the note out would let the AI forget the target while the
+        army was still walking over, and the hidden base would survive.
+
+        暴雪等价机制：**升级不改变 AI 的记忆**。crazyMod 的虫族把
+        ``couveuse`` 升级成 ``pouponniere`` 时，引擎会**删掉旧建筑、
+        生成一个新句柄的新建筑**（见 ``UpgradeToOrder.complete``）。如果
+        笔记只认死句柄，升级的一瞬间 AI 就把目标"忘光"了 —— 而探测器
+        往往因为该格在敌方火力范围内而无法靠近重新侦测，于是隐形基地
+        永远打不掉（crazyMod z5 / seed=5 实测：30 分钟超时，pouponniere
+        满血 100000 存活，AI 的可疑格表里有 0,0 / 0,1，笔记却是空的）。
+
+        所以：句柄失效时，按**类型血脉**在同一格重新认领建筑 ——
+        ``pouponniere`` 的 ``is_a`` 链里有 ``couveuse``，因此它是
+        "同一栋楼"的新形态。笔记随之改绑到新句柄。
+        """
+        notes = getattr(self, "_hidden_building_notes", None)
+        if not notes:
+            return []
+        alive = []
+        for key, entry in list(notes.items()):
+            place, seen_at, type_name, building_id = entry
+            building = self._alive_building_at(place, type_name, building_id)
+            if building is None:
+                # 句柄失效：可能是升级换了新句柄，也可能是原地重建。
+                # 只要那一格上还有同一血脉的隐形建筑，就改绑过去。
+                building = self._upgraded_hidden_building_at(place, type_name)
+                if building is None:
+                    del notes[key]
+                    continue
+                new_key = (
+                    id(place),
+                    getattr(building, "type_name", type_name),
+                    getattr(building, "id", None),
+                )
+                notes[new_key] = (
+                    place,
+                    seen_at,
+                    getattr(building, "type_name", type_name),
+                    getattr(building, "id", None),
+                )
+                if new_key != key:
+                    del notes[key]
+            alive.append(building)
+        return alive
+
+    def _upgraded_hidden_building_at(self, place, type_name):
+        """The invisible enemy building at ``place`` that continues ``type_name``.
+
+        暴雪等价机制：AI 记住的是**敌方基地的位置和血脉**，不是某个具体
+        的建筑句柄。虫族的 ``couveuse → pouponniere →
+        laboratoire_larvaire → fertiliseur_transgenetique`` 是一条升级链
+        （后者的 ``is_a`` 里有前者），所以升级后的新建筑仍然是"AI 知道
+        的那栋楼"，AI 应当继续打它。
+
+        只在同一格上找，且必须仍然是**隐形**的敌方建筑 —— 否则 AI 会把
+        旁边可见的建筑误当成目标。
+        """
+        if place is None or not type_name:
+            return None
+        best = None
+        for p in getattr(self.world, "players", ()) or ():
+            if p is self:
+                continue
+            try:
+                if not self.player_is_a_hostile_enemy(p):
+                    continue
+            except Exception:
+                continue
+            for u in getattr(p, "units", ()) or ():
+                if not getattr(u, "is_a_building", False):
+                    continue
+                if getattr(u, "place", None) is not place:
+                    continue
+                if not (
+                    getattr(u, "is_invisible", False)
+                    or getattr(u, "is_cloaked", False)
+                ):
+                    continue
+                name = getattr(u, "type_name", "")
+                if name == type_name:
+                    return u
+                if self._unit_is_a(u, type_name):
+                    # 同一条升级链上的更高形态：优先选最接近原型的那个。
+                    if best is None:
+                        best = u
+                    elif self._unit_is_a(u, getattr(best, "type_name", "")):
+                        best = u
+        return best
+
+    def _unit_is_a(self, unit, ancestor_name):
+        """True when ``unit``'s type inherits from ``ancestor_name``.
+
+        暴雪等价机制：AI 判断"这是不是同一栋楼的升级形态"时，用的是单位
+        自己身上的 ``is_a`` 血脉（``expanded_is_a``），而不是硬编码的
+        类型名 —— 这样 mods 自己的升级链（crazyMod 虫族的
+        ``couveuse → pouponniere → laboratorio_larvaire``）都能认出来。
+
+        ``expanded_is_a`` 是实例属性（见 ``CreatureAttributes.__init__``），
+        所以这里优先读实例；读不到再退回类属性。
+        """
+        if not ancestor_name:
+            return False
+        if getattr(unit, "type_name", "") == ancestor_name:
+            return True
+        expanded = getattr(unit, "expanded_is_a", None)
+        if expanded is None:
+            cls = type(unit)
+            expanded = getattr(cls, "expanded_is_a", ()) or ()
+        return ancestor_name in expanded
+
+    def _alive_building_at(self, place, type_name="", building_id=None):
+        """The (still living) enemy building of ``type_name`` at ``place``.
+
+        ``building_id`` narrows it down to one specific building, so that two
+        invisible buildings standing on the same square are tracked
+        independently (a square can hold e.g. ``couveuse`` + ``termitiere``).
+        """
+        for p in getattr(self.world, "players", ()) or ():
+            if p is self:
+                continue
+            try:
+                if not self.player_is_a_hostile_enemy(p):
+                    continue
+            except Exception:
+                continue
+            for u in getattr(p, "units", ()) or ():
+                if not getattr(u, "is_a_building", False):
+                    continue
+                if getattr(u, "place", None) is not place:
+                    continue
+                if type_name and getattr(u, "type_name", "") != type_name:
+                    continue
+                if building_id is not None and getattr(u, "id", None) != building_id:
+                    continue
+                return u
+        return None
+
+    def _hidden_enemy_attack_places(self):
+        """Squares where a revealed invisible building stands.
+
+        These are handed to the regular attack machinery so the army actually
+        walks over and destroys the hidden base.
+        """
+        places = []
+        seen = set()
+        for b in self._hidden_building_notes_alive():
+            place = getattr(b, "place", None)
+            if place is None:
+                continue
+            pid = id(place)
+            if pid in seen:
+                continue
+            seen.add(pid)
+            places.append(place)
+        places.sort(key=lambda p: getattr(p, "id", 0))
+        return places
+
+    def _hidden_enemy_attack_targets(self):
+        """The revealed invisible enemy buildings themselves (not just squares).
+
+        暴雪星际争霸等价机制：AI 记住的是**单位句柄**，不是坐标。攻击指令
+        绑定到单位 id 后，即使目标当前不在视野里（隐形 + 探测器走开了），
+        攻击依然会一直持续到目标死亡。
+
+        本仓库里对应的就是 ``revealed_units`` + ``AttackOrder``：
+        ``AttackAction.can_attack`` 在 ``forced=True``（orders[0].keyword ==
+        "attack" 且目标一致）时跳过"敌对"与"视野"两项检查。
+        """
+        result = []
+        seen = set()
+        for b in self._hidden_building_notes_alive():
+            bid = getattr(b, "id", None)
+            if bid is None or bid in seen:
+                continue
+            seen.add(bid)
+            result.append(b)
+        return result
+
+    def _has_handle_bound_attack(self, unit):
+        """True when ``unit`` is executing a handle-bound attack order.
+
+        暴雪星际争霸等价机制：AI 下达的攻击指令绑定**单位 id**（而不是
+        坐标），并且**在目标被摧毁之前不会被普通指令替换**。这类单位
+        正在前往隐形目标（couveuse）的路上，任何"移动到某个格子"的
+        普通指令都必须让路。
+
+        判据：队首指令是 ``attack``，且目标是一个仍然活着的隐形敌方
+        建筑（即 AI 已经侦测到的隐形基地）。
+        """
+        orders = getattr(unit, "orders", None) or ()
+        if not orders:
+            return False
+        o = orders[0]
+        if getattr(o, "keyword", None) != "attack":
+            return False
+        target = getattr(o, "target", None)
+        if target is None:
+            return False
+        if getattr(target, "hp", 0) <= 0:
+            return False
+        try:
+            notes = self._hidden_building_notes_alive()
+        except Exception:
+            return False
+        return any(t is target for t in notes)
+
+    def _hidden_enemy_strike_units(self):
+        """The units that should form the strike force against a hidden base.
+
+        暴雪星际争霸等价机制：**整支部队**（strike group）一起推进，而不是
+        一个单位一个单位地送死（"trickle"）。
+
+        这里和 ``_idle_fighters`` 的区别有三处，都是被 crazyMod 逼出来的：
+
+        1. **空中单位必须算数**。``_idle_fighters`` 会排除
+           ``airground_type == "air" and transport_capacity > 0`` 的单位
+           （那些是运输机）。但 crazyMod 的机器人阵营唯一的空中武器
+           ``vaisseau_laser`` 恰好带 ``transport_capacity 1``，于是它永远
+           进不了进攻部队。而地面路线 8→9→6→**7**→4→3→2 必经 sq 7 的
+           120 人中立大军（``computer_only ... technique``，对机器人阵营
+           是敌对的），地面部队在那儿全灭；空中路线 8→**5**→2 直飞
+           24000mm，绕开堵截。
+
+        2. **只挑真能走到目标的单位**。``_unit_can_reach`` 用的是该单位
+           自己的寻路平面（air / ground / water），所以空中单位会自动
+           选中那条能通行的路线。
+
+        3. **已经在路上的单位要算在内**。攻击指令一旦下达，``_idle_fighters``
+           就再也看不到这些单位了（它们有 orders），下一帧就"掉队"。
+           暴雪的做法是 AI 记住自己的打击编队并持续维持它。
+        """
+        targets = self._hidden_enemy_attack_targets()
+        if not targets:
+            return []
+
+        candidates = []
+        seen = set()
+        for u in list(self.units) + list(self._idle_fighters):
+            uid = getattr(u, "id", None)
+            if uid is not None:
+                if uid in seen:
+                    continue
+                seen.add(uid)
+            if getattr(u, "is_a_building", False):
+                continue
+            if getattr(u, "is_inside", False):
+                continue
+            if self._is_livestock_unit(u):
+                continue
+            if not isinstance(u, Soldier):
+                continue
+            if not getattr(u, "speed", 0):
+                continue
+            # 必须能打到建筑：有近战或远程伤害。
+            if not (getattr(u, "mdg", 0) or getattr(u, "rdg", 0)):
+                continue
+            # 已经在执行绑定句柄攻击指令的单位：保持原状，不要重复下指令
+            # （重新下指令会 cancel 掉旧的，再来一次"每帧重下"的乒乓）。
+            o = u.orders[0] if u.orders else None
+            if (
+                o is not None
+                and getattr(o, "keyword", None) == "attack"
+                and any(getattr(o, "target", None) is t for t in targets)
+            ):
+                continue
+            candidates.append(u)
+
+        reachable = []
+        for u in candidates:
+            # 只要能到达**其中任意一个**隐形目标即可参战
+            # （一格之上可能有多个隐形建筑，句柄各自独立）。
+            ok = False
+            for t in targets:
+                try:
+                    if self._unit_can_reach(u, getattr(t, "place", None)):
+                        ok = True
+                        break
+                except Exception:
+                    continue
+            if not ok:
+                continue
+            reachable.append(u)
+        return reachable
+
+    def _hidden_enemy_committed_strike_units(self):
+        """The strike units whose own plane may advance right now.
+
+        暴雪等价机制：**每个寻路平面单独编一个 TaskForce**，每个
+        TaskForce 自己判断"我的战斗力够不够打通这条路线"。
+        空中 TaskForce 的路线绕开 sq 1,2 的中立大军（威胁 0）可以推进；
+        地面 TaskForce 要硬闯那 120 人 + 20 座攻城炮，战斗力不够就
+        继续在基地集结。
+
+        一个平面的通行证**不是**全体的通行证：crazyMod z5 / seed=5 实测，
+        地面军队（46 个单位）跟着空军的通行证冲进 sq 1,2，2 分钟内
+        46 → 7 全灭；而同一时刻空中单位沿着 ``2,0 → 1,0 → 0,0``
+        绕开堵截，独立把隐形孵化场打掉了。
+        """
+        units = self._hidden_enemy_strike_units()
+        if not units:
+            return []
+        targets = self._hidden_enemy_attack_targets()
+        if not targets:
+            return []
+        ready_planes = self._hidden_enemy_strike_planes_ready(units, targets)
+        if not ready_planes:
+            return []
+        return [
+            u for u in units
+            if (getattr(u, "airground_type", None) or "ground") in ready_planes
+        ]
+
+    def _hidden_enemy_route_threat(self, unit, place):
+        """The enemy menace the strike group meets on the way to ``place``.
+
+        暴雪等价机制：SC2 的 AI 在派出一支打击编队之前，会先用
+        ``CAI::CalculateCombatState`` 估算这条路线上的敌军总威胁，
+        只有当编队的 ``CombatStrength`` 足够时才真正发起进攻。
+        否则 AI 会先继续集结兵力，而不是把先头部队一个个送掉。
+
+        这里返回路线上**最大**的 ``enemy_menace``（而不是总和）：总和
+        会把路过的每一个格子都算进去，导致门槛高得永远无法达成；最
+        大值才是"最坏遭遇点"的威胁，符合暴雪"路线上最强敌军"的估算。
+
+        找不到路径时返回 0（没有已知威胁 —— 例如空中路线绕开了地面
+        大军），此时不设门槛。
+        """
+        try:
+            path = self._unit_path(unit, place, places=True) or []
+        except Exception:
+            return 0
+        threat = 0
+        for p in path:
+            try:
+                m = int(self._enemy_menace.get(p, 0) or 0)
+            except (TypeError, ValueError):
+                m = 0
+            if m > threat:
+                threat = m
+        return threat
+
+    def _hidden_enemy_strike_planes_ready(self, units, targets):
+        """The path planes whose strike group is strong enough to be committed.
+
+        暴雪等价机制：SC2 的 AI 为每个**寻路平面**单独编一个 TaskForce，
+        每个 TaskForce 自己判断"我的战斗力够不够打通这条路线"。
+        空中 TaskForce 的路线绕开地面大军（威胁 0）可以推进，
+        地面 TaskForce 的路线要穿过 sq 1,2 的 120 人中立大军，
+        战斗力不够就继续集结 —— 两个 TaskForce 互不干涉。
+
+        返回可以推进的平面集合（``{"air"}`` / ``{"ground"}`` /
+        ``{"ground", "air"}`` / 空集）。
+
+        暴雪等价机制的第二个要点：**一个平面的通行证不是全体的通行证**。
+        空中 TaskForce 合格不代表地面 TaskForce 合格，反之亦然。
+        crazyMod z5 / seed=5 的实测：地面军队（46 个单位）被放进 sq 1,2
+        的攻城炮阵地，2 分钟内 46 → 7 全灭；而同一时刻空中单位沿着
+        ``2,0 → 1,0 → 0,0`` 绕开中立大军，把隐形孵化场打掉了。
+        """
+        ready = set()
+        if not units or not targets:
+            return ready
+        planes = {}
+        for u in units:
+            plane = getattr(u, "airground_type", None) or "ground"
+            planes.setdefault(plane, []).append(u)
+        for plane, group in planes.items():
+            if not group:
+                continue
+            force = 0
+            for u in group:
+                try:
+                    force += int(getattr(u, "menace", 0) or 0)
+                except (TypeError, ValueError):
+                    continue
+            if force <= 0:
+                continue
+            threat = 0
+            for t in targets:
+                place = getattr(t, "place", None)
+                if place is None:
+                    continue
+                th = self._hidden_enemy_route_threat(group[0], place)
+                if th > threat:
+                    threat = th
+            if threat <= 0:
+                # 路线上没有已知敌军 —— 直接推进。
+                #
+                # 这里也覆盖了"空中路线绕开地面大军"的情况：crazyMod 的
+                # ``vaisseau_laser`` 走 8->5->2，压根不经过 sq 1,2 的
+                # 120 人中立大军，所以它的路线威胁是 0 —— 它是唯一能把
+                # 隐形基地打掉的路线，不能因为"地面有大军"就把它拦下。
+                ready.add(plane)
+                continue
+            if force * 100 >= threat * self._hidden_strike_force_ratio:
+                ready.add(plane)
+        return ready
+
+    def _hidden_enemy_strike_group_ready(self, units, targets):
+        """True when at least one strike plane is strong enough to be committed.
+
+        暴雪等价机制：打击编队（``TaskForce``）必须**成建制**推进。
+        SC2 AI 从不把单个单位送去碰瓷 —— 它等编队集结到足以压制路线
+        上的敌军之后再一起推进。
+
+        这个门槛是 crazyMod ``z5`` 死锁的关键修复。实测数据：
+
+        * 敌方 ``technique`` 中立大军在 sq ``1,2``，120 人、总 menace
+          31 万，其中有 20 座 ``catapult``（单发 14000 伤害）。
+        * 机器人的 ``tireur_magnetique`` / ``capteur_mobile`` 的
+          ``hp_max`` 只有 8~10 —— 攻城车一发秒杀。
+        * 反隐形层启用后，机器人会把它**仅有**的 1~3 个兵直接送进这
+          支大军，423 个单位全灭，隐形基地永远打不掉（seed=42 失败）。
+        * 关掉反隐形层反而能赢：AI 会先集结 30~147 个兵（menace 29 万）
+          再推进，t=1382s 推掉隐形基地。
+
+        所以规则是：**编队总 menace 必须达到路线威胁的一个比例**，
+        且**编队规模至少 2 个单位**（一个单位不算编队）。
+        """
+        return bool(self._hidden_enemy_strike_planes_ready(units, targets))
+
+    def _order_attack_hidden_buildings(self, units):
+        """Give ``units`` a handle-bound attack order on the hidden buildings.
+
+        暴雪星际争霸等价机制（见 ``_hidden_enemy_attack_targets``）：
+        攻击指令绑定**单位 id**，而不是"移动到某个格子"。
+
+        与 ``_send_units`` 的 "go" 指令的本质区别：
+          * "go <square>" 只移动；目标选择交给 ``decide()`` →
+            ``known_enemies()``，而后者过滤掉不在 perception 里的对象 ——
+            感知一闪烁，单位就站着不动（crazyMod 电脑不拆隐形孵化场的
+            直接原因）。
+          * "attack <id>" + ``imperative=True`` 会让
+            ``AttackAction.can_attack`` 返回 True（``forced`` 路径），
+            单位会一路走到目标跟前并持续开火，直到建筑被摧毁。
+
+        返回成功下达指令的单位数。
+        """
+        targets = self._hidden_enemy_attack_targets()
+        if not targets or not units:
+            return 0
+        # 暴雪等价机制：打击编队必须先集结到足以压制路线威胁的规模，
+        # 否则只会白白送死（crazyMod z5 / seed=42：1~3 个兵被 20 座
+        # catapult 一发秒杀，全军覆没）。
+        #
+        # **按平面分别判定**：空中 TaskForce 绕开 sq 1,2 的中立大军，
+        # 地面 TaskForce 要硬闯。空中合格不代表地面合格 —— 否则地面
+        # 军队会跟着空军的通行证一起冲进攻城炮阵地（seed=5 实测：
+        # 46 个地面单位 2 分钟内全灭，而空军独立把隐形孵化场打掉了）。
+        ready_planes = self._hidden_enemy_strike_planes_ready(units, targets)
+        if not ready_planes:
+            return 0
+        issued = 0
+        for u in units:
+            if getattr(u, "is_a_building", False):
+                continue
+            if not getattr(u, "speed", 0):
+                # 建筑/静止单位打不了移动目标，但也可能能打建筑
+                if not (getattr(u, "mdg", 0) or getattr(u, "rdg", 0)):
+                    continue
+            plane = getattr(u, "airground_type", None) or "ground"
+            if plane not in ready_planes:
+                # 这个平面的 TaskForce 还没集结到足以打通路线的规模：
+                # 留在基地继续集结，不要送死。
+                continue
+            target = None
+            for t in targets:
+                if not self._unit_can_reach(u, getattr(t, "place", None)):
+                    continue
+                target = t
+                break
+            if target is None:
+                continue
+            # 已经带着同一条绑定攻击指令 → 不要重下。重下会先
+            # ``cancel_all_orders()``，把"正在飞行途中"的攻击指令冲掉，
+            # 单位就会在半路停下来（crazyMod：空中飞船飞到一半就掉头）。
+            o = u.orders[0] if u.orders else None
+            if (
+                o is not None
+                and getattr(o, "keyword", None) == "attack"
+                and getattr(o, "target", None) is target
+                and not getattr(o, "is_impossible", False)
+            ):
+                issued += 1
+                continue
+            try:
+                u.take_order(["attack", target.id], imperative=True)
+            except Exception:
+                continue
+            orders = getattr(u, "orders", None) or []
+            if orders and not getattr(orders[0], "is_impossible", False):
+                issued += 1
+        return issued
+
+    def _hostile_players_still_alive(self):
+        """Hostile players that are still in the match and still have units."""
+        world = getattr(self, "world", None)
+        players = getattr(world, "players", None) or ()
+        result = []
+        for p in players:
+            if p is self:
+                continue
+            if not self.player_is_a_hostile_enemy(p):
+                continue
+            if not getattr(p, "is_playing", True):
+                continue
+            if not p.units:
+                continue
+            result.append(p)
+        return result
+
+    def _hidden_enemy_needs_sweep(self):
+        """True when a hostile player is alive but no enemy building is seen.
+
+        Returns False when the AI still perceives an enemy building (nothing
+        hidden to hunt), when no hostile player is left (the enemy really is
+        dead), or when the AI has never seen the enemy at all (that is the
+        scout's job, not the detectors').
+
+        This describes the *situation*, not the means: the AI may still have
+        to build a detector first (see ``_ensure_mobile_detector``).
+        """
+        # An enemy building is visible → nothing hidden to hunt for.
+        if self._perceived_enemy_buildings():
+            # …unless the AI already knows about a hidden building that is
+            # still standing: a detector must stay next to it, otherwise it
+            # goes invisible again and the army loses the target.
+            if not self._hidden_building_notes_alive():
+                # …or unless the AI knows where a hidden building *used to*
+                # stand.  The enemy may rebuild an invisible building there
+                # at any moment, so the detector must keep watching that
+                # square (Blizzard's AI keeps a permanent list of
+                # "suspicious base locations").
+                if not self._hidden_base_suspect_places():
+                    return False
+
+        # The AI must have seen the enemy before.  Otherwise this is just the
+        # opening of the match: the regular scout (``_send_explorer``) is
+        # responsible for finding the enemy, and dispatching the detectors
+        # right away would only slow the opening down.
+        if not getattr(self, "_ever_saw_enemy", False):
+            return False
+
+        if not self._hostile_players_still_alive():
+            return False
+
+        return True
+
+    def _sweeping_for_hidden_enemy(self):
+        """True while the AI is actively hunting a hidden enemy.
+
+        Used to keep the sweep detectors out of the explorer's recall logic.
+        """
+        return bool(getattr(self, "_hidden_enemy_sweep_active", False))
+
+    def _is_sweeping_detector(self, unit):
+        """True when ``unit`` is a detector on a sweep / park mission.
+
+        暴雪等价机制：被指派了侦察任务的单位不会被普通移动指令打断。
+        只有两种情况算"在执行任务"：
+
+        1. **正在前往可疑格**（扫荡任务）：探测器带着一条 "go <可疑格>"
+           指令 —— 这条指令的目标正是 AI 自己分配的扫荡目标。
+        2. **已经停在隐形建筑上**（驻守任务）：探测器已经站在隐形基地
+           那一格，必须留在那里保持侦测，否则建筑重新隐形，军队就失去
+           目标。
+
+        这两种情况之外的探测器（刚刚被造出来、还没派任务的）不算 ——
+        它们仍然可以被普通进攻指令调走。
+        """
+        if not getattr(unit, "is_a_detector", False):
+            return False
+        try:
+            detectors = self._sweep_detector_units()
+        except Exception:
+            return False
+        if not any(unit is d for d in detectors):
+            return False
+        # 2) Parked on a known hidden building: stay there.
+        parked = getattr(self, "_hidden_building_parked", None)
+        if parked is not None and unit is parked:
+            return True
+        # 1) On the way to a sweep target.
+        orders = getattr(unit, "orders", None) or ()
+        if not orders:
+            return False
+        o = orders[0]
+        if getattr(o, "keyword", None) != "go":
+            return False
+        target = getattr(o, "target", None)
+        if target is None:
+            return False
+        try:
+            targets = self._hidden_enemy_sweep_targets()
+        except Exception:
+            return False
+        return any(target is t for t in targets)
+
+    def _sweep_detector_units(self):
+        """Mobile detector units usable for a sweep.
+
+        Only units that can actually move are useful: a static radar tower
+        covers a fixed spot and cannot be redeployed to hunt.
+        """
+        units = getattr(self, "_detector_units", None)
+        if units is None:
+            units = [u for u in getattr(self, "units", ()) or ()
+                     if getattr(u, "is_a_detector", False)]
+            self._detector_units = units
+        result = []
+        for u in units:
+            if getattr(u, "is_inside", False):
+                continue
+            if getattr(u, "speed", 0) <= 0:
+                continue
+            if getattr(u, "airground_type", "ground") == "water":
+                continue
+            result.append(u)
+        return result
+
+    def _own_start_square(self):
+        """The square this player started on."""
+        world = getattr(self, "world", None)
+        starts = list(getattr(world, "starting_squares", ()) or ())
+        number = getattr(self, "number", None)
+        try:
+            index = (number - 1) if number is not None else 0
+            if 0 <= index < len(starts):
+                square = getattr(world, "grid", {}).get(starts[index])
+                if square is not None:
+                    return square
+        except Exception:
+            pass
+        try:
+            return self._default_start_place()
+        except Exception:
+            return None
+
+    def _hidden_enemy_base_squares(self):
+        """The squares where the invisible base most likely stands.
+
+        Priority order:
+
+        1. squares where a detector already revealed an invisible building;
+        2. the permanent "suspicious base location" table;
+        3. the enemy starting squares (the invisible hatchery stands on the
+           enemy start square in crazyMod).
+
+        The AI's own start square is excluded: reaching it proves nothing.
+        """
+        result = []
+        seen = set()
+
+        def _add(place):
+            place = self._world_place_for_pathfinding(place)
+            if place is None:
+                return
+            key = id(place)
+            if key in seen:
+                return
+            seen.add(key)
+            result.append(place)
+
+        try:
+            for b in self._hidden_building_notes_alive():
+                _add(getattr(b, "place", None))
+        except Exception:
+            pass
+        try:
+            for p in self._hidden_base_suspect_places():
+                _add(p)
+        except Exception:
+            pass
+        world = getattr(self, "world", None)
+        grid = getattr(world, "grid", {}) or {}
+        own = self._own_start_square()
+        try:
+            for name in list(getattr(world, "starting_squares", ()) or ()):
+                square = grid.get(name)
+                if square is None or square is own:
+                    continue
+                _add(square)
+        except Exception:
+            pass
+        return result
+
+    def _detector_reaches_base(self, detector, bases):
+        """True when *detector* can safely reach one of the *bases* squares.
+
+        暴雪等价机制：暴雪只把**真的能到位**的侦察单位派去侦察。crazyMod
+        的 z5 地图上，地面通路 (2,0 → 2,1 → 1,1 → 1,2 → 0,2 → 0,1 → 0,0)
+        要穿过 1,2 的中立攻城炮阵地，一发 14000 伤害就能打死
+        ``capteur_mobile``（hp_max 8）；空中通路 (2,0 → 1,0 → 0,0) 完全没有
+        威胁。地面探测器永远走不到隐形基地 —— 只有空中探测器能。
+
+        When no base square is known yet, every detector counts (there is
+        nothing to reach yet).
+        """
+        if not bases:
+            return True
+        origin = getattr(detector, "place", None)
+        for base in bases:
+            if origin is base:
+                return True
+            if self._detector_route_is_safe(detector, base):
+                return True
+        return False
+
+    def _dedicated_detector_units(self):
+        """The AI's usable scout squad.
+
+        A detector only counts when it can actually **reach** the suspected
+        invisible base.  crazyMod's ``priest`` carries ``is_a_detector 1``
+        but is a slow ground fighter whose only route to the enemy base
+        crosses the catapult battery — it can never find the hatchery, so
+        it must not satisfy the squad requirement.
+        """
+        bases = self._hidden_enemy_base_squares()
+        return [
+            u for u in self._sweep_detector_units()
+            if self._detector_reaches_base(u, bases)
+        ]
+
+    def _detector_type_reaches_base(self, type_name, bases):
+        """Same question, but for a detector *type* the AI could build.
+
+        The path is computed from the AI's own base square, using the
+        type's movement plane.
+        """
+        if not bases:
+            return True
+        plane = self._detector_type_plane(type_name)
+        origin = self._own_start_square()
+        if origin is None:
+            return True
+        for base in bases:
+            try:
+                path = origin.shortest_path_to(
+                    base, self, plane=plane, places=True
+                ) or []
+            except Exception:
+                return False
+            safe = True
+            for p in path:
+                try:
+                    if self.square_is_dangerous(p):
+                        safe = False
+                        break
+                except Exception:
+                    continue
+            if safe:
+                return True
+        return False
+
+    def _mobile_detector_candidates(self):
+        """Unit types that could be fielded as a mobile detector.
+
+        A mobile detector is a unit that
+
+        * carries ``is_a_detector`` (it can reveal invisible enemies),
+        * is not a building (it must be able to move),
+        * can actually move (``speed`` > 0), and
+        * has a maker, so it can be produced at all.
+
+        The list is cached: the rules never change during a match.
+        """
+        cached = getattr(self, "_mobile_detector_candidates_cache", None)
+        if cached is not None:
+            return cached
+        candidates = []
+        try:
+            class_names = list(getattr(rules, "classes", ()) or ())
+        except Exception:
+            class_names = []
+        for name in class_names:
+            try:
+                cls = rules.unit_class(name)
+                if cls is None:
+                    continue
+                if not rules.class_rules_attr(cls, "is_a_detector", 0):
+                    continue
+                if rules.class_rules_attr(cls, "is_a_building", False):
+                    continue
+                if not rules.class_rules_attr(cls, "speed", 0):
+                    continue
+                makers = rules.get_makers(name)
+                if not makers:
+                    continue
+                candidates.append((name, tuple(makers)))
+            except Exception:
+                continue
+        candidates.sort()
+        self._mobile_detector_candidates_cache = candidates
+        return candidates
+
+    def _detector_type_plane(self, type_name):
+        """The movement plane of a detector *type* ("ground" / "air")."""
+        try:
+            cls = rules.unit_class(type_name)
+        except Exception:
+            cls = None
+        if cls is None:
+            return "ground"
+        plane = rules.class_rules_attr(cls, "airground_type", "ground")
+        return plane or "ground"
+
+    def _detector_type_is_air(self, type_name):
+        return self._detector_type_plane(type_name) == "air"
+
+    def _mobile_detector_candidates_ordered(self):
+        """Detector types to build, best first.
+
+        暴雪等价机制：暴雪的 AI 会按**用途**挑侦察单位 —— 地面被敌军
+        封锁时改用空中侦察（Observer / Raven 可以飞过地面部队）。
+
+        crazyMod 的 z5 地图上，从机器人基地 (2,0) 到虫族基地 (0,0) 的
+        唯一地面通路要穿过 1,2 —— 那里驻扎着 120 人的中立军队和 20 门
+        攻城炮（一发 14000 伤害）。空中通路 (2,0 → 1,0 → 0,0) 完全
+        无阻。所以当**地面**探测器无法安全抵达目标时，必须优先造
+        **空中**探测器，否则隐形基地永远找不到。
+
+        The ordering is:
+
+        1. types that can actually reach the suspected base, first;
+        2. air detectors before ground ones — they can bypass a ground
+           kill zone entirely;
+        3. alphabetical, to stay deterministic.
+        """
+        candidates = list(self._mobile_detector_candidates())
+        bases = self._hidden_enemy_base_squares()
+
+        def _key(item):
+            name = item[0]
+            try:
+                reachable = 1 if self._detector_type_reaches_base(name, bases) else 0
+            except Exception:
+                reachable = 0
+            is_air = 1 if self._detector_type_is_air(name) else 0
+            return (-reachable, -is_air, name)
+
+        candidates.sort(key=_key)
+        return candidates
+
+    def _ensure_mobile_detector(self):
+        """Make sure the AI fields at least one mobile detector.
+
+        The mod's own build script may never ask for a detector (crazyMod's
+        robot script only builds the static ``tour_radar``), so the AI has
+        to be able to field one on its own.  Without a mobile detector the
+        hidden-enemy sweep cannot happen at all and the match deadlocks.
+
+        Two detectors are kept when possible: the sweep sends them to
+        different squares, and a single detector that dies (or walks into an
+        enemy base) would leave the hidden enemy unfindable again.
+
+        暴雪等价机制：AI 不会因为"造不出探测器"就放弃。暴雪在这种情况下
+        会**先把前置建筑补齐**（crazyMod 的 ``capteur_mobile`` 需要
+        ``modulateur_de_signal``，而机器人的 build 脚本从不造它 —— 于是
+        训练指令被静默拒绝，AI 永远只有一个探测器，而且那个探测器一死
+        就再也找不到隐形的敌方基地）。所以这里在训练之前先检查
+        ``requirements``，缺什么就先造什么。
+
+        Returns True when a detector is already owned or has just been
+        ordered.
+        """
+        # A *generic* unit that merely carries the detector flag (crazyMod's
+        # ``priest``) is not a scout squad: it fights, it does not scout, and
+        # counting it here would stop the AI from ever building a real
+        # detector.  The real test is reachability: a detector that cannot
+        # get to the suspected base is useless no matter what it is.
+        if self._dedicated_detector_units():
+            return True
+        for name, makers in self._mobile_detector_candidates_ordered():
+            # Only types whose factory we already own can be trained right
+            # away; for the others we ask the regular AI machinery to build
+            # the factory first (it handles the requirements chain).
+            owned_makers = [m for m in makers if self.nb(m) > 0]
+            if not owned_makers:
+                continue
+            try:
+                cls = rules.unit_class(name)
+            except Exception:
+                cls = None
+            if cls is None:
+                continue
+            # The training order is silently rejected when the *type's*
+            # requirements are not met (``TrainOrder.is_allowed`` checks
+            # ``player.has_all(type.requirements)``).  Build the missing
+            # prerequisites first, otherwise the order is a no-op and the
+            # AI silently ends up with no detector at all.
+            if not self._ensure_detector_prerequisites(cls):
+                continue
+            host = find_train_host(self, list(owned_makers), name)
+            if host is None:
+                # Every factory is busy: try the regular path, which may
+                # still find a free slot later on.
+                continue
+            try:
+                if not self.gather(cls.cost, cls.population_cost):
+                    continue
+            except Exception:
+                continue
+            try:
+                host.take_order(["train", name])
+            except Exception:
+                continue
+            self._invalidate_play_derived_counts()
+            return True
+        return False
+
+    # How long a plan line may be stuck before the AI stops waiting for it
+    # and keeps producing with the buildings it already owns.
+    #
+    # crazyMod's robot script reaches ``get 28 canon_plasma``, whose
+    # requirement chain (canon_plasma -> accelerateur_de_particules ->
+    # supercalculateur) takes ~215 s to upgrade.  During that whole window
+    # the plan produced *nothing*: 30 workers stood idle and 2 M gold sat in
+    # the bank, because the only ``get`` token was unreachable.
+    #
+    # Blizzard's AI never idles like this.  When the scripted build order
+    # cannot advance, it keeps its factories running on whatever they can
+    # already make (the "extra production" behaviour of the StarCraft AI).
+    _fallback_train_stall_seconds = 45
+
+    def _plan_line_stalled_seconds(self):
+        """Seconds the plan has been sitting on its current line.
+
+        ``_previous_linechange`` is refreshed every tick while the watchdog
+        decides the line is "still completable" (see
+        ``_watchdog_should_wait``).  That is the right behaviour for the
+        watchdog -- the line must not be skipped -- but it makes the timer
+        useless for the fallback production: on AoE2 jl3 the AI sat on
+        ``get 6 militia`` for the whole game while banking food for the
+        500-food feudal click, and the fallback never fired once because
+        the timer was reset 1000 times a minute.
+
+        So the fallback uses its own clock: it counts the time since the
+        plan line last made *progress* (the line index changed, or the
+        line's satisfied quota grew).
+        """
+        previous = getattr(self, "_previous_linechange", None)
+        if previous is None:
+            return 0
+        try:
+            return max(0, (self.world.time - previous) // 1000)
+        except Exception:
+            return 0
+
+    def _plan_progress_stall_seconds(self):
+        """Seconds since the current plan line last made progress.
+
+        "Progress" means: the plan advanced to another line, or the
+        current line's owned+in-production count for one of its tokens
+        grew.  A line that is waiting for an age-up or an unaffordable
+        token makes no progress at all, so this clock keeps running.
+        """
+        now = getattr(getattr(self, "world", None), "time", None)
+        if now is None:
+            return 0
+        state = getattr(self, "_plan_progress_state", None)
+        try:
+            line = self._plan[self._line_nb]
+        except Exception:
+            return 0
+        quota = self._plan_line_quota_signature(line)
+        signature = (self._line_nb, quota)
+        if state is None or state.get("signature") != signature:
+            self._plan_progress_state = {
+                "signature": signature,
+                "since": now,
+            }
+            return 0
+        return max(0, (now - state.get("since", now)) // 1000)
+
+    def _plan_line_quota_signature(self, line):
+        """Stable digest of how much of the current plan line is satisfied."""
+        if not isinstance(line, str) or not line.startswith("get "):
+            return ()
+        out = []
+        for token in str(line).split()[1:]:
+            if token.isdigit():
+                continue
+            try:
+                name = self.equivalent(token)
+            except Exception:
+                name = token
+            try:
+                have = self.nb(name) + self.future_nb(name)
+            except Exception:
+                have = 0
+            out.append((name, have))
+        return tuple(out)
+
+    def _plan_line_is_stalled_get(self):
+        """True when the current plan row is a ``get`` line that is stuck."""
+        try:
+            line = self._plan[self._line_nb]
+        except Exception:
+            return False
+        if not isinstance(line, str) or not line.startswith("get "):
+            return False
+        threshold = int(self._fallback_train_stall_seconds or 0)
+        if threshold <= 0:
+            return False
+        return self._plan_progress_stall_seconds() >= threshold
+
+    def _fallback_train_army_when_plan_stalled(self):
+        """Keep producing while the plan's ``get`` line cannot be completed.
+
+        The scripted build order is a *wish list*.  When one of its tokens
+        is unreachable (a missing requirement building that is still being
+        upgraded, a tech that will not come, a building that cannot be
+        placed) the whole line stalls and the AI produces nothing at all:
+        no soldiers, no detectors, no pressure on the enemy.
+
+        Blizzard's AI does not behave that way.  Its factories keep running
+        on what they can already build, so the army keeps growing while the
+        tech chain finishes.  This is the "extra production" behaviour of
+        the StarCraft AI.
+
+        So: when the plan has been stuck on the same ``get`` line for
+        ``_fallback_train_stall_seconds`` and the AI owns an operable
+        production building with a free slot, train one affordable army
+        unit from it.
+
+        Returns True when a unit was ordered.
+        """
+        if not self._plan_line_is_stalled_get():
+            return False
+        # Never fight the plan: if the plan's own token is trainable right
+        # now, the regular path already ordered it.
+        candidates = self._fallback_army_train_candidates()
+        if not candidates:
+            return False
+        # Food reserved for a pending age-up must not be spent on extra
+        # soldiers: the 500-food feudal click is the gate for the first
+        # *real* wave, and one militia (50 food) is 10 % of it.  The plan
+        # itself defers the same token for exactly this reason
+        # (``_defer_plan_get_token`` with ``saving_for_feudal``).
+        saving_food = False
+        try:
+            saving_food = bool(self._saving_food_for_age())
+        except Exception:
+            saving_food = False
+        for name, host in candidates:
+            cls = rules.unit_class(name)
+            if cls is None:
+                continue
+            cost = getattr(cls, "cost", None) or ()
+            if saving_food and len(cost) > 2 and cost[2]:
+                # The unit eats into the food bank: only allow it when the
+                # bank already covers the age-up *plus* this unit.
+                try:
+                    age_cost = self._pending_age_up_food_cost()
+                except Exception:
+                    age_cost = 0
+                if age_cost:
+                    res = getattr(self, "resources", None) or ()
+                    food = res[2] if len(res) > 2 else 0
+                    if food < age_cost + cost[2]:
+                        continue
+            try:
+                if self.missing_resources(cost):
+                    continue
+            except Exception:
+                continue
+            # NOTE: do **not** call ``gather()`` here.  ``gather`` is the
+            # eco routine: it re-assigns workers to resources and its
+            # target choice walks perception sets, whose iteration order
+            # depends on object addresses.  Calling it from the fallback
+            # would perturb the economy in a non-reproducible way (the
+            # same seed then produced different matches from run to run).
+            # The fallback only *trains*: affordability is all it needs.
+            try:
+                host.take_order(["train", name])
+            except Exception:
+                continue
+            self._invalidate_play_derived_counts()
+            return True
+        return False
+
+    def _fallback_army_train_candidates(self):
+        """Army units the owned, idle production buildings can train now.
+
+        Returns a list of ``(type_name, host_building)`` pairs, best first.
+
+        The plan's own tokens are deliberately *not* preferred here.  The
+        unit the plan asks for is often the one that dies the fastest (the
+        scripted ``get 20 tireur_laser`` kept losing its units to the
+        enemy), so reinforcing it would just burn the money.  The cheapest
+        unit the AI can field is the one that keeps the army alive while
+        the tech chain finishes.
+
+        Determinism note: the choice must be **stable across runs**.
+        Several factories can train the same unit, and which of them is
+        idle depends on the battle that is already happening — which is
+        itself only reproducible up to the engine's object-address
+        ordering.  Picking "the first idle factory that can train the
+        cheapest unit" therefore flipped between runs and the match ended
+        up 600 s apart for the same seed.
+
+        So the fallback must not depend on *which* factory is free.  It
+        only asks for **one** unit from **one** factory; the cheapest
+        unit is what matters, and the factory is irrelevant to the
+        outcome.  To keep the decision reproducible, the candidates are
+        sorted by unit name only, and the first idle factory able to
+        train that unit is used.
+        """
+        # unit name -> set of factories that can train it
+        makers_of = {}
+        for u in getattr(self, "units", ()) or ():
+            if not getattr(u, "is_a_building", False):
+                continue
+            if getattr(u, "place", None) is None:
+                continue
+            if not building_can_operate(u):
+                continue
+            for raw in effective_can_train(u) or ():
+                name = (
+                    self.equivalent(raw)
+                    if callable(getattr(self, "equivalent", None))
+                    else raw
+                )
+                if not name:
+                    continue
+                cls = rules.unit_class(name)
+                if cls is None:
+                    continue
+                # The unit's own requirements must already be met, otherwise
+                # the train order is silently rejected (see
+                # ``TrainOrder.is_allowed``).
+                try:
+                    if not self.has_all(
+                        tuple(getattr(cls, "requirements", ()) or ())
+                    ):
+                        continue
+                except Exception:
+                    continue
+                if not self._token_is_army_for_inject(name):
+                    continue
+                makers_of.setdefault(name, []).append(u)
+
+        # Prefer the cheapest unit the AI can actually field, so the
+        # fallback keeps producing even when the money is nearly gone.
+        def _key(name):
+            cls = rules.unit_class(name)
+            cost = getattr(cls, "cost", None) or ()
+            gold = cost[0] if cost else 0
+            try:
+                threat = getattr(cls, "rdg", 0) + getattr(cls, "mdg", 0)
+            except Exception:
+                threat = 0
+            return (gold, -threat, name)
+
+        result = []
+        for name in sorted(makers_of, key=_key):
+            hosts = [
+                u
+                for u in makers_of[name]
+                if not u.orders  # idle factory only
+            ]
+            if not hosts:
+                continue
+            # Lowest id first: the unit id is assigned in creation order and
+            # is stable across runs, unlike the object address.
+            hosts.sort(key=lambda u: getattr(u, "id", 0) or 0)
+            result.append((name, hosts[0]))
+        return result
+
+    def _ensure_detector_prerequisites(self, detector_cls):
+        """Make sure the *type requirements* of a detector type are met.
+
+        ``TrainOrder.is_allowed`` checks ``player.has_all(type.requirements)``
+        and silently refuses the order otherwise.  In crazyMod the robot
+        faction's build script never builds ``modulateur_de_signal``, which
+        ``capteur_mobile`` requires — so every attempt to train a mobile
+        detector was a silent no-op, and the AI ended up with **zero**
+        detectors after its first one died.  That is exactly the deadlock
+        this whole sweep machinery exists to prevent.
+
+        Blizzard's AI behaves the same way in spirit: it will spend
+        resources on the tech/building chain that unlocks the unit it needs
+        (e.g. building the Tech Lab before the Cloaking Field), rather than
+        silently doing nothing.
+
+        Returns True when all requirements are satisfied (or are being
+        satisfied right now).
+        """
+        try:
+            reqs = tuple(getattr(detector_cls, "requirements", ()) or ())
+        except Exception:
+            return True
+        if not reqs:
+            return True
+        try:
+            if self.has_all(reqs):
+                return True
+        except Exception:
+            return True
+        # Ask the regular AI machinery for the missing prerequisites.  It
+        # handles the requirements chain (and will build the buildings with
+        # the workers).
+        for r in reqs:
+            if self.has(r):
+                continue
+            try:
+                if not self._get(1, r):
+                    # The prerequisite is not obtainable (no maker) — do not
+                    # block the whole detector search on it.
+                    continue
+            except Exception:
+                continue
+        try:
+            return self.has_all(reqs) or self.future_nb(list(reqs)) > 0
+        except Exception:
+            return True
+
+    def _ensure_missing_requirement_buildings(self):
+        """Build the requirement buildings the current plan line is missing.
+
+        A ``get`` token can be unreachable because one of the *type
+        requirements* is not satisfied.  ``_get_requirements`` already
+        requests the missing building, but only when the plan line is
+        reached -- and only for the token currently being asked for.  The
+        problem is that the AI can sit on a plan line for minutes while the
+        requirement chain is still being upgraded, and in that window it
+        produces nothing at all.
+
+        On crazyMod z5 the robot's ``get 28 canon_plasma`` needs
+        ``accelerateur_de_particules``, which needs ``supercalculateur`` —
+        an *upgrade* of ``calculateur`` that takes ~215 s.  The plan was
+        therefore blocked for 1300+ s of a 1500 s game while 30 workers
+        stood idle and 2 M gold sat unused.
+
+        This proactively walks the requirement chain of the current plan
+        tokens and asks for the missing buildings, so the chain is built in
+        parallel with whatever else the plan is doing instead of starting
+        only when the plan reaches that token.
+
+        Returns True when something was requested.
+        """
+        if not self._plan:
+            return False
+        try:
+            line = self._plan[self._line_nb]
+        except Exception:
+            return False
+        if not isinstance(line, str) or not line.startswith("get "):
+            return False
+        requested = False
+        for name in self._plan_line_requirement_buildings(line):
+            if self.has(name):
+                continue
+            try:
+                if self.future_nb(name) > 0:
+                    # Already being built / upgraded.
+                    continue
+            except Exception:
+                continue
+            if not self._requirement_building_is_buildable(name):
+                continue
+            before = self._total_pending_order_count()
+            try:
+                self._get(1, name)
+            except Exception:
+                continue
+            if self._total_pending_order_count() > before:
+                requested = True
+                # The chain is built bottom-up: the next requirement of
+                # this building can only be started once this one is done,
+                # so one request per line is enough.
+                break
+        return requested
+
+    def _total_pending_order_count(self):
+        """Number of orders currently queued on all of the AI's units."""
+        total = 0
+        for u in getattr(self, "units", ()) or ():
+            total += len(getattr(u, "orders", None) or ())
+        return total
+
+    def _plan_line_requirement_buildings(self, line):
+        """Requirement buildings the tokens of ``line`` still need.
+
+        The chain is walked **recursively**: ``canon_plasma`` needs
+        ``accelerateur_de_particules``, which needs ``supercalculateur``,
+        which is an upgrade of ``calculateur``, which needs ``garage``.
+        Only the first level is ever reached by the plan itself, so without
+        the recursion the AI would never notice that the whole chain has
+        to be built before the token can be produced.
+
+        Returns the names of the missing buildings, nearest to the token
+        first (so the chain is built bottom-up).
+        """
+        from .worldrequirements import (
+            ANY_BUILDINGS,
+            parse_requirement_clauses,
+        )
+
+        wanted = []
+        seen = set()
+
+        def _walk(name, depth):
+            if depth > 6 or name in seen:
+                return
+            seen.add(name)
+            cls = rules.unit_class(name)
+            if cls is None:
+                return
+            reqs = tuple(getattr(cls, "requirements", ()) or ())
+            for clause in parse_requirement_clauses(reqs):
+                if clause[0] == ANY_BUILDINGS:
+                    continue
+                req_name = clause[1]
+                if req_name in seen:
+                    continue
+                req_cls = rules.unit_class(req_name)
+                if req_cls is None:
+                    continue
+                if not getattr(req_cls, "is_a_building", False):
+                    # A phase or a tech requirement — not a building to build.
+                    continue
+                _walk(req_name, depth + 1)
+                if req_name not in wanted:
+                    wanted.append(req_name)
+
+        for token in str(line).split()[1:]:
+            if token.isdigit():
+                continue
+            try:
+                name = self.equivalent(token)
+            except Exception:
+                name = token
+            if name in seen:
+                continue
+            _walk(name, 0)
+        return wanted
+
+    def _requirement_building_is_buildable(self, name):
+        """True when the AI can actually build the requirement building."""
+        cls = rules.unit_class(name)
+        if cls is None:
+            return False
+        if not getattr(cls, "is_a_building", False):
+            return False
+        # The AI needs a maker it can use: either it already owns one, or a
+        # worker can build it.
+        makers = rules.get_makers(name) or ()
+        if not makers:
+            return False
+        buildable = self._worker_buildable_type_names()
+        for maker in makers:
+            if self.nb(maker) > 0:
+                return True
+            if maker in buildable:
+                return True
+        return False
+
+    def _ensure_detector_squad(self):
+        """Keep at least two mobile detectors alive.
+
+        One detector is not enough: the sweep assigns a different square to
+        every detector, so a single one covers a single corner of the map,
+        and if it dies the hidden enemy becomes unfindable again.  A second
+        detector doubles the searched area and survives the first loss.
+
+        Only detectors that can actually **reach** the suspected base count
+        here: a generic fighter that happens to carry the detector flag
+        (crazyMod's ``priest``) cannot reach the invisible hatchery, so it
+        must not satisfy the squad requirement — otherwise the AI would
+        never build a real detector and the match would deadlock.
+        """
+        if len(self._dedicated_detector_units()) >= 2:
+            return True
+        # Do not spam the factory: only order when nothing is in training.
+        return self._ensure_mobile_detector()
+
+    def _hidden_enemy_sweep_targets(self):
+        """Where the detectors should look for the hidden enemy."""
+        targets = []
+        seen = set()
+
+        def _add(place):
+            place = self._world_place_for_pathfinding(place)
+            if place is None:
+                return
+            key = id(place)
+            if key in seen:
+                return
+            seen.add(key)
+            targets.append(place)
+
+        # 0) Squares where a detector already revealed a hidden building:
+        #    the AI knows the hatchery is there, so a detector should stay
+        #    close to it (a detector standing next to it keeps it revealed).
+        try:
+            for b in self._hidden_building_notes_alive():
+                _add(getattr(b, "place", None))
+        except Exception:
+            pass
+
+        # 0b) Squares where an invisible enemy building was EVER detected.
+        #     暴雪等价机制：这张"可疑基地位置"表是**永久**的 —— 敌人会在
+        #     原地重建隐形建筑（crazyMod 的 Zerg 就在同一格重建 couveuse →
+        #     pouponniere → laboratoire_larvaire）。如果 AI 拆完第一栋就
+        #     忘了这个格子，重建出来的隐形基地就永远找不回来了。
+        try:
+            for p in self._hidden_base_suspect_places():
+                _add(p)
+        except Exception:
+            pass
+
+        # 1) Where the enemy was last seen (memory) — the invisible hatchery
+        #    usually stands where the rest of the base was.
+        try:
+            for o in getattr(self, "memory", ()) or ():
+                if not self.is_an_enemy(o):
+                    continue
+                _add(getattr(o, "place", None))
+                if len(targets) >= 8:
+                    break
+        except Exception:
+            pass
+
+        # 2) Enemy starting squares that were never observed.
+        try:
+            for s in self.unknown_starting_squares:
+                _add(s)
+                if len(targets) >= 12:
+                    break
+        except Exception:
+            pass
+
+        # 3) Squares the AI already wants to watch.
+        try:
+            for s in self.squares_to_watch:
+                _add(s)
+                if len(targets) >= 16:
+                    break
+        except Exception:
+            pass
+
+        # 4) Every enemy starting square, even the ones the AI already
+        #    observed.  The invisible hatchery usually stands next to the
+        #    other base buildings, so the start square itself is a good
+        #    place to look — but by the time the sweep runs the AI has
+        #    usually already seen the start square, so it would be filtered
+        #    out by ``unknown_starting_squares``.
+        try:
+            for name in list(getattr(self.world, "starting_squares", ()) or ()):
+                square = getattr(self.world, "grid", {}).get(name)
+                if square is None:
+                    continue
+                _add(square)
+                if len(targets) >= 24:
+                    break
+        except Exception:
+            pass
+
+        return self._filter_sweep_targets_for_survival(targets)
+
+    def _filter_sweep_targets_for_survival(self, targets):
+        """Drop sweep targets that would kill the detector on the way.
+
+        暴雪等价机制：SC2 的 AI 从不把 Observer / Raven 送进它自己都打不过
+        的敌军堆里 —— 侦察单位是**脆弱**的（Observer 只有 25 HP），AI 会
+        先派地面部队清场，或者干脆绕开那支敌军。
+
+        crazyMod ``z5`` 的实测数据：
+
+        * sq ``1,2`` 有一支 120 人的中立大军，其中 20 座 ``catapult``
+          （单发 14000 伤害）。
+        * 机器人的 ``capteur_mobile`` 只有 ``hp_max 8`` —— 进城枪火
+          射程就是一击秒杀。
+        * 结果：AI 每 120 秒造一批探测器（每次 6 个），全部在 sq
+          ``1,1`` / ``1,2`` 被秒掉，t=840s 已经白造了 **54 个**探测器
+          （43 万金币），而且**从来没有一个活着报告过敌情**。
+
+        危险不只在**终点**：sq ``1,1`` 也在攻城车的射程内，而从机器人
+        基地 ``2,0`` 到敌方基地 ``0,0`` 的**地面路线**必然经过它。
+        所以过滤必须看**整条路径**，不只是目标格 —— 探测器死在半路上
+        （实测 t=658s 死在 ``1,1``，指令是 ``go 2``）。
+
+        目标格本身是敌军的火力范围时，探测器不能去。把它去掉，
+        探测器就会去别的格扫荡；等主力部队清掉那支敌军，AI 还会
+        重新把这一格列进"可疑位置"表（``_hidden_base_suspects`` 是永久的），
+        所以隐形基地最终仍然会被找到。
+        """
+        if not targets:
+            return []
+        result = []
+        for place in targets:
+            try:
+                if self.square_is_dangerous(place):
+                    # 目标格本身在敌方火力范围内：探测器走进去就是送死。
+                    continue
+            except Exception:
+                pass
+            result.append(place)
+        # 全部目标都危险时，退回原列表 —— 宁可损失探测器，也不能
+        # 永远找不到隐形基地（那会让比赛直接死锁）。
+        return result or list(targets)
+
+    def _detector_route_is_safe(self, detector, place):
+        """True when the detector can reach ``place`` without crossing fire.
+
+        The detector is fragile (``capteur_mobile`` has ``hp_max 8`` and the
+        ``catapults`` of the neutral army at sq ``1,2`` deal 14000 damage per
+        shot), so a route that crosses a square under enemy fire kills the
+        detector.  In that case the AI must wait until the army has cleared
+        that square, or find another way in.
+        """
+        try:
+            path = self._unit_path(detector, place, places=True) or []
+        except Exception:
+            # Unknown route: assume it is fine (never block the sweep
+            # entirely because the pathfinder hiccupped).
+            return True
+        for p in path:
+            try:
+                if self.square_is_dangerous(p):
+                    return False
+            except Exception:
+                continue
+        return True
+
+    def _sweep_assignment_for(self, detector, targets):
+        """The square this detector is responsible for sweeping.
+
+        The assignment is *stable*: it is remembered between turns.  Without
+        that, the candidate list is rebuilt every turn from the AI's memory
+        (whose iteration order changes as the memory set grows and shrinks),
+        and the detectors get reassigned from one square to another before
+        they can arrive — they oscillate in the middle of the map and never
+        detect anything.
+
+        Every detector gets a *different* square, so a squad of detectors
+        covers several corners of the map at once instead of all walking to
+        the same spot.
+
+        暴雪等价机制：只有**走得到**的目标才算数。crazyMod 的 z5 地图上，
+        地面探测器永远无法安全抵达虫族基地 (0,0)（唯一地面通路要穿过
+        1,2 的攻城炮阵地），而空中探测器 (drone) 可以。如果把 0,0 分给
+        走不到的地面探测器，隐形基地就永远不会被发现 —— 所以这里优先
+        分配该探测器**能够安全抵达**的目标。
+        """
+        assignments = getattr(self, "_sweep_assignments", None)
+        if assignments is None:
+            assignments = {}
+            self._sweep_assignments = assignments
+
+        key = id(detector)
+        current = assignments.get(key)
+        # Keep the previous assignment as long as it is still a valid target.
+        if current is not None:
+            for t in targets:
+                if t is current:
+                    # The assignment stays even when the route is currently
+                    # unsafe: the enemy army may move away later, and
+                    # re-assigning every turn would make the detector
+                    # oscillate between squares.
+                    return current
+        if not targets:
+            return None
+        # Pick a square that no other detector is already responsible for.
+        taken = {
+            id(place)
+            for other_key, place in assignments.items()
+            if other_key != key
+        }
+        free = [c for c in targets if id(c) not in taken]
+        # Prefer a square this detector can actually reach without walking
+        # into enemy fire.
+        for candidate in free:
+            if self._detector_route_is_safe(detector, candidate):
+                assignments[key] = candidate
+                return candidate
+        for candidate in free:
+            assignments[key] = candidate
+            return candidate
+        # Every square is taken: fall back to the first one.
+        target = targets[0]
+        assignments[key] = target
+        return target
+
+    def _maintain_hidden_enemy_sweep(self):
+        """Send detectors to hunt for a hidden enemy.
+
+        Returns True when at least one detector was dispatched.
+        """
+        # ``_enemy_is_known`` records that the enemy has been seen at least
+        # once; call it first so the flag is up to date even when the
+        # explorer's recall path did not run this turn.
+        self._enemy_is_known()
+        # Note every invisible building a detector revealed this tick, so the
+        # army can be sent to destroy it (the detection itself lasts 1 tick).
+        self._remember_detected_hidden_buildings()
+        if not self._hidden_enemy_needs_sweep():
+            self._hidden_enemy_sweep_active = False
+            return False
+        # No detector yet?  Build one first: the mod's build script may not
+        # ask for any (crazyMod's robot script only builds the static
+        # ``tour_radar``, which cannot move to the enemy base).
+        self._ensure_detector_squad()
+        detectors = self._sweep_detector_units()
+        if not detectors:
+            self._hidden_enemy_sweep_active = False
+            return False
+        targets = self._hidden_enemy_sweep_targets()
+        if not targets:
+            self._hidden_enemy_sweep_active = False
+            return False
+        self._hidden_enemy_sweep_active = True
+        dispatched = False
+        # A detector must stay ON the revealed hidden building: the army can
+        # only attack what it can see, and only a detector standing next to
+        # the hatchery keeps it visible (the detection lasts a single tick
+        # otherwise, so the army would arrive at an empty square).
+        parked = self._park_detector_on_hidden_building(detectors)
+        for u in detectors:
+            if u is parked:
+                dispatched = True
+                continue
+            target = self._sweep_assignment_for(u, targets)
+            if target is None:
+                continue
+            if getattr(u, "place", None) is target:
+                # Already there: the detector has swept this square.
+                continue
+            # The detector is fragile: a route that crosses a square under
+            # enemy fire kills it (crazyMod z5: the 6 detectors died at
+            # sq 1,1 under the neutral army's catapults while walking to
+            # the enemy base).  Wait for the army to clear that square
+            # instead of feeding detectors into the guns.
+            if not self._detector_route_is_safe(u, target):
+                continue
+            if u.orders and u.orders[0].keyword == "go":
+                last = u.orders[-1]
+                if getattr(last, "target", None) is target:
+                    # Already on its way there — do not cancel the order,
+                    # that would make it turn around every turn.
+                    dispatched = True
+                    continue
+            u.cancel_all_orders()
+            try:
+                u.take_order(["go", target.id])
+            except Exception:
+                continue
+            dispatched = True
+        return dispatched
+
+    def _park_detector_on_hidden_building(self, detectors):
+        """Keep one detector on the square of a known hidden building.
+
+        Returns the parked detector, or None when there is nothing to park
+        on / no detector is available.
+
+        暴雪等价机制：当 AI 知道某个格子**曾经**有隐形建筑（但那栋楼
+        已经被拆掉了），探测器也要留在那一格 —— 因为敌人随时会在原地
+        重建一栋隐形的孵化场。没有探测器盯着，重建的隐形基地就永远
+        找不回来了（crazyMod：couveuse 被拆后原地重建 pouponniere /
+        laboratoire_larvaire，AI 完全没察觉）。
+        """
+        if not detectors:
+            return None
+        notes = self._hidden_building_notes_alive()
+        place = None
+        if notes:
+            place = getattr(notes[0], "place", None)
+        if place is None:
+            suspects = self._hidden_base_suspect_places()
+            if suspects:
+                place = suspects[0]
+        if place is None:
+            return None
+        place = self._world_place_for_pathfinding(place)
+        if place is None:
+            return None
+        # Already parked on it?
+        for u in detectors:
+            if getattr(u, "place", None) is place:
+                self._hidden_building_parked = u
+                return u
+        # Pick the closest detector and send it there.
+        best = None
+        best_dist = None
+        for u in detectors:
+            up = getattr(u, "place", None)
+            if up is None:
+                continue
+            d = (up.x - place.x) ** 2 + (up.y - place.y) ** 2
+            if best_dist is None or d < best_dist:
+                best_dist = d
+                best = u
+        if best is None:
+            return None
+        if not (best.orders and best.orders[0].keyword == "go"):
+            best.cancel_all_orders()
+        try:
+            best.take_order(["go", place.id])
+        except Exception:
+            return None
+        self._hidden_building_parked = best
+        return best
 
     def _send_explorer(self):
         candidates = self.best_explorers()
@@ -6618,12 +8692,17 @@ class Computer(Player):
             and self._later_age_startable_production_wood()
         )
         workers = getattr(self, "_workers", ()) or ()
+        # Detectors that are sweeping for a hidden enemy must not be recalled
+        # home just because the AI spotted (and killed) the visible part of
+        # the enemy base — the invisible hatchery is still standing.
+        sweep_units = set(self._sweep_detector_units()) if self._sweeping_for_hidden_enemy() else set()
         explorers = [
             u
             for u in self.units
             if u.orders
             and u.orders[0].keyword == "auto_explore"
             and not (keep_wood_scouts and u in workers)
+            and u not in sweep_units
         ]
 
         def _recall(u):
@@ -7800,8 +9879,11 @@ class Computer(Player):
                 chosen.append(u)
         return chosen
 
-    def _eventually_attack(self, places):
-        units = list(self._idle_fighters)
+    def _eventually_attack(self, places, units=None):
+        if units is None:
+            units = list(self._idle_fighters)
+        else:
+            units = list(units)
         if not units:
             return
         places = sorted(
@@ -8245,6 +10327,30 @@ class Computer(Player):
                 and u.orders[-1].keyword == "go"
                 and getattr(u.orders[-1].target, "id", None) == place.id
             ):
+                continue
+            # 暴雪星际争霸等价机制：已经在执行"绑定单位句柄"攻击指令的
+            # 单位**不能被普通"移动到格子"指令打断**。攻击指令一旦被
+            # ``cancel_all_orders()`` 冲掉，单位就会在半路停下、掉头回家，
+            # 隐形基地永远打不掉（crazyMod：空中飞船飞到 sq 5 命中一次，
+            # 下一帧就被冲掉指令）。
+            if self._has_handle_bound_attack(u):
+                continue
+            # 暴雪等价机制：正在执行**反隐形扫荡任务**的探测器也不能被
+            # 普通"移动到格子"指令打断。
+            #
+            # crazyMod z5 / seed=5 实测（30 分钟虚拟时间，AI 反复失败）：
+            # 虫族把 couveuse 升级成 pouponniere 时会**删掉旧建筑、生成
+            # 一个新句柄的新建筑**，AI 手里那条"隐形建筑"的笔记
+            # （按建筑 id 索引）当场失效。AI 只能靠探测器**重新侦测**才能
+            # 拿到新句柄 —— 但普通进攻指令每 tick 都在把探测器从
+            # "go <可疑格>" 上拉走（``cancel_all_orders()``），于是探测器
+            # 在 0,0 / 0,1 / 2,1 之间来回拉锯，永远到不了可疑格。
+            # 结果：可疑格表里有 0,0 / 0,1，笔记却是空的，strike units
+            # 为空，pouponniere 满血 100000 活到超时。
+            #
+            # 暴雪的做法：侦察单位一旦被指派了任务，普通移动指令不会
+            # 打断它（只有"召回基地"会）。
+            if self._is_sweeping_detector(u):
                 continue
             u.cancel_all_orders()
             to_move.append(u)

@@ -246,6 +246,21 @@ class Player(PerceptionCachesMixin):
         self._alliance_declined_from = set()  # 已拒绝的结盟申请：对方玩家id集合
         self._ally_relations_one_way = set()  # 我单方面视为盟友的玩家id（未对方确认）
         self.detected_units = set()
+        # 已被侦测到、且目标仍存活的隐形/隐身单位（暴雪星际争霸
+        # ``Player::units_in_memory`` 的等价物）。
+        #
+        # ``detected_units`` 每 tick 被 ``World._update_detection`` 推倒重建，
+        # 只反映"这一瞬间有没有探测器在旁边"。而隐形单位一旦离开探测器
+        # 范围，就同时从 ``perception`` 和 ``memory`` 里消失 —— 于是
+        # ``get_object_by_id`` 拿不到它，AI 也就无法像星际争霸那样对
+        # "曾经侦测到、当前不可见"的目标下持续攻击指令。
+        #
+        # 这个集合保存那些**确实被侦测到过**的隐形单位，直到它们死亡或被
+        # 删除才移除。有了它：
+        #   * 感知层把它们算作"已侦测"（等同 detected_units 的语义），
+        #   * ``get_object_by_id`` 能解析出对象，
+        #   * AI 可以对它们下 handle 绑定的攻击指令（forced=True 绕过 LOS）。
+        self.revealed_units = set()
         self.allied_control = (self,)
         self.allied_control_units_set = set()
         self._known_enemies = {}
@@ -645,6 +660,11 @@ class Player(PerceptionCachesMixin):
         o = self.world.objects.get(i)
         if o is not None:
             if isinstance(o, Square) or (o.place and o in self.perception):
+                return o
+            # 已侦测过但当前不可见的隐形单位（``revealed_units``）：
+            # 返回真实对象，AI/玩家才能对它下 handle 绑定的攻击指令。
+            # 对应暴雪星际争霸 ``units_in_memory`` 里保留的隐形单位残影。
+            if o in getattr(self, "revealed_units", ()):
                 return o
             return self._memory_index.get(o)
         g = self.world.grid.get(i)

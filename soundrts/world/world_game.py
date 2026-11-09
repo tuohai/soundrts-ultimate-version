@@ -177,6 +177,32 @@ class WorldGameMixin:
 
     def _update_detection(self):
         for p in self.players:
+            # 星际争霸等价机制：一旦被侦测到的隐形单位，其"已侦测"状态要
+            # **持久化**，直到它死亡/被删除（暴雪 ``Player::units_in_memory``
+            # 里同样会为隐形单位保留一条残影记录）。
+            #
+            # ``detected_units`` 只反映"这一瞬间有没有探测器在旁边"，每 tick
+            # 推倒重建；隐形单位一旦离开探测器范围就会从 ``perception`` 与
+            # ``memory`` 双双消失，AI 便再也拿不到它的对象，无法下持续攻击
+            # 指令（这正是 crazyMod 电脑不拆隐形孵化场的根因）。
+            #
+            # 所以：把上一 tick 侦测到的隐形单位并入 ``revealed_units``，
+            # 再重置 ``detected_units``。
+            revealed = getattr(p, "revealed_units", None)
+            if revealed is None:
+                revealed = set()
+                p.revealed_units = revealed
+            if p.detected_units:
+                revealed.update(p.detected_units)
+            # 清理已死的 / 已被移除的（离线的）对象。
+            if revealed:
+                dead = [
+                    o
+                    for o in revealed
+                    if getattr(o, "hp", 0) <= 0 or getattr(o, "place", None) is None
+                ]
+                for o in dead:
+                    revealed.discard(o)
             p.detected_units = set()
         for p in self.players:
             for u in p.units:
