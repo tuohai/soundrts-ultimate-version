@@ -256,12 +256,19 @@ def cmd_gamemenu(interface):
 
 # 游戏菜单处理函数
 def _try_save_resume(interface):
-    """尝试在玩家退出时自动保留游戏进度，以便下次主菜单中继续未完成的游戏。"""
+    """尝试在玩家退出时自动保留游戏进度，以便下次主菜单中继续未完成的游戏。
+
+    "已保留进度，下次可继续未完成的游戏" 是对玩家操作的确认，必须走
+    **primary** 语音库（次要/被动的战斗播报才会走 secondary），并且要
+    在退出流程把语音队列丢掉之前把这句话完整播完——否则它会被
+    ``voice.discard_pending()`` 连同战斗播报一起丢弃，玩家听不到任何
+    反馈，以为没有保存。
+    """
     try:
         # 仅在该客户端支持存档（即单人/战役游戏）时才保存
         if hasattr(interface.server, "save_resume"):
             interface.server.save_resume()
-            voice.info(mp.RESUME_SAVED)
+            _speak_resume_saved_notice()
     except Exception as exc:
         from ..game import SaveTooLargeError
 
@@ -274,6 +281,36 @@ def _try_save_resume(interface):
             )
         else:
             exception("auto save resume game failed")
+
+
+def _speak_resume_saved_notice():
+    """同步播完"已保留进度，下次可继续未完成的游戏"。
+
+    手动取消游戏时必须同步播完：一旦让服务端退出，``srv_quit()`` 里的
+    ``voice.discard_pending()`` 会把整条队列丢掉，这句提示就再也听不到。
+    """
+    try:
+        # 菜单的语音播报会把按键事件重新塞回事件队列（keep_key=True），
+        # 那个"确认取消游戏"的按键会让 flush() 误判为"按键打断"，
+        # 把这句话掐断。播报之前先把残留按键清掉。
+        _clear_pending_keys()
+        voice.say_primary_now(mp.RESUME_SAVED)
+    except Exception:
+        exception("failed to speak the resume-saved notice")
+
+
+def _clear_pending_keys():
+    """清掉事件队列里的残留按键（菜单语音会重新投递按键事件）。
+
+    只清 KEYDOWN：USEREVENT 是语音通道的"播放结束"通知，清掉它会让
+    语音队列不再前进。
+    """
+    try:
+        import pygame
+
+        pygame.event.clear([pygame.KEYDOWN])
+    except Exception:
+        pass
 
 
 def gm_quit(interface):

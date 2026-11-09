@@ -378,6 +378,139 @@ class _Voice:
         for m in self.msgs:
             m.said = True
 
+    def discard_pending(self):
+        """Drop every queued message without speaking it.
+
+        Used when the match ends (defeat / victory): the important alert was
+        already spoken synchronously by ``confirmation()`` / ``important()``,
+        but the passive combat chatter still sitting in ``self.msgs`` must not
+        delay the transition to the statistics screen.
+
+        Unlike :meth:`silent_flush` this keeps the primary library alone: the
+        post-match statistics are spoken on primary right after the match
+        loop ends, and the passive backlog lives on the secondary library.
+        """
+        from . import game_tts as _game_tts
+
+        try:
+            self.channel.stop(tts_channel=_game_tts.SECONDARY)
+        except Exception:
+            pass
+        self.active = False
+        self.current = len(self.msgs)
+        for m in self.msgs:
+            m.said = True
+
+    def flush_primary(self, interruptible=True):
+        """Speak the messages queued on the **primary** library only.
+
+        The passive (secondary) backlog is dropped — the match is over and it
+        must not delay the statistics screen — but the player's own
+        confirmations (e.g. "已保留进度，下次可继续未完成的游戏" after a
+        manual cancel) are spoken in full.
+
+        This is the counterpart of :meth:`discard_pending`: use it *before*
+        tearing the match down, so the queued primary line is finished
+        instead of being cut off.
+        """
+        from . import game_tts as _game_tts
+
+        # Stop the passive library: a Nuance secondary utterance would
+        # swallow the primary line (game_tts.speak() skips primary while
+        # secondary holds the shared Nuance mouth).
+        try:
+            self.channel.stop(tts_channel=_game_tts.SECONDARY)
+        except Exception:
+            pass
+
+        # Drop the passive backlog, keep the primary confirmations.
+        # Only messages *explicitly* routed to primary are kept: a message
+        # without an explicit channel follows passive_channel(), which is
+        # primary when the secondary library is disabled — in that case the
+        # whole combat backlog would be spoken and delay the exit.
+        self._drop_passive_messages()
+
+        # First message still waiting to be spoken.
+        primary_idx = self.unsaid
+        if primary_idx >= len(self.msgs):
+            self.active = False
+            return
+
+        # If that primary line is already playing, keep the bookkeeping so
+        # it is not replayed once it ends. Otherwise jump the queue to it.
+        already_playing = (
+            self.active and self._exists(self.current) and self.current == primary_idx
+        )
+        self.current = primary_idx
+        if not already_playing:
+            self.active = False
+            self.history = False
+
+        # Same loop as flush(), but the passive backlog is re-dropped on every
+        # iteration: new passive alerts may arrive from the match thread
+        # while we are speaking, and they must not delay the exit.
+        while True:
+            self._drop_passive_messages()
+            self.update()
+            if not (self._unsaid_exists() or self.channel.get_busy()):
+                break
+            elif interruptible and self._key_hit():
+                if self._unsaid_exists():
+                    self.say_next()
+                    pygame.event.get([KEYDOWN])  # consequence: _key_hit() == False
+                else:
+                    break
+            time.sleep(0.1)
+        if not interruptible:
+            self._drop_pending_keys()
+
+    def say_primary_now(self, list_of_sound_numbers, *args, **keywords):
+        """Speak a player-action confirmation on the primary library, right now.
+
+        Used for confirmations that must survive an immediate teardown
+        (e.g. "已保留进度，下次可继续未完成的游戏" when the player cancels
+        the match by hand).
+
+        The passive (secondary) backlog is dropped and the confirmation is
+        spoken in full before this call returns, so the caller can safely
+        tear the match down right after.
+        """
+        from . import game_tts as _game_tts
+
+        # Stop the passive library *before* queueing: while secondary holds
+        # the shared Nuance mouth, game_tts.speak() skips primary entirely
+        # and the confirmation would be silently dropped.
+        try:
+            self.channel.stop(tts_channel=_game_tts.SECONDARY)
+        except Exception:
+            pass
+
+        # Drop whatever was queued before (passive backlog and old primary
+        # lines) so only the confirmation is spoken.
+        self.active = False
+        for m in self.msgs:
+            m.said = True
+        self.current = len(self.msgs)
+
+        keywords.setdefault("tts_channel", _game_tts.PRIMARY)
+        self.info(list_of_sound_numbers, *args, **keywords)
+        self.flush_primary(interruptible=False)
+
+    def _drop_pending_keys(self):
+        """丢掉事件队列里的按键（pygame 未初始化时安全跳过）。"""
+        try:
+            pygame.event.get([KEYDOWN])
+        except Exception:
+            pass
+
+    def _drop_passive_messages(self):
+        """Mark every non-primary queued message as said (drop the backlog)."""
+        from . import game_tts as _game_tts
+
+        for m in self.msgs:
+            if getattr(m, "tts_channel", None) != _game_tts.PRIMARY:
+                m.said = True
+
     def flush(self, interruptible=True):
         while True:
             self.update()

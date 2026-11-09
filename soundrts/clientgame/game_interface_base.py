@@ -226,6 +226,10 @@ class GameInterface(AttributesInterface):
                 processed += 1
                 if e and e[0] == "voila":
                     break
+                if e and e[0] == "quit":
+                    # The match is over: do not process further events, they
+                    # would re-queue passive alerts behind the statistics.
+                    break
                 if time.perf_counter() >= deadline:
                     break
         finally:
@@ -233,9 +237,12 @@ class GameInterface(AttributesInterface):
                 flush_pending_capture_tts(self)
 
     def srv_quit(self):
-        # Drain any queued speech so defeat / victory alerts finish before the
-        # audio device is torn down. silent_flush() would drop them.
-        voice.flush()
+        # The match is over: drop the passive combat backlog (30+ queued
+        # alerts would otherwise be recited before the statistics screen).
+        # The defeat / victory alert itself was already spoken synchronously
+        # by srv_voice_important, and the post-match statistics are spoken on
+        # the primary library by game.post_run().
+        voice.discard_pending()
         from ..lib import sound
         sound.stop()
         self.end_loop = True
@@ -703,9 +710,11 @@ class GameInterface(AttributesInterface):
             self._catch_up_muted = False
         
         game._record_stats(game.world)
-        # Drain any pending speech (last alerts, cut-scene tail) before the
-        # world tears down and post_run() finalises the match state.
-        voice.flush()
+        # Drop the passive combat backlog (last alerts, cut-scene tail) so the
+        # world teardown and the statistics screen are not delayed by it.
+        # The statistics themselves are spoken on the primary library by
+        # say_score() inside post_run().
+        voice.discard_pending()
         game.post_run()
         game.world.stop()
         
