@@ -1579,3 +1579,4 @@
 5866	obléhací řada
 5867	prstenec
 5868	oblouk
+7800	rytíř zombie

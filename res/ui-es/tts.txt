@@ -1579,3 +1579,4 @@
 5866	fila de asedio
 5867	anillo
 5868	arco
+7800	caballero no-muerto

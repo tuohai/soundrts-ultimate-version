@@ -1580,3 +1580,4 @@
 5866	Belagerungsreihe
 5867	Ring
 5868	Bogen
+7800	untoter Ritter

@@ -1579,3 +1579,4 @@
 5866	rząd oblężniczy
 5867	pierścień
 5868	łuk
+7800	rycerz umarły

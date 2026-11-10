@@ -1579,3 +1579,4 @@
 5866	obliehacia rad
 5867	prstenec
 5868	oblúk
+7800	nemytý rytier

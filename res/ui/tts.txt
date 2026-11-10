@@ -1709,3 +1709,4 @@
 5866	siege rank
 5867	ring
 5868	arc
+7800	undead knight

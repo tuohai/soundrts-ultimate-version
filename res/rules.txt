@@ -760,6 +760,35 @@ is_healable 0
 is_undead 1
 ;space 0.25
 
+; 亡灵骑士 Undead Knight —— 「攻击即破隐」的示例单位。
+; 平时隐形（is_invisible 1），一旦发动攻击（近战 / 远程 / 冲锋）就会被
+; 暴露 stealth_reveal_time 秒，之后可以重新隐匿。
+; 由 necropolis 训练，需要 imperial_age。
+def undead_knight
+class soldier
+is_a knight
+cost 20 0 20
+population_cost 2
+time_cost 30
+requirements imperial_age
+hp_max 55
+mdf 1
+rdf 0
+mdg 8
+mdg_bonus 6
+mdg_cd 1.5
+mdg_range 1
+speed 2.5
+sight_range 6
+corpse 0
+is_healable 0
+is_undead 1
+; 隐形 + 攻击即破隐（暴露 3 秒）
+is_invisible 1
+reveal_stealth_on_attack 1
+stealth_reveal_time 3
+;space 0.5
+
 def archer
 class soldier
 cost 5 1
@@ -1241,7 +1270,7 @@ population_provided 0
 hp_max 300
 time_cost 90
 requirements imperial_age
-can_train necromancer
+can_train necromancer undead_knight
 can_research u_deadly_fog
 
 
@@ -1577,7 +1606,7 @@ def feudal_age
 class phase
 cost 10 15
 time_cost 130
-phase_bonus_targets -building
+phase_bonus_targets -building -new_flyingmachine -boat
 phase bonus mdg 1 hp_max 5 cost -2 0 time_cost -5
 units_auto_upgrade 0
 can_upgrade_to castle_age
@@ -1587,6 +1616,7 @@ class phase
 cost 20 30
 time_cost 160
 requirements feudal_age any_buildings 2 feudal_age_buildings
+phase_bonus_targets -building -new_flyingmachine -boat
 phase bonus mdg 2 rdg 2 sight_range 1
 units_auto_upgrade 1
 can_upgrade_to imperial_age

@@ -957,6 +957,14 @@ falling_on_water fallwater2
 keyboard soldier3
 shortcut k
 
+; 亡灵骑士 Undead Knight —— 「攻击即破隐」的示例单位（见 res/rules.txt）。
+; 继承骑士的外观/音效，独立标题与快捷键（soldier3 页面用 u）。
+def undead_knight
+is_a knight
+title 7800
+keyboard soldier3
+shortcut u
+
 def catapult
 is_a unit
 title 4201

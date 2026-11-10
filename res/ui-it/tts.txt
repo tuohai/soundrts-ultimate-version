@@ -1579,3 +1579,4 @@
 5866	fila d'assedio
 5867	anello
 5868	arco
+7800	cavaliere non-morto

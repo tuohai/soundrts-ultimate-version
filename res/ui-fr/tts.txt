@@ -1579,3 +1579,4 @@
 5866	rang de siège
 5867	anneau
 5868	arc
+7800	chevalier mort-vivant

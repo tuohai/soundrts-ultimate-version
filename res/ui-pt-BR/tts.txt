@@ -1579,3 +1579,4 @@
 5866	fileira de cerco
 5867	anel
 5868	arco
+7800	cavaleiro não-morto
