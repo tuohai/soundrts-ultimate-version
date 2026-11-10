@@ -32,6 +32,11 @@ class Exit(Entity):
     def __getstate__(self):
         d = self.__dict__.copy()
         d.pop("_blocked_cache", None)
+        # ``_other_side`` is a live reference to the partner Exit. Pickling it
+        # would restore a *copy* of the partner instead of the live object in
+        # ``world.objects``; the ``_other_side_id`` fallback in the
+        # ``other_side`` property re-links the pair after a load.
+        d.pop("_other_side", None)
         return d
 
     def __setstate__(self, state):
@@ -42,15 +47,61 @@ class Exit(Entity):
 
     @property
     def other_side(self):
-        return self.world.objects[self._other_side_id]
+        # Hot path: 44M calls / 40min cw1 profile. The id->object lookup
+        # (``self.world.objects[self._other_side_id]``) is two dict/index
+        # operations behind a property descriptor on every single call.
+        # The partner Exit is immutable for the lifetime of the pair (only
+        # ``Exit.delete`` unlinks it, and that clears ``_other_side_id``),
+        # so we keep a direct reference and fall back to the id lookup when
+        # the cached partner is gone (e.g. right after a delete).
+        partner = self._other_side
+        if partner is not None:
+            return partner
+        oid = self._other_side_id
+        if oid is None:
+            return None
+        return self.world.objects.get(oid)
+
+    _other_side = None
 
     is_blocked_by_forests = False
 
     def is_blocked(self, o=None, ignore_enemy_walls=False, ignore_forests=False):
-        """D-Phase 2: 仍保留原 try/except 控制流 (4.2M calls / 5min,
-        try/except 的成本 + 缓存读写 已平衡, 改用 try-free 流反而退化).
-        getattr fallback 仅用 b.is_a_gate (Entity class default False).
+        """Is this exit blocked for *o*?
+
+        Hot path: 56.4M calls / 40min cw1 profile (40.9s tottime, 101s
+        cumtime). Two optimisations:
+
+        1. **Fast path** — an exit with no blockers on either side is never
+           blocked (a wall/gate is what blocks an exit, and those are rare
+           compared to the ~50k plain exits of a map). The original code
+           built a 4-tuple cache key and did two dict lookups *before*
+           discovering that; this returns immediately instead.
+        2. The remaining (rare) blocked case keeps the original time-bucketed
+           cache so repeated queries inside one 250ms window stay cheap.
         """
+        # 快速路径：森林阻塞
+        if not ignore_forests and self.is_blocked_by_forests:
+            return True
+
+        blockers = self._blockers
+        # ``getattr(self, 'other_side', None)`` in the original also swallowed
+        # an AttributeError raised *inside* the property (e.g. an Exit whose
+        # world is gone). Keep that behaviour.
+        try:
+            other = self.other_side
+        except AttributeError:
+            other = None
+        if other is not None:
+            other_blockers = getattr(other, "_blockers", None)
+        else:
+            other_blockers = None
+        if not blockers and not other_blockers:
+            # Nothing blocks this exit — the result cannot change until a
+            # blocker is added/removed, so no caching is needed.
+            return False
+
+        # Slow path: there is at least one blocker, so consult the cache.
         cache = None
         key = None
         try:
@@ -62,40 +113,27 @@ class Exit(Entity):
                 if cache is None:
                     self._blocked_cache = {}
                     cache = self._blocked_cache
-                if key in cache:
-                    return cache[key]
+                hit = cache.get(key)
+                if hit is not None:
+                    return hit
         except Exception:
             cache = None
-        # 快速路径：森林阻塞
-        if not ignore_forests and self.is_blocked_by_forests:
-            result = True
-            if cache is not None:
-                cache[key] = result
-            return result
         # 本侧阻塞者
-        blockers = self._blockers
-        if blockers:
-            for b in blockers:
-                if ignore_enemy_walls and (o is None or o.is_an_enemy(b)):
-                    continue
-                if not b.is_a_gate or (o is None or o.is_an_enemy(b)):
-                    result = True
-                    if cache is not None:
-                        cache[key] = result
-                    return result
+        for b in blockers:
+            if ignore_enemy_walls and (o is None or o.is_an_enemy(b)):
+                continue
+            if not b.is_a_gate or (o is None or o.is_an_enemy(b)):
+                if cache is not None:
+                    cache[key] = True
+                return True
         # 另一侧阻塞者
-        other = getattr(self, 'other_side', None)
-        if other is not None:
-            other_blockers = getattr(other, '_blockers', None)
-            if other_blockers:
-                for b in other_blockers:
-                    if ignore_enemy_walls and (o is None or o.is_an_enemy(b)):
-                        continue
-                    if not b.is_a_gate or (o is None or o.is_an_enemy(b)):
-                        result = True
-                        if cache is not None:
-                            cache[key] = result
-                        return result
+        for b in other_blockers:
+            if ignore_enemy_walls and (o is None or o.is_an_enemy(b)):
+                continue
+            if not b.is_a_gate or (o is None or o.is_an_enemy(b)):
+                if cache is not None:
+                    cache[key] = True
+                return True
         # 无阻塞
         if cache is not None:
             cache[key] = False
@@ -114,6 +152,9 @@ class Exit(Entity):
     def delete(self):
         other_id = self._other_side_id
         self._other_side_id = None
+        # Drop the cached partner reference too, otherwise ``other_side``
+        # would keep returning a deleted Exit.
+        self._other_side = None
         place = self.place
         if place is not None:
             if self in place.exits:
@@ -130,6 +171,7 @@ class Exit(Entity):
         if other is None or other is self:
             return
         other._other_side_id = None
+        other._other_side = None
         other_place = other.place
         if other_place is not None:
             if other in other_place.exits:
@@ -151,3 +193,8 @@ def passage(places, exit_type):
     exit2 = Exit(place2, exit_type, is_a_portal)
     exit1._other_side_id = exit2.id
     exit2._other_side_id = exit1.id
+    # Keep a direct reference to the partner Exit as well: ``other_side`` is
+    # read 44M times / 40min cw1 profile and the id->object dict lookup
+    # was the whole cost of that property.
+    exit1._other_side = exit2
+    exit2._other_side = exit1

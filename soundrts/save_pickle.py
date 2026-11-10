@@ -476,6 +476,7 @@ def _revive_blank_exits(world) -> None:
                 getattr(partner, "id", None),
             )
             partner._other_side_id = None
+            partner._other_side = None
             objects.pop(oid, None)
             continue
         # Mirror a normal Exit on the far side of ``partner``.
@@ -484,6 +485,8 @@ def _revive_blank_exits(world) -> None:
         obj.world = world
         obj.id = oid
         obj._other_side_id = partner.id
+        obj._other_side = partner
+        partner._other_side = obj
         obj._blockers = []
         obj._blocked_cache = None
         obj.is_blocked_by_forests = False
@@ -513,6 +516,30 @@ def _revive_blank_exits(world) -> None:
             place.exits.append(obj)
 
 
+def _relink_exit_partners(world) -> None:
+    """Re-link the cached ``Exit._other_side`` references after a load.
+
+    ``Exit.other_side`` is a hot property (44M reads / 40min cw1 profile)
+    that normally resolves through a direct reference to the partner Exit.
+    That reference is stripped by ``Exit.__getstate__`` (it must not be
+    pickled), so it has to be restored once the world graph is rebuilt.
+    """
+    from .worldexit import Exit
+
+    objects = getattr(world, "objects", None) or {}
+    for obj in objects.values():
+        if not isinstance(obj, Exit):
+            continue
+        partner = None
+        oid = obj._other_side_id
+        if oid is not None:
+            partner = objects.get(oid)
+        if partner is not None and partner is not obj:
+            obj._other_side = partner
+        else:
+            obj._other_side = None
+
+
 def rebuild_world_after_load(world) -> None:
     if not hasattr(world, "objects") or world.objects is None:
         world.objects = {}
@@ -527,6 +554,7 @@ def rebuild_world_after_load(world) -> None:
         world.grid[sq.name] = sq
         world.grid[(sq.col, sq.row)] = sq
     _revive_blank_exits(world)
+    _relink_exit_partners(world)
     world._create_graphs()
     world._sights_cache = {}
     world._sights_cache_bucket = -1
