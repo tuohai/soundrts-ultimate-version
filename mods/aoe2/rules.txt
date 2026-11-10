@@ -5146,7 +5146,14 @@ cost 0 0 50 0
 time_cost 25
 population_cost 1
 can_use_tech burgundian_vineyards flemish_revolution first_crusade
-can_upgrade_to flemish_militia
+; NB: NO ``can_upgrade_to flemish_militia`` here — Flemish Revolution is a
+; Burgundian-only technology, and the *upgrade* action must only exist on
+; ``burgundian_villager``.  Leaving it on the shared ``peasant`` base gave
+; every civ's villagers (Vietnamese included) a bogus manual
+; "upgrade to Flemish Militia" button in Feudal Age.
+; The research effect (``unit_line_upgrade flemish_militia``) morphs units
+; whose ``can_upgrade_to`` lists the target, so restricting the flag to
+; the Burgundian villager is enough for Flemish Revolution to work.
 
 hp_max 25
 speed 0.8
@@ -10196,6 +10203,11 @@ can_research burgundian_vineyards flemish_revolution elite_coustillier conscript
 
 def burgundian_villager
 is_a peasant
+; Flemish Revolution morphs the Burgundian villagers into Flemish Militia.
+; The morph (``world_build_rules.apply_unit_line_upgrade``) only touches units
+; whose ``can_upgrade_to`` lists the target type, so the flag belongs HERE
+; and NOT on the shared ``peasant`` base class.
+can_upgrade_to flemish_militia
 can_build house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university aoe_castle wall gate fortified_wall palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
 can_use_tech burgundian_vineyards flemish_revolution first_crusade loom wheelbarrow hand_cart horse_collar heavy_plow crop_rotation double_bit_axe bow_saw two_man_saw gold_mining gold_shaft_mining stone_mining stone_shaft_mining treadmill_crane sappers town_watch town_patrol paper_money
 
