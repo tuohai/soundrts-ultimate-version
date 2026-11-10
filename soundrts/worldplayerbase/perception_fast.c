@@ -1685,7 +1685,7 @@ struct __pyx_opt_args_8soundrts_15worldplayerbase_15perception_fast_collect_part
   int cap;
 };
 
-/* "soundrts/worldplayerbase/perception_fast.pyx":319
+/* "soundrts/worldplayerbase/perception_fast.pyx":326
  *     cdef int i
  *     for i in range(9):
  *         key = (grid_x + dxs[i], grid_y + dys[i])             # <<<<<<<<<<<<<<
@@ -2369,6 +2369,9 @@ static CYTHON_INLINE PyObject* __Pyx_CallUnboundCMethod1(__Pyx_CachedCFunction* 
 #define __Pyx_CallUnboundCMethod1(cfunc, self, arg)  __Pyx__CallUnboundCMethod1(cfunc, self, arg)
 #endif
 
+/* GetAttr3.proto */
+static CYTHON_INLINE PyObject *__Pyx_GetAttr3(PyObject *, PyObject *, PyObject *);
+
 /* ListExtend.proto */
 #if (CYTHON_COMPILING_IN_LIMITED_API || PY_VERSION_HEX < 0x030d0000) && !defined(PyList_Extend)
 static CYTHON_INLINE int __Pyx_PyList_Extend(PyObject* L, PyObject* v);
@@ -2490,9 +2493,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyLong_AddObjC(PyObject *op1, PyObject *op2
 #define __Pyx_PyLong_AddObjC(op1, op2, intval, inplace, zerodivision_check)\
     (inplace ? PyNumber_InPlaceAdd(op1, op2) : PyNumber_Add(op1, op2))
 #endif
-
-/* GetAttr3.proto */
-static CYTHON_INLINE PyObject *__Pyx_GetAttr3(PyObject *, PyObject *, PyObject *);
 
 /* HasAttr.proto */
 #if __PYX_LIMITED_VERSION_HEX >= 0x030d0000
@@ -2835,6 +2835,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_scan_memo
 static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_player_is_an_enemy(PyObject *, PyObject *, int __pyx_skip_dispatch); /*proto*/
 static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_memorize(PyObject *, PyObject *, int __pyx_skip_dispatch); /*proto*/
 static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_merge_buckets_3x3(PyObject *, PY_LONG_LONG, PY_LONG_LONG, int __pyx_skip_dispatch); /*proto*/
+static CYTHON_INLINE int __pyx_f_8soundrts_15worldplayerbase_15perception_fast__is_detected_or_revealed(PyObject *, PyObject *); /*proto*/
 static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObject *, PyObject *, int __pyx_skip_dispatch); /*proto*/
 static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visibility_check(PyObject *, PyObject *, int __pyx_skip_dispatch); /*proto*/
 static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_enemy_place_menace(PyObject *, PyObject *, int __pyx_skip_dispatch); /*proto*/
@@ -2896,7 +2897,7 @@ namespace {
     __Pyx_CachedCFunction __pyx_umethod_PyDict_Type_values;
     PyObject *__pyx_tuple[2];
     PyObject *__pyx_codeobj_tab[15];
-    PyObject *__pyx_string_tab[149];
+    PyObject *__pyx_string_tab[150];
     PyObject *__pyx_number_tab[8];
 /* #### Code section: module_state_contents ### */
 /* PyFrozenDict.module_state_decls */
@@ -3060,41 +3061,42 @@ static __pyx_mstatetype * const __pyx_mstate_global = &__pyx_mstate_global_stati
 #define __pyx_n_u_player_is_an_enemy __pyx_string_tab[111]
 #define __pyx_n_u_pop __pyx_string_tab[112]
 #define __pyx_n_u_radius2 __pyx_string_tab[113]
-#define __pyx_n_u_scan_memories_for_forget __pyx_string_tab[114]
-#define __pyx_n_u_self __pyx_string_tab[115]
-#define __pyx_n_u_setdefault __pyx_string_tab[116]
-#define __pyx_n_u_should_do_full_cleanup __pyx_string_tab[117]
-#define __pyx_n_u_sight_range __pyx_string_tab[118]
-#define __pyx_n_u_sort __pyx_string_tab[119]
-#define __pyx_n_u_soundrts_worldplayerbase_percept __pyx_string_tab[120]
-#define __pyx_n_u_speed __pyx_string_tab[121]
-#define __pyx_n_u_squares __pyx_string_tab[122]
-#define __pyx_n_u_time __pyx_string_tab[123]
-#define __pyx_n_u_time_stamp __pyx_string_tab[124]
-#define __pyx_n_u_u __pyx_string_tab[125]
-#define __pyx_n_u_units __pyx_string_tab[126]
-#define __pyx_n_u_update __pyx_string_tab[127]
-#define __pyx_n_u_values __pyx_string_tab[128]
-#define __pyx_n_u_vision_cache_hits __pyx_string_tab[129]
-#define __pyx_n_u_vision_cache_misses __pyx_string_tab[130]
-#define __pyx_n_u_world __pyx_string_tab[131]
-#define __pyx_n_u_x __pyx_string_tab[132]
-#define __pyx_n_u_y __pyx_string_tab[133]
-#define __pyx_kp_b_iso88591_5_Zq __pyx_string_tab[134]
-#define __pyx_kp_b_iso88591_q_Q_Qa_3gU_b_1 __pyx_string_tab[135]
-#define __pyx_kp_b_iso88591_Q_q_t6_c_d_Q_6_T_a_Cq_q_4wa_q_1 __pyx_string_tab[136]
-#define __pyx_kp_b_iso88591_1_a_Q_AQ_2S_Qa_3c_c_1_4q_aq_4wa __pyx_string_tab[137]
-#define __pyx_kp_b_iso88591_q_z_A_q_T_Q_1G3a_Qc_1_Qc_1_3b_2 __pyx_string_tab[138]
-#define __pyx_kp_b_iso88591_t6_T_T_A_q_3a_3nCs_t1A_9G1_N_F __pyx_string_tab[139]
-#define __pyx_kp_b_iso88591_q_Q_1G3a_Qc_1_Qc_1_3b_2S_S_1 __pyx_string_tab[140]
-#define __pyx_kp_b_iso88591_G86_3c_s_a_G1_1_r_A_r_T_1_t7_q __pyx_string_tab[141]
-#define __pyx_kp_b_iso88591_q_Cq_AQ_2S_Qa_3c_c_Cq_2_c_Qa_aq __pyx_string_tab[142]
-#define __pyx_kp_b_iso88591_r_A_q_t6_d_D_Bj_V1_q_aq_d_1_wgQ __pyx_string_tab[143]
-#define __pyx_kp_b_iso88591_q_q_T_AU_q_T_AU_q_T_AV1_q_T_AU __pyx_string_tab[144]
-#define __pyx_kp_b_iso88591_q_q_4wa_4wa_4s_S_3c_c_Rq_1 __pyx_string_tab[145]
-#define __pyx_kp_b_iso88591_4A_Q_Q_5_s_7_1_4uA_vS_waq_32Q_r __pyx_string_tab[146]
-#define __pyx_kp_b_iso88591_a_s_BgT_q_AQ_vS_q_q_gU_d_q_t1_G __pyx_string_tab[147]
-#define __pyx_kp_b_iso88591_q_Q_a_Q_q_4q_E_q_q_r_A_D_q_Cq_a __pyx_string_tab[148]
+#define __pyx_n_u_revealed_units __pyx_string_tab[114]
+#define __pyx_n_u_scan_memories_for_forget __pyx_string_tab[115]
+#define __pyx_n_u_self __pyx_string_tab[116]
+#define __pyx_n_u_setdefault __pyx_string_tab[117]
+#define __pyx_n_u_should_do_full_cleanup __pyx_string_tab[118]
+#define __pyx_n_u_sight_range __pyx_string_tab[119]
+#define __pyx_n_u_sort __pyx_string_tab[120]
+#define __pyx_n_u_soundrts_worldplayerbase_percept __pyx_string_tab[121]
+#define __pyx_n_u_speed __pyx_string_tab[122]
+#define __pyx_n_u_squares __pyx_string_tab[123]
+#define __pyx_n_u_time __pyx_string_tab[124]
+#define __pyx_n_u_time_stamp __pyx_string_tab[125]
+#define __pyx_n_u_u __pyx_string_tab[126]
+#define __pyx_n_u_units __pyx_string_tab[127]
+#define __pyx_n_u_update __pyx_string_tab[128]
+#define __pyx_n_u_values __pyx_string_tab[129]
+#define __pyx_n_u_vision_cache_hits __pyx_string_tab[130]
+#define __pyx_n_u_vision_cache_misses __pyx_string_tab[131]
+#define __pyx_n_u_world __pyx_string_tab[132]
+#define __pyx_n_u_x __pyx_string_tab[133]
+#define __pyx_n_u_y __pyx_string_tab[134]
+#define __pyx_kp_b_iso88591_5_Zq __pyx_string_tab[135]
+#define __pyx_kp_b_iso88591_q_Q_Qa_3gU_b_1 __pyx_string_tab[136]
+#define __pyx_kp_b_iso88591_Q_q_t6_c_d_Q_6_T_a_Cq_q_4wa_q_1 __pyx_string_tab[137]
+#define __pyx_kp_b_iso88591_1_a_Q_AQ_2S_Qa_3c_c_1_4q_aq_4wa __pyx_string_tab[138]
+#define __pyx_kp_b_iso88591_q_z_A_q_T_Q_1G3a_Qc_1_Qc_1_3b_2 __pyx_string_tab[139]
+#define __pyx_kp_b_iso88591_t6_T_T_A_wav_q_q_3a_3nCs_t7_a_9 __pyx_string_tab[140]
+#define __pyx_kp_b_iso88591_q_Q_1G3a_Qc_1_Qc_1_3b_2S_S_1 __pyx_string_tab[141]
+#define __pyx_kp_b_iso88591_G86_3c_s_a_G1_1_r_A_r_T_1_t7_q __pyx_string_tab[142]
+#define __pyx_kp_b_iso88591_q_Cq_AQ_2S_Qa_3c_c_Cq_2_c_Qa_aq __pyx_string_tab[143]
+#define __pyx_kp_b_iso88591_r_A_q_t6_d_D_Bj_V1_q_aq_d_1_wgQ __pyx_string_tab[144]
+#define __pyx_kp_b_iso88591_q_q_T_AU_q_T_AU_q_T_AV1_q_T_AU __pyx_string_tab[145]
+#define __pyx_kp_b_iso88591_q_q_4wa_4wa_4s_S_3c_c_Rq_1 __pyx_string_tab[146]
+#define __pyx_kp_b_iso88591_4A_Q_Q_5_s_7_1_4uA_vS_waq_32Q_r __pyx_string_tab[147]
+#define __pyx_kp_b_iso88591_a_s_BgT_4_q_a_1_AQ_vS_q_q_gU_d __pyx_string_tab[148]
+#define __pyx_kp_b_iso88591_q_Q_a_Q_q_4q_E_q_q_r_A_D_q_Cq_a __pyx_string_tab[149]
 #define __pyx_int_0 __pyx_number_tab[0]
 #define __pyx_int_1 __pyx_number_tab[1]
 #define __pyx_int_2 __pyx_number_tab[2]
@@ -3123,7 +3125,7 @@ static CYTHON_SMALL_CODE int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_umethod_PyDict_Type_values.method);
   for (int i=0; i<2; ++i) { Py_CLEAR(clear_module_state->__pyx_tuple[i]); }
   for (int i=0; i<15; ++i) { Py_CLEAR(clear_module_state->__pyx_codeobj_tab[i]); }
-  for (int i=0; i<149; ++i) { Py_CLEAR(clear_module_state->__pyx_string_tab[i]); }
+  for (int i=0; i<150; ++i) { Py_CLEAR(clear_module_state->__pyx_string_tab[i]); }
   for (int i=0; i<8; ++i) { Py_CLEAR(clear_module_state->__pyx_number_tab[i]); }
 /* #### Code section: module_state_clear_contents ### */
 /* CommonTypesMetaclass.module_state_clear */
@@ -3153,7 +3155,7 @@ static CYTHON_SMALL_CODE int __pyx_m_traverse(PyObject *m, visitproc visit, void
   Py_VISIT(traverse_module_state->__pyx_umethod_PyDict_Type_values.method);
   for (int i=0; i<2; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_tuple[i]); }
   for (int i=0; i<15; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_codeobj_tab[i]); }
-  for (int i=0; i<149; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_string_tab[i]); }
+  for (int i=0; i<150; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_string_tab[i]); }
   for (int i=0; i<8; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_number_tab[i]); }
 /* #### Code section: module_state_traverse_contents ### */
 /* CommonTypesMetaclass.module_state_traverse */
@@ -7378,6 +7380,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_memo
   PyObject *__pyx_v_remembrance = 0;
   PyObject *__pyx_v_existing = 0;
   PyObject *__pyx_v_add_place = 0;
+  PyObject *__pyx_v_revealed = 0;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -7449,21 +7452,33 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_memo
   __pyx_v__copy = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":272
- *     cdef object obj, remembrance, existing
+  /* "soundrts/worldplayerbase/perception_fast.pyx":273
  *     cdef object add_place
+ *     cdef object revealed
  *     add_place = self._memory_place_index_add             # <<<<<<<<<<<<<<
+ *     revealed = getattr(self, "revealed_units", None)
  *     for obj in objects:
- *         if obj._is_skill_combat_proxy:
 */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_memory_place_index_add); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 272, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_memory_place_index_add); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 273, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_add_place = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":273
- *     cdef object add_place
+  /* "soundrts/worldplayerbase/perception_fast.pyx":274
+ *     cdef object revealed
  *     add_place = self._memory_place_index_add
+ *     revealed = getattr(self, "revealed_units", None)             # <<<<<<<<<<<<<<
+ *     for obj in objects:
+ *         if obj._is_skill_combat_proxy:
+*/
+  __pyx_t_1 = __Pyx_GetAttr3(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_revealed_units, Py_None); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 274, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_v_revealed = __pyx_t_1;
+  __pyx_t_1 = 0;
+
+  /* "soundrts/worldplayerbase/perception_fast.pyx":275
+ *     add_place = self._memory_place_index_add
+ *     revealed = getattr(self, "revealed_units", None)
  *     for obj in objects:             # <<<<<<<<<<<<<<
  *         if obj._is_skill_combat_proxy:
  *             continue
@@ -7473,9 +7488,9 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_memo
     __pyx_t_3 = 0;
     __pyx_t_4 = NULL;
   } else {
-    __pyx_t_3 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_objects); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 273, __pyx_L1_error)
+    __pyx_t_3 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_objects); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 275, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 273, __pyx_L1_error)
+    __pyx_t_4 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 275, __pyx_L1_error)
   }
   for (;;) {
     if (likely(!__pyx_t_4)) {
@@ -7483,7 +7498,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_memo
         {
           Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_1);
           #if !CYTHON_ASSUME_SAFE_SIZE
-          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 273, __pyx_L1_error)
+          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 275, __pyx_L1_error)
           #endif
           if (__pyx_t_3 >= __pyx_temp) break;
         }
@@ -7493,7 +7508,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_memo
         {
           Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_1);
           #if !CYTHON_ASSUME_SAFE_SIZE
-          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 273, __pyx_L1_error)
+          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 275, __pyx_L1_error)
           #endif
           if (__pyx_t_3 >= __pyx_temp) break;
         }
@@ -7504,13 +7519,13 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_memo
         #endif
         ++__pyx_t_3;
       }
-      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 273, __pyx_L1_error)
+      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 275, __pyx_L1_error)
     } else {
       __pyx_t_2 = __pyx_t_4(__pyx_t_1);
       if (unlikely(!__pyx_t_2)) {
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
-          if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 273, __pyx_L1_error)
+          if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 275, __pyx_L1_error)
           PyErr_Clear();
         }
         break;
@@ -7520,48 +7535,48 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_memo
     __Pyx_XDECREF_SET(__pyx_v_obj, __pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":274
- *     add_place = self._memory_place_index_add
+    /* "soundrts/worldplayerbase/perception_fast.pyx":276
+ *     revealed = getattr(self, "revealed_units", None)
  *     for obj in objects:
  *         if obj._is_skill_combat_proxy:             # <<<<<<<<<<<<<<
  *             continue
- *         if obj.is_invisible or obj.is_cloaked:
+ *         # /""
 */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_is_skill_combat_proxy); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 274, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_is_skill_combat_proxy); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 276, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_5 < 0))) __PYX_ERR(0, 274, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_5 < 0))) __PYX_ERR(0, 276, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     if (__pyx_t_5) {
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":275
+      /* "soundrts/worldplayerbase/perception_fast.pyx":277
  *     for obj in objects:
  *         if obj._is_skill_combat_proxy:
  *             continue             # <<<<<<<<<<<<<<
- *         if obj.is_invisible or obj.is_cloaked:
- *             continue
+ *         # /""
+ *         #  ``Player::units_in_memory``
 */
       goto __pyx_L3_continue;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":274
- *     add_place = self._memory_place_index_add
+      /* "soundrts/worldplayerbase/perception_fast.pyx":276
+ *     revealed = getattr(self, "revealed_units", None)
  *     for obj in objects:
  *         if obj._is_skill_combat_proxy:             # <<<<<<<<<<<<<<
  *             continue
- *         if obj.is_invisible or obj.is_cloaked:
+ *         # /""
 */
     }
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":276
- *         if obj._is_skill_combat_proxy:
- *             continue
+    /* "soundrts/worldplayerbase/perception_fast.pyx":281
+ *         #  ``Player::units_in_memory``
+ *         # UI
  *         if obj.is_invisible or obj.is_cloaked:             # <<<<<<<<<<<<<<
- *             continue
- *         existing = memory_index.get(obj)
+ *             if obj not in self.detected_units:
+ *                 if revealed is None or obj not in revealed:
 */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_is_invisible); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 276, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_is_invisible); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 281, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 276, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 281, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     if (!__pyx_t_6) {
 
@@ -7571,9 +7586,9 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_memo
 
       goto __pyx_L7_bool_binop_done;
     }
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_is_cloaked); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 276, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_is_cloaked); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 281, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 276, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 281, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
     __pyx_t_5 = __pyx_t_6;
@@ -7582,42 +7597,98 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_memo
     if (__pyx_t_5) {
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":277
- *             continue
+      /* "soundrts/worldplayerbase/perception_fast.pyx":282
+ *         # UI
  *         if obj.is_invisible or obj.is_cloaked:
- *             continue             # <<<<<<<<<<<<<<
+ *             if obj not in self.detected_units:             # <<<<<<<<<<<<<<
+ *                 if revealed is None or obj not in revealed:
+ *                     continue
+*/
+      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_detected_units); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 282, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_5 = (__Pyx_PySequence_ContainsTF(__pyx_v_obj, __pyx_t_2, Py_NE)); if (unlikely((__pyx_t_5 < 0))) __PYX_ERR(0, 282, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      if (__pyx_t_5) {
+
+
+        /* "soundrts/worldplayerbase/perception_fast.pyx":283
+ *         if obj.is_invisible or obj.is_cloaked:
+ *             if obj not in self.detected_units:
+ *                 if revealed is None or obj not in revealed:             # <<<<<<<<<<<<<<
+ *                     continue
+ *         existing = memory_index.get(obj)
+*/
+        __pyx_t_6 = (__pyx_v_revealed == Py_None);
+        if (!__pyx_t_6) {
+
+        } else {
+
+          __pyx_t_5 = __pyx_t_6;
+
+          goto __pyx_L11_bool_binop_done;
+        }
+        __pyx_t_6 = (__Pyx_PySequence_ContainsTF(__pyx_v_obj, __pyx_v_revealed, Py_NE)); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 283, __pyx_L1_error)
+
+        __pyx_t_5 = __pyx_t_6;
+
+        __pyx_L11_bool_binop_done:;
+        if (__pyx_t_5) {
+
+
+          /* "soundrts/worldplayerbase/perception_fast.pyx":284
+ *             if obj not in self.detected_units:
+ *                 if revealed is None or obj not in revealed:
+ *                     continue             # <<<<<<<<<<<<<<
  *         existing = memory_index.get(obj)
  *         if existing is not None:
 */
-      goto __pyx_L3_continue;
+          goto __pyx_L3_continue;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":276
- *         if obj._is_skill_combat_proxy:
- *             continue
- *         if obj.is_invisible or obj.is_cloaked:             # <<<<<<<<<<<<<<
- *             continue
+          /* "soundrts/worldplayerbase/perception_fast.pyx":283
+ *         if obj.is_invisible or obj.is_cloaked:
+ *             if obj not in self.detected_units:
+ *                 if revealed is None or obj not in revealed:             # <<<<<<<<<<<<<<
+ *                     continue
  *         existing = memory_index.get(obj)
+*/
+        }
+
+        /* "soundrts/worldplayerbase/perception_fast.pyx":282
+ *         # UI
+ *         if obj.is_invisible or obj.is_cloaked:
+ *             if obj not in self.detected_units:             # <<<<<<<<<<<<<<
+ *                 if revealed is None or obj not in revealed:
+ *                     continue
+*/
+      }
+
+      /* "soundrts/worldplayerbase/perception_fast.pyx":281
+ *         #  ``Player::units_in_memory``
+ *         # UI
+ *         if obj.is_invisible or obj.is_cloaked:             # <<<<<<<<<<<<<<
+ *             if obj not in self.detected_units:
+ *                 if revealed is None or obj not in revealed:
 */
     }
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":278
- *         if obj.is_invisible or obj.is_cloaked:
- *             continue
+    /* "soundrts/worldplayerbase/perception_fast.pyx":285
+ *                 if revealed is None or obj not in revealed:
+ *                     continue
  *         existing = memory_index.get(obj)             # <<<<<<<<<<<<<<
  *         if existing is not None:
  *             existing.time_stamp = current_time
 */
     if (unlikely(__pyx_v_memory_index == Py_None)) {
       PyErr_Format(PyExc_AttributeError, "\047NoneType\047 object has no attribute \047%.30s\047", "get");
-      __PYX_ERR(0, 278, __pyx_L1_error)
+      __PYX_ERR(0, 285, __pyx_L1_error)
     }
-    __pyx_t_2 = __Pyx_PyDict_GetItemDefault(__pyx_v_memory_index, __pyx_v_obj, Py_None); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 278, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyDict_GetItemDefault(__pyx_v_memory_index, __pyx_v_obj, Py_None); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 285, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_XDECREF_SET(__pyx_v_existing, __pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":279
- *             continue
+    /* "soundrts/worldplayerbase/perception_fast.pyx":286
+ *                     continue
  *         existing = memory_index.get(obj)
  *         if existing is not None:             # <<<<<<<<<<<<<<
  *             existing.time_stamp = current_time
@@ -7627,38 +7698,38 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_memo
     if (__pyx_t_5) {
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":280
+      /* "soundrts/worldplayerbase/perception_fast.pyx":287
  *         existing = memory_index.get(obj)
  *         if existing is not None:
  *             existing.time_stamp = current_time             # <<<<<<<<<<<<<<
  *             existing.hp = obj.hp
  *         else:
 */
-      if (__Pyx_PyObject_SetAttrStr(__pyx_v_existing, __pyx_mstate_global->__pyx_n_u_time_stamp, __pyx_v_current_time) < (0)) __PYX_ERR(0, 280, __pyx_L1_error)
+      if (__Pyx_PyObject_SetAttrStr(__pyx_v_existing, __pyx_mstate_global->__pyx_n_u_time_stamp, __pyx_v_current_time) < (0)) __PYX_ERR(0, 287, __pyx_L1_error)
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":281
+      /* "soundrts/worldplayerbase/perception_fast.pyx":288
  *         if existing is not None:
  *             existing.time_stamp = current_time
  *             existing.hp = obj.hp             # <<<<<<<<<<<<<<
  *         else:
  *             remembrance = _copy(obj)
 */
-      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_hp); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 281, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_hp); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 288, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      if (__Pyx_PyObject_SetAttrStr(__pyx_v_existing, __pyx_mstate_global->__pyx_n_u_hp, __pyx_t_2) < (0)) __PYX_ERR(0, 281, __pyx_L1_error)
+      if (__Pyx_PyObject_SetAttrStr(__pyx_v_existing, __pyx_mstate_global->__pyx_n_u_hp, __pyx_t_2) < (0)) __PYX_ERR(0, 288, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":279
- *             continue
+      /* "soundrts/worldplayerbase/perception_fast.pyx":286
+ *                     continue
  *         existing = memory_index.get(obj)
  *         if existing is not None:             # <<<<<<<<<<<<<<
  *             existing.time_stamp = current_time
  *             existing.hp = obj.hp
 */
-      goto __pyx_L9;
+      goto __pyx_L13;
     }
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":283
+    /* "soundrts/worldplayerbase/perception_fast.pyx":290
  *             existing.hp = obj.hp
  *         else:
  *             remembrance = _copy(obj)             # <<<<<<<<<<<<<<
@@ -7686,31 +7757,31 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_memo
         __pyx_t_2 = __Pyx_PyObject_FastCall((PyObject*)__pyx_t_8, __pyx_callargs+__pyx_t_9, (2-__pyx_t_9) | (__pyx_t_9*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
         __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 283, __pyx_L1_error)
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 290, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
       }
       __Pyx_XDECREF_SET(__pyx_v_remembrance, __pyx_t_2);
       __pyx_t_2 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":284
+      /* "soundrts/worldplayerbase/perception_fast.pyx":291
  *         else:
  *             remembrance = _copy(obj)
  *             remembrance.time_stamp = current_time             # <<<<<<<<<<<<<<
  *             remembrance.initial_model = obj
  *             memory_set.add(remembrance)
 */
-      if (__Pyx_PyObject_SetAttrStr(__pyx_v_remembrance, __pyx_mstate_global->__pyx_n_u_time_stamp, __pyx_v_current_time) < (0)) __PYX_ERR(0, 284, __pyx_L1_error)
+      if (__Pyx_PyObject_SetAttrStr(__pyx_v_remembrance, __pyx_mstate_global->__pyx_n_u_time_stamp, __pyx_v_current_time) < (0)) __PYX_ERR(0, 291, __pyx_L1_error)
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":285
+      /* "soundrts/worldplayerbase/perception_fast.pyx":292
  *             remembrance = _copy(obj)
  *             remembrance.time_stamp = current_time
  *             remembrance.initial_model = obj             # <<<<<<<<<<<<<<
  *             memory_set.add(remembrance)
  *             memory_index[obj] = remembrance
 */
-      if (__Pyx_PyObject_SetAttrStr(__pyx_v_remembrance, __pyx_mstate_global->__pyx_n_u_initial_model, __pyx_v_obj) < (0)) __PYX_ERR(0, 285, __pyx_L1_error)
+      if (__Pyx_PyObject_SetAttrStr(__pyx_v_remembrance, __pyx_mstate_global->__pyx_n_u_initial_model, __pyx_v_obj) < (0)) __PYX_ERR(0, 292, __pyx_L1_error)
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":286
+      /* "soundrts/worldplayerbase/perception_fast.pyx":293
  *             remembrance.time_stamp = current_time
  *             remembrance.initial_model = obj
  *             memory_set.add(remembrance)             # <<<<<<<<<<<<<<
@@ -7724,12 +7795,12 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_memo
         PyObject *__pyx_callargs[2] = {__pyx_t_8, __pyx_v_remembrance};
         __pyx_t_2 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_add, __pyx_callargs+__pyx_t_9, (2-__pyx_t_9) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
         __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 286, __pyx_L1_error)
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 293, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
       }
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":287
+      /* "soundrts/worldplayerbase/perception_fast.pyx":294
  *             remembrance.initial_model = obj
  *             memory_set.add(remembrance)
  *             memory_index[obj] = remembrance             # <<<<<<<<<<<<<<
@@ -7738,11 +7809,11 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_memo
 */
       if (unlikely(__pyx_v_memory_index == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "\047NoneType\047 object is not subscriptable");
-        __PYX_ERR(0, 287, __pyx_L1_error)
+        __PYX_ERR(0, 294, __pyx_L1_error)
       }
-      if (unlikely((PyDict_SetItem(__pyx_v_memory_index, __pyx_v_obj, __pyx_v_remembrance) < 0))) __PYX_ERR(0, 287, __pyx_L1_error)
+      if (unlikely((PyDict_SetItem(__pyx_v_memory_index, __pyx_v_obj, __pyx_v_remembrance) < 0))) __PYX_ERR(0, 294, __pyx_L1_error)
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":288
+      /* "soundrts/worldplayerbase/perception_fast.pyx":295
  *             memory_set.add(remembrance)
  *             memory_index[obj] = remembrance
  *             add_place(remembrance)             # <<<<<<<<<<<<<<
@@ -7769,16 +7840,16 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_memo
         __pyx_t_2 = __Pyx_PyObject_FastCall((PyObject*)__pyx_t_7, __pyx_callargs+__pyx_t_9, (2-__pyx_t_9) | (__pyx_t_9*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
         __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 288, __pyx_L1_error)
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 295, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
       }
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     }
-    __pyx_L9:;
+    __pyx_L13:;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":273
- *     cdef object add_place
+    /* "soundrts/worldplayerbase/perception_fast.pyx":275
  *     add_place = self._memory_place_index_add
+ *     revealed = getattr(self, "revealed_units", None)
  *     for obj in objects:             # <<<<<<<<<<<<<<
  *         if obj._is_skill_combat_proxy:
  *             continue
@@ -7814,6 +7885,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_memo
   __Pyx_XDECREF(__pyx_v_remembrance);
   __Pyx_XDECREF(__pyx_v_existing);
   __Pyx_XDECREF(__pyx_v_add_place);
+  __Pyx_XDECREF(__pyx_v_revealed);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
@@ -7945,7 +8017,7 @@ static PyObject *__pyx_pf_8soundrts_15worldplayerbase_15perception_fast_16bulk_m
   return __pyx_r;
 }
 
-/* "soundrts/worldplayerbase/perception_fast.pyx":291
+/* "soundrts/worldplayerbase/perception_fast.pyx":298
  * 
  * 
  * cpdef list merge_buckets_3x3(dict buckets, long long grid_x, long long grid_y):             # <<<<<<<<<<<<<<
@@ -7980,19 +8052,19 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_merge_buc
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("merge_buckets_3x3", 0);
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":303
+  /* "soundrts/worldplayerbase/perception_fast.pyx":310
  *       Cython  bug
  *     """
  *     cdef list result = []             # <<<<<<<<<<<<<<
  *     # dx/dy  _potential_neighbors  determinism
  *     # for dx in (0, 1, -1) for dy in (0, 1, -1)
 */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 303, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 310, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_result = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":308
+  /* "soundrts/worldplayerbase/perception_fast.pyx":315
  *     cdef int[9] dxs
  *     cdef int[9] dys
  *     dxs[0] = 0;  dys[0] = 0             # <<<<<<<<<<<<<<
@@ -8002,7 +8074,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_merge_buc
   (__pyx_v_dxs[0]) = 0;
   (__pyx_v_dys[0]) = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":309
+  /* "soundrts/worldplayerbase/perception_fast.pyx":316
  *     cdef int[9] dys
  *     dxs[0] = 0;  dys[0] = 0
  *     dxs[1] = 0;  dys[1] = 1             # <<<<<<<<<<<<<<
@@ -8012,7 +8084,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_merge_buc
   (__pyx_v_dxs[1]) = 0;
   (__pyx_v_dys[1]) = 1;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":310
+  /* "soundrts/worldplayerbase/perception_fast.pyx":317
  *     dxs[0] = 0;  dys[0] = 0
  *     dxs[1] = 0;  dys[1] = 1
  *     dxs[2] = 0;  dys[2] = -1             # <<<<<<<<<<<<<<
@@ -8022,7 +8094,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_merge_buc
   (__pyx_v_dxs[2]) = 0;
   (__pyx_v_dys[2]) = -1;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":311
+  /* "soundrts/worldplayerbase/perception_fast.pyx":318
  *     dxs[1] = 0;  dys[1] = 1
  *     dxs[2] = 0;  dys[2] = -1
  *     dxs[3] = 1;  dys[3] = 0             # <<<<<<<<<<<<<<
@@ -8032,7 +8104,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_merge_buc
   (__pyx_v_dxs[3]) = 1;
   (__pyx_v_dys[3]) = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":312
+  /* "soundrts/worldplayerbase/perception_fast.pyx":319
  *     dxs[2] = 0;  dys[2] = -1
  *     dxs[3] = 1;  dys[3] = 0
  *     dxs[4] = 1;  dys[4] = 1             # <<<<<<<<<<<<<<
@@ -8042,7 +8114,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_merge_buc
   (__pyx_v_dxs[4]) = 1;
   (__pyx_v_dys[4]) = 1;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":313
+  /* "soundrts/worldplayerbase/perception_fast.pyx":320
  *     dxs[3] = 1;  dys[3] = 0
  *     dxs[4] = 1;  dys[4] = 1
  *     dxs[5] = 1;  dys[5] = -1             # <<<<<<<<<<<<<<
@@ -8052,7 +8124,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_merge_buc
   (__pyx_v_dxs[5]) = 1;
   (__pyx_v_dys[5]) = -1;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":314
+  /* "soundrts/worldplayerbase/perception_fast.pyx":321
  *     dxs[4] = 1;  dys[4] = 1
  *     dxs[5] = 1;  dys[5] = -1
  *     dxs[6] = -1; dys[6] = 0             # <<<<<<<<<<<<<<
@@ -8062,7 +8134,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_merge_buc
   (__pyx_v_dxs[6]) = -1;
   (__pyx_v_dys[6]) = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":315
+  /* "soundrts/worldplayerbase/perception_fast.pyx":322
  *     dxs[5] = 1;  dys[5] = -1
  *     dxs[6] = -1; dys[6] = 0
  *     dxs[7] = -1; dys[7] = 1             # <<<<<<<<<<<<<<
@@ -8072,7 +8144,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_merge_buc
   (__pyx_v_dxs[7]) = -1;
   (__pyx_v_dys[7]) = 1;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":316
+  /* "soundrts/worldplayerbase/perception_fast.pyx":323
  *     dxs[6] = -1; dys[6] = 0
  *     dxs[7] = -1; dys[7] = 1
  *     dxs[8] = -1; dys[8] = -1             # <<<<<<<<<<<<<<
@@ -8082,7 +8154,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_merge_buc
   (__pyx_v_dxs[8]) = -1;
   (__pyx_v_dys[8]) = -1;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":318
+  /* "soundrts/worldplayerbase/perception_fast.pyx":325
  *     dxs[8] = -1; dys[8] = -1
  *     cdef int i
  *     for i in range(9):             # <<<<<<<<<<<<<<
@@ -8092,7 +8164,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_merge_buc
   for (__pyx_t_2 = 0; __pyx_t_2 < 9; __pyx_t_2+=1) {
     __pyx_v_i = __pyx_t_2;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":319
+    /* "soundrts/worldplayerbase/perception_fast.pyx":326
  *     cdef int i
  *     for i in range(9):
  *         key = (grid_x + dxs[i], grid_y + dys[i])             # <<<<<<<<<<<<<<
@@ -8103,7 +8175,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_merge_buc
     __pyx_t_3.f1 = (__pyx_v_grid_y + (__pyx_v_dys[__pyx_v_i]));
     __pyx_v_key = __pyx_t_3;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":320
+    /* "soundrts/worldplayerbase/perception_fast.pyx":327
  *     for i in range(9):
  *         key = (grid_x + dxs[i], grid_y + dys[i])
  *         bucket = buckets.get(key)             # <<<<<<<<<<<<<<
@@ -8112,17 +8184,17 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_merge_buc
 */
     if (unlikely(__pyx_v_buckets == Py_None)) {
       PyErr_Format(PyExc_AttributeError, "\047NoneType\047 object has no attribute \047%.30s\047", "get");
-      __PYX_ERR(0, 320, __pyx_L1_error)
+      __PYX_ERR(0, 327, __pyx_L1_error)
     }
-    __pyx_t_1 = __pyx_convert__to_py___pyx_ctuple_PY_LONG_LONG__and_PY_LONG_LONG(__pyx_v_key); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 320, __pyx_L1_error)
+    __pyx_t_1 = __pyx_convert__to_py___pyx_ctuple_PY_LONG_LONG__and_PY_LONG_LONG(__pyx_v_key); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 327, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = __Pyx_PyDict_GetItemDefault(__pyx_v_buckets, __pyx_t_1, Py_None); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 320, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyDict_GetItemDefault(__pyx_v_buckets, __pyx_t_1, Py_None); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 327, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_XDECREF_SET(__pyx_v_bucket, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":321
+    /* "soundrts/worldplayerbase/perception_fast.pyx":328
  *         key = (grid_x + dxs[i], grid_y + dys[i])
  *         bucket = buckets.get(key)
  *         if bucket is not None:             # <<<<<<<<<<<<<<
@@ -8133,17 +8205,17 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_merge_buc
     if (__pyx_t_5) {
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":322
+      /* "soundrts/worldplayerbase/perception_fast.pyx":329
  *         bucket = buckets.get(key)
  *         if bucket is not None:
  *             result.extend(bucket)             # <<<<<<<<<<<<<<
  *     return result
  * 
 */
-      __pyx_t_6 = __Pyx_PyList_Extend(__pyx_v_result, __pyx_v_bucket); if (unlikely(__pyx_t_6 == ((int)-1))) __PYX_ERR(0, 322, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyList_Extend(__pyx_v_result, __pyx_v_bucket); if (unlikely(__pyx_t_6 == ((int)-1))) __PYX_ERR(0, 329, __pyx_L1_error)
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":321
+      /* "soundrts/worldplayerbase/perception_fast.pyx":328
  *         key = (grid_x + dxs[i], grid_y + dys[i])
  *         bucket = buckets.get(key)
  *         if bucket is not None:             # <<<<<<<<<<<<<<
@@ -8153,7 +8225,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_merge_buc
     }
   }
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":323
+  /* "soundrts/worldplayerbase/perception_fast.pyx":330
  *         if bucket is not None:
  *             result.extend(bucket)
  *     return result             # <<<<<<<<<<<<<<
@@ -8171,7 +8243,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_merge_buc
   }
   goto __pyx_L0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":291
+  /* "soundrts/worldplayerbase/perception_fast.pyx":298
  * 
  * 
  * cpdef list merge_buckets_3x3(dict buckets, long long grid_x, long long grid_y):             # <<<<<<<<<<<<<<
@@ -8239,46 +8311,46 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_buckets,&__pyx_mstate_global->__pyx_n_u_grid_x,&__pyx_mstate_global->__pyx_n_u_grid_y,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 291, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 298, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  3:
         values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 291, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 298, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 291, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 298, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 291, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 298, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "merge_buckets_3x3", 0) < (0)) __PYX_ERR(0, 291, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "merge_buckets_3x3", 0) < (0)) __PYX_ERR(0, 298, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 3; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("merge_buckets_3x3", 1, 3, 3, i); __PYX_ERR(0, 291, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("merge_buckets_3x3", 1, 3, 3, i); __PYX_ERR(0, 298, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 3)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 291, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 298, __pyx_L3_error)
       values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 291, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 298, __pyx_L3_error)
       values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 291, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 298, __pyx_L3_error)
     }
     __pyx_v_buckets = ((PyObject*)values[0]);
-    __pyx_v_grid_x = __Pyx_PyLong_As_PY_LONG_LONG(values[1]); if (unlikely((__pyx_v_grid_x == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 291, __pyx_L3_error)
-    __pyx_v_grid_y = __Pyx_PyLong_As_PY_LONG_LONG(values[2]); if (unlikely((__pyx_v_grid_y == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 291, __pyx_L3_error)
+    __pyx_v_grid_x = __Pyx_PyLong_As_PY_LONG_LONG(values[1]); if (unlikely((__pyx_v_grid_x == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 298, __pyx_L3_error)
+    __pyx_v_grid_y = __Pyx_PyLong_As_PY_LONG_LONG(values[2]); if (unlikely((__pyx_v_grid_y == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 298, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("merge_buckets_3x3", 1, 3, 3, __pyx_nargs); __PYX_ERR(0, 291, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("merge_buckets_3x3", 1, 3, 3, __pyx_nargs); __PYX_ERR(0, 298, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -8289,7 +8361,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_buckets), (&PyDict_Type), 1, "buckets", 1))) __PYX_ERR(0, 291, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_buckets), (&PyDict_Type), 1, "buckets", 1))) __PYX_ERR(0, 298, __pyx_L1_error)
   __pyx_r = __pyx_pf_8soundrts_15worldplayerbase_15perception_fast_18merge_buckets_3x3(__pyx_self, __pyx_v_buckets, __pyx_v_grid_x, __pyx_v_grid_y);
 
   /* function exit code */
@@ -8319,7 +8391,7 @@ static PyObject *__pyx_pf_8soundrts_15worldplayerbase_15perception_fast_18merge_
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("merge_buckets_3x3", 0);
-  __pyx_t_1 = __pyx_f_8soundrts_15worldplayerbase_15perception_fast_merge_buckets_3x3(__pyx_v_buckets, __pyx_v_grid_x, __pyx_v_grid_y, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 291, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_8soundrts_15worldplayerbase_15perception_fast_merge_buckets_3x3(__pyx_v_buckets, __pyx_v_grid_x, __pyx_v_grid_y, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 298, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   {
     PyObject *__pyx_temp;
@@ -8343,7 +8415,121 @@ static PyObject *__pyx_pf_8soundrts_15worldplayerbase_15perception_fast_18merge_
   return __pyx_r;
 }
 
-/* "soundrts/worldplayerbase/perception_fast.pyx":326
+/* "soundrts/worldplayerbase/perception_fast.pyx":333
+ * 
+ * 
+ * cdef inline bint _is_detected_or_revealed(object player, object u):             # <<<<<<<<<<<<<<
+ *     """""
+ * 
+*/
+
+static CYTHON_INLINE int __pyx_f_8soundrts_15worldplayerbase_15perception_fast__is_detected_or_revealed(PyObject *__pyx_v_player, PyObject *__pyx_v_u) {
+  PyObject *__pyx_v_revealed = NULL;
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_t_2;
+  int __pyx_t_3;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("_is_detected_or_revealed", 0);
+
+  /* "soundrts/worldplayerbase/perception_fast.pyx":343
+ *     ``revealed_units`` ""
+ *     """
+ *     if u in player.detected_units:             # <<<<<<<<<<<<<<
+ *         return True
+ *     revealed = getattr(player, "revealed_units", None)
+*/
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_player, __pyx_mstate_global->__pyx_n_u_detected_units); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 343, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = (__Pyx_PySequence_ContainsTF(__pyx_v_u, __pyx_t_1, Py_EQ)); if (unlikely((__pyx_t_2 < 0))) __PYX_ERR(0, 343, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  if (__pyx_t_2) {
+
+
+    /* "soundrts/worldplayerbase/perception_fast.pyx":344
+ *     """
+ *     if u in player.detected_units:
+ *         return True             # <<<<<<<<<<<<<<
+ *     revealed = getattr(player, "revealed_units", None)
+ *     return revealed is not None and u in revealed
+*/
+    {
+
+      __pyx_r = 1;
+    }
+    goto __pyx_L0;
+
+    /* "soundrts/worldplayerbase/perception_fast.pyx":343
+ *     ``revealed_units`` ""
+ *     """
+ *     if u in player.detected_units:             # <<<<<<<<<<<<<<
+ *         return True
+ *     revealed = getattr(player, "revealed_units", None)
+*/
+  }
+
+  /* "soundrts/worldplayerbase/perception_fast.pyx":345
+ *     if u in player.detected_units:
+ *         return True
+ *     revealed = getattr(player, "revealed_units", None)             # <<<<<<<<<<<<<<
+ *     return revealed is not None and u in revealed
+ * 
+*/
+  __pyx_t_1 = __Pyx_GetAttr3(__pyx_v_player, __pyx_mstate_global->__pyx_n_u_revealed_units, Py_None); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 345, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_v_revealed = __pyx_t_1;
+  __pyx_t_1 = 0;
+
+  /* "soundrts/worldplayerbase/perception_fast.pyx":346
+ *         return True
+ *     revealed = getattr(player, "revealed_units", None)
+ *     return revealed is not None and u in revealed             # <<<<<<<<<<<<<<
+ * 
+ * 
+*/
+  __pyx_t_3 = (__pyx_v_revealed != Py_None);
+  if (__pyx_t_3) {
+
+  } else {
+
+    __pyx_t_2 = __pyx_t_3;
+
+    goto __pyx_L4_bool_binop_done;
+  }
+  __pyx_t_3 = (__Pyx_PySequence_ContainsTF(__pyx_v_u, __pyx_v_revealed, Py_EQ)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 346, __pyx_L1_error)
+
+  __pyx_t_2 = __pyx_t_3;
+
+  __pyx_L4_bool_binop_done:;
+  {
+    __pyx_r = __pyx_t_2;
+  }
+  goto __pyx_L0;
+
+  /* "soundrts/worldplayerbase/perception_fast.pyx":333
+ * 
+ * 
+ * cdef inline bint _is_detected_or_revealed(object player, object u):             # <<<<<<<<<<<<<<
+ *     """""
+ * 
+*/
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("soundrts.worldplayerbase.perception_fast._is_detected_or_revealed", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = -1;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_revealed);
+
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "soundrts/worldplayerbase/perception_fast.pyx":349
  * 
  * 
  * cpdef bint is_seeing(self, u) except -1:             # <<<<<<<<<<<<<<
@@ -8388,16 +8574,16 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("is_seeing", 0);
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":339
+  /* "soundrts/worldplayerbase/perception_fast.pyx":362
  *     cdef object place, avp, avu, sr
  * 
  *     if (u.is_invisible or u.is_cloaked) and u not in self.detected_units:             # <<<<<<<<<<<<<<
- *         return False
- * 
+ *         if not _is_detected_or_revealed(self, u):
+ *             return False
 */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_u, __pyx_mstate_global->__pyx_n_u_is_invisible); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 339, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_u, __pyx_mstate_global->__pyx_n_u_is_invisible); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 362, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 339, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 362, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   if (!__pyx_t_3) {
 
@@ -8405,9 +8591,9 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
 
     goto __pyx_L5_next_and;
   }
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_u, __pyx_mstate_global->__pyx_n_u_is_cloaked); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 339, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_u, __pyx_mstate_global->__pyx_n_u_is_cloaked); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 362, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 339, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 362, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   if (__pyx_t_3) {
 
@@ -8418,9 +8604,9 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
     goto __pyx_L4_bool_binop_done;
   }
   __pyx_L5_next_and:;
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_detected_units); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 339, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_detected_units); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 362, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = (__Pyx_PySequence_ContainsTF(__pyx_v_u, __pyx_t_2, Py_NE)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 339, __pyx_L1_error)
+  __pyx_t_3 = (__Pyx_PySequence_ContainsTF(__pyx_v_u, __pyx_t_2, Py_NE)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 362, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   __pyx_t_1 = __pyx_t_3;
@@ -8429,52 +8615,75 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
   if (__pyx_t_1) {
 
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":340
+    /* "soundrts/worldplayerbase/perception_fast.pyx":363
  * 
  *     if (u.is_invisible or u.is_cloaked) and u not in self.detected_units:
- *         return False             # <<<<<<<<<<<<<<
+ *         if not _is_detected_or_revealed(self, u):             # <<<<<<<<<<<<<<
+ *             return False
+ * 
+*/
+    __pyx_t_1 = __pyx_f_8soundrts_15worldplayerbase_15perception_fast__is_detected_or_revealed(__pyx_v_self, __pyx_v_u); if (unlikely(__pyx_t_1 == ((int)-1) && PyErr_Occurred())) __PYX_ERR(0, 363, __pyx_L1_error)
+    __pyx_t_3 = (!__pyx_t_1);
+
+
+    if (__pyx_t_3) {
+
+
+      /* "soundrts/worldplayerbase/perception_fast.pyx":364
+ *     if (u.is_invisible or u.is_cloaked) and u not in self.detected_units:
+ *         if not _is_detected_or_revealed(self, u):
+ *             return False             # <<<<<<<<<<<<<<
  * 
  *     place = u.place
 */
-    {
+      {
 
-      __pyx_r = 0;
+        __pyx_r = 0;
+      }
+      goto __pyx_L0;
+
+      /* "soundrts/worldplayerbase/perception_fast.pyx":363
+ * 
+ *     if (u.is_invisible or u.is_cloaked) and u not in self.detected_units:
+ *         if not _is_detected_or_revealed(self, u):             # <<<<<<<<<<<<<<
+ *             return False
+ * 
+*/
     }
-    goto __pyx_L0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":339
+    /* "soundrts/worldplayerbase/perception_fast.pyx":362
  *     cdef object place, avp, avu, sr
  * 
  *     if (u.is_invisible or u.is_cloaked) and u not in self.detected_units:             # <<<<<<<<<<<<<<
- *         return False
- * 
+ *         if not _is_detected_or_revealed(self, u):
+ *             return False
 */
   }
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":342
- *         return False
+  /* "soundrts/worldplayerbase/perception_fast.pyx":366
+ *             return False
  * 
  *     place = u.place             # <<<<<<<<<<<<<<
  *     if place is None:
  *         return False
 */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_u, __pyx_mstate_global->__pyx_n_u_place); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 342, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_u, __pyx_mstate_global->__pyx_n_u_place); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 366, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_v_place = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":343
+  /* "soundrts/worldplayerbase/perception_fast.pyx":367
  * 
  *     place = u.place
  *     if place is None:             # <<<<<<<<<<<<<<
  *         return False
  * 
 */
-  __pyx_t_1 = (__pyx_v_place == Py_None);
-  if (__pyx_t_1) {
+  __pyx_t_3 = (__pyx_v_place == Py_None);
+  if (__pyx_t_3) {
 
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":344
+    /* "soundrts/worldplayerbase/perception_fast.pyx":368
  *     place = u.place
  *     if place is None:
  *         return False             # <<<<<<<<<<<<<<
@@ -8487,7 +8696,7 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
     }
     goto __pyx_L0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":343
+    /* "soundrts/worldplayerbase/perception_fast.pyx":367
  * 
  *     place = u.place
  *     if place is None:             # <<<<<<<<<<<<<<
@@ -8496,24 +8705,24 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
 */
   }
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":347
+  /* "soundrts/worldplayerbase/perception_fast.pyx":371
  * 
  *     # Most units have blocked_exit=None; avoid Python exit-blocker walk.
  *     if u.blocked_exit is not None and self._exit_blocker_visible(u):             # <<<<<<<<<<<<<<
  *         return True
  * 
 */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_u, __pyx_mstate_global->__pyx_n_u_blocked_exit); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 347, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_u, __pyx_mstate_global->__pyx_n_u_blocked_exit); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 371, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = (__pyx_t_2 != Py_None);
+  __pyx_t_1 = (__pyx_t_2 != Py_None);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (__pyx_t_3) {
+  if (__pyx_t_1) {
 
   } else {
 
-    __pyx_t_1 = __pyx_t_3;
+    __pyx_t_3 = __pyx_t_1;
 
-    goto __pyx_L9_bool_binop_done;
+    goto __pyx_L10_bool_binop_done;
   }
   __pyx_t_4 = __pyx_v_self;
   __Pyx_INCREF(__pyx_t_4);
@@ -8522,19 +8731,19 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
     PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_v_u};
     __pyx_t_2 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_exit_blocker_visible, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 347, __pyx_L1_error)
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 371, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
   }
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 347, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_1 < 0))) __PYX_ERR(0, 371, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  __pyx_t_1 = __pyx_t_3;
+  __pyx_t_3 = __pyx_t_1;
 
-  __pyx_L9_bool_binop_done:;
-  if (__pyx_t_1) {
+  __pyx_L10_bool_binop_done:;
+  if (__pyx_t_3) {
 
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":348
+    /* "soundrts/worldplayerbase/perception_fast.pyx":372
  *     # Most units have blocked_exit=None; avoid Python exit-blocker walk.
  *     if u.blocked_exit is not None and self._exit_blocker_visible(u):
  *         return True             # <<<<<<<<<<<<<<
@@ -8547,7 +8756,7 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
     }
     goto __pyx_L0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":347
+    /* "soundrts/worldplayerbase/perception_fast.pyx":371
  * 
  *     # Most units have blocked_exit=None; avoid Python exit-blocker walk.
  *     if u.blocked_exit is not None and self._exit_blocker_visible(u):             # <<<<<<<<<<<<<<
@@ -8556,49 +8765,49 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
 */
   }
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":350
+  /* "soundrts/worldplayerbase/perception_fast.pyx":374
  *         return True
  * 
  *     x = u.x             # <<<<<<<<<<<<<<
  *     y = u.y
  *     for avp in self.allied_vision:
 */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_u, __pyx_mstate_global->__pyx_n_u_x); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 350, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_u, __pyx_mstate_global->__pyx_n_u_x); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 374, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_6 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_2); if (unlikely((__pyx_t_6 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 350, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_2); if (unlikely((__pyx_t_6 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 374, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_x = __pyx_t_6;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":351
+  /* "soundrts/worldplayerbase/perception_fast.pyx":375
  * 
  *     x = u.x
  *     y = u.y             # <<<<<<<<<<<<<<
  *     for avp in self.allied_vision:
  *         for avu in avp._potential_neighbors(x, y):
 */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_u, __pyx_mstate_global->__pyx_n_u_y); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 351, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_u, __pyx_mstate_global->__pyx_n_u_y); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 375, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_6 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_2); if (unlikely((__pyx_t_6 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 351, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_2); if (unlikely((__pyx_t_6 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 375, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_y = __pyx_t_6;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":352
+  /* "soundrts/worldplayerbase/perception_fast.pyx":376
  *     x = u.x
  *     y = u.y
  *     for avp in self.allied_vision:             # <<<<<<<<<<<<<<
  *         for avu in avp._potential_neighbors(x, y):
  *             if avu.is_inside:
 */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_allied_vision); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 352, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_allied_vision); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 376, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (likely(PyList_CheckExact(__pyx_t_2)) || PyTuple_CheckExact(__pyx_t_2)) {
     __pyx_t_4 = __pyx_t_2; __Pyx_INCREF(__pyx_t_4);
     __pyx_t_7 = 0;
     __pyx_t_8 = NULL;
   } else {
-    __pyx_t_7 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 352, __pyx_L1_error)
+    __pyx_t_7 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 376, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_8 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 352, __pyx_L1_error)
+    __pyx_t_8 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 376, __pyx_L1_error)
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   for (;;) {
@@ -8607,7 +8816,7 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
         {
           Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_4);
           #if !CYTHON_ASSUME_SAFE_SIZE
-          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 352, __pyx_L1_error)
+          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 376, __pyx_L1_error)
           #endif
           if (__pyx_t_7 >= __pyx_temp) break;
         }
@@ -8617,7 +8826,7 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
         {
           Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_4);
           #if !CYTHON_ASSUME_SAFE_SIZE
-          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 352, __pyx_L1_error)
+          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 376, __pyx_L1_error)
           #endif
           if (__pyx_t_7 >= __pyx_temp) break;
         }
@@ -8628,13 +8837,13 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
         #endif
         ++__pyx_t_7;
       }
-      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 352, __pyx_L1_error)
+      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 376, __pyx_L1_error)
     } else {
       __pyx_t_2 = __pyx_t_8(__pyx_t_4);
       if (unlikely(!__pyx_t_2)) {
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
-          if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 352, __pyx_L1_error)
+          if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 376, __pyx_L1_error)
           PyErr_Clear();
         }
         break;
@@ -8644,7 +8853,7 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
     __Pyx_XDECREF_SET(__pyx_v_avp, __pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":353
+    /* "soundrts/worldplayerbase/perception_fast.pyx":377
  *     y = u.y
  *     for avp in self.allied_vision:
  *         for avu in avp._potential_neighbors(x, y):             # <<<<<<<<<<<<<<
@@ -8653,9 +8862,9 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
 */
     __pyx_t_9 = __pyx_v_avp;
     __Pyx_INCREF(__pyx_t_9);
-    __pyx_t_10 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_x); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 353, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_x); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 377, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_11 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_y); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 353, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_y); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 377, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     __pyx_t_5 = 0;
     {
@@ -8664,7 +8873,7 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
       __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 353, __pyx_L1_error)
+      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 377, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
     }
     if (likely(PyList_CheckExact(__pyx_t_2)) || PyTuple_CheckExact(__pyx_t_2)) {
@@ -8672,9 +8881,9 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
       __pyx_t_12 = 0;
       __pyx_t_13 = NULL;
     } else {
-      __pyx_t_12 = -1; __pyx_t_11 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 353, __pyx_L1_error)
+      __pyx_t_12 = -1; __pyx_t_11 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 377, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
-      __pyx_t_13 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_11); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 353, __pyx_L1_error)
+      __pyx_t_13 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_11); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 377, __pyx_L1_error)
     }
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     for (;;) {
@@ -8683,7 +8892,7 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
           {
             Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_11);
             #if !CYTHON_ASSUME_SAFE_SIZE
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 353, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 377, __pyx_L1_error)
             #endif
             if (__pyx_t_12 >= __pyx_temp) break;
           }
@@ -8693,7 +8902,7 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
           {
             Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_11);
             #if !CYTHON_ASSUME_SAFE_SIZE
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 353, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 377, __pyx_L1_error)
             #endif
             if (__pyx_t_12 >= __pyx_temp) break;
           }
@@ -8704,13 +8913,13 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
           #endif
           ++__pyx_t_12;
         }
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 353, __pyx_L1_error)
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 377, __pyx_L1_error)
       } else {
         __pyx_t_2 = __pyx_t_13(__pyx_t_11);
         if (unlikely(!__pyx_t_2)) {
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
-            if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 353, __pyx_L1_error)
+            if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 377, __pyx_L1_error)
             PyErr_Clear();
           }
           break;
@@ -8720,30 +8929,30 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
       __Pyx_XDECREF_SET(__pyx_v_avu, __pyx_t_2);
       __pyx_t_2 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":354
+      /* "soundrts/worldplayerbase/perception_fast.pyx":378
  *     for avp in self.allied_vision:
  *         for avu in avp._potential_neighbors(x, y):
  *             if avu.is_inside:             # <<<<<<<<<<<<<<
  *                 continue
  *             sr = avu.sight_range
 */
-      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_avu, __pyx_mstate_global->__pyx_n_u_is_inside); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 354, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_avu, __pyx_mstate_global->__pyx_n_u_is_inside); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 378, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_1 < 0))) __PYX_ERR(0, 354, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 378, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      if (__pyx_t_1) {
+      if (__pyx_t_3) {
 
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":355
+        /* "soundrts/worldplayerbase/perception_fast.pyx":379
  *         for avu in avp._potential_neighbors(x, y):
  *             if avu.is_inside:
  *                 continue             # <<<<<<<<<<<<<<
  *             sr = avu.sight_range
  *             if not sr:
 */
-        goto __pyx_L13_continue;
+        goto __pyx_L14_continue;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":354
+        /* "soundrts/worldplayerbase/perception_fast.pyx":378
  *     for avp in self.allied_vision:
  *         for avu in avp._potential_neighbors(x, y):
  *             if avu.is_inside:             # <<<<<<<<<<<<<<
@@ -8752,42 +8961,42 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
 */
       }
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":356
+      /* "soundrts/worldplayerbase/perception_fast.pyx":380
  *             if avu.is_inside:
  *                 continue
  *             sr = avu.sight_range             # <<<<<<<<<<<<<<
  *             if not sr:
  *                 continue
 */
-      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_avu, __pyx_mstate_global->__pyx_n_u_sight_range); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 356, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_avu, __pyx_mstate_global->__pyx_n_u_sight_range); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 380, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_XDECREF_SET(__pyx_v_sr, __pyx_t_2);
       __pyx_t_2 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":357
+      /* "soundrts/worldplayerbase/perception_fast.pyx":381
  *                 continue
  *             sr = avu.sight_range
  *             if not sr:             # <<<<<<<<<<<<<<
  *                 continue
  *             dx = avu.x - x
 */
-      __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_v_sr); if (unlikely((__pyx_t_1 < 0))) __PYX_ERR(0, 357, __pyx_L1_error)
-      __pyx_t_3 = (!__pyx_t_1);
+      __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_v_sr); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 381, __pyx_L1_error)
+      __pyx_t_1 = (!__pyx_t_3);
 
 
-      if (__pyx_t_3) {
+      if (__pyx_t_1) {
 
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":358
+        /* "soundrts/worldplayerbase/perception_fast.pyx":382
  *             sr = avu.sight_range
  *             if not sr:
  *                 continue             # <<<<<<<<<<<<<<
  *             dx = avu.x - x
  *             dy = avu.y - y
 */
-        goto __pyx_L13_continue;
+        goto __pyx_L14_continue;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":357
+        /* "soundrts/worldplayerbase/perception_fast.pyx":381
  *                 continue
  *             sr = avu.sight_range
  *             if not sr:             # <<<<<<<<<<<<<<
@@ -8796,56 +9005,56 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
 */
       }
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":359
+      /* "soundrts/worldplayerbase/perception_fast.pyx":383
  *             if not sr:
  *                 continue
  *             dx = avu.x - x             # <<<<<<<<<<<<<<
  *             dy = avu.y - y
  *             sr2 = <long long>sr
 */
-      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_avu, __pyx_mstate_global->__pyx_n_u_x); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 359, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_avu, __pyx_mstate_global->__pyx_n_u_x); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 383, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_10 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_x); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 359, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_x); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 383, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_9 = __Pyx_PyNumber_Subtract_object_int(__pyx_t_2, __pyx_t_10); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 359, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyNumber_Subtract_object_int(__pyx_t_2, __pyx_t_10); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 383, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      __pyx_t_6 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_9); if (unlikely((__pyx_t_6 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 359, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_9); if (unlikely((__pyx_t_6 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 383, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
       __pyx_v_dx = __pyx_t_6;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":360
+      /* "soundrts/worldplayerbase/perception_fast.pyx":384
  *                 continue
  *             dx = avu.x - x
  *             dy = avu.y - y             # <<<<<<<<<<<<<<
  *             sr2 = <long long>sr
  *             sr2 = sr2 * sr2
 */
-      __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_avu, __pyx_mstate_global->__pyx_n_u_y); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 360, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_avu, __pyx_mstate_global->__pyx_n_u_y); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 384, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
-      __pyx_t_10 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_y); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 360, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_y); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 384, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_2 = __Pyx_PyNumber_Subtract_object_int(__pyx_t_9, __pyx_t_10); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 360, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyNumber_Subtract_object_int(__pyx_t_9, __pyx_t_10); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 384, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      __pyx_t_6 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_2); if (unlikely((__pyx_t_6 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 360, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_2); if (unlikely((__pyx_t_6 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 384, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_v_dy = __pyx_t_6;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":361
+      /* "soundrts/worldplayerbase/perception_fast.pyx":385
  *             dx = avu.x - x
  *             dy = avu.y - y
  *             sr2 = <long long>sr             # <<<<<<<<<<<<<<
  *             sr2 = sr2 * sr2
  *             if dx * dx + dy * dy >= sr2:
 */
-      __pyx_t_6 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_v_sr); if (unlikely((__pyx_t_6 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 361, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_v_sr); if (unlikely((__pyx_t_6 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 385, __pyx_L1_error)
       __pyx_v_sr2 = ((PY_LONG_LONG)__pyx_t_6);
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":362
+      /* "soundrts/worldplayerbase/perception_fast.pyx":386
  *             dy = avu.y - y
  *             sr2 = <long long>sr
  *             sr2 = sr2 * sr2             # <<<<<<<<<<<<<<
@@ -8854,28 +9063,28 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
 */
       __pyx_v_sr2 = (__pyx_v_sr2 * __pyx_v_sr2);
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":363
+      /* "soundrts/worldplayerbase/perception_fast.pyx":387
  *             sr2 = <long long>sr
  *             sr2 = sr2 * sr2
  *             if dx * dx + dy * dy >= sr2:             # <<<<<<<<<<<<<<
  *                 continue
  *             if place in avu.get_observed_squares():
 */
-      __pyx_t_3 = (((__pyx_v_dx * __pyx_v_dx) + (__pyx_v_dy * __pyx_v_dy)) >= __pyx_v_sr2);
+      __pyx_t_1 = (((__pyx_v_dx * __pyx_v_dx) + (__pyx_v_dy * __pyx_v_dy)) >= __pyx_v_sr2);
 
-      if (__pyx_t_3) {
+      if (__pyx_t_1) {
 
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":364
+        /* "soundrts/worldplayerbase/perception_fast.pyx":388
  *             sr2 = sr2 * sr2
  *             if dx * dx + dy * dy >= sr2:
  *                 continue             # <<<<<<<<<<<<<<
  *             if place in avu.get_observed_squares():
  *                 return True
 */
-        goto __pyx_L13_continue;
+        goto __pyx_L14_continue;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":363
+        /* "soundrts/worldplayerbase/perception_fast.pyx":387
  *             sr2 = <long long>sr
  *             sr2 = sr2 * sr2
  *             if dx * dx + dy * dy >= sr2:             # <<<<<<<<<<<<<<
@@ -8884,7 +9093,7 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
 */
       }
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":365
+      /* "soundrts/worldplayerbase/perception_fast.pyx":389
  *             if dx * dx + dy * dy >= sr2:
  *                 continue
  *             if place in avu.get_observed_squares():             # <<<<<<<<<<<<<<
@@ -8898,15 +9107,15 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
         PyObject *__pyx_callargs[2] = {__pyx_t_10, NULL};
         __pyx_t_2 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_get_observed_squares, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
         __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 365, __pyx_L1_error)
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 389, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
       }
-      __pyx_t_3 = (__Pyx_PySequence_ContainsTF(__pyx_v_place, __pyx_t_2, Py_EQ)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 365, __pyx_L1_error)
+      __pyx_t_1 = (__Pyx_PySequence_ContainsTF(__pyx_v_place, __pyx_t_2, Py_EQ)); if (unlikely((__pyx_t_1 < 0))) __PYX_ERR(0, 389, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      if (__pyx_t_3) {
+      if (__pyx_t_1) {
 
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":366
+        /* "soundrts/worldplayerbase/perception_fast.pyx":390
  *                 continue
  *             if place in avu.get_observed_squares():
  *                 return True             # <<<<<<<<<<<<<<
@@ -8921,7 +9130,7 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
         goto __pyx_L0;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":365
+        /* "soundrts/worldplayerbase/perception_fast.pyx":389
  *             if dx * dx + dy * dy >= sr2:
  *                 continue
  *             if place in avu.get_observed_squares():             # <<<<<<<<<<<<<<
@@ -8930,18 +9139,18 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
 */
       }
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":353
+      /* "soundrts/worldplayerbase/perception_fast.pyx":377
  *     y = u.y
  *     for avp in self.allied_vision:
  *         for avu in avp._potential_neighbors(x, y):             # <<<<<<<<<<<<<<
  *             if avu.is_inside:
  *                 continue
 */
-      __pyx_L13_continue:;
+      __pyx_L14_continue:;
     }
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":352
+    /* "soundrts/worldplayerbase/perception_fast.pyx":376
  *     x = u.x
  *     y = u.y
  *     for avp in self.allied_vision:             # <<<<<<<<<<<<<<
@@ -8951,7 +9160,7 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
   }
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":367
+  /* "soundrts/worldplayerbase/perception_fast.pyx":391
  *             if place in avu.get_observed_squares():
  *                 return True
  *     return False             # <<<<<<<<<<<<<<
@@ -8964,7 +9173,7 @@ static int __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(PyObj
   }
   goto __pyx_L0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":326
+  /* "soundrts/worldplayerbase/perception_fast.pyx":349
  * 
  * 
  * cpdef bint is_seeing(self, u) except -1:             # <<<<<<<<<<<<<<
@@ -9037,39 +9246,39 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_self,&__pyx_mstate_global->__pyx_n_u_u,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 326, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 349, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 326, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 349, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 326, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 349, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "is_seeing", 0) < (0)) __PYX_ERR(0, 326, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "is_seeing", 0) < (0)) __PYX_ERR(0, 349, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 2; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("is_seeing", 1, 2, 2, i); __PYX_ERR(0, 326, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("is_seeing", 1, 2, 2, i); __PYX_ERR(0, 349, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 326, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 349, __pyx_L3_error)
       values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 326, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 349, __pyx_L3_error)
     }
     __pyx_v_self = values[0];
     __pyx_v_u = values[1];
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("is_seeing", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 326, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("is_seeing", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 349, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -9099,8 +9308,8 @@ static PyObject *__pyx_pf_8soundrts_15worldplayerbase_15perception_fast_20is_see
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("is_seeing", 0);
-  __pyx_t_1 = __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(__pyx_v_self, __pyx_v_u, 1); if (unlikely(__pyx_t_1 == ((int)-1))) __PYX_ERR(0, 326, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 326, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_8soundrts_15worldplayerbase_15perception_fast_is_seeing(__pyx_v_self, __pyx_v_u, 1); if (unlikely(__pyx_t_1 == ((int)-1))) __PYX_ERR(0, 349, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 349, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
 
   {
@@ -9125,7 +9334,7 @@ static PyObject *__pyx_pf_8soundrts_15worldplayerbase_15perception_fast_20is_see
   return __pyx_r;
 }
 
-/* "soundrts/worldplayerbase/perception_fast.pyx":375
+/* "soundrts/worldplayerbase/perception_fast.pyx":399
  * # Python fallback: perception._py_bulk_visibility_check (byte-exact ).
  * 
  * cpdef tuple bulk_visibility_check(self, objects):             # <<<<<<<<<<<<<<
@@ -9218,106 +9427,106 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("bulk_visibility_check", 0);
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":380
+  /* "soundrts/worldplayerbase/perception_fast.pyx":404
  *      (visible_objects set, invisible_objects set).
  *     """
  *     cdef object visible_objects = set()             # <<<<<<<<<<<<<<
  *     cdef object invisible_objects = set()
  *     cdef object current_time = self.world.time
 */
-  __pyx_t_1 = PySet_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 380, __pyx_L1_error)
+  __pyx_t_1 = PySet_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 404, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_visible_objects = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":381
+  /* "soundrts/worldplayerbase/perception_fast.pyx":405
  *     """
  *     cdef object visible_objects = set()
  *     cdef object invisible_objects = set()             # <<<<<<<<<<<<<<
  *     cdef object current_time = self.world.time
  *     cdef long long time_bucket = current_time // 250
 */
-  __pyx_t_1 = PySet_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 381, __pyx_L1_error)
+  __pyx_t_1 = PySet_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 405, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_invisible_objects = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":382
+  /* "soundrts/worldplayerbase/perception_fast.pyx":406
  *     cdef object visible_objects = set()
  *     cdef object invisible_objects = set()
  *     cdef object current_time = self.world.time             # <<<<<<<<<<<<<<
  *     cdef long long time_bucket = current_time // 250
  *     cdef object cls = self.__class__
 */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_world); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 382, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_world); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 406, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_time); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 382, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_time); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 406, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_current_time = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":383
+  /* "soundrts/worldplayerbase/perception_fast.pyx":407
  *     cdef object invisible_objects = set()
  *     cdef object current_time = self.world.time
  *     cdef long long time_bucket = current_time // 250             # <<<<<<<<<<<<<<
  *     cdef object cls = self.__class__
  *     #  world  World._perception_caches
 */
-  __pyx_t_2 = __Pyx_PyLong_FloorDivideObjC(__pyx_v_current_time, __pyx_mstate_global->__pyx_int_250, 0xFA, 0, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 383, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyLong_FloorDivideObjC(__pyx_v_current_time, __pyx_mstate_global->__pyx_int_250, 0xFA, 0, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 407, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_2); if (unlikely((__pyx_t_3 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 383, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_2); if (unlikely((__pyx_t_3 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 407, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_time_bucket = __pyx_t_3;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":384
+  /* "soundrts/worldplayerbase/perception_fast.pyx":408
  *     cdef object current_time = self.world.time
  *     cdef long long time_bucket = current_time // 250
  *     cdef object cls = self.__class__             # <<<<<<<<<<<<<<
  *     #  world  World._perception_caches
  *     #  world  world  id  world
 */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_class); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 384, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_class); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 408, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_v_cls = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":388
+  /* "soundrts/worldplayerbase/perception_fast.pyx":412
  *     #  world  world  id  world
  *     #
  *     cdef object caches = self._pcaches             # <<<<<<<<<<<<<<
  *     cdef object player_cache
  *     cdef dict objects_by_place = {}
 */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_pcaches); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 388, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_pcaches); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 412, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_v_caches = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":390
+  /* "soundrts/worldplayerbase/perception_fast.pyx":414
  *     cdef object caches = self._pcaches
  *     cdef object player_cache
  *     cdef dict objects_by_place = {}             # <<<<<<<<<<<<<<
  *     cdef object obj, place
  *     cdef object union_cache, observed_places_union, observed_places
 */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 390, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 414, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_v_objects_by_place = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":407
+  /* "soundrts/worldplayerbase/perception_fast.pyx":431
  *     cdef object observed_key
  * 
  *     player_cache = caches.global_vision_cache.get(self.id)             # <<<<<<<<<<<<<<
  *     if player_cache is None:
  *         player_cache = {}
 */
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_global_vision_cache); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 407, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_global_vision_cache); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 431, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_1 = __pyx_t_4;
   __Pyx_INCREF(__pyx_t_1);
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 407, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 431, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_6 = 0;
   {
@@ -9326,13 +9535,13 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
     __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 407, __pyx_L1_error)
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 431, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
   }
   __pyx_v_player_cache = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":408
+  /* "soundrts/worldplayerbase/perception_fast.pyx":432
  * 
  *     player_cache = caches.global_vision_cache.get(self.id)
  *     if player_cache is None:             # <<<<<<<<<<<<<<
@@ -9343,34 +9552,34 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
   if (__pyx_t_7) {
 
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":409
+    /* "soundrts/worldplayerbase/perception_fast.pyx":433
  *     player_cache = caches.global_vision_cache.get(self.id)
  *     if player_cache is None:
  *         player_cache = {}             # <<<<<<<<<<<<<<
  *         caches.global_vision_cache[self.id] = player_cache
  * 
 */
-    __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 409, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 433, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF_SET(__pyx_v_player_cache, __pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":410
+    /* "soundrts/worldplayerbase/perception_fast.pyx":434
  *     if player_cache is None:
  *         player_cache = {}
  *         caches.global_vision_cache[self.id] = player_cache             # <<<<<<<<<<<<<<
  * 
  *     for obj in objects:
 */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_global_vision_cache); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 410, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_global_vision_cache); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 434, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 410, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 434, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    if (unlikely((PyObject_SetItem(__pyx_t_2, __pyx_t_4, __pyx_v_player_cache) < 0))) __PYX_ERR(0, 410, __pyx_L1_error)
+    if (unlikely((PyObject_SetItem(__pyx_t_2, __pyx_t_4, __pyx_v_player_cache) < 0))) __PYX_ERR(0, 434, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":408
+    /* "soundrts/worldplayerbase/perception_fast.pyx":432
  * 
  *     player_cache = caches.global_vision_cache.get(self.id)
  *     if player_cache is None:             # <<<<<<<<<<<<<<
@@ -9379,7 +9588,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
   }
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":412
+  /* "soundrts/worldplayerbase/perception_fast.pyx":436
  *         caches.global_vision_cache[self.id] = player_cache
  * 
  *     for obj in objects:             # <<<<<<<<<<<<<<
@@ -9391,9 +9600,9 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
     __pyx_t_8 = 0;
     __pyx_t_9 = NULL;
   } else {
-    __pyx_t_8 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_v_objects); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 412, __pyx_L1_error)
+    __pyx_t_8 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_v_objects); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 436, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_9 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_4); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 412, __pyx_L1_error)
+    __pyx_t_9 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_4); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 436, __pyx_L1_error)
   }
   for (;;) {
     if (likely(!__pyx_t_9)) {
@@ -9401,7 +9610,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
         {
           Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_4);
           #if !CYTHON_ASSUME_SAFE_SIZE
-          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 412, __pyx_L1_error)
+          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 436, __pyx_L1_error)
           #endif
           if (__pyx_t_8 >= __pyx_temp) break;
         }
@@ -9411,7 +9620,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
         {
           Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_4);
           #if !CYTHON_ASSUME_SAFE_SIZE
-          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 412, __pyx_L1_error)
+          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 436, __pyx_L1_error)
           #endif
           if (__pyx_t_8 >= __pyx_temp) break;
         }
@@ -9422,13 +9631,13 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
         #endif
         ++__pyx_t_8;
       }
-      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 412, __pyx_L1_error)
+      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 436, __pyx_L1_error)
     } else {
       __pyx_t_2 = __pyx_t_9(__pyx_t_4);
       if (unlikely(!__pyx_t_2)) {
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
-          if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 412, __pyx_L1_error)
+          if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 436, __pyx_L1_error)
           PyErr_Clear();
         }
         break;
@@ -9438,42 +9647,42 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
     __Pyx_XDECREF_SET(__pyx_v_obj, __pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":413
+    /* "soundrts/worldplayerbase/perception_fast.pyx":437
  * 
  *     for obj in objects:
  *         place = obj.place             # <<<<<<<<<<<<<<
  *         if place not in objects_by_place:
  *             objects_by_place[place] = []
 */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_place); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 413, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_place); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 437, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_XDECREF_SET(__pyx_v_place, __pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":414
+    /* "soundrts/worldplayerbase/perception_fast.pyx":438
  *     for obj in objects:
  *         place = obj.place
  *         if place not in objects_by_place:             # <<<<<<<<<<<<<<
  *             objects_by_place[place] = []
  *         objects_by_place[place].append(obj)
 */
-    __pyx_t_7 = (__Pyx_PyDict_ContainsTF(__pyx_v_place, __pyx_v_objects_by_place, Py_NE)); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 414, __pyx_L1_error)
+    __pyx_t_7 = (__Pyx_PyDict_ContainsTF(__pyx_v_place, __pyx_v_objects_by_place, Py_NE)); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 438, __pyx_L1_error)
     if (__pyx_t_7) {
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":415
+      /* "soundrts/worldplayerbase/perception_fast.pyx":439
  *         place = obj.place
  *         if place not in objects_by_place:
  *             objects_by_place[place] = []             # <<<<<<<<<<<<<<
  *         objects_by_place[place].append(obj)
  * 
 */
-      __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 415, __pyx_L1_error)
+      __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 439, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      if (unlikely((PyDict_SetItem(__pyx_v_objects_by_place, __pyx_v_place, __pyx_t_2) < 0))) __PYX_ERR(0, 415, __pyx_L1_error)
+      if (unlikely((PyDict_SetItem(__pyx_v_objects_by_place, __pyx_v_place, __pyx_t_2) < 0))) __PYX_ERR(0, 439, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":414
+      /* "soundrts/worldplayerbase/perception_fast.pyx":438
  *     for obj in objects:
  *         place = obj.place
  *         if place not in objects_by_place:             # <<<<<<<<<<<<<<
@@ -9482,20 +9691,20 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
     }
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":416
+    /* "soundrts/worldplayerbase/perception_fast.pyx":440
  *         if place not in objects_by_place:
  *             objects_by_place[place] = []
  *         objects_by_place[place].append(obj)             # <<<<<<<<<<<<<<
  * 
  *     if caches.observed_union_bucket != time_bucket:
 */
-    __pyx_t_2 = __Pyx_PyDict_GetItem(__pyx_v_objects_by_place, __pyx_v_place); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 416, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyDict_GetItem(__pyx_v_objects_by_place, __pyx_v_place); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 440, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_10 = __Pyx_PyObject_Append(__pyx_t_2, __pyx_v_obj); if (unlikely(__pyx_t_10 == ((int)-1))) __PYX_ERR(0, 416, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyObject_Append(__pyx_t_2, __pyx_v_obj); if (unlikely(__pyx_t_10 == ((int)-1))) __PYX_ERR(0, 440, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":412
+    /* "soundrts/worldplayerbase/perception_fast.pyx":436
  *         caches.global_vision_cache[self.id] = player_cache
  * 
  *     for obj in objects:             # <<<<<<<<<<<<<<
@@ -9505,48 +9714,48 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
   }
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":418
+  /* "soundrts/worldplayerbase/perception_fast.pyx":442
  *         objects_by_place[place].append(obj)
  * 
  *     if caches.observed_union_bucket != time_bucket:             # <<<<<<<<<<<<<<
  *         caches.observed_union_cache = {}
  *         caches.observed_union_bucket = time_bucket
 */
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_observed_union_bucket); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 418, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_observed_union_bucket); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 442, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_2 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 418, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 442, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_7 = __Pyx_PyObject_CompareBoolNe_object_int(__pyx_t_4, __pyx_t_2, Py_NE); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 418, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyObject_CompareBoolNe_object_int(__pyx_t_4, __pyx_t_2, Py_NE); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 442, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   if (__pyx_t_7) {
 
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":419
+    /* "soundrts/worldplayerbase/perception_fast.pyx":443
  * 
  *     if caches.observed_union_bucket != time_bucket:
  *         caches.observed_union_cache = {}             # <<<<<<<<<<<<<<
  *         caches.observed_union_bucket = time_bucket
  *     union_cache = caches.observed_union_cache
 */
-    __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 419, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 443, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    if (__Pyx_PyObject_SetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_observed_union_cache, __pyx_t_2) < (0)) __PYX_ERR(0, 419, __pyx_L1_error)
+    if (__Pyx_PyObject_SetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_observed_union_cache, __pyx_t_2) < (0)) __PYX_ERR(0, 443, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":420
+    /* "soundrts/worldplayerbase/perception_fast.pyx":444
  *     if caches.observed_union_bucket != time_bucket:
  *         caches.observed_union_cache = {}
  *         caches.observed_union_bucket = time_bucket             # <<<<<<<<<<<<<<
  *     union_cache = caches.observed_union_cache
  *     if self.id not in union_cache:
 */
-    __pyx_t_2 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 420, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 444, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    if (__Pyx_PyObject_SetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_observed_union_bucket, __pyx_t_2) < (0)) __PYX_ERR(0, 420, __pyx_L1_error)
+    if (__Pyx_PyObject_SetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_observed_union_bucket, __pyx_t_2) < (0)) __PYX_ERR(0, 444, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":418
+    /* "soundrts/worldplayerbase/perception_fast.pyx":442
  *         objects_by_place[place].append(obj)
  * 
  *     if caches.observed_union_bucket != time_bucket:             # <<<<<<<<<<<<<<
@@ -9555,61 +9764,61 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
   }
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":421
+  /* "soundrts/worldplayerbase/perception_fast.pyx":445
  *         caches.observed_union_cache = {}
  *         caches.observed_union_bucket = time_bucket
  *     union_cache = caches.observed_union_cache             # <<<<<<<<<<<<<<
  *     if self.id not in union_cache:
  *         observed_places_union = set()
 */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_observed_union_cache); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 421, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_observed_union_cache); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 445, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_v_union_cache = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":422
+  /* "soundrts/worldplayerbase/perception_fast.pyx":446
  *         caches.observed_union_bucket = time_bucket
  *     union_cache = caches.observed_union_cache
  *     if self.id not in union_cache:             # <<<<<<<<<<<<<<
  *         observed_places_union = set()
  *         for avp in self.allied_vision:
 */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 422, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 446, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_7 = (__Pyx_PySequence_ContainsTF(__pyx_t_2, __pyx_v_union_cache, Py_NE)); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 422, __pyx_L1_error)
+  __pyx_t_7 = (__Pyx_PySequence_ContainsTF(__pyx_t_2, __pyx_v_union_cache, Py_NE)); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 446, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   if (__pyx_t_7) {
 
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":423
+    /* "soundrts/worldplayerbase/perception_fast.pyx":447
  *     union_cache = caches.observed_union_cache
  *     if self.id not in union_cache:
  *         observed_places_union = set()             # <<<<<<<<<<<<<<
  *         for avp in self.allied_vision:
  *             observed_places_union.update(avp.observed_squares)
 */
-    __pyx_t_2 = PySet_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 423, __pyx_L1_error)
+    __pyx_t_2 = PySet_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 447, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_v_observed_places_union = __pyx_t_2;
     __pyx_t_2 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":424
+    /* "soundrts/worldplayerbase/perception_fast.pyx":448
  *     if self.id not in union_cache:
  *         observed_places_union = set()
  *         for avp in self.allied_vision:             # <<<<<<<<<<<<<<
  *             observed_places_union.update(avp.observed_squares)
  *         union_cache[self.id] = observed_places_union
 */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_allied_vision); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 424, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_allied_vision); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 448, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     if (likely(PyList_CheckExact(__pyx_t_2)) || PyTuple_CheckExact(__pyx_t_2)) {
       __pyx_t_4 = __pyx_t_2; __Pyx_INCREF(__pyx_t_4);
       __pyx_t_8 = 0;
       __pyx_t_9 = NULL;
     } else {
-      __pyx_t_8 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 424, __pyx_L1_error)
+      __pyx_t_8 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 448, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_9 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_4); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 424, __pyx_L1_error)
+      __pyx_t_9 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_4); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 448, __pyx_L1_error)
     }
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     for (;;) {
@@ -9618,7 +9827,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
           {
             Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_4);
             #if !CYTHON_ASSUME_SAFE_SIZE
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 424, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 448, __pyx_L1_error)
             #endif
             if (__pyx_t_8 >= __pyx_temp) break;
           }
@@ -9628,7 +9837,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
           {
             Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_4);
             #if !CYTHON_ASSUME_SAFE_SIZE
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 424, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 448, __pyx_L1_error)
             #endif
             if (__pyx_t_8 >= __pyx_temp) break;
           }
@@ -9639,13 +9848,13 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
           #endif
           ++__pyx_t_8;
         }
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 424, __pyx_L1_error)
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 448, __pyx_L1_error)
       } else {
         __pyx_t_2 = __pyx_t_9(__pyx_t_4);
         if (unlikely(!__pyx_t_2)) {
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
-            if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 424, __pyx_L1_error)
+            if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 448, __pyx_L1_error)
             PyErr_Clear();
           }
           break;
@@ -9655,7 +9864,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
       __Pyx_XDECREF_SET(__pyx_v_avp, __pyx_t_2);
       __pyx_t_2 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":425
+      /* "soundrts/worldplayerbase/perception_fast.pyx":449
  *         observed_places_union = set()
  *         for avp in self.allied_vision:
  *             observed_places_union.update(avp.observed_squares)             # <<<<<<<<<<<<<<
@@ -9664,7 +9873,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
       __pyx_t_5 = __pyx_v_observed_places_union;
       __Pyx_INCREF(__pyx_t_5);
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_avp, __pyx_mstate_global->__pyx_n_u_observed_squares); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 425, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_avp, __pyx_mstate_global->__pyx_n_u_observed_squares); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 449, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __pyx_t_6 = 0;
       {
@@ -9672,12 +9881,12 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
         __pyx_t_2 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_update, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
         __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 425, __pyx_L1_error)
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 449, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
       }
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":424
+      /* "soundrts/worldplayerbase/perception_fast.pyx":448
  *     if self.id not in union_cache:
  *         observed_places_union = set()
  *         for avp in self.allied_vision:             # <<<<<<<<<<<<<<
@@ -9687,19 +9896,19 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
     }
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":426
+    /* "soundrts/worldplayerbase/perception_fast.pyx":450
  *         for avp in self.allied_vision:
  *             observed_places_union.update(avp.observed_squares)
  *         union_cache[self.id] = observed_places_union             # <<<<<<<<<<<<<<
  *     else:
  *         observed_places_union = union_cache[self.id]
 */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 426, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 450, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    if (unlikely((PyObject_SetItem(__pyx_v_union_cache, __pyx_t_4, __pyx_v_observed_places_union) < 0))) __PYX_ERR(0, 426, __pyx_L1_error)
+    if (unlikely((PyObject_SetItem(__pyx_v_union_cache, __pyx_t_4, __pyx_v_observed_places_union) < 0))) __PYX_ERR(0, 450, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":422
+    /* "soundrts/worldplayerbase/perception_fast.pyx":446
  *         caches.observed_union_bucket = time_bucket
  *     union_cache = caches.observed_union_cache
  *     if self.id not in union_cache:             # <<<<<<<<<<<<<<
@@ -9709,7 +9918,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
     goto __pyx_L9;
   }
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":428
+  /* "soundrts/worldplayerbase/perception_fast.pyx":452
  *         union_cache[self.id] = observed_places_union
  *     else:
  *         observed_places_union = union_cache[self.id]             # <<<<<<<<<<<<<<
@@ -9717,9 +9926,9 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
  * 
 */
   /*else*/ {
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 428, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 452, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_union_cache, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 428, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_union_cache, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 452, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_v_observed_places_union = __pyx_t_2;
@@ -9727,7 +9936,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
   }
   __pyx_L9:;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":429
+  /* "soundrts/worldplayerbase/perception_fast.pyx":453
  *     else:
  *         observed_places_union = union_cache[self.id]
  *     observed_places = observed_places_union             # <<<<<<<<<<<<<<
@@ -9737,48 +9946,48 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
   __Pyx_INCREF(__pyx_v_observed_places_union);
   __pyx_v_observed_places = __pyx_v_observed_places_union;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":431
+  /* "soundrts/worldplayerbase/perception_fast.pyx":455
  *     observed_places = observed_places_union
  * 
  *     if caches.place_covering_units_bucket != time_bucket:             # <<<<<<<<<<<<<<
  *         caches.place_covering_units_cache = {}
  *         caches.place_covering_units_bucket = time_bucket
 */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_place_covering_units_bucket); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 431, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_place_covering_units_bucket); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 455, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 431, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 455, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_7 = __Pyx_PyObject_CompareBoolNe_object_int(__pyx_t_2, __pyx_t_4, Py_NE); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 431, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyObject_CompareBoolNe_object_int(__pyx_t_2, __pyx_t_4, Py_NE); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 455, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   if (__pyx_t_7) {
 
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":432
+    /* "soundrts/worldplayerbase/perception_fast.pyx":456
  * 
  *     if caches.place_covering_units_bucket != time_bucket:
  *         caches.place_covering_units_cache = {}             # <<<<<<<<<<<<<<
  *         caches.place_covering_units_bucket = time_bucket
  * 
 */
-    __pyx_t_4 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 432, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 456, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    if (__Pyx_PyObject_SetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_place_covering_units_cache, __pyx_t_4) < (0)) __PYX_ERR(0, 432, __pyx_L1_error)
+    if (__Pyx_PyObject_SetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_place_covering_units_cache, __pyx_t_4) < (0)) __PYX_ERR(0, 456, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":433
+    /* "soundrts/worldplayerbase/perception_fast.pyx":457
  *     if caches.place_covering_units_bucket != time_bucket:
  *         caches.place_covering_units_cache = {}
  *         caches.place_covering_units_bucket = time_bucket             # <<<<<<<<<<<<<<
  * 
  *     if caches.place_visible_bucket != time_bucket:
 */
-    __pyx_t_4 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 433, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 457, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    if (__Pyx_PyObject_SetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_place_covering_units_bucket, __pyx_t_4) < (0)) __PYX_ERR(0, 433, __pyx_L1_error)
+    if (__Pyx_PyObject_SetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_place_covering_units_bucket, __pyx_t_4) < (0)) __PYX_ERR(0, 457, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":431
+    /* "soundrts/worldplayerbase/perception_fast.pyx":455
  *     observed_places = observed_places_union
  * 
  *     if caches.place_covering_units_bucket != time_bucket:             # <<<<<<<<<<<<<<
@@ -9787,48 +9996,48 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
   }
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":435
+  /* "soundrts/worldplayerbase/perception_fast.pyx":459
  *         caches.place_covering_units_bucket = time_bucket
  * 
  *     if caches.place_visible_bucket != time_bucket:             # <<<<<<<<<<<<<<
  *         caches.place_visible_cache = {}
  *         caches.place_visible_bucket = time_bucket
 */
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_place_visible_bucket); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 435, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_place_visible_bucket); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 459, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_2 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 435, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 459, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_7 = __Pyx_PyObject_CompareBoolNe_object_int(__pyx_t_4, __pyx_t_2, Py_NE); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 435, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyObject_CompareBoolNe_object_int(__pyx_t_4, __pyx_t_2, Py_NE); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 459, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   if (__pyx_t_7) {
 
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":436
+    /* "soundrts/worldplayerbase/perception_fast.pyx":460
  * 
  *     if caches.place_visible_bucket != time_bucket:
  *         caches.place_visible_cache = {}             # <<<<<<<<<<<<<<
  *         caches.place_visible_bucket = time_bucket
  *     pvc_root = caches.place_visible_cache
 */
-    __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 436, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 460, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    if (__Pyx_PyObject_SetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_place_visible_cache, __pyx_t_2) < (0)) __PYX_ERR(0, 436, __pyx_L1_error)
+    if (__Pyx_PyObject_SetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_place_visible_cache, __pyx_t_2) < (0)) __PYX_ERR(0, 460, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":437
+    /* "soundrts/worldplayerbase/perception_fast.pyx":461
  *     if caches.place_visible_bucket != time_bucket:
  *         caches.place_visible_cache = {}
  *         caches.place_visible_bucket = time_bucket             # <<<<<<<<<<<<<<
  *     pvc_root = caches.place_visible_cache
  *     if self.id not in pvc_root:
 */
-    __pyx_t_2 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 437, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 461, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    if (__Pyx_PyObject_SetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_place_visible_bucket, __pyx_t_2) < (0)) __PYX_ERR(0, 437, __pyx_L1_error)
+    if (__Pyx_PyObject_SetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_place_visible_bucket, __pyx_t_2) < (0)) __PYX_ERR(0, 461, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":435
+    /* "soundrts/worldplayerbase/perception_fast.pyx":459
  *         caches.place_covering_units_bucket = time_bucket
  * 
  *     if caches.place_visible_bucket != time_bucket:             # <<<<<<<<<<<<<<
@@ -9837,48 +10046,48 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
   }
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":438
+  /* "soundrts/worldplayerbase/perception_fast.pyx":462
  *         caches.place_visible_cache = {}
  *         caches.place_visible_bucket = time_bucket
  *     pvc_root = caches.place_visible_cache             # <<<<<<<<<<<<<<
  *     if self.id not in pvc_root:
  *         pvc_root[self.id] = {}
 */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_place_visible_cache); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 438, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_place_visible_cache); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 462, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_v_pvc_root = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":439
+  /* "soundrts/worldplayerbase/perception_fast.pyx":463
  *         caches.place_visible_bucket = time_bucket
  *     pvc_root = caches.place_visible_cache
  *     if self.id not in pvc_root:             # <<<<<<<<<<<<<<
  *         pvc_root[self.id] = {}
  *     place_visible_cache = pvc_root[self.id]
 */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 439, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 463, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_7 = (__Pyx_PySequence_ContainsTF(__pyx_t_2, __pyx_v_pvc_root, Py_NE)); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 439, __pyx_L1_error)
+  __pyx_t_7 = (__Pyx_PySequence_ContainsTF(__pyx_t_2, __pyx_v_pvc_root, Py_NE)); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 463, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   if (__pyx_t_7) {
 
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":440
+    /* "soundrts/worldplayerbase/perception_fast.pyx":464
  *     pvc_root = caches.place_visible_cache
  *     if self.id not in pvc_root:
  *         pvc_root[self.id] = {}             # <<<<<<<<<<<<<<
  *     place_visible_cache = pvc_root[self.id]
  * 
 */
-    __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 440, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 464, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 440, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 464, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    if (unlikely((PyObject_SetItem(__pyx_v_pvc_root, __pyx_t_4, __pyx_t_2) < 0))) __PYX_ERR(0, 440, __pyx_L1_error)
+    if (unlikely((PyObject_SetItem(__pyx_v_pvc_root, __pyx_t_4, __pyx_t_2) < 0))) __PYX_ERR(0, 464, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":439
+    /* "soundrts/worldplayerbase/perception_fast.pyx":463
  *         caches.place_visible_bucket = time_bucket
  *     pvc_root = caches.place_visible_cache
  *     if self.id not in pvc_root:             # <<<<<<<<<<<<<<
@@ -9887,22 +10096,22 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
   }
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":441
+  /* "soundrts/worldplayerbase/perception_fast.pyx":465
  *     if self.id not in pvc_root:
  *         pvc_root[self.id] = {}
  *     place_visible_cache = pvc_root[self.id]             # <<<<<<<<<<<<<<
  * 
  *     for place, place_objects in objects_by_place.items():
 */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 441, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 465, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = __Pyx_PyObject_GetItem(__pyx_v_pvc_root, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 441, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetItem(__pyx_v_pvc_root, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 465, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_place_visible_cache = __pyx_t_4;
   __pyx_t_4 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":443
+  /* "soundrts/worldplayerbase/perception_fast.pyx":467
  *     place_visible_cache = pvc_root[self.id]
  * 
  *     for place, place_objects in objects_by_place.items():             # <<<<<<<<<<<<<<
@@ -9910,7 +10119,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
  *             invisible_objects.update(place_objects)
 */
   __pyx_t_8 = 0;
-  __pyx_t_2 = __Pyx_dict_iterator(__pyx_v_objects_by_place, 1, __pyx_mstate_global->__pyx_n_u_items, (&__pyx_t_11), (&__pyx_t_12)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 443, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_dict_iterator(__pyx_v_objects_by_place, 1, __pyx_mstate_global->__pyx_n_u_items, (&__pyx_t_11), (&__pyx_t_12)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 467, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_4);
   __pyx_t_4 = __pyx_t_2;
@@ -9918,7 +10127,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
   while (1) {
     __pyx_t_13 = __Pyx_dict_iter_next(__pyx_t_4, __pyx_t_11, &__pyx_t_8, &__pyx_t_2, &__pyx_t_1, NULL, __pyx_t_12);
     if (unlikely(__pyx_t_13 == 0)) break;
-    if (unlikely(__pyx_t_13 == -1)) __PYX_ERR(0, 443, __pyx_L1_error)
+    if (unlikely(__pyx_t_13 == -1)) __PYX_ERR(0, 467, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_XDECREF_SET(__pyx_v_place, __pyx_t_2);
@@ -9926,18 +10135,18 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
     __Pyx_XDECREF_SET(__pyx_v_place_objects, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":444
+    /* "soundrts/worldplayerbase/perception_fast.pyx":468
  * 
  *     for place, place_objects in objects_by_place.items():
  *         if place not in observed_places:             # <<<<<<<<<<<<<<
  *             invisible_objects.update(place_objects)
  *             for obj in place_objects:
 */
-    __pyx_t_7 = (__Pyx_PySequence_ContainsTF(__pyx_v_place, __pyx_v_observed_places, Py_NE)); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 444, __pyx_L1_error)
+    __pyx_t_7 = (__Pyx_PySequence_ContainsTF(__pyx_v_place, __pyx_v_observed_places, Py_NE)); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 468, __pyx_L1_error)
     if (__pyx_t_7) {
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":445
+      /* "soundrts/worldplayerbase/perception_fast.pyx":469
  *     for place, place_objects in objects_by_place.items():
  *         if place not in observed_places:
  *             invisible_objects.update(place_objects)             # <<<<<<<<<<<<<<
@@ -9951,12 +10160,12 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
         PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_v_place_objects};
         __pyx_t_1 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_update, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
         __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 445, __pyx_L1_error)
+        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 469, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
       }
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":446
+      /* "soundrts/worldplayerbase/perception_fast.pyx":470
  *         if place not in observed_places:
  *             invisible_objects.update(place_objects)
  *             for obj in place_objects:             # <<<<<<<<<<<<<<
@@ -9968,9 +10177,9 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
         __pyx_t_14 = 0;
         __pyx_t_9 = NULL;
       } else {
-        __pyx_t_14 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_place_objects); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 446, __pyx_L1_error)
+        __pyx_t_14 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_place_objects); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 470, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_9 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 446, __pyx_L1_error)
+        __pyx_t_9 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 470, __pyx_L1_error)
       }
       for (;;) {
         if (likely(!__pyx_t_9)) {
@@ -9978,7 +10187,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
             {
               Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_1);
               #if !CYTHON_ASSUME_SAFE_SIZE
-              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 446, __pyx_L1_error)
+              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 470, __pyx_L1_error)
               #endif
               if (__pyx_t_14 >= __pyx_temp) break;
             }
@@ -9988,7 +10197,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
             {
               Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_1);
               #if !CYTHON_ASSUME_SAFE_SIZE
-              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 446, __pyx_L1_error)
+              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 470, __pyx_L1_error)
               #endif
               if (__pyx_t_14 >= __pyx_temp) break;
             }
@@ -9999,13 +10208,13 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
             #endif
             ++__pyx_t_14;
           }
-          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 446, __pyx_L1_error)
+          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 470, __pyx_L1_error)
         } else {
           __pyx_t_2 = __pyx_t_9(__pyx_t_1);
           if (unlikely(!__pyx_t_2)) {
             PyObject* exc_type = PyErr_Occurred();
             if (exc_type) {
-              if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 446, __pyx_L1_error)
+              if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 470, __pyx_L1_error)
               PyErr_Clear();
             }
             break;
@@ -10015,38 +10224,38 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
         __Pyx_XDECREF_SET(__pyx_v_obj, __pyx_t_2);
         __pyx_t_2 = 0;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":447
+        /* "soundrts/worldplayerbase/perception_fast.pyx":471
  *             invisible_objects.update(place_objects)
  *             for obj in place_objects:
  *                 cache_key = (obj.id, time_bucket)             # <<<<<<<<<<<<<<
  *                 player_cache[cache_key] = False
  *             continue
 */
-        __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 447, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 471, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
-        __pyx_t_5 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 447, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 471, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_15 = PyTuple_New(2); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 447, __pyx_L1_error)
+        __pyx_t_15 = PyTuple_New(2); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 471, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_15);
         __Pyx_GIVEREF(__pyx_t_2);
-        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_t_2) != (0)) __PYX_ERR(0, 447, __pyx_L1_error);
+        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_t_2) != (0)) __PYX_ERR(0, 471, __pyx_L1_error);
         __Pyx_GIVEREF(__pyx_t_5);
-        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_15, 1, __pyx_t_5) != (0)) __PYX_ERR(0, 447, __pyx_L1_error);
+        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_15, 1, __pyx_t_5) != (0)) __PYX_ERR(0, 471, __pyx_L1_error);
         __pyx_t_2 = 0;
         __pyx_t_5 = 0;
         __Pyx_XDECREF_SET(__pyx_v_cache_key, __pyx_t_15);
         __pyx_t_15 = 0;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":448
+        /* "soundrts/worldplayerbase/perception_fast.pyx":472
  *             for obj in place_objects:
  *                 cache_key = (obj.id, time_bucket)
  *                 player_cache[cache_key] = False             # <<<<<<<<<<<<<<
  *             continue
  * 
 */
-        if (unlikely((PyObject_SetItem(__pyx_v_player_cache, __pyx_v_cache_key, Py_False) < 0))) __PYX_ERR(0, 448, __pyx_L1_error)
+        if (unlikely((PyObject_SetItem(__pyx_v_player_cache, __pyx_v_cache_key, Py_False) < 0))) __PYX_ERR(0, 472, __pyx_L1_error)
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":446
+        /* "soundrts/worldplayerbase/perception_fast.pyx":470
  *         if place not in observed_places:
  *             invisible_objects.update(place_objects)
  *             for obj in place_objects:             # <<<<<<<<<<<<<<
@@ -10056,7 +10265,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
       }
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":449
+      /* "soundrts/worldplayerbase/perception_fast.pyx":473
  *                 cache_key = (obj.id, time_bucket)
  *                 player_cache[cache_key] = False
  *             continue             # <<<<<<<<<<<<<<
@@ -10065,7 +10274,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
       goto __pyx_L16_continue;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":444
+      /* "soundrts/worldplayerbase/perception_fast.pyx":468
  * 
  *     for place, place_objects in objects_by_place.items():
  *         if place not in observed_places:             # <<<<<<<<<<<<<<
@@ -10074,48 +10283,48 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
     }
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":451
+    /* "soundrts/worldplayerbase/perception_fast.pyx":475
  *             continue
  * 
  *         if self._nearby_units_cache_bucket != time_bucket:             # <<<<<<<<<<<<<<
  *             self._nearby_units_cache = {}
  *             self._nearby_units_cache_bucket = time_bucket
 */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_nearby_units_cache_bucket); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 451, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_nearby_units_cache_bucket); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 475, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_15 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 451, __pyx_L1_error)
+    __pyx_t_15 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 475, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_15);
-    __pyx_t_7 = __Pyx_PyObject_CompareBoolNe_object_int(__pyx_t_1, __pyx_t_15, Py_NE); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 451, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_CompareBoolNe_object_int(__pyx_t_1, __pyx_t_15, Py_NE); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 475, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
     if (__pyx_t_7) {
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":452
+      /* "soundrts/worldplayerbase/perception_fast.pyx":476
  * 
  *         if self._nearby_units_cache_bucket != time_bucket:
  *             self._nearby_units_cache = {}             # <<<<<<<<<<<<<<
  *             self._nearby_units_cache_bucket = time_bucket
  *         cache_key_nearby = place.id
 */
-      __pyx_t_15 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 452, __pyx_L1_error)
+      __pyx_t_15 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 476, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_15);
-      if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_nearby_units_cache, __pyx_t_15) < (0)) __PYX_ERR(0, 452, __pyx_L1_error)
+      if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_nearby_units_cache, __pyx_t_15) < (0)) __PYX_ERR(0, 476, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":453
+      /* "soundrts/worldplayerbase/perception_fast.pyx":477
  *         if self._nearby_units_cache_bucket != time_bucket:
  *             self._nearby_units_cache = {}
  *             self._nearby_units_cache_bucket = time_bucket             # <<<<<<<<<<<<<<
  *         cache_key_nearby = place.id
  *         all_nearby_units = self._nearby_units_cache.get(cache_key_nearby)
 */
-      __pyx_t_15 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 453, __pyx_L1_error)
+      __pyx_t_15 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 477, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_15);
-      if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_nearby_units_cache_bucket, __pyx_t_15) < (0)) __PYX_ERR(0, 453, __pyx_L1_error)
+      if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_nearby_units_cache_bucket, __pyx_t_15) < (0)) __PYX_ERR(0, 477, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":451
+      /* "soundrts/worldplayerbase/perception_fast.pyx":475
  *             continue
  * 
  *         if self._nearby_units_cache_bucket != time_bucket:             # <<<<<<<<<<<<<<
@@ -10124,26 +10333,26 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
     }
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":454
+    /* "soundrts/worldplayerbase/perception_fast.pyx":478
  *             self._nearby_units_cache = {}
  *             self._nearby_units_cache_bucket = time_bucket
  *         cache_key_nearby = place.id             # <<<<<<<<<<<<<<
  *         all_nearby_units = self._nearby_units_cache.get(cache_key_nearby)
  *         if all_nearby_units is None:
 */
-    __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_place, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 454, __pyx_L1_error)
+    __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_place, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 478, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_15);
     __Pyx_XDECREF_SET(__pyx_v_cache_key_nearby, __pyx_t_15);
     __pyx_t_15 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":455
+    /* "soundrts/worldplayerbase/perception_fast.pyx":479
  *             self._nearby_units_cache_bucket = time_bucket
  *         cache_key_nearby = place.id
  *         all_nearby_units = self._nearby_units_cache.get(cache_key_nearby)             # <<<<<<<<<<<<<<
  *         if all_nearby_units is None:
  *             all_nearby_units = set()
 */
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_nearby_units_cache); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 455, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_nearby_units_cache); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 479, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __pyx_t_1 = __pyx_t_5;
     __Pyx_INCREF(__pyx_t_1);
@@ -10153,13 +10362,13 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
       __pyx_t_15 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_get, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
       __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 455, __pyx_L1_error)
+      if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 479, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_15);
     }
     __Pyx_XDECREF_SET(__pyx_v_all_nearby_units, __pyx_t_15);
     __pyx_t_15 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":456
+    /* "soundrts/worldplayerbase/perception_fast.pyx":480
  *         cache_key_nearby = place.id
  *         all_nearby_units = self._nearby_units_cache.get(cache_key_nearby)
  *         if all_nearby_units is None:             # <<<<<<<<<<<<<<
@@ -10170,35 +10379,35 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
     if (__pyx_t_7) {
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":457
+      /* "soundrts/worldplayerbase/perception_fast.pyx":481
  *         all_nearby_units = self._nearby_units_cache.get(cache_key_nearby)
  *         if all_nearby_units is None:
  *             all_nearby_units = set()             # <<<<<<<<<<<<<<
  *             for avp in self.allied_vision:
  *                 x, y = place.x, place.y
 */
-      __pyx_t_15 = PySet_New(0); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 457, __pyx_L1_error)
+      __pyx_t_15 = PySet_New(0); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 481, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_15);
       __Pyx_DECREF_SET(__pyx_v_all_nearby_units, __pyx_t_15);
       __pyx_t_15 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":458
+      /* "soundrts/worldplayerbase/perception_fast.pyx":482
  *         if all_nearby_units is None:
  *             all_nearby_units = set()
  *             for avp in self.allied_vision:             # <<<<<<<<<<<<<<
  *                 x, y = place.x, place.y
  *                 nearby_units = avp._potential_neighbors(x, y)
 */
-      __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_allied_vision); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 458, __pyx_L1_error)
+      __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_allied_vision); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 482, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_15);
       if (likely(PyList_CheckExact(__pyx_t_15)) || PyTuple_CheckExact(__pyx_t_15)) {
         __pyx_t_5 = __pyx_t_15; __Pyx_INCREF(__pyx_t_5);
         __pyx_t_14 = 0;
         __pyx_t_9 = NULL;
       } else {
-        __pyx_t_14 = -1; __pyx_t_5 = PyObject_GetIter(__pyx_t_15); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 458, __pyx_L1_error)
+        __pyx_t_14 = -1; __pyx_t_5 = PyObject_GetIter(__pyx_t_15); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 482, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_9 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_5); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 458, __pyx_L1_error)
+        __pyx_t_9 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_5); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 482, __pyx_L1_error)
       }
       __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
       for (;;) {
@@ -10207,7 +10416,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
             {
               Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_5);
               #if !CYTHON_ASSUME_SAFE_SIZE
-              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 458, __pyx_L1_error)
+              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 482, __pyx_L1_error)
               #endif
               if (__pyx_t_14 >= __pyx_temp) break;
             }
@@ -10217,7 +10426,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
             {
               Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_5);
               #if !CYTHON_ASSUME_SAFE_SIZE
-              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 458, __pyx_L1_error)
+              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 482, __pyx_L1_error)
               #endif
               if (__pyx_t_14 >= __pyx_temp) break;
             }
@@ -10228,13 +10437,13 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
             #endif
             ++__pyx_t_14;
           }
-          if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 458, __pyx_L1_error)
+          if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 482, __pyx_L1_error)
         } else {
           __pyx_t_15 = __pyx_t_9(__pyx_t_5);
           if (unlikely(!__pyx_t_15)) {
             PyObject* exc_type = PyErr_Occurred();
             if (exc_type) {
-              if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 458, __pyx_L1_error)
+              if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 482, __pyx_L1_error)
               PyErr_Clear();
             }
             break;
@@ -10244,23 +10453,23 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
         __Pyx_XDECREF_SET(__pyx_v_avp, __pyx_t_15);
         __pyx_t_15 = 0;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":459
+        /* "soundrts/worldplayerbase/perception_fast.pyx":483
  *             all_nearby_units = set()
  *             for avp in self.allied_vision:
  *                 x, y = place.x, place.y             # <<<<<<<<<<<<<<
  *                 nearby_units = avp._potential_neighbors(x, y)
  *                 all_nearby_units.update(nearby_units)
 */
-        __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_place, __pyx_mstate_global->__pyx_n_u_x); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 459, __pyx_L1_error)
+        __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_place, __pyx_mstate_global->__pyx_n_u_x); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 483, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_15);
-        __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_place, __pyx_mstate_global->__pyx_n_u_y); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 459, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_place, __pyx_mstate_global->__pyx_n_u_y); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 483, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_XDECREF_SET(__pyx_v_x, __pyx_t_15);
         __pyx_t_15 = 0;
         __Pyx_XDECREF_SET(__pyx_v_y, __pyx_t_1);
         __pyx_t_1 = 0;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":460
+        /* "soundrts/worldplayerbase/perception_fast.pyx":484
  *             for avp in self.allied_vision:
  *                 x, y = place.x, place.y
  *                 nearby_units = avp._potential_neighbors(x, y)             # <<<<<<<<<<<<<<
@@ -10274,13 +10483,13 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
           PyObject *__pyx_callargs[3] = {__pyx_t_15, __pyx_v_x, __pyx_v_y};
           __pyx_t_1 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_potential_neighbors, __pyx_callargs+__pyx_t_6, (3-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
           __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
-          if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 460, __pyx_L1_error)
+          if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 484, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
         }
         __Pyx_XDECREF_SET(__pyx_v_nearby_units, __pyx_t_1);
         __pyx_t_1 = 0;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":461
+        /* "soundrts/worldplayerbase/perception_fast.pyx":485
  *                 x, y = place.x, place.y
  *                 nearby_units = avp._potential_neighbors(x, y)
  *                 all_nearby_units.update(nearby_units)             # <<<<<<<<<<<<<<
@@ -10294,12 +10503,12 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
           PyObject *__pyx_callargs[2] = {__pyx_t_15, __pyx_v_nearby_units};
           __pyx_t_1 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_update, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
           __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
-          if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 461, __pyx_L1_error)
+          if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 485, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
         }
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":458
+        /* "soundrts/worldplayerbase/perception_fast.pyx":482
  *         if all_nearby_units is None:
  *             all_nearby_units = set()
  *             for avp in self.allied_vision:             # <<<<<<<<<<<<<<
@@ -10309,19 +10518,19 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
       }
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":462
+      /* "soundrts/worldplayerbase/perception_fast.pyx":486
  *                 nearby_units = avp._potential_neighbors(x, y)
  *                 all_nearby_units.update(nearby_units)
  *             self._nearby_units_cache[cache_key_nearby] = all_nearby_units             # <<<<<<<<<<<<<<
  * 
  *         covering_units = caches.place_covering_units_cache.get(place)
 */
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_nearby_units_cache); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 462, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_nearby_units_cache); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 486, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      if (unlikely((PyObject_SetItem(__pyx_t_5, __pyx_v_cache_key_nearby, __pyx_v_all_nearby_units) < 0))) __PYX_ERR(0, 462, __pyx_L1_error)
+      if (unlikely((PyObject_SetItem(__pyx_t_5, __pyx_v_cache_key_nearby, __pyx_v_all_nearby_units) < 0))) __PYX_ERR(0, 486, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":456
+      /* "soundrts/worldplayerbase/perception_fast.pyx":480
  *         cache_key_nearby = place.id
  *         all_nearby_units = self._nearby_units_cache.get(cache_key_nearby)
  *         if all_nearby_units is None:             # <<<<<<<<<<<<<<
@@ -10330,14 +10539,14 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
     }
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":464
+    /* "soundrts/worldplayerbase/perception_fast.pyx":488
  *             self._nearby_units_cache[cache_key_nearby] = all_nearby_units
  * 
  *         covering_units = caches.place_covering_units_cache.get(place)             # <<<<<<<<<<<<<<
  *         if covering_units is None:
  *             covering_units = []
 */
-    __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_place_covering_units_cache); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 464, __pyx_L1_error)
+    __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_place_covering_units_cache); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 488, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_15);
     __pyx_t_1 = __pyx_t_15;
     __Pyx_INCREF(__pyx_t_1);
@@ -10347,13 +10556,13 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
       __pyx_t_5 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_get, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
       __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-      if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 464, __pyx_L1_error)
+      if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 488, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
     }
     __Pyx_XDECREF_SET(__pyx_v_covering_units, __pyx_t_5);
     __pyx_t_5 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":465
+    /* "soundrts/worldplayerbase/perception_fast.pyx":489
  * 
  *         covering_units = caches.place_covering_units_cache.get(place)
  *         if covering_units is None:             # <<<<<<<<<<<<<<
@@ -10364,19 +10573,19 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
     if (__pyx_t_7) {
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":466
+      /* "soundrts/worldplayerbase/perception_fast.pyx":490
  *         covering_units = caches.place_covering_units_cache.get(place)
  *         if covering_units is None:
  *             covering_units = []             # <<<<<<<<<<<<<<
  *             for unit in all_nearby_units:
  *                 observed_squares = unit._cached_observed_squares
 */
-      __pyx_t_5 = PyList_New(0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 466, __pyx_L1_error)
+      __pyx_t_5 = PyList_New(0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 490, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF_SET(__pyx_v_covering_units, __pyx_t_5);
       __pyx_t_5 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":467
+      /* "soundrts/worldplayerbase/perception_fast.pyx":491
  *         if covering_units is None:
  *             covering_units = []
  *             for unit in all_nearby_units:             # <<<<<<<<<<<<<<
@@ -10388,9 +10597,9 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
         __pyx_t_14 = 0;
         __pyx_t_9 = NULL;
       } else {
-        __pyx_t_14 = -1; __pyx_t_5 = PyObject_GetIter(__pyx_v_all_nearby_units); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 467, __pyx_L1_error)
+        __pyx_t_14 = -1; __pyx_t_5 = PyObject_GetIter(__pyx_v_all_nearby_units); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 491, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_9 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_5); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 467, __pyx_L1_error)
+        __pyx_t_9 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_5); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 491, __pyx_L1_error)
       }
       for (;;) {
         if (likely(!__pyx_t_9)) {
@@ -10398,7 +10607,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
             {
               Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_5);
               #if !CYTHON_ASSUME_SAFE_SIZE
-              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 467, __pyx_L1_error)
+              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 491, __pyx_L1_error)
               #endif
               if (__pyx_t_14 >= __pyx_temp) break;
             }
@@ -10408,7 +10617,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
             {
               Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_5);
               #if !CYTHON_ASSUME_SAFE_SIZE
-              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 467, __pyx_L1_error)
+              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 491, __pyx_L1_error)
               #endif
               if (__pyx_t_14 >= __pyx_temp) break;
             }
@@ -10419,13 +10628,13 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
             #endif
             ++__pyx_t_14;
           }
-          if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 467, __pyx_L1_error)
+          if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 491, __pyx_L1_error)
         } else {
           __pyx_t_15 = __pyx_t_9(__pyx_t_5);
           if (unlikely(!__pyx_t_15)) {
             PyObject* exc_type = PyErr_Occurred();
             if (exc_type) {
-              if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 467, __pyx_L1_error)
+              if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 491, __pyx_L1_error)
               PyErr_Clear();
             }
             break;
@@ -10435,19 +10644,19 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
         __Pyx_XDECREF_SET(__pyx_v_unit, __pyx_t_15);
         __pyx_t_15 = 0;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":468
+        /* "soundrts/worldplayerbase/perception_fast.pyx":492
  *             covering_units = []
  *             for unit in all_nearby_units:
  *                 observed_squares = unit._cached_observed_squares             # <<<<<<<<<<<<<<
  *                 if observed_squares is None or unit._cached_observed_time != time_bucket:
  *                     observed_squares = set(unit.get_observed_squares())
 */
-        __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_cached_observed_squares); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 468, __pyx_L1_error)
+        __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_cached_observed_squares); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 492, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_15);
         __Pyx_XDECREF_SET(__pyx_v_observed_squares, __pyx_t_15);
         __pyx_t_15 = 0;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":469
+        /* "soundrts/worldplayerbase/perception_fast.pyx":493
  *             for unit in all_nearby_units:
  *                 observed_squares = unit._cached_observed_squares
  *                 if observed_squares is None or unit._cached_observed_time != time_bucket:             # <<<<<<<<<<<<<<
@@ -10463,11 +10672,11 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 
           goto __pyx_L31_bool_binop_done;
         }
-        __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_cached_observed_time); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 469, __pyx_L1_error)
+        __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_cached_observed_time); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 493, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_15);
-        __pyx_t_1 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 469, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 493, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_16 = __Pyx_PyObject_CompareBoolNe_object_int(__pyx_t_15, __pyx_t_1, Py_NE); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 469, __pyx_L1_error)
+        __pyx_t_16 = __Pyx_PyObject_CompareBoolNe_object_int(__pyx_t_15, __pyx_t_1, Py_NE); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 493, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
@@ -10477,7 +10686,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
         if (__pyx_t_7) {
 
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":470
+          /* "soundrts/worldplayerbase/perception_fast.pyx":494
  *                 observed_squares = unit._cached_observed_squares
  *                 if observed_squares is None or unit._cached_observed_time != time_bucket:
  *                     observed_squares = set(unit.get_observed_squares())             # <<<<<<<<<<<<<<
@@ -10491,37 +10700,37 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
             PyObject *__pyx_callargs[2] = {__pyx_t_15, NULL};
             __pyx_t_1 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_get_observed_squares, __pyx_callargs+__pyx_t_6, (1-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
             __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
-            if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 470, __pyx_L1_error)
+            if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 494, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_1);
           }
-          __pyx_t_15 = PySet_New(__pyx_t_1); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 470, __pyx_L1_error)
+          __pyx_t_15 = PySet_New(__pyx_t_1); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 494, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_15);
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
           __Pyx_DECREF_SET(__pyx_v_observed_squares, __pyx_t_15);
           __pyx_t_15 = 0;
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":471
+          /* "soundrts/worldplayerbase/perception_fast.pyx":495
  *                 if observed_squares is None or unit._cached_observed_time != time_bucket:
  *                     observed_squares = set(unit.get_observed_squares())
  *                     unit._cached_observed_squares = observed_squares             # <<<<<<<<<<<<<<
  *                     unit._cached_observed_time = time_bucket
  *                 if place in observed_squares:
 */
-          if (__Pyx_PyObject_SetAttrStr(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_cached_observed_squares, __pyx_v_observed_squares) < (0)) __PYX_ERR(0, 471, __pyx_L1_error)
+          if (__Pyx_PyObject_SetAttrStr(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_cached_observed_squares, __pyx_v_observed_squares) < (0)) __PYX_ERR(0, 495, __pyx_L1_error)
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":472
+          /* "soundrts/worldplayerbase/perception_fast.pyx":496
  *                     observed_squares = set(unit.get_observed_squares())
  *                     unit._cached_observed_squares = observed_squares
  *                     unit._cached_observed_time = time_bucket             # <<<<<<<<<<<<<<
  *                 if place in observed_squares:
  *                     covering_units.append(unit)
 */
-          __pyx_t_15 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 472, __pyx_L1_error)
+          __pyx_t_15 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 496, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_15);
-          if (__Pyx_PyObject_SetAttrStr(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_cached_observed_time, __pyx_t_15) < (0)) __PYX_ERR(0, 472, __pyx_L1_error)
+          if (__Pyx_PyObject_SetAttrStr(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_cached_observed_time, __pyx_t_15) < (0)) __PYX_ERR(0, 496, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":469
+          /* "soundrts/worldplayerbase/perception_fast.pyx":493
  *             for unit in all_nearby_units:
  *                 observed_squares = unit._cached_observed_squares
  *                 if observed_squares is None or unit._cached_observed_time != time_bucket:             # <<<<<<<<<<<<<<
@@ -10530,42 +10739,42 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
         }
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":473
+        /* "soundrts/worldplayerbase/perception_fast.pyx":497
  *                     unit._cached_observed_squares = observed_squares
  *                     unit._cached_observed_time = time_bucket
  *                 if place in observed_squares:             # <<<<<<<<<<<<<<
  *                     covering_units.append(unit)
  *                     if len(covering_units) >= 3:
 */
-        __pyx_t_7 = (__Pyx_PySequence_ContainsTF(__pyx_v_place, __pyx_v_observed_squares, Py_EQ)); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 473, __pyx_L1_error)
+        __pyx_t_7 = (__Pyx_PySequence_ContainsTF(__pyx_v_place, __pyx_v_observed_squares, Py_EQ)); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 497, __pyx_L1_error)
         if (__pyx_t_7) {
 
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":474
+          /* "soundrts/worldplayerbase/perception_fast.pyx":498
  *                     unit._cached_observed_time = time_bucket
  *                 if place in observed_squares:
  *                     covering_units.append(unit)             # <<<<<<<<<<<<<<
  *                     if len(covering_units) >= 3:
  *                         break
 */
-          __pyx_t_10 = __Pyx_PyObject_Append(__pyx_v_covering_units, __pyx_v_unit); if (unlikely(__pyx_t_10 == ((int)-1))) __PYX_ERR(0, 474, __pyx_L1_error)
+          __pyx_t_10 = __Pyx_PyObject_Append(__pyx_v_covering_units, __pyx_v_unit); if (unlikely(__pyx_t_10 == ((int)-1))) __PYX_ERR(0, 498, __pyx_L1_error)
 
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":475
+          /* "soundrts/worldplayerbase/perception_fast.pyx":499
  *                 if place in observed_squares:
  *                     covering_units.append(unit)
  *                     if len(covering_units) >= 3:             # <<<<<<<<<<<<<<
  *                         break
  *             caches.place_covering_units_cache[place] = covering_units
 */
-          __pyx_t_17 = PyObject_Length(__pyx_v_covering_units); if (unlikely(__pyx_t_17 == ((Py_ssize_t)-1))) __PYX_ERR(0, 475, __pyx_L1_error)
+          __pyx_t_17 = PyObject_Length(__pyx_v_covering_units); if (unlikely(__pyx_t_17 == ((Py_ssize_t)-1))) __PYX_ERR(0, 499, __pyx_L1_error)
           __pyx_t_7 = (__pyx_t_17 >= 3);
 
 
           if (__pyx_t_7) {
 
 
-            /* "soundrts/worldplayerbase/perception_fast.pyx":476
+            /* "soundrts/worldplayerbase/perception_fast.pyx":500
  *                     covering_units.append(unit)
  *                     if len(covering_units) >= 3:
  *                         break             # <<<<<<<<<<<<<<
@@ -10574,7 +10783,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
             goto __pyx_L29_break;
 
-            /* "soundrts/worldplayerbase/perception_fast.pyx":475
+            /* "soundrts/worldplayerbase/perception_fast.pyx":499
  *                 if place in observed_squares:
  *                     covering_units.append(unit)
  *                     if len(covering_units) >= 3:             # <<<<<<<<<<<<<<
@@ -10583,7 +10792,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
           }
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":473
+          /* "soundrts/worldplayerbase/perception_fast.pyx":497
  *                     unit._cached_observed_squares = observed_squares
  *                     unit._cached_observed_time = time_bucket
  *                 if place in observed_squares:             # <<<<<<<<<<<<<<
@@ -10592,7 +10801,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
         }
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":467
+        /* "soundrts/worldplayerbase/perception_fast.pyx":491
  *         if covering_units is None:
  *             covering_units = []
  *             for unit in all_nearby_units:             # <<<<<<<<<<<<<<
@@ -10607,19 +10816,19 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
       goto __pyx_L35_for_end;
       __pyx_L35_for_end:;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":477
+      /* "soundrts/worldplayerbase/perception_fast.pyx":501
  *                     if len(covering_units) >= 3:
  *                         break
  *             caches.place_covering_units_cache[place] = covering_units             # <<<<<<<<<<<<<<
  * 
  *         place_visible_for_any = len(covering_units) > 0
 */
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_place_covering_units_cache); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 477, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_place_covering_units_cache); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 501, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      if (unlikely((PyObject_SetItem(__pyx_t_5, __pyx_v_place, __pyx_v_covering_units) < 0))) __PYX_ERR(0, 477, __pyx_L1_error)
+      if (unlikely((PyObject_SetItem(__pyx_t_5, __pyx_v_place, __pyx_v_covering_units) < 0))) __PYX_ERR(0, 501, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":465
+      /* "soundrts/worldplayerbase/perception_fast.pyx":489
  * 
  *         covering_units = caches.place_covering_units_cache.get(place)
  *         if covering_units is None:             # <<<<<<<<<<<<<<
@@ -10628,51 +10837,51 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
     }
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":479
+    /* "soundrts/worldplayerbase/perception_fast.pyx":503
  *             caches.place_covering_units_cache[place] = covering_units
  * 
  *         place_visible_for_any = len(covering_units) > 0             # <<<<<<<<<<<<<<
  * 
  *         history_key = (self.id, place.id)
 */
-    __pyx_t_14 = PyObject_Length(__pyx_v_covering_units); if (unlikely(__pyx_t_14 == ((Py_ssize_t)-1))) __PYX_ERR(0, 479, __pyx_L1_error)
+    __pyx_t_14 = PyObject_Length(__pyx_v_covering_units); if (unlikely(__pyx_t_14 == ((Py_ssize_t)-1))) __PYX_ERR(0, 503, __pyx_L1_error)
     __pyx_v_place_visible_for_any = (__pyx_t_14 > 0);
 
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":481
+    /* "soundrts/worldplayerbase/perception_fast.pyx":505
  *         place_visible_for_any = len(covering_units) > 0
  * 
  *         history_key = (self.id, place.id)             # <<<<<<<<<<<<<<
  *         if covering_units:
  *             cov_ids = tuple(sorted([u.id for u in covering_units])[:3])
 */
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 481, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 505, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_place, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 481, __pyx_L1_error)
+    __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_place, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 505, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_15);
-    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 481, __pyx_L1_error)
+    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 505, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_GIVEREF(__pyx_t_5);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_5) != (0)) __PYX_ERR(0, 481, __pyx_L1_error);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_5) != (0)) __PYX_ERR(0, 505, __pyx_L1_error);
     __Pyx_GIVEREF(__pyx_t_15);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_15) != (0)) __PYX_ERR(0, 481, __pyx_L1_error);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_15) != (0)) __PYX_ERR(0, 505, __pyx_L1_error);
     __pyx_t_5 = 0;
     __pyx_t_15 = 0;
     __Pyx_XDECREF_SET(__pyx_v_history_key, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":482
+    /* "soundrts/worldplayerbase/perception_fast.pyx":506
  * 
  *         history_key = (self.id, place.id)
  *         if covering_units:             # <<<<<<<<<<<<<<
  *             cov_ids = tuple(sorted([u.id for u in covering_units])[:3])
  *         else:
 */
-    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_v_covering_units); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 482, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_v_covering_units); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 506, __pyx_L1_error)
     if (__pyx_t_7) {
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":483
+      /* "soundrts/worldplayerbase/perception_fast.pyx":507
  *         history_key = (self.id, place.id)
  *         if covering_units:
  *             cov_ids = tuple(sorted([u.id for u in covering_units])[:3])             # <<<<<<<<<<<<<<
@@ -10680,16 +10889,16 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
  *             cov_ids = ()
 */
       { /* enter inner scope */
-        __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 483, __pyx_L39_error)
+        __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 507, __pyx_L39_error)
         __Pyx_GOTREF(__pyx_t_1);
         if (likely(PyList_CheckExact(__pyx_v_covering_units)) || PyTuple_CheckExact(__pyx_v_covering_units)) {
           __pyx_t_15 = __pyx_v_covering_units; __Pyx_INCREF(__pyx_t_15);
           __pyx_t_14 = 0;
           __pyx_t_9 = NULL;
         } else {
-          __pyx_t_14 = -1; __pyx_t_15 = PyObject_GetIter(__pyx_v_covering_units); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 483, __pyx_L39_error)
+          __pyx_t_14 = -1; __pyx_t_15 = PyObject_GetIter(__pyx_v_covering_units); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 507, __pyx_L39_error)
           __Pyx_GOTREF(__pyx_t_15);
-          __pyx_t_9 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_15); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 483, __pyx_L39_error)
+          __pyx_t_9 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_15); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 507, __pyx_L39_error)
         }
         for (;;) {
           if (likely(!__pyx_t_9)) {
@@ -10697,7 +10906,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
               {
                 Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_15);
                 #if !CYTHON_ASSUME_SAFE_SIZE
-                if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 483, __pyx_L39_error)
+                if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 507, __pyx_L39_error)
                 #endif
                 if (__pyx_t_14 >= __pyx_temp) break;
               }
@@ -10707,7 +10916,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
               {
                 Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_15);
                 #if !CYTHON_ASSUME_SAFE_SIZE
-                if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 483, __pyx_L39_error)
+                if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 507, __pyx_L39_error)
                 #endif
                 if (__pyx_t_14 >= __pyx_temp) break;
               }
@@ -10718,13 +10927,13 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
               #endif
               ++__pyx_t_14;
             }
-            if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 483, __pyx_L39_error)
+            if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 507, __pyx_L39_error)
           } else {
             __pyx_t_5 = __pyx_t_9(__pyx_t_15);
             if (unlikely(!__pyx_t_5)) {
               PyObject* exc_type = PyErr_Occurred();
               if (exc_type) {
-                if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 483, __pyx_L39_error)
+                if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 507, __pyx_L39_error)
                 PyErr_Clear();
               }
               break;
@@ -10733,10 +10942,10 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
           __Pyx_GOTREF(__pyx_t_5);
           __Pyx_XDECREF_SET(__pyx_8genexpr2__pyx_v_u, __pyx_t_5);
           __pyx_t_5 = 0;
-          __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_8genexpr2__pyx_v_u, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 483, __pyx_L39_error)
+          __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_8genexpr2__pyx_v_u, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 507, __pyx_L39_error)
           __Pyx_GOTREF(__pyx_t_5);
           __Pyx_GIVEREF(__pyx_t_5);
-          if (unlikely(__Pyx_ListComp_AppendAndDecref(__pyx_t_1, __pyx_t_5))) __PYX_ERR(0, 483, __pyx_L39_error)
+          if (unlikely(__Pyx_ListComp_AppendAndDecref(__pyx_t_1, __pyx_t_5))) __PYX_ERR(0, 507, __pyx_L39_error)
           __pyx_t_5 = 0;
         }
         __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
@@ -10747,17 +10956,17 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
         goto __pyx_L1_error;
         __pyx_L43_exit_scope:;
       } /* exit inner scope */
-      if (unlikely((PyList_Sort(__pyx_t_1) < 0))) __PYX_ERR(0, 483, __pyx_L1_error)
-      __pyx_t_15 = __Pyx_PyList_GetSlice(__pyx_t_1, 0, 3); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 483, __pyx_L1_error)
+      if (unlikely((PyList_Sort(__pyx_t_1) < 0))) __PYX_ERR(0, 507, __pyx_L1_error)
+      __pyx_t_15 = __Pyx_PyList_GetSlice(__pyx_t_1, 0, 3); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 507, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_15);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = PyList_AsTuple(((PyObject*)__pyx_t_15)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 483, __pyx_L1_error)
+      __pyx_t_1 = PyList_AsTuple(((PyObject*)__pyx_t_15)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 507, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
       __Pyx_XDECREF_SET(__pyx_v_cov_ids, __pyx_t_1);
       __pyx_t_1 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":482
+      /* "soundrts/worldplayerbase/perception_fast.pyx":506
  * 
  *         history_key = (self.id, place.id)
  *         if covering_units:             # <<<<<<<<<<<<<<
@@ -10767,7 +10976,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
       goto __pyx_L36;
     }
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":485
+    /* "soundrts/worldplayerbase/perception_fast.pyx":509
  *             cov_ids = tuple(sorted([u.id for u in covering_units])[:3])
  *         else:
  *             cov_ids = ()             # <<<<<<<<<<<<<<
@@ -10780,14 +10989,14 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
     }
     __pyx_L36:;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":486
+    /* "soundrts/worldplayerbase/perception_fast.pyx":510
  *         else:
  *             cov_ids = ()
  *         prev = caches.place_visible_history.get(history_key)             # <<<<<<<<<<<<<<
  *         if not place_visible_for_any and prev:
  *             prev_bucket, prev_sig, prev_visible = prev
 */
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_place_visible_history); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 486, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_place_visible_history); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 510, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __pyx_t_15 = __pyx_t_5;
     __Pyx_INCREF(__pyx_t_15);
@@ -10797,13 +11006,13 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
       __pyx_t_1 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_get, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
       __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 486, __pyx_L1_error)
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 510, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
     }
     __Pyx_XDECREF_SET(__pyx_v_prev, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":487
+    /* "soundrts/worldplayerbase/perception_fast.pyx":511
  *             cov_ids = ()
  *         prev = caches.place_visible_history.get(history_key)
  *         if not place_visible_for_any and prev:             # <<<<<<<<<<<<<<
@@ -10820,7 +11029,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 
       goto __pyx_L45_bool_binop_done;
     }
-    __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_v_prev); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 487, __pyx_L1_error)
+    __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_v_prev); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 511, __pyx_L1_error)
 
     __pyx_t_7 = __pyx_t_16;
 
@@ -10828,7 +11037,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
     if (__pyx_t_7) {
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":488
+      /* "soundrts/worldplayerbase/perception_fast.pyx":512
  *         prev = caches.place_visible_history.get(history_key)
  *         if not place_visible_for_any and prev:
  *             prev_bucket, prev_sig, prev_visible = prev             # <<<<<<<<<<<<<<
@@ -10841,7 +11050,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
         if (unlikely(size != 3)) {
           if (size > 3) __Pyx_RaiseTooManyValuesError(3);
           else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-          __PYX_ERR(0, 488, __pyx_L1_error)
+          __PYX_ERR(0, 512, __pyx_L1_error)
         }
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
         if (likely(PyTuple_CheckExact(sequence))) {
@@ -10853,26 +11062,26 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
           __Pyx_INCREF(__pyx_t_15);
         } else {
           __pyx_t_1 = __Pyx_PyList_GET_ITEM_REF(sequence, 0, __Pyx_ReferenceSharing_SharedReference);
-          if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 488, __pyx_L1_error)
+          if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 512, __pyx_L1_error)
           __Pyx_XGOTREF(__pyx_t_1);
           __pyx_t_5 = __Pyx_PyList_GET_ITEM_REF(sequence, 1, __Pyx_ReferenceSharing_SharedReference);
-          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 488, __pyx_L1_error)
+          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 512, __pyx_L1_error)
           __Pyx_XGOTREF(__pyx_t_5);
           __pyx_t_15 = __Pyx_PyList_GET_ITEM_REF(sequence, 2, __Pyx_ReferenceSharing_SharedReference);
-          if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 488, __pyx_L1_error)
+          if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 512, __pyx_L1_error)
           __Pyx_XGOTREF(__pyx_t_15);
         }
         #else
-        __pyx_t_1 = __Pyx_PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 488, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 512, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_5 = __Pyx_PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 488, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 512, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_15 = __Pyx_PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 488, __pyx_L1_error)
+        __pyx_t_15 = __Pyx_PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 512, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_15);
         #endif
       } else {
         Py_ssize_t index = -1;
-        __pyx_t_2 = PyObject_GetIter(__pyx_v_prev); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 488, __pyx_L1_error)
+        __pyx_t_2 = PyObject_GetIter(__pyx_v_prev); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 512, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __pyx_t_18 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_2);
         index = 0; __pyx_t_1 = __pyx_t_18(__pyx_t_2); if (unlikely(!__pyx_t_1)) goto __pyx_L47_unpacking_failed;
@@ -10881,7 +11090,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
         __Pyx_GOTREF(__pyx_t_5);
         index = 2; __pyx_t_15 = __pyx_t_18(__pyx_t_2); if (unlikely(!__pyx_t_15)) goto __pyx_L47_unpacking_failed;
         __Pyx_GOTREF(__pyx_t_15);
-        if (__Pyx_IternextUnpackEndCheck(__pyx_t_18(__pyx_t_2), 3) < (0)) __PYX_ERR(0, 488, __pyx_L1_error)
+        if (__Pyx_IternextUnpackEndCheck(__pyx_t_18(__pyx_t_2), 3) < (0)) __PYX_ERR(0, 512, __pyx_L1_error)
         __pyx_t_18 = NULL;
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         goto __pyx_L48_unpacking_done;
@@ -10889,7 +11098,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __pyx_t_18 = NULL;
         if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-        __PYX_ERR(0, 488, __pyx_L1_error)
+        __PYX_ERR(0, 512, __pyx_L1_error)
         __pyx_L48_unpacking_done:;
       }
       __Pyx_XDECREF_SET(__pyx_v_prev_bucket, __pyx_t_1);
@@ -10899,14 +11108,14 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
       __Pyx_XDECREF_SET(__pyx_v_prev_visible, __pyx_t_15);
       __pyx_t_15 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":489
+      /* "soundrts/worldplayerbase/perception_fast.pyx":513
  *         if not place_visible_for_any and prev:
  *             prev_bucket, prev_sig, prev_visible = prev
  *             if prev_visible and (time_bucket - prev_bucket) <= 3 and prev_sig == cov_ids:             # <<<<<<<<<<<<<<
  *                 place_visible_for_any = True
  * 
 */
-      __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_v_prev_visible); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 489, __pyx_L1_error)
+      __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_v_prev_visible); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 513, __pyx_L1_error)
       if (__pyx_t_16) {
 
       } else {
@@ -10915,12 +11124,12 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 
         goto __pyx_L50_bool_binop_done;
       }
-      __pyx_t_15 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 489, __pyx_L1_error)
+      __pyx_t_15 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 513, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_15);
-      __pyx_t_5 = __Pyx_PyNumber_Subtract_int_object(__pyx_t_15, __pyx_v_prev_bucket); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 489, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyNumber_Subtract_int_object(__pyx_t_15, __pyx_v_prev_bucket); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 513, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-      __pyx_t_16 = __Pyx_PyObject_CompareBoolLe_object_int(__pyx_t_5, __pyx_mstate_global->__pyx_int_3, Py_LE); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 489, __pyx_L1_error)
+      __pyx_t_16 = __Pyx_PyObject_CompareBoolLe_object_int(__pyx_t_5, __pyx_mstate_global->__pyx_int_3, Py_LE); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 513, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       if (__pyx_t_16) {
 
@@ -10930,7 +11139,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 
         goto __pyx_L50_bool_binop_done;
       }
-      __pyx_t_16 = __Pyx_PyObject_CompareBoolEq_object_object(__pyx_v_prev_sig, __pyx_v_cov_ids, Py_EQ); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 489, __pyx_L1_error)
+      __pyx_t_16 = __Pyx_PyObject_CompareBoolEq_object_object(__pyx_v_prev_sig, __pyx_v_cov_ids, Py_EQ); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 513, __pyx_L1_error)
 
       __pyx_t_7 = __pyx_t_16;
 
@@ -10938,7 +11147,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
       if (__pyx_t_7) {
 
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":490
+        /* "soundrts/worldplayerbase/perception_fast.pyx":514
  *             prev_bucket, prev_sig, prev_visible = prev
  *             if prev_visible and (time_bucket - prev_bucket) <= 3 and prev_sig == cov_ids:
  *                 place_visible_for_any = True             # <<<<<<<<<<<<<<
@@ -10947,7 +11156,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
         __pyx_v_place_visible_for_any = 1;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":489
+        /* "soundrts/worldplayerbase/perception_fast.pyx":513
  *         if not place_visible_for_any and prev:
  *             prev_bucket, prev_sig, prev_visible = prev
  *             if prev_visible and (time_bucket - prev_bucket) <= 3 and prev_sig == cov_ids:             # <<<<<<<<<<<<<<
@@ -10956,7 +11165,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
       }
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":487
+      /* "soundrts/worldplayerbase/perception_fast.pyx":511
  *             cov_ids = ()
  *         prev = caches.place_visible_history.get(history_key)
  *         if not place_visible_for_any and prev:             # <<<<<<<<<<<<<<
@@ -10965,7 +11174,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
     }
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":492
+    /* "soundrts/worldplayerbase/perception_fast.pyx":516
  *                 place_visible_for_any = True
  * 
  *         if place_visible_for_any:             # <<<<<<<<<<<<<<
@@ -10974,28 +11183,28 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
     if (__pyx_v_place_visible_for_any) {
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":493
+      /* "soundrts/worldplayerbase/perception_fast.pyx":517
  * 
  *         if place_visible_for_any:
  *             place_visible_cache[place] = True             # <<<<<<<<<<<<<<
  *             remaining_to_check = []
  *             for obj in place_objects:
 */
-      if (unlikely((PyObject_SetItem(__pyx_v_place_visible_cache, __pyx_v_place, Py_True) < 0))) __PYX_ERR(0, 493, __pyx_L1_error)
+      if (unlikely((PyObject_SetItem(__pyx_v_place_visible_cache, __pyx_v_place, Py_True) < 0))) __PYX_ERR(0, 517, __pyx_L1_error)
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":494
+      /* "soundrts/worldplayerbase/perception_fast.pyx":518
  *         if place_visible_for_any:
  *             place_visible_cache[place] = True
  *             remaining_to_check = []             # <<<<<<<<<<<<<<
  *             for obj in place_objects:
  *                 cache_key = (obj.id, time_bucket)
 */
-      __pyx_t_5 = PyList_New(0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 494, __pyx_L1_error)
+      __pyx_t_5 = PyList_New(0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 518, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_XDECREF_SET(__pyx_v_remaining_to_check, __pyx_t_5);
       __pyx_t_5 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":495
+      /* "soundrts/worldplayerbase/perception_fast.pyx":519
  *             place_visible_cache[place] = True
  *             remaining_to_check = []
  *             for obj in place_objects:             # <<<<<<<<<<<<<<
@@ -11007,9 +11216,9 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
         __pyx_t_14 = 0;
         __pyx_t_9 = NULL;
       } else {
-        __pyx_t_14 = -1; __pyx_t_5 = PyObject_GetIter(__pyx_v_place_objects); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 495, __pyx_L1_error)
+        __pyx_t_14 = -1; __pyx_t_5 = PyObject_GetIter(__pyx_v_place_objects); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 519, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_9 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_5); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 495, __pyx_L1_error)
+        __pyx_t_9 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_5); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 519, __pyx_L1_error)
       }
       for (;;) {
         if (likely(!__pyx_t_9)) {
@@ -11017,7 +11226,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
             {
               Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_5);
               #if !CYTHON_ASSUME_SAFE_SIZE
-              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 495, __pyx_L1_error)
+              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 519, __pyx_L1_error)
               #endif
               if (__pyx_t_14 >= __pyx_temp) break;
             }
@@ -11027,7 +11236,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
             {
               Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_5);
               #if !CYTHON_ASSUME_SAFE_SIZE
-              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 495, __pyx_L1_error)
+              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 519, __pyx_L1_error)
               #endif
               if (__pyx_t_14 >= __pyx_temp) break;
             }
@@ -11038,13 +11247,13 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
             #endif
             ++__pyx_t_14;
           }
-          if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 495, __pyx_L1_error)
+          if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 519, __pyx_L1_error)
         } else {
           __pyx_t_15 = __pyx_t_9(__pyx_t_5);
           if (unlikely(!__pyx_t_15)) {
             PyObject* exc_type = PyErr_Occurred();
             if (exc_type) {
-              if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 495, __pyx_L1_error)
+              if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 519, __pyx_L1_error)
               PyErr_Clear();
             }
             break;
@@ -11054,38 +11263,38 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
         __Pyx_XDECREF_SET(__pyx_v_obj, __pyx_t_15);
         __pyx_t_15 = 0;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":496
+        /* "soundrts/worldplayerbase/perception_fast.pyx":520
  *             remaining_to_check = []
  *             for obj in place_objects:
  *                 cache_key = (obj.id, time_bucket)             # <<<<<<<<<<<<<<
  *                 if not obj.is_invisible and not obj.is_cloaked:
  *                     player_cache[cache_key] = True
 */
-        __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 496, __pyx_L1_error)
+        __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 520, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_15);
-        __pyx_t_1 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 496, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 520, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 496, __pyx_L1_error)
+        __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 520, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_GIVEREF(__pyx_t_15);
-        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_15) != (0)) __PYX_ERR(0, 496, __pyx_L1_error);
+        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_15) != (0)) __PYX_ERR(0, 520, __pyx_L1_error);
         __Pyx_GIVEREF(__pyx_t_1);
-        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_1) != (0)) __PYX_ERR(0, 496, __pyx_L1_error);
+        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_1) != (0)) __PYX_ERR(0, 520, __pyx_L1_error);
         __pyx_t_15 = 0;
         __pyx_t_1 = 0;
         __Pyx_XDECREF_SET(__pyx_v_cache_key, __pyx_t_2);
         __pyx_t_2 = 0;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":497
+        /* "soundrts/worldplayerbase/perception_fast.pyx":521
  *             for obj in place_objects:
  *                 cache_key = (obj.id, time_bucket)
  *                 if not obj.is_invisible and not obj.is_cloaked:             # <<<<<<<<<<<<<<
  *                     player_cache[cache_key] = True
  *                     visible_objects.add(obj)
 */
-        __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_is_invisible); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 497, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_is_invisible); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 521, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
-        __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 497, __pyx_L1_error)
+        __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 521, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __pyx_t_19 = (!__pyx_t_16);
 
@@ -11098,9 +11307,9 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 
           goto __pyx_L57_bool_binop_done;
         }
-        __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_is_cloaked); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 497, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_is_cloaked); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 521, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
-        __pyx_t_19 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_19 < 0))) __PYX_ERR(0, 497, __pyx_L1_error)
+        __pyx_t_19 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_19 < 0))) __PYX_ERR(0, 521, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __pyx_t_16 = (!__pyx_t_19);
 
@@ -11112,16 +11321,16 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
         if (__pyx_t_7) {
 
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":498
+          /* "soundrts/worldplayerbase/perception_fast.pyx":522
  *                 cache_key = (obj.id, time_bucket)
  *                 if not obj.is_invisible and not obj.is_cloaked:
  *                     player_cache[cache_key] = True             # <<<<<<<<<<<<<<
  *                     visible_objects.add(obj)
  *                 else:
 */
-          if (unlikely((PyObject_SetItem(__pyx_v_player_cache, __pyx_v_cache_key, Py_True) < 0))) __PYX_ERR(0, 498, __pyx_L1_error)
+          if (unlikely((PyObject_SetItem(__pyx_v_player_cache, __pyx_v_cache_key, Py_True) < 0))) __PYX_ERR(0, 522, __pyx_L1_error)
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":499
+          /* "soundrts/worldplayerbase/perception_fast.pyx":523
  *                 if not obj.is_invisible and not obj.is_cloaked:
  *                     player_cache[cache_key] = True
  *                     visible_objects.add(obj)             # <<<<<<<<<<<<<<
@@ -11135,12 +11344,12 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
             PyObject *__pyx_callargs[2] = {__pyx_t_1, __pyx_v_obj};
             __pyx_t_2 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_add, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
             __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-            if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 499, __pyx_L1_error)
+            if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 523, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_2);
           }
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":497
+          /* "soundrts/worldplayerbase/perception_fast.pyx":521
  *             for obj in place_objects:
  *                 cache_key = (obj.id, time_bucket)
  *                 if not obj.is_invisible and not obj.is_cloaked:             # <<<<<<<<<<<<<<
@@ -11150,7 +11359,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
           goto __pyx_L56;
         }
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":501
+        /* "soundrts/worldplayerbase/perception_fast.pyx":525
  *                     visible_objects.add(obj)
  *                 else:
  *                     remaining_to_check.append(obj)             # <<<<<<<<<<<<<<
@@ -11158,12 +11367,12 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
  *         caches.place_visible_history[history_key] = (time_bucket, cov_ids, place_visible_for_any)
 */
         /*else*/ {
-          __pyx_t_10 = __Pyx_PyObject_Append(__pyx_v_remaining_to_check, __pyx_v_obj); if (unlikely(__pyx_t_10 == ((int)-1))) __PYX_ERR(0, 501, __pyx_L1_error)
+          __pyx_t_10 = __Pyx_PyObject_Append(__pyx_v_remaining_to_check, __pyx_v_obj); if (unlikely(__pyx_t_10 == ((int)-1))) __PYX_ERR(0, 525, __pyx_L1_error)
 
         }
         __pyx_L56:;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":495
+        /* "soundrts/worldplayerbase/perception_fast.pyx":519
  *             place_visible_cache[place] = True
  *             remaining_to_check = []
  *             for obj in place_objects:             # <<<<<<<<<<<<<<
@@ -11173,7 +11382,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
       }
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":502
+      /* "soundrts/worldplayerbase/perception_fast.pyx":526
  *                 else:
  *                     remaining_to_check.append(obj)
  *             place_objects = remaining_to_check             # <<<<<<<<<<<<<<
@@ -11183,7 +11392,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
       __Pyx_INCREF(__pyx_v_remaining_to_check);
       __Pyx_DECREF_SET(__pyx_v_place_objects, __pyx_v_remaining_to_check);
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":492
+      /* "soundrts/worldplayerbase/perception_fast.pyx":516
  *                 place_visible_for_any = True
  * 
  *         if place_visible_for_any:             # <<<<<<<<<<<<<<
@@ -11192,35 +11401,35 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
     }
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":503
+    /* "soundrts/worldplayerbase/perception_fast.pyx":527
  *                     remaining_to_check.append(obj)
  *             place_objects = remaining_to_check
  *         caches.place_visible_history[history_key] = (time_bucket, cov_ids, place_visible_for_any)             # <<<<<<<<<<<<<<
  * 
  *         for obj in place_objects:
 */
-    __pyx_t_5 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 503, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 527, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_v_place_visible_for_any); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 503, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_v_place_visible_for_any); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 527, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_1 = PyTuple_New(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 503, __pyx_L1_error)
+    __pyx_t_1 = PyTuple_New(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 527, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_GIVEREF(__pyx_t_5);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_5) != (0)) __PYX_ERR(0, 503, __pyx_L1_error);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_5) != (0)) __PYX_ERR(0, 527, __pyx_L1_error);
     __Pyx_INCREF(__pyx_v_cov_ids);
     __Pyx_GIVEREF(__pyx_v_cov_ids);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_v_cov_ids) != (0)) __PYX_ERR(0, 503, __pyx_L1_error);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_v_cov_ids) != (0)) __PYX_ERR(0, 527, __pyx_L1_error);
     __Pyx_GIVEREF(__pyx_t_2);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 2, __pyx_t_2) != (0)) __PYX_ERR(0, 503, __pyx_L1_error);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 2, __pyx_t_2) != (0)) __PYX_ERR(0, 527, __pyx_L1_error);
     __pyx_t_5 = 0;
     __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_place_visible_history); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 503, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_place_visible_history); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 527, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    if (unlikely((PyObject_SetItem(__pyx_t_2, __pyx_v_history_key, __pyx_t_1) < 0))) __PYX_ERR(0, 503, __pyx_L1_error)
+    if (unlikely((PyObject_SetItem(__pyx_t_2, __pyx_v_history_key, __pyx_t_1) < 0))) __PYX_ERR(0, 527, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":505
+    /* "soundrts/worldplayerbase/perception_fast.pyx":529
  *         caches.place_visible_history[history_key] = (time_bucket, cov_ids, place_visible_for_any)
  * 
  *         for obj in place_objects:             # <<<<<<<<<<<<<<
@@ -11232,9 +11441,9 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
       __pyx_t_14 = 0;
       __pyx_t_9 = NULL;
     } else {
-      __pyx_t_14 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_place_objects); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 505, __pyx_L1_error)
+      __pyx_t_14 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_place_objects); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 529, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_9 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 505, __pyx_L1_error)
+      __pyx_t_9 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 529, __pyx_L1_error)
     }
     for (;;) {
       if (likely(!__pyx_t_9)) {
@@ -11242,7 +11451,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
           {
             Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_1);
             #if !CYTHON_ASSUME_SAFE_SIZE
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 505, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 529, __pyx_L1_error)
             #endif
             if (__pyx_t_14 >= __pyx_temp) break;
           }
@@ -11252,7 +11461,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
           {
             Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_1);
             #if !CYTHON_ASSUME_SAFE_SIZE
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 505, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 529, __pyx_L1_error)
             #endif
             if (__pyx_t_14 >= __pyx_temp) break;
           }
@@ -11263,13 +11472,13 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
           #endif
           ++__pyx_t_14;
         }
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 505, __pyx_L1_error)
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 529, __pyx_L1_error)
       } else {
         __pyx_t_2 = __pyx_t_9(__pyx_t_1);
         if (unlikely(!__pyx_t_2)) {
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
-            if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 505, __pyx_L1_error)
+            if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 529, __pyx_L1_error)
             PyErr_Clear();
           }
           break;
@@ -11279,69 +11488,69 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
       __Pyx_XDECREF_SET(__pyx_v_obj, __pyx_t_2);
       __pyx_t_2 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":506
+      /* "soundrts/worldplayerbase/perception_fast.pyx":530
  * 
  *         for obj in place_objects:
  *             cache_key = (obj.id, time_bucket)             # <<<<<<<<<<<<<<
  * 
  *             if cache_key in player_cache:
 */
-      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 506, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 530, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_5 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 506, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 530, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_15 = PyTuple_New(2); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 506, __pyx_L1_error)
+      __pyx_t_15 = PyTuple_New(2); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 530, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_15);
       __Pyx_GIVEREF(__pyx_t_2);
-      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_t_2) != (0)) __PYX_ERR(0, 506, __pyx_L1_error);
+      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_t_2) != (0)) __PYX_ERR(0, 530, __pyx_L1_error);
       __Pyx_GIVEREF(__pyx_t_5);
-      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_15, 1, __pyx_t_5) != (0)) __PYX_ERR(0, 506, __pyx_L1_error);
+      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_15, 1, __pyx_t_5) != (0)) __PYX_ERR(0, 530, __pyx_L1_error);
       __pyx_t_2 = 0;
       __pyx_t_5 = 0;
       __Pyx_XDECREF_SET(__pyx_v_cache_key, __pyx_t_15);
       __pyx_t_15 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":508
+      /* "soundrts/worldplayerbase/perception_fast.pyx":532
  *             cache_key = (obj.id, time_bucket)
  * 
  *             if cache_key in player_cache:             # <<<<<<<<<<<<<<
  *                 caches.vision_cache_hits += 1
  *                 if player_cache[cache_key]:
 */
-      __pyx_t_7 = (__Pyx_PySequence_ContainsTF(__pyx_v_cache_key, __pyx_v_player_cache, Py_EQ)); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 508, __pyx_L1_error)
+      __pyx_t_7 = (__Pyx_PySequence_ContainsTF(__pyx_v_cache_key, __pyx_v_player_cache, Py_EQ)); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 532, __pyx_L1_error)
       if (__pyx_t_7) {
 
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":509
+        /* "soundrts/worldplayerbase/perception_fast.pyx":533
  * 
  *             if cache_key in player_cache:
  *                 caches.vision_cache_hits += 1             # <<<<<<<<<<<<<<
  *                 if player_cache[cache_key]:
  *                     visible_objects.add(obj)
 */
-        __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_vision_cache_hits); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 509, __pyx_L1_error)
+        __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_vision_cache_hits); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 533, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_15);
-        __pyx_t_5 = __Pyx_PyLong_AddObjC(__pyx_t_15, __pyx_mstate_global->__pyx_int_1, 1, 1, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 509, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyLong_AddObjC(__pyx_t_15, __pyx_mstate_global->__pyx_int_1, 1, 1, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 533, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-        if (__Pyx_PyObject_SetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_vision_cache_hits, __pyx_t_5) < (0)) __PYX_ERR(0, 509, __pyx_L1_error)
+        if (__Pyx_PyObject_SetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_vision_cache_hits, __pyx_t_5) < (0)) __PYX_ERR(0, 533, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":510
+        /* "soundrts/worldplayerbase/perception_fast.pyx":534
  *             if cache_key in player_cache:
  *                 caches.vision_cache_hits += 1
  *                 if player_cache[cache_key]:             # <<<<<<<<<<<<<<
  *                     visible_objects.add(obj)
  *                 else:
 */
-        __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_v_player_cache, __pyx_v_cache_key); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 510, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_v_player_cache, __pyx_v_cache_key); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 534, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 510, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 534, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
         if (__pyx_t_7) {
 
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":511
+          /* "soundrts/worldplayerbase/perception_fast.pyx":535
  *                 caches.vision_cache_hits += 1
  *                 if player_cache[cache_key]:
  *                     visible_objects.add(obj)             # <<<<<<<<<<<<<<
@@ -11355,12 +11564,12 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
             PyObject *__pyx_callargs[2] = {__pyx_t_15, __pyx_v_obj};
             __pyx_t_5 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_add, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
             __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
-            if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 511, __pyx_L1_error)
+            if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 535, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_5);
           }
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":510
+          /* "soundrts/worldplayerbase/perception_fast.pyx":534
  *             if cache_key in player_cache:
  *                 caches.vision_cache_hits += 1
  *                 if player_cache[cache_key]:             # <<<<<<<<<<<<<<
@@ -11370,7 +11579,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
           goto __pyx_L63;
         }
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":513
+        /* "soundrts/worldplayerbase/perception_fast.pyx":537
  *                     visible_objects.add(obj)
  *                 else:
  *                     invisible_objects.add(obj)             # <<<<<<<<<<<<<<
@@ -11385,14 +11594,14 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
             PyObject *__pyx_callargs[2] = {__pyx_t_15, __pyx_v_obj};
             __pyx_t_5 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_add, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
             __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
-            if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 513, __pyx_L1_error)
+            if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 537, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_5);
           }
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
         }
         __pyx_L63:;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":514
+        /* "soundrts/worldplayerbase/perception_fast.pyx":538
  *                 else:
  *                     invisible_objects.add(obj)
  *                 continue             # <<<<<<<<<<<<<<
@@ -11401,7 +11610,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
         goto __pyx_L60_continue;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":508
+        /* "soundrts/worldplayerbase/perception_fast.pyx":532
  *             cache_key = (obj.id, time_bucket)
  * 
  *             if cache_key in player_cache:             # <<<<<<<<<<<<<<
@@ -11410,31 +11619,31 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
       }
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":516
+      /* "soundrts/worldplayerbase/perception_fast.pyx":540
  *                 continue
  * 
  *             caches.vision_cache_misses += 1             # <<<<<<<<<<<<<<
  * 
  *             if (getattr(obj, 'is_invisible', False) or getattr(obj, 'is_cloaked', False)) and obj not in self.detected_units:
 */
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_vision_cache_misses); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 516, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_vision_cache_misses); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 540, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_15 = __Pyx_PyLong_AddObjC(__pyx_t_5, __pyx_mstate_global->__pyx_int_1, 1, 1, 0); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 516, __pyx_L1_error)
+      __pyx_t_15 = __Pyx_PyLong_AddObjC(__pyx_t_5, __pyx_mstate_global->__pyx_int_1, 1, 1, 0); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 540, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_15);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      if (__Pyx_PyObject_SetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_vision_cache_misses, __pyx_t_15) < (0)) __PYX_ERR(0, 516, __pyx_L1_error)
+      if (__Pyx_PyObject_SetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_vision_cache_misses, __pyx_t_15) < (0)) __PYX_ERR(0, 540, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":518
+      /* "soundrts/worldplayerbase/perception_fast.pyx":542
  *             caches.vision_cache_misses += 1
  * 
  *             if (getattr(obj, 'is_invisible', False) or getattr(obj, 'is_cloaked', False)) and obj not in self.detected_units:             # <<<<<<<<<<<<<<
- *                 ivc = caches.invis_visibility_cache
- *                 ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))
+ *                 if not _is_detected_or_revealed(self, obj):
+ *                     ivc = caches.invis_visibility_cache
 */
-      __pyx_t_15 = __Pyx_GetAttr3(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_is_invisible, Py_False); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 518, __pyx_L1_error)
+      __pyx_t_15 = __Pyx_GetAttr3(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_is_invisible, Py_False); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 542, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_15);
-      __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_t_15); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 518, __pyx_L1_error)
+      __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_t_15); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 542, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
       if (!__pyx_t_16) {
 
@@ -11442,9 +11651,9 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 
         goto __pyx_L66_next_and;
       }
-      __pyx_t_15 = __Pyx_GetAttr3(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_is_cloaked, Py_False); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 518, __pyx_L1_error)
+      __pyx_t_15 = __Pyx_GetAttr3(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_is_cloaked, Py_False); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 542, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_15);
-      __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_t_15); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 518, __pyx_L1_error)
+      __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_t_15); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 542, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
       if (__pyx_t_16) {
 
@@ -11455,9 +11664,9 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
         goto __pyx_L65_bool_binop_done;
       }
       __pyx_L66_next_and:;
-      __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_detected_units); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 518, __pyx_L1_error)
+      __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_detected_units); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 542, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_15);
-      __pyx_t_16 = (__Pyx_PySequence_ContainsTF(__pyx_v_obj, __pyx_t_15, Py_NE)); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 518, __pyx_L1_error)
+      __pyx_t_16 = (__Pyx_PySequence_ContainsTF(__pyx_v_obj, __pyx_t_15, Py_NE)); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 542, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
 
       __pyx_t_7 = __pyx_t_16;
@@ -11466,319 +11675,342 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
       if (__pyx_t_7) {
 
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":519
+        /* "soundrts/worldplayerbase/perception_fast.pyx":543
  * 
  *             if (getattr(obj, 'is_invisible', False) or getattr(obj, 'is_cloaked', False)) and obj not in self.detected_units:
- *                 ivc = caches.invis_visibility_cache             # <<<<<<<<<<<<<<
- *                 ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))
- *                 ivc_entry = ivc.get(ivc_key)
+ *                 if not _is_detected_or_revealed(self, obj):             # <<<<<<<<<<<<<<
+ *                     ivc = caches.invis_visibility_cache
+ *                     ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))
 */
-        __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_invis_visibility_cache); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 519, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_15);
-        __Pyx_XDECREF_SET(__pyx_v_ivc, __pyx_t_15);
-        __pyx_t_15 = 0;
+        __pyx_t_7 = __pyx_f_8soundrts_15worldplayerbase_15perception_fast__is_detected_or_revealed(__pyx_v_self, __pyx_v_obj); if (unlikely(__pyx_t_7 == ((int)-1) && PyErr_Occurred())) __PYX_ERR(0, 543, __pyx_L1_error)
+        __pyx_t_16 = (!__pyx_t_7);
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":520
+
+        if (__pyx_t_16) {
+
+
+          /* "soundrts/worldplayerbase/perception_fast.pyx":544
  *             if (getattr(obj, 'is_invisible', False) or getattr(obj, 'is_cloaked', False)) and obj not in self.detected_units:
- *                 ivc = caches.invis_visibility_cache
- *                 ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))             # <<<<<<<<<<<<<<
- *                 ivc_entry = ivc.get(ivc_key)
- *                 if ivc_entry:
+ *                 if not _is_detected_or_revealed(self, obj):
+ *                     ivc = caches.invis_visibility_cache             # <<<<<<<<<<<<<<
+ *                     ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))
+ *                     ivc_entry = ivc.get(ivc_key)
 */
-        __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 520, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_15);
-        __pyx_t_2 = NULL;
-        __pyx_t_6 = 1;
-        {
-          PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_v_place};
-          __pyx_t_5 = __Pyx_PyObject_FastCall((PyObject*)__pyx_builtin_id, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (__pyx_t_6*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-          __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 520, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_5);
-        }
-        __pyx_t_2 = __Pyx_GetAttr3(__pyx_v_place, __pyx_mstate_global->__pyx_n_u_id, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 520, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_2);
-        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        __pyx_t_20 = NULL;
-        __pyx_t_6 = 1;
-        {
-          PyObject *__pyx_callargs[2] = {__pyx_t_20, __pyx_v_obj};
-          __pyx_t_5 = __Pyx_PyObject_FastCall((PyObject*)__pyx_builtin_id, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (__pyx_t_6*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-          __Pyx_XDECREF(__pyx_t_20); __pyx_t_20 = 0;
-          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 520, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_5);
-        }
-        __pyx_t_20 = __Pyx_GetAttr3(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_id, __pyx_t_5); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 520, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_20);
-        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 520, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_5);
-        __Pyx_GIVEREF(__pyx_t_15);
-        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_15) != (0)) __PYX_ERR(0, 520, __pyx_L1_error);
-        __Pyx_GIVEREF(__pyx_t_2);
-        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_2) != (0)) __PYX_ERR(0, 520, __pyx_L1_error);
-        __Pyx_GIVEREF(__pyx_t_20);
-        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_t_20) != (0)) __PYX_ERR(0, 520, __pyx_L1_error);
-        __pyx_t_15 = 0;
-        __pyx_t_2 = 0;
-        __pyx_t_20 = 0;
-        __Pyx_XDECREF_SET(__pyx_v_ivc_key, __pyx_t_5);
-        __pyx_t_5 = 0;
+          __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_invis_visibility_cache); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 544, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_15);
+          __Pyx_XDECREF_SET(__pyx_v_ivc, __pyx_t_15);
+          __pyx_t_15 = 0;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":521
- *                 ivc = caches.invis_visibility_cache
- *                 ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))
- *                 ivc_entry = ivc.get(ivc_key)             # <<<<<<<<<<<<<<
- *                 if ivc_entry:
- *                     last_bucket, last_visible = ivc_entry
+          /* "soundrts/worldplayerbase/perception_fast.pyx":545
+ *                 if not _is_detected_or_revealed(self, obj):
+ *                     ivc = caches.invis_visibility_cache
+ *                     ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))             # <<<<<<<<<<<<<<
+ *                     ivc_entry = ivc.get(ivc_key)
+ *                     if ivc_entry:
 */
-        __pyx_t_20 = __pyx_v_ivc;
-        __Pyx_INCREF(__pyx_t_20);
-        __pyx_t_6 = 0;
-        {
-          PyObject *__pyx_callargs[2] = {__pyx_t_20, __pyx_v_ivc_key};
-          __pyx_t_5 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_get, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-          __Pyx_XDECREF(__pyx_t_20); __pyx_t_20 = 0;
-          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 521, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_5);
-        }
-        __Pyx_XDECREF_SET(__pyx_v_ivc_entry, __pyx_t_5);
-        __pyx_t_5 = 0;
-
-        /* "soundrts/worldplayerbase/perception_fast.pyx":522
- *                 ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))
- *                 ivc_entry = ivc.get(ivc_key)
- *                 if ivc_entry:             # <<<<<<<<<<<<<<
- *                     last_bucket, last_visible = ivc_entry
- *                     if time_bucket - last_bucket <= 2:
-*/
-        __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_v_ivc_entry); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 522, __pyx_L1_error)
-        if (__pyx_t_7) {
-
-
-          /* "soundrts/worldplayerbase/perception_fast.pyx":523
- *                 ivc_entry = ivc.get(ivc_key)
- *                 if ivc_entry:
- *                     last_bucket, last_visible = ivc_entry             # <<<<<<<<<<<<<<
- *                     if time_bucket - last_bucket <= 2:
- *                         player_cache[cache_key] = last_visible
-*/
-          if ((likely(PyTuple_CheckExact(__pyx_v_ivc_entry))) || (PyList_CheckExact(__pyx_v_ivc_entry))) {
-            PyObject* sequence = __pyx_v_ivc_entry;
-            Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
-            if (unlikely(size != 2)) {
-              if (size > 2) __Pyx_RaiseTooManyValuesError(2);
-              else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-              __PYX_ERR(0, 523, __pyx_L1_error)
-            }
-            #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            if (likely(PyTuple_CheckExact(sequence))) {
-              __pyx_t_5 = PyTuple_GET_ITEM(sequence, 0);
-              __Pyx_INCREF(__pyx_t_5);
-              __pyx_t_20 = PyTuple_GET_ITEM(sequence, 1);
-              __Pyx_INCREF(__pyx_t_20);
-            } else {
-              __pyx_t_5 = __Pyx_PyList_GET_ITEM_REF(sequence, 0, __Pyx_ReferenceSharing_SharedReference);
-              if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 523, __pyx_L1_error)
-              __Pyx_XGOTREF(__pyx_t_5);
-              __pyx_t_20 = __Pyx_PyList_GET_ITEM_REF(sequence, 1, __Pyx_ReferenceSharing_SharedReference);
-              if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 523, __pyx_L1_error)
-              __Pyx_XGOTREF(__pyx_t_20);
-            }
-            #else
-            __pyx_t_5 = __Pyx_PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 523, __pyx_L1_error)
+          __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 545, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_15);
+          __pyx_t_2 = NULL;
+          __pyx_t_6 = 1;
+          {
+            PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_v_place};
+            __pyx_t_5 = __Pyx_PyObject_FastCall((PyObject*)__pyx_builtin_id, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (__pyx_t_6*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+            __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+            if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 545, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_5);
-            __pyx_t_20 = __Pyx_PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 523, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_20);
-            #endif
-          } else {
-            Py_ssize_t index = -1;
-            __pyx_t_2 = PyObject_GetIter(__pyx_v_ivc_entry); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 523, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_2);
-            __pyx_t_18 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_2);
-            index = 0; __pyx_t_5 = __pyx_t_18(__pyx_t_2); if (unlikely(!__pyx_t_5)) goto __pyx_L69_unpacking_failed;
-            __Pyx_GOTREF(__pyx_t_5);
-            index = 1; __pyx_t_20 = __pyx_t_18(__pyx_t_2); if (unlikely(!__pyx_t_20)) goto __pyx_L69_unpacking_failed;
-            __Pyx_GOTREF(__pyx_t_20);
-            if (__Pyx_IternextUnpackEndCheck(__pyx_t_18(__pyx_t_2), 2) < (0)) __PYX_ERR(0, 523, __pyx_L1_error)
-            __pyx_t_18 = NULL;
-            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-            goto __pyx_L70_unpacking_done;
-            __pyx_L69_unpacking_failed:;
-            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-            __pyx_t_18 = NULL;
-            if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-            __PYX_ERR(0, 523, __pyx_L1_error)
-            __pyx_L70_unpacking_done:;
           }
-          __Pyx_XDECREF_SET(__pyx_v_last_bucket, __pyx_t_5);
-          __pyx_t_5 = 0;
-          __Pyx_XDECREF_SET(__pyx_v_last_visible, __pyx_t_20);
-          __pyx_t_20 = 0;
-
-          /* "soundrts/worldplayerbase/perception_fast.pyx":524
- *                 if ivc_entry:
- *                     last_bucket, last_visible = ivc_entry
- *                     if time_bucket - last_bucket <= 2:             # <<<<<<<<<<<<<<
- *                         player_cache[cache_key] = last_visible
- *                         if last_visible:
-*/
-          __pyx_t_20 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 524, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_20);
-          __pyx_t_5 = __Pyx_PyNumber_Subtract_int_object(__pyx_t_20, __pyx_v_last_bucket); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 524, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_5);
-          __Pyx_DECREF(__pyx_t_20); __pyx_t_20 = 0;
-          __pyx_t_7 = __Pyx_PyObject_CompareBoolLe_object_int(__pyx_t_5, __pyx_mstate_global->__pyx_int_2, Py_LE); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 524, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_GetAttr3(__pyx_v_place, __pyx_mstate_global->__pyx_n_u_id, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 545, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-          if (__pyx_t_7) {
+          __pyx_t_20 = NULL;
+          __pyx_t_6 = 1;
+          {
+            PyObject *__pyx_callargs[2] = {__pyx_t_20, __pyx_v_obj};
+            __pyx_t_5 = __Pyx_PyObject_FastCall((PyObject*)__pyx_builtin_id, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (__pyx_t_6*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+            __Pyx_XDECREF(__pyx_t_20); __pyx_t_20 = 0;
+            if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 545, __pyx_L1_error)
+            __Pyx_GOTREF(__pyx_t_5);
+          }
+          __pyx_t_20 = __Pyx_GetAttr3(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_id, __pyx_t_5); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 545, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_20);
+          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+          __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 545, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_5);
+          __Pyx_GIVEREF(__pyx_t_15);
+          if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_15) != (0)) __PYX_ERR(0, 545, __pyx_L1_error);
+          __Pyx_GIVEREF(__pyx_t_2);
+          if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_2) != (0)) __PYX_ERR(0, 545, __pyx_L1_error);
+          __Pyx_GIVEREF(__pyx_t_20);
+          if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_t_20) != (0)) __PYX_ERR(0, 545, __pyx_L1_error);
+          __pyx_t_15 = 0;
+          __pyx_t_2 = 0;
+          __pyx_t_20 = 0;
+          __Pyx_XDECREF_SET(__pyx_v_ivc_key, __pyx_t_5);
+          __pyx_t_5 = 0;
 
-
-            /* "soundrts/worldplayerbase/perception_fast.pyx":525
- *                     last_bucket, last_visible = ivc_entry
- *                     if time_bucket - last_bucket <= 2:
- *                         player_cache[cache_key] = last_visible             # <<<<<<<<<<<<<<
- *                         if last_visible:
- *                             visible_objects.add(obj)
+          /* "soundrts/worldplayerbase/perception_fast.pyx":546
+ *                     ivc = caches.invis_visibility_cache
+ *                     ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))
+ *                     ivc_entry = ivc.get(ivc_key)             # <<<<<<<<<<<<<<
+ *                     if ivc_entry:
+ *                         last_bucket, last_visible = ivc_entry
 */
-            if (unlikely((PyObject_SetItem(__pyx_v_player_cache, __pyx_v_cache_key, __pyx_v_last_visible) < 0))) __PYX_ERR(0, 525, __pyx_L1_error)
+          __pyx_t_20 = __pyx_v_ivc;
+          __Pyx_INCREF(__pyx_t_20);
+          __pyx_t_6 = 0;
+          {
+            PyObject *__pyx_callargs[2] = {__pyx_t_20, __pyx_v_ivc_key};
+            __pyx_t_5 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_get, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+            __Pyx_XDECREF(__pyx_t_20); __pyx_t_20 = 0;
+            if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 546, __pyx_L1_error)
+            __Pyx_GOTREF(__pyx_t_5);
+          }
+          __Pyx_XDECREF_SET(__pyx_v_ivc_entry, __pyx_t_5);
+          __pyx_t_5 = 0;
 
-            /* "soundrts/worldplayerbase/perception_fast.pyx":526
- *                     if time_bucket - last_bucket <= 2:
- *                         player_cache[cache_key] = last_visible
- *                         if last_visible:             # <<<<<<<<<<<<<<
- *                             visible_objects.add(obj)
- *                         else:
+          /* "soundrts/worldplayerbase/perception_fast.pyx":547
+ *                     ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))
+ *                     ivc_entry = ivc.get(ivc_key)
+ *                     if ivc_entry:             # <<<<<<<<<<<<<<
+ *                         last_bucket, last_visible = ivc_entry
+ *                         if time_bucket - last_bucket <= 2:
 */
-            __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_v_last_visible); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 526, __pyx_L1_error)
-            if (__pyx_t_7) {
+          __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_v_ivc_entry); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 547, __pyx_L1_error)
+          if (__pyx_t_16) {
 
 
-              /* "soundrts/worldplayerbase/perception_fast.pyx":527
- *                         player_cache[cache_key] = last_visible
- *                         if last_visible:
- *                             visible_objects.add(obj)             # <<<<<<<<<<<<<<
- *                         else:
- *                             invisible_objects.add(obj)
+            /* "soundrts/worldplayerbase/perception_fast.pyx":548
+ *                     ivc_entry = ivc.get(ivc_key)
+ *                     if ivc_entry:
+ *                         last_bucket, last_visible = ivc_entry             # <<<<<<<<<<<<<<
+ *                         if time_bucket - last_bucket <= 2:
+ *                             player_cache[cache_key] = last_visible
 */
-              __pyx_t_20 = __pyx_v_visible_objects;
-              __Pyx_INCREF(__pyx_t_20);
-              __pyx_t_6 = 0;
-              {
-                PyObject *__pyx_callargs[2] = {__pyx_t_20, __pyx_v_obj};
-                __pyx_t_5 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_add, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-                __Pyx_XDECREF(__pyx_t_20); __pyx_t_20 = 0;
-                if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 527, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_5);
+            if ((likely(PyTuple_CheckExact(__pyx_v_ivc_entry))) || (PyList_CheckExact(__pyx_v_ivc_entry))) {
+              PyObject* sequence = __pyx_v_ivc_entry;
+              Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
+              if (unlikely(size != 2)) {
+                if (size > 2) __Pyx_RaiseTooManyValuesError(2);
+                else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
+                __PYX_ERR(0, 548, __pyx_L1_error)
               }
-              __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+              #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+              if (likely(PyTuple_CheckExact(sequence))) {
+                __pyx_t_5 = PyTuple_GET_ITEM(sequence, 0);
+                __Pyx_INCREF(__pyx_t_5);
+                __pyx_t_20 = PyTuple_GET_ITEM(sequence, 1);
+                __Pyx_INCREF(__pyx_t_20);
+              } else {
+                __pyx_t_5 = __Pyx_PyList_GET_ITEM_REF(sequence, 0, __Pyx_ReferenceSharing_SharedReference);
+                if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 548, __pyx_L1_error)
+                __Pyx_XGOTREF(__pyx_t_5);
+                __pyx_t_20 = __Pyx_PyList_GET_ITEM_REF(sequence, 1, __Pyx_ReferenceSharing_SharedReference);
+                if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 548, __pyx_L1_error)
+                __Pyx_XGOTREF(__pyx_t_20);
+              }
+              #else
+              __pyx_t_5 = __Pyx_PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 548, __pyx_L1_error)
+              __Pyx_GOTREF(__pyx_t_5);
+              __pyx_t_20 = __Pyx_PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 548, __pyx_L1_error)
+              __Pyx_GOTREF(__pyx_t_20);
+              #endif
+            } else {
+              Py_ssize_t index = -1;
+              __pyx_t_2 = PyObject_GetIter(__pyx_v_ivc_entry); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 548, __pyx_L1_error)
+              __Pyx_GOTREF(__pyx_t_2);
+              __pyx_t_18 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_2);
+              index = 0; __pyx_t_5 = __pyx_t_18(__pyx_t_2); if (unlikely(!__pyx_t_5)) goto __pyx_L70_unpacking_failed;
+              __Pyx_GOTREF(__pyx_t_5);
+              index = 1; __pyx_t_20 = __pyx_t_18(__pyx_t_2); if (unlikely(!__pyx_t_20)) goto __pyx_L70_unpacking_failed;
+              __Pyx_GOTREF(__pyx_t_20);
+              if (__Pyx_IternextUnpackEndCheck(__pyx_t_18(__pyx_t_2), 2) < (0)) __PYX_ERR(0, 548, __pyx_L1_error)
+              __pyx_t_18 = NULL;
+              __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+              goto __pyx_L71_unpacking_done;
+              __pyx_L70_unpacking_failed:;
+              __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+              __pyx_t_18 = NULL;
+              if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
+              __PYX_ERR(0, 548, __pyx_L1_error)
+              __pyx_L71_unpacking_done:;
+            }
+            __Pyx_XDECREF_SET(__pyx_v_last_bucket, __pyx_t_5);
+            __pyx_t_5 = 0;
+            __Pyx_XDECREF_SET(__pyx_v_last_visible, __pyx_t_20);
+            __pyx_t_20 = 0;
 
-              /* "soundrts/worldplayerbase/perception_fast.pyx":526
- *                     if time_bucket - last_bucket <= 2:
- *                         player_cache[cache_key] = last_visible
- *                         if last_visible:             # <<<<<<<<<<<<<<
- *                             visible_objects.add(obj)
- *                         else:
+            /* "soundrts/worldplayerbase/perception_fast.pyx":549
+ *                     if ivc_entry:
+ *                         last_bucket, last_visible = ivc_entry
+ *                         if time_bucket - last_bucket <= 2:             # <<<<<<<<<<<<<<
+ *                             player_cache[cache_key] = last_visible
+ *                             if last_visible:
 */
-              goto __pyx_L72;
+            __pyx_t_20 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 549, __pyx_L1_error)
+            __Pyx_GOTREF(__pyx_t_20);
+            __pyx_t_5 = __Pyx_PyNumber_Subtract_int_object(__pyx_t_20, __pyx_v_last_bucket); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 549, __pyx_L1_error)
+            __Pyx_GOTREF(__pyx_t_5);
+            __Pyx_DECREF(__pyx_t_20); __pyx_t_20 = 0;
+            __pyx_t_16 = __Pyx_PyObject_CompareBoolLe_object_int(__pyx_t_5, __pyx_mstate_global->__pyx_int_2, Py_LE); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 549, __pyx_L1_error)
+            __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+            if (__pyx_t_16) {
+
+
+              /* "soundrts/worldplayerbase/perception_fast.pyx":550
+ *                         last_bucket, last_visible = ivc_entry
+ *                         if time_bucket - last_bucket <= 2:
+ *                             player_cache[cache_key] = last_visible             # <<<<<<<<<<<<<<
+ *                             if last_visible:
+ *                                 visible_objects.add(obj)
+*/
+              if (unlikely((PyObject_SetItem(__pyx_v_player_cache, __pyx_v_cache_key, __pyx_v_last_visible) < 0))) __PYX_ERR(0, 550, __pyx_L1_error)
+
+              /* "soundrts/worldplayerbase/perception_fast.pyx":551
+ *                         if time_bucket - last_bucket <= 2:
+ *                             player_cache[cache_key] = last_visible
+ *                             if last_visible:             # <<<<<<<<<<<<<<
+ *                                 visible_objects.add(obj)
+ *                             else:
+*/
+              __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_v_last_visible); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 551, __pyx_L1_error)
+              if (__pyx_t_16) {
+
+
+                /* "soundrts/worldplayerbase/perception_fast.pyx":552
+ *                             player_cache[cache_key] = last_visible
+ *                             if last_visible:
+ *                                 visible_objects.add(obj)             # <<<<<<<<<<<<<<
+ *                             else:
+ *                                 invisible_objects.add(obj)
+*/
+                __pyx_t_20 = __pyx_v_visible_objects;
+                __Pyx_INCREF(__pyx_t_20);
+                __pyx_t_6 = 0;
+                {
+                  PyObject *__pyx_callargs[2] = {__pyx_t_20, __pyx_v_obj};
+                  __pyx_t_5 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_add, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+                  __Pyx_XDECREF(__pyx_t_20); __pyx_t_20 = 0;
+                  if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 552, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_5);
+                }
+                __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+
+                /* "soundrts/worldplayerbase/perception_fast.pyx":551
+ *                         if time_bucket - last_bucket <= 2:
+ *                             player_cache[cache_key] = last_visible
+ *                             if last_visible:             # <<<<<<<<<<<<<<
+ *                                 visible_objects.add(obj)
+ *                             else:
+*/
+                goto __pyx_L73;
+              }
+
+              /* "soundrts/worldplayerbase/perception_fast.pyx":554
+ *                                 visible_objects.add(obj)
+ *                             else:
+ *                                 invisible_objects.add(obj)             # <<<<<<<<<<<<<<
+ *                             continue
+ *                     player_cache[cache_key] = False
+*/
+              /*else*/ {
+                __pyx_t_20 = __pyx_v_invisible_objects;
+                __Pyx_INCREF(__pyx_t_20);
+                __pyx_t_6 = 0;
+                {
+                  PyObject *__pyx_callargs[2] = {__pyx_t_20, __pyx_v_obj};
+                  __pyx_t_5 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_add, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+                  __Pyx_XDECREF(__pyx_t_20); __pyx_t_20 = 0;
+                  if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 554, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_5);
+                }
+                __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+              }
+              __pyx_L73:;
+
+              /* "soundrts/worldplayerbase/perception_fast.pyx":555
+ *                             else:
+ *                                 invisible_objects.add(obj)
+ *                             continue             # <<<<<<<<<<<<<<
+ *                     player_cache[cache_key] = False
+ *                     invisible_objects.add(obj)
+*/
+              goto __pyx_L60_continue;
+
+              /* "soundrts/worldplayerbase/perception_fast.pyx":549
+ *                     if ivc_entry:
+ *                         last_bucket, last_visible = ivc_entry
+ *                         if time_bucket - last_bucket <= 2:             # <<<<<<<<<<<<<<
+ *                             player_cache[cache_key] = last_visible
+ *                             if last_visible:
+*/
             }
 
-            /* "soundrts/worldplayerbase/perception_fast.pyx":529
- *                             visible_objects.add(obj)
- *                         else:
- *                             invisible_objects.add(obj)             # <<<<<<<<<<<<<<
- *                         continue
- *                 player_cache[cache_key] = False
-*/
-            /*else*/ {
-              __pyx_t_20 = __pyx_v_invisible_objects;
-              __Pyx_INCREF(__pyx_t_20);
-              __pyx_t_6 = 0;
-              {
-                PyObject *__pyx_callargs[2] = {__pyx_t_20, __pyx_v_obj};
-                __pyx_t_5 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_add, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-                __Pyx_XDECREF(__pyx_t_20); __pyx_t_20 = 0;
-                if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 529, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_5);
-              }
-              __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-            }
-            __pyx_L72:;
-
-            /* "soundrts/worldplayerbase/perception_fast.pyx":530
- *                         else:
- *                             invisible_objects.add(obj)
- *                         continue             # <<<<<<<<<<<<<<
- *                 player_cache[cache_key] = False
- *                 invisible_objects.add(obj)
-*/
-            goto __pyx_L60_continue;
-
-            /* "soundrts/worldplayerbase/perception_fast.pyx":524
- *                 if ivc_entry:
- *                     last_bucket, last_visible = ivc_entry
- *                     if time_bucket - last_bucket <= 2:             # <<<<<<<<<<<<<<
- *                         player_cache[cache_key] = last_visible
- *                         if last_visible:
+            /* "soundrts/worldplayerbase/perception_fast.pyx":547
+ *                     ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))
+ *                     ivc_entry = ivc.get(ivc_key)
+ *                     if ivc_entry:             # <<<<<<<<<<<<<<
+ *                         last_bucket, last_visible = ivc_entry
+ *                         if time_bucket - last_bucket <= 2:
 */
           }
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":522
- *                 ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))
- *                 ivc_entry = ivc.get(ivc_key)
- *                 if ivc_entry:             # <<<<<<<<<<<<<<
- *                     last_bucket, last_visible = ivc_entry
- *                     if time_bucket - last_bucket <= 2:
+          /* "soundrts/worldplayerbase/perception_fast.pyx":556
+ *                                 invisible_objects.add(obj)
+ *                             continue
+ *                     player_cache[cache_key] = False             # <<<<<<<<<<<<<<
+ *                     invisible_objects.add(obj)
+ *                     continue
 */
-        }
+          if (unlikely((PyObject_SetItem(__pyx_v_player_cache, __pyx_v_cache_key, Py_False) < 0))) __PYX_ERR(0, 556, __pyx_L1_error)
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":531
- *                             invisible_objects.add(obj)
- *                         continue
- *                 player_cache[cache_key] = False             # <<<<<<<<<<<<<<
- *                 invisible_objects.add(obj)
- *                 continue
-*/
-        if (unlikely((PyObject_SetItem(__pyx_v_player_cache, __pyx_v_cache_key, Py_False) < 0))) __PYX_ERR(0, 531, __pyx_L1_error)
-
-        /* "soundrts/worldplayerbase/perception_fast.pyx":532
- *                         continue
- *                 player_cache[cache_key] = False
- *                 invisible_objects.add(obj)             # <<<<<<<<<<<<<<
- *                 continue
+          /* "soundrts/worldplayerbase/perception_fast.pyx":557
+ *                             continue
+ *                     player_cache[cache_key] = False
+ *                     invisible_objects.add(obj)             # <<<<<<<<<<<<<<
+ *                     continue
  * 
 */
-        __pyx_t_20 = __pyx_v_invisible_objects;
-        __Pyx_INCREF(__pyx_t_20);
-        __pyx_t_6 = 0;
-        {
-          PyObject *__pyx_callargs[2] = {__pyx_t_20, __pyx_v_obj};
-          __pyx_t_5 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_add, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-          __Pyx_XDECREF(__pyx_t_20); __pyx_t_20 = 0;
-          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 532, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_5);
-        }
-        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+          __pyx_t_20 = __pyx_v_invisible_objects;
+          __Pyx_INCREF(__pyx_t_20);
+          __pyx_t_6 = 0;
+          {
+            PyObject *__pyx_callargs[2] = {__pyx_t_20, __pyx_v_obj};
+            __pyx_t_5 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_add, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+            __Pyx_XDECREF(__pyx_t_20); __pyx_t_20 = 0;
+            if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 557, __pyx_L1_error)
+            __Pyx_GOTREF(__pyx_t_5);
+          }
+          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":533
- *                 player_cache[cache_key] = False
- *                 invisible_objects.add(obj)
- *                 continue             # <<<<<<<<<<<<<<
+          /* "soundrts/worldplayerbase/perception_fast.pyx":558
+ *                     player_cache[cache_key] = False
+ *                     invisible_objects.add(obj)
+ *                     continue             # <<<<<<<<<<<<<<
  * 
  *             if self.is_an_enemy(obj) and place not in self.observed_squares:
 */
-        goto __pyx_L60_continue;
+          goto __pyx_L60_continue;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":518
+          /* "soundrts/worldplayerbase/perception_fast.pyx":543
+ * 
+ *             if (getattr(obj, 'is_invisible', False) or getattr(obj, 'is_cloaked', False)) and obj not in self.detected_units:
+ *                 if not _is_detected_or_revealed(self, obj):             # <<<<<<<<<<<<<<
+ *                     ivc = caches.invis_visibility_cache
+ *                     ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))
+*/
+        }
+
+        /* "soundrts/worldplayerbase/perception_fast.pyx":542
  *             caches.vision_cache_misses += 1
  * 
  *             if (getattr(obj, 'is_invisible', False) or getattr(obj, 'is_cloaked', False)) and obj not in self.detected_units:             # <<<<<<<<<<<<<<
- *                 ivc = caches.invis_visibility_cache
- *                 ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))
+ *                 if not _is_detected_or_revealed(self, obj):
+ *                     ivc = caches.invis_visibility_cache
 */
       }
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":535
- *                 continue
+      /* "soundrts/worldplayerbase/perception_fast.pyx":560
+ *                     continue
  * 
  *             if self.is_an_enemy(obj) and place not in self.observed_squares:             # <<<<<<<<<<<<<<
  *                 player_cache[cache_key] = False
@@ -11791,40 +12023,40 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
         PyObject *__pyx_callargs[2] = {__pyx_t_20, __pyx_v_obj};
         __pyx_t_5 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_is_an_enemy, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
         __Pyx_XDECREF(__pyx_t_20); __pyx_t_20 = 0;
-        if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 535, __pyx_L1_error)
+        if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 560, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
       }
-      __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 535, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 560, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      if (__pyx_t_16) {
+      if (__pyx_t_7) {
 
       } else {
 
-        __pyx_t_7 = __pyx_t_16;
+        __pyx_t_16 = __pyx_t_7;
 
-        goto __pyx_L74_bool_binop_done;
+        goto __pyx_L75_bool_binop_done;
       }
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_observed_squares); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 535, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_observed_squares); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 560, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_16 = (__Pyx_PySequence_ContainsTF(__pyx_v_place, __pyx_t_5, Py_NE)); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 535, __pyx_L1_error)
+      __pyx_t_7 = (__Pyx_PySequence_ContainsTF(__pyx_v_place, __pyx_t_5, Py_NE)); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 560, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-      __pyx_t_7 = __pyx_t_16;
+      __pyx_t_16 = __pyx_t_7;
 
-      __pyx_L74_bool_binop_done:;
-      if (__pyx_t_7) {
+      __pyx_L75_bool_binop_done:;
+      if (__pyx_t_16) {
 
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":536
+        /* "soundrts/worldplayerbase/perception_fast.pyx":561
  * 
  *             if self.is_an_enemy(obj) and place not in self.observed_squares:
  *                 player_cache[cache_key] = False             # <<<<<<<<<<<<<<
  *                 invisible_objects.add(obj)
  *                 continue
 */
-        if (unlikely((PyObject_SetItem(__pyx_v_player_cache, __pyx_v_cache_key, Py_False) < 0))) __PYX_ERR(0, 536, __pyx_L1_error)
+        if (unlikely((PyObject_SetItem(__pyx_v_player_cache, __pyx_v_cache_key, Py_False) < 0))) __PYX_ERR(0, 561, __pyx_L1_error)
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":537
+        /* "soundrts/worldplayerbase/perception_fast.pyx":562
  *             if self.is_an_enemy(obj) and place not in self.observed_squares:
  *                 player_cache[cache_key] = False
  *                 invisible_objects.add(obj)             # <<<<<<<<<<<<<<
@@ -11838,12 +12070,12 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
           PyObject *__pyx_callargs[2] = {__pyx_t_20, __pyx_v_obj};
           __pyx_t_5 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_add, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
           __Pyx_XDECREF(__pyx_t_20); __pyx_t_20 = 0;
-          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 537, __pyx_L1_error)
+          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 562, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_5);
         }
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":538
+        /* "soundrts/worldplayerbase/perception_fast.pyx":563
  *                 player_cache[cache_key] = False
  *                 invisible_objects.add(obj)
  *                 continue             # <<<<<<<<<<<<<<
@@ -11852,8 +12084,8 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
         goto __pyx_L60_continue;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":535
- *                 continue
+        /* "soundrts/worldplayerbase/perception_fast.pyx":560
+ *                     continue
  * 
  *             if self.is_an_enemy(obj) and place not in self.observed_squares:             # <<<<<<<<<<<<<<
  *                 player_cache[cache_key] = False
@@ -11861,23 +12093,23 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
       }
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":540
+      /* "soundrts/worldplayerbase/perception_fast.pyx":565
  *                 continue
  * 
  *             x, y = obj.x, obj.y             # <<<<<<<<<<<<<<
  *             is_visible = False
  * 
 */
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_x); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 540, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_x); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 565, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_20 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_y); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 540, __pyx_L1_error)
+      __pyx_t_20 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_y); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 565, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_20);
       __Pyx_XDECREF_SET(__pyx_v_x, __pyx_t_5);
       __pyx_t_5 = 0;
       __Pyx_XDECREF_SET(__pyx_v_y, __pyx_t_20);
       __pyx_t_20 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":541
+      /* "soundrts/worldplayerbase/perception_fast.pyx":566
  * 
  *             x, y = obj.x, obj.y
  *             is_visible = False             # <<<<<<<<<<<<<<
@@ -11886,33 +12118,33 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
       __pyx_v_is_visible = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":543
+      /* "soundrts/worldplayerbase/perception_fast.pyx":568
  *             is_visible = False
  * 
  *             if not hasattr(cls, '_sight_range_squares'):             # <<<<<<<<<<<<<<
  *                 cls._sight_range_squares = {}
  * 
 */
-      __pyx_t_7 = __Pyx_HasAttr(__pyx_v_cls, __pyx_mstate_global->__pyx_n_u_sight_range_squares); if (unlikely(__pyx_t_7 == ((int)-1))) __PYX_ERR(0, 543, __pyx_L1_error)
-      __pyx_t_16 = (!__pyx_t_7);
+      __pyx_t_16 = __Pyx_HasAttr(__pyx_v_cls, __pyx_mstate_global->__pyx_n_u_sight_range_squares); if (unlikely(__pyx_t_16 == ((int)-1))) __PYX_ERR(0, 568, __pyx_L1_error)
+      __pyx_t_7 = (!__pyx_t_16);
 
 
-      if (__pyx_t_16) {
+      if (__pyx_t_7) {
 
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":544
+        /* "soundrts/worldplayerbase/perception_fast.pyx":569
  * 
  *             if not hasattr(cls, '_sight_range_squares'):
  *                 cls._sight_range_squares = {}             # <<<<<<<<<<<<<<
  * 
  *             units_to_check = covering_units if covering_units else all_nearby_units
 */
-        __pyx_t_20 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 544, __pyx_L1_error)
+        __pyx_t_20 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 569, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_20);
-        if (__Pyx_PyObject_SetAttrStr(__pyx_v_cls, __pyx_mstate_global->__pyx_n_u_sight_range_squares, __pyx_t_20) < (0)) __PYX_ERR(0, 544, __pyx_L1_error)
+        if (__Pyx_PyObject_SetAttrStr(__pyx_v_cls, __pyx_mstate_global->__pyx_n_u_sight_range_squares, __pyx_t_20) < (0)) __PYX_ERR(0, 569, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_20); __pyx_t_20 = 0;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":543
+        /* "soundrts/worldplayerbase/perception_fast.pyx":568
  *             is_visible = False
  * 
  *             if not hasattr(cls, '_sight_range_squares'):             # <<<<<<<<<<<<<<
@@ -11921,15 +12153,15 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
       }
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":546
+      /* "soundrts/worldplayerbase/perception_fast.pyx":571
  *                 cls._sight_range_squares = {}
  * 
  *             units_to_check = covering_units if covering_units else all_nearby_units             # <<<<<<<<<<<<<<
  *             checked = 0
  *             for unit in units_to_check:
 */
-      __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_v_covering_units); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 546, __pyx_L1_error)
-      if (__pyx_t_16) {
+      __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_v_covering_units); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 571, __pyx_L1_error)
+      if (__pyx_t_7) {
         __Pyx_INCREF(__pyx_v_covering_units);
         __pyx_t_20 = __pyx_v_covering_units;
       } else {
@@ -11940,7 +12172,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
       __Pyx_XDECREF_SET(__pyx_v_units_to_check, __pyx_t_20);
       __pyx_t_20 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":547
+      /* "soundrts/worldplayerbase/perception_fast.pyx":572
  * 
  *             units_to_check = covering_units if covering_units else all_nearby_units
  *             checked = 0             # <<<<<<<<<<<<<<
@@ -11949,7 +12181,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
       __pyx_v_checked = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":548
+      /* "soundrts/worldplayerbase/perception_fast.pyx":573
  *             units_to_check = covering_units if covering_units else all_nearby_units
  *             checked = 0
  *             for unit in units_to_check:             # <<<<<<<<<<<<<<
@@ -11961,9 +12193,9 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
         __pyx_t_17 = 0;
         __pyx_t_21 = NULL;
       } else {
-        __pyx_t_17 = -1; __pyx_t_20 = PyObject_GetIter(__pyx_v_units_to_check); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 548, __pyx_L1_error)
+        __pyx_t_17 = -1; __pyx_t_20 = PyObject_GetIter(__pyx_v_units_to_check); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 573, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_20);
-        __pyx_t_21 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_20); if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 548, __pyx_L1_error)
+        __pyx_t_21 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_20); if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 573, __pyx_L1_error)
       }
       for (;;) {
         if (likely(!__pyx_t_21)) {
@@ -11971,7 +12203,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
             {
               Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_20);
               #if !CYTHON_ASSUME_SAFE_SIZE
-              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 548, __pyx_L1_error)
+              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 573, __pyx_L1_error)
               #endif
               if (__pyx_t_17 >= __pyx_temp) break;
             }
@@ -11981,7 +12213,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
             {
               Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_20);
               #if !CYTHON_ASSUME_SAFE_SIZE
-              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 548, __pyx_L1_error)
+              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 573, __pyx_L1_error)
               #endif
               if (__pyx_t_17 >= __pyx_temp) break;
             }
@@ -11992,13 +12224,13 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
             #endif
             ++__pyx_t_17;
           }
-          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 548, __pyx_L1_error)
+          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 573, __pyx_L1_error)
         } else {
           __pyx_t_5 = __pyx_t_21(__pyx_t_20);
           if (unlikely(!__pyx_t_5)) {
             PyObject* exc_type = PyErr_Occurred();
             if (exc_type) {
-              if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 548, __pyx_L1_error)
+              if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 573, __pyx_L1_error)
               PyErr_Clear();
             }
             break;
@@ -12008,48 +12240,48 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
         __Pyx_XDECREF_SET(__pyx_v_unit, __pyx_t_5);
         __pyx_t_5 = 0;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":549
+        /* "soundrts/worldplayerbase/perception_fast.pyx":574
  *             checked = 0
  *             for unit in units_to_check:
  *                 sight_range = unit.sight_range             # <<<<<<<<<<<<<<
  *                 if sight_range not in cls._sight_range_squares:
  *                     cls._sight_range_squares[sight_range] = sight_range * sight_range
 */
-        __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_sight_range); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 549, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_sight_range); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 574, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __Pyx_XDECREF_SET(__pyx_v_sight_range, __pyx_t_5);
         __pyx_t_5 = 0;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":550
+        /* "soundrts/worldplayerbase/perception_fast.pyx":575
  *             for unit in units_to_check:
  *                 sight_range = unit.sight_range
  *                 if sight_range not in cls._sight_range_squares:             # <<<<<<<<<<<<<<
  *                     cls._sight_range_squares[sight_range] = sight_range * sight_range
  *                 radius2 = cls._sight_range_squares[sight_range]
 */
-        __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_cls, __pyx_mstate_global->__pyx_n_u_sight_range_squares); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 550, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_cls, __pyx_mstate_global->__pyx_n_u_sight_range_squares); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 575, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_16 = (__Pyx_PySequence_ContainsTF(__pyx_v_sight_range, __pyx_t_5, Py_NE)); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 550, __pyx_L1_error)
+        __pyx_t_7 = (__Pyx_PySequence_ContainsTF(__pyx_v_sight_range, __pyx_t_5, Py_NE)); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 575, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        if (__pyx_t_16) {
+        if (__pyx_t_7) {
 
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":551
+          /* "soundrts/worldplayerbase/perception_fast.pyx":576
  *                 sight_range = unit.sight_range
  *                 if sight_range not in cls._sight_range_squares:
  *                     cls._sight_range_squares[sight_range] = sight_range * sight_range             # <<<<<<<<<<<<<<
  *                 radius2 = cls._sight_range_squares[sight_range]
  * 
 */
-          __pyx_t_5 = __Pyx_PyNumber_Multiply_object_object(__pyx_v_sight_range, __pyx_v_sight_range); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 551, __pyx_L1_error)
+          __pyx_t_5 = __Pyx_PyNumber_Multiply_object_object(__pyx_v_sight_range, __pyx_v_sight_range); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 576, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_5);
-          __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_cls, __pyx_mstate_global->__pyx_n_u_sight_range_squares); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 551, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_cls, __pyx_mstate_global->__pyx_n_u_sight_range_squares); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 576, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
-          if (unlikely((PyObject_SetItem(__pyx_t_2, __pyx_v_sight_range, __pyx_t_5) < 0))) __PYX_ERR(0, 551, __pyx_L1_error)
+          if (unlikely((PyObject_SetItem(__pyx_t_2, __pyx_v_sight_range, __pyx_t_5) < 0))) __PYX_ERR(0, 576, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":550
+          /* "soundrts/worldplayerbase/perception_fast.pyx":575
  *             for unit in units_to_check:
  *                 sight_range = unit.sight_range
  *                 if sight_range not in cls._sight_range_squares:             # <<<<<<<<<<<<<<
@@ -12058,54 +12290,54 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
         }
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":552
+        /* "soundrts/worldplayerbase/perception_fast.pyx":577
  *                 if sight_range not in cls._sight_range_squares:
  *                     cls._sight_range_squares[sight_range] = sight_range * sight_range
  *                 radius2 = cls._sight_range_squares[sight_range]             # <<<<<<<<<<<<<<
  * 
  *                 dx = unit.x - x
 */
-        __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_cls, __pyx_mstate_global->__pyx_n_u_sight_range_squares); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 552, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_cls, __pyx_mstate_global->__pyx_n_u_sight_range_squares); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 577, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_t_5, __pyx_v_sight_range); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 552, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_t_5, __pyx_v_sight_range); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 577, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
         __Pyx_XDECREF_SET(__pyx_v_radius2, __pyx_t_2);
         __pyx_t_2 = 0;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":554
+        /* "soundrts/worldplayerbase/perception_fast.pyx":579
  *                 radius2 = cls._sight_range_squares[sight_range]
  * 
  *                 dx = unit.x - x             # <<<<<<<<<<<<<<
  *                 dy = unit.y - y
  *                 dist2 = dx * dx + dy * dy
 */
-        __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_x); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 554, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_x); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 579, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
-        __pyx_t_5 = __Pyx_PyNumber_Subtract_object_object(__pyx_t_2, __pyx_v_x); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 554, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyNumber_Subtract_object_object(__pyx_t_2, __pyx_v_x); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 579, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-        __pyx_t_3 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_5); if (unlikely((__pyx_t_3 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 554, __pyx_L1_error)
+        __pyx_t_3 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_5); if (unlikely((__pyx_t_3 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 579, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
         __pyx_v_dx = __pyx_t_3;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":555
+        /* "soundrts/worldplayerbase/perception_fast.pyx":580
  * 
  *                 dx = unit.x - x
  *                 dy = unit.y - y             # <<<<<<<<<<<<<<
  *                 dist2 = dx * dx + dy * dy
  * 
 */
-        __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_y); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 555, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_y); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 580, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_2 = __Pyx_PyNumber_Subtract_object_object(__pyx_t_5, __pyx_v_y); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 555, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyNumber_Subtract_object_object(__pyx_t_5, __pyx_v_y); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 580, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        __pyx_t_3 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_2); if (unlikely((__pyx_t_3 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 555, __pyx_L1_error)
+        __pyx_t_3 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_2); if (unlikely((__pyx_t_3 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 580, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __pyx_v_dy = __pyx_t_3;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":556
+        /* "soundrts/worldplayerbase/perception_fast.pyx":581
  *                 dx = unit.x - x
  *                 dy = unit.y - y
  *                 dist2 = dx * dx + dy * dy             # <<<<<<<<<<<<<<
@@ -12114,24 +12346,24 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
         __pyx_v_dist2 = ((__pyx_v_dx * __pyx_v_dx) + (__pyx_v_dy * __pyx_v_dy));
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":558
+        /* "soundrts/worldplayerbase/perception_fast.pyx":583
  *                 dist2 = dx * dx + dy * dy
  * 
  *                 if dist2 < radius2 / 4:             # <<<<<<<<<<<<<<
  *                     is_visible = True
  *                     break
 */
-        __pyx_t_2 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_dist2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 558, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_dist2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 583, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
-        __pyx_t_5 = __Pyx_PyLong_TrueDivideObjC(__pyx_v_radius2, __pyx_mstate_global->__pyx_int_4, 4, 0, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 558, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyLong_TrueDivideObjC(__pyx_v_radius2, __pyx_mstate_global->__pyx_int_4, 4, 0, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 583, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_16 = __Pyx_PyObject_CompareBoolLt_int_object(__pyx_t_2, __pyx_t_5, Py_LT); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 558, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyObject_CompareBoolLt_int_object(__pyx_t_2, __pyx_t_5, Py_LT); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 583, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        if (__pyx_t_16) {
+        if (__pyx_t_7) {
 
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":559
+          /* "soundrts/worldplayerbase/perception_fast.pyx":584
  * 
  *                 if dist2 < radius2 / 4:
  *                     is_visible = True             # <<<<<<<<<<<<<<
@@ -12140,16 +12372,16 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
           __pyx_v_is_visible = 1;
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":560
+          /* "soundrts/worldplayerbase/perception_fast.pyx":585
  *                 if dist2 < radius2 / 4:
  *                     is_visible = True
  *                     break             # <<<<<<<<<<<<<<
  * 
  *                 if dist2 < radius2:
 */
-          goto __pyx_L78_break;
+          goto __pyx_L79_break;
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":558
+          /* "soundrts/worldplayerbase/perception_fast.pyx":583
  *                 dist2 = dx * dx + dy * dy
  * 
  *                 if dist2 < radius2 / 4:             # <<<<<<<<<<<<<<
@@ -12158,85 +12390,85 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
         }
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":562
+        /* "soundrts/worldplayerbase/perception_fast.pyx":587
  *                     break
  * 
  *                 if dist2 < radius2:             # <<<<<<<<<<<<<<
  *                     observed_key = (unit.id, time_bucket)
  *                     observed_squares = getattr(unit, '_cached_observed_squares', None)
 */
-        __pyx_t_5 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_dist2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 562, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_dist2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 587, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_16 = __Pyx_PyObject_CompareBoolLt_int_object(__pyx_t_5, __pyx_v_radius2, Py_LT); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 562, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyObject_CompareBoolLt_int_object(__pyx_t_5, __pyx_v_radius2, Py_LT); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 587, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        if (__pyx_t_16) {
+        if (__pyx_t_7) {
 
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":563
+          /* "soundrts/worldplayerbase/perception_fast.pyx":588
  * 
  *                 if dist2 < radius2:
  *                     observed_key = (unit.id, time_bucket)             # <<<<<<<<<<<<<<
  *                     observed_squares = getattr(unit, '_cached_observed_squares', None)
  *                     if observed_squares is None or getattr(unit, '_cached_observed_time', 0) != time_bucket:
 */
-          __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 563, __pyx_L1_error)
+          __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 588, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_5);
-          __pyx_t_2 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 563, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 588, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
-          __pyx_t_15 = PyTuple_New(2); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 563, __pyx_L1_error)
+          __pyx_t_15 = PyTuple_New(2); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 588, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_15);
           __Pyx_GIVEREF(__pyx_t_5);
-          if (__Pyx_PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_t_5) != (0)) __PYX_ERR(0, 563, __pyx_L1_error);
+          if (__Pyx_PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_t_5) != (0)) __PYX_ERR(0, 588, __pyx_L1_error);
           __Pyx_GIVEREF(__pyx_t_2);
-          if (__Pyx_PyTuple_SET_ITEM(__pyx_t_15, 1, __pyx_t_2) != (0)) __PYX_ERR(0, 563, __pyx_L1_error);
+          if (__Pyx_PyTuple_SET_ITEM(__pyx_t_15, 1, __pyx_t_2) != (0)) __PYX_ERR(0, 588, __pyx_L1_error);
           __pyx_t_5 = 0;
           __pyx_t_2 = 0;
           __Pyx_XDECREF_SET(__pyx_v_observed_key, __pyx_t_15);
           __pyx_t_15 = 0;
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":564
+          /* "soundrts/worldplayerbase/perception_fast.pyx":589
  *                 if dist2 < radius2:
  *                     observed_key = (unit.id, time_bucket)
  *                     observed_squares = getattr(unit, '_cached_observed_squares', None)             # <<<<<<<<<<<<<<
  *                     if observed_squares is None or getattr(unit, '_cached_observed_time', 0) != time_bucket:
  *                         observed_squares = set(unit.get_observed_squares())
 */
-          __pyx_t_15 = __Pyx_GetAttr3(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_cached_observed_squares, Py_None); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 564, __pyx_L1_error)
+          __pyx_t_15 = __Pyx_GetAttr3(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_cached_observed_squares, Py_None); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 589, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_15);
           __Pyx_XDECREF_SET(__pyx_v_observed_squares, __pyx_t_15);
           __pyx_t_15 = 0;
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":565
+          /* "soundrts/worldplayerbase/perception_fast.pyx":590
  *                     observed_key = (unit.id, time_bucket)
  *                     observed_squares = getattr(unit, '_cached_observed_squares', None)
  *                     if observed_squares is None or getattr(unit, '_cached_observed_time', 0) != time_bucket:             # <<<<<<<<<<<<<<
  *                         observed_squares = set(unit.get_observed_squares())
  *                         unit._cached_observed_squares = observed_squares
 */
-          __pyx_t_7 = (__pyx_v_observed_squares == Py_None);
-          if (!__pyx_t_7) {
+          __pyx_t_16 = (__pyx_v_observed_squares == Py_None);
+          if (!__pyx_t_16) {
 
           } else {
 
-            __pyx_t_16 = __pyx_t_7;
+            __pyx_t_7 = __pyx_t_16;
 
-            goto __pyx_L83_bool_binop_done;
+            goto __pyx_L84_bool_binop_done;
           }
-          __pyx_t_15 = __Pyx_GetAttr3(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_cached_observed_time, __pyx_mstate_global->__pyx_int_0); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 565, __pyx_L1_error)
+          __pyx_t_15 = __Pyx_GetAttr3(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_cached_observed_time, __pyx_mstate_global->__pyx_int_0); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 590, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_15);
-          __pyx_t_2 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 565, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 590, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
-          __pyx_t_7 = __Pyx_PyObject_CompareBoolNe_object_int(__pyx_t_15, __pyx_t_2, Py_NE); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 565, __pyx_L1_error)
+          __pyx_t_16 = __Pyx_PyObject_CompareBoolNe_object_int(__pyx_t_15, __pyx_t_2, Py_NE); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 590, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-          __pyx_t_16 = __pyx_t_7;
+          __pyx_t_7 = __pyx_t_16;
 
-          __pyx_L83_bool_binop_done:;
-          if (__pyx_t_16) {
+          __pyx_L84_bool_binop_done:;
+          if (__pyx_t_7) {
 
 
-            /* "soundrts/worldplayerbase/perception_fast.pyx":566
+            /* "soundrts/worldplayerbase/perception_fast.pyx":591
  *                     observed_squares = getattr(unit, '_cached_observed_squares', None)
  *                     if observed_squares is None or getattr(unit, '_cached_observed_time', 0) != time_bucket:
  *                         observed_squares = set(unit.get_observed_squares())             # <<<<<<<<<<<<<<
@@ -12250,37 +12482,37 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
               PyObject *__pyx_callargs[2] = {__pyx_t_15, NULL};
               __pyx_t_2 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_get_observed_squares, __pyx_callargs+__pyx_t_6, (1-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
               __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
-              if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 566, __pyx_L1_error)
+              if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 591, __pyx_L1_error)
               __Pyx_GOTREF(__pyx_t_2);
             }
-            __pyx_t_15 = PySet_New(__pyx_t_2); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 566, __pyx_L1_error)
+            __pyx_t_15 = PySet_New(__pyx_t_2); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 591, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_15);
             __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
             __Pyx_DECREF_SET(__pyx_v_observed_squares, __pyx_t_15);
             __pyx_t_15 = 0;
 
-            /* "soundrts/worldplayerbase/perception_fast.pyx":567
+            /* "soundrts/worldplayerbase/perception_fast.pyx":592
  *                     if observed_squares is None or getattr(unit, '_cached_observed_time', 0) != time_bucket:
  *                         observed_squares = set(unit.get_observed_squares())
  *                         unit._cached_observed_squares = observed_squares             # <<<<<<<<<<<<<<
  *                         unit._cached_observed_time = time_bucket
  *                     if place in observed_squares:
 */
-            if (__Pyx_PyObject_SetAttrStr(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_cached_observed_squares, __pyx_v_observed_squares) < (0)) __PYX_ERR(0, 567, __pyx_L1_error)
+            if (__Pyx_PyObject_SetAttrStr(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_cached_observed_squares, __pyx_v_observed_squares) < (0)) __PYX_ERR(0, 592, __pyx_L1_error)
 
-            /* "soundrts/worldplayerbase/perception_fast.pyx":568
+            /* "soundrts/worldplayerbase/perception_fast.pyx":593
  *                         observed_squares = set(unit.get_observed_squares())
  *                         unit._cached_observed_squares = observed_squares
  *                         unit._cached_observed_time = time_bucket             # <<<<<<<<<<<<<<
  *                     if place in observed_squares:
  *                         is_visible = True
 */
-            __pyx_t_15 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 568, __pyx_L1_error)
+            __pyx_t_15 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 593, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_15);
-            if (__Pyx_PyObject_SetAttrStr(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_cached_observed_time, __pyx_t_15) < (0)) __PYX_ERR(0, 568, __pyx_L1_error)
+            if (__Pyx_PyObject_SetAttrStr(__pyx_v_unit, __pyx_mstate_global->__pyx_n_u_cached_observed_time, __pyx_t_15) < (0)) __PYX_ERR(0, 593, __pyx_L1_error)
             __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
 
-            /* "soundrts/worldplayerbase/perception_fast.pyx":565
+            /* "soundrts/worldplayerbase/perception_fast.pyx":590
  *                     observed_key = (unit.id, time_bucket)
  *                     observed_squares = getattr(unit, '_cached_observed_squares', None)
  *                     if observed_squares is None or getattr(unit, '_cached_observed_time', 0) != time_bucket:             # <<<<<<<<<<<<<<
@@ -12289,18 +12521,18 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
           }
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":569
+          /* "soundrts/worldplayerbase/perception_fast.pyx":594
  *                         unit._cached_observed_squares = observed_squares
  *                         unit._cached_observed_time = time_bucket
  *                     if place in observed_squares:             # <<<<<<<<<<<<<<
  *                         is_visible = True
  *                         break
 */
-          __pyx_t_16 = (__Pyx_PySequence_ContainsTF(__pyx_v_place, __pyx_v_observed_squares, Py_EQ)); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 569, __pyx_L1_error)
-          if (__pyx_t_16) {
+          __pyx_t_7 = (__Pyx_PySequence_ContainsTF(__pyx_v_place, __pyx_v_observed_squares, Py_EQ)); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 594, __pyx_L1_error)
+          if (__pyx_t_7) {
 
 
-            /* "soundrts/worldplayerbase/perception_fast.pyx":570
+            /* "soundrts/worldplayerbase/perception_fast.pyx":595
  *                         unit._cached_observed_time = time_bucket
  *                     if place in observed_squares:
  *                         is_visible = True             # <<<<<<<<<<<<<<
@@ -12309,16 +12541,16 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
             __pyx_v_is_visible = 1;
 
-            /* "soundrts/worldplayerbase/perception_fast.pyx":571
+            /* "soundrts/worldplayerbase/perception_fast.pyx":596
  *                     if place in observed_squares:
  *                         is_visible = True
  *                         break             # <<<<<<<<<<<<<<
  *                 checked += 1
  *                 if checked >= 4:
 */
-            goto __pyx_L78_break;
+            goto __pyx_L79_break;
 
-            /* "soundrts/worldplayerbase/perception_fast.pyx":569
+            /* "soundrts/worldplayerbase/perception_fast.pyx":594
  *                         unit._cached_observed_squares = observed_squares
  *                         unit._cached_observed_time = time_bucket
  *                     if place in observed_squares:             # <<<<<<<<<<<<<<
@@ -12327,7 +12559,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
           }
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":562
+          /* "soundrts/worldplayerbase/perception_fast.pyx":587
  *                     break
  * 
  *                 if dist2 < radius2:             # <<<<<<<<<<<<<<
@@ -12336,7 +12568,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
         }
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":572
+        /* "soundrts/worldplayerbase/perception_fast.pyx":597
  *                         is_visible = True
  *                         break
  *                 checked += 1             # <<<<<<<<<<<<<<
@@ -12345,28 +12577,28 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
         __pyx_v_checked = (__pyx_v_checked + 1);
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":573
+        /* "soundrts/worldplayerbase/perception_fast.pyx":598
  *                         break
  *                 checked += 1
  *                 if checked >= 4:             # <<<<<<<<<<<<<<
  *                     break
  * 
 */
-        __pyx_t_16 = (__pyx_v_checked >= 4);
+        __pyx_t_7 = (__pyx_v_checked >= 4);
 
-        if (__pyx_t_16) {
+        if (__pyx_t_7) {
 
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":574
+          /* "soundrts/worldplayerbase/perception_fast.pyx":599
  *                 checked += 1
  *                 if checked >= 4:
  *                     break             # <<<<<<<<<<<<<<
  * 
  *             player_cache[cache_key] = is_visible
 */
-          goto __pyx_L78_break;
+          goto __pyx_L79_break;
 
-          /* "soundrts/worldplayerbase/perception_fast.pyx":573
+          /* "soundrts/worldplayerbase/perception_fast.pyx":598
  *                         break
  *                 checked += 1
  *                 if checked >= 4:             # <<<<<<<<<<<<<<
@@ -12375,7 +12607,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
         }
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":548
+        /* "soundrts/worldplayerbase/perception_fast.pyx":573
  *             units_to_check = covering_units if covering_units else all_nearby_units
  *             checked = 0
  *             for unit in units_to_check:             # <<<<<<<<<<<<<<
@@ -12384,74 +12616,74 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
       }
       __Pyx_DECREF(__pyx_t_20); __pyx_t_20 = 0;
-      goto __pyx_L87_for_end;
-      __pyx_L78_break:;
+      goto __pyx_L88_for_end;
+      __pyx_L79_break:;
       __Pyx_DECREF(__pyx_t_20); __pyx_t_20 = 0;
-      goto __pyx_L87_for_end;
-      __pyx_L87_for_end:;
+      goto __pyx_L88_for_end;
+      __pyx_L88_for_end:;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":576
+      /* "soundrts/worldplayerbase/perception_fast.pyx":601
  *                     break
  * 
  *             player_cache[cache_key] = is_visible             # <<<<<<<<<<<<<<
  *             if getattr(obj, 'is_invisible', False) or getattr(obj, 'is_cloaked', False):
  *                 ivc = caches.invis_visibility_cache
 */
-      __pyx_t_20 = __Pyx_PyBool_FromLong(__pyx_v_is_visible); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 576, __pyx_L1_error)
+      __pyx_t_20 = __Pyx_PyBool_FromLong(__pyx_v_is_visible); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 601, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_20);
-      if (unlikely((PyObject_SetItem(__pyx_v_player_cache, __pyx_v_cache_key, __pyx_t_20) < 0))) __PYX_ERR(0, 576, __pyx_L1_error)
+      if (unlikely((PyObject_SetItem(__pyx_v_player_cache, __pyx_v_cache_key, __pyx_t_20) < 0))) __PYX_ERR(0, 601, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_20); __pyx_t_20 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":577
+      /* "soundrts/worldplayerbase/perception_fast.pyx":602
  * 
  *             player_cache[cache_key] = is_visible
  *             if getattr(obj, 'is_invisible', False) or getattr(obj, 'is_cloaked', False):             # <<<<<<<<<<<<<<
  *                 ivc = caches.invis_visibility_cache
  *                 ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))
 */
-      __pyx_t_20 = __Pyx_GetAttr3(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_is_invisible, Py_False); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 577, __pyx_L1_error)
+      __pyx_t_20 = __Pyx_GetAttr3(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_is_invisible, Py_False); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 602, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_20);
-      __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_20); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 577, __pyx_L1_error)
+      __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_t_20); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 602, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_20); __pyx_t_20 = 0;
-      if (!__pyx_t_7) {
+      if (!__pyx_t_16) {
 
       } else {
 
-        __pyx_t_16 = __pyx_t_7;
+        __pyx_t_7 = __pyx_t_16;
 
-        goto __pyx_L89_bool_binop_done;
+        goto __pyx_L90_bool_binop_done;
       }
-      __pyx_t_20 = __Pyx_GetAttr3(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_is_cloaked, Py_False); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 577, __pyx_L1_error)
+      __pyx_t_20 = __Pyx_GetAttr3(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_is_cloaked, Py_False); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 602, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_20);
-      __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_20); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 577, __pyx_L1_error)
+      __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_t_20); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 602, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_20); __pyx_t_20 = 0;
 
-      __pyx_t_16 = __pyx_t_7;
+      __pyx_t_7 = __pyx_t_16;
 
-      __pyx_L89_bool_binop_done:;
-      if (__pyx_t_16) {
+      __pyx_L90_bool_binop_done:;
+      if (__pyx_t_7) {
 
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":578
+        /* "soundrts/worldplayerbase/perception_fast.pyx":603
  *             player_cache[cache_key] = is_visible
  *             if getattr(obj, 'is_invisible', False) or getattr(obj, 'is_cloaked', False):
  *                 ivc = caches.invis_visibility_cache             # <<<<<<<<<<<<<<
  *                 ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))
  *                 ivc[ivc_key] = (time_bucket, is_visible)
 */
-        __pyx_t_20 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_invis_visibility_cache); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 578, __pyx_L1_error)
+        __pyx_t_20 = __Pyx_PyObject_GetAttrStr(__pyx_v_caches, __pyx_mstate_global->__pyx_n_u_invis_visibility_cache); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 603, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_20);
         __Pyx_XDECREF_SET(__pyx_v_ivc, __pyx_t_20);
         __pyx_t_20 = 0;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":579
+        /* "soundrts/worldplayerbase/perception_fast.pyx":604
  *             if getattr(obj, 'is_invisible', False) or getattr(obj, 'is_cloaked', False):
  *                 ivc = caches.invis_visibility_cache
  *                 ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))             # <<<<<<<<<<<<<<
  *                 ivc[ivc_key] = (time_bucket, is_visible)
  *             if is_visible:
 */
-        __pyx_t_20 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 579, __pyx_L1_error)
+        __pyx_t_20 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 604, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_20);
         __pyx_t_2 = NULL;
         __pyx_t_6 = 1;
@@ -12459,10 +12691,10 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
           PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_v_place};
           __pyx_t_15 = __Pyx_PyObject_FastCall((PyObject*)__pyx_builtin_id, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (__pyx_t_6*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
           __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-          if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 579, __pyx_L1_error)
+          if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 604, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_15);
         }
-        __pyx_t_2 = __Pyx_GetAttr3(__pyx_v_place, __pyx_mstate_global->__pyx_n_u_id, __pyx_t_15); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 579, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_GetAttr3(__pyx_v_place, __pyx_mstate_global->__pyx_n_u_id, __pyx_t_15); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 604, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
         __pyx_t_5 = NULL;
@@ -12471,49 +12703,49 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
           PyObject *__pyx_callargs[2] = {__pyx_t_5, __pyx_v_obj};
           __pyx_t_15 = __Pyx_PyObject_FastCall((PyObject*)__pyx_builtin_id, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (__pyx_t_6*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
           __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-          if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 579, __pyx_L1_error)
+          if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 604, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_15);
         }
-        __pyx_t_5 = __Pyx_GetAttr3(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_id, __pyx_t_15); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 579, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_GetAttr3(__pyx_v_obj, __pyx_mstate_global->__pyx_n_u_id, __pyx_t_15); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 604, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-        __pyx_t_15 = PyTuple_New(3); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 579, __pyx_L1_error)
+        __pyx_t_15 = PyTuple_New(3); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 604, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_15);
         __Pyx_GIVEREF(__pyx_t_20);
-        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_t_20) != (0)) __PYX_ERR(0, 579, __pyx_L1_error);
+        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_t_20) != (0)) __PYX_ERR(0, 604, __pyx_L1_error);
         __Pyx_GIVEREF(__pyx_t_2);
-        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_15, 1, __pyx_t_2) != (0)) __PYX_ERR(0, 579, __pyx_L1_error);
+        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_15, 1, __pyx_t_2) != (0)) __PYX_ERR(0, 604, __pyx_L1_error);
         __Pyx_GIVEREF(__pyx_t_5);
-        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_15, 2, __pyx_t_5) != (0)) __PYX_ERR(0, 579, __pyx_L1_error);
+        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_15, 2, __pyx_t_5) != (0)) __PYX_ERR(0, 604, __pyx_L1_error);
         __pyx_t_20 = 0;
         __pyx_t_2 = 0;
         __pyx_t_5 = 0;
         __Pyx_XDECREF_SET(__pyx_v_ivc_key, __pyx_t_15);
         __pyx_t_15 = 0;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":580
+        /* "soundrts/worldplayerbase/perception_fast.pyx":605
  *                 ivc = caches.invis_visibility_cache
  *                 ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))
  *                 ivc[ivc_key] = (time_bucket, is_visible)             # <<<<<<<<<<<<<<
  *             if is_visible:
  *                 visible_objects.add(obj)
 */
-        __pyx_t_15 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 580, __pyx_L1_error)
+        __pyx_t_15 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_v_time_bucket); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 605, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_15);
-        __pyx_t_5 = __Pyx_PyBool_FromLong(__pyx_v_is_visible); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 580, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyBool_FromLong(__pyx_v_is_visible); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 605, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 580, __pyx_L1_error)
+        __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 605, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_GIVEREF(__pyx_t_15);
-        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_15) != (0)) __PYX_ERR(0, 580, __pyx_L1_error);
+        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_15) != (0)) __PYX_ERR(0, 605, __pyx_L1_error);
         __Pyx_GIVEREF(__pyx_t_5);
-        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_5) != (0)) __PYX_ERR(0, 580, __pyx_L1_error);
+        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_5) != (0)) __PYX_ERR(0, 605, __pyx_L1_error);
         __pyx_t_15 = 0;
         __pyx_t_5 = 0;
-        if (unlikely((PyObject_SetItem(__pyx_v_ivc, __pyx_v_ivc_key, __pyx_t_2) < 0))) __PYX_ERR(0, 580, __pyx_L1_error)
+        if (unlikely((PyObject_SetItem(__pyx_v_ivc, __pyx_v_ivc_key, __pyx_t_2) < 0))) __PYX_ERR(0, 605, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":577
+        /* "soundrts/worldplayerbase/perception_fast.pyx":602
  * 
  *             player_cache[cache_key] = is_visible
  *             if getattr(obj, 'is_invisible', False) or getattr(obj, 'is_cloaked', False):             # <<<<<<<<<<<<<<
@@ -12522,7 +12754,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
       }
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":581
+      /* "soundrts/worldplayerbase/perception_fast.pyx":606
  *                 ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))
  *                 ivc[ivc_key] = (time_bucket, is_visible)
  *             if is_visible:             # <<<<<<<<<<<<<<
@@ -12531,7 +12763,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
 */
       if (__pyx_v_is_visible) {
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":582
+        /* "soundrts/worldplayerbase/perception_fast.pyx":607
  *                 ivc[ivc_key] = (time_bucket, is_visible)
  *             if is_visible:
  *                 visible_objects.add(obj)             # <<<<<<<<<<<<<<
@@ -12545,22 +12777,22 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
           PyObject *__pyx_callargs[2] = {__pyx_t_5, __pyx_v_obj};
           __pyx_t_2 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_add, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
           __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 582, __pyx_L1_error)
+          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 607, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
         }
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":581
+        /* "soundrts/worldplayerbase/perception_fast.pyx":606
  *                 ivc_key = (self.id, getattr(place, 'id', id(place)), getattr(obj, 'id', id(obj)))
  *                 ivc[ivc_key] = (time_bucket, is_visible)
  *             if is_visible:             # <<<<<<<<<<<<<<
  *                 visible_objects.add(obj)
  *             else:
 */
-        goto __pyx_L91;
+        goto __pyx_L92;
       }
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":584
+      /* "soundrts/worldplayerbase/perception_fast.pyx":609
  *                 visible_objects.add(obj)
  *             else:
  *                 invisible_objects.add(obj)             # <<<<<<<<<<<<<<
@@ -12575,14 +12807,14 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
           PyObject *__pyx_callargs[2] = {__pyx_t_5, __pyx_v_obj};
           __pyx_t_2 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_add, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
           __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 584, __pyx_L1_error)
+          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 609, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
         }
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       }
-      __pyx_L91:;
+      __pyx_L92:;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":505
+      /* "soundrts/worldplayerbase/perception_fast.pyx":529
  *         caches.place_visible_history[history_key] = (time_bucket, cov_ids, place_visible_for_any)
  * 
  *         for obj in place_objects:             # <<<<<<<<<<<<<<
@@ -12596,21 +12828,21 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
   }
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":586
+  /* "soundrts/worldplayerbase/perception_fast.pyx":611
  *                 invisible_objects.add(obj)
  * 
  *     return visible_objects, invisible_objects             # <<<<<<<<<<<<<<
  * 
  * 
 */
-  __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 586, __pyx_L1_error)
+  __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 611, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_INCREF(__pyx_v_visible_objects);
   __Pyx_GIVEREF(__pyx_v_visible_objects);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_v_visible_objects) != (0)) __PYX_ERR(0, 586, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_v_visible_objects) != (0)) __PYX_ERR(0, 611, __pyx_L1_error);
   __Pyx_INCREF(__pyx_v_invisible_objects);
   __Pyx_GIVEREF(__pyx_v_invisible_objects);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_v_invisible_objects) != (0)) __PYX_ERR(0, 586, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_v_invisible_objects) != (0)) __PYX_ERR(0, 611, __pyx_L1_error);
   {
     PyObject *__pyx_temp;
     {
@@ -12622,7 +12854,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visi
   __pyx_t_4 = 0;
   goto __pyx_L0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":375
+  /* "soundrts/worldplayerbase/perception_fast.pyx":399
  * # Python fallback: perception._py_bulk_visibility_check (byte-exact ).
  * 
  * cpdef tuple bulk_visibility_check(self, objects):             # <<<<<<<<<<<<<<
@@ -12736,39 +12968,39 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_self,&__pyx_mstate_global->__pyx_n_u_objects,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 375, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 399, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 375, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 399, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 375, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 399, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "bulk_visibility_check", 0) < (0)) __PYX_ERR(0, 375, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "bulk_visibility_check", 0) < (0)) __PYX_ERR(0, 399, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 2; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("bulk_visibility_check", 1, 2, 2, i); __PYX_ERR(0, 375, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("bulk_visibility_check", 1, 2, 2, i); __PYX_ERR(0, 399, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 375, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 399, __pyx_L3_error)
       values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 375, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 399, __pyx_L3_error)
     }
     __pyx_v_self = values[0];
     __pyx_v_objects = values[1];
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("bulk_visibility_check", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 375, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("bulk_visibility_check", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 399, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -12797,7 +13029,7 @@ static PyObject *__pyx_pf_8soundrts_15worldplayerbase_15perception_fast_22bulk_v
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("bulk_visibility_check", 0);
-  __pyx_t_1 = __pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visibility_check(__pyx_v_self, __pyx_v_objects, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 375, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_8soundrts_15worldplayerbase_15perception_fast_bulk_visibility_check(__pyx_v_self, __pyx_v_objects, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 399, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   {
     PyObject *__pyx_temp;
@@ -12821,7 +13053,7 @@ static PyObject *__pyx_pf_8soundrts_15worldplayerbase_15perception_fast_22bulk_v
   return __pyx_r;
 }
 
-/* "soundrts/worldplayerbase/perception_fast.pyx":589
+/* "soundrts/worldplayerbase/perception_fast.pyx":614
  * 
  * 
  * cpdef tuple build_enemy_place_menace(object perceived, object enemy_player_ids):             # <<<<<<<<<<<<<<
@@ -12859,31 +13091,31 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_ene
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("build_enemy_place_menace", 0);
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":595
+  /* "soundrts/worldplayerbase/perception_fast.pyx":620
  *     one Python attribute indirection per unit (hot on cw1 10min profiles).
  *     """
  *     cdef dict place_enemy_menace = {}             # <<<<<<<<<<<<<<
  *     cdef list enemy_presence_places = []
  *     cdef object o, p, pl, men, current_sum, pid
 */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 595, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 620, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_place_enemy_menace = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":596
+  /* "soundrts/worldplayerbase/perception_fast.pyx":621
  *     """
  *     cdef dict place_enemy_menace = {}
  *     cdef list enemy_presence_places = []             # <<<<<<<<<<<<<<
  *     cdef object o, p, pl, men, current_sum, pid
  *     for o in perceived:
 */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 596, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 621, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_enemy_presence_places = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":598
+  /* "soundrts/worldplayerbase/perception_fast.pyx":623
  *     cdef list enemy_presence_places = []
  *     cdef object o, p, pl, men, current_sum, pid
  *     for o in perceived:             # <<<<<<<<<<<<<<
@@ -12895,9 +13127,9 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_ene
     __pyx_t_2 = 0;
     __pyx_t_3 = NULL;
   } else {
-    __pyx_t_2 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_perceived); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 598, __pyx_L1_error)
+    __pyx_t_2 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_perceived); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 623, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_3 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 598, __pyx_L1_error)
+    __pyx_t_3 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 623, __pyx_L1_error)
   }
   for (;;) {
     if (likely(!__pyx_t_3)) {
@@ -12905,7 +13137,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_ene
         {
           Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_1);
           #if !CYTHON_ASSUME_SAFE_SIZE
-          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 598, __pyx_L1_error)
+          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 623, __pyx_L1_error)
           #endif
           if (__pyx_t_2 >= __pyx_temp) break;
         }
@@ -12915,7 +13147,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_ene
         {
           Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_1);
           #if !CYTHON_ASSUME_SAFE_SIZE
-          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 598, __pyx_L1_error)
+          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 623, __pyx_L1_error)
           #endif
           if (__pyx_t_2 >= __pyx_temp) break;
         }
@@ -12926,13 +13158,13 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_ene
         #endif
         ++__pyx_t_2;
       }
-      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 598, __pyx_L1_error)
+      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 623, __pyx_L1_error)
     } else {
       __pyx_t_4 = __pyx_t_3(__pyx_t_1);
       if (unlikely(!__pyx_t_4)) {
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
-          if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 598, __pyx_L1_error)
+          if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 623, __pyx_L1_error)
           PyErr_Clear();
         }
         break;
@@ -12942,19 +13174,19 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_ene
     __Pyx_XDECREF_SET(__pyx_v_o, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":599
+    /* "soundrts/worldplayerbase/perception_fast.pyx":624
  *     cdef object o, p, pl, men, current_sum, pid
  *     for o in perceived:
  *         p = o.player             # <<<<<<<<<<<<<<
  *         if p is None:
  *             continue
 */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_player); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 599, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_player); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 624, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_XDECREF_SET(__pyx_v_p, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":600
+    /* "soundrts/worldplayerbase/perception_fast.pyx":625
  *     for o in perceived:
  *         p = o.player
  *         if p is None:             # <<<<<<<<<<<<<<
@@ -12965,7 +13197,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_ene
     if (__pyx_t_5) {
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":601
+      /* "soundrts/worldplayerbase/perception_fast.pyx":626
  *         p = o.player
  *         if p is None:
  *             continue             # <<<<<<<<<<<<<<
@@ -12974,7 +13206,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_ene
 */
       goto __pyx_L3_continue;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":600
+      /* "soundrts/worldplayerbase/perception_fast.pyx":625
  *     for o in perceived:
  *         p = o.player
  *         if p is None:             # <<<<<<<<<<<<<<
@@ -12983,19 +13215,19 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_ene
 */
     }
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":602
+    /* "soundrts/worldplayerbase/perception_fast.pyx":627
  *         if p is None:
  *             continue
  *         pl = o.place             # <<<<<<<<<<<<<<
  *         if pl is None or pl.is_inside_place:
  *             continue
 */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_place); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 602, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_place); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 627, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_XDECREF_SET(__pyx_v_pl, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":603
+    /* "soundrts/worldplayerbase/perception_fast.pyx":628
  *             continue
  *         pl = o.place
  *         if pl is None or pl.is_inside_place:             # <<<<<<<<<<<<<<
@@ -13011,9 +13243,9 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_ene
 
       goto __pyx_L7_bool_binop_done;
     }
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_pl, __pyx_mstate_global->__pyx_n_u_is_inside_place); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 603, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_pl, __pyx_mstate_global->__pyx_n_u_is_inside_place); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 628, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 603, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 628, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
     __pyx_t_5 = __pyx_t_6;
@@ -13022,7 +13254,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_ene
     if (__pyx_t_5) {
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":604
+      /* "soundrts/worldplayerbase/perception_fast.pyx":629
  *         pl = o.place
  *         if pl is None or pl.is_inside_place:
  *             continue             # <<<<<<<<<<<<<<
@@ -13031,7 +13263,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_ene
 */
       goto __pyx_L3_continue;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":603
+      /* "soundrts/worldplayerbase/perception_fast.pyx":628
  *             continue
  *         pl = o.place
  *         if pl is None or pl.is_inside_place:             # <<<<<<<<<<<<<<
@@ -13040,16 +13272,16 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_ene
 */
     }
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":605
+    /* "soundrts/worldplayerbase/perception_fast.pyx":630
  *         if pl is None or pl.is_inside_place:
  *             continue
  *         if not o.is_vulnerable:             # <<<<<<<<<<<<<<
  *             continue
  *         pid = p.id
 */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_is_vulnerable); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 605, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_is_vulnerable); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 630, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_5 < 0))) __PYX_ERR(0, 605, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_5 < 0))) __PYX_ERR(0, 630, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_t_6 = (!__pyx_t_5);
 
@@ -13057,7 +13289,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_ene
     if (__pyx_t_6) {
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":606
+      /* "soundrts/worldplayerbase/perception_fast.pyx":631
  *             continue
  *         if not o.is_vulnerable:
  *             continue             # <<<<<<<<<<<<<<
@@ -13066,7 +13298,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_ene
 */
       goto __pyx_L3_continue;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":605
+      /* "soundrts/worldplayerbase/perception_fast.pyx":630
  *         if pl is None or pl.is_inside_place:
  *             continue
  *         if not o.is_vulnerable:             # <<<<<<<<<<<<<<
@@ -13075,30 +13307,30 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_ene
 */
     }
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":607
+    /* "soundrts/worldplayerbase/perception_fast.pyx":632
  *         if not o.is_vulnerable:
  *             continue
  *         pid = p.id             # <<<<<<<<<<<<<<
  *         if pid not in enemy_player_ids:
  *             continue
 */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_p, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 607, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_p, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 632, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_XDECREF_SET(__pyx_v_pid, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":608
+    /* "soundrts/worldplayerbase/perception_fast.pyx":633
  *             continue
  *         pid = p.id
  *         if pid not in enemy_player_ids:             # <<<<<<<<<<<<<<
  *             continue
  *         men = o.menace
 */
-    __pyx_t_6 = (__Pyx_PySequence_ContainsTF(__pyx_v_pid, __pyx_v_enemy_player_ids, Py_NE)); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 608, __pyx_L1_error)
+    __pyx_t_6 = (__Pyx_PySequence_ContainsTF(__pyx_v_pid, __pyx_v_enemy_player_ids, Py_NE)); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 633, __pyx_L1_error)
     if (__pyx_t_6) {
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":609
+      /* "soundrts/worldplayerbase/perception_fast.pyx":634
  *         pid = p.id
  *         if pid not in enemy_player_ids:
  *             continue             # <<<<<<<<<<<<<<
@@ -13107,7 +13339,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_ene
 */
       goto __pyx_L3_continue;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":608
+      /* "soundrts/worldplayerbase/perception_fast.pyx":633
  *             continue
  *         pid = p.id
  *         if pid not in enemy_player_ids:             # <<<<<<<<<<<<<<
@@ -13116,31 +13348,31 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_ene
 */
     }
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":610
+    /* "soundrts/worldplayerbase/perception_fast.pyx":635
  *         if pid not in enemy_player_ids:
  *             continue
  *         men = o.menace             # <<<<<<<<<<<<<<
  *         current_sum = place_enemy_menace.get(pl)
  *         if current_sum is None:
 */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_menace); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 610, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_menace); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 635, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_XDECREF_SET(__pyx_v_men, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":611
+    /* "soundrts/worldplayerbase/perception_fast.pyx":636
  *             continue
  *         men = o.menace
  *         current_sum = place_enemy_menace.get(pl)             # <<<<<<<<<<<<<<
  *         if current_sum is None:
  *             place_enemy_menace[pl] = men
 */
-    __pyx_t_4 = __Pyx_PyDict_GetItemDefault(__pyx_v_place_enemy_menace, __pyx_v_pl, Py_None); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 611, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyDict_GetItemDefault(__pyx_v_place_enemy_menace, __pyx_v_pl, Py_None); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 636, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_XDECREF_SET(__pyx_v_current_sum, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":612
+    /* "soundrts/worldplayerbase/perception_fast.pyx":637
  *         men = o.menace
  *         current_sum = place_enemy_menace.get(pl)
  *         if current_sum is None:             # <<<<<<<<<<<<<<
@@ -13151,26 +13383,26 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_ene
     if (__pyx_t_6) {
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":613
+      /* "soundrts/worldplayerbase/perception_fast.pyx":638
  *         current_sum = place_enemy_menace.get(pl)
  *         if current_sum is None:
  *             place_enemy_menace[pl] = men             # <<<<<<<<<<<<<<
  *             enemy_presence_places.append(pl)
  *         else:
 */
-      if (unlikely((PyDict_SetItem(__pyx_v_place_enemy_menace, __pyx_v_pl, __pyx_v_men) < 0))) __PYX_ERR(0, 613, __pyx_L1_error)
+      if (unlikely((PyDict_SetItem(__pyx_v_place_enemy_menace, __pyx_v_pl, __pyx_v_men) < 0))) __PYX_ERR(0, 638, __pyx_L1_error)
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":614
+      /* "soundrts/worldplayerbase/perception_fast.pyx":639
  *         if current_sum is None:
  *             place_enemy_menace[pl] = men
  *             enemy_presence_places.append(pl)             # <<<<<<<<<<<<<<
  *         else:
  *             place_enemy_menace[pl] = current_sum + men
 */
-      __pyx_t_7 = __Pyx_PyList_Append(__pyx_v_enemy_presence_places, __pyx_v_pl); if (unlikely(__pyx_t_7 == ((int)-1))) __PYX_ERR(0, 614, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyList_Append(__pyx_v_enemy_presence_places, __pyx_v_pl); if (unlikely(__pyx_t_7 == ((int)-1))) __PYX_ERR(0, 639, __pyx_L1_error)
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":612
+      /* "soundrts/worldplayerbase/perception_fast.pyx":637
  *         men = o.menace
  *         current_sum = place_enemy_menace.get(pl)
  *         if current_sum is None:             # <<<<<<<<<<<<<<
@@ -13180,7 +13412,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_ene
       goto __pyx_L11;
     }
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":616
+    /* "soundrts/worldplayerbase/perception_fast.pyx":641
  *             enemy_presence_places.append(pl)
  *         else:
  *             place_enemy_menace[pl] = current_sum + men             # <<<<<<<<<<<<<<
@@ -13188,14 +13420,14 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_ene
  * 
 */
     /*else*/ {
-      __pyx_t_4 = __Pyx_PyNumber_Add_object_object(__pyx_v_current_sum, __pyx_v_men); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 616, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_PyNumber_Add_object_object(__pyx_v_current_sum, __pyx_v_men); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 641, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      if (unlikely((PyDict_SetItem(__pyx_v_place_enemy_menace, __pyx_v_pl, __pyx_t_4) < 0))) __PYX_ERR(0, 616, __pyx_L1_error)
+      if (unlikely((PyDict_SetItem(__pyx_v_place_enemy_menace, __pyx_v_pl, __pyx_t_4) < 0))) __PYX_ERR(0, 641, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     }
     __pyx_L11:;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":598
+    /* "soundrts/worldplayerbase/perception_fast.pyx":623
  *     cdef list enemy_presence_places = []
  *     cdef object o, p, pl, men, current_sum, pid
  *     for o in perceived:             # <<<<<<<<<<<<<<
@@ -13206,21 +13438,21 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_ene
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":617
+  /* "soundrts/worldplayerbase/perception_fast.pyx":642
  *         else:
  *             place_enemy_menace[pl] = current_sum + men
  *     return place_enemy_menace, enemy_presence_places             # <<<<<<<<<<<<<<
  * 
  * 
 */
-  __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 617, __pyx_L1_error)
+  __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 642, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_INCREF(__pyx_v_place_enemy_menace);
   __Pyx_GIVEREF(__pyx_v_place_enemy_menace);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_place_enemy_menace) != (0)) __PYX_ERR(0, 617, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_place_enemy_menace) != (0)) __PYX_ERR(0, 642, __pyx_L1_error);
   __Pyx_INCREF(__pyx_v_enemy_presence_places);
   __Pyx_GIVEREF(__pyx_v_enemy_presence_places);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_v_enemy_presence_places) != (0)) __PYX_ERR(0, 617, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_v_enemy_presence_places) != (0)) __PYX_ERR(0, 642, __pyx_L1_error);
   {
     PyObject *__pyx_temp;
     {
@@ -13232,7 +13464,7 @@ static PyObject *__pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_ene
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":589
+  /* "soundrts/worldplayerbase/perception_fast.pyx":614
  * 
  * 
  * cpdef tuple build_enemy_place_menace(object perceived, object enemy_player_ids):             # <<<<<<<<<<<<<<
@@ -13301,39 +13533,39 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_perceived,&__pyx_mstate_global->__pyx_n_u_enemy_player_ids,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 589, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 614, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 589, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 614, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 589, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 614, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "build_enemy_place_menace", 0) < (0)) __PYX_ERR(0, 589, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "build_enemy_place_menace", 0) < (0)) __PYX_ERR(0, 614, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 2; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("build_enemy_place_menace", 1, 2, 2, i); __PYX_ERR(0, 589, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("build_enemy_place_menace", 1, 2, 2, i); __PYX_ERR(0, 614, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 589, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 614, __pyx_L3_error)
       values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 589, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 614, __pyx_L3_error)
     }
     __pyx_v_perceived = values[0];
     __pyx_v_enemy_player_ids = values[1];
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("build_enemy_place_menace", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 589, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("build_enemy_place_menace", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 614, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -13362,7 +13594,7 @@ static PyObject *__pyx_pf_8soundrts_15worldplayerbase_15perception_fast_24build_
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("build_enemy_place_menace", 0);
-  __pyx_t_1 = __pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_enemy_place_menace(__pyx_v_perceived, __pyx_v_enemy_player_ids, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 589, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_8soundrts_15worldplayerbase_15perception_fast_build_enemy_place_menace(__pyx_v_perceived, __pyx_v_enemy_player_ids, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 614, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   {
     PyObject *__pyx_temp;
@@ -13386,7 +13618,7 @@ static PyObject *__pyx_pf_8soundrts_15worldplayerbase_15perception_fast_24build_
   return __pyx_r;
 }
 
-/* "soundrts/worldplayerbase/perception_fast.pyx":620
+/* "soundrts/worldplayerbase/perception_fast.pyx":645
  * 
  * 
  * cpdef void add_memory_enemy_menace(             # <<<<<<<<<<<<<<
@@ -13424,7 +13656,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("add_memory_enemy_menace", 0);
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":629
+  /* "soundrts/worldplayerbase/perception_fast.pyx":654
  *     """Half-threat ghosts for places not already covered by live presence."""
  *     cdef object rem, o, p, pl, men, current_sum, pid
  *     for rem in mem_set:             # <<<<<<<<<<<<<<
@@ -13436,9 +13668,9 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
     __pyx_t_2 = 0;
     __pyx_t_3 = NULL;
   } else {
-    __pyx_t_2 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_mem_set); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 629, __pyx_L1_error)
+    __pyx_t_2 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_mem_set); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 654, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_3 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 629, __pyx_L1_error)
+    __pyx_t_3 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 654, __pyx_L1_error)
   }
   for (;;) {
     if (likely(!__pyx_t_3)) {
@@ -13446,7 +13678,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
         {
           Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_1);
           #if !CYTHON_ASSUME_SAFE_SIZE
-          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 629, __pyx_L1_error)
+          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 654, __pyx_L1_error)
           #endif
           if (__pyx_t_2 >= __pyx_temp) break;
         }
@@ -13456,7 +13688,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
         {
           Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_1);
           #if !CYTHON_ASSUME_SAFE_SIZE
-          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 629, __pyx_L1_error)
+          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 654, __pyx_L1_error)
           #endif
           if (__pyx_t_2 >= __pyx_temp) break;
         }
@@ -13467,13 +13699,13 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
         #endif
         ++__pyx_t_2;
       }
-      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 629, __pyx_L1_error)
+      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 654, __pyx_L1_error)
     } else {
       __pyx_t_4 = __pyx_t_3(__pyx_t_1);
       if (unlikely(!__pyx_t_4)) {
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
-          if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 629, __pyx_L1_error)
+          if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 654, __pyx_L1_error)
           PyErr_Clear();
         }
         break;
@@ -13483,31 +13715,31 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
     __Pyx_XDECREF_SET(__pyx_v_rem, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":630
+    /* "soundrts/worldplayerbase/perception_fast.pyx":655
  *     cdef object rem, o, p, pl, men, current_sum, pid
  *     for rem in mem_set:
  *         o = rem.initial_model             # <<<<<<<<<<<<<<
  *         p = o.player
  *         if p is None:
 */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_rem, __pyx_mstate_global->__pyx_n_u_initial_model); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 630, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_rem, __pyx_mstate_global->__pyx_n_u_initial_model); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 655, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_XDECREF_SET(__pyx_v_o, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":631
+    /* "soundrts/worldplayerbase/perception_fast.pyx":656
  *     for rem in mem_set:
  *         o = rem.initial_model
  *         p = o.player             # <<<<<<<<<<<<<<
  *         if p is None:
  *             continue
 */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_player); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 631, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_player); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 656, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_XDECREF_SET(__pyx_v_p, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":632
+    /* "soundrts/worldplayerbase/perception_fast.pyx":657
  *         o = rem.initial_model
  *         p = o.player
  *         if p is None:             # <<<<<<<<<<<<<<
@@ -13518,7 +13750,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
     if (__pyx_t_5) {
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":633
+      /* "soundrts/worldplayerbase/perception_fast.pyx":658
  *         p = o.player
  *         if p is None:
  *             continue             # <<<<<<<<<<<<<<
@@ -13527,7 +13759,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
       goto __pyx_L3_continue;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":632
+      /* "soundrts/worldplayerbase/perception_fast.pyx":657
  *         o = rem.initial_model
  *         p = o.player
  *         if p is None:             # <<<<<<<<<<<<<<
@@ -13536,19 +13768,19 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
     }
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":634
+    /* "soundrts/worldplayerbase/perception_fast.pyx":659
  *         if p is None:
  *             continue
  *         pl = o.place             # <<<<<<<<<<<<<<
  *         if pl is None or pl in live_presence:
  *             continue
 */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_place); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 634, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_place); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 659, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_XDECREF_SET(__pyx_v_pl, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":635
+    /* "soundrts/worldplayerbase/perception_fast.pyx":660
  *             continue
  *         pl = o.place
  *         if pl is None or pl in live_presence:             # <<<<<<<<<<<<<<
@@ -13564,7 +13796,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 
       goto __pyx_L7_bool_binop_done;
     }
-    __pyx_t_6 = (__Pyx_PySequence_ContainsTF(__pyx_v_pl, __pyx_v_live_presence, Py_EQ)); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 635, __pyx_L1_error)
+    __pyx_t_6 = (__Pyx_PySequence_ContainsTF(__pyx_v_pl, __pyx_v_live_presence, Py_EQ)); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 660, __pyx_L1_error)
 
     __pyx_t_5 = __pyx_t_6;
 
@@ -13572,7 +13804,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
     if (__pyx_t_5) {
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":636
+      /* "soundrts/worldplayerbase/perception_fast.pyx":661
  *         pl = o.place
  *         if pl is None or pl in live_presence:
  *             continue             # <<<<<<<<<<<<<<
@@ -13581,7 +13813,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
       goto __pyx_L3_continue;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":635
+      /* "soundrts/worldplayerbase/perception_fast.pyx":660
  *             continue
  *         pl = o.place
  *         if pl is None or pl in live_presence:             # <<<<<<<<<<<<<<
@@ -13590,16 +13822,16 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
     }
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":637
+    /* "soundrts/worldplayerbase/perception_fast.pyx":662
  *         if pl is None or pl in live_presence:
  *             continue
  *         if pl.is_inside_place or not o.is_vulnerable:             # <<<<<<<<<<<<<<
  *             continue
  *         pid = p.id
 */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_pl, __pyx_mstate_global->__pyx_n_u_is_inside_place); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 637, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_pl, __pyx_mstate_global->__pyx_n_u_is_inside_place); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 662, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 637, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 662, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     if (!__pyx_t_6) {
 
@@ -13609,9 +13841,9 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 
       goto __pyx_L10_bool_binop_done;
     }
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_is_vulnerable); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 637, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_is_vulnerable); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 662, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 637, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 662, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_t_7 = (!__pyx_t_6);
 
@@ -13623,7 +13855,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
     if (__pyx_t_5) {
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":638
+      /* "soundrts/worldplayerbase/perception_fast.pyx":663
  *             continue
  *         if pl.is_inside_place or not o.is_vulnerable:
  *             continue             # <<<<<<<<<<<<<<
@@ -13632,7 +13864,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
       goto __pyx_L3_continue;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":637
+      /* "soundrts/worldplayerbase/perception_fast.pyx":662
  *         if pl is None or pl in live_presence:
  *             continue
  *         if pl.is_inside_place or not o.is_vulnerable:             # <<<<<<<<<<<<<<
@@ -13641,30 +13873,30 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
     }
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":639
+    /* "soundrts/worldplayerbase/perception_fast.pyx":664
  *         if pl.is_inside_place or not o.is_vulnerable:
  *             continue
  *         pid = p.id             # <<<<<<<<<<<<<<
  *         if pid not in enemy_player_ids:
  *             continue
 */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_p, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 639, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_p, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 664, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_XDECREF_SET(__pyx_v_pid, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":640
+    /* "soundrts/worldplayerbase/perception_fast.pyx":665
  *             continue
  *         pid = p.id
  *         if pid not in enemy_player_ids:             # <<<<<<<<<<<<<<
  *             continue
  *         men = o.menace // 2
 */
-    __pyx_t_5 = (__Pyx_PySequence_ContainsTF(__pyx_v_pid, __pyx_v_enemy_player_ids, Py_NE)); if (unlikely((__pyx_t_5 < 0))) __PYX_ERR(0, 640, __pyx_L1_error)
+    __pyx_t_5 = (__Pyx_PySequence_ContainsTF(__pyx_v_pid, __pyx_v_enemy_player_ids, Py_NE)); if (unlikely((__pyx_t_5 < 0))) __PYX_ERR(0, 665, __pyx_L1_error)
     if (__pyx_t_5) {
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":641
+      /* "soundrts/worldplayerbase/perception_fast.pyx":666
  *         pid = p.id
  *         if pid not in enemy_player_ids:
  *             continue             # <<<<<<<<<<<<<<
@@ -13673,7 +13905,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
       goto __pyx_L3_continue;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":640
+      /* "soundrts/worldplayerbase/perception_fast.pyx":665
  *             continue
  *         pid = p.id
  *         if pid not in enemy_player_ids:             # <<<<<<<<<<<<<<
@@ -13682,22 +13914,22 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
     }
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":642
+    /* "soundrts/worldplayerbase/perception_fast.pyx":667
  *         if pid not in enemy_player_ids:
  *             continue
  *         men = o.menace // 2             # <<<<<<<<<<<<<<
  *         current_sum = place_enemy_menace.get(pl)
  *         if current_sum is None:
 */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_menace); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 642, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_menace); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 667, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_8 = __Pyx_PyLong_FloorDivideObjC(__pyx_t_4, __pyx_mstate_global->__pyx_int_2, 2, 0, 0); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 642, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyLong_FloorDivideObjC(__pyx_t_4, __pyx_mstate_global->__pyx_int_2, 2, 0, 0); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 667, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_XDECREF_SET(__pyx_v_men, __pyx_t_8);
     __pyx_t_8 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":643
+    /* "soundrts/worldplayerbase/perception_fast.pyx":668
  *             continue
  *         men = o.menace // 2
  *         current_sum = place_enemy_menace.get(pl)             # <<<<<<<<<<<<<<
@@ -13706,14 +13938,14 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
     if (unlikely(__pyx_v_place_enemy_menace == Py_None)) {
       PyErr_Format(PyExc_AttributeError, "\047NoneType\047 object has no attribute \047%.30s\047", "get");
-      __PYX_ERR(0, 643, __pyx_L1_error)
+      __PYX_ERR(0, 668, __pyx_L1_error)
     }
-    __pyx_t_8 = __Pyx_PyDict_GetItemDefault(__pyx_v_place_enemy_menace, __pyx_v_pl, Py_None); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 643, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyDict_GetItemDefault(__pyx_v_place_enemy_menace, __pyx_v_pl, Py_None); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 668, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_XDECREF_SET(__pyx_v_current_sum, __pyx_t_8);
     __pyx_t_8 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":644
+    /* "soundrts/worldplayerbase/perception_fast.pyx":669
  *         men = o.menace // 2
  *         current_sum = place_enemy_menace.get(pl)
  *         if current_sum is None:             # <<<<<<<<<<<<<<
@@ -13724,7 +13956,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
     if (__pyx_t_5) {
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":645
+      /* "soundrts/worldplayerbase/perception_fast.pyx":670
  *         current_sum = place_enemy_menace.get(pl)
  *         if current_sum is None:
  *             place_enemy_menace[pl] = men             # <<<<<<<<<<<<<<
@@ -13733,11 +13965,11 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
       if (unlikely(__pyx_v_place_enemy_menace == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "\047NoneType\047 object is not subscriptable");
-        __PYX_ERR(0, 645, __pyx_L1_error)
+        __PYX_ERR(0, 670, __pyx_L1_error)
       }
-      if (unlikely((PyDict_SetItem(__pyx_v_place_enemy_menace, __pyx_v_pl, __pyx_v_men) < 0))) __PYX_ERR(0, 645, __pyx_L1_error)
+      if (unlikely((PyDict_SetItem(__pyx_v_place_enemy_menace, __pyx_v_pl, __pyx_v_men) < 0))) __PYX_ERR(0, 670, __pyx_L1_error)
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":646
+      /* "soundrts/worldplayerbase/perception_fast.pyx":671
  *         if current_sum is None:
  *             place_enemy_menace[pl] = men
  *             enemy_presence_places.append(pl)             # <<<<<<<<<<<<<<
@@ -13746,12 +13978,12 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
       if (unlikely(__pyx_v_enemy_presence_places == Py_None)) {
         PyErr_Format(PyExc_AttributeError, "\047NoneType\047 object has no attribute \047%.30s\047", "append");
-        __PYX_ERR(0, 646, __pyx_L1_error)
+        __PYX_ERR(0, 671, __pyx_L1_error)
       }
-      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_enemy_presence_places, __pyx_v_pl); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 646, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_enemy_presence_places, __pyx_v_pl); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 671, __pyx_L1_error)
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":644
+      /* "soundrts/worldplayerbase/perception_fast.pyx":669
  *         men = o.menace // 2
  *         current_sum = place_enemy_menace.get(pl)
  *         if current_sum is None:             # <<<<<<<<<<<<<<
@@ -13761,7 +13993,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
       goto __pyx_L13;
     }
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":648
+    /* "soundrts/worldplayerbase/perception_fast.pyx":673
  *             enemy_presence_places.append(pl)
  *         else:
  *             place_enemy_menace[pl] = current_sum + men             # <<<<<<<<<<<<<<
@@ -13769,18 +14001,18 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
  * 
 */
     /*else*/ {
-      __pyx_t_8 = __Pyx_PyNumber_Add_object_object(__pyx_v_current_sum, __pyx_v_men); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 648, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyNumber_Add_object_object(__pyx_v_current_sum, __pyx_v_men); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 673, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       if (unlikely(__pyx_v_place_enemy_menace == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "\047NoneType\047 object is not subscriptable");
-        __PYX_ERR(0, 648, __pyx_L1_error)
+        __PYX_ERR(0, 673, __pyx_L1_error)
       }
-      if (unlikely((PyDict_SetItem(__pyx_v_place_enemy_menace, __pyx_v_pl, __pyx_t_8) < 0))) __PYX_ERR(0, 648, __pyx_L1_error)
+      if (unlikely((PyDict_SetItem(__pyx_v_place_enemy_menace, __pyx_v_pl, __pyx_t_8) < 0))) __PYX_ERR(0, 673, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     }
     __pyx_L13:;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":629
+    /* "soundrts/worldplayerbase/perception_fast.pyx":654
  *     """Half-threat ghosts for places not already covered by live presence."""
  *     cdef object rem, o, p, pl, men, current_sum, pid
  *     for rem in mem_set:             # <<<<<<<<<<<<<<
@@ -13791,7 +14023,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":620
+  /* "soundrts/worldplayerbase/perception_fast.pyx":645
  * 
  * 
  * cpdef void add_memory_enemy_menace(             # <<<<<<<<<<<<<<
@@ -13862,50 +14094,50 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_place_enemy_menace,&__pyx_mstate_global->__pyx_n_u_enemy_presence_places,&__pyx_mstate_global->__pyx_n_u_live_presence,&__pyx_mstate_global->__pyx_n_u_mem_set,&__pyx_mstate_global->__pyx_n_u_enemy_player_ids,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 620, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 645, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  5:
         values[4] = __Pyx_ArgRef_FASTCALL(__pyx_args, 4);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[4])) __PYX_ERR(0, 620, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[4])) __PYX_ERR(0, 645, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  4:
         values[3] = __Pyx_ArgRef_FASTCALL(__pyx_args, 3);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 620, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 645, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  3:
         values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 620, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 645, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 620, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 645, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 620, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 645, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "add_memory_enemy_menace", 0) < (0)) __PYX_ERR(0, 620, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "add_memory_enemy_menace", 0) < (0)) __PYX_ERR(0, 645, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 5; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("add_memory_enemy_menace", 1, 5, 5, i); __PYX_ERR(0, 620, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("add_memory_enemy_menace", 1, 5, 5, i); __PYX_ERR(0, 645, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 5)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 620, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 645, __pyx_L3_error)
       values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 620, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 645, __pyx_L3_error)
       values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 620, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 645, __pyx_L3_error)
       values[3] = __Pyx_ArgRef_FASTCALL(__pyx_args, 3);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 620, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 645, __pyx_L3_error)
       values[4] = __Pyx_ArgRef_FASTCALL(__pyx_args, 4);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[4])) __PYX_ERR(0, 620, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[4])) __PYX_ERR(0, 645, __pyx_L3_error)
     }
     __pyx_v_place_enemy_menace = ((PyObject*)values[0]);
     __pyx_v_enemy_presence_places = ((PyObject*)values[1]);
@@ -13915,7 +14147,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("add_memory_enemy_menace", 1, 5, 5, __pyx_nargs); __PYX_ERR(0, 620, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("add_memory_enemy_menace", 1, 5, 5, __pyx_nargs); __PYX_ERR(0, 645, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -13926,8 +14158,8 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_place_enemy_menace), (&PyDict_Type), 1, "place_enemy_menace", 1))) __PYX_ERR(0, 621, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_enemy_presence_places), (&PyList_Type), 1, "enemy_presence_places", 1))) __PYX_ERR(0, 622, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_place_enemy_menace), (&PyDict_Type), 1, "place_enemy_menace", 1))) __PYX_ERR(0, 646, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_enemy_presence_places), (&PyList_Type), 1, "enemy_presence_places", 1))) __PYX_ERR(0, 647, __pyx_L1_error)
   __pyx_r = __pyx_pf_8soundrts_15worldplayerbase_15perception_fast_26add_memory_enemy_menace(__pyx_self, __pyx_v_place_enemy_menace, __pyx_v_enemy_presence_places, __pyx_v_live_presence, __pyx_v_mem_set, __pyx_v_enemy_player_ids);
 
   /* function exit code */
@@ -13955,8 +14187,8 @@ static PyObject *__pyx_pf_8soundrts_15worldplayerbase_15perception_fast_26add_me
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("add_memory_enemy_menace", 0);
-  __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_enemy_menace(__pyx_v_place_enemy_menace, __pyx_v_enemy_presence_places, __pyx_v_live_presence, __pyx_v_mem_set, __pyx_v_enemy_player_ids, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 620, __pyx_L1_error)
-  __pyx_t_1 = __Pyx_void_to_None(NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 620, __pyx_L1_error)
+  __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_enemy_menace(__pyx_v_place_enemy_menace, __pyx_v_enemy_presence_places, __pyx_v_live_presence, __pyx_v_mem_set, __pyx_v_enemy_player_ids, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 645, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_void_to_None(NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 645, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   {
     PyObject *__pyx_temp;
@@ -13980,7 +14212,7 @@ static PyObject *__pyx_pf_8soundrts_15worldplayerbase_15perception_fast_26add_me
   return __pyx_r;
 }
 
-/* "soundrts/worldplayerbase/perception_fast.pyx":651
+/* "soundrts/worldplayerbase/perception_fast.pyx":676
  * 
  * 
  * cpdef void add_memory_enemy_menace_by_place(             # <<<<<<<<<<<<<<
@@ -14024,7 +14256,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("add_memory_enemy_menace_by_place", 0);
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":660
+  /* "soundrts/worldplayerbase/perception_fast.pyx":685
  *     """Same as ``add_memory_enemy_menace`` but iterate place bags (skip live places)."""
  *     cdef object rem, o, p, pl, men, current_sum, pid, bag
  *     for pl, bag in by_place.items():             # <<<<<<<<<<<<<<
@@ -14034,9 +14266,9 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
   __pyx_t_2 = 0;
   if (unlikely(__pyx_v_by_place == Py_None)) {
     PyErr_Format(PyExc_AttributeError, "\047NoneType\047 object has no attribute \047%.30s\047", "items");
-    __PYX_ERR(0, 660, __pyx_L1_error)
+    __PYX_ERR(0, 685, __pyx_L1_error)
   }
-  __pyx_t_5 = __Pyx_dict_iterator(__pyx_v_by_place, 1, __pyx_mstate_global->__pyx_n_u_items, (&__pyx_t_3), (&__pyx_t_4)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 660, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_dict_iterator(__pyx_v_by_place, 1, __pyx_mstate_global->__pyx_n_u_items, (&__pyx_t_3), (&__pyx_t_4)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 685, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_1);
   __pyx_t_1 = __pyx_t_5;
@@ -14044,7 +14276,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
   while (1) {
     __pyx_t_7 = __Pyx_dict_iter_next(__pyx_t_1, __pyx_t_3, &__pyx_t_2, &__pyx_t_5, &__pyx_t_6, NULL, __pyx_t_4);
     if (unlikely(__pyx_t_7 == 0)) break;
-    if (unlikely(__pyx_t_7 == -1)) __PYX_ERR(0, 660, __pyx_L1_error)
+    if (unlikely(__pyx_t_7 == -1)) __PYX_ERR(0, 685, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_XDECREF_SET(__pyx_v_pl, __pyx_t_5);
@@ -14052,14 +14284,14 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
     __Pyx_XDECREF_SET(__pyx_v_bag, __pyx_t_6);
     __pyx_t_6 = 0;
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":661
+    /* "soundrts/worldplayerbase/perception_fast.pyx":686
  *     cdef object rem, o, p, pl, men, current_sum, pid, bag
  *     for pl, bag in by_place.items():
  *         if pl in live_presence or not bag:             # <<<<<<<<<<<<<<
  *             continue
  *         for rem in bag:
 */
-    __pyx_t_9 = (__Pyx_PySequence_ContainsTF(__pyx_v_pl, __pyx_v_live_presence, Py_EQ)); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 661, __pyx_L1_error)
+    __pyx_t_9 = (__Pyx_PySequence_ContainsTF(__pyx_v_pl, __pyx_v_live_presence, Py_EQ)); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 686, __pyx_L1_error)
     if (!__pyx_t_9) {
 
     } else {
@@ -14068,7 +14300,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 
       goto __pyx_L6_bool_binop_done;
     }
-    __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_v_bag); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 661, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_v_bag); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 686, __pyx_L1_error)
     __pyx_t_10 = (!__pyx_t_9);
 
 
@@ -14079,7 +14311,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
     if (__pyx_t_8) {
 
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":662
+      /* "soundrts/worldplayerbase/perception_fast.pyx":687
  *     for pl, bag in by_place.items():
  *         if pl in live_presence or not bag:
  *             continue             # <<<<<<<<<<<<<<
@@ -14088,7 +14320,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
       goto __pyx_L3_continue;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":661
+      /* "soundrts/worldplayerbase/perception_fast.pyx":686
  *     cdef object rem, o, p, pl, men, current_sum, pid, bag
  *     for pl, bag in by_place.items():
  *         if pl in live_presence or not bag:             # <<<<<<<<<<<<<<
@@ -14097,7 +14329,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
     }
 
-    /* "soundrts/worldplayerbase/perception_fast.pyx":663
+    /* "soundrts/worldplayerbase/perception_fast.pyx":688
  *         if pl in live_presence or not bag:
  *             continue
  *         for rem in bag:             # <<<<<<<<<<<<<<
@@ -14109,9 +14341,9 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
       __pyx_t_11 = 0;
       __pyx_t_12 = NULL;
     } else {
-      __pyx_t_11 = -1; __pyx_t_6 = PyObject_GetIter(__pyx_v_bag); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 663, __pyx_L1_error)
+      __pyx_t_11 = -1; __pyx_t_6 = PyObject_GetIter(__pyx_v_bag); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 688, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_12 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_6); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 663, __pyx_L1_error)
+      __pyx_t_12 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_6); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 688, __pyx_L1_error)
     }
     for (;;) {
       if (likely(!__pyx_t_12)) {
@@ -14119,7 +14351,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
           {
             Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_6);
             #if !CYTHON_ASSUME_SAFE_SIZE
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 663, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 688, __pyx_L1_error)
             #endif
             if (__pyx_t_11 >= __pyx_temp) break;
           }
@@ -14129,7 +14361,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
           {
             Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_6);
             #if !CYTHON_ASSUME_SAFE_SIZE
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 663, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 688, __pyx_L1_error)
             #endif
             if (__pyx_t_11 >= __pyx_temp) break;
           }
@@ -14140,13 +14372,13 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
           #endif
           ++__pyx_t_11;
         }
-        if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 663, __pyx_L1_error)
+        if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 688, __pyx_L1_error)
       } else {
         __pyx_t_5 = __pyx_t_12(__pyx_t_6);
         if (unlikely(!__pyx_t_5)) {
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
-            if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 663, __pyx_L1_error)
+            if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 688, __pyx_L1_error)
             PyErr_Clear();
           }
           break;
@@ -14156,31 +14388,31 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
       __Pyx_XDECREF_SET(__pyx_v_rem, __pyx_t_5);
       __pyx_t_5 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":664
+      /* "soundrts/worldplayerbase/perception_fast.pyx":689
  *             continue
  *         for rem in bag:
  *             o = rem.initial_model             # <<<<<<<<<<<<<<
  *             p = o.player
  *             if p is None:
 */
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_rem, __pyx_mstate_global->__pyx_n_u_initial_model); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 664, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_rem, __pyx_mstate_global->__pyx_n_u_initial_model); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 689, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_XDECREF_SET(__pyx_v_o, __pyx_t_5);
       __pyx_t_5 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":665
+      /* "soundrts/worldplayerbase/perception_fast.pyx":690
  *         for rem in bag:
  *             o = rem.initial_model
  *             p = o.player             # <<<<<<<<<<<<<<
  *             if p is None:
  *                 continue
 */
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_player); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 665, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_player); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 690, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_XDECREF_SET(__pyx_v_p, __pyx_t_5);
       __pyx_t_5 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":666
+      /* "soundrts/worldplayerbase/perception_fast.pyx":691
  *             o = rem.initial_model
  *             p = o.player
  *             if p is None:             # <<<<<<<<<<<<<<
@@ -14191,7 +14423,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
       if (__pyx_t_8) {
 
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":667
+        /* "soundrts/worldplayerbase/perception_fast.pyx":692
  *             p = o.player
  *             if p is None:
  *                 continue             # <<<<<<<<<<<<<<
@@ -14200,7 +14432,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
         goto __pyx_L8_continue;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":666
+        /* "soundrts/worldplayerbase/perception_fast.pyx":691
  *             o = rem.initial_model
  *             p = o.player
  *             if p is None:             # <<<<<<<<<<<<<<
@@ -14209,16 +14441,16 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
       }
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":668
+      /* "soundrts/worldplayerbase/perception_fast.pyx":693
  *             if p is None:
  *                 continue
  *             if pl.is_inside_place or not o.is_vulnerable:             # <<<<<<<<<<<<<<
  *                 continue
  *             pid = p.id
 */
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_pl, __pyx_mstate_global->__pyx_n_u_is_inside_place); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 668, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_pl, __pyx_mstate_global->__pyx_n_u_is_inside_place); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 693, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_10 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely((__pyx_t_10 < 0))) __PYX_ERR(0, 668, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely((__pyx_t_10 < 0))) __PYX_ERR(0, 693, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       if (!__pyx_t_10) {
 
@@ -14228,9 +14460,9 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 
         goto __pyx_L12_bool_binop_done;
       }
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_is_vulnerable); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 668, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_is_vulnerable); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 693, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_10 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely((__pyx_t_10 < 0))) __PYX_ERR(0, 668, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely((__pyx_t_10 < 0))) __PYX_ERR(0, 693, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __pyx_t_9 = (!__pyx_t_10);
 
@@ -14242,7 +14474,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
       if (__pyx_t_8) {
 
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":669
+        /* "soundrts/worldplayerbase/perception_fast.pyx":694
  *                 continue
  *             if pl.is_inside_place or not o.is_vulnerable:
  *                 continue             # <<<<<<<<<<<<<<
@@ -14251,7 +14483,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
         goto __pyx_L8_continue;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":668
+        /* "soundrts/worldplayerbase/perception_fast.pyx":693
  *             if p is None:
  *                 continue
  *             if pl.is_inside_place or not o.is_vulnerable:             # <<<<<<<<<<<<<<
@@ -14260,30 +14492,30 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
       }
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":670
+      /* "soundrts/worldplayerbase/perception_fast.pyx":695
  *             if pl.is_inside_place or not o.is_vulnerable:
  *                 continue
  *             pid = p.id             # <<<<<<<<<<<<<<
  *             if pid not in enemy_player_ids:
  *                 continue
 */
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_p, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 670, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_p, __pyx_mstate_global->__pyx_n_u_id); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 695, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_XDECREF_SET(__pyx_v_pid, __pyx_t_5);
       __pyx_t_5 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":671
+      /* "soundrts/worldplayerbase/perception_fast.pyx":696
  *                 continue
  *             pid = p.id
  *             if pid not in enemy_player_ids:             # <<<<<<<<<<<<<<
  *                 continue
  *             # Ghost may have moved; only count while still remembering this place.
 */
-      __pyx_t_8 = (__Pyx_PySequence_ContainsTF(__pyx_v_pid, __pyx_v_enemy_player_ids, Py_NE)); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 671, __pyx_L1_error)
+      __pyx_t_8 = (__Pyx_PySequence_ContainsTF(__pyx_v_pid, __pyx_v_enemy_player_ids, Py_NE)); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 696, __pyx_L1_error)
       if (__pyx_t_8) {
 
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":672
+        /* "soundrts/worldplayerbase/perception_fast.pyx":697
  *             pid = p.id
  *             if pid not in enemy_player_ids:
  *                 continue             # <<<<<<<<<<<<<<
@@ -14292,7 +14524,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
         goto __pyx_L8_continue;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":671
+        /* "soundrts/worldplayerbase/perception_fast.pyx":696
  *                 continue
  *             pid = p.id
  *             if pid not in enemy_player_ids:             # <<<<<<<<<<<<<<
@@ -14301,14 +14533,14 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
       }
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":674
+      /* "soundrts/worldplayerbase/perception_fast.pyx":699
  *                 continue
  *             # Ghost may have moved; only count while still remembering this place.
  *             if o.place is not None and o.place is not pl and o.place in live_presence:             # <<<<<<<<<<<<<<
  *                 continue
  *             men = o.menace // 2
 */
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_place); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 674, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_place); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 699, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __pyx_t_9 = (__pyx_t_5 != Py_None);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -14320,7 +14552,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 
         goto __pyx_L16_bool_binop_done;
       }
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_place); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 674, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_place); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 699, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __pyx_t_9 = (__pyx_t_5 != __pyx_v_pl);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -14332,9 +14564,9 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 
         goto __pyx_L16_bool_binop_done;
       }
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_place); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 674, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_place); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 699, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_9 = (__Pyx_PySequence_ContainsTF(__pyx_t_5, __pyx_v_live_presence, Py_EQ)); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 674, __pyx_L1_error)
+      __pyx_t_9 = (__Pyx_PySequence_ContainsTF(__pyx_t_5, __pyx_v_live_presence, Py_EQ)); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 699, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
       __pyx_t_8 = __pyx_t_9;
@@ -14343,7 +14575,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
       if (__pyx_t_8) {
 
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":675
+        /* "soundrts/worldplayerbase/perception_fast.pyx":700
  *             # Ghost may have moved; only count while still remembering this place.
  *             if o.place is not None and o.place is not pl and o.place in live_presence:
  *                 continue             # <<<<<<<<<<<<<<
@@ -14352,7 +14584,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
         goto __pyx_L8_continue;
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":674
+        /* "soundrts/worldplayerbase/perception_fast.pyx":699
  *                 continue
  *             # Ghost may have moved; only count while still remembering this place.
  *             if o.place is not None and o.place is not pl and o.place in live_presence:             # <<<<<<<<<<<<<<
@@ -14361,22 +14593,22 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
       }
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":676
+      /* "soundrts/worldplayerbase/perception_fast.pyx":701
  *             if o.place is not None and o.place is not pl and o.place in live_presence:
  *                 continue
  *             men = o.menace // 2             # <<<<<<<<<<<<<<
  *             current_sum = place_enemy_menace.get(pl)
  *             if current_sum is None:
 */
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_menace); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 676, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_o, __pyx_mstate_global->__pyx_n_u_menace); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 701, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_13 = __Pyx_PyLong_FloorDivideObjC(__pyx_t_5, __pyx_mstate_global->__pyx_int_2, 2, 0, 0); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 676, __pyx_L1_error)
+      __pyx_t_13 = __Pyx_PyLong_FloorDivideObjC(__pyx_t_5, __pyx_mstate_global->__pyx_int_2, 2, 0, 0); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 701, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_XDECREF_SET(__pyx_v_men, __pyx_t_13);
       __pyx_t_13 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":677
+      /* "soundrts/worldplayerbase/perception_fast.pyx":702
  *                 continue
  *             men = o.menace // 2
  *             current_sum = place_enemy_menace.get(pl)             # <<<<<<<<<<<<<<
@@ -14385,14 +14617,14 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
       if (unlikely(__pyx_v_place_enemy_menace == Py_None)) {
         PyErr_Format(PyExc_AttributeError, "\047NoneType\047 object has no attribute \047%.30s\047", "get");
-        __PYX_ERR(0, 677, __pyx_L1_error)
+        __PYX_ERR(0, 702, __pyx_L1_error)
       }
-      __pyx_t_13 = __Pyx_PyDict_GetItemDefault(__pyx_v_place_enemy_menace, __pyx_v_pl, Py_None); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 677, __pyx_L1_error)
+      __pyx_t_13 = __Pyx_PyDict_GetItemDefault(__pyx_v_place_enemy_menace, __pyx_v_pl, Py_None); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 702, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
       __Pyx_XDECREF_SET(__pyx_v_current_sum, __pyx_t_13);
       __pyx_t_13 = 0;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":678
+      /* "soundrts/worldplayerbase/perception_fast.pyx":703
  *             men = o.menace // 2
  *             current_sum = place_enemy_menace.get(pl)
  *             if current_sum is None:             # <<<<<<<<<<<<<<
@@ -14403,7 +14635,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
       if (__pyx_t_8) {
 
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":679
+        /* "soundrts/worldplayerbase/perception_fast.pyx":704
  *             current_sum = place_enemy_menace.get(pl)
  *             if current_sum is None:
  *                 place_enemy_menace[pl] = men             # <<<<<<<<<<<<<<
@@ -14412,11 +14644,11 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
         if (unlikely(__pyx_v_place_enemy_menace == Py_None)) {
           PyErr_SetString(PyExc_TypeError, "\047NoneType\047 object is not subscriptable");
-          __PYX_ERR(0, 679, __pyx_L1_error)
+          __PYX_ERR(0, 704, __pyx_L1_error)
         }
-        if (unlikely((PyDict_SetItem(__pyx_v_place_enemy_menace, __pyx_v_pl, __pyx_v_men) < 0))) __PYX_ERR(0, 679, __pyx_L1_error)
+        if (unlikely((PyDict_SetItem(__pyx_v_place_enemy_menace, __pyx_v_pl, __pyx_v_men) < 0))) __PYX_ERR(0, 704, __pyx_L1_error)
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":680
+        /* "soundrts/worldplayerbase/perception_fast.pyx":705
  *             if current_sum is None:
  *                 place_enemy_menace[pl] = men
  *                 enemy_presence_places.append(pl)             # <<<<<<<<<<<<<<
@@ -14425,12 +14657,12 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
 */
         if (unlikely(__pyx_v_enemy_presence_places == Py_None)) {
           PyErr_Format(PyExc_AttributeError, "\047NoneType\047 object has no attribute \047%.30s\047", "append");
-          __PYX_ERR(0, 680, __pyx_L1_error)
+          __PYX_ERR(0, 705, __pyx_L1_error)
         }
-        __pyx_t_14 = __Pyx_PyList_Append(__pyx_v_enemy_presence_places, __pyx_v_pl); if (unlikely(__pyx_t_14 == ((int)-1))) __PYX_ERR(0, 680, __pyx_L1_error)
+        __pyx_t_14 = __Pyx_PyList_Append(__pyx_v_enemy_presence_places, __pyx_v_pl); if (unlikely(__pyx_t_14 == ((int)-1))) __PYX_ERR(0, 705, __pyx_L1_error)
 
 
-        /* "soundrts/worldplayerbase/perception_fast.pyx":678
+        /* "soundrts/worldplayerbase/perception_fast.pyx":703
  *             men = o.menace // 2
  *             current_sum = place_enemy_menace.get(pl)
  *             if current_sum is None:             # <<<<<<<<<<<<<<
@@ -14440,24 +14672,24 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
         goto __pyx_L19;
       }
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":682
+      /* "soundrts/worldplayerbase/perception_fast.pyx":707
  *                 enemy_presence_places.append(pl)
  *             else:
  *                 place_enemy_menace[pl] = current_sum + men             # <<<<<<<<<<<<<<
 */
       /*else*/ {
-        __pyx_t_13 = __Pyx_PyNumber_Add_object_object(__pyx_v_current_sum, __pyx_v_men); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 682, __pyx_L1_error)
+        __pyx_t_13 = __Pyx_PyNumber_Add_object_object(__pyx_v_current_sum, __pyx_v_men); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 707, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_13);
         if (unlikely(__pyx_v_place_enemy_menace == Py_None)) {
           PyErr_SetString(PyExc_TypeError, "\047NoneType\047 object is not subscriptable");
-          __PYX_ERR(0, 682, __pyx_L1_error)
+          __PYX_ERR(0, 707, __pyx_L1_error)
         }
-        if (unlikely((PyDict_SetItem(__pyx_v_place_enemy_menace, __pyx_v_pl, __pyx_t_13) < 0))) __PYX_ERR(0, 682, __pyx_L1_error)
+        if (unlikely((PyDict_SetItem(__pyx_v_place_enemy_menace, __pyx_v_pl, __pyx_t_13) < 0))) __PYX_ERR(0, 707, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
       }
       __pyx_L19:;
 
-      /* "soundrts/worldplayerbase/perception_fast.pyx":663
+      /* "soundrts/worldplayerbase/perception_fast.pyx":688
  *         if pl in live_presence or not bag:
  *             continue
  *         for rem in bag:             # <<<<<<<<<<<<<<
@@ -14471,7 +14703,7 @@ static void __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_ene
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":651
+  /* "soundrts/worldplayerbase/perception_fast.pyx":676
  * 
  * 
  * cpdef void add_memory_enemy_menace_by_place(             # <<<<<<<<<<<<<<
@@ -14544,50 +14776,50 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_place_enemy_menace,&__pyx_mstate_global->__pyx_n_u_enemy_presence_places,&__pyx_mstate_global->__pyx_n_u_live_presence,&__pyx_mstate_global->__pyx_n_u_by_place,&__pyx_mstate_global->__pyx_n_u_enemy_player_ids,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 651, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 676, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  5:
         values[4] = __Pyx_ArgRef_FASTCALL(__pyx_args, 4);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[4])) __PYX_ERR(0, 651, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[4])) __PYX_ERR(0, 676, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  4:
         values[3] = __Pyx_ArgRef_FASTCALL(__pyx_args, 3);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 651, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 676, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  3:
         values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 651, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 676, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 651, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 676, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 651, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 676, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "add_memory_enemy_menace_by_place", 0) < (0)) __PYX_ERR(0, 651, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "add_memory_enemy_menace_by_place", 0) < (0)) __PYX_ERR(0, 676, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 5; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("add_memory_enemy_menace_by_place", 1, 5, 5, i); __PYX_ERR(0, 651, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("add_memory_enemy_menace_by_place", 1, 5, 5, i); __PYX_ERR(0, 676, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 5)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 651, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 676, __pyx_L3_error)
       values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 651, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 676, __pyx_L3_error)
       values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 651, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 676, __pyx_L3_error)
       values[3] = __Pyx_ArgRef_FASTCALL(__pyx_args, 3);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 651, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 676, __pyx_L3_error)
       values[4] = __Pyx_ArgRef_FASTCALL(__pyx_args, 4);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[4])) __PYX_ERR(0, 651, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[4])) __PYX_ERR(0, 676, __pyx_L3_error)
     }
     __pyx_v_place_enemy_menace = ((PyObject*)values[0]);
     __pyx_v_enemy_presence_places = ((PyObject*)values[1]);
@@ -14597,7 +14829,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("add_memory_enemy_menace_by_place", 1, 5, 5, __pyx_nargs); __PYX_ERR(0, 651, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("add_memory_enemy_menace_by_place", 1, 5, 5, __pyx_nargs); __PYX_ERR(0, 676, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -14608,9 +14840,9 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_place_enemy_menace), (&PyDict_Type), 1, "place_enemy_menace", 1))) __PYX_ERR(0, 652, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_enemy_presence_places), (&PyList_Type), 1, "enemy_presence_places", 1))) __PYX_ERR(0, 653, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_by_place), (&PyDict_Type), 1, "by_place", 1))) __PYX_ERR(0, 655, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_place_enemy_menace), (&PyDict_Type), 1, "place_enemy_menace", 1))) __PYX_ERR(0, 677, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_enemy_presence_places), (&PyList_Type), 1, "enemy_presence_places", 1))) __PYX_ERR(0, 678, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_by_place), (&PyDict_Type), 1, "by_place", 1))) __PYX_ERR(0, 680, __pyx_L1_error)
   __pyx_r = __pyx_pf_8soundrts_15worldplayerbase_15perception_fast_28add_memory_enemy_menace_by_place(__pyx_self, __pyx_v_place_enemy_menace, __pyx_v_enemy_presence_places, __pyx_v_live_presence, __pyx_v_by_place, __pyx_v_enemy_player_ids);
 
   /* function exit code */
@@ -14638,8 +14870,8 @@ static PyObject *__pyx_pf_8soundrts_15worldplayerbase_15perception_fast_28add_me
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("add_memory_enemy_menace_by_place", 0);
-  __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_enemy_menace_by_place(__pyx_v_place_enemy_menace, __pyx_v_enemy_presence_places, __pyx_v_live_presence, __pyx_v_by_place, __pyx_v_enemy_player_ids, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 651, __pyx_L1_error)
-  __pyx_t_1 = __Pyx_void_to_None(NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 651, __pyx_L1_error)
+  __pyx_f_8soundrts_15worldplayerbase_15perception_fast_add_memory_enemy_menace_by_place(__pyx_v_place_enemy_menace, __pyx_v_enemy_presence_places, __pyx_v_live_presence, __pyx_v_by_place, __pyx_v_enemy_player_ids, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 676, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_void_to_None(NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 676, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   {
     PyObject *__pyx_temp;
@@ -15170,94 +15402,94 @@ __Pyx_RefNannySetupContext("PyInit_perception_fast", 0);
   if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_bulk_memorize, __pyx_t_2) < (0)) __PYX_ERR(0, 259, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":291
+  /* "soundrts/worldplayerbase/perception_fast.pyx":298
  * 
  * 
  * cpdef list merge_buckets_3x3(dict buckets, long long grid_x, long long grid_y):             # <<<<<<<<<<<<<<
  *     """ ``buckets[(gx+dx, gy+dy)] for dx in {-1,0,1} for dy in {-1,0,1}``
  * 
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8soundrts_15worldplayerbase_15perception_fast_19merge_buckets_3x3, 0, __pyx_mstate_global->__pyx_n_u_merge_buckets_3x3, NULL, __pyx_mstate_global->__pyx_n_u_soundrts_worldplayerbase_percept, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[9])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 291, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8soundrts_15worldplayerbase_15perception_fast_19merge_buckets_3x3, 0, __pyx_mstate_global->__pyx_n_u_merge_buckets_3x3, NULL, __pyx_mstate_global->__pyx_n_u_soundrts_worldplayerbase_percept, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[9])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 298, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
   #endif
-  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_merge_buckets_3x3, __pyx_t_2) < (0)) __PYX_ERR(0, 291, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_merge_buckets_3x3, __pyx_t_2) < (0)) __PYX_ERR(0, 298, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":326
+  /* "soundrts/worldplayerbase/perception_fast.pyx":349
  * 
  * 
  * cpdef bint is_seeing(self, u) except -1:             # <<<<<<<<<<<<<<
  *     """Cython  ``PerceptionMixin._is_seeing``1.3.8.1
  * 
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8soundrts_15worldplayerbase_15perception_fast_21is_seeing, 0, __pyx_mstate_global->__pyx_n_u_is_seeing, NULL, __pyx_mstate_global->__pyx_n_u_soundrts_worldplayerbase_percept, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[10])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 326, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8soundrts_15worldplayerbase_15perception_fast_21is_seeing, 0, __pyx_mstate_global->__pyx_n_u_is_seeing, NULL, __pyx_mstate_global->__pyx_n_u_soundrts_worldplayerbase_percept, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[10])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 349, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
   #endif
-  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_is_seeing, __pyx_t_2) < (0)) __PYX_ERR(0, 326, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_is_seeing, __pyx_t_2) < (0)) __PYX_ERR(0, 349, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":375
+  /* "soundrts/worldplayerbase/perception_fast.pyx":399
  * # Python fallback: perception._py_bulk_visibility_check (byte-exact ).
  * 
  * cpdef tuple bulk_visibility_check(self, objects):             # <<<<<<<<<<<<<<
  *     """Cython  ``PerceptionMixin._bulk_visibility_check``.
  * 
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8soundrts_15worldplayerbase_15perception_fast_23bulk_visibility_check, 0, __pyx_mstate_global->__pyx_n_u_bulk_visibility_check, NULL, __pyx_mstate_global->__pyx_n_u_soundrts_worldplayerbase_percept, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[11])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 375, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8soundrts_15worldplayerbase_15perception_fast_23bulk_visibility_check, 0, __pyx_mstate_global->__pyx_n_u_bulk_visibility_check, NULL, __pyx_mstate_global->__pyx_n_u_soundrts_worldplayerbase_percept, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[11])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 399, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
   #endif
-  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_bulk_visibility_check, __pyx_t_2) < (0)) __PYX_ERR(0, 375, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_bulk_visibility_check, __pyx_t_2) < (0)) __PYX_ERR(0, 399, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":589
+  /* "soundrts/worldplayerbase/perception_fast.pyx":614
  * 
  * 
  * cpdef tuple build_enemy_place_menace(object perceived, object enemy_player_ids):             # <<<<<<<<<<<<<<
  *     """Aggregate live enemy menace by place (parity with Python snapshot loop).
  * 
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8soundrts_15worldplayerbase_15perception_fast_25build_enemy_place_menace, 0, __pyx_mstate_global->__pyx_n_u_build_enemy_place_menace, NULL, __pyx_mstate_global->__pyx_n_u_soundrts_worldplayerbase_percept, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[12])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 589, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8soundrts_15worldplayerbase_15perception_fast_25build_enemy_place_menace, 0, __pyx_mstate_global->__pyx_n_u_build_enemy_place_menace, NULL, __pyx_mstate_global->__pyx_n_u_soundrts_worldplayerbase_percept, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[12])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 614, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
   #endif
-  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_build_enemy_place_menace, __pyx_t_2) < (0)) __PYX_ERR(0, 589, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_build_enemy_place_menace, __pyx_t_2) < (0)) __PYX_ERR(0, 614, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":620
+  /* "soundrts/worldplayerbase/perception_fast.pyx":645
  * 
  * 
  * cpdef void add_memory_enemy_menace(             # <<<<<<<<<<<<<<
  *     dict place_enemy_menace,
  *     list enemy_presence_places,
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8soundrts_15worldplayerbase_15perception_fast_27add_memory_enemy_menace, 0, __pyx_mstate_global->__pyx_n_u_add_memory_enemy_menace, NULL, __pyx_mstate_global->__pyx_n_u_soundrts_worldplayerbase_percept, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[13])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 620, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8soundrts_15worldplayerbase_15perception_fast_27add_memory_enemy_menace, 0, __pyx_mstate_global->__pyx_n_u_add_memory_enemy_menace, NULL, __pyx_mstate_global->__pyx_n_u_soundrts_worldplayerbase_percept, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[13])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 645, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
   #endif
-  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_add_memory_enemy_menace, __pyx_t_2) < (0)) __PYX_ERR(0, 620, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_add_memory_enemy_menace, __pyx_t_2) < (0)) __PYX_ERR(0, 645, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "soundrts/worldplayerbase/perception_fast.pyx":651
+  /* "soundrts/worldplayerbase/perception_fast.pyx":676
  * 
  * 
  * cpdef void add_memory_enemy_menace_by_place(             # <<<<<<<<<<<<<<
  *     dict place_enemy_menace,
  *     list enemy_presence_places,
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8soundrts_15worldplayerbase_15perception_fast_29add_memory_enemy_menace_by_place, 0, __pyx_mstate_global->__pyx_n_u_add_memory_enemy_menace_by_place, NULL, __pyx_mstate_global->__pyx_n_u_soundrts_worldplayerbase_percept, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[14])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 651, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8soundrts_15worldplayerbase_15perception_fast_29add_memory_enemy_menace_by_place, 0, __pyx_mstate_global->__pyx_n_u_add_memory_enemy_menace_by_place, NULL, __pyx_mstate_global->__pyx_n_u_soundrts_worldplayerbase_percept, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[14])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 676, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
   #endif
-  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_add_memory_enemy_menace_by_place, __pyx_t_2) < (0)) __PYX_ERR(0, 651, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_add_memory_enemy_menace_by_place, __pyx_t_2) < (0)) __PYX_ERR(0, 676, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "soundrts/worldplayerbase/perception_fast.pyx":1
@@ -15398,47 +15630,47 @@ static int __Pyx_InitConstants(__pyx_mstatetype *__pyx_mstate) {
   int __pyx_clineno = 0;
   CYTHON_UNUSED_VAR(__pyx_mstate);
   {
-    const struct { const unsigned int length: 8; } str_length_index[] = {{1},{179},{8},{44},{20},{12},{9},{17},{8},{8},{10},{8},{12},{8},{24},{21},{9},{19},{23},{21},{6},{13},{22},{13},{23},{19},{26},{11},{8},{20},{20},{3},{23},{32},{6},{13},{6},{18},{12},{7},{24},{13},{21},{8},{3},{13},{18},{26},{4},{12},{2},{2},{14},{7},{16},{16},{21},{15},{9},{16},{24},{19},{33},{3},{20},{19},{6},{6},{5},{2},{2},{13},{22},{18},{11},{10},{10},{9},{15},{12},{9},{12},{13},{5},{3},{13},{7},{8},{6},{19},{6},{17},{9},{1},{7},{8},{16},{21},{20},{1},{9},{13},{10},{5},{27},{26},{18},{20},{19},{21},{6},{18},{3},{7},{24},{4},{10},{22},{11},{4},{40},{5},{7},{4},{10},{1},{5},{6},{6},{17},{19},{5},{1},{1}};
-    const struct { const unsigned int length: 11; } bytes_length_index[] = {{22},{50},{1601},{163},{124},{161},{87},{203},{165},{126},{232},{90},{259},{237},{301}};
+    const struct { const unsigned int length: 8; } str_length_index[] = {{1},{179},{8},{44},{20},{12},{9},{17},{8},{8},{10},{8},{12},{8},{24},{21},{9},{19},{23},{21},{6},{13},{22},{13},{23},{19},{26},{11},{8},{20},{20},{3},{23},{32},{6},{13},{6},{18},{12},{7},{24},{13},{21},{8},{3},{13},{18},{26},{4},{12},{2},{2},{14},{7},{16},{16},{21},{15},{9},{16},{24},{19},{33},{3},{20},{19},{6},{6},{5},{2},{2},{13},{22},{18},{11},{10},{10},{9},{15},{12},{9},{12},{13},{5},{3},{13},{7},{8},{6},{19},{6},{17},{9},{1},{7},{8},{16},{21},{20},{1},{9},{13},{10},{5},{27},{26},{18},{20},{19},{21},{6},{18},{3},{7},{14},{24},{4},{10},{22},{11},{4},{40},{5},{7},{4},{10},{1},{5},{6},{6},{17},{19},{5},{1},{1}};
+    const struct { const unsigned int length: 11; } bytes_length_index[] = {{22},{50},{1617},{163},{124},{205},{87},{203},{165},{126},{232},{90},{259},{251},{301}};
     #ifndef CYTHON_COMPRESS_STRINGS
       #define CYTHON_COMPRESS_STRINGS 90
     #endif
-    #if (CYTHON_COMPRESS_STRINGS) == 2 /* compression: bz2 (2931 bytes) */
-static const char cstring[] = "BZh91AY&SYn\363\322\361\000\003\036\377\377\377\377\377\377\377\377\377\367\377\365\177\377\377\377\377\367@@@@@@@@@@@@@\000@\000`\013\237y\n\270\007l\275\266,W\226\206\212\032N\335\020\357y\000\006\312\003S\322h\204\246(\323\324\3656C\3215?Tz\217\324\315=\032S0\2304\324d\246OS\315S\3226\2402i\241\247\251\345\006\324\323A\352\r\352\232~\224\022\204\002d\010\000\232\233A2\210\310\006\032\200\320\000\006\215\001\240\000\003@\003\3244\323 \r4\004\246\222\006S=@\000F\232i\206L)\2011\352\t\200\322\032d\030!\206\2016\241\2044\364\214\231\004\246Dj\212\236\rM&\324hdi\352\r=@\000\006\200\001\240\000\000\000\000\000\320\007\250\320 \311\200\023\000\0010\004i\204`\000\000\000\2314\304\320`\004`\000\000\000\004\211\010\022ji\352\237\350\212=\224\320\3224\304h\321\2010\215\000h4\323!\210\304\332\214M4\300\2154\304\3014\005\325\350ic\233\236\243\327_\223.+\047\261\311/\354\346\001\340\017\010x\221\343<\213\371\376\247JyhD\207\375\274*P\356a\047\034\267\232\250s\234;\316\020\234Ae\230.\335\005C\2733_\340\037\352\005\t!(P!$\210\022\020\200H\201\260\301d\354\2602\202(\205$J\177\362\232\273`\010\204X\225\n\312\347]\250\271\211\r\210\033\022M\240\033\033L{\025h\225\252\002-\264\2541\nb\320\033\004\233\0218P\334\354@\255b\030\333M\203`\206\322m\264\233M\200\330\306*\235(6\224\201\240\253\030\021e\001A\254\200`\250\020\205\010\204\203(i!%\213\000\260i6\332\004\333u\r\2672\214b\"\273\244\246\256E\306r\302Z[\013\025X\030\261\267\252d\312\346\342\351\224\204+)R\315\030T\250i\211yd\312\366\022\241D\251Q\344\213\345d\005Y\242$\321+b\350\030\200d)\225\221\353J\024\n\027\345\204\214J\014P)\344\231\310-9\314eQXY\025\310{\244\214\350\224e%rI/G<\256\010\027\026\nD\255fE\343\240A\325\336\227J\221\214\247k\337\"R\242\223 \236\033\257\236j>\022Fekcj\222ID\210\327\310m*\017\356\216S+\036\370\022\025)\217\353\237\253\343\364<\177\037\367\372\276\375\377\345\322\376/\366\036z\327\331\315\030\335\340\351\351\322\272\370oN)-\363\337Dr3\267\242\034\272\372\312\010\217[\232\020a\350\367\262\273\266/zDV""\345\310\233\274\233\313\374\316xxfM\r]p)\231\206r\302\215\247\263*\025\363m`\266\235W\226\272\263\333l\010\341#g|\377\247\225\302\202K|\3533E\274O_ro\321\017q\237\322\313\203?;;j\314\231\231\260\354/\327\230\346\332\267F\215#\252\334\354\376\240r\301\323\237=\236\271`\317\023\272\341\224\001\303\3353X\025\253%\r\003i\016\035\361rM12\356f:+\255\255\235\004\222E\306\022\204\217c\315r\004\322i;\223\305\350]\037K\346Q\020rP\240\2244w\374[\264\320\234\262r9\034\235\037\032P,\221\262\017\035H1\000\312\036{\321\364\210\324l\325 \017\346\277\032\327\352y:\257\021\240\201\301\220\325\0078L\224\232U\212j)\047Q\265\254\332\n\355\016\215\001\363u\266\024\005\001H(V7G\177B\222\251#\342\275\002\352\014\210D\211\047\321\205\303A\271zn\307\357J\006\204\252$J\205K\217\246\370)\006\025F\276#\212n\223\340*\301\206\305\005.\016\032\306\007\246:Y1W\361\306\2304\021\2306\244F\014)\005%D\"@{\203\272I\205\212\027\014\341\014\300J~\203\265.3\305\344\375C^F\321C\234P\006\343M\361\262\000H\003r\372\037\306\027J\303Ub\025\342]F\324\257%\302\311]\232\303]\374\306\204\231R\017-\330\202\240\320\365\263\260\273\r.b\3314\035\031u([\365\247F\235\3714m\243)-\207Mm\244\225AB\215d\347gH\310&\2510\261Qf\320}\362\036Z\341U\247\0331%ZA\320\030\347\267\374p\331B\373\200UfaUWb\t\353e}\247\350\341rh\333\376\222\347N\236\217\356\365\3620:12\362\364d?\322\261\022\214\rd8\344-\003\231\225\360\302\367\260\320\210\036G\262\005\017\n\033\303\242:\243\244\234\303fE\207H\224$Kme\310\301\237\325T\254\341\355\363\272\347\r\047\035jt\304c\271A|\034wA\021\220\330\366\350\274n\254\rf\243G\257\313\031\202r\266\tC\326\212\246\203\001\020\2411I\201*Fyx\267\306\231u\225=k$\365\031\206\341\265\347\275\235\351\027\253\315#6oW\035\273\003$a\324\010H\202\"\230\257F\215FU\343MZ\250Z1ux_d\243\311\221&\353\241\r!\244\317OF]\270\243O\231\006\357\352g\261\252b\325)3m\351\273\252\213B2Y\047-Mi\334\3364\360x\266lD^\261\356!m\371\036^WB#;\034E1\233\313\314 \253F@s\"\023r\021+\260H+\205))\315V\212\310\356\n\252\212b\3249\274\252\026""\310u\350\017\266vb\212Y\354\253\252\305]\227]Ld\331+IY\352\240\323\201\232\177x\0348w\364x\367L[\255\247s@3_\r\216RCR\224\234\237\255 \372\366\366\227]\333\325\242\364\332\274\020\307\223 \346\022#\016\336\243\004\325\364\002;\267\330\311\255|\252\047\256w\324i\236i\233\322D\263\205\266}\326B\316/\257U\3434R+\247\216(\264FR4\357\243\247\261Y\321]j\376\333\242\300\213\253\267\300R\177\356x(\021\310\242I\244g\313p\345\341\003RkTL\357\036<5\240\217\2000\033y\226F\270H\023aj(\346\211\262(\335\225\007\021\333A\361\022\021b\324\326[2\245G\254\304\326s+j\215\320q\244\313d\202\301\202\244[)\020\203\205\025\221\234\203\360u^]&\220\317\030\231\301`\t)\220\342\250LY\216f\001\306\322r\202x\250Dq\331\321\230\355\367\227\\\243\227DV\004\223\035g\013\221\tny\240\222qG\033j\361%-Z\216\3476\313\346p*-\324\317%\326:U\322\276\363\312\313\014\027\247{\326\302\262\262f\265S%\2612.\301\224\334\344\305\351\233\31428\331\t\371\007w\260A\304#\214T\034x7L\230\301Ci\323\016:*\230\362L\245\207)\354\214\310\362\016s\224f\214\034\347\303\024\301D6a`vjh\025\005\347\307k\234\262\025!Jv\2148Q \324tw\014\364ED\323\211\210f\231\346\374\047\206\246\030\275MC\212N\034\270h\235NQ\206W\"\236\356\243\231\047\047\001q\2425\243\205\273q\257\242\305\254\007\0221\271!\271\317V,\264\222\315\006\306\314\022\260P\211\327\244f\221l\030\311\200\001\200`18\272\375\222\3428h\330\215.-\002MR\312\322\270v\300\201u\361\0229\2076\273\214uIR\325\334n\"-%\202\330Y\212\224g\334>(*\252\334\371\322a]y\014\211dX\305\220\327\230\366\242\300f\026{S\322\2037\242d\212\031\3504.\333U\273^\244\231\267N\235&\236\227n\232nDZ\026\311\021p\0306\226JX\034\216\333\016\276\311\306 NhbP\354\356\344fj\301\203-v\350\367\335gF\320\353\354N5{\271\212\n+\360\222&\017\224\266\365Tt?\255\365\277\227\014\316\0141\271\333:\177g\211\233R\262\207\247\370\300Q\202k\361\030716\231\rDtU\357C\237\317\022Z#\022\374\230s\2279\243\010\3167\334\226-Q\214#pnI%/\2608\213l\230t\224\007\260\315\226\257!\213)\230\234\0212`6I\212\032\030\234\230}\241\233\304\330?""\234\221\352\031aJp\330\370\232g\031\356\003\306\014c\370\255\331\014\243\232\375H#\311\252l\327\3460>\365\321\210\371\372m\3717\212\375\314eI#D\301\362\311\211\245(\345(\r\3440\221\220\021\341\2122 (yy\243A\036\375NU\375\336\360Z\034\030\362\310aQN \221\241\003v\010W=\326\204d\202\230\347C\372\307\316\362\344\034\234\226\201\002\014\"\371\216\030\2606\262\3032\261\031_u\311\347l\314\251\037;\222\036%\242f\243-\006@\337)\317\310\311\031G,C\3072 \204\202\250\234\033\025\205p\313\014\034\316P\034R\003\311\366Z\031s\213\033\005\233@\330\265\265i\276\222\227\275\376L\205\300C\013xU\221\027y/\026\017A\273\340\006YP\005\357\2215\365}\317/=\321x\202o\314\340\014\311\000\036-\240/\\\004$\315K\346o\303\363\362\337\0106\371\001\232a\000\300\263\240\205\250>s\200D\0022\007\314\371u=\3548\037\201KyN\354Oz\210\240r OE\361\2667\023,o\356w\233\204\020\305T\0300\214\010\316}\206`\2319\036\255\\!\004R\260\215\263\253U\031~f\262b\242\006\021\206[~i\314\231\267H\341P\200\211E\320=\276-\233]\022\205d\256\315\004=J89\266\355\001\025\303\2233\340\276B\222\365b]\267m\230\230\227\002\026\223+\225\314+e\225\265\211 \263\037\337ek\210k\261+%m\221\\\253\202\272O5pA\354\263w\277\300142\244\203f\240\251\047\234!\340Z\265U\032\2107\271\365\305S\340\355+q \254\013iI\036\245V\324\221\034\212\264\205H\3114\373\222G\272i\343\336V\252.\2735\351\317\350e\216(\351\236\360\354\353u\2437\220.\206\261\024\262\263}\232)C\303\247@fO\351v\376\332\032X2\223Gn\300\354{\223\273\177D\361\325\2368\250\016^\255N\266\205!KCSA\277\365\031{\024_\334\245\275\265\323\375\207\251\335\311\335\322\350\311\030\273ho\235\034!\234}\254L\361\2008\357i\2169\010\322\325\026DR\213\007\205\2361\261v\244\224.\014;\235|\334\257\227O\024\375\021c\365\207\344\340\035OW\242\355\207\217\233\030\361\001\214W\363\343\372\271<\256\027@\t\033\035\322R\273\317)\256\037P\335\303D\262\356\353\026\326F\225\324\227Ai\244\247R\024*\270\260\211X\014\352\220\2153\022\323b\242\251\231\202\211B\031B\245\210\0175,\252\304\033\013=\225\342\242\241""\346\252\255B\3256ahV\222cNDe\270\231\036\014\323\205\215\026\253*\350w4\362\357\020S\222\254|ff\246T)\006\224\231\207\227V\205p\360\342@\260\2102\313@\375-Sb\321k\033f\370f\034\315\367\0273_\274&\024,\\E\232\375\366W\250\207\270T\025\212g\nh8\202\361i,P\225fbb \342K\315\250\024\0265\036\013\326\200\324\315\021)\016\364\3260\200)\021\377\213\271\"\234(H7y\351x\200";
-    PyObject *data = __Pyx_DecompressString(cstring, 2931, 2);
+    #if (CYTHON_COMPRESS_STRINGS) == 2 /* compression: bz2 (2979 bytes) */
+static const char cstring[] = "BZh91AY&SY\306\276\007\243\000\003-\377\377\377\377\377\377\377\377\377\367\377\365\177\377\377\377\377\367@@@@@@@@@@@@@\000@\000`\013\326\370\014\016\355\255\"\213\253m\001E\026\300\014\034\350\240|\373p\001\251\3514\202\223ji\246M\030\200\001\246\207\352\236i\250i\265\023\312~\212z@z&\200\320dd\003L\206\004\311\240\310h%\t\240M\002\r\nzd\230#T\320\320\000\032\000\000\001\352\000\000\r\000\000\030\214\236\240\032d\t\"Q\372\223\364\246\203#j\036S\021\240\032l\240h\003\305\000\000\032\006\200\000\323\020\001\352i\240\021HM\033S\023F#&\230\230\000\021\210i\200\232\006\000\000&C\010\300\320F&\000@0\252\236\"\r\001\221\211\223\365#\306\247\250CL\002\014\206\236\240z\010\014\232h\311\200L\021\246\231\014F# \3650\223T\"h\010S\365C\312<(\364\324z\236\247\244i\352\000\000\000\000h\000\014 \000\000\006\232\000\272{\270\355u\277\262\\\366i\321*?^\220\177)\366\200\364\003\321\017I\017\362\237\350=?\366\361\217\251\021\234.\212\223\005\225\273\022\233\373U\020\305\305JW\024Bf\026,P\253P\026\224/\304_o\360\017\365\006*,`\212\244\024F\002\220P\313\205\260\3006B\027BV\025\267\374ZW!\323\204+\014$\274\304^_v)\216\031\022AH\013\t\026\000\242\304wfBL\223-B\271r\232\230\303X\227\023\240\024$R\027RQm\220\t\225 \210\261AB\n\002\254\213\024\005\021%\356\365\367\213%\201\201\213\242\222\030\026\002\301\241\002\220l\010\210\221azQ\245(+v\022Lb\002\250AV\361V\305\310\220i\337\004t\275\013\214\3039\252\346\261w\210\302\352\226pbK\340I\273\016\242\2131\325\326nE\331\306L\214\013\323<\030K\005R\305\234\231\204\357u@e\242\"Q\022\327\216d\202\031\252\251\235Q\326\224(\2240\303<hd\\1p]\346\006\251\206\024\245\006U\025\226e\371\217\t\203B\263\025\226w$\323\024\203\233o\314\013\030\005\323/\276\244\234\204H\302\376%\323\254\245ZW\014cB\224&:x\255l\022\210\361\230\314\266\312\305I\204\246Hk\346\223\207-\030%\343\246\253\213\345\337Y\032\3522o\264m\3558_\215\212\233\0264\277\030\253\371k\372\213\270\243\365mj\324y\353N=\310\343\233\224\340\360\357Y\306c\367\260^B\032\313Y\230kll\014\2034\034\322\362D""4B/\257Q\024Ykp\206\037\215\25059\032\3728t(\206\337\024J\3521\325<j\306\314\250]\355\255`\266\275\227\226\273\276\206\373\341\211#\031\233\257\241\327\351\336B\031k\005\3343\241\033\371\335\nN4E\345\303\321\335\332\333?wuoO\016u\303\370\026\376\315\353\245\304\276\276\351\037Y\r8o\"\371S\232\353ni\330\250p-\311\016\324\360N}\264\224\305u\241\005\031A\230\220\231c\205A\341\002\205\332\017\261q\276\321\201Mc7Ksc\243\264\354\006\033\r\213\223\335{\373\245\344\371uD \225\252%vw\374K\266U+Zf\351\004\271\323\253\342\326E\022sA\341X\262D)\234\275\304R7L\204.\206\245G\0077\377G\303\315\371Y\316)A\006\t&H8\016\355\t\030\230E\240\250\0323\244B\227\023\014\362#\321\3530,\013\002\303X\275_?\276\261mv\323\305\312Fk\016\314E\330\364\2472\225\326\362\237G.\364\320 gf\241\235\263\215\366q\352\350\253\"\320$-\030\016!(+\006$J@\260\203\253)c\021\256=T\010\274\355\347\245\310TI\241\034\334G\034\240\224%\030\242D{Z2\327\222\267\274\257\350\227v\246\346r\3529\247!\314\347>a\242\234s\326\374\001\332t\374g`\t\000v\361\275\372m\303^\335\347\306D<\325\302\0342\267`*+aK\347\375gz\215\"\017\225\016A@\330\376^\034f\333\265\337\2546\3642\027\016A\350FX\313\240\343\032H\242N\014\354\272\325U]\007\025,\255\014j1\024\322l,\224Z4_\t\216_p\2550o\315S\022\343\272\267\0246\270\334\355~v\275\316CFP\026\224\240\253\257\t\317\326\321\205<\231\\\2338ziu^\255\344\376^\246f\047<\214\375\216\274\307\372\267\222*\300\327\241\3131j\033\246\256{\264g\265\n]x\034~@0\352\241\322\006\334\3428+|\245\013\306\352J!\"\035\335\003I\323\tv\376\220\231\202\362\264\360u\007\003Tpw\344kPC\210@==\034\"\210\310nv\345\200\335\230\232\033M}\234\362\240\047;\355\006\\\304\222\240XfJD\225@\255\324\3244\223\2707\014\230^\352\245^2g\310,\352\035\3752\032f\223\211\313\227\262\333^\243F\303\260\030\021\206h\352\330\206\371\035\013\321]\273j_)B\334p\275*\345\t\024\205\321\216\300\330j\331\313>\354\221\251\324E\273\372\331\330ev\0278*\261\255\2539\273\244\326*\304\211\220<\253\007\256\357V]\263\246e\221\047M\010\271+\374\031\236\277;""FCC+\neG01\212\255Y\002\014\210R\010H\266\341\"\260\024\254\351EZ\253$8\252\252)\223T\352r\310_\231\014\020\036\375W\261U/vU\333yhg\331c)\266j\323VuPjRF\244\364\244q\343\337\313\320\341Am\206\316\r\020\326\276+\371\315\rJV\223}\022/n\356\342\353\273\272\365\340\233\327\212\031sd \241\001\260\363dY\323d@\247\347\247\004\264\351\253ym\267M\346\341\260mq\341\\\304\341w\363C5L\371ws\224\245\351%\331\321\222-Q\224\225{\353\nnV\204\227E~\353\244\300\213\267\273\244\255<\264\305P%\231T\233L\325\317\201\005\343\023jh\250\232\260\034p\321\004x\203\001\277\250\275\032\341\"R\220\032\302\216\3237M\033\266\201\002[\352<\204\213Q;1\253\222H\256:\231\23112\345\270i\322\246:\300\300B]Lu\251HTF\222\225\205\261\205\234\272m1\234b\207\025\210$\350G\241P\240\264 \314\201\003yI\305<\352\222 v\362\324C\301\201u\312Au\311bM2\320\343r!>\016k&\235\t\003}\234I\317n\323\307\006\335\205\016%\205\272\272\263]\010N\333\027\336z\334\361\305|>\007[\305ed\324\345MW1\201}tQ6+5-5\254h\3256sC\016\003\177\224Cl\233\245\241\301\033]\250qi\350HtS\240 \210\204\025\007re9\204\3114\002\363\020u\032Qgx\344\230\250\206\354o\010jSX\250/WF\370Af*{\351]w\210b\002\211&\272\023\360\014\350\212\211\26730\326\232\315o\2251\321\2060X:2:\2624\031\031Hjh)\026\036.\335\271\033HH\315z\321(\232v\315-I\213`9\244t\200i\311\3432j\252\262p\303\024u\035bDR\027\272\221uXn\326\233\200\334nX\313_O[^\344#\324g\256b\252\316m&\2338\360\336\203t\306D\265\007S]\306[f\251}\270\034\t\013Y\342\267\213AR\254\367\017$\025Unw\213\2419\350h\006\211\264M\023\302\233|\301,r\023%G\342\307.\363F\211\220\206\353\267\331n\323jP\337\263f\303gL8PU\340\210\265/\315\021q\0307\227\245o\016\267G~\022\354\355\254\346\201:\241\231R\357\0373Q\267\026\014\364\277\227\235\330r\336\035\235\251\321g\207P\240\242\2763D\305\347=\375v!\037\361\205\260\347\307P\242\233\370\356\360\376\377v\315\265YC\355\371\340(\241\031\315\020[\021bQ\224\247\3014\275\037/\226\004\367\030l\014\223\344B\263\335a\234NO*Mn`\210S\210\354\212\311_h<\231\303\020\370e\003\267M\356g\244""\223d\332-B\226-\"\225d\242D\215P\366\303k\236\240\371\345NA\263I[QG\307\3349/\020\177\000\210\370\330\367\204\271\264\373\212\024\376y\246\374\371\212\001\370=H\237GW\352T\341-\373\227^\324\251D\251>Z\313\253d\252~L\016\022,\021\376\004f\303\021\017\224:\032q \212\314\375\025\331y\340Z\034\030\361d\020(\352B\022 \204\010\201\010\247\334\3271\254q\024\017\353j\207\307\347\031\222F\270+\201.bk\032\316\200\034aK\272.\266yY\233\362~\363f\207\207\004\210\232y\252\271\332a\307\035\332<\356? l\235\240\345v\232 \200\202\250\230\362`\214 \312L\032nP\034Q\363\362\366\312\047?h\200,\030r\203JZr\266\331^y\355/\361y\220@\334\225d$;J\241\003\372z\271\206\255T\001r\372\3114\316\177\253\253\265PU \231\2538\003Y\037ft\240U\255P kZ\223\032\332:\232\263\004\025\363\301\255YM\215\311\3158-\356\230\334\310\007k\257\036\307\213\304\363\267w+r7T}e\362\025P2\271H/\354\302\270\353\244\341g\257\342n0,\n\241&\306\026\021\233X\014\261Y3\336V\2560A\017X\021\\\337\306\214\231\024\211\212\207\200#\032\254\272\366\202f\342\232\252\020T@qY\316\361\311Ov\240VTu\300,yJ8\031i\201\016!\335\336\370*\225%\345bb\313+2\tbb\004-&\243\245s\300\027a\262\377\004\220H,\334\320\303YM&CI\211\204\230X\"\221W\005s\235\036\265 H\350\262\306^>CX#\2420\014b:;a\r\225\222EF\242v\366\250\n\0472En:R\005\261Q\237\316\221\271\224d\ry\034\261}#2F\210\205\275\274\n\024\r\r\306\264\243D\361>..\3108\231]\211\376;\362\030\353\005\241\034\004\242W\345\222H\032.\313P\274\032\244\256\030\rZ\264`L^V\177\200\206a\375\031\205\010\375\261\300\310\344\232\"\304\016\323\r\3211\371a\322\000Y,\323\t_\312\330\357\210\354NV\274\333\231\336\351\306\207S\321\177\240\334\355\336\222\r|\014!\231$\022\270\000\r\320\214A\220\216\004\013A\370\013\332\r\007G\020Z\341\323\327\315\316\221\310=(\344\3512\276(c\036>\024\373\020eX\023\256n\267j\323\017\371\273\373y\254\333\263O\366+\355\347Y\327\273\345\200H\337LKM|\2241\003\305\266D:\027wSV\215\204LC\213\200\255\350\267\257(%\003\002iK\302ig\2323OX(]\273\270B\230\207A6\010\021WN\223\220q\210\302\211""\271\271\212\273\371\262\261\213\2548\304\224J\010\247\004RL\356\204\212\204\306qv\246\313\300V\360\251\\\260\210%9\373%R\272\244\021\006\32151P\236T\010\230\024\006\004\311\247Vt\335}9*\273\313#\036d\303\231\317\031\236\304\272\t\360m\362\312\004<=\314`U_e\247\0255F\0011\r\232\031!\005\313\022\245\334\251\231:\"\047+\005\264\035C\212\214\261!\355\336f\202\223\027\224di\200DO\376.\344\212p\241!\215|\017F";
+    PyObject *data = __Pyx_DecompressString(cstring, 2979, 2);
     #define __Pyx_DecompressString_LZSS_UNUSED
     if (unlikely(!data)) __PYX_ERR(0, 1, __pyx_L1_error)
     const char* const bytes = __Pyx_PyBytes_AsString(data);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (likely(bytes)); else { Py_DECREF(data); __PYX_ERR(0, 1, __pyx_L1_error) }
     #endif
-    #elif (CYTHON_COMPRESS_STRINGS) == 1 /* compression: zlib (3044 bytes) */
-static const char cstring[] = "x\332\245WKs\333F\022\026m*\242\327\264MJ\264\336\262HI~\254\035\313\241$?\222\312\256W\226\035o\266R.S\266\343\304\211\203\200\300HBL\001$\000Jb*\331\322\021G\034\347\210#\2168\362\250\243\2168\362\310\237\340\237\260_\317\200\324#NR\273\353*\013\203\306LO\367\327_?\370\360\231\345\262\242\273\245\272\305\265\226\273e\231E\303)\352\254fT\231\255\272\254\326*:\256mh.\263i\223Y|\376\344\371\355\225\007+E\325\324\2136\373\211i\256St\232U\255\246:\016s\212\326F\261\3324j\256a\026\335V\2359\213\305/7\212-\253Y4\031\323\213\256U\254c\337\361\003\356\0263\213\016siQ\274\256\232\246\345\252\256a\231\n\216\033\346\346\365\242n\330\270\304\330at\372\013\265\346\260EU\327\025\354c\216\3254u\333u\356\354ZvM\257\327\324\026\263\253\252\303\356\324\231\255\261\272P\263\241:\356b\275\265\247(\317\361\347y\3531|Q\236\261=w\235m(Jr\037S\360OXt\264\330d\256\341\262m\022l4M\215\236\333\252a\212\247\2457k\342\214\251n\213g\243\251\326zk\330\345\222\026U\333b\272bU\035f\357`\341`\217\315\234\337\310]\003\3074\253\336\"\265\n3\331vK\221\256\310\255\047E\264\333q\325\355\272\302\366\014W\251\326,\355\035\304;\206cTa\322\026S\353\r\305\300-\226m5\021\005F/\316;\243V\203h\273\252\272J\335\266\366p\027\333\266\354\226b\230:\333\353\275\340\n\215%\"\0011S\355jKi\232\206\233\230\375!Q\265\t\013\\\370\363\223b\350\312;\006=\342\203\243\324\021\"\3235\324\032\216\031\233[U\313\206)X\270\212\255\232\233\254\207\010\256\242\333\022#\244\267\333\314\204-\277#V\252\211\255j\255f0]\376\025\020X\246Z\2573SW\235\226\251\031\326b\037\005G\002\245\013\324\244\305\016\361\364\030\340\320+\325W\233\265w\362Z\343g\371\"\3205j\206\333R\340\230\366\256w\277\246\326\265\032S\315f\035\004\000\217\264\232\000\034\334\265I\217\252\275\323\254Z\r\354U\352\252-\200p\210\334\232B\007\021q\255i\333@H\004U\333\323Z:s\261\031V\n|u\303\321T[\307\203b\257\350M[$\306\t:\030\272\223\274\003Hf\302\007aX\"\224aBrm #\261{\303L\0260\321Vu\243\351\234~Wv\rwK\321\252}\271c\350L\352ID=\246\3554k&*\004-\3512\2039H\230MA\204\223""\204\337\254YUx.\303#9\263i\203){\342oK0v\253n\350\006.!\210\220\005\250>&\366\237\300\235\316A\244*\"l\250\014J\r%\210$\246\214!\221\276f\251\0102V:\253[\016\3649\211\013\375\205\304G\274&\236P~0\006\205\375\005p\242\313\373\016R\031p@\354\032\212P\037h\020\204\220\225<a\216\244i\217\254{u\203R\235\342*9\265\315\354\315^\2528\312\362\336\262\351l\203\267He\013\211CE\264\007\333i\370\372\357\010\002\360\223*N\t\0058uQ\364`\242\336_\220\201G\245Px.\211\256Y;\314&O%C\244\322\017~\222\252\305\227\343)(%=.\034?\337\223\035;\330/N\006\334\265[\222\272=\002\037\005\260n\325%\t\227\300{S\351!\253lX6\375\007\267\034V\333\200K:\333P\2335\327\331\262\232H`\335B}\246\362&3\361X\201q,\364\206\244E,\236j\021\213\247Z\204SG\177J \247\260\211\252,\nmS\000\321\254\353h\023;j\255\311\234\343T\206S\356I\301\266A}M\\\267\327\332Ou\322\031/\345\345;\351\363\336]\377\214?\357\277\341\215\375T7=\3467\272\3704\350U:\231\013^\305S;\231\363\336\262\267\351\277\342\013\274\032\244:\331a\377:\317\363\022\235,\357\247\336\377e`\360ZP\351\244\257\007\215Nz\226\273\301\275\020ZK\301L\250EX\214\372:/\275\317\014\014N\362\002\257t\361!\377~n`\260\340\337\213\047n\207/\243|\264\020\251\235\364\320\376\257\376\232\337\350d\306\350\317\305\370\342\\P\nV\202\335P%k\206<\010s\376Y\277L\326\334\363\3078\354\230\346\253\374\333\000\366\215\363\024\037\345\273\201\032\300\364\241\375\235\370\302B\260\026H5\327h\003\236\302\272a\377\032\016b\213\353\255x\273>\276\314\007\320\230\365\236\372+\2706[\n\306\302T8\022\256v2#~\331\177\314\207x\243\233)\006\347\303r\3708J\2213jr\303\315p>\254\010\315\037\323v<o\207\225\344\333|\260\234\334z5\250\364\255H_\362v\374\312\211\333s~\312/\370\257\371j\047=\311o\010\207\005\370C\361\245b\\\374$\372(R\217\371;\303_\007\253P\230\315\371C\26067\303_\004\203x\317\021\020o\303R\047{\241\213\335+\361\245[\341r\250b_\234#\267\351\271\210\367\314\024\277\213\370\341\261\022\317.G+Q\243\215\267\363\361\371i\276\306\261\r\210K\335./wr#\200\244\311\037\313\033f\271\023\317\335""\307\201\263m|*\006CA#L\t\305\013\301j|\365\323v\276\233\231\340\243\361\354g\355\205\266\332n\220\325\017\371<\257\220\325\302\342\014<\310\315\223\203P\035\217P\200\232\341Z\350\306\313\377:\234?\254t\n\327\003\047,\205+\361\235\307\007\253\235\302x<\276\022\311g\031,\2025\367\370\010p*\314\005\327\303<|-\214\371\016/\305S\322\325\361\t\3202\036F\010B#\022!;\033\224\343\205\225\350Q\244vA)\027\236\223#0\253\334\311\216\372\214\337\007\332e\300\3712,\204\257\342\245G\007s\007\253]|\001L\210S|\371V\270\0226\"\302\207\000\275\212}\371Nv\202O\006\017#\240t\311\373\225?\t\246\303\365\360\327\366Z\333>(\034|{\250\305\225\365N\356F\230\352\312[fy#8G\247\300\370\337\306\214\340u\370b\230\006\261\316F\345N\241\030\244\2202j\247 @\202\226\302\265`\023\376\250\202\350\202E\002\353\273\321\333\203\277\036\226\273\202\265e\262i\004\246\344\273\260\351g\001Qn4\036%N\342\212\317aB\352\230F\341\006\300\313a;\340\272\031\226\272\3220>\030\317\334\016_Gk\321.\302\327<x\026\257\277\211\337\374\020\377P\215\253Fll\307\333&\364\372\033\244\036\364\341\315\340)R\342it\257=\334.\267\277<x}\270z\370*^\377&\376\006\307\276\213\277\373\236H\271\206Z\000\210\311\020\370W\nf\001\047\302\366K\260\024|\037\215 \272\343p(x\013<\307\247\300\270\351\004\362\356\264,\013%\212j\237\333\271RP\010*H\243\234p\325\025\276\r\302\237\321p7\322\333\245?\330\271\214\n$\2508\301\023\311}^\022\251@L\274\025\226\273\331\231x\346N|g\355@\220C\355\363\365\n\327\221\023\002\310\335@C,\013c\361\030\260\r\225\366W\207g\016\361i\222\317\3073KQ)*ws\227\375\227\010\300#\216\233\217-\307\371Y\276\204\250\237\t\346\203u\244\267\240\3620\177\000\024*\204\n\224^\356\t\001\323B\3608\034\014E>\240\366\205;\361\335\n\361\212.\276\021\236\r\357\202,\367\333\245\366\275x\025H\277\215\337\376\030\377\010\372\213,\240d\372\347a\2523>\035O?h\313\347\335\250B\230\357\300\000\010\250\034\021\250S2\301\037\360eX\210\353\263TAg\000\031\320Aa\362\233\361\364\307\210\356r\264\331\256\264\331\301\337\005\263\377\273\360S\375\374*\270""\000O\240\263A\025D\220\241\333\213N7-\n\317*\032Hv`p\001e8}-P\373\235\047\353\255z\"]\227\274\027>*\315\205\023\315H\363/\373\232\300\213> C\275F\262\351\242\247z\r)\242\n{L\204\254\270\201l[\r\205\332\317\251zt\262W\270\312w\250\244\312\312\017zH\311\367\3210r\222L\234\245\256\370\376\342\300\340\270/\232\313\317\376\210\217l\274\024_\222\371] \256vzf#\361\221\225\313\311\315d\261\346\017S\323:\266$\007\252heK\376\013~\006\304\\\247\332+\334\370\324_E\2038\335_qw\261\327Ug\370\313\340\3501\316\317\241\231~40\230\367\3230\252\327\047\351\0025Q\271\354\231\310C\207*\373\005jj\237\0479)n{J\000\026\374g\364\265\340\177AI\322\315N\362\253\242jd\307\374\177\0232\202x)\312\013\364q:@\\\031\243\r\227\375\212\257\302\300\\\002\316\377\201\301\213\017\314\025\303\003\203\347\2744T=\340\367\340m\022\370+pf!\220\272\223\n(\347\202,5\323<\261\315\026!\312\311u\234\237C\342\365\312\036]R\242\315I\025HjD\0035p\2273Q&\207PO\264v\001\304\337<x\201l\352\035\222\311\222\235\214\047?\246Y \022\352\177\021\302\034\315*\024\237\334\325\34051\254\233H\246\243\365\250\321sE\304&\353\255\311\307\237\323{Dve\021\306\245\370\302\025\256%u\355\017x\276\047h\375?p\035F\216\016\014f\366mo\304#z{\307g9\021\372Nz\032\323@JNj\217\374\237P\320Jd\365\327\024\317l\234\025\003\026\212\047\272\\z\202_\246\312II=\264\277\213\331\261\222\250\034\363mp\047\r\002\246\317yy\357\272\237\357E{\\\220\210\206\311\314~\003DzIA\304\314Y\"\025\177 \370\232\227\377d\307\357\037\371\010H\237\330\361\273\002\034\221\374~%\350\223\2412YEa/\003\222\241\300\246\221\221\260\316cPK\243\r\t\330\357\023\235\177\303\352i\341\347\261\\=\n\340\351\265\343\227\022f\020G\2161\243 k\306)\315\305\201\301\022\305\007s\023\325\204Q\277\322OI\231\032\031\232\364\207$\031\246\344\000\324\277\253\211\214\311\322\200\372\202\372\336\254\034\246\305\327\344\354$\277\026\234\211\347\226\243%t\024\232\365\270MII\0235`H\212p\277\326\037\035\047\3725hz=y\243h\264[\340\037v\335\014\027\320\274\032\211\370\304\276\370\374\034\262}#|\024\212""\336\324H\314?\272\3412M\324\262\223\304\003h \357\047)\325R\336\025\332\307\377\206$x\024nF/\333yA\300nZ&\036\215\351\022T\010\t,\342\334E\177\223\277\302mz|\363\037\007\251\203\336\211\344WR\3771\204\312\221\374fX\216G1=`\212\025\216S\270\250X\344E\371\021\025\246\334\027\254\201\370\047\227\303\376-.\212\375\002\230\224\222\n\346\304G\032\034\264`$\350\3250\n\312\331x\352\023\214O9\372uD\361\216\007\036\266E\266L\021\001\004\n\310f\022\234\223!\277$Zb/,\242X>\221\345\261\201\331\006\277kz\005\262_,\013\370\275\223\342r\013\315\365kb\306\317MP\261\307|\231\223\271\235+\240m,\t\240\264p2\272\333>\203id\245-z\243\343\225\274\317\004\20324 \257\022\334k\302\216#\300\363`\260*~a`9\301\347\260+CP-\371\025IP\372)Z\241,\240\216t\023\003\342\327a\231\342\374\206\010\047\206\366\265\300\305\034\224\352~HHX\274\020n\020+\246\370\247\301\243@\375\017\342\264\263&";
-    PyObject *data = __Pyx_DecompressString(cstring, 3044, 1);
+    #elif (CYTHON_COMPRESS_STRINGS) == 1 /* compression: zlib (3146 bytes) */
+static const char cstring[] = "x\332\245WKs\333F\022\026-\312\242\327\264MJ\264\336\262II~\254\035\313\241\036~\244\274\233\225\345\304\233\255\224\313\224\374H\034;\010\010@\022b\n \001P\022S\233-\037y\304q\2168\342\210#\217:\3528G\036\371\023\374\023\366\353\031\220\242\024\047\251\332u\225\205Ac\246\247\373\353\257\037\374\362\231\355\031yoG\365\362\353\ro\307\266\362\246\233\327\215\212Y6\034\3253*\215\274\3539\246\346\031\016m\262\362\317\277z~g\345\301J^\265\364\274c\374lh\236\233w\353e\255\242\272\256\341\346\355\255|\271nV<\323\312{\215\252\341.\346\277\331\3127\354z\3362\014=\357\331\371*\366\365\037\360v\014+\357\032\036-\3627T\313\262=\3253mK\301q\323\332\276\221\327M\007\227\230{\006\235\376Z\255\270\306\242\252\353\n\366\031\256]\267t\307s\357\356\333NE\257V\324\206\341\224U\327\270[5\034\315\250\n5[\252\353-V\033\007\212\362\034\177\2367\236\300\027\345\231q\340m\030[\212\022\337g(\370\047,:^l\033\236\351\031\273$\330\252[\032=wU\323\022O[\257W\304\031K\335\025\317Z]\255t\327\260\313#-\252\266c\350\212]v\rg\017\013\027{\034\303\375\215\3343qL\263\253\rR\253\030\226\261\333P\244+r\353I\021\355v=u\267\252\030\007\246\247\224+\266\366\036\342=\3235\3130i\307P\2535\305\304-\266c\327\021\005\203^\334\367f\245\002\321nY\365\224\252c\037\340.c\327v\032\212i\351\306A\367\005WhF,\022\020\033\252Sn(u\313\364b\263?%*\327a\201\007\177~VL]yo@\217\370\340*U\204\310\362L\265\202c\346\366N\331v`\n\026\236\342\250\326\266\321E\004W\321m\261\021\322\333]\303\202-\277#V\312\261\255j\245b\032\272\374+ \260-\265Z5,]u\033\226f\332\213=\024\\\t\224.P\223\026\273\304\323>\300\241W\252/\327+\357\345\265\346/\362E\240kVL\257\241\3001\355}\367~M\255j\025C\265\352U\020\000<\322*\002pp\327!=\252\366^\263+\025\260W\251\252\216\000\302%rk\n\035D\304\265\272\343\000!\021T\355@k\350\206\207\315\260R\340\253\233\256\246::\036\024{E\257;\"1N\320\301\324\335\370\035@\032\026|\020\206\305B\031&$\327\0262\022\273\267\254x\001\023\035U7\353\356\351we\337\364v\024\255\334\223\273\246nH=\261\250\313\264\275z\305B\205\240%]""f\032.\022f[\020\341$\341\267+v\031\236\313\360H\316l;`\312\201\370\333\020\214\335\251\232\272\211K\010\"d\001\252\217\205\375\047p\247s\020\251\212\010\033*\203RA\t\"\211%cH\244\257\330*\202\214\225nTm\027\372\334\330\205\336B\342#^cO(?\014\003\n{\013\340D\227\367\034\2442\340\202\330\025\024\241\036\320 \010!+yb\270\222\246]\262\036TMJu\212\253\344\324\256\341lwS\305U\226\017\226-w\027\274E*\333H\034*\242]\330N\303\327{G\020\200\237TqJ(\300\251\212\242\007\023\365\336\202\014<.\205\302sIt\315\3363\034\362T2D*\375\344\047\251Z|\351OA)\351r\241\377|W\326w\260W\234L\270\3534$u\273\004>\016`\325\256J\022.9\306\036r\273\233\007\310\002K\351\342\254l\331\016\375\007\323\\\243\262\005\007ucK\255W<w\307\256#\235u\033\325\232\212\235\314\313\276r\343\332\350\024q\303X<\3250\026O5\014\267\212n\025\007\200\202(j\264(\273uaR\275\252\243i\354\251\225\272\341\366\023\033.z\047\005\273&u9q\335A\343C\242\235L5\023\315l;y\276\271\352\237\361\347\3757\254\366!\321I\216\373\265\016>\r5K\355\324\205f\251\251\266S\347\233\313\315m\377%[`\345 \321N\217\3707X\226\025\350d\361C\342\343_\006\206\256\007\245v\362FPk\047\2572/\270\027Bk!\230\r\265\010\2131_g\205\217\251\201\241)\226c\245\016>d?\316\r\014\345\374{|\362N\370\"\312F\013\221\332N\016\177\370\325_\367k\355\3248\375\271\310/\316\005\205`%\330\017U\262f\270\ta\306\037\364\213d\315=\177\234\301\216\031\266\306\276\017`\337\004K\2601\266\037\250\001L\037\376\260\307/,\004\353\201Ts\2356\340)\254\033\361\257\343 \266x\315\225\346\276\217/\363\0014\246\233O\375\025\\\233.\004\343a\"\034\r\327\332\251Q\277\350?a\303\254\326I\345\203\363a1|\022%\310\0315\276\341V8\037\226\204\346\317h;\236w\302R\374m>X\216o\275\026\224zV$/5\367\374\322\211\3333~\302\317\371\257\331Z;9\305n\n\207\005\370\303\374R\236\347?\217\316Fj\237\277\263\354u\260\006\205\351\214?\014k3\263l3\030\302{\206\200x\027\026\332\351\013\035\354^\341\227n\207\313\241\212}<Cn\323s\021\357\251i\266\212\370\341\261\302\257.G+Q\255\205\267\363\374\374\014[g\330\006\304\245n""\217\025\333\231Q@RgO\344\rW\231\313\347\356\343\300`\013\237\362\301pP\013\023B\361B\260\306\257=le;\251I6\306\257~\321Zh\251\255\032Y\375%\233g%\262ZX\234\202\007\231yr\020\252\371(\005\250\036\256\207\036_\376\327\321\374Q\251\235\273\021\270a!\\\341w\237\034\256\265s\023|b%\222\317\"X\004k\356\261Q\340\224\233\013n\204Y\370\232\033\367]V\340\323\322\325\211I\320\222\217 \004\241\031\211\220\r\006E\276\260\022=\216\324\016(\345\301sr\004f\025\333\3511\337`\367\201v\021p\276\010s\341K\276\364\370p\356p\255\203/\200\tq\342\227o\207+a-\"|\010\320k\330\227m\247\047\331T\360e\004\224.5\177e_\0053\341F\370kk\275\345\034\346\016\277?\322xi\243\235\271\031&:\362\226\253\254\026\234\243S`\374ocF\360\272l1L\202X\203Q\261\235\313\007\t\244\214\332\316\t\220\240%w=\330\206?\252 \272`\221\300z5zw\370\327\243bG\260\266H6\215\302\224l\0076\375\" \312\214\3611\342$\256x\004\023\022}\032\205\033\000/\203\355\200\353VX\350H\303\330\020\237\275\023\276\216\326\243}\204\257~\370\214o\274\341o~\344?\226y\331\344\346.\337\265\204\311|\374.P!Z\346\246\330u\322M\t\277\032\016C:\034\355\2656Z\265\303sG\343\374y\211\227^\361Wo\371[\350P\270\362\023\3717(\315\240\320\325\332\023\327\002\005\001\236\230f\217\002\047\234\2116\301\305\031\200\027\316B\371\014\260k\347\357\206^T\214\326:\371b\224\213J$\236\355\203\251\353K\3562\271\356\t_\207 \033\013\367#\275U8\316\212L!\310\005%$`&+w.\243\"\tjN\262Xr\237\025Dj\0203o\207\305Nz\226\317\336\345w\327\017\005Y\324\036\177\2570\0359\"\200\335\0174\30467\316\307\201u\250\264\276=:s\204OSl\236\317.E\205\250\330\311\\\366_  \217\031n\356[N\260A\266\004\026\234\t\346\203\r\244\273\240\366\010{\020,\201\0269\342\n<\212\205\240\305B\360$\034\nE~\240\026\206{|\265D<\243\213o\206\203\341*\310s\277Uh\335\343k\010\330;\376\356\047\376\023\322Ad\005%\327?\217\022\355\211\031>\363\240%\237\253Q\211\360\337\203\001\t\212A\211R\0473-\023\376\001[\206\205\004(U\324Y@\006tP\250\374:\237\371,|\032-G\333\255R\3138\374\273`\372\230\277ElC5a\365\340)*\344\323\350^k""\244Ul}s\370\372h\355\350%\337\370\216\177\007\243~\340?\274%\355E\377\333\340\002<\201\316\032U\024\217\362\257\323\215N\047)\n\321\032\032Jz`h\001e9y=P{\235(\335\\k\212\364]jn\372\250<\027N4\047\315\277\354k\002/\372\200\214m\326\342M\027\233j\263&ETq\373D\310\222\233\310\276\265P\250}D\325\244\235\276\302T\266G%Vv\002\320CJ\336F#\310Q2\361*u\311\217\027\007\206&|\321l~\361G}d\347%~I\346{\216ZZ\273k6\n\001\262t9\276\231,\326\374\021jb}Kr\240\214\326\266\344o\2623 \346\006\325b\341\306C\177\r\r\343t\277\305\335\371n\227\235e/\202\343\307\004;\207\346\212V\233\365\2230*)\203\267\007.\207\265v\267\213\322ud\016\366\235Kcm\241\370\273\201\250i\224\010\013\304\321Q\377!\244u\324h/\274\037Q\216QC|$C&-{J`\347\374gt2\347\177M\t\325IO\261k\242\342\244\307\375\377\020\212\202\244\t\312!\314\000t\200x5N\033.\373%_\2053\231\030\310\377\003\257\315O\314$#\003C\347\232I\250z\300\356\001\231\230$W\340\350B u\307\325S\316\024ij\304Y\202\300\021\341\314\3105\317\316!I\273%\223.)\320\346\270b\304\365\244\206\372\271\317\014Q\333\206Q{\264V\016I\262}\270\211\314\353\036\222\211\225\236\342S\237\321\034\021\t\365\377\026\302\014\3159\024\313\314\265\3405\261\261\023Kf\242\215\250\326uED.\335\\\227\217?O\205Q\331\321\005\213\226\370\205+L\213k\340\037\344\304\201H\201\377!/`\344\330\300P\352\203\323\034mR*4\373\347@\021\372vr\006\223DBNy\217\375\237Q\374\nd\365+\212g\232\247\305p\206B\213\276\220\234d\227\251\312R\001\030\376\260\217\271\263\024\253\034\367\035p\047\t\002&\3175\263\315\033~\266\033\355\tA\"\032DS\037j \322\013\n\"\346\325\002\251\370\003\301+V\374\223\035\277\177\344,\220>\261\343w\0058\"\371\375R\320\047EYYF\023(\002\222a\364\276Q\211u\026C^\022-K\300~\237\350\374\033V\317\010?\3732\3718\200\247\327\256_\210\231A\034\351cFN\326\227S\232\363\003C\005\212\017f\256\217g\007\206\306\374R/%ej\244\350W\302\260$\303\264\034\236zw\325\2211i\032n7\251G^\225\203\270\370\032\237\245Q\341\014\237[\216\226\320}hNd\016%%M\343\200!.\330\275\276p|\234\350W\243\311\367\344\215\242)""\357\200\177\330u+\\@\243\253\305\342\023\373\370\3719d\373V\3708\024}\254\026\233\177|\303e\232\306e\327\341\003h6\037\247(\325\022\315+\264\217\375\rI\3608\334\216^\264\262\361\020\010\226\206gI\031zY\047)\323\220\006~\t1n \350\210\201\027\375m\366\022w\353\374\326?\016\023\207Y\361\261\323\375\275\325{\014\243\216\304\277>\226\371\030\346\016\314\303\002\006\n\036\225\216\254(F\242\336\024{\202u\244\301\311\345\210\177\233\2116\261\000^%\244\2029\361\221F\016-\030\r\272\025\215B4\310\247?\307\\\233\241!\214\242\317\007\276l\211\334\231&:\010L\220\333$8\047\tpI4\323n\220D\351\374J\026\313\032\246\"\374B\352\226\313^\351\314\341\227S\202\311-\364\013a]\214}\231I*\375\230T32\323394\221%\001\224\026NE\253\2553\230cVZ\242\253\272\315B\363\013\301\247\024\215\332k\004\367\272\260\343\030\360,\370\254\212\337*XN\2629\354J\021TK~I\322\225~\324\226(\047\250?\335\302\254\377*,R\324\337\020\375\304\370O\375m5Jt>%$,6\205\033\304\221i\3660x\034\250\377\005\004\036\327|";
+    PyObject *data = __Pyx_DecompressString(cstring, 3146, 1);
     #define __Pyx_DecompressString_LZSS_UNUSED
     if (unlikely(!data)) __PYX_ERR(0, 1, __pyx_L1_error)
     const char* const bytes = __Pyx_PyBytes_AsString(data);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (likely(bytes)); else { Py_DECREF(data); __PYX_ERR(0, 1, __pyx_L1_error) }
     #endif
-    #elif (CYTHON_COMPRESS_STRINGS) > 0 && (CYTHON_COMPRESS_STRINGS) <= 90 /* compression: lzss (4133 bytes) */
-static const char cstring[] = "\377?Note th\377at Cytho\377n is del\377iberatel\377y strict\373er!\001n PEP\377-484 and\377 rejects\377 subclas\377ses of b\377uiltin t\377ypes. If\377 you nee?d to p%\000%\t\377then set\376\200\000e \047anno\177tation_<\000\377ing\047 dir\366b\000iv\242\000o Fa\377lse.add_\376%\000esoundr\377ts/world\377playerba\377se/perce\375pB\002fast.p\337yx__P\002\000Py\375D\311\000_NextR\357ef__i\004e__\363__\276\002\000\006_get\357item\026\001fun\275c\036\001main\003\002owdul/\002nam7\002\357qual\004\005tes\375tK\001ached_\277observ\006\000s\276!\000res_c\t\014t\375i@\000copy_m\377od_enemy\341_\305\003%\003\005\013*\001sta\377mp_exit_\377blocker_\337visib\220\000he\337apq_ic\000or\353ou\203@e\t\001ski\377ll_comba\277t_proxi\000e\377mory_ind\317ex_m\007\003\276 ce\374\014\004\336\"earby_ounit\260\004_n\001\017\353bu\177\000t\345\000j_i\317d_ke\273\000\336\002s_}p\327`ntial4\000\377ighbors_\375s\006\000t_rang\203e_\213$\313@\315A~\004\373\003m\337enace\000\024_b\374\235\"\035\000llieda\374\001\002\376\002onappe\377ndasynciWo.c\376\005s\243#d\261\"\302\254\003s\244\204\001\346(\370\000p\003bu;lk\215#ize\010\002\331\"\277ility_\321@c\375kx\005capcle\377anup_quo\277taclin\275!_\373tr\273\000backc\337ollec\362 ar\\\204\"\270@tic\201`p\356A\377current_\376\377Acxcydet\347ect\262`\356\"dis\317card\004\000\326\204\001_dsur\224\205\002\225jids\253d\206\330`en\274@\300B\016\004\264Cs\277etfilt\243`f\355n\002\004in\200@diu\375s\000\r_with_{cb\037\006side\374C\374=\004\342evulner\371a\361a\260\204\001iesge\357tget\340\204\016glo\331b\200`\236\204\001on\370\204\003gr\352\247`x\001\002y\255\204\002hpi\263di\344`\250amo\372\207\001n\317vis_\354)\312\205\001is\367_a_\262Bing_wlan\240 _an\257\205\003\276\361\204\001loake\021\001d\377epositis\307_in\277\001\000\006\327\205\001ce\374\023\002\255\205\004is_seewing\000\006_fny\001\374\330\006\203\207\001skeyli\357ve_p\342$mem\3025\000t\266\205\002\372\000\275\205\003\274\204\005xp\361i\347\206\001\327\206\001\304\204\003merg\373e_\362d_3x3n\367s""ma\230`stooab\300\211\002\240\207\005\240\207\r\267\207\006un\222\211\001\350\350\205\003\006\014\316\207\002p\360\210\002ive\301d\000\006\235\001\201\211\007\332\206\002\336\206\003co\007ver\300!\326\206\003\275\206\003\006\022U\003\037lace_\216\206\t\245\207\003\356\207\005\3204\t\202\210\005.\010\224\210\006i\354\000ry\360\242\212\003\334\210\004\317A\272Dpopr\235a\221\204\0012sc\322@\322%_\367for\000\001gets\377elfsetde\377faultsho\377uld_do_f\361u\333\210\001\204\206\003\326\207\010sort\352\233\213\005.\224\213\014.\224\213\014speCed\234\212\004\216\212\001\221\212\002\344\211\002u\373\210\002\377updateva\357lues\277\204\t_hi\315t\003\013mi\205\215\001\215\214\002xy\377\200\001\330\004\010\210\001\210\377\021\330\004\013\2105\220\002\377\220#\220Z\230q\200\001\277\340\004\027\220q\340\030\000\005\377\210Q\330\010\r\210Q\210\377a\330\010\013\2103\210g\377\220U\230$\230b\240\001\377\330\014\022\220\047\230\021\230\375!6\0011\200\001\360\n\000\377\005&\240Q\330\004\047\240\377q\330\004\037\230t\2406\375\250S\000!\240\035\250c\260\376\\\000\026\220d\230!\360\010\377\000\005\032\230\024\230Q\340\377\004!\240\021\360\"\000\005\377\024\2206\320\031-\250T\377\260\021\260$\260a\330\004\377\007\200}\220C\220q\330\375\010}\000\330\010\016\320\016\"\377\240!\2404\240w\250a\366\212\001\007\210\027\000\020\220\003\220\2751\212\0016\220\027\230\205\000\034\337\230A\230Y\240\235\000\030\230\377\001\230\026\230w\240a\240\376\270\000\007\200v\320\r$\240\211C\213\000C\001&\035\001L\000\231\002\022\363\220&6\000i\000t\2104\210\333w\220\330\000#\240O\000\014\210\367G\2204y\000\014!\240\027\377\250\001\250\023\250A\330\010\377\023\2201\220D\230\007\230\377q\340\010 \240\013\25017\250D\260\260 \026\220\214\000]\002_*\250#\250Q\244\002,+\001\346\256\000-\250\333\000y\002#\2403\346o\004%\240\036\003\202\001\004\017\210\333v\220\245 \007\200u\006\020\220\377\001\220\024\220W\230A\330\317\004\032\230(\354\002\370\"\007\320\377\017 \320 0\260\006\260}a\345\010\035\230W\240A\347 \357\014""\020\220\007\247 \020\035\230\327S\240\005\367 \020\205!]\250\337!\330\014\r\340\251@4\320\377\017+\2503\250a\330\014\247\020\320\020\221A\004\001.\r\000\010\347\033\2305\275@\004\0004\320\037\1773\2604\260q\270\001\332@\377\320\013\034\230C\230q\330\365\014\357 \330W\002t\2301\330\273\020\023\220 u\230D\\\003\037\337\230s\320\"7.\000\003\270\376\030\000 \240\007\240q\250\001\376\\\002$\240A\320%9\270\377\021\340\010\031\230\026\320\037\277:\270$\270a\270\304@\013\377\210?\230#\230Q\330\014\335\035\001\001\020\220\010\257@\020#\332\317@qX\000\320\023\235Au\250\377C\250t\3203J\310#\377\310Q\330\024\047\240s\250\377!\2504\320/D\300A\177\330\024\030\320\0304\260\002\003\2711\303`\213\0006\230\023\245 \024\337\"\240\047\250\021\351\000\024\027\277\220s\230!\320\033\345\003\030\277\031\330\014\022\320\022\200@\250\373i\260\256B\003\2401\320$\2774\260B\260a\340\320`t\374\367\000\247!\010\013\2101\330\014_\026\220e\2307\334`1\314 \377T\250\024\250U\3202B\337\300\"\300A\340\027\000a\330\375\010\245@\320\025+\2504\250\371q\360@\313#%\240T\250\021\377\330\014\031\230\032\240?\260\376\346 \017\210}\230E\240\034\377\250R\250}\270C\270r\377\300\024\300Y\310c\320Q\177R\330\020(\250\001\340`\003\337\037\230q\240\t2\001!\240\363\021\330\243N\333!s\230.\250\375\004\326`\003\2601\330\024 /\240\001\240\035\263@\024\240\"C\000\277\024&\240g\250Q\304A\034\370\236`\217\205\001\347\"5\260]\300)O\3101\340\010\262\204\001\312\000\031\225 \377E\240\021\340\014\017\210z\236\236\"\020\026\320\026\220\204\001\277@<F\200\000\001\330H\007\302\002\246`\020,\000\336\254 *\250!\340\307c\230\005\377\320\035-\250W\260C\260\375w\274@u\300N\320RZ\377\320Z^\320^b\320b\377i\320im\320mn\330\377\020\026\220f\230A\330\020\377\033\2304\230u\240G\250\3771\250G\2606\270\022\270\3771\270I\300W\310A\310\277U\320RX\320X4\000[\337\320[\\\330\020\321at\240x\340 \307a\335\000!\240\037\260\211\000\377\027\220|\2402\240\\\260\265\023\333@\030\272`\240]\315 \030\265\033\357`\034\354$\340\034\221\207\003!\371\330\323@""\323\204\006\020!\240\024\240\357Q\240a\330\270\001\017\210t\365\220\330\001\005\224@\026\250w\260\357d\270!\330\020\0273\220d\366\205\204\003\031\230\242\"t\2207\230\375!\206\205\002\020\023\320\023+\250\3771\340\014\035\320\035/\320\307/C\300\230b\266\205\001\252\204\003\036\230\353d\240W\000\023j\000w\240c\377\250\021\330\024\027\320\027,\377\250A\250_\270L\310\002\375\310r\000\032\230#\320\0352\377\260!\2601\340\020\025\220?T\230\023\230B\230\241\000\000\010\377\030\230\003\2302\230S\240\377\002\240#\240R\240q\340\356\306\204\002\022\2308\203 Q\330\024\346\230a\024\025\r\005\204`$\240D\367\250\005\250\213\205\002w\250a\250\317v\3205Q\324au\001(\250\377\003\2505\260\003\2607\270\337!\2706\320A\236@]\320\177]`\320`a\330\030\354\206\002\376\311\205\001H\310\001\330\030\034\320w\0348\270\002\0035\260Q\262\000\037\220v\230S\240\026\000\213\210\001\321!\235\033\333\206\0038\2303\252\000|\000\014\336\276\211\001\035\240a\330\302`w\220\277a\220u\320\034,\333@3\377\260g\270Q\270e\300>\370\325\204\002\321\202+\274\211\001L\240\r\250Q\356P\001q\330\020\225\213\0011\240A\335\340\300E\340\004\013\365\207\001A\200\377\001\360\014\000\005$\2401\337\330\004&\240a\361\213\006\014\210\375A\375\213\001\013\2102\210S\220\357\001\330\014\r\200\214\nc\220\025\277\220c\230\022\2301\024\002\013\357\2104\210q\036\004\016\210a\342\247\213\001\013\331\212\0044\001\014\004\026\320\026W(\250\004\271@Q\315\214\001<\272\207\001\177\330\014\036\230a\230v\317\211\001\366\364\212\003\021\340\013\004\\\260\022\260\364\217\000\240\000\037\222\215\001\360\016\000\005\375\030\224\215\001\007\200z\220\023\220\277A\330\010\017\320\017\332\206\003\024\372\277\214\001\330\251\215\005\013\2101\210G\357\2203\220a\251\006c\220\022\360\261\214\001\306\215\001\004\004\312\215\001b\220\003\220\3772\220S\230\002\230#\230\371R\370\211\001\335\000\013\2109\220A\323\220Q\317\215\016y\000 \316\215\005\035\230\337T\240\021\330\004\000\004\030\230\377\t\240\021\360\006\000\005\021;\220\004\222\000\004\010\210\243""\215\002\253\216\001\374{\003\265\216\001n\230C\230s\240\254\231\213\001\321\214\001<\230\216\206\003\010j\001G\356\275!\024\220N\032\001\024\220F\276\254\212\001\340\014\032\230%\261\207\002\014\367\027\220~\351\213\001\027\320\027(\320\350\212\001\303\216\002\356!\352\215\001\027\204\217\001\025\220\177Q\220a\200\001\360\020\226$\323\010\210\260\217\002\320\2001S\305\217\020\022\000\377\005\t\210\004\210G\2208\357\2306\240\021\200\220\003c\220\036F\312\000$\240\332#\373\210\004\222\217\003\014\311\215\001\325\021\276\204\001r\236B\020\006\003\320\021\307\"\240#\272\212\001\362\210\002\271\220\001!\220\3611\344\204\001\201\207\002\307\207\004q\220\007\220\367w\230e\232\214\001\250\007\250w\377\260c\270\024\270Q\270g\337\300S\310\001\330D\001\022\220\373!\220\247\205\003\014\032\320\032,*\210\217\001\260f\002|\275\205\002\020\250\220\001\362\220\001\257\020%\240W\336a\340\013\004\034\177\260R\260q\200\001\360\306\002N\277\220\002\014\210C\307\220\001\273\204!\023\220\216\003~\225b2\320\r\036\230c\373\210\004\324\312\204\010\330\204\rx\322\204\002\010\272\204/\200\001\377\360\026\000\005\010\200r\210\313\023\210\333\204\001\210\300\222\t\276\222\002\330\004\337\034\230D\240\001\244\222\003B\220_j\240\002\240!\236\223\001V\220\222\001\367\014\320\014\372\222\002\026\220a\220?q\330\004\031\230\025\266\211\001\321\206\001\177\007\200w\210g\220Q\322\215\001\377q\330\004\027\220r\230\027\377\240\004\240A\330\004\t\210_\021\210\047\220\021\276\223\005\030\335\205\002\256\311\223\001\010\200q\306`T\344\205\001\220\345U\343\223\001\007\000\016\027\010V\2301|\271\223\001\0000q\210\006\210cX\013P\000\016\032\005c\000\217\225\003U\207`1\237\217\001\377w\220b\230\003\2301\230\237D\240\007\240r\257\223\001\212\223\001\021\177\220\027\230\004\230A\230\336\207\002)7\243\225\001\235\225\016\034\305\207\002\330\242\206\007\203\224\003X\335\210\001\251\210\t\320\210\001s\220\260\206\003\r\376\210\002\344\201\226\002\363\210\003\024\256\207\003\371\225\014 \000\005\335!\234A4\260A\220""\207\001\026\220\251Q\277\226\006\225\205\003\010\346\226\001\007\363\210\003\033\334\373\220\003\267\211\006u\220A\371\212\001v\220\305S\244\222\001\037\307\225\003\362\211\0025\004\032\230\377&\240\002\320\"3\26027\260Q\330\350\222\001\230r\221\206\001\316\225\001\034\204 \240\227\0014\210q\343\212\006\207\226\002\226\212\004\307<\220q\252\226\001d\013\201\222\002h\230\375a\364\223\001*\250$\250a\250\356\257\223\0021\330\014\215\n\320\013\"\277\240$\240f\250B\313\224\001\017\235\210\244\206\001s\230!\312\213\001[\004\025\374\316\225\001\304\213\003\320\000&\240a\360\335\032\262\207\001\001\210\036\232\223\001\230=\373\250\0048\000g\260T\270\021\366\374b\340\004\322\213\003\004\007\200v\360\317#Q\000\275\211\001\360a\016\220g\230\375Uk\000d\320*@\300\001a\300*\005\237\231\004\246\231\004\337\211\001t\220\255\227\004\3773\320\026+\2501\250CQ\250\364\002\253A\361\207\001\021\235\213\002\014\240\220\001\3731\330\t\005C\220r\230\021s\330\014\030\001\004\004\022\220+\233\225\001\327\022\220$\307`\001\366\215\001s\220\363\"\220$\001\300\217\001c\240\023\240\371A\367\207\002\262\227\001S\230\003\320\033\3370\260\001\330\020\232\231\001\004\013\177\2101\320\000?\270q\367\231\001\271\033\205\232\001\201\"\036\230a\210\232\001\t\364\200\212\003\251!\001\216F\r\330\010\014w\210E\220\232\211\002q\220\010\324\230\001\374V\004\243\211\007\024\220D\230\001\230\366\035\003\320\020\275\231\002\250\001\330\020\377\031\230\027\240\001\240\021\340\375\020\326\206\003\020\024\220G\2302\376\244\"c\250\032\2605\270\002\337\270!\2704\270\364\231\002s\210W!\210:\275b\010\235\225\001A\353!\371C\226\216\002\347\047\021\220\025\220a\375\220\336\227\001\010\021\220\031\230\"/\230A\340\010\313\222\0012\240\207\001\203\234\005\371Q\275\215\001\216\214\001*\240A\240V\177\2501\330\014\025\220Z\355a\376\260\226\002C\240t\2505\260\001\035\340\001\021\330\004\025\277\204\001\351 \334\217\001\177\033\2309\240B\240a";
-    PyObject *data = __Pyx_DecompressString_LZSS(cstring, 4133, 5707);
+    #elif (CYTHON_COMPRESS_STRINGS) > 0 && (CYTHON_COMPRESS_STRINGS) <= 90 /* compression: lzss (4283 bytes) */
+static const char cstring[] = "\377?Note th\377at Cytho\377n is del\377iberatel\377y strict\373er!\001n PEP\377-484 and\377 rejects\377 subclas\377ses of b\377uiltin t\377ypes. If\377 you nee?d to p%\000%\t\377then set\376\200\000e \047anno\177tation_<\000\377ing\047 dir\366b\000iv\242\000o Fa\377lse.add_\376%\000esoundr\377ts/world\377playerba\377se/perce\375pB\002fast.p\337yx__P\002\000Py\375D\311\000_NextR\357ef__i\004e__\363__\276\002\000\006_get\357item\026\001fun\275c\036\001main\003\002owdul/\002nam7\002\357qual\004\005tes\375tK\001ached_\277observ\006\000s\276!\000res_c\t\014t\375i@\000copy_m\377od_enemy\341_\305\003%\003\005\013*\001sta\377mp_exit_\377blocker_\337visib\220\000he\337apq_ic\000or\353ou\203@e\t\001ski\377ll_comba\277t_proxi\000e\377mory_ind\317ex_m\007\003\276 ce\374\014\004\336\"earby_ounit\260\004_n\001\017\353bu\177\000t\345\000j_i\317d_ke\273\000\336\002s_}p\327`ntial4\000\377ighbors_\375s\006\000t_rang\203e_\213$\313@\315A~\004\373\003m\337enace\000\024_b\374\235\"\035\000llieda\374\001\002\376\002onappe\377ndasynciWo.c\376\005s\243#d\261\"\302\254\003s\244\204\001\346(\370\000p\003bu;lk\215#ize\010\002\331\"\277ility_\321@c\375kx\005capcle\377anup_quo\277taclin\275!_\373tr\273\000backc\337ollec\362 ar\\\204\"\270@tic\201`p\356A\377current_\376\377Acxcydet\347ect\262`\356\"dis\317card\004\000\326\204\001_dsur\224\205\002\225jids\253d\206\330`en\274@\300B\016\004\264Cs\277etfilt\243`f\355n\002\004in\200@diu\375s\000\r_with_{cb\037\006side\374C\374=\004\342evulner\371a\361a\260\204\001iesge\357tget\340\204\016glo\331b\200`\236\204\001on\370\204\003gr\352\247`x\001\002y\255\204\002hpi\263di\344`\250amo\372\207\001n\317vis_\354)\312\205\001is\367_a_\262Bing_wlan\240 _an\257\205\003\276\361\204\001loake\021\001d\377epositis\307_in\277\001\000\006\327\205\001ce\374\023\002\255\205\004is_seewing\000\006_fny\001\374\330\006\203\207\001skeyli\357ve_p\342$mem\3025\000t\266\205\002\372\000\275\205\003\274\204\005xp\361i\347\206\001\327\206\001\304\204\003merg\373e_\362d_3x3n\367s""ma\230`stooab\300\211\002\240\207\005\240\207\r\267\207\006un\222\211\001\350\350\205\003\006\014\316\207\002p\360\210\002ive\301d\000\006\235\001\201\211\007\332\206\002\336\206\003co\007ver\300!\326\206\003\275\206\003\006\022U\003\037lace_\216\206\t\245\207\003\356\207\005\3204\t\202\210\005.\010\224\210\006i\354\000ry\360\242\212\003\334\210\004\317A\272Dpopr\375a\221\204\0012revea\315l\200\205\005sc\340@\340%_f\373or\000\001getse\377lfsetdef\377aultshou\377ld_do_fux\351\210\001\222\206\003\344\207\010sort\251\213\005\365.\242\213\014.\242\213\014spee\241d\252\212\004\234\212\001\237\212\002\362\211\002u\211\211\002u\377pdateval\367ues\315\204\t_hit\346\003\013mi\223\215\001\233\214\002xy\200\377\001\330\004\010\210\001\210\021\377\330\004\013\2105\220\002\220\377#\220Z\230q\200\001\340\337\004\027\220q\340\030\000\005\210\377Q\330\010\r\210Q\210a\377\330\010\013\2103\210g\220\377U\230$\230b\240\001\330\377\014\022\220\047\230\021\230!\3766\0011\200\001\360\n\000\005\377&\240Q\330\004\047\240q\377\330\004\037\230t\2406\250~S\000!\240\035\250c\260\\\000\377\026\220d\230!\360\010\000\377\005\032\230\024\230Q\340\004\377!\240\021\360\"\000\005\024\377\2206\320\031-\250T\260\377\021\260$\260a\330\004\007\377\200}\220C\220q\330\010\376}\000\330\010\016\320\016\"\240\177!\2404\240w\250a\212\001\373\007\210\027\000\020\220\003\2201\336\212\0016\220\027\230\205\000\034\230\357A\230Y\240\235\000\030\230\001\177\230\026\230w\240a\240\270\000\377\007\200v\320\r$\240C\304\213\000C\001&\035\001L\000\231\002\022\220\371&6\000i\000t\2104\210w\355\220\330\000#\240O\000\014\210G\373\2204y\000\014!\240\027\250\377\001\250\023\250A\330\010\023\377\2201\220D\230\007\230q\377\340\010 \240\013\2501\250\233D\260\260 \026\220\214\000]\002*/\250#\250Q\244\002,+\001\256\000s-\250\333\000y\002#\2403o\004\363%\240\036\003\202\001\004\017\210v\355\220\245 \007\200u\006\020\220\001\377\220\024\220W\230A\330\004\347\032\230(\354\002\370\"\007\320\017\377 \320 0\260\006\260a\276\345\010\035""\230W\240A\347 \014\367\020\220\007\247 \020\035\230S\353\240\005\367 \020\205!]\250!\357\330\014\r\340\251@4\320\017\377+\2503\250a\330\014\020\323\320\020\221A\004\001.\r\000\010\033\363\2305\275@\004\0004\320\0373\277\2604\260q\270\001\332@\320\377\013\034\230C\230q\330\014\372\357 \330W\002t\2301\330\020\335\023\220 u\230D\\\003\037\230os\320\"7.\000\003\270\030\000\177 \240\007\240q\250\001\\\002\377$\240A\320%9\270\021\377\340\010\031\230\026\320\037:\337\270$\270a\270\304@\013\210\377?\230#\230Q\330\014\035n\001\001\020\220\010\257@\020#\317@\355qX\000\320\023\235Au\250C\377\250t\3203J\310#\310\377Q\330\024\047\240s\250!\377\2504\320/D\300A\330\277\024\030\320\0304\260\002\0031\334\303`\213\0006\230\023\245 \024\"\357\240\047\250\021\351\000\024\027\220\337s\230!\320\033\345\003\030\031\337\330\014\022\320\022\200@\250i\375\260\256B\003\2401\320$4_\260B\260a\340\320`t\367\000\376\247!\010\013\2101\330\014\026\257\220e\2307\334`1\314 T\377\250\024\250U\3202B\300\357\"\300A\340\027\000a\330\010\376\245@\320\025+\2504\250q\374\360@\313#%\240T\250\021\330\177\014\031\230\032\240?\260\346 \377\017\210}\230E\240\034\250\377R\250}\270C\270r\300\377\024\300Y\310c\320QR\277\330\020(\250\001\340`\003\037\357\230q\240\t2\001!\240\021\371\330\243N\333!s\230.\250\004\376\326`\003\2601\330\024 \240\227\001\240\035\263@\024\240\"C\000\024_&\240g\250Q\304A\034\236`\374\217\205\001\347\"5\260]\300)\310\2471\340\010\262\204\001\312\000\031\225 E\177\240\021\340\014\017\210z\236\"O\020\026\320\026\220\204\001\277@<\200\000#\001\330H\007\302\002\246`\020,\000\254 \357*\250!\340\307c\230\005\320\377\035-\250W\260C\260w\376\274@u\300N\320RZ\320\377Z^\320^b\320bi\277\320im\320mn\215b\320\363\027/\223 \223\204\001\024\032\230&\271\240Y\000\355\206\0015\250\007\251 \007\377\260v\270R\270q\300\t\377\310\027\320PQ\320QV\337\320V\\\320\\A\000_\320\213_`\334\001\003\372A\264`\270@q\337\330\030%\240_\336@\030\033\377\230<\240r\250\034\260S\357\270\001\330\034\272 \250\035\260\367a\330""\034\271 \330 /\250\377t\2601\260A\340 1/\260\024\260Q\023\001\035\234(\304\005[\024\025\367\001t\220\350\001\005\244@\377\026\250w\260d\270!\330\376\215\205\006\020!\240\024\240Q\240\373a\330\362\001\017\210t\2203\333\220d\225\204\003\031\230\262\"t\220\3677\230!\226\205\002\020\023\320\023\377+\2501\340\014\035\320\035\037/\320/C\300\250b\306\205\001\272\204\003\257\036\230d\240W\000\023j\000w\377\240c\250\021\330\024\027\320\377\027,\250A\250_\270L\367\310\002\310r\000\032\230#\320\377\0352\260!\2601\340\020\377\025\220T\230\023\230B\230\374w\000\000\010\030\230\003\2302\230\377S\240\002\240#\240R\240\373q\340\326\204\002\022\2308\2402\017\240Q\330\024\250a\317\000\016\004\224`\277$\240D\250\005\250\233\205\002w\277\250a\250v\3205\330 R\376t\002(\250\003\2505\260\003\377\2607\270!\2706\320A\376\256@]\320]`\320`a\363\330\030\374\206\002\331\205\001H\310\001\330\277\030\034\320\0348\270\002\0035\373\260Q\262\000\220v\230S\240|\026\000\233\210\001\030\031\330\020\033\353\206\003\3078\2303\252\000\315!\316\211\001\035\240\373a\330\322`w\220a\220u\377\320\034,\250G\2603\260\177g\270Q\270e\300>\345\204\002\337\026\220f\230A8\0014\230\337u\240G\2501\036\0006\270\377\022\2701\270I\300W\310\377A\310U\320RX\320X\336\303`[\320[\\\313\207\0011\220\337L\240\r\250QP\001q\330\275\020\245\213\0011\240A\340\226E\340\373\004\013\205\210\001A\200\001\360\014\377\000\005$\2401\330\004&\273\240a\201\214\006\014\210A\215\214\001\013\377\2102\210S\220\001\330\014\375\r\220\214\nc\220\025\220c\230\367\022\2301\024\002\013\2104\210]q\036\004\016\210a\267\213\001\013\351\212\004\3744\001\014\004\026\320\026(\250\004\352\271@Q\335\214\001<\312\207\001\330\014\036\317\230a\230v\337\211\001\204\213\003\021\340\236\013\004\\\260\022\260\217\000\240\000\037\276\242\215\001\360\016\000\005\030\244\215\001\007\377\200z\220\023\220A\330\010W\017\320\017\352\206\003\024\317\214\001\330\271\215\005_\013\2101\210G\356`a\251\006\207c\220\022\301\214\001\326\215\001\004\004\332\215\001b\377\220\003""\2202\220S\230\002\317\230#\230R\210\212\001\335\000\013\210\2379\220A\220Q\337\215\016y\000 \376\336\215\005\035\230T\240\021\330\004\276\000\004\030\230\t\240\021\347\215\001\021\333\220\004\222\000\004\017\340\214\001\220v\037\320\035/\250q\353\216\001\301\215\002\311\216\001\376\213\001\360\010\000\t\014\2103\177\210n\230C\230s\240\317\210\002\372\205\205\001$\253\204\001\023\2209\230C\376\323@C\240t\2507\260!\367\330\024\025\215\215\001<\230t\240w1\240A\214\217\0019\220G\351!w\024\220N6\001\024\220F\350\212\001\337\340\014\032\230%\355\207\002\014\027{\220~\245\214\001\027\320\027(\244\213\001\350\377\216\002\232A\246\216\001\027\300\217\001\025\220Q\277\220a\200\001\360\020\302$\010\351\210\354\217\002\374\2001S\201\220\020\022\000\005\377\t\210\004\210G\2208\230w6\240\021\274\220\003c\220\036\346\000\243$\240\206C\267\211\004\316\217\003\014\205\216\001\021\352\352\204\001r\312B\020\006\003\320\021\"\343\240#\366\212\001\256\211\002\365\220\001!\2201\370\220\205\001\255\207\002\311\207\004q\220\007\220w\373\230e\327\210\002\007\250w\260c\377\270\024\270Q\270g\300S\367\310\001\330D\001\022\220!\220\276\323\205\003\014\032\320\032,\304\217\001\260\312f\002|\351\205\002\020\344\220\001\256\221\001\020%\353\240W\212\204\001\340\013\004\034\260R\237\260q\200\001\360\306\002\373\220\002\014\223\210C\203\221\001\347\204!\023\314\216\003\301b2\037\320\r\036\230c\375\210\004\366\204\010\204\205\r\365x\376\204\002\010\346\204/\200\001\360\026\377\000\005\010\200r\210\023\210\362\207\205\001\210\374\222\t\372\222\002\330\004\034\230\367D\240\001\340\222\003B\220j\240\327\002\240!\332\223\001V\314\222\001\014\320\375\014\266\223\002\026\220a\220q\330\317\004\031\230\025\342\211\001\375\206\001\007\200\337w\210g\220Q\216\216\001q\330\377\004\027\220r\230\027\240\004\376\376`\004\t\210\021\210\047\220\345\021\372\223\005\030\211\206\002\205\224\001\010\200qZ\306`T\220\206\001\220U\237\224\001\007\000\016\316\027\010V\2301\365\223\001\0000q\210\007\006\210cX\013\000\016""\032\005c\000\313\225\003\365U\207`1\333\217\001w\220b\230\377\003\2301\230D\240\007\240\371r\353\223\001\306\223\001\021\220\027\230\004\227\230A\230\212\210\0027\337\225\001\331\225\016\034\300\361\207\002\277\206\010\277\224\003\211\211\001\325\210\t\374\210\001s\220!!\236\211\004\253\211\001\275\226\002\237\211\003\024\332\207\003\265\226\014\357 \000\005!\234A4\260A\177\360\006\000\005\026\220Q\373\226\006*\225\205\003\010\242\227\001\007\237\211\003\033\267\221\003\343\211\006wu\220A\245\213\001v\220S\340\222\001\341\037\203\226\003\236\212\0025\004\247\217\001\002\320\"\2773\2602\260Q\330\244\223\001\230\341r\221\206\001\212\226\001\204 \334\227\0014\210q8\217\213\006\303\226\002\302\212\004<\220q\346\226\001d\013\356\275\222\002h\230a\260\224\001*\250$w\250a\250\353\223\0021\330\014\215\n\377\320\013\"\240$\240f\250\355B\207\225\001\017\210\244\206\001s\230!\344\366\213\001[\004\025\212\226\001\360\213\003\320\000&\357\240a\360\032\262\207\001\001\210\036\336\326\223\001\230=\250\0048\000g\260\373T\270\273\207\0024\320\017\047\240\367q\250\006\324\225\001\023\2201\340\275\004\214\214\003\004\007\200v\215\214\002\010\370_\000\267!\376a\016\220g\230U\376y\000d\320*@\300\001\300\345\021\274\204\002\340\350\231\005\360\231\004\010\210\007\367\210t\220\367\227\0043\320\026+\037\2501\250C\250\202\"\271A\377\207\001\265\021\327\213\002\014\260\220\0011\330\t\005C?\220r\230\021\330\014\030\001\004\004w\022\220+\345\225\001\022\220$\325`=\001\260\216\001s\220\"\220$\001\372\217\001\237c\240\023\240A\205\210\002\374\227\001S\377\230\003\320\0330\260\001\330\375\020\344\231\001\004\013\2101\320\000\227?\270q\301\232\001\033\317\232\001\217\"\036K\230a\322\232\001\t\216\212\003\267!\001\234F\177\r\330\010\014\210E\220\250\211\002\307q\220\010\236\231\001V\004\261\211\007\024\220oD\230\001\230\035\003\320\020\207\232\002\377\250\001\330\020\031\230\027\240\337\001\240\021\340\020\344\206\003\020\024\357\220G\2302\244\"c\250\032\377\2605\270\002\270!\2704}\270\276\232""\002s\210!\210:\313b\225\010\347\225\001A\353!C\320\216\002\347\047\021\337\220\025\220a\220\250\230\001\010\021\377\220\031\230\"\230A\340\010\362\333\222\0012\256\207\001\315\234\005Q\220a\330\375\014\234\214\001*\240A\240V\250?1\330\014\025\220Z\373a\372\226\002\336\334\214\0015\260\001\340\001\021\330\004\361\025\315\204\001\351 \226\220\001\033\2309\240\007B\240a";
+    PyObject *data = __Pyx_DecompressString_LZSS(cstring, 4283, 5795);
     #define __Pyx_DecompressString_UNUSED
     if (unlikely(!data)) __PYX_ERR(0, 1, __pyx_L1_error)
     const char* const bytes = __Pyx_PyBytes_AsString(data);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (likely(bytes)); else { Py_DECREF(data); __PYX_ERR(0, 1, __pyx_L1_error) }
     #endif
-    #else /* compression: none (5707 bytes) */
-static const char bytes[] = "?Note that Cython is deliberately stricter than PEP-484 and rejects subclasses of builtin types. If you need to pass subclasses then set the \047annotation_typing\047 directive to False.add_notesoundrts/worldplayerbase/perception_fast.pyx__Pyx_PyDict_NextRef__annotate____class____class_getitem____func____main____module____name____qualname____test___cached_observed_squares_cached_observed_time_copy_mod_enemy_player_cache_enemy_player_timestamp_exit_blocker_visible_heapq_is_coroutine_is_skill_combat_proxy_memory_index_memory_place_index_add_nearby_units_cache_nearby_units_cache_bucket_obj_id_key_pcaches_potential_neighbors_sight_range_squaresaddadd_memory_enemy_menaceadd_memory_enemy_menace_by_placealliedallied_visionappendasyncio.coroutinesblocked_exitbucketsbuild_enemy_place_menacebulk_memorizebulk_visibility_checkby_placecapcleanup_quotacline_in_tracebackcollect_partial_static_capcopycurrent_timecxcydetected_unitsdiscarddisplay_durationenemy_player_idsenemy_presence_placesenemy_units_setfilter_fnfilter_in_radiusfilter_in_radius_with_cbfilter_inside_unitsfilter_visible_vulnerable_enemiesgetget_observed_squaresglobal_vision_cachegrid_xgrid_yheapqhpidinitial_modelinvis_visibility_cacheis_a_building_landis_an_enemyis_cloakedis_depositis_insideis_inside_placeis_invisibleis_seeingis_seeing_fnis_vulnerableitemskeylive_presencemem_setmemoriesmemorymemory_expires_timemenacemerge_buckets_3x3nsmallestoobjectsobservedobserved_squaresobserved_union_bucketobserved_union_cachepperceivedperceived_setperceptionplaceplace_covering_units_bucketplace_covering_units_cacheplace_enemy_menaceplace_visible_bucketplace_visible_cacheplace_visible_historyplayerplayer_is_an_enemypopradius2scan_memories_for_forgetselfsetdefaultshould_do_full_cleanupsight_rangesortsoundrts.worldplayerbase.perception_fastspeedsquarestimetime_stampuunitsupdatevaluesvision_cache_hitsvision_cache_missesworldxy\200\001\330\004\010\210\001\210\021\330\004\013\2105\220\002\220#\220Z\230q\200\001\340\004\027\220q\340""\004\010\210\005\210Q\330\010\r\210Q\210a\330\010\013\2103\210g\220U\230$\230b\240\001\330\014\022\220\047\230\021\230!\330\004\013\2101\200\001\360\n\000\005&\240Q\330\004\047\240q\330\004\037\230t\2406\250\021\330\004!\240\035\250c\260\021\330\004\026\220d\230!\360\010\000\005\032\230\024\230Q\340\004!\240\021\360\"\000\005\024\2206\320\031-\250T\260\021\260$\260a\330\004\007\200}\220C\220q\330\010\027\220q\330\010\016\320\016\"\240!\2404\240w\250a\340\004\010\210\007\210q\330\010\020\220\003\2201\330\010\013\2106\220\027\230\001\330\014\034\230A\230Y\240a\330\010\030\230\001\230\026\230w\240a\240q\340\004\007\200v\320\r$\240C\240q\330\010\016\320\016&\240a\330\010\016\320\016\047\240q\330\004\022\220&\230\001\330\004\007\200t\2104\210w\220a\330\010#\2401\330\010\014\210G\2204\220q\330\014!\240\027\250\001\250\023\250A\330\010\023\2201\220D\230\007\230q\340\010 \240\013\2501\250D\260\001\330\004\026\220a\340\004\007\200v\320\r*\250#\250Q\330\010\016\320\016,\250A\330\010\016\320\016-\250Q\340\004\007\200v\320\r#\2403\240a\330\010\016\320\016%\240Q\330\010\016\320\016&\240a\330\004\017\210v\220Q\330\004\007\200t\2104\210w\220a\330\010\020\220\001\220\024\220W\230A\330\004\032\230(\240!\2404\240q\340\004\010\210\007\320\017 \320 0\260\006\260a\330\010\013\2106\220\027\230\001\330\014\035\230W\240A\240Q\330\014\020\220\007\220q\330\020\035\230S\240\005\240Q\330\020\034\230A\230]\250!\330\014\r\340\010\013\2104\320\017+\2503\250a\330\014\020\320\020\047\240q\330\014\020\320\020.\250a\330\010\033\2305\240\001\330\010\033\2304\320\0373\2604\260q\270\001\330\010\013\320\013\034\230C\230q\330\014\"\240!\330\014\020\220\007\220t\2301\330\020\023\2204\220u\230D\240\005\240Q\330\020\037\230s\320\"7\260q\270\003\2701\330\020 \240\007\240q\250\001\330\014\020\320\020$\240A\320%9\270\021\340\010\031\230\026\320\037:\270$\270a\270q\330\010\013\210?\230#\230Q\330\014\035\230Q\330\014\020\220\010\230\001\330\020#\2404\240q\330\020\023\320\023$\240C\240u\250C\250t\3203J\310#\310Q""\330\024\047\240s\250!\2504\320/D\300A\330\024\030\320\0304\260A\330\024\030\320\0301\260\021\330\020\023\2206\230\023\230A\330\024\"\240\047\250\021\250!\330\024\027\220s\230!\320\033+\2503\250a\330\030\031\330\014\022\320\022-\250Q\250i\260q\340\010 \240\003\2401\320$4\260B\260a\340\010\027\220t\2305\240\005\240Q\330\010\013\2101\330\014\026\220e\2307\240!\2401\240A\240T\250\024\250U\3202B\300\"\300A\340\014\026\220a\330\010\017\210v\320\025+\2504\250q\260\001\330\010\013\2104\320\017%\240T\250\021\330\014\031\230\032\240?\260!\330\014\017\210}\230E\240\034\250R\250}\270C\270r\300\024\300Y\310c\320QR\330\020(\250\001\340\010\013\2101\330\014\037\230q\240\t\250\021\330\014!\240\021\330\014\020\220\007\220q\330\020\035\230S\240\005\240Q\330\020\023\2204\220s\230.\250\004\250D\260\003\2601\330\024 \240\001\240\035\250a\330\024#\2404\240q\250\001\340\024&\240g\250Q\250a\330\014\034\230A\330\010\016\320\016$\240A\320%5\260]\300)\3101\340\010\014\210G\2201\330\014\031\230\023\230E\240\021\340\014\017\210z\230\023\230A\330\020\026\320\026,\250A\330\020\023\220<\230q\240\001\330\024#\2404\240q\250\001\340\024%\240T\250\021\250!\330\020\021\340\014\022\320\022*\250!\340\014\020\220\007\220q\230\005\320\035-\250W\260C\260w\270a\270u\300N\320RZ\320Z^\320^b\320bi\320im\320mn\330\020\026\220f\230A\330\020\033\2304\230u\240G\2501\250G\2606\270\022\2701\270I\300W\310A\310U\320RX\320XZ\320Z[\320[\\\330\020\034\230C\230t\2401\240A\330\020\023\2201\330\024!\240\037\260\001\330\024\027\220|\2402\240\\\260\023\260A\330\030$\240A\240]\260!\330\030\033\2301\330\034+\2504\250q\260\001\340\034-\250T\260\021\260!\330\030\031\330\020\034\230A\230]\250!\330\020!\240\024\240Q\240a\330\020\021\340\014\017\210t\220<\230q\240\005\240T\250\026\250w\260d\270!\330\020\034\230A\230]\250!\330\020!\240\024\240Q\240a\330\020\021\340\014\017\210t\2203\220d\230#\230Q\330\014\031\230\021\340\014\017\210t\2207\230!\2305\240\001\330\020\023\320\023+\2501\340\014\035\320\035/\320/C\3001\330\014\026\220a""\330\014\020\220\010\230\001\330\020\036\230d\240!\330\020\023\220<\230w\240c\250\021\330\024\027\320\027,\250A\250_\270L\310\002\310!\330\020\032\230#\320\0352\260!\2601\340\020\025\220T\230\023\230B\230a\330\020\025\220T\230\023\230B\230a\330\020\030\230\003\2302\230S\240\002\240#\240R\240q\340\020\023\2206\230\022\2308\2402\240Q\330\024!\240\021\330\024\025\340\020\023\2206\230\022\2301\330\024$\240D\250\005\250Q\330\024\047\240w\250a\250v\3205Q\320QR\330\024\027\320\027(\250\003\2505\260\003\2607\270!\2706\320AZ\320Z]\320]`\320`a\330\030+\2503\250a\250t\3203H\310\001\330\030\034\320\0348\270\001\330\030\034\320\0345\260Q\330\024\027\220v\230S\240\001\330\030%\240Q\330\030\031\330\020\033\2301\330\020\023\2208\2303\230a\330\024\025\340\014\030\230\001\230\035\240a\330\014\017\210w\220a\220u\320\034,\250G\2603\260g\270Q\270e\300>\320QR\330\020\026\220f\230A\330\020\033\2304\230u\240G\2501\250G\2606\270\022\2701\270I\300W\310A\310U\320RX\320XZ\320Z[\320[\\\330\020\023\2201\220L\240\r\250Q\330\014\017\210q\330\020\037\230t\2401\240A\340\020!\240\024\240Q\240a\340\004\013\320\013\034\230A\200\001\360\014\000\005$\2401\330\004&\240a\340\004\010\210\005\210Q\330\010\014\210A\210Q\330\010\013\2102\210S\220\001\330\014\r\330\010\r\210Q\210a\330\010\013\2103\210c\220\025\220c\230\022\2301\330\014\r\330\010\013\2104\210q\220\001\330\014\r\330\010\016\210a\210q\330\010\013\2104\210w\220a\330\014\r\330\010\016\210a\210q\330\010\026\320\026(\250\004\250A\250Q\330\010\013\210<\220s\230!\330\014\036\230a\230v\240Q\330\014!\240\027\250\001\250\021\340\014\036\230a\230v\240\\\260\022\2601\330\004\013\320\013\037\230q\200\001\360\016\000\005\030\220q\340\004\007\200z\220\023\220A\330\010\017\320\017\037\230q\240\t\250\024\250T\260\021\330\004\010\210\005\210Q\330\010\013\2101\210G\2203\220a\330\014\r\330\010\r\210Q\210c\220\022\2201\330\010\r\210Q\210c\220\022\2201\330\010\013\2103\210b\220\003\2202\220S\230\002\230#\230R\230q\330\014\r\330\010\013\2109\220A\220Q\330\014\022\220""\047\230\021\230!\330\004\013\2101\200\001\360\016\000\005 \230t\2406\250\021\330\004\035\230T\240\021\330\004\035\230T\240\021\330\004\030\230\t\240\021\360\006\000\005\021\220\004\220A\330\004\010\210\007\210q\330\010\013\2103\210a\330\014\r\330\010\013\2103\210n\230C\230s\240!\330\014\r\330\010\023\220<\230t\2401\240A\330\010\013\2109\220G\2301\330\014\024\220N\240!\330\014\024\220F\230#\230Q\340\014\032\230%\230q\240\001\330\014\027\220~\240Q\330\014\027\320\027(\250\001\330\014\026\220d\230!\2301\330\014\030\230\001\230\027\240\001\330\014\025\220Q\220a\200\001\360\020\000\005\030\220q\340\004\010\210\005\210Q\330\010\013\2101\210G\2203\220a\330\014\r\330\010\r\210Q\210c\220\022\2201\330\010\r\210Q\210c\220\022\2201\330\010\013\2103\210b\220\003\2202\220S\230\002\230#\230S\240\001\330\014\022\220\047\230\021\230!\330\004\013\2101\200\001\360\022\000\005\t\210\004\210G\2208\2306\240\021\330\010\013\2103\210c\220\036\230s\240$\240a\330\014\r\330\010\014\210G\2201\330\014\020\220\003\2201\330\014\020\220\001\220\021\330\014\017\210r\220\023\220A\330\020\021\330\014\017\210r\320\021\"\240#\240T\250\021\250!\330\020\021\330\014\022\220!\2201\330\014\017\210t\2207\230!\330\020\021\340\014\017\210q\220\007\220w\230e\2404\240q\250\007\250w\260c\270\024\270Q\270g\300S\310\001\330\020\021\330\014\022\220!\2208\2303\230a\330\014\032\320\032,\250D\260\001\260\021\330\014\017\210|\2303\230a\330\020\"\240!\2406\250\021\330\020%\240W\250A\250Q\340\020\"\240!\2406\250\034\260R\260q\200\001\360\022\000\005\t\210\007\210q\330\010\014\210C\210q\330\010\014\210A\210Q\330\010\013\2102\210S\220\001\330\014\r\330\010\r\210Q\210a\330\010\013\2103\210c\220\025\220c\230\023\230C\230q\330\014\r\330\010\013\2102\320\r\036\230c\240\024\240Q\240a\330\014\r\330\010\016\210a\210q\330\010\013\2104\210w\220a\330\014\r\330\010\016\210a\210x\220s\230!\330\010\026\320\026(\250\004\250A\250Q\330\010\013\210<\220s\230!\330\014\036\230a\230v\240Q\330\014!\240\027\250\001\250\021\340\014\036\230a\230v""\240\\\260\022\2601\200\001\360\026\000\005\010\200r\210\023\210A\330\010\017\210q\330\004\037\230t\2406\250\021\330\004\026\220d\230!\330\004\034\230D\240\001\330\004\007\200}\220B\220j\240\002\240!\330\010\r\210V\2201\330\010\014\320\014\047\240q\330\004\026\220a\220q\330\004\031\230\025\230d\240!\2401\330\004\007\200w\210g\220Q\330\010\017\210q\330\004\027\220r\230\027\240\004\240A\330\004\t\210\021\210\047\220\021\330\004\013\2101\200\001\360\030\000\005\030\220q\360\n\000\005\010\200q\210\005\210T\220\023\220A\220U\230!\330\004\007\200q\210\005\210T\220\023\220A\220U\230!\330\004\007\200q\210\005\210T\220\023\220A\220V\2301\330\004\007\200q\210\005\210T\220\023\220A\220U\230!\330\004\007\200q\210\005\210T\220\023\220A\220U\230!\330\004\007\200q\210\005\210T\220\023\220A\220V\2301\330\004\007\200q\210\006\210c\220\023\220A\220U\230!\330\004\007\200q\210\006\210c\220\023\220A\220U\230!\330\004\007\200q\210\006\210c\220\023\220A\220V\2301\340\004\010\210\005\210U\220!\2201\330\010\017\210w\220b\230\003\2301\230D\240\007\240r\250\023\250A\250Q\330\010\021\220\027\230\004\230A\230Q\330\010\013\2107\220\047\230\021\330\014\022\220\047\230\021\230!\330\004\013\2101\200\001\360\034\000\005\030\220q\330\004\010\210\007\210q\330\010\013\2104\210w\220a\330\014\r\330\010\013\2104\210w\220a\330\014\r\330\010\013\2104\210s\220!\330\014\r\330\010\r\210S\220\001\330\010\013\2103\210c\220\025\220c\230\024\230R\230q\330\014\022\220\047\230\021\230!\330\004\013\2101\200\001\360 \000\005!\240\001\330\0044\260A\360\006\000\005\026\220Q\340\004\010\210\005\210Q\330\010\020\220\001\220\021\330\010\013\2105\220\007\220s\230!\330\014\033\2307\240!\2401\330\014\r\330\010\013\2104\210u\220A\330\014\017\210v\220S\230\001\330\020\037\230w\240a\240q\330\014\r\330\010\020\220\001\220\021\330\010\032\230&\240\002\320\"3\2602\260Q\330\010\031\230\026\230r\240\021\330\010\022\220&\230\003\2301\330\010\013\2104\210q\330\014\017\210q\330\020\037\230w\240a\240q\330\014\r\330\010\013\210<\220q\230""\001\330\014\033\2307\240!\2401\330\014\r\330\010\013\2101\330\014\026\220h\230a\230q\330\014*\250$\250a\250q\330\010\013\2101\330\014\033\2307\240!\2401\330\014\r\330\010\013\320\013\"\240$\240f\250B\250a\330\014\017\210q\220\007\220s\230!\330\020\037\230w\240a\240q\330\014\025\220Q\330\004\013\320\013\034\230A\320\000&\240a\360\032\000\005\t\210\001\210\036\220s\230!\230=\250\004\250B\250g\260T\270\021\330\010\017\210q\340\004\014\210A\210Q\330\004\007\200v\210S\220\001\330\010\017\210q\360\006\000\005\010\200q\210\016\220g\230U\240$\240d\320*@\300\001\300\021\330\010\017\210q\340\004\010\210\001\210\021\330\004\010\210\001\210\021\330\004\010\210\007\210t\2201\330\010\014\210G\2203\320\026+\2501\250C\250q\330\014\017\210s\220!\330\020\021\330\014\021\220\023\220A\330\014\017\210t\2201\330\020\021\330\014\021\220\023\220C\220r\230\021\330\014\021\220\023\220C\220r\230\021\330\014\022\220+\230Q\330\014\022\220$\220b\230\001\330\014\017\210s\220\"\220C\220r\230\023\230B\230c\240\023\240A\330\020\021\330\014\017\210v\220S\230\003\320\0330\260\001\330\020\027\220q\330\004\013\2101\320\000?\270q\360\n\000\005\033\230!\330\004\025\220Q\330\004\036\230a\360\n\000\005\t\210\005\210Q\330\010\017\210q\220\001\330\010\013\2104\210q\330\014\r\330\010\014\210E\220\021\330\014\017\210q\220\010\230\007\230q\330\020\021\330\014\017\210r\220\023\220A\330\020\021\330\014\024\220D\230\001\230\021\330\014\017\210q\320\020$\240C\240q\250\001\330\020\031\230\027\240\001\240\021\340\020\026\220a\220q\330\020\024\220G\2302\230U\240$\240c\250\032\2605\270\002\270!\2704\270q\340\004\007\200s\210!\210:\220S\230\001\330\010\017\210}\230A\340\004\014\210C\210q\220\001\330\004\007\200v\210S\220\001\330\010\021\220\025\220a\220t\2301\330\010\021\220\031\230\"\230A\340\010\017\210t\2202\220Q\330\010\013\2105\220\002\220#\220Q\220a\330\014\024\220F\230*\240A\240V\2501\330\014\025\220Z\230r\240\021\240!\2401\240C\240t\2505\260\001\340\014\025\220Z\230r\240\021\240!\2401\240C\240t\2505\260\001\330""\004\025\220S\230\001\230\021\330\004\013\320\013\033\2309\240B\240a";
+    #else /* compression: none (5795 bytes) */
+static const char bytes[] = "?Note that Cython is deliberately stricter than PEP-484 and rejects subclasses of builtin types. If you need to pass subclasses then set the \047annotation_typing\047 directive to False.add_notesoundrts/worldplayerbase/perception_fast.pyx__Pyx_PyDict_NextRef__annotate____class____class_getitem____func____main____module____name____qualname____test___cached_observed_squares_cached_observed_time_copy_mod_enemy_player_cache_enemy_player_timestamp_exit_blocker_visible_heapq_is_coroutine_is_skill_combat_proxy_memory_index_memory_place_index_add_nearby_units_cache_nearby_units_cache_bucket_obj_id_key_pcaches_potential_neighbors_sight_range_squaresaddadd_memory_enemy_menaceadd_memory_enemy_menace_by_placealliedallied_visionappendasyncio.coroutinesblocked_exitbucketsbuild_enemy_place_menacebulk_memorizebulk_visibility_checkby_placecapcleanup_quotacline_in_tracebackcollect_partial_static_capcopycurrent_timecxcydetected_unitsdiscarddisplay_durationenemy_player_idsenemy_presence_placesenemy_units_setfilter_fnfilter_in_radiusfilter_in_radius_with_cbfilter_inside_unitsfilter_visible_vulnerable_enemiesgetget_observed_squaresglobal_vision_cachegrid_xgrid_yheapqhpidinitial_modelinvis_visibility_cacheis_a_building_landis_an_enemyis_cloakedis_depositis_insideis_inside_placeis_invisibleis_seeingis_seeing_fnis_vulnerableitemskeylive_presencemem_setmemoriesmemorymemory_expires_timemenacemerge_buckets_3x3nsmallestoobjectsobservedobserved_squaresobserved_union_bucketobserved_union_cachepperceivedperceived_setperceptionplaceplace_covering_units_bucketplace_covering_units_cacheplace_enemy_menaceplace_visible_bucketplace_visible_cacheplace_visible_historyplayerplayer_is_an_enemypopradius2revealed_unitsscan_memories_for_forgetselfsetdefaultshould_do_full_cleanupsight_rangesortsoundrts.worldplayerbase.perception_fastspeedsquarestimetime_stampuunitsupdatevaluesvision_cache_hitsvision_cache_missesworldxy\200\001\330\004\010\210\001\210\021\330\004\013\2105\220\002\220#\220Z\230q\200\001\340\004""\027\220q\340\004\010\210\005\210Q\330\010\r\210Q\210a\330\010\013\2103\210g\220U\230$\230b\240\001\330\014\022\220\047\230\021\230!\330\004\013\2101\200\001\360\n\000\005&\240Q\330\004\047\240q\330\004\037\230t\2406\250\021\330\004!\240\035\250c\260\021\330\004\026\220d\230!\360\010\000\005\032\230\024\230Q\340\004!\240\021\360\"\000\005\024\2206\320\031-\250T\260\021\260$\260a\330\004\007\200}\220C\220q\330\010\027\220q\330\010\016\320\016\"\240!\2404\240w\250a\340\004\010\210\007\210q\330\010\020\220\003\2201\330\010\013\2106\220\027\230\001\330\014\034\230A\230Y\240a\330\010\030\230\001\230\026\230w\240a\240q\340\004\007\200v\320\r$\240C\240q\330\010\016\320\016&\240a\330\010\016\320\016\047\240q\330\004\022\220&\230\001\330\004\007\200t\2104\210w\220a\330\010#\2401\330\010\014\210G\2204\220q\330\014!\240\027\250\001\250\023\250A\330\010\023\2201\220D\230\007\230q\340\010 \240\013\2501\250D\260\001\330\004\026\220a\340\004\007\200v\320\r*\250#\250Q\330\010\016\320\016,\250A\330\010\016\320\016-\250Q\340\004\007\200v\320\r#\2403\240a\330\010\016\320\016%\240Q\330\010\016\320\016&\240a\330\004\017\210v\220Q\330\004\007\200t\2104\210w\220a\330\010\020\220\001\220\024\220W\230A\330\004\032\230(\240!\2404\240q\340\004\010\210\007\320\017 \320 0\260\006\260a\330\010\013\2106\220\027\230\001\330\014\035\230W\240A\240Q\330\014\020\220\007\220q\330\020\035\230S\240\005\240Q\330\020\034\230A\230]\250!\330\014\r\340\010\013\2104\320\017+\2503\250a\330\014\020\320\020\047\240q\330\014\020\320\020.\250a\330\010\033\2305\240\001\330\010\033\2304\320\0373\2604\260q\270\001\330\010\013\320\013\034\230C\230q\330\014\"\240!\330\014\020\220\007\220t\2301\330\020\023\2204\220u\230D\240\005\240Q\330\020\037\230s\320\"7\260q\270\003\2701\330\020 \240\007\240q\250\001\330\014\020\320\020$\240A\320%9\270\021\340\010\031\230\026\320\037:\270$\270a\270q\330\010\013\210?\230#\230Q\330\014\035\230Q\330\014\020\220\010\230\001\330\020#\2404\240q\330\020\023\320\023$\240C\240u\250C\250t\3203""J\310#\310Q\330\024\047\240s\250!\2504\320/D\300A\330\024\030\320\0304\260A\330\024\030\320\0301\260\021\330\020\023\2206\230\023\230A\330\024\"\240\047\250\021\250!\330\024\027\220s\230!\320\033+\2503\250a\330\030\031\330\014\022\320\022-\250Q\250i\260q\340\010 \240\003\2401\320$4\260B\260a\340\010\027\220t\2305\240\005\240Q\330\010\013\2101\330\014\026\220e\2307\240!\2401\240A\240T\250\024\250U\3202B\300\"\300A\340\014\026\220a\330\010\017\210v\320\025+\2504\250q\260\001\330\010\013\2104\320\017%\240T\250\021\330\014\031\230\032\240?\260!\330\014\017\210}\230E\240\034\250R\250}\270C\270r\300\024\300Y\310c\320QR\330\020(\250\001\340\010\013\2101\330\014\037\230q\240\t\250\021\330\014!\240\021\330\014\020\220\007\220q\330\020\035\230S\240\005\240Q\330\020\023\2204\220s\230.\250\004\250D\260\003\2601\330\024 \240\001\240\035\250a\330\024#\2404\240q\250\001\340\024&\240g\250Q\250a\330\014\034\230A\330\010\016\320\016$\240A\320%5\260]\300)\3101\340\010\014\210G\2201\330\014\031\230\023\230E\240\021\340\014\017\210z\230\023\230A\330\020\026\320\026,\250A\330\020\023\220<\230q\240\001\330\024#\2404\240q\250\001\340\024%\240T\250\021\250!\330\020\021\340\014\022\320\022*\250!\340\014\020\220\007\220q\230\005\320\035-\250W\260C\260w\270a\270u\300N\320RZ\320Z^\320^b\320bi\320im\320mn\330\020\023\2204\320\027/\250q\260\006\260a\330\024\032\230&\240\001\330\024\037\230t\2405\250\007\250q\260\007\260v\270R\270q\300\t\310\027\320PQ\320QV\320V\\\320\\^\320^_\320_`\330\024 \240\003\2404\240q\250\001\330\024\027\220q\330\030%\240_\260A\330\030\033\230<\240r\250\034\260S\270\001\330\034(\250\001\250\035\260a\330\034\037\230q\330 /\250t\2601\260A\340 1\260\024\260Q\260a\330\034\035\330\024 \240\001\240\035\250a\330\024%\240T\250\021\250!\330\024\025\340\014\017\210t\220<\230q\240\005\240T\250\026\250w\260d\270!\330\020\034\230A\230]\250!\330\020!\240\024\240Q\240a\330\020\021\340\014\017\210t\2203\220d\230#\230Q\330\014\031\230\021\340\014\017\210t\2207\230!\2305\240\001\330\020""\023\320\023+\2501\340\014\035\320\035/\320/C\3001\330\014\026\220a\330\014\020\220\010\230\001\330\020\036\230d\240!\330\020\023\220<\230w\240c\250\021\330\024\027\320\027,\250A\250_\270L\310\002\310!\330\020\032\230#\320\0352\260!\2601\340\020\025\220T\230\023\230B\230a\330\020\025\220T\230\023\230B\230a\330\020\030\230\003\2302\230S\240\002\240#\240R\240q\340\020\023\2206\230\022\2308\2402\240Q\330\024!\240\021\330\024\025\340\020\023\2206\230\022\2301\330\024$\240D\250\005\250Q\330\024\047\240w\250a\250v\3205Q\320QR\330\024\027\320\027(\250\003\2505\260\003\2607\270!\2706\320AZ\320Z]\320]`\320`a\330\030+\2503\250a\250t\3203H\310\001\330\030\034\320\0348\270\001\330\030\034\320\0345\260Q\330\024\027\220v\230S\240\001\330\030%\240Q\330\030\031\330\020\033\2301\330\020\023\2208\2303\230a\330\024\025\340\014\030\230\001\230\035\240a\330\014\017\210w\220a\220u\320\034,\250G\2603\260g\270Q\270e\300>\320QR\330\020\026\220f\230A\330\020\033\2304\230u\240G\2501\250G\2606\270\022\2701\270I\300W\310A\310U\320RX\320XZ\320Z[\320[\\\330\020\023\2201\220L\240\r\250Q\330\014\017\210q\330\020\037\230t\2401\240A\340\020!\240\024\240Q\240a\340\004\013\320\013\034\230A\200\001\360\014\000\005$\2401\330\004&\240a\340\004\010\210\005\210Q\330\010\014\210A\210Q\330\010\013\2102\210S\220\001\330\014\r\330\010\r\210Q\210a\330\010\013\2103\210c\220\025\220c\230\022\2301\330\014\r\330\010\013\2104\210q\220\001\330\014\r\330\010\016\210a\210q\330\010\013\2104\210w\220a\330\014\r\330\010\016\210a\210q\330\010\026\320\026(\250\004\250A\250Q\330\010\013\210<\220s\230!\330\014\036\230a\230v\240Q\330\014!\240\027\250\001\250\021\340\014\036\230a\230v\240\\\260\022\2601\330\004\013\320\013\037\230q\200\001\360\016\000\005\030\220q\340\004\007\200z\220\023\220A\330\010\017\320\017\037\230q\240\t\250\024\250T\260\021\330\004\010\210\005\210Q\330\010\013\2101\210G\2203\220a\330\014\r\330\010\r\210Q\210c\220\022\2201\330\010\r\210Q\210c\220\022\2201\330\010\013\2103\210b\220\003\2202\220S\230\002""\230#\230R\230q\330\014\r\330\010\013\2109\220A\220Q\330\014\022\220\047\230\021\230!\330\004\013\2101\200\001\360\016\000\005 \230t\2406\250\021\330\004\035\230T\240\021\330\004\035\230T\240\021\330\004\030\230\t\240\021\360\010\000\005\021\220\004\220A\330\004\017\210w\220a\220v\320\035/\250q\330\004\010\210\007\210q\330\010\013\2103\210a\330\014\r\360\010\000\t\014\2103\210n\230C\230s\240!\330\014\017\210t\2207\230$\230a\330\020\023\2209\230C\230u\240C\240t\2507\260!\330\024\025\330\010\023\220<\230t\2401\240A\330\010\013\2109\220G\2301\330\014\024\220N\240!\330\014\024\220F\230#\230Q\340\014\032\230%\230q\240\001\330\014\027\220~\240Q\330\014\027\320\027(\250\001\330\014\026\220d\230!\2301\330\014\030\230\001\230\027\240\001\330\014\025\220Q\220a\200\001\360\020\000\005\030\220q\340\004\010\210\005\210Q\330\010\013\2101\210G\2203\220a\330\014\r\330\010\r\210Q\210c\220\022\2201\330\010\r\210Q\210c\220\022\2201\330\010\013\2103\210b\220\003\2202\220S\230\002\230#\230S\240\001\330\014\022\220\047\230\021\230!\330\004\013\2101\200\001\360\022\000\005\t\210\004\210G\2208\2306\240\021\330\010\013\2103\210c\220\036\230s\240$\240a\330\014\r\330\010\014\210G\2201\330\014\020\220\003\2201\330\014\020\220\001\220\021\330\014\017\210r\220\023\220A\330\020\021\330\014\017\210r\320\021\"\240#\240T\250\021\250!\330\020\021\330\014\022\220!\2201\330\014\017\210t\2207\230!\330\020\021\340\014\017\210q\220\007\220w\230e\2404\240q\250\007\250w\260c\270\024\270Q\270g\300S\310\001\330\020\021\330\014\022\220!\2208\2303\230a\330\014\032\320\032,\250D\260\001\260\021\330\014\017\210|\2303\230a\330\020\"\240!\2406\250\021\330\020%\240W\250A\250Q\340\020\"\240!\2406\250\034\260R\260q\200\001\360\022\000\005\t\210\007\210q\330\010\014\210C\210q\330\010\014\210A\210Q\330\010\013\2102\210S\220\001\330\014\r\330\010\r\210Q\210a\330\010\013\2103\210c\220\025\220c\230\023\230C\230q\330\014\r\330\010\013\2102\320\r\036\230c\240\024\240Q\240a\330\014\r\330\010\016\210a\210q\330\010\013\2104""\210w\220a\330\014\r\330\010\016\210a\210x\220s\230!\330\010\026\320\026(\250\004\250A\250Q\330\010\013\210<\220s\230!\330\014\036\230a\230v\240Q\330\014!\240\027\250\001\250\021\340\014\036\230a\230v\240\\\260\022\2601\200\001\360\026\000\005\010\200r\210\023\210A\330\010\017\210q\330\004\037\230t\2406\250\021\330\004\026\220d\230!\330\004\034\230D\240\001\330\004\007\200}\220B\220j\240\002\240!\330\010\r\210V\2201\330\010\014\320\014\047\240q\330\004\026\220a\220q\330\004\031\230\025\230d\240!\2401\330\004\007\200w\210g\220Q\330\010\017\210q\330\004\027\220r\230\027\240\004\240A\330\004\t\210\021\210\047\220\021\330\004\013\2101\200\001\360\030\000\005\030\220q\360\n\000\005\010\200q\210\005\210T\220\023\220A\220U\230!\330\004\007\200q\210\005\210T\220\023\220A\220U\230!\330\004\007\200q\210\005\210T\220\023\220A\220V\2301\330\004\007\200q\210\005\210T\220\023\220A\220U\230!\330\004\007\200q\210\005\210T\220\023\220A\220U\230!\330\004\007\200q\210\005\210T\220\023\220A\220V\2301\330\004\007\200q\210\006\210c\220\023\220A\220U\230!\330\004\007\200q\210\006\210c\220\023\220A\220U\230!\330\004\007\200q\210\006\210c\220\023\220A\220V\2301\340\004\010\210\005\210U\220!\2201\330\010\017\210w\220b\230\003\2301\230D\240\007\240r\250\023\250A\250Q\330\010\021\220\027\230\004\230A\230Q\330\010\013\2107\220\047\230\021\330\014\022\220\047\230\021\230!\330\004\013\2101\200\001\360\034\000\005\030\220q\330\004\010\210\007\210q\330\010\013\2104\210w\220a\330\014\r\330\010\013\2104\210w\220a\330\014\r\330\010\013\2104\210s\220!\330\014\r\330\010\r\210S\220\001\330\010\013\2103\210c\220\025\220c\230\024\230R\230q\330\014\022\220\047\230\021\230!\330\004\013\2101\200\001\360 \000\005!\240\001\330\0044\260A\360\006\000\005\026\220Q\340\004\010\210\005\210Q\330\010\020\220\001\220\021\330\010\013\2105\220\007\220s\230!\330\014\033\2307\240!\2401\330\014\r\330\010\013\2104\210u\220A\330\014\017\210v\220S\230\001\330\020\037\230w\240a\240q\330\014\r\330\010\020\220\001\220\021\330""\010\032\230&\240\002\320\"3\2602\260Q\330\010\031\230\026\230r\240\021\330\010\022\220&\230\003\2301\330\010\013\2104\210q\330\014\017\210q\330\020\037\230w\240a\240q\330\014\r\330\010\013\210<\220q\230\001\330\014\033\2307\240!\2401\330\014\r\330\010\013\2101\330\014\026\220h\230a\230q\330\014*\250$\250a\250q\330\010\013\2101\330\014\033\2307\240!\2401\330\014\r\330\010\013\320\013\"\240$\240f\250B\250a\330\014\017\210q\220\007\220s\230!\330\020\037\230w\240a\240q\330\014\025\220Q\330\004\013\320\013\034\230A\320\000&\240a\360\032\000\005\t\210\001\210\036\220s\230!\230=\250\004\250B\250g\260T\270\021\330\010\013\2104\320\017\047\240q\250\006\250a\330\014\023\2201\340\004\014\210A\210Q\330\004\007\200v\210S\220\001\330\010\017\210q\360\006\000\005\010\200q\210\016\220g\230U\240$\240d\320*@\300\001\300\021\330\010\017\210q\340\004\010\210\001\210\021\330\004\010\210\001\210\021\330\004\010\210\007\210t\2201\330\010\014\210G\2203\320\026+\2501\250C\250q\330\014\017\210s\220!\330\020\021\330\014\021\220\023\220A\330\014\017\210t\2201\330\020\021\330\014\021\220\023\220C\220r\230\021\330\014\021\220\023\220C\220r\230\021\330\014\022\220+\230Q\330\014\022\220$\220b\230\001\330\014\017\210s\220\"\220C\220r\230\023\230B\230c\240\023\240A\330\020\021\330\014\017\210v\220S\230\003\320\0330\260\001\330\020\027\220q\330\004\013\2101\320\000?\270q\360\n\000\005\033\230!\330\004\025\220Q\330\004\036\230a\360\n\000\005\t\210\005\210Q\330\010\017\210q\220\001\330\010\013\2104\210q\330\014\r\330\010\014\210E\220\021\330\014\017\210q\220\010\230\007\230q\330\020\021\330\014\017\210r\220\023\220A\330\020\021\330\014\024\220D\230\001\230\021\330\014\017\210q\320\020$\240C\240q\250\001\330\020\031\230\027\240\001\240\021\340\020\026\220a\220q\330\020\024\220G\2302\230U\240$\240c\250\032\2605\270\002\270!\2704\270q\340\004\007\200s\210!\210:\220S\230\001\330\010\017\210}\230A\340\004\014\210C\210q\220\001\330\004\007\200v\210S\220\001\330\010\021\220\025\220a\220t\2301\330\010\021""\220\031\230\"\230A\340\010\017\210t\2202\220Q\330\010\013\2105\220\002\220#\220Q\220a\330\014\024\220F\230*\240A\240V\2501\330\014\025\220Z\230r\240\021\240!\2401\240C\240t\2505\260\001\340\014\025\220Z\230r\240\021\240!\2401\240C\240t\2505\260\001\330\004\025\220S\230\001\230\021\330\004\013\320\013\033\2309\240B\240a";
     PyObject *data = NULL;
     #define __Pyx_DecompressString_UNUSED
     #define __Pyx_DecompressString_LZSS_UNUSED
     #endif
     PyObject **stringtab = __pyx_mstate->__pyx_string_tab;
     Py_ssize_t pos = 0;
-    for (int i = 0; i < 134; i++) {
+    for (int i = 0; i < 135; i++) {
       Py_ssize_t bytes_length = str_length_index[i].length;
       PyObject *string = PyUnicode_DecodeUTF8(bytes + pos, bytes_length, NULL);
       if (likely(string) && i >= 4) PyUnicode_InternInPlace(&string);
@@ -15449,8 +15681,8 @@ static const char bytes[] = "?Note that Cython is deliberately stricter than PEP
       stringtab[i] = string;
       pos += bytes_length;
     }
-    for (int i = 134; i < 149; i++) {
-      Py_ssize_t bytes_length = bytes_length_index[i-134].length;
+    for (int i = 135; i < 150; i++) {
+      Py_ssize_t bytes_length = bytes_length_index[i-135].length;
       PyObject *string = PyBytes_FromStringAndSize(bytes + pos, bytes_length);
       stringtab[i] = string;
       pos += bytes_length;
@@ -15460,14 +15692,14 @@ static const char bytes[] = "?Note that Cython is deliberately stricter than PEP
       }
     }
     Py_XDECREF(data);
-    for (Py_ssize_t i = 0; i < 149; i++) {
+    for (Py_ssize_t i = 0; i < 150; i++) {
       if (unlikely(PyObject_Hash(stringtab[i]) == -1)) {
         __PYX_ERR(0, 1, __pyx_L1_error)
       }
     }
     #if CYTHON_IMMORTAL_CONSTANTS
     {
-      PyObject **table = stringtab + 134;
+      PyObject **table = stringtab + 135;
       for (Py_ssize_t i=0; i<15; ++i) {
         #if PY_VERSION_HEX >= 0x030F0000
         PyUnstable_SetImmortal(table[i]);
@@ -15597,35 +15829,35 @@ static int __Pyx_CreateCodeObjects(__pyx_mstatetype *__pyx_mstate) {
   {
     const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 259};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_objects};
-    __pyx_mstate_global->__pyx_codeobj_tab[8] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_soundrts_worldplayerbase_percept_2, __pyx_mstate->__pyx_n_u_bulk_memorize, __pyx_mstate->__pyx_kp_b_iso88591_t6_T_T_A_q_3a_3nCs_t1A_9G1_N_F, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[8])) goto bad;
+    __pyx_mstate_global->__pyx_codeobj_tab[8] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_soundrts_worldplayerbase_percept_2, __pyx_mstate->__pyx_n_u_bulk_memorize, __pyx_mstate->__pyx_kp_b_iso88591_t6_T_T_A_wav_q_q_3a_3nCs_t7_a_9, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[8])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {3, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 291};
+    const __Pyx_PyCode_New_function_description descr = {3, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 298};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_buckets, __pyx_mstate->__pyx_n_u_grid_x, __pyx_mstate->__pyx_n_u_grid_y};
     __pyx_mstate_global->__pyx_codeobj_tab[9] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_soundrts_worldplayerbase_percept_2, __pyx_mstate->__pyx_n_u_merge_buckets_3x3, __pyx_mstate->__pyx_kp_b_iso88591_q_q_T_AU_q_T_AU_q_T_AV1_q_T_AU, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[9])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 326};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 349};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_u};
-    __pyx_mstate_global->__pyx_codeobj_tab[10] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_soundrts_worldplayerbase_percept_2, __pyx_mstate->__pyx_n_u_is_seeing, __pyx_mstate->__pyx_kp_b_iso88591_a_s_BgT_q_AQ_vS_q_q_gU_d_q_t1_G, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[10])) goto bad;
+    __pyx_mstate_global->__pyx_codeobj_tab[10] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_soundrts_worldplayerbase_percept_2, __pyx_mstate->__pyx_n_u_is_seeing, __pyx_mstate->__pyx_kp_b_iso88591_a_s_BgT_4_q_a_1_AQ_vS_q_q_gU_d, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[10])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 375};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 399};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_objects};
     __pyx_mstate_global->__pyx_codeobj_tab[11] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_soundrts_worldplayerbase_percept_2, __pyx_mstate->__pyx_n_u_bulk_visibility_check, __pyx_mstate->__pyx_kp_b_iso88591_Q_q_t6_c_d_Q_6_T_a_Cq_q_4wa_q_1, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[11])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 589};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 614};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_perceived, __pyx_mstate->__pyx_n_u_enemy_player_ids};
     __pyx_mstate_global->__pyx_codeobj_tab[12] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_soundrts_worldplayerbase_percept_2, __pyx_mstate->__pyx_n_u_build_enemy_place_menace, __pyx_mstate->__pyx_kp_b_iso88591_1_a_Q_AQ_2S_Qa_3c_c_1_4q_aq_4wa, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[12])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {5, 0, 0, 5, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 620};
+    const __Pyx_PyCode_New_function_description descr = {5, 0, 0, 5, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 645};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_place_enemy_menace, __pyx_mstate->__pyx_n_u_enemy_presence_places, __pyx_mstate->__pyx_n_u_live_presence, __pyx_mstate->__pyx_n_u_mem_set, __pyx_mstate->__pyx_n_u_enemy_player_ids};
     __pyx_mstate_global->__pyx_codeobj_tab[13] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_soundrts_worldplayerbase_percept_2, __pyx_mstate->__pyx_n_u_add_memory_enemy_menace, __pyx_mstate->__pyx_kp_b_iso88591_q_Cq_AQ_2S_Qa_3c_c_Cq_2_c_Qa_aq, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[13])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {5, 0, 0, 5, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 651};
+    const __Pyx_PyCode_New_function_description descr = {5, 0, 0, 5, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 676};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_place_enemy_menace, __pyx_mstate->__pyx_n_u_enemy_presence_places, __pyx_mstate->__pyx_n_u_live_presence, __pyx_mstate->__pyx_n_u_by_place, __pyx_mstate->__pyx_n_u_enemy_player_ids};
     __pyx_mstate_global->__pyx_codeobj_tab[14] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_soundrts_worldplayerbase_percept_2, __pyx_mstate->__pyx_n_u_add_memory_enemy_menace_by_place, __pyx_mstate->__pyx_kp_b_iso88591_G86_3c_s_a_G1_1_r_A_r_T_1_t7_q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[14])) goto bad;
   }
@@ -18128,6 +18360,38 @@ static PyObject* __Pyx_PyDict_GetItemDefault(PyObject* d, PyObject* key, PyObjec
     return value;
 }
 
+/* GetAttr3 */
+#if __PYX_LIMITED_VERSION_HEX < 0x030d0000
+static PyObject *__Pyx_GetAttr3Default(PyObject *d) {
+    __Pyx_PyThreadState_declare
+    __Pyx_PyThreadState_assign
+    if (unlikely(!__Pyx_PyErr_ExceptionMatches(PyExc_AttributeError)))
+        return NULL;
+    __Pyx_PyErr_Clear();
+    Py_INCREF(d);
+    return d;
+}
+#endif
+static CYTHON_INLINE PyObject *__Pyx_GetAttr3(PyObject *o, PyObject *n, PyObject *d) {
+    PyObject *r;
+#if __PYX_LIMITED_VERSION_HEX >= 0x030d0000
+    int res = PyObject_GetOptionalAttr(o, n, &r);
+    return (res != 0) ? r : __Pyx_NewRef(d);
+#else
+  #if CYTHON_USE_TYPE_SLOTS
+    if (likely(PyUnicode_Check(n))) {
+        r = __Pyx_PyObject_GetAttrStrNoError(o, n);
+        if (unlikely(!r) && likely(!PyErr_Occurred())) {
+            r = __Pyx_NewRef(d);
+        }
+        return r;
+    }
+  #endif
+    r = PyObject_GetAttr(o, n);
+    return (likely(r)) ? r : __Pyx_GetAttr3Default(d);
+#endif
+}
+
 /* ListExtend */
 #if (CYTHON_COMPILING_IN_LIMITED_API || PY_VERSION_HEX < 0x030d0000) && !defined(PyList_Extend)
 static CYTHON_INLINE int __Pyx_PyList_Extend(PyObject* L, PyObject* v) {
@@ -19482,38 +19746,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyLong_AddObjC(PyObject *op1, PyObject *op2
     return __Pyx_Fallback___Pyx_PyLong_AddObjC(op1, op2, inplace);
 }
 #endif
-
-/* GetAttr3 */
-#if __PYX_LIMITED_VERSION_HEX < 0x030d0000
-static PyObject *__Pyx_GetAttr3Default(PyObject *d) {
-    __Pyx_PyThreadState_declare
-    __Pyx_PyThreadState_assign
-    if (unlikely(!__Pyx_PyErr_ExceptionMatches(PyExc_AttributeError)))
-        return NULL;
-    __Pyx_PyErr_Clear();
-    Py_INCREF(d);
-    return d;
-}
-#endif
-static CYTHON_INLINE PyObject *__Pyx_GetAttr3(PyObject *o, PyObject *n, PyObject *d) {
-    PyObject *r;
-#if __PYX_LIMITED_VERSION_HEX >= 0x030d0000
-    int res = PyObject_GetOptionalAttr(o, n, &r);
-    return (res != 0) ? r : __Pyx_NewRef(d);
-#else
-  #if CYTHON_USE_TYPE_SLOTS
-    if (likely(PyUnicode_Check(n))) {
-        r = __Pyx_PyObject_GetAttrStrNoError(o, n);
-        if (unlikely(!r) && likely(!PyErr_Occurred())) {
-            r = __Pyx_NewRef(d);
-        }
-        return r;
-    }
-  #endif
-    r = PyObject_GetAttr(o, n);
-    return (likely(r)) ? r : __Pyx_GetAttr3Default(d);
-#endif
-}
 
 /* HasAttr */
 #if __PYX_LIMITED_VERSION_HEX < 0x030d0000

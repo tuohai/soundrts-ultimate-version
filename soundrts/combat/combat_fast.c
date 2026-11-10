@@ -2715,7 +2715,7 @@ namespace {
     __Pyx_CachedCFunction __pyx_umethod_PyDict_Type_pop;
     __Pyx_CachedCFunction __pyx_umethod_PyDict_Type_values;
     PyObject *__pyx_codeobj_tab[13];
-    PyObject *__pyx_string_tab[123];
+    PyObject *__pyx_string_tab[124];
     PyObject *__pyx_number_tab[3];
 /* #### Code section: module_state_contents ### */
 /* PyFrozenDict.module_state_decls */
@@ -2786,108 +2786,109 @@ static __pyx_mstatetype * const __pyx_mstate_global = &__pyx_mstate_global_stati
 #define __pyx_n_u_get_melee_damage_vs __pyx_string_tab[18]
 #define __pyx_n_u_get_ranged_damage_vs __pyx_string_tab[19]
 #define __pyx_n_u_is_coroutine __pyx_string_tab[20]
-#define __pyx_n_u_should_auto_switch_weapon __pyx_string_tab[21]
-#define __pyx_n_u_should_respect_manual_weapon_ch __pyx_string_tab[22]
-#define __pyx_n_u_weapon_instances __pyx_string_tab[23]
-#define __pyx_n_u_airground_type __pyx_string_tab[24]
-#define __pyx_n_u_apply_piercing __pyx_string_tab[25]
-#define __pyx_n_u_armor __pyx_string_tab[26]
-#define __pyx_n_u_asyncio_coroutines __pyx_string_tab[27]
-#define __pyx_n_u_ax __pyx_string_tab[28]
-#define __pyx_n_u_ay __pyx_string_tab[29]
-#define __pyx_n_u_base_cover __pyx_string_tab[30]
-#define __pyx_n_u_base_defense __pyx_string_tab[31]
-#define __pyx_n_u_base_dg __pyx_string_tab[32]
-#define __pyx_n_u_base_dodge __pyx_string_tab[33]
-#define __pyx_n_u_bx __pyx_string_tab[34]
-#define __pyx_n_u_by __pyx_string_tab[35]
-#define __pyx_n_u_calc_actual_damage __pyx_string_tab[36]
-#define __pyx_n_u_calc_hit_chance __pyx_string_tab[37]
-#define __pyx_n_u_calc_splash_factor __pyx_string_tab[38]
-#define __pyx_n_u_can_attack_if_in_range __pyx_string_tab[39]
-#define __pyx_n_u_clamp_0_100 __pyx_string_tab[40]
-#define __pyx_n_u_cline_in_traceback __pyx_string_tab[41]
-#define __pyx_n_u_collision __pyx_string_tab[42]
-#define __pyx_n_u_compute_damage_vs __pyx_string_tab[43]
-#define __pyx_n_u_current_weapon __pyx_string_tab[44]
-#define __pyx_n_u_damage __pyx_string_tab[45]
-#define __pyx_n_u_decay_min_value __pyx_string_tab[46]
-#define __pyx_n_u_defense __pyx_string_tab[47]
-#define __pyx_n_u_descale_if_internal __pyx_string_tab[48]
-#define __pyx_n_u_dg_vs __pyx_string_tab[49]
-#define __pyx_n_u_dist2 __pyx_string_tab[50]
-#define __pyx_n_u_divisor __pyx_string_tab[51]
-#define __pyx_n_u_dot_product_2d __pyx_string_tab[52]
-#define __pyx_n_u_effective_range __pyx_string_tab[53]
-#define __pyx_n_u_expanded_is_a __pyx_string_tab[54]
-#define __pyx_n_u_forced_damage __pyx_string_tab[55]
-#define __pyx_n_u_get __pyx_string_tab[56]
-#define __pyx_n_u_ground __pyx_string_tab[57]
-#define __pyx_n_u_high_ground __pyx_string_tab[58]
-#define __pyx_n_u_hp __pyx_string_tab[59]
-#define __pyx_n_u_id __pyx_string_tab[60]
-#define __pyx_n_u_is_a __pyx_string_tab[61]
-#define __pyx_n_u_is_vulnerable __pyx_string_tab[62]
-#define __pyx_n_u_items __pyx_string_tab[63]
-#define __pyx_n_u_matches_attack_targets __pyx_string_tab[64]
-#define __pyx_n_u_mdg __pyx_string_tab[65]
-#define __pyx_n_u_mdg_explode __pyx_string_tab[66]
-#define __pyx_n_u_mdg_projectile __pyx_string_tab[67]
-#define __pyx_n_u_mdg_targets __pyx_string_tab[68]
-#define __pyx_n_u_min_range __pyx_string_tab[69]
-#define __pyx_n_u_minimal_damage __pyx_string_tab[70]
-#define __pyx_n_u_other __pyx_string_tab[71]
-#define __pyx_n_u_perception __pyx_string_tab[72]
-#define __pyx_n_u_piercing __pyx_string_tab[73]
-#define __pyx_n_u_piercing_resistance __pyx_string_tab[74]
-#define __pyx_n_u_place __pyx_string_tab[75]
-#define __pyx_n_u_player __pyx_string_tab[76]
-#define __pyx_n_u_pop __pyx_string_tab[77]
-#define __pyx_n_u_range_check __pyx_string_tab[78]
-#define __pyx_n_u_rdg __pyx_string_tab[79]
-#define __pyx_n_u_rdg_explode __pyx_string_tab[80]
-#define __pyx_n_u_rdg_projectile __pyx_string_tab[81]
-#define __pyx_n_u_rdg_targets __pyx_string_tab[82]
-#define __pyx_n_u_resolve_vs_lookup __pyx_string_tab[83]
-#define __pyx_n_u_resolve_vs_lookup_with_threshold __pyx_string_tab[84]
-#define __pyx_n_u_self __pyx_string_tab[85]
-#define __pyx_n_u_setdefault __pyx_string_tab[86]
-#define __pyx_n_u_soundrts_combat_combat_fast __pyx_string_tab[87]
-#define __pyx_n_u_soundrts_worldunit_world_public __pyx_string_tab[88]
-#define __pyx_n_u_specific_cover_bonus __pyx_string_tab[89]
-#define __pyx_n_u_specific_dodge_bonus __pyx_string_tab[90]
-#define __pyx_n_u_splash_range __pyx_string_tab[91]
-#define __pyx_n_u_square_of_distance __pyx_string_tab[92]
-#define __pyx_n_u_target __pyx_string_tab[93]
-#define __pyx_n_u_terrain_cover_mod __pyx_string_tab[94]
-#define __pyx_n_u_terrain_dodge_mod __pyx_string_tab[95]
-#define __pyx_n_u_threshold __pyx_string_tab[96]
-#define __pyx_n_u_time __pyx_string_tab[97]
-#define __pyx_n_u_type_name __pyx_string_tab[98]
-#define __pyx_n_u_value __pyx_string_tab[99]
-#define __pyx_n_u_values __pyx_string_tab[100]
-#define __pyx_n_u_vs_dict __pyx_string_tab[101]
-#define __pyx_n_u_water __pyx_string_tab[102]
-#define __pyx_n_u_weapons __pyx_string_tab[103]
-#define __pyx_n_u_world __pyx_string_tab[104]
-#define __pyx_n_u_x __pyx_string_tab[105]
-#define __pyx_n_u_x1 __pyx_string_tab[106]
-#define __pyx_n_u_x2 __pyx_string_tab[107]
-#define __pyx_n_u_y1 __pyx_string_tab[108]
-#define __pyx_n_u_y2 __pyx_string_tab[109]
-#define __pyx_kp_b_iso88591_r_1_q_r_1_q_5 __pyx_string_tab[110]
-#define __pyx_kp_b_iso88591_1_cAQQSST_z_1_j_S_A_6_1_1_6_A __pyx_string_tab[111]
-#define __pyx_kp_b_iso88591_b_Rq_b_Rq_r_t2Q_q_t2Q_q_5 __pyx_string_tab[112]
-#define __pyx_kp_b_iso88591_vRq_vS_1 __pyx_string_tab[113]
-#define __pyx_kp_b_iso88591_Qi_r_A_q_A_s_A_s_Q_1 __pyx_string_tab[114]
-#define __pyx_kp_b_iso88591_z_G4q_2WA_1_S_q_Q_G4q_2WA_1_1 __pyx_string_tab[115]
-#define __pyx_kp_b_iso88591_t6_m3a_4q_U_T_3a_Q_vS_q_5_4q_wg __pyx_string_tab[116]
-#define __pyx_kp_b_iso88591_a_3b_2S __pyx_string_tab[117]
-#define __pyx_kp_b_iso88591_a_1_A_Q_A_xr_q_1 __pyx_string_tab[118]
-#define __pyx_kp_b_iso88591_q_Cq_q_d_A_vQha_4s_r_b __pyx_string_tab[119]
-#define __pyx_kp_b_iso88591_F_z_E_Qa_2WA_82_F_WA_E_T_r_xr_A __pyx_string_tab[120]
-#define __pyx_kp_b_iso88591_2Q_2Q_3b_2S __pyx_string_tab[121]
-#define __pyx_kp_b_iso88591_G2Q_wb_b_gRq_Rq_1 __pyx_string_tab[122]
+#define __pyx_n_u_player_ordered_attack_on __pyx_string_tab[21]
+#define __pyx_n_u_should_auto_switch_weapon __pyx_string_tab[22]
+#define __pyx_n_u_should_respect_manual_weapon_ch __pyx_string_tab[23]
+#define __pyx_n_u_weapon_instances __pyx_string_tab[24]
+#define __pyx_n_u_airground_type __pyx_string_tab[25]
+#define __pyx_n_u_apply_piercing __pyx_string_tab[26]
+#define __pyx_n_u_armor __pyx_string_tab[27]
+#define __pyx_n_u_asyncio_coroutines __pyx_string_tab[28]
+#define __pyx_n_u_ax __pyx_string_tab[29]
+#define __pyx_n_u_ay __pyx_string_tab[30]
+#define __pyx_n_u_base_cover __pyx_string_tab[31]
+#define __pyx_n_u_base_defense __pyx_string_tab[32]
+#define __pyx_n_u_base_dg __pyx_string_tab[33]
+#define __pyx_n_u_base_dodge __pyx_string_tab[34]
+#define __pyx_n_u_bx __pyx_string_tab[35]
+#define __pyx_n_u_by __pyx_string_tab[36]
+#define __pyx_n_u_calc_actual_damage __pyx_string_tab[37]
+#define __pyx_n_u_calc_hit_chance __pyx_string_tab[38]
+#define __pyx_n_u_calc_splash_factor __pyx_string_tab[39]
+#define __pyx_n_u_can_attack_if_in_range __pyx_string_tab[40]
+#define __pyx_n_u_clamp_0_100 __pyx_string_tab[41]
+#define __pyx_n_u_cline_in_traceback __pyx_string_tab[42]
+#define __pyx_n_u_collision __pyx_string_tab[43]
+#define __pyx_n_u_compute_damage_vs __pyx_string_tab[44]
+#define __pyx_n_u_current_weapon __pyx_string_tab[45]
+#define __pyx_n_u_damage __pyx_string_tab[46]
+#define __pyx_n_u_decay_min_value __pyx_string_tab[47]
+#define __pyx_n_u_defense __pyx_string_tab[48]
+#define __pyx_n_u_descale_if_internal __pyx_string_tab[49]
+#define __pyx_n_u_dg_vs __pyx_string_tab[50]
+#define __pyx_n_u_dist2 __pyx_string_tab[51]
+#define __pyx_n_u_divisor __pyx_string_tab[52]
+#define __pyx_n_u_dot_product_2d __pyx_string_tab[53]
+#define __pyx_n_u_effective_range __pyx_string_tab[54]
+#define __pyx_n_u_expanded_is_a __pyx_string_tab[55]
+#define __pyx_n_u_forced_damage __pyx_string_tab[56]
+#define __pyx_n_u_get __pyx_string_tab[57]
+#define __pyx_n_u_ground __pyx_string_tab[58]
+#define __pyx_n_u_high_ground __pyx_string_tab[59]
+#define __pyx_n_u_hp __pyx_string_tab[60]
+#define __pyx_n_u_id __pyx_string_tab[61]
+#define __pyx_n_u_is_a __pyx_string_tab[62]
+#define __pyx_n_u_is_vulnerable __pyx_string_tab[63]
+#define __pyx_n_u_items __pyx_string_tab[64]
+#define __pyx_n_u_matches_attack_targets __pyx_string_tab[65]
+#define __pyx_n_u_mdg __pyx_string_tab[66]
+#define __pyx_n_u_mdg_explode __pyx_string_tab[67]
+#define __pyx_n_u_mdg_projectile __pyx_string_tab[68]
+#define __pyx_n_u_mdg_targets __pyx_string_tab[69]
+#define __pyx_n_u_min_range __pyx_string_tab[70]
+#define __pyx_n_u_minimal_damage __pyx_string_tab[71]
+#define __pyx_n_u_other __pyx_string_tab[72]
+#define __pyx_n_u_perception __pyx_string_tab[73]
+#define __pyx_n_u_piercing __pyx_string_tab[74]
+#define __pyx_n_u_piercing_resistance __pyx_string_tab[75]
+#define __pyx_n_u_place __pyx_string_tab[76]
+#define __pyx_n_u_player __pyx_string_tab[77]
+#define __pyx_n_u_pop __pyx_string_tab[78]
+#define __pyx_n_u_range_check __pyx_string_tab[79]
+#define __pyx_n_u_rdg __pyx_string_tab[80]
+#define __pyx_n_u_rdg_explode __pyx_string_tab[81]
+#define __pyx_n_u_rdg_projectile __pyx_string_tab[82]
+#define __pyx_n_u_rdg_targets __pyx_string_tab[83]
+#define __pyx_n_u_resolve_vs_lookup __pyx_string_tab[84]
+#define __pyx_n_u_resolve_vs_lookup_with_threshold __pyx_string_tab[85]
+#define __pyx_n_u_self __pyx_string_tab[86]
+#define __pyx_n_u_setdefault __pyx_string_tab[87]
+#define __pyx_n_u_soundrts_combat_combat_fast __pyx_string_tab[88]
+#define __pyx_n_u_soundrts_worldunit_world_public __pyx_string_tab[89]
+#define __pyx_n_u_specific_cover_bonus __pyx_string_tab[90]
+#define __pyx_n_u_specific_dodge_bonus __pyx_string_tab[91]
+#define __pyx_n_u_splash_range __pyx_string_tab[92]
+#define __pyx_n_u_square_of_distance __pyx_string_tab[93]
+#define __pyx_n_u_target __pyx_string_tab[94]
+#define __pyx_n_u_terrain_cover_mod __pyx_string_tab[95]
+#define __pyx_n_u_terrain_dodge_mod __pyx_string_tab[96]
+#define __pyx_n_u_threshold __pyx_string_tab[97]
+#define __pyx_n_u_time __pyx_string_tab[98]
+#define __pyx_n_u_type_name __pyx_string_tab[99]
+#define __pyx_n_u_value __pyx_string_tab[100]
+#define __pyx_n_u_values __pyx_string_tab[101]
+#define __pyx_n_u_vs_dict __pyx_string_tab[102]
+#define __pyx_n_u_water __pyx_string_tab[103]
+#define __pyx_n_u_weapons __pyx_string_tab[104]
+#define __pyx_n_u_world __pyx_string_tab[105]
+#define __pyx_n_u_x __pyx_string_tab[106]
+#define __pyx_n_u_x1 __pyx_string_tab[107]
+#define __pyx_n_u_x2 __pyx_string_tab[108]
+#define __pyx_n_u_y1 __pyx_string_tab[109]
+#define __pyx_n_u_y2 __pyx_string_tab[110]
+#define __pyx_kp_b_iso88591_r_1_q_r_1_q_5 __pyx_string_tab[111]
+#define __pyx_kp_b_iso88591_1_cAQQSST_z_1_j_S_A_6_1_1_6_A __pyx_string_tab[112]
+#define __pyx_kp_b_iso88591_b_Rq_b_Rq_r_t2Q_q_t2Q_q_5 __pyx_string_tab[113]
+#define __pyx_kp_b_iso88591_vRq_vS_1 __pyx_string_tab[114]
+#define __pyx_kp_b_iso88591_Qi_r_A_q_A_s_A_s_Q_1 __pyx_string_tab[115]
+#define __pyx_kp_b_iso88591_z_G4q_2WA_1_S_q_Q_G4q_2WA_1_1 __pyx_string_tab[116]
+#define __pyx_kp_b_iso88591_t6_m3a_4q_U_T_3a_Q_vS_q_5_4q_wg __pyx_string_tab[117]
+#define __pyx_kp_b_iso88591_a_3b_2S __pyx_string_tab[118]
+#define __pyx_kp_b_iso88591_a_1_A_Q_A_xr_q_1 __pyx_string_tab[119]
+#define __pyx_kp_b_iso88591_q_Cq_q_d_A_vQha_4s_r_b __pyx_string_tab[120]
+#define __pyx_kp_b_iso88591_F_z_E_Qa_2WA_82_F_WA_E_T_r_xr_A __pyx_string_tab[121]
+#define __pyx_kp_b_iso88591_2Q_2Q_3b_2S __pyx_string_tab[122]
+#define __pyx_kp_b_iso88591_G2Q_wb_b_gRq_Rq_1 __pyx_string_tab[123]
 #define __pyx_int_0 __pyx_number_tab[0]
 #define __pyx_int_1 __pyx_number_tab[1]
 #define __pyx_int_200 __pyx_number_tab[2]
@@ -2910,7 +2911,7 @@ static CYTHON_SMALL_CODE int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_umethod_PyDict_Type_pop.method);
   Py_CLEAR(clear_module_state->__pyx_umethod_PyDict_Type_values.method);
   for (int i=0; i<13; ++i) { Py_CLEAR(clear_module_state->__pyx_codeobj_tab[i]); }
-  for (int i=0; i<123; ++i) { Py_CLEAR(clear_module_state->__pyx_string_tab[i]); }
+  for (int i=0; i<124; ++i) { Py_CLEAR(clear_module_state->__pyx_string_tab[i]); }
   for (int i=0; i<3; ++i) { Py_CLEAR(clear_module_state->__pyx_number_tab[i]); }
 /* #### Code section: module_state_clear_contents ### */
 /* CommonTypesMetaclass.module_state_clear */
@@ -2939,7 +2940,7 @@ static CYTHON_SMALL_CODE int __pyx_m_traverse(PyObject *m, visitproc visit, void
   Py_VISIT(traverse_module_state->__pyx_umethod_PyDict_Type_pop.method);
   Py_VISIT(traverse_module_state->__pyx_umethod_PyDict_Type_values.method);
   for (int i=0; i<13; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_codeobj_tab[i]); }
-  for (int i=0; i<123; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_string_tab[i]); }
+  for (int i=0; i<124; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_string_tab[i]); }
   for (int i=0; i<3; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_number_tab[i]); }
 /* #### Code section: module_state_traverse_contents ### */
 /* CommonTypesMetaclass.module_state_traverse */
@@ -6331,7 +6332,7 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
  *     if other.place is None or other.hp < 0:
  *         cache_dict[other_id] = False             # <<<<<<<<<<<<<<
  *         return False
- *     if other not in self.player.perception:
+ *     # : ****,
 */
     if (unlikely(__pyx_v_cache_dict == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "\047NoneType\047 object is not subscriptable");
@@ -6343,8 +6344,8 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
  *     if other.place is None or other.hp < 0:
  *         cache_dict[other_id] = False
  *         return False             # <<<<<<<<<<<<<<
- *     if other not in self.player.perception:
- *         cache_dict[other_id] = False
+ *     # : ****,
+ *     # ""``forced`` =
 */
     {
       PyObject *__pyx_temp;
@@ -6366,64 +6367,98 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
 */
   }
 
-  /* "soundrts/combat/combat_fast.pyx":248
- *         cache_dict[other_id] = False
- *         return False
+  /* "soundrts/combat/combat_fast.pyx":252
+ *     # ; ""( +
+ *     # ),  crazyMod
  *     if other not in self.player.perception:             # <<<<<<<<<<<<<<
- *         cache_dict[other_id] = False
- *         return False
+ *         if not self._player_ordered_attack_on(other):
+ *             cache_dict[other_id] = False
 */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_player); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 248, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_player); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 252, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_perception); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 248, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_perception); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 252, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_3 = (__Pyx_PySequence_ContainsTF(__pyx_v_other, __pyx_t_1, Py_NE)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 248, __pyx_L1_error)
+  __pyx_t_3 = (__Pyx_PySequence_ContainsTF(__pyx_v_other, __pyx_t_1, Py_NE)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 252, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_3) {
 
 
-    /* "soundrts/combat/combat_fast.pyx":249
- *         return False
+    /* "soundrts/combat/combat_fast.pyx":253
+ *     # ),  crazyMod
  *     if other not in self.player.perception:
- *         cache_dict[other_id] = False             # <<<<<<<<<<<<<<
- *         return False
+ *         if not self._player_ordered_attack_on(other):             # <<<<<<<<<<<<<<
+ *             cache_dict[other_id] = False
+ *             return False
+*/
+    __pyx_t_2 = __pyx_v_self;
+    __Pyx_INCREF(__pyx_t_2);
+    __pyx_t_5 = 0;
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_v_other};
+      __pyx_t_1 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_player_ordered_attack_on, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 253, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+    }
+    __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 253, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_4 = (!__pyx_t_3);
+
+
+    if (__pyx_t_4) {
+
+
+      /* "soundrts/combat/combat_fast.pyx":254
+ *     if other not in self.player.perception:
+ *         if not self._player_ordered_attack_on(other):
+ *             cache_dict[other_id] = False             # <<<<<<<<<<<<<<
+ *             return False
  * 
 */
-    if (unlikely(__pyx_v_cache_dict == Py_None)) {
-      PyErr_SetString(PyExc_TypeError, "\047NoneType\047 object is not subscriptable");
-      __PYX_ERR(0, 249, __pyx_L1_error)
-    }
-    if (unlikely((PyDict_SetItem(__pyx_v_cache_dict, __pyx_v_other_id, Py_False) < 0))) __PYX_ERR(0, 249, __pyx_L1_error)
+      if (unlikely(__pyx_v_cache_dict == Py_None)) {
+        PyErr_SetString(PyExc_TypeError, "\047NoneType\047 object is not subscriptable");
+        __PYX_ERR(0, 254, __pyx_L1_error)
+      }
+      if (unlikely((PyDict_SetItem(__pyx_v_cache_dict, __pyx_v_other_id, Py_False) < 0))) __PYX_ERR(0, 254, __pyx_L1_error)
 
-    /* "soundrts/combat/combat_fast.pyx":250
- *     if other not in self.player.perception:
- *         cache_dict[other_id] = False
- *         return False             # <<<<<<<<<<<<<<
+      /* "soundrts/combat/combat_fast.pyx":255
+ *         if not self._player_ordered_attack_on(other):
+ *             cache_dict[other_id] = False
+ *             return False             # <<<<<<<<<<<<<<
  * 
  *     #
 */
-    {
-      PyObject *__pyx_temp;
       {
-        __pyx_temp = __pyx_r;
-        __Pyx_INCREF(Py_False);
-        __pyx_r = Py_False;
+        PyObject *__pyx_temp;
+        {
+          __pyx_temp = __pyx_r;
+          __Pyx_INCREF(Py_False);
+          __pyx_r = Py_False;
+        }
+        __Pyx_XDECREF(__pyx_temp);
       }
-      __Pyx_XDECREF(__pyx_temp);
-    }
-    goto __pyx_L0;
+      goto __pyx_L0;
 
-    /* "soundrts/combat/combat_fast.pyx":248
- *         cache_dict[other_id] = False
- *         return False
+      /* "soundrts/combat/combat_fast.pyx":253
+ *     # ),  crazyMod
+ *     if other not in self.player.perception:
+ *         if not self._player_ordered_attack_on(other):             # <<<<<<<<<<<<<<
+ *             cache_dict[other_id] = False
+ *             return False
+*/
+    }
+
+    /* "soundrts/combat/combat_fast.pyx":252
+ *     # ; ""( +
+ *     # ),  crazyMod
  *     if other not in self.player.perception:             # <<<<<<<<<<<<<<
- *         cache_dict[other_id] = False
- *         return False
+ *         if not self._player_ordered_attack_on(other):
+ *             cache_dict[other_id] = False
 */
   }
 
-  /* "soundrts/combat/combat_fast.pyx":253
+  /* "soundrts/combat/combat_fast.pyx":258
  * 
  *     #
  *     cdef long long melee_damage = self._get_melee_damage_vs(other)             # <<<<<<<<<<<<<<
@@ -6437,14 +6472,14 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
     PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_v_other};
     __pyx_t_1 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_get_melee_damage_vs, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
     __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 253, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 258, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
   }
-  __pyx_t_6 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_1); if (unlikely((__pyx_t_6 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 253, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_1); if (unlikely((__pyx_t_6 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 258, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_melee_damage = __pyx_t_6;
 
-  /* "soundrts/combat/combat_fast.pyx":254
+  /* "soundrts/combat/combat_fast.pyx":259
  *     #
  *     cdef long long melee_damage = self._get_melee_damage_vs(other)
  *     cdef long long ranged_damage = self._get_ranged_damage_vs(other)             # <<<<<<<<<<<<<<
@@ -6458,108 +6493,108 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
     PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_v_other};
     __pyx_t_1 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_get_ranged_damage_vs, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
     __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 254, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 259, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
   }
-  __pyx_t_6 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_1); if (unlikely((__pyx_t_6 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 254, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_1); if (unlikely((__pyx_t_6 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 259, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_ranged_damage = __pyx_t_6;
 
-  /* "soundrts/combat/combat_fast.pyx":255
+  /* "soundrts/combat/combat_fast.pyx":260
  *     cdef long long melee_damage = self._get_melee_damage_vs(other)
  *     cdef long long ranged_damage = self._get_ranged_damage_vs(other)
  *     cdef long long minimal_damage = self.minimal_damage             # <<<<<<<<<<<<<<
  *     cdef bint has_attack = (melee_damage > 0 or ranged_damage > 0
  *                             or minimal_damage > 0)
 */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_minimal_damage); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 255, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_minimal_damage); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 260, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_6 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_1); if (unlikely((__pyx_t_6 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 255, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_1); if (unlikely((__pyx_t_6 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 260, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_minimal_damage = __pyx_t_6;
 
-  /* "soundrts/combat/combat_fast.pyx":256
+  /* "soundrts/combat/combat_fast.pyx":261
  *     cdef long long ranged_damage = self._get_ranged_damage_vs(other)
  *     cdef long long minimal_damage = self.minimal_damage
  *     cdef bint has_attack = (melee_damage > 0 or ranged_damage > 0             # <<<<<<<<<<<<<<
  *                             or minimal_damage > 0)
  *     cdef bint mdg_explode = self.mdg_explode
 */
-  __pyx_t_4 = (__pyx_v_melee_damage > 0);
+  __pyx_t_3 = (__pyx_v_melee_damage > 0);
 
-  if (!__pyx_t_4) {
+  if (!__pyx_t_3) {
 
   } else {
 
-    __pyx_t_3 = __pyx_t_4;
+    __pyx_t_4 = __pyx_t_3;
 
-    goto __pyx_L12_bool_binop_done;
+    goto __pyx_L13_bool_binop_done;
   }
 
-  /* "soundrts/combat/combat_fast.pyx":257
+  /* "soundrts/combat/combat_fast.pyx":262
  *     cdef long long minimal_damage = self.minimal_damage
  *     cdef bint has_attack = (melee_damage > 0 or ranged_damage > 0
  *                             or minimal_damage > 0)             # <<<<<<<<<<<<<<
  *     cdef bint mdg_explode = self.mdg_explode
  *     cdef bint rdg_explode = self.rdg_explode
 */
-  __pyx_t_4 = (__pyx_v_ranged_damage > 0);
+  __pyx_t_3 = (__pyx_v_ranged_damage > 0);
 
-  if (!__pyx_t_4) {
+  if (!__pyx_t_3) {
 
   } else {
 
-    __pyx_t_3 = __pyx_t_4;
+    __pyx_t_4 = __pyx_t_3;
 
-    goto __pyx_L12_bool_binop_done;
+    goto __pyx_L13_bool_binop_done;
   }
-  __pyx_t_4 = (__pyx_v_minimal_damage > 0);
+  __pyx_t_3 = (__pyx_v_minimal_damage > 0);
 
 
-  __pyx_t_3 = __pyx_t_4;
+  __pyx_t_4 = __pyx_t_3;
 
-  __pyx_L12_bool_binop_done:;
-  __pyx_v_has_attack = __pyx_t_3;
+  __pyx_L13_bool_binop_done:;
+  __pyx_v_has_attack = __pyx_t_4;
 
-  /* "soundrts/combat/combat_fast.pyx":258
+  /* "soundrts/combat/combat_fast.pyx":263
  *     cdef bint has_attack = (melee_damage > 0 or ranged_damage > 0
  *                             or minimal_damage > 0)
  *     cdef bint mdg_explode = self.mdg_explode             # <<<<<<<<<<<<<<
  *     cdef bint rdg_explode = self.rdg_explode
  * 
 */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_mdg_explode); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 258, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_mdg_explode); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 263, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 258, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_4 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 263, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_v_mdg_explode = __pyx_t_3;
+  __pyx_v_mdg_explode = __pyx_t_4;
 
-  /* "soundrts/combat/combat_fast.pyx":259
+  /* "soundrts/combat/combat_fast.pyx":264
  *                             or minimal_damage > 0)
  *     cdef bint mdg_explode = self.mdg_explode
  *     cdef bint rdg_explode = self.rdg_explode             # <<<<<<<<<<<<<<
  * 
  *     if not has_attack:
 */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_rdg_explode); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 259, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_rdg_explode); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 264, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 259, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_4 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 264, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_v_rdg_explode = __pyx_t_3;
+  __pyx_v_rdg_explode = __pyx_t_4;
 
-  /* "soundrts/combat/combat_fast.pyx":261
+  /* "soundrts/combat/combat_fast.pyx":266
  *     cdef bint rdg_explode = self.rdg_explode
  * 
  *     if not has_attack:             # <<<<<<<<<<<<<<
  *         if mdg_explode or rdg_explode:
  *             has_attack = True
 */
-  __pyx_t_3 = (!__pyx_v_has_attack);
+  __pyx_t_4 = (!__pyx_v_has_attack);
 
-  if (__pyx_t_3) {
+  if (__pyx_t_4) {
 
 
-    /* "soundrts/combat/combat_fast.pyx":262
+    /* "soundrts/combat/combat_fast.pyx":267
  * 
  *     if not has_attack:
  *         if mdg_explode or rdg_explode:             # <<<<<<<<<<<<<<
@@ -6569,16 +6604,16 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
     if (!__pyx_v_mdg_explode) {
     } else {
 
-      __pyx_t_3 = __pyx_v_mdg_explode;
-      goto __pyx_L17_bool_binop_done;
+      __pyx_t_4 = __pyx_v_mdg_explode;
+      goto __pyx_L18_bool_binop_done;
     }
 
-    __pyx_t_3 = __pyx_v_rdg_explode;
-    __pyx_L17_bool_binop_done:;
-    if (__pyx_t_3) {
+    __pyx_t_4 = __pyx_v_rdg_explode;
+    __pyx_L18_bool_binop_done:;
+    if (__pyx_t_4) {
 
 
-      /* "soundrts/combat/combat_fast.pyx":263
+      /* "soundrts/combat/combat_fast.pyx":268
  *     if not has_attack:
  *         if mdg_explode or rdg_explode:
  *             has_attack = True             # <<<<<<<<<<<<<<
@@ -6587,17 +6622,17 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
 */
       __pyx_v_has_attack = 1;
 
-      /* "soundrts/combat/combat_fast.pyx":262
+      /* "soundrts/combat/combat_fast.pyx":267
  * 
  *     if not has_attack:
  *         if mdg_explode or rdg_explode:             # <<<<<<<<<<<<<<
  *             has_attack = True
  *         else:
 */
-      goto __pyx_L16;
+      goto __pyx_L17;
     }
 
-    /* "soundrts/combat/combat_fast.pyx":265
+    /* "soundrts/combat/combat_fast.pyx":270
  *             has_attack = True
  *         else:
  *             cache_dict[other_id] = False             # <<<<<<<<<<<<<<
@@ -6607,11 +6642,11 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
     /*else*/ {
       if (unlikely(__pyx_v_cache_dict == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "\047NoneType\047 object is not subscriptable");
-        __PYX_ERR(0, 265, __pyx_L1_error)
+        __PYX_ERR(0, 270, __pyx_L1_error)
       }
-      if (unlikely((PyDict_SetItem(__pyx_v_cache_dict, __pyx_v_other_id, Py_False) < 0))) __PYX_ERR(0, 265, __pyx_L1_error)
+      if (unlikely((PyDict_SetItem(__pyx_v_cache_dict, __pyx_v_other_id, Py_False) < 0))) __PYX_ERR(0, 270, __pyx_L1_error)
 
-      /* "soundrts/combat/combat_fast.pyx":266
+      /* "soundrts/combat/combat_fast.pyx":271
  *         else:
  *             cache_dict[other_id] = False
  *             return False             # <<<<<<<<<<<<<<
@@ -6629,9 +6664,9 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
       }
       goto __pyx_L0;
     }
-    __pyx_L16:;
+    __pyx_L17:;
 
-    /* "soundrts/combat/combat_fast.pyx":261
+    /* "soundrts/combat/combat_fast.pyx":266
  *     cdef bint rdg_explode = self.rdg_explode
  * 
  *     if not has_attack:             # <<<<<<<<<<<<<<
@@ -6640,30 +6675,30 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
 */
   }
 
-  /* "soundrts/combat/combat_fast.pyx":269
+  /* "soundrts/combat/combat_fast.pyx":274
  * 
  *     # / ( world_public_method.ground_or_air)
  *     cdef object airground = other.airground_type             # <<<<<<<<<<<<<<
  *     cdef object target_type
  *     if airground == "water":
 */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_other, __pyx_mstate_global->__pyx_n_u_airground_type); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 269, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_other, __pyx_mstate_global->__pyx_n_u_airground_type); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 274, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_airground = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "soundrts/combat/combat_fast.pyx":271
+  /* "soundrts/combat/combat_fast.pyx":276
  *     cdef object airground = other.airground_type
  *     cdef object target_type
  *     if airground == "water":             # <<<<<<<<<<<<<<
  *         target_type = "ground"
  *     else:
 */
-  __pyx_t_3 = __Pyx_PyObject_CompareBoolEq_object_str(__pyx_v_airground, __pyx_mstate_global->__pyx_n_u_water, Py_EQ); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 271, __pyx_L1_error)
-  if (__pyx_t_3) {
+  __pyx_t_4 = __Pyx_PyObject_CompareBoolEq_object_str(__pyx_v_airground, __pyx_mstate_global->__pyx_n_u_water, Py_EQ); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 276, __pyx_L1_error)
+  if (__pyx_t_4) {
 
 
-    /* "soundrts/combat/combat_fast.pyx":272
+    /* "soundrts/combat/combat_fast.pyx":277
  *     cdef object target_type
  *     if airground == "water":
  *         target_type = "ground"             # <<<<<<<<<<<<<<
@@ -6673,17 +6708,17 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
     __Pyx_INCREF(__pyx_mstate_global->__pyx_n_u_ground);
     __pyx_v_target_type = __pyx_mstate_global->__pyx_n_u_ground;
 
-    /* "soundrts/combat/combat_fast.pyx":271
+    /* "soundrts/combat/combat_fast.pyx":276
  *     cdef object airground = other.airground_type
  *     cdef object target_type
  *     if airground == "water":             # <<<<<<<<<<<<<<
  *         target_type = "ground"
  *     else:
 */
-    goto __pyx_L19;
+    goto __pyx_L20;
   }
 
-  /* "soundrts/combat/combat_fast.pyx":274
+  /* "soundrts/combat/combat_fast.pyx":279
  *         target_type = "ground"
  *     else:
  *         target_type = airground             # <<<<<<<<<<<<<<
@@ -6694,9 +6729,9 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
     __Pyx_INCREF(__pyx_v_airground);
     __pyx_v_target_type = __pyx_v_airground;
   }
-  __pyx_L19:;
+  __pyx_L20:;
 
-  /* "soundrts/combat/combat_fast.pyx":277
+  /* "soundrts/combat/combat_fast.pyx":282
  * 
  *     # /
  *     cdef bint can_attack_target = False             # <<<<<<<<<<<<<<
@@ -6705,55 +6740,55 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
 */
   __pyx_v_can_attack_target = 0;
 
-  /* "soundrts/combat/combat_fast.pyx":278
+  /* "soundrts/combat/combat_fast.pyx":283
  *     # /
  *     cdef bint can_attack_target = False
  *     cdef object weapons = self.weapons             # <<<<<<<<<<<<<<
  *     cdef object weapon_instances = getattr(self, '_weapon_instances', None)
  *     cdef object weapon, current_weapon, weapon_name
 */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_weapons); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 278, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_weapons); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 283, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_weapons = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "soundrts/combat/combat_fast.pyx":279
+  /* "soundrts/combat/combat_fast.pyx":284
  *     cdef bint can_attack_target = False
  *     cdef object weapons = self.weapons
  *     cdef object weapon_instances = getattr(self, '_weapon_instances', None)             # <<<<<<<<<<<<<<
  *     cdef object weapon, current_weapon, weapon_name
  * 
 */
-  __pyx_t_1 = __Pyx_GetAttr3(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_weapon_instances, Py_None); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 279, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetAttr3(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_weapon_instances, Py_None); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 284, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_weapon_instances = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "soundrts/combat/combat_fast.pyx":282
+  /* "soundrts/combat/combat_fast.pyx":287
  *     cdef object weapon, current_weapon, weapon_name
  * 
  *     if weapons and weapon_instances:             # <<<<<<<<<<<<<<
  *         # weapon_instances :  Python
  *         if (self._should_auto_switch_weapon() and len(weapons) > 1 and
 */
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_v_weapons); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 282, __pyx_L1_error)
-  if (__pyx_t_4) {
+  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_v_weapons); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 287, __pyx_L1_error)
+  if (__pyx_t_3) {
 
   } else {
 
-    __pyx_t_3 = __pyx_t_4;
+    __pyx_t_4 = __pyx_t_3;
 
-    goto __pyx_L21_bool_binop_done;
+    goto __pyx_L22_bool_binop_done;
   }
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_v_weapon_instances); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 282, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_v_weapon_instances); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 287, __pyx_L1_error)
 
-  __pyx_t_3 = __pyx_t_4;
+  __pyx_t_4 = __pyx_t_3;
 
-  __pyx_L21_bool_binop_done:;
-  if (__pyx_t_3) {
+  __pyx_L22_bool_binop_done:;
+  if (__pyx_t_4) {
 
 
-    /* "soundrts/combat/combat_fast.pyx":284
+    /* "soundrts/combat/combat_fast.pyx":289
  *     if weapons and weapon_instances:
  *         # weapon_instances :  Python
  *         if (self._should_auto_switch_weapon() and len(weapons) > 1 and             # <<<<<<<<<<<<<<
@@ -6767,33 +6802,33 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
       PyObject *__pyx_callargs[2] = {__pyx_t_2, NULL};
       __pyx_t_1 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_should_auto_switch_weapon, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
       __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 284, __pyx_L1_error)
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 289, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
     }
-    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 284, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 289, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    if (__pyx_t_4) {
+    if (__pyx_t_3) {
 
     } else {
 
-      __pyx_t_3 = __pyx_t_4;
+      __pyx_t_4 = __pyx_t_3;
 
-      goto __pyx_L24_bool_binop_done;
+      goto __pyx_L25_bool_binop_done;
     }
-    __pyx_t_7 = PyObject_Length(__pyx_v_weapons); if (unlikely(__pyx_t_7 == ((Py_ssize_t)-1))) __PYX_ERR(0, 284, __pyx_L1_error)
-    __pyx_t_4 = (__pyx_t_7 > 1);
+    __pyx_t_7 = PyObject_Length(__pyx_v_weapons); if (unlikely(__pyx_t_7 == ((Py_ssize_t)-1))) __PYX_ERR(0, 289, __pyx_L1_error)
+    __pyx_t_3 = (__pyx_t_7 > 1);
 
 
-    if (__pyx_t_4) {
+    if (__pyx_t_3) {
 
     } else {
 
-      __pyx_t_3 = __pyx_t_4;
+      __pyx_t_4 = __pyx_t_3;
 
-      goto __pyx_L24_bool_binop_done;
+      goto __pyx_L25_bool_binop_done;
     }
 
-    /* "soundrts/combat/combat_fast.pyx":285
+    /* "soundrts/combat/combat_fast.pyx":290
  *         # weapon_instances :  Python
  *         if (self._should_auto_switch_weapon() and len(weapons) > 1 and
  *                 not self._should_respect_manual_weapon_choice()):             # <<<<<<<<<<<<<<
@@ -6807,30 +6842,30 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
       PyObject *__pyx_callargs[2] = {__pyx_t_2, NULL};
       __pyx_t_1 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_should_respect_manual_weapon_ch, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
       __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 285, __pyx_L1_error)
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 290, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
     }
-    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 285, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 290, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_8 = (!__pyx_t_4);
+    __pyx_t_8 = (!__pyx_t_3);
 
 
 
-    __pyx_t_3 = __pyx_t_8;
+    __pyx_t_4 = __pyx_t_8;
 
-    __pyx_L24_bool_binop_done:;
+    __pyx_L25_bool_binop_done:;
 
-    /* "soundrts/combat/combat_fast.pyx":284
+    /* "soundrts/combat/combat_fast.pyx":289
  *     if weapons and weapon_instances:
  *         # weapon_instances :  Python
  *         if (self._should_auto_switch_weapon() and len(weapons) > 1 and             # <<<<<<<<<<<<<<
  *                 not self._should_respect_manual_weapon_choice()):
  *             for weapon_name in weapons:
 */
-    if (__pyx_t_3) {
+    if (__pyx_t_4) {
 
 
-      /* "soundrts/combat/combat_fast.pyx":286
+      /* "soundrts/combat/combat_fast.pyx":291
  *         if (self._should_auto_switch_weapon() and len(weapons) > 1 and
  *                 not self._should_respect_manual_weapon_choice()):
  *             for weapon_name in weapons:             # <<<<<<<<<<<<<<
@@ -6842,9 +6877,9 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
         __pyx_t_7 = 0;
         __pyx_t_9 = NULL;
       } else {
-        __pyx_t_7 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_weapons); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 286, __pyx_L1_error)
+        __pyx_t_7 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_weapons); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 291, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_9 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 286, __pyx_L1_error)
+        __pyx_t_9 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 291, __pyx_L1_error)
       }
       for (;;) {
         if (likely(!__pyx_t_9)) {
@@ -6852,7 +6887,7 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
             {
               Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_1);
               #if !CYTHON_ASSUME_SAFE_SIZE
-              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 286, __pyx_L1_error)
+              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 291, __pyx_L1_error)
               #endif
               if (__pyx_t_7 >= __pyx_temp) break;
             }
@@ -6862,7 +6897,7 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
             {
               Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_1);
               #if !CYTHON_ASSUME_SAFE_SIZE
-              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 286, __pyx_L1_error)
+              if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 291, __pyx_L1_error)
               #endif
               if (__pyx_t_7 >= __pyx_temp) break;
             }
@@ -6873,13 +6908,13 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
             #endif
             ++__pyx_t_7;
           }
-          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 286, __pyx_L1_error)
+          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 291, __pyx_L1_error)
         } else {
           __pyx_t_2 = __pyx_t_9(__pyx_t_1);
           if (unlikely(!__pyx_t_2)) {
             PyObject* exc_type = PyErr_Occurred();
             if (exc_type) {
-              if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 286, __pyx_L1_error)
+              if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 291, __pyx_L1_error)
               PyErr_Clear();
             }
             break;
@@ -6889,27 +6924,27 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
         __Pyx_XDECREF_SET(__pyx_v_weapon_name, __pyx_t_2);
         __pyx_t_2 = 0;
 
-        /* "soundrts/combat/combat_fast.pyx":287
+        /* "soundrts/combat/combat_fast.pyx":292
  *                 not self._should_respect_manual_weapon_choice()):
  *             for weapon_name in weapons:
  *                 if weapon_name not in weapon_instances:             # <<<<<<<<<<<<<<
  *                     continue
  *                 weapon = weapon_instances[weapon_name]
 */
-        __pyx_t_3 = (__Pyx_PySequence_ContainsTF(__pyx_v_weapon_name, __pyx_v_weapon_instances, Py_NE)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 287, __pyx_L1_error)
-        if (__pyx_t_3) {
+        __pyx_t_4 = (__Pyx_PySequence_ContainsTF(__pyx_v_weapon_name, __pyx_v_weapon_instances, Py_NE)); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 292, __pyx_L1_error)
+        if (__pyx_t_4) {
 
 
-          /* "soundrts/combat/combat_fast.pyx":288
+          /* "soundrts/combat/combat_fast.pyx":293
  *             for weapon_name in weapons:
  *                 if weapon_name not in weapon_instances:
  *                     continue             # <<<<<<<<<<<<<<
  *                 weapon = weapon_instances[weapon_name]
  *                 if self._check_weapon_target_compatibility(weapon, other, target_type):
 */
-          goto __pyx_L27_continue;
+          goto __pyx_L28_continue;
 
-          /* "soundrts/combat/combat_fast.pyx":287
+          /* "soundrts/combat/combat_fast.pyx":292
  *                 not self._should_respect_manual_weapon_choice()):
  *             for weapon_name in weapons:
  *                 if weapon_name not in weapon_instances:             # <<<<<<<<<<<<<<
@@ -6918,19 +6953,19 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
 */
         }
 
-        /* "soundrts/combat/combat_fast.pyx":289
+        /* "soundrts/combat/combat_fast.pyx":294
  *                 if weapon_name not in weapon_instances:
  *                     continue
  *                 weapon = weapon_instances[weapon_name]             # <<<<<<<<<<<<<<
  *                 if self._check_weapon_target_compatibility(weapon, other, target_type):
  *                     can_attack_target = True
 */
-        __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_weapon_instances, __pyx_v_weapon_name); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 289, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_weapon_instances, __pyx_v_weapon_name); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 294, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_XDECREF_SET(__pyx_v_weapon, __pyx_t_2);
         __pyx_t_2 = 0;
 
-        /* "soundrts/combat/combat_fast.pyx":290
+        /* "soundrts/combat/combat_fast.pyx":295
  *                     continue
  *                 weapon = weapon_instances[weapon_name]
  *                 if self._check_weapon_target_compatibility(weapon, other, target_type):             # <<<<<<<<<<<<<<
@@ -6944,15 +6979,15 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
           PyObject *__pyx_callargs[4] = {__pyx_t_10, __pyx_v_weapon, __pyx_v_other, __pyx_v_target_type};
           __pyx_t_2 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_check_weapon_target_compatibili, __pyx_callargs+__pyx_t_5, (4-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
           __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 290, __pyx_L1_error)
+          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 295, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
         }
-        __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 290, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 295, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-        if (__pyx_t_3) {
+        if (__pyx_t_4) {
 
 
-          /* "soundrts/combat/combat_fast.pyx":291
+          /* "soundrts/combat/combat_fast.pyx":296
  *                 weapon = weapon_instances[weapon_name]
  *                 if self._check_weapon_target_compatibility(weapon, other, target_type):
  *                     can_attack_target = True             # <<<<<<<<<<<<<<
@@ -6961,16 +6996,16 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
 */
           __pyx_v_can_attack_target = 1;
 
-          /* "soundrts/combat/combat_fast.pyx":292
+          /* "soundrts/combat/combat_fast.pyx":297
  *                 if self._check_weapon_target_compatibility(weapon, other, target_type):
  *                     can_attack_target = True
  *                     break             # <<<<<<<<<<<<<<
  *         else:
  *             current_weapon = getattr(self, 'current_weapon', None)
 */
-          goto __pyx_L28_break;
+          goto __pyx_L29_break;
 
-          /* "soundrts/combat/combat_fast.pyx":290
+          /* "soundrts/combat/combat_fast.pyx":295
  *                     continue
  *                 weapon = weapon_instances[weapon_name]
  *                 if self._check_weapon_target_compatibility(weapon, other, target_type):             # <<<<<<<<<<<<<<
@@ -6979,33 +7014,33 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
 */
         }
 
-        /* "soundrts/combat/combat_fast.pyx":286
+        /* "soundrts/combat/combat_fast.pyx":291
  *         if (self._should_auto_switch_weapon() and len(weapons) > 1 and
  *                 not self._should_respect_manual_weapon_choice()):
  *             for weapon_name in weapons:             # <<<<<<<<<<<<<<
  *                 if weapon_name not in weapon_instances:
  *                     continue
 */
-        __pyx_L27_continue:;
+        __pyx_L28_continue:;
       }
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      goto __pyx_L31_for_end;
-      __pyx_L28_break:;
+      goto __pyx_L32_for_end;
+      __pyx_L29_break:;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      goto __pyx_L31_for_end;
-      __pyx_L31_for_end:;
+      goto __pyx_L32_for_end;
+      __pyx_L32_for_end:;
 
-      /* "soundrts/combat/combat_fast.pyx":284
+      /* "soundrts/combat/combat_fast.pyx":289
  *     if weapons and weapon_instances:
  *         # weapon_instances :  Python
  *         if (self._should_auto_switch_weapon() and len(weapons) > 1 and             # <<<<<<<<<<<<<<
  *                 not self._should_respect_manual_weapon_choice()):
  *             for weapon_name in weapons:
 */
-      goto __pyx_L23;
+      goto __pyx_L24;
     }
 
-    /* "soundrts/combat/combat_fast.pyx":294
+    /* "soundrts/combat/combat_fast.pyx":299
  *                     break
  *         else:
  *             current_weapon = getattr(self, 'current_weapon', None)             # <<<<<<<<<<<<<<
@@ -7013,48 +7048,48 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
  *                 weapon = weapon_instances[current_weapon]
 */
     /*else*/ {
-      __pyx_t_1 = __Pyx_GetAttr3(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_current_weapon, Py_None); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 294, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetAttr3(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_current_weapon, Py_None); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 299, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __pyx_v_current_weapon = __pyx_t_1;
       __pyx_t_1 = 0;
 
-      /* "soundrts/combat/combat_fast.pyx":295
+      /* "soundrts/combat/combat_fast.pyx":300
  *         else:
  *             current_weapon = getattr(self, 'current_weapon', None)
  *             if current_weapon and current_weapon in weapon_instances:             # <<<<<<<<<<<<<<
  *                 weapon = weapon_instances[current_weapon]
  *                 can_attack_target = self._check_weapon_target_compatibility(
 */
-      __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_v_current_weapon); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 295, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_v_current_weapon); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 300, __pyx_L1_error)
       if (__pyx_t_8) {
 
       } else {
 
-        __pyx_t_3 = __pyx_t_8;
+        __pyx_t_4 = __pyx_t_8;
 
-        goto __pyx_L33_bool_binop_done;
+        goto __pyx_L34_bool_binop_done;
       }
-      __pyx_t_8 = (__Pyx_PySequence_ContainsTF(__pyx_v_current_weapon, __pyx_v_weapon_instances, Py_EQ)); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 295, __pyx_L1_error)
+      __pyx_t_8 = (__Pyx_PySequence_ContainsTF(__pyx_v_current_weapon, __pyx_v_weapon_instances, Py_EQ)); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 300, __pyx_L1_error)
 
-      __pyx_t_3 = __pyx_t_8;
+      __pyx_t_4 = __pyx_t_8;
 
-      __pyx_L33_bool_binop_done:;
-      if (__pyx_t_3) {
+      __pyx_L34_bool_binop_done:;
+      if (__pyx_t_4) {
 
 
-        /* "soundrts/combat/combat_fast.pyx":296
+        /* "soundrts/combat/combat_fast.pyx":301
  *             current_weapon = getattr(self, 'current_weapon', None)
  *             if current_weapon and current_weapon in weapon_instances:
  *                 weapon = weapon_instances[current_weapon]             # <<<<<<<<<<<<<<
  *                 can_attack_target = self._check_weapon_target_compatibility(
  *                     weapon, other, target_type)
 */
-        __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_weapon_instances, __pyx_v_current_weapon); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 296, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_weapon_instances, __pyx_v_current_weapon); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 301, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __pyx_v_weapon = __pyx_t_1;
         __pyx_t_1 = 0;
 
-        /* "soundrts/combat/combat_fast.pyx":297
+        /* "soundrts/combat/combat_fast.pyx":302
  *             if current_weapon and current_weapon in weapon_instances:
  *                 weapon = weapon_instances[current_weapon]
  *                 can_attack_target = self._check_weapon_target_compatibility(             # <<<<<<<<<<<<<<
@@ -7064,7 +7099,7 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
         __pyx_t_2 = __pyx_v_self;
         __Pyx_INCREF(__pyx_t_2);
 
-        /* "soundrts/combat/combat_fast.pyx":298
+        /* "soundrts/combat/combat_fast.pyx":303
  *                 weapon = weapon_instances[current_weapon]
  *                 can_attack_target = self._check_weapon_target_compatibility(
  *                     weapon, other, target_type)             # <<<<<<<<<<<<<<
@@ -7076,22 +7111,22 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
           PyObject *__pyx_callargs[4] = {__pyx_t_2, __pyx_v_weapon, __pyx_v_other, __pyx_v_target_type};
           __pyx_t_1 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_check_weapon_target_compatibili, __pyx_callargs+__pyx_t_5, (4-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
           __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-          if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 297, __pyx_L1_error)
+          if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 302, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
         }
 
-        /* "soundrts/combat/combat_fast.pyx":297
+        /* "soundrts/combat/combat_fast.pyx":302
  *             if current_weapon and current_weapon in weapon_instances:
  *                 weapon = weapon_instances[current_weapon]
  *                 can_attack_target = self._check_weapon_target_compatibility(             # <<<<<<<<<<<<<<
  *                     weapon, other, target_type)
  *     else:
 */
-        __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 297, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_4 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 302, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_v_can_attack_target = __pyx_t_3;
+        __pyx_v_can_attack_target = __pyx_t_4;
 
-        /* "soundrts/combat/combat_fast.pyx":295
+        /* "soundrts/combat/combat_fast.pyx":300
  *         else:
  *             current_weapon = getattr(self, 'current_weapon', None)
  *             if current_weapon and current_weapon in weapon_instances:             # <<<<<<<<<<<<<<
@@ -7100,19 +7135,19 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
 */
       }
     }
-    __pyx_L23:;
+    __pyx_L24:;
 
-    /* "soundrts/combat/combat_fast.pyx":282
+    /* "soundrts/combat/combat_fast.pyx":287
  *     cdef object weapon, current_weapon, weapon_name
  * 
  *     if weapons and weapon_instances:             # <<<<<<<<<<<<<<
  *         # weapon_instances :  Python
  *         if (self._should_auto_switch_weapon() and len(weapons) > 1 and
 */
-    goto __pyx_L20;
+    goto __pyx_L21;
   }
 
-  /* "soundrts/combat/combat_fast.pyx":301
+  /* "soundrts/combat/combat_fast.pyx":306
  *     else:
  *         #  ()
  *         mdg = self.mdg             # <<<<<<<<<<<<<<
@@ -7120,101 +7155,101 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
  *         has_melee_system = (mdg > 0 or mdg_explode)
 */
   /*else*/ {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_mdg); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 301, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_mdg); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 306, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_v_mdg = __pyx_t_1;
     __pyx_t_1 = 0;
 
-    /* "soundrts/combat/combat_fast.pyx":302
+    /* "soundrts/combat/combat_fast.pyx":307
  *         #  ()
  *         mdg = self.mdg
  *         rdg = self.rdg             # <<<<<<<<<<<<<<
  *         has_melee_system = (mdg > 0 or mdg_explode)
  *         has_ranged_system = (rdg > 0 or rdg_explode)
 */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_rdg); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 302, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_rdg); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 307, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_v_rdg = __pyx_t_1;
     __pyx_t_1 = 0;
 
-    /* "soundrts/combat/combat_fast.pyx":303
+    /* "soundrts/combat/combat_fast.pyx":308
  *         mdg = self.mdg
  *         rdg = self.rdg
  *         has_melee_system = (mdg > 0 or mdg_explode)             # <<<<<<<<<<<<<<
  *         has_ranged_system = (rdg > 0 or rdg_explode)
  * 
 */
-    __pyx_t_2 = __Pyx_PyObject_CompareGt_object_int(__pyx_v_mdg, __pyx_mstate_global->__pyx_int_0, Py_GT); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 303, __pyx_L1_error)
-    __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 303, __pyx_L1_error)
-    if (!__pyx_t_3) {
+    __pyx_t_2 = __Pyx_PyObject_CompareGt_object_int(__pyx_v_mdg, __pyx_mstate_global->__pyx_int_0, Py_GT); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 308, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 308, __pyx_L1_error)
+    if (!__pyx_t_4) {
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     } else {
       __Pyx_INCREF(__pyx_t_2);
       __pyx_t_1 = __pyx_t_2;
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      goto __pyx_L35_bool_binop_done;
+      goto __pyx_L36_bool_binop_done;
     }
-    __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_v_mdg_explode); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 303, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_v_mdg_explode); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 308, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_t_1 = __pyx_t_2;
     __pyx_t_2 = 0;
-    __pyx_L35_bool_binop_done:;
+    __pyx_L36_bool_binop_done:;
     __pyx_v_has_melee_system = __pyx_t_1;
     __pyx_t_1 = 0;
 
-    /* "soundrts/combat/combat_fast.pyx":304
+    /* "soundrts/combat/combat_fast.pyx":309
  *         rdg = self.rdg
  *         has_melee_system = (mdg > 0 or mdg_explode)
  *         has_ranged_system = (rdg > 0 or rdg_explode)             # <<<<<<<<<<<<<<
  * 
  *         if has_melee_system and not has_ranged_system:
 */
-    __pyx_t_2 = __Pyx_PyObject_CompareGt_object_int(__pyx_v_rdg, __pyx_mstate_global->__pyx_int_0, Py_GT); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 304, __pyx_L1_error)
-    __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 304, __pyx_L1_error)
-    if (!__pyx_t_3) {
+    __pyx_t_2 = __Pyx_PyObject_CompareGt_object_int(__pyx_v_rdg, __pyx_mstate_global->__pyx_int_0, Py_GT); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 309, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 309, __pyx_L1_error)
+    if (!__pyx_t_4) {
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     } else {
       __Pyx_INCREF(__pyx_t_2);
       __pyx_t_1 = __pyx_t_2;
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      goto __pyx_L37_bool_binop_done;
+      goto __pyx_L38_bool_binop_done;
     }
-    __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_v_rdg_explode); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 304, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_v_rdg_explode); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 309, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_t_1 = __pyx_t_2;
     __pyx_t_2 = 0;
-    __pyx_L37_bool_binop_done:;
+    __pyx_L38_bool_binop_done:;
     __pyx_v_has_ranged_system = __pyx_t_1;
     __pyx_t_1 = 0;
 
-    /* "soundrts/combat/combat_fast.pyx":306
+    /* "soundrts/combat/combat_fast.pyx":311
  *         has_ranged_system = (rdg > 0 or rdg_explode)
  * 
  *         if has_melee_system and not has_ranged_system:             # <<<<<<<<<<<<<<
  *             can_attack_target = matches_attack_targets(other, self.mdg_targets, target_type)
  *         elif has_ranged_system and not has_melee_system:
 */
-    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_v_has_melee_system); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 306, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_v_has_melee_system); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 311, __pyx_L1_error)
     if (__pyx_t_8) {
 
     } else {
 
-      __pyx_t_3 = __pyx_t_8;
+      __pyx_t_4 = __pyx_t_8;
 
-      goto __pyx_L40_bool_binop_done;
+      goto __pyx_L41_bool_binop_done;
     }
-    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_v_has_ranged_system); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 306, __pyx_L1_error)
-    __pyx_t_4 = (!__pyx_t_8);
+    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_v_has_ranged_system); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 311, __pyx_L1_error)
+    __pyx_t_3 = (!__pyx_t_8);
 
 
 
-    __pyx_t_3 = __pyx_t_4;
+    __pyx_t_4 = __pyx_t_3;
 
-    __pyx_L40_bool_binop_done:;
-    if (__pyx_t_3) {
+    __pyx_L41_bool_binop_done:;
+    if (__pyx_t_4) {
 
 
-      /* "soundrts/combat/combat_fast.pyx":307
+      /* "soundrts/combat/combat_fast.pyx":312
  * 
  *         if has_melee_system and not has_ranged_system:
  *             can_attack_target = matches_attack_targets(other, self.mdg_targets, target_type)             # <<<<<<<<<<<<<<
@@ -7222,190 +7257,9 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
  *             can_attack_target = matches_attack_targets(other, self.rdg_targets, target_type)
 */
       __pyx_t_2 = NULL;
-      __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_matches_attack_targets); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 307, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_mdg_targets); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 307, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_11);
-      __pyx_t_5 = 1;
-      #if CYTHON_UNPACK_METHODS
-      if (unlikely(PyMethod_Check(__pyx_t_10))) {
-        __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_10);
-        assert(__pyx_t_2);
-        PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_10);
-        __Pyx_INCREF(__pyx_t_2);
-        __Pyx_INCREF(__pyx__function);
-        __Pyx_DECREF_SET(__pyx_t_10, __pyx__function);
-        __pyx_t_5 = 0;
-      }
-      #endif
-      {
-        PyObject *__pyx_callargs[4] = {__pyx_t_2, __pyx_v_other, __pyx_t_11, __pyx_v_target_type};
-        __pyx_t_1 = __Pyx_PyObject_FastCall((PyObject*)__pyx_t_10, __pyx_callargs+__pyx_t_5, (4-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-        __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-        __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 307, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_1);
-      }
-      __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 307, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_v_can_attack_target = __pyx_t_3;
-
-      /* "soundrts/combat/combat_fast.pyx":306
- *         has_ranged_system = (rdg > 0 or rdg_explode)
- * 
- *         if has_melee_system and not has_ranged_system:             # <<<<<<<<<<<<<<
- *             can_attack_target = matches_attack_targets(other, self.mdg_targets, target_type)
- *         elif has_ranged_system and not has_melee_system:
-*/
-      goto __pyx_L39;
-    }
-
-    /* "soundrts/combat/combat_fast.pyx":308
- *         if has_melee_system and not has_ranged_system:
- *             can_attack_target = matches_attack_targets(other, self.mdg_targets, target_type)
- *         elif has_ranged_system and not has_melee_system:             # <<<<<<<<<<<<<<
- *             can_attack_target = matches_attack_targets(other, self.rdg_targets, target_type)
- *         elif has_melee_system and has_ranged_system:
-*/
-    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_v_has_ranged_system); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 308, __pyx_L1_error)
-    if (__pyx_t_4) {
-
-    } else {
-
-      __pyx_t_3 = __pyx_t_4;
-
-      goto __pyx_L42_bool_binop_done;
-    }
-    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_v_has_melee_system); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 308, __pyx_L1_error)
-    __pyx_t_8 = (!__pyx_t_4);
-
-
-
-    __pyx_t_3 = __pyx_t_8;
-
-    __pyx_L42_bool_binop_done:;
-    if (__pyx_t_3) {
-
-
-      /* "soundrts/combat/combat_fast.pyx":309
- *             can_attack_target = matches_attack_targets(other, self.mdg_targets, target_type)
- *         elif has_ranged_system and not has_melee_system:
- *             can_attack_target = matches_attack_targets(other, self.rdg_targets, target_type)             # <<<<<<<<<<<<<<
- *         elif has_melee_system and has_ranged_system:
- *             can_melee = matches_attack_targets(other, self.mdg_targets, target_type)
-*/
-      __pyx_t_10 = NULL;
-      __Pyx_GetModuleGlobalName(__pyx_t_11, __pyx_mstate_global->__pyx_n_u_matches_attack_targets); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 309, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_11);
-      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_rdg_targets); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 309, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_5 = 1;
-      #if CYTHON_UNPACK_METHODS
-      if (unlikely(PyMethod_Check(__pyx_t_11))) {
-        __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_11);
-        assert(__pyx_t_10);
-        PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_11);
-        __Pyx_INCREF(__pyx_t_10);
-        __Pyx_INCREF(__pyx__function);
-        __Pyx_DECREF_SET(__pyx_t_11, __pyx__function);
-        __pyx_t_5 = 0;
-      }
-      #endif
-      {
-        PyObject *__pyx_callargs[4] = {__pyx_t_10, __pyx_v_other, __pyx_t_2, __pyx_v_target_type};
-        __pyx_t_1 = __Pyx_PyObject_FastCall((PyObject*)__pyx_t_11, __pyx_callargs+__pyx_t_5, (4-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-        __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 309, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_1);
-      }
-      __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 309, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_v_can_attack_target = __pyx_t_3;
-
-      /* "soundrts/combat/combat_fast.pyx":308
- *         if has_melee_system and not has_ranged_system:
- *             can_attack_target = matches_attack_targets(other, self.mdg_targets, target_type)
- *         elif has_ranged_system and not has_melee_system:             # <<<<<<<<<<<<<<
- *             can_attack_target = matches_attack_targets(other, self.rdg_targets, target_type)
- *         elif has_melee_system and has_ranged_system:
-*/
-      goto __pyx_L39;
-    }
-
-    /* "soundrts/combat/combat_fast.pyx":310
- *         elif has_ranged_system and not has_melee_system:
- *             can_attack_target = matches_attack_targets(other, self.rdg_targets, target_type)
- *         elif has_melee_system and has_ranged_system:             # <<<<<<<<<<<<<<
- *             can_melee = matches_attack_targets(other, self.mdg_targets, target_type)
- *             can_ranged = matches_attack_targets(other, self.rdg_targets, target_type)
-*/
-    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_v_has_melee_system); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 310, __pyx_L1_error)
-    if (__pyx_t_8) {
-
-    } else {
-
-      __pyx_t_3 = __pyx_t_8;
-
-      goto __pyx_L44_bool_binop_done;
-    }
-    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_v_has_ranged_system); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 310, __pyx_L1_error)
-
-    __pyx_t_3 = __pyx_t_8;
-
-    __pyx_L44_bool_binop_done:;
-    if (__pyx_t_3) {
-
-
-      /* "soundrts/combat/combat_fast.pyx":311
- *             can_attack_target = matches_attack_targets(other, self.rdg_targets, target_type)
- *         elif has_melee_system and has_ranged_system:
- *             can_melee = matches_attack_targets(other, self.mdg_targets, target_type)             # <<<<<<<<<<<<<<
- *             can_ranged = matches_attack_targets(other, self.rdg_targets, target_type)
- *             can_attack_target = can_melee or can_ranged
-*/
-      __pyx_t_11 = NULL;
-      __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_matches_attack_targets); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 311, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_mdg_targets); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 311, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_5 = 1;
-      #if CYTHON_UNPACK_METHODS
-      if (unlikely(PyMethod_Check(__pyx_t_2))) {
-        __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_2);
-        assert(__pyx_t_11);
-        PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_2);
-        __Pyx_INCREF(__pyx_t_11);
-        __Pyx_INCREF(__pyx__function);
-        __Pyx_DECREF_SET(__pyx_t_2, __pyx__function);
-        __pyx_t_5 = 0;
-      }
-      #endif
-      {
-        PyObject *__pyx_callargs[4] = {__pyx_t_11, __pyx_v_other, __pyx_t_10, __pyx_v_target_type};
-        __pyx_t_1 = __Pyx_PyObject_FastCall((PyObject*)__pyx_t_2, __pyx_callargs+__pyx_t_5, (4-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 311, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_1);
-      }
-      __pyx_v_can_melee = __pyx_t_1;
-      __pyx_t_1 = 0;
-
-      /* "soundrts/combat/combat_fast.pyx":312
- *         elif has_melee_system and has_ranged_system:
- *             can_melee = matches_attack_targets(other, self.mdg_targets, target_type)
- *             can_ranged = matches_attack_targets(other, self.rdg_targets, target_type)             # <<<<<<<<<<<<<<
- *             can_attack_target = can_melee or can_ranged
- * 
-*/
-      __pyx_t_2 = NULL;
       __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_matches_attack_targets); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 312, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_rdg_targets); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 312, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_mdg_targets); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 312, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __pyx_t_5 = 1;
       #if CYTHON_UNPACK_METHODS
@@ -7428,33 +7282,214 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
         if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 312, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
       }
+      __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_4 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 312, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __pyx_v_can_attack_target = __pyx_t_4;
+
+      /* "soundrts/combat/combat_fast.pyx":311
+ *         has_ranged_system = (rdg > 0 or rdg_explode)
+ * 
+ *         if has_melee_system and not has_ranged_system:             # <<<<<<<<<<<<<<
+ *             can_attack_target = matches_attack_targets(other, self.mdg_targets, target_type)
+ *         elif has_ranged_system and not has_melee_system:
+*/
+      goto __pyx_L40;
+    }
+
+    /* "soundrts/combat/combat_fast.pyx":313
+ *         if has_melee_system and not has_ranged_system:
+ *             can_attack_target = matches_attack_targets(other, self.mdg_targets, target_type)
+ *         elif has_ranged_system and not has_melee_system:             # <<<<<<<<<<<<<<
+ *             can_attack_target = matches_attack_targets(other, self.rdg_targets, target_type)
+ *         elif has_melee_system and has_ranged_system:
+*/
+    __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_v_has_ranged_system); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 313, __pyx_L1_error)
+    if (__pyx_t_3) {
+
+    } else {
+
+      __pyx_t_4 = __pyx_t_3;
+
+      goto __pyx_L43_bool_binop_done;
+    }
+    __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_v_has_melee_system); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 313, __pyx_L1_error)
+    __pyx_t_8 = (!__pyx_t_3);
+
+
+
+    __pyx_t_4 = __pyx_t_8;
+
+    __pyx_L43_bool_binop_done:;
+    if (__pyx_t_4) {
+
+
+      /* "soundrts/combat/combat_fast.pyx":314
+ *             can_attack_target = matches_attack_targets(other, self.mdg_targets, target_type)
+ *         elif has_ranged_system and not has_melee_system:
+ *             can_attack_target = matches_attack_targets(other, self.rdg_targets, target_type)             # <<<<<<<<<<<<<<
+ *         elif has_melee_system and has_ranged_system:
+ *             can_melee = matches_attack_targets(other, self.mdg_targets, target_type)
+*/
+      __pyx_t_10 = NULL;
+      __Pyx_GetModuleGlobalName(__pyx_t_11, __pyx_mstate_global->__pyx_n_u_matches_attack_targets); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 314, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_11);
+      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_rdg_targets); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 314, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_5 = 1;
+      #if CYTHON_UNPACK_METHODS
+      if (unlikely(PyMethod_Check(__pyx_t_11))) {
+        __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_11);
+        assert(__pyx_t_10);
+        PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_11);
+        __Pyx_INCREF(__pyx_t_10);
+        __Pyx_INCREF(__pyx__function);
+        __Pyx_DECREF_SET(__pyx_t_11, __pyx__function);
+        __pyx_t_5 = 0;
+      }
+      #endif
+      {
+        PyObject *__pyx_callargs[4] = {__pyx_t_10, __pyx_v_other, __pyx_t_2, __pyx_v_target_type};
+        __pyx_t_1 = __Pyx_PyObject_FastCall((PyObject*)__pyx_t_11, __pyx_callargs+__pyx_t_5, (4-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+        __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 314, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+      }
+      __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_4 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 314, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __pyx_v_can_attack_target = __pyx_t_4;
+
+      /* "soundrts/combat/combat_fast.pyx":313
+ *         if has_melee_system and not has_ranged_system:
+ *             can_attack_target = matches_attack_targets(other, self.mdg_targets, target_type)
+ *         elif has_ranged_system and not has_melee_system:             # <<<<<<<<<<<<<<
+ *             can_attack_target = matches_attack_targets(other, self.rdg_targets, target_type)
+ *         elif has_melee_system and has_ranged_system:
+*/
+      goto __pyx_L40;
+    }
+
+    /* "soundrts/combat/combat_fast.pyx":315
+ *         elif has_ranged_system and not has_melee_system:
+ *             can_attack_target = matches_attack_targets(other, self.rdg_targets, target_type)
+ *         elif has_melee_system and has_ranged_system:             # <<<<<<<<<<<<<<
+ *             can_melee = matches_attack_targets(other, self.mdg_targets, target_type)
+ *             can_ranged = matches_attack_targets(other, self.rdg_targets, target_type)
+*/
+    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_v_has_melee_system); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 315, __pyx_L1_error)
+    if (__pyx_t_8) {
+
+    } else {
+
+      __pyx_t_4 = __pyx_t_8;
+
+      goto __pyx_L45_bool_binop_done;
+    }
+    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_v_has_ranged_system); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 315, __pyx_L1_error)
+
+    __pyx_t_4 = __pyx_t_8;
+
+    __pyx_L45_bool_binop_done:;
+    if (__pyx_t_4) {
+
+
+      /* "soundrts/combat/combat_fast.pyx":316
+ *             can_attack_target = matches_attack_targets(other, self.rdg_targets, target_type)
+ *         elif has_melee_system and has_ranged_system:
+ *             can_melee = matches_attack_targets(other, self.mdg_targets, target_type)             # <<<<<<<<<<<<<<
+ *             can_ranged = matches_attack_targets(other, self.rdg_targets, target_type)
+ *             can_attack_target = can_melee or can_ranged
+*/
+      __pyx_t_11 = NULL;
+      __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_matches_attack_targets); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 316, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_mdg_targets); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 316, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_10);
+      __pyx_t_5 = 1;
+      #if CYTHON_UNPACK_METHODS
+      if (unlikely(PyMethod_Check(__pyx_t_2))) {
+        __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_2);
+        assert(__pyx_t_11);
+        PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_2);
+        __Pyx_INCREF(__pyx_t_11);
+        __Pyx_INCREF(__pyx__function);
+        __Pyx_DECREF_SET(__pyx_t_2, __pyx__function);
+        __pyx_t_5 = 0;
+      }
+      #endif
+      {
+        PyObject *__pyx_callargs[4] = {__pyx_t_11, __pyx_v_other, __pyx_t_10, __pyx_v_target_type};
+        __pyx_t_1 = __Pyx_PyObject_FastCall((PyObject*)__pyx_t_2, __pyx_callargs+__pyx_t_5, (4-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 316, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+      }
+      __pyx_v_can_melee = __pyx_t_1;
+      __pyx_t_1 = 0;
+
+      /* "soundrts/combat/combat_fast.pyx":317
+ *         elif has_melee_system and has_ranged_system:
+ *             can_melee = matches_attack_targets(other, self.mdg_targets, target_type)
+ *             can_ranged = matches_attack_targets(other, self.rdg_targets, target_type)             # <<<<<<<<<<<<<<
+ *             can_attack_target = can_melee or can_ranged
+ * 
+*/
+      __pyx_t_2 = NULL;
+      __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_matches_attack_targets); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 317, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_10);
+      __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_rdg_targets); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 317, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_11);
+      __pyx_t_5 = 1;
+      #if CYTHON_UNPACK_METHODS
+      if (unlikely(PyMethod_Check(__pyx_t_10))) {
+        __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_10);
+        assert(__pyx_t_2);
+        PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_10);
+        __Pyx_INCREF(__pyx_t_2);
+        __Pyx_INCREF(__pyx__function);
+        __Pyx_DECREF_SET(__pyx_t_10, __pyx__function);
+        __pyx_t_5 = 0;
+      }
+      #endif
+      {
+        PyObject *__pyx_callargs[4] = {__pyx_t_2, __pyx_v_other, __pyx_t_11, __pyx_v_target_type};
+        __pyx_t_1 = __Pyx_PyObject_FastCall((PyObject*)__pyx_t_10, __pyx_callargs+__pyx_t_5, (4-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+        __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+        __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 317, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+      }
       __pyx_v_can_ranged = __pyx_t_1;
       __pyx_t_1 = 0;
 
-      /* "soundrts/combat/combat_fast.pyx":313
+      /* "soundrts/combat/combat_fast.pyx":318
  *             can_melee = matches_attack_targets(other, self.mdg_targets, target_type)
  *             can_ranged = matches_attack_targets(other, self.rdg_targets, target_type)
  *             can_attack_target = can_melee or can_ranged             # <<<<<<<<<<<<<<
  * 
  *     if not can_attack_target:
 */
-      __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_v_can_melee); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 313, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_v_can_melee); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 318, __pyx_L1_error)
       if (!__pyx_t_8) {
 
       } else {
 
-        __pyx_t_3 = __pyx_t_8;
+        __pyx_t_4 = __pyx_t_8;
 
-        goto __pyx_L46_bool_binop_done;
+        goto __pyx_L47_bool_binop_done;
       }
-      __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_v_can_ranged); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 313, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_v_can_ranged); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 318, __pyx_L1_error)
 
-      __pyx_t_3 = __pyx_t_8;
+      __pyx_t_4 = __pyx_t_8;
 
-      __pyx_L46_bool_binop_done:;
-      __pyx_v_can_attack_target = __pyx_t_3;
+      __pyx_L47_bool_binop_done:;
+      __pyx_v_can_attack_target = __pyx_t_4;
 
-      /* "soundrts/combat/combat_fast.pyx":310
+      /* "soundrts/combat/combat_fast.pyx":315
  *         elif has_ranged_system and not has_melee_system:
  *             can_attack_target = matches_attack_targets(other, self.rdg_targets, target_type)
  *         elif has_melee_system and has_ranged_system:             # <<<<<<<<<<<<<<
@@ -7462,23 +7497,23 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
  *             can_ranged = matches_attack_targets(other, self.rdg_targets, target_type)
 */
     }
-    __pyx_L39:;
+    __pyx_L40:;
   }
-  __pyx_L20:;
+  __pyx_L21:;
 
-  /* "soundrts/combat/combat_fast.pyx":315
+  /* "soundrts/combat/combat_fast.pyx":320
  *             can_attack_target = can_melee or can_ranged
  * 
  *     if not can_attack_target:             # <<<<<<<<<<<<<<
  *         cache_dict[other_id] = False
  *         return False
 */
-  __pyx_t_3 = (!__pyx_v_can_attack_target);
+  __pyx_t_4 = (!__pyx_v_can_attack_target);
 
-  if (__pyx_t_3) {
+  if (__pyx_t_4) {
 
 
-    /* "soundrts/combat/combat_fast.pyx":316
+    /* "soundrts/combat/combat_fast.pyx":321
  * 
  *     if not can_attack_target:
  *         cache_dict[other_id] = False             # <<<<<<<<<<<<<<
@@ -7487,11 +7522,11 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
 */
     if (unlikely(__pyx_v_cache_dict == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "\047NoneType\047 object is not subscriptable");
-      __PYX_ERR(0, 316, __pyx_L1_error)
+      __PYX_ERR(0, 321, __pyx_L1_error)
     }
-    if (unlikely((PyDict_SetItem(__pyx_v_cache_dict, __pyx_v_other_id, Py_False) < 0))) __PYX_ERR(0, 316, __pyx_L1_error)
+    if (unlikely((PyDict_SetItem(__pyx_v_cache_dict, __pyx_v_other_id, Py_False) < 0))) __PYX_ERR(0, 321, __pyx_L1_error)
 
-    /* "soundrts/combat/combat_fast.pyx":317
+    /* "soundrts/combat/combat_fast.pyx":322
  *     if not can_attack_target:
  *         cache_dict[other_id] = False
  *         return False             # <<<<<<<<<<<<<<
@@ -7509,7 +7544,7 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
     }
     goto __pyx_L0;
 
-    /* "soundrts/combat/combat_fast.pyx":315
+    /* "soundrts/combat/combat_fast.pyx":320
  *             can_attack_target = can_melee or can_ranged
  * 
  *     if not can_attack_target:             # <<<<<<<<<<<<<<
@@ -7518,24 +7553,24 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
 */
   }
 
-  /* "soundrts/combat/combat_fast.pyx":320
+  /* "soundrts/combat/combat_fast.pyx":325
  * 
  *     #  (NOTE:  cache, )
  *     if not other.is_vulnerable:             # <<<<<<<<<<<<<<
  *         return False
  * 
 */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_other, __pyx_mstate_global->__pyx_n_u_is_vulnerable); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 320, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_other, __pyx_mstate_global->__pyx_n_u_is_vulnerable); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 325, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 320, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 325, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_8 = (!__pyx_t_3);
+  __pyx_t_8 = (!__pyx_t_4);
 
 
   if (__pyx_t_8) {
 
 
-    /* "soundrts/combat/combat_fast.pyx":321
+    /* "soundrts/combat/combat_fast.pyx":326
  *     #  (NOTE:  cache, )
  *     if not other.is_vulnerable:
  *         return False             # <<<<<<<<<<<<<<
@@ -7553,7 +7588,7 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
     }
     goto __pyx_L0;
 
-    /* "soundrts/combat/combat_fast.pyx":320
+    /* "soundrts/combat/combat_fast.pyx":325
  * 
  *     #  (NOTE:  cache, )
  *     if not other.is_vulnerable:             # <<<<<<<<<<<<<<
@@ -7562,156 +7597,156 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
 */
   }
 
-  /* "soundrts/combat/combat_fast.pyx":324
+  /* "soundrts/combat/combat_fast.pyx":329
  * 
  *     #
  *     self_place = self.place             # <<<<<<<<<<<<<<
  *     other_place = other.place
  *     if (self_place is not None and other_place is not None
 */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_place); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 324, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_place); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 329, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_self_place = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "soundrts/combat/combat_fast.pyx":325
+  /* "soundrts/combat/combat_fast.pyx":330
  *     #
  *     self_place = self.place
  *     other_place = other.place             # <<<<<<<<<<<<<<
  *     if (self_place is not None and other_place is not None
  *             and not self_place.high_ground and other_place.high_ground
 */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_other, __pyx_mstate_global->__pyx_n_u_place); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 325, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_other, __pyx_mstate_global->__pyx_n_u_place); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 330, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_other_place = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "soundrts/combat/combat_fast.pyx":326
+  /* "soundrts/combat/combat_fast.pyx":331
  *     self_place = self.place
  *     other_place = other.place
  *     if (self_place is not None and other_place is not None             # <<<<<<<<<<<<<<
  *             and not self_place.high_ground and other_place.high_ground
  *             and other.airground_type == "ground"
 */
-  __pyx_t_3 = (__pyx_v_self_place != Py_None);
-  if (__pyx_t_3) {
+  __pyx_t_4 = (__pyx_v_self_place != Py_None);
+  if (__pyx_t_4) {
 
   } else {
 
-    __pyx_t_8 = __pyx_t_3;
+    __pyx_t_8 = __pyx_t_4;
 
-    goto __pyx_L51_bool_binop_done;
+    goto __pyx_L52_bool_binop_done;
   }
 
-  /* "soundrts/combat/combat_fast.pyx":327
+  /* "soundrts/combat/combat_fast.pyx":332
  *     other_place = other.place
  *     if (self_place is not None and other_place is not None
  *             and not self_place.high_ground and other_place.high_ground             # <<<<<<<<<<<<<<
  *             and other.airground_type == "ground"
  *             and self.mdg_projectile != 1 and self.rdg_projectile != 1):
 */
-  __pyx_t_3 = (__pyx_v_other_place != Py_None);
+  __pyx_t_4 = (__pyx_v_other_place != Py_None);
+  if (__pyx_t_4) {
+
+  } else {
+
+    __pyx_t_8 = __pyx_t_4;
+
+    goto __pyx_L52_bool_binop_done;
+  }
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self_place, __pyx_mstate_global->__pyx_n_u_high_ground); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 332, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 332, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_3 = (!__pyx_t_4);
+
+
   if (__pyx_t_3) {
 
   } else {
 
     __pyx_t_8 = __pyx_t_3;
 
-    goto __pyx_L51_bool_binop_done;
-  }
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self_place, __pyx_mstate_global->__pyx_n_u_high_ground); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 327, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 327, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_4 = (!__pyx_t_3);
-
-
-  if (__pyx_t_4) {
-
-  } else {
-
-    __pyx_t_8 = __pyx_t_4;
-
-    goto __pyx_L51_bool_binop_done;
+    goto __pyx_L52_bool_binop_done;
   }
 
-  /* "soundrts/combat/combat_fast.pyx":328
+  /* "soundrts/combat/combat_fast.pyx":333
  *     if (self_place is not None and other_place is not None
  *             and not self_place.high_ground and other_place.high_ground
  *             and other.airground_type == "ground"             # <<<<<<<<<<<<<<
  *             and self.mdg_projectile != 1 and self.rdg_projectile != 1):
  *         cache_dict[other_id] = False
 */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_other_place, __pyx_mstate_global->__pyx_n_u_high_ground); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 327, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_other_place, __pyx_mstate_global->__pyx_n_u_high_ground); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 332, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
 
-  /* "soundrts/combat/combat_fast.pyx":327
+  /* "soundrts/combat/combat_fast.pyx":332
  *     other_place = other.place
  *     if (self_place is not None and other_place is not None
  *             and not self_place.high_ground and other_place.high_ground             # <<<<<<<<<<<<<<
  *             and other.airground_type == "ground"
  *             and self.mdg_projectile != 1 and self.rdg_projectile != 1):
 */
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 327, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 332, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (__pyx_t_4) {
+  if (__pyx_t_3) {
 
   } else {
 
-    __pyx_t_8 = __pyx_t_4;
+    __pyx_t_8 = __pyx_t_3;
 
-    goto __pyx_L51_bool_binop_done;
+    goto __pyx_L52_bool_binop_done;
   }
 
-  /* "soundrts/combat/combat_fast.pyx":328
+  /* "soundrts/combat/combat_fast.pyx":333
  *     if (self_place is not None and other_place is not None
  *             and not self_place.high_ground and other_place.high_ground
  *             and other.airground_type == "ground"             # <<<<<<<<<<<<<<
  *             and self.mdg_projectile != 1 and self.rdg_projectile != 1):
  *         cache_dict[other_id] = False
 */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_other, __pyx_mstate_global->__pyx_n_u_airground_type); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 328, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_other, __pyx_mstate_global->__pyx_n_u_airground_type); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 333, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_4 = __Pyx_PyObject_CompareBoolEq_object_str(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_ground, Py_EQ); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 328, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_CompareBoolEq_object_str(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_ground, Py_EQ); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 333, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (__pyx_t_4) {
+  if (__pyx_t_3) {
 
   } else {
 
-    __pyx_t_8 = __pyx_t_4;
+    __pyx_t_8 = __pyx_t_3;
 
-    goto __pyx_L51_bool_binop_done;
+    goto __pyx_L52_bool_binop_done;
   }
 
-  /* "soundrts/combat/combat_fast.pyx":329
+  /* "soundrts/combat/combat_fast.pyx":334
  *             and not self_place.high_ground and other_place.high_ground
  *             and other.airground_type == "ground"
  *             and self.mdg_projectile != 1 and self.rdg_projectile != 1):             # <<<<<<<<<<<<<<
  *         cache_dict[other_id] = False
  *         return False
 */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_mdg_projectile); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 329, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_mdg_projectile); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 334, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_4 = (__Pyx_PyLong_BoolNeObjC(__pyx_t_1, __pyx_mstate_global->__pyx_int_1, 1, 0)); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 329, __pyx_L1_error)
+  __pyx_t_3 = (__Pyx_PyLong_BoolNeObjC(__pyx_t_1, __pyx_mstate_global->__pyx_int_1, 1, 0)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 334, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (__pyx_t_4) {
+  if (__pyx_t_3) {
 
   } else {
 
-    __pyx_t_8 = __pyx_t_4;
+    __pyx_t_8 = __pyx_t_3;
 
-    goto __pyx_L51_bool_binop_done;
+    goto __pyx_L52_bool_binop_done;
   }
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_rdg_projectile); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 329, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_mstate_global->__pyx_n_u_rdg_projectile); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 334, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_4 = (__Pyx_PyLong_BoolNeObjC(__pyx_t_1, __pyx_mstate_global->__pyx_int_1, 1, 0)); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 329, __pyx_L1_error)
+  __pyx_t_3 = (__Pyx_PyLong_BoolNeObjC(__pyx_t_1, __pyx_mstate_global->__pyx_int_1, 1, 0)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 334, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  __pyx_t_8 = __pyx_t_4;
+  __pyx_t_8 = __pyx_t_3;
 
-  __pyx_L51_bool_binop_done:;
+  __pyx_L52_bool_binop_done:;
 
-  /* "soundrts/combat/combat_fast.pyx":326
+  /* "soundrts/combat/combat_fast.pyx":331
  *     self_place = self.place
  *     other_place = other.place
  *     if (self_place is not None and other_place is not None             # <<<<<<<<<<<<<<
@@ -7721,7 +7756,7 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
   if (__pyx_t_8) {
 
 
-    /* "soundrts/combat/combat_fast.pyx":330
+    /* "soundrts/combat/combat_fast.pyx":335
  *             and other.airground_type == "ground"
  *             and self.mdg_projectile != 1 and self.rdg_projectile != 1):
  *         cache_dict[other_id] = False             # <<<<<<<<<<<<<<
@@ -7730,11 +7765,11 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
 */
     if (unlikely(__pyx_v_cache_dict == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "\047NoneType\047 object is not subscriptable");
-      __PYX_ERR(0, 330, __pyx_L1_error)
+      __PYX_ERR(0, 335, __pyx_L1_error)
     }
-    if (unlikely((PyDict_SetItem(__pyx_v_cache_dict, __pyx_v_other_id, Py_False) < 0))) __PYX_ERR(0, 330, __pyx_L1_error)
+    if (unlikely((PyDict_SetItem(__pyx_v_cache_dict, __pyx_v_other_id, Py_False) < 0))) __PYX_ERR(0, 335, __pyx_L1_error)
 
-    /* "soundrts/combat/combat_fast.pyx":331
+    /* "soundrts/combat/combat_fast.pyx":336
  *             and self.mdg_projectile != 1 and self.rdg_projectile != 1):
  *         cache_dict[other_id] = False
  *         return False             # <<<<<<<<<<<<<<
@@ -7752,7 +7787,7 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
     }
     goto __pyx_L0;
 
-    /* "soundrts/combat/combat_fast.pyx":326
+    /* "soundrts/combat/combat_fast.pyx":331
  *     self_place = self.place
  *     other_place = other.place
  *     if (self_place is not None and other_place is not None             # <<<<<<<<<<<<<<
@@ -7761,7 +7796,7 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
 */
   }
 
-  /* "soundrts/combat/combat_fast.pyx":333
+  /* "soundrts/combat/combat_fast.pyx":338
  *         return False
  * 
  *     cache_dict[other_id] = True             # <<<<<<<<<<<<<<
@@ -7770,11 +7805,11 @@ static PyObject *__pyx_f_8soundrts_6combat_11combat_fast_can_attack_if_in_range(
 */
   if (unlikely(__pyx_v_cache_dict == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "\047NoneType\047 object is not subscriptable");
-    __PYX_ERR(0, 333, __pyx_L1_error)
+    __PYX_ERR(0, 338, __pyx_L1_error)
   }
-  if (unlikely((PyDict_SetItem(__pyx_v_cache_dict, __pyx_v_other_id, Py_True) < 0))) __PYX_ERR(0, 333, __pyx_L1_error)
+  if (unlikely((PyDict_SetItem(__pyx_v_cache_dict, __pyx_v_other_id, Py_True) < 0))) __PYX_ERR(0, 338, __pyx_L1_error)
 
-  /* "soundrts/combat/combat_fast.pyx":334
+  /* "soundrts/combat/combat_fast.pyx":339
  * 
  *     cache_dict[other_id] = True
  *     return True             # <<<<<<<<<<<<<<
@@ -7967,7 +8002,7 @@ static PyObject *__pyx_pf_8soundrts_6combat_11combat_fast_22can_attack_if_in_ran
   return __pyx_r;
 }
 
-/* "soundrts/combat/combat_fast.pyx":344
+/* "soundrts/combat/combat_fast.pyx":349
  * # ,  cpdef =  ~2-3  Python frame.
  * 
  * cpdef long long compute_damage_vs(long long base_dg, dict dg_vs, target):             # <<<<<<<<<<<<<<
@@ -8003,19 +8038,19 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("compute_damage_vs", 0);
 
-  /* "soundrts/combat/combat_fast.pyx":359
+  /* "soundrts/combat/combat_fast.pyx":364
  *     """
  *     cdef object v
  *     cdef object type_name = target.type_name             # <<<<<<<<<<<<<<
  *     cdef object expanded_is_a
  *     cdef object armor_name
 */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_target, __pyx_mstate_global->__pyx_n_u_type_name); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 359, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_target, __pyx_mstate_global->__pyx_n_u_type_name); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 364, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_type_name = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "soundrts/combat/combat_fast.pyx":365
+  /* "soundrts/combat/combat_fast.pyx":370
  * 
  *     # : target.type_name
  *     if type_name is not None:             # <<<<<<<<<<<<<<
@@ -8026,7 +8061,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
   if (__pyx_t_2) {
 
 
-    /* "soundrts/combat/combat_fast.pyx":366
+    /* "soundrts/combat/combat_fast.pyx":371
  *     # : target.type_name
  *     if type_name is not None:
  *         v = dg_vs.get(type_name)             # <<<<<<<<<<<<<<
@@ -8035,14 +8070,14 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
 */
     if (unlikely(__pyx_v_dg_vs == Py_None)) {
       PyErr_Format(PyExc_AttributeError, "\047NoneType\047 object has no attribute \047%.30s\047", "get");
-      __PYX_ERR(0, 366, __pyx_L1_error)
+      __PYX_ERR(0, 371, __pyx_L1_error)
     }
-    __pyx_t_1 = __Pyx_PyDict_GetItemDefault(__pyx_v_dg_vs, __pyx_v_type_name, Py_None); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 366, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyDict_GetItemDefault(__pyx_v_dg_vs, __pyx_v_type_name, Py_None); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 371, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_v_v = __pyx_t_1;
     __pyx_t_1 = 0;
 
-    /* "soundrts/combat/combat_fast.pyx":367
+    /* "soundrts/combat/combat_fast.pyx":372
  *     if type_name is not None:
  *         v = dg_vs.get(type_name)
  *         if v is not None:             # <<<<<<<<<<<<<<
@@ -8053,14 +8088,14 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
     if (__pyx_t_2) {
 
 
-      /* "soundrts/combat/combat_fast.pyx":368
+      /* "soundrts/combat/combat_fast.pyx":373
  *         v = dg_vs.get(type_name)
  *         if v is not None:
  *             return base_dg + <long long>v             # <<<<<<<<<<<<<<
  * 
  *     # : target.expanded_is_a
 */
-      __pyx_t_3 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_v_v); if (unlikely((__pyx_t_3 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 368, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_v_v); if (unlikely((__pyx_t_3 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 373, __pyx_L1_error)
       {
 
         __pyx_r = (__pyx_v_base_dg + ((PY_LONG_LONG)__pyx_t_3));
@@ -8068,7 +8103,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
 
       goto __pyx_L0;
 
-      /* "soundrts/combat/combat_fast.pyx":367
+      /* "soundrts/combat/combat_fast.pyx":372
  *     if type_name is not None:
  *         v = dg_vs.get(type_name)
  *         if v is not None:             # <<<<<<<<<<<<<<
@@ -8077,7 +8112,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
 */
     }
 
-    /* "soundrts/combat/combat_fast.pyx":365
+    /* "soundrts/combat/combat_fast.pyx":370
  * 
  *     # : target.type_name
  *     if type_name is not None:             # <<<<<<<<<<<<<<
@@ -8086,19 +8121,19 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
 */
   }
 
-  /* "soundrts/combat/combat_fast.pyx":371
+  /* "soundrts/combat/combat_fast.pyx":376
  * 
  *     # : target.expanded_is_a
  *     expanded_is_a = target.expanded_is_a             # <<<<<<<<<<<<<<
  *     if expanded_is_a is not None:
  *         for t in expanded_is_a:
 */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_target, __pyx_mstate_global->__pyx_n_u_expanded_is_a); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 371, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_target, __pyx_mstate_global->__pyx_n_u_expanded_is_a); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 376, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_expanded_is_a = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "soundrts/combat/combat_fast.pyx":372
+  /* "soundrts/combat/combat_fast.pyx":377
  *     # : target.expanded_is_a
  *     expanded_is_a = target.expanded_is_a
  *     if expanded_is_a is not None:             # <<<<<<<<<<<<<<
@@ -8109,7 +8144,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
   if (__pyx_t_2) {
 
 
-    /* "soundrts/combat/combat_fast.pyx":373
+    /* "soundrts/combat/combat_fast.pyx":378
  *     expanded_is_a = target.expanded_is_a
  *     if expanded_is_a is not None:
  *         for t in expanded_is_a:             # <<<<<<<<<<<<<<
@@ -8121,9 +8156,9 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
       __pyx_t_4 = 0;
       __pyx_t_5 = NULL;
     } else {
-      __pyx_t_4 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_expanded_is_a); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 373, __pyx_L1_error)
+      __pyx_t_4 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_expanded_is_a); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 378, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_5 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 373, __pyx_L1_error)
+      __pyx_t_5 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 378, __pyx_L1_error)
     }
     for (;;) {
       if (likely(!__pyx_t_5)) {
@@ -8131,7 +8166,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
           {
             Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_1);
             #if !CYTHON_ASSUME_SAFE_SIZE
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 373, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 378, __pyx_L1_error)
             #endif
             if (__pyx_t_4 >= __pyx_temp) break;
           }
@@ -8141,7 +8176,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
           {
             Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_1);
             #if !CYTHON_ASSUME_SAFE_SIZE
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 373, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 378, __pyx_L1_error)
             #endif
             if (__pyx_t_4 >= __pyx_temp) break;
           }
@@ -8152,13 +8187,13 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
           #endif
           ++__pyx_t_4;
         }
-        if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 373, __pyx_L1_error)
+        if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 378, __pyx_L1_error)
       } else {
         __pyx_t_6 = __pyx_t_5(__pyx_t_1);
         if (unlikely(!__pyx_t_6)) {
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
-            if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 373, __pyx_L1_error)
+            if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 378, __pyx_L1_error)
             PyErr_Clear();
           }
           break;
@@ -8168,7 +8203,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
       __Pyx_XDECREF_SET(__pyx_v_t, __pyx_t_6);
       __pyx_t_6 = 0;
 
-      /* "soundrts/combat/combat_fast.pyx":374
+      /* "soundrts/combat/combat_fast.pyx":379
  *     if expanded_is_a is not None:
  *         for t in expanded_is_a:
  *             v = dg_vs.get(t)             # <<<<<<<<<<<<<<
@@ -8177,14 +8212,14 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
 */
       if (unlikely(__pyx_v_dg_vs == Py_None)) {
         PyErr_Format(PyExc_AttributeError, "\047NoneType\047 object has no attribute \047%.30s\047", "get");
-        __PYX_ERR(0, 374, __pyx_L1_error)
+        __PYX_ERR(0, 379, __pyx_L1_error)
       }
-      __pyx_t_6 = __Pyx_PyDict_GetItemDefault(__pyx_v_dg_vs, __pyx_v_t, Py_None); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 374, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyDict_GetItemDefault(__pyx_v_dg_vs, __pyx_v_t, Py_None); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 379, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_XDECREF_SET(__pyx_v_v, __pyx_t_6);
       __pyx_t_6 = 0;
 
-      /* "soundrts/combat/combat_fast.pyx":375
+      /* "soundrts/combat/combat_fast.pyx":380
  *         for t in expanded_is_a:
  *             v = dg_vs.get(t)
  *             if v is not None:             # <<<<<<<<<<<<<<
@@ -8195,14 +8230,14 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
       if (__pyx_t_2) {
 
 
-        /* "soundrts/combat/combat_fast.pyx":376
+        /* "soundrts/combat/combat_fast.pyx":381
  *             v = dg_vs.get(t)
  *             if v is not None:
  *                 return base_dg + <long long>v             # <<<<<<<<<<<<<<
  * 
  *     # : target.armor ()
 */
-        __pyx_t_3 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_v_v); if (unlikely((__pyx_t_3 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 376, __pyx_L1_error)
+        __pyx_t_3 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_v_v); if (unlikely((__pyx_t_3 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 381, __pyx_L1_error)
         {
 
           __pyx_r = (__pyx_v_base_dg + ((PY_LONG_LONG)__pyx_t_3));
@@ -8211,7 +8246,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         goto __pyx_L0;
 
-        /* "soundrts/combat/combat_fast.pyx":375
+        /* "soundrts/combat/combat_fast.pyx":380
  *         for t in expanded_is_a:
  *             v = dg_vs.get(t)
  *             if v is not None:             # <<<<<<<<<<<<<<
@@ -8220,7 +8255,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
 */
       }
 
-      /* "soundrts/combat/combat_fast.pyx":373
+      /* "soundrts/combat/combat_fast.pyx":378
  *     expanded_is_a = target.expanded_is_a
  *     if expanded_is_a is not None:
  *         for t in expanded_is_a:             # <<<<<<<<<<<<<<
@@ -8230,7 +8265,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
     }
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "soundrts/combat/combat_fast.pyx":372
+    /* "soundrts/combat/combat_fast.pyx":377
  *     # : target.expanded_is_a
  *     expanded_is_a = target.expanded_is_a
  *     if expanded_is_a is not None:             # <<<<<<<<<<<<<<
@@ -8239,30 +8274,30 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
 */
   }
 
-  /* "soundrts/combat/combat_fast.pyx":379
+  /* "soundrts/combat/combat_fast.pyx":384
  * 
  *     # : target.armor ()
  *     armor_name = target.armor             # <<<<<<<<<<<<<<
  *     if armor_name:
  *         v = dg_vs.get(armor_name)
 */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_target, __pyx_mstate_global->__pyx_n_u_armor); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 379, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_target, __pyx_mstate_global->__pyx_n_u_armor); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 384, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_armor_name = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "soundrts/combat/combat_fast.pyx":380
+  /* "soundrts/combat/combat_fast.pyx":385
  *     # : target.armor ()
  *     armor_name = target.armor
  *     if armor_name:             # <<<<<<<<<<<<<<
  *         v = dg_vs.get(armor_name)
  *         if v is not None:
 */
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_armor_name); if (unlikely((__pyx_t_2 < 0))) __PYX_ERR(0, 380, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_armor_name); if (unlikely((__pyx_t_2 < 0))) __PYX_ERR(0, 385, __pyx_L1_error)
   if (__pyx_t_2) {
 
 
-    /* "soundrts/combat/combat_fast.pyx":381
+    /* "soundrts/combat/combat_fast.pyx":386
  *     armor_name = target.armor
  *     if armor_name:
  *         v = dg_vs.get(armor_name)             # <<<<<<<<<<<<<<
@@ -8271,14 +8306,14 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
 */
     if (unlikely(__pyx_v_dg_vs == Py_None)) {
       PyErr_Format(PyExc_AttributeError, "\047NoneType\047 object has no attribute \047%.30s\047", "get");
-      __PYX_ERR(0, 381, __pyx_L1_error)
+      __PYX_ERR(0, 386, __pyx_L1_error)
     }
-    __pyx_t_1 = __Pyx_PyDict_GetItemDefault(__pyx_v_dg_vs, __pyx_v_armor_name, Py_None); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 381, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyDict_GetItemDefault(__pyx_v_dg_vs, __pyx_v_armor_name, Py_None); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 386, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_XDECREF_SET(__pyx_v_v, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "soundrts/combat/combat_fast.pyx":382
+    /* "soundrts/combat/combat_fast.pyx":387
  *     if armor_name:
  *         v = dg_vs.get(armor_name)
  *         if v is not None:             # <<<<<<<<<<<<<<
@@ -8289,14 +8324,14 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
     if (__pyx_t_2) {
 
 
-      /* "soundrts/combat/combat_fast.pyx":383
+      /* "soundrts/combat/combat_fast.pyx":388
  *         v = dg_vs.get(armor_name)
  *         if v is not None:
  *             return base_dg + <long long>v             # <<<<<<<<<<<<<<
  * 
  *     # : target._armor_instance (Armor ,  expanded_is_a / is_a)
 */
-      __pyx_t_3 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_v_v); if (unlikely((__pyx_t_3 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 383, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_v_v); if (unlikely((__pyx_t_3 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 388, __pyx_L1_error)
       {
 
         __pyx_r = (__pyx_v_base_dg + ((PY_LONG_LONG)__pyx_t_3));
@@ -8304,7 +8339,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
 
       goto __pyx_L0;
 
-      /* "soundrts/combat/combat_fast.pyx":382
+      /* "soundrts/combat/combat_fast.pyx":387
  *     if armor_name:
  *         v = dg_vs.get(armor_name)
  *         if v is not None:             # <<<<<<<<<<<<<<
@@ -8313,7 +8348,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
 */
     }
 
-    /* "soundrts/combat/combat_fast.pyx":380
+    /* "soundrts/combat/combat_fast.pyx":385
  *     # : target.armor ()
  *     armor_name = target.armor
  *     if armor_name:             # <<<<<<<<<<<<<<
@@ -8322,19 +8357,19 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
 */
   }
 
-  /* "soundrts/combat/combat_fast.pyx":386
+  /* "soundrts/combat/combat_fast.pyx":391
  * 
  *     # : target._armor_instance (Armor ,  expanded_is_a / is_a)
  *     armor = target._armor_instance             # <<<<<<<<<<<<<<
  *     if armor is not None:
  *         for armor_type in armor.expanded_is_a:
 */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_target, __pyx_mstate_global->__pyx_n_u_armor_instance); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 386, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_target, __pyx_mstate_global->__pyx_n_u_armor_instance); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 391, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_armor = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "soundrts/combat/combat_fast.pyx":387
+  /* "soundrts/combat/combat_fast.pyx":392
  *     # : target._armor_instance (Armor ,  expanded_is_a / is_a)
  *     armor = target._armor_instance
  *     if armor is not None:             # <<<<<<<<<<<<<<
@@ -8345,23 +8380,23 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
   if (__pyx_t_2) {
 
 
-    /* "soundrts/combat/combat_fast.pyx":388
+    /* "soundrts/combat/combat_fast.pyx":393
  *     armor = target._armor_instance
  *     if armor is not None:
  *         for armor_type in armor.expanded_is_a:             # <<<<<<<<<<<<<<
  *             if armor_type in dg_vs:
  *                 return base_dg + <long long>dg_vs[armor_type]
 */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_armor, __pyx_mstate_global->__pyx_n_u_expanded_is_a); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 388, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_armor, __pyx_mstate_global->__pyx_n_u_expanded_is_a); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 393, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (likely(PyList_CheckExact(__pyx_t_1)) || PyTuple_CheckExact(__pyx_t_1)) {
       __pyx_t_6 = __pyx_t_1; __Pyx_INCREF(__pyx_t_6);
       __pyx_t_4 = 0;
       __pyx_t_5 = NULL;
     } else {
-      __pyx_t_4 = -1; __pyx_t_6 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 388, __pyx_L1_error)
+      __pyx_t_4 = -1; __pyx_t_6 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 393, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_5 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 388, __pyx_L1_error)
+      __pyx_t_5 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 393, __pyx_L1_error)
     }
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     for (;;) {
@@ -8370,7 +8405,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
           {
             Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_6);
             #if !CYTHON_ASSUME_SAFE_SIZE
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 388, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 393, __pyx_L1_error)
             #endif
             if (__pyx_t_4 >= __pyx_temp) break;
           }
@@ -8380,7 +8415,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
           {
             Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_6);
             #if !CYTHON_ASSUME_SAFE_SIZE
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 388, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 393, __pyx_L1_error)
             #endif
             if (__pyx_t_4 >= __pyx_temp) break;
           }
@@ -8391,13 +8426,13 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
           #endif
           ++__pyx_t_4;
         }
-        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 388, __pyx_L1_error)
+        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 393, __pyx_L1_error)
       } else {
         __pyx_t_1 = __pyx_t_5(__pyx_t_6);
         if (unlikely(!__pyx_t_1)) {
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
-            if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 388, __pyx_L1_error)
+            if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 393, __pyx_L1_error)
             PyErr_Clear();
           }
           break;
@@ -8407,7 +8442,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
       __Pyx_XDECREF_SET(__pyx_v_armor_type, __pyx_t_1);
       __pyx_t_1 = 0;
 
-      /* "soundrts/combat/combat_fast.pyx":389
+      /* "soundrts/combat/combat_fast.pyx":394
  *     if armor is not None:
  *         for armor_type in armor.expanded_is_a:
  *             if armor_type in dg_vs:             # <<<<<<<<<<<<<<
@@ -8416,13 +8451,13 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
 */
       if (unlikely(__pyx_v_dg_vs == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "\047NoneType\047 object is not iterable");
-        __PYX_ERR(0, 389, __pyx_L1_error)
+        __PYX_ERR(0, 394, __pyx_L1_error)
       }
-      __pyx_t_2 = (__Pyx_PyDict_ContainsTF(__pyx_v_armor_type, __pyx_v_dg_vs, Py_EQ)); if (unlikely((__pyx_t_2 < 0))) __PYX_ERR(0, 389, __pyx_L1_error)
+      __pyx_t_2 = (__Pyx_PyDict_ContainsTF(__pyx_v_armor_type, __pyx_v_dg_vs, Py_EQ)); if (unlikely((__pyx_t_2 < 0))) __PYX_ERR(0, 394, __pyx_L1_error)
       if (__pyx_t_2) {
 
 
-        /* "soundrts/combat/combat_fast.pyx":390
+        /* "soundrts/combat/combat_fast.pyx":395
  *         for armor_type in armor.expanded_is_a:
  *             if armor_type in dg_vs:
  *                 return base_dg + <long long>dg_vs[armor_type]             # <<<<<<<<<<<<<<
@@ -8431,11 +8466,11 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
 */
         if (unlikely(__pyx_v_dg_vs == Py_None)) {
           PyErr_SetString(PyExc_TypeError, "\047NoneType\047 object is not subscriptable");
-          __PYX_ERR(0, 390, __pyx_L1_error)
+          __PYX_ERR(0, 395, __pyx_L1_error)
         }
-        __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_dg_vs, __pyx_v_armor_type); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 390, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_dg_vs, __pyx_v_armor_type); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 395, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_3 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_1); if (unlikely((__pyx_t_3 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 390, __pyx_L1_error)
+        __pyx_t_3 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_1); if (unlikely((__pyx_t_3 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 395, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         {
 
@@ -8445,7 +8480,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
         goto __pyx_L0;
 
-        /* "soundrts/combat/combat_fast.pyx":389
+        /* "soundrts/combat/combat_fast.pyx":394
  *     if armor is not None:
  *         for armor_type in armor.expanded_is_a:
  *             if armor_type in dg_vs:             # <<<<<<<<<<<<<<
@@ -8454,7 +8489,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
 */
       }
 
-      /* "soundrts/combat/combat_fast.pyx":388
+      /* "soundrts/combat/combat_fast.pyx":393
  *     armor = target._armor_instance
  *     if armor is not None:
  *         for armor_type in armor.expanded_is_a:             # <<<<<<<<<<<<<<
@@ -8464,23 +8499,23 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
     }
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-    /* "soundrts/combat/combat_fast.pyx":391
+    /* "soundrts/combat/combat_fast.pyx":396
  *             if armor_type in dg_vs:
  *                 return base_dg + <long long>dg_vs[armor_type]
  *         for armor_type in armor.is_a:             # <<<<<<<<<<<<<<
  *             if armor_type in dg_vs:
  *                 return base_dg + <long long>dg_vs[armor_type]
 */
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_armor, __pyx_mstate_global->__pyx_n_u_is_a); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 391, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_armor, __pyx_mstate_global->__pyx_n_u_is_a); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 396, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     if (likely(PyList_CheckExact(__pyx_t_6)) || PyTuple_CheckExact(__pyx_t_6)) {
       __pyx_t_1 = __pyx_t_6; __Pyx_INCREF(__pyx_t_1);
       __pyx_t_4 = 0;
       __pyx_t_5 = NULL;
     } else {
-      __pyx_t_4 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 391, __pyx_L1_error)
+      __pyx_t_4 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 396, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_5 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 391, __pyx_L1_error)
+      __pyx_t_5 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 396, __pyx_L1_error)
     }
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     for (;;) {
@@ -8489,7 +8524,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
           {
             Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_1);
             #if !CYTHON_ASSUME_SAFE_SIZE
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 391, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 396, __pyx_L1_error)
             #endif
             if (__pyx_t_4 >= __pyx_temp) break;
           }
@@ -8499,7 +8534,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
           {
             Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_1);
             #if !CYTHON_ASSUME_SAFE_SIZE
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 391, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 396, __pyx_L1_error)
             #endif
             if (__pyx_t_4 >= __pyx_temp) break;
           }
@@ -8510,13 +8545,13 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
           #endif
           ++__pyx_t_4;
         }
-        if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 391, __pyx_L1_error)
+        if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 396, __pyx_L1_error)
       } else {
         __pyx_t_6 = __pyx_t_5(__pyx_t_1);
         if (unlikely(!__pyx_t_6)) {
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
-            if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 391, __pyx_L1_error)
+            if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 396, __pyx_L1_error)
             PyErr_Clear();
           }
           break;
@@ -8526,7 +8561,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
       __Pyx_XDECREF_SET(__pyx_v_armor_type, __pyx_t_6);
       __pyx_t_6 = 0;
 
-      /* "soundrts/combat/combat_fast.pyx":392
+      /* "soundrts/combat/combat_fast.pyx":397
  *                 return base_dg + <long long>dg_vs[armor_type]
  *         for armor_type in armor.is_a:
  *             if armor_type in dg_vs:             # <<<<<<<<<<<<<<
@@ -8535,13 +8570,13 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
 */
       if (unlikely(__pyx_v_dg_vs == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "\047NoneType\047 object is not iterable");
-        __PYX_ERR(0, 392, __pyx_L1_error)
+        __PYX_ERR(0, 397, __pyx_L1_error)
       }
-      __pyx_t_2 = (__Pyx_PyDict_ContainsTF(__pyx_v_armor_type, __pyx_v_dg_vs, Py_EQ)); if (unlikely((__pyx_t_2 < 0))) __PYX_ERR(0, 392, __pyx_L1_error)
+      __pyx_t_2 = (__Pyx_PyDict_ContainsTF(__pyx_v_armor_type, __pyx_v_dg_vs, Py_EQ)); if (unlikely((__pyx_t_2 < 0))) __PYX_ERR(0, 397, __pyx_L1_error)
       if (__pyx_t_2) {
 
 
-        /* "soundrts/combat/combat_fast.pyx":393
+        /* "soundrts/combat/combat_fast.pyx":398
  *         for armor_type in armor.is_a:
  *             if armor_type in dg_vs:
  *                 return base_dg + <long long>dg_vs[armor_type]             # <<<<<<<<<<<<<<
@@ -8550,11 +8585,11 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
 */
         if (unlikely(__pyx_v_dg_vs == Py_None)) {
           PyErr_SetString(PyExc_TypeError, "\047NoneType\047 object is not subscriptable");
-          __PYX_ERR(0, 393, __pyx_L1_error)
+          __PYX_ERR(0, 398, __pyx_L1_error)
         }
-        __pyx_t_6 = __Pyx_PyDict_GetItem(__pyx_v_dg_vs, __pyx_v_armor_type); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 393, __pyx_L1_error)
+        __pyx_t_6 = __Pyx_PyDict_GetItem(__pyx_v_dg_vs, __pyx_v_armor_type); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 398, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
-        __pyx_t_3 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_6); if (unlikely((__pyx_t_3 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 393, __pyx_L1_error)
+        __pyx_t_3 = __Pyx_PyLong_As_PY_LONG_LONG(__pyx_t_6); if (unlikely((__pyx_t_3 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 398, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
         {
 
@@ -8564,7 +8599,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         goto __pyx_L0;
 
-        /* "soundrts/combat/combat_fast.pyx":392
+        /* "soundrts/combat/combat_fast.pyx":397
  *                 return base_dg + <long long>dg_vs[armor_type]
  *         for armor_type in armor.is_a:
  *             if armor_type in dg_vs:             # <<<<<<<<<<<<<<
@@ -8573,7 +8608,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
 */
       }
 
-      /* "soundrts/combat/combat_fast.pyx":391
+      /* "soundrts/combat/combat_fast.pyx":396
  *             if armor_type in dg_vs:
  *                 return base_dg + <long long>dg_vs[armor_type]
  *         for armor_type in armor.is_a:             # <<<<<<<<<<<<<<
@@ -8583,7 +8618,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
     }
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "soundrts/combat/combat_fast.pyx":387
+    /* "soundrts/combat/combat_fast.pyx":392
  *     # : target._armor_instance (Armor ,  expanded_is_a / is_a)
  *     armor = target._armor_instance
  *     if armor is not None:             # <<<<<<<<<<<<<<
@@ -8592,7 +8627,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
 */
   }
 
-  /* "soundrts/combat/combat_fast.pyx":395
+  /* "soundrts/combat/combat_fast.pyx":400
  *                 return base_dg + <long long>dg_vs[armor_type]
  * 
  *     return base_dg             # <<<<<<<<<<<<<<
@@ -8603,7 +8638,7 @@ static PY_LONG_LONG __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(PY
   }
   goto __pyx_L0;
 
-  /* "soundrts/combat/combat_fast.pyx":344
+  /* "soundrts/combat/combat_fast.pyx":349
  * # ,  cpdef =  ~2-3  Python frame.
  * 
  * cpdef long long compute_damage_vs(long long base_dg, dict dg_vs, target):             # <<<<<<<<<<<<<<
@@ -8672,46 +8707,46 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_base_dg,&__pyx_mstate_global->__pyx_n_u_dg_vs,&__pyx_mstate_global->__pyx_n_u_target,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 344, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 349, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  3:
         values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 344, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 349, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 344, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 349, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 344, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 349, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "compute_damage_vs", 0) < (0)) __PYX_ERR(0, 344, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "compute_damage_vs", 0) < (0)) __PYX_ERR(0, 349, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 3; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("compute_damage_vs", 1, 3, 3, i); __PYX_ERR(0, 344, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("compute_damage_vs", 1, 3, 3, i); __PYX_ERR(0, 349, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 3)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 344, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 349, __pyx_L3_error)
       values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 344, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 349, __pyx_L3_error)
       values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 344, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 349, __pyx_L3_error)
     }
-    __pyx_v_base_dg = __Pyx_PyLong_As_PY_LONG_LONG(values[0]); if (unlikely((__pyx_v_base_dg == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 344, __pyx_L3_error)
+    __pyx_v_base_dg = __Pyx_PyLong_As_PY_LONG_LONG(values[0]); if (unlikely((__pyx_v_base_dg == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 349, __pyx_L3_error)
     __pyx_v_dg_vs = ((PyObject*)values[1]);
     __pyx_v_target = values[2];
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("compute_damage_vs", 1, 3, 3, __pyx_nargs); __PYX_ERR(0, 344, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("compute_damage_vs", 1, 3, 3, __pyx_nargs); __PYX_ERR(0, 349, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -8722,7 +8757,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_dg_vs), (&PyDict_Type), 1, "dg_vs", 1))) __PYX_ERR(0, 344, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_dg_vs), (&PyDict_Type), 1, "dg_vs", 1))) __PYX_ERR(0, 349, __pyx_L1_error)
   __pyx_r = __pyx_pf_8soundrts_6combat_11combat_fast_24compute_damage_vs(__pyx_self, __pyx_v_base_dg, __pyx_v_dg_vs, __pyx_v_target);
 
   /* function exit code */
@@ -8752,8 +8787,8 @@ static PyObject *__pyx_pf_8soundrts_6combat_11combat_fast_24compute_damage_vs(CY
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("compute_damage_vs", 0);
-  __pyx_t_1 = __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(__pyx_v_base_dg, __pyx_v_dg_vs, __pyx_v_target, 1); if (unlikely(__pyx_t_1 == ((PY_LONG_LONG)-1LL) && PyErr_Occurred())) __PYX_ERR(0, 344, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 344, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_8soundrts_6combat_11combat_fast_compute_damage_vs(__pyx_v_base_dg, __pyx_v_dg_vs, __pyx_v_target, 1); if (unlikely(__pyx_t_1 == ((PY_LONG_LONG)-1LL) && PyErr_Occurred())) __PYX_ERR(0, 349, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyLong_From_PY_LONG_LONG(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 349, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
 
   {
@@ -9329,19 +9364,19 @@ __Pyx_RefNannySetupContext("PyInit_combat_fast", 0);
   if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_can_attack_if_in_range, __pyx_t_2) < (0)) __PYX_ERR(0, 215, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "soundrts/combat/combat_fast.pyx":344
+  /* "soundrts/combat/combat_fast.pyx":349
  * # ,  cpdef =  ~2-3  Python frame.
  * 
  * cpdef long long compute_damage_vs(long long base_dg, dict dg_vs, target):             # <<<<<<<<<<<<<<
  *     """ damage_vs : base + adjust(target).
  * 
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8soundrts_6combat_11combat_fast_25compute_damage_vs, 0, __pyx_mstate_global->__pyx_n_u_compute_damage_vs, NULL, __pyx_mstate_global->__pyx_n_u_soundrts_combat_combat_fast, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[12])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 344, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8soundrts_6combat_11combat_fast_25compute_damage_vs, 0, __pyx_mstate_global->__pyx_n_u_compute_damage_vs, NULL, __pyx_mstate_global->__pyx_n_u_soundrts_combat_combat_fast, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[12])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 349, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
   #endif
-  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_compute_damage_vs, __pyx_t_2) < (0)) __PYX_ERR(0, 344, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_compute_damage_vs, __pyx_t_2) < (0)) __PYX_ERR(0, 349, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "soundrts/combat/combat_fast.pyx":1
@@ -9420,38 +9455,38 @@ static int __Pyx_InitConstants(__pyx_mstatetype *__pyx_mstate) {
   int __pyx_clineno = 0;
   CYTHON_UNUSED_VAR(__pyx_mstate);
   {
-    const struct { const unsigned int length: 8; } str_length_index[] = {{1},{1},{179},{8},{31},{20},{12},{17},{8},{8},{10},{8},{12},{8},{15},{17},{24},{34},{20},{21},{13},{26},{36},{17},{14},{14},{5},{18},{2},{2},{10},{12},{7},{10},{2},{2},{18},{15},{18},{22},{11},{18},{9},{17},{14},{6},{15},{7},{19},{5},{5},{7},{14},{15},{13},{13},{3},{6},{11},{2},{2},{4},{13},{5},{22},{3},{11},{14},{11},{9},{14},{5},{10},{8},{19},{5},{6},{3},{11},{3},{11},{14},{11},{17},{32},{4},{10},{27},{38},{20},{20},{12},{18},{6},{17},{17},{9},{4},{9},{5},{6},{7},{5},{7},{5},{1},{2},{2},{2},{2}};
-    const struct { const unsigned int length: 10; } bytes_length_index[] = {{40},{77},{79},{30},{62},{89},{789},{24},{58},{58},{246},{42},{71}};
+    const struct { const unsigned int length: 8; } str_length_index[] = {{1},{1},{179},{8},{31},{20},{12},{17},{8},{8},{10},{8},{12},{8},{15},{17},{24},{34},{20},{21},{13},{25},{26},{36},{17},{14},{14},{5},{18},{2},{2},{10},{12},{7},{10},{2},{2},{18},{15},{18},{22},{11},{18},{9},{17},{14},{6},{15},{7},{19},{5},{5},{7},{14},{15},{13},{13},{3},{6},{11},{2},{2},{4},{13},{5},{22},{3},{11},{14},{11},{9},{14},{5},{10},{8},{19},{5},{6},{3},{11},{3},{11},{14},{11},{17},{32},{4},{10},{27},{38},{20},{20},{12},{18},{6},{17},{17},{9},{4},{9},{5},{6},{7},{5},{7},{5},{1},{2},{2},{2},{2}};
+    const struct { const unsigned int length: 10; } bytes_length_index[] = {{40},{77},{79},{30},{62},{89},{805},{24},{58},{58},{246},{42},{71}};
     #ifndef CYTHON_COMPRESS_STRINGS
       #define CYTHON_COMPRESS_STRINGS 90
     #endif
-    #if (CYTHON_COMPRESS_STRINGS) == 1 /* compression: zlib (1827 bytes) */
-static const char cstring[] = "x\332\215T\315s\333\270\025\267\262r\243\254\275\261\345o\047qB\371\243I\047S%\222\225\217i\262\355h\3428\323v\232\261l\2679t:\034\220\204$l(R\002@Y\332l7>\362\210#\216<\362\250\243\216>\346\310\243\216\372\023\374\047\354\003)*N\272\235\326#\023\300\003\360\336\357\375\336\357\241\370\247\267.\307\032o\"\256\275\352\363\246\353h\204i\026\266\211\201)\342\330\356k\214SbrL\325!G;z}\364\373\312\363\212\206\034K\243\370\007lr\2461\3170m\304\030f\232[\327\014\217\330\2348\032\357\2671+j\177\256k}\327\323\034\214-\215\273Z\033\316]\275\300\233\330\321\030\346j\242\335G\216\343r\304\211\353\350p\2358\215\373\232E(\004!]\254n\037\"\233\341\"\262,\035\316a\346z\216E9{d\272-\003\361\311\240\327\021\343\305v\277\247\353G\3609\352\037\000|\375-\356\361c\\\327\365I\010\254\303_\014Bo`N8n)C\335sL5\266\020q\342\321\265<;>\352\240V<v<d\247s@\300a@\264\345R\2358\214#\307\304\272\211\034\035q\216\314\36705\233\277b0<\363=\346:L\301t\206Q[\245\213hC\331\334V\033\3627\210Mx_!\323[\330\306X\267P\0135\260\336\215\321\352\0249\rl]1\022\0067\251\353\001\357XgM\327\263-\035y\334\325\331\031\341f3\r2\331\241\230\265\201S\310\322\201l\322M\263\351\022\200?Y\245\3510Dh\203*\242UE`\257m\367\3656\301\324\204\352\304\231#\326wL\342\026\247\000\030\352\241\276\201\030d\356v1\215g\026\256c\207\341d\336H\006\327j`\243g\364Md\233:2\271\302\222\244\024[\232DQ\2440\304K\326\206b5\241\270&w\351\025JI\035\260&\214@9[m\375\261^z\374\330\264\025\023\260\301)2!\254\371\336tm\2330P\226\242\330\343W(5=J\261\303\047\231\047f\013\202\366\365\0268\350\"\333\303\023\370\026f\200\005\0471\241%\034d[\r\360`\021\306\313\026\351\022\346R\313\345z\233\202n\200\3402\334\253\047\352M\020\342^\033\032\007J\007\005Cu\310cZE(kBs\2234\232\372d\332&\226:\010\377]\317v\240!\r\033+\251\262\026\202\252b\226r\220\210\207\265\254\006\374t\010b\273\026VS\000\242Z\224\330\361*=\226\362\005\023\322\232\222\356B\007\3226\024\026\267U\003\2465NG\245\032\222h\002*\021\177\372p\336m\307\256\0221S\253A?\003\240_\000\240\237\001\200\047""\327\356\306\302\265]\367\275\327\376\017\203\016\262m\352\274\t\033M\327\266\030\266\353\360F\000\233\310\263y\332\366\305\244\337\213W\332~\272u\346R\333\362\034\302\223\231\336\366\014\233\230\320L\360\304YJ\375\244\016\313X\237\272\341:\036\233\332bY\246\266Xrq\202\014\032\237b\335\255\353\326\204\205$\031P\001U\217E\342\n\336\213\324\220\370Q\2064\013N <\364P\374\226\304\262\212?\014\262\266\340\211:\203G\211&\032d1\350^\257\324+\367K\375\362yf\264\2726\316^?\247\376\222_\032\345\026\374\316\350\253\325\234\377Dd\340\334\332\372\345\342\314\354vT(\r\226\006/\206fT\255E\265\223\350\344T]\377Q,\t\270\260&~\010\256\005\017\303\223\301\267\303\355au\224\233\363\237\306;\363\313\360\311\252\325\262\250\202\263\315[\227+3\263w\344\213\300\210\036|?<\036B\240\333_\2546\345\232\244A^\241\341~\331\257M\261]]\245\330vv/\347gfs\347]\377\030\314\260\327\025\0472\243\366K\347\031\005{5Z\331\013j\001\t?\014\013I\272\313~u\342\344\206\177[T\225g\346o\047F&vD-\275\275\241\034\377(\326\301_n\336\177#*\242\243\246s\000\343\035\334K2\273~\376s\0341\361\230\363g\025\304\377zz\352X\223<x\032B\222we+\334\017\221\"\241\";\n\341\007\300\360w\271#O\243\302\213\341\376\020\215r\253B\371\214\346\013\300\212\032\037\204\031u\260\353\237\210$\360\030n?\t2\212\273[A%\350\204\031\005\354\314o\210\204\257\313\337\250T<@\265/\260\334\227\030\016Q\210\236[\022\005\361Rv\246\024w\001\353\201\274\256,W\267\324\375\235`7\372\355\213a\t\212\233\335\t*\321\375\357\2075\000\227\335\r\016T\270;\362o\341RX\006\001\334\034\032\027\231\321\235{\362ch\014\342\235\203 \035\306q\031K\212\226\227\202\311\302h~S\346\307\363k\002\211\237\202D,*\326\226|\035\344\023u\201j\224\272\320X}\022\034\205Q\366\226\334\225H\341x\026\026\302\247Q\351\360\002%9\366|.Jc(\300A\264\370\020\210\265\006;\203\332\200\014\351\305\322Ei\264\270\"\016\242\r\000>\232_\024\013\220\334\3422\344x\026\240\321\312\352hq3\332\374]\230\017\013\312Z\211\326\3770,\014\237_<\373T\030\255\000\341pb<\277%\337\005\325\340\037\321\303\330\305""\202\377QZ\301\243\301\362\240z\3652\020\022=\370\353\247\322h\345\216|\023\250|n,\370\226(\214r7\223A1q-\330\016^\005\300\356\226<\r\226\202rp\0025\315\315Esj3\033\200^\264H{:@\203\263\241uQ\214\216j\243\357\356\201d\240\266\277\262s\027`\000\225\033\321F1D\341\331\300\032\026?e\200\332h\363Q\330\031\\\037\360\341\037?\345\341^\360m\270\023\326\2465\370\272\30290?\231(J\255\227\304\212j\206%\261\047bi\317\211gr\017@\274\204\020H1\230\025\177\001\365VTk\251\345l\264\272\247\362\210\267\242\225]H\220\206+\341iT\252^,_T\277\0148\316\336\364\221\377\223L\232\"\232\271+\343\n\316\373\373\276!\276\021eh\252k\262\220\330s3\263\205\340\006\310+\356\267\017b[iB5EvK\376+\334\016\343\036\356\371T\344\247\257\003x\274\047;\352\001\310\235\377[\274\022\251\304\025U\333@ov]teM6\241\364p\272\002\215\277\047\250\334\n\2140\023\315@\237]\336U*<\014\n\311\3632}\005^+N\004\372\242\257\237\313\262\374g\230Q\360W\305!\210:~\024\336\311jr!\037s#Ne^\351}\001`*_\213\353\242\007\317\334\355\260\232P\275&\342\006\354\374\037A\276\363\017E!\355\3268\310[\250KG\371\376\000\357F\355\263\357\327\203\374\240\360?\017\214\023\276\266!Y\360\276)\277\201P\300\355F:\231\373\272&\352\344\206\342\347\r\010\267\226<5\206\022N^\304\317\366Ga\300\301]\331\010\216\225\304\047\326\237\305\261HW\020\360\027\261\354\271\227";
-    PyObject *data = __Pyx_DecompressString(cstring, 1827, 1);
+    #if (CYTHON_COMPRESS_STRINGS) == 1 /* compression: zlib (1852 bytes) */
+static const char cstring[] = "x\332\215T\317s\333\270\025\266\262r\243\304\336\330\362o\047qB\331N\223Nf\225\310\366&\231&\333\216&\2163m\247\031\313v\233C\247\303\001IH\342\206\"%\000\224\245\315v\343#\2178\342\310#\217:\352\350c\216<\352\250?\301\177\302>\000\222b\357n\247\365\310\004\360\000\274\367\275\357}x\305?\277\013\0306X\0351\343u\227\325\003\337p\251\341`\317\2650A\014{]\2032\342\332\014\023y\3107\016\337\034~\263\367b\317@\276c\020\374=\266\0315hh\331\036\242\024S#\250\032V\350z\314\365\r\326mbZ4\376R5\272Ah\370\030;\006\013\214&\234\273|\201\325\261oP\314\344\304x\210|?`\210\271\201o\302u\327\257=4\034\227@\020\267\215\345\355\003\344Q\\D\216c\3029L\203\320w\010\243O\354\240a!6\032\314*\242\254\330\354vL\363\020>\207\335}\200o\276\303\035v\204\253\2469\n\201M\370S \314\032f.\303\ri\250\206\276-\307\006r}5\006N\350\251\243>j\250\261\025\"o<\007\004\014\006D\032\0011]\2372\344\333\330\264\221o\"\306\220\375\001\246v\3757\014Vh\177\300\314\204)\230N1j\312t\021\251I[\320hB\376\226\353\271\254+\221\231\r\354al:\250\201j\330l+\264&A~\r;\227\214.\205\233$\010\201wl6=\324\305\304\014\210\203\t\234\032\205\206\030\264\036\204\036\030B\026\230\364\324ev}\034}\264C0m\002\331\220\276\017i\2167\355z\340B^\243\3258O\212\\R#\262\002\262T\260\327\364\272f\323\305\304\206\262)J\020\355\372\266\033\024\047\310(\352\240\256\205(P\022\2641Q3\007W\261O\261\236\327\364\02085lu\254\256\215<\333D6\223Xt\256\312Rw%w\022\203ZR\310\227\326\241\3526\013\310%\256\335*`\325TA\235\033M\363\251Yz\372\324\366$E\260\301\010\262!\254\375\301\016<\317\245 9\311}\310.qm\207\204`\237\2152\327f\007\202v\315\0068h#/\304#\370\016\246\200\005\353\230\360V|\34495\360\340\270\224\3558n\333\245P\215\200\231M\002\202\002\202w\340^U\313Z#\304\235&\274(\250\026T\022U!\217Iy\241\336\232\346\272[\253\233\243i\323u\344A\370o\207\236\017/\325\362\260\3240m \250*\246c\016\264\252h\303\251\301\317\204 ^\340`9\005 \362\355\272\236Z\215\217\215\371\202\211\333\230\220\036\300\323$M(,n\312\2279\256\361x\224\252q\265&\240\022\352\003\362k""\006M\345J\253\23485\362\005\000\271\002\200|\001\000\236\002\257\255\024\355\005\301\207\260\371+\203\t\262\255\233\254\016\033\365\300s(\366\252\320<\200M\024zl\334\017\212\272\021\024/\365\203\311\326i@<\047\364]\246gf3\264<\327\206W\006\275\317\221\352w\253\260T\3724\255\300\017\351\304\246d9\266)\311\251\004)t\004\202\315\240j:#\026t2\240\002\"\273\210v\005\215dl\320~\244a\234\005s!<\274!\325d\224\254\324\207B\326\016\364\256S\350VDk\220*\320\235N\251\263\323-uw\3162\203\345\225a\366\372\031\211\026\242\322 7\027\265\006\277X\315D\337\362\014\234[Y\275\230\237\232\336L\013\245\336B\357e\337N\313\225\264r\234\036\237\310\353?\360\005\016\027V\370\367\361\265\370qr\334\273\331\337\354\227\007\271\231\350\231\332\231]\204OV\256\026y\031\234\255\337\276X\232\232\276+^\306V\372\350\273\376Q\037\002\335\271\262Z\027+\202\304y\211\206E;Qe\202\355\362j\214mk\373bvj:w\326\216\216\300\014{m~,2r\277t\226\221\260\227\323\245\007q%v\223\217\375\202Nw1*\217\234\334\210\356\360\262\364L\243Mm\244|\213W\306\267\327\244\343\037\370*\370\313\315Fo\371\036o\311\351\014\300x\017\367tf\327\317~R\021\265\307\\4-!\376\327\323\023\307\206`\361\263\004\222\274\047\032\311n\202$\t{\242%\021~\004\014\377\020[\342$-\274\354\357\366\321 \267\314\245\317t\266\000\254\310\361Q\222\221\007\333\3211\327\201\207p\373\3338#\271\273\035\357\305\255$#\201\235F5\256\371\272\370\235L%\004T\273\034\213]\201\341\020\201\350\271\005^\340\257DK\037\272\251\211|\317\367\305ui\233\211\366\"\226.~\223T\000\337\354\nG\374\307X\027T\372\333\212\267\323\337\277\354\227\240\330\331\255x/}\370]\277\002`\263\333\361\276\014\177W\374=YHv@\020\267\372\326yfp\367\276\370\224X=\265\263\037\217\207\241*kI\306z\305\251(\014f\327E~\370\253X\033\342M\234\327j\003\025I\265\241\241\374h\034\205A\366\266\330\026H\342x\236\024\222gi\351\340\034\351\234;\021\343\245!\024d?\235\177\014D;\275\255^\245\347\366\311\371\302yi0\277\304\367\3235\000>\230\235\347s\220\363\374\"\320q\032\243\301\322\362`~=]\377C\222O\n\322\272\227""\256\376\261_\350\2778\177\376\2710X\202\002\300\211\341\354\206x\037\227\343\177\246\217\225\213\271\350\223p\342\047\275\305^\371\362e $}\364\267\317\245\301\322]\3616\226\371\334\230\213\034^\030\344n\351A2q-\336\214_\307@\372\2068\211\027\342\235\370\030j\234\233Ig\344f6\006\375\030\251\361\254\207z\247}\347\274\230\036V\006_\337\007\tA\255\177c\347\036\300\000*\327\322\265b\202\222\323\236\323/~\316\000\265\351\372\223\244\325\273\336c\375?}\316\303\275\370f\262\225T&5\270\"\006\305\036\223\257l\262^\340K\362q,\360\007\\I}\206?\027\017\000\304+\010\201$\203Y\376WP\363\236|jr9\235.?\220y\250\255ti\033\022$\311Rr\222\226\312\347\213\347\345\253\001\207\331[\021\212~\024\372\221\244S\367\204\252\340l\264\033Y\374+\276\003\217\354\232(h{nj\272\020\337\000y\251\367\367\221oJM\310G\222\335\020\377N6\023\365\246;\021\341\371I\267\000\217\367EK6\204\334\331\177\370k\336\032\355H\2526\201\336\354*o\213\212\250C\351\263R\367\024\222$b#\266\222L:\005\357\356\342\236T\341A\\\320\355f\322\025\336HN8\272\362\316_\210\035\361\257$#\341/\363\003\020\265j\022\357EY_\310+n\370\211\310K\275\317\001L\351k~\225w\240\355\335I\312\232\352\025\256z^\353\377\010\362ut\300U\220\266\332\204\013\357\240.-\351\373#\364\221\312\027\337oz\371^\341\177\036\030j\2766!Y\360\276.\276\202P\300\355\332x2\363\313\232\310\223k\222\237\267 \334\212n=\226\024N\236\2536\376\211[pp[\324\342#)\361\221\365\047~\304\307+\010\3703\301w\311\323";
+    PyObject *data = __Pyx_DecompressString(cstring, 1852, 1);
     #define __Pyx_DecompressString_LZSS_UNUSED
     if (unlikely(!data)) __PYX_ERR(0, 1, __pyx_L1_error)
     const char* const bytes = __Pyx_PyBytes_AsString(data);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (likely(bytes)); else { Py_DECREF(data); __PYX_ERR(0, 1, __pyx_L1_error) }
     #endif
-    #elif (CYTHON_COMPRESS_STRINGS) > 0 && (CYTHON_COMPRESS_STRINGS) <= 90 /* compression: lzss (2404 bytes) */
-static const char cstring[] = "\377.?Note t\377hat Cyth\377on is de\377liberate\377ly stric\367ter!\001n PE\377P-484 an\377d reject\377s subcla\377sses of \377builtin \377types. I\377f you ne\177ed to p%\000\376%\tthen se\375t\200\000e \047ann\377otation_\376<\000ing\047 di\355rb\000iv\242\000o F\377alse.add\375_%\000esound\377rts/comb\373at\000\004_fast\177.pyx__P\002\000\367PyD\274\000_Nex\277tRef__\\\004e\357____\261\002_ge\337titem\r\001fu{nc\025\001main\003\002\357odul&\002nam\336.\002qual\004\005te\373stD\000armor\377_instanc\377e_can_atotack\010\000ch\000\016\377e_buckety_\031\000!\000weap\353\001\253ar\205\000_\307\000p\375\000b\337ility\226\001_m\377elee_dam\277age_vs\017\002r\337anged\n\010is\3567\000rou\365 e_s\377hould_au\377to_switc\363h_^\004\023\004resp\236\266@_man\313\000\025\005c\307hoi\274\000\211\004\307\005sa7irgW\000nd\216A\251\000\377ply_pier\371c\233@\365\002async\337io.coz\004sa\277xaybas\210 o\367ver\005\002defe\327nse\006\003g\r\003od\377gebxbyca?lc_act\210\001\342\003\306\r\002hi\237!\317!\034\002spz\340`h\332@ctor\331(\353if\370 _\215\"cla\377mp_0_100\337cline\025\001tr\373act\000ckcolglis\327`\337!ut\310(\177current\236$\376\344#decay_m\276\203`value\270\004d\343es\252\000U\000p\001ter\337naldg\222@di\377st2divis\377ordot_pr^\265`ct_2\364\000f\270\204\003~\234\003expand\270@\346\256@af\305\000\275Fget\276\341#high_\004\004p\355iW\000_a\333@vul\177nerable\247\204\001\267sma\323@es\340et^\270bsmdg\000\000_b\000\217lode\007\001\206\000\237\206\001i\231l\t\002\037\005in\252#\334\000i\367mal\326dothe\033rp\326@ep\375\205\001\334E\344Ee_\263`i\335\204\003\207@ce\214@\315y-\000op\210\204\002\307\204\003rd\001g\000\000y\005\007\001w\007\025\001\241\004\375`\367olv\311\204\002look\373up\000\016_with\377_thresho\377ldselfse\275t\302`ault\357\206\005.\360\361\206\003\000\004\362\206\002\022\006worl\277dunit.\005\002_\377public_m\337ethod\372\204\001if\372\014\000c\234\204\001_bonu\205s\013\006d\223\204\001\014\005\356b\351\205\002s\377quare_of\363_d\377\004\357#terr\034\251""\207\001E\003mod\t\005B\003\r\001\366\276\005ti|\000ype_\270\310\207\001\322b\327bsvsQ\000c\277twater\210\207\003s\376\272\002xx1x2y1\377y2\200\001\330\025\026\340\377\004\007\200r\210\022\2101\277\330\010\017\210q\330\000\013\004\337\013\2105\220\001%\000\026\027\377\360\020\000\005\"\320!1\377\260\022\260;\270c\320A\177Q\320QS\320ST;\001\357z\220\022\220<\000\026\220j\377\240\002\240+\250S\260\n\377\270\"\270A\330\010\013\210\3156\025\002\014\023\034\000H\0006\220\367\023\220Ar\000\031\032\360\024\377\000\005\034\230;\240b\320_(=\270R\270t\000\033\001\n\177\031\230\026\230r\240\021\212\001\037t\2102\210Q\223\006\002\t\224\005\377#$\360\014\000\005\010\200\347v\210R\276\000\303\000v\220Sw\230\001\330\271\0001\200\001\263\001\377\025\320\024%\240Q\240i\357\250{\270!\351\003\023\210A\276\350\004\t\210\033\220A\362\001s\373\210\"\017\003s\220#\220Q\2726\005\030U\001z\220\027M\000\010\177\014\210G\2204\220q\007\001\345\013\222\000W5\000\324\003\007\200~\234m\002\273#\010\210\005\255\001\025\026\013\371\210\223\001V\000 \230t\2406\375\250\342\000\036\230m\2503\250\377a\330\004\033\2304\230q\372\215A{\201\000U\230#\230T\377\320!;\2703\270a\330\373\010\025\221\000\010\014\320\014!\334\223 \004\001(\250\001\266Av\210\327S\220\001\265B\340;\0005\240\376\364\000\031\230\032\2404\240q\375\250\377\000\007\200w\210g\220\326\270#\360\006\240!u\301\0003\220_e\2303\230e\"\000r{\000\377\010\022\220!\220<\230q\376\366Fv\210W\220D\230\007\370\016\001\017\t<\001#\240$\320&\367;\2701\332@\004#\2404\337\320\047=\270Q\232\000\004$\373\240Dk\001\034\230M\250\022\373\2502\376@\016\270b\300\001\377\330\034\037\230\177\250b\260\236\210@\034\230D\240\000\004\262\002t\376\353a\013\210<\220s\230!\377\330\014\031\230\021\340\014\026\177\220a\220|\2401\330\251a>\250\001\035\230E\240\021\330c\263`\313\330\010\035\000\340\001\001\202\003!\330\337\004\032\230$\230\261 #\240\3777\250!\2506\3201F\373\300a\336\003x\210t\2201\275\340\254@D\320\020+\326 d\377\260#\260Q\260i\270r\377\300\022\3001\330\020""\024\220\367D\320\030\266\000\330\014\020\220\355\017\365\000\020\023\374\000w\240a\377\330\024\025\330\020\031\320\031\277)\250\021\250!\330\023\0004\377\320\027:\270!\2708\300\2377\310!\330\024\356 \037\000\340\377\014\035\230W\240A\240V\373\320+>\002\017\210\177\230d?\240/\260\023\260A1\t\216 \377\320(K\3101\330\024\034\357\230G\2401\371 \t\017\210?d\220!\330\010\016\001\003\215!\277\002\240\"\240C\240\366 \035\377\230T\240\022\2402\240S\336\321@\010\013\320\013\252!\004\240\377A\330\014 \320 6\260\377a\260w\270d\300.\320\037PQ\330\r\037\260`\331@\007\020\371\036\204\000\310 \030\320\030.\250\377a\250w\260d\270.\310\375\001\330 \320\031/\250q\260\177\007\260t\270>\310\021O\000?\240\n\250#\250Q\361\206\001\377\"\216\322M\010\200t\356\206\001\207\207\002\256a\022\373\220\024\211\205\001\022\220%\220q\377\330\004\010\210\013\2207\230_%\230t\240<`\000a\276!\177\004\220J\230m\2504\327\205\001\236\315!\005\320\025%\304\001\026\002\320\373\024$\336\000r\250\024\250T\377\3201A\300\023\300A\330\376\341j\340\004\016\210a\210|{\2301\247\206\002\320\000\036\230\275B\377\014\2103\210b\220\003\220\1772\220S\230\002\230!\022\003?\010\000\005!\240\t\334`*\000\177\007\200{\220\"\220A\217\205\003\177\004\035\230]\250\"\250\277\206\002\337x\210r\220\021\301\210\004\013\210\2771\320\000\037\230q\264\210\001\010\237\200}\220C\220\333\204\005\247!\"\376\334 \004\027\220v\230Q\230\375h\370@\004\013\2104\210s\376\342\000r\230\035\240b\250\001\377\320\000!\240\021\360\036\000?\005\035\230F\240!\331\207\003\375\206\006mE\220!\220a\334\210\0012\210\377\206\004\1778\2302\230[\250\001\341\205\001\337\025\220F\230!\304\211\001~\220\377W\230A\330\010\014\210E|\222\000\352`\005\220T\230\021\354\204\001\371\017\244\000\316\207\001\020\027\220x\230_r\240\033\250A\345#\026\340!\307\007\200q.\003\366 K\027\r\210\243F\220`\002\252\206\001`\002N\225@q\377\330\014\017\210{\230#\230{Q\330S\006E\260\021\260\365`\353\014\210\004\032\340\252\211\001\320\000\"~\352\000\006\000\005\031\230\003\315\000/Q""\330\004\030\001\005\013\204M&\001}\030\234!G\2402\240Q\263\213\001}w\262@\001\330\010\021\220\262\212\002\367\177\220b\272@$\230g\2409R\337\204\001\017\004~\220R\203A\037\002\007\013\2101";
-    PyObject *data = __Pyx_DecompressString_LZSS(cstring, 2404, 3110);
+    #elif (CYTHON_COMPRESS_STRINGS) > 0 && (CYTHON_COMPRESS_STRINGS) <= 90 /* compression: lzss (2438 bytes) */
+static const char cstring[] = "\377.?Note t\377hat Cyth\377on is de\377liberate\377ly stric\367ter!\001n PE\377P-484 an\377d reject\377s subcla\377sses of \377builtin \377types. I\377f you ne\177ed to p%\000\376%\tthen se\375t\200\000e \047ann\377otation_\376<\000ing\047 di\355rb\000iv\242\000o F\377alse.add\375_%\000esound\377rts/comb\373at\000\004_fast\177.pyx__P\002\000\367PyD\274\000_Nex\277tRef__\\\004e\357____\261\002_ge\337titem\r\001fu{nc\025\001main\003\002\357odul&\002nam\336.\002qual\004\005te\373stD\000armor\377_instanc\377e_can_atotack\010\000ch\000\016\377e_buckety_\031\000!\000weap\353\001\253ar\205\000_\307\000p\375\000b\337ility\226\001_m\377elee_dam\277age_vs\017\002r\337anged\n\010is\3567\000rou\365 e_p\377layer_or\307der#\000\205\004\320 sh\377ould_aut\377o_switchy_w\004\023\004resp\317@\317_man\344\000\025\005ch\343oi\325\000\242\004\340\005sai\233rgp\000nd\247A\302\000p\377ly_pierc\374\264@\216\"asynci\357o.co\223\004sax\337aybas\241 ov\373er\005\002defen\353se\006\003g\r\003odg\377ebxbycal\037c_act\210\001\373\003\r\002\243hi\270!\350!\034\002s\355\000s\275h\363@ctor\362(i\365f\221@_\246\"clam\377p_0_100c\357line\025\001tra\375ct\000ckcoll\263is\360`\370!ut\341(c?urrent\236$\375#\177decay_m\234`\337value\270\004de\361s\252\000U\000p\001tern\357aldg\253@dis\177t2divis\213@\337ot_pr\316`ct\313_2\364\000f\321\204\003\234\003ex\317pand\321@\307@af\334\305\000\326Fget\341#hi\267gh_\004\004piW\000_\375a\364@vulner\357able\300\204\001sma\326\323@es\371et\321bsm\353dg\000\000_b\000lod1e\007\001\206\000\270\206\001il\t\002\037\005\363in\252#\334\000imal~\357dotherp\326@\243ep\226\206\001\334E\344E_\263`i\354\366\204\003\367`ce\371cpop\034\241\204\002\340\204\003rdg\000\000y\005\007\001pw\007\025\001\241\004\375`olv\342\204\002\277lookup\000\016_\377with_thr\377esholdse\337lfset\302`au\013lt\210\207\005.\212\207\003\000\004\213\207\002\022\006\377worlduni\373t.\005\002_publ\377ic_metho\255d\372\204\001if\014\000c\234\204\001__bonus\013\006d\223\204\001\346\014\005la\360`\202\206\002s""qu\377are_of_d<\377\004\357#terr\302\207\001E\003\207mod\t\005B\003\r\001\276\005t=i|\000ype_\341\207\001\322b\356\327bsvsQ\000ctw\257ater\241\207\003s\272\002x\377x1x2y1y2\377\200\001\330\025\026\340\004\007\377\200r\210\022\2101\330\010\357\017\210q\330\000\013\004\013\210\3675\220\001%\000\026\027\360\020\377\000\005\"\320!1\260\022\377\260;\270c\320AQ\320\337QS\320ST;\001z\220\373\022\220<\000\026\220j\240\002\377\240+\250S\260\n\270\"\177\270A\330\010\013\2106\025\002\363\014\023\034\000H\0006\220\023\220\375Ar\000\031\032\360\024\000\005\377\034\230;\240b\320(=\327\270R\270t\000\033\001\n\031\230\337\026\230r\240\021\212\001t\210\3072\210Q\223\006\002\t\224\005#$\377\360\014\000\005\010\200v\210\371R\276\000\303\000v\220S\230\001\335\330\271\0001\200\001\263\001\025\320\377\024%\240Q\240i\250{\273\270!\351\003\023\210A\350\004\t\357\210\033\220A\362\001s\210\"\276\017\003s\220#\220Q6\005\030\356U\001z\220\027M\000\010\014\210_G\2204\220q\007\001\013\222\0009W5\000\324\003\007\200~m\002\273#g\010\210\005\255\001\025\026\013\210\223\001~V\000 \230t\2406\250\342\000\377\036\230m\2503\250a\330\277\004\033\2304\230q\215A{\376\201\000U\230#\230T\320!\377;\2703\270a\330\010\025>\221\000\010\014\320\014!\223 \004\001\367(\250\001\266Av\210S\220\265\001\265B\340;\0005\240\364\000\031\177\230\032\2404\240q\250\377\000\277\007\200w\210g\220\270#\360\365\006\240!u\301\0003\220e\230\3273\230e\"\000r{\000\010\022\277\220!\220<\230q\372B\360}\n\303#W\220D\230\007\020\001\377\013\2104\210t\320\023-\373\250Q\235\000\014\026\220a\220\317|\2401\330\315AL\001#\240\277$\320&;\2701\352@\004\377#\2404\320\047=\270Q\336\252\000\004$\240D{\001\034\230\337M\250\022\2502\216`\016\270\377b\300\001\330\034\037\230\177\367\250b\260\230@\034\230D\240\364\000\004\302\002t\373a\013\210<\220\377s\230!\330\014\031\230\021}\340[\016\035\230E\240\021\350c\226\303`\330\010\211\000\340\001\001\202\003!\277\330\004\032\230$\230\301 #\377\2407\250!\2506\3201\367F\300a\356\003x\210t\220{1\340\274@D""\320\020+\346 \377d\260#\260Q\260i\270\377r\300\022\3001\330\020\024\357\220D\320\030\266\000\330\014\020\333\220\017\205 \020\023\214 w\240\377a\330\024\025\330\020\031\320\177\031)\250\021\250!\330\023\000\3774\320\027:\270!\2708?\3007\310!\330\024\376 \037\000\377\340\014\035\230W\240A\240\367V\320+>\002\017\210\177\230\177d\240/\260\023\260A1\t\376\216 \320(K\3101\330\024\337\034\230G\2401\211@\t\017\177\210d\220!\330\010\016\001\003~\215!\002\240\"\240C\240\206@\377\035\230T\240\022\2402\240\275S\341@\010\013\320\013\252!\004\377\240A\330\014 \320 6\377\260a\260w\270d\300.?\320PQ\330\r\037\300`\351@\362\007\020\036\204\000\310 \030\320\030.\377\250a\250w\260d\270.\373\310\001\330 \320\031/\250q\377\260\007\260t\270>\310\021~O\000\240\n\250#\250Q\201\207\001\210\377\"\200j\255bt\376\206\001\227c\277`\022\373\220\024\231\205\001\022\220%\220q\377\330\004\010\210\013\2207\230_%\230t\240<`\000a\276!\177\004\220J\230m\2504\347\205\001\236\315!\005\320\025%\304\001\026\002\320\373\024$\336\000r\250\024\250T\377\3201A\300\023\300A\330\376\361j\340\004\016\210a\210|{\2301\267\206\002\320\000\036\230\275B\377\014\2103\210b\220\003\220\1772\220S\230\002\230!\022\003?\010\000\005!\240\t\334`*\000\177\007\200{\220\"\220A\237\205\003\177\004\035\230]\250\"\250\317\206\002\337x\210r\220\021\321\210\004\013\210\2771\320\000\037\230q\304\210\001\010\337\200}\220C\220\355\204\003\330\004\372\247!\"\334 \004\027\220v\230WQ\230h\370@\004\364\204\001s\342\000\377r\230\035\240b\250\001\320\377\000!\240\021\360\036\000\005\237\035\230F\240!\351\207\003\215\207\006E\266\220!\220a\354\210\0012\210\217\207\0048\277\2302\230[\250\001\361\205\001\025\357\220F\230!\324\211\001~\220W\177\230A\330\010\014\210E\222\000\276\352`\005\220T\230\021\354\204\001\017\374\244\000\336\207\001\020\027\220x\230r\357\240\033\250A\251\206\001\022\220\026\216\340!\007\200q.\003\366 K\027\r\327\210F\220`\002v}\002\010\014\373\210N\225@q\330\014\017\210\277{\230#\230Q\330S\006E\247\260\021\260\365`\002\034""\340\272\211\001\320\373\000\"\352\000\006\000\005\031\230\275\003\315\000Q\330\004\030\001\005\013\364\204M&\001\030\234!G\2402\240\365Q\303\213\001w\262@\001\330\010\021\335\220\302\212\002\177\220b\272@$\230\347g\240R\337\204\001\017\004~\220R\034\203A\037\002\013\2101";
+    PyObject *data = __Pyx_DecompressString_LZSS(cstring, 2438, 3151);
     #define __Pyx_DecompressString_UNUSED
     if (unlikely(!data)) __PYX_ERR(0, 1, __pyx_L1_error)
     const char* const bytes = __Pyx_PyBytes_AsString(data);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (likely(bytes)); else { Py_DECREF(data); __PYX_ERR(0, 1, __pyx_L1_error) }
     #endif
-    #else /* compression: none (3110 bytes) */
-static const char bytes[] = ".?Note that Cython is deliberately stricter than PEP-484 and rejects subclasses of builtin types. If you need to pass subclasses then set the \047annotation_typing\047 directive to False.add_notesoundrts/combat/combat_fast.pyx__Pyx_PyDict_NextRef__annotate____class_getitem____func____main____module____name____qualname____test___armor_instance_can_attack_cache_can_attack_cache_bucket_check_weapon_target_compatibility_get_melee_damage_vs_get_ranged_damage_vs_is_coroutine_should_auto_switch_weapon_should_respect_manual_weapon_choice_weapon_instancesairground_typeapply_piercingarmorasyncio.coroutinesaxaybase_coverbase_defensebase_dgbase_dodgebxbycalc_actual_damagecalc_hit_chancecalc_splash_factorcan_attack_if_in_rangeclamp_0_100cline_in_tracebackcollisioncompute_damage_vscurrent_weapondamagedecay_min_valuedefensedescale_if_internaldg_vsdist2divisordot_product_2deffective_rangeexpanded_is_aforced_damagegetgroundhigh_groundhpidis_ais_vulnerableitemsmatches_attack_targetsmdgmdg_explodemdg_projectilemdg_targetsmin_rangeminimal_damageotherperceptionpiercingpiercing_resistanceplaceplayerpoprange_checkrdgrdg_exploderdg_projectilerdg_targetsresolve_vs_lookupresolve_vs_lookup_with_thresholdselfsetdefaultsoundrts.combat.combat_fastsoundrts.worldunit.world_public_methodspecific_cover_bonusspecific_dodge_bonussplash_rangesquare_of_distancetargetterrain_cover_modterrain_dodge_modthresholdtimetype_namevaluevaluesvs_dictwaterweaponsworldxx1x2y1y2\200\001\330\025\026\340\004\007\200r\210\022\2101\330\010\017\210q\330\004\007\200r\210\022\2101\330\010\017\210q\330\004\013\2105\220\001\200\001\330\026\027\360\020\000\005\"\320!1\260\022\260;\270c\320AQ\320QS\320ST\340\004\007\200z\220\022\2201\330\010\026\220j\240\002\240+\250S\260\n\270\"\270A\330\010\013\2106\220\022\2201\330\014\023\2201\330\004\013\2106\220\023\220A\200\001\330\031\032\360\024\000\005\034\230;\240b\320(=\270R\270q\330\004\033\230;\240b\320(=\270R\270q\330\004\031\230\026\230r\240\021\330\004\007\200t\2102\210Q\330""\010\017\210q\330\004\007\200t\2102\210Q\330\010\017\210q\330\004\013\2105\220\001\200\001\330#$\360\014\000\005\010\200v\210R\210q\330\010\017\210v\220S\230\001\330\004\013\2101\200\001\360\020\000\005\025\320\024%\240Q\240i\250{\270!\340\004\007\200r\210\023\210A\330\010\017\210q\330\004\t\210\033\220A\330\004\007\200s\210\"\210A\330\010\017\210s\220#\220Q\330\004\013\2101\200\001\360\030\000\005\010\200z\220\027\230\001\330\010\014\210G\2204\220q\230\001\330\010\013\2102\210W\220A\330\014\023\2201\330\004\007\200~\220S\230\001\330\010\017\210q\330\004\010\210\005\210Q\330\010\014\210G\2204\220q\230\001\330\010\013\2102\210W\220A\330\014\023\2201\330\004\013\2101\200\001\360\030\000\005 \230t\2406\250\021\330\004\036\230m\2503\250a\330\004\033\2304\230q\340\004\007\200{\220#\220U\230#\230T\320!;\2703\270a\330\010\025\220Q\330\010\014\320\014!\240\021\330\010\014\320\014(\250\001\340\004\007\200v\210S\220\001\330\010\017\210q\340\004\033\2305\240\001\330\004\031\230\032\2404\240q\250\001\330\004\007\200w\210g\220Q\330\010\017\210q\360\006\000\005\010\200u\210G\2203\220e\2303\230e\2404\240r\250\021\330\010\022\220!\220<\230q\330\010\017\210q\330\004\007\200v\210W\220D\230\007\230q\330\010\022\220!\220<\230q\330\010\017\210q\360\006\000\005#\240$\320&;\2701\270A\330\004#\2404\320\047=\270Q\270a\330\004$\240D\250\001\330\004\034\230M\250\022\2502\250S\260\016\270b\300\001\330\034\037\230\177\250b\260\001\330\004\034\230D\240\001\330\004\034\230D\240\001\340\004\007\200t\2101\330\010\013\210<\220s\230!\330\014\031\230\021\340\014\026\220a\220|\2401\330\014\023\2201\360\006\000\005\035\230E\240\021\340\004\007\200z\220\023\220A\330\010\026\220a\340\010\026\220a\360\006\000\005#\240!\330\004\032\230$\230a\330\004#\2407\250!\2506\3201F\300a\360\006\000\005\010\200x\210t\2201\340\010\014\210D\320\020+\2503\250d\260#\260Q\260i\270r\300\022\3001\330\020\024\220D\320\030=\270Q\330\014\020\220\017\230q\330\020\023\220<\230w\240a\330\024\025\330\020\031\320\031)\250\021\250!""\330\020\023\2204\320\027:\270!\2708\3007\310!\330\024(\250\001\330\024\025\340\014\035\230W\240A\240V\320+=\270Q\330\014\017\210\177\230d\240/\260\023\260A\330\020\031\320\031)\250\021\250!\330\020$\240D\320(K\3101\330\024\034\230G\2401\360\006\000\t\017\210d\220!\330\010\016\210d\220!\330\010\034\230D\240\002\240\"\240C\240q\330\010\035\230T\240\022\2402\240S\250\001\340\010\013\320\013\034\230D\240\004\240A\330\014 \320 6\260a\260w\270d\300.\320PQ\330\r\037\230t\2404\240q\330\014 \320 6\260a\260w\270d\300.\320PQ\330\r\036\230d\240!\330\014\030\320\030.\250a\250w\260d\270.\310\001\330\014\031\320\031/\250q\260\007\260t\270>\310\021\330\014 \240\n\250#\250Q\340\004\007\200t\2101\330\010\022\220!\220<\230q\330\010\017\210q\360\006\000\005\010\200t\2105\220\001\330\010\017\210q\360\006\000\005\022\220\024\220Q\330\004\022\220%\220q\330\004\010\210\013\2207\230%\230t\240<\250w\260a\330\014\020\220\004\220J\230m\2504\250{\270!\330\014\020\220\005\320\025%\240S\250\001\330\014\020\220\004\320\024$\240C\240r\250\024\250T\3201A\300\023\300A\330\010\022\220!\220<\230q\330\010\017\210q\340\004\016\210a\210|\2301\330\004\013\2101\320\000\036\230a\360\006\000\005\014\2103\210b\220\003\2202\220S\230\002\230!\320\000\036\230a\360\010\000\005!\240\t\250\022\2501\330\004\007\200{\220\"\220A\330\010\025\220Q\330\004\035\230]\250\"\250A\330\004\007\200x\210r\220\021\330\010\017\210q\330\004\013\2101\320\000\037\230q\360\020\000\005\010\200}\220C\220q\330\010\017\210q\330\004\036\230d\240\"\240A\330\004\027\220v\230Q\230h\240a\330\004\013\2104\210s\220%\220r\230\035\240b\250\001\320\000!\240\021\360\036\000\005\035\230F\240!\360\014\000\005\010\200z\220\027\230\001\330\010\014\210E\220\024\220Q\220a\330\010\013\2102\210W\220A\330\014\023\2208\2302\230[\250\001\360\006\000\005\025\220F\230!\330\004\007\200~\220W\230A\330\010\014\210E\220\021\330\014\020\220\005\220T\230\021\230!\330\014\017\210r\220\027\230\001\330\020\027\220x\230r\240\033\250A\360\006\000\005\022\220\026\220q\330""\004\007\200q\330\010\014\210E\220\024\220Q\220a\330\010\013\2102\210W\220A\330\014\023\2208\2302\230[\250\001\360\006\000\005\r\210F\220!\330\004\007\200v\210W\220A\330\010\014\210N\230%\230q\330\014\017\210{\230#\230Q\330\020\027\220x\230r\240\033\250E\260\021\260!\330\010\014\210N\230%\230q\330\014\017\210{\230#\230Q\330\020\027\220x\230r\240\033\250E\260\021\260!\340\004\013\2101\320\000\"\240!\360\006\000\005\031\230\003\2302\230Q\330\004\030\230\003\2302\230Q\330\004\013\2103\210b\220\003\2202\220S\230\002\230!\320\000\"\240!\360\030\000\005\035\230G\2402\240Q\330\004\007\200w\210b\220\001\330\010\021\220\021\330\004\007\200\177\220b\230\002\230$\230g\240R\240q\330\010\021\220\021\330\004\007\200~\220R\220q\330\010\021\220\021\330\004\013\2101";
+    #else /* compression: none (3151 bytes) */
+static const char bytes[] = ".?Note that Cython is deliberately stricter than PEP-484 and rejects subclasses of builtin types. If you need to pass subclasses then set the \047annotation_typing\047 directive to False.add_notesoundrts/combat/combat_fast.pyx__Pyx_PyDict_NextRef__annotate____class_getitem____func____main____module____name____qualname____test___armor_instance_can_attack_cache_can_attack_cache_bucket_check_weapon_target_compatibility_get_melee_damage_vs_get_ranged_damage_vs_is_coroutine_player_ordered_attack_on_should_auto_switch_weapon_should_respect_manual_weapon_choice_weapon_instancesairground_typeapply_piercingarmorasyncio.coroutinesaxaybase_coverbase_defensebase_dgbase_dodgebxbycalc_actual_damagecalc_hit_chancecalc_splash_factorcan_attack_if_in_rangeclamp_0_100cline_in_tracebackcollisioncompute_damage_vscurrent_weapondamagedecay_min_valuedefensedescale_if_internaldg_vsdist2divisordot_product_2deffective_rangeexpanded_is_aforced_damagegetgroundhigh_groundhpidis_ais_vulnerableitemsmatches_attack_targetsmdgmdg_explodemdg_projectilemdg_targetsmin_rangeminimal_damageotherperceptionpiercingpiercing_resistanceplaceplayerpoprange_checkrdgrdg_exploderdg_projectilerdg_targetsresolve_vs_lookupresolve_vs_lookup_with_thresholdselfsetdefaultsoundrts.combat.combat_fastsoundrts.worldunit.world_public_methodspecific_cover_bonusspecific_dodge_bonussplash_rangesquare_of_distancetargetterrain_cover_modterrain_dodge_modthresholdtimetype_namevaluevaluesvs_dictwaterweaponsworldxx1x2y1y2\200\001\330\025\026\340\004\007\200r\210\022\2101\330\010\017\210q\330\004\007\200r\210\022\2101\330\010\017\210q\330\004\013\2105\220\001\200\001\330\026\027\360\020\000\005\"\320!1\260\022\260;\270c\320AQ\320QS\320ST\340\004\007\200z\220\022\2201\330\010\026\220j\240\002\240+\250S\260\n\270\"\270A\330\010\013\2106\220\022\2201\330\014\023\2201\330\004\013\2106\220\023\220A\200\001\330\031\032\360\024\000\005\034\230;\240b\320(=\270R\270q\330\004\033\230;\240b\320(=\270R\270q\330\004\031\230\026\230r\240\021\330\004""\007\200t\2102\210Q\330\010\017\210q\330\004\007\200t\2102\210Q\330\010\017\210q\330\004\013\2105\220\001\200\001\330#$\360\014\000\005\010\200v\210R\210q\330\010\017\210v\220S\230\001\330\004\013\2101\200\001\360\020\000\005\025\320\024%\240Q\240i\250{\270!\340\004\007\200r\210\023\210A\330\010\017\210q\330\004\t\210\033\220A\330\004\007\200s\210\"\210A\330\010\017\210s\220#\220Q\330\004\013\2101\200\001\360\030\000\005\010\200z\220\027\230\001\330\010\014\210G\2204\220q\230\001\330\010\013\2102\210W\220A\330\014\023\2201\330\004\007\200~\220S\230\001\330\010\017\210q\330\004\010\210\005\210Q\330\010\014\210G\2204\220q\230\001\330\010\013\2102\210W\220A\330\014\023\2201\330\004\013\2101\200\001\360\030\000\005 \230t\2406\250\021\330\004\036\230m\2503\250a\330\004\033\2304\230q\340\004\007\200{\220#\220U\230#\230T\320!;\2703\270a\330\010\025\220Q\330\010\014\320\014!\240\021\330\010\014\320\014(\250\001\340\004\007\200v\210S\220\001\330\010\017\210q\340\004\033\2305\240\001\330\004\031\230\032\2404\240q\250\001\330\004\007\200w\210g\220Q\330\010\017\210q\360\006\000\005\010\200u\210G\2203\220e\2303\230e\2404\240r\250\021\330\010\022\220!\220<\230q\330\010\017\210q\360\n\000\005\010\200v\210W\220D\230\007\230q\330\010\013\2104\210t\320\023-\250Q\250a\330\014\026\220a\220|\2401\330\014\023\2201\360\006\000\005#\240$\320&;\2701\270A\330\004#\2404\320\047=\270Q\270a\330\004$\240D\250\001\330\004\034\230M\250\022\2502\250S\260\016\270b\300\001\330\034\037\230\177\250b\260\001\330\004\034\230D\240\001\330\004\034\230D\240\001\340\004\007\200t\2101\330\010\013\210<\220s\230!\330\014\031\230\021\340\014\026\220a\220|\2401\330\014\023\2201\360\006\000\005\035\230E\240\021\340\004\007\200z\220\023\220A\330\010\026\220a\340\010\026\220a\360\006\000\005#\240!\330\004\032\230$\230a\330\004#\2407\250!\2506\3201F\300a\360\006\000\005\010\200x\210t\2201\340\010\014\210D\320\020+\2503\250d\260#\260Q\260i\270r\300\022\3001\330\020\024\220D\320\030=\270Q\330\014\020\220\017\230q\330""\020\023\220<\230w\240a\330\024\025\330\020\031\320\031)\250\021\250!\330\020\023\2204\320\027:\270!\2708\3007\310!\330\024(\250\001\330\024\025\340\014\035\230W\240A\240V\320+=\270Q\330\014\017\210\177\230d\240/\260\023\260A\330\020\031\320\031)\250\021\250!\330\020$\240D\320(K\3101\330\024\034\230G\2401\360\006\000\t\017\210d\220!\330\010\016\210d\220!\330\010\034\230D\240\002\240\"\240C\240q\330\010\035\230T\240\022\2402\240S\250\001\340\010\013\320\013\034\230D\240\004\240A\330\014 \320 6\260a\260w\270d\300.\320PQ\330\r\037\230t\2404\240q\330\014 \320 6\260a\260w\270d\300.\320PQ\330\r\036\230d\240!\330\014\030\320\030.\250a\250w\260d\270.\310\001\330\014\031\320\031/\250q\260\007\260t\270>\310\021\330\014 \240\n\250#\250Q\340\004\007\200t\2101\330\010\022\220!\220<\230q\330\010\017\210q\360\006\000\005\010\200t\2105\220\001\330\010\017\210q\360\006\000\005\022\220\024\220Q\330\004\022\220%\220q\330\004\010\210\013\2207\230%\230t\240<\250w\260a\330\014\020\220\004\220J\230m\2504\250{\270!\330\014\020\220\005\320\025%\240S\250\001\330\014\020\220\004\320\024$\240C\240r\250\024\250T\3201A\300\023\300A\330\010\022\220!\220<\230q\330\010\017\210q\340\004\016\210a\210|\2301\330\004\013\2101\320\000\036\230a\360\006\000\005\014\2103\210b\220\003\2202\220S\230\002\230!\320\000\036\230a\360\010\000\005!\240\t\250\022\2501\330\004\007\200{\220\"\220A\330\010\025\220Q\330\004\035\230]\250\"\250A\330\004\007\200x\210r\220\021\330\010\017\210q\330\004\013\2101\320\000\037\230q\360\020\000\005\010\200}\220C\220q\330\010\017\210q\330\004\036\230d\240\"\240A\330\004\027\220v\230Q\230h\240a\330\004\013\2104\210s\220%\220r\230\035\240b\250\001\320\000!\240\021\360\036\000\005\035\230F\240!\360\014\000\005\010\200z\220\027\230\001\330\010\014\210E\220\024\220Q\220a\330\010\013\2102\210W\220A\330\014\023\2208\2302\230[\250\001\360\006\000\005\025\220F\230!\330\004\007\200~\220W\230A\330\010\014\210E\220\021\330\014\020\220\005\220T\230\021\230!\330\014\017\210r\220\027\230\001\330""\020\027\220x\230r\240\033\250A\360\006\000\005\022\220\026\220q\330\004\007\200q\330\010\014\210E\220\024\220Q\220a\330\010\013\2102\210W\220A\330\014\023\2208\2302\230[\250\001\360\006\000\005\r\210F\220!\330\004\007\200v\210W\220A\330\010\014\210N\230%\230q\330\014\017\210{\230#\230Q\330\020\027\220x\230r\240\033\250E\260\021\260!\330\010\014\210N\230%\230q\330\014\017\210{\230#\230Q\330\020\027\220x\230r\240\033\250E\260\021\260!\340\004\013\2101\320\000\"\240!\360\006\000\005\031\230\003\2302\230Q\330\004\030\230\003\2302\230Q\330\004\013\2103\210b\220\003\2202\220S\230\002\230!\320\000\"\240!\360\030\000\005\035\230G\2402\240Q\330\004\007\200w\210b\220\001\330\010\021\220\021\330\004\007\200\177\220b\230\002\230$\230g\240R\240q\330\010\021\220\021\330\004\007\200~\220R\220q\330\010\021\220\021\330\004\013\2101";
     PyObject *data = NULL;
     #define __Pyx_DecompressString_UNUSED
     #define __Pyx_DecompressString_LZSS_UNUSED
     #endif
     PyObject **stringtab = __pyx_mstate->__pyx_string_tab;
     Py_ssize_t pos = 0;
-    for (int i = 0; i < 110; i++) {
+    for (int i = 0; i < 111; i++) {
       Py_ssize_t bytes_length = str_length_index[i].length;
       PyObject *string = PyUnicode_DecodeUTF8(bytes + pos, bytes_length, NULL);
       if (likely(string) && i >= 5) PyUnicode_InternInPlace(&string);
@@ -9462,8 +9497,8 @@ static const char bytes[] = ".?Note that Cython is deliberately stricter than PE
       stringtab[i] = string;
       pos += bytes_length;
     }
-    for (int i = 110; i < 123; i++) {
-      Py_ssize_t bytes_length = bytes_length_index[i-110].length;
+    for (int i = 111; i < 124; i++) {
+      Py_ssize_t bytes_length = bytes_length_index[i-111].length;
       PyObject *string = PyBytes_FromStringAndSize(bytes + pos, bytes_length);
       stringtab[i] = string;
       pos += bytes_length;
@@ -9473,14 +9508,14 @@ static const char bytes[] = ".?Note that Cython is deliberately stricter than PE
       }
     }
     Py_XDECREF(data);
-    for (Py_ssize_t i = 0; i < 123; i++) {
+    for (Py_ssize_t i = 0; i < 124; i++) {
       if (unlikely(PyObject_Hash(stringtab[i]) == -1)) {
         __PYX_ERR(0, 1, __pyx_L1_error)
       }
     }
     #if CYTHON_IMMORTAL_CONSTANTS
     {
-      PyObject **table = stringtab + 110;
+      PyObject **table = stringtab + 111;
       for (Py_ssize_t i=0; i<13; ++i) {
         #if PY_VERSION_HEX >= 0x030F0000
         PyUnstable_SetImmortal(table[i]);
@@ -9628,7 +9663,7 @@ static int __Pyx_CreateCodeObjects(__pyx_mstatetype *__pyx_mstate) {
     __pyx_mstate_global->__pyx_codeobj_tab[11] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_soundrts_combat_combat_fast_pyx, __pyx_mstate->__pyx_n_u_can_attack_if_in_range, __pyx_mstate->__pyx_kp_b_iso88591_t6_m3a_4q_U_T_3a_Q_vS_q_5_4q_wg, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[11])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {3, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 344};
+    const __Pyx_PyCode_New_function_description descr = {3, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 349};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_base_dg, __pyx_mstate->__pyx_n_u_dg_vs, __pyx_mstate->__pyx_n_u_target};
     __pyx_mstate_global->__pyx_codeobj_tab[12] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_soundrts_combat_combat_fast_pyx, __pyx_mstate->__pyx_n_u_compute_damage_vs, __pyx_mstate->__pyx_kp_b_iso88591_F_z_E_Qa_2WA_82_F_WA_E_T_r_xr_A, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[12])) goto bad;
   }
