@@ -95,6 +95,84 @@ class Entity:
     is_a_cloaker = False
     cloaking_range = 6 * PRECISION
 
+    # ------------------------------------------------------------------
+    # Stealth: "attacking breaks stealth" (AoE3 spy / ninja / jaguar
+    # stalker style).
+    #
+    # ``reveal_stealth_on_attack`` (rules, int): 1 = attacking while
+    # invisible or cloaked exposes the unit for ``stealth_reveal_time``
+    # milliseconds. 0 = the unit keeps its stealth (legacy default).
+    #
+    # ``stealth_reveal_time`` (rules, precision-scaled seconds): how long
+    # the unit stays exposed. 0 means "stays exposed forever".
+    #
+    # While the reveal window is active the unit shadows the class-level
+    # ``is_invisible`` / ``is_cloaked`` / ``is_cloakable`` attributes with
+    # instance-level overrides, so both the Python and the Cython
+    # perception paths see it as a regular, visible unit.
+    # ------------------------------------------------------------------
+    reveal_stealth_on_attack = 0
+    stealth_reveal_time = 3 * PRECISION
+    # Absolute world time (ms) at which the reveal window ends.
+    _stealth_revealed_until = 0
+    # Saved natural state, restored when the reveal window expires.
+    _stealth_saved_invisible = None
+    _stealth_saved_cloakable = None
+    _stealth_saved_cloaked = None
+
+    def _reveal_stealth(self, now):
+        """Expose this unit for ``stealth_reveal_time`` ms.
+
+        No-op when the unit is not stealthed at all, or when the rules
+        knob ``reveal_stealth_on_attack`` is 0. Calling it again while
+        the window is active refreshes the timer.
+
+        Returns True when the unit is currently exposed.
+        """
+        if not getattr(self, "reveal_stealth_on_attack", 0):
+            return False
+        revealed_until = getattr(self, "_stealth_revealed_until", 0)
+        # Already revealed: just refresh the timer.
+        if revealed_until and revealed_until > now:
+            self._stealth_revealed_until = self._stealth_reveal_deadline(now)
+            return True
+        if not (self.is_invisible or self.is_cloaked):
+            return False
+        # Save the natural state so it can be restored later.
+        self._stealth_saved_invisible = self.is_invisible
+        self._stealth_saved_cloakable = self.is_cloakable
+        self._stealth_saved_cloaked = self.is_cloaked
+        self._stealth_revealed_until = self._stealth_reveal_deadline(now)
+        # Expose: instance-level overrides shadow the class attributes, so
+        # both the Python and the Cython perception fast paths see the unit
+        # as visible.
+        self.is_invisible = False
+        self.is_cloaked = False
+        # Also block the cloaker from re-cloaking the unit meanwhile.
+        self.is_cloakable = False
+        return True
+
+    def _stealth_reveal_deadline(self, now):
+        """Absolute world time (ms) at which the reveal window ends."""
+        duration = getattr(self, "stealth_reveal_time", 0)
+        if duration is None or duration <= 0:
+            # "stays exposed forever"
+            return now + 2 ** 62
+        return now + duration
+
+    def _end_stealth_reveal(self):
+        """Restore the natural stealth state after the reveal window."""
+        if getattr(self, "_stealth_saved_invisible", None) is None:
+            return False
+        self.is_invisible = self._stealth_saved_invisible
+        self.is_cloakable = self._stealth_saved_cloakable
+        self.is_cloaked = self._stealth_saved_cloaked
+        self._stealth_saved_invisible = None
+        self._stealth_saved_cloakable = None
+        self._stealth_saved_cloaked = None
+        self._stealth_revealed_until = 0
+        return True
+
     # class-level 默认: 让 getattr(x, 'is_an_exit', False) 在热路径上
     # (worldplayercomputer2.play 29M calls) 直接命中类属性, 而不是触发
     # __getattribute__ + AttributeError 慢路径. Exit 子类 override 为 True.

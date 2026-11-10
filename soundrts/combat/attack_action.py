@@ -888,6 +888,10 @@ class AttackActionMixin:
             # 立即应用伤害（显式标记为近战冲锋，避免 receive_hit 内部基于距离误判）
             damage_target = self._resolve_damage_target(target)
             if damage_target is not None:
+                # 冲锋也会暴露隐形单位（AoE3 风格：攻击即破隐）
+                reveal = getattr(self, "_reveal_stealth", None)
+                if reveal is not None:
+                    reveal(now)
                 damage_target.receive_hit(charge_damage, self, notify=True, is_charge=True, is_melee=True)
             
             # 恢复原始通知方法
@@ -953,6 +957,10 @@ class AttackActionMixin:
             self.notify = charge_notify
             
             # 立即应用伤害（显式标记为远程冲锋）
+            # 冲锋也会暴露隐形单位（AoE3 风格：攻击即破隐）
+            reveal = getattr(self, "_reveal_stealth", None)
+            if reveal is not None:
+                reveal(now)
             target.receive_hit(charge_damage, self, notify=True, is_charge=True, is_melee=False)
             
             # 恢复原始通知方法

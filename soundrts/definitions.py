@@ -1059,6 +1059,11 @@ _precision_properties = {
     "xp_reward_per_xp",
     "revival_time",
     "revival_time_per_level",
+    # Stealth: how long (in seconds; PRECISION-scaled to milliseconds) a
+    # stealthed unit stays exposed after it attacks. 0 = never re-cloak
+    # (permanent exposure). Only meaningful when ``reveal_stealth_on_attack``
+    # is 1.
+    "stealth_reveal_time",
 }
 
 _precision_properties_extended = _precision_properties.union(
@@ -1559,6 +1564,10 @@ class Rules(_Definitions):
         "aura_speed_bonus_pct",  # aura: % speed bonus applied to the targets
         "is_invisible",
         "is_cloakable",
+        # Stealth: 1 = attacking while invisible/cloaked exposes the unit for
+        # ``stealth_reveal_time`` seconds (AoE3-style "attack breaks stealth").
+        # 0 = attacking does not break stealth (default for legacy rules).
+        "reveal_stealth_on_attack",
         # D-Phase 2: rules-driven "fire on the move" toggle for ranged units
         # (AoE2 Kipchak/Conquistador: 1 = keep advancing while firing, don't stop to aim).
         "can_fire_on_move",

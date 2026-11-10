@@ -154,6 +154,18 @@ class WorldGameMixin:
                 clear_vis()
 
     def _update_cloaking(self):
+        # --- Stealth reveal expiry -------------------------------------
+        # A unit that attacked while stealthed stays exposed until
+        # ``_stealth_revealed_until``. When the window ends, the natural
+        # state (invisible / cloakable / cloaked) is restored.
+        now = self.time
+        for p in self.players:
+            for u in p.units:
+                until = getattr(u, "_stealth_revealed_until", 0)
+                if until and now >= until:
+                    end = getattr(u, "_end_stealth_reveal", None)
+                    if end is not None:
+                        end()
         for p in self.players:
             for u in p.units:
                 if u.is_cloakable:

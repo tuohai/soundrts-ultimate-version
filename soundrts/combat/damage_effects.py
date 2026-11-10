@@ -634,6 +634,10 @@ class DamageEffectsMixin(DamageCalculationMixin):
 
     def _schedule_ballistic_hit(self, target, damage_delay_ms: int, is_melee=False):
         """调度一次攻击序列"""
+        # 攻击即破隐（AoE3 风格）：近战/远程普攻发起时暴露隐形单位
+        reveal = getattr(self, "_reveal_stealth", None)
+        if reveal is not None:
+            reveal(self.world.time)
         # 获取投射物标记
         is_projectile = (is_melee and self.mdg_projectile) or (not is_melee and self.rdg_projectile)
 
