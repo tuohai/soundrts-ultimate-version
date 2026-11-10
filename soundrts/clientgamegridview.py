@@ -11,6 +11,11 @@ from .worldentity import COLLISION_RADIUS
 R = 3
 R2 = 9
 
+# _paint_object 里 radius 只取决于 kind，预计算避免每次 max() 调用
+_R_UNIT = max(3, R // 2)
+_R_BUILDING = max(4, int(R * 0.85))
+_R_RESOURCE = max(3, int(R * 0.7))
+
 # display_objects 图层：空地 → 资源 → 建筑 → 单位
 _KIND_LAYER = {"land": 0, "resource": 1, "building": 2, "unit": 3}
 
@@ -80,8 +85,40 @@ def filter_box_selection(units):
     return [o for t, o in ranked if t == best]
 
 
+_ICON_SIZE_MEMO = {}
+# Flat index for the ``kind`` argument so the memo needs only two dict
+# lookups (cell -> kind -> crowd -> size) instead of three.
+_KIND_INDEX = {"unit": 0, "building": 1, "resource": 2, "land": 3}
+
+
 def map_icon_size_for(cell_px, kind, crowd=1):
-    """Sprite size in pixels. Units shrink when many share a square."""
+    """Sprite size in pixels. Units shrink when many share a square.
+
+    Hot path: 41M calls / 40min cw1 profile (133M ``max()`` calls). The
+    result is a pure function of ``(cell_px, kind, crowd)``, so it is
+    memoized. ``crowd`` is bounded by the units sharing one square, and
+    ``cell_px`` changes only when the zoom/cell size changes, so the
+    memo stays small in practice; it is cleared when it grows too big.
+
+    Round 6: the memo is nested (``cell_px -> kind -> crowd -> size``)
+    instead of a flat ``(cell_px, kind, crowd)`` tuple key. Building a
+    3-tuple per call (4.9M calls / 10min cw1 profile) cost more than the
+    two extra dict lookups it replaced.
+
+    Round 7: the ``cell_px`` level of the nest was merged into the
+    ``kind`` level (``(cell_px * 4 + kind_index) -> crowd -> size``), so a
+    lookup is two dict gets instead of three.
+    """
+    ki = _KIND_INDEX.get(kind)
+    if ki is None:
+        ki = 3
+    by_kind = _ICON_SIZE_MEMO.get(cell_px * 4 + ki)
+    if by_kind is None:
+        by_kind = {}
+        _ICON_SIZE_MEMO[cell_px * 4 + ki] = by_kind
+    hit = by_kind.get(crowd)
+    if hit is not None:
+        return hit
     radius = max(3, R // 2)
     size = max(radius * 2, 10)
     cell = cell_px
@@ -95,6 +132,9 @@ def map_icon_size_for(cell_px, kind, crowd=1):
     if kind == "unit" and crowd > 1:
         packed = max(8, int(cell * 0.65 / (crowd ** 0.5)))
         size = min(size, packed)
+    if len(by_kind) > 4096:
+        by_kind.clear()
+    by_kind[crowd] = size
     return size
 
 
@@ -102,12 +142,25 @@ def _kind_from_model(model):
     """Classify from the world model (no EntityView.__getattr__)."""
     if model is None:
         return "unit"
-    if getattr(model, "resource_type", None) is not None:
-        return "resource"
-    if getattr(model, "is_a_building", False):
-        return "building"
-    if getattr(model, "is_a_building_land", False):
-        return "land"
+    # Round 7: all world models are Entity subclasses, which now declare
+    # ``resource_type`` / ``is_a_building`` / ``is_a_building_land`` as
+    # class-level defaults. Plain attribute loads replace 3 getattr calls
+    # per object (54M getattr / 40min cw1 profile in this function).
+    try:
+        if model.resource_type is not None:
+            return "resource"
+        if model.is_a_building:
+            return "building"
+        if model.is_a_building_land:
+            return "land"
+    except AttributeError:
+        # Not an Entity (e.g. a test stub) — fall back to reflection.
+        if getattr(model, "resource_type", None) is not None:
+            return "resource"
+        if getattr(model, "is_a_building", False):
+            return "building"
+        if getattr(model, "is_a_building_land", False):
+            return "land"
     return "unit"
 
 
@@ -130,10 +183,21 @@ def stamp_map_view_cache(view, model):
 
 
 def _model_unplaced(model):
-    """True when the world object has no square and is not inside a transport."""
-    if getattr(model, "place", None) is not None:
-        return False
-    return not getattr(model, "is_inside", False)
+    """True when the world object has no square and is not inside a transport.
+
+    Hot path: 54.1M calls / 40min cw1 profile (17.4s, all getattr).
+    ``Entity.place`` is a class-level default (``None``) and ``is_inside``
+    is a property on Entity, so both are safe direct attribute reads.
+    """
+    try:
+        if model.place is not None:
+            return False
+    except AttributeError:
+        return True
+    try:
+        return not model.is_inside
+    except AttributeError:
+        return True
 
 
 _LABEL_SURF = {}
@@ -846,7 +910,16 @@ class GridView:
     def _color_from_model(self, model, selected=False, kind=None):
         if selected:
             return (80, 255, 120)  # 选中：亮绿
-        p = getattr(model, "player", None)
+        # Hot path: 46.7M calls / 40min cw1 profile (19.3s tottime + 12.1s
+        # in the getattr). Every world model has a ``player`` attribute
+        # (``Entity.player = None`` class default, overridden per instance),
+        # so a plain attribute read replaces the getattr-with-default slow
+        # path. Guard with try/except for the (never observed) case of a
+        # model object that is not an Entity at all.
+        try:
+            p = model.player
+        except AttributeError:
+            p = None
         if p is not None:
             cache = self._team_color_by_pid
             pid = id(p)
@@ -857,15 +930,17 @@ class GridView:
             if p is me:
                 c = (70, 210, 90)
             else:
-                allied = getattr(me, "allied", None)
-                if allied is not None and p in allied:
+                # Round 7: ``allied`` is set in Player.__init__, so a plain
+                # read replaces the getattr-with-default slow path.
+                allied = me.allied
+                if p in allied:
                     c = (70, 140, 255)
+                # 中立玩家（``computer_only ... neutral``）：不是敌人。
+                # ``player_is_an_enemy`` 只看 alliance，对 neutral 也返回
+                # True，所以必须在这里先判 neutral——否则中立建筑
+                # （战役的兰斯大教堂、城镇等）会被涂成敌方红色，
+                # 看起来像敌人的据点。
                 elif getattr(p, "neutral", False):
-                    # 中立玩家（``computer_only ... neutral``）：不是敌人。
-                    # ``player_is_an_enemy`` 只看 alliance，对 neutral 也返回
-                    # True，所以必须在这里先判 neutral——否则中立建筑
-                    # （战役的兰斯大教堂、城镇等）会被涂成敌方红色，
-                    # 看起来像敌人的据点。
                     c = (180, 180, 80)
                 elif p.player_is_an_enemy(me):
                     c = (230, 70, 60)
@@ -873,10 +948,18 @@ class GridView:
                     c = (180, 180, 80)
             cache[pid] = c
             return c
-        if kind == "resource" or getattr(model, "resource_type", None) is not None:
-            return (240, 200, 60)
-        if kind == "land" or getattr(model, "is_a_building_land", False):
-            return (90, 140, 70)
+        # Round 7: ``resource_type`` / ``is_a_building_land`` are Entity
+        # class-level defaults, so plain reads replace the getattr calls.
+        try:
+            if kind == "resource" or model.resource_type is not None:
+                return (240, 200, 60)
+            if kind == "land" or model.is_a_building_land:
+                return (90, 140, 70)
+        except AttributeError:
+            if kind == "resource" or getattr(model, "resource_type", None) is not None:
+                return (240, 200, 60)
+            if kind == "land" or getattr(model, "is_a_building_land", False):
+                return (90, 140, 70)
         return (150, 150, 155)
 
     def _object_kind(self, o):
@@ -1033,7 +1116,12 @@ class GridView:
     ):
         if screen is None:
             screen = get_screen()
-        oid = getattr(model, "id", None)
+        # Round 6: world models are Entity subclasses (id = None class
+        # default), so a plain attribute load replaces the getattr.
+        try:
+            oid = model.id
+        except AttributeError:
+            oid = None
         if selected is None:
             selected = oid is not None and oid in (self.interface.group or ())
         # Buildings / resources / land do not need per-frame lerp (35M calls).
@@ -1045,11 +1133,12 @@ class GridView:
             x, y = target_xy[0], target_xy[1]
         color = self._color_from_model(model, selected, kind)
 
-        radius = max(3, R // 2)
         if kind == "building":
-            radius = max(4, int(R * 0.85))
+            radius = _R_BUILDING
         elif kind == "resource":
-            radius = max(3, int(R * 0.7))
+            radius = _R_RESOURCE
+        else:
+            radius = _R_UNIT
 
         if now and oid is not None and now < self.fx.hurt_until.get(oid, 0):
             color = _blend(color, (255, 255, 255), 0.55)
@@ -1060,9 +1149,12 @@ class GridView:
         # （命令卡 icons 不参与地图绘制）
         crowd = 1
         if kind == "unit":
-            place = getattr(model, "place", None)
+            place = model.place
             crowd = self._unit_crowd.get(id(place) if place is not None else id(o), 1)
-        icon_size = self._map_icon_size(kind, crowd)
+        # Round 7: inline ``_map_icon_size`` — it is a one-line wrapper
+        # called 4.9M times / 10min cw1 profile, and the extra Python frame
+        # cost ~1.2s tottime there.
+        icon_size = map_icon_size_for(self.square_view_width, kind, crowd)
         used_sprite = False
         od = o.__dict__
         type_name = od.get("_map_type_name") or ""
@@ -1266,7 +1358,7 @@ class GridView:
         team_colors.clear()
 
         is_visible = self._is_object_visible
-        unplaced = _model_unplaced
+        crowd = {}
         for o in self.interface.dobjets.values():
             od = o.__dict__
             model = od.get("model")
@@ -1283,8 +1375,21 @@ class GridView:
                 item = (o, o, kind, xy, selected)
                 layer = layer_of.get(kind, 3)
                 (sel_buckets if selected else buckets)[layer].append(item)
+                if kind == "unit":
+                    key = id(o)
+                    crowd[key] = crowd.get(key, 0) + 1
                 continue
-            if unplaced(model):
+            # Round 7: inline ``_model_unplaced`` — it was a separate call
+            # for every object of every frame (5.7M calls / 10min cw1
+            # profile, 1.15s of pure call overhead).
+            try:
+                if model.place is not None:
+                    pass
+                elif model.is_inside:
+                    pass
+                else:
+                    continue
+            except AttributeError:
                 continue
             try:
                 xy = (int(ox0 + model.x * w2px), int(oy0 + ymax - model.y * h2px))
@@ -1297,21 +1402,38 @@ class GridView:
                 x, y = xy
                 if x < -margin or y < -margin or x > sw + margin or y > sh + margin:
                     continue
-            kind = od.get("_map_kind") or kind_of(model)
-            oid = getattr(model, "id", None)
+            kind = od.get("_map_kind")
+            if kind is None:
+                # Round 7: inline ``_kind_from_model`` — it was a separate
+                # call for every object of every frame (4.9M calls / 10min
+                # cw1 profile, 1.7s of pure call overhead).
+                try:
+                    if model.resource_type is not None:
+                        kind = "resource"
+                    elif model.is_a_building:
+                        kind = "building"
+                    elif model.is_a_building_land:
+                        kind = "land"
+                    else:
+                        kind = "unit"
+                except AttributeError:
+                    kind = kind_of(model)
+            # Round 6: world models are Entity subclasses, which declare
+            # ``id = None`` and ``place = None`` as class defaults, so plain
+            # attribute loads replace the getattr reflection.
+            try:
+                oid = model.id
+            except AttributeError:
+                oid = None
             selected = oid in group if oid is not None else False
             item = (o, model, kind, xy, selected)
             layer = layer_of.get(kind, 3)
             (sel_buckets if selected else buckets)[layer].append(item)
-
-        crowd = {}
-        for bucket in (*buckets, *sel_buckets):
-            for o, model, kind, _xy, _sel in bucket:
-                if kind != "unit":
-                    continue
-                place = getattr(model, "place", None)
+            if kind == "unit":
+                place = model.place
                 key = id(place) if place is not None else id(o)
                 crowd[key] = crowd.get(key, 0) + 1
+
         self._unit_crowd = crowd
         buckets[3].sort(key=lambda it: it[3][1])
         sel_buckets[3].sort(key=lambda it: it[3][1])
