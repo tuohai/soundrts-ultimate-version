@@ -306,6 +306,15 @@ class WorldGameMixin:
         self._update_buckets()
         self._update_cloaking()
         self._update_detection()
+        # Safety net for the aura-building registry (maintained incrementally
+        # by Player.add / Player.remove).  Without it the per-tick aura
+        # lookup had to scan every unit of every player.
+        try:
+            from ..world_aura import resync_aura_registry
+
+            resync_aura_registry(self)
+        except Exception:
+            pass
         
         # 决定性配额：按玩家 id 稳定顺序分帧更新，避免不同步
         players_snapshot = sorted(self.players, key=lambda _p: _p.id)

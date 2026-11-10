@@ -495,6 +495,15 @@ class Player(PerceptionCachesMixin):
             
         unit.number = unit.next_free_number()
         self.units.append(unit)
+        # Keep the world's aura-building registry in sync (see world_aura.py).
+        # The registry replaces a full scan of every unit of every player on
+        # every tick, which dominated the 40-minute cw1 profile.
+        try:
+            from ..world_aura import register_aura_building
+
+            register_aura_building(unit)
+        except Exception:
+            pass
         self.population += unit.population_provided
         # AoE2 DE Slavs team bonus: "Military buildings (except Castles)
         # provide +5 population space".  The extra headroom is granted per
@@ -547,6 +556,13 @@ class Player(PerceptionCachesMixin):
 
     def remove(self, unit):
         self.units.remove(unit)
+        # Keep the world's aura-building registry in sync (see world_aura.py).
+        try:
+            from ..world_aura import unregister_aura_building
+
+            unregister_aura_building(unit)
+        except Exception:
+            pass
         # Mongol Nomads: destroyed houses keep their population headroom.
         retain_house_pop = (
             unit.population_provided

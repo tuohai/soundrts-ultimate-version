@@ -15,6 +15,9 @@ WORLD_STRIP_ON_SAVE = (
     "quad_trees",
     "_sights_cache",
     "_sights_cache_bucket",
+    # Aura-building registry: keyed by id(unit), so it must be rebuilt from
+    # the live unit tables after a load (see world_aura.aura_buildings).
+    "_aura_buildings",
 )
 
 SQUARE_STRIP_ON_SAVE = (
@@ -527,6 +530,10 @@ def rebuild_world_after_load(world) -> None:
     world._create_graphs()
     world._sights_cache = {}
     world._sights_cache_bucket = -1
+    # The aura registry is stripped on save (it is keyed by id(unit)); make
+    # sure it exists so the first lookup rebuilds it from the live units.
+    world._aura_buildings = {}
+    world._aura_registry_time = 0
     for key in ("region_graph", "region_portals", "quad_trees"):
         world.__dict__.pop(key, None)
     for player in getattr(world, "players", ()):

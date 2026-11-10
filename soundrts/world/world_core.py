@@ -141,6 +141,12 @@ class World:
         # simulations forked.
         self._decision_cache = {}
         self._decision_cache_bucket = -1
+        # Registry of the world's aura buildings (id(unit) -> unit).
+        # Maintained by ``Player.add`` / ``Player.remove``; re-synced
+        # periodically by ``world_aura.aura_buildings``.  Without it the
+        # per-tick aura lookup scanned every unit of every player.
+        self._aura_buildings = {}
+        self._aura_registry_time = 0
         self.random = random.Random()
         self.random.seed(int(seed))
         self.time = 0

@@ -37,6 +37,12 @@ DEFAULT_TILE_UNITS = 12
 #: How often the per-unit speed-aura cache is refreshed (ms).
 AURA_CACHE_MS = 500
 
+#: How often the world's aura-building registry is re-synced from the live
+#: unit tables (ms of world time).  The registry is maintained incrementally
+#: by ``Player.add`` / ``Player.remove``; this resync is the safety net that
+#: makes a missed add/remove harmless.
+AURA_REGISTRY_RESYNC_MS = 5000
+
 
 def _tile_units(world) -> int:
     """Engine units per map tile (the world's ``square_width``)."""
@@ -91,6 +97,104 @@ def is_aura_building(unit) -> bool:
     return int(getattr(unit, "aura_radius", 0) or 0) > 0
 
 
+def register_aura_building(unit) -> None:
+    """Add *unit* to its world's aura-building registry.
+
+    The registry is the only thing the per-tick aura lookup has to walk.
+    Without it ``aura_speed_bonus_pct`` had to scan *every unit of every
+    player* on every tick (1.2e8 ``is_aura_building`` calls in a 40-minute
+    cw1 match) just to discover that the map contains no aura building at
+    all.
+    """
+    if not is_aura_building(unit):
+        return
+    world = getattr(unit, "world", None)
+    if world is None:
+        return
+    registry = getattr(world, "_aura_buildings", None)
+    if registry is None:
+        registry = {}
+        try:
+            world._aura_buildings = registry
+        except Exception:
+            return
+    try:
+        registry[id(unit)] = unit
+    except Exception:
+        pass
+
+
+def unregister_aura_building(unit) -> None:
+    """Remove *unit* from its world's aura-building registry."""
+    world = getattr(unit, "world", None)
+    if world is None:
+        return
+    registry = getattr(world, "_aura_buildings", None)
+    if not registry:
+        return
+    try:
+        registry.pop(id(unit), None)
+    except Exception:
+        pass
+
+
+def _rescan_aura_buildings(world, registry) -> None:
+    """Rebuild the registry from the live unit tables (drift safety net)."""
+    registry.clear()
+    for unit in _all_units(world):
+        if is_aura_building(unit):
+            registry[id(unit)] = unit
+    try:
+        world._aura_registry_time = int(getattr(world, "time", 0) or 0)
+    except Exception:
+        pass
+
+
+def aura_buildings(world):
+    """The world's registered aura buildings (empty dict when there are none).
+
+    The registry is maintained incrementally by ``Player.add`` /
+    ``Player.remove`` and re-synced once per tick by
+    ``world_aura.resync_aura_registry``.  This function is a plain lookup so
+    it stays cheap enough for the per-unit hot path.
+    """
+    if world is None:
+        return ()
+    registry = getattr(world, "_aura_buildings", None)
+    if registry is None:
+        registry = {}
+        try:
+            world._aura_buildings = registry
+        except Exception:
+            pass
+    return registry
+
+
+def resync_aura_registry(world) -> None:
+    """Re-sync the world's aura-building registry from the live unit tables.
+
+    The registry is maintained incrementally by ``Player.add`` /
+    ``Player.remove``; this resync is the safety net that makes a missed
+    add/remove harmless (e.g. a unit that entered the world outside the
+    normal path).  It runs at most once every ``AURA_REGISTRY_RESYNC_MS``
+    of world time.
+    """
+    if world is None:
+        return
+    now = int(getattr(world, "time", 0) or 0)
+    last = getattr(world, "_aura_registry_time", None)
+    if last is not None and now - last < AURA_REGISTRY_RESYNC_MS:
+        return
+    registry = aura_buildings(world)
+    if not isinstance(registry, dict):
+        registry = {}
+        try:
+            world._aura_buildings = registry
+        except Exception:
+            return
+    _rescan_aura_buildings(world, registry)
+
+
 def _matches_targets(unit, targets) -> bool:
     if not targets:
         return False
@@ -119,12 +223,10 @@ def _aura_buildings_near(unit):
     world = getattr(unit, "world", None)
     if world is None:
         return []
-    out = []
     cx = getattr(unit, "x", 0)
     cy = getattr(unit, "y", 0)
-    for other in _all_units(world):
-        if not is_aura_building(other):
-            continue
+    out = []
+    for other in aura_buildings(world).values():
         radius = aura_radius_mm(other)
         if radius <= 0:
             continue
@@ -139,16 +241,41 @@ def aura_speed_bonus_pct(unit) -> int:
     Several auras do not stack (DE behaviour): the strongest one wins.
     The result is cached for ``AURA_CACHE_MS`` because the movement code
     asks for it on every tick.
+
+    Hot path: 33.8M getattr calls / 40min cw1 profile. ``unit.world`` is
+    set by ``Entity.__init__`` and ``world.time`` is a plain instance
+    attribute, and ``_aura_speed_cache`` has a class-level default on
+    ``Entity`` — so all three can be read directly instead of through
+    ``getattr`` with a default.
     """
     if unit is None:
         return 0
-    world = getattr(unit, "world", None)
+    try:
+        world = unit.world
+    except AttributeError:
+        return 0
     if world is None:
         return 0
-    now = int(getattr(world, "time", 0) or 0)
-    cache = getattr(unit, "_aura_speed_cache", None)
+    try:
+        now = int(world.time)
+    except AttributeError:
+        now = 0
+    try:
+        cache = unit._aura_speed_cache
+    except AttributeError:
+        cache = None
     if cache is not None and now - cache[0] < AURA_CACHE_MS:
         return cache[1]
+
+    # Fast path: the map has no aura building at all (the common case).
+    # Returning here skips the whole lookup — this was the single hottest
+    # path in a 40-minute cw1 match.
+    if not aura_buildings(world):
+        try:
+            unit._aura_speed_cache = (now, 0)
+        except Exception:
+            pass
+        return 0
 
     pct = 0
     try:
