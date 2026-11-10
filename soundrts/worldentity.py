@@ -141,6 +141,46 @@ class Entity:
     _attacker_terrain_type = None
     is_moving = False
 
+    # Per-unit cache of the last aura speed lookup: ``(world_time_ms, pct)``.
+    # Declared here so ``world_aura.aura_speed_bonus_pct`` can read it with a
+    # plain attribute load (33.8M getattr calls / 40min cw1 profile).
+    _aura_speed_cache = None
+
+    # Round 6: hot-path class-level defaults. These attributes are read via
+    # ``getattr(obj, name, default)`` in the AI/perception hot paths, where
+    # the objects iterated are a mix of Creature / Deposit / BuildingLand /
+    # Item / Corpse (all Entity subclasses) plus ``copy.copy`` memory copies
+    # of them. Declaring the defaults on Entity lets those call sites use a
+    # plain attribute load instead of a reflection call:
+    #   is_huntable / herdable / claimable : wildlife & livestock flags
+    #   production_item                    : item a building drops on completion
+    #   presence                           : "does this unit count as present"
+    #   _formation_speed_cap               : keep_pace formation speed cap
+    # The Creature subclass already overrides these with the same values.
+    is_huntable = 0
+    herdable = 0
+    claimable = 0
+    production_item = None
+    presence = 1
+    _formation_speed_cap = 0
+    # Round 7: ``_formation_combat_spec`` is only bound while a unit stands
+    # in a ``class formation`` slot; ``world_formation.break_formation_hold``
+    # clears it back to None. Declaring the default on Entity lets the hot
+    # paths (2.5M calls / 10min cw1 profile in
+    # ``_speed_with_formation_cap`` alone) use a plain attribute read
+    # instead of ``getattr(unit, "_formation_combat_spec", None)``.
+    _formation_combat_spec = None
+    # Round 7: ``expanded_is_a`` is the resolved ``is_a`` chain of a unit
+    # (set on Creature at init, empty for every other Entity kind). The
+    # default lets ``Player.check_type`` read it without a getattr
+    # (1.9M calls / 10min cw1 profile).
+    expanded_is_a = ()
+    # Round 7: ``resource_type`` marks a gatherable deposit. ``Deposit`` and
+    # the resource-bearing Creature subclasses already declare it; promoting
+    # the default to Entity lets the display hot path (54M getattr calls /
+    # 40min cw1 profile in ``_kind_from_model``) use a plain attribute load.
+    resource_type = None
+
     def __repr__(self):
         return "%s()" % self.__class__.__name__
 
