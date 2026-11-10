@@ -8650,7 +8650,7 @@ can_research war_galley galleon fire_ship fast_fire_ship demolition_ship heavy_d
 def magyar_castle
 is_a aoe_castle
 can_train magyar_huszar trebuchet
-can_research mercenaries corvinian_army recurve_bow elite_magyar_huszar conscription hoardings sappers spies
+can_research corvinian_army recurve_bow elite_magyar_huszar conscription hoardings sappers spies
 
 def magyar_knight
 is_a aoe_knight
