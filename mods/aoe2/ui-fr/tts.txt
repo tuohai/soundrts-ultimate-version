@@ -866,3 +866,13 @@
 9119 Charrette de mulet
 9120 Église fortifiée
 9121 Établissement
+9122 Compagnies d'ordonnance
+9123 Cranequins
+9124 Pirotechnia
+9125 Arbalétrier monté
+9126 Arbalétrier monté lourd
+9127 Milicien flamand
+9128 Chamelier incendiaire
+9129 Prêtre guerrier
+9130 Navire Dragon
+9131 Savaran

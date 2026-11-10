@@ -866,3 +866,13 @@
 9119 Mulkarrren
 9120 Befestigte Kirche
 9121 Siedlung
+9122 Ordonnanzkompanien
+9123 Armbrustspanner
+9124 Pirotechnologien
+9125 Berittener Armbrustschütze
+9126 Schwerer berittener Armbrustschütze
+9127 Flämischer Milizsoldat
+9128 Brandkamel
+9129 Kriegerpriester
+9130 Drachenboot
+9131 Savar

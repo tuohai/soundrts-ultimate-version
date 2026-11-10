@@ -3021,3 +3021,75 @@ def fabric_shields
 title 9106
 def andean_sling
 title 9107
+
+; ===========================================================================
+; AoE2 DE units / technologies that still lacked a style block.
+; Every trainable / selectable unit needs a ``title`` (TTS id), a
+; ``keyboard`` group (hotkey page) and a ``shortcut`` (hotkey letter).
+; Without a style def the type inherits nothing, so the order menu stayed
+; silent (``style.get(type, "title")`` returned nothing) — this is what
+; made the Frankish Castle tech "Ordonnance Companies" speak nothing.
+; Free TTS title ids: 9122-9131.
+; ===========================================================================
+
+; 法兰克 王家敕令骑兵 Ordonnance Companies (DE tech 1496, Castle Age)
+def ordonnance_companies
+title 9122
+
+; 弩机 Cranequins (DE tech 1452, Archery Range, Imperial Age)
+def cranequins
+title 9123
+
+; 意大利 烟火之术 Pirotechnia (DE tech 902, Castle, Imperial Age)
+def pirotechnia
+title 9124
+
+; 骑马弩兵 Mounted Crossbowman (DE unit 2700, Archery Range, Castle Age).
+; A mounted archer, so it sits in the cavalry (soldier3) hotkey page.
+def mounted_crossbowman
+is_a cavalry_archer
+title 9125
+
+; 重装骑马弩兵 Heavy Mounted Crossbowman (DE unit_upgrades 1451)
+def heavy_mounted_crossbowman
+is_a mounted_crossbowman
+title 9126
+
+; 弗拉芒民兵 Flemish Militia (Burgundians, DE unit 14542)
+def flemish_militia
+is_a militia
+title 9127
+
+; 火焰骆驼 Flaming Camel (Tatars, DE unit 14375).  A demolition siege
+; camel: it charges like the camel line but deals melee splash damage,
+; so it uses the camel movement / death sounds and the cavalry melee
+; attack sounds.
+def flaming_camel
+is_a camel_rider
+title 9128
+launch_mdg 12349
+mdg_hit 1040 1041 10391
+
+; 牧师战士 Warrior Priest (Armenians, DE unit 14037).  A monk that fights,
+; so it keeps the monk spawn sound but uses the infantry melee sounds.
+def warrior_priest
+is_a monk
+title 9129
+launch_mdg 76728
+mdg_hit 1040 1041 76737
+keyboard soldier6
+shortcut m
+
+; 龙舟 Dragon Ship (Chinese, DE unit 14739) — a fire ship.
+def dragon_ship
+is_a fire_ship
+title 9130
+
+; 萨瓦尔 Savar (Persians, DE unit 14703) — a heavy cavalry line upgrade.
+def savar
+is_a cavalier
+title 9131
+
+; 保加利亚磨坊 Bulgarian Mill — the same 磨坊 as every other mill.
+def bulgarian_mill
+is_a mill

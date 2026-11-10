@@ -866,3 +866,13 @@
 9119 Carro de mulas
 9120 Iglesia fortificada
 9121 Asentamiento
+9122 Compañías Ordenanza
+9123 Molinetes
+9124 Pirotecnia
+9125 Ballestero montado
+9126 Ballestero montado pesado
+9127 Milicia flamenca
+9128 Camello llameante
+9129 Sacerdote guerrero
+9130 Bote dragón
+9131 Savar

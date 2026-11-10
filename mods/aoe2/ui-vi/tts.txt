@@ -866,3 +866,13 @@
 9119 Xe trâu
 9120 Nhà thờ phòng thủ
 9121 Khu định cư
+9122 Đại đội Ordonnance
+9123 Dụng cụ kéo dây nỏ
+9124 Hỏa thương
+9125 Nỏ kỵ binh
+9126 Nỏ kỵ binh Hạng nặng
+9127 Dân binh Flemish
+9128 Lạc đà lửa
+9129 Linh mục chiến binh
+9130 Tàu rồng
+9131 Savar

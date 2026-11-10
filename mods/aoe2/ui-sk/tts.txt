@@ -866,3 +866,13 @@
 9119 Mulský vozík
 9120 Opevnený kostol
 9121 Osada
+9122 Ordonnance Companies
+9123 Cranequins
+9124 Pirotechnia
+9125 Mounted Crossbowman
+9126 Heavy Mounted Crossbowman
+9127 Flemish Militia
+9128 Flaming Camel
+9129 Warrior Priest
+9130 Dragon Ship
+9131 Savar

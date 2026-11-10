@@ -866,3 +866,13 @@
 9119 Carro de mula
 9120 Igreja fortificada
 9121 Assentamento
+9122 Companhias de Ordenança
+9123 Cranequins
+9124 Pirotecnia
+9125 Besteiro Montado
+9126 Besteiro Montado Pesado
+9127 Milícia Flamenga
+9128 Camelo Flamejante
+9129 Sacerdote Guerreiro
+9130 Barco Dragão
+9131 Savar

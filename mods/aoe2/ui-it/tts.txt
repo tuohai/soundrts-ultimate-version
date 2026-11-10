@@ -866,3 +866,13 @@
 9119 Carro di mulo
 9120 Chiesa fortificata
 9121 Insediamento
+9122 Compagnie d'ordonnance
+9123 Cranequin
+9124 Pirotecnia
+9125 Balestriere a cavallo
+9126 Balestriere a cavallo pesante
+9127 Milizia fiamminga
+9128 Cammello in fiamme
+9129 Sacerdote guerriero
+9130 Nave drago
+9131 Savaran

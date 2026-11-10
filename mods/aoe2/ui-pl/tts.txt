@@ -866,3 +866,13 @@
 9119 Wóz muli
 9120 Kościół obwarowany
 9121 Osada
+9122 Kompanie stanowione
+9123 Kołowrotki
+9124 Pirotechnika
+9125 Kusznik konny
+9126 Ciężki kusznik konny
+9127 Flamandzka straż obywatelska
+9128 Płonący wielbłąd
+9129 Wojowniczy kapłan
+9130 Smoczy okręt
+9131 Aswaran
