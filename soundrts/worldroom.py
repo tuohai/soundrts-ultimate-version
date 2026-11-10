@@ -476,26 +476,44 @@ class Square(_Space):
         # A* 使用 heapq，减少 priodict 的开销；保持跨机器确定性。
         # 启发式与 is_blocked 缓存查询走 Cython（如可用）以省闭包/属性查找开销。
         # Round 4: end/start/w 都是 Entity 子类, x/y/id 在基类有, 直接访问.
+        # Round 5: 启发式直接内联调用 int_distance（Cython cpdef）, 不再走
+        # lambda -> _rf.astar_heuristic 的 Python 边界（该闭包在 40min
+        # profile 中被调用 5557 万次, 单这一层就占 ~20s tottime）。
         end_x = end.x
         end_y = end.y
-        if _rf is not None:
-            _h = lambda n: _rf.astar_heuristic(n, end_x, end_y)
-        else:
-            def _h(n):
-                try:
-                    return int_distance(n.x, n.y, end_x, end_y)
-                except Exception:
-                    return 0
 
         g_score = {start: 0}
         came_from = {}
         open_heap = []  # (f, tie_breaker, node)
-        heappush(open_heap, (_h(start), int(start.id), start))
+        try:
+            h0 = int_distance(start.x, start.y, end_x, end_y)
+        except Exception:
+            h0 = 0
+        heappush(open_heap, (h0, int(start.id), start))
         closed = set()
 
-        # 本次寻路的局部阻挡缓存，避免对同一出口重复判断
+        # 本次寻路的局部阻挡缓存，避免对同一出口重复判断。
+        # Round 5: player_id 在单次调用内是常量，缓存键只需 id(node)；
+        # 省掉每次查询构造 (id, player_id) 元组的开销（2600 万次）。
         local_block_cache = {}
-        player_id = int(player.id) if player else 0
+        lb_get = local_block_cache.get
+
+        def _slow_blocked(node):
+            """Full ``is_blocked`` check, cached per A* call.
+
+            Only reached for exits that actually have blockers (walls /
+            gates), which are rare — the common case is handled inline at
+            the call sites below without any function call at all.
+            """
+            lk = id(node)
+            blocked = lb_get(lk)
+            if blocked is None:
+                try:
+                    blocked = node.is_blocked(player, ignore_enemy_walls=True)
+                except Exception:
+                    blocked = False
+                local_block_cache[lk] = blocked
+            return blocked
 
         while open_heap:
             _, _, v = heappop(open_heap)
@@ -505,18 +523,34 @@ class Square(_Space):
             # 同一 A* 调用内 v 可能多次入堆 (从不同方向), cache 复用首次结果.
             # 配合下面 neighbors 检查共用一份 local_block_cache, 命中率显著提升.
             # 仅 Exit 有 is_blocked；用 is_an_exit 替代 hasattr (千万级调用)。
+            #
+            # Round 7: the blocked-check used to be a closure call. At 240M
+            # calls / 40min cw1 profile that was 19.9s of pure call overhead
+            # plus another 19.9s in the getattr() fallback. The check is now
+            # inlined at both use sites:
+            #   * no blockers on either side -> not blocked (the common case,
+            #     walls/gates are rare on a map of ~50k exits);
+            #   * otherwise fall back to the cached full ``is_blocked``.
+            # The semantics match ``Exit.is_blocked`` exactly.
             if player and v.is_an_exit:
-                if _rf is not None:
-                    v_blocked = _rf.cached_is_blocked(v, player, local_block_cache, player_id)
+                if v.is_blocked_by_forests:
+                    v_blocked = True
+                elif v._blockers:
+                    v_blocked = _slow_blocked(v)
                 else:
-                    lk = (id(v), player_id)
-                    v_blocked = local_block_cache.get(lk)
-                    if v_blocked is None:
+                    other = v._other_side
+                    if other is None:
+                        # ``other_side`` may raise AttributeError when the
+                        # Exit's world is gone; ``Exit.is_blocked`` swallows
+                        # that too, so treat it as "no partner".
                         try:
-                            v_blocked = v.is_blocked(player, ignore_enemy_walls=True)
-                        except Exception:
-                            v_blocked = False
-                        local_block_cache[lk] = v_blocked
+                            other = v.other_side
+                        except AttributeError:
+                            other = None
+                    if other is None or not other._blockers:
+                        v_blocked = False
+                    else:
+                        v_blocked = _slow_blocked(v)
             else:
                 v_blocked = False
             if v_blocked or (avoid_fn is not None and avoid_fn(v)):
@@ -529,19 +563,23 @@ class Square(_Space):
             neighbors = G.get(v, {})
             g_v = g_score.get(v, 0)
             for w, edge_cost in neighbors.items():
-                # 使用局部阻挡缓存（Cython 加速时走 cached_is_blocked）
+                # 使用局部阻挡缓存（id-only 键，省元组构造）
                 if player and w.is_an_exit:
-                    if _rf is not None:
-                        blocked = _rf.cached_is_blocked(w, player, local_block_cache, player_id)
+                    if w.is_blocked_by_forests:
+                        blocked = True
+                    elif w._blockers:
+                        blocked = _slow_blocked(w)
                     else:
-                        lk = (id(w), player_id)
-                        blocked = local_block_cache.get(lk)
-                        if blocked is None:
+                        other = w._other_side
+                        if other is None:
                             try:
-                                blocked = w.is_blocked(player, ignore_enemy_walls=True)
-                            except Exception:
-                                blocked = False
-                            local_block_cache[lk] = blocked
+                                other = w.other_side
+                            except AttributeError:
+                                other = None
+                        if other is None or not other._blockers:
+                            blocked = False
+                        else:
+                            blocked = _slow_blocked(w)
                 else:
                     blocked = False
                 if blocked or (avoid_fn is not None and avoid_fn(w)):
@@ -551,7 +589,10 @@ class Square(_Space):
                 if tentative_g < g_score.get(w, 1 << 60):
                     came_from[w] = v
                     g_score[w] = tentative_g
-                    f = tentative_g + _h(w)
+                    try:
+                        f = tentative_g + int_distance(w.x, w.y, end_x, end_y)
+                    except Exception:
+                        f = tentative_g
                     heappush(open_heap, (f, int(w.id), w))
 
         # restore the graph
@@ -585,7 +626,9 @@ class Square(_Space):
         if places:
             result = []
             for e in Path:
-                if hasattr(e, "other_side"):
+                # Round 5: 用 is_an_exit 判定 Exit（类级 bool），替代
+                # hasattr(e, "other_side") 的反射慢路径（920 万次）。
+                if e.is_an_exit:
                     result.append(e.place)
                 elif hasattr(e, "strict_neighbors"):
                     result.append(e)
@@ -615,14 +658,8 @@ class Square(_Space):
         G = self.world.g["ground"]
         end_x = dest.x
         end_y = dest.y
-        if _rf is not None:
-            _h = lambda n: _rf.astar_heuristic(n, end_x, end_y)
-        else:
-            def _h(n):
-                try:
-                    return int_distance(n.x, n.y, end_x, end_y)
-                except Exception:
-                    return 0
+        # Round 5: 启发式直接内联 int_distance（Cython cpdef），去掉
+        # lambda -> _rf.astar_heuristic 的 Python 边界调用层。
 
         # Hot budget shared across pathfinds this tick. Read once at start;
         # a tick-wide budget lets us bound the *aggregate* A* cost.
@@ -648,9 +685,9 @@ class Square(_Space):
         open_heap = []
         closed = set()
         local_block_cache = {}
-        player_id = int(player.id) if player else 0
         # 优化：所有 G.get(v, {}) 返回的都是 Exit，直接走 is_blocked；
-        # 同时 id-based dict.get 比 tuple key 快 ~30%（CPython 3.11）
+        # Round 5: player_id 在单次调用内是常量，缓存键只需 id(node)，
+        # 省掉每次查询构造 (id, player_id) 元组的开销（2600 万次）。
         lb_get = local_block_cache.get
         in_closed = closed.__contains__
         heap_push = heappush
@@ -659,15 +696,29 @@ class Square(_Space):
         def _blocked(node):
             if not player:
                 return False
+            # Round 7: inline the common case (no blockers on either side ->
+            # never blocked) so the 82M calls / 40min cw1 profile no longer
+            # pay for a closure call plus an id()+dict lookup each time.
+            if node.is_blocked_by_forests:
+                return True
+            if not node._blockers:
+                other = node._other_side
+                if other is None:
+                    try:
+                        other = node.other_side
+                    except AttributeError:
+                        other = None
+                if other is None or not other._blockers:
+                    return False
             lk = id(node)
-            blocked = lb_get((lk, player_id))
+            blocked = lb_get(lk)
             if blocked is not None:
                 return blocked
             try:
                 blocked = node.is_blocked(player, ignore_enemy_walls=True)
             except Exception:
                 blocked = False
-            local_block_cache[(lk, player_id)] = blocked
+            local_block_cache[lk] = blocked
             return blocked
 
         for e in self.exits:
@@ -676,7 +727,11 @@ class Square(_Space):
             g0 = int_distance(self.x, self.y, e.x, e.y)
             g_score[e] = g0
             came_from[e] = None
-            heappush(open_heap, (g0 + _h(e), int(e.id), e))
+            try:
+                h_e = int_distance(e.x, e.y, end_x, end_y)
+            except Exception:
+                h_e = 0
+            heap_push(open_heap, (g0 + h_e, int(e.id), e))
 
         # Best partial path (closest we've gotten to dest) for early exit.
         best_first = None
@@ -734,7 +789,11 @@ class Square(_Space):
                 if tentative_g < g_score.get(w, 1 << 60):
                     came_from[w] = v
                     g_score[w] = tentative_g
-                    heap_push(open_heap, (tentative_g + _h(w), int(w.id), w))
+                    try:
+                        h_w = int_distance(w.x, w.y, end_x, end_y)
+                    except Exception:
+                        h_w = 0
+                    heap_push(open_heap, (tentative_g + h_w, int(w.id), w))
 
         return None, float("inf")
 
