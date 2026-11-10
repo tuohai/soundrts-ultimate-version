@@ -69,13 +69,16 @@ class CreatureAIDecision(Entity):
         """Living huntable/herdable/claimable unit (wild or owned livestock)."""
         if other is None or other is self:
             return False
-        if getattr(other, "hp", 0) <= 0 or getattr(other, "player", None) is None:
+        # Round 6: Entity declares hp / player / is_huntable / herdable /
+        # claimable as class-level defaults, so plain attribute loads replace
+        # the getattr reflection. The try/except keeps the old "missing
+        # attribute -> default" behaviour for duck-typed objects.
+        try:
+            if other.hp <= 0 or other.player is None:
+                return False
+            return bool(other.is_huntable or other.herdable or other.claimable)
+        except AttributeError:
             return False
-        return bool(
-            getattr(other, "is_huntable", 0)
-            or getattr(other, "herdable", 0)
-            or getattr(other, "claimable", 0)
-        )
 
     def _is_approach_only_target(self, other):
         """Default/go should approach, not fight: neutrals and wildlife/livestock."""
@@ -200,9 +203,8 @@ class CreatureAIDecision(Entity):
         """狩猎动物或可驱赶牲畜（帝国时代式野生动物）。"""
         if unit is None:
             unit = CreatureAIDecision
-        return bool(
-            getattr(unit, "is_huntable", 0) or getattr(unit, "herdable", 0)
-        )
+        # Round 6: Entity declares is_huntable / herdable as class defaults.
+        return bool(unit.is_huntable or unit.herdable)
 
     def _wildlife_wander(self):
         """野生动物在出生点附近随机徘徊（帝国时代式行为）。"""
@@ -341,10 +343,23 @@ class CreatureAIDecision(Entity):
     def decide(self):
         """优化的单位AI决策逻辑"""
         # Unbound decide(stub) tests may not inherit CreatureAIDecision defaults.
-        if getattr(self, "_has_yielded", False):
-            return
-        if getattr(self, "herdable", 0):
-            leader = getattr(self, "_herd_leader", None)
+        # Round 6: try/except AttributeError is a zero-cost fast path in
+        # CPython 3.11+ and avoids the getattr() call overhead. decide() is
+        # called ~2.4M times / 10min cw1 profile with ~6 getattr calls each.
+        try:
+            if self._has_yielded:
+                return
+        except AttributeError:
+            pass
+        try:
+            herdable = self.herdable
+        except AttributeError:
+            herdable = 0
+        if herdable:
+            try:
+                leader = self._herd_leader
+            except AttributeError:
+                leader = None
             if (
                 leader is not None
                 and getattr(leader, "place", None) is not None
@@ -392,17 +407,28 @@ class CreatureAIDecision(Entity):
         self._last_decide_time = current_time
         self._next_decide_time = current_time + interval
 
-        if self._flee_on_hit_enabled() and self.last_attacker is not None:
-            if self._flee_from_attacker():
-                return
+        # Round 6: check ``last_attacker`` FIRST. It is None for the vast
+        # majority of decide() calls, so the short-circuit skips the
+        # _flee_on_hit_enabled() / _has_pursue_attacker() helper calls
+        # (~2.4M calls each / 10min cw1 profile).
+        if self.last_attacker is not None:
+            if self._flee_on_hit_enabled():
+                if self._flee_from_attacker():
+                    return
 
-        # pursue_attacker + pursue_leash_range: outrun → forget and go home
-        if self._has_pursue_attacker() and self.last_attacker is not None:
-            if self._pursue_target_too_far():
-                self._clear_pursue_aggro(return_home=True)
-                return
+            # pursue_attacker + pursue_leash_range: outrun → forget and go home
+            if self._has_pursue_attacker():
+                if self._pursue_target_too_far():
+                    self._clear_pursue_aggro(return_home=True)
+                    return
 
-        if self._wildlife_wander():
+        # Only wildlife units ever wander; check the flags inline before
+        # paying for the _wildlife_wander() call.
+        try:
+            is_wildlife = self.is_huntable or herdable
+        except AttributeError:
+            is_wildlife = herdable
+        if is_wildlife and self._wildlife_wander():
             return
 
         # 如果在载具内，选择载具位置的敌人
@@ -441,8 +467,17 @@ class CreatureAIDecision(Entity):
         # The cache lives on the world, not on the class: a live match and a
         # spectator rebuild share unit ids, so a class-level cache made the
         # spectator reuse the live world's attack target (and diverge).
-        world = getattr(self, "world", None)
-        world_cache = getattr(world, "_decision_cache", None) if world is not None else None
+        try:
+            world = self.world
+        except AttributeError:
+            world = None
+        if world is None:
+            world_cache = None
+        else:
+            try:
+                world_cache = world._decision_cache
+            except AttributeError:
+                world_cache = None
         if world_cache is None:
             decision_cache = self.__class__._decision_cache
             if self.__class__._decision_cache_bucket != decision_bucket:

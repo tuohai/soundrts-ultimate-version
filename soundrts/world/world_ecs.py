@@ -230,7 +230,9 @@ class WorldEcs:
                 continue
             # Only exit-blockers (doors/walls) need the expensive observed-square walk.
             # Class default blocked_exit=None on normal units — skip exit_vis entirely.
-            is_blocker = getattr(u, "blocked_exit", None) is not None
+            # Entity declares ``blocked_exit = None`` as a class default, so a
+            # plain attribute load replaces the getattr reflection.
+            is_blocker = u.blocked_exit is not None
             if vision_places is not None and pl not in vision_places:
                 if is_blocker and exit_vis is not None and exit_vis(u):
                     visible.add(u)

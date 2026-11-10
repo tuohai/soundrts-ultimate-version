@@ -5,6 +5,14 @@ from .world_public_method import *
 from ..worldentity import Entity
 from ..world_siege_pack import tick_siege_pack
 
+# Round 6: C-level id / type_name extraction for the per-tick
+# inventory/buffs change-detection hashes (see CreatureStatusUpdate.update).
+from operator import attrgetter
+
+_item_id = attrgetter("id")
+_buff_type_name = attrgetter("type_name")
+
+
 class CreatureStatusUpdate(Entity):
     _cached_inventory_hash = -1
     _cached_sorted_inventory = ()
@@ -338,17 +346,26 @@ class CreatureStatusUpdate(Entity):
             return
         inventory = self.inventory
         if inventory:
-            inventory_hash = hash(tuple((i.id for i in inventory)))
+            # Round 6: ``tuple(map(attrgetter('id'), inv))`` runs the id
+            # extraction in C instead of a Python generator expression.
+            # update() is called ~3M times / 10min cw1 profile, so this
+            # tuple+hash was a measurable slice of the 8.2s tottime.
+            inventory_hash = hash(tuple(map(_item_id, inventory)))
             if self._cached_inventory_hash != inventory_hash:
                 self._cached_sorted_inventory = sorted(inventory, key=lambda i: i.id)
                 self._cached_inventory_hash = inventory_hash
             for i in self._cached_sorted_inventory:
-                update_inv = getattr(i, 'update_in_inventory', None)
+                # Item declares update_in_inventory; keep the getattr fallback
+                # for duck-typed inventory entries.
+                try:
+                    update_inv = i.update_in_inventory
+                except AttributeError:
+                    update_inv = None
                 if update_inv is not None:
                     update_inv(self)
         buffs = self._buffs
         if buffs:
-            buffs_hash = hash(tuple((b.type_name for b in buffs)))
+            buffs_hash = hash(tuple(map(_buff_type_name, buffs)))
             if self._cached_buffs_hash != buffs_hash:
                 self._cached_sorted_buffs = sorted(buffs, key=lambda b: b.type_name)
                 self._cached_buffs_hash = buffs_hash
@@ -375,7 +392,7 @@ class CreatureStatusUpdate(Entity):
             return
         if self.claimable or self.herdable:
             owner = self.player
-            if owner is not None and getattr(owner, 'neutral', False):
+            if owner is not None and owner.neutral:
                 self._try_auto_claim()
             elif owner is not None:
                 self._try_steal_owned_herdable()
@@ -387,12 +404,27 @@ class CreatureStatusUpdate(Entity):
             self.action.update()
         if self.player is None:
             return
-        if self.has_imperative_orders():
+        # Round 6: inline has_imperative_orders() / _is_attacking().
+        # update() runs ~3M times / 10min cw1 profile; each helper call cost
+        # ~1.4us of pure call overhead.
+        # NOTE: the first order element may be a duck-typed stub without an
+        # ``is_imperative`` attribute (see tests/test_world_hotpath_opt.py),
+        # so the read must not raise. try/except is zero-cost on the happy
+        # path, unlike a getattr() default lookup.
+        orders = self.orders
+        if orders:
+            try:
+                imperative = orders[0].is_imperative
+            except AttributeError:
+                imperative = False
+        else:
+            imperative = False
+        if imperative:
             self._execute_orders()
         else:
             if self.world.time >= self._next_decide_time or self.last_attacker is not None:
                 self.decide()
-            if not self._is_attacking() and self.orders:
+            if not isinstance(self.action, AttackAction) and orders:
                 self._execute_orders()
 
     def has_imperative_orders(self):

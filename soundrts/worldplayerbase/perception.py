@@ -2270,7 +2270,7 @@ class PerceptionMixin(PerceptionCachesMixin):
         by_place = self._ensure_memory_by_place()
         unit_by = getattr(self, "_memory_unit_by_place", None) or {}
         for p, bag in by_place.items():
-            if p is None or getattr(p, "is_inside_place", False):
+            if p is None or p.is_inside_place:
                 continue
             enemy = False
             units = unit_by.get(p)
@@ -2281,13 +2281,13 @@ class PerceptionMixin(PerceptionCachesMixin):
                         break
             if enemy:
                 squares.add(p)
-                for e in getattr(p, "exits", []) or ():
-                    other = getattr(e, "other_side", None)
+                for e in p.exits:
+                    other = e.other_side
                     if other is not None:
                         squares.add(other.place)
                 continue
             for m in bag:
-                if getattr(m, "is_deposit", False) or isinstance(m, Deposit):
+                if m.is_deposit:
                     squares.add(p)
                     break
         result = sorted(squares, key=lambda s: s.name)  # avoid desync

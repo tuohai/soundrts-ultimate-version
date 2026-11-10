@@ -583,7 +583,12 @@ def formation_combat_stats(unit, flat_key, vs_key):
     """Unit flat + vs, plus ``class formation`` bonuses once standing on the slot."""
     base = getattr(unit, flat_key, 0)
     vs = getattr(unit, vs_key, None)
-    spec = getattr(unit, "_formation_combat_spec", None)
+    # Round 7: Entity declares _formation_combat_spec = None as a class
+    # default, so a plain read replaces the getattr-with-default lookup.
+    try:
+        spec = unit._formation_combat_spec
+    except AttributeError:
+        spec = None
     if not spec:
         return base, vs
     if not formation_ranks_formed(unit):

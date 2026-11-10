@@ -67,6 +67,12 @@ class ResourcesMixin:
         from ..lib.nofloat import to_int
         from ..lib.square_terrain_rules import terrain_list_value
 
+        # AoE2 DE building auras (Caravanserai): trade carts inside the aura
+        # radius move faster. The import used to sit *inside* the per-unit
+        # loop, so every unit of every player paid a module lookup on every
+        # tick (119k ticks x units). Hoist it out of the loop.
+        from ..world_aura import apply_speed_aura
+
         for u in self.units:
             try:
                 base_speed = u.speed
@@ -96,8 +102,6 @@ class ResourcesMixin:
                     u.actual_speed = max(u.actual_speed, VERY_SLOW)  # never stuck
                 # AoE2 DE 建筑光环（商队驿站 Caravanserai）：光环范围内的贸易车
                 # 移动速度 +N%（数据来自 rules.txt 的 aura_* 行）。
-                from ..world_aura import apply_speed_aura
-
                 apply_speed_aura(u)
             except Exception:
                 u.actual_speed = getattr(u, "speed", 0)
@@ -112,14 +116,14 @@ class ResourcesMixin:
 
     def _update_drowning(self):
         for u in self.units[:]:
-            if getattr(u, "is_a_building", False):
+            # Entity declares is_a_building = False as a class default.
+            if u.is_a_building:
                 continue
-            if (
-                u.is_vulnerable
-                and u.airground_type == "ground"
-                and not getattr(u.place, "is_ground", True)
-            ):
-                u.die()
+            if u.is_vulnerable and u.airground_type == "ground":
+                place = u.place
+                # place may be None (unit in transit) -> treat as ground.
+                if place is not None and not place.is_ground:
+                    u.die()
 
     def pay(self, cost):
         for i, c in enumerate(cost):

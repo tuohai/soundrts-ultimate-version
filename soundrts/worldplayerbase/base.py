@@ -50,12 +50,25 @@ def alliance_ids_equal(a, b):
 
 def is_wildlife_unit(unit):
     """狩猎/畜牧动物（鹿、羊、野猪等）。"""
-    return bool(getattr(unit, "is_huntable", 0) or getattr(unit, "herdable", 0))
+    # Round 6: Entity declares is_huntable / herdable as class-level defaults,
+    # so a plain attribute load is enough (no getattr reflection). The
+    # try/except keeps the old "missing attribute -> not wildlife" behaviour
+    # for duck-typed objects that are not Entity subclasses.
+    try:
+        return bool(unit.is_huntable or unit.herdable)
+    except AttributeError:
+        return False
 
 
 def player_is_wildlife_only(player):
     """玩家名下所有存活单位均为野生动物。"""
-    units = [u for u in getattr(player, "units", []) if getattr(u, "presence", True)]
+    units = []
+    for u in getattr(player, "units", []):
+        try:
+            if u.presence:
+                units.append(u)
+        except AttributeError:
+            units.append(u)
     if not units:
         return False
     return all(is_wildlife_unit(u) for u in units)
@@ -176,6 +189,11 @@ class Player(PerceptionCachesMixin):
 
     group = ()
     group_had_enough_mana = False  # used to warn if not enough mana
+
+    # Round 6: class-level default so the AI hot paths can read
+    # ``player.neutral`` with a plain attribute load instead of
+    # ``getattr(player, "neutral", False)``.
+    neutral = False
 
     AI_type = ""
     is_cpu_intensive = False
@@ -420,10 +438,16 @@ class Player(PerceptionCachesMixin):
 
     def __setattr__(self, name, value):
         """确保人口相关字段不为负数。
-        
+
         统一在赋值入口做下限保护，避免在各处加/减操作后出现负数。
+
+        Round 7: the tuple membership test ran on *every* attribute write.
+        ``Player.__setattr__`` is on the hot path (248K calls / 10min cw1
+        profile just from the bucket bookkeeping), and the guard only ever
+        applies to two names. Comparing against the two strings directly
+        avoids building the constant tuple on every call.
         """
-        if name in ("population", "used_population"):
+        if name == "population" or name == "used_population":
             try:
                 if value < 0:
                     value = 0
@@ -1399,18 +1423,30 @@ class Player(PerceptionCachesMixin):
         elif isinstance(t, str):
             # Line-upgraded units (man_at_arms is_a militia) must still count
             # toward AI get quotas for the root type.
-            tn = getattr(o, "type_name", None)
+            # Round 7: ``type_name`` / ``expanded_is_a`` are Entity
+            # class-level defaults, so plain reads replace the getattr calls
+            # (1.9M calls / 10min cw1 profile). Duck-typed objects may lack
+            # them, so guard the reads.
+            try:
+                tn = o.type_name
+                expanded = o.expanded_is_a
+            except AttributeError:
+                tn = getattr(o, "type_name", None)
+                expanded = getattr(o, "expanded_is_a", None)
             if tn == t:
                 return True
-            expanded = getattr(o, "expanded_is_a", None)
             return bool(expanded) and t in expanded
         else:
             type_name = getattr(t, "type_name", None)
             if type_name is not None:
-                tn = getattr(o, "type_name", None)
+                try:
+                    tn = o.type_name
+                    expanded = o.expanded_is_a
+                except AttributeError:
+                    tn = getattr(o, "type_name", None)
+                    expanded = getattr(o, "expanded_is_a", None)
                 if tn == type_name:
                     return True
-                expanded = getattr(o, "expanded_is_a", None)
                 return bool(expanded) and type_name in expanded
 
     @staticmethod

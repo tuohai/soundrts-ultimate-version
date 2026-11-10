@@ -4583,19 +4583,36 @@ class Computer(Player):
 
         def _compute():
             result = []
+            append = result.append
+            # Round 6: Entity declares is_huntable / herdable / claimable /
+            # hp / place / player as class-level defaults, so plain attribute
+            # loads replace the getattr reflection (10.5M getattr calls /
+            # 10min cw1 profile). The except branch keeps the old
+            # "missing attribute -> default" behaviour for duck-typed stubs.
             for o in self.perception.union(self.memory):
-                if not getattr(o, "is_huntable", 0):
+                try:
+                    huntable = o.is_huntable
+                    hp = o.hp
+                    place = o.place
+                    owner = o.player
+                    herdable = o.herdable
+                    claimable = o.claimable
+                except AttributeError:
+                    huntable = getattr(o, "is_huntable", 0)
+                    hp = getattr(o, "hp", 0)
+                    place = getattr(o, "place", None)
+                    owner = getattr(o, "player", None)
+                    herdable = getattr(o, "herdable", 0)
+                    claimable = getattr(o, "claimable", 0)
+                if not huntable:
                     continue
-                if getattr(o, "hp", 0) <= 0 or o.place is None:
+                if hp <= 0 or place is None:
                     continue
-                owner = getattr(o, "player", None)
                 if getattr(owner, "neutral", False) or (
-                    owner is self
-                    and (getattr(o, "herdable", 0) or getattr(o, "claimable", 0))
+                    owner is self and (herdable or claimable)
                 ):
-                    result.append(o)
+                    append(o)
             return result
-
         return self._play_memo_get("huntable_animals", _compute)
 
     def _choose_hunt_target(self, worker):
@@ -4989,7 +5006,8 @@ class Computer(Player):
         seen = set()
         producers = []
         for u in self.units:
-            if getattr(u, "production_item", None):
+            # Entity declares production_item = None as a class default.
+            if u.production_item:
                 producers.append(u)
         for u in producers:
             place = u.place
@@ -6863,17 +6881,31 @@ class Computer(Player):
         separately, in ``_remember_detected_hidden_buildings``.
         """
         result = []
+        append = result.append
         for o in getattr(self, "perception", ()) or ():
-            if not getattr(o, "is_a_building", False):
-                continue
-            if getattr(o, "is_invisible", False) or getattr(o, "is_cloaked", False):
+            # Round 6: Entity declares is_a_building / is_invisible /
+            # is_cloaked as class-level defaults, so plain attribute loads
+            # replace the getattr reflection. The except branch keeps the
+            # exact old semantics for duck-typed stubs (missing attribute ->
+            # its old default) instead of skipping the object.
+            try:
+                if not o.is_a_building:
+                    continue
+                invisible = o.is_invisible
+                cloaked = o.is_cloaked
+            except AttributeError:
+                if not getattr(o, "is_a_building", False):
+                    continue
+                invisible = getattr(o, "is_invisible", False)
+                cloaked = getattr(o, "is_cloaked", False)
+            if invisible or cloaked:
                 continue
             try:
                 if not self.is_an_enemy(o):
                     continue
             except Exception:
                 continue
-            result.append(o)
+            append(o)
         return result
 
     def _detected_enemy_buildings(self):

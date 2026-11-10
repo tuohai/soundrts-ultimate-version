@@ -41,7 +41,16 @@ _vs_lookup = _cf.resolve_vs_lookup if _cf is not None else _resolve_vs
 
 def _with_formation_combat(unit, flat_key, vs_key):
     """Add ``class formation`` flats/vs only while a combat spec is bound."""
-    if not getattr(unit, "_formation_combat_spec", None):
+    # Round 7: Entity declares _formation_combat_spec = None as a class
+    # default, so a plain read replaces the getattr-with-default lookup
+    # (2.5M calls / 10min cw1 profile). Duck-typed proxies (e.g.
+    # SkillCombatProxy) delegate to a stub that may not have the attribute,
+    # so the read must not raise.
+    try:
+        spec = unit._formation_combat_spec
+    except AttributeError:
+        spec = None
+    if not spec:
         return getattr(unit, flat_key, 0), getattr(unit, vs_key, None)
     from ..world_formation import formation_combat_stats
 

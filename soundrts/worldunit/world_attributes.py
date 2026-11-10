@@ -25,10 +25,16 @@ class CreatureAttributes(Entity):
             speed = int(speed or 0)
         except (TypeError, ValueError):
             return speed
-        cap = int(getattr(self, "_formation_speed_cap", 0) or 0)
+        # Round 6: Entity declares _formation_speed_cap = 0 as a class default.
+        cap = int(self._formation_speed_cap or 0)
         if cap > 0 and speed > cap:
             speed = max(cap, int(getattr(self, "VERY_SLOW", 1) or 1))
-        spec = getattr(self, "_formation_combat_spec", None)
+        # Round 7: Entity declares _formation_combat_spec = None as a class
+        # default, so a plain read replaces the getattr-with-default lookup.
+        try:
+            spec = self._formation_combat_spec
+        except AttributeError:
+            spec = None
         extra = spec.get("speed", 0) if spec else 0
         if extra:
             from ..world_formation import _bonus_delta, formation_ranks_formed

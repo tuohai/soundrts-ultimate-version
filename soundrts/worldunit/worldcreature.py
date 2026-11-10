@@ -780,12 +780,20 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
         # Common multiplayer path: no allied-control transfer in effect.
         # Skip controller lookup + unit_under_allied_control megacalls.
         if world is not None:
-            if not getattr(world, "_allied_control_scanned", False):
+            # Round 7: ``_allied_control_scanned`` / ``_allied_control_active``
+            # are plain World attributes set in World.__init__, so direct
+            # reads replace 2 getattr calls (1.7M calls / 10min cw1 profile).
+            # A duck-typed world stub may not have them, so guard the read.
+            try:
+                scanned = world._allied_control_scanned
+            except AttributeError:
+                scanned = False
+            if not scanned:
                 from ..worldplayerbase.allied_control import _world_has_allied_control
 
                 world._allied_control_active = _world_has_allied_control(world)
                 world._allied_control_scanned = True
-            if not getattr(world, "_allied_control_active", False):
+            if not world._allied_control_active:
                 p = self.player
                 return bool(p) and p.player_is_an_enemy(c.player)
 
