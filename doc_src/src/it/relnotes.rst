@@ -3,6 +3,121 @@ Note di rilascio
 
 .. contents::
 
+1.5.1.8
+-------
+
+**Corretto: le unità d'assalto non mostravano «sta dispiegando» durante un attacco forzato**
+
+- **Problema**: con un trabucco, un attacco forzato (``ctrl`` + backspace) dispiega prima l'unità e poi spara, ma l'interfaccia non menzionava mai il dispiego: né «sta dispiegando» né alcuno stato sulla barra di avanzamento. Solo premendo «dispiega» nel menu dei comandi compariva quell'informazione.
+- **Causa**: premere «dispiega» mette in coda un ordine ``unpack``, quindi l'interfaccia sa che l'unità si sta dispiegando leggendo la coda degli ordini. Il dispiego automatico dell'attacco forzato avviene dentro ``soundrts/combat/attack_action.py`` (``ensure_unpacked``); la coda degli ordini contiene solo l'attacco, quindi l'interfaccia non aveva modo di saperlo.
+- **Corretto**: l'interfaccia legge ora direttamente lo stato d'assalto dell'unità (``_siege_mode``), così l'unità mostra e annuncia **sta dispiegando** (``siege_unpacking``) sia quando la transizione è stata avviata da un ordine manuale sia quando è stata avviata da un attacco. Sono collegati tre punti di visualizzazione: il riepilogo parlato degli ordini (``orders_txt``), la riga di stato del pannello di selezione in basso a sinistra e la riga degli «stati speciali» della schermata degli attributi.
+- **Non intralcia**: lo stato viene annunciato **solo quando il giocatore interroga l'unità** (per esempio, controllando un trabucco con la scorciatoia si sente «controlli il trabucco 1 in a1, sta dispiegando»). Piegamento e dispiego non annunciano più nulla da soli all'inizio, e la loro conclusione non dice più «piegato» / «dispiegato».
+- **Niente duplicati**: quando la coda degli ordini contiene già il corrispondente ordine pack / unpack, «sta piegando» / «sta dispiegando» non è più seguito da un ripetuto «piega» / «dispiega».
+- **Ambito**: ``soundrts/clientgameentity/base.py``, ``soundrts/clientgameentity/properties.py``, ``soundrts/clientgameentity/events.py``, ``soundrts/clientgame/game_hud.py``, ``soundrts/attributes/unit_detail.py``, ``soundrts/tests/test_siege_forced_attack_unpack_status.py``.
+
+**Aggiunto: la velocità di raccolta del pannello attributi segue le tecnologie**
+
+- **Problema**: le tecnologie del campo minerario e della segheria (Gold Mining, Stone Mining, Double Bit Axe, ecc. del mod AoE2) funzionavano davvero, ma il pannello degli attributi del contadino mostrava sempre il valore statico del file delle regole. Studiare Gold Mining rende davvero il contadino ~15% più veloce nell'estrarre oro, eppure la schermata continuava ad annunciare 0,38 al secondo, così il giocatore non poteva capire se la tecnologia avesse effetto.
+- **Miglioramento**: il pannello degli attributi mostra ora la velocità di raccolta **effettiva**. Dopo Gold Mining la riga della miniera d'oro passa a 0,44 al secondo, dopo Double Bit Axe la riga del legname passa a 0,47 al secondo; senza tecnologie il valore originale resta invariato. La simulazione dal vivo e il pannello degli attributi condividono ora un'unica implementazione di risoluzione dei bonus (``soundrts/gather_rate.py``), così la schermata non può più divergere dalla velocità reale. L'annuncio da scorciatoia riporta anch'esso la velocità effettiva.
+- **Corretto anche**: i bonus di raccolta scritti con un **nome di risorsa** (``gold`` / ``wood`` / ``food`` / ``stone``) non avevano mai effetto: il motore li cercava solo per slot di risorsa (``resource1``) e per tipo di deposito (``goldmine``). Ecco perché gli Etiopi con "50% più veloce l'oro dall'Età dei Castelli", i Romani con "5% più veloce su tutto" e i Siciliani con "23% più veloce il cibo" non finivano da nessuna parte. Ora questi bonus funzionano.
+- **Guidato dalle regole**: il motore non codifica più i nomi delle risorse. Un file di regole dichiara come si chiamano le sue risorse con ``parameters resource_names resource1 gold resource2 wood resource3 food resource4 stone``, e il motore le risolve da quella dichiarazione. Sono supportate **entrambe** le forme: lo **slot di risorsa** (``gather_time_resource1``) per un'intera risorsa (le tecnologie del campo minerario e della segheria, il bonus romano su tutto) e il **tipo di deposito** (``gather_time_goldmine``) per un deposito specifico (il bonus dei pastori britannici). Le tecnologie minerarie e della segheria del mod AoE2 sono passate alla forma dello slot di risorsa, e quindi non nominano più un singolo tipo di deposito.
+- **Corretto: il pannello degli attributi non concordava con la simulazione**: i bonus venivano cercati in due ordini diversi — la simulazione controllava prima lo slot di risorsa, il pannello degli attributi prima il tipo di deposito. Con il "5% più veloce su tutto" dei Romani (``gather_time_resource1``) e la tecnologia del campo minerario (``gather_time_resource1 -13%``) entrambi attivi, i due lati sceglievano bonus **diversi**, così la schermata annunciava una velocità che il contadino non raggiungeva mai. Ora entrambi condividono un unico ordine: **vince la chiave più specifica** (tipo di deposito → slot di risorsa → nome della risorsa → ``all``).
+- **Corretto: un bonus di tecnologia e uno di fase di civiltà potevano cancellarsi a vicenda**: entrambi erano salvati in un unico dict piatto, così la tecnologia del campo minerario (``gather_time_resource1``) e il "50% più veloce sull'oro dallaetà del Castello" degli Etiopi (``gather_time_resource1``) scrivevano la stessa chiave, e quello applicato dopo cancellava in silenzio l'altro: la tecnologia di mining dell'oro di un etiope semplicemente smetteva di funzionare all'età del Castello. Ora le due fonti sono salvate separatamente ed **entrambe si applicano**: le percentuali si moltiplicano (un -13% della tecnologia più un -50% della civiltà dà -56,5% del tempo). Ogni fonte sceglie ancora la propria chiave più specifica, così una chiave stretta (``goldmine``) non nasconde più una larga (``resource1``) dell'altra fonte.
+- **Ambito**: ``soundrts/gather_rate.py``, ``soundrts/worldunit/worldworker.py``, ``soundrts/attributes/gather_rate_display.py``, ``soundrts/attributes/gather_handler.py``, ``soundrts/worldmarket.py``, ``soundrts/definitions.py``, ``soundrts/worldphase.py``, ``soundrts/worldupgrade/attribute_effects.py``, ``mods/aoe2/rules.txt``, ``res/rules.txt``, ``soundrts/tests/test_gather_rate_dynamic_attributes.py``.
+
+**Aggiunto: attaccare rompe la furtività (in stile AoE3)**
+
+- **Problema**: il motore non aveva alcun modo di costringere un'unità nascosta a scoprirsi. Un'unità invisibile o mimetizzata poteva attaccare per sempre senza essere mai individuata, così la furtività era sempre migliore che essere un'unità visibile con le stesse statistiche.
+- **Miglioramento**: due nuovi campi di regola e il relativo supporto nel motore. ``reveal_stealth_on_attack 1`` (int, 0 per impostazione predefinita) fa sì che un'unità nascosta si scopra quando attacca, e ``stealth_reveal_time N`` (secondi con scala di precisione, 3 per impostazione predefinita) indica per quanto tempo resta scoperta (``0`` = per sempre). La rivelazione scatta con gli attacchi mischia, a distanza e di carica, e attaccare di nuovo mentre è scoperta rinnova il timer. Mentre la finestra è aperta, gli ``is_invisible`` / ``is_cloaked`` / ``is_cloakable`` dell'unità vengono sovrascritti a livello di istanza, così è visibile a tutti e un camuffatore vicino non può più nasconderla; alla chiusura della finestra lo stato naturale viene ripristinato. Questo è il comportamento della spia / del ninja / del cacciatore di giaguari di Age of Empires III.
+- **Ambito**: ``soundrts/definitions.py``, ``soundrts/worldentity.py``, ``soundrts/world/world_game.py``, ``soundrts/combat/attack_action.py``, ``soundrts/combat/damage_effects.py``, ``soundrts/tests/test_stealth_reveal_on_attack.py``.
+
+**Aggiunto: il Cavaliere Non-Morto, un'unità che si scopre quando attacca**
+
+- **Problema**: il gioco base non aveva alcuna unità che mostrasse il nuovo meccanismo, quindi la funzionalità non si vedeva mai in azione.
+- **Miglioramento**: un nuovo ``undead_knight`` in ``res/rules.txt``: un cavaliere invisibile dell'era imperiale addestrato dal necropoli (20 cibo / 20 oro, 55 punti ferita, 8 danno mischia). È invisibile mentre riposa e resta scoperto 3 secondi dopo ogni attacco, così può colpire dall'ombra ma deve ritirarsi prima del successivo. Ha ricevuto la definizione di stile e il titolo TTS in tutti e 13 gli idiomi.
+- **Ambito**: ``res/rules.txt``, ``res/ui/style.txt``, ``res/ui*/tts.txt``, ``soundrts/tests/test_res_undead_knight.py``.
+
+**Corretto: solo il contadino Burgundy può essere migliorato a Milizia Fiamminga**
+
+- **Problema**: il mod di AoE2 metteva ``can_upgrade_to flemish_militia`` sulla classe base condivisa ``peasant``, così ogni civiltà il cui contadino eredita da essa -- vietnamiti compresi -- offriva un miglioramento manuale a Milizia Fiamminga, anche se la Rivoluzione Fiamminga è una ricerca Burgundy.
+- **Miglioramento**: la linea di miglioramento è passata da ``peasant`` a ``burgundian_villager``. La ricerca continua a trasformare i contadini Burgundy come prescrive DE, e le altre 41 civiltà non vedono più il pulsante.
+- **Ambito**: ``mods/aoe2/rules.txt``, ``soundrts/tests/test_aoe2_flemish_militia_upgrade.py``.
+
+**Corretto: il castello Magyar offriva una tecnologia che non esiste**
+
+- **Problema**: il Castello Magyar elencava una tecnologia chiamata ``mercenaries`` nella sua lista ``can_research``, ma non esiste alcun ``def mercenaries`` nelle regole. Selezionare quella voce nel menu delle tecnologie causava un crash con ``AttributeError: 'NoneType' object has no attribute 'cost'``.
+- **Miglioramento**: il nome pendente viene rimosso, e un nuovo test impone che ogni tecnologia offerta da un edificio si risolva in una classe di regole reale.
+- **Ambito**: ``mods/aoe2/rules.txt``, ``soundrts/tests/test_aoe2_castle_research_defs_exist.py``.
+
+**Corretto: le unità e le tecnologie di DE che non venivano annunciate**
+
+- **Problema**: undici unità e tecnologie di AoE2 DE erano definite nelle regole ma non avevano una voce nel file di stile, quindi non avevano né titolo né scorciatoia, e la voce non le annunciava mai.
+- **Miglioramento**: sono state aggiunte le definizioni di stile mancanti (``ordonnance_companies``, ``cranequins``, ``pirotechnia``, ``mounted_crossbowman``, ``heavy_mounted_crossbowman``, ``flemish_militia``, ``flaming_camel``, ``warrior_priest``, ``dragon_ship``, ``savar``, ``bulgarian_mill``) insieme ai loro annunci TTS nell'intervallo di ID 9122-9131, per tutti e 13 gli idiomi.
+- **Ambito**: ``mods/aoe2/ui/style.txt``, ``mods/aoe2/ui*/tts.txt``, ``soundrts/tests/test_aoe2_de_unit_announcements.py``.
+
+**Corretto: l'IA ora demolisce le basi nemiche nascoste**
+
+- **Problema**: in crazyMod il computer eliminava ogni unità visibile ma non attaccava mai l'incubatrice mimetizzata del giocatore, e la partita si bloccava.
+- **Miglioramento**: quattro livelli rendono raggiungibile la base nascosta. Viene arruolato un rivelatore mobile (``is_a_detector`` / ``detection_range``) che setaccia i riquadri sospetti, e il suo ordine sopravvive al ``cancel_all_orders()`` della normale routine di combattimento. Un'unità individuata una volta resta nella memoria del proprietario del rivelatore, così si può continuare a colpirla anche dopo che il rivelatore se n'è andato. Migliorando un edificio mimetizzato, le note di edificio nascosto vengono ricollegate alla nuova entità. E l'attacco è legato all'handle dell'unità, così non viene perso quando la percezione mimetizzata sfarfalla.
+- **Ambito**: ``soundrts/worldplayercomputer.py``, ``soundrts/world/world_game.py``, ``soundrts/worldplayerbase/base.py``, ``soundrts/worldplayerbase/perception.py``, ``soundrts/worldplayerbase/perception_fast.pyx``, ``soundrts/combat/targeting.py``, ``soundrts/combat/combat_fast.pyx``, ``soundrts/worldroom.py``.
+
+**Corretto: l'IA di AoE2 jl3 non raggiungeva mai l'età feudale**
+
+- **Problema**: sulla mappa AoE2 jl3 le tre IA intermedie non attaccavano mai: il clic da 500 di cibo per l'età feudale sfuggiva oltre i 24 minuti. Si accumulavano diversi difetti indipendenti. La richiesta di raccolta oscillava fra il passaggio del cibo e quello del legname, così nessuna delle due risorse si accumulava mai. Il fieno non veniva mai costruito perché il mulino di cui ha bisogno non è un produttore di cibo di per sé. Il costo del reimpianto veniva addebitato alla riserva del prossimo edificio di produzione, bloccando ogni taglialegna sugli alberi. E il pianificatore dell'oro vedeva solo edifici come sbocco di oro, così nessuno minava, mentre 4 milizie + 8 arcieri richiedono 440 d'oro.
+- **Miglioramento**: il controllo "sta già raccogliendo X" conosce ora il tetto di ogni risorsa, una squadra piena viene saltata in partenza, un lavoratore che trasporta un carico non viene riassegnato, e un lavorante che raccoglie già dallo stesso bersaglio mantiene il suo ordine in corso. Il mulino viene ora eretto prima del fieno. Il reimpianto conta come domanda e non come riserva, e qualunque riserva positiva conta. Il pianificatore dell'oro valuta anche i soldati della linea di raccolta.
+- **Ambito**: ``soundrts/worldplayercomputer.py``, ``soundrts/tests/test_ai_aoe2_jl3_no_wood_food_pingpong.py``, ``soundrts/tests/test_aoe2_farm_is_not_a_warehouse.py``.
+
+**Corretto: lo scout di res jl1 oscillava per sempre fra due riquadri**
+
+- **Problema**: lo scout dell'IA interrogava ``player.strictly_observed_squares`` -- i riquadri visti *in questo fotogramma* -- invece del cumulato ``strictly_observed_before_squares``, così ripescava per sempre lo stesso riquadro. La prima scoperta su jl1 avveniva fra 8m07s e 16m59s invece di circa 3m32s uniformi.
+- **Miglioramento**: lo scout usa ora l'insieme cumulato monotono. Le unità dell'età di castello passano anche a un'ondata tutta loro, così la prima ondata militare non è più bloccata dietro di esse.
+- **Ambito**: ``soundrts/worldunit/worldcreature.py``, ``res/ai.txt``, ``mods/aoe2/ai.txt``, ``soundrts/tests/test_ai_res_jl1_attack_timing.py``, ``soundrts/tests/test_ai_aoe2_dark_age_eco.py``.
+
+**Corretto: il rapporto di stato dell'unità non elencava le tecnologie di effect_bonus_targets**
+
+- **Problema**: una tecnologia il cui ambito è definito da ``effect_bonus_targets`` (il Collo di Cavallo / Aratro Pesante / Rotazione delle Colture di AoE2, il cui bersaglio è ``farm``) si applica all'unità bersaglio anche se l'unità non ripete la tecnologia in ``can_use_tech``. Il rapporto di stato (tasto ``v``) elencava solo le tecnologie classiche di ``can_use`` / ``can_use_tech``, così il fieno non menzionava mai il Collo di Cavallo dopo che il mulino lo aveva ricercato.
+- **Miglioramento**: il rapporto di stato elenca ora anche le tecnologie ricercate le cui righe di effetto filtrato nominano il tipo di questa unità. La via classica resta l'autoritativa, una tecnologia non viene mai elencata due volte e l'ordine di ricerca viene conservato.
+- **Ambito**: ``soundrts/worldunit/world_attributes.py``, ``soundrts/worldupgrade/effect_bonus_parse.py``, ``soundrts/tests/test_effect_bonus_targets_status_report.py``.
+
+**Corretto: la ricostruzione dello spettatore condivideva le cache di percezione e di decisione IA con la partita dal vivo**
+
+- **Problema**: una partita dal vivo e una ricostruzione da spettatore girano fianco a fianco nello stesso processo e ricevono gli *stessi* identativi di giocatore e di unità. Le cache di percezione e la cache di decisione IA erano attributi di classe indicizzati da quegli identificativi, così i due mondi leggevano lo stato l'uno dell'altro e le loro simulazioni divergevano: in un mondo un'unità decise di attaccare, nell'altro la stessa chiave di cache restituiva subito e l'unità non scelse mai un bersaglio; e un valore di minaccia memorizzato faceva attaccare un mondo mentre l'altro fuggiva.
+- **Miglioramento**: le cache di percezione passano all'istanza del mondo, raggiunte tramite il nuovo ``PerceptionCachesMixin``, e anche la cache di decisione IA vive sul mondo (l'attributo di classe resta solo come ripiego per gli stub di test senza mondo). Uno spettatore puro non combatte e non ha unità, quindi non legge più il ``.menace`` di nessuno.
+- **Ambito**: ``soundrts/worldplayerbase/perception_caches.py``, ``soundrts/worldplayerbase/perception.py``, ``soundrts/worldplayerbase/perception_fast.pyx``, ``soundrts/worldplayerbase/base.py``, ``soundrts/world/world_core.py``, ``soundrts/worldunit/world_ai_decision.py``.
+
+**Corretto: il gioco non usciva subito dalla partita quando si perdeva**
+
+- **Problema**: la sconfitta non faceva uscire subito dal gioco: la partita aspettava che tutta la coda vocale (oltre 30 annunci di combattimento in coda) fosse stata recitata prima che apparisse la schermata delle statistiche.
+- **Miglioramento**: i messaggi vocali in sospeso vengono scartati senza essere pronunciati (``Voice.discard_pending()``), così il ritardo passivo del combattimento non trattiene la transizione; l'avviso di sconfitta viene comunque pronunciato in modo sincrono. L'avviso "progresso salvato" usa la libreria vocale principale, che sopravvive allo smontaggio.
+- **Ambito**: ``soundrts/lib/voice.py``, ``soundrts/clientgame/game_interface_base.py``, ``soundrts/clientgame/game_resources.py``.
+
+**Prestazioni: il percorso caldo, round 4-7**
+
+- **Problema**: il profilo cw1 di 40 minuti continuava a indicare sempre le stesse poche funzioni.
+- **Miglioramento**: otto modifiche mirate. I valori predefiniti degli attributi del percorso caldo sono dichiarati sulla classe base ``Entity`` invece di essere cercati con ``getattr``. Gli edifici con aura del mondo sono tenuti in un registro invece di scandire tutte le unità di tutti i giocatori (1,2e8 chiamate in una partita). L'``Exit`` partner viene tenuto direttamente e il controllo di blocco fa cortocircuito quando nessuno dei due lati ha un blocco (44M e 56,4M di chiamate nella stessa partita). Il controllo dei blocchi e l'euristica dell'A* vengono resi inline invece di passare per una closure e una lambda (240M + 82M + 55,6M di chiamate). La vista a griglia unisce la sua memoizzazione della dimensione delle icone e rende inline i suoi helper di una sola riga. E le sorgenti Cython generate vengono rigenerate, così il C versionato corrisponde al ``.pyx`` versionato.
+- **Ambito**: ``soundrts/worldentity.py``, ``soundrts/world_aura.py``, ``soundrts/worldexit.py``, ``soundrts/worldroom.py``, ``soundrts/clientgamegridview.py``, ``soundrts/clientgame/game_navigation.py``, ``soundrts/worldplayerbase/base.py``, ``soundrts/worldplayerbase/perception.py``, ``soundrts/worldplayerbase/resources.py``, ``soundrts/worldplayercomputer.py``, ``soundrts/worldunit/world_ai_decision.py``, ``soundrts/worldunit/world_attributes.py``, ``soundrts/worldunit/world_status_update.py``, ``soundrts/worldunit/worldcreature.py``, ``soundrts/world/world_ecs.py``, ``soundrts/world_formation.py``, ``soundrts/combat/damage_calculation.py``, ``PERF_ROUND7_SUMMARY.md``.
+
+**Mappa: l'esercito solo-computer di z5 è stato riequilibrato**
+
+- **Cambiamento**: il giocatore computer su z5 riceve ora un inventario vero di assedio e magia invece di cinque cavalieri e quattro draghi, e il giocatore umano inizia con una macchina volante accanto all'esercito iniziale.
+- **Ambito**: ``res/multi/z5.txt``.
+
+**Aggiunto: il meccanismo di furtività è documentato nella guida alla modifica**
+
+- **Problema**: la guida alla modifica non menzionava mai il sottosistema di furtività, quindi i modder non avevano modo di conoscere ``is_invisible``, ``is_cloakable``, ``is_a_cloaker``, ``cloaking_range``, ``is_a_detector`` o ``detection_range``, e ancora meno il nuovo meccanismo di rottura della furtività durante l'attacco.
+- **Miglioramento**: tutte e cinque le lingue (``en``, ``zh``, ``es``, ``it``, ``pt-BR``) di ``doc_src/src/*/mod/modding.rst`` hanno ricevuto una nuova sezione *stealth* che spiega l'intero sottosistema -- ``is_invisible``, ``is_cloakable``, ``is_a_cloaker`` con ``cloaking_range``, ``is_a_detector`` con ``detection_range`` -- e il nuovo meccanismo di rottura della furtività durante l'attacco con ``reveal_stealth_on_attack`` e ``stealth_reveal_time``, con un esempio di spia.
+- **Ambito**: ``doc_src/src/*/mod/modding.rst``.
+
+**Aggiunto: i campi della furtività ora vengono annunciati nella schermata degli attributi**
+
+- **Problema**: La schermata degli attributi leggeva ``mp.CLOAKING_RANGE`` e ``mp.DETECTION_RANGE``, ma nessuna delle due costanti era mai stata definita in ``msgparts.py``. L'``AttributeError`` che ne risultava veniva inghiottito dal ``try/except`` che avvolge ogni passo degli attributi, quindi il raggio di camuffamento e il raggio di rilevamento non venivano mai annunciati: né per un camuffatore, né per un rilevatore.
+- **Miglioramento**: Il sottosistema della furtività ora ha un posto nella schermata degli attributi. ``cloaking_range`` e ``detection_range`` vengono annunciati solo per le unità che li possiedono davvero, e vengono annunciati anche i nuovi campi di rottura della furtività: ``reveal_stealth_on_attack`` (sì / no) e ``stealth_reveal_time`` (i secondi in cui l'unità resta scoperta; «esposto in permanenza» per ``0``). Le righe compaiono solo per le unità che sono nascoste o che rompono la propria furtività, così le unità normali non vengono disturbate. Tutte le 13 lingue dell'interfaccia hanno ricevuto le cinque nuove voci TTS (5869-5873).
+- **Ambito**: ``soundrts/msgparts.py``, ``soundrts/attributes/basic_attributes.py``, ``soundrts/attributes/display_interface.py``, ``res/ui*/tts.txt``, ``soundrts/tests/test_stealth_attributes_ui.py``.
+
+**Aggiunto: test di regressione per questa versione**
+
+- **Ambito**: ``soundrts/tests/test_changelog_1518.py``, ``soundrts/tests/test_stealth_reveal_on_attack.py``, ``soundrts/tests/test_res_undead_knight.py``, ``soundrts/tests/test_aoe2_flemish_militia_upgrade.py``, ``soundrts/tests/test_aoe2_castle_research_defs_exist.py``, ``soundrts/tests/test_aoe2_de_unit_announcements.py``, ``soundrts/tests/test_ai_hidden_enemy_detector.py``, ``soundrts/tests/test_ai_gather_target_determinism.py``, ``soundrts/tests/test_ai_stalled_plan_fallback.py``, ``soundrts/tests/test_ai_aoe2_jl3_no_wood_food_pingpong.py``, ``soundrts/tests/test_aoe2_farm_is_not_a_warehouse.py``, ``soundrts/tests/test_ai_res_jl1_attack_timing.py``, ``soundrts/tests/test_ai_aoe2_dark_age_eco.py``, ``soundrts/tests/test_effect_bonus_targets_status_report.py``, ``soundrts/tests/test_defeat_immediate_stats_exit.py``, ``soundrts/tests/test_end_game_voice_flush.py``, ``soundrts/tests/test_resume_saved_voice_notice.py``, ``soundrts/tests/test_incremental_buckets.py``.
+
 1.5.1.7
 -------
 

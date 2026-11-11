@@ -4,6 +4,121 @@ Notas de la versión
 
 .. contents::
 
+1.5.1.8
+-------
+
+**Corregido: las unidades de asedio no mostraban «desplegándose» durante un ataque forzado**
+
+- **Problema**: con un trebuchet, un ataque forzado (``ctrl`` + retroceso) despliega primero la unidad y luego dispara, pero la interfaz nunca mencionaba el despliegue: ni «desplegándose» ni ningún estado en la barra de progreso. Solo al pulsar «desplegar» en el menú de comandos aparecía esa información.
+- **Causa**: pulsar «desplegar» encola una orden ``unpack``, así que la interfaz sabe que la unidad se está desplegando leyendo la cola de órdenes. El despliegue automático del ataque forzado ocurre dentro de ``soundrts/combat/attack_action.py`` (``ensure_unpacked``); la cola de órdenes sólo contiene el ataque, así que la interfaz no tenía forma de saberlo.
+- **Corregido**: la interfaz lee ahora directamente el estado de asedio de la unidad (``_siege_mode``), de modo que muestra y anuncia **desplegándose** (``siege_unpacking``) tanto si la transición la inició una orden manual como si la inició un ataque. Se conectaron tres puntos de visualización: el resumen hablado de órdenes (``orders_txt``), la línea de estado del panel de selección de abajo a la izquierda y la fila de «estados especiales» de la pantalla de atributos.
+- **Sin molestar**: el estado se anuncia **sólo cuando el jugador consulta la unidad** (por ejemplo, al controlar un trebuchet con el atajo se dice «controlas el trebuchet 1 en a1, desplegándose»). El plegado y el despliegue ya no anuncian nada por sí solos al comenzar, y su finalización ya no dice «plegado» / «desplegado».
+- **Sin duplicados**: cuando la cola de órdenes ya contiene la orden pack / unpack correspondiente, «plegándose» / «desplegándose» ya no va seguido de un repetido «plegar» / «desplegar».
+- **Ámbito**: ``soundrts/clientgameentity/base.py``, ``soundrts/clientgameentity/properties.py``, ``soundrts/clientgameentity/events.py``, ``soundrts/clientgame/game_hud.py``, ``soundrts/attributes/unit_detail.py``, ``soundrts/tests/test_siege_forced_attack_unpack_status.py``.
+
+**Añadido: la velocidad de recolección del panel de atributos sigue a las tecnologías**
+
+- **Problema**: las tecnologías del campamento minero y del aserradero (Gold Mining, Stone Mining, Double Bit Axe, etc. del mod de AoE2) sí funcionaban, pero el panel de atributos del aldeano siempre mostraba el valor estático del archivo de reglas. Investigar Gold Mining realmente hace que el aldeano sea ~15% más rápido extrayendo oro, y sin embargo la pantalla seguía anunciando 0,38 por segundo, así que el jugador no podía saber si la tecnología surtía efecto.
+- **Mejora**: el panel de atributos muestra ahora la velocidad de recolección **efectiva**. Tras Gold Mining la fila de la mina de oro pasa a 0,44 por segundo, y tras Double Bit Axe la fila de la madera pasa a 0,47 por segundo; sin tecnología se sigue mostrando el valor original. La simulación en vivo y el panel de atributos comparten ahora una única implementación de resolución de bonificaciones (``soundrts/gather_rate.py``), de modo que la pantalla ya no puede apartarse de la velocidad real. El aviso por atajo también indica la velocidad efectiva.
+- **Corregido además**: las bonificaciones de recolección escritas con un **nombre de recurso** (``gold`` / ``wood`` / ``food`` / ``stone``) nunca surtían efecto: el motor sólo las buscaba por ranura de recurso (``resource1``) y por tipo de depósito (``goldmine``). Por eso los etíopes con "50% más rápido el oro desde la Edad de la Castillo", los romanos con "5% más rápido en todo" y los sicilianos con "23% más rápido la comida" no llegaban a ninguna parte. Ahora estas bonificaciones sí funcionan.
+- **Impulsado por reglas**: el motor ya no lleva codificados los nombres de los recursos. Un archivo de reglas declara cómo se llaman sus recursos con ``parameters resource_names resource1 gold resource2 wood resource3 food resource4 stone``, y el motor los resuelve a partir de esa declaración. Se admiten **ambas** formas: la **ranura de recurso** (``gather_time_resource1``) para todo un recurso (las tecnologías del campamento minero y del aserradero, el bonus romano de todo) y el **tipo de depósito** (``gather_time_goldmine``) para un depósito concreto (el bonus pastor de los britanos). Las tecnologías mineras y de aserradero del mod AoE2 pasaron a la forma de ranura de recurso, de modo que ya no nombran un único tipo de depósito.
+- **Corregido: el panel de atributos no coincidía con la simulación**: las bonificaciones se buscaban en dos órdenes distintos — la simulación consultaba primero la ranura de recurso y el panel de atributos primero el tipo de depósito. Con el "5% más rápido en todo" de los romanos (``gather_time_resource1``) y la tecnología del campamento minero (``gather_time_resource1 -13%``) activas a la vez, cada lado elegía una bonificación **distinta**, así que la pantalla anunciaba una velocidad que el aldeano nunca alcanzaba. Ahora ambos comparten un único orden: **gana la clave más específica** (tipo de depósito → ranura de recurso → nombre de recurso → ``all``).
+- **Corregido: una bonificación de tecnología y una de fase de civilización podían borrarse mutuamente**: ambas se guardaban en un único dict plano, así que la tecnología del campamento minero (``gather_time_resource1``) y el "50% más rápido en oro desde la Edad del Castillo" de los etíopes (``gather_time_resource1``) escribían la misma clave, y la que se aplicaba después borraba en silencio a la otra: la tecnología de minería de oro de un etíope dejaba de funcionar en la Edad del Castillo. Ahora las dos fuentes se guardan aparte y **ambas se aplican**: los porcentajes se multiplican (un -13% de la tecnología más un -50% de la civilización da -56,5% del tiempo). Cada fuente sigue eligiendo su propia clave más específica, así que una clave estrecha (``goldmine``) ya no oculta una amplia (``resource1``) de la otra fuente.
+- **Alcance**: ``soundrts/gather_rate.py``, ``soundrts/worldunit/worldworker.py``, ``soundrts/attributes/gather_rate_display.py``, ``soundrts/attributes/gather_handler.py``, ``soundrts/worldmarket.py``, ``soundrts/definitions.py``, ``soundrts/worldphase.py``, ``soundrts/worldupgrade/attribute_effects.py``, ``mods/aoe2/rules.txt``, ``res/rules.txt``, ``soundrts/tests/test_gather_rate_dynamic_attributes.py``.
+
+**Añadido: atacar rompe el sigilo (al estilo de AoE3)**
+
+- **Problema**: el motor no tenía ninguna forma de obligar a una unidad oculta a delatarse. Una unidad invisible o camuflada podía atacar indefinidamente sin ser detectada nunca, de modo que el sigilo era siempre mejor que ser una unidad visible con las mismas estadísticas.
+- **Mejora**: dos campos de reglas nuevos y el soporte del motor. ``reveal_stealth_on_attack 1`` (int, 0 por defecto) hace que una unidad oculta se descubra al atacar, y ``stealth_reveal_time N`` (segundos con escala de precisión, 3 por defecto) indica cuánto tiempo permanece descubierta (``0`` = para siempre). La revelación se dispara con ataques cuerpo a cuerpo, a distancia y de carga, y volver a atacar mientras está descubierta renueva el temporizador. Mientras la ventana está abierta, los ``is_invisible`` / ``is_cloaked`` / ``is_cloakable`` de la unidad se sobrescriben a nivel de instancia, así que es visible para todos y un ocultador cercano no puede volver a esconderla; al cerrarse la ventana se restaura el estado natural. Este es el comportamiento del espía / del ninja / del acechador de jaguar de Age of Empires III.
+- **Alcance**: ``soundrts/definitions.py``, ``soundrts/worldentity.py``, ``soundrts/world/world_game.py``, ``soundrts/combat/attack_action.py``, ``soundrts/combat/damage_effects.py``, ``soundrts/tests/test_stealth_reveal_on_attack.py``.
+
+**Añadido: el Caballero No-Muerto, una unidad que se descubre al atacar**
+
+- **Problema**: el juego base no tenía ninguna unidad que mostrara el nuevo mecanismo, así que la función nunca podía verse en acción.
+- **Mejora**: una nueva ``undead_knight`` en ``res/rules.txt``: un caballero invisible de la era imperial que entrena el necrópolis (20 de comida / 20 de oro, 55 de vida, 8 de daño cuerpo a cuerpo). Es invisible mientras descansa y queda descubierto 3 segundos después de cada ataque, así que puede golpear desde las sombras pero tiene que retirarse antes del siguiente. Se le añadió la definición de estilo y el título TTS en los 13 idiomas.
+- **Alcance**: ``res/rules.txt``, ``res/ui/style.txt``, ``res/ui*/tts.txt``, ``soundrts/tests/test_res_undead_knight.py``.
+
+**Corregido: solo el aldeano Burgundy puede mejorarse a Militia Flamenca**
+
+- **Problema**: el mod de AoE2 ponía ``can_upgrade_to flemish_militia`` en la clase base compartida ``peasant``, así que toda civilización cuyo aldeano heredase de ella -- los vietnamitas incluidos -- ofrecía una mejora manual a Militia Flamenca, aunque la Revolución Flamenca es una investigación Burgundy.
+- **Mejora**: la línea de mejora se movió de ``peasant`` a ``burgundian_villager``. La investigación sigue transformando a los aldeanos Burgundy como manda DE, y las otras 41 civilizaciones ya no ven el botón.
+- **Alcance**: ``mods/aoe2/rules.txt``, ``soundrts/tests/test_aoe2_flemish_militia_upgrade.py``.
+
+**Corregido: el castillo Magyar ofrecía una tecnología que no existe**
+
+- **Problema**: el Castillo Magyar listaba una tecnología llamada ``mercenaries`` en su lista ``can_research``, pero no existe ningún ``def mercenaries`` en las reglas. Seleccionar esa entrada en el menú de tecnologías reventaba con ``AttributeError: 'NoneType' object has no attribute 'cost'``.
+- **Mejora**: se elimina el nombre colgante, y una prueba nueva exige que toda tecnología que ofrece un edificio resuelva a una clase de reglas real.
+- **Alcance**: ``mods/aoe2/rules.txt``, ``soundrts/tests/test_aoe2_castle_research_defs_exist.py``.
+
+**Corregido: las unidades y tecnologías de DE que no se anunciaban**
+
+- **Problema**: once unidades y tecnologías de AoE2 DE estaban definidas en las reglas pero no tenían entrada en el archivo de estilo, así que no tenían ni título ni atajo, y la voz nunca las anunciaba.
+- **Mejora**: se añadieron las definiciones de estilo que faltaban (``ordonnance_companies``, ``cranequins``, ``pirotechnia``, ``mounted_crossbowman``, ``heavy_mounted_crossbowman``, ``flemish_militia``, ``flaming_camel``, ``warrior_priest``, ``dragon_ship``, ``savar``, ``bulgarian_mill``) junto con sus anuncios TTS en el rango de ID 9122-9131, para los 13 idiomas.
+- **Alcance**: ``mods/aoe2/ui/style.txt``, ``mods/aoe2/ui*/tts.txt``, ``soundrts/tests/test_aoe2_de_unit_announcements.py``.
+
+**Corregido: la IA ahora destruye las bases enemigas ocultas**
+
+- **Problema**: en crazyMod la computadora barría todas las unidades visibles pero nunca atacaba la incubadora camuflada del jugador, y la partida se bloqueaba.
+- **Mejora**: cuatro capas hacen accesible la base oculta. Se recluta un detector móvil (``is_a_detector`` / ``detection_range``) que barre los recuadros sospechosos, y su orden sobrevive al ``cancel_all_orders()`` de la rutina de combate habitual. Una unidad detectada una vez permanece en la memoria del propietario del detector, así que se puede seguir atacando después de que el detector se haya ido. Al mejorar un edificio camuflado, las notas de edificio oculto se re-vinculan a la nueva entidad. Y el ataque va ligado al identificador de la unidad, así que no se pierde cuando la percepción camuflada parpadea.
+- **Alcance**: ``soundrts/worldplayercomputer.py``, ``soundrts/world/world_game.py``, ``soundrts/worldplayerbase/base.py``, ``soundrts/worldplayerbase/perception.py``, ``soundrts/worldplayerbase/perception_fast.pyx``, ``soundrts/combat/targeting.py``, ``soundrts/combat/combat_fast.pyx``, ``soundrts/worldroom.py``.
+
+**Corregido: la IA de AoE2 jl3 nunca llegaba a la edad feudal**
+
+- **Problema**: en el mapa AoE2 jl3 las tres IA intermedias nunca atacaban: el clic de 500 de comida para la edad feudal se colaba más allá de los 24 minutos. Varios defectos independientes se sumaban. La petición de recolección oscilaba entre la pasada de comida y la de madera, así que ninguno de los dos recursos llegaba a acumularse. La granja nunca se construía porque el molino que necesita no es productor de comida por sí mismo. El coste de replantación se cargaba contra la reserva del próximo edificio de producción, lo que clavaba a cada leñador en los árboles. Y el planificador de oro sólo veía edificios como sumideros de oro, así que nadie minaba, mientras 4 milicianos + 8 arqueros necesitan 440 de oro.
+- **Mejora**: la comprobación de "ya está recolectando X" conoce ahora el tope de cada recurso, una cuadrilla llena se omite de entrada, un trabajador que lleva carga nunca se reasigna, y un trabajador que ya recolecta del mismo objetivo conserva su orden en curso. El molino se levanta ahora antes que la granja. La replantación cuenta como demanda y no como reserva, y cualquier reserva positiva cuenta. El planificador de oro valora también a los soldados de la línea de recolección.
+- **Alcance**: ``soundrts/worldplayercomputer.py``, ``soundrts/tests/test_ai_aoe2_jl3_no_wood_food_pingpong.py``, ``soundrts/tests/test_aoe2_farm_is_not_a_warehouse.py``.
+
+**Corregido: el explorador de res jl1 oscilaba para siempre entre dos recuadros**
+
+- **Problema**: el explorador de la IA consultaba ``player.strictly_observed_squares`` -- los recuadros vistos *en este fotograma* -- en lugar del acumulado ``strictly_observed_before_squares``, así que volvía a elegir el mismo recuadro una y otra vez. El primer descubrimiento en jl1 ocurría entre 8m07s y 16m59s en lugar de unos 3m32s uniformes.
+- **Mejora**: el explorador usa ahora el conjunto acumulado monótono. Las unidades de la edad de castillo pasan también a su propia ola, de modo que la primera ola militar ya no queda bloqueada detrás de ellas.
+- **Alcance**: ``soundrts/worldunit/worldcreature.py``, ``res/ai.txt``, ``mods/aoe2/ai.txt``, ``soundrts/tests/test_ai_res_jl1_attack_timing.py``, ``soundrts/tests/test_ai_aoe2_dark_age_eco.py``.
+
+**Corregido: el informe de estado de la unidad no listaba las tecnologías de effect_bonus_targets**
+
+- **Problema**: una tecnología cuyo alcance está definido por ``effect_bonus_targets`` (el Collar de Caballo / Arado Pesado / Rotación de Cultivos de AoE2, cuyo objetivo es ``farm``) se aplica a la unidad objetivo aunque la unidad no repita la tecnología en ``can_use_tech``. El informe de estado (tecla ``v``) sólo listaba las tecnologías clásicas de ``can_use`` / ``can_use_tech``, así que la granja nunca mencionaba el Collar de Caballo después de que el molino lo hubiera investigado.
+- **Mejora**: el informe de estado lista ahora también las tecnologías investigadas cuyas filas de efecto filtrado nombran el tipo de esta unidad. La vía clásica sigue siendo la autorizada, una tecnología nunca se lista dos veces y se conserva el orden de investigación.
+- **Alcance**: ``soundrts/worldunit/world_attributes.py``, ``soundrts/worldupgrade/effect_bonus_parse.py``, ``soundrts/tests/test_effect_bonus_targets_status_report.py``.
+
+**Corregido: la reconstrucción del espectador compartía las cachés de percepción y de decisión de IA con la partida en vivo**
+
+- **Problema**: una partida en vivo y una reconstrucción de espectador se ejecutan en paralelo en el mismo proceso y reparten los *mismos* identificadores de jugador y de unidad. Las cachés de percepción y la caché de decisión de IA eran atributos de clase indexados por esos identificadores, así que los dos mundos leían el estado del otro y sus simulaciones divergían: en un mundo una unidad decidió atacar, en el otro la misma clave de caché retornaba pronto y la unidad nunca eligió objetivo; y un valor de amenaza cacheado hacía que un mundo atacara donde el otro huía.
+- **Mejora**: las cachés de percepción pasan a la instancia del mundo, accesibles mediante el nuevo ``PerceptionCachesMixin``, y la caché de decisión de IA vive también en el mundo (el atributo de clase queda sólo como respaldo para los stubs de prueba sin mundo). Un espectador puro nunca combate ni tiene unidades, así que ya no lee ``.menace`` de nadie.
+- **Alcance**: ``soundrts/worldplayerbase/perception_caches.py``, ``soundrts/worldplayerbase/perception.py``, ``soundrts/worldplayerbase/perception_fast.pyx``, ``soundrts/worldplayerbase/base.py``, ``soundrts/world/world_core.py``, ``soundrts/worldunit/world_ai_decision.py``.
+
+**Corregido: el juego no salía de la partida inmediatamente al perder**
+
+- **Problema**: al ser derrotado no se salía de inmediato: la partida esperaba a que se recitara toda la cola de voz (más de 30 alertas de combate en cola) antes de que apareciera la pantalla de estadísticas.
+- **Mejora**: los mensajes de voz pendientes se descartan sin pronunciarse (``Voice.discard_pending()``), así que el rezago pasivo de combate no retrasa la transición; el aviso de derrota se sigue pronunciando sincrónicamente. El aviso de "progreso guardado" usa la biblioteca de voz principal, que sobrevive al desmontaje.
+- **Alcance**: ``soundrts/lib/voice.py``, ``soundrts/clientgame/game_interface_base.py``, ``soundrts/clientgame/game_resources.py``.
+
+**Rendimiento: el camino crítico, rondas 4 a 7**
+
+- **Problema**: el perfil de cw1 de 40 minutos seguía señalando las mismas funciones una y otra vez.
+- **Mejora**: ocho cambios dirigidos. Los valores por defecto de los atributos del camino crítico se declaran en la clase base ``Entity`` en lugar de buscarlos con ``getattr``. Los edificios de aura del mundo se mantienen en un registro en vez de recorrer todas las unidades de todos los jugadores (1,2e8 llamadas en una partida). El ``Exit`` pareja se guarda directamente y la comprobación de bloqueo hace cortocircuito cuando ninguno de los dos lados tiene bloqueadores (44M y 56,4M de llamadas en la misma partida). La comprobación de bloqueadores y la heurística del A* se inlinean en lugar de pasar por un cierre y una lambda (240M + 82M + 55,6M de llamadas). La vista de cuadrícula fusiona su memorización de tamaño de icono e inlinea sus auxiliares de una sola línea. Y las fuentes Cython generadas se regeneran, de modo que el C versionado coincide con el ``.pyx`` versionado.
+- **Alcance**: ``soundrts/worldentity.py``, ``soundrts/world_aura.py``, ``soundrts/worldexit.py``, ``soundrts/worldroom.py``, ``soundrts/clientgamegridview.py``, ``soundrts/clientgame/game_navigation.py``, ``soundrts/worldplayerbase/base.py``, ``soundrts/worldplayerbase/perception.py``, ``soundrts/worldplayerbase/resources.py``, ``soundrts/worldplayercomputer.py``, ``soundrts/worldunit/world_ai_decision.py``, ``soundrts/worldunit/world_attributes.py``, ``soundrts/worldunit/world_status_update.py``, ``soundrts/worldunit/worldcreature.py``, ``soundrts/world/world_ecs.py``, ``soundrts/world_formation.py``, ``soundrts/combat/damage_calculation.py``, ``PERF_ROUND7_SUMMARY.md``.
+
+**Mapa: el ejército solo-computadora de z5 fue reequilibrado**
+
+- **Cambio**: el jugador computadora en z5 recibe ahora un inventario real de asedio y magia en lugar de cinco caballeros y cuatro dragones, y el jugador humano empieza con una máquina voladora junto al ejército inicial.
+- **Alcance**: ``res/multi/z5.txt``.
+
+**Añadido: el mecanismo de sigilo está documentado en la guía de modificación**
+
+- **Problema**: la guía de modificación nunca mencionaba el subsistema de sigilo, así que los modders no tenían forma de enterarse de ``is_invisible``, ``is_cloakable``, ``is_a_cloaker``, ``cloaking_range``, ``is_a_detector`` o ``detection_range``, y menos aún del nuevo mecanismo de ruptura de sigilo al atacar.
+- **Mejora**: los cinco idiomas (``en``, ``zh``, ``es``, ``it``, ``pt-BR``) de ``doc_src/src/*/mod/modding.rst`` recibieron una nueva sección *stealth* que explica todo el subsistema -- ``is_invisible``, ``is_cloakable``, ``is_a_cloaker`` con ``cloaking_range``, ``is_a_detector`` con ``detection_range`` -- y el nuevo mecanismo de ruptura de sigilo al atacar con ``reveal_stealth_on_attack`` y ``stealth_reveal_time``, con un ejemplo de espía.
+- **Alcance**: ``doc_src/src/*/mod/modding.rst``.
+
+**Añadido: los campos de sigilo ahora se anuncian en la pantalla de atributos**
+
+- **Problema**: La pantalla de atributos leía ``mp.CLOAKING_RANGE`` y ``mp.DETECTION_RANGE``, pero ninguna de esas dos constantes estaba definida en ``msgparts.py``. El ``AttributeError`` resultante lo tragaba el ``try/except`` que rodea cada paso de los atributos, así que el alcance de camuflaje y el alcance de detección nunca se anunciaban: ni en una unidad que se camufla, ni en un detector.
+- **Mejora**: El subsistema de sigilo ya tiene sitio en la pantalla de atributos. ``cloaking_range`` y ``detection_range`` se anuncian sólo para las unidades que realmente los tienen, y también se anuncian los nuevos campos de ruptura de sigilo: ``reveal_stealth_on_attack`` (sí / no) y ``stealth_reveal_time`` (los segundos que la unidad permanece descubierta; «expuesto en permanencia» para ``0``). Las filas sólo aparecen en unidades que están ocultas o que rompen su sigilo, así que las unidades normales no se ensucian. Los 13 idiomas de la interfaz recibieron las cinco nuevas entradas de TTS (5869-5873).
+- **Alcance**: ``soundrts/msgparts.py``, ``soundrts/attributes/basic_attributes.py``, ``soundrts/attributes/display_interface.py``, ``res/ui*/tts.txt``, ``soundrts/tests/test_stealth_attributes_ui.py``.
+
+**Añadido: pruebas de regresión para esta versión**
+
+- **Alcance**: ``soundrts/tests/test_changelog_1518.py``, ``soundrts/tests/test_stealth_reveal_on_attack.py``, ``soundrts/tests/test_res_undead_knight.py``, ``soundrts/tests/test_aoe2_flemish_militia_upgrade.py``, ``soundrts/tests/test_aoe2_castle_research_defs_exist.py``, ``soundrts/tests/test_aoe2_de_unit_announcements.py``, ``soundrts/tests/test_ai_hidden_enemy_detector.py``, ``soundrts/tests/test_ai_gather_target_determinism.py``, ``soundrts/tests/test_ai_stalled_plan_fallback.py``, ``soundrts/tests/test_ai_aoe2_jl3_no_wood_food_pingpong.py``, ``soundrts/tests/test_aoe2_farm_is_not_a_warehouse.py``, ``soundrts/tests/test_ai_res_jl1_attack_timing.py``, ``soundrts/tests/test_ai_aoe2_dark_age_eco.py``, ``soundrts/tests/test_effect_bonus_targets_status_report.py``, ``soundrts/tests/test_defeat_immediate_stats_exit.py``, ``soundrts/tests/test_end_game_voice_flush.py``, ``soundrts/tests/test_resume_saved_voice_notice.py``, ``soundrts/tests/test_incremental_buckets.py``.
+
 1.5.1.7
 -------
 

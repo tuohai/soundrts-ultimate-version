@@ -5,6 +5,121 @@ Release notes
 .. contents::
 
 
+1.5.1.8
+-------
+
+**Fixed: siege units showed no "unpacking" status during a forced attack**
+
+- **Problem**: with a trebuchet, a forced attack (``ctrl`` + backspace) first unpacks the unit and then fires, but the interface never mentioned the unpacking - neither "unpacking" nor any state on the progress bar. Only clicking "unpack" in the command menu produced that feedback.
+- **Cause**: clicking "unpack" queues an ``unpack`` order, so the interface can tell the unit is unpacking by reading the order queue. The automatic unpack of a forced attack happens inside ``soundrts/combat/attack_action.py`` (``ensure_unpacked``); the order queue only ever holds the attack, so the interface had no way to know.
+- **Fix**: the interface now reads the unit's siege state (``_siege_mode``) directly, so the unit shows and announces **unpacking** (``siege_unpacking``) whether the transition was started by a manual order or by an attack. Three display sites are wired up: the spoken order summary (``orders_txt``), the status line of the selection panel at the bottom left, and the "special states" row of the attribute screen.
+- **Non-intrusive**: the state is announced **only when the player queries the unit** (for example, using the hotkey to take control of a trebuchet says "you control the trebuchet 1 at a1, unpacking"). Packing and unpacking no longer announce anything by themselves when they start, and their completion no longer says "packed" / "unpacked".
+- **De-duplicated**: when the order queue already holds the matching pack / unpack command, "packing" / "unpacking" is no longer followed by a repeated "pack" / "unpack".
+- **Scope**: ``soundrts/clientgameentity/base.py``, ``soundrts/clientgameentity/properties.py``, ``soundrts/clientgameentity/events.py``, ``soundrts/clientgame/game_hud.py``, ``soundrts/attributes/unit_detail.py``, ``soundrts/tests/test_siege_forced_attack_unpack_status.py``.
+
+**Added: the attribute screen's gathering rate now follows the technologies**
+
+- **Problem**: the mining-camp and lumber-mill technologies (the AoE2 mod's Gold Mining, Stone Mining, Double Bit Axe, ...) did work, but the villager's attribute screen always showed the static rules value. Researching Gold Mining really makes the villager ~15% faster at gold, yet the screen still reported 0.38 per second, so the player could not tell whether the technology had any effect.
+- **Improvement**: the attribute screen now shows the **effective** gathering rate. After Gold Mining the gold-mine row reads 0.44 per second, after Double Bit Axe the wood row reads 0.47 per second; without any technology the original value is still shown. The live simulation and the attribute screen now share one bonus-resolution implementation (``soundrts/gather_rate.py``), so the screen can no longer drift from the real speed. The hotkey announcement reports the effective rate too.
+- **Also fixed**: gathering bonuses written with a **resource name** (``gold`` / ``wood`` / ``food`` / ``stone``) never took effect at all - the engine only looked the bonus up by resource slot (``resource1``) and by deposit type (``goldmine``). The Ethiopians' "50% faster gold from Castle Age", the Romans' "5% faster at everything" and the Sicilians' "23% faster food" therefore all landed nowhere. These bonuses now work.
+- **Rules-driven**: the engine no longer hardcodes resource names. A rules file declares what its resources are called with ``parameters resource_names resource1 gold resource2 wood resource3 food resource4 stone``, and the engine resolves them from that declaration. **Both** spellings are supported: the **resource slot** (``gather_time_resource1``) for a whole resource (the mining-camp and lumber-mill techs, the Romans' everything bonus) and the **deposit type** (``gather_time_goldmine``) for one specific deposit (the Britons' shepherd bonus). The AoE2 mining and lumber technologies were switched to the resource-slot spelling, so they no longer name a single deposit type.
+- **Fixed: the attribute screen disagreed with the live simulation**: bonuses were looked up in two different orders - the simulation checked the resource slot first, the attribute screen checked the deposit type first. When the Romans' "5% faster at everything" (``gather_time_resource1``) and the mining-camp tech (``gather_time_resource1 -13%``) were both active, the two sides picked *different* bonuses, so the screen reported a rate the worker never achieved. Both now share one order: the **most specific key wins** (deposit type -> resource slot -> resource name -> ``all``).
+- **Fixed: a technology bonus and a civilization phase bonus could erase each other**: both were stored in one flat dict, so the mining-camp tech (``gather_time_resource1``) and the Ethiopians' "50% faster gold from Castle Age" (``gather_time_resource1``) wrote the same key, and whichever was applied last silently deleted the other — an Ethiopian's gold mining tech simply stopped working at Castle Age. The two sources are now stored apart and **both apply**: the percentages multiply (a -13% tech plus a -50% civ bonus is -56.5% of the time). Each source still resolves its own most specific key, so a narrow civ bonus (``goldmine``) no longer hides a broad one (``resource1``) from the other source.
+- **Scope**: ``soundrts/gather_rate.py``, ``soundrts/worldunit/worldworker.py``, ``soundrts/attributes/gather_rate_display.py``, ``soundrts/attributes/gather_handler.py``, ``soundrts/worldmarket.py``, ``soundrts/definitions.py``, ``soundrts/worldphase.py``, ``soundrts/worldupgrade/attribute_effects.py``, ``mods/aoe2/rules.txt``, ``res/rules.txt``, ``soundrts/tests/test_gather_rate_dynamic_attributes.py``.
+
+**Added: attacking breaks stealth (AoE3-style reveal)**
+
+- **Problem**: The engine had no way to make a stealthed unit give itself away. An invisible or cloaked unit could keep attacking forever without ever being spotted, so stealth was strictly better than being a visible unit with the same stats.
+- **Fix**: Two new rules fields plus the engine support. ``reveal_stealth_on_attack 1`` (int, default 0) makes a stealthed unit expose itself when it attacks, and ``stealth_reveal_time N`` (precision-scaled seconds, default 3) says for how long it stays exposed (``0`` = forever). The reveal fires on melee, ranged and charge attacks, and attacking again while exposed refreshes the timer. While the window is open the unit's ``is_invisible`` / ``is_cloaked`` / ``is_cloakable`` are overridden at the instance level, so the unit is visible to everybody and a nearby cloaker cannot re-hide it; when the window closes the natural state is restored. This is the Age of Empires III spy / ninja / jaguar stalker behaviour.
+- **Scope**: ``soundrts/definitions.py``, ``soundrts/worldentity.py``, ``soundrts/world/world_game.py``, ``soundrts/combat/attack_action.py``, ``soundrts/combat/damage_effects.py``, ``soundrts/tests/test_stealth_reveal_on_attack.py``.
+
+**Added: the Undead Knight, a unit that is exposed when it attacks**
+
+- **Problem**: The base game had no unit that showed the new mechanic, so the feature could never be seen in action.
+- **Fix**: A new ``undead_knight`` in ``res/rules.txt``: an invisible imperial-age knight trained by the necropolis (20 food / 20 gold, 55 HP, 8 melee damage). It is invisible while it rests and exposed for 3 seconds after every attack, so it can strike from the shadows but has to slip away before the next one. It got a style entry and a TTS title in all 13 locales.
+- **Scope**: ``res/rules.txt``, ``res/ui/style.txt``, ``res/ui*/tts.txt``, ``soundrts/tests/test_res_undead_knight.py``.
+
+**Fixed: only the Burgundian villager can be upgraded to Flemish Militia**
+
+- **Problem**: The AoE2 mod put ``can_upgrade_to flemish_militia`` on the shared ``peasant`` base class, so every civilization whose villager inherits from it -- the Vietnamese included -- offered a manual upgrade to Flemish Militia, even though the Flemish Revolution is a Burgundian research.
+- **Fix**: The upgrade line moved from ``peasant`` to ``burgundian_villager``. The research still morphs the Burgundian villagers as DE prescribes, and the other 41 civilizations no longer see the button.
+- **Scope**: ``mods/aoe2/rules.txt``, ``soundrts/tests/test_aoe2_flemish_militia_upgrade.py``.
+
+**Fixed: the Magyar castle offered a technology that does not exist**
+
+- **Problem**: The Magyar Castle listed a technology named ``mercenaries`` in its ``can_research`` list, but no ``def mercenaries`` exists in the ruleset. Selecting that entry in the technology menu crashed with ``AttributeError: 'NoneType' object has no attribute 'cost'``.
+- **Fix**: The dangling name is removed, and a test now requires every technology a building offers to resolve to a real rules class.
+- **Scope**: ``mods/aoe2/rules.txt``, ``soundrts/tests/test_aoe2_castle_research_defs_exist.py``.
+
+**Fixed: the DE units and technologies that had no announcement**
+
+- **Problem**: Eleven AoE2 DE units and technologies were defined in the rules but had no entry in the style file, so they had neither a title nor a hotkey, and the voice never announced them.
+- **Fix**: The missing style definitions (``ordonnance_companies``, ``cranequins``, ``pirotechnia``, ``mounted_crossbowman``, ``heavy_mounted_crossbowman``, ``flemish_militia``, ``flaming_camel``, ``warrior_priest``, ``dragon_ship``, ``savar``, ``bulgarian_mill``) were added together with their TTS announcements in the 9122-9131 ID range, for all 13 locales.
+- **Scope**: ``mods/aoe2/ui/style.txt``, ``mods/aoe2/ui*/tts.txt``, ``soundrts/tests/test_aoe2_de_unit_announcements.py``.
+
+**Fixed: the AI now destroys cloaked enemy bases**
+
+- **Problem**: In the crazyMod the computer wiped out every visible unit but never attacked the player's cloaked hatchery, so the match deadlocked.
+- **Fix**: Four layers make the hidden base reachable. A mobile detector (``is_a_detector`` / ``detection_range``) is recruited and sent to sweep the suspect squares, and its order survives the ordinary combat routine's ``cancel_all_orders()``. A unit that has been detected once stays in the detector owner's memory, so it can still be attacked after the detector has moved away. Upgrading a cloaked building re-binds the hidden-building notes to the new entity. And the attack is bound to the unit handle, so it is not dropped when the cloaked perception flickers.
+- **Scope**: ``soundrts/worldplayercomputer.py``, ``soundrts/world/world_game.py``, ``soundrts/worldplayerbase/base.py``, ``soundrts/worldplayerbase/perception.py``, ``soundrts/worldplayerbase/perception_fast.pyx``, ``soundrts/combat/targeting.py``, ``soundrts/combat/combat_fast.pyx``, ``soundrts/worldroom.py``.
+
+**Fixed: the AoE2 jl3 AI never reached feudal**
+
+- **Problem**: On the AoE2 jl3 map the three intermediate AIs never attacked: the 500-food feudal click slipped past 24 minutes. Several independent defects added up. The gather request ping-ponged between the food pass and the wood pass, so neither resource ever accumulated. The farm was never built because the mill it needs is not a food producer itself. The replant cost was charged against the reserve for the next production building, which pinned every lumberjack to the trees. And the gold planner only ever saw buildings as gold sinks, so nobody ever mined, while 4 militia + 8 archers need 440 gold.
+- **Fix**: The "already collecting" guard now knows the cap of every resource, a full crew is skipped up-front, a worker that carries cargo is never re-tasked, and a worker that already gathers from the same target keeps its running order. The mill is now put up before the farm. The replant counts as a demand rather than a reserve, and any positive reserve counts. The gold planner prices the get line's soldiers as well.
+- **Scope**: ``soundrts/worldplayercomputer.py``, ``soundrts/tests/test_ai_aoe2_jl3_no_wood_food_pingpong.py``, ``soundrts/tests/test_aoe2_farm_is_not_a_warehouse.py``.
+
+**Fixed: the res jl1 scout oscillated between two squares forever**
+
+- **Problem**: The AI scout probed ``player.strictly_observed_squares`` -- the squares seen *this frame* -- instead of the cumulative ``strictly_observed_before_squares``, so it kept re-picking the same square forever. First discovery on jl1 happened anywhere between 8m07s and 16m59s instead of a uniform ~3m32s.
+- **Fix**: The scout now uses the monotonic cumulative set. The castle-age units also moved to their own wave, so the first military wave is no longer blocked behind them.
+- **Scope**: ``soundrts/worldunit/worldcreature.py``, ``res/ai.txt``, ``mods/aoe2/ai.txt``, ``soundrts/tests/test_ai_res_jl1_attack_timing.py``, ``soundrts/tests/test_ai_aoe2_dark_age_eco.py``.
+
+**Fixed: the unit status report did not list the effect_bonus_targets techs**
+
+- **Problem**: A tech whose reach is defined by ``effect_bonus_targets`` (the AoE2 Horse Collar / Heavy Plow / Crop Rotation, whose target is ``farm``) applies to the target unit even though the unit does not repeat the tech in ``can_use_tech``. The status readout (the ``v`` key) only listed the classic ``can_use`` / ``can_use_tech`` techs, so the farm never mentioned Horse Collar after the mill had researched it.
+- **Fix**: The status readout now also lists the researched techs whose filtered effect rows name this unit's type. The classic path stays authoritative, a tech is never listed twice, and the research order is preserved.
+- **Scope**: ``soundrts/worldunit/world_attributes.py``, ``soundrts/worldupgrade/effect_bonus_parse.py``, ``soundrts/tests/test_effect_bonus_targets_status_report.py``.
+
+**Fixed: the spectator rebuild shared the perception and AI decision caches with the live match**
+
+- **Problem**: A live match and a spectator rebuild run side by side in the same process hand out the *same* player ids and the *same* unit ids. The perception caches and the AI decision cache were class attributes keyed by those ids, so the two worlds read each other's state and their simulations forked: in one world a unit decided to attack, in the other the same cache key returned early and the unit never chose a target; and a cached menace value made one world attack where the other fled.
+- **Fix**: The perception caches move to the world instance, reached through the new ``PerceptionCachesMixin``, and the AI decision cache lives on the world as well (with the class attribute kept only as a fallback for world-less test stubs). A pure spectator never fights and has no units, so it no longer reads ``.menace`` on anyone.
+- **Scope**: ``soundrts/worldplayerbase/perception_caches.py``, ``soundrts/worldplayerbase/perception.py``, ``soundrts/worldplayerbase/perception_fast.pyx``, ``soundrts/worldplayerbase/base.py``, ``soundrts/world/world_core.py``, ``soundrts/worldunit/world_ai_decision.py``.
+
+**Fixed: the game did not leave the match immediately on defeat**
+
+- **Problem**: Being defeated did not exit the game right away: the match waited until the whole voice queue (30+ queued combat alerts) had been recited before the statistics screen appeared.
+- **Fix**: The pending voice messages are discarded without speaking them (``Voice.discard_pending()``), so the passive combat backlog cannot delay the transition; the defeat alert itself is still spoken synchronously. The "progress saved" notice uses the primary voice library, which survives the teardown.
+- **Scope**: ``soundrts/lib/voice.py``, ``soundrts/clientgame/game_interface_base.py``, ``soundrts/clientgame/game_resources.py``.
+
+**Performance: the hot path, rounds 4 to 7**
+
+- **Problem**: The 40-minute cw1 profile kept pointing at the same handful of functions.
+- **Fix**: Eight targeted changes. The hot-path attribute defaults are declared on the ``Entity`` base class instead of being looked up with ``getattr``. The world's aura buildings are kept in a registry instead of a full scan of every unit of every player (1.2e8 calls in one match). The partner ``Exit`` is held directly and the blocked check short-circuits when neither side has a blocker (44M and 56.4M calls in the same match). The A* blocker check and the heuristic are inlined instead of going through a closure and a lambda (240M + 82M + 55.6M calls). The grid view merges its icon-size memo and inlines its one-line helpers. And the generated Cython sources are regenerated so that the checked-in C matches the checked-in ``.pyx``.
+- **Scope**: ``soundrts/worldentity.py``, ``soundrts/world_aura.py``, ``soundrts/worldexit.py``, ``soundrts/worldroom.py``, ``soundrts/clientgamegridview.py``, ``soundrts/clientgame/game_navigation.py``, ``soundrts/worldplayerbase/base.py``, ``soundrts/worldplayerbase/perception.py``, ``soundrts/worldplayerbase/resources.py``, ``soundrts/worldplayercomputer.py``, ``soundrts/worldunit/world_ai_decision.py``, ``soundrts/worldunit/world_attributes.py``, ``soundrts/worldunit/world_status_update.py``, ``soundrts/worldunit/worldcreature.py``, ``soundrts/world/world_ecs.py``, ``soundrts/world_formation.py``, ``soundrts/combat/damage_calculation.py``, ``PERF_ROUND7_SUMMARY.md``.
+
+**Map: the z5 computer-only army was rebalanced**
+
+- **Change**: The computer player on z5 now gets a real siege-and-magic roster instead of five knights and four dragons, and the human player starts with a flying machine alongside the existing army.
+- **Scope**: ``res/multi/z5.txt``.
+
+**Added: the stealth mechanic is documented in the modding guide**
+
+- **Problem**: The modding guide never mentioned the stealth subsystem, so modders had no way to learn about ``is_invisible``, ``is_cloakable``, ``is_a_cloaker``, ``cloaking_range``, ``is_a_detector`` or ``detection_range``, let alone the new attack-reveal mechanic.
+- **Fix**: All five locales (``en``, ``zh``, ``es``, ``it``, ``pt-BR``) of ``doc_src/src/*/mod/modding.rst`` gained a new *stealth* section that explains the whole subsystem -- ``is_invisible``, ``is_cloakable``, ``is_a_cloaker`` with ``cloaking_range``, ``is_a_detector`` with ``detection_range`` -- and the new *breaking stealth by attacking* mechanic with ``reveal_stealth_on_attack`` and ``stealth_reveal_time``, including a worked spy example.
+- **Scope**: ``doc_src/src/*/mod/modding.rst``.
+
+**Added: the stealth fields are now announced in the attributes screen**
+
+- **Problem**: The attributes screen read ``mp.CLOAKING_RANGE`` and ``mp.DETECTION_RANGE``, but neither constant was ever defined in ``msgparts.py``. The resulting ``AttributeError`` was swallowed by the ``try/except`` around every attribute step, so the cloaking range and the detection range were never announced at all -- not for a cloaker, not for a detector.
+- **Fix**: The stealth subsystem now has a place in the attributes screen. ``cloaking_range`` and ``detection_range`` are announced for the units that actually have them, and the new reveal fields are announced as well: ``reveal_stealth_on_attack`` (yes / no) and ``stealth_reveal_time`` (the number of seconds the unit stays exposed, "stays revealed forever" for ``0``). The rows only appear for units that are stealthed or that break their stealth, so ordinary units are not cluttered. All 13 interface languages got the five new TTS entries (5869-5873).
+- **Scope**: ``soundrts/msgparts.py``, ``soundrts/attributes/basic_attributes.py``, ``soundrts/attributes/display_interface.py``, ``res/ui*/tts.txt``, ``soundrts/tests/test_stealth_attributes_ui.py``.
+
+**Added: regression tests for this release**
+
+- **Scope**: ``soundrts/tests/test_changelog_1518.py``, ``soundrts/tests/test_stealth_reveal_on_attack.py``, ``soundrts/tests/test_res_undead_knight.py``, ``soundrts/tests/test_aoe2_flemish_militia_upgrade.py``, ``soundrts/tests/test_aoe2_castle_research_defs_exist.py``, ``soundrts/tests/test_aoe2_de_unit_announcements.py``, ``soundrts/tests/test_ai_hidden_enemy_detector.py``, ``soundrts/tests/test_ai_gather_target_determinism.py``, ``soundrts/tests/test_ai_stalled_plan_fallback.py``, ``soundrts/tests/test_ai_aoe2_jl3_no_wood_food_pingpong.py``, ``soundrts/tests/test_aoe2_farm_is_not_a_warehouse.py``, ``soundrts/tests/test_ai_res_jl1_attack_timing.py``, ``soundrts/tests/test_ai_aoe2_dark_age_eco.py``, ``soundrts/tests/test_effect_bonus_targets_status_report.py``, ``soundrts/tests/test_defeat_immediate_stats_exit.py``, ``soundrts/tests/test_end_game_voice_flush.py``, ``soundrts/tests/test_resume_saved_voice_notice.py``, ``soundrts/tests/test_incremental_buckets.py``.
+
 1.5.1.7
 -------
 

@@ -4,6 +4,121 @@
 .. contents::
 
 
+1.5.1.8
+-------
+
+**修复：强制攻击时攻城单位不显示「正在拆包」**
+
+- **问题**：用巨型投石机（``ctrl`` + 退格）强制攻击时，投石机会先拆包再开火，但界面完全不提示拆包 —— 既没有「正在拆包」也没有进度条上的状态。只有在命令菜单里手动点「拆包」时才会显示。
+- **原因**：手动拆包会在命令队列里排一条 ``unpack`` 命令，界面读命令队列就知道它在拆包；而强制攻击的自动拆包发生在 ``soundrts/combat/attack_action.py`` 里（``ensure_unpacked``），命令队列里始终只有 attack，界面完全无从得知。
+- **修复**：界面现在直接读单位的攻城状态（``_siege_mode``），不论拆包是手动命令触发还是攻击自动触发，都会显示并播报**正在拆包**（``siege_unpacking``）。三个显示位置都接上了：选单位时的语音播报（``orders_txt``）、左下角选中属性板的状态行、属性界面的「特殊状态」。
+- **不打扰**：状态**只在玩家查询该单位时**播报（例如用热键控制投石机时会说「你控制了 巨型投石机 1 在 a1，正在拆包」）。打包 / 拆包开始或结束时不会主动语音提醒，打包 / 拆包完成也不会播报「已打包 / 已拆包」。
+- **去重**：命令队列里若已有对应的 pack / unpack 命令，「正在打包 / 正在拆包」之后不会再重复念一遍「打包 / 拆包」。
+- **范围**：``soundrts/clientgameentity/base.py``、``soundrts/clientgameentity/properties.py``、``soundrts/clientgameentity/events.py``、``soundrts/clientgame/game_hud.py``、``soundrts/attributes/unit_detail.py``、``soundrts/tests/test_siege_forced_attack_unpack_status.py``。
+
+**新增：属性界面的采集速率会跟着科技一起变**
+
+- **问题**：采矿场与伐木场的科技（帝国 2 模组的"采金法"、"采石法"、"双刃斧"等）实际上是有效的，但村民属性界面里的"采集速率"始终显示规则文件里的静态底数。升级采金法之后金矿采集速度其实提高了约 15%，界面却还是报 0.38 每秒，玩家无法确认科技到底有没有生效。
+- **改进**：属性界面现在显示**实际**采集速率。升级"采金法"后金矿一行会变成 0.44 每秒，升级"双刃斧"后木材一行会变成 0.47 每秒；没有科技时仍显示原始数值。实战模拟与属性界面共用同一套加成解析（``soundrts/gather_rate.py``），因此界面不会再与真实速度脱节。热键播报同样改为播报实际速率。
+- **附带修复**：以**资源名**书写的采集加成（``gold`` / ``wood`` / ``food`` / ``stone``）此前完全无法生效 —— 引擎只按资源槽编号（``resource1``）和矿床类型（``goldmine``）查找，所以埃塞俄比亚的"城堡时代金矿采集快 50%"、罗马的"采集全部资源快 5%"、西西里人的"食物快 23%"等文明加成都落到了空处。现在这些加成都能正常生效。
+- **规则驱动**：资源名不再由引擎写死。规则文件用 ``parameters resource_names resource1 gold resource2 wood resource3 food resource4 stone`` 声明自己的资源叫什么，引擎据此解析。**资源槽编号**（``gather_time_resource1``）与**矿床类型**（``gather_time_goldmine``）两种写法都受支持 —— 前者适合"整个资源"（采矿场 / 伐木场科技、罗马的全资源加成），后者适合"某一种矿床"（不列颠的牧羊加成）。AoE2 的采矿 / 伐木科技已改用资源槽写法，不再指定单一矿床类型。
+- **修复：属性界面与实战对不上号**：加成查找此前有两套顺序 —— 实战模拟先查资源槽，属性界面先查矿床类型。罗马的"全资源快 5%"（``gather_time_resource1``）与采矿场科技（``gather_time_resource1 -13%``）同时生效时，两边会挑中**不同**的加成，界面报出的速率和工人真实的采集速度对不上。现在两边统一为同一套顺序：**更具体的键优先**（矿床类型 → 资源槽 → 资源名 → ``all``）。
+- **修复：科技加成与文明时代加成会互相抹掉**：两者此前存在同一个扁平 dict 里，采矿场科技（``gather_time_resource1``）与埃塞俄比亚的"城堡时代起采金快 100%"（``gather_time_resource1``）写的是同一个键，后写入的那个会把先写入的悄悄删掉 —— 于是埃塞俄比亚到了城堡时代采金科技就失效了。现在两者分开存放并**同时生效**：百分比相乘（-13% 的科技加上 -50% 的文明加成 = 采集时间减少 56.5%）。每一路仍各自挑选自己最具体的键，所以一方的窄键（``goldmine``）不会再遮住另一方的宽键（``resource1``）。
+- **范围**：``soundrts/gather_rate.py``、``soundrts/worldunit/worldworker.py``、``soundrts/attributes/gather_rate_display.py``、``soundrts/attributes/gather_handler.py``、``soundrts/worldmarket.py``、``soundrts/definitions.py``、``soundrts/worldphase.py``、``soundrts/worldupgrade/attribute_effects.py``、``mods/aoe2/rules.txt``、``res/rules.txt``、``soundrts/tests/test_gather_rate_dynamic_attributes.py``。
+
+**新增：攻击即破隐（帝国 3 风格）**
+
+- **问题**：引擎没有任何办法让隐身的单位自己暴露。一个隐形或被隐身的单位可以永远攻击而始终不被发现，于是"隐身"严格优于"同等属性的可见单位"。
+- **改进**：新增两个规则字段与配套引擎支持。``reveal_stealth_on_attack 1``（int，默认 0）让隐身的单位在发动攻击时暴露自己，``stealth_reveal_time N``（精度缩放的秒数，默认 3）规定暴露持续多久（``0`` = 永久）。近战、远程与冲锋攻击都会触发暴露，暴露期间再次攻击会刷新计时。暴露窗口打开期间，单位的 ``is_invisible`` / ``is_cloaked`` / ``is_cloakable`` 会被实例属性覆盖，因此所有人都能看见它，附近的隐身装置也无法把它重新藏起来；窗口关闭后恢复原本的状态。这就是帝国时代 3 的间谍 / 忍者 / 美洲虎潜行武士的行为。
+- **范围**：``soundrts/definitions.py``、``soundrts/worldentity.py``、``soundrts/world/world_game.py``、``soundrts/combat/attack_action.py``、``soundrts/combat/damage_effects.py``、``soundrts/tests/test_stealth_reveal_on_attack.py``。
+
+**新增：亡灵骑士 —— 攻击之后就会暴露的单位**
+
+- **问题**：基础版里没有任何单位能演示这套新机制，玩家永远看不到它的实际效果。
+- **改进**：``res/rules.txt`` 新增 ``undead_knight``：一个隐形的帝国时代骑士，由死灵城堡训练（20 粮 / 20 金，55 血量，8 点近战伤害）。它平时隐形，每次攻击后暴露 3 秒，因此可以从暗处发动突袭，却必须在下一次攻击前抽身。它在 13 个语言包里都补上了样式定义与 TTS 标题。
+- **范围**：``res/rules.txt``、``res/ui/style.txt``、``res/ui*/tts.txt``、``soundrts/tests/test_res_undead_knight.py``。
+
+**修复：只有勃艮第村民才能升级为佛兰德斯民兵**
+
+- **问题**：帝国 2 模组把 ``can_upgrade_to flemish_militia`` 写在了共用的 ``peasant`` 基类上，于是所有继承它的村民 —— 包括越南人 —— 都提供了升级为佛兰德斯民兵的手动操作，尽管"佛兰德斯革命"是勃艮第人的专属研究。
+- **改进**：升级线从 ``peasant`` 移到 ``burgundian_villager``。研究完成时仍会按 DE 的规则把勃艮第村民变形，其余 41 个文明不再看到这个按钮。
+- **范围**：``mods/aoe2/rules.txt``、``soundrts/tests/test_aoe2_flemish_militia_upgrade.py``。
+
+**修复：马扎尔城堡提供了一个根本不存在的科技**
+
+- **问题**：马扎尔城堡的 ``can_research`` 列表里写了一个叫 ``mercenaries`` 的科技，但规则文件里根本没有 ``def mercenaries``。在科技菜单里选中这一项会崩溃，报 ``AttributeError: 'NoneType' object has no attribute 'cost'``。
+- **改进**：删除这个悬空的名字，并新增测试：建筑提供的每一项科技都必须能解析到真实的规则类。
+- **范围**：``mods/aoe2/rules.txt``、``soundrts/tests/test_aoe2_castle_research_defs_exist.py``。
+
+**修复：一批没有播报的 DE 单位与科技**
+
+- **问题**：十一个帝国 2 DE 单位与科技在规则里定义了，却没有对应的样式定义，于是既没有名字也没有热键，语音也不会播报它们。
+- **改进**：补齐缺失的样式定义（``ordonnance_companies``、``cranequins``、``pirotechnia``、``mounted_crossbowman``、``heavy_mounted_crossbowman``、``flemish_militia``、``flaming_camel``、``warrior_priest``、``dragon_ship``、``savar``、``bulgarian_mill``），并在 9122-9131 号 ID 段补上对应的 TTS 播报，覆盖全部 13 个语言包。
+- **范围**：``mods/aoe2/ui/style.txt``、``mods/aoe2/ui*/tts.txt``、``soundrts/tests/test_aoe2_de_unit_announcements.py``。
+
+**修复：电脑现在会拆掉隐身的敌方基地**
+
+- **问题**：在 crazyMod 里，电脑把所有可见单位都清干净了，却始终不攻击玩家的隐身孵化场，对局因此僵住。
+- **改进**：四层机制让隐藏的基地变得可打。电脑会招募一名机动侦测器（``is_a_detector`` / ``detection_range``）去扫荡可疑地块，而且它的命令不会被常规战斗流程的 ``cancel_all_orders()`` 打断；单位一旦被侦测到就会留在侦测方玩家的记忆里，因此侦测器离开后仍可继续攻击；升级隐身建筑时，隐藏建筑记录会重新绑定到新实体；攻击指令绑定在单位句柄上，因此隐身的感知闪烁也不会让它丢掉目标。
+- **范围**：``soundrts/worldplayercomputer.py``、``soundrts/world/world_game.py``、``soundrts/worldplayerbase/base.py``、``soundrts/worldplayerbase/perception.py``、``soundrts/worldplayerbase/perception_fast.pyx``、``soundrts/combat/targeting.py``、``soundrts/combat/combat_fast.pyx``、``soundrts/worldroom.py``。
+
+**修复：帝国 2 jl3 的电脑始终升不到封建**
+
+- **问题**：在帝国 2 jl3 地图上，三个中等电脑从不进攻：500 粮的升封建点击被拖过了 24 分钟。这是好几个独立缺陷叠加的结果。采集请求在"找食物"与"找木头"两趟之间来回拉扯，两种资源都攒不起来；农田永远没建起来，因为它需要的磨坊本身并不产食物；补种的开销被算进了下一个生产建筑的预留，于是每个伐木工都被钉在树上；而黄金规划器只把建筑当成花钱的地方，没人去挖矿，而 4 个民兵 + 8 个弓箭手需要 440 金。
+- **改进**："已经在采集 X"的判断现在知道每一种资源的采集上限，满员的队伍一开始就被跳过，携带货物的工人不会被重新派活，正在同一个目标采集的工人会保留手里的采集命令。磨坊现在会先于农田被建起来。补种算作需求而不是预留，而且任何正数预留都算数。黄金规划器也会给采集线上的士兵计价。
+- **范围**：``soundrts/worldplayercomputer.py``、``soundrts/tests/test_ai_aoe2_jl3_no_wood_food_pingpong.py``、``soundrts/tests/test_aoe2_farm_is_not_a_warehouse.py``。
+
+**修复：res jl1 的斥候在两个格子之间来回打转**
+
+- **问题**：电脑斥候探测的是 ``player.strictly_observed_squares`` —— *这一帧* 看见的格子 —— 而不是累计的 ``strictly_observed_before_squares``，于是它永远在反复挑同一个格子。jl1 上的首次发现时间从 8 分 07 秒到 16 分 59 秒不等，而正确值是均匀的约 3 分 32 秒。
+- **改进**：斥候改用单调递增的累计集合。城堡时代的单位也拆成单独一波，第一个军事波次不再被它们挡住。
+- **范围**：``soundrts/worldunit/worldcreature.py``、``res/ai.txt``、``mods/aoe2/ai.txt``、``soundrts/tests/test_ai_res_jl1_attack_timing.py``、``soundrts/tests/test_ai_aoe2_dark_age_eco.py``。
+
+**修复：单位状态面板没有列出 effect_bonus_targets 的科技**
+
+- **问题**：生效范围由 ``effect_bonus_targets`` 定义的科技（帝国 2 的马轭 / 重犁 / 轮作，目标名是 ``farm``）会作用到目标单位上，哪怕该单位没有在 ``can_use_tech`` 里重复列出它。状态面板（``v`` 键）只列出传统的 ``can_use`` / ``can_use_tech`` 科技，于是磨坊研究完马轭之后，农田的状态里始终没有马轭。
+- **改进**：状态面板现在也会列出那些"过滤效果行点名了本单位类型"的研究科技。传统路径仍然是权威来源，同一项科技不会列两次，研究的先后顺序也保持不变。
+- **范围**：``soundrts/worldunit/world_attributes.py``、``soundrts/worldupgrade/effect_bonus_parse.py``、``soundrts/tests/test_effect_bonus_targets_status_report.py``。
+
+**修复：观战重建与实战共用感知与 AI 决策缓存**
+
+- **问题**：实战对局与观战重建在同一个进程里跑，会分配到*相同*的玩家 id 与*相同*的单位 id。感知缓存与 AI 决策缓存是按这些 id 索引的类属性，于是两个世界互相读到了对方的状态，模拟结果就此分叉：一个世界里某个单位决定发起攻击，另一个世界命中同一个缓存键直接返回，那个单位根本没有选目标；还有一个缓存下来的威胁值让一个世界选择进攻、另一个世界选择逃跑。
+- **改进**：感知缓存移到 world 实例上，通过新增的 ``PerceptionCachesMixin`` 访问；AI 决策缓存也放到 world 上（类属性只作为无 world 的测试桩的后备）。纯观战者既不参战也没有单位，因此不再读取任何单位的 ``.menace``。
+- **范围**：``soundrts/worldplayerbase/perception_caches.py``、``soundrts/worldplayerbase/perception.py``、``soundrts/worldplayerbase/perception_fast.pyx``、``soundrts/worldplayerbase/base.py``、``soundrts/world/world_core.py``、``soundrts/worldunit/world_ai_decision.py``。
+
+**修复：战败后没有立刻退出对局**
+
+- **问题**：战败之后游戏不会马上退出：必须等整条语音队列（30 多条排队的战斗播报）全部念完，统计画面才出现。
+- **改进**：待播报的语音消息被直接丢弃而不朗读（``Voice.discard_pending()``），因此被动的战斗播报不会再拖延跳转；战败提示本身仍然是同步朗读的。"已保留进度"提示走主语音库，因此能在收尾过程中保留下来。
+- **范围**：``soundrts/lib/voice.py``、``soundrts/clientgame/game_interface_base.py``、``soundrts/clientgame/game_resources.py``。
+
+**性能：第 4 到第 7 轮热点路径优化**
+
+- **问题**：40 分钟 cw1 的性能剖析每次都指向同样那几个函数。
+- **改进**：八项针对性改动。热点属性的默认值改为声明在 ``Entity`` 基类上，不再用 ``getattr`` 逐次查找。世界里的光环建筑改为登记在册，而不是每帧扫描所有玩家的所有单位（一场对局 1.2 亿次调用）。出口的"另一端"直接持有，并且当两侧都没有阻挡物时立即短路（同一场对局分别 4400 万与 5640 万次调用）。A\* 的阻挡检查与启发函数改为内联，不再经过闭包与 lambda（2.4 亿 + 8200 万 + 5560 万次调用）。网格视图合并了图标尺寸的记忆表，并把只有一行的辅助函数内联。生成的 Cython 源码也重新生成，使提交进仓库的 C 与 ``.pyx`` 保持一致。
+- **范围**：``soundrts/worldentity.py``、``soundrts/world_aura.py``、``soundrts/worldexit.py``、``soundrts/worldroom.py``、``soundrts/clientgamegridview.py``、``soundrts/clientgame/game_navigation.py``、``soundrts/worldplayerbase/base.py``、``soundrts/worldplayerbase/perception.py``、``soundrts/worldplayerbase/resources.py``、``soundrts/worldplayercomputer.py``、``soundrts/worldunit/world_ai_decision.py``、``soundrts/worldunit/world_attributes.py``、``soundrts/worldunit/world_status_update.py``、``soundrts/worldunit/worldcreature.py``、``soundrts/world/world_ecs.py``、``soundrts/world_formation.py``、``soundrts/combat/damage_calculation.py``、``PERF_ROUND7_SUMMARY.md``。
+
+**地图：z5 的电脑阵容重新平衡**
+
+- **调整**：z5 上的电脑现在拿到一套真正像样的攻城与魔法阵容，而不是五名骑士与四条龙；人类玩家则在原有的初始部队之外多了一架飞行机器。
+- **范围**：``res/multi/z5.txt``。
+
+**新增：模组编写指南里记录了破隐机制**
+
+- **问题**：模组编写指南从未提及整套隐形子系统，模组作者无从了解 ``is_invisible``、``is_cloakable``、``is_a_cloaker``、``cloaking_range``、``is_a_detector``、``detection_range``，更不用说新加的攻击破隐机制。
+- **改进**：``doc_src/src/*/mod/modding.rst`` 的五种语言（``en``、``zh``、``es``、``it``、``pt-BR``）都新增了*stealth* 章节，完整讲解整套子系统 —— ``is_invisible``、``is_cloakable``、``is_a_cloaker`` 与 ``cloaking_range``、``is_a_detector`` 与 ``detection_range`` —— 以及新增的*攻击破隐* 机制（``reveal_stealth_on_attack`` 与 ``stealth_reveal_time``），并附了一个间谍单位示例。
+- **范围**：``doc_src/src/*/mod/modding.rst``。
+
+**新增：破隐机制的相关字段现在会在属性界面里播报**
+
+- **问题**：属性界面读取了 ``mp.CLOAKING_RANGE`` 与 ``mp.DETECTION_RANGE``，但这两个常量在 ``msgparts.py`` 里从未定义过。抛出的 ``AttributeError`` 又被属性生成流程的 ``try/except`` 吞掉，于是隐身范围与侦测范围从来没有被念出来 —— 无论是隐身装置还是侦测单位。
+- **改进**：隐形子系统现在出现在了属性界面里。``cloaking_range`` 与 ``detection_range`` 只会为真正拥有它们的单位播报；新增的破隐字段同样会被念出来：``reveal_stealth_on_attack``（是 / 否）与 ``stealth_reveal_time``（暴露持续的秒数，``0`` 念作「永久暴露」）。这些行只在「本身隐形」或「会破隐」的单位上出现，普通单位不会被这些字段打扰。13 个界面语言都补上了这 5 条新的播报（5869-5873）。
+- **范围**：``soundrts/msgparts.py``、``soundrts/attributes/basic_attributes.py``、``soundrts/attributes/display_interface.py``、``res/ui*/tts.txt``、``soundrts/tests/test_stealth_attributes_ui.py``。
+
+**新增：本次发布的回归测试**
+
+- **范围**：``soundrts/tests/test_changelog_1518.py``、``soundrts/tests/test_stealth_reveal_on_attack.py``、``soundrts/tests/test_res_undead_knight.py``、``soundrts/tests/test_aoe2_flemish_militia_upgrade.py``、``soundrts/tests/test_aoe2_castle_research_defs_exist.py``、``soundrts/tests/test_aoe2_de_unit_announcements.py``、``soundrts/tests/test_ai_hidden_enemy_detector.py``、``soundrts/tests/test_ai_gather_target_determinism.py``、``soundrts/tests/test_ai_stalled_plan_fallback.py``、``soundrts/tests/test_ai_aoe2_jl3_no_wood_food_pingpong.py``、``soundrts/tests/test_aoe2_farm_is_not_a_warehouse.py``、``soundrts/tests/test_ai_res_jl1_attack_timing.py``、``soundrts/tests/test_ai_aoe2_dark_age_eco.py``、``soundrts/tests/test_effect_bonus_targets_status_report.py``、``soundrts/tests/test_defeat_immediate_stats_exit.py``、``soundrts/tests/test_end_game_voice_flush.py``、``soundrts/tests/test_resume_saved_voice_notice.py``、``soundrts/tests/test_incremental_buckets.py``。
+
 1.5.1.7
 -------
 
