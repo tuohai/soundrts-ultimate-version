@@ -101,20 +101,33 @@ def test_gather_time_qty_supports_gather_time_resource_prefix():
 
 
 def test_gather_time_bonus_applied_per_resource():
-    """1.3.8.8: 升级 effect bonus gather_time 1 走 player.gather_time_bonus 字典。"""
+    """1.3.8.8: 升级 effect bonus gather_time 1 走 player.gather_time_bonus 字典。
+
+    1.5.1.9 起，加成查找统一走 ``soundrts.gather_rate``（通用 + 资源特定
+    + deposit 特定 + 资源名 + all），属性界面与实战模拟共用同一套解析。
+    """
     src = _source("soundrts", "worldunit", "worldworker.py")
     block = _section(src, "def get_gather_time", "def get_gather_qty")
-    # 通用 + 资源特定 + deposit 特定 + all
-    assert "self.player.gather_time_bonus" in block
-    assert 'in self.player.gather_time_bonus' in block
-    assert '"all" in self.player.gather_time_bonus' in block
+    assert "gather_time_bonus" in block
+    assert "gather_rate.lookup_bonus" in block
+    assert "gather_rate.bonus_keys" in block
+
+    helper = _source("soundrts", "gather_rate.py")
+    # 通用 + 资源特定 + deposit 特定 + 资源名 + all
+    assert '"all"' in helper
+    assert "resource_name_aliases" in helper
+    assert "deposit_type" in helper
 
 
 def test_gather_qty_bonus_applied_per_resource():
     src = _source("soundrts", "worldunit", "worldworker.py")
     block = src[src.index("def get_gather_qty"):]
-    assert "self.player.gather_qty_bonus" in block
-    assert '"all" in self.player.gather_qty_bonus' in block
+    assert "gather_qty_bonus" in block
+    assert "gather_rate.lookup_bonus" in block
+    assert "gather_rate.bonus_keys" in block
+
+    helper = _source("soundrts", "gather_rate.py")
+    assert '"all"' in helper
 
 
 def test_gather_effects_module_has_resource_specific_bonus():

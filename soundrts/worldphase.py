@@ -244,7 +244,9 @@ def apply_parsed_on_phase_bonus(player, bonus_args, unit_types, phase_name, fact
             host.can_gather_deposit = []
             host.can_gather_building = []
         try:
-            Upgrade.effect_bonus(host, 0, *bonus_args)
+            # phase=True：加成存进 player.phase_gather_*_bonus，
+            # 而不是与科技加成共用同一个 dict（两者可能用同一个键）。
+            Upgrade.effect_bonus(host, 0, *bonus_args, phase=True)
         except Exception as e:
             warning(
                 "on_phase %s gather bonus for %s failed: %s",
@@ -257,7 +259,7 @@ def apply_parsed_on_phase_bonus(player, bonus_args, unit_types, phase_name, fact
         if unit_types and not _unit_matches_type_names(unit, unit_types):
             continue
         try:
-            Upgrade.effect_bonus(unit, 0, *bonus_args)
+            Upgrade.effect_bonus(unit, 0, *bonus_args, phase=True)
         except Exception as e:
             warning(
                 "on_phase %s for %s failed on %s: %s",
@@ -493,7 +495,7 @@ class Phase(Upgrade):
             if targets and not cls._unit_matches_targets(unit, targets):
                 continue
             try:
-                cls.effect_bonus(unit, 0, *non_cost_args)
+                cls.effect_bonus(unit, 0, *non_cost_args, phase=True)
             except Exception as e:
                 warning("Error applying phase bonus to unit %s: %s",
                         getattr(unit, "type_name", unit), str(e))

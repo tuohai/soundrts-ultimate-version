@@ -23,6 +23,12 @@ _DEFAULT_TRADE_CAP = 517
 _DEFAULT_TRADE_TILE_SCALE = 6.0
 _DEFAULT_TRADE_SHRINK = 5.0
 
+# The last ``parameters resource_names`` declaration seen.  It is remembered so
+# that a lookup still resolves after the rules singleton has been swapped (the
+# test harness restores the base rules between modules, and ``Rules.load``
+# replaces ``_dict`` wholesale).  A new declaration always replaces it.
+_RESOURCE_NAME_PAIRS = ()
+
 
 def _rules():
     from . import definitions
@@ -51,19 +57,91 @@ def parse_resource_index(token) -> Optional[int]:
         return int(s[8:]) - 1
     if s.isdigit():
         return int(s)
-    # Common aliases (optional convenience; mods may also use style titles)
-    aliases = {
-        "gold": 0,
-        "wood": 1,
-        "food": 2,
-        "stone": 3,
-    }
-    if s in aliases:
-        return aliases[s]
+    # Resource *names* are rules-driven (``parameters resource_names``),
+    # never hardcoded here: the engine must not know what a mod calls gold.
+    idx = resource_name_index(s)
+    if idx is not None:
+        return idx
     try:
         return _rules().parse_resource_type(s)
     except Exception:
         return None
+
+
+def resource_name_index(name) -> Optional[int]:
+    """The resource slot a *name* refers to, or ``None``.
+
+    The names come from the rules (``parameters resource_names``), so the
+    engine itself hardcodes no resource name.  The parameter holds pairs::
+
+        resource_names resource1 gold resource2 wood resource3 food
+
+    A name that is not declared there is not a resource name at all (it may
+    still be a *deposit* type, which the gather bonus keys handle
+    separately).
+    """
+    key = str(name or "").strip().lower()
+    if not key:
+        return None
+    for slot, alias in _resource_name_pairs():
+        if alias == key:
+            return slot
+    return None
+
+
+def _resource_name_pairs():
+    """``(slot_index, alias)`` pairs declared by ``parameters resource_names``.
+
+    The declaration is read from the live rules and remembered, so a later
+    lookup still works when the rules have been swapped (or temporarily
+    cleared) behind our back — e.g. the test harness restores the base
+    ``rules`` singleton between modules.  A *new* declaration always
+    replaces the remembered one.
+    """
+    global _RESOURCE_NAME_PAIRS
+    raw = _param("resource_names", None)
+    if raw:
+        pairs = definitions_module()._parse_resource_name_pairs(raw)
+        _RESOURCE_NAME_PAIRS = pairs
+        return pairs
+    # The live rules no longer carry the declaration (they were swapped or
+    # cleared): fall back to what the rules object remembers.
+    try:
+        pairs = tuple(_rules().resource_name_pairs() or ())
+    except Exception:
+        pairs = ()
+    if pairs:
+        _RESOURCE_NAME_PAIRS = pairs
+        return pairs
+    if _RESOURCE_NAME_PAIRS:
+        return _RESOURCE_NAME_PAIRS
+    return ()
+
+
+def definitions_module():
+    """The ``soundrts.definitions`` module (imported lazily to avoid a cycle)."""
+    from . import definitions
+
+    return definitions
+
+
+def resource_name_aliases(index: int):
+    """The names a resource slot is known by (rules-driven).
+
+    The names come from ``parameters resource_names``, so the engine
+    hardcodes no resource name.  A deposit type that yields the slot is
+    *not* listed here: the deposit type is already a bonus lookup key of
+    its own (see ``soundrts.gather_rate.bonus_keys``).
+    """
+    try:
+        index = int(index)
+    except (TypeError, ValueError):
+        return ()
+    names = []
+    for slot, alias in _resource_name_pairs():
+        if slot == index and alias not in names:
+            names.append(alias)
+    return tuple(names)
 
 
 def resource_label(index: int) -> str:

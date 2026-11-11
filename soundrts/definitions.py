@@ -108,6 +108,35 @@ def parse_can_train_words(words) -> dict:
     return result
 
 
+def _parse_resource_name_pairs(raw):
+    """Parse ``resource1 gold resource2 wood`` → ``((0, "gold"), (1, "wood"))``.
+
+    The declaration comes from ``parameters resource_names``: it is how a
+    mod tells the engine what its resources are *called*, so the engine
+    itself never hardcodes a resource name.
+    """
+    if not raw:
+        return ()
+    if isinstance(raw, (list, tuple)):
+        items = list(raw)
+    else:
+        items = str(raw).split()
+    out = []
+    i = 0
+    while i < len(items):
+        tok = str(items[i]).strip().lower()
+        if tok.startswith("resource") and tok[8:].isdigit():
+            slot = int(tok[8:]) - 1
+            if i + 1 < len(items):
+                alias = str(items[i + 1]).strip().lower()
+                if alias:
+                    out.append((slot, alias))
+                    i += 2
+                    continue
+        i += 1
+    return tuple(out)
+
+
 class _Definitions:
     int_properties: Set[str] = set()
     precision_properties: Set[str] = set()
@@ -115,6 +144,7 @@ class _Definitions:
     precision_list_properties: Set[str] = set()
     string_properties: Set[str] = set()
     string_list_properties: Set[str] = set()
+
 
     @classmethod
     def is_string_list_key(cls, key):
@@ -1854,6 +1884,7 @@ class Rules(_Definitions):
         "trade_hubs",          # hub type names and/or flags (market, is_dock, …)
         "trade_rewards",       # resource indices a trade unit may earn on routes
         "tribute_resources",   # parameters: resources that can be tributed
+        "resource_names",      # parameters: resourceN <name> pairs (name aliases)
         "reveal_enemy_town_centers",  # race: fog-memory these hostile types at start
         # AoE2 DE team bonus — Ethiopians: "Outposts cost no stone".
         # NOTE: parsed by its own branch in read() (it stores a list-of-lists,
@@ -2166,6 +2197,22 @@ class Rules(_Definitions):
             else:
                 Worker._interp_rules_dict = previous_interp_rules
         self.classes = d
+        # Remember the resource *names* the rules declare.  They are read
+        # from ``parameters resource_names`` and kept on the instance (not
+        # only in ``_dict``) so that they survive a later ``_dict`` swap —
+        # the test harness restores the base rules between modules, and
+        # ``Rules.load`` replaces ``_dict`` wholesale.  The engine hardcodes
+        # no resource name; this is just a durable copy of the declaration.
+        self._resource_name_pairs = _parse_resource_name_pairs(
+            self._dict.get("parameters", {}).get("resource_names"))
+
+    def resource_name_pairs(self):
+        """``(slot_index, name)`` pairs declared by ``parameters resource_names``."""
+        pairs = getattr(self, "_resource_name_pairs", None)
+        if pairs is None:
+            pairs = ()
+            self._resource_name_pairs = pairs
+        return pairs
 
     def classnames(self):
         result = _Definitions.classnames(self)

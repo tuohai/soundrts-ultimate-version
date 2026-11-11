@@ -2,6 +2,7 @@ from .worldbase import Unit
 from ..worldresource import Deposit
 from .worldcreature import BuildingSite
 from ..worldorders import RallyingPointOrder, GoOrder
+from .. import gather_rate
 
 class Worker(Unit):
 
@@ -314,45 +315,16 @@ class Worker(Unit):
         
         # 应用 gather_time_bonus 效果
         final_time = base_time
-        if hasattr(self.player, 'gather_time_bonus') and self.player.gather_time_bonus:
-            # 检查是否有资源特定的bonus
-            if isinstance(self.player.gather_time_bonus, dict):
-                # 支持资源特定的bonus: gather_time_bonus = {"wood": -7, "gold": -5}
-                if resource_type in self.player.gather_time_bonus:
-                    bonus_value = self.player.gather_time_bonus[resource_type]
-                    if isinstance(bonus_value, str) and bonus_value.endswith('%'):
-                        # 处理百分比bonus
-                        percent_value = float(bonus_value[:-1])
-                        final_time = base_time * (1 + percent_value / 100)
-                    else:
-                        # 处理固定值bonus
-                        final_time = base_time + int(bonus_value)
-                # 检查是否有目标特定的bonus（如deposit名称）
-                elif target is not None:
-                    if isinstance(target, Deposit):
-                        deposit_type = getattr(target, 'type_name', None)
-                        if deposit_type and deposit_type in self.player.gather_time_bonus:
-                            bonus_value = self.player.gather_time_bonus[deposit_type]
-                            if isinstance(bonus_value, str) and bonus_value.endswith('%'):
-                                # 处理百分比bonus
-                                percent_value = float(bonus_value[:-1])
-                                final_time = base_time * (1 + percent_value / 100)
-                            else:
-                                # 处理固定值bonus
-                                final_time = base_time + int(bonus_value)
-                # 检查是否有通用bonus
-                elif "all" in self.player.gather_time_bonus:
-                    bonus_value = self.player.gather_time_bonus["all"]
-                    if isinstance(bonus_value, str) and bonus_value.endswith('%'):
-                        # 处理百分比bonus
-                        percent_value = float(bonus_value[:-1])
-                        final_time = base_time * (1 + percent_value / 100)
-                    else:
-                        # 处理固定值bonus
-                        final_time = base_time + int(bonus_value)
-            else:
-                # 处理简单的通用bonus值
-                bonus_value = self.player.gather_time_bonus
+        time_bonus = gather_rate.player_gather_bonus(self.player, "time")
+        if time_bonus:
+            deposit_type = None
+            if target is not None and isinstance(target, Deposit):
+                deposit_type = getattr(target, 'type_name', None)
+            bonus_value = gather_rate.lookup_bonus(
+                time_bonus,
+                gather_rate.bonus_keys(deposit_type, resource_type),
+            )
+            if bonus_value is not None:
                 if isinstance(bonus_value, str) and bonus_value.endswith('%'):
                     # 处理百分比bonus
                     percent_value = float(bonus_value[:-1])
@@ -522,45 +494,16 @@ class Worker(Unit):
         
         # 应用 gather_qty_bonus 效果
         final_qty = base_qty
-        if hasattr(self.player, 'gather_qty_bonus') and self.player.gather_qty_bonus:
-            # 检查是否有资源特定的bonus
-            if isinstance(self.player.gather_qty_bonus, dict):
-                # 支持资源特定的bonus: gather_qty_bonus = {"wood": 2, "gold": 1}
-                if resource_type in self.player.gather_qty_bonus:
-                    bonus_value = self.player.gather_qty_bonus[resource_type]
-                    if isinstance(bonus_value, str) and bonus_value.endswith('%'):
-                        # 处理百分比bonus
-                        percent_value = float(bonus_value[:-1])
-                        final_qty = base_qty * (1 + percent_value / 100)
-                    else:
-                        # 处理固定值bonus
-                        final_qty = base_qty + int(bonus_value)
-                # 检查是否有目标特定的bonus（如deposit名称）
-                elif target is not None:
-                    if isinstance(target, Deposit):
-                        deposit_type = getattr(target, 'type_name', None)
-                        if deposit_type and deposit_type in self.player.gather_qty_bonus:
-                            bonus_value = self.player.gather_qty_bonus[deposit_type]
-                            if isinstance(bonus_value, str) and bonus_value.endswith('%'):
-                                # 处理百分比bonus
-                                percent_value = float(bonus_value[:-1])
-                                final_qty = base_qty * (1 + percent_value / 100)
-                            else:
-                                # 处理固定值bonus
-                                final_qty = base_qty + int(bonus_value)
-                # 检查是否有通用bonus
-                elif "all" in self.player.gather_qty_bonus:
-                    bonus_value = self.player.gather_qty_bonus["all"]
-                    if isinstance(bonus_value, str) and bonus_value.endswith('%'):
-                        # 处理百分比bonus
-                        percent_value = float(bonus_value[:-1])
-                        final_qty = base_qty * (1 + percent_value / 100)
-                    else:
-                        # 处理固定值bonus
-                        final_qty = base_qty + int(bonus_value)
-            else:
-                # 处理简单的通用bonus值
-                bonus_value = self.player.gather_qty_bonus
+        qty_bonus = gather_rate.player_gather_bonus(self.player, "qty")
+        if qty_bonus:
+            deposit_type = None
+            if target is not None and isinstance(target, Deposit):
+                deposit_type = getattr(target, 'type_name', None)
+            bonus_value = gather_rate.lookup_bonus(
+                qty_bonus,
+                gather_rate.bonus_keys(deposit_type, resource_type),
+            )
+            if bonus_value is not None:
                 if isinstance(bonus_value, str) and bonus_value.endswith('%'):
                     # 处理百分比bonus
                     percent_value = float(bonus_value[:-1])
@@ -646,44 +589,17 @@ class Worker(Unit):
         优先显式 ``gather_rate`` / ``gather_rate_<deposit>``；
         否则用 ``gather_qty / gather_time``（含 extraction 与科技加成）。
         """
-        rate = None
         deposit_type = getattr(target, "type_name", None) if target is not None else None
-        if deposit_type:
-            attr = f"gather_rate_{deposit_type}"
-            if hasattr(self, attr):
-                try:
-                    rate = float(getattr(self, attr))
-                except (TypeError, ValueError):
-                    rate = None
-        if rate is None:
-            gr = getattr(self, "gather_rate", None)
-            if isinstance(gr, dict) and deposit_type and deposit_type in gr:
-                try:
-                    rate = float(gr[deposit_type])
-                except (TypeError, ValueError):
-                    rate = None
-            elif isinstance(gr, (int, float)):
-                rate = float(gr)
+        rate = gather_rate.base_gather_rate(self, deposit_type)
         if rate is not None and rate > 0:
             # gather_time_% 科技：缩短时间 ≈ 提高速率
             player = getattr(self, "player", None)
-            bonus = getattr(player, "gather_time_bonus", None) if player else None
-            if isinstance(bonus, dict):
-                bval = None
-                if deposit_type and deposit_type in bonus:
-                    bval = bonus[deposit_type]
-                elif resource_type in bonus:
-                    bval = bonus[resource_type]
-                elif "all" in bonus:
-                    bval = bonus["all"]
-                if isinstance(bval, str) and bval.endswith("%"):
-                    try:
-                        pct = float(bval[:-1])
-                        factor = 1.0 + pct / 100.0
-                        if factor > 0.01:
-                            rate = rate / factor
-                    except (TypeError, ValueError):
-                        pass
+            bonus = gather_rate.player_gather_bonus(player, "time")
+            factor = gather_rate.rate_bonus_factor(
+                bonus, deposit_type, resource_type
+            )
+            if factor is not None:
+                rate = rate * factor
             return max(0.01, float(rate))
         qty = float(self.get_gather_qty(resource_type, target))
         time_s = float(self.get_gather_time(resource_type, target))

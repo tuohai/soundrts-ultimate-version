@@ -171,6 +171,10 @@ menace_hp_ref 50
 gather_mode continuous
 ; Generic market (engine reads these; not hardcoded to gold/wood/food/stone)
 market_currency resource1
+; Resource *names* — the engine knows no resource name by itself; a mod
+; declares them here.  Rules may then write ``gather_time_gold`` /
+; ``gather_time_resource1`` interchangeably.
+resource_names resource1 gold resource2 wood resource3 food resource4 stone
 market_batch 100
 market_tax_permille 300
 market_tax_guilds_permille 150
@@ -1008,7 +1012,7 @@ cost 0 50 100 0
 time_cost 25
 requirements lumbermill feudal_age
 ; DE +20% wood -> time x1/1.2; percent overwrites (set cumulative on later techs)
-effect bonus gather_time_wood -17%
+effect bonus gather_time_resource2 -17%
 
 def bow_saw
 class upgrade
@@ -1016,7 +1020,7 @@ cost 0 100 150 0
 time_cost 50
 requirements double_bit_axe castle_age
 ; cumulative +20% + +20% -> time x1/1.44 ~ -31%
-effect bonus gather_time_wood -31%
+effect bonus gather_time_resource2 -31%
 
 def two_man_saw
 class upgrade
@@ -1024,7 +1028,7 @@ cost 0 200 300 0
 time_cost 100
 requirements bow_saw imperial_age
 ; cumulative x1/1.584 ~ -37%
-effect bonus gather_time_wood -37%
+effect bonus gather_time_resource2 -37%
 
 def gold_mining
 class upgrade
@@ -1032,7 +1036,7 @@ cost 0 75 100 0
 time_cost 30
 requirements mining_camp feudal_age
 ; DE +15% gold -> time x1/1.15 ~ -13%
-effect bonus gather_time_goldmine -13%
+effect bonus gather_time_resource1 -13%
 
 def gold_shaft_mining
 class upgrade
@@ -1040,21 +1044,21 @@ cost 0 75 175 0
 time_cost 75
 requirements gold_mining castle_age
 ; cumulative +15% + +15% -> time x1/1.3225 ~ -24%
-effect bonus gather_time_goldmine -24%
+effect bonus gather_time_resource1 -24%
 
 def stone_mining
 class upgrade
 cost 0 75 100 0
 time_cost 30
 requirements mining_camp feudal_age
-effect bonus gather_time_stone_mine -13%
+effect bonus gather_time_resource4 -13%
 
 def stone_shaft_mining
 class upgrade
 cost 0 75 175 0
 time_cost 75
 requirements stone_mining castle_age
-effect bonus gather_time_stone_mine -24%
+effect bonus gather_time_resource4 -24%
 
 
 ; ===========================================================================
@@ -7612,7 +7616,7 @@ on_phase feudal_age speed 5% infantry
 on_phase castle_age speed 5% infantry
 on_phase imperial_age speed 5% infantry
 ; DE lumberjacks +15% -> wood gather time x1/1.15 ~ -13%
-on_phase dark_age gather_time_wood -13%
+on_phase dark_age gather_time_resource2 -13%
 ; steal guarded enemy herdables; own flock ignores that steal bonus
 herdable_steal_ignore_guards 1
 herdable_steal_protected 1
@@ -8291,10 +8295,10 @@ workshop korean_workshop
 shipyard korean_shipyard
 townhall town_center
 ; DE: wood chopping +15% Castle, +20% Imperial
-on_phase castle_age gather_time_wood -15%
-on_phase imperial_age gather_time_wood -20%
+on_phase castle_age gather_time_resource2 -15%
+on_phase imperial_age gather_time_resource2 -20%
 ; DE: stone mining yields +20% per trip
-on_phase dark_age gather_qty_stone 20%
+on_phase dark_age gather_qty_resource4 20%
 ; DE: villagers +1 LOS
 on_phase dark_age sight_range 1 peasant
 ; DE Team bonus: Villagers +3 line of sight
@@ -8380,10 +8384,10 @@ townhall town_center
 starting_units town_center 4 peasant
 ; DE: resources last +15% (after recalc when villager added: each villager reduces by 1 age)
 ; Modelled as gather_time slight reduction across all ages (gentle buff to compensate for -1 villager)
-on_phase dark_age gather_time_food_orchard -7%
-on_phase feudal_age gather_time_wood -7%
-on_phase castle_age gather_time_gold_mine -7%
-on_phase imperial_age gather_time_stone -7%
+on_phase dark_age gather_time_orchard -7%
+on_phase feudal_age gather_time_resource2 -7%
+on_phase castle_age gather_time_goldmine -7%
+on_phase imperial_age gather_time_resource4 -7%
 ; DE: archery range units +30% HP Castle, +40% Imperial (cumulative)
 on_phase castle_age hp 30% aoe_archer crossbowman arbalester skirmisher elite_skirmisher plumed_archer elite_plumed_archer
 on_phase imperial_age hp 10% aoe_archer crossbowman arbalester skirmisher elite_skirmisher plumed_archer elite_plumed_archer
@@ -8786,7 +8790,7 @@ shipyard polish_shipyard
 mill polish_folwark
 townhall town_center
 ; DE: stone miners carry +3 (we model as +25% stone gather quantity)
-on_phase dark_age gather_qty_stone 25%
+on_phase dark_age gather_qty_resource4 25%
 ; DE: scouts/light cav line +1 LOS
 on_phase dark_age sight_range 1 scout_cavalry light_cavalry hussar
 ; DE Team bonus: Scout Cavalry-line +1 attack vs. Ranged Soldiers
@@ -8888,7 +8892,7 @@ townhall town_center
 ; DE: dock line +10% HP
 on_phase dark_age hp 10% shipyard
 ; DE: fishing ships +15/+15/+20 fish per trip
-on_phase dark_age gather_qty_fish 15
+on_phase dark_age gather_qty_resource3 15
 ; DE: gunpowder units -20% gold cost
 on_phase dark_age cost -20% 0 0 0 hand_cannoneer bombard_cannon cannon_galleon elite_cannon_galleon
 ; AoE2 Italian Condottiero team bonus: allies train condottiero for free
@@ -8984,9 +8988,9 @@ workshop bohemian_workshop
 shipyard bohemian_shipyard
 townhall town_center
 ; DE: villagers drop off +10% food; mines +15%/+20%/+25% stone (dark base, +5% Castle, +10% Imperial)
-on_phase dark_age gather_qty_stone 15
-on_phase castle_age gather_qty_stone 5
-on_phase imperial_age gather_qty_stone 10
+on_phase dark_age gather_qty_resource4 15
+on_phase castle_age gather_qty_resource4 5
+on_phase imperial_age gather_qty_resource4 10
 ; DE: university research -15% food cost
 on_phase dark_age cost 0 0 -15% 0 ballistics chemistry guardtower keeptower cannontower fortified_wall murder_holes masonry heated_shot treadmill_crane
 ; DE: Sappers free at University (we keep sappers but mark auto-researched on Castle)
@@ -9617,7 +9621,7 @@ shipyard tartar_shipyard
 monastery tartar_monastery
 townhall town_center
 ; DE: sheep +50% (gather_qty +50% for food_livestock)
-on_phase dark_age gather_qty 50% food_livestock
+on_phase dark_age gather_qty_food_livestock 50%
 ; DE: CA line +10% HP (Silk Armor UT via on_phase — Castle/Imperial only)
 on_phase castle_age hp 10% cavalry_archer heavy_cavalry_archer
 on_phase imperial_age hp 10% cavalry_archer heavy_cavalry_archer
@@ -9880,7 +9884,7 @@ townhall town_center
 ; DE: archers +20% attack (rdg +20%)
 on_phase dark_age rdg 20% archer_unit hand_cannoneer cavalry_archer
 ; DE: gold mining +100% faster from Castle Age (gather_time -50%)
-on_phase castle_age gather_time -50% gold
+on_phase castle_age gather_time_resource1 -50%
 ; DE: tower +1 attack per age (already via UT; here via on_phase)
 on_phase feudal_age mdg 1 scouttower guardtower keeptower
 on_phase castle_age mdg 1 scouttower guardtower keeptower
@@ -10338,7 +10342,7 @@ townhall town_center
 on_phase dark_age mdf 25% infantry cavalry archer_unit siege_unit
 on_phase dark_age rdf 25% infantry cavalry archer_unit siege_unit
 ; DE: farmers +30% faster (gather_time -23%)
-on_phase dark_age gather_time -23% food
+on_phase dark_age gather_time_resource3 -23%
 ; DE: start with +100 stone (200 -> 300 stone, 4th resource slot).
 starting_resources 100 200 200 300
 ; DE 城楼 Donjon: replaces the Watch Tower line, buildable from the Dark Age.
@@ -11260,7 +11264,7 @@ on_phase dark_age hp 20% infantry spearman pikeman eagle_warrior elite_eagle_war
 ; DE: buildings -25% cost (wood & stone)
 on_phase dark_age cost 0 -25% 0 -25% house farm mill lumbermill mining_camp market barracks archery_range blacksmith stables workshop university aoe_castle wall gate fortified_wall palisade_wall palisade_gate outpost scouttower guardtower keeptower cannontower town_center shipyard
 ; DE: start with llama (food_livestock bonus)
-on_phase dark_age gather_qty 50% food_livestock
+on_phase dark_age gather_qty_food_livestock 50%
 ; Team: Farms +1 carry (via food_deposit_qty on team)
 ; DE Team bonus: Start with a free Llama
 team_start_free_llama 1
@@ -11375,7 +11379,10 @@ shipyard roman_shipyard
 townhall town_center
 ; DE: villagers gather, build and repair 5% faster
 build_speed_pct 5
-on_phase dark_age gather_time -5% food wood gold stone
+on_phase dark_age gather_time_resource3 -5%
+on_phase dark_age gather_time_resource2 -5%
+on_phase dark_age gather_time_resource1 -5%
+on_phase dark_age gather_time_resource4 -5%
 ; DE: infantry receives double effect from Blacksmith armor upgrades.
 ; Modelled as +1/+1 armor per armor upgrade on the infantry line.
 on_phase dark_age mdf 1 infantry

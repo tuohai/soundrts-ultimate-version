@@ -400,14 +400,25 @@ def test_roman_build_speed_pct_shortens_construction_time(installed):
 
 
 def test_roman_gather_time_bonus_is_faster(aoe2_rules):
+    """DE: Roman villagers gather every resource 5% faster.
+
+    The bonus is resource-scoped, so each resource carries its own row
+    keyed by the resource slot (resource1 gold, resource2 wood,
+    resource3 food, resource4 stone).
+    """
     rows = _on_phase(aoe2_rules)
-    found = False
+    found = set()
     for row in rows:
-        if "gather_time" in row and "-5%" in row:
-            for target in ("food", "wood", "gold", "stone"):
-                assert target in row
-            found = True
-    assert found, rows
+        for key in ("gather_time_resource1", "gather_time_resource2",
+                    "gather_time_resource3", "gather_time_resource4"):
+            if key in row and "-5%" in row:
+                found.add(key)
+    assert found == {
+        "gather_time_resource1",
+        "gather_time_resource2",
+        "gather_time_resource3",
+        "gather_time_resource4",
+    }, rows
 
 
 def test_roman_infantry_gets_double_blacksmith_armor(aoe2_rules):

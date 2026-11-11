@@ -171,6 +171,10 @@ cover .5 0
 
 def parameters
 nb_of_resource_types 3 ; gold, wood, food
+; Resource *names* — the engine knows no resource name by itself; a mod
+; declares them here.  Rules may then write ``gather_time_gold`` /
+; ``gather_time_resource1`` interchangeably.
+resource_names resource1 gold resource2 wood resource3 food
 minimal_damage 0.17
 hide_locked_commands 0
 achievements_enabled 1 ; 0 = mod disables achievements, cards, ranks, loadout

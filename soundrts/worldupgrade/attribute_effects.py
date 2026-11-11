@@ -15,15 +15,18 @@ class AttributeEffectsMixin:
     """属性效果处理混入类"""
 
     @classmethod
-    def effect_bonus(cls, unit, start_level, *args):
+    def effect_bonus(cls, unit, start_level, *args, phase=False):
         """通用属性加成处理器
-        
+
         参数：
             unit: 要应用效果的单位
             start_level: 起始等级
             *args: 属性名/值（``*_vs`` 三元组），末尾可为已存储的
                    ``effect_bonus_targets``（含 ``-type`` 排除）。
                    rules 里不要在 ``effect bonus`` 行写单位名。
+            phase: True 表示这是**文明时代加成**（``on_phase …``），
+                   采集类加成会存进 ``player.phase_gather_*_bonus``，
+                   以免与科技加成互相覆盖。
         """
         from .effect_bonus_parse import split_effect_bonus_args, unit_matches_effect_types
 
@@ -280,13 +283,13 @@ class AttributeEffectsMixin:
                 
             # 处理gather_time（应用到玩家级别）
             if stat == "gather_time" or stat.startswith("gather_time_"):
-                cls._handle_gather_time_bonus(unit, stat, value)
+                cls._handle_gather_time_bonus(unit, stat, value, phase=phase)
                 i += 2
                 continue
                 
             # 处理gather_qty（应用到玩家级别）
             if stat == "gather_qty" or stat.startswith("gather_qty_"):
-                cls._handle_gather_qty_bonus(unit, stat, value)
+                cls._handle_gather_qty_bonus(unit, stat, value, phase=phase)
                 i += 2
                 continue
                 
@@ -826,7 +829,7 @@ class AttributeEffectsMixin:
         return int(float(old)) + int(float(new))
 
     @classmethod
-    def _handle_gather_time_bonus(cls, unit, stat, value):
+    def _handle_gather_time_bonus(cls, unit, stat, value, phase=False):
         """处理gather_time属性加成（应用到玩家级别）"""
         from ..lib.log import debug
         debug(f"Processing {stat} with value: {value}")
@@ -835,6 +838,14 @@ class AttributeEffectsMixin:
             # 初始化玩家的 gather_time_bonus（如果还没有）
             if not hasattr(player, 'gather_time_bonus'):
                 player.gather_time_bonus = {}
+            # 文明时代加成存到独立的 dict，避免与科技加成互相覆盖
+            # （两者可能用同一个键，如采矿场科技与罗马的全资源加成都是 resource1）。
+            if phase:
+                if not hasattr(player, 'phase_gather_time_bonus'):
+                    player.phase_gather_time_bonus = {}
+                store = player.phase_gather_time_bonus
+            else:
+                store = player.gather_time_bonus
             
             # 检查是否是特定资源的属性（如 gather_time_wood）
             if stat.startswith("gather_time_") and stat != "gather_time":
@@ -848,8 +859,8 @@ class AttributeEffectsMixin:
                     # 普通数值格式
                     value_to_store = int(float(value))
                 
-                old = player.gather_time_bonus.get(resource_identifier)
-                player.gather_time_bonus[resource_identifier] = cls._combine_gather_bonus_value(
+                old = store.get(resource_identifier)
+                store[resource_identifier] = cls._combine_gather_bonus_value(
                     old, value_to_store
                 )
                 
@@ -879,8 +890,8 @@ class AttributeEffectsMixin:
                         )
                         if len(gather_perms) == 1:
                             gather_identifier = gather_perms[0]
-                            old = player.gather_time_bonus.get(gather_identifier)
-                            player.gather_time_bonus[gather_identifier] = (
+                            old = store.get(gather_identifier)
+                            store[gather_identifier] = (
                                 cls._combine_gather_bonus_value(old, value_to_store)
                             )
                             
@@ -888,8 +899,8 @@ class AttributeEffectsMixin:
                             debug(f"Applied gather_time bonus {value_to_store} to {gather_identifier} for player {player.number}")
                         else:
                             # 对所有可采集类型设置相同的时间增量
-                            old = player.gather_time_bonus.get("all")
-                            player.gather_time_bonus["all"] = cls._combine_gather_bonus_value(
+                            old = store.get("all")
+                            store["all"] = cls._combine_gather_bonus_value(
                                 old, value_to_store
                             )
                             
@@ -915,8 +926,8 @@ class AttributeEffectsMixin:
                                 value_to_store = int(float(resource_value))
                             
                             # 直接使用resource_identifier应用到玩家级别
-                            old = player.gather_time_bonus.get(resource_identifier)
-                            player.gather_time_bonus[resource_identifier] = (
+                            old = store.get(resource_identifier)
+                            store[resource_identifier] = (
                                 cls._combine_gather_bonus_value(old, value_to_store)
                             )
                             
@@ -929,7 +940,7 @@ class AttributeEffectsMixin:
                         j += 2
 
     @classmethod
-    def _handle_gather_qty_bonus(cls, unit, stat, value):
+    def _handle_gather_qty_bonus(cls, unit, stat, value, phase=False):
         """处理gather_qty属性加成（应用到玩家级别）"""
         from ..lib.log import debug
         debug(f"Processing {stat} with value: {value}")
@@ -938,6 +949,13 @@ class AttributeEffectsMixin:
             # 初始化玩家的 gather_qty_bonus（如果还没有）
             if not hasattr(player, 'gather_qty_bonus'):
                 player.gather_qty_bonus = {}
+            # 文明时代加成存到独立的 dict，避免与科技加成互相覆盖。
+            if phase:
+                if not hasattr(player, 'phase_gather_qty_bonus'):
+                    player.phase_gather_qty_bonus = {}
+                store = player.phase_gather_qty_bonus
+            else:
+                store = player.gather_qty_bonus
             
             # 检查是否是特定资源的属性（如 gather_qty_wood）
             if stat.startswith("gather_qty_") and stat != "gather_qty":
@@ -951,8 +969,8 @@ class AttributeEffectsMixin:
                     # 普通数值格式
                     value_to_store = int(float(value))
                 
-                old = player.gather_qty_bonus.get(resource_identifier)
-                player.gather_qty_bonus[resource_identifier] = cls._combine_gather_bonus_value(
+                old = store.get(resource_identifier)
+                store[resource_identifier] = cls._combine_gather_bonus_value(
                     old, value_to_store
                 )
                 
@@ -982,8 +1000,8 @@ class AttributeEffectsMixin:
                         )
                         if len(gather_perms) == 1:
                             gather_identifier = gather_perms[0]
-                            old = player.gather_qty_bonus.get(gather_identifier)
-                            player.gather_qty_bonus[gather_identifier] = (
+                            old = store.get(gather_identifier)
+                            store[gather_identifier] = (
                                 cls._combine_gather_bonus_value(old, value_to_store)
                             )
                             
@@ -991,8 +1009,8 @@ class AttributeEffectsMixin:
                             debug(f"Applied gather_qty bonus {value_to_store} to {gather_identifier} for player {player.number}")
                         else:
                             # 对所有可采集类型设置相同的数量增量
-                            old = player.gather_qty_bonus.get("all")
-                            player.gather_qty_bonus["all"] = cls._combine_gather_bonus_value(
+                            old = store.get("all")
+                            store["all"] = cls._combine_gather_bonus_value(
                                 old, value_to_store
                             )
                             
@@ -1018,8 +1036,8 @@ class AttributeEffectsMixin:
                                 value_to_store = int(float(resource_value))
                             
                             # 直接使用resource_identifier应用到玩家级别
-                            old = player.gather_qty_bonus.get(resource_identifier)
-                            player.gather_qty_bonus[resource_identifier] = (
+                            old = store.get(resource_identifier)
+                            store[resource_identifier] = (
                                 cls._combine_gather_bonus_value(old, value_to_store)
                             )
                             

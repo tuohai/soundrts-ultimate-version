@@ -15,6 +15,14 @@ class GatherHandler:
     def _add_dynamic_gather_attributes(self, attrs, u, attr_prefix):
         """检测和添加动态采集属性（如gather_time_goldmine, gather_qty_woodcutter等）"""
         try:
+            # 采集速率受科技（采矿场/伐木场等）影响，显示的是**实际**速率，
+            # 而不是 rules 里的静态底数。
+            effective = {}
+            if attr_prefix == "gather_rate":
+                from .gather_rate_display import effective_rates
+
+                effective = effective_rates(u)
+
             # 遍历单位模型的所有属性
             for attr_name in dir(u.model):
                 # 跳过私有属性和方法
@@ -41,7 +49,9 @@ class GatherHandler:
                             attrs.append(("", gather_msg, qty_text))
 
                         elif attr_prefix == "gather_rate":
-                            rate_text = nb2msg_float(round(float(attr_value), 2)) + mp.PER_SECOND
+                            deposit_type = attr_name[len("gather_rate_"):]
+                            rate = effective.get(deposit_type, attr_value)
+                            rate_text = nb2msg_float(round(float(rate), 2)) + mp.PER_SECOND
                             attrs.append(("", gather_msg, rate_text))
 
                         elif attr_prefix == "carry_capacity":
@@ -85,10 +95,17 @@ class GatherHandler:
                     attr_value = getattr(unit.model, attr_name, 0)
                     gather_rate_msg = get_stat_tts_name(attr_name)
                     if isinstance(attr_value, (int, float)) and attr_value != 0:
+                        # 播报实际速率（含采矿场/伐木场等科技加成）。
+                        from .gather_rate_display import effective_rate
+
+                        deposit_type = attr_name[len("gather_rate_"):]
+                        rate = effective_rate(unit, deposit_type)
+                        if rate is None:
+                            rate = attr_value
                         voice.item(
                             gather_rate_msg
                             + mp.COLON
-                            + format_signed_number(round(float(attr_value), 2), as_float=True)
+                            + format_signed_number(round(float(rate), 2), as_float=True)
                             + mp.PER_SECOND
                         )
                         return True
@@ -133,11 +150,16 @@ class GatherHandler:
                 if hasattr(unit.model, gather_rate_attr):
                     rate_value = getattr(unit.model, gather_rate_attr, 0)
                     if isinstance(rate_value, (int, float)) and rate_value != 0:
+                        from .gather_rate_display import effective_rate
+
+                        rate = effective_rate(unit, attr_name)
+                        if rate is None:
+                            rate = rate_value
                         gather_rate_msg = get_stat_tts_name(gather_rate_attr)
                         voice.item(
                             gather_rate_msg
                             + mp.COLON
-                            + format_signed_number(round(float(rate_value), 2), as_float=True)
+                            + format_signed_number(round(float(rate), 2), as_float=True)
                             + mp.PER_SECOND
                         )
                         return True
