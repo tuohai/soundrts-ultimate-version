@@ -422,6 +422,7 @@ class DisplayInterface:
             self.basic_attributes.add_movement_attributes,
             self.basic_attributes.add_basic_combat_attributes,
             self.basic_attributes.add_sight_attributes,
+            self.basic_attributes.add_stealth_attributes,
             self.combat_attributes.add_attack_defense_attributes,
             self.combat_attributes.add_charge_attributes,
             self.equipment_abilities.add_weapon_attributes,

@@ -1256,6 +1256,11 @@
 5491	la chambre cachée offre un butin supplémentaire
 5492	ruines encore non découvertes
 5493	il ne reste qu'une ruine à découvrir
+5869	portée de camouflage
+5870	portée de détection
+5871	se révèle en attaquant
+5872	durée de l'exposition
+5873	exposé en permanence
 7736	Raynor, seigneur de la Coalition
 5398	aucun mod
 5500	tout sélectionner localement

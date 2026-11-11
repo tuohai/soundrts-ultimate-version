@@ -1256,6 +1256,11 @@
 5491	skrytá komnata skýta ďalšiu korisť
 5492	dosiaľ neobjavené ruiny
 5493	zostáva len jedna ruina na objavenie
+5869	dosah maskovania
+5870	dosah odhalenia
+5871	odhalí sa pri útoku
+5872	čas odhalenia
+5873	odhalený natrvalo
 7736	Raynor, pán koalície
 5398	žiadny mod
 5500	lokálne vybrať všetko

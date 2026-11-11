@@ -1256,6 +1256,11 @@
 5491	a câmara oculta oferece saque extra
 5492	ruínas ainda não descobertas
 5493	resta apenas uma ruína a descobrir
+5869	alcance de camuflagem
+5870	alcance de detecção
+5871	revela ao atacar
+5872	duração da exposição
+5873	exposto permanentemente
 7736	Raynor, senhor da Coalizão
 5398	sem mod
 5500	selecionar tudo localmente

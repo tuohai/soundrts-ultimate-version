@@ -1256,6 +1256,11 @@
 5491	ukryta komnata kryje dodatkowe łupy
 5492	jeszcze nieodkryte ruiny
 5493	została tylko jedna ruina do odkrycia
+5869	zasięg maskowania
+5870	zasięg wykrywania
+5871	ujawnia się przy ataku
+5872	czas ujawnienia
+5873	ujawniony na stałe
 7736	Raynor, władca koalicji
 5398	brak moda
 5500	zaznacz wszystko lokalnie

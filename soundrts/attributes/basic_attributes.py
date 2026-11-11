@@ -338,12 +338,57 @@ class BasicAttributes:
             sight_range_text = nb2msg_float(sight_value / 1000)  # 转换为格子单位
             attrs.append(("v", mp.SIGHT_RANGE, sight_range_text))
         
+        src = self._attribute_source(u)
+
         # 隐身范围（只有隐身单位才显示）
-        if getattr(u.model, "is_a_cloaker", 0) and hasattr(u.model, "cloaking_range") and u.model.cloaking_range > 0:
-            cloaking_range_text = nb2msg_float(u.model.cloaking_range / 1000)  # 转换为格子单位
+        if getattr(src, "is_a_cloaker", 0) and getattr(src, "cloaking_range", 0) > 0:
+            cloaking_range_text = nb2msg_float(src.cloaking_range / 1000)  # 转换为格子单位
             attrs.append(("", mp.CLOAKING_RANGE, cloaking_range_text))
         
         # 侦测范围（只有侦测单位才显示）
-        if getattr(u.model, "is_a_detector", 0) and hasattr(u.model, "detection_range") and u.model.detection_range > 0:
-            detection_range_text = nb2msg_float(u.model.detection_range / 1000)  # 转换为格子单位
+        if getattr(src, "is_a_detector", 0) and getattr(src, "detection_range", 0) > 0:
+            detection_range_text = nb2msg_float(src.detection_range / 1000)  # 转换为格子单位
             attrs.append(("", mp.DETECTION_RANGE, detection_range_text))
+
+    def add_stealth_attributes(self, u, attrs):
+        """添加破隐机制相关属性。
+
+        * ``reveal_stealth_on_attack``：攻击时是否暴露自己（破隐）。
+        * ``stealth_reveal_time``：暴露持续时间（秒）；0 = 永久暴露。
+
+        只在「会破隐」或「本身是隐形单位」时显示，避免给每个单位都播报
+        一堆无意义的字段。
+        """
+        src = self._attribute_source(u)
+        if src is None:
+            return
+
+        reveal = getattr(src, "reveal_stealth_on_attack", 0)
+        invisible = getattr(src, "is_invisible", 0)
+        cloaked = getattr(src, "is_cloaked", 0)
+
+        stealthed = bool(invisible or cloaked)
+        if not reveal and not stealthed:
+            return
+
+        if reveal:
+            attrs.append(("", mp.REVEAL_STEALTH_ON_ATTACK, mp.YES))
+        else:
+            attrs.append(("", mp.REVEAL_STEALTH_ON_ATTACK, mp.NO))
+
+        if not reveal:
+            return
+
+        duration = getattr(src, "stealth_reveal_time", 0) or 0
+        try:
+            duration = int(duration)
+        except (TypeError, ValueError):
+            duration = 0
+        if duration <= 0:
+            # 0 = 永久暴露
+            attrs.append(("", mp.STEALTH_REVEAL_TIME, mp.STEALTH_REVEAL_FOREVER))
+        else:
+            attrs.append(
+                ("", mp.STEALTH_REVEAL_TIME,
+                 nb2msg_float(duration / PRECISION) + mp.SECONDS)
+            )

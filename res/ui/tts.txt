@@ -1709,4 +1709,9 @@
 5866	siege rank
 5867	ring
 5868	arc
+5869	cloaking range
+5870	detection range
+5871	reveals on attack
+5872	reveal duration
+5873	stays revealed forever
 7800	undead knight

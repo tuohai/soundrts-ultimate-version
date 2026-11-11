@@ -1256,6 +1256,11 @@
 5491	la camera nascosta offre bottino extra
 5492	rovine ancora da scoprire
 5493	resta solo una rovina da scoprire
+5869	raggio di camuffamento
+5870	raggio di rilevamento
+5871	si rivela attaccando
+5872	durata dell'esposizione
+5873	esposto permanentemente
 7736	Raynor, signore della Coalizione
 5398	nessun mod
 5500	seleziona tutto in locale

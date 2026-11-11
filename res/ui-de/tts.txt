@@ -1519,6 +1519,11 @@
 72	Nord-Westen
 73	Süd-Osten
 74	Süd-Westen
+5869	Tarnreichweite
+5870	Entdeckungsreichweite
+5871	wird beim Angriff entdeckt
+5872	Aufdeckdauer
+5873	dauerhaft aufgedeckt
 7736	Raynor, Herr der Koalition
 79	Aue
 80	Wald

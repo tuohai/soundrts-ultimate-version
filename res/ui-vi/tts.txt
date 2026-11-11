@@ -1257,6 +1257,11 @@
 5491	phòng ẩn mang thêm chiến lợi phẩm
 5492	di tích chưa phát hiện
 5493	chỉ còn một di tích chưa tìm thấy
+5869	phạm vi ngụy trang
+5870	phạm vi máy dò
+5871	bị lộ khi tấn công
+5872	thời gian bị lộ
+5873	bị lộ vĩnh viễn
 7736	Raynor, Chúa liên minh
 5398	không có mod
 5500	chọn tất cả địa phương
