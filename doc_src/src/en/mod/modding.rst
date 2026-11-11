@@ -185,6 +185,46 @@ New in SoundRTS 1.2 alpha 9.
 
 The unit (or building) is affected by the teleportation effect or the recall effect.
 
+stealth: invisibility, cloaking, detection and breaking stealth
+================================================================
+
+New in SoundRTS 1.5.1.8.
+
+SoundRTS knows two ways to hide a unit and two ways to find it.
+
+^ Hiding a unit
+^^^^^^^^^^^^^^^
+
+- ``is_invisible 1`` — the unit is invisible to the enemy. It is not drawn in the grid view and the enemy AI does not perceive it, until a detector reveals it. Default: 0.
+- ``is_cloakable 1`` — the unit *may* be cloaked. At the start of every tick the engine clears the cloak flag of all ``is_cloakable`` units, so cloaking is transient: it holds only while a cloaker stays nearby.
+- ``is_a_cloaker 1`` — the unit cloaks allied ``is_cloakable`` units within ``cloaking_range``.
+- ``cloaking_range <n>`` — the cloaking radius, in tiles (PRECISION). Default: 6.
+
+^ Detecting a unit
+^^^^^^^^^^^^^^^^^^
+
+- ``is_a_detector 1`` — the unit detects invisible and cloaked enemy units within ``detection_range``.
+- ``detection_range <n>`` — the detection radius, in tiles (PRECISION). Default: 8.5.
+
+A detected unit stays known to the enemy player afterwards, even if the detector dies or leaves, so a single detector reveals that spot for the rest of the game.
+
+^ Breaking stealth by attacking
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+New in SoundRTS 1.5.1.8.
+
+- ``reveal_stealth_on_attack 1`` — attacking while invisible or cloaked exposes the unit for ``stealth_reveal_time`` seconds. Default: 0 (the unit keeps its stealth, the legacy behaviour).
+- ``stealth_reveal_time <n>`` — how long the unit stays exposed, in seconds (PRECISION). Default: 3. A value of 0 means "stays exposed forever".
+
+While the expose window is running, the unit behaves like a regular visible unit: it is drawn in the grid view, the enemy perceives it and can attack it, and cloakers cannot re-cloak it. When the window ends, the unit returns to its natural stealth state. Attacking again during the window refreshes the timer instead of stacking it.
+
+Example — a spy that is exposed for 3 seconds after firing::
+
+    def spy
+        is_invisible 1
+        reveal_stealth_on_attack 1
+        stealth_reveal_time 3
+
 hp_regen
 =========
 
@@ -1183,6 +1223,25 @@ Two gather mechanisms are available for mods:
 
 Use ``effect bonus carry_capacity N`` for wheelbarrow-style upgrades. Percent ``gather_time_*`` bonuses raise the effective continuous rate. Keys match deposit ``type_name`` (e.g. ``gather_time_food_livestock`` vs ``gather_time_food_carcass``), so shepherd and hunter civ bonuses can target different carcasses without hardcoding civ names. Random maps: ``rmg_deposit 0`` keeps the deposit from stealing a resource-slot keyword; ``rmg_water 1`` scatters it on interior water.
 
+
+Gathering bonus keys (since 1.5.1.8)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The key of an ``effect bonus gather_time ...`` / ``effect bonus gather_qty ...`` row may be written in three ways; the engine tries them in this order:
+
+| Form | Example | Use it for |
+| --- | --- | --- |
+| Deposit / building type | ``gather_time_goldmine`` | One specific deposit (the Britons' shepherd bonus uses this) |
+| Resource slot number | ``gather_time_resource1`` | Every deposit that yields one exact resource slot |
+| Resource name | ``gather_time_gold`` | By resource kind (``gold`` / ``wood`` / ``food`` / ``stone``) |
+
+The most specific key wins: a deposit-scoped bonus takes precedence over a resource-wide one for that deposit. A bare ``gather_time`` behaves like ``all`` and applies to every resource. Percent values (``-13%``) shorten the gathering time, which the engine turns into a higher effective rate; plain integers are a fixed number of seconds.
+
+A **technology** bonus and a **civilization phase** bonus (``on_phase … gather_time_…``) may use the *same* key — the mining-camp tech and the Romans' "5% faster at everything" are both written for ``resource1``. The engine keeps the two apart and applies **both**: the percentages multiply (a -13% tech plus a -50% civ bonus is -56.5% of the time), so neither one can silently erase the other.
+
+The resource *names* are not hardcoded in the engine: a rules file declares them with ``parameters resource_names resource1 gold resource2 wood resource3 food resource4 stone``, and the engine resolves ``gather_time_gold`` through that declaration.
+
+The attribute screen shows the **effective** gathering rate: after researching the mining camp, the "gather rate gold mine" row goes from 0.38 to 0.44 per second, exactly like the real speed in a match. The attribute screen and the live simulation share one bonus-resolution implementation (``soundrts/gather_rate.py``), so the two can no longer disagree.
 Market system (since 1.4.6.9)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

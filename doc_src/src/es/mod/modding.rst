@@ -188,6 +188,46 @@ Nuevo en SoundRTS 1.2 alfa 9.
 
 La unidad (o edificio) se ve afectada por el efecto de teletransportación o el efecto de recuperación.
 
+stealth: invisibilidad, camuflaje, detección y ruptura de sigilo
+=================================================================
+
+Nuevo en SoundRTS 1.5.1.8.
+
+SoundRTS conoce dos formas de ocultar una unidad y dos formas de detectarla.
+
+^ Ocultar una unidad
+^^^^^^^^^^^^^^^^^^^^
+
+- ``is_invisible 1`` — la unidad es invisible para el enemigo. No se dibuja en la vista de cuadrícula y la IA enemiga no la percibe hasta que un detector la revela. Valor por defecto: 0.
+- ``is_cloakable 1`` — la unidad *puede* ocultarse. Al principio de cada tick el motor borra la marca de camuflaje de todas las unidades ``is_cloakable``, así que el camuflaje es transitorio: solo se mantiene mientras un camuflador permanece cerca.
+- ``is_a_cloaker 1`` — la unidad camufla a las unidades aliadas ``is_cloakable`` dentro de ``cloaking_range``.
+- ``cloaking_range <n>`` — radio de camuflaje, en casillas (PRECISION). Valor por defecto: 6.
+
+^ Detectar una unidad
+^^^^^^^^^^^^^^^^^^^^^
+
+- ``is_a_detector 1`` — la unidad detecta las unidades enemigas invisibles o camufladas dentro de ``detection_range``.
+- ``detection_range <n>`` — radio de detección, en casillas (PRECISION). Valor por defecto: 8.5.
+
+Una unidad detectada sigue siendo conocida por el jugador enemigo aunque el detector muera o se marche, así que un solo detector revela esa posición para el resto de la partida.
+
+^ Romper el sigilo al atacar
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Nuevo en SoundRTS 1.5.1.8.
+
+- ``reveal_stealth_on_attack 1`` — atacar mientras la unidad es invisible o camuflada la expone durante ``stealth_reveal_time`` segundos. Valor por defecto: 0 (la unidad conserva su sigilo, el comportamiento anterior).
+- ``stealth_reveal_time <n>`` — tiempo que la unidad permanece expuesta, en segundos (PRECISION). Valor por defecto: 3. Un valor de 0 significa "expuesta para siempre".
+
+Mientras la ventana de exposición está activa, la unidad se comporta como una unidad visible normal: se dibuja en la vista de cuadrícula, el enemigo la percibe y puede atacarla, y los camufladores no pueden volver a camuflarla. Al terminar la ventana, la unidad vuelve a su estado natural de sigilo. Atacar de nuevo durante la ventana renueva el temporizador en lugar de acumularlo.
+
+Ejemplo — un espía que queda expuesto 3 segundos después de disparar::
+
+    def spy
+        is_invisible 1
+        reveal_stealth_on_attack 1
+        stealth_reveal_time 3
+
 hp_regen
 ========
 
@@ -1060,6 +1100,25 @@ Hay dos mecanismos de recolección disponibles para mods:
 
 Use ``effect bonus carry_capacity N`` para mejoras estilo carretilla. Los bonus porcentuales ``gather_time_*`` aumentan la tasa continuous efectiva. Las claves coinciden con el ``type_name`` del depósito (p. ej. ``gather_time_food_livestock`` frente a ``gather_time_food_carcass``), así los bonus de pastores y cazadores pueden separarse sin hardcodear civs.
 
+
+Claves de los bonus de recolección (desde 1.5.1.8)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+La clave de una fila ``effect bonus gather_time ...`` / ``effect bonus gather_qty ...`` puede escribirse de tres maneras; el motor las prueba en este orden:
+
+| Forma | Ejemplo | Para qué sirve |
+| --- | --- | --- |
+| Tipo de depósito / edificio | ``gather_time_goldmine`` | Un solo depósito (es lo que usa el bonus de pastor de los britanos) |
+| Número de ranura de recurso | ``gather_time_resource1`` | Todos los depósitos que producen una ranura de recurso exacta |
+| Nombre de recurso | ``gather_time_gold`` | Por tipo de recurso (``gold`` / ``wood`` / ``food`` / ``stone``) |
+
+Gana la clave más específica: un bonus de depósito tiene prioridad sobre uno de recurso completo. Un ``gather_time`` sin sufijo se comporta como ``all`` y afecta a todos los recursos. Los valores en porcentaje (``-13%``) acortan el tiempo de recolección, que el motor convierte en una tasa efectiva mayor; los enteros son un número fijo de segundos.
+
+Una bonificación de **tecnología** y una de **fase de civilización** (``on_phase … gather_time_…``) pueden usar la *misma* clave — la tecnología de la mina de oro y el "5% más rápido en todo" de los romanos están ambos escritos para ``resource1``. El motor los mantiene aparte y aplica **ambos**: los porcentajes se multiplican (un -13% de la tecnología más un -50% de la civilización da -56,5% del tiempo), así que ninguno puede borrar silenciosamente al otro.
+
+Los nombres de recurso no están codificados en el motor: un archivo de reglas los declara con ``parameters resource_names resource1 gold resource2 wood resource3 food resource4 stone``, y el motor resuelve ``gather_time_gold`` a partir de esa declaración.
+
+El panel de atributos muestra la velocidad de recolección **efectiva**: tras investigar el campamento minero, la fila "velocidad de recolección mina de oro" pasa de 0,38 a 0,44 por segundo, igual que la velocidad real en una partida. El panel de atributos y la simulación en vivo comparten una única implementación de resolución de bonificaciones (``soundrts/gather_rate.py``), así que ya no pueden discrepar.
 Sistema de mercado (desde 1.4.6.9)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

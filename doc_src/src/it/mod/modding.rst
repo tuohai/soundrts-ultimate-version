@@ -188,6 +188,46 @@ Novità in SoundRTS 1.2 alpha 9.
 
 L’unità (o edificio) è influenzata dall’effetto di teletrasporto o dall’effetto di richiamo.
 
+stealth: invisibilità, mimetizzazione, rilevamento e rottura del nascondiglio
+=============================================================================
+
+Novità in SoundRTS 1.5.1.8.
+
+SoundRTS conosce due modi per nascondere un'unita e due modi per individuarla.
+
+^ Nascondere un'unita
+^^^^^^^^^^^^^^^^^^^^^
+
+- ``is_invisible 1`` — l'unità è invisibile per il nemico. Non viene disegnata nella vista a griglia e l'IA nemica non la percepisce finché un rilevatore non la scopre. Valore predefinito: 0.
+- ``is_cloakable 1`` — l'unità *può* essere mimetizzata. All'inizio di ogni tick il motore azzera il contrassegno di mimetizzazione di tutte le unità ``is_cloakable``, quindi la mimetizzazione è transitoria: vale solo finché un mimetizzatore resta vicino.
+- ``is_a_cloaker 1`` — l'unità mimetizza le unità alleate ``is_cloakable`` entro ``cloaking_range``.
+- ``cloaking_range <n>`` — raggio di mimetizzazione, in caselle (PRECISION). Valore predefinito: 6.
+
+^ Individuare un'unità
+^^^^^^^^^^^^^^^^^^^^^^^
+
+- ``is_a_detector 1`` — l'unità individua le unità nemiche invisibili o mimetizzate entro ``detection_range``.
+- ``detection_range <n>`` — raggio di individuazione, in caselle (PRECISION). Valore predefinito: 8.5.
+
+Un'unità individuata resta nota al giocatore nemico anche se il rilevatore muore o si allontana, quindi un solo rilevatore scopre quella posizione per il resto della partita.
+
+^ Rottura del nascondiglio durante l'attacco
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Novità in SoundRTS 1.5.1.8.
+
+- ``reveal_stealth_on_attack 1`` — attaccare mentre l'unità è invisibile o mimetizzata la espone per ``stealth_reveal_time`` secondi. Valore predefinito: 0 (l'unità mantiene il nascondiglio, il comportamento precedente).
+- ``stealth_reveal_time <n>`` — durata dell'esposizione, in secondi (PRECISION). Valore predefinito: 3. Il valore 0 significa "esposta per sempre".
+
+Mentre la finestra di esposizione è attiva, l'unità si comporta come un'unità visibile normale: viene disegnata nella vista a griglia, il nemico la percepisce e può attaccarla, e i mimetizzatori non possono più mimetizzarla. Quando la finestra termina, l'unità torna al suo stato naturale di nascondiglio. Attaccare di nuovo durante la finestra rinnova il timer invece di accumularlo.
+
+Esempio — una spia che resta esposta 3 secondi dopo aver sparato::
+
+    def spy
+        is_invisible 1
+        reveal_stealth_on_attack 1
+        stealth_reveal_time 3
+
 hp_regen
 =========
 
@@ -1040,6 +1080,25 @@ Sono disponibili due meccanismi di raccolta per le mod:
 
 Usa ``effect bonus carry_capacity N`` per upgrade stile carriola. I bonus percentuali ``gather_time_*`` aumentano il tasso continuous effettivo. Le chiavi corrispondono al ``type_name`` del deposito (es. ``gather_time_food_livestock`` vs ``gather_time_food_carcass``), così i bonus pastori e cacciatori si possono separare senza hardcode dei nomi civ.
 
+
+Chiavi dei bonus di raccolta (da 1.5.1.8)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+La chiave di una riga ``effect bonus gather_time ...`` / ``effect bonus gather_qty ...`` può essere scritta in tre modi; il motore li prova in successione:
+
+| Forma | Esempio | A cosa serve |
+| --- | --- | --- |
+| Tipo di deposito / edificio | ``gather_time_goldmine`` | Un solo deposito (è quello che usa il bonus dei pastori britannici) |
+| Numero dello slot di risorsa | ``gather_time_resource1`` | Tutti i depositi che producono uno slot di risorsa esatto |
+| Nome della risorsa | ``gather_time_gold`` | Per tipo di risorsa (``gold`` / ``wood`` / ``food`` / ``stone``) |
+
+Vince la chiave più specifica: un bonus sul deposito ha la precedenza su un bonus sull'intera risorsa. Un ``gather_time`` senza suffisso si comporta come ``all`` e vale per tutte le risorse. I valori percentuali (``-13%``) riducono il tempo di raccolta, che il motore converte in una velocità effettiva maggiore; gli interi sono un numero fisso di secondi.
+
+Un bonus di **tecnologia** e un bonus di **fase di civiltà** (``on_phase … gather_time_…``) possono usare la *stessa* chiave — la tecnologia della miniera d'oro e il "5% più veloce su tutto" dei Romani sono entrambe scritte per ``resource1``. Il motore li tiene separati e applica **entrambi**: le percentuali si moltiplicano (un -13% della tecnologia più un -50% della civiltà dà -56,5% del tempo), quindi nessuno dei due può cancellare silenziosamente l'altro.
+
+I nomi delle risorse non sono codificati nel motore: un file di regole li dichiara con ``parameters resource_names resource1 gold resource2 wood resource3 food resource4 stone``, e il motore risolve ``gather_time_gold`` tramite quella dichiarazione.
+
+Il pannello degli attributi mostra la velocità di raccolta **effettiva**: dopo aver studiato il campo minerario, la riga "velocità di raccolta miniera d'oro" passa da 0,38 a 0,44 al secondo, esattamente come la velocità reale in partita. Il pannello degli attributi e la simulazione dal vivo condividono un'unica implementazione di risoluzione dei bonus (``soundrts/gather_rate.py``), quindi non possono più discordare.
 Sistema di mercato (da 1.4.6.9)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
