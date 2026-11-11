@@ -1872,8 +1872,8 @@ def scorpion
 is_a unit
 title 8153
 noise repeat 60 76700
-launch_mdg 76701
-mdg_hit 76702
+launch_rdg 76701
+rdg_hit 76702
 move 76703
 death 76704
 keyboard soldier4
@@ -1886,7 +1886,8 @@ def trebuchet
 is_a unit
 title 8154
 is_a onager
-mdg_hit 76864
+launch_rdg 1084
+rdg_hit 76864
 
 def bombard_cannon
 is_a unit
@@ -1921,7 +1922,8 @@ def hand_cannoneer
 is_a walking_unit
 title 8173
 noise repeat 25 76935 76936 76937 76938
-rdg_hit76875
+launch_rdg 76874
+rdg_hit 76875
 shortcut m
 keyboard soldier1
 
