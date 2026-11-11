@@ -542,6 +542,34 @@ class EntityViewEvents:
         # 发送菜单更新通知
         self.interface.send_menu_alerts_if_needed()
 
+    def _say_siege_transition(self, keyword):
+        """攻城单位的打包 / 拆包状态播报（已废弃，保留仅为兼容旧调用）。
+
+        现在只在玩家主动查询单位状态时播报（见
+        ``clientgameentity.base._siege_transition_title_msg`` 与
+        ``clientgameentity.properties.orders_txt``），不再在打包 / 拆包
+        开始或结束时主动语音提醒，避免打扰玩家。
+        """
+        return
+
+    def on_siege_unpacking(self, *args):
+        """攻城单位开始拆包（含强制攻击时的自动拆包）。
+
+        不做语音提醒：状态会在玩家查询该单位时播报。
+        """
+
+    def on_siege_packing(self, *args):
+        """攻城单位开始打包（移动前的自动打包）。
+
+        不做语音提醒：状态会在玩家查询该单位时播报。
+        """
+
+    def on_siege_unpacked(self, *args):
+        """攻城单位拆包完成。不做语音提醒。"""
+
+    def on_siege_packed(self, *args):
+        """攻城单位打包完成。不做语音提醒。"""
+
     def on_completeness(self, s):  # building train or upgrade
         # Construction uses the HP progress bar (proportion_*), not production ticks.
         if self.type_name != "buildingsite":

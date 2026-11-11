@@ -539,7 +539,19 @@ class UnitDetail:
             status_text.extend(mp.DETECTOR)
         if getattr(u.model, "is_a_cloaker", 0):
             status_text.extend(mp.CLOAKER)
-        
+        # 攻城单位（巨型投石机）打包 / 拆包中：强制攻击时是自动拆包，
+        # 命令队列里看不到 unpack 命令，属性界面要单独显示状态。
+        try:
+            from ..clientgameentity.base import _siege_transition_title_msg
+
+            siege_status = _siege_transition_title_msg(u.model)
+            if siege_status:
+                if status_text:
+                    status_text.extend(mp.COMMA)
+                status_text.extend(siege_status)
+        except Exception:
+            pass
+
         if status_text:
             attrs.append(("t", mp.STATS, status_text))
         

@@ -91,6 +91,39 @@ def _target_title_msg(interface, target, *, for_order_unit=None):
     return EntityView(interface, target).short_title
 
 
+def _siege_transition_keyword(model):
+    """攻城单位当前的打包 / 拆包过渡状态关键词（无过渡时返回 None）。
+
+    ``_siege_mode`` 只在可打包单位上存在（见 ``world_siege_pack.init_siege_pack``），
+    所以普通单位直接返回 None，不会去碰 rules 属性。
+    """
+    try:
+        from ..world_siege_pack import MODE_PACKING, MODE_UNPACKING
+    except Exception:
+        return None
+    mode = getattr(model, "_siege_mode", None)
+    if mode == MODE_UNPACKING:
+        return "siege_unpacking"
+    if mode == MODE_PACKING:
+        return "siege_packing"
+    return None
+
+
+def _siege_transition_title_msg(model):
+    """攻城单位正在打包 / 拆包时的状态播报（返回 style 定义的标题列表）。
+
+    强制攻击（ctrl+退格）时，巨型投石机在 ``attack_action.py`` 里自动拆包，
+    此时 ``unit.orders`` 仍是 attack 命令，界面不会显示「正在拆包」。
+    这里直接读 ``_siege_mode``，让拆包 / 打包状态在选单位时被播报出来。
+
+    只在「你控制了 <单位>」这类主动查询时播报，不做事件驱动的主动提醒。
+    """
+    keyword = _siege_transition_keyword(model)
+    if not keyword:
+        return []
+    return list(style.get(keyword, "title", warn_if_not_found=False) or [])
+
+
 def _attack_action_title_msg(interface, model):
     """单位正在 AttackAction 时，生成「攻击 + 目标」播报（用于 orders_txt）。"""
     from ..worldaction import AttackAction

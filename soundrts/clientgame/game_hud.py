@@ -632,9 +632,24 @@ def _draw_selection_stats(interface, screen, *, panel, card_x, font, font_s):
     title_s = font.render(_short_label(title, 22), True, (255, 235, 160))
     screen.blit(title_s, (text_x, py))
 
+    # 攻城单位（巨型投石机）打包 / 拆包中：在属性板标题下显示状态。
+    # 强制攻击时是自动拆包，命令队列里看不到 unpack，所以这里单独显示。
+    siege_label = ""
+    try:
+        from ..clientgameentity.base import _siege_transition_title_msg
+
+        siege_label = _short_label(_siege_transition_title_msg(model), 16)
+    except Exception:
+        siege_label = ""
+    siege_h = 0
+    if siege_label:
+        siege_s = font_s.render(siege_label, True, (255, 210, 120))
+        screen.blit(siege_s, (text_x, py + title_s.get_height() + 1))
+        siege_h = siege_s.get_height() + 1
+
     hp = _attr_of(primary, "hp", None)
     hp_max = _attr_of(primary, "hp_max", None)
-    y = py + title_s.get_height() + 4
+    y = py + title_s.get_height() + 4 + siege_h
     meter_w = box.right - text_x - 8
     if hp is not None and hp_max:
         try:

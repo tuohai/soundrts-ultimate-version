@@ -154,22 +154,46 @@ class EntityViewProperties:
     def orders_txt(self):
         t = []
         model = getattr(self, "model", None)
+        siege_keyword = None
         if model is not None:
-            from .base import _attack_action_title_msg
+            from .base import (
+                _attack_action_title_msg,
+                _siege_transition_keyword,
+                _siege_transition_title_msg,
+            )
 
-            orders = getattr(model, "orders", None) or []
+            model_orders = getattr(model, "orders", None) or []
             attack_msg = _attack_action_title_msg(self.interface, model)
             if attack_msg:
-                if not orders:
+                if not model_orders:
                     return attack_msg + mp.COMMA
-                if getattr(orders[0], "keyword", None) != "attack":
+                if getattr(model_orders[0], "keyword", None) != "attack":
                     t += attack_msg
+
+            # 攻城单位（巨型投石机等）打包 / 拆包中：强制攻击时是自动拆包，
+            # 命令列表里看不到 unpack 命令，所以这里单独播报「正在拆包」。
+            siege_keyword = _siege_transition_keyword(model)
+            siege_msg = _siege_transition_title_msg(model)
+            if siege_msg:
+                t += mp.COMMA + siege_msg
+
+        orders = list(self.orders)
+        if siege_keyword:
+            # 「正在打包 / 正在拆包」已经说明了当前状态，命令队列里对应的
+            # pack / unpack 订单标题（「打包」/「拆包」）是重复播报，去掉。
+            # 例：控制正在拆包的投石机 → 只说「正在拆包」，不再追加「拆包」。
+            redundant_keyword = {
+                "siege_packing": "pack",
+                "siege_unpacking": "unpack",
+            }.get(siege_keyword)
+            if redundant_keyword:
+                orders = [o for o in orders if o.keyword != redundant_keyword]
 
         prev = None
         nb = 0
         
         # 处理不同命令类型
-        for i, o in enumerate(self.orders):
+        for i, o in enumerate(orders):
             # 如果是巡逻命令，不再显示后续命令
             if o.keyword == "patrol":
                 if prev:
