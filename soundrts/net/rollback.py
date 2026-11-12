@@ -160,6 +160,11 @@ class RollbackManager:
     ):
         self.local_player = local_player
         self.players: List[str] = list(players)
+        # The players that quit the match.  They are no longer waited for,
+        # but their confirmed orders are still part of the authoritative
+        # content of the frames they answered, so they stay in the input
+        # vector of those frames.
+        self._departed: List[str] = []
         self.world = world
         self._step = step
         self._apply_inputs = apply_inputs
@@ -277,10 +282,20 @@ class RollbackManager:
         frames that were applied with the quitter still waiting for its
         answer are re-checked, because the authoritative content of those
         frames may now differ from what was applied.
+
+        The quitter is *not* forgotten, though: it is moved to
+        :attr:`_departed`.  It still has to be part of the input vector of
+        the frames it answered, because the server's authoritative record
+        of those frames contains its orders.  Dropping it from the vector
+        entirely would make every re-simulation of those frames apply one
+        order less than the server did, and the client would silently
+        diverge from the server and from every spectator.
         """
         if player_id not in self.players:
             return
         self.players.remove(player_id)
+        if player_id not in self._departed:
+            self._departed.append(player_id)
         for frame, confirmed in list(self.confirmed.items()):
             if not self._frame_is_complete(frame):
                 continue
@@ -304,7 +319,14 @@ class RollbackManager:
             local_orders = self.local_inputs.get(frame, "")
         confirmed = self.confirmed.get(frame)
         if confirmed is not None:
-            inputs = {pid: confirmed.order_for(pid) for pid in self.players}
+            # The vector contains the players who are still in the match
+            # *and* the ones who left: a quitter's orders are part of the
+            # authoritative content of the frames it answered, so they must
+            # be applied again when the frame is re-simulated.
+            vector_players = list(self.players) + [
+                pid for pid in self._departed if pid != self.local_player
+            ]
+            inputs = {pid: confirmed.order_for(pid) for pid in vector_players}
             # A player that did not answer the server keeps its empty
             # prediction, which is what the server confirmed too.
             for pid in confirmed.inputs:
@@ -424,9 +446,16 @@ class RollbackManager:
         inputs = dict(known.inputs) if known is not None else {}
         if player_id in inputs:
             # Already known: a retransmission must not change anything.
-            existing_seq, existing_orders = inputs[player_id]
-            if existing_orders == orders:
-                return None
+            #
+            # The *first* confirmation wins, even when the orders differ.
+            # A differing second copy can only come from a source that
+            # disagrees with the authoritative record -- for instance the
+            # empty input the server synthesises when a player quits,
+            # broadcast for a frame the quitter had already answered.
+            # Overwriting the real orders with that empty input would
+            # silently corrupt the frame and fork the client from the
+            # server and from every spectator.
+            return None
         inputs[player_id] = (0, orders)
 
         frame_obj = InputFrame(frame, inputs, confirmed=frame)

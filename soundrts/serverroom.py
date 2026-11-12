@@ -250,6 +250,14 @@ class InputStreamGame:
         open_frames = self.stream.remove_player(player_login)
         for number in open_frames:
             # The quitter's share of the frame is empty: it did nothing.
+            #
+            # But only for the frames it had *not* answered.  A frame the
+            # quitter did answer holds its real orders, and broadcasting an
+            # empty input for it would contradict -- and therefore silently
+            # corrupt -- the authoritative record of that frame.
+            existing = self.stream.frame(number)
+            if existing is not None and player_login in existing.inputs:
+                continue
             self.game._broadcast_input(
                 encode_input(number, player_login, 0, ""), exclude=None
             )
@@ -266,6 +274,23 @@ class InputStreamGame:
     def confirmed_frames(self):
         """Every frame that every player has answered, oldest first."""
         return self.stream.confirmed_frames()
+
+    def frames(self):
+        """Every frame that has at least one input, oldest first.
+
+        Unlike :meth:`confirmed_frames`, this includes the frames that are
+        not complete yet: their partial inputs exist and must not be lost.
+        """
+        result = []
+        for number in self.stream.frame_numbers():
+            frame = self.stream.frame(number)
+            if frame is not None:
+                result.append(frame)
+        return result
+
+    def frame_numbers(self):
+        """Every frame that has at least one input, oldest first."""
+        return self.stream.frame_numbers()
 
     def gaps(self):
         """Frames below the confirmed one that are still incomplete."""
@@ -642,13 +667,19 @@ class Game:
         (which replays the communication turns), the spectator has to
         replay every single frame.
 
+        *Every* frame that has at least one input is included, not only the
+        ones every player has answered.  A frame that is still missing a
+        player's input is replayed by the spectator as soon as that input
+        arrives (live), and dropping the partial inputs here would lose
+        them for good.
+
         Each entry is ``(frame, player_login, seq, packed orders)``.
         """
         stream = getattr(self, "_input_stream", None)
         if stream is None:
             return []
         result = []
-        for frame in stream.confirmed_frames():
+        for frame in stream.frames():
             for player_login in sorted(frame.inputs):
                 seq, orders = frame.inputs[player_login]
                 result.append((frame.frame, player_login, seq, orders))

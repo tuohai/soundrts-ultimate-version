@@ -261,9 +261,14 @@ def test_the_server_does_not_send_the_input_history_to_a_lockstep_spectator():
     assert "all_orders" in kinds
 
 
-def test_the_server_only_sends_the_frames_every_player_answered():
-    """A half-answered frame cannot be replayed: the spectator would have
-    to guess what the missing player did."""
+def test_the_server_sends_the_partial_frames_too():
+    """A half-answered frame is sent as far as it goes.
+
+    The spectator cannot *replay* a half-answered frame -- it waits for the
+    missing player's input -- but the inputs it does have must reach it:
+    they arrived before it joined, and they will never be sent again.
+    Dropping them would lose the host's orders for frame 1 forever.
+    """
     game = _game_with_players("host", "guest")
     host, guest = game.players
 
@@ -275,7 +280,16 @@ def test_the_server_only_sends_the_frames_every_player_answered():
     game._send_input_history(spectator)
 
     decoded = [decode_input(" ".join(n[1:])) for n in spectator.notes]
-    assert {(f, p) for f, p, _s, _o in decoded} == {(0, "host"), (0, "guest")}
+    assert {(f, p) for f, p, _s, _o in decoded} == {
+        (0, "host"),
+        (0, "guest"),
+        (1, "host"),
+    }
+
+    # The orders themselves are intact.
+    orders = {(f, p): o for f, p, _s, o in decoded}
+    assert orders[(0, "host")] == "a"
+    assert orders[(1, "host")] == "c"
 
 
 def test_the_live_inputs_reach_the_spectators():
