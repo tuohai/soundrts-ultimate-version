@@ -283,11 +283,6 @@ def test_the_client_ignores_an_unknown_protocol():
     assert menu._protocol == DEFAULT_PROTOCOL
 
 
-# ---------------------------------------------------------------------------
-# No relative import may escape its package
-# ---------------------------------------------------------------------------
-
-
 def test_no_relative_import_escapes_its_package():
     """No module may import from *above* its own package.
 

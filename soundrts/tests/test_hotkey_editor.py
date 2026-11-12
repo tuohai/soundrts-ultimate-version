@@ -1,6 +1,7 @@
 """Phase 1 热键映射编辑器测试。"""
 
 import json
+import sys
 from pathlib import Path
 
 import pytest
@@ -46,11 +47,26 @@ def test_apply_overrides_replaces_primary_key(monkeypatch):
     assert "x: resource_status resource2" in result
 
 
-def test_key_event_to_binding_string_letter_and_mods():
+def test_key_event_to_binding_string_letter_and_mods(monkeypatch):
     import pygame
     from pygame.locals import KMOD_CTRL, KMOD_SHIFT
 
     from soundrts.hotkey_editor import key_event_to_binding_string
+
+    # ``key_event_to_binding_string`` asks Windows which *physical* shift
+    # key is held, so that it can tell LSHIFT and RSHIFT apart (the
+    # layered hotkeys need that).  That makes the result depend on the
+    # keyboard of whoever runs the test: with the left shift key held
+    # down, the answer is "CTRL LSHIFT d" instead of "CTRL SHIFT d".
+    #
+    # The test therefore neutralises the physical-key query, so that it
+    # checks the *logic* and not the state of the machine it runs on.
+    # (The production code resolves ``ctypes.windll.user32.GetKeyState``
+    # at call time, so patching the attribute is enough.)
+    if sys.platform == "win32":
+        import ctypes
+
+        monkeypatch.setattr(ctypes.windll.user32, "GetKeyState", lambda _v: 0)
 
     class E:
         pass
