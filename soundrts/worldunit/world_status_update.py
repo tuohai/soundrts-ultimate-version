@@ -864,7 +864,7 @@ class CreatureStatusUpdate(Entity):
                 if getattr(self.world, 'treaty_until_time', 0) > 0 and self.world.time < self.world.treaty_until_time:
                     if hasattr(self, 'player') and hasattr(u, 'player') and self.player and u.player:
                         if u.player.player_is_an_enemy(self.player):
-                            from ...worldplayerbase.base import is_wildlife_unit
+                            from ..worldplayerbase.base import is_wildlife_unit
                             if is_wildlife_unit(u) or is_wildlife_unit(self):
                                 pass
                             else:
@@ -898,7 +898,7 @@ class CreatureStatusUpdate(Entity):
                 if getattr(self.world, 'treaty_until_time', 0) > 0 and self.world.time < self.world.treaty_until_time:
                     if hasattr(self, 'player') and hasattr(best_target, 'player') and self.player and best_target.player:
                         if best_target.player.player_is_an_enemy(self.player):
-                            from ...worldplayerbase.base import is_wildlife_unit
+                            from ..worldplayerbase.base import is_wildlife_unit
                             if is_wildlife_unit(best_target) or is_wildlife_unit(self):
                                 pass
                             else:

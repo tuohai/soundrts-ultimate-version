@@ -163,7 +163,7 @@ class _ServerMenu(Menu):
         ``start_spectating``): the client has to know which protocol the
         game uses before it starts simulating.
         """
-        from ..version import SUPPORTED_PROTOCOLS
+        from .version import SUPPORTED_PROTOCOLS
 
         protocol = args[0] if args else DEFAULT_PROTOCOL
         if protocol not in SUPPORTED_PROTOCOLS:

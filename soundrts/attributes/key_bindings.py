@@ -302,7 +302,7 @@ class KeyBindings:
                         if attr_value > 0:
                             # 格式化数值
                             try:
-                                from ...lib.nofloat import PRECISION
+                                from ..lib.nofloat import PRECISION
                                 value = int(attr_value/PRECISION) if attr_value >= PRECISION else attr_value
                             except:
                                 value = attr_value

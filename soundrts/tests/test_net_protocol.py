@@ -226,3 +226,52 @@ def test_the_lockstep_path_is_untouched_by_the_rollback_work():
     assert len(broadcasts) == 1
     assert "host/order,0,0,go,42" in broadcasts[0][2]
     assert "guest/" in broadcasts[0][2]
+
+
+# ---------------------------------------------------------------------------
+# No relative import may escape its package
+# ---------------------------------------------------------------------------
+
+
+def test_no_relative_import_escapes_its_package():
+    """No module may import from *above* its own package.
+
+    ``from ..version import ...`` inside ``soundrts/clientservermenu.py``
+    means "one level above ``soundrts``", which does not exist.  The
+    import is only evaluated when the statement runs, so such a bug can
+    sit in the tree for months and then kill a real game session.
+
+    This test scans the whole package and fails on any relative import
+    that goes above the package it lives in.
+    """
+    import ast
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]  # the "soundrts" package
+    offenders = []
+    for path in root.rglob("*.py"):
+        rel = path.relative_to(root).parts
+        if rel[0] == "tests":
+            continue
+        # The package depth: "soundrts" is 1, "soundrts/worldunit" is 2.
+        depth = len(rel)
+        try:
+            tree = ast.parse(path.read_text(encoding="utf-8"), str(path))
+        except SyntaxError:
+            continue
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.ImportFrom):
+                continue
+            if node.level and node.level > depth:
+                offenders.append(
+                    "%s:%d  from %s"
+                    % (
+                        path.relative_to(root),
+                        node.lineno,
+                        "." * node.level + (node.module or ""),
+                    )
+                )
+
+    assert not offenders, (
+        "relative imports that escape their package:\n  " + "\n  ".join(offenders)
+    )

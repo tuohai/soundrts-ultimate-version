@@ -183,11 +183,11 @@ class MoveAction(Action):
         place = getattr(unit, "place", None)
         if place is None:
             return
-        from ..worldunit.world_ai_decision import (  # local import; avoid cycles
+        from .worldunit.world_ai_decision import (  # local import; avoid cycles
             int_distance as _ai_int_distance,
         )
         # Optional formation override: do not override player-suppressed stand-ground.
-        from ..world_formation import formation_stand_ground
+        from .world_formation import formation_stand_ground
         if formation_stand_ground(unit):
             return
         rdg_r = int(getattr(unit, "rdg_range", 0) or 0)
