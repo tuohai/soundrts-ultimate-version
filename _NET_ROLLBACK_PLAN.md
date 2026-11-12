@@ -211,6 +211,66 @@ cw1-mm:   dump 492ms / load 515ms → digest MATCH = True
 15. 本地指令**竞态**：帧号在读取 input 与写入本地指令之间不能移动，
     否则本地指令会落到已模拟完的帧上被**静默丢弃**（`RLock` + 提前推进帧号）。
 
+### Phase 6：实网验证（无头双客户端）★ 已完成
+
+前面所有测试都是**进程内**驱动各个部件：精确、快，但从来没有把
+**真实 socket + 真实服务器 + 真实线上格式 + 两个同时模拟的客户端**
+串成一条链跑过。Phase 6 补上这一段。
+
+新增 `soundrts/net/headless.py`：一个**无头**（无 Pygame 窗口、无声音）的
+多人测试台。
+
+| 组件 | 是不是真的 |
+|---|---|
+| 服务器 | 真的 `soundrts.servermain.Server`，绑 `127.0.0.1:0`（临时端口），由测试驱动而非线程 |
+| 握手 | 真的协议：`:` 提示符 → `login <兼容版本> <登录名> <协议令牌>` → `ok!` |
+| 地图 | 真的走线缆：服务器 `pack_buffer` 打包，客户端 `res.unpack_map` 解包 |
+| 世界 | 真的 `World`（同 seed、同地图字节、同玩家顺序） |
+| 客户端 | 真的 `Coordinator` + 真的 `RollbackSession` / `SpectatorSession` |
+| 唯一被替换的 | Pygame 界面：换成 `StubInterface`（`queue_srv_event` 空实现） |
+
+`StubInterface` 的存在很关键：`Player.is_local_human()` 判断的是
+`hasattr(self.client, "interface")`，所以桩接口让"本地人类"的语义
+和真人对局完全一致；而它**不消耗 world.random**，两边的模拟仍然逐位相同。
+
+#### 延迟注入是**按帧**的，不是按秒的
+
+这是让测试可复现的关键：连接把线上的行**压住 N 帧**，等比赛时钟推进了
+N 帧再放行。于是"远端输入迟到"是**确定的**，同一份测试每次跑出同样的
+回滚深度，不会因为机器快慢而时灵时不灵。
+
+#### 四个场景（`soundrts/tests/test_net_rollback_live.py`）
+
+| # | 场景 | 断言 |
+|---|---|---|
+| 1 | **基线收敛** | 两个客户端跑真实 TCP，20 帧后 `strong_digest` 逐位相同；且**零回滚**（无延迟时远端输入总是及时到达，不需要预测） |
+| 2 | **高延迟** | 延迟 3~4 帧：`stats.rollbacks >= 1`、`frames_resimulated >= 1`、`max_rollback_depth >= 1`、`desync_detected >= 1`，且最终 digest 相同、`unrecoverable_desyncs == 0` |
+| 3 | **中途掉线** | 玩家掉线后幸存者**继续模拟**（帧数继续增长）、`unrecoverable_desyncs == 0`；并且"掉线局"与"没人掉线的同 seed 参考局"最终 digest **相同** |
+| 4 | **中途旁观** | 旁观者加入后重放服务器下发的整局 input 历史，帧号追上玩家；随后**继续跟着实况走**（每一步都追平），三方 digest 相同 |
+
+场景 3 的"与参考局 digest 相同"是这里最强的一条断言：它证明掉线时
+服务器**补空**的帧和客户端**预测**的帧内容一致，所以幸存者的世界
+没有被掉线这件事弄脏。
+
+#### 验证结果
+
+```
+$ python -m pytest soundrts/tests/test_net_rollback_live.py -v
+9 passed          # 连跑 5 次，5/5 全绿，无抖动
+```
+
+---
+
+## 回滚协议已设为默认（Step 4）
+
+`config.py` 的 `use_rollback_netcode` 默认值从 `0` 改成 `1`：
+**回滚协议现在是默认协议**，用户仍可手动改回 `0` 走传统锁步。
+
+两种协议继续共存：`version.py::client_protocol()` 决定客户端宣告什么，
+`version.py::negotiate_protocol()` 保证**只有当一局的所有玩家都宣告
+回滚协议（且版本号一致）时才用回滚**，否则整局回落到锁步——旧客户端
+因此仍然能和新宿主玩。
+
 ---
 
 ## 风险清单
