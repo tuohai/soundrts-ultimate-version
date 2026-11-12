@@ -100,6 +100,9 @@ class _ServerMenu(Menu):
     # barrier; the legacy lockstep protocol is used when any player does
     # not understand it.
     _protocol = DEFAULT_PROTOCOL
+    # The revision of that protocol.  The server announces it as part of
+    # the protocol token (``<protocol>/<revision>``).
+    _protocol_revision = 1
 
     def __init__(self, server, auto=False, menu_type="main"):
         self.server = server
@@ -162,13 +165,40 @@ class _ServerMenu(Menu):
         This line arrives before ``start_game`` (and before
         ``start_spectating``): the client has to know which protocol the
         game uses before it starts simulating.
-        """
-        from .version import SUPPORTED_PROTOCOLS
 
-        protocol = args[0] if args else DEFAULT_PROTOCOL
-        if protocol not in SUPPORTED_PROTOCOLS:
+        The token is ``<protocol>/<revision>``.  A bare protocol name is
+        understood as revision 1 (what an older server sends).
+        """
+        from .version import (
+            SUPPORTED_PROTOCOLS,
+            parse_protocol_token,
+            protocol_revision,
+        )
+
+        token = args[0] if args else DEFAULT_PROTOCOL
+        try:
+            protocol, revision = parse_protocol_token(token)
+        except ValueError:
+            warning("malformed protocol token from server: %r", token)
             protocol = DEFAULT_PROTOCOL
+            revision = protocol_revision(DEFAULT_PROTOCOL)
+        if protocol not in SUPPORTED_PROTOCOLS:
+            warning("unknown protocol %r from server, assuming %s", protocol, DEFAULT_PROTOCOL)
+            protocol = DEFAULT_PROTOCOL
+            revision = protocol_revision(DEFAULT_PROTOCOL)
+        if revision != protocol_revision(protocol):
+            # The server speaks a revision this client does not know.  The
+            # protocol is still used, but the mismatch is logged: the
+            # server's negotiation is what guarantees the *other* clients
+            # agree too.
+            warning(
+                "server speaks %s revision %s, this client speaks revision %s",
+                protocol,
+                revision,
+                protocol_revision(protocol),
+            )
         self._protocol = protocol
+        self._protocol_revision = revision
 
     def srv_quit(self, unused_args):
         voice.flush()

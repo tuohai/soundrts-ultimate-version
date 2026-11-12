@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 
 from .version import IS_DEV_VERSION
 from .version import DEFAULT_PROTOCOL, ROLLBACK_PROTOCOL, negotiate_protocol
+from .version import protocol_revision, protocol_token
 
 
 def same(strings):
@@ -414,11 +415,21 @@ class Game:
         self._input_stream = InputStreamGame(self)
         # The protocol this game is played with.  It is negotiated from the
         # protocols the clients speak: the rollback protocol only works if
-        # *every* player understands it.
+        # *every* player understands it, and agrees on its revision.
         self.protocol = negotiate_protocol(
-            [getattr(c, "protocol", DEFAULT_PROTOCOL) for c in self.human_players]
+            [getattr(c, "protocol", DEFAULT_PROTOCOL) for c in self.human_players],
+            [int(getattr(c, "protocol_revision", 1) or 1) for c in self.human_players],
         )
-        info("game %s uses the %s protocol", self.id, self.protocol)
+        # The revision of the protocol the game is played with.  It is the
+        # revision every client announced for that protocol (the negotiation
+        # guarantees they all agree on it).
+        self.protocol_revision = protocol_revision(self.protocol)
+        info(
+            "game %s uses the %s protocol (revision %s)",
+            self.id,
+            self.protocol,
+            self.protocol_revision,
+        )
         ##        # guess first ping from the connection delays
         ##        self.ping = max([p.delay for p in self.human_players])
         # 帝国时代式合作战役：人类玩家与 AI 队友同属 1 队。
@@ -469,8 +480,10 @@ class Game:
                 )
             # The protocol is negotiated for the whole game, and sent
             # before start_game: the client has to know which protocol the
-            # game uses before it starts simulating.
-            client.notify("protocol", self.protocol)
+            # game uses before it starts simulating.  The token carries
+            # the revision too, so a client can check that it understands
+            # the exact wire format the server will use.
+            client.notify("protocol", protocol_token(self.protocol))
             client.notify(
                 "start_game",
                 self._initial_players_pack,
@@ -804,8 +817,9 @@ class Game:
         if not initial_players:
             initial_players = ";".join(pack(p) for p in self.players)
         # The protocol comes first: the spectator has to know how to
-        # rebuild the match before it starts.
-        client.notify("protocol", getattr(self, "protocol", DEFAULT_PROTOCOL))
+        # rebuild the match before it starts.  The token carries the
+        # revision, so the spectator knows the exact wire format.
+        client.notify("protocol", protocol_token(getattr(self, "protocol", DEFAULT_PROTOCOL)))
         client.notify(
             "start_spectating",
             initial_players,

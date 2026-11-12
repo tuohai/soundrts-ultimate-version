@@ -23,7 +23,7 @@ from .serverroom import (
     WaitingForTheGameToStart,
     _State,
 )
-from .version import DEFAULT_PROTOCOL
+from .version import DEFAULT_PROTOCOL, PROTOCOL_REVISIONS, protocol_revision
 
 
 def _map(map_index_or_name):
@@ -45,6 +45,9 @@ class ConnectionToClient(asynchat.async_chat):
     # The netcode protocol this client speaks.  An old client does not send
     # it, and speaks the legacy lockstep protocol.
     protocol = DEFAULT_PROTOCOL
+    # The revision of the protocol this client speaks.  An old client does
+    # not send it, and speaks revision 1 (the original wire format).
+    protocol_revision = 1
 
     def __init__(self, server: "Server", connection_and_address) -> None:
         (connection, address) = connection_and_address
@@ -206,26 +209,46 @@ class ConnectionToClient(asynchat.async_chat):
     def _get_version_and_login_from_data(self, data):
         """Parse the login line.
 
-        The line is ``<version> <login> [<protocol>]``.  The protocol is
-        optional: an old client does not send it, and speaks the legacy
-        lockstep protocol.
+        The line is ``<version> <login> [<protocol>[/<revision>]]]``.  The
+        protocol is optional: an old client does not send it, and speaks the
+        legacy lockstep protocol.  The revision is optional too: a bare
+        protocol name means revision 1.
         """
-        from .version import DEFAULT_PROTOCOL, SUPPORTED_PROTOCOLS
+        from .version import DEFAULT_PROTOCOL, SUPPORTED_PROTOCOLS, parse_protocol_token
 
         parts = data.split(" ")
         version = parts[0] if parts else ""
         login = parts[1] if len(parts) > 1 else ""
-        protocol = parts[2] if len(parts) > 2 else DEFAULT_PROTOCOL
+        raw_protocol = parts[2] if len(parts) > 2 else DEFAULT_PROTOCOL
+        try:
+            protocol, revision = parse_protocol_token(raw_protocol)
+        except ValueError:
+            warning("unknown protocol %r, assuming %s", raw_protocol, DEFAULT_PROTOCOL)
+            protocol = DEFAULT_PROTOCOL
+            revision = protocol_revision(DEFAULT_PROTOCOL)
         if protocol not in SUPPORTED_PROTOCOLS:
             warning("unknown protocol %r, assuming %s", protocol, DEFAULT_PROTOCOL)
             protocol = DEFAULT_PROTOCOL
+            revision = protocol_revision(DEFAULT_PROTOCOL)
+        if revision <= 0:
+            revision = 1
+        if revision != protocol_revision(protocol):
+            # The client speaks a revision this server does not know.  The
+            # revision is still recorded, so that the negotiation can fall
+            # back to a protocol both sides understand.
+            warning(
+                "client speaks %s revision %s, this server speaks revision %s",
+                protocol,
+                revision,
+                protocol_revision(protocol),
+            )
         if not config.login_is_valid(login):
             warning("bad login: %s" % login)
-            return version, None, protocol
+            return version, None, protocol, revision
         if len(self.server.clients) >= self.server.nb_clients_max:
             warning("refused client %s: too many clients." % login)
-            return version, None, protocol
-        return version, self._unique_login(login), protocol
+            return version, None, protocol, revision
+        return version, self._unique_login(login), protocol, revision
 
     @property
     def compatible_clients(self):
@@ -259,9 +282,12 @@ class ConnectionToClient(asynchat.async_chat):
         self.server.log_status()
 
     def cmd_login(self, args):
-        self.version, self.login, self.protocol = (
-            self._get_version_and_login_from_data(" ".join(args))
-        )
+        (
+            self.version,
+            self.login,
+            self.protocol,
+            self.protocol_revision,
+        ) = self._get_version_and_login_from_data(" ".join(args))
         if self.login is not None:
             self._accept_client_after_login()
             self.server.update_menus()

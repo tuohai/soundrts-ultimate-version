@@ -10,7 +10,7 @@ from .clientmedia import voice
 from .clientservermenu import ServerMenu
 from .clientversion import revision_checker
 from .lib.log import exception, info
-from .version import compatibility_version, client_protocol
+from .version import compatibility_version, client_protocol, client_protocol_token
 from soundrts.lib import sound
 
 
@@ -122,7 +122,7 @@ class ConnectionToServer:
                 (
                     "login "
                     + compatibility_version()
-                    + " %s %s\n" % (config.login, client_protocol())
+                    + " %s %s\n" % (config.login, client_protocol_token())
                 ).encode("utf-8")
             )
         except (EOFError, OSError):
