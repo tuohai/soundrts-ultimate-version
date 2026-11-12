@@ -210,9 +210,9 @@ class ConnectionToClient(asynchat.async_chat):
         """Parse the login line.
 
         The line is ``<version> <login> [<protocol>[/<revision>]]]``.  The
-        protocol is optional: an old client does not send it, and speaks the
-        legacy lockstep protocol.  The revision is optional too: a bare
-        protocol name means revision 1.
+        protocol is optional: an old client does not send it, and speaks
+        the legacy lockstep protocol.  The revision is optional too: a
+        bare protocol name means revision 1.
         """
         from .version import DEFAULT_PROTOCOL, SUPPORTED_PROTOCOLS, parse_protocol_token
 

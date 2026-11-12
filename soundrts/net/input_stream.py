@@ -411,7 +411,7 @@ class InputStream:
 
         This is *not* the same as :meth:`confirmed_frames`: a frame that
         only one player has answered is not authoritative yet, but its
-        input exists and must not be lost -- a spectator joining now needs
+        input exists and must not be lost — a spectator joining now needs
         it, and it will be completed by the inputs that arrive later.
         """
         return sorted(self._frames)

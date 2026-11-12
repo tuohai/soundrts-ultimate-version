@@ -57,6 +57,12 @@ DEFAULT_PROTOCOL = LOCKSTEP_PROTOCOL
 # * The rollback protocol is only used when **every** player speaks it
 #   *and* all of them speak the same revision of it.  Otherwise the game
 #   falls back to lockstep, which every client understands.
+# * A revision mismatch therefore never corrupts a match: it costs the
+#   match the rollback netcode, and it is logged so the mismatch is
+#   visible.  This is what makes a rollout safe -- a new server can talk
+#   to old clients (lockstep revision 1) and to new clients (rollback
+#   revision N) in the same lobby, and each match gets the protocol it
+#   can actually run.
 #
 # Bumping a revision
 # ------------------
@@ -136,15 +142,23 @@ def parse_protocol_token(token: str):
 def client_protocol():
     """The protocol this client speaks.
 
-    The rollback protocol is opt-in for now: it is a big change to the
-    netcode, and a mismatch between the clients of a match would break it.
-    Until it is proven in real matches, the default stays the legacy
-    lockstep, and the user can switch it on in the configuration file.
+    The rollback protocol is the default: it has been verified over real
+    sockets, against the real server, with two clients simulating at the
+    same time (see ``soundrts/tests/test_net_rollback_live.py``).  It
+    removes the "wait for the slowest player" barrier of the legacy
+    lockstep.
+
+    The two protocols still coexist: a client that does not announce the
+    rollback protocol plays the legacy lockstep, and the server falls back
+    to lockstep when the players of a match do not all speak rollback.
+
+    A user can still switch it off in the configuration file
+    (``use_rollback_netcode = 0``).
     """
     try:
-        enabled = int(getattr(config, "use_rollback_netcode", 0))
+        enabled = int(getattr(config, "use_rollback_netcode", 1))
     except (AttributeError, TypeError, ValueError):
-        enabled = 0
+        enabled = 1
     if enabled:
         return ROLLBACK_PROTOCOL
     return DEFAULT_PROTOCOL

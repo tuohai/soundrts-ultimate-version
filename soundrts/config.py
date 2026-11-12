@@ -128,8 +128,13 @@ _options = [
     # 1 = Ctrl+F2 画面开启（下次启动恢复）; 0 = 关闭
     ("general", "display_enabled", 0, int),
     # 1 = 使用回滚网络协议（预测 + 回滚，去掉"等最慢玩家"的锁步屏障）;
-    # 0 = 传统锁步（默认，向后兼容）
-    ("general", "use_rollback_netcode", 0, int),
+    # 0 = 传统锁步（向后兼容，可手动改回）
+    #
+    # 回滚协议现在是默认协议：它已经通过了 soundrts/tests/test_net_rollback_live.py
+    # 的实网验证（真实 TCP 回环、真实服务器、两个客户端同时模拟），覆盖
+    # 基线收敛 / 高延迟回滚 / 中途掉线 / 中途旁观追帧四个场景。
+    # 旧客户端不声明回滚协议时，服务器仍会按锁步分流，两种协议共存。
+    ("general", "use_rollback_netcode", 1, int),
     ("server", "timeout", 60.0),
     # fpct must be as small as possible while respecting test_fpct()
     ("server", "fpct_coef", 2.3),

@@ -449,7 +449,7 @@ class RollbackManager:
             #
             # The *first* confirmation wins, even when the orders differ.
             # A differing second copy can only come from a source that
-            # disagrees with the authoritative record -- for instance the
+            # disagrees with the authoritative record — for instance the
             # empty input the server synthesises when a player quits,
             # broadcast for a frame the quitter had already answered.
             # Overwriting the real orders with that empty input would

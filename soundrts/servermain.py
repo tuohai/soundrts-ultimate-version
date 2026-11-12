@@ -110,7 +110,7 @@ class Server(asyncore.dispatcher):
 
         ``host`` and ``port`` default to the wildcard address and the port
         from the command line.  They can be overridden to bind somewhere
-        else -- the headless test harness binds to ``127.0.0.1`` on an
+        else — the headless test harness binds to ``127.0.0.1`` on an
         ephemeral port (0), so that the tests never collide with a real
         server and never trigger a Windows firewall prompt.
         """
