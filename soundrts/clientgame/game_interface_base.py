@@ -333,6 +333,29 @@ class GameInterface(AttributesInterface):
         self.next_update = time.time() + interval
         reset_combat_sfx_cap(self)
 
+    def _ask_for_rollback_update(self):
+        """Advance the simulation by one frame, using the rollback session.
+
+        In the rollback protocol the client does not wait for the server:
+        it applies its own orders plus whatever it has already received
+        from the server, and *predicts* the rest.  When the server later
+        contradicts the prediction, the session repairs the world.
+
+        The step runs on the world thread (it is queued as a command, like
+        ``world.update``), because restoring a snapshot mutates the world.
+        """
+        session = getattr(self.server, "rollback_session", None)
+        if session is None:
+            self._ask_for_update()
+            return
+        for player, order in self.server.get_orders():
+            self.world.queue_command(player, order)
+        self.world.queue_command(None, session.step)
+        self.waiting_for_world_update = True
+        interval = VIRTUAL_TIME_INTERVAL / 1000.0 / self.speed
+        self.next_update = time.time() + interval
+        reset_combat_sfx_cap(self)
+
     def _time_to_ask_for_next_update(self):
         if self.waiting_for_world_update:
             return False
@@ -346,11 +369,25 @@ class GameInterface(AttributesInterface):
     _catch_up_muted = False
     _announced_spectating = False
 
+    def _pending_spectator_frames(self):
+        """How many frames the spectator still has to replay.
+
+        The lockstep protocol queues the communication turns in
+        ``all_orders``; the rollback protocol queues the frames whose
+        inputs have arrived in the spectator session.
+        """
+        session = getattr(self.server, "rollback_session", None)
+        if session is not None and hasattr(session, "pending_frames"):
+            return session.pending_frames()
+        return len(getattr(self.server, "all_orders", []) or [])
+
     def _update_catch_up_audio(self):
         """旁观追帧期间静音，追上后恢复音频。"""
         if not getattr(self.server, "_is_spectator", False):
             return
-        pending = len(getattr(self.server, "all_orders", []) or [])
+        # The helper is looked up on the class, so a caller that builds a
+        # partial interface stub (as the tests do) still works.
+        pending = GameInterface._pending_spectator_frames(self)
         buffer = int(getattr(self.server, "catch_up_buffer", 3) or 3)
         if pending > buffer and not self._catch_up_muted:
             from ..lib import sound

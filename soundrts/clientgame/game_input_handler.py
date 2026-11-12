@@ -642,7 +642,10 @@ def _loop(interface):
                 interface._time_to_ask_for_next_update()
                 and interface.server.orders_are_ready()
             ):
-                interface._ask_for_update()
+                if getattr(interface.server, "rollback_enabled", False):
+                    interface._ask_for_rollback_update()
+                else:
+                    interface._ask_for_update()
             from .game_display import _animate_objects
             _animate_objects(interface)
             _process_events(interface)
