@@ -1,0 +1,228 @@
+# -*- coding: utf-8 -*-
+"""The negotiation of the netcode protocol.
+
+The rollback protocol and the legacy lockstep protocol have to coexist: an
+old client must still be able to play against a new server.  The rule is
+simple: the rollback protocol is only used when *every* player speaks it,
+because the clients have to agree on which inputs are authoritative.
+"""
+from __future__ import annotations
+
+import logging
+import os
+import sys
+import time
+import warnings
+
+import pytest
+
+os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
+os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
+
+saved = sys.argv
+sys.argv = [saved[0] if saved else "pytest"]
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    from soundrts.serverclient import ConnectionToClient
+    from soundrts.servermain import Server
+    from soundrts.serverroom import (
+        Game,
+        InTheLobby,
+        InputStreamGame,
+        Orders,
+        Playing,
+        pack,
+    )
+    from soundrts.version import (
+        DEFAULT_PROTOCOL,
+        LOCKSTEP_PROTOCOL,
+        ROLLBACK_PROTOCOL,
+        negotiate_protocol,
+    )
+
+sys.argv = saved
+
+
+# ---------------------------------------------------------------------------
+# The negotiation itself
+# ---------------------------------------------------------------------------
+
+
+def test_everybody_speaking_rollback_gives_rollback():
+    assert negotiate_protocol([ROLLBACK_PROTOCOL, ROLLBACK_PROTOCOL]) == (
+        ROLLBACK_PROTOCOL
+    )
+
+
+def test_one_old_client_falls_back_to_lockstep():
+    """An old client must still be able to play."""
+    assert negotiate_protocol([ROLLBACK_PROTOCOL, LOCKSTEP_PROTOCOL]) == (
+        LOCKSTEP_PROTOCOL
+    )
+
+
+def test_everybody_old_gives_lockstep():
+    assert negotiate_protocol([LOCKSTEP_PROTOCOL, LOCKSTEP_PROTOCOL]) == (
+        LOCKSTEP_PROTOCOL
+    )
+
+
+def test_no_client_gives_the_default():
+    assert negotiate_protocol([]) == DEFAULT_PROTOCOL
+    assert DEFAULT_PROTOCOL == LOCKSTEP_PROTOCOL
+
+
+def test_a_lone_rollback_client_uses_rollback():
+    """With a single human, there is nobody to disagree with.
+
+    The computer players are simulated locally by the client, so a game
+    with one human is entirely under that client's control.
+    """
+    assert negotiate_protocol([ROLLBACK_PROTOCOL]) == ROLLBACK_PROTOCOL
+
+
+# ---------------------------------------------------------------------------
+# The server side
+# ---------------------------------------------------------------------------
+
+
+class _FakeMap:
+    name = "jl1"
+    nb_players_min = 1
+    nb_players_max = 8
+
+
+def _fake_client(login, server, protocol=LOCKSTEP_PROTOCOL):
+    client = ConnectionToClient.__new__(ConnectionToClient)
+    client.login = login
+    client.server = server
+    client.game = None
+    client.state = InTheLobby()
+    client.alliance = 1
+    client.faction = "human_faction"
+    client.is_disconnected = False
+    client.protocol = protocol
+    client.t1 = time.time()
+    client.address = ("127.0.0.1", 1234)
+    client.notes = []
+    client.notify = lambda *args: client.notes.append(args)
+    client.push = lambda *args: None
+    return client
+
+
+def _make_server():
+    server = Server.__new__(Server)
+    server.clients = []
+    server.games = []
+    server.nb_clients_max = 40
+    server.login = "testserver"
+    server.update_menus = lambda: None
+    server.log_status = lambda: None
+    server._cleanup = lambda: None
+    return server
+
+
+def _game_with(server, *humans):
+    game = Game.__new__(Game)
+    game.id = 7
+    game.scenario = _FakeMap()
+    game.admin = humans[0] if humans else None
+    game.password = ""
+    game.started = True
+    game.time = 0
+    game._start_time = time.time()
+    game.server = server
+    game.players = list(humans)
+    game.guests = []
+    game.spectators = []
+    game.seed = 42
+    game.treaty_minutes = 0
+    game.speed = 1
+    game.real_speed = 1
+    game.ping = 0
+    game.delay = 0
+    game._order_history = []
+    game._initial_players_pack = ";".join(pack(p) for p in humans)
+    game._coop_enemy_hp = 100
+    game._coop_enemy_damage = 100
+    game._orders = Orders.__new__(Orders)
+    game._orders.all_orders = {h: [] for h in humans}
+    game._input_stream = InputStreamGame(game)
+    game.protocol = negotiate_protocol([h.protocol for h in humans])
+    for h in humans:
+        h.game = game
+        h.state = Playing()
+        h.alliance = humans.index(h) + 1
+        h.faction = "human_faction"
+    server.games.append(game)
+    return game
+
+
+def test_the_login_line_carries_the_protocol():
+    server = _make_server()
+    client = _fake_client("host", server)
+
+    client.cmd_login(["15-abcdef", "host", ROLLBACK_PROTOCOL])
+
+    assert client.login == "host"
+    assert client.protocol == ROLLBACK_PROTOCOL
+
+
+def test_an_old_client_that_sends_no_protocol_gets_lockstep():
+    """An old client does not send the protocol at all."""
+    server = _make_server()
+    client = _fake_client("host", server)
+
+    client.cmd_login(["15-abcdef", "host"])
+
+    assert client.login == "host"
+    assert client.protocol == LOCKSTEP_PROTOCOL
+
+
+def test_an_unknown_protocol_falls_back_to_lockstep():
+    server = _make_server()
+    client = _fake_client("host", server)
+
+    client.cmd_login(["15-abcdef", "host", "something-else"])
+
+    assert client.protocol == LOCKSTEP_PROTOCOL
+
+
+def test_the_game_uses_rollback_only_when_everybody_speaks_it():
+    server = _make_server()
+    p1 = _fake_client("host", server, ROLLBACK_PROTOCOL)
+    p2 = _fake_client("guest", server, ROLLBACK_PROTOCOL)
+    server.clients.extend([p1, p2])
+    game = _game_with(server, p1, p2)
+    assert game.protocol == ROLLBACK_PROTOCOL
+
+    server2 = _make_server()
+    q1 = _fake_client("host", server2, ROLLBACK_PROTOCOL)
+    q2 = _fake_client("guest", server2, LOCKSTEP_PROTOCOL)
+    server2.clients.extend([q1, q2])
+    game2 = _game_with(server2, q1, q2)
+    assert game2.protocol == LOCKSTEP_PROTOCOL
+
+
+def test_the_lockstep_path_is_untouched_by_the_rollback_work():
+    """The legacy path must still work exactly as before.
+
+    The rollback protocol is additive: when it is not enabled, the server
+    still waits for every player and broadcasts the whole turn.
+    """
+    server = _make_server()
+    p1 = _fake_client("host", server)
+    p2 = _fake_client("guest", server)
+    server.clients.extend([p1, p2])
+    game = _game_with(server, p1, p2)
+
+    # Only one player has sent their orders: nothing is broadcast yet.
+    game.orders(p1, "order,0,0,go,42")
+    assert not [n for n in p2.notes if n[0] == "all_orders"]
+
+    # The second player answers: now the turn is broadcast.
+    game.orders(p2, "")
+    broadcasts = [n for n in p2.notes if n[0] == "all_orders"]
+    assert len(broadcasts) == 1
+    assert "host/order,0,0,go,42" in broadcasts[0][2]
+    assert "guest/" in broadcasts[0][2]

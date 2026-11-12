@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from .serverclient import ConnectionToClient
 
 from .version import IS_DEV_VERSION
+from .version import DEFAULT_PROTOCOL, ROLLBACK_PROTOCOL, negotiate_protocol
 
 
 def same(strings):
@@ -95,7 +96,7 @@ class WaitingForTheGameToStart(_State):
 
 class Playing(_State):
 
-    allowed_commands = ("orders", "quit_game", "timeout", "debug_info", "say")
+    allowed_commands = ("orders", "quit_game", "timeout", "debug_info", "say", "input")
 
 
 class Spectating(_State):
@@ -147,6 +148,127 @@ class Orders:
 
     def get_next_check_strings(self):
         return [queue[0][1] for queue in list(self.all_orders.values())]
+
+
+class InputStreamGame:
+    """Server side of the rollback protocol.
+
+    This is the replacement for the lockstep :class:`Orders` barrier.  The
+    legacy protocol waits until *every* player has sent their orders for a
+    communication turn, and only then broadcasts the whole turn.  The
+    slowest player's ping therefore sets the pace of the entire match.
+
+    Here the server instead:
+
+    * stamps every input with a monotonically increasing sequence number the
+      moment it arrives — that number is what makes the *order* in which the
+      inputs are applied authoritative and identical on every client;
+    * broadcasts each input immediately, without waiting for the others.
+
+    A client therefore learns about the other player's move as soon as the
+    server receives it, and simulates it immediately.  When the truth
+    contradicts what the client predicted, the client rolls back and
+    re-simulates — see :mod:`soundrts.net.rollback`.
+
+    The *frame* number is chosen by the client, not by the server: in a
+    rollback netcode every client runs its own simulation ahead of the
+    server, so only the client knows which frame its orders belong to.  The
+    server checks that the frame is not absurdly far ahead, and that is
+    that.
+    """
+
+    def __init__(self, game, max_ahead: int = 240):
+        from .net.input_stream import InputStream
+
+        self.game = game
+        self.stream = InputStream([p.login for p in game.human_players])
+        # How far a client may run ahead of the server before the server
+        # considers it cheating (or broken).
+        self.max_ahead = max_ahead
+        # The highest frame the server has seen an input for.
+        self.highest_frame = -1
+        # Frames the server has already broadcast as complete.
+        self.confirmed = set()
+        # When each player last sent an input.  The timeout check uses it to
+        # find a player that stopped playing (the lockstep protocol uses the
+        # order queue for the same purpose).
+        self.last_input_time = {}
+
+    @property
+    def players(self):
+        return self.stream.players
+
+    def submit(self, player_login: str, frame: int, orders: str):
+        """Record *player_login*'s input for *frame*.
+
+        *orders* must already be packed (see
+        :func:`soundrts.net.input_stream.pack_orders`).
+
+        Returns the stamped input, ready to be broadcast, or ``None`` when
+        the submission was rejected (a duplicate, or a frame that is too far
+        ahead).
+        """
+        from .net.input_stream import encode_input
+
+        if frame < 0:
+            return None
+        if self.highest_frame >= 0 and frame > self.highest_frame + self.max_ahead:
+            warning(
+                "player %s sent input for frame %d, too far ahead of %d",
+                player_login,
+                frame,
+                self.highest_frame,
+            )
+            return None
+
+        stamped = self.stream.submit_incremental(player_login, frame, orders)
+        if stamped is None:
+            # A duplicate submission.  The first one wins: a retransmission
+            # must never change an input that has already been broadcast.
+            return None
+        self.last_input_time[player_login] = time.time()
+        if frame > self.highest_frame:
+            self.highest_frame = frame
+        if self.stream.is_authoritative(frame):
+            self.confirmed.add(frame)
+        number, seq, packed = stamped
+        return encode_input(number, player_login, seq, packed)
+
+    def remove_player(self, player_login: str) -> None:
+        """Drop a player that quit the match from the stream.
+
+        The frames the quitter left open are closed: they are stamped and
+        broadcast, so that the other players and the spectators can keep
+        replaying the match instead of stalling on a frame nobody will
+        ever answer.
+        """
+        from .net.input_stream import encode_input
+
+        if player_login not in self.stream.players:
+            return
+        open_frames = self.stream.remove_player(player_login)
+        for number in open_frames:
+            # The quitter's share of the frame is empty: it did nothing.
+            self.game._broadcast_input(
+                encode_input(number, player_login, 0, ""), exclude=None
+            )
+            if self.stream.is_authoritative(number):
+                self.confirmed.add(number)
+        # The clients must stop waiting for the quitter too: they have to
+        # know it is gone, or every frame would stay incomplete on their
+        # side as well.
+        for client in self.game.human_players:
+            client.notify("player_quit", player_login)
+        for spectator in self.game.spectators:
+            spectator.notify("player_quit", player_login)
+
+    def confirmed_frames(self):
+        """Every frame that every player has answered, oldest first."""
+        return self.stream.confirmed_frames()
+
+    def gaps(self):
+        """Frames below the confirmed one that are still incomplete."""
+        return self.stream.gaps()
 
 
 class Game:
@@ -286,6 +408,17 @@ class Game:
         self.seed = seed
         self._order_history = []
         self._orders = Orders(self)
+        # The authoritative input stream, used by the rollback protocol.
+        # It is created here so that the server has a single place that
+        # stamps and broadcasts the inputs, no matter which client sent them.
+        self._input_stream = InputStreamGame(self)
+        # The protocol this game is played with.  It is negotiated from the
+        # protocols the clients speak: the rollback protocol only works if
+        # *every* player understands it.
+        self.protocol = negotiate_protocol(
+            [getattr(c, "protocol", DEFAULT_PROTOCOL) for c in self.human_players]
+        )
+        info("game %s uses the %s protocol", self.id, self.protocol)
         ##        # guess first ping from the connection delays
         ##        self.ping = max([p.delay for p in self.human_players])
         # 帝国时代式合作战役：人类玩家与 AI 队友同属 1 队。
@@ -334,6 +467,10 @@ class Game:
                     self._coop_enemy_damage,
                     coop_difficulty,
                 )
+            # The protocol is negotiated for the whole game, and sent
+            # before start_game: the client has to know which protocol the
+            # game uses before it starts simulating.
+            client.notify("protocol", self.protocol)
             client.notify(
                 "start_game",
                 self._initial_players_pack,
@@ -368,6 +505,14 @@ class Game:
             self.players.remove(client)
         if getattr(client, "game", None) is self:
             client.game = None
+        if getattr(self, "protocol", None) == ROLLBACK_PROTOCOL:
+            # The quitter will never answer the frames it was supposed to
+            # answer.  Those frames have to be closed, or the whole match
+            # would stall: a frame is only complete once every player has
+            # answered it.
+            stream = getattr(self, "_input_stream", None)
+            if stream is not None:
+                stream.remove_player(client.login)
         if self.human_players:
             try:
                 self._orders.remove(client)
@@ -421,6 +566,89 @@ class Game:
         self.real_speed = min(self.real_speed, float(real_speed))
         self._orders.add(client, [orders, check])
         self._dispatch_orders_if_needed()
+
+    # -- the rollback protocol -------------------------------------------
+
+    def submit_input(self, client, frame: int, orders: str) -> bool:
+        """Accept one player's input for *frame* and broadcast it.
+
+        The input is stamped with an authoritative sequence number and sent
+        to every other player *immediately* — the server does not wait for
+        the other players, which is what removes the lockstep barrier.
+
+        Returns ``True`` when the input was accepted.
+        """
+        stream = getattr(self, "_input_stream", None)
+        if stream is None:
+            return False
+        login = getattr(client, "login", None)
+        if login is None or login not in stream.players:
+            return False
+        message = stream.submit(login, frame, orders)
+        if message is None:
+            # A duplicate or a rejected frame: nothing to broadcast.
+            return False
+        self._broadcast_input(message, exclude=client)
+        return True
+
+    def _broadcast_input(self, message: str, exclude=None) -> None:
+        """Send an authoritative input to every player but *exclude*.
+
+        The spectators get the inputs too: under the rollback protocol a
+        spectator does not merely rebuild the past, it *keeps up* with the
+        match by replaying the frames as they arrive.  Without this, a
+        spectator would freeze at the frame it had caught up to.
+        """
+        for client in self.human_players:
+            if exclude is not None and client is exclude:
+                continue
+            client.notify("input", message)
+        for spectator in self.spectators:
+            spectator.notify("input", message)
+
+    def confirmed_frames(self):
+        """Every frame that every player has answered, oldest first."""
+        stream = getattr(self, "_input_stream", None)
+        if stream is None:
+            return []
+        return stream.confirmed_frames()
+
+    def input_gaps(self):
+        """Frames below the confirmed one that are still incomplete."""
+        stream = getattr(self, "_input_stream", None)
+        if stream is None:
+            return []
+        return stream.gaps()
+
+    def input_history(self):
+        """Every authoritative input of the match, in order.
+
+        This is what a spectator needs to rebuild the match from the start:
+        in the rollback protocol the match is a sequence of frames, and each
+        frame is a set of per-player inputs.  Unlike the lockstep protocol
+        (which replays the communication turns), the spectator has to
+        replay every single frame.
+
+        Each entry is ``(frame, player_login, seq, packed orders)``.
+        """
+        stream = getattr(self, "_input_stream", None)
+        if stream is None:
+            return []
+        result = []
+        for frame in stream.confirmed_frames():
+            for player_login in sorted(frame.inputs):
+                seq, orders = frame.inputs[player_login]
+                result.append((frame.frame, player_login, seq, orders))
+        return result
+
+    def _send_input_history(self, client) -> None:
+        """Send the whole input history to a spectator (rollback mode).
+
+        The spectator rebuilds the match by replaying those inputs, one
+        frame at a time, exactly like the players do.
+        """
+        for frame, player_login, seq, orders in self.input_history():
+            client.notify("input", "%d:%s=%d:%s" % (frame, player_login, seq, orders))
 
     max_ping = 0.5  # seconds
 
@@ -575,6 +803,9 @@ class Game:
         initial_players = getattr(self, "_initial_players_pack", None)
         if not initial_players:
             initial_players = ";".join(pack(p) for p in self.players)
+        # The protocol comes first: the spectator has to know how to
+        # rebuild the match before it starts.
+        client.notify("protocol", getattr(self, "protocol", DEFAULT_PROTOCOL))
         client.notify(
             "start_spectating",
             initial_players,
@@ -585,6 +816,12 @@ class Game:
             getattr(self, "_coop_enemy_hp", 100),
             getattr(self, "_coop_enemy_damage", 100),
         )
+        if getattr(self, "protocol", None) == ROLLBACK_PROTOCOL:
+            # The rollback protocol has no communication turns: the match is
+            # a sequence of frames, and the spectator rebuilds it by
+            # replaying the inputs of every frame.
+            self._send_input_history(client)
+            return
         for fpct, all_orders in getattr(self, "_order_history", []) or []:
             client.notify("all_orders", fpct, all_orders)
 
@@ -729,6 +966,14 @@ class Game:
     _timeout_reference = None
 
     def check_timeout(self):
+        # The rollback protocol: the clients send "input" messages, not
+        # "orders", so the lockstep order queue is never filled and every
+        # player would look idle.  The timeout is therefore measured on the
+        # *input stream* instead: a player that has not sent any input for
+        # a while is the one that is stuck.
+        if getattr(self, "protocol", None) == ROLLBACK_PROTOCOL:
+            self._check_input_timeout()
+            return
         if self._timeout_reference is None:
             self._timeout_reference = time.time()
         elif time.time() > self._timeout_reference + config.timeout:
@@ -736,3 +981,32 @@ class Game:
                 warning("timeout %s", player.login)
                 player.handle_close()  # disconnect player
                 break  # don't continue! (might disconnect more players)
+
+    def _check_input_timeout(self):
+        """Disconnect a player that stopped sending inputs (rollback mode).
+
+        In the rollback protocol every client sends an input for *every*
+        frame — even an empty one — so a player that has been silent for
+        longer than the timeout is stuck, and is disconnected.
+
+        This mirrors the lockstep behaviour, where the server waits for
+        everybody's orders: a player that stops answering stalls the match.
+        """
+        stream = getattr(self, "_input_stream", None)
+        if stream is None:
+            return
+        now = time.time()
+        last = getattr(stream, "last_input_time", None) or {}
+        players = self.human_players
+        if not players:
+            return
+        if not all(p.login in last for p in players):
+            # Somebody has not spoken yet: give everybody a grace period.
+            self._timeout_reference = now
+            return
+        self._timeout_reference = now
+        for player in players:
+            if now - last[player.login] > config.timeout:
+                warning("timeout %s", player.login)
+                player.handle_close()  # disconnect player
+                break

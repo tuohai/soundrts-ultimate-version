@@ -127,6 +127,9 @@ _options = [
     ("general", "check_updates_on_start", 1, int),
     # 1 = Ctrl+F2 画面开启（下次启动恢复）; 0 = 关闭
     ("general", "display_enabled", 0, int),
+    # 1 = 使用回滚网络协议（预测 + 回滚，去掉"等最慢玩家"的锁步屏障）;
+    # 0 = 传统锁步（默认，向后兼容）
+    ("general", "use_rollback_netcode", 0, int),
     ("server", "timeout", 60.0),
     # fpct must be as small as possible while respecting test_fpct()
     ("server", "fpct_coef", 2.3),

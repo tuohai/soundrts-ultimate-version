@@ -10,7 +10,7 @@ from .clientmedia import voice
 from .clientservermenu import ServerMenu
 from .clientversion import revision_checker
 from .lib.log import exception, info
-from .version import compatibility_version
+from .version import compatibility_version, client_protocol
 from soundrts.lib import sound
 
 
@@ -119,7 +119,11 @@ class ConnectionToServer:
             if self.tn.read_until(b":", 1) != b":":
                 raise WrongServerError
             self.tn.write(
-                ("login " + compatibility_version() + " %s\n" % config.login).encode("utf-8")
+                (
+                    "login "
+                    + compatibility_version()
+                    + " %s %s\n" % (config.login, client_protocol())
+                ).encode("utf-8")
             )
         except (EOFError, OSError):
             raise WrongServerError
