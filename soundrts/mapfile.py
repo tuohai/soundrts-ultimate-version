@@ -126,8 +126,8 @@ class Map:
         # 确保buffer_name被设置为路径的basename
         self.buffer_name = os.path.basename(path)
         if path.endswith(".txt"):
-            f = open(path, encoding="utf-8", errors="replace")
-            self._load_from_text_file(f)
+            with open(path, encoding="utf-8", errors="replace") as f:
+                self._load_from_text_file(f)
             # 对于.txt文件，生成缓冲区以供网络传输
             if self.buffer is None and hasattr(self, 'definition') and self.definition:
                 self.buffer = self.definition.encode("utf-8", errors="replace")
