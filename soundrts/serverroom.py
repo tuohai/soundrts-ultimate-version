@@ -254,7 +254,7 @@ class InputStreamGame:
             # But only for the frames it had *not* answered.  A frame the
             # quitter did answer holds its real orders, and broadcasting an
             # empty input for it would contradict — and therefore silently
-            # corrupt -- the authoritative record of that frame.
+            # corrupt — the authoritative record of that frame.
             existing = self.stream.frame(number)
             if existing is not None and player_login in existing.inputs:
                 continue

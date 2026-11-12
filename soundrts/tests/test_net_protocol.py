@@ -229,6 +229,61 @@ def test_the_lockstep_path_is_untouched_by_the_rollback_work():
 
 
 # ---------------------------------------------------------------------------
+# The client side: the "protocol" line the server sends
+# ---------------------------------------------------------------------------
+
+
+def _menu():
+    """A ``_ServerMenu`` that is not connected to anything.
+
+    The menu is built without ``__init__`` because the real one wants a
+    server and a pygame screen; ``srv_protocol`` only touches the two
+    attributes it sets, so the bare object is enough.
+    """
+    from soundrts.clientservermenu import _ServerMenu
+
+    return _ServerMenu.__new__(_ServerMenu)
+
+
+def test_the_client_accepts_the_protocol_the_server_negotiates():
+    """The "protocol" line must not blow up.
+
+    The server announces the protocol before ``start_game``; the client
+    handles it in ``srv_protocol``.  This test exists because that
+    handler once used a relative import (``from ..version import ...``)
+    that went *above* the ``soundrts`` package: the import only fails
+    when the line is actually received, so nothing noticed it until a
+    host created a game and the client died with
+    "attempted relative import beyond top-level package".
+    """
+    menu = _menu()
+
+    menu.srv_protocol([ROLLBACK_PROTOCOL + "/1"])
+
+    assert menu._protocol == ROLLBACK_PROTOCOL
+    assert menu._protocol_revision == 1
+
+
+def test_the_client_accepts_a_bare_protocol_name():
+    """An older server announces just the name; that means revision 1."""
+    menu = _menu()
+
+    menu.srv_protocol([LOCKSTEP_PROTOCOL])
+
+    assert menu._protocol == LOCKSTEP_PROTOCOL
+    assert menu._protocol_revision == 1
+
+
+def test_the_client_ignores_an_unknown_protocol():
+    """An unknown protocol is not fatal: the client falls back."""
+    menu = _menu()
+
+    menu.srv_protocol(["something-else/3"])
+
+    assert menu._protocol == DEFAULT_PROTOCOL
+
+
+# ---------------------------------------------------------------------------
 # No relative import may escape its package
 # ---------------------------------------------------------------------------
 

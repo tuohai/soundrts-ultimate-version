@@ -264,8 +264,8 @@ def test_the_server_does_not_send_the_input_history_to_a_lockstep_spectator():
 def test_the_server_sends_the_partial_frames_too():
     """A half-answered frame is sent as far as it goes.
 
-    The spectator cannot *replay* a half-answered frame -- it waits for the
-    missing player's input -- but the inputs it does have must reach it:
+    The spectator cannot *replay* a half-answered frame — it waits for the
+    missing player's input — but the inputs it does have must reach it:
     they arrived before it joined, and they will never be sent again.
     Dropping them would lose the host's orders for frame 1 forever.
     """

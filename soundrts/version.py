@@ -34,13 +34,12 @@ SUPPORTED_PROTOCOLS = (LOCKSTEP_PROTOCOL, ROLLBACK_PROTOCOL)
 # The protocol a client uses when it does not say otherwise.
 DEFAULT_PROTOCOL = LOCKSTEP_PROTOCOL
 
-
 # The revision of each protocol.
 #
 # A *protocol* says which netcode is used (lockstep or rollback); a
 # *revision* says which version of that netcode's wire format and
-# semantics the speaker implements.  They are separate numbers because
-# the two protocols evolve independently: a bug fix in the rollback netcode
+# semantics the speaker implements.  They are separate numbers because the
+# two protocols evolve independently: a bug fix in the rollback netcode
 # does not change the lockstep wire format, and vice versa.
 #
 # Compatibility rules
@@ -96,7 +95,7 @@ def protocol_revision(protocol: str) -> int:
 def protocol_token(protocol: str = None) -> str:
     """The token a client announces at login time.
 
-    The token is ``<protocol>/<revision>`` -- for example ``rollback/1``.
+    The token is ``<protocol>/<revision>`` — for example ``rollback/1``.
     A bare protocol name (``rollback``) is also understood and means
     revision 1: that is what an old client sends, and it is the whole
     point of the revision being 1 for a freshly introduced protocol.
