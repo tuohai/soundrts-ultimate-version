@@ -105,13 +105,21 @@ def _forward_port():
 
 
 class Server(asyncore.dispatcher):
-    def __init__(self, parameters, is_standalone):
+    def __init__(self, parameters, is_standalone, host=None, port=None):
+        """Create the server and start listening.
+
+        ``host`` and ``port`` default to the wildcard address and the port
+        from the command line.  They can be overridden to bind somewhere
+        else -- the headless test harness binds to ``127.0.0.1`` on an
+        ephemeral port (0), so that the tests never collide with a real
+        server and never trigger a Windows firewall prompt.
+        """
         self.parameters = parameters
         self.is_standalone = is_standalone
         asyncore.dispatcher.__init__(self)
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
         self.set_reuse_addr()
-        self.bind(("", options.port))
+        self.bind((host if host is not None else "", options.port if port is None else port))
         self.listen(5)
         self.login = config.login
         self.clients = []
