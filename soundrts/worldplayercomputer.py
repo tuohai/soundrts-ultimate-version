@@ -9865,6 +9865,7 @@ class Computer(Player):
         if not houses:
             return False
         buildable = self._worker_buildable_type_names()
+        wanted_resources = []
         for house in houses:
             house_cls = rules.unit_class(house)
             if house_cls is None:
@@ -9876,7 +9877,21 @@ class Computer(Player):
                 continue
             if self.future_nb(house) > self.nb(house):
                 continue
-            if self.missing_resources(house_cls.cost):
+            missing = self.missing_resources(house_cls.cost)
+            if missing:
+                # The house is unaffordable.  Nothing else in the engine asks
+                # the workers for the missing resources, so the AI silently
+                # sits at the population cap forever.
+                #
+                # This was a hard deadlock on jl1 (AI start square 2,1): the
+                # AI paid 7 gold + 9 wood for a barracks, was left with
+                # 1 gold / 0 wood, and could not afford either the 4-gold
+                # peasant or the 5-wood house.  The population stayed capped
+                # at 9/9 for eight minutes and the first soldier only came
+                # out at ~15 min instead of ~8 min.
+                for idx in missing:
+                    if idx not in wanted_resources:
+                        wanted_resources.append(idx)
                 continue
             cost = getattr(house_cls, "cost", None) or ()
             reserve = self._plan_expensive_wood_reserve(ignore_age_defer=True)
@@ -9911,6 +9926,10 @@ class Computer(Player):
                     continue
             self.build_or_train_or_upgradeto_or_summon(house)
             return True
+        if wanted_resources:
+            # Ask the workers for what the house needs.  Without this the
+            # population cap is a silent deadlock (see above).
+            self._send_workers_toward_resources(wanted_resources)
         return False
 
     def gather(self, cost, population):
@@ -10356,12 +10375,123 @@ class Computer(Player):
                 chosen.append(u)
         return chosen
 
+    def _blind_attack_targets(self):
+        """Where to look for the enemy when the AI has never seen it.
+
+        ``constant_attacks 1`` makes the AI attack ``_enemy_presence`` every
+        tick.  When that list is empty (the AI never scouted, or its scout
+        died before reaching the enemy base) ``_eventually_attack([])``
+        produces only the home-guard group, so the whole army sits at home
+        and never attacks at all.
+
+        The fallback is the enemy *starting squares*: the map tells the
+        engine where every player begins, so an army that cannot see the
+        enemy can still walk to the most likely place to find it.  This is
+        the difference between "never attacks" and "attacks at ~15 min".
+
+        The squares are resolved **per player**, not per start slot:
+        ``world.players_starts`` and ``world.players`` do not line up
+        (``random_starts`` shuffles the slots, and a map with fewer slots
+        than players reuses them).  Each player remembers the square it
+        spawned on (``Player._map_start_square``), and only *hostile* players
+        are considered — marching on an ally's town would be just as wrong
+        as marching on one's own.
+
+        Neutral wildlife (boars, deer) is skipped as well: those start
+        squares are not anybody's town.
+        """
+        squares = []
+        seen = set()
+        own_base = {id(p) for p in self._home_base_places()}
+
+        def _add(square):
+            if square is None:
+                return
+            if id(square) in seen:
+                return
+            seen.add(id(square))
+            squares.append(square)
+
+        hostile = []
+        for player in list(getattr(self.world, "players", ()) or ()):
+            if player is self:
+                continue
+            try:
+                if not self.player_is_a_hostile_enemy(player):
+                    continue
+            except Exception:
+                continue
+            try:
+                from .worldplayerbase.base import player_is_wildlife_only
+
+                if player_is_wildlife_only(player):
+                    # Boars, deer, sheep: not anybody's town.
+                    continue
+            except Exception:
+                pass
+            hostile.append(player)
+
+        if not hostile:
+            # No enemy at all: there is nothing to march on.
+            return []
+
+        for player in hostile:
+            square = getattr(player, "_map_start_square", None)
+            if square is None:
+                continue
+            if id(square) in own_base:
+                # Our own base (or a base we already guard).
+                continue
+            _add(square)
+
+        if squares:
+            return squares
+
+        # The hostile players never recorded a spawn square (a map with no
+        # starting units, or players created outside ``populate_map``).
+        # Fall back to the raw start squares, minus everything that belongs
+        # to us or to our allies.
+        friendly = set(own_base)
+        for player in list(getattr(self.world, "players", ()) or ()):
+            if player is self:
+                continue
+            try:
+                if self.player_is_a_hostile_enemy(player):
+                    continue
+            except Exception:
+                continue
+            square = getattr(player, "_map_start_square", None)
+            if square is not None:
+                friendly.add(id(square))
+        grid = getattr(self.world, "grid", {}) or {}
+        for name in list(getattr(self.world, "starting_squares", ()) or ()):
+            square = grid.get(name)
+            if square is None:
+                continue
+            if id(square) in friendly:
+                continue
+            _add(square)
+        return squares
+
     def _eventually_attack(self, places, units=None):
         if units is None:
             units = list(self._idle_fighters)
         else:
             units = list(units)
         if not units:
+            return
+        places = list(places or ())
+        if not places:
+            # No known enemy position.  With ``constant_attacks 1`` this used
+            # to mean "the whole army garrisons home and never attacks" —
+            # on jl1 the intermediate AI simply never attacked when its
+            # villagers did not explore.  Fall back to the enemy starting
+            # squares so the army goes looking for the enemy instead of
+            # sitting at home.
+            fallback = self._blind_attack_targets()
+            if fallback:
+                places = fallback
+        if not places:
             return
         places = sorted(
             places, key=lambda p: self._attack_place_sort_key(p, units)

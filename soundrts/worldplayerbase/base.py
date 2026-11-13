@@ -1912,6 +1912,11 @@ class Player(PerceptionCachesMixin):
         """初始化玩家位置和状态"""
         units, self.upgrades, self.forbidden_techs, resources, triggers, population_bonus = parsed_start
 
+        # 记住本玩家的出生格。``world.players_starts`` 与 ``world.players``
+        # 不是一一对应的（random_starts 会洗牌、人数不匹配会复用 slot），
+        # 所以"敌人在哪出生"必须按玩家来记，不能按 slot 下标去猜。
+        self._map_start_square = None
+
         # 若起始 upgrades 中包含 phase（时代），则把其 phase bonus 注入到玩家加成池
         # 以及（若设置）记录 current_phase。这样起始时代下生产的单位也能获得对应加成。
         try:
@@ -2039,6 +2044,8 @@ class Player(PerceptionCachesMixin):
                         # 再兜底：随机一个可用方格
                         if hasattr(self.world, 'squares') and self.world.squares:
                             actual_place = self.world.random.choice(self.world.squares)
+                if self._map_start_square is None:
+                    self._map_start_square = actual_place
                 for _ in range(n):
                     self.add_unit(type_, actual_place)
 
