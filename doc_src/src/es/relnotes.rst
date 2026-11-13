@@ -4,6 +4,124 @@ Notas de la versión
 
 .. contents::
 
+1.5.1.9
+-------
+
+**Añadido: el código de red con reversión -- la partida ya no espera al jugador más lento**
+
+- **Problema**: el protocolo lockstep heredado hace que el servidor espere a *todos* los jugadores antes de difundir un turno. Con una conexión lenta la partida entera se detiene esperando al más lento, aunque ese jugador no esté haciendo nada interesante.
+- **Mejora**: un nuevo protocolo con autoridad del anfitrión. El servidor ya no simula el mundo: marca cada entrada entrante con un identificador de fotograma autoritativo y la difunde de inmediato. El cliente aplica sus propias órdenes al instante y *predice* las entradas de los demás jugadores; cuando el servidor confirma una entrada que contradice la predicción, el cliente restaura la instantánea del primer fotograma divergente y vuelve a simular hasta el presente. La barrera de esperar al más lento desaparece.
+- **Predeterminado**: el protocolo de reversión es ahora el predeterminado. Se puede desactivar en el archivo de configuración (``use_rollback_netcode = 0``).
+- **Ambos protocolos siguen conviviendo**: un cliente que no anuncie el protocolo de reversión juega el lockstep heredado, y el servidor vuelve a lockstep cuando los jugadores de una partida no todos hablan reversión -- así que un cliente antiguo todavía puede jugar contra un anfitrión nuevo.
+- **Verificado sobre sockets reales**: toda la cadena -- un socket TCP real, el servidor real, el formato de cable real, dos clientes simulando a la vez -- la ejercita ``soundrts/tests/test_net_rollback_live.py``, con cuatro escenarios: convergencia de referencia (idéntico bit a bit, cero reversiones), latencia alta (el cliente predice, revierte, vuelve a simular y aun así converge), una desconexión a mitad de partida (el superviviente sigue siendo coherente con una partida de referencia en la que nadie se fue) y un espectador que entra a mitad de partida.
+- **Alcance**: ``soundrts/net/input_stream.py``, ``soundrts/net/rollback.py``, ``soundrts/net/session.py``, ``soundrts/net/headless.py``, ``soundrts/serverroom.py``, ``soundrts/worldclient.py``, ``soundrts/game.py``, ``soundrts/config.py``, ``soundrts/version.py``.
+
+**Añadido: las instantáneas por capas del mundo y el resumen fuerte**
+
+- **Problema**: el código de red con reversión tiene que rebobinar la simulación hasta un fotograma arbitrario y reproducirlo, lo que exige capturar y restaurar exactamente todo el estado mutable del mundo -- y una forma de *demostrar* que una restauración reprodujo el estado de forma exacta.
+- **Mejora**: ``soundrts/net/snapshot.py`` captura el mundo por capas -- L0 los escalares y el estado del RNG, L1 el estado de los jugadores, L2 los ``__dict__`` de las entidades calientes más copias de los contenedores en los que viven, L3 los cambios de estructura, L4 los mapas de colisión y el estado de los cierres de eventos programados. La restauración es el inverso exacto, y ``strong_digest()`` hashea el resultado (recursos, población, mejoras y el id / posición / ángulo / puntos de vida de cada unidad, además del estado del RNG -- no es un hash superficial), de modo que un mundo restaurado se puede comparar con uno recién simulado. Las pruebas afirman igualdad bit a bit tras una ida y vuelta.
+- **Alcance**: ``soundrts/net/snapshot.py``.
+
+**Añadido: la negociación de protocolo y las revisiones de protocolo**
+
+- **Problema**: hasta ahora lo único que anunciaba un cliente era el *nombre* del protocolo, así que no había forma de distinguir "un cliente que habla el mismo código de red" de "un cliente que habla el mismo código de red pero una versión distinta". El segundo caso es el peligroso: los dos lados discreparían sobre qué es un fotograma, o sobre el orden en que se aplican las entradas, y la partida se corrompería en silencio -- sin error, solo un mundo que se va separando poco a poco.
+- **Mejora**: se añadió una *revisión* junto al nombre del protocolo. El cliente anuncia ``<protocolo>/<revisión>`` en la línea de login, y el servidor anuncia el protocolo negociado antes de ``start_game`` y antes de ``start_spectating``. ``negotiate_protocol()`` usa el protocolo de reversión solo cuando todos los jugadores lo hablan *y* todos dicen la misma revisión; una discrepancia vuelve a lockstep, que todo el mundo entiende, y queda registrado. Un nombre de protocolo suelto sigue aceptándose y significa revisión 1, así que un cliente antiguo sigue funcionando sin cambios.
+- **Alcance**: ``soundrts/version.py``, ``soundrts/serverroom.py``, ``soundrts/servermain.py``, ``soundrts/clientservermenu.py``, ``soundrts/clientserver.py``.
+
+**Añadido: el modo espectador en vivo bajo el protocolo de reversión**
+
+- **Problema**: bajo lockstep, un espectador reconstruye la partida reproduciendo los turnos de comunicación que el servidor guardó en su historial de órdenes. Bajo el protocolo de reversión no hay turnos de comunicación: la partida es una secuencia de fotogramas, cada uno con un conjunto de entradas por jugador, así que un espectador no tenía nada que reproducir.
+- **Mejora**: el servidor envía todo el historial de entradas a un espectador que entra a una partida de reversión, y sigue difundiendo las entradas en vivo a los espectadores -- sin eso, un espectador se congelaría en el fotograma al que había alcanzado. La sesión de espectador (``SpectatorSession``) no predice ni da pasos especulativos: espera las entradas autoritativas del fotograma que va a reproducir y luego las aplica.
+- **Alcance**: ``soundrts/net/session.py``, ``soundrts/serverroom.py``, ``soundrts/worldclient.py``, ``soundrts/game.py``, ``soundrts/tests/test_net_rollback_spectator.py``.
+
+**Corregido: el cliente se separaba del servidor después de que alguien se fuera**
+
+- **Problema**: tres defectos relacionados hacían que el cliente se separara del servidor -- y de todos los espectadores -- después de que un jugador se fuera o de que entrara un espectador. No se lanzaba ningún error: sencillamente los mundos deixavam de coincidir.
+- **Mejora**: cuatro cambios. El servidor ya no difunde una entrada *vacía* para los fotogramas que el que se fue ya había respondido, porque esa entrada contradice el registro autoritativo de ese fotograma. El que se va pasa a una lista de "partidas" y permanece en el vector de entradas de los fotogramas que respondió, así que volver a simular esos fotogramas no aplica una orden menos de las que aplicó el servidor. Una retransmisión ya no puede sobrescribir la entrada de un fotograma: ahora gana la *primera* confirmación, incluso si una copia posterior difiere; una copia que difiere solo puede venir de una fuente que discrepa del registro autoritativo (por ejemplo la entrada vacía sintetizada al irse un jugador), y aceptarla corrompería el fotograma en silencio. Y el servidor ahora envía al espectador también los fotogramas a medio responder, en lugar de descartar las entradas que ya habían llegado antes de que el espectador entrara y nunca volverían a enviarse.
+- **Alcance**: ``soundrts/net/input_stream.py``, ``soundrts/net/rollback.py``, ``soundrts/serverroom.py``.
+
+**Corregido: "error de conexión con el servidor" al crear una partida como anfitrión**
+
+- **Problema**: ``soundrts/clientservermenu.py`` hacía ``from ..version import ...``. Ese archivo vive directamente en el paquete ``soundrts``, así que ``..`` significa "un nivel por encima de soundrts" -- que no existe. El import está dentro de una función, así que solo se evaluaba cuando el servidor enviaba de verdad la línea "protocol", es decir, cuando un anfitrión creaba una partida. El cliente moría entonces con ``ImportError: attempted relative import beyond top-level package`` y el menú informaba de un "error durante la conexión con el servidor".
+- **Mejora**: el mismo error existía en otros cuatro sitios, todos bombas de ejecución latentes (``soundrts/worldaction.py``, ``soundrts/attributes/key_bindings.py``, ``soundrts/worldunit/world_status_update.py``). Todos están reparados, y una prueba nueva recorre todo el paquete con el AST y falla ante cualquier import relativo que suba por encima del paquete que lo contiene, así que esta clase de error no puede volver.
+- **Alcance**: ``soundrts/clientservermenu.py``, ``soundrts/worldaction.py``, ``soundrts/attributes/key_bindings.py``, ``soundrts/worldunit/world_status_update.py``, ``soundrts/tests/test_net_protocol.py``.
+
+**Corregido: el archivo de texto del mapa no se cerraba nunca**
+
+- **Problema**: ``_load_from_text_file`` mantenía vivo el objeto de archivo después de leerlo, fugando un ``ResourceWarning`` en cada carga de mapa.
+- **Mejora**: se usa un gestor de contexto, así que el manejador se cierra en cuanto el mapa queda analizado. Ahora importa más de lo habitual: la prueba de red multincliente sin interfaz carga el mapa repetidamente y los manejadores fugados se acumulaban.
+- **Alcance**: ``soundrts/mapfile.py``.
+
+**Corregido: la prueba de teclas rápidas dependía del teclado de la máquina**
+
+- **Problema**: ``key_event_to_binding_string()`` le pregunta a Windows qué tecla *física* de Mayúsculas está pulsada, para distinguir LSHIFT de RSHIFT -- las teclas por capas necesitan esa distinción. La prueba afirmaba el "CTRL SHIFT d" genérico, así que solo pasaba cuando por casualidad ninguna de las dos teclas estaba pulsada en ese instante. En una terminal, donde el texto se selecciona con Mayúsculas casi siempre, eso era una moneda al aire: el mismo commit salía verde una vez y rojo al siguiente.
+- **Mejora**: la prueba neutraliza ahora la consulta de tecla física, así que comprueba la *lógica* y no el estado de la máquina en la que se ejecuta.
+- **Alcance**: ``soundrts/tests/test_hotkey_editor.py``.
+
+**Añadido: la IA mantiene varios edificios de producción ocupados a la vez**
+
+- **Problema**: la IA entrenaba su ejército por una *sola* fábrica: la primera que podía construir la unidad recibía la orden, y todas las demás quedaban ociosas. Con dos barracas eso significaba desperdiciar media capacidad de producción, y el ejército crecía a la mitad de la velocidad que el jugador espera.
+- **Mejora**: ``_maintain_multi_queue_production()`` abre una segunda, tercera, ... cola, una por edificio de producción propio, para las dificultades que tienen permiso para hacerlo. Es deliberadamente dirigido por las reglas: los edificios se localizan mediante ``effective_can_train`` y no por nombre de tipo, así que un barraco de AoE2, una fábrica de StarCraft y un garaje de CrazyMod se tratan igual; las unidades son las que pide el *plan* y se respeta la cuota del plan, así que la IA nunca construye más de lo que quería la orden de construcción; el coste viene de las reglas, así que se respeta la economía del propio mod; y el tipo se compara mediante ``equivalent()``, porque un mod puede llamar ``militia`` a su soldado mientras el edificio lista la piel de la civilización. El edificio menos cargado recibe el siguiente pedido, así que la producción queda equilibrada en vez de machacar siempre la primera fábrica.
+- **Grado por dificultad**: ``beginner`` / ``timers`` mantienen una sola cola (comportamiento sin cambios), ``intermediate`` puede abrir una cola extra, ``advanced`` dos, ``expert`` tres, ``nightmare`` cuatro.
+- **Alcance**: ``soundrts/worldplayercomputer.py``, ``soundrts/world_ai_economy.py``, ``soundrts/tests/test_ai_economy_scheduling.py``.
+
+**Añadido: la IA reparte a sus trabajadores entre las fuentes de comida**
+
+- **Problema**: todo aldeano que estaba en el mismo recuadro era enviado al *mismo* objetivo de recolección, así que toda la economía funcionaba sobre una granja mientras el huerto contiguo se quedaba vacío.
+- **Mejora**: dos cambios. El objetivo de recolección se memoriza ahora por *trabajador* y no por recuadro (el *barrido* de candidatos sigue siendo compartido entre los trabajadores de un turno, así que repartir a los trabajadores cuesta una elección barata cada uno en vez de un barrido completo cada uno). Y el equilibrio de carga ocurre en el nivel de la *selección*: los candidatos se agrupan por su carga actual, solo se considera el grupo menos cargado y se elige el objetivo más cercano de ese grupo. El primer trabajador va a la fuente más cercana; el segundo ve que ya hay alguien allí y va a la siguiente. La carga se cuenta con el contador genérico de unidades del motor, así que funciona en cualquier mod.
+- **Grado por dificultad**: ``beginner`` / ``timers`` mantienen a los trabajadores amontonados (una IA fácil debería ser fácil de derrotar), ``intermediate`` los reparte entre las fuentes del recurso que hace falta, ``advanced`` y superiores los reparten entre todas las fuentes, incluida la segunda mejor.
+- **Alcance**: ``soundrts/worldplayercomputer.py``, ``soundrts/world_ai_economy.py``, ``soundrts/tests/test_ai_economy_scheduling.py``, ``soundrts/tests/test_ai_gather_target_determinism.py``.
+
+**Añadido: la IA gestiona automáticamente el número de bases principales**
+
+- **Problema**: la IA solo abría bases principales adicionales cuando ``ai.txt`` decía "expand N". Casi ningún mapa lo dice, así que la IA se quedaba con una base hasta que se quedaba atascada.
+- **Mejora**: ``_maintain_expansions()`` tiene ahora dos fuentes para el número objetivo. El "expand N" de ``ai.txt`` sigue ganando cuando está presente; si no, decide ``_automatic_base_target()``, a partir del nivel de dificultad (``expansion_headroom()``: una IA principiante nunca se expande sola, una experta puede abrir tres bases extra), de la presión de población (la vivienda debe estar al 75 % llena) y del atributo de reglas de la propia base ``ai_base_worth_expanding``, para que un mod pueda prohibir la expansión de una base concreta. Dos salvaguardas evitan que la expansión automática rompa la orden de construcción: el coste de la base debe ser pagable, y la madera que el plan está ahorrando para su próximo edificio no se gasta en la base. Todo es dirigido por las reglas: el tipo de base se localiza a través del trabajador principal, así que un mod con un incubador o un centro de mando funciona igual.
+- **Alcance**: ``soundrts/worldplayercomputer.py``, ``soundrts/world_ai_economy.py``, ``soundrts/tests/test_ai_economy_scheduling.py``.
+
+**Añadido: un módulo de política económica de la IA dirigido por las reglas**
+
+- **Cambio**: ``soundrts/world_ai_economy.py`` es una capa de política agnóstica de mod para el jugador computadora. Contiene las ayudas de graduación por dificultad (``balancing_tier``, ``balances_workers``, ``balances_strictly``), la política de expansión de bases (``expansion_headroom()``, ``population_is_pressured()``, ``expansion_is_worthwhile()``), las ayudas de introspección de reglas (``read_bool_attr`` / ``read_int_attr``, que leen atributos ``ai_*`` personalizados de una clase de reglas sin inundar la salida de depuración, más ``base_supplies()`` y ``base_is_worth_expanding()``) y la política de multcola (``multi_queue_limit()``, ``production_queue_depth()``, ``can_queue_on_host()``, ``balanced_production_key()``, ``extra_queue_budget()``).
+- **Agnóstico de mod**: aquí no se referencia ninguna unidad ni edificio por su nombre; todas las capacidades se derivan de las reglas cargadas, así que la misma política sirve para AoE2, StarCraft, CrazyMod, orc, wuxia y prismalab.
+- **Alcance**: ``soundrts/world_ai_economy.py``.
+
+**Corregido: la comprobación de presión de población nunca disparaba**
+
+- **Problema**: la expansión automática de bases comparaba la vivienda de la IA con ``world.population_limit``. Ese límite es el tope *global* compartido por todos los jugadores (el mapa cw1 de AoE2 usa 1999), así que la vivienda propia de la IA -- 140 plazas en cw1 -- estaba siempre muy por debajo del 75 % de ese valor y la expansión nunca se disparaba.
+- **Mejora**: la vivienda del propio jugador es ``player.population`` (lo que dan sus edificios) y ``player.used_population`` (lo que consumen sus unidades), así que ``population_is_pressured()`` toma ahora esos dos números y avisa de presión cuando se acaba el margen. El límite del mundo deja de usarse a propósito: no dice nada sobre la vivienda de la IA.
+- **Alcance**: ``soundrts/world_ai_economy.py``, ``soundrts/worldplayercomputer.py``.
+
+**Corregido: el límite de multcola contaba el total en vez de las colas extra**
+
+- **Problema**: ``multi_queue_limit()`` está documentado como el número de colas de producción *extra* que una dificultad puede abrir, pero ``extra_queue_budget()`` restaba uno del límite como si fuera un *total*. Y el que lo llama en ``_maintain_multi_queue_production()`` volvía a restar los anfitriones ya ocupados, así que una IA intermedia (límite 1) nunca podía abrir una segunda cola: la cola de la ruta normal del plan ya se había gastado todo el presupuesto.
+- **Mejora**: el límite cuenta ahora directamente las colas extra, y el presupuesto es ``min(límite, anfitriones_libres)``. Una IA intermedia ya puede abrir una cola extra en cuanto posee un segundo edificio de producción, que es lo que promete la tabla de política.
+- **Alcance**: ``soundrts/world_ai_economy.py``, ``soundrts/worldplayercomputer.py``.
+
+**Corregido: la computadora nunca atacaba cuando no había visto al enemigo**
+
+- **Problema**: en ``res/multi/jl1.txt`` la computadora intermedia atacaba a los ~8 min cuando sus aldeanos exploraban, pero solo a los ~13-15 min cuando no lo hacían. No era aleatoriedad: ``constant_attacks 1`` hace que la IA ataque ``_enemy_presence`` en cada tick, y esa lista solo contiene los recuadros donde la IA ha *visto* a un enemigo. Sin explorador la lista se quedaba vacía, ``_eventually_attack([])`` asignaba todo el ejército a la guardia de casa, y el ejército se quedaba en su base hasta que algo se colaba en su línea de visión.
+- **Mejora**: ``_blind_attack_targets`` recurre ahora a los recuadros de inicio enemigos, así que un ejército que no ve al enemigo sale a buscarlo. Los recuadros se resuelven por *jugador* (``Player._map_start_square``) y no por ranura de inicio, porque ``world.players_starts`` y ``world.players`` no coinciden una vez que ``random_starts`` los ha barajado, y solo se consideran los jugadores hostiles, así que la IA nunca marcha hacia la ciudad de un aliado. ``_ensure_housing`` pide ahora también a los trabajadores los recursos que le faltan a una casa: la IA solía pagar el barraco y luego no poder pagar ni el siguiente aldeano ni la siguiente casa, dejando la población topada durante minutos sin que pasara nada.
+- **Alcance**: ``soundrts/worldplayercomputer.py``, ``soundrts/worldplayerbase/base.py``, ``soundrts/tests/test_ai_jl1_blind_attack.py``.
+
+**Corregido: el plan de apertura de la IA volvía a-sortearse según si exploraba**
+
+- **Problema**: el mismo mapa seguía produciendo un primer ataque a los ~8 min o a los ~13-15 min sin ninguna razón aparente. La causa era la instrucción ``goto_random`` del plan, que sorteaba su rama del ``world.random`` -- el flujo de simulación *compartido*. Cuántos números había consumido ya ese flujo cuando se hacía el sorteo dependía de lo que la IA hubiera hecho en los segundos anteriores: un aldeano enviado a ``auto_explore`` gasta dos números más, lo que desplaza el flujo compartido exactamente dos posiciones y hace que la IA elija una rama de apertura *distinta* -- ``very_early_rush`` (3 aldeanos + 1 infante), ``early_rush`` (4 + 5 infantes), ``rush`` (9 + 5 infantes) o ``phase2`` (9 aldeanos + 15 arqueros). Cada rama necesita un ejército distinto antes de poder completar su línea ``attack``, así que el primer ataque caía a los ~8 min o a los ~13 min sin ninguna razón visible.
+- **Mejora**: la rama se sortea ahora del flujo propio de la IA, con semilla derivada de la semilla de la partida y de la identidad del jugador, así que no depende ni de la decisión de explorar ni de nada que la simulación hiciera antes. El flujo se guarda como un entero simple (y no como un objeto ``random.Random``) para que la maquinaria de instantáneas de reversión, que captura los atributos del jugador por valor, pueda rebobinarlo correctamente. Medido en jl1 con 20 semillas, la rama de apertura es ahora idéntica con y sin exploración en 20/20 casos (antes era 5/20).
+- **Alcance**: ``soundrts/worldplayercomputer.py``, ``soundrts/tests/test_ai_plan_rng_decoupled.py``.
+
+**Añadido: dos bancos de pruebas sin interfaz**
+
+- **Cambio**: ``bench_ai_features.py`` ejecuta una partida real sin interfaz (controlador SDL dummy, sin ventana de juego) y mide lo que hacen realmente las tres nuevas funciones de la IA: cuántos pedidos de cola extra se hacen y cómo se reparten entre los edificios de producción; cuántos objetivos de recolección usan los trabajadores y cuál es el más grande; y el número de bases principales a lo largo del tiempo. ``--ab`` ejecuta la misma IA dos veces, una con la multcola desactivada, para medir lo que vale la multcola. ``bench_jl1_sweep.py`` recorre las semillas de ``res/multi/jl1.txt`` e informa del minuto en que la IA intermedia saca por primera vez su ejército de su base, con y sin que sus aldeanos exploren; ``--old-rng`` restituye el comportamiento previo a la corrección para poder reproducir el fallo a voluntad, y ``--seed-list`` reproduce una lista explícita de semillas.
+- **Alcance**: ``bench_ai_features.py``, ``bench_jl1_sweep.py``.
+
+**Añadido: el documento de arquitectura del código de red con reversión**
+
+- **Cambio**: ``_NET_ROLLBACK_PLAN.md`` recoge los costes de instantánea medidos que justificaron el diseño por capas, el plan de instantáneas por capas, la estrategia de compatibilidad, el desglose por fases y la lista de riesgos.
+- **Alcance**: ``_NET_ROLLBACK_PLAN.md``.
+
+**Añadido: pruebas de regresión para esta versión**
+
+- **Alcance**: ``soundrts/tests/test_net_protocol.py``, ``soundrts/tests/test_net_input_stream_server.py``, ``soundrts/tests/test_net_rollback.py``, ``soundrts/tests/test_net_rollback_session.py``, ``soundrts/tests/test_net_rollback_spectator.py``, ``soundrts/tests/test_net_rollback_wiring.py``, ``soundrts/tests/test_net_rollback_live.py``, ``soundrts/tests/test_ai_economy_scheduling.py``, ``soundrts/tests/test_ai_jl1_blind_attack.py``, ``soundrts/tests/test_ai_plan_rng_decoupled.py``.
+
 1.5.1.8
 -------
 

@@ -4,6 +4,124 @@
 .. contents::
 
 
+1.5.1.9
+-------
+
+**新增：回滚网络协议 —— 对局不再等最慢的玩家**
+
+- **问题**：旧的锁步协议要求服务器等**所有**玩家都到齐才广播一个回合。于是在一条慢连接上，整局游戏都被最慢的那个玩家拖住，哪怕他此刻什么也没干。
+- **改进**：新增主机权威协议。服务器不再自己模拟世界，而是给每一个收到的输入盖上一个递增的权威帧号并立即广播。客户端立刻执行自己的命令，并对其他玩家的输入做**预测**；当服务器确认的输入与预测矛盾时，客户端会恢复到第一个分叉帧的快照，再重新模拟到当前帧。「等最慢玩家」这道坎就此消失。
+- **默认启用**：回滚协议现在是默认协议。可以在配置文件里关掉（``use_rollback_netcode = 0``）。
+- **两种协议仍然共存**：不声明回滚协议的客户端仍然走旧的锁步协议（``lockstep``）；当一局里的玩家并非全都支持回滚（``rollback``）时，服务器也会退回锁步 —— 所以旧客户端依然能和新主机对战。
+- **真实网络验证**：整条链路 —— 真实 TCP socket、真实服务器、真实线路格式、两个客户端同时模拟 —— 由 ``soundrts/tests/test_net_rollback_live.py`` 覆盖，包含四个场景：基线收敛（逐位一致、零次回滚）、高延迟（客户端预测、回滚、重演后依然收敛）、中途掉线（幸存者与「没人离开」的参照局保持一致）、中途旁观追帧。
+- **范围**：``soundrts/net/input_stream.py``、``soundrts/net/rollback.py``、``soundrts/net/session.py``、``soundrts/net/headless.py``、``soundrts/serverroom.py``、``soundrts/worldclient.py``、``soundrts/game.py``、``soundrts/config.py``、``soundrts/version.py``。
+
+**新增：分层世界快照与强摘要**
+
+- **问题**：回滚网络协议必须能把模拟倒回任意一帧再重放，这既需要完整捕获并精确还原整个世界的可变状态，也需要一种办法来**证明**这次还原确实复现了原状态。
+- **改进**：``soundrts/net/snapshot.py`` 按层捕获世界 —— L0 是标量与随机数状态，L1 是玩家状态，L2 是热点实体的 ``__dict__`` 以及它们所在容器的副本，L3 是结构变化，L4 是碰撞图与调度事件闭包的状态。还原是捕获的精确逆操作，而 ``strong_digest()`` 对结果做哈希（资源、人口、升级、每个单位的 id / 位置 / 朝向 / 血量以及随机数状态 —— 不是浅层哈希），因此还原后的世界可以与重新模拟出来的世界直接比对。测试用这个摘要断言一次往返之后逐位相等。
+- **范围**：``soundrts/net/snapshot.py``。
+
+**新增：协议协商与协议修订号**
+
+- **问题**：此前客户端声明的只有协议*名称*，于是没有办法区分「客户端说的是同一套网络代码」与「客户端说的是同一套网络代码的不同版本」。后者才是危险的那一种：两边会对「一帧是什么」或者「输入按什么顺序生效」产生分歧，对局就会静默损坏 —— 不报错，只是世界慢慢分叉。
+- **改进**：在协议名旁边加上了*修订号*。客户端在登录行里声明 ``<protocol>/<revision>``，服务器则在 ``start_game`` 与 ``start_spectating`` 之前声明协商出的协议。``negotiate_protocol()`` 只有在所有玩家都支持回滚**且**都说出同一个修订号时才使用回滚；修订号不一致就退回人人皆懂的锁步，并写进日志。只有协议名没有修订号的写法仍然被接受，视为修订号 1，因此旧客户端完全不受影响。
+- **范围**：``soundrts/version.py``、``soundrts/serverroom.py``、``soundrts/servermain.py``、``soundrts/clientservermenu.py``、``soundrts/clientserver.py``。
+
+**新增：回滚协议下的实时旁观模式**
+
+- **问题**：锁步协议下，旁观者靠重放服务器保留的通讯回合来重建对局。回滚协议下没有通讯回合：对局是一串帧，每帧是一组每玩家的输入，旁观者根本没有东西可以重放。
+- **改进**：中途加入回滚对局的旁观者会收到服务器发来的完整输入历史，服务器也会持续向旁观者广播实时输入 —— 否则旁观者会卡在它追上的那一帧。旁观者会话（``SpectatorSession``）不做预测也不做投机步进：它等当前要重放那一帧的权威输入到达，然后再应用。
+- **范围**：``soundrts/net/session.py``、``soundrts/serverroom.py``、``soundrts/worldclient.py``、``soundrts/game.py``、``soundrts/tests/test_net_rollback_spectator.py``。
+
+**修复：玩家退出后客户端与服务器分叉**
+
+- **问题**：三个相关缺陷会让客户端在有人退出或有人旁观加入之后与服务器 —— 以及与每一个旁观者 —— 逐渐分叉。全程不报错，只是世界不再一致。
+- **改进**：四处改动。服务器不再为退出者**已经回答过**的那些帧广播空输入 —— 这样的输入与该帧的权威记录相矛盾。退出者被移到「已离开」名单，并保留在它回答过的那些帧的输入向量里，因此重演这些帧时不会比服务器少算一条命令。重传也不能再覆盖某一帧的输入：现在**第一次**确认说了算，即使后来的副本内容不同也一样 —— 内容不同的副本只能来自与权威记录不一致的来源（例如退出时合成的空输入），采信它就会静默损坏那一帧。服务器现在也会把「只答了一半」的帧发给旁观者，而不是丢掉那些在旁观者加入之前就已到达、之后永远不会再发一次的输入。
+- **范围**：``soundrts/net/input_stream.py``、``soundrts/net/rollback.py``、``soundrts/serverroom.py``。
+
+**修复：主机建局时提示「与服务器连接错误」**
+
+- **问题**：``soundrts/clientservermenu.py`` 里写的是 ``from ..version import ...``。该文件就在 ``soundrts`` 包的最外层，``..`` 指的是「soundrts 之上的一层」—— 那里并不存在。这条 import 写在函数里，所以只有在服务器真的发出「protocol」那一行时才会求值，也就是主机建局的时候。客户端随即崩溃，报 ``ImportError: attempted relative import beyond top-level package``，菜单显示「与服务器连接错误」。
+- **改进**：同样的错误还存在于另外四处，都是潜伏的运行时炸弹（``soundrts/worldaction.py``、``soundrts/attributes/key_bindings.py``、``soundrts/worldunit/world_status_update.py``）。现已全部修好，并新增一条测试：用 AST 扫描整个包，任何越出所在包的相对 import 都会让测试失败，这类 bug 再也回不来了。
+- **范围**：``soundrts/clientservermenu.py``、``soundrts/worldaction.py``、``soundrts/attributes/key_bindings.py``、``soundrts/worldunit/world_status_update.py``、``soundrts/tests/test_net_protocol.py``。
+
+**修复：地图文本文件没有被关闭**
+
+- **问题**：``_load_from_text_file`` 读完以后一直留着文件对象，每次加载地图都会泄漏一个 ``ResourceWarning``。
+- **改进**：改用上下文管理器，地图一解析完就关掉句柄。这一点现在更要紧：无头多客户端网络测试会反复加载地图，泄漏的句柄会不断累积。
+- **范围**：``soundrts/mapfile.py``。
+
+**修复：热键测试的结果取决于本机键盘状态**
+
+- **问题**：``key_event_to_binding_string()`` 会问 Windows 当前按着的是哪个*物理* Shift 键，以便区分 LSHIFT 与 RSHIFT —— 分层热键需要这个区别。而测试断言的是通用的「CTRL SHIFT d」，于是只有在那一刻恰好两个 Shift 都没按着时才会通过。在终端里（文字经常要按住 shift 选中），这就是抛硬币：同一个提交这次绿下次红。
+- **改进**：测试现在会屏蔽物理按键查询，于是它检查的是*逻辑*，而不是运行它的那台机器的状态。
+- **范围**：``soundrts/tests/test_hotkey_editor.py``。
+
+**新增：AI 同时让多个生产建筑忙起来**
+
+- **问题**：AI 只通过**一个**生产建筑来训练军队：第一个能造这个单位的工厂拿到命令，其余工厂全部闲置。有两座兵营时，这意味着一半产能被浪费，军队只有玩家预期的速度的一半。
+- **改进**：``_maintain_multi_queue_production()`` 会开出第二条、第三条……训练队列，每个自己拥有的生产建筑一条，仅限允许这样做的难度。它刻意做成规则驱动的：生产建筑是通过 ``effective_can_train`` 找出来的，而不是按类型名硬编码，于是帝国 2 的兵营、星际争霸的工厂、crazyMod 的车库都能一视同仁；训练的单位是*计划*要求的那些，并且尊重计划的配额，AI 不会造出比建造顺序更多的东西；开销来自规则文件，所以模组自己的经济体系会被尊重；类型比较走 ``equivalent()``，因为模组可能把自己的士兵叫 ``militia`` 而建筑上写的是文明皮肤。订单交给负载最轻的那座建筑，于是生产是被均衡的，而不是永远压在第一座工厂上。
+- **难度分级**：``beginner`` / ``timers`` 保持单队列（行为不变），``intermediate`` 可多开一条，``advanced`` 两条，``expert`` 三条，``nightmare`` 四条。
+- **范围**：``soundrts/worldplayercomputer.py``、``soundrts/world_ai_economy.py``、``soundrts/tests/test_ai_economy_scheduling.py``。
+
+**新增：AI 把工人分散到各个食物来源**
+
+- **问题**：站在同一个格子上的村民会被派往*同一个*采集目标，于是整个经济跑在一块农田上，而旁边的果园空着。
+- **改进**：两处改动。采集目标改为按*工人*记忆化，而不是按格子（候选*扫描*仍在同一回合的工人之间共享，所以分散工人的代价是每人一次廉价的挑选，而不是每人一次完整扫描）。负载均衡则发生在*挑选*环节：候选目标按当前负载分桶，只考虑负载最小的那一桶，再从中挑最近的那个。第一个工人去最近的来源，第二个工人发现已经有人在那儿了，就去下一个来源。负载用引擎通用的单位计数器统计，因此对所有模组都有效。
+- **难度分级**：``beginner`` / ``timers`` 让工人保持扎堆（弱的 AI 应当容易被打败），``intermediate`` 把工人分散到「当前所缺资源」的各个来源上，``advanced`` 及以上会分散到所有来源，包括次优的那个。
+- **范围**：``soundrts/worldplayercomputer.py``、``soundrts/world_ai_economy.py``、``soundrts/tests/test_ai_economy_scheduling.py``、``soundrts/tests/test_ai_gather_target_determinism.py``。
+
+**新增：AI 自动管理主基地数量**
+
+- **问题**：AI 过去只有在 ``ai.txt`` 写了「expand N」时才会开额外的主基地。大多数地图根本没这么写，于是 AI 死守一个基地直到卡住。
+- **改进**：``_maintain_expansions()`` 现在有两个目标数量来源。``ai.txt`` 的「expand N」存在时仍然优先；否则由 ``_automatic_base_target()`` 决定，依据是难度档位（``expansion_headroom()``：初级的 AI 绝不自行扩张，专家可以多开三个基地）、人口压力（住房必须填满 75 %），以及基地自己的规则属性 ``ai_base_worth_expanding`` —— 模组可以为某个基地禁止扩张。两道保险让自动扩张不会打乱建造顺序：基地的造价必须付得起，而且计划为下一座建筑攒下的木头不会被花在基地上。这一切都是规则驱动的：基地类型是通过主工人找到的，因此带孵化场或指挥中心的模组同样适用。
+- **范围**：``soundrts/worldplayercomputer.py``、``soundrts/world_ai_economy.py``、``soundrts/tests/test_ai_economy_scheduling.py``。
+
+**新增：规则驱动的 AI 经济策略模块**
+
+- **调整**：``soundrts/world_ai_economy.py`` 是面向电脑玩家的、与模组无关的策略层。它包含难度分级辅助函数（``balancing_tier``、``balances_workers``、``balances_strictly``）、基地扩张策略（``expansion_headroom()``、``population_is_pressured()``、``expansion_is_worthwhile()``）、规则内省辅助函数（``read_bool_attr`` / ``read_int_attr``，可以在不刷屏调试警告的前提下读取规则类上的自定义 ``ai_*`` 属性，以及 ``base_supplies()`` 和 ``base_is_worth_expanding()``），以及多队列策略（``multi_queue_limit()``、``production_queue_depth()``、``can_queue_on_host()``、``balanced_production_key()``、``extra_queue_budget()``）。
+- **与模组无关**：这里没有任何地方按名字引用具体的单位或建筑；每一项能力都是从载入的规则推导出来的，因此同一套策略对帝国 2、星际争霸、crazyMod、兽人、武侠、prismalab 都适用。
+- **范围**：``soundrts/world_ai_economy.py``。
+
+**修复：人口压力判断从来没有触发过**
+
+- **问题**：自动扩基地会把 AI 的住房与 ``world.population_limit`` 比较。而这个上限是**所有玩家共享**的全局上限（帝国 2 的 cw1 地图用的是 1999），于是 AI 自己的住房 —— cw1 上是 140 —— 永远远远低于它的 75 %，扩张自然从不触发。
+- **改进**：玩家自己的住房是 ``player.population``（它的建筑提供多少）和 ``player.used_population``（它的单位吃掉多少），因此 ``population_is_pressured()`` 现在接收这两个数字，在余量见底时报告压力。世界上限被有意弃用了：它说明不了 AI 自己的住房情况。
+- **范围**：``soundrts/world_ai_economy.py``、``soundrts/worldplayercomputer.py``。
+
+**修复：多队列上限把「总数」当成了「额外队列数」**
+
+- **问题**：``multi_queue_limit()`` 的文档说的是某个难度可以额外开多少条生产队列，但 ``extra_queue_budget()`` 从上限里减一，好像那个上限是*总数*一样。而 ``_maintain_multi_queue_production()`` 里的调用方又减了一次已经忙着的宿主，于是中等 AI（上限 1）永远开不出第二条队列：常规计划路径的那条队列已经把预算吃光了。
+- **改进**：现在上限直接就是额外队列数，预算取 ``min(limit, idle_hosts)``。中等 AI 只要拥有第二座生产建筑，就可以立刻多开一条队列，这正是策略表所承诺的。
+- **范围**：``soundrts/world_ai_economy.py``、``soundrts/worldplayercomputer.py``。
+
+**修复：电脑在从未见过敌人时从不进攻**
+
+- **问题**：在 ``res/multi/jl1.txt`` 上，中级电脑在村民探索时约 8 分钟进攻，而在村民不探索时要 13 到 15 分钟。这不是随机性：``constant_attacks 1`` 让 AI 每 tick 都去攻击 ``_enemy_presence``，而那个列表里只有 AI *看见过*敌人的格子。没有斥候时列表一直是空的，``_eventually_attack([])`` 于是把全军都分配去守家，军队就在基地里闲着，直到有东西自己走进它的视野。
+- **改进**：``_blind_attack_targets`` 现在会退回到敌方出生点，于是看不见敌人的军队会主动去找它。这些格子按*玩家*（``Player._map_start_square``）而不是按出生槽位解析，因为 ``random_starts`` 打乱之后 ``world.players_starts`` 与 ``world.players`` 并对不上；而且只考虑敌对玩家，因此 AI 绝不会进军盟友的城镇。``_ensure_housing`` 现在也会向工人讨要房子缺的那部分资源：AI 过去会先付钱造好兵营，然后既买不起下一个村民也买不起下一座房子，人口上限被卡住好几分钟而什么也没发生。
+- **范围**：``soundrts/worldplayercomputer.py``、``soundrts/worldplayerbase/base.py``、``soundrts/tests/test_ai_jl1_blind_attack.py``。
+
+**修复：AI 的开局分支被「是否派村民探索」随机重掷**
+
+- **问题**：同一张地图上，首次进攻依然会在约 8 分钟或约 13 到 15 分钟之间跳变，找不到任何表面原因。根源是计划里的 ``goto_random`` 指令 —— 它从 ``world.random`` 这个**共享**模拟流里抽分支。而这时共享流已经消耗了多少次，取决于 AI 在此前几秒钟做了什么：一个被派去 ``auto_explore`` 的村民会多消耗两次随机数，正好把共享流挪开两位，于是 AI 挑到了*另一个*开局分支 —— ``very_early_rush``（3 村民 + 1 步兵）、``early_rush``（4 + 5 步兵）、``rush``（9 + 5 步兵）或 ``phase2``（9 村民 + 15 弓箭手）。每个分支在走到自己的 ``attack`` 之前需要凑齐的军队都不一样，于是首次进攻就落在约 8 分钟或约 13 分钟，而且毫无表面理由。
+- **改进**：分支改从 AI 自己的流里抽取，种子由对局 seed 与玩家身份决定，因此既不取决于探索决策，也不取决于模拟此前做过的任何事。这个流保存为**纯整数**（而不是 ``random.Random`` 对象），这样按值捕获玩家属性的回滚快照机制才能正确地把它倒回去。在 jl1 上跑 20 个 seed 实测：修复前，开启与不开启探索的开局分支只有 5/20 相同；修复后是 20/20 相同。
+- **范围**：``soundrts/worldplayercomputer.py``、``soundrts/tests/test_ai_plan_rng_decoupled.py``。
+
+**新增：两个无头基准工具**
+
+- **调整**：``bench_ai_features.py`` 会跑一场真实的无头对局（SDL dummy 驱动，不开游戏窗口），测量三项新 AI 特性的实际效果：额外队列下了多少订单、它们分布在哪些生产建筑上；工人用了几个采集目标、最大的那个有多大；以及主基地数量随时间的变化。``--ab`` 会用同一套 AI 跑两遍（其中一遍关掉多队列），以量化多队列的价值。``bench_jl1_sweep.py`` 会扫描 ``res/multi/jl1.txt`` 的各个 seed，报告中级 AI 第一次把军队派出基地是第几分钟，分别在村民探索与不探索两种情况下；``--old-rng`` 可以恢复修复前的行为以便随时复现这个 bug，``--seed-list`` 则可以重放一列指定的 seed。
+- **范围**：``bench_ai_features.py``、``bench_jl1_sweep.py``。
+
+**新增：回滚网络协议的架构文档**
+
+- **调整**：``_NET_ROLLBACK_PLAN.md`` 记录了促成分层设计的实测快照开销、分层快照方案、兼容性策略、阶段划分与风险清单。
+- **范围**：``_NET_ROLLBACK_PLAN.md``。
+
+**新增：本次发布的回归测试**
+
+- **范围**：``soundrts/tests/test_net_protocol.py``、``soundrts/tests/test_net_input_stream_server.py``、``soundrts/tests/test_net_rollback.py``、``soundrts/tests/test_net_rollback_session.py``、``soundrts/tests/test_net_rollback_spectator.py``、``soundrts/tests/test_net_rollback_wiring.py``、``soundrts/tests/test_net_rollback_live.py``、``soundrts/tests/test_ai_economy_scheduling.py``、``soundrts/tests/test_ai_jl1_blind_attack.py``、``soundrts/tests/test_ai_plan_rng_decoupled.py``。
+
 1.5.1.8
 -------
 

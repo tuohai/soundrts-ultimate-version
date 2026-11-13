@@ -5,6 +5,124 @@ Release notes
 .. contents::
 
 
+1.5.1.9
+-------
+
+**Added: the rollback netcode -- the match no longer waits for the slowest player**
+
+- **Problem**: the legacy lockstep protocol makes the server wait for *every* player before it broadcasts a turn. On a slow connection the whole match stalls on the slowest player, even though that player is doing nothing interesting.
+- **Fix**: a new host-authoritative protocol. The server does not simulate the world; it stamps every incoming input with a sequential authoritative frame id and broadcasts it immediately. The client applies its own orders straight away and *predicts* the other players' inputs; when the server confirms an input that contradicts the prediction, the client restores the snapshot of the first diverging frame and re-simulates forward to the present. The wait-for-the-slowest barrier is gone.
+- **Default**: the rollback protocol is now the default. It can be switched off in the configuration file (``use_rollback_netcode = 0``).
+- **Both protocols still coexist**: a client that does not announce the rollback protocol plays the legacy lockstep, and the server falls back to lockstep when the players of a match do not all speak rollback -- so an old client can still play against a new host.
+- **Verified over real sockets**: the whole chain -- a real TCP socket, the real server, the real wire format, two clients simulating at the same time -- is exercised by ``soundrts/tests/test_net_rollback_live.py``, with four scenarios: baseline convergence (bit-exact, zero rollbacks), high latency (the client predicts, rolls back, re-simulates and still converges), a mid-match disconnect (the survivor stays consistent with a reference run in which nobody left) and a mid-match spectator catch-up.
+- **Scope**: ``soundrts/net/input_stream.py``, ``soundrts/net/rollback.py``, ``soundrts/net/session.py``, ``soundrts/net/headless.py``, ``soundrts/serverroom.py``, ``soundrts/worldclient.py``, ``soundrts/game.py``, ``soundrts/config.py``, ``soundrts/version.py``.
+
+**Added: the layered world snapshots and the strong digest**
+
+- **Problem**: the rollback netcode has to rewind the simulation to an arbitrary frame and replay it, which needs both the capture and the exact restore of the whole mutable world state -- and a way to *prove* that a restore reproduced the state exactly.
+- **Fix**: ``soundrts/net/snapshot.py`` captures the world in layers -- L0 the scalars and the RNG state, L1 the player state, L2 the hot entities plus copies of the containers they live in, L3 the structure changes, L4 the collision maps and the state of the scheduled-event closures. The restore is the exact inverse, and ``strong_digest()`` hashes the result (resources, population, upgrades, every unit's id / position / angle / hit points and the RNG state -- not a shallow hash), so a restored world can be compared against a freshly simulated one. The tests assert bit-exact equality after a round trip.
+- **Scope**: ``soundrts/net/snapshot.py``.
+
+**Added: the protocol negotiation and the protocol revisions**
+
+- **Problem**: until now the only thing a client announced was the protocol *name*, so there was no way to tell "a client that speaks the same netcode" from "a client that speaks the same netcode but a different version of it". The second case is the dangerous one: the two sides would disagree on what a frame is, or on the order in which the inputs are applied, and the match would corrupt silently -- no error, just a world that slowly diverges.
+- **Fix**: a *revision* was added next to the protocol name. The client announces ``<protocol>/<revision>`` in the login line, and the server announces the negotiated protocol before ``start_game`` and before ``start_spectating``. ``negotiate_protocol()`` uses the rollback protocol only when every player speaks it *and* they all speak the same revision of it; a mismatch falls back to lockstep, which every client understands, and is logged. A bare protocol name is still accepted and means revision 1, so an old client keeps working unchanged.
+- **Scope**: ``soundrts/version.py``, ``soundrts/serverroom.py``, ``soundrts/servermain.py``, ``soundrts/clientservermenu.py``, ``soundrts/clientserver.py``.
+
+**Added: the live spectator mode under the rollback protocol**
+
+- **Problem**: under the lockstep protocol a spectator rebuilds the match by replaying the communication turns the server kept in its order history. Under the rollback protocol there are no communication turns: the match is a sequence of frames, each frame a set of per-player inputs, so a spectator had nothing to replay.
+- **Fix**: the server sends the whole input history to a spectator that joins a rollback match, and keeps broadcasting the live inputs to the spectators -- without that, a spectator would freeze at the frame it had caught up to. The spectator session (``SpectatorSession``) does not predict and does not speculative-step: it waits for the authoritative inputs of the frame it is about to replay and then applies them.
+- **Scope**: ``soundrts/net/session.py``, ``soundrts/serverroom.py``, ``soundrts/worldclient.py``, ``soundrts/game.py``, ``soundrts/tests/test_net_rollback_spectator.py``.
+
+**Fixed: the client drifted away from the server after a player quit**
+
+- **Problem**: three related bugs made the client drift away from the server -- and from every spectator -- after a player quit or after a spectator joined the match. No error was raised: the worlds simply stopped matching.
+- **Fix**: four changes. The server no longer broadcasts an *empty* input for the frames the quitter had already answered, because such an input contradicts the authoritative record of that frame. The quitter is moved to a "departed" list and stays in the input vector of the frames it answered, so re-simulating those frames does not apply one order less than the server did. A retransmission can no longer overwrite a frame's input: the *first* confirmation wins, even when a later copy differs. And the server now sends the spectator the partial frames too, instead of dropping the inputs that arrived before the spectator joined and would never be sent again.
+- **Scope**: ``soundrts/net/input_stream.py``, ``soundrts/net/rollback.py``, ``soundrts/serverroom.py``.
+
+**Fixed: "error during connection to server" when a host created a game**
+
+- **Problem**: ``soundrts/clientservermenu.py`` did ``from ..version import ...``. That file lives directly in the ``soundrts`` package, so ``..`` means "one level above soundrts" -- which does not exist. The import sits inside a function, so it was only evaluated when the server actually sent the "protocol" line, which happens when a host creates a game. The client then died with ``ImportError: attempted relative import beyond top-level package`` and the menu reported "error during connection to server".
+- **Fix**: the same mistake existed in four other places, all of them latent runtime bombs (``soundrts/worldaction.py``, ``soundrts/attributes/key_bindings.py``, ``soundrts/worldunit/world_status_update.py``). They are all repaired, and a new test scans the whole package with the AST and fails on any relative import that goes above the package it lives in, so this class of bug cannot come back.
+- **Scope**: ``soundrts/clientservermenu.py``, ``soundrts/worldaction.py``, ``soundrts/attributes/key_bindings.py``, ``soundrts/worldunit/world_status_update.py``, ``soundrts/tests/test_net_protocol.py``.
+
+**Fixed: the map text file was never closed**
+
+- **Problem**: ``_load_from_text_file`` kept the file object alive after reading it, leaking a ``ResourceWarning`` on every map load.
+- **Fix**: a context manager closes the handle as soon as the map is parsed. This matters more than usual now: the headless multi-client netcode test loads the map repeatedly and the leaked handles accumulated.
+- **Scope**: ``soundrts/mapfile.py``.
+
+**Fixed: the hotkey test passed or failed depending on the machine's keyboard**
+
+- **Problem**: ``key_event_to_binding_string()`` asks Windows which *physical* shift key is held, so that it can tell LSHIFT and RSHIFT apart -- the layered hotkeys need that distinction. The test asserted the generic "CTRL SHIFT d", so it passed only when neither shift key happened to be down at that instant. In a terminal, where text is selected with shift all the time, that was a coin flip: the same commit would be green on one run and red on the next.
+- **Fix**: the test now neutralises the physical-key query, so it checks the *logic* and not the state of the machine it runs on.
+- **Scope**: ``soundrts/tests/test_hotkey_editor.py``.
+
+**Added: the AI keeps several production buildings busy at the same time**
+
+- **Problem**: the AI trained its army through a *single* production building: the first factory that could build the unit got the order, and every other factory stood idle. With two barracks that meant half of the production capacity was wasted, and the army grew at half the speed the player expects.
+- **Fix**: ``_maintain_multi_queue_production()`` opens a second, third, ... queue, one per owned production building, for the difficulties that are allowed to do so. It is deliberately rules-driven: the buildings are found through ``effective_can_train`` and not by type name, so an AoE2 barracks, a StarCraft factory and a CrazyMod garage are all handled the same way; the units are the ones the *plan* asks for and the plan's quota is respected, so the AI never builds more than the build order wanted; the cost comes from the rules, so a mod's own economy is respected; and the type is compared through ``equivalent()``, because a mod may name its soldier ``militia`` while the building lists the civilisation skin. The least loaded building gets the next order, so the production is balanced instead of always hitting the first factory.
+- **Difficulty grading**: ``beginner`` / ``timers`` keep a single queue (unchanged behaviour), ``intermediate`` may open one extra queue, ``advanced`` two, ``expert`` three, ``nightmare`` four.
+- **Scope**: ``soundrts/worldplayercomputer.py``, ``soundrts/world_ai_economy.py``, ``soundrts/tests/test_ai_economy_scheduling.py``.
+
+**Added: the AI spreads its workers over the food sources**
+
+- **Problem**: every villager standing on the same square was sent to the *same* gather target, so the whole economy ran on one farm while the orchard next to it stayed empty.
+- **Fix**: two changes. The gather target is memoized per *worker* and not per square (the candidate *scan* is still shared between the workers of one turn, so spreading the workers costs one cheap pick each instead of one full scan each). And the load balancing happens at the *selection* level: the candidates are bucketed by their current load, only the least loaded bucket is considered, and the nearest target of that bucket is picked. The first worker goes to the nearest source, the second one sees that somebody is already there and goes to the next source. The load is counted with the engine's generic unit counter, so it works for every mod.
+- **Difficulty grading**: ``beginner`` / ``timers`` keep the workers bunched up (an easy AI should be easy to beat), ``intermediate`` spreads them over the sources of the resource they are needed for, ``advanced`` and above spread them over every source, including the second best one.
+- **Scope**: ``soundrts/worldplayercomputer.py``, ``soundrts/world_ai_economy.py``, ``soundrts/tests/test_ai_economy_scheduling.py``, ``soundrts/tests/test_ai_gather_target_determinism.py``.
+
+**Added: the AI manages the number of main bases automatically**
+
+- **Problem**: the AI used to open extra main bases only when ``ai.txt`` said "expand N". Most maps never say that, so the AI stayed with one base until it was stuck.
+- **Fix**: ``_maintain_expansions()`` now has two sources for the target number. ``ai.txt``'s "expand N" still wins when it is present; otherwise ``_automatic_base_target()`` decides from the difficulty tier (``expansion_headroom()``: a beginner AI never expands on its own, an expert may open three extra bases), the population pressure (the housing must be 75 % full) and the base's own rules attribute ``ai_base_worth_expanding``, so a mod can forbid expansion for a particular base. Two safeguards keep the automatic expansion from breaking the build order: the base's cost must be affordable, and the wood the plan is saving for its next building is not spent on the base. All of it is rules-driven: the base type is found through the primary worker, so a mod with a hatchery or a command center works the same way.
+- **Scope**: ``soundrts/worldplayercomputer.py``, ``soundrts/world_ai_economy.py``, ``soundrts/tests/test_ai_economy_scheduling.py``.
+
+**Added: a rules-driven AI economy policy module**
+
+- **Change**: ``soundrts/world_ai_economy.py`` is a mod-agnostic policy layer for the computer player. It holds the difficulty grading helpers (``balancing_tier``, ``balances_workers``, ``balances_strictly``), the base expansion policy (``expansion_headroom()``, ``population_is_pressured()``, ``expansion_is_worthwhile()``), the rules introspection helpers (``read_bool_attr`` / ``read_int_attr``, which read custom ``ai_*`` attributes off a rules class without spamming debug warnings, plus ``base_supplies()`` and ``base_is_worth_expanding()``) and the multi-queue policy (``multi_queue_limit()``, ``production_queue_depth()``, ``can_queue_on_host()``, ``balanced_production_key()``, ``extra_queue_budget()``).
+- **Mod agnostic**: nothing here references any unit or building by name; every capability is derived from the loaded rules, so the same policy works for AoE2, StarCraft, CrazyMod, orc, wuxia and prismalab.
+- **Scope**: ``soundrts/world_ai_economy.py``.
+
+**Fixed: the population-pressure check never fired**
+
+- **Problem**: the automatic base expansion compared the AI's housing against ``world.population_limit``. That limit is the *global* cap shared by every player (the AoE2 cw1 map uses 1999), so the AI's own housing -- 140 slots on cw1 -- was always far below 75 % of it and the expansion never triggered.
+- **Fix**: the player's own housing is ``player.population`` (what its buildings provide) and ``player.used_population`` (what its units consume), so ``population_is_pressured()`` now takes those two numbers and reports pressure when the headroom runs out. The world limit is deliberately not used any more: it says nothing about the AI's own housing.
+- **Scope**: ``soundrts/world_ai_economy.py``, ``soundrts/worldplayercomputer.py``.
+
+**Fixed: the multi-queue limit counted the total instead of the extra queues**
+
+- **Problem**: ``multi_queue_limit()`` is documented as the number of *extra* production queues a difficulty may open, but ``extra_queue_budget()`` subtracted one from the limit as if it were a *total*. The caller in ``_maintain_multi_queue_production()`` subtracted the already-busy hosts again, so an intermediate AI (limit 1) could never open a second queue: the regular plan path's queue already consumed the whole budget.
+- **Fix**: the limit now counts the extra queues directly, and the budget is ``min(limit, idle_hosts)``. An intermediate AI may now open one extra queue as soon as it owns a second production building, which is what the policy table promises.
+- **Scope**: ``soundrts/world_ai_economy.py``, ``soundrts/worldplayercomputer.py``.
+
+**Fixed: the computer never attacked when it had never seen the enemy**
+
+- **Problem**: on ``res/multi/jl1.txt`` the intermediate computer attacked at ~8 min when its villagers explored, but only at ~13-15 min when they did not. That was not randomness: ``constant_attacks 1`` makes the AI attack ``_enemy_presence`` every tick, and that list only holds the squares where the AI has *seen* an enemy. With no scout the list stayed empty, ``_eventually_attack([])`` assigned the whole army to the home guard, and the army idled in its base until something wandered into its line of sight.
+- **Fix**: ``_blind_attack_targets`` now falls back to the enemy starting squares, so an army that cannot see the enemy goes looking for it. The squares are resolved per *player* (``Player._map_start_square``) rather than per start slot, because ``world.players_starts`` and ``world.players`` do not line up once ``random_starts`` has shuffled them, and only hostile players are considered so the AI never marches onto an ally's town. ``_ensure_housing`` now also asks the workers for the resources a house is missing: the AI used to pay for a barracks and then be unable to afford either the next villager or the next house, leaving the population capped for minutes with nothing happening.
+- **Scope**: ``soundrts/worldplayercomputer.py``, ``soundrts/worldplayerbase/base.py``, ``soundrts/tests/test_ai_jl1_blind_attack.py``.
+
+**Fixed: the AI's opening plan was re-rolled by the scouting decision**
+
+- **Problem**: the same map still produced a first attack at ~8 min or at ~13-15 min for no visible reason. The cause was the plan's ``goto_random`` instruction, which drew its branch from ``world.random`` -- the *shared* simulation stream. How many numbers that stream had already consumed when the draw happened depended on what the AI did in the preceding seconds: a villager sent on ``auto_explore`` burns two extra draws, which shifts the shared stream by exactly two positions and makes the AI pick a *different* opening branch -- ``very_early_rush`` (3 villagers + 1 footman), ``early_rush`` (4 + 5 footmen), ``rush`` (9 + 5 footmen) or ``phase2`` (9 villagers + 15 archers). Each branch needs a different army before its ``attack`` line can complete, so the first attack landed at ~8 min or at ~13 min for no visible reason.
+- **Fix**: the branch is drawn from the AI's own stream, seeded from the match seed and the player's identity, so it depends on neither the scouting decision nor anything else the simulation did earlier. The stream is kept as a plain integer (and not as a ``random.Random`` object) so that the rollback snapshot machinery, which captures the player attributes by value, can rewind it correctly. Measured on jl1 over 20 seeds, the opening branch is now identical with and without exploring in 20/20 seeds (it was 5/20 before).
+- **Scope**: ``soundrts/worldplayercomputer.py``, ``soundrts/tests/test_ai_plan_rng_decoupled.py``.
+
+**Added: two headless benchmarks**
+
+- **Change**: ``bench_ai_features.py`` runs a real headless match (SDL dummy driver, no game window) and measures what the three new AI features actually do: how many extra-queue orders are placed and how they are spread over the production buildings, how many gather targets the workers use and how big the biggest one is, and the number of main bases over time. ``--ab`` runs the same AI twice, once with the multi-queue disabled, to measure what the multi-queue is worth. ``bench_jl1_sweep.py`` sweeps the seeds of ``res/multi/jl1.txt`` and reports the minute at which the intermediate AI first marched its army off its home base, with and without the AI's villagers exploring; ``--old-rng`` restores the pre-fix behaviour so the bug can be reproduced on demand, and ``--seed-list`` replays an explicit list of seeds.
+- **Scope**: ``bench_ai_features.py``, ``bench_jl1_sweep.py``.
+
+**Added: the rollback netcode architecture document**
+
+- **Change**: ``_NET_ROLLBACK_PLAN.md`` records the measured snapshot costs that justified the layered design, the layered snapshot plan, the compatibility strategy, the phase breakdown and the risk list.
+- **Scope**: ``_NET_ROLLBACK_PLAN.md``.
+
+**Added: regression tests for this release**
+
+- **Scope**: ``soundrts/tests/test_net_protocol.py``, ``soundrts/tests/test_net_input_stream_server.py``, ``soundrts/tests/test_net_rollback.py``, ``soundrts/tests/test_net_rollback_session.py``, ``soundrts/tests/test_net_rollback_spectator.py``, ``soundrts/tests/test_net_rollback_wiring.py``, ``soundrts/tests/test_net_rollback_live.py``, ``soundrts/tests/test_ai_economy_scheduling.py``, ``soundrts/tests/test_ai_jl1_blind_attack.py``, ``soundrts/tests/test_ai_plan_rng_decoupled.py``.
+
 1.5.1.8
 -------
 
