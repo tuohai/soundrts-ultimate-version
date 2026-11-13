@@ -52,7 +52,8 @@ class _StubInterface:
         return lambda *a, **k: None
 
 
-def run(seed, scout, blind, minutes=18.0, trace=False, old_rng=False):
+def run(seed, scout, blind, minutes=18.0, trace=False, old_rng=False,
+        force_branch=None):
     m = Map(str(JL1))
     game = TrainingGame(m, ["test", "intermediate"],
                         ["random_faction", "random_faction"], ["1", "2"])
@@ -76,6 +77,7 @@ def run(seed, scout, blind, minutes=18.0, trace=False, old_rng=False):
         Computer._blind_attack_targets = lambda self: []
     if not scout:
         Computer._send_explorer = lambda self: None
+
     if old_rng:
         # The pre-fix behaviour: the plan's ``goto_random`` drew its branch
         # from the *shared* world RNG, so exploring (or not) shifted the
@@ -85,7 +87,28 @@ def run(seed, scout, blind, minutes=18.0, trace=False, old_rng=False):
             if not options:
                 return None
             return self.world.random.choice(options)
-        Computer._plan_random_choice = old_choice
+    else:
+        old_choice = orig_choice
+
+    if force_branch is not None:
+        # Pin the opening branch, so the branch cannot be the cause of any
+        # difference between two runs.  This is how the "is the branch the
+        # main cause of the delay?" question is answered.
+        def pinned(self, options):
+            options = list(options)
+            if not options:
+                return None
+            if force_branch in options:
+                return force_branch
+            return old_choice(self, options)
+        base_choice = pinned
+    else:
+        base_choice = old_choice
+
+    def choice(self, options):
+        return base_choice(self, options)
+
+    Computer._plan_random_choice = choice
 
     out = {"first_attack": None, "first_sighting": None, "first_army": None,
            "sight_min": None, "army_min": None}
@@ -129,6 +152,10 @@ def main():
                         "goto_random branch is drawn from the shared world RNG")
     p.add_argument("--seed-list", type=str, default=None,
                    help="comma-separated explicit seeds (overrides --seeds)")
+    p.add_argument("--force-branch", type=str, default=None,
+                   help="pin the opening branch (very_early_rush, early_rush, "
+                        "rush, phase2) so it cannot be the cause of a "
+                        "difference between two runs")
     a = p.parse_args(_REAL_ARGV)
 
     if a.seed_list:
@@ -140,7 +167,8 @@ def main():
         for blind in (True, False):
             times = []
             for s in seeds:
-                r = run(s, scout, blind, a.minutes, old_rng=a.old_rng)
+                r = run(s, scout, blind, a.minutes, old_rng=a.old_rng,
+                        force_branch=a.force_branch)
                 times.append(r["first_attack"])
                 print(f"  seed={s:5d} scout={'on ' if scout else 'off'} "
                       f"fix={'on ' if blind else 'off'}  "
@@ -153,7 +181,8 @@ def main():
 
     print("=" * 70)
     print("首次进攻时间分布（分钟）"
-          + ("  [旧行为: 分支取自 world.random]" if a.old_rng else ""))
+          + ("  [旧行为: 分支取自 world.random]" if a.old_rng else "")
+          + ("  [固定分支: %s]" % a.force_branch if a.force_branch else ""))
     print("=" * 70)
     for (scout, blind), good in table.items():
         if not good:
