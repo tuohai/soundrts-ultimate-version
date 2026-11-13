@@ -5214,9 +5214,24 @@ class Computer(Player):
         except TypeError:
             allowed_key = ("all",)
         idx_key = tuple(resource_indices) if resource_indices is not None else None
+        # 缓存键必须区分**工人**，不能只按起点方格。
+        #
+        # 原来的键是 (起点方格 id, 资源过滤, 可采集类型, 飞行/地面)，
+        # 于是站在同一格上的所有工人拿到**同一个**目标 —— 这才是
+        # "所有人挤在一个农场"的真正原因（光改排序键没用）。
+        #
+        # 现在把工人自己的 id 放进键里：每个工人单独算一次目标，
+        # 于是第 2 个工人能看到"那边已经有人了"，从而散开。
+        #
+        # 昂贵的"候选扫描"仍然共享（见 ``_gather_candidates``），所以
+        # 每个工人多付的只是一次**挑选**，不是一次**扫描**。
+        worker_id = getattr(worker, "id", None)
+        if worker_id is None:
+            worker_id = id(worker)
         return self._play_memo_get(
             (
                 "gather_tgt",
+                worker_id,
                 getattr(origin, "id", None),
                 idx_key,
                 allowed_key,
@@ -5227,23 +5242,53 @@ class Computer(Player):
             ),
         )
 
-    def _choose_gather_target_compute(self, worker, origin, resource_indices=None):
-        candidates = []
-        for o in self._known_ok_deposits():
-            if not self._worker_can_gather_deposit(worker, o):
-                continue
-            if not Worker._gather_terrain_ok_for_unit(worker, o):
-                continue
-            idx = self._target_resource_index(o)
-            if resource_indices is not None and idx not in resource_indices:
-                continue
-            candidates.append(o)
+    def _gather_candidates(self, worker, resource_indices=None):
+        """The gather targets this worker may choose from.
 
-        for u in self._gatherable_building_targets(worker):
-            idx = self._target_resource_index(u)
-            if resource_indices is not None and idx not in resource_indices:
-                continue
-            candidates.append(u)
+        The scan is shared between the workers of one play() turn: it
+        only depends on what the worker may gather and on the resource
+        filter, not on which worker is asking.  Only the final *pick*
+        is per-worker, so spreading the workers costs one cheap pick
+        each instead of one full scan each.
+        """
+        allowed = getattr(worker, "can_gather_deposit", None) or ()
+        try:
+            allowed_key = tuple(allowed)
+        except TypeError:
+            allowed_key = ("all",)
+        idx_key = tuple(resource_indices) if resource_indices is not None else None
+
+        def _compute():
+            candidates = []
+            for o in self._known_ok_deposits():
+                if not self._worker_can_gather_deposit(worker, o):
+                    continue
+                if not Worker._gather_terrain_ok_for_unit(worker, o):
+                    continue
+                idx = self._target_resource_index(o)
+                if resource_indices is not None and idx not in resource_indices:
+                    continue
+                candidates.append(o)
+
+            for u in self._gatherable_building_targets(worker):
+                idx = self._target_resource_index(u)
+                if resource_indices is not None and idx not in resource_indices:
+                    continue
+                candidates.append(u)
+            return candidates
+
+        return self._play_memo_get(
+            (
+                "gather_cands",
+                allowed_key,
+                idx_key,
+                getattr(worker, "airground_type", "ground"),
+            ),
+            _compute,
+        )
+
+    def _choose_gather_target_compute(self, worker, origin, resource_indices=None):
+        candidates = self._gather_candidates(worker, resource_indices)
 
         if candidates:
             # AoE2 food comes from two very different places: the AI's own
@@ -5264,21 +5309,58 @@ class Computer(Player):
                     return 0
                 return 1
 
-            candidates.sort(
-                key=lambda t: (
-                    self._resource_need_ratio(self._target_resource_index(t)),
-                    _renewable_rank(t),
-                    square_of_distance(origin.x, origin.y, t.place.x, t.place.y),
-                )
-            )
+            # 采集负载均衡：同样"需要"的候选里，去**人少**的那个。
+            #
+            # 原来的排序键是 (需求比例, 可再生, 距离)，于是第 2 个、
+            # 第 3 个工人会得到和第 1 个工人一样的答案 —— 所有人挤到
+            # 最近的那个农场/果园上，第二好的食物源一直空着。
+            #
+            # 注意：``_pick_nearest_reachable`` 内部会**按距离重排**，
+            # 所以光改排序键是不够的 —— 那样做等于没做。真正起作用的
+            # 是在**选择层**先按"已分配人数"分桶：取人数最少的那一桶
+            # 里的候选，再在里面挑最近的（见下面的 _load 分桶）。
+            #
+            # 人数用 world_extractor 的通用计数接口，模组无关。
+            #
+            # 难度分级：beginner/timers 故意让工人挤在一起（新手 AI
+            # 分散开只是更难打，初级难度的意义就是好打）；其余难度
+            # 才做均衡。分级表在 world_ai_economy 里。
+            _ai_type = getattr(self, "AI_type", None)
+            _balancing = _ai_economy.balances_workers(_ai_type)
+            _strict = _ai_economy.balances_strictly(_ai_type)
+
+            def _sort_key(t):
+                idx = self._target_resource_index(t)
+                need = self._resource_need_ratio(idx)
+                renew = _renewable_rank(t)
+                dist = square_of_distance(origin.x, origin.y, t.place.x, t.place.y)
+                return (need, renew, dist)
+
+            candidates.sort(key=_sort_key)
             best_ratio = self._resource_need_ratio(
                 self._target_resource_index(candidates[0])
             )
+            # 均衡的候选集合：
+            # * 严格分级（advanced 及以上）：只把"同样需要"的候选一起
+            #   考虑 —— 工人散开，但不跑到不需要的资源上去。
+            # * 宽松分级（intermediate 等）：把该资源的**所有**候选都
+            #   纳入，于是工人会散到每一个食物源（包括那个次优的果园）。
+            if _strict:
+                need_limit = best_ratio + 1e-9
+            else:
+                best_idx = self._target_resource_index(candidates[0])
+                need_limit = max(
+                    self._resource_need_ratio(
+                        self._target_resource_index(t)
+                    )
+                    for t in candidates
+                    if self._target_resource_index(t) == best_idx
+                ) + 1e-9
             preferred = [
                 t
                 for t in candidates
                 if self._resource_need_ratio(self._target_resource_index(t))
-                <= best_ratio + 1e-9
+                <= need_limit
             ]
             # The renewable preference has to be applied at the *selection*
             # level, not merely in the sort order: ``_pick_nearest_reachable``
@@ -5298,6 +5380,25 @@ class Computer(Player):
 
             def _gather_place(t):
                 return Worker.gather_stand_place(worker, t) or getattr(t, "place", None)
+
+            # 负载均衡必须在**选择层**做：``_pick_nearest_reachable``
+            # 内部按欧氏距离重排候选，所以如果只是把"已分配人数"塞进
+            # 排序键，到了这里又会被距离覆盖掉，等于没做。
+            #
+            # 做法：按"已分配人数"给候选分桶，取**人数最少**的那一桶
+            # 作为首选集合；桶里再按距离挑最近的。这样第一个工人去
+            # 最近的那个源，第二个工人发现那边已经有人了，就去下一个
+            # 源 —— 工人依次散开，而且每个源都不会被塞爆。
+            #
+            # 只有一桶的时候行为和以前完全一样（新手难度就是这一桶）。
+            if _balancing and len(preferred) > 1:
+                loads = _ai_economy.worker_loads(preferred, world=self.world)
+                values = [loads.get(t, 0) for t in preferred]
+                min_load = min(values)
+                if min_load < max(values):
+                    preferred = [
+                        t for t in preferred if loads.get(t, 0) == min_load
+                    ]
 
             pick_from = origin
             if (
