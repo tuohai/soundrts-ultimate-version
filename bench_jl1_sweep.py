@@ -127,9 +127,14 @@ def main():
     p.add_argument("--old-rng", action="store_true",
                    help="reproduce the pre-fix behaviour: the plan's "
                         "goto_random branch is drawn from the shared world RNG")
+    p.add_argument("--seed-list", type=str, default=None,
+                   help="comma-separated explicit seeds (overrides --seeds)")
     a = p.parse_args(_REAL_ARGV)
 
-    seeds = [a.start + i for i in range(a.seeds)]
+    if a.seed_list:
+        seeds = [int(x) for x in a.seed_list.replace(" ", "").split(",") if x]
+    else:
+        seeds = [a.start + i for i in range(a.seeds)]
     table = {}
     for scout in (True, False):
         for blind in (True, False):
