@@ -1435,13 +1435,22 @@ class Computer(Player):
             self._issue_build(wh_type.type_name, meadow, nearby_workers)
 
     def _maintain_expansions(self):
-        """Build extra main bases up to the ``expand`` target.
+        """Build extra main bases.
 
-        The starting base counts toward the total, so ``expand 2`` makes
-        the AI build a single additional base. Disabled by default (``0``).
+        Two sources of the target count:
+
+        * ``ai.txt`` says ``expand N`` -- the AI then wants N bases in
+          total (the starting one counts).
+        * otherwise the AI decides for itself, from the population
+          pressure and the base's own rules attributes.
+
+        The automatic part is deliberately conservative: a base is only
+        opened when the housing is nearly full, the cost is affordable,
+        and there is still room to build one.  Every one of those checks
+        is rules-driven, so a mod without a population limit, without a
+        buildable base, or with a base that says it is not worth
+        expanding, simply never expands.
         """
-        if self._target_townhalls <= 0:
-            return
         bases = self._main_base_type_names()
         if not bases:
             return
@@ -1449,11 +1458,50 @@ class Computer(Player):
         cls = rules.unit_class(townhall)
         if cls is None:
             return
-        if self.future_nb(list(bases)) >= self._target_townhalls:
+        target = self._target_townhalls
+        if target <= 0:
+            target = self._automatic_base_target()
+            if target <= 0:
+                return
+        if self.future_nb(list(bases)) >= target:
             return
         if self.missing_resources(cls.cost):
             return
+        if not _ai_economy.base_is_worth_expanding(rules, townhall):
+            return
+        # Do not spend the wood the plan is saving for its next building:
+        # a base that costs the barracks wood is a base the plan never
+        # gets to.
+        if self._plan_expensive_wood_reserve(ignore_age_defer=True):
+            return
         self.build_or_train_or_upgradeto_or_summon(townhall)
+
+    def _automatic_base_target(self):
+        """How many bases the AI wants, when it decides by itself.
+
+        ``0`` means "do not expand on its own".  The rules that decide:
+
+        * the difficulty (a beginner AI never expands by itself);
+        * the population pressure (the housing must be nearly full);
+        * the base's own ``ai_base_worth_expanding`` attribute.
+        """
+        budget = _ai_economy.expansion_headroom(getattr(self, "AI_type", None))
+        if budget <= 0:
+            return 0
+        bases = self._main_base_type_names()
+        if not bases:
+            return 0
+        if not _ai_economy.base_is_worth_expanding(rules, bases[0]):
+            return 0
+        limit = getattr(getattr(self, "world", None), "population_limit", 0) or 0
+        if not _ai_economy.population_is_pressured(
+            self.available_population, limit
+        ):
+            return 0
+        # The starting base counts toward the total, so a budget of 1
+        # means "one base in addition to the one the AI starts with".
+        owned = self.future_nb(list(bases))
+        return owned + budget
 
     def _build_a_warehouse_if_useful(self):
         if not self._warehouse_economy_enabled() or not self._auto_warehouse_expansion_enabled():
