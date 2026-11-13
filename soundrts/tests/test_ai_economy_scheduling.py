@@ -105,13 +105,34 @@ def test_the_higher_tiers_get_a_budget():
     assert eco.expansion_headroom("nightmare") == 3
 
 
-def test_no_population_limit_means_no_pressure():
-    assert eco.population_is_pressured(100, 0) is False
+def test_no_housing_capacity_means_no_pressure():
+    """A rules set without any housing cannot press the AI."""
+    assert eco.population_is_pressured(0, 10) is False
 
 
 def test_a_full_housing_means_pressure():
-    assert eco.population_is_pressured(80, 100) is True
-    assert eco.population_is_pressured(10, 100) is False
+    """The AI's own housing is nearly full -> it needs another base."""
+    # 20 housing, 16 used -> 80 % full -> pressure.
+    assert eco.population_is_pressured(20, 16) is True
+    # 20 housing, 4 used -> plenty of room -> no pressure.
+    assert eco.population_is_pressured(20, 4) is False
+
+
+def test_the_global_population_limit_is_not_the_housing():
+    """The world's population limit is shared by every player.
+
+    AoE2's cw1 map uses 1999; comparing the AI's housing against it
+    would never report any pressure, so the housing capacity is what
+    counts.
+    """
+    # 140 housing, 135 used -> pressure, whatever the global limit is.
+    assert eco.population_is_pressured(140, 135) is True
+    assert eco.population_is_pressured(140, 20) is False
+
+
+def test_a_fully_used_housing_is_pressure():
+    assert eco.population_is_pressured(20, 20) is True
+    assert eco.population_is_pressured(20, 25) is True
 
 
 def test_expansion_needs_everything():
@@ -324,8 +345,9 @@ def test_the_base_expansion_waits_for_the_population():
     ai = Computer.__new__(Computer)
     ai.AI_type = "expert"
     ai._target_townhalls = 0
-    ai.world = types.SimpleNamespace(population_limit=100)
-    ai.population = 20
+    ai.world = types.SimpleNamespace(population_limit=1999)
+    ai.population = 20          # housing the AI's own buildings provide
+    ai.used_population = 4      # population the AI's units consume
     ai.units = []
     ai._main_base_type_names = lambda: ("town_center",)
     ai.future_nb = lambda _names: 1
@@ -337,8 +359,28 @@ def test_the_base_expansion_opens_a_base_when_the_housing_is_full():
     ai = Computer.__new__(Computer)
     ai.AI_type = "expert"
     ai._target_townhalls = 0
-    ai.world = types.SimpleNamespace(population_limit=100)
-    ai.population = 95
+    ai.world = types.SimpleNamespace(population_limit=1999)
+    ai.population = 20
+    ai.used_population = 18
+    ai.units = []
+    ai._main_base_type_names = lambda: ("town_center",)
+    ai.future_nb = lambda _names: 1
+
+    assert ai._automatic_base_target() == 1 + 3
+
+
+def test_the_global_population_limit_does_not_trigger_the_expansion():
+    """The world's population limit is shared by every player.
+
+    AoE2's cw1 map uses 1999.  An AI with 140 housing and 135 units is
+    under pressure even though 135 is far below 1999.
+    """
+    ai = Computer.__new__(Computer)
+    ai.AI_type = "expert"
+    ai._target_townhalls = 0
+    ai.world = types.SimpleNamespace(population_limit=1999)
+    ai.population = 140
+    ai.used_population = 135
     ai.units = []
     ai._main_base_type_names = lambda: ("town_center",)
     ai.future_nb = lambda _names: 1
@@ -350,8 +392,9 @@ def test_a_beginner_never_opens_a_base_on_its_own():
     ai = Computer.__new__(Computer)
     ai.AI_type = "beginner"
     ai._target_townhalls = 0
-    ai.world = types.SimpleNamespace(population_limit=100)
-    ai.population = 95
+    ai.world = types.SimpleNamespace(population_limit=1999)
+    ai.population = 20
+    ai.used_population = 18
     ai.units = []
     ai._main_base_type_names = lambda: ("town_center",)
     ai.future_nb = lambda _names: 1
@@ -364,8 +407,9 @@ def test_the_base_expansion_uses_the_base_type_of_the_mod():
     ai = Computer.__new__(Computer)
     ai.AI_type = "expert"
     ai._target_townhalls = 0
-    ai.world = types.SimpleNamespace(population_limit=100)
-    ai.population = 95
+    ai.world = types.SimpleNamespace(population_limit=1999)
+    ai.population = 20
+    ai.used_population = 18
     ai.units = []
     ai._main_base_type_names = lambda: ("mairie",)
     ai.future_nb = lambda _names: 1

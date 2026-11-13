@@ -231,26 +231,42 @@ def expansion_headroom(ai_type: Optional[str]) -> int:
 
 
 def population_is_pressured(
-    available_population: int,
-    population_limit: int,
+    housing_capacity: int,
+    population_used: int,
     *,
     threshold: float = 0.75,
 ) -> bool:
-    """True when the housing the AI owns is nearly full.
+    """True when the AI's *own* housing is nearly full.
 
-    ``population_limit`` of 0 (or less) means the rules do not have a
-    population limit: there is no pressure, so no expansion.
+    ``housing_capacity`` is what the AI's buildings provide (a town
+    center gives 5, a house gives 5 …) and ``population_used`` is how
+    many population the AI's units consume.  The AI must open a new
+    base when its own housing is running out.
+
+    The world's ``population_limit`` is deliberately **not** used here:
+    that is the *global* cap shared by every player (AoE2's cw1 map
+    uses 1999), and comparing the AI's housing against it would never
+    report any pressure.
+
+    A capacity of 0 (or less) means the rules give no housing at all:
+    there is no pressure to relieve, so no expansion.
     """
     try:
-        limit = int(population_limit or 0)
-        have = int(available_population or 0)
+        capacity = int(housing_capacity or 0)
+        used = int(population_used or 0)
     except (TypeError, ValueError):
         return False
-    if limit <= 0:
+    if capacity <= 0:
         return False
-    if have < 0:
-        have = 0
-    return have >= limit * threshold
+    if used < 0:
+        used = 0
+    # The headroom is what matters: a full house means the AI cannot
+    # train the next unit.  The threshold is a fraction of the capacity,
+    # so an AI with 20 housing and 14 units is under pressure.
+    headroom = capacity - used
+    if headroom <= 0:
+        return True
+    return headroom <= capacity * (1.0 - threshold)
 
 
 def expansion_is_worthwhile(

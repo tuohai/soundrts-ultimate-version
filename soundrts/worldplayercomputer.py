@@ -1483,7 +1483,10 @@ class Computer(Player):
         ``0`` means "do not expand on its own".  The rules that decide:
 
         * the difficulty (a beginner AI never expands by itself);
-        * the population pressure (the housing must be nearly full);
+        * the population pressure (the AI's own housing must be nearly
+          full -- *not* the world's global population limit, which is
+          shared by every player and is far too large to ever be
+          reached);
         * the base's own ``ai_base_worth_expanding`` attribute.
         """
         budget = _ai_economy.expansion_headroom(getattr(self, "AI_type", None))
@@ -1494,10 +1497,14 @@ class Computer(Player):
             return 0
         if not _ai_economy.base_is_worth_expanding(rules, bases[0]):
             return 0
-        limit = getattr(getattr(self, "world", None), "population_limit", 0) or 0
-        if not _ai_economy.population_is_pressured(
-            self.available_population, limit
-        ):
+        # ``self.population`` is the housing the AI's own buildings
+        # provide; ``self.used_population`` is what its units consume.
+        try:
+            capacity = int(self.population)
+            used = int(self.used_population)
+        except (TypeError, ValueError):
+            return 0
+        if not _ai_economy.population_is_pressured(capacity, used):
             return 0
         # The starting base counts toward the total, so a budget of 1
         # means "one base in addition to the one the AI starts with".
