@@ -8585,12 +8585,12 @@ class Computer(Player):
         wanted = self._multi_queue_wanted_army_types()
         if not wanted:
             return False
-        # ``limit`` is how many buildings may run a queue at the same
-        # time.  The buildings that are already busy count towards it:
-        # the regular plan path just used one of them.
+        # ``limit`` is how many *extra* queues this difficulty may open,
+        # on top of the one the regular plan path always uses.  The
+        # buildings that are already busy are not available any more,
+        # so the budget is clamped by the idle ones.
         limit = _ai_economy.multi_queue_limit(ai_type)
-        running = len(all_hosts) - len(idle_hosts)
-        budget = min(limit - running, len(idle_hosts))
+        budget = min(limit, len(idle_hosts))
         if budget <= 0:
             return False
         # The *least loaded* building gets the order first, so the

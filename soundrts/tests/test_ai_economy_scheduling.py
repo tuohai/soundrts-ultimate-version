@@ -431,6 +431,7 @@ def test_a_beginner_keeps_a_single_production_queue():
 
 def test_the_higher_tiers_open_more_queues():
     assert eco.should_open_extra_queue("intermediate") is True
+    assert eco.multi_queue_limit("intermediate") == 1
     assert eco.multi_queue_limit("advanced") == 2
     assert eco.multi_queue_limit("expert") == 3
     assert eco.multi_queue_limit("nightmare") == 4
@@ -443,10 +444,16 @@ def test_an_unknown_difficulty_opens_one_extra_queue():
 
 def test_the_queue_budget_is_capped_by_what_the_ai_owns():
     """A tier never invents buildings to fill its quota."""
+    # The limit counts *extra* queues: with two owned buildings an
+    # expert may use one of them besides the first one.
     assert eco.extra_queue_budget("expert", 1) == 0
     assert eco.extra_queue_budget("expert", 2) == 1
-    assert eco.extra_queue_budget("expert", 5) == 2
+    assert eco.extra_queue_budget("expert", 5) == 3
     assert eco.extra_queue_budget("beginner", 9) == 0
+    # An intermediate AI may open one extra queue as soon as it owns
+    # a second production building.
+    assert eco.extra_queue_budget("intermediate", 2) == 1
+    assert eco.extra_queue_budget("intermediate", 5) == 1
 
 
 def test_a_busy_building_has_no_room_for_another_order():

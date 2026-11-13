@@ -436,14 +436,17 @@ MULTI_QUEUE_LIMITS = {
 
 
 def multi_queue_limit(ai_type: Optional[str]) -> int:
-    """How many production buildings this difficulty keeps busy at once.
+    """How many *extra* production queues this difficulty may open.
 
     ``0`` means "one queue only": the AI trains through a single host
     and leaves the other factories idle, exactly like before.
 
-    The limit is a *policy* graded by difficulty, like the worker
-    balancing.  It is also capped by what the AI actually owns, so a
-    tier never builds extra buildings just to fill its quota.
+    The number is *additional* queues on top of the one the regular
+    plan path always uses, so ``intermediate`` (1) really does open a
+    second queue.  It is a *policy* graded by difficulty, like the
+    worker balancing, and it is always capped by what the AI actually
+    owns, so a tier never builds extra buildings just to fill its
+    quota.
     """
     name = str(ai_type or "").strip().lower()
     if name in ("timers", "beginner", "easy"):
@@ -550,4 +553,4 @@ def extra_queue_budget(ai_type: Optional[str], owned_hosts: int) -> int:
         owned = 0
     if owned <= 1:
         return 0
-    return min(limit - 1, owned - 1)
+    return min(limit, owned - 1)
