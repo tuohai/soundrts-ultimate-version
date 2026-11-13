@@ -100,17 +100,19 @@
 
 - **问题**：在 ``res/multi/jl1.txt`` 上，中级电脑在村民探索时约 8 分钟进攻，而在村民不探索时要 13 到 15 分钟。这不是随机性：``constant_attacks 1`` 让 AI 每 tick 都去攻击 ``_enemy_presence``，而那个列表里只有 AI *看见过*敌人的格子。没有斥候时列表一直是空的，``_eventually_attack([])`` 于是把全军都分配去守家，军队就在基地里闲着，直到有东西自己走进它的视野。
 - **改进**：``_blind_attack_targets`` 现在会退回到敌方出生点，于是看不见敌人的军队会主动去找它。这些格子按*玩家*（``Player._map_start_square``）而不是按出生槽位解析，因为 ``random_starts`` 打乱之后 ``world.players_starts`` 与 ``world.players`` 并对不上；而且只考虑敌对玩家，因此 AI 绝不会进军盟友的城镇。``_ensure_housing`` 现在也会向工人讨要房子缺的那部分资源：AI 过去会先付钱造好兵营，然后既买不起下一个村民也买不起下一座房子，人口上限被卡住好几分钟而什么也没发生。
-- **范围**：``soundrts/worldplayercomputer.py``、``soundrts/worldplayerbase/base.py``、``soundrts/tests/test_ai_jl1_blind_attack.py``。
+- **这是 13 到 15 分钟那一档的主因**：在 jl1 上分别关掉这一个修复与下一个修复实测，关掉它之后「探索 / 不探索」之间会重新出现 3 到 7 分钟的差距，而不关它时差距始终在 1 分钟以内。
+- **范围**：``soundrts/worldplayercomputer.py``、``soundrts/worldplayerbase/base.py``、``soundrts/tests/test_ai_jl1_blind_attack.py``、``soundrts/tests/test_ai_jl1_attack_attribution.py``。
 
 **修复：AI 的开局分支被「是否派村民探索」随机重掷**
 
-- **问题**：同一张地图上，首次进攻依然会在约 8 分钟或约 13 到 15 分钟之间跳变，找不到任何表面原因。根源是计划里的 ``goto_random`` 指令 —— 它从 ``world.random`` 这个**共享**模拟流里抽分支。而这时共享流已经消耗了多少次，取决于 AI 在此前几秒钟做了什么：一个被派去 ``auto_explore`` 的村民会多消耗两次随机数，正好把共享流挪开两位，于是 AI 挑到了*另一个*开局分支 —— ``very_early_rush``（3 村民 + 1 步兵）、``early_rush``（4 + 5 步兵）、``rush``（9 + 5 步兵）或 ``phase2``（9 村民 + 15 弓箭手）。每个分支在走到自己的 ``attack`` 之前需要凑齐的军队都不一样，于是首次进攻就落在约 8 分钟或约 13 分钟，而且毫无表面理由。
+- **问题**：`goto_random` 原本从 ``world.random`` 这个**共享**模拟流里抽分支。而这时共享流已经消耗了多少次，取决于 AI 在此前几秒钟做了什么：一个被派去 ``auto_explore`` 的村民会多消耗两次随机数（实测 20 个 seed 全部精确等于 2），正好把共享流挪开两位，于是 AI 挑到了*另一个*开局分支 —— ``very_early_rush``（3 村民 + 1 步兵）、``early_rush``（4 + 5 步兵）、``rush``（9 + 5 步兵）或 ``phase2``（9 村民 + 15 弓箭手）。每个分支在走到自己的 ``attack`` 之前需要凑齐的军队都不一样，所以探索与否会实质改变开局强度：一个无关的决策不该决定 AI 开什么局。
 - **改进**：分支改从 AI 自己的流里抽取，种子由对局 seed 与玩家身份决定，因此既不取决于探索决策，也不取决于模拟此前做过的任何事。这个流保存为**纯整数**（而不是 ``random.Random`` 对象），这样按值捕获玩家属性的回滚快照机制才能正确地把它倒回去。在 jl1 上跑 20 个 seed 实测：修复前，开启与不开启探索的开局分支只有 5/20 相同；修复后是 20/20 相同。
-- **范围**：``soundrts/worldplayercomputer.py``、``soundrts/tests/test_ai_plan_rng_decoupled.py``。
+- **这是独立于上一条的问题**：抽签本身按规则执行，并没有 bug；bug 在于抽签的**时机**会被无关决策挪动。实测把开局分支强制固定后，探索与否对首次进攻时间的影响始终在 1 分钟以内 —— 所以这一条本身**并不是** 13 到 15 分钟那一档的成因，那一档来自上一条的盲攻回退。
+- **范围**：``soundrts/worldplayercomputer.py``、``soundrts/tests/test_ai_plan_rng_decoupled.py``、``soundrts/tests/test_ai_jl1_attack_attribution.py``。
 
 **新增：两个无头基准工具**
 
-- **调整**：``bench_ai_features.py`` 会跑一场真实的无头对局（SDL dummy 驱动，不开游戏窗口），测量三项新 AI 特性的实际效果：额外队列下了多少订单、它们分布在哪些生产建筑上；工人用了几个采集目标、最大的那个有多大；以及主基地数量随时间的变化。``--ab`` 会用同一套 AI 跑两遍（其中一遍关掉多队列），以量化多队列的价值。``bench_jl1_sweep.py`` 会扫描 ``res/multi/jl1.txt`` 的各个 seed，报告中级 AI 第一次把军队派出基地是第几分钟，分别在村民探索与不探索两种情况下；``--old-rng`` 可以恢复修复前的行为以便随时复现这个 bug，``--seed-list`` 则可以重放一列指定的 seed。
+- **调整**：``bench_ai_features.py`` 会跑一场真实的无头对局（SDL dummy 驱动，不开游戏窗口），测量三项新 AI 特性的实际效果：额外队列下了多少订单、它们分布在哪些生产建筑上；工人用了几个采集目标、最大的那个有多大；以及主基地数量随时间的变化。``--ab`` 会用同一套 AI 跑两遍（其中一遍关掉多队列），以量化多队列的价值。``bench_jl1_sweep.py`` 会扫描 ``res/multi/jl1.txt`` 的各个 seed，报告中级 AI 第一次把军队派出基地是第几分钟，分别在村民探索与不探索两种情况下；``--old-rng`` 可以恢复修复前的行为以便随时复现这个 bug，``--seed-list`` 则可以重放一列指定的 seed，``--force-branch`` 则把开局分支钉死（``very_early_rush`` / ``early_rush`` / ``rush`` / ``phase2``），用来回答「分支本身是不是延迟的主因」这个问题。
 - **范围**：``bench_ai_features.py``、``bench_jl1_sweep.py``。
 
 **新增：回滚网络协议的架构文档**
@@ -120,7 +122,7 @@
 
 **新增：本次发布的回归测试**
 
-- **范围**：``soundrts/tests/test_net_protocol.py``、``soundrts/tests/test_net_input_stream_server.py``、``soundrts/tests/test_net_rollback.py``、``soundrts/tests/test_net_rollback_session.py``、``soundrts/tests/test_net_rollback_spectator.py``、``soundrts/tests/test_net_rollback_wiring.py``、``soundrts/tests/test_net_rollback_live.py``、``soundrts/tests/test_ai_economy_scheduling.py``、``soundrts/tests/test_ai_jl1_blind_attack.py``、``soundrts/tests/test_ai_plan_rng_decoupled.py``。
+- **范围**：``soundrts/tests/test_net_protocol.py``、``soundrts/tests/test_net_input_stream_server.py``、``soundrts/tests/test_net_rollback.py``、``soundrts/tests/test_net_rollback_session.py``、``soundrts/tests/test_net_rollback_spectator.py``、``soundrts/tests/test_net_rollback_wiring.py``、``soundrts/tests/test_net_rollback_live.py``、``soundrts/tests/test_ai_economy_scheduling.py``、``soundrts/tests/test_ai_jl1_blind_attack.py``、``soundrts/tests/test_ai_plan_rng_decoupled.py``、``soundrts/tests/test_ai_jl1_attack_attribution.py``。
 
 1.5.1.8
 -------
