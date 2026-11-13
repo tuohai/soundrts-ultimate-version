@@ -15,6 +15,7 @@ from .ai_brain import (
 )
 from .definitions import filter_ai_executable_plan, get_ai, parse_ai_start_settings, rules
 from .lib.log import exception, info, warning
+from . import world_ai_economy as _ai_economy
 from .world_build_rules import (
     building_can_operate,
     effective_can_train,
