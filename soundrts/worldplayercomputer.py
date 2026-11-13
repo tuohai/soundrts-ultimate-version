@@ -6787,6 +6787,10 @@ class Computer(Player):
         # crazyMod z5：``get 28 canon_plasma`` 的需求链要升级 215 秒，
         # 期间 30 个工人全闲、200 万金币躺着 —— AI 一个兵都不造。
         self._fallback_train_army_when_plan_stalled()
+        # 多线补兵：让**每一座**生产建筑都开一条队列，而不是把所有兵
+        # 都塞进第一座兵营。分级由 AI_type 决定（beginner 单线，
+        # expert/nightmare 多线），完全由 rules 驱动，不认识任何兵种名。
+        self._maintain_multi_queue_production()
         # 主动补齐当前计划行缺失的**需求建筑**，不要等到计划走到那个
         # token 才发现造不出来（crazyMod z5 的 accelerateur_de_particules
         # 链会让整行卡 1300 秒）。
@@ -8326,6 +8330,290 @@ class Computer(Player):
             hosts.sort(key=lambda u: getattr(u, "id", 0) or 0)
             result.append((name, hosts[0]))
         return result
+
+    # ------------------------------------------------------------------
+    # Multi-queue reinforcement (多线补兵)
+    # ------------------------------------------------------------------
+
+    def _owned_production_hosts(self):
+        """The AI's operable production buildings, in a stable order.
+
+        "Production building" is *not* a type name: it is any building
+        that lists at least one trainable unit.  A mod's barracks, a
+        StarCraft factory and a CrazyMod garage are all found the same
+        way, through ``effective_can_train``.
+
+        The order is by unit id, which is stable across runs (unlike the
+        object address), so the dispatch is reproducible.
+        """
+        hosts = []
+        for u in getattr(self, "units", ()) or ():
+            if not getattr(u, "is_a_building", False):
+                continue
+            if getattr(u, "place", None) is None:
+                continue
+            if not building_can_operate(u):
+                continue
+            try:
+                trainable = effective_can_train(u)
+            except Exception:
+                trainable = ()
+            if not trainable:
+                continue
+            hosts.append(u)
+        hosts.sort(key=lambda u: getattr(u, "id", 0) or 0)
+        return hosts
+
+    def _host_train_load(self, host):
+        """How many units *host* has already produced for the AI.
+
+        The load is what makes the AI spread its production: the
+        building that has trained the fewest units gets the next order.
+
+        The engine does not keep a "created by" back-pointer, so the
+        AI counts the orders it gave to each host itself.  The tally
+        lives on the Computer and is therefore stable across turns and
+        reproducible across runs.
+        """
+        tally = getattr(self, "_ai_trained_by_host", None)
+        if tally is None:
+            tally = {}
+            self._ai_trained_by_host = tally
+        key = getattr(host, "id", None)
+        count = int(tally.get(key, 0) or 0)
+        # The units that are already in the queue count too.
+        return count + _ai_economy.production_queue_depth(host)
+
+    def _record_host_order(self, host):
+        """Remember that the AI gave one more order to *host*."""
+        tally = getattr(self, "_ai_trained_by_host", None)
+        if tally is None:
+            tally = {}
+            self._ai_trained_by_host = tally
+        key = getattr(host, "id", None)
+        tally[key] = int(tally.get(key, 0) or 0) + 1
+
+    def _train_on_extra_queue(self, type_name, host, cost):
+        """Order one unit from *host*.
+
+        ``TrainOrder`` pays the resources itself when the order is
+        queued, and it refuses the order when the treasury is short, so
+        the AI checks the cost *before* ordering: the plan's money
+        reserve is not spent by accident.
+
+        The food that the age-up needs is protected the same way the
+        stalled-plan fallback protects it: a soldier that eats into the
+        500-food bank delays the first real wave, and the age-up gates
+        everything else.
+
+        Returns True when the order was really queued.  The engine may
+        refuse it (no space on the square, not enough population, a
+        requirement that is not met), and a refused order must not be
+        counted as production.
+        """
+        try:
+            if self.missing_resources(cost):
+                return False
+        except Exception:
+            return False
+        if not self._extra_queue_may_spend_food(cost):
+            return False
+        before = _ai_economy.production_queue_depth(host)
+        try:
+            host.take_order(["train", type_name])
+        except Exception:
+            return False
+        after = _ai_economy.production_queue_depth(host)
+        if after <= before:
+            # The order was refused by the engine.
+            return False
+        self._record_host_order(host)
+        self._invalidate_play_derived_counts()
+        return True
+
+    def _extra_queue_may_spend_food(self, cost):
+        """True when the extra queue may spend this much food.
+
+        The food that is being saved for the age-up must not be spent
+        on extra soldiers: the 500-food feudal click is the gate for
+        the first *real* wave, and one militia (50 food) is 10 % of it.
+        The unit is only allowed when the bank already covers the
+        age-up *plus* this unit.
+        """
+        try:
+            saving_food = bool(self._saving_food_for_age())
+        except Exception:
+            saving_food = False
+        if not saving_food:
+            return True
+        food_cost = cost[2] if len(cost) > 2 else 0
+        if not food_cost:
+            return True
+        try:
+            age_cost = self._pending_age_up_food_cost()
+        except Exception:
+            age_cost = 0
+        if not age_cost:
+            return True
+        res = getattr(self, "resources", None) or ()
+        food = res[2] if len(res) > 2 else 0
+        return food >= age_cost + food_cost
+
+    def _multi_queue_wanted_army_types(self):
+        """The army units the current plan still wants, with their quota.
+
+        The plan's ``get`` line is the AI's wish list: ``get 6 militia``
+        means "six militiamen".  The regular path trains them through a
+        *single* host, one unit per turn, so a second barracks stands
+        idle while the first one grinds.
+
+        This method returns the tokens of the current line that are
+        still missing, as ``(type_name, missing_count)`` pairs.  The
+        quota is the *plan's* quota, so the multi-queue never builds
+        more than the plan asked for.
+
+        When the plan wants no soldier (the line is satisfied, or it is
+        not a ``get`` line), nothing is returned: the multi-queue only
+        decides *where* the plan's units are trained, never *what* the
+        AI builds.
+        """
+        pairs = []
+        try:
+            line = self._plan[self._line_nb]
+        except Exception:
+            line = ""
+        if not (isinstance(line, str) and line.startswith("get ")):
+            return pairs
+        try:
+            for count, token in parse_get_pairs(line.split()[1:]):
+                if rules.unit_class(token) is None:
+                    continue
+                name = (
+                    self.equivalent(token)
+                    if callable(getattr(self, "equivalent", None))
+                    else token
+                )
+                if not name or not self._token_is_army_for_inject(name):
+                    continue
+                try:
+                    have = self.future_nb(name)
+                except Exception:
+                    have = 0
+                missing = max(0, int(count) - int(have or 0))
+                if missing:
+                    pairs.append((name, missing))
+        except Exception:
+            return []
+        return pairs
+
+    def _hosts_that_can_train(self, type_name, hosts):
+        """The idle hosts that can train *type_name* right now.
+
+        The unit type is compared through ``equivalent``, because a mod
+        may name its soldier ``militia`` while the building lists the
+        civ skin (``portuguese_militia``).
+        """
+        result = []
+        for host in hosts:
+            try:
+                trainable = effective_can_train(host)
+            except Exception:
+                trainable = ()
+            names = set(trainable or ())
+            mapped = set()
+            for name in names:
+                mapped.add(name)
+                if callable(getattr(self, "equivalent", None)):
+                    try:
+                        mapped.add(self.equivalent(name))
+                    except Exception:
+                        pass
+            if type_name in mapped:
+                result.append(host)
+        return result
+
+    def _maintain_multi_queue_production(self):
+        """Keep several production buildings busy at the same time.
+
+        The AI used to train through a *single* host: the first factory
+        that could build the unit got the order, and every other
+        factory stood idle.  With two barracks that means half the
+        production capacity is wasted, and the army grows at half the
+        speed the player expects.
+
+        This method opens a second, third, ... queue -- one per owned
+        production building -- for the difficulties that are allowed to
+        do so.  It is deliberately *rules-driven*:
+
+        * the buildings are found through ``effective_can_train``, not
+          by type name;
+        * the units are the ones the *plan* asks for, and the plan's
+          quota is respected, so the AI never builds more than the
+          build order wanted;
+        * the cost comes from the rules, so a mod's own economy is
+          respected.
+
+        The behaviour degrades gracefully: a mod with one production
+        building behaves exactly like before, and a mod whose
+        buildings train nothing the AI wants is simply not used.
+        """
+        ai_type = getattr(self, "AI_type", None)
+        if not _ai_economy.should_open_extra_queue(ai_type):
+            return False
+        all_hosts = self._owned_production_hosts()
+        if len(all_hosts) < 2:
+            # Only one production building: there is no second queue to
+            # open.  The regular plan path already uses it.
+            return False
+        # The hosts that may take an order *now*: only the idle ones.
+        # A building that is already training is left alone, so the AI
+        # spreads over its factories instead of stacking ten orders on
+        # the first one.
+        idle_hosts = [
+            host for host in all_hosts if not _ai_economy.production_queue_depth(host)
+        ]
+        if not idle_hosts:
+            return False
+        wanted = self._multi_queue_wanted_army_types()
+        if not wanted:
+            return False
+        # ``limit`` is how many buildings may run a queue at the same
+        # time.  The buildings that are already busy count towards it:
+        # the regular plan path just used one of them.
+        limit = _ai_economy.multi_queue_limit(ai_type)
+        running = len(all_hosts) - len(idle_hosts)
+        budget = min(limit - running, len(idle_hosts))
+        if budget <= 0:
+            return False
+        # The *least loaded* building gets the order first, so the
+        # production is balanced instead of always hitting the first
+        # factory.  The id is the tie-breaker: it is stable across runs.
+        loads = [(self._host_train_load(host), host) for host in idle_hosts]
+        loads.sort(key=lambda item: (item[0], getattr(item[1], "id", 0) or 0))
+        used = set()
+        ordered = False
+        for type_name, missing in wanted:
+            remaining = int(missing)
+            capable = self._hosts_that_can_train(type_name, idle_hosts)
+            if not capable:
+                continue
+            cls = rules.unit_class(type_name)
+            if cls is None:
+                continue
+            cost = tuple(getattr(cls, "cost", None) or ())
+            for _load, host in loads:
+                if remaining <= 0 or budget <= 0:
+                    break
+                if host in used:
+                    continue
+                if host not in capable:
+                    continue
+                if self._train_on_extra_queue(type_name, host, cost):
+                    ordered = True
+                    remaining -= 1
+                    budget -= 1
+                    used.add(host)
+        return ordered
 
     def _ensure_detector_prerequisites(self, detector_cls):
         """Make sure the *type requirements* of a detector type are met.
