@@ -322,7 +322,71 @@ class Computer(Player):
             self._attacked_this_play = False
             self._utility_goal = None
             self._scout_sequence_started = None
+            # Dedicated draw counter for the plan's ``goto_random`` lines.
+            #
+            # ``goto_random`` used to draw from ``world.random``, the shared
+            # simulation stream.  How many numbers that stream has consumed by
+            # the time the draw happens depends on what the AI did before --
+            # and a villager that explores (or does not) shifts it by a
+            # couple of draws.  The AI therefore got a *different opening
+            # plan* depending on whether its villagers had explored, and each
+            # branch demands a different army before it commits:
+            #
+            #     very_early_rush -> get 3 peasant 1 footman
+            #     early_rush      -> get 4 peasant 5 footman
+            #     rush            -> get 9 peasant 5 footman
+            #     phase2          -> get 9 peasant 15 archer
+            #
+            # On res/multi/jl1 that made the first attack land at ~8 min or
+            # at ~13 min for no visible reason.  The branch is now drawn from
+            # a dedicated stream keyed on the match seed and the player's
+            # identity, so it depends on neither.
+            #
+            # The stream is kept as a plain integer (not a ``random.Random``
+            # object) so that the rollback snapshot machinery, which copies
+            # player attributes by value, can rewind it correctly.
+            self._plan_draw = 0
             self._update_effect_users_and_workers()  # required by some tests
+
+    def _plan_random_seed(self):
+        """Seed of the dedicated ``goto_random`` stream.
+
+        It is derived from the match seed and the player's own identity, so
+        it is stable across a match and independent of how many draws the
+        shared simulation stream has already consumed.  Two AIs in the same
+        game get different streams (they must not open with the same plan),
+        and the same AI on the same map and seed always gets the same plan.
+        """
+        world = getattr(self, "world", None)
+        seed = getattr(world, "seed", None) if world is not None else None
+        if seed is None:
+            seed = getattr(world, "_seed", 0) if world is not None else 0
+        try:
+            seed = int(seed)
+        except (TypeError, ValueError):
+            seed = 0
+        return (seed * 1000003 + int(getattr(self, "id", 0) or 0)) & 0xFFFFFFFF
+
+    def _plan_random_choice(self, options):
+        """Pick one of *options* from the AI's own deterministic stream.
+
+        The stream is a small integer state advanced by one step per draw,
+        so it is trivially copyable by the snapshot machinery and cannot be
+        perturbed by anything the rest of the simulation does.
+        """
+        options = list(options)
+        if not options:
+            return None
+        state = getattr(self, "_plan_draw", None)
+        if state is None:
+            state = 0
+        # A cheap integer hash (xorshift-style) so that consecutive draws
+        # do not simply walk the option list.
+        state = (state * 1103515245 + self._plan_random_seed() + 12345) & 0x7FFFFFFF
+        state ^= (state >> 13)
+        state = (state * 2654435761) & 0xFFFFFFFF
+        self._plan_draw = (state + 1) & 0xFFFFFFFF
+        return options[state % len(options)]
 
     _previous_linechange = 0
     __line_nb = 0
@@ -360,8 +424,14 @@ class Computer(Player):
                 self._line_nb += 1
                 info(cmd[1])
             elif cmd[0] == "goto_random":
-                dest = self.world.random.choice(cmd[1:])
-                if "label " + dest in self._plan:
+                # Draw from the AI's own stream, not the shared simulation
+                # stream: the branch must not depend on what the AI (or any
+                # other player) happened to do before.  See
+                # ``Computer.set_ai`` for the full explanation.
+                dest = self._plan_random_choice(cmd[1:])
+                if dest is None:
+                    self._line_nb += 1
+                elif "label " + dest in self._plan:
                     self._line_nb = self._plan.index("label " + dest)
                 else:
                     warning("goto_random: label not found: %s", dest)
