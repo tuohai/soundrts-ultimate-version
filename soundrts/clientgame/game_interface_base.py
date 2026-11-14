@@ -261,9 +261,18 @@ class GameInterface(AttributesInterface):
         snapshot of that frame is still in the history window (64 frames,
         19.2 s of virtual time).  A client that falls further behind — for
         instance because it was paused for a long time — cannot rewind that
-        far, and its world is then provably wrong: it holds a prediction
-        the server has just contradicted, and it will stay wrong for the
-        rest of the match.
+        far.
+
+        Being too far behind is not enough on its own, though: the world
+        is only really wrong when the server's authoritative content for
+        that frame contradicts what the client applied on it.  A late but
+        harmless confirmation (a player that paused and did nothing) leaves
+        the world correct, and the match goes on — see
+        :meth:`soundrts.net.rollback.RollbackManager._trimmed_frame_is_a_desync`.
+
+        When the content really does contradict what was applied, the world
+        the client is holding holds a prediction the server has just
+        contradicted, and it will stay wrong for the rest of the match.
 
         Silently continuing would let the client diverge from every other
         client without anybody noticing, so the desync is announced and the

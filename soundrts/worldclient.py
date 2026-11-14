@@ -605,10 +605,18 @@ class Coordinator(_Client):  # client coordinator for multiplayer games
         """Has the client fallen too far behind to repair itself?
 
         This happens when the dirty frame is older than the rollback
-        history window (64 frames, i.e. 19.2 s of virtual time).  The world
-        the client is holding then contains a prediction the server has
-        just contradicted, and it will stay wrong for the rest of the
-        match.
+        history window (64 frames, i.e. 19.2 s of virtual time) *and* the
+        server's authoritative content for that frame contradicts what was
+        applied on it.  The world the client is holding then contains a
+        prediction the server has just contradicted, and it will stay wrong
+        for the rest of the match.
+
+        A frame that cannot be redone is not enough on its own: when the
+        authoritative content agrees with what was applied, the world is
+        perfectly correct and the match goes on.  That distinction matters
+        a lot in practice — a player who pauses for a long time sends its
+        (empty) input very late, and that late input used to end the
+        match on the side that was playing fine.
 
         The client must not silently continue: it would diverge from every
         other client (and from the server) without anybody noticing.  The

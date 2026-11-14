@@ -176,6 +176,36 @@ class RollbackManager:
         self.history_size = max(4, history_size)
         self.confirmed: Dict[int, InputFrame] = {}
         self.local_inputs: Dict[int, str] = {}
+        # The input vector that was *applied* on every simulated frame.
+        #
+        # The history above holds a full snapshot per frame, and it is
+        # trimmed to ``history_size`` frames.  When a frame is trimmed, its
+        # record is gone — but the frame was still simulated, and the
+        # authoritative input that arrives for it can still be *compared*
+        # against what was applied, if that is remembered.
+        #
+        # Remembering it is what separates "the server contradicted a
+        # prediction" (a real desync, and the world really is wrong) from
+        # "the server confirmed the prediction" (no desync at all, even
+        # though the frame can no longer be redone).  Without this memory a
+        # late but harmless confirmation was reported as an unrecoverable
+        # desync, which ended perfectly healthy matches.
+        #
+        # Only the input vector is kept, not the snapshot, so this is cheap:
+        # a few short strings per frame, against hundreds of kilobytes for a
+        # snapshot.  It is kept for longer than the history, so that it is
+        # still there when a late confirmation needs it.
+        self._applied_inputs: Dict[int, Dict[str, str]] = {}
+        # How many frames the applied input vectors are kept for.
+        #
+        # This has to be comfortably larger than the history window, because
+        # the whole point is to compare a confirmation that arrives for a
+        # frame whose record has *already* been trimmed.  The server
+        # disconnects a silent player after ``config.timeout`` seconds
+        # (60 s, i.e. 200 frames of virtual time), so a confirmation can
+        # realistically be that late; the window is several times larger,
+        # and the memory cost is negligible next to the snapshots.
+        self.applied_inputs_window = max(self.history_size * 8, 1024)
         self.stats = RollbackStats()
         self._next_frame = 0
         self._rollback_target: Optional[int] = None
@@ -383,6 +413,10 @@ class RollbackManager:
         self._step()
 
         self.history.append(FrameRecord(frame, inputs, predicted, snapshot))
+        # Remember what was applied, so that a late confirmation can still
+        # be compared against it after the frame's record has been trimmed.
+        with self._inputs_lock:
+            self._applied_inputs[frame] = dict(inputs)
         self._trim_history()
         self.stats.frames_simulated += 1
         return True
@@ -400,6 +434,19 @@ class RollbackManager:
                     del self.local_inputs[frame]
             for frame in [f for f in self.confirmed if f < oldest]:
                 del self.confirmed[frame]
+            # The applied input vectors are trimmed on a *longer* schedule
+            # than the history: they are the only way left to tell a real
+            # desync from a harmless late confirmation, so they have to
+            # outlive the snapshots they were recorded with.
+            #
+            # They are cheap — a few short strings per frame, against
+            # hundreds of kilobytes for a snapshot — so they are kept for
+            # the whole window a late confirmation can realistically fall
+            # into.
+            cutoff = self._next_frame - self.applied_inputs_window
+            with self._inputs_lock:
+                for frame in [f for f in self._applied_inputs if f < cutoff]:
+                    del self._applied_inputs[frame]
 
     # -- confirmation ----------------------------------------------------
 
@@ -477,6 +524,14 @@ class RollbackManager:
             if frame < self._next_frame:
                 # The frame was simulated, but its record has been trimmed
                 # from the history, so it cannot be redone.
+                #
+                # That is *not* automatically a desync: the frame can only
+                # be wrong if the authoritative input contradicts what was
+                # applied on it.  A late but harmless confirmation (the
+                # player was idle, so the prediction was right) leaves the
+                # world perfectly correct and the match must go on.
+                if not self._trimmed_frame_is_a_desync(frame, frame_obj):
+                    return None
                 self.stats.desync_detected += 1
                 self.stats.unrecoverable_desyncs += 1
                 self._unrecoverable_desync = True
@@ -519,11 +574,19 @@ class RollbackManager:
             if number < self._next_frame:
                 # The frame *was* simulated, but its record has already been
                 # trimmed from the history: the snapshot needed to rewind to
-                # it no longer exists.  The world therefore holds a
-                # prediction that the server has just contradicted, and it
-                # cannot be repaired.  This must not be mistaken for
-                # "not simulated yet" — that would leave the client silently
-                # desynced for the rest of the match.
+                # it no longer exists.  It cannot be redone — but it is only
+                # *wrong* if the authoritative content contradicts what was
+                # applied on it.
+                #
+                # A late but harmless confirmation (the player was idle, so
+                # the prediction was right) leaves the world correct, and
+                # must not end the match.
+                if not self._trimmed_frame_is_a_desync(number, frame_obj):
+                    return None
+                # The world holds a prediction that the server has just
+                # contradicted, and it cannot be repaired.  This must not be
+                # mistaken for "not simulated yet" — that would leave the
+                # client silently desynced for the rest of the match.
                 self.stats.desync_detected += 1
                 self.stats.unrecoverable_desyncs += 1
                 self._unrecoverable_desync = True
@@ -549,13 +612,65 @@ class RollbackManager:
         discrepancy there (a re-packing, a truncated packet) must not
         trigger a rollback — the local player knows best what it ordered.
         """
-        for pid in set(record.inputs) | set(frame_obj.inputs):
+        return self._matches_inputs(record.inputs, frame_obj)
+
+    def _matches_inputs(
+        self, applied: Dict[str, str], frame_obj: InputFrame
+    ) -> bool:
+        """Does the confirmed frame agree with the given applied inputs?
+
+        Same rule as :meth:`_matches`, but the applied input vector is
+        given directly instead of through a :class:`FrameRecord`.  This is
+        what makes it possible to compare a frame whose record has already
+        been trimmed out of the history: the vector that was applied is
+        still remembered, even though the snapshot is gone.
+        """
+        for pid in set(applied) | set(frame_obj.inputs):
             if pid == self.local_player:
                 continue
-            applied = record.inputs.get(pid, "")
-            if applied != frame_obj.order_for(pid):
+            if applied.get(pid, "") != frame_obj.order_for(pid):
                 return False
         return True
+
+    def _trimmed_frame_is_a_desync(self, frame: int, frame_obj: InputFrame) -> bool:
+        """Does a late confirmation *contradict* a frame that was trimmed?
+
+        The frame was simulated and its record has been trimmed from the
+        history, so it can no longer be redone.  That alone does **not**
+        mean the world is wrong: it only means the frame cannot be
+        redone.  The world is wrong only if the authoritative content
+        differs from what was actually applied.
+
+        The two cases are very different in practice:
+
+        * the player was silent (paused, or simply idle) and the server
+          confirms an empty input — the prediction was *right*, the world
+          is fine, and the match must go on;
+        * the player did something the client had predicted away — the
+          world really is wrong, and it cannot be repaired.
+
+        Only the second case is an unrecoverable desync.  Reporting the
+        first one ended perfectly healthy matches.
+
+        Returns:
+            ``True`` when the authoritative content contradicts what was
+            applied, ``False`` when the two agree (or when there is
+            nothing left to compare, in which case the frame is treated as
+            agreeing: the input vector is trimmed together with the
+            history, so it is only missing for frames that were simulated
+            before the input vector was recorded).
+        """
+        with self._inputs_lock:
+            applied = self._applied_inputs.get(frame)
+        if applied is None:
+            # The applied vector is gone too.  This can only happen for a
+            # frame that was trimmed long ago; the prediction for it was
+            # the idle input, and there is no way left to check it.
+            #
+            # Treating it as a desync would end the match on a guess, so it
+            # is not treated as one: the frame is assumed to agree.
+            return False
+        return not self._matches_inputs(applied, frame_obj)
 
     # -- rollback --------------------------------------------------------
 
@@ -610,10 +725,17 @@ class RollbackManager:
     def unrecoverable_desync(self) -> bool:
         """Has a desync been detected that could *not* be rolled back?
 
-        This happens when the dirty frame is older than the history window:
-        the snapshot needed to rewind to it no longer exists.  The world the
-        client is holding is then provably wrong and will stay wrong, so the
-        caller has to end the match or re-sync from scratch.
+        This happens when the dirty frame is older than the history window
+        — the snapshot needed to rewind to it no longer exists — *and* the
+        authoritative content for that frame contradicts what was applied
+        on it.  The world the client is holding is then provably wrong and
+        will stay wrong, so the caller has to end the match or re-sync from
+        scratch.
+
+        A frame that cannot be redone is not enough on its own: when the
+        authoritative content agrees with what was applied, the world is
+        correct and the match goes on.  See
+        :meth:`_trimmed_frame_is_a_desync`.
         """
         return self._unrecoverable_desync
 
