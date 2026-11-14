@@ -459,7 +459,29 @@ def _capture_scalars(world) -> Dict[str, Any]:
             # counter and the re-simulated orders would get different ids
             # than the original ones.
             value = getattr(type(world), name, None)
-            if isinstance(value, (int, float, bool, str, bytes, type(None))):
+            # ``None`` is deliberately *not* accepted here.
+            #
+            # The fallback is used for attributes that simply do not exist
+            # yet, and ``getattr`` returns ``None`` for those.  Capturing
+            # that ``None`` would poison the snapshot: on restore, ``None``
+            # is written into ``world.__dict__``, which *shadows* the class
+            # attribute and defeats the lazy initialisation the simulation
+            # relies on.
+            #
+            # The concrete victim was ``_last_full_terrain_update``: the
+            # snapshot of frame 0 captured ``None`` for it, and
+            # ``World._update_terrain`` then evaluated
+            # ``self.time - self._last_full_terrain_update`` -> ``TypeError:
+            # unsupported operand type(s) for -: 'int' and 'NoneType'``.
+            # In the real client the exception is swallowed by the world
+            # thread, so the game froze for good with no error shown.
+            #
+            # A missing attribute is simply *not captured*: on restore, the
+            # attribute stays absent and the lazy initialisation runs again,
+            # exactly as it does on a fresh world.
+            if value is None:
+                continue
+            if isinstance(value, (int, float, bool, str, bytes)):
                 data[name] = value
     data["rng"] = world.random.getstate()
     return data
@@ -710,6 +732,17 @@ def _restore_scalars(world, data: Dict[str, Any]) -> None:
     for name, value in data.items():
         if name == "rng":
             world.random.setstate(value)
+            continue
+        # A ``None`` value would shadow the class attribute and defeat the
+        # lazy initialisation the simulation relies on (see
+        # ``_capture_scalars``).  Older snapshots — written before the
+        # capture side learned to skip missing attributes — do contain such
+        # ``None`` values, so they are filtered here too: restoring them
+        # would poison the world again.
+        if value is None:
+            # Drop the shadowing instance value, so the class attribute (or
+            # the lazy initialisation) applies again.
+            world.__dict__.pop(name, None)
             continue
         # Writing into ``__dict__`` shadows the class attribute, which is what
         # makes the restored value the one the simulation will read.

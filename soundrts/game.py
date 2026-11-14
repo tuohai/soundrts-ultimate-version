@@ -936,6 +936,29 @@ class ReplayGame(_Game):
             s = s[:-1]
         return s
 
+    def replay_read_line(self):
+        """Read one line of the replay, distinguishing EOF from a blank line.
+
+        :meth:`replay_read` returns an empty string both at the end of the
+        file *and* for a blank line, so a reader cannot tell "the file is
+        over" from "this line is empty".
+
+        The distinction matters for the replay *reader*: the old rollback
+        recorder wrote multi-line orders as one physical line, which left
+        blank lines in the file.  Reading such a file with
+        :meth:`replay_read` would stop at the first blank line and the rest
+        of the replay would never be played.
+
+        Returns the line (possibly empty), or ``None`` at the end of the
+        file.
+        """
+        s = self._file.readline()
+        if s == "":
+            return None
+        if s.endswith("\n"):
+            s = s[:-1]
+        return s
+
     def pre_run(self):
         voice.info(mp.OBSERVE_ANOTHER_PLAYER_EXPLANATION)
         voice.flush()

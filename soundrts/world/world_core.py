@@ -107,6 +107,24 @@ class World:
     enemy_damage_factor = 100
     coop_difficulty = ""
 
+    # Lazily-initialised counters, with their *class-level* defaults.
+    #
+    # These are created on demand by ``World.update`` (see the
+    # ``hasattr`` guards in ``world_game.py``).  Giving them a class-level
+    # default does two things:
+    #
+    # 1. the rollback snapshot can read them as a fallback, so a snapshot
+    #    taken *before* the first update still records the right value
+    #    instead of ``None`` (see ``soundrts.net.snapshot._capture_scalars``);
+    # 2. the snapshot no longer has to special-case a missing attribute, so
+    #    the lazy initialisation and the snapshot agree.
+    #
+    # The values are the ones the lazy initialisation itself would use:
+    # ``_last_full_terrain_update`` -> 0 (a full terrain sweep is due),
+    # ``_last_perception_cleanup`` -> 0 (a perception cleanup is due).
+    _last_full_terrain_update = 0
+    _last_perception_cleanup = 0
+
     def __init__(self, default_triggers=None, seed=0):
         if default_triggers is None:
             default_triggers = []
@@ -419,6 +437,10 @@ class World:
         return d.hexdigest()
 
     previous_state = (0, b"")
+    # Same story as ``previous_state``: a class-level default, so the
+    # snapshot of the very first frame records a real value instead of
+    # ``None`` (a ``None`` would poison the world on restore).
+    previous_previous_state = (0, b"")
 
     def _record_sync_debug_info(self):
         try:

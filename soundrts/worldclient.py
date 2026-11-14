@@ -9,6 +9,7 @@ import urllib.request
 from hashlib import md5
 from typing import Optional
 
+from .definitions import VIRTUAL_TIME_INTERVAL
 from .lib import chronometer as chrono
 from .lib.log import exception, info, warning
 from .metaserver import METASERVER_URL
@@ -23,6 +24,21 @@ FIRST_FPCT = 1
 # used for packing the orders
 NEWLINE_REPLACEMENT = ";"
 SPACE_REPLACEMENT = ","
+
+# The orders a replay line may start with.  A line that starts with one of
+# these but has no time is a *continuation*: it is the second (or third,
+# ...) order of a multi-line order, written by the old rollback recorder
+# (which put a raw newline in the replay file).
+REPLAY_ORDER_KEYWORDS = (
+    "control",
+    "order",
+    "quit",
+    "say",
+    "flare",
+    "speed",
+    "set_formation",
+    "stop",
+)
 
 
 def _pack(player_orders):
@@ -199,19 +215,166 @@ class ReplayClient(DirectClient):
         elif not s.startswith(("control", "order")):
             self.queue_command(self.player, s)
 
+    # -- reading the replay ----------------------------------------------
+
+    def _parse_replay_record(self, line):
+        """Parse one replay line into ``(time, player index, command)``.
+
+        Returns ``None`` when the line is not a record (a malformed line, or
+        a continuation of a multi-line order written by an old version of
+        the rollback recorder).
+
+        The old reader did ``self._cmd.split(" ", 2)`` and then
+        ``int(time)``, and both could raise:
+        * a continuation line (``order 0 0 default 7``) has no time, so
+          ``int("order")`` raises ``ValueError`` and the replay dies;
+        * a line with fewer than three fields raises ``ValueError`` on the
+          unpacking.
+
+        Both are handled here, so a damaged (or old) replay line is skipped
+        instead of taking the whole playback down.
+        """
+        if not line:
+            return None
+        parts = line.split(" ", 2)
+        if len(parts) < 3:
+            return None
+        time_part, player_part, command = parts
+        try:
+            record_time = int(time_part)
+            player_index = int(player_part)
+        except ValueError:
+            # Not a record: a continuation line, or a corrupted line.
+            return None
+        if not command:
+            return None
+        return record_time, player_index, command
+
+    def _parse_continuation(self, line, previous):
+        """Parse a continuation line of a multi-line order.
+
+        The old rollback recorder wrote a multi-line order string as one
+        physical line, which put a raw newline in the replay file.  The
+        lines after the first therefore have no time and no player index:
+        they are the remaining orders of the *same* player's order string,
+        applied at the *same* time.
+
+        So a continuation line is turned back into a record that belongs to
+        the previous record: same time, same player, and the continuation
+        as the command.
+
+        Returns ``None`` when the line is not a continuation (a corrupted
+        line, or a line that does not start with an order keyword).
+        """
+        if not line or previous is None:
+            return None
+        stripped = line.strip()
+        if not stripped.startswith(REPLAY_ORDER_KEYWORDS):
+            return None
+        previous_time, previous_player, _previous_command = previous
+        return previous_time, previous_player, stripped
+
     def _dispatch_orders(self):
-        while True:
-            if not getattr(self, "_cmd", None):
-                self._cmd = self.game_session.replay_read()
-                if not self._cmd:
+        """Apply the replay records whose time the world has reached.
+
+        The replay is a list of ``<time> <player> <order>`` records, and
+        the world advances 300 ms per frame.  A record is applied when the
+        world's time has reached the record's time.
+
+        The old reader waited for an *exact* match
+        (``int(time) == self.player.world.time``) and stopped at the first
+        record that did not match.  That is fragile in three ways:
+
+        * a record whose time is not a multiple of 300 ms can never match
+          exactly, so the reader stalls on it forever and the rest of the
+          replay is never played;
+        * a rollback rewinds the world, so the timestamps of a rollback
+          replay are not monotonic, and a record that goes backwards is
+          never matched either;
+        * the reader stopped at the first record it could not apply, so a
+          single unmatchable record blocked *every* record behind it.
+
+        So the reader now:
+
+        * applies every record whose time is **at or before** the world's
+          time, instead of waiting for an exact match;
+        * keeps the records it cannot apply yet in a buffer, so they are
+          applied as soon as the world catches up with them;
+        * reads the *whole* file up front and applies the records in
+          chronological order, so a record that went backwards (a rollback)
+          is not lost.
+
+        The last point matters: a rollback rewinds the world, so the
+        records of the rewound frames are written *after* the records of
+        the frames that came after them.  Applying them in file order would
+        apply them at the wrong moment; sorting by time puts them back in
+        the order the match actually happened in.
+        """
+        world = self.player.world
+        pending = self._pending_replay_records()
+        # Fill the buffer with every record of the file (if it is not
+        # already in it).
+        if not getattr(self, "_replay_loaded", False):
+            self._replay_loaded = True
+            previous = None
+            while True:
+                line = self._read_replay_line()
+                if line is None:
                     break
-            time, player, command = self._cmd.split(" ", 2)
-            if int(time) == self.player.world.time:
-                player = self.player.world.players[int(player)]
-                self.queue_command(player, command)
-                self._cmd = None
-            else:
-                break
+                record = self._parse_replay_record(line)
+                if record is None:
+                    # Not a record.  It may be the continuation of a
+                    # multi-line order written by the old recorder, which
+                    # put a raw newline in the file.
+                    record = self._parse_continuation(line, previous)
+                    if record is None:
+                        # A corrupted line: skip it rather than dying on it.
+                        continue
+                    pending.append(record)
+                    # A continuation belongs to the same order string, so
+                    # the *previous* record stays the same one.
+                    continue
+                pending.append(record)
+                previous = record
+            # Sort by time, keeping the file order for the records that
+            # share a time (they must be applied in that order).
+            pending.sort(key=lambda r: r[0])
+        # Apply the records that are due.
+        applied = 0
+        while pending and pending[0][0] <= world.time:
+            record_time, player_index, command = pending.pop(0)
+            try:
+                player = world.players[player_index]
+            except IndexError:
+                continue
+            self.queue_command(player, command)
+            applied += 1
+        self._pending_records = pending
+
+    def _read_replay_line(self):
+        """Read one line of the replay, or ``None`` at the end of the file.
+
+        The session may provide :meth:`replay_read_line`, which tells an
+        empty line from the end of the file.  When it does not (an older
+        session, or a test double), :meth:`replay_read` is used, and an
+        empty string is then the end of the file.
+        """
+        session = self.game_session
+        read_line = getattr(session, "replay_read_line", None)
+        if read_line is not None:
+            return read_line()
+        line = session.replay_read()
+        if not line:
+            return None
+        return line
+
+    def _pending_replay_records(self):
+        """The records that were read but not applied yet."""
+        pending = getattr(self, "_pending_records", None)
+        if pending is None:
+            pending = []
+            self._pending_records = pending
+        return pending
 
 
 class Coordinator(_Client):  # client coordinator for multiplayer games
@@ -361,9 +524,33 @@ class Coordinator(_Client):  # client coordinator for multiplayer games
 
         The replay format is ``<world time> <player index> <order>``, and
         :class:`~soundrts.game.ReplayGame` applies a line when the world's
-        time matches.  In rollback mode the world's time advances by one
-        frame at a time, so the line is written with the time of the frame
-        the orders belong to.
+        time matches.
+
+        Two things need care here.
+
+        **One physical line per order.**  The order string may hold several
+        orders, separated by newlines (a *control* order plus the *order*
+        it triggers, for instance).  Writing them as one physical line
+        would put a raw newline in the file, and the reader — which reads
+        *lines* — would then see a continuation line without a time and a
+        player index.  Parsing that line raises ``ValueError: invalid
+        literal for int() with base 10: 'order'`` and the replay dies.  So
+        every order gets its own line, each with its own time and player
+        index.
+
+        **The time of the frame, not the time of the world.**  A rollback
+        rewinds the world and re-simulates the frames it rewound over, so
+        the world's time goes *backwards* for a moment and then catches up.
+        Writing ``world.time`` would therefore produce a replay whose
+        timestamps are not monotonic, and the reader — which waits for the
+        timestamp to match the world's time — would stall forever on the
+        first record that went backwards.
+
+        The frame number is monotonic by construction (a rollback re-uses
+        the frame numbers it rewinds over, and each (frame, player) pair is
+        written only once), and the frame's time is ``frame * 300`` ms.
+        The time is therefore *derived from the frame* instead of read from
+        the world, which makes the replay monotonic by construction.
 
         The tricky part is that a frame can be simulated more than once: a
         rollback rewinds the world and re-simulates the frames it rewound
@@ -391,12 +578,19 @@ class Coordinator(_Client):  # client coordinator for multiplayer games
         if key in self._replay_written:
             return
         self._replay_written.add(key)
-        try:
-            self.game_session.replay_write(
-                " ".join(map(str, (world.time, player_index, orders)))
-            )
-        except Exception:
-            exception("couldn't write the replay")
+        # The time of the frame, derived from the frame number: it is
+        # monotonic by construction, even when a rollback rewinds the world.
+        frame_time = frame * VIRTUAL_TIME_INTERVAL
+        for order in orders.split("\n"):
+            if not order:
+                continue
+            try:
+                self.game_session.replay_write(
+                    " ".join(map(str, (frame_time, player_index, order)))
+                )
+            except Exception:
+                exception("couldn't write the replay")
+                return
 
     def _rollback_current_frame(self) -> int:
         """The frame the world thread is currently simulating."""
@@ -404,6 +598,40 @@ class Coordinator(_Client):  # client coordinator for multiplayer games
         if session is not None:
             return session.frame
         return 0
+
+    # -- the unrecoverable desync ----------------------------------------
+
+    def has_unrecoverable_desync(self) -> bool:
+        """Has the client fallen too far behind to repair itself?
+
+        This happens when the dirty frame is older than the rollback
+        history window (64 frames, i.e. 19.2 s of virtual time).  The world
+        the client is holding then contains a prediction the server has
+        just contradicted, and it will stay wrong for the rest of the
+        match.
+
+        The client must not silently continue: it would diverge from every
+        other client (and from the server) without anybody noticing.  The
+        caller (the game interface) announces the desync and ends the
+        match.
+        """
+        session = self.rollback_session
+        if session is None:
+            return False
+        try:
+            return bool(session.unrecoverable_desync)
+        except Exception:
+            return False
+
+    def unrecoverable_desync_stats(self):
+        """The rollback statistics, for the desync report."""
+        session = self.rollback_session
+        if session is None:
+            return None
+        try:
+            return session.stats
+        except Exception:
+            return None
 
     def _send_rollback_input(self, frame: int, orders: str) -> None:
         """Send the local player's input for *frame* to the server."""

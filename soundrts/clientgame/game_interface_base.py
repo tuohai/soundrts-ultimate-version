@@ -247,6 +247,77 @@ class GameInterface(AttributesInterface):
         sound.stop()
         self.end_loop = True
 
+    # -- the unrecoverable desync ----------------------------------------
+
+    # Set once the desync has been announced, so the announcement happens
+    # exactly once (the flag stays set on the session until it is cleared).
+    _desync_announced = False
+
+    def check_unrecoverable_desync(self) -> bool:
+        """Announce and end the match if the client can no longer resync.
+
+        The rollback netcode repairs the world by rewinding to the dirty
+        frame and re-simulating it.  That is only possible while the
+        snapshot of that frame is still in the history window (64 frames,
+        19.2 s of virtual time).  A client that falls further behind — for
+        instance because it was paused for a long time — cannot rewind that
+        far, and its world is then provably wrong: it holds a prediction
+        the server has just contradicted, and it will stay wrong for the
+        rest of the match.
+
+        Silently continuing would let the client diverge from every other
+        client without anybody noticing, so the desync is announced and the
+        match is ended.  The player is told what happened instead of
+        wondering why the game "felt wrong".
+
+        Returns ``True`` when the desync was detected (and the match is
+        being ended).
+        """
+        if self._desync_announced:
+            return True
+        server = self.server
+        has_desync = getattr(server, "has_unrecoverable_desync", None)
+        if has_desync is None or not has_desync():
+            return False
+
+        self._desync_announced = True
+        try:
+            self._announce_desync()
+        except Exception:
+            exception("could not announce the desync")
+        # Leave the match: the world we are holding is wrong, and playing on
+        # would only produce a bogus result.
+        try:
+            server.write_line("quit")
+        except Exception:
+            pass
+        self.forced_quit = True
+        self.end_loop = True
+        return True
+
+    def _announce_desync(self):
+        """Speak the desync notice."""
+        from ..lib.msgs import literal_text_msg
+
+        stats = None
+        getter = getattr(self.server, "unrecoverable_desync_stats", None)
+        if getter is not None:
+            stats = getter()
+        details = ""
+        if stats is not None:
+            try:
+                details = (
+                    "，已回滚 %d 次，最大回滚深度 %d 帧"
+                    % (stats.rollbacks, stats.max_rollback_depth)
+                )
+            except Exception:
+                details = ""
+        voice.confirmation(
+            literal_text_msg(
+                "与对手不同步：落后太多，无法回滚，已结束本局" + details
+            )
+        )
+
     def srv_msg(self, s):
         from ..lib.msgs import eval_msg_and_volume
         voice.info(*eval_msg_and_volume(s))
