@@ -365,3 +365,145 @@ def test_the_spectator_keeps_up_while_the_match_goes_on(match):
 
     digests = match.digests()
     assert digests["watcher"] == digests["host"]
+
+
+# ---------------------------------------------------------------------------
+# 5. A long pause
+# ---------------------------------------------------------------------------
+
+
+def _run_paused_guest(pause_frames: int):
+    """Play a match in which the guest pauses for *pause_frames* frames.
+
+    This is the F10 scenario: the guest stops simulating (and stops
+    sending inputs) while the host keeps playing.  When the guest
+    resumes, the host learns about the guest's late input for a frame it
+    simulated long ago.
+
+    The guest stays *silent* while it resumes — it has just closed the
+    menu and has not clicked anything yet — so the late input is empty,
+    and the host's prediction of "the guest did nothing" was right.
+    """
+    instance = HeadlessMatch(map_name="jl1", logins=("host", "guest"))
+    try:
+        instance.connect("host")
+        instance.connect("guest")
+        instance.setup_room()
+        instance.build_worlds()
+        host = instance.clients["host"]
+        guest = instance.clients["guest"]
+
+        def tick(acting, simulating):
+            for c in acting:
+                c.submit(move_order(c))
+            for c in acting:
+                c.dispatch()
+            instance.pump()
+            for c in simulating:
+                c.drain_network()
+            for c in simulating:
+                c.simulate()
+            instance.clock.frame += 1
+
+        # Both sides play for a while.
+        for _ in range(10):
+            tick([host, guest], [host, guest])
+
+        # The guest pauses: it neither acts nor simulates, for a long time.
+        for _ in range(pause_frames):
+            tick([host], [host])
+
+        # The guest resumes, still silent.
+        guest.dispatch()
+        instance.pump()
+        for c in (host, guest):
+            c.drain_network()
+        host.simulate()
+        guest.simulate()
+        instance.clock.frame += 1
+
+        # Let the guest catch up with the host.
+        for _ in range(400):
+            instance.pump()
+            guest.drain_network()
+            guest.simulate()
+            guest.repair()
+            instance.clock.frame += 1
+            if guest.frame >= host.frame:
+                break
+
+        instance.drain()
+        for _ in range(4):
+            for c in (host, guest):
+                c.repair()
+        instance.drain()
+        return instance, host, guest
+    except Exception:
+        instance.close()
+        raise
+
+
+def test_a_long_pause_does_not_end_the_match(quiet):
+    """A pause longer than the rollback window must not kill the match.
+
+    This is the bug the whole fix is about.  The guest pauses for longer
+    than the 64-frame history window, so the host cannot redo the frames
+    it simulated during the pause.
+
+    The host used to end the match with "与对手不同步：落后太多，无法回滚"
+    — on the side that was *playing fine*, because of a late input that
+    contradicted nothing at all.
+
+    The pause must now be harmless: no unrecoverable desync, and the two
+    worlds still agree.
+    """
+    if not os.path.isfile(JL1):
+        pytest.skip("jl1 map not present")
+
+    # The pause has to be longer than the history window for the frame's
+    # record to be trimmed — that is the case the bug was about.
+    for pause in (65, 90):
+        instance, host, guest = _run_paused_guest(pause)
+        try:
+            for login in ("host", "guest"):
+                stats = instance.clients[login].stats
+                assert stats.unrecoverable_desyncs == 0, (
+                    "the %s reported an unrecoverable desync after a %d-frame "
+                    "pause: %r" % (login, pause, stats.as_dict())
+                )
+                assert (
+                    instance.clients[login]
+                    .rollback_session.manager.unrecoverable_desync
+                    is False
+                )
+
+            digests = instance.digests()
+            assert digests["host"] == digests["guest"], (
+                "the two clients diverged after a %d-frame pause" % pause
+            )
+        finally:
+            instance.close()
+
+
+def test_a_pause_shorter_than_the_history_window_is_fine_too(quiet):
+    """The same scenario, with a pause that fits inside the window.
+
+    This is the control: the pause is short enough for the host to redo
+    the frames, so the host rolls back rather than giving up.  It must
+    never report an unrecoverable desync either.
+    """
+    if not os.path.isfile(JL1):
+        pytest.skip("jl1 map not present")
+
+    instance, host, guest = _run_paused_guest(20)
+    try:
+        for login in ("host", "guest"):
+            stats = instance.clients[login].stats
+            assert stats.unrecoverable_desyncs == 0, (
+                "the %s reported an unrecoverable desync: %r"
+                % (login, stats.as_dict())
+            )
+        digests = instance.digests()
+        assert digests["host"] == digests["guest"]
+    finally:
+        instance.close()
