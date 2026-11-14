@@ -4,6 +4,41 @@ Notas de la versión
 
 .. contents::
 
+1.5.2.0
+-------
+
+**Corregido: la partida se congelaba para siempre cuando una reversión volvía al primer fotograma**
+
+- **Problema**: el código de red con reversión toma una instantánea del mundo en cada fotograma, y la restaura cuando el servidor contradice una predicción. La instantánea del fotograma 0 se tomaba *antes* de que la simulación se hubiera ejecutado alguna vez, así que algunos contadores todavía no existían -- los crea ``World.update()`` bajo demanda. La instantánea los capturaba como ``None``, porque el respaldo que usaba (leer el atributo de clase) devuelve ``None`` para un atributo que no existe ni en la instancia ni en la clase.
+- **El fallo**: al restaurar, ese ``None`` se escribía en el diccionario de la instancia del mundo, que *sombrea* el atributo de clase y anula la inicialización bajo demanda. El siguiente paso de simulación calculaba entonces ``self.time - None`` y lanzaba ``TypeError: unsupported operand type(s) for -: 'int' and 'NoneType'``. El hilo del mundo captura la excepción y sólo la registra, así que el mundo dejaba de avanzar mientras el cliente seguía corriendo: **una partida congelada, sin ningún error mostrado al jugador**. Los contadores afectados eran ``_last_full_terrain_update`` (el barrido periódico del terreno) y ``_last_perception_cleanup`` (la limpieza periódica de la percepción).
+- **Mejora**: un atributo que falta ya no se captura, de modo que tras la restauración la inicialización bajo demanda vuelve a ejecutarse igual que en un mundo nuevo. El lado de la restauración también filtra los valores ``None``, así que una instantánea escrita por una versión anterior tampoco puede envenenar el mundo. Además, los contadores de inicialización bajo demanda tienen ahora valores por defecto a nivel de clase (``_last_full_terrain_update = 0``, ``_last_perception_cleanup = 0``, ``previous_previous_state``), de modo que la instantánea y la simulación coinciden en su valor.
+- **Alcance**: ``soundrts/net/snapshot.py``, ``soundrts/world/world_core.py``.
+
+**Corregido: el cliente se separaba de los demás jugadores sin avisar a nadie**
+
+- **Problema**: el código de red con reversión sólo puede rebobinar hasta donde llega su ventana de historial (64 fotogramas, es decir 19,2 s de tiempo virtual). Un cliente que se retrasa más -- por ejemplo porque estuvo pausado con F10 mucho tiempo -- ya no puede volver al fotograma sucio. Su mundo guarda entonces una predicción que el servidor acaba de contradecir, y ese mundo es *demonstrablemente incorrecto* durante el resto de la partida.
+- **El fallo**: el gestor de reversión ya lo señalaba (``unrecoverable_desync``) y lo contabilizaba, pero **nadie leía esa señal**. El cliente sencillamente seguía jugando con el mundo equivocado, divergiendo en silencio de todos los demás clientes y del servidor. Ningún error, ningún aviso, nada -- la partida simplemente dejaba de tener sentido.
+- **Mejora**: el coordinador expone la señal, y la interfaz de juego la comprueba antes de simular cada fotograma. Cuando salta, se le dice al jugador qué ha pasado ("fuiste desincronizado con tu rival: demasiado atrasado para revertir, la partida ha terminado"), se informa también de las estadísticas (cuántas reversiones hubo y cuál fue la más profunda), y la partida termina en lugar de seguir con un mundo sin sentido.
+- **Alcance**: ``soundrts/worldclient.py``, ``soundrts/clientgame/game_interface_base.py``, ``soundrts/clientgame/game_input_handler.py``.
+
+**Corregido: la repetición de una partida con reversión no se podía reproducir**
+
+- **Problema**: el escritor de repeticiones escribía una cadena de órdenes de varias líneas como *una sola* línea física. Una cadena de órdenes puede contener varias órdenes (una orden *control* más la *order* que provoca, por ejemplo), y escribirlas juntas dejaba un salto de línea en crudo dentro del archivo de repetición. El lector lee *líneas*, así que se encontraba con una línea de continuación sin tiempo ni índice de jugador, y al analizarla lanzaba ``ValueError: invalid literal for int() with base 10: 'order'``. La repetición moría en la primera línea así.
+- **Mejora**: ahora cada orden ocupa su propia línea física, cada una con su propio tiempo y su propio índice de jugador. Así, una repetición de una partida con reversión se puede reproducir de principio a fin.
+- **Alcance**: ``soundrts/worldclient.py``.
+
+**Corregido: la repetición de una partida con reversión se quedaba atascada en la primera reversión**
+
+- **Problema**: el escritor de repeticiones sellaba cada registro con el tiempo del mundo. Una reversión rebobina el mundo y vuelve a simular los fotogramas que había rebobinado, así que el tiempo del mundo *retrocede* un momento. Por tanto las marcas de tiempo de la repetición no eran monótonas -- aparecía un registro escrito *después* de otro más tardío --, y el lector, que esperaba a que la marca de tiempo coincidiera exactamente con el tiempo del mundo, se quedaba atascado en el primer registro que retrocedía y nunca reproducía el resto de la repetición.
+- **Mejora**: del lado de la escritura, la marca de tiempo se deriva ahora del *número de fotograma* (``frame * 300`` ms) en lugar de leerse del mundo. El número de fotograma es monótono por construcción, así que la repetición también lo es. Del lado de la lectura, el lector aplica ahora todos los registros cuyo tiempo es *anterior o igual* al tiempo del mundo (en vez de esperar una coincidencia exacta), guarda en un búfer los que todavía no tocan, y aplica el archivo entero en orden cronológico -- de modo que un registro que retrocede se aplica en el momento correcto en lugar de perderse. Un registro cuya marca de tiempo no sea múltiplo de 300 ms ya no bloquea tampoco los registros que vienen detrás.
+- **Compatibilidad hacia atrás**: las repeticiones escritas por el escritor antiguo siguen reproduciéndose. Las líneas de continuación se reconocen y se vuelven a convertir en órdenes del mismo jugador en el mismo instante, y el nuevo ``replay_read_line()`` distingue una línea vacía del final del archivo.
+- **Alcance**: ``soundrts/worldclient.py``, ``soundrts/game.py``.
+
+**Añadido: pruebas de regresión para esta publicación**
+
+- **Alcance**: ``soundrts/tests/test_rollback_defects_regression.py``.
+
+
 1.5.1.9
 -------
 

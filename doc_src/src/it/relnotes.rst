@@ -3,6 +3,41 @@ Note di rilascio
 
 .. contents::
 
+1.5.2.0
+-------
+
+**Corretto: la partita si bloccava per sempre quando un rollback tornava al primo fotogramma**
+
+- **Problema**: il codice di rete con rollback cattura una snapshot del mondo a ogni fotogramma e la ripristina quando il server contraddice una previsione. La snapshot del fotogramma 0 veniva presa *prima* che la simulazione fosse mai partita, quindi alcuni contatori non esistevano ancora -- vengono creati su richiesta da ``World.update()``. La snapshot li catturava come ``None``, perché il ripiego che usava (leggere l'attributo di classe) restituisce ``None`` per un attributo che non esiste né sull'istanza né sulla classe.
+- **Il crash**: al ripristino, quel ``None`` veniva scritto nel dizionario dell'istanza del mondo, che *ombreggia* l'attributo di classe e annulla l'inizializzazione su richiesta. Il passo di simulazione successivo calcolava allora ``self.time - None`` e lanciava ``TypeError: unsupported operand type(s) for -: 'int' and 'NoneType'``. Il thread del mondo cattura l'eccezione e si limita a registrarla, quindi il mondo smetteva di avanzare mentre il client continuava a girare: **una partita congelata, senza alcun errore mostrato al giocatore**. I contatori coinvolti erano ``_last_full_terrain_update`` (la passata periodica del terreno) e ``_last_perception_cleanup`` (la pulizia periodica della percezione).
+- **Miglioramento**: un attributo che manca non viene più catturato, così dopo il ripristino l'inizializzazione su richiesta viene semplicemente rieseguita, come in un mondo nuovo. Anche il lato del ripristino filtra i valori ``None``, quindi una snapshot scritta da una versione precedente non può più avvelenare il mondo. In più, i contatori a inizializzazione su richiesta hanno ora dei valori predefiniti a livello di classe (``_last_full_terrain_update = 0``, ``_last_perception_cleanup = 0``, ``previous_previous_state``), così la snapshot e la simulazione concordano sul loro valore.
+- **Ambito**: ``soundrts/net/snapshot.py``, ``soundrts/world/world_core.py``.
+
+**Corretto: il client si separava dagli altri giocatori senza avvisare nessuno**
+
+- **Problema**: il codice di rete con rollback può riavvolgere solo fino a dove arriva la sua finestra di cronologia (64 fotogrammi, cioè 19,2 s di tempo virtuale). Un client che si ritarda di più -- per esempio perché è rimasto in pausa con F10 a lungo -- non può più tornare al fotogramma sporco. Il suo mondo contiene allora una previsione che il server ha appena contraddetto, e quel mondo è *dimostrabilmente sbagliato* per il resto della partita.
+- **Il difetto**: il gestore del rollback lo segnalava già (``unrecoverable_desync``) e lo contava, ma **nessuno leggeva quel segnale**. Il client semplicemente continuava a giocare con il mondo sbagliato, divergendo in silenzio da tutti gli altri giocatori e dal server. Nessun errore, nessun avviso, niente -- la partita semplicemente smetteva di avere senso.
+- **Miglioramento**: il coordinatore espone il segnale e l'interfaccia di gioco lo controlla prima di simulare ogni fotogramma. Quando scatta, si dice al giocatore che cosa è successo ("non sei sincronizzato con il rivale: troppo indietro per riavvolgere, la partita è terminata"), si riportano anche le statistiche (quanti rollback ci sono stati e quanto profondo è stato il più profondo), e la partita viene terminata invece di proseguire con un mondo privo di senso.
+- **Ambito**: ``soundrts/worldclient.py``, ``soundrts/clientgame/game_interface_base.py``, ``soundrts/clientgame/game_input_handler.py``.
+
+**Corretto: la replay di una partita con rollback non era riproducibile**
+
+- **Problema**: lo scrittore delle replay scriveva una stringa di ordini su più righe come *una sola* riga fisica. Una stringa di ordini può contenere più ordini (un ordine *control* più l'*order* che provoca, per esempio), e scriverli insieme lasciava un a capo grezzo nel file di replay. Il lettore legge *righe*, quindi si trovava una riga di continuazione senza tempo né indice del giocatore, e analizzandola lanciava ``ValueError: invalid literal for int() with base 10: 'order'``. La replay moriva alla prima riga di questo tipo.
+- **Miglioramento**: ora ogni ordine occupa la propria riga fisica, ciascuna con il proprio tempo e il proprio indice del giocatore. Una replay di una partita con rollback può quindi essere riprodotta dall'inizio alla fine.
+- **Ambito**: ``soundrts/worldclient.py``.
+
+**Corretto: la replay di una partita con rollback si bloccava al primo rollback**
+
+- **Problema**: lo scrittore delle replay timbrava ogni record con il tempo del mondo. Un rollback riavvolge il mondo e risimula i fotogrammi che aveva riavvolto, quindi il tempo del mondo *torna indietro* per un momento. I timestamp della replay non erano quindi monotoni -- compariva un record scritto *dopo* un altro più tardizio --, e il lettore, che aspettava un timestamp esattamente uguale al tempo del mondo, si bloccava sul primo record che andava indietro e non riproduceva mai il resto della replay.
+- **Miglioramento**: sul lato della scrittura il timestamp deriva ora dal *numero di fotogramma* (``frame * 300`` ms) invece di essere letto dal mondo. Il numero di fotogramma è monotono per costruzione, quindi anche la replay lo è. Sul lato della lettura il lettore applica ora tutti i record il cui tempo è *precedente o uguale* al tempo del mondo (invece di aspettare una corrispondenza esatta), mette in un buffer quelli che non sono ancora dovuti, e applica l'intero file in ordine cronologico -- così un record che va indietro viene applicato al momento giusto invece di essere perso. Un record il cui timestamp non è un multiplo di 300 ms non blocca più nemmeno quelli che vengono dopo.
+- **Compatibilità all'indietro**: le replay scritte dal vecchio scrittore si riproducono ancora. Le righe di continuazione vengono riconosciute e trasformate di nuovo in ordini dello stesso giocatore nello stesso istante, e il nuovo ``replay_read_line()`` distingue una riga vuota dalla fine del file.
+- **Ambito**: ``soundrts/worldclient.py``, ``soundrts/game.py``.
+
+**Aggiunto: test di regressione per questa pubblicazione**
+
+- **Ambito**: ``soundrts/tests/test_rollback_defects_regression.py``.
+
+
 1.5.1.9
 -------
 

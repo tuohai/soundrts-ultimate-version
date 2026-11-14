@@ -4,6 +4,40 @@ Release notes
 
 .. contents::
 
+1.5.2.0
+-------
+
+**Fixed: the game froze for good when a rollback rewound to the very first frame**
+
+- **Problem**: the rollback netcode snapshots the world every frame, and restores it when the server contradicts a prediction. The snapshot of frame 0 was taken *before* the simulation had ever run, so a few counters did not exist yet -- they are created on demand by ``World.update()``. The snapshot captured them as ``None`` because the fallback it used (reading the class attribute) returned ``None`` for an attribute that exists on neither the instance nor the class.
+- **The crash**: on restore, that ``None`` was written into the world's instance dictionary, which *shadows* the class attribute and defeats the lazy initialisation. The next simulation step then evaluated ``self.time - None`` and raised ``TypeError: unsupported operand type(s) for -: 'int' and 'NoneType'``. The world thread catches and only logs that exception, so the world stopped advancing while the client kept running: **a frozen game, with no error shown to the player**. The counters were ``_last_full_terrain_update`` (the periodic terrain sweep) and ``_last_perception_cleanup`` (the periodic perception cleanup).
+- **Fix**: a missing attribute is no longer captured at all, so the lazy initialisation simply runs again after a restore, exactly as it does on a fresh world. The restore side filters out the ``None`` values too, so a snapshot written by an older version cannot poison the world either. On top of that, the lazily-initialised counters now have class-level defaults (``_last_full_terrain_update = 0``, ``_last_perception_cleanup = 0``, ``previous_previous_state``), so the snapshot and the simulation agree on their value.
+- **Scope**: ``soundrts/net/snapshot.py``, ``soundrts/world/world_core.py``.
+
+**Fixed: the client drifted away from the other players without telling anybody**
+
+- **Problem**: the rollback netcode can only rewind as far as its history window reaches (64 frames, i.e. 19.2 s of virtual time). A client that falls further behind -- for instance because it was paused with F10 for a long time -- cannot rewind to the dirty frame any more. Its world then holds a prediction the server has just contradicted, and that world is *provably wrong* for the rest of the match.
+- **The bug**: the rollback manager flagged this (``unrecoverable_desync``) and counted it, but **nothing read the flag**. The client simply carried on playing with the wrong world, silently diverging from every other player and from the server. No error, no message, nothing -- the match just quietly stopped making sense.
+- **Fix**: the coordinator exposes the flag, and the game interface checks it before every frame it simulates. When it fires, the player is told what happened ("out of sync with your opponent: too far behind to roll back, the match has ended"), the statistics are reported along with it (how many rollbacks happened, and how deep the deepest one was), and the match is ended instead of playing on with a bogus world.
+- **Scope**: ``soundrts/worldclient.py``, ``soundrts/clientgame/game_interface_base.py``, ``soundrts/clientgame/game_input_handler.py``.
+
+**Fixed: the replay of a rollback match could not be played at all**
+
+- **Problem**: the replay writer wrote a multi-line order string as *one* physical line. An order string can hold several orders (a *control* order plus the *order* it triggers, for instance), and writing them together put a raw newline in the replay file. The reader reads *lines*, so it met a continuation line without a time and without a player index, and parsing it raised ``ValueError: invalid literal for int() with base 10: 'order'``. The replay died on the first such line.
+- **Fix**: every order now gets its own physical line, each with its own time and player index. A replay of a rollback match can therefore be played from beginning to end.
+- **Scope**: ``soundrts/worldclient.py``.
+
+**Fixed: the replay of a rollback match stalled on the first rollback**
+
+- **Problem**: the replay writer stamped each record with the world's time. A rollback rewinds the world and re-simulates the frames it rewound over, so the world's time goes *backwards* for a moment. The replay's timestamps were therefore not monotonic -- a record written *after* a later one -- and the reader, which waited for the timestamp to match the world's time exactly, stalled on the first record that went backwards and never played the rest of the replay.
+- **Fix**: on the writing side, the timestamp is derived from the *frame* number (``frame * 300`` ms) instead of being read from the world. The frame number is monotonic by construction, so the replay is monotonic by construction. On the reading side, the reader now applies every record whose time is *at or before* the world's time (instead of waiting for an exact match), it keeps the records that are not due yet in a buffer, and it applies the whole file in chronological order -- so a record that went backwards is applied at the right moment instead of being lost. A record whose timestamp is not a multiple of 300 ms no longer blocks the records behind it either.
+- **Backwards compatibility**: replays written by the old writer still play. The continuation lines are recognised and turned back into orders of the same player at the same moment, and a new ``replay_read_line()`` tells an empty line apart from the end of the file.
+- **Scope**: ``soundrts/worldclient.py``, ``soundrts/game.py``.
+
+**Added: regression tests for this release**
+
+- **Scope**: ``soundrts/tests/test_rollback_defects_regression.py``.
+
 
 1.5.1.9
 -------

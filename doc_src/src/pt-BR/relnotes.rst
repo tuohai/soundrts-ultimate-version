@@ -4,6 +4,41 @@ Notas de lançamento
 
 .. contents::
 
+1.5.2.0
+-------
+
+**Corrigido: a partida travava para sempre quando um rollback voltava ao primeiro quadro**
+
+- **Problema**: o código de rede com rollback tira uma instantânea do mundo a cada quadro e a restaura quando o servidor contradiz uma previsão. A instantânea do quadro 0 era tirada *antes* de a simulação ter rodado alguma vez, então alguns contadores ainda não existiam -- são criados sob demanda por ``World.update()``. A instantânea os capturava como ``None``, porque o recurso que ela usava (ler o atributo de classe) devolve ``None`` para um atributo que não existe nem na instância nem na classe.
+- **A falha**: ao restaurar, esse ``None`` era gravado no dicionário da instância do mundo, que *sombreia* o atributo de classe e anula a inicialização sob demanda. O passo de simulação seguinte calculava então ``self.time - None`` e levantava ``TypeError: unsupported operand type(s) for -: 'int' and 'NoneType'``. A thread do mundo captura a exceção e apenas a registra, de modo que o mundo parou de avançar enquanto o cliente continuava rodando: **uma partida travada, sem nenhum erro mostrado ao jogador**. Os contadores afetados eram ``_last_full_terrain_update`` (a varredura periódica do terreno) e ``_last_perception_cleanup`` (a limpeza periódica da percepção).
+- **Correção**: um atributo que falta não é mais capturado, de modo que depois da restauração a inicialização sob demanda simplesmente roda de novo, como num mundo novo. O lado da restauração também filtra os valores ``None``, então uma instantânea escrita por uma versão antiga não consegue mais envenenar o mundo. Além disso, os contadores de inicialização sob demanda têm agora padrões a nível de classe (``_last_full_terrain_update = 0``, ``_last_perception_cleanup = 0``, ``previous_previous_state``), de forma que a instantânea e a simulação concordam quanto ao valor deles.
+- **Escopo**: ``soundrts/net/snapshot.py``, ``soundrts/world/world_core.py``.
+
+**Corrigido: o cliente divergia dos outros jogadores sem avisar ninguém**
+
+- **Problema**: o código de rede com rollback só pode rebobinar até onde alcança a sua janela de histórico (64 quadros, ou seja 19,2 s de tempo virtual). Um cliente que fica mais atrasado -- por exemplo porque ficou pausado com F10 por um bom tempo -- já não consegue voltar ao quadro sujo. O mundo dele passa a guardar uma previsão que o servidor acabou de contradizer, e esse mundo é *comprovadamente errado* pelo resto da partida.
+- **O defeito**: o gerenciador de rollback já sinalizava isso (``unrecoverable_desync``) e fazia a contagem, mas **ninguém lia aquele sinal**. O cliente simplesmente continuava jogando com o mundo errado, divergindo em silêncio de todos os outros jogadores e do servidor. Nenhum erro, nenhum aviso, nada -- a partida simplesmente deixava de fazer sentido.
+- **Correção**: o coordenador expõe o sinal, e a interface de jogo verifica-o antes de simular cada quadro. Quando ele dispara, o jogador é avisado do que aconteceu ("você ficou dessincronizado com o adversário: atraso demais para rebobinar, a partida foi encerrada"), as estatísticas são informadas junto (quantos rollbacks houve e qual foi o mais profundo), e a partida é encerrada em vez de continuar com um mundo sem sentido.
+- **Escopo**: ``soundrts/worldclient.py``, ``soundrts/clientgame/game_interface_base.py``, ``soundrts/clientgame/game_input_handler.py``.
+
+**Corrigido: a replay de uma partida com rollback não podia ser reproduzida**
+
+- **Problema**: o escritor de replay gravava uma sequência de ordens de várias linhas como *uma única* linha física. Uma sequência de ordens pode conter várias ordens (uma ordem *control* mais a *order* que ela dispara, por exemplo), e gravá-las juntas deixava uma quebra de linha crua dentro do arquivo de replay. O leitor lê *linhas*, então encontrava uma linha de continuação sem tempo e sem índice do jogador, e ao analisá-la levantava ``ValueError: invalid literal for int() with base 10: 'order'``. A replay morria na primeira linha dessas.
+- **Correção**: agora cada ordem ocupa sua própria linha física, cada uma com o seu próprio tempo e o seu próprio índice do jogador. Assim, uma replay de uma partida com rollback pode ser reproduzida do começo ao fim.
+- **Escopo**: ``soundrts/worldclient.py``.
+
+**Corrigido: a replay de uma partida com rollback travava no primeiro rollback**
+
+- **Problema**: o escritor de replay marcava cada registro com o tempo do mundo. Um rollback rebobina o mundo e re-simula os quadros que rebobinou, então o tempo do mundo *volta* por um instante. Os timestamps da replay não eram, portanto, monotônicos -- um registro acabava escrito *depois* de outro mais tardio --, e o leitor, que esperava um timestamp exatamente igual ao tempo do mundo, travava no primeiro registro que voltava e nunca reproduzia o resto da replay.
+- **Correção**: do lado da escrita, o timestamp passa a ser derivado do *número do quadro* (``frame * 300`` ms) em vez de ser lido do mundo. O número do quadro é monotônico por construção, então a replay também é. Do lado da leitura, o leitor aplica agora todos os registros cujo tempo é *anterior ou igual* ao tempo do mundo (em vez de esperar uma correspondência exata), mantém num buffer os que ainda não estão na hora, e aplica o arquivo inteiro em ordem cronológica -- assim um registro que volta é aplicado no momento certo em vez de ser perdido. Um registro cujo timestamp não seja múltiplo de 300 ms também não bloqueia mais os registros que vêm depois.
+- **Compatibilidade com versões antigas**: as replays escritas pelo escritor antigo continuam a ser reproduzidas. As linhas de continuação são reconhecidas e transformadas de volta em ordens do mesmo jogador no mesmo instante, e o novo ``replay_read_line()`` distingue uma linha vazia do fim do arquivo.
+- **Escopo**: ``soundrts/worldclient.py``, ``soundrts/game.py``.
+
+**Adicionado: testes de regressão para esta versão**
+
+- **Escopo**: ``soundrts/tests/test_rollback_defects_regression.py``.
+
+
 1.5.1.9
 -------
 
