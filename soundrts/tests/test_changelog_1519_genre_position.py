@@ -88,21 +88,17 @@ def test_relnotes_1519_state_that_classic_rts_used_lockstep():
 
 
 def test_the_history_window_numbers_match_the_engine():
-    """发行说明里的窗口数字必须和引擎里的常量一致。"""
+    """发行说明里的窗口数字必须和引擎里的常量一致。
+
+    这些数字记的是 1.5.1.9 当时的事实（那次回滚协议确实存在过），
+    因此这里断言的是**发行说明里的数字本身**：帧长仍是 300 毫秒，
+    64 帧仍是 19.2 秒。引擎本身从 1.5.2.1 起不再有历史窗口。
+    """
     from soundrts.definitions import VIRTUAL_TIME_INTERVAL
-    from soundrts.net.rollback import RollbackManager
 
     assert VIRTUAL_TIME_INTERVAL == 300
 
-    manager = RollbackManager(
-        local_player="p1",
-        players=("p1", "p2"),
-        world=object(),
-        step=lambda: None,
-        apply_inputs=lambda inputs: None,
-    )
-    # 窗口是 64 帧 → 19.2 秒。
-    assert manager.history_size == 64
+    # 64 帧 → 19.2 秒。
     assert 64 * 300 == 19200
 
     for lang in _LANGS:
@@ -113,19 +109,25 @@ def test_the_history_window_numbers_match_the_engine():
         assert "19.2" in section or "19,2" in section, lang
 
 
-def test_the_engine_really_ships_the_rollback_architecture():
-    """这一段描述的架构必须真的在引擎里。"""
-    snapshot = _source("soundrts", "net", "snapshot.py")
-    assert "host-authoritative input + client prediction + rollback" in snapshot
+def test_the_engine_no_longer_ships_the_rollback_architecture():
+    """从 1.5.2.1 起，回滚架构已从引擎里移除。
 
-    rollback = _source("soundrts", "net", "rollback.py")
-    assert "history_size: int = 64" in rollback
-    assert "def unrecoverable_desync(self)" in rollback
+    这一段发行说明描述的是 1.5.1.9 的架构。它当时是真的；现在引擎
+    回到确定性锁步，所以这里断言的是**移除之后**的状态。
+    """
+    root = Path(__file__).resolve().parents[2]
+    assert not (root / "soundrts" / "net").exists()
 
-    # 经典协议名必须还在（回滚是默认，但旧客户端仍要能连）。
     version = _source("soundrts", "version.py")
-    assert 'ROLLBACK_PROTOCOL = "rollback"' in version
-    assert 'LOCKSTEP_PROTOCOL = "lockstep"' in version
+    assert 'ROLLBACK_PROTOCOL = "rollback"' not in version
+    assert 'LOCKSTEP_PROTOCOL = "lockstep"' not in version
+    assert "def negotiate_protocol(" not in version
+
+    # 锁步这条路上的两个关键部件必须还在。
+    serverroom = _source("soundrts", "serverroom.py")
+    assert "class Orders" in serverroom
+    assert "def are_ready(self" in serverroom
+    assert "all_orders" in serverroom
 
 
 def test_the_new_block_is_in_the_1519_section_only():

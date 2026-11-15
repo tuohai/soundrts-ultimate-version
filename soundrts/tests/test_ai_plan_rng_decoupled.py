@@ -25,8 +25,8 @@ so the first attack landed at ~8 min or at ~13 min for no visible reason.
 The fix draws the branch from the AI's own stream, seeded from the match
 seed and the player's identity, so it depends on neither the scouting
 decision nor anything else the simulation did earlier.  The stream is kept
-as a plain integer so that the rollback snapshot machinery (which copies
-player attributes by value) can rewind it correctly.
+as a plain integer so that it is cheap to copy by value and can never
+leak state through a shared mutable object.
 """
 
 from __future__ import annotations
@@ -190,14 +190,13 @@ def test_opening_branch_is_stable_across_repeated_runs_of_one_seed(res_loaded):
     assert len(branches) == 1, branches
 
 
-def test_plan_stream_is_an_integer_so_snapshots_can_rewind_it(res_loaded):
-    """The plan stream must be plain data the snapshot machinery can copy.
+def test_plan_stream_is_plain_data_that_copies_by_value(res_loaded):
+    """The plan stream must be plain data, not a shared mutable object.
 
-    ``soundrts/net/snapshot.py`` captures every player attribute by value and
-    copies containers a bounded number of levels deep.  A ``random.Random``
-    object stored on the player would be shared *by reference* between the
-    live player and the snapshot, so a rollback re-simulation would see an
-    already-advanced stream and diverge.
+    A ``random.Random`` object stored on the player would be shared *by
+    reference* with every other holder of that object, so two copies of the
+    same player would advance the same stream and diverge.  Keeping the
+    stream as an integer makes it a value.
     """
     world, hp, comp = _build_world(42)
     comp._plan_random_choice(["a", "b", "c"])
@@ -206,21 +205,18 @@ def test_plan_stream_is_an_integer_so_snapshots_can_rewind_it(res_loaded):
     assert isinstance(state, int), type(state)
 
 
-def test_plan_stream_survives_a_snapshot_round_trip(res_loaded):
-    """Capturing and restoring a snapshot must rewind the plan stream."""
-    from soundrts.net.snapshot import capture_snapshot, restore_snapshot
-
+def test_plan_stream_advances_monotonically(res_loaded):
+    """Each draw must advance the stream, and a by-value copy must not."""
     world, hp, comp = _build_world(42)
     comp._plan_random_choice(["a", "b", "c"])
     drawn = comp._plan_draw
+    assert isinstance(drawn, int)
 
-    snap = capture_snapshot(world)
-    # Advance the stream after the snapshot was taken.
+    # A by-value copy is independent of the live stream.
+    copied = comp._plan_draw
     comp._plan_random_choice(["a", "b", "c"])
-    assert comp._plan_draw != drawn
-
-    restore_snapshot(world, snap)
-    assert comp._plan_draw == drawn, "the plan stream was not restored"
+    assert comp._plan_draw != copied, "the stream did not advance"
+    assert copied == drawn, "the copy tracked the live stream"
 
 
 def test_plan_stream_differs_between_two_players_in_the_same_match(res_loaded):

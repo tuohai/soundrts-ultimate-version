@@ -85,6 +85,14 @@ def _section_1519(lang: str) -> str:
     return rest if next_idx == -1 else rest[:next_idx]
 
 
+def _section_1521(lang: str) -> str:
+    text = _source("doc_src", "src", lang, "relnotes.rst")
+    start = text.index("\n1.5.2.1\n")
+    rest = text[start:]
+    next_idx = rest.find("\n1.5.2.0\n")
+    return rest if next_idx == -1 else rest[:next_idx]
+
+
 def test_version_is_at_least_1519():
     """当前 VERSION 必须 >= 1.5.1.9。"""
     assert tuple(int(x) for x in VERSION.split(".")) >= (1, 5, 1, 9)
@@ -134,20 +142,41 @@ def test_relnotes_1519_document_the_ai_attack_timing_fixes():
 
 
 def test_engine_ships_the_rollback_protocol():
-    """引擎必须真的实现了回滚协议。"""
+    """回滚协议曾经真的实现过；1.5.2.1 起它已被移除。
+
+    1.5.1.9 确实把回滚协议落地了，发行说明的记载是准确的。但从 1.5.2.1
+    起引擎回到确定性锁步，因此这里断言的是**移除之后**的状态：回滚相关的
+    源码与配置项都不在了，协议协商也不在了。
+    """
+    root = Path(__file__).resolve().parents[2]
+
+    # 整个回滚包都不在了。
+    assert not (root / "soundrts" / "net").exists()
+
     version = _source("soundrts", "version.py")
-    assert 'ROLLBACK_PROTOCOL = "rollback"' in version
-    assert 'LOCKSTEP_PROTOCOL = "lockstep"' in version
-    assert "PROTOCOL_REVISIONS" in version
-    assert "def negotiate_protocol(" in version
+    assert "ROLLBACK_PROTOCOL" not in version
+    assert "LOCKSTEP_PROTOCOL" not in version
+    assert "PROTOCOL_REVISIONS" not in version
+    assert "def negotiate_protocol(" not in version
 
     config = _source("soundrts", "config.py")
-    assert '"use_rollback_netcode", 1' in config
+    assert "use_rollback_netcode" not in config
 
-    root = Path(__file__).resolve().parents[2] / "soundrts" / "net"
-    for name in ("snapshot.py", "rollback.py", "session.py", "input_stream.py",
-                 "headless.py"):
-        assert (root / name).exists(), name
+    # 客户端登录行里不再声明协议。
+    clientserver = _source("soundrts", "clientserver.py")
+    assert "client_protocol" not in clientserver
+    assert "client_protocol_token" not in clientserver
+
+
+def test_the_removal_is_documented_in_the_1521_release_notes():
+    """五个语言的 1.5.2.1 段落都必须点名这次移除。
+
+    详见 ``soundrts/tests/test_changelog_1521.py``。
+    """
+    for lang in _LANGS:
+        section = _section_1521(lang)
+        for topic in ("rollback", "lockstep", "soundrts/net/", "all_orders"):
+            assert topic in section, (lang, topic)
 
 
 def test_engine_ships_the_ai_economy_policy_module():

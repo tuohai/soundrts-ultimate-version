@@ -109,15 +109,11 @@ def test_relnotes_1520_document_the_replay_fixes():
 
 
 def test_engine_does_not_capture_missing_attributes():
-    """快照不得把缺失的属性记成 ``None``。"""
-    snapshot = _source("soundrts", "net", "snapshot.py")
-    assert "if value is None:\n            continue" in snapshot
-    # 还原那一侧也必须过滤 ``None``。
-    assert "world.__dict__.pop(name, None)" in snapshot
+    """快照不得把缺失的属性记成 ``None``。
 
-
-def test_engine_ships_the_class_level_defaults():
-    """按需初始化的计数器必须有类级默认值。"""
+    快照机制本身从 1.5.2.1 起已经移除，但**按需初始化的计数器仍然必须
+    有类级默认值** —— 它们是模拟自身的一致性保证，与协议无关。
+    """
     world_core = _source("soundrts", "world", "world_core.py")
     assert "_last_full_terrain_update = 0" in world_core
     assert "_last_perception_cleanup = 0" in world_core
@@ -125,24 +121,30 @@ def test_engine_ships_the_class_level_defaults():
 
 
 def test_engine_exposes_the_unrecoverable_desync():
-    """协调器必须把分叉标记暴露出来。"""
+    """分叉标记曾经存在过；从 1.5.2.1 起不再需要它。
+
+    锁步下落后只会让全场一起变慢，世界不会分叉，因此「无法回滚的分叉」
+    这个状态不存在了 —— 相应地，告警与结束本局的代码也一并删除。
+    """
     worldclient = _source("soundrts", "worldclient.py")
-    assert "def has_unrecoverable_desync(" in worldclient
-    assert "def unrecoverable_desync_stats(" in worldclient
+    assert "def has_unrecoverable_desync(" not in worldclient
+    assert "def unrecoverable_desync_stats(" not in worldclient
 
     interface = _source("soundrts", "clientgame", "game_interface_base.py")
-    assert "def check_unrecoverable_desync(" in interface
-    assert "def _announce_desync(" in interface
+    assert "def check_unrecoverable_desync(" not in interface
+    assert "def _announce_desync(" not in interface
 
     handler = _source("soundrts", "clientgame", "game_input_handler.py")
-    assert "check_unrecoverable_desync" in handler
+    assert "check_unrecoverable_desync" not in handler
 
 
 def test_engine_writes_one_replay_line_per_order():
-    """回放写入端必须每条指令独占一行。"""
+    """回放写入端必须每条指令独占一行。
+
+    这一条与协议无关，因此**保留**：锁步对局的回放同样受益。
+    """
     worldclient = _source("soundrts", "worldclient.py")
     assert "for order in orders.split(\"\\n\"):" in worldclient
-    assert "frame * VIRTUAL_TIME_INTERVAL" in worldclient
     assert "REPLAY_ORDER_KEYWORDS" in worldclient
 
     game = _source("soundrts", "game.py")
@@ -150,6 +152,11 @@ def test_engine_writes_one_replay_line_per_order():
 
 
 def test_the_regression_test_file_exists():
-    """回归测试文件必须真的存在。"""
+    """回归测试文件必须真的存在。
+
+    回滚相关的回归测试随回滚一起删除；回放格式那部分被移植到
+    ``soundrts/tests/test_replay_format_regression.py``。
+    """
     root = Path(__file__).resolve().parents[2]
-    assert (root / "soundrts" / "tests" / "test_rollback_defects_regression.py").exists()
+    assert not (root / "soundrts" / "tests" / "test_rollback_defects_regression.py").exists()
+    assert (root / "soundrts" / "tests" / "test_replay_format_regression.py").exists()
