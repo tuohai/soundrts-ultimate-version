@@ -4,6 +4,23 @@ Release notes
 
 .. contents::
 
+1.5.2.1
+-------
+
+**Changed: the rollback snapshot netcode is gone, the game is back to deterministic lockstep**
+
+- **Problem**: rollback is an architecture designed for fighting games (and later for a handful of RTS games), and the measurement on this project showed that it cost more than the problem it solved. Measured against a real server, real clients and real sockets: the snapshot costs **48.4 ms per frame** on the large map ``cw1`` -- 16% of the 300 ms frame budget permanently occupied -- while it is only 1.95 ms per frame on ``jl1``; keeping a 64-frame history costs 27 MB on ``jl1`` and **260 MB** on ``cw1``. And the problem it was meant to solve ("a long pause can still be rolled back") **cannot be reached** on ``cw1``: one snapshot is about 4.1 MB, so a 256-frame window means about 1 GB of memory, and re-simulating a 58-second pause (193 frames) extrapolates to **10.9 seconds of freeze**. The rollback depth is not a free parameter -- the map size locks it down on both memory and CPU.
+- **Decision**: go back to **deterministic lockstep** -- the server waits until every player has handed in the orders for the turn and then broadcasts them to everyone. That is what the classic real-time strategy games have always done (Age of Empires 1/2/4, StarCraft 1/2 -- see the 1.5.1.9 release notes). The "wait for the slowest player" price is not as bad as it sounds: the server scales ``fpct`` with the ping, so a 200 ms ping means a 2-frame turn (600 ms) and 300 ms or more means 3 frames (900 ms). At low latencies lockstep hides itself quite well.
+- **Fix**: the whole ``soundrts/net/`` package (``rollback.py``, ``snapshot.py``, ``session.py``, ``input_stream.py``, ``headless.py``) is gone, together with the protocol negotiation and the protocol revision numbers (``negotiate_protocol``), the ``input`` command, the client-prediction and snapshot-rollback loop, and the ``use_rollback_netcode`` setting. The multiplayer data path is back to the ``Orders`` barrier plus the ``all_orders`` broadcast. **There is no snapshot, no history window and no re-simulation, so the state "the world diverged and cannot be rolled back" does not exist any more** -- under lockstep a late client merely slows everyone down, it never forks the world.
+- **Kept**: all three replay-format fixes (one line per order, monotonic timestamps, a reader that sorts the records by time and buffers them) are **kept** -- they are protocol-independent and a lockstep replay benefits from them just as much. ``replay_read_line()`` tells a blank line from the end of the file, and a multi-line order no longer kills the replay halfway through. The 1.5.1.9 and 1.5.2.0 release notes stay as the historical record of what those releases shipped.
+- **Scope**: ``soundrts/net/`` (the whole package), ``soundrts/version.py``, ``soundrts/serverroom.py``, ``soundrts/serverclient.py``, ``soundrts/clientserver.py``, ``soundrts/clientservermenu.py``, ``soundrts/game.py``, ``soundrts/worldclient.py``, ``soundrts/clientgame/game_interface_base.py``, ``soundrts/clientgame/game_input_handler.py``, ``soundrts/config.py``.
+- **End-to-end verification**: a new ``soundrts/tests/test_net_lockstep_end_to_end.py`` drives the **real server** and **real clients** over **real loopback sockets**: the two clients log in with the plain ``<version> <login>`` line, the host creates the room, the guest registers for it, the host starts the game, both sides rebuild their world from the bytes the server sent, and then they answer communication turn after communication turn, receive ``all_orders``, and advance the simulation. At the end it asserts that the two worlds have the **same digest** (the digest covers every player's resources and every unit's id and position) -- that is, that the two simulations really do agree. It is the only test that can prove that this surgery did not break the wire format.
+
+**Added: a netcode regression test for the lockstep path**
+
+- **Fix**: ``soundrts/tests/test_net_protocol.py`` now covers the pure lockstep path: the login line is still parsed as ``<version> <login>``, and the ``Orders`` barrier still waits for **every** player's orders before it lets the turn through.
+- **Scope**: ``soundrts/tests/test_net_protocol.py``.
+
 1.5.2.0
 -------
 

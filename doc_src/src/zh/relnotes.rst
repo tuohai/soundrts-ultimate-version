@@ -3,6 +3,23 @@
 
 .. contents::
 
+1.5.2.1
+-------
+
+**变更：移除回滚快照网络协议，回到确定性锁步**
+
+- **问题**：回滚协议是为格斗游戏（以及后来的少数 RTS）设计的架构，实测下来它在本项目里付出的代价比它解决的问题更大。真实服务器 + 真实客户端 + 真实 socket 的对照测量结果：快照开销在 jl1 上是每帧 1.95 毫秒，在大图 cw1 上是**每帧 48.4 毫秒** —— 相当于 300 毫秒帧预算的 16% 常驻占用；保留 64 帧历史要多占 27 MB（jl1）到 **260 MB**（cw1）内存。而它本来要解决的问题（「暂停很久也能回滚」）在 cw1 上**根本走不通**：单个快照约 4.1 MB，窗口开到 256 帧就是约 1 GB 内存，58 秒暂停（193 帧）的重演外推约 **10.9 秒卡死**。回滚深度不是想开多大就能开多大，它被地图大小同时锁在内存和 CPU 上。
+- **决策**：回到**确定性锁步**（deterministic lockstep）—— 服务器等所有玩家交齐本回合的指令，再统一广播。经典即时战略游戏（帝国时代 1/2/4、星际争霸 1/2）历来就是这么做的（详见 1.5.1.9 的发行说明）。锁步的「等最慢玩家」代价并没有想象中大：服务器按 ping 自动放大 ``fpct``，200 毫秒 ping 对应 2 帧回合（600 毫秒），300 毫秒以上对应 3 帧（900 毫秒），低延迟下锁步隐藏得相当好。
+- **改进**：整个 ``soundrts/net/`` 包（``rollback.py``、``snapshot.py``、``session.py``、``input_stream.py``、``headless.py``）连同协议协商与协议修订号（``negotiate_protocol``）、``input`` 命令、客户端预测与快照回滚循环、``use_rollback_netcode`` 配置项全部删除。多播数据回到 ``Orders`` 屏障 + ``all_orders`` 广播这一条路上。**没有快照、没有历史窗口、没有重演，因此也不存在「回滚不回来导致世界分叉」这种状态** —— 锁步下落后只意味着一起变慢，不会分叉。
+- **保留**：回放格式的三个修复（每条指令独占一行、时间戳单调、读取端按时间排序并缓冲）**全部保留** —— 它们与协议无关，锁步对局的回放同样受益。``replay_read_line()`` 能区分空行与文件末尾，多行指令不再让回放半路夭折。1.5.1.9 与 1.5.2.0 的发行说明作为历史记录保持原样。
+- **范围**：``soundrts/net/``（整个包）、``soundrts/version.py``、``soundrts/serverroom.py``、``soundrts/serverclient.py``、``soundrts/clientserver.py``、``soundrts/clientservermenu.py``、``soundrts/game.py``、``soundrts/worldclient.py``、``soundrts/clientgame/game_interface_base.py``、``soundrts/clientgame/game_input_handler.py``、``soundrts/config.py``。
+- **端到端验证**：新增 ``soundrts/tests/test_net_lockstep_end_to_end.py`` —— 它驱动**真实的服务器**与**真实的客户端**，跑**真实的 loopback socket**：两个客户端用朴素的 ``<version> <login>`` 登录，主建房、客人登记、主机开局，双方从服务器发来的字节重建世界，然后一轮一轮地应答通信回合、接收 ``all_orders``、推进模拟。最后断言两个世界的**摘要相同**（摘要覆盖每个玩家的资源与每个单位的 id 和位置）—— 也就是两次模拟确实一致。这是唯一能证明这次「摘除手术」没有破坏线路格式的测试。
+
+**新增：网络协议回归测试（锁步专用）**
+
+- **改进**：``soundrts/tests/test_net_protocol.py`` 改为覆盖纯锁步链路：登录行仍然按 ``<version> <login>`` 解析；``Orders`` 屏障仍然要等齐**每一个**玩家的指令才会放行。
+- **范围**：``soundrts/tests/test_net_protocol.py``。
+
 1.5.2.0
 -------
 

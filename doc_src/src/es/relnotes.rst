@@ -4,6 +4,23 @@ Notas de la versión
 
 .. contents::
 
+1.5.2.1
+-------
+
+**Cambio: se elimina el código de red con reversión por instantáneas; la partida vuelve al lockstep determinista**
+
+- **Problema**: la reversión es una arquitectura pensada para los juegos de lucha (y más tarde para unos pocos juegos de estrategia en tiempo real), y la medición en este proyecto mostró que costaba más que el problema que resolvía. Medido contra un servidor real, clientes reales y sockets reales: la instantánea cuesta **48,4 ms por fotograma** en el mapa grande ``cw1`` -- un 16% del presupuesto de fotograma de 300 ms ocupado de forma permanente --, mientras que en ``jl1`` sólo cuesta 1,95 ms por fotograma; conservar un historial de 64 fotogramas cuesta 27 MB en ``jl1`` y **260 MB** en ``cw1``. Y el problema que debía resolver ("una pausa larga todavía se puede revertir") **no se puede alcanzar** en ``cw1``: una instantánea ocupa unos 4,1 MB, así que una ventana de 256 fotogramas significa alrededor de 1 GB de memoria, y resimular una pausa de 58 segundos (193 fotogramas) se extrapola a **10,9 segundos de congelación**. La profundidad de la reversión no es un parámetro libre: el tamaño del mapa la bloquea a la vez por memoria y por CPU.
+- **Decisión**: volver al **lockstep determinista**: el servidor espera a que todos los jugadores entreguen las órdenes del turno y luego las transmite a todos. Así es como siempre han jugado los juegos clásicos de estrategia en tiempo real (Age of Empires 1/2/4, StarCraft 1/2; mira las notas de la 1.5.1.9). El precio de "esperar al jugador más lento" no es tan grande como parece: el servidor escala ``fpct`` con el ping, de modo que un ping de 200 ms equivale a un turno de 2 fotogramas (600 ms) y 300 ms o más a 3 fotogramas (900 ms). Con poca latencia, el lockstep se disimula bastante bien.
+- **Mejora**: desaparece todo el paquete ``soundrts/net/`` (``rollback.py``, ``snapshot.py``, ``session.py``, ``input_stream.py``, ``headless.py``), junto con la negociación de protocolo y los números de revisión (``negotiate_protocol``), el comando ``input``, el bucle de predicción del cliente y reversión por instantáneas, y la opción ``use_rollback_netcode``. Los datos multijugador vuelven a la barrera de ``Orders`` más la difusión de ``all_orders``. **No hay instantáneas, ni ventana de historial, ni resimulación, así que el estado "el mundo se ha bifurcado y no se puede revertir" ya no existe**: bajo lockstep, un cliente retrasado sólo ralentiza a todos, nunca bifurca el mundo.
+- **Se conserva**: las tres correcciones del formato de repetición (una línea por orden, marcas de tiempo monótonas y un lector que ordena los registros por tiempo y los almacena en un búfer) **se conservan**: son independientes del protocolo y una repetición con lockstep se beneficia igual. ``replay_read_line()`` distingue una línea en blanco del final del archivo, y una orden de varias líneas ya no mata la repetición a mitad. Las notas de la 1.5.1.9 y de la 1.5.2.0 se quedan como el registro histórico de lo que publicó cada versión.
+- **Alcance**: ``soundrts/net/`` (el paquete entero), ``soundrts/version.py``, ``soundrts/serverroom.py``, ``soundrts/serverclient.py``, ``soundrts/clientserver.py``, ``soundrts/clientservermenu.py``, ``soundrts/game.py``, ``soundrts/worldclient.py``, ``soundrts/clientgame/game_interface_base.py``, ``soundrts/clientgame/game_input_handler.py``, ``soundrts/config.py``.
+- **Verificación de extremo a extremo**: el nuevo ``soundrts/tests/test_net_lockstep_end_to_end.py`` maneja el **servidor real** y los **clientes reales** sobre **sockets loopback reales**: los dos clientes se identifican con la línea ``<version> <login>`` a secas, el anfitrión crea la sala, el invitado se registra, el anfitrión inicia la partida, ambos lados reconstruyen su mundo a partir de los bytes que envió el servidor y luego responden turno de comunicación tras turno de comunicación, reciben ``all_orders`` y avanzan la simulación. Al final comprueba que los dos mundos tienen el **mismo resumen** (el resumen cubre los recursos de cada jugador y el id y la posición de cada unidad), es decir, que las dos simulaciones coinciden de verdad. Es la única prueba que puede demostrar que esta operación no rompió el formato de la línea.
+
+**Añadido: un test de regresión del protocolo para el lockstep**
+
+- **Mejora**: ``soundrts/tests/test_net_protocol.py`` ahora cubre el camino del lockstep puro: la línea de login se sigue interpretando como ``<version> <login>``, y la barrera de ``Orders`` sigue esperando las órdenes de **todos** los jugadores antes de dejar pasar el turno.
+- **Alcance**: ``soundrts/tests/test_net_protocol.py``.
+
 1.5.2.0
 -------
 
