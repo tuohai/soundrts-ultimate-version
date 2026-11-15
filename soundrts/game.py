@@ -1,7 +1,6 @@
 ﻿import os.path
 import random
 import time
-import traceback
 from typing import List, Tuple, Union
 
 import cloudpickle
@@ -24,12 +23,7 @@ from .paths import (
     current_resume_save_path,
     current_saves_dir,
 )
-from .version import (
-    DEFAULT_PROTOCOL,
-    ROLLBACK_PROTOCOL,
-    VERSION,
-    compatibility_version,
-)
+from .version import VERSION, compatibility_version
 from .world import World, MapError
 from .worldclient import (
     Coordinator,
@@ -265,32 +259,6 @@ class _Game:
                 return []
         return self.default_triggers
 
-    def _start_rollback_session(self):
-        """Create the rollback session as soon as the world exists.
-
-        The session must exist *before* the first frame is simulated: it
-        takes the initial snapshot of the world, and it is the object that
-        applies the authoritative inputs.  Creating it lazily (on the first
-        input message) would mean that the inputs arriving before the world
-        is built are lost, and the client would diverge from the server for
-        the whole match.
-
-        This runs on the world thread, before the game loop starts.
-        """
-        local = getattr(self, "local_client", None)
-        if local is None:
-            return
-        if not getattr(local, "rollback_enabled", False):
-            return
-        ensure = getattr(local, "_ensure_session", None)
-        if ensure is None:
-            return
-        try:
-            local.world = self.world
-            ensure()
-        except Exception:
-            warning("could not start the rollback session: %s", traceback.format_exc())
-
     def run(self, speed=None):
         # Default must not capture config.speed at import time: Options can
         # change it afterwards, and solo/campaign call run() with no speed.
@@ -361,7 +329,6 @@ class _Game:
                 for msg in loadout_applied_msgs(applied_cards):
                     voice.alert(msg)
             self.nb_human_players = self.world.current_nb_human_players()
-            self._start_rollback_session()
             self.interface = clientgame.GameInterface(self.local_client, speed=speed)
             self.interface.auto = self.auto
             # 推导本局是否锁定联盟：如果开局前已设置非空且存在共享的联盟编号，则锁定
@@ -532,25 +499,10 @@ class MultiplayerGame(_MultiplayerGame):
         self.seed = seed
         self.speed = speed
         self.main_server = main_server
-        # The netcode protocol the server negotiated for this game.  The
-        # coordinator uses it to decide whether it drives the simulation
-        # itself (rollback) or waits for the server (lockstep).
-        #
-        # It is set by the caller (the menu) *after* this constructor, so
-        # it is applied in ``run()``.
-        self.protocol = getattr(self, "protocol", DEFAULT_PROTOCOL)
         if len(self.humans) > 1:
             self.allow_cheatmode = False
 
-    def _apply_protocol(self):
-        """Tell the local coordinator which protocol the game uses."""
-        local = getattr(self, "local_client", None)
-        if local is None:
-            return
-        local.rollback_enabled = self.protocol == ROLLBACK_PROTOCOL
-
     def run(self):
-        self._apply_protocol()
         _MultiplayerGame.run(self, speed=self.speed)
 
     def _countdown(self):
@@ -943,11 +895,11 @@ class ReplayGame(_Game):
         file *and* for a blank line, so a reader cannot tell "the file is
         over" from "this line is empty".
 
-        The distinction matters for the replay *reader*: the old rollback
-        recorder wrote multi-line orders as one physical line, which left
-        blank lines in the file.  Reading such a file with
-        :meth:`replay_read` would stop at the first blank line and the rest
-        of the replay would never be played.
+        The distinction matters for the replay *reader*: a recorder that
+        wrote multi-line orders as one physical line left blank lines in the
+        file.  Reading such a file with :meth:`replay_read` would stop at
+        the first blank line and the rest of the replay would never be
+        played.
 
         Returns the line (possibly empty), or ``None`` at the end of the
         file.
@@ -1006,11 +958,6 @@ class SpectatorGame(_MultiplayerGame):
         # 创建旁观者客户端（使用Coordinator作为基础）
         self.local_client = Coordinator(main_server.login, main_server, self)
 
-        # The netcode protocol the match uses.  It is set by the caller
-        # (the menu) *after* this constructor, so it is applied in
-        # ``run()``.
-        self.protocol = getattr(self, "protocol", DEFAULT_PROTOCOL)
-
         # 创建实际游戏玩家列表（观战者不包含在内）
         self.players = []  # 只包含实际游戏玩家，不包含观战者
         for login, alliance, faction in players:
@@ -1041,11 +988,6 @@ class SpectatorGame(_MultiplayerGame):
             speed = config.current_game_speed()
         if self.record_replay:
             self.create_replay()
-
-        # The spectator has to know which protocol the match uses: under
-        # the rollback protocol it replays the authoritative inputs frame
-        # by frame, instead of the lockstep communication turns.
-        self._apply_protocol()
 
         self.world = World(self._world_default_triggers(), self.seed)
 
@@ -1086,10 +1028,6 @@ class SpectatorGame(_MultiplayerGame):
             # 为观战者创建独立的玩家对象（在 populate_map 之后，确保不扰乱
             # 真实玩家创建期间的随机数消耗）
             self._create_spectator_player()
-
-            # The spectator's rollback session must exist before the first
-            # frame: it is the object that replays the authoritative inputs.
-            self._start_rollback_session()
 
             self.interface = clientgame.GameInterface(self.local_client, speed=speed)
             self.interface.auto = self.auto

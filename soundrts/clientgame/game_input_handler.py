@@ -638,23 +638,11 @@ def _loop(interface):
                 from .game_display import display
                 display(interface)
             interface.server.update()
-            # The rollback netcode may have fallen too far behind to repair
-            # the world.  This is checked *before* the next frame is
-            # simulated: the world we are holding is provably wrong, and it
-            # would stay wrong for the rest of the match.
-            check_desync = getattr(
-                interface, "check_unrecoverable_desync", None
-            )
-            if check_desync is not None and check_desync():
-                break
             if (
                 interface._time_to_ask_for_next_update()
                 and interface.server.orders_are_ready()
             ):
-                if getattr(interface.server, "rollback_enabled", False):
-                    interface._ask_for_rollback_update()
-                else:
-                    interface._ask_for_update()
+                interface._ask_for_update()
             from .game_display import _animate_objects
             _animate_objects(interface)
             _process_events(interface)

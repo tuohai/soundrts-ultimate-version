@@ -23,7 +23,6 @@ from .serverroom import (
     WaitingForTheGameToStart,
     _State,
 )
-from .version import DEFAULT_PROTOCOL, PROTOCOL_REVISIONS, protocol_revision
 
 
 def _map(map_index_or_name):
@@ -42,12 +41,6 @@ class ConnectionToClient(asynchat.async_chat):
     login = None
     version = None
     game = None
-    # The netcode protocol this client speaks.  An old client does not send
-    # it, and speaks the legacy lockstep protocol.
-    protocol = DEFAULT_PROTOCOL
-    # The revision of the protocol this client speaks.  An old client does
-    # not send it, and speaks revision 1 (the original wire format).
-    protocol_revision = 1
 
     def __init__(self, server: "Server", connection_and_address) -> None:
         (connection, address) = connection_and_address
@@ -209,46 +202,20 @@ class ConnectionToClient(asynchat.async_chat):
     def _get_version_and_login_from_data(self, data):
         """Parse the login line.
 
-        The line is ``<version> <login> [<protocol>[/<revision>]]]``.  The
-        protocol is optional: an old client does not send it, and speaks
-        the legacy lockstep protocol.  The revision is optional too: a
-        bare protocol name means revision 1.
+        The line is ``<version> <login>``.
         """
-        from .version import DEFAULT_PROTOCOL, SUPPORTED_PROTOCOLS, parse_protocol_token
-
-        parts = data.split(" ")
-        version = parts[0] if parts else ""
-        login = parts[1] if len(parts) > 1 else ""
-        raw_protocol = parts[2] if len(parts) > 2 else DEFAULT_PROTOCOL
         try:
-            protocol, revision = parse_protocol_token(raw_protocol)
-        except ValueError:
-            warning("unknown protocol %r, assuming %s", raw_protocol, DEFAULT_PROTOCOL)
-            protocol = DEFAULT_PROTOCOL
-            revision = protocol_revision(DEFAULT_PROTOCOL)
-        if protocol not in SUPPORTED_PROTOCOLS:
-            warning("unknown protocol %r, assuming %s", protocol, DEFAULT_PROTOCOL)
-            protocol = DEFAULT_PROTOCOL
-            revision = protocol_revision(DEFAULT_PROTOCOL)
-        if revision <= 0:
-            revision = 1
-        if revision != protocol_revision(protocol):
-            # The client speaks a revision this server does not know.  The
-            # revision is still recorded, so that the negotiation can fall
-            # back to a protocol both sides understand.
-            warning(
-                "client speaks %s revision %s, this server speaks revision %s",
-                protocol,
-                revision,
-                protocol_revision(protocol),
-            )
+            version, login = data.split(" ", 1)
+        except Exception:
+            warning("can't extract version and login: %s" % data)
+            return None, None
         if not config.login_is_valid(login):
             warning("bad login: %s" % login)
-            return version, None, protocol, revision
+            return version, None
         if len(self.server.clients) >= self.server.nb_clients_max:
             warning("refused client %s: too many clients." % login)
-            return version, None, protocol, revision
-        return version, self._unique_login(login), protocol, revision
+            return version, None
+        return version, self._unique_login(login)
 
     @property
     def compatible_clients(self):
@@ -282,12 +249,7 @@ class ConnectionToClient(asynchat.async_chat):
         self.server.log_status()
 
     def cmd_login(self, args):
-        (
-            self.version,
-            self.login,
-            self.protocol,
-            self.protocol_revision,
-        ) = self._get_version_and_login_from_data(" ".join(args))
+        self.version, self.login = self._get_version_and_login_from_data(" ".join(args))
         if self.login is not None:
             self._accept_client_after_login()
             self.server.update_menus()
@@ -685,31 +647,6 @@ class ConnectionToClient(asynchat.async_chat):
     def cmd_orders(self, args):
         self.push("pong\n")
         self.game.orders(self, *args)
-
-    def cmd_input(self, args):
-        """input <frame> <packed orders>
-
-        The rollback protocol: the client sends the orders it wants applied
-        on a given frame, and the server stamps them and broadcasts them to
-        the other players straight away.
-        """
-        if not args:
-            return
-        try:
-            frame = int(args[0])
-        except ValueError:
-            warning("bad input frame: %r", args[0])
-            return
-        # The orders are the rest of the line, verbatim: they are packed
-        # (spaces and newlines replaced), so they contain no space.
-        orders = " ".join(args[1:])
-        game = self.game
-        if game is None:
-            return
-        try:
-            game.submit_input(self, frame, orders)
-        except Exception as e:
-            warning("submit_input: %s", e)
 
     def cmd_quit_game(self, unused_args):
         # post_run and srv_start_game finally both send this; second is a no-op.

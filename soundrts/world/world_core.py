@@ -113,11 +113,10 @@ class World:
     # ``hasattr`` guards in ``world_game.py``).  Giving them a class-level
     # default does two things:
     #
-    # 1. the rollback snapshot can read them as a fallback, so a snapshot
-    #    taken *before* the first update still records the right value
-    #    instead of ``None`` (see ``soundrts.net.snapshot._capture_scalars``);
-    # 2. the snapshot no longer has to special-case a missing attribute, so
-    #    the lazy initialisation and the snapshot agree.
+    # 1. reading the class attribute is a safe fallback, so a value taken
+    #    *before* the first update is the right one instead of ``None``;
+    # 2. the lazy initialisation and every reader of these counters agree
+    #    on the value.
     #
     # The values are the ones the lazy initialisation itself would use:
     # ``_last_full_terrain_update`` -> 0 (a full terrain sweep is due),

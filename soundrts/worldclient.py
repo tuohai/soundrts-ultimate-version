@@ -1,15 +1,12 @@
 import platform
 import sys
-import threading
 import time
-import traceback
 import urllib.error
 import urllib.parse
 import urllib.request
 from hashlib import md5
 from typing import Optional
 
-from .definitions import VIRTUAL_TIME_INTERVAL
 from .lib import chronometer as chrono
 from .lib.log import exception, info, warning
 from .metaserver import METASERVER_URL
@@ -27,8 +24,8 @@ SPACE_REPLACEMENT = ","
 
 # The orders a replay line may start with.  A line that starts with one of
 # these but has no time is a *continuation*: it is the second (or third,
-# ...) order of a multi-line order, written by the old rollback recorder
-# (which put a raw newline in the replay file).
+# ...) order of a multi-line order, written by an older recorder (which put
+# a raw newline in the replay file).
 REPLAY_ORDER_KEYWORDS = (
     "control",
     "order",
@@ -253,7 +250,7 @@ class ReplayClient(DirectClient):
     def _parse_continuation(self, line, previous):
         """Parse a continuation line of a multi-line order.
 
-        The old rollback recorder wrote a multi-line order string as one
+        An older recorder wrote a multi-line order string as one
         physical line, which put a raw newline in the replay file.  The
         lines after the first therefore have no time and no player index:
         they are the remaining orders of the *same* player's order string,
@@ -288,9 +285,8 @@ class ReplayClient(DirectClient):
         * a record whose time is not a multiple of 300 ms can never match
           exactly, so the reader stalls on it forever and the rest of the
           replay is never played;
-        * a rollback rewinds the world, so the timestamps of a rollback
-          replay are not monotonic, and a record that goes backwards is
-          never matched either;
+        * an older recorder could write a record whose timestamp went
+          backwards, and such a record would never be matched either;
         * the reader stopped at the first record it could not apply, so a
           single unmatchable record blocked *every* record behind it.
 
@@ -301,14 +297,12 @@ class ReplayClient(DirectClient):
         * keeps the records it cannot apply yet in a buffer, so they are
           applied as soon as the world catches up with them;
         * reads the *whole* file up front and applies the records in
-          chronological order, so a record that went backwards (a rollback)
-          is not lost.
+          chronological order, so a record that went backwards is not lost.
 
-        The last point matters: a rollback rewinds the world, so the
-        records of the rewound frames are written *after* the records of
-        the frames that came after them.  Applying them in file order would
-        apply them at the wrong moment; sorting by time puts them back in
-        the order the match actually happened in.
+        The last point matters: a record that goes backwards was written
+        *after* the records that came after it.  Applying the records in
+        file order would apply them at the wrong moment; sorting by time
+        puts them back in the order the match actually happened in.
         """
         world = self.player.world
         pending = self._pending_replay_records()
@@ -392,38 +386,9 @@ class Coordinator(_Client):  # client coordinator for multiplayer games
         self.all_orders = [[FIRST_FPCT]]
         self.turn = 0  # com turn
         self.sub_turn = 0  # simulation frame
-        # The number of simulation frames per communication turn.  In the
-        # lockstep protocol it is set by the server, in every "all_orders"
-        # message.  The rollback protocol has no communication turn at all:
-        # the server sends inputs frame by frame, so there is exactly one
-        # simulation frame per turn.  The value must exist from the start,
-        # because ``_dispatch_orders`` uses it (``self.sub_turn %= self.fpct``)
-        # and in rollback mode ``_give_all_orders`` — which is where the
-        # lockstep protocol sets it — is never called.
+        # The number of simulation frames per communication turn.  It is set
+        # by the server, in every "all_orders" message.
         self.fpct = FIRST_FPCT
-        # -- the rollback protocol ---------------------------------------
-        # The session drives the simulation: it predicts, it snapshots, and
-        # it repairs the world when the server contradicts a prediction.
-        # It is created once the world exists (see ``_ensure_session``).
-        self.rollback_session = None
-        # Whether the server and this client speak the rollback protocol.
-        self.rollback_enabled = False
-        # The (frame, player index) pairs already written to the replay file.
-        # A frame can be simulated more than once (a rollback re-simulates
-        # the frames it rewound over), and the orders must not be written
-        # twice.
-        self._replay_written = set()
-        # The authoritative inputs that arrived *before* the session could be
-        # created.  The session needs the world (to snapshot it) and the
-        # players (to know whose input to wait for), and neither exists when
-        # the socket starts delivering messages.  Dropping those inputs would
-        # make the client diverge from the server for the whole match, so
-        # they are buffered here and replayed into the session as soon as it
-        # exists.
-        self._pending_rollback_inputs = []
-        # The buffer is written by the network thread and read by the world
-        # thread, so it needs a lock.
-        self._pending_inputs_lock = threading.Lock()
 
     @property
     def clients(self):
@@ -434,276 +399,6 @@ class Coordinator(_Client):  # client coordinator for multiplayer games
             if c.login == login:
                 return c
 
-    # -- the rollback protocol -------------------------------------------
-
-    def _ensure_session(self):
-        """Create the rollback session, once the world is available.
-
-        The session needs the world (to snapshot it) and the list of the
-        players (to know whose input to wait for).  Both are only known
-        once the game has started, so the session is created lazily.
-        """
-        if self.rollback_session is not None:
-            return self.rollback_session
-        world = self.world
-        if world is None:
-            return None
-
-        players_by_login = {}
-        for client in self.clients:
-            player = getattr(client, "player", None)
-            if player is not None:
-                players_by_login[client.login] = player
-        if not players_by_login:
-            return None
-
-        from .net.session import RollbackSession, SpectatorSession
-
-        if self._is_spectator:
-            # A spectator does not predict and does not roll back: it only
-            # replays the authoritative inputs the server sends it.
-            session = SpectatorSession(
-                world=world,
-                players=list(players_by_login),
-                step=world.update,
-                apply_inputs=self._apply_rollback_inputs,
-            )
-        else:
-            session = RollbackSession(
-                world=world,
-                local_player=self.login,
-                players=list(players_by_login),
-                step=world.update,
-                apply_inputs=self._apply_rollback_inputs,
-                on_local_input=self._send_rollback_input,
-            )
-        self.rollback_session = session
-        # The inputs that arrived before the session existed are replayed
-        # into it now, in the order they were received.
-        with self._pending_inputs_lock:
-            pending = self._pending_rollback_inputs
-            self._pending_rollback_inputs = []
-        for frame, player_id, orders in pending:
-            session.on_input(frame, player_id, orders)
-        return session
-
-    def _apply_rollback_inputs(self, inputs):
-        """Apply one frame's inputs to the world.
-
-        This runs on the *world* thread (it is called by the session while
-        it steps the simulation), so it is the only place where orders are
-        handed to the players.
-        """
-        for login in sorted(inputs):
-            orders = inputs.get(login) or ""
-            if not orders:
-                continue
-            player = None
-            for client in self.clients:
-                if client.login == login:
-                    player = getattr(client, "player", None)
-                    break
-            if player is None:
-                continue
-            for order in orders.split("\n"):
-                if order:
-                    player.execute_command(order)
-            # The replay is written here, and not in ``queue_command``:
-            # the rollback protocol applies the orders itself.
-            self._record_rollback_replay(login, orders)
-
-    # -- the replay, in rollback mode -------------------------------------
-
-    def _record_rollback_replay(self, login, orders) -> None:
-        """Write one player's orders to the replay file.
-
-        In the lockstep protocol the replay is written by
-        :meth:`_Client.queue_command`, which the rollback protocol does not
-        go through (its orders are applied directly, because they are
-        applied per *frame* rather than per communication turn).
-
-        The replay format is ``<world time> <player index> <order>``, and
-        :class:`~soundrts.game.ReplayGame` applies a line when the world's
-        time matches.
-
-        Two things need care here.
-
-        **One physical line per order.**  The order string may hold several
-        orders, separated by newlines (a *control* order plus the *order*
-        it triggers, for instance).  Writing them as one physical line
-        would put a raw newline in the file, and the reader — which reads
-        *lines* — would then see a continuation line without a time and a
-        player index.  Parsing that line raises ``ValueError: invalid
-        literal for int() with base 10: 'order'`` and the replay dies.  So
-        every order gets its own line, each with its own time and player
-        index.
-
-        **The time of the frame, not the time of the world.**  A rollback
-        rewinds the world and re-simulates the frames it rewound over, so
-        the world's time goes *backwards* for a moment and then catches up.
-        Writing ``world.time`` would therefore produce a replay whose
-        timestamps are not monotonic, and the reader — which waits for the
-        timestamp to match the world's time — would stall forever on the
-        first record that went backwards.
-
-        The frame number is monotonic by construction (a rollback re-uses
-        the frame numbers it rewinds over, and each (frame, player) pair is
-        written only once), and the frame's time is ``frame * 300`` ms.
-        The time is therefore *derived from the frame* instead of read from
-        the world, which makes the replay monotonic by construction.
-
-        The tricky part is that a frame can be simulated more than once: a
-        rollback rewinds the world and re-simulates the frames it rewound
-        over.  Writing the replay line again would duplicate the orders, so
-        every (frame, player) pair is written at most once.
-        """
-        if not getattr(self.game_session, "record_replay", False):
-            return
-        player = None
-        for client in self.clients:
-            if client.login == login:
-                player = getattr(client, "player", None)
-                break
-        if player is None:
-            return
-        world = self.world
-        if world is None:
-            return
-        try:
-            player_index = world.players.index(player)
-        except ValueError:
-            return
-        frame = self._rollback_current_frame()
-        key = (frame, player_index)
-        if key in self._replay_written:
-            return
-        self._replay_written.add(key)
-        # The time of the frame, derived from the frame number: it is
-        # monotonic by construction, even when a rollback rewinds the world.
-        frame_time = frame * VIRTUAL_TIME_INTERVAL
-        for order in orders.split("\n"):
-            if not order:
-                continue
-            try:
-                self.game_session.replay_write(
-                    " ".join(map(str, (frame_time, player_index, order)))
-                )
-            except Exception:
-                exception("couldn't write the replay")
-                return
-
-    def _rollback_current_frame(self) -> int:
-        """The frame the world thread is currently simulating."""
-        session = self.rollback_session
-        if session is not None:
-            return session.frame
-        return 0
-
-    # -- the unrecoverable desync ----------------------------------------
-
-    def has_unrecoverable_desync(self) -> bool:
-        """Has the client fallen too far behind to repair itself?
-
-        This happens when the dirty frame is older than the rollback
-        history window (64 frames, i.e. 19.2 s of virtual time) *and* the
-        server's authoritative content for that frame contradicts what was
-        applied on it.  The world the client is holding then contains a
-        prediction the server has just contradicted, and it will stay wrong
-        for the rest of the match.
-
-        A frame that cannot be redone is not enough on its own: when the
-        authoritative content agrees with what was applied, the world is
-        perfectly correct and the match goes on.  That distinction matters
-        a lot in practice — a player who pauses for a long time sends its
-        (empty) input very late, and that late input used to end the
-        match on the side that was playing fine.
-
-        The client must not silently continue: it would diverge from every
-        other client (and from the server) without anybody noticing.  The
-        caller (the game interface) announces the desync and ends the
-        match.
-        """
-        session = self.rollback_session
-        if session is None:
-            return False
-        try:
-            return bool(session.unrecoverable_desync)
-        except Exception:
-            return False
-
-    def unrecoverable_desync_stats(self):
-        """The rollback statistics, for the desync report."""
-        session = self.rollback_session
-        if session is None:
-            return None
-        try:
-            return session.stats
-        except Exception:
-            return None
-
-    def _send_rollback_input(self, frame: int, orders: str) -> None:
-        """Send the local player's input for *frame* to the server."""
-        try:
-            self.main_server.write_line("input %d %s" % (frame, orders))
-        except Exception:
-            warning("couldn't send input for frame %s", frame)
-
-    def submit_rollback_input(self, frame: int, orders: str) -> None:
-        """Send the local player's orders for *frame* to the server.
-
-        The orders are sent *packed* (no spaces, no newlines), because the
-        protocol is line-based.
-        """
-        from .net.input_stream import pack_orders
-
-        self._send_rollback_input(frame, pack_orders(orders))
-
-    def receive_rollback_input(self, message: str) -> None:
-        """Handle one authoritative input received from the server.
-
-        This runs on the network thread.  It only *records* what the server
-        said: the world is not touched here, because it lives on the world
-        thread.  The session repairs the world on its next step.
-        """
-        from .net.input_stream import decode_input
-
-        try:
-            frame, player_id, seq, orders = decode_input(message)
-        except ValueError:
-            warning("malformed input from server: %r", message)
-            return
-
-        session = self.rollback_session
-        if session is None:
-            # The session does not exist yet (the world is not built, or the
-            # players are not attached).  The input is not lost: it is
-            # buffered and replayed into the session as soon as it exists.
-            #
-            # The session is *not* created here: it snapshots the world, and
-            # that must happen on the world thread, not on the network one.
-            with self._pending_inputs_lock:
-                self._pending_rollback_inputs.append((frame, player_id, orders))
-            return
-        session.on_input(frame, player_id, orders)
-
-    def receive_player_quit(self, login: str) -> None:
-        """Handle the notification that a player left the match.
-
-        This runs on the network thread.  The player will never send an
-        input again, so the session must stop waiting for it — otherwise
-        every frame would stay incomplete and the client would freeze.
-        """
-        session = self.rollback_session
-        if session is None:
-            return
-        remove = getattr(session, "remove_player", None)
-        if remove is None:
-            return
-        try:
-            remove(login)
-        except Exception:
-            warning("couldn't drop the player %s: %s", login, traceback.format_exc())
-
     # communications with the client game interface
 
     def com_turn(self):
@@ -712,19 +407,6 @@ class Coordinator(_Client):  # client coordinator for multiplayer games
     delay = 0
 
     def orders_are_ready(self):
-        if self.rollback_enabled:
-            # The rollback protocol has no barrier: the client is always
-            # ready to simulate the next frame, because it predicts the
-            # inputs it does not have yet.
-            #
-            # A spectator is the exception: it does not predict, it waits
-            # for the authoritative inputs of the frame it is about to
-            # replay.  It must not run ahead of them, or it would show a
-            # world that does not exist.
-            session = self.rollback_session
-            if session is not None and hasattr(session, "has_ready_frame"):
-                return session.has_ready_frame()
-            return True
         return not self.com_turn() or self.all_orders
 
     def write_line(self, s):
@@ -742,11 +424,6 @@ class Coordinator(_Client):  # client coordinator for multiplayer games
         """旁观者是否还有大量未处理的历史回合需要快进追帧。"""
         if not self._is_spectator:
             return False
-        session = self.rollback_session
-        if session is not None and hasattr(session, "pending_frames"):
-            # The rollback protocol: the backlog is the number of frames
-            # whose inputs have arrived but have not been replayed yet.
-            return session.pending_frames() > self.catch_up_buffer
         return len(self.all_orders) > self.catch_up_buffer
 
     def _dispatch_orders(self):
@@ -763,42 +440,27 @@ class Coordinator(_Client):  # client coordinator for multiplayer games
             # 旁观者只接收、不上报：服务器把旁观者状态设为 Spectating，
             # 不接受 orders/timeout，硬发只会被拒绝并刷服务器日志。
             if not self._is_spectator:
-                if self.rollback_enabled:
-                    # The rollback protocol: the local player's orders are
-                    # sent as an *input* for the frame they belong to, and
-                    # the client does not wait for the server.
-                    session = self._ensure_session()
-                    if session is not None:
-                        session.submit_local(self.orders)
-                else:
-                    self.main_server.write_line(
-                        " ".join(
-                            map(
-                                str,
-                                (
-                                    "orders",
-                                    _pack(self.orders),
-                                    self.get_digest(),
-                                    chrono.value("ping"),
-                                    chrono.value("update"),
-                                    self.delay,
-                                    self.interface.real_speed,
-                                ),
-                            )
+                self.main_server.write_line(
+                    " ".join(
+                        map(
+                            str,
+                            (
+                                "orders",
+                                _pack(self.orders),
+                                self.get_digest(),
+                                chrono.value("ping"),
+                                chrono.value("update"),
+                                self.delay,
+                                self.interface.real_speed,
+                            ),
                         )
                     )
+                )
                 chrono.start("ping")
             self.orders = ""
-            if not self.rollback_enabled:
-                # The lockstep protocol: the server sends back the whole
-                # turn ("all_orders"), which is then applied to the players.
-                #
-                # The rollback protocol has no such message: the server
-                # sends the *inputs* one by one, and the session applies
-                # them to the players itself (see ``_apply_rollback_inputs``).
-                # Popping the order queue here would therefore raise an
-                # IndexError, because nothing ever refills it.
-                self._give_all_orders()
+            # The server sends back the whole turn ("all_orders"), which is
+            # then applied to the players.
+            self._give_all_orders()
             self.turn += 1
         self.sub_turn += 1
         self.sub_turn %= self.fpct
@@ -871,16 +533,6 @@ class Coordinator(_Client):  # client coordinator for multiplayer games
             elif args[0] == "all_orders":
                 self.all_orders.append(args[1:])
                 self.delay = time.time() - self.interface.next_update
-            elif args[0] == "input":
-                # An authoritative input from the server (rollback protocol).
-                # The whole rest of the line is the payload.
-                self.receive_rollback_input(" ".join(args[1:]))
-            elif args[0] == "player_quit":
-                # A player left the match (rollback protocol).  The client
-                # has to stop waiting for its inputs, or it would never
-                # simulate another frame.
-                if len(args) >= 2:
-                    self.receive_player_quit(args[1])
             elif args[0] == "spectate_success":
                 # 大厅在 start_spectating 之后才发这条；旁观主循环已经接管套接字，
                 # 菜单回调到不了。不是错误，静默丢掉即可。

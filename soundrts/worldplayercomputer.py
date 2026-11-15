@@ -343,8 +343,8 @@ class Computer(Player):
             # identity, so it depends on neither.
             #
             # The stream is kept as a plain integer (not a ``random.Random``
-            # object) so that the rollback snapshot machinery, which copies
-            # player attributes by value, can rewind it correctly.
+            # object) so that it is a value: copying a player copies the
+            # stream by value instead of sharing one mutable object.
             self._plan_draw = 0
             self._update_effect_users_and_workers()  # required by some tests
 

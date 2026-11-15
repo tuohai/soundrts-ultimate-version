@@ -247,86 +247,6 @@ class GameInterface(AttributesInterface):
         sound.stop()
         self.end_loop = True
 
-    # -- the unrecoverable desync ----------------------------------------
-
-    # Set once the desync has been announced, so the announcement happens
-    # exactly once (the flag stays set on the session until it is cleared).
-    _desync_announced = False
-
-    def check_unrecoverable_desync(self) -> bool:
-        """Announce and end the match if the client can no longer resync.
-
-        The rollback netcode repairs the world by rewinding to the dirty
-        frame and re-simulating it.  That is only possible while the
-        snapshot of that frame is still in the history window (64 frames,
-        19.2 s of virtual time).  A client that falls further behind — for
-        instance because it was paused for a long time — cannot rewind that
-        far.
-
-        Being too far behind is not enough on its own, though: the world
-        is only really wrong when the server's authoritative content for
-        that frame contradicts what the client applied on it.  A late but
-        harmless confirmation (a player that paused and did nothing) leaves
-        the world correct, and the match goes on — see
-        :meth:`soundrts.net.rollback.RollbackManager._trimmed_frame_is_a_desync`.
-
-        When the content really does contradict what was applied, the world
-        the client is holding holds a prediction the server has just
-        contradicted, and it will stay wrong for the rest of the match.
-
-        Silently continuing would let the client diverge from every other
-        client without anybody noticing, so the desync is announced and the
-        match is ended.  The player is told what happened instead of
-        wondering why the game "felt wrong".
-
-        Returns ``True`` when the desync was detected (and the match is
-        being ended).
-        """
-        if self._desync_announced:
-            return True
-        server = self.server
-        has_desync = getattr(server, "has_unrecoverable_desync", None)
-        if has_desync is None or not has_desync():
-            return False
-
-        self._desync_announced = True
-        try:
-            self._announce_desync()
-        except Exception:
-            exception("could not announce the desync")
-        # Leave the match: the world we are holding is wrong, and playing on
-        # would only produce a bogus result.
-        try:
-            server.write_line("quit")
-        except Exception:
-            pass
-        self.forced_quit = True
-        self.end_loop = True
-        return True
-
-    def _announce_desync(self):
-        """Speak the desync notice."""
-        from ..lib.msgs import literal_text_msg
-
-        stats = None
-        getter = getattr(self.server, "unrecoverable_desync_stats", None)
-        if getter is not None:
-            stats = getter()
-        details = ""
-        if stats is not None:
-            try:
-                details = (
-                    "，已回滚 %d 次，最大回滚深度 %d 帧"
-                    % (stats.rollbacks, stats.max_rollback_depth)
-                )
-            except Exception:
-                details = ""
-        voice.confirmation(
-            literal_text_msg(
-                "与对手不同步：落后太多，无法回滚，已结束本局" + details
-            )
-        )
-
     def srv_msg(self, s):
         from ..lib.msgs import eval_msg_and_volume
         voice.info(*eval_msg_and_volume(s))
@@ -413,29 +333,6 @@ class GameInterface(AttributesInterface):
         self.next_update = time.time() + interval
         reset_combat_sfx_cap(self)
 
-    def _ask_for_rollback_update(self):
-        """Advance the simulation by one frame, using the rollback session.
-
-        In the rollback protocol the client does not wait for the server:
-        it applies its own orders plus whatever it has already received
-        from the server, and *predicts* the rest.  When the server later
-        contradicts the prediction, the session repairs the world.
-
-        The step runs on the world thread (it is queued as a command, like
-        ``world.update``), because restoring a snapshot mutates the world.
-        """
-        session = getattr(self.server, "rollback_session", None)
-        if session is None:
-            self._ask_for_update()
-            return
-        for player, order in self.server.get_orders():
-            self.world.queue_command(player, order)
-        self.world.queue_command(None, session.step)
-        self.waiting_for_world_update = True
-        interval = VIRTUAL_TIME_INTERVAL / 1000.0 / self.speed
-        self.next_update = time.time() + interval
-        reset_combat_sfx_cap(self)
-
     def _time_to_ask_for_next_update(self):
         if self.waiting_for_world_update:
             return False
@@ -450,15 +347,7 @@ class GameInterface(AttributesInterface):
     _announced_spectating = False
 
     def _pending_spectator_frames(self):
-        """How many frames the spectator still has to replay.
-
-        The lockstep protocol queues the communication turns in
-        ``all_orders``; the rollback protocol queues the frames whose
-        inputs have arrived in the spectator session.
-        """
-        session = getattr(self.server, "rollback_session", None)
-        if session is not None and hasattr(session, "pending_frames"):
-            return session.pending_frames()
+        """How many communication turns the spectator still has to replay."""
         return len(getattr(self.server, "all_orders", []) or [])
 
     def _update_catch_up_audio(self):

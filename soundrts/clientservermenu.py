@@ -15,7 +15,6 @@ from .lib.msgs import (
     normalize_map_title_for_voice,
 )
 from .lib.resource import res
-from .version import DEFAULT_PROTOCOL
 
 
 def insert_silences(msg):
@@ -95,15 +94,6 @@ def ask_room_password(on_password, on_cancel=None):
 
 
 class _ServerMenu(Menu):
-    # The netcode protocol the server negotiated for the current game.
-    # The rollback protocol removes the "wait for the slowest player"
-    # barrier; the legacy lockstep protocol is used when any player does
-    # not understand it.
-    _protocol = DEFAULT_PROTOCOL
-    # The revision of that protocol.  The server announces it as part of
-    # the protocol token (``<protocol>/<revision>``).
-    _protocol_revision = 1
-
     def __init__(self, server, auto=False, menu_type="main"):
         self.server = server
         self.auto = auto
@@ -158,47 +148,6 @@ class _ServerMenu(Menu):
 
     def srv_invitations(self, unused_args):
         pass
-
-    def srv_protocol(self, args):
-        """Receive the protocol the server negotiated for this game.
-
-        This line arrives before ``start_game`` (and before
-        ``start_spectating``): the client has to know which protocol the
-        game uses before it starts simulating.
-
-        The token is ``<protocol>/<revision>``.  A bare protocol name is
-        understood as revision 1 (what an older server sends).
-        """
-        from .version import (
-            SUPPORTED_PROTOCOLS,
-            parse_protocol_token,
-            protocol_revision,
-        )
-
-        token = args[0] if args else DEFAULT_PROTOCOL
-        try:
-            protocol, revision = parse_protocol_token(token)
-        except ValueError:
-            warning("malformed protocol token from server: %r", token)
-            protocol = DEFAULT_PROTOCOL
-            revision = protocol_revision(DEFAULT_PROTOCOL)
-        if protocol not in SUPPORTED_PROTOCOLS:
-            warning("unknown protocol %r from server, assuming %s", protocol, DEFAULT_PROTOCOL)
-            protocol = DEFAULT_PROTOCOL
-            revision = protocol_revision(DEFAULT_PROTOCOL)
-        if revision != protocol_revision(protocol):
-            # The server speaks a revision this client does not know.  The
-            # protocol is still used, but the mismatch is logged: the
-            # server's negotiation is what guarantees the *other* clients
-            # agree too.
-            warning(
-                "server speaks %s revision %s, this client speaks revision %s",
-                protocol,
-                revision,
-                protocol_revision(protocol),
-            )
-        self._protocol = protocol
-        self._protocol_revision = revision
 
     def srv_quit(self, unused_args):
         voice.flush()
@@ -792,10 +741,6 @@ class _BeforeGameMenu(_ServerMenu):
         game.enemy_damage_factor = int(getattr(self, "_coop_enemy_damage", 100) or 100)
         game.coop_difficulty = getattr(self, "_coop_difficulty", "") or ""
         game.auto = self.auto
-        # The netcode protocol the server negotiated.  The client has to
-        # use the same one, otherwise the two would disagree about which
-        # inputs are authoritative.
-        game.protocol = getattr(self, "_protocol", DEFAULT_PROTOCOL)
 
         # 合作战役：像单人战役 Campaign.run 那样加载该战役的资源层
         # （mods + 战役 rules.txt + 战役 ui/tts.txt）。否则：
@@ -1119,10 +1064,6 @@ class RoomListMenu(_ServerMenu):
         game = SpectatorGame(map_name, players, self.server, speed, seed, treaty)
         game.enemy_hp_factor = enemy_hp
         game.enemy_damage_factor = enemy_damage
-        # The netcode protocol the match uses.  A spectator under the
-        # rollback protocol replays the authoritative inputs frame by
-        # frame, instead of the lockstep communication turns.
-        game.protocol = getattr(self, "_protocol", DEFAULT_PROTOCOL)
         game.auto = self.auto
         game.run()
         self.end_loop = True
