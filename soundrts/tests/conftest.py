@@ -25,6 +25,24 @@ try:
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         import soundrts.options  # noqa: F401  (triggers the one-time arg parse)
+        # Import the resource stack *here*, at conftest import time, instead of
+        # letting the first test that needs it do the import lazily.
+        #
+        # ``soundrts.lib.resource`` builds the global ``res`` singleton at module
+        # import time (``res = _resource_stack()``), and that construction calls
+        # ``load_rules_and_ai()`` -> ``rules.load(<base rules>)``.  The
+        # ``rules`` object is a process-wide singleton, so that import
+        # *replaces* whatever rules a test module had loaded.
+        #
+        # When the import happened lazily -- inside the first test's fixture --
+        # it could land *after* a module-scoped fixture had already loaded the
+        # AoE2 mod rules, and the AoE2 tables would silently be replaced by the
+        # base ones.  ``test_can_use_tech_civ_filter.py`` failed exactly that
+        # way: ``scorpion`` disappeared from the rules and every assertion saw
+        # an empty list.  Importing it up-front makes the base-rules load a
+        # one-off event that happens during collection, before any fixture can
+        # install mod rules.
+        import soundrts.lib.resource  # noqa: F401
 finally:
     sys.argv = _saved_argv
 
