@@ -356,13 +356,17 @@ class Campaign:
         return self.chapter(chapter.number + 1)
 
     def _get_bookmark(self):
-        c = configparser.ConfigParser()
-        if os.path.isfile(CAMPAIGNS_CONFIG_PATH):
-            c.read_file(open(CAMPAIGNS_CONFIG_PATH))
+        """单人战役进度书签：指向"下一个可玩章节"在 ``self.chapters`` 中的下标。
+
+        缺省为 0（全新战役）：序章 0.txt 尚未播放，第一个任务章节（下标 1）
+        暂不可玩。
+        """
+        c = self._read_config()
         return c.getint(self._id(), "chapter", fallback=0)
 
     def _available_chapters(self):
-        return self.chapters[: self._get_bookmark() + 1]
+        """已解锁的章节：下标 <= 书签（书签指向下一个可玩章节，故取不到它）。"""
+        return self.chapters[: self._get_bookmark()]
 
     def _get_coop_bookmark(self):
         """合作战役进度书签（与单人 ``chapter`` 独立持久化）。"""
@@ -408,24 +412,25 @@ class Campaign:
         return bool(self.coop_campaign)
 
     def _set_bookmark(self, number):
-        c = configparser.ConfigParser()
-        if os.path.isfile(CAMPAIGNS_CONFIG_PATH):
-            c.read_file(open(CAMPAIGNS_CONFIG_PATH))
-        if self._id() not in c.sections():
-            c.add_section(self._id())
+        c = self._read_config()
         c.set(self._id(), "chapter", repr(number))
-        c.write(open(CAMPAIGNS_CONFIG_PATH, "w"))
+        self._write_config(c)
 
     def _read_config(self):
         c = configparser.ConfigParser()
         if os.path.isfile(CAMPAIGNS_CONFIG_PATH):
-            c.read_file(open(CAMPAIGNS_CONFIG_PATH))
+            # 必须用 with：open() 返回的文件对象不会被 configparser 关闭，
+            # 泄漏句柄（Windows 上很快耗尽），且 pytest 会把 ResourceWarning
+            # 升级为错误。
+            with open(CAMPAIGNS_CONFIG_PATH, encoding="utf-8") as f:
+                c.read_file(f)
         if self._id() not in c.sections():
             c.add_section(self._id())
         return c
 
     def _write_config(self, c):
-        c.write(open(CAMPAIGNS_CONFIG_PATH, "w"))
+        with open(CAMPAIGNS_CONFIG_PATH, "w", encoding="utf-8") as f:
+            c.write(f)
 
     def get_flags(self):
         c = self._read_config()
@@ -479,14 +484,31 @@ class Campaign:
         return factors(self.get_difficulty(), 1)
 
     def unlock_next(self, chapter):
-        # Store the array INDEX of the CURRENT (just-completed) chapter, so
-        # that ch_idx < bookmark correctly marks completed chapters.
-        # (Storing the NEXT chapter's index would make the just-finished
-        # chapter show as "当前" instead of "已完成".)
+        """推进单人战役书签，使其指向"下一个可玩章节"。
+
+        书签语义（与 ``_available_chapters`` / ``menu()`` 一致）：
+            章节下标 <  书签 -> 已完成
+            章节下标 == 书签 -> 当前可玩
+            章节下标 >  书签 -> 未解锁
+
+        之前这里存的是"刚完成章节"的下标，于是刚打完的章节显示成
+        "当前可玩"而不是"已完成"，而真正的下一关永远落在书签之后，
+        变成"未解锁"——玩家无法继续推进战役。
+
+        过场章节（CutSceneChapter，如 0.txt 序章）不占可玩位置，
+        因此推进时跳过它们。
+        """
         try:
-            self._set_bookmark(self.chapters.index(chapter))
+            index = self.chapters.index(chapter)
         except ValueError:
-            pass
+            return
+        for next_index in range(index + 1, len(self.chapters)):
+            if isinstance(self.chapters[next_index], CutSceneChapter):
+                continue
+            self._set_bookmark(next_index)
+            return
+        # 没有后续关卡了：保持最后一个已完成章节的下一位。
+        self._set_bookmark(len(self.chapters))
 
     def get_coop_difficulty(self):
         """返回合作战役当前难度（与单人 ``difficulty`` 独立；缺省为中等）。"""
@@ -558,26 +580,30 @@ class Campaign:
             (self._difficulty_menu, None),
         )
         bookmark = self._get_bookmark()
-        available = self._available_chapters()
-        if len(available) > 1:
-            # "Continue" shows the first non-CutSceneChapter at or after the
-            # bookmark.  Intro cutscene (0.txt) is at index 0 so we skip it.
-            continue_target = None
-            for i in range(bookmark, len(self.chapters)):
-                if not isinstance(self.chapters[i], CutSceneChapter):
-                    continue_target = self.chapters[i]
-                    break
-            if continue_target is not None:
-                menu.append(mp.CONTINUE + continue_target.title, continue_target)
+        # 书签指向"下一个可玩章节"的下标：
+        #     下标 <  书签 -> 已完成
+        #     下标 == 书签 -> 当前可玩
+        #     下标 >  书签 -> 未解锁
+        continue_target = None
+        if bookmark < len(self.chapters):
+            candidate = self.chapters[bookmark]
+            if not isinstance(candidate, CutSceneChapter):
+                continue_target = candidate
+        if continue_target is not None:
+            menu.append(mp.CONTINUE + continue_target.title, continue_target)
         for chapter in self.chapters:
-            # CutSceneChapter entries (e.g. the intro cutscene 0.txt) are NOT
-            # shown in the chapter list.  They play before the first mission or
-            # chain automatically after the previous chapter ends.
-            if isinstance(chapter, CutSceneChapter):
-                continue
             ch_idx = self.chapters.index(chapter)
             prefix = nb2msg(chapter.number) if chapter.number > 0 else []
-            if ch_idx <= bookmark:
+            if isinstance(chapter, CutSceneChapter):
+                # 过场章节（如 0.txt 序章）：在章节列表中显示，但只能播放。
+                # 它不属于"可玩任务"，因此不占用书签位置，也不会被标记
+                # 为"已完成"/"未解锁"——只是提供入口让玩家能看序章。
+                if ch_idx < bookmark:
+                    menu.append(prefix + chapter.title + mp.MISSION_COMPLETED, chapter)
+                else:
+                    menu.append(prefix + chapter.title, chapter)
+                continue
+            if ch_idx < bookmark:
                 # 已通关：标注"已完成"，仍可重玩
                 menu.append(prefix + chapter.title + mp.MISSION_COMPLETED, chapter)
             elif ch_idx == bookmark:
