@@ -44,6 +44,29 @@ def test_briton_scorpion_hides_foreign_unique_techs(aoe2_loaded):
     assert "furor_celtica" not in shown
 
 
+def test_briton_trebuchet_hides_sicilian_first_crusade(aoe2_loaded):
+    """First Crusade is a Sicilian unique tech and must not show for Britons.
+
+    The Sicilian Donjon is not a race-table skin of any civ, so the maker
+    lookup falls back to inspecting ``donjon.can_research`` directly.  Without
+    the reachability check that fallback leaked every civ's unique tech onto
+    every other civ's units.
+    """
+    from soundrts.attributes.utils import filter_can_use_tech_names
+
+    raw = list(aoe2_loaded.get("trebuchet", "can_use_tech") or [])
+    assert "first_crusade" in raw
+
+    shown = filter_can_use_tech_names(raw, _player("britons"))
+    assert "first_crusade" not in shown
+    # A tech the Britons really can research stays listed.
+    assert "warwolf" in shown
+
+    # The Sicilians still see their own unique tech.
+    sicilian = filter_can_use_tech_names(raw, _player("sicilians"))
+    assert "first_crusade" in sicilian
+
+
 def test_chinese_scorpion_shows_rocketry(aoe2_loaded):
     from soundrts.attributes.utils import filter_can_use_tech_names
 

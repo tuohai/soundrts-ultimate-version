@@ -2147,6 +2147,9 @@ class Rules(_Definitions):
             self._direct_makers_cache.clear()
         self._factions_cache = None
         self._race_equiv_index = None
+        # Per-civ buildable-type cache (see attributes.utils.
+        # _faction_buildable_types) is derived from the rules tables.
+        self._faction_buildable_types_cache = None
         try:
             from .worldrequirements import clear_caches
 

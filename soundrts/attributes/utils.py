@@ -406,6 +406,35 @@ def _faction_equivalent_dests(faction):
     return dests
 
 
+def _faction_buildable_types(faction):
+    """The building types *faction* can actually construct.
+
+    A civ reaches a building through its own units' ``can_build`` lists: the
+    race table gives the civ's *types* (``peasant`` -> ``sicilian_villager``),
+    and the civ-specific villager then lists the buildings it may raise.
+    A civ that cannot raise a building can never research what that building
+    researches.
+    """
+    if not faction:
+        return set()
+    cache = getattr(rules, "_faction_buildable_types_cache", None)
+    if cache is None:
+        cache = {}
+        setattr(rules, "_faction_buildable_types_cache", cache)
+    if faction in cache:
+        return cache[faction]
+    out = set()
+    for dest in _faction_equivalent_dests(faction):
+        uc = rules.unit_class(dest)
+        if uc is None:
+            continue
+        for name in (rules.class_rules_attr(uc, "can_build", ()) or ()):
+            if isinstance(name, str):
+                out.add(name)
+    cache[faction] = out
+    return out
+
+
 def is_tech_researchable_by_player(player, tech_name):
     """True if *player*'s civ can research *tech_name* (or already has it).
 
@@ -441,11 +470,19 @@ def is_tech_researchable_by_player(player, tech_name):
             if maker in race_dests:
                 return True
             continue
-        check = maker
-        if faction:
-            mapped = rules.get(faction, maker)
-            if mapped:
-                check = mapped[0]
+        # The maker is not a race skin of any civ (e.g. the Sicilian Donjon
+        # or the Armenian Monastery).  It still only authorizes the tech for
+        # the civ that can actually reach it: either the race table maps the
+        # maker for this civ (the civ owns a skin of it), or one of the civ's
+        # own units lists the maker in ``can_build``.
+        mapped = rules.get(faction, maker) if faction else None
+        if mapped:
+            check = mapped[0]
+        else:
+            check = maker
+            if maker not in _faction_buildable_types(faction):
+                # Unreachable for this civ — do not leak a foreign unique tech.
+                continue
         uc = rules.unit_class(check)
         if uc is None:
             continue
