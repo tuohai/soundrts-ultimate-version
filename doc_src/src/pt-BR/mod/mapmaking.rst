@@ -434,6 +434,21 @@ significa: "um jogador começará com 5 de ouro, 10 de madeira, não poderá con
 
 Cada linha ``player`` acrescenta um slot de spawn na ordem do mapa; ``a1``, ``c1``, etc. são coordenadas de quadrado. Para fixar um slot ao jogador N, use player_start_ ou defina random_starts 0 (veja spawn_semantics_ acima).
 
+Civilização do jogador (desde 1.5.2.2)
+'''''''''''''''''''''''''''''''''''
+
+Em uma campanha de um jogador, a civilização do jogador vem por padrão do
+``default_faction`` do ``campaign.txt``. Mas algumas campanhas trocam de
+civilização entre capítulos (a campanha El Cid de AoE2 DE joga como espanhóis
+nos capítulos 1, 2, 5 e 6 e como sarracenos nos capítulos 3 e 4). Para esses
+casos, escreva isto no arquivo de mapa::
+
+    player_faction saracens
+
+O ``player_faction`` do mapa tem precedência sobre o ``default_faction`` da
+campanha; sem nenhum dos dois usa-se a primeira civilização das regras (assim
+o mod AoE2 não sorteia uma civilização aleatória para o jogador).
+
 
 Lista de tipos
 '''''''''''''

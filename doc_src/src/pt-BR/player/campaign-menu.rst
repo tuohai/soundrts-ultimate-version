@@ -77,6 +77,19 @@ Após escolher uma campanha no menu principal:
 
 Progresso é armazenado em `user/campaigns.ini <../../../soundrts/paths.py>`_ (``chapter`` + ``difficulty`` por id de campanha).
 
+.. note:: **O que significa o marcador (desde 1.5.2.2)**
+
+   O ``chapter`` do marcador é o **índice do próximo capítulo jogável dentro da
+   lista de capítulos**:
+
+   - índice < marcador -> concluído
+   - índice == marcador -> atual
+   - índice > marcador -> bloqueado
+
+   Capítulos de cinemateca (``cut_scene_chapter``, como o prólogo ``0.txt``)
+   **não ocupam uma posição jogável**: nunca tomam o slot "atual" e podem ser
+   escolhidos no menu para serem reproduzidos.
+
 2.1.1 Crescimento do herói e carryover entre missões (orientado por regras)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

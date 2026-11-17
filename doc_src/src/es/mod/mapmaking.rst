@@ -433,6 +433,21 @@ significa: "un jugador comenzará con 5 de oro, 10 de madera, no se le permitir�
 
 Cada línea ``player`` agrega un espacio de generación en el orden del mapa; ``a1``, ``c1``, etc. son coordenadas cuadradas. Para fijar una ranura al jugador N, use player_start_ o establezca random_starts 0 (consulte spawn_semantics_ arriba).
 
+Civilización del jugador (desde 1.5.2.2)
+''''''''''''''''''''''''''''''''''''''
+
+En una campaña de un solo jugador, la civilización del jugador es por
+defecto el ``default_faction`` de ``campaign.txt``. Pero algunas campañas
+cambian de civilización entre capítulos (la campaña El Cid de AoE2 DE juega
+como españoles en los capítulos 1, 2, 5 y 6 y como sarracenos en los
+capítulos 3 y 4). Para esos casos, escriba esto en el archivo de mapa::
+
+    player_faction saracens
+
+El ``player_faction`` del mapa tiene prioridad sobre el ``default_faction``
+de la campaña; sin ninguno de los dos se usa la primera facción de las reglas
+(así el mod AoE2 no reparte una civilización al azar al jugador).
+
 Lista de tipos
 ''''''''''''''
 

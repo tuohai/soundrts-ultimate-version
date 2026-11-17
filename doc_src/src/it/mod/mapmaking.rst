@@ -434,6 +434,21 @@ significa: "un giocatore inizierà con 5 d'oro, 10 di legna, non potrà costruir
 
 Ogni riga ``player`` aggiunge uno slot di generazione nell'ordine della mappa; ``a1``, ``c1``, ecc. sono coordinate di cella. Per fissare uno slot al giocatore N, usare player_start_ o impostare random_starts 0 (vedere spawn_semantics_ sopra).
 
+Civiltà del giocatore (da 1.5.2.2)
+'''''''''''''''''''''''''''''''''
+
+In una campagna a giocatore singolo la civiltà del giocatore è per impostazione
+predefinita il ``default_faction`` di ``campaign.txt``. Alcune campagne però
+cambiano civiltà fra un capitolo e l'altro (la campagna El Cid di AoE2 DE gioca
+come spagnoli ai capitoli 1, 2, 5 e 6 e come saraceni ai capitoli 3 e 4). Per
+questo, scrivere nel file di mappa::
+
+    player_faction saracens
+
+Il ``player_faction`` della mappa ha la precedenza sul ``default_faction``
+della campagna; senza nessuno dei due si usa la prima civiltà delle regole
+(così il mod AoE2 non assegna una civiltà a caso al giocatore).
+
 
 Elenco dei tipi
 '''''''''''''''

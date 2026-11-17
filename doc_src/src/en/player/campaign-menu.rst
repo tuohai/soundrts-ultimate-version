@@ -77,6 +77,19 @@ After picking a campaign from the main menu:
 
 Progress is stored in `user/campaigns.ini <../../../soundrts/paths.py>`_ (``chapter`` + ``difficulty`` per campaign id).
 
+.. note:: **What the bookmark means (since 1.5.2.2)**
+
+   The ``chapter`` in the bookmark is the **index of the next playable chapter in
+   the chapter list**:
+
+   - index < bookmark -> completed
+   - index == bookmark -> current
+   - index > bookmark -> locked
+
+   Cut-scene chapters (``cut_scene_chapter``, such as the ``0.txt`` prologue)
+   **do not occupy a playable slot**: they never take the "current" slot away,
+   and they can be picked in the menu to be played.
+
 2.1.1 Hero growth and cross-mission carryover (rules-driven)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

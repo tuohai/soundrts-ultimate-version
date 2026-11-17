@@ -4,6 +4,47 @@ Notas de lançamento
 
 .. contents::
 
+1.5.2.2
+-------
+
+**Adicionado: a campanha narrativa de AoE2 DE "El Cid"**
+
+- **Conteúdo**: uma sexta campanha de AoE2, tirada da campanha "El Cid" de *Age of Empires II: The Conquerors* (Edição Definitiva). Tem seis capítulos, cada um escrito a partir dos fatos reais dos cenários da Wiki da Série Age of Empires: capítulo 1, *Brother against Brother* (1072 — o torneio em que o Cid, a pé, vence seu duelo, e depois sai de novo montado em Babieca); capítulo 2, *The Enemy of my Enemy* (1081 — Toledo se rebelou e o Cid precisa comprar a ajuda do imã com quatro relíquias santas); capítulo 3, *The Exile of the Cid* (1082–1084 — o Cid está exilado e entra sozinho na cidade de Tahar); capítulo 4, *Black Guards* (1086–1089 — escoltar o rei Alfonso para casa enquanto se destroem os seis cais da Guarda Negra); capítulo 5, *King of Valencia* (1087–1094 — Denia não se pode segurar, então o Cid foge para o sul atravessando o Ebro rumo a Valência); capítulo 6, *Reconquista* (1094 — Ximena Díaz segura Valência enquanto o prodígio precisa ficar pronto antes que o cerco termine).
+- **Troca de civilização**: esta campanha troca de civilização entre capítulos — espanhóis nos capítulos 1, 2, 5 e 6, sarracenos nos capítulos 3 e 4. Por isso os arquivos de mapa aceitam uma nova palavra-chave ``player_faction <civilização>``: o ``default_faction`` de ``campaign.txt`` vale para a campanha inteira, mas o ``player_faction`` do próprio mapa tem precedência naquele capítulo. O motor só tinha o valor padrão válido para toda a campanha e não conseguia expressar "trocar de civilização no meio do caminho".
+- **Operadores de comparação nos gatilhos**: o interpretador de mapas avisava ``>=`` dentro de ``(var x >= 3)`` como se fosse um tipo de unidade desconhecido. Agora os operadores de comparação (``==`` ``!=`` ``<=`` ``>=`` ``<`` ``>``) são reconhecidos como operadores e não são mais reportados errado.
+- **Arquivos acompanhantes**: um ``rules.txt`` próprio da campanha (o Cid, o Cid Campeador montado, o corpo do Cid, o castelo de Valência e as demais unidades ``npc_*``), ``campaign.txt``, ``ui/style.txt`` (nomes de lugares e pessoas) e ``ui*/tts.txt`` em **13 idiomas** (inglês, alemão, espanhol, francês, italiano, português do Brasil, polonês, tcheco, eslovaco, russo, ucraniano, bielorrusso, vietnamita e chinês).
+- **Escopo**: ``mods/aoe2/single/El Cid/``, ``soundrts/game.py``, ``soundrts/world/world_map.py``, ``soundrts/tests/test_el_cid_campaign.py``.
+- **Verificação**: o novo ``soundrts/tests/test_el_cid_campaign.py`` — capítulo por capítulo verifica que os mapas são interpretados, que o tamanho da grade está certo, que nenhum caminho dá a volta, que a contabilidade de objetivos (principais / secundários) é coerente, que a civilização do capítulo confere com o original de DE, que cada unidade ``npc_*`` tem nome em ``ui/style.txt`` (sem nome ela não pode ser nem selecionada nem mirada), que todo identificador de texto citado existe no arquivo inglês e nas 12 pastas localizadas, e que os identificadores do Cid não colidem com os das outras duas campanhas de AoE2.
+
+**Corrigido: tecnologias exclusivas de uma civilização vazavam para as unidades de outras**
+
+- **Problema**: o trebuchet britânico oferecia "Primeira Cruzada", uma tecnologia única siciliana. ``first_crusade`` é pesquisada pelo donjon siciliano, mas o donjon não é uma variante da tabela de raças de nenhuma civilização (os sicilianos o erguem pelo ``can_build`` do ``sicilian_villager``), então ``is_tech_researchable_by_player()`` pulava a verificação de raça e ia direto olhar ``donjon.can_research``. Isso autorizava a tecnologia a todas as 42 civilizações.
+- **Correção**: a lógica de reserva agora verifica também que a civilização consegue **alcançar** aquele produtor: ou a tabela de raças mapeia o produtor para essa civilização, ou alguma unidade dela o lista em ``can_build``. Uma civilização que não consegue erguer um prédio nunca pode pesquisar o que esse prédio pesquisa.
+- **Medido**: contra uma verdade de referência independente derivada dos dados do mod (tabela de raças + ``can_build`` + ``can_research``) para todas as 42 civilizações x 249 tecnologias: 207 divergências corrigidas, 0 novas. No nível do painel de atributos o filtro agora remove 11460 entradas vazadas e mostra 0 tecnologias que a civilização não pode pesquisar.
+- **Escopo**: ``soundrts/attributes/utils.py``, ``soundrts/definitions.py``, ``soundrts/tests/test_can_use_tech_civ_filter.py``.
+
+**Corrigido: o prólogo 0.txt não aparecia no menu de campanhas e a primeira missão não podia ser desbloqueada**
+
+- **Problema**: o menu de campanhas de um jogador tinha três defeitos sobrepostos que tornavam impossível começar uma campanha. Primeiro, o laço do menu usava ``continue`` para pular todos os ``CutSceneChapter``, de modo que o prólogo 0.txt **não aparecia de todo** no menu e o jogador não tinha como tocá-lo. Segundo, o ramo "disponível agora" era código morto: o menu usava ``ch_idx <= bookmark`` para "concluído" e ``ch_idx == bookmark`` para "disponível agora", e ``chapters[0]`` era justamente o prólogo pulado — então "disponível agora" nunca casava com um capítulo de missão e a primeira missão ficava "bloqueada" para sempre. Terceiro, ``unlock_next()`` guardava o índice do capítulo recém-concluído, então o capítulo que você acabou de terminar aparecia como "disponível agora" e o verdadeiro seguinte caía depois do marcador como "bloqueado", e a campanha não podia avançar.
+- **Correção**: o marcador passou a significar uma coisa só em todo lugar: "o índice do próximo capítulo jogável dentro de ``chapters``", igual ao caminho de campanhas cooperatives que já existia (``unlock_next_coop`` / ``_available_coop_chapters``): índice < marcador -> concluído, índice == marcador -> disponível agora, índice > marcador -> bloqueado. ``unlock_next()`` avança para o próximo capítulo jogável e pula capítulos de cinemateca (uma cinemateca não ocupa uma posição jogável). O prólogo 0.txt agora aparece e pode ser escolhido (cinematecas não contam para o marcador; são apenas um ponto de entrada).
+- **Corrigido de passagem**: cinco vazamentos de descritor de arquivo na leitura/escrita de ``campaigns.ini`` — os objetos devolvidos por ``open()`` não eram fechados nem pelo ``configparser`` nem por nós, o que esgota descritores depressa no Windows e fazia o pytest transformar ``ResourceWarning`` em erro. Usar ``with`` também fica igual ao estilo ``encoding="utf-8"`` já usado em ``campaign_hero.py``.
+- **Verificação**: o novo ``soundrts/tests/test_campaign_chapter_unlock.py`` — monta o menu real de campanhas e confere capítulo por capítulo. Num jogo novo 8800 (o prólogo) é escolhível e 1–6 estão todos "bloqueados"; depois de jogar 0.txt, 8800 fica "concluído", o capítulo 1 é escolhível e "continuar" aponta para o capítulo 1; depois de terminar o capítulo 1, o capítulo 1 fica "concluído", o capítulo 2 é escolhível e "continuar" avança para o capítulo 2. As seis campanhas (Joan of Arc, William Wallace, Raynor, nathan tech, crazyMod, sc_campaign) foram conferidas capítulo por capítulo, incluindo cinematecas no meio da campanha (nathan cap. 13) e capítulos de mapa aleatório (Raynor cap. 29).
+- **Escopo**: ``soundrts/campaign.py``, ``soundrts/tests/test_campaign_chapter_unlock.py``.
+
+**Corrigido: a tela de atributos anunciava "bônus de dano" para os bônus de precisão**
+
+- **Problema**: o rótulo de uma linha ``*_vs`` na tela de atributos era adivinhado a partir do nome do atributo — "contém ``mdg`` ou ``rdg``?". ``rdg_hit_rate`` (precisão à distância) contém ``rdg`` claro, então seu rótulo era ``RDG_VS`` (``4406`` "bônus de dano à distância"): uma **precisão** era anunciada como **bônus de dano**. Na tela de atributos do trebuchet (``rdg_hit_rate_vs building 65``) o jogador ouvia "bônus de dano à distância contra edifício 65", quando o correto é "bônus de precisão à distância contra edifício 65".
+- **Alcance real**: a adivinhação rotulava errado **todos** os atributos ``rdg_`` / ``mdg_`` cujo sentido não é o dano — precisão, esquiva, intervalo de ataque, alcance, acertos críticos, perfuração de armadura, dano de investida. Trinta rótulos eram anunciados todos como "bônus de dano corpo a corpo / à distância".
+- **Correção**: o rótulo não é mais adivinhado. ``STAT_TTS_NAMES`` em ``soundrts/attributes/utils.py`` já continha o mapa autoritativo de cada atributo ``*_vs`` (``mdg_hit_rate_vs`` → ``MDG_COVER_VS``, ``rdg_hit_rate_vs`` → ``RDG_COVER_VS``, ...), e ``VsHandler._vs_msg_for_attr()`` agora consulta primeiro essa tabela, só recorrendo à antiga adivinhação para os atributos que a tabela não conhece.
+- **Escopo**: ``soundrts/attributes/vs_handler.py``.
+- **Verificação**: o novo ``soundrts/tests/test_vs_handler_hit_rate_labels.py`` — afirma que os rótulos ``*_vs`` de precisão e esquiva **não** são os de dano, que os rótulos de dano continuam iguais, que as variantes com ``_bonus`` continuam com a palavra "bônus", e monta o texto falado em chinês com o ``res/ui-zh/tts.txt`` real para confirmar que diz "precisão à distância" e não "dano à distância".
+
+**Melhoria: a suíte de testes não depende mais da ordem de importação**
+
+- **Problema**: ``soundrts/lib/resource.py`` constrói o singleton global ``res`` no momento da **importação**, e essa construção chama ``load_rules_and_ai()`` → ``rules.load(<regras base>)``. O objeto ``rules`` é um singleton de processo, então importar o módulo **substitui** as regras que outro módulo de teste tinha carregado. Quando essa importação era preguiçosa — dentro de uma fixture — ela podia chegar depois de uma fixture de escopo de módulo já ter instalado as regras do mod AoE2, e as tabelas do AoE2 eram silenciosamente substituídas pelas básicas: a classe ``scorpion`` sumia das regras e ``rules.get("scorpion", "can_use_tech")`` não devolvia nada.
+- **Melhoria**: a pilha de recursos passa a ser importada no **momento da importação do conftest**, o que faz do carregamento das regras base um evento único que acontece durante a coleta, antes que qualquer fixture possa instalar regras de mod. A suíte agora é independente da ordem quanto a essa importação.
+- **Escopo**: ``soundrts/tests/conftest.py``.
+
 1.5.2.1
 -------
 
@@ -20,6 +61,14 @@ Notas de lançamento
 
 - **Melhoria**: ``soundrts/tests/test_net_protocol.py`` agora cobre o caminho do lockstep puro: a linha de login continua sendo interpretada como ``<version> <login>``, e a barreira de ``Orders`` continua esperando as ordens de **todos** os jogadores antes de deixar o turno passar.
 - **Escopo**: ``soundrts/tests/test_net_protocol.py``.
+
+**Corrigido: a tela de atributos anunciava "bônus de dano" para os bônus de precisão**
+
+- **Problema**: o rótulo de uma linha ``*_vs`` na tela de atributos era adivinhado a partir do nome do atributo — "contém ``mdg`` ou ``rdg``?". ``rdg_hit_rate`` (precisão à distância) contém ``rdg`` claro, então seu rótulo era ``RDG_VS`` (``4406`` "bônus de dano à distância"): uma **precisão** era anunciada como **bônus de dano**. Na tela de atributos do trebuchet (``rdg_hit_rate_vs building 65``) o jogador ouvia "bônus de dano à distância contra edifício 65", quando o correto é "bônus de precisão à distância contra edifício 65".
+- **Alcance real**: a adivinhação rotulava errado **todos** os atributos ``rdg_`` / ``mdg_`` cujo sentido não é o dano — precisão, esquiva, intervalo de ataque, alcance, acertos críticos, perfuração de armadura, dano de investida. Trinta rótulos eram anunciados todos como "bônus de dano corpo a corpo / à distância".
+- **Correção**: o rótulo não é mais adivinhado. ``STAT_TTS_NAMES`` em ``soundrts/attributes/utils.py`` já continha o mapa autoritativo de cada atributo ``*_vs`` (``mdg_hit_rate_vs`` → ``MDG_COVER_VS``, ``rdg_hit_rate_vs`` → ``RDG_COVER_VS``, ...), e ``VsHandler._vs_msg_for_attr()`` agora consulta primeiro essa tabela, só recorrendo à antiga adivinhação para os atributos que a tabela não conhece.
+- **Escopo**: ``soundrts/attributes/vs_handler.py``.
+- **Verificação**: novo ``soundrts/tests/test_vs_handler_hit_rate_labels.py`` — afirma que os rótulos ``*_vs`` de precisão e esquiva **não** são os de dano, que os rótulos de dano continuam iguais, que as variantes com ``_bonus`` continuam com a palavra "bônus", e monta o texto falado em chinês com o ``res/ui-zh/tts.txt`` real para confirmar que diz "precisão à distância" e não "dano à distância".
 
 1.5.2.0
 -------

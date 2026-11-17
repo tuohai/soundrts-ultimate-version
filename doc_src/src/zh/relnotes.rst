@@ -3,6 +3,47 @@
 
 .. contents::
 
+1.5.2.2
+-------
+
+**新增：帝国时代 2 决定版剧情战役「El Cid」（熙德）**
+
+- **内容**：新增第六个 AoE2 战役，取材自帝国时代 2 决定版《The Conquerors》的熙德战役，共 6 章，全部依据 Age of Empires 系列 Wiki 的真实战役资料编写：第一章 *Brother against Brother*（1072 年 tournaments 决斗，徒步的熙德先赢得比赛，再到马厩骑上巴比埃卡重新参战）、第二章 *The Enemy of my Enemy*（1081 年，托莱多叛乱，要用四件圣物买下伊玛目的帮助）、第三章 *The Exile of the Cid*（1082–1084 年，熙德只身流亡，独自走进塔霍城里）、第四章 *Black Guards*（1086–1089 年，护送阿方索国王回家，同时摧毁黑卫队的六座海港）、第五章 *King of Valencia*（1087–1094 年，德尼亚守不住，南渡埃布罗逃往瓦伦西亚）、第六章 *Reconquista*（1094 年，希梅娜·迪亚斯守住瓦伦西亚，奇迹要在围城结束前建成）。
+- **文明切换**：这个战役在章节之间会换文明 —— 第 1、2、5、6 章是西班牙人，第 3、4 章是撒拉逊人。为此地图文件里新增了 ``player_faction <文明名>`` 关键字：``campaign.txt`` 的 ``default_faction`` 对整个战役生效，但某一关需要换文明时，地图自己的 ``player_faction`` 优先。此前引擎只有战役级默认值，无法表达「中途换文明」。
+- **触发器比较运算符**：地图解析器此前会把 ``(var x >= 3)`` 里的 ``>=`` 当成未知单位类型而报警告。比较运算符（``==`` ``!=`` ``<=`` ``>=`` ``<`` ``>``）现在被识别为运算符，不再误报。
+- **配套文件**：战役专属的 ``rules.txt``（熙德本人、骑马的熙德·坎佩亚多、熙德的遗体、瓦伦西亚城堡等 ``npc_*`` 单位）、``campaign.txt``、``ui/style.txt``（地名与人名）以及 **13 种语言**的 ``ui*/tts.txt``（英文、德文、西班牙文、法文、意大利文、葡萄牙（巴西）文、波兰文、捷克文、斯洛伐克文、俄文、乌克兰文、白俄罗斯文、越南文、中文）。
+- **范围**：``mods/aoe2/single/El Cid/``、``soundrts/game.py``、``soundrts/world/world_map.py``、``soundrts/tests/test_el_cid_campaign.py``。
+- **验证**：新增 ``soundrts/tests/test_el_cid_campaign.py`` —— 逐章检查地图能被解析、网格尺寸正确、没有环绕路径、目标（主目标 / 次目标）账目自洽、章节文明与决定版原版一致、每个 ``npc_*`` 单位在 ``ui/style.txt`` 里都有名字（否则无法被选中或锁定）、每一个被引用到的 TTS 编号在英文和全部 12 个本地化目录里都存在，以及熙德的 TTS 编号不与另外两个 AoE2 战役冲突。
+
+**修复：文明专属科技泄漏到别的文明的单位上**
+
+- **问题**：不列颠的巨型投石机在属性界面里列出了「第一次十字军东征」—— 那是西西里人的独特科技。``first_crusade`` 由西西里的唐克楼研究，但唐克楼不是任何文明的种族表变体（西西里人靠 ``sicilian_villager`` 的 ``can_build`` 建造它），于是 ``is_tech_researchable_by_player()`` 跳过了种族检查，直接去看 ``donjon.can_research``，结果把这项科技授权给了全部 42 个文明。
+- **改进**：兜底逻辑现在还要检查这个文明**能不能真的造出那座建筑** —— 要么种族表把这个建筑映射到这个文明，要么该文明自己的某个单位在 ``can_build`` 里列了它。造不出那座建筑的文明，永远不可能研究那座建筑所研究的东西。
+- **实测**：用一份独立从 mod 数据（种族表 + ``can_build`` + ``can_research``）推导出的基准，对全部 42 个文明 × 249 项科技做了比对：修正了 207 处不符，没有引入新的不符。在属性面板这一层，过滤掉 11460 条泄漏条目之后，显示的科技数量与该文明实际可研究的完全一致。
+- **范围**：``soundrts/attributes/utils.py``、``soundrts/definitions.py``、``soundrts/tests/test_can_use_tech_civ_filter.py``。
+
+**修复：单人战役菜单里 0.txt 序章不出现，第一关也无法解锁**
+
+- **问题**：单人战役菜单有三个叠加的缺陷，导致玩家根本没法开始战役。其一，菜单循环用 ``continue`` 跳过了所有 ``CutSceneChapter``，序章 0.txt 在菜单里**完全不出现**，玩家没有入口去播放它。其二，「当前可玩」的判断是死代码：菜单用 ``ch_idx <= bookmark`` 判断「已完成」、``ch_idx == bookmark`` 判断「当前可玩」，而 ``chapters[0]`` 正是被跳过的那本序章，于是「当前可玩」永远匹配不到任何任务章节 —— 第一关 1.txt 永远是「未解锁」。其三，``unlock_next()`` 存的是「刚完成章节」的下标，所以刚通关的那一关反而显示成「当前可玩」，真正的下一关落在书签之后变成「未解锁」，战役无法推进。
+- **改进**：书签语义统一为「下一个可玩章节在 ``chapters`` 中的下标」，与已有的合作战役路径（``unlock_next_coop`` / ``_available_coop_chapters``）保持一致：下标小于书签 = 已完成，等于书签 = 当前可玩，大于书签 = 未解锁。``unlock_next()`` 会推进到下一个可玩章节并跳过过场章节（过场不占可玩位置）。序章 0.txt 现在会显示出来、也可以选择（过场不参与书签计数，只作为播放入口）。
+- **附带修复**：``campaigns.ini`` 的读写有 5 处文件句柄泄漏 —— ``open()`` 返回的文件对象既没有交给 ``configparser`` 关闭也没有自己关闭，在 Windows 上很快耗尽句柄，而且 pytest 会把 ``ResourceWarning`` 升级成错误。改用 ``with`` 之后与 ``campaign_hero.py`` 已有的 ``encoding="utf-8"`` 写法一致。
+- **验证**：新增 ``soundrts/tests/test_campaign_chapter_unlock.py`` —— 真实构建战役菜单并逐关核对。全新存档时 8800（序章）可选、1–6 全是「未解锁」；玩过 0.txt 之后 8800 标为「已完成」、第 1 关可选、「继续」指向第 1 关；通关第 1 关之后第 1 关标为「已完成」、第 2 关可选、「继续」推进到第 2 关。6 个战役（Joan of Arc、William Wallace、Raynor、nathan tech、crazyMod、sc_campaign）逐关推进均已核对，含中途过场（nathan 第 13 章）与随机地图关卡（Raynor 第 29 章）。
+- **范围**：``soundrts/campaign.py``、``soundrts/tests/test_campaign_chapter_unlock.py``。
+
+**修复：属性界面把「命中加成」念成「伤害加成」**
+
+- **问题**：属性界面的 ``*_vs`` 行标签是用「属性名里含不含 mdg / rdg」猜出来的。``rdg_hit_rate``（远程命中率）里当然含 ``rdg``，于是它的标签被套成了 ``RDG_VS``（``4406`` 远程伤害加成）—— 明明是**命中率**，却念成**伤害加成**。玩家在巨型投石机（``rdg_hit_rate_vs building 65``）的属性界面里听到的是「远程伤害加成 对抗 建筑 65」，而正确说法是「远程命中加成 对抗 建筑 65」。
+- **波及范围**：这个猜测把**所有**以 ``rdg_`` / ``mdg_`` 开头、但含义并不是伤害的属性都念错了 —— 命中率、闪避率、攻击间隔、射程、暴击率、穿甲、冲锋伤害…… 30 个标签全部念成了「近战/远程伤害加成」。
+- **改进**：标签不再靠猜。``soundrts/attributes/utils.py`` 的 ``STAT_TTS_NAMES`` 里本来就有每一项 ``*_vs`` 属性的权威映射（``mdg_hit_rate_vs`` → ``MDG_COVER_VS``、``rdg_hit_rate_vs`` → ``RDG_COVER_VS``、……），现在 ``VsHandler._vs_msg_for_attr()`` 先查这张表，查不到才退回旧的猜测逻辑。
+- **范围**：``soundrts/attributes/vs_handler.py``。
+- **验证**：新增 ``soundrts/tests/test_vs_handler_hit_rate_labels.py`` —— 断言命中率 / 闪避率的 ``*_vs`` 标签**不是**伤害标签、伤害本身的标签保持原样、带 ``_bonus`` 的仍然带「加成」二字，并且用真实的 ``res/ui-zh/tts.txt`` 拼出中文朗读文本，确认里面是「远程命中」而不是「远程伤害」。
+
+**改进：测试套件不再受导入顺序影响**
+
+- **问题**：``soundrts/lib/resource.py`` 在**导入时**就构造全局 ``res`` 单例，而这个构造会调用 ``load_rules_and_ai()`` → ``rules.load(<基础 rules>)``。``rules`` 是进程级单例，所以这次导入会把别的测试模块加载好的 mod 规则**整个替换掉**。当这次导入是懒加载（发生在某个 fixture 内部）时，它可能落在某个 module 级 fixture 装好 AoE2 mod 规则**之后**，于是 AoE2 的表被静默地换成了基础表 —— ``scorpion`` 类从规则里消失，``rules.get("scorpion", "can_use_tech")`` 返回空。
+- **改进**：把资源栈的导入挪到 ``conftest.py`` 的**导入期**完成，这样基础规则的加载变成收集阶段的一次性事件，早于任何 fixture 安装 mod 规则。测试套件现在对这一次导入的先后顺序不再敏感。
+- **范围**：``soundrts/tests/conftest.py``。
+
 1.5.2.1
 -------
 
@@ -19,6 +60,14 @@
 
 - **改进**：``soundrts/tests/test_net_protocol.py`` 改为覆盖纯锁步链路：登录行仍然按 ``<version> <login>`` 解析；``Orders`` 屏障仍然要等齐**每一个**玩家的指令才会放行。
 - **范围**：``soundrts/tests/test_net_protocol.py``。
+
+**修复：属性界面把「命中加成」念成「伤害加成」**
+
+- **问题**：属性界面的 ``*_vs`` 行标签是用「属性名里含不含 mdg / rdg」猜出来的。``rdg_hit_rate``（远程命中率）里当然含 ``rdg``，于是它的标签被套成了 ``RDG_VS``（``4406`` 远程伤害加成）—— 明明是**命中率**，却念成**伤害加成**。玩家在巨型投石机（``rdg_hit_rate_vs building 65``）的属性界面里听到的是「远程伤害加成 对抗 建筑 65」，而正确说法是「远程命中加成 对抗 建筑 65」。
+- **波及范围**：这个猜测把**所有**以 ``rdg_`` / ``mdg_`` 开头、但含义并不是伤害的属性都念错了 —— 命中率、闪避率、攻击间隔、射程、暴击率、穿甲、冲锋伤害…… 30 个标签全部念成了「近战/远程伤害加成」。
+- **改进**：标签不再靠猜。``soundrts/attributes/utils.py`` 的 ``STAT_TTS_NAMES`` 里本来就有每一项 ``*_vs`` 属性的权威映射（``mdg_hit_rate_vs`` → ``MDG_COVER_VS``、``rdg_hit_rate_vs`` → ``RDG_COVER_VS``、……），现在 ``VsHandler._vs_msg_for_attr()`` 先查这张表，查不到才退回旧的猜测逻辑。
+- **范围**：``soundrts/attributes/vs_handler.py``。
+- **验证**：新增 ``soundrts/tests/test_vs_handler_hit_rate_labels.py`` —— 断言命中率 / 闪避率的 ``*_vs`` 标签**不是**伤害标签、伤害本身的标签保持原样、带 ``_bonus`` 的仍然带「加成」二字，并且用真实的 ``res/ui-zh/tts.txt`` 拼出中文朗读文本，确认里面是「远程命中」而不是「远程伤害」。
 
 1.5.2.0
 -------

@@ -77,6 +77,19 @@ Dopo aver scelto una campagna dal menu principale:
 
 I progressi sono memorizzati in `user/campaigns.ini <../../../soundrts/paths.py>`_ (``chapter`` + ``difficulty`` per id campagna).
 
+.. note:: **Che cosa indica il segnalibro (da 1.5.2.2)**
+
+   Il ``chapter`` del segnalibro è l'**indice del prossimo capitolo giocabile
+   nella lista dei capitoli**:
+
+   - indice < segnalibro -> completato
+   - indice == segnalibro -> attuale
+   - indice > segnalibro -> bloccato
+
+   I capitoli di cinempresa (``cut_scene_chapter``, come il prologo ``0.txt``)
+   **non occupano una posizione giocabile**: non rubano mai lo slot "attuale" e
+   possono essere scelti nel menu per essere riprodotti.
+
 2.1.1 Crescita dell’eroe e trasferimento tra missioni (guidato dalle regole)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

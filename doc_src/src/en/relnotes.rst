@@ -4,6 +4,47 @@ Release notes
 
 .. contents::
 
+1.5.2.2
+-------
+
+**Added: the AoE2 DE story campaign "El Cid"**
+
+- **Content**: a sixth AoE2 campaign, taken from the "El Cid" campaign of *Age of Empires II: The Conquerors* (Definitive Edition). It has six chapters, each written from the real scenario facts on the Age of Empires Series Wiki: chapter 1, *Brother against Brother* (1072 — the tournament where the Cid, on foot, wins his trial by combat, then rides out again on Babieca); chapter 2, *The Enemy of my Enemy* (1081 — Toledo has rebelled, and the Cid must buy the iman's help with four holy relics); chapter 3, *The Exile of the Cid* (1082–1084 — the Cid is in exile and walks into the city of Tahar alone); chapter 4, *Black Guards* (1086–1089 — escort King Alfonso home while destroying the six Black Guard docks); chapter 5, *King of Valencia* (1087–1094 — Denia cannot be held, so the Cid flees south across the Ebro towards Valencia); chapter 6, *Reconquista* (1094 — Ximena Díaz holds Valencia while the Wonder must be finished before the siege ends).
+- **Civilization switching**: this campaign changes civilization between chapters — Spanish in chapters 1, 2, 5 and 6, Saracens in chapters 3 and 4. The map files therefore support a new ``player_faction <faction>`` keyword: ``campaign.txt``'s ``default_faction`` applies to the whole campaign, but a map's own ``player_faction`` wins for that chapter. The engine previously only had the campaign-wide default and could not express "switch civilization halfway through".
+- **Trigger comparison operators**: the map parser used to warn about ``>=`` in ``(var x >= 3)`` as if it were an unknown unit type. The comparison operators (``==`` ``!=`` ``<=`` ``>=`` ``<`` ``>``) are now recognised as operators and no longer misreported.
+- **Companion files**: a campaign-local ``rules.txt`` (the Cid himself, the mounted El Cid Campeador, the Cid's body, the castle of Valencia and the other ``npc_*`` units), ``campaign.txt``, ``ui/style.txt`` (place and person names), and ``ui*/tts.txt`` in **13 languages** (English, German, Spanish, French, Italian, Brazilian Portuguese, Polish, Czech, Slovak, Russian, Ukrainian, Belarusian, Vietnamese and Chinese).
+- **Scope**: ``mods/aoe2/single/El Cid/``, ``soundrts/game.py``, ``soundrts/world/world_map.py``, ``soundrts/tests/test_el_cid_campaign.py``.
+- **Verification**: new ``soundrts/tests/test_el_cid_campaign.py`` — chapter by chapter it checks that the maps parse, that the grid size is right, that no path wraps around, that the objective bookkeeping (primary / secondary) is coherent, that the chapter's civilization matches the DE original, that every ``npc_*`` unit has a name in ``ui/style.txt`` (without one it can neither be selected nor targeted), that every referenced TTS id exists in the English file and in all 12 localised folders, and that the Cid's TTS ids do not collide with the other two AoE2 campaigns.
+
+**Fixed: civ-unique techs leaking onto other civs' units**
+
+- **Problem**: the Briton trebuchet offered "First Crusade", a Sicilian unique tech. ``first_crusade`` is researched by the Sicilian donjon, but the donjon is not a race-table skin of any civ (the Sicilians raise it through ``sicilian_villager``'s ``can_build``), so ``is_tech_researchable_by_player()`` skipped the race check and fell back to inspecting ``donjon.can_research`` directly. That authorized the tech for every one of the 42 civs.
+- **Fix**: the fallback now also checks that the civ can actually reach the maker: either the race table maps the maker for this civ, or one of the civ's own units lists it in ``can_build``. A civ that cannot raise a building can never research what that building researches.
+- **Measured**: against an independent ground truth derived from the mod data (race table + ``can_build`` + ``can_research``) for all 42 civs x 249 techs: 207 mismatches fixed, 0 introduced. At the attribute-panel level the filter now removes 11460 leaked entries and shows 0 techs the civ cannot research.
+- **Scope**: ``soundrts/attributes/utils.py``, ``soundrts/definitions.py``, ``soundrts/tests/test_can_use_tech_civ_filter.py``.
+
+**Fixed: the 0.txt prologue never showed up in the campaign menu and the first mission could not be unlocked**
+
+- **Problem**: the single-player campaign menu had three overlapping defects that made it impossible to start a campaign. First, the menu loop used ``continue`` to skip every ``CutSceneChapter``, so the 0.txt prologue did not appear in the menu at all and the player had no way to play it. Second, the "currently playable" branch was dead code: the menu used ``ch_idx <= bookmark`` for "completed" and ``ch_idx == bookmark`` for "currently playable", and ``chapters[0]`` was precisely the skipped prologue — so "currently playable" never matched a mission chapter and the first mission stayed "locked" forever. Third, ``unlock_next()`` stored the index of the chapter that had just been completed, so the chapter you had just finished was shown as "currently playable" and the real next chapter fell behind the bookmark as "locked", and the campaign could not advance.
+- **Fix**: the bookmark now means one thing everywhere: "the index of the next playable chapter in ``chapters``", matching the existing co-op campaign path (``unlock_next_coop`` / ``_available_coop_chapters``): index < bookmark -> completed, index == bookmark -> currently playable, index > bookmark -> locked. ``unlock_next()`` advances to the next playable chapter and skips cut-scene chapters (a cut scene does not occupy a playable slot). The 0.txt prologue now shows up and can be selected (cut scenes do not count towards the bookmark; they are only an entry point).
+- **Also fixed**: five file-handle leaks in the ``campaigns.ini`` read/write path — the objects returned by ``open()`` were neither closed by ``configparser`` nor by us, which exhausts handles quickly on Windows and made pytest escalate ``ResourceWarning`` into an error. Using ``with`` also matches the ``encoding="utf-8"`` style already used in ``campaign_hero.py``.
+- **Verification**: new ``soundrts/tests/test_campaign_chapter_unlock.py`` — it builds the real campaign menu and checks it chapter by chapter. On a fresh save 8800 (the prologue) is selectable and 1–6 are all "locked"; after playing 0.txt, 8800 is "completed", chapter 1 is selectable and "continue" points at chapter 1; after finishing chapter 1, chapter 1 is "completed", chapter 2 is selectable and "continue" advances to chapter 2. All six campaigns (Joan of Arc, William Wallace, Raynor, nathan tech, crazyMod, sc_campaign) were checked chapter by chapter, including mid-campaign cut scenes (nathan ch13) and random-map chapters (Raynor ch29).
+- **Scope**: ``soundrts/campaign.py``, ``soundrts/tests/test_campaign_chapter_unlock.py``.
+
+**Fixed: the attributes screen announced "damage bonus" for hit-rate bonuses**
+
+- **Problem**: the label for an ``*_vs`` row in the attributes screen was guessed from the attribute name -- "does it contain ``mdg`` or ``rdg``?". ``rdg_hit_rate`` (ranged hit rate) obviously contains ``rdg``, so its label was set to ``RDG_VS`` (``4406`` "ranged damage bonus") -- a **hit rate** was announced as a **damage bonus**. In the trebuchet's attributes screen (``rdg_hit_rate_vs building 65``) the player heard "ranged damage bonus versus building 65", while the correct wording is "ranged hit bonus versus building 65".
+- **Blast radius**: the guess mislabelled **every** ``rdg_`` / ``mdg_`` attribute whose meaning is not damage -- hit rate, dodge rate, attack interval, range, crit rate, armour pierce, charge damage. Thirty labels were all announced as "melee/ranged damage bonus".
+- **Fix**: the label is no longer guessed. ``STAT_TTS_NAMES`` in ``soundrts/attributes/utils.py`` already holds the authoritative mapping for every ``*_vs`` attribute (``mdg_hit_rate_vs`` -> ``MDG_COVER_VS``, ``rdg_hit_rate_vs`` -> ``RDG_COVER_VS``, ...), and ``VsHandler._vs_msg_for_attr()`` now looks there first, only falling back to the old guess for attributes the table does not know.
+- **Scope**: ``soundrts/attributes/vs_handler.py``.
+- **Verification**: new ``soundrts/tests/test_vs_handler_hit_rate_labels.py`` -- asserts that the ``*_vs`` labels of hit rate / dodge rate are **not** the damage labels, that the damage labels themselves are unchanged, that ``_bonus`` variants still carry the word "bonus", and builds the Chinese spoken text from the real ``res/ui-zh/tts.txt`` to confirm it says "ranged hit" and not "ranged damage".
+
+**Improved: the test suite no longer depends on import order**
+
+- **Problem**: ``soundrts/lib/resource.py`` builds the global ``res`` singleton at *import* time, and that construction calls ``load_rules_and_ai()`` -> ``rules.load(<base rules>)``. The ``rules`` object is a process-wide singleton, so importing the module **replaces** whatever rules a test module had loaded. When that import happened lazily -- inside a fixture -- it could land after a module-scoped fixture had already installed the AoE2 mod rules, and the AoE2 tables were silently replaced by the base ones: the ``scorpion`` class disappeared from the rules and ``rules.get("scorpion", "can_use_tech")`` returned nothing.
+- **Fix**: the resource stack is now imported at *conftest import time*, which makes the base-rules load a one-off event that happens during collection, before any fixture can install mod rules. The test suite is now order-independent with respect to this import.
+- **Scope**: ``soundrts/tests/conftest.py``.
+
 1.5.2.1
 -------
 
@@ -20,6 +61,14 @@ Release notes
 
 - **Fix**: ``soundrts/tests/test_net_protocol.py`` now covers the pure lockstep path: the login line is still parsed as ``<version> <login>``, and the ``Orders`` barrier still waits for **every** player's orders before it lets the turn through.
 - **Scope**: ``soundrts/tests/test_net_protocol.py``.
+
+**Fixed: the attributes screen announced "damage bonus" for hit-rate bonuses**
+
+- **Problem**: the label for an ``*_vs`` row in the attributes screen was guessed from the attribute name -- "does it contain ``mdg`` or ``rdg``?". ``rdg_hit_rate`` (ranged hit rate) obviously contains ``rdg``, so its label was set to ``RDG_VS`` (``4406`` "ranged damage bonus") -- a **hit rate** was announced as a **damage bonus**. In the trebuchet's attributes screen (``rdg_hit_rate_vs building 65``) the player heard "ranged damage bonus versus building 65", while the correct wording is "ranged hit bonus versus building 65".
+- **Blast radius**: the guess mislabelled **every** ``rdg_`` / ``mdg_`` attribute whose meaning is not damage -- hit rate, dodge rate, attack interval, range, crit rate, armour pierce, charge damage. Thirty labels were all announced as "melee/ranged damage bonus".
+- **Fix**: the label is no longer guessed. ``STAT_TTS_NAMES`` in ``soundrts/attributes/utils.py`` already holds the authoritative mapping for every ``*_vs`` attribute (``mdg_hit_rate_vs`` -> ``MDG_COVER_VS``, ``rdg_hit_rate_vs`` -> ``RDG_COVER_VS``, ...), and ``VsHandler._vs_msg_for_attr()`` now looks there first, only falling back to the old guess for attributes the table does not know.
+- **Scope**: ``soundrts/attributes/vs_handler.py``.
+- **Verification**: new ``soundrts/tests/test_vs_handler_hit_rate_labels.py`` -- asserts that the ``*_vs`` labels of hit rate / dodge rate are **not** the damage labels, that the damage labels themselves are unchanged, that ``_bonus`` variants still carry the word "bonus", and builds the Chinese spoken text from the real ``res/ui-zh/tts.txt`` to confirm it says "ranged hit" and not "ranged damage".
 
 1.5.2.0
 -------

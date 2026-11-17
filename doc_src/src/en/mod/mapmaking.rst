@@ -434,6 +434,22 @@ means: "a player will start with 5 gold, 10 wood, won't be allowed to build a to
 
 Each ``player`` line appends one spawn slot in map order; ``a1``, ``c1``, etc. are square coordinates. To pin a slot to player N, use player_start_ or set random_starts 0 (see spawn_semantics_ above).
 
+Player civilization (since 1.5.2.2)
+'''''''''''''''''''''''''''''''''
+
+In a single-player campaign, the player's civilization defaults to the
+``default_faction`` from ``campaign.txt``. Some campaigns change civilization
+between chapters though (the AoE2 DE El Cid campaign plays as Spanish in
+chapters 1, 2, 5 and 6 and as Saracens in chapters 3 and 4). For those, write
+this in the map file::
+
+    player_faction saracens
+
+to give that chapter its own civilization. The map's ``player_faction`` wins
+over the campaign's ``default_faction``; without either, the first faction in
+the rules is used (so the AoE2 mod does not shuffle a random civilization for
+the player).
+
 
 Types list
 ''''''''''
