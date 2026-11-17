@@ -77,17 +77,35 @@ class VsHandler:
 
     @staticmethod
     def _vs_msg_for_attr(attr_name):
-        if "mdg" in attr_name:
-            vs_msg = mp.MDG_VS
-        elif "rdg" in attr_name:
-            vs_msg = mp.RDG_VS
-        elif "mdf" in attr_name:
-            vs_msg = mp.MDF_VS
-        elif "rdf" in attr_name:
-            vs_msg = mp.RDF_VS
+        """Return the TTS label for a ``*_vs`` attribute.
+
+        The label must match *what* the bonus is about: a ranged hit-rate
+        bonus must not be announced as "ranged damage bonus".  The
+        authoritative mapping already lives in ``STAT_TTS_NAMES`` (the
+        ``<attr>_vs`` entries), so consult it first and only fall back to
+        the old substring heuristic for attributes it does not know.
+        """
+        from .utils import STAT_TTS_NAMES
+
+        is_bonus = "bonus" in attr_name
+        if is_bonus and attr_name.endswith("_bonus"):
+            root = attr_name[: -len("_bonus")]
         else:
-            vs_msg = mp.VERSUS
-        if "bonus" in attr_name:
+            root = attr_name
+
+        vs_msg = STAT_TTS_NAMES.get(root + "_vs")
+        if vs_msg is None:
+            if "mdg" in attr_name:
+                vs_msg = mp.MDG_VS
+            elif "rdg" in attr_name:
+                vs_msg = mp.RDG_VS
+            elif "mdf" in attr_name:
+                vs_msg = mp.MDF_VS
+            elif "rdf" in attr_name:
+                vs_msg = mp.RDF_VS
+            else:
+                vs_msg = mp.VERSUS
+        if is_bonus:
             vs_msg = vs_msg + [" "] + mp.BONUS
         return vs_msg
 
