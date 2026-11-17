@@ -1,0 +1,186 @@
+; 4 -- Black Guards (AoE2 DE El Cid, ch. 4)
+;
+; Source: ageofempires.fandom.com/wiki/Black_Guards
+; (Age of Empires II: The Conquerors/El Cid/Black Guards).
+;
+; Real scenario facts reproduced here:
+;   * Year 1086-1089. The player is SARACEN (second chapter of the
+;     exile -- the civilization does not change back until ch. 5).
+;   * King Alfonso must survive. He is a Gaia unit on the battlefield;
+;     once rescued he comes under the player's control and has to be
+;     escorted WEST to his own camp, which then changes hands to the
+;     player.
+;   * The Black Guard Navy holds the coast in the east: six Docks
+;     with War Galleys and Towers. The player must destroy all six.
+;   * The Black Guard Mosque is an OPTIONAL objective: converting it
+;     brings aid against Yusuf and the Black Guards. El Cid has to
+;     meet the monks there.
+;   * Yusuf ibn Tashfin (Moorish, Berber) is the other enemy and must
+;     be destroyed.
+;   * The player fields the Saracen "Conquistadors" (cavalry) in this
+;     chapter.
+;
+; Map grid (10x8 -- a..j columns, 8 rows):
+;       a       b       c       d       e       f       g       h       i       j
+;    8 [a8]   [b8]   [c8]   [d8]   [e8]   [f8]   [g8]   [h8]   [i8]   [j8]
+;    7 [a7]   [b7]   [c7]   [d7]   [e7]   [f7]   [g7]   [h7]   [i7]   [j7]
+;    6 [a6]   [b6]   [c6]   [d6]   [e6]   [f6]   [g6]   [h6]   [i6]   [j6]
+;    5 [a5]   [b5]   [c5]   [d5]   [e5]   [f5]   [g5]   [h5]   [i5]   [j5]
+;    4 [a4]   [b4]   [c4]   [d4]   [e4]   [f4]   [g4]   [h4]   [i4]   [j4]
+;    3 [a3]   [b3]   [c3]   [d3]   [e3]   [f3]   [g3]   [h3]   [i3]   [j3]
+;    2 [a2]   [b2]   [c2]   [d2]   [e2]   [f2]   [g2]   [h2]   [i2]   [j2]
+;    1 [a1]   [b1]   [c1]   [d1]   [e1]   [f1]   [g1]   [h1]   [i1]   [j1]
+;
+;   The player starts at c3 (El Cid + a small army).
+;   King Alfonso is stranded at e4 in the middle of the battlefield.
+;   Alfonso's camp -- the destination of the escort -- is at a1 (west).
+;   The Black Guard Mosque (optional) is at f3.
+;   The six Black Guard Docks line the eastern coast: h2, i2, i4,
+;   i6, j3 and j6.
+;   Yusuf's base is at h7 (north-east, inland).
+;
+; Wrap safety: west_east_paths must stay in columns a..i and
+; south_north_paths in rows 1..7 (see Joan of Arc/4.txt).
+
+title 9163
+intro 9173
+
+; CHAPTER 4 STILL PLAYS AS THE SARACENS.
+player_faction saracens
+
+square_width 12
+nb_columns 10
+nb_lines 8
+
+nb_players_min 1
+nb_players_max 1
+random_starts 0
+
+; starting_squares MUST list every spawn slot: without it the list is
+; empty, the AI's auto_explore has no target square and the enemies
+; never even look for the player's position (see mapmaking.rst,
+; "Defence mission: making the attackers actually attack").
+;
+; The order matters: index 0 is the player (c3, El Cid's landing
+; point), then the computer_only slots in the order in which their
+; ``computer_only`` lines appear.
+starting_squares c3 e4 a1 f3 h2 i2 i4 i6 j3 j6 h7
+
+square_name 9231 3,3      ; El Cid's landing point
+square_name 9232 5,4      ; King Alfonso's position
+square_name 9233 1,1      ; Alfonso's camp (the west)
+square_name 9234 6,3      ; the Black Guard Mosque
+square_name 9235 8,2      ; Black Guard Docks
+square_name 9236 8,7      ; Yusuf's base
+
+west_east_paths a1 b1 c1 d1 e1 f1 g1 h1 i1
+west_east_paths a2 b2 c2 d2 e2 f2 g2 h2 i2
+west_east_paths a3 b3 c3 d3 e3 f3 g3 h3 i3
+west_east_paths a4 b4 c4 d4 e4 f4 g4 h4 i4
+west_east_paths a5 b5 c5 d5 e5 f5 g5 h5 i5
+west_east_paths a6 b6 c6 d6 e6 f6 g6 h6 i6
+west_east_paths a7 b7 c7 d7 e7 f7 g7 h7 i7
+south_north_paths a1 a2 a3 a4 a5 a6 a7 b1 b2 b3 b4 b5 b6 b7 c1 c2 c3 c4 c5 c6 c7 d1 d2 d3 d4 d5 d6 d7 e1 e2 e3 e4 e5 e6 e7 f1 f2 f3 f4 f5 f6 f7 g1 g2 g3 g4 g5 g6 g7 h1 h2 h3 h4 h5 h6 h7 i1 i2 i3 i4 i5 i6 i7
+
+goldmines 300 c3
+woods 500 c3 c2
+orchard 200 c3
+stone_mines 400 c3
+nb_meadows_by_square 2
+
+; El Cid's landing point: the hero plus a small Moorish army.
+player 300 400 400 300 c3 1 npc_cid_mounted 4 conquistador 4 mameluke 2 monk 4 peasant
+
+; King Alfonso, stranded on the battlefield. He is a Gaia unit: the
+; player picks him up by reaching him, and then must escort him.
+computer_only 0 0 0 0 neutral faction saracens e4 1 npc_alfonso
+
+; Alfonso's camp in the west -- it becomes the player's base once
+; Alfonso is brought home.
+computer_only 0 0 0 0 neutral faction saracens a1 2 scouttower 4 peasant 2 aoe_knight
+
+; The Black Guard Mosque -- the OPTIONAL objective.
+computer_only 0 0 0 0 neutral faction saracens f3 npc_mosque 2 monk
+
+; The six Black Guard Docks on the eastern coast.
+;
+; NOTE: the AoE2 mod's building type is ``shipyard`` (see
+; mods/aoe2/rules.txt ``def shipyard``) -- there is no ``dock`` unit
+; type in this engine, so a ``dock`` line would spawn nothing.
+computer_only 0 0 0 0 non_neutral faction saracens h2 shipyard 2 war_galley 2 scouttower
+computer_only 0 0 0 0 non_neutral faction saracens i2 shipyard 2 war_galley 2 scouttower
+computer_only 0 0 0 0 non_neutral faction saracens i4 shipyard 2 war_galley 2 scouttower
+computer_only 0 0 0 0 non_neutral faction saracens i6 shipyard 2 war_galley 2 scouttower
+computer_only 0 0 0 0 non_neutral faction saracens j3 shipyard 2 war_galley 2 scouttower
+computer_only 0 0 0 0 non_neutral faction saracens j6 shipyard 2 war_galley 2 scouttower
+
+; Yusuf ibn Tashfin, the Almoravid sultan -- the second enemy.
+computer_only 0 0 0 0 non_neutral faction berbers h7 aoe_castle town_center 4 peasant 6 mameluke 4 archer 2 mangonel
+
+timer_coefficient 40
+
+trigger player1 (timer 0) (alliance 1)
+; King Alfonso must be ALLIED, not hostile: he is rescued from the
+; battlefield and walked home by the player, so a hostile alliance
+; makes the player's own units attack (and kill) the king on the way.
+trigger computer1 (timer 0) (alliance 1)   ; King Alfonso
+trigger computer2 (timer 0) (alliance 1)   ; Alfonso's camp
+trigger computer3 (timer 0) (alliance 1)   ; the Black Guard Mosque
+trigger computer4 (timer 0) (alliance 2)   ; Black Guard Docks
+trigger computer5 (timer 0) (alliance 2)   ; Black Guard Docks
+trigger computer6 (timer 0) (alliance 2)   ; Black Guard Docks
+trigger computer7 (timer 0) (alliance 2)   ; Black Guard Docks
+trigger computer8 (timer 0) (alliance 2)   ; Black Guard Docks
+trigger computer9 (timer 0) (alliance 2)   ; Black Guard Docks
+trigger computer10 (timer 0) (alliance 2)  ; Yusuf
+
+; Objectives
+;   1 = Rescue King Alfonso from the battlefield
+;   2 = Escort King Alfonso to his camp in the west
+;   3 = Destroy the six Black Guard Docks
+;   4 = Defeat Yusuf ibn Tashfin
+;   5 (optional) = Convert the Black Guard Mosque
+trigger player1 (timer 0) (register_objective 1 2 3 4)
+trigger player1 (timer 0) (add_objective 1 9192)
+trigger player1 (timer 0) (add_objective 2 9193)
+trigger player1 (timer 0) (add_objective 3 9194)
+trigger player1 (timer 0) (add_objective 4 9195)
+trigger player1 (timer 0) (add_secondary_objective 5 9196)
+
+; Objective 1: El Cid reaches King Alfonso, who joins the player.
+trigger player1 (has_entered e4 npc_cid_mounted) (do (objective_complete 1) (transfer_units computer1 player1) (cut_scene 9258))
+
+; Objective 2: the king is brought home to Alfonso's camp in the west.
+trigger player1 (has_entered a1 npc_alfonso) (do (objective_complete 2) (cut_scene 9259) (transfer_units computer2 player1))
+
+; Optional objective: El Cid visits the Black Guard Mosque.
+trigger player1 (has_entered f3 npc_cid_mounted) (do (secondary_objective_complete 5) (cut_scene 9260) (transfer_units computer3 player1))
+
+; Objective 3: all six Black Guard Docks are destroyed.
+;
+; Six separate one-shot triggers count the fallen docks in the
+; ``docks`` variable; a repeatable trigger then completes objective 3
+; once the counter reaches six.  Six separate triggers that each
+; called ``(objective_complete 3)`` would have completed the objective
+; when the FIRST dock fell -- the objective has to wait for all six.
+trigger player1 (enemy_building_destroyed h2 shipyard) (add_var docks 1)
+trigger player1 (enemy_building_destroyed i2 shipyard) (add_var docks 1)
+trigger player1 (enemy_building_destroyed i4 shipyard) (add_var docks 1)
+trigger player1 (enemy_building_destroyed i6 shipyard) (add_var docks 1)
+trigger player1 (enemy_building_destroyed j3 shipyard) (add_var docks 1)
+trigger player1 (enemy_building_destroyed j6 shipyard) (add_var docks 1)
+trigger player1 repeat (var docks >= 6) (objective_complete 3)
+
+; Objective 4: Yusuf's base is destroyed.
+trigger player1 (enemy_building_destroyed h7 aoe_castle) (do (objective_complete 4) (victory))
+
+; Defeat conditions. King Alfonso must survive -- losing him loses
+; the chapter, exactly as in the DE original.
+;
+; The mosque is NOT a defeat condition: converting the Black Guard
+; Mosque is the OPTIONAL objective 5, so destroying it (which the
+; player may well do while attacking Yusuf) must not lose the
+; chapter.
+trigger player1 (no_unit_left) (defeat)
+trigger player1 (key_unit_killed npc_cid_mounted) (defeat)
+trigger player1 (key_unit_killed npc_alfonso) (defeat)

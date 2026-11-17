@@ -1,0 +1,324 @@
+; 5 -- King of Valencia (AoE2 DE El Cid, ch. 5)
+;
+; Source: ageofempires.fandom.com/wiki/King_of_Valencia
+; (Age of Empires II: The Conquerors/El Cid/King of Valencia).
+;
+; Real scenario facts reproduced here:
+;   * Year 1087-1094. The player is SPANISH again -- the civilization
+;     switches back from Saracens (ch. 3-4) to Spanish here.
+;   * El Cid is in exile in the west and has no land of his own. He
+;     crosses the Ebro, takes the coastal town of DENIA and holds it.
+;   * Count BERENGUER of Barcelona (Franks) then attacks Denia with
+;     trebuchets and bombard towers. El Cid cannot hold the town, so
+;     he FLEES SOUTH across the river (this is the scenario's hinge:
+;     you must not be trapped north of the Ebro).
+;   * On the way south he passes LERIDA, whose knights and camel riders
+;     change sides and join him, and the monastery of GAIA, whose monks
+;     give him 2 Missionaries.
+;   * He reaches VALENCIA on the Mediterranean coast. The Valencian
+;     villagers begin building the WONDER.
+;   * The chapter ends when the Wonder is finished. Berenguer's Frankish
+;     army attacks Valencia throughout, so the Wonder must survive the
+;     whole construction.
+;
+; Map grid (12x8 -- a..l columns, 8 rows):
+;       a       b       c       d       e       f       g       h       i       j       k       l
+;    8 [a8]   [b8]   [c8]   [d8]   [e8]   [f8]   [g8]   [h8]   [i8]   [j8]   [k8]   [l8]
+;    7 [a7]   [b7]   [c7]   [d7]   [e7]   [f7]   [g7]   [h7]   [i7]   [j7]   [k7]   [l7]
+;    6 [a6]   [b6]   [c6]   [d6]   [e6]   [f6]   [g6]   [h6]   [i6]   [j6]   [k6]   [l6]
+;    5 [a5]   [b5]   [c5]   [d5]   [e5]   [f5]   [g5]   [h5]   [i5]   [j5]   [k5]   [l5]
+;    4 [a4]   [b4]   [c4]   [d4]   [e4]   [f4]   [g4]   [h4]   [i4]   [j4]   [k4]   [l4]
+;    3 [a3]   [b3]   [c3]   [d3]   [e3]   [f3]   [g3]   [h3]   [i3]   [j3]   [k3]   [l3]
+;    2 [a2]   [b2]   [c2]   [d2]   [e2]   [f2]   [g2]   [h2]   [i2]   [j2]   [k2]   [l2]
+;    1 [a1]   [b1]   [c1]   [d1]   [e1]   [f1]   [g1]   [h1]   [i1]   [j1]   [k1]   [l1]
+;
+;   The Ebro runs along row 4 (a4..l4).  It is crossed at THREE
+;   points: the stone bridge at g4, the ford at d4 and the ford at j4.
+;   Three crossings matter here: the scenario is about ESCAPING south,
+;   so a single chokepoint bridge would turn the "flee" phase into a
+;   stand-up fight and the chapter would no longer be a chase.
+;
+;   El Cid starts in the WEST at b7 (the exile's camp).
+;   Denia (the town to capture) is at g7, NORTH of the Ebro.
+;   The monastery of Gaia is at c6 (north-west, north of the river).
+;   Lerida is at e3 (south of the river, mid-map).
+;   Valencia is at k2 (south-east, on the Mediterranean coast).
+;   Berenguer's Frankish army is at k6 (north-east) -- it besieges
+;   Denia first and then marches down on Valencia.
+;
+; Wrap safety: west_east_paths must stay in columns a..k and
+; south_north_paths in rows 1..7 (see Joan of Arc/6.txt for the full
+; explanation of the toroidal wrap).
+
+title 9164
+intro 9174
+
+; THE CIVILIZATION SWITCHES BACK: ch. 5 is played as the Spanish.
+player_faction spanish
+
+square_width 12
+nb_columns 12
+nb_lines 8
+
+nb_players_min 1
+nb_players_max 1
+random_starts 0
+
+; starting_squares MUST list every spawn slot: without it the list is
+; empty, the AI's auto_explore has no target square and the besiegers
+; never even look for the player's base (see mapmaking.rst,
+; "Defence mission: making the attackers actually attack").
+;
+; The player slot is b7 (the exile's camp); the computer_only slots
+; are Denia's garrison, the monastery, Lerida, Berenguer's army and
+; Valencia's own villagers.
+starting_squares b7 g7 c6 e3 k6 k2
+
+; Place names (square_name ids in tts.txt).
+;   9237 = El Cid's exile camp   (b7 -- the player's start)
+;   9238 = Denia                (g7 -- the coastal town to capture)
+;   9239 = Monastery of Gaia    (c6 -- the monks who give 2 missionaries)
+;   9240 = Lerida               (e3 -- the knights who change sides)
+;   9241 = Valencia             (k2 -- the city on the coast)
+;   9242 = Berenguer's army     (k6 -- the Frankish besiegers)
+;   9243 = the Ebro bridge      (g4 -- the stone bridge)
+square_name 9237 2,7
+square_name 9238 7,7
+square_name 9239 3,6
+square_name 9240 5,3
+square_name 9241 11,2
+square_name 9242 11,6
+square_name 9243 7,4
+
+; Land-grid paths.  The Ebro is row 4 (a4..l4).  south_north_paths
+; must SKIP row 4 for every column except the crossing columns d, g
+; and j -- otherwise the water squares become vertical passages and
+; the armies can walk across the river anywhere.
+;
+; The crossing squares are declared ``terrain ford`` (d4, j4) and
+; ``terrain big_bridge`` (g4): water for the river's continuity AND
+; ground the armies can walk on.
+west_east_paths a1 b1 c1 d1 e1 f1 g1 h1 i1 j1 k1
+west_east_paths a2 b2 c2 d2 e2 f2 g2 h2 i2 j2 k2
+west_east_paths a3 b3 c3 d3 e3 f3 g3 h3 i3 j3 k3
+west_east_paths a5 b5 c5 d5 e5 f5 g5 h5 i5 j5 k5
+west_east_paths a6 b6 c6 d6 e6 f6 g6 h6 i6 j6 k6
+west_east_paths a7 b7 c7 d7 e7 f7 g7 h7 i7 j7 k7
+west_east_paths a8 b8 c8 d8 e8 f8 g8 h8 i8 j8 k8
+south_north_paths a1 a2 a3 a5 a6 a7
+south_north_paths b1 b2 b3 b5 b6 b7
+south_north_paths c1 c2 c3 c5 c6 c7
+south_north_paths d1 d2 d3 d4 d5 d6 d7
+south_north_paths e1 e2 e3 e5 e6 e7
+south_north_paths f1 f2 f3 f5 f6 f7
+south_north_paths g1 g2 g3 g4 g5 g6 g7
+south_north_paths h1 h2 h3 h5 h6 h7
+south_north_paths i1 i2 i3 i5 i6 i7
+south_north_paths j1 j2 j3 j4 j5 j6 j7
+south_north_paths k1 k2 k3 k5 k6 k7
+south_north_paths l1 l2 l3 l5 l6 l7
+
+; The Ebro river: row 4.  g4 is the stone bridge; d4 and j4 are the
+; two fords (half speed, so they are chokepoints the archers can
+; shoot into rather than free highways).
+terrain river a4 b4 c4 e4 f4 h4 i4 k4 l4
+terrain ford d4 j4
+terrain big_bridge g4
+
+goldmines 300 b7
+woods 400 b7 b6
+orchard 200 b7
+stone_mines 300 b7
+; Denia has its own mine so the player can pay for the garrison.
+goldmines 400 g7
+stone_mines 300 g7
+; Berenguer needs his own income, otherwise his AI can never train
+; the trebuchets and bombard towers the chapter is about.
+goldmines 400 k6
+stone_mines 400 k6
+goldmines 300 e3
+goldmines 300 k2
+woods 300 g6 h7 i7
+woods 300 e2 f3 h3
+
+nb_meadows_by_square 0
+additional_meadows a1 b1 c1 d1 e1 f1 g1 h1 i1 j1 k1 l1
+additional_meadows a2 b2 c2 d2 e2 f2 g2 h2 i2 j2 k2 l2
+additional_meadows a3 b3 c3 d3 e3 f3 g3 h3 i3 j3 k3 l3
+additional_meadows a5 b5 c5 d5 e5 f5 g5 h5 i5 j5 k5 l5
+additional_meadows a6 b6 c6 d6 e6 f6 g6 h6 i6 j6 k6 l6
+additional_meadows a7 b7 c7 d7 e7 f7 g7 h7 i7 j7 k7 l7
+additional_meadows a8 b8 c8 d8 e8 f8 g8 h8 i8 j8 k8 l8
+
+; ---------------------------------------------------------------------------
+; El CID -- the player. He starts in the west, in exile, with a small
+; force: El Cid Campeador, a handful of knights, some villagers and the
+; few men who followed him into exile.
+;
+; Age chain: dark_age / feudal_age / castle_age must all be listed even
+; though the chapter starts in the castle age, because units whose
+; .requirements = ['feudal_age'] check for the literal upgrade name in
+; player.upgrades (not via the phase chain).
+; ---------------------------------------------------------------------------
+player 500 400 400 300 b7 town_center 2 house 8 peasant 4 militia 4 aoe_archer 2 aoe_knight 1 npc_cid_mounted dark_age feudal_age castle_age
+
+; DENIA -- the town El Cid has to take, north of the Ebro. It starts
+; as a small Moorish/Frankish garrison; when the player reaches it
+; the town changes hands.
+computer_only 0 0 0 0 non_neutral faction saracens g7 town_center 2 house 4 aoe_archer 2 aoe_knight 1 scouttower
+
+; The MONASTERY OF GAIA -- the two Missionaries El Cid is given here.
+; It is a neutral ally: the player visits it and takes the monks.
+computer_only 0 0 0 0 neutral faction saracens c6 monastery 2 missionary
+
+; LERIDA -- the knights and camel riders who change sides and join
+; El Cid on his flight south.
+computer_only 0 0 0 0 neutral faction saracens e3 3 npc_lerida_knight 2 npc_lerida_camel 4 peasant
+
+; BERENGUER -- the Frankish army. This is the real antagonist of the
+; chapter: it besieges Denia first and then marches south on Valencia.
+;
+; He gets a full economy (town center, farm, barracks, stables,
+; workshop) and a real AI (``(ai intermediate)``) so that he really
+; builds and really attacks. He starts with the trebuchets and the
+; bombard towers the DE scenario gives him.
+computer_only 500 500 600 400 non_neutral faction franks k6 town_center 2 house farm 2 barracks archery_range stables workshop aoe_castle 2 scouttower 8 militia 4 man_at_arms 4 aoe_knight 3 aoe_archer 2 scout_cavalry 2 peasant 10 trebuchet 2 bombard_cannon dark_age feudal_age castle_age imperial_age
+
+; VALENCIA -- the city on the coast. The Valencian villagers live here
+; and build the Wonder; the Wonder itself is placed by a trigger when
+; the player arrives (see objective 4 below), because the 10-minute
+; siege countdown must start at THAT moment and not at map start.
+computer_only 0 0 0 0 neutral faction saracens k2 2 house 6 peasant
+
+timer_coefficient 40
+
+trigger player1 (timer 0) (alliance 1)
+trigger computer1 (timer 0) (alliance 2)   ; Denia
+trigger computer2 (timer 0) (alliance 1)   ; the monastery of Gaia
+trigger computer3 (timer 0) (alliance 1)   ; Lerida
+trigger computer4 (timer 0) (alliance 2)   ; Berenguer
+trigger computer5 (timer 0) (alliance 1)   ; Valencia
+
+; ---------------------------------------------------------------------------
+; MAKE BERENGUER REALLY ATTACK.
+;
+; A ``computer_only`` slot gets a trigger-only, do-nothing AI by default
+; (see doc_src/src/en/mod/mapmaking.rst "Switch to another AI"), so
+; without this Berenguer would sit in his castle at k6 and the whole
+; chapter would be a walk to Valencia.
+;
+; ``(ai intermediate)`` swaps in mods/aoe2/ai.txt's ``franks_intermediate``
+; script, which contains real ``attack`` lines and ``attack_ratio 120``.
+; ---------------------------------------------------------------------------
+trigger computer4 (timer 0) (ai intermediate)
+
+; ---------------------------------------------------------------------------
+; OBJECTIVES
+;
+;   1 = Take Denia, north of the Ebro
+;   2 = Flee south across the Ebro with your army
+;   3 = Take the knights of Lerida (and the monks of Gaia)
+;   4 = Reach Valencia
+;   5 = Defend the Wonder of Valencia until it is finished
+;   6 (optional) = Visit the monastery of Gaia and take the missionaries
+;
+; The primary objectives are 1-5; the monastery of Gaia is the
+; OPTIONAL one (6) and therefore lives in the secondary key space:
+; it must NOT appear in ``register_objective`` and must be completed
+; with ``secondary_objective_complete``.
+; ---------------------------------------------------------------------------
+trigger player1 (timer 0) (register_objective 1 2 3 4 5)
+trigger player1 (timer 0) (add_objective 1 9197)
+trigger player1 (timer 0) (add_objective 2 9198)
+trigger player1 (timer 0) (add_objective 3 9199)
+trigger player1 (timer 0) (add_objective 4 9200)
+trigger player1 (timer 0) (add_objective 5 9201)
+trigger player1 (timer 0) (add_secondary_objective 6 9202)
+
+; Objective 1: El Cid reaches Denia (g7) and takes the town.
+trigger player1 (has_entered g7 npc_cid_mounted) (do (objective_complete 1) (cut_scene 9261) (transfer_units computer1 player1))
+
+; Objective 2: El Cid flees SOUTH across the Ebro.  He has to end up
+; on the southern bank -- the trigger watches the three southern
+; squares of the three crossings (d3, g3, j3).
+;
+; NOTE: this is what makes the chapter a CHASE.  Berenguer is still
+; north of the river with his trebuchets, so a player who lingers on
+; the northern bank is fighting the siege he is supposed to run away
+; from.
+trigger player1 repeat (has_entered d3 npc_cid_mounted) (do (objective_complete 2) (cut_scene 9262))
+trigger player1 repeat (has_entered g3 npc_cid_mounted) (do (objective_complete 2) (cut_scene 9262))
+trigger player1 repeat (has_entered j3 npc_cid_mounted) (do (objective_complete 2) (cut_scene 9262))
+
+; Objective 3: the knights and camel riders of Lerida change sides.
+trigger player1 (has_entered e3 npc_cid_mounted) (do (objective_complete 3) (cut_scene 9263) (transfer_units computer3 player1))
+
+; Optional objective: the monastery of Gaia and its 2 missionaries.
+trigger player1 (has_entered c6 npc_cid_mounted) (do (secondary_objective_complete 6) (transfer_units computer2 player1))
+
+; Objective 4: El Cid reaches Valencia.  Reaching the city starts
+; the construction of the WONDER, and the wonder is the thing that has
+; to survive the siege, so it is spawned HERE and not at map start:
+; the 10-minute countdown must begin at this moment.
+;
+; ``add_units`` puts the building in the PLAYER's hands (the trigger
+; belongs to player1), so the wonder's own victory timer would hand
+; the victory to the player when it runs out.  That is not used here:
+; ``npc_wonder`` sets ``victory_time 0``, which cancels the inherited
+; auto-victory countdown, and the chapter's own timer decides.
+;
+; Arrival also LATCHES the siege clock (``siege_started``).  The
+; countdown used to be a plain ``(timer 15)`` trigger, which counts
+; from the MAP START -- so the "10 minutes of siege" had already
+; elapsed long before El Cid ever reached Valencia, and the chapter
+; could be won without ever fighting the siege.
+trigger player1 (timer 0) (set_var siege 0)
+trigger player1 (timer 0) (set_var siege_started 0)
+trigger player1 (has_entered k2 npc_cid_mounted) (do (objective_complete 4) (add_units k2 1 npc_wonder) (cut_scene 9264) (set_var siege 0) (set_var siege_started 1))
+
+; Objective 5: hold Valencia until the Wonder is finished.
+;
+; The siege lasts 10 minutes of GAME time (600 s) counted from the
+; moment El Cid enters Valencia (k2), not from the map start.
+;
+; ``(timer N)`` counts from the map start and cannot be re-anchored,
+; so the countdown is driven by a TICK COUNTER instead: a repeatable
+; trigger with a 20-second cooldown adds 1 to ``siege`` every 20 s
+; while ``siege_started`` is latched.  The counter is reset to 0 by
+; the arrival trigger, so tick k corresponds to k * 20 s after the
+; arrival:
+;
+;   siege = 1 + floor(elapsed / 20 s)
+;
+; The original map-start timings are preserved as ratios of the
+; 15-tick (600 s) siege:
+;
+;   (timer 10) -> 400 s -> siege 21 -> cut_scene 9265
+;   (timer 13) -> 520 s -> siege 27 -> cut_scene 9266
+;   (timer 14) -> 560 s -> siege 29 -> cut_scene 9267
+;   (timer 15) -> 600 s -> siege 31 -> objective 5 + victory
+;
+; The announcements at 9265 / 9266 / 9267 make the wait legible --
+; without them the player has no idea how long the siege still has to
+; last.
+trigger player1 repeat 20 (var siege_started >= 1) (add_var siege 1)
+trigger player1 (var siege >= 21) (cut_scene 9265)
+trigger player1 (var siege >= 27) (cut_scene 9266)
+trigger player1 (var siege >= 29) (cut_scene 9267)
+trigger player1 (var siege >= 31) (do (objective_complete 5) (victory))
+
+; ---------------------------------------------------------------------------
+; DEFEAT
+;
+; The Wonder is the whole point of the chapter: if it falls the city
+; falls with it and the scenario is lost.
+;
+; The wonder only exists AFTER El Cid reaches Valencia (it is spawned
+; by the objective-4 trigger), so the raw ``(building_lost npc_wonder)``
+; condition would be TRUE from the very first tick -- the wonder is
+; simply not there yet -- and the chapter would be lost in seconds.
+; The condition is therefore gated on the siege clock, which is latched
+; at the same moment the wonder appears.
+trigger player1 (and (var siege_started >= 1) (building_lost npc_wonder)) (defeat)
+trigger player1 (no_unit_left) (defeat)
+trigger player1 (key_unit_killed npc_cid_mounted) (defeat)

@@ -1,0 +1,134 @@
+; coding: utf-8
+; El Cid — première campagne scénarisée AoE2 DE (français)
+
+; Campaign title, synopsis and the two intro lines played by 0.txt.
+9140 El Cid
+9141 Castille, 1081-1102. Suivez Rodrigo Díaz de Vivar tandis qu'il affronte son beau-frère pour la couronne de Castille, franchit l'Èbre en exil et revient libérer l'Espagne que ses ennemis se sont partagé. Six chapitres.
+9142 Castille, 1072. Le roi Sanche II a fait de Alphonse VI de León et de Castille son héritier, et les deux rois se disputent la couronne.
+9143 Rodrigo Díaz de Vivar, surnommé le Cid, doit décider qui il va servir. Suivez le Cid à travers six chapitres de la Reconquista.
+
+; Chapter titles (the ``title`` line of each 1.txt - 6.txt).
+9160 Frères contre frères
+9161 L'ennemi de mon ennemi
+9162 L'exil du Cid
+9163 La Garde noire
+9164 Roi de Valence
+9165 Reconquista
+
+; Chapter intros (the ``intro`` line of each 1.txt - 6.txt).
+9170 An 1072. Le Cid vient au tournoi du roi Sanche II pour combattre pour son épée et son nom. Mais le frère de Sanche, Alphonse, revendique lui aussi la Castille, et l'épée du Cid ne suffit pas à trancher.
+9171 An 1081. Le Cid est le plus grand capitaine de Castille et la plus grande prise de la guerre. Tolède s'est soulevée contre le roi, et seul l'imam peut l'apaiser. Le Cid doit d'abord gagner l'aide de l'imam avec quatre reliques sacrées.
+9172 An 1081. La Castille a banni le Cid. Il franchit la frontière avec rien que son épée et entre au service de Motamid de Saragosse, mais la route vers l'est est gardée par les tours d'Alphonse, et le comte de Berenguer attend plus loin.
+9173 An 1086. Yusuf ibn Tashfin a franchi le détroit, et la Garde noire tient la côte. Le Cid doit sauver le roi Alphonse du champ de bataille et le ramener, tandis que les flottes de Yusuf et sa mosquée du littoral pèsent sur la balance.
+9174 An 1087. Le Cid est de nouveau un errant, et Denia est la dernière ville qu'il puisse tenir au nord. Lorsque l'armée franche du comte de Berenguer l'en chasse, il ne reste que la route du sud, par-delà l'Èbre, vers Valence — où les Valenciens ont déjà commencé le Merveille.
+9175 An 1094. Le Cid est mort — mais son corps se dresse sur Babieca devant le château de Valence, et la garnison l'ignore. Trois armées marchent sur la ville : la Garde noire de Berenguer au nord, la flotte de la Garde noire sur la côte, et Yusuf ibn Tashfin au-delà de la mer. Ximena Díaz tient ce qui reste.
+
+; Objective texts (add_objective / add_secondary_objective).
+9180 Gagner le combat d'épreuve du tournoi
+9181 Monter Babieca à l'écurie
+9182 Détruire le château du roi Alphonse
+9183 Amener le roi Alphonse au roi Sanche
+9184 Rencontrer l'imam sur son île
+9185 Récupérer les quatre reliques de Tolède
+9186 Rendre les reliques à l'imam
+9187 Monter Babieca et prendre les chameliers
+9188 Détruire le château d'Alphonse
+9189 Rejoindre Motamid à Saragosse
+9190 Détruire l'atelier de siège de Berenguer
+9191 Vaincre le comte de Berenguer
+9192 Sauver le roi Alphonse du champ de bataille
+9193 Escoorter le roi Alphonse jusqu'à son camp à l'ouest
+9194 Détruire les six chantiers navals de la Garde noire
+9195 Vaincre Yusuf ibn Tashfin
+9196 Convertir la mosquée de la Garde noire
+9197 Prendre Denia, au nord de l'Èbre
+9198 Fuir vers le sud en franchissant l'Èbre
+9199 Gagner les chevaliers de Lérida
+9200 Atteindre Valence
+9201 Défendre le Merveille de Valence jusqu'à son achèvement
+9202 Visiter le monastère de Gaia et prendre les missionnaires
+9203 Vaincre l'armée de la Garde noire au nord
+9204 Détruire les quatre chantiers navals de la Garde noire sur la côte
+9205 Vaincre Yusuf ibn Tashfin au-delà de la mer
+
+; Place names (map square_name labels).
+9210 la place du tournoi
+9211 l'écurie
+9212 le château d'Alphonse
+9213 le château du roi Sanche
+9214 le monastère de l'ouest
+9215 les champs des serfs
+9216 le camp du Cid
+9217 l'île de l'imam
+9218 le marché de Motamid
+9219 Tolède
+9220 la porte ouest de Tolède
+9221 le poste rebelle maure
+9222 le poste rebelle espagnol
+9223 la porte de l'exilé
+9224 l'écurie de Babieca
+9225 le moulin à vent
+9226 le château d'Alphonse
+9227 le camp GATA
+9228 Saragosse
+9229 l'atelier de siège de Berenguer
+9230 la forteresse de Berenguer
+9231 le point de débarquement du Cid
+9232 la position du roi Alphonse
+9233 le camp d'Alphonse
+9234 la mosquée de la Garde noire
+9235 les chantiers navals de la Garde noire
+9236 la base de Yusuf
+9237 le camp d'exil du Cid
+9238 Denia
+9239 le monastère de Gaia
+9240 Lérida
+9241 Valence
+9242 l'armée de Berenguer
+9243 le pont de l'Èbre
+9244 Valence
+9245 le château de Valence
+9246 l'armée de la Garde noire
+9247 la flotte de la Garde noire
+9248 la forteresse de Yusuf
+
+; Cut scene narration (cut_scene).
+9250 La lame du champion heurte le bouclier du Cid, et la foule rugit. Le nom se propage de bouche en bouche : Rodrigo Díaz de Vivar, El Cid Campeador.
+9251 Babieca secoue la tête et piaffe. Le Cid l'enfourche, et pour la première fois un roi de Castille est fier de lui.
+9252 Le château d'Alphonse brûle. Ses hommes lâchent leurs armes, et le roi lui-même vient trouver le Cid et le supplie de le conduire à Sanche.
+9253 L'imam écoute, et sa voix s'adoucit : « Le Cid de Castille veut savoir comment apaiser Tolède ? Alors Tolède retrouvera ses reliques, et la Castille aura sa paix. »
+9254 Le Cid monte Babieca et galope vers l'est hors de la porte de l'exil, les tours d'Alphonse dans son dos.
+9255 Les chameliers du sud-ouest regardent le chevalier exilé, et un à un ils viennent se ranger derrière lui.
+9256 Le château d'Alphonse est tombé. Sa garnison jure la paix du nouveau seigneur, et la route de Saragosse s'ouvre.
+9257 Motamid de Saragosse reçoit le Cid à la cour de son taïfa : « Mon hôte et mon épée, aussi longtemps que vous le voudrez. »
+9258 Le Cid trouve le roi Alphonse seul au milieu du champ et le ramène à ses lignes.
+9259 Le roi est rentré. Le camp à l'extrémité occidentale du champ de bataille n'appartient plus qu'au Cid.
+9260 Les moines de la mosquée de la Garde noire adoptent la foi d'El Cid, et avec eux vient l'aide de leur ordre.
+9261 Les portes de Denia s'ouvrent. El Cid se tient sur les remparts et regarde vers le sud, vers le fleuve et la longue route de Valence.
+9262 L'Èbre est derrière lui. Ce qui était un royaume n'est plus qu'une fuite, et il ne reste devant lui que la côte.
+9263 Les chevaliers de Lérida changent de camp à la vue du Cid, et le vieux cri de guerre de Castille s'élève de nouveau.
+9264 Les paysans de Valence travaillent toute la nuit. Sur le rivage près de la ville s'élève le Merveille, et l'armée de Berenguer est déjà en route.
+9265 La moitié du siège est passée. Tenez Valence encore un peu.
+9266 Le Merveille est presque achevé. Tenez la ville.
+9267 Le Merveille est enfin achevé. Valence est sauvée.
+9268 Le dernier des gardes noirs tombe au nord, et la route de Valence s'ouvre.
+9269 La flotte de la Garde noire brûle sur la côte, et la mer appartient de nouveau à la Castille.
+9270 Par-dessus le détroit, les étendards de Yusuf ibn Tashfin descendent. La Reconquista est accomplie.
+
+; Named people and places -- wired up in El Cid/ui/style.txt.
+9280 El Cid
+9281 El Cid Campeador
+9282 le corps d'El Cid
+9283 Ximena Díaz
+9284 le roi Alphonse VI
+9285 le roi Sanche II
+9286 l'imam de Tolède
+9287 Motamid de Saragosse
+9288 le comte de Berenguer
+9289 Yusuf ibn Tashfin
+9290 un chevalier de Lérida
+9291 un chamelier de Lérida
+9292 le Merveille de Valence
+9293 la ville de Tolède
+9294 la mosquée de la Garde noire
+9295 le château de Valence

@@ -1,0 +1,134 @@
+; coding: utf-8
+; El Cid — AoE2 DE erste Story-Kampagne (Deutsch)
+
+; Campaign title, synopsis and the two intro lines played by 0.txt.
+9140 El Cid
+9141 Kastilien, 1081-1102. Folge Rodrigo Díaz de Vivar, während er gegen seinen Schwager um die Krone von Kastilien kämpft, im Exil über den Ebro zieht und zurückkehrt, um das Spanien seiner Feinde zu befreien. Sechs Kapitel.
+9142 Kastilien, 1072. König Sancho II. hat Alfonso VI. von León und Kastilien zu seinem Erben ernannt, und die beiden Könige streiten um die Krone.
+9143 Rodrigo Díaz de Vivar, der Cid, muss entscheiden, wem er dienen wird. Folge dem Cid durch sechs Kapitel der Reconquista.
+
+; Chapter titles (the ``title`` line of each 1.txt - 6.txt).
+9160 Brüder gegen Brüder
+9161 Der Feind meines Feindes
+9162 Das Exil des Cid
+9163 Die schwarze Garde
+9164 König von Valencia
+9165 Reconquista
+
+; Chapter intros (the ``intro`` line of each 1.txt - 6.txt).
+9170 Jahr 1072. Der Cid kommt zum Turnier von König Sancho II., um für seine Klinge und seinen Namen zu kämpfen. Doch Sanchos Bruder Alfonso erhebt ebenfalls Anspruch auf Kastilien, und des Cids Klinge allein entscheidet die Sache nicht.
+9171 Jahr 1081. Der Cid ist der größte Feldherr Kastiliens und die größte Beute des Krieges. Toledo hat sich gegen den König erhoben, und nur der Imam kann es zur Ruhe bringen. Der Cid muss dem Imam zuerst mit vier heiligen Relikien helfen.
+9172 Jahr 1081. Kastilien hat den Cid ins Exil getrieben. Er überschreitet die Grenze mit nichts als seinem Schwert und nimmt Dienst bei Motamid von Zaragoza — doch der Weg nach Osten wird von Alfonsos Wachtürmen bewacht, und Graf Berenguer wartet dahinter.
+9173 Jahr 1086. Yusuf ibn Tashfin ist über die Meerenge gekommen, und die schwarze Garde hält die Küste. Der Cid muss König Alfonso vom Schlachtfeld retten und nach Hause bringen, während Yusufs Flotten und seine Moschee an der Küste die Waage schwer belasten.
+9174 Jahr 1087. Der Cid ist wieder ein Wanderer, und Denia ist die letzte Stadt, die er im Norden halten kann. Als die fränkische Heerschar des Grafen Berenguer ihn vertreibt, führt der einzige Weg nach Süden, über den Ebro, nach Valencia — wo die Valencianer bereits das Wunder begonnen haben.
+9175 Jahr 1094. Der Cid ist tot — doch sein Leichnam steht auf Babieca vor der Burg von Valencia gestellt, und die Besatzung ahnt es nicht. Drei Heere rücken auf die Stadt: Berenguers schwarze Garde im Norden, die schwarze Garde zur See und Yusuf ibn Tashfin jenseits des Meeres. Ximena Díaz hält, was bleibt.
+
+; Objective texts (add_objective / add_secondary_objective).
+9180 Gewinne das Turnier in der Kampfprobe
+9181 Besteige Babieca im Stall
+9182 Zerstöre die Burg von König Alfonso
+9183 Bringe König Alfonso zu König Sancho
+9184 Triff den Imam auf seiner Insel
+9185 Hole die vier Reliquien von Toledo zurück
+9186 Gib die Reliquien dem Imam zurück
+9187 Besteige Babieca und nimm die Kamelreiter
+9188 Zerstöre Alfonsos Burg
+9189 Schließe dich Motamid in Zaragoza an
+9190 Zerstöre Berenguers Belagerungswerkstatt
+9191 Besiege Graf Berenguer
+9192 Rette König Alfonso vom Schlachtfeld
+9193 Geleite König Alfonso zu seinem Lager im Westen
+9194 Zerstöre alle sechs Werften der schwarzen Garde
+9195 Besiege Yusuf ibn Tashfin
+9196 Konvertiere die Moschee der schwarzen Garde
+9197 Ermittle Denia, nördlich des Ebro
+9198 Fliehe südlich über den Ebro
+9199 Nimm die Ritter von Lérida ein
+9200 Erreiche Valencia
+9201 Verteidige das Wunder von Valencia, bis es fertig ist
+9202 Besuche das Kloster von Gaia und nimm die Missionare mit
+9203 Besiege die schwarze Garde im Norden
+9204 Zerstöre die vier Werften der schwarzen Garde an der Küste
+9205 Besiege Yusuf ibn Tashfin jenseits des Meeres
+
+; Place names (map square_name labels).
+9210 der Turnierplatz
+9211 der Stall
+9212 Alfonsos Burg
+9213 die Burg von König Sancho
+9214 das Kloster im Westen
+9215 die Felder der Bauern
+9216 das Lager des Cid
+9217 die Insel des Imam
+9218 Motamids Markt
+9219 Toledo
+9220 das Westtor von Toledo
+9221 der maurische Rebellenposten
+9222 der spanische Rebellenposten
+9223 das Tor des Verbannten
+9224 Babiecas Stall
+9225 die Windmühle
+9226 Alfonsos Burg
+9227 das GATA-Lager
+9228 Zaragoza
+9229 Berenguers Belagerungswerkstatt
+9230 Berenguers Festung
+9231 der Landungsplatz des Cid
+9232 die Stellung von König Alfonso
+9233 Alfonsos Lager
+9234 die Moschee der schwarzen Garde
+9235 die Werften der schwarzen Garde
+9236 Yusufs Basis
+9237 das Exillager des Cid
+9238 Denia
+9239 das Kloster von Gaia
+9240 Lérida
+9241 Valencia
+9242 die Armee des Grafen Berenguer
+9243 die Ebrobrücke
+9244 Valencia
+9245 die Burg von Valencia
+9246 die schwarze Garde
+9247 die schwarze Garde zur See
+9248 Yusufs Festung
+
+; Cut scene narration (cut_scene).
+9250 Die Klinge des Kämpfers schlägt an den Schild des Cid, und die Menge tobt. Der Name spricht sich herum: Rodrigo Díaz de Vivar, El Cid Campeador.
+9251 Babieca wirft den Kopf und stampft. Der Cid steigt auf, und zum ersten Mal ist ein König von Kastilien stolz auf ihn.
+9252 Alfonsos Burg brennt. Seine Männer legen die Waffen nieder, und der König selbst kommt zum Cid und bittet, zu Sancho geführt zu werden.
+9253 Der Imam hört zu, und seine Stimme wird weich: 'Der Cid von Kastilien will lernen, wie Toledo zur Ruhe kommt? Dann bekommt Toledo seine Reliquien zurück, und Kastilien seinen Frieden.'
+9254 Der Cid besteigt Babieca und reitet ostwärts aus dem Tor des Exils, Alfonsos Wachtürme in seinem Rücken.
+9255 Die Kamelreiter im Südwesten betrachten den verbannten Ritter, und einer nach dem anderen schließt sich ihm an.
+9256 Alfonsos Burg ist gefallen. Die Besatzung schwört dem neuen Herrn den Frieden, und der Weg nach Zaragoza ist offen.
+9257 Motamid von Zaragoza empfängt den Cid am Hof seiner Taifa: 'Mein Gast und mein Schwert, solange Ihr es wünscht.'
+9258 Der Cid findet König Alfonso allein mitten auf dem Feld und bringt ihn zurück zu seinen Linien.
+9259 Der König ist zu Hause. Das Lager am westlichen Ende des Schlachtfeldes gehört nun allein dem Cid.
+9260 Die Mönche der Moschee der schwarzen Garde nehmen den Glauben des El Cid an, und mit ihnen die Hilfe ihres Ordens.
+9261 Die Tore von Denia öffnen sich. El Cid steht auf der Mauer und blickt nach Süden, auf den Fluss und den langen Weg nach Valencia.
+9262 Der Ebro liegt hinter ihm. Was ein Königreich war, ist jetzt eine Flucht, und vor ihm liegt nur die Küste.
+9263 Die Ritter von Lérida wechseln die Seite, als sie den Cid sehen, und der alte Schlachtruf Kastiliens erklingt wieder.
+9264 Die Bauern von Valencia arbeiten die ganze Nacht. Am Strand bei der Stadt erhebt sich das Wunder, und Berenguers Heer ist bereits unterwegs.
+9265 Die Hälfte der Belagerung ist vorbei. Haltet Valencia noch ein wenig longer.
+9266 Das Wunder ist fast fertig. Haltet die Stadt.
+9267 Das Wunder ist endlich fertig. Valencia ist gerettet.
+9268 Der letzte der schwarzen Garde fällt im Norden, und der Weg nach Valencia ist offen.
+9269 Die Flotte der schwarzen Garde brennt an der Küste, und das Meer gehört wieder Kastilien.
+9270 Über der Meerenge sinken die Fahnen von Yusuf ibn Tashfin. Die Reconquista ist vollendet.
+
+; Named people and places -- wired up in El Cid/ui/style.txt.
+9280 El Cid
+9281 El Cid Campeador
+9282 die Leiche des El Cid
+9283 Ximena Díaz
+9284 König Alfonso VI.
+9285 König Sancho II.
+9286 der Imam von Toledo
+9287 Motamid von Zaragoza
+9288 Graf Berenguer
+9289 Yusuf ibn Tashfin
+9290 ein Ritter von Lérida
+9291 ein Kamelreiter von Lérida
+9292 das Wunder von Valencia
+9293 die Stadt Toledo
+9294 die Moschee der schwarzen Garde
+9295 die Burg von Valencia

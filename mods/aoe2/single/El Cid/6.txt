@@ -1,0 +1,275 @@
+; 6 -- Reconquista (AoE2 DE El Cid, ch. 6)
+;
+; Source: ageofempires.fandom.com/wiki/Reconquista
+; (Age of Empires II: The Conquerors/El Cid/Reconquista).
+;
+; Real scenario facts reproduced here:
+;   * Year 1094-1102. The player is SPANISH and commands the garrison
+;     of VALENCIA under XIMENA DÍAZ, El Cid's widow.
+;   * El Cid is MORTALLY WOUNDED. His body is strapped to his horse
+;     Babieca and set in front of the castle of Valencia, so that the
+;     garrison does not learn that its lord is dead.
+;   * If the body is harmed, the garrison loses heart and the scenario
+;     is lost -- hence the ``(key_unit_killed npc_cid_body) (defeat)``
+;     trigger below. The body is therefore a must-survive key unit.
+;   * Three enemies attack at once:
+;       - the BLACK GUARD ARMY in the north (Berenguer's Frankish
+;         army, with trebuchets and bombard towers),
+;       - the BLACK GUARD NAVY in the south-west (docks and war
+;         galleys along the coast),
+;       - YUSUF IBN TASHFIN, the Almoravid sultan, across the
+;         Mediterranean in AFRICA (the southern shore).
+;   * The player must defeat all three.
+;
+; Map grid (12x8 -- a..l columns, 8 rows):
+;       a       b       c       d       e       f       g       h       i       j       k       l
+;    8 [a8]   [b8]   [c8]   [d8]   [e8]   [f8]   [g8]   [h8]   [i8]   [j8]   [k8]   [l8]
+;    7 [a7]   [b7]   [c7]   [d7]   [e7]   [f7]   [g7]   [h7]   [i7]   [j7]   [k7]   [l7]
+;    6 [a6]   [b6]   [c6]   [d6]   [e6]   [f6]   [g6]   [h6]   [i6]   [j6]   [k6]   [l6]
+;    5 [a5]   [b5]   [c5]   [d5]   [e5]   [f5]   [g5]   [h5]   [i5]   [j5]   [k5]   [l5]
+;    4 [a4]   [b4]   [c4]   [d4]   [e4]   [f4]   [g4]   [h4]   [i4]   [j4]   [k4]   [l4]
+;    3 [a3]   [b3]   [c3]   [d3]   [e3]   [f3]   [g3]   [h3]   [i3]   [j3]   [k3]   [l3]
+;    2 [a2]   [b2]   [c2]   [d2]   [e2]   [f2]   [g2]   [h2]   [i2]   [j2]   [k2]   [l2]
+;    1 [a1]   [b1]   [c1]   [d1]   [e1]   [f1]   [g1]   [h1]   [i1]   [j1]   [k1]   [l1]
+;
+;   The MEDITERRANEAN fills the bottom row (a1..l1) and the coast of
+;   Africa is the southern shore.  The Black Guard Navy sits on that
+;   shore (b1, d1, g1, j1) and Yusuf's fortress is on the African
+;   coast in the far south-east (l1 area).
+;
+;   Valencia -- the player's city -- is at h4, in the middle of the
+;   north bank.  The castle of Valencia (npc_castillo_valencia) is at
+;   g4, and El Cid's body stands in front of it at f4.
+;
+;   The BLACK GUARD ARMY is in the north (d7 / f7).
+;
+; Wrap safety: west_east_paths must stay in columns a..k and
+; south_north_paths in rows 1..7 (see Joan of Arc/6.txt).
+
+title 9165
+intro 9175
+
+; The last chapter is played as the Spanish again.
+player_faction spanish
+
+square_width 12
+nb_columns 12
+nb_lines 8
+
+nb_players_min 1
+nb_players_max 1
+random_starts 0
+
+; starting_squares MUST list every spawn slot, otherwise the AI's
+; auto_explore has no target square at all and the enemies never
+; even look for Valencia (see mapmaking.rst, "Defence mission:
+; making the attackers actually attack").
+starting_squares h4 g4 d7 f7 b1 d1 g1 j1 l2
+
+; Place names (square_name ids in tts.txt).
+;   9244 = Valencia                (h4 -- the player's city)
+;   9245 = the castle of Valencia (g4)
+;   9246 = Black Guard Army        (d7 -- Berenguer in the north)
+;   9247 = Black Guard Navy        (b1 -- the fleet in the south-west)
+;   9248 = Yusuf's fortress        (l2 -- Yusuf across the sea)
+square_name 9244 8,4
+square_name 9245 7,4
+square_name 9246 4,7
+square_name 9247 2,1
+square_name 9248 12,2
+
+; Land-grid paths.  Row 1 is the Mediterranean: it is water, so it
+; is NOT in any west_east_path line.  The naval squares are reachable
+; only by ship, which is exactly what the Black Guard Navy needs.
+west_east_paths a2 b2 c2 d2 e2 f2 g2 h2 i2 j2 k2
+west_east_paths a3 b3 c3 d3 e3 f3 g3 h3 i3 j3 k3
+west_east_paths a4 b4 c4 d4 e4 f4 g4 h4 i4 j4 k4
+west_east_paths a5 b5 c5 d5 e5 f5 g5 h5 i5 j5 k5
+west_east_paths a6 b6 c6 d6 e6 f6 g6 h6 i6 j6 k6
+west_east_paths a7 b7 c7 d7 e7 f7 g7 h7 i7 j7 k7
+west_east_paths a8 b8 c8 d8 e8 f8 g8 h8 i8 j8 k8
+south_north_paths a2 a3 a4 a5 a6 a7
+south_north_paths b2 b3 b4 b5 b6 b7
+south_north_paths c2 c3 c4 c5 c6 c7
+south_north_paths d2 d3 d4 d5 d6 d7
+south_north_paths e2 e3 e4 e5 e6 e7
+south_north_paths f2 f3 f4 f5 f6 f7
+south_north_paths g2 g3 g4 g5 g6 g7
+south_north_paths h2 h3 h4 h5 h6 h7
+south_north_paths i2 i3 i4 i5 i6 i7
+south_north_paths j2 j3 j4 j5 j6 j7
+south_north_paths k2 k3 k4 k5 k6 k7
+; Column l is the far east: Yusuf's side of the map.  l1 is the
+; African shore and l2..l7 is his land, so the column is listed only
+; from row 2 up.
+south_north_paths l2 l3 l4 l5 l6 l7
+
+; The Mediterranean: the whole bottom row is sea.
+terrain sea a1 b1 c1 d1 e1 f1 g1 h1 i1 j1 k1 l1
+
+goldmines 400 h4
+woods 400 h4 h5
+orchard 200 h4
+stone_mines 400 h4
+; The three enemies need their own income, otherwise their AIs can
+; never train the units their get-lines ask for.
+goldmines 400 d7
+goldmines 400 f7
+goldmines 300 l2
+stone_mines 300 d7
+stone_mines 300 l2
+woods 300 d8 e8
+woods 300 g7 h7
+woods 300 b6 c6
+
+nb_meadows_by_square 0
+additional_meadows a2 b2 c2 d2 e2 f2 g2 h2 i2 j2 k2 l2
+additional_meadows a3 b3 c3 d3 e3 f3 g3 h3 i3 j3 k3 l3
+additional_meadows a4 b4 c4 d4 e4 f4 g4 h4 i4 j4 k4 l4
+additional_meadows a5 b5 c5 d5 e5 f5 g5 h5 i5 j5 k5 l5
+additional_meadows a6 b6 c6 d6 e6 f6 g6 h6 i6 j6 k6 l6
+additional_meadows a7 b7 c7 d7 e7 f7 g7 h7 i7 j7 k7 l7
+additional_meadows a8 b8 c8 d8 e8 f8 g8 h8 i8 j8 k8 l8
+
+; ---------------------------------------------------------------------------
+; THE GARRISON OF VALENCIA (PLAYER) -- commanded by Ximena Díaz.
+;
+; El Cid's body (npc_cid_body) stands in front of the castle, at f4.
+; It is a key unit: losing it loses the chapter, exactly as in the DE
+; original (the garrison loses heart when it learns the Cid is dead).
+;
+; The body must have a ``title`` in ui/style.txt (9270-9286 block) or
+; ``EntityView.short_title`` would be empty and the unit could neither
+; be Tab-selected nor targeted.
+;
+; Age chain: dark_age / feudal_age / castle_age must all be listed even
+; though the chapter starts in the castle age, because units whose
+; .requirements = ['feudal_age'] check for the literal upgrade name in
+; player.upgrades (not via the phase chain).
+; ---------------------------------------------------------------------------
+player 600 500 500 400 h4 town_center monastery barracks archery_range blacksmith stables 2 house 8 peasant 4 militia 6 aoe_archer 2 aoe_knight 1 npc_cid_body 1 npc_ximena dark_age feudal_age castle_age
+
+; The castle of Valencia, in front of which the body is set.
+computer_only 0 0 0 0 neutral faction spanish g4 npc_castillo_valencia
+
+; ---------------------------------------------------------------------------
+; THE BLACK GUARD ARMY -- Berenguer's Frankish army in the north.
+;
+; Two bases so that the northern attack comes from two directions
+; (the DE scenario's northern army is the biggest of the three).
+; Both get a real AI (``(ai intermediate)``) and their own economy,
+; otherwise they would never train the trebuchets and bombard
+; towers the chapter is about.
+; ---------------------------------------------------------------------------
+computer_only 500 500 600 400 non_neutral faction franks d7 town_center 2 house farm 2 barracks archery_range stables workshop aoe_castle 2 scouttower 8 militia 4 man_at_arms 4 aoe_knight 3 aoe_archer 2 scout_cavalry 2 peasant 10 trebuchet 2 bombard_cannon dark_age feudal_age castle_age imperial_age
+computer_only 500 500 600 400 non_neutral faction franks f7 town_center 2 house farm 2 barracks archery_range stables workshop 2 scouttower 6 militia 3 man_at_arms 3 aoe_knight 2 aoe_archer 2 peasant 8 trebuchet 1 dark_age feudal_age castle_age imperial_age
+
+; ---------------------------------------------------------------------------
+; THE BLACK GUARD NAVY -- four docks on the Mediterranean coast in the
+; south-west, with war galleys.
+;
+; NOTE: the AoE2 mod's building type is ``shipyard`` (see
+; mods/aoe2/rules.txt ``def shipyard``) -- there is no ``dock`` unit
+; type in this engine, so a ``dock`` line would spawn nothing.
+;
+; The navy is a real AI (``berbers_intermediate``) but it can only
+; reach the player by sea: the whole bottom row is water, and the
+; player has to build a fleet to answer it.
+; ---------------------------------------------------------------------------
+computer_only 400 400 600 200 non_neutral faction berbers b1 shipyard 2 war_galley 2 scouttower
+computer_only 400 400 600 200 non_neutral faction berbers d1 shipyard 2 war_galley 2 scouttower
+computer_only 400 400 600 200 non_neutral faction berbers g1 shipyard 2 war_galley 2 scouttower
+computer_only 400 400 600 200 non_neutral faction berbers j1 shipyard 2 war_galley 2 scouttower
+
+; ---------------------------------------------------------------------------
+; YUSUF IBN TASHFIN -- the Almoravid sultan, across the sea in Africa.
+;
+; He commands a heavy Berber army (camelry, mamelukes, monks) and
+; holds a fortified base on the African coast.  His base is the seat
+; of his power, so destroying it ends his part in the chapter.
+; ---------------------------------------------------------------------------
+computer_only 500 500 600 400 non_neutral faction berbers l2 town_center 2 house farm 2 barracks archery_range stables aoe_castle 3 scouttower 8 militia 4 camel_rider 4 mameluke 3 archer 2 monk 4 peasant 10 mangonel 2 dark_age feudal_age castle_age
+
+timer_coefficient 40
+
+trigger player1 (timer 0) (alliance 1)
+trigger computer1 (timer 0) (alliance 1)   ; the castle of Valencia
+trigger computer2 (timer 0) (alliance 2)   ; Black Guard Army, west
+trigger computer3 (timer 0) (alliance 2)   ; Black Guard Army, east
+trigger computer4 (timer 0) (alliance 2)   ; Black Guard Navy, b1
+trigger computer5 (timer 0) (alliance 2)   ; Black Guard Navy, d1
+trigger computer6 (timer 0) (alliance 2)   ; Black Guard Navy, g1
+trigger computer7 (timer 0) (alliance 2)   ; Black Guard Navy, j1
+trigger computer8 (timer 0) (alliance 2)   ; Yusuf
+
+; ---------------------------------------------------------------------------
+; MAKE THE ENEMIES REALLY ATTACK.
+;
+; A ``computer_only`` slot gets a trigger-only, do-nothing AI by default
+; (see doc_src/src/en/mod/mapmaking.rst "Switch to another AI"), so
+; without this the three enemies would sit in their bases and the
+; chapter would be a walk around an empty map.
+;
+; ``(ai intermediate)`` swaps in mods/aoe2/ai.txt's ``franks_intermediate``
+; and ``berbers_intermediate`` scripts, which contain real ``attack``
+; lines and ``attack_ratio 120``.
+; ---------------------------------------------------------------------------
+trigger computer2 (timer 0) (ai intermediate)
+trigger computer3 (timer 0) (ai intermediate)
+trigger computer4 (timer 0) (ai intermediate)
+trigger computer5 (timer 0) (ai intermediate)
+trigger computer6 (timer 0) (ai intermediate)
+trigger computer7 (timer 0) (ai intermediate)
+trigger computer8 (timer 0) (ai intermediate)
+
+; ---------------------------------------------------------------------------
+; OBJECTIVES
+;
+;   1 = Defeat the Black Guard Army in the north
+;   2 = Destroy the four Black Guard docks in the south-west
+;   3 = Defeat Yusuf ibn Tashfin across the sea
+;
+; All three are primary: the chapter ends when the whole Reconquista
+; is done.
+; ---------------------------------------------------------------------------
+trigger player1 (timer 0) (register_objective 1 2 3)
+trigger player1 (timer 0) (add_objective 1 9203)
+trigger player1 (timer 0) (add_objective 2 9204)
+trigger player1 (timer 0) (add_objective 3 9205)
+
+; Objective 1: the Black Guard Army -- both of Berenguer's bases must
+; fall.  As in ch. 4, the two one-shot triggers count the fallen
+; bases in a variable and a repeatable trigger completes the objective
+; once the counter reaches two.  Two separate triggers that each
+; called ``(objective_complete 1)`` would complete the objective when
+; the FIRST base fell.
+trigger player1 (enemy_building_destroyed d7 aoe_castle) (add_var army 1)
+trigger player1 (enemy_building_destroyed f7 town_center) (add_var army 1)
+trigger player1 repeat (var army >= 2) (do (objective_complete 1) (cut_scene 9268))
+
+; Objective 2: all four Black Guard docks are destroyed.
+trigger player1 (enemy_building_destroyed b1 shipyard) (add_var docks 1)
+trigger player1 (enemy_building_destroyed d1 shipyard) (add_var docks 1)
+trigger player1 (enemy_building_destroyed g1 shipyard) (add_var docks 1)
+trigger player1 (enemy_building_destroyed j1 shipyard) (add_var docks 1)
+trigger player1 repeat (var docks >= 4) (do (objective_complete 2) (cut_scene 9269))
+
+; Objective 3: Yusuf's fortress in Africa falls.
+;
+; NOTE: this must NOT be ``(no_enemy_player_left)``.  That condition only
+; counts players that take part in the match (human players and invited
+; computer opponents).  Every campaign NPC here is a ``computer_only``
+; slot whose ``broadcasts_defeat_and_quit`` is False, so
+; ``no_enemy_player_left`` is already True on the very first tick --
+; the chapter would end instantly.
+trigger player1 (enemy_building_destroyed l2 aoe_castle) (do (objective_complete 3) (cut_scene 9270) (victory))
+
+; ---------------------------------------------------------------------------
+; DEFEAT
+;
+; The body of El Cid must not be harmed -- that is the whole point of
+; the scenario.  Losing it loses the chapter.
+; ---------------------------------------------------------------------------
+trigger player1 (no_unit_left) (defeat)
+trigger player1 (key_unit_killed npc_cid_body) (defeat)
+trigger player1 (key_unit_killed npc_ximena) (defeat)

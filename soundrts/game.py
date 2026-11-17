@@ -757,23 +757,42 @@ class MissionGame(_Game, _Savable):
         self.map = chapter.map
         self.seed = random.randint(0, 10000)
         self.local_client = DirectClient(config.login, self)
-        # Prefer campaign.txt ``default_faction``; else first rules faction.
-        # Without this, MissionGame keeps random_faction and aoe2 civs shuffle.
-        faction = getattr(getattr(chapter, "campaign", None), "default_faction", None)
-        if not faction:
-            try:
-                from . import definitions
-
-                faction = (
-                    definitions.rules.factions[0]
-                    if definitions.rules.factions
-                    else None
-                )
-            except Exception:
-                faction = None
+        faction = self._faction_for_chapter(chapter)
         if faction:
             self.local_client.faction = faction
         self.players = [self.local_client]
+
+    @staticmethod
+    def _faction_for_chapter(chapter):
+        """Pick the player's civilization for *chapter*.
+
+        Priority:
+
+        1. The map's own ``player_faction <faction>`` keyword. Some AoE2
+           campaigns change civilization between scenarios -- the DE
+           El Cid campaign plays Spanish in ch. 1-2, Saracens in ch. 3-4
+           and Spanish again in ch. 5-6 -- and ``campaign.txt``'s
+           ``default_faction`` can only cover the whole campaign.
+        2. The campaign-wide ``default_faction`` from ``campaign.txt``.
+        3. The first faction in the rules (so the AoE2 mod does not shuffle
+           a random civilization).
+        """
+        map_faction = getattr(getattr(chapter, "map", None), "player_faction", None)
+        if map_faction:
+            return map_faction
+        faction = getattr(getattr(chapter, "campaign", None), "default_faction", None)
+        if faction:
+            return faction
+        try:
+            from . import definitions
+
+            return (
+                definitions.rules.factions[0]
+                if definitions.rules.factions
+                else None
+            )
+        except Exception:
+            return None
 
     def _replay_write_map(self):
         self.replay_write(self.chapter.campaign.name)

@@ -1,0 +1,151 @@
+; coding: utf-8
+; El Cid campaign — local style.txt
+;
+; Loaded on top of the mod-wide mods/aoe2/ui/style.txt.  The engine
+; stacks the campaign layer via res._add_layers when a campaign is
+; active (see soundrts/lib/resource.py::_reload), so this file is
+; reachable at runtime.
+;
+; ---------------------------------------------------------------------------
+; WHY EVERY npc_* NEEDS A TITLE HERE
+;
+; ``EntityView.short_title`` is built from ``style.get(type_name,
+; "title")``.  ``is_visible()`` (soundrts/clientgame/game_unit_control.py)
+; rejects any object whose ``short_title`` is empty, and the "who is in
+; this square" report (place_summary) skips them too.  An NPC without a
+; title is therefore neither Tab-selectable nor click-targetable -- the
+; player literally cannot see El Cid, and the trigger conditions that
+; watch him (``has_entered ... npc_cid``) can never be satisfied by hand.
+;
+; This is the same trap that npc_reims_cathedral fell into in the Joan of
+; Arc campaign (see that file for the long version).
+; ---------------------------------------------------------------------------
+;
+; TTS id blocks used here:
+;   9140-9143  campaign title / synopsis / intro sequence
+;   9160-9165  chapter titles (ch. 1 - ch. 6)
+;   9170-9175  chapter intros
+;   9180-9205  chapter objectives
+;   9210-9248  place names (map square_name labels)
+;   9250-9270  cut_scene narration lines
+;   9280-9295  the named people of the campaign (heroes, kings, villains)
+;
+; Every one of these ids is defined in the campaign's ui/tts.txt and in
+; all 12 localised ui-* folders.
+;
+; ---------------------------------------------------------------------------
+; El Cid and his people
+; ---------------------------------------------------------------------------
+
+; npc_cid -- Rodrigo Díaz de Vivar on foot (chapters 1 and 3).
+; Inherits the knight class so it has a real melee attack and the knight
+; sprite; the rules file already zeroes his aggro so he never charges.
+def npc_cid
+is_a aoe_knight
+title 9280
+
+; npc_cid_mounted -- El Cid Campeador, mounted on Babieca.
+; Inherits npc_cid so it keeps the hero's look and stays a key unit.
+def npc_cid_mounted
+is_a npc_cid
+title 9281
+
+; npc_cid_body -- the dead El Cid, propped on Babieca in front of the
+; castle of Valencia (chapter 6).  It is a KEY unit: if it dies the
+; garrison loses heart and the chapter is lost.
+def npc_cid_body
+is_a npc_cid_mounted
+title 9282
+
+; npc_ximena -- Ximena Díaz, the Cid's widow, who commands the garrison
+; of Valencia in the last chapter.
+def npc_ximena
+is_a monk
+title 9283
+
+; npc_alfonso -- King Alfonso VI of León and Castile.  A ruler, not a
+; soldier: the rules file gives him zero damage so he never fights.
+; ``is_a monk`` gives him the monk sprite (a bare ``class soldier``
+; would have no artwork at all in the AoE2 mod).
+def npc_alfonso
+is_a monk
+title 9284
+
+; npc_sancho -- King Sancho II of Castile, who hosts the tournament in
+; chapter 1 and receives the captured Alfonso at the end of it.
+def npc_sancho
+is_a monk
+title 9285
+
+; npc_imam -- the Imam of Toledo, who receives the four relics in
+; chapter 2.
+def npc_imam
+is_a monk
+title 9286
+
+; npc_motamid -- Motamid of Zaragoza, the Moorish taifa king the Cid
+; serves during his exile (chapters 3 and 5).
+def npc_motamid
+is_a monk
+title 9287
+
+; npc_berenguer -- Count Berenguer of Barcelona, the Cid's great rival.
+; A real combat unit, so it keeps the knight class and its artwork.
+def npc_berenguer
+is_a aoe_knight
+title 9288
+
+; npc_yusuf -- Yusuf ibn Tashfin, the Almoravid sultan.
+; Inherits the mameluke so it has the camel-rider artwork and sound set.
+def npc_yusuf
+is_a mameluke
+title 9289
+
+; The wandering knights and camel riders of Lérida who change sides in
+; chapter 5.  They are ordinary soldiers, so they keep their own class.
+def npc_lerida_knight
+is_a aoe_knight
+title 9290
+
+def npc_lerida_camel
+is_a camel_rider
+title 9291
+
+; ---------------------------------------------------------------------------
+; Named places and special buildings
+; ---------------------------------------------------------------------------
+
+; The wonder the Valencians build in chapter 5.  The mod-wide
+; mods/aoe2/ui/style.txt already has a ``wonder`` block (title 8317,
+; the wonder construction sound and the wonder destruction sound), and
+; a ``keep`` block (title 8300).
+;
+; ``is_a wonder keep`` inherits BOTH: the sound cues come from ``wonder``
+; (it is the first parent, and the engine copies a parent's attributes
+; only when the child does not define them), while the map artwork falls
+; through ``wonder`` -- there is no ``wonder.png`` anywhere in the
+; repository -- to ``keep``, whose ``keep.png`` exists
+; (mods/aoe2/ui/map/keep.png).  Without the second parent the Wonder
+; would be drawn as a plain rectangle.
+def npc_wonder
+is_a wonder keep
+title 9292
+
+; The city of Toledo, whose rebels the player pacifies in chapter 2.
+; ``is_a monastery`` gives it the monastery artwork (a bare
+; ``class building`` has no sprite in the AoE2 mod).
+def npc_toledo
+is_a monastery
+title 9293
+
+; The Black Guard mosque in chapter 4 — the optional objective.
+def npc_mosque
+is_a monastery
+title 9294
+
+; The castle of Valencia, in front of which the dead Cid is set up in
+; chapter 6.  ``is_a aoe_castle`` keeps the castle artwork and its
+; garrison behaviours.
+def npc_castillo_valencia
+is_a aoe_castle
+title 9295

@@ -1,0 +1,379 @@
+; coding: utf-8
+; Campaign-local rules for the AoE2 DE "El Cid" campaign.
+;
+; Source of truth: the Age of Empires Series Wiki scenario pages for
+; "Age of Empires II: The Conquerors/El Cid" (Brother against Brother,
+; The Enemy of my Enemy, The Exile of the Cid, Black Guards, King of
+; Valencia, Reconquista).
+;
+; The campaign is the first in AoE2 to switch civilization between
+; scenarios: Spanish in ch. 1-2, Saracens in ch. 3-4, Spanish again in
+; ch. 5-6. The player colour is red throughout.
+;
+; All NPCs below are story units: they must never aggro on sight and
+; must never counterattack, otherwise they chase the player's units and
+; issue meaningless attacks (the same trap npc_joan / npc_dauphin in the
+; Joan of Arc campaign fell into -- see that file for the long version).
+
+; ---------------------------------------------------------------------
+; npc_cid -- Rodrigo Díaz de Vivar, "El Cid", on foot.
+;
+; The hero unit of the whole campaign. AoE2 DE gives him 330 HP, 13
+; melee attack, +3 vs buildings, 5 line of sight and regeneration of
+; 0.5 HP/s (30 HP per minute); he cannot be converted.
+;
+; Inherits knight (so he gets the knight sprite and a usable melee
+; attack) but is deliberately NOT a full combat hero: this engine has
+; no hero regeneration or "cannot be converted" flag, so those two
+; properties of the original hero unit are not reproduced. What the
+; campaign needs from him is that he is a must-survive key unit.
+;
+; hp_max 330 and mdg 13 match the DE hero unit; mdf/rdf 2 / rdg 0
+; match his DE armour line (armor 2, pierce armor 1, no ranged attack).
+; agro_on_sight 0 + counterattack_enabled 0 keep him from charging
+; into the enemy on his own -- in the original he only fights what the
+; player points him at.
+; ---------------------------------------------------------------------
+def npc_cid
+is_a knight
+; The mod's legacy ``knight`` stub carries ``decay 1`` (1000 ms), which
+; would make the hero disappear one second after he spawns.  The
+; campaign hero must never expire, so the inherited decay is cancelled.
+decay 0
+hp_max 330
+sight_range 5
+mdg 13
+mdf 2
+rdf 2
+rdg 0
+mdg_range 1
+agro_on_sight 0
+counterattack_enabled 0
+
+; ---------------------------------------------------------------------
+; npc_cid_mounted -- El Cid Campeador, the same hero once mounted on
+; Babieca (his horse).
+;
+; The DE campaign literally swaps the on-foot El Cid for the mounted
+; El Cid Campeador once he reaches the stable, and both are key units.
+; The mounted version is the stronger of the two (same 330 HP, but the
+; campaign treats him as the version that leads the army).
+; ---------------------------------------------------------------------
+def npc_cid_mounted
+is_a knight
+; Same as npc_cid: cancel the inherited ``decay 1`` of the legacy knight
+; stub, otherwise El Cid Campeador vanishes after one second.
+decay 0
+hp_max 330
+sight_range 6
+mdg 13
+mdf 2
+rdf 2
+rdg 0
+mdg_range 1
+agro_on_sight 0
+counterattack_enabled 0
+
+; ---------------------------------------------------------------------
+; npc_alfonso -- King Alfonso VI of León and Castile.
+;
+; A separate player in the original campaign: once the player's army
+; destroys his castle, the king himself becomes controllable and must
+; be brought to King Sancho. He is a key unit -- losing him loses the
+; scenario.
+;
+; He is a ruler, not a soldier, so he must not fight: same
+; no-aggro / no-counterattack / zero-damage pattern as npc_dauphin in
+; the Joan of Arc campaign.
+; ---------------------------------------------------------------------
+def npc_alfonso
+class soldier
+hp_max 200
+mdg 0
+mdf 0
+rdf 0
+rdg 0
+agro_on_sight 0
+counterattack_enabled 0
+receive_items 0
+
+; ---------------------------------------------------------------------
+; npc_imam -- the Imam of Toledo.
+;
+; Receives the four relics recovered from the rebel leaders (ch. 2).
+; Same receiver pattern as npc_reims_cathedral in the Joan of Arc
+; campaign: receive_items 1 + accepted_items relic + accept_from
+; self/ally/neutral.
+;
+; "neutral" matters because right after populate_map() the (alliance 1)
+; triggers have not fired yet, so the Imam and player1 are still in
+; different default alliances. Without it the handover could not
+; happen until the alliance resolved.
+; ---------------------------------------------------------------------
+def npc_imam
+class soldier
+hp_max 150
+mdg 0
+mdf 0
+rdf 0
+rdg 0
+agro_on_sight 0
+counterattack_enabled 0
+receive_items 1
+accepted_items relic
+accept_from self
+accept_from ally
+accept_from neutral
+
+; ---------------------------------------------------------------------
+; npc_motamid -- Motamid of Zaragoza, the Moorish taifa king the Cid
+; serves during his exile (ch. 3) and who later abandons him (ch. 5).
+;
+; An ally, not a combatant in this engine's sense -- the player's army
+; does the fighting. He is a story NPC so he must not aggro.
+; ---------------------------------------------------------------------
+def npc_motamid
+class soldier
+hp_max 150
+mdg 0
+mdf 0
+rdf 0
+rdg 0
+agro_on_sight 0
+counterattack_enabled 0
+receive_items 0
+
+; ---------------------------------------------------------------------
+; npc_sancho -- King Sancho II of Castile, who hosts the tournament in
+; ch. 1 and receives the captured Alfonso at the end of it.
+; ---------------------------------------------------------------------
+def npc_sancho
+class soldier
+hp_max 200
+mdg 0
+mdf 0
+rdf 0
+rdg 0
+agro_on_sight 0
+counterattack_enabled 0
+receive_items 0
+
+; ---------------------------------------------------------------------
+; npc_toledo -- the city of Toledo, whose rebels the player has to
+; pacify in ch. 2. Rendered as a building so it shows on the minimap
+; as a unique structure (same pattern as npc_cathedral /
+; npc_reims_cathedral in the Joan of Arc campaign).
+; ---------------------------------------------------------------------
+def npc_toledo
+class building
+is_a building
+hp_max 4000
+cost 0 0 0 0
+time_cost 0
+mdf 8
+rdf 8
+agro_on_sight 0
+counterattack_enabled 0
+population_provided 0
+is_repairable 0
+
+; ---------------------------------------------------------------------
+; npc_mosque -- the Black Guard mosque in ch. 4.
+;
+; Optional objective in the DE campaign: converting the mosque brings
+; aid against Yusuf and the Black Guards. The conversion itself is done
+; by the player's own monks, so the building only has to survive.
+; ---------------------------------------------------------------------
+def npc_mosque
+class building
+is_a building
+hp_max 4000
+cost 0 0 0 0
+time_cost 0
+mdf 8
+rdf 8
+agro_on_sight 0
+counterattack_enabled 0
+population_provided 0
+is_repairable 0
+
+; ---------------------------------------------------------------------
+; npc_castillo_valencia -- the castle of Valencia in ch. 6, in front
+; of which the dead El Cid's body is placed.
+; ---------------------------------------------------------------------
+def npc_castillo_valencia
+class building
+is_a building
+hp_max 4000
+cost 0 0 0 0
+time_cost 0
+mdf 8
+rdf 8
+agro_on_sight 0
+counterattack_enabled 0
+population_provided 0
+is_repairable 0
+
+; ---------------------------------------------------------------------
+; npc_wonder -- the Wonder the Valencians build in ch. 5.
+;
+; The base game defines a ``wonder`` building (res/rules.txt) with
+; ``victory_time 300``: as soon as it is finished the OWNER wins the
+; game by itself, with no objective bookkeeping.  That is the wrong
+; model for this chapter -- the DE original ends when the Valencians
+; finish the Wonder while the player is still defending Valencia, and
+; the Wonder must survive the whole siege.
+;
+; The AoE2 mod's own rules.txt starts with ``clear``, so the base
+; ``res/rules.txt`` definitions are wiped and there is NO ``wonder``
+; class to inherit from (``is_a wonder`` would raise "wonder doesn't
+; exist" and leave ``rules.unit_class("npc_wonder") == None``, which
+; makes ``(add_units k2 1 npc_wonder)`` spawn nothing at all).
+;
+; So the campaign defines its OWN ``npc_wonder``:
+;   * it is a plain ``building`` (the mod has no wonder class), with
+;     the wonder artwork coming from ui/style.txt (``is_a wonder keep``),
+;   * it has NO ``victory_time`` -- the chapter's victory is driven by
+;     the trigger script (see 5.txt), not by the generic
+;     building-victory timer, and
+;   * it is a plain scenario prop: no cost, no population, not
+;     repairable, and it does not aggro.
+;
+; The chapter watches it with ``(building_lost npc_wonder)`` for defeat
+; and a 10-minute timer for victory.
+; ---------------------------------------------------------------------
+def npc_wonder
+class building
+is_a building
+hp_max 6000
+cost 0 0 0 0
+time_cost 0
+mdf 8
+rdf 8
+agro_on_sight 0
+counterattack_enabled 0
+population_provided 0
+is_repairable 0
+; The base ``wonder`` has ``victory_time 300``; the engine only copies a
+; parent attribute when the child does not define it, so writing 0 here
+; cancels the inherited auto-victory countdown.
+victory_time 0
+
+; ---------------------------------------------------------------------
+; npc_cid_body -- the dead El Cid, propped on Babieca in front of the
+; castle of Valencia in ch. 6.
+;
+; In the DE original the body of the Cid is strapped to his horse so
+; that the garrison of Valencia does not learn he is dead.  If this
+; unit is killed, the soldiers lose heart and the scenario is lost --
+; hence the ``(key_unit_killed npc_cid_body) (defeat)`` trigger in
+; 6.txt.
+;
+; It is a key unit, so it must have a ``title`` in ui/style.txt
+; (9270-9286 block): without one, ``EntityView.short_title`` is empty
+; and the unit can neither be Tab-selected nor targeted.
+; ---------------------------------------------------------------------
+def npc_cid_body
+is_a npc_cid_mounted
+decay 0
+hp_max 330
+sight_range 4
+mdg 0
+mdf 0
+rdf 0
+rdg 0
+agro_on_sight 0
+counterattack_enabled 0
+receive_items 0
+
+; ---------------------------------------------------------------------
+; npc_ximena -- Ximena Diaz, the Cid's wife.
+;
+; In the DE original she is the player in ch. 6 ("Reconquista"): she
+; commands the garrison of Valencia while the dead El Cid stands in
+; front of the castle.  She is a story NPC, so she must not fight --
+; same no-aggro / no-counterattack / zero-damage pattern as the other
+; campaign rulers.
+; ---------------------------------------------------------------------
+def npc_ximena
+class soldier
+hp_max 180
+mdg 0
+mdf 0
+rdf 0
+rdg 0
+agro_on_sight 0
+counterattack_enabled 0
+receive_items 0
+
+; ---------------------------------------------------------------------
+; npc_berenguer -- Count Berenguer of Barcelona.
+;
+; The Cid's great rival.  He is the enemy of ch. 3 (Saracens), ch. 5
+; (Franks, per the DE original) and appears again in ch. 6 as the
+; commander of the Black Guard Army.
+;
+; He is a real combat unit -- the DE scenario gives him a full army
+; of knights, crossbowmen and mangonels -- so he keeps the knight
+; stats instead of the inert "ruler" pattern.  Only the AI is
+; disabled so that he holds his ground until the player attacks.
+; ---------------------------------------------------------------------
+def npc_berenguer
+is_a aoe_knight
+hp_max 220
+sight_range 6
+mdg 14
+mdf 3
+rdf 3
+rdg 0
+mdg_range 1
+agro_on_sight 0
+counterattack_enabled 0
+
+; ---------------------------------------------------------------------
+; npc_yusuf -- Yusuf ibn Tashfin, the Almoravid sultan.
+;
+; The main enemy of ch. 6 (Reconquista): his base lies across the
+; Mediterranean in Africa, guarded by towers.  He commands a heavy
+; Berber army (camelry, cavalry archers, monks) plus a fleet.
+;
+; Like npc_berenguer he is a combat unit, but his AI stays off so
+; that he does not charge out of his fortress on his own.
+; ---------------------------------------------------------------------
+def npc_yusuf
+is_a mameluke
+hp_max 260
+sight_range 6
+mdg 15
+mdf 3
+rdf 3
+rdg 0
+mdg_range 1
+agro_on_sight 0
+counterattack_enabled 0
+
+; ---------------------------------------------------------------------
+; npc_lerida_knight -- a knight of Lerida who joins the Cid in ch. 5.
+;
+; In the DE original the wandering knights and camel riders of Lerida
+; switch sides when the Cid passes through.  They are ordinary
+; soldiers (they fight), so they keep the knight/camel stats; only
+; the aggro is disabled so they do not charge the enemy on sight.
+; ---------------------------------------------------------------------
+def npc_lerida_knight
+is_a aoe_knight
+hp_max 100
+sight_range 6
+agro_on_sight 0
+counterattack_enabled 0
+
+; ---------------------------------------------------------------------
+; npc_lerida_camel -- a Moorish camel rider of Lerida who joins the
+; Cid in ch. 5 (the DE scenario's 3 Gaia camel riders).
+; ---------------------------------------------------------------------
+def npc_lerida_camel
+is_a camel_rider
+hp_max 90
+sight_range 7
+agro_on_sight 0
+counterattack_enabled 0

@@ -1,0 +1,134 @@
+; coding: utf-8
+; El Cid — prvá príbehová kampaň AoE2 DE (slovenčina)
+
+; Campaign title, synopsis and the two intro lines played by 0.txt.
+9140 El Cid
+9141 Kastília, 1081-1102. Nasleduj Rodriga Díaza de Vivara, kým bojuje so svoím svákom o korunu Kastílie, prechádza cez Ebro v exile a vracia sa, aby oslobodil Španielisko, ktoré si jeho nepriatelia rozdelili. Šesť kapitol.
+9142 Kastília, 1072. Kráľ Sancho II. menoval za dediča Alfonza VI. z Leónu a Kastílie a obidvaja králi bojujú o korunu.
+9143 Rodrigo Díaz de Vivar, nazývaný Cid, musí rozhodnúť, komu bude slúžiť. Nasleduj Cida cez šesť kapitol Reconquisty.
+
+; Chapter titles (the ``title`` line of each 1.txt - 6.txt).
+9160 Bratia proti bratom
+9161 Nepriateľ môjho nepriateľa
+9162 Vyhnanie Cida
+9163 Čierna stráž
+9164 Kráľ Valencie
+9165 Reconquista
+
+; Chapter intros (the ``intro`` line of each 1.txt - 6.txt).
+9170 Rok 1072. Cid prichádza na turnaj kráľa Sancha II., aby bojoval o svoj meč a svoje meno. Ale aj brat Sancha, Alfonz, si nárokuje na Kastíliu, a meč Cida sám o sebe spor nevyrieši.
+9171 Rok 1081. Cid je najväčší veliteľ Kastílie a najväčšia korisť vojny. Toledo povstalo proti kráľovi, a upokajať ho vie iba imám. Cid si musí najprv kúpiť imámovu pomoc štyrmi svätými relikviami.
+9172 Rok 1081. Kastília vyhnala Cida. Prekročí hranicu s nič iným než svojím mečom a vstúpi do služby Motamida zo Saragossy, no cesta na východ strážia Alfonzove veže a gróf Berenguer čaká ďalej.
+9173 Rok 1086. Jusuf ibn Tašfin preplul cez prieliv a Čierna stráž drží pobrežie. Cid musí zachrániť kráľa Alfonza z bojiska a previesť ho domov, zatiaľ čo loďstvá Jusufa a jeho mešita na brehu ťažia na váhe.
+9174 Rok 1087. Cid je znova tulák a Denia je posledné mesto, ktoré môže na severe udržať. Keď ho frankovská armáda grófa Berenguera vyženie, zostáva iba cesta na juh, cez Ebro, k Valencii, kde valenčania už začali Budúcnosť.
+9175 Rok 1094. Cid je mŕtvy — no jeho telo stoja na Babice pred zámkom Valencie a posádka o tom nevie. Na mesto útočia tri armády: Berenguerova Čierna stráž na severe, loďstvo Čiernej stráže na brehu a Jusuf ibn Tašfin za morom. Ximena Díaz drží to, čo zostalo.
+
+; Objective texts (add_objective / add_secondary_objective).
+9180 Vyhraj turnajový súboj
+9181 Nasadni na Babicu v stajni
+9182 Znič hrad kráľa Alfonza
+9183 Priveď kráľa Alfonza ku kráľovi San-chovi
+9184 Stretni imáma na jeho ostrove
+9185 Získaj štyri relikvie Toleda
+9186 Odovzdaj relikvie imámovi
+9187 Nasadni na Babicu a vezmi kamelovodcov
+9188 Znič Alfonzov hrad
+9189 Pripoj sa k Motamidovi v Saragosse
+9190 Znič Berenguerovú obliečnu dielňu
+9191 Poraz grófa Berenguera
+9192 Zachráň kráľa Alfonza z bojiska
+9193 Sprevádzaj kráľa Alfonza do jeho tábora na západe
+9194 Znič všetkých šesť lodeníc Čiernej stráže
+9195 Poraz Jusufa ibn Tašfina
+9196 Obrát mešitu Čiernej stráže
+9197 Zober Deniu, na severe od Ebra
+9198 Uteč na juh cez Ebro
+9199 Získaj rytierov z Leridy
+9200 Dosiahni Valenciu
+9201 Obráň Budúcnosť Valencie, kým nie je dokončená
+9202 Navštív kláštor Gaiu a vezmi misijnérov
+9203 Poraz armádu Čiernej stráže na severe
+9204 Znič štyri lodenice Čiernej stráže na brehu
+9205 Poraz Jusufa ibn Tašfina za morom
+
+; Place names (map square_name labels).
+9210 turnajové námestie
+9211 stajňa
+9212 Alfonzov hrad
+9213 hrad kráľa Sancha
+9214 západný kláštor
+9215 polia poddaných
+9216 Cidov tábor
+9217 imámov ostrov
+9218 Motamidov trh
+9219 Toledo
+9220 západná brána Toleda
+9221 mauriský povstalecký post
+9222 španielsky povstalecký post
+9223 brána vyhnanca
+9224 Babicova stajňa
+9225 veterný mlyn
+9226 Alfonzov hrad
+9227 tábor GATA
+9228 Saragossa
+9229 Berenguerova obliečna dielňa
+9230 Berenguerova pevnosť
+9231 miesto vylodenia Cida
+9232 pozícia kráľa Alfonza
+9233 Alfonzov tábor
+9234 mešita Čiernej stráže
+9235 lodenice Čiernej stráže
+9236 Jusufova základňa
+9237 tábor Cida v exile
+9238 Denia
+9239 kláštor Gaiu
+9240 Lerida
+9241 Valencia
+9242 Berenguerova armáda
+9243 most cez Ebro
+9244 Valencia
+9245 hrad Valencie
+9246 armáda Čiernej stráže
+9247 loďstvo Čiernej stráže
+9248 Jusufova pevnosť
+
+; Cut scene narration (cut_scene).
+9250 Čepeľ šampióna zaznie o štít Cida a dav šalie. Meno sa šíri od úst k ústam: Rodrigo Díaz de Vivar, El Cid Campeador.
+9251 Babica trasi hlavou a kopytá. Cid sadá na ňu a po prvý raz sa kráľ Kastílie môže naňho hrdý.
+9252 Alfonzov hrad horí. Jeho vojaci odkladajú zbraň a sám kráľ príde k Cidovi a prosí, aby ho zviedol k San-chovi.
+9253 Imám počúva a jeho hlas zmäkne: „Cid z Kastílie sa chce naučiť, ako upokajiť Toledo? Nech Toledo dostane svoje relikvie a Kastília svoj pokoj.“
+9254 Cid sadá na Babicu a uháňa na východ z bran vyhnania, s Alfonzovými vežami za chrbtom.
+9255 Kamelovodcovia z juhovýchodu sa pozerajú na vyhnaného rytiera a jeden po druhom sa zaradia zaň.
+9256 Alfonzov hrad padol. Jeho posádka prisľúbi mier novému pánovi a cesta do Saragossy sa otvorí.
+9257 Motamid zo Saragossy prijíma Cida na dvore svojej taify: „Môj hosť a môj meč, kokoľvek dlho si želáte.“
+9258 Cid nájde kráľa Alfonza samého uprostred poľa a privedie ho späť k svojim radom.
+9259 Kráľ je doma. Tábor na západnom konci bojiska patrí teraz iba Cidovi.
+9260 Mníši mešity Čiernej stráže prijmú vieru El Cida a s nimi prichádza pomoc ich rádu.
+9261 Brány Denie sa otvoria. El Cid stojí na múroch a pozerá na juh, na rieku a dlhú cestu k Valencii.
+9262 Ebro je za ním. Čo bolo kráľovstvom, je teraz únik, a pred ním je len more.
+9263 Rytieri z Leridy prejdú na stranu Cida a staré bojové zvolanie Kastílie znova zaznie.
+9264 Sedliaci Valencie pracujú celú noc. Na brehu pri meste rastie Budúcnosť a Berenguerova armáda je už na ceste.
+9265 Polovica obliehania je preč. Držte Valenciu ešte chvíľu.
+9266 Budúcnosť je takmer dokončená. Držte mesto.
+9267 Budúcnosť je napokon dokončená. Valencia je zachránená.
+9268 Posledný z Čiernej stráže padá na severe a cesta do Valencie sa otvorí.
+9269 Loďstvo Čiernej stráže horí na brehu a more patrí opäť Kastílii.
+9270 Nad prielivom padajú zástavy Jusufa ibn Tašfina. Reconquista je dokončená.
+
+; Named people and places -- wired up in El Cid/ui/style.txt.
+9280 El Cid
+9281 El Cid Campeador
+9282 Cidovo telo
+9283 Ximena Díaz
+9284 kráľ Alfonz VI.
+9285 kráľ Sancho II.
+9286 imám z Toleda
+9287 Motamid zo Saragossy
+9288 gróf Berenguer
+9289 Jusuf ibn Tašfin
+9290 rytier z Leridy
+9291 kamelovodec z Leridy
+9292 Budúcnosť Valencie
+9293 mesto Toledo
+9294 mešita Čiernej stráže
+9295 hrad Valencie

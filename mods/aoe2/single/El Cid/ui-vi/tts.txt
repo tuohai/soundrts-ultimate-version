@@ -1,0 +1,134 @@
+; coding: utf-8
+; El Cid — chiến dịch cốt truyện đầu tiên của AoE2 DE (tiếng Việt)
+
+; Campaign title, synopsis and the two intro lines played by 0.txt.
+9140 El Cid
+9141 Castilla, 1081-1102. Hãy theo Rodrigo Díaz de Vivar khi ông tranh đấu với em rể vì vương miện Castilla, vượt sông Ebro trong thời gian lưu vong, và trở lại giải phóng nước Tây Ban Nha đã bị kẻ thù chia nhau. Sáu chương.
+9142 Castilla, 1072. Vua Sancho II đã đặt Alfonso VI xứ León và Castilla làm người thừa kế, và hai vua đang tranh giành ngai vàng.
+9143 Rodrigo Díaz de Vivar, gọi là Cid, phải quyết định sẽ phòng tá ai. Hãy theo Cid qua sáu chương của Cuộc Chiếm Lại.
+
+; Chapter titles (the ``title`` line of each 1.txt - 6.txt).
+9160 Anh em đối đầu
+9161 Kẻ thù của kẻ thù ta
+9162 Cuộc lưu vong của Cid
+9163 Đội Cận Vệ Đen
+9164 Vua của Valencia
+9165 Cuộc Chiếm Lại
+
+; Chapter intros (the ``intro`` line of each 1.txt - 6.txt).
+9170 Năm 1072. Cid đến giải đấu của vua Sancho II để tranh giành thanh kiếm và danh dự của mình. Nhưng người anh trai của Sancho là Alfonso cũng đòi Castilla, và thanh kiếm của Cid không thể một mình phân xử nỗi tranh chấp.
+9171 Năm 1081. Cid là vị tướng lớn nhất của Castilla và là món quà lớn nhất của cuộc chiến. Toledo đã nổi loạn chống vua, và chỉ giáo học mới có thể dập tắt. Cid phải mua lòng tin của giáo học bằng bốn thánh vật trước đã.
+9172 Năm 1081. Castilla đã đày Cid đi. Ông vượt biên giới chỉ với thanh kiếm của mình và đầu thành hầu của Motamid ở Zaragoza, nhưng con đường phía đông bị các tháp canh của Alfonso canh giữ, và bá tước Berenguer đang đợi bên kia.
+9173 Năm 1086. Yusuf ibn Tashfin đã vượt eo biển, và Đội Cận Vệ Đen nắm giữ bờ biển. Cid phải cứu vua Alfonso khỏi chiến trường và đưa ông về nhà, trong khi các đội hải quân của Yusuf và đền thờ của ông trên bờ biển nghiêng cán cân.
+9174 Năm 1087. Cid lại trở thành kẻ lang thang, và Denia là thành phố cuối cùng ông có thể giữ ở phía bắc. Khi đạo quân người Pháp của bá tước Berenguer đuổi ông đi, chỉ còn con đường phía nam, qua sông Ebro, đến Valencia, nơi dân Valencia đã bắt đầu xây Kỳ Quan.
+9175 Năm 1094. Cid đã chết — nhưng thi thể ông vẫn đứng trên Babieca trước lâu đài Valencia, và quân thủ không hề hay. Ba đạo quân tiến về thành phố: Đội Cận Vệ Đen của Berenguer ở phía bắc, hải đội Cận Vệ Đen ngoài bờ biển, và Yusuf ibn Tashfin bên kia đại dương. Ximena Díaz giữ lại những gì còn sót.
+
+; Objective texts (add_objective / add_secondary_objective).
+9180 Thắng trận tấn công tại giải đấu
+9181 Lên ngựa Babieca tại chuồng ngựa
+9182 Phá hủy lâu đài của vua Alfonso
+9183 Đưa vua Alfonso đến vua Sancho
+9184 Gặp giáo học trên đảo của ông
+9185 Thu hồi bốn thánh vật của Toledo
+9186 Trả lại bốn thánh vật cho giáo học
+9187 Lên ngựa Babieca và chiêu mộ kỵ binh lạc đà
+9188 Phá hủy lâu đài của Alfonso
+9189 Gia nhập Motamid ở Zaragoza
+9190 Phá hủy xưởng công thành của Berenguer
+9191 Đánh bại bá tước Berenguer
+9192 Cứu vua Alfonso khỏi chiến trường
+9193 Hộ tống vua Alfonso về doanh trại phía tây
+9194 Phá hủy cả sáu bến đóng tàu của Đội Cận Vệ Đen
+9195 Đánh bại Yusuf ibn Tashfin
+9196 Cải đạo đền thờ Đội Cận Vệ Đen
+9197 Chiếm Denia, phía bắc sông Ebro
+9198 Chạy trốn về phía nam qua sông Ebro
+9199 Chiêu mộ các hiệp sĩ Lérida
+9200 Đến được Valencia
+9201 Giữ Kỳ Quan của Valencia cho tới khi xây xong
+9202 Ghé tu viện Gaia và đưa các giáo sĩ đi
+9203 Đánh bại quân Đội Cận Vệ Đen ở phía bắc
+9204 Phá hủy bốn bến đóng tàu của Đội Cận Vệ Đen trên bờ biển
+9205 Đánh bại Yusuf ibn Tashfin bên kia đại dương
+
+; Place names (map square_name labels).
+9210 quảng trường giải đấu
+9211 chuồng ngựa
+9212 lâu đài của Alfonso
+9213 lâu đài của vua Sancho
+9214 tu viện phía tây
+9215 ruộng của nông nô
+9216 doanh trại của Cid
+9217 đảo của giáo học
+9218 chợ của Motamid
+9219 Toledo
+9220 cổng tây của Toledo
+9221 tiền đồn nổi loạn Hồi giáo
+9222 tiền đồn nổi loạn Tây Ban Nha
+9223 cổng của người lưu vong
+9224 chuồng ngựa của Babieca
+9225 cối xay gió
+9226 lâu đài của Alfonso
+9227 doanh trại GATA
+9228 Zaragoza
+9229 xưởng công thành của Berenguer
+9230 pháo đài của Berenguer
+9231 bãi đổ của Cid
+9232 vị trí của vua Alfonso
+9233 doanh trại của Alfonso
+9234 đền thờ Đội Cận Vệ Đen
+9235 bến đóng tàu của Đội Cận Vệ Đen
+9236 tiền đồ của Yusuf
+9237 doanh trại lưu vong của Cid
+9238 Denia
+9239 tu viện Gaia
+9240 Lérida
+9241 Valencia
+9242 quân đội của Berenguer
+9243 cầu qua sông Ebro
+9244 Valencia
+9245 lâu đài Valencia
+9246 quân Đội Cận Vệ Đen
+9247 hải đội Đội Cận Vệ Đen
+9248 pháo đài của Yusuf
+
+; Cut scene narration (cut_scene).
+9250 Lưỡi kiếm của nhà vô địch vang lên trên khiên của Cid, và đám đông reo hò. Cái tên truyền khắp từ miệng này sang miệng khác: Rodrigo Díaz de Vivar, El Cid Campeador.
+9251 Babieca vẫy đầu và giậm chân. Cid lên yên, và lần đầu tiên một vua Castilla tự hào về ông.
+9252 Lâu đài của Alfonso cháy rụi. Quân của ông đặt vũ khí xuống, và chính vua đến bên Cid rồi xin được đưa đến gặp Sancho.
+9253 Giáo học lắng nghe, và giọng ông dịu đi: «Cid xứ Castilla muốn biết làm sao dập tắt Toledo? Vậy hãy để Toledo nhận lại các thánh vật, và Castilla có được sự bình yên.»
+9254 Cid lên Babieca và phi nhanh về phía đông qua cổng lưu vong, các tháp canh của Alfonso theo sau lưng.
+9255 Kỵ binh lạc đà ở phía tây nam nhìn người hiệp sĩ bị lưu vong, rồi lần lượt xếp hàng theo ông.
+9256 Lâu đài của Alfonso đã sụp. Thủ thành thề trung thành với chủ mới, và con đường tới Zaragoza được mở ra.
+9257 Motamid của Zaragoza đón Cid tại triều đình của taifa: «Khách và thanh kiếm của tôi, chừng nào ngài còn muốn.»
+9258 Cid tìm thấy vua Alfonso một mình giữa đồng, và đưa ông trở về với hàng quân.
+9259 Vua đã về nhà. Doanh trại ở cuối phía tây chiến trường giờ thuộc về Cid một mình.
+9260 Các tu sĩ đền thờ Đội Cận Vệ Đen chấp nhận đức tin của El Cid, và cùng họ đến sự trợ giúp của giới tu sĩ.
+9261 Cổng Denia mở ra. El Cid đứng trên thành trì và nhìn về phía nam, về phía dòng sông và con đường dài dẫn tới Valencia.
+9262 Sông Ebro đã ở lại sau lưng. Một vương quốc giờ chỉ còn là một cuộc chạy trốn, và phía trước chỉ còn biển.
+9263 Các hiệp sĩ Lérida đổi phe khi nhìn thấy Cid, và tiếng hô xung kích cổ xưa của Castilla lại vang lên.
+9264 Dân nông Valencia làm việc suốt đêm. Bên bờ biển gần thành phố, Kỳ Quan mọc lên, và quân đội của Berenguer đã lên đường.
+9265 Nửa cuộc vây đã qua. Hãy giữ Valencia thêm một chút.
+9266 Kỳ Quan sắp xong. Hãy giữ thành phố.
+9267 Kỳ Quan cuối cùng đã hoàn thành. Valencia đã được cứu.
+9268 Kẻ Cận Vệ Đen cuối cùng gục ngã ở phía bắc, và con đường tới Valencia được mở ra.
+9269 Hải đội Cận Vệ Đen cháy rụi ngoài bờ biển, và biển trở lại thuộc về Castilla.
+9270 Trên eo biển, cờ của Yusuf ibn Tashfin hạ xuống. Cuộc Chiếm Lại đã hoàn tất.
+
+; Named people and places -- wired up in El Cid/ui/style.txt.
+9280 El Cid
+9281 El Cid Campeador
+9282 thi thể của El Cid
+9283 Ximena Díaz
+9284 vua Alfonso VI
+9285 vua Sancho II
+9286 giáo học của Toledo
+9287 Motamid xứ Zaragoza
+9288 bá tước Berenguer
+9289 Yusuf ibn Tashfin
+9290 một hiệp sĩ Lérida
+9291 một kỵ binh lạc đà Lérida
+9292 Kỳ Quan của Valencia
+9293 thành phố Toledo
+9294 đền thờ Đội Cận Vệ Đen
+9295 lâu đài Valencia

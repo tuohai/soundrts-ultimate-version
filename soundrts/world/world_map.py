@@ -24,11 +24,22 @@ from ..lib.subcell_terrain import (
     format_subcell_suffix,
 )
 
+# Comparison operators used by the trigger-script variable conditions
+# (``(var x >= 3)``, ``(var x < 10)``, ...).  They are operators, not
+# unit type names, so the map parser must not warn about them.
+_TRIGGER_COMPARISON_OPERATORS = frozenset(
+    ("==", "=", "!=", "<=", ">=", "<", ">")
+)
+
 class WorldMapMixin:
     """World地图管理混入类"""
 
     starting_population = 0
     map_defined_starting_population = False
+
+    # 章节专属的玩家阵营（None = 沿用 campaign.txt 的 default_faction）。
+    # 地图里写 ``player_faction <faction>`` 可为这一关指定阵营。
+    player_faction = None
 
     # --- 新增: 坐标标准化工具 ---
     def _normalize_square_token(self, token):
@@ -875,6 +886,9 @@ class WorldMapMixin:
                             and _w not in get_ai_names()
                             and _w not in ["(", ")", "all", "players", "computers", "="]
                             and _w not in ORDERS_DICT
+                            # 比较运算符：``(var x >= 3)`` 之类的触发器条件
+                            # 用它们比较变量值，不是单位类型名。
+                            and _w not in _TRIGGER_COMPARISON_OPERATORS
                     ):
                         # 如果包含中文字符，则不触发警告
                         if any('\u4e00' <= c <= '\u9fff' for c in _w):
@@ -948,6 +962,19 @@ class WorldMapMixin:
                         warning("nb_rows is deprecated, use nb_columns instead")
                 except:
                     map_error(line, "%s must be an integer" % w)
+            elif w == "player_faction":
+                # 章节专属的玩家阵营（战役内换阵营用）。
+                #
+                # ``campaign.txt`` 的 ``default_faction`` 对整个战役生效，
+                # 但有些 AoE2 战役在关卡之间会换文明（DE 的 El Cid 战役：
+                # 西班牙 → 撒拉逊 → 西班牙）。地图里写
+                # ``player_faction <faction>`` 即可为这一关覆盖战役默认值。
+                #
+                # 读取方：soundrts/game.py::MissionGame（见 _faction_for_chapter）。
+                if len(words) < 2:
+                    map_warning(line, "player_faction requires a faction name")
+                else:
+                    self.player_faction = words[1]
             elif (land_type := self._nb_by_square_land_type(w)) is not None:
                 from ..worldresource import (
                     building_land_types,

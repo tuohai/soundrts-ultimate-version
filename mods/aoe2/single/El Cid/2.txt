@@ -1,0 +1,145 @@
+; 2 -- The Enemy of my Enemy (AoE2 DE El Cid, ch. 2)
+;
+; Source: ageofempires.fandom.com "The Enemy of my Enemy"
+; (Age of Empires II: The Conquerors/El Cid/The_Enemy_of_my_Enemy).
+;
+; Real scenario facts reproduced here:
+;   * Player is Spanish (red). Starting Age: Castle.
+;   * El Cid Campeador + a small army (10 Long Swordsmen, 10 Knights,
+;     8 Archers, 4 Villagers, 3 Light Cavalry).
+;   * The city of Toledo (yellow) is in the south and is occupied by
+;     rebels. The Spanish Rebels (orange) sit west of the city, the
+;     Moorish Rebels (green) hold it.
+;   * The Imam (purple) lives on an island in the north and knows how
+;     to quell the unrest in Toledo.
+;   * Motamid (cyan) has a market just east of the player's start.
+;   * The four relics are held by the rebel leaders and must be
+;     returned to the Imam.
+;
+; Map grid (8x6 -- a..h columns, 6 rows):
+;       a       b       c       d       e       f       g       h
+;    6 [a6]   [b6]   [c6]   [d6]   [e6]   [f6]   [g6]   [h6]
+;    5 [a5]   [b5]   [c5]   [d5]   [e5]   [f5]   [g5]   [h5]
+;    4 [a4]   [b4]   [c4]   [d4=Imp] [e4]   [f4]   [g4]   [h4]
+;    3 [a3]   [b3]   [c3]   [d3]   [e3]   [f3]   [g3]   [h3]
+;    2 [a2]   [b2]   [c2]   [d2]   [e2=Rel] [f2]   [g2]   [h2]
+;    1 [a1=St] [b1]   [c1]   [d1]   [e1]   [f1]   [g1]   [h1]
+;
+;   The player starts at a1 (north-west), in the pavilions.
+;   The Imam's island is at d4 (north).
+;   Motamid's market is at b1 (just east of the start).
+;   Toledo stands in the south: the Moorish rebels hold e2, the
+;   Spanish rebels hold c4. The four relics sit in rebel hands:
+;   two in Toledo's own buildings (e2, c4) and two in outlying
+;   rebel posts (f5, b5).
+
+title 9161
+intro 9171
+
+; This mission is played as the Spanish.
+player_faction spanish
+
+square_width 12
+nb_columns 8
+nb_lines 6
+
+nb_players_min 1
+nb_players_max 1
+random_starts 0
+
+; starting_squares MUST list every spawn slot: without it the list is
+; empty, the AI's auto_explore has no target square and the enemies
+; never even look for the player's position (see mapmaking.rst,
+; "Defence mission: making the attackers actually attack").
+;
+; The order matters: index 0 is the player (a1, El Cid's camp), then
+; the computer_only slots in the order in which their ``computer_only``
+; lines appear.
+starting_squares a1 b1 d4 e2 c4 f5 b5
+
+square_name 9216 1,1      ; El Cid's camp (player start)
+square_name 9217 4,4      ; the Imam's island
+square_name 9218 2,1      ; Motamid's market
+square_name 9219 5,2      ; Toledo (Moorish rebels)
+square_name 9220 3,4      ; Toledo west gate (Spanish rebels)
+square_name 9221 6,5      ; Moorish rebel outpost
+square_name 9222 2,5      ; Spanish rebel outpost
+
+; Passages must stay inside columns a..g and rows 1..5.
+west_east_paths a1 b1 c1 d1 e1 f1 g1
+west_east_paths a2 b2 c2 d2 e2 f2 g2
+west_east_paths a3 b3 c3 d3 e3 f3 g3
+west_east_paths a4 b4 c4 d4 e4 f4 g4
+west_east_paths a5 b5 c5 d5 e5 f5 g5
+south_north_paths a1 a2 a3 a4 a5 b1 b2 b3 b4 b5 c1 c2 c3 c4 c5 d1 d2 d3 d4 d5 e1 e2 e3 e4 e5 f1 f2 f3 f4 f5 g1 g2 g3 g4 g5
+
+goldmines 400 a1 b1
+woods 500 a1 b1 a2
+orchard 200 a1
+stone_mines 400 a2
+nb_meadows_by_square 2
+
+; Starting force, matching the DE scenario (Castle Age, small army).
+; The four monks are needed: only a unit with ``inventory_capacity``
+; can pick a relic off the ground, and the relics lie on the ground at
+; e2 / c4 / f5 / b5.
+player 400 300 300 300 a1 10 long_swordsman 10 aoe_knight 8 aoe_archer 4 peasant 3 scout_cavalry 4 monk 1 npc_cid_mounted
+
+; Motamid -- an ally with a market and a monk who heals friends and
+; foes alike. He is allied to every player.
+computer_only 0 0 0 0 neutral faction saracens b1 1 npc_motamid 1 monk market
+
+; The Imam -- on his island in the north. He receives the four relics.
+computer_only 0 0 0 0 neutral faction saracens d4 1 npc_imam 1 monk monastery
+
+; The Moorish rebels, holding Toledo itself.
+computer_only 0 0 0 0 non_neutral faction saracens e2 2 aoe_castle 6 pikeman 4 crossbowman 2 mangonel 1 monastery
+
+; The Spanish rebels, west of the city walls. They cannot advance past
+; Castle Age, so they field Long Swordsmen and Rams.
+computer_only 0 0 0 0 non_neutral faction spanish c4 2 aoe_castle 6 long_swordsman 4 aoe_knight 2 siege_ram
+
+; Outlying rebel posts holding the other two relics.
+computer_only 0 0 0 0 non_neutral faction saracens f5 3 pikeman 2 crossbowman monastery
+computer_only 0 0 0 0 non_neutral faction spanish b5 3 long_swordsman 2 militia monastery
+
+; The four relics, held by the rebel leaders.
+relic e2
+relic c4
+relic f5
+relic b5
+
+timer_coefficient 40
+
+trigger player1 (timer 0) (alliance 1)
+trigger computer1 (timer 0) (alliance 1)
+trigger computer2 (timer 0) (alliance 1)
+trigger computer3 (timer 0) (alliance 2)
+trigger computer4 (timer 0) (alliance 2)
+trigger computer5 (timer 0) (alliance 2)
+trigger computer6 (timer 0) (alliance 2)
+
+; Objective 1: meet the Imam -- he knows how to quell the unrest in
+; Toledo. He lives on his island in the north (d4).
+trigger player1 (timer 0) (register_objective 1 2 3)
+trigger player1 (timer 0) (add_objective 1 9184)
+trigger player1 (timer 0) (add_objective 2 9185)
+trigger player1 (timer 0) (add_objective 3 9186)
+
+trigger player1 (has_entered d4 npc_cid_mounted) (do (objective_complete 1) (cut_scene 9253))
+
+; Objective 2: recover the four relics from the rebel leaders.
+; The count comes from (npc_has_items ...) -- the Imam has to have
+; received all four, not just one.  The objective is complete as soon
+; as the player carries all four relics (they may still be on the
+; ground) OR the Imam has already received all four (the player
+; delivered them one by one), so the chapter can never soft-lock.
+trigger player1 (or (has_item relic 4) (npc_has_items npc_imam relic 4 d4)) (objective_complete 2)
+
+; Objective 3: return them to the Imam, which ends the rebellion.
+trigger player1 (npc_has_items npc_imam relic 4 d4) (do (objective_complete 3) (victory))
+
+; Defeat conditions.
+trigger player1 (no_unit_left) (defeat)
+trigger player1 (key_unit_killed npc_cid_mounted) (defeat)
+trigger player1 (key_unit_killed npc_imam) (defeat)

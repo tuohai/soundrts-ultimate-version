@@ -1,0 +1,171 @@
+; 1 -- Brother against Brother (AoE2 DE El Cid, ch. 1)
+;
+; Source: ageofempires.fandom.com "Brother against Brother"
+; (Age of Empires II: The Conquerors/El Cid/Brother against Brother).
+;
+; Real scenario facts reproduced here:
+;   * Year 1072, based on the Battle of Golpejera.
+;   * Player is Spanish (red). Starting Age: Feudal.
+;   * El Cid starts on foot in the east, next to King Sancho's
+;     tournament square. He must win a trial by combat, then mount
+;     Babieca at the stable and win again.
+;   * King Sancho's Champion attacks El Cid with a Two-Handed
+;     Swordsman; once El Cid is mounted the Champion sends a Knight.
+;   * King Alfonso (a separate player) holds a castle in the north-west
+;     across the river. Destroying his castle makes his army neutral
+;     and then allied, and hands control of Alfonso himself to the
+;     player, who must carry him to King Sancho.
+;   * The serfs in the centre work farms.
+;   * A Gaia monastery in the west holds relics.
+;
+; Map grid (8x6 -- a..h columns, 6 rows):
+;       a       b       c       d       e       f       g       h
+;    6 [a6]   [b6]   [c6]   [d6]   [e6]   [f6]   [g6]   [h6]
+;    5 [a5]   [b5]   [c5]   [d5]   [e5]   [f5]   [g5]   [h5]
+;    4 [a4]   [b4]   [c4]   [d4]   [e4]   [f4]   [g4]   [h4]
+;    3 [a3]   [b3]   [c3]   [d3]   [e3]   [f3]   [g3]   [h3]
+;    2 [a2]   [b2]   [c2]   [d2]   [e2]   [f2]   [g2]   [h2]
+;    1 [a1]   [b1]   [c1]   [d1]   [e1]   [f1]   [g1]   [h1]
+;
+;   El Cid starts at g2 (tournament square, next to Sancho).
+;   Babieca's stable is at e4 (north of the tournament ground).
+;   Alfonso's castle is at b5 (north-west, across the river).
+;   Sancho's castle is at g4 (east).
+;   The Gaia monastery is at a3 (far west) and holds a relic.
+;   The serfs' farms are in the middle around d2/d3.
+;
+; Wrap safety (see Joan of Arc/4.txt for the full explanation):
+;   _create_we_passage wraps when cx+1 == nb_columns, _create_sn_passage
+;   wraps when cy+1 == nb_lines. Column h (0-based 7) would wrap, and
+;   row 6 would wrap, so neither appears in any path line.
+
+title 9160
+intro 9170
+
+; This mission is played as the Spanish.
+player_faction spanish
+
+square_width 12
+nb_columns 8
+nb_lines 6
+
+nb_players_min 1
+nb_players_max 1
+random_starts 0
+
+; starting_squares MUST list every spawn slot: without it the list is
+; empty, the AI's auto_explore has no target square and the enemies
+; never even look for the player's position (see mapmaking.rst,
+; "Defence mission: making the attackers actually attack").
+;
+; The order matters: index 0 is the player (g2, the tournament
+; square), then the computer_only slots in the order in which their
+; ``computer_only`` lines appear.
+starting_squares g2 g1 g4 b5 d2 e4 a3
+
+square_name 9210 7,2      ; tournament square (Sancho's grounds)
+square_name 9211 5,4      ; the stable (Babieca)
+square_name 9212 2,5      ; Alfonso's castle
+square_name 9213 7,4      ; King Sancho's castle
+square_name 9214 1,3      ; the monastery in the west
+square_name 9215 4,2      ; the serfs' fields
+
+; Passages must stay inside columns a..g and rows 1..5.
+west_east_paths a1 b1 c1 d1 e1 f1 g1
+west_east_paths a2 b2 c2 d2 e2 f2 g2
+west_east_paths a3 b3 c3 d3 e3 f3 g3
+west_east_paths a4 b4 c4 d4 e4 f4 g4
+west_east_paths a5 b5 c5 d5 e5 f5 g5
+south_north_paths a1 a2 a3 a4 a5 b1 b2 b3 b4 b5 c1 c2 c3 c4 c5 d1 d2 d3 d4 d5 e1 e2 e3 e4 e5 f1 f2 f3 f4 f5 g1 g2 g3 g4 g5
+
+goldmines 300 g2
+woods 400 g1 g2 f1
+orchard 200 g2
+stone_mines 300 g1
+nb_meadows_by_square 2
+
+; The player starts with El Cid on foot only -- the DE scenario gives
+; the player nothing but the hero at the start, and the army comes from
+; King Sancho once the tournament is won.
+player 100 100 100 100 g2 1 npc_cid
+
+; King Sancho's tournament champion. In the DE scenario this is a
+; separate player whose only job is to send a Two-Handed Swordsman at
+; El Cid during the tournament.
+computer_only 0 0 0 0 faction spanish g1 2 two_handed_swordsman
+
+; King Sancho himself, with his castle and a token guard.
+computer_only 0 0 0 0 neutral faction spanish g4 1 npc_sancho 4 militia aoe_castle
+
+; King Alfonso -- a separate player. Once his castle falls, the player
+; takes control of Alfonso himself and must bring him to Sancho.
+computer_only 0 0 0 0 non_neutral faction spanish b5 1 npc_alfonso aoe_castle 6 militia 3 man_at_arms 2 aoe_knight 2 skirmisher
+
+; The serfs: neutral villagers working the middle fields.
+computer_only 0 0 0 0 neutral faction spanish d2 4 peasant farm
+
+; Babieca's stable: the player has to bring El Cid here to mount the
+; horse, which is what turns him into El Cid Campeador.
+computer_only 0 0 0 0 neutral faction spanish e4 1 npc_cid_mounted
+
+; The monastery in the far west, holding a relic.
+computer_only 0 0 0 0 neutral faction spanish a3 monastery
+relic a3
+
+timer_coefficient 40
+
+; Alliances.
+;
+; alliance 1 = the player's camp (El Cid, King Sancho, the serfs and
+; Babieca's stable are all on the player's side in the DE original);
+; alliance 2 = the enemy.
+;
+; NOTE: computer2 is King Sancho, computer4 is the serfs at d2 and
+; computer5 is Babieca's stable at e4.  All three were on alliance 2
+; (the enemy side), which made Sancho, the serfs and Babieca HOSTILE:
+; the serfs would not work their fields for the player and Babieca
+; would be attacked instead of mounted.
+trigger player1 (timer 0) (alliance 1)
+trigger computer1 (timer 0) (alliance 2)   ; the tournament champion
+trigger computer2 (timer 0) (alliance 1)   ; King Sancho
+trigger computer3 (timer 0) (alliance 2)   ; King Alfonso
+trigger computer4 (timer 0) (alliance 1)   ; the serfs at d2
+trigger computer5 (timer 0) (alliance 1)   ; Babieca's stable
+trigger computer6 (timer 0) (alliance 1)   ; the Gaia monastery in the west
+
+; Objective 1: win the trial by combat. The champion's Two-Handed
+; Swordsman has to die -- that is the tournament win.
+trigger player1 (timer 0) (register_objective 1 2 3 4)
+trigger player1 (timer 0) (add_objective 1 9180)
+trigger player1 (timer 0) (add_objective 2 9181)
+trigger player1 (timer 0) (add_objective 3 9182)
+trigger player1 (timer 0) (add_objective 4 9183)
+
+; The tournament: the champion's swordsman must be killed.  Winning
+; the trial by combat is what makes King Sancho hand the player an
+; army -- in the DE original the player starts with nothing but the
+; hero and only receives troops once the tournament is won.
+trigger player1 (has_killed 1 two_handed_swordsman) (do (objective_complete 1) (cut_scene 9250) (add_units g2 4 peasant 6 long_swordsman 4 aoe_knight 2 aoe_archer))
+
+; Mounting Babieca: the mounted hero waits at the stable (e4).
+; When El Cid reaches it, the mounted hero is handed over to the
+; player (the on-foot hero is removed at the same time, see the
+; ``key_unit_killed``/unit handling below) -- that is how the DE
+; campaign swaps the two.
+trigger player1 (has_entered e4 npc_cid) (do (objective_complete 2) (cut_scene 9251) (transfer_units computer5 player1 e4 1 npc_cid_mounted))
+
+; Alfonso's castle: destroying it makes his army neutral and then
+; allied. The king himself is handed to the player, who must carry
+; him east to King Sancho.
+trigger player1 (enemy_building_destroyed b5 aoe_castle) (do (objective_complete 3) (cut_scene 9252) (transfer_units computer3 player1 b5 1 npc_alfonso) (alliance 1 computer3))
+
+; Objective 4: bring the captured king to King Sancho's tournament
+; ground (g2).
+trigger player1 (has_entered g2 npc_alfonso) (do (objective_complete 4) (victory))
+
+; Defeat conditions. El Cid is a key unit in every scenario of the
+; campaign -- if he dies the chapter is lost.
+trigger player1 (no_unit_left) (defeat)
+trigger player1 (key_unit_killed npc_cid) (defeat)
+trigger player1 (key_unit_killed npc_cid_mounted) (defeat)
+trigger player1 (key_unit_killed npc_alfonso) (defeat)

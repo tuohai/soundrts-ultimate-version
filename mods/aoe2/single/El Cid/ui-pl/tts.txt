@@ -1,0 +1,134 @@
+; coding: utf-8
+; El Cid — pierwsza kampania fabularna AoE2 DE (polski)
+
+; Campaign title, synopsis and the two intro lines played by 0.txt.
+9140 El Cid
+9141 Kastylia, 1081-1102. Podążaj za Rodrigo Díaz de Vivar, gdy walczy ze swym szwagrem o koronę Kastylii, przekracza Ebro na wygnaniu i wraca, by wyzwolić Hiszpanię podzieloną przez wrogów. Sześć rozdziałów.
+9142 Kastylia, 1072. Król Sancho II mianował Alfonsa VI z Leónu i Kastylii swym następcą, a dwaj królowie toczą wojnę o koronę.
+9143 Rodrigo Díaz de Vivar, zwany Cid, musi zdecydować, komu służyć. Podążaj za Cidem przez sześć rozdziałów Reconquisty.
+
+; Chapter titles (the ``title`` line of each 1.txt - 6.txt).
+9160 Bracia przeciw braciom
+9161 Wróg mojego wroga
+9162 Wygnanie Cida
+9163 Czarna Straż
+9164 Król Walencji
+9165 Reconquista
+
+; Chapter intros (the ``intro`` line of each 1.txt - 6.txt).
+9170 Rok 1072. Cid przybywa na turniej króla Sancho II, by walczyć o swój miecz i swoje imię. Ale także brat Sancho, Alfons, rości sobie prawa do Kastylii, a sam miecz Cida nie rozstrzygnie sporu.
+9171 Rok 1081. Cid jest największym wodzem Kastylii i największą zdobyczą tej wojny. Toledo zbuntowało się przeciw królowi, a tylko imam potrafi ją uspokoić. Cid musi najpierw kupić imamową pomoc czterema świętymi relikwiami.
+9172 Rok 1081. Kastylia wygnana Cida. Przekracza granicę z samym mieczem i wchodzi na służbę Motamida z Saragossy, ale droga na wschód jest strzeżona przez wieże Alfonsa, a hrabia Berenguer czeka dalej.
+9173 Rok 1086. Jusuf ibn Taszfin przepłynął cieśninę, a Czarna Straż trzyma wybrzeże. Cid musi ocalić króla Alfonsa z pola bitwy i odprowadzić go do domu, podczas gdy floty Jusufa i jego meczet nad morzem przesuwają szalę.
+9174 Rok 1087. Cid jest znowu włóczęgiem, a Denia to ostatnie miasto, które może utrzymać na północy. Gdy frankijska armia hrabiego Berenguera wyrzuca go, zostaje tylko droga na południe, przez Ebro, ku Walencji — gdzie walencjanie rozpoczęli już Cud.
+9175 Rok 1094. Cid nie żyje — ale jego ciało stoi na Babiecie przed zamkiem w Walencji, a garnizon o tym nie wie. Trzy armie nadchodzą na miasto: Czarna Straż Berenguera na północy, flota Czarnej Straży na wybrzeżu i Jusuf ibn Taszfin za morzem. Ximena Díaz trzyma to, co zostało.
+
+; Objective texts (add_objective / add_secondary_objective).
+9180 Wygraj próbę na turnieju
+9181 Dosiądź Babieki w stajni
+9182 Zniszcz zamek króla Alfonsa
+9183 Doprowadź króla Alfonsa do króla Sancho
+9184 Spotkaj imama na jego wyspie
+9185 Odzyskaj cztery relikwie Toledo
+9186 Zanieś relikwie imamowi
+9187 Dosiądź Babieki i przejmij wielbłądziców
+9188 Zniszcz zamek Alfonsa
+9189 Dołącz do Motamida w Saragosie
+9190 Zniszcz pracownię oblężniczą Berenguera
+9191 Pokonaj hrabiego Berenguera
+9192 Uwolnij króla Alfonsa z pola bitwy
+9193 Eskortuj króla Alfonsa do jego obozu na zachodzie
+9194 Zniszcz wszystkie sześć stoczni Czarnej Straży
+9195 Pokonaj Jusufa ibn Taszfina
+9196 Nawróć meczet Czarnej Straży
+9197 Zdobądź Denię, na północ od Ebro
+9198 Uciekaj na południe przez Ebro
+9199 Przejmij rycerzy z Leridy
+9200 Dotrzyj do Walencji
+9201 Strzeż Cudu w Walencji do jego ukończenia
+9202 Odwiedź klasztor Gai i zabierz misjonarzy
+9203 Pokonaj armię Czarnej Straży na północy
+9204 Zniszcz cztery stocznie Czarnej Straży na wybrzeżu
+9205 Pokonaj Jusufa ibn Taszfina za morzem
+
+; Place names (map square_name labels).
+9210 plac turniejowy
+9211 stajnia
+9212 zamek Alfonsa
+9213 zamek króla Sancho
+9214 zachodni klasztor
+9215 pola chłopów pańszczyznych
+9216 obóz Cida
+9217 wyspa imama
+9218 targ Motamida
+9219 Toledo
+9220 zachodnia brama Toledo
+9221 posterunek mauretańskich buntowników
+9222 posterunek hiszpańskich buntowników
+9223 brama wygnanieca
+9224 stajnia Babieki
+9225 młyn wietrzny
+9226 zamek Alfonsa
+9227 obóz GATA
+9228 Saragosa
+9229 pracownia oblężnicza Berenguera
+9230 twierdza Berenguera
+9231 punkt lądowania Cida
+9232 pozycja króla Alfonsa
+9233 obóz Alfonsa
+9234 meczet Czarnej Straży
+9235 stocznie Czarnej Straży
+9236 baza Jusufa
+9237 obóz wygnania Cida
+9238 Denia
+9239 klasztor Gai
+9240 Lerida
+9241 Walencja
+9242 armia Berenguera
+9243 most na Ebro
+9244 Walencja
+9245 zamek w Walencji
+9246 armia Czarnej Straży
+9247 flota Czarnej Straży
+9248 twierdza Jusufa
+
+; Cut scene narration (cut_scene).
+9250 Ostrze czempiona uderza w tarczę Cida, a tłum wyje. Imię rozchodzi się od ust do ust: Rodrigo Díaz de Vivar, El Cid Campeador.
+9251 Babieka parska i przewraca głową. Cid dosiada, i po raz pierwszy król Kastylii jest z niego dumny.
+9252 Zamek Alfonsa płonie. Jego żołnierze składają broń, a sam król przychodzi do Cida i prosi, by zaprowadził go do Sancho.
+9253 Imam słucha, a jego głos łagodnieje: «Cid z Kastylii chce wiedzieć, jak uspokoić Toledo? Niech Toledo odzyska swoje relikwie, a Kastylia swój pokój.»
+9254 Cid dosiada Babieki i pędzi na wschód, wychodząc przez bramę wygnania, z wieżami Alfonsa za plecami.
+9255 Wielbłądzicy z południowego zachodu patrzą na wygnanego rycerza i jeden po drugim ustawiają się za nim.
+9256 Zamek Alfonsa padł. Jego garnizon składa przysięgę nowemu panu, a droga do Saragossy staje otwarta.
+9257 Motamid z Saragossy przyjmuje Cida na dworze swojej taify: «Mój gość i mój miecz, tak długo, jak zechcecie.»
+9258 Cid znajduje króla Alfonsa samego pośrodku pola i odprowadza go z powrotem do swoich szeregów.
+9259 Król jest w domu. Obóz na zachodnim końcu pola bitwy należy teraz tylko do Cida.
+9260 Mnisi z meczetu Czarnej Straży przyjmują wiarę El Cida, a z nimi przychodzi pomoc ich zakonu.
+9261 Bramy Denii się otwierają. El Cid stoi na murach i patrzy na południe, na rzekę i długą drogę do Walencji.
+9262 Ebro jest już za nim. To, co było królestwem, jest teraz ucieczką, a przed nim jest tylko morze.
+9263 Rycerze z Leridy przechodzą na stronę Cida, a stary okrzyk wojenny Kastylii rozlega się znów.
+9264 Chłopi Walencji pracują całą noc. Na brzegu przy mieście wyrasta Cud, a armia Berenguera już jest w drodze.
+9265 Połowa oblężenia już minęła. Postojcie Walencję jeszcze trochę.
+9266 Cud jest prawie ukończony. Trzymajcie miasto.
+9267 Cud jest wreszcie ukończony. Walencja jest ocalona.
+9268 Ostatni z Czarnej Straży pada na północy, a droga do Walencji staje otwarta.
+9269 Flota Czarnej Straży płonie na wybrzeżu, a morze znów należy do Kastylii.
+9270 Nad cieśniną opadają sztandary Jusufa ibn Taszfina. Reconquista jest dokonana.
+
+; Named people and places -- wired up in El Cid/ui/style.txt.
+9280 El Cid
+9281 El Cid Campeador
+9282 ciało El Cida
+9283 Ximena Díaz
+9284 król Alfons VI
+9285 król Sancho II
+9286 imam z Toledo
+9287 Motamid z Saragosy
+9288 hrabia Berenguer
+9289 Jusuf ibn Taszfin
+9290 rycerz z Leridy
+9291 wielbłądzik z Leridy
+9292 Cud w Walencji
+9293 miasto Toledo
+9294 meczet Czarnej Straży
+9295 zamek w Walencji

@@ -1,0 +1,209 @@
+; 3 -- The Exile of the Cid (AoE2 DE El Cid, ch. 3)
+;
+; Source: ageofempires.fandom.com/wiki/The_Exile_of_the_Cid
+; (Age of Empires II: The Conquerors/El Cid/The Exile of the Cid).
+;
+; Real scenario facts reproduced here:
+;   * Year 1081-1087. The player is SARACEN (the player takes the
+;     Moorish side while El Cid is in exile -- this is the first
+;     civilization switch of the campaign).
+;   * El Cid starts ALONE as a Champion unit. He has to walk east
+;     out of the gates to the stable and mount Babieca.
+;   * Alfonso's watchtowers line the western border and shoot at him.
+;   * A windmill in the north has 2 Knights and 6 Pikemen who change
+;     sides and join El Cid.
+;   * Four Camel Riders wait in the south-west; the player takes them.
+;   * Alfonso's Castle blocks the road to Zaragoza. Beside it a Gaia
+;     camp provides a Siege Workshop and resources (and a Trebuchet
+;     on standard).
+;   * In Zaragoza, Motamid of the Moors holds a castle. The player
+;     joins him and must destroy Berenguer's Siege Workshop outside
+;     the walls, then defeat Count Berenguer.
+;   * Berenguer is the enemy: Saracens/Arabs, with a castle.
+;
+; Map grid (10x8 -- a..j columns, 8 rows):
+;       a       b       c       d       e       f       g       h       i       j
+;    8 [a8]   [b8]   [c8]   [d8]   [e8]   [f8]   [g8]   [h8]   [i8]   [j8]
+;    7 [a7]   [b7]   [c7]   [d7]   [e7]   [f7]   [g7]   [h7]   [i7]   [j7]
+;    6 [a6]   [b6]   [c6]   [d6]   [e6]   [f6]   [g6]   [h6]   [i6]   [j6]
+;    5 [a5]   [b5]   [c5]   [d5]   [e5]   [f5]   [g5]   [h5]   [i5]   [j5]
+;    4 [a4]   [b4]   [c4]   [d4]   [e4]   [f4]   [g4]   [h4]   [i4]   [j4]
+;    3 [a3]   [b3]   [c3]   [d3]   [e3]   [f3]   [g3]   [h3]   [i3]   [j3]
+;    2 [a2]   [b2]   [c2]   [d2]   [e2]   [f2]   [g2]   [h2]   [i2]   [j2]
+;    1 [a1]   [b1]   [c1]   [d1]   [e1]   [f1]   [g1]   [h1]   [i1]   [j1]
+;
+;   El Cid starts alone at a1 (west, the exile's gate).
+;   Babieca's stable is at c1 (just east of the gate).
+;   Alfonso's watchtowers line the west edge (a3/a4/a5).
+;   The windmill with the turncoat garrison is at c6.
+;   The four Camel Riders are at d2 (south-west valley).
+;   Alfonso's Castle is at f4, with towers at e4 and g4.
+;   The Gaia camp (Siege Workshop) is at f2 (south-east).
+;   Zaragoza (Motamid's castle) is at h6.
+;   Berenguer's Siege Workshop is at h4.
+;   Berenguer's fortress is at i2.
+;
+; Wrap safety: west_east_paths must stay in columns a..i and
+; south_north_paths in rows 1..7 (see Joan of Arc/4.txt).
+
+title 9162
+intro 9172
+
+; CHAPTER 3 PLAYS AS THE SARACENS -- the first civilization switch of
+; the campaign (El Cid is in exile and serves Motamid of Zaragoza).
+player_faction saracens
+
+square_width 12
+nb_columns 10
+nb_lines 8
+
+nb_players_min 1
+nb_players_max 1
+random_starts 0
+
+; starting_squares MUST list every spawn slot: without it the list is
+; empty, the AI's auto_explore has no target square and the enemies
+; never even look for the player's position (see mapmaking.rst,
+; "Defence mission: making the attackers actually attack").
+;
+; The order matters: index 0 is the player (a1, the exile's gate), then
+; the computer_only slots in the order in which their ``computer_only``
+; lines appear.
+starting_squares a1 c1 c6 d2 a3 a4 a5 f4 f2 h6 i2 h4
+
+square_name 9223 1,1      ; the exile's gate
+square_name 9224 3,1      ; Babieca's stable
+square_name 9225 3,6      ; the windmill
+square_name 9226 6,4      ; Alfonso's castle
+square_name 9227 6,2      ; the GATA camp
+square_name 9228 8,6      ; Zaragoza
+square_name 9229 8,4      ; Berenguer's siege workshop
+square_name 9230 9,2      ; Berenguer's fortress
+
+west_east_paths a1 b1 c1 d1 e1 f1 g1 h1 i1
+west_east_paths a2 b2 c2 d2 e2 f2 g2 h2 i2
+west_east_paths a3 b3 c3 d3 e3 f3 g3 h3 i3
+west_east_paths a4 b4 c4 d4 e4 f4 g4 h4 i4
+west_east_paths a5 b5 c5 d5 e5 f5 g5 h5 i5
+west_east_paths a6 b6 c6 d6 e6 f6 g6 h6 i6
+west_east_paths a7 b7 c7 d7 e7 f7 g7 h7 i7
+south_north_paths a1 a2 a3 a4 a5 a6 a7 b1 b2 b3 b4 b5 b6 b7 c1 c2 c3 c4 c5 c6 c7 d1 d2 d3 d4 d5 d6 d7 e1 e2 e3 e4 e5 e6 e7 f1 f2 f3 f4 f5 f6 f7 g1 g2 g3 g4 g5 g6 g7 h1 h2 h3 h4 h5 h6 h7 i1 i2 i3 i4 i5 i6 i7
+
+goldmines 300 a1
+woods 400 a1 b1
+orchard 200 a1
+stone_mines 200 a1
+nb_meadows_by_square 2
+
+; El Cid starts ALONE -- that is the whole point of the exile. He has
+; no army, no villagers and no buildings until he wins the Allies.
+player 200 200 200 200 a1 1 npc_cid
+
+; Babieca waits at the stable just east of the gate.
+computer_only 0 0 0 0 neutral faction saracens c1 1 npc_cid_mounted
+
+; The windmill garrison that changes sides and joins El Cid.
+computer_only 0 0 0 0 neutral faction saracens c6 2 aoe_knight 6 pikeman
+
+; The four Camel Riders the player takes in the south-west valley.
+computer_only 0 0 0 0 neutral faction saracens d2 4 camel_rider
+
+; Alfonso's watchtowers on the western border -- they shoot at El Cid
+; as he leaves the gates.
+computer_only 0 0 0 0 non_neutral faction saracens a3 3 scouttower 2 pikeman
+computer_only 0 0 0 0 non_neutral faction saracens a4 3 scouttower 2 pikeman
+computer_only 0 0 0 0 non_neutral faction saracens a5 3 scouttower 2 pikeman
+
+; Alfonso's Castle, blocking the road to Zaragoza.
+computer_only 0 0 0 0 non_neutral faction saracens f4 aoe_castle 2 scouttower 4 pikeman 2 aoe_knight
+
+; The GATA camp in the south-east: a Gaia base with a Siege Workshop,
+; so the player can build rams to take Alfonso's castle.
+computer_only 0 0 0 0 neutral faction saracens f2 4 peasant workshop
+
+; Motamid of the Moors holds Zaragoza (h6) and joins the player.
+computer_only 0 0 0 0 neutral faction saracens h6 aoe_castle 2 npc_motamid
+
+; Count Berenguer of Barcelona: the main enemy of the chapter.
+computer_only 0 0 0 0 non_neutral faction saracens i2 aoe_castle 6 camel_rider 4 mameluke 3 crossbowman 2 mangonel
+
+; Berenguer's Siege Workshop, outside the walls of Zaragoza.
+computer_only 0 0 0 0 non_neutral faction saracens h4 workshop 2 mangonel 4 pikeman
+
+timer_coefficient 40
+
+trigger player1 (timer 0) (alliance 1)
+trigger computer1 (timer 0) (alliance 1)   ; Babieca's stable
+trigger computer2 (timer 0) (alliance 1)   ; the windmill garrison
+trigger computer3 (timer 0) (alliance 1)   ; the camel riders
+trigger computer4 (timer 0) (alliance 2)   ; Alfonso's west towers
+trigger computer5 (timer 0) (alliance 2)   ; Alfonso's west towers
+trigger computer6 (timer 0) (alliance 2)   ; Alfonso's west towers
+trigger computer7 (timer 0) (alliance 2)   ; Alfonso's castle
+trigger computer8 (timer 0) (alliance 1)   ; the GATA camp
+trigger computer9 (timer 0) (alliance 1)   ; Zaragoza / Motamid
+trigger computer10 (timer 0) (alliance 2)  ; Berenguer
+trigger computer11 (timer 0) (alliance 2)  ; Berenguer's siege workshop
+
+; Objectives
+;   1 = Mount Babieca and take the four Camel Riders
+;   2 = Destroy Alfonso's Castle (SECONDARY in the DE original)
+;   3 = Join Motamid in Zaragoza
+;   4 = Destroy Berenguer's Siege Workshop
+;   5 = Defeat Count Berenguer
+;
+; Numbering rule of this engine: ``register_objective`` lists the
+; PRIMARY objectives that must all be completed for the mission to
+; end, and ``add_secondary_objective`` numbers live in a separate
+; key space (Objective.storage_key with optional=True).  A secondary
+; objective therefore must NOT appear in ``register_objective``, and
+; a primary objective number must be completed with
+; ``objective_complete`` (not ``secondary_objective_complete``) --
+; only the primary completion adds the number to
+; ``_completed_objective_numbers``, which is what ``_try_mission_victory``
+; checks.
+;
+; So: primary objectives are 1, 3, 4, 5 (1 = mount up, 3 = Zaragoza,
+; 4 = the siege workshop, 5 = Berenguer).  The optional one is 2.
+trigger player1 (timer 0) (register_objective 1 3 4 5)
+trigger player1 (timer 0) (add_objective 1 9187)
+trigger player1 (timer 0) (add_secondary_objective 2 9188)
+trigger player1 (timer 0) (add_objective 3 9189)
+trigger player1 (timer 0) (add_objective 4 9190)
+trigger player1 (timer 0) (add_objective 5 9191)
+
+; Objective 1: El Cid reaches Babieca's stable and mounts up.
+trigger player1 (has_entered c1 npc_cid) (do (objective_complete 1) (cut_scene 9254))
+
+; The four Camel Riders join the player when El Cid reaches them.
+trigger player1 (has_entered d2 npc_cid) (do (transfer_units computer3 player1) (cut_scene 9255))
+
+; Objective 2 (SECONDARY, as in the DE original): Alfonso's Castle
+; falls.  It is optional -- the road to Zaragoza is opened by the
+; GATA camp's siege workshop, so the player may go around it.
+trigger player1 (enemy_building_destroyed f4 aoe_castle) (do (secondary_objective_complete 2) (cut_scene 9256) (alliance 1 computer7))
+
+; Objective 3: Motamid in Zaragoza -- the player joins him.
+trigger player1 (has_entered h6 npc_cid) (do (objective_complete 3) (cut_scene 9257))
+
+; Objective 4: Berenguer's Siege Workshop is destroyed, which is what
+; opens the road to his fortress.
+trigger player1 (enemy_building_destroyed h4 workshop) (do (objective_complete 4) (add_units h5 4 peasant 2 aoe_knight 2 camel_rider))
+
+; Objective 5: Count Berenguer himself falls.
+;
+; NOTE: this must NOT be ``(no_enemy_player_left)``.  That condition only
+; counts players that take part in the match (human players and invited
+; computer opponents).  Every campaign NPC here is a ``computer_only``
+; slot whose ``broadcasts_defeat_and_quit`` is False, so
+; ``no_enemy_player_left`` is already True on the very first tick -- the
+; chapter would end instantly.  ``(enemy_building_destroyed i2
+; aoe_castle)`` is the honest condition: Berenguer's fortress is his
+; seat, and it falls when he does.
+trigger player1 (enemy_building_destroyed i2 aoe_castle) (do (objective_complete 5) (victory))
+
+; Defeat conditions.
+trigger player1 (no_unit_left) (defeat)
+trigger player1 (key_unit_killed npc_cid) (defeat)
+trigger player1 (key_unit_killed npc_cid_mounted) (defeat)
+trigger player1 (key_unit_killed npc_motamid) (defeat)

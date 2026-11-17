@@ -1,0 +1,13 @@
+; coding: utf-8
+; AoE2 DE "El Cid" campaign metadata.
+;
+; Title / synopsis are TTS ids; they live in this campaign's ui/tts.txt
+; (9140 / 9141) and in every ui-* language folder.
+;
+; ``default_faction`` is only the fallback: the campaign switches
+; civilization between scenarios (Spanish -> Saracens -> Spanish), and
+; each mission map overrides it with its own ``player_faction`` line.
+title 9140
+synopsis 9141
+default_faction spanish
+intro 9142 9143
