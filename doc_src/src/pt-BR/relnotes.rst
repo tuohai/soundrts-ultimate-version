@@ -4,6 +4,78 @@ Notas de lançamento
 
 .. contents::
 
+1.5.2.3
+-------
+
+**Adicionado: conteúdo de cenário que depende da dificuldade**
+
+- **Adicionado**: o motor agora pode ramificar o *conteúdo* de um cenário conforme a dificuldade escolhida pelo jogador, exatamente como no original de Age of Empires II Definitive Edition. A nova condição de gatilho é ``(difficulty <nível>)``: ``(difficulty standard)`` só é verdadeira no nível padrão, ``(difficulty >= hard)`` é verdadeira do nível difícil em diante (e portanto também no extremo) e ``(difficulty != easy)`` é verdadeira em todos menos o fácil. Um gatilho aceita exatamente **uma** condição, então os testes compostos usam os combinadores booleanos ``(and ...)`` e ``(or ...)`` -- por exemplo ``(and (difficulty >= hard) (timer 30))`` significa «do nível difícil em diante **e** depois de 30 marcas de tempo».
+- **Adicionado**: o **nível semântico** ``story``. ``(difficulty story)`` é verdadeira em **fácil e padrão** -- os dois níveis que recebem o «presente do nível padrão» do DE. O nível fácil equivale ao Story mode do DE e é ainda mais generoso que o padrão, então os dois níveis recebem o presente. ``story`` não tem ordem, portanto ``(difficulty >= story)`` é sempre falsa; apenas igualdade e desigualdade funcionam. A comparação exata ``(difficulty standard)`` mantém seu sentido antigo: corresponde somente ao nível padrão.
+- **Os cinco níveis**: as chaves de dificuldade da campanha de jogador único são ``easy``, ``standard``, ``moderate``, ``hard`` e ``extreme``, nessa ordem (``easy < standard < moderate < hard < extreme``). É isso que um script de mapa escreve, por exemplo ``(difficulty standard)``, ``(difficulty moderate)``, ``(difficulty >= hard)`` ou ``(difficulty extreme)``.
+- **Adicionado**: a ação de gatilho ``(remove_unit <quadrant> <tipo> [quantidade])``. Remove as unidades ou construções desse tipo que estejam naquele quadrante, com a mesma correspondência por ``is_a`` do resto do motor (assim ``man_at_arms`` é removido por ``militia``), e as remove de verdade: o objeto sai da lista do seu dono e devolve a população, o que também desbloqueia os caminhos de forma determinística. Até agora o motor só podia remover *objetos* do chão (``remove_ground_item``), então «no Padrão não há Torres de Guarda na cidade Burgundy» não podia ser expresso.
+- **Escopo**: ``soundrts/worldplayerbase/triggers.py``, ``soundrts/coop_difficulty.py``.
+
+**Melhorado: a dificuldade da campanha de jogador único volta a ter cinco níveis**
+
+- **Alterado**: a campanha de jogador único oferece de novo **cinco** níveis de dificuldade -- fácil, padrão, médio, difícil e extremo -- e o extremo é mantido. As campanhas do DE só têm três dificuldades, mas isso não deve custar ao jogador esses dois níveis extras.
+- **Alterado**: o «presente do nível padrão» do DE passa a ser expresso com o novo nível semântico ``story``, que cobre **fácil + padrão**, então o presente não se perde em silêncio agora que o fácil é selecionável de novo.
+- **Escopo**: ``soundrts/coop_difficulty.py``, ``soundrts/campaign.py``.
+
+**Adicionado: as diferenças de dificuldade das campanhas de AoE2, capítulo por capítulo**
+
+As três campanhas de AoE2 -- **19 capítulos** ao todo -- seguem agora os «Differences between difficulty levels» documentados no original de Age of Empires II Definitive Edition. As diferenças são implementadas com as novas condições de gatilho e a nova ação ``remove_unit``; quando um efeito do DE não tem correspondente direto em um capítulo local, a correspondência está documentada no próprio arquivo de mapa.
+
+- **El Cid** (``mods/aoe2/single/El Cid/``), 6 capítulos: capítulo 1 *Brother against Brother* (o jogador começa com Furos de Tiro no nível story), capítulo 2 *The Enemy of my Enemy* (sem diferença), capítulo 3 *The Exile of the Cid* (o jogador recebe um Trebuchet para o acampamento GATA no nível story), capítulo 4 *Black Guards* (a base do rei Alfonso tem um Castelo e o jogador começa com Furos de Tiro no nível story), capítulo 5 *King of Valencia* (sem diferença), capítulo 6 *Reconquista* (a frota inicial muda conforme o nível: 3 galéias de guerra, 3 navios de fogo rápido, 2 aríetes de assédio e 4 picados no nível story; 3 galéias de guerra, 3 navios de fogo, 2 aríetes com testa e 4 picados no médio; 2 galéias de guerra, 2 navios de fogo e 2 aríetes de assédio no difícil e extremo).
+- **Joan of Arc** (``mods/aoe2/single/Joan of Arc/``), 6 capítulos: capítulo 1 *An Unlikely Messiah* (sem Torres de Guarda nos postos ingleses no nível story), capítulo 2 *The Maid of Orleans* (Furos de Tiro do nível difícil em diante), capítulo 3 *The Cleansing of the Loire* (sem Escorpião no nível story, um Aríete com testa no médio, um Aríete com testa mais um Aríete de assédio no difícil e extremo), capítulo 4 *The Rising* (sem diferença), capítulo 5 *The Siege of Paris* (sem Trebuchet nem Catapulta de contrapeso na fortaleza central e sem Trebuchet na emboscada no nível story; um Castelo, uma Torre de Bombarda e dois Monges no difícil e extremo), capítulo 6 *A Perfect Martyr* (o jogador recebe 2 trebuchets e 6 canhões de bombarda, cortados pela metade para 1 trebuchet e 3 canhões no difícil e extremo; o cerco inglês recebe 3 canhões de bombarda e uma Torre de Guarda no difícil e extremo; os ingleses constroem um segundo Centro de Ville no difícil e extremo, escrito como ``(and (difficulty >= hard) (timer 30))``).
+- **William Wallace** (``mods/aoe2/single/William Wallace/``), 7 capítulos: capítulo 4 *Research and Technology* (acima do Padrão a milícia inglesa que ataca é trocada por Homens de Armas); os outros seis capítulos não têm diferença documentada e ficam inalterados.
+- **Escopo**: ``mods/aoe2/single/El Cid/``, ``mods/aoe2/single/Joan of Arc/``, ``mods/aoe2/single/William Wallace/``.
+
+**Corrigido: uma tecnologia concedida por um gatilho realmente chega às unidades do jogador**
+
+- **Corrigido**: ``(add_units <tecnologia>)`` apenas acrescentava o nome da tecnologia a ``player.upgrades``; os prédios e unidades que o jogador já possuía mantinham suas estatísticas inalteradas. Agora a tecnologia é realmente aplicada às unidades existentes -- os Furos de Tiro de fato removem o alcance mínimo das torres de vigia e dos castelos herdados pelo jogador, em vez de ficarem apenas «registrados».
+- **Escopo**: ``soundrts/worldplayerbase/triggers.py``.
+
+**Corrigido: os roteiros das campanhas de AoE2 tinham falhas silenciosas e textos desatualizados**
+
+As campanhas Joan of Arc e William Wallace foram auditadas capítulo a capítulo contra o original de Age of Empires II Definitive Edition. Foram encontrados vários defeitos que faziam os capítulos se comportarem de forma diferente do original — ou simplesmente não se comportarem — e todos foram corrigidos.
+
+- **Corrigido**: no capítulo 7 de *William Wallace* (o do castelo) um ``(victory)`` era disparado assim que o jogador terminava de construir um castelo, o que encerrava o capítulo muito antes de o segundo objetivo poder ser alcançado. Agora a vitória vem do gerenciador de objetivos, como em todos os outros capítulos.
+- **Corrigido**: no capítulo 4 de *Joan of Arc* a condição de derrota usava ``(campaign_defeat)``, que **não** é uma ação conhecida pelo motor. O gatilho parecia funcionar mas não fazia nada, então o capítulo não podia ser perdido. Agora é ``(defeat)``, de modo que perder o delfim encerra de verdade o capítulo.
+- **Corrigido**: no capítulo 2 de *Joan of Arc* o prazo dos carros de comércio era escrito ``(timer 600)``, mas esse temporizador é multiplicado pelo ``timer_coefficient 40`` do mapa — o prazo real eram 24 000 segundos de jogo (400 minutos), ou seja, código morto. Agora é ``(timer 15)``, que são exatamente os 600 segundos pretendidos.
+- **Corrigido**: o capítulo 1 de *Joan of Arc* tinha um único objetivo para algo que o original divide em duas tarefas distintas: alcançar a guarnição de Robert em Vaucouleurs e depois entregar a carta sagrada ao delfim em Chinon. Agora o capítulo registra ambos, como objetivo 1 (id de texto ``8820``) e objetivo 2 (id de texto ``8821``).
+- **Corrigido**: o texto de introdução do capítulo 2 de *Joan of Arc* ainda descrevia o projeto *antigo* do capítulo (milícia e torres de vigia) em vez do que o capítulo é agora: marchar até Blois para retirar o exército e os seis carros de suprimento, atravessar a ponte sobre o Loire até Orleans e erguer a própria cidade até a Era do Castelo. O texto (id ``8811``) foi reescrito em **todos os 13 idiomas** da campanha. O limite de população do capítulo também passou a ser o limite da Era do Castelo, 125, com ``global_population_limit 125``.
+- **Corrigido**: o segundo objetivo do capítulo 4 de *Joan of Arc* usava o texto do objetivo «destrua a emboscada» de outro capítulo, e a cutscene reproduzida na entrega da relíquia era a cutscene do castelo de *Orleans*. Agora ambos têm entradas próprias: o objetivo 2 usa o id ``8904`` («escolte o delfim até a catedral de Reims») e a cutscene usa o id ``8905`` («a consagração do altar de Reims»), escritos em **todos os 13 idiomas**.
+- **Corrigido**: nos capítulos 1, 4, 5, 6 e 7 de *William Wallace* os ingleses eram computadores apenas-gatilho: tinham uma força inicial mas **nenhuma IA**, então ficavam parados e nunca atacavam. Agora recebem uma IA de verdade (``(ai intermediate)``) e — nos capítulos em que precisam — um centro urbano, casas, uma fazenda, um quartel, um campo de tiro e recursos iniciais, para que os ingleses possam realmente construir e assaltar.
+- **Corrigido**: o capítulo 6 de *William Wallace* não tinha economia de comércio: o jogador não tinha mercado, nem moinho, nem carro de comércio, e o pagamento do aliado escocês pelas relíquias nunca fora escrito no roteiro. O capítulo agora oferece mercado, moinho e carro de comércio, e o aliado paga um tributo ao jogador a cada relíquia entregue.
+- **Escopo**: ``mods/aoe2/single/Joan of Arc/``, ``mods/aoe2/single/William Wallace/``.
+
+**Adicionado: palavras-chave desconhecidas de gatilho agora avisam em vez de falhar em silêncio**
+
+- **Adicionado**: uma ação de gatilho cuja palavra-chave o motor não conhece era descartada sem dizer nada. Um erro de digitação como ``(campaign_defeat)`` portanto parecia funcionar enquanto não fazia nada. Agora o motor registra um aviso que nomeia a palavra-chave desconhecida. O aviso é emitido uma vez por palavra-chave e por dono do gatilho, então um gatilho que dispara a cada segundo não inunda o registro.
+- **Escopo**: ``soundrts/worldplayerbase/triggers.py``.
+
+**Adicionado: câmera, realces, revelação de neblina e tributo roteirizáveis**
+
+Quatro novas ações de gatilho dão ao roteiro de uma campanha o controle sobre o que o jogador *vê* e sobre o fluxo de recursos entre aliados. São primitivas do motor e funcionam em qualquer mod, não apenas nas campanhas de AoE2.
+
+- **Adicionado**: ``(camera <quadrado>)`` move a visão do jogador para um quadrado e o seleciona. É um efeito **apenas do cliente** — o servidor envia somente o identificador do quadrado — então nunca pode dessincronizar a partida.
+- **Adicionado**: ``(flash <quadrado> [r,g,b])`` desenha um anel temporário em expansão sobre um quadrado, para chamar a atenção do jogador para um lugar. A cor é opcional e por omissão é um amarelo quente ``255,220,90``.
+- **Adicionado**: ``(reveal_map)`` levanta a neblina de guerra sobre o mapa inteiro, e ``(reveal_area <quadrado> [raio])`` levanta sobre uma vizinhança de *raio* quadrados (por omissão 1, ou seja o próprio quadrado; omita o quadrado para revelar tudo). O terreno revelado passa a ser terreno *explorado*, exatamente como o modo trapaça «mostrar o mapa inteiro»; não altera as condições de vitória ou derrota.
+- **Adicionado**: ``(tribute <recurso> <quantia> <destino>)`` move recursos do dono do gatilho para o *destino*. O recurso é nomeado pelo seu nome interno do motor (``resource1`` … ``resourceN``) ou por um dos nomes que o mod declara em ``parameters resource_names`` (``gold``, ``wood``, ``food``, ``stone`` em AoE2). Duas formas adicionais tornam explícita a direção quando o dono do gatilho *não* é quem paga: ``(tribute from <pagador> <recurso> <quantia> <recebedor>)`` e ``(tribute to <pagador> <recurso> <quantia> <recebedor>)``. Nada é transferido quando o pagador não tem o suficiente: a quantia é limitada ao que de fato existe.
+- **Escopo**: ``soundrts/worldplayerbase/triggers.py``, ``soundrts/clientgame/game_resources.py``, ``soundrts/clientgame/game_visual_fx.py``, ``soundrts/clientgamegridview.py``.
+
+**Documentação**
+
+- A documentação de criação de mapas agora descreve a condição ``(difficulty ...)`` e a ação ``(remove_unit ...)``, nos cinco idiomas documentados: ``doc_src/src/zh/mod/mapmaking.rst``, ``doc_src/src/en/mod/mapmaking.rst``, ``doc_src/src/es/mod/mapmaking.rst``, ``doc_src/src/it/mod/mapmaking.rst``, ``doc_src/src/pt-BR/mod/mapmaking.rst``.
+- A documentação de criação de mapas agora também descreve as novas ações ``(camera ...)``, ``(flash ...)``, ``(reveal_map ...)``, ``(reveal_area ...)`` e ``(tribute ...)``, e o aviso que o motor agora registra para uma palavra-chave de gatilho desconhecida, nesses mesmos cinco idiomas.
+
+**Verificação**
+
+- ``soundrts/tests/test_campaign_difficulty_tiers.py`` -- o novo teste carrega todos os **19 capítulos** nos cinco níveis de dificuldade e verifica capítulo por capítulo que o nível story recebe de fato o presente do nível padrão, que os níveis mais difíceis recebem de fato os inimigos extras e que os capítulos que o DE lista como «sem diferença» não ramificam de forma alguma.
+- ``soundrts/tests/test_difficulty_trigger.py`` -- atualizado para os cinco níveis e para o nível semântico ``story``, mais novos testes para a ação ``(remove_unit ...)`` (correspondência de tipos pela cadeia ``is_a``, o argumento de quantidade, o nome do quadrante e a ordem de remoção determinística).
+- ``soundrts/tests/test_changelog_1523.py`` -- o teste de auditoria: verifica que as notas de lançamento dos cinco idiomas nomeiam todos os tópicos desta versão e que o motor realmente se comporta como descrito.
+- ``soundrts/tests/test_campaign_script_primitives_and_fixes.py`` -- o novo teste para este lote de correções: exercita as ações ``(camera ...)``, ``(flash ...)``, ``(reveal_map ...)``, ``(reveal_area ...)`` e ``(tribute ...)`` (incluindo a forma ``from`` e o recorte em zero), afirma que uma palavra-chave de gatilho desconhecida avisa e avisa apenas uma vez, verifica um a um os oito defeitos de mapa corrigidos, confere que o tributo de Wallace chega de fato à bolsa do jogador, verifica os novos identificadores de texto de Joan em **todos os 13 idiomas** e constrói os 6 capítulos de Joan e os 7 de Wallace.
+
 1.5.2.2
 -------
 

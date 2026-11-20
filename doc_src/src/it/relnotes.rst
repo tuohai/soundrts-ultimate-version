@@ -3,6 +3,78 @@ Note di rilascio
 
 .. contents::
 
+1.5.2.3
+-------
+
+**Aggiunto: contenuti dello scenario che dipendono dalla difficoltà**
+
+- **Aggiunto**: il motore può ora ramificare il *contenuto* di uno scenario in base alla difficoltà scelta dal giocatore, esattamente come nell'originale di Age of Empires II Definitive Edition. La nuova condizione di trigger è ``(difficulty <livello>)``: ``(difficulty standard)`` è vera solo al livello standard, ``(difficulty >= hard)`` è vera dal livello difficile in su (e quindi anche all'estremo) e ``(difficulty != easy)`` è vera su tutti tranne il facile. Un trigger accetta esattamente **una** condizione, quindi i test composti usano i combinatori booleani ``(and ...)`` e ``(or ...)`` -- per esempio ``(and (difficulty >= hard) (timer 30))`` significa «dal livello difficile in su **e** dopo 30 scatti di tempo».
+- **Aggiunto**: il **livello semantico** ``story``. ``(difficulty story)`` è vera su **facile e standard** -- i due livelli che ricevono il «regalo del livello standard» del DE. Il livello facile equivale allo Story mode del DE ed è ancora più generoso dello standard, quindi entrambi i livelli ricevono il regalo. ``story`` non ha un ordine, perciò ``(difficulty >= story)`` è sempre falsa; solo l'uguaglianza e la disuguaglianza funzionano. Il confronto esatto ``(difficulty standard)`` mantiene il suo significato di prima: corrisponde soltanto al livello standard.
+- **I cinque livelli**: le chiavi di difficoltà della campagna single-player sono ``easy``, ``standard``, ``moderate``, ``hard`` ed ``extreme``, in quest'ordine (``easy < standard < moderate < hard < extreme``). È questo che scrive uno script di mappa, per esempio ``(difficulty standard)``, ``(difficulty moderate)``, ``(difficulty >= hard)`` o ``(difficulty extreme)``.
+- **Aggiunto**: l'azione di trigger ``(remove_unit <casella> <tipo> [quantità])``. Elimina le unità o gli edifici di quel tipo presenti in quella casella, con la stessa corrispondenza tramite ``is_a`` del resto del motore (così ``man_at_arms`` viene eliminato da ``militia``), e li elimina davvero: l'oggetto esce dalla lista del suo proprietario e restituisce la popolazione, il che sblocca anche i cammini in modo deterministico. Finora il motore poteva togliere solo *oggetti* dal terreno (``remove_ground_item``), quindi «in Standard non ci sono Torri di Guardia nella città borgognona» non era esprimibile.
+- **Ambito**: ``soundrts/worldplayerbase/triggers.py``, ``soundrts/coop_difficulty.py``.
+
+**Migliorato: la difficoltà della campagna single-player torna a cinque livelli**
+
+- **Modificato**: la campagna single-player offre di nuovo **cinque** livelli di difficoltà -- facile, standard, medio, difficile ed estremo -- e l'estremo viene mantenuto. Le campagne del DE hanno solo tre difficoltà, ma questo non deve costare al giocatore questi due livelli in più.
+- **Modificato**: il «regalo del livello standard» del DE è ora espresso con il nuovo livello semantico ``story``, che copre **facile + standard**, così il regalo non si perde in silenzio ora che facile è di nuovo selezionabile.
+- **Ambito**: ``soundrts/coop_difficulty.py``, ``soundrts/campaign.py``.
+
+**Aggiunto: le differenze di difficoltà delle campagne AoE2, capitolo per capitolo**
+
+Tutte e tre le campagne AoE2 -- **19 capitoli** in totale -- seguono ora i «Differences between difficulty levels» documentati nell'originale di Age of Empires II Definitive Edition. Le differenze sono implementate con le nuove condizioni di trigger e la nuova azione ``remove_unit``; quando un effetto del DE non ha un corrispondente diretto in un capitolo locale, la corrispondenza è documentata nel file di mappa stesso.
+
+- **El Cid** (``mods/aoe2/single/El Cid/``), 6 capitoli: capitolo 1 *Brother against Brother* (il giocatore inizia con Buchi da Sparo al livello story), capitolo 2 *The Enemy of my Enemy* (nessuna differenza), capitolo 3 *The Exile of the Cid* (al giocatore viene dato un Trebuchet per l'accampamento GATA al livello story), capitolo 4 *Black Guards* (la base del re Alfonso ha un Castello e il giocatore inizia con Buchi da Sparo al livello story), capitolo 5 *King of Valencia* (nessuna differenza), capitolo 6 *Reconquista* (la flotta iniziale cambia da livello a livello: 3 galere da guerra, 3 navi da fuoco veloce, 2 arieti d'assedio e 4 picchieri al livello story; 3 galere da guerra, 3 navi da fuoco, 2 arieti con testata e 4 picchieri a medio; 2 galere da guerra, 2 navi da fuoco e 2 arieti d'assedio a difficile ed estremo).
+- **Joan of Arc** (``mods/aoe2/single/Joan of Arc/``), 6 capitoli: capitolo 1 *An Unlikely Messiah* (nessuna Torre di Guardia negli avamposti inglesi al livello story), capitolo 2 *The Maid of Orleans* (Buchi da Sparo dal livello difficile in su), capitolo 3 *The Cleansing of the Loire* (nessuno Scorpione al livello story, un Ariete con testata a medio, un Ariete con testata più un Ariete d'assedio a difficile ed estremo), capitolo 4 *The Rising* (nessuna differenza), capitolo 5 *The Siege of Paris* (nessun Onagro né Trebuchet nella fortezza centrale e nessun Onagro nell'imboscata al livello story; un Castello, una Torre da Bombardata e due Monaci a difficile ed estremo), capitolo 6 *A Perfect Martyr* (il giocatore riceve 2 trebuchet e 6 cannoni da bombardata, dimezzati a 1 trebuchet e 3 cannoni a difficile ed estremo; l'anello d'assedio inglese riceve 3 cannoni da bombardata e una Torre di Guardia a difficile ed estremo; gli inglesi costruiscono un secondo Centro Cittadino dopo 15 minuti a difficile ed estremo, scritto come ``(and (difficulty >= hard) (timer 30))``).
+- **William Wallace** (``mods/aoe2/single/William Wallace/``), 7 capitoli: capitolo 4 *Research and Technology* (al di sopra del livello standard la milizia inglese che attacca viene sostituita da Uomini con Armi); gli altri sei capitoli non hanno differenze documentate e restano invariati.
+- **Ambito**: ``mods/aoe2/single/El Cid/``, ``mods/aoe2/single/Joan of Arc/``, ``mods/aoe2/single/William Wallace/``.
+
+**Corretto: una tecnologia concessa da un trigger raggiunge davvero le unità del giocatore**
+
+- **Corretto**: ``(add_units <tecnologia>)`` si limitava ad aggiungere il nome della tecnologia a ``player.upgrades``; gli edifici e le unità che il giocatore possedeva già conservavano le statistiche immutate. Ora la tecnologia viene realmente applicata alle unità esistenti -- i Buchi da Sparo tolgono davvero la gittata minima delle torri di guardia e dei castelli ereditati dal giocatore, invece di restare soltanto «registrati».
+- **Ambito**: ``soundrts/worldplayerbase/triggers.py``.
+
+**Corretto: gli script delle campagne AoE2 avevano guasti silenziosi e testi obsoleti**
+
+Le campagne Joan of Arc e William Wallace sono state verificate capitolo per capitolo rispetto all'originale di Age of Empires II Definitive Edition. Sono stati trovati diversi difetti che facevano sì che i capitoli si comportassero in modo diverso dall'originale — o che non si comportassero affatto — e ora sono tutti corretti.
+
+- **Corretto**: nel capitolo 7 di *William Wallace* (quello del castello) si sparava un ``(victory)`` appena il giocatore finiva di costruire un castello, il che chiudeva il capitolo molto prima che si potesse raggiungere il secondo obiettivo. Ora la vittoria arriva dal gestore degli obiettivi, come in tutti gli altri capitoli.
+- **Corretto**: nel capitolo 4 di *Joan of Arc* la condizione di sconfitta usava ``(campaign_defeat)``, che **non** è un'azione che il motore conosce. Il trigger sembrava funzionare ma non faceva nulla, così il capitolo non poteva essere perso. Ora è ``(defeat)``, e perdere il delfino chiude davvero il capitolo.
+- **Corretto**: nel capitolo 2 di *Joan of Arc* il termine per i carri commerciali era scritto ``(timer 600)``, ma quel timer viene moltiplicato per il ``timer_coefficient 40`` della mappa — il termine reale erano 24 000 secondi di gioco (400 minuti), cioè codice morto. Ora è ``(timer 15)``, che sono esattamente i 600 secondi previsti.
+- **Corretto**: il capitolo 1 di *Joan of Arc* aveva un unico obiettivo per qualcosa che l'originale divide in due compiti distinti: raggiungere la guarnigione di Robert a Vaucouleurs e poi consegnare la sacra lettera al delfino a Chinon. Ora il capitolo registra entrambi, come obiettivo 1 (id di testo ``8820``) e obiettivo 2 (id di testo ``8821``).
+- **Corretto**: il testo di introduzione del capitolo 2 di *Joan of Arc* descriveva ancora il progetto *vecchio* del capitolo (milizia e torri di guardia) invece di ciò che il capitolo è adesso: marciare a Blois per prendere l'esercito e i sei carri di rifornimento, far attraversare il ponte sulla Loira fino a Orleans e portare la propria città all'Età della Castello. Il testo (id ``8811``) è stato riscritto in **tutte le 13 lingue** della campagna. Anche il limite di popolazione del capitolo è stato fissato al limite dell'Età della Castello, 125, con ``global_population_limit 125``.
+- **Corretto**: il secondo obiettivo del capitolo 4 di *Joan of Arc* usava il testo dell'obiettivo «distruggi l'imboscata» di un altro capitolo, e la scena cinematica riprodotta alla consegna della reliquia era quella del castello di *Orleans*. Ora entrambe hanno voci dedicate: l'obiettivo 2 usa l'id ``8904`` («scorta il delfino fino alla cattedrale di Reims») e la scena cinematica usa l'id ``8905`` («la consacrazione dell'altare di Reims»), scritti in **tutte le 13 lingue**.
+- **Corretto**: nei capitoli 1, 4, 5, 6 e 7 di *William Wallace* gli inglesi erano computer solo-trigger: avevano una forza iniziale ma **nessuna IA**, così restavano fermi e non attaccavano mai. Ora ricevono una IA vera (``(ai intermediate)``) e — nei capitoli in cui servono — un centro urbano, case, una fattoria, una caserma, un campo di tiro e risorse iniziali, così gli inglesi possono davvero costruire e assaltare.
+- **Corretto**: il capitolo 6 di *William Wallace* non aveva economia commerciale: il giocatore non aveva mercato, né mulino, né carro commerciale, e il pagamento dell'alleato scozzese per le reliquie non era mai stato messo in copione. Il capitolo ora fornisce mercato, mulino e carro commerciale, e l'alleato paga un tributo al giocatore alla consegna di ogni reliquia.
+- **Ambito**: ``mods/aoe2/single/Joan of Arc/``, ``mods/aoe2/single/William Wallace/``.
+
+**Aggiunto: le parole chiave sconosciute dei trigger ora avvisano invece di fallire in silenzio**
+
+- **Aggiunto**: un'azione di trigger la cui parola chiave il motore non conosce veniva scartata senza una parola. Un errore di battitura come ``(campaign_defeat)`` sembrava quindi funzionare mentre non faceva nulla. Ora il motore registra un avviso che nomina la parola chiave sconosciuta. L'avviso viene emesso una volta per parola chiave e per proprietario del trigger, così un trigger che si attiva ogni secondo non inonda il registro.
+- **Ambito**: ``soundrts/worldplayerbase/triggers.py``.
+
+**Aggiunto: camera, evidenziazioni, nebbia rivelata e tributo scriptabili**
+
+Quattro nuove azioni di trigger danno allo script di una campata il controllo su ciò che il giocatore *vede* e sul flusso di risorse tra alleati. Sono primitive del motore e funzionano in qualunque mod, non solo nelle campagne di AoE2.
+
+- **Aggiunto**: ``(camera <quadrato>)`` sposta la vista del giocatore su un quadrato e lo seleziona. È un effetto **solo lato client** — il server invia solo l'identificativo del quadrato — quindi non può mai desincronizzare la partita.
+- **Aggiunto**: ``(flash <quadrato> [r,g,b])`` disegna un anello temporaneo in espansione su un quadrato, per richiamare l'attenzione del giocatore su un luogo. Il colore è opzionale e per omissione è un giallo caldo ``255,220,90``.
+- **Aggiunto**: ``(reveal_map)`` solleva la nebbia di guerra su tutta la mappa, e ``(reveal_area <quadrato> [raggio])`` la solleva su un intorno di *raggio* quadrati (per omissione 1, cioè il quadrato stesso; ometti il quadrato per rivelare tutto). Il terreno rivelato diventa terreno *esplorato*, esattamente come la modalità trappola «mostra tutta la mappa»; non cambia le condizioni di vittoria o sconfitta.
+- **Aggiunto**: ``(tribute <risorsa> <quantità> <destinatario>)`` sposta risorse dal proprietario del trigger verso il *destinatario*. La risorsa è indicata con il suo nome interno del motore (``resource1`` … ``resourceN``) oppure con uno dei nomi che il mod dichiara in ``parameters resource_names`` (``gold``, ``wood``, ``food``, ``stone`` in AoE2). Due forme in più rendono esplicita la direzione quando il proprietario del trigger *non* è chi paga: ``(tribute from <pagatore> <risorsa> <quantità> <destinatario>)`` e ``(tribute to <pagatore> <risorsa> <quantità> <destinatario>)``. Nulla viene trasferito se il pagatore non ne ha abbastanza: la quantità viene limitata a quella effettivamente presente.
+- **Ambito**: ``soundrts/worldplayerbase/triggers.py``, ``soundrts/clientgame/game_resources.py``, ``soundrts/clientgame/game_visual_fx.py``, ``soundrts/clientgamegridview.py``.
+
+**Documentazione**
+
+- La documentazione sulla creazione delle mappe ora descrive la condizione ``(difficulty ...)`` e l'azione ``(remove_unit ...)``, in tutte e cinque le lingue documentate: ``doc_src/src/zh/mod/mapmaking.rst``, ``doc_src/src/en/mod/mapmaking.rst``, ``doc_src/src/es/mod/mapmaking.rst``, ``doc_src/src/it/mod/mapmaking.rst``, ``doc_src/src/pt-BR/mod/mapmaking.rst``.
+- La documentazione sulla creazione delle mappe ora descrive anche le nuove azioni ``(camera ...)``, ``(flash ...)``, ``(reveal_map ...)``, ``(reveal_area ...)`` e ``(tribute ...)``, e l'avviso che il motore ora registra per una parola chiave di trigger sconosciuta, in quelle stesse cinque lingue.
+
+**Verifica**
+
+- ``soundrts/tests/test_campaign_difficulty_tiers.py`` -- il nuovo test carica tutti i **19 capitoli** su tutti e cinque i livelli di difficoltà e verifica capitolo per capitolo che il livello story riceva davvero il regalo del livello standard, che i livelli più difficili ricevano davvero i nemici aggiuntivi e che i capitoli che il DE elenca come «senza differenza» non si ramifichino affatto.
+- ``soundrts/tests/test_difficulty_trigger.py`` -- aggiornato per i cinque livelli e per il livello semantico ``story``, più nuovi test per l'azione ``(remove_unit ...)`` (corrispondenza dei tipi lungo la catena ``is_a``, l'argomento quantità, il nome della casella e l'ordine di eliminazione deterministico).
+- ``soundrts/tests/test_changelog_1523.py`` -- il test di audit: verifica che le note di rilascio di tutte e cinque le lingue nominino ogni argomento di questa versione e che il motore si comporti davvero come descritto.
+- ``soundrts/tests/test_campaign_script_primitives_and_fixes.py`` -- il nuovo test per questo lotto di correzioni: esercita le azioni ``(camera ...)``, ``(flash ...)``, ``(reveal_map ...)``, ``(reveal_area ...)`` e ``(tribute ...)`` (comprese la forma ``from`` e il troncamento a zero), asserisce che una parola chiave di trigger sconosciuta avvisa e avvisa solo una volta, controlla uno a uno gli otto difetti di mappa corretti, verifica che il tributo di Wallace arrivi davvero nella tasca del giocatore, controlla i nuovi identificativi di testo di Joan in **tutte le 13 lingue** e costruisce i 6 capitoli di Joan e i 7 di Wallace.
+
 1.5.2.2
 -------
 

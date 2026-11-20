@@ -739,6 +739,66 @@ cap. 15 entregar ``knight_lance`` al punto muerto ``npc_knight``; cap. 16 entreg
 ``npc_mage`` (relaciones ``ally``/``neutral``/``enemy``). Ver ``res/single/The Legend of Raynor/14.txt``,
 ``15.txt``, ``16.txt``. Demostración multijugador: ``res/multi/give_demo.txt``.
 
+Contenido del escenario según la dificultad (desde 1.5.2.3)
+..............................................
+
+Un capítulo de campaña puede ramificar su *contenido* según la dificultad que eligió el
+jugador, exactamente como en el original de Age of Empires II Definitive Edition. La
+campaña de jugador único tiene **cinco** niveles de dificultad: ``easy``, ``standard``,
+``moderate``, ``hard`` y ``extreme``.
+
+``difficulty`` — condición de disparador sobre el nivel de dificultad actual::
+
+    trigger player1 (difficulty standard) (add_units a1 trebuchet)
+    trigger computer1 (difficulty >= hard) (add_units c2 1 keep)
+    trigger player1 (difficulty != easy) (cut_scene 8850)
+
+Sintaxis: ``(difficulty <nivel>)`` para una coincidencia exacta, ``(difficulty <op> <nivel>)``
+para una comparación, con los operadores ``==`` ``=`` ``!=`` ``<=`` ``>=`` ``<`` ``>``.
+Los niveles se ordenan ``easy < standard < moderate < hard < extreme``.
+
+El nivel semántico ``story``::
+
+    trigger player1 (difficulty story) (add_units murder_holes)
+
+``(difficulty story)`` es cierta en **fácil y estándar** — los dos niveles que reciben el
+«regalo del nivel estándar» del DE (el nivel fácil equivale al Story mode del DE y es
+incluso más generoso que el estándar). ``story`` no tiene orden, así que
+``(difficulty >= story)`` siempre es falsa; solo funcionan la igualdad y la desigualdad.
+``(difficulty standard)`` conserva su sentido exacto: solo el nivel estándar.
+
+Un disparador acepta exactamente **una** condición, así que los test compuestos usan los
+combinadores booleanos ``(and ...)`` y ``(or ...)``::
+
+    trigger computer1 (and (difficulty >= hard) (timer 30)) (add_units c2 1 town_center)
+
+Eso es «desde el nivel difícil en adelante **y** después de 30 marcas de tiempo». Como
+``story`` no es un nivel propio, para conceder algo en todos los niveles *excepto* el
+story hay que escribir la disyunción explícitamente:
+``(or (difficulty moderate) (difficulty >= hard))``.
+
+``remove_unit`` — borra las unidades o edificios que estén en una casilla::
+
+    trigger computer1 (difficulty story) (remove_unit c2 scouttower)
+    trigger computer1 (difficulty >= moderate) (remove_unit c3 militia 3)
+
+Sintaxis: ``(remove_unit <casilla> <tipo> [cantidad])``
+
+- El tipo se corresponde por la cadena ``is_a``, así que ``man_at_arms`` se borra con
+  ``militia``.
+- Los objetos se borran de verdad: salen de la lista de su dueño y devuelven su
+  población, y los caminos de la casilla vuelven a quedar libres.
+- Sin ``cantidad`` se borra un solo objeto coincidente; con cantidad se borran esa
+  cantidad (en el orden fijo de objetos de la casilla — el borrado es determinista, así
+  que todos los clientes reconstruyen el mismo mundo).
+- ``remove_ground_item`` borra *objetos* del suelo; ``remove_unit`` borra *unidades y
+  edificios*.
+
+Ejemplos reales: ``mods/aoe2/single/El Cid/4.txt`` (un Castillo y Agujeros para Disparar
+en el nivel story), ``mods/aoe2/single/Joan of Arc/1.txt`` (sin Torres de Guardia en el
+nivel story), ``mods/aoe2/single/William Wallace/4.txt`` (la Milicia se convierte en
+Hombres con Armas desde el nivel medio en adelante).
+
 Alianza de campaña y transferencia de unidades (desde 1.4.3.1)
 .....................................................
 
@@ -936,6 +996,94 @@ Agregar unidades
 To add 10 dragons at A1::
 
     trigger computer1 (timer 0) (add_units a1 10 dragon)
+
+Cámara, resaltados, revelar niebla y tributo disparables
+........................................................
+
+Cuatro nuevas acciones de disparo dan al script de una campaña el control
+sobre lo que el jugador *ve* y sobre el flujo de recursos entre aliados.
+Son primitivas del motor: funcionan en cualquier mod, no sólo en la campaña
+de AoE2.
+
+Cámara
+""""""
+
+``(camera <cuadrado>)`` mueve la vista del jugador a un cuadrado y lo
+selecciona, de modo que el jugador pueda actuar de inmediato sobre lo que la
+historia está mencionando::
+
+    trigger player1 (timer 0) (camera e2)
+
+El cuadrado puede escribirse como ``e2``, como ``3,5`` (columna,fila
+basadas en 1) o con uno de los alias ``square_name`` del mapa. El
+movimiento de cámara es un efecto **sólo del cliente**: el servidor
+únicamente envía el identificador del cuadrado, así que nunca desincroniza
+la partida.
+
+Destello (resaltado visual)
+""""""""""""""""""""""""""""
+
+``(flash <cuadrado> [r,g,b])`` dibuja un anillo temporal en expansión sobre
+un cuadrado, para llamar la atención del jugador hacia un lugar. El color
+es opcional y por omisión es un amarillo cálido ``255,220,90``::
+
+    trigger player1 (has_entered b4 npc_joan) (flash b4 255,90,60)
+
+Como ``camera``, esto es puramente visual y sólo del cliente.
+
+Revelar la niebla de guerra
+"""""""""""""""""""""""""""
+
+``(reveal_map)`` levanta la niebla de guerra sobre el mapa entero, y
+``(reveal_area <cuadrado> [radio])`` la levanta sobre una vecindad de
+*radio* cuadrados (por omisión 1, es decir el cuadrado mismo; omita el
+cuadrado para revelarlo todo)::
+
+    trigger player1 (timer 0) (reveal_area c5 2)
+    trigger player1 (timer 0) (reveal_map)
+
+El terreno revelado pasa a ser terreno *explorado*: el jugador ve el suelo
+pero las unidades ya no se actualizan allí. Esto coincide con la semántica
+del modo tramposo "mostrar el mapa entero" y no cambia las condiciones de
+victoria o derrota.
+
+Tributo
+"""""""
+
+``(tribute <recurso> <cantidad> <destino>)`` mueve recursos del dueño del
+disparo hacia el *destino*. El destino es una referencia de jugador como
+``player1`` o ``computer2``. El nombre del recurso es el nombre interno del
+motor (``resource1`` … ``resourceN``) o uno de los nombres que el mod declara
+en ``parameters resource_names`` (``gold``, ``wood``, ``food``, ``stone`` en
+el mod de AoE2)::
+
+    trigger player1 (timer 0) (tribute gold 200 computer1)
+
+Dos formas adicionales hacen explícita la dirección, lo cual importa
+cuando el dueño del disparo *no* es quien paga::
+
+    trigger player1 (timer 0) (tribute from computer1 gold 200 player1)
+    trigger player1 (timer 0) (tribute to computer1 gold 200 player1)
+
+* ``from <pagador> <recurso> <cantidad> <receptor>`` — paga el jugador
+  indicado.
+* ``to <pagador> <recurso> <cantidad> <receptor>`` — igual que la forma
+  simple, escrita de forma explícita.
+
+Una cantidad negativa toma recursos *del* destino en vez de dárselos. No se
+transfiere nada si el pagador no tiene suficiente: la cantidad se recorta a
+la que realmente hay.
+
+Las palabras clave desconocidas de los disparos ahora avisan
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Una acción de disparo cuya palabra clave el motor no conoce solía
+descartarse en silencio, así que un error de escritura como
+``(campaign_defeat)`` parecía funcionar pero no hacía nada. Ahora el motor
+registra una advertencia que nombra la palabra clave desconocida (una vez
+por palabra clave y por dueño del disparo, así que un disparo repetitivo no
+inunda el registro). Si ve una advertencia así, revise la ortografía de la
+acción.
 
 #elección_aleatoria, #elección_final y #elección_aleatoria
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""

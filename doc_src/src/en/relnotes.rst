@@ -4,6 +4,78 @@ Release notes
 
 .. contents::
 
+1.5.2.3
+-------
+
+**Added: scenario content that branches on the difficulty**
+
+- **Added**: the engine can now branch the *content* of a scenario on the difficulty the player picked, exactly like the AoE2 Definitive Edition original. The new trigger condition is ``(difficulty <level>)``: ``(difficulty standard)`` is true only on the standard tier, ``(difficulty >= hard)`` is true from the hard tier upwards (and therefore also on the extreme tier), and ``(difficulty != easy)`` is true on everything but the easy tier. A trigger takes exactly **one** condition, so compound tests use the boolean combinators ``(and ...)`` and ``(or ...)`` -- for example ``(and (difficulty >= hard) (timer 30))`` is "from the hard tier upwards **and** after 30 timer ticks".
+- **Added**: the ``story`` **semantic tier**. ``(difficulty story)`` is true on **easy and standard** -- the two tiers that get the DE "standard tier bonus". The easy tier is the equivalent of the DE's Story mode and is even more generous than standard, so both tiers receive the bonus. ``story`` has no ordering, so ``(difficulty >= story)`` is always false; only equality and inequality work with it. The exact comparison ``(difficulty standard)`` keeps its old meaning: it matches the standard tier only.
+- **The five tiers**: the difficulty keys of the single-player campaign are ``easy``, ``standard``, ``moderate``, ``hard`` and ``extreme``, in that order (``easy < standard < moderate < hard < extreme``). That is what a map script writes, for example ``(difficulty standard)``, ``(difficulty moderate)``, ``(difficulty >= hard)`` or ``(difficulty extreme)``.
+- **Added**: the trigger action ``(remove_unit <square> <type> [count])``. It deletes units or buildings of that type standing on that square, using the same ``is_a`` matching as the rest of the engine (so ``man_at_arms`` is deleted by ``militia``), and it really deletes them: the object is removed from its owner's roster and its population is given back, which also unblocks paths deterministically. Until now the engine could only remove *items* from the ground (``remove_ground_item``), so "on Standard there are no Guard Towers in the Burgundian town" could not be expressed at all.
+- **Scope**: ``soundrts/worldplayerbase/triggers.py``, ``soundrts/coop_difficulty.py``.
+
+**Improved: the single-player campaign difficulty is back to five tiers**
+
+- **Changed**: the single-player campaign offers **five** difficulty tiers again -- easy, standard, moderate, hard and extreme -- and the extreme tier is kept. The DE campaigns only have three difficulties, but that must not cost the player the two extra tiers.
+- **Changed**: the DE "standard tier bonus" is expressed with the new ``story`` semantic tier, which covers **easy + standard**, so the bonus is not silently lost now that easy is selectable again.
+- **Scope**: ``soundrts/coop_difficulty.py``, ``soundrts/campaign.py``.
+
+**Added: the AoE2 campaigns' difficulty differences, chapter by chapter**
+
+All three AoE2 campaigns -- **19 chapters** in total -- now follow the AoE2 Definitive Edition original's documented "Differences between difficulty levels". The differences are implemented with the new trigger conditions and the new ``remove_unit`` action; where the DE's effect has no direct counterpart in a local chapter, the mapping is documented in the map file itself.
+
+- **El Cid** (``mods/aoe2/single/El Cid/``), 6 chapters: chapter 1 *Brother against Brother* (the player begins with Murder Holes on the story tier), chapter 2 *The Enemy of my Enemy* (no difference), chapter 3 *The Exile of the Cid* (the player is given a Trebuchet for the GATA camp on the story tier), chapter 4 *Black Guards* (King Alfonso's base has a Castle and the player begins with Murder Holes on the story tier), chapter 5 *King of Valencia* (no difference), chapter 6 *Reconquista* (the starting fleet differs per tier: 3 war galleys / 3 fast fire ships / 2 siege rams / 4 pikemen on the story tier, 3 war galleys / 3 fire ships / 2 capped rams / 4 pikemen on moderate, 2 war galleys / 2 fire ships / 2 battering rams on hard and extreme).
+- **Joan of Arc** (``mods/aoe2/single/Joan of Arc/``), 6 chapters: chapter 1 *An Unlikely Messiah* (no Guard Towers in the English outposts on the story tier), chapter 2 *The Maid of Orleans* (Murder Holes from the hard tier upwards), chapter 3 *The Cleansing of the Loire* (no Scorpion on the story tier, one Capped Ram on moderate, one Capped Ram plus one Battering Ram on hard and extreme), chapter 4 *The Rising* (no difference), chapter 5 *The Siege of Paris* (no Onager or Trebuchet in the central fortress and no Onager in the ambush on the story tier; a Keep, a Bombard Tower and two Monks on hard and extreme), chapter 6 *A Perfect Martyr* (the player gets 2 trebuchets and 6 bombard cannons, halved to 1 trebuchet and 3 bombard cannons on hard and extreme; the English siege ring gets 3 bombard cannons and a Guard Tower on hard and extreme; the English build a second Town Center after 15 minutes on hard and extreme, expressed as ``(and (difficulty >= hard) (timer 30))``).
+- **William Wallace** (``mods/aoe2/single/William Wallace/``), 7 chapters: chapter 4 *Research and Technology* (above Standard the English militia that attack are replaced with Men-at-Arms); the other six chapters have no documented difference and are unchanged.
+- **Scope**: ``mods/aoe2/single/El Cid/``, ``mods/aoe2/single/Joan of Arc/``, ``mods/aoe2/single/William Wallace/``.
+
+**Fixed: a trigger-granted tech now really reaches the units the player owns**
+
+- **Fixed**: ``(add_units <tech>)`` used to only append the tech name to ``player.upgrades``; the buildings and units the player already owned kept their unmodified stats. The tech is now actually applied to the existing units -- Murder Holes really removes the minimum range of the watchtowers and castles the player inherits, instead of merely being "recorded".
+- **Scope**: ``soundrts/worldplayerbase/triggers.py``.
+
+**Fixed: the AoE2 campaign scripts had silent failures and stale text**
+
+The Joan of Arc and William Wallace campaigns were audited against the AoE2 Definitive Edition original chapter by chapter. Several defects were found that made the chapters behave differently from the original — or not behave at all — and they are all fixed now.
+
+- **Fixed**: in *William Wallace* chapter 7 (the castle chapter) a ``(victory)`` was fired the moment the player finished building a castle, which ended the chapter long before its second objective could be reached. The victory now comes from the objective manager, like in every other chapter.
+- **Fixed**: in *Joan of Arc* chapter 4 the loss condition used ``(campaign_defeat)``, which is **not** an action the engine knows. The trigger looked like it worked but did nothing at all, so the chapter could not be lost. It is now ``(defeat)``, so losing the Dauphin really ends the chapter.
+- **Fixed**: in *Joan of Arc* chapter 2 the trade-cart deadline was written ``(timer 600)``, but that timer is multiplied by the map's ``timer_coefficient 40`` — the deadline was therefore 24 000 game seconds (400 minutes), i.e. dead code. It is now ``(timer 15)``, which is exactly the intended 600 seconds.
+- **Fixed**: *Joan of Arc* chapter 1 had a single objective for what the original splits into two distinct tasks: reaching Robert's garrison at Vaucouleurs, and then delivering the holy letter to the Dauphin at Chinon. The chapter now registers both, as objective 1 (text id ``8820``) and objective 2 (text id ``8821``).
+- **Fixed**: *Joan of Arc* chapter 2's introduction text still described the chapter's *old* design (militia and watch towers) instead of what the chapter actually is now — leading the convoy to Blois, ferrying it across the Loire to Orleans and raising your own town to the Castle Age. The text (id ``8811``) was rewritten in **all 13 languages** of the campaign. The chapter's population cap was also set to the Castle Age limit of 125 with ``global_population_limit 125``.
+- **Fixed**: *Joan of Arc* chapter 4's second objective used the text of a different chapter's "defeat the ambush" objective, and the cut scene played when the relic was delivered was the *Orleans* castle cut scene. Both are now dedicated entries: objective 2 uses id ``8904`` ("escort the Dauphin to the Reims cathedral") and the cut scene uses id ``8905`` ("the consecration of the Reims altar"), written in **all 13 languages**.
+- **Fixed**: in the *William Wallace* chapters 1, 4, 5, 6 and 7 the English were trigger-only computers: they had a starting force but **no AI at all**, so they stood still and never attacked. They now get a real AI (``(ai intermediate)``) and — in the chapters where they need one — a town center, houses, a farm, a barracks, an archery range and starting resources, so the English can actually build and assault.
+- **Fixed**: *William Wallace* chapter 6 had no trade economy: the player had no market, no mill and no trade cart, and the Scottish ally's payment for the relics was never scripted. The chapter now provides the market, the mill and the trade cart, and the ally pays the player a tribute when each relic is delivered.
+- **Scope**: ``mods/aoe2/single/Joan of Arc/``, ``mods/aoe2/single/William Wallace/``.
+
+**Added: unknown trigger keywords now warn instead of failing silently**
+
+- **Added**: a trigger action whose keyword the engine does not know used to be dropped without a word. A misspelled action such as ``(campaign_defeat)`` therefore looked like it worked while doing nothing. The engine now logs a warning naming the unknown keyword. The warning is emitted once per keyword and trigger owner, so a trigger that fires every second does not flood the log.
+- **Scope**: ``soundrts/worldplayerbase/triggers.py``.
+
+**Added: scriptable camera, highlights, fog reveal and tribute**
+
+Four new trigger actions give a campaign script control over what the player *sees* and over the flow of resources between allies. They are engine primitives and work in any mod, not only in the AoE2 campaigns.
+
+- **Added**: ``(camera <square>)`` moves the player's view to a square and selects it. It is a purely client-side effect — the server only sends the square id — so it can never desynchronise the game.
+- **Added**: ``(flash <square> [r,g,b])`` draws a temporary expanding ring on a square, to pull the player's attention to a place. The colour is optional and defaults to a warm yellow ``255,220,90``.
+- **Added**: ``(reveal_map)`` lifts the fog of war over the whole map, and ``(reveal_area <square> [radius])`` lifts it over a neighbourhood of *radius* squares (default 1, i.e. the square itself; omit the square to reveal everything). Revealed terrain becomes *explored* terrain, exactly like the cheat-mode "show whole map"; it does not change the win/lose conditions.
+- **Added**: ``(tribute <resource> <amount> <target>)`` moves resources from the trigger's owner to the *target*. The resource is named either by its engine-internal name (``resource1`` … ``resourceN``) or by one of the names the mod declares in ``parameters resource_names`` (``gold``, ``wood``, ``food``, ``stone`` in AoE2). Two extra forms make the direction explicit when the trigger's owner is *not* the payer: ``(tribute from <payer> <resource> <amount> <receiver>)`` and ``(tribute to <payer> <resource> <amount> <receiver>)``. Nothing is transferred when the payer does not have enough — the amount is clamped to what is actually there.
+- **Scope**: ``soundrts/worldplayerbase/triggers.py``, ``soundrts/clientgame/game_resources.py``, ``soundrts/clientgame/game_visual_fx.py``, ``soundrts/clientgamegridview.py``.
+
+**Documentation**
+
+- The map-making documentation now describes the ``(difficulty ...)`` trigger condition and the ``(remove_unit ...)`` trigger action, in all five documented languages: ``doc_src/src/zh/mod/mapmaking.rst``, ``doc_src/src/en/mod/mapmaking.rst``, ``doc_src/src/es/mod/mapmaking.rst``, ``doc_src/src/it/mod/mapmaking.rst``, ``doc_src/src/pt-BR/mod/mapmaking.rst``.
+- The map-making documentation now also describes the new ``(camera ...)``, ``(flash ...)``, ``(reveal_map ...)``, ``(reveal_area ...)`` and ``(tribute ...)`` trigger actions, and the warning the engine now logs for an unknown trigger keyword, in the same five languages.
+
+**Verification**
+
+- ``soundrts/tests/test_campaign_difficulty_tiers.py`` -- the new test loads all **19 chapters** on all five difficulty levels and asserts chapter by chapter that the story tier really gets the standard-tier bonus, that the harder tiers really get the extra enemies, and that the chapters the DE lists as "no difference" do not branch at all.
+- ``soundrts/tests/test_difficulty_trigger.py`` -- updated for the five tiers and the ``story`` semantic tier, plus new tests for the ``(remove_unit ...)`` action (type matching through the ``is_a`` chain, the count argument, the square name, and the deterministic deletion order).
+- ``soundrts/tests/test_changelog_1523.py`` -- the audit test: it checks that all five languages' release notes name every topic of this release, and that the engine really behaves as described.
+- ``soundrts/tests/test_campaign_script_primitives_and_fixes.py`` -- the new test for this batch of fixes: it exercises the ``(camera ...)``, ``(flash ...)``, ``(reveal_map ...)``, ``(reveal_area ...)`` and ``(tribute ...)`` actions (including the ``from`` form and the clamping at zero), asserts that an unknown trigger keyword is warned about and warned about only once, checks the eight fixed map defects chapter by chapter, verifies the Wallace tribute really reaches the player's purse, checks the new Joan text ids in **all 13 languages**, and builds all 6 Joan and all 7 Wallace chapters.
+
 1.5.2.2
 -------
 

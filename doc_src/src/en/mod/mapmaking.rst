@@ -774,6 +774,65 @@ ch. 15 deliver ``knight_lance`` to neutral ``npc_knight``; ch. 16 deliver ``wand
 ``npc_mage`` (``ally``/``neutral``/``enemy`` relations). See ``res/single/The Legend of Raynor/14.txt``,
 ``15.txt``, ``16.txt``. Multiplayer demo: ``res/multi/give_demo.txt``.
 
+Difficulty-conditional content (since 1.5.2.3)
+..............................................
+
+A campaign chapter can branch its *content* on the difficulty the player picked,
+exactly like the AoE2 Definitive Edition original. The single-player campaign has
+**five** difficulty tiers: ``easy``, ``standard``, ``moderate``, ``hard`` and
+``extreme``.
+
+``difficulty`` — trigger condition on the current difficulty tier::
+
+    trigger player1 (difficulty standard) (add_units a1 trebuchet)
+    trigger computer1 (difficulty >= hard) (add_units c2 1 keep)
+    trigger player1 (difficulty != easy) (cut_scene 8850)
+
+Syntax: ``(difficulty <level>)`` for an exact match, ``(difficulty <op> <level>)``
+for a comparison, with the operators ``==`` ``=`` ``!=`` ``<=`` ``>=`` ``<`` ``>``.
+The levels are ordered ``easy < standard < moderate < hard < extreme``.
+
+The ``story`` **semantic tier**::
+
+    trigger player1 (difficulty story) (add_units murder_holes)
+
+``(difficulty story)`` is true on **easy and standard** — the two tiers that get
+the DE "standard tier bonus" (the easy tier is the equivalent of the DE's Story
+mode and is even more generous than standard). ``story`` has no ordering, so
+``(difficulty >= story)`` is always false; only equality and inequality work
+with it. ``(difficulty standard)`` keeps its exact meaning: standard only.
+
+A trigger accepts exactly **one** condition, so compound tests use the boolean
+combinators ``(and ...)`` and ``(or ...)``::
+
+    trigger computer1 (and (difficulty >= hard) (timer 30)) (add_units c2 1 town_center)
+
+That is "from the hard tier upwards **and** after 30 timer ticks". The story tier
+is not a level of its own, so to grant something on everything *except* the story
+tier, write the disjunction explicitly: ``(or (difficulty moderate) (difficulty >= hard))``.
+
+``remove_unit`` — delete units or buildings standing on a square::
+
+    trigger computer1 (difficulty story) (remove_unit c2 scouttower)
+    trigger computer1 (difficulty >= moderate) (remove_unit c3 militia 3)
+
+Syntax: ``(remove_unit <square> <type_name> [count])``
+
+- The type is matched through the ``is_a`` chain, so ``man_at_arms`` is deleted
+  by ``militia``.
+- The objects are really deleted: they leave their owner's roster and give their
+  population back, and the square's paths are unblocked again.
+- Without ``count`` exactly one matching object is deleted; with a count, that
+  many are deleted (in the square's fixed object order — the deletion is
+  deterministic, so every client rebuilds the same world).
+- ``remove_ground_item`` deletes *items* on the ground; ``remove_unit`` deletes
+  units and buildings.
+
+Live examples: ``mods/aoe2/single/El Cid/4.txt`` (a Castle and Murder Holes on
+the story tier), ``mods/aoe2/single/Joan of Arc/1.txt`` (no Guard Towers on the
+story tier), ``mods/aoe2/single/William Wallace/4.txt`` (Militia become
+Men-at-Arms from the moderate tier upwards).
+
 Campaign alliance and unit transfer (since 1.4.3.1)
 .....................................................
 
@@ -1039,6 +1098,91 @@ Add units
 To add 10 dragons at A1::
 
     trigger computer1 (timer 0) (add_units a1 10 dragon)
+
+
+Scriptable camera, highlights, fog reveal and tribute
+.....................................................
+
+Four new trigger actions give a campaign script control over what the
+player *sees* and over the flow of resources between allies. They are
+engine primitives: they work in any mod, not only in the AoE2 campaign.
+
+Camera
+""""""
+
+``(camera <square>)`` moves the player's view to a square and selects it,
+so the player can immediately act on what the story is talking about::
+
+    trigger player1 (timer 0) (camera e2)
+
+The square can be written as ``e2``, as ``3,5`` (1-based column,row) or
+with one of the map's ``square_name`` aliases. The camera move is a
+purely **client-side** effect: the server only sends the square id, so
+it never desynchronises the game.
+
+Flash (visual highlight)
+""""""""""""""""""""""""
+
+``(flash <square> [r,g,b])`` draws a temporary expanding ring on a
+square, to pull the player's attention to a place. The colour is
+optional and defaults to a warm yellow ``255,220,90``::
+
+    trigger player1 (has_entered b4 npc_joan) (flash b4 255,90,60)
+
+Like ``camera``, this is purely visual and client-side.
+
+Fog of war reveal
+"""""""""""""""""
+
+``(reveal_map)`` lifts the fog of war over the whole map, and
+``(reveal_area <square> [radius])`` lifts it over a neighbourhood of
+*radius* squares (default 1, i.e. the square itself; omit the square to
+reveal everything)::
+
+    trigger player1 (timer 0) (reveal_area c5 2)
+    trigger player1 (timer 0) (reveal_map)
+
+Revealed terrain becomes *explored* terrain: the player sees the ground
+but units are not refreshed there any more. This matches the semantics
+of the cheat-mode "show whole map" and does not change the win/lose
+conditions.
+
+Tribute
+"""""""
+
+``(tribute <resource> <amount> <target>)`` moves resources from the
+trigger's owner to *target*. The target is a player reference such as
+``player1`` or ``computer2``. The resource name is either the engine
+internal name (``resource1`` … ``resourceN``) or one of the names the
+mod declares in ``parameters resource_names`` (``gold``, ``wood``,
+``food``, ``stone`` in the AoE2 mod)::
+
+    trigger player1 (timer 0) (tribute gold 200 computer1)
+
+Two extra forms make the direction explicit, which matters when the
+trigger's owner is *not* the payer::
+
+    trigger player1 (timer 0) (tribute from computer1 gold 200 player1)
+    trigger player1 (timer 0) (tribute to computer1 gold 200 player1)
+
+* ``from <payer> <resource> <amount> <receiver>`` — the named player
+  pays.
+* ``to <payer> <resource> <amount> <receiver>`` — same as the plain
+  form, written out.
+
+A negative amount takes resources *from* the target instead of giving
+them. Nothing is transferred if the payer does not have enough: the
+amount is clamped to what is actually there.
+
+Unknown trigger keywords now warn
+"""""""""""""""""""""""""""""""""
+
+A trigger action whose keyword the engine does not know used to be
+silently dropped, so a typo like ``(campaign_defeat)`` looked like it
+worked but did nothing at all. The engine now logs a warning naming the
+unknown keyword (once per keyword and trigger owner, so a repeating
+trigger does not spam the log). If you see such a warning in the log,
+check the spelling of the action.
 
 
 #random_choice,  #end_choice and #end_random_choice

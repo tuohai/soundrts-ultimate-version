@@ -852,6 +852,56 @@ give — 触发器 order 中的脚本化交付::
 见 ``res/single/The Legend of Raynor/14.txt``、``15.txt``、``16.txt``。
 联机通用演示仍见 ``res/multi/give_demo.txt``。
 
+按难度分支的关卡内容（自 1.5.2.3 起）
+..............................................
+
+战役章节可以像帝国时代 2 决定版原版那样，让**关卡内容**随玩家选择的难度而变化。
+单人战役共有**五档**难度：``easy``（简单）、``standard``（标准）、``moderate``（中等）、
+``hard``（困难）、``extreme``（极难）。
+
+``difficulty`` — 触发器条件：当前难度档位::
+
+    trigger player1 (difficulty standard) (add_units a1 trebuchet)
+    trigger computer1 (difficulty >= hard) (add_units c2 1 keep)
+    trigger player1 (difficulty != easy) (cut_scene 8850)
+
+用法：``(difficulty <档位>)`` 是精确匹配，``(difficulty <运算符> <档位>)`` 是比较，
+运算符有 ``==`` ``=`` ``!=`` ``<=`` ``>=`` ``<`` ``>``。档位次序为
+``easy < standard < moderate < hard < extreme``。
+
+``story`` **语义档**::
+
+    trigger player1 (difficulty story) (add_units murder_holes)
+
+``(difficulty story)`` 在**简单与标准**两档成立 —— 也就是拿到决定版「标准档礼物」的
+两档（简单档相当于决定版的 Story mode，比标准档更宽松）。``story`` 没有高低之分，
+因此 ``(difficulty >= story)`` 永远为假；它只支持等值与不等值比较。
+``(difficulty standard)`` 保持精确语义：只匹配标准档。
+
+一个触发器只接受**一个**条件，所以复合判断要用布尔组合 ``(and ...)`` 与 ``(or ...)``::
+
+    trigger computer1 (and (difficulty >= hard) (timer 30)) (add_units c2 1 town_center)
+
+也就是「困难档起 **并且** 过了 30 个计时刻」。``story`` 不是独立档位，因此要表达
+「除 story 档之外都发放」时，请显式写出析取：``(or (difficulty moderate) (difficulty >= hard))``。
+
+``remove_unit`` — 触发器动作：删除某方格上的指定类型单位/建筑::
+
+    trigger computer1 (difficulty story) (remove_unit c2 scouttower)
+    trigger computer1 (difficulty >= moderate) (remove_unit c3 militia 3)
+
+用法：``(remove_unit <方格> <类型名> [数量])``
+
+- 类型按 ``is_a`` 链匹配，因此 ``man_at_arms`` 会被 ``militia`` 匹配到。
+- 这些对象是**真的被删除**：它们离开主人的名册并归还人口，该格子的通路也随之恢复通畅。
+- 不写数量时只删除 1 个匹配对象；写了数量则删除这么多个（按该格子固定的对象顺序删除 ——
+  删除顺序是确定性的，因此三端重建出的世界完全一致）。
+- ``remove_ground_item`` 删除地上的**物品**；``remove_unit`` 删除**单位与建筑**。
+
+实例：``mods/aoe2/single/El Cid/4.txt``（story 档给城堡与近射孔）、
+``mods/aoe2/single/Joan of Arc/1.txt``（story 档没有守卫塔）、
+``mods/aoe2/single/William Wallace/4.txt``（中等档起民兵换成 Men-at-Arms）。
+
 战役结盟与部队归属（自 1.4.3.1 起）
 ........................................
 
@@ -1065,6 +1115,78 @@ computer_only 的默认 AI 是一个仅靠触发器、什么都不做的 AI。�
 要在 A1 添加 10 条巨龙::
 
     trigger computer1 (timer 0) (add_units a1 10 dragon)
+
+
+可脚本化的镜头、高亮、揭雾与贡金
+................................
+
+新增四个触发器动作，让战役脚本控制玩家**看到**什么，以及盟友之间的资源流动。
+它们是引擎原语：任何 mod 都能用，不限于帝国时代 2 战役。
+
+镜头
+""""""
+
+``(camera <方格>)`` 把玩家的视角移到某个方格并选中它，玩家可以立刻对剧情
+正在谈论的位置采取行动::
+
+    trigger player1 (timer 0) (camera e2)
+
+方格可以写成 ``e2``、``3,5``（1 基的列、行），也可以用地图里
+``square_name`` 起的别名。镜头移动是**纯客户端**效果：服务器只发送方格
+编号，所以绝不会造成不同步。
+
+闪烁（视觉高亮）
+""""""""""""""""""""""
+
+``(flash <方格> [r,g,b])`` 在某个方格上画一个短暂的扩散圆环，用来把玩家的
+注意力拉到某个位置。颜色可省略，默认为暖黄 ``255,220,90``::
+
+    trigger player1 (has_entered b4 npc_joan) (flash b4 255,90,60)
+
+和 ``camera`` 一样，这纯粹是视觉效果，由客户端处理。
+
+揭开战争迷雾
+""""""""""""""
+
+``(reveal_map)`` 揭开整张地图的战争迷雾；``(reveal_area <方格> [半径])``
+揭开以某方格为中心、半径为*半径*个方格的邻域（默认 1，即只有该方格本身；
+省略方格则揭开整张地图）::
+
+    trigger player1 (timer 0) (reveal_area c5 2)
+    trigger player1 (timer 0) (reveal_map)
+
+被揭开的区域变成**已探索**区域：玩家能看到地形，但单位不再在那里实时刷新。
+这与作弊模式"显示全图"的语义一致，也不会改变胜负判定。
+
+贡金
+""""""
+
+``(tribute <资源> <数量> <目标>)`` 把资源从触发器所属玩家转给*目标*。
+目标是 ``player1`` / ``computer2`` 这样的玩家引用。资源名可以是引擎内部名
+（``resource1``…``resourceN``），也可以是 mod 在 ``parameters resource_names``
+里声明的名字（帝国时代 2 mod 里是 ``gold``、``wood``、``food``、``stone``）::
+
+    trigger player1 (timer 0) (tribute gold 200 computer1)
+
+另外两种写法可以明确指定方向 —— 当触发器所属玩家**不是**付出方时很有用::
+
+    trigger player1 (timer 0) (tribute from computer1 gold 200 player1)
+    trigger player1 (timer 0) (tribute to computer1 gold 200 player1)
+
+* ``from <付出方> <资源> <数量> <收取方>`` —— 由指定玩家付出。
+* ``to <付出方> <资源> <数量> <收取方>`` —— 与普通写法等价，只是写全。
+
+数量为负数时，方向相反：从目标那里收取资源。付出方资源不足时不会发生
+转移 —— 数量会被限制为实际拥有的量。
+
+未知触发器关键字现在会告警
+"""""""""""""""""""""""""""""
+
+以前，引擎不认识的触发器动作关键字会被**静默丢弃**，所以像
+``(campaign_defeat)`` 这样的拼写错误看起来"生效了"，实际上什么也没做。
+现在引擎会记录一条告警，指明未知的关键字（每个触发器所属玩家、
+每个关键字只记一次，所以重复触发的触发器不会刷屏）。如果你在日志里看到
+这类告警，请检查动作的拼写。
 
 
 #random_choice、#end_choice 和 #end_random_choice
