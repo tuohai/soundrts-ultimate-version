@@ -680,6 +680,40 @@ class GridView:
         # 坐标 / 地名（格够大才画，避免糊成一团）
         self._draw_square_labels(squares_to_view, player.world)
 
+        # 剧情高亮标记（(flash <方格>) 触发器动作）
+        self._draw_script_markers()
+
+    def _draw_script_markers(self):
+        """Draw the scripted square highlights requested by ``(flash ...)``."""
+        markers = getattr(self.fx, "markers", None)
+        if not markers:
+            return
+        screen = get_screen()
+        if screen is None:
+            return
+        now = time.time()
+        keep = []
+        for m in markers:
+            if m["until"] <= now:
+                continue
+            keep.append(m)
+            place = m["place"]
+            try:
+                x, y = self._xy_coords(place.x, place.y)
+            except Exception:
+                continue
+            half_w = self.square_view_width / 2
+            half_h = self.square_view_height / 2
+            color = m["color"]
+            span = max(4.0, min(half_w, half_h))
+            # Expanding ring: radius grows then fades over the marker life.
+            life = max(0.0, min(1.0, (m["until"] - now) / max(m["duration"], 1e-6)))
+            radius = int(span * (1.0 - life) * 1.6) + 3
+            pygame.draw.circle(screen, color, (x, y), radius, 2)
+            pygame.draw.line(screen, color, (x - radius, y), (x + radius, y), 1)
+            pygame.draw.line(screen, color, (x, y - radius), (x, y + radius), 1)
+        self.fx.markers = keep
+
     def _draw_fog_fringes(self, squares_to_view, player):
         """Soft edge between live vision and fog-of-war memory."""
         screen = get_screen()

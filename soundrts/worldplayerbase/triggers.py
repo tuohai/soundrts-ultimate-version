@@ -198,9 +198,35 @@ class TriggersMixin:
     def my_eval(self, l):
         if not l or not isinstance(l, (list, tuple)):
             return False
-        if hasattr(self, "lang_" + l[0]):
-            return getattr(self, "lang_" + l[0])(l[1:])
-        return False
+        keyword = str(l[0])
+        handler = getattr(self, "lang_" + keyword, None)
+        if handler is None:
+            # An unknown trigger keyword used to be silently ignored: the
+            # action was consumed and dropped, so a typo (e.g.
+            # ``(campaign_defeat)``) looked like it worked but did
+            # nothing at all.  Warn loudly instead -- once per keyword
+            # per trigger owner, so a repeated trigger does not spam
+            # the log.
+            self._warn_unknown_trigger_keyword(keyword, l)
+            return False
+        return handler(l[1:])
+
+    def _warn_unknown_trigger_keyword(self, keyword, expression):
+        """Log an unknown trigger keyword once per (owner, keyword)."""
+        try:
+            seen = self.__dict__.setdefault("_unknown_trigger_keywords", set())
+        except Exception:
+            seen = None
+        if seen is not None:
+            if keyword in seen:
+                return
+            seen.add(keyword)
+        warning(
+            "unknown trigger keyword %r -- the action was ignored "
+            "(full expression: %s)",
+            keyword,
+            " ".join(str(x) for x in expression),
+        )
 
     def lang_timer(self, args):
         # float(args[0]) is probably not a problem for synchro since the result
@@ -3354,6 +3380,282 @@ class TriggersMixin:
 
     def lang_ai(self, args):
         self.set_ai(args[0])
+
+    # ------------------------------------------------------------------
+    # Scriptable camera / reveal / tribute primitives
+    #
+    # These three groups fill gaps that the AoE2 campaign maps kept
+    # hitting:
+    #   * ``camera``  -- the campaign could not move the player's view
+    #     to the place the story is talking about.
+    #   * ``flash``   -- the campaign could not draw the player's
+    #     attention to a specific square.
+    #   * ``reveal_*``-- the campaign could not lift the fog of war in
+    #     a scripted area (AoE2 DE reveals the map as the story moves
+    #     north).
+    #   * ``tribute`` -- the campaign could not move resources between
+    #     allies (AoE2 DE "market" / "tribute" mechanics).
+    # ------------------------------------------------------------------
+
+    def lang_camera(self, args):
+        """触发器动作：把镜头对准某个方格。
+
+        用法：``(camera <方格>)``
+
+        方格可以是 ``a1`` / ``3,5`` / 地图里 ``square_name`` 起的别名。
+        镜头移动是**纯客户端**效果（服务器只发一个坐标），因此不影响
+        对局同步。
+        """
+        if not args:
+            return
+        square = self._resolve_trigger_square(args[0])
+        if square is None:
+            warning("camera: unknown square %s", args[0])
+            return
+        square_id = getattr(square, "id", None)
+        if square_id is None:
+            return
+        self.push("camera", square_id)
+
+    def lang_flash(self, args):
+        """触发器动作：在某个方格上闪烁一个高亮标记。
+
+        用法：``(flash <方格> [颜色])``
+
+        颜色可省略（默认黄色）或写成 ``r,g,b``（0-255）。这是纯视觉
+        效果，用来把玩家注意力拉到剧情正在发生的位置。
+        """
+        if not args:
+            return
+        square = self._resolve_trigger_square(args[0])
+        if square is None:
+            warning("flash: unknown square %s", args[0])
+            return
+        square_id = getattr(square, "id", None)
+        if square_id is None:
+            return
+        color = "255,220,90"
+        if len(args) > 1:
+            color = ",".join(str(a) for a in args[1:])
+        self.push("flash", square_id, color)
+
+    def lang_reveal_map(self, args):
+        """触发器动作：揭开整张地图（永久视野）。
+
+        用法：``(reveal_map)``
+
+        揭开后的方格进入 ``observed_before_squares``（迷雾记忆），地形
+        可见但单位不再实时刷新 —— 与作弊模式的"全图可见"语义一致，
+        但不改变玩家的胜负判定。
+        """
+        self._reveal_squares(self._all_world_squares())
+
+    def lang_reveal_area(self, args):
+        """触发器动作：揭开某片区域的迷雾。
+
+        用法：``(reveal_area <方格> [半径])``
+
+        半径以方格为单位（默认 1，即方格本身；省略方格则整张地图）。
+        """
+        if not args:
+            self._reveal_squares(self._all_world_squares())
+            return
+        square = self._resolve_trigger_square(args[0])
+        if square is None:
+            warning("reveal_area: unknown square %s", args[0])
+            return
+        radius = 1
+        if len(args) > 1:
+            try:
+                radius = int(float(str(args[1])))
+            except (TypeError, ValueError):
+                radius = 1
+        squares = self._squares_within(square, radius)
+        self._reveal_squares(squares)
+
+    def lang_tribute(self, args):
+        """触发器动作：把资源贡给盟友（或从盟友处收取）。
+
+        用法::
+
+            (tribute <资源> <数量> <目标>)
+            (tribute <资源> <数量>)          ; 付给第一个盟友
+            (tribute from <玩家> <资源> <数量> <玩家>)
+            (tribute to <玩家> <资源> <数量> <玩家>)
+
+        ``目标`` 可以是 ``player1`` / ``computer2`` 等玩家引用。资源名
+        用引擎内部名（``resource1``…``resourceN``）或 mod 里的名字
+        （``food`` / ``wood`` / ``gold`` / ``stone``）。
+
+        默认方向是"付出"：触发器所属玩家付给目标。``from`` / ``to``
+        形式可以明确指定两个方向端点 —— 例如
+        ``(tribute from computer1 gold 200 player1)`` 表示让
+        computer1 付 200 金币给 player1（而不是反过来）。
+        """
+        if len(args) < 2:
+            return
+        direction = None
+        if str(args[0]).strip().lower() in ("from", "to"):
+            direction = str(args[0]).strip().lower()
+            args = list(args[1:])
+            if len(args) < 3:
+                return
+            source_ref = str(args[0])
+            resource = args[1]
+            try:
+                amount = to_int(str(args[2]))
+            except (TypeError, ValueError):
+                warning("tribute: invalid amount %s", args[2])
+                return
+            target_ref = str(args[3]) if len(args) > 3 else None
+            payer = self._resolve_map_player_ref(source_ref)
+            if payer is None:
+                warning("tribute: unknown player %s", source_ref)
+                return
+            receiver = (
+                self._resolve_map_player_ref(target_ref)
+                if target_ref
+                else self._first_allied_player()
+            )
+            if receiver is None or receiver is payer:
+                return
+            index = self._resolve_trigger_resource_index(resource)
+            if index is None:
+                warning("tribute: unknown resource %s", resource)
+                return
+            give = min(amount, payer.resources[index])
+            if give <= 0:
+                return
+            payer.resources[index] -= give
+            receiver.resources[index] += give
+            return
+
+        resource = args[0]
+        try:
+            amount = to_int(str(args[1]))
+        except (TypeError, ValueError):
+            warning("tribute: invalid amount %s", args[1])
+            return
+        index = self._resolve_trigger_resource_index(resource)
+        if index is None:
+            warning("tribute: unknown resource %s", resource)
+            return
+        if len(args) > 2:
+            target = self._resolve_map_player_ref(args[2])
+            if target is None:
+                warning("tribute: unknown player %s", args[2])
+                return
+        else:
+            target = self._first_allied_player()
+        if target is None or target is self:
+            return
+        if amount >= 0:
+            give = min(amount, self.resources[index])
+            if give <= 0:
+                return
+            self.resources[index] -= give
+            target.resources[index] += give
+        else:
+            # 负数：从盟友那里收取
+            take = min(-amount, target.resources[index])
+            if take <= 0:
+                return
+            target.resources[index] -= take
+            self.resources[index] += take
+
+    def _resolve_trigger_resource_index(self, token):
+        """把触发器里的资源记号解析成资源槽位索引。
+
+        接受 ``resource1``…``resourceN``（引擎内部名）以及 mod 在
+        ``parameters resource_names`` 里声明的别名（``gold`` /
+        ``wood`` / ``food`` / ``stone``）。
+        """
+        text = str(token).strip().lower()
+        if not text:
+            return None
+        index = rules.parse_resource_type(text)
+        if index is not None:
+            return index
+        try:
+            from ..worldmarket import resource_name_index
+
+            index = resource_name_index(text)
+        except Exception:
+            index = None
+        if index is not None:
+            return index
+        try:
+            pairs = rules.resource_name_pairs()
+        except Exception:
+            pairs = ()
+        for slot, alias in pairs or ():
+            if alias == text:
+                return slot
+        return None
+
+    def _first_allied_player(self):
+        for p in getattr(self, "allied", None) or ():
+            if p is not self:
+                return p
+        return None
+
+    def _resolve_trigger_square(self, token):
+        """把触发器里的方格记号解析成 world 里的方格对象。"""
+        key = self._normalize_square_token(token)
+        if key is None:
+            return None
+        grid = getattr(self.world, "grid", None)
+        if not grid:
+            return None
+        square = grid.get(key)
+        if square is not None:
+            return square
+        # ``_normalize_square_token`` 对 "x,y" 走的是 1 基 → 0 基转换，
+        # 这里再兜底一次直接查表（有些地图用 0 基坐标）。
+        try:
+            return grid.get((int(str(token).split(",")[0]), int(str(token).split(",")[1])))
+        except Exception:
+            return None
+
+    def _all_world_squares(self):
+        squares = getattr(self.world, "squares", None)
+        if squares:
+            return list(squares)
+        grid = getattr(self.world, "grid", None) or {}
+        return list(grid.values())
+
+    def _squares_within(self, square, radius):
+        """返回以 *square* 为中心、半径 *radius*（方格数）的方格列表。"""
+        if radius <= 0:
+            return [square]
+        col = getattr(square, "col", None)
+        row = getattr(square, "row", None)
+        if col is None or row is None:
+            return [square]
+        grid = getattr(self.world, "grid", None) or {}
+        out = []
+        for dc in range(-radius, radius + 1):
+            for dr in range(-radius, radius + 1):
+                sq = grid.get((col + dc, row + dr))
+                if sq is not None:
+                    out.append(sq)
+        return out
+
+    def _reveal_squares(self, squares):
+        """把方格永久加入本玩家的视野记忆（并通知盟友共享视野）。"""
+        if not squares:
+            return
+        for p in [self] + list(getattr(self, "allied_vision", None) or ()):
+            try:
+                p.observed_before_squares.update(squares)
+                p.strictly_observed_before_squares.update(squares)
+            except Exception:
+                continue
+        # 迷雾缓存必须作废，否则下一次感知刷新会把新揭开的格子丢掉。
+        try:
+            self._clear_allied_vision_cache()
+        except Exception:
+            pass
 
     def lang_faction(self, args):
         if args and args[0] in rules.factions:

@@ -215,6 +215,8 @@ GameInterface.direction_to_msg = game_resources.direction_to_msg
 GameInterface.launch_alert = game_resources.launch_alert
 GameInterface.srv_alert = game_resources.srv_alert
 GameInterface.srv_flare = game_resources.srv_flare
+GameInterface.srv_camera = game_resources.srv_camera
+GameInterface.srv_flash = game_resources.srv_flash
 GameInterface.send_msg_if_playing = game_resources.send_msg_if_playing
 GameInterface._execute_command = game_resources._execute_command
 

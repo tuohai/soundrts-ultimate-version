@@ -65,6 +65,7 @@ class VisualFxState:
         self.attack_beams: List[dict] = []  # lingering attack lines
         self.projectiles: List[dict] = []  # flying shots
         self.slashes: List[dict] = []  # melee arcs
+        self.markers: List[dict] = []  # scripted square highlights
         self.select_pulse_t0 = time.time()
 
     def clear(self):
@@ -75,6 +76,27 @@ class VisualFxState:
         self.attack_beams.clear()
         self.projectiles.clear()
         self.slashes.clear()
+        self.markers.clear()
+
+    def note_flash(self, place, color=(255, 220, 90), duration=1.6):
+        """Highlight a square (scripted ``(flash <square>)`` trigger action).
+
+        *place* is a world square; the marker is anchored to the square so
+        it follows the camera.
+        """
+        if place is None:
+            return
+        self.markers.append(
+            {
+                "place": place,
+                "color": tuple(color) if color else (255, 220, 90),
+                "until": time.time() + duration,
+                "duration": duration,
+            }
+        )
+        # Keep the list short if a script spams flashes.
+        if len(self.markers) > 32:
+            del self.markers[:-32]
 
     def note_hurt(self, oid, duration=0.28):
         self.hurt_until[oid] = time.time() + duration

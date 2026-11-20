@@ -702,6 +702,70 @@ def srv_flare(interface, square_id, sender_number=None, *unused):
         voice.info(msg)
 
 
+def srv_camera(interface, square_id, *unused):
+    """Server-driven camera move: centre the view on a square.
+
+    Trigger action ``(camera <square>)`` sends the square id; the client
+    pans its free camera there and selects the square so the player can
+    immediately act on it.
+    """
+    place = _interface_square(interface, square_id)
+    if place is None:
+        return
+    try:
+        from .game_navigation import move_to_square
+
+        move_to_square(interface, place)
+    except Exception:
+        return
+    grid_view = getattr(interface, "grid_view", None)
+    if grid_view is not None:
+        try:
+            grid_view._cam_force_center = True
+            grid_view._cam_origin = None
+        except Exception:
+            pass
+
+
+def srv_flash(interface, square_id, color="255,220,90", *unused):
+    """Server-driven highlight marker on a square."""
+    place = _interface_square(interface, square_id)
+    if place is None:
+        return
+    rgb = _parse_rgb(color)
+    grid_view = getattr(interface, "grid_view", None)
+    if grid_view is None:
+        return
+    try:
+        grid_view.fx.note_flash(place, rgb)
+    except Exception:
+        pass
+
+
+def _interface_square(interface, square_id):
+    player = getattr(interface, "player", None)
+    if player is None:
+        return None
+    try:
+        return player.get_object_by_id(square_id)
+    except Exception:
+        return None
+
+
+def _parse_rgb(color):
+    if isinstance(color, (list, tuple)):
+        parts = list(color)
+    else:
+        parts = str(color).split(",")
+    try:
+        vals = [max(0, min(255, int(float(p)))) for p in parts[:3]]
+    except (TypeError, ValueError):
+        vals = [255, 220, 90]
+    while len(vals) < 3:
+        vals.append(0)
+    return tuple(vals)
+
+
 # 导出的函数供其他模块使用
 __all__ = [
     'resources', 'available_population', 'used_population',
@@ -711,7 +775,8 @@ __all__ = [
     'cmd_toggle_side_filter', 'cmd_toggle_type_filter', 'cmd_gamemenu',
     'cmd_toggle_cheatmode', 'cmd_cmd', 'cmd_console', 'cmd_reload_parameters',
     'cmd_change_player', 'cmd_objectives', 'cmd_help', 'direction_to_msg',
-    'launch_alert', 'srv_alert', 'srv_flare', 'send_msg_if_playing',
+    'launch_alert', 'srv_alert', 'srv_flare', 'srv_camera', 'srv_flash',
+    'send_msg_if_playing',
     'gm_quit', 'gm_slow_speed', 'gm_normal_speed', 'gm_fast_speed',
     'gm_very_fast_speed', 'gm_save', '_execute_command'
 ]
