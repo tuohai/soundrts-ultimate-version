@@ -370,6 +370,10 @@ class EntityViewEvents:
     def on_order_ok(self):
         if self.player is not self.interface.player:
             return
+        # 第一人称RPG模式：方向键连续移动会不断重复发送强制go命令，
+        # 在这里屏蔽音效，避免走路时持续蜂鸣。
+        if getattr(self.interface, "immersion", False):
+            return
         self.launch_event_style("order_ok", alert=True)
 
     def on_rallying_point(self):

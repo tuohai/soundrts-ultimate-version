@@ -60,9 +60,8 @@ class GoOrder(BasicOrder):
         # 直接点满格（或格上单位/草地等）：立刻打断并提示空间不足
         if not via_exit and self._reject_if_not_enough_square_space(self.target):
             return
-        # 在RPG模式下（强制性命令）不播放order_ok音效
-        if not self.is_imperative:
-            self.unit.notify("order_ok")
+        # 强制命令（Ctrl+退格）同样播放order_ok音效，与其他指令类型保持一致
+        self.unit.notify("order_ok")
 
     def _try_attach_herd_on_arrival(self):
         if not getattr(self.target, "herdable", 0):
