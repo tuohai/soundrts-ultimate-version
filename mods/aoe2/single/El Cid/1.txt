@@ -91,8 +91,11 @@ player 100 100 100 100 g2 1 npc_cid
 
 ; King Sancho's tournament champion. In the DE scenario this is a
 ; separate player whose only job is to send a Two-Handed Swordsman at
-; El Cid during the tournament.
-computer_only 0 0 0 0 faction spanish g1 2 two_handed_swordsman
+; El Cid during the tournament.  The DE original has exactly ONE such
+; champion (a single duel); the trial is won by killing it, so the
+; spawn count must stay in sync with the (has_killed 1 ...) trigger
+; below -- otherwise a surplus champion is left standing in the arena.
+computer_only 0 0 0 0 faction spanish g1 1 two_handed_swordsman
 
 ; King Sancho himself, with his castle and a token guard.
 computer_only 0 0 0 0 neutral faction spanish g4 1 npc_sancho 4 militia aoe_castle
@@ -106,6 +109,13 @@ computer_only 0 0 0 0 neutral faction spanish d2 4 peasant farm
 
 ; Babieca's stable: the player has to bring El Cid here to mount the
 ; horse, which is what turns him into El Cid Campeador.
+;
+; NOTE: there is no separate "Babieca" unit in this game.  Babieca is
+; El Cid's horse, and the horse is part of the mounted hero unit
+; itself: ``npc_cid_mounted`` (style title 9281, "El Cid Campeador")
+; IS "El Cid on Babieca".  So the unit standing in the stable reads
+; "El Cid Campeador", not "Babieca" -- and "mounting Babieca" is
+; scripted as taking over that unit (see the e4 trigger below).
 computer_only 0 0 0 0 neutral faction spanish e4 1 npc_cid_mounted
 
 ; The monastery in the far west, holding a relic.
@@ -133,6 +143,26 @@ trigger computer4 (timer 0) (alliance 1)   ; the serfs at d2
 trigger computer5 (timer 0) (alliance 1)   ; Babieca's stable
 trigger computer6 (timer 0) (alliance 1)   ; the Gaia monastery in the west
 
+; ---------------------------------------------------------------------------
+; STANDARD-TIER BONUS (AoE2 DE "Brother against Brother").
+;
+; DE original, "Differences between difficulty levels":
+;     "On standard, the player starts with Murder Holes researched."
+;
+; The ``story`` semantic tier covers "easy" and "standard" (easy is the
+; equivalent of the DE's Story mode, which is even more generous than
+; Standard).  On Moderate / Hard / Extreme the player must research
+; Murder Holes at a monastery like everybody else.
+;
+; Murder Holes removes the minimum range of towers and castles.  The
+; player fights Alfonso's castle at b5, which has an ``aoe_castle``, so
+; the tech matters from the first shot.
+;
+; The tech is granted via a trigger, so the engine applies it to the
+; units the player ALREADY owns -- see
+; soundrts/worldplayerbase/triggers.py::_grant_upgrade_by_trigger.
+trigger player1 (difficulty story) (add_units murder_holes)
+
 ; Objective 1: win the trial by combat. The champion's Two-Handed
 ; Swordsman has to die -- that is the tournament win.
 trigger player1 (timer 0) (register_objective 1 2 3 4)
@@ -147,21 +177,43 @@ trigger player1 (timer 0) (add_objective 4 9183)
 ; hero and only receives troops once the tournament is won.
 trigger player1 (has_killed 1 two_handed_swordsman) (do (objective_complete 1) (cut_scene 9250) (add_units g2 4 peasant 6 long_swordsman 4 aoe_knight 2 aoe_archer))
 
-; Mounting Babieca: the mounted hero waits at the stable (e4).
-; When El Cid reaches it, the mounted hero is handed over to the
-; player (the on-foot hero is removed at the same time, see the
-; ``key_unit_killed``/unit handling below) -- that is how the DE
-; campaign swaps the two.
-trigger player1 (has_entered e4 npc_cid) (do (objective_complete 2) (cut_scene 9251) (transfer_units computer5 player1 e4 1 npc_cid_mounted))
+; Mounting Babieca: the MOUNTED hero (npc_cid_mounted, "El Cid
+; Campeador" -- El Cid already sitting on Babieca) waits at the stable
+; (e4).  When the on-foot Cid reaches it, that mounted unit is handed
+; over to the player and the on-foot copy is deleted -- that is how the
+; DE campaign swaps the two.
+;
+; The deletion is deliberate and MUST stay: ``key_unit_killed npc_cid``
+; is a defeat condition, so the on-foot hero has to be removed from the
+; world rather than left standing around next to the mounted one.
+; ``remove_ground_item`` deletes the unit (unblock + move to None +
+; drop from its player) WITHOUT registering a combat death, so the
+; defeat trigger never fires.
+trigger player1 (has_entered e4 npc_cid) (do (objective_complete 2) (cut_scene 9251) (transfer_units computer5 player1 e4 1 npc_cid_mounted) (remove_ground_item e4 npc_cid))
 
 ; Alfonso's castle: destroying it makes his army neutral and then
 ; allied. The king himself is handed to the player, who must carry
 ; him east to King Sancho.
 trigger player1 (enemy_building_destroyed b5 aoe_castle) (do (objective_complete 3) (cut_scene 9252) (transfer_units computer3 player1 b5 1 npc_alfonso) (alliance 1 computer3))
 
-; Objective 4: bring the captured king to King Sancho's tournament
-; ground (g2).
-trigger player1 (has_entered g2 npc_alfonso) (do (objective_complete 4) (victory))
+; Objective 4: bring the captured king to King Sancho.
+;
+; The DE scenario has TWO places that count as "King Sancho's position",
+; and the two sources disagree on which one the objective refers to:
+;   * the scenario instructions say "King Sancho's tournament grounds"
+;     -- the arena at g2 where the mission started, and
+;   * the Allies section says "King Sancho's Castle close to the
+;     tournament square" -- the castle at g4, which is where
+;     npc_sancho actually stands.
+;
+; g2 and g4 are adjacent squares, so accepting BOTH is the only way to
+; satisfy either reading.  With only g2 the objective could not be
+; completed when the player walked the king to Sancho's castle, and
+; with only g4 it could not be completed at the arena.
+;
+; ``has_entered`` accepts several squares: the condition holds when
+; the named unit stands on ANY of them.
+trigger player1 (has_entered g2 g4 npc_alfonso) (do (objective_complete 4) (victory))
 
 ; Defeat conditions. El Cid is a key unit in every scenario of the
 ; campaign -- if he dies the chapter is lost.

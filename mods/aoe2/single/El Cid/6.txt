@@ -153,7 +153,29 @@ player 600 500 500 400 h4 town_center monastery barracks archery_range blacksmit
 computer_only 0 0 0 0 neutral faction spanish g4 npc_castillo_valencia
 
 ; ---------------------------------------------------------------------------
-; THE BLACK GUARD ARMY -- Berenguer's Frankish army in the north.
+; THE STARTING FLEET -- DE ORIGINAL, "Starting conditions":
+;
+;     Starting units:
+;         On hard difficulty:    2 War Galleys, 2 Fire Ships, 2 Battering Rams
+;         On moderate difficulty: 3 War Galleys, 3 Fire Ships, 2 Capped Rams, 4 Pikemen
+;         On standard difficulty: 3 War Galleys, 3 Fast Fire Ships, 2 Siege Rams, 4 Pikemen
+;
+; This engine has FIVE tiers, so the DE tiers are mapped as:
+;
+;     easy / standard  ->  the DE "standard" fleet (the ``story`` tier)
+;     moderate         ->  the DE "moderate" fleet (the baseline)
+;     hard / extreme   ->  the DE "hard" fleet
+;
+; The fleet is therefore NOT part of the static ``player`` line: it is
+; handed out by three difficulty triggers below.  ``easy`` gets the
+; standard fleet like ``standard`` does, because easy is the equivalent
+; of the DE's Story mode, which is even more generous than Standard.
+;
+; Placement: the ships go on the water square h1 (the Mediterranean
+; right in front of Valencia, at h4), the land units on h2 next to it.
+; The player has no shipyard of his own, so the fleet is his only way
+; to fight the Black Guard Navy.
+; ---------------------------------------------------------------------------
 ;
 ; Two bases so that the northern attack comes from two directions
 ; (the DE scenario's northern army is the biggest of the three).
@@ -221,6 +243,32 @@ trigger computer5 (timer 0) (ai intermediate)
 trigger computer6 (timer 0) (ai intermediate)
 trigger computer7 (timer 0) (ai intermediate)
 trigger computer8 (timer 0) (ai intermediate)
+
+; ---------------------------------------------------------------------------
+; THE STARTING FLEET, BY DIFFICULTY (see the comment above the
+; ``player`` line for the DE original's three fleets).
+;
+; ``story`` = easy + standard -> the DE "standard" fleet:
+;     3 War Galleys, 3 Fast Fire Ships, 2 Siege Rams, 4 Pikemen
+; ``moderate`` -> the DE "moderate" fleet:
+;     3 War Galleys, 3 Fire Ships, 2 Capped Rams, 4 Pikemen
+; ``hard`` / ``extreme`` -> the DE "hard" fleet:
+;     2 War Galleys, 2 Fire Ships, 2 Battering Rams
+;
+; The three triggers are mutually exclusive, so exactly one fleet is
+; given.  On Hard the DE gives no Pikemen at all, and on Moderate the
+; Fast Fire Ships become ordinary Fire Ships -- hence the fleet has to
+; be handed out per difficulty instead of being a static ``player``
+; line.
+; ---------------------------------------------------------------------------
+trigger player1 (difficulty story) (add_units h1 3 war_galley 3 fast_fire_ship)
+trigger player1 (difficulty story) (add_units h2 2 siege_ram 4 pikeman)
+trigger player1 (difficulty moderate) (add_units h1 3 war_galley 3 fire_ship)
+trigger player1 (difficulty moderate) (add_units h2 2 capped_ram 4 pikeman)
+trigger player1 (difficulty hard) (add_units h1 2 war_galley 2 fire_ship)
+trigger player1 (difficulty hard) (add_units h2 2 battering_ram)
+trigger player1 (difficulty extreme) (add_units h1 2 war_galley 2 fire_ship)
+trigger player1 (difficulty extreme) (add_units h2 2 battering_ram)
 
 ; ---------------------------------------------------------------------------
 ; OBJECTIVES

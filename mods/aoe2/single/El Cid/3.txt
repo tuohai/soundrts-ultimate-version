@@ -89,17 +89,64 @@ west_east_paths a6 b6 c6 d6 e6 f6 g6 h6 i6
 west_east_paths a7 b7 c7 d7 e7 f7 g7 h7 i7
 south_north_paths a1 a2 a3 a4 a5 a6 a7 b1 b2 b3 b4 b5 b6 b7 c1 c2 c3 c4 c5 c6 c7 d1 d2 d3 d4 d5 d6 d7 e1 e2 e3 e4 e5 e6 e7 f1 f2 f3 f4 f5 f6 f7 g1 g2 g3 g4 g5 g6 g7 h1 h2 h3 h4 h5 h6 h7 i1 i2 i3 i4 i5 i6 i7
 
+; Resources.
+;
+; DE original: there are gold mines outside the south-eastern gate of
+; Zaragoza and a single quarry between Alfonso's castle and Zaragoza.
+; The player fights the whole chapter in the EAST (the GATA camp at f2,
+; Zaragoza at h6, Berenguer's workshop at h4 and his fortress at i2), so
+; the a1 deposits are only the starting stock -- the a1 deposits are
+; ~7 squares away from the front, which made every villager walk half
+; the map twice per trip.  These eastern deposits give the player a
+; working economy where the fighting happens.
 goldmines 300 a1
 woods 400 a1 b1
 orchard 200 a1
 stone_mines 200 a1
+goldmines 400 g5 h5
+stone_mines 300 g4
+woods 300 g6
+orchard 200 g5
 nb_meadows_by_square 2
+
+; The GATA camp needs SIX building slots: a Town Center, a Siege
+; Workshop and four Houses.  ``nb_meadows_by_square 2`` gives every
+; square two, and ``additional_meadows`` adds more on top -- without
+; the extra ones the later buildings would have no free building site
+; and would be stacked on the square centre.
+additional_meadows f2 f2 f2 f2 h5 h5
 
 ; El Cid starts ALONE -- that is the whole point of the exile. He has
 ; no army, no villagers and no buildings until he wins the Allies.
-player 200 200 200 200 a1 1 npc_cid
+;
+; Starting resources (600 wood / 500 gold / 400 food / 400 stone):
+; a Town Center costs 275 wood + 100 stone, so the player CAN build one
+; immediately -- which is the whole point: without a Town Center the
+; villagers cannot deposit anything (only ``town_center`` stores all
+; four resource types; ``workshop`` and ``aoe_castle`` store NOTHING),
+; no ``mining_camp`` / ``lumbermill`` / ``mill`` / ``barracks`` can be
+; raised (they all have ``requirements town_center``), and the ages
+; cannot be advanced (only the Town Center can ``can_advance``).
+;
+; Age chain: ``dark_age`` / ``feudal_age`` / ``castle_age`` must ALL be
+; listed, even though the chapter starts in the castle age:
+;   * ``Player.has()`` looks the name up in ``player.upgrades``, so
+;     ``requirements castle_age`` (workshop, battering_ram, mangonel)
+;     is satisfied directly;
+;   * ``castle_age`` itself requires ``feudal_age``, which is checked
+;     by literal name, so ``feudal_age`` must be listed too.
+; The DE original's chapter 3 is a Castle Age scenario -- El Cid is
+; exiled with a Moorish army and besieges castles.
+player 600 500 400 400 a1 1 npc_cid dark_age feudal_age castle_age
 
-; Babieca waits at the stable just east of the gate.
+; The MOUNTED El Cid waits at the stable just east of the gate.
+;
+; NOTE: there is no separate "Babieca" unit in this game.  Babieca is
+; El Cid's horse, and the horse is part of the mounted hero unit
+; itself: ``npc_cid_mounted`` (style title 9281, "El Cid Campeador")
+; IS "El Cid on Babieca".  So the unit standing in the stable reads
+; "El Cid Campeador", not "Babieca" -- and "mounting Babieca" is
+; scripted as taking over that unit (see the c1 trigger below).
 computer_only 0 0 0 0 neutral faction saracens c1 1 npc_cid_mounted
 
 ; The windmill garrison that changes sides and joins El Cid.
@@ -117,9 +164,34 @@ computer_only 0 0 0 0 non_neutral faction saracens a5 3 scouttower 2 pikeman
 ; Alfonso's Castle, blocking the road to Zaragoza.
 computer_only 0 0 0 0 non_neutral faction saracens f4 aoe_castle 2 scouttower 4 pikeman 2 aoe_knight
 
-; The GATA camp in the south-east: a Gaia base with a Siege Workshop,
-; so the player can build rams to take Alfonso's castle.
-computer_only 0 0 0 0 neutral faction saracens f2 4 peasant workshop
+; The GATA camp in the south-east: a Gaia base that hands the player a
+; working economy AND the siege train the chapter needs.
+;
+; DE original: the Gaia camp in the south-east of the map provides a Siege
+; Workshop, villagers, food/wood/gold AND a Trebuchet, so that the player
+; can take Alfonso's Castle (f4).  Without those the optional objective is
+; impossible, because the player starts alone with no villagers at all.
+;
+; The Town Center is the keystone: it is the only building whose
+; ``storable_resource_types`` covers all four resources, so it is the only
+; place where peasants can deposit gold/stone/wood/food.  Every other
+; economy building (``mining_camp`` / ``lumbermill`` / ``mill`` / ``barracks``
+; / ``house``) has ``requirements town_center``, so without a Town Center
+; the player cannot build anything and cannot mine at all.
+;
+; NOTE: ``f2`` only has TWO building slots after ``nb_meadows_by_square 2``
+; plus the one ``additional_meadows f2`` -- and the Workshop already takes
+; one.  The Town Center therefore needs the second one, and any further
+; building the player raises needs another square.  ``additional_meadows
+; f2 f2 h5 h5`` gives the camp a spare slot each.
+;
+; THE TREBUCHET IS NOT IN THIS LINE: in the DE original it is granted to
+; the player on the standard tier only ("Gaia units: 1 Trebuchet *
+; Standard difficulty only", and the strategy section: "On standard
+; difficulty, the player is also provided with a Trebuchet to take down
+; the Castle").  It is handed over by a difficulty trigger below -- see
+; the ``(difficulty story)`` trigger.
+computer_only 0 0 0 0 neutral faction saracens f2 4 peasant town_center 1 workshop 2 mangonel 1 battering_ram 4 house
 
 ; Motamid of the Moors holds Zaragoza (h6) and joins the player.
 computer_only 0 0 0 0 neutral faction saracens h6 aoe_castle 2 npc_motamid
@@ -145,12 +217,38 @@ trigger computer9 (timer 0) (alliance 1)   ; Zaragoza / Motamid
 trigger computer10 (timer 0) (alliance 2)  ; Berenguer
 trigger computer11 (timer 0) (alliance 2)  ; Berenguer's siege workshop
 
+; ---------------------------------------------------------------------------
+; STANDARD-TIER BONUS (AoE2 DE "The Exile of the Cid").
+;
+; DE original, "Starting conditions":
+;     Gaia units:
+;         1 Trebuchet *
+;         2 Knights
+;         4 Camel Riders
+;         6 Pikemen
+;     * Standard difficulty only
+;
+; and the strategy section: "On standard difficulty, the player is also
+; provided with a Trebuchet to take down the Castle."
+;
+; The Trebuchet is therefore NOT part of the GATA camp's ``computer_only``
+; line any more -- it is handed to the player by a difficulty trigger.
+; The ``story`` semantic tier covers "easy" and "standard" (easy is the
+; equivalent of the DE's Story mode, which is even more generous).
+;
+; The Trebuchet is placed on the GATA camp square (f2), next to the Siege
+; Workshop the camp also hands over, so it is where the player picks it
+; up.  On Moderate / Hard / Extreme the player has to build his own --
+; the camp's Workshop makes that possible.
+trigger player1 (difficulty story) (add_units f2 trebuchet)
+
 ; Objectives
-;   1 = Mount Babieca and take the four Camel Riders
-;   2 = Destroy Alfonso's Castle (SECONDARY in the DE original)
-;   3 = Join Motamid in Zaragoza
-;   4 = Destroy Berenguer's Siege Workshop
-;   5 = Defeat Count Berenguer
+;   1 = Mount Babieca (take over the mounted El Cid at the stable)
+;      AND take the four Camel Riders
+;   2 = Join Motamid in Zaragoza
+;   3 = Destroy Berenguer's Siege Workshop
+;   4 = Defeat Count Berenguer
+;   1 (optional) = Destroy Alfonso's Castle
 ;
 ; Numbering rule of this engine: ``register_objective`` lists the
 ; PRIMARY objectives that must all be completed for the mission to
@@ -163,34 +261,116 @@ trigger computer11 (timer 0) (alliance 2)  ; Berenguer's siege workshop
 ; ``_completed_objective_numbers``, which is what ``_try_mission_victory``
 ; checks.
 ;
-; So: primary objectives are 1, 3, 4, 5 (1 = mount up, 3 = Zaragoza,
-; 4 = the siege workshop, 5 = Berenguer).  The optional one is 2.
-trigger player1 (timer 0) (register_objective 1 3 4 5)
+; So: primary objectives are 1, 2, 3, 4 (1 = mount up, 2 = Zaragoza,
+; 3 = the siege workshop, 4 = Berenguer).  The optional one is the
+; only optional objective of the chapter, so it is "optional
+; objective 1".
+;
+; The two numbering spaces are INDEPENDENT and both start at 1 (see
+; doc_src/src/*/mod/mapproduction): primary objectives run 1..N, and
+; optional objectives run 1..M in their own space.  An optional
+; objective therefore never takes up a primary number -- numbering
+; the optional one 5 (as this chapter used to) both skipped the
+; primary number 2 and made the list read "optional objective 5",
+; while the primary list jumped from "objective 1" to "objective 3".
+;
+; The TTS ids are independent of the objective numbers: 9187 = mount
+; up, 9189 = Zaragoza, 9190 = the siege workshop, 9191 = Berenguer,
+; 9188 = Alfonso's Castle (the optional one).
+trigger player1 (timer 0) (register_objective 1 2 3 4)
 trigger player1 (timer 0) (add_objective 1 9187)
-trigger player1 (timer 0) (add_secondary_objective 2 9188)
-trigger player1 (timer 0) (add_objective 3 9189)
-trigger player1 (timer 0) (add_objective 4 9190)
-trigger player1 (timer 0) (add_objective 5 9191)
+trigger player1 (timer 0) (add_objective 2 9189)
+trigger player1 (timer 0) (add_objective 3 9190)
+trigger player1 (timer 0) (add_objective 4 9191)
+trigger player1 (timer 0) (add_secondary_objective 1 9188)
 
-; Objective 1: El Cid reaches Babieca's stable and mounts up.
-trigger player1 (has_entered c1 npc_cid) (do (objective_complete 1) (cut_scene 9254))
+; Objective 1 has TWO halves: El Cid must MOUNT Babieca at the stable
+; (c1) AND take the four Camel Riders (d2).  The objective text
+; (tts 9187, "Mount Babieca and take the camel riders") promises both,
+; so it may only be completed once BOTH are done.  Each of the two
+; triggers below therefore checks whether the other half is already
+; fulfilled -- whichever of the two the player does LAST completes
+; objective 1.
+;
+; Mounting Babieca: the MOUNTED hero (npc_cid_mounted, "El Cid
+; Campeador" -- El Cid already sitting on Babieca) waits at the stable
+; (c1).  When the on-foot Cid reaches it, that mounted unit is handed
+; over to the player and the on-foot copy is deleted -- that is how the
+; DE campaign swaps the two.  Deleting (rather than killing) the on-foot
+; hero is deliberate: ``key_unit_killed npc_cid`` is a defeat
+; condition, and Alfonso's watchtowers shoot at everything standing
+; near the gate, so a leftover second El Cid would eventually lose the
+; chapter.
+;
+; NOTE: every ``has_entered`` trigger below must accept BOTH
+; ``npc_cid`` and ``npc_cid_mounted``.  ``has_entered`` matches a unit
+; by exact type name or by its ``is_a`` chain, and ``npc_cid_mounted``
+; is ``is_a knight`` -- so a trigger naming only ``npc_cid`` would
+; never fire again once the hero is mounted.
+trigger player1 (has_entered c1 npc_cid) (do (cut_scene 9254) (transfer_units computer1 player1 c1 1 npc_cid_mounted) (remove_ground_item c1 npc_cid) (if (has 4 camel_rider) (do (objective_complete 1))))
 
-; The four Camel Riders join the player when El Cid reaches them.
-trigger player1 (has_entered d2 npc_cid) (do (transfer_units computer3 player1) (cut_scene 9255))
+; The four Camel Riders join the player when El Cid reaches them; if
+; he is already mounted, this completes objective 1.
+trigger player1 (has_entered d2 npc_cid npc_cid_mounted) (do (transfer_units computer3 player1) (cut_scene 9255) (if (has 1 npc_cid_mounted) (do (objective_complete 1))))
 
-; Objective 2 (SECONDARY, as in the DE original): Alfonso's Castle
-; falls.  It is optional -- the road to Zaragoza is opened by the
-; GATA camp's siege workshop, so the player may go around it.
-trigger player1 (enemy_building_destroyed f4 aoe_castle) (do (secondary_objective_complete 2) (cut_scene 9256) (alliance 1 computer7))
+; The windmill garrison (c6): 2 knights and 6 pikemen who change sides.
+;
+; DE original: the garrison of the windmill that El Cid passes on his
+; way north defects to him as soon as he reaches it.  This chapter used
+; to leave them in the windmill forever -- the player never got them,
+; so the whole northern half of the map was fought with nothing but
+; the four camel riders and the two knights at the stable.
+;
+; ``transfer_units`` changes ownership of the existing units (it does
+; NOT spawn copies), so the windmill is emptied exactly once.
+trigger player1 (has_entered c6 npc_cid npc_cid_mounted) (do (transfer_units computer2 player1))
 
-; Objective 3: Motamid in Zaragoza -- the player joins him.
-trigger player1 (has_entered h6 npc_cid) (do (objective_complete 3) (cut_scene 9257))
+; Optional objective 1 (SECONDARY, as in the DE original): Alfonso's
+; Castle falls.  It is optional -- the road to Zaragoza is opened by
+; the GATA camp's siege workshop, so the player may go around it.
+trigger player1 (enemy_building_destroyed f4 aoe_castle) (do (secondary_objective_complete 1) (cut_scene 9256) (alliance 1 computer7))
 
-; Objective 4: Berenguer's Siege Workshop is destroyed, which is what
+; The GATA camp (f2): the player takes the Gaia base -- the Town Center,
+; the Siege Workshop, the villagers and the siege train -- plus the
+; resources it carries.
+;
+; This is where the player gets an economy.  Before this the player is
+; alone with a horse and four camel riders, so the optional objective
+; (Alfonso's Castle: 4800 HP + 2 watchtowers + 4 pikemen + 2 knights)
+; is simply not winnable.
+trigger player1 (has_entered f2 npc_cid npc_cid_mounted) (do (transfer_units computer8 player1) (grant_resources 500 resource1 800 resource2 500 resource3 300 resource4))
+
+; Objective 2: Motamid in Zaragoza -- the player joins him.
+;
+; ``npc_cid_mounted`` has to be listed next to ``npc_cid``: by the time
+; the player gets here the hero is already mounted, and a trigger
+; naming only ``npc_cid`` would never fire.
+;
+; Motamid's castle (h6) joins the player as well: in the DE original
+; Zaragoza is the base the player builds his army in.  ``aoe_castle``
+; is not a warehouse (``storable_resource_types`` is empty), so it
+; gives no economy -- the Town Center from the GATA camp does that.
+trigger player1 (has_entered h6 npc_cid npc_cid_mounted) (do (objective_complete 2) (cut_scene 9257) (transfer_units computer9 player1))
+
+; Objective 3: Berenguer's Siege Workshop is destroyed, which is what
 ; opens the road to his fortress.
-trigger player1 (enemy_building_destroyed h4 workshop) (do (objective_complete 4) (add_units h5 4 peasant 2 aoe_knight 2 camel_rider))
+;
+; The reward is the DE original's reward: the troops AND the buildings
+; that were inside Zaragoza's walls -- a Town Center, peasants, knights
+; and Berenguer's own camel riders, who now defect to the Cid.  These
+; are NOT the four Camel Riders of objective 1 (those wait in the
+; south-west valley at d2); handing out a second batch of camel riders
+; here is what used to make objective 1 look like it had been given
+; already.
+;
+; The Town Center matters: it is the only building that can store all
+; four resource types, and every economy building requires one, so
+; without it the peasants handed over here cannot mine, cannot build
+; and cannot deposit anything.  It goes to h5, the square the workshop
+; was defending.
+trigger player1 (enemy_building_destroyed h4 workshop) (do (objective_complete 3) (add_units h5 1 town_center 6 peasant 4 aoe_knight 2 camel_rider 1 mangonel 1 battering_ram) (grant_resources 500 resource1 500 resource2 400 resource3 300 resource4))
 
-; Objective 5: Count Berenguer himself falls.
+; Objective 4: Count Berenguer himself falls.
 ;
 ; NOTE: this must NOT be ``(no_enemy_player_left)``.  That condition only
 ; counts players that take part in the match (human players and invited
@@ -200,7 +380,7 @@ trigger player1 (enemy_building_destroyed h4 workshop) (do (objective_complete 4
 ; chapter would end instantly.  ``(enemy_building_destroyed i2
 ; aoe_castle)`` is the honest condition: Berenguer's fortress is his
 ; seat, and it falls when he does.
-trigger player1 (enemy_building_destroyed i2 aoe_castle) (do (objective_complete 5) (victory))
+trigger player1 (enemy_building_destroyed i2 aoe_castle) (do (objective_complete 4) (victory))
 
 ; Defeat conditions.
 trigger player1 (no_unit_left) (defeat)

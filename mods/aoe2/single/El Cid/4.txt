@@ -88,8 +88,87 @@ orchard 200 c3
 stone_mines 400 c3
 nb_meadows_by_square 2
 
-; El Cid's landing point: the hero plus a small Moorish army.
-player 300 400 400 300 c3 1 npc_cid_mounted 4 conquistador 4 mameluke 2 monk 4 peasant
+; The battlefield is in the EAST (Yusuf at h7, the six docks from h2 to
+; j6) while the deposits above all sit at c3 -- four to six squares away
+; from the fighting.  These eastern deposits give the player a working
+; economy where the fighting actually happens.
+goldmines 400 h6
+stone_mines 300 g6
+woods 400 g5 g6
+orchard 200 g6
+
+; ---------------------------------------------------------------------------
+; BUILDING SLOTS (meadows).
+;
+; Every square starts with TWO meadows (``nb_meadows_by_square 2``) and
+; every BUILDING consumes one of them (``find_and_remove_meadow``,
+; worldroom.py:819-827).  Units do NOT consume meadows -- their ``space``
+; attribute is 0 -- so only the buildings below need slots:
+;
+;   c3 = town_center + barracks + stables + workshop + 6 house  = 10
+;   a1 = town_center + aoe_castle + 2 house + 2 scouttower      =  6
+;   h7 = town_center + aoe_castle + barracks + stables
+;         + workshop + 2 house + 2 scouttower                  =  9
+;   h2/i2/i4/i6/j3/j6 = town_center + shipyard + 2 house
+;         + 2 scouttower                                      =  6
+; ---------------------------------------------------------------------------
+additional_meadows c3 c3 c3 c3 c3 c3 c3 c3
+additional_meadows a1 a1 a1 a1
+additional_meadows h7 h7 h7 h7 h7 h7 h7
+additional_meadows h2 h2 h2 h2 i2 i2 i2 i2 i4 i4 i4 i4 i6 i6 i6 i6 j3 j3 j3 j3 j6 j6 j6 j6
+
+; ---------------------------------------------------------------------------
+; EL CID -- the player.  He starts in the west at c3 with a small army.
+;
+; THE TOWN CENTER IS THE KEYSTONE OF THIS WHOLE START.  It is the only
+; building whose ``storable_resource_types`` covers all four resources
+; (rules.txt:5256) -- ``workshop``, ``aoe_castle``, ``scouttower`` and
+; ``shipyard`` store NOTHING.  Without a Town Center:
+;   * ``nearest_warehouse`` returns None for every resource, so the
+;     villagers cannot deposit a single thing (probe: all four resources
+;     came back None before this fix, and ``town_center()`` for all four
+;     in chapters 5/6);
+;   * ``available_population`` is 0, so not even a House can be built;
+;   * ``house`` / ``mill`` / ``lumbermill`` / ``mining_camp`` / ``barracks``
+;     all have ``requirements town_center``, so no economy building and
+;     no barracks can be raised;
+;   * only the Town Center can ``can_advance`` to the next age, so the
+;     player would never leave the Dark Age and could never build a
+;     Siege Workshop -- which is exactly why there were NO SIEGE
+;     ENGINES in this chapter.
+;
+; Age chain: ``dark_age`` / ``feudal_age`` / ``castle_age`` must ALL be
+; listed, even though the chapter starts in the castle age:
+;   * ``Player.has()`` looks the name up in ``player.upgrades``, so
+;     ``requirements castle_age`` (workshop, battering_ram, mangonel)
+;     is satisfied directly;
+;   * ``castle_age`` itself requires ``feudal_age``, which is checked by
+;     literal name, so ``feudal_age`` must be listed too.
+; The DE original's chapter 4 is a Castle Age scenario -- El Cid besieges
+; Yusuf's castle with a full siege train.
+;
+; Starting resources (800 wood / 600 gold / 500 food / 400 stone):
+; a Town Center costs 275 wood + 100 stone, four Houses 100 wood, the
+; Barracks/Stables/Siege Workshop 175+175+200 wood -- 925 wood in all,
+; so the player can raise the whole base immediately AND still afford
+; siege engines (a Battering Ram is 75 gold + 160 wood).
+;
+; The army follows the DE original's starting units (2 Scorpions, 2 Monks,
+; 4 Long Swordsmen, 4 Conquistadors, 6 Pikemen, 6 Knights, El Cid) and
+; adds the siege train the DE walkthrough recommends for walled cities
+; ("try using Trebuchets and garrisoned Battering Rams against them"):
+; the Trebuchet out-ranges the castle's 8-tile arrow range with its 16,
+; so it can shell the castle from safety.
+;
+; Population: town_center (+5) + 6 house (+30) = 35 housing from the
+; buildings, and the starting units cost 1 + 8 + 8 + 6 + 12 + 2 + 4
+; + 4 + 4 + 3 = 52.  ``population 30`` adds a scenario population
+; bonus on top of the buildings so that the player is NOT over the
+; cap at the very first tick (52 used vs 35 housing would block every
+; training order with ``order_impossible,not_enough_population``).
+; The player still has to build more houses as the army grows.
+; ---------------------------------------------------------------------------
+player 800 600 500 400 c3 1 town_center 1 barracks 1 stables 1 workshop 6 house 1 npc_cid_mounted 4 conquistador 4 mameluke 6 pikeman 6 aoe_knight 2 monk 4 peasant 2 battering_ram 2 mangonel 1 trebuchet dark_age feudal_age castle_age population 30
 
 ; King Alfonso, stranded on the battlefield. He is a Gaia unit: the
 ; player picks him up by reaching him, and then must escort him.
@@ -97,7 +176,38 @@ computer_only 0 0 0 0 neutral faction saracens e4 1 npc_alfonso
 
 ; Alfonso's camp in the west -- it becomes the player's base once
 ; Alfonso is brought home.
-computer_only 0 0 0 0 neutral faction saracens a1 2 scouttower 4 peasant 2 aoe_knight
+;
+; DE original: "bring him towards the king's base (blue), where the whole
+; base will switch to the player's control", and on Standard difficulty
+; "King Alfonso's base has a Castle, which will be given to the player with
+; the rest of his base".  The walkthrough then tells the player to build
+; a castle there and mass mangonels.
+;
+; The TOWN CENTER is what makes the handover useful: without it the
+; player would receive four villagers who cannot deposit anything (the
+; two watchtowers and the two knights store no resources either).
+; The CASTLE lets the player build Trebuchets afterwards.
+;
+; DE original, Standard difficulty: "King Alfonso's base has a Castle,
+; which will be given to the player with the rest of his base."
+;
+; The castle is therefore NOT placed statically.  It is handed over by a
+; difficulty-conditional trigger (``(difficulty story)``) so that the
+; scenario matches the DE original exactly.  The ``story`` semantic tier
+; covers "easy" and "standard" (easy is the equivalent of the DE's Story
+; mode, which is even more generous than Standard):
+;
+;   * Easy / Standard -- the castle is GIVEN to the player with the base
+;   * Moderate        -- no castle (the player must build his own)
+;   * Hard            -- no castle
+;
+; The engine supports this via the ``(difficulty <level>)`` /
+; ``(difficulty <op> <level>)`` trigger condition -- see
+; soundrts/worldplayerbase/triggers.py::lang_difficulty.
+;
+; The town center, the two houses, the two watchtowers, the four
+; peasants and the two knights are handed over at EVERY difficulty.
+computer_only 0 0 0 0 neutral faction saracens a1 town_center 2 house 2 scouttower 4 peasant 2 aoe_knight
 
 ; The Black Guard Mosque -- the OPTIONAL objective.
 computer_only 0 0 0 0 neutral faction saracens f3 npc_mosque 2 monk
@@ -107,15 +217,33 @@ computer_only 0 0 0 0 neutral faction saracens f3 npc_mosque 2 monk
 ; NOTE: the AoE2 mod's building type is ``shipyard`` (see
 ; mods/aoe2/rules.txt ``def shipyard``) -- there is no ``dock`` unit
 ; type in this engine, so a ``dock`` line would spawn nothing.
-computer_only 0 0 0 0 non_neutral faction saracens h2 shipyard 2 war_galley 2 scouttower
-computer_only 0 0 0 0 non_neutral faction saracens i2 shipyard 2 war_galley 2 scouttower
-computer_only 0 0 0 0 non_neutral faction saracens i4 shipyard 2 war_galley 2 scouttower
-computer_only 0 0 0 0 non_neutral faction saracens i6 shipyard 2 war_galley 2 scouttower
-computer_only 0 0 0 0 non_neutral faction saracens j3 shipyard 2 war_galley 2 scouttower
-computer_only 0 0 0 0 non_neutral faction saracens j6 shipyard 2 war_galley 2 scouttower
+;
+; Each dock gets a Town Center and a house so that the Black Guard Navy
+; has an economy of its own.  Without a Town Center their AI could
+; never even spawn a villager (``get 8 berber_villager`` needs a
+; ``town_center``, the only maker of ``peasant``), so the whole
+; ``berbers_intermediate`` script would stall on its first line and the
+; two watchtowers per dock (850 HP each, rdf 7) would be the only
+; defence -- which is what made this objective a walkover.
+computer_only 400 400 600 200 non_neutral faction berbers h2 town_center 1 shipyard 2 house 4 peasant 2 war_galley 2 scouttower population 20
+computer_only 400 400 600 200 non_neutral faction berbers i2 town_center 1 shipyard 2 house 4 peasant 2 war_galley 2 scouttower population 20
+computer_only 400 400 600 200 non_neutral faction berbers i4 town_center 1 shipyard 2 house 4 peasant 2 war_galley 2 scouttower population 20
+computer_only 400 400 600 200 non_neutral faction berbers i6 town_center 1 shipyard 2 house 4 peasant 2 war_galley 2 scouttower population 20
+computer_only 400 400 600 200 non_neutral faction berbers j3 town_center 1 shipyard 2 house 4 peasant 2 war_galley 2 scouttower population 20
+computer_only 400 400 600 200 non_neutral faction berbers j6 town_center 1 shipyard 2 house 4 peasant 2 war_galley 2 scouttower population 20
 
 ; Yusuf ibn Tashfin, the Almoravid sultan -- the second enemy.
-computer_only 0 0 0 0 non_neutral faction berbers h7 aoe_castle town_center 4 peasant 6 mameluke 4 archer 2 mangonel
+;
+; DE original: "forcing Yusuf to resign requires destroying his Town
+; Center and his Castle", and his base is described as a fortified camp
+; whose castle trains mamelukes and trebuchets.
+;
+; He needs a REAL base, not just a castle: the AI needs a Town Center
+; (the only warehouse) and resources to build anything, and it needs a
+; Siege Workshop to keep producing the mangonels that shell the player's
+; camp.  The age chain is listed so that his AI can build Castle Age
+; buildings and units.
+computer_only 500 500 600 400 non_neutral faction berbers h7 town_center 1 barracks 1 stables 1 workshop 2 house 1 aoe_castle 2 scouttower 6 mameluke 4 camel_rider 2 aoe_archer 2 mangonel 8 peasant dark_age feudal_age castle_age population 45
 
 timer_coefficient 40
 
@@ -134,27 +262,109 @@ trigger computer8 (timer 0) (alliance 2)   ; Black Guard Docks
 trigger computer9 (timer 0) (alliance 2)   ; Black Guard Docks
 trigger computer10 (timer 0) (alliance 2)  ; Yusuf
 
+; ---------------------------------------------------------------------------
+; STANDARD-DIFFICULTY BONUSES (AoE2 DE "Black Guards").
+;
+; DE original: "On Standard difficulty, King Alfonso's base has a Castle,
+; which will be given to the player with the rest of his base, and the
+; player begins with Murder Holes researched."
+;
+; Two things are therefore granted on the "standard tier" of the
+; difficulty -- the ``story`` semantic tier, which covers "easy" and
+; "standard" (easy is the equivalent of the DE's Story mode, which is
+; even more generous than Standard):
+;
+;   1. The CASTLE in Alfonso's camp (a1).  It is NOT part of the
+;      ``computer_only`` line any more -- it is added here by a trigger so
+;      that it appears only on the standard tier.  On Moderate and Hard
+;      the player has to build his own castle, exactly like the DE
+;      original.
+;
+;   2. The MURDER HOLES tech for the player.  Researching it at start
+;      makes the watchtowers and the castle the player inherits stop
+;      having a minimum range (the tech's effect is
+;      ``bonus rdg_minimal_range -1`` on scouttower/cannontower/aoe_castle).
+;      Because the tech is granted via a trigger, the engine has to apply
+;      it to the units the player ALREADY owns -- see
+;      soundrts/worldplayerbase/triggers.py::_grant_upgrade_by_trigger.
+;
+; The trigger syntax takes exactly ONE condition, so the difficulty test
+; IS the condition: ``trigger <owner> (difficulty story) <action>``.
+; Comparison forms (``(difficulty >= hard)``, ``(difficulty != easy)``,
+; ...) are supported by the engine too.
+;
+; NOTE ON OWNERSHIP: the castle is added to ``computer2`` (Alfonso's camp)
+; so that it is handed over to the player together with the rest of the
+; base when the king is escorted home (objective 2 transfers the whole
+; camp).  ``(add_units <square> <type>)`` places it on that square.
+trigger computer2 (difficulty story) (add_units a1 aoe_castle)
+trigger player1 (difficulty story) (add_units murder_holes)
+
+; ---------------------------------------------------------------------------
+; MAKE THE ENEMIES REALLY ATTACK.
+;
+; A ``computer_only`` slot gets a trigger-only, do-nothing AI by default
+; (see doc_src/src/en/mod/mapmaking.rst "Switch to another AI"), so
+; without this the Black Guard Navy would sit in its docks and Yusuf
+; would hide in his castle -- the whole chapter would be a walk around
+; an empty map, and the player's army would never be tested.
+;
+; ``(ai intermediate)`` swaps in mods/aoe2/ai.txt's
+; ``berbers_intermediate`` script, which contains real ``attack`` lines
+; and ``attack_ratio 120``.
+;
+; The six DOCKS get their AI right away: the Black Guard Navy is the
+; chapter's active enemy, it raids the coast and the player has to
+; fight it.
+;
+; YUSUF only wakes up once the king has been delivered home (the
+; ``yusuf_awake`` global is set by the objective-2 trigger below).
+; While the king is being rescued and escorted, El Cid stands alone
+; on the battlefield as a lone 330 HP hero, and an active Yusuf would
+; simply hunt him down -- which trips
+; ``(key_unit_killed npc_cid_mounted) (defeat)`` and makes the whole
+; chapter unwinnable before the player has even reached Yusuf.  In the
+; DE original Yusuf also sits in his camp until the player comes for
+; him.
+; ---------------------------------------------------------------------------
+trigger computer4 (timer 0) (ai intermediate)
+trigger computer5 (timer 0) (ai intermediate)
+trigger computer6 (timer 0) (ai intermediate)
+trigger computer7 (timer 0) (ai intermediate)
+trigger computer8 (timer 0) (ai intermediate)
+trigger computer9 (timer 0) (ai intermediate)
+trigger computer10 (global yusuf_awake >= 1) (ai intermediate)
+
 ; Objectives
 ;   1 = Rescue King Alfonso from the battlefield
 ;   2 = Escort King Alfonso to his camp in the west
 ;   3 = Destroy the six Black Guard Docks
 ;   4 = Defeat Yusuf ibn Tashfin
-;   5 (optional) = Convert the Black Guard Mosque
+;   1 (optional) = Convert the Black Guard Mosque
+;
+; Primary objectives run 1..N; optional objectives run 1..M in their
+; OWN numbering space (both start at 1 -- see
+; doc_src/src/*/mod/mapproduction).  The optional one here is therefore
+; "optional objective 1", not 5.
 trigger player1 (timer 0) (register_objective 1 2 3 4)
 trigger player1 (timer 0) (add_objective 1 9192)
 trigger player1 (timer 0) (add_objective 2 9193)
 trigger player1 (timer 0) (add_objective 3 9194)
 trigger player1 (timer 0) (add_objective 4 9195)
-trigger player1 (timer 0) (add_secondary_objective 5 9196)
+trigger player1 (timer 0) (add_secondary_objective 1 9196)
 
 ; Objective 1: El Cid reaches King Alfonso, who joins the player.
 trigger player1 (has_entered e4 npc_cid_mounted) (do (objective_complete 1) (transfer_units computer1 player1) (cut_scene 9258))
 
 ; Objective 2: the king is brought home to Alfonso's camp in the west.
-trigger player1 (has_entered a1 npc_alfonso) (do (objective_complete 2) (cut_scene 9259) (transfer_units computer2 player1))
+;
+; ``set_global yusuf_awake 1`` releases Yusuf's AI (see the AI block
+; above): from now on he really comes after the player instead of
+; sitting in his castle.
+trigger player1 (has_entered a1 npc_alfonso) (do (objective_complete 2) (cut_scene 9259) (transfer_units computer2 player1) (set_global yusuf_awake 1))
 
-; Optional objective: El Cid visits the Black Guard Mosque.
-trigger player1 (has_entered f3 npc_cid_mounted) (do (secondary_objective_complete 5) (cut_scene 9260) (transfer_units computer3 player1))
+; Optional objective 1: El Cid visits the Black Guard Mosque.
+trigger player1 (has_entered f3 npc_cid_mounted) (do (secondary_objective_complete 1) (cut_scene 9260) (transfer_units computer3 player1))
 
 ; Objective 3: all six Black Guard Docks are destroyed.
 ;
@@ -172,7 +382,16 @@ trigger player1 (enemy_building_destroyed j6 shipyard) (add_var docks 1)
 trigger player1 repeat (var docks >= 6) (objective_complete 3)
 
 ; Objective 4: Yusuf's base is destroyed.
-trigger player1 (enemy_building_destroyed h7 aoe_castle) (do (objective_complete 4) (victory))
+;
+; DE original: "forcing Yusuf to resign requires destroying his Town
+; Center AND his Castle".  Both buildings are counted in the ``yusuf``
+; variable and a repeatable trigger completes the objective once BOTH
+; have fallen -- two separate triggers that each called
+; ``(objective_complete 4)`` would have completed it after the first
+; one (same pattern as objective 3 above).
+trigger player1 (enemy_building_destroyed h7 aoe_castle) (add_var yusuf 1)
+trigger player1 (enemy_building_destroyed h7 town_center) (add_var yusuf 1)
+trigger player1 repeat (var yusuf >= 2) (do (objective_complete 4) (victory))
 
 ; Defeat conditions. King Alfonso must survive -- losing him loses
 ; the chapter, exactly as in the DE original.

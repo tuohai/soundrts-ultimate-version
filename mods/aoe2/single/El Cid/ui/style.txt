@@ -38,16 +38,28 @@
 ; ---------------------------------------------------------------------------
 
 ; npc_cid -- Rodrigo Díaz de Vivar on foot (chapters 1 and 3).
-; Inherits the knight class so it has a real melee attack and the knight
-; sprite; the rules file already zeroes his aggro so he never charges.
+;
+; He inherits ``militia`` -- an INFANTRY style -- so that his MOVEMENT
+; SOUND is the human footstep.  The footstep noise is read from the
+; STYLE layer (``style.get(type_name, "move")``), and the cavalry
+; styles carry ``move 1303 1303`` -- the horse hooves.  Before he
+; mounts Babieca he walks, so he must not sound like a rider.
+;
+; ``militia`` also provides the infantry artwork (militia.png) and a
+; usable melee attack; the rules file already zeroes his aggro so he
+; never charges.
 def npc_cid
-is_a aoe_knight
+is_a militia
 title 9280
 
 ; npc_cid_mounted -- El Cid Campeador, mounted on Babieca.
-; Inherits npc_cid so it keeps the hero's look and stays a key unit.
+;
+; He inherits ``aoe_knight`` directly -- NOT npc_cid -- so that he
+; keeps the cavalry artwork AND the horse-hoof movement sound
+; (``move 1303 1303``) once he is riding.  Inheriting npc_cid would
+; drag in the infantry footstep again.
 def npc_cid_mounted
-is_a npc_cid
+is_a aoe_knight
 title 9281
 
 ; npc_cid_body -- the dead El Cid, propped on Babieca in front of the

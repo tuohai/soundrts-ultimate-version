@@ -22,11 +22,18 @@
 ; melee attack, +3 vs buildings, 5 line of sight and regeneration of
 ; 0.5 HP/s (30 HP per minute); he cannot be converted.
 ;
-; Inherits knight (so he gets the knight sprite and a usable melee
-; attack) but is deliberately NOT a full combat hero: this engine has
-; no hero regeneration or "cannot be converted" flag, so those two
-; properties of the original hero unit are not reproduced. What the
-; campaign needs from him is that he is a must-survive key unit.
+; Inherits ``militia`` (an INFANTRY unit) so that his MOVEMENT SOUND is
+; the human footstep, not the cavalry clomp: the footstep noise is taken
+; from the STYLE layer (``style.get(type_name, "move")``), and the
+; knight/aoe_knight styles carry ``move 1303 1303`` -- the horse-hoof
+; sound.  Before he mounts Babieca he walks, so he must walk like an
+; infantryman.  The mounted form (``npc_cid_mounted``) keeps the
+; cavalry style and therefore the hooves.
+;
+; He is deliberately NOT a full combat hero: this engine has no hero
+; regeneration or "cannot be converted" flag, so those two properties
+; of the original hero unit are not reproduced. What the campaign
+; needs from him is that he is a must-survive key unit.
 ;
 ; hp_max 330 and mdg 13 match the DE hero unit; mdf/rdf 2 / rdg 0
 ; match his DE armour line (armor 2, pierce armor 1, no ranged attack).
@@ -35,17 +42,46 @@
 ; player points him at.
 ; ---------------------------------------------------------------------
 def npc_cid
-is_a knight
+is_a militia
 ; The mod's legacy ``knight`` stub carries ``decay 1`` (1000 ms), which
 ; would make the hero disappear one second after he spawns.  The
 ; campaign hero must never expire, so the inherited decay is cancelled.
 decay 0
+; The hero is a story unit, never a trainable one: the militia line
+; would otherwise make him cost 20 gold / 50 food and take 21 s to
+; train.  Both are cancelled explicitly.
+cost 0 0 0 0
+time_cost 0
+; The militia line upgrades into man_at_arms (``can_upgrade_to
+; man_at_arms``).  Inheriting that would make ``apply_unit_line_upgrade``
+; morph the hero into a generic Man-at-Arms the moment the player
+; researches it -- the campaign's key unit would simply disappear.
+; An empty declaration cancels the inherited list.
+can_upgrade_to
+; The militia line also lists the whole infantry blacksmith / age tech
+; list (forging, squires, scale_mail_armor, ...).  The hero is not one
+; of the player's militia: he must not inherit their upgrade effects,
+; so the list is cancelled as well.
+can_use_tech
 hp_max 330
 sight_range 5
+; The hero's own speed and melee reload are stated explicitly so that
+; they can never be lost again, whatever parent he inherits from:
+; without an explicit ``speed`` the unit ends up with
+; ``Creature.speed == 0`` and every move order fails instantly (see
+; ``move_to_or_fail`` in soundrts/worldorders/base.py).  Without an
+; explicit ``mdg_cd`` the hero would swing once per simulation tick
+; instead of once per reload.
+;
+; DE values used: the hero walks like a heavy infantryman (0.96, the
+; speed of long_swordsman / man_at_arms) and his melee reload is the
+; standard 2 s of the Spanish melee line.
+speed 0.96
 mdg 13
 mdf 2
 rdf 2
 rdg 0
+mdg_cd 2
 mdg_range 1
 agro_on_sight 0
 counterattack_enabled 0
@@ -66,10 +102,16 @@ is_a knight
 decay 0
 hp_max 330
 sight_range 6
+; Same inheritance trap as npc_cid: the legacy ``knight`` stub has no
+; ``speed`` and no ``mdg_cd``, so both have to be stated explicitly.
+; Mounted on Babieca the hero rides at cavalry speed (1.35, same as
+; aoe_knight) and his melee reload is the cavalry one (1.8 s).
+speed 1.35
 mdg 13
 mdf 2
 rdf 2
 rdg 0
+mdg_cd 1.8
 mdg_range 1
 agro_on_sight 0
 counterattack_enabled 0
@@ -89,6 +131,30 @@ counterattack_enabled 0
 def npc_alfonso
 class soldier
 hp_max 200
+; The king must survive his own castle's siege.  In chapter 1 he
+; belongs to ``computer3`` (alliance 2, the ENEMY side) and stands on
+; the same square as his castle at b5, so the player's assaulting
+; units auto-target him and kill him -- which trips
+; ``(key_unit_killed npc_alfonso) (defeat)`` and makes objective 4
+; (escort him to King Sancho) unreachable.
+;
+; ``is_vulnerable 0`` removes him from ``known_enemies``
+; (soundrts/worldplayerbase/perception.py), so the player's units
+; never pick him as a target.  ``receive_hit`` honours the same flag
+; (soundrts/combat/damage_effects.py), which also protects him from
+; splash / bounce / pierce damage that does not go through the
+; targeting code at all.
+;
+; He stays fully controllable: he can still be selected, transferred
+; to the player and ordered to walk.
+is_vulnerable 0
+; ``class soldier`` (the plain Python base class) has NO movement speed
+; at all -- ``Creature.speed`` defaults to 0.  A unit with speed 0 can
+; never be ordered to move, so King Alfonso could not be escorted to
+; King Sancho and objective 4 of chapter 1 (and objective 2 of chapter
+; 4) could never be completed.  He walks like a common soldier
+; (1.0, the speed of the spearman line).
+speed 1.0
 mdg 0
 mdf 0
 rdf 0
@@ -278,6 +344,10 @@ is_a npc_cid_mounted
 decay 0
 hp_max 330
 sight_range 4
+; The corpse inherits npc_cid_mounted's cavalry speed -- it must NOT:
+; the dead Cid is strapped to Babieca and has to stand still in front
+; of the castle of Valencia.  ``speed 0`` cancels the inherited value.
+speed 0
 mdg 0
 mdf 0
 rdf 0

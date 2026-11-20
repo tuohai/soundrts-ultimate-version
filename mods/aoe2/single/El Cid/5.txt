@@ -220,12 +220,17 @@ trigger computer4 (timer 0) (ai intermediate)
 ;   3 = Take the knights of Lerida (and the monks of Gaia)
 ;   4 = Reach Valencia
 ;   5 = Defend the Wonder of Valencia until it is finished
-;   6 (optional) = Visit the monastery of Gaia and take the missionaries
+;   1 (optional) = Visit the monastery of Gaia and take the missionaries
 ;
 ; The primary objectives are 1-5; the monastery of Gaia is the
-; OPTIONAL one (6) and therefore lives in the secondary key space:
+; OPTIONAL one and therefore lives in the secondary key space:
 ; it must NOT appear in ``register_objective`` and must be completed
 ; with ``secondary_objective_complete``.
+;
+; Primary objectives run 1..N and optional objectives run 1..M in their
+; OWN numbering space -- both start at 1 (see
+; doc_src/src/*/mod/mapproduction).  The optional one here is therefore
+; "optional objective 1", not 6.
 ; ---------------------------------------------------------------------------
 trigger player1 (timer 0) (register_objective 1 2 3 4 5)
 trigger player1 (timer 0) (add_objective 1 9197)
@@ -233,7 +238,7 @@ trigger player1 (timer 0) (add_objective 2 9198)
 trigger player1 (timer 0) (add_objective 3 9199)
 trigger player1 (timer 0) (add_objective 4 9200)
 trigger player1 (timer 0) (add_objective 5 9201)
-trigger player1 (timer 0) (add_secondary_objective 6 9202)
+trigger player1 (timer 0) (add_secondary_objective 1 9202)
 
 ; Objective 1: El Cid reaches Denia (g7) and takes the town.
 trigger player1 (has_entered g7 npc_cid_mounted) (do (objective_complete 1) (cut_scene 9261) (transfer_units computer1 player1))
@@ -253,8 +258,8 @@ trigger player1 repeat (has_entered j3 npc_cid_mounted) (do (objective_complete 
 ; Objective 3: the knights and camel riders of Lerida change sides.
 trigger player1 (has_entered e3 npc_cid_mounted) (do (objective_complete 3) (cut_scene 9263) (transfer_units computer3 player1))
 
-; Optional objective: the monastery of Gaia and its 2 missionaries.
-trigger player1 (has_entered c6 npc_cid_mounted) (do (secondary_objective_complete 6) (transfer_units computer2 player1))
+; Optional objective 1: the monastery of Gaia and its 2 missionaries.
+trigger player1 (has_entered c6 npc_cid_mounted) (do (secondary_objective_complete 1) (transfer_units computer2 player1))
 
 ; Objective 4: El Cid reaches Valencia.  Reaching the city starts
 ; the construction of the WONDER, and the wonder is the thing that has
