@@ -57,6 +57,7 @@ def test_coop_difficulty_defaults_to_moderate_independent_of_solo(tmp_path, monk
     campaign.resources = resource_layer("", "Raynor")
     campaign.chapters = [MissionChapter(campaign, 1, FakeMap())]
 
+    # The single-player campaign uses the full 5-tier difficulty set.
     campaign.set_difficulty("easy")
     assert campaign.get_difficulty() == "easy"
     assert campaign.get_coop_difficulty() == MODERATE

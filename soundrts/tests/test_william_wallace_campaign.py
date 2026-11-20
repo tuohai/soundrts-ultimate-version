@@ -88,10 +88,27 @@ def test_each_chapter_has_alliance_triggers():
 
 
 def test_each_chapter_has_victory_trigger():
-    """Each mission chapter must have at least one victory trigger."""
+    """Each mission chapter must have at least one victory trigger.
+
+    Chapter 7 is the exception: it registers TWO objectives and lets the
+    objective manager award the victory once both are done (see
+    ``_all_required_objectives_done``).  An explicit ``(victory)`` there
+    used to fire as soon as the player built his own castle, which
+    skipped the second objective (destroying the English castle).
+    """
     base = Path("mods/aoe2/single/William Wallace")
     for n in range(1, 8):
         text = (base / f"{n}.txt").read_text(encoding="utf-8")
+        if n == 7:
+            assert "register_objective 1 2" in text, (
+                "ch7 must register both objectives so the objective manager "
+                "awards the victory"
+            )
+            assert not _chapters_have_trigger(text, "(victory)"), (
+                "ch7 must not fire an explicit (victory): it would skip "
+                "objective 2 (destroy the English castle)"
+            )
+            continue
         assert _chapters_have_trigger(text, "victory"), (
             f"ch{n} must have a victory trigger"
         )

@@ -170,11 +170,20 @@ def test_spectate_carries_difficulty():
 
 def test_replay_seed_line_carries_difficulty_backward_compatibly():
     src = _source("soundrts", "game.py")
-    # 写：seed 行可选追加两个百分比
-    assert 'self.replay_write(f"{self.seed} {ehp} {edmg}")' in src
+    # 写：seed 行可选追加两个百分比（敌人 hp/伤害），再可选追加难度等级名。
+    #
+    # 格式（向后兼容）：
+    #   "<seed>"                              -- 旧回放
+    #   "<seed> <enemy_hp%> <enemy_damage%>"  -- 合作战役难度
+    #   "<seed> <enemy_hp%> <enemy_damage%> <difficulty>"  -- 关卡内容按难度分支
+    assert "parts = [str(self.seed), str(ehp), str(edmg)]" in src
+    assert 'parts.append(str(diff))' in src
     # 读：按空格切分，缺省向后兼容
     assert "seed_parts = self.replay_read().split()" in src
     assert "self.seed = int(seed_parts[0])" in src
+    # 读：第 4 段是难度等级名
+    assert "self.scenario_difficulty = seed_parts[3]" in src
+    assert "self.coop_difficulty = seed_parts[3]" in src
 
 
 # ---------------------------------------------------------------------------
