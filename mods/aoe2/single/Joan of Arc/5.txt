@@ -63,10 +63,61 @@ player 50 700 500 150 c4 town_center monastery barracks archery_range blacksmith
 computer_only 0 0 0 0 faction britons a1 town_center aoe_castle scouttower 6 militia 4 man_at_arms 3 longbowman 1 aoe_knight
 
 ; Beaugency (middle, fortified bridge town)
-computer_only 0 0 0 0 faction britons d3 town_center aoe_castle scouttower 6 militia 4 man_at_arms 3 longbowman 1 aoe_knight
+;
+; DE MAPPING NOTE -- AoE2 DE's ch. 5 is "The Siege of Paris"; this map
+; has no Paris, so the central fortified bridge-town (Beaugency, d3)
+; stands in for the city of Paris and Jallains (f5) for the Burgundian
+; ambush.  See the DIFFICULTY DIFFERENCES block below.
+computer_only 0 0 0 0 faction britons d3 town_center aoe_castle scouttower 6 militia 4 man_at_arms 3 longbowman 1 aoe_knight onager 1 trebuchet 1
 
 ; Jallains / Gien (east, supply depot)
-computer_only 0 0 0 0 faction britons f5 town_center aoe_castle scouttower 6 militia 4 man_at_arms 3 longbowman 2 aoe_knight
+;
+; The ONAGER is the "Siege Onager" of the Burgundian ambush on the
+; standard tier -- see the DIFFICULTY DIFFERENCES block below.
+computer_only 0 0 0 0 faction britons f5 town_center aoe_castle scouttower 6 militia 4 man_at_arms 3 longbowman 2 aoe_knight onager 1
+
+; ---------------------------------------------------------------------------
+; DIFFICULTY DIFFERENCES (AoE2 DE "The Siege of Paris", ch. 5)
+;
+;     "On Standard, there are no Onagers or Trebuchets within Paris, and
+;      the Burgundian ambush is missing a few Siege Onagers and Champions.
+;      On Hard, Paris is heavily fortified with Keeps and Bombard Towers,
+;      the English have Monks in the city, and the Burgundian force is
+;      twice as large."
+;
+; MAPPING NOTE -- this map has no Paris and no Burgundian player: the
+; three English bridge-towns of the Loire are Meung (a1), Beaugency
+; (d3) and Jallains (f5).  The DE's three effects are therefore mapped
+; onto the two English fortresses of this map:
+;
+;   * "no Onagers or Trebuchets within Paris" -> the standard tier
+;     (``story``: easy + standard) removes the Onager and the Trebuchet
+;     from the central fortress Beaugency (d3).  Both are part of the
+;     static ``computer_only`` line, so the baseline (moderate / hard /
+;     extreme) keeps them and the standard tier loses them.
+;
+;   * "the Burgundian ambush is missing a few Siege Onagers and
+;     Champions" -> the standard tier removes the Onager and the
+;     Champion (aoe_knight) from the ambush at Jallains (f5).
+;
+;   * "On Hard, Paris is heavily fortified with Keeps and Bombard
+;     Towers, the English have Monks in the city" -> the hard / extreme
+;     tier adds a Keep, a Bombard Tower (cannontower) and two Monks to
+;     Beaugency (d3).
+;
+;   * "the Burgundian force is twice as large" -> the hard / extreme
+;     tier doubles the garrison of the ambush at Jallains (f5).
+;
+; ``story`` = easy + standard (the DE's Story mode is even more generous
+; than Standard), ``(difficulty >= hard)`` covers hard + extreme.
+; ---------------------------------------------------------------------------
+trigger computer2 (difficulty story) (remove_unit d3 onager)
+trigger computer2 (difficulty story) (remove_unit d3 trebuchet)
+trigger computer3 (difficulty story) (remove_unit f5 onager)
+trigger computer3 (difficulty story) (remove_unit f5 aoe_knight)
+
+trigger computer2 (difficulty >= hard) (add_units d3 1 keep 1 cannontower 2 monk)
+trigger computer3 (difficulty >= hard) (add_units f5 4 militia 3 man_at_arms 2 longbowman 1 aoe_knight 1 onager)
 
 timer_coefficient 40
 

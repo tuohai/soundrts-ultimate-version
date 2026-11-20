@@ -12,7 +12,7 @@
 8807 Ein perfektes Martyrium
 
 8810 Führe Jeanne östlich von Vaucouleurs (a1) an den englischen Patrouillen vorbei zu Robert de Baudricourt bei b4, der ihr einen heiligen Brief und eine kleine Eskorte gewährt. Trage den Brief dann zum Dauphin an dessen Hof in Chinon (f4). Jeanne muss überleben.
-8811 Orléans ist von einem englischen Ring aus Wachtürmen und einer kleinen Festung belagert. Bilde Milizen aus, um die Bürger zu sammeln, dann brich die Belagerung und zerstöre jeden englischen Turm.
+8811 Führe Jeanne zum französischen Lager bei Blois (e2), um die Armee und sechs Vorratswagen zu holen. Überführe den Konvoi über die Loirebrücke (f4) nach Orleans (h6); die Stadt übergibt daraufhin ihre Zitadelle und ihre Bauern. Erhebe deine eigene Stadt bis zum Zeitalter der Burgen - die Bevölkerungsgrenze beträgt 125 - und zerstöre eine der beiden englischen Burgen im Norden (k5 oder l5). Jeanne und die Kathedrale von Orleans müssen überleben.
 8812 Nach Orléans führt Jeanne die Armee über die Loire. Stoße vom französischen Stützpunkt (d4) ostwärts vor, nimm Saint-Loup (a1) am Südufer und Les Tourelles (f5) am Nordufer, um die englische Belagerung zu brechen.
 8813 Eskortiere den Dauphin durch Burgund nach Reims (c5) zur Krönung. Trage drei Reliquien zur Kathedrale. Die Burgunder und Engländer werden versuchen, dich aufzuhalten.
 8814 Führe Jeanne die Loire hinauf und zerstöre jeden englischen Vorposten. Wenn jeder Turm und jede Burg gefallen ist, bringt Jeanne es heim.
@@ -66,6 +66,12 @@
 8897 Die Hälfte der Belagerung ist geschafft. Haltet die Zitadelle noch etwas länger.
 8898 Die Glocken von Reims werden bald läuten. Haltet stand.
 8899 Die Glocken werden gleich läuten. Haltet die Zitadelle!
+
+; --- ch4 (The Rising) additions ---
+; 8904 = objective 2 (escort the Dauphin to Reims);
+; 8905 = the cut_scene played when the relics reach the cathedral.
+8904 Begleite den Dauphin zur Kathedrale von Reims
+8905 Die drei Reliquien liegen vor dem Altar von Reims. In den Augen des Dauphin kehrt die Hoffnung zurück: die Krönung kann nun stattfinden.
 
 8840 Vaucouleurs
 8841 Chinon

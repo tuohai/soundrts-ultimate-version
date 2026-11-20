@@ -118,6 +118,22 @@ computer_only 0 0 0 0 neutral faction franks e3 monastery 2 monk
 ; Burgundian guard tower on the bridge approach.  Tiny garrison so the
 ; player can use the bridge if they want, but the heavy attack comes
 ; from the north English castles.
+;
+; DE original, "Differences between difficulty levels" (ch. 2
+; "The Maid of Orleans"):
+;
+;     On Standard, all four English bases are missing a Guard Tower
+;     each, and Orleans starts with Fletching and Murder Holes
+;     researched.  Additionally, the South English are missing a
+;     Monastery (plus Monk) on the path between Blois and Orleans.
+;
+;     On Hard, Burgundy, the Northern English/British, and Orleans start
+;     with Murder Holes researched.
+;
+; The four English bases here are f3 (South English / Burgundy), k5 and
+; k6 (North English) and l5 / l6 (outer English fortification).  Each
+; of them loses one Guard Tower on the standard tier -- see the
+; ``(remove_unit ...)`` triggers below.
 computer_only 0 0 0 0 faction burgundians f3 scouttower 2 militia 1 aoe_knight
 
 ; --- Orleans (h6+h7) ------------------------------------------------------
@@ -125,6 +141,11 @@ computer_only 0 0 0 0 faction burgundians f3 scouttower 2 militia 1 aoe_knight
 ; reused) and a small French garrison.  When Joan + 6 trade_carts reach
 ; the Orleans town_center, the (transfer_units) trigger below hands the
 ; whole camp over to the player so they can build up to Castle Age.
+;
+; NOTE: in the DE original, Orleans starts with Fletching and Murder
+; Holes researched on the standard tier, and with Murder Holes on the
+; hard tier.  Those are granted by triggers below -- see the
+; "DIFFICULTY DIFFERENCES" block.
 computer_only 0 0 0 0 neutral faction franks h6 town_center 3 house 4 militia 2 aoe_archer 4 peasant 1 npc_cathedral
 computer_only 0 0 0 0 neutral faction franks h7 scouttower 1 militia
 
@@ -142,6 +163,12 @@ computer_only 0 0 0 0 faction britons l6 scouttower 1 militia 1 aoe_archer
 
 timer_coefficient 40
 
+; Castle Age population cap.  AoE2 DE ch. 2 is capped at the Castle
+; Age, whose population limit is 125.  Without this line the engine
+; default (80) applies and the player runs out of population long
+; before the Castle Age economy is up.
+global_population_limit 125
+
 ; --- Alliances ------------------------------------------------------------
 trigger player1 (timer 0) (alliance 1)
 trigger computer1 (timer 0) (alliance 1)   ; Blois (e2) — French ally
@@ -153,6 +180,72 @@ trigger computer6 (timer 0) (alliance 2)   ; North English (k5) — enemy
 trigger computer7 (timer 0) (alliance 2)   ; North English (k6) — enemy
 trigger computer8 (timer 0) (alliance 2)   ; Outer English (l5) — enemy
 trigger computer9 (timer 0) (alliance 2)   ; Outer English (l6) — enemy
+
+; ---------------------------------------------------------------------------
+; DIFFICULTY DIFFERENCES (AoE2 DE "The Maid of Orleans").
+;
+;     On Standard, all four English bases are missing a Guard Tower each,
+;     and Orleans starts with Fletching and Murder Holes researched.
+;     Additionally, the South English are missing a Monastery (plus Monk)
+;     on the path between Blois and Orleans.
+;
+;     On Hard, Burgundy, the Northern English/British, and Orleans start
+;     with Murder Holes researched.
+;
+; The ``story`` semantic tier covers "easy" and "standard" (easy is the
+; equivalent of the DE's Story mode, which is even more generous than
+; Standard).  ``(difficulty >= hard)`` covers BOTH "hard" and "extreme":
+; the engine has 5 tiers while the DE original has 3, so the DE's
+; "Hard" tier is mapped onto hard + extreme (see
+; soundrts/coop_difficulty.py::LEVELS).
+;
+; MAPPING NOTE: the DE's four English bases are, in this map, the
+; South-English keep (f3, the Burgundy slot), the North English keep
+; (k5 + k6) and the outer English fortification (l5 + l6).  Each of
+; them loses ONE Guard Tower on the standard tier -- the ``remove_unit``
+; action deletes it from the square (see
+; soundrts/worldplayerbase/triggers.py::lang_remove_unit).
+;
+; The "missing a Monastery (plus Monk)" of the South English has no
+; separate building in this map: the Blois camp's monastery (e3) is a
+; FRIENDLY (neutral) French building, not an English one, so there is
+; nothing to remove.
+; ---------------------------------------------------------------------------
+trigger computer3 (difficulty story) (remove_unit f3 scouttower)
+trigger computer6 (difficulty story) (remove_unit k5 scouttower)
+trigger computer7 (difficulty story) (remove_unit k6 scouttower)
+trigger computer8 (difficulty story) (remove_unit l5 scouttower)
+trigger computer9 (difficulty story) (remove_unit l6 scouttower)
+
+; Orleans starts with Fletching and Murder Holes on the standard tier.
+;
+; The techs are granted to computer4 (the Orleans camp) BEFORE the camp
+; is handed over to the player -- the transfer trigger below moves the
+; buildings AND the techs to the player, so the player's towers and the
+; cathedral they inherit really do benefit from Murder Holes (it
+; removes their minimum range).
+;
+; On the hard tier Orleans starts with Murder Holes only.
+trigger computer4 (difficulty story) (add_units fletching murder_holes)
+trigger computer4 (difficulty >= hard) (add_units murder_holes)
+
+; On the hard tier, Burgundy (f3) and the Northern English (k5 + k6)
+; also start with Murder Holes researched.
+trigger computer3 (difficulty >= hard) (add_units murder_holes)
+trigger computer6 (difficulty >= hard) (add_units murder_holes)
+trigger computer7 (difficulty >= hard) (add_units murder_holes)
+
+; The PLAYER ends up owning Orleans (its camp is handed over on
+; objective 2), so the player gets the same techs.  Granting them to
+; the player directly is simpler and more robust than relying on the
+; techs travelling with the transferred buildings.
+;
+; The tech is applied to the units the player ALREADY owns (see
+; soundrts/worldplayerbase/triggers.py::_grant_upgrade_by_trigger), so
+; the watchtower the player inherits from Orleans really does lose its
+; minimum range.
+trigger player1 (difficulty story) (add_units fletching murder_holes)
+trigger player1 (difficulty >= hard) (add_units murder_holes)
 
 ; --- Objectives (tts ids) -------------------------------------------------
 ; 8822 = "Train 8 militia to rally Orleans" (legacy ch2 — REPLACED with DE)
@@ -217,7 +310,12 @@ trigger player1 (no_unit_left) (defeat)
 ; "Joan victorious" hero portrait doesn't get stuck on Blois/Orleans).
 trigger all (no_unit_left) (defeat)
 
-; Trade-cart protection: by timer 600 the player MUST still have 6
-; trade_carts alive.  If even one is lost, the supply run to Orleans
-; has failed — match the DE ch. 2 hard fail "deliver 6 trade carts".
-trigger player1 (and (timer 600) (lt (count trade_cart) 6)) (defeat)
+; Trade-cart protection: the player MUST still have 6 trade_carts alive
+; 10 minutes (600 game seconds) after the start of the chapter.
+;
+; NOTE: ``timer N`` counts N *timer_coefficient* GAME SECONDS, and this
+; map sets ``timer_coefficient 40`` (so one map "timer unit" is 40
+; game seconds).  The old ``(timer 600)`` therefore fired after
+; 600*40 = 24000 s = 400 minutes -- the deadline was effectively dead
+; code.  15 * 40 = 600 s = 10 minutes, which is the intended deadline.
+trigger player1 (and (timer 15) (lt (count trade_cart) 6)) (defeat)

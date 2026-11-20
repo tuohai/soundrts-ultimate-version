@@ -14,7 +14,7 @@
 
 ; Intros
 8810 March Joan east from Vaucouleurs (a1) past the English patrols to Robert de Baudricourt at b4, who will grant her a holy letter and a small escort. Then carry the letter to the Dauphin's court at Chinon (f4). Joan must survive.
-8811 Orleans is besieged by an English ring of watch towers and a small fort. Train militia to rally the townsfolk, then break the siege and destroy every English tower.
+8811 Lead Joan to the French camp at Blois (e2) to pick up the army and six supply carts. Ferry the convoy across the Loire bridge (f4) to Orleans (h6); the city then hands over its citadel and its villagers. Raise your own town to the Castle Age - the population cap is 125 - and destroy one of the two English Castles in the north (k5 or l5). Joan and the cathedral of Orleans must survive.
 8812 After Orleans, Joan leads the army across the Loire. Push east from the French base (d4), capture St. Loup (a1) on the south bank and Les Tourelles (f5) on the north bank to break the English siege.
 8813 Escort the Dauphin through Burgundy to Reims (c5) for the coronation. Carry three relics to the cathedral. The Burgundians and English will try to stop you.
 8814 Drive Joan up the Loire and destroy every English outpost. Once every tower and castle is gone, Joan carries it home.
@@ -70,6 +70,12 @@
 8897 Half the siege is over. Hold the citadel a while longer.
 8898 The bells of Reims will ring soon. Hold fast.
 8899 The bells are about to ring. Hold the citadel!
+
+; --- ch4 (The Rising) additions ---
+; 8904 = objective 2 (escort the Dauphin to Reims);
+; 8905 = the cut_scene played when the relics reach the cathedral.
+8904 Escort the Dauphin to Reims cathedral
+8905 The three relics are laid before the altar of Reims. In the Dauphin's eyes a spark of hope returns: the coronation may now take place.
 
 8840 Vaucouleurs
 8841 Chinon

@@ -116,10 +116,18 @@ player 50 700 500 150 d4 town_center monastery barracks archery_range blacksmith
 ; English Fort St. Loup (south bank, a fortified monastery + a small
 ; castle) — DE original has a fortified monastery with a small
 ; bailey-castle bolted to it.
-computer_only 0 0 0 0 faction britons a1 monastery aoe_castle 4 militia 3 man_at_arms 3 longbowman 1 aoe_knight
+;
+; The SCORPION is part of the static garrison: the DE original removes
+; it from the Burgundian base on the standard tier only, so the baseline
+; (moderate / hard / extreme) keeps it and a difficulty trigger deletes
+; it on the standard tier (see the DIFFICULTY DIFFERENCES block below).
+computer_only 0 0 0 0 faction britons a1 monastery aoe_castle 4 militia 3 man_at_arms 3 longbowman 1 aoe_knight 1 scorpion
 
 ; English Les Tourelles (north bank, outer fortress with bridge)
-computer_only 0 0 0 0 faction britons f5 aoe_castle scouttower 6 longbowman 4 man_at_arms 3 aoe_knight 2 aoe_archer
+;
+; The SCORPION is part of the static garrison -- see the DIFFICULTY
+; DIFFERENCES block below for the standard-tier removal.
+computer_only 0 0 0 0 faction britons f5 aoe_castle scouttower 6 longbowman 4 man_at_arms 3 aoe_knight 2 aoe_archer 1 scorpion
 
 ; English reinforcement camp (east of Les Tourelles, won't move).
 ; e5 holds a small garrison so the player can't just ignore the
@@ -146,6 +154,46 @@ computer_only 0 0 0 0 faction britons e3 longboat 1
 ; longbowmen holding the forest, so the player can't just harvest
 ; it for free.
 computer_only 0 0 0 0 faction britons g2 scouttower 2 longbowman 1 militia
+
+; ---------------------------------------------------------------------------
+; DIFFICULTY DIFFERENCES (AoE2 DE, "The Cleansing of the Loire" -- the
+; chapter whose content this file carries).
+;
+;     "On Standard, Burgundy no longer starts with a Scorpion in their
+;      base.
+;      On Moderate, Fastolf has an extra Capped Ram when he attacks after
+;      the player first destroys a Castle, and he gains an additional Ram
+;      on Hard."
+;
+; MAPPING NOTE -- this map has no Burgundian player and no Fastolf:
+; the English forts here are Fort St. Loup (a1), Les Tourelles (f5),
+; the east reinforcement camp (e5), the west cavalry camp (b5), the
+; river fleet (e3) and the lumber camp (g2).  The DE's two effects are
+; therefore mapped onto the two English siege bases of this map:
+;
+;   * The "no Scorpion in the Burgundian base" of the standard tier is
+;     applied to the two English siege bases: St. Loup (a1) and Les
+;     Tourelles (f5) each lose their Siege Scorpion on the standard
+;     tier.  The Scorpion is NOT part of the static ``computer_only``
+;     lines -- it is handed out by difficulty triggers below, so the
+;     baseline (moderate / hard / extreme) keeps it and the standard
+;     tier loses it.
+;
+;   * The "extra Capped Ram on Moderate, one more Ram on Hard" of
+;     Fastolf is applied to the English siege bases as well: they get
+;     one Capped Ram on the moderate tier and one Capped Ram **plus**
+;     one Battering Ram on the hard / extreme tier.
+;
+; ``story`` = easy + standard (the DE's Story mode is even more generous
+; than Standard), ``(difficulty >= hard)`` covers hard + extreme.
+; ---------------------------------------------------------------------------
+trigger computer1 (difficulty story) (remove_unit a1 scorpion)
+trigger computer2 (difficulty story) (remove_unit f5 scorpion)
+
+trigger computer1 (difficulty moderate) (add_units a1 1 capped_ram)
+trigger computer2 (difficulty moderate) (add_units f5 1 capped_ram)
+trigger computer1 (difficulty >= hard) (add_units a1 1 capped_ram 1 battering_ram)
+trigger computer2 (difficulty >= hard) (add_units f5 1 capped_ram 1 battering_ram)
 
 timer_coefficient 40
 

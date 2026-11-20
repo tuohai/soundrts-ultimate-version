@@ -12,7 +12,7 @@
 8807 Una perfecta mártir
 
 8810 Lleva a Juana al este desde Vaucouleurs (a1), cruzando las patrullas inglesas, hasta Robert de Baudricourt en b4, quien le concederá una santa carta y una pequeña escolta. Luego lleva la carta a la corte del Delfín en Chinon (f4). Juana debe sobrevivir.
-8811 Orleans está sitiada por un anillo inglés de torres de vigilancia y una pequeña fortaleza. Entrena milicias para reunir a los burgueses, luego rompe el sitio y destruye cada torre inglesa.
+8811 Lleva a Juana al campamento francés de Blois (e2) para recoger al ejército y seis carros de suministros. Traslada la convoyada por el puente sobre el Loira (f4) hasta Orleans (h6); la ciudad te entregará su ciudadela y sus aldeanos. Eleva tu propia ciudad hasta la Edad de los Castillos - el límite de población es 125 - y destruye uno de los dos Castillos ingleses del norte (k5 o l5). Juana y la catedral de Orleans deben sobrevivir.
 8812 Tras Orleans, Juana lidera al ejército cruzando el Loira. Avanza al este desde la base francesa (d4), toma San Loup (a1) en la orilla sur y Las Torrelas (f5) en la orilla norte para romper el asedio inglés.
 8813 Escorata al Delfín a través de Borgoña hasta Reims (c5) para la coronación. Lleva tres reliquias a la catedral. Los borgoñones y los ingleses intentarán detenerte.
 8814 Lleva a Juana río arriba por el Loira y destruye cada puesto avanzado inglés. Una vez que caigan todas las torres y castillos, Juana lo trae a casa.
@@ -66,6 +66,12 @@
 8897 Ya has sobrevivido a la mitad del asedio. Aguanta un poco más.
 8898 Las campanas de Reims sonar pronto. Resistid.
 8899 Las campanas van a sonar. ¡Defended la ciudadela!
+
+; --- ch4 (The Rising) additions ---
+; 8904 = objective 2 (escort the Dauphin to Reims);
+; 8905 = the cut_scene played when the relics reach the cathedral.
+8904 Escolta al Dauphin hasta la catedral de Reims
+8905 Las tres reliquias están colocadas ante el altar de Reims. En los ojos del Dauphin renace la esperanza: la coronación ya puede celebrarse.
 
 8840 Vaucouleurs
 8841 Chinon

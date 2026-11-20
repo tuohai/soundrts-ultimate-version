@@ -250,6 +250,42 @@ computer_only 400 400 700 200 non_neutral faction burgundians h1 town_center 2 h
 ; and the player's garrison takes real losses (63 -> 61 units).
 computer_only 400 400 600 200 non_neutral faction britons a1 town_center 2 house farm barracks archery_range stables 4 militia 4 aoe_archer 2 aoe_knight 1 peasant 10 dark_age feudal_age castle_age
 
+; ---------------------------------------------------------------------------
+; DIFFICULTY DIFFERENCES (AoE2 DE "A Perfect Martyr", ch. 6)
+;
+;     "On Hard, the player is only given 1 Trebuchet and 3 Bombard
+;      Cannons instead of 2 Trebuchets and 6 Bombards; the English town
+;      gets 3 Bombard Cannons and an extra Guard Tower; and the English
+;      construct an additional Town Center after 15 minutes."
+;
+; MAPPING NOTE -- this map is the defence of Compiegne: the PLAYER is the
+; French garrison at the citadel (e6), the English siege ring sits on the
+; south bank (c2), the Burgundian camp is in the south-east (h1) and a
+; British outpost covers the western ford (a1).  The DE's three effects
+; are mapped as follows:
+;
+;   * "the player is only given 1 Trebuchet and 3 Bombard Cannons
+;     instead of 2 Trebuchets and 6 Bombards" -> on the hard / extreme
+;     tier the player's own artillery is halved.  The artillery is NOT
+;     part of the static ``player`` line: it is handed out by the
+;     difficulty triggers below, so the baseline (easy / standard /
+;     moderate) keeps the full 2 Trebuchets + 6 Bombards and the hard
+;     tier gets the reduced 1 Trebuchet + 3 Bombards.
+;
+;   * "the English town gets 3 Bombard Cannons and an extra Guard
+;     Tower" -> the hard / extreme tier gives the English siege ring
+;     (c2) three Bombard Cannons and one Guard Tower.
+;
+;   * "the English construct an additional Town Center after 15
+;     minutes" -> the English siege ring (c2) gets an extra Town Center
+;     once the battle has run for 15 minutes.  A trigger takes a single
+;     condition, so this is expressed with the boolean combinator
+;     ``(and (difficulty >= hard) (timer 30))`` -- ``timer 30`` is 30
+;     ticks of ``timer_coefficient 30``, i.e. 15 real minutes.
+;
+; ``(difficulty >= hard)`` covers hard + extreme.
+; ---------------------------------------------------------------------------
+
 timer_coefficient 30
 
 trigger player1 (timer 0) (faction franks)
@@ -257,6 +293,43 @@ trigger player1 (timer 0) (alliance 1)
 trigger computer1 (timer 0) (alliance 2)
 trigger computer2 (timer 0) (alliance 2)
 trigger computer3 (timer 0) (alliance 2)
+
+; ---------------------------------------------------------------------------
+; THE PLAYER'S ARTILLERY, BY TIER (see the DIFFICULTY DIFFERENCES block).
+;
+; The DE's baseline (every tier below hard) hands the player 2 Trebuchets
+; and 6 Bombard Cannons; on hard / extreme the player only gets 1
+; Trebuchet and 3 Bombards.  ``story`` covers easy + standard, and
+; ``moderate`` is the third baseline tier, so the baseline condition is
+; the disjunction of the two.
+;
+; The siege train is placed on the citadel square e6 next to the player.
+; ---------------------------------------------------------------------------
+trigger player1 (or (difficulty story) (difficulty moderate)) (add_units e6 2 trebuchet 6 bombard_cannon)
+trigger player1 (difficulty >= hard) (add_units e6 1 trebuchet 3 bombard_cannon)
+
+; ---------------------------------------------------------------------------
+; THE ENGLISH BESIEGERS' ARTILLERY AND FORTIFICATIONS (hard / extreme).
+;
+; ``computer1`` is the English siege ring on the south bank (c2) -- the
+; "English town" of this chapter.  It gets three Bombard Cannons and an
+; extra Guard Tower on the hard tier.
+; ---------------------------------------------------------------------------
+trigger computer1 (difficulty >= hard) (add_units c2 3 bombard_cannon 1 guardtower)
+
+; ---------------------------------------------------------------------------
+; THE ENGLISH BUILD A SECOND TOWN CENTER AFTER 15 MINUTES (hard / extreme).
+;
+; A trigger accepts exactly ONE condition, so the difficulty test and the
+; timer test are combined with the boolean ``and``:
+;
+;     (and (difficulty >= hard) (timer 30))
+;
+; ``timer 30`` means 30 ticks of ``timer_coefficient 30`` = 900 seconds =
+; 15 real minutes.  A trigger whose condition is false is kept, so this
+; one fires once the clock has run out AND the difficulty is high enough.
+; ---------------------------------------------------------------------------
+trigger computer1 (and (difficulty >= hard) (timer 30)) (add_units c2 1 town_center)
 
 ; ---------------------------------------------------------------------------
 ; MAKE THE BESIEGERS ACTUALLY ATTACK.

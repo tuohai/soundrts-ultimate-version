@@ -12,7 +12,7 @@
 8807 Uma perfeita mártir
 
 8810 Conduza Joana para o leste a partir de Vaucouleurs (a1), passando pelas patrulhas inglesas, até Robert de Baudricourt em b4, que lhe concederá uma santa carta e uma pequena escolta. Então leve a carta à corte do Delfim em Chinon (f4). Joana deve sobreviver.
-8811 Orleans está sitiada por um anel inglês de torres de vigia e uma pequena fortaleza. Treine milícias para reunir os cidadãos, então rompa o cerco e destrua cada torre inglesa.
+8811 Conduza Joana ao acampamento francês em Blois (e2) para pegar o exército e seis carroças de suprimento. Leve a comboia pela ponte sobre o Loire (f4) até Orleans (h6); a cidade então lhe entrega sua cidela e seus camponeses. Erga sua própria cidade até a Idade dos Castelos - o limite de população é 125 - e destrua um dos dois Castelos ingleses ao norte (k5 ou l5). Joana e a catedral de Orleans devem sobreviver.
 8812 Após Orleans, Joana lidera o exército cruzando o Loire. Da base francesa (d4) avance para leste, tome Saint-Loup (a1) na margem sul e Les Tourelles (f5) na margem norte para romper o cerco inglês.
 8813 Escolte o Delfim pela Borgonha até Reims (c5) para a coroação. Leve três relíquias à catedral. Os borgonheses e os ingleses tentarão impedi-lo.
 8814 Conduza Joana rio acima pelo Loire e destrua cada posto avançado inglês. Quando cada torre e cada castelo caírem, Joana o traz para casa.
@@ -66,6 +66,12 @@
 8897 Metade do cerco já passou. Aguente a citadela mais um pouco.
 8898 Os sinos de Reims vão tocar em breve. Aguente firme.
 8899 Os sinos estão prestes a tocar. Defenda a citadela!
+
+; --- ch4 (The Rising) additions ---
+; 8904 = objective 2 (escort the Dauphin to Reims);
+; 8905 = the cut_scene played when the relics reach the cathedral.
+8904 Esconda o Dauphin até a catedral de Reims
+8905 As três relíquias foram postas diante do altar de Reims. Nos olhos do Dauphin renasce a esperança: a coroação finalmente pode ocorrer.
 
 8840 Vaucouleurs
 8841 Chinon

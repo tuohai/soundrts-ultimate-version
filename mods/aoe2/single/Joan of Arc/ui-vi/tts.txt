@@ -12,7 +12,7 @@
 8807 Một ngường tử đạo hoàn hảo
 
 8810 Dẫn Jeanne về phía đông từ Vaucouleurs (a1), qua các tuần tra Anh, đến Robert de Baudricourt ở b4, người sẽ ban cho cô một lá thư thánh và một đoàn hộ tống nhỏ. Sau đó mang thư đến triều đình Thái tử ở Chinon (f4). Jeanne phải sống sót.
-8811 Orleans bị bao vây bởi một vòng tháp canh Anh và một pháo đài nhỏ. Huấn luyện dân binh để tập hợp dân thành thị, rồi phá vỡ cuộc bao vây và phá hủy mọi tháp Anh.
+8811 Dẫn Joan đến doanh trại quân Pháp tại Blois (e2) để nhận đội quân và sáu xe hàng hóa. Đưa đoàn hộ tốc qua cầu Loire (f4) đến Orleans (h6); thành phố sẽ trao thành trì và dân nông cho bạn. Nâng thị trấn của bạn lên thời đại Lâu Đài - giới hạn dân số là 125 - và phá hủy một trong hai Lâu Đài Anh ở phía bắc (k5 hoặc l5). Joan và nhà thờ chính ở Orleans phải sống sót.
 8812 Sau Orleans, Jeanne dẫn đoàn quân vượt Loire. Từ căn cứ Pháp (d4), đẩy về phía đông, chiếm Saint-Loup (a1) bên bờ nam và Les Tourelles (f5) bên bờ bắc để phá vòng vây Anh.
 8813 Hộ tống Thái tử qua Burgundy đến Reims (c5) để đăng quang. Mang ba thánh vật đến nhà thờ chính tòa. Người Burgundy và Anh sẽ tìm cách ngăn bạn.
 8814 Dẫn Jeanne ngược dòng Loire và phá hủy mọi tiền đồn Anh. Khi mọi tháp và lâu đài đổ xuống, Jeanne sẽ mang nó về nhà.
@@ -66,6 +66,12 @@
 8897 Đã qua nửa thời gian vây hãm. Hãy giữ thành thêm một chút nữa.
 8898 Chuông nhà thờ Reims sẽ vang lên sớm. Hãy giữ vững.
 8899 Chuông sắp vang lên. Hãy giữ thành!
+
+; --- ch4 (The Rising) additions ---
+; 8904 = objective 2 (escort the Dauphin to Reims);
+; 8905 = the cut_scene played when the relics reach the cathedral.
+8904 Hộ tống Dauphin đến nhà thờ Reims
+8905 Ba tín vật đã được đặt trước bàn thờ ở Reims. Trong mắt Dauphin bừng lên hy vọng: lễ đăng quang cuối cùng đã có thể diễn ra.
 
 8840 Vaucouleurs
 8841 Chinon

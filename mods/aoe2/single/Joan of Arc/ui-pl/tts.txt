@@ -12,7 +12,7 @@
 8807 Doskonała męczennica
 
 8810 Prowadź Joannę na wschód z Vaucouleurs (a1) obok angielskich patroli do Roberta de Baudricourt w b4, który da jej święty list i mały orszak. Potem zanieś list na dwór delfina w Chinon (f4). Joanna musi przeżyć.
-8811 Orlean jest oblegany przez angielski pierścień wież strażniczych i małą twierdzę. Wyszkol milicję, by zebrać mieszczan, potem przełam oblężenie i zniszcz każdą angielską wieżę.
+8811 Poprowadź Joannę do francuskiego obozu pod Blois (e2), aby odebrać armię i sześć wozów zapasowych. Przeprowadź konwój przez most na Loarze (f4) do Orleanu (h6); miasto odda wtedy swoją cytadelę i chłopów. Wznieś własne miasto aż do ery zamków - limit populacji to 125 - i zniszcz jeden z dwóch angielskich zamków na północy (k5 lub l5). Joanna i katedra w Orleanie muszą przetrwać.
 8812 Po Orleanie Joanna prowadzi armię przez Loirę. Z bazy francuskiej (d4) ruszaj na wschód, zdobądź Saint-Loup (a1) na południowym brzegu i Les Tourelles (f5) na północnym, by przerwać angielskie oblężenie.
 8813 Eskortuj delfina przez Burgundię do Reims (c5) na koronację. Zanieś trzy relikwie do katedry. Burgundczycy i Anglicy spróbują cię powstrzymać.
 8814 Prowadź Joannę w górę Loary i niszcz każdy angielski posterunek. Gdy każda wieża i każdy zamek padnie, Joanna przyniesie to do domu.
@@ -66,6 +66,12 @@
 8897 Połowa oblęgi już za tobą. Trzymaj fortecę jeszcze chwilę.
 8898 Dzwony w Reims zabrzmią wkrótce. Trzymaj się.
 8899 Dzwony zaraz zadzwonią. Trzymaj fortecę!
+
+; --- ch4 (The Rising) additions ---
+; 8904 = objective 2 (escort the Dauphin to Reims);
+; 8905 = the cut_scene played when the relics reach the cathedral.
+8904 Escortuj Dauphina do katedry w Reims
+8905 Trzy relikwie złożono przed ołtarzem w Reims. W oczach Dauphina rozpala się nadzieja: koronacja może się wreszcie odbyć.
 
 8840 Vaucouleurs
 8841 Chinon

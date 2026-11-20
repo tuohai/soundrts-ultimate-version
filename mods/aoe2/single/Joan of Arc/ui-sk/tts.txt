@@ -12,7 +12,7 @@
 8807 Dokonalá mučeníčka
 
 8810 Veď Janku na východ z Vaucouleurs (a1) okolo anglických hliadok k Robertovi de Baudricourtovi v b4, ktorý jej udelí svätý list a malý sprievod. Potom odniesť list ku dvoru dauphina v Chinone (f4). Janka musí prežiť.
-8811 Orléans oblieha anglický kruh strážnych veží a malá pevnosť. Vycvič milíciu, aby sa pridali mešťania, potom prelom obliehanie a znič každú anglickú vežu.
+8811 Ved Joannu k francúzskému táboru pri Blois (e2), aby si vyzvedla armádu a šesť zásobovacích vozov. Preveď konvoj cez most na Loire (f4) do Orléansu (h6); mesto potom odovzdá svoju citadéľu a svojich sedliakov. Postav svoje vlastné mesto až do veku hradov - limit populácie je 125 - a znič jeden z dvoch anglických hradov na severe (k5 alebo l5). Joanna a katedrála v Orléane musia prežiť.
 8812 Po Orléans vedie Janka armádu cez Loiru. Z francúzskej základne (d4) tlač na východ, vezmi Saint-Loup (a1) na južnom brehu a Les Tourelles (f5) na severnom brehu, aby si prelomil anglické obliehanie.
 8813 Eskortuj dauphina Burgundskom do Remeša (c5) na korunováciu. Prines tri relikvie do katedrály. Burgundi a Angličania sa ťa pokúsia zastaviť.
 8814 Veď Janku proti prúdu Loiry a nič každú anglickú základňu. Keď každá veža a každý hrad padne, Janka to prinesie domov.
@@ -66,6 +66,12 @@
 8897 Polovica obliehania je za nami. Ešte chvíľu vydržte pevnosť.
 8898 Zvoní v Remeši zaznajú čoskoro. Odolajte.
 8899 Zvoní už zaznajú. Držte pevnosť!
+
+; --- ch4 (The Rising) additions ---
+; 8904 = objective 2 (escort the Dauphin to Reims);
+; 8905 = the cut_scene played when the relics reach the cathedral.
+8904 Eskortujte dauphinu do katedrály v Remeši
+8905 Tri relikvie sú položené pred oltárom v Remeši. V očiach dauphina sa rozzvieti nádej: korunovanie sa môže konať.
 
 8840 Vaucouleurs
 8841 Chinon

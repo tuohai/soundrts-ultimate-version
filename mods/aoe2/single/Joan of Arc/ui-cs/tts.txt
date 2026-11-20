@@ -12,7 +12,7 @@
 8807 Dokonalá mučednice
 
 8810 Veď Johanku na východ z Vaucouleurs (a1) kolem anglických hlídek k Robertovi de Baudricourtovi v b4, který jí udělí svatý dopis a malý doprovod. Pak dones dopis ke dvoru dauphina v Chinonu (f4). Johanka musí přežít.
-8811 Orléans obléhá anglický kruh strážních věží a malá pevnost. Vycvič milice, aby se přidali měšťané, pak prolom obléhání a znič každou anglickou věž.
+8811 Veď Janu k francouzskému táboru u Blois (e2), aby tam vyzvedla armádu a šest zásobovacích vozů. Převeď konvoj přes ložský most (f4) do Orléansu (h6); město poté odevzdá svou pevnost i své sedláky. Postav své vlastní město až do věku hradů - populační limit je 125 - a znič jeden ze dvou anglických hradů na severu (k5 nebo l5). Jana i katedrála v Orléansu musí přežít.
 8812 Po Orléansu vede Johanka armádu přes Loiру. Z francouzské základny (d4) se vydej na východ, vezmi Saint-Loup (a1) na jižním břehu a Les Tourelles (f5) na severním břehu, abys prolomil anglické obléhání.
 8813 Eskoruj dauphina Burgundskem do Remeše (c5) ke korunovaci. Přines tři relikvie do katedrály. Burgundi a Angličané se tě pokusí zastavit.
 8814 Veď Johanku proti proudu Loiry a nič každou anglickou základnu. Až každá věž a každý hrad padne, Johanka to přinese domů.
@@ -66,6 +66,12 @@
 8897 Polovina obrany je za námi. Ještě chvíli udržte pevnost.
 8898 Zvonice v Remeši brzy rozzvoní. Vydržte.
 8899 Zvonice už brzy znějí. Držte pevnost!
+
+; --- ch4 (The Rising) additions ---
+; 8904 = objective 2 (escort the Dauphin to Reims);
+; 8905 = the cut_scene played when the relics reach the cathedral.
+8904 Eskortujte dauphina do katedrály v Remeši
+8905 Tři relikvie jsou položeny před oltářem v Remeši. V očích dauphina se rozzářila naděje: korunovace se může konečně konat.
 
 8840 Vaucouleurs
 8841 Chinon

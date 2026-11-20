@@ -58,6 +58,23 @@ additional_meadows a1
 player 0 0 0 0 a1 town_center 2 peasant 1 house 1 npc_joan
 
 ; English outposts along the Loire
+;
+; DE original, "Differences between difficulty levels" (ch. 1
+; "An Unlikely Messiah"):
+;
+;     On Standard, there are no Guard Towers in the Burgundian town,
+;     the Burgundian ambuscade at the docks has considerably fewer men,
+;     and the final Burgundian force on the way to Chinon is missing
+;     a Mangonel and Man-at-Arms.
+;
+; This chapter's English outposts are the "Burgundian town" forts: on the
+; standard tier (the ``story`` semantic tier, which covers "easy" and
+; "standard") their Guard Towers are removed -- see the
+; ``(remove_unit ...)`` triggers below.  The other two differences
+; (the ambush at the docks and the final force on the way to Chinon)
+; have no counterpart in this map: there is no dock and no separate
+; "final force" here, because the chapter is a single escort from
+; Vaucouleurs to Chinon.
 computer_only 0 0 0 0 faction britons c2 scouttower 2 militia
 computer_only 0 0 0 0 faction britons d3 2 militia 1 aoe_archer
 computer_only 0 0 0 0 faction britons e3 scouttower 2 militia 1 aoe_archer
@@ -80,18 +97,45 @@ trigger computer1 (timer 0) (alliance 2)
 trigger computer2 (timer 0) (alliance 2)
 trigger computer3 (timer 0) (alliance 2)
 
-trigger player1 (timer 0) (register_objective 1)
+; ---------------------------------------------------------------------------
+; STANDARD-TIER DIFFERENCE (AoE2 DE "An Unlikely Messiah").
+;
+;     "On Standard, there are no Guard Towers in the Burgundian town..."
+;
+; The ``story`` semantic tier covers "easy" and "standard" (easy is the
+; equivalent of the DE's Story mode, which is even more generous than
+; Standard).  On Moderate / Hard / Extreme the outposts keep their
+; Guard Towers.
+;
+; ``(remove_unit <方格> <类型> [数量])`` deletes the tower from that
+; square -- it is an engine action added for exactly this purpose (see
+; soundrts/worldplayerbase/triggers.py::lang_remove_unit).
+; ---------------------------------------------------------------------------
+trigger computer1 (difficulty story) (remove_unit c2 scouttower)
+trigger computer3 (difficulty story) (remove_unit e3 scouttower)
+
+; Two objectives, matching the two story beats of AoE2 DE ch. 1:
+;   1) 8820 "Reach Robert's garrison at Vaucouleurs"  -> completes when
+;      Joan reaches Baudricourt at b4.
+;   2) 8821 "Deliver the holy letter to the Dauphin at Chinon"
+;      -> completes when the Dauphin receives the letter at f4.
+; Previously only objective 1 existed and it was completed by the
+; LETTER DELIVERY, so the objective text ("reach Vaucouleurs") did not
+; match what actually happened, and 8821 was defined in tts.txt but
+; never used.
+trigger player1 (timer 0) (register_objective 1 2)
 trigger player1 (timer 0) (add_objective 1 8820)
+trigger player1 (timer 0) (add_objective 2 8821)
 
 ; Step 1: Joan (npc_joan) reaches Baudricourt at b4
 ; -> cut_scene "Baudricourt grants holy letter + escort"
 ; -> Joan receives holy_letter in inventory
 ; -> 4 militia + 2 aoe_knight spawn at b4 and join player1
-trigger player1 (has_entered b4 npc_joan) (do (cut_scene 8826) (add_inventory_item holy_letter 1 npc_joan) (add_units b4 4 militia 2 aoe_knight))
+trigger player1 (has_entered b4 npc_joan) (do (cut_scene 8826) (add_inventory_item holy_letter 1 npc_joan) (add_units b4 4 militia 2 aoe_knight) (objective_complete 1))
 
 ; Step 2: Joan carries holy_letter and GIVEs it to Dauphin at f4
 ; npc_has_item triggers when Dauphin receives the letter in inventory
-trigger player1 (npc_has_item npc_dauphin holy_letter f4) (do (cut_scene 8830) (objective_complete 1))
+trigger player1 (npc_has_item npc_dauphin holy_letter f4) (do (cut_scene 8830) (objective_complete 2))
 
 ; Defeat conditions
 trigger player1 (key_unit_killed npc_joan) (defeat)

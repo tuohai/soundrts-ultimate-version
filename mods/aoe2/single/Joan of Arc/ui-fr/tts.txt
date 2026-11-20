@@ -12,7 +12,7 @@
 8807 Une Parfaite Martyre
 
 8810 Mène Jeanne vers l'est depuis Vaucouleurs (a1), à travers les patrouilles anglaises, jusqu'à Robert de Baudricourt à b4, qui lui accordera une sainte lettre et une petite escorte. Porte ensuite la lettre à la cour du Dauphin à Chinon (f4). Jeanne doit survivre.
-8811 Orléans est assiégée par un anneau anglais de tours de guet et une petite forteresse. Entraîne des miliciens pour rassembler les bourgeois, puis brise le siège et détruis chaque tour anglaise.
+8811 Conduis Jeanne au camp français de Blois (e2) pour y prendre l'armée et six charrettes de ravitaillement. Fais passer le convoi par le pont sur la Loire (f4) jusqu'à Orléans (h6) ; la ville te confiera alors sa citadelle et ses paysans. Élève ta propre ville jusqu'à l'Âge des châteaux - la limite de population est de 125 - et détruis l'un des deux châteaux anglais du nord (k5 ou l5). Jeanne et la cathédrale d'Orléans doivent survivre.
 8812 Après Orléans, Jeanne mène l'armée à travers la Loire. Depuis la base française (d4), pousse vers l'est, prends Saint-Loup (a1) sur la rive sud et Les Tourelles (f5) sur la rive nord pour briser le siège anglais.
 8813 Escorter le Dauphin à travers la Bourgogne jusqu'à Reims (c5) pour le sacre. Porte trois reliques à la cathédrale. Les Bourguignons et les Anglais tenteront de t'arrêter.
 8814 Mène Jeanne en amont de la Loire et détruis chaque avant-poste anglais. Une fois chaque tour et chaque château tombés, Jeanne le rapporte à la maison.
@@ -66,6 +66,12 @@
 8897 La moitié du siège est surmontée. Tenez encore un peu la citadelle.
 8898 Les cloches de Reims vont sonner bientôt. Tenez bon.
 8899 Les cloches vont sonner. Tenez la citadelle !
+
+; --- ch4 (The Rising) additions ---
+; 8904 = objective 2 (escort the Dauphin to Reims);
+; 8905 = the cut_scene played when the relics reach the cathedral.
+8904 Escorte le Dauphin à la cathédrale de Reims
+8905 Les trois reliques sont posées devant l'autel de Reims. Dans les yeux du Dauphin renaît l'espoir : le couronnement peut enfin avoir lieu.
 
 8840 Vaucouleurs
 8841 Chinon
