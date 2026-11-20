@@ -25,13 +25,34 @@ nb_meadows_by_square 2
 ; Scots force + small base
 player 500 400 500 400 a1 town_center 3 house barracks 4 peasant 8 militia 4 man_at_arms 4 aoe_archer feudal_age
 
-; English army + watch tower
-computer_only 0 0 0 0 faction britons e4 scouttower 10 militia 6 man_at_arms 4 aoe_archer e3 4 militia
+; English army + watch tower.
+;
+; The English get a REAL economy and a REAL AI.  A ``computer_only``
+; slot gets a trigger-only, do-nothing AI by default (see
+; doc_src/src/en/mod/mapmaking.rst "Switch to another AI"), so without
+; this the English would sit in their camp and the whole chapter
+; would be a walk around an empty map -- the player's army would
+; never be tested.
+;
+; The resources below are the seed economy the ``britons_intermediate``
+; script (``(ai intermediate)``) needs, and the town_center + farm +
+; barracks let the AI actually train and feed the militia it plans.
+computer_only 500 400 500 400 non_neutral faction britons e4 town_center 2 house farm 2 barracks archery_range scouttower 10 militia 6 man_at_arms 4 aoe_archer 6 peasant e3 4 militia dark_age feudal_age
 
 timer_coefficient 40
 
 trigger player1 (timer 0) (alliance 1)
 trigger computers (timer 0) (alliance 2)
+
+; ---------------------------------------------------------------------------
+; MAKE THE ENGLISH REALLY ATTACK.
+;
+; ``(ai intermediate)`` swaps in mods/aoe2/ai.txt's
+; ``britons_intermediate`` script, which contains real ``attack`` lines
+; and ``attack_ratio 120``: the English build an army and come at the
+; Scots over the field.
+; ---------------------------------------------------------------------------
+trigger computer1 (timer 0) (ai intermediate)
 
 trigger player1 (timer 0) (register_objective 1)
 trigger player1 (timer 0) (add_objective 1 8624)

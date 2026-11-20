@@ -20,13 +20,19 @@ nb_meadows_by_square 0
 ; Player: 3 militia at west; walk east to village
 player 0 0 0 0 a1 3 militia
 
-; Optional: English raid that can catch stragglers
+; Optional: English raid that can catch stragglers.
+;
+; The raid is given a REAL AI so it actually comes at the player: a
+; ``computer_only`` slot gets a trigger-only, do-nothing AI by default
+; (see doc_src/src/en/mod/mapmaking.rst "Switch to another AI"), so
+; without this the "English raid" was two militia that stood still.
 computer_only 0 0 0 0 faction britons c1 2 militia
 
 timer_coefficient 40
 
 trigger player1 (timer 0) (alliance 1)
 trigger computer1 (timer 0) (alliance 2)
+trigger computer1 (timer 0) (ai intermediate)
 
 trigger player1 (timer 0) (register_objective 1)
 trigger player1 (timer 0) (add_objective 1 8620)

@@ -25,14 +25,33 @@ nb_meadows_by_square 2
 ; Relics: home, ally town, English camp
 relic a1 a4 e4
 
-; Castle Age Scots with monastery + monk; bring relics to a1 monastery
-player 500 500 500 500 a1 town_center monastery 3 monk 4 house barracks 4 peasant 6 militia castle_age
+; Castle Age Scots with monastery + monk; bring relics to a1 monastery.
+;
+; The MARKET is the AoE2 DE trade/tribute hub: it unlocks the market UI
+; (buy / sell / pay tribute to your allies) and it is the drop-off point
+; for the trade carts.  ``market`` requires a ``mill`` in the AoE2 tech
+; tree, so the mill comes with it.  Without a market the player had no
+; way at all to trade or to pay tribute -- the engine's whole market /
+; tribute system was unreachable in this chapter.
+;
+; The trade cart is the player's income: a trade unit that hauls gold
+; back to the market, so the player can afford the militia the chapter
+; needs.
+player 500 500 500 500 a1 town_center monastery mill market 1 trade_cart 3 monk 4 house barracks 4 peasant 6 militia castle_age
 
-; Scottish ally (computer1)
-computer_only 0 0 0 0 faction celts a4 6 militia 2 aoe_archer monastery
+; Scottish ally (computer1).  It keeps a do-nothing AI on purpose: it is
+; a friendly camp, not an enemy.
+computer_only 300 300 0 0 faction celts a4 6 militia 2 aoe_archer monastery
 
-; English (computer2)
-computer_only 0 0 0 0 faction britons e4 scouttower 8 militia 4 man_at_arms 3 aoe_archer
+; English (computer2).
+;
+; The English get a REAL economy and a REAL AI.  A ``computer_only``
+; slot gets a trigger-only, do-nothing AI by default (see
+; doc_src/src/en/mod/mapmaking.rst "Switch to another AI"), so without
+; this the English camp would sit there and the player could walk to
+; the third relic unopposed -- the chapter's tension (race the English
+; to the relics) would not exist at all.
+computer_only 500 400 500 400 non_neutral faction britons e4 town_center 2 house farm 2 barracks archery_range scouttower 8 militia 4 man_at_arms 3 aoe_archer 6 peasant dark_age feudal_age
 
 timer_coefficient 40
 
@@ -40,8 +59,38 @@ trigger player1 (timer 0) (alliance 1)
 trigger computer1 (timer 0) (alliance 1)
 trigger computer2 (timer 0) (alliance 2)
 
+; ---------------------------------------------------------------------------
+; MAKE THE ENGLISH REALLY ATTACK.
+;
+; ``(ai intermediate)`` swaps in mods/aoe2/ai.txt's
+; ``britons_intermediate`` script, which contains real ``attack`` lines
+; and ``attack_ratio 120``.
+; ---------------------------------------------------------------------------
+trigger computer2 (timer 0) (ai intermediate)
+
 trigger player1 (timer 0) (register_objective 1)
 trigger player1 (timer 0) (add_objective 1 8625)
 ; Three relics carried into the monastery square (a1)
 trigger player1 (has_brought_item a1 relic 3) (do (objective_complete 1) (victory))
 trigger player1 (building_lost town_center) (defeat)
+
+; ---------------------------------------------------------------------------
+; THE SCOTTISH ALLY PAYS THE PLAYER FOR THE RELICS.
+;
+; This is the AoE2 DE "Forge an Alliance" reward: the Scottish ally at
+; a4 hands the player gold for every relic delivered to the monastery.
+; The engine's tribute action moves the resources between two players,
+; so the ally's gold is what actually arrives in the player's purse.
+;
+; The amount is 200 gold per relic (3 relics = 600 gold), which is the
+; DE's relief for a chapter where the player has no market income.
+;
+; Three ONE-SHOT triggers with growing counts are used instead of one
+; repeating trigger: a ``(has_brought_item a1 relic 1)`` condition stays
+; true forever once the first relic is delivered, so a ``repeat``
+; trigger would pay the player over and over.  Each count trigger
+; fires exactly once, when that many relics have arrived.
+; ---------------------------------------------------------------------------
+trigger player1 (has_brought_item a1 relic 1) (tribute from computer1 gold 200 player1)
+trigger player1 (has_brought_item a1 relic 2) (tribute from computer1 gold 200 player1)
+trigger player1 (has_brought_item a1 relic 3) (tribute from computer1 gold 200 player1)

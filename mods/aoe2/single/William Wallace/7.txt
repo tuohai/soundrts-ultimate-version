@@ -26,20 +26,41 @@ nb_meadows_by_square 3
 ; Castle Age base with stone for a castle (650)
 player 200 200 800 200 a1 town_center barracks archery_range blacksmith stables workshop 6 house 8 peasant 6 militia 4 aoe_archer 2 aoe_knight castle_age
 
-; English fortified base with castle
-computer_only 0 0 0 0 faction britons f5 aoe_castle scouttower 8 longbowman 6 man_at_arms 4 aoe_knight e5 6 militia 2 scouttower
+; English fortified base with castle.
+;
+; The English get a REAL economy and a REAL AI.  A ``computer_only``
+; slot gets a trigger-only, do-nothing AI by default (see
+; doc_src/src/en/mod/mapmaking.rst "Switch to another AI"), so without
+; this the English would sit behind their castle and the player could
+; build his own castle in peace -- Falkirk would be a build race, not
+; a battle.
+computer_only 800 600 800 600 non_neutral faction britons f5 aoe_castle town_center 2 house farm 2 barracks archery_range stables workshop scouttower 8 longbowman 6 man_at_arms 4 aoe_knight e5 6 militia 2 scouttower 8 peasant dark_age feudal_age castle_age
 
 timer_coefficient 40
 
 trigger player1 (timer 0) (alliance 1)
 trigger computers (timer 0) (alliance 2)
 
+; ---------------------------------------------------------------------------
+; MAKE THE ENGLISH REALLY ATTACK.
+;
+; ``(ai intermediate)`` swaps in mods/aoe2/ai.txt's
+; ``britons_intermediate`` script, which contains real ``attack`` lines
+; and ``attack_ratio 120``: the English build their army and come at
+; the Scots over the field.
+; ---------------------------------------------------------------------------
+trigger computer1 (timer 0) (ai intermediate)
+
 trigger player1 (timer 0) (register_objective 1 2)
 trigger player1 (timer 0) (add_objective 1 8626)
 trigger player1 (timer 0) (add_objective 2 8627)
 
-trigger player1 (has aoe_castle) (do (objective_complete 1) (victory))
+; NOTE: building our own castle only completes objective 1.
+; Victory is awarded by the objective manager once BOTH registered
+; objectives are done (see _all_required_objectives_done), i.e. the
+; player must ALSO destroy the English castle (objective 2).
+trigger player1 (has aoe_castle) (objective_complete 1)
 trigger computer1 (building_lost aoe_castle) (defeat)
-trigger player1 (no_enemy_left) (do (objective_complete 2) (victory))
+trigger player1 (no_enemy_left) (objective_complete 2)
 
 trigger player1 (building_lost town_center) (defeat)

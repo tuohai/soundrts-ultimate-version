@@ -23,7 +23,38 @@ nb_meadows_by_square 3
 player 250 200 450 200 a1 town_center barracks 4 house 6 peasant 4 militia
 
 ; Light English raid (optional pressure)
+;
+; DIFFICULTY DIFFERENCES (AoE2 DE "Research and Technology", ch. 4)
+;
+;     "Above Standard, the English militia that attacks are replaced
+;      with Men-at-Arms."
+;
+; The baseline is the standard tier's English militia; from the moderate
+; tier upwards (``(difficulty >= moderate)``, which also covers hard and
+; extreme) the militia is deleted and replaced by the same number of
+; Men-at-Arms.  ``(remove_unit ...)`` is the engine action added for
+; exactly this kind of "the enemy garrison changes with the difficulty"
+; difference (see soundrts/worldplayerbase/triggers.py::lang_remove_unit).
+;
+; ``story`` (easy + standard) is NOT affected -- the story tier keeps
+; the weaker militia, exactly as in the DE original.
 computer_only 0 0 0 0 faction britons c3 3 militia
+
+; The raid party is given a REAL AI so it actually comes at the player.
+; A ``computer_only`` slot gets a trigger-only, do-nothing AI by default
+; (see doc_src/src/en/mod/mapmaking.rst "Switch to another AI"), so
+; without this the "English raid that attacks" was three militia that
+; stood still and never attacked anybody -- the chapter's whole point
+; (research Man-at-Arms under pressure) was missing.
+;
+; ``(ai intermediate)`` swaps in mods/aoe2/ai.txt's
+; ``britons_intermediate`` script, which contains real ``attack`` lines.
+; The raid is small (3 units), so the script's own economy is never
+; reached -- the party simply advances on the player.
+trigger computer1 (timer 0) (ai intermediate)
+
+trigger computer1 (difficulty >= moderate) (remove_unit c3 militia 3)
+trigger computer1 (difficulty >= moderate) (add_units c3 3 man_at_arms)
 
 timer_coefficient 40
 
