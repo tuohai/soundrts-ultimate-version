@@ -176,6 +176,12 @@ class DamageEffectsMixin(DamageCalculationMixin):
             return
         if attacker is not None and getattr(attacker, "_has_yielded", False):
             return
+        # A unit declared ``is_vulnerable 0`` is untouchable.  Direct
+        # hits, splash, bounce and pierce all funnel through
+        # receive_hit, so this single choke point makes such units
+        # immune to every damage path -- not just to auto-targeting.
+        if not getattr(self, "is_vulnerable", True):
+            return
         if self.player is None or self.hp <= 0:
             return
 
