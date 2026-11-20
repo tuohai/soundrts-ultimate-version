@@ -127,10 +127,23 @@ class _Game:
         # seed 行向后兼容地追加合作战役敌人强度百分比：旧回放只有 seed，
         # 新回放为 "<seed> <enemy_hp%> <enemy_damage%>"。这样回放重建世界时
         # 能套用与对局完全一致的难度，避免敌方 hp/伤害缩放不一致导致不同步。
+        #
+        # 战役难度等级名（"easy".."extreme"）也必须写进去：关卡内容按难度
+        # 分支（``(difficulty standard)`` 之类），回放若丢掉等级名，触发器
+        # 的分支就会与原对局不同 —— 那是最典型的"回放与对局不一致"。
+        # 追加在百分比之后，读端按"有第 4 段就是等级名"解析，旧回放不受影响。
         ehp = int(getattr(self, "enemy_hp_factor", 100) or 100)
         edmg = int(getattr(self, "enemy_damage_factor", 100) or 100)
-        if ehp != 100 or edmg != 100:
-            self.replay_write(f"{self.seed} {ehp} {edmg}")
+        diff = (
+            getattr(self, "scenario_difficulty", "")
+            or getattr(self, "coop_difficulty", "")
+            or ""
+        )
+        if ehp != 100 or edmg != 100 or diff:
+            parts = [str(self.seed), str(ehp), str(edmg)]
+            if diff:
+                parts.append(str(diff))
+            self.replay_write(" ".join(parts))
         else:
             self.replay_write(str(self.seed))
 
@@ -286,6 +299,14 @@ class _Game:
         self.world.enemy_hp_factor = int(getattr(self, "enemy_hp_factor", 100) or 100)
         self.world.enemy_damage_factor = int(getattr(self, "enemy_damage_factor", 100) or 100)
         self.world.coop_difficulty = getattr(self, "coop_difficulty", "") or ""
+        # 战役难度等级：地图脚本靠它分支关卡内容（决定版风格）。单人战役用
+        # ``Campaign.get_difficulty()``，合作战役用服务器下发的等级名，
+        # 两者都经由 ``scenario_difficulty`` 写入游戏再传到世界。
+        self.world.scenario_difficulty = (
+            getattr(self, "scenario_difficulty", "")
+            or getattr(self, "coop_difficulty", "")
+            or ""
+        )
         # 条约时间配置（分钟转毫秒），仅多人局使用
         treaty_minutes = clamp_treaty_minutes(getattr(self, "treaty_minutes", 0))
         if treaty_minutes > 0:
@@ -861,12 +882,17 @@ class ReplayGame(_Game):
         players = self.replay_read().split()
         alliances = self.replay_read().split()
         factions = self.replay_read().split()
-        # seed 行可能为 "<seed>" 或 "<seed> <enemy_hp%> <enemy_damage%>"（合作战役难度）
+        # seed 行可能为 "<seed>"、"<seed> <enemy_hp%> <enemy_damage%>"（合作战役难度）
+        # 或 "<seed> <enemy_hp%> <enemy_damage%> <difficulty>"（关卡内容按难度分支）。
+        # 旧回放只有 seed，向后兼容。
         seed_parts = self.replay_read().split()
         self.seed = int(seed_parts[0])
         if len(seed_parts) >= 3:
             self.enemy_hp_factor = int(seed_parts[1])
             self.enemy_damage_factor = int(seed_parts[2])
+        if len(seed_parts) >= 4:
+            self.scenario_difficulty = seed_parts[3]
+            self.coop_difficulty = seed_parts[3]
         self.local_client = ReplayClient(players[0], self)
         self.players = [self.local_client]
         _replay_ai_types = {
@@ -1022,6 +1048,12 @@ class SpectatorGame(_MultiplayerGame):
         # 合作战役难度：旁观世界必须与对局用相同的敌人强度百分比，否则不同步。
         self.world.enemy_hp_factor = int(getattr(self, "enemy_hp_factor", 100) or 100)
         self.world.enemy_damage_factor = int(getattr(self, "enemy_damage_factor", 100) or 100)
+        # 战役难度等级：关卡内容按难度分支，旁观世界必须与对局一致。
+        self.world.scenario_difficulty = (
+            getattr(self, "scenario_difficulty", "")
+            or getattr(self, "coop_difficulty", "")
+            or ""
+        )
 
         try:
             self.world.load_and_build_map(self.map)

@@ -39,6 +39,25 @@ EXTREME = "extreme"
 # 菜单展示顺序。
 LEVELS = (EASY, STANDARD, MODERATE, HARD, EXTREME)
 
+# 「决定版标准档礼物」覆盖的难度档位。
+#
+# 《帝国时代2 决定版》的战役难度是 3 档（标准 / 中等 / 困难），其中
+# **标准档**会给玩家额外的礼物 —— 例如《El Cid》第四章"黑衣卫队"：
+# "On Standard difficulty, King Alfonso's base has a Castle, which will be
+# given to the player with the rest of his base, and the player begins with
+# Murder Holes researched."
+#
+# 本引擎有 5 档（多出"简单"与"极难"）。为了让关卡脚本能表达
+# "决定版标准档的礼物"这一概念，而不必在每个章节里把 easy 和 standard
+# 各写一遍，这里定义一个**语义档** ``story``：
+#
+#     (difficulty story)   ->  当前难度是 easy 或 standard
+#
+# easy 相当于决定版主机版的 Story mode（比标准更宽松），所以把
+# 标准档的礼物一并给它；extreme 则映射到困难档的敌人强度。
+STORY_TIERS = (EASY, STANDARD)
+STORY = "story"
+
 # 默认难度：标准（与不传难度时的行为一致，敌人 100%）。
 DEFAULT_LEVEL = STANDARD
 
@@ -63,6 +82,74 @@ def normalize_level(level) -> str:
         if key in _BASE:
             return key
     return DEFAULT_LEVEL
+
+
+def normalize_single_player_level(level) -> str:
+    """把任意输入规整为**单人战役**合法难度 key。
+
+    单人战役与合作战役一样使用 5 档（简单/标准/中等/困难/极难），因此
+    这个函数现在等价于 :func:`normalize_level`。它保留下来是为了不破坏
+    既有调用点（``Campaign.get_difficulty`` / ``set_difficulty``），并把
+    "单人战役用哪一套难度"这个决定集中在一处。
+
+    决定版战役只有 3 档这件事，由**语义档** ``story``（= easy + standard，
+    见 :data:`STORY_TIERS`）表达，而不是靠砍掉 easy / extreme 两档 ——
+    玩家仍然可以选到"极难"。
+    """
+    return normalize_level(level)
+
+
+def is_story_tier(level) -> bool:
+    """当前难度是否属于「决定版标准档礼物」覆盖的档位（easy / standard）。"""
+    return normalize_level(level) in STORY_TIERS
+
+
+def level_index(level) -> int:
+    """返回难度等级在 ``LEVELS`` 中的序号（越难越大）。
+
+    无法识别的输入回退到标准难度的序号。用于触发器里的难度比较
+    （``(difficulty >= hard)`` 之类），纯整数运算，确定性安全。
+    """
+    key = normalize_level(level)
+    try:
+        return LEVELS.index(key)
+    except ValueError:
+        return LEVELS.index(DEFAULT_LEVEL)
+
+
+def compare_level(current, op: str, other) -> bool:
+    """按难度高低比较两个等级，返回 *op* 的结果。
+
+    ``op`` 取自 ``("==", "=", "!=", "<", "<=", ">", ">=")``。等级不可识别时
+    一律按标准难度处理，因此比较结果总是确定的。
+
+    ``other`` 可以是语义档 ``"story"``（= easy + standard，见
+    :data:`STORY_TIERS`）。语义档只对**等值**比较有意义：``(difficulty
+    story)`` 为真表示当前难度落在标准档礼物的覆盖范围内。大小比较遇到
+    语义档一律返回 False（语义档没有"高低"可言）。
+    """
+    if isinstance(other, str) and other.strip().lower() == STORY:
+        in_story = is_story_tier(current)
+        if op in ("==", "="):
+            return in_story
+        if op == "!=":
+            return not in_story
+        return False
+    left = level_index(current)
+    right = level_index(other)
+    if op in ("==", "="):
+        return left == right
+    if op == "!=":
+        return left != right
+    if op == "<":
+        return left < right
+    if op == "<=":
+        return left <= right
+    if op == ">":
+        return left > right
+    if op == ">=":
+        return left >= right
+    return False
 
 
 def player_count_multiplier(nb_human_players: int) -> int:

@@ -76,11 +76,16 @@ class MissionChapter(Chapter):
         game.map = map_for_solo_campaign(self.map)
         # 帝国时代决定版风格难度：把本战役选定的敌人强度百分比传给单人战役会话，
         # 由 game.run 写入世界，确定性地缩放敌方单位 hp/伤害（回放也会记录）。
+        #
+        # 难度等级名（"easy".."extreme"）同样要传：决定版的关卡内容随难度
+        # 不同（例如《 El Cid》第四章在标准难度下阿方索的基地带城堡、玩家
+        # 开局就带"近射孔"），地图脚本靠 ``(difficulty standard)`` 分支。
         try:
             hp, dmg = self.campaign.difficulty_factors()
             game.enemy_hp_factor = hp
             game.enemy_damage_factor = dmg
             game.coop_difficulty = self.campaign.get_difficulty()
+            game.scenario_difficulty = game.coop_difficulty
         except Exception:
             pass
         game.run()
@@ -464,17 +469,22 @@ class Campaign:
         self._write_config(c)
 
     def get_difficulty(self):
-        """返回本战役当前难度等级（持久化于战役配置；缺省为标准）。"""
-        from .coop_difficulty import normalize_level
+        """返回本战役当前难度等级（持久化于战役配置；缺省为标准）。
+
+        单人战役使用全部 5 档（简单/标准/中等/困难/极难）。决定版的
+        "标准档礼物"通过语义档 ``story``（easy + standard）表达，见
+        ``coop_difficulty.STORY_TIERS``。
+        """
+        from .coop_difficulty import normalize_single_player_level
 
         c = self._read_config()
-        return normalize_level(c.get(self._id(), "difficulty", fallback=""))
+        return normalize_single_player_level(c.get(self._id(), "difficulty", fallback=""))
 
     def set_difficulty(self, level):
-        from .coop_difficulty import normalize_level
+        from .coop_difficulty import normalize_single_player_level
 
         c = self._read_config()
-        c.set(self._id(), "difficulty", normalize_level(level))
+        c.set(self._id(), "difficulty", normalize_single_player_level(level))
         self._write_config(c)
 
     def difficulty_factors(self):
@@ -626,6 +636,9 @@ class Campaign:
         self._reopen_menu()
 
     def _difficulty_menu(self, _ignored=None):
+        # 单人战役有全部 5 档难度（简单/标准/中等/困难/极难），与合作战役
+        # 一致。决定版的"标准档礼物"由语义档 story（easy + standard）表达，
+        # 不需要为此砍掉"简单"或"极难"。
         from .coop_difficulty import LEVELS, label as _difficulty_label
 
         current = self.get_difficulty()

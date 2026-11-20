@@ -740,6 +740,9 @@ class _BeforeGameMenu(_ServerMenu):
         game.enemy_hp_factor = int(getattr(self, "_coop_enemy_hp", 100) or 100)
         game.enemy_damage_factor = int(getattr(self, "_coop_enemy_damage", 100) or 100)
         game.coop_difficulty = getattr(self, "_coop_difficulty", "") or ""
+        # 关卡内容按难度分支：难度等级名也必须进世界，否则各端的
+        # ``(difficulty standard)`` 之类条件会给出不同结果。
+        game.scenario_difficulty = game.coop_difficulty
         game.auto = self.auto
 
         # 合作战役：像单人战役 Campaign.run 那样加载该战役的资源层
@@ -1033,15 +1036,26 @@ class RoomListMenu(_ServerMenu):
     def srv_start_spectating(self, args):
         """开始旁观游戏
 
-        服务器格式（新）: <packed_players> <scenario...> <speed> <seed> <treaty_minutes> <enemy_hp%> <enemy_damage%>
-        旧格式: <packed_players> <scenario...> <speed> <seed> <treaty_minutes>
-        更旧: <packed_players> <scenario...> <speed>
+        服务器格式（新）: <packed_players> <scenario...> <speed> <seed> <treaty_minutes> <enemy_hp%> <enemy_damage%> <difficulty>
+        旧格式: <packed_players> <scenario...> <speed> <seed> <treaty_minutes> <enemy_hp%> <enemy_damage%>
+        更旧: <packed_players> <scenario...> <speed> <seed> <treaty_minutes>
+        最旧: <packed_players> <scenario...> <speed>
         从两端定位字段，使中间的地图名即使含空格也能正确解析。
         """
         players_str = args[0]
         enemy_hp = 100
         enemy_damage = 100
-        if len(args) >= 7:
+        difficulty = ""
+        if len(args) >= 8:
+            # 最新的格式：末尾多一个难度等级名（关卡内容按难度分支）。
+            speed = float(args[-6])
+            seed = int(args[-5])
+            treaty = int(args[-4])
+            enemy_hp = int(args[-3])
+            enemy_damage = int(args[-2])
+            difficulty = args[-1]
+            map_name = " ".join(args[1:-6])
+        elif len(args) >= 7:
             speed = float(args[-5])
             seed = int(args[-4])
             treaty = int(args[-3])
@@ -1064,6 +1078,8 @@ class RoomListMenu(_ServerMenu):
         game = SpectatorGame(map_name, players, self.server, speed, seed, treaty)
         game.enemy_hp_factor = enemy_hp
         game.enemy_damage_factor = enemy_damage
+        game.scenario_difficulty = difficulty
+        game.coop_difficulty = difficulty
         game.auto = self.auto
         game.run()
         self.end_loop = True

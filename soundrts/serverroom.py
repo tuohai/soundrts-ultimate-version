@@ -312,6 +312,9 @@ class Game:
         # 故必须由服务器算定后分发，而不是各端自行根据等级名重算。
         self._coop_enemy_hp = 100
         self._coop_enemy_damage = 100
+        # 难度等级名也缓存下来：关卡内容按难度分支（``(difficulty standard)``），
+        # 旁观者必须拿到与对局相同的等级名，否则看到的关卡内容会与对局不同。
+        self._coop_difficulty = ""
         coop_difficulty = getattr(self, "coop_difficulty", None)
         if is_coop and coop_difficulty:
             try:
@@ -320,6 +323,7 @@ class Game:
                 self._coop_enemy_hp, self._coop_enemy_damage = factors(
                     coop_difficulty, len(self.human_players)
                 )
+                self._coop_difficulty = coop_difficulty
             except Exception:
                 self._coop_enemy_hp = 100
                 self._coop_enemy_damage = 100
@@ -584,6 +588,7 @@ class Game:
             self.treaty_minutes,
             getattr(self, "_coop_enemy_hp", 100),
             getattr(self, "_coop_enemy_damage", 100),
+            getattr(self, "_coop_difficulty", "") or "",
         )
         for fpct, all_orders in getattr(self, "_order_history", []) or []:
             client.notify("all_orders", fpct, all_orders)

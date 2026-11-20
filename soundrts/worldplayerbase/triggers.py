@@ -351,6 +351,59 @@ class TriggersMixin:
         """条件：世界变量，用法同 ``var``。"""
         return eval_var_condition(self, getattr(self, "world", None), args, is_global=True)
 
+    def _current_difficulty(self):
+        """返回本局（战役章节）的难度等级 key。
+
+        数据源是 ``world.scenario_difficulty``，由 ``game.run`` 在开局时写入。
+        未设定（普通对局、读档、测试）时回退到标准难度 —— 与
+        ``coop_difficulty.DEFAULT_LEVEL`` 一致，且与"标准难度 = 原版关卡
+        平衡"的语义相符：没选难度就按原版内容走。
+        """
+        from ..coop_difficulty import normalize_level
+
+        world = getattr(self, "world", None)
+        return normalize_level(getattr(world, "scenario_difficulty", ""))
+
+    def lang_difficulty(self, args):
+        """条件：当前战役难度。
+
+        用法::
+
+            (difficulty standard)        当前难度恰好是"标准"
+            (difficulty story)           当前难度属于"决定版标准档礼物"的覆盖范围
+                                        （简单或标准 —— 简单相当于决定版的
+                                        Story mode，比标准更宽松）
+            (difficulty >= hard)         当前难度不低于"困难"
+            (difficulty != easy)         当前难度不是"简单"
+
+        难度按 简单 < 标准 < 中等 < 困难 < 极难 排序，比较用的是这个次序。
+
+        这是决定版风格"关卡内容随难度不同"所需的机制：帝国时代2 决定版
+        《 El Cid》第四章"黑衣卫队"在标准难度下阿方索国王的基地带城堡、
+        玩家开局就带"近射孔"，困难难度则没有 —— 地图脚本必须能按难度
+        分支。引擎此前只能按难度缩放敌人血量/伤害，无法分支关卡内容。
+
+        注意：``story`` 是**语义档**，没有"高低"可言，因此只支持等值比较
+        （``(difficulty story)`` / ``(difficulty != story)``）；写成
+        ``(difficulty >= story)`` 永远为假。
+        """
+        if not args:
+            return False
+        from ..coop_difficulty import compare_level
+
+        current = self._current_difficulty()
+        # (difficulty <level>) —— 等值比较
+        if len(args) == 1:
+            return compare_level(current, "==", str(args[0]))
+        # (difficulty <op> <level>) —— 大小比较。
+        # 注意触发器解析器已经把关键字 "difficulty" 剥掉了，所以这里收到的是
+        # ["<op>", "<level>"]（两个参数），而不是三个。
+        if len(args) >= 2:
+            op = str(args[0])
+            if op in ("==", "=", "!=", "<", "<=", ">", ">="):
+                return compare_level(current, op, str(args[1]))
+        return False
+
     def lang_set_var(self, args):
         if len(args) < 2:
             return
@@ -1946,6 +1999,49 @@ class TriggersMixin:
             if removed >= need:
                 return
 
+    def lang_remove_unit(self, args):
+        """触发器动作：删除某方格上的指定类型单位/建筑。
+
+        用法：``(remove_unit <方格> <type_name> [数量])``
+
+        这是决定版风格"关卡内容随难度不同"所需的机制之一。决定版的
+        战役在标准档会**减少**敌人 —— 例如《圣女贞德》第一章
+        "An Unlikely Messiah"："On Standard, there are no Guard Towers in
+        the Burgundian town, the Burgundian ambuscade at the docks has
+        considerably fewer men, and the final Burgundian force on the way
+        to Chinon is missing a Mangonel and Man-at-Arms."
+
+        引擎此前只有 ``remove_ground_item``（只删**物品**，不删建筑/单位），
+        因此无法表达"标准档少一座守卫塔"这类差异。
+
+        实现要点：
+        * 用 ``Player.check_type`` 匹配，它认得 ``expanded_is_a``（例如
+          ``man_at_arms`` 属于 ``militia``），因此可以按根类型删。
+        * 调用 ``o.delete()``：``Building.delete()`` → ``Entity.delete()``
+          → ``move_to(None, 0, 0)``，会把建筑从它主人的 ``player.units``
+          里摘掉并归还人口（``Player.remove``）。
+        * 遍历顺序是 ``square.objects`` 的固定顺序，**没有随机**，因此
+          对局 / 旁观 / 回放三端重建出的世界完全一致。
+        """
+        if len(args) < 2:
+            return
+        square_key = self._normalize_square_token(args[0])
+        if square_key is None or square_key not in self.world.grid:
+            return
+        unit_type = args[1]
+        need = int(args[2]) if len(args) > 2 and args[2].isdigit() else 1
+        removed = 0
+        for o in list(self.world.grid[square_key].objects):
+            if not self.check_type(o, unit_type):
+                continue
+            try:
+                o.delete()
+            except Exception:
+                pass
+            removed += 1
+            if removed >= need:
+                return
+
     def _nb_scouts(self, square):
         n = 0
         for u in self.units:
@@ -1999,6 +2095,40 @@ class TriggersMixin:
         if notify:
             u.notify("added")
 
+    def _grant_upgrade_by_trigger(self, cls, type_name):
+        """通过触发器给玩家一个科技，并把它的效果**真正**应用到已有单位。
+
+        背景：``(add_units <tech>)`` 过去只是把科技名塞进 ``player.upgrades``，
+        没有调用 ``upgrade_player``，于是这个科技对**已经存在**的单位不生效
+        —— 例如《 El Cid》第四章标准难度下"玩家开局就带近射孔"，但玩家
+        基地里已经建好的城堡/箭塔并不会因此去掉最小射程。
+
+        这里的行为与"研究完成"一致（``ResearchOrder.complete`` →
+        ``upgrade_player``），因此科技对已有单位和之后新建的单位都生效。
+        ``upgrade_player`` 内部按 ``_applied_upgrade_effects`` 去重，重复调用
+        不会叠加。
+
+        时代（phase）类除外：它们不走"研究"路径，而是由 ``AdvanceOrder``
+        推进；这里只登记名字，不改变玩家的当前时代（与
+        ``Player._apply_starting_upgrades`` 的处理一致）。
+        """
+        name = str(type_name)
+        if name not in self.upgrades:
+            self.upgrades.append(name)
+        try:
+            from ..worldphase import is_a_phase
+
+            if is_a_phase(cls):
+                return
+        except Exception:
+            pass
+        try:
+            cls.upgrade_player(self)
+        except Exception as e:
+            warning(
+                "error applying trigger-granted upgrade %s: %s", name, str(e)
+            )
+
     def lang_add_units(
         self, items, target=None, decay=0, from_corpse=False, corpses=None, notify=True
     ):
@@ -2020,7 +2150,7 @@ class TriggersMixin:
             else:
                 cls = rules.unit_class(i)
                 if is_an_upgrade(cls):
-                    self.upgrades.append(i)
+                    self._grant_upgrade_by_trigger(cls, i)
                     self.send_voice_important(mp.OK)
                 elif getattr(cls, "cls", None) == Skill:
                     self.send_voice_important(mp.BEEP)

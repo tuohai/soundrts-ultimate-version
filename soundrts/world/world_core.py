@@ -106,6 +106,13 @@ class World:
     enemy_hp_factor = 100
     enemy_damage_factor = 100
     coop_difficulty = ""
+    # 战役难度等级（"easy".."extreme"）：决定版风格的"关卡内容随难度不同"
+    # 需要它——例如帝国时代2 决定版《 El Cid》第四章"黑衣卫队"在标准难度下
+    # 阿方索国王的基地带城堡、玩家开局就带"近射孔"科技，困难难度则没有。
+    # 触发器条件 ``(difficulty standard)`` / ``(difficulty >= hard)`` 读它。
+    # 由 game.run / SpectatorGame.run 写入；类级默认空串表示"未设定"，
+    # 读取时按标准难度处理（见 coop_difficulty.normalize_level）。
+    scenario_difficulty = ""
 
     # Lazily-initialised counters, with their *class-level* defaults.
     #
