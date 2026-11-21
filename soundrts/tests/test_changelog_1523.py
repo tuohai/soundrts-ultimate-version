@@ -74,9 +74,10 @@ def test_version_is_at_least_1523():
     assert tuple(int(x) for x in VERSION.split(".")) >= (1, 5, 2, 3)
 
 
-def test_the_version_file_says_1523():
+def test_the_version_file_says_at_least_1523():
     src = _source("soundrts", "version.py")
-    assert 'VERSION = "1.5.2.3"' in src
+    version = src.split('VERSION = "')[1].split('"')[0]
+    assert tuple(int(x) for x in version.split(".")) >= (1, 5, 2, 3)
 
 
 # ---------------------------------------------------------------------------
