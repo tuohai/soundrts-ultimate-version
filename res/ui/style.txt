@@ -137,6 +137,21 @@ def attack ; imperative go
 title 114
 ; no index (won't appear in the menu)
 
+def attack_move
+title 7806
+index 1.5
+shortcut a
+
+def warp_in
+title 7807
+index 4.5
+shortcut w
+
+def nydus_in
+title 7808
+index 4.6
+shortcut y
+
 def pack
 title 4938
 index 2.2

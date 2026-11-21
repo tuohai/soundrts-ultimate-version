@@ -1586,3 +1586,12 @@
 5867	Ring
 5868	Bogen
 7800	untoter Ritter
+7801	Schild
+7802	maximales Schild
+7803	Schildregeneration
+7804	Abklingzeit der Schildregeneration
+7805	Verzögerung der Schildregeneration
+7806	Angriff mit Bewegung
+7807	Warp-Sprung
+7808	Nyduskanal
+7809	Brennendes Gebäude

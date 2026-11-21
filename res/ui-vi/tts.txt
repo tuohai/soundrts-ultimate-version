@@ -1586,3 +1586,12 @@
 5867	vòng tròn
 5868	hình quạt
 7800	hiệp sĩ bất tử
+7801	khiên
+7802	khiên tối đa
+7803	hồi phục khiên
+7804	thời gian chờ hồi phục khiên
+7805	độ trễ hồi phục khiên
+7806	tiến công di chuyển
+7807	dịch chuyển xuất hiện
+7808	đường hầm nydus
+7809	công trình đang cháy

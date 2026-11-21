@@ -1715,3 +1715,12 @@
 5872	reveal duration
 5873	stays revealed forever
 7800	undead knight
+7801	shield
+7802	maximum shield
+7803	shield regeneration
+7804	shield regeneration cooldown
+7805	shield regeneration delay
+7806	attack-move
+7807	warp-in
+7808	nydus canal
+7809	building burning

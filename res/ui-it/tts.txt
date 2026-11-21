@@ -1585,3 +1585,12 @@
 5867	anello
 5868	arco
 7800	cavaliere non-morto
+7801	scudo
+7802	scudo massimo
+7803	rigenerazione dello scudo
+7804	tempo di attesa della rigenerazione dello scudo
+7805	preparazione della rigenerazione dello scudo
+7806	attacco in movimento
+7807	comparsa a warp
+7808	canale nydus
+7809	edificio in fiamme

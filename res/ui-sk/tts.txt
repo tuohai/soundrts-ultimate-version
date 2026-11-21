@@ -1585,3 +1585,12 @@
 5867	prstenec
 5868	oblúk
 7800	nemytý rytier
+7801	štít
+7802	maximálny štít
+7803	regenerácia štítu
+7804	ochladenie regenerácie štítu
+7805	predĺženie regenerácie štítu
+7806	útok s presunom
+7807	skoková teleportácia
+7808	nidusový kanál
+7809	horiaca budova

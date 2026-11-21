@@ -1585,3 +1585,12 @@
 5867	anel
 5868	arco
 7800	cavaleiro não-morto
+7801	escudo
+7802	escudo máximo
+7803	regeneração de escudo
+7804	espera da regeneração de escudo
+7805	preparação da regeneração de escudo
+7806	atacar movendo
+7807	aparecer por salto
+7808	canal nydus
+7809	edifício em chamas
