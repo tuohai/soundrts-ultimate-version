@@ -23,15 +23,29 @@ menace_hp_ref 50
 
 def sc_light
 class armor
+; SC: units do not body-block each other — they walk through their
+; comrades instead of being pushed aside (only buildings block).
+collision 0
 
 def sc_armored
 class armor
+collision 0
 
 def sc_massive
 class armor
+collision 0
 
 def sc_structure
 class armor
+
+; SC: Zerg units regenerate their hit points out of combat (both SC1 and
+; SC2).  ``hp_regen`` is the amount restored per tick, ``hp_regen_cd`` the
+; seconds between two ticks.
+def zerg_unit
+class soldier
+hp_regen 0.5
+hp_regen_cd 5
+hp_regen_ready 8
 
 def mineral_field
 class deposit
@@ -77,6 +91,13 @@ resource_volume_start 0
 def sc_building
 class building
 is_a sc_structure
+; SC: a building below one third of its hit points catches fire and
+; burns down over time (StarCraft 1 and 2 building-burn mechanic).
+; burn_damage follows the HP scale (hp_max 400 = 400000 HP), so 5 burns
+; 5 HP points per tick; burn_interval is in seconds.
+burn_hp_threshold_pct 33
+burn_damage 5
+burn_interval 1
 
 def protoss_building
 is_a sc_building
@@ -107,6 +128,8 @@ is_repairable 1
 is_healable 0
 
 ; ---------- Protoss ----------
+; SC1/SC2: Protoss units carry a plasma-shield pool that absorbs damage
+; before their hull.  The pool recharges out of combat (shield_regen_cd).
 
 def nexus
 is_a protoss_building
@@ -116,6 +139,9 @@ build_field_radius_m 18
 storable_resource_types resource1 resource2
 cost 40 0
 hp_max 1000
+shield_max 150
+shield_regen 5
+shield_regen_cd 5
 time_cost 71
 population_provided 10
 can_train probe
@@ -137,13 +163,21 @@ def gateway
 is_a protoss_building
 cost 15 0
 hp_max 400
+shield_max 50
+shield_regen 2
+shield_regen_cd 5
+shield_regen_ready 3
 time_cost 46
-can_train zealot dragoon
+can_train zealot dragoon sentry stalker
 
 def forge
 is_a protoss_building
 cost 15 1
 hp_max 400
+shield_max 40
+shield_regen 2
+shield_regen_cd 5
+shield_regen_ready 3
 time_cost 32
 can_research protoss_ground_weapons protoss_ground_weapons_2 protoss_ground_weapons_3
 
@@ -151,6 +185,10 @@ def cybernetics_core
 is_a protoss_building
 cost 15 2
 hp_max 400
+shield_max 60
+shield_regen 2
+shield_regen_cd 5
+shield_regen_ready 3
 time_cost 36
 can_research protoss_plasma_shields protoss_plasma_shields_2 protoss_plasma_shields_3 protoss_singularity_charge protoss_singularity_charge_2
 
@@ -159,23 +197,54 @@ is_a protoss_building
 requirements cybernetics_core
 cost 28 4
 hp_max 600
+shield_max 75
+shield_regen 3
+shield_regen_cd 5
+shield_regen_ready 3
 time_cost 43
-can_train observer phoenix
+can_train observer phoenix void_ray
 
 def robotics_facility
 is_a protoss_building
 requirements cybernetics_core
 cost 15 10
 hp_max 450
+shield_max 55
+shield_regen 2
+shield_regen_cd 5
+shield_regen_ready 3
 time_cost 46
-can_train colossus
+can_train colossus immortal
 
 def robotics_bay
 is_a protoss_building
 requirements robotics_facility
 cost 20 20
 hp_max 500
+shield_max 55
+shield_regen 2
+shield_regen_cd 5
+shield_regen_ready 3
 time_cost 46
+
+; SC2: the Warp Gate warps Protoss units straight onto the battlefield.
+; The destination must be inside the gate's psi field.
+def warp_gate
+is_a protoss_building
+requirements cybernetics_core
+cost 15 5
+hp_max 500
+shield_max 60
+shield_regen 2
+shield_regen_cd 5
+shield_regen_ready 3
+time_cost 36
+warp_in_types zealot dragoon stalker
+warp_in_charge 2
+warp_in_recharge 45
+warp_in_needs_field psi
+warp_in_field_radius_m 20
+warp_in_skill warp_in
 
 def assimilator
 is_a protoss_building sc_gas_building
@@ -184,6 +253,10 @@ requires_build_field 0
 ; SC1 Assimilator 100 minerals → ×0.1 cost scale
 cost 10 0
 hp_max 500
+shield_max 40
+shield_regen 2
+shield_regen_cd 5
+shield_regen_ready 3
 time_cost 21
 
 def photon_cannon
@@ -191,6 +264,10 @@ is_a protoss_building
 ; SC: must warp in psi; unpowered cannons do not attack (loses_power_without_field)
 cost 15 0
 hp_max 200
+shield_max 30
+shield_regen 1
+shield_regen_cd 5
+shield_regen_ready 3
 time_cost 29
 rdg 8
 rdg_range 6
@@ -205,6 +282,7 @@ is_a sc_light
 build_mode place_and_leave
 can_repair 0
 auto_repair 0
+can_attack_move 0
 can_gather mineral_field assimilator
 cost 5 0
 hp_max 4
@@ -219,6 +297,10 @@ cost 10 0
 population_cost 2
 time_cost 27
 hp_max 80
+shield_max 40
+shield_regen 2
+shield_regen_cd 5
+shield_regen_ready 3
 speed 1.4
 mdg 8
 mdg_range 1
@@ -234,6 +316,10 @@ cost 12 2
 population_cost 2
 time_cost 27
 hp_max 100
+shield_max 50
+shield_regen 2
+shield_regen_cd 5
+shield_regen_ready 3
 speed 1.3
 rdg 10
 rdg_range 4
@@ -252,6 +338,10 @@ cost 15 2
 population_cost 1
 time_cost 18
 hp_max 40
+shield_max 30
+shield_regen 1
+shield_regen_cd 5
+shield_regen_ready 3
 speed 2
 airground_type air
 sight_range 12
@@ -299,6 +389,8 @@ cost 15 15
 time_cost 114
 effect bonus mdf 1
 effect_bonus_targets zealot dragoon
+effect bonus shield_max 10
+effect_bonus_targets zealot dragoon
 
 def protoss_plasma_shields_2
 class upgrade
@@ -307,6 +399,8 @@ cost 22 22
 time_cost 136
 effect bonus mdf 1
 effect_bonus_targets zealot dragoon dark_templar
+effect bonus shield_max 10
+effect_bonus_targets zealot dragoon dark_templar
 
 def protoss_plasma_shields_3
 class upgrade
@@ -314,6 +408,8 @@ requirements protoss_plasma_shields_2
 cost 30 30
 time_cost 157
 effect bonus mdf 1
+effect_bonus_targets zealot dragoon dark_templar
+effect bonus shield_max 10
 effect_bonus_targets zealot dragoon dark_templar
 
 def protoss_singularity_charge
@@ -362,6 +458,7 @@ requirements spawning_pool
 cost 15 2
 hp_max 500
 time_cost 39
+can_train ravager
 
 def hydralisk_den
 is_a zerg_building
@@ -370,6 +467,7 @@ cost 15 3
 hp_max 500
 time_cost 29
 can_research zerg_missile zerg_missile_2 zerg_missile_3
+can_train infestor
 
 def lurker_den
 is_a zerg_building
@@ -377,6 +475,21 @@ requirements hydralisk_den
 cost 10 15
 hp_max 500
 time_cost 41
+
+; SC2: the Nydus Canal lets Zerg units crawl out of the ground at a
+; remote spot.  The destination must be covered by creep.
+def nydus
+is_a zerg_building
+requirements spawning_pool
+cost 10 5
+hp_max 500
+time_cost 36
+warp_in_types zergling hydralisk roach
+warp_in_charge 3
+warp_in_recharge 40
+warp_in_needs_field creep
+warp_in_field_radius_m 20
+warp_in_skill nydus_in
 
 def extractor
 is_a zerg_building sc_gas_building
@@ -390,10 +503,11 @@ time_cost 21
 
 def drone
 class worker
-is_a sc_light
+is_a zerg_unit sc_light
 build_mode sacrifice
 can_repair 0
 auto_repair 0
+can_attack_move 0
 can_gather mineral_field extractor
 cost 5 0
 hp_max 4
@@ -403,7 +517,7 @@ can_build hatchery spawning_pool roach_warren hydralisk_den lurker_den extractor
 
 def zergling
 class soldier
-is_a sc_light
+is_a zerg_unit sc_light
 requirements spawning_pool
 cost 5 0
 population_cost 1
@@ -420,7 +534,7 @@ change_time 2
 
 def roach
 class soldier
-is_a sc_armored
+is_a zerg_unit sc_armored
 requirements roach_warren
 cost 10 1
 population_cost 2
@@ -438,7 +552,7 @@ change_time 2
 
 def hydralisk
 class soldier
-is_a sc_light
+is_a zerg_unit sc_light
 requirements hydralisk_den
 cost 10 2
 population_cost 2
@@ -457,7 +571,7 @@ change_time 2
 
 def lurker
 class soldier
-is_a sc_armored
+is_a zerg_unit sc_armored
 requirements lurker_den
 cost 15 15
 population_cost 3
@@ -592,15 +706,15 @@ can_train scv
 
 def barracks
 is_a terran_building
-requirements 
+requirements
 cost 20 0
 hp_max 600
 time_cost 46
 can_have_addon tech_lab reactor
 can_change_to flying_barracks
 change_time 2
-can_train marine
-can_research 
+can_train marine marauder reaper
+can_research
 
 def factory
 is_a terran_building
@@ -610,7 +724,7 @@ time_cost 43
 can_have_addon tech_lab reactor
 can_change_to flying_factory
 change_time 2
-can_train hellion
+can_train hellion cyclone
 
 def starport
 is_a terran_building
@@ -620,6 +734,19 @@ time_cost 36
 can_have_addon tech_lab reactor
 can_change_to flying_starport
 change_time 2
+can_train banshee raven
+
+def orbital_command
+is_a terran_building
+storable_resource_types resource1 resource2
+cost 50 0
+hp_max 1200
+time_cost 71
+population_provided 10
+can_train scv mule
+can_change_to command_center
+change_time 3
+can_have_addon tech_lab reactor
 
 def refinery
 is_a terran_building sc_gas_building
@@ -852,6 +979,10 @@ is_a protoss_building
 requirements cybernetics_core
 cost 20 3
 hp_max 500
+shield_max 60
+shield_regen 2
+shield_regen_cd 5
+shield_regen_ready 3
 time_cost 36
 can_train high_templar dark_templar
 can_research u_psi_storm
@@ -861,6 +992,10 @@ is_a protoss_building
 requirements stargate
 cost 20 4
 hp_max 500
+shield_max 60
+shield_regen 2
+shield_regen_cd 5
+shield_regen_ready 3
 time_cost 43
 can_research protoss_air_weapons protoss_air_weapons_2 protoss_air_weapons_3 protoss_air_armor protoss_air_armor_2 protoss_air_armor_3
 can_train carrier
@@ -873,6 +1008,10 @@ cost 30 20
 population_cost 6
 time_cost 54
 hp_max 350
+shield_max 60
+shield_regen 2
+shield_regen_cd 5
+shield_regen_ready 3
 speed 1.1
 rdg 12
 rdg_range 6
@@ -895,6 +1034,10 @@ cost 15 3
 population_cost 2
 time_cost 39
 hp_max 40
+shield_max 30
+shield_regen 1
+shield_regen_cd 5
+shield_regen_ready 3
 speed 1.2
 mana_max 200
 mana_regen 1
@@ -908,6 +1051,10 @@ cost 15 2
 population_cost 2
 time_cost 39
 hp_max 60
+shield_max 40
+shield_regen 1
+shield_regen_cd 5
+shield_regen_ready 3
 speed 1.6
 mdg 12
 mdg_range 1
@@ -924,6 +1071,10 @@ cost 12 2
 population_cost 2
 time_cost 25
 hp_max 50
+shield_max 40
+shield_regen 2
+shield_regen_cd 5
+shield_regen_ready 3
 speed 2.2
 airground_type air
 rdg 8
@@ -946,6 +1097,10 @@ cost 25 6
 population_cost 6
 time_cost 64
 hp_max 300
+shield_max 80
+shield_regen 3
+shield_regen_cd 5
+shield_regen_ready 3
 speed 1.2
 airground_type air
 rdg 12
@@ -1044,6 +1199,7 @@ requirements spire
 cost 20 4
 hp_max 500
 time_cost 46
+can_train viper brood_lord
 
 def queen_nest
 is_a zerg_building
@@ -1051,10 +1207,11 @@ requirements spawning_pool
 cost 15 2
 hp_max 500
 time_cost 36
+can_train infestor
 
 def mutalisk
 class soldier
-is_a sc_light
+is_a zerg_unit sc_light
 requirements spire
 cost 12 2
 population_cost 2
@@ -1077,7 +1234,7 @@ corpse 0
 
 def ultralisk
 class soldier
-is_a sc_massive
+is_a zerg_unit sc_massive
 requirements ultralisk_cavern
 cost 20 4
 population_cost 6
@@ -1472,6 +1629,7 @@ def scv
 class worker
 is_a sc_light
 build_mode assisted
+can_attack_move 0
 can_gather mineral_field refinery assimilator extractor
 cost 5 0
 hp_max 6
@@ -1587,6 +1745,289 @@ heal_radius 6
 is_repairable 1
 is_healable 0
 can_use_skill sc_heal
+corpse 0
+
+; ---------- SC2 additions ----------
+
+; --- Terran: MULE (a free worker dropped by the Orbital Command) ---
+def mule
+class worker
+is_a sc_light
+cost 0 0
+population_cost 0
+time_cost 0
+hp_max 30
+speed 1.4
+can_gather mineral_field refinery
+is_repairable 1
+corpse 0
+
+; --- Terran: Reaper (SC2 infantry) ---
+def reaper
+class soldier
+is_a sc_light
+cost 5 0
+population_cost 1
+time_cost 17
+hp_max 30
+speed 1.7
+mdg 8
+mdg_range 0.8
+mdg_cd 0.6
+mdg_vs sc_massive -2
+mdg_projectile 0
+is_repairable 1
+is_healable 0
+can_use_tech infantry_weapons infantry_weapons_2 infantry_armor infantry_armor_2 infantry_weapons_3 infantry_armor_3
+can_use_skill sc_stim_pack
+
+; --- Terran: Banshee (SC2 air unit) ---
+def banshee
+class soldier
+is_a sc_armored
+cost 10 5
+population_cost 2
+time_cost 30
+hp_max 60
+speed 2
+airground_type air
+rdg 10
+rdg_range 6
+rdg_cd 1.5
+rdg_vs sc_massive -4
+rdg_projectile 1
+rdg_projectile_speed 8
+is_repairable 1
+is_healable 0
+corpse 0
+can_use_tech ship_weapons ship_weapons_2 ship_armor ship_armor_2 ship_weapons_3 ship_armor_3
+
+; --- Terran: Raven (SC2 air support) ---
+def raven
+class soldier
+is_a sc_armored
+cost 10 5
+population_cost 2
+time_cost 30
+hp_max 60
+speed 1.8
+airground_type air
+rdg 8
+rdg_range 6
+rdg_cd 1.5
+rdg_vs sc_massive -2
+rdg_projectile 1
+rdg_projectile_speed 8
+is_repairable 1
+is_healable 0
+corpse 0
+can_use_tech ship_weapons ship_weapons_2 ship_armor ship_armor_2 ship_weapons_3 ship_armor_3
+
+; --- Terran: Cyclone (SC2) ---
+def cyclone
+class soldier
+is_a sc_armored
+cost 8 2
+population_cost 2
+time_cost 25
+hp_max 55
+speed 1.6
+rdg 10
+rdg_range 6
+rdg_cd 0.9
+rdg_vs sc_light -2 sc_massive -2
+rdg_projectile 1
+rdg_projectile_speed 10
+is_repairable 1
+is_healable 0
+can_use_tech vehicle_weapons vehicle_weapons_2 vehicle_armor vehicle_armor_2 vehicle_weapons_3 vehicle_armor_3
+
+; --- Protoss: Sentry (SC2) ---
+def sentry
+class soldier
+is_a sc_armored
+requirements cybernetics_core
+cost 5 2
+population_cost 2
+time_cost 37
+hp_max 90
+shield_max 50
+shield_regen 2
+shield_regen_cd 5
+shield_regen_ready 3
+speed 1.2
+mdg 8
+mdg_range 1
+mdg_cd 1
+mdg_vs sc_massive -3
+can_use_tech protoss_ground_weapons protoss_ground_weapons_2 protoss_plasma_shields protoss_plasma_shields_2 protoss_ground_weapons_3 protoss_plasma_shields_3
+
+; --- Protoss: Stalker (SC2) ---
+def stalker
+class soldier
+is_a sc_armored
+requirements cybernetics_core
+cost 13 2
+population_cost 2
+time_cost 27
+hp_max 80
+shield_max 40
+shield_regen 2
+shield_regen_cd 5
+shield_regen_ready 3
+speed 1.4
+rdg 13
+rdg_range 5
+rdg_cd 1
+rdg_vs sc_massive -4
+rdg_projectile 1
+rdg_projectile_speed 10
+can_use_tech protoss_ground_weapons protoss_ground_weapons_2 protoss_plasma_shields protoss_plasma_shields_2 protoss_ground_weapons_3 protoss_plasma_shields_3
+
+; --- Protoss: Immortal (SC2) ---
+def immortal
+class soldier
+is_a sc_massive
+requirements robotics_bay
+cost 25 5
+population_cost 4
+time_cost 55
+hp_max 350
+shield_max 60
+shield_regen 2
+shield_regen_cd 5
+shield_regen_ready 3
+speed 1
+rdg 20
+rdg_range 6
+rdg_cd 1.6
+rdg_vs sc_light -10 sc_massive -10
+rdg_projectile 1
+rdg_projectile_speed 4
+is_repairable 1
+is_healable 0
+can_use_tech protoss_ground_weapons protoss_ground_weapons_2 protoss_plasma_shields protoss_plasma_shields_2 protoss_ground_weapons_3 protoss_plasma_shields_3
+
+; --- Protoss: Void Ray (SC2) ---
+def void_ray
+class soldier
+is_a sc_armored
+requirements stargate
+cost 15 5
+population_cost 3
+time_cost 36
+hp_max 100
+shield_max 60
+shield_regen 2
+shield_regen_cd 5
+shield_regen_ready 3
+speed 1.5
+airground_type air
+rdg 15
+rdg_range 6
+rdg_cd 1
+rdg_vs sc_massive -5
+rdg_projectile 1
+rdg_projectile_speed 8
+is_repairable 1
+is_healable 0
+corpse 0
+can_use_tech protoss_air_weapons protoss_air_weapons_2 protoss_air_armor protoss_air_armor_2 protoss_air_weapons_3 protoss_air_armor_3
+
+; --- Zerg: Zergling vs Baneling (SC2) ---
+def baneling
+class soldier
+is_a zerg_unit sc_light
+requirements spawning_pool
+cost 5 0
+population_cost 1
+time_cost 17
+hp_max 25
+speed 2
+mdg 5
+mdg_range 0.8
+mdg_cd 0.6
+mdg_vs sc_massive -2
+can_use_tech zerg_melee zerg_melee_2 zerg_carapace zerg_carapace_2 zerg_metabolic_boost zerg_melee_3 zerg_carapace_3
+
+; --- Zerg: Infestor (SC2 caster) ---
+def infestor
+class soldier
+is_a zerg_unit sc_armored
+requirements queen_nest
+cost 10 3
+population_cost 2
+time_cost 30
+hp_max 50
+speed 1
+rdg 10
+rdg_range 5
+rdg_cd 1.4
+rdg_vs sc_massive -3
+rdg_projectile 1
+rdg_projectile_speed 8
+can_use_tech zerg_missile zerg_missile_2 zerg_missile_3
+
+; --- Zerg: Ravager (SC2) ---
+def ravager
+class soldier
+is_a zerg_unit sc_armored
+requirements roach_warren
+cost 10 3
+population_cost 2
+time_cost 27
+hp_max 90
+speed 1
+rdg 18
+rdg_range 5
+rdg_cd 1.5
+rdg_splash 4
+rdg_radius 1.2
+rdg_vs sc_light -6 sc_massive -6
+rdg_projectile 1
+rdg_projectile_speed 6
+is_repairable 1
+is_healable 0
+can_use_tech zerg_missile zerg_missile_2 zerg_missile_3
+
+; --- Zerg: Viper (SC2) ---
+def viper
+class soldier
+is_a zerg_unit sc_armored
+requirements ultralisk_cavern
+cost 15 5
+population_cost 3
+time_cost 36
+hp_max 80
+speed 1.6
+airground_type air
+rdg 12
+rdg_range 6
+rdg_cd 1.4
+rdg_vs sc_massive -4
+rdg_projectile 1
+rdg_projectile_speed 8
+corpse 0
+
+; --- Zerg: Brood Lord (SC2) ---
+def brood_lord
+class soldier
+is_a zerg_unit sc_massive
+requirements ultralisk_cavern
+cost 25 10
+population_cost 4
+time_cost 42
+hp_max 250
+speed 0.9
+airground_type air
+rdg 18
+rdg_range 6
+rdg_cd 1.6
+rdg_splash 4
+rdg_radius 1.2
+rdg_vs sc_light -8 sc_massive -8
+rdg_projectile 1
+rdg_projectile_speed 5
 corpse 0
 
 ; ---------- factions (multiplayer + AI equivalents) ----------
