@@ -31,6 +31,11 @@ class Unit(Creature):
     # the cost becomes 0). Defined on the base Unit so the rules parser
     # accepts the field on every descendant (soldier, building, …).
     team_free_unit = 0
+    # Attack-move (StarCraft 2's "A-move"): 1 = the unit may use the
+    # attack-move order (advance towards a point while engaging enemies
+    # on the way).  0 = the unit type opts out (workers should not A-move
+    # into a fight).  See ``worldorders.movement.AttackMoveOrder``.
+    can_attack_move = 1
 
     @classmethod
     def interpret(cls, d):

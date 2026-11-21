@@ -265,6 +265,115 @@ class CaptureOrder(AttackOrder):
         )
 
 
+class AttackMoveOrder(BasicOrder):
+    """Attack-move: advance to a square while engaging enemies on the way.
+
+    This is the core StarCraft 2 order (A-move).  The unit marches to the
+    destination and automatically attacks any enemy it meets on the way,
+    instead of ignoring everything until it arrives.
+
+    The rules knob ``can_attack_move`` (default 1) lets a unit type opt out
+    (workers, for instance, should not A-move into a fight).
+    """
+
+    keyword = "attack_move"
+    nb_args = 1
+    is_imperative = True
+
+    @classmethod
+    def is_allowed(cls, unit, *unused_args):
+        if not int(getattr(unit, "can_attack_move", 1) or 0):
+            return False
+        if "attack" not in getattr(unit, "basic_skills", ()):
+            return False
+        return "go" in getattr(unit, "basic_skills", ())
+
+    def on_queued(self):
+        self.target = self.player.get_object_by_id(self.args[0])
+        square = _order_target_square(self.target)
+        if square is None:
+            try:
+                square = self.player.get_object_by_id(self.target.place.id)
+            except AttributeError:
+                self.mark_as_impossible()
+                return
+        self.target = square
+        if self._reject_if_terrain_impassable(self.target):
+            return
+        if self._reject_if_not_enough_square_space(self.target):
+            return
+        self.unit.notify("order_ok")
+
+    def execute(self):
+        self.update_target()
+        if self.target is None:
+            self.mark_as_impossible()
+            return
+        enemy = self._pick_enemy_on_the_way()
+        if enemy is not None:
+            # Engage: the AttackAction handles both closing the distance and
+            # firing.  The order stays active so the unit keeps advancing
+            # once the enemy dies.
+            action = AttackAction(self.unit, enemy)
+            if getattr(self, "is_imperative", False):
+                action.is_imperative = True
+            self.unit.action = action
+            return
+        if self.unit.is_in_position(self.target) or self.unit._near_enough(self.target):
+            self.mark_as_complete()
+            self.unit.hold(self.target)
+            return
+        if self.unit.is_idle:
+            self.move_to_or_fail(self.target)
+
+    def _pick_enemy_on_the_way(self):
+        """The closest enemy the unit can engage along its path.
+
+        Only enemies within the unit's weapon range (or adjacent) count, so
+        an A-move does not pull the unit across the map after a distant
+        scout.
+        """
+        unit = self.unit
+        player = getattr(unit, "player", None)
+        if player is None:
+            return None
+        place = getattr(unit, "place", None)
+        if place is None:
+            return None
+        best = None
+        best_distance = float("inf")
+        # Look at the current square and its neighbours: that is the area
+        # the unit is about to walk through.
+        squares = [place] + list(getattr(place, "neighbors", ()) or ())
+        for square in squares:
+            try:
+                enemies = list(player.known_enemies(square))
+            except Exception:
+                enemies = []
+            if not enemies:
+                enemies = [
+                    obj
+                    for obj in (getattr(square, "objects", ()) or ())
+                    if getattr(obj, "place", None) is not None
+                ]
+            for enemy in enemies:
+                if enemy is unit or enemy is None:
+                    continue
+                if getattr(enemy, "hp", 0) <= 0:
+                    continue
+                if not getattr(enemy, "is_vulnerable", True):
+                    continue
+                if not unit.is_an_enemy(enemy):
+                    continue
+                if not unit.in_attack_range(enemy):
+                    continue
+                distance = (unit.x - enemy.x) ** 2 + (unit.y - enemy.y) ** 2
+                if distance < best_distance:
+                    best_distance = distance
+                    best = enemy
+        return best
+
+
 class PatrolOrder(BasicOrder):
 
     keyword = "patrol"

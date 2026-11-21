@@ -1071,6 +1071,25 @@ _precision_properties = {
     "hp_regen",
     "hp_regen_per_level",
     "mana_regen",
+    # --- Shield layer (StarCraft plasma shields / SC2 shields) ---
+    # A unit may carry a separate shield pool that absorbs damage before
+    # HP.  ``shield_max`` is the pool size, ``shield_regen`` the amount
+    # restored per tick (PRECISION-scaled), ``shield_regen_cd`` the delay
+    # between two regen ticks and ``shield_regen_ready`` the wind-up.
+    # ``shield_start`` lets a unit spawn with a partially charged shield.
+    "shield_max",
+    "shield_start",
+    "shield_regen",
+    "shield_regen_cd",
+    "shield_regen_ready",
+    # NOTE: ``shield_pierce`` is deliberately NOT in this set.  It is a
+    # boolean flag (damage that skips the shield pool), so it belongs in
+    # ``int_properties`` only.  Listing it in both sets made the two
+    # parsing paths disagree: a direct ``shield_pierce 1`` row parsed as
+    # 1 (``int_properties`` is checked first in ``read()``), while
+    # ``effect bonus shield_pierce 1`` was PRECISION-scaled to 1000 by
+    # ``split_effect_bonus_args``.  A keyword must live in exactly one
+    # property set; ``test_starcraft_shields.py`` locks that invariant.
     "speed",
     "effect_range",
     "effect_radius",
@@ -1083,6 +1102,20 @@ _precision_properties = {
     "radius",  # formation polar: ring/arc radius (meters → PRECISION mm; 0 = auto)
     "build_field_radius",
     "build_field_radius_m",
+    # --- Warp-in / Nydus (StarCraft 2) ---
+    # ``warp_in_field_radius_m`` is in meters, like ``build_field_radius_m``.
+    "warp_in_field_radius_m",
+    # ``warp_in_recharge`` is a timing field: PRECISION-scaled to
+    # milliseconds, like ``hp_regen_cd`` (the world clock is in
+    # milliseconds).
+    "warp_in_recharge",
+    # --- Burning structures (StarCraft) ---
+    # ``burn_interval`` is a timing field: PRECISION-scaled to milliseconds,
+    # like ``hp_regen_cd`` (the world clock is in milliseconds).
+    "burn_interval",
+    # ``burn_damage`` is HP lost per tick, so it follows the HP scale
+    # (PRECISION-scaled), just like ``shield_max`` and ``hp_max``.
+    "burn_damage",
     "addon_offset_x",
     "cloaking_range",
     "detection_range",
@@ -1149,6 +1182,9 @@ class Rules(_Definitions):
         "ground_form",  # 飞行建筑落地后的地面形态（如 flying_barracks → barracks）
         "requires_deposit",  # 必须建在指定矿床类型上（如气矿 geyser）
         "spawns_unit",  # 自动生成单位类型（如 larva）；与 larva_cap / larva_spawn_time 配合
+        "warp_in_needs_field",  # 折跃/虫道目标格需要的建造场（psi/creep）
+        "warp_in_effect",  # 折跃/虫道落地时部署的特效类型名
+        "warp_in_skill",  # 折跃/虫道对应的命令关键字：warp_in 或 nydus_in
         "summon_requires_build_field",  # 召唤技能：目标格需有指定建造场（如 creep）
         "bridge_terrain",  # 建成后将该格变为指定桥梁地形（如 big_bridge）
         "market_currency",  # resource token used as buy/sell currency (default resource1)
@@ -1562,6 +1598,12 @@ class Rules(_Definitions):
         "is_repairable",
         "is_healable",
         "is_vulnerable",
+        # --- Shield layer (StarCraft plasma shields / SC2 shields) ---
+        # ``shield_pierce`` = damage that skips the shield pool entirely
+        # (e.g. a psi storm).  It is a boolean flag, so it lives here and
+        # NOT in ``precision_properties`` (a keyword must belong to
+        # exactly one property set).
+        "shield_pierce",
         "is_undead",
         "is_a_building_land",
         "is_buildable_anywhere",
@@ -1601,6 +1643,9 @@ class Rules(_Definitions):
         # D-Phase 2: rules-driven "fire on the move" toggle for ranged units
         # (AoE2 Kipchak/Conquistador: 1 = keep advancing while firing, don't stop to aim).
         "can_fire_on_move",
+        # Attack-move (SC2 "A-move"): 1 = the unit may use the attack-move
+        # order.  Read by ``worldorders.movement.AttackMoveOrder.is_allowed``.
+        "can_attack_move",
         # D-Phase 2: rules-driven extra Town Center build slot after research
         # (AoE2 Cuman Mercenaries). Read by world_build_rules.can_build + tc cap.
         "allow_extra_town_center",
@@ -1685,6 +1730,16 @@ class Rules(_Definitions):
         "market_batch",  # building override; 0 = use parameters
         "market_tax_permille",  # building override; -1 = use parameters
         "larva_cap",  # 单位生成点：同格已生成单位上限（配合 spawns_unit）
+        # --- Warp-in / Nydus (StarCraft 2) ---
+        # ``warp_in_charge`` is a count (raw int); the recharge time is a
+        # timing field and lives in ``precision_properties`` (seconds are
+        # scaled to milliseconds, the unit of the world clock).
+        "warp_in_charge",  # 折跃/虫道：充能次数（用尽后需等待充能）
+        # --- Burning structures (StarCraft) ---
+        # ``burn_hp_threshold_pct`` is a percentage (raw int).
+        "burn_hp_threshold_pct",  # 建筑低于该血量百分比时开始燃烧
+        # NOTE: ``burn_damage`` is a timing-independent HP amount and lives
+        # in ``precision_properties`` (HP scale), not here.
         "spawn_player_cap",  # 单位生成点：玩家全图该类型存活上限（0=不限；草场用）
         "spawn_immediate",  # 1=建成后立刻刷第 1 个（帝国 4 草场）；0=先等一个间隔
         "packable",  # 1=可打包/架设（投石机等；需 unpack_time / pack_time）
@@ -1880,8 +1935,7 @@ class Rules(_Definitions):
         "accept_from",         # 仅接收来自这些关系的给予者：self/ally/neutral/enemy（空=不限）
         "accept_givers",       # 仅接收这些单位类型交来的物品（type_name，支持is_a；空=不限）
         "passable_units",      # 地形允许通行的单位类型（type_name，支持 is_a 继承链）
-        "market_commodities",  # resourceN [price] pairs (buy/sell table; building or parameters)
-        "trade_hubs",          # hub type names and/or flags (market, is_dock, …)
+        "market_commodities",  # resourceN [price] pairs (buy/sell table; building or parameters)        "trade_hubs",          # hub type names and/or flags (market, is_dock, …)
         "trade_rewards",       # resource indices a trade unit may earn on routes
         "tribute_resources",   # parameters: resources that can be tributed
         "resource_names",      # parameters: resourceN <name> pairs (name aliases)
@@ -1891,6 +1945,10 @@ class Rules(_Definitions):
         # one row per line), so it is NOT handled by the generic
         # string-list merge here.
         "team_free_stone_buildings",
+        # --- Warp-in / Nydus (StarCraft 2) ---
+        # A building that can summon units onto a remote square.  See
+        # ``soundrts/world_warp_in.py``.
+        "warp_in_types",  # unit type names this building may warp in
         # NOTE: race_grants_team_free_unit is intentionally NOT in this set;
         # it's absorbed in read()'s elif chain to store a list-of-lists.
         # AoE2 DE team bonus — Magyars / Turks: "Mounted Archers / Gunpowder
@@ -2193,6 +2251,17 @@ class Rules(_Definitions):
                     d[k] = type(k, (base,), v)
                     d[k].type_name = k
                     d[k].cls = base
+                    # Warp-in / Nydus (StarCraft 2): a building that
+                    # declares ``warp_in_types`` gets the matching order
+                    # in its menu.  Done here (on the concrete class) so
+                    # the skill does not leak to unrelated buildings.
+                    if v.get("warp_in_types"):
+                        skill = (
+                            str(v.get("warp_in_skill") or "warp_in").strip()
+                            or "warp_in"
+                        )
+                        d[k].basic_skills = set(base.basic_skills or set())
+                        d[k].basic_skills.add(skill)
         finally:
             if previous_interp_rules is None:
                 if hasattr(Worker, "_interp_rules_dict"):

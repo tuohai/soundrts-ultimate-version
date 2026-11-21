@@ -69,6 +69,7 @@ from .movement import (
     GoOrder,
     HerdOrder,
     AttackOrder,
+    AttackMoveOrder,
     CaptureOrder,
     PatrolOrder,
     BlockOrder,
@@ -81,6 +82,12 @@ from .movement import (
 # Gathering orders
 from .gathering import (
     GatherOrder,
+)
+
+# Warp-in / nydus orders (StarCraft 2)
+from .warp_in import (
+    WarpInOrder,
+    NydusInOrder,
 )
 
 # Transport orders

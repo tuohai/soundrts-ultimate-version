@@ -141,6 +141,52 @@ class DamageEffectsMixin(DamageCalculationMixin):
         ):
             self._try_trigger_skill(self, attacker, skill_name, "passive", is_melee)
 
+    def _absorb_with_shield(self, damage, attacker=None):
+        """Absorb *damage* with the unit's shield pool.
+
+        Returns the damage that still reaches HP.
+
+        The shield layer is a StarCraft mechanic (Protoss plasma shields,
+        SC2 shields): the pool takes the hit first and only the overflow
+        damages the unit.  ``shield_pierce`` damage skips the pool (psi
+        storms in StarCraft hit shields and health alike).
+
+        ``shield_pierce`` is a property of the **attacker** -- it says
+        that *this* damage ignores the defender's shield pool.  It is read
+        from ``attacker`` when one is given; otherwise the defender's own
+        flag is used as a fallback so that a unit with
+        ``shield_pierce 1`` is never protected by its own pool.
+        """
+        try:
+            shield_max = int(getattr(self, "shield_max", 0) or 0)
+        except (TypeError, ValueError):
+            return damage
+        if shield_max <= 0:
+            return damage
+        pierce_source = attacker if attacker is not None else self
+        if int(getattr(pierce_source, "shield_pierce", 0) or 0) > 0:
+            return damage
+        try:
+            shield = int(getattr(self, "shield", 0) or 0)
+        except (TypeError, ValueError):
+            return damage
+        if shield <= 0:
+            return damage
+        absorbed = min(shield, int(damage))
+        if absorbed <= 0:
+            return damage
+        self.shield = shield - absorbed
+        # A shield hit resets the regeneration timer: the pool only
+        # recharges once the unit has been left alone (SC2 behaviour).
+        self.shield_regen_next_time = 0
+        self.shield_regen_prep_end_time = 0
+        try:
+            if hasattr(self, "notify"):
+                self.notify(f"shield_update,{self.shield}")
+        except Exception:
+            pass
+        return int(damage) - absorbed
+
     def receive_hit(self, damage, attacker, notify=True, is_crit=False, is_charge=False, is_melee=None, is_reflect=False, extra_melee_damage=None, hit_scale=100):
         """处理被命中。
 
@@ -467,6 +513,10 @@ class DamageEffectsMixin(DamageCalculationMixin):
 
         # 应用伤害
         # 将伤害作用到单位
+        # --- Shield layer (StarCraft plasma shields / SC2 shields) ---
+        # The shield pool absorbs damage before HP.  ``shield_pierce``
+        # damage (e.g. psi storms) skips the pool entirely.
+        actual_damage = self._absorb_with_shield(actual_damage, attacker)
         self.hp -= actual_damage
 
         if actual_damage > 0 and attacker is not None and not is_reflect and self.hp > 0:

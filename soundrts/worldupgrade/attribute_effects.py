@@ -1225,7 +1225,11 @@ class AttributeEffectsMixin:
         if stat == "hp":
             cls._handle_hp_bonus(unit, value)
             return
-        
+
+        if stat == "shield_max":
+            cls._handle_shield_max_bonus(unit, value)
+            return
+
         current = getattr(unit, stat, 0)
         try:
             # Percent: multiply current numeric value (never store "10%" on combat stats).
@@ -1310,6 +1314,49 @@ class AttributeEffectsMixin:
             new_hp = new_max
         unit.hp_max = new_max
         unit.hp = new_hp
+
+    @classmethod
+    def _handle_shield_max_bonus(cls, unit, value):
+        """``effect bonus shield_max N``: grow the shield pool with it.
+
+        The shield pool grows by the same amount as its maximum so an
+        upgrade that adds shield capacity also grants that much extra
+        shield right away (StarCraft plasma shield upgrades).
+        """
+        from ..lib.log import warning
+
+        try:
+            old_max = float(getattr(unit, "shield_max", 0) or 0)
+            old_shield = float(getattr(unit, "shield", 0) or 0)
+        except (TypeError, ValueError):
+            warning(
+                "Cannot apply shield_max bonus to non-numeric shield on "
+                f"{getattr(unit, 'type_name', unit)}"
+            )
+            return
+
+        if isinstance(value, str) and value.endswith("%"):
+            try:
+                percent = float(str(value).rstrip("%")) / 100.0
+            except (TypeError, ValueError):
+                warning(f"Cannot parse percent '{value}' for shield_max - skipping")
+                return
+            if old_max <= 0:
+                return
+            delta = old_max * percent
+        else:
+            try:
+                delta = float(value)
+            except (TypeError, ValueError):
+                warning(f"Cannot convert value '{value}' for shield_max - skipping")
+                return
+
+        new_max = int(old_max + delta)
+        new_shield = int(old_shield + delta)
+        if new_shield > new_max:
+            new_shield = new_max
+        unit.shield_max = new_max
+        unit.shield = new_shield
 
     @classmethod
     def effect_apply_bonus(cls, unit, start_level, *stats):

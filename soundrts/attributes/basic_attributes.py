@@ -69,10 +69,17 @@ class BasicAttributes:
         # 基本信息 - HP和MP（如果有的话）
         if hasattr(u, "hp") and hasattr(u, "hp_max"):
             attrs.append(("h", mp.HP, u.hp_status))
-            
+
             # 魔法值/能量
             if hasattr(u, "mana") and hasattr(u, "mana_max") and u.mana_max > 0:
                 attrs.append(("n", mp.MANA, u.mana_status))
+
+            # 护盾层（星际争霸等离子护盾 / SC2 护盾）
+            shield_max = int(getattr(u.model, "shield_max", 0) or 0)
+            if shield_max > 0:
+                shield_now = int(getattr(u, "shield", 0) or 0)
+                attrs.append(("", mp.SHIELD, nb2msg(shield_now // PRECISION)))
+                attrs.append(("", mp.SHIELD_MAX, nb2msg(shield_max // PRECISION)))
         
         # 单位简介（总是检查）
         unit_type_name = getattr(u, 'type_name', None) or getattr(u.model, 'type_name', None)
@@ -150,6 +157,18 @@ class BasicAttributes:
     
     def add_regeneration_attributes(self, u, attrs):
         """添加回复相关属性"""
+        # 护盾回复（星际争霸等离子护盾 / SC2 护盾）
+        if getattr(u.model, "shield_max", 0) > 0:
+            if getattr(u.model, "shield_regen_cd", 0) > 0:
+                shield_cd_text = nb2msg_float(u.model.shield_regen_cd / 1000)
+                attrs.append(("", mp.SHIELD_REGEN_CD, shield_cd_text))
+            if getattr(u.model, "shield_regen_ready", 0) > 0:
+                shield_ready_text = nb2msg_float(u.model.shield_regen_ready / 1000)
+                attrs.append(("", mp.SHIELD_REGEN_READY, shield_ready_text))
+            if getattr(u.model, "shield_regen", 0) > 0:
+                shield_regen_text = nb2msg_float(u.model.shield_regen / PRECISION)
+                attrs.append(("", mp.SHIELD_REGEN, shield_regen_text))
+
         # 生命回复冷却时间
         if hasattr(u.model, "hp_regen_cd") and u.model.hp_regen_cd > 0:
             hp_regen_cd_text = nb2msg_float(u.model.hp_regen_cd / 1000)  # 转换为秒

@@ -904,6 +904,18 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     hp_max_per_level = 0
     hp_regen = 0
     hp_regen_per_level = 0
+    # --- Shield layer (StarCraft plasma shields / SC2 shields) ---
+    # The shield pool absorbs damage before HP (see
+    # ``combat.damage_effects.DamageEffectsMixin.receive_hit``).
+    # ``shield_max`` = pool size, ``shield_regen`` = HP restored per
+    # regen tick, ``shield_regen_cd`` = seconds between ticks,
+    # ``shield_regen_ready`` = wind-up before the first tick.
+    shield_max = 0
+    shield_start = 0
+    shield_regen = 0
+    shield_regen_cd = 0
+    shield_regen_ready = 0
+    shield_pierce = 0  # damage that ignores the shield layer
     mana_max = 0
     mana_start = 0
     mana_regen = 0
@@ -1625,6 +1637,22 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
         else:
             self.mana = self.mana_max
 
+        # --- Shield layer (StarCraft plasma shields / SC2 shields) ---
+        # ``shield_max`` is the pool size; ``shield_start`` lets a unit
+        # spawn with a partially charged shield (0 = start full).
+        self.shield_max = int(getattr(type(self), "shield_max", 0) or 0)
+        self.shield_pierce = int(getattr(type(self), "shield_pierce", 0) or 0)
+        if self.shield_max > 0:
+            shield_start = int(getattr(type(self), "shield_start", 0) or 0)
+            self.shield = shield_start if shield_start > 0 else self.shield_max
+            self.shield = min(self.shield, self.shield_max)
+            self.shield_regen_next_time = 0
+            self.shield_regen_prep_end_time = 0
+        else:
+            self.shield = 0
+            self.shield_regen_next_time = 0
+            self.shield_regen_prep_end_time = 0
+
         # rules.txt 中的初始等级/经验（需同时定义 xp_thresholds）
         target_level = getattr(type(self), "level", 1)
         if target_level > 1 and getattr(type(self), "xp_thresholds", None):
@@ -2197,6 +2225,27 @@ class Building(_Building):
     aura_speed_bonus_pct = 0  # % speed bonus applied to the aura targets
     aura_target_types = ()  # type names affected by the aura
 
+    # --- Warp-in / Nydus (StarCraft 2) ---
+    # A building that can summon units onto a remote square.  See
+    # ``soundrts/world_warp_in.py`` for the full rules-side description.
+    warp_in_types = ()  # unit type names this building may warp in
+    warp_in_charge = 0  # units warpable before a recharge is needed
+    warp_in_recharge = 0  # seconds between two charges
+    warp_in_needs_field = ""  # build field the destination must carry
+    warp_in_field_radius_m = 0  # radius (meters) of the projected field
+    warp_in_effect = ""  # effect class deployed at the destination
+    warp_in_skill = "warp_in"  # order keyword: "warp_in" or "nydus_in"
+    # --- Burning structures (StarCraft) ---
+    # A building below ``burn_hp_threshold_pct`` of its max HP catches fire
+    # and loses ``burn_damage`` HP every ``burn_interval`` seconds.
+    # See ``soundrts/world_building_burn.py``.
+    burn_hp_threshold_pct = 0  # 0 = do not burn
+    burn_damage = 0  # HP lost per burn tick
+    burn_interval = 0  # seconds between two burn ticks
+    # Runtime state (per instance):
+    _warp_in_used = 0  # charges spent since the last recharge
+    _warp_in_ready_time = 0  # world time at which the building recharges
+
     @property
     def can_train(self):
         from ..world_build_rules import effective_can_train
@@ -2417,3 +2466,11 @@ class Building(_Building):
         if "can_repair_ships" in d:
             # 将属性设置到字典中，而不是直接修改基类
             d["can_repair_ships"] = int(d["can_repair_ships"])
+
+        # --- Warp-in / Nydus (StarCraft 2) ---
+        # A building that declares ``warp_in_types`` gets the warp-in
+        # order in its menu.  The skill keyword is registered on the
+        # concrete class in ``_Definitions.load`` (after the class object
+        # exists), not here: ``interpret`` runs on the shared base class,
+        # so mutating ``basic_skills`` here would leak the skill to every
+        # building.

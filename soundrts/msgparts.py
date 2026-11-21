@@ -740,6 +740,17 @@ CATEGORY = [4909] # 类别
 INVENTORY_CAPACITY = [4910] # 库存容量
 MANA_REGEN_NAME = [4911] # 魔法回复
 
+# 护盾层（星际争霸等离子护盾 / SC2 护盾）
+SHIELD = [7801]              # 护盾
+SHIELD_MAX = [7802]          # 最大护盾
+SHIELD_REGEN = [7803]        # 护盾回复
+SHIELD_REGEN_CD = [7804]     # 护盾回复冷却
+SHIELD_REGEN_READY = [7805]  # 护盾回复前摇
+ATTACK_MOVE = [7806]         # 进攻移动
+WARP_IN = [7807]             # 折跃传送
+NYDUS = [7808]               # 虫道
+BUILDING_BURN = [7809]       # 建筑燃烧
+
 # 合作战役相关消息常量
 COOP_CAMPAIGN = [4950]                 # 合作战役
 LOCAL_COOP_CAMPAIGN = [4951]           # 合作战役(本地)

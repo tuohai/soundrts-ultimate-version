@@ -18,6 +18,9 @@ class Worker(Unit):
     build_mode = "assisted"  # assisted | place_and_leave | sacrifice
     _basic_skills = {"go", "attack", "herd", "gather", "repair", "block", "join_group", "pickup", "drop"}
     is_teleportable = True
+    # Attack-move (SC2 "A-move"): workers do not A-move into a fight by
+    # default.  A rules.txt unit may re-enable it with ``can_attack_move 1``.
+    can_attack_move = 0
     cargo = None  # gathered resource
     stat_type = "unit"
     # 可开采目标：矿床与建筑分开配置

@@ -40,6 +40,7 @@ class CreatureStatusUpdate(Entity):
     def regenerate(self):
         """生命和法力回复，支持自定义冷却时间和前摇"""
         current_time = self.world.time
+        self._regenerate_shield(current_time)
         if self.hp_regen and self.hp < self.hp_max:
             if current_time >= self.hp_regen_next_time:
                 hp_regen_ready = getattr(self, 'hp_regen_ready', 0)
@@ -77,8 +78,68 @@ class CreatureStatusUpdate(Entity):
                     self.mana_regen_next_time = current_time + mana_regen_cd
                 self.mana_regen_prep_end_time = 0
 
+    def _regenerate_shield(self, current_time):
+        """护盾回复（StarCraft plasma shields / SC2 shields）。
+
+        护盾池在脱战后按 ``shield_regen`` 回复；``shield_regen_cd`` 是两次
+        回复之间的间隔（秒），``shield_regen_ready`` 是首次回复的前摇。
+        受到伤害后护盾回复计时器会被重置（见 ``_absorb_with_shield``）。
+        """
+        try:
+            shield_max = int(getattr(self, "shield_max", 0) or 0)
+        except (TypeError, ValueError):
+            return
+        if shield_max <= 0:
+            return
+        try:
+            shield = int(getattr(self, "shield", 0) or 0)
+        except (TypeError, ValueError):
+            return
+        if shield >= shield_max:
+            return
+        regen = int(getattr(self, "shield_regen", 0) or 0)
+        if regen <= 0:
+            return
+        if current_time < int(getattr(self, "shield_regen_next_time", 0) or 0):
+            return
+        ready = int(getattr(self, "shield_regen_ready", 0) or 0)
+        if ready > 0:
+            prep_end = int(getattr(self, "shield_regen_prep_end_time", 0) or 0)
+            if prep_end == 0:
+                self.shield_regen_prep_end_time = current_time + ready
+                return
+            if current_time < prep_end:
+                return
+        shield = min(shield_max, shield + regen)
+        self.shield = shield
+        cd = int(getattr(self, "shield_regen_cd", 0) or 0)
+        if cd > 0:
+            self.shield_regen_next_time = current_time + cd
+        self.shield_regen_prep_end_time = 0
+        try:
+            if hasattr(self, "notify"):
+                self.notify(f"shield_update,{shield}")
+        except Exception:
+            pass
+
     def slow_update(self):
         self.regenerate()
+        # Burning structures (StarCraft): a building below its burn
+        # threshold loses HP over time until it explodes.
+        try:
+            from ..world_building_burn import update_burning
+
+            update_burning(self, self.world.time)
+        except Exception:
+            pass
+        # Warp-in / Nydus recharge (StarCraft 2): a warp gate regains its
+        # charges over time so it can summon another wave of units.
+        try:
+            from ..world_warp_in import warp_in_recharge_tick
+
+            warp_in_recharge_tick(self)
+        except Exception:
+            pass
         # AoE2 DE 建筑光环（商队驿站 Caravanserai）：周期性治疗光环范围内的贸易车。
         # 数据来自 rules.txt 的 aura_* 行，引擎不硬编码建筑名。
         try:
