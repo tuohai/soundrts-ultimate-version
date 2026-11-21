@@ -3,6 +3,49 @@
 
 .. contents::
 
+1.5.2.4
+-------
+
+**新增：护盾层（神族等离子护盾 / SC2 护盾）**
+
+- **新增**：单位现在可以在血量之前额外带一层**护盾池**。受到的伤害先扣护盾，溢出部分才打到血量。新增的关键字是 ``shield_max`` （护盾池上限）、``shield_start`` （出场时的护盾值）、``shield_regen`` （每次回复的点数）、``shield_regen_cd`` （两次回复的间隔）、``shield_regen_ready`` （首次回复的前摇）以及 ``shield_pierce`` （完全无视**对方**护盾层的伤害，例如 psi storm）。
+- **新增**：护盾在**脱战后**回复。受到伤害会重置回复计时，所以单位脱战 ``shield_regen_ready`` + ``shield_regen_cd`` 秒之后才开始回盾 —— 这正是星际的等离子护盾行为。
+- **新增**：升级可以用现有的 ``effect bonus shield_max N`` 行加护盾上限。加值会同时放大**当前**护盾，升级后不会留下一个偏小的旧护盾池。
+- **改动范围**：``soundrts/combat/damage_effects.py`` 、``soundrts/worldunit/world_status_update.py`` 、``soundrts/worldunit/worldcreature.py`` 、``soundrts/worldupgrade/attribute_effects.py`` 、``soundrts/definitions.py`` 。
+
+**新增：进攻移动命令（SC2 的 A-move）**
+
+- **新增**：**进攻移动**命令 —— 单位一边向目的地行军，一边攻击沿途遇到的敌人，而不是无视它们。用法是在战场上选中「进攻移动」后右键（默认快捷键 **A**），地图脚本也可以用 ``attack_move`` 命令关键字调用。
+- **新增**：``can_attack_move`` 关键字决定该单位能否使用这个命令。士兵默认开启；工人用 ``can_attack_move 0`` 退出。
+- **改动范围**：``soundrts/worldorders/movement.py`` 、``soundrts/definitions.py`` 、``res/ui/style.txt`` 。
+
+**新增：折跃传送门与虫道（瞬间召唤单位）**
+
+- **新增**：建筑现在可以把单位瞬间传送到远处的格子。神族**折跃传送门**与异虫**虫道**用的是同一套引擎原语，而且两者都没有写死在代码里 —— 建筑自己声明可以召唤什么。
+- **新增**：新增的关键字是 ``warp_in_types`` （可召唤的单位类型）、``warp_in_charge`` （充能次数）、``warp_in_recharge`` （充能秒数）、``warp_in_needs_field`` （目标格必须带有的建造场 —— 折跃传送门是 ``psi`` ，虫道是 ``creep`` ）、``warp_in_field_radius_m`` （建筑投射的场半径）、``warp_in_effect`` （在落点部署的特效类型）以及 ``warp_in_skill`` （命令关键字，``warp_in`` 或 ``nydus_in`` ）。
+- **新增**：只要建筑声明了 ``warp_in_types`` ，它就会自动在自己的命令菜单里获得对应命令 —— 右键建筑 → 选择单位类型 → 点击目标格。目标格必须带有所需的建造场，且位于 ``warp_in_field_radius_m`` 半径内。
+- **改动范围**：``soundrts/world_warp_in.py`` 、``soundrts/worldorders/warp_in.py`` 、``soundrts/definitions.py`` 。
+
+**新增：建筑燃烧自毁（低血量着火）**
+
+- **新增**：建筑血量降到阈值以下就会着火，持续掉血直到爆炸 —— 这就是星际 1 / 2 的「建筑着火」机制。新增的关键字是 ``burn_hp_threshold_pct`` （血量低于最大值的这个百分比时开始着火，默认 33）、``burn_damage`` （每次燃烧扣血）以及 ``burn_interval`` （两次燃烧扣血的间隔秒数）。
+- **改动范围**：``soundrts/world_building_burn.py`` 、``soundrts/worldunit/world_status_update.py`` 、``soundrts/definitions.py`` 。
+
+**改进：星际模组现在同时支持星际 1 与星际 2**
+
+- **新增**：星际模组的 rules 文件现在给神族单位与建筑配上了**等离子护盾**，``protoss_plasma_shields`` 的 1–3 级升级会提高护盾上限。
+- **新增**：补齐了 SC2 单位 —— 轨道命令中心、MULE、建造者、破坏者、恶蝠、渡鸦、旋风、哨兵、追猎者、禁卫、虚空舰、刺虫、感染者、刺蛛、毒蛇与巢虫。
+- **新增**：折跃传送门与虫道建筑，并接入命令菜单。
+- **改动**：战斗单位之间不再互相阻挡（在轻甲 / 重甲 / 巨型三个基类上设 ``collision 0`` ），这就是星际的移动模型；建筑仍然挡路。
+- **改动**：异虫士兵与工人通过新增的 ``zerg_unit`` 基类获得脱战自然回血（``hp_regen 0.5`` 、``hp_regen_cd 5`` 、``hp_regen_ready 8`` ）。
+- **改动范围**：``mods/starcraft/rules.txt`` 、``res/ui/style.txt`` 、``res/ui*/tts.txt`` 。
+
+**新增：新关键字已写入文档**
+
+- 模组制作指南新增了「星际争霸模组新关键字」一节，涵盖护盾层、进攻移动命令、折跃传送门 / 虫道、建筑燃烧自毁、脱战回血与单位碰撞，每一项都有对照表和 rules 示例。该节已用**全部 5 种文档语言**撰写（英文、中文、西班牙文、意大利文、巴西葡萄牙文）。
+- **新增**：每项新原语都补了回归测试：``test_starcraft_shields.py``、``test_starcraft_attack_move.py``、``test_starcraft_warp_in.py`` 与 ``test_starcraft_building_burn.py``，另有发行说明审计 ``test_changelog_1524.py``。
+- **改动范围**：``doc_src/src/*/mod/modding.rst`` 。
+
 1.5.2.3
 -------
 

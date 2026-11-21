@@ -1909,6 +1909,164 @@ Ship repair (since 1.4.1.1)
 ``can_repair_ships 1`` on workers or buildings. Workers repair adjacent shore ships (6
 squares); buildings auto-repair ships in neighboring water (8 squares).
 
+StarCraft modding primitives (since 1.5.2.4)
+----------------------------------------------
+
+These keywords let one rules file drive both StarCraft 1 and StarCraft 2 style
+mods. The engine hardcodes no unit name: everything below is data-driven.
+Reference implementation: ``mods/starcraft/rules.txt``.
+
+Shield layer (Protoss plasma shields / SC2 shields)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+A unit may carry a separate **shield pool** in front of its hit points. Damage
+is subtracted from the shield first; only what overflows reaches the HP.
+
+| Attribute | Role |
+| --- | --- |
+| ``shield_max \<hp\>`` | Size of the shield pool (0 = no shield) |
+| ``shield_start \<hp\>`` | Shield value the unit spawns with (defaults to ``shield_max``) |
+| ``shield_regen \<hp\>`` | Shield points restored per regeneration tick |
+| ``shield_regen_cd \<sec\>`` | Delay between two regeneration ticks |
+| ``shield_regen_ready \<sec\>`` | Wind-up before the first regeneration tick |
+| ``shield_pierce 1`` | This unit's damage ignores the defender's shield pool entirely (e.g. a psi storm) |
+
+Taking damage resets the regeneration timer, so a unit only recovers its shield
+after it has been out of combat for ``shield_regen_ready`` + ``shield_regen_cd``
+seconds -- the StarCraft plasma shield behaviour.
+
+Example (Protoss zealot with a plasma shield and a shield upgrade)::
+
+    def zealot
+    is_a sc_light
+    shield_max 60
+    shield_regen 2
+    shield_regen_cd 2
+    shield_regen_ready 5
+
+Upgrades may add to the pool with the existing ``effect bonus`` row::
+
+    def protoss_plasma_shields_2
+    is_a upgrade
+    effect bonus shield_max 10
+
+The bonus scales the **current** shield as well, so a unit that already has a
+shield is not left with a stale (smaller) pool after the research.
+
+Attack-move (SC2 "A-move")
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+``can_attack_move 1`` (the default for soldiers) lets a unit use the
+**attack-move** order: the unit marches towards the destination but attacks
+any enemy it meets on the way instead of ignoring it.
+
+| Attribute | Role |
+| --- | --- |
+| ``can_attack_move 1`` | The unit may be given the attack-move order |
+| ``can_attack_move 0`` | The unit may not (workers, for example) |
+
+The order is a right-click on the battlefield with the "attack-move" command
+selected (default hotkey **A**), or the ``attack_move`` order keyword in a
+trigger. The unit walks towards the target square and stops to fight every
+enemy within its attack range; when nothing is in range it keeps marching.
+
+Warp-in / Nydus canal (instant unit summoning)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+A building can teleport units onto a remote square -- the Protoss **warp gate**
+and the Zerg **nydus canal** are the same engine primitive.
+
+| Attribute | Role |
+| --- | --- |
+| ``warp_in_types \<type\> [<type>…]`` | Unit types this building may summon (space-separated) |
+| ``warp_in_charge N`` | How many units may be warped in before a recharge is needed |
+| ``warp_in_recharge \<sec\>`` | Seconds needed to recharge (0 = no cooldown) |
+| ``warp_in_needs_field \<name\>`` | Build field the destination square must carry (``psi``, ``creep``); empty = none |
+| ``warp_in_field_radius_m \<m\>`` | Radius (meters) of the field the building projects |
+| ``warp_in_effect \<type\>`` | Effect class deployed at the destination (optional) |
+| ``warp_in_skill \<keyword\>`` | Order keyword of the building (``warp_in`` or ``nydus_in``) |
+
+A building that declares ``warp_in_types`` automatically gets the matching
+order in its command menu (right-click the building, then pick the unit type and
+the destination square). The destination must carry the required build field and
+lie inside ``warp_in_field_radius_m``; each summon spends one charge and starts
+the recharge timer.
+
+Example::
+
+    def warp_gate
+    is_a protoss_building
+    warp_in_types zealot dragoon stalker
+    warp_in_charge 2
+    warp_in_recharge 45
+    warp_in_needs_field psi
+    warp_in_field_radius_m 20
+    warp_in_skill warp_in
+
+    def nydus
+    is_a zerg_building
+    warp_in_types zergling hydralisk
+    warp_in_charge 3
+    warp_in_recharge 60
+    warp_in_needs_field creep
+    warp_in_field_radius_m 24
+    warp_in_skill nydus_in
+
+Burning structures (low-HP buildings catch fire)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+A building whose hit points fall below a threshold catches fire and keeps
+losing hit points until it explodes -- the StarCraft 1 / 2 "burning building"
+behaviour.
+
+| Attribute | Role |
+| --- | --- |
+| ``burn_hp_threshold_pct \<pct\>`` | The building starts burning below this percentage of its maximum HP (default 33) |
+| ``burn_damage \<hp\>`` | HP lost per burn tick, on the same scale as ``hp_max`` (0 = the building never burns) |
+| ``burn_interval \<sec\>`` | Seconds between two burn ticks (default 1) |
+
+Example::
+
+    def sc_building
+    is_a building
+    burn_hp_threshold_pct 33
+    burn_damage 5
+    burn_interval 1
+
+Out-of-combat regeneration (Zerg natural regen)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+The existing ``hp_regen`` / ``hp_regen_cd`` / ``hp_regen_ready`` keywords give
+a unit a natural regeneration cycle: the unit regenerates ``hp_regen`` hit
+points every ``hp_regen_cd`` seconds, but only after it has been out of combat
+for ``hp_regen_ready`` seconds. A mod only has to put them on a base class::
+
+    def zerg_unit
+    is_a sc_light
+    hp_regen 0.5
+    hp_regen_cd 5
+    hp_regen_ready 8
+
+Unit collision (StarCraft "no body blocking")
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+``collision 0`` removes a unit from the collision matrix, so units pass through
+each other instead of blocking one another -- the StarCraft movement model,
+where soldiers do not body-block each other but buildings still block.
+
+| Attribute | Role |
+| --- | --- |
+| ``collision 0`` | The unit does not block other units and is not blocked by them |
+| ``collision 1`` | The unit blocks other units (default) |
+
+Example::
+
+    def sc_light
+    is_a unit
+    collision 0
+
+Buildings keep ``collision 1``.
+
 Building bridges on water (tile spans)
 ---------------------------------------
 

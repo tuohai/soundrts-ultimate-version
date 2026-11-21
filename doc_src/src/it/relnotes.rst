@@ -3,6 +3,49 @@ Note di rilascio
 
 .. contents::
 
+1.5.2.4
+-------
+
+**Aggiunto: un livello di scudo (scudi al plasma dei Protoss / scudi di SC2)**
+
+- **Aggiunto**: un’unità può ora avere un **pool di scudi** davanti ai punti vita. Il danno viene sottratto prima dallo scudo; solo l’eccedenza raggiunge la vita. Le nuove parole chiave sono ``shield_max`` (dimensione del pool), ``shield_start`` (lo scudo con cui l’unità appare), ``shield_regen`` (punti ripristinati per tick), ``shield_regen_cd`` (attesa fra due tick), ``shield_regen_ready`` (preparazione prima del primo tick) e ``shield_pierce`` (danno che ignora completamente il pool di scudi del **difensore**, come una tempesta psionica).
+- **Aggiunto**: lo scudo si rigenera **fuori dal combattimento**. Subire danni riavvia il temporizzatore, quindi l’unità ricarica il proprio scudo solo dopo ``shield_regen_ready`` + ``shield_regen_cd`` secondi senza essere colpita: esattamente il comportamento dello scudo al plasma di StarCraft.
+- **Aggiunto**: un miglioramento può aumentare il pool con la riga già esistente ``effect bonus shield_max N``. Il bonus scala anche lo scudo **corrente**, così un’unità che aveva già uno scudo non resta con un pool più piccolo dopo la ricerca.
+- **Ambito**: ``soundrts/combat/damage_effects.py``, ``soundrts/worldunit/world_status_update.py``, ``soundrts/worldunit/worldcreature.py``, ``soundrts/worldupgrade/attribute_effects.py``, ``soundrts/definitions.py``.
+
+**Aggiunto: l’ordine di attacco in movimento (l’«A-move» di SC2)**
+
+- **Aggiunto**: l’ordine di **attacco in movimento** — l’unità marcia verso la destinazione ma attacca qualsiasi nemico incontra lungo la strada invece di ignorarlo. Si dà con clic destro sul campo di battaglia con il comando «attacco in movimento» selezionato (tasto predefinito **A**), ed è disponibile anche agli script di mappa tramite la parola chiave ``attack_move``.
+- **Aggiunto**: la parola chiave ``can_attack_move`` decide se un’unità può usare l’ordine. È attiva per default sui soldati; i lavoratori si escludono con ``can_attack_move 0``.
+- **Ambito**: ``soundrts/worldorders/movement.py``, ``soundrts/definitions.py``, ``res/ui/style.txt``.
+
+**Aggiunto: apparizione tramite salto e canale nydus (invocazione istantanea)**
+
+- **Aggiunto**: un edificio può ora teletrasportare unità su una casella remota. Il **portale di salto** protoss e il **canale nydus** zerg sono la stessa primitiva del motore, e nessuno dei due è codificato nel sorgente: l’edificio dichiara che cosa può evocare.
+- **Aggiunto**: le nuove parole chiave sono ``warp_in_types`` (i tipi di unità che può evocare), ``warp_in_charge`` (quante unità prima della ricarica), ``warp_in_recharge`` (il tempo di ricarica in secondi), ``warp_in_needs_field`` (il campo di costruzione che la casella di destinazione deve avere — ``psi`` per il portale di salto, ``creep`` per il nydus), ``warp_in_field_radius_m`` (il raggio del campo proiettato dall’edificio), ``warp_in_effect`` (una classe di effetto schierata nella destinazione) e ``warp_in_skill`` (la parola chiave dell’ordine, ``warp_in`` o ``nydus_in``).
+- **Aggiunto**: un edificio che dichiara ``warp_in_types`` riceve automaticamente l’ordine corrispondente nel suo menu dei comandi — clic destro sull’edificio, scelta del tipo di unità e poi della casella di destinazione. La destinazione deve avere il campo di costruzione richiesto e trovarsi entro ``warp_in_field_radius_m``.
+- **Ambito**: ``soundrts/world_warp_in.py``, ``soundrts/worldorders/warp_in.py``, ``soundrts/definitions.py``.
+
+**Aggiunto: edifici in fiamme (gli edifici con poca vita prendono fuoco)**
+
+- **Aggiunto**: un edificio la cui vita scende sotto una soglia prende fuoco e continua a perdere vita finché non esplode: il comportamento dell’«edificio in fiamme» di StarCraft 1 e 2. Le nuove parole chiave sono ``burn_hp_threshold_pct`` (la percentuale della vita massima sotto la quale inizia il fuoco; 33 per default), ``burn_damage`` (la vita persa per tick) e ``burn_interval`` (i secondi fra due tick).
+- **Ambito**: ``soundrts/world_building_burn.py``, ``soundrts/worldunit/world_status_update.py``, ``soundrts/definitions.py``.
+
+**Migliorato: il mod di StarCraft ora copre StarCraft 1 e StarCraft 2**
+
+- **Aggiunto**: il file di regole del mod di StarCraft porta ora **scudi al plasma** sulle unità e sugli edifici Protoss, e i miglioramenti ``protoss_plasma_shields`` da 1 a 3 aumentano il pool di scudi.
+- **Aggiunto**: completata la rosa di SC2 — Orbital Command, MULE, Reaper, Banshee, Raven, Cyclone, Sentry, Stalker, Immortal, Void Ray, Baneling, Infestor, Ravager, Viper e Brood Lord.
+- **Aggiunto**: gli edifici portale di salto e nydus, collegati al menu dei comandi.
+- **Cambiato**: le unità da combattimento non si bloccano più a vicenda (``collision 0`` sulle classi base leggera / corazzata / pesante), che è il modello di movimento di StarCraft. Gli edifici continuano a bloccare.
+- **Cambiato**: i soldati e i lavoratori zerg ricevono rigenerazione naturale fuori dal combattimento (``hp_regen 0.5``, ``hp_regen_cd 5``, ``hp_regen_ready 8``) tramite una nuova classe base ``zerg_unit``.
+- **Ambito**: ``mods/starcraft/rules.txt``, ``res/ui/style.txt``, ``res/ui*/tts.txt``.
+
+**Aggiunto: documentate le nuove parole chiave**
+
+- La guida alla modding ha acquisito una sezione **«Parole chiave per le mod di StarCraft»** che copre il livello di scudo, l’ordine di attacco in movimento, l’apparizione tramite salto / nydus, gli edifici in fiamme, la rigenerazione fuori combattimento e la collisione fra unità, con una tabella e un esempio di regole per ciascuno. È stata scritta in **tutte e 5 le lingue della documentazione** (inglese, cinese, spagnolo, italiano e portoghese brasiliano).
+- **Aggiunto**: test di regressione per ogni nuova primitiva: ``test_starcraft_shields.py``, ``test_starcraft_attack_move.py``, ``test_starcraft_warp_in.py`` e ``test_starcraft_building_burn.py``, più l’audit delle note di rilascio ``test_changelog_1524.py``.
+- **Ambito**: ``doc_src/src/*/mod/modding.rst``.
+
 1.5.2.3
 -------
 

@@ -4,6 +4,49 @@ Release notes
 
 .. contents::
 
+1.5.2.4
+-------
+
+**Added: a shield layer (Protoss plasma shields / SC2 shields)**
+
+- **Added**: a unit may now carry a **shield pool** in front of its hit points. Incoming damage is subtracted from the shield first; only the overflow reaches the HP. The new rules keywords are ``shield_max`` (pool size), ``shield_start`` (the shield the unit spawns with), ``shield_regen`` (points restored per tick), ``shield_regen_cd`` (delay between two ticks), ``shield_regen_ready`` (wind-up before the first tick) and ``shield_pierce`` (damage that ignores the **defender's** shield pool entirely -- a psi storm, for example).
+- **Added**: the shield regenerates **out of combat**. Taking damage resets the regeneration timer, so a unit only recovers its shield after ``shield_regen_ready`` + ``shield_regen_cd`` seconds without being hit -- exactly the StarCraft plasma shield behaviour.
+- **Added**: an upgrade may raise the pool with the existing ``effect bonus shield_max N`` row. The bonus scales the **current** shield as well, so a unit that already carries a shield is not left with a stale, smaller pool after the research.
+- **Scope**: ``soundrts/combat/damage_effects.py``, ``soundrts/worldunit/world_status_update.py``, ``soundrts/worldunit/worldcreature.py``, ``soundrts/worldupgrade/attribute_effects.py``, ``soundrts/definitions.py``.
+
+**Added: the attack-move order (SC2 "A-move")**
+
+- **Added**: the **attack-move** order -- the unit marches towards the destination but attacks every enemy it meets on the way instead of ignoring it. It is a right-click on the battlefield with the "attack-move" command selected (default hotkey **A**), and it is also available to map scripts through the ``attack_move`` order keyword.
+- **Added**: the ``can_attack_move`` keyword decides whether a unit may use the order. It is on by default for soldiers; workers opt out with ``can_attack_move 0``.
+- **Scope**: ``soundrts/worldorders/movement.py``, ``soundrts/definitions.py``, ``res/ui/style.txt``.
+
+**Added: warp-in and the nydus canal (instant unit summoning)**
+
+- **Added**: a building can now teleport units onto a remote square. The Protoss **warp gate** and the Zerg **nydus canal** are the same engine primitive, and neither of them is hardcoded -- the building declares what it may summon.
+- **Added**: the new rules keywords are ``warp_in_types`` (the unit types it may summon), ``warp_in_charge`` (how many units before a recharge is needed), ``warp_in_recharge`` (the recharge time in seconds), ``warp_in_needs_field`` (the build field the destination square must carry -- ``psi`` for the warp gate, ``creep`` for the nydus), ``warp_in_field_radius_m`` (the radius of the field the building projects), ``warp_in_effect`` (an effect class deployed at the destination) and ``warp_in_skill`` (the order keyword, ``warp_in`` or ``nydus_in``).
+- **Added**: a building that declares ``warp_in_types`` automatically gets the matching order in its command menu -- right-click the building, pick the unit type, then pick the destination square. The destination must carry the required build field and lie inside ``warp_in_field_radius_m``.
+- **Scope**: ``soundrts/world_warp_in.py``, ``soundrts/worldorders/warp_in.py``, ``soundrts/definitions.py``.
+
+**Added: burning structures (low-HP buildings catch fire)**
+
+- **Added**: a building whose hit points fall below a threshold now catches fire and keeps losing hit points until it explodes -- the StarCraft 1 / 2 "burning building" behaviour. The new rules keywords are ``burn_hp_threshold_pct`` (the percentage of the maximum HP below which the fire starts; 33 by default), ``burn_damage`` (the HP lost per tick) and ``burn_interval`` (the seconds between two ticks).
+- **Scope**: ``soundrts/world_building_burn.py``, ``soundrts/worldunit/world_status_update.py``, ``soundrts/definitions.py``.
+
+**Improved: the StarCraft mod now supports both StarCraft 1 and StarCraft 2**
+
+- **Added**: the StarCraft mod rules file now carries **plasma shields** on the Protoss units and buildings, and the ``protoss_plasma_shields`` upgrades 1 to 3 raise the shield pool.
+- **Added**: the SC2 roster is filled in -- Orbital Command, MULE, Reaper, Banshee, Raven, Cyclone, Sentry, Stalker, Immortal, Void Ray, Baneling, Infestor, Ravager, Viper and Brood Lord.
+- **Added**: the warp gate and the nydus buildings, wired into the command menu.
+- **Changed**: the combat units no longer body-block each other (``collision 0`` on the light / armored / massive base classes), which is the StarCraft movement model. Buildings still block.
+- **Changed**: the Zerg soldiers and workers get natural out-of-combat regeneration (``hp_regen 0.5``, ``hp_regen_cd 5``, ``hp_regen_ready 8``) through a new ``zerg_unit`` base class.
+- **Scope**: ``mods/starcraft/rules.txt``, ``res/ui/style.txt``, ``res/ui*/tts.txt``.
+
+**Added: the new keywords are documented**
+
+- The modding guide gained a **"StarCraft modding primitives"** section covering the shield layer, the attack-move order, warp-in / nydus, burning structures, out-of-combat regeneration and unit collision, with a table and a rules example for each. It was written in **all 5 documentation languages** (English, Chinese, Spanish, Italian and Brazilian Portuguese).
+- **Added**: regression tests for every new primitive: ``test_starcraft_shields.py``, ``test_starcraft_attack_move.py``, ``test_starcraft_warp_in.py`` and ``test_starcraft_building_burn.py``, plus the release-note audit ``test_changelog_1524.py``.
+- **Scope**: ``doc_src/src/*/mod/modding.rst``.
+
 1.5.2.3
 -------
 

@@ -1752,6 +1752,169 @@ Reparación de barcos (desde 1.4.1.1)
 ``can_repair_ships 1`` sobre trabajadores o edificios. Los trabajadores reparan barcos costeros adyacentes (6
 cuadrados); edificios de barcos de reparación de automóviles en aguas vecinas (8 cuadrados).
 
+Palabras clave para mods de StarCraft (desde 1.5.2.4)
+------------------------------------------------------
+
+Estas palabras clave permiten que un mismo ``rules.txt`` sirva para mods con
+estilo StarCraft 1 y StarCraft 2. El motor no codifica ningún nombre de
+unidad: todo es dirigido por datos. Implementación de referencia:
+``mods/starcraft/rules.txt``.
+
+Capa de escudo (escudos de plasma de los Protoss / escudos de SC2)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Una unidad puede llevar un **depósito de escudos** delante de sus puntos de
+vida. El daño se resta primero del escudo; solo el exceso llega a la vida.
+
+| Atributo | Función |
+| --- | --- |
+| ``shield_max \<vida\>`` | Tamaño del depósito de escudos (0 = sin escudo) |
+| ``shield_start \<vida\>`` | Escudo con el que aparece la unidad (por defecto ``shield_max``) |
+| ``shield_regen \<vida\>`` | Puntos de escudo restaurados por tick |
+| ``shield_regen_cd \<seg\>`` | Espera entre dos ticks de regeneración |
+| ``shield_regen_ready \<seg\>`` | Preparación antes del primer tick |
+| ``shield_pierce 1`` | El daño de esta unidad ignora el depósito de escudos del **defensor** (p. ej. una tormenta psiónica) |
+
+Recibir daño reinicia el temporizador de regeneración, así que la unidad sólo
+recupera su escudo tras ``shield_regen_ready`` + ``shield_regen_cd`` segundos
+fuera de combate: el comportamiento del escudo de plasma de StarCraft.
+
+Ejemplo (un zealot protoss con escudo de plasma y una mejora de escudo)::
+
+    def zealot
+    is_a sc_light
+    shield_max 60
+    shield_regen 2
+    shield_regen_cd 2
+    shield_regen_ready 5
+
+Las mejoras añaden al depósito con la fila ``effect bonus`` existente::
+
+    def protoss_plasma_shields_2
+    is_a upgrade
+    effect bonus shield_max 10
+
+El bonus escala también el escudo **actual**, de modo que una unidad que ya
+tenía escudo no se queda con un depósito más pequeño tras la investigación.
+
+Avance con ataque (el «A-move» de SC2)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+``can_attack_move 1`` (por defecto en los soldados) permite usar la orden de
+**avance con ataque**: la unidad marcha hacia el destino pero ataca a
+cualquier enemigo que encuentre por el camino.
+
+| Atributo | Función |
+| --- | --- |
+| ``can_attack_move 1`` | La unidad puede recibir la orden de avance con ataque |
+| ``can_attack_move 0`` | No puede (los trabajadores, por ejemplo) |
+
+La orden se da con clic derecho en el campo de batalla con el comando
+«avance con ataque» seleccionado (atajo por defecto **A**), o con la palabra
+clave ``attack_move`` en un disparador. La unidad camina hacia la casilla
+destino y se detiene a luchar con cada enemigo dentro de su alcance; cuando no
+hay nadie a tiro, sigue avanzando.
+
+Aparición por salto / canal de nydus (invocación instantánea)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Un edificio puede teletransportar unidades a una casilla remota: la **puerta
+de salto** protoss y el **canal de nydus** zerg son la misma primitiva del
+motor.
+
+| Atributo | Función |
+| --- | --- |
+| ``warp_in_types \<tipo\> [<tipo>…]`` | Tipos de unidad que este edificio puede invocar (separados por espacios) |
+| ``warp_in_charge N`` | Cuántas unidades pueden aparecer antes de recargar |
+| ``warp_in_recharge \<seg\>`` | Segundos necesarios para recargar (0 = sin espera) |
+| ``warp_in_needs_field \<nombre\>`` | Campo de construcción que debe tener la casilla destino (``psi``, ``creep``); vacío = ninguno |
+| ``warp_in_field_radius_m \<m\>`` | Radio (en metros) del campo que proyecta el edificio |
+| ``warp_in_effect \<tipo\>`` | Clase de efecto desplegada en el destino (opcional) |
+| ``warp_in_skill \<palabra\>`` | Palabra clave de la orden del edificio (``warp_in`` o ``nydus_in``) |
+
+Un edificio que declara ``warp_in_types`` recibe automáticamente la orden
+correspondiente en su menú de comandos (clic derecho en el edificio, elegir el
+tipo de unidad y la casilla de destino). El destino debe llevar el campo de
+construcción requerido y estar dentro de ``warp_in_field_radius_m``; cada
+invocación gasta una carga e inicia la recarga.
+
+Ejemplo::
+
+    def warp_gate
+    is_a protoss_building
+    warp_in_types zealot dragoon stalker
+    warp_in_charge 2
+    warp_in_recharge 45
+    warp_in_needs_field psi
+    warp_in_field_radius_m 20
+    warp_in_skill warp_in
+
+    def nydus
+    is_a zerg_building
+    warp_in_types zergling hydralisk
+    warp_in_charge 3
+    warp_in_recharge 60
+    warp_in_needs_field creep
+    warp_in_field_radius_m 24
+    warp_in_skill nydus_in
+
+Edificios en llamas (los edificios con poca vida arden)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Un edificio cuya vida baja de un umbral se prende fuego y sigue perdiendo
+vida hasta explotar: el comportamiento de «edificio en llamas» de StarCraft 1
+y 2.
+
+| Atributo | Función |
+| --- | --- |
+| ``burn_hp_threshold_pct \<pct\>`` | El edificio empieza a arder por debajo de este porcentaje de su vida máxima (33 por defecto) |
+| ``burn_damage \<vida\>`` | Vida perdida por tick de fuego, en la misma escala que ``hp_max`` (0 = el edificio nunca arde) |
+| ``burn_interval \<seg\>`` | Segundos entre dos ticks de fuego (1 por defecto) |
+
+Ejemplo::
+
+    def sc_building
+    is_a building
+    burn_hp_threshold_pct 33
+    burn_damage 5
+    burn_interval 1
+
+Regeneración fuera de combate (regeneración natural zerg)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Las palabras clave ``hp_regen`` / ``hp_regen_cd`` / ``hp_regen_ready`` ya
+existentes dan a la unidad un ciclo de regeneración natural: recupera
+``hp_regen`` puntos de vida cada ``hp_regen_cd`` segundos, pero sólo tras
+``hp_regen_ready`` segundos fuera de combate. Basta con ponerlas en una clase
+base::
+
+    def zerg_unit
+    is_a sc_light
+    hp_regen 0.5
+    hp_regen_cd 5
+    hp_regen_ready 8
+
+Colisión entre unidades (el «sin bloqueo» de StarCraft)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+``collision 0`` saca a la unidad de la matriz de colisión, de modo que las
+unidades se atraviesan en lugar de bloquearse: el modelo de movimiento de
+StarCraft, donde los soldados no se bloquean entre sí pero los edificios
+siguen bloqueando.
+
+| Atributo | Función |
+| --- | --- |
+| ``collision 0`` | La unidad no bloquea a otras unidades ni es bloqueada por ellas |
+| ``collision 1`` | La unidad bloquea a otras unidades (por defecto) |
+
+Ejemplo::
+
+    def sc_light
+    is_a unit
+    collision 0
+
+Los edificios conservan ``collision 1``.
+
 Construcción de puentes sobre el agua (tramos de tejas)
 -------------------------------------------------------
 
