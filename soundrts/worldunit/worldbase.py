@@ -36,6 +36,13 @@ class Unit(Creature):
     # on the way).  0 = the unit type opts out (workers should not A-move
     # into a fight).  See ``worldorders.movement.AttackMoveOrder``.
     can_attack_move = 1
+    # Attack-move cross-square pursuit: 0 = an attack-moving unit never
+    # abandons its destination to chase a fleeing enemy across squares (it
+    # keeps advancing and only fights what it meets on the way).  1 = the
+    # unit type opts back into cross-square chasing while A-moving.
+    # See ``worldorders.movement.AttackMoveOrder`` /
+    # ``worldaction.AttackAction``.
+    can_attack_move_chase = 0
 
     @classmethod
     def interpret(cls, d):

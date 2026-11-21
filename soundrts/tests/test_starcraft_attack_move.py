@@ -101,3 +101,200 @@ def test_attack_move_menu_requires_both_skills():
         basic_skills = {"go"}
 
     assert AttackMoveOrder.is_allowed(NoAttack()) is False
+
+
+# ---------------------------------------------------------------------------
+# Option A: an attack-moving unit never chases a fleeing enemy across squares
+# ---------------------------------------------------------------------------
+
+
+def _chase_unit():
+    """A minimal unit stub that is in "chase" ai_mode."""
+
+    class _Player:
+        def updated_target(self, target):
+            return target
+
+        def player_is_an_enemy(self, other):
+            return True
+
+    class _Square:
+        def __init__(self, name):
+            self.id = name
+            self.objects = []
+            self.neighbors = []
+            self.high_ground = False
+
+    class _Unit:
+        speed = 1
+        ai_mode = "chase"
+        can_attack_move = 1
+        can_attack_move_chase = 0
+        x = 0
+        y = 0
+        radius = 0
+        action = None
+
+        def __init__(self):
+            self.chase_calls = []
+            self.aim_calls = []
+            self.notifications = []
+            self.go_to_calls = []
+            self.player = _Player()
+            self.place = _Square("home")
+
+        def is_an_enemy(self, other):
+            return True
+
+        def can_attack(self, target):
+            return False
+
+        def aim(self, target):
+            self.aim_calls.append(target)
+
+        def action_reach_and_aim(self):
+            self.aim_calls.append(self.action_target)
+
+        def go_to_xy(self, x, y):
+            self.go_to_calls.append((x, y))
+
+        def notify(self, msg, *args, **kwargs):
+            self.notifications.append(msg)
+
+    return _Unit()
+
+
+class _FakeStage:
+    """A stand-in for the exit/stage returned by ``unit.next_stage``."""
+
+    def __init__(self):
+        self.x = 500
+        self.y = 500
+        self.place = None
+        self.other_side = None
+
+
+class _FakeTarget:
+    def __init__(self, x=0, y=0):
+        self.id = "enemy1"
+        self.x = x
+        self.y = y
+        self.hp = 100
+        self.is_vulnerable = True
+        self.radius = 0
+        # The target sits in another square, so the unit has to walk to it.
+        self.place = type("_Square", (), {"id": "far", "objects": [], "neighbors": []})()
+
+
+def test_attack_move_action_forbids_cross_square_pursuit_by_default():
+    """The attack-move order must mark its AttackAction as no-chase."""
+    from soundrts.worldaction import AttackAction
+    from soundrts.worldorders.movement import AttackMoveOrder
+
+    unit = _chase_unit()
+    enemy = _FakeTarget()
+    unit.action_target = enemy
+
+    order = AttackMoveOrder.__new__(AttackMoveOrder)
+    order.unit = unit
+    order.target = enemy
+    order.is_imperative = True
+    order._pick_enemy_on_the_way = lambda: enemy
+
+    order.execute()
+
+    assert isinstance(unit.action, AttackAction)
+    assert unit.action.no_cross_square_pursuit is True
+
+
+def test_attack_move_does_not_chase_across_squares_even_in_chase_mode():
+    """A chaser that is A-moving must not follow a target out of its square."""
+    from soundrts.worldaction import AttackAction
+
+    unit = _chase_unit()
+    enemy = _FakeTarget()
+    unit.action = AttackAction(unit, enemy)
+    unit.action.no_cross_square_pursuit = True
+    unit.action_target = enemy
+
+    # The target is out of reach and not attackable: the action must give
+    # up instead of walking towards it.
+    chased = []
+    unit.next_stage = lambda target: chased.append(target) or _FakeStage()
+
+    unit.action.update()
+
+    assert chased == [], "A-move unit must not pursue the target across squares"
+    # The action is over, so the order queue takes over again and the unit
+    # resumes advancing towards its destination.
+    assert unit.action is None
+
+
+def test_regular_attack_action_still_chases_across_squares():
+    """Without the A-move flag the chase behaviour is unchanged."""
+    from soundrts.worldaction import AttackAction
+
+    unit = _chase_unit()
+    enemy = _FakeTarget()
+    unit.action = AttackAction(unit, enemy)
+    unit.action_target = enemy
+
+    chased = []
+    unit.next_stage = lambda target: chased.append(target) or _FakeStage()
+
+    unit.action.update()
+
+    assert chased == [enemy], "a plain chase-mode attack must still pursue"
+    assert unit.action is not None, "the chase must not end the action"
+
+
+def test_can_attack_move_chase_opt_in_re_enables_cross_square_pursuit():
+    """``can_attack_move_chase 1`` lets a mod opt a unit type back in."""
+    from soundrts.worldaction import AttackAction
+    from soundrts.worldorders.movement import AttackMoveOrder
+
+    unit = _chase_unit()
+    unit.can_attack_move_chase = 1
+    enemy = _FakeTarget()
+    unit.action_target = enemy
+
+    order = AttackMoveOrder.__new__(AttackMoveOrder)
+    order.unit = unit
+    order.target = enemy
+    order.is_imperative = True
+    order._pick_enemy_on_the_way = lambda: enemy
+
+    order.execute()
+
+    assert isinstance(unit.action, AttackAction)
+    assert unit.action.no_cross_square_pursuit is False
+
+
+def test_can_attack_move_chase_is_a_known_rule_keyword():
+    from soundrts.definitions import rules as global_rules
+
+    assert "can_attack_move_chase" in global_rules.int_properties
+
+
+def test_can_attack_move_chase_loads_from_rules():
+    rules = Rules()
+    rules.load(
+        """
+def marine
+class soldier
+can_attack_move_chase 0
+
+def firebat
+class soldier
+can_attack_move_chase 1
+"""
+    )
+    assert rules.unit_class("marine").can_attack_move_chase == 0
+    assert rules.unit_class("firebat").can_attack_move_chase == 1
+
+
+def test_units_do_not_chase_across_squares_while_attack_moving_by_default():
+    """The default is "no cross-square chase" for every unit type."""
+    from soundrts.worldunit.worldbase import Unit
+
+    assert Unit.can_attack_move_chase == 0

@@ -17,7 +17,8 @@ Note di rilascio
 
 - **Aggiunto**: l’ordine di **attacco in movimento** — l’unità marcia verso la destinazione ma attacca qualsiasi nemico incontra lungo la strada invece di ignorarlo. Si dà con clic destro sul campo di battaglia con il comando «attacco in movimento» selezionato (tasto predefinito **A**), ed è disponibile anche agli script di mappa tramite la parola chiave ``attack_move``.
 - **Aggiunto**: la parola chiave ``can_attack_move`` decide se un’unità può usare l’ordine. È attiva per default sui soldati; i lavoratori si escludono con ``can_attack_move 0``.
-- **Ambito**: ``soundrts/worldorders/movement.py``, ``soundrts/definitions.py``, ``res/ui/style.txt``.
+- **Corretto**: un attacco in movimento **non insegue più** un nemico che fugge tra una casella e l’altra. Appena il nemico lascia la sua casella (o esce dalla portata dell’arma), l’unità conclude il combattimento e riprende ad avanzare verso la destinazione, anche quando il suo ``ai_mode`` è ``chase``. È il comportamento originale dell’A-move. Una mod che vuole recuperare il comportamento precedente può abilitarlo esplicitamente con ``can_attack_move_chase 1``.
+- **Ambito**: ``soundrts/worldorders/movement.py``, ``soundrts/worldaction.py``, ``soundrts/definitions.py``, ``res/ui/style.txt``.
 
 **Aggiunto: apparizione tramite salto e canale nydus (invocazione istantanea)**
 

@@ -18,7 +18,8 @@ Release notes
 
 - **Added**: the **attack-move** order -- the unit marches towards the destination but attacks every enemy it meets on the way instead of ignoring it. It is a right-click on the battlefield with the "attack-move" command selected (default hotkey **A**), and it is also available to map scripts through the ``attack_move`` order keyword.
 - **Added**: the ``can_attack_move`` keyword decides whether a unit may use the order. It is on by default for soldiers; workers opt out with ``can_attack_move 0``.
-- **Scope**: ``soundrts/worldorders/movement.py``, ``soundrts/definitions.py``, ``res/ui/style.txt``.
+- **Fixed**: an attack-move no longer **chases** a fleeing enemy across squares. As soon as the enemy leaves its square (or the unit's weapon range), the unit ends the engagement and resumes advancing towards its destination -- even when the unit's ``ai_mode`` is ``chase``. That matches the original A-move behaviour. A mod that wants the old behaviour back can opt in explicitly with ``can_attack_move_chase 1``.
+- **Scope**: ``soundrts/worldorders/movement.py``, ``soundrts/worldaction.py``, ``soundrts/definitions.py``, ``res/ui/style.txt``.
 
 **Added: warp-in and the nydus canal (instant unit summoning)**
 

@@ -317,6 +317,14 @@ class AttackMoveOrder(BasicOrder):
             action = AttackAction(self.unit, enemy)
             if getattr(self, "is_imperative", False):
                 action.is_imperative = True
+            # An A-move must never abandon its destination to chase a
+            # fleeing enemy: the unit stops as soon as the target leaves
+            # the square and then resumes advancing.  This is what keeps
+            # the A-move semantics ("advance while fighting what you meet")
+            # even for a unit whose ai_mode is "chase".  A mod can opt a
+            # unit type back in with ``can_attack_move_chase 1``.
+            if not int(getattr(self.unit, "can_attack_move_chase", 0) or 0):
+                action.no_cross_square_pursuit = True
             self.unit.action = action
             return
         if self.unit.is_in_position(self.target) or self.unit._near_enough(self.target):

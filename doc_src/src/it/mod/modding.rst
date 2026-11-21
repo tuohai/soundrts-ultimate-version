@@ -1767,6 +1767,19 @@ parola chiave ``attack_move`` in un trigger. L’unità cammina verso la casella
 di destinazione e si ferma a combattere ogni nemico entro la sua portata; quando
 non c’è nessuno a tiro continua a marciare.
 
+Un attacco in movimento **non insegue mai** un nemico in fuga tra una casella e
+l’altra. Appena il nemico lascia la sua casella (o esce dalla portata
+dell’arma), l’unità conclude il combattimento, torna alla coda degli ordini e
+riprende ad avanzare verso la destinazione. Questo è il comportamento originale
+dell’A-move, e vale anche quando l’``ai_mode`` dell’unità è ``chase``
+(inseguimento). Una mod che vuole comunque l’inseguimento tra caselle durante
+l’attacco in movimento può abilitarelo esplicitamente:
+
+| Attributo | Funzione |
+| --- | --- |
+| ``can_attack_move_chase 1`` | Un’unità che attacca in movimento può inseguire tra caselle (abbandona la destinazione per farlo) |
+| ``can_attack_move_chase 0`` | Non può (il valore predefinito), l’unità continua sempre ad avanzare verso la destinazione |
+
 Apparizione tramite salto / canale nydus (invocazione istantanea)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

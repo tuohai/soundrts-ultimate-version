@@ -18,7 +18,8 @@ Notas de la versión
 
 - **Añadido**: la orden de **avance con ataque** — la unidad marcha hacia el destino pero ataca a cualquier enemigo que encuentre por el camino en vez de ignorarlo. Se da con clic derecho en el campo de batalla con el comando «avance con ataque» seleccionado (atajo por defecto **A**), y también está disponible para los scripts de mapa mediante la palabra clave ``attack_move``.
 - **Añadido**: la palabra clave ``can_attack_move`` decide si una unidad puede usar la orden. Está activa por defecto en los soldados; los trabajadores se excluyen con ``can_attack_move 0``.
-- **Ámbito**: ``soundrts/worldorders/movement.py``, ``soundrts/definitions.py``, ``res/ui/style.txt``.
+- **Corregido**: un avance con ataque ya **no persigue** a un enemigo que huye entre casillas. En cuanto el enemigo abandona su casilla (o sale del alcance del arma), la unidad termina el combate y sigue avanzando hacia el destino, incluso si su ``ai_mode`` es ``chase``. Esto coincide con el comportamiento original del A-move. Un mod que quiera recuperar el comportamiento anterior puede activarlo explícitamente con ``can_attack_move_chase 1``.
+- **Ámbito**: ``soundrts/worldorders/movement.py``, ``soundrts/worldaction.py``, ``soundrts/definitions.py``, ``res/ui/style.txt``.
 
 **Añadido: aparición por salto y canal de nydus (invocación instantánea)**
 

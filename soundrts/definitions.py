@@ -1646,6 +1646,13 @@ class Rules(_Definitions):
         # Attack-move (SC2 "A-move"): 1 = the unit may use the attack-move
         # order.  Read by ``worldorders.movement.AttackMoveOrder.is_allowed``.
         "can_attack_move",
+        # Attack-move cross-square pursuit: 1 = a unit that is attack-moving
+        # may still chase a fleeing enemy across squares (it abandons its
+        # destination to do so).  0 = the default: an A-move keeps advancing
+        # towards its destination and only fights what it meets on the way.
+        # Read by ``worldorders.movement.AttackMoveOrder`` /
+        # ``worldaction.AttackAction``.
+        "can_attack_move_chase",
         # D-Phase 2: rules-driven extra Town Center build slot after research
         # (AoE2 Cuman Mercenaries). Read by world_build_rules.can_build + tc cap.
         "allow_extra_town_center",
