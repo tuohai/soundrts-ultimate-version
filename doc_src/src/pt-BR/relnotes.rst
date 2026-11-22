@@ -44,9 +44,37 @@ Notas de lançamento
 
 **Adicionado: as novas palavras-chave foram documentadas**
 
-- O guia de modding ganhou uma seção **“Palavras-chave para mods de StarCraft”** cobrindo a camada de escudo, a ordem de avançar atacando, a aparição por salto / nydus, as edificações em chamas, a regeneração fora de combate e a colisão entre unidades, com uma tabela e um exemplo de regras para cada uma. Foi escrita nos **5 idiomas da documentação** (inglês, chinês, espanhol, italiano e português do Brasil).
-- **Adicionado**: testes de regressão para cada nova primitiva: ``test_starcraft_shields.py``, ``test_starcraft_attack_move.py``, ``test_starcraft_warp_in.py`` e ``test_starcraft_building_burn.py``, mais a auditoria das notas de lançamento ``test_changelog_1524.py``.
+- O guia de modding ganhou uma seção **“Palavras-chave para mods de StarCraft”** cobrindo a camada de escudo, a aparição por salto / nydus, as edificações em chamas, a regeneração fora de combate e a colisão entre unidades, com uma tabela e um exemplo de regras para cada uma. Foi escrita nos **5 idiomas da documentação** (inglês, chinês, espanhol, italiano e português do Brasil).
+- **Adicionado**: testes de regressão para cada nova primitiva: ``test_starcraft_shields.py``, ``test_starcraft_warp_in.py`` e ``test_starcraft_building_burn.py``, mais a auditoria das notas de lançamento ``test_changelog_1524.py``.
 - **Escopo**: ``doc_src/src/*/mod/modding.rst``.
+
+**Corrigido: com formação, as unidades anunciavam «atacando» sem atacar, e algumas paravam no meio do caminho**
+
+- **Problema**: depois de dar uma formação ao exército, uma ordem de mover ou atacar fazia a interface anunciar «atacando XXX» sem parar enquanto as unidades nem lutavam nem avançavam. Às vezes algumas unidades simplesmente paravam no meio do caminho e nunca alcançavam a força principal: por exemplo, no salvamento ``测试2``, de 28 unidades de combate marchando para a1, **exatamente 3 arqueiros sempre paravam em d2**. Sem formação isso nunca acontecia.
+- **Causa 1 (a verificação da casa de formação saía dos limites)**: uma casa de formação é transformada num alvo de sub-quadrante de zoom (``ZoomTarget``). ``zoom_cell_contains()`` decidia «este ponto está no mesmo sub-quadrante?» dobrando as coordenadas num índice de célula e recortando-o na grade, **sem conferir antes que o ponto estivesse realmente dentro da casa alvo**. Uma unidade ainda em d2 (a quatro casas de a1) era dobrada sobre a **célula de borda** de a1, ``contains()`` informava «chegou» e a ordem ``go`` se completava: a unidade parava para sempre. Uma formação em linha espreme as casas contra a borda da casa, então todas as unidades que caíam na mesma célula de canto eram atingidas de uma vez.
+- **Causa 2 (manter a posição não atravessava casas)**: ``formation_stand_ground()`` olhava apenas se a unidade estava no modo ``guard`` e ignorava uma ordem **explícita de atravessar a casa** dada pelo jogador. Mandar uma unidade corpo a corpo atacar um castelo na casa vizinha era vetado pela regra «nunca sair desta casa», então a unidade ficava parada enquanto a interface anunciava «atacando castelo».
+- **Causa 3 (a casa estava mais longe do alvo do que o alcance da arma)**: as unidades nas pontas de uma linha larga podem estar a mais de dez metros do alvo (um castelo), mais longe que o alcance da própria arma. Segurar a casa para sempre significava nunca entrar no alcance: de novo «atacando» na tela e nenhum dano na realidade.
+- **Causa 4 (a ação de contra-ataque passou fome nas outras ordens)**: uma unidade que mantém a posição e é atingida por um atacante distante construía um ``AttackAction`` contra um atacante que **nunca conseguia alcançar**. Essa ação nunca termina, e ``update()`` pula ``_execute_orders()`` enquanto um ``AttackAction`` está em execução, então as ordens próprias da unidade ficavam famintas para sempre.
+- **Correção**: ``zoom_cell_contains()`` e ``ZoomTarget.contains()`` agora exigem que o ponto consultado **esteja dentro dos limites daquela casa** e rejeitam qualquer ponto exterior; ``formation_stand_ground()`` recebe um argumento ``target``, de modo que uma ordem explícita de atravessar a casa levanta o veto «nunca sair da casa»; a nova ``_slot_can_reach_target()`` e a nova ``_close_in_on_target()`` fazem a unidade se aproximar quando sua casa fica além do alcance da própria arma, em vez de segurá-la; a nova ``_can_reach_attacker()`` impede que um atacante inalcançável crie uma ação sem saída (e limpa ``last_attacker``), de forma que ser atingido de novo a rearma.
+- **Escopo**: ``soundrts/worldroom.py``, ``soundrts/world_formation.py``, ``soundrts/worldunit/world_movement.py``, ``soundrts/worldunit/world_ai_decision.py``, ``soundrts/worldorders/movement.py``.
+
+**Corrigido: carregar um salvamento devolvia a câmera ao ponto de nascimento**
+
+- **Problema**: o jogador estava olhando para uma casa (digamos ``d1`` ou ``10,5``) ao salvar; ao carregar aquele salvamento a câmera saltava de volta ao ponto de nascimento (o centro urbano em a1).
+- **Causa**: ``_Savable.__getstate__()`` remove a ``interface`` inteira do pickle (ela carrega a superfície do pygame e o estado das threads, então não é serializável), e **a casa em que se está olhando é justamente ``interface.place``**: ela vai junto. Ao carregar, ``set_obs_pos()`` caía no ``_initial_observer_place()``, que devolve a casa da primeira unidade controlável, ou seja o ponto de nascimento.
+- **Melhoria**: o novo ``soundrts/clientgame/focus_persistence.py`` captura o foco como **dados puros** (o identificador da casa, mais as coordenadas opcionais de sub-quadrante do zoom) e o guarda no campo ``_saved_focus`` do salvamento; ao carregar a casa é procurada pelo identificador e ``interface.place`` é restaurado, com a câmera livre recentrada nela. Salvamentos antigos não têm esse campo, então a restauração é simplesmente pulada sem erros.
+- **Escopo**: ``soundrts/clientgame/focus_persistence.py``, ``soundrts/game.py``.
+
+**Corrigido: a casa restaurada era anunciada como «desconhecida» ao carregar um salvamento**
+
+- **Problema**: com o foco restaurado, carregar um salvamento cujo foco estava em ``10,5`` fazia o cliente anunciar primeiro «10 , 5 , desconhecido».
+- **Causa**: o anúncio acontecia antes de chegar o primeiro dado de névoa de guerra do servidor (evento ``voila``), então ``scouted_squares`` ainda estava vazio e a casa era reportada como inexplorada.
+- **Melhoria**: ``GameInterface`` ganhou uma flag ``_fog_synced``, acionada quando chega o primeiro ``voila``; o foco restaurado não é mais anunciado de imediato, mas enfileirado no espaço de anúncios pendentes que o laço principal do cliente drena a cada quadro, marcado com «esperar a névoa». ``flush_pending_square_announce()`` só fala quando os dados de névoa já chegaram; se o jogador já tiver se movido para outra casa nesse meio-tempo, o anúncio é descartado.
+- **Escopo**: ``soundrts/clientgame/game_interface_base.py``, ``soundrts/clientgame/game_navigation.py``, ``soundrts/clientgame/focus_persistence.py``.
+
+**Verificação**
+
+- ``soundrts/tests/test_formation_slot_and_save_focus.py`` -- testes novos: uma casa de formação não pode confundir as coordenadas de outra casa com «estar dentro da casa», uma formação em linha completa chega à casa distante, o foco sobrevive a um ciclo de salvamento, nenhuma casa é anunciada enquanto a névoa é desconhecida, e o anúncio pendente é descartado se o jogador se moveu.
 
 1.5.2.3
 -------

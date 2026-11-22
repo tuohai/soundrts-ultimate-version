@@ -1403,10 +1403,22 @@ def unit_agro_on_sight(unit) -> bool:
     return _flag_on(getattr(unit, "agro_on_sight", 1))
 
 
-def formation_stand_ground(unit) -> bool:
+def formation_stand_ground(unit, target=None) -> bool:
     """AoE2 stand ground: fire in range, never walk.
 
     Units with ``agro_on_sight 0`` keep classic guard (hit then counterattack).
+
+    ``target`` is the destination the unit is *explicitly* ordered to reach
+    (an ``attack``/``go`` order target).  Stand ground means "don't chase",
+    not "refuse to walk anywhere": when the player orders a unit to attack a
+    target that lives in another square, the unit must still cross squares
+    to reach it.  So an explicit order on a cross-square target cancels the
+    stand-ground veto (AoE2 behaviour: selecting a building and pressing
+    attack-move walks the unit there).
+
+    ``target=None`` keeps the original semantics ("fire at what is already in
+    range, never leave the square"), which is what the AI auto-fire and
+    formation slot code paths rely on.
     """
     if unit is None or getattr(unit, "ai_mode", None) != "guard":
         return False
@@ -1414,7 +1426,23 @@ def formation_stand_ground(unit) -> bool:
         return False
     if not unit_agro_on_sight(unit):
         return False
+    if target is not None and _target_in_other_square(unit, target):
+        # Explicit cross-square order: walk there instead of standing still.
+        return False
     return True
+
+
+def _target_in_other_square(unit, target) -> bool:
+    """True when *target* is not on the unit's current square."""
+    if target is None:
+        return False
+    target_place = getattr(target, "place", None)
+    if target_place is None:
+        return False
+    unit_place = getattr(unit, "place", None)
+    if unit_place is None:
+        return False
+    return target_place is not unit_place
 
 
 def formation_hold_xy(unit):

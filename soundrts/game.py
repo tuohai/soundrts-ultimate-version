@@ -12,6 +12,11 @@ from . import msgparts as mp
 from . import stats
 from .treaty import clamp_treaty_minutes
 from .clientgameorder import update_orders_list
+from .clientgame.focus_persistence import (
+    announce_restored_focus,
+    capture_focus,
+    restore_focus,
+)
 from .clientmedia import play_sequence, voice
 from .definitions import rules, style
 from .lib.log import warning
@@ -623,7 +628,11 @@ class _Savable:
     def __getstate__(self):
         odict = self.__dict__.copy()
         odict.pop("_replay_file", None)
-        odict.pop("interface", None)
+        interface = odict.pop("interface", None)
+        # The interface itself is not picklable (pygame + thread state), but
+        # the square the player is looking at must survive a save/load round
+        # trip -- otherwise the camera jumps back to the spawn square.
+        odict["_saved_focus"] = capture_focus(interface)
         return odict
 
     def __setstate__(self, state):
@@ -728,6 +737,28 @@ class _Savable:
         self.interface = clientgame.GameInterface(self.local_client, speed=speed)
         self.interface.auto = getattr(self, "auto", None)
 
+    def _restore_saved_focus(self):
+        """Put the camera back on the square the player was looking at.
+
+        ``interface.place`` is rebuilt from scratch when a save is loaded,
+        so without this the view snaps back to the spawn square.  The
+        snapshot was captured in ``_Savable.__getstate__``.
+        """
+        data = getattr(self, "_saved_focus", None)
+        if not data:
+            return False
+        interface = getattr(self, "interface", None)
+        if interface is None:
+            return False
+        if not restore_focus(interface, data):
+            return False
+        # Announce the restored square so the player hears where they are.
+        # The announcement is deferred until the server's first "voila"
+        # has delivered the fog-of-war data -- announcing it right away
+        # would say "unknown" ("未知") because the client has no fog yet.
+        announce_restored_focus(interface, interface.place)
+        return True
+
     def run_on(self):
         if self.record_replay:
             # 同样写入当前 mod 专属的回放目录
@@ -749,6 +780,7 @@ class _Savable:
             pass
         update_orders_list()  # when style has changed
         self._ensure_interface_for_restore()
+        self._restore_saved_focus()
         self.interface.run_game(self, new=False)
         if self.record_replay:
             self._replay_file.close()

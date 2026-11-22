@@ -97,7 +97,7 @@ class GoOrder(BasicOrder):
                 int(getattr(self.target, "hp", 0) or 0) > 0
                 and getattr(self.target, "player", None) is not None
             )
-            if living and formation_stand_ground(self.unit):
+            if living and formation_stand_ground(self.unit, self.target):
                 return
             if living:
                 blocker = formation_blocker(self.unit, self.target)
@@ -226,7 +226,7 @@ class AttackOrder(BasicOrder):
                 formation_stand_ground,
             )
 
-            if formation_stand_ground(self.unit):
+            if formation_stand_ground(self.unit, self.target):
                 return
             break_formation_hold(self.unit)
             blocker = formation_blocker(self.unit, self.target)

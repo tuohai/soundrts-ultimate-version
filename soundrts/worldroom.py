@@ -1409,13 +1409,29 @@ def parse_zoom_target_id(zoom_id):
 
 
 def zoom_cell_contains(place, precision, center_x, center_y, x, y):
-    """Same zoom sub-cell as center at client F8 precision."""
+    """Same zoom sub-cell as center at client F8 precision.
+
+    The queried point MUST be inside ``place``: the sub-cell index is
+    clamped to the grid, so a point from a neighbouring (or distant)
+    square would otherwise be folded onto the edge cell and wrongly
+    reported as "inside the same zoom cell".  That bug made a unit
+    which was still several squares away believe it had reached its
+    formation slot: its ``go`` order completed and it stopped for good
+    (e.g. 3 archers stuck in d2 while the rest of the army marched to
+    a1).
+    """
     if place is None or precision <= 0:
         return False
     xmin = place.xmin
     ymin = place.ymin
     xmax = place.xmax
     ymax = place.ymax
+    # The point must lie within the square's own bounds.
+    if not (xmin <= x < xmax and ymin <= y < ymax):
+        return False
+    # The reference centre must lie within the square as well.
+    if not (xmin <= center_x < xmax and ymin <= center_y < ymax):
+        return False
     sub_w = (xmax - xmin) / precision
     sub_h = (ymax - ymin) / precision
     if sub_w <= 0 or sub_h <= 0:
@@ -1491,7 +1507,14 @@ class ZoomTarget:
         if zoom_cell_contains(self.place, precision, self.x, self.y, x, y):
             return True
         # Legacy 3×3 fallback for old zoom ids without precision suffix.
-        subsquare = self.place.world.get_subsquare_id_from_xy
+        # Same square-bounds guard as zoom_cell_contains(): a point from
+        # another square must never be folded onto an edge subsquare.
+        place = self.place
+        if place is not None and not (
+            place.xmin <= x < place.xmax and place.ymin <= y < place.ymax
+        ):
+            return False
+        subsquare = place.world.get_subsquare_id_from_xy
         return subsquare(self.x, self.y) == subsquare(x, y)
 
 

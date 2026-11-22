@@ -1012,17 +1012,28 @@ def flush_pending_square_announce(interface):
     pending = getattr(interface, "_pending_square_announce", None)
     if not pending:
         return
-    interface._pending_square_announce = None
     if isinstance(pending, dict):
         place = pending.get("place")
         prefix = list(pending.get("prefix") or [])
+        require_fog = bool(pending.get("require_fog", False))
     else:
         place = pending
         prefix = []
+        require_fog = False
     if place is None:
+        interface._pending_square_announce = None
         return
     if interface.place is not None and interface.place is not place:
+        interface._pending_square_announce = None
         return
+    if require_fog:
+        # Wait for the server's first "voila": without the fog-of-war
+        # data the square would be announced as "unknown" ("未知").
+        from .focus_persistence import fog_state_ready
+
+        if not fog_state_ready(interface):
+            return
+    interface._pending_square_announce = None
     say_square(interface, place, prefix)
 
 

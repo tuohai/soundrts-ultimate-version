@@ -43,9 +43,37 @@
 
 **新增：新关键字已写入文档**
 
-- 模组制作指南新增了「星际争霸模组新关键字」一节，涵盖护盾层、进攻移动命令、折跃传送门 / 虫道、建筑燃烧自毁、脱战回血与单位碰撞，每一项都有对照表和 rules 示例。该节已用**全部 5 种文档语言**撰写（英文、中文、西班牙文、意大利文、巴西葡萄牙文）。
-- **新增**：每项新原语都补了回归测试：``test_starcraft_shields.py``、``test_starcraft_attack_move.py``、``test_starcraft_warp_in.py`` 与 ``test_starcraft_building_burn.py``，另有发行说明审计 ``test_changelog_1524.py``。
+- 模组制作指南新增了「星际争霸模组新关键字」一节，涵盖护盾层、折跃传送门 / 虫道、建筑燃烧自毁、脱战回血与单位碰撞，每一项都有对照表和 rules 示例。该节已用**全部 5 种文档语言**撰写（英文、中文、西班牙文、意大利文、巴西葡萄牙文）。
+- **新增**：每项新原语都补了回归测试：``test_starcraft_shields.py``、``test_starcraft_warp_in.py`` 与 ``test_starcraft_building_burn.py``，另有发行说明审计 ``test_changelog_1524.py``。
 - **改动范围**：``doc_src/src/*/mod/modding.rst`` 。
+
+**修复：排阵型后「显示正在攻击」却并没有攻击，单位还会半路卡住**
+
+- **问题**：给部队排好阵型之后，再用「移动」或「攻击」下达指令，界面会一直播报「正在攻击 XXX」，但单位其实既没有真的开打，也没有继续前进。有时几个单位会直接停在半路上，永远跟不上大部队 —— 例如 ``测试2`` 存档里 28 个战斗单位开往 a1 时，**必定有 3 个步弓手停在 d2 不再前进**。没有阵型时不会这样。
+- **原因一（阵型槽位判定越界）**：阵型槽位会被换算成一个缩放子格目标 ``ZoomTarget``。``zoom_cell_contains()`` 判断「某点是否落在同一个子格」时，只把坐标折算成子格编号再夹到网格边界，却**没有先检查这个点是不是真的在目标方格内**。于是还在 d2（离 a1 有四格远）的单位被折算后夹到 a1 的**边缘子格**上，``contains()`` 误判成「已到达」，``go`` 指令随即判定完成 —— 单位就永久停在了半路上。队伍排成横队时槽位被压到方格边界，落在同一个角落子格上的单位就集体中招。
+- **原因二（站桩不跨格）**：``formation_stand_ground()`` 只看单位是不是 ``guard`` 模式，完全无视玩家**明确下达**的跨格指令。玩家命令近战单位去攻击隔壁格的城堡时，单位被「不许离开本方格」的规则否决，于是站在原地不动，界面却播报「攻击城堡」。
+- **原因三（阵型槽位离目标太远）**：横排阵型的两端单位离目标（城堡）可能有十几米，比自己的武器射程还远。单位死守槽位不动，就永远进不了射程 —— 同样是「显示攻击、实际没打」。
+- **原因四（反击动作饿死其它指令）**：被远处敌人打中的站桩单位会对着一个**根本够不着**的敌人建立 ``AttackAction``。这个动作永远不会结束，而 ``update()`` 在 ``AttackAction`` 运行期间会跳过 ``_execute_orders()``，于是该单位自己的移动 / 攻击指令被永久饿死。
+- **修复**：``zoom_cell_contains()`` 与 ``ZoomTarget.contains()`` 现在都要求被查询的点**必须落在该方格自己的边界内**，越界一律判否；``formation_stand_ground()`` 增加 ``target`` 参数，玩家明确下达的跨格指令会解除「不许离格」的限制；新增 ``_slot_can_reach_target()`` 与 ``_close_in_on_target()``，槽位离目标超出武器射程时单位会主动拉近距离而不是死守槽位；新增 ``_can_reach_attacker()``，够不着的攻击者不再建立死胡同动作（并清掉 ``last_attacker``），再次被攻击会重新触发。
+- **改动范围**：``soundrts/worldroom.py``、``soundrts/world_formation.py``、``soundrts/worldunit/world_movement.py``、``soundrts/worldunit/world_ai_decision.py``、``soundrts/worldorders/movement.py`` 。
+
+**修复：读取存档后镜头焦点回到出生点**
+
+- **问题**：保存游戏时玩家正看着某个方格（例如 ``d1`` 或 ``10,5``），读取该存档后镜头却跳回出生点（城镇中心所在的 a1）。
+- **原因**：存档时 ``_Savable.__getstate__()`` 会把 ``interface`` 整个从 pickle 里剔除（它带着 pygame 界面与线程状态，没法序列化），而**焦点所在的方格正是 ``interface.place``** —— 它跟着一起没了。读取时 ``set_obs_pos()`` 走兜底逻辑 ``_initial_observer_place()``，返回第一个可控单位所在的方格，也就是出生点。
+- **改进**：新增 ``soundrts/clientgame/focus_persistence.py``，把焦点快照成一份**纯数据**（方格编号，外加可选的缩放子格坐标）存进存档的 ``_saved_focus`` 字段；读取时按方格编号还原 ``interface.place``，并把自由镜头重新对准该格。旧存档没有这个字段，读取时会自动跳过还原，不会出错。
+- **改动范围**：``soundrts/clientgame/focus_persistence.py``、``soundrts/game.py`` 。
+
+**修复：读取存档后焦点方格播报「未知」**
+
+- **问题**：焦点恢复之后，读取一份焦点在 ``10,5`` 的存档，客户端会先播报「10 , 5 , 未知」。
+- **原因**：读档流程里的播报发生在服务器的第一份战争迷雾数据（``voila`` 事件）到达**之前**，客户端此时 ``scouted_squares`` 还是空的，方格自然被判成「未探索」。
+- **改进**：``GameInterface`` 增加 ``_fog_synced`` 标志，在收到第一份 ``voila`` 时置位；还原焦点后不再立即播报，而是排进客户端主循环每帧都会处理的待播报队列，并标记「必须等迷雾就绪」。``flush_pending_square_announce()`` 只在迷雾数据到达后才真正朗读；若玩家在此之前已经移动到别的方格，这条播报直接作废。
+- **改动范围**：``soundrts/clientgame/game_interface_base.py``、``soundrts/clientgame/game_navigation.py``、``soundrts/clientgame/focus_persistence.py`` 。
+
+**验证**
+
+- ``soundrts/tests/test_formation_slot_and_save_focus.py`` —— 新增测试：阵型槽位不得把另一个方格的坐标误判为「已在槽位内」、整队行阵能走到远端方格、焦点数据的存档往返、迷雾未同步时不播报方格、玩家已经移动时丢弃待播报。
 
 1.5.2.3
 -------

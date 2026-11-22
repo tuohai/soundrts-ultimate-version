@@ -614,7 +614,8 @@ class CreatureAIDecision(Entity):
                     self._attack(target)
                     return
             if (self.last_attacker is not None and self.last_attacker.place is not None and
-                self.counterattack_enabled):
+                self.counterattack_enabled and
+                CreatureAIDecision._can_reach_attacker(self, self.last_attacker)):
                 # 站岗模式下，如果遭受攻击且反击开关开启，才进行反击
                 # 缓存反击决策
                 decision_cache[cache_key] = {
@@ -894,6 +895,48 @@ class CreatureAIDecision(Entity):
     # D-Phase 1 T3: 删除上面的 def can_attack(target) 死代码 — Python 后定义
     # 的同名方法覆盖前者, line 394-432 早就不会被调用 (game 一直在跑下面这个).
     # 只保留 line 434 这个 "without moving to another square" 版本.
+    def _can_reach_attacker(self, attacker) -> bool:
+        """Can this unit actually retaliate against *attacker* right now?
+
+        A guard unit may only counterattack an attacker it can reach: the
+        attacker must be on the unit's own square, or already inside weapon
+        range (an archer can shoot a tower in the next square).
+
+        Without this check a guard unit that was hit by a distant attacker
+        builds an ``AttackAction`` on a target it can never reach.  That
+        action never completes, and because ``update()`` skips
+        ``_execute_orders()`` while an ``AttackAction`` is running, the unit's
+        own attack/go orders are starved forever (the unit stands still
+        although the player ordered it to move and attack).
+
+        Returns True when reachability cannot be determined, so that units
+        which do not implement the range check keep their old behaviour.
+        """
+        if attacker is None:
+            return False
+        attacker_place = getattr(attacker, "place", None)
+        if attacker_place is None:
+            return False
+        my_place = getattr(self, "place", None)
+        if my_place is not None and attacker_place is my_place:
+            return True
+        # Different square: only reachable if it is already within weapon
+        # range (ranged units shooting at a neighbouring tower).
+        near_enough = getattr(self, "_near_enough_to_aim", None)
+        if not callable(near_enough):
+            return True  # cannot tell -> keep the old behaviour
+        try:
+            reachable = bool(near_enough(attacker))
+        except Exception:
+            return True  # cannot tell -> keep the old behaviour
+        if reachable:
+            return True
+        # Out of reach: forget the attacker so the next decide() does not
+        # rebuild the same dead-end action.  Being hit again re-arms it.
+        if getattr(self, "last_attacker", None) is attacker:
+            self.last_attacker = None
+        return False
+
     def _stand_ground_target(self):
         """Stand ground: first enemy already in true weapon range. Never walk."""
         candidates = []

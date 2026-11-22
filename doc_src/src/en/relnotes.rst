@@ -44,9 +44,37 @@ Release notes
 
 **Added: the new keywords are documented**
 
-- The modding guide gained a **"StarCraft modding primitives"** section covering the shield layer, the attack-move order, warp-in / nydus, burning structures, out-of-combat regeneration and unit collision, with a table and a rules example for each. It was written in **all 5 documentation languages** (English, Chinese, Spanish, Italian and Brazilian Portuguese).
-- **Added**: regression tests for every new primitive: ``test_starcraft_shields.py``, ``test_starcraft_attack_move.py``, ``test_starcraft_warp_in.py`` and ``test_starcraft_building_burn.py``, plus the release-note audit ``test_changelog_1524.py``.
+- The modding guide gained a **"StarCraft modding primitives"** section covering the shield layer, warp-in / nydus, burning structures, out-of-combat regeneration and unit collision, with a table and a rules example for each. It was written in **all 5 documentation languages** (English, Chinese, Spanish, Italian and Brazilian Portuguese).
+- **Added**: regression tests for every new primitive: ``test_starcraft_shields.py``, ``test_starcraft_warp_in.py`` and ``test_starcraft_building_burn.py``, plus the release-note audit ``test_changelog_1524.py``.
 - **Scope**: ``doc_src/src/*/mod/modding.rst``.
+
+**Fixed: with a formation, units announced "attacking" without attacking, and some stalled halfway**
+
+- **Problem**: after giving the army a formation, an order to move or attack made the interface announce "attacking XXX" over and over while the units neither fought nor advanced. Sometimes a few units simply stopped half-way and never caught up with the main force -- e.g. in the ``测试2`` save, of 28 combat units marching to a1, **exactly 3 archers always stalled in d2**. Without a formation this never happened.
+- **Cause 1 (the formation slot test ran out of bounds)**: a formation slot is turned into a zoom sub-square target (``ZoomTarget``). ``zoom_cell_contains()`` decided "is this point in the same sub-square?" by folding the coordinates into a cell index and clamping it to the grid, **without first checking that the point really lies inside the target square**. A unit still in d2 (four squares away from a1) was therefore folded onto the **edge cell** of a1, ``contains()`` reported "arrived", and the ``go`` order completed -- the unit stopped for good. A line formation squeezes the slots against the square border, so every unit landing on the same corner cell was hit at once.
+- **Cause 2 (stand ground refused to cross squares)**: ``formation_stand_ground()`` only looked at whether the unit was in ``guard`` mode and ignored an **explicit cross-square order** from the player. Ordering a melee unit to attack a castle in the next square was vetoed by the "never leave this square" rule, so the unit stood still while the interface announced "attacking castle".
+- **Cause 3 (the slot was further from the target than the weapon range)**: the units at the ends of a wide line can be more than ten metres from the target (a castle) -- further than their own weapon range. Holding the slot for ever meant never getting into range: again "attacking" on screen, no damage in reality.
+- **Cause 4 (the counterattack action starved the other orders)**: a stand-ground unit hit by a distant attacker built an ``AttackAction`` against an attacker it could **never reach**. That action never finishes, and ``update()`` skips ``_execute_orders()`` while an ``AttackAction`` runs, so the unit's own move / attack orders were starved for good.
+- **Fix**: ``zoom_cell_contains()`` and ``ZoomTarget.contains()`` now require the queried point to **lie inside that square's own bounds** and reject anything outside; ``formation_stand_ground()`` takes a ``target`` argument, so an explicit cross-square order lifts the "never leave the square" veto; the new ``_slot_can_reach_target()`` and ``_close_in_on_target()`` make a unit close the distance when its slot lies beyond its weapon range instead of holding the slot; the new ``_can_reach_attacker()`` stops an unreachable attacker from creating a dead-end action (and clears ``last_attacker``), so being hit again re-arms it.
+- **Scope**: ``soundrts/worldroom.py``, ``soundrts/world_formation.py``, ``soundrts/worldunit/world_movement.py``, ``soundrts/worldunit/world_ai_decision.py``, ``soundrts/worldorders/movement.py``.
+
+**Fixed: loading a save put the camera back on the spawn square**
+
+- **Problem**: the player was looking at a given square (say ``d1`` or ``10,5``) when saving; loading that save snapped the camera back to the spawn point (the town centre on a1).
+- **Cause**: ``_Savable.__getstate__()`` strips the whole ``interface`` from the pickle (it carries the pygame surface and the thread state, so it cannot be serialized), and **the square the view is on is ``interface.place``** -- it went with it. On load, ``set_obs_pos()`` fell back to ``_initial_observer_place()``, which returns the square of the first controllable unit, i.e. the spawn point.
+- **Improvement**: the new ``soundrts/clientgame/focus_persistence.py`` snapshots the focus into **plain data** (the square id, plus the optional zoom sub-square coordinates) and stores it in the save's ``_saved_focus`` field; on load the square is looked up by id and ``interface.place`` is restored, with the free camera re-centred on it. Older saves have no such field, so the restoration is simply skipped for them and nothing breaks.
+- **Scope**: ``soundrts/clientgame/focus_persistence.py``, ``soundrts/game.py``.
+
+**Fixed: the restored square was announced as "unknown" after loading a save**
+
+- **Problem**: with the focus restored, loading a save whose focus was on ``10,5`` made the client announce "10 , 5 , unknown" first.
+- **Cause**: the announcement happened before the server's first fog-of-war data (``voila`` event) had arrived, so ``scouted_squares`` was still empty and the square was reported as unexplored.
+- **Improvement**: ``GameInterface`` gained a ``_fog_synced`` flag, set when the first ``voila`` arrives; the restored focus is no longer announced immediately but queued in the pending-announcement slot the client main loop drains every frame, flagged "wait for the fog". ``flush_pending_square_announce()`` only speaks once the fog data is in; if the player has already moved to another square by then, the announcement is dropped.
+- **Scope**: ``soundrts/clientgame/game_interface_base.py``, ``soundrts/clientgame/game_navigation.py``, ``soundrts/clientgame/focus_persistence.py``.
+
+**Verification**
+
+- ``soundrts/tests/test_formation_slot_and_save_focus.py`` -- new tests: a formation slot must not mistake another square's coordinates for "inside the slot", a whole line formation reaches the far square, the focus survives a save round trip, no square is announced while the fog is unknown, and the pending announcement is dropped when the player moved on.
 
 1.5.2.3
 -------

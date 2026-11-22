@@ -43,9 +43,37 @@ Note di rilascio
 
 **Aggiunto: documentate le nuove parole chiave**
 
-- La guida alla modding ha acquisito una sezione **«Parole chiave per le mod di StarCraft»** che copre il livello di scudo, l’ordine di attacco in movimento, l’apparizione tramite salto / nydus, gli edifici in fiamme, la rigenerazione fuori combattimento e la collisione fra unità, con una tabella e un esempio di regole per ciascuno. È stata scritta in **tutte e 5 le lingue della documentazione** (inglese, cinese, spagnolo, italiano e portoghese brasiliano).
-- **Aggiunto**: test di regressione per ogni nuova primitiva: ``test_starcraft_shields.py``, ``test_starcraft_attack_move.py``, ``test_starcraft_warp_in.py`` e ``test_starcraft_building_burn.py``, più l’audit delle note di rilascio ``test_changelog_1524.py``.
+- La guida alla modding ha acquisito una sezione **«Parole chiave per le mod di StarCraft»** che copre il livello di scudo, l’apparizione tramite salto / nydus, gli edifici in fiamme, la rigenerazione fuori combattimento e la collisione fra unità, con una tabella e un esempio di regole per ciascuno. È stata scritta in **tutte e 5 le lingue della documentazione** (inglese, cinese, spagnolo, italiano e portoghese brasiliano).
+- **Aggiunto**: test di regressione per ogni nuova primitiva: ``test_starcraft_shields.py``, ``test_starcraft_warp_in.py`` e ``test_starcraft_building_burn.py``, più l’audit delle note di rilascio ``test_changelog_1524.py``.
 - **Ambito**: ``doc_src/src/*/mod/modding.rst``.
+
+**Corretto: con una formazione, le unità annunciavano «attacca» senza attaccare, e alcune si fermavano a metà strada**
+
+- **Problema**: dopo aver dato una formazione all'esercito, un ordine di muovere o attaccare faceva annunciare all'interfaccia «attacca XXX» più e più volte mentre le unità non combattevano né avanzavano. A volte alcune unità si fermavano semplicemente a metà strada e non raggiungevano mai la forza principale: ad esempio, nel salvataggio ``测试2``, di 28 unità da combattimento in marcia verso a1, **esattamente 3 arcieri si fermavano sempre in d2**. Senza formazione questo non accadeva mai.
+- **Causa 1 (il controllo della casella di formazione usciva dai limiti)**: una casella di formazione diventa un bersaglio di sotto-riquadro dello zoom (``ZoomTarget``). ``zoom_cell_contains()`` decideva «questo punto è nello stesso sotto-riquadro?» piegando le coordinate in un indice di cella e ritagliandolo sulla griglia, **senza controllare prima che il punto sia davvero dentro la casella bersaglio**. Un'unità ancora in d2 (a quattro caselle da a1) veniva quindi piegata sulla **cella di bordo** di a1, ``contains()`` segnalava «arrivata» e l'ordine ``go`` si completava: l'unità si fermava per sempre. Una formazione a schiera schiaccia le caselle contro il bordo della casella, così tutte le unità che finivano nella stessa cella d'angolo erano colpite insieme.
+- **Causa 2 (mantenere la posizione non attraversava le caselle)**: ``formation_stand_ground()`` guardava soltanto se l'unità era in modalità ``guard`` e ignorava un ordine **esplicito di attraversare la casella** impartito dal giocatore. Ordinare a un'unità corpo a corpo di attaccare un castello nella casella accanto veniva annullato dalla regola «non uscire mai da questa casella», quindi l'unità restava ferma mentre l'interfaccia annunciava «attacca castello».
+- **Causa 3 (la casella era più lontana del bersaglio rispetto alla portata dell'arma)**: le unità agli estremi di una linea larga possono trovarsi a più di dieci metri dal bersaglio (un castello), più lontano della propria portata d'arma. Tenere la casella per sempre significava non entrare mai in portata: di nuovo «attacca» sullo schermo e nessun danno nella realtà.
+- **Causa 4 (l'azione di controattacco divorava le altre ordini)**: un'unità che mantiene la posizione e viene colpita da un attaccante lontano costruiva un'``AttackAction`` contro un attaccante che **non poteva mai raggiungere**. Quell'azione non finisce mai e ``update()`` salta ``_execute_orders()`` mentre è in corso un'``AttackAction``, così le ordini dell'unità rimanevano digiune per sempre.
+- **Correzione**: ``zoom_cell_contains()`` e ``ZoomTarget.contains()`` ora esigono che il punto interrogato **sia dentro i limiti di quella casella** e rifiutano qualsiasi punto esterno; ``formation_stand_ground()`` riceve un argomento ``target``, così un ordine esplicito di attraversare la casella solleva il veto «non uscire dalla casella»; la nuova ``_slot_can_reach_target()`` e la nuova ``_close_in_on_target()`` fanno avvicinare l'unità quando la sua casella è oltre la propria portata d'arma invece di tenerla ferma; la nuova ``_can_reach_attacker()`` impedisce a un attaccante irraggiungibile di creare un'azione senza sbocco (e pulisce ``last_attacker``), così un nuovo colpo la riattiva.
+- **Ambito**: ``soundrts/worldroom.py``, ``soundrts/world_formation.py``, ``soundrts/worldunit/world_movement.py``, ``soundrts/worldunit/world_ai_decision.py``, ``soundrts/worldorders/movement.py``.
+
+**Corretto: caricare un salvataggio riportava la camera al punto di partenza**
+
+- **Problema**: il giocatore stava guardando una casella ( diciamo ``d1`` o ``10,5``) al salvare; caricando quel salvataggio la camera saltava indietro al punto di partenza (il centro città su a1).
+- **Causa**: ``_Savable.__getstate__()`` rimuove l'intero ``interface`` dal pickle (trasporta la superficie pygame e lo stato dei thread, quindi non è serializzabile), e **la casella su cui si guarda è proprio ``interface.place``**: se ne va con esso. Al caricamento ``set_obs_pos()`` ripiegava su ``_initial_observer_place()``, che restituisce la casella della prima unità controllabile, cioè il punto di partenza.
+- **Miglioramento**: il nuovo ``soundrts/clientgame/focus_persistence.py`` cattura il fuoco come **dati puri** (l'identificatore della casella, più le coordinate opzionali del sotto-riquadro dello zoom) e lo salva nel campo ``_saved_focus`` del salvataggio; al caricamento la casella viene cercata per identificatore e ``interface.place`` viene ripristinato, con la camera libera ricentrata su di essa. I salvataggi vecchi non hanno quel campo, quindi il ripristino viene semplicemente saltato senza errori.
+- **Ambito**: ``soundrts/clientgame/focus_persistence.py``, ``soundrts/game.py``.
+
+**Corretto: la casella ripristinata veniva annunciata come «sconosciuta» al caricamento**
+
+- **Problema**: con il fuoco ripristinato, caricare un salvataggio il cui fuoco era su ``10,5`` faceva annunciare al client per prima «10 , 5 , sconosciuto».
+- **Causa**: l'annuncio avveniva prima che arrivasse il primo dato di nebbia di guerra del server (evento ``voila``), quindi ``scouted_squares`` era ancora vuoto e la casella veniva riportata come inesplorata.
+- **Miglioramento**: ``GameInterface`` ha guadagnato un indicatore ``_fog_synced``, attivato quando arriva il primo ``voila``; il fuoco ripristinato non viene più annunciato subito, ma accodato nell'area degli annunci in sospeso che il ciclo principale del client svuota ogni fotogramma, con il contrassegno «aspetta la nebbia». ``flush_pending_square_announce()`` parla solo quando i dati di nebbia sono arrivati; se nel frattempo il giocatore si è già spostato in un'altra casella, l'annuncio viene scartato.
+- **Ambito**: ``soundrts/clientgame/game_interface_base.py``, ``soundrts/clientgame/game_navigation.py``, ``soundrts/clientgame/focus_persistence.py``.
+
+**Verifica**
+
+- ``soundrts/tests/test_formation_slot_and_save_focus.py`` -- test nuovi: una casella di formazione non deve scambiare le coordinate di un'altra casella per «essere dentro la casella», una formazione a schiera completa raggiunge la casella lontana, il fuoco sopravvive a un ciclo di salvataggio, nessuna casella viene annunciata mentre la nebbia è sconosciuta e l'annuncio in sospeso viene scartato se il giocatore si è mosso.
 
 1.5.2.3
 -------

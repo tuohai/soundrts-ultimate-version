@@ -65,6 +65,8 @@ class GameInterface(AttributesInterface):
         self._srv_queue = queue.Queue()
         self.scouted_squares = ()
         self.scouted_before_squares = ()
+        # Set once the server has pushed a "voila" with the fog data.
+        self._fog_synced = False
         self._bindings = Bindings()
         
         # 初始化属性界面
@@ -297,6 +299,11 @@ class GameInterface(AttributesInterface):
         self.scouted_squares = scouted_squares
         self.scouted_before_squares = scouted_before_squares
         self.collision_debug = collision_debug
+        # The fog-of-war data has arrived: the client now knows which
+        # squares are scouted.  Square announcements (e.g. the focus
+        # restored after loading a save) wait for this flag, otherwise
+        # they would say "unknown" ("未知").
+        self._fog_synced = True
 
         # 这些方法会在其他模块中定义
         from .game_resources import send_resource_alerts_if_needed

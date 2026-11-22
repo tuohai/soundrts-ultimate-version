@@ -44,9 +44,37 @@ Notas de la versión
 
 **Añadido: documentadas las nuevas palabras clave**
 
-- La guía de modding ganó una sección **«Palabras clave para mods de StarCraft»** que cubre la capa de escudo, la orden de avance con ataque, la aparición por salto / nydus, los edificios en llamas, la regeneración fuera de combate y la colisión entre unidades, con una tabla y un ejemplo de reglas para cada una. Se escribió en **los 5 idiomas de documentación** (inglés, chino, español, italiano y portugués de Brasil).
-- **Añadido**: pruebas de regresión para cada primitiva nueva: ``test_starcraft_shields.py``, ``test_starcraft_attack_move.py``, ``test_starcraft_warp_in.py`` y ``test_starcraft_building_burn.py``, más la auditoría de notas de versión ``test_changelog_1524.py``.
+- La guía de modding ganó una sección **«Palabras clave para mods de StarCraft»** que cubre la capa de escudo, la aparición por salto / nydus, los edificios en llamas, la regeneración fuera de combate y la colisión entre unidades, con una tabla y un ejemplo de reglas para cada una. Se escribió en **los 5 idiomas de documentación** (inglés, chino, español, italiano y portugués de Brasil).
+- **Añadido**: pruebas de regresión para cada primitiva nueva: ``test_starcraft_shields.py``, ``test_starcraft_warp_in.py`` y ``test_starcraft_building_burn.py``, más la auditoría de notas de versión ``test_changelog_1524.py``.
 - **Ámbito**: ``doc_src/src/*/mod/modding.rst``.
+
+**Corregido: con una formación, las unidades anunciaban «atacando» sin atacar, y algunas se quedaban paradas a medio camino**
+
+- **Problema**: después de dar una formación al ejército, una orden de mover o atacar hacía que la interfaz anunciara «atacando XXX» una y otra vez mientras las unidades ni combatían ni avanzaban. A veces algunas unidades se quedaban paradas a medio camino y nunca alcanzaban a la fuerza principal: por ejemplo, en la partida guardada ``测试2``, de 28 unidades de combate marchando hacia a1, **exactamente 3 arqueros siempre se detenían en d2**. Sin formación esto nunca ocurría.
+- **Causa 1 (la comprobación de la casilla de formación se salía de rango)**: una casilla de formación se convierte en un objetivo de sub-cuadrantalla de zoom (``ZoomTarget``). ``zoom_cell_contains()`` decidía «¿está este punto en la misma sub-cuadrantalla?» plegando las coordenadas en un índice de celda y recortándolo a la cuadrícula, **sin comprobar antes que el punto esté realmente dentro de la casilla objetivo**. Una unidad que seguía en d2 (a cuatro casillas de a1) se plegaba sobre la **celda del borde** de a1, ``contains()`` informaba «llegada», y la orden ``go`` se completaba: la unidad se detenía para siempre. Una formación en línea aprieta las casillas contra el borde de la casilla, así que todas las unidades que caían en la misma celda de esquina se veían afectadas a la vez.
+- **Causa 2 (mantener la posición no cruzaba casillas)**: ``formation_stand_ground()`` sólo miraba si la unidad estaba en modo ``guard`` e ignoraba una orden **explícita de cruzar casilla** del jugador. Ordenar a una unidad cuerpo a cuerpo que atacara un castillo en la casilla contiguera quedaba vetado por la regla «nunca salir de esta casilla», así que la unidad se quedaba quieta mientras la interfaz anunciaba «atacando castillo».
+- **Causa 3 (la casilla estaba más lejos del objetivo que el alcance del arma)**: las unidades de los extremos de una línea ancha pueden estar a más de diez metros del objetivo (un castillo), más lejos que su propio alcance de arma. Aguantar la casilla para siempre significaba no entrar nunca en alcance: otra vez «atacando» en pantalla y ningún daño en la realidad.
+- **Causa 4 (la acción de contraataque hambraba a las demás órdenes)**: una unidad que mantiene la posición y recibe un golpe de un atacante lejano construía un ``AttackAction`` contra un atacante al que **nunca podía alcanzar**. Esa acción nunca termina, y ``update()`` se salta ``_execute_orders()`` mientras se ejecuta un ``AttackAction``, así que las órdenes propias de la unidad quedaban hambrientas para siempre.
+- **Corrección**: ``zoom_cell_contains()`` y ``ZoomTarget.contains()`` exigen ahora que el punto consultado **esté dentro de los límites de esa casilla** y rechazan cualquier cosa exterior; ``formation_stand_ground()`` recibe un argumento ``target``, de modo que una orden explícita de cruzar casilla levanta el veto «nunca salir de la casilla»; la nueva ``_slot_can_reach_target()`` y la nueva ``_close_in_on_target()`` hacen que la unidad acorte la distancia cuando su casilla queda más allá de su alcance de arma en lugar de aguantar la casilla; la nueva ``_can_reach_attacker()`` impide que un atacante inalcanzable cree una acción sin salida (y limpia ``last_attacker``), de modo que volver a recibir un golpe la rearma.
+- **Ámbito**: ``soundrts/worldroom.py``, ``soundrts/world_formation.py``, ``soundrts/worldunit/world_movement.py``, ``soundrts/worldunit/world_ai_decision.py``, ``soundrts/worldorders/movement.py``.
+
+**Corregido: cargar una partida devolvía la cámara al punto de aparición**
+
+- **Problema**: el jugador estaba mirando una casilla (digamos ``d1`` o ``10,5``) al guardar; al cargar esa partida la cámara saltaba de vuelta al punto de aparición (el centro urbano en a1).
+- **Causa**: ``_Savable.__getstate__()`` elimina el ``interface`` entero del pickle (arrastra la superficie de pygame y el estado de los hilos, así que no se puede serializar), y **la casilla que se está mirando es ``interface.place``**: se iba con él. Al cargar, ``set_obs_pos()`` recurría a ``_initial_observer_place()``, que devuelve la casilla de la primera unidad controlable, es decir el punto de aparición.
+- **Mejora**: el nuevo ``soundrts/clientgame/focus_persistence.py`` captura el foco como **datos puros** (el identificador de la casilla, más las coordenadas opcionales de sub-cuadrantalla del zoom) y lo guarda en el campo ``_saved_focus`` de la partida; al cargar se busca la casilla por identificador y se restaura ``interface.place``, recentrando la cámara libre sobre ella. Las partidas antiguas no tienen ese campo, así que la restauración se omite sin errores.
+- **Ámbito**: ``soundrts/clientgame/focus_persistence.py``, ``soundrts/game.py``.
+
+**Corregido: la casilla restaurada se anunciaba como «desconocida» al cargar una partida**
+
+- **Problema**: con el foco restaurado, cargar una partida cuyo foco estaba en ``10,5`` hacía que el cliente anunciara primero «10 , 5 , desconocido».
+- **Causa**: el anuncio ocurría antes de que llegara el primer dato de niebla de guerra del servidor (evento ``voila``), así que ``scouted_squares`` seguía vacío y la casilla se informaba como inexplorada.
+- **Mejora**: ``GameInterface`` ganó un indicador ``_fog_synced``, que se activa al llegar el primer ``voila``; el foco restaurado ya no se anuncia de inmediato, sino que se encola en la ranura de anuncios pendientes que el bucle principal del cliente vacía cada fotograma, marcada con «esperar a la niebla». ``flush_pending_square_announce()`` sólo habla cuando ya hay datos de niebla; si para entonces el jugador ya se ha movido a otra casilla, el anuncio se descarta.
+- **Ámbito**: ``soundrts/clientgame/game_interface_base.py``, ``soundrts/clientgame/game_navigation.py``, ``soundrts/clientgame/focus_persistence.py``.
+
+**Verificación**
+
+- ``soundrts/tests/test_formation_slot_and_save_focus.py`` -- pruebas nuevas: una casilla de formación no debe confundir las coordenadas de otra casilla con «estar dentro de la casilla», una formación en línea completa llega a la casilla lejana, el foco sobrevive a un ciclo de guardado, no se anuncia ninguna casilla mientras la niebla es desconocida y el anuncio pendiente se descarta si el jugador se ha movido.
 
 1.5.2.3
 -------

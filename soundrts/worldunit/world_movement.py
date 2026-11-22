@@ -480,6 +480,69 @@ class CreatureMovement(Entity):
         else:
             return 0
 
+    def _target_in_own_square(self, target) -> bool:
+        """True when *target* stands on the unit's current square."""
+        if target is None:
+            return False
+        target_place = getattr(target, "place", None)
+        if target_place is None:
+            return False
+        my_place = getattr(self, "place", None)
+        if my_place is None:
+            return False
+        return target_place is my_place
+
+    def _weapon_reach_for(self, target) -> int:
+        """Effective weapon reach against *target* (including collision radii).
+
+        Returns the largest distance (mm) at which this unit could still
+        hit *target* with either of its weapons.
+        """
+        reach = 0
+        collision = self._collision_range(target)
+        try:
+            mdg = int(self.get_effective_mdg_range(target) or 0)
+        except Exception:
+            mdg = 0
+        try:
+            rdg = int(self.get_effective_rdg_range(target) or 0)
+        except Exception:
+            rdg = 0
+        reach = max(mdg, rdg)
+        if reach <= 0:
+            return 0
+        return reach + collision
+
+    def _slot_can_reach_target(self, slot, target) -> bool:
+        """Can the unit hit *target* from its formation slot?
+
+        ``False`` means the slot is too far away for this unit's own weapon,
+        so holding the slot would freeze the unit out of range.
+        """
+        if slot is None or target is None:
+            return True
+        reach = self._weapon_reach_for(target)
+        if reach <= 0:
+            # The unit has no usable weapon against this target; holding the
+            # slot is all it can do.
+            return True
+        sx, sy = slot[0], slot[1]
+        dist2 = square_of_distance(sx, sy, target.x, target.y)
+        return dist2 <= reach * reach
+
+    def _close_in_on_target(self, target) -> None:
+        """Walk towards *target* until weapon range is reached.
+
+        Used by stand-ground units whose target is on their own square but
+        still outside weapon range (melee unit vs a castle).  Turning towards
+        the target is not enough: without actually closing the distance the
+        unit would never attack, while the interface would keep announcing
+        "attacking <building>".
+        """
+        d = int_distance(self.x, self.y, target.x, target.y)
+        self.o = int_angle(self.x, self.y, target.x, target.y)
+        self._reach(d - self._collision_range(target))
+
     def action_reach_and_stop(self):
         target = self.action_target
         if not self._near_enough(target):
@@ -509,6 +572,14 @@ class CreatureMovement(Entity):
             if self._near_enough_to_aim(target):
                 self.walked = []
                 self.aim(target)
+            elif self._target_in_own_square(target):
+                # Stand ground means "do not chase *into other squares*", not
+                # "never move".  The target is on this very square but outside
+                # weapon range (a melee unit facing a castle ~10m away): the
+                # unit must still close the gap, otherwise it stands there
+                # forever showing "attacking <building>" while dealing no
+                # damage at all.
+                self._close_in_on_target(target)
             else:
                 self.o = int_angle(self.x, self.y, target.x, target.y)
             return
@@ -544,7 +615,20 @@ class CreatureMovement(Entity):
         if slot is not None:
             sx, sy = slot
             arrive = formation_slot_arrive_mm(self)
-            if square_of_distance(self.x, self.y, sx, sy) > arrive * arrive:
+            if not self._slot_can_reach_target(slot, target):
+                # The unit's formation slot is further from the target than
+                # the unit's own weapon range (a wide combat line puts the
+                # units at the ends of the line several metres away from a
+                # melee target).  Holding that slot means the unit stands
+                # still for ever, announcing "attacking <building>" while
+                # dealing no damage at all.
+                # The slot is a formation convenience, not a hard constraint:
+                # close the distance so the unit can actually hit the target.
+                # This check comes BEFORE the "walk back to the slot" branch,
+                # otherwise the unit would oscillate between the slot and
+                # the target without ever reaching it.
+                self._close_in_on_target(target)
+            elif square_of_distance(self.x, self.y, sx, sy) > arrive * arrive:
                 self.go_to_xy(sx, sy)
             else:
                 self.o = int_angle(self.x, self.y, target.x, target.y)
