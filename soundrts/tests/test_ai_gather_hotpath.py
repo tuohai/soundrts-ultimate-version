@@ -166,9 +166,12 @@ def test_known_huntable_animals_memoized_per_play():
     scans = []
 
     class _Perc(set):
-        def union(self, other):
+        # The scan walks ``perception`` directly (it no longer materialises
+        # ``perception.union(memory)``), so count the iterations to prove the
+        # scan runs once per play() turn.
+        def __iter__(self):
             scans.append(1)
-            return set()
+            return super().__iter__()
 
     p = _computer(perception=_Perc(), memory=set())
     assert p._known_huntable_animals() == []

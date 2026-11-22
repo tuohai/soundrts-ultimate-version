@@ -65,6 +65,12 @@ def square_spiral(x, y, step=COLLISION_RADIUS * 25 // 10):
 _cache = {}
 _cache_time = None
 
+#: Time-bucketed memo for ``Square.can_reach`` (see the method docstring).
+#: Kept separate from the path cache above: the two answers have different
+#: semantics (a boolean vs a path) and must not evict each other.
+_reach_cache = {}
+_reach_cache_time = None
+
 
 def cache(f):
     """Memoize path queries for a few seconds.
@@ -796,6 +802,209 @@ class Square(_Space):
                     heap_push(open_heap, (tentative_g + h_w, int(w.id), w))
 
         return None, float("inf")
+
+    def can_reach(self, dest, player=None, plane="ground", avoid=False):
+        """Is *dest* reachable from this square?  (boolean only)
+
+        This answers the *connectivity* question and nothing else: the
+        caller only needs to know whether a path exists, not what it
+        looks like.
+
+        Why a dedicated search instead of ``shortest_path_to(places=True)``:
+
+        * the ``places=True`` A* mutates the shared ``world.g[plane]``
+          graph (it inserts the start/dest Squares as temporary nodes)
+          and then reconstructs the whole path through ``came_from`` —
+          both are wasted work for a yes/no question;
+        * the reconstruction alone was ~40% of the cost of
+          ``Computer._unit_can_reach``, which the AI calls ~3M times in
+          a 40-minute cw1 match (250 s of a 2320 s run).
+
+        The search itself is the exit-graph A* used by
+        ``_ground_astar_exits_only``: it never touches ``world.g`` and it
+        stops the moment the destination is reached.  Unlike the
+        pathfinding variant this one has **no best-effort partial
+        fallback** — if the heap runs dry the destination is genuinely
+        unreachable and the answer is ``False``.
+
+        The answers are memoised in a 1500 ms bucket (the same window the
+        path cache uses, so one bucket spans two ticks).  Without it the
+        AI re-runs the same A* on every tick for every idle soldier, and
+        the reachability search ends up *more* expensive per query than
+        the path search it replaced.
+
+        The per-call expansion cap is deliberately *not* applied: a
+        truncated search cannot prove unreachability, so capping it would
+        turn "unknown" into "False" and make the AI believe it must
+        ferry troops that can walk there perfectly well.
+        """
+        if dest is None:
+            return False
+        if dest is self:
+            return True
+        if plane != "ground":
+            # Water/air planes keep the old (slower) path: they are rare
+            # and the shared-graph A* is correct for them.
+            path = self.shortest_path_to(dest, player, plane=plane, places=True, avoid=avoid)
+            return bool(path)
+
+        # Time-bucketed memo (1500 ms, same window as the path cache).
+        # The AI asks the same reachability question every tick for every
+        # idle soldier; without this the search is re-run from scratch
+        # each time.
+        global _reach_cache, _reach_cache_time
+        current_bucket = self.world.time // 1500
+        if _reach_cache_time != current_bucket:
+            _reach_cache = {}
+            _reach_cache_time = current_bucket
+        pid = None if player is None else player.id
+        did = None if dest is None else dest.id
+        ck = (id(self.world), self.id, did, pid, avoid)
+        hit = _reach_cache.get(ck)
+        if hit is not None:
+            return hit
+
+        from heapq import heappop, heappush
+
+        G = self.world.g["ground"]
+        end_x = dest.x
+        end_y = dest.y
+
+        avoid_fn = None
+        if avoid and player is not None:
+            avoid_fn = player.is_very_dangerous
+
+        g_score = {}
+        open_heap = []
+        closed = set()
+        local_block_cache = {}
+        lb_get = local_block_cache.get
+        in_closed = closed.__contains__
+        heap_push = heappush
+        heap_pop = heappop
+
+        def _slow_blocked(node):
+            """Full ``is_blocked`` check, cached per A* call.
+
+            Only reached for exits that actually have blockers (walls /
+            gates), which are rare; the common case is handled inline at
+            the call sites below without any function call at all.
+            """
+            lk = id(node)
+            blocked = lb_get(lk)
+            if blocked is not None:
+                return blocked
+            try:
+                blocked = node.is_blocked(player, ignore_enemy_walls=True)
+            except Exception:
+                blocked = False
+            local_block_cache[lk] = blocked
+            return blocked
+
+        def _blocked(node):
+            """Inline-equivalent of ``Exit.is_blocked``.
+
+            Kept as a helper for the seeding loop (few calls), but the
+            hot expansion loop uses the inlined form below.
+            """
+            if not player:
+                return False
+            if node.is_blocked_by_forests:
+                return True
+            if not node._blockers:
+                other = node._other_side
+                if other is None:
+                    try:
+                        other = node.other_side
+                    except AttributeError:
+                        other = None
+                if other is None or not other._blockers:
+                    return False
+            return _slow_blocked(node)
+
+        for e in self.exits:
+            if _blocked(e) or (avoid_fn is not None and avoid_fn(e)):
+                continue
+            g0 = int_distance(self.x, self.y, e.x, e.y)
+            g_score[e] = g0
+            try:
+                h_e = int_distance(e.x, e.y, end_x, end_y)
+            except Exception:
+                h_e = 0
+            heap_push(open_heap, (g0 + h_e, int(e.id), e))
+
+        while open_heap:
+            _, _, v = heap_pop(open_heap)
+            if in_closed(v):
+                continue
+            # Round 8: inline the blocked check (same shape as
+            # ``_shortest_path_to`` / ``_ground_astar_exits_only``). The
+            # closure call was 219M times / 40min cw1 profile -- 39.9s of
+            # pure call overhead for a check that is a couple of
+            # attribute loads in the common case (no blockers on either
+            # side of the exit).
+            if player and v.is_an_exit:
+                if v.is_blocked_by_forests:
+                    v_blocked = True
+                elif v._blockers:
+                    v_blocked = _slow_blocked(v)
+                else:
+                    other = v._other_side
+                    if other is None:
+                        try:
+                            other = v.other_side
+                        except AttributeError:
+                            other = None
+                    if other is None or not other._blockers:
+                        v_blocked = False
+                    else:
+                        v_blocked = _slow_blocked(v)
+            else:
+                v_blocked = False
+            if v_blocked or (avoid_fn is not None and avoid_fn(v)):
+                closed.add(v)
+                continue
+            closed.add(v)
+
+            # Arrive: an exit standing on the destination square.
+            if v.place is dest:
+                _reach_cache[ck] = True
+                return True
+
+            g_v = g_score.get(v, 0)
+            for w, edge_cost in G.get(v, {}).items():
+                # Inlined blocked check for the neighbour (see above).
+                if player and w.is_an_exit:
+                    if w.is_blocked_by_forests:
+                        blocked = True
+                    elif w._blockers:
+                        blocked = _slow_blocked(w)
+                    else:
+                        other = w._other_side
+                        if other is None:
+                            try:
+                                other = w.other_side
+                            except AttributeError:
+                                other = None
+                        if other is None or not other._blockers:
+                            blocked = False
+                        else:
+                            blocked = _slow_blocked(w)
+                else:
+                    blocked = False
+                if blocked or (avoid_fn is not None and avoid_fn(w)):
+                    continue
+                tentative_g = g_v + edge_cost
+                if tentative_g < g_score.get(w, 1 << 60):
+                    g_score[w] = tentative_g
+                    try:
+                        h_w = int_distance(w.x, w.y, end_x, end_y)
+                    except Exception:
+                        h_w = 0
+                    heap_push(open_heap, (tentative_g + h_w, int(w.id), w))
+
+        _reach_cache[ck] = False
+        return False
 
     def find_nearest_meadow(self, unit):
         return self.find_meadow_near_xy(unit.x, unit.y)

@@ -1,3 +1,4 @@
+import os
 import re
 
 from soundrts.lib.nofloat import square_of_distance, to_int
@@ -53,6 +54,17 @@ from .worldunit import Worker
 _PROD_ORDER_KEYWORDS = frozenset(
     ("build", "train", "upgrade_to", "research", "advance")
 )
+
+#: Use the dedicated reachability search (``Square.can_reach``) instead of
+#: the full pathfinding A* when the AI only needs to know *whether* a unit
+#: can walk to a destination.  The two agree on every query (verified by
+#: ``_tools/test_can_reach_diff.py``); the reachability search is cheaper
+#: because it neither mutates the shared world graph nor reconstructs the
+#: path.  Set ``SOUNDRTS_LEGACY_CAN_REACH=1`` to fall back to the old
+#: path (used for A/B measurements).
+_USE_CAN_REACH = os.environ.get(
+    "SOUNDRTS_LEGACY_CAN_REACH", ""
+).strip().lower() not in ("1", "true", "yes")
 
 
 def _order_keyword(order):
@@ -3838,19 +3850,24 @@ class Computer(Player):
         if from_place is None:
             return []
         candidates = []
-        for o in self.perception.union(self.memory):
+        # Round 8: ``self.perception.union(self.memory)`` allocated a copy of
+        # every known entity on each call (5.2k calls / 40min cw1 profile,
+        # 16.2s cumtime).  The candidates are sorted by a stable key below,
+        # so the iteration order does not matter — walk the two sets
+        # directly instead of materialising the union.
+        def _consider(o):
             if not isinstance(o, Deposit) or not self._gather_target_ok(o):
-                continue
+                return
             idx = self._deposit_resource_index(o)
             if resource_index is not None and idx != resource_index:
-                continue
+                return
             if worker is not None and not self._worker_can_gather_deposit(worker, o):
-                continue
+                return
             place = Worker.gather_path_place_for_plane(o, "ground")
             if worker is not None:
                 place = Worker.gather_stand_place(worker, o) or place
             if place is None:
-                continue
+                return
             try:
                 euclid = square_of_distance(
                     from_place.x, from_place.y, place.x, place.y
@@ -3864,6 +3881,12 @@ class Computer(Player):
             # ``id(o)``（内存地址），跨进程会变，导致同距离矿点顺序随机。
             tie = (getattr(place, "x", 0), getattr(place, "y", 0))
             candidates.append((euclid, oid, tie, o, place))
+
+        for o in self.perception:
+            _consider(o)
+        for o in self.memory:
+            if o not in self.perception:
+                _consider(o)
         candidates.sort(key=lambda t: (t[0], t[1], t[2]))
         found = []
         for _, _, _, o, place in candidates:
@@ -4454,7 +4477,16 @@ class Computer(Player):
 
     def _known_ok_deposits_compute(self):
         result = []
-        for o in self.perception.union(self.memory):
+        # Round 8: ``self.perception.union(self.memory)`` allocated a copy of
+        # every known entity on every call (2.7k calls / 40min cw1 profile).
+        # The result is sorted by a stable key below, so the iteration order
+        # does not matter — walk the two sets directly.
+        for o in self.perception:
+            if isinstance(o, Deposit) and self._gather_target_ok(o):
+                result.append(o)
+        for o in self.memory:
+            if o in self.perception:
+                continue
             if isinstance(o, Deposit) and self._gather_target_ok(o):
                 result.append(o)
         # 确定性：``perception`` / ``memory`` 是 set，``union`` 的迭代顺序由
@@ -4715,7 +4747,40 @@ class Computer(Player):
             # loads replace the getattr reflection (10.5M getattr calls /
             # 10min cw1 profile). The except branch keeps the old
             # "missing attribute -> default" behaviour for duck-typed stubs.
-            for o in self.perception.union(self.memory):
+            #
+            # Round 8: ``self.perception.union(self.memory)`` allocated a
+            # fresh set holding every known entity on every play() turn
+            # (11.7k times / 40min cw1 profile, 34s tottime).  Iterating
+            # the two sets in turn visits the same entities without the
+            # copy.  ``union`` also de-duplicated; the memory pass skips
+            # entities already seen in perception (the two sets rarely
+            # overlap, so the extra check is cheap).
+            for o in self.perception:
+                try:
+                    huntable = o.is_huntable
+                    hp = o.hp
+                    place = o.place
+                    owner = o.player
+                    herdable = o.herdable
+                    claimable = o.claimable
+                except AttributeError:
+                    huntable = getattr(o, "is_huntable", 0)
+                    hp = getattr(o, "hp", 0)
+                    place = getattr(o, "place", None)
+                    owner = getattr(o, "player", None)
+                    herdable = getattr(o, "herdable", 0)
+                    claimable = getattr(o, "claimable", 0)
+                if not huntable:
+                    continue
+                if hp <= 0 or place is None:
+                    continue
+                if getattr(owner, "neutral", False) or (
+                    owner is self and (herdable or claimable)
+                ):
+                    append(o)
+            for o in self.memory:
+                if o in self.perception:
+                    continue
                 try:
                     huntable = o.is_huntable
                     hp = o.hp
@@ -10703,6 +10768,22 @@ class Computer(Player):
 
         def _compute():
             move_target = movement_target_for_unit(unit, dest, self)
+            # Reachability only: ``can_reach`` runs the exit-graph A* and
+            # stops at the destination, without mutating the shared
+            # ``world.g`` graph and without reconstructing the path.
+            # The old ``shortest_path_to(places=True)`` call answered the
+            # same yes/no question but paid for both.
+            if _USE_CAN_REACH:
+                try:
+                    return bool(
+                        origin.can_reach(
+                            move_target, self, plane=plane, avoid=avoid
+                        )
+                    )
+                except AttributeError:
+                    # Duck-typed origin (tests / stubs) without the
+                    # reachability helper: fall back to the path search.
+                    pass
             path = origin.shortest_path_to(
                 move_target, self, plane=plane, places=True, avoid=avoid
             )
