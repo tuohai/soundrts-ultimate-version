@@ -129,18 +129,22 @@ def test_ch2_blois_grants_escort():
 
 def test_ch2_orleans_hand_over():
     """When Joan + 6 trade_carts reach the Orleans TC (h6), the
-    Orleans camp (computer4/computer5) must be transferred to the player
-    via (transfer_units)."""
+    Orleans camp must be transferred to the player via (transfer_units).
+
+    The camp is addressed by its slot alias (``name orleans_h6`` /
+    ``name orleans_h7``) rather than by ordinal (``computer4`` /
+    ``computer5``), so inserting or removing a ``computer_only`` line
+    can never shift the hand-over onto a different base."""
     text = _read("2.txt")
     assert "has_entered h6 npc_joan" in text, (
         "ch2 must trigger when Joan enters Orleans TC (h6)"
     )
-    assert "transfer_units computer4 player1" in text, (
-        "ch2 must transfer Orleans camp (computer4) to player1 "
+    assert "transfer_units orleans_h6 player1" in text, (
+        "ch2 must transfer the Orleans citadel (orleans_h6) to player1 "
         "when Joan + trade_carts arrive"
     )
-    assert "transfer_units computer5 player1" in text, (
-        "ch2 must transfer Orleans garrison (computer5) to player1 "
+    assert "transfer_units orleans_h7 player1" in text, (
+        "ch2 must transfer the Orleans garrison (orleans_h7) to player1 "
         "when Joan + trade_carts arrive"
     )
 
@@ -151,6 +155,201 @@ def test_ch2_objective_3_requires_castle_age():
     text = _read("2.txt")
     assert "has castle_age" in text, (
         "ch2 must use (has castle_age) for objective 3 (Castle Age), got: " + text[:500]
+    )
+
+
+# ---------------------------------------------------------------------------
+# ch2 objective 3 must be ACHIEVABLE -- not just declared.
+#
+# Background (user-reported bug, 2026-11-21):
+#   "My main objective 3 -- advance to Castle Age -- cannot be completed,
+#   because there is no Town Center."
+#
+#   The chapter was unwinnable *by construction*, for four independent
+#   reasons stacked on top of each other:
+#
+#     1. NO TOWN CENTER.  Only ``town_center`` / ``townhall`` declare
+#        ``can_advance feudal_age castle_age imperial_age`` in
+#        mods/aoe2/rules.txt.  With no TC the player had no
+#        ``can_advance`` menu entry at all, no warehouse to drop
+#        resources in, and no build menu (no house, no mill, no farm).
+#
+#     2. NO POPULATION HEADROOM.  The escort (Joan, d'Alencon, scout,
+#        2 swordsmen, 4 knights, 6 trade carts, 4 peasants) uses 23
+#        population, but with no houses the player's *supply* was 0, so
+#        headroom was -23 and EVERY train order was refused with
+#        "not_enough_population" -- not even a replacement peasant.
+#
+#     3. NOT ENOUGH FOOD.  Advancing to Feudal costs 500 food and to
+#        Castle another 800, so 1300 food total.  The map's only food
+#        was a single finite ``orchard 200 a1``.  There was no ``mill``
+#        (the food drop-off) and no ``farm`` (the renewable source) on
+#        the whole map.
+#
+#     4. THE "2 FEUDAL BUILDINGS" GATE.  ``castle_age`` declares
+#        ``requirements feudal_age any_buildings 2 feudal_age_buildings``
+#        and ``feudal_age_buildings`` resolves to
+#            archery_range, blacksmith, gate, market, scouttower, stables, wall
+#        so the player must own TWO DIFFERENT buildings from that list.
+#        The Orleans hand-over only gave them the ``scouttower``.
+#
+#   The fixes: a starting Town Center + 4 peasants + 4 houses at Chinon,
+#   a mill and 3 renewable farms, 1000 starting food, and a ``market``
+#   at Orleans (the second ``feudal_age_buildings`` entry).
+# ---------------------------------------------------------------------------
+
+
+def _ch2_player_line() -> str:
+    text = _read("2.txt")
+    for line in text.splitlines():
+        if line.startswith("player "):
+            return line
+    raise AssertionError("No ch2 player line found")
+
+
+def test_ch2_player_starts_with_a_town_center():
+    """Objective 3 needs a Town Center: only ``town_center`` /
+    ``townhall`` carry ``can_advance``.
+
+    Without it the "Advance to Feudal Age" button does not exist and the
+    chapter cannot be completed at all.
+    """
+    line = _ch2_player_line()
+    tokens = line.split()
+    assert "town_center" in tokens or "townhall" in tokens, (
+        "ch2 must start the player with a town_center (it is the only "
+        f"building with can_advance), got: {line!r}"
+    )
+
+
+def test_ch2_player_starts_with_houses_and_peasants():
+    """Population headroom must be positive at turn 0.
+
+    The escort uses 23 population; without houses the supply is 0 and
+    every train order is refused with "not_enough_population".
+    """
+    line = _ch2_player_line()
+    tokens = line.split()
+    assert "peasant" in tokens, (
+        f"ch2 must start the player with peasants, got: {line!r}"
+    )
+    assert "house" in tokens, (
+        f"ch2 must start the player with houses (population headroom), "
+        f"got: {line!r}"
+    )
+    # The house count must be spelled out (the parser reads a bare number
+    # as a multiplicity for the PREVIOUS token).
+    assert tokens[tokens.index("house") - 1].isdigit(), (
+        "ch2 must give the player a house COUNT, e.g. '4 house', got: "
+        f"{line!r}"
+    )
+    assert int(tokens[tokens.index("house") - 1]) >= 2, (
+        "ch2 needs at least 2 houses so the escort's 23 population fits "
+        f"under the supply, got: {line!r}"
+    )
+
+
+def test_ch2_player_starts_with_a_mill_and_farms():
+    """The player needs a food drop-off (mill) and renewable food (farm).
+
+    ``farm`` requires ``mill`` and ``mill`` requires ``town_center``, so
+    the starting town must contain the whole chain.
+    """
+    line = _ch2_player_line()
+    tokens = line.split()
+    assert "mill" in tokens, (
+        f"ch2 must start the player with a mill (food drop-off), got: {line!r}"
+    )
+    assert "farm" in tokens, (
+        f"ch2 must start the player with farms (renewable food), got: {line!r}"
+    )
+
+
+def test_ch2_player_starts_with_enough_food_for_both_age_ups():
+    """Feudal costs 500 food and Castle 800 more.
+
+    The map's finite food is not enough to gather 1300 food in time, so
+    the player must open with a food bank that covers the age-up chain.
+    """
+    line = _ch2_player_line()
+    tokens = line.split()
+    # player <gold> <wood> <food> <stone> <square> ...
+    assert tokens[3].isdigit(), (
+        f"ch2 player line must start with 4 resource counts, got: {line!r}"
+    )
+    food = int(tokens[3])
+    assert food >= 500, (
+        "ch2 must open with at least 500 food (the Feudal Age price), got "
+        f"{food} in: {line!r}"
+    )
+
+
+def test_ch2_orleans_hands_over_the_second_feudal_age_building():
+    """Castle Age needs TWO DIFFERENT ``feudal_age_buildings``.
+
+    The hand-over must give the player the ``scouttower`` (h7) AND a
+    ``market`` (h7) -- ``market`` is one of the seven buildings in the
+    ``feudal_age_buildings`` group, so with only the scouttower the
+    ``any_buildings 2 feudal_age_buildings`` gate could never open.
+    """
+    text = _read("2.txt")
+    slot_lines = [
+        line.split(";", 1)[0].strip()
+        for line in text.splitlines()
+        if line.split(";", 1)[0].strip().startswith("computer_only ")
+    ]
+    h7 = [ln for ln in slot_lines if " name orleans_h7 " in ln]
+    assert h7, (
+        "ch2 must have an orleans_h7 computer slot, got: " + repr(slot_lines)
+    )
+    h7_tokens = h7[0].split()
+    assert "scouttower" in h7_tokens, (
+        f"the orleans_h7 slot must hold the scouttower, got: {h7[0]!r}"
+    )
+    assert "market" in h7_tokens, (
+        "the orleans_h7 slot must also hold a market -- Castle Age "
+        "requires TWO different feudal_age_buildings "
+        "(archery_range, blacksmith, gate, market, scouttower, stables, "
+        f"wall) and the hand-over only provided the scouttower, got: {h7[0]!r}"
+    )
+
+
+def test_ch2_orleans_has_a_mill_and_farms():
+    """The handed-over city must be able to feed the peasants it inherits."""
+    text = _read("2.txt")
+    slot_lines = [
+        line.split(";", 1)[0].strip()
+        for line in text.splitlines()
+        if line.split(";", 1)[0].strip().startswith("computer_only ")
+    ]
+    h6 = [ln for ln in slot_lines if " name orleans_h6 " in ln]
+    assert h6, (
+        "ch2 must have an orleans_h6 computer slot, got: " + repr(slot_lines)
+    )
+    h6_tokens = h6[0].split()
+    assert "mill" in h6_tokens, (
+        f"the orleans_h6 slot must hold a mill (food drop-off), got: {h6[0]!r}"
+    )
+    assert "farm" in h6_tokens, (
+        f"the orleans_h6 slot must hold farms (renewable food), got: {h6[0]!r}"
+    )
+
+
+def test_ch2_map_has_a_food_supply_above_the_age_up_cost():
+    """The finite map food must not be the only food source.
+
+    Feudal + Castle need 1300 food.  The orchards plus the farms must
+    cover it, otherwise the chapter is a resource race against the
+    trade-cart deadline.
+    """
+    text = _read("2.txt")
+    total = 0
+    for line in text.splitlines():
+        s = line.split(";", 1)[0].strip()
+        if s.startswith("orchard "):
+            total += int(s.split()[1])
+    assert total >= 500, (
+        f"ch2 must have at least 500 food in orchards, got {total}"
     )
 
 

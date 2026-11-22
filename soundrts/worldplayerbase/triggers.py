@@ -609,13 +609,25 @@ class TriggersMixin:
                         unit.last_attacker = None
 
     def _resolve_map_player_ref(self, ref):
-        """将地图触发器里的 player1 / computer1 解析为运行时 Player 对象。"""
+        """将地图触发器里的 player1 / computer1 解析为运行时 Player 对象。
+
+        也支持**命名槽位**：``computer_only ... name blois`` 声明的别名可以
+        直接用作 ``(transfer_units blois player1)`` 这样的参数。命名槽位在
+        地图插入/删除 ``computer_only`` 行时不会错位，而序号 ``computerN``
+        会。
+        """
         if not ref:
             return None
         ref = str(ref).strip()
         m = re.match(r"^player(\d+)$", ref)
         if m:
             idx = int(m.group(1)) - 1
+            # Identity binding first (stable when a human leaves the world).
+            slots = getattr(self.world, "human_slot_players", None)
+            if slots and 0 <= idx < len(slots):
+                player = slots[idx]
+                if player is not None:
+                    return player
             humans = [p for p in self.world.players if getattr(p, "is_human", False)]
             if 0 <= idx < len(humans):
                 return humans[idx]
@@ -623,12 +635,71 @@ class TriggersMixin:
         m = re.match(r"^computer(\d+)$", ref)
         if m:
             idx = int(m.group(1)) - 1
+            # Preferred: identity binding to the map's Nth ``computer_only``
+            # slot (``world.computer_slot_players``).  A trigger owner
+            # ``computerN`` binds to the Nth ``computer_only`` line in the
+            # map, so it must NOT be resolved by position in the *live*
+            # player list -- that list shrinks when a computer is defeated,
+            # silently re-targeting the trigger at a different slot.
+            slots = getattr(self.world, "computer_slot_players", None)
+            if slots and 0 <= idx < len(slots):
+                player = slots[idx]
+                if player is not None:
+                    return player
+            # Fallback for worlds without the identity table.
             computers = [
                 p for p in self.world.players if not getattr(p, "is_human", False)
             ]
             if 0 <= idx < len(computers):
                 return computers[idx]
             return None
+        # Named computer slot (see WorldMap.computers_names).
+        named = self._named_computer_player(ref)
+        if named is not None:
+            return named
+        return None
+
+    def _named_computer_player(self, alias):
+        """Resolve a named ``computer_only`` slot alias to its Player.
+
+        The alias -> slot index mapping lives on the map (``computers_names``).
+        The slot index is the ordinal position among the computer players.
+
+        Resolution is by **identity**, not by position: ``world`` keeps a
+        table (``computer_slot_players``) mapping each map slot to the exact
+        Player object created for it.  Looking the alias up by indexing into
+        the *live* ``world.players`` list used to break as soon as a computer
+        was defeated and removed from that list -- every later alias then
+        pointed at the wrong slot, so e.g. ``transfer_units orleans_h7
+        player1`` handed the ENGLISH castle + army to the player and
+        auto-completed "destroy 1 English Castle".
+
+        The positional lookup is kept only as a fallback for worlds that were
+        built before the identity table existed (e.g. loaded from an old
+        save); it is safe there because such a world has no defeated
+        computers either.
+        """
+        world = getattr(self, "world", None)
+        if world is None:
+            return None
+        names = getattr(world, "computers_names", None) or {}
+        if alias not in names:
+            return None
+        idx = names[alias]
+
+        # Preferred: identity binding (stable across defeats / removals).
+        slots = getattr(world, "computer_slot_players", None)
+        if slots and 0 <= idx < len(slots):
+            player = slots[idx]
+            if player is not None:
+                return player
+
+        # Fallback for worlds without the identity table.
+        computers = [
+            p for p in getattr(world, "players", []) if not getattr(p, "is_human", False)
+        ]
+        if 0 <= idx < len(computers):
+            return computers[idx]
         return None
 
     def lang_alliance_request(self, args):

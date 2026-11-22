@@ -523,6 +523,27 @@ class WorldMapMixin:
                 i += 1
         return filtered, faction
 
+    def _strip_slot_name_from_items(self, items):
+        """Pull ``name <alias>`` out of a computer_only unit list.
+
+        The token pair names the slot so triggers can address it by name
+        (``trigger blois (alliance 1)``) instead of by ordinal
+        (``trigger computer2``).  Ordinals shift whenever a map gains or
+        loses a ``computer_only`` line; names do not.
+        """
+        name = None
+        filtered = []
+        i = 0
+        while i < len(items):
+            token = items[i]
+            if token == "name" and i + 1 < len(items):
+                name = str(items[i + 1])
+                i += 2
+            else:
+                filtered.append(token)
+                i += 1
+        return filtered, name
+
     def _add_start_to(self, starts, resources, items, sq=None, neutral=None, population=0):
         items, from_items = self._strip_population_from_items(list(items))
         if from_items:
@@ -596,8 +617,10 @@ class WorldMapMixin:
                 units = [u for u in units if u != "neutral"]
         units, population = self._strip_population_from_items(units)
         faction = None
+        slot_name = None
         if w in ["computer_only", "computer"]:
             units, faction = self._strip_faction_from_items(units)
+            units, slot_name = self._strip_slot_name_from_items(units)
 
         start_info = [resources, units]
         if w in ["computer_only", "computer"]:
@@ -625,6 +648,17 @@ class WorldMapMixin:
             if not hasattr(self, "computers_factions"):
                 self.computers_factions = []
             self.computers_factions.append(faction)
+            if slot_name:
+                slot_index = len(self.computers_starts) - 1
+                if slot_name in self.computers_names:
+                    from .world_core import map_warning
+                    map_warning(
+                        "computer_only",
+                        "duplicate computer slot name %r (slots %d and %d)"
+                        % (slot_name, self.computers_names[slot_name] + 1,
+                           slot_index + 1),
+                    )
+                self.computers_names[slot_name] = slot_index
 
     def _apply_player_start_overrides(self, starting_resources):
         """把 ``player_start N <sq>`` 的指令落到 ``players_starts[N-1]`` 上。
@@ -791,8 +825,203 @@ class WorldMapMixin:
                         map_warning("trigger " + " ".join(words), "%s is unknown" % o)
                 else:
                     map_warning("trigger " + " ".join(words), "%s is unknown" % o)
+            elif o in self.computers_names:
+                # Named slot: ``trigger blois (alliance 1)`` where the
+                # ``computer_only`` line declared ``name blois``.  Stable
+                # under insertions, unlike the ordinal ``computerN``.
+                slot_index = self.computers_names[o]
+                self.computers_starts[slot_index][2].append(
+                    copy_trigger_record(condition, action, meta)
+                )
             else:
                 map_warning("trigger " + " ".join(words), "%s is unknown" % o)
+
+    def _warn_on_computer_slot_misalignment(self):
+        """Warn when a ``trigger computerN`` clearly targets the wrong slot.
+
+        ``trigger computerN`` binds to the N-th ``computer_only`` line in
+        file order.  If a map inserts or removes a ``computer_only`` line,
+        every later ordinal silently shifts by one — and the symptom is
+        baffling: a friendly garrison ends up on the enemy alliance and
+        attacks the player, an enemy base becomes an ally, a difficulty
+        ``(remove_unit ...)`` fires on the wrong square.
+
+        This check compares the square mentioned *inside* the trigger
+        (``remove_unit k5 scouttower``, ``add_units f3 ...``) with the
+        squares the bound slot actually occupies.  When the two are
+        disjoint the trigger is almost certainly bound to the wrong slot,
+        so we warn loudly at map-load time instead of letting the player
+        discover it in-game.
+
+        The check is heuristic and only ever *warns*; it never changes
+        behaviour.  A trigger that mentions no square, or that mentions a
+        square shared by several slots, is left alone.
+        """
+        from .world_core import map_warning
+
+        def _slot_square_key(value):
+            """Canonical 0-based "x,y" key for a square stored on a slot.
+
+            The map parser already normalizes the square of a
+            ``computer_only`` line to 0-based coordinates before storing
+            it (``_normalize_square_list`` -> ``"k5"`` becomes
+            ``"10,4"``).  Re-normalizing that value would apply the
+            1-based -> 0-based conversion a second time and shift it by
+            one in both directions, so the slot's square and the square
+            mentioned in a trigger would never compare equal.
+
+            A letter-style token ("k5") is still 1-based-ish and must be
+            converted; an "x,y" token is already 0-based and is kept.
+            """
+            if not isinstance(value, str):
+                return value
+            if re.match(r"^\s*-?\d+\s*,\s*-?\d+\s*$", value):
+                return value.strip()
+            return self._normalize_square_token(value)
+
+        slot_squares = []
+        for slot in self.computers_starts:
+            squares = set()
+            for item in slot[1] if len(slot) >= 2 else ():
+                if isinstance(item, (list, tuple)) and item and item[0]:
+                    squares.add(_slot_square_key(item[0]))
+            slot_squares.append(squares)
+
+        def _square_keys_in(node):
+            """Square keys mentioned anywhere inside a trigger tree.
+
+            Returns a dict ``{normalized_key: original_token}`` so the
+            warning can name the square the way the map author wrote it.
+            """
+            keys = {}
+            stack = [node]
+            while stack:
+                cur = stack.pop()
+                if isinstance(cur, (list, tuple)):
+                    stack.extend(cur)
+                    continue
+                if not isinstance(cur, str):
+                    continue
+                tok = self.name_to_square.get(cur, cur)
+                if isinstance(tok, str) and re.match(
+                    r"^\s*-?\d+\s*,\s*-?\d+\s*$", tok
+                ):
+                    keys[self._normalize_square_token(tok)] = cur
+                elif isinstance(cur, str) and re.match(r"^[a-z]+[0-9]+$", cur):
+                    if rules.unit_class(cur) is None:
+                        keys[self._normalize_square_token(cur)] = cur
+            return keys
+
+        for slot_index, slot in enumerate(self.computers_starts):
+            for record in slot[2] if len(slot) >= 3 else ():
+                condition, action, _meta = (record + [None, None, None])[:3]
+                mentioned = _square_keys_in(condition)
+                mentioned.update(_square_keys_in(action))
+                if not mentioned:
+                    continue
+                own = slot_squares[slot_index]
+                if not own:
+                    continue
+                if set(mentioned) & own:
+                    # The trigger mentions a square this slot owns -> fine.
+                    continue
+                # The trigger mentions only squares owned by OTHER slots.
+                others = [
+                    i + 1
+                    for i, sqs in enumerate(slot_squares)
+                    if i != slot_index and set(sqs) & set(mentioned)
+                ]
+                if not others:
+                    continue
+                map_warning(
+                    "trigger computer%d" % (slot_index + 1),
+                    "targets square(s) %s that belong to computer slot(s) %s, "
+                    "not to computer%d (%s).  computer_only lines and "
+                    "trigger computerN must stay in the same order — "
+                    "consider naming the slot with 'name <alias>' and "
+                    "triggering the alias instead."
+                    % (
+                        ",".join(sorted(mentioned.values())),
+                        ",".join(str(i) for i in others),
+                        slot_index + 1,
+                        ",".join(sorted(own)) or "?",
+                    ),
+                )
+
+    def _warn_on_alliance_slot_mismatch(self):
+        """Warn when a slot's alliance contradicts the slot's own nature.
+
+        A ``computer_only`` line may declare ``neutral`` (a passive camp
+        that only reacts) or omit it (a hostile base).  Its alliance
+        trigger must agree with that: a *neutral* camp on the enemy
+        alliance is a contradiction — it is drawn as neutral in the UI
+        yet its units see the player as an enemy and open fire, which is
+        exactly how Joan of Arc ch. 2's Orleans h7 garrison used to
+        behave.
+
+        The check only warns; it never changes behaviour.
+        """
+        from .world_core import map_warning
+
+        # neutral flag of each slot (written by _add_start as start[3]).
+        neutral_flags = [
+            bool(slot[3]) if len(slot) >= 4 else False
+            for slot in self.computers_starts
+        ]
+        if not self.computers_starts:
+            return
+
+        # The alliance of the human player is set by the player triggers;
+        # read it from the trigger records that mention "alliance".
+        def _alliance_ids(node):
+            found = []
+            stack = [node]
+            while stack:
+                cur = stack.pop()
+                if isinstance(cur, (list, tuple)):
+                    if cur and cur[0] == "alliance" and len(cur) > 1:
+                        found.append(str(cur[1]))
+                    stack.extend(cur)
+            return found
+
+        player_alliances = set()
+        for slot in self.players_starts:
+            for record in slot[2] if len(slot) >= 3 else ():
+                condition, action, _meta = (record + [None, None, None])[:3]
+                player_alliances.update(_alliance_ids(action))
+
+        if not player_alliances:
+            # The player never declares an alliance; nothing to compare.
+            return
+        friendly = {str(a) for a in player_alliances}
+
+        for slot_index, slot in enumerate(self.computers_starts):
+            neutral = neutral_flags[slot_index]
+            for record in slot[2] if len(slot) >= 3 else ():
+                condition, action, _meta = (record + [None, None, None])[:3]
+                for aid in _alliance_ids(action):
+                    on_friendly = str(aid) in friendly
+                    if neutral and not on_friendly:
+                        map_warning(
+                            "trigger computer%d" % (slot_index + 1),
+                            "puts a NEUTRAL slot on alliance %s, which is not "
+                            "the player's alliance (%s).  A neutral camp on "
+                            "the enemy alliance is drawn as neutral but still "
+                            "attacks the player.  Use the player's alliance, "
+                            "or drop the 'neutral' keyword from the "
+                            "computer_only line."
+                            % (aid, ",".join(sorted(friendly))),
+                        )
+                    elif not neutral and on_friendly:
+                        map_warning(
+                            "trigger computer%d" % (slot_index + 1),
+                            "puts a HOSTILE slot (no 'neutral' keyword) on "
+                            "the player's own alliance %s.  Its units will "
+                            "fight the player while the map presents them "
+                            "as an ally base.  Use an enemy alliance, or add "
+                            "the 'neutral' keyword to the computer_only line."
+                            % aid,
+                        )
 
     def random_choice_repl(self, matchobj):
         return self.random.choice(matchobj.group(1).split("\n#end_choice\n"))
@@ -1415,6 +1644,8 @@ class WorldMapMixin:
             # 用处理后的触发器数据调用_add_trigger
             self._add_trigger(t)
 
+        self._warn_on_computer_slot_misalignment()
+        self._warn_on_alliance_slot_mismatch()
         self._sync_map_building_land_default()
 
     def load_and_build_map(self, map):

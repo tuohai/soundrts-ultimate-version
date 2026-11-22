@@ -71,9 +71,37 @@
 - **改进**：``GameInterface`` 增加 ``_fog_synced`` 标志，在收到第一份 ``voila`` 时置位；还原焦点后不再立即播报，而是排进客户端主循环每帧都会处理的待播报队列，并标记「必须等迷雾就绪」。``flush_pending_square_announce()`` 只在迷雾数据到达后才真正朗读；若玩家在此之前已经移动到别的方格，这条播报直接作废。
 - **改动范围**：``soundrts/clientgame/game_interface_base.py``、``soundrts/clientgame/game_navigation.py``、``soundrts/clientgame/focus_persistence.py`` 。
 
+**修复：帝国时代 2 决定版「圣女贞德」第二章的中立据点会攻击玩家**
+
+- **问题**：第二章的奥尔良 h7 据点（民兵 + 瞭望箭塔）在界面上显示为**中立**，却会主动攻击玩家；玩家一打它，它就变成「法兰克」。
+- **原因一（地图槽位错位）**：Blois 营地原本被拆成**三行** ``computer_only``，而地图只声明了九行 ``trigger computerN``。``trigger computerN`` 是按**文件顺序**绑定到第 N 行 ``computer_only`` 的，多出来的一行让后面每个槽位整体错位一位：奥尔良 h7 拿到了**敌方**联盟（同时还带着 ``neutral`` 关键字，于是界面上画成中立、行为上却打玩家），勃艮第 f3 拿到了玩家的联盟（所以从不主动进攻），Blois 修道院拿到敌方联盟，英军 l6 前哨则完全没有触发器，留在默认的 ``ai`` 联盟上。
+- **原因二（别名的位置解析）**：即使给槽位起了名字，引擎此前也是按**位置**去 ``world.players`` 列表里取人。而电脑玩家被打败后会从该列表里被移除，列表一缩短，后面每个别名就指向了**错误的槽位** —— 第二章有「清空所有敌人即失败」的触发器，打下 f3 那个小前哨就足以让 ``orleans_h7`` 指向英军 k5，于是目标 2 的 ``transfer_units orleans_h7 player1`` 把**英军的城堡和军队**交给了玩家。
+- **原因三（阵营与联盟是两回事）**：``note_combat_with`` 在据点被打后会清掉 ``neutral`` 标记，于是玩家看到「法兰克」—— 法兰克这个 faction 和「联盟 1 / 联盟 2」互相独立，两个法兰克 faction 完全可以是敌人。
+- **改进（引擎）**：``computer_only`` 行新增 ``name <别名>`` 关键字，地图可用别名直接写 ``trigger <别名> ...``，别名不受插入 / 删除 ``computer_only`` 行的影响；引擎把每个槽位与它创建的 Player 按**对象身份**绑定（``world.computer_slot_players`` / ``world.human_slot_players``），别名解析不再依赖会缩短的列表位置；地图加载时新增两条**诊断告警**——``trigger computerN`` 提到的方格属于别的槽位时告警，槽位的联盟与它自身的 ``neutral`` 性质矛盾时告警（中立据点挂在敌方联盟、敌对据点挂在玩家联盟）。
+- **改进（地图）**：``mods/aoe2/single/Joan of Arc/2.txt`` 把 Blois 的两行合并为一行，槽位恢复到九个，每个槽位都带上别名，全部触发器改用别名引用。
+- **改动范围**：``soundrts/world/world_map.py``、``soundrts/world/world_core.py``、``soundrts/world/world_objects.py``、``soundrts/worldplayerbase/triggers.py``、``mods/aoe2/single/Joan of Arc/2.txt`` 。
+
+**修复：圣女贞德第二章目标 3「推进到城堡时代」无法完成**
+
+- **问题**：玩家报告「我主要目标 3 推进到城堡时代无法完成，因为没有城镇中心」。
+- **原因**：章节原本**一个建筑都不给玩家**。只有 ``town_center`` 和 ``townhall`` 声明了 ``can_advance feudal_age castle_age imperial_age``，没有城镇中心就意味着：升级菜单里**根本没有**「推进到封建时代」这一项；没有仓库，农民采集的资源无处存放；没有建造菜单，不能盖房子、磨坊与农田。玩家唯一能拿到城镇中心的时机是完成目标 2（把贸易马车从 Blois 护送到奥尔良，约十五格路程），而那时还得凑够封建的 500 食物与城堡的 800 食物加 200 黄金 —— 而全图唯一的食物是一处**有限的** 200 食物果园，且没有磨坊也没有农田（磨坊要城镇中心，农田要磨坊）。这一章是**在构造上就不可通关**的。
+- **改进（引擎）**：``soundrts/world_build_rules.py`` 新增 ``_auto_enable_farm_cultivation()``：声明了 ``auto_cultivate`` 的采集类建筑（农田）一建成就自动进入自动耕种模式。此前农田的 ``current_production_mode`` 是 ``None``，``world_status_update.py`` 没有这个分支，于是收完 175 食物后**永远不会再种**，玩家必须手点每一块农田的「开始自动耕种」，忘掉的农田就永久停产。
+- **改进（地图）**：Chinon 现在按其它圣女贞德章节的样式开局，给玩家城镇中心、4 个农民、4 座房子、磨坊、3 块农田以及 300 金 / 300 木 / 1000 食物 / 150 石；奥尔良 h6 补上磨坊与 2 块农田，h7 补上市场（城堡时代要求「两座不同的封建时代建筑」，市场正好与瞭望箭塔凑齐两座）；地图另加两处果园（g6 / h5，各 300 食物）。
+- **改动范围**：``soundrts/world_build_rules.py``、``mods/aoe2/single/Joan of Arc/2.txt`` 。
+
+**修复：圣女贞德第二章目标 4「摧毁一座英军城堡」凭空完成**
+
+- **问题**：完成目标 2 之后，目标 4 紧接着就自动完成了 —— 玩家根本没有摧毁英军城堡，反倒是英军的城堡和军队因为上面的槽位错位归到了玩家名下。
+- **原因**：``enemy_building_destroyed <方格> <类型>`` 的语义是「该方格上**不再有敌方**的这类建筑」，因此**易主**（移交 / 占领）同样会让它成立 —— 建筑不再属于敌人，但它根本没有被摧毁。
+- **改进**：目标 4 的条件改为 ``(and (enemy_building_destroyed k5 aoe_castle) (killed_target k5 1 aoe_castle enemy))`` 的形式，额外要求那座城堡确实是被玩家一方**摧毁**的。
+- **改动范围**：``mods/aoe2/single/Joan of Arc/2.txt`` 。
+
 **验证**
 
 - ``soundrts/tests/test_formation_slot_and_save_focus.py`` —— 新增测试：阵型槽位不得把另一个方格的坐标误判为「已在槽位内」、整队行阵能走到远端方格、焦点数据的存档往返、迷雾未同步时不播报方格、玩家已经移动时丢弃待播报。
+- ``soundrts/tests/test_joan_ch2_computer_slots.py`` 与 ``soundrts/tests/test_joan_ch2_computer_slots_runtime.py`` —— 新增测试：第二章九个槽位的方格 / 联盟 / 中立标志逐条核对，别名在运行时能正确解析，中立的 h7 据点不视玩家为敌人而敌对的 f3 前哨视玩家为敌人，引擎的两条诊断告警确实会响。
+- ``soundrts/tests/test_joan_ch2_objective3_reachable.py`` —— 新增测试：真实构建第二章世界，逐项断言开局有城镇中心、有人口余量、有磨坊与农田、农田收完后会自动补种、拿到奥尔良后拥有两座不同的封建时代建筑、两段升级都能付得起。
+- ``soundrts/tests/test_joan_ch2_objective4_requires_destruction.py`` 与 ``soundrts/tests/test_joan_ch2_full_flow.py`` —— 新增 / 扩充测试：目标 4 在城堡只是易主时**不得**完成，被真正摧毁时才算完成。
 
 1.5.2.3
 -------

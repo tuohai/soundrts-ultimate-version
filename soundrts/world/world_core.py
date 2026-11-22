@@ -226,6 +226,29 @@ class World:
 
         self.computers_starts = []
         self.computers_factions = []
+        # Named computer slots: {alias: slot_index} (0-based, into
+        # ``computers_starts``).  A map may give a ``computer_only`` line a
+        # name with the ``name <alias>`` keyword and then address it with
+        # ``trigger <alias> ...`` instead of the fragile ordinal
+        # ``trigger computerN``.
+        #
+        # Ordinals are position-based: inserting one ``computer_only`` line
+        # in the middle of a map silently shifts every later ``computerN``
+        # by one, which is how Joan of Arc ch. 2 ended up with the Orleans
+        # h7 garrison on the English alliance (and attacking the player).
+        # Names are stable under insertions.
+        self.computers_names = {}
+        # Runtime binding of a map ``computer_only`` slot to the Player that
+        # was created for it, parallel to ``computers_starts`` (0-based).
+        #
+        # This table is what makes a named slot resolvable *after* the world
+        # has changed: a defeated computer is removed from ``world.players``,
+        # so looking an alias up by index into that live list makes every
+        # later alias point at the wrong slot.  The identity table is stable.
+        # See ``World._bind_computer_slot_player``.
+        self.computer_slot_players = []
+        # Same identity binding for the human ``playerN`` slots.
+        self.human_slot_players = []
         self.players_starts = []
         self.starting_units = []
         self.starting_resources = []  # just for the editor

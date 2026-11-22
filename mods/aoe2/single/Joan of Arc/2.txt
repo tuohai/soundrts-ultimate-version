@@ -70,6 +70,26 @@ stone_mines 200 a1
 goldmines 250 h6
 woods 300 h7
 stone_mines 150 h5
+; FOOD AT ORLEANS (2026-11-21 fix).
+;
+; Objective 3 needs 500 food (Feudal) + 800 food (Castle) = 1300 food.
+; The map's only food was ``orchard 200 a1`` -- 200 food, FINITE, and
+; 15 squares away from Orleans.  There was no ``mill`` and no ``farm``
+; on the map, and ``mill`` requires a Town Center while ``farm``
+; requires a ``mill``, so the player had no way to PRODUCE food at
+; all: the chapter was unwinnable by construction, not by difficulty.
+;
+; ``orchard`` is a finite deposit (no ``resource_regen``), so it alone
+; would still run out.  The Orleans camp therefore also gets a
+; ``mill`` (the food drop-off) and a ``farm`` (the renewable food
+; source: 175 food per cycle, replanted for 60 wood).  Two more
+; orchards at g6 / h5 give the player a food bank to open with.
+;
+; 200 (a1) + 300 (g6) + 300 (h5) = 800 food of finite supply, plus
+; the renewable farms.  That covers Feudal immediately and Castle with
+; two or three farm cycles.
+orchard 300 g6
+orchard 300 h5
 ; Meadows: nb_meadows_by_square 0 + explicit additional_meadows on
 ; all land squares (NOT the river row) — same jl7-style pattern.
 nb_meadows_by_square 0
@@ -86,17 +106,92 @@ additional_meadows a1 b1 c1 d1 e1 f1 g1 h1 i1 j1 k1 l1 a2 b2 c2 d2 e2 f2 g2 h2 i
 ;   - 2 Two-Handed Swordsmen (man_at_arms upgrade of militia)
 ;   - 4 Knights (aoe_knight)
 ;   - 6 Trade Carts (trade_cart) -- the supply train to Orleans
-;   - 50F 200W to bootstrap, but most resources come from Blois+Orleans
+;   - a starting purse (see below) to bootstrap the economy
 ; npc_joan is the key_unit (her death = defeat).  npc_d_alencon is a
 ; combat hero who can fight but is not a key unit.
-; player 50 200 0 0 a1 npc_joan npc_d_alencon 1 scout_cavalry 2 man_at_arms 4 aoe_knight 6 trade_cart -imperial_age
 ;
+; STARTING TOWN CENTER (2026-11-21 fix -- user-reported: "Objective 3
+; cannot be completed, there is no Town Center").
+;
+; The player used to start with NO building at all.  Only ``town_center``
+; and ``townhall`` declare ``can_advance feudal_age castle_age
+; imperial_age`` in mods/aoe2/rules.txt, so with no Town Center the
+; player had:
+;   * no ``can_advance`` menu entry  -> the "Advance to Feudal Age"
+;     button literally did not exist in the UI;
+;   * no warehouse                    -> the 4 starting peasants had
+;     nowhere to deposit what they gathered;
+;   * no build menu                   -> no house, no mill, no farm.
+;
+; Objective 3 ("advance to Castle Age") was therefore *unreachable by
+; construction*: the only Town Center on the map was the Orleans one,
+; which the player only receives after completing objective 2 (the
+; Blois -> Orleans trade-cart escort, ~15 squares of walking).  By the
+; time the player owned a Town Center they had to ALSO have gathered
+; 500 food for Feudal + 800 food and 200 gold for Castle, from a map
+; whose entire food supply was a single finite 200-food orchard.
+;
+; So Chinon now starts as a real (small) French town, exactly like the
+; other Joan chapters (1.txt / 3.txt / 4.txt / 5.txt all start with a
+; ``town_center``).  This does NOT skip any objective: the DE chapter
+; still opens at Chinon with Joan and the escort, the Blois hand-over
+; and the Orleans hand-over are unchanged, and the chapter is still
+; capped at Castle Age.
+;
+; The numbers below are deliberately generous but not absurd:
+;   * town_center : 275W 100S -> provides 5 pop, stores ALL 4 resources
+;     (it is the drop-off the peasants need), and carries the
+;     ``can_advance`` menu that objective 3 needs.
+;   * 4 peasant    : the working force (Chinon is a village).
+;   * 4 house      : 4 x 5 = 20 pop headroom.  Without houses the
+;     player starts with population supply 0 against 19 used, so EVERY
+;     train order is refused with "not_enough_population" -- the player
+;     could not even replace a lost peasant, let alone grow an economy.
+;   * mill + 3 farm (on b1, next to Chinon): the food economy.  The
+;     map's finite food is ``orchard 200 a1`` + ``orchard 300 g6`` +
+;     ``orchard 300 h5`` = 800 food, but the age-up needs 500 (Feudal)
+;     + 800 (Castle) = 1300 food, and 4 peasants cannot gather 800
+;     food in time.  The mill is the food drop-off
+;     (``storable_resource_types resource3``) and each farm is 175 food
+;     that REPLANTS ITSELF for 60 wood (``auto_cultivate`` in
+;     mods/aoe2/rules.txt + the engine's
+;     ``_auto_enable_farm_cultivation``), so the food supply is
+;     renewable instead of finite.
+;   * 300G 300W 1000F 150S : the DE chapter gives the player a
+;     starting purse; 1000 food covers Feudal (500) plus most of
+;     Castle (800), so the age-up chain is never a resource race.
+;     The 300 wood / 150 stone also cover the two Feudal buildings the
+;     Castle Age gate demands (see the "CASTLE AGE GATE" note below).
+;
+; population math (see worldplayerbase/base.py: ``population`` is the
+; SUPPLY from buildings, ``used_population`` is the cost of units):
+;   supply = town_center 5 + 4 houses 20            = 25
+;   used   = joan 1 + alencon 1 + scout 1 + 2 swords 2
+;            + 4 knights 8 + 6 carts 6 + 4 peasants 4 = 23
+;   headroom = +2 -> the player can train a 5th peasant.
+;
+; CASTLE AGE GATE (why the map hands the player a market):
+;   mods/aoe2/rules.txt declares
+;       def castle_age
+;       requirements feudal_age any_buildings 2 feudal_age_buildings
+;   and ``feudal_age_buildings`` resolves to
+;       archery_range, blacksmith, gate, market, scouttower, stables, wall
+;   so the player must own TWO DIFFERENT buildings from that list.
+;   The Orleans hand-over gives them the ``scouttower`` (h7) and the
+;   ``market`` (h7) -- exactly two, as in the AoE2 DE chapter, where the
+;   city of Orleans already stands with its market.
+player 300 300 1000 150 a1 town_center 4 peasant 4 house npc_joan npc_d_alencon 1 scout_cavalry 2 man_at_arms 4 aoe_knight 6 trade_cart b1 mill 3 farm -imperial_age
+
 ; The trailing "-imperial_age" forbids the Imperial Age research
 ; for the entire chapter (soundrts parse_assets treats any
 ; type_name starting with "-" as a forbidden_tech, see
 ; soundrts/world/world_objects.py:419).  The chapter is capped at
 ; Castle Age, matching the AoE2 DE ch. 2 population 125 cap.
-player 50 200 0 0 a1 npc_joan npc_d_alencon 1 scout_cavalry 2 man_at_arms 4 aoe_knight 6 trade_cart -imperial_age
+;
+; NOTE: there must be exactly ONE ``player`` line in this file -- the
+; map parser appends every ``player`` line it sees to
+; ``world.players_starts``, so a second one would create a second
+; starting slot (and the LAST one would win).  Keep this one.
 
 ; --- Blois (e2+e3) --------------------------------------------------------
 ; The French army + trade carts await Joan here.  When Joan reaches Blois
@@ -110,9 +205,32 @@ player 50 200 0 0 a1 npc_joan npc_d_alencon 1 scout_cavalry 2 man_at_arms 4 aoe_
 ; camp across e2+e3 (the decoration), and the (add_units) trigger
 ; below spawns the reinforcements into e1+d2 (sibling cells with room
 ; to maneuver out of Blois toward d3 / d4 / c2).
-computer_only 0 0 0 0 neutral faction franks e2 town_center 1 house
-computer_only 0 0 0 0 neutral faction franks e3 4 trade_cart 8 aoe_knight 12 aoe_archer
-computer_only 0 0 0 0 neutral faction franks e3 monastery 2 monk
+;
+; SLOT NUMBERING (read before adding a computer_only line!):
+; ``trigger computerN`` binds to the N-th ``computer_only`` line of this
+; file, in file order.  Blois used to be split over THREE lines (e2, e3
+; units, e3 monastery), which pushed every later slot one past the base
+; it was meant to be: the Orleans h7 garrison got the English "alliance 2"
+; (and attacked the player), Burgundy f3 got "alliance 1" (and never
+; attacked), the Blois monastery got "alliance 2", and the l6 outwork was
+; left on the default "ai" alliance.  The e3 units and the e3 monastery
+; are now ONE line, so the slots line up with the comments below again:
+;
+;   slot 1 = Blois e2      slot 2 = Blois e3      slot 3 = Burgundy f3
+;   slot 4 = Orleans h6    slot 5 = Orleans h7    slot 6 = English k5
+;   slot 7 = English k6    slot 8 = English l5    slot 9 = English l6
+;
+; Keep this map at exactly NINE computer_only lines.  If you add a tenth,
+; every ``trigger computerN`` after it silently shifts by one.
+;
+; Every slot also carries a NAME (``name <alias>``).  The triggers below
+; address the slots by that alias, so inserting or removing a
+; ``computer_only`` line can never silently shift an alliance, a
+; ``(remove_unit ...)`` or a ``(transfer_units ...)`` onto the wrong base.
+; The engine warns at map-load time if a ``trigger computerN`` mentions a
+; square that belongs to a different slot.
+computer_only 0 0 0 0 neutral faction franks name blois_e2 e2 town_center 1 house
+computer_only 0 0 0 0 neutral faction franks name blois_e3 e3 4 trade_cart 8 aoe_knight 12 aoe_archer monastery 2 monk
 
 ; --- South English keep (just across the river from Blois, f3) -----------
 ; Burgundian guard tower on the bridge approach.  Tiny garrison so the
@@ -134,7 +252,7 @@ computer_only 0 0 0 0 neutral faction franks e3 monastery 2 monk
 ; k6 (North English) and l5 / l6 (outer English fortification).  Each
 ; of them loses one Guard Tower on the standard tier -- see the
 ; ``(remove_unit ...)`` triggers below.
-computer_only 0 0 0 0 faction burgundians f3 scouttower 2 militia 1 aoe_knight
+computer_only 0 0 0 0 faction burgundians name burgundy_f3 f3 scouttower 2 militia 1 aoe_knight
 
 ; --- Orleans (h6+h7) ------------------------------------------------------
 ; The city of Orleans with its cathedral (tts 8860 "holy letter"
@@ -146,20 +264,41 @@ computer_only 0 0 0 0 faction burgundians f3 scouttower 2 militia 1 aoe_knight
 ; Holes researched on the standard tier, and with Murder Holes on the
 ; hard tier.  Those are granted by triggers below -- see the
 ; "DIFFICULTY DIFFERENCES" block.
-computer_only 0 0 0 0 neutral faction franks h6 town_center 3 house 4 militia 2 aoe_archer 4 peasant 1 npc_cathedral
-computer_only 0 0 0 0 neutral faction franks h7 scouttower 1 militia
+;
+; ORLEANS ECONOMY + THE CASTLE AGE GATE (2026-11-21 fix):
+;
+;   * ``orleans_h6`` gets a ``mill`` and 2 ``farm``: the citadel's food
+;     drop-off and its renewable food.  Without them the handed-over
+;     city could not feed the 6 peasants it inherits.
+;   * ``orleans_h7`` gets a ``market``: ``market`` is one of the seven
+;     ``feudal_age_buildings``
+;         archery_range, blacksmith, gate, market, scouttower, stables, wall
+;     and ``castle_age`` requires ``any_buildings 2 feudal_age_buildings``
+;     -- i.e. TWO DIFFERENT buildings from that list.  The hand-over
+;     gives the player the ``scouttower`` (h7) and now the ``market``
+;     (h7), so objective 3 ("reach Castle Age") is actually reachable
+;     the moment the hand-over completes.  The market also gives the
+;     inherited trade carts a proper trade hub (``is_market 1``).
+;
+; NOTE the market's requirement is ``mill feudal_age`` -- it must be
+; built in Feudal Age, which is exactly the order the chapter plays
+; in (hand over -> Feudal -> Castle).  Since it is pre-placed on the
+; map it is exempt from the build requirement; the engine's
+; ``requirements_satisfied`` only gates *building* and *researching*.
+computer_only 0 0 0 0 neutral faction franks name orleans_h6 h6 town_center 3 house 4 militia 2 aoe_archer 4 peasant 1 npc_cathedral mill 2 farm
+computer_only 0 0 0 0 neutral faction franks name orleans_h7 h7 scouttower 1 militia market
 
 ; --- North English keep (k5+k6) ------------------------------------------
 ; The Castle the player MUST destroy to complete the chapter.
-computer_only 0 0 0 0 faction britons k5 aoe_castle 2 scouttower 4 militia 2 man_at_arms 4 aoe_archer
-computer_only 0 0 0 0 faction britons k6 scouttower 2 militia 1 man_at_arms
+computer_only 0 0 0 0 faction britons name english_k5 k5 aoe_castle 2 scouttower 4 militia 2 man_at_arms 4 aoe_archer
+computer_only 0 0 0 0 faction britons name english_k6 k6 scouttower 2 militia 1 man_at_arms
 
 ; --- Outer English fortification (l5+l6) ----------------------------------
 ; The OTHER English Castle, kept to make the map feel like a siege ring.
 ; The player does NOT have to destroy this one — only 1 of the 2 English
 ; Castles needs to fall.  Matches AoE2 DE "destroy 1 of their Castles".
-computer_only 0 0 0 0 faction britons l5 aoe_castle 2 scouttower 3 militia 1 man_at_arms 2 aoe_archer
-computer_only 0 0 0 0 faction britons l6 scouttower 1 militia 1 aoe_archer
+computer_only 0 0 0 0 faction britons name english_l5 l5 aoe_castle 2 scouttower 3 militia 1 man_at_arms 2 aoe_archer
+computer_only 0 0 0 0 faction britons name english_l6 l6 scouttower 1 militia 1 aoe_archer
 
 timer_coefficient 40
 
@@ -170,16 +309,21 @@ timer_coefficient 40
 global_population_limit 125
 
 ; --- Alliances ------------------------------------------------------------
+; The slots are addressed BY NAME (the ``name <alias>`` keyword on each
+; ``computer_only`` line above), so these lines cannot silently shift if
+; the map ever gains or loses a ``computer_only`` line.  All nine slots
+; have exactly one alliance line — a slot without one would stay on the
+; default "ai" alliance and belong to nobody.
 trigger player1 (timer 0) (alliance 1)
-trigger computer1 (timer 0) (alliance 1)   ; Blois (e2) — French ally
-trigger computer2 (timer 0) (alliance 1)   ; Blois (e3) — French ally
-trigger computer3 (timer 0) (alliance 2)   ; Burgundy (f3) — enemy
-trigger computer4 (timer 0) (alliance 1)   ; Orleans (h6) — French ally, then handed to player
-trigger computer5 (timer 0) (alliance 1)   ; Orleans (h7) — French ally
-trigger computer6 (timer 0) (alliance 2)   ; North English (k5) — enemy
-trigger computer7 (timer 0) (alliance 2)   ; North English (k6) — enemy
-trigger computer8 (timer 0) (alliance 2)   ; Outer English (l5) — enemy
-trigger computer9 (timer 0) (alliance 2)   ; Outer English (l6) — enemy
+trigger blois_e2 (timer 0) (alliance 1)   ; Blois (e2) — French ally
+trigger blois_e3 (timer 0) (alliance 1)   ; Blois (e3) — French ally
+trigger burgundy_f3 (timer 0) (alliance 2)   ; Burgundy (f3) — enemy
+trigger orleans_h6 (timer 0) (alliance 1)   ; Orleans (h6) — French ally, then handed to player
+trigger orleans_h7 (timer 0) (alliance 1)   ; Orleans (h7) — French ally
+trigger english_k5 (timer 0) (alliance 2)   ; North English (k5) — enemy
+trigger english_k6 (timer 0) (alliance 2)   ; North English (k6) — enemy
+trigger english_l5 (timer 0) (alliance 2)   ; Outer English (l5) — enemy
+trigger english_l6 (timer 0) (alliance 2)   ; Outer English (l6) — enemy
 
 ; ---------------------------------------------------------------------------
 ; DIFFICULTY DIFFERENCES (AoE2 DE "The Maid of Orleans").
@@ -211,29 +355,29 @@ trigger computer9 (timer 0) (alliance 2)   ; Outer English (l6) — enemy
 ; FRIENDLY (neutral) French building, not an English one, so there is
 ; nothing to remove.
 ; ---------------------------------------------------------------------------
-trigger computer3 (difficulty story) (remove_unit f3 scouttower)
-trigger computer6 (difficulty story) (remove_unit k5 scouttower)
-trigger computer7 (difficulty story) (remove_unit k6 scouttower)
-trigger computer8 (difficulty story) (remove_unit l5 scouttower)
-trigger computer9 (difficulty story) (remove_unit l6 scouttower)
+trigger burgundy_f3 (difficulty story) (remove_unit f3 scouttower)
+trigger english_k5 (difficulty story) (remove_unit k5 scouttower)
+trigger english_k6 (difficulty story) (remove_unit k6 scouttower)
+trigger english_l5 (difficulty story) (remove_unit l5 scouttower)
+trigger english_l6 (difficulty story) (remove_unit l6 scouttower)
 
 ; Orleans starts with Fletching and Murder Holes on the standard tier.
 ;
-; The techs are granted to computer4 (the Orleans camp) BEFORE the camp
+; The techs are granted to the Orleans camp (orleans_h6) BEFORE the camp
 ; is handed over to the player -- the transfer trigger below moves the
 ; buildings AND the techs to the player, so the player's towers and the
 ; cathedral they inherit really do benefit from Murder Holes (it
 ; removes their minimum range).
 ;
 ; On the hard tier Orleans starts with Murder Holes only.
-trigger computer4 (difficulty story) (add_units fletching murder_holes)
-trigger computer4 (difficulty >= hard) (add_units murder_holes)
+trigger orleans_h6 (difficulty story) (add_units fletching murder_holes)
+trigger orleans_h6 (difficulty >= hard) (add_units murder_holes)
 
 ; On the hard tier, Burgundy (f3) and the Northern English (k5 + k6)
 ; also start with Murder Holes researched.
-trigger computer3 (difficulty >= hard) (add_units murder_holes)
-trigger computer6 (difficulty >= hard) (add_units murder_holes)
-trigger computer7 (difficulty >= hard) (add_units murder_holes)
+trigger burgundy_f3 (difficulty >= hard) (add_units murder_holes)
+trigger english_k5 (difficulty >= hard) (add_units murder_holes)
+trigger english_k6 (difficulty >= hard) (add_units murder_holes)
 
 ; The PLAYER ends up owning Orleans (its camp is handed over on
 ; objective 2), so the player gets the same techs.  Granting them to
@@ -282,7 +426,7 @@ trigger player1 (has_entered e3 npc_joan) (objective_complete 1)
 ; arrive.  Cut scene plays the DE dialogue ("the supplies are here; the
 ; city of Orleans is yours").  transfer_units moves the Orleans
 ; militia/archer/etc onto the player so they can defend the city.
-trigger player1 (and (has_entered h6 npc_joan) (has 6 trade_cart) (has_entered h6 trade_cart)) (do (cut_scene 8836) (transfer_units computer4 player1) (transfer_units computer5 player1) (objective_complete 2))
+trigger player1 (and (has_entered h6 npc_joan) (has 6 trade_cart) (has_entered h6 trade_cart)) (do (cut_scene 8836) (transfer_units orleans_h6 player1) (transfer_units orleans_h7 player1) (objective_complete 2))
 
 ; --- Objective 3: Reach Castle Age ----------------------------------------
 ; Once the player has dark_age + feudal_age + castle_age in upgrades,
@@ -293,10 +437,20 @@ trigger player1 (and (has castle_age) (not (has imperial_age))) (objective_compl
 
 ; --- Objective 4: Destroy 1 English Castle -------------------------------
 ; AoE2 DE ch. 2: "Convince the British to withdraw by destroying 1 of
-; their Castles."  Use enemy_building_destroyed on k5 OR l5 (any of the
-; two English Castles counts).  When either is gone, the chapter's main
-; victory condition is met -- play the victory cut_scene.
-trigger player1 (or (enemy_building_destroyed k5 aoe_castle) (enemy_building_destroyed l5 aoe_castle)) (do (cut_scene 8838) (objective_complete 4))
+; their Castles."  Either English Castle counts (k5 or l5).
+;
+; IMPORTANT: ``enemy_building_destroyed`` means "there is no *enemy* castle
+; of this type on that square any more".  It therefore also becomes true
+; when the castle merely CHANGES OWNER (hand-over / capture) -- it is no
+; longer an enemy building, but it was not destroyed either.  That is
+; exactly how this objective used to fire for free right after objective 2.
+; So the condition is strengthened with ``killed_target ... enemy``: the
+; castle must have been actually DESTROYED by the player (or their team).
+;
+; ``killed_target <square> <index> <type> enemy`` is keyed on the map
+; spawn index of the castle on that square (both English castles are the
+; 1st aoe_castle on their square).
+trigger player1 (or (and (enemy_building_destroyed k5 aoe_castle) (killed_target k5 1 aoe_castle enemy)) (and (enemy_building_destroyed l5 aoe_castle) (killed_target l5 1 aoe_castle enemy))) (do (cut_scene 8838) (objective_complete 4))
 
 ; --- Defeat conditions ----------------------------------------------------
 ; Joan must survive (key unit).  The cathedral in Orleans (npc_cathedral)

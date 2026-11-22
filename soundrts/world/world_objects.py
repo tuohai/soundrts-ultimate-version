@@ -216,8 +216,26 @@ class WorldObjectsMixin:
         self.g["air"] = self._air_graph()
         self.g["water"] = self._water_graph()
 
+    def _bind_computer_slot_player(self, slot_index, player):
+        """Bind a runtime player to its map ``computer_only`` slot.
+
+        The binding is by **object identity**, stored in
+        ``world.computer_slot_players`` (a list parallel to
+        ``computers_starts``).  It is deliberately *not* positional:
+        resolving an alias by indexing into the live ``world.players`` list
+        breaks as soon as a computer is defeated and removed from that list,
+        because every later alias then points at the wrong slot.
+        """
+        try:
+            slots = self.__dict__.setdefault("computer_slot_players", [])
+            while len(slots) <= slot_index:
+                slots.append(None)
+            slots[slot_index] = player
+        except Exception:
+            pass
+
     # Population and game management
-    
+
     global_population_limit = 80  # Default value
 
     def populate_map(self, clients, random_starts=True, equivalents=False):
@@ -267,8 +285,19 @@ class WorldObjectsMixin:
             players_starts = self.random.sample(self.players_starts, len(clients))
         else:
             players_starts = self.players_starts[:len(clients)]
+        # Reset the identity slot tables: this world is (re)populated from
+        # scratch, so the previous bindings are stale.
+        self.__dict__["human_slot_players"] = []
+        self.__dict__["computer_slot_players"] = []
         for client in clients:
             client.create_player(self)
+            # Bind the human slot by identity too, so ``playerN`` keeps
+            # pointing at the same player even after another human leaves
+            # the world (see ``_bind_computer_slot_player``).
+            try:
+                self.human_slot_players.append(client.player)
+            except Exception:
+                pass
         for idx, computer_start in enumerate(self.computers_starts):
             # 检查是否指定了neutral标志
             # 默认 False = 敌对，与 world_map.py 的解析默认保持一致。
@@ -292,7 +321,16 @@ class WorldObjectsMixin:
             if idx < len(factions) and factions[idx]:
                 client.faction = factions[idx]
             client.create_player(self)
-        
+            # Bind this runtime player to its map slot *by identity*, not by
+            # position.  The alias table (``computers_names``) was fixed at
+            # map-parse time; looking an alias up by index into the live
+            # ``world.players`` list silently shifted as soon as a computer
+            # was defeated and removed from that list -- which made
+            # ``transfer_units orleans_h7 player1`` hand the ENGLISH k5
+            # castle + army to the player (and auto-complete "destroy 1
+            # English Castle").  See ``world.computer_slot_players``.
+            self._bind_computer_slot_player(idx, client.player)
+
         # 初始化所有玩家的联盟（在所有玩家创建后）
         for player in self.players:
             player.init_alliance()

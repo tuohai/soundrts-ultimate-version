@@ -1941,8 +1941,45 @@ def finalize_new_building(building, site=None):
         attach_addon(host, building)
     _apply_farm_food_tech_bonuses(building)
     _auto_start_gas_production(building)
+    _auto_enable_farm_cultivation(building)
     if is_unit_spawn_host(building):
         init_spawn_host_on_ready(building, notify=False)
+
+
+def _auto_enable_farm_cultivation(building):
+    """Farms (and other ``auto_cultivate`` gatherers) start in auto mode.
+
+    AoE2 DE farms are renewable food: when the villager has harvested the
+    175 food out of a farm, the farm must be replanted (60 wood) before it
+    yields again.  In this engine that replanting is driven by
+    ``AutoCultivateOrder``, which is only ever issued when the building's
+    ``current_production_mode`` is ``"auto"``.
+
+    The problem: a farm that is *built* (or placed on the map) starts with
+    ``current_production_mode = None``.  ``world_status_update.py`` has no
+    branch for ``production_mode is None``, so a depleted farm stayed
+    permanently dead -- the player had to click "start automatic
+    cultivate" on every single farm by hand, and any farm they forgot
+    silently produced no more food forever.
+
+    That made several campaign chapters unwinnable by construction (e.g.
+    Joan of Arc ch. 2 needs 500 + 800 food to reach Castle Age, and the
+    only renewable food source on that map is a farm).
+
+    So: any building that declares ``auto_cultivate 1`` and ``is_gather 1``
+    is switched to auto mode as soon as it exists, unless the player has
+    explicitly stopped it (``_user_manually_stopped``).
+    """
+    if not getattr(building, "auto_cultivate", 0):
+        return
+    if not getattr(building, "is_gather", 0):
+        return
+    if getattr(building, "current_production_mode", None) is not None:
+        # Already in "auto" or "manual" mode -- respect the explicit state.
+        return
+    if getattr(building, "_user_manually_stopped", False):
+        return
+    building.current_production_mode = "auto"
 
 
 def _farm_food_tech_bonus_for(player):
