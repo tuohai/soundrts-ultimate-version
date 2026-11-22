@@ -1747,36 +1747,6 @@ Melhorias aumentam o reservatório com a linha ``effect bonus`` já existente::
 O bônus escala também o escudo **atual**, então uma unidade que já tinha escudo
 não fica com um reservatório menor depois da pesquisa.
 
-Avançar atacando (o “A-move” de SC2)
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-``can_attack_move 1`` (padrão nos soldados) permite usar a ordem de
-**avançar atacando**: a unidade marcha até o destino, mas ataca qualquer
-inimigo que encontrar pelo caminho.
-
-| Atributo | Função |
-| --- | --- |
-| ``can_attack_move 1`` | A unidade pode receber a ordem de avançar atacando |
-| ``can_attack_move 0`` | Não pode (os trabalhadores, por exemplo) |
-
-A ordem é dada com clique direito no campo de batalha com o comando
-“avançar atacando” selecionado (atalho padrão **A**), ou com a palavra-chave
-``attack_move`` num gatilho. A unidade caminha até a casa de destino e para
-para lutar com cada inimigo dentro do seu alcance; quando não há ninguém ao
-alcance, continua marchando.
-
-Um avanço atacando **nunca** persegue um inimigo que foge de uma casa para outra.
-Assim que o inimigo sai da casa dele (ou sai do alcance da arma), a unidade
-encerra o combate, volta para a fila de ordens e retoma o avanço até o destino.
-Esse é o comportamento original do A-move, e vale mesmo que o ``ai_mode`` da
-unidade seja ``chase`` (perseguição). Um mod que queira de fato a perseguição
-entre casas durante o avanço atacando pode ativá-la explicitamente:
-
-| Atributo | Função |
-| --- | --- |
-| ``can_attack_move_chase 1`` | Uma unidade que avança atacando pode perseguir entre casas (abandona o destino para isso) |
-| ``can_attack_move_chase 0`` | Não pode (o padrão), a unidade sempre continua avançando até o destino |
-
 Aparição por salto / canal nydus (invocação instantânea)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

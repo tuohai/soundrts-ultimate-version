@@ -1749,37 +1749,6 @@ I miglioramenti aggiungono al pool con la riga ``effect bonus`` esistente::
 Il bonus scala anche lo scudo **corrente**, così un’unità che aveva già uno
 scudo non resta con un pool più piccolo dopo la ricerca.
 
-Attacco in movimento (l’«A-move» di SC2)
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-``can_attack_move 1`` (per default sui soldati) permette di usare l’ordine di
-**attacco in movimento**: l’unità marcia verso la destinazione ma attacca
-qualsiasi nemico incontra lungo la strada.
-
-| Attributo | Funzione |
-| --- | --- |
-| ``can_attack_move 1`` | L’unità può ricevere l’ordine di attacco in movimento |
-| ``can_attack_move 0`` | Non può (i lavoratori, per esempio) |
-
-L’ordine si dà con clic destro sul campo di battaglia con il comando
-«attacco in movimento» selezionato (tasto predefinito **A**), oppure con la
-parola chiave ``attack_move`` in un trigger. L’unità cammina verso la casella
-di destinazione e si ferma a combattere ogni nemico entro la sua portata; quando
-non c’è nessuno a tiro continua a marciare.
-
-Un attacco in movimento **non insegue mai** un nemico in fuga tra una casella e
-l’altra. Appena il nemico lascia la sua casella (o esce dalla portata
-dell’arma), l’unità conclude il combattimento, torna alla coda degli ordini e
-riprende ad avanzare verso la destinazione. Questo è il comportamento originale
-dell’A-move, e vale anche quando l’``ai_mode`` dell’unità è ``chase``
-(inseguimento). Una mod che vuole comunque l’inseguimento tra caselle durante
-l’attacco in movimento può abilitarelo esplicitamente:
-
-| Attributo | Funzione |
-| --- | --- |
-| ``can_attack_move_chase 1`` | Un’unità che attacca in movimento può inseguire tra caselle (abbandona la destinazione per farlo) |
-| ``can_attack_move_chase 0`` | Non può (il valore predefinito), l’unità continua sempre ad avanzare verso la destinazione |
-
 Apparizione tramite salto / canale nydus (invocazione istantanea)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

@@ -13,13 +13,6 @@
 - **新增**：升级可以用现有的 ``effect bonus shield_max N`` 行加护盾上限。加值会同时放大**当前**护盾，升级后不会留下一个偏小的旧护盾池。
 - **改动范围**：``soundrts/combat/damage_effects.py`` 、``soundrts/worldunit/world_status_update.py`` 、``soundrts/worldunit/worldcreature.py`` 、``soundrts/worldupgrade/attribute_effects.py`` 、``soundrts/definitions.py`` 。
 
-**新增：进攻移动命令（SC2 的 A-move）**
-
-- **新增**：**进攻移动**命令 —— 单位一边向目的地行军，一边攻击沿途遇到的敌人，而不是无视它们。用法是在战场上选中「进攻移动」后右键（默认快捷键 **A**），地图脚本也可以用 ``attack_move`` 命令关键字调用。
-- **新增**：``can_attack_move`` 关键字决定该单位能否使用这个命令。士兵默认开启；工人用 ``can_attack_move 0`` 退出。
-- **修复**：进攻移动**不再**追着逃跑的敌人跨格跑。敌人一离开所在格（或射程），单位就结束交战并继续向目的地推进 —— 即使该单位的 ``ai_mode`` 是 ``chase`` （追击）也一样，这与原版 A-move 的行为一致。需要旧行为的模组可以用 ``can_attack_move_chase 1`` 显式打开。
-- **改动范围**：``soundrts/worldorders/movement.py`` 、``soundrts/worldaction.py`` 、``soundrts/definitions.py`` 、``res/ui/style.txt`` 。
-
 **新增：折跃传送门与虫道（瞬间召唤单位）**
 
 - **新增**：建筑现在可以把单位瞬间传送到远处的格子。神族**折跃传送门**与异虫**虫道**用的是同一套引擎原语，而且两者都没有写死在代码里 —— 建筑自己声明可以召唤什么。

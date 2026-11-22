@@ -1591,7 +1591,6 @@
 7803	hồi phục khiên
 7804	thời gian chờ hồi phục khiên
 7805	độ trễ hồi phục khiên
-7806	tiến công di chuyển
 7807	dịch chuyển xuất hiện
 7808	đường hầm nydus
 7809	công trình đang cháy

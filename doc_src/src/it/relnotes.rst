@@ -13,13 +13,6 @@ Note di rilascio
 - **Aggiunto**: un miglioramento può aumentare il pool con la riga già esistente ``effect bonus shield_max N``. Il bonus scala anche lo scudo **corrente**, così un’unità che aveva già uno scudo non resta con un pool più piccolo dopo la ricerca.
 - **Ambito**: ``soundrts/combat/damage_effects.py``, ``soundrts/worldunit/world_status_update.py``, ``soundrts/worldunit/worldcreature.py``, ``soundrts/worldupgrade/attribute_effects.py``, ``soundrts/definitions.py``.
 
-**Aggiunto: l’ordine di attacco in movimento (l’«A-move» di SC2)**
-
-- **Aggiunto**: l’ordine di **attacco in movimento** — l’unità marcia verso la destinazione ma attacca qualsiasi nemico incontra lungo la strada invece di ignorarlo. Si dà con clic destro sul campo di battaglia con il comando «attacco in movimento» selezionato (tasto predefinito **A**), ed è disponibile anche agli script di mappa tramite la parola chiave ``attack_move``.
-- **Aggiunto**: la parola chiave ``can_attack_move`` decide se un’unità può usare l’ordine. È attiva per default sui soldati; i lavoratori si escludono con ``can_attack_move 0``.
-- **Corretto**: un attacco in movimento **non insegue più** un nemico che fugge tra una casella e l’altra. Appena il nemico lascia la sua casella (o esce dalla portata dell’arma), l’unità conclude il combattimento e riprende ad avanzare verso la destinazione, anche quando il suo ``ai_mode`` è ``chase``. È il comportamento originale dell’A-move. Una mod che vuole recuperare il comportamento precedente può abilitarlo esplicitamente con ``can_attack_move_chase 1``.
-- **Ambito**: ``soundrts/worldorders/movement.py``, ``soundrts/worldaction.py``, ``soundrts/definitions.py``, ``res/ui/style.txt``.
-
 **Aggiunto: apparizione tramite salto e canale nydus (invocazione istantanea)**
 
 - **Aggiunto**: un edificio può ora teletrasportare unità su una casella remota. Il **portale di salto** protoss e il **canale nydus** zerg sono la stessa primitiva del motore, e nessuno dei due è codificato nel sorgente: l’edificio dichiara che cosa può evocare.

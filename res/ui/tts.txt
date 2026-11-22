@@ -1720,7 +1720,6 @@
 7803	shield regeneration
 7804	shield regeneration cooldown
 7805	shield regeneration delay
-7806	attack-move
 7807	warp-in
 7808	nydus canal
 7809	building burning

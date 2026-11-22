@@ -1590,7 +1590,6 @@
 7803	regeneracja osłony
 7804	odnowienie regeneracji osłony
 7805	przygotowanie regeneracji osłony
-7806	atak z ruchem
 7807	skok wymiarowy
 7808	kanał nydus
 7809	płonący budynek

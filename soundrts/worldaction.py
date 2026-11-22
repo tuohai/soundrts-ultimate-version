@@ -234,11 +234,6 @@ class MoveXYAction(Action):
 
 
 class AttackAction(Action):
-    # When set, this action never follows its target across squares: the
-    # unit stops as soon as the target leaves the square.  The attack-move
-    # order sets it so an A-move keeps advancing towards its destination
-    # instead of abandoning it to chase a fleeing enemy.
-    no_cross_square_pursuit = False
 
     def update(self):
         unit = self.unit
@@ -280,9 +275,7 @@ class AttackAction(Action):
             unit.aim(target)
             return
         # 追击模式 / 受击追击（pursue_attacker，如野猪诱敌到 TC）
-        # 攻击移动（A-move）禁止跨格追击：目标一旦离开本格/射程，单位就
-        # 停止战斗并回到命令队列，继续向目标点推进，而不是追着敌人跑。
-        if not self.no_cross_square_pursuit and _may_pursue_across_squares(unit, target):
+        if _may_pursue_across_squares(unit, target):
             too_far = getattr(unit, "_pursue_target_too_far", None)
             if callable(too_far) and too_far(target):
                 clear = getattr(unit, "_clear_pursue_aggro", None)

@@ -1590,7 +1590,6 @@
 7803	regenerácia štítu
 7804	ochladenie regenerácie štítu
 7805	predĺženie regenerácie štítu
-7806	útok s presunom
 7807	skoková teleportácia
 7808	nidusový kanál
 7809	horiaca budova

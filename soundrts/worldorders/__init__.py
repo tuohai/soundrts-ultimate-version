@@ -69,7 +69,6 @@ from .movement import (
     GoOrder,
     HerdOrder,
     AttackOrder,
-    AttackMoveOrder,
     CaptureOrder,
     PatrolOrder,
     BlockOrder,

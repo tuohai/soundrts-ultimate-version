@@ -1797,37 +1797,6 @@ Las mejoras añaden al depósito con la fila ``effect bonus`` existente::
 El bonus escala también el escudo **actual**, de modo que una unidad que ya
 tenía escudo no se queda con un depósito más pequeño tras la investigación.
 
-Avance con ataque (el «A-move» de SC2)
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-``can_attack_move 1`` (por defecto en los soldados) permite usar la orden de
-**avance con ataque**: la unidad marcha hacia el destino pero ataca a
-cualquier enemigo que encuentre por el camino.
-
-| Atributo | Función |
-| --- | --- |
-| ``can_attack_move 1`` | La unidad puede recibir la orden de avance con ataque |
-| ``can_attack_move 0`` | No puede (los trabajadores, por ejemplo) |
-
-La orden se da con clic derecho en el campo de batalla con el comando
-«avance con ataque» seleccionado (atajo por defecto **A**), o con la palabra
-clave ``attack_move`` en un disparador. La unidad camina hacia la casilla
-destino y se detiene a luchar con cada enemigo dentro de su alcance; cuando no
-hay nadie a tiro, sigue avanzando.
-
-Un avance con ataque **nunca** persigue a un enemigo que huye entre casillas.
-En cuanto el enemigo abandona su casilla (o sale del alcance del arma), la
-unidad termina el combate, vuelve a su cola de órdenes y sigue avanzando hacia
-el destino. Ese es el comportamiento original del A-move, y se mantiene incluso
-si el ``ai_mode`` de la unidad es ``chase`` (persecución). Un mod que sí quiera
-persecución entre casillas durante el avance con ataque puede activarlo
-explícitamente:
-
-| Atributo | Función |
-| --- | --- |
-| ``can_attack_move_chase 1`` | Una unidad que avanza con ataque puede perseguir entre casillas (abandona su destino para ello) |
-| ``can_attack_move_chase 0`` | No puede (el valor predeterminado), la unidad siempre sigue avanzando hacia su destino |
-
 Aparición por salto / canal de nydus (invocación instantánea)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

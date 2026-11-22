@@ -282,7 +282,6 @@ is_a sc_light
 build_mode place_and_leave
 can_repair 0
 auto_repair 0
-can_attack_move 0
 can_gather mineral_field assimilator
 cost 5 0
 hp_max 4
@@ -507,7 +506,6 @@ is_a zerg_unit sc_light
 build_mode sacrifice
 can_repair 0
 auto_repair 0
-can_attack_move 0
 can_gather mineral_field extractor
 cost 5 0
 hp_max 4
@@ -1629,7 +1627,6 @@ def scv
 class worker
 is_a sc_light
 build_mode assisted
-can_attack_move 0
 can_gather mineral_field refinery assimilator extractor
 cost 5 0
 hp_max 6

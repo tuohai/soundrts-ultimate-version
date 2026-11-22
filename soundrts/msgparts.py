@@ -746,7 +746,6 @@ SHIELD_MAX = [7802]          # 最大护盾
 SHIELD_REGEN = [7803]        # 护盾回复
 SHIELD_REGEN_CD = [7804]     # 护盾回复冷却
 SHIELD_REGEN_READY = [7805]  # 护盾回复前摇
-ATTACK_MOVE = [7806]         # 进攻移动
 WARP_IN = [7807]             # 折跃传送
 NYDUS = [7808]               # 虫道
 BUILDING_BURN = [7809]       # 建筑燃烧

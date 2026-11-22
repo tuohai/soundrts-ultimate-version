@@ -1590,7 +1590,6 @@
 7803	regenerace štítu
 7804	ochlazení regenerace štítu
 7805	prodleva regenerace štítu
-7806	útok s přesunem
 7807	průrazový teleport
 7808	nidusový kanál
 7809	hořící budova

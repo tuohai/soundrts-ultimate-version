@@ -1590,7 +1590,6 @@
 7803	rigenerazione dello scudo
 7804	tempo di attesa della rigenerazione dello scudo
 7805	preparazione della rigenerazione dello scudo
-7806	attacco in movimento
 7807	comparsa a warp
 7808	canale nydus
 7809	edificio in fiamme

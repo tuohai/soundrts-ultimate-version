@@ -3,7 +3,6 @@
 
 1.5.2.4 发布的内容是：
   * 新增**护盾层**：伤害先扣护盾，溢出才打血；脱战回盾；升级可加护盾上限；
-  * 新增**进攻移动**命令（SC2 的 A-move），``can_attack_move`` 控制可用性；
   * 新增**折跃传送门 / 虫道**：建筑把单位瞬间召唤到远处格子里；
   * 新增**建筑燃烧自毁**：血量低于阈值就着火，持续掉血直到爆炸；
   * 星际模组：神族等离子护盾、SC2 单位补齐、单位不互相阻挡、异虫脱战回血；
@@ -30,9 +29,6 @@ _TOPICS = (
     "shield_regen_cd",
     "shield_regen_ready",
     "shield_pierce",
-    # 进攻移动
-    "attack_move",
-    "can_attack_move",
     # 折跃传送门 / 虫道
     "warp_in_types",
     "warp_in_charge",
@@ -48,7 +44,6 @@ _TOPICS = (
     # 文档与测试
     "modding.rst",
     "test_starcraft_shields.py",
-    "test_starcraft_attack_move.py",
     "test_starcraft_warp_in.py",
     "test_starcraft_building_burn.py",
     # 引擎文件
@@ -116,7 +111,6 @@ def test_all_modding_guides_document_every_new_keyword_in_all_five_languages():
         "shield_regen_cd",
         "shield_regen_ready",
         "shield_pierce",
-        "can_attack_move",
         "warp_in_types",
         "warp_in_charge",
         "warp_in_recharge",
@@ -153,7 +147,6 @@ def test_the_new_rules_keywords_are_known_to_the_parser():
         "shield_regen_cd",
         "shield_regen_ready",
         "shield_pierce",
-        "can_attack_move",
         "warp_in_types",
         "warp_in_charge",
         "warp_in_recharge",
@@ -171,7 +164,6 @@ def test_the_new_rules_keywords_are_known_to_the_parser():
 def test_the_new_orders_are_registered():
     from soundrts.worldorders import ORDERS_DICT
 
-    assert "attack_move" in ORDERS_DICT
     assert "warp_in" in ORDERS_DICT
     assert "nydus_in" in ORDERS_DICT
 
@@ -179,7 +171,7 @@ def test_the_new_orders_are_registered():
 def test_the_new_orders_have_style_entries():
     from soundrts.definitions import style
 
-    for keyword in ("attack_move", "warp_in", "nydus_in"):
+    for keyword in ("warp_in", "nydus_in"):
         assert style.has(keyword, "index"), keyword
         assert style.has(keyword, "title"), keyword
 
@@ -193,7 +185,6 @@ def test_the_new_tts_ids_exist_in_every_language():
         mp.SHIELD_REGEN,
         mp.SHIELD_REGEN_CD,
         mp.SHIELD_REGEN_READY,
-        mp.ATTACK_MOVE,
         mp.WARP_IN,
         mp.NYDUS,
         mp.BUILDING_BURN,
@@ -212,7 +203,6 @@ def test_the_new_tts_ids_exist_in_every_language():
 def test_the_starcraft_mod_uses_the_new_keywords():
     text = _source("mods", "starcraft", "rules.txt")
     assert "shield_max" in text
-    assert "can_attack_move 0" in text
     assert "collision 0" in text
     assert "hp_regen" in text
     assert "warp_in_types" in text

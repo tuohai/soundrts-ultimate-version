@@ -1590,7 +1590,6 @@
 7803	regeneración de escudo
 7804	tiempo de espera de regeneración de escudo
 7805	preparación de regeneración de escudo
-7806	atacar moviéndose
 7807	aparición por salto
 7808	canal nydus
 7809	edificio en llamas

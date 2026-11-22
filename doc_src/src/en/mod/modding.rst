@@ -1953,35 +1953,6 @@ Upgrades may add to the pool with the existing ``effect bonus`` row::
 The bonus scales the **current** shield as well, so a unit that already has a
 shield is not left with a stale (smaller) pool after the research.
 
-Attack-move (SC2 "A-move")
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-``can_attack_move 1`` (the default for soldiers) lets a unit use the
-**attack-move** order: the unit marches towards the destination but attacks
-any enemy it meets on the way instead of ignoring it.
-
-| Attribute | Role |
-| --- | --- |
-| ``can_attack_move 1`` | The unit may be given the attack-move order |
-| ``can_attack_move 0`` | The unit may not (workers, for example) |
-
-The order is a right-click on the battlefield with the "attack-move" command
-selected (default hotkey **A**), or the ``attack_move`` order keyword in a
-trigger. The unit walks towards the target square and stops to fight every
-enemy within its attack range; when nothing is in range it keeps marching.
-
-An attack-move **never chases** a fleeing enemy across squares. As soon as the
-enemy leaves its square (or leaves the unit's weapon range), the unit ends the
-engagement, returns to its order queue and resumes advancing towards the
-destination. That is the original A-move behaviour, and it holds even when the
-unit's ``ai_mode`` is ``chase``. A mod that does want cross-square pursuit
-while attack-moving can opt back in explicitly:
-
-| Attribute | Role |
-| --- | --- |
-| ``can_attack_move_chase 1`` | An attack-moving unit may chase across squares (it abandons its destination to do so) |
-| ``can_attack_move_chase 0`` | It may not (the default), the unit always keeps advancing towards its destination |
-
 Warp-in / Nydus canal (instant unit summoning)
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

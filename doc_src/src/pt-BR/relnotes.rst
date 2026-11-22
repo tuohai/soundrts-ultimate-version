@@ -14,13 +14,6 @@ Notas de lançamento
 - **Adicionado**: uma melhoria pode aumentar o reservatório com a linha já existente ``effect bonus shield_max N``. O bônus escala também o escudo **atual**, então uma unidade que já tinha escudo não fica com um reservatório menor depois da pesquisa.
 - **Escopo**: ``soundrts/combat/damage_effects.py``, ``soundrts/worldunit/world_status_update.py``, ``soundrts/worldunit/worldcreature.py``, ``soundrts/worldupgrade/attribute_effects.py``, ``soundrts/definitions.py``.
 
-**Adicionado: a ordem de avançar atacando (o “A-move” de SC2)**
-
-- **Adicionado**: a ordem de **avançar atacando** — a unidade marcha até o destino, mas ataca qualquer inimigo que encontrar pelo caminho em vez de ignorá-lo. É dada com clique direito no campo de batalha com o comando “avançar atacando” selecionado (atalho padrão **A**), e também está disponível para os scripts de mapa pela palavra-chave ``attack_move``.
-- **Adicionado**: a palavra-chave ``can_attack_move`` decide se a unidade pode usar a ordem. É o padrão nos soldados; os trabalhadores ficam de fora com ``can_attack_move 0``.
-- **Corrigido**: o avanço atacando não **persegue** mais um inimigo que foge de uma casa para outra. Assim que o inimigo sai da casa dele (ou sai do alcance da arma), a unidade encerra o combate e retoma o avanço até o destino, mesmo que o ``ai_mode`` dela seja ``chase``. Isso corresponde ao comportamento original do A-move. Um mod que queira o comportamento anterior de volta pode ativá-lo explicitamente com ``can_attack_move_chase 1``.
-- **Escopo**: ``soundrts/worldorders/movement.py``, ``soundrts/worldaction.py``, ``soundrts/definitions.py``, ``res/ui/style.txt``.
-
 **Adicionado: aparição por salto e canal nydus (invocação instantânea)**
 
 - **Adicionado**: uma edificação agora pode teletransportar unidades para uma casa remota. O **portal de salto** protoss e o **canal nydus** zerg são a mesma primitiva do motor, e nenhum dos dois está codificado no código-fonte: a edificação declara o que pode invocar.

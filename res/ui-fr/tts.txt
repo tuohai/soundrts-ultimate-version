@@ -1590,7 +1590,6 @@
 7803	régénération du bouclier
 7804	temps de recharge de régénération du bouclier
 7805	préparation de régénération du bouclier
-7806	attaque en se déplaçant
 7807	apparition par téléportation
 7808	canal nydus
 7809	bâtiment en feu
