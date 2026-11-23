@@ -60,6 +60,55 @@ def is_wildlife_unit(unit):
         return False
 
 
+def is_livestock_unit(unit):
+    """牲口：玩家可以「归属/偷取」的动物（羊、牛等），不是造出来的兵。
+
+    与 :func:`is_wildlife_unit` 的区别：
+    - ``is_wildlife_unit``：鹿、野猪这类纯野生动物，永远没有主人。
+    - ``is_livestock_unit``：可以被人接近后归属（或从敌人手里偷走）的牲口。
+
+    牲口不是军事单位，所以它的死亡既不该算作主人的「阵亡」，
+    杀掉它也不该算作「消灭敌人」。
+    """
+    # Entity 把 is_huntable / herdable / claimable 声明为类级默认值，
+    # 直接读属性即可（无 getattr 反射开销）。try/except 保留旧的
+    # 「缺属性 -> 不是牲口」行为，兼容鸭子类型对象。
+    try:
+        return bool(unit.herdable or unit.claimable)
+    except AttributeError:
+        return False
+
+
+def is_animal_unit(unit):
+    """动物：牲口（羊/牛）或纯野生动物（鹿/野猪）。
+
+    动物都不是玩家的军事单位，所以杀掉它们不算「消灭敌人」。
+    野生动物还额外适用条约豁免（见 ``is_wildlife_unit``）。
+    """
+    try:
+        return bool(unit.is_huntable or unit.herdable or unit.claimable)
+    except AttributeError:
+        return False
+
+
+def counts_in_unit_stats(unit):
+    """这个单位该计入「单位」统计（生产 / 阵亡 / 消灭）吗？
+
+    统计口径：**只有玩家造出来的军事单位才算**。
+
+    - 作战单位（士兵、村民等）：算。
+    - 牲口（羊、牛等，可以归属/偷取的动物）：不算。它们是「归属」来的，
+      不是造出来的兵；算进阵亡会让「阵亡」凭空多于「生产」，把生存率
+      评分拉低，也会在结算里显示成莫名其妙的「1 阵亡」。
+    - 纯野生动物（鹿、野猪）：没有主人，本来就不进任何玩家的统计。
+
+    判定只看单位本身是什么，不依赖任何可能过期的记账标记——羊通常先由
+    中立野生动物玩家生成、再被玩家归属，记账标记会跟着前任主人，
+    靠标记判断会把归属来的羊误判成「自己造的兵」。
+    """
+    return not is_livestock_unit(unit)
+
+
 def player_is_wildlife_only(player):
     """玩家名下所有存活单位均为野生动物。"""
     units = []
@@ -248,6 +297,12 @@ class Player(PerceptionCachesMixin):
         self.upgrades = []
         self.forbidden_techs = []
         self.triggers = []  # 初始化 triggers 属性，避免 AttributeError
+        # 势力整体刷新（地图 ``respawn_group <秒>``）：整个势力被全歼后，
+        # 过 ``_respawn_group_seconds`` 毫秒原地恢复原始阵容。
+        # （队列本身在世界上：``world._respawn_group_queue``。）
+        self._respawn_group_seconds = 0
+        self._respawn_group_armed = False
+        self._respawn_roster = []
         # 时代（phase）系统状态
         self.current_phase = None  # 玩家最近研究的 phase 名称
         self._phase_bonus_pool = []  # 已研究 phase 累积的非成本加成参数列表
@@ -607,6 +662,29 @@ class Player(PerceptionCachesMixin):
             self.used_population -= int(eff)
         except Exception:
             self.used_population -= unit.population_cost
+
+    def _maybe_schedule_group_respawn(self):
+        """势力被打光了？排一次整队复活的队列。
+
+        只有地图写了 ``respawn_group <秒>`` 的槽位才有这个机制；没配置的
+        势力照旧判负。
+
+        注意：真正的触发点在 ``Creature.die()`` 里（``schedule_group_respawn_
+        if_wiped_out``），而不是这里 —— ``Player.remove()`` 也会在**归属
+        转移**（认领一只羊、夺回建筑）时调用，那时势力并没有被打光。
+        这个方法保留给需要主动检查的调用方。
+        """
+        if not getattr(self, "_respawn_group_armed", False):
+            return None
+        if getattr(self, "has_been_defeated", False):
+            return None
+        # 还有活着的单位 —— 还没被全歼。
+        for unit in getattr(self, "units", ()) or ():
+            if getattr(unit, "place", None) is not None:
+                return None
+        from ..world_respawn import schedule_group_respawn
+
+        return schedule_group_respawn(self)
 
     @property
     def allied_victory(self):
@@ -1369,7 +1447,7 @@ class Player(PerceptionCachesMixin):
     def set_ai(self, ai_type):
         pass
 
-    def add_unit(self, type_, place, population_cost=None):
+    def add_unit(self, type_, place, population_cost=None, respawn_time_override=None):
         # 防止观战者获得任何单位
         if hasattr(self, '_is_pure_spectator') and self._is_pure_spectator:
             warning("Attempted to add unit to spectator player via add_unit, ignoring")
@@ -1388,6 +1466,13 @@ class Player(PerceptionCachesMixin):
                     unit.effective_population_cost = eff
                     self.used_population += eff - base_pop
                 except Exception:
+                    pass
+            # 地图 ``respawn <类型> <秒>`` 的逐类型覆盖（毫秒）。
+            # 覆盖值存在实例上 —— 规则的 ``respawn_time`` 仍在类上。
+            if respawn_time_override is not None:
+                try:
+                    unit._respawn_time_override = int(respawn_time_override)
+                except (TypeError, ValueError):
                     pass
             unit.building_land = land
             if hasattr(self, "_assign_map_select_slot"):
@@ -1910,7 +1995,19 @@ class Player(PerceptionCachesMixin):
 
     def init_position(self, parsed_start):
         """初始化玩家位置和状态"""
-        units, self.upgrades, self.forbidden_techs, resources, triggers, population_bonus = parsed_start
+        (
+            units,
+            self.upgrades,
+            self.forbidden_techs,
+            resources,
+            triggers,
+            population_bonus,
+        ) = parsed_start[:6]
+        # 第 7 项（可选）：地图 ``respawn <类型> <秒>`` 的逐类型刷新时限覆盖。
+        respawn_overrides = parsed_start[6] if len(parsed_start) >= 7 else {}
+        # 第 8 项（可选）：地图 ``respawn_group <秒>`` —— 整个势力被全歼后，
+        # 过这么多秒，原地恢复**原始阵容**（含建筑）。
+        respawn_group = parsed_start[7] if len(parsed_start) >= 8 else None
 
         # 记住本玩家的出生格。``world.players_starts`` 与 ``world.players``
         # 不是一一对应的（random_starts 会洗牌、人数不匹配会复用 slot），
@@ -2012,6 +2109,14 @@ class Player(PerceptionCachesMixin):
         
         # 观战者不应该获得任何单位
         if not (hasattr(self, '_is_pure_spectator') and self._is_pure_spectator):
+            # ``respawn_group <秒>``：整个势力被全歼后，过这么多秒原地恢复
+            # 原始阵容。必须在下面生成单位**之前**打开这个开关 ——
+            # 原始阵容就是在那次生成过程中记下来的。
+            self._respawn_group_seconds = (
+                int(respawn_group) * 1000 if respawn_group is not None else 0
+            )
+            self._respawn_group_armed = self._respawn_group_seconds > 0
+            self._respawn_roster = []
             # 如果 place 为 None，使用本玩家起始格（players_starts 中对应的 sq）作为落点；
             # 为兼容默认起始（从规则来）情况。
             default_place = None
@@ -2046,8 +2151,15 @@ class Player(PerceptionCachesMixin):
                             actual_place = self.world.random.choice(self.world.squares)
                 if self._map_start_square is None:
                     self._map_start_square = actual_place
+                # 地图 ``respawn <类型> <秒>`` 的逐类型刷新时限覆盖（毫秒）。
+                respawn_override = self._respawn_override_for(type_, respawn_overrides)
                 for _ in range(n):
-                    self.add_unit(type_, actual_place)
+                    self.add_unit(
+                        type_, actual_place, respawn_time_override=respawn_override
+                    )
+                # 记住原始阵容：``respawn_group`` 要在全军覆没后把这一整套
+                # （单位 + 建筑，含原来的数量与格子）原样恢复。
+                self._record_respawn_roster_entry(actual_place, type_, n)
 
             self._spawn_team_free_starting_units(default_place)
 
@@ -2055,6 +2167,41 @@ class Player(PerceptionCachesMixin):
             self.population += population_bonus
 
         self._apply_starting_upgrades()
+
+    def _record_respawn_roster_entry(self, place, type_, count):
+        """把一条原始阵容记进 ``_respawn_roster``。
+
+        只在地图写了 ``respawn_group`` 的槽位上才有意义 —— 记的是
+        ``(方格, 类型名, 数量)``，恢复时按这个清单原样重建。
+        """
+        if not getattr(self, "_respawn_group_armed", False):
+            return
+        name = getattr(type_, "type_name", None)
+        if not name or not place:
+            return
+        roster = getattr(self, "_respawn_roster", None)
+        if roster is None:
+            roster = []
+            self._respawn_roster = roster
+        roster.append((place, name, int(count or 0)))
+
+    def _respawn_override_for(self, type_, respawn_overrides):
+        """这个单位类型的地图级刷新时限覆盖（毫秒），没有则返回 None。
+
+        地图写的是秒（``respawn footman 10``），这里换算成毫秒。
+        覆盖里写 ``0`` 表示「这个类型不刷新」—— 返回 0 即可。
+        """
+        if not respawn_overrides:
+            return None
+        name = getattr(type_, "type_name", None)
+        if not name:
+            return None
+        if name not in respawn_overrides:
+            return None
+        try:
+            return int(respawn_overrides[name]) * 1000
+        except (TypeError, ValueError):
+            return None
 
     def _spawn_team_free_starting_units(self, default_place):
         """AoE2 DE Incas team bonus — "Start with a free Llama".

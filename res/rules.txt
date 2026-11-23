@@ -335,6 +335,10 @@ is_vulnerable 1
 ; items (random map treasure chests, etc.)
 
 ; 随机地图「丰富宝物」可刷出；单位拾取即开启并获得资源（同战役 gold_coin 机制）
+; 注意：**不要**给下面这些物品加 ``item_decay`` —— 战役关卡会把它们当作
+; 必需目标（例如《The Legend of Raynor》第 12/22 章要求玩家捡起
+; ``gold_coin``），物品一旦到期消失，战役就通不过。
+; 需要限时消失时，在自定义 mod 里写 ``item_decay <秒>`` 即可。
 def treasure_chest
 class item
 consume_on_pickup 1

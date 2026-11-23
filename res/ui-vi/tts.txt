@@ -1594,3 +1594,4 @@
 7807	dịch chuyển xuất hiện
 7808	đường hầm nydus
 7809	công trình đang cháy
+7810	bị thịt

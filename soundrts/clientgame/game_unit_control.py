@@ -823,12 +823,20 @@ def units_alert(interface, units_list, msg_end, brief=True):
 
 
 def units_alert_if_needed(interface, place=None):
-    if (interface.neutralized_units or interface.lost_units or interface.new_enemy_units) and (
+    slaughtered = getattr(interface, "slaughtered_units", None) or []
+    if (
+        interface.neutralized_units
+        or interface.lost_units
+        or interface.new_enemy_units
+        or slaughtered
+    ) and (
         getattr(interface, 'previous_units_alert', None) is None
         or time.time() > interface.previous_units_alert + 10
     ):
         units_alert(interface, interface.neutralized_units, mp.NEUTRALIZED, brief=False)
         units_alert(interface, interface.lost_units, mp.LOST)
+        # 动物死亡单独播报「被宰杀」，不混进「被消灭/阵亡」。
+        units_alert(interface, slaughtered, mp.SLAUGHTERED, brief=False)
         units_alert(interface, interface.new_enemy_units, mp.ENEMY)
         if place:
             tell_enemies_in_square(interface, place)  # if lost fight

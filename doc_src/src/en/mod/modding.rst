@@ -1276,8 +1276,39 @@ See ``sc_gas_building`` / ``assimilator`` in ``mods/starcraft/rules.txt``. Playe
 ``../player/starcraft-resources.htm``. The attributes screen (V) adds requires deposit;
 StarCraft gas debits ``source_qty`` via worker ``extraction_*``, with optional ``gather_slots`` for concurrent extractors.
 
+Respawning units (since 1.5.2.5)
+-------------------------------
+
+Write ``respawn_time <seconds>`` in a unit or building definition to make it
+come back after it is destroyed — the RPG-style endless monster pack::
+
+    def footman
+        respawn_time 20
+
+The unit reappears **on the square where it fell**, ``<seconds>`` later, as a
+brand new unit: full health, no leftover buffs, and no carried-over level or
+XP. ``0`` (the default) means the unit never comes back.
+
+| Field | Default | Meaning |
+| --- | --- | --- |
+| ``respawn_time`` | ``0`` | Seconds until the destroyed unit respawns on the same square. ``0`` = never respawn. |
+
+A respawning unit **keeps its side alive**: wiping out an army of them does
+not make the game declare that computer defeated, because its units are about
+to come back. The older hero revival (``is_revivable`` + ``revival_time``)
+gets the same protection — a unit waiting to be revived also keeps its side
+alive.
+
+A map can override the rules per unit type and per slot with
+``respawn <type> <seconds>`` inside a ``computer_only`` line — see
+``mapmaking.rst``.
+A map can also respawn a **whole faction** at once with
+``respawn_group <seconds>`` (mutually exclusive with the per-type
+``respawn``) — see ``mapmaking.rst``.
+
+
 Heroes (since 1.4)
--------------------
+---------------------
 
 Define hero units in any ``rules.txt`` (base rules, mods, campaign packs, multiplayer map packs). They work in skirmish, random maps, multiplayer, and campaigns: kill XP, ``xp_thresholds`` leveling, ``is_revivable`` revival, inventory, etc. Cross-chapter save (``campaign_carryover`` in the next section) is an extra feature for single-player campaigns only.
 
@@ -1479,6 +1510,24 @@ Items (since 1.4.1.3)
     resource_rewards resource1 50
 
 ``is_loot 1`` drops the item when the carrier dies.
+
+``item_decay <seconds>`` how long the item disappears after it was dropped on the ground (``0`` = never disappears, the default). The timer only runs **while the item lies on the ground** -- picking it up stops the countdown, dropping it again restarts it. Example::
+
+    def magic_sword
+    class item
+    item_decay 300
+
+.. note::
+   The AoE2 ``relic`` deliberately has **no** ``item_decay`` -- campaigns treat relics as required objectives, and if such an item expires the campaign cannot be completed. Check whether your item is used as a level objective before giving it a lifetime.
+
+``deposit_decay <seconds>`` how long a deposit / hunt carcass disappears after it was created (``0`` = never disappears, the default). The harvestable carcass left behind by a killed animal (deer / sheep / boar) is such a deposit. Example::
+
+    def food_carcass
+    class deposit
+    deposit_decay 120
+
+.. note::
+   Do not set ``deposit_decay`` on ordinary map deposits (gold mines, forests) -- they are map resources, not temporary carcasses.
 
 ``Item sounds (``style.txt``; use sounds since 1.4.4.6)``
 

@@ -502,6 +502,86 @@ If a ``computer_only`` line contains only animals with ``is_huntable`` / ``herda
 
 If the same line mixes animals and footmen, the whole slot stays a normal AI. See ``../player/hunting.htm`` §3.1.
 
+Respawning monsters (since 1.5.2.5)
+..................................
+
+
+
+Make the monsters come back after they are killed, like the endless monster
+packs of an RPG. Write ``respawn <type> <seconds>`` inside the
+``computer_only`` line — one pair per unit type::
+
+    computer_only 0 0 b3 20 footman 20 archer 20 knight respawn footman 20 respawn archer 20 respawn knight 25
+
+Every unit of that type that dies comes back **on the square where it fell**,
+``<seconds>`` later, as a brand new unit (full health, no leftover buffs).
+``respawn <type> 0`` means "this type never comes back".
+
+The same thing can be declared in ``rules.txt``, for every unit of that type
+wherever it is::
+
+    def footman
+        respawn_time 20
+
+The map's ``respawn`` wins over the rules' ``respawn_time`` for that slot.
+``0`` (the default) means the unit never comes back.
+
+Two consequences worth knowing:
+
+* A respawning army **never loses**: wiping it out does not make the game
+  declare the computer defeated, because its units are about to come back.
+  The same holds for the older hero revival (``is_revivable`` +
+  ``revival_time``): a unit waiting to be revived also keeps its side alive.
+* If the square is full when the timer runs out (a player is standing
+  there), the respawn is **postponed** to the next tick instead of
+  stacking units on top of each other.
+
+
+Respawning a whole faction (since 1.5.2.5)
+...........................................
+
+``respawn <type> <seconds>`` respawns **each unit on its own** — kill one
+and another appears, so the faction can never actually be wiped out. If
+what you want is the other thing — "this faction is defeated (wiped
+out), and after a while the whole garrison comes back", like a boss spawn
+point in an RPG — write ``respawn_group <seconds>``::
+
+    computer_only 0 0 b3 20 footman 20 archer 20 knight respawn_group 60
+
+With that:
+
+* the clock starts the moment **every unit of the faction is destroyed**;
+* after ``<seconds>`` the faction's **original garrison** is back in
+  place — the same unit types, the same numbers, on the same squares
+  (buildings included);
+* everything that comes back is **brand new**: full health, no leftover
+  buffs, no carried-over level or XP;
+* while the faction waits, it does **not** count as defeated — it is
+  about to be back;
+* the garrison that comes back can be wiped out again, which queues
+  another respawn. It repeats.
+
+Two things worth knowing:
+
+* ``respawn_group`` and the per-type ``respawn <type> <seconds>`` are
+  **mutually exclusive**. If a slot has both, ``respawn_group`` wins and
+  the per-type settings are dropped (the map loader warns about it).
+  The reason is simple: per-unit respawn means the faction is never
+  really defeated.
+* In a slot that uses ``respawn_group``, the rules' ``respawn_time`` does
+  not apply either — that slot respawns as a whole, not unit by unit.
+
+If the square is full when the timer runs out (a player is standing
+there), the whole garrison's return is **postponed** to the next tick
+rather than stacking units on top of each other.
+
+Example: the b3 garrison of the "zombie planet" map
+(``res/multi/z5.txt``) uses ``respawn_group 60`` — the 140 enemies
+(20 footmen, 20 archers, 20 knights, 20 catapults, 20 dragons, 20
+mages, 20 priests) come back to b3 sixty seconds after being wiped
+out. The neutral wildlife on the same square (deer / sheep / boar) does
+not respawn.
+
 
 Add triggers to make the monsters move
 ''''''''''''''''''''''''''''''''''''''

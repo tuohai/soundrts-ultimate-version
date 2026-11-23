@@ -1,3 +1,4 @@
+from soundrts.lib.nofloat import PRECISION
 from soundrts.worldentity import Entity
 
 
@@ -162,6 +163,9 @@ class Item(Entity):
     hp_max = 1  # 最小生命值，防止某些系统错误
     airground_type = "ground"  # 地面物品
     is_vulnerable = False  # 物品不会受到伤害
+    # 掉在地上后多久自动消失（毫秒）。0 = 永不消失（默认，保持旧行为）。
+    # 只在物品**掉到地上**时计时；放进背包里的物品不受影响。
+    item_decay = 0
     
     # 战斗属性 - 物品本身不参与战斗，默认0；
     # 但同型模型（same-type）允许一个 item 同时是可装备的武器/盔甲：
@@ -277,6 +281,16 @@ class Item(Entity):
         ]:
             if k in d:
                 d[k] = f(d[k][0] if isinstance(d[k], list) else d[k])
+
+        # ``item_decay``：规则里写的是**秒**，换算成毫秒。
+        if "item_decay" in d:
+            raw = d["item_decay"]
+            if isinstance(raw, (list, tuple)):
+                raw = raw[0] if raw else 0
+            try:
+                d["item_decay"] = int(float(raw) * PRECISION)
+            except (TypeError, ValueError):
+                d["item_decay"] = 0
         
         # 解析战斗属性（同型模型：item 可携带武器/盔甲数值）
         for k, f in [
@@ -348,11 +362,57 @@ class Item(Entity):
     def __init__(self, *args, **kargs):
         super().__init__(*args, **kargs)
         self._buffs = []
-        
+
         # 初始化is_a机制
         self.expanded_is_a = set()
         if hasattr(self, 'is_a') and self.is_a:
             self._expand_is_a(self.is_a)
+
+    def update(self):
+        pass  # necessary to allow slow update
+
+    def slow_update(self):
+        """地上的物品到期消失。
+
+        ``item_decay`` 只在物品**掉到地上**时计时：物品被捡进背包后不再
+        计时（``_ground_decay_deadline`` 被清掉），重新掉到地上时重新计时。
+        """
+        deadline = getattr(self, "_ground_decay_deadline", None)
+        if deadline is None:
+            return
+        world = getattr(self, "world", None)
+        now = getattr(world, "time", None)
+        if now is None:
+            return
+        if now >= deadline:
+            self._expire_on_ground()
+
+    def _expire_on_ground(self):
+        """地面物品到期：通知客户端并从世界里删掉。"""
+        try:
+            self.notify("exhausted")
+        except Exception:
+            pass
+        self._ground_decay_deadline = None
+        self.delete()
+
+    def start_ground_decay(self):
+        """物品落到地面时开始计时（由 ``drop`` 调用）。
+
+        已经在背包里时重新掉出来，计时重新开始。
+        """
+        decay = getattr(type(self), "item_decay", 0) or 0
+        if decay <= 0:
+            return
+        world = getattr(self, "world", None)
+        now = getattr(world, "time", None)
+        if now is None:
+            return
+        self._ground_decay_deadline = now + decay
+
+    def stop_ground_decay(self):
+        """物品被捡起来（或放进背包）时停止计时。"""
+        self._ground_decay_deadline = None
 
     def _expand_is_a(self, is_a_list):
         """展开is_a列表，将直接继承的父类和间接继承的父类都添加到expanded_is_a中"""

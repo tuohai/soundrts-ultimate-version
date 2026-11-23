@@ -1046,6 +1046,9 @@ _precision_properties = {
         "projectile_speed",  # deprecated：加载时迁到 mdg_/rdg_projectile_speed
     "decay",
     "corpse_decay",
+    "deposit_decay",  # 矿床/狩猎尸体生成后多久消失（秒；0=永不消失）
+    "item_decay",  # 掉在地上的物品多久消失（秒；0=永不消失）
+    "respawn_time",  # 单位/建筑被摧毁后多久刷新（秒；0=永不刷新）
     "qty",
     "hp_start",
     "hp",  # effect bonus hp N：上限与当前生命同加（见 attribute_effects）

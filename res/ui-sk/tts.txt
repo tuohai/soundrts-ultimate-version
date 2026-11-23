@@ -1593,3 +1593,4 @@
 7807	skoková teleportácia
 7808	nidusový kanál
 7809	horiaca budova
+7810	zabití

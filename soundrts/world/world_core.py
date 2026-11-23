@@ -557,6 +557,88 @@ def start_population_bonus(start):
 
 
 START_SQUARE_MARK = "square"
+START_RESPAWN_MARK = "respawn"
+START_RESPAWN_GROUP_MARK = "respawn_group"
+
+
+def start_slot_respawn_group(start):
+    """Whole-garrison respawn delay (seconds) recorded on a start slot.
+
+    Maps write ``respawn_group <seconds>`` inside a ``computer_only``
+    line to say "when this whole faction is wiped out, bring the entire
+    original garrison back after N seconds".  Returns the delay in
+    seconds, or ``None`` when the slot has no group respawn.
+
+    A group respawn is **mutually exclusive** with the per-type
+    ``respawn <type> <seconds>`` overrides of the same slot: with a group
+    respawn the faction dies as a whole and comes back as a whole, so
+    per-unit timers would only produce a half-dead garrison in between.
+    """
+    if not start or not isinstance(start, list):
+        return None
+    for extra in start[3:]:
+        if (
+            isinstance(extra, tuple)
+            and len(extra) == 2
+            and extra[0] == START_RESPAWN_GROUP_MARK
+        ):
+            try:
+                return int(extra[1])
+            except (TypeError, ValueError):
+                return None
+    return None
+
+
+def set_start_slot_respawn_group(start, seconds):
+    """Remember the whole-garrison respawn delay on a start slot."""
+    if not start or not isinstance(start, list) or seconds is None:
+        return
+    for i, extra in enumerate(start):
+        if (
+            isinstance(extra, tuple)
+            and len(extra) == 2
+            and extra[0] == START_RESPAWN_GROUP_MARK
+        ):
+            start[i] = (START_RESPAWN_GROUP_MARK, int(seconds))
+            return
+    start.append((START_RESPAWN_GROUP_MARK, int(seconds)))
+
+
+def start_slot_respawn_overrides(start):
+    """Per-type respawn delays (seconds) recorded on a start slot.
+
+    Maps write ``respawn <type> <seconds>`` inside a ``computer_only``
+    line to override the rules' ``respawn_time`` for one type in that
+    slot.  Returns ``{type_name: seconds}`` (empty when the slot has no
+    override).
+    """
+    if not start or not isinstance(start, list):
+        return {}
+    overrides = {}
+    for extra in start[3:]:
+        if (
+            isinstance(extra, tuple)
+            and len(extra) == 2
+            and extra[0] == START_RESPAWN_MARK
+            and isinstance(extra[1], dict)
+        ):
+            overrides.update(extra[1])
+    return overrides
+
+
+def set_start_slot_respawn_overrides(start, overrides):
+    """Remember per-type respawn delays on a start slot."""
+    if not start or not isinstance(start, list) or not overrides:
+        return
+    for i, extra in enumerate(start):
+        if (
+            isinstance(extra, tuple)
+            and len(extra) == 2
+            and extra[0] == START_RESPAWN_MARK
+        ):
+            start[i] = (START_RESPAWN_MARK, dict(overrides))
+            return
+    start.append((START_RESPAWN_MARK, dict(overrides)))
 
 
 def start_slot_square(start):

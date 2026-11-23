@@ -14,9 +14,24 @@ class Deposit(Entity):
     extraction_qty = None  # 提取量
     deposit_volume = 0  # 默认储量（萃取建筑建成时，地图 qty 为 1 则用此值）
     gather_from_shore = 0  # 1=地面工人可从相邻陆格采集水路矿床（岸边鱼）
+    # 生成后多久自动消失（毫秒）。0 = 永不消失（默认，保持旧行为）。
+    # 狩猎动物留下的食物尸体（food_carcass / food_livestock）用它设置时限。
+    deposit_decay = 0
     type_name = "deposit"  # 添加type_name属性
     is_a = ()
     expanded_is_a = ()
+
+    @classmethod
+    def interpret(cls, d):
+        """解析 ``deposit_decay``（规则里写的是**秒**）。"""
+        if "deposit_decay" in d:
+            raw = d["deposit_decay"]
+            if isinstance(raw, (list, tuple)):
+                raw = raw[0] if raw else 0
+            try:
+                d["deposit_decay"] = int(float(raw) * PRECISION)
+            except (TypeError, ValueError):
+                d["deposit_decay"] = 0
 
     def is_a_type(self, type_name):
         cls = type(self)
@@ -38,6 +53,22 @@ class Deposit(Entity):
         self.qty_max = self.qty
         Entity.__init__(self, square, x, y)
         self._register_map_capacity()
+        self._apply_decay_limit()
+
+    def _apply_decay_limit(self):
+        """按 ``deposit_decay`` 设置自动消失的时间。
+
+        规则里写的是秒，这里换算成毫秒。0 = 永不消失。
+        时间从矿床**生成的那一刻**算起（狩猎尸体就是从动物死亡那一刻算）。
+        """
+        decay = getattr(type(self), "deposit_decay", 0) or 0
+        if decay <= 0:
+            return
+        world = getattr(self, "world", None)
+        now = getattr(world, "time", None)
+        if now is None:
+            return
+        self.time_limit = now + decay
 
     def _register_map_capacity(self, qty=None):
         world = getattr(self, "world", None)

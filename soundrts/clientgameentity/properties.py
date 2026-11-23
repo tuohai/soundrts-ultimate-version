@@ -107,6 +107,33 @@ def player_is_wildlife_only(player):
     return all(is_wildlife_unit(u) for u in units)
 
 
+def attacker_is_friendly(interface, attacker):
+    """攻击者是自己人（本人或盟友）吗？
+
+    用于「自己人打自己的羊」这种误伤：这种情况不该播报「羊 被宰杀」——
+    玩家是自己动手的，不需要被告知自己宰掉了自己的羊。
+    """
+    if attacker is None:
+        return False
+    attacker_player = getattr(attacker, "player", None)
+    if attacker_player is None:
+        return False
+    me = getattr(interface, "player", None)
+    if me is None:
+        return False
+    if attacker_player is me:
+        return True
+    # 盟友的玩家列表：本人 + 所有盟友。
+    allied = getattr(me, "allied", None)
+    if allied is not None:
+        try:
+            if attacker_player in allied:
+                return True
+        except TypeError:
+            pass
+    return False
+
+
 class EntityViewProperties:
     """EntityView的属性和描述相关方法"""
 

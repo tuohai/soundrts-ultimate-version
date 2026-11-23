@@ -1594,3 +1594,4 @@
 7807	Warp-Sprung
 7808	Nyduskanal
 7809	Brennendes Gebäude
+7810	geschlachtet

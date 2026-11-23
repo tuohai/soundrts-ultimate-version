@@ -2293,13 +2293,40 @@ class TriggersMixin:
         ]
 
     def lang_no_unit_left(self, unused_args):
+        # 会刷新的单位不算「全军覆没」：它们死了还会原地重生，
+        # 所以这个玩家并没有输。详见 soundrts/world_respawn.py。
+        if self._has_respawnable_units():
+            return False
         return not self.units
 
     def lang_no_building_left(self, unused_args):
+        # 同上：可刷新的建筑倒了也会回来，不能因此判负。
         for u in self.units:
             if u.provides_survival:
                 return False
+        if self._has_respawnable_units():
+            return False
         return True
+
+    def _has_respawnable_units(self):
+        """这个玩家还有「会刷新的」单位或建筑吗？
+
+        三种情况都算：
+          * 世界上还有排队等刷新的记录（说明刚死掉，正在等重生）；
+          * 玩家手上还活着一个 ``respawn_time > 0`` 的类型；
+          * 有一支整队正等着回来（地图 ``respawn_group``）。
+        """
+        try:
+            from ..world_respawn import (
+                player_has_pending_group_respawn,
+                player_has_respawnable_units,
+            )
+
+            if player_has_respawnable_units(self):
+                return True
+            return player_has_pending_group_respawn(self)
+        except Exception:
+            return False
 
     def lang_killed_target(self, args):
         """检查玩家是否杀死了目标单位
@@ -3106,6 +3133,11 @@ class TriggersMixin:
                     p.defeat()
 
     def defeat(self, force_quit=False):
+        # 安全网：还有「会刷新的」单位时，不能判负 —— 它们死了还会原地
+        # 重生，敌人并没有输。详见 soundrts/world_respawn.py。
+        # ``force_quit=True`` 是剧情强制结束，不受此限制。
+        if not force_quit and self._has_respawnable_units():
+            return
         self.has_been_defeated = True
         self.stats.freeze()
         # 地图脚本 NPC、战役电脑等不算对局参与者，被击败时不播报。

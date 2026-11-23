@@ -497,6 +497,89 @@ Se una riga ``computer_only`` contiene solo animali con ``is_huntable`` / ``herd
 
 Se la stessa riga mescola animali e fanti, l'intero slot resta una IA normale. Vedere ``../player/hunting.htm`` §3.1.
 
+Mostri che rispawnano (dalla 1.5.2.5)
+......................................
+
+
+
+Fai tornare i mostri dopo che sono stati uccisi, come le infinite tane di
+mostri di un RPG. Scrivi ``respawn <tipo> <secondi>`` dentro la riga
+``computer_only`` — una coppia per ogni tipo di unità::
+
+    computer_only 0 0 b3 20 footman 20 archer 20 knight respawn footman 20 respawn archer 20 respawn knight 25
+
+Ogni unità di quel tipo che muore torna **nel quadrato dove è caduta**,
+``<secondi>`` dopo, come un'unità completamente nuova (piena vita, nessun
+buff residuo). ``respawn <tipo> 0`` significa "questo tipo non torna mai".
+
+La stessa cosa si può dichiarare in ``rules.txt``, per tutte le unità di quel
+tipo ovunque si trovino::
+
+    def footman
+        respawn_time 20
+
+Lo ``respawn`` della mappa ha la precedenza sul ``respawn_time`` delle regole
+per quello slot. ``0`` (il valore predefinito) significa che l'unità non
+torna mai.
+
+Due conseguenze da conoscere:
+
+* Un esercito che rispawna **non perde mai**: annientarlo non fa dichiarare
+  sconfitta quel computer, perché le sue unità stanno per tornare. Vale
+  anche per il vecchio revival degli eroi (``is_revivable`` +
+  ``revival_time``): un'unità in attesa di revival tiene viva la sua fazione.
+* Se il quadrato è pieno quando scade il timer (c'è un giocatore lì), lo
+  spawn viene **posticipato** al tick successivo invece di sovrapporre
+  unità.
+
+
+Respawn di un'intera fazione (dalla 1.5.2.5)
+..............................................
+
+``respawn <tipo> <secondi>`` fa rispawnare **ogni unità singolarmente**:
+ne ammazzi una e ne compare un'altra, quindi la fazione non può mai
+essere davvero annientata. Se invece vuoi l'altra cosa — «questa fazione
+è stata sconfitta (annientata), e dopo un po' l'intera guarnigione
+torna», come un punto di generazione di un boss in un RPG — scrivi
+``respawn_group <secondi>``::
+
+    computer_only 0 0 b3 20 footman 20 archer 20 knight respawn_group 60
+
+Con questo:
+
+* l'orologio parte nel momento in cui **tutte le unità** della fazione
+  vengono distrutte;
+* dopo ``<secondi>`` la **guarnigione originale** torna al suo posto:
+  gli stessi tipi di unità, gli stessi numeri, sulle stesse caselle
+  (edifici compresi);
+* tutto ciò che torna è **completamente nuovo**: piena vita, nessun buff
+  residuo e senza conservare livello o XP;
+* mentre la fazione aspetta, **non** conta come sconfitta — sta per
+  tornare;
+* la guarnigione che torna può essere annientata di nuovo, il che mette
+  in coda un altro respawn. Si ripete.
+
+Due cose da sapere:
+
+* ``respawn_group`` e il ``respawn <tipo> <secondi>`` per tipo sono
+  **mutuamente esclusivi**. Se uno slot ha entrambi, vince
+  ``respawn_group`` e le impostazioni per tipo vengono scartate (il
+  caricatore della mappa avvisa). Il motivo è semplice: il respawn per
+  unità implica che la fazione non viene mai davvero sconfitta.
+* In uno slot che usa ``respawn_group``, il ``respawn_time`` delle regole
+  non vale — quello slot rispawna tutto insieme, non unità per unità.
+
+Se la casella è piena quando scade il timer (c'è un giocatore lì), il
+ritorno della guarnigione viene **posticipato** al tick successivo
+invece di sovrapporre le unità.
+
+Esempio: la guarnigione di b3 della mappa «zombie planet»
+(``res/multi/z5.txt``) usa ``respawn_group 60`` — i 140 nemici
+(20 fanti, 20 arcieri, 20 cavalieri, 20 catapulthe, 20 draghi, 20 maghi,
+20 sacerdoti) tornano a b3 sessanta secondi dopo essere stati
+annientati. La fauna neutra della stessa casella (cervi / pecore /
+cinghiali) non rispawna.
+
 
 Aggiungere trigger per far muovere i mostri
 '''''''''''''''''''''''''''''''''''''''''''

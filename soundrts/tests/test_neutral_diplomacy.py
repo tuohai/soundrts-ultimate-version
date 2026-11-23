@@ -387,10 +387,21 @@ def _make_map_stub_for_add_start():
     m.nb_res = 2  # 与多数地图 "computer_only 0 0 ..." 的两资源一致
     captured = {}
 
-    def fake_add(starts, resources, items, sq=None, neutral=None, population=0):
+    def fake_add(
+        starts,
+        resources,
+        items,
+        sq=None,
+        neutral=None,
+        population=0,
+        respawn_overrides=None,
+        respawn_group=None,
+    ):
         captured['neutral'] = neutral
         captured['items'] = list(items)
         captured['population'] = population
+        captured['respawn_overrides'] = dict(respawn_overrides or {})
+        captured['respawn_group'] = respawn_group
         starts.append([resources, items, [], neutral])
 
     m._add_start_to = fake_add

@@ -822,7 +822,11 @@ class Unit(Creature):
     def die(self, attacker=None):
         if self.player is None:
             return
-        self.player.nb_units_lost += 1
+        # 归属来的牲口（羊/牛等）不是主人造出来的单位，死亡不计入其阵亡数。
+        from ..worldplayerbase.base import counts_in_unit_stats
+
+        if counts_in_unit_stats(self):
+            self.player.nb_units_lost += 1
         if attacker and hasattr(attacker, 'last_player') and attacker.last_player:
             attacker.last_player.nb_units_killed += 1
         if self.drop_loot:

@@ -1723,3 +1723,4 @@
 7807	warp-in
 7808	nydus canal
 7809	building burning
+7810	slaughtered

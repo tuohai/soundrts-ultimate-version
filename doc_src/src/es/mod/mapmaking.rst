@@ -494,6 +494,88 @@ Si una línea ``computer_only`` contiene solo animales con ``is_huntable`` / ``h
 
 Si la misma línea mezcla animales y lacayos, toda la tragamonedas sigue siendo una IA normal. Véase ``../player/hunting.htm`` §3.1.
 
+Monstruos que reaparecen (desde 1.5.2.5)
+........................................
+
+
+
+Haz que los monstruos vuelvan después de morir, como las manadas infinitas de
+monstruos de un RPG. Escribe ``respawn <tipo> <segundos>`` dentro de la línea
+``computer_only`` — un par por cada tipo de unidad::
+
+    computer_only 0 0 b3 20 footman 20 archer 20 knight respawn footman 20 respawn archer 20 respawn knight 25
+
+Cada unidad de ese tipo que muere vuelve **en la casilla donde cayó**,
+``<segundos>`` después, como una unidad completamente nueva (vida completa,
+sin buffs sobrantes). ``respawn <tipo> 0`` significa "este tipo nunca vuelve".
+
+Lo mismo se puede declarar en ``rules.txt``, para todas las unidades de ese
+tipo en cualquier parte::
+
+    def footman
+        respawn_time 20
+
+El ``respawn`` del mapa tiene prioridad sobre el ``respawn_time`` de las
+reglas para esa ranura. ``0`` (el valor por defecto) significa que la unidad
+nunca vuelve.
+
+Dos consecuencias que conviene conocer:
+
+* Un ejército que reaparece **nunca pierde**: aniquilarlo no hace que el
+  juego declare derrotado a ese ordenador, porque sus unidades van a volver.
+  Lo mismo ocurre con la antigua reanimación de héroes (``is_revivable`` +
+  ``revival_time``): una unidad a la espera de ser reanimada también mantiene
+  vivo a su bando.
+* Si la casilla está llena cuando vence el temporizador (hay un jugador ahí),
+  la reaparición se **aplaza** al siguiente tick en vez de apilar unidades.
+
+Reaparecer una facción entera (desde 1.5.2.5)
+............................................
+
+``respawn <tipo> <segundos>`` hace reaparecer **cada unidad por separado**:
+matas una y aparece otra, así que la facción nunca llega a ser aniquilada
+de verdad. Si lo que quieres es lo otro — «esta facción ha sido derrotada
+(aniquilada), y al cabo de un rato vuelve la guarnición entera», como un
+punto de aparición de jefe en un RPG — escribe ``respawn_group <segundos>``::
+
+    computer_only 0 0 b3 20 footman 20 archer 20 knight respawn_group 60
+
+Con eso:
+
+* el reloj empieza en el instante en que **se destruyen todas las
+  unidades** de la facción;
+* pasados ``<segundos>``, la **guarnición original** vuelve a su sitio:
+  los mismos tipos de unidad, las mismas cantidades, en las mismas
+  casillas (los edificios incluidos);
+* todo lo que vuelve es **completamente nuevo**: vida completa, sin buffs
+  sobrantes y sin conservar el nivel ni la XP;
+* mientras la facción espera, **no** cuenta como derrotada — va a volver;
+* la guarnición que vuelve puede ser aniquilada otra vez, lo que encola
+  otro respawn. Se repite.
+
+Dos cosas que conviene saber:
+
+* ``respawn_group`` y el ``respawn <tipo> <segundos>`` por tipo son
+  **mutuamente excluyentes**. Si una ranura tiene los dos, gana
+  ``respawn_group`` y se descartan los ajustes por tipo (el cargador del
+  mapa avisa). La razón es simple: el respawn por unidad implica que la
+  facción nunca llega a estar realmente derrotada.
+* En una ranura que use ``respawn_group``, el ``respawn_time`` de las
+  reglas tampoco se aplica — esa ranura reaparece entera, no unidad a
+  unidad.
+
+Si la casilla está llena cuando vence el temporizador (hay un jugador
+ahí), la vuelta de la guarnición se **pospone** al siguiente tick en vez
+de apilar unidades unas sobre otras.
+
+Ejemplo: la guarnición de b3 del mapa «zombie planet»
+(``res/multi/z5.txt``) usa ``respawn_group 60`` — los 140 enemigos
+(20 infantes, 20 arqueros, 20 caballeros, 20 catapultas, 20 dragones,
+20 magos, 20 sacerdotes) vuelven a b3 sesenta segundos después de ser
+aniquilados. La fauna neutral de la misma casilla (ciervos / ovejas /
+jabalíes) no reaparece.
+
+
 Añade disparadores para hacer que los monstruos se muevan.
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 

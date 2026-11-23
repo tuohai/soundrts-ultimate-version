@@ -1156,6 +1156,39 @@ Consulte ``sc_gas_building`` / ``assimilator`` en ``mods/starcraft/rules.txt``. 
 ``../player/starcraft-resources.htm``. La pantalla de atributos (V) agrega requiere depósito;
 El tiempo/cantidad de producción utiliza las entradas de atributos de producción existentes.
 
+Unidades que reaparecen (desde 1.5.2.5)
+-------------------------------------
+
+Escriba ``respawn_time <segundos>`` en la definición de una unidad o edificio
+para que vuelva a aparecer después de ser destruido — el hada infinita de
+monstruos al estilo RPG::
+
+    def footman
+        respawn_time 20
+
+La unidad reaparece **en la casilla donde cayó**, ``<segundos>`` después,
+como una unidad completamente nueva: vida completa, sin buffs sobrantes y sin
+conservar el nivel ni la XP. ``0`` (el valor por defecto) significa que la
+unidad nunca vuelve.
+
+| Campo | Por defecto | Significado |
+| --- | --- | --- |
+| ``respawn_time`` | ``0`` | Segundos hasta que la unidad destruida reaparece en la misma casilla. ``0`` = nunca reaparece. |
+
+Una unidad que reaparece **mantiene vivo a su bando**: aniquilar un ejército
+de ellas no hace que el juego declare derrotado a ese ordenador, porque sus
+unidades están a punto de volver. La antigua reanimación de héroes
+(``is_revivable`` + ``revival_time``) recibe la misma protección: una unidad a
+la espera de ser reanimada también mantiene vivo a su bando.
+
+Un mapa puede anular las reglas por tipo de unidad y por ranura con
+``respawn <tipo> <segundos>`` dentro de una línea ``computer_only`` — véase
+``mapmaking.rst``.
+Un mapa también puede hacer reaparecer una **facción entera** de una vez
+con ``respawn_group <segundos>`` (mutuamente excluyente con el
+``respawn`` por tipo) — véase ``mapmaking.rst``.
+
+
 Héroes (desde 1.4)
 ------------------
 
@@ -1364,6 +1397,24 @@ Artículos (desde 1.4.1.3)
 
 
 ``is_loot 1`` deja caer el artículo cuando el portador muere.
+
+``item_decay <segundos>`` cuánto tarda el artículo en desaparecer tras caer al suelo (``0`` = nunca desaparece, el valor por defecto). La cuenta atrás **sólo corre mientras el artículo está en el suelo** — recogerlo la detiene, y volver a tirarlo la reinicia. Ejemplo::
+
+    def magic_sword
+    class item
+    item_decay 300
+
+.. note::
+   El ``relic`` de AoE2 **no** lleva ``item_decay`` a propósito — las campañas tratan las reliquias como objetivos obligatorios, y si un artículo así expira la campaña no se puede completar. Comprueba si tu artículo se usa como objetivo de nivel antes de darle una duración.
+
+``deposit_decay <segundos>`` cuánto tarda un depósito / cadáver de caza en desaparecer tras crearse (``0`` = nunca desaparece, el valor por defecto). El cadáver cosechable que deja un animal muerto (ciervo / oveja / jabalí) es uno de esos depósitos. Ejemplo::
+
+    def food_carcass
+    class deposit
+    deposit_decay 120
+
+.. note::
+   No pongas ``deposit_decay`` en depósitos normales del mapa (minas de oro, bosques) — son recursos del mapa, no cadáveres temporales.
 
 ``Item sounds (``estilo.txt``; use sounds since 1.4.4.6)``
 

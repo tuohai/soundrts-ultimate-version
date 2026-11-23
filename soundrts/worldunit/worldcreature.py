@@ -574,12 +574,24 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
         # 只在被击杀时发送死亡通知和处理统计（到期消失走 on_disappear，不记 lost）
         if notify_death and not getattr(self, "_disappeared", False):
             self.notify("death")
-            if hasattr(self.player, 'stats'):
+            # 牲口（羊/牛等）是「归属」来的，不是造出来的兵，所以它的死亡
+            # 不算主人的单位阵亡（否则结算里会显示莫名其妙的「1 阵亡」，
+            # 而且阵亡数会凭空多于生产数，把生存率评分拉低）。
+            from ..worldplayerbase.base import counts_in_unit_stats, is_animal_unit
+
+            counts_in_stats = counts_in_unit_stats(self)
+            if counts_in_stats and hasattr(self.player, 'stats'):
                 self.player.stats.add("lost", self.stat_type)
             if attacker is not None:
                 self.notify("death_by,%s" % attacker.id)
                 self.player.on_unit_attacked(self, attacker)
-                if hasattr(attacker.player, 'stats'):
+                # 杀动物（羊/鹿/野猪）不算「消灭敌人」：它们不是玩家造出来的
+                # 军事单位，也不该计入消灭数与战斗评分。
+                if (
+                    not is_animal_unit(self)
+                    and getattr(attacker, "player", None) is not None
+                    and hasattr(attacker.player, 'stats')
+                ):
                     attacker.player.stats.add("killed", self.stat_type)
                 # 记录单位被击杀，用于触发"杀死目标单位"胜利条件或失败条件
                 if hasattr(attacker.player, 'record_unit_killed'):
@@ -587,6 +599,32 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
 
         # on_death 技能：delete 前触发（仍有 place/player；允许 hp<=0）
         self._trigger_death_skills(attacker)
+
+        # 敌军刷新：排一次「原地重生」。必须在 delete() **之前**排 ——
+        # delete() 之后 place 就没了。
+        try:
+            from ..world_respawn import schedule_respawn
+
+            schedule_respawn(self, attacker)
+        except Exception:
+            from ..lib.log import exception
+
+            exception("couldn't schedule respawn")
+
+        # 势力整体刷新（地图 ``respawn_group <秒>``）：如果这个单位是本势力
+        # 最后的一个了，整支部队会在设定的时间之后原样回来。**必须在
+        # delete() 之前**判断 —— delete() 之后单位就离开玩家的名册了。
+        #
+        # 这里而不是 ``Player.remove()``：``remove()`` 也会在**归属转移**
+        # （认领一只羊、夺回建筑）时触发，那时势力并没有被打光。
+        try:
+            from ..world_respawn import schedule_group_respawn_if_wiped_out
+
+            schedule_group_respawn_if_wiped_out(self)
+        except Exception:
+            from ..lib.log import exception
+
+            exception("couldn't schedule the group respawn")
 
         if self.player is not None:
             self.player.observed_objects.pop(self, None)
@@ -1108,6 +1146,10 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
     attack_inside_chance = 0  # 外部攻击命中容器内乘客的几率（0-100，仅对容器生效）
     capture_hp_threshold = 0  # 默认为0表示不可夺取
     yield_on_defeat = 0  # 战败后投降（不死亡），用于比武收服等剧情
+    # 被摧毁后多久在原地刷新（毫秒）。0 = 永不刷新（默认）。
+    # 规则里写的是秒（``respawn_time 60``），由 ``interpret`` 换算成毫秒。
+    # 详见 soundrts/world_respawn.py。
+    respawn_time = 0
     _last_capture_time = 0  # 上次夺取尝试的时间
     _capture_cooldown = 10000  # 10秒冷却时间(毫秒)
     mdg_delay = 0  # deprecated

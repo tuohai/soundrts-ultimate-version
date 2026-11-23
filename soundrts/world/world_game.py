@@ -374,6 +374,10 @@ class WorldGameMixin:
                 from ..world_inventory_victory import update_inventory_victory
 
                 update_inventory_victory(self)
+                from ..world_respawn import tick_group_respawns, tick_respawns
+
+                tick_respawns(self)
+                tick_group_respawns(self)
             except Exception:
                 exception("")
             for o in self._active_objects_snapshot():

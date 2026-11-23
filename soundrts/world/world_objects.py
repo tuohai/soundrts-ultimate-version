@@ -448,13 +448,35 @@ class WorldObjectsMixin:
             pass
 
     def parse_start(self, start, faction, must_apply_equivalent_type):
-        from .world_core import start_population_bonus
+        from .world_core import (
+            start_population_bonus,
+            start_slot_respawn_group,
+            start_slot_respawn_overrides,
+        )
 
         resources = rules.normalized_cost_or_resources(start[0])
         units, upgrades, forbidden_techs = self.parse_assets(start, faction, must_apply_equivalent_type)
         triggers = start[2]
         population_bonus = start_population_bonus(start)
-        return units, upgrades, forbidden_techs, resources, triggers, population_bonus
+        respawn_overrides = start_slot_respawn_overrides(start)
+        # Whole-garrison respawn: the entire original garrison comes back
+        # after N seconds once the faction has been wiped out.  ``None``
+        # means the slot has no group respawn.
+        respawn_group = start_slot_respawn_group(start)
+        # A group respawn replaces the per-unit timers entirely (the two
+        # are mutually exclusive), so drop the overrides in that case.
+        if respawn_group is not None:
+            respawn_overrides = {}
+        return (
+            units,
+            upgrades,
+            forbidden_techs,
+            resources,
+            triggers,
+            population_bonus,
+            respawn_overrides,
+            respawn_group,
+        )
 
     def parse_assets(self, start, faction, must_apply_equivalent_type):
         units = []

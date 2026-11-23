@@ -13,7 +13,11 @@ from ..lib.log import exception
 from ..lib.msgs import nb2msg, nb2msg_float
 from .. import msgparts as mp
 from ..attributes.utils import get_stat_tts_name
-from .properties import summary_omit_single_count_at_death
+from .properties import (
+    summary_omit_single_count_at_death,
+    is_wildlife_unit,
+    attacker_is_friendly,
+)
 from .battle_shout_audio import clash_unit_count
 
 # Player economy / production feedback → primary library (not secondary).
@@ -450,22 +454,44 @@ class EntityViewEvents:
 
     def on_death_by(self, attacker_id):
         attacker = self.interface.dobjets.get(attacker_id)
-        if self.player is self.interface.player:
-            self.interface.lost_units.append(
-                [
-                    self.short_title,
-                    self.place,
-                    summary_omit_single_count_at_death(self.model),
-                ]
-            )
-        if getattr(attacker, "player", None) is self.interface.player:
-            self.interface.neutralized_units.append(
-                [
-                    self.short_title,
-                    self.place,
-                    summary_omit_single_count_at_death(self.model),
-                ]
-            )  # TODO: "de " self.player.name
+        # 动物（羊/鹿/野猪）不是军事单位：死了不该说成「阵亡」或「被消灭」，
+        # 而是专门播报「被宰杀」。牲口是玩家「归属」来的动物，杀它不是
+        # 消灭敌人；自己的羊被杀掉也不是军事单位损失。
+        if is_wildlife_unit(self.model):
+            # 自己人（本人或盟友）打**自己名下**的羊 —— 玩家自己动手的，
+            # 不需要播报「羊 被宰杀」。只有被别人打死时才播报。
+            # 注意：打中立（还没归属）的羊是正常狩猎，仍然要播报。
+            victim_is_ours = self.player is self.interface.player
+            if not (
+                victim_is_ours and attacker_is_friendly(self.interface, attacker)
+            ):
+                # 数量总是要读出来（「1 羊 被宰杀」/「2 羊 被宰杀」/「20 羊 被宰杀」），
+                # 和「xx 敌人被消灭」一致。动物在规则里带 ``no_number 1``（同类型
+                # 只有一只时不报序号），那只适用于平时的羊/鹿播报，不适用于死亡播报。
+                self.interface.slaughtered_units.append(
+                    [
+                        self.short_title,
+                        self.place,
+                        False,
+                    ]
+                )
+        else:
+            if self.player is self.interface.player:
+                self.interface.lost_units.append(
+                    [
+                        self.short_title,
+                        self.place,
+                        summary_omit_single_count_at_death(self.model),
+                    ]
+                )
+            if getattr(attacker, "player", None) is self.interface.player:
+                self.interface.neutralized_units.append(
+                    [
+                        self.short_title,
+                        self.place,
+                        summary_omit_single_count_at_death(self.model),
+                    ]
+                )  # TODO: "de " self.player.name
         friends = [
             u for u in self.player.units if u.place is self.place and u.id != self.id
         ]

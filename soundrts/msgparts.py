@@ -749,6 +749,7 @@ SHIELD_REGEN_READY = [7805]  # 护盾回复前摇
 WARP_IN = [7807]             # 折跃传送
 NYDUS = [7808]               # 虫道
 BUILDING_BURN = [7809]       # 建筑燃烧
+SLAUGHTERED = [7810]          # 宰杀（动物被杀死时的播报，不是「阵亡/被消灭」）
 
 # 合作战役相关消息常量
 COOP_CAMPAIGN = [4950]                 # 合作战役

@@ -1593,3 +1593,4 @@
 7807	průrazový teleport
 7808	nidusový kanál
 7809	hořící budova
+7810	poraženy

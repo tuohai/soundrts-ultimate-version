@@ -52,6 +52,9 @@ class GameInterface(AttributesInterface):
         self.group = []
         self.lost_units = []
         self.neutralized_units = []
+        # 动物（羊/鹿/野猪）死亡播报：既不是「阵亡」也不是「被消灭」，
+        # 用专门的「被宰杀」措辞，避免把一只羊说成军事单位损失。
+        self.slaughtered_units = []
         self.new_enemy_units = []
         self.previous_menus = {}
         self.scout_info = set()

@@ -286,6 +286,10 @@ class CreatureOrders(Entity):
             target.move_to(None, 0, 0)  # 正确地移除物品，提供x和y坐标
             self.inventory.append(target)
             target.equip(self)
+            # 捡进背包：停止地面消失倒计时（没配就不计时）。
+            if hasattr(target, "stop_ground_decay"):
+                target.stop_ground_decay()
+
     def _auto_unequip_item_systems(self, item):
         """若该物品当前作为武器/盔甲被装备（同型模型），在移出库存前先卸下，
         以确保单位的攻防属性正确还原。"""
@@ -338,6 +342,10 @@ class CreatureOrders(Entity):
             item.move_to(self.place, self.x, self.y)
             if hasattr(item, 'unequip'):
                 item.unequip(self)
+
+        # 物品落到地面：开始 ``item_decay`` 倒计时（没配就不计时）。
+        if hasattr(item, "start_ground_decay"):
+            item.start_ground_decay()
 
     def give(self, item, target):
         """把库存里的物品 item 交给另一个单位 target（含中立/NPC单位）。
@@ -407,10 +415,16 @@ class CreatureOrders(Entity):
             target.inventory.append(item)
             if hasattr(item, "equip"):
                 item.equip(target)
+            # 进了背包：停止地面消失倒计时。
+            if hasattr(item, "stop_ground_decay"):
+                item.stop_ground_decay()
             target.notify(f"received,{item.type_name}")
         else:
             # 目标无法持有物品时，将物品掉落在目标所在位置
             item.move_to(target.place, target.x, target.y)
+            # 落在地上：开始 ``item_decay`` 倒计时。
+            if hasattr(item, "start_ground_decay"):
+                item.start_ground_decay()
 
     def _find_inventory_item(self, item_id):
         """按 id 在背包或已装备槽位中查找物品。"""
@@ -576,6 +590,9 @@ class CreatureOrders(Entity):
                         item.equip(new_unit)
                     except Exception:
                         pass
+                # 进了背包：停止地面消失倒计时。
+                if hasattr(item, "stop_ground_decay"):
+                    item.stop_ground_decay()
             else:
                 # 新单位放不下：把物品掉落在新单位所在位置，避免丢失
                 item.move_to(
@@ -583,3 +600,6 @@ class CreatureOrders(Entity):
                     getattr(new_unit, "x", 0),
                     getattr(new_unit, "y", 0),
                 )
+                # 落在地上：开始 ``item_decay`` 倒计时。
+                if hasattr(item, "start_ground_decay"):
+                    item.start_ground_decay()

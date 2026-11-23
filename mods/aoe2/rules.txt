@@ -296,6 +296,9 @@ resource_type resource3
 extraction_time 0
 extraction_qty 0
 collision 0
+; 狩猎尸体在地上存在多久（秒）。0 = 永不消失。
+; 太长会让尸体堆积到地图上；太短则牧民来不及赶来收肉。
+deposit_decay 120
 
 ; Herdable kill deposit (shepherding). Separate from food_carcass so
 ; gather_time_food_livestock / gather_time_food_carcass civ bonuses do not overlap.
@@ -305,6 +308,8 @@ resource_type resource3
 extraction_time 0
 extraction_qty 0
 collision 0
+; 归属牲口被宰后留下的肉：同样会随时间消失（秒）。
+deposit_decay 120
 
 ; ---------- building land (maps: nb_meadow_by_square / nb_build_site_by_square) ----------
 
@@ -6307,6 +6312,8 @@ can_use_skill a_conversion
 can_use_tech sanctity fervor illumination block_printing redemption atonement
 
 ; Relic -> DE: 0.5 gold/s when held by apply_inventory_production host (monastery)
+; 注意：**不要**给 relic 加 item_decay —— 战役里圣物必须一直留在地上，
+; 否则玩家还没赶到圣物就消失了，战役无法通过。
 def relic
 class item
 transport_volume 1

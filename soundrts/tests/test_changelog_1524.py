@@ -188,6 +188,7 @@ def test_the_new_tts_ids_exist_in_every_language():
         mp.WARP_IN,
         mp.NYDUS,
         mp.BUILDING_BURN,
+        mp.SLAUGHTERED,
     )
     flat = [str(x) for group in ids for x in group]
     assert len(set(flat)) == len(flat), "the TTS ids must be unique"

@@ -257,7 +257,10 @@ class CreatureStatusUpdate(Entity):
         for i in range(max(1, int(count))):
             offset_x = (i % 3 - 1) * 100 + 1000
             offset_y = i // 3 * 100
-            item_cls(place, self.x + offset_x, self.y + offset_y)
+            item = item_cls(place, self.x + offset_x, self.y + offset_y)
+            # 落在地上：开始 ``item_decay`` 倒计时（没配就不计时）。
+            if hasattr(item, "start_ground_decay"):
+                item.start_ground_decay()
             spawned += 1
         return spawned
 

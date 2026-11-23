@@ -1593,3 +1593,4 @@
 7807	skok wymiarowy
 7808	kanał nydus
 7809	płonący budynek
+7810	zabite

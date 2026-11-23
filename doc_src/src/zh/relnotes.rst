@@ -3,6 +3,51 @@
 
 .. contents::
 
+1.5.2.5
+-------
+
+**新增：狩猎尸体与地上物品的消失时限**
+
+- **新增**：动物（鹿 / 羊 / 野猪）被杀死后留在地上的可开采尸体，现在会**随时间消失**。新增的关键字是 ``deposit_decay`` （写在 ``class deposit`` 上，单位是**秒**；``0`` 表示永不消失）。帝国 2 模组里 ``food_carcass`` 与 ``food_livestock`` 都设成了 ``deposit_decay 120``（两分钟），地图上的金矿、树林等普通矿床不受影响。
+- **新增**：掉在地上的物品现在也会**随时间消失**。新增的关键字是 ``item_decay`` （写在 ``class item`` 上，单位是**秒**；``0`` 表示永不消失）。计时**只在物品待在地上时**走 —— 物品被捡进背包就停止计时，重新掉到地上时重新计时。
+- **修复**：地上的物品以前**根本不会被更新** —— ``Item`` 类压根没有 ``update`` / ``slow_update`` 方法，于是 ``world.register_entity`` 不会把它放进 ``active_objects`` ，世界循环永远不会调用它。这就是「地上的东西永远不消失」的根因。现在补上了这两个方法，物品才会被登记进活跃列表并真正计时。
+- **注意**：**帝国 2 模组的 ``relic`` （圣物）故意没有设置 ``item_decay``** —— 战役关卡会把圣物当作必需目标（例如《The Legend of Raynor》第 12 章要求把 ``gold_coin`` 交给商人、第 22 章要求地上还剩着 ``gold_coin`` ），物品一旦到期消失，战役就通不过。``res/rules.txt`` 里的 ``treasure_chest`` / ``gold_pile`` / ``gold_coin`` 同样保持 ``0`` 。需要限时消失时，请在自定义 mod 里写 ``item_decay <秒>`` 。
+- **改动范围**：``soundrts/worldresource.py`` 、``soundrts/worlditem.py`` 、``soundrts/worldunit/world_order.py`` 、``soundrts/worldunit/world_status_update.py`` 、``soundrts/definitions.py`` 、``mods/aoe2/rules.txt`` 、``res/rules.txt`` 、``soundrts/tests/test_ground_item_decay.py`` 。
+
+**修复：归属自己的羊被播报成「阵亡」，杀掉一只羊被算成「消灭了敌人」**
+
+- **问题**：玩家用 ``claim`` 归属的羊，在统计与语音里都被当成了**军事单位**。敌方斥候骑兵杀掉它时，游戏播报「羊 被消灭 在 2 , 1」与「羊 阵亡 在 2 , 1」，游戏结束后的统计则显示「4 单位 生产 , 1 阵亡 , 0 被消灭」——凭空多出一次阵亡，生存率评分也被拉低。反过来，我方单位杀掉一只羊却算「消灭了敌人」，战斗评分虚高。
+- **原因**：羊由中立野生动物玩家生成时，身上带着当时的 ``_stats_counted_produced`` 标记；归属转移时这个标记没有被清掉。牲口与士兵共用同一套 ``lost`` / ``killed`` 计数。
+- **改进（统计）**：牲口（可驱赶 / 可归属的动物）现在整体排除在单位计数之外 —— 无论怎么死，都不计入生产、阵亡或被消灭。单位发生归属转移时，旧的「已生产」标记会被清掉。同一个场景的结算现在显示「4 单位 生产 , 0 阵亡 , 0 被消灭」。
+- **改进（播报）**：动物死亡有了专门的播报：游戏会说「1 羊 被宰杀 在 2 , 1」，不再用「被消灭 / 阵亡」这套军事措辞。数量照常读出来（一次打死多只会合成「2 羊 被宰杀」「20 羊 被宰杀」），和「xx 敌人被消灭」一致 —— 帝国 2 的羊 / 鹿 / 野猪在规则里带 ``no_number 1``（同类型只有一只时不报序号），那只适用于平时的羊群播报，不适用于死亡播报。**自己人（本人或盟友）打死自己名下的羊不再播报** —— 玩家自己动手的不用被告知；打中立（还没归属）的羊仍然正常播报，那属于狩猎。军事单位的播报保持不变。
+- **改动范围**：``soundrts/worldplayerbase/base.py`` 、``soundrts/worldunit/world_attributes.py`` 、``soundrts/worldunit/worldbase.py`` 、``soundrts/worldunit/worldcreature.py`` 、``soundrts/clientgameentity/events.py`` 、``soundrts/clientgame/game_interface_base.py`` 、``soundrts/clientgame/game_unit_control.py`` 、``soundrts/msgparts.py`` 、``res/ui*/tts.txt`` （13 种语言）、``soundrts/tests/test_livestock_kill_stats.py`` 、``soundrts/tests/test_livestock_death_announcement.py`` 。
+**新增：势力整体刷新（整个守军被打光后整队回来）**
+
+- **新增**：除了逐单位刷新，现在还可以让**整个势力**被打败后整队回来 —— 就像 RPG 里的 BOSS 刷新点。地图的 ``computer_only`` 行新增了 ``respawn_group <秒>`` 语法：``computer_only 0 0 b3 20 footman 20 archer respawn_group 60`` 表示这个势力**全部单位被打光**的那一刻开始计时，60 秒后它的**原始阵容**原地回来 —— 同样的单位类型、同样的数量、同样的格子（建筑也在内）。
+- **新增**：回来的都是**全新的**单位：满血、没有残留的 buff、不保留等级与经验。等待期间这个势力**不算输** —— 它马上就会回来。回来的守军可以再次被打光，再次排队复活，反复循环。
+- **注意**：``respawn_group`` 与逐类型的 ``respawn <类型> <秒>`` **互斥**。两个都写时以 ``respawn_group`` 为准，逐类型的设置被忽略（地图加载时会给出警告）。原因很简单：逐单位刷新意味着势力永远不会被真的打光。在配了 ``respawn_group`` 的槽位里，规则里的 ``respawn_time`` 同样不生效。
+- **示例**：《zombie planet》``res/multi/z5.txt`` 的 b3 守军改用 ``respawn_group 60`` —— 140 个敌军（20 步兵、20 弓箭手、20 骑士、20 投石机、20 飞龙、20 法师、20 祭司）被打光之后，60 秒后整队回到 b3。同格的中立野生动物（鹿 / 羊 / 野猪）不刷新。
+
+
+**验证**
+
+- ``soundrts/tests/test_ground_item_decay.py`` —— 新增测试：两个新关键字按秒解析、狩猎尸体带时限并按时消失、没有配置时限的矿床与物品永不过期、物品掉到地上开始计时、捡进背包停止计时。
+- ``soundrts/tests/test_livestock_kill_stats.py`` 与 ``soundrts/tests/test_livestock_death_announcement.py`` —— 牲口死亡不计入阵亡 / 被消灭，动物死亡播报带数量，自己人误伤自己名下的羊不播报。
+
+**新增：敌军刷新（RPG 式的怪物重生）**
+
+- **新增**：单位与建筑现在可以在被摧毁后**重新刷新** —— 就像 RPG 里的无限刷怪点。规则里新增的关键字是 ``respawn_time <秒>``（写在 ``class`` 定义上；``0`` 表示永不刷新）。被摧毁的单位会在**它倒下的那个格子**上，过指定秒数后冒出一个**全新的**单位：满血、没有残留的 buff、也不保留原来的等级与经验。
+- **新增**：地图的 ``computer_only`` 行新增了 ``respawn <类型> <秒>`` 语法，可以**逐类型**设置刷新时间。例如 ``computer_only 0 0 b3 20 footman 20 archer respawn footman 20 respawn archer 30`` 表示这个槽位里的步兵 20 秒刷新、弓箭手 30 秒刷新；写 ``respawn <类型> 0`` 表示该类型不刷新。地图里的设置优先于规则里的 ``respawn_time``。
+- **新增**：**会刷新的部队永远不会输** —— 把它们全歼，游戏也不会宣布那个电脑失败，因为它的单位马上就会回来。判定同时覆盖旧的英雄复活机制（``is_revivable`` + ``revival_time``）：**正在等复活的单位同样让它的阵营保持存活**。以前这个漏洞会让「只有一个可复活单位」的电脑在单位被打死后被立刻判负，而它的单位马上就要复活了。
+- **改进**：计时到了但格子被占满时（例如玩家正站在那儿），刷新会**推迟**到下一帧，而不是把单位硬叠在一起。
+- **示例**：《zombie planet》``res/multi/z5.txt`` 的 b3 守军现在会刷新 —— 步兵与弓箭手 20 秒、骑士 25 秒、投石机 40 秒、飞龙 45 秒、法师与祭司 30 秒；同格的中立野生动物（鹿 / 羊 / 野猪）不刷新。
+- **改动范围**：``soundrts/world_respawn.py`` 、``soundrts/worldunit/worldcreature.py`` 、``soundrts/worldunit/world_attributes.py`` 、``soundrts/worldplayerbase/base.py`` 、``soundrts/worldplayerbase/triggers.py`` 、``soundrts/world/world_map.py`` 、``soundrts/world/world_core.py`` 、``soundrts/world/world_objects.py`` 、``soundrts/world/world_game.py`` 、``soundrts/definitions.py`` 、``res/multi/z5.txt`` 。
+
+**验证**
+
+- ``soundrts/tests/test_respawn.py`` 与 ``soundrts/tests/test_respawn_end_to_end.py`` —— 新增测试：``respawn_time`` 按秒解析、地图 ``respawn`` 语法从单位列表里被摘出来并覆盖规则值、被打死的单位排进刷新队列、到期后原地长出一个满血的新单位、存档 / 读档后刷新队列仍在且能继续刷出来、刷新型部队与待 复活的英雄都不会让敌人被判负、普通玩家全军覆没照样判负。
+- ``soundrts/tests/test_respawn_group.py`` 与 ``soundrts/tests/test_z5_group_respawn.py`` —— 势力整体刷新的测试：``respawn_group`` 从单位列表里被摘出来、与逐类型的 ``respawn`` 互斥（并给出警告）、守军被打光后整队回来、等待期间不算输、回来的守军可以再次被打光。
+
 1.5.2.4
 -------
 

@@ -497,6 +497,88 @@ Se uma linha ``computer_only`` contiver apenas animais com ``is_huntable`` / ``h
 
 Se a mesma linha misturar animais e footmen, o slot inteiro permanece uma IA normal. Veja ``../player/hunting.htm`` §3.1.
 
+Monstros que reaparecem (a partir de 1.5.2.5)
+...............................................
+
+
+
+Faça os monstros voltarem depois de morrerem, como as hordas infinitas de
+monstros de um RPG. Escreva ``respawn <tipo> <segundos>`` dentro da linha
+``computer_only`` — um par para cada tipo de unidade::
+
+    computer_only 0 0 b3 20 footman 20 archer 20 knight respawn footman 20 respawn archer 20 respawn knight 25
+
+Cada unidade desse tipo que morre volta **no quadrado onde caiu**,
+``<segundos>`` depois, como uma unidade totalmente nova (vida cheia, sem
+buffs remanescentes). ``respawn <tipo> 0`` significa "este tipo nunca volta".
+
+A mesma coisa pode ser declarada em ``rules.txt``, para todas as unidades
+desse tipo em qualquer lugar::
+
+    def footman
+        respawn_time 20
+
+O ``respawn`` do mapa tem precedência sobre o ``respawn_time`` das regras
+para esse slot. ``0`` (o valor padrão) significa que a unidade nunca volta.
+
+Duas consequências que vale conhecer:
+
+* Um exército que reaparece **nunca perde**: aniquilá-lo não faz o jogo
+  declarar aquele computador derrotado, porque suas unidades estão prestes a
+  voltar. O mesmo vale para a antiga ressurreição de heróis (``is_revivable``
+  + ``revival_time``): uma unidade à espera de ressurreição também mantém o
+  seu lado vivo.
+* Se o quadrado estiver cheio quando o temporizador expira (há um jogador
+  ali), o reaparecimento é **adiado** para o próximo tick em vez de empilhar
+  unidades.
+
+
+Reaparecer uma facção inteira (a partir de 1.5.2.5)
+.......................................................
+
+``respawn <tipo> <segundos>`` faz reaparecer **cada unidade separadamente**:
+mate uma e outra aparece, então a facção nunca chega a ser aniquilada de
+verdade. Se o que você quer é a outra coisa — «esta facção foi derrotada
+(aniquilada), e depois de um tempo a guarnição inteira volta», como um
+ponto de geração de chefe em um RPG — escreva ``respawn_group <segundos>``::
+
+    computer_only 0 0 b3 20 footman 20 archer 20 knight respawn_group 60
+
+Com isso:
+
+* o relógio começa no instante em que **todas as unidades** da facção são
+  destruídas;
+* passados ``<segundos>``, a **guarnição original** volta ao seu lugar: os
+  mesmos tipos de unidade, as mesmas quantidades, nos mesmos quadrados
+  (incluindo construções);
+* tudo o que volta é **totalmente novo**: vida cheia, sem buffs remanescentes
+  e sem conservar nível ou XP;
+* enquanto a facção espera, ela **não** conta como derrotada — está prestes
+  a voltar;
+* a guarnição que volta pode ser aniquilada de novo, o que enfileira outro
+  reaparecimento. O ciclo se repete.
+
+Duas coisas que vale saber:
+
+* ``respawn_group`` e o ``respawn <tipo> <segundos>`` por tipo são
+  **mutuamente exclusivos**. Se um slot tiver os dois, ``respawn_group``
+  vence e as definições por tipo são descartadas (o carregador do mapa
+  avisa). O motivo é simples: reaparecimento por unidade significa que a
+  facção nunca chega a estar realmente derrotada.
+* Em um slot que usa ``respawn_group``, o ``respawn_time`` das regras
+  também não se aplica — esse slot reaparece inteiro, não unidade por
+  unidade.
+
+Se o quadrado estiver cheio quando o temporizador expira (há um jogador
+ali), o retorno da guarnição é **adiado** para o próximo tique em vez de
+empilhar unidades umas sobre as outras.
+
+Exemplo: a guarnição de b3 do mapa «zombie planet» (``res/multi/z5.txt``)
+usa ``respawn_group 60`` — os 140 inimigos (20 footmen, 20 arqueiros,
+20 cavaleiros, 20 catapultas, 20 dragões, 20 magos, 20 sacerdotes) voltam
+para b3 sessenta segundos depois de serem aniquilados. A fauna neutra do
+mesmo quadrado (cervos / ovelhas / javalis) não reaparece.
+
 
 Adicionar gatilhos para fazer os monstros se moverem
 '''''''''''''''''''''''''''''''''''''''''''''''''''

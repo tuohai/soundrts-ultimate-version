@@ -1134,6 +1134,39 @@ Vedi ``sc_gas_building`` / ``assimilator`` in ``mods/starcraft/rules.txt``. Guid
 ``../player/starcraft-resources.htm``. La schermata attributi (V) aggiunge requires deposit;
 tempo/qty di produzione usano le voci attributo di produzione esistenti.
 
+Unità che rispawnano (da 1.5.2.5)
+----------------------------------
+
+Scrivi ``respawn_time <secondi>`` nella definizione di un'unità o di un
+edificio per farla ricomparire dopo essere stata distrutta — la tana di
+mostri infinita stile RPG::
+
+    def footman
+        respawn_time 20
+
+L'unità ricompare **nel quadrato dove è caduta**, ``<secondi>`` dopo, come
+un'unità completamente nuova: piena vita, nessun buff residuo e senza
+conservare livello o XP. ``0`` (il valore predefinito) significa che l'unità
+non torna mai.
+
+| Campo | Predefinito | Significato |
+| --- | --- | --- |
+| ``respawn_time`` | ``0`` | Secondi prima che l'unità distrutta rispawni nello stesso quadrato. ``0`` = non rispawna mai. |
+
+Un'unità che rispawna **mantiene viva la sua fazione**: annientare un
+esercito di queste non fa dichiarare sconfitta quel computer, perché le sue
+unità stanno per tornare. Anche il vecchio revival degli eroi
+(``is_revivable`` + ``revival_time``) ottiene la stessa protezione: un'unità
+in attesa di revival tiene viva la sua fazione.
+
+Una mappa può sovrascrivere le regole per tipo di unità e per slot con
+``respawn <tipo> <secondi>`` dentro una riga ``computer_only`` — vedi
+``mapmaking.rst``.
+Una mappa può anche far rispawnare un'intera **fazione** in una volta
+con ``respawn_group <secondi>`` (mutuamente esclusivo con il
+``respawn`` per tipo) — vedi ``mapmaking.rst``.
+
+
 Eroi (da 1.4)
 --------------
 
@@ -1332,6 +1365,24 @@ Oggetti (da 1.4.1.3)
     resource_rewards resource1 50
 
 ``is_loot 1`` fa cadere l’oggetto quando il portatore muore.
+
+``item_decay <secondi>`` quanto tempo l’oggetto impiega a sparire dopo essere stato buttato a terra (``0`` = non scompare mai, il valore predefinito). Il conto alla rovescia scorre **solo mentre l’oggetto è a terra** — raccoglierlo lo ferma, e buttarlo di nuovo lo riavvia. Esempio::
+
+    def magic_sword
+    class item
+    item_decay 300
+
+.. note::
+   Il ``relic`` di AoE2 **non** ha ``item_decay`` di proposito — le campagne trattano le reliquie come obiettivi obbligatori, e se un oggetto del genere scade la campagna non può essere completata. Verifica se il tuo oggetto viene usato come obiettivo di livello prima di dargli una durata.
+
+``deposit_decay <secondi>`` quanto tempo un deposito / cadavere di caccia impiega a sparire dopo essere stato creato (``0`` = non scompare mai, il valore predefinito). Il cadavere raccoglibile lasciato da un animale morto (cervo / pecora / cinghiale) è uno di questi depositi. Esempio::
+
+    def food_carcass
+    class deposit
+    deposit_decay 120
+
+.. note::
+   Non impostare ``deposit_decay`` sui depositi normali della mappa (miniere d’oro, boschi) — sono risorse della mappa, non cadaveri temporanei.
 
 ``Suoni degli oggetti (``style.txt``; suoni di uso da 1.4.4.6)``
 

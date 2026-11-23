@@ -4,6 +4,51 @@ Release notes
 
 .. contents::
 
+1.5.2.5
+-------
+
+**Added: expiry times for hunt carcasses and ground items**
+
+- **Added**: the harvestable carcass left on the ground when an animal (deer / sheep / boar) is killed now **disappears after a while**. The new keyword is ``deposit_decay`` (written on a ``class deposit``, in **seconds**; ``0`` means "never disappears"). In the AoE2 mod both ``food_carcass`` and ``food_livestock`` are set to ``deposit_decay 120`` (two minutes); ordinary map deposits such as gold mines and forests are unaffected.
+- **Added**: items dropped on the ground now **disappear after a while** as well. The new keyword is ``item_decay`` (written on a ``class item``, in **seconds**; ``0`` means "never disappears"). The timer only runs **while the item lies on the ground** -- picking it up stops the countdown, and dropping it again restarts it.
+- **Fixed**: ground items used to **never be updated at all** -- the ``Item`` class had no ``update`` / ``slow_update`` method, so ``world.register_entity`` did not add it to ``active_objects`` and the world loop never called it. That was the actual root cause of "things on the ground never disappear". Both methods are now implemented, so items are registered as active objects and the timer really runs.
+- **Note**: the AoE2 mod's ``relic`` deliberately has **no** ``item_decay`` -- campaigns treat relics as required objectives (e.g. chapter 12 of *The Legend of Raynor* expects the player to hand a ``gold_coin`` to the trader, and chapter 22 expects a ``gold_coin`` to still be lying on the ground); if such an item expires, the campaign cannot be completed. ``treasure_chest`` / ``gold_pile`` / ``gold_coin`` in ``res/rules.txt`` likewise stay at ``0``. Write ``item_decay <seconds>`` in your own mod if you want a limited lifetime.
+- **Scope**: ``soundrts/worldresource.py``, ``soundrts/worlditem.py``, ``soundrts/worldunit/world_order.py``, ``soundrts/worldunit/world_status_update.py``, ``soundrts/definitions.py``, ``mods/aoe2/rules.txt``, ``res/rules.txt``, ``soundrts/tests/test_ground_item_decay.py``.
+
+**Fixed: a claimed sheep was announced as a lost soldier, and a killed sheep as a neutralized enemy**
+
+- **Problem**: a sheep the player had claimed (taken ownership of) was a **military unit** as far as the statistics and the voice were concerned. When an enemy scout cavalry killed it, the game announced "sheep neutralized at 2 , 1" and "sheep lost at 2 , 1", and the post-game statistics read "4 units produced, 1 lost, 0 neutralized" -- one phantom loss that also dragged the survival score down. Killing a sheep on the other hand counted as "neutralizing an enemy", inflating the combat score.
+- **Cause**: the sheep spawned by the neutral wildlife player carries a stale ``_stats_counted_produced`` flag from that moment, and the ownership transfer did not clear it. Livestock also went through the same ``lost`` / ``killed`` counters as soldiers.
+- **Improvement (statistics)**: livestock (herdable / claimable animals) is now excluded from the unit counters altogether -- it is never counted as produced, lost or neutralized, whichever way it dies. Transferring the ownership of a unit clears the stale production flag. The end-of-game statistics now read "4 units produced, 0 lost, 0 neutralized" for the same scenario.
+- **Improvement (announcements)**: an animal death has its own announcement: the game says "1 sheep slaughtered at 2 , 1" instead of the military "neutralized" / "lost" wording. The count is spoken as usual (several killed at once merge into "2 sheep slaughtered" / "20 sheep slaughtered"), just like "N enemies neutralized" -- the AoE2 sheep / deer / boar carry ``no_number 1`` in the rules (no index when only one of that type is around), which applies to the usual herd announcements but not to the death announcement. **One of your own units (yours or an ally's) killing a sheep you own is no longer announced** -- you do not need to be told about your own handiwork; killing a neutral (not yet claimed) sheep is still announced, since that is hunting. Military units keep their old announcements.
+- **Scope**: ``soundrts/worldplayerbase/base.py``, ``soundrts/worldunit/world_attributes.py``, ``soundrts/worldunit/worldbase.py``, ``soundrts/worldunit/worldcreature.py``, ``soundrts/clientgameentity/events.py``, ``soundrts/clientgame/game_interface_base.py``, ``soundrts/clientgame/game_unit_control.py``, ``soundrts/msgparts.py``, ``res/ui*/tts.txt`` (13 languages), ``soundrts/tests/test_livestock_kill_stats.py``, ``soundrts/tests/test_livestock_death_announcement.py``.
+**Added: respawning a whole faction (the garrison comes back as a whole)**
+
+- **Added**: on top of the per-unit respawn, a **whole faction** can now come back after being defeated — like a boss spawn point in an RPG. The map's ``computer_only`` line accepts the new ``respawn_group <seconds>`` syntax: ``computer_only 0 0 b3 20 footman 20 archer respawn_group 60`` means the clock starts the moment **every unit of that faction is destroyed**, and 60 seconds later its **original garrison** is back in place — the same unit types, the same numbers, on the same squares (buildings included).
+- **Added**: everything that comes back is **brand new**: full health, no leftover buffs, no carried-over level or XP. While the faction waits it does **not** count as defeated — it is about to be back. The garrison that returns can be wiped out again, which queues another respawn; it repeats.
+- **Note**: ``respawn_group`` and the per-type ``respawn <type> <seconds>`` are **mutually exclusive**. If a slot has both, ``respawn_group`` wins and the per-type settings are dropped (the map loader warns about it). The reason is simple: per-unit respawn means the faction is never really defeated. In a slot that uses ``respawn_group``, the rules' ``respawn_time`` does not apply either.
+- **Example**: the b3 garrison of the "zombie planet" map (``res/multi/z5.txt``) now uses ``respawn_group 60`` — the 140 enemies (20 footmen, 20 archers, 20 knights, 20 catapults, 20 dragons, 20 mages, 20 priests) come back to b3 sixty seconds after being wiped out. The neutral wildlife on the same square (deer / sheep / boar) does not respawn.
+
+
+**Verification**
+
+- ``soundrts/tests/test_ground_item_decay.py`` -- new tests: both new keywords are parsed as seconds, a hunt carcass expires on time, a deposit or item without a configured limit never expires, an item starts counting down once dropped and stops once picked up.
+- ``soundrts/tests/test_livestock_kill_stats.py`` and ``soundrts/tests/test_livestock_death_announcement.py`` -- livestock deaths are not counted as losses or kills, the animal-death announcement carries the count, and friendly fire on your own sheep is silent.
+
+**Added: enemy respawn (RPG-style monster revival)**
+
+- **Added**: units and buildings can now **come back after they are destroyed** — like the endless monster packs of an RPG. The new rules keyword is ``respawn_time <seconds>`` (written in a ``class`` definition; ``0`` means "never respawn"). A destroyed unit reappears **on the square where it fell**, a set number of seconds later, as a **brand new** unit: full health, no leftover buffs, and no carried-over level or XP.
+- **Added**: the ``computer_only`` map line accepts a new ``respawn <type> <seconds>`` syntax, so the respawn delay can be set **per unit type**. For example ``computer_only 0 0 b3 20 footman 20 archer respawn footman 20 respawn archer 30`` means the footmen in that slot come back after 20 seconds and the archers after 30; ``respawn <type> 0`` means that type never comes back. The map setting wins over the rules' ``respawn_time``.
+- **Added**: a **respawning army never loses** — wiping it out does not make the game declare that computer defeated, because its units are about to come back. The check also covers the older hero revival (``is_revivable`` + ``revival_time``): a unit **waiting to be revived keeps its side alive** too. This used to be a bug: a computer whose only unit could be revived was declared defeated the moment that unit died, even though it was about to come back.
+- **Improvement**: if the square is full when the timer runs out (a player is standing there), the respawn is **postponed** to the next tick instead of stacking units on top of each other.
+- **Example**: the b3 garrison of the "zombie planet" map (``res/multi/z5.txt``) now respawns — footmen and archers after 20 seconds, knights after 25, catapults after 40, dragons after 45, mages and priests after 30. The neutral wildlife on the same square (deer / sheep / boar) does not respawn.
+- **Scope**: ``soundrts/world_respawn.py``, ``soundrts/worldunit/worldcreature.py``, ``soundrts/worldunit/world_attributes.py``, ``soundrts/worldplayerbase/base.py``, ``soundrts/worldplayerbase/triggers.py``, ``soundrts/world/world_map.py``, ``soundrts/world/world_core.py``, ``soundrts/world/world_objects.py``, ``soundrts/world/world_game.py``, ``soundrts/definitions.py``, ``res/multi/z5.txt``.
+
+**Verification**
+
+- ``soundrts/tests/test_respawn.py`` and ``soundrts/tests/test_respawn_end_to_end.py`` -- new tests: ``respawn_time`` is parsed as seconds, the map's ``respawn`` syntax is stripped out of the unit list and overrides the rules value, a killed unit is queued for respawn, a full-health new unit grows on the old square when the timer runs out, the respawn queue survives a save / load and still respawns afterwards, neither a respawning army nor a pending hero revival makes the enemy lose, and a  normal player who is wiped out still loses.
+- ``soundrts/tests/test_respawn_group.py`` and ``soundrts/tests/test_z5_group_respawn.py`` -- the group respawn tests: ``respawn_group`` is stripped out of the unit list, it is mutually exclusive with the per-type ``respawn`` (with a warning), the garrison comes back as a whole after being wiped out, it does not count as defeated while waiting, and the garrison that returns can be wiped out again.
+
 1.5.2.4
 -------
 

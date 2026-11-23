@@ -544,8 +544,104 @@ class WorldMapMixin:
                 i += 1
         return filtered, name
 
-    def _add_start_to(self, starts, resources, items, sq=None, neutral=None, population=0):
+    def _strip_respawn_group_from_items(self, items):
+        """Pull ``respawn_group <seconds>`` out of a unit list.
+
+        ``respawn_group`` says "when this whole garrison is wiped out,
+        bring it all back after N seconds"::
+
+            computer_only 0 0 b3 20 footman 20 archer respawn_group 60
+
+        It is **mutually exclusive** with the per-type ``respawn`` pairs
+        of the same slot: a group respawn means the faction dies as a
+        whole and comes back as a whole, so per-unit timers would only
+        produce a half-dead garrison in between.  When both are written
+        the group respawn wins and the per-type overrides are dropped
+        (with a warning) -- see ``_add_start``.
+
+        Returns ``(filtered_items, seconds_or_None)``.
+        """
+        seconds = None
+        filtered = []
+        i = 0
+        while i < len(items):
+            token = items[i]
+            if token == "respawn_group":
+                # 没有后面的数字 —— 是个残缺的写法：警告并丢弃这个 token，
+                # 免得它被当成单位类型名去解析。
+                if i + 1 >= len(items):
+                    from ..lib.log import warning
+
+                    warning("respawn_group needs a delay in seconds")
+                    i += 1
+                    continue
+                raw_seconds = items[i + 1]
+                try:
+                    seconds = int(float(raw_seconds))
+                except (TypeError, ValueError):
+                    from ..lib.log import warning
+
+                    warning(
+                        "respawn_group: invalid delay %r",
+                        raw_seconds,
+                    )
+                i += 2
+            else:
+                filtered.append(token)
+                i += 1
+        return filtered, seconds
+
+    def _strip_respawn_from_items(self, items):
+        """Pull ``respawn <type> <seconds>`` pairs out of a unit list.
+
+        The token pair sets the respawn delay (in seconds) for one unit
+        type in this slot, overriding the ``respawn_time`` the rules
+        declare for that type::
+
+            computer_only 0 0 b3 20 footman 20 archer respawn footman 10 archer 60
+
+        ``respawn <type> 0`` means "this type never respawns" even if the
+        rules give it a ``respawn_time``.
+
+        Returns ``(filtered_items, {type_name: seconds})``.
+        """
+        overrides = {}
+        filtered = []
+        i = 0
+        while i < len(items):
+            token = items[i]
+            if token == "respawn" and i + 2 < len(items):
+                type_name = str(items[i + 1])
+                raw_seconds = items[i + 2]
+                try:
+                    overrides[type_name] = int(float(raw_seconds))
+                except (TypeError, ValueError):
+                    from ..lib.log import warning
+
+                    warning(
+                        "respawn: invalid delay %r for type %r",
+                        raw_seconds,
+                        type_name,
+                    )
+                i += 3
+            else:
+                filtered.append(token)
+                i += 1
+        return filtered, overrides
+
+    def _add_start_to(
+        self,
+        starts,
+        resources,
+        items,
+        sq=None,
+        neutral=None,
+        population=0,
+        respawn_overrides=None,
+        respawn_group=None,
+    ):
         items, from_items = self._strip_population_from_items(list(items))
+        respawn_overrides = dict(respawn_overrides or {})
         if from_items:
             population = from_items
 
@@ -586,8 +682,15 @@ class WorldMapMixin:
             start_data.append(neutral)
         if population:
             start_data.append(population)
-        from .world_core import set_start_slot_square
+        from .world_core import (
+            set_start_slot_square,
+            set_start_slot_respawn_overrides,
+            set_start_slot_respawn_group,
+        )
+
         set_start_slot_square(start_data, sq)
+        set_start_slot_respawn_overrides(start_data, respawn_overrides)
+        set_start_slot_respawn_group(start_data, respawn_group)
         starts.append(start_data)
 
     def _add_start(self, w, words):
@@ -595,7 +698,7 @@ class WorldMapMixin:
             n = "players_starts"
         else:
             n = "computers_starts"
-        from .world_core import convert_and_split_first_numbers
+        from .world_core import convert_and_split_first_numbers, map_warning
         resources, units = convert_and_split_first_numbers(words[1:])
         if len(resources) != self.nb_res:
             warning("the map have %s resources while the rules have %s resources",
@@ -618,14 +721,31 @@ class WorldMapMixin:
         units, population = self._strip_population_from_items(units)
         faction = None
         slot_name = None
+        respawn_overrides = {}
+        respawn_group = None
         if w in ["computer_only", "computer"]:
             units, faction = self._strip_faction_from_items(units)
             units, slot_name = self._strip_slot_name_from_items(units)
+            units, respawn_group = self._strip_respawn_group_from_items(units)
+            units, respawn_overrides = self._strip_respawn_from_items(units)
+            # ``respawn_group``（整个势力一起复活）与逐类型的 ``respawn``
+            # 互斥：前者表示「全军覆没后整队回来」，后者表示「每个单位
+            # 各自回来」。两者同时写会让守军变成半死不活的混合状态，
+            # 所以这里让 ``respawn_group`` 胜出，并丢掉逐类型的设置。
+            if respawn_group is not None and respawn_overrides:
+                map_warning(
+                    " ".join(str(w) for w in words),
+                    "respawn_group and respawn <type> <seconds> are mutually "
+                    "exclusive; keeping respawn_group %d and ignoring %d "
+                    "per-type respawn setting(s)"
+                    % (respawn_group, len(respawn_overrides)),
+                )
+                respawn_overrides = {}
 
         start_info = [resources, units]
         if w in ["computer_only", "computer"]:
             start_info.append(neutral)  # 添加neutral标志
-        
+
         # ``_add_start_to`` 的签名是 ``(starts, resources, items, sq=None,
         # neutral=None, population=0)``——第 4 个位置参数是 ``sq``，不是 ``neutral``。
         # 历史上这里把 ``neutral`` 当第 4 个位置参数传，结果落到了 ``sq``
@@ -643,6 +763,8 @@ class WorldMapMixin:
             start_info[1],
             neutral=neutral if len(start_info) > 2 else None,
             population=population,
+            respawn_overrides=respawn_overrides,
+            respawn_group=respawn_group,
         )
         if w in ["computer_only", "computer"]:
             if not hasattr(self, "computers_factions"):

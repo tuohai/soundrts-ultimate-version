@@ -497,6 +497,19 @@ class CreatureAttributes(Entity):
         else:
             cls.yield_on_defeat = 0
 
+        # ``respawn_time``：被摧毁后原地刷新的时限。规则里写的是**秒**，
+        # 这里换算成毫秒（内部时间单位）。0 = 永不刷新。
+        # 只写在 d 里（不写 cls），避免污染共享基类 —— 每个单位类型
+        # 由 ``type(k, (base,), v)`` 单独建类，d 的键会变成类属性。
+        if "respawn_time" in d:
+            raw = d["respawn_time"]
+            if isinstance(raw, (list, tuple)):
+                raw = raw[0] if raw else 0
+            try:
+                d["respawn_time"] = int(float(raw) * PRECISION)
+            except (TypeError, ValueError):
+                d["respawn_time"] = 0
+
         if "passenger_attack_types" in d:
             if "all" in d["passenger_attack_types"]:
                 d["passenger_attack_types"] = ["all"]
@@ -709,10 +722,27 @@ class CreatureAttributes(Entity):
         self.stop()
         self.cancel_all_orders(unpay=False)
         if self.player:
+            # 归属转移（claim / herd / 夺回建筑）：新主人没有「生产」过这个单位，
+            # 所以清掉生产标记。否则该单位会带着**前任主人**的生产标记，
+            # 让后来者在阵亡统计上被误判成「自己造的兵」。
+            # 旧主人的 produced 计数保持不变（东西还是他造的）。
+            self._stats_counted_produced = False
+            self._stats_produced_for = None
             self.player.remove(self)
         elif player:
-            player.stats.add("produced", self.stat_type)
-            self._stats_counted_produced = True
+            # 牲口（羊/牛等）不是军事单位：既不记「生产」，死亡时也不记
+            # 「阵亡」，被杀时也不记「消灭」——三者口径一致，结算里不会
+            # 出现「阵亡比生产还多」这种自相矛盾的数字。
+            from ..worldplayerbase.base import counts_in_unit_stats
+
+            if counts_in_unit_stats(self):
+                player.stats.add("produced", self.stat_type)
+                self._stats_counted_produced = True
+                # 记住 produced 是记给谁 的：归属转移后据此判断新主人是否造过它。
+                self._stats_produced_for = player
+            else:
+                self._stats_counted_produced = False
+                self._stats_produced_for = None
         self.player = player
         if player:
             player.add(self)
