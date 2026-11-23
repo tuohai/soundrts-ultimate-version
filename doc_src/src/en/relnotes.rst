@@ -49,6 +49,20 @@ Release notes
 - ``soundrts/tests/test_respawn.py`` and ``soundrts/tests/test_respawn_end_to_end.py`` -- new tests: ``respawn_time`` is parsed as seconds, the map's ``respawn`` syntax is stripped out of the unit list and overrides the rules value, a killed unit is queued for respawn, a full-health new unit grows on the old square when the timer runs out, the respawn queue survives a save / load and still respawns afterwards, neither a respawning army nor a pending hero revival makes the enemy lose, and a  normal player who is wiped out still loses.
 - ``soundrts/tests/test_respawn_group.py`` and ``soundrts/tests/test_z5_group_respawn.py`` -- the group respawn tests: ``respawn_group`` is stripped out of the unit list, it is mutually exclusive with the per-type ``respawn`` (with a warning), the garrison comes back as a whole after being wiped out, it does not count as defeated while waiting, and the garrison that returns can be wiped out again.
 
+**Improved: the AI no longer runs a full path search just to ask whether a unit can walk somewhere**
+
+- **Problem**: the AI only ever asked a yes/no question -- "can this unit walk to that square?" -- but it paid for the complete pathfinding A* to find out. That search inserts the start square and the destination square into the shared world graph, explores it, and then reconstructs the whole path through the ``came_from`` chain. Both the graph surgery and the reconstruction are wasted work for a question whose answer is a single boolean.
+- **Improvement**: a dedicated reachability search (``Square.can_reach``) now answers the question over the exit graph without touching the shared graph and without reconstructing anything, and it stops the moment the destination is reached. The answers are also memoised in a 1500 ms bucket -- the same window the path cache already uses, so one bucket spans two ticks.
+- **Improvement**: the AI also stopped copying its whole perception-and-memory set on every scan. Walking the two sets directly visits the same entities without materialising a copy of several thousand objects each time.
+- **Scope**: ``soundrts/worldroom.py``, ``soundrts/worldplayercomputer.py``, ``soundrts/tests/test_square_can_reach.py``.
+
+**Verification**
+
+- ``soundrts/tests/test_square_can_reach.py`` -- new tests: the reachability search agrees with the full path search on directly linked squares, disconnected squares, multi-hop chains, blocked passages and forest-blocked exits, the self-target and the ``None`` destination, and the 1500 ms memo answers a repeated query without searching again.
+- Differential test against ``shortest_path_to(places=True)`` -- 230,162 live calls during a 10-minute match, 0 mismatches; and 142,191 square pairs across all players, 0 mismatches.
+- Both implementations replayed over the *same* frozen world and the *same* queries (so the comparison is not affected by the engine's inherent nondeterminism): the reachability search costs 1.6 to 7.4 percent less per query, averaging about 4 percent.
+- The full 40-minute cw1 benchmark (15 beginner computers) went from 2319.9 s to 2273.6 s of wall clock, while the pathfinding function itself dropped from 338.4 s of cumulative time over 358,578 calls to 243.3 s over 200,176 calls -- and the optimised build ended the match with 1474 units instead of 1197, so it did more work in less time.
+
 1.5.2.4
 -------
 

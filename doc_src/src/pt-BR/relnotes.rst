@@ -49,6 +49,20 @@ Notas de lançamento
 - **Observação**: ``respawn_group`` e o ``respawn <tipo> <segundos>`` por tipo são **mutuamente exclusivos**. Se um slot tiver os dois, ``respawn_group`` vence e as definições por tipo são descartadas (o carregador do mapa avisa). O motivo é simples: reaparecimento por unidade significa que a facção nunca chega a estar realmente derrotada. Em um slot que usa ``respawn_group``, o ``respawn_time`` das regras também não se aplica.
 - **Exemplo**: a guarnição de b3 do mapa «zombie planet» (``res/multi/z5.txt``) usa agora ``respawn_group 60`` — os 140 inimigos (20 footmen, 20 arqueiros, 20 cavaleiros, 20 catapultas, 20 dragões, 20 magos, 20 sacerdotes) voltam para b3 sessenta segundos depois de serem aniquilados. A fauna neutra do mesmo quadrado (cervos / ovelhas / javalis) não reaparece.
 
+**Melhorado: a IA não executa mais uma busca de caminho completa só para perguntar se uma unidade consegue caminhar até lá**
+
+- **Problema**: a IA só fazia uma pergunta de sim ou não — «esta unidade consegue caminhar até aquele quadrado?» — mas pagava o custo completo da busca A* de caminhos. Essa busca insere o quadrado de origem e o quadrado de destino no grafo compartilhado do mundo, o explora e depois reconstrói o caminho inteiro através da cadeia ``came_from``. Tanto a manipulação do grafo quanto a reconstrução são trabalho desperdiçado para uma pergunta cuja resposta é um único booleano.
+- **Melhoria**: uma busca de alcançabilidade dedicada (``Square.can_reach``) responde agora à pergunta sobre o grafo de saídas sem tocar no grafo compartilhado e sem reconstruir nada, e para assim que atinge o destino. As respostas também são memorizadas em baldes de 1500 ms — a mesma janela que a cache de caminhos já usa, então um balde abrange dois ticks.
+- **Melhoria**: a IA também parou de copiar todo o seu conjunto de percepção e memória a cada varredura. Percorrer os dois conjuntos diretamente visita as mesmas entidades sem materializar uma cópia de vários milhares de objetos cada vez.
+- **Escopo**: ``soundrts/worldroom.py``, ``soundrts/worldplayercomputer.py``, ``soundrts/tests/test_square_can_reach.py``.
+
+**Verificação**
+
+- ``soundrts/tests/test_square_can_reach.py`` — novos testes: a busca de alcançabilidade concorda com a busca de caminho completo em quadrados ligado diretamente, quadrados desconectados, cadeias de vários saltos, passagens bloqueadas e saídas bloqueadas por florestas, o alvo igual a si mesmo e o destino ``None``, e a memorização de 1500 ms responde a uma consulta repetida sem buscar de novo.
+- Teste diferencial contra ``shortest_path_to(places=True)`` — 230.162 chamadas ao vivo durante uma partida de 10 minutos, 0 divergências; e 142.191 pares de quadrados entre todos os jogadores, 0 divergências.
+- Ambas as implementações repetidas sobre o *mesmo* mundo congelado e as *mesmas* consultas (para que a comparação não seja afetada pela não determinismo inerente do motor): a busca de alcançabilidade custa entre 1,6 e 7,4 por cento menos por consulta, com média de cerca de 4 por cento.
+- O benchmark completo de 40 minutos no cw1 (15 computadores iniciantes) passou de 2319,9 s para 2273,6 s de tempo real, enquanto a própria função de busca de caminhos caiu de 338,4 s de tempo acumulado em 358.578 chamadas para 243,3 s em 200.176 chamadas — e a partida otimizada terminou com 1474 unidades em vez de 1197, ou seja, fez mais trabalho em menos tempo.
+
 1.5.2.4
 -------
 

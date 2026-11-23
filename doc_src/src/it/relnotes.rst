@@ -48,6 +48,20 @@ Note di rilascio
 - **Nota**: ``respawn_group`` e il ``respawn <tipo> <secondi>`` per tipo sono **mutuamente esclusivi**. Se uno slot ha entrambi, vince ``respawn_group`` e le impostazioni per tipo vengono scartate (il caricatore della mappa avvisa). Il motivo è semplice: il respawn per unità implica che la fazione non viene mai davvero sconfitta. In uno slot che usa ``respawn_group``, il ``respawn_time`` delle regole non vale.
 - **Esempio**: la guarnigione di b3 della mappa «zombie planet» (``res/multi/z5.txt``) usa ora ``respawn_group 60`` — i 140 nemici (20 fanti, 20 arcieri, 20 cavalieri, 20 catapulthe, 20 draghi, 20 maghi, 20 sacerdoti) tornano a b3 sessanta secondi dopo essere stati annientati. La fauna neutra della stessa casella (cervi / pecore / cinghiali) non rispawna.
 
+**Migliorato: l'IA non esegue più una ricerca di percorso completa solo per chiedere se un'unità può camminare fin li**
+
+- **Problema**: l'IA faceva in realtà una sola domanda sì o no — «questa unità può camminare fino a quella casella?» — ma ne pagava il costo completo dell'A* di ricerca del percorso. Quella ricerca inserisce la casella di partenza e quella di destinazione nel grafo condiviso del mondo, lo esplora e poi ricostruisce l'intero percorso seguendo la catena ``came_from``. Sia la manipolazione del grafo sia la ricostruzione sono lavoro sprecato per una domanda la cui risposta è un singolo booleano.
+- **Miglioramento**: una ricerca di raggiungibilità dedicata (``Square.can_reach``) risponde ora alla domanda sul grafo delle uscite senza toccare il grafo condiviso e senza ricostruire nulla, e si ferma appena raggiunge la destinazione. Le risposte vengono anche memorizzate in bucket da 1500 ms — la stessa finestra già usata dalla cache dei percorsi, così un bucket copre due tick.
+- **Miglioramento**: l'IA ha anche smesso di copiare l'intero suo insieme di percezione e memoria a ogni scansione. Percorrere i due insiemi direttamente visita le stesse entità senza materializzare una copia di diverse migliaia di oggetti ogni volta.
+- **Ambito**: ``soundrts/worldroom.py``, ``soundrts/worldplayercomputer.py``, ``soundrts/tests/test_square_can_reach.py``.
+
+**Verifica**
+
+- ``soundrts/tests/test_square_can_reach.py`` — nuovi test: la ricerca di raggiungibilità concorda con la ricerca del percorso completo su caselle collegate direttamente, caselle scollegate, catene a più salti, passaggi bloccati e uscite bloccate da boschi, il bersaglio uguale a se stessi e la destinazione ``None``, e la memorizzazione da 1500 ms risponde a una query ripetuta senza effettuare di nuovo la ricerca.
+- Test differenziale contro ``shortest_path_to(places=True)`` — 230.162 chiamate reali durante una partita di 10 minuti, 0 discrepanze; e 142.191 coppie di caselle su tutti i giocatori, 0 discrepanze.
+- Entrambe le implementazioni rilanciate sullo *stesso* mondo congelato e sulle *stesse* query (così il confronto non risente della non determinismo intrinseco del motore): la ricerca di raggiungibilità costa dall'1,6 al 7,4 per cento in meno per query, con una media intorno al 4 per cento.
+- Il benchmark completo di 40 minuti su cw1 (15 computer principianti) è passato da 2319,9 s a 2273,6 s di tempo reale, mentre la funzione di ricerca dei percorsi è scesa da 338,4 s di tempo cumulativo su 358.578 chiamate a 243,3 s su 200.176 chiamate — e la partita ottimizzata si è conclusa con 1474 unità invece di 1197, quindi ha fatto più lavoro in meno tempo.
+
 1.5.2.4
 -------
 
