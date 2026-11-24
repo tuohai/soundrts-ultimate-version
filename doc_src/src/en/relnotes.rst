@@ -4,6 +4,23 @@ Release notes
 
 .. contents::
 
+1.5.2.6
+-------
+
+**Fixed: building a building cost twice, and the second charge used the undiscounted price**
+
+- **Problem**: with 10 gold in the feudal age, ordering a town hall announced "10 gold" and then left the player with **-2 gold**. The town hall's rules cost is ``cost 12 16``, and the feudal age gives a 2 gold discount (``phase bonus ... cost -2 0 ...``), so the price that was *shown* (10) was not the price that was *charged* (12).
+- **Cause 1 (the resources were taken twice)**: the build order reserved the **discounted** cost (10) up front, and refunded it when the worker reached the site. The ``BuildingSite`` then charged the **raw rules cost** (12) again. The building was billed twice, and the second bill was at the undiscounted price -- which is why the player ended up with 12 spent out of 10.
+- **Cause 2 (the refund used the current price, not the price that was paid)**: the reservation refund recomputed the order cost instead of remembering what had actually been charged. If the cost changed between the reservation and the refund (an age-up, a technology, a civ bonus), the difference silently created or destroyed resources.
+- **Fix**: the build order now passes the amount it actually charged to the building site, and the site charges exactly that amount (``paid_cost``) -- the price the player was shown. The reservation records the charged amount as a snapshot (``reserved_cost``), and the refund gives back precisely that snapshot.
+- **Fix**: cancelling a building under construction (``cancel_building``) now also refunds exactly the amount that was charged, instead of the raw rules cost.
+- **Scope**: ``soundrts/worldunit/worldcreature.py``, ``soundrts/worldorders/production.py``, ``soundrts/worldorders/base.py``, ``soundrts/worldorders/immediate.py``, ``soundrts/worldplayerbase/resources.py``, ``soundrts/tests/test_build_cost_not_double_charged.py``.
+
+**Verification**
+
+- ``soundrts/tests/test_build_cost_not_double_charged.py`` -- new tests: reserving and then freeing a project gives back exactly what was taken, a cost change between reservation and refund does not leak resources, and an end-to-end feudal-age scenario -- 10 gold in, town hall ordered, 0 gold left -- never drives the player into negative gold.
+- The same scenario replayed against the old behaviour reproduces the reported **-2 gold** exactly; with the fix the player finishes at **0 gold**.
+
 1.5.2.5
 -------
 

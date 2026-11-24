@@ -3,6 +3,23 @@ Note di rilascio
 
 .. contents::
 
+1.5.2.6
+-------
+
+**Corretto: costruire un edificio costava il doppio, e il secondo addebito usava il prezzo senza sconto**
+
+- **Problema**: con 10 di oro nell'Età Feudale, ordinare un municipio annunciava "10 di oro" e lasciava il giocatore con **-2 di oro**. Il costo nelle regole del municipio è ``cost 12 16``, e l'Età Feudale dà uno sconto di 2 oro (``phase bonus ... cost -2 0 ...``), quindi il prezzo *mostrato* (10) non era quello *addebitato* (12).
+- **Causa 1 (le risorse venivano addebitate due volte)**: l'ordine di costruzione prenotava subito il costo **scontato** (10) e lo rimborsava quando l'operaio arrivava al cantiere. La ``BuildingSite`` addebitava quindi di nuovo il **costo grezzo delle regole** (12). L'edificio veniva fatturato due volte, e la seconda fattura era al prezzo senza sconto -- per questo il giocatore finiva con 12 spesi su 10.
+- **Causa 2 (il rimborso usava il prezzo attuale, non quello pagato)**: il rimborso della prenotazione ricalcolava il costo dell'ordine invece di ricordare quanto era stato realmente addebitato. Se il costo cambiava fra la prenotazione e il rimborso (un passaggio d'età, una tecnologia, un bonus di civiltà), la differenza creava o distruggeva risorse in silenzio.
+- **Correzione**: l'ordine di costruzione passa ora al cantiere la quantità che ha realmente addebitato (``paid_cost``), e il cantiere addebita esattamente quella quantità -- il prezzo mostrato al giocatore. La prenotazione registra quella quantità come istantanea (``reserved_cost``) e il rimborso restituisce esattamente quell'istantanea.
+- **Correzione**: annullare un edificio in costruzione (``cancel_building``) restituisce ora esattamente la quantità addebitata, invece del costo grezzo delle regole.
+- **Ambito**: ``soundrts/worldunit/worldcreature.py``, ``soundrts/worldorders/production.py``, ``soundrts/worldorders/base.py``, ``soundrts/worldorders/immediate.py``, ``soundrts/worldplayerbase/resources.py``, ``soundrts/tests/test_build_cost_not_double_charged.py``.
+
+**Verifica**
+
+- ``soundrts/tests/test_build_cost_not_double_charged.py`` -- nuovi test: prenotare e poi liberare un progetto restituisce esattamente quanto è stato preso, un cambio di costo fra prenotazione e rimborso non fa perdere risorse, e uno scenario feudale completo -- 10 di oro in entrata, municipio ordinato, 0 di oro alla fine -- non porta mai il giocatore in oro negativo.
+- Lo stesso scenario riprodotto con il comportamento precedente riproduce esattamente i **-2 di oro** segnalati; con la correzione il giocatore finisce a **0 di oro**.
+
 1.5.2.5
 -------
 

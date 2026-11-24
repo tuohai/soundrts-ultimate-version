@@ -4,6 +4,23 @@ Notas de lançamento
 
 .. contents::
 
+1.5.2.6
+-------
+
+**Corrigido: construir um edifício custava o dobro, e a segunda cobrança usava o preço sem desconto**
+
+- **Problema**: com 10 de ouro na Idade Feudal, ordenar um prefeitura anunciava "10 de ouro" e deixava o jogador com **-2 de ouro**. O custo nas regras da prefeitura é ``cost 12 16``, e a Idade Feudal dá um desconto de 2 de ouro (``phase bonus ... cost -2 0 ...``), então o preço que era *mostrado* (10) não era o preço que era *cobrado* (12).
+- **Causa 1 (os recursos eram cobrados duas vezes)**: a ordem de construção reservava o custo **com desconto** (10) logo de início, e devolvia-o quando o trabalhador chegava ao terreno. A ``BuildingSite`` então cobrava de novo o **custo cru das regras** (12). O edifício era faturado duas vezes, e a segunda fatura vinha ao preço sem desconto -- por isso o jogador acabava com 12 gastos de 10.
+- **Causa 2 (a devolução usava o preço atual, não o que tinha sido pago)**: a devolução da reserva recalculava o custo da ordem em vez de lembrar o que realmente tinha sido cobrado. Se o custo mudasse entre a reserva e a devolução (uma subida de idade, uma tecnologia, um bônus de civilização), a diferença criava ou destruía recursos em silêncio.
+- **Correção**: a ordem de construção agora passa ao terreno de construção a quantidade que realmente cobrou (``paid_cost``), e o terreno cobra exatamente essa quantidade -- o preço mostrado ao jogador. A reserva guarda essa quantidade como instantâneo (``reserved_cost``), e a devolução devolve precisamente esse instantâneo.
+- **Correção**: cancelar um edifício em construção (``cancel_building``) também devolve agora exatamente a quantidade cobrada, em vez do custo cru das regras.
+- **Escopo**: ``soundrts/worldunit/worldcreature.py``, ``soundrts/worldorders/production.py``, ``soundrts/worldorders/base.py``, ``soundrts/worldorders/immediate.py``, ``soundrts/worldplayerbase/resources.py``, ``soundrts/tests/test_build_cost_not_double_charged.py``.
+
+**Verificação**
+
+- ``soundrts/tests/test_build_cost_not_double_charged.py`` -- novos testes: reservar e depois libertar um projeto devolve exatamente o que foi retirado, uma mudança de custo entre a reserva e a devolução não vaza recursos, e um cenário feudal completo -- 10 de ouro a entrar, prefeitura encomendada, 0 de ouro no fim -- nunca leva o jogador a ouro negativo.
+- O mesmo cenário reproduzido com o comportamento antigo reproduz exatamente os **-2 de ouro** relatados; com a correção o jogador termina com **0 de ouro**.
+
 1.5.2.5
 -------
 
