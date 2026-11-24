@@ -297,7 +297,12 @@ class CancelBuildingOrder(ImmediateOrder):
     keyword = "cancel_building"
 
     def immediate_action(self):
-        self.unit.player.unpay(self.unit.type.cost)
+        # Refund exactly what was charged for the site (it may be cheaper
+        # than the raw rules cost because of age / tech / civ discounts).
+        cost = getattr(self.unit, "paid_cost", None)
+        if cost is None:
+            cost = self.unit.type.cost
+        self.unit.player.unpay(cost)
         self.unit.die()
 
 

@@ -209,8 +209,10 @@ def test_cancel_building_refunds_cost():
     src = _source("soundrts", "worldorders", "immediate.py")
     block = _section(src, "class CancelBuildingOrder", "class EnableAutoGather",
                      "class CancelTrainingOrder")
-    # unpay 是 player 的逆操作，把资源退回
-    assert "self.unit.player.unpay(self.unit.type.cost)" in block
+    # unpay 是 player 的逆操作，把资源退回。
+    # 返还的是建造时实际扣掉的金额（paid_cost），没有时才退回原始 cost。
+    assert "self.unit.player.unpay(cost)" in block
+    assert "paid_cost" in block
     assert "self.unit.die()" in block
 
 

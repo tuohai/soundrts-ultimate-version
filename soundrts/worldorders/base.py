@@ -162,6 +162,11 @@ class Order:
     cost = (0,) * MAX_NB_OF_RESOURCE_TYPES
     population_cost = 0
 
+    # Amount actually charged when the resources were reserved.  Set by
+    # ``Player._reserve_resources``; used to refund exactly what was taken
+    # (the order cost may change between reservation and refund).
+    reserved_cost = None
+
     is_deferred = False
     nb_args = 0
 

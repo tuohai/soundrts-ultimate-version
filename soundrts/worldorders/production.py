@@ -1792,6 +1792,12 @@ class BuildOrder(ComplexOrder):
             return
         if at_build_site:
             # 释放预留的资源，但只有在资源被预留的情况下
+            # The reservation is refunded and immediately re-charged by the
+            # BuildingSite with the *same* amount (the price the player was
+            # shown).  Capture it before freeing it.
+            paid_cost = getattr(self, "reserved_cost", None)
+            if paid_cost is None:
+                paid_cost = tuple(self.cost)
             if self.resources_reserved:
                 self.player.free_resources(self)
                 self.resources_reserved = False  # 重置标记
@@ -1819,6 +1825,7 @@ class BuildOrder(ComplexOrder):
                     self.type,
                     self.target,
                     addon_host=getattr(self, "addon_host", None),
+                    paid_cost=paid_cost,
                 )
             else:
                 self.cancel(unpay=False)  # 不需要返还资源，因为没有创建BuildingSite

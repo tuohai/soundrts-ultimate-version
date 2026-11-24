@@ -697,7 +697,7 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
             self.action = MoveAction(self, value)
         else:
             self.action = Action(self, value)
-    def _put_building_site(self, type, target, addon_host=None):
+    def _put_building_site(self, type, target, addon_host=None, paid_cost=None):
         from ..world_build_rules import (
             addon_build_target_coords,
             building_sacrifices_worker,
@@ -748,7 +748,11 @@ class Creature(CreatureAttributes, CreatureMovement, CreatureAttack, CreatureSta
             remember_land = not is_addon_type(type)
         else:
             remember_land = False
-        site = BuildingSite(self.player, place, x, y, type)
+        # Charge exactly what the build order already charged (it may be
+        # discounted by the current age / techs / civ bonuses).
+        if paid_cost is None:
+            paid_cost = type.cost
+        site = BuildingSite(self.player, place, x, y, type, paid_cost=paid_cost)
         if remember_land:
             site.building_land = target
         if build_on_deposit:
@@ -2035,9 +2039,19 @@ class BuildingSite(_Building):
     type_name = "buildingsite"
     basic_skills = {"cancel_building"}
 
-    def __init__(self, player, place, x, y, building_type):
+    def __init__(self, player, place, x, y, building_type, paid_cost=None):
         super().__init__(player, place, x, y)
-        player.pay(building_type.cost)
+        # The resources were already charged by the build order (at the
+        # *discounted* price shown to the player).  Charging the raw rules
+        # cost here took the resources a second time and used a different
+        # (undiscounted) amount: with a feudal-age ``cost`` discount a
+        # townhall reserved for 10 gold was then billed 12, driving the
+        # player into negative gold.
+        if paid_cost is None:
+            paid_cost = building_type.cost
+        paid_cost = tuple(paid_cost)
+        player.pay(paid_cost)
+        self.paid_cost = paid_cost
         self.type = building_type
         self.hp_max = building_type.hp_max
         self._starting_hp = building_type.hp_max * 5 // 100

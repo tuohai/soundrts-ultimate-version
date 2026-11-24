@@ -133,7 +133,15 @@ class ResourcesMixin:
         self.pay([-c for c in cost])
 
     def _reserve_resources(self, project):
-        self.pay(project.cost)
+        # Snapshot the amount actually charged: the order's cost may change
+        # later (age-up discounts, techs, civ bonuses).  Refunding a *different*
+        # amount than the one that was taken creates or destroys resources.
+        cost = tuple(project.cost)
+        self.pay(cost)
+        try:
+            project.reserved_cost = cost
+        except Exception:
+            pass
         self.budget.append(project)
 
     def resources_are_reserved(self, project):
@@ -145,7 +153,12 @@ class ResourcesMixin:
 
     def free_resources(self, project):
         if project in self.budget:
-            self.unpay(project.cost)
+            # Refund exactly what was reserved (falls back to the current cost
+            # for projects reserved before this snapshot existed).
+            cost = getattr(project, "reserved_cost", None)
+            if cost is None:
+                cost = tuple(project.cost)
+            self.unpay(cost)
             self.budget.remove(project)
 
     def store(self, resource_type, qty):
